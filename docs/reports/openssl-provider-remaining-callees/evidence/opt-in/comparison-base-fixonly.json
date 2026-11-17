@@ -1,0 +1,133 @@
+{
+ "before": "run-base-1/resource-diagnostics.json",
+ "after": "run-fixonly-1/resource-diagnostics.json",
+ "function_totals": {
+  "before": {
+   "Pending": 2,
+   "Safe": 1097,
+   "Unknown": 3700,
+   "Unsafe": 5
+  },
+  "after": {
+   "Pending": 2,
+   "Safe": 1097,
+   "Unknown": 3700,
+   "Unsafe": 5
+  }
+ },
+ "unit_totals": {
+  "before": {
+   "Unknown": 163,
+   "Safe": 9,
+   "Unsafe": 5,
+   "data_only": 4
+  },
+  "after": {
+   "Unknown": 163,
+   "Safe": 9,
+   "Unsafe": 5,
+   "data_only": 4
+  }
+ },
+ "unmatched": {
+  "before_only": [],
+  "after_only": []
+ },
+ "rows_changed": 7,
+ "content_changes": [
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_ssl.c::0::rd_kafka_ssl_ctx_init",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [
+    "SSL_CTX_new"
+   ],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": []
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_ssl.c::0::rd_kafka_transport_ssl_connect",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [
+    "ERR_clear_error",
+    "SSL_new"
+   ],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": []
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_ssl.c::0::rd_kafka_transport_ssl_io_event",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [
+    "ERR_clear_error"
+   ],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": []
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_ssl.c::0::rd_kafka_transport_ssl_recv",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [
+    "ERR_clear_error"
+   ],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": []
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_ssl.c::0::rd_kafka_transport_ssl_send",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [
+    "ERR_clear_error"
+   ],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": []
+  },
+  {
+   "row": "monkey::lib/monkey/tls/tls_openssl.c::0::mk_tls_exit",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [
+    "SSL_CTX_free"
+   ],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": []
+  },
+  {
+   "row": "monkey::lib/monkey/tls/tls_openssl.c::0::mk_tls_init",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [
+    "OPENSSL_init_ssl"
+   ],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": []
+  }
+ ],
+ "moves": [],
+ "unit_moves": []
+}

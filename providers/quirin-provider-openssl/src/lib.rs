@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//! OpenSSL resource contracts and their checker plugin (card
-//! **OPENSSL-PROVIDER-PLUGIN**; user decisions of 2026-09-28 and 2026-11-16).
+//! OpenSSL resource contracts and their checker plugin (cards
+//! **OPENSSL-PROVIDER-PLUGIN** and **OPENSSL-PROVIDER-REMAINING-CALLEES**; user decisions of 2026-09-28 and 2026-11-16).
 //!
 //! The first in-repository crate built on the user-contract SDK
 //! (`quirin-provider-plugin`), laid out as a user crate: `contracts/openssl/`
@@ -33,6 +33,7 @@
 //! certificate checker exists.
 
 pub mod check;
+pub mod documented;
 
 /// The crate's contract-inheritance namespace.
 pub const NAMESPACE: &str = "openssl";
@@ -60,16 +61,48 @@ pub const MODULES: &[(&str, &str)] = &[
         include_str!("../contracts/openssl/evp.qv"),
     ),
     (
+        "openssl/evp_digest.qv",
+        include_str!("../contracts/openssl/evp_digest.qv"),
+    ),
+    (
         "openssl/init.qv",
         include_str!("../contracts/openssl/init.qv"),
+    ),
+    (
+        "openssl/lookup.qv",
+        include_str!("../contracts/openssl/lookup.qv"),
+    ),
+    (
+        "openssl/pem.qv",
+        include_str!("../contracts/openssl/pem.qv"),
+    ),
+    (
+        "openssl/pkcs12.qv",
+        include_str!("../contracts/openssl/pkcs12.qv"),
     ),
     (
         "openssl/ssl.qv",
         include_str!("../contracts/openssl/ssl.qv"),
     ),
     (
+        "openssl/ssl_ctx.qv",
+        include_str!("../contracts/openssl/ssl_ctx.qv"),
+    ),
+    (
+        "openssl/ssl_io.qv",
+        include_str!("../contracts/openssl/ssl_io.qv"),
+    ),
+    (
+        "openssl/stack.qv",
+        include_str!("../contracts/openssl/stack.qv"),
+    ),
+    (
         "openssl/x509.qv",
         include_str!("../contracts/openssl/x509.qv"),
+    ),
+    (
+        "openssl/x509_store.qv",
+        include_str!("../contracts/openssl/x509_store.qv"),
     ),
 ];
 

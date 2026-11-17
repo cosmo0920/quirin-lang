@@ -723,6 +723,16 @@ impl AuditReport {
 
     /// Card W45-USER-CONTRACT-PLUGINS: fold these checker links into every
     /// unit recorded from now on.
+    /// Card OPENSSL-PROVIDER-REMAINING-CALLEES: fold, into the unit row just
+    /// recorded and annotated with its contract dependencies, the links of
+    /// every bound declaration a function rests on that the record's fold
+    /// did not link (`crate::user_plugins::fold_dependencies`).
+    pub(crate) fn fold_last_unit_dependencies(&mut self) {
+        if let (Some(links), Some(row)) = (&self.plugin_links, self.units.last_mut()) {
+            crate::user_plugins::fold_dependencies(links, row);
+        }
+    }
+
     pub fn set_plugin_links(&mut self, links: std::sync::Arc<crate::user_plugins::PluginLinks>) {
         self.plugin_links = Some(links);
     }

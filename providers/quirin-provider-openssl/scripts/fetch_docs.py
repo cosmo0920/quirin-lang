@@ -71,7 +71,7 @@ def fetch(series, page, out):
     text = data.decode("utf-8", "replace")
     return {"url": url, "series": series, "fetched": True,
             "sha256": hashlib.sha256(data).hexdigest(), "bytes": len(data),
-            "history": history(text), "null_sentences": null_sentences(text),
+            "name": section(text, "name"), "history": history(text), "null_sentences": null_sentences(text),
             "reference_sentences": reference_sentences(text)}
 
 
@@ -79,20 +79,34 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--out", required=True, type=Path)
     parser.add_argument("--record", required=True, type=Path)
+    parser.add_argument("--merge", action="store_true",
+                        help="keep the record's existing pages and add only the (page, series) "
+                             "pairs it lacks, each with its own `fetched_on` (card "
+                             "OPENSSL-PROVIDER-REMAINING-CALLEES: a page already cited is never "
+                             "refetched, so its recorded digest stays the one reviewed)")
     parser.add_argument("pages", nargs="+", help="PAGE@SERIES[,SERIES...]")
     args = parser.parse_args()
     date = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d")
-    record = {"schema_version": 1, "source": BASE, "fetched_on": date,
-              "rule": "user decision 2026-11-16: since/removal bounds come from the official "
-                      "manual pages' HISTORY sections; pages are not committed, only their "
-                      "SHA-256 as fetched and the HISTORY text",
-              "pages": []}
+    if args.merge:
+        record = json.loads(args.record.read_text())
+    else:
+        record = {"schema_version": 1, "source": BASE, "fetched_on": date,
+                  "rule": "user decision 2026-11-16: since/removal bounds come from the official "
+                          "manual pages' HISTORY sections; pages are not committed, only their "
+                          "SHA-256 as fetched and the HISTORY text",
+                  "pages": []}
+    present = {(entry["page"], entry["series"]) for entry in record["pages"]}
     for spec in args.pages:
         page, series = spec.split("@", 1)
         for one in series.split(","):
+            if (page, one) in present:
+                continue
             entry = fetch(one, page, args.out)
             entry["page"] = page
+            if args.merge:
+                entry["fetched_on"] = date
             record["pages"].append(entry)
+            present.add((page, one))
     args.record.write_text(json.dumps(record, indent=1) + "\n")
 
 

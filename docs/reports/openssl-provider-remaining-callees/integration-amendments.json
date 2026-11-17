@@ -1,0 +1,96 @@
+{
+ "schema": "quirin-amendments/1",
+ "card": "OPENSSL-PROVIDER-REMAINING-CALLEES",
+ "base": "32336c33d",
+ "measured_tip": "e556fea4f",
+ "increment_paragraph": "**OPENSSL-PROVIDER-REMAINING-CALLEES (2026-11-17).** The OpenSSL user crate providers/quirin-provider-openssl grows from 12 to 57 flexible, version-ranged, checker-bound declarations, each range read off the official manual pages (102 new page snapshots in doc-snapshots.json; fetch_docs.py --merge never refetches a reviewed page) and each prototype off the pinned 3.5.5 headers: plain calls (ERR_peek_error, ERR_peek_last_error since 0.9.7, ERR_error_string_n since 0.9.6, EVP_sha256/512, EVP_EncodeBlock, SSL_get_error, SSL_set_accept_state, SSL_CTX_set_options since 3.0.0, SSL_CTX_set_default_verify_paths, SSL_CTX_load_verify_locations, SSL_CTX_use_certificate/PrivateKey whose context takes its own reference, the X509_STORE_CTX error accessors, X509_STORE_set_flags), SSL_write/read/connect/do_handshake and the two *_file loaders under the named premise openssl_registered_callbacks (C04.18), borrowed results (SSL_get_certificate, SSL_get_client_CA_list, SSL_CTX_get_cert_store, X509_get_issuer_name, X509_STORE_get0_objects, X509_STORE_CTX_get_current_cert, OPENSSL_sk_value), returned references (X509_new, BIO_new_file, ENGINE_by_id, SSL_get1_peer_certificate, and PEM_read_bio_X509/PrivateKey bounded to a null x and cb by C04.5's premise), fresh objects and releases (EVP_MD_CTX_new/free, OPENSSL_sk_new_null/free, d2i_PKCS12_bio at a null p12, PKCS12_free), a counted drop (X509_STORE_free) and two retentions (OPENSSL_sk_push, SSL_CTX_set_default_passwd_cb_userdata); the lock diff adds 45 entries and changes none, and the six frees REFERENCE-DROP-NULL-ACCEPTING owns are untouched. The checker derives each declaration's exact clause set from its documented shape and premises and refuses any other; Lean QCore.OpensslCalleeShapes (13 audited theorems). The fixture found the plugin fold published a scalar return f() over a bound contract Safe over an uncertified binding (it read only ContractCall nodes); qcore_audit::user_plugins::fold_dependencies now folds every bound declaration a row rests on (contract_dependencies), only raising, and does nothing without user-load-path links. 16 callees stay uncontracted with reasons (BIO_new_mem_buf, the PEM readers' callback arm, SSL_CTX_ctrl/SSL_ctrl, the SSL_CTX callback setters, OPENSSL_sk_pop_free, SSL_set_fd, ERR_peek_last_error_all, X509_NAME_oneline, CRYPTO_free, OSSL_PROVIDER_load/unload and four the manual pages do not document); census re-rank: on current 16 of 72 callees and 22 of 116 pairs left, one row blocked by OpenSSL alone (rd_kafka_ssl_PKEY_from_string, BIO_new_mem_buf). Measured opt-in arbiter (current --monkey-linked over Fluent Bit 046accf6 with the user load path, three runs: base, fold fix only, tip): 1097 Safe / 2 Pending / 3700 Unknown / 5 Unsafe functions in every run, no row moved, as predicted; 7 rows gain links from the fold fix and 30 from the new declarations, content only; the two Pending rows are rd_kafka_transport_ssl_clear_error and tls_init_library. Pinned routes read no user load path: no move by construction.",
+ "status_paragraph": null,
+ "ledger": [
+  {
+   "id": "OPENSSL-PROVIDER-REMAINING-CALLEES",
+   "operation": "retire",
+   "why": "OPENSSL-PROVIDER-REMAINING-CALLEES (2026-11-17): 45 of the census's 61 remaining OpenSSL callees contracted (57 in the crate), each of the other 16 registered with its reason (OPENSSL-NULLABLE-RESULT-HOLDER, OPENSSL-PEM-CALLBACK-ARM, OPENSSL-CTRL-COMMAND-ARMS, OPENSSL-SSL-CTX-CALLBACK-SLOTS, OPENSSL-STACK-POP-FREE-CALLBACK, OPENSSL-DESCRIPTOR-RETENTION, OPENSSL-QUEUE-OUT-SLOTS, OPENSSL-NONNULL-ARGUMENT-PREMISE, OPENSSL-ALLOCATOR-KIND, OPENSSL-UNDOCUMENTED-CALLEES), and the opt-in arbiter measured (three current runs over 046accf6 with the user load path: no row moved, every content change attributed).",
+   "source": "docs/reports/openssl-provider-remaining-callees/README.md"
+  },
+  {
+   "id": "OPENSSL-NULLABLE-RESULT-HOLDER",
+   "operation": "register",
+   "title": "A nullable result that retains a caller's buffer (BIO_new_mem_buf)",
+   "text": "BIO_new_mem_buf returns a BIO that keeps reading the caller's buffer, or NULL; C04.14.2 admits resource_retained_by(P, result) only beside resource_return_owned(nonnull), so the retention cannot be declared and the callee stays uncontracted (current: 5 pairs, 1 row it blocks alone, rd_kafka_ssl_PKEY_from_string). DISCHARGE: a result holder whose NULL edge holds nothing (loader, rule 13e consumer, Lean QCore.ReferenceResult), then the OpenSSL declaration. Size: one vocabulary card (loader + route G + Lean) and one declaration.",
+   "source": "docs/reports/openssl-provider-remaining-callees/README.md",
+   "recorded_by": "OPENSSL-PROVIDER-REMAINING-CALLEES"
+  },
+  {
+   "id": "OPENSSL-PEM-CALLBACK-ARM",
+   "operation": "register",
+   "title": "PEM readers called with a password callback",
+   "text": "PEM_read_bio_X509 and PEM_read_bio_PrivateKey are declared only where x and cb are null pointer constants: resource_callback_invoked(cb, _, _, _, u) states the callback exactly, but the loader admits no callback clause beside the literal-argument premise the x reuse arm needs (contract_loader.rs, literal_arguments). Seven librdkafka calls pass rd_kafka_conf_ssl_passwd_cb or rd_kafka_transport_ssl_passwd_cb (rdkafka_cert.c:272, 349, 405; rdkafka_ssl.c:761, 790, 833, 1292) and stay uncontracted. DISCHARGE: admit a literal-argument premise beside callback clauses (loader, route G's premise refusal, Lean), then add the invocation to pem.qv. Size: small vocabulary card.",
+   "source": "docs/reports/openssl-provider-remaining-callees/README.md",
+   "recorded_by": "OPENSSL-PROVIDER-REMAINING-CALLEES"
+  },
+  {
+   "id": "OPENSSL-CTRL-COMMAND-ARMS",
+   "operation": "register",
+   "title": "SSL_CTX_ctrl / SSL_ctrl custody by command",
+   "text": "SSL_CTX_ctrl and SSL_ctrl switch custody on cmd (SSL_CTX_add_extra_chain_cert hands the context the caller's certificate; SSL_CTX_set_mode takes nothing); the vocabulary guards only retentions (C04.14.1), and one declaration per function cannot carry several literal arms. current: 3 pairs (rd_kafka_ssl_ctx_init, rd_kafka_ssl_set_certs, rd_kafka_ssl_cert_callback). DISCHARGE: guarded modes (or per-arm declarations) on an integer argument, with the commands the macros expand to read from the pinned headers. Size: vocabulary card, then three to five declarations.",
+   "source": "docs/reports/openssl-provider-remaining-callees/README.md",
+   "recorded_by": "OPENSSL-PROVIDER-REMAINING-CALLEES"
+  },
+  {
+   "id": "OPENSSL-SSL-CTX-CALLBACK-SLOTS",
+   "operation": "register",
+   "title": "Callback registrations into an SSL_CTX's several slots, and the registered-callbacks premise",
+   "text": "SSL_CTX_set_cert_cb and SSL_CTX_set_default_passwd_cb register a callback into one of an SSL_CTX's several slots; C04.19's registration replaces any earlier registration of its holder, so they are not declared. Six declarations of OPENSSL-PROVIDER-REMAINING-CALLEES (SSL_write, SSL_read, SSL_connect, SSL_do_handshake, SSL_CTX_use_PrivateKey_file, SSL_CTX_use_certificate_chain_file) rest on the named premise openssl_registered_callbacks instead of a stated registry invocation; SSL_shutdown, SSL_free and SSL_CTX_free read the same silently. DISCHARGE: per-slot registrations and registry invocations (C04.19.3's member registrations may be the route), the two setters declared, the premise replaced by stated invocations. Size: medium (vocabulary + about ten declarations).",
+   "source": "docs/reports/openssl-provider-remaining-callees/README.md",
+   "recorded_by": "OPENSSL-PROVIDER-REMAINING-CALLEES"
+  },
+  {
+   "id": "OPENSSL-STACK-POP-FREE-CALLBACK",
+   "operation": "register",
+   "title": "OPENSSL_sk_pop_free: a passed callback that releases every element",
+   "text": "OPENSSL_sk_pop_free(st, freefunc) calls freefunc on every element and frees the stack; C04.19 lets only a registry's element position release, not a synchronous invocation's, and X509_free there is a counted drop. current: 2 pairs, 10 sites (rd_kafka_cert_new, rd_kafka_ssl_set_certs). DISCHARGE: a synchronous invocation over a holder's elements whose candidates release or drop them, composed with OPENSSL_sk_push's retention. Size: vocabulary card.",
+   "source": "docs/reports/openssl-provider-remaining-callees/README.md",
+   "recorded_by": "OPENSSL-PROVIDER-REMAINING-CALLEES"
+  },
+  {
+   "id": "OPENSSL-DESCRIPTOR-RETENTION",
+   "operation": "register",
+   "title": "SSL_set_fd keeps the caller's descriptor",
+   "text": "SSL_set_fd makes the SSL use (not close) the descriptor; reading it borrowed would hide that the SSL must not outlive the descriptor, and resource_retained_by takes a pointer only. current: 1 pair (Monkey context_new, Unsafe on other diagnostics). DISCHARGE: a retention of a descriptor-kind integer, then the declaration. Size: small vocabulary card.",
+   "source": "docs/reports/openssl-provider-remaining-callees/README.md",
+   "recorded_by": "OPENSSL-PROVIDER-REMAINING-CALLEES"
+  },
+  {
+   "id": "OPENSSL-QUEUE-OUT-SLOTS",
+   "operation": "register",
+   "title": "Out slots receiving pointers the error queue keeps (ERR_peek_last_error_all)",
+   "text": "ERR_peek_last_error_all writes into four const char ** slots pointers into the thread's error record; C04.16's derived out slot derives from a parameter, and a borrowed reading would not end the caller's earlier binding of the slot. current: 1 pair (rd_kafka_ssl_last_error_str, 1 other diagnostic). DISCHARGE: an out slot borrowed from a global holder. Size: small vocabulary card.",
+   "source": "docs/reports/openssl-provider-remaining-callees/README.md",
+   "recorded_by": "OPENSSL-PROVIDER-REMAINING-CALLEES"
+  },
+  {
+   "id": "OPENSSL-NONNULL-ARGUMENT-PREMISE",
+   "operation": "register",
+   "title": "Two arms split on whether a pointer argument is NULL (X509_NAME_oneline)",
+   "text": "X509_NAME_oneline(a, buf, size) allocates when buf is NULL and returns buf otherwise; C04.5's premise bounds a declaration to the null-pointer-constant arm only, and librdkafka passes arrays (rdkafka_ssl.c:432, 434). current: 1 pair. DISCHARGE: a premise admitting the non-null arm (an array or an address), then the alias declaration. Size: small.",
+   "source": "docs/reports/openssl-provider-remaining-callees/README.md",
+   "recorded_by": "OPENSSL-PROVIDER-REMAINING-CALLEES"
+  },
+  {
+   "id": "OPENSSL-ALLOCATOR-KIND",
+   "operation": "register",
+   "title": "CRYPTO_free / OPENSSL_free: OpenSSL's allocator as a resource kind",
+   "text": "CRYPTO_free releases what OpenSSL's allocator (replaceable by CRYPTO_set_mem_functions) returned; declaring it a heap release would let free() and CRYPTO_free discharge each other's allocations (C04.6 rule 1). current: 1 pair. DISCHARGE: an openssl allocator kind (C04.6 adds kinds only with a declared use), its allocation results (X509_NAME_oneline's NULL arm) and CRYPTO_free. Size: small vocabulary card.",
+   "source": "docs/reports/openssl-provider-remaining-callees/README.md",
+   "recorded_by": "OPENSSL-PROVIDER-REMAINING-CALLEES"
+  },
+  {
+   "id": "OPENSSL-UNDOCUMENTED-CALLEES",
+   "operation": "register",
+   "title": "OpenSSL callees the official manual pages do not document or whose custody they leave open",
+   "text": "No official manual page documents ENGINE_load_ssl_client_cert or X509_OBJECT_get0_X509; SSL_certs_clear is named only in SSL_CTX_set_cert_cb's NOTES; SSL_CTX_use_cert_and_key's page states the custody of the key, not of the certificate or chain; OSSL_PROVIDER_unload's page does not say who holds the provider after a failed unload (0). Each stays uncontracted (current: 6 pairs). DISCHARGE: a documented source (an upstream documentation change or a user decision admitting the pinned 3.5.5 source as evidence), then the declarations. Size: needs a user decision.",
+   "source": "docs/reports/openssl-provider-remaining-callees/README.md",
+   "recorded_by": "OPENSSL-PROVIDER-REMAINING-CALLEES"
+  }
+ ]
+}

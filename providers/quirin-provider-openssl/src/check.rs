@@ -12,7 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//! The OpenSSL contract checker (card **OPENSSL-PROVIDER-PLUGIN**).
+//! The OpenSSL contract checker (cards **OPENSSL-PROVIDER-PLUGIN** and
+//! **OPENSSL-PROVIDER-REMAINING-CALLEES**).
 //!
 //! The audit sends one request per binding (`quirin-plugin.json`): one
 //! `parameter_mode_respected` obligation per bound function, bound to the
@@ -22,19 +23,24 @@
 //!    its SHA-256 is the request's `source_digest`.
 //! 2. **The prototype**: the pinned headers declare the function
 //!    ([`crate::PINNED_PROTOTYPES`]), and the declaration's parameter and
-//!    result kinds equal the contract's (a C pointer to const is
-//!    `ptr<const, u8>`, any other pointer `ptr<mut, u8>`, `int` `i32`,
-//!    `uint64_t` `u64`, `void` `unit`).
+//!    result kinds equal the contract's ([`contract_type`]: a C pointer to
+//!    const is `ptr<const, u8>`, any other object pointer `ptr<mut, u8>`, a
+//!    pointer to a pointer `ptr<mut, ptr<B, u8>>` with `B` the innermost
+//!    pointee's qualifier, a pointer to a function typedef `fnptr`, `int`
+//!    `i32`, `long` `i64`, `unsigned long` and `uint64_t` `u64`, `size_t`
+//!    `usize`, `void` `unit`).
 //! 3. **The version range**: the declaration states exactly one
 //!    `resource_library_version(openssl, …)` and it admits the pinned headers'
 //!    version (3.5.5).
 //! 4. **The documented semantics** ([`DOCUMENTED`]): the range is the one the
 //!    official manual page supports, that page was fetched
-//!    ([`crate::DOC_SNAPSHOTS`]), and the custody clauses match what the page
-//!    documents: a release of a reference-counted object is a reference drop
-//!    (never a final free), a constructor's result is a returned reference
-//!    that may be NULL, and a function that takes or returns nothing has no
-//!    custody clause.
+//!    ([`crate::DOC_SNAPSHOTS`]), and the declaration's clauses are exactly
+//!    the set [`expected_clauses`] derives from the documented shape and
+//!    premises: a release of a reference-counted object is a reference drop
+//!    (never a final free), a constructor of one returns a reference that may
+//!    be NULL, a getter returning what its argument owns is a borrowed result,
+//!    a holder keeping a pointer is a retention, every other position is
+//!    borrowed, and nothing else is stated.
 //!
 //! Every function passing all four is answered with a `Safe` **claim** and no
 //! certificate, one diagnostic per function naming what was checked; the
@@ -50,119 +56,10 @@ use qcore_schemas::plugin::{
 };
 use serde_json::Value;
 
-/// The custody shape the official documentation gives a function.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub enum Documented {
-    /// Takes and returns no custody.
-    Plain,
-    /// Releases one reference on a reference-counted object (the parameter
-    /// at this position): a reference drop.
-    CountedRelease(usize),
-    /// Creates a reference-counted object and returns one reference, or NULL
-    /// on failure.
-    CountedConstructor,
-}
-
-/// What the documentation supports for one function: the page cited, the
-/// series establishing the lower bound, the range clause it supports, and the
-/// custody shape.
-#[derive(Clone, Copy, Debug)]
-pub struct DocumentedFunction {
-    pub function: &'static str,
-    pub page: &'static str,
-    pub series: &'static str,
-    pub range: &'static str,
-    pub shape: Documented,
-}
-
-/// The documented semantics of every contracted function (user decision
-/// 2026-11-16: the official manual pages; `doc-snapshots.json`).
-pub const DOCUMENTED: &[DocumentedFunction] = &[
-    DocumentedFunction {
-        function: "BIO_free",
-        page: "BIO_new",
-        series: "1.0.2",
-        range: "resource_library_version(openssl, documented \"1.0.2\")",
-        shape: Documented::CountedRelease(0),
-    },
-    DocumentedFunction {
-        function: "ENGINE_free",
-        page: "ENGINE_add",
-        series: "1.1.1",
-        range: "resource_library_version(openssl, documented \"1.1.1\")",
-        shape: Documented::CountedRelease(0),
-    },
-    DocumentedFunction {
-        function: "ERR_clear_error",
-        page: "ERR_clear_error",
-        series: "1.0.2",
-        range: "resource_library_version(openssl, documented \"1.0.2\")",
-        shape: Documented::Plain,
-    },
-    DocumentedFunction {
-        function: "EVP_PKEY_free",
-        page: "EVP_PKEY_new",
-        series: "1.0.2",
-        range: "resource_library_version(openssl, documented \"1.0.2\")",
-        shape: Documented::CountedRelease(0),
-    },
-    DocumentedFunction {
-        function: "OPENSSL_init_ssl",
-        page: "OPENSSL_init_ssl",
-        series: "3.5",
-        range: "resource_library_version(openssl, since \"1.1.0\")",
-        shape: Documented::Plain,
-    },
-    DocumentedFunction {
-        function: "SSL_CTX_free",
-        page: "SSL_CTX_free",
-        series: "1.0.2",
-        range: "resource_library_version(openssl, documented \"1.0.2\")",
-        shape: Documented::CountedRelease(0),
-    },
-    DocumentedFunction {
-        function: "SSL_CTX_new",
-        page: "SSL_CTX_new",
-        series: "1.0.2",
-        range: "resource_library_version(openssl, documented \"1.0.2\")",
-        shape: Documented::CountedConstructor,
-    },
-    DocumentedFunction {
-        function: "SSL_free",
-        page: "SSL_free",
-        series: "1.0.2",
-        range: "resource_library_version(openssl, documented \"1.0.2\")",
-        shape: Documented::CountedRelease(0),
-    },
-    DocumentedFunction {
-        function: "SSL_new",
-        page: "SSL_new",
-        series: "1.0.2",
-        range: "resource_library_version(openssl, documented \"1.0.2\")",
-        shape: Documented::CountedConstructor,
-    },
-    DocumentedFunction {
-        function: "SSL_shutdown",
-        page: "SSL_shutdown",
-        series: "1.0.2",
-        range: "resource_library_version(openssl, documented \"1.0.2\")",
-        shape: Documented::Plain,
-    },
-    DocumentedFunction {
-        function: "TLS_server_method",
-        page: "SSL_CTX_new",
-        series: "3.5",
-        range: "resource_library_version(openssl, since \"1.1.0\")",
-        shape: Documented::Plain,
-    },
-    DocumentedFunction {
-        function: "X509_free",
-        page: "X509_new",
-        series: "1.0.2",
-        range: "resource_library_version(openssl, documented \"1.0.2\")",
-        shape: Documented::CountedRelease(0),
-    },
-];
+pub use crate::documented::{
+    DOCUMENTED, Documented, DocumentedFunction, Null, Premise, REGISTERED_CALLBACKS,
+    REGISTERED_CALLBACKS_STATEMENT,
+};
 
 /// The crate name a request's translation unit carries.
 pub const CRATE: &str = "quirin-provider-openssl";
@@ -235,21 +132,47 @@ pub fn declaration(module: &str, function: &str) -> Option<Declaration> {
     })
 }
 
+/// The pinned headers' typedefs of function types, whose pointers are
+/// `fnptr`.
+pub const FUNCTION_TYPEDEFS: &[&str] = &["pem_password_cb"];
+
 /// The contract type a C type from a pinned prototype corresponds to.
 #[must_use]
 pub fn contract_type(c_type: &str) -> Option<&'static str> {
     let c_type = collapse(c_type);
-    if c_type.ends_with('*') {
-        return Some(if c_type.starts_with("const ") {
-            "ptr<const, u8>"
-        } else {
-            "ptr<mut, u8>"
-        });
+    let stars = c_type.matches('*').count();
+    let base = c_type.trim_end_matches(['*', ' ']);
+    if FUNCTION_TYPEDEFS.contains(&base) {
+        // A pointer to a function type is `fnptr`; a pointer to that pointer
+        // has no spelling.
+        return (stars == 1).then_some("fnptr");
+    }
+    match stars {
+        0 => {}
+        1 if c_type.ends_with('*') => {
+            return Some(if c_type.starts_with("const ") {
+                "ptr<const, u8>"
+            } else {
+                "ptr<mut, u8>"
+            });
+        }
+        // `T **` / `const T **`: the slot is unqualified, the innermost
+        // pointee carries the qualifier (C04.1, rule 12v).
+        2 if c_type.ends_with("**") && !c_type[..c_type.len() - 2].contains('*') => {
+            return Some(if c_type.starts_with("const ") {
+                "ptr<mut, ptr<const, u8>>"
+            } else {
+                "ptr<mut, ptr<mut, u8>>"
+            });
+        }
+        _ => return None,
     }
     match c_type.as_str() {
         "void" => Some("unit"),
         "int" => Some("i32"),
-        "uint64_t" => Some("u64"),
+        "long" => Some("i64"),
+        "unsigned long" | "uint64_t" => Some("u64"),
+        "size_t" => Some("usize"),
         _ => None,
     }
 }
@@ -381,50 +304,32 @@ pub fn check_function(module_path: &str, module: &str, function: &str) -> Result
                 documented.page, documented.series
             )
         })?;
-    let has = |clause: &str| declaration.clauses.iter().any(|c| c == clause);
-    let custody = declaration
-        .clauses
+    let names = declaration
+        .parameters
         .iter()
-        .filter(|c| {
-            c.contains("resource_released")
-                || c.contains("resource_reference_")
-                || c.contains("resource_return_owned")
-                || c.contains("resource_return_kind")
-        })
-        .count();
-    match documented.shape {
-        Documented::Plain => {
-            if custody != 0 || !has("ensures normal resource_return_none()") {
-                return Err(format!(
-                    "{function}: documented to take and return no custody, but the contract \
-                     states custody"
-                ));
-            }
-        }
-        Documented::CountedRelease(position) => {
-            let (name, _) = &declaration.parameters[position];
-            if custody != 1
-                || !has(&format!(
-                    "ensures normal resource_reference_dropped({name})"
-                ))
-            {
-                return Err(format!(
-                    "{function}: documented to release one reference on `{name}` (a counted \
-                     drop, never a final free), and the contract does not state exactly that"
-                ));
-            }
-        }
-        Documented::CountedConstructor => {
-            if custody != 2
-                || !has("ensures normal resource_return_owned(nullable)")
-                || !has("ensures normal resource_return_kind(reference)")
-            {
-                return Err(format!(
-                    "{function}: documented to return one reference or NULL, and the contract \
-                     does not state exactly that"
-                ));
-            }
-        }
+        .map(|(name, _)| name.clone())
+        .collect::<Vec<_>>();
+    let expected = expected_clauses(documented, &names).ok_or_else(|| {
+        format!("{function}: the documented shape names a parameter the declaration lacks")
+    })?;
+    let mut stated = declaration.clauses.clone();
+    stated.sort();
+    if stated != expected {
+        let missing = expected
+            .iter()
+            .filter(|clause| !stated.contains(clause))
+            .cloned()
+            .collect::<Vec<_>>();
+        let extra = stated
+            .iter()
+            .filter(|clause| !expected.contains(clause))
+            .cloned()
+            .collect::<Vec<_>>();
+        return Err(format!(
+            "{function}: the contract does not state exactly the documented {} \
+             (missing: {missing:?}; not documented: {extra:?})",
+            describe(documented.shape)
+        ));
     }
     Ok(format!(
         "{function}: prototype `{prototype}` ({header}, sha256 {}) matches the contract; `{range}` \
@@ -434,6 +339,108 @@ pub fn check_function(module_path: &str, module: &str, function: &str) -> Result
         page["url"].as_str().unwrap_or_default(),
         &page["sha256"].as_str().unwrap_or_default()[..12],
     ))
+}
+
+/// What a shape is, for a diagnostic.
+#[must_use]
+pub fn describe(shape: Documented) -> &'static str {
+    match shape {
+        Documented::Plain => "plain call (no custody taken or returned)",
+        Documented::CountedRelease(_) => {
+            "counted release (one reference dropped, never a final free)"
+        }
+        Documented::CountedConstructor => "returned reference (one reference, or NULL)",
+        Documented::Constructor => "fresh object (owned, or NULL)",
+        Documented::Release(..) => "release of an object that is not reference counted",
+        Documented::BorrowedResult(..) => "borrowed result (owned by the argument)",
+        Documented::Retains { .. } => "retention (the holder keeps the pointer)",
+    }
+}
+
+/// The exact clause set, sorted, of a declaration stating `documented` over
+/// parameters named `parameters` (in order); `None` when the shape or a
+/// premise names a position the declaration lacks.
+#[must_use]
+pub fn expected_clauses(
+    documented: &DocumentedFunction,
+    parameters: &[String],
+) -> Option<Vec<String>> {
+    let name = |position: usize| parameters.get(position).cloned();
+    let mut clauses = vec![
+        "requires resource_contract_v1".to_owned(),
+        "requires resource_revision(flexible)".to_owned(),
+        format!("requires {}", documented.range),
+    ];
+    for premise in documented.premises {
+        clauses.push(match premise {
+            Premise::NullArgument(position) => {
+                format!("requires resource_literal_argument({}, 0)", name(*position)?)
+            }
+            Premise::RegisteredCallbacks => format!(
+                "requires resource_premise({REGISTERED_CALLBACKS}, \"{REGISTERED_CALLBACKS_STATEMENT}\")"
+            ),
+            Premise::CallbackInvoked {
+                callback,
+                arguments,
+            } => {
+                let mut actuals = vec![name(*callback)?];
+                for argument in *arguments {
+                    actuals.push(match argument {
+                        Some(position) => name(*position)?,
+                        None => "_".to_owned(),
+                    });
+                }
+                format!("ensures normal resource_callback_invoked({})", actuals.join(", "))
+            }
+        });
+    }
+    for (position, parameter) in parameters.iter().enumerate() {
+        clauses.push(match documented.shape {
+            Documented::Release(released, null) if released == position => {
+                format!(
+                    "ensures normal resource_released({parameter}, {})",
+                    null.word()
+                )
+            }
+            _ => format!("ensures normal resource_borrowed({parameter})"),
+        });
+    }
+    match documented.shape {
+        Documented::Plain => clauses.push("ensures normal resource_return_none()".to_owned()),
+        Documented::CountedRelease(position) => {
+            clauses.push(format!(
+                "ensures normal resource_reference_dropped({})",
+                name(position)?
+            ));
+            clauses.push("ensures normal resource_return_none()".to_owned());
+        }
+        Documented::CountedConstructor => {
+            clauses.push("ensures normal resource_return_owned(nullable)".to_owned());
+            clauses.push("ensures normal resource_return_kind(reference)".to_owned());
+        }
+        Documented::Constructor => {
+            clauses.push("ensures normal resource_return_owned(nullable)".to_owned());
+        }
+        Documented::Release(position, _) => {
+            name(position)?;
+            clauses.push("ensures normal resource_return_none()".to_owned());
+        }
+        Documented::BorrowedResult(position, null) => clauses.push(format!(
+            "ensures normal resource_return_borrowed_from({}, {})",
+            name(position)?,
+            null.word()
+        )),
+        Documented::Retains { item, holder } => {
+            clauses.push(format!(
+                "ensures normal resource_retained_by({}, {})",
+                name(item)?,
+                name(holder)?
+            ));
+            clauses.push("ensures normal resource_return_none()".to_owned());
+        }
+    }
+    clauses.sort();
+    Some(clauses)
 }
 
 /// `(lower, removed)` of a range clause, read with the schema's version
@@ -624,6 +631,137 @@ mod tests {
         );
         assert_eq!(contract_type("const SSL_METHOD *"), Some("ptr<const, u8>"));
         assert_eq!(contract_type("SSL *"), Some("ptr<mut, u8>"));
-        assert_eq!(contract_type("long"), None);
+        // Card OPENSSL-PROVIDER-REMAINING-CALLEES: the shapes its prototypes
+        // add, each exactly one spelling, and no reading of anything else.
+        assert_eq!(contract_type("long"), Some("i64"));
+        assert_eq!(contract_type("unsigned long"), Some("u64"));
+        assert_eq!(contract_type("size_t"), Some("usize"));
+        assert_eq!(contract_type("X509 **"), Some("ptr<mut, ptr<mut, u8>>"));
+        assert_eq!(
+            contract_type("const char **"),
+            Some("ptr<mut, ptr<const, u8>>")
+        );
+        assert_eq!(contract_type("pem_password_cb *"), Some("fnptr"));
+        assert_eq!(contract_type("char *const *"), None);
+        assert_eq!(contract_type("X509 ***"), None);
+        assert_eq!(contract_type("pem_password_cb **"), None);
+        assert_eq!(contract_type("unsigned int"), None);
+        assert_eq!(
+            prototype_types(
+                "X509 *PEM_read_bio_X509(BIO *out, X509 **x, pem_password_cb *cb, void *u)",
+                "PEM_read_bio_X509"
+            ),
+            Some((
+                vec![
+                    "BIO *".into(),
+                    "X509 **".into(),
+                    "pem_password_cb *".into(),
+                    "void *".into()
+                ],
+                "X509 *".into()
+            ))
+        );
+        assert_eq!(
+            prototype_types(
+                "void *OPENSSL_sk_value(const OPENSSL_STACK *, int)",
+                "OPENSSL_sk_value"
+            ),
+            Some((
+                vec!["const OPENSSL_STACK *".into(), "int".into()],
+                "void *".into()
+            ))
+        );
+    }
+
+    fn module_of(function: &str) -> (&'static str, &'static str) {
+        let (path, text) = crate::MODULES
+            .iter()
+            .find(|(_, text)| text.contains(&format!("extern fn {function}(")))
+            .unwrap();
+        (path, text)
+    }
+
+    #[test]
+    fn a_drifted_shape_of_the_new_readings_is_refused() {
+        // A borrowed result read as an owned one: a getter whose result the
+        // page says the caller must not free.
+        let (path, text) = module_of("SSL_get_certificate");
+        let owned = text.replacen(
+            "ensures normal resource_return_borrowed_from(ssl, nullable);",
+            "ensures normal resource_return_owned(nullable);",
+            1,
+        );
+        assert!(check_function(path, &owned, "SSL_get_certificate").is_err());
+        // A retention dropped: the borrowed-and-forgotten reading C04.14
+        // forbids.
+        let (path, text) = module_of("OPENSSL_sk_push");
+        let forgotten = text.replace("    ensures normal resource_retained_by(data, st);\n", "");
+        assert!(check_function(path, &forgotten, "OPENSSL_sk_push").is_err());
+        // A returned reference read as a fresh heap object (a final free
+        // would then discharge it).
+        let (path, text) = module_of("X509_new");
+        let heap = text.replacen(
+            "    ensures normal resource_return_kind(reference);\n",
+            "",
+            1,
+        );
+        assert!(check_function(path, &heap, "X509_new").is_err());
+        // The callbacks premise removed from an I/O call.
+        let (path, text) = module_of("SSL_write");
+        let premise = format!(
+            "    requires resource_premise({REGISTERED_CALLBACKS}, \"{REGISTERED_CALLBACKS_STATEMENT}\");\n"
+        );
+        assert!(text.contains(&premise));
+        let unpremised = text.replacen(&premise, "", 1);
+        assert!(check_function(path, &unpremised, "SSL_write").is_err());
+        // The null-argument premise removed: the reuse arm would read as the
+        // fresh-object arm.
+        let (path, text) = module_of("PEM_read_bio_X509");
+        let widened = text.replacen("    requires resource_literal_argument(x, 0);\n", "", 1);
+        assert!(check_function(path, &widened, "PEM_read_bio_X509").is_err());
+        // The null-callback premise removed: a caller's password callback
+        // would read as a benign borrowed pointer.
+        let premise = "    requires resource_literal_argument(cb, 0);\n";
+        assert!(text.contains(premise));
+        let benign = text.replacen(premise, "", 1);
+        assert!(check_function(path, &benign, "PEM_read_bio_X509").is_err());
+        // A release of a non-counted object read as a counted drop, and a
+        // counted drop read as a final free.
+        let (path, text) = module_of("PKCS12_free");
+        let counted = text.replacen(
+            "ensures normal resource_released(a, nullable);",
+            "ensures normal resource_borrowed(a);\n    ensures normal resource_reference_dropped(a);",
+            1,
+        );
+        assert!(check_function(path, &counted, "PKCS12_free").is_err());
+        let (path, text) = module_of("X509_STORE_free");
+        let freed = text.replacen(
+            "    ensures normal resource_borrowed(xs);\n    ensures normal resource_reference_dropped(xs);\n",
+            "    ensures normal resource_released(xs, nullable);\n",
+            1,
+        );
+        assert!(check_function(path, &freed, "X509_STORE_free").is_err());
+        // A since bound the HISTORY section does not give.
+        let (path, text) = module_of("SSL_CTX_set_options");
+        let older = text.replacen("since \"3.0.0\"", "documented \"1.0.2\"", 1);
+        assert!(check_function(path, &older, "SSL_CTX_set_options").is_err());
+    }
+
+    #[test]
+    fn every_documented_page_was_fetched() {
+        let snapshots: Value = serde_json::from_str(crate::DOC_SNAPSHOTS).unwrap();
+        for documented in DOCUMENTED {
+            assert!(
+                snapshots["pages"].as_array().unwrap().iter().any(|page| {
+                    page["page"] == documented.page
+                        && page["series"] == documented.series
+                        && page["fetched"] == true
+                }),
+                "{}: {}@{}",
+                documented.function,
+                documented.page,
+                documented.series
+            );
+        }
     }
 }

@@ -550,6 +550,1630 @@
    ],
    "reference_sentences": [],
    "page": "BIO_new"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/BIO_s_file/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "62a58373c77607fa88dd3cd5897b0b28944df64e00cd24119271d23992f6ea1c",
+   "bytes": 1085970,
+   "name": "BIO_s_file, BIO_new_file, BIO_new_fp, BIO_set_fp, BIO_get_fp, BIO_read_filename, BIO_write_filename, BIO_append_filename, BIO_rw_filename - FILE bio",
+   "history": null,
+   "null_sentences": [
+    "BIO_new_file() and BIO_new_fp() return a file BIO or NULL if an error occurred."
+   ],
+   "reference_sentences": [],
+   "page": "BIO_s_file",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/1.1.1/man3/BIO_s_file/",
+   "series": "1.1.1",
+   "fetched": true,
+   "sha256": "3cbf30e903285896ab8283c807edaf8be1fe302aa4f842daba74b5a82b3a52a4",
+   "bytes": 679019,
+   "name": "BIO_s_file, BIO_new_file, BIO_new_fp, BIO_set_fp, BIO_get_fp, BIO_read_filename, BIO_write_filename, BIO_append_filename, BIO_rw_filename - FILE bio",
+   "history": null,
+   "null_sentences": [
+    "BIO_new_file() and BIO_new_fp() return a file BIO or NULL if an error occurred."
+   ],
+   "reference_sentences": [],
+   "page": "BIO_s_file",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/1.0.2/man3/BIO_s_file/",
+   "series": "1.0.2",
+   "fetched": true,
+   "sha256": "4376e9bed8f34f896e761fc1044c65bd40ffb241c22c833fba9b433eece508f0",
+   "bytes": 288597,
+   "name": "BIO_s_file, BIO_new_file, BIO_new_fp, BIO_set_fp, BIO_get_fp, BIO_read_filename, BIO_write_filename, BIO_append_filename, BIO_rw_filename - FILE bio",
+   "history": null,
+   "null_sentences": [
+    "BIO_new_file() and BIO_new_fp() return a file BIO or NULL if an error occurred."
+   ],
+   "reference_sentences": [],
+   "page": "BIO_s_file",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/BIO_s_mem/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "ef24cbdcf61b0b3ac397189325eea7a7b8702c432b38deadeac862e28e6ec222",
+   "bytes": 1088175,
+   "name": "BIO_s_secmem, BIO_s_dgram_mem, BIO_s_mem, BIO_set_mem_eof_return, BIO_get_mem_data, BIO_set_mem_buf, BIO_get_mem_ptr, BIO_new_mem_buf - memory BIO",
+   "history": "BIO_s_dgram_mem() was added in OpenSSL 3.2.",
+   "null_sentences": [
+    "BIO_get_mem_data() returns the total number of bytes available on success, 0 if b is NULL, or a negative value in case of other errors.",
+    "BIO_new_mem_buf() returns a valid BIO structure on success or NULL on error."
+   ],
+   "reference_sentences": [],
+   "page": "BIO_s_mem",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/1.1.1/man3/BIO_s_mem/",
+   "series": "1.1.1",
+   "fetched": true,
+   "sha256": "a10340d729ead6754ef2decfc8345be6d7bf09d2b758036e3f3504b5adb2ba78",
+   "bytes": 677281,
+   "name": "BIO_s_secmem, BIO_s_mem, BIO_set_mem_eof_return, BIO_get_mem_data, BIO_set_mem_buf, BIO_get_mem_ptr, BIO_new_mem_buf - memory BIO",
+   "history": null,
+   "null_sentences": [
+    "BIO_get_mem_data() returns the total number of bytes available on success, 0 if b is NULL, or a negative value in case of other errors.",
+    "BIO_new_mem_buf() returns a valid BIO structure on success or NULL on error."
+   ],
+   "reference_sentences": [],
+   "page": "BIO_s_mem",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/1.0.2/man3/BIO_s_mem/",
+   "series": "1.0.2",
+   "fetched": true,
+   "sha256": "21d90b5a4de6f09491950354220cd1619e7bf02428bf7e0602a8717df029d670",
+   "bytes": 284673,
+   "name": "BIO_s_mem, BIO_set_mem_eof_return, BIO_get_mem_data, BIO_set_mem_buf, BIO_get_mem_ptr, BIO_new_mem_buf - memory BIO",
+   "history": null,
+   "null_sentences": [],
+   "reference_sentences": [],
+   "page": "BIO_s_mem",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/DEFINE_STACK_OF/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "b375ba526f5601ab054ba8129d57fe81058427e286c140e463e0c0da847a8b74",
+   "bytes": 1102567,
+   "name": "DEFINE_STACK_OF, DEFINE_STACK_OF_CONST, DEFINE_SPECIAL_STACK_OF, DEFINE_SPECIAL_STACK_OF_CONST, sk_TYPE_num, sk_TYPE_value, sk_TYPE_new, sk_TYPE_new_null, sk_TYPE_reserve, sk_TYPE_free, sk_TYPE_zero, sk_TYPE_delete, sk_TYPE_delete_ptr, sk_TYPE_push, sk_TYPE_unshift, sk_TYPE_pop, sk_TYPE_shift, sk_TYPE_pop_free, sk_TYPE_insert, sk_TYPE_set, sk_TYPE_find, sk_TYPE_find_ex, sk_TYPE_find_all, sk_TYPE_sort, sk_TYPE_is_sorted, sk_TYPE_dup, sk_TYPE_deep_copy, sk_TYPE_set_cmp_func, sk_TYPE_new_reserve, OPENSSL_sk_deep_copy, OPENSSL_sk_delete, OPENSSL_sk_delete_ptr, OPENSSL_sk_dup, OPENSSL_sk_find, OPENSSL_sk_find_ex, OPENSSL_sk_find_all, OPENSSL_sk_free, OPENSSL_sk_insert, OPENSSL_sk_is_sorted, OPENSSL_sk_new, OPENSSL_sk_new_null, OPENSSL_sk_new_reserve, OPENSSL_sk_num, OPENSSL_sk_pop, OPENSSL_sk_pop_free, OPENSSL_sk_push, OPENSSL_sk_reserve, OPENSSL_sk_set, OPENSSL_sk_set_cmp_func, OPENSSL_sk_shift, OPENSSL_sk_sort, OPENSSL_sk_unshift, OPENSSL_sk_value, OPENSSL_sk_zero - stack container",
+   "history": "Before OpenSSL 1.1.0, this was implemented via macros and not inline functions and was not a public API. sk_ TYPE _reserve () and sk_ TYPE _new_reserve () were added in OpenSSL 1.1.1. From OpenSSL 3.2.0, the sk_ TYPE _find (), sk_ TYPE _find_ex () and sk_ TYPE _find_all () calls are read-only and do not sort the stack. To avoid any performance implications this change introduces, sk_ TYPE _sort () should be called before these find operations. Before OpenSSL 3.3.0 sk_ TYPE _push () returned -1 if sk was NULL. It was changed to return 0 in this condition as for other errors.",
+   "null_sentences": [
+    "/* DEFINE_STACK_OF(TYPE) */ TYPE * sk_TYPE_value ( STACK_OF ( TYPE ) * sk , int idx ); /* DEFINE_STACK_OF_CONST(TYPE) */ const TYPE * sk_TYPE_value ( STACK_OF ( TYPE ) * sk , int idx ); DEFINE_SPECIAL_STACK_OF() and DEFINE_SPECIAL_STACK_OF_CONST() are similar except FUNCNAME is used in the function names: /* DEFINE_SPECIAL_STACK_OF(TYPE, FUNCNAME) */ TYPE * sk_FUNCNAME_value ( STACK_OF ( TYPE ) * sk , int idx ); /* DEFINE_SPECIAL_STACK_OF(TYPE, FUNCNAME) */ const TYPE * sk_FUNCNAME_value ( STACK_OF ( TYPE ) * sk , int idx ); sk_ TYPE _num () returns the number of elements in sk or -1 if sk is NULL.",
+    "If idx is out of range then NULL is returned.",
+    "If compare is NULL then no comparison function is used.",
+    "This function is equivalent to sk_ TYPE _new_reserve (NULL, 0).",
+    "If compare is NULL then no comparison function is used.",
+    "The previous comparison function is returned or NULL if there was no previous comparison function.",
+    "It returns the deleted element or NULL if i is out of range.",
+    "It returns the deleted element or NULL if no element matching ptr was found.",
+    "The new element value is returned or NULL if an error occurred: this will only happen if sk is NULL or idx is out of range.",
+    "sk_ TYPE _dup () returns a shallow copy of sk or an empty stack if the passed stack is NULL.",
+    "sk_ TYPE _deep_copy () returns a new stack where each element has been copied or an empty stack if the passed stack is NULL.",
+    "sk_ TYPE _num () returns the number of elements in the stack or -1 if the passed stack is NULL.",
+    "sk_ TYPE _value () returns a pointer to a stack element or NULL if the index is out of range.",
+    "sk_ TYPE _new (), sk_ TYPE _new_null () and sk_ TYPE _new_reserve () return an empty stack or NULL if an error occurs.",
+    "sk_ TYPE _set_cmp_func () returns the old comparison function or NULL if there was no old comparison function.",
+    "sk_ TYPE _pop (), sk_ TYPE _shift (), sk_ TYPE _delete () and sk_ TYPE _delete_ptr () return a pointer to the deleted element or NULL on error.",
+    "sk_ TYPE _set () returns a pointer to the replacement element or NULL on error.",
+    "sk_ TYPE _dup () and sk_ TYPE _deep_copy () return a pointer to the copy of the stack or NULL on error."
+   ],
+   "reference_sentences": [],
+   "page": "DEFINE_STACK_OF",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/1.1.1/man3/DEFINE_STACK_OF/",
+   "series": "1.1.1",
+   "fetched": true,
+   "sha256": "3b1b2487588c5cf02becdf38dfe8562157cda3137ebcf24180af4167f1adad8c",
+   "bytes": 692430,
+   "name": "DEFINE_STACK_OF, DEFINE_STACK_OF_CONST, DEFINE_SPECIAL_STACK_OF, DEFINE_SPECIAL_STACK_OF_CONST, sk_TYPE_num, sk_TYPE_value, sk_TYPE_new, sk_TYPE_new_null, sk_TYPE_reserve, sk_TYPE_free, sk_TYPE_zero, sk_TYPE_delete, sk_TYPE_delete_ptr, sk_TYPE_push, sk_TYPE_unshift, sk_TYPE_pop, sk_TYPE_shift, sk_TYPE_pop_free, sk_TYPE_insert, sk_TYPE_set, sk_TYPE_find, sk_TYPE_find_ex, sk_TYPE_sort, sk_TYPE_is_sorted, sk_TYPE_dup, sk_TYPE_deep_copy, sk_TYPE_set_cmp_func, sk_TYPE_new_reserve - stack container",
+   "history": "Before OpenSSL 1.1.0, this was implemented via macros and not inline functions and was not a public API. sk_TYPE_reserve() and sk_TYPE_new_reserve() were added in OpenSSL 1.1.1.",
+   "null_sentences": [
+    "For example: TYPE * sk_FUNCNAME_value ( STACK_OF ( TYPE ) * sk , int idx ); DEFINE_SPECIAL_STACK_OF_CONST() is similar except that each element is constant: const TYPE * sk_FUNCNAME_value ( STACK_OF ( TYPE ) * sk , int idx ); sk_TYPE_num() returns the number of elements in sk or -1 if sk is NULL .",
+    "If idx is out of range then NULL is returned.",
+    "If compare is NULL then no comparison function is used.",
+    "This function is equivalent to sk_TYPE_new_reserve(NULL, 0).",
+    "If compare is NULL then no comparison function is used.",
+    "The previous comparison function is returned or NULL if there was no previous comparison function.",
+    "It returns the deleted element or NULL if i is out of range.",
+    "It returns the deleted element or NULL if no element matching ptr was found.",
+    "The new element value is returned or NULL if an error occurred: this will only happen if sk is NULL or idx is out of range.",
+    "sk_TYPE_num() returns the number of elements in the stack or -1 if the passed stack is NULL .",
+    "sk_TYPE_value() returns a pointer to a stack element or NULL if the index is out of range.",
+    "sk_TYPE_new(), sk_TYPE_new_null() and sk_TYPE_new_reserve() return an empty stack or NULL if an error occurs.",
+    "sk_TYPE_set_cmp_func() returns the old comparison function or NULL if there was no old comparison function.",
+    "sk_TYPE_pop(), sk_TYPE_shift(), sk_TYPE_delete() and sk_TYPE_delete_ptr() return a pointer to the deleted element or NULL on error.",
+    "sk_TYPE_push() further returns -1 if sk is NULL .",
+    "sk_TYPE_set() returns a pointer to the replacement element or NULL on error."
+   ],
+   "reference_sentences": [],
+   "page": "DEFINE_STACK_OF",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/ERR_error_string/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "c3ab30e4eabf3a41e6465bb21a82ccd00ef01bdddb8d24059322085f2fe7caec",
+   "bytes": 1077939,
+   "name": "ERR_error_string, ERR_error_string_n, ERR_lib_error_string, ERR_func_error_string, ERR_reason_error_string - obtain human-readable error message",
+   "history": "ERR_func_error_string() became deprecated in OpenSSL 3.0.",
+   "null_sentences": [
+    "If buf is NULL , the error string is placed in a static buffer.",
+    "For ERR_error_string_n(), buf MUST NOT be NULL.",
+    "ERR_error_string() returns a pointer to a static buffer containing the string if buf == NULL , buf otherwise.",
+    "ERR_lib_error_string() and ERR_reason_error_string() return the strings, and NULL if none is registered for the error code.",
+    "ERR_func_error_string() returns NULL."
+   ],
+   "reference_sentences": [],
+   "page": "ERR_error_string",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/1.1.1/man3/ERR_error_string/",
+   "series": "1.1.1",
+   "fetched": true,
+   "sha256": "114b0713146c0be87576556c8baa0cdc201f07c005435211e6546688b0f3dfe5",
+   "bytes": 670892,
+   "name": "ERR_error_string, ERR_error_string_n, ERR_lib_error_string, ERR_func_error_string, ERR_reason_error_string - obtain human-readable error message",
+   "history": null,
+   "null_sentences": [
+    "If buf is NULL , the error string is placed in a static buffer.",
+    "For ERR_error_string_n(), buf may not be NULL .",
+    "ERR_error_string() returns a pointer to a static buffer containing the string if buf == NULL , buf otherwise.",
+    "ERR_lib_error_string(), ERR_func_error_string() and ERR_reason_error_string() return the strings, and NULL if none is registered for the error code."
+   ],
+   "reference_sentences": [],
+   "page": "ERR_error_string",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/1.0.2/man3/ERR_error_string/",
+   "series": "1.0.2",
+   "fetched": true,
+   "sha256": "9ebd35917914c7fc35b2eef438d592501c2a4caa6d1d19496c4352c2cb2efccc",
+   "bytes": 281331,
+   "name": "ERR_error_string, ERR_error_string_n, ERR_lib_error_string, ERR_func_error_string, ERR_reason_error_string - obtain human-readable error message",
+   "history": "ERR_error_string() is available in all versions of SSLeay and OpenSSL. ERR_error_string_n() was added in OpenSSL 0.9.6.",
+   "null_sentences": [
+    "If buf is NULL , the error string is placed in a static buffer.",
+    "For ERR_error_string_n(), buf may not be NULL .",
+    "ERR_error_string() returns a pointer to a static buffer containing the string if buf == NULL , buf otherwise.",
+    "ERR_lib_error_string(), ERR_func_error_string() and ERR_reason_error_string() return the strings, and NULL if none is registered for the error code."
+   ],
+   "reference_sentences": [],
+   "page": "ERR_error_string",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/ERR_get_error/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "edccf6d82cc7fdb7bcfbc396a91c792f13f99c64b0c90cc7becc08dbf14b7ca0",
+   "bytes": 1087395,
+   "name": "ERR_get_error, ERR_peek_error, ERR_peek_last_error, ERR_get_error_line, ERR_peek_error_line, ERR_peek_last_error_line, ERR_peek_error_func, ERR_peek_last_error_func, ERR_peek_error_data, ERR_peek_last_error_data, ERR_get_error_all, ERR_peek_error_all, ERR_peek_last_error_all, ERR_get_error_line_data, ERR_peek_error_line_data, ERR_peek_last_error_line_data - obtain error code and data",
+   "history": "ERR_peek_error_func(), ERR_peek_last_error_func(), ERR_peek_error_data(), ERR_peek_last_error_data(), ERR_peek_error_all() and ERR_peek_last_error_all() were added in OpenSSL 3.0. ERR_get_error_line(), ERR_get_error_line_data(), ERR_peek_error_line_data() and ERR_peek_last_error_line_data() became deprecated in OpenSSL 3.0.",
+   "null_sentences": [
+    "If any of those parameters are NULL, it will not be changed.",
+    "ERR_peek_error_line() and ERR_peek_last_error_line() are the same as ERR_peek_error() and ERR_peek_last_error(), but on success they additionally store the filename and line number where the error occurred in * file and * line , as far as they are not NULL.",
+    "ERR_peek_error_func() and ERR_peek_last_error_func() are the same as ERR_peek_error() and ERR_peek_last_error(), but on success they additionally store the name of the function where the error occurred in * func , unless it is NULL.",
+    "ERR_peek_error_data() and ERR_peek_last_error_data() are the same as ERR_peek_error() and ERR_peek_last_error(), but on success they additionally store additional data and flags associated with the error code in * data and * flags , as far as they are not NULL."
+   ],
+   "reference_sentences": [],
+   "page": "ERR_get_error",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/1.1.1/man3/ERR_get_error/",
+   "series": "1.1.1",
+   "fetched": true,
+   "sha256": "aaba76cabf315a6f9db665fca49def27fe7ad8cfb483a9ccd72b302922d77226",
+   "bytes": 673443,
+   "name": "ERR_get_error, ERR_peek_error, ERR_peek_last_error, ERR_get_error_line, ERR_peek_error_line, ERR_peek_last_error_line, ERR_get_error_line_data, ERR_peek_error_line_data, ERR_peek_last_error_line_data - obtain error code and data",
+   "history": null,
+   "null_sentences": [
+    "ERR_get_error_line(), ERR_peek_error_line() and ERR_peek_last_error_line() are the same as the above, but they additionally store the filename and line number where the error occurred in * file and * line , unless these are NULL .",
+    "ERR_get_error_line_data(), ERR_peek_error_line_data() and ERR_peek_last_error_line_data() store additional data and flags associated with the error code in * data and * flags , unless these are NULL ."
+   ],
+   "reference_sentences": [],
+   "page": "ERR_get_error",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/1.0.2/man3/ERR_get_error/",
+   "series": "1.0.2",
+   "fetched": true,
+   "sha256": "ed278141e275a34455784600fe8300d96e8fa7a95ca67ddf36b17be81131adc3",
+   "bytes": 283772,
+   "name": "ERR_get_error, ERR_peek_error, ERR_peek_last_error, ERR_get_error_line, ERR_peek_error_line, ERR_peek_last_error_line, ERR_get_error_line_data, ERR_peek_error_line_data, ERR_peek_last_error_line_data - obtain error code and data",
+   "history": "ERR_get_error(), ERR_peek_error(), ERR_get_error_line() and ERR_peek_error_line() are available in all versions of SSLeay and OpenSSL. ERR_get_error_line_data() and ERR_peek_error_line_data() were added in SSLeay 0.9.0. ERR_peek_last_error(), ERR_peek_last_error_line() and ERR_peek_last_error_line_data() were added in OpenSSL 0.9.7.",
+   "null_sentences": [
+    "ERR_get_error_line(), ERR_peek_error_line() and ERR_peek_last_error_line() are the same as the above, but they additionally store the file name and line number where the error occurred in * file and * line , unless these are NULL .",
+    "ERR_get_error_line_data(), ERR_peek_error_line_data() and ERR_peek_last_error_line_data() store additional data and flags associated with the error code in * data and * flags , unless these are NULL ."
+   ],
+   "reference_sentences": [],
+   "page": "ERR_get_error",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/EVP_DigestInit/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "1341a63b5d05d113124ceca2216918968d066063222fa1e805b9b7ac576414d7",
+   "bytes": 1137893,
+   "name": "EVP_MD_fetch, EVP_MD_up_ref, EVP_MD_free, EVP_MD_get_params, EVP_MD_gettable_params, EVP_MD_CTX_new, EVP_MD_CTX_reset, EVP_MD_CTX_free, EVP_MD_CTX_dup, EVP_MD_CTX_copy, EVP_MD_CTX_copy_ex, EVP_MD_CTX_ctrl, EVP_MD_CTX_set_params, EVP_MD_CTX_get_params, EVP_MD_settable_ctx_params, EVP_MD_gettable_ctx_params, EVP_MD_CTX_settable_params, EVP_MD_CTX_gettable_params, EVP_MD_CTX_set_flags, EVP_MD_CTX_clear_flags, EVP_MD_CTX_test_flags, EVP_Q_digest, EVP_Digest, EVP_DigestInit_ex2, EVP_DigestInit_ex, EVP_DigestInit, EVP_DigestUpdate, EVP_DigestFinal_ex, EVP_DigestFinalXOF, EVP_DigestFinal, EVP_DigestSqueeze, EVP_MD_is_a, EVP_MD_get0_name, EVP_MD_get0_description, EVP_MD_names_do_all, EVP_MD_get0_provider, EVP_MD_get_type, EVP_MD_get_pkey_type, EVP_MD_get_size, EVP_MD_get_block_size, EVP_MD_get_flags, EVP_MD_CTX_get0_name, EVP_MD_CTX_md, EVP_MD_CTX_get0_md, EVP_MD_CTX_get1_md, EVP_MD_CTX_get_type, EVP_MD_CTX_get_size_ex, EVP_MD_CTX_get_block_size, EVP_MD_CTX_get0_md_data, EVP_MD_CTX_update_fn, EVP_MD_CTX_set_update_fn, EVP_md_null, EVP_get_digestbyname, EVP_get_digestbynid, EVP_get_digestbyobj, EVP_MD_CTX_get_pkey_ctx, EVP_MD_CTX_set_pkey_ctx, EVP_MD_do_all_provided, EVP_MD_type, EVP_MD_nid, EVP_MD_name, EVP_MD_pkey_type, EVP_MD_size, EVP_MD_block_size, EVP_MD_flags, EVP_MD_xof, EVP_MD_CTX_size, EVP_MD_CTX_get_size, EVP_MD_CTX_block_size, EVP_MD_CTX_type, EVP_MD_CTX_pkey_ctx, EVP_MD_CTX_md_data - EVP digest routines",
+   "history": "The EVP_MD_CTX_create() and EVP_MD_CTX_destroy() functions were renamed to EVP_MD_CTX_new() and EVP_MD_CTX_free() in OpenSSL 1.1.0, respectively. The link between digests and signing algorithms was fixed in OpenSSL 1.0 and later, so now EVP_sha1() can be used with RSA and DSA. The EVP_dss1() function was removed in OpenSSL 1.1.0. The EVP_MD_CTX_set_pkey_ctx() function was added in OpenSSL 1.1.1. The EVP_Q_digest(), EVP_DigestInit_ex2(), EVP_MD_fetch(), EVP_MD_free(), EVP_MD_up_ref(), EVP_MD_get_params(), EVP_MD_CTX_set_params(), EVP_MD_CTX_get_params(), EVP_MD_gettable_params(), EVP_MD_gettable_ctx_params(), EVP_MD_settable_ctx_params(), EVP_MD_CTX_settable_params() and EVP_MD_CTX_gettable_params() functions were added in OpenSSL 3.0. The EVP_MD_type(), EVP_MD_nid(), EVP_MD_name(), EVP_MD_pkey_type(), EVP_MD_size(), EVP_MD_block_size(), EVP_MD_flags(), EVP_MD_CTX_size(), EVP_MD_CTX_block_size(), EVP_MD_CTX_type(), and EVP_MD_CTX_md_data() functions were renamed to include get or get0 in their names in OpenSSL 3.0, respectively. The old names are kept as non-deprecated alias macros. The EVP_MD_CTX_md() function was deprecated in OpenSSL 3.0; use EVP_MD_CTX_get0_md() instead. EVP_MD_CTX_update_fn() and EVP_MD_CTX_set_update_fn() were deprecated in OpenSSL 3.0. The EVP_MD_CTX_dup() function was added in OpenSSL 3.1. The EVP_DigestSqueeze() function was added in OpenSSL 3.3. The EVP_MD_CTX_get_size_ex() and EVP_xof() functions were added in OpenSSL 3.4. The macros EVP_MD_CTX_get_size() and EVP_MD_CTX_size were changed in OpenSSL 3.4 to be aliases for EVP_MD_CTX_get_size_ex(), previously they were aliases for EVP_MD_get_size which returned a constant value. This is required for XOF digests since they do not have a fixed size.",
+   "null_sentences": [
+    "If the argument is NULL, nothing is done.",
+    "If the argument is NULL, nothing is done.",
+    "The digest value is placed in md and its length is written at mdlen if the pointer is not NULL.",
+    "The digest value is placed in md and its length is written at size if the pointer is not NULL.",
+    "If impl is NULL the default implementation of digest type is used.",
+    "ctx MUST NOT be NULL.",
+    "The type parameter can be NULL if ctx has been already initialized with another EVP_DigestInit_ex() call and has not been reset with EVP_MD_CTX_reset().",
+    "If impl is non-NULL, its implementation of the digest type is used if there is one, and if not, the default implementation is used.",
+    "The type parameter can be NULL if ctx has been already initialized with another EVP_DigestInit_ex() call and has not been reset with EVP_MD_CTX_reset().",
+    "If the s parameter is not NULL then the number of bytes of data written (i.e.",
+    "ctx MUST NOT be NULL.",
+    "EVP_DigestInit() Behaves in the same way as EVP_DigestInit_ex2() except it doesn't set any parameters and calls EVP_MD_CTX_reset() so it cannot be used with an type of NULL.",
+    "A NULL pctx pointer is also allowed to clear the EVP_PKEY_CTX assigned to ctx .",
+    "EVP_MD_fetch() Returns a pointer to a EVP_MD for success or NULL for failure.",
+    "EVP_MD_CTX_settable_params(), EVP_MD_CTX_gettable_params() Return an array of constant OSSL_PARAM(3) s, or NULL if there is none to get.",
+    "EVP_MD_CTX_dup() Returns a new EVP_MD_CTX if successful or NULL on failure.",
+    "EVP_get_digestbyname(), EVP_get_digestbynid(), EVP_get_digestbyobj() Returns either an EVP_MD structure or NULL if an error occurs."
+   ],
+   "reference_sentences": [
+    "Fetched EVP_MD structures are reference counted.",
+    "EVP_MD_up_ref() Increments the reference count for an EVP_MD structure.",
+    "EVP_MD_free() Decrements the reference count for the fetched EVP_MD structure.",
+    "If the reference count drops to 0 then the structure is freed.",
+    "Note that where explicit fetch is in use (see EVP_MD_fetch(3) ) the value returned from this function will not have its reference count incremented and therefore it should not be used after the EVP_MD_CTX is freed."
+   ],
+   "page": "EVP_DigestInit",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/1.1.1/man3/EVP_DigestInit/",
+   "series": "1.1.1",
+   "fetched": true,
+   "sha256": "c9e3d227435515167ee7769148bf6ce949e1f325f78929ef09d0037868203f59",
+   "bytes": 701019,
+   "name": "EVP_MD_CTX_new, EVP_MD_CTX_reset, EVP_MD_CTX_free, EVP_MD_CTX_copy, EVP_MD_CTX_copy_ex, EVP_MD_CTX_ctrl, EVP_MD_CTX_set_flags, EVP_MD_CTX_clear_flags, EVP_MD_CTX_test_flags, EVP_Digest, EVP_DigestInit_ex, EVP_DigestInit, EVP_DigestUpdate, EVP_DigestFinal_ex, EVP_DigestFinalXOF, EVP_DigestFinal, EVP_MD_type, EVP_MD_pkey_type, EVP_MD_size, EVP_MD_block_size, EVP_MD_flags, EVP_MD_CTX_md, EVP_MD_CTX_type, EVP_MD_CTX_size, EVP_MD_CTX_block_size, EVP_MD_CTX_md_data, EVP_MD_CTX_update_fn, EVP_MD_CTX_set_update_fn, EVP_md_null, EVP_get_digestbyname, EVP_get_digestbynid, EVP_get_digestbyobj, EVP_MD_CTX_pkey_ctx, EVP_MD_CTX_set_pkey_ctx - EVP digest routines",
+   "history": "The EVP_MD_CTX_create() and EVP_MD_CTX_destroy() functions were renamed to EVP_MD_CTX_new() and EVP_MD_CTX_free() in OpenSSL 1.1.0, respectively. The link between digests and signing algorithms was fixed in OpenSSL 1.0 and later, so now EVP_sha1() can be used with RSA and DSA. The EVP_dss1() function was removed in OpenSSL 1.1.0. The EVP_MD_CTX_set_pkey_ctx() function was added in 1.1.1.",
+   "null_sentences": [
+    "The digest value is placed in md and its length is written at size if the pointer is not NULL.",
+    "If impl is NULL the default implementation of digest type is used.",
+    "If impl is NULL then the default implementation of digest type is used.",
+    "If the s parameter is not NULL then the number of bytes of data written (i.e.",
+    "A NULL pctx pointer is also allowed to clear the EVP_PKEY_CTX assigned to ctx .",
+    "EVP_get_digestbyname(), EVP_get_digestbynid(), EVP_get_digestbyobj() Returns either an EVP_MD structure or NULL if an error occurs."
+   ],
+   "reference_sentences": [],
+   "page": "EVP_DigestInit",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/1.0.2/man3/EVP_DigestInit/",
+   "series": "1.0.2",
+   "fetched": true,
+   "sha256": "3d1fce1c211fb85deef380029b4637c2b5ca3d8c9176672442e5ef38ba36f5c6",
+   "bytes": 301376,
+   "name": "EVP_MD_CTX_init, EVP_MD_CTX_create, EVP_DigestInit_ex, EVP_DigestUpdate, EVP_DigestFinal_ex, EVP_MD_CTX_cleanup, EVP_MD_CTX_destroy, EVP_MAX_MD_SIZE, EVP_MD_CTX_copy_ex, EVP_DigestInit, EVP_DigestFinal, EVP_MD_CTX_copy, EVP_MD_type, EVP_MD_pkey_type, EVP_MD_size, EVP_MD_block_size, EVP_MD_CTX_md, EVP_MD_CTX_size, EVP_MD_CTX_block_size, EVP_MD_CTX_type, EVP_md_null, EVP_md2, EVP_md5, EVP_sha, EVP_sha1, EVP_sha224, EVP_sha256, EVP_sha384, EVP_sha512, EVP_dss, EVP_dss1, EVP_mdc2, EVP_ripemd160, EVP_get_digestbyname, EVP_get_digestbynid, EVP_get_digestbyobj - EVP digest routines",
+   "history": "EVP_DigestInit(), EVP_DigestUpdate() and EVP_DigestFinal() are available in all versions of SSLeay and OpenSSL. EVP_MD_CTX_init(), EVP_MD_CTX_create(), EVP_MD_CTX_copy_ex(), EVP_MD_CTX_cleanup(), EVP_MD_CTX_destroy(), EVP_DigestInit_ex() and EVP_DigestFinal_ex() were added in OpenSSL 0.9.7. EVP_md_null(), EVP_md2(), EVP_md5(), EVP_sha(), EVP_sha1(), EVP_dss(), EVP_dss1(), EVP_mdc2() and EVP_ripemd160() were changed to return truly const EVP_MD * in OpenSSL 0.9.7. The link between digests and signing algorithms was fixed in OpenSSL 1.0 and later, so now EVP_sha1() can be used with RSA and DSA; there is no need to use EVP_dss1() any more. OpenSSL 1.0 and later does not include the MD2 digest algorithm in the default configuration due to its security weaknesses.",
+   "null_sentences": [
+    "If impl is NULL then the default implementation of digest type is used.",
+    "If the s parameter is not NULL then the number of bytes of data written (i.e.",
+    "EVP_get_digestbyname(), EVP_get_digestbynid() and EVP_get_digestbyobj() return either an EVP_MD structure or NULL if an error occurs."
+   ],
+   "reference_sentences": [],
+   "page": "EVP_DigestInit",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/EVP_EncodeInit/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "d072c74575fb807abbfe1d06a6feb24819ebd961ca798f7ad8a62b358c560024",
+   "bytes": 1088393,
+   "name": "EVP_ENCODE_CTX_new, EVP_ENCODE_CTX_free, EVP_ENCODE_CTX_copy, EVP_ENCODE_CTX_num, EVP_EncodeInit, EVP_EncodeUpdate, EVP_EncodeFinal, EVP_EncodeBlock, EVP_DecodeInit, EVP_DecodeUpdate, EVP_DecodeFinal, EVP_DecodeBlock - EVP base64 encode/decode routines",
+   "history": "The EVP_DecodeUpdate() function was fixed in OpenSSL 3.5, so now it produces the number of bytes specified in outl* and does not decode padding bytes ( = ) to 6 zero bits.",
+   "null_sentences": [
+    "If the argument is NULL, nothing is done.",
+    "EVP_ENCODE_CTX_new() returns a pointer to the newly allocated EVP_ENCODE_CTX object or NULL on error."
+   ],
+   "reference_sentences": [],
+   "page": "EVP_EncodeInit",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/1.1.1/man3/EVP_EncodeInit/",
+   "series": "1.1.1",
+   "fetched": true,
+   "sha256": "25dc750fc92fd1a91531b2c1c8c467983612c72a76cec194a56afd11b0afb092",
+   "bytes": 680166,
+   "name": "EVP_ENCODE_CTX_new, EVP_ENCODE_CTX_free, EVP_ENCODE_CTX_copy, EVP_ENCODE_CTX_num, EVP_EncodeInit, EVP_EncodeUpdate, EVP_EncodeFinal, EVP_EncodeBlock, EVP_DecodeInit, EVP_DecodeUpdate, EVP_DecodeFinal, EVP_DecodeBlock - EVP base 64 encode/decode routines",
+   "history": null,
+   "null_sentences": [
+    "EVP_ENCODE_CTX_new() returns a pointer to the newly allocated EVP_ENCODE_CTX object or NULL on error."
+   ],
+   "reference_sentences": [],
+   "page": "EVP_EncodeInit",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/1.0.2/man3/EVP_EncodeInit/",
+   "series": "1.0.2",
+   "fetched": true,
+   "sha256": "4f61090c2229066414e115ab7765e22325b760936d30feee5d51b0b65d56f351",
+   "bytes": 287993,
+   "name": "EVP_EncodeInit, EVP_EncodeUpdate, EVP_EncodeFinal, EVP_EncodeBlock, EVP_DecodeInit, EVP_DecodeUpdate, EVP_DecodeFinal, EVP_DecodeBlock - EVP base 64 encode/decode routines",
+   "history": null,
+   "null_sentences": [],
+   "reference_sentences": [],
+   "page": "EVP_EncodeInit",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/EVP_sha224/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "251be67f94867b737e9204051d53f12e6865507426ab5dc69c501d971b5635c6",
+   "bytes": 1077095,
+   "name": "EVP_sha224, EVP_sha256, EVP_sha512_224, EVP_sha512_256, EVP_sha384, EVP_sha512 - SHA-2 For EVP",
+   "history": null,
+   "null_sentences": [],
+   "reference_sentences": [],
+   "page": "EVP_sha224",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/1.1.1/man3/EVP_sha224/",
+   "series": "1.1.1",
+   "fetched": true,
+   "sha256": "f3b0f6f95a098351e64decf5c257da207c49f1059efb6936b60e256aded830c3",
+   "bytes": 669791,
+   "name": "EVP_sha224, EVP_sha256, EVP_sha512_224, EVP_sha512_256, EVP_sha384, EVP_sha512 - SHA-2 For EVP",
+   "history": null,
+   "null_sentences": [],
+   "reference_sentences": [],
+   "page": "EVP_sha224",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/OPENSSL_malloc/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "c1370f22c194d36e4db44e4cf09901b34b170ec1cc0f03bf703b18d1dc945be3",
+   "bytes": 1101368,
+   "name": "OPENSSL_malloc_init, OPENSSL_malloc, OPENSSL_aligned_alloc, OPENSSL_zalloc, OPENSSL_realloc, OPENSSL_free, OPENSSL_clear_realloc, OPENSSL_clear_free, OPENSSL_cleanse, CRYPTO_malloc, CRYPTO_aligned_alloc, CRYPTO_zalloc, CRYPTO_realloc, CRYPTO_free, OPENSSL_strdup, OPENSSL_strndup, OPENSSL_memdup, OPENSSL_strlcpy, OPENSSL_strlcat, OPENSSL_strtoul, CRYPTO_strdup, CRYPTO_strndup, OPENSSL_mem_debug_push, OPENSSL_mem_debug_pop, CRYPTO_mem_debug_push, CRYPTO_mem_debug_pop, CRYPTO_clear_realloc, CRYPTO_clear_free, CRYPTO_malloc_fn, CRYPTO_realloc_fn, CRYPTO_free_fn, CRYPTO_get_mem_functions, CRYPTO_set_mem_functions, CRYPTO_get_alloc_counts, CRYPTO_set_mem_debug, CRYPTO_mem_ctrl, CRYPTO_mem_leaks, CRYPTO_mem_leaks_fp, CRYPTO_mem_leaks_cb, OPENSSL_MALLOC_FAILURES, OPENSSL_MALLOC_FD - Memory allocation functions",
+   "history": "OPENSSL_mem_debug_push(), OPENSSL_mem_debug_pop(), CRYPTO_mem_debug_push(), CRYPTO_mem_debug_pop(), CRYPTO_mem_leaks(), CRYPTO_mem_leaks_fp(), CRYPTO_mem_leaks_cb(), CRYPTO_set_mem_debug(), CRYPTO_mem_ctrl() were deprecated in OpenSSL 3.0. The memory-leak checking has been deprecated in OpenSSL 3.0 in favor of clang's memory and leak sanitizer. OPENSSL_aligned_alloc(), CRYPTO_aligned_alloc(), OPENSSL_strtoul() were added in OpenSSL 3.4.",
+   "null_sentences": [
+    "If the argument to OPENSSL_clear_free() is NULL, nothing is done.",
+    "OPENSSL_strtoul() is a wrapper around the POSIX function strtoul, with the same behaviors listed in the POSIX documentation, with the additional behavior that it validates the input str and num parameters for not being NULL, and confirms that at least a single byte of input has been consumed in the translation, returning an error in the event that no bytes were consumed.",
+    "If any of malloc_fn , realloc_fn , or free_fn are NULL, then the function is not changed.",
+    "If a pointer is NULL, then the corresponding count is not stored.",
+    "OPENSSL_malloc(), OPENSSL_aligned_alloc(), OPENSSL_zalloc(), OPENSSL_realloc(), OPENSSL_clear_realloc(), CRYPTO_malloc(), CRYPTO_zalloc(), CRYPTO_realloc(), CRYPTO_clear_realloc(), OPENSSL_strdup(), and OPENSSL_strndup() return a pointer to allocated memory or NULL on error.",
+    "Specifically, 0 is returned in the following events: If the underlying call to strtoul returned a non zero errno value If the translation did not consume the entire input string, and the passed endptr value was NULL If no characters were consumed in the translation Note that a success condition does not imply that the expected translation has been performed."
+   ],
+   "reference_sentences": [],
+   "page": "OPENSSL_malloc",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/1.1.1/man3/OPENSSL_malloc/",
+   "series": "1.1.1",
+   "fetched": true,
+   "sha256": "4fe9470c360884b6915436bc23dc51362bc9f0abc63836e55f0b7b94bc337960",
+   "bytes": 693119,
+   "name": "OPENSSL_malloc_init, OPENSSL_malloc, OPENSSL_zalloc, OPENSSL_realloc, OPENSSL_free, OPENSSL_clear_realloc, OPENSSL_clear_free, OPENSSL_cleanse, CRYPTO_malloc, CRYPTO_zalloc, CRYPTO_realloc, CRYPTO_free, OPENSSL_strdup, OPENSSL_strndup, OPENSSL_memdup, OPENSSL_strlcpy, OPENSSL_strlcat, OPENSSL_hexstr2buf, OPENSSL_buf2hexstr, OPENSSL_hexchar2int, CRYPTO_strdup, CRYPTO_strndup, OPENSSL_mem_debug_push, OPENSSL_mem_debug_pop, CRYPTO_mem_debug_push, CRYPTO_mem_debug_pop, CRYPTO_clear_realloc, CRYPTO_clear_free, CRYPTO_get_mem_functions, CRYPTO_set_mem_functions, CRYPTO_get_alloc_counts, CRYPTO_set_mem_debug, CRYPTO_mem_ctrl, CRYPTO_mem_leaks, CRYPTO_mem_leaks_fp, CRYPTO_mem_leaks_cb, OPENSSL_MALLOC_FAILURES, OPENSSL_MALLOC_FD - Memory allocation functions",
+   "history": null,
+   "null_sentences": [
+    "If len is not NULL, it is filled in with the output length.",
+    "OPENSSL_buf2hexstr() takes the specified buffer and length, and returns a hex string for value, or NULL on error.",
+    "Buffer cannot be NULL; if len is 0 an empty string is returned.",
+    "If any of m , r , or f are NULL, then the function is not changed.",
+    "If a pointer is NULL, then the corresponding count is not stored.",
+    "OPENSSL_malloc(), OPENSSL_zalloc(), OPENSSL_realloc(), OPENSSL_clear_realloc(), CRYPTO_malloc(), CRYPTO_zalloc(), CRYPTO_realloc(), CRYPTO_clear_realloc(), OPENSSL_buf2hexstr(), OPENSSL_hexstr2buf(), OPENSSL_strdup(), and OPENSSL_strndup() return a pointer to allocated memory or NULL on error."
+   ],
+   "reference_sentences": [],
+   "page": "OPENSSL_malloc",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/OSSL_PROVIDER/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "709a8618788dd5a0d33ce59703845c1a922d31bd6dbe2d59dfec3084123dd895",
+   "bytes": 1099519,
+   "name": "OSSL_PROVIDER_set_default_search_path, OSSL_PROVIDER_get0_default_search_path, OSSL_PROVIDER, OSSL_PROVIDER_load, OSSL_PROVIDER_try_load, OSSL_PROVIDER_unload, OSSL_PROVIDER_load_ex, OSSL_PROVIDER_try_load_ex, OSSL_PROVIDER_available, OSSL_PROVIDER_do_all, OSSL_PROVIDER_gettable_params, OSSL_PROVIDER_get_params, OSSL_PROVIDER_query_operation, OSSL_PROVIDER_unquery_operation, OSSL_PROVIDER_get0_provider_ctx, OSSL_PROVIDER_get0_dispatch, OSSL_PROVIDER_add_builtin, OSSL_PROVIDER_get0_name, OSSL_PROVIDER_get_capabilities, OSSL_PROVIDER_add_conf_parameter, OSSL_PROVIDER_get_conf_parameters, OSSL_PROVIDER_conf_get_bool, OSSL_PROVIDER_self_test - provider routines",
+   "history": "The type and functions described here were added in OpenSSL 3.0. The OSSL_PROVIDER_load_ex and OSSL_PROVIDER_try_load_ex functions were added in OpenSSL 3.2. The OSSL_PROVIDER_add_conf_parameter , OSSL_PROVIDER_get_conf_parameters , and OSSL_PROVIDER_conf_get_bool functions were added in OpenSSL 3.5.",
+   "null_sentences": [
+    "It returns an array of OSSL_ALGORITHM for the given operation_id terminated by an all NULL OSSL_ALGORITHM entry.",
+    "OSSL_PROVIDER_get0_default_search_path() returns a pointer to a path on success, or NULL on error or if the path has not previously been set.",
+    "OSSL_PROVIDER_load() and OSSL_PROVIDER_try_load() return a pointer to a provider object on success, or NULL on error.",
+    "OSSL_PROVIDER_gettable_params() returns a pointer to an array of constant OSSL_PARAM(3) , or NULL if none is provided.",
+    "OSSL_PROVIDER_query_operation() returns an array of OSSL_ALGORITHM or NULL on error."
+   ],
+   "reference_sentences": [],
+   "page": "OSSL_PROVIDER",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/PEM_read_bio_PrivateKey/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "5dbca613e18d9f134af7bc186075c386ab6a102647defbf2c6403e3a60b28cc7",
+   "bytes": 1159177,
+   "name": "pem_password_cb, PEM_read_bio_PrivateKey_ex, PEM_read_bio_PrivateKey, PEM_read_PrivateKey_ex, PEM_read_PrivateKey, PEM_write_bio_PrivateKey_ex, PEM_write_bio_PrivateKey, PEM_write_bio_PrivateKey_traditional, PEM_write_PrivateKey_ex, PEM_write_PrivateKey, PEM_write_bio_PKCS8PrivateKey, PEM_write_PKCS8PrivateKey, PEM_write_bio_PKCS8PrivateKey_nid, PEM_write_PKCS8PrivateKey_nid, PEM_read_bio_PUBKEY_ex, PEM_read_bio_PUBKEY, PEM_read_PUBKEY_ex, PEM_read_PUBKEY, PEM_write_bio_PUBKEY_ex, PEM_write_bio_PUBKEY, PEM_write_PUBKEY_ex, PEM_write_PUBKEY, PEM_read_bio_RSAPrivateKey, PEM_read_RSAPrivateKey, PEM_write_bio_RSAPrivateKey, PEM_write_RSAPrivateKey, PEM_read_bio_RSAPublicKey, PEM_read_RSAPublicKey, PEM_write_bio_RSAPublicKey, PEM_write_RSAPublicKey, PEM_read_bio_RSA_PUBKEY, PEM_read_RSA_PUBKEY, PEM_write_bio_RSA_PUBKEY, PEM_write_RSA_PUBKEY, PEM_read_bio_DSAPrivateKey, PEM_read_DSAPrivateKey, PEM_write_bio_DSAPrivateKey, PEM_write_DSAPrivateKey, PEM_read_bio_DSA_PUBKEY, PEM_read_DSA_PUBKEY, PEM_write_bio_DSA_PUBKEY, PEM_write_DSA_PUBKEY, PEM_read_bio_Parameters_ex, PEM_read_bio_Parameters, PEM_write_bio_Parameters, PEM_read_bio_DSAparams, PEM_read_DSAparams, PEM_write_bio_DSAparams, PEM_write_DSAparams, PEM_read_bio_DHparams, PEM_read_DHparams, PEM_write_bio_DHparams, PEM_write_DHparams, PEM_read_bio_X509, PEM_read_X509, PEM_write_bio_X509, PEM_write_X509, PEM_read_bio_X509_ACERT, PEM_read_X509_ACERT, PEM_write_bio_X509_ACERT, PEM_write_X509_ACERT, PEM_read_bio_X509_AUX, PEM_read_X509_AUX, PEM_write_bio_X509_AUX, PEM_write_X509_AUX, PEM_read_bio_X509_REQ, PEM_read_X509_REQ, PEM_write_bio_X509_REQ, PEM_write_X509_REQ, PEM_write_bio_X509_REQ_NEW, PEM_write_X509_REQ_NEW, PEM_read_bio_X509_CRL, PEM_read_X509_CRL, PEM_write_bio_X509_CRL, PEM_write_X509_CRL, PEM_read_bio_PKCS7, PEM_read_PKCS7, PEM_write_bio_PKCS7, PEM_write_PKCS7 - PEM routines",
+   "history": "The old Netscape certificate sequences were no longer documented in OpenSSL 1.1.0; applications should use the PKCS7 standard instead as they will be formally deprecated in a future releases. PEM_read_bio_PrivateKey_ex(), PEM_read_PrivateKey_ex(), PEM_read_bio_PUBKEY_ex(), PEM_read_PUBKEY_ex() and PEM_read_bio_Parameters_ex() were introduced in OpenSSL 3.0. The functions PEM_read_bio_RSAPrivateKey(), PEM_read_RSAPrivateKey(), PEM_write_bio_RSAPrivateKey(), PEM_write_RSAPrivateKey(), PEM_read_bio_RSAPublicKey(), PEM_read_RSAPublicKey(), PEM_write_bio_RSAPublicKey(), PEM_write_RSAPublicKey(), PEM_read_bio_RSA_PUBKEY(), PEM_read_RSA_PUBKEY(), PEM_write_bio_RSA_PUBKEY(), PEM_write_RSA_PUBKEY(), PEM_read_bio_DSAPrivateKey(), PEM_read_DSAPrivateKey(), PEM_write_bio_DSAPrivateKey(), PEM_write_DSAPrivateKey(), PEM_read_bio_DSA_PUBKEY(), PEM_read_DSA_PUBKEY(), PEM_write_bio_DSA_PUBKEY(), PEM_write_DSA_PUBKEY(); PEM_read_bio_DSAparams(), PEM_read_DSAparams(), PEM_write_bio_DSAparams(), PEM_write_DSAparams(), PEM_read_bio_DHparams(), PEM_read_DHparams(), PEM_write_bio_DHparams() and PEM_write_DHparams() were deprecated in 3.0. PEM_read_bio_X509_ACERT(), PEM_read_X509_ACERT(), PEM_write_bio_X509_ACERT(), PEM_write_X509_ACERT() were added in OpenSSL 3.4.",
+   "null_sentences": [
+    "If cipher is NULL then no encryption is used and a PKCS#8 PrivateKeyInfo structure is used instead.",
+    "The read routines return either a pointer to the structure read or NULL if an error occurred."
+   ],
+   "reference_sentences": [],
+   "page": "PEM_read_bio_PrivateKey",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/1.1.1/man3/PEM_read_bio_PrivateKey/",
+   "series": "1.1.1",
+   "fetched": true,
+   "sha256": "fcbaf1f20dba5770f50ca52382bf6ad051a3a1291484d0ef76c7c50e3e334c03",
+   "bytes": 735383,
+   "name": "pem_password_cb, PEM_read_bio_PrivateKey, PEM_read_PrivateKey, PEM_write_bio_PrivateKey, PEM_write_bio_PrivateKey_traditional, PEM_write_PrivateKey, PEM_write_bio_PKCS8PrivateKey, PEM_write_PKCS8PrivateKey, PEM_write_bio_PKCS8PrivateKey_nid, PEM_write_PKCS8PrivateKey_nid, PEM_read_bio_PUBKEY, PEM_read_PUBKEY, PEM_write_bio_PUBKEY, PEM_write_PUBKEY, PEM_read_bio_RSAPrivateKey, PEM_read_RSAPrivateKey, PEM_write_bio_RSAPrivateKey, PEM_write_RSAPrivateKey, PEM_read_bio_RSAPublicKey, PEM_read_RSAPublicKey, PEM_write_bio_RSAPublicKey, PEM_write_RSAPublicKey, PEM_read_bio_RSA_PUBKEY, PEM_read_RSA_PUBKEY, PEM_write_bio_RSA_PUBKEY, PEM_write_RSA_PUBKEY, PEM_read_bio_DSAPrivateKey, PEM_read_DSAPrivateKey, PEM_write_bio_DSAPrivateKey, PEM_write_DSAPrivateKey, PEM_read_bio_DSA_PUBKEY, PEM_read_DSA_PUBKEY, PEM_write_bio_DSA_PUBKEY, PEM_write_DSA_PUBKEY, PEM_read_bio_Parameters, PEM_write_bio_Parameters, PEM_read_bio_DSAparams, PEM_read_DSAparams, PEM_write_bio_DSAparams, PEM_write_DSAparams, PEM_read_bio_DHparams, PEM_read_DHparams, PEM_write_bio_DHparams, PEM_write_DHparams, PEM_read_bio_X509, PEM_read_X509, PEM_write_bio_X509, PEM_write_X509, PEM_read_bio_X509_AUX, PEM_read_X509_AUX, PEM_write_bio_X509_AUX, PEM_write_X509_AUX, PEM_read_bio_X509_REQ, PEM_read_X509_REQ, PEM_write_bio_X509_REQ, PEM_write_X509_REQ, PEM_write_bio_X509_REQ_NEW, PEM_write_X509_REQ_NEW, PEM_read_bio_X509_CRL, PEM_read_X509_CRL, PEM_write_bio_X509_CRL, PEM_write_X509_CRL, PEM_read_bio_PKCS7, PEM_read_PKCS7, PEM_write_bio_PKCS7, PEM_write_PKCS7 - PEM routines",
+   "history": "The old Netscape certificate sequences were no longer documented in OpenSSL 1.1.0; applications should use the PKCS7 standard instead as they will be formally deprecated in a future releases.",
+   "null_sentences": [
+    "If cipher is NULL then no encryption is used and a PKCS#8 PrivateKeyInfo structure is used instead.",
+    "The read routines return either a pointer to the structure read or NULL if an error occurred."
+   ],
+   "reference_sentences": [],
+   "page": "PEM_read_bio_PrivateKey",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/SSL_CTX_ctrl/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "c247379bc723f46cd4b48b2ee0662d219799fc3bf309c0526029b4f1f1debd91",
+   "bytes": 1076580,
+   "name": "SSL_CTX_ctrl, SSL_CTX_callback_ctrl, SSL_ctrl, SSL_callback_ctrl - internal handling functions for SSL_CTX and SSL objects",
+   "history": null,
+   "null_sentences": [],
+   "reference_sentences": [],
+   "page": "SSL_CTX_ctrl",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/1.1.1/man3/SSL_CTX_ctrl/",
+   "series": "1.1.1",
+   "fetched": true,
+   "sha256": "618aab043db9894fe6ea313f90566a49c9f7f84996992e4c541775504fb51239",
+   "bytes": 669896,
+   "name": "SSL_CTX_ctrl, SSL_CTX_callback_ctrl, SSL_ctrl, SSL_callback_ctrl - internal handling functions for SSL_CTX and SSL objects",
+   "history": null,
+   "null_sentences": [],
+   "reference_sentences": [],
+   "page": "SSL_CTX_ctrl",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/1.0.2/man3/SSL_CTX_ctrl/",
+   "series": "1.0.2",
+   "fetched": true,
+   "sha256": "e6a7142f76b2928dfabf6e434c3fc737d01a2ccf7cabb40c3a7070225ec0d412",
+   "bytes": 279663,
+   "name": "SSL_CTX_ctrl, SSL_CTX_callback_ctrl, SSL_ctrl, SSL_callback_ctrl - internal handling functions for SSL_CTX and SSL objects",
+   "history": null,
+   "null_sentences": [],
+   "reference_sentences": [],
+   "page": "SSL_CTX_ctrl",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/SSL_CTX_load_verify_locations/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "133faad6512efc19df3a13c601d2e91637b48554cd4dabefd2f55031559938ea",
+   "bytes": 1084186,
+   "name": "SSL_CTX_load_verify_dir, SSL_CTX_load_verify_file, SSL_CTX_load_verify_store, SSL_CTX_set_default_verify_paths, SSL_CTX_set_default_verify_dir, SSL_CTX_set_default_verify_file, SSL_CTX_set_default_verify_store, SSL_CTX_load_verify_locations - set default locations for trusted CA certificates",
+   "history": null,
+   "null_sentences": [
+    "ctx MUST NOT be NULL Details of the certificate verification and chain checking process are described in \"Certification Path Validation\" in openssl-verification-options(1) .",
+    "ctx MUST NOT be NULL.",
+    "For SSL_CTX_load_verify_locations the following return values can occur: 0 The operation failed because CAfile and CApath are NULL or the processing at one of the locations specified failed."
+   ],
+   "reference_sentences": [],
+   "page": "SSL_CTX_load_verify_locations",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/1.1.1/man3/SSL_CTX_load_verify_locations/",
+   "series": "1.1.1",
+   "fetched": true,
+   "sha256": "41f1d01f4c17edb7d413660b709c15674869f12f34a4f0ff1cf90c8e490f33b0",
+   "bytes": 675238,
+   "name": "SSL_CTX_load_verify_locations, SSL_CTX_set_default_verify_paths, SSL_CTX_set_default_verify_dir, SSL_CTX_set_default_verify_file - set default locations for trusted CA certificates",
+   "history": null,
+   "null_sentences": [
+    "For SSL_CTX_load_verify_locations the following return values can occur: 0 The operation failed because CAfile and CApath are NULL or the processing at one of the locations specified failed."
+   ],
+   "reference_sentences": [],
+   "page": "SSL_CTX_load_verify_locations",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/1.0.2/man3/SSL_CTX_load_verify_locations/",
+   "series": "1.0.2",
+   "fetched": true,
+   "sha256": "029e24bf2993ec001afa22f217e97d94923f6ac5443d13e65fc65af331258e82",
+   "bytes": 283150,
+   "name": "SSL_CTX_load_verify_locations - set default locations for trusted CA certificates",
+   "history": null,
+   "null_sentences": [
+    "The following return values can occur: 0 The operation failed because CAfile and CApath are NULL or the processing at one of the locations specified failed."
+   ],
+   "reference_sentences": [],
+   "page": "SSL_CTX_load_verify_locations",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/SSL_CTX_set0_CA_list/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "f20a174fe89c077e63e2097c9805d4da21c2588ff94ce0dbb71b177b17be8ec7",
+   "bytes": 1087333,
+   "name": "SSL_CTX_set_client_CA_list, SSL_set_client_CA_list, SSL_get_client_CA_list, SSL_CTX_get_client_CA_list, SSL_CTX_add_client_CA, SSL_add_client_CA, SSL_set0_CA_list, SSL_CTX_set0_CA_list, SSL_get0_CA_list, SSL_CTX_get0_CA_list, SSL_add1_to_CA_list, SSL_CTX_add1_to_CA_list, SSL_get0_peer_CA_list - get or set CA list",
+   "history": null,
+   "null_sentences": [
+    "So any list of CA names set is never sent from client to server and the list of CA names retrieved by SSL_get0_peer_CA_list() is always NULL .",
+    "SSL_CTX_get_client_CA_list(), SSL_get_client_CA_list(), SSL_CTX_get0_CA_list() and SSL_get0_CA_list() return a stack of CA names or NULL is no CA names are set.",
+    "SSL_get0_peer_CA_list() returns a stack of CA names sent by the peer or NULL or an empty stack if no list was sent."
+   ],
+   "reference_sentences": [],
+   "page": "SSL_CTX_set0_CA_list",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/1.1.1/man3/SSL_CTX_set0_CA_list/",
+   "series": "1.1.1",
+   "fetched": true,
+   "sha256": "2c921842ce79f1e3f16d1d672c08abcb5d1d3e1dacd8c518230feb6c38aabc05",
+   "bytes": 680635,
+   "name": "SSL_CTX_set_client_CA_list, SSL_set_client_CA_list, SSL_get_client_CA_list, SSL_CTX_get_client_CA_list, SSL_CTX_add_client_CA, SSL_add_client_CA, SSL_set0_CA_list, SSL_CTX_set0_CA_list, SSL_get0_CA_list, SSL_CTX_get0_CA_list, SSL_add1_to_CA_list, SSL_CTX_add1_to_CA_list, SSL_get0_peer_CA_list - get or set CA list",
+   "history": null,
+   "null_sentences": [
+    "So any list of CA names set is never sent from client to server and the list of CA names retrieved by SSL_get0_peer_CA_list() is always NULL .",
+    "SSL_CTX_get_client_CA_list(), SSL_get_client_CA_list(), SSL_CTX_get0_CA_list() and SSL_get0_CA_list() return a stack of CA names or NULL is no CA names are set.",
+    "SSL_get0_peer_CA_list() returns a stack of CA names sent by the peer or NULL or an empty stack if no list was sent."
+   ],
+   "reference_sentences": [],
+   "page": "SSL_CTX_set0_CA_list",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/SSL_CTX_set_cert_cb/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "f5dff8afd3d9a691241756138273ee3c652b8586a84b2224859a5fb1e3ac6573",
+   "bytes": 1078407,
+   "name": "SSL_CTX_set_cert_cb, SSL_set_cert_cb - handle certificate callback function",
+   "history": null,
+   "null_sentences": [
+    "When cert_cb is NULL, no callback function is used."
+   ],
+   "reference_sentences": [],
+   "page": "SSL_CTX_set_cert_cb",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/1.1.1/man3/SSL_CTX_set_cert_cb/",
+   "series": "1.1.1",
+   "fetched": true,
+   "sha256": "505e523423f2bfb1d627ef87f9c33cfde12da2125f878809f20f1b65c70c1bd3",
+   "bytes": 672101,
+   "name": "SSL_CTX_set_cert_cb, SSL_set_cert_cb - handle certificate callback function",
+   "history": null,
+   "null_sentences": [
+    "When cert_cb() is NULL, no callback function is used."
+   ],
+   "reference_sentences": [],
+   "page": "SSL_CTX_set_cert_cb",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/1.0.2/man3/SSL_CTX_set_cert_cb/",
+   "series": "1.0.2",
+   "fetched": true,
+   "sha256": "3b448e1fdea2639135b9458a0609598403ba24928c6d7c957e84b36933e0665f",
+   "bytes": 281454,
+   "name": "SSL_CTX_set_cert_cb, SSL_set_cert_cb - handle certificate callback function",
+   "history": null,
+   "null_sentences": [
+    "When cert_cb() is NULL, no callback function is used."
+   ],
+   "reference_sentences": [],
+   "page": "SSL_CTX_set_cert_cb",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/SSL_CTX_set_cert_store/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "97cf4d524063119d22128e202149fffe6715311d65e53662d496b243b6314f80",
+   "bytes": 1078653,
+   "name": "SSL_CTX_set_cert_store, SSL_CTX_set1_cert_store, SSL_CTX_get_cert_store - manipulate X509 certificate verification storage",
+   "history": null,
+   "null_sentences": [
+    "ctx MUST NOT be NULL."
+   ],
+   "reference_sentences": [
+    "The store 's reference count is incremented."
+   ],
+   "page": "SSL_CTX_set_cert_store",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/1.1.1/man3/SSL_CTX_set_cert_store/",
+   "series": "1.1.1",
+   "fetched": true,
+   "sha256": "a1ef7958daad89deba91cbe81e4f6a98d4149d9554e59a908ce6e00b816676f9",
+   "bytes": 671765,
+   "name": "SSL_CTX_set_cert_store, SSL_CTX_set1_cert_store, SSL_CTX_get_cert_store - manipulate X509 certificate verification storage",
+   "history": null,
+   "null_sentences": [],
+   "reference_sentences": [
+    "The store 's reference count is incremented."
+   ],
+   "page": "SSL_CTX_set_cert_store",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/1.0.2/man3/SSL_CTX_set_cert_store/",
+   "series": "1.0.2",
+   "fetched": true,
+   "sha256": "def442dea0d0e9b736ec38c686a55cdfa8e281b3bd0e09f5cf0647b2109452d8",
+   "bytes": 280362,
+   "name": "SSL_CTX_set_cert_store, SSL_CTX_get_cert_store - manipulate X509 certificate verification storage",
+   "history": null,
+   "null_sentences": [],
+   "reference_sentences": [],
+   "page": "SSL_CTX_set_cert_store",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/SSL_CTX_set_default_passwd_cb/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "1592b55064f399b8ef7d0a7f78c11d8b22828f92d74a4968628645c4638c74bc",
+   "bytes": 1082116,
+   "name": "SSL_CTX_set_default_passwd_cb, SSL_CTX_set_default_passwd_cb_userdata, SSL_CTX_get_default_passwd_cb, SSL_CTX_get_default_passwd_cb_userdata, SSL_set_default_passwd_cb, SSL_set_default_passwd_cb_userdata, SSL_get_default_passwd_cb, SSL_get_default_passwd_cb_userdata - set or get passwd callback for encrypted PEM file handling",
+   "history": "SSL_CTX_get_default_passwd_cb(), SSL_CTX_get_default_passwd_cb_userdata(), SSL_set_default_passwd_cb() and SSL_set_default_passwd_cb_userdata() were added in OpenSSL 1.1.0.",
+   "null_sentences": [
+    "If no callback was explicitly set, the NULL pointer is returned.",
+    "If no userdata was explicitly set, the NULL pointer is returned."
+   ],
+   "reference_sentences": [],
+   "page": "SSL_CTX_set_default_passwd_cb",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/1.1.1/man3/SSL_CTX_set_default_passwd_cb/",
+   "series": "1.1.1",
+   "fetched": true,
+   "sha256": "3acd57a8974fb3e4d1b6c9dfb01121a8b2db2bb3cdf332f8e8a959bdaa3e5af1",
+   "bytes": 675427,
+   "name": "SSL_CTX_set_default_passwd_cb, SSL_CTX_set_default_passwd_cb_userdata, SSL_CTX_get_default_passwd_cb, SSL_CTX_get_default_passwd_cb_userdata, SSL_set_default_passwd_cb, SSL_set_default_passwd_cb_userdata, SSL_get_default_passwd_cb, SSL_get_default_passwd_cb_userdata - set or get passwd callback for encrypted PEM file handling",
+   "history": "SSL_CTX_get_default_passwd_cb(), SSL_CTX_get_default_passwd_cb_userdata(), SSL_set_default_passwd_cb() and SSL_set_default_passwd_cb_userdata() were added in OpenSSL 1.1.0.",
+   "null_sentences": [
+    "If no callback was explicitly set, the NULL pointer is returned.",
+    "If no userdata was explicitly set, the NULL pointer is returned."
+   ],
+   "reference_sentences": [],
+   "page": "SSL_CTX_set_default_passwd_cb",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/1.0.2/man3/SSL_CTX_set_default_passwd_cb/",
+   "series": "1.0.2",
+   "fetched": true,
+   "sha256": "394e58b2e3149e76d9f9565a397ffc42126a095df03725d83cae541bbc5ce343",
+   "bytes": 282946,
+   "name": "SSL_CTX_set_default_passwd_cb, SSL_CTX_set_default_passwd_cb_userdata - set passwd callback for encrypted PEM file handling",
+   "history": null,
+   "null_sentences": [],
+   "reference_sentences": [],
+   "page": "SSL_CTX_set_default_passwd_cb",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/SSL_CTX_set_options/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "ff5732fd6242aebcf9cff57f415630357ee2ba8664b4dd410b0bdf54f697fcb6",
+   "bytes": 1100809,
+   "name": "SSL_CTX_set_options, SSL_set_options, SSL_CTX_clear_options, SSL_clear_options, SSL_CTX_get_options, SSL_get_options, SSL_get_secure_renegotiation_support - manipulate SSL options",
+   "history": "The attempt to always try to use secure renegotiation was added in OpenSSL 0.9.8m. The SSL_OP_PRIORITIZE_CHACHA and SSL_OP_NO_RENEGOTIATION options were added in OpenSSL 1.1.1. The SSL_OP_NO_EXTENDED_MASTER_SECRET and SSL_OP_IGNORE_UNEXPECTED_EOF options were added in OpenSSL 3.0. The SSL_OP_ constants and the corresponding parameter and return values of the affected functions were changed to uint64_t type in OpenSSL 3.0. For that reason it is no longer possible use the SSL_OP_ macro values in preprocessor #if conditions. However it is still possible to test whether these macros are defined or not.",
+   "null_sentences": [
+    "ctx MUST NOT be NULL."
+   ],
+   "reference_sentences": [],
+   "page": "SSL_CTX_set_options",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/1.1.1/man3/SSL_CTX_set_options/",
+   "series": "1.1.1",
+   "fetched": true,
+   "sha256": "b374ed92e5a91827195b9105c364d3ba3b2e83685a21271ef973c68b47c654a4",
+   "bytes": 685935,
+   "name": "SSL_CTX_set_options, SSL_set_options, SSL_CTX_clear_options, SSL_clear_options, SSL_CTX_get_options, SSL_get_options, SSL_get_secure_renegotiation_support - manipulate SSL options",
+   "history": "The attempt to always try to use secure renegotiation was added in OpenSSL 0.9.8m. The SSL_OP_PRIORITIZE_CHACHA and SSL_OP_NO_RENEGOTIATION options were added in OpenSSL 1.1.1.",
+   "null_sentences": [],
+   "reference_sentences": [],
+   "page": "SSL_CTX_set_options",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/1.0.2/man3/SSL_CTX_set_options/",
+   "series": "1.0.2",
+   "fetched": true,
+   "sha256": "e7e6ee390522aab27a936f1769abee6837ffb592c20bf77150040a74e374cba9",
+   "bytes": 294338,
+   "name": "SSL_CTX_set_options, SSL_set_options, SSL_CTX_clear_options, SSL_clear_options, SSL_CTX_get_options, SSL_get_options, SSL_get_secure_renegotiation_support - manipulate SSL options",
+   "history": "SSL_OP_CIPHER_SERVER_PREFERENCE and SSL_OP_NO_SESSION_RESUMPTION_ON_RENEGOTIATION have been added in OpenSSL 0.9.7. SSL_OP_TLS_ROLLBACK_BUG has been added in OpenSSL 0.9.6 and was automatically enabled with SSL_OP_ALL . As of 0.9.7, it is no longer included in SSL_OP_ALL and must be explicitly set. SSL_OP_DONT_INSERT_EMPTY_FRAGMENTS has been added in OpenSSL 0.9.6e. Versions up to OpenSSL 0.9.6c do not include the countermeasure that can be disabled with this option (in OpenSSL 0.9.6d, it was always enabled). SSL_CTX_clear_options() and SSL_clear_options() were first added in OpenSSL 0.9.8m. SSL_OP_ALLOW_UNSAFE_LEGACY_RENEGOTIATION , SSL_OP_LEGACY_SERVER_CONNECT and the function SSL_get_secure_renegotiation_support() were first added in OpenSSL 0.9.8m.",
+   "null_sentences": [],
+   "reference_sentences": [],
+   "page": "SSL_CTX_set_options",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/SSL_CTX_use_certificate/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "f5bfbb697d0f1f6e71e0f8d6c9b1537ac9b9e81d5fe3b7489f858d3a1f7fae59",
+   "bytes": 1095622,
+   "name": "SSL_CTX_use_certificate, SSL_CTX_use_certificate_ASN1, SSL_CTX_use_certificate_file, SSL_use_certificate, SSL_use_certificate_ASN1, SSL_use_certificate_file, SSL_CTX_use_certificate_chain_file, SSL_use_certificate_chain_file, SSL_CTX_use_PrivateKey, SSL_CTX_use_PrivateKey_ASN1, SSL_CTX_use_PrivateKey_file, SSL_CTX_use_RSAPrivateKey, SSL_CTX_use_RSAPrivateKey_ASN1, SSL_CTX_use_RSAPrivateKey_file, SSL_use_PrivateKey_file, SSL_use_PrivateKey_ASN1, SSL_use_PrivateKey, SSL_use_RSAPrivateKey, SSL_use_RSAPrivateKey_ASN1, SSL_use_RSAPrivateKey_file, SSL_CTX_check_private_key, SSL_check_private_key, SSL_CTX_use_cert_and_key, SSL_use_cert_and_key - load certificate and key data",
+   "history": null,
+   "null_sentences": [
+    "ctx MUST NOT be NULL.",
+    "If pkey is NULL, then the public key of x is used as the private key.",
+    "ctx MUST NOT be NULL."
+   ],
+   "reference_sentences": [
+    "On success the reference counter of the x is incremented.",
+    "On success the reference counter of the pkey / rsa is incremented.",
+    "The reference count of the public key is incremented (twice if there is no private key); it is not copied nor duplicated."
+   ],
+   "page": "SSL_CTX_use_certificate",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/1.1.1/man3/SSL_CTX_use_certificate/",
+   "series": "1.1.1",
+   "fetched": true,
+   "sha256": "0d1aa33bd390770a7b3ef947edcef3650e71165ea0191bb54fc24050dc85edff",
+   "bytes": 688351,
+   "name": "SSL_CTX_use_certificate, SSL_CTX_use_certificate_ASN1, SSL_CTX_use_certificate_file, SSL_use_certificate, SSL_use_certificate_ASN1, SSL_use_certificate_file, SSL_CTX_use_certificate_chain_file, SSL_use_certificate_chain_file, SSL_CTX_use_PrivateKey, SSL_CTX_use_PrivateKey_ASN1, SSL_CTX_use_PrivateKey_file, SSL_CTX_use_RSAPrivateKey, SSL_CTX_use_RSAPrivateKey_ASN1, SSL_CTX_use_RSAPrivateKey_file, SSL_use_PrivateKey_file, SSL_use_PrivateKey_ASN1, SSL_use_PrivateKey, SSL_use_RSAPrivateKey, SSL_use_RSAPrivateKey_ASN1, SSL_use_RSAPrivateKey_file, SSL_CTX_check_private_key, SSL_check_private_key, SSL_CTX_use_cert_and_key, SSL_use_cert_and_key - load certificate and key data",
+   "history": null,
+   "null_sentences": [
+    "If pkey is NULL, then the public key of x is used as the private key."
+   ],
+   "reference_sentences": [
+    "The reference count of the public key is incremented (twice if there is no private key); it is not copied nor duplicated."
+   ],
+   "page": "SSL_CTX_use_certificate",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/1.0.2/man3/SSL_CTX_use_certificate/",
+   "series": "1.0.2",
+   "fetched": true,
+   "sha256": "9340a34c638699ddd296e2515b33e5d8c0144d82434ca22fd0f6e117d088d2c1",
+   "bytes": 295173,
+   "name": "SSL_CTX_use_certificate, SSL_CTX_use_certificate_ASN1, SSL_CTX_use_certificate_file, SSL_use_certificate, SSL_use_certificate_ASN1, SSL_use_certificate_file, SSL_CTX_use_certificate_chain_file, SSL_CTX_use_PrivateKey, SSL_CTX_use_PrivateKey_ASN1, SSL_CTX_use_PrivateKey_file, SSL_CTX_use_RSAPrivateKey, SSL_CTX_use_RSAPrivateKey_ASN1, SSL_CTX_use_RSAPrivateKey_file, SSL_use_PrivateKey_file, SSL_use_PrivateKey_ASN1, SSL_use_PrivateKey, SSL_use_RSAPrivateKey, SSL_use_RSAPrivateKey_ASN1, SSL_use_RSAPrivateKey_file, SSL_CTX_check_private_key, SSL_check_private_key - load certificate and key data",
+   "history": "Support for DER encoded private keys (SSL_FILETYPE_ASN1) in SSL_CTX_use_PrivateKey_file() and SSL_use_PrivateKey_file() was added in 0.9.8 .",
+   "null_sentences": [],
+   "reference_sentences": [],
+   "page": "SSL_CTX_use_certificate",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/SSL_connect/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "3f877c8668996d835c64f39b15ce81eee2298156d9fbedf5ea373c2d29244efe",
+   "bytes": 1077715,
+   "name": "SSL_connect - initiate the TLS/SSL handshake with an TLS/SSL server",
+   "history": null,
+   "null_sentences": [
+    "ssl MUST NOT be NULL."
+   ],
+   "reference_sentences": [],
+   "page": "SSL_connect",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/1.1.1/man3/SSL_connect/",
+   "series": "1.1.1",
+   "fetched": true,
+   "sha256": "e0df7cec10da6fb73d540a1a258d90dc2ec4212e7ef796cf0a37f77ab51137d0",
+   "bytes": 670975,
+   "name": "SSL_connect - initiate the TLS/SSL handshake with an TLS/SSL server",
+   "history": null,
+   "null_sentences": [],
+   "reference_sentences": [],
+   "page": "SSL_connect",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/1.0.2/man3/SSL_connect/",
+   "series": "1.0.2",
+   "fetched": true,
+   "sha256": "4d3f29b04dd07b95e095065a81e4abca3c29bf21c9c5989d39e3e0f01461c8cc",
+   "bytes": 279789,
+   "name": "SSL_connect - initiate the TLS/SSL handshake with an TLS/SSL server",
+   "history": null,
+   "null_sentences": [],
+   "reference_sentences": [],
+   "page": "SSL_connect",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/SSL_do_handshake/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "23de16827b2773de1eaf4412d9c3b7988614d5578d0fad1439e59e83375a1894",
+   "bytes": 1076770,
+   "name": "SSL_do_handshake - perform a TLS/SSL handshake",
+   "history": null,
+   "null_sentences": [],
+   "reference_sentences": [],
+   "page": "SSL_do_handshake",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/1.1.1/man3/SSL_do_handshake/",
+   "series": "1.1.1",
+   "fetched": true,
+   "sha256": "b88536c0a0368ec4e1a8bc2daff1f252387558c043b47704479891820ae03547",
+   "bytes": 670085,
+   "name": "SSL_do_handshake - perform a TLS/SSL handshake",
+   "history": null,
+   "null_sentences": [],
+   "reference_sentences": [],
+   "page": "SSL_do_handshake",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/1.0.2/man3/SSL_do_handshake/",
+   "series": "1.0.2",
+   "fetched": true,
+   "sha256": "34436ba1570fe2726e0f07aa239218b6e32b938599ef91e288ed87ad753355cb",
+   "bytes": 279843,
+   "name": "SSL_do_handshake - perform a TLS/SSL handshake",
+   "history": null,
+   "null_sentences": [],
+   "reference_sentences": [],
+   "page": "SSL_do_handshake",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/SSL_get_certificate/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "06181936623b95d28ec88c6268e1e8cea17b135d3e3f91ce9e12bd56d8bf1102",
+   "bytes": 1076356,
+   "name": "SSL_get_certificate, SSL_get_privatekey - retrieve TLS/SSL certificate and private key",
+   "history": null,
+   "null_sentences": [
+    "The certificate which is returned by SSL_get_certificate() is determined as follows: If it is called before certificate selection has occurred, it returns the most recently added certificate, or NULL if no certificate has been added.",
+    "After certificate selection has occurred, it returns the certificate which was selected during the handshake, or NULL if no certificate was selected (for example, on a client where no client certificate is in use).",
+    "These functions return pointers to their respective objects, or NULL if no such object is available."
+   ],
+   "reference_sentences": [],
+   "page": "SSL_get_certificate",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/1.1.1/man3/SSL_get_certificate/",
+   "series": "1.1.1",
+   "fetched": false,
+   "error": "curl: (22) The requested URL returned error: 404",
+   "page": "SSL_get_certificate",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/1.0.2/man3/SSL_get_certificate/",
+   "series": "1.0.2",
+   "fetched": false,
+   "error": "curl: (22) The requested URL returned error: 404",
+   "page": "SSL_get_certificate",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/1.0.2/man3/SSL_get_client_CA_list/",
+   "series": "1.0.2",
+   "fetched": true,
+   "sha256": "8ec5a5b70b9411056bc886de81ebf075f58e5a3902230eb821d440bcbffcfa6e",
+   "bytes": 279012,
+   "name": "SSL_get_client_CA_list, SSL_CTX_get_client_CA_list - get list of client CAs",
+   "history": null,
+   "null_sentences": [
+    "NULL No client CA list was explicitly set (for ctx or in server mode) or the server did not send a list of CAs (client mode)."
+   ],
+   "reference_sentences": [],
+   "page": "SSL_get_client_CA_list",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/SSL_get_error/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "13a4b9340337eeede89285acdd42b8e8ac52af900394fd76b9e26fe4dbb3445b",
+   "bytes": 1084115,
+   "name": "SSL_get_error - obtain result code for TLS/SSL I/O operation",
+   "history": "The SSL_ERROR_WANT_ASYNC error code was added in OpenSSL 1.1.0. The SSL_ERROR_WANT_CLIENT_HELLO_CB error code was added in OpenSSL 1.1.1.",
+   "null_sentences": [],
+   "reference_sentences": [],
+   "page": "SSL_get_error",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/1.1.1/man3/SSL_get_error/",
+   "series": "1.1.1",
+   "fetched": true,
+   "sha256": "4ed67e6bb8e9872f626b3d982a613a8dfbd6830dbf75f4f4951b25ca9feeb18b",
+   "bytes": 675884,
+   "name": "SSL_get_error - obtain result code for TLS/SSL I/O operation",
+   "history": "The SSL_ERROR_WANT_ASYNC error code was added in OpenSSL 1.1.0. The SSL_ERROR_WANT_CLIENT_HELLO_CB error code was added in OpenSSL 1.1.1.",
+   "null_sentences": [],
+   "reference_sentences": [],
+   "page": "SSL_get_error",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/1.0.2/man3/SSL_get_error/",
+   "series": "1.0.2",
+   "fetched": true,
+   "sha256": "7dc17cbbc8926b9b873a4c4be0542d06515423bdf83ed6004599187cada8b7a3",
+   "bytes": 282044,
+   "name": "SSL_get_error - obtain result code for TLS/SSL I/O operation",
+   "history": "SSL_get_error() was added in SSLeay 0.8.",
+   "null_sentences": [],
+   "reference_sentences": [],
+   "page": "SSL_get_error",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/SSL_get_peer_certificate/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "b54da2348146d176dca832bf1dde7fb90677849b5b9e31a4bb157fce8c357fb5",
+   "bytes": 1077419,
+   "name": "SSL_get_peer_certificate, SSL_get0_peer_certificate, SSL_get1_peer_certificate - get the X509 certificate of the peer",
+   "history": "SSL_get0_peer_certificate() and SSL_get1_peer_certificate() were added in 3.0.0. SSL_get_peer_certificate() was deprecated in 3.0.0.",
+   "null_sentences": [
+    "If the peer did not present a certificate, NULL is returned.",
+    "The following return values can occur: NULL No certificate was presented by the peer or no connection was established."
+   ],
+   "reference_sentences": [],
+   "page": "SSL_get_peer_certificate",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/1.1.1/man3/SSL_get_peer_certificate/",
+   "series": "1.1.1",
+   "fetched": true,
+   "sha256": "4155aa48f16e8960cb215b655e6c98bf63769aeb6be6f533d41caf8453de237d",
+   "bytes": 669163,
+   "name": "SSL_get_peer_certificate - get the X509 certificate of the peer",
+   "history": null,
+   "null_sentences": [
+    "If the peer did not present a certificate, NULL is returned.",
+    "The following return values can occur: NULL No certificate was presented by the peer or no connection was established."
+   ],
+   "reference_sentences": [],
+   "page": "SSL_get_peer_certificate",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/1.0.2/man3/SSL_get_peer_certificate/",
+   "series": "1.0.2",
+   "fetched": true,
+   "sha256": "3d266e0e07ea708ba8a69e21b3ff13bf69dea3ce53f3d34f31936f0e8834879e",
+   "bytes": 278916,
+   "name": "SSL_get_peer_certificate - get the X509 certificate of the peer",
+   "history": null,
+   "null_sentences": [
+    "If the peer did not present a certificate, NULL is returned.",
+    "The following return values can occur: NULL No certificate was presented by the peer or no connection was established."
+   ],
+   "reference_sentences": [],
+   "page": "SSL_get_peer_certificate",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/SSL_read/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "569b5816d54f45bc227e893926561df22385467888e621a3bf129c384fc4badb",
+   "bytes": 1083448,
+   "name": "SSL_read_ex, SSL_read, SSL_peek_ex, SSL_peek - read bytes from a TLS/SSL connection",
+   "history": "The SSL_read_ex() and SSL_peek_ex() functions were added in OpenSSL 1.1.1.",
+   "null_sentences": [],
+   "reference_sentences": [],
+   "page": "SSL_read",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/1.1.1/man3/SSL_read/",
+   "series": "1.1.1",
+   "fetched": true,
+   "sha256": "bbe8787390c13dea84e321f0c0344da7479a900b53b39a032b6fc86001fac87f",
+   "bytes": 676218,
+   "name": "SSL_read_ex, SSL_read, SSL_peek_ex, SSL_peek - read bytes from a TLS/SSL connection",
+   "history": "The SSL_read_ex() and SSL_peek_ex() functions were added in OpenSSL 1.1.1.",
+   "null_sentences": [],
+   "reference_sentences": [],
+   "page": "SSL_read",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/1.0.2/man3/SSL_read/",
+   "series": "1.0.2",
+   "fetched": true,
+   "sha256": "87ab85bcdce173c800a86acc5ef9423fe8cadc86d7bf46257c0cabb767bb4c94",
+   "bytes": 282927,
+   "name": "SSL_read - read bytes from a TLS/SSL connection.",
+   "history": null,
+   "null_sentences": [],
+   "reference_sentences": [],
+   "page": "SSL_read",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/SSL_set_connect_state/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "6b5229d943f2b260a1b72c07d2335ef84fee87730581385b3c2385330952d4a6",
+   "bytes": 1077514,
+   "name": "SSL_set_connect_state, SSL_set_accept_state, SSL_is_server - functions for manipulating and examining the client or server mode of an SSL object",
+   "history": null,
+   "null_sentences": [],
+   "reference_sentences": [],
+   "page": "SSL_set_connect_state",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/1.1.1/man3/SSL_set_connect_state/",
+   "series": "1.1.1",
+   "fetched": true,
+   "sha256": "7c20903127e09f0fe63135779df5bfbd9fa3fdd3c8cd52814fe07f0183665b1e",
+   "bytes": 670803,
+   "name": "SSL_set_connect_state, SSL_set_accept_state, SSL_is_server - functions for manipulating and examining the client or server mode of an SSL object",
+   "history": null,
+   "null_sentences": [],
+   "reference_sentences": [],
+   "page": "SSL_set_connect_state",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/1.0.2/man3/SSL_set_connect_state/",
+   "series": "1.0.2",
+   "fetched": true,
+   "sha256": "6741fbdce9ac91ea22be914de035c0b15ac2adc488c6c299fc0c12457f032825",
+   "bytes": 279472,
+   "name": "SSL_set_connect_state, SSL_get_accept_state - prepare SSL object to work in client or server mode",
+   "history": null,
+   "null_sentences": [],
+   "reference_sentences": [],
+   "page": "SSL_set_connect_state",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/SSL_set_fd/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "45029c21a7268f915ff3051a8a80ebc89ada0e7d80cb5a26cc10ffe062e05628",
+   "bytes": 1077218,
+   "name": "SSL_set_fd, SSL_set_rfd, SSL_set_wfd - connect the SSL object with a file descriptor",
+   "history": null,
+   "null_sentences": [],
+   "reference_sentences": [],
+   "page": "SSL_set_fd",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/1.1.1/man3/SSL_set_fd/",
+   "series": "1.1.1",
+   "fetched": true,
+   "sha256": "87814455bded801f5bf82baed9d5db4e2cac03276c07d5dc531e720c365820e7",
+   "bytes": 670309,
+   "name": "SSL_set_fd, SSL_set_rfd, SSL_set_wfd - connect the SSL object with a file descriptor",
+   "history": null,
+   "null_sentences": [],
+   "reference_sentences": [],
+   "page": "SSL_set_fd",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/1.0.2/man3/SSL_set_fd/",
+   "series": "1.0.2",
+   "fetched": true,
+   "sha256": "0456b20cfe6a07188d8ada4f110934a38dab3d4e181be3debde78ddaa371aa76",
+   "bytes": 279274,
+   "name": "SSL_set_fd - connect the SSL object with a file descriptor",
+   "history": null,
+   "null_sentences": [],
+   "reference_sentences": [],
+   "page": "SSL_set_fd",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/SSL_write/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "9761dd7e68ebf66adaf3bc55052b26d691b1d5c68afca5f6cda66394a44c3751",
+   "bytes": 1086442,
+   "name": "SSL_write_ex2, SSL_write_ex, SSL_write, SSL_sendfile, SSL_WRITE_FLAG_CONCLUDE - write bytes to a TLS/SSL connection",
+   "history": "The SSL_write_ex() function was added in OpenSSL 1.1.1. The SSL_sendfile() function was added in OpenSSL 3.0. The SSL_write_ex2() function was added in OpenSSL 3.3.",
+   "null_sentences": [],
+   "reference_sentences": [],
+   "page": "SSL_write",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/1.1.1/man3/SSL_write/",
+   "series": "1.1.1",
+   "fetched": true,
+   "sha256": "3e22aeb56ac7a2b843b4a62d0443be7409fecf470a8dd6693fac1be3a43eb1c8",
+   "bytes": 674565,
+   "name": "SSL_write_ex, SSL_write - write bytes to a TLS/SSL connection",
+   "history": "The SSL_write_ex() function was added in OpenSSL 1.1.1.",
+   "null_sentences": [],
+   "reference_sentences": [],
+   "page": "SSL_write",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/1.0.2/man3/SSL_write/",
+   "series": "1.0.2",
+   "fetched": true,
+   "sha256": "8b0a75de20e5719c4f3e7e92b399da1c4625f5c542c135da7ab3f97259aa4bf5",
+   "bytes": 282264,
+   "name": "SSL_write - write bytes to a TLS/SSL connection.",
+   "history": null,
+   "null_sentences": [],
+   "reference_sentences": [],
+   "page": "SSL_write",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/X509_NAME_print_ex/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "e92b11210f7cbe3a1b40103ba842b78f3edd6e88985cd1a037d46de5596e3712",
+   "bytes": 1081597,
+   "name": "X509_NAME_print_ex, X509_NAME_print_ex_fp, X509_NAME_print, X509_NAME_oneline - X509_NAME printing routines",
+   "history": null,
+   "null_sentences": [
+    "If buf is NULL then a buffer is dynamically allocated and returned, and size is ignored.",
+    "X509_NAME_oneline() returns a valid string on success or NULL on error."
+   ],
+   "reference_sentences": [],
+   "page": "X509_NAME_print_ex",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/1.1.1/man3/X509_NAME_print_ex/",
+   "series": "1.1.1",
+   "fetched": true,
+   "sha256": "5ec6adfa3be3caea2d11ef13dac4d12199f2471698292b61fc22a2a081ea7074",
+   "bytes": 674937,
+   "name": "X509_NAME_print_ex, X509_NAME_print_ex_fp, X509_NAME_print, X509_NAME_oneline - X509_NAME printing routines",
+   "history": null,
+   "null_sentences": [
+    "If buf is NULL then a buffer is dynamically allocated and returned, and size is ignored.",
+    "X509_NAME_oneline() returns a valid string on success or NULL on error."
+   ],
+   "reference_sentences": [],
+   "page": "X509_NAME_print_ex",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/1.0.2/man3/X509_NAME_print_ex/",
+   "series": "1.0.2",
+   "fetched": true,
+   "sha256": "635ae74d79609bac93b45e6c351855142039f64a5f5577b8cfd19651608e9f4b",
+   "bytes": 284071,
+   "name": "X509_NAME_print_ex, X509_NAME_print_ex_fp, X509_NAME_print, X509_NAME_oneline - X509_NAME printing routines.",
+   "history": "TBA",
+   "null_sentences": [
+    "If buf is NULL then a buffer is dynamically allocated and returned, and size is ignored."
+   ],
+   "reference_sentences": [],
+   "page": "X509_NAME_print_ex",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/X509_STORE_CTX_get_error/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "6a7a318fcb693409a5f1cf90f94e652868d1d913b635ac79cefc275e2ffd6ac7",
+   "bytes": 1096369,
+   "name": "X509_STORE_CTX_get_error, X509_STORE_CTX_set_error, X509_STORE_CTX_get_error_depth, X509_STORE_CTX_set_error_depth, X509_STORE_CTX_get_current_cert, X509_STORE_CTX_set_current_cert, X509_STORE_CTX_get0_cert, X509_STORE_CTX_get1_chain, X509_verify_cert_error_string - get or set certificate verification status information",
+   "history": null,
+   "null_sentences": [
+    "ctx MUST NOT be NULL.",
+    "ctx MUST NOT be NULL.",
+    "ctx MUST NOT be NULL.",
+    "If an error occurred, the current certificate will be the one that is most closely related to the error, or possibly NULL if no such certificate is relevant.",
+    "It may be NULL if a raw public key is being verified.",
+    "X509_STORE_CTX_get_current_cert() returns the certificate which caused the error or NULL if no certificate is relevant to the error."
+   ],
+   "reference_sentences": [
+    "If a callback wishes the save the certificate for use after it returns, it needs to increment its reference count via X509_up_ref(3) ."
+   ],
+   "page": "X509_STORE_CTX_get_error",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/1.1.1/man3/X509_STORE_CTX_get_error/",
+   "series": "1.1.1",
+   "fetched": true,
+   "sha256": "6ca2909f94e365a36642ae8843f14e6d46f59eb93516d03c3dbd2fd18c443f6b",
+   "bytes": 683862,
+   "name": "X509_STORE_CTX_get_error, X509_STORE_CTX_set_error, X509_STORE_CTX_get_error_depth, X509_STORE_CTX_set_error_depth, X509_STORE_CTX_get_current_cert, X509_STORE_CTX_set_current_cert, X509_STORE_CTX_get0_cert, X509_STORE_CTX_get1_chain, X509_verify_cert_error_string - get or set certificate verification status information",
+   "history": null,
+   "null_sentences": [
+    "X509_STORE_CTX_get_current_cert() returns the certificate in ctx which caused the error or NULL if no certificate is relevant.",
+    "X509_STORE_CTX_get_current_cert() returns the certificate which caused the error or NULL if no certificate is relevant to the error."
+   ],
+   "reference_sentences": [
+    "If a callback wishes the save the certificate for use after it returns, it needs to increment its reference count via X509_up_ref(3) ."
+   ],
+   "page": "X509_STORE_CTX_get_error",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/1.0.2/man3/X509_STORE_CTX_get_error/",
+   "series": "1.0.2",
+   "fetched": true,
+   "sha256": "70e00815c1835f8d01fe85b088efbebcbcae95d40692c5fe45278723b19952c4",
+   "bytes": 291963,
+   "name": "X509_STORE_CTX_get_error, X509_STORE_CTX_set_error, X509_STORE_CTX_get_error_depth, X509_STORE_CTX_get_current_cert, X509_STORE_CTX_get1_chain, X509_verify_cert_error_string - get or set certificate verification status information",
+   "history": "TBA",
+   "null_sentences": [
+    "X509_STORE_CTX_get_current_cert() returns the certificate in ctx which caused the error or NULL if no certificate is relevant.",
+    "X509_STORE_CTX_get_current_cert() returns the cerificate which caused the error or NULL if no certificate is relevant to the error."
+   ],
+   "reference_sentences": [],
+   "page": "X509_STORE_CTX_get_error",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/X509_STORE_add_cert/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "52d8591e5c5e703cf3316c259f8877cdc62dd0539743dbd8020be81b4032926d",
+   "bytes": 1088693,
+   "name": "X509_STORE, X509_STORE_add_cert, X509_STORE_add_crl, X509_STORE_set_depth, X509_STORE_set_flags, X509_STORE_set_purpose, X509_STORE_set_trust, X509_STORE_add_lookup, X509_STORE_load_file_ex, X509_STORE_load_file, X509_STORE_load_path, X509_STORE_load_store_ex, X509_STORE_load_store, X509_STORE_set_default_paths_ex, X509_STORE_set_default_paths, X509_STORE_load_locations_ex, X509_STORE_load_locations - X509_STORE manipulation",
+   "history": "The functions X509_STORE_set_default_paths_ex(), X509_STORE_load_file_ex(), X509_STORE_load_store_ex() and X509_STORE_load_locations_ex() were added in OpenSSL 3.0.",
+   "null_sentences": [
+    "The X509_STORE MUST NOT be NULL.",
+    "X509_STORE_load_file() is similar to X509_STORE_load_file_ex() but uses NULL for the library context libctx and property query propq .",
+    "X509_STORE_load_store() is similar to X509_STORE_load_store_ex() but uses NULL for the library context libctx and property query propq .",
+    "X509_STORE_load_locations() is similar to X509_STORE_load_locations_ex() but uses NULL for the library context libctx and property query propq .",
+    "X509_STORE_set_default_paths() is similar to X509_STORE_set_default_paths_ex() but uses NULL for the library context libctx and property query propq .",
+    "X509_STORE_add_lookup() returns the found or created X509_LOOKUP(3) , or NULL on error."
+   ],
+   "reference_sentences": [
+    "The added object's reference count is incremented by one, hence the caller retains ownership of the object and needs to free it when it is no longer needed."
+   ],
+   "page": "X509_STORE_add_cert",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/1.1.1/man3/X509_STORE_add_cert/",
+   "series": "1.1.1",
+   "fetched": true,
+   "sha256": "065c478eed608e59f034a683308f1960c484c114a163b9cfd11d3f5fadae3455",
+   "bytes": 675142,
+   "name": "X509_STORE, X509_STORE_add_cert, X509_STORE_add_crl, X509_STORE_set_depth, X509_STORE_set_flags, X509_STORE_set_purpose, X509_STORE_set_trust, X509_STORE_add_lookup, X509_STORE_load_locations, X509_STORE_set_default_paths - X509_STORE manipulation",
+   "history": null,
+   "null_sentences": [
+    "X509_STORE_add_lookup() returns the found or created X509_LOOKUP(3) , or NULL on error."
+   ],
+   "reference_sentences": [
+    "The added object's reference count is incremented by one, hence the caller retains ownership of the object and needs to free it when it is no longer needed."
+   ],
+   "page": "X509_STORE_add_cert",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/X509_STORE_get0_param/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "eb1b55b9d57c471c359b8ff66da60c15b037b1ba8a67e23fb6c4d214965c4297",
+   "bytes": 1077959,
+   "name": "X509_STORE_get0_param, X509_STORE_set1_param, X509_STORE_get1_objects, X509_STORE_get0_objects, X509_STORE_get1_all_certs - X509_STORE setter and getter functions",
+   "history": "X509_STORE_get0_param and X509_STORE_get0_objects were added in OpenSSL 1.1.0. X509_STORE_get1_certs was added in OpenSSL 3.0. X509_STORE_get1_objects was added in OpenSSL 3.3.",
+   "null_sentences": [
+    "X509_STORE_get1_objects() returns a pointer to a stack of the retrieved objects on success, else NULL.",
+    "X509_STORE_get1_all_certs() returns a pointer to a stack of the retrieved certificates on success, else NULL."
+   ],
+   "reference_sentences": [],
+   "page": "X509_STORE_get0_param",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/1.1.1/man3/X509_STORE_get0_param/",
+   "series": "1.1.1",
+   "fetched": true,
+   "sha256": "c2211a12abc371c0257206059d53396da8a0b9f2625286f8098108201a54fd4f",
+   "bytes": 669494,
+   "name": "X509_STORE_get0_param, X509_STORE_set1_param, X509_STORE_get0_objects - X509_STORE setter and getter functions",
+   "history": "X509_STORE_get0_param and X509_STORE_get0_objects were added in OpenSSL 1.1.0.",
+   "null_sentences": [],
+   "reference_sentences": [],
+   "page": "X509_STORE_get0_param",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/X509_STORE_new/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "e799195e87cc7fd2aca2d3017b59b2f1a56b2557db29483859d014f7023278a7",
+   "bytes": 1076142,
+   "name": "X509_STORE_new, X509_STORE_up_ref, X509_STORE_free, X509_STORE_lock,X509_STORE_unlock - X509_STORE allocation, freeing and locking functions",
+   "history": "The X509_STORE_up_ref(), X509_STORE_lock() and X509_STORE_unlock() functions were added in OpenSSL 1.1.0.",
+   "null_sentences": [
+    "If the argument is NULL, nothing is done.",
+    "X509_STORE_new() returns a newly created X509_STORE or NULL if the call fails."
+   ],
+   "reference_sentences": [
+    "X509_STORE_up_ref() increments the reference count associated with the X509_STORE object."
+   ],
+   "page": "X509_STORE_new",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/1.1.1/man3/X509_STORE_new/",
+   "series": "1.1.1",
+   "fetched": true,
+   "sha256": "6794e597cb592cee73720e69166cc03c604d6d24569bdbaf87b268184c3876df",
+   "bytes": 669440,
+   "name": "X509_STORE_new, X509_STORE_up_ref, X509_STORE_free, X509_STORE_lock, X509_STORE_unlock - X509_STORE allocation, freeing and locking functions",
+   "history": "The X509_STORE_up_ref(), X509_STORE_lock() and X509_STORE_unlock() functions were added in OpenSSL 1.1.0.",
+   "null_sentences": [
+    "X509_STORE_new() returns a newly created X509_STORE or NULL if the call fails."
+   ],
+   "reference_sentences": [
+    "X509_STORE_up_ref() increments the reference count associated with the X509_STORE object."
+   ],
+   "page": "X509_STORE_new",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/X509_dup/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "a28042ad699587ef3a8bea35462e72c3d6353e050f911a1f39bfc0640b0590b8",
+   "bytes": 1089728,
+   "name": "DECLARE_ASN1_FUNCTIONS, IMPLEMENT_ASN1_FUNCTIONS, ASN1_ITEM, ACCESS_DESCRIPTION_free, ACCESS_DESCRIPTION_new, ADMISSIONS_free, ADMISSIONS_new, ADMISSION_SYNTAX_free, ADMISSION_SYNTAX_new, ASIdOrRange_free, ASIdOrRange_new, ASIdentifierChoice_free, ASIdentifierChoice_new, ASIdentifiers_free, ASIdentifiers_new, ASRange_free, ASRange_new, AUTHORITY_INFO_ACCESS_free, AUTHORITY_INFO_ACCESS_new, AUTHORITY_KEYID_free, AUTHORITY_KEYID_new, BASIC_CONSTRAINTS_free, BASIC_CONSTRAINTS_new, CERTIFICATEPOLICIES_free, CERTIFICATEPOLICIES_new, CMS_ContentInfo_free, CMS_ContentInfo_new, CMS_ContentInfo_new_ex, CMS_ContentInfo_print_ctx, CMS_EnvelopedData_it, CMS_EnvelopedData_dup, CMS_ReceiptRequest_free, CMS_ReceiptRequest_new, CMS_SignedData_free, CMS_SignedData_new, CRL_DIST_POINTS_free, CRL_DIST_POINTS_new, DIRECTORYSTRING_free, DIRECTORYSTRING_new, DISPLAYTEXT_free, DISPLAYTEXT_new, DIST_POINT_NAME_free, DIST_POINT_NAME_new, DIST_POINT_NAME_dup, DIST_POINT_free, DIST_POINT_new, DSAparams_dup, ECPARAMETERS_free, ECPARAMETERS_new, ECPKPARAMETERS_free, ECPKPARAMETERS_new, EDIPARTYNAME_free, EDIPARTYNAME_new, ESS_CERT_ID_dup, ESS_CERT_ID_free, ESS_CERT_ID_new, ESS_CERT_ID_V2_dup, ESS_CERT_ID_V2_free, ESS_CERT_ID_V2_new, ESS_ISSUER_SERIAL_dup, ESS_ISSUER_SERIAL_free, ESS_ISSUER_SERIAL_new, ESS_SIGNING_CERT_dup, ESS_SIGNING_CERT_free, ESS_SIGNING_CERT_it, ESS_SIGNING_CERT_new, ESS_SIGNING_CERT_V2_dup, ESS_SIGNING_CERT_V2_free, ESS_SIGNING_CERT_V2_it, ESS_SIGNING_CERT_V2_new, EXTENDED_KEY_USAGE_free, EXTENDED_KEY_USAGE_new, GENERAL_NAMES_free, GENERAL_NAMES_new, GENERAL_NAME_dup, GENERAL_NAME_free, GENERAL_NAME_new, GENERAL_SUBTREE_free, GENERAL_SUBTREE_new, OSSL_IETF_ATTR_SYNTAX_free, OSSL_IETF_ATTR_SYNTAX_it, OSSL_IETF_ATTR_SYNTAX_new, IPAddressChoice_free, IPAddressChoice_new, IPAddressFamily_free, IPAddressFamily_new, IPAddressOrRange_free, IPAddressOrRange_new, IPAddressRange_free, IPAddressRange_new, ISSUER_SIGN_TOOL_free, ISSUER_SIGN_TOOL_it, ISSUER_SIGN_TOOL_new, ISSUING_DIST_POINT_free, ISSUING_DIST_POINT_it, ISSUING_DIST_POINT_new, NAME_CONSTRAINTS_free, NAME_CONSTRAINTS_new, NAMING_AUTHORITY_free, NAMING_AUTHORITY_new, NETSCAPE_CERT_SEQUENCE_free, NETSCAPE_CERT_SEQUENCE_new, NETSCAPE_SPKAC_free, NETSCAPE_SPKAC_new, NETSCAPE_SPKI_free, NETSCAPE_SPKI_new, NOTICEREF_free, NOTICEREF_new, OCSP_BASICRESP_free, OCSP_BASICRESP_new, OCSP_CERTID_dup, OCSP_CERTID_new, OCSP_CERTSTATUS_free, OCSP_CERTSTATUS_new, OCSP_CRLID_free, OCSP_CRLID_new, OCSP_ONEREQ_free, OCSP_ONEREQ_new, OCSP_REQINFO_free, OCSP_REQINFO_new, OCSP_RESPBYTES_free, OCSP_RESPBYTES_new, OCSP_RESPDATA_free, OCSP_RESPDATA_new, OCSP_RESPID_free, OCSP_RESPID_new, OCSP_RESPONSE_new, OCSP_REVOKEDINFO_free, OCSP_REVOKEDINFO_new, OCSP_SERVICELOC_free, OCSP_SERVICELOC_new, OCSP_SIGNATURE_free, OCSP_SIGNATURE_new, OCSP_SINGLERESP_free, OCSP_SINGLERESP_new, OSSL_AA_DIST_POINT_free, OSSL_AA_DIST_POINT_new, OSSL_AA_DIST_POINT_it, OSSL_ALLOWED_ATTRIBUTES_CHOICE_free, OSSL_ALLOWED_ATTRIBUTES_CHOICE_new, OSSL_ALLOWED_ATTRIBUTES_CHOICE_it, OSSL_ALLOWED_ATTRIBUTES_ITEM_free, OSSL_ALLOWED_ATTRIBUTES_ITEM_new, OSSL_ALLOWED_ATTRIBUTES_ITEM_it, OSSL_ALLOWED_ATTRIBUTES_SYNTAX_free, OSSL_ALLOWED_ATTRIBUTES_SYNTAX_new, OSSL_ALLOWED_ATTRIBUTES_SYNTAX_it, OSSL_ATAV_free, OSSL_ATAV_new, OSSL_ATAV_it, OSSL_ATTRIBUTE_DESCRIPTOR_free, OSSL_ATTRIBUTE_DESCRIPTOR_new, OSSL_ATTRIBUTE_DESCRIPTOR_it, OSSL_ATTRIBUTE_MAPPING_free, OSSL_ATTRIBUTE_MAPPING_new, OSSL_ATTRIBUTE_MAPPING_it, OSSL_ATTRIBUTE_MAPPINGS_free, OSSL_ATTRIBUTE_MAPPINGS_new, OSSL_ATTRIBUTE_MAPPINGS_it, OSSL_ATTRIBUTE_TYPE_MAPPING_free, OSSL_ATTRIBUTE_TYPE_MAPPING_new, OSSL_ATTRIBUTE_TYPE_MAPPING_it, OSSL_ATTRIBUTE_VALUE_MAPPING_free, OSSL_ATTRIBUTE_VALUE_MAPPING_new, OSSL_ATTRIBUTE_VALUE_MAPPING_it, OSSL_ATTRIBUTES_SYNTAX_free, OSSL_ATTRIBUTES_SYNTAX_it, OSSL_ATTRIBUTES_SYNTAX_new, OSSL_AUTHORITY_ATTRIBUTE_ID_SYNTAX_free, OSSL_AUTHORITY_ATTRIBUTE_ID_SYNTAX_it, OSSL_AUTHORITY_ATTRIBUTE_ID_SYNTAX_new, OSSL_BASIC_ATTR_CONSTRAINTS_free, OSSL_BASIC_ATTR_CONSTRAINTS_it, OSSL_BASIC_ATTR_CONSTRAINTS_new, OSSL_CMP_ATAVS_new, OSSL_CMP_ATAVS_free, OSSL_CMP_ATAVS_it, OSSL_CMP_CRLSTATUS_free, OSSL_CMP_ITAV_dup, OSSL_CMP_ITAV_free, OSSL_CMP_MSG_dup, OSSL_CMP_MSG_it, OSSL_CMP_MSG_free, OSSL_CMP_PKIHEADER_free, OSSL_CMP_PKIHEADER_it, OSSL_CMP_PKIHEADER_new, OSSL_CMP_PKISI_dup, OSSL_CMP_PKISI_free, OSSL_CMP_PKISI_it, OSSL_CMP_PKISI_new, OSSL_CMP_PKISTATUS_it, OSSL_CRMF_CERTID_dup, OSSL_CRMF_CERTID_free, OSSL_CRMF_CERTID_it, OSSL_CRMF_CERTID_new, OSSL_CRMF_CERTTEMPLATE_free, OSSL_CRMF_CERTTEMPLATE_it, OSSL_CRMF_CERTTEMPLATE_new, OSSL_CRMF_CERTTEMPLATE_dup, OSSL_CRMF_ATTRIBUTETYPEANDVALUE_dup, OSSL_CRMF_ATTRIBUTETYPEANDVALUE_free, OSSL_CRMF_ENCRYPTEDKEY_free, OSSL_CRMF_ENCRYPTEDKEY_it, OSSL_CRMF_ENCRYPTEDKEY_new, OSSL_CRMF_ENCRYPTEDVALUE_free, OSSL_CRMF_ENCRYPTEDVALUE_it, OSSL_CRMF_ENCRYPTEDVALUE_new, OSSL_CRMF_MSGS_free, OSSL_CRMF_MSGS_it, OSSL_CRMF_MSGS_new, OSSL_CRMF_MSG_dup, OSSL_CRMF_MSG_free, OSSL_CRMF_MSG_it, OSSL_CRMF_MSG_new, OSSL_CRMF_PBMPARAMETER_free, OSSL_CRMF_PBMPARAMETER_it, OSSL_CRMF_PBMPARAMETER_new, OSSL_CRMF_PKIPUBLICATIONINFO_free, OSSL_CRMF_PKIPUBLICATIONINFO_it, OSSL_CRMF_PKIPUBLICATIONINFO_new, OSSL_CRMF_SINGLEPUBINFO_free, OSSL_CRMF_SINGLEPUBINFO_it, OSSL_CRMF_SINGLEPUBINFO_new, OSSL_DAY_TIME_free, OSSL_DAY_TIME_new, OSSL_DAY_TIME_it, OSSL_DAY_TIME_BAND_free, OSSL_DAY_TIME_BAND_new, OSSL_DAY_TIME_BAND_it, OSSL_HASH_free, OSSL_HASH_it, OSSL_HASH_new, OSSL_INFO_SYNTAX_free, OSSL_INFO_SYNTAX_it, OSSL_INFO_SYNTAX_new, OSSL_INFO_SYNTAX_POINTER_free, OSSL_INFO_SYNTAX_POINTER_it, OSSL_INFO_SYNTAX_POINTER_new, OSSL_PRIVILEGE_POLICY_ID_free, OSSL_PRIVILEGE_POLICY_ID_it, OSSL_PRIVILEGE_POLICY_ID_new, OSSL_TARGET_CERT_free, OSSL_TARGET_CERT_it, OSSL_TARGET_CERT_new, OSSL_TARGET_free, OSSL_TARGET_it, OSSL_TARGET_new, OSSL_TARGETING_INFORMATION_free, OSSL_TARGETING_INFORMATION_it, OSSL_TARGETING_INFORMATION_new, OSSL_TARGETS_free, OSSL_TARGETS_it, OSSL_TARGETS_new, OSSL_IETF_ATTR_SYNTAX_VALUE_free, OSSL_IETF_ATTR_SYNTAX_VALUE_it, OSSL_IETF_ATTR_SYNTAX_VALUE_new, OSSL_ISSUER_SERIAL_free, OSSL_ISSUER_SERIAL_new, OSSL_NAMED_DAY_free, OSSL_NAMED_DAY_new, OSSL_NAMED_DAY_it, OSSL_OBJECT_DIGEST_INFO_free, OSSL_OBJECT_DIGEST_INFO_new, OSSL_ROLE_SPEC_CERT_ID_free, OSSL_ROLE_SPEC_CERT_ID_new, OSSL_ROLE_SPEC_CERT_ID_it, OSSL_ROLE_SPEC_CERT_ID_SYNTAX_free, OSSL_ROLE_SPEC_CERT_ID_SYNTAX_new, OSSL_ROLE_SPEC_CERT_ID_SYNTAX_it, OSSL_TIME_PERIOD_free, OSSL_TIME_PERIOD_new, OSSL_TIME_PERIOD_it, OSSL_TIME_SPEC_ABSOLUTE_free, OSSL_TIME_SPEC_ABSOLUTE_new, OSSL_TIME_SPEC_ABSOLUTE_it, OSSL_TIME_SPEC_free, OSSL_TIME_SPEC_new, OSSL_TIME_SPEC_it, OSSL_TIME_SPEC_DAY_free, OSSL_TIME_SPEC_DAY_new, OSSL_TIME_SPEC_DAY_it, OSSL_TIME_SPEC_MONTH_free, OSSL_TIME_SPEC_MONTH_new, OSSL_TIME_SPEC_MONTH_it, OSSL_TIME_SPEC_TIME_free, OSSL_TIME_SPEC_TIME_new, OSSL_TIME_SPEC_TIME_it, OSSL_TIME_SPEC_WEEKS_free, OSSL_TIME_SPEC_WEEKS_new, OSSL_TIME_SPEC_WEEKS_it, OSSL_TIME_SPEC_X_DAY_OF_free, OSSL_TIME_SPEC_X_DAY_OF_new, OSSL_TIME_SPEC_X_DAY_OF_it, OSSL_USER_NOTICE_SYNTAX_free, OSSL_USER_NOTICE_SYNTAX_new, OSSL_USER_NOTICE_SYNTAX_it, OTHERNAME_free, OTHERNAME_new, PBE2PARAM_free, PBE2PARAM_new, PBEPARAM_free, PBEPARAM_new, PBKDF2PARAM_free, PBKDF2PARAM_new, PBMAC1PARAM_free, PBMAC1PARAM_it, PBMAC1PARAM_new, PKCS12_BAGS_free, PKCS12_BAGS_new, PKCS12_MAC_DATA_free, PKCS12_MAC_DATA_new, PKCS12_SAFEBAG_free, PKCS12_SAFEBAG_new, PKCS12_free, PKCS12_new, PKCS7_DIGEST_free, PKCS7_DIGEST_new, PKCS7_ENCRYPT_free, PKCS7_ENCRYPT_new, PKCS7_ENC_CONTENT_free, PKCS7_ENC_CONTENT_new, PKCS7_ENVELOPE_free, PKCS7_ENVELOPE_new, PKCS7_ISSUER_AND_SERIAL_free, PKCS7_ISSUER_AND_SERIAL_new, PKCS7_RECIP_INFO_free, PKCS7_RECIP_INFO_new, PKCS7_SIGNED_free, PKCS7_SIGNED_new, PKCS7_SIGNER_INFO_free, PKCS7_SIGNER_INFO_new, PKCS7_SIGN_ENVELOPE_free, PKCS7_SIGN_ENVELOPE_new, PKCS7_dup, PKCS7_free, PKCS7_new_ex, PKCS7_new, PKCS7_print_ctx, PKCS8_PRIV_KEY_INFO_free, PKCS8_PRIV_KEY_INFO_new, PKEY_USAGE_PERIOD_free, PKEY_USAGE_PERIOD_new, POLICYINFO_free, POLICYINFO_new, POLICYQUALINFO_free, POLICYQUALINFO_new, POLICY_CONSTRAINTS_free, POLICY_CONSTRAINTS_new, POLICY_MAPPING_free, POLICY_MAPPING_new, PROFESSION_INFOS_free, PROFESSION_INFOS_new, PROFESSION_INFO_free, PROFESSION_INFO_new, PROXY_CERT_INFO_EXTENSION_free, PROXY_CERT_INFO_EXTENSION_new, PROXY_POLICY_free, PROXY_POLICY_new, RSAPrivateKey_dup, RSAPublicKey_dup, RSA_OAEP_PARAMS_free, RSA_OAEP_PARAMS_new, RSA_PSS_PARAMS_free, RSA_PSS_PARAMS_new, RSA_PSS_PARAMS_dup, SCRYPT_PARAMS_free, SCRYPT_PARAMS_new, SXNETID_free, SXNETID_new, SXNET_free, SXNET_new, TLS_FEATURE_free, TLS_FEATURE_new, TS_ACCURACY_dup, TS_ACCURACY_free, TS_ACCURACY_new, TS_MSG_IMPRINT_dup, TS_MSG_IMPRINT_free, TS_MSG_IMPRINT_new, TS_REQ_dup, TS_REQ_free, TS_REQ_new, TS_RESP_dup, TS_RESP_free, TS_RESP_new, TS_STATUS_INFO_dup, TS_STATUS_INFO_free, TS_STATUS_INFO_new, TS_TST_INFO_dup, TS_TST_INFO_free, TS_TST_INFO_new, USERNOTICE_free, USERNOTICE_new, X509_ACERT_dup, X509_ACERT_free, X509_ACERT_it, X509_ACERT_new, X509_ACERT_INFO_free, X509_ACERT_INFO_it, X509_ACERT_INFO_new, X509_ACERT_ISSUER_V2FORM_free, X509_ACERT_ISSUER_V2FORM_new, X509_ALGOR_free, X509_ALGOR_it, X509_ALGOR_new, X509_ATTRIBUTE_dup, X509_ATTRIBUTE_free, X509_ATTRIBUTE_new, X509_CERT_AUX_free, X509_CERT_AUX_new, X509_CINF_free, X509_CINF_new, X509_CRL_INFO_free, X509_CRL_INFO_new, X509_CRL_dup, X509_CRL_free, X509_CRL_new_ex, X509_CRL_new, X509_EXTENSION_dup, X509_EXTENSION_free, X509_EXTENSION_new, X509_NAME_ENTRY_dup, X509_NAME_ENTRY_free, X509_NAME_ENTRY_new, X509_NAME_dup, X509_NAME_free, X509_NAME_new, X509_REQ_INFO_free, X509_REQ_INFO_new, X509_REQ_dup, X509_REQ_free, X509_REQ_new, X509_REQ_new_ex, X509_REVOKED_dup, X509_REVOKED_free, X509_REVOKED_new, X509_SIG_free, X509_SIG_new, X509_VAL_free, X509_VAL_new, X509_dup, - ASN1 object utilities",
+   "history": "The functions X509_REQ_new_ex(), X509_CRL_new_ex(), PKCS7_new_ex() and CMS_ContentInfo_new_ex() were added in OpenSSL 3.0. The functions DSAparams_dup(), RSAPrivateKey_dup() and RSAPublicKey_dup() were deprecated in 3.0. CMS_EnvelopedData_it(), CMS_SignedData_free(), CMS_SignedData_new() were added in OpenSSL 3.2. DIST_POINT_NAME_dup(), OSSL_IETF_ATTR_SYNTAX_free(), OSSL_IETF_ATTR_SYNTAX_it(), OSSL_IETF_ATTR_SYNTAX_new(), OSSL_ATTRIBUTES_SYNTAX_free(), OSSL_ATTRIBUTES_SYNTAX_it(), OSSL_ATTRIBUTES_SYNTAX_new(), OSSL_BASIC_ATTR_CONSTRAINTS_free(), OSSL_BASIC_ATTR_CONSTRAINTS_it(), OSSL_BASIC_ATTR_CONSTRAINTS_new(), OSSL_CMP_ATAVS_new(), OSSL_CMP_ATAVS_free(), OSSL_CMP_ATAVS_it(), OSSL_CMP_CRLSTATUS_free(), OSSL_CRMF_CERTTEMPLATE_dup(), OSSL_CRMF_ATTRIBUTETYPEANDVALUE_dup(), OSSL_CRMF_ATTRIBUTETYPEANDVALUE_free(), OSSL_TARGET_free(), OSSL_TARGET_it(), OSSL_TARGET_new(), OSSL_TARGETING_INFORMATION_free(), OSSL_TARGETING_INFORMATION_it(), OSSL_TARGETING_INFORMATION_new(), OSSL_TARGETS_free(), OSSL_TARGETS_it(), OSSL_TARGETS_new(), OSSL_IETF_ATTR_SYNTAX_VALUE_free(), OSSL_IETF_ATTR_SYNTAX_VALUE_it(), OSSL_IETF_ATTR_SYNTAX_VALUE_new(), OSSL_ISSUER_SERIAL_free(), OSSL_ISSUER_SERIAL_new(), OSSL_OBJECT_DIGEST_INFO_free(), OSSL_OBJECT_DIGEST_INFO_new(), OSSL_USER_NOTICE_SYNTAX_free(), OSSL_USER_NOTICE_SYNTAX_new(), OSSL_USER_NOTICE_SYNTAX_it(), PBMAC1PARAM_free(), PBMAC1PARAM_it(), PBMAC1PARAM_new(), X509_ACERT_dup(), X509_ACERT_free(), X509_ACERT_it(), X509_ACERT_new(), X509_ACERT_INFO_free(), X509_ACERT_INFO_it(), X509_ACERT_INFO_new(), X509_ACERT_ISSUER_V2FORM_free(), X509_ACERT_ISSUER_V2FORM_new() were added in OpenSSL 3.4. OSSL_AA_DIST_POINT_free(), OSSL_AA_DIST_POINT_new(), OSSL_AA_DIST_POINT_it(), OSSL_ALLOWED_ATTRIBUTES_CHOICE_free(), OSSL_ALLOWED_ATTRIBUTES_CHOICE_new(), OSSL_ALLOWED_ATTRIBUTES_CHOICE_it(), OSSL_ALLOWED_ATTRIBUTES_ITEM_free(), OSSL_ALLOWED_ATTRIBUTES_ITEM_new(), OSSL_ALLOWED_ATTRIBUTES_ITEM_it(), OSSL_ALLOWED_ATTRIBUTES_SYNTAX_free(), OSSL_ALLOWED_ATTRIBUTES_SYNTAX_new(), OSSL_ALLOWED_ATTRIBUTES_SYNTAX_it(), OSSL_ATAV_free(), OSSL_ATAV_it(), OSSL_ATAV_new(), OSSL_ATTRIBUTE_DESCRIPTOR_free(), OSSL_ATTRIBUTE_DESCRIPTOR_new(), OSSL_ATTRIBUTE_DESCRIPTOR_it(), OSSL_ATTRIBUTE_MAPPINGS_free(), OSSL_ATTRIBUTE_MAPPINGS_it(), OSSL_ATTRIBUTE_MAPPINGS_new(), OSSL_ATTRIBUTE_MAPPING_free(), OSSL_ATTRIBUTE_MAPPING_it(), OSSL_ATTRIBUTE_MAPPING_new(), OSSL_ATTRIBUTE_TYPE_MAPPING_free(), OSSL_ATTRIBUTE_TYPE_MAPPING_it(), OSSL_ATTRIBUTE_TYPE_MAPPING_new(), OSSL_ATTRIBUTE_VALUE_MAPPING_free(), OSSL_ATTRIBUTE_VALUE_MAPPING_it(), OSSL_ATTRIBUTE_VALUE_MAPPING_new(), OSSL_AUTHORITY_ATTRIBUTE_ID_SYNTAX_free(), OSSL_AUTHORITY_ATTRIBUTE_ID_SYNTAX_it(), OSSL_AUTHORITY_ATTRIBUTE_ID_SYNTAX_new(), OSSL_HASH_free(), OSSL_HASH_it(), OSSL_HASH_new(), OSSL_INFO_SYNTAX_free(), OSSL_INFO_SYNTAX_it(), OSSL_INFO_SYNTAX_new(), OSSL_INFO_SYNTAX_POINTER_free(), OSSL_INFO_SYNTAX_POINTER_it(), OSSL_INFO_SYNTAX_POINTER_new(), OSSL_PRIVILEGE_POLICY_ID_free(), OSSL_PRIVILEGE_POLICY_ID_it(), OSSL_PRIVILEGE_POLICY_ID_new(), OSSL_ROLE_SPEC_CERT_ID_free(), OSSL_ROLE_SPEC_CERT_ID_new(), OSSL_ROLE_SPEC_CERT_ID_it(), OSSL_ROLE_SPEC_CERT_ID_SYNTAX_free(), OSSL_ROLE_SPEC_CERT_ID_SYNTAX_new(), OSSL_ROLE_SPEC_CERT_ID_SYNTAX_it(), OSSL_DAY_TIME_BAND_free(), OSSL_DAY_TIME_BAND_it(), OSSL_DAY_TIME_BAND_new(), OSSL_DAY_TIME_free(), OSSL_DAY_TIME_it(), OSSL_DAY_TIME_new(), OSSL_NAMED_DAY_free(), OSSL_NAMED_DAY_it(), OSSL_NAMED_DAY_new(), OSSL_TIME_PERIOD_free(), OSSL_TIME_PERIOD_it(), OSSL_TIME_PERIOD_new(), OSSL_TIME_SPEC_ABSOLUTE_free(), OSSL_TIME_SPEC_ABSOLUTE_it(), OSSL_TIME_SPEC_ABSOLUTE_new(), OSSL_TIME_SPEC_DAY_free(), OSSL_TIME_SPEC_DAY_it(), OSSL_TIME_SPEC_DAY_new(), OSSL_TIME_SPEC_MONTH_free(), OSSL_TIME_SPEC_MONTH_it(), OSSL_TIME_SPEC_MONTH_new(), OSSL_TIME_SPEC_TIME_free(), OSSL_TIME_SPEC_TIME_it(), OSSL_TIME_SPEC_TIME_new(), OSSL_TIME_SPEC_WEEKS_free(), OSSL_TIME_SPEC_WEEKS_it(), OSSL_TIME_SPEC_WEEKS_new(), OSSL_TIME_SPEC_X_DAY_OF_free(), OSSL_TIME_SPEC_X_DAY_OF_it(), OSSL_TIME_SPEC_X_DAY_OF_new(), OSSL_TIME_SPEC_free(), OSSL_TIME_SPEC_it(), OSSL_TIME_SPEC_new(), CMS_EnvelopedData_dup(), OSSL_CRMF_ENCRYPTEDKEY_free(), OSSL_CRMF_ENCRYPTEDKEY_it() and OSSL_CRMF_ENCRYPTEDKEY_new() were added in OpenSSL 3.5.",
+   "null_sentences": [
+    "If the argument is NULL, nothing is done.",
+    "The pctx specifies the printing context and is for internal use; use NULL to get the default behavior.",
+    "TYPE _new (), TYPE _new_ex () and TYPE _dup () return a pointer to the object or NULL on failure."
+   ],
+   "reference_sentences": [
+    "To avoid such situations, better use TYPE _up_ref () if available.",
+    "For the case of X509 objects, an alternative to using X509_up_ref(3) may be to still call TYPE _dup (), e.g., copied_cert = X509_dup(cert) , followed by X509_check_purpose(copied_cert, -1, 0) , which re-builds the cached data."
+   ],
+   "page": "X509_dup",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/1.1.1/man3/X509_dup/",
+   "series": "1.1.1",
+   "fetched": true,
+   "sha256": "2c08aa3dc6b6770c6d39b51c83071adb62776e6073a3fd557561e4137a605ef6",
+   "bytes": 672517,
+   "name": "DECLARE_ASN1_FUNCTIONS, IMPLEMENT_ASN1_FUNCTIONS, ASN1_ITEM, ACCESS_DESCRIPTION_free, ACCESS_DESCRIPTION_new, ADMISSIONS_free, ADMISSIONS_new, ADMISSION_SYNTAX_free, ADMISSION_SYNTAX_new, ASIdOrRange_free, ASIdOrRange_new, ASIdentifierChoice_free, ASIdentifierChoice_new, ASIdentifiers_free, ASIdentifiers_new, ASRange_free, ASRange_new, AUTHORITY_INFO_ACCESS_free, AUTHORITY_INFO_ACCESS_new, AUTHORITY_KEYID_free, AUTHORITY_KEYID_new, BASIC_CONSTRAINTS_free, BASIC_CONSTRAINTS_new, CERTIFICATEPOLICIES_free, CERTIFICATEPOLICIES_new, CMS_ContentInfo_free, CMS_ContentInfo_new, CMS_ContentInfo_print_ctx, CMS_ReceiptRequest_free, CMS_ReceiptRequest_new, CRL_DIST_POINTS_free, CRL_DIST_POINTS_new, DIRECTORYSTRING_free, DIRECTORYSTRING_new, DISPLAYTEXT_free, DISPLAYTEXT_new, DIST_POINT_NAME_free, DIST_POINT_NAME_new, DIST_POINT_free, DIST_POINT_new, DSAparams_dup, ECPARAMETERS_free, ECPARAMETERS_new, ECPKPARAMETERS_free, ECPKPARAMETERS_new, EDIPARTYNAME_free, EDIPARTYNAME_new, ESS_CERT_ID_dup, ESS_CERT_ID_free, ESS_CERT_ID_new, ESS_ISSUER_SERIAL_dup, ESS_ISSUER_SERIAL_free, ESS_ISSUER_SERIAL_new, ESS_SIGNING_CERT_dup, ESS_SIGNING_CERT_free, ESS_SIGNING_CERT_new, EXTENDED_KEY_USAGE_free, EXTENDED_KEY_USAGE_new, GENERAL_NAMES_free, GENERAL_NAMES_new, GENERAL_NAME_dup, GENERAL_NAME_free, GENERAL_NAME_new, GENERAL_SUBTREE_free, GENERAL_SUBTREE_new, IPAddressChoice_free, IPAddressChoice_new, IPAddressFamily_free, IPAddressFamily_new, IPAddressOrRange_free, IPAddressOrRange_new, IPAddressRange_free, IPAddressRange_new, ISSUING_DIST_POINT_free, ISSUING_DIST_POINT_new, NAME_CONSTRAINTS_free, NAME_CONSTRAINTS_new, NAMING_AUTHORITY_free, NAMING_AUTHORITY_new, NETSCAPE_CERT_SEQUENCE_free, NETSCAPE_CERT_SEQUENCE_new, NETSCAPE_SPKAC_free, NETSCAPE_SPKAC_new, NETSCAPE_SPKI_free, NETSCAPE_SPKI_new, NOTICEREF_free, NOTICEREF_new, OCSP_BASICRESP_free, OCSP_BASICRESP_new, OCSP_CERTID_dup, OCSP_CERTID_new, OCSP_CERTSTATUS_free, OCSP_CERTSTATUS_new, OCSP_CRLID_free, OCSP_CRLID_new, OCSP_ONEREQ_free, OCSP_ONEREQ_new, OCSP_REQINFO_free, OCSP_REQINFO_new, OCSP_RESPBYTES_free, OCSP_RESPBYTES_new, OCSP_RESPDATA_free, OCSP_RESPDATA_new, OCSP_RESPID_free, OCSP_RESPID_new, OCSP_RESPONSE_new, OCSP_REVOKEDINFO_free, OCSP_REVOKEDINFO_new, OCSP_SERVICELOC_free, OCSP_SERVICELOC_new, OCSP_SIGNATURE_free, OCSP_SIGNATURE_new, OCSP_SINGLERESP_free, OCSP_SINGLERESP_new, OTHERNAME_free, OTHERNAME_new, PBE2PARAM_free, PBE2PARAM_new, PBEPARAM_free, PBEPARAM_new, PBKDF2PARAM_free, PBKDF2PARAM_new, PKCS12_BAGS_free, PKCS12_BAGS_new, PKCS12_MAC_DATA_free, PKCS12_MAC_DATA_new, PKCS12_SAFEBAG_free, PKCS12_SAFEBAG_new, PKCS12_free, PKCS12_new, PKCS7_DIGEST_free, PKCS7_DIGEST_new, PKCS7_ENCRYPT_free, PKCS7_ENCRYPT_new, PKCS7_ENC_CONTENT_free, PKCS7_ENC_CONTENT_new, PKCS7_ENVELOPE_free, PKCS7_ENVELOPE_new, PKCS7_ISSUER_AND_SERIAL_free, PKCS7_ISSUER_AND_SERIAL_new, PKCS7_RECIP_INFO_free, PKCS7_RECIP_INFO_new, PKCS7_SIGNED_free, PKCS7_SIGNED_new, PKCS7_SIGNER_INFO_free, PKCS7_SIGNER_INFO_new, PKCS7_SIGN_ENVELOPE_free, PKCS7_SIGN_ENVELOPE_new, PKCS7_dup, PKCS7_free, PKCS7_new, PKCS7_print_ctx, PKCS8_PRIV_KEY_INFO_free, PKCS8_PRIV_KEY_INFO_new, PKEY_USAGE_PERIOD_free, PKEY_USAGE_PERIOD_new, POLICYINFO_free, POLICYINFO_new, POLICYQUALINFO_free, POLICYQUALINFO_new, POLICY_CONSTRAINTS_free, POLICY_CONSTRAINTS_new, POLICY_MAPPING_free, POLICY_MAPPING_new, PROFESSION_INFO_free, PROFESSION_INFO_new, PROFESSION_INFOS_free, PROFESSION_INFOS_new, PROXY_CERT_INFO_EXTENSION_free, PROXY_CERT_INFO_EXTENSION_new, PROXY_POLICY_free, PROXY_POLICY_new, RSAPrivateKey_dup, RSAPublicKey_dup, RSA_OAEP_PARAMS_free, RSA_OAEP_PARAMS_new, RSA_PSS_PARAMS_free, RSA_PSS_PARAMS_new, SCRYPT_PARAMS_free, SCRYPT_PARAMS_new, SXNETID_free, SXNETID_new, SXNET_free, SXNET_new, TLS_FEATURE_free, TLS_FEATURE_new, TS_ACCURACY_dup, TS_ACCURACY_free, TS_ACCURACY_new, TS_MSG_IMPRINT_dup, TS_MSG_IMPRINT_free, TS_MSG_IMPRINT_new, TS_REQ_dup, TS_REQ_free, TS_REQ_new, TS_RESP_dup, TS_RESP_free, TS_RESP_new, TS_STATUS_INFO_dup, TS_STATUS_INFO_free, TS_STATUS_INFO_new, TS_TST_INFO_dup, TS_TST_INFO_free, TS_TST_INFO_new, USERNOTICE_free, USERNOTICE_new, X509_ALGOR_free, X509_ALGOR_new, X509_ATTRIBUTE_dup, X509_ATTRIBUTE_free, X509_ATTRIBUTE_new, X509_CERT_AUX_free, X509_CERT_AUX_new, X509_CINF_free, X509_CINF_new, X509_CRL_INFO_free, X509_CRL_INFO_new, X509_CRL_dup, X509_CRL_free, X509_CRL_new, X509_EXTENSION_dup, X509_EXTENSION_free, X509_EXTENSION_new, X509_NAME_ENTRY_dup, X509_NAME_ENTRY_free, X509_NAME_ENTRY_new, X509_NAME_dup, X509_NAME_free, X509_NAME_new, X509_REQ_INFO_free, X509_REQ_INFO_new, X509_REQ_dup, X509_REQ_free, X509_REQ_new, X509_REVOKED_dup, X509_REVOKED_free, X509_REVOKED_new, X509_SIG_free, X509_SIG_new, X509_VAL_free, X509_VAL_new, X509_dup, - ASN1 object utilities",
+   "history": null,
+   "null_sentences": [
+    "The pctx specifies the printing context and is for internal use; use NULL to get the default behavior.",
+    "TYPE_new() and TYPE_dup() return a pointer to the object or NULL on failure."
+   ],
+   "reference_sentences": [],
+   "page": "X509_dup",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/X509_get_subject_name/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "4368ecfb9f48161781c0e8efd56299e09ed9624b633369ac7e01460b9928930f",
+   "bytes": 1083819,
+   "name": "X509_NAME_hash_ex, X509_NAME_hash, X509_get_subject_name, X509_set_subject_name, X509_subject_name_hash, X509_get_issuer_name, X509_set_issuer_name, X509_issuer_name_hash, X509_REQ_get_subject_name, X509_REQ_set_subject_name, X509_ACERT_get0_issuerName, X509_ACERT_set1_issuerName, X509_CRL_get_issuer, X509_CRL_set_issuer_name - get X509_NAME hashes or get and set issuer or subject names",
+   "history": "X509_REQ_get_subject_name() is a function in OpenSSL 1.1.0 and a macro in earlier versions. X509_CRL_get_issuer() is a function in OpenSSL 1.1.0. It was previously added in OpenSSL 1.0.0 as a macro. X509_NAME_hash() was turned into a macro and deprecated in OpenSSL 3.0. X509_ACERT_get0_issuerName(), X509_ACERT_set1_issuerName() were added in OpenSSL 3.4.",
+   "null_sentences": [
+    "The ok result argument may be NULL or else is used to return 1 for success and 0 for failure.",
+    "x MUST NOT be NULL."
+   ],
+   "reference_sentences": [],
+   "page": "X509_get_subject_name",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/1.1.1/man3/X509_get_subject_name/",
+   "series": "1.1.1",
+   "fetched": true,
+   "sha256": "e5f1ffab9e8c8628395aa1b4f376148b2409cdd35a42a17205a582f879a2647b",
+   "bytes": 672454,
+   "name": "X509_get_subject_name, X509_set_subject_name, X509_get_issuer_name, X509_set_issuer_name, X509_REQ_get_subject_name, X509_REQ_set_subject_name, X509_CRL_get_issuer, X509_CRL_set_issuer_name - get and set issuer or subject names",
+   "history": "X509_REQ_get_subject_name() is a function in OpenSSL 1.1.0 and a macro in earlier versions. X509_CRL_get_issuer() is a function in OpenSSL 1.1.0. It was previously added in OpenSSL 1.0.0 as a macro.",
+   "null_sentences": [],
+   "reference_sentences": [],
+   "page": "X509_get_subject_name",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/1.0.2/man3/X509_get_subject_name/",
+   "series": "1.0.2",
+   "fetched": false,
+   "error": "curl: (22) The requested URL returned error: 404",
+   "page": "X509_get_subject_name",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/d2i_X509/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "5fc845f2c74d3ff1d1a346cace57374ac75dd3d573705c6bd3d6fd39ebe30076",
+   "bytes": 1101752,
+   "name": "d2i_ACCESS_DESCRIPTION, d2i_ADMISSIONS, d2i_ADMISSION_SYNTAX, d2i_ASIdOrRange, d2i_ASIdentifierChoice, d2i_ASIdentifiers, d2i_ASN1_BIT_STRING, d2i_ASN1_BMPSTRING, d2i_ASN1_ENUMERATED, d2i_ASN1_GENERALIZEDTIME, d2i_ASN1_GENERALSTRING, d2i_ASN1_IA5STRING, d2i_ASN1_INTEGER, d2i_ASN1_NULL, d2i_ASN1_OBJECT, d2i_ASN1_OCTET_STRING, d2i_ASN1_PRINTABLE, d2i_ASN1_PRINTABLESTRING, d2i_ASN1_SEQUENCE_ANY, d2i_ASN1_SET_ANY, d2i_ASN1_T61STRING, d2i_ASN1_TIME, d2i_ASN1_TYPE, d2i_ASN1_UINTEGER, d2i_ASN1_UNIVERSALSTRING, d2i_ASN1_UTCTIME, d2i_ASN1_UTF8STRING, d2i_ASN1_VISIBLESTRING, d2i_ASRange, d2i_AUTHORITY_INFO_ACCESS, d2i_AUTHORITY_KEYID, d2i_BASIC_CONSTRAINTS, d2i_CERTIFICATEPOLICIES, d2i_CMS_ContentInfo, d2i_CMS_ReceiptRequest, d2i_CMS_bio, d2i_CRL_DIST_POINTS, d2i_DHxparams, d2i_DIRECTORYSTRING, d2i_DISPLAYTEXT, d2i_DIST_POINT, d2i_DIST_POINT_NAME, d2i_DSA_SIG, d2i_ECDSA_SIG, d2i_ECPKParameters, d2i_EDIPARTYNAME, d2i_ESS_CERT_ID, d2i_ESS_CERT_ID_V2, d2i_ESS_ISSUER_SERIAL, d2i_ESS_SIGNING_CERT, d2i_ESS_SIGNING_CERT_V2, d2i_EXTENDED_KEY_USAGE, d2i_GENERAL_NAME, d2i_GENERAL_NAMES, d2i_IPAddressChoice, d2i_IPAddressFamily, d2i_IPAddressOrRange, d2i_IPAddressRange, d2i_ISSUER_SIGN_TOOL, d2i_ISSUING_DIST_POINT, d2i_NAMING_AUTHORITY, d2i_NETSCAPE_CERT_SEQUENCE, d2i_NETSCAPE_SPKAC, d2i_NETSCAPE_SPKI, d2i_NOTICEREF, d2i_OCSP_BASICRESP, d2i_OCSP_CERTID, d2i_OCSP_CERTSTATUS, d2i_OCSP_CRLID, d2i_OCSP_ONEREQ, d2i_OCSP_REQINFO, d2i_OCSP_REQUEST, d2i_OCSP_RESPBYTES, d2i_OCSP_RESPDATA, d2i_OCSP_RESPID, d2i_OCSP_RESPONSE, d2i_OCSP_REVOKEDINFO, d2i_OCSP_SERVICELOC, d2i_OCSP_SIGNATURE, d2i_OCSP_SINGLERESP, d2i_OSSL_AA_DIST_POINT, d2i_OSSL_ALLOWED_ATTRIBUTES_CHOICE, d2i_OSSL_ALLOWED_ATTRIBUTES_ITEM, d2i_OSSL_ALLOWED_ATTRIBUTES_SYNTAX, d2i_OSSL_ATAV, d2i_OSSL_ATTRIBUTE_DESCRIPTOR, d2i_OSSL_ATTRIBUTE_MAPPING, d2i_OSSL_ATTRIBUTE_MAPPINGS, d2i_OSSL_ATTRIBUTE_TYPE_MAPPING, d2i_OSSL_ATTRIBUTE_VALUE_MAPPING, d2i_OSSL_ATTRIBUTES_SYNTAX, d2i_OSSL_AUTHORITY_ATTRIBUTE_ID_SYNTAX, d2i_OSSL_BASIC_ATTR_CONSTRAINTS, d2i_OSSL_CMP_ATAVS, d2i_OSSL_CMP_MSG, d2i_OSSL_CMP_PKIHEADER, d2i_OSSL_CMP_PKISI, d2i_OSSL_CRMF_CERTID, d2i_OSSL_CRMF_CERTTEMPLATE, d2i_OSSL_CRMF_ENCRYPTEDKEY, d2i_OSSL_CRMF_ENCRYPTEDVALUE, d2i_OSSL_CRMF_MSG, d2i_OSSL_CRMF_MSGS, d2i_OSSL_CRMF_PBMPARAMETER, d2i_OSSL_CRMF_PKIPUBLICATIONINFO, d2i_OSSL_CRMF_SINGLEPUBINFO, d2i_OSSL_DAY_TIME, d2i_OSSL_DAY_TIME_BAND, d2i_OSSL_HASH, d2i_OSSL_IETF_ATTR_SYNTAX, d2i_OSSL_INFO_SYNTAX, d2i_OSSL_INFO_SYNTAX_POINTER, d2i_OSSL_ISSUER_SERIAL, d2i_OSSL_NAMED_DAY, d2i_OSSL_OBJECT_DIGEST_INFO, d2i_OSSL_PRIVILEGE_POLICY_ID, d2i_OSSL_ROLE_SPEC_CERT_ID, d2i_OSSL_ROLE_SPEC_CERT_ID_SYNTAX, d2i_OSSL_TARGET_CERT, d2i_OSSL_TARGET, d2i_OSSL_TARGETING_INFORMATION, d2i_OSSL_TARGETS, d2i_OSSL_TIME_PERIOD, d2i_OSSL_TIME_SPEC, d2i_OSSL_TIME_SPEC_ABSOLUTE, d2i_OSSL_TIME_SPEC_DAY, d2i_OSSL_TIME_SPEC_MONTH, d2i_OSSL_TIME_SPEC_TIME, d2i_OSSL_TIME_SPEC_WEEKS, d2i_OSSL_TIME_SPEC_X_DAY_OF, d2i_OSSL_USER_NOTICE_SYNTAX, d2i_OTHERNAME, d2i_PBE2PARAM, d2i_PBEPARAM, d2i_PBKDF2PARAM, d2i_PBMAC1PARAM, d2i_PKCS12, d2i_PKCS12_BAGS, d2i_PKCS12_MAC_DATA, d2i_PKCS12_SAFEBAG, d2i_PKCS12_bio, d2i_PKCS12_fp, d2i_PKCS7, d2i_PKCS7_DIGEST, d2i_PKCS7_ENCRYPT, d2i_PKCS7_ENC_CONTENT, d2i_PKCS7_ENVELOPE, d2i_PKCS7_ISSUER_AND_SERIAL, d2i_PKCS7_RECIP_INFO, d2i_PKCS7_SIGNED, d2i_PKCS7_SIGNER_INFO, d2i_PKCS7_SIGN_ENVELOPE, d2i_PKCS7_bio, d2i_PKCS7_fp, d2i_PKCS8_PRIV_KEY_INFO, d2i_PKCS8_PRIV_KEY_INFO_bio, d2i_PKCS8_PRIV_KEY_INFO_fp, d2i_PKCS8_bio, d2i_PKCS8_fp, d2i_PKEY_USAGE_PERIOD, d2i_POLICYINFO, d2i_POLICYQUALINFO, d2i_PROFESSION_INFO, d2i_PROXY_CERT_INFO_EXTENSION, d2i_PROXY_POLICY, d2i_RSA_OAEP_PARAMS, d2i_RSA_PSS_PARAMS, d2i_SCRYPT_PARAMS, d2i_SCT_LIST, d2i_SXNET, d2i_SXNETID, d2i_TS_ACCURACY, d2i_TS_MSG_IMPRINT, d2i_TS_MSG_IMPRINT_bio, d2i_TS_MSG_IMPRINT_fp, d2i_TS_REQ, d2i_TS_REQ_bio, d2i_TS_REQ_fp, d2i_TS_RESP, d2i_TS_RESP_bio, d2i_TS_RESP_fp, d2i_TS_STATUS_INFO, d2i_TS_TST_INFO, d2i_TS_TST_INFO_bio, d2i_TS_TST_INFO_fp, d2i_USERNOTICE, d2i_X509, d2i_X509_bio, d2i_X509_fp, d2i_X509_ACERT, d2i_X509_ACERT_bio, d2i_X509_ACERT_fp, d2i_X509_ALGOR, d2i_X509_ALGORS, d2i_X509_ATTRIBUTE, d2i_X509_CERT_AUX, d2i_X509_CINF, d2i_X509_CRL, d2i_X509_CRL_INFO, d2i_X509_CRL_bio, d2i_X509_CRL_fp, d2i_X509_EXTENSION, d2i_X509_EXTENSIONS, d2i_X509_NAME, d2i_X509_NAME_ENTRY, d2i_X509_PUBKEY, d2i_X509_PUBKEY_bio, d2i_X509_PUBKEY_fp, d2i_X509_REQ, d2i_X509_REQ_INFO, d2i_X509_REQ_bio, d2i_X509_REQ_fp, d2i_X509_REVOKED, d2i_X509_SIG, d2i_X509_VAL, i2d_ACCESS_DESCRIPTION, i2d_ADMISSIONS, i2d_ADMISSION_SYNTAX, i2d_ASIdOrRange, i2d_ASIdentifierChoice, i2d_ASIdentifiers, i2d_ASN1_BIT_STRING, i2d_ASN1_BMPSTRING, i2d_ASN1_ENUMERATED, i2d_ASN1_GENERALIZEDTIME, i2d_ASN1_GENERALSTRING, i2d_ASN1_IA5STRING, i2d_ASN1_INTEGER, i2d_ASN1_NULL, i2d_ASN1_OBJECT, i2d_ASN1_OCTET_STRING, i2d_ASN1_PRINTABLE, i2d_ASN1_PRINTABLESTRING, i2d_ASN1_SEQUENCE_ANY, i2d_ASN1_SET_ANY, i2d_ASN1_T61STRING, i2d_ASN1_TIME, i2d_ASN1_TYPE, i2d_ASN1_UNIVERSALSTRING, i2d_ASN1_UTCTIME, i2d_ASN1_UTF8STRING, i2d_ASN1_VISIBLESTRING, i2d_ASN1_bio_stream, i2d_ASRange, i2d_AUTHORITY_INFO_ACCESS, i2d_AUTHORITY_KEYID, i2d_BASIC_CONSTRAINTS, i2d_CERTIFICATEPOLICIES, i2d_CMS_ContentInfo, i2d_CMS_ReceiptRequest, i2d_CMS_bio, i2d_CRL_DIST_POINTS, i2d_DHxparams, i2d_DIRECTORYSTRING, i2d_DISPLAYTEXT, i2d_DIST_POINT, i2d_DIST_POINT_NAME, i2d_DSA_SIG, i2d_ECDSA_SIG, i2d_ECPKParameters, i2d_EDIPARTYNAME, i2d_ESS_CERT_ID, i2d_ESS_CERT_ID_V2, i2d_ESS_ISSUER_SERIAL, i2d_ESS_SIGNING_CERT, i2d_ESS_SIGNING_CERT_V2, i2d_EXTENDED_KEY_USAGE, i2d_GENERAL_NAME, i2d_GENERAL_NAMES, i2d_IPAddressChoice, i2d_IPAddressFamily, i2d_IPAddressOrRange, i2d_IPAddressRange, i2d_ISSUER_SIGN_TOOL, i2d_ISSUING_DIST_POINT, i2d_NAMING_AUTHORITY, i2d_NETSCAPE_CERT_SEQUENCE, i2d_NETSCAPE_SPKAC, i2d_NETSCAPE_SPKI, i2d_NOTICEREF, i2d_OCSP_BASICRESP, i2d_OCSP_CERTID, i2d_OCSP_CERTSTATUS, i2d_OCSP_CRLID, i2d_OCSP_ONEREQ, i2d_OCSP_REQINFO, i2d_OCSP_REQUEST, i2d_OCSP_RESPBYTES, i2d_OCSP_RESPDATA, i2d_OCSP_RESPID, i2d_OCSP_RESPONSE, i2d_OCSP_REVOKEDINFO, i2d_OCSP_SERVICELOC, i2d_OCSP_SIGNATURE, i2d_OCSP_SINGLERESP, i2d_OSSL_AA_DIST_POINT, i2d_OSSL_ALLOWED_ATTRIBUTES_CHOICE, i2d_OSSL_ALLOWED_ATTRIBUTES_ITEM, i2d_OSSL_ALLOWED_ATTRIBUTES_SYNTAX, i2d_OSSL_ATAV, i2d_OSSL_ATTRIBUTE_DESCRIPTOR, i2d_OSSL_ATTRIBUTE_MAPPING, i2d_OSSL_ATTRIBUTE_MAPPINGS, i2d_OSSL_ATTRIBUTE_TYPE_MAPPING, i2d_OSSL_ATTRIBUTE_VALUE_MAPPING, i2d_OSSL_ATTRIBUTES_SYNTAX, i2d_OSSL_AUTHORITY_ATTRIBUTE_ID_SYNTAX, i2d_OSSL_BASIC_ATTR_CONSTRAINTS, i2d_OSSL_CMP_ATAVS, i2d_OSSL_CMP_MSG, i2d_OSSL_CMP_PKIHEADER, i2d_OSSL_CMP_PKISI, i2d_OSSL_CRMF_CERTID, i2d_OSSL_CRMF_CERTTEMPLATE, i2d_OSSL_CRMF_ENCRYPTEDKEY, i2d_OSSL_CRMF_ENCRYPTEDVALUE, i2d_OSSL_CRMF_MSG, i2d_OSSL_CRMF_MSGS, i2d_OSSL_CRMF_PBMPARAMETER, i2d_OSSL_CRMF_PKIPUBLICATIONINFO, i2d_OSSL_CRMF_SINGLEPUBINFO, i2d_OSSL_HASH, i2d_OSSL_DAY_TIME, i2d_OSSL_DAY_TIME_BAND, i2d_OSSL_IETF_ATTR_SYNTAX, i2d_OSSL_INFO_SYNTAX, i2d_OSSL_INFO_SYNTAX_POINTER, i2d_OSSL_ISSUER_SERIAL, i2d_OSSL_NAMED_DAY, i2d_OSSL_OBJECT_DIGEST_INFO, i2d_OSSL_PRIVILEGE_POLICY_ID, i2d_OSSL_ROLE_SPEC_CERT_ID, i2d_OSSL_ROLE_SPEC_CERT_ID_SYNTAX, i2d_OSSL_TARGET_CERT, i2d_OSSL_TARGET, i2d_OSSL_TARGETING_INFORMATION, i2d_OSSL_TARGETS, i2d_OSSL_TIME_PERIOD, i2d_OSSL_TIME_SPEC, i2d_OSSL_TIME_SPEC_ABSOLUTE, i2d_OSSL_TIME_SPEC_DAY, i2d_OSSL_TIME_SPEC_MONTH, i2d_OSSL_TIME_SPEC_TIME, i2d_OSSL_TIME_SPEC_WEEKS, i2d_OSSL_TIME_SPEC_X_DAY_OF, i2d_OSSL_USER_NOTICE_SYNTAX, i2d_OTHERNAME, i2d_PBE2PARAM, i2d_PBEPARAM, i2d_PBKDF2PARAM, i2d_PBMAC1PARAM, i2d_PKCS12, i2d_PKCS12_BAGS, i2d_PKCS12_MAC_DATA, i2d_PKCS12_SAFEBAG, i2d_PKCS12_bio, i2d_PKCS12_fp, i2d_PKCS7, i2d_PKCS7_DIGEST, i2d_PKCS7_ENCRYPT, i2d_PKCS7_ENC_CONTENT, i2d_PKCS7_ENVELOPE, i2d_PKCS7_ISSUER_AND_SERIAL, i2d_PKCS7_NDEF, i2d_PKCS7_RECIP_INFO, i2d_PKCS7_SIGNED, i2d_PKCS7_SIGNER_INFO, i2d_PKCS7_SIGN_ENVELOPE, i2d_PKCS7_bio, i2d_PKCS7_fp, i2d_PKCS8PrivateKeyInfo_bio, i2d_PKCS8PrivateKeyInfo_fp, i2d_PKCS8_PRIV_KEY_INFO, i2d_PKCS8_PRIV_KEY_INFO_bio, i2d_PKCS8_PRIV_KEY_INFO_fp, i2d_PKCS8_bio, i2d_PKCS8_fp, i2d_PKEY_USAGE_PERIOD, i2d_POLICYINFO, i2d_POLICYQUALINFO, i2d_PROFESSION_INFO, i2d_PROXY_CERT_INFO_EXTENSION, i2d_PROXY_POLICY, i2d_RSA_OAEP_PARAMS, i2d_RSA_PSS_PARAMS, i2d_SCRYPT_PARAMS, i2d_SCT_LIST, i2d_SXNET, i2d_SXNETID, i2d_TS_ACCURACY, i2d_TS_MSG_IMPRINT, i2d_TS_MSG_IMPRINT_bio, i2d_TS_MSG_IMPRINT_fp, i2d_TS_REQ, i2d_TS_REQ_bio, i2d_TS_REQ_fp, i2d_TS_RESP, i2d_TS_RESP_bio, i2d_TS_RESP_fp, i2d_TS_STATUS_INFO, i2d_TS_TST_INFO, i2d_TS_TST_INFO_bio, i2d_TS_TST_INFO_fp, i2d_USERNOTICE, i2d_X509, i2d_X509_bio, i2d_X509_fp, i2d_X509_ACERT, i2d_X509_ACERT_bio, i2d_X509_ACERT_fp, i2d_X509_ALGOR, i2d_X509_ALGORS, i2d_X509_ATTRIBUTE, i2d_X509_CERT_AUX, i2d_X509_CINF, i2d_X509_CRL, i2d_X509_CRL_INFO, i2d_X509_CRL_bio, i2d_X509_CRL_fp, i2d_X509_EXTENSION, i2d_X509_EXTENSIONS, i2d_X509_NAME, i2d_X509_NAME_ENTRY, i2d_X509_PUBKEY, i2d_X509_PUBKEY_bio, i2d_X509_PUBKEY_fp, i2d_X509_REQ, i2d_X509_REQ_INFO, i2d_X509_REQ_bio, i2d_X509_REQ_fp, i2d_X509_REVOKED, i2d_X509_SIG, i2d_X509_VAL, - convert objects from/to ASN.1/DER representation",
+   "history": "d2i_OSSL_ATTRIBUTES_SYNTAX(), d2i_OSSL_BASIC_ATTR_CONSTRAINTS(), d2i_OSSL_CMP_ATAVS(), d2i_OSSL_IETF_ATTR_SYNTAX(), d2i_OSSL_TARGET(), d2i_OSSL_TARGETING_INFORMATION(), d2i_OSSL_TARGETS(), d2i_OSSL_USER_NOTICE_SYNTAX(), d2i_PBMAC1PARAM(), d2i_X509_ACERT(), d2i_X509_ACERT_bio(), d2i_X509_ACERT_fp(), i2d_OSSL_ATTRIBUTES_SYNTAX(), i2d_OSSL_BASIC_ATTR_CONSTRAINTS(), i2d_OSSL_CMP_ATAVS(), i2d_OSSL_IETF_ATTR_SYNTAX(), i2d_OSSL_TARGET(), i2d_OSSL_TARGETING_INFORMATION(), i2d_OSSL_TARGETS(), i2d_OSSL_USER_NOTICE_SYNTAX(), i2d_PBMAC1PARAM(), i2d_X509_ACERT(), i2d_X509_ACERT_bio(), i2d_X509_ACERT_fp() were added in OpenSSL 3.4. d2i_OSSL_AA_DIST_POINT(), d2i_OSSL_ALLOWED_ATTRIBUTES_CHOICE(), d2i_OSSL_ALLOWED_ATTRIBUTES_ITEM(), d2i_OSSL_ALLOWED_ATTRIBUTES_SYNTAX(), d2i_OSSL_ATAV(), d2i_OSSL_ATTRIBUTE_DESCRIPTOR(), d2i_OSSL_ATTRIBUTE_MAPPING(), d2i_OSSL_ATTRIBUTE_MAPPINGS(), d2i_OSSL_ATTRIBUTE_TYPE_MAPPING(), d2i_OSSL_ATTRIBUTE_VALUE_MAPPING(), d2i_OSSL_AUTHORITY_ATTRIBUTE_ID_SYNTAX(), d2i_OSSL_HASH(), d2i_OSSL_INFO_SYNTAX(), d2i_OSSL_INFO_SYNTAX_POINTER(), d2i_OSSL_PRIVILEGE_POLICY_ID(), d2i_OSSL_ROLE_SPEC_CERT_ID(), d2i_OSSL_ROLE_SPEC_CERT_ID_SYNTAX(), i2d_OSSL_AA_DIST_POINT(), i2d_OSSL_ALLOWED_ATTRIBUTES_CHOICE(), i2d_OSSL_ALLOWED_ATTRIBUTES_ITEM(), i2d_OSSL_ALLOWED_ATTRIBUTES_SYNTAX(), i2d_OSSL_ATAV(), i2d_OSSL_ATTRIBUTE_DESCRIPTOR(), i2d_OSSL_ATTRIBUTE_MAPPING(), i2d_OSSL_ATTRIBUTE_MAPPINGS(), i2d_OSSL_ATTRIBUTE_TYPE_MAPPING(), i2d_OSSL_ATTRIBUTE_VALUE_MAPPING(), i2d_OSSL_AUTHORITY_ATTRIBUTE_ID_SYNTAX(), i2d_OSSL_HASH(), i2d_OSSL_INFO_SYNTAX(), i2d_OSSL_INFO_SYNTAX_POINTER(), i2d_OSSL_PRIVILEGE_POLICY_ID(), i2d_OSSL_ROLE_SPEC_CERT_ID(), i2d_OSSL_ROLE_SPEC_CERT_ID_SYNTAX(), d2i_OSSL_CRMF_ENCRYPTEDKEY(), i2d_OSSL_CRMF_ENCRYPTEDKEY(), d2i_OSSL_DAY_TIME(), d2i_OSSL_DAY_TIME_BAND(), d2i_OSSL_NAMED_DAY(), d2i_OSSL_TIME_PERIOD(), d2i_OSSL_TIME_SPEC(), d2i_OSSL_TIME_SPEC_ABSOLUTE(), d2i_OSSL_TIME_SPEC_DAY(), d2i_OSSL_TIME_SPEC_MONTH(), d2i_OSSL_TIME_SPEC_TIME(), d2i_OSSL_TIME_SPEC_WEEKS(), d2i_OSSL_TIME_SPEC_X_DAY_OF(), i2d_OSSL_DAY_TIME(), i2d_OSSL_DAY_TIME_BAND(), i2d_OSSL_NAMED_DAY(), i2d_OSSL_TIME_PERIOD(), i2d_OSSL_TIME_SPEC(), i2d_OSSL_TIME_SPEC_ABSOLUTE(), i2d_OSSL_TIME_SPEC_DAY(), i2d_OSSL_TIME_SPEC_MONTH(), i2d_OSSL_TIME_SPEC_TIME(), i2d_OSSL_TIME_SPEC_WEEKS(), i2d_OSSL_TIME_SPEC_X_DAY_OF() were added in OpenSSL 3.5.",
+   "null_sentences": [
+    "If either a or *a is NULL, then fresh storage is allocated for the returned object, and if a is not NULL then *a is set equal to the returned pointer.",
+    "When both a and *a are not NULL, *a MUST be a pointer to an existing TYPE object, which is reused to hold the decoded result.",
+    "On error (NULL return value), the object is freed and *a is set to NULL.",
+    "If ppout is not NULL, it writes the DER encoded data to the buffer at *ppout , and increments it to point after the data just written.",
+    "If *ppout is NULL memory will be allocated for a buffer and the encoded data written to it.",
+    "d2i_ TYPE (), d2i_ TYPE _bio () and d2i_ TYPE _fp () return a valid TYPE structure or NULL if an error occurs.",
+    "If the \"reuse\" capability has been used with a valid structure being passed in via a , then the object is freed in the event of error and *a is set to NULL."
+   ],
+   "reference_sentences": [],
+   "page": "d2i_X509",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/1.1.1/man3/d2i_X509/",
+   "series": "1.1.1",
+   "fetched": true,
+   "sha256": "448130cf12e10a42698cd2d66ad7ce23359bbb53019f961bb521f39eabd8be2e",
+   "bytes": 687351,
+   "name": "d2i_ACCESS_DESCRIPTION, d2i_ADMISSIONS, d2i_ADMISSION_SYNTAX, d2i_ASIdOrRange, d2i_ASIdentifierChoice, d2i_ASIdentifiers, d2i_ASN1_BIT_STRING, d2i_ASN1_BMPSTRING, d2i_ASN1_ENUMERATED, d2i_ASN1_GENERALIZEDTIME, d2i_ASN1_GENERALSTRING, d2i_ASN1_IA5STRING, d2i_ASN1_INTEGER, d2i_ASN1_NULL, d2i_ASN1_OBJECT, d2i_ASN1_OCTET_STRING, d2i_ASN1_PRINTABLE, d2i_ASN1_PRINTABLESTRING, d2i_ASN1_SEQUENCE_ANY, d2i_ASN1_SET_ANY, d2i_ASN1_T61STRING, d2i_ASN1_TIME, d2i_ASN1_TYPE, d2i_ASN1_UINTEGER, d2i_ASN1_UNIVERSALSTRING, d2i_ASN1_UTCTIME, d2i_ASN1_UTF8STRING, d2i_ASN1_VISIBLESTRING, d2i_ASRange, d2i_AUTHORITY_INFO_ACCESS, d2i_AUTHORITY_KEYID, d2i_BASIC_CONSTRAINTS, d2i_CERTIFICATEPOLICIES, d2i_CMS_ContentInfo, d2i_CMS_ReceiptRequest, d2i_CMS_bio, d2i_CRL_DIST_POINTS, d2i_DHxparams, d2i_DIRECTORYSTRING, d2i_DISPLAYTEXT, d2i_DIST_POINT, d2i_DIST_POINT_NAME, d2i_DSAPrivateKey, d2i_DSAPrivateKey_bio, d2i_DSAPrivateKey_fp, d2i_DSAPublicKey, d2i_DSA_PUBKEY, d2i_DSA_PUBKEY_bio, d2i_DSA_PUBKEY_fp, d2i_DSA_SIG, d2i_DSAparams, d2i_ECDSA_SIG, d2i_ECPKParameters, d2i_ECParameters, d2i_ECPrivateKey, d2i_ECPrivateKey_bio, d2i_ECPrivateKey_fp, d2i_EC_PUBKEY, d2i_EC_PUBKEY_bio, d2i_EC_PUBKEY_fp, d2i_EDIPARTYNAME, d2i_ESS_CERT_ID, d2i_ESS_ISSUER_SERIAL, d2i_ESS_SIGNING_CERT, d2i_EXTENDED_KEY_USAGE, d2i_GENERAL_NAME, d2i_GENERAL_NAMES, d2i_IPAddressChoice, d2i_IPAddressFamily, d2i_IPAddressOrRange, d2i_IPAddressRange, d2i_ISSUING_DIST_POINT, d2i_NAMING_AUTHORITY, d2i_NETSCAPE_CERT_SEQUENCE, d2i_NETSCAPE_SPKAC, d2i_NETSCAPE_SPKI, d2i_NOTICEREF, d2i_OCSP_BASICRESP, d2i_OCSP_CERTID, d2i_OCSP_CERTSTATUS, d2i_OCSP_CRLID, d2i_OCSP_ONEREQ, d2i_OCSP_REQINFO, d2i_OCSP_REQUEST, d2i_OCSP_RESPBYTES, d2i_OCSP_RESPDATA, d2i_OCSP_RESPID, d2i_OCSP_RESPONSE, d2i_OCSP_REVOKEDINFO, d2i_OCSP_SERVICELOC, d2i_OCSP_SIGNATURE, d2i_OCSP_SINGLERESP, d2i_OTHERNAME, d2i_PBE2PARAM, d2i_PBEPARAM, d2i_PBKDF2PARAM, d2i_PKCS12, d2i_PKCS12_BAGS, d2i_PKCS12_MAC_DATA, d2i_PKCS12_SAFEBAG, d2i_PKCS12_bio, d2i_PKCS12_fp, d2i_PKCS7, d2i_PKCS7_DIGEST, d2i_PKCS7_ENCRYPT, d2i_PKCS7_ENC_CONTENT, d2i_PKCS7_ENVELOPE, d2i_PKCS7_ISSUER_AND_SERIAL, d2i_PKCS7_RECIP_INFO, d2i_PKCS7_SIGNED, d2i_PKCS7_SIGNER_INFO, d2i_PKCS7_SIGN_ENVELOPE, d2i_PKCS7_bio, d2i_PKCS7_fp, d2i_PKCS8_PRIV_KEY_INFO, d2i_PKCS8_PRIV_KEY_INFO_bio, d2i_PKCS8_PRIV_KEY_INFO_fp, d2i_PKCS8_bio, d2i_PKCS8_fp, d2i_PKEY_USAGE_PERIOD, d2i_POLICYINFO, d2i_POLICYQUALINFO, d2i_PROFESSION_INFO, d2i_PROXY_CERT_INFO_EXTENSION, d2i_PROXY_POLICY, d2i_RSAPrivateKey, d2i_RSAPrivateKey_bio, d2i_RSAPrivateKey_fp, d2i_RSAPublicKey, d2i_RSAPublicKey_bio, d2i_RSAPublicKey_fp, d2i_RSA_OAEP_PARAMS, d2i_RSA_PSS_PARAMS, d2i_RSA_PUBKEY, d2i_RSA_PUBKEY_bio, d2i_RSA_PUBKEY_fp, d2i_SCRYPT_PARAMS, d2i_SCT_LIST, d2i_SXNET, d2i_SXNETID, d2i_TS_ACCURACY, d2i_TS_MSG_IMPRINT, d2i_TS_MSG_IMPRINT_bio, d2i_TS_MSG_IMPRINT_fp, d2i_TS_REQ, d2i_TS_REQ_bio, d2i_TS_REQ_fp, d2i_TS_RESP, d2i_TS_RESP_bio, d2i_TS_RESP_fp, d2i_TS_STATUS_INFO, d2i_TS_TST_INFO, d2i_TS_TST_INFO_bio, d2i_TS_TST_INFO_fp, d2i_USERNOTICE, d2i_X509, d2i_X509_bio, d2i_X509_fp, d2i_X509_ALGOR, d2i_X509_ALGORS, d2i_X509_ATTRIBUTE, d2i_X509_CERT_AUX, d2i_X509_CINF, d2i_X509_CRL, d2i_X509_CRL_INFO, d2i_X509_CRL_bio, d2i_X509_CRL_fp, d2i_X509_EXTENSION, d2i_X509_EXTENSIONS, d2i_X509_NAME, d2i_X509_NAME_ENTRY, d2i_X509_PUBKEY, d2i_X509_REQ, d2i_X509_REQ_INFO, d2i_X509_REQ_bio, d2i_X509_REQ_fp, d2i_X509_REVOKED, d2i_X509_SIG, d2i_X509_VAL, i2d_ACCESS_DESCRIPTION, i2d_ADMISSIONS, i2d_ADMISSION_SYNTAX, i2d_ASIdOrRange, i2d_ASIdentifierChoice, i2d_ASIdentifiers, i2d_ASN1_BIT_STRING, i2d_ASN1_BMPSTRING, i2d_ASN1_ENUMERATED, i2d_ASN1_GENERALIZEDTIME, i2d_ASN1_GENERALSTRING, i2d_ASN1_IA5STRING, i2d_ASN1_INTEGER, i2d_ASN1_NULL, i2d_ASN1_OBJECT, i2d_ASN1_OCTET_STRING, i2d_ASN1_PRINTABLE, i2d_ASN1_PRINTABLESTRING, i2d_ASN1_SEQUENCE_ANY, i2d_ASN1_SET_ANY, i2d_ASN1_T61STRING, i2d_ASN1_TIME, i2d_ASN1_TYPE, i2d_ASN1_UNIVERSALSTRING, i2d_ASN1_UTCTIME, i2d_ASN1_UTF8STRING, i2d_ASN1_VISIBLESTRING, i2d_ASN1_bio_stream, i2d_ASRange, i2d_AUTHORITY_INFO_ACCESS, i2d_AUTHORITY_KEYID, i2d_BASIC_CONSTRAINTS, i2d_CERTIFICATEPOLICIES, i2d_CMS_ContentInfo, i2d_CMS_ReceiptRequest, i2d_CMS_bio, i2d_CRL_DIST_POINTS, i2d_DHxparams, i2d_DIRECTORYSTRING, i2d_DISPLAYTEXT, i2d_DIST_POINT, i2d_DIST_POINT_NAME, i2d_DSAPrivateKey, i2d_DSAPrivateKey_bio, i2d_DSAPrivateKey_fp, i2d_DSAPublicKey, i2d_DSA_PUBKEY, i2d_DSA_PUBKEY_bio, i2d_DSA_PUBKEY_fp, i2d_DSA_SIG, i2d_DSAparams, i2d_ECDSA_SIG, i2d_ECPKParameters, i2d_ECParameters, i2d_ECPrivateKey, i2d_ECPrivateKey_bio, i2d_ECPrivateKey_fp, i2d_EC_PUBKEY, i2d_EC_PUBKEY_bio, i2d_EC_PUBKEY_fp, i2d_EDIPARTYNAME, i2d_ESS_CERT_ID, i2d_ESS_ISSUER_SERIAL, i2d_ESS_SIGNING_CERT, i2d_EXTENDED_KEY_USAGE, i2d_GENERAL_NAME, i2d_GENERAL_NAMES, i2d_IPAddressChoice, i2d_IPAddressFamily, i2d_IPAddressOrRange, i2d_IPAddressRange, i2d_ISSUING_DIST_POINT, i2d_NAMING_AUTHORITY, i2d_NETSCAPE_CERT_SEQUENCE, i2d_NETSCAPE_SPKAC, i2d_NETSCAPE_SPKI, i2d_NOTICEREF, i2d_OCSP_BASICRESP, i2d_OCSP_CERTID, i2d_OCSP_CERTSTATUS, i2d_OCSP_CRLID, i2d_OCSP_ONEREQ, i2d_OCSP_REQINFO, i2d_OCSP_REQUEST, i2d_OCSP_RESPBYTES, i2d_OCSP_RESPDATA, i2d_OCSP_RESPID, i2d_OCSP_RESPONSE, i2d_OCSP_REVOKEDINFO, i2d_OCSP_SERVICELOC, i2d_OCSP_SIGNATURE, i2d_OCSP_SINGLERESP, i2d_OTHERNAME, i2d_PBE2PARAM, i2d_PBEPARAM, i2d_PBKDF2PARAM, i2d_PKCS12, i2d_PKCS12_BAGS, i2d_PKCS12_MAC_DATA, i2d_PKCS12_SAFEBAG, i2d_PKCS12_bio, i2d_PKCS12_fp, i2d_PKCS7, i2d_PKCS7_DIGEST, i2d_PKCS7_ENCRYPT, i2d_PKCS7_ENC_CONTENT, i2d_PKCS7_ENVELOPE, i2d_PKCS7_ISSUER_AND_SERIAL, i2d_PKCS7_NDEF, i2d_PKCS7_RECIP_INFO, i2d_PKCS7_SIGNED, i2d_PKCS7_SIGNER_INFO, i2d_PKCS7_SIGN_ENVELOPE, i2d_PKCS7_bio, i2d_PKCS7_fp, i2d_PKCS8PrivateKeyInfo_bio, i2d_PKCS8PrivateKeyInfo_fp, i2d_PKCS8_PRIV_KEY_INFO, i2d_PKCS8_PRIV_KEY_INFO_bio, i2d_PKCS8_PRIV_KEY_INFO_fp, i2d_PKCS8_bio, i2d_PKCS8_fp, i2d_PKEY_USAGE_PERIOD, i2d_POLICYINFO, i2d_POLICYQUALINFO, i2d_PROFESSION_INFO, i2d_PROXY_CERT_INFO_EXTENSION, i2d_PROXY_POLICY, i2d_RSAPrivateKey, i2d_RSAPrivateKey_bio, i2d_RSAPrivateKey_fp, i2d_RSAPublicKey, i2d_RSAPublicKey_bio, i2d_RSAPublicKey_fp, i2d_RSA_OAEP_PARAMS, i2d_RSA_PSS_PARAMS, i2d_RSA_PUBKEY, i2d_RSA_PUBKEY_bio, i2d_RSA_PUBKEY_fp, i2d_SCRYPT_PARAMS, i2d_SCT_LIST, i2d_SXNET, i2d_SXNETID, i2d_TS_ACCURACY, i2d_TS_MSG_IMPRINT, i2d_TS_MSG_IMPRINT_bio, i2d_TS_MSG_IMPRINT_fp, i2d_TS_REQ, i2d_TS_REQ_bio, i2d_TS_REQ_fp, i2d_TS_RESP, i2d_TS_RESP_bio, i2d_TS_RESP_fp, i2d_TS_STATUS_INFO, i2d_TS_TST_INFO, i2d_TS_TST_INFO_bio, i2d_TS_TST_INFO_fp, i2d_USERNOTICE, i2d_X509, i2d_X509_bio, i2d_X509_fp, i2d_X509_ALGOR, i2d_X509_ALGORS, i2d_X509_ATTRIBUTE, i2d_X509_CERT_AUX, i2d_X509_CINF, i2d_X509_CRL, i2d_X509_CRL_INFO, i2d_X509_CRL_bio, i2d_X509_CRL_fp, i2d_X509_EXTENSION, i2d_X509_EXTENSIONS, i2d_X509_NAME, i2d_X509_NAME_ENTRY, i2d_X509_PUBKEY, i2d_X509_REQ, i2d_X509_REQ_INFO, i2d_X509_REQ_bio, i2d_X509_REQ_fp, i2d_X509_REVOKED, i2d_X509_SIG, i2d_X509_VAL, - convert objects from/to ASN.1/DER representation",
+   "history": null,
+   "null_sentences": [
+    "If a is not NULL then a pointer to the returned structure is also written to *a .",
+    "If an error occurred then NULL is returned.",
+    "On a successful return, if *a is not NULL then it is assumed that *a contains a valid TYPE structure and an attempt is made to reuse it.",
+    "If ppout is not NULL , it writes the DER encoded data to the buffer at *ppout , and increments it to point after the data just written.",
+    "If *ppout is NULL memory will be allocated for a buffer and the encoded data written to it.",
+    "d2i_TYPE(), d2i_TYPE_bio() and d2i_TYPE_fp() return a valid TYPE structure or NULL if an error occurs.",
+    "If the \"reuse\" capability has been used with a valid structure being passed in via a , then the object is freed in the event of error and *a is set to NULL."
+   ],
+   "reference_sentences": [],
+   "page": "d2i_X509",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/1.0.2/man3/d2i_X509/",
+   "series": "1.0.2",
+   "fetched": true,
+   "sha256": "9e2aa87a8e578f5c507d6d378fc7df8cdda653d50fd456c6f3ebd64f30296ddb",
+   "bytes": 297115,
+   "name": "d2i_X509, i2d_X509, d2i_X509_bio, d2i_X509_fp, i2d_X509_bio, i2d_X509_fp - X509 encode and decode functions",
+   "history": "d2i_X509, i2d_X509, d2i_X509_bio, d2i_X509_fp, i2d_X509_bio and i2d_X509_fp are available in all versions of SSLeay and OpenSSL.",
+   "null_sentences": [
+    "If an error occurred then NULL is returned.",
+    "If px is not NULL then the returned structure is written to *px .",
+    "If *px is not NULL then it is assumed that *px contains a valid X509 structure and an attempt is made to reuse it.",
+    "If out is not NULL is writes the DER encoded data to the buffer at *out , and increments it to point after the data just written.",
+    "For OpenSSL 0.9.7 and later if *out is NULL memory will be allocated for a buffer and the encoded data written to it.",
+    "d2i_X509(), d2i_X509_bio() and d2i_X509_fp() return a valid X509 structure or NULL if an error occurs."
+   ],
+   "reference_sentences": [],
+   "page": "d2i_X509",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/1.0.2/man3/pem/",
+   "series": "1.0.2",
+   "fetched": true,
+   "sha256": "d600cdea99323c22196119d7654a97ac2f50118cdb41a56db38e448b1f321a5b",
+   "bytes": 343488,
+   "name": "PEM, PEM_read_bio_PrivateKey, PEM_read_PrivateKey, PEM_write_bio_PrivateKey, PEM_write_PrivateKey, PEM_write_bio_PKCS8PrivateKey, PEM_write_PKCS8PrivateKey, PEM_write_bio_PKCS8PrivateKey_nid, PEM_write_PKCS8PrivateKey_nid, PEM_read_bio_PUBKEY, PEM_read_PUBKEY, PEM_write_bio_PUBKEY, PEM_write_PUBKEY, PEM_read_bio_RSAPrivateKey, PEM_read_RSAPrivateKey, PEM_write_bio_RSAPrivateKey, PEM_write_RSAPrivateKey, PEM_read_bio_RSAPublicKey, PEM_read_RSAPublicKey, PEM_write_bio_RSAPublicKey, PEM_write_RSAPublicKey, PEM_read_bio_RSA_PUBKEY, PEM_read_RSA_PUBKEY, PEM_write_bio_RSA_PUBKEY, PEM_write_RSA_PUBKEY, PEM_read_bio_DSAPrivateKey, PEM_read_DSAPrivateKey, PEM_write_bio_DSAPrivateKey, PEM_write_DSAPrivateKey, PEM_read_bio_DSA_PUBKEY, PEM_read_DSA_PUBKEY, PEM_write_bio_DSA_PUBKEY, PEM_write_DSA_PUBKEY, PEM_read_bio_DSAparams, PEM_read_DSAparams, PEM_write_bio_DSAparams, PEM_write_DSAparams, PEM_read_bio_DHparams, PEM_read_DHparams, PEM_write_bio_DHparams, PEM_write_DHparams, PEM_read_bio_X509, PEM_read_X509, PEM_write_bio_X509, PEM_write_X509, PEM_read_bio_X509_AUX, PEM_read_X509_AUX, PEM_write_bio_X509_AUX, PEM_write_X509_AUX, PEM_read_bio_X509_REQ, PEM_read_X509_REQ, PEM_write_bio_X509_REQ, PEM_write_X509_REQ, PEM_write_bio_X509_REQ_NEW, PEM_write_X509_REQ_NEW, PEM_read_bio_X509_CRL, PEM_read_X509_CRL, PEM_write_bio_X509_CRL, PEM_write_X509_CRL, PEM_read_bio_PKCS7, PEM_read_PKCS7, PEM_write_bio_PKCS7, PEM_write_PKCS7, PEM_read_bio_NETSCAPE_CERT_SEQUENCE, PEM_read_NETSCAPE_CERT_SEQUENCE, PEM_write_bio_NETSCAPE_CERT_SEQUENCE, PEM_write_NETSCAPE_CERT_SEQUENCE - PEM routines",
+   "history": null,
+   "null_sentences": [
+    "If cipher is NULL then no encryption is used and a PKCS#8 PrivateKeyInfo structure is used instead."
+   ],
+   "reference_sentences": [],
+   "page": "pem",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/1.0.2/man3/OPENSSL_sk_value/",
+   "series": "1.0.2",
+   "fetched": false,
+   "error": "curl: (22) The requested URL returned error: 404",
+   "page": "OPENSSL_sk_value",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/3.0/man3/DEFINE_STACK_OF/",
+   "series": "3.0",
+   "fetched": true,
+   "sha256": "85e83a12729b541262d963acf6e90b36cca749fbf3f6fc33b763d4ad9ee0571b",
+   "bytes": 955161,
+   "name": "DEFINE_STACK_OF, DEFINE_STACK_OF_CONST, DEFINE_SPECIAL_STACK_OF, DEFINE_SPECIAL_STACK_OF_CONST, sk_TYPE_num, sk_TYPE_value, sk_TYPE_new, sk_TYPE_new_null, sk_TYPE_reserve, sk_TYPE_free, sk_TYPE_zero, sk_TYPE_delete, sk_TYPE_delete_ptr, sk_TYPE_push, sk_TYPE_unshift, sk_TYPE_pop, sk_TYPE_shift, sk_TYPE_pop_free, sk_TYPE_insert, sk_TYPE_set, sk_TYPE_find, sk_TYPE_find_ex, sk_TYPE_find_all, sk_TYPE_sort, sk_TYPE_is_sorted, sk_TYPE_dup, sk_TYPE_deep_copy, sk_TYPE_set_cmp_func, sk_TYPE_new_reserve, OPENSSL_sk_deep_copy, OPENSSL_sk_delete, OPENSSL_sk_delete_ptr, OPENSSL_sk_dup, OPENSSL_sk_find, OPENSSL_sk_find_ex, OPENSSL_sk_find_all, OPENSSL_sk_free, OPENSSL_sk_insert, OPENSSL_sk_is_sorted, OPENSSL_sk_new, OPENSSL_sk_new_null, OPENSSL_sk_new_reserve, OPENSSL_sk_num, OPENSSL_sk_pop, OPENSSL_sk_pop_free, OPENSSL_sk_push, OPENSSL_sk_reserve, OPENSSL_sk_set, OPENSSL_sk_set_cmp_func, OPENSSL_sk_shift, OPENSSL_sk_sort, OPENSSL_sk_unshift, OPENSSL_sk_value, OPENSSL_sk_zero - stack container",
+   "history": "Before OpenSSL 1.1.0, this was implemented via macros and not inline functions and was not a public API. sk_ TYPE _reserve () and sk_ TYPE _new_reserve () were added in OpenSSL 1.1.1.",
+   "null_sentences": [
+    "/* DEFINE_STACK_OF(TYPE) */ TYPE * sk_TYPE_value ( STACK_OF ( TYPE ) * sk , int idx ); /* DEFINE_STACK_OF_CONST(TYPE) */ const TYPE * sk_TYPE_value ( STACK_OF ( TYPE ) * sk , int idx ); DEFINE_SPECIAL_STACK_OF() and DEFINE_SPECIAL_STACK_OF_CONST() are similar except FUNCNAME is used in the function names: /* DEFINE_SPECIAL_STACK_OF(TYPE, FUNCNAME) */ TYPE * sk_FUNCNAME_value ( STACK_OF ( TYPE ) * sk , int idx ); /* DEFINE_SPECIAL_STACK_OF(TYPE, FUNCNAME) */ const TYPE * sk_FUNCNAME_value ( STACK_OF ( TYPE ) * sk , int idx ); sk_ TYPE _num () returns the number of elements in sk or -1 if sk is NULL.",
+    "If idx is out of range then NULL is returned.",
+    "If compare is NULL then no comparison function is used.",
+    "This function is equivalent to sk_ TYPE _new_reserve (NULL, 0).",
+    "If compare is NULL then no comparison function is used.",
+    "The previous comparison function is returned or NULL if there was no previous comparison function.",
+    "It returns the deleted element or NULL if i is out of range.",
+    "It returns the deleted element or NULL if no element matching ptr was found.",
+    "The new element value is returned or NULL if an error occurred: this will only happen if sk is NULL or idx is out of range.",
+    "sk_ TYPE _dup () returns a shallow copy of sk or an empty stack if the passed stack is NULL.",
+    "sk_ TYPE _deep_copy () returns a new stack where each element has been copied or an empty stack if the passed stack is NULL.",
+    "sk_ TYPE _num () returns the number of elements in the stack or -1 if the passed stack is NULL.",
+    "sk_ TYPE _value () returns a pointer to a stack element or NULL if the index is out of range.",
+    "sk_ TYPE _new (), sk_ TYPE _new_null () and sk_ TYPE _new_reserve () return an empty stack or NULL if an error occurs.",
+    "sk_ TYPE _set_cmp_func () returns the old comparison function or NULL if there was no old comparison function.",
+    "sk_ TYPE _pop (), sk_ TYPE _shift (), sk_ TYPE _delete () and sk_ TYPE _delete_ptr () return a pointer to the deleted element or NULL on error.",
+    "sk_ TYPE _push () further returns -1 if sk is NULL.",
+    "sk_ TYPE _set () returns a pointer to the replacement element or NULL on error.",
+    "sk_ TYPE _dup () and sk_ TYPE _deep_copy () return a pointer to the copy of the stack or NULL on error."
+   ],
+   "reference_sentences": [],
+   "page": "DEFINE_STACK_OF",
+   "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/3.0/man3/SSL_get_certificate/",
+   "series": "3.0",
+   "fetched": true,
+   "sha256": "2dfe1363d4f6d8795f2b80c9f19712d955acf91e012a32b64c0d407a844daa14",
+   "bytes": 929011,
+   "name": "SSL_get_certificate, SSL_get_privatekey - retrieve TLS/SSL certificate and private key",
+   "history": null,
+   "null_sentences": [
+    "The certificate which is returned by SSL_get_certificate() is determined as follows: If it is called before certificate selection has occurred, it returns the most recently added certificate, or NULL if no certificate has been added.",
+    "After certificate selection has occurred, it returns the certificate which was selected during the handshake, or NULL if no certificate was selected (for example, on a client where no client certificate is in use).",
+    "These functions return pointers to their respective objects, or NULL if no such object is available."
+   ],
+   "reference_sentences": [],
+   "page": "SSL_get_certificate",
+   "fetched_on": "2026-11-17"
   }
  ]
 }

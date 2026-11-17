@@ -1,0 +1,175 @@
+// SPDX-License-Identifier: Apache-2.0
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+module contract;
+
+// Card OPENSSL-PROVIDER-REMAINING-CALLEES. Configuring an SSL_CTX (see
+// err.qv for what every declaration of this crate shares; ssl_io.qv for the
+// registered-callbacks premise). Not declared here, each fail-closed:
+// SSL_CTX_ctrl (its custody depends on `cmd`: SSL_CTX_add_extra_chain_cert
+// hands the context the caller's certificate), SSL_CTX_set_cert_cb and
+// SSL_CTX_set_default_passwd_cb (a registration into one of the context's
+// several callback slots, which C04.19's single registration per holder
+// does not state) and SSL_CTX_use_cert_and_key (the page states the custody
+// of the key only, not of the certificate or the chain).
+
+// SSL_CTX_set_options: https://docs.openssl.org/3.5/man3/SSL_CTX_set_options/
+// HISTORY (3.5): "The SSL_OP_ constants and the corresponding parameter and
+// return values of the affected functions were changed to uint64_t type in
+// OpenSSL 3.0", so the pinned prototype holds since 3.0.0. It adds option
+// bits to `ctx`. Pinned prototype: `uint64_t SSL_CTX_set_options(SSL_CTX
+// *ctx, uint64_t op)` (openssl/ssl.h).
+extern fn SSL_CTX_set_options(ctx: ptr<mut, u8>, op: u64) -> u64
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, since "3.0.0");
+    ensures normal resource_borrowed(ctx);
+    ensures normal resource_borrowed(op);
+    ensures normal resource_return_none();
+};
+
+// SSL_CTX_set_default_verify_paths: https://docs.openssl.org/1.1.1/man3/SSL_CTX_load_verify_locations/
+// (also 3.5; the 1.0.2 page does not document it). No HISTORY entry.
+// DESCRIPTION (3.5): it "specifies that the default locations from which CA
+// certificates are loaded should be used"; RETURN VALUES: "1 on success or 0
+// on failure". Pinned prototype: `int
+// SSL_CTX_set_default_verify_paths(SSL_CTX *ctx)`.
+extern fn SSL_CTX_set_default_verify_paths(ctx: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, documented "1.1.1");
+    ensures normal resource_borrowed(ctx);
+    ensures normal resource_return_none();
+};
+
+// SSL_CTX_load_verify_locations: https://docs.openssl.org/1.0.2/man3/SSL_CTX_load_verify_locations/
+// (also 3.5, 1.1.1). No HISTORY entry. DESCRIPTION (3.5): it "specifies the
+// locations for ctx, at which CA certificates for verification purposes are
+// located"; NOTES: "The CAfile is processed on execution of the
+// SSL_CTX_load_verify_locations() function". The paths are read, not kept.
+// Pinned prototype: `int SSL_CTX_load_verify_locations(SSL_CTX *ctx, const
+// char *CAfile, const char *CApath)`.
+extern fn SSL_CTX_load_verify_locations(ctx: ptr<mut, u8>, CAfile: ptr<const, u8>, CApath: ptr<const, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, documented "1.0.2");
+    ensures normal resource_borrowed(ctx);
+    ensures normal resource_borrowed(CAfile);
+    ensures normal resource_borrowed(CApath);
+    ensures normal resource_return_none();
+};
+
+// SSL_CTX_use_certificate: https://docs.openssl.org/1.0.2/man3/SSL_CTX_use_certificate/
+// (also 3.5, 1.1.1). HISTORY (1.0.2) names only DER key support in the
+// *_file functions (0.9.8). DESCRIPTION (3.5): it "loads the certificate x
+// into ctx"; "On success the reference counter of the x is incremented."
+// The context takes its own reference; the caller's is unchanged, so `x` is
+// borrowed (as SSL_new's `ctx` is). Pinned prototype: `int
+// SSL_CTX_use_certificate(SSL_CTX *ctx, X509 *x)`.
+extern fn SSL_CTX_use_certificate(ctx: ptr<mut, u8>, x: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, documented "1.0.2");
+    ensures normal resource_borrowed(ctx);
+    ensures normal resource_borrowed(x);
+    ensures normal resource_return_none();
+};
+
+// SSL_CTX_use_PrivateKey: same page. DESCRIPTION (3.5): it "adds pkey as
+// private key to ctx"; "On success the reference counter of the pkey / rsa
+// is incremented." `pkey` is borrowed as `x` is above. Pinned prototype:
+// `int SSL_CTX_use_PrivateKey(SSL_CTX *ctx, EVP_PKEY *pkey)`.
+extern fn SSL_CTX_use_PrivateKey(ctx: ptr<mut, u8>, pkey: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, documented "1.0.2");
+    ensures normal resource_borrowed(ctx);
+    ensures normal resource_borrowed(pkey);
+    ensures normal resource_return_none();
+};
+
+// SSL_CTX_use_PrivateKey_file: same page. DESCRIPTION (3.5): it "adds the
+// first private key found in file to ctx"; NOTES: "In order to successfully
+// load encrypted keys, a function returning the passphrase must have been
+// supplied, see SSL_CTX_set_default_passwd_cb", so the call may run the
+// context's password callback: the registered-callbacks premise. Pinned
+// prototype: `int SSL_CTX_use_PrivateKey_file(SSL_CTX *ctx, const char
+// *file, int type)`.
+extern fn SSL_CTX_use_PrivateKey_file(ctx: ptr<mut, u8>, file: ptr<const, u8>, filetype: i32) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, documented "1.0.2");
+    requires resource_premise(openssl_registered_callbacks, "a callback the SSL object or its SSL_CTX carries (verify, certificate, password, info, message or ex_data callbacks) and the call may run takes, releases or retains nothing the caller holds");
+    ensures normal resource_borrowed(ctx);
+    ensures normal resource_borrowed(file);
+    ensures normal resource_borrowed(filetype);
+    ensures normal resource_return_none();
+};
+
+// SSL_CTX_use_certificate_chain_file: same page. DESCRIPTION (3.5): it
+// "loads a certificate chain from file into ctx"; it may run the password
+// callback as SSL_CTX_use_PrivateKey_file does. Pinned prototype: `int
+// SSL_CTX_use_certificate_chain_file(SSL_CTX *ctx, const char *file)`.
+extern fn SSL_CTX_use_certificate_chain_file(ctx: ptr<mut, u8>, file: ptr<const, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, documented "1.0.2");
+    requires resource_premise(openssl_registered_callbacks, "a callback the SSL object or its SSL_CTX carries (verify, certificate, password, info, message or ex_data callbacks) and the call may run takes, releases or retains nothing the caller holds");
+    ensures normal resource_borrowed(ctx);
+    ensures normal resource_borrowed(file);
+    ensures normal resource_return_none();
+};
+
+// SSL_CTX_get_cert_store: https://docs.openssl.org/1.0.2/man3/SSL_CTX_set_cert_store/
+// (also 3.5, 1.1.1). No HISTORY entry. DESCRIPTION (3.5): it "returns a
+// pointer to the current certificate verification storage"; NOTES: to share
+// it with a second SSL_CTX, "use SSL_CTX_get_cert_store() to get the
+// X509_STORE from the first SSL_CTX, and then use SSL_CTX_set1_cert_store()
+// to assign to the second SSL_CTX and increment the reference count", so the
+// getter takes no reference: the store stays the context's. A borrowed
+// result of `ctx`. Pinned prototype: `X509_STORE
+// *SSL_CTX_get_cert_store(const SSL_CTX *)`.
+extern fn SSL_CTX_get_cert_store(ctx: ptr<const, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, documented "1.0.2");
+    ensures normal resource_borrowed(ctx);
+    ensures normal resource_return_borrowed_from(ctx, nullable);
+};
+
+// SSL_CTX_set_default_passwd_cb_userdata: https://docs.openssl.org/1.0.2/man3/SSL_CTX_set_default_passwd_cb/
+// (also 3.5, 1.1.1). HISTORY (3.5) names only the getters and the SSL_*
+// setters (1.1.0). DESCRIPTION (3.5): it "sets a pointer to userdata, u,
+// which will be provided to the password callback on invocation": the
+// context keeps `u` (C04.14); the caller keeps custody of `u`'s object and
+// must show it outlives the context. Pinned prototype: `void
+// SSL_CTX_set_default_passwd_cb_userdata(SSL_CTX *ctx, void *u)`.
+extern fn SSL_CTX_set_default_passwd_cb_userdata(ctx: ptr<mut, u8>, u: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, documented "1.0.2");
+    ensures normal resource_borrowed(ctx);
+    ensures normal resource_borrowed(u);
+    ensures normal resource_retained_by(u, ctx);
+    ensures normal resource_return_none();
+};

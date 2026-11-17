@@ -1,0 +1,172 @@
+// SPDX-License-Identifier: Apache-2.0
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+module contract;
+
+// Card OPENSSL-PROVIDER-REMAINING-CALLEES. The SSL connection: handshake,
+// I/O, its error code and what it carries (see err.qv for what every
+// declaration of this crate shares).
+//
+// The handshake and I/O calls may run callbacks the SSL object or its
+// SSL_CTX carries (certificate verification, the certificate callback, info
+// and message callbacks). No clause of the vocabulary states such a hidden
+// registry on a holder with several callback slots, so the declarations
+// name the reading they rest on as a premise (C04.18), published with every
+// row that applies them: those callbacks take, release or retain nothing the
+// caller holds. The callbacks themselves are the application's functions,
+// analysed on their own rows.
+
+// SSL_write: https://docs.openssl.org/1.0.2/man3/SSL_write/ (also 3.5,
+// 1.1.1). HISTORY (3.5) names only SSL_write_ex(), SSL_sendfile() and
+// SSL_write_ex2(), so the bound is the oldest series that documents
+// SSL_write. DESCRIPTION (3.5): it "write[s] num bytes from the buffer buf
+// into the specified ssl connection". A retried write must be repeated
+// "with the same arguments" (NOTES): a protocol on the caller, not a
+// retention of `buf`. Pinned prototype: `int SSL_write(SSL *ssl, const void
+// *buf, int num)` (openssl/ssl.h).
+extern fn SSL_write(ssl: ptr<mut, u8>, buf: ptr<const, u8>, num: i32) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, documented "1.0.2");
+    requires resource_premise(openssl_registered_callbacks, "a callback the SSL object or its SSL_CTX carries (verify, certificate, password, info, message or ex_data callbacks) and the call may run takes, releases or retains nothing the caller holds");
+    ensures normal resource_borrowed(ssl);
+    ensures normal resource_borrowed(buf);
+    ensures normal resource_borrowed(num);
+    ensures normal resource_return_none();
+};
+
+// SSL_read: https://docs.openssl.org/1.0.2/man3/SSL_read/ (also 3.5,
+// 1.1.1). HISTORY (3.5) names only SSL_read_ex() and SSL_peek_ex().
+// DESCRIPTION (3.5): it tries "to read num bytes from the specified ssl into
+// the buffer buf". Pinned prototype: `int SSL_read(SSL *ssl, void *buf, int
+// num)`.
+extern fn SSL_read(ssl: ptr<mut, u8>, buf: ptr<mut, u8>, num: i32) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, documented "1.0.2");
+    requires resource_premise(openssl_registered_callbacks, "a callback the SSL object or its SSL_CTX carries (verify, certificate, password, info, message or ex_data callbacks) and the call may run takes, releases or retains nothing the caller holds");
+    ensures normal resource_borrowed(ssl);
+    ensures normal resource_borrowed(buf);
+    ensures normal resource_borrowed(num);
+    ensures normal resource_return_none();
+};
+
+// SSL_connect: https://docs.openssl.org/1.0.2/man3/SSL_connect/ (also 3.5,
+// 1.1.1). No HISTORY entry. DESCRIPTION (3.5): it "initiates the TLS/SSL
+// handshake with a server". Pinned prototype: `int SSL_connect(SSL *ssl)`.
+extern fn SSL_connect(ssl: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, documented "1.0.2");
+    requires resource_premise(openssl_registered_callbacks, "a callback the SSL object or its SSL_CTX carries (verify, certificate, password, info, message or ex_data callbacks) and the call may run takes, releases or retains nothing the caller holds");
+    ensures normal resource_borrowed(ssl);
+    ensures normal resource_return_none();
+};
+
+// SSL_do_handshake: https://docs.openssl.org/1.0.2/man3/SSL_do_handshake/
+// (also 3.5, 1.1.1). No HISTORY entry. DESCRIPTION (3.5): it "will wait for
+// an SSL/TLS handshake to take place". Pinned prototype: `int
+// SSL_do_handshake(SSL *s)`.
+extern fn SSL_do_handshake(s: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, documented "1.0.2");
+    requires resource_premise(openssl_registered_callbacks, "a callback the SSL object or its SSL_CTX carries (verify, certificate, password, info, message or ex_data callbacks) and the call may run takes, releases or retains nothing the caller holds");
+    ensures normal resource_borrowed(s);
+    ensures normal resource_return_none();
+};
+
+// SSL_get_error: https://docs.openssl.org/1.0.2/man3/SSL_get_error/ (also
+// 3.5, 1.1.1). HISTORY (1.0.2): "SSL_get_error() was added in SSLeay 0.8",
+// an SSLeay release, not an OpenSSL version, so the bound is the oldest
+// series checked. DESCRIPTION (3.5): it "returns a result code" for a
+// preceding I/O call and "inspects the current thread's OpenSSL error
+// queue". Pinned prototype: `int SSL_get_error(const SSL *s, int ret_code)`.
+extern fn SSL_get_error(s: ptr<const, u8>, ret_code: i32) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, documented "1.0.2");
+    ensures normal resource_borrowed(s);
+    ensures normal resource_borrowed(ret_code);
+    ensures normal resource_return_none();
+};
+
+// SSL_set_accept_state: https://docs.openssl.org/1.0.2/man3/SSL_set_connect_state/
+// (also 3.5, 1.1.1). No HISTORY entry. DESCRIPTION (3.5): it "sets ssl to
+// work in server mode"; RETURN VALUES: it does "not return diagnostic
+// information". Pinned prototype: `void SSL_set_accept_state(SSL *s)`.
+extern fn SSL_set_accept_state(s: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, documented "1.0.2");
+    ensures normal resource_borrowed(s);
+    ensures normal resource_return_none();
+};
+
+// SSL_get_certificate: https://docs.openssl.org/3.0/man3/SSL_get_certificate/
+// (also 3.5; no page at 1.1.1 or 1.0.2), so the bound is the oldest series
+// checked that documents it. DESCRIPTION (3.5): it "returns a pointer to an
+// X509 object representing a certificate used as the local peer's
+// identity", "or NULL if no certificate has been added"; "Returned objects
+// are owned by the SSL object and should not be freed by users of these
+// functions." A borrowed result of `ssl`. Pinned prototype: `X509
+// *SSL_get_certificate(const SSL *ssl)`.
+extern fn SSL_get_certificate(ssl: ptr<const, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, documented "3.0");
+    ensures normal resource_borrowed(ssl);
+    ensures normal resource_return_borrowed_from(ssl, nullable);
+};
+
+// SSL_get_client_CA_list: https://docs.openssl.org/1.0.2/man3/SSL_get_client_CA_list/
+// (3.5, 1.1.1: man3/SSL_CTX_set0_CA_list). No HISTORY entry. DESCRIPTION
+// (3.5): it "returns the list of client CAs explicitly set for ssl" (or, in
+// client mode, sent by the server); RETURN VALUES: "a stack of CA names or
+// NULL is no CA names are set"; "The returned list should not be freed by
+// the caller." A borrowed result of `s`. Pinned prototype: `struct
+// stack_st_X509_NAME *SSL_get_client_CA_list(const SSL *s)`.
+extern fn SSL_get_client_CA_list(s: ptr<const, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, documented "1.0.2");
+    ensures normal resource_borrowed(s);
+    ensures normal resource_return_borrowed_from(s, nullable);
+};
+
+// SSL_get1_peer_certificate: https://docs.openssl.org/3.5/man3/SSL_get_peer_certificate/
+// HISTORY (3.5): "SSL_get0_peer_certificate() and
+// SSL_get1_peer_certificate() were added in 3.0.0." NOTES (3.5): "The
+// reference count of the X509 object returned by SSL_get1_peer_certificate()
+// is incremented by one" and "The X509 object must be explicitly freed using
+// X509_free()"; "If the peer did not present a certificate, NULL is
+// returned." One returned reference. Pinned prototype: `X509 *SSL_get1_peer_certificate(const SSL
+// *s)`.
+extern fn SSL_get1_peer_certificate(s: ptr<const, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, since "3.0.0");
+    ensures normal resource_borrowed(s);
+    ensures normal resource_return_owned(nullable);
+    ensures normal resource_return_kind(reference);
+};

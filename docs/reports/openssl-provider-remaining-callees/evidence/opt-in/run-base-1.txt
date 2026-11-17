@@ -1,0 +1,7 @@
+started 2026-11-17T11:43:21Z finished 2026-11-17T12:41:26Z exit 0
+report sha256 45842fab38c1bd9402e708f3ae2d634499f16cbe82e1863f8f93158cf3c3d78a
+monkey: Monkey as linked into fluent-bit (29 unit(s) of the compile database); 28 standalone unit(s) replaced, 1 not linked
+monkey: 29 selected compilation configuration(s)
+current revision: 180 source file(s), 181 configuration(s): 9 Safe / 0 Pending / 5 provisional Unsafe / 163 Unknown / 4 data-only / 0 gateway failures
+checker plugins: 12 binding(s): 0 Safe / 12 Pending / 0 Unknown / 0 provisional Unsafe
+contract revision: 473 pinned (470 in force, 3 not in force), 0 flexible checked, 6 flexible trusted, 146 libc under the standing assumption; 0 function(s) and 0 call site(s) held Pending (contract-pin-mismatch); 1 tracking the tip of an unreleased branch (0 in force, 1 not in force)

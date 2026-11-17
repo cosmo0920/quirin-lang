@@ -45,7 +45,13 @@
 //! Which contracts a function applies is read from its control-flow graph: a
 //! contracted call is lowered to `LegacyInstruction::ContractCall` (with its
 //! admitted nested calls), and a call the analysis refused applies no contract
-//! and already leaves the function `Unknown`.
+//! and already leaves the function `Unknown`. A contracted call the analysis
+//! admits without such a node (a scalar `return f(…);`, whose call is checked
+//! and lowered with the return) applies its contract all the same: card
+//! **OPENSSL-PROVIDER-REMAINING-CALLEES** found such a row published `Safe`
+//! over an uncertified binding, so after the row's contract dependencies are
+//! recorded every bound declaration it rests on is folded too
+//! ([`fold_dependencies`]).
 
 use std::collections::{BTreeMap, BTreeSet};
 use std::sync::Arc;
@@ -469,6 +475,113 @@ pub fn applied_contracts(function: &LegacyFunctionSummary) -> BTreeSet<String> {
     callees
 }
 
+/// One `plugin_links` entry of a function row.
+fn link_entry(callee: &str, link: &Link) -> Value {
+    json!({
+        "callee": callee,
+        "plugin": link.plugin,
+        "crate": link.user_crate,
+        "module": link.module,
+        "answer": link.answer,
+        "package": link.package,
+        "verdict": link.verdict.verdict(),
+        "reasons": link.verdict.reasons(),
+    })
+}
+
+/// Fold the checker links of every bound declaration a just-annotated unit
+/// row's functions rest on (`contract_dependencies.declarations`, rule 13f)
+/// and [`fold_unit`] did not link: a contracted call the analysis admits
+/// without a `ContractCall` node still applies its contract, so its binding's
+/// verdict joins the function's status exactly as a linked one does (card
+/// **OPENSSL-PROVIDER-REMAINING-CALLEES**). Only raises; a row with nothing
+/// new to link is left untouched.
+pub(crate) fn fold_dependencies(links: &PluginLinks, row: &mut Value) {
+    if links.is_empty() {
+        return;
+    }
+    let Some(unit_verdict) = row["status"]
+        .as_str()
+        .and_then(|status| status.parse::<Verdict>().ok())
+    else {
+        return;
+    };
+    let mut joined = unit_verdict;
+    let mut link_reasons: Vec<(Verdict, VerdictReason)> = Vec::new();
+    let mut linked_any = false;
+    for function_row in row["functions"].as_array_mut().into_iter().flatten() {
+        let Some(own) = function_row["status"]
+            .as_str()
+            .and_then(|status| status.parse::<Verdict>().ok())
+        else {
+            continue;
+        };
+        let linked = function_row["plugin_links"]
+            .as_array()
+            .into_iter()
+            .flatten()
+            .filter_map(|entry| entry["callee"].as_str().map(str::to_owned))
+            .collect::<BTreeSet<_>>();
+        let rested = function_row["contract_dependencies"]["declarations"]
+            .as_array()
+            .into_iter()
+            .flatten()
+            .filter_map(Value::as_str)
+            .filter(|callee| !linked.contains(*callee))
+            .map(str::to_owned)
+            .collect::<BTreeSet<_>>();
+        let function_links: Vec<(&String, &Link)> = rested
+            .iter()
+            .filter_map(|callee| links.links.get(callee).map(|links| (callee, links)))
+            .flat_map(|(callee, links)| links.iter().map(move |link| (callee, link)))
+            .collect();
+        if function_links.is_empty() {
+            continue;
+        }
+        linked_any = true;
+        let folded = function_links.iter().fold(own, |verdict, (_, link)| {
+            verdict.join(link.verdict.verdict())
+        });
+        if function_row.get("host_status").is_none() {
+            function_row["host_status"] = json!(own.as_str());
+        }
+        function_row["status"] = json!(folded.as_str());
+        let mut entries = function_row["plugin_links"]
+            .as_array()
+            .cloned()
+            .unwrap_or_default();
+        entries.extend(
+            function_links
+                .iter()
+                .map(|(callee, link)| link_entry(callee, link)),
+        );
+        function_row["plugin_links"] = entries.into();
+        for (_, link) in &function_links {
+            if let Some(reason) = link.verdict.reasons().first() {
+                link_reasons.push((link.verdict.verdict(), reason.clone()));
+            }
+        }
+        joined = joined.join(folded);
+    }
+    if !linked_any {
+        return;
+    }
+    if row.get("host_verdict").is_none() {
+        row["host_verdict"] = json!({
+            "status": unit_verdict.as_str(),
+            "reason": row["reason"].clone(),
+            "reason_code": row["reason_code"].clone(),
+        });
+    }
+    if joined != unit_verdict {
+        row["status"] = json!(joined.as_str());
+        if let Some((_, reason)) = link_reasons.iter().find(|(verdict, _)| *verdict == joined) {
+            row["reason"] = json!(reason.detail);
+            row["reason_code"] = crate::report::reason_code_value(reason.code.parse().ok());
+        }
+    }
+}
+
 /// Fold the checker links into one just-recorded unit row: each function's
 /// status becomes the join of its own and the links of every contract it
 /// applies, and the unit's the join of its own and its functions'. A row
@@ -527,18 +640,7 @@ pub(crate) fn fold_unit(
         function_row["host_status"] = json!(own.as_str());
         function_row["plugin_links"] = function_links
             .iter()
-            .map(|(callee, link)| {
-                json!({
-                    "callee": callee,
-                    "plugin": link.plugin,
-                    "crate": link.user_crate,
-                    "module": link.module,
-                    "answer": link.answer,
-                    "package": link.package,
-                    "verdict": link.verdict.verdict(),
-                    "reasons": link.verdict.reasons(),
-                })
-            })
+            .map(|(callee, link)| link_entry(callee, link))
             .collect::<Vec<_>>()
             .into();
         for (_, link) in &function_links {
