@@ -1,0 +1,46 @@
+== moves 1
+librdkafka::rdkafka_feature.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_ApiVersion_check#0 Unknown -> Safe
+   - {"category": "unsupported", "description": "call to `bsearch`: callback `rd_kafka_ApiVersion_key_cmp` (from `rd_kafka_ApiVersion_key_cmp`) has no contract in force (callback-uncontracted)", "origin": "rdkafka_feature.c:374"}
+   other fields: []
+   summaries gained ['rd_kafka_ApiVersion_key_cmp'] lost []
+   null_premises gained ['null-deref:rd_kafka_ApiVersion_key_cmp:13285:a', 'null-deref:rd_kafka_ApiVersion_key_cmp:13285:b'] lost []
+== content_changes 11
+librdkafka::rdkafka_broker.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_broker_ApiVersion_supported0#0 Unknown -> Unknown
+   other fields: []
+   summaries gained ['rd_kafka_ApiVersion_key_cmp'] lost []
+   null_premises gained ['null-deref:rd_kafka_ApiVersion_key_cmp:13763:a', 'null-deref:rd_kafka_ApiVersion_key_cmp:13763:b'] lost []
+librdkafka::rdkafka_broker.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_broker_request_supported#0 Unknown -> Unknown
+   other fields: []
+   summaries gained ['rd_kafka_ApiVersion_key_cmp'] lost []
+   null_premises gained ['null-deref:rd_kafka_ApiVersion_key_cmp:13763:a', 'null-deref:rd_kafka_ApiVersion_key_cmp:13763:b'] lost []
+librdkafka::rdkafka_feature.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_ApiVersions_copy#0 Unknown -> Unknown
+   other fields: []
+   summaries gained ['rd_kafka_ApiVersion_key_cmp'] lost []
+   null_premises gained ['null-deref:rd_kafka_ApiVersion_key_cmp:13285:a', 'null-deref:rd_kafka_ApiVersion_key_cmp:13285:b'] lost []
+librdkafka::rdkafka_feature.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_features_check#0 Unknown -> Unknown
+   - {"category": "unsupported", "description": "call to uncontracted function `rd_kafka_ApiVersion_check`", "origin": "rdkafka_feature.c:412"}
+   + {"category": "unknown_alias", "description": "unresolved resource identity `match`", "origin": "rdkafka_feature.c:412"}
+   other fields: []
+   summaries gained ['rd_kafka_ApiVersion_check', 'rd_kafka_ApiVersion_key_cmp'] lost []
+   null_premises gained ['null-deref:rd_kafka_ApiVersion_key_cmp:13285:a', 'null-deref:rd_kafka_ApiVersion_key_cmp:13285:b'] lost []
+   declarations gained ['bsearch'] lost []
+librdkafka::rdkafka_metadata.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_metadata_refresh_consumer_topics#0 Unknown -> Unknown
+   other fields: ['rule_obligations']
+librdkafka::rdkafka_metadata.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_metadata_refresh_known_topics#0 Unknown -> Unknown
+   other fields: ['rule_obligations']
+librdkafka::rdkafka_metadata.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_metadata_refresh_topics#0 Unknown -> Unknown
+   other fields: ['rule_obligations']
+   summaries gained ['rd_list_string_copy'] lost []
+   declarations gained ['rd_strdup'] lost []
+librdkafka::rdkafka_metadata.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_parse_Metadata#0 Unknown -> Unknown
+   other fields: ['rule_obligations']
+librdkafka::rdkafka_metadata.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_parse_Metadata0#0 Unknown -> Unknown
+   other fields: ['rule_obligations']
+   summaries gained ['rd_list_string_copy'] lost []
+   declarations gained ['rd_strdup'] lost []
+librdkafka::rdkafka_metadata.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_parse_Metadata_admin#0 Unknown -> Unknown
+   other fields: ['rule_obligations']
+librdkafka::rdkafka_request.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_handle_ApiVersion#0 Unknown -> Unknown
+   other fields: []
+   summaries gained ['rd_kafka_ApiVersion_key_cmp'] lost []
+   null_premises gained ['null-deref:rd_kafka_ApiVersion_key_cmp:13286:a', 'null-deref:rd_kafka_ApiVersion_key_cmp:13286:b'] lost []

@@ -193,6 +193,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [cg21-call-exits-and-boundaries](cg21-call-exits-and-boundaries/README.md) | CG21-CALL-EXITS-AND-BOUNDARIES |
 
+| [cg22-callback-candidate-contracts](cg22-callback-candidate-contracts/README.md) | CG22-CALLBACK-CANDIDATE-CONTRACTS: callback candidates in force |
+
 | [cg22-callback-registry-contract](cg22-callback-registry-contract/README.md) | CG22-CALLBACK-REGISTRY-CONTRACT: callback contracts |
 
 | [cg22-indirect-calls-and-callbacks](cg22-indirect-calls-and-callbacks/README.md) | CG22-INDIRECT-CALLS-AND-CALLBACKS: candidate callee sets and the callback relation |
