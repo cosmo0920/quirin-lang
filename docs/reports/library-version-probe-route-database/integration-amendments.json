@@ -1,0 +1,32 @@
+{
+ "schema": "quirin-amendments/1",
+ "card": "LIBRARY-VERSION-PROBE-ROUTE-DATABASE",
+ "base": "32336c33d",
+ "measured_tip": "c3a97de46",
+ "increment_paragraph": "**LIBRARY-VERSION-PROBE-ROUTE-DATABASE (2026-11-17).** Rule 53's library version probe now reads the include configurations of the compile databases the run analyses: the configured route's `compile_database` (and every library slice), the current route's `--compile-database` (plus its standalone Monkey database), the pinned route's build database, and `quirin-audit pin --compile-database FILE` (a pin, `--regenerate` or `--untrack-tip` of resource locks; with `--bounds --derive-results` the flag keeps its derivation meaning). Only a run with no database (the contracts route, a pin without the flag) uses Clang's default search path; `QCORE_LIBRARY_VERSION_COMPILE_DATABASE` stays an explicit override, recorded as `override QCORE_LIBRARY_VERSION_COMPILE_DATABASE: compile-database:PATH`. Fail-closed: the database is read by the routes' own reader (`compile_db::compile_entries`, `shell_words`), and an unreadable or empty database, a refused record, a dangling include flag or a flag that moves the header search otherwise (`UNREAD_SEARCH_FLAGS`: -nostdinc, --sysroot, -isysroot, -iprefix/-iwithprefix, -I-, --include-directory, -iframework, -F) is `library-version-unreadable` (Unknown) and refuses a pin, never the default search path (before, an entry without arguments, an empty database and a dangling -I silently read as the default search path). API: `library_version::{ProbeDatabases, Configurations, include_configurations, probe_under}`, `contract_revision::apply_pins_probing` (`apply_pins` keeps its signature with no database), `CurrentAudit::with_probe_databases`. Tests through the shipped binary (`library_version_route_database.rs`): a bundled header set in the database (2.5.0) wins over the system one (2.3.1, on C_INCLUDE_PATH) for pin, current and configured; two disagreeing configurations are ambiguous (Unknown) on both routes and refuse a pin; an unreproducible configuration is unreadable; the override is recorded. No ranged declaration exists outside the user crate quirin-provider-openssl, so the corpus, system and slice routes never run the probe and are unchanged by construction; the OpenSSL crate's lock is byte-identical after `pin --compile-database` over a prepared Fluent Bit 046accf6 build (system headers, 3.5.5). Rule 53 and contract spec C06.2 amended; no Lean change (the in-force decision is unchanged).",
+ "status_paragraph": null,
+ "ledger": [
+  {
+   "id": "LIBRARY-VERSION-PROBE-ROUTE-DATABASE",
+   "operation": "retire",
+   "why": "DISCHARGED (LIBRARY-VERSION-PROBE-ROUTE-DATABASE, 2026-11-17): the current, configured and pinned routes pass their own compile databases to the probe and pin takes --compile-database; route-level tests show a bundled header set in the database winning over the system one and two disagreeing configurations held Unknown (ambiguous); an unreadable database or configuration holds Unknown (unreadable) and refuses a pin; the env variable is a documented, recorded override.",
+   "source": "docs/reports/library-version-probe-route-database/README.md"
+  },
+  {
+   "id": "LIBRARY-VERSION-PROBE-CONTRACTS-ROUTE-INCLUDES",
+   "operation": "register",
+   "title": "The contracts route's probe ignores its own -I directories",
+   "text": "`quirin-audit contracts` analyses with the user's -I/-D flags but has no compile database, so rule 53's probe uses Clang's default search path there even when an -I names a bundled copy of the library. DISCHARGE: the contracts route hands its own include flags to the probe (a ProbeDatabases variant of explicit flags), with a test where a bundled -I wins over the system headers.",
+   "source": "docs/reports/library-version-probe-route-database/README.md",
+   "recorded_by": "LIBRARY-VERSION-PROBE-ROUTE-DATABASE"
+  },
+  {
+   "id": "LIBRARY-VERSION-PROBE-UNIT-SCOPE",
+   "operation": "register",
+   "title": "The library version probe reads a run's whole database, not the units that call the library",
+   "text": "The probe reads every distinct include configuration of the run's databases, including units outside the audited selection or that never include the library, so an unrelated unit with a bundled copy makes the version ambiguous (Unknown, conservative, never Safe). Forced includes (-include, -imacros), -D and --target are not reproduced (stated premise). DISCHARGE: probe the configurations of the units that call a ranged function (or include its header), with tests, keeping the whole-database reading as the fail-closed fallback.",
+   "source": "docs/reports/library-version-probe-route-database/README.md",
+   "recorded_by": "LIBRARY-VERSION-PROBE-ROUTE-DATABASE"
+  }
+ ]
+}
