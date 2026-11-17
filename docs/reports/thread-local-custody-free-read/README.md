@@ -182,3 +182,15 @@ submodules, fmt, clippy, both probes exit 0; Rust suite exit 0 (639 units,
 9,523 passed, 0 failed, 17 ignored, 148 filtered); Lean exit 0 (435 audits);
 Python exit 0 (761 tests). The provider gate is not assigned (no
 `providers/` change).
+
+## Integrator measurement (2026-11-17)
+
+Declared measurement, base `rev:0f6e17118` (no baseline has been published since `497bdeb90`, so the card base isolates this card), tip `rev:1ac1fabbd` (the measured code tip), run from the main checkout (`private/measure/thread-local-20261116T142036Z`): exit 0, all three routes complete, no unmatched rows, declared result **match**.
+
+- corpus: 0 rows moved.
+- system: 4 rows moved, all `Unknown -> Safe` (`flb_engine_evl_get`, `flb_sched_ctx_get`, `flb_context_get`, `flb_cf_context_get`); 4 rows changed content only.
+- slice: the same 4 rows `Unknown -> Safe`.
+
+No Safe row moves to Unknown or Unsafe. [Comparison](integration/native-comparison.json.gz) (gzip of `native-comparison.json`, sha256 `2f0b2022b1d1cd912da29ce79f333c95b1d299f01781ff255d2425e4895f1f21`).
+
+Landed through integrate/r16 with CURRENT-CONTEXT-NEW-TRIAGE D3. The landing gate record is [here](integration/gate.json) (full gate on 39b1964ac; the one Python failure was the read census's coverage floor, fixed by recording the census again; see its note).

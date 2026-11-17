@@ -1,0 +1,13 @@
+{
+ "note": "Landing integrate/r16 from main 285f51092: merges THREAD-LOCAL-CUSTODY-FREE-READ 6a766cb72 (conflicts only in the rule router and docs/agents/gateway.md, where rule 54 sits beside main's rules 51 and 53; both kept) and CURRENT-CONTEXT-NEW-TRIAGE D3 7862cca97 (conflicts only in proof/QCore.lean imports and the card README; both kept), amendments applied and docs regenerated at 39b1964ac. Full landing gate on 39b1964ac (private/gate-full-39b1964ac): every step exits 0 except python, where 778 of 779 tests pass and test_gate_scope_census.test_the_census_covers_the_suite fails (626 observed units not greater than 0.9 x 696; the read census was recorded at 682c7c843, before the new test units). As that test documents, the census was recorded again on 39b1964ac (scripts/gate_read_census.py record + reduce under gate_slot rust-suite, private/census-39b1964ac: 642 units traced, 45 not ok under the tracer, which the census records and does not gate on); test_gate_scope_census then passes (5 tests OK). No source or test file changed after the gate.",
+ "workspace_tests": 9568,
+ "provider_tests": 140,
+ "python_evidence_validator_tests": 779,
+ "reevaluation_probe_exit": 0,
+ "reevaluation_followup_exit": 0,
+ "cargo_fmt": "clean",
+ "cargo_clippy": "clean",
+ "standing_gate": "full landing gate: every step exits 0 except one Python census-coverage test, fixed by re-recording the read census and rerun green (disclosed in the note)",
+ "lean_audits": 440,
+ "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

@@ -437,3 +437,15 @@ The Python failure is
 (`'26.0.0' != '27.0.0'`). It is the committed matrix's derived
 `qcore-schemas` version, stale because D3 bumps the schema. It is expected,
 and the integrator regenerates the matrix at landing.
+
+## Integrator measurement, D3 (2026-11-17)
+
+Declared measurement, base `rev:0f6e17118`, tip `rev:8e190aa83` (the D3 code tip), run from the main checkout (`private/measure/d3-20261116T223408Z`) against [PREDICTION-D3](PREDICTION-D3.md): exit 0, all three routes complete, no unmatched rows, declared result **match**.
+
+- corpus: 1 row moved, `mk_http_thread_initialize_tls_once` `Unknown -> Safe`; 4 rows changed content only (refusal text).
+- system: 0 rows moved; 10 rows changed content only.
+- slice: 0 rows moved; 2 rows changed content only.
+
+No Safe row moves to Unknown or Unsafe. [Comparison](integration-d3/native-comparison.json.gz) (gzip of `native-comparison.json`, sha256 `9b5c1483b249a94197ae332175a83b52e0e65fc44863a0ca0c605cfdf74b7eb5`).
+
+Landed through integrate/r16 with THREAD-LOCAL-CUSTODY-FREE-READ; the landing gate record is [THREAD-LOCAL-CUSTODY-FREE-READ's](../thread-local-custody-free-read/integration/gate.json). CG25-VOID-CAST-GUARD-ESCAPE (registered by D3) is not fixed by this landing.
