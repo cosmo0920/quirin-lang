@@ -1,0 +1,38 @@
+{
+  "schema": "quirin-measure-inputs/1",
+  "description": "CG22-CALLBACK-CANDIDATE-CONTRACTS worktree-private preparation of the pinned corpus route only, as RULE50-CONSUMER-COMPOSITION prepared it: quirin-audit prepare clang-build --link (base 32336c33d binary, system Clang 21 /usr/lib/llvm-21/bin/clang) of the host's local Fluent Bit clone at 66910c10, its production compile database copied into fluent-bit-clang-source/build/, quirin-audit prepare monkey over that tree, and providers/package.py build at the base for provider-packages-wave20 (artifacts/prep.sh). --inputs-base is this card's worktree.",
+  "routes": [
+    {
+      "name": "corpus",
+      "profile": "eight-home",
+      "kind": "pinned-corpus",
+      "source_commit": "66910c10",
+      "inputs_root": "private/corpus-inputs",
+      "compile_databases": [
+        {
+          "path": "c-gateway-wave-pin/fluent-bit-clang-source/build/compile_commands.json",
+          "sha256": "1a21f0f6f417eab9f3a7cc43cbb0c02064c9d3430b632b992549fc4082d29db6"
+        },
+        {
+          "path": "c-gateway-wave-pin/monkey/monkey-build/compile_commands.json",
+          "sha256": "c72659daaff2a6d432090bed0f52a39660a439bca6329e32d3ebbfda6ed22881"
+        }
+      ],
+      "mirror_trees": [
+        "c-gateway-wave-pin/fluent-bit-clang-source",
+        "c-gateway-wave-pin/monkey",
+        "provider-packages-wave20"
+      ],
+      "link_map": {
+        "path": "docs/reports/w48-bu-single-leaf-bodies/link-map.corpus.json",
+        "sha256": "98a4db761ace9fd4846b000c4c98defdc2e39ce6f95684c67c30f9b8b6f38ad3"
+      },
+      "clang": "/usr/lib/llvm-21/bin/clang",
+      "tracked": [
+        "contract/profiles/fluent-bit/audit.json",
+        "contract/profiles/fluent-bit/profile.json",
+        "contract/profiles/fluent-bit/member-facts-scope.json"
+      ]
+    }
+  ]
+}

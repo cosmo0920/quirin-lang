@@ -61,6 +61,19 @@
 //! stay uncontracted. `quirin-provider-libc` declares none of these names, so no
 //! declared contract and no derived summary both apply to one of them.
 //!
+//! Card **CG22-CALLBACK-CANDIDATE-CONTRACTS** (rule 4a amended) adds one more
+//! way to reach a candidate: a **designator** a scope member names beside a
+//! call to a declaration in force with a synchronous invocation or a table
+//! dispatch (`callback_route::invocation_designators`, rule 13u's W4 order
+//! edges). A `static` comparator a header defines and a body hands to
+//! `bsearch` or `qsort` is called during that call and only through that
+//! designator, which denotes this unit's definition (internal linkage), so its
+//! validated summary is a statement about every invocation of it here. The
+//! candidate conditions are unchanged, and the invocation still decides over
+//! the candidates' contracts in force: a body that does not validate
+//! publishes nothing and the invocation keeps `callback-uncontracted`.
+//! `QCore.CallbackCandidateScope`.
+//!
 //! Nothing else changes. A definition admitted to the scope is offered to the
 //! **unchanged** W4 derivation: its summary is published only after
 //! `observations_match_contract` validated it against a fresh analysis of its
@@ -90,6 +103,8 @@
 
 use std::collections::BTreeSet;
 
+use qcore_schemas::contract::ResourceContracts;
+
 use super::{Token, direct_calls, find_function_body};
 
 /// The definitions W4 derives summaries for: `selected` together with the
@@ -102,6 +117,7 @@ pub(crate) fn derivation_scope(
     selected: &[String],
     definitions: &[String],
     selection_applied: bool,
+    contracts: &ResourceContracts,
 ) -> Vec<String> {
     if !selection_applied {
         return selected.to_vec();
@@ -120,10 +136,20 @@ pub(crate) fn derivation_scope(
     }
     // Reachability through direct calls, from the selection. The admitted set
     // only grows and is bounded by `candidates`, so the work list terminates.
+    // Card CG22-CALLBACK-CANDIDATE-CONTRACTS: also through the designators a
+    // body hands a synchronous invocation or a table dispatch
+    // (`invocation_designators`), still only to `candidates`.
     let mut admitted = BTreeSet::new();
     let mut work = selected.to_vec();
     while let Some(name) = work.pop() {
-        for callee in direct_calls(tokens, &name, &candidates) {
+        let mut reached = direct_calls(tokens, &name, &candidates);
+        reached.extend(super::callback_route::invocation_designators(
+            tokens,
+            &name,
+            &candidates,
+            contracts,
+        ));
+        for callee in reached {
             if admitted.insert(callee.clone()) {
                 work.push(callee);
             }
@@ -276,7 +302,7 @@ pub(crate) mod census {
         for name in selected {
             direct.extend(super::direct_calls(tokens, name, &unselected));
         }
-        let scope = derivation_scope(tokens, selected, definitions, true);
+        let scope = derivation_scope(tokens, selected, definitions, true, contracts);
         let admitted = scope
             .iter()
             .filter(|name| !chosen.contains(*name))

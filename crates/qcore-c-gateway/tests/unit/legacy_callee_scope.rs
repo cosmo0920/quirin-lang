@@ -22,7 +22,13 @@ fn scope(source: &str, selected: &[&str]) -> Vec<String> {
         .iter()
         .map(|name| (*name).to_owned())
         .collect::<Vec<_>>();
-    let mut scope = derivation_scope(&tokens, &selected, &definitions, true);
+    let mut scope = derivation_scope(
+        &tokens,
+        &selected,
+        &definitions,
+        true,
+        &qcore_schemas::contract::ResourceContracts::default(),
+    );
     scope.sort();
     scope
 }
@@ -79,7 +85,13 @@ fn without_a_selection_the_scope_is_unchanged() {
     let (tokens, conditionals) = tokenize_with_conditionals(source);
     let definitions = function_names(&tokens, &conditionals).definitions;
     assert_eq!(
-        derivation_scope(&tokens, &definitions, &definitions, false),
+        derivation_scope(
+            &tokens,
+            &definitions,
+            &definitions,
+            false,
+            &qcore_schemas::contract::ResourceContracts::default(),
+        ),
         definitions
     );
 }

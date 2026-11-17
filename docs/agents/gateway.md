@@ -77,6 +77,28 @@ which is not a second authority.
     `static` definition that contradicts a declaration now withdraws it in that
     unit, the refusing direction. `QCore.CalleeSummaryScope`;
     [the card report](../reports/w44-corpus-callee-summaries/README.md).
+    **Amended in place by card CG22-CALLBACK-CANDIDATE-CONTRACTS**: the
+    reachability also follows the designators a scope member names beside a
+    call to a declaration in force with a synchronous invocation or a table
+    dispatch (`resource_callback_invoked`, `resource_callback_table`; rule
+    13u's W4 order edges, `callback_route::invocation_designators`), still
+    only to unselected internal-linkage definitions the unit carries. A
+    `static` comparator a header defines and a body hands to `bsearch` or
+    `qsort` is called only through that designator, which denotes this
+    unit's definition, so the summary the unchanged derivation validates is a
+    statement about every invocation of it here; one that does not validate
+    publishes nothing and the invocation keeps `callback-uncontracted`.
+    Registries, registrations and member invocations add no edge here.
+    **Do not** follow a designator to an external definition or read a
+    designated body's summary before it validates. Measured (corpus
+    `66910c10`, base `32336c33d`, this card's own preparation, binaries
+    `47db0eba…` -> `b1299962…`): **1,082 / 6 / 3,616 -> 1,083 / 6 / 3,615**,
+    exactly `rd_kafka_ApiVersion_check` `Unknown -> Safe` (its comparator
+    `rd_kafka_ApiVersion_key_cmp`, `rdkafka_proto.h:208`, now summarised),
+    eleven rows changing content only, no `Safe -> non-Safe`, no `Unsafe`
+    added; `callback-uncontracted` 51 / 49 / 18 -> 50 / 48 / 17.
+    `QCore.CallbackCandidateScope`;
+    [report](../reports/cg22-callback-candidate-contracts/README.md).
 
 <a id="constraint-4b"></a>
 
@@ -7555,7 +7577,11 @@ safety claim and no validation of the detach representation premise.
     lists them among its own dependencies since card
     HANDOFF-CANDIDATE-OWN-CALLBACKS (below), except through a registry or a
     decided registration (`MEMBER-CANDIDATE-DEPENDENCIES-UNLISTED`). **Do not** read a callback as borrowed, admit a
-    candidate on a summary of another unit, admit a releasing or keeping
+    candidate on a summary of another unit except rule 4c's import (in force
+    at a callback position exactly as at a direct call, under the same
+    stated link premise and two-sided replay; card
+    CG22-CALLBACK-CANDIDATE-CONTRACTS found the code already reads it through
+    the function map and pinned it by test), admit a releasing or keeping
     candidate outside a registry's `element` position, or place a call whose
     Clang calls disagree. **Amended by rule 15w**: an actual that is the
     calling function's own callback formal, handed on exactly as that
