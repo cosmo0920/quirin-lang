@@ -151,4 +151,162 @@ sorted fixes it, and `providers/README.md` now says so. Registered:
 
 ## 6. The opt-in `current` run
 
-RESULTS
+**Inputs (this card's own; the host had none).** Fluent Bit was cloned from
+upstream into `private/fb/`. `quirin-audit prepare --revision 046accf6` (the
+base binary, `target/release/quirin-audit` sha256 `bb48af09…`, built from
+this worktree; no analyzer source differs from the base at any commit of
+this card) prepared the system route. CMake saw the extracted
+`libcurl4-openssl-dev` headers through `CMAKE_INCLUDE_PATH` and
+`CMAKE_LIBRARY_PATH`, as W48 did (`CURL_INCLUDE_DIR` is the extracted
+directory; `find_package(CURL)` reports `v8.18.0`), so librdkafka is
+configured with curl. The production database is 1,414 commands (sha256
+`a1f9e82b…`), and 815 of them pass the libcurl include directory
+([`probe_database.py`](evidence/probe_database.py)).
+
+**Run** ([`callers.sh`](evidence/callers.sh), logs `private/callers-1/`, every
+step exit 0; [comparison](evidence/callers-comparison.json) by
+[`compare_callers.py`](evidence/compare_callers.py), exit 0). The selection is
+W48's two librdkafka units, the provider selection is the profile's 69
+default modules, `--jobs 2`, `SOURCE_DATE_EPOCH=1767225600`. `without` runs
+on the shipped load path. Each `with-*` side runs on
+`providers/user-crates-load-path.json` with `quirin-provider-libcurl` added,
+under one probe configuration:
+
+| Side | Probe configuration | libcurl declarations | Functions (Safe / Pending / Unknown / Unsafe) | Units |
+|---|---|---|---|---|
+| without | — | — | 6 / 0 / 39 / 4 | Unsafe, Unsafe |
+| with-selected | the two selected units' commands (`selected.json`, sha256 `5e128caa…`) | all 6 in force (8.18.0 = lock) | 6 / **1** / 38 / 4 | Unsafe, Unsafe |
+| with-default | Clang's default search path | all 6 held, `library-version-unreadable` | 6 / 1 / 38 / 4 | Unsafe, Unsafe |
+| with-full | the whole prepared database | all 6 held, `library-version-unreadable` | 6 / 1 / 38 / 4 | Unsafe, Unsafe |
+
+Every side checks 18 bindings (OpenSSL's 12 and libcurl's 6), all `Pending`
+(`plugin-claim-uncertified`). No row is unmatched, none reaches `Safe`, none
+moves into or out of `Unsafe`.
+
+**with-selected, every row attributed.** Seven rows link a bound libcurl
+contract (each link `Pending`), exactly W48's seven:
+
+| Row | Status | Diagnostics removed (none added) | Still blocked by |
+|---|---|---|---|
+| `rd_http_global_init` | **Unknown → Pending** | uncontracted `curl_global_init` | nothing: the binding's `Pending` |
+| `rd_http_get` | Unknown | uncontracted `curl_slist_append`, `curl_slist_free_all` | the typecheck stubs, `curl_easy_*` (W48-LIBCURL-TYPECHECK-STUBS, W48-LIBCURL-UNCONTRACTED-CALLEES) |
+| `rd_http_get_params_append` | Unknown | uncontracted `curl_url`, `curl_url_cleanup` | `curl_url_set`/`_get` |
+| `rd_kafka_oidc_jwt_bearer_build_request_body` | Unknown | uncontracted `curl_easy_escape`; unresolved identity `scope_escaped` | other refusals |
+| `rd_kafka_oidc_token_jwt_bearer_refresh_cb` | Unknown | uncontracted `curl_slist_append`, `curl_slist_free_all`; unresolved identity `headers` | other refusals |
+| `rd_kafka_oidc_token_client_credentials_refresh_cb` | Unknown | uncontracted `curl_slist_free_all` | other refusals |
+| `rd_kafka_oidc_token_metadata_azure_imds_refresh_cb` | Unknown | none | other refusals |
+
+This is the prediction's first row, exactly.
+
+**with-default and with-full: an unpredicted move, and a fail-closed defect
+found.** Both probes are unreadable, as predicted: this host has no
+`curl/curlver.h` on the default path, and 599 of the full database's commands
+pass no libcurl include directory. Every declaration's record reads
+`in_force: false`, `reason: library-version-unreadable`. Rule 53 says such a
+call is held `Unknown` (`stale-evidence`). Yet `rd_http_global_init` is
+published **`Pending`**. Its uncontracted-call diagnostic is replaced by "call
+to `curl_global_init` whose pinned contract is not in force: the audited
+source does not match its lock (contract-pin-mismatch)", which is the
+human-resolvable hold's text, not the library-version hold's ("… not in force
+at the audited library version (library-version-unreadable)", which
+`legacy_pin_hold::hold_description_for` chooses when the classifier's
+environment carries the withheld entry's reason). On the `contracts` route
+the same hold is `Unknown`, as `libcurl_user_crate_versions.rs` asserts. So
+on the `current` route an unreadable (and, by the same path, out-of-range or
+ambiguous) version publishes a held call `Pending`, a value below its
+standing. No row reaches `Safe`, but an `Unknown` is published as a `Pending`
+that no review can resolve. The cause is not localised. The run-level
+evaluation records the right reason, but the environment the classifier
+consults when it describes the held call evidently lacks it. The card changes
+no gateway code, so the defect is registered as
+`LIBRARY-VERSION-HOLD-CURRENT-ROUTE-PENDING` (§9), with this run as its
+reproduction. Until it is fixed, an opt-in `current` run reads correctly only
+where the probe reads the headers (with-selected), and a `Pending` row there
+must be read against the sidecar's `library_versions` record.
+
+**The probe's configurations (a finding for LIBRARY-VERSION-PROBE-ROUTE-DATABASE).**
+With the whole database the probe is unreadable, because only the targets
+linking libcurl get its include directory. A route database handed to the
+probe as it is today (that follow-up's discharge) would therefore hold every
+libcurl call on any host whose libcurl headers are off the default path. The
+probe has to read the configurations of the units that call the library (or
+the units audited), not every command. Registered with that follow-up's
+evidence (§9). On the user's host the package installs the headers on the
+default path (`/usr/include/x86_64-linux-gnu`), so every configuration
+resolves them.
+
+## 7. The measured routes
+
+Prediction: corpus, system and slice verdict-identical (`none`). This card
+changes no analyzer crate. Its only `crates/` change is a test
+(`crates/qcore-audit/tests/libcurl_user_crate_versions.rs` and its fixture),
+and the crate is reachable only through the user load path, which no pinned
+or configured route reads (W45-PLUGIN-ROUTE-COVERAGE). The arbiter comparison
+(`quirin-audit measure --declared PREDICTION.md`) is left to the integrator's
+landing measurement, as for OPENSSL-PROVIDER-PLUGIN. This host has no prepared
+corpus inputs, and its `rev:` sides need user namespaces it refuses (W48 §4).
+
+## 8. Gate
+
+`python3 scripts/gate_scope.py --base 32336c33d --out private/gate-1` through
+`private/toolchain/env.sh`, on `b60e5e30c` (scoped: rust-suite packages
+qcore-audit, qcore-compiler, qcorec, the three audit plugins and
+quirin-source-analysis plus 43 test targets; Lean none; provider gate yes;
+record `private/gate-1/gate.json`):
+
+| Step | Exit | Counts |
+|---|---:|---|
+| submodules, fmt, Clippy (7 invocations) | 0 | |
+| Rust suite | 0 | 270 units, 277 summaries; 3,413 passed, 0 failed, 9 ignored, 10 filtered |
+| `reevaluation_probe`, `reevaluation_followup` | 0, 0 | |
+| Python suite | 1 | 779 tests, 2 failures (below) |
+| provider package build, verify-all, verify `qcore.libevent` | 0, 0, 0 | |
+| provider tests | 0 | 49 summaries; 147 passed, 0 failed, 1 ignored |
+| provider fmt, provider Clippy | 0, 0 | |
+
+The Python failures: (1) `test_gate_scope_census` named the new test's two
+directory literals (`providers/quirin-provider-libcurl`, `providers`) as
+undeclared walkers. The test now spells each file it reads by its whole path
+(commit after `b60e5e30c`), and `gate_scope.py --plan` reports no undeclared
+literal. (2) `test_gate_slot_queue.Status.test_each_waiter_shows_its_queue_position`
+saw a holder where it expected a waiter, a load-sensitive slot test on a host
+at load 60 to 70 that this card's code does not touch. Reruns after the fix:
+`python3 -m unittest discover -s scripts/tests -p "test_gate_s*.py"` exit 0,
+255 tests (`private/logs/py-rerun.log`); the edited test
+`cargo test -p qcore-audit --test libcurl_user_crate_versions` exit 0, 2
+passed (`private/logs/libcurl-versions-test-2.log`); `cargo fmt` and
+`cargo clippy -p qcore-audit --tests` exit 0. Also run outside the gate:
+`python3 providers/package.py checkers` exit 0, `providers/contracts.py check`
+exit 0, and the providers' Python tests exit 0 (26 tests).
+
+## 9. Follow-ups
+
+Registered or amended in [`integration-amendments.json`](integration-amendments.json):
+
+- `LIBRARY-VERSION-HOLD-CURRENT-ROUTE-PENDING` (new): §6, the fail-closed
+  defect: on `current` a call held for an unreadable, out-of-range or
+  ambiguous library version is published `Pending` with the
+  contract-pin-mismatch text, where rule 53 requires `Unknown`.
+- `LIBRARY-VERSION-PROBE-UNIT-CONFIGURATIONS` (new): the probe reads every
+  configuration, and a library only some targets include is unreadable under
+  a whole route database.
+- `USER-LOAD-PATH-CHECKER-ORDER` (new): §4.
+- `LIBCURL-CONTRACTS-TWO-HOMES` (new): the same six declarations now live in
+  this crate and in the `quirin-audit libcurl` plugin's `install` output (a
+  crate also named `quirin-provider-libcurl`, namespace `libcurl`, without
+  ranges). The plugin stays, per the brief. Which one owns libcurl's contracts,
+  and whether `install` should emit this crate, is open.
+- `W48-LIBCURL-UNCONTRACTED-CALLEES` (amended): unchanged scope; the six
+  established contracts now ride this crate too, and `curl_easy_init` is not
+  contracted (§1).
+- `W45-PLUGIN-ROUTE-COVERAGE` (amended): this crate's bindings, too, reach
+  only `current` and `contracts`.
+
+## 10. Files likely to conflict
+
+`providers/contracts.py` (`USER_LOAD_PATH_PACKAGES`), `providers/Cargo.toml`
+and `Cargo.lock`, `providers/user-crates-load-path.json` (regenerate with both
+crates named sorted, then `plugin views --write`), `providers/README.md`,
+`providers/conformance/tests/packages.rs` (the user-crate pin) and the CI
+comment. OPENSSL-PROVIDER-REMAINING-CALLEES and REFERENCE-DROP-NULL-ACCEPTING
+touch the same roots.

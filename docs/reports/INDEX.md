@@ -666,6 +666,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [libc-reading-site-evidence](libc-reading-site-evidence/README.md) | Libc reading-site evidence v1 |
 
+| [libcurl-provider-plugin](libcurl-provider-plugin/README.md) | LIBCURL-PROVIDER-PLUGIN: libcurl contracts on the user-contract SDK, with version-ranged declarations |
+
 | [libevent-core-census-guard-correlation](libevent-core-census-guard-correlation/README.md) | LIBEVENT-CORE-CENSUS-GUARD-CORRELATION |
 
 | [librdkafka-header-inlines](librdkafka-header-inlines/README.md) | LIBRDKAFKA-HEADER-INLINES |

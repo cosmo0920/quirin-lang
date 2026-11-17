@@ -61,6 +61,32 @@ const MODULES: [&str; 4] = [
     "libcurl/url.qv",
 ];
 
+/// The crate's committed files the scratch crate copies: (repository path,
+/// path inside the crate). Spelled as whole file paths so the gate's scope
+/// reads exactly these files.
+const COPIED: [(&str, &str); 5] = [
+    (
+        "providers/quirin-provider-libcurl/contracts/libcurl/escape.qv",
+        "contracts/libcurl/escape.qv",
+    ),
+    (
+        "providers/quirin-provider-libcurl/contracts/libcurl/global.qv",
+        "contracts/libcurl/global.qv",
+    ),
+    (
+        "providers/quirin-provider-libcurl/contracts/libcurl/slist.qv",
+        "contracts/libcurl/slist.qv",
+    ),
+    (
+        "providers/quirin-provider-libcurl/contracts/libcurl/url.qv",
+        "contracts/libcurl/url.qv",
+    ),
+    (
+        "providers/quirin-provider-libcurl/library-versions.json",
+        "library-versions.json",
+    ),
+];
+
 struct Tree(PathBuf);
 
 impl Tree {
@@ -79,22 +105,12 @@ impl Tree {
             root.join("src/curl_user.c"),
         )
         .unwrap();
-        let source = repository().join("providers/quirin-provider-libcurl");
         let krate = root.join("user/quirin-provider-libcurl");
         fs::create_dir_all(krate.join("src")).unwrap();
         fs::create_dir_all(krate.join("contracts/libcurl")).unwrap();
-        for module in MODULES {
-            fs::copy(
-                source.join("contracts").join(module),
-                krate.join("contracts").join(module),
-            )
-            .unwrap();
+        for (from, to) in COPIED {
+            fs::copy(repository().join(from), krate.join(to)).unwrap();
         }
-        fs::copy(
-            source.join("library-versions.json"),
-            krate.join("library-versions.json"),
-        )
-        .unwrap();
         fs::write(
             krate.join("Cargo.toml"),
             "[package]\nname = \"quirin-provider-libcurl\"\nversion = \"0.1.0\"\nedition = \"2024\"\n",
@@ -321,12 +337,10 @@ fn the_libcurl_ranges_follow_the_audited_curlver_header() {
 /// shipped one.
 #[test]
 fn the_libcurl_crate_rides_the_user_load_path_only() {
-    let read = |name: &str| -> String {
-        fs::read_to_string(repository().join("providers").join(name)).unwrap()
-    };
-    let shipped = read("contract-load-path.json");
+    let read = |path: &str| -> String { fs::read_to_string(repository().join(path)).unwrap() };
+    let shipped = read("providers/contract-load-path.json");
     assert!(!shipped.contains("quirin-provider-libcurl"));
-    let user: Value = serde_json::from_str(&read("user-crates-load-path.json")).unwrap();
+    let user: Value = serde_json::from_str(&read("providers/user-crates-load-path.json")).unwrap();
     assert!(
         user["crates"]
             .as_array()

@@ -49,3 +49,16 @@ and passed to CMake, as W48 did):
 | the selected units' compile commands (`QCORE_LIBRARY_VERSION_COMPILE_DATABASE`, each passing the extracted include directory): 8.18.0, equal to the lock | **`rd_http_global_init` Unknown -> Pending** (its only blocker is `curl_global_init`); `rd_http_get`, `rd_http_get_params_append`, `rd_kafka_oidc_jwt_bearer_build_request_body` and the three OIDC refresh callbacks link a bound contract and stay `Unknown` on their other blockers (the typecheck stubs, `curl_url_set`/`_get`, `curl_easy_*` option calls). Exactly W48's movement. |
 | Clang's default search path (no database; no `curl/curlver.h` on this host) | no move: every libcurl call is held `Unknown` (`library-version-unreadable`, `stale-evidence`) |
 | the whole prepared compile database (configurations that pass libcurl no include directory) | no move: the probe cannot read `curl/curlver.h` in those configurations, so it is unreadable and every call is held `Unknown`. Recorded as a finding for LIBRARY-VERSION-PROBE-ROUTE-DATABASE, not changed here. |
+
+## Correction after the measurement (the table above is unchanged as committed)
+
+The first row was measured exactly ([README](README.md) §6). The second and
+third rows were not. In both configurations the probe was unreadable as
+predicted, and every declaration was withheld with
+`library-version-unreadable`, but `rd_http_global_init` still moved
+`Unknown -> Pending`. On the `current` route the held call carries the
+human-resolvable `contract-pin-mismatch` text and is published `Pending`, where
+rule 53 requires `Unknown`. That is a fail-closed defect of the `current`
+route, not a contract's effect, and it is registered as
+LIBRARY-VERSION-HOLD-CURRENT-ROUTE-PENDING. The measured routes' block is
+unchanged: no move.
