@@ -271,3 +271,24 @@ fixes), against [PREDICTION.md](PREDICTION.md):
 ```sh
 target/release/quirin-audit --plugin-path target/release --output <dir> --timeout-ms 36000000 measure --inputs crates/quirin-audit-plugin-measure/inputs/live.json --inputs-base /media/Data/GitHub/quirin-lang --side base=rev:36b2cf931 --side tip=rev:67fdd5c28 --declared docs/reports/cg25-void-cast-guard-escape/PREDICTION.md
 ```
+
+## 6. Gate
+
+`python3 scripts/gate_scope.py --base 36b2cf931 --out private/gate-1` was
+run at `ae28d74cd`, whose code equals `67fdd5c28`. Its record is
+[gate.json](gate.json). Clang is recorded in
+[gate/](gate/clang-version.txt). The scope was full (the diff reaches
+`qcore-c-gateway`; Lean ran in full because `proof/QCore.lean` changed). The
+provider gate was not selected.
+
+| Step | Exit | Counts |
+|---|---|---|
+| submodules, fmt, clippy | 0, 0, 0 | |
+| Rust suite | 0 | 651 units, 696 summaries; 9,624 passed, 0 failed, 21 ignored, 148 filtered |
+| reevaluation probe, follow-up | 0, 0 | |
+| Lean (`check_lean_audits.py`) | 0 | 443 audits |
+| Python suite | 0 | 779 tests |
+
+Logs: `private/gate-1/` (Rust per-unit logs in `private/gate-1/rust-suite/`).
+The console log is outside the worktree, in the session scratchpad
+(`gate-1.console.log`).
