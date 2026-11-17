@@ -1,0 +1,48 @@
+{
+ "schema_version": 1,
+ "generated_by": "providers/quirin-provider-libcurl/scripts/pin_prototypes.py",
+ "version": "8.18.0",
+ "provenance": "Ubuntu 26.04 libcurl4-openssl-dev 8.18.0-1ubuntu2.8 amd64 (.deb sha256 eb12af8113f7fae1f13bd113c85a2d15047b33f9fec8c83ae34b94d7a94f55fe), /usr/include/x86_64-linux-gnu/curl",
+ "headers": {
+  "curl/curl.h": "4df0438c38181ecce811fa61c8a027e4e70f2c45784e23bf61f6ded0c7f35831",
+  "curl/curlver.h": "ace17dbbc1a4c20d084a4ac3a743b0250d5430ab0b32bbc72a4dee521ce6ded5",
+  "curl/easy.h": "4b94482a7b8f7f70928cc5113eb532fc7e7db49cab20f2d63a0318eda59f0d79",
+  "curl/header.h": "0f393dd84b6bb80a43777ec3871721c065102569d951791c59986eeaa84fb113",
+  "curl/mprintf.h": "a79657fa15db71e732bcb58bc4645ab65bdb3222767f34be5bab56aa0d4f4cc9",
+  "curl/multi.h": "434c3076986b37c6831a17c8e215bff9acdd14f49bbeba28180092c1f7cbe0fe",
+  "curl/options.h": "32fe87f843367d25a9db91a47386652402f08c9668617b4c51295ef31d93f8b0",
+  "curl/system.h": "ce05ff7adce5f1e1c1eae7a95eee6cef189faba18cb3d69b806534e198d59936",
+  "curl/typecheck-gcc.h": "8cc9c4827abc4ca51a73a4ef236b0caf1a3876edc9da14f4d5671e1a61876d74",
+  "curl/urlapi.h": "4dda5954c042ff23f7561a6767ee6cf8929ddbbca7c8ae1dae15044d1dcfeafb",
+  "curl/websockets.h": "43b93bb4b7121178aef33182ed11356948d9ed78fe41e92bae005d06eb76e1c4"
+ },
+ "enums": {
+  "CURLcode": "unsigned int"
+ },
+ "prototypes": {
+  "curl_easy_escape": {
+   "declaration": "char *curl_easy_escape(CURL *handle, const char *string, int length)",
+   "header": "curl/curl.h"
+  },
+  "curl_global_init": {
+   "declaration": "CURLcode curl_global_init(long flags)",
+   "header": "curl/curl.h"
+  },
+  "curl_slist_append": {
+   "declaration": "struct curl_slist *curl_slist_append(struct curl_slist *list, const char *data)",
+   "header": "curl/curl.h"
+  },
+  "curl_slist_free_all": {
+   "declaration": "void curl_slist_free_all(struct curl_slist *list)",
+   "header": "curl/curl.h"
+  },
+  "curl_url": {
+   "declaration": "CURLU *curl_url(void)",
+   "header": "curl/urlapi.h"
+  },
+  "curl_url_cleanup": {
+   "declaration": "void curl_url_cleanup(CURLU *handle)",
+   "header": "curl/urlapi.h"
+  }
+ }
+}

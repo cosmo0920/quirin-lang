@@ -129,6 +129,9 @@ pub struct CurrentAudit {
     /// Card LINK-STANDING (rule 40): the derived resolution's per-caller
     /// conditions, when the run's link resolution is derived.
     link_standing: Option<std::sync::Arc<crate::cross_unit_links::LinkStanding>>,
+    /// Card LIBRARY-VERSION-PROBE-ROUTE-DATABASE: the compile databases the
+    /// library version probe reads, for every slice too.
+    probe_databases: crate::library_version::ProbeDatabases,
 }
 
 /// One configuration's console lines and, unless it failed, its products.
@@ -278,18 +281,41 @@ impl CurrentAudit {
         mode: EvidenceMode,
         checkers: crate::user_plugins::PluginCheckers<'_>,
     ) -> Result<Self, String> {
+        Self::with_probe_databases(
+            checkout,
+            profile,
+            input,
+            mode,
+            checkers,
+            crate::library_version::ProbeDatabases::None,
+        )
+    }
+
+    /// [`Self::with_plugin_checkers`] for a run that analyses units from
+    /// `databases`: a library version range is probed under their include
+    /// configurations, here and on every slice (card
+    /// LIBRARY-VERSION-PROBE-ROUTE-DATABASE, rule 53).
+    pub fn with_probe_databases(
+        checkout: &Path,
+        profile: &LoadedProfile,
+        input: &ContractInput,
+        mode: EvidenceMode,
+        checkers: crate::user_plugins::PluginCheckers<'_>,
+        probe_databases: crate::library_version::ProbeDatabases,
+    ) -> Result<Self, String> {
         let checkout = checkout.canonicalize().map_err(|error| error.to_string())?;
         let revision = crate::checkout_head(&checkout)?;
         let mut contracts = input.load()?;
         // Card W45-CONTRACT-REVISION-MODE: every pinned contract is compared
         // with its lock over the checkout's HEAD before any unit is analysed.
-        let pins = crate::contract_revision::apply_pins(
+        let pins = crate::contract_revision::apply_pins_probing(
             &mut contracts,
             &crate::contract_revision::ModuleOwners::for_manifest(
                 input.manifest_path(),
                 input.manifest_text(),
             )?,
             &checkout,
+            &probe_databases,
         )?;
         // Card CHUNKIO-META-LEN-BOUNDS-CONTRACTS: the bounds environment.
         crate::bounds_selection::select_for_route(
@@ -392,6 +418,7 @@ impl CurrentAudit {
             member_prepass: None,
             cross_unit_homes: Vec::new(),
             link_standing: None,
+            probe_databases,
         })
     }
 
@@ -523,13 +550,14 @@ impl CurrentAudit {
     pub fn activate_slice_contracts(&mut self, slice_input: &ContractInput) -> Result<(), String> {
         crate::contract_dependencies::clear_premises_cache();
         let mut contracts = slice_input.load()?;
-        let pins = crate::contract_revision::apply_pins(
+        let pins = crate::contract_revision::apply_pins_probing(
             &mut contracts,
             &crate::contract_revision::ModuleOwners::for_manifest(
                 slice_input.manifest_path(),
                 slice_input.manifest_text(),
             )?,
             &self.checkout,
+            &self.probe_databases,
         )?;
         crate::bounds_selection::select_for_route(
             "configured",

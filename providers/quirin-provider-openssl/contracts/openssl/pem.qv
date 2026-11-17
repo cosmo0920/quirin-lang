@@ -1,0 +1,80 @@
+// SPDX-License-Identifier: Apache-2.0
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+module contract;
+
+// Card OPENSSL-PROVIDER-REMAINING-CALLEES. Reading PEM objects from a BIO
+// (see err.qv for what every declaration of this crate shares).
+//
+// https://docs.openssl.org/1.0.2/man3/pem/ documents both functions (3.5,
+// 1.1.1: man3/PEM_read_bio_PrivateKey); HISTORY names neither, so the bound
+// is the oldest series checked. What the 3.5 page states, PEM FUNCTION
+// ARGUMENTS:
+//
+// * `x`: "If x is NULL then the parameter is ignored"; otherwise the result
+//   is written to `*x`, or the structure at `*x` is reused. The reuse arm
+//   hands a caller's object to the call, so each declaration holds only at
+//   calls passing a null pointer constant there (C04.5's premise); every
+//   other call stays uncontracted.
+// * `cb`: "the callback to use when querying for the pass phrase", called
+//   during the read with `u` ("The u parameter has the same value as the u
+//   parameter passed to the PEM routine"). A caller's callback would be a
+//   synchronous invocation (C04.19), but the vocabulary admits no callback
+//   clause beside the literal-argument premise the `x` arm needs, so each
+//   declaration also holds only at calls passing a null pointer constant
+//   for `cb`: then "If the cb parameters is set to NULL and the u parameter
+//   is not NULL then the u parameter is interpreted as a NUL terminated
+//   string to use as the passphrase"; if both are NULL "the default
+//   callback routine is used", OpenSSL's own. Either way `u` is read, not
+//   kept. A call passing a callback (librdkafka's
+//   rd_kafka_transport_ssl_passwd_cb) stays uncontracted.
+// * RETURN VALUES: "The read routines return either a pointer to the
+//   structure read or NULL if an error occurred." X509 and EVP_PKEY are
+//   reference counted (X509_new, EVP_PKEY_new), so the result is one
+//   returned reference, which X509_free / EVP_PKEY_free drops.
+
+// PEM_read_bio_X509. Pinned prototype: `X509 *PEM_read_bio_X509(BIO *out,
+// X509 **x, pem_password_cb *cb, void *u)` (openssl/pem.h).
+extern fn PEM_read_bio_X509(out: ptr<mut, u8>, x: ptr<mut, ptr<mut, u8>>, cb: fnptr, u: ptr<mut, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, documented "1.0.2");
+    requires resource_literal_argument(x, 0);
+    requires resource_literal_argument(cb, 0);
+    ensures normal resource_borrowed(out);
+    ensures normal resource_borrowed(x);
+    ensures normal resource_borrowed(cb);
+    ensures normal resource_borrowed(u);
+    ensures normal resource_return_owned(nullable);
+    ensures normal resource_return_kind(reference);
+};
+
+// PEM_read_bio_PrivateKey. Pinned prototype: `EVP_PKEY
+// *PEM_read_bio_PrivateKey(BIO *out, EVP_PKEY **x, pem_password_cb *cb, void
+// *u)`.
+extern fn PEM_read_bio_PrivateKey(out: ptr<mut, u8>, x: ptr<mut, ptr<mut, u8>>, cb: fnptr, u: ptr<mut, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, documented "1.0.2");
+    requires resource_literal_argument(x, 0);
+    requires resource_literal_argument(cb, 0);
+    ensures normal resource_borrowed(out);
+    ensures normal resource_borrowed(x);
+    ensures normal resource_borrowed(cb);
+    ensures normal resource_borrowed(u);
+    ensures normal resource_return_owned(nullable);
+    ensures normal resource_return_kind(reference);
+};

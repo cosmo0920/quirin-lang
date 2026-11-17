@@ -1,0 +1,435 @@
+{
+ "schema": "libcurl-provider-plugin-callers-comparison/1",
+ "without": {
+  "units": {
+   "lib/librdkafka-2.15.0/src/rdhttp.c": "Unsafe",
+   "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer_oidc.c": "Unsafe"
+  },
+  "function_tallies": {
+   "Safe": 6,
+   "Unknown": 39,
+   "Unsafe": 4
+  }
+ },
+ "sides": {
+  "with-selected": {
+   "units": {
+    "lib/librdkafka-2.15.0/src/rdhttp.c": "Unsafe",
+    "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer_oidc.c": "Unsafe"
+   },
+   "function_tallies": {
+    "Pending": 1,
+    "Safe": 6,
+    "Unknown": 38,
+    "Unsafe": 4
+   },
+   "unmatched": [],
+   "library_versions": {
+    "configurations": "override QCORE_LIBRARY_VERSION_COMPILE_DATABASE: compile-database:/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-aaf5aabba83ffaa50/private/hold/probe/selected.json",
+    "libraries": {
+     "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-aaf5aabba83ffaa50/providers/quirin-provider-libcurl:curl": {
+      "configurations": 1,
+      "header": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-aaf5aabba83ffaa50/private/hold/libcurl-root/usr/include/x86_64-linux-gnu/curl/curlver.h",
+      "header_sha256": "ace17dbbc1a4c20d084a4ac3a743b0250d5430ab0b32bbc72a4dee521ce6ded5",
+      "version": "8.18.0"
+     }
+    },
+    "declarations": [
+     {
+      "function": "curl_easy_escape",
+      "range": "resource_library_version(curl, since \"7.15.4\")",
+      "audited_version": "8.18.0",
+      "pinned_version": "8.18.0",
+      "in_force": true,
+      "reason": null,
+      "detail": ""
+     },
+     {
+      "function": "curl_global_init",
+      "range": "resource_library_version(curl, since \"7.8.0\")",
+      "audited_version": "8.18.0",
+      "pinned_version": "8.18.0",
+      "in_force": true,
+      "reason": null,
+      "detail": ""
+     },
+     {
+      "function": "curl_slist_append",
+      "range": "resource_library_version(curl, since \"7.1.0\")",
+      "audited_version": "8.18.0",
+      "pinned_version": "8.18.0",
+      "in_force": true,
+      "reason": null,
+      "detail": ""
+     },
+     {
+      "function": "curl_slist_free_all",
+      "range": "resource_library_version(curl, since \"7.1.0\")",
+      "audited_version": "8.18.0",
+      "pinned_version": "8.18.0",
+      "in_force": true,
+      "reason": null,
+      "detail": ""
+     },
+     {
+      "function": "curl_url",
+      "range": "resource_library_version(curl, since \"7.62.0\")",
+      "audited_version": "8.18.0",
+      "pinned_version": "8.18.0",
+      "in_force": true,
+      "reason": null,
+      "detail": ""
+     },
+     {
+      "function": "curl_url_cleanup",
+      "range": "resource_library_version(curl, since \"7.62.0\")",
+      "audited_version": "8.18.0",
+      "pinned_version": "8.18.0",
+      "in_force": true,
+      "reason": null,
+      "detail": ""
+     }
+    ]
+   },
+   "plugin_checks": {
+    "Pending": 18,
+    "Safe": 0,
+    "Unknown": 0,
+    "Unsafe": 0
+   },
+   "rows_moved_or_linked": [
+    {
+     "file": "lib/librdkafka-2.15.0/src/rdhttp.c",
+     "function": "rd_http_get",
+     "without": "Unknown",
+     "with": "Unknown",
+     "plugin_links": [
+      {
+       "callee": "curl_slist_append",
+       "verdict": "Pending",
+       "reasons": [
+        "plugin-claim-uncertified"
+       ]
+      },
+      {
+       "callee": "curl_slist_free_all",
+       "verdict": "Pending",
+       "reasons": [
+        "plugin-claim-uncertified"
+       ]
+      }
+     ],
+     "diagnostics_removed": [
+      "call to uncontracted function `curl_slist_append`",
+      "call to uncontracted function `curl_slist_free_all`"
+     ],
+     "diagnostics_added": []
+    },
+    {
+     "file": "lib/librdkafka-2.15.0/src/rdhttp.c",
+     "function": "rd_http_get_params_append",
+     "without": "Unknown",
+     "with": "Unknown",
+     "plugin_links": [
+      {
+       "callee": "curl_url",
+       "verdict": "Pending",
+       "reasons": [
+        "plugin-claim-uncertified"
+       ]
+      },
+      {
+       "callee": "curl_url_cleanup",
+       "verdict": "Pending",
+       "reasons": [
+        "plugin-claim-uncertified"
+       ]
+      }
+     ],
+     "diagnostics_removed": [
+      "call to uncontracted function `curl_url_cleanup`",
+      "call to uncontracted function `curl_url`"
+     ],
+     "diagnostics_added": []
+    },
+    {
+     "file": "lib/librdkafka-2.15.0/src/rdhttp.c",
+     "function": "rd_http_global_init",
+     "without": "Unknown",
+     "with": "Pending",
+     "plugin_links": [
+      {
+       "callee": "curl_global_init",
+       "verdict": "Pending",
+       "reasons": [
+        "plugin-claim-uncertified"
+       ]
+      }
+     ],
+     "diagnostics_removed": [
+      "call to uncontracted function `curl_global_init`"
+     ],
+     "diagnostics_added": []
+    },
+    {
+     "file": "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer_oidc.c",
+     "function": "rd_kafka_oidc_jwt_bearer_build_request_body",
+     "without": "Unknown",
+     "with": "Unknown",
+     "plugin_links": [
+      {
+       "callee": "curl_easy_escape",
+       "verdict": "Pending",
+       "reasons": [
+        "plugin-claim-uncertified"
+       ]
+      }
+     ],
+     "diagnostics_removed": [
+      "call to uncontracted function `curl_easy_escape`",
+      "unresolved resource identity `scope_escaped`"
+     ],
+     "diagnostics_added": []
+    },
+    {
+     "file": "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer_oidc.c",
+     "function": "rd_kafka_oidc_token_client_credentials_refresh_cb",
+     "without": "Unknown",
+     "with": "Unknown",
+     "plugin_links": [
+      {
+       "callee": "curl_slist_free_all",
+       "verdict": "Pending",
+       "reasons": [
+        "plugin-claim-uncertified"
+       ]
+      }
+     ],
+     "diagnostics_removed": [
+      "call to uncontracted function `curl_slist_free_all`"
+     ],
+     "diagnostics_added": []
+    },
+    {
+     "file": "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer_oidc.c",
+     "function": "rd_kafka_oidc_token_jwt_bearer_refresh_cb",
+     "without": "Unknown",
+     "with": "Unknown",
+     "plugin_links": [
+      {
+       "callee": "curl_slist_append",
+       "verdict": "Pending",
+       "reasons": [
+        "plugin-claim-uncertified"
+       ]
+      },
+      {
+       "callee": "curl_slist_free_all",
+       "verdict": "Pending",
+       "reasons": [
+        "plugin-claim-uncertified"
+       ]
+      }
+     ],
+     "diagnostics_removed": [
+      "call to uncontracted function `curl_slist_append`",
+      "call to uncontracted function `curl_slist_free_all`",
+      "unresolved resource identity `headers`"
+     ],
+     "diagnostics_added": []
+    },
+    {
+     "file": "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer_oidc.c",
+     "function": "rd_kafka_oidc_token_metadata_azure_imds_refresh_cb",
+     "without": "Unknown",
+     "with": "Unknown",
+     "plugin_links": [
+      {
+       "callee": "curl_slist_free_all",
+       "verdict": "Pending",
+       "reasons": [
+        "plugin-claim-uncertified"
+       ]
+      }
+     ],
+     "diagnostics_removed": [],
+     "diagnostics_added": []
+    }
+   ],
+   "rows_to_safe": [],
+   "rows_into_or_out_of_unsafe": []
+  },
+  "with-default": {
+   "units": {
+    "lib/librdkafka-2.15.0/src/rdhttp.c": "Unsafe",
+    "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer_oidc.c": "Unsafe"
+   },
+   "function_tallies": {
+    "Safe": 6,
+    "Unknown": 39,
+    "Unsafe": 4
+   },
+   "unmatched": [],
+   "library_versions": {
+    "configurations": "compile-database:/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-aaf5aabba83ffaa50/private/hold/prep/fluent-bit-clang-production/compile_commands.json",
+    "libraries": {
+     "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-aaf5aabba83ffaa50/providers/quirin-provider-libcurl:curl": {
+      "detail": "`#include <curl/curlver.h>` does not preprocess: <stdin>:1:10: fatal error: 'curl/curlver.h' file not found",
+      "failure": "library-version-unreadable"
+     }
+    },
+    "declarations": [
+     {
+      "function": "curl_easy_escape",
+      "range": "resource_library_version(curl, since \"7.15.4\")",
+      "audited_version": null,
+      "pinned_version": "8.18.0",
+      "in_force": false,
+      "reason": "library-version-unreadable",
+      "detail": "`#include <curl/curlver.h>` does not preprocess: <stdin>:1:10: fatal error: 'curl/curlver.h' file not found"
+     },
+     {
+      "function": "curl_global_init",
+      "range": "resource_library_version(curl, since \"7.8.0\")",
+      "audited_version": null,
+      "pinned_version": "8.18.0",
+      "in_force": false,
+      "reason": "library-version-unreadable",
+      "detail": "`#include <curl/curlver.h>` does not preprocess: <stdin>:1:10: fatal error: 'curl/curlver.h' file not found"
+     },
+     {
+      "function": "curl_slist_append",
+      "range": "resource_library_version(curl, since \"7.1.0\")",
+      "audited_version": null,
+      "pinned_version": "8.18.0",
+      "in_force": false,
+      "reason": "library-version-unreadable",
+      "detail": "`#include <curl/curlver.h>` does not preprocess: <stdin>:1:10: fatal error: 'curl/curlver.h' file not found"
+     },
+     {
+      "function": "curl_slist_free_all",
+      "range": "resource_library_version(curl, since \"7.1.0\")",
+      "audited_version": null,
+      "pinned_version": "8.18.0",
+      "in_force": false,
+      "reason": "library-version-unreadable",
+      "detail": "`#include <curl/curlver.h>` does not preprocess: <stdin>:1:10: fatal error: 'curl/curlver.h' file not found"
+     },
+     {
+      "function": "curl_url",
+      "range": "resource_library_version(curl, since \"7.62.0\")",
+      "audited_version": null,
+      "pinned_version": "8.18.0",
+      "in_force": false,
+      "reason": "library-version-unreadable",
+      "detail": "`#include <curl/curlver.h>` does not preprocess: <stdin>:1:10: fatal error: 'curl/curlver.h' file not found"
+     },
+     {
+      "function": "curl_url_cleanup",
+      "range": "resource_library_version(curl, since \"7.62.0\")",
+      "audited_version": null,
+      "pinned_version": "8.18.0",
+      "in_force": false,
+      "reason": "library-version-unreadable",
+      "detail": "`#include <curl/curlver.h>` does not preprocess: <stdin>:1:10: fatal error: 'curl/curlver.h' file not found"
+     }
+    ]
+   },
+   "plugin_checks": {
+    "Pending": 18,
+    "Safe": 0,
+    "Unknown": 0,
+    "Unsafe": 0
+   },
+   "rows_moved_or_linked": [],
+   "rows_to_safe": [],
+   "rows_into_or_out_of_unsafe": []
+  },
+  "with-full": {
+   "units": {
+    "lib/librdkafka-2.15.0/src/rdhttp.c": "Unsafe",
+    "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer_oidc.c": "Unsafe"
+   },
+   "function_tallies": {
+    "Safe": 6,
+    "Unknown": 39,
+    "Unsafe": 4
+   },
+   "unmatched": [],
+   "library_versions": {
+    "configurations": "override QCORE_LIBRARY_VERSION_COMPILE_DATABASE: compile-database:/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-aaf5aabba83ffaa50/private/hold/prep/fluent-bit-clang-production/compile_commands.json",
+    "libraries": {
+     "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-aaf5aabba83ffaa50/providers/quirin-provider-libcurl:curl": {
+      "detail": "`#include <curl/curlver.h>` does not preprocess: <stdin>:1:10: fatal error: 'curl/curlver.h' file not found",
+      "failure": "library-version-unreadable"
+     }
+    },
+    "declarations": [
+     {
+      "function": "curl_easy_escape",
+      "range": "resource_library_version(curl, since \"7.15.4\")",
+      "audited_version": null,
+      "pinned_version": "8.18.0",
+      "in_force": false,
+      "reason": "library-version-unreadable",
+      "detail": "`#include <curl/curlver.h>` does not preprocess: <stdin>:1:10: fatal error: 'curl/curlver.h' file not found"
+     },
+     {
+      "function": "curl_global_init",
+      "range": "resource_library_version(curl, since \"7.8.0\")",
+      "audited_version": null,
+      "pinned_version": "8.18.0",
+      "in_force": false,
+      "reason": "library-version-unreadable",
+      "detail": "`#include <curl/curlver.h>` does not preprocess: <stdin>:1:10: fatal error: 'curl/curlver.h' file not found"
+     },
+     {
+      "function": "curl_slist_append",
+      "range": "resource_library_version(curl, since \"7.1.0\")",
+      "audited_version": null,
+      "pinned_version": "8.18.0",
+      "in_force": false,
+      "reason": "library-version-unreadable",
+      "detail": "`#include <curl/curlver.h>` does not preprocess: <stdin>:1:10: fatal error: 'curl/curlver.h' file not found"
+     },
+     {
+      "function": "curl_slist_free_all",
+      "range": "resource_library_version(curl, since \"7.1.0\")",
+      "audited_version": null,
+      "pinned_version": "8.18.0",
+      "in_force": false,
+      "reason": "library-version-unreadable",
+      "detail": "`#include <curl/curlver.h>` does not preprocess: <stdin>:1:10: fatal error: 'curl/curlver.h' file not found"
+     },
+     {
+      "function": "curl_url",
+      "range": "resource_library_version(curl, since \"7.62.0\")",
+      "audited_version": null,
+      "pinned_version": "8.18.0",
+      "in_force": false,
+      "reason": "library-version-unreadable",
+      "detail": "`#include <curl/curlver.h>` does not preprocess: <stdin>:1:10: fatal error: 'curl/curlver.h' file not found"
+     },
+     {
+      "function": "curl_url_cleanup",
+      "range": "resource_library_version(curl, since \"7.62.0\")",
+      "audited_version": null,
+      "pinned_version": "8.18.0",
+      "in_force": false,
+      "reason": "library-version-unreadable",
+      "detail": "`#include <curl/curlver.h>` does not preprocess: <stdin>:1:10: fatal error: 'curl/curlver.h' file not found"
+     }
+    ]
+   },
+   "plugin_checks": {
+    "Pending": 18,
+    "Safe": 0,
+    "Unknown": 0,
+    "Unsafe": 0
+   },
+   "rows_moved_or_linked": [],
+   "rows_to_safe": [],
+   "rows_into_or_out_of_unsafe": []
+  }
+ }
+}

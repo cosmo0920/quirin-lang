@@ -26,6 +26,14 @@ unreadable or different from the pin, it is not.
 `Pending` (a changed version) or `Unknown` (out of range, unreadable,
 ambiguous), never `Safe`, and no chain containing such a call is `Safe`.
 
+**The hold under a reduced environment** (card
+LIBRARY-VERSION-HOLD-CURRENT-ROUTE-PENDING). The classifier reads a held
+call's reason from the environment it analyses under; a reduction (the ABI
+gate's) that carries the withheld table classifies as the unreduced one, one
+that drops it publishes a range failure `Pending`; a checker binding's claim
+is joined, never lowering a hold, so a `Pending` claim leaves a range failure
+`Unknown`.
+
 **The OpenSSL premises.** A counted release frees only at a zero count, so it
 is not final while another reference is outstanding, and reading it as a final
 free is unsound; a NULL-accepting release of NULL is a no-op and discharges
@@ -49,6 +57,15 @@ The Rust boundary is pinned by the tests of `qcore_schemas::library_version`,
 #print axioms QCore.LibraryVersionRange.changed_is_pending
 #print axioms QCore.LibraryVersionRange.range_failure_is_unknown
 #print axioms QCore.LibraryVersionRange.held_call_keeps_chain_non_safe
+
+-- The hold under a reduced environment (card
+-- LIBRARY-VERSION-HOLD-CURRENT-ROUTE-PENDING).
+#print axioms QCore.LibraryVersionRange.heldBy_agrees_with_held
+#print axioms QCore.LibraryVersionRange.dropped_table_lifts_a_range_failure
+#print axioms QCore.LibraryVersionRange.carried_reduction_keeps_the_verdict
+#print axioms QCore.LibraryVersionRange.carried_reduction_agrees_with_held
+#print axioms QCore.LibraryVersionRange.binding_never_lowers_a_hold
+#print axioms QCore.LibraryVersionRange.pending_binding_keeps_the_split
 
 -- The OpenSSL premises.
 #print axioms QCore.LibraryVersionRange.counted_release_is_not_final

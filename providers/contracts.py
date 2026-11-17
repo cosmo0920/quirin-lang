@@ -57,10 +57,10 @@ import subprocess
 
 ROOT = Path(__file__).resolve().parent
 # Ownership is intentionally narrow: shared language/support policies stay in
-# the providers/quirin-provider-*/contracts data crates. The ChunkIO provider also handles
-# Fluent Bit's busy-state API.
+# the providers/quirin-provider-*/contracts data crates. Fluent Bit's busy-state
+# API is owned by its data crate, quirin-provider-fluent-bit.
 OWNERS = {
-    "qcore-provider-chunkio": ("chunkio", "fluent_bit/busy_state.qv"),
+    "qcore-provider-chunkio": ("chunkio",),
     "qcore-provider-cmetrics": ("cmetrics",),
     "qcore-provider-ctraces": ("ctraces",),
     "qcore-provider-libevent": ("monkey",),
@@ -126,7 +126,8 @@ NON_CONTRACT_PACKAGES = ("qcore-provider-conformance", "quirin-provider-plugin")
 # `quirin-audit plugin views --write`), which `check` validates
 # (`check_user_crates`): every declaration bound to a checker, every
 # declaration of a crate with a version source stating a range, a lock.
-USER_LOAD_PATH_PACKAGES = ("quirin-provider-openssl",)
+# Card LIBCURL-PROVIDER-PLUGIN adds quirin-provider-libcurl.
+USER_LOAD_PATH_PACKAGES = ("quirin-provider-openssl", "quirin-provider-libcurl")
 USER_LOAD_PATH = "user-crates-load-path.json"
 NAMESPACE_CONST = re.compile(r'^pub const NAMESPACE: &str = "([a-z_][a-z0-9_]*)";$', re.M)
 PUBLISHED_CONST = re.compile(r'^pub const PUBLISHED: &\[&str\] = &\[([^\]]*)\];$', re.M)

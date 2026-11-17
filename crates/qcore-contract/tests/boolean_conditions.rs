@@ -19,8 +19,9 @@ use qcore_schemas::{chunk_summary::*, quant_condition::Selector};
 use std::collections::BTreeMap;
 const UNIT: &str =
     include_str!("../../../providers/qcore-provider-cmetrics/contracts/cmetrics/counter_reset.qv");
-const BUSY: &str =
-    include_str!("../../../providers/qcore-provider-chunkio/contracts/fluent_bit/busy_state.qv");
+const BUSY: &str = include_str!(
+    "../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/busy_state.qv"
+);
 fn summary(unit: bool) -> ChunkSourceSummaryRecord {
     ChunkSourceSummaryRecord {
         result_kind: if unit {

@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "libraries": {
+    "curl": {
+      "header": "curl/curlver.h",
+      "major": "LIBCURL_VERSION_MAJOR",
+      "minor": "LIBCURL_VERSION_MINOR",
+      "patch": "LIBCURL_VERSION_PATCH"
+    }
+  }
+}

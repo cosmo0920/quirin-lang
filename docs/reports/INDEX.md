@@ -80,6 +80,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [builtin-expect-null-test](builtin-expect-null-test/README.md) | BUILTIN-EXPECT-NULL-TEST |
 
+| [busy-state-fluent-bit-provider](busy-state-fluent-bit-provider/README.md) | BUSY-STATE-FLUENT-BIT-PROVIDER: Fluent Bit's busy-state contract moves to the Fluent Bit provider |
+
 ## C
 
 | Card directory | Original report title |
@@ -666,7 +668,13 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [libc-reading-site-evidence](libc-reading-site-evidence/README.md) | Libc reading-site evidence v1 |
 
+| [libcurl-provider-plugin](libcurl-provider-plugin/README.md) | LIBCURL-PROVIDER-PLUGIN: libcurl contracts on the user-contract SDK, with version-ranged declarations |
+
 | [libevent-core-census-guard-correlation](libevent-core-census-guard-correlation/README.md) | LIBEVENT-CORE-CENSUS-GUARD-CORRELATION |
+
+| [library-version-hold-current-route-pending](library-version-hold-current-route-pending/README.md) | LIBRARY-VERSION-HOLD-CURRENT-ROUTE-PENDING |
+
+| [library-version-probe-route-database](library-version-probe-route-database/README.md) | LIBRARY-VERSION-PROBE-ROUTE-DATABASE |
 
 | [librdkafka-header-inlines](librdkafka-header-inlines/README.md) | LIBRDKAFKA-HEADER-INLINES |
 
@@ -792,6 +800,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [op-constructor-declarations](op-constructor-declarations/README.md) | OP-CONSTRUCTOR-DECLARATIONS: op constructors and their result states |
 
 | [openssl-provider-plugin](openssl-provider-plugin/README.md) | OPENSSL-PROVIDER-PLUGIN: OpenSSL contracts on the user-contract SDK, with version-ranged declarations |
+
+| [openssl-provider-remaining-callees](openssl-provider-remaining-callees/README.md) | OPENSSL-PROVIDER-REMAINING-CALLEES: the census's remaining OpenSSL callees, and the measured opt-in arbiter |
 
 | [out-parameter-body-summary](out-parameter-body-summary/README.md) | OUT-PARAMETER-BODY-SUMMARY |
 

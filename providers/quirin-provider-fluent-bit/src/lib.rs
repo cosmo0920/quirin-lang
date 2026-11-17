@@ -36,6 +36,10 @@ pub const PUBLISHED: &[&str] = &[];
 /// is the name `contract/corpus.json` resolves (for example `fluent_bit/hash_table_publication.qv`).
 pub const CONTRACTS: &[(&str, &str)] = &[
     (
+        "fluent_bit/busy_state.qv",
+        include_str!("../contracts/fluent_bit/busy_state.qv"),
+    ),
+    (
         "fluent_bit/hash_table_publication.qv",
         include_str!("../contracts/fluent_bit/hash_table_publication.qv"),
     ),

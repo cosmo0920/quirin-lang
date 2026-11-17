@@ -59,7 +59,8 @@ quirin-audit contracts --load-path providers/user-crates-load-path.json \
 
 Regenerate the user load path after a module or binding changes with
 `quirin-plugin load-path --extends contract-load-path.json --output
-providers/user-crates-load-path.json providers/quirin-provider-openssl` and
+providers/user-crates-load-path.json providers/quirin-provider-libcurl
+providers/quirin-provider-openssl` and
 `quirin-audit plugin views --load-path providers/user-crates-load-path.json
 --write`; re-pin after review with `quirin-audit pin --load-path
 providers/user-crates-load-path.json --source-root SRC`, which also records the
@@ -67,13 +68,25 @@ OpenSSL version the headers report (contract specification C06.2, library
 version ranges). `contracts.py check` refuses a user-crate declaration no
 checker binds.
 
+`quirin-provider-libcurl` (card LIBCURL-PROVIDER-PLUGIN, user decision
+2026-11-17) is the second user crate, on the same terms: libcurl's six
+contracts card W48-LIBCURL-CONTRACT-PLUGIN established, each `since` the
+version the official manual page's AVAILABILITY section names, its checker
+`checkers/libcurl-check`, and its version read from `curl/curlver.h`. Name
+the crates to `quirin-plugin load-path` in sorted order, as above (the order
+in which `contracts.py check` expects their bindings), and pin one crate with
+`--crate NAME`. The version probe needs the headers: on a host where
+libcurl's development headers are not on Clang's default search path, set
+`QCORE_LIBRARY_VERSION_COMPILE_DATABASE` to a database whose every command
+passes them, or each libcurl call is held `Unknown`.
+
 Provider crates own their supplied Quirin contracts under `contracts/`, beside
 `src/` and `provider-template.json`. `contracts.json` records their package paths
 and SHA-256 values. The ownership map is `providers/contracts.py`.
 
 | Crate | Owned contract families |
 |---|---|
-| `qcore-provider-chunkio` | `chunkio/` and `fluent_bit/busy_state.qv` |
+| `qcore-provider-chunkio` | `chunkio/` |
 | `qcore-provider-cmetrics` | `cmetrics/` |
 | `qcore-provider-ctraces` | `ctraces/` |
 | `qcore-provider-libevent` | `monkey/` |

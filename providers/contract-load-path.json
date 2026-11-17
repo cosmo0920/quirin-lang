@@ -55,8 +55,7 @@
         "chunkio/teardown_traversal.qv",
         "chunkio/unmap_wrapper.qv",
         "chunkio/unsupported_close.qv",
-        "chunkio/unsupported_constructor_observation.qv",
-        "fluent_bit/busy_state.qv"
+        "chunkio/unsupported_constructor_observation.qv"
       ],
       "published": {},
       "resource_view": [
@@ -245,6 +244,7 @@
         "quirin-provider-libc"
       ],
       "modules": [
+        "fluent_bit/busy_state.qv",
         "fluent_bit/hash_table_publication.qv",
         "fluent_bit/input_chunk_destroy.qv",
         "fluent_bit/input_chunk_destroy_direct_routes.qv",

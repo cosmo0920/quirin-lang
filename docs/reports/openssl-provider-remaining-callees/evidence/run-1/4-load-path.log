@@ -1,0 +1,3 @@
+$ providers/target/release/quirin-plugin load-path --extends contract-load-path.json --output providers/user-crates-load-path.json providers/quirin-provider-openssl
+wrote providers/user-crates-load-path.json; now run `quirin-audit plugin views --load-path providers/user-crates-load-path.json --write`
+exit 0

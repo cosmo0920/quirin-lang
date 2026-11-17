@@ -1,0 +1,55 @@
+// SPDX-License-Identifier: Apache-2.0
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+module contract;
+
+// Card OPENSSL-PROVIDER-REMAINING-CALLEES. PKCS#12 structures (see err.qv
+// for what every declaration of this crate shares). PKCS12 is not reference
+// counted (no page gives it an up_ref), so its decoder returns a fresh
+// object and its free is a final release.
+
+// d2i_PKCS12_bio: https://docs.openssl.org/1.1.1/man3/d2i_X509/ (also 3.5;
+// the 1.0.2 page does not document it). No HISTORY entry names it.
+// DESCRIPTION (3.5): d2i_TYPE_bio() "is similar to d2i_TYPE() except it
+// attempts to parse data from BIO bp"; "If either a or *a is NULL, then
+// fresh storage is allocated for the returned object"; RETURN VALUES: "a
+// valid TYPE structure or NULL if an error occurs". With a non-NULL `p12`
+// the call may reuse or free the caller's `*p12`, so the declaration holds
+// only at calls passing a null pointer constant there (C04.5). Pinned
+// prototype: `PKCS12 *d2i_PKCS12_bio(BIO *bp, PKCS12 **p12)`
+// (openssl/pkcs12.h).
+extern fn d2i_PKCS12_bio(bp: ptr<mut, u8>, p12: ptr<mut, ptr<mut, u8>>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, documented "1.1.1");
+    requires resource_literal_argument(p12, 0);
+    ensures normal resource_borrowed(bp);
+    ensures normal resource_borrowed(p12);
+    ensures normal resource_return_owned(nullable);
+};
+
+// PKCS12_free: https://docs.openssl.org/1.1.1/man3/X509_dup/ (also 3.5; no
+// page at 1.0.2). HISTORY (3.5) names other TYPEs only. DESCRIPTION (3.5):
+// "TYPE_free() releases the object and all pointers and sub-objects within
+// it. If the argument is NULL, nothing is done." Pinned prototype: `void
+// PKCS12_free(PKCS12 *a)` (through DECLARE_ASN1_FUNCTIONS).
+extern fn PKCS12_free(a: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, documented "1.1.1");
+    ensures normal resource_released(a, nullable);
+    ensures normal resource_return_none();
+};

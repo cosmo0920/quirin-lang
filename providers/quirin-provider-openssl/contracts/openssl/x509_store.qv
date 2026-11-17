@@ -1,0 +1,160 @@
+// SPDX-License-Identifier: Apache-2.0
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+module contract;
+
+// Card OPENSSL-PROVIDER-REMAINING-CALLEES. Certificate stores, their
+// verification contexts, and certificates (see err.qv for what every
+// declaration of this crate shares). X509_OBJECT_get0_X509 is not declared:
+// no official manual page documents it.
+
+// X509_new: https://docs.openssl.org/1.0.2/man3/X509_new/ (also 3.5,
+// 1.1.1). HISTORY (1.0.2): X509_new() "and X509_free() are available in all
+// versions of SSLeay and OpenSSL". DESCRIPTION (3.5): X509_new_ex()
+// "allocates and initializes a X509 structure ... and a reference count of
+// 1" and X509_new() "is similar"; "If the allocation fails, X509_new()
+// returns NULL". One returned reference, which X509_free drops. Pinned
+// prototype: `X509 *X509_new(void)` (openssl/x509.h, through
+// DECLARE_ASN1_FUNCTIONS).
+extern fn X509_new() -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, documented "1.0.2");
+    ensures normal resource_return_owned(nullable);
+    ensures normal resource_return_kind(reference);
+};
+
+// X509_get_issuer_name: https://docs.openssl.org/1.1.1/man3/X509_get_subject_name/
+// (also 3.5; no page at 1.0.2). HISTORY (3.5, 1.1.1) names other functions
+// only. DESCRIPTION (3.5): X509_get_subject_name() "returns the subject name
+// of certificate x. The returned value is an internal pointer which MUST NOT
+// be freed", and X509_get_issuer_name() is "identical ... except [it
+// relates] to the issuer name of x". A borrowed result of `a`. Pinned
+// prototype: `X509_NAME *X509_get_issuer_name(const X509 *a)`.
+extern fn X509_get_issuer_name(a: ptr<const, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, documented "1.1.1");
+    ensures normal resource_borrowed(a);
+    ensures normal resource_return_borrowed_from(a, nullable);
+};
+
+// X509_STORE_free: https://docs.openssl.org/1.1.1/man3/X509_STORE_new/ (also
+// 3.5; no page at 1.0.2). HISTORY (3.5, 1.1.1): "The X509_STORE_up_ref(),
+// X509_STORE_lock() and X509_STORE_unlock() functions were added in OpenSSL
+// 1.1.0." DESCRIPTION (3.5): "X509_STORE_up_ref() increments the reference
+// count associated with the X509_STORE object" and X509_STORE_free() "frees
+// up a single X509_STORE object": a counted object, so the free is a
+// reference drop (C04.17), never read as a final free. Pinned prototype:
+// `void X509_STORE_free(X509_STORE *xs)` (openssl/x509_vfy.h).
+extern fn X509_STORE_free(xs: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, documented "1.1.1");
+    ensures normal resource_borrowed(xs);
+    ensures normal resource_reference_dropped(xs);
+    ensures normal resource_return_none();
+};
+
+// X509_STORE_get0_objects: https://docs.openssl.org/3.5/man3/X509_STORE_get0_param/
+// HISTORY (3.5, 1.1.1): "X509_STORE_get0_param and X509_STORE_get0_objects
+// were added in OpenSSL 1.1.0." DESCRIPTION (3.5): it "retrieves an internal
+// pointer to the store's X509 object cache ... The returned pointer must not
+// be freed by the calling application." A borrowed result of `xs` (the page
+// also warns that the result is unsafe to use while another thread shares
+// the store: a concurrency fact no custody clause states). Pinned
+// prototype: `struct stack_st_X509_OBJECT *X509_STORE_get0_objects(const
+// X509_STORE *xs)`.
+extern fn X509_STORE_get0_objects(xs: ptr<const, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, since "1.1.0");
+    ensures normal resource_borrowed(xs);
+    ensures normal resource_return_borrowed_from(xs, nullable);
+};
+
+// X509_STORE_set_flags: https://docs.openssl.org/1.1.1/man3/X509_STORE_add_cert/
+// (also 3.5; no page at 1.0.2). HISTORY (3.5) names the *_ex loaders only.
+// DESCRIPTION (3.5): it sets "the default values for the corresponding
+// values used in certificate chain validation"; RETURN VALUES: "1 on success
+// or 0 on failure". Pinned prototype: `int X509_STORE_set_flags(X509_STORE
+// *xs, unsigned long flags)`.
+extern fn X509_STORE_set_flags(xs: ptr<mut, u8>, flags: u64) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, documented "1.1.1");
+    ensures normal resource_borrowed(xs);
+    ensures normal resource_borrowed(flags);
+    ensures normal resource_return_none();
+};
+
+// X509_STORE_CTX_get_current_cert: https://docs.openssl.org/1.0.2/man3/X509_STORE_CTX_get_error/
+// (also 3.5, 1.1.1). HISTORY (1.0.2): "TBA", no version. DESCRIPTION (3.5):
+// it "returns the current certificate in ctx"; RETURN VALUES: "the
+// certificate which caused the error or NULL if no certificate is relevant";
+// NOTES: "If a callback wishes the save the certificate for use after it
+// returns, it needs to increment its reference count via X509_up_ref", so
+// the getter takes no reference. A borrowed result of `ctx`. Pinned
+// prototype: `X509 *X509_STORE_CTX_get_current_cert(const X509_STORE_CTX
+// *ctx)`.
+extern fn X509_STORE_CTX_get_current_cert(ctx: ptr<const, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, documented "1.0.2");
+    ensures normal resource_borrowed(ctx);
+    ensures normal resource_return_borrowed_from(ctx, nullable);
+};
+
+// X509_STORE_CTX_get_error: same page. DESCRIPTION (3.5): it "returns the
+// error code of ctx". Pinned prototype: `int X509_STORE_CTX_get_error(const
+// X509_STORE_CTX *ctx)`.
+extern fn X509_STORE_CTX_get_error(ctx: ptr<const, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, documented "1.0.2");
+    ensures normal resource_borrowed(ctx);
+    ensures normal resource_return_none();
+};
+
+// X509_STORE_CTX_get_error_depth: same page. DESCRIPTION (3.5): it "returns
+// the depth of the error". Pinned prototype: `int
+// X509_STORE_CTX_get_error_depth(const X509_STORE_CTX *ctx)`.
+extern fn X509_STORE_CTX_get_error_depth(ctx: ptr<const, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, documented "1.0.2");
+    ensures normal resource_borrowed(ctx);
+    ensures normal resource_return_none();
+};
+
+// X509_STORE_CTX_set_error: same page. DESCRIPTION (3.5): it "sets the error
+// code of ctx to s". Pinned prototype: `void
+// X509_STORE_CTX_set_error(X509_STORE_CTX *ctx, int s)`.
+extern fn X509_STORE_CTX_set_error(ctx: ptr<mut, u8>, s: i32) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, documented "1.0.2");
+    ensures normal resource_borrowed(ctx);
+    ensures normal resource_borrowed(s);
+    ensures normal resource_return_none();
+};

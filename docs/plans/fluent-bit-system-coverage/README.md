@@ -45,7 +45,7 @@ Existing constraints particularly relevant to this review:
   are trusted custody premises, not proofs of successful residency transitions
   or capacity enforcement. [Counter declarations](../../../providers/qcore-provider-chunkio/contracts/chunkio/counters.qv)
   require range and exclusivity premises; callers must establish them.
-- [Busy-state contract](../../../providers/qcore-provider-chunkio/contracts/fluent_bit/busy_state.qv)
+- [Busy-state contract](../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/busy_state.qv)
   distinguishes the wrapper busy flag from the underlying chunk lock.
 - [CT24's withdrawn mapping](../../reports/ct-wire-lane-3/README.md#4-ct24--withdrawn-with-the-measurement)
   demonstrates why refusal for placement is not evidence about cleanup duties.

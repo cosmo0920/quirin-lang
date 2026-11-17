@@ -89,6 +89,13 @@
 //! when its manifest exists. `--window-create REV`, `--window-add REV`,
 //! `--window-rotate REV`, `--window-retire` and `--window-check` maintain the
 //! window of at most three lock sets.
+//!
+//! Card **LIBRARY-VERSION-PROBE-ROUTE-DATABASE** (rule 53): a pin of resource
+//! locks whose declarations state a library version range records the
+//! version probed under `--compile-database FILE`'s include configurations
+//! (the database the audited route reads), else under Clang's default search
+//! path; `QCORE_LIBRARY_VERSION_COMPILE_DATABASE` overrides both. With
+//! `--bounds --derive-results` the same flag is the derivation's database.
 
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
@@ -120,7 +127,8 @@ pin --source-root DIR --function NAME... --untrack-tip | pin --source-root DIR -
 [--pinned-at STAMP] | pin --window-create REV | --window-add REV | --window-rotate REV | \
 --window-retire | --window-check [--load-path FILE] (`--bounds` or `--outer` with a pin, \
 --check, --regenerate, --stamp-only or --drop-revision selects the bounds or the outer locks; \
-`--pinned-at STAMP` sets the review stamp of a pin)";
+`--pinned-at STAMP` sets the review stamp of a pin; `--compile-database FILE` with a pin or \
+--regenerate of resource locks is the library version probe's database)";
 
 /// The lock's generated-by line.
 pub const GENERATED_BY: &str = "quirin-audit pin";
@@ -329,7 +337,30 @@ fn parse(arguments: Vec<String>) -> Result<Arguments, String> {
     }
     // Card CELL-GUARD-RESULT-RANGE-CHECKED: a derivation is a bounds pin of a
     // reviewed checkout, read through its configured compile database.
-    if (parsed.derive_results || parsed.compile_database.is_some())
+    let pins_probing = parsed.compile_database.is_some() && !parsed.derive_results;
+    // Card LIBRARY-VERSION-PROBE-ROUTE-DATABASE (rule 53): without
+    // `--derive-results`, `--compile-database` names the database whose
+    // include configurations the library version probe reads, for a pin of
+    // the resource locks (the only ones that record library versions).
+    if pins_probing
+        && (parsed.bounds
+            || parsed.outer
+            || parsed.check
+            || parsed.revision.is_some()
+            || parsed.stamp_only
+            || parsed.verify_contracts
+            || parsed.track_tip.is_some()
+            || parsed.drop_revision.is_some())
+    {
+        return Err(
+            "--compile-database without --derive-results is the library version probe's database: \
+             a pin, --regenerate or --untrack-tip of resource locks (no --bounds, --outer, \
+             --check, --revision, --stamp-only, --verify-contracts, --track-tip or \
+             --drop-revision)"
+                .into(),
+        );
+    }
+    if parsed.derive_results
         && (!parsed.bounds
             || !parsed.derive_results
             || parsed.compile_database.is_none()
@@ -551,9 +582,13 @@ impl Target {
 /// Card OPENSSL-PROVIDER-PLUGIN: probe every library a target's declarations
 /// state a version range for, under the audited build's include
 /// configurations (`crate::library_version`). A library that cannot be
-/// probed refuses the pin: a version nobody read is never recorded.
+/// probed refuses the pin: a version nobody read is never recorded. Card
+/// LIBRARY-VERSION-PROBE-ROUTE-DATABASE: the configurations are those of
+/// `--compile-database` when given (an unreadable one refuses), as a route
+/// reads its own.
 fn probe_libraries(
     target: &Target,
+    databases: &crate::library_version::ProbeDatabases,
 ) -> Result<BTreeMap<String, crate::library_version::LockedLibraryVersion>, String> {
     let mut versions = BTreeMap::new();
     if target.libraries.is_empty() {
@@ -571,7 +606,7 @@ fn probe_libraries(
             crate::library_version::SOURCE_FILE
         )
     })?;
-    let (configurations, _) = crate::library_version::include_configurations()?;
+    let configurations = crate::library_version::include_configurations(databases);
     for library in &target.libraries {
         let source = sources.get(library).ok_or_else(|| {
             format!(
@@ -580,7 +615,7 @@ fn probe_libraries(
                 crate::library_version::SOURCE_FILE
             )
         })?;
-        let probed = crate::library_version::probe(source, &configurations).map_err(
+        let probed = crate::library_version::probe_under(source, &configurations).map_err(
             |(failure, detail)| {
                 format!(
                     "{}: cannot pin the `{library}` version ({}): {detail}",
@@ -1214,7 +1249,9 @@ fn derive_results(
 /// new lock and one line per changed entry. Each entry written anew is
 /// stamped later than the entry of its function in `replaced` (the lock on
 /// disk before the run: `existing` for an update, the lock a regeneration
-/// replaces otherwise).
+/// replaces otherwise). `databases` are the library version probe's
+/// (`--compile-database`).
+#[allow(clippy::too_many_arguments)]
 fn update(
     existing: Option<&ContractLock>,
     replaced: Option<&ContractLock>,
@@ -1223,6 +1260,7 @@ fn update(
     functions: &BTreeSet<String>,
     untrack: bool,
     stamper: &Stamper,
+    databases: &crate::library_version::ProbeDatabases,
 ) -> Result<(ContractLock, Vec<String>), String> {
     let declared = declarations(target)?;
     let known = declared
@@ -1501,7 +1539,7 @@ fn update(
     lock.tip.sort_by(|a, b| a.function.cmp(&b.function));
     // Card OPENSSL-PROVIDER-PLUGIN: the library versions the declarations'
     // ranges are checked against, probed now.
-    lock.library_versions = probe_libraries(target)?;
+    lock.library_versions = probe_libraries(target, databases)?;
     for (library, version) in &lock.library_versions {
         if old.library_versions.get(library) != Some(version) {
             lines.push(format!(
@@ -2355,6 +2393,15 @@ fn run(arguments: Arguments) -> Result<bool, String> {
     }
     let mut clean = true;
     let mut tips = TipResolver::from_environment()?;
+    // Card LIBRARY-VERSION-PROBE-ROUTE-DATABASE (rule 53): the library
+    // version probe reads `--compile-database` when given, as a route reads
+    // its own database.
+    let probe_databases = arguments
+        .compile_database
+        .as_deref()
+        .map_or(crate::library_version::ProbeDatabases::None, |database| {
+            crate::library_version::ProbeDatabases::route(database)
+        });
     // Card PIN-REGENERATE-STAMP-MONOTONICITY: every lock is computed before
     // any is written, so a refused entry (a stamp not later than the one it
     // replaces) leaves every lock as it was.
@@ -2408,6 +2455,7 @@ fn run(arguments: Arguments) -> Result<bool, String> {
             &arguments.functions,
             arguments.untrack_tip,
             &stamper,
+            &probe_databases,
         )?;
         // Card CONTRACT-SUPERSESSION: a new lock of the provider tree joins
         // the live lock set, tied to the window's latest revision.

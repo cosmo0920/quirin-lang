@@ -488,14 +488,18 @@ pub fn run_config_with_jobs(path: &Path, flag_jobs: Option<usize>) -> Result<Aud
     };
     let mut contracts = contract_input.load()?;
     // Card W45-CONTRACT-REVISION-MODE: every pinned contract is compared with
-    // its lock over the checkout before any unit is analysed.
-    let pins = contract_revision::apply_pins(
+    // its lock over the checkout before any unit is analysed. Card
+    // LIBRARY-VERSION-PROBE-ROUTE-DATABASE: a library version range is probed
+    // under this run's own compile database.
+    let probe_databases = library_version::ProbeDatabases::route(&database_path);
+    let pins = contract_revision::apply_pins_probing(
         &mut contracts,
         &contract_revision::ModuleOwners::for_manifest(
             contract_input.manifest_path(),
             contract_input.manifest_text(),
         )?,
         &checkout,
+        &probe_databases,
     )?;
     let mut work = Vec::new();
     let mut revisions = BTreeSet::new();
@@ -619,13 +623,14 @@ pub fn run_config_with_jobs(path: &Path, flag_jobs: Option<usize>) -> Result<Aud
             contract_dependencies::clear_premises_cache();
             let slice_providers = library_table.slice_for(library)?;
             let mut slice_contracts = slice_providers.input.load()?;
-            let _ = contract_revision::apply_pins(
+            let _ = contract_revision::apply_pins_probing(
                 &mut slice_contracts,
                 &contract_revision::ModuleOwners::for_manifest(
                     slice_providers.input.manifest_path(),
                     slice_providers.input.manifest_text(),
                 )?,
                 &checkout,
+                &probe_databases,
             )?;
             let mut slice_task_dependencies = task_dependencies.clone();
             slice_task_dependencies.insert(

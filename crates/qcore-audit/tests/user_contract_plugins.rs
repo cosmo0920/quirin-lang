@@ -133,6 +133,16 @@ impl Tree {
     /// crate, with or without its checker binding, and extra overrides.
     /// Returns `quirin-audit plugin views --write`'s output.
     fn write_load_path(&self, checkers: bool, overrides: &[Value]) -> Output {
+        self.write_load_path_binding(checkers, overrides, &["acme_pool_get", "acme_pool_put"])
+    }
+
+    /// [`Self::write_load_path`] with the checker bound to `functions`.
+    fn write_load_path_binding(
+        &self,
+        checkers: bool,
+        overrides: &[Value],
+        functions: &[&str],
+    ) -> Output {
         let crate_root = self.0.join("user/quirin-provider-acme");
         let mut modules = Vec::new();
         for entry in fs::read_dir(crate_root.join("contracts/acme")).unwrap() {
@@ -153,7 +163,7 @@ impl Tree {
             "overrides": overrides,
             "checkers": if checkers {
                 json!([{"crate": "quirin-provider-acme", "module": "acme/pool.qv",
-                        "functions": ["acme_pool_get", "acme_pool_put"],
+                        "functions": functions,
                         "package": "quirin-provider-acme/checkers/pool-check"}])
             } else {
                 json!([])
@@ -727,4 +737,64 @@ fn a_user_lock_mismatch_is_pending() {
     assert_eq!(report["verdicts"]["after"]["functions"]["Pending"], 1);
     assert_eq!(report["verdicts"]["before"]["functions"]["Pending"], 0);
     assert_rollup(&after);
+}
+
+/// Card OPENSSL-PROVIDER-REMAINING-CALLEES: a bound contract applied by a
+/// call the analysis admits without a `ContractCall` node (a scalar
+/// `return f();`) still joins its binding's verdict. Before the card such a
+/// row was published `Safe` over an uncertified claim; it is `Pending`, and
+/// the same call through a local keeps its link.
+#[test]
+fn a_bound_contract_applied_in_a_return_expression_joins_its_binding() {
+    if !clang_available() {
+        return;
+    }
+    let tree = Tree::new(true);
+    let module = tree
+        .0
+        .join("user/quirin-provider-acme/contracts/acme/pool.qv");
+    let mut text = fs::read_to_string(&module).unwrap();
+    text.push_str(
+        "\nextern fn acme_pool_size() -> i32\ncontract {\n    requires resource_contract_v1;\n    \
+         requires resource_revision(flexible);\n    ensures normal resource_return_none();\n};\n",
+    );
+    fs::write(&module, text).unwrap();
+    fs::write(
+        tree.0.join("src/size_user.c"),
+        "int acme_pool_size(void);\n\
+         int size_returned(void) {\n    return acme_pool_size();\n}\n\
+         int size_stored(void) {\n    int n = acme_pool_size();\n    return n;\n}\n",
+    )
+    .unwrap();
+    succeeded(&tree.write_load_path_binding(
+        true,
+        &[],
+        &["acme_pool_get", "acme_pool_put", "acme_pool_size"],
+    ));
+    tree.install(&Checker::Answer(ProposedVerdict::Safe, false));
+    succeeded(&tree.audit("r.json"));
+    let report = tree.read("r.json");
+    let unit = Tree::unit(&report, "size_user.c");
+    for function in ["size_returned", "size_stored"] {
+        let row = unit["functions"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|row| row["function"] == function)
+            .unwrap();
+        assert_eq!(
+            row["contract_dependencies"]["declarations"],
+            json!(["acme_pool_size"])
+        );
+        assert_eq!(row["status"], "Pending", "{row}");
+        assert_eq!(row["host_status"], "Safe", "{row}");
+        let links = row["plugin_links"].as_array().unwrap();
+        assert_eq!(links.len(), 1, "{row}");
+        assert_eq!(links[0]["callee"], "acme_pool_size");
+        assert_eq!(links[0]["verdict"], "Pending");
+    }
+    assert_eq!(unit["status"], "Pending");
+    assert_eq!(unit["reason_code"], "plugin-claim-uncertified");
+    assert_eq!(unit["host_verdict"]["status"], "Safe");
+    assert_rollup(&report);
 }

@@ -16,7 +16,14 @@ states `documented` at the oldest series checked, never an invented `since`.
 Card REFERENCE-DROP-NULL-ACCEPTING: `--append` adds the fetched pages to an
 existing record instead of rewriting it, each new entry carrying its own
 `fetched_on` (the record's top-level date stays the first fetch's), so a
-digest recorded earlier is never silently replaced by a later fetch.
+digest recorded earlier is never silently replaced by a later fetch; asking
+for a page/series the record already holds is an error.
+
+Card OPENSSL-PROVIDER-REMAINING-CALLEES: `--merge` likewise keeps the record
+and stamps each new entry's `fetched_on`, but silently skips every
+page/series already held (never refetching it), so a whole page list can be
+re-run to fill only the gaps. The two flags are exclusive; both leave every
+recorded digest as reviewed.
 """
 import argparse
 import datetime
@@ -76,7 +83,7 @@ def fetch(series, page, out):
     text = data.decode("utf-8", "replace")
     return {"url": url, "series": series, "fetched": True,
             "sha256": hashlib.sha256(data).hexdigest(), "bytes": len(data),
-            "history": history(text), "null_sentences": null_sentences(text),
+            "name": section(text, "name"), "history": history(text), "null_sentences": null_sentences(text),
             "reference_sentences": reference_sentences(text)}
 
 
@@ -84,12 +91,19 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--out", required=True, type=Path)
     parser.add_argument("--record", required=True, type=Path)
-    parser.add_argument("--append", action="store_true",
-                        help="add to an existing record; refuse a page/series it already holds")
+    mode = parser.add_mutually_exclusive_group()
+    mode.add_argument("--append", action="store_true",
+                      help="add to an existing record; refuse a page/series it already holds "
+                           "(card REFERENCE-DROP-NULL-ACCEPTING)")
+    mode.add_argument("--merge", action="store_true",
+                      help="keep the record's existing pages and add only the (page, series) "
+                           "pairs it lacks, each with its own `fetched_on` (card "
+                           "OPENSSL-PROVIDER-REMAINING-CALLEES: a page already cited is never "
+                           "refetched, so its recorded digest stays the one reviewed)")
     parser.add_argument("pages", nargs="+", help="PAGE@SERIES[,SERIES...]")
     args = parser.parse_args()
     date = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d")
-    if args.append:
+    if args.append or args.merge:
         record = json.loads(args.record.read_text())
     else:
         record = {"schema_version": 1, "source": BASE, "fetched_on": date,
@@ -97,17 +111,20 @@ def main():
                           "manual pages' HISTORY sections; pages are not committed, only their "
                           "SHA-256 as fetched and the HISTORY text",
                   "pages": []}
-    held = {(entry["page"], entry["series"]) for entry in record["pages"]}
+    present = {(entry["page"], entry["series"]) for entry in record["pages"]}
     for spec in args.pages:
         page, series = spec.split("@", 1)
         for one in series.split(","):
-            if (page, one) in held:
-                raise SystemExit(f"{page}@{one} is already recorded")
+            if (page, one) in present:
+                if args.append:
+                    raise SystemExit(f"{page}@{one} is already recorded")
+                continue
             entry = fetch(one, page, args.out)
             entry["page"] = page
-            if args.append:
+            if args.append or args.merge:
                 entry["fetched_on"] = date
             record["pages"].append(entry)
+            present.add((page, one))
     args.record.write_text(json.dumps(record, indent=1) + "\n")
 
 

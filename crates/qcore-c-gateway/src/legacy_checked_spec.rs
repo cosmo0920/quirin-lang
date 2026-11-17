@@ -145,6 +145,9 @@ fn reduced(
     reduced.carry_side_declarations(contracts, |_| false);
     reduced.set_source_assumptions(contracts.source_assumptions().clone());
     reduced.carry_cross_unit_imports(contracts);
+    // Card LIBRARY-VERSION-HOLD-CURRENT-ROUTE-PENDING (rule 53): a held
+    // call is described by the reason it is held for, read from here.
+    reduced.carry_pin_mismatch(contracts);
     reduced
 }
 

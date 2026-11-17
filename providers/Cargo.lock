@@ -278,6 +278,16 @@ name = "quirin-provider-libc"
 version = "0.1.0"
 
 [[package]]
+name = "quirin-provider-libcurl"
+version = "0.1.0"
+dependencies = [
+ "qcore-schemas",
+ "quirin-provider-plugin",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "quirin-provider-mpack"
 version = "0.1.0"
 
