@@ -175,7 +175,19 @@ pass the environment.
 
 ## 8. Gate
 
-GATE_SECTION
+Scoped card gate **gate-1** on `05cf62f76` (the code, Lean and records of
+this card; the later commit adds only this section and the gate record),
+`python3 scripts/gate_scope.py --base 32336c33d --no-slots` through
+`private/toolchain/env.sh` (system Clang 21, Lean 4.35.0), mode **full** (the
+diff reaches `qcore-c-gateway`), exit **0**, 8 steps passed
+([gate.json](gate/gate.json); logs `private/gate-1/gate/`): submodules 0;
+`cargo fmt --check` 0; `cargo clippy --all-targets -D warnings` 0;
+`run_test_binaries.py` **651 units, 696 summaries, 9,619 passed, 0 failed, 21
+ignored, 148 filtered**, exit 0; `reevaluation_probe` 0;
+`reevaluation_followup` 0; `check_lean_audits.py` **443** audits passed;
+Python suite **779 tests** OK. The provider gate is not assigned (no
+`providers/` change). An earlier targeted run of `qcore-c-gateway` alone
+(`private/pretest-gateway/`, 3,842 passed, 0 failed) is not gate evidence.
 
 ## Files
 
