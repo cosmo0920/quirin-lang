@@ -1555,8 +1555,8 @@
       "sha256": "32e26f8ea85eb34337760ba2b0f5350ce7fdc683c9551425faffd4e3cd81940f"
     },
     "libc/threads.qv": {
-      "clause_count": 101,
-      "declaration_count": 22,
+      "clause_count": 113,
+      "declaration_count": 24,
       "declarations": [
         {
           "clauses": 4,
@@ -1796,13 +1796,50 @@
             "result": "none"
           },
           "resource_table": "functions"
+        },
+        {
+          "clauses": 7,
+          "name": "pthread_key_create",
+          "resource_mode": {
+            "parameter_kinds": {
+              "0": "thread_key"
+            },
+            "parameters": [
+              {
+                "out": {
+                  "nullable": true
+                }
+              },
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 5,
+          "name": "pthread_key_delete",
+          "resource_mode": {
+            "parameter_kinds": {
+              "0": "thread_key"
+            },
+            "parameters": [
+              {
+                "released": {
+                  "nullable": false
+                }
+              }
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         }
       ],
       "inherits": [],
       "other_declarations": [],
       "premise_bindings": [],
       "premises": {},
-      "sha256": "9f03ee35ccfc2f8c921a5b48040db79583b53b90cfbc73031fb2b160d105b6cc"
+      "sha256": "4b6334460525e52a9818e76977f38f6e10866908e7d33528d8a59a8a493cd16f"
     },
     "libc/time.qv": {
       "clause_count": 35,

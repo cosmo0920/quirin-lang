@@ -642,15 +642,19 @@ fn a_pointer_premise_admits_exactly_the_null_sentinel_call() {
         return;
     }
     // C11 6.3.2.3p3: an integer constant expression with value 0 is a null
-    // pointer constant, and a suffix does not change that.
-    for actual in ["0", "(0)", "0L"] {
+    // pointer constant, and a suffix does not change that. Card
+    // CURRENT-CONTEXT-NEW-TRIAGE (D3; user decision 2026-11-16 "Admit (void *)
+    // 0 (Recommended)", §C04.5.1): so is that expression cast to `void *`, at
+    // a pointer premise of `0` (deliberate update: `(void *) 0` moved from the
+    // refused list).
+    for actual in ["0", "(0)", "0L", "(void *) 0", "((void *) 0)"] {
         assert!(
             !forget_withdrawn(actual),
             "`{actual}` is a null pointer constant and satisfies the premise"
         );
     }
     // The other arm — the one this declaration was not read off — is refused.
-    for actual in ["v", "(void *) 0", "&t"] {
+    for actual in ["v", "(char *) 0", "(void *) 1", "&t"] {
         assert!(
             forget_withdrawn(actual),
             "`{actual}` must be outside the declared premise"

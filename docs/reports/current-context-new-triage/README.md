@@ -308,3 +308,132 @@ Declared measurement, base `rev:0f6e17118` (the card's base; r8–r12 landed aft
 The change runs only on a refused-owner branch; no pinned route reads Monkey `tls_openssl.c`, so nothing moves. Its effect is on the user's `current --monkey-linked` run (`context_new` Unsafe to Unknown), which the integrator reruns after landing. Landed through integrate/r15 with CURRENT-CONTEXT-NEW-TRIAGE (phase 1), LINK-STANDING-IMPORT-LIMITERS and OPENSSL-PROVIDER-PLUGIN; all three merged without conflict.
 
 The integrate/r15 landing gate record is [OPENSSL-PROVIDER-PLUGIN's](../openssl-provider-plugin/integration/gate.json) (full gate on the merged tree 96bf2cc25 plus a targeted rerun; see its note).
+
+## Phase 3: user decisions on the proposal
+
+User decisions, 2026-11-16, relayed by the integrator and quoted exactly:
+`context_new` → "C: derived → Safe"; D1/D3 → "Queue both (Recommended)".
+D3 is this card's next landable set ([prediction](PREDICTION-D3.md)); C
+follows on the same branch. D1 and D2 (OPENSSL-PROVIDER-PLUGIN) are separate
+cards.
+
+## D3 finding: Monkey spells the null destructor `NULL`
+
+A unit-scoped `current --monkey-linked` reproduction (base binary `p1` from
+`3d735b88c` with the base contracts, against the D3 binary;
+`private/repro/d3run-{p1,d3}`) shows **no status move**, against
+[PREDICTION-D3](PREDICTION-D3.md)'s `mk_http_thread_initialize_tls_once
+Unknown -> Safe`.
+
+Monkey writes `pthread_key_create(&key, NULL)`, and glibc's `NULL` is
+`((void *) 0)`. §C04.5.1 admits only `0` with matched parentheses and an
+integer suffix, and refuses `(void *) 0` explicitly ("reaching into a cast's
+operand"). So the declaration does not apply at any Monkey creation site.
+Six rows trade "call to uncontracted function `pthread_key_create`" for
+"outside its declared literal-argument premise":
+
+* `mk_http_thread_initialize_tls_once`, `mk_plugin_preworker_calls`,
+  `mk_set_up_tls_keys`, `mk_fifo_create`, `mk_tls_init`;
+* `mk_tls_exit`, whose static delete now refuses as rule 11v (5) says.
+
+The static-key and automatic-key readings are in place and pinned with a
+`0`-spelled destructor (`tests/thread_key_in_place.rs`). Whether to admit
+the C11 6.3.2.3p3 null pointer constant `(void *) 0` at a pointer premise is
+a specification choice, offered to the user in the hand-back.
+
+User decision on that choice, 2026-11-16, relayed by the integrator and
+quoted exactly: "Admit (void *) 0 (Recommended)". §C04.5.1 now admits
+`(void *) 0` at a pointer premise whose literal is `0`
+([prediction amendment](PREDICTION-D3.md)).
+
+### D3 confirmation (unit-scoped, after the null pointer constant)
+
+Same reproduction, base binary `p1` (with the base contracts) against the D3
+binary at `c92b77db8` (`private/repro/d3run-{p1,d3b}`, 31 units, 99 rows):
+
+* one status move: `mk_http_thread_initialize_tls_once` `Unknown -> Safe`
+  (its two `pthread_key_create(&key, NULL)` refusals are gone), as
+  PREDICTION-D3 states;
+* refusal text changes, all still `Unknown`:
+  * `mk_set_up_tls_keys` and `mk_tls_init` lose their static-creation
+    refusals; `mk_http_thread_initialize_tls` and `mk_tls_init`'s other
+    blockers remain;
+  * `mk_tls_exit`'s static delete is refused by rule 11v (5);
+  * `mk_fifo_create` and `mk_plugin_preworker_calls`, whose keys are
+    reached through `ctx->key` and `node->thread_key`, are refused at the
+    access gate ("indirect memory access").
+
+No other row changes.
+
+### D3 gate finding: a `(void)` cast escaped the in-place guard
+
+The first D3 gate (`private/gate-d3-2`) failed 4 tests:
+
+* **Three were deliberate updates.**
+  * `hash_contracts` pinned `(void *) 0` as refused; it is moved to the
+    admitted list at a pointer premise.
+  * `libc_gap_declarations` read D3's `threads.qv` section as its own.
+  * A D3 fixture's refusal text: the access gate refuses a pointer-reached
+    key first.
+* **One was a real gap.** A probe (`private/repro/probe-getter.log`) showed
+  that `(void) pthread_getspecific(key)` over a tracked automatic key was
+  **Safe**, even after `pthread_key_delete(key)`. The in-place guard refused
+  it, and a later statement fallback re-lowered the cast statement as a plain
+  borrowed call. The two spellings without the cast stayed refused.
+
+The guard's refusal is now final (`in_place_custody::is_guard_refusal`,
+checked in `legacy_c.rs` before the statement fallbacks; rule 11v (5)), with
+a fixture for the read after the delete. This also closes the same escape
+for the `regex` kind, which only adds refusals in bodies that track an
+in-place object.
+
+The Python failure in that gate is the matrix's derived `qcore-schemas`
+version (`26.0.0` != `27.0.0`). It is expected for a schema bump: the
+integrator regenerates the matrix at landing.
+
+Correction after the next gate (`private/gate-d3-3`, `private/gate-d3-4`):
+making the guard's own refusal final was not enough. The cast statement's
+first classification is an older refusal, which the guard skips. Widening
+the guard to every refusal that mentions a tracked object broke
+`rd_regex_match`'s admitted `r = k_regexec(&re, str) != 1;` (a fallback
+lowers it correctly). That widening is reverted.
+
+The check now sits at the CFG (`in_place_custody::verify_cfg`). A call node
+that names an object an in-place initialiser of the same CFG binds, at any
+position but an in-place position of its kind, is refused, whichever route
+lowered it. `rd_regex_match` keeps its admission, and `(void)
+pthread_getspecific(key)` over a tracked key refuses.
+
+Second correction (`private/repro/d3-targeted.log`): the CFG-level check
+did not catch the case either. The fallback's node carries no place for a
+by-value scalar actual, so no name is there to match. That check is
+reverted. D3 now **never tracks a thread key**: a creation into anything
+but static storage refuses (`THREAD_KEY_STORAGE_REFUSAL`, rule 11v (5),
+`QCore.ThreadKeyStatic.an_automatic_creation_is_refused`), so no read after
+a delete can be certified. No Fluent Bit or Monkey row creates an automatic
+key. The same fallback escape for a tracked `regex` object (`(void) f(&re)`
+at an unkinded position) predates this card; it is registered as
+`CG25-VOID-CAST-GUARD-ESCAPE`, not repaired here.
+
+### D3 gate
+
+`python3 scripts/gate_scope.py --base 0f6e17118 --out private/gate-d3-5` was
+run at `8e190aa83`, the D3 tip. It records [gate-d3.json](gate-d3.json), and
+Clang is recorded in [gate-d3/](gate-d3/clang-version.txt). The scope was
+full, with the provider steps selected.
+
+| Step | Exit | Counts |
+|---|---|---|
+| submodules, fmt, clippy | 0, 0, 0 | |
+| Rust suite | 0 | 640 units, 683 summaries; 9,527 passed, 0 failed, 17 ignored, 148 filtered |
+| Lean (`check_lean_audits.py`) | 0 | 437 audits |
+| Python suite | 1 | 761 tests, 1 failure |
+| provider package build, verify-all, verify | 0, 0, 0 | |
+| provider tests | 0 | 43 summaries; 133 passed, 0 failed, 1 ignored |
+| provider fmt, clippy | 0, 0 | |
+
+The Python failure is
+`test_build_matrix_sections …test_the_derived_facts_are_recomputed_rather_than_carried`
+(`'26.0.0' != '27.0.0'`). It is the committed matrix's derived
+`qcore-schemas` version, stale because D3 bumps the schema. It is expected,
+and the integrator regenerates the matrix at landing.

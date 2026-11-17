@@ -72,6 +72,7 @@ inductive Carrier where
 def _root_.QCore.KindedCustody.Kind.carrier : Kind → Carrier
   | .descriptor => .integer
   | .regex => .storage
+  | .threadKey => .storage
   | _ => .pointer
 
 def _root_.QCore.KindedCustody.Kind.inPlace (k : Kind) : Bool := k.carrier = .storage
@@ -84,6 +85,7 @@ def _root_.QCore.KindedCustody.Kind.spelling : Kind → String
   | .dynamicLibrary => "dynamic_library"
   | .regex => "regex"
   | .reference => "reference"
+  | .threadKey => "thread_key"
 
 def Carrier.word : Carrier → String
   | .pointer => "pointer"
@@ -92,7 +94,7 @@ def Carrier.word : Carrier → String
 
 /-- Every kind, in the Rust `ResourceKind::ALL` order. -/
 def allKinds : List Kind :=
-  [.heap, .descriptor, .stream, .directory, .dynamicLibrary, .regex, .reference]
+  [.heap, .descriptor, .stream, .directory, .dynamicLibrary, .regex, .reference, .threadKey]
 
 /-- `KIND_VECTORS`: spelling, carrier, integer-carried, in place. -/
 def kindVectors : List (String × String × Bool × Bool) := [
@@ -102,7 +104,8 @@ def kindVectors : List (String × String × Bool × Bool) := [
   ("directory", "pointer", false, false),
   ("dynamic_library", "pointer", false, false),
   ("regex", "storage", false, true),
-  ("reference", "pointer", false, false)
+  ("reference", "pointer", false, false),
+  ("thread_key", "storage", false, true)
 ]
 
 theorem kind_vectors_are_the_table :
@@ -121,10 +124,11 @@ theorem spellings_are_distinct (a b : Kind) (h : a.spelling = b.spelling) : a = 
 the acquiring call and position, the releasing call and position. -/
 def protocolVectors : List (String × String × String × String × String) := [
   ("dynamic_library", "dlopen", "return_owned", "dlclose", "released"),
-  ("regex", "regcomp", "out", "regfree", "released")
+  ("regex", "regcomp", "out", "regfree", "released"),
+  ("thread_key", "pthread_key_create", "out", "pthread_key_delete", "released")
 ]
 
-theorem protocol_vectors_count : protocolVectors.length = 2 := by decide
+theorem protocol_vectors_count : protocolVectors.length = 3 := by decide
 
 /-! ### The library handle: the pointer-kind protocol, instantiated -/
 

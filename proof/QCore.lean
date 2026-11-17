@@ -303,6 +303,7 @@ import QCore.NullLookupEvent
 import QCore.NullMemberPremise
 import QCore.NullMemberQualifier
 import QCore.NullMemberScope
+import QCore.NullPointerConstantPremise
 import QCore.NullTriage
 import QCore.NullTriagePaths
 import QCore.NullableRemoval
@@ -463,6 +464,7 @@ import QCore.TaskTraceRelation
 import QCore.TaskTraceWrites
 import QCore.TeardownAdmission
 import QCore.TeardownTraversal
+import QCore.ThreadKeyStatic
 import QCore.ThreadLocalRead
 import QCore.TimeoutTeardown
 import QCore.TrackedSelfInit

@@ -31,6 +31,9 @@ use qcore_schemas::contract::{
 const LEAN: &str = include_str!("../../../proof/QCore/ResourceKinds.lean");
 const DLFCN: &str = include_str!("../../../providers/quirin-provider-libc/contracts/libc/dlfcn.qv");
 const REGEX: &str = include_str!("../../../providers/quirin-provider-libc/contracts/libc/regex.qv");
+// Card CURRENT-CONTEXT-NEW-TRIAGE (D3): the `thread_key` declarations.
+const THREADS: &str =
+    include_str!("../../../providers/quirin-provider-libc/contracts/libc/threads.qv");
 
 /// The quoted and boolean fields of every row of the Lean list `header`
 /// opens, one `Vec` per row.
@@ -82,10 +85,11 @@ fn cg25_lean_kind_vectors_match_the_rust_table() {
 fn cg25_lean_protocol_vectors_match_the_libc_declarations() {
     let rows =
         lean_rows("def protocolVectors : List (String × String × String × String × String) := [");
-    assert_eq!(rows.len(), 2);
+    assert_eq!(rows.len(), 3);
     let contracts = load_resource_contract_sources(&BTreeMap::from([
         ("libc/dlfcn.qv".to_owned(), DLFCN.to_owned()),
         ("libc/regex.qv".to_owned(), REGEX.to_owned()),
+        ("libc/threads.qv".to_owned(), THREADS.to_owned()),
     ]))
     .expect("the libc modules load");
     for row in rows {
