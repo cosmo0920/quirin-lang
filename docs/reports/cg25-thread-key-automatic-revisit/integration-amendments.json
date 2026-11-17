@@ -2,7 +2,7 @@
   "schema": "quirin-amendments/1",
   "card": "CG25-THREAD-KEY-AUTOMATIC-REVISIT",
   "base": "5c824e443",
-  "measured_tip": "5da652f52",
+  "measured_tip": "08ce3ade6",
   "profiles": [],
   "increment_paragraph": "**CG25-THREAD-KEY-AUTOMATIC-REVISIT** (USER DECISION 2026-11-17 \"CG25-THREAD-KEY-AUTOMATIC-REVISIT -> Let's get started.\"; gateway rule 11v (7); Lean `QCore.ThreadKeyStatic`; [report](../../reports/cg25-thread-key-automatic-revisit/README.md)). D3 refused every `pthread_key_create` into anything but static storage because a tracked by-value key reached a data route; rule 11v (6) now refuses every such mention, so the refusal was revisited use by use. Rules 11v (1)-(6) refuse or decide every use of a tracked automatic key except a by-value getter before the status test, on the failure edge or before any creation, which they would admit `Safe` although POSIX leaves it undefined: the plain lift is unsound. The card lifts it narrowed: the one automatic key object of a function (one `VarDecl`, every `DeclRefExpr` designating it) is CG25's in-place object; libc's `pthread_getspecific` key becomes a kinded by-value use; a by-value use of a tracked key is admitted only where the settled state certifies it (`report_uncertified_key_uses`), a released key being the `use_after_close` candidate; `&k` is never a by-value actual. Members, formals, pointer-reached keys and names that also designate a file-scope object keep `THREAD_KEY_STORAGE_REFUSAL`; the setter stays refused on a tracked key. Census: no Fluent Bit or Monkey evidence tree creates an automatic key, and a unit differential of the 40 evidence units that name a key call is identical at base and tip. Predicted: no move on corpus, system, slice or `current`.",
   "status_paragraph": null,

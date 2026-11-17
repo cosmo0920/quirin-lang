@@ -228,4 +228,51 @@ The integrator measures with base `rev:5c824e443` against
 
 ## 6. Gate
 
-GATE_SECTION
+`python3 scripts/gate_scope.py --base 36b2cf931 --out private/gate-2` was
+run at `4eb13fdfd`, whose code equals `08ce3ade6`. Its record is
+[gate.json](gate.json), and Clang is recorded in
+[gate/](gate/clang-version.txt). The scope was full:
+
+* the diff reaches `qcore-c-gateway` and the libc provider;
+* Lean ran in full because `proof/QCore.lean`'s imports changed;
+* the provider gate was selected.
+
+| Step | Exit | Counts |
+|---|---|---|
+| submodules, fmt, clippy | 0, 0, 0 | |
+| Rust suite | 0 | 651 units, 696 summaries; 9,632 passed, 0 failed, 21 ignored, 148 filtered |
+| reevaluation probe, follow-up | 0, 0 | |
+| Lean (`check_lean_audits.py`) | 0 | 443 audits |
+| Python suite | 0 | 779 tests, 0 skipped |
+| provider package build, verify-all, verify | 0, 0, 0 | |
+| provider tests | 0 | 46 summaries; 140 passed, 0 failed, 1 ignored |
+| provider fmt, clippy | 0, 0 | |
+
+The earlier run, `private/gate-1` at `5da652f52`, exited 1 on two steps,
+and `08ce3ade6` fixes both:
+
+* **clippy** (101): `private_interfaces`, because
+  `report_uncertified_key_uses` was `pub(crate)` over the `pub(super)`
+  `AbstractState`;
+* **Rust suite** (101; 9,631 passed, 1 failed):
+  `compiler/tests/contract_loader.rs`
+  `production_contracts_preserve_the_previous_resource_modes` pinned
+  `pthread_getspecific`'s unkinded mode. This is the deliberate contract
+  change, and the table was updated.
+
+Every other gate-1 step exited 0: Lean 443, Python 779, provider tests 140
+passed. Logs are in `private/gate-1/` and `private/gate-2/`, with the
+Rust per-unit logs under `rust-suite/`.
+
+Other checks:
+
+* `providers/contracts.py sync` and `check`: 0, 0 (`private/probe/sync2.log`).
+* `quirin-audit pin --source-root <pinned Fluent Bit checkout> --load-path
+  providers/contract-load-path.json --crate quirin-provider-libc --function
+  pthread_getspecific`: 0.
+* `python3 scripts/gen_rule_docs.py --check`: 0 (238 rule files).
+* `python3 scripts/apply_amendments.py
+  docs/reports/cg25-thread-key-automatic-revisit/integration-amendments.json
+  --check`: 0. It was run against a `git archive` of the card tree with
+  CG25-VOID-CAST-GUARD-ESCAPE's amendments applied first, because the
+  revisit entry it retires is registered by those amendments.
