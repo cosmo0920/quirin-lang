@@ -229,6 +229,7 @@ import QCore.LegacyCAnalyzer
 import QCore.LexicalClosureNestedAssignment
 import QCore.LibcReadingPremises
 import QCore.LibcReadingSiteEvidence
+import QCore.LibcurlContractPlugin
 import QCore.LibraryVersionRange
 import QCore.LifetimeCorrespondence
 import QCore.ListIteration
@@ -310,6 +311,7 @@ import QCore.NullableRemoval
 import QCore.ObsReordering
 import QCore.ObservedWaitComposition
 import QCore.OpCallbacks
+import QCore.OpensslContractPlugin
 import QCore.OrderedLifetimeReplay
 import QCore.OsEndpointPostState
 import QCore.OutParameterBodySummary

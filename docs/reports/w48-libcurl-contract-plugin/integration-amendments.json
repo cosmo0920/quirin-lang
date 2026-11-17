@@ -1,0 +1,66 @@
+{
+  "schema": "quirin-amendments/1",
+  "card": "W48-LIBCURL-CONTRACT-PLUGIN",
+  "base": "d7a497822",
+  "measured_tip": "238c66cf2",
+  "increment_paragraph": "**W48-LIBCURL-CONTRACT-PLUGIN** (user decision 2026-09-28; [report](../../reports/w48-libcurl-contract-plugin/README.md)): new crate crates/quirin-audit-plugin-libcurl, the `quirin-audit libcurl` subcommand plugin on the SDK with a C11.1 checker package (`quirin-libcurl-checker`). `prepare --tarball` accepts only the upstream libcurl 8.18.0 tarball (sha256 e9274a5f...cf88f, tag curl-8_18_0 at 2eebc58c; equal to Ubuntu 26.04's curl_8.18.0.orig.tar.gz, the release the measured routes' libcurl4-openssl-dev headers come from) and every one of the 12 files the checker reads by its own digest; a tarball, tree or package file off the pin fails the run or answers Unknown. The plugin's own lexical checker answers one binding per ranked callee (curl_global_init first, then the librdkafka census's twelve real functions): 6 contracts in the user crate's module libcurl/libcurl.qv established (curl_global_init, curl_slist_append with libc realloc's reallocation reading, curl_slist_free_all, curl_easy_escape, curl_url, curl_url_cleanup; 54 obligations) and 6 Unknown with named reasons and checked witnesses (curl_easy_setopt/getinfo option-indexed retention, curl_easy_perform/cleanup registered callbacks, curl_url_set/get). Answers enter only through the firewall: subcommand route 6 Pending (QP016) / 6 Unknown; checker-binding route, `quirin-audit current` over librdkafka's two libcurl callers at 046accf6 on the card's own preparation, 6 bindings Pending (QP008), rd_http_global_init Unknown -> Pending, nothing to Safe, no Unsafe change. Arbiter (corpus, system; own preparations): corpus 1,087/3,656/10 and system 103/341/4 on both sides, no row moved (declared check: match on both routes). The 44 typecheck-gcc.h warning stubs are not bound (W48-LIBCURL-TYPECHECK-STUBS). Lean QCore.LibcurlContractPlugin (18 theorems). The gate read census was re-recorded (640 units). The two reason-preservation gaps the card recorded on its base are closed on landing (integrate/r16) by W48-PLUGIN-VERDICT-PRESERVATION's contributor records; its gap test checks the binding's answer record and passes.",
+  "status_paragraph": "W48-LIBCURL-CONTRACT-PLUGIN (base `d7a497822`, measured tip `238c66cf2`): `quirin-audit libcurl` carries libcurl 8.18.0 contracts (pinned by tarball and per-file sha256) and checks them with its own checker; 6 of the 12 ranked callees are established and bound through a user load path, 6 are Unknown with reasons. Its answers are Pending at best (no certificate checker). With the plugin's load path, `rd_http_global_init` is Pending on the current route; the corpus and system routes do not read a user load path and do not move.",
+  "ledger": [
+    {
+      "id": "W48-LIBCURL-TYPECHECK-STUBS",
+      "operation": "register",
+      "title": "libcurl's 44 typecheck-gcc.h warning stubs stay Unknown at every curl_easy_setopt/getinfo call",
+      "text": "Registered by W48-LIBCURL-CONTRACT-PLUGIN. On the user's current run at Fluent Bit 046accf6 librdkafka units call 44 Wcurl_easy_setopt_err_*/Wcurl_easy_getinfo_err_* names, 152 pairs (census docs/reports/librdkafka-header-inlines/census/). Evidence checked against pinned libcurl 8.18.0 (docs/reports/w48-libcurl-contract-plugin/artifacts/libcurl-check.json, typecheck_stubs): include/curl/typecheck-gcc.h:271-274 defines each with CURLWARNING as a static void function with __attribute__((__warning__)) whose whole body is __asm__(\"\"), and the curl_easy_setopt macro (lines 44-46) calls them only under if(__builtin_constant_p(option)) and type tests the compiler folds; 8.18.0 defines 52 such names, a superset of the 44. They are not libcurl runtime calls, so the libcurl plugin binds none and gives none a contract. On the callers run rd_http_get keeps them as blockers. DISCHARGE: a gateway reading, with Lean, of a call Clang proves dead or of a static body that is only an empty asm (or a recorded decision to configure the routes with CURL_DISABLE_TYPECHECK, measured), never a contract by assertion.",
+      "source": "docs/reports/w48-libcurl-contract-plugin/README.md",
+      "recorded_by": "W48-LIBCURL-CONTRACT-PLUGIN"
+    },
+    {
+      "id": "W48-LIBCURL-UNCONTRACTED-CALLEES",
+      "operation": "register",
+      "title": "Six ranked libcurl callees have no contract the resource-v1 vocabulary can state",
+      "text": "Registered by W48-LIBCURL-CONTRACT-PLUGIN, whose checker answers each Unknown with its reason and checked witnesses: curl_easy_setopt (2 pairs; the third argument's fate depends on the option: CURLOPT_HTTPHEADER and CURLOPT_ERRORBUFFER keep the caller's pointer, lib/setopt.c) and curl_easy_getinfo (1; CURLINFO_CONTENT_TYPE hands back memory the handle owns, lib/getinfo.c) need an option-indexed clause over a variadic tail; curl_easy_perform (1) runs callbacks registered by an earlier setopt, and curl_easy_cleanup (1) releases the handle through Curl_close, which may run them; curl_url_get (1) allocates into an out slot, which resource-v1 reads only with a kind; curl_url_set (1) hands its string to parsing helpers whose non-retention the checker does not establish. DISCHARGE: per callee, the vocabulary form (with Lean) or a checker obligation set that establishes a contract against the pinned release, bound and measured; never a contract the checker cannot establish.",
+      "source": "docs/reports/w48-libcurl-contract-plugin/README.md",
+      "recorded_by": "W48-LIBCURL-CONTRACT-PLUGIN"
+    },
+    {
+      "id": "W48-LIBCURL-DISTRIBUTION-PATCHES",
+      "operation": "register",
+      "title": "The libcurl plugin pins the upstream release, not the distribution's patched build the routes link",
+      "text": "Registered by W48-LIBCURL-CONTRACT-PLUGIN. Ubuntu 8.18.0-1ubuntu2.8 applies 62 patches; four touch files the checker reads (include/curl/curl.h: a deprecation; lib/urlapi.c: an appended Curl_url_same_origin; lib/getinfo.c and lib/setopt.c, read only for Unknown witnesses), none inside a function a Safe answer rests on. Every claim names the upstream-release assumption. DISCHARGE: pin the distribution's source package too (the .dsc's orig and debian tarballs by digest, patches applied) and check the read files of both, or record that the upstream pin is the scope.",
+      "source": "docs/reports/w48-libcurl-contract-plugin/README.md",
+      "recorded_by": "W48-LIBCURL-CONTRACT-PLUGIN"
+    },
+    {
+      "id": "PLUGIN-CHECKER-TRANSPORT-SHARED",
+      "operation": "register",
+      "title": "A root-workspace checker package re-implements the provider transport",
+      "text": "Registered by W48-LIBCURL-CONTRACT-PLUGIN. The C11.1 checker package quirin-libcurl-checker (crates/quirin-audit-plugin-libcurl/src/provider.rs) re-implements quirin_provider_shared::runtime (frame I/O, the installed-manifest binding, request validation) and package installation, because the root workspace cannot link the providers workspace; the card was told not to factor shared code into the SDK. W48-OPENSSL-CONTRACT-PLUGIN may carry a third copy. DISCHARGE: one transport and packaging library both workspaces link (or the plugins' checkers moved to the providers workspace), with the copies removed and the conformance tests run over it.",
+      "source": "docs/reports/w48-libcurl-contract-plugin/README.md",
+      "recorded_by": "W48-LIBCURL-CONTRACT-PLUGIN"
+    },
+    {
+      "id": "W45-PLUGIN-ROUTE-COVERAGE",
+      "operation": "amend",
+      "text": "AMENDED (W48-LIBCURL-CONTRACT-PLUGIN): the libcurl plugin's six checker bindings therefore reach only current and contracts; its one move (rd_http_global_init Unknown -> Pending) is invisible to the corpus and system arbiter, which measured no move.",
+      "source": "docs/reports/w48-libcurl-contract-plugin/README.md"
+    },
+    {
+      "id": "W45-SUBCOMMAND-CERTIFICATE-ROUTE",
+      "operation": "amend",
+      "text": "AMENDED (W48-LIBCURL-CONTRACT-PLUGIN): `quirin-audit libcurl check` is the first shipped subcommand that claims: 12 claims per run, 6 Safe offering libcurl-check.json as a certificate reference (published Pending, QP016) and 6 Unknown.",
+      "source": "docs/reports/w48-libcurl-contract-plugin/README.md"
+    },
+    {
+      "id": "W47-EXTERNAL-RESIDUAL-RANKING-R2",
+      "operation": "amend",
+      "text": "AMENDED (W48-LIBCURL-CONTRACT-PLUGIN): curl_global_init now has a contract in the libcurl plugin's user crate, established by its checker and bound; with the plugin's load path its one caller rd_http_global_init is Pending (plugin-claim-uncertified) on the current route, and unchanged on the corpus and system routes.",
+      "source": "docs/reports/w48-libcurl-contract-plugin/README.md"
+    },
+    {
+      "id": "W48-LIBCURL-CONTRACT-PLUGIN",
+      "operation": "retire",
+      "why": "DISCHARGED by W48-LIBCURL-CONTRACT-PLUGIN (docs/reports/w48-libcurl-contract-plugin/README.md): the plugin crate on the SDK; its preparation pinned to libcurl 8.18.0 by tarball and per-file sha256, fail-closed; contracts for curl_global_init and 5 of the census's other functions established by its own checker and bound through C11.1, the other 6 answered Unknown with reasons (W48-LIBCURL-UNCONTRACTED-CALLEES); answers through the firewall and the join only (uncertified Safe published Pending); Rust tests and audited Lean QCore.LibcurlContractPlugin; the gate; the arbiter and the callers comparison attributing every move. Residuals: W48-LIBCURL-TYPECHECK-STUBS, W48-LIBCURL-UNCONTRACTED-CALLEES, W48-LIBCURL-DISTRIBUTION-PATCHES, PLUGIN-CHECKER-TRANSPORT-SHARED, the reason gaps on W48-PLUGIN-VERDICT-PRESERVATION, and certificate checking (W45-PLUGIN-CERTIFICATE-CHECKER, W45-SUBCOMMAND-CERTIFICATE-ROUTE); the subcommand route into audit rows depends on SUBCOMMAND-CLAIMS-INTO-AUDIT-ROWS (W48-PLUGIN-VERDICT-PRESERVATION).",
+      "source": "docs/reports/w48-libcurl-contract-plugin/README.md"
+    }
+  ]
+}

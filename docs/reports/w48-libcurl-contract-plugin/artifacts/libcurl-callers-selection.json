@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "name": "libcurl-callers",
+  "description": "Card W48-LIBCURL-CONTRACT-PLUGIN: the two librdkafka units of Fluent Bit 046accf6 that call libcurl (the librdkafka census's twelve real functions), audited with and without the libcurl plugin's user load path.",
+  "groups": [
+    {
+      "library": "librdkafka",
+      "label": "libcurl-callers",
+      "files": [
+        "lib/librdkafka-2.15.0/src/rdhttp.c",
+        "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer_oidc.c"
+      ]
+    }
+  ]
+}

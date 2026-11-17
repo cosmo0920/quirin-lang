@@ -1,0 +1,830 @@
+{
+  "schema": "quirin-openssl-contracts/1",
+  "contract_set_version": 1,
+  "library": "openssl",
+  "release": "3.5.5",
+  "flag_sets": {
+    "libcrypto": [
+      "-I.",
+      "-Iinclude",
+      "-Iproviders/common/include",
+      "-Iproviders/implementations/include",
+      "-fPIC",
+      "-pthread",
+      "-m64",
+      "-Wall",
+      "-O3",
+      "-DOPENSSL_USE_NODELETE",
+      "-DL_ENDIAN",
+      "-DOPENSSL_PIC",
+      "-DOPENSSLDIR=\"/usr/local/ssl\"",
+      "-DENGINESDIR=\"/usr/local/lib64/engines-3\"",
+      "-DMODULESDIR=\"/usr/local/lib64/ossl-modules\"",
+      "-DOPENSSL_BUILDING_OPENSSL",
+      "-DNDEBUG"
+    ],
+    "libssl": [
+      "-I.",
+      "-Iinclude",
+      "-fPIC",
+      "-pthread",
+      "-m64",
+      "-Wall",
+      "-O3",
+      "-DOPENSSL_USE_NODELETE",
+      "-DL_ENDIAN",
+      "-DOPENSSL_PIC",
+      "-DOPENSSLDIR=\"/usr/local/ssl\"",
+      "-DENGINESDIR=\"/usr/local/lib64/engines-3\"",
+      "-DMODULESDIR=\"/usr/local/lib64/ossl-modules\"",
+      "-DOPENSSL_BUILDING_OPENSSL",
+      "-DNDEBUG"
+    ]
+  },
+  "classes": {
+    "no-pointer-interface": {
+      "checked": true,
+      "meaning": "No parameter, and a void or builtin integer result: no caller resource is passed in or returned. The definition exists, external, in the pinned file with the declared type."
+    },
+    "static-object-return": {
+      "checked": true,
+      "meaning": "No parameter; the body is exactly `return &V;` for the named file-scope static const object V of the defining file: the result is library-owned static storage the caller must not release."
+    },
+    "pure-reader": {
+      "checked": true,
+      "meaning": "The body is loop-free and call-free and contains no assignment, increment or static local: it reads its arguments' reachable memory and constants and writes, allocates and releases nothing; a returned pointer is borrowed."
+    },
+    "member-store": {
+      "checked": true,
+      "meaning": "The body is exactly the listed stores `param->member op= expression`, each expression call-free and assignment-free over the parameters; the listed pointer parameters escape into the base object; nothing is allocated or released."
+    },
+    "refcounted-release": {
+      "checked": false,
+      "meaning": "Drops one reference to the object and frees it, with everything it owns, when the count reaches zero; NULL is accepted."
+    },
+    "release": {
+      "checked": false,
+      "meaning": "Releases the object and everything it owns; NULL is accepted."
+    },
+    "constructor": {
+      "checked": false,
+      "meaning": "Returns a new object the caller owns (one reference), or NULL on failure."
+    },
+    "container": {
+      "checked": false,
+      "meaning": "Stores or reads an element pointer of the stack without taking ownership of it."
+    },
+    "ownership-transfer": {
+      "checked": false,
+      "meaning": "Takes a reference to, or a copy of, the caller's object into the context; the caller keeps its own reference."
+    },
+    "configuration": {
+      "checked": false,
+      "meaning": "Reconfigures the context from files, controls or callbacks; may allocate and release library-owned state."
+    },
+    "protocol-io": {
+      "checked": false,
+      "meaning": "Drives the TLS protocol on the connection: reads, writes or changes connection state."
+    },
+    "buffer-writer": {
+      "checked": false,
+      "meaning": "Writes a bounded result into a caller buffer or out-parameters."
+    }
+  },
+  "bindings": [
+    {
+      "function": "ERR_clear_error",
+      "header": "openssl/err.h",
+      "prototype": "void (void)",
+      "class": "no-pointer-interface",
+      "contract": "Empties the calling thread's OpenSSL error queue. No caller resource is passed in or returned.",
+      "definition": {
+        "file": "crypto/err/err.c",
+        "object": "crypto/err/libcrypto-lib-err.o",
+        "flags": "libcrypto"
+      },
+      "census_pairs": 3
+    },
+    {
+      "function": "X509_free",
+      "header": "openssl/x509.h",
+      "prototype": "void (X509 *)",
+      "class": "refcounted-release",
+      "contract": "Drops one reference to the object and frees it, with everything it owns, when the count reaches zero; NULL is accepted.",
+      "definition": null,
+      "census_pairs": 6
+    },
+    {
+      "function": "BIO_free",
+      "header": "openssl/bio.h",
+      "prototype": "int (BIO *)",
+      "class": "refcounted-release",
+      "contract": "Drops one reference to the object and frees it, with everything it owns, when the count reaches zero; NULL is accepted.",
+      "definition": null,
+      "census_pairs": 5
+    },
+    {
+      "function": "BIO_new_mem_buf",
+      "header": "openssl/bio.h",
+      "prototype": "BIO *(const void *, int)",
+      "class": "constructor",
+      "contract": "Returns a new object the caller owns (one reference), or NULL on failure.",
+      "definition": null,
+      "census_pairs": 4
+    },
+    {
+      "function": "EVP_PKEY_free",
+      "header": "openssl/evp.h",
+      "prototype": "void (EVP_PKEY *)",
+      "class": "refcounted-release",
+      "contract": "Drops one reference to the object and frees it, with everything it owns, when the count reaches zero; NULL is accepted.",
+      "definition": null,
+      "census_pairs": 4
+    },
+    {
+      "function": "ENGINE_free",
+      "header": "openssl/engine.h",
+      "prototype": "int (ENGINE *)",
+      "class": "refcounted-release",
+      "contract": "Drops one reference to the object and frees it, with everything it owns, when the count reaches zero; NULL is accepted.",
+      "definition": null,
+      "census_pairs": 3
+    },
+    {
+      "function": "BIO_new_file",
+      "header": "openssl/bio.h",
+      "prototype": "BIO *(const char *, const char *)",
+      "class": "constructor",
+      "contract": "Returns a new object the caller owns (one reference), or NULL on failure.",
+      "definition": null,
+      "census_pairs": 2
+    },
+    {
+      "function": "EVP_sha256",
+      "header": "openssl/evp.h",
+      "prototype": "const EVP_MD *(void)",
+      "class": "static-object-return",
+      "contract": "Returns the address of the library's static constant SHA-256 method table; the caller owns nothing and must not release it.",
+      "definition": {
+        "file": "crypto/evp/legacy_sha.c",
+        "object": "crypto/evp/libcrypto-lib-legacy_sha.o",
+        "flags": "libcrypto"
+      },
+      "returns": "sha256_md",
+      "census_pairs": 2
+    },
+    {
+      "function": "OPENSSL_sk_pop_free",
+      "header": "openssl/stack.h",
+      "prototype": "void (OPENSSL_STACK *, void (*)(void *))",
+      "class": "release",
+      "contract": "Releases the object and everything it owns; NULL is accepted.",
+      "definition": null,
+      "census_pairs": 2
+    },
+    {
+      "function": "OPENSSL_sk_push",
+      "header": "openssl/stack.h",
+      "prototype": "int (OPENSSL_STACK *, const void *)",
+      "class": "container",
+      "contract": "Stores or reads an element pointer of the stack without taking ownership of it.",
+      "definition": null,
+      "census_pairs": 2
+    },
+    {
+      "function": "OPENSSL_sk_value",
+      "header": "openssl/stack.h",
+      "prototype": "void *(const OPENSSL_STACK *, int)",
+      "class": "container",
+      "contract": "Stores or reads an element pointer of the stack without taking ownership of it.",
+      "definition": null,
+      "census_pairs": 2
+    },
+    {
+      "function": "PEM_read_bio_PrivateKey",
+      "header": "openssl/pem.h",
+      "prototype": "EVP_PKEY *(BIO *, EVP_PKEY **, pem_password_cb *, void *)",
+      "class": "constructor",
+      "contract": "Returns a new object the caller owns (one reference), or NULL on failure.",
+      "definition": null,
+      "census_pairs": 2
+    },
+    {
+      "function": "PKCS12_free",
+      "header": "openssl/pkcs12.h",
+      "prototype": "void (PKCS12 *)",
+      "class": "release",
+      "contract": "Releases the object and everything it owns; NULL is accepted.",
+      "definition": null,
+      "census_pairs": 2
+    },
+    {
+      "function": "SSL_CTX_ctrl",
+      "header": "openssl/ssl.h",
+      "prototype": "long (SSL_CTX *, int, long, void *)",
+      "class": "configuration",
+      "contract": "Reconfigures the context from files, controls or callbacks; may allocate and release library-owned state.",
+      "definition": null,
+      "census_pairs": 2
+    },
+    {
+      "function": "SSL_CTX_free",
+      "header": "openssl/ssl.h",
+      "prototype": "void (SSL_CTX *)",
+      "class": "refcounted-release",
+      "contract": "Drops one reference to the object and frees it, with everything it owns, when the count reaches zero; NULL is accepted.",
+      "definition": null,
+      "census_pairs": 2
+    },
+    {
+      "function": "SSL_CTX_set_default_verify_paths",
+      "header": "openssl/ssl.h",
+      "prototype": "int (SSL_CTX *)",
+      "class": "configuration",
+      "contract": "Reconfigures the context from files, controls or callbacks; may allocate and release library-owned state.",
+      "definition": null,
+      "census_pairs": 2
+    },
+    {
+      "function": "SSL_write",
+      "header": "openssl/ssl.h",
+      "prototype": "int (SSL *, const void *, int)",
+      "class": "protocol-io",
+      "contract": "Drives the TLS protocol on the connection: reads, writes or changes connection state.",
+      "definition": null,
+      "census_pairs": 2
+    },
+    {
+      "function": "d2i_PKCS12_bio",
+      "header": "openssl/pkcs12.h",
+      "prototype": "PKCS12 *(BIO *, PKCS12 **)",
+      "class": "constructor",
+      "contract": "Returns a new object the caller owns (one reference), or NULL on failure.",
+      "definition": null,
+      "census_pairs": 2
+    },
+    {
+      "function": "CRYPTO_free",
+      "header": "openssl/crypto.h",
+      "prototype": "void (void *, const char *, int)",
+      "class": "release",
+      "contract": "Releases the object and everything it owns; NULL is accepted.",
+      "definition": null,
+      "census_pairs": 1
+    },
+    {
+      "function": "ENGINE_by_id",
+      "header": "openssl/engine.h",
+      "prototype": "ENGINE *(const char *)",
+      "class": "constructor",
+      "contract": "Returns a new object the caller owns (one reference), or NULL on failure.",
+      "definition": null,
+      "census_pairs": 1
+    },
+    {
+      "function": "ENGINE_load_ssl_client_cert",
+      "header": "openssl/engine.h",
+      "prototype": "int (ENGINE *, SSL *, struct stack_st_X509_NAME *, X509 **, EVP_PKEY **, struct stack_st_X509 **, UI_METHOD *, void *)",
+      "class": "ownership-transfer",
+      "contract": "Takes a reference to, or a copy of, the caller's object into the context; the caller keeps its own reference.",
+      "definition": null,
+      "census_pairs": 1
+    },
+    {
+      "function": "ERR_error_string_n",
+      "header": "openssl/err.h",
+      "prototype": "void (unsigned long, char *, size_t)",
+      "class": "buffer-writer",
+      "contract": "Writes a bounded result into a caller buffer or out-parameters.",
+      "definition": null,
+      "census_pairs": 1
+    },
+    {
+      "function": "ERR_peek_error",
+      "header": "openssl/err.h",
+      "prototype": "unsigned long (void)",
+      "class": "no-pointer-interface",
+      "contract": "Returns the earliest error code of the calling thread's queue without removing it. No caller resource is passed in or returned.",
+      "definition": {
+        "file": "crypto/err/err.c",
+        "object": "crypto/err/libcrypto-lib-err.o",
+        "flags": "libcrypto"
+      },
+      "census_pairs": 1
+    },
+    {
+      "function": "ERR_peek_last_error",
+      "header": "openssl/err.h",
+      "prototype": "unsigned long (void)",
+      "class": "no-pointer-interface",
+      "contract": "Returns the latest error code of the calling thread's queue without removing it. No caller resource is passed in or returned.",
+      "definition": {
+        "file": "crypto/err/err.c",
+        "object": "crypto/err/libcrypto-lib-err.o",
+        "flags": "libcrypto"
+      },
+      "census_pairs": 1
+    },
+    {
+      "function": "ERR_peek_last_error_all",
+      "header": "openssl/err.h",
+      "prototype": "unsigned long (const char **, int *, const char **, const char **, int *)",
+      "class": "buffer-writer",
+      "contract": "Writes a bounded result into a caller buffer or out-parameters.",
+      "definition": null,
+      "census_pairs": 1
+    },
+    {
+      "function": "EVP_EncodeBlock",
+      "header": "openssl/evp.h",
+      "prototype": "int (unsigned char *, const unsigned char *, int)",
+      "class": "buffer-writer",
+      "contract": "Writes a bounded result into a caller buffer or out-parameters.",
+      "definition": null,
+      "census_pairs": 1
+    },
+    {
+      "function": "EVP_MD_CTX_free",
+      "header": "openssl/evp.h",
+      "prototype": "void (EVP_MD_CTX *)",
+      "class": "release",
+      "contract": "Releases the object and everything it owns; NULL is accepted.",
+      "definition": null,
+      "census_pairs": 1
+    },
+    {
+      "function": "EVP_MD_CTX_new",
+      "header": "openssl/evp.h",
+      "prototype": "EVP_MD_CTX *(void)",
+      "class": "constructor",
+      "contract": "Returns a new object the caller owns (one reference), or NULL on failure.",
+      "definition": null,
+      "census_pairs": 1
+    },
+    {
+      "function": "EVP_sha512",
+      "header": "openssl/evp.h",
+      "prototype": "const EVP_MD *(void)",
+      "class": "static-object-return",
+      "contract": "Returns the address of the library's static constant SHA-512 method table; the caller owns nothing and must not release it.",
+      "definition": {
+        "file": "crypto/evp/legacy_sha.c",
+        "object": "crypto/evp/libcrypto-lib-legacy_sha.o",
+        "flags": "libcrypto"
+      },
+      "returns": "sha512_md",
+      "census_pairs": 1
+    },
+    {
+      "function": "OPENSSL_sk_free",
+      "header": "openssl/stack.h",
+      "prototype": "void (OPENSSL_STACK *)",
+      "class": "release",
+      "contract": "Releases the object and everything it owns; NULL is accepted.",
+      "definition": null,
+      "census_pairs": 1
+    },
+    {
+      "function": "OPENSSL_sk_new_null",
+      "header": "openssl/stack.h",
+      "prototype": "OPENSSL_STACK *(void)",
+      "class": "constructor",
+      "contract": "Returns a new object the caller owns (one reference), or NULL on failure.",
+      "definition": null,
+      "census_pairs": 1
+    },
+    {
+      "function": "OSSL_PROVIDER_load",
+      "header": "openssl/provider.h",
+      "prototype": "OSSL_PROVIDER *(OSSL_LIB_CTX *, const char *)",
+      "class": "constructor",
+      "contract": "Returns a new object the caller owns (one reference), or NULL on failure.",
+      "definition": null,
+      "census_pairs": 1
+    },
+    {
+      "function": "OSSL_PROVIDER_unload",
+      "header": "openssl/provider.h",
+      "prototype": "int (OSSL_PROVIDER *)",
+      "class": "refcounted-release",
+      "contract": "Drops one reference to the object and frees it, with everything it owns, when the count reaches zero; NULL is accepted.",
+      "definition": null,
+      "census_pairs": 1
+    },
+    {
+      "function": "PEM_read_bio_X509",
+      "header": "openssl/pem.h",
+      "prototype": "X509 *(BIO *, X509 **, pem_password_cb *, void *)",
+      "class": "constructor",
+      "contract": "Returns a new object the caller owns (one reference), or NULL on failure.",
+      "definition": null,
+      "census_pairs": 1
+    },
+    {
+      "function": "SSL_CTX_get_cert_store",
+      "header": "openssl/ssl.h",
+      "prototype": "X509_STORE *(const SSL_CTX *)",
+      "class": "pure-reader",
+      "contract": "Returns the certificate store of `ctx`, borrowed: owned by `ctx`.",
+      "definition": {
+        "file": "ssl/ssl_lib.c",
+        "object": "ssl/libssl-lib-ssl_lib.o",
+        "flags": "libssl"
+      },
+      "census_pairs": 1
+    },
+    {
+      "function": "SSL_CTX_load_verify_locations",
+      "header": "openssl/ssl.h",
+      "prototype": "int (SSL_CTX *, const char *, const char *)",
+      "class": "configuration",
+      "contract": "Reconfigures the context from files, controls or callbacks; may allocate and release library-owned state.",
+      "definition": null,
+      "census_pairs": 1
+    },
+    {
+      "function": "SSL_CTX_new",
+      "header": "openssl/ssl.h",
+      "prototype": "SSL_CTX *(const SSL_METHOD *)",
+      "class": "constructor",
+      "contract": "Returns a new object the caller owns (one reference), or NULL on failure.",
+      "definition": null,
+      "census_pairs": 1
+    },
+    {
+      "function": "SSL_CTX_set_cert_cb",
+      "header": "openssl/ssl.h",
+      "prototype": "void (SSL_CTX *, int (*)(SSL *, void *), void *)",
+      "class": "configuration",
+      "contract": "Reconfigures the context from files, controls or callbacks; may allocate and release library-owned state.",
+      "definition": null,
+      "census_pairs": 1
+    },
+    {
+      "function": "SSL_CTX_set_default_passwd_cb",
+      "header": "openssl/ssl.h",
+      "prototype": "void (SSL_CTX *, pem_password_cb *)",
+      "class": "member-store",
+      "contract": "Stores the callback `cb` into `ctx`; the function pointer escapes into `ctx`; nothing is allocated or released.",
+      "definition": {
+        "file": "ssl/ssl_lib.c",
+        "object": "ssl/libssl-lib-ssl_lib.o",
+        "flags": "libssl"
+      },
+      "stores": [
+        {
+          "base": 0,
+          "member": "default_passwd_callback",
+          "operator": "=",
+          "parameters": [
+            1
+          ]
+        }
+      ],
+      "escapes": [
+        1
+      ],
+      "census_pairs": 1
+    },
+    {
+      "function": "SSL_CTX_set_default_passwd_cb_userdata",
+      "header": "openssl/ssl.h",
+      "prototype": "void (SSL_CTX *, void *)",
+      "class": "member-store",
+      "contract": "Stores the caller's pointer `u` into `ctx`, retained but not owned: `u` escapes into `ctx` and must outlive its use; nothing is allocated or released.",
+      "definition": {
+        "file": "ssl/ssl_lib.c",
+        "object": "ssl/libssl-lib-ssl_lib.o",
+        "flags": "libssl"
+      },
+      "stores": [
+        {
+          "base": 0,
+          "member": "default_passwd_callback_userdata",
+          "operator": "=",
+          "parameters": [
+            1
+          ]
+        }
+      ],
+      "escapes": [
+        1
+      ],
+      "census_pairs": 1
+    },
+    {
+      "function": "SSL_CTX_set_options",
+      "header": "openssl/ssl.h",
+      "prototype": "uint64_t (SSL_CTX *, uint64_t)",
+      "class": "member-store",
+      "contract": "ORs the option bits `op` into `ctx->options` and returns the new value; nothing escapes, nothing is allocated or released.",
+      "definition": {
+        "file": "ssl/ssl_lib.c",
+        "object": "ssl/libssl-lib-ssl_lib.o",
+        "flags": "libssl"
+      },
+      "stores": [
+        {
+          "base": 0,
+          "member": "options",
+          "operator": "|=",
+          "parameters": [
+            1
+          ]
+        }
+      ],
+      "escapes": [],
+      "census_pairs": 1
+    },
+    {
+      "function": "SSL_CTX_use_PrivateKey",
+      "header": "openssl/ssl.h",
+      "prototype": "int (SSL_CTX *, EVP_PKEY *)",
+      "class": "ownership-transfer",
+      "contract": "Takes a reference to, or a copy of, the caller's object into the context; the caller keeps its own reference.",
+      "definition": null,
+      "census_pairs": 1
+    },
+    {
+      "function": "SSL_CTX_use_PrivateKey_file",
+      "header": "openssl/ssl.h",
+      "prototype": "int (SSL_CTX *, const char *, int)",
+      "class": "configuration",
+      "contract": "Reconfigures the context from files, controls or callbacks; may allocate and release library-owned state.",
+      "definition": null,
+      "census_pairs": 1
+    },
+    {
+      "function": "SSL_CTX_use_cert_and_key",
+      "header": "openssl/ssl.h",
+      "prototype": "int (SSL_CTX *, X509 *, EVP_PKEY *, struct stack_st_X509 *, int)",
+      "class": "ownership-transfer",
+      "contract": "Takes a reference to, or a copy of, the caller's object into the context; the caller keeps its own reference.",
+      "definition": null,
+      "census_pairs": 1
+    },
+    {
+      "function": "SSL_CTX_use_certificate",
+      "header": "openssl/ssl.h",
+      "prototype": "int (SSL_CTX *, X509 *)",
+      "class": "ownership-transfer",
+      "contract": "Takes a reference to, or a copy of, the caller's object into the context; the caller keeps its own reference.",
+      "definition": null,
+      "census_pairs": 1
+    },
+    {
+      "function": "SSL_CTX_use_certificate_chain_file",
+      "header": "openssl/ssl.h",
+      "prototype": "int (SSL_CTX *, const char *)",
+      "class": "configuration",
+      "contract": "Reconfigures the context from files, controls or callbacks; may allocate and release library-owned state.",
+      "definition": null,
+      "census_pairs": 1
+    },
+    {
+      "function": "SSL_certs_clear",
+      "header": "openssl/ssl.h",
+      "prototype": "void (SSL *)",
+      "class": "configuration",
+      "contract": "Reconfigures the context from files, controls or callbacks; may allocate and release library-owned state.",
+      "definition": null,
+      "census_pairs": 1
+    },
+    {
+      "function": "SSL_connect",
+      "header": "openssl/ssl.h",
+      "prototype": "int (SSL *)",
+      "class": "protocol-io",
+      "contract": "Drives the TLS protocol on the connection: reads, writes or changes connection state.",
+      "definition": null,
+      "census_pairs": 1
+    },
+    {
+      "function": "SSL_ctrl",
+      "header": "openssl/ssl.h",
+      "prototype": "long (SSL *, int, long, void *)",
+      "class": "configuration",
+      "contract": "Reconfigures the context from files, controls or callbacks; may allocate and release library-owned state.",
+      "definition": null,
+      "census_pairs": 1
+    },
+    {
+      "function": "SSL_do_handshake",
+      "header": "openssl/ssl.h",
+      "prototype": "int (SSL *)",
+      "class": "protocol-io",
+      "contract": "Drives the TLS protocol on the connection: reads, writes or changes connection state.",
+      "definition": null,
+      "census_pairs": 1
+    },
+    {
+      "function": "SSL_free",
+      "header": "openssl/ssl.h",
+      "prototype": "void (SSL *)",
+      "class": "refcounted-release",
+      "contract": "Drops one reference to the object and frees it, with everything it owns, when the count reaches zero; NULL is accepted.",
+      "definition": null,
+      "census_pairs": 1
+    },
+    {
+      "function": "SSL_get1_peer_certificate",
+      "header": "openssl/ssl.h",
+      "prototype": "X509 *(const SSL *)",
+      "class": "constructor",
+      "contract": "Returns a new object the caller owns (one reference), or NULL on failure.",
+      "definition": null,
+      "census_pairs": 1
+    },
+    {
+      "function": "SSL_get_certificate",
+      "header": "openssl/ssl.h",
+      "prototype": "X509 *(const SSL *)",
+      "class": "pure-reader",
+      "contract": "Returns the certificate of the connection, or NULL, borrowed.",
+      "definition": {
+        "file": "ssl/ssl_lib.c",
+        "object": "ssl/libssl-lib-ssl_lib.o",
+        "flags": "libssl"
+      },
+      "census_pairs": 1
+    },
+    {
+      "function": "SSL_get_client_CA_list",
+      "header": "openssl/ssl.h",
+      "prototype": "struct stack_st_X509_NAME *(const SSL *)",
+      "class": "pure-reader",
+      "contract": "Returns the client CA name list of the connection, borrowed.",
+      "definition": {
+        "file": "ssl/ssl_cert.c",
+        "object": "ssl/libssl-lib-ssl_cert.o",
+        "flags": "libssl"
+      },
+      "census_pairs": 1
+    },
+    {
+      "function": "SSL_get_error",
+      "header": "openssl/ssl.h",
+      "prototype": "int (const SSL *, int)",
+      "class": "protocol-io",
+      "contract": "Drives the TLS protocol on the connection: reads, writes or changes connection state.",
+      "definition": null,
+      "census_pairs": 1
+    },
+    {
+      "function": "SSL_read",
+      "header": "openssl/ssl.h",
+      "prototype": "int (SSL *, void *, int)",
+      "class": "protocol-io",
+      "contract": "Drives the TLS protocol on the connection: reads, writes or changes connection state.",
+      "definition": null,
+      "census_pairs": 1
+    },
+    {
+      "function": "SSL_shutdown",
+      "header": "openssl/ssl.h",
+      "prototype": "int (SSL *)",
+      "class": "protocol-io",
+      "contract": "Drives the TLS protocol on the connection: reads, writes or changes connection state.",
+      "definition": null,
+      "census_pairs": 1
+    },
+    {
+      "function": "X509_NAME_oneline",
+      "header": "openssl/x509.h",
+      "prototype": "char *(const X509_NAME *, char *, int)",
+      "class": "buffer-writer",
+      "contract": "Writes a bounded result into a caller buffer or out-parameters.",
+      "definition": null,
+      "census_pairs": 1
+    },
+    {
+      "function": "X509_OBJECT_get0_X509",
+      "header": "openssl/x509_vfy.h",
+      "prototype": "X509 *(const X509_OBJECT *)",
+      "class": "pure-reader",
+      "contract": "Returns the certificate held by `a`, or NULL, borrowed (get0): no reference is taken or given.",
+      "definition": {
+        "file": "crypto/x509/x509_lu.c",
+        "object": "crypto/x509/libcrypto-lib-x509_lu.o",
+        "flags": "libcrypto"
+      },
+      "census_pairs": 1
+    },
+    {
+      "function": "X509_STORE_CTX_get_current_cert",
+      "header": "openssl/x509_vfy.h",
+      "prototype": "X509 *(const X509_STORE_CTX *)",
+      "class": "pure-reader",
+      "contract": "Returns the certificate `ctx` currently refers to, borrowed: no reference is taken or given; allocates, releases and writes nothing.",
+      "definition": {
+        "file": "crypto/x509/x509_vfy.c",
+        "object": "crypto/x509/libcrypto-lib-x509_vfy.o",
+        "flags": "libcrypto"
+      },
+      "census_pairs": 1
+    },
+    {
+      "function": "X509_STORE_CTX_get_error",
+      "header": "openssl/x509_vfy.h",
+      "prototype": "int (const X509_STORE_CTX *)",
+      "class": "pure-reader",
+      "contract": "Reads the verification error of `ctx`; allocates, releases and writes nothing.",
+      "definition": {
+        "file": "crypto/x509/x509_vfy.c",
+        "object": "crypto/x509/libcrypto-lib-x509_vfy.o",
+        "flags": "libcrypto"
+      },
+      "census_pairs": 1
+    },
+    {
+      "function": "X509_STORE_CTX_get_error_depth",
+      "header": "openssl/x509_vfy.h",
+      "prototype": "int (const X509_STORE_CTX *)",
+      "class": "pure-reader",
+      "contract": "Reads the verification error depth of `ctx`; allocates, releases and writes nothing.",
+      "definition": {
+        "file": "crypto/x509/x509_vfy.c",
+        "object": "crypto/x509/libcrypto-lib-x509_vfy.o",
+        "flags": "libcrypto"
+      },
+      "census_pairs": 1
+    },
+    {
+      "function": "X509_STORE_CTX_set_error",
+      "header": "openssl/x509_vfy.h",
+      "prototype": "void (X509_STORE_CTX *, int)",
+      "class": "member-store",
+      "contract": "Stores the integer `err` into `ctx->error`; nothing escapes, nothing is allocated or released.",
+      "definition": {
+        "file": "crypto/x509/x509_vfy.c",
+        "object": "crypto/x509/libcrypto-lib-x509_vfy.o",
+        "flags": "libcrypto"
+      },
+      "stores": [
+        {
+          "base": 0,
+          "member": "error",
+          "operator": "=",
+          "parameters": [
+            1
+          ]
+        }
+      ],
+      "escapes": [],
+      "census_pairs": 1
+    },
+    {
+      "function": "X509_STORE_free",
+      "header": "openssl/x509_vfy.h",
+      "prototype": "void (X509_STORE *)",
+      "class": "refcounted-release",
+      "contract": "Drops one reference to the object and frees it, with everything it owns, when the count reaches zero; NULL is accepted.",
+      "definition": null,
+      "census_pairs": 1
+    },
+    {
+      "function": "X509_STORE_get0_objects",
+      "header": "openssl/x509_vfy.h",
+      "prototype": "struct stack_st_X509_OBJECT *(const X509_STORE *)",
+      "class": "pure-reader",
+      "contract": "Returns the object stack of the store, borrowed (get0): no reference is taken or given.",
+      "definition": {
+        "file": "crypto/x509/x509_lu.c",
+        "object": "crypto/x509/libcrypto-lib-x509_lu.o",
+        "flags": "libcrypto"
+      },
+      "census_pairs": 1
+    },
+    {
+      "function": "X509_STORE_set_flags",
+      "header": "openssl/x509_vfy.h",
+      "prototype": "int (X509_STORE *, unsigned long)",
+      "class": "configuration",
+      "contract": "Reconfigures the context from files, controls or callbacks; may allocate and release library-owned state.",
+      "definition": null,
+      "census_pairs": 1
+    },
+    {
+      "function": "X509_get_issuer_name",
+      "header": "openssl/x509.h",
+      "prototype": "X509_NAME *(const X509 *)",
+      "class": "pure-reader",
+      "contract": "Returns the issuer name stored in `a`, borrowed: owned by `a`.",
+      "definition": {
+        "file": "crypto/x509/x509_cmp.c",
+        "object": "crypto/x509/libcrypto-lib-x509_cmp.o",
+        "flags": "libcrypto"
+      },
+      "census_pairs": 1
+    },
+    {
+      "function": "X509_new",
+      "header": "openssl/x509.h",
+      "prototype": "X509 *(void)",
+      "class": "constructor",
+      "contract": "Returns a new object the caller owns (one reference), or NULL on failure.",
+      "definition": null,
+      "census_pairs": 1
+    }
+  ]
+}

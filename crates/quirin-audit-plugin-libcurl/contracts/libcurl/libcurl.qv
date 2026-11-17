@@ -1,0 +1,102 @@
+// SPDX-License-Identifier: Apache-2.0
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+module contract;
+
+// libcurl 8.18.0's own contracts (card W48-LIBCURL-CONTRACT-PLUGIN), carried
+// by the `quirin-audit libcurl` plugin and checked by its own checker against
+// the pinned release (crates/quirin-audit-plugin-libcurl/src/checker.rs, one
+// binding per function). They are a user contract crate's module (contract
+// specification C11.1), never a shipped provider's: each declaration is
+// flexible (it binds by name and declared signature, and is listed as an
+// explicit assumption of a run that applies it), and each is bound to the
+// plugin's checker package, whose answer joins into every function that
+// applies it. That answer carries no certificate the audit checks, so a
+// caller is at best Pending (plugin-claim-uncertified), never Safe.
+//
+// Only the functions whose contract resource-v1 can state are here. The
+// ranked callees curl_easy_setopt, curl_easy_getinfo, curl_easy_perform,
+// curl_easy_cleanup, curl_url_set and curl_url_get have no contract: the
+// checker answers each Unknown with its reason (option-indexed retention,
+// registered callbacks, an out-slot allocation, helpers it does not read).
+// The typecheck-gcc.h warning stubs (Wcurl_easy_*_err_*) are never bound.
+//
+// Enumerations are spelled as Clang's integer type for them (contract
+// specification C02, rule 12u): CURLcode has no negative value, so `u32`.
+
+// `CURLcode curl_global_init(long flags)` (lib/easy.c): a scalar in, a
+// scalar out; `flags` is only passed by value to `global_init`.
+extern fn curl_global_init(flags: i64) -> u32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    ensures normal resource_borrowed(flags);
+    ensures normal resource_return_none();
+};
+
+// `curl_slist_append(list, data)` (lib/slist.c): `data` is copied with
+// curlx_strdup and never kept. A failure returns NULL before `list` is read,
+// so the caller keeps `list`; otherwise the new node is linked last and the
+// same head is returned, or the node itself when `list` is NULL. That is
+// exactly the reallocation reading (C04.3) libc's realloc carries.
+extern fn curl_slist_append(list: ptr<mut, u8>, data: ptr<const, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    ensures normal resource_owned(list, nullable);
+    ensures normal resource_borrowed(data);
+    ensures normal resource_return_reallocated(list, nullable);
+};
+
+// `curl_slist_free_all(list)` (lib/slist.c): NULL releases nothing;
+// otherwise every node and its string are freed.
+extern fn curl_slist_free_all(list: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    ensures normal resource_released(list, nullable);
+    ensures normal resource_return_none();
+};
+
+// `char *curl_easy_escape(CURL *data, const char *string, int inlength)`
+// (lib/escape.c): the handle is unused (`(void)data;`), the string only
+// read; the result is NULL, a fresh copy of "" or the function's own dynbuf,
+// which a failed append frees first (lib/curlx/dynbuf.c).
+extern fn curl_easy_escape(handle: ptr<mut, u8>, text: ptr<const, u8>, length: i32) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    ensures normal resource_borrowed(handle);
+    ensures normal resource_borrowed(text);
+    ensures normal resource_borrowed(length);
+    ensures normal resource_return_owned(nullable);
+};
+
+// `CURLU *curl_url(void)` (lib/urlapi.c): one zeroed allocation.
+extern fn curl_url() -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    ensures normal resource_return_owned(nullable);
+};
+
+// `void curl_url_cleanup(CURLU *u)` (lib/urlapi.c): NULL releases nothing;
+// otherwise the handle's ten strings and the handle are freed.
+extern fn curl_url_cleanup(handle: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    ensures normal resource_released(handle, nullable);
+    ensures normal resource_return_none();
+};

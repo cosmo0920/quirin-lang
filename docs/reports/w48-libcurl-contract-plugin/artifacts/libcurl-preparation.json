@@ -1,0 +1,67 @@
+{
+  "files": [
+    {
+      "path": "include/curl/curl.h",
+      "sha256": "697555e3f5829c8fbea3fc3ef783fb6003219f3263c464b6de4019f3b09ea604"
+    },
+    {
+      "path": "include/curl/easy.h",
+      "sha256": "4b94482a7b8f7f70928cc5113eb532fc7e7db49cab20f2d63a0318eda59f0d79"
+    },
+    {
+      "path": "include/curl/urlapi.h",
+      "sha256": "4dda5954c042ff23f7561a6767ee6cf8929ddbbca7c8ae1dae15044d1dcfeafb"
+    },
+    {
+      "path": "include/curl/typecheck-gcc.h",
+      "sha256": "8cc9c4827abc4ca51a73a4ef236b0caf1a3876edc9da14f4d5671e1a61876d74"
+    },
+    {
+      "path": "lib/curl_setup.h",
+      "sha256": "84bbb5f4915d53ce8759d0962d49c3eed2ca92e5372721e717763068b8cb3d32"
+    },
+    {
+      "path": "lib/easy.c",
+      "sha256": "2e52bdc0560e1e864fb820ab3eb73a2dc49e12cbf034d348d8af2f11af1c3661"
+    },
+    {
+      "path": "lib/slist.c",
+      "sha256": "8bdaa480609ef676ddf6fa5628bf46038150730e057471c870cb068759640f6c"
+    },
+    {
+      "path": "lib/escape.c",
+      "sha256": "be3d650fe9007000c64741c1c2d2e5fda3f61a9f920cfc6792d48bdc8b348b77"
+    },
+    {
+      "path": "lib/urlapi.c",
+      "sha256": "da7f3127436028b85a8c6d22c9d827a30dd6e35524a2ec157fd02b5464e30eaf"
+    },
+    {
+      "path": "lib/setopt.c",
+      "sha256": "82c6526a8156d643b561cb7dddf8afa3768b7874791ecbd161f5711ad621dfa4"
+    },
+    {
+      "path": "lib/getinfo.c",
+      "sha256": "30eac4f54f562e42f379dcb39a8f511c4bf4f496ddbf8c7c3c0bea793159d76a"
+    },
+    {
+      "path": "lib/curlx/dynbuf.c",
+      "sha256": "274a3e728d5e277e4e08544ebec00b9093ae6e5bef383b298528320280874941"
+    }
+  ],
+  "meaning": "the release tarball had its pinned SHA-256 and every file the checker reads has its pinned digest; this records provenance and claims no verdict",
+  "pin": {
+    "source_directory": "curl-8.18.0",
+    "tag": "curl-8_18_0",
+    "tag_commit": "2eebc58c4b8d68c98c8344381a9f6df4cca838fd",
+    "tarball": "curl-8.18.0.tar.gz",
+    "tarball_sha256": "e9274a5f8ab5271c0e0e6762d2fce194d5f98acc568e4ce816845b2dcc0cf88f",
+    "version": "8.18.0"
+  },
+  "schema": "quirin-libcurl-preparation/1",
+  "tarball": {
+    "path": "<worktree>/private/w48-libcurl/dl/curl-8.18.0.tar.gz",
+    "sha256": "e9274a5f8ab5271c0e0e6762d2fce194d5f98acc568e4ce816845b2dcc0cf88f"
+  },
+  "tree": "libcurl-source/curl-8.18.0"
+}

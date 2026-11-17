@@ -22,7 +22,9 @@ members = [
     "crates/qcorec",
     "crates/quirin-audit-plugin",
     "crates/quirin-audit-plugin-libevent",
+    "crates/quirin-audit-plugin-libcurl",
     "crates/quirin-audit-plugin-measure",
+    "crates/quirin-audit-plugin-openssl",
 ]
 resolver = "2"
 

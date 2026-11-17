@@ -1,0 +1,27 @@
+[package]
+name = "quirin-audit-plugin-openssl"
+version = "0.1.0"
+edition = "2024"
+license = "MIT OR Apache-2.0"
+description = "The `quirin-audit openssl` subcommand plugin: prepares the pinned OpenSSL release Fluent Bit builds against, carries OpenSSL's own contracts, and checks them with its own checker, answering per binding through the host's plugin firewall."
+
+[lib]
+name = "quirin_audit_plugin_openssl"
+
+# `quirin-audit openssl …` runs this executable.
+[[bin]]
+name = "quirin-audit-openssl"
+path = "src/main.rs"
+
+[dependencies]
+quirin-audit-plugin = { path = "../quirin-audit-plugin", version = "0.1.0" }
+qcore-schemas = { path = "../qcore-schemas", version = "26.0.0" }
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = "1.0.151"
+
+[dev-dependencies]
+# The end-to-end tests run the real host route
+# (`qcore_audit::subcommand_plugins::main`) over this plugin's binary, so the
+# firewall and the join they observe are the shipped ones. A dev-dependency
+# only: the plugin itself links no core analysis crate.
+qcore-audit = { path = "../qcore-audit" }

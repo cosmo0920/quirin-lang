@@ -1,0 +1,54 @@
+{
+  "schema": "quirin-amendments/1",
+  "card": "W48-OPENSSL-CONTRACT-PLUGIN",
+  "base": "d7a497822",
+  "measured_tip": "aa8db89bd",
+  "increment_paragraph": "**W48-OPENSSL-CONTRACT-PLUGIN** (registered follow-up, user decision of 2026-09-28; gateway rule 52 (new), Lean `QCore.OpensslContractPlugin`; [report](../../reports/w48-openssl-contract-plugin/README.md)). New subcommand plugin `crates/quirin-audit-plugin-openssl` (`quirin-audit openssl prepare|check`). It pins OpenSSL 3.5.5, the release Fluent Bit builds against (CMake's `find_package(OpenSSL)` finds the distribution's `libssl-dev 3.5.5-1ubuntu3.7` at `/usr/include` on prepared `046accf6`, `66910c10` and `90978ac6`; tag `openssl-3.5.5` at `67b5686b4`, tarball SHA-256 `b28c9153…`, extracted and prepared tree digests checked fail-closed), prepares it (`Configure linux-x86_64 no-asm`, generated headers, `make -n` flag checks), and checks 68 carried bindings (the librdkafka census, 99 pairs, and the round-2 ranking) with its own Clang-AST checker: release pin, public prototype, one external definition, and a closed class rule (`no-pointer-interface`, `static-object-return`, `pure-reader`, `member-store`). On the pinned release 16 bindings are proposed Safe and published Pending through the host firewall (`ERR_clear_error`, `ERR_peek_error`, `ERR_peek_last_error`, `EVP_sha256`, `EVP_sha512`, seven getters, four member stores) and 52 are Unknown (50 in classes without a rule, two getters whose bodies call); no row is Safe and nothing is proposed Unsafe. All 68 prototypes equal the distribution headers'. Measured base `d7a497822` against tip `aa8db89bd` on the card's own preparations (binary sides; the host refuses `rev:` sides' user namespace): no row moves on the corpus, system or slice route, as predicted, because no route reads the plugin's verdicts (W48-OPENSSL-CALLER-COMPOSITION). The host row of an uncertified Safe claim drops the plugin's own reason (an ignored test, discharger W48-PLUGIN-VERDICT-PRESERVATION). Card gate at `c004b59a7`: Rust 9,543 passed / 0 failed / 19 ignored over 644 units, Lean 436 audits, Python 779 after an isolated rerun of a load-sensitive gate-slot row.",
+  "status_paragraph": "W48-OPENSSL-CONTRACT-PLUGIN (gateway rule 52): OpenSSL's contracts are checked by their own plugin, `quirin-audit openssl`, against the pinned upstream 3.5.5 release (the distribution build Fluent Bit links is 3.5.5-1ubuntu3.7); of 68 bindings, 16 are published Pending (uncertified plugin Safe, never Safe) and 52 Unknown. No analysis route reads these verdicts yet, so the corpus, system and slice figures are unchanged (measured on the card's preparations).",
+  "ledger": [
+    {
+      "id": "W48-OPENSSL-CONTRACT-PLUGIN",
+      "operation": "retire",
+      "why": "DISCHARGED by W48-OPENSSL-CONTRACT-PLUGIN (gateway rule 52): crate quirin-audit-plugin-openssl (quirin-audit openssl prepare|check) on the SDK; the pin is OpenSSL 3.5.5 (tag openssl-3.5.5 at 67b5686b4419b4cb8caa502711c41815f5279751, tarball SHA-256 b28c91532a8b65a1f983b4c28b7488174e4a01008e29ce8e69bd789f28bc2a89), determined from the CMake caches of the card's preparations of 046accf6, 66910c10 and 90978ac6 (find_package(OpenSSL) finds libssl-dev 3.5.5-1ubuntu3.7), with tarball, extracted-tree and prepared-tree digests checked fail-closed; 68 bindings carried (the librdkafka census's 68 functions and 99 pairs, which contain the round-2 ranking's), ERR_clear_error first; its own checker (release pin, Clang header prototype, one external definition, closed class rules) publishes 16 Pending and 52 Unknown through the rule 10h firewall; Rust tests (classes, obligations, host route) and audited Lean QCore.OpensslContractPlugin; measured: no move on the three live routes (predicted). Residuals registered: W48-OPENSSL-CALLER-COMPOSITION, W48-OPENSSL-UNCHECKED-CLASSES, W48-OPENSSL-DISTRIBUTION-BUILD.",
+      "source": "docs/reports/w48-openssl-contract-plugin/README.md"
+    },
+    {
+      "id": "W48-OPENSSL-CALLER-COMPOSITION",
+      "operation": "register",
+      "title": "No analysis route reads the OpenSSL plugin's binding verdicts into their callers",
+      "text": "W48-OPENSSL-CONTRACT-PLUGIN publishes one verdict per OpenSSL binding in the plugin's own report (artifact openssl@3.5.5::FUNCTION; 16 Pending, 52 Unknown), but neither the pinned corpus route nor a configured selection runs a subcommand plugin or reads its report, so a Fluent Bit caller of a bound function keeps its uncontracted-callee Unknown: rd_kafka_transport_ssl_clear_error, blocked by ERR_clear_error alone (round-2 ranking), and the census's only-uncontracted callers (rd_kafka_ssl_PKEY_from_string, rd_kafka_ssl_ctx_term, rd_kafka_transport_ssl_close). A subcommand plugin's claims reach only its own report's artifact rows, never an audit report's function or unit rows or a .qo checkpoint; that route is SUBCOMMAND-CLAIMS-INTO-AUDIT-ROWS (registered by W48-PLUGIN-VERDICT-PRESERVATION), on which this depends; the user-plugin checker route (user_plugins.rs, C11.1) does reach function rows and is the alternative. DISCHARGE: a host route that applies a binding's published verdict and contract at its call sites through the reasoned join (C11.1, QCore.VerdictSemigroup), so a caller resting on a Pending binding is Pending and never Safe until W45-SUBCOMMAND-CERTIFICATE-ROUTE certifies it, keeping each binding's (plugin, verdict, reasons) record; fail-closed when the plugin's report is absent, failed, of another pin or another contract-set digest; measured on the corpus and system routes with a prediction.",
+      "source": "docs/reports/w48-openssl-contract-plugin/README.md",
+      "recorded_by": "W48-OPENSSL-CONTRACT-PLUGIN"
+    },
+    {
+      "id": "W48-OPENSSL-UNCHECKED-CLASSES",
+      "operation": "register",
+      "title": "52 OpenSSL bindings have no checker rule or a refused body",
+      "text": "The OpenSSL plugin's checker v1 has rules for four contract classes only. Unknown: refcounted-release (X509_free 6 pairs, BIO_free 5, EVP_PKEY_free 4, ENGINE_free 3, SSL_CTX_free 2, SSL_free, X509_STORE_free, OSSL_PROVIDER_unload), constructor (BIO_new_mem_buf 4, BIO_new_file, PEM_read_bio_PrivateKey, d2i_PKCS12_bio and 8 more), configuration (7), release (5), protocol-io (6), ownership-transfer (4), container (OPENSSL_sk_push, OPENSSL_sk_value), buffer-writer (4); and SSL_get_certificate and SSL_get_client_CA_list, whose bodies call (the pure-reader rule refuses them). DISCHARGE: per class, a sound rule (most need inter-procedural reasoning: ASN1_item_free and CRYPTO_DOWN_REF for the releasers, allocation results for the constructors) with positive and negative tests and Lean for its premise, each binding then Pending or a named Unknown; never a class marked checked without a rule.",
+      "source": "docs/reports/w48-openssl-contract-plugin/README.md",
+      "recorded_by": "W48-OPENSSL-CONTRACT-PLUGIN"
+    },
+    {
+      "id": "W48-OPENSSL-DISTRIBUTION-BUILD",
+      "operation": "register",
+      "title": "The OpenSSL check reads the upstream release, not the distribution build Fluent Bit links",
+      "text": "Fluent Bit's CMake finds the distribution's libssl-dev 3.5.5-1ubuntu3.7; the plugin checks the upstream openssl-3.5.5 release configured linux-x86_64 no-asm. Of 142 public headers 116 are identical, 23 differ only in a generated comment, and configuration.h (the distribution's Configure options), fips_names.h and one ssl.h define differ in substance; all 68 bound prototypes agree (artifacts/pin-evidence.json). Every claim names the release and configuration as assumptions. DISCHARGE: prepare the distribution's own source package at that version (pinned by its .dsc and orig/debian tarball digests, its patches applied, its configuration) and show each checked definition identical to, or rechecked in, that build; fail-closed on a version mismatch with the installed package.",
+      "source": "docs/reports/w48-openssl-contract-plugin/README.md",
+      "recorded_by": "W48-OPENSSL-CONTRACT-PLUGIN"
+    },
+    {
+      "id": "W48-PLUGIN-SDK-SHARED-HELPERS",
+      "operation": "register",
+      "title": "Subcommand plugins repeat process, digest and lookup helpers outside the SDK",
+      "text": "quirin-audit-plugin-libevent (audit.rs), quirin-audit-plugin-measure and quirin-audit-plugin-openssl (lib.rs: logged, captured, which, file_digest) each carry their own copies of running a logged or captured command, resolving a program on PATH and digesting a file; W48-LIBCURL-CONTRACT-PLUGIN adds another in parallel. The brief kept them out of the SDK. DISCHARGE: one SDK module for them with the plugins moved onto it, byte-identical outputs (the libevent preparation's retired-script identity included) and the dependency tests unchanged.",
+      "source": "docs/reports/w48-openssl-contract-plugin/README.md",
+      "recorded_by": "W48-OPENSSL-CONTRACT-PLUGIN"
+    },
+    {
+      "id": "W45-SUBCOMMAND-CERTIFICATE-ROUTE",
+      "operation": "append",
+      "text": "Since W48-OPENSSL-CONTRACT-PLUGIN a shipped plugin makes claims: quirin-audit openssl check proposes Safe for 16 OpenSSL bindings on the pinned release, each offering its check record (openssl-check.json, by SHA-256) as a certificate reference, so each is Pending (QP016); a checker for that record (obligations re-derived from the pinned tree and Clang's AST) would be the first subcommand certificate this route could accept.",
+      "source": "docs/reports/w48-openssl-contract-plugin/README.md"
+    }
+  ]
+}

@@ -1,0 +1,82 @@
+{
+  "compiled_objects": {
+    "crypto/err/libcrypto-lib-err.o": {
+      "flags": "libcrypto",
+      "source": "crypto/err/err.c"
+    },
+    "crypto/evp/libcrypto-lib-legacy_sha.o": {
+      "flags": "libcrypto",
+      "source": "crypto/evp/legacy_sha.c"
+    },
+    "crypto/x509/libcrypto-lib-x509_cmp.o": {
+      "flags": "libcrypto",
+      "source": "crypto/x509/x509_cmp.c"
+    },
+    "crypto/x509/libcrypto-lib-x509_lu.o": {
+      "flags": "libcrypto",
+      "source": "crypto/x509/x509_lu.c"
+    },
+    "crypto/x509/libcrypto-lib-x509_vfy.o": {
+      "flags": "libcrypto",
+      "source": "crypto/x509/x509_vfy.c"
+    },
+    "ssl/libssl-lib-ssl_cert.o": {
+      "flags": "libssl",
+      "source": "ssl/ssl_cert.c"
+    },
+    "ssl/libssl-lib-ssl_lib.o": {
+      "flags": "libssl",
+      "source": "ssl/ssl_lib.c"
+    }
+  },
+  "configure": {
+    "CC": "/usr/lib/llvm-21/bin/clang",
+    "command": [
+      "Configure",
+      "linux-x86_64",
+      "no-asm"
+    ]
+  },
+  "generate": [
+    "make",
+    "-j8",
+    "build_generated"
+  ],
+  "plugin": {
+    "name": "quirin-audit-plugin-openssl",
+    "version": "0.1.0"
+  },
+  "prepared_tree": {
+    "excluded_byproducts": [
+      "Makefile",
+      "builddata.pm",
+      "configdata.pm",
+      "libcrypto.pc",
+      "libssl.pc",
+      "openssl.pc"
+    ],
+    "files": 5772,
+    "sha256": "8364e1c0d8e85f8d3ed592e59be9e545c0e4ddde0c08adf8131f376567e0bda4"
+  },
+  "release": {
+    "tag": "openssl-3.5.5",
+    "tag_commit": "67b5686b4419b4cb8caa502711c41815f5279751",
+    "tarball_url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.5/openssl-3.5.5.tar.gz",
+    "version": "3.5.5"
+  },
+  "schema": "quirin-openssl-preparation/1",
+  "source_tree": {
+    "files": 5730,
+    "sha256": "d62a5bdb90f2eb3cf772c0416bcf25178ea70d4e2379a13c04fed7d429edd106"
+  },
+  "tarball": {
+    "path": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-ae711b0a8203bae45/private/openssl-dl/openssl-3.5.5.tar.gz",
+    "sha256": "b28c91532a8b65a1f983b4c28b7488174e4a01008e29ce8e69bd789f28bc2a89"
+  },
+  "tools": {
+    "clang": "Ubuntu clang version 21.1.8 (6ubuntu1)",
+    "make": "GNU Make 4.4.1",
+    "perl": "v5.40.1"
+  },
+  "tree": "openssl-3.5.5"
+}

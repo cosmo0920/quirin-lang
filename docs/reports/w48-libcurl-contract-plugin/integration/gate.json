@@ -1,0 +1,13 @@
+{
+  "note": "Landing integrate/r17: the merge of origin/main 285f51092 (the other lane's integrate/r13 through r15: CURRENT-CONTEXT-NEW-TRIAGE, LINK-STANDING-IMPORT-LIMITERS, OPENSSL-PROVIDER-PLUGIN, merged onto W48-PLUGIN-VERDICT-PRESERVATION) into this lane's main 0c0c6b297 (integrate/r15 W48-OPENSSL-CONTRACT-PLUGIN and integrate/r16 W48-LIBCURL-CONTRACT-PLUGIN), merge commit 11d945be5. Conflicts were additive only and resolved by keeping both sides: gateway rules 52 (W48-OPENSSL-CONTRACT-PLUGIN) and 53 (OPENSSL-PROVIDER-PLUGIN) and their router rows, the wave-48 increment paragraphs, proof roots and report index regenerated; the two OpenSSL efforts are distinct (an audit subcommand plugin in crates/quirin-audit-plugin-openssl, and a user contract crate in providers/quirin-provider-openssl) and neither reads the other. Full landing gate on 11d945be5 (private/integrate-r17/gate, raw record beside this file as gate-scope.json) via scripts/gate_scope.py --base origin/main --full --landing through private/toolchain/env.sh: Rust 648 units / 693 summaries, 9588 passed, 0 failed, 21 ignored; Lean all, 439 audits; fmt, Clippy, provider lock and both reevaluation examples exit 0; provider gate not selected (providers/ unchanged by the merge relative to origin/main), so provider_tests carries the other lane's integrate/r15 figure (140). Python (779 tests) exited 1 on one test_build_matrix_sections check only, because the committed matrix predates the merge; it is regenerated from this record and the suite rerun is recorded in private/integrate-r17/python-rerun.log: 778 passed, the matrix check among them; the one failure there was the load-sensitive test_gate_slot_lane.Status.test_status_shows_lane_holders_and_waiters (a third short-lane holder seen), which passed three isolated reruns of its module, appended to the same log. This record replaces the integrate/r16 one (whose figures were Rust 9570 / 646 units, Lean 437). No measured row moves; no profile baseline is changed and land.py publish is owed.",
+  "workspace_tests": 9588,
+  "provider_tests": 140,
+  "python_evidence_validator_tests": 779,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "full landing gate: every step exits 0 except the Python suite's one stale-matrix check, cleared by regenerating the matrix from this record (rerun disclosed in the note)",
+  "lean_audits": 439,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

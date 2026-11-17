@@ -1,0 +1,127 @@
+{
+  "schema": "w48-openssl-pin-evidence/1",
+  "distribution_prototypes_vs_contracts": {
+    "agree": 68,
+    "disagree": {}
+  },
+  "substantive_header_differences": {
+    "configuration.h": [
+      "< # ifndef OPENSSL_NO_ASM",
+      "< #  define OPENSSL_NO_ASM",
+      "< # endif",
+      "> # ifndef OPENSSL_NO_CAPIENG",
+      "> #  define OPENSSL_NO_CAPIENG",
+      "> # endif",
+      "< # ifndef OPENSSL_NO_EC_NISTP_64_GCC_128",
+      "< #  define OPENSSL_NO_EC_NISTP_64_GCC_128",
+      "< # endif",
+      "> # ifndef OPENSSL_NO_HEARTBEATS",
+      "> #  define OPENSSL_NO_HEARTBEATS",
+      "> # endif",
+      "< # ifndef OPENSSL_NO_JITTER",
+      "< #  define OPENSSL_NO_JITTER",
+      "< # endif",
+      "< # ifndef OPENSSL_NO_KTLS",
+      "< #  define OPENSSL_NO_KTLS",
+      "> # ifndef OPENSSL_NO_IDEA",
+      "> #  define OPENSSL_NO_IDEA",
+      "> # ifndef OPENSSL_NO_MDC2",
+      "> #  define OPENSSL_NO_MDC2",
+      "> # endif",
+      "> # ifndef OPENSSL_NO_RDRAND",
+      "> #  define OPENSSL_NO_RDRAND",
+      "> # endif",
+      "< # ifndef OPENSSL_NO_TFO",
+      "< #  define OPENSSL_NO_TFO",
+      "< # endif",
+      "< # ifndef OPENSSL_NO_UNIT_TEST",
+      "< #  define OPENSSL_NO_UNIT_TEST",
+      "< # endif",
+      "< # ifndef OPENSSL_NO_ZLIB",
+      "< #  define OPENSSL_NO_ZLIB",
+      "< # endif",
+      "< # endif",
+      "< # ifndef OPENSSL_NO_ZSTD",
+      "< #  define OPENSSL_NO_ZSTD"
+    ],
+    "fips_names.h": [
+      "> /*",
+      ">  * The module status indicator for the FIPS provider. This is queried from",
+      ">  * the provider.",
+      ">  * Type: OSSL_PARAM_INTEGER",
+      ">  */",
+      "> #define UBUNTU_OSSL_PROV_FIPS_PARAM_UNAPPROVED_USAGE \"ubuntu.fips-unapproved-usage\"",
+      "> "
+    ],
+    "ssl.h": [
+      "> #define SSL_VALUE_QUIC_MAX_PENDING_CONNS 16"
+    ]
+  },
+  "fluent_bit_cmake": {
+    "system/fluent-bit-clang-production": {
+      "OPENSSL_CRYPTO_LIBRARY:FILEPATH": "/usr/lib/x86_64-linux-gnu/libcrypto.so",
+      "OPENSSL_INCLUDE_DIR:PATH": "/usr/include",
+      "OPENSSL_SSL_LIBRARY:FILEPATH": "/usr/lib/x86_64-linux-gnu/libssl.so",
+      "FIND_PACKAGE_MESSAGE_DETAILS_OpenSSL:INTERNAL": "[/usr/lib/x86_64-linux-gnu/libcrypto.so][/usr/include][ ][v3.5.5()]",
+      "OPENSSL_CRYPTO_LIBRARY-ADVANCED:INTERNAL": "1",
+      "OPENSSL_INCLUDE_DIR-ADVANCED:INTERNAL": "1",
+      "OPENSSL_SSL_LIBRARY-ADVANCED:INTERNAL": "1"
+    },
+    "c-gateway-wave-pin/fluent-bit-clang-production": {
+      "OPENSSL_CRYPTO_LIBRARY:FILEPATH": "/usr/lib/x86_64-linux-gnu/libcrypto.so",
+      "OPENSSL_INCLUDE_DIR:PATH": "/usr/include",
+      "OPENSSL_SSL_LIBRARY:FILEPATH": "/usr/lib/x86_64-linux-gnu/libssl.so",
+      "FIND_PACKAGE_MESSAGE_DETAILS_OpenSSL:INTERNAL": "[/usr/lib/x86_64-linux-gnu/libcrypto.so][/usr/include][ ][v3.5.5()]",
+      "OPENSSL_CRYPTO_LIBRARY-ADVANCED:INTERNAL": "1",
+      "OPENSSL_INCLUDE_DIR-ADVANCED:INTERNAL": "1",
+      "OPENSSL_SSL_LIBRARY-ADVANCED:INTERNAL": "1"
+    },
+    "slice/fluent-bit-clang-production": {
+      "OPENSSL_CRYPTO_LIBRARY:FILEPATH": "/usr/lib/x86_64-linux-gnu/libcrypto.so",
+      "OPENSSL_INCLUDE_DIR:PATH": "/usr/include",
+      "OPENSSL_SSL_LIBRARY:FILEPATH": "/usr/lib/x86_64-linux-gnu/libssl.so",
+      "FIND_PACKAGE_MESSAGE_DETAILS_OpenSSL:INTERNAL": "[/usr/lib/x86_64-linux-gnu/libcrypto.so][/usr/include][ ][v3.5.5()]",
+      "OPENSSL_CRYPTO_LIBRARY-ADVANCED:INTERNAL": "1",
+      "OPENSSL_INCLUDE_DIR-ADVANCED:INTERNAL": "1",
+      "OPENSSL_SSL_LIBRARY-ADVANCED:INTERNAL": "1"
+    }
+  },
+  "distribution_packages": [
+    "libssl-dev 3.5.5-1ubuntu3.7",
+    "libssl3t64 3.5.5-1ubuntu3.7"
+  ],
+  "header_owner": "libssl-dev:amd64: /usr/include/openssl/opensslv.h",
+  "release_headers_vs_distribution": {
+    "identical": 116,
+    "different": [
+      "asn1.h",
+      "asn1t.h",
+      "bio.h",
+      "cmp.h",
+      "cms.h",
+      "conf.h",
+      "configuration.h",
+      "core_names.h",
+      "crmf.h",
+      "crypto.h",
+      "ct.h",
+      "ess.h",
+      "fips_names.h",
+      "fipskey.h",
+      "ocsp.h",
+      "opensslv.h",
+      "pkcs12.h",
+      "pkcs7.h",
+      "safestack.h",
+      "srp.h",
+      "ssl.h",
+      "ui.h",
+      "x509.h",
+      "x509_acert.h",
+      "x509_vfy.h",
+      "x509v3.h"
+    ],
+    "only_in_release": [],
+    "only_in_distribution": []
+  }
+}

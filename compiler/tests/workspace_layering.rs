@@ -178,6 +178,25 @@ const ALLOWED: &[(&str, &[&str])] = &[
         "crates/quirin-audit-plugin-measure",
         &["quirin-audit-plugin", "qcore-schemas"],
     ),
+    // Card W48-OPENSSL-CONTRACT-PLUGIN: the OpenSSL contract plugin links the
+    // SDK and the schema crate only; `qcore-audit` is a dev-dependency of its
+    // end-to-end tests (the shipped host route), never of the plugin.
+    (
+        "crates/quirin-audit-plugin-openssl",
+        &["quirin-audit-plugin", "qcore-schemas", "qcore-audit"],
+    ),
+    // Card W48-LIBCURL-CONTRACT-PLUGIN: the libcurl plugin links the SDK and
+    // the schema crate only; its tests (dev-dependencies) drive the host's
+    // firewall and checker-binding route as a library.
+    (
+        "crates/quirin-audit-plugin-libcurl",
+        &[
+            "quirin-audit-plugin",
+            "qcore-schemas",
+            "qcore-audit",
+            "qcore-contract",
+        ],
+    ),
     ("crates/qcorec", &["qcore-compiler", "qcore-contract"]),
 ];
 

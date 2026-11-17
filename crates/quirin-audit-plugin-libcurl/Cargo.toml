@@ -1,0 +1,34 @@
+[package]
+name = "quirin-audit-plugin-libcurl"
+version = "0.1.0"
+edition = "2024"
+license = "MIT OR Apache-2.0"
+description = "The `quirin-audit libcurl` subcommand plugin: libcurl contracts checked by the plugin's own checker against a pinned libcurl release, with a C11.1 checker package for the user contract crate it installs."
+
+[lib]
+name = "quirin_audit_plugin_libcurl"
+
+# `quirin-audit libcurl …` runs this executable.
+[[bin]]
+name = "quirin-audit-libcurl"
+path = "src/main.rs"
+# `main.rs` holds no test; the crate's tests are its library's and `tests/`.
+test = false
+
+# The C11.1 checker package's executable. Deliberately not named
+# `quirin-audit-*`, so the host never lists it as a subcommand.
+[[bin]]
+name = "quirin-libcurl-checker"
+path = "src/bin/checker.rs"
+test = false
+
+[dependencies]
+quirin-audit-plugin = { path = "../quirin-audit-plugin", version = "0.1.0" }
+qcore-schemas = { path = "../qcore-schemas", version = "26.0.0" }
+serde_json = "1.0.151"
+
+[dev-dependencies]
+# The end-to-end tests drive the host's own firewall and checker-binding
+# route as a library; the plugin itself links no core analysis crate.
+qcore-audit = { path = "../qcore-audit" }
+qcore-contract = { path = "../qcore-contract" }
