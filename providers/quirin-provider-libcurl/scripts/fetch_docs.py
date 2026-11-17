@@ -10,7 +10,8 @@ https://curl.se/libcurl/c/<function>.html, its AVAILABILITY section ("Added
 in curl X.Y.Z"). Each page is fetched with curl into DIR (outside the
 repository; the pages are not committed), its SHA-256 and fetch date are
 recorded, and beside them the text of its AVAILABILITY, SYNOPSIS and RETURN
-VALUE sections and its sentences mentioning NULL (tags stripped), so a
+VALUE sections, its sentences mentioning NULL and its DESCRIPTION
+sentences on allocation, copying and release (tags stripped), so a
 reviewer can check every cited bound and custody reading against the
 snapshot digest. libcurl publishes one manual (the current release's), so a
 page has no series: `series` records the manual's own version as the page
@@ -58,6 +59,14 @@ def null_sentences(page_html):
     return sentences
 
 
+def custody_sentences(page_html):
+    """The DESCRIPTION sentences that speak of allocation, copying or
+    release: the documented custody each contract states."""
+    text = section(page_html, "DESCRIPTION") or ""
+    return [s.strip() for s in re.split(r"(?<=[.])\s+", text)
+            if re.search(r"free|cop(?:y|ies)|allocat|destroy|cleanup", s, re.I)]
+
+
 def fetch(function, out):
     url = f"{BASE}/{function}.html"
     target = out / f"{function}.html"
@@ -73,7 +82,8 @@ def fetch(function, out):
             "sha256": hashlib.sha256(data).hexdigest(), "bytes": len(data),
             "availability": availability, "added_in": added_in(availability),
             "synopsis": section(text, "SYNOPSIS"), "return_value": section(text, "RETURN"),
-            "null_sentences": null_sentences(text)}
+            "null_sentences": null_sentences(text),
+            "custody_sentences": custody_sentences(text)}
 
 
 def main():

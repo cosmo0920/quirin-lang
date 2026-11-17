@@ -1,0 +1,45 @@
+// SPDX-License-Identifier: Apache-2.0
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+module contract;
+
+// Card LIBCURL-PROVIDER-PLUGIN. URL handles (see global.qv for what every
+// declaration of this crate shares).
+
+// curl_url: https://curl.se/libcurl/c/curl_url.html
+// AVAILABILITY: "Added in curl 7.62.0". DESCRIPTION: it "allocates a URL
+// object and returns a CURLU handle"; "The object must be destroyed with a
+// call to curl_url_cleanup". RETURN VALUE: "NULL if out of memory". Pinned
+// prototype: `CURLU *curl_url(void)` (curl/urlapi.h).
+extern fn curl_url() -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(curl, since "7.62.0");
+    ensures normal resource_return_owned(nullable);
+};
+
+// curl_url_cleanup: https://curl.se/libcurl/c/curl_url_cleanup.html
+// AVAILABILITY: "Added in curl 7.62.0". "Frees all the resources associated
+// with the given CURLU handle"; "Passing in a NULL pointer in handle makes
+// this function return immediately with no action". Pinned prototype:
+// `void curl_url_cleanup(CURLU *handle)` (curl/urlapi.h).
+extern fn curl_url_cleanup(handle: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(curl, since "7.62.0");
+    ensures normal resource_released(handle, nullable);
+    ensures normal resource_return_none();
+};

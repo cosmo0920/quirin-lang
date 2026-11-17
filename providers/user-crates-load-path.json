@@ -1,6 +1,54 @@
 {
   "checkers": [
     {
+      "crate": "quirin-provider-libcurl",
+      "functions": [
+        "curl_easy_escape"
+      ],
+      "module": "libcurl/escape.qv",
+      "package": "quirin-provider-libcurl/checkers/libcurl-check"
+    },
+    {
+      "crate": "quirin-provider-libcurl",
+      "functions": [
+        "curl_global_init"
+      ],
+      "module": "libcurl/global.qv",
+      "package": "quirin-provider-libcurl/checkers/libcurl-check"
+    },
+    {
+      "crate": "quirin-provider-libcurl",
+      "functions": [
+        "curl_slist_append"
+      ],
+      "module": "libcurl/slist.qv",
+      "package": "quirin-provider-libcurl/checkers/libcurl-check"
+    },
+    {
+      "crate": "quirin-provider-libcurl",
+      "functions": [
+        "curl_slist_free_all"
+      ],
+      "module": "libcurl/slist.qv",
+      "package": "quirin-provider-libcurl/checkers/libcurl-check"
+    },
+    {
+      "crate": "quirin-provider-libcurl",
+      "functions": [
+        "curl_url"
+      ],
+      "module": "libcurl/url.qv",
+      "package": "quirin-provider-libcurl/checkers/libcurl-check"
+    },
+    {
+      "crate": "quirin-provider-libcurl",
+      "functions": [
+        "curl_url_cleanup"
+      ],
+      "module": "libcurl/url.qv",
+      "package": "quirin-provider-libcurl/checkers/libcurl-check"
+    },
+    {
       "crate": "quirin-provider-openssl",
       "functions": [
         "BIO_free"
@@ -98,6 +146,26 @@
     }
   ],
   "crates": [
+    {
+      "contracts": "quirin-provider-libcurl/contracts",
+      "dependencies": [],
+      "modules": [
+        "libcurl/escape.qv",
+        "libcurl/global.qv",
+        "libcurl/slist.qv",
+        "libcurl/url.qv"
+      ],
+      "name": "quirin-provider-libcurl",
+      "namespace": "libcurl",
+      "published": {},
+      "resource_view": [
+        "libcurl/escape.qv",
+        "libcurl/global.qv",
+        "libcurl/slist.qv",
+        "libcurl/url.qv"
+      ],
+      "version": "0.1.0"
+    },
     {
       "contracts": "quirin-provider-openssl/contracts",
       "dependencies": [],

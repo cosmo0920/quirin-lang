@@ -1,0 +1,25 @@
+[package]
+name = "quirin-provider-libcurl"
+version = "0.1.0"
+edition = "2024"
+license = "MIT OR Apache-2.0"
+publish = false
+autobins = false
+description = "libcurl resource contracts and their checker plugin, a user crate on the quirin-provider-plugin SDK (card LIBCURL-PROVIDER-PLUGIN)"
+
+[lib]
+name = "quirin_provider_libcurl"
+
+# The checker plugin bound to every contract of this crate
+# (`quirin-plugin.json`); `providers/package.py checkers` installs it at
+# `checkers/libcurl-check/`.
+[[bin]]
+name = "quirin-libcurl-check"
+path = "src/bin/libcurl_check.rs"
+test = false
+
+[dependencies]
+qcore-schemas.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+quirin-provider-plugin = { path = "../quirin-provider-plugin" }
