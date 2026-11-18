@@ -207,7 +207,10 @@ fn a_non_null_x_stays_outside_the_premise() {
         assert!(rows[name].refused_with(OUTSIDE), "{name}: {:?}", rows[name]);
         // Withdrawn before the callback route reads the call.
         assert!(
-            !rows[name].unsupported.iter().any(|d| d.contains("callback-")),
+            !rows[name]
+                .unsupported
+                .iter()
+                .any(|d| d.contains("callback-")),
             "{name}: {:?}",
             rows[name]
         );

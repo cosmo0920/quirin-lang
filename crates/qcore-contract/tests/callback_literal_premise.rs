@@ -20,9 +20,7 @@
 
 use std::collections::BTreeMap;
 
-use qcore_contract::contract_loader::{
-    literal_argument_premises, load_resource_contract_sources,
-};
+use qcore_contract::contract_loader::{literal_argument_premises, load_resource_contract_sources};
 use qcore_schemas::callback::{CallbackActual, CallbackClause};
 use qcore_schemas::contract::ResourceContracts;
 

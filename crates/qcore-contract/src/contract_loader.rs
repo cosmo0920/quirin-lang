@@ -3067,8 +3067,7 @@ fn load_function_in(
                 })
             {
                 return Err(
-                    "a literal-argument premise stands beside a synchronous invocation only"
-                        .into(),
+                    "a literal-argument premise stands beside a synchronous invocation only".into(),
                 );
             }
             if callbacks.iter().any(|clause| {
