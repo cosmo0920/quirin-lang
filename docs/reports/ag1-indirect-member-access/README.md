@@ -142,6 +142,20 @@ also makes `sizeof(*NAME)` an unevaluated operand (a struct type is never
 variably modified, C11 6.7.6.2p2, 6.5.3.4p2), which the base scan needs
 (probe s10 was refused at that `*` before the second hook).
 
+**A record this body allocated (the owned-binding fact).** The first unit
+reproduction of the committed rule (`b10211ad4`, section 4) moved three rows
+Safe -> Unknown: `parpriv = rd_kafka_topic_partition_get_private(rktpar);
+parpriv->leader_epoch = e;` binds an alias-spelled local from an accessor
+whose declared result is `resource_return_borrowed_from(rktpar, nonnull)`;
+once read as an aggregate-store base, the owner check refused it (not an
+identity this body acquired) where the typed route (rule 10t) had read the
+scalar store. Rule 61 therefore also requires the local's one binding to be a
+direct call (under at most one pointer cast) whose contract in force returns
+an **owned** result. That is the census shape (a constructor's own
+allocation) and leaves every other base to the routes that read it before.
+PREDICTION.md revision 2 was committed with the first measurement before
+the narrowing commit (`c3c57d83d`).
+
 **Re-attribution, not admission.** `rd_kafka_Node_new` stores `rack` on one
 arm only (`if (rack != NULL) ret->rack = rd_strdup(rack);`); the store is now
 read and the join's partial link meets rule 11c's escape refusal (`field-link
@@ -156,12 +170,14 @@ aliased base, a release before the store, an overwrite in a loop, a store
 through a second path (`slot = &ret->host; *slot = …`), a union alias, a
 pointer alias, two declarators, a formal base (rule 38i's name, never the
 gate's text), and the one-arm store (rule 11c). Unit tests in
-`typedef_aggregate_base.rs` (5) bind the decision to the Lean vectors and
-cover the alias table's refusals.
+`typedef_aggregate_base.rs` (6) bind the decision to the Lean vectors (128)
+and cover the alias table's refusals and the owned binding (a borrowed
+accessor result, an uncontracted call, a copy, two bindings, none).
 
 **Lean** `QCore.TypedefAggregateBase`: `an_agreeing_alias_names_its_struct_everywhere`,
 `a_disagreeing_alias_names_nothing`, `an_other_declaration_names_nothing`,
-`a_missing_fact_never_admits`, `decision_vectors_hold`,
+`a_missing_fact_never_admits` (seven facts, the owned binding among them),
+`decision_vectors_hold`,
 `an_admitted_local_is_the_struct_pointer`,
 `the_store_decides_alike_over_either_spelling` (over
 `QCore.AggregateStore.admitsStore`), `a_refused_alias_keeps_the_refusal`,
@@ -187,9 +203,78 @@ Every edit outside the new module is a delimited hook
 - None of `legacy_c.rs`, `legacy_cfg_builder.rs`, `legacy_transfer.rs` or
   `typed_access_path.rs` is touched.
 
-## 4. Measurement
+## 4. Measurement (unit reproduction of the user's `current`)
 
-MEASUREMENT
+The user's full `current` route (2+ hours, ~10 GB) was not rerun. Every
+non-Monkey unit holding an access row (135 units, `private/ag1/selection-all.json`
+from `scripts/selection.py --all`) was run with `quirin-audit current
+--selection` twice, report only (`AG1_REPORT_ONLY=1 scripts/census-run.sh`):
+BEFORE the card base's census-feature binary (`400317f6…`), AFTER the card's
+(`ff179785…` for the committed rule `b10211ad4`, `52d92287…` for the narrowed
+rule `c3c57d83d`); each exit 0. BEFORE reproduces the user's rows for these
+units, 4,430 of 4,431 identical (the one difference is section 1's run-wide
+fold, `ut_create_fetch_op_with_offset`). Monkey (14 sole-blocker rows) is
+analysed only through `--monkey-linked` and was not reproduced; rule 61 reads
+no Monkey shape the census found.
+
+| side | Safe / Unknown / Unsafe (135 units) | access rows | access alone | access leaves |
+|---|---|---:|---:|---:|
+| BEFORE (`a9c6dcf44`) | 939 / 3,485 / 7 | 2,140 | 218 | 9,021 |
+| first AFTER (`b10211ad4`) | 942 / 3,480 / 9 | | | 8,993 |
+| **AFTER (`c3c57d83d`)** | **945 / 3,477 / 9** | **2,130** | **215** | **8,994** |
+
+**The narrowed rule's moves** ([artifacts/compare-current-v2.json](artifacts/compare-current-v2.json)),
+exactly PREDICTION.md revision 2's block, no Safe -> non-Safe move:
+
+- Unknown -> Safe (6): `rd_kafka_topic_partition_new` and
+  `rd_kafka_topic_partition_new_with_id_and_name` (`rdkafka_partition.c`),
+  `cJSON_CreateStringReference`, `cJSON_CreateObjectReference`,
+  `cJSON_CreateArrayReference` (`cJSON.c`, `cJSON *item =
+  cJSON_New_Item(&global_hooks)`, the owned `cJSON_New_Item` declaration),
+  `ut_ack_create_message` (`rdunittest_acknowledge.c`).
+- Unknown -> **Unsafe** (2, provisional): `ut_case_acknowledge_accept`
+  (`live obligation acquired at rdunittest_acknowledge.c:261`) and
+  `ut_case_acknowledge_multiple_partitions` (`:533`, `:534`). With
+  `ut_ack_create_message` now validated as returning an owned message, its
+  librdkafka **unit-test** callers are read to leak the message on the paths
+  where an `RD_UT_ASSERT` fails and returns before `ut_ack_destroy_message`;
+  their success paths release it. This is the analysis's provisional finding
+  on test code, not a claim about librdkafka; each row also keeps its
+  uncontracted callees.
+- Leaves: 27 access leaves removed, none added; 31 rows change leaves.
+  Removed beside them: `call to uncontracted function ut_ack_create_message`
+  10, `rd_kafka_topic_partition_new` 2, `unresolved resource identity`
+  `msg`/`item` 12, `nullable resource item` 3. Added (re-attributions on rows
+  that stay Unknown): `unresolved resource identity` 20 (`batches`, `node`,
+  `cpair`, …: later uses of a base whose store is now read), `call to
+  uncontracted function cJSON_strdup` 2, rule 11c's `field-link escape` 1
+  (`rd_kafka_Node_new`, as predicted), `nullable resource node` 1, and the
+  four leak leaves above.
+
+**The first AFTER** (the committed rule before the owned-binding fact;
+[artifacts/compare-current-v1.json](artifacts/compare-current-v1.json)) moved
+the same eight rows plus `rd_kafka_topic_partition_set_leader_epoch`,
+`rd_kafka_topic_partition_set_current_leader_epoch` and
+`rd_kafka_topic_partition_set_from_fetch_pos` **Safe -> Unknown** (section 2),
+which the narrowing removed.
+
+**Against the first prediction.** Revision 1 named two rows; one moved
+(`rd_kafka_topic_partition_new`). `rd_kafka_share_ack_batch_entry_new` did not
+move: its member `types` is declared `rd_kafka_share_internal_acknowledgement_type
+*types;` over a **defining enum typedef**, which no B08 member class reads (a
+member-typedef shape, AG1-POINTER-TYPEDEF-MEMBER). Revision 1's "no new
+Unsafe" and "no Safe -> non-Safe" were wrong for the committed rule; revision
+2 holds exactly. `rd_kafka_UserScramCredentialDeletion_new` (a forward-only
+typedef over a struct with a union member: an incomplete record for B08) and
+`rd_kafka_topic_partition_new_from_rktp` (a deep member chain in the call's
+actuals) keep the access refusal, as section 1's owners say.
+
+**The user's `current` run, expected after landing.** The same eight moves
+(the reproduced units are the full run's), access-alone rows 232 -> 229, no
+Monkey change. Corpus and twelve-home: the moves of revision 2's block where
+the corpus analyses those units (`rdkafka_partition.c` and
+`rdkafka_share_acknowledgement.c` byte-identical at `66910c10`); system and
+slice: none.
 
 ## 5. Gate
 
@@ -197,4 +282,27 @@ GATE
 
 ## 6. Follow-ups (registered in [integration-amendments.json](integration-amendments.json))
 
-FOLLOWUPS
+- **AG1-TWO-BORROWED-CALLS** (new): rule 14a's one-call limit; several
+  `Borrowed`-only, `None`-result calls in one scalar statement or nested
+  (`strlen(a->p) + strlen(b->q)`, `cmt_atomic_store(&d->f,
+  cmt_atomic_load(&s->f))`; probes s11, s12).
+- **RK-OP-ERR-DESTROY-CONTRACT** (new): the mock API's nested return; 8 rows
+  alone, 18 mentioning.
+- **AG1-POINTER-TYPEDEF-MEMBER** (new): a member declared through a pointer
+  typedef (`cfl_sds_t`) or a pointer to a defining-typedef enum
+  (`rd_kafka_share_ack_batch_entry_new`'s `types`) is in no B08 member class.
+- **AG1-FORMAL-ARRAY-ELEMENTS-RELEASED** (new, a user decision): the twelve
+  `*_destroy_array` helpers.
+- **W44-CALL-RESULT-INDIRECT-DESTINATION** and **MEMBER-EFFECT-STORES**
+  (amended with this census).
+- Not registered again: decision class 1 (embedded lists, retained
+  pointers), class 3 (reference-count keeps), rules 10v and 10w's refusals
+  and the uncontracted-callee residual already tracked as
+  W45-CALLEE-CASCADE-RESIDUAL.
+
+**Environment note.** `/media/Data` filled to 0 bytes several times during
+the card; this card's own debug test build (17 GB, deleted at once) was one
+contributor at 21:1x JST. One AFTER build attempt failed with ENOSPC
+(`private/ag1/build-after.log`, retained, not evidence) and was rebuilt; the
+first gate attempt (`private/gate-1`) was cancelled when the rule was
+narrowed and is not evidence.
