@@ -5,6 +5,11 @@ restriction that OPENSSL-PROVIDER-REMAINING-CALLEES left
 ([report](../openssl-provider-remaining-callees/README.md) §1). Base
 `974434463`; the [prediction](PREDICTION.md) was committed first
 (`bcdb9b3b2`), the implementation, Lean and lock in `fbe57c2d8`, and formatting in `3efc68959`.
+On the user's decision of 2026-11-18 (relayed by the integrator: the card
+must not land with the null-callback regression its first measurement
+showed, §2), the card also states the null-`cb` arm: `7db083c87`, with a
+prediction addendum `3fe037567` committed after that code commit but before
+its measurement.
 
 ## 1. What changed
 
@@ -25,30 +30,58 @@ restriction that OPENSSL-PROVIDER-REMAINING-CALLEES left
   a missing actual or a poisoned premise set renames the call before the
   callback route, the retaining environment or any other reader sees it.
   A met call keeps its name, and rule 13u decides the invocation unchanged.
+* **The null default** (`7db083c87`). `resource_callback_invoked_or_default(F,
+  A…)` is the synchronous invocation (schema `CallbackClause::Invoked {
+  null_default: true }`, omitted when false, so existing serialisations are
+  unchanged; no `qcore-schemas` version bump) except that a null pointer
+  constant at `F` invokes nothing. In route G (`Parser::callback_operands`)
+  the candidates are read with `null_is_none` under the flag, and an empty
+  set, which only Clang's `null_leaf` (`NULL`, `0`, a cast of `0`) produces,
+  skips the invocation: the call is its custody contract with nothing decided
+  or required. Every other actual is decided by rule 13u exactly as before:
+  a non-null designator, a local that may hold null, a formal, or a call's
+  result. No body check establishes a null default, so in a unit defining the
+  declared function the declaration is withdrawn (rule 13y,
+  `callback-withdrawn`), and rule 13i classes the clause `Callback`
+  (uncovered). Rule 15w neither forwards to it (`stated_invocation`) nor
+  forwards from it (the own-clause match). The changes are in the C04.19
+  table and Candidates item, C04.5, the G05 production and conditions, and
+  rule 57.
 * **Gateway rule 57** (new, `docs/agents/rules/57.md`).
 * **`pem.qv`.** Both readers drop `requires resource_literal_argument(cb,
-  0)` and state `ensures normal resource_callback_invoked(cb, _, _, _, u)`:
+  0)` and state `ensures normal resource_callback_invoked_or_default(cb, _, _, _, u)`:
   `buf`, `size` and `rwflag` are the routine's own values, and `u` is the
   caller's ("The u parameter has the same value as the u parameter passed to
   the PEM routine"). The `x` premise stays, so the reuse arm is still
-  refused. The OpenSSL checker's `PEM_READ` premises become
-  `[NullArgument(1), CallbackInvoked { callback: 2, arguments: [_, _, _,
-  u] }]`, so `expected_clauses` derives the new set and requires exactly
-  that set. Its test refuses three drifts: the invocation removed, `u`
-  dropped to `_`, and the retired `cb` premise restored.
+  refused. The null arm is the page's: "If the cb parameters is set to NULL
+  and the u parameter is not NULL then the u parameter is interpreted as a
+  NUL terminated string to use as the passphrase. If both cb and u are NULL
+  then the default callback routine is used." The OpenSSL checker's
+  `PEM_READ` premises become `[NullArgument(1), CallbackInvokedOrDefault {
+  callback: 2, arguments: [_, _, _, u] }]` (a new `Premise` variant), so
+  `expected_clauses` derives the new set and requires exactly that set. Its
+  test refuses four drifts: the invocation removed, `u` dropped to `_`, the
+  plain invocation without the default, and the retired `cb` premise
+  restored. Limit: the snapshot's `null_sentences` extractor does not record
+  the `cb` sentence, so unlike `NullAcceptingRelease`, the checker does not
+  tie the default to the fetched page; the quotation is in `pem.qv`.
 * **Lock.** `quirin-audit pin --load-path providers/user-crates-load-path.json
   --source-root docs/reports/openssl-provider-remaining-callees/evidence/fixture
   --crate quirin-provider-openssl --function PEM_read_bio_X509 --function
   PEM_read_bio_PrivateKey`, after `providers/package.py checkers` at the tip
-  (`private/pin-2.log`). Diff reviewed: only the two pem entries'
-  `contract_sha256` and `pinned_at` move (`3e91f807…` → `e70f8404…`,
-  `a204c108…` → `76c1dcea…`), and nothing else changes. `pin
-  --verify-contracts` exits 0 (`0 pinned, 57 flexible`). `providers/contracts.py
+  (`private/pin-2.log`, then `private/pin-3.log` for the null default). Diff
+  reviewed against base: only the two pem entries' `contract_sha256` and
+  `pinned_at` move (`PEM_read_bio_PrivateKey` `3e91f807…` → `f98a0caa…`,
+  `PEM_read_bio_X509` `a204c108…` → `56b47d21…`), and nothing else changes.
+  `pin --verify-contracts` exits 0 (`0 pinned, 57 flexible`). `providers/contracts.py
   sync` writes nothing, and `check` exits 0. The user path's `contracts` step
-  on the predecessor's fixture shows `63 binding(s): 0 Safe / 63 Pending`
-  (`private/user-path/`).
+  on the predecessor's fixture shows `63 binding(s): 0 Safe / 63 Pending`,
+  with `read_cert` `Pending` (`private/user-path/7-contracts-2.log`).
 
-## 2. The null callback: a regression in content, as predicted
+## 2. The null callback: the first measurement's regression, now discharged
+
+What follows is the first measurement (`fbe57c2d8`), kept because it is why
+the null default exists.
 
 A null pointer constant at an invoked callback is an open candidate set
 (rule 13u, `callback-undecided`). OpenSSL's documented null-`cb` arm ("the
@@ -61,9 +94,10 @@ its `X509_free`). The OIDC calls (`rdkafka_sasl_oauthbearer_oidc.c:495, 498`)
 behave the same way, but this preparation's database has no record of them.
 The refusal is fail-closed: nothing becomes `Safe` and no null callback is
 read as no invocation. A one-declaration-per-function vocabulary cannot keep
-both arms. Restoring the null arm needs a clause meaning "a null `F` invokes
-nothing: the callee uses its own default", which this card leaves out:
-follow-up `OPENSSL-PEM-NULL-CALLBACK-DEFAULT`, a user decision.
+both arms. The card first registered `OPENSSL-PEM-NULL-CALLBACK-DEFAULT`;
+the user decided to discharge it here (§1, "The null default"). At
+`7db083c87`, `read_cert` is `Pending` again and Monkey's row equals base
+(§5).
 
 ## 3. Tests
 
@@ -72,7 +106,10 @@ follow-up `OPENSSL-PEM-NULL-CALLBACK-DEFAULT`, a user decision.
   invocation beside a retention, a registration, a table and an invocation
   beside a registry invocation, each beside a premise, are rejected, and the
   rederivation refuses too. The premise's own malformations still reject
-  beside an invocation. An invocation without a premise is unchanged.
+  beside an invocation. An invocation without a premise is unchanged. The
+  null-default spelling loads as `Invoked { null_default: true }` with its own
+  keyword; both spellings on one callback reject, and so does a callback
+  that is not `fnptr`.
 * `crates/qcore-c-gateway/tests/callback_literal_premise.rs` (route G,
   Clang). Within the premise, an identity callback applies the declaration
   (`in_premise`, `in_premise_zero`, `u_is_not_kept` are `Safe`). The
@@ -81,7 +118,16 @@ follow-up `OPENSSL-PEM-NULL-CALLBACK-DEFAULT`, a user decision.
   **A non-null `x` still refuses**: `&slot` and a formal give "outside its
   declared literal-argument premise", with no `callback-*` reading.
   **A callback with no contract in force refuses** (`callback-uncontracted`),
-  and so do an effectful one, a null one and a formal (`callback-undecided`).
+  and so does an effectful one, and so do a formal and a call's result
+  (`callback-undecided`).
+  **The null default**: `NULL`, `0` and `(pass_cb *) 0` are `Safe`; the
+  declaration still applies (a dropped result leaks); a null `cb` beside a
+  non-null `x` is still outside the premise. Under the plain invocation
+  (`p_read_plain`) a null `cb` still refuses (`callback-undecided`), while a
+  non-null identity callback reads the same as before. A local holding
+  `which ? quiet : NULL` is not a null pointer constant and refuses
+  (`callback-undecided`). In a unit that defines the declared function the
+  default is withdrawn (`callback-withdrawn`).
   A callback that dereferences `u` puts the requirement on the call, exactly
   as a direct call does.
 * The OpenSSL checker test above (`a_drifted_shape_of_the_new_readings_is_refused`).
@@ -89,7 +135,7 @@ follow-up `OPENSSL-PEM-NULL-CALLBACK-DEFAULT`, a user decision.
 ## 4. Lean
 
 `proof/QCore/CallbackLiteralPremise.lean`, audited by
-`proof/AuditCallbackLiteralPremise.lean`: 21 theorems, axioms within
+`proof/AuditCallbackLiteralPremise.lean`: 31 theorems, axioms within
 `propext`/`Quot.sound`, with no placeholder and no project axiom. The
 admission theorems are `a_premise_stands_only_beside_invocations`,
 `every_other_clause_beside_a_premise_rejects` and
@@ -100,8 +146,16 @@ admission theorems are `a_premise_stands_only_beside_invocations`,
 `a_met_premise_defers_to_the_invocation`, `applied_only_over_identities`
 and the three refusals. The rewrite: `the_new_rewrite_refuses_at_least_the_old`,
 `the_rewrite_is_unchanged_on_the_function_map` and
-`no_premise_is_transparent`. The PEM vectors include
-`pem_old_rewrite_missed_the_reuse_arm`.
+`no_premise_is_transparent`. The null default:
+`a_null_callback_under_the_default_invokes_nothing`,
+`without_the_default_a_null_callback_refuses`,
+`the_plain_invocation_is_the_flag_off`,
+`a_non_null_callback_is_decided_as_before`,
+`the_default_never_crosses_the_premise`,
+`applied_only_by_the_default_or_over_identities` (nothing is applied except
+through the documented default or over identity candidates) and
+`a_null_default_is_never_forwarded`. The PEM vectors include
+`pem_old_rewrite_missed_the_reuse_arm` and the three null-default vectors.
 
 ## 5. Measurement
 
@@ -110,19 +164,25 @@ of REFERENCE-DROP-NULL-ACCEPTING, contracts from the generated user load
 path). Inputs come from `quirin-audit prepare` at `046accf6`, run by the
 base binary from the local Fluent Bit clone (`private/prep/system`). Base
 side: the base export with its checkers and binary. Tip side: this tree,
-its checkers and binary. Both exit 0 (`private/optin/{base,tip}/run.log`).
+its checkers and binary: `tip` at `fbe57c2d8`, `tip2` at `7db083c87` (null
+default). All exit 0 (`private/optin/{base,tip,tip2}/run.log`).
 
-| | base | tip |
-|---|---|---|
-| units (7) | 7 Unknown | 7 Unknown |
-| function rows | 422: 131 Safe / 2 Pending / 289 Unknown | 422: 131 / 2 / 289 |
-| checker bindings | 63 Pending | 63 Pending |
+| | base | tip | tip2 |
+|---|---|---|---|
+| units (7) | 7 Unknown | 7 Unknown | 7 Unknown |
+| function rows | 422: 131 Safe / 2 Pending / 289 Unknown | 422: 131 / 2 / 289 | 422: 131 / 2 / 289 |
+| checker bindings | 63 Pending | 63 Pending | 63 Pending |
 
-[compare.json](artifacts/compare.json) ([script](scripts/compare_optin.py)):
-**0 moves, 4 rows change content**, as predicted. No row becomes `Safe`, and
-there is no new `Unsafe`.
+Base to tip ([compare.json](artifacts/compare.json),
+[script](scripts/compare_optin.py)): 0 moves and 4 rows changed content, as
+predicted, Monkey's `tls_load_builtin_credentials` among them (§2). **Base to
+tip2** ([compare-null-default.json](artifacts/compare-null-default.json)):
+**0 moves and 3 rows changed content**, as the addendum predicted.
+`tls_load_builtin_credentials` equals base: its two null-`cb` reads apply
+within the premise again and its six drops are of held references. No row
+becomes `Safe`, and there is no new `Unsafe`.
 
-The seven calls and what blocks each at the tip:
+The seven calls and what blocks each at tip2 (identical to tip):
 
 | Call | Base | Tip blocker |
 |---|---|---|
@@ -134,9 +194,10 @@ The seven calls and what blocks each at the tip:
 | `rdkafka_ssl.c:833` (`rd_kafka_ssl_X509_from_string`) | outside the premise | `callback-uncontracted`, the same callback |
 | `rdkafka_ssl.c:1292` (`while ((x509 = PEM_read_bio_X509(…)))`) | unmodeled call in loop condition | the same |
 
-`tls_load_builtin_credentials` gains `callback-undecided` at both null-`cb`
-reads, plus `reference-drop-unheld` on its six `X509_free(cert)` /
-`EVP_PKEY_free(key)` drops (§2), and stays `Unknown`.
+At tip (before the null default), `tls_load_builtin_credentials` gained
+`callback-undecided` at both null-`cb` reads and `reference-drop-unheld` on
+its six `X509_free(cert)` / `EVP_PKEY_free(key)` drops. At tip2 it is back
+to the base reading.
 
 **Pinned routes.** These were not measured on this host. By construction
 they cannot move. No pinned route reads the user load path, so `pem.qv`
@@ -183,10 +244,11 @@ failed with `reuse_arm` `Safe`); and `quirin-provider-openssl`'s tests
 ## 7. Follow-ups
 
 [`integration-amendments.json`](integration-amendments.json) retires
-`OPENSSL-PEM-CALLBACK-ARM` and registers:
+`OPENSSL-PEM-CALLBACK-ARM`; the null-default follow-up the first
+measurement exposed (`OPENSSL-PEM-NULL-CALLBACK-DEFAULT`) is discharged
+within the card and was never registered on main, so it is neither
+registered nor retired. It registers:
 
-* `OPENSSL-PEM-NULL-CALLBACK-DEFAULT`: the null-`cb` arm (§2). This needs a
-  user decision.
 * `RDKAFKA-PASSWD-CB-CONTRACTS`: `rd_kafka_transport_ssl_passwd_cb` has no
   contract in force (two calls). Reading `rd_kafka_conf_ssl_passwd_cb` at
   `rdkafka_cert.c:349, 405` additionally needs the member store of a
@@ -195,5 +257,7 @@ failed with `reuse_arm` `Safe`); and `quirin-provider-openssl`'s tests
 Files likely to conflict: `providers/quirin-provider-openssl/contracts.lock`
 (regenerate with `quirin-audit pin`), `src/documented.rs` and `src/check.rs`
 (OPENSSL-SSL-CTX-CALLBACK-SLOTS), `contract_loader.rs` (the retaining
-branch), C04.19's placement paragraph, and the generated `docs/agents/gateway.md`,
+branch), `contract_callback.rs` (the keyword list and the `INVOKED` arm),
+`qcore_schemas::callback` (`Invoked`'s new field), C04.19's table and
+placement paragraph, and the generated `docs/agents/gateway.md`,
 `docs/agents/README.md` and `proof/QCore.lean` (rerun the generators).
