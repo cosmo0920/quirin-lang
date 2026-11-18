@@ -147,7 +147,7 @@
 //! Both premises card C02 records — declaration completeness and C effective
 //! types — are inherited unchanged and are not proved here.
 
-use std::collections::BTreeSet;
+use std::collections::{BTreeMap, BTreeSet};
 
 use qcore_schemas::contract::{ResourceContracts, ResourceParameterMode};
 
@@ -162,11 +162,26 @@ pub(crate) struct AggregateStoreBases {
     /// all, except through an argument that is exactly one admitted
     /// `BASE - > FIELD` member read. See [`insulated_bases`].
     insulated: BTreeSet<String>,
+    /// Card AG1-INDIRECT-MEMBER-ACCESS (rule 61 (1)): the locals declared
+    /// `A * NAME` through a struct alias, with the struct's tag
+    /// ([`crate::typedef_aggregate_base`]). Consulted only where the shared
+    /// reader answered `Opaque` for the name.
+    alias_tags: BTreeMap<String, String>,
 }
 
 impl AggregateStoreBases {
     pub(crate) fn contains(&self, name: &str) -> bool {
         self.admissible.contains(name)
+    }
+
+    /// Rule 61 (1): the struct tag premise 2 reads for an admissible base:
+    /// its declared `struct TAG *`, or the struct a local's alias names.
+    fn base_tag<'a>(&'a self, name: &str, types: &'a FunctionTypes) -> Option<&'a str> {
+        match types.declared_type(name) {
+            Some(DeclaredType::RecordPointer(tag)) => Some(tag.as_str()),
+            Some(DeclaredType::Opaque) => self.alias_tags.get(name).map(String::as_str),
+            _ => None,
+        }
     }
 
     /// Whether premise **F** holds for `name`: every occurrence of it inside
@@ -261,6 +276,9 @@ pub(crate) fn store_bases(
     // mention unevaluated. They supply neither an owner identity nor
     // non-nullness; off, the scan counts every mention as before rule 37.
     let unevaluated = crate::result_constructor_rule::exempt_operand_spans(model, parameters, body);
+    // Rule 61 (1): locals spelled through a struct alias.
+    let alias_tags =
+        crate::typedef_aggregate_base::alias_record_locals(body, formal_parameters, model, types);
     let mut candidates = BTreeSet::new();
     let mut refused = BTreeSet::new();
     let mut assignments: Vec<&str> = Vec::new();
@@ -280,8 +298,9 @@ pub(crate) fn store_bases(
         let selects = matches!(next, Some("-")) && after == Some(">");
         // Premise 2: a local whose declared type is `struct TAG *`.
         if !formal_parameters.contains(text)
-            && matches!(types.declared_type(text), Some(DeclaredType::RecordPointer(tag))
+            && (matches!(types.declared_type(text), Some(DeclaredType::RecordPointer(tag))
                 if model.record_definition_is_complete(tag))
+                || alias_tags.contains_key(text))
         {
             candidates.insert(text.to_owned());
         }
@@ -375,10 +394,19 @@ pub(crate) fn store_bases(
     }
     refuse_rebinding_arguments(body, contracts, &mut refused);
     let admissible: BTreeSet<String> = candidates.difference(&refused).cloned().collect();
-    let insulated = insulated_bases(body, &admissible, contracts, model, types, &unevaluated);
+    let insulated = insulated_bases(
+        body,
+        &admissible,
+        contracts,
+        model,
+        types,
+        &unevaluated,
+        &alias_tags,
+    );
     AggregateStoreBases {
         admissible,
         insulated,
+        alias_tags,
     }
 }
 
@@ -434,6 +462,7 @@ fn insulated_bases(
     model: &TypedAccessModel,
     types: &FunctionTypes,
     unevaluated: &[(usize, usize)],
+    alias_tags: &BTreeMap<String, String>,
 ) -> BTreeSet<String> {
     let mut insulated = admissible.clone();
     for index in 0..body.len().saturating_sub(1) {
@@ -465,8 +494,13 @@ fn insulated_bases(
                     ["&", base, "-", ">", field] => {
                         base == name
                             && is_name(field)
-                            && matches!(types.declared_type(base), Some(DeclaredType::RecordPointer(tag))
+                            && (matches!(types.declared_type(base), Some(DeclaredType::RecordPointer(tag))
                                 if model.addressable_field(tag, field))
+                                // Rule 61 (1): a local spelled through a struct alias.
+                                || (types.declared_type(base) == Some(&DeclaredType::Opaque)
+                                    && alias_tags
+                                        .get(*base)
+                                        .is_some_and(|tag| model.addressable_field(tag, field))))
                     }
                     [base] => terminal && base == name,
                     _ => false,
@@ -597,9 +631,8 @@ pub(crate) fn admitted_field(
     if !is_name(base) || !is_name(field) || !bases.contains(base) {
         return None;
     }
-    let Some(DeclaredType::RecordPointer(tag)) = types.declared_type(base) else {
-        return None;
-    };
+    // Rule 61 (1): `struct TAG *`, or a local spelled through a struct alias.
+    let tag = bases.base_tag(base, types)?;
     let scalar = model.scalar_field(tag, field);
     let pointer = model.single_pointer_field(tag, field);
     // Card ALIAS-AGGREGATE: exactly `void *`, disjoint from both of the above
@@ -730,8 +763,14 @@ pub(crate) fn member_address_actuals(
         if !is_name(base) || !is_name(field) {
             continue;
         }
-        let Some(DeclaredType::RecordPointer(tag)) = types.declared_type(base) else {
-            continue;
+        // Rule 61 (1): an alias-spelled local only when it is an admissible base.
+        let tag = match types.declared_type(base) {
+            Some(DeclaredType::RecordPointer(tag)) => tag.as_str(),
+            _ if bases.contains(base) => match bases.base_tag(base, types) {
+                Some(tag) => tag,
+                None => continue,
+            },
+            _ => continue,
         };
         if !model.record_definition_is_complete(tag) || !model.addressable_field(tag, field) {
             continue;

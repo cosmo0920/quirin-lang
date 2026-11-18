@@ -11595,4 +11595,59 @@ an undeclared OpenSSL producer). `QCore.NullableReferenceDrop` (12 audited,
     `crates/qcore-c-gateway/tests/callback_literal_premise.rs`.
     [Report](../reports/openssl-pem-callback-arm/README.md).
 
+<a id="constraint-61"></a>
+
+61. **A local spelled through a struct alias is the struct pointer for the
+    aggregate store.** Card AG1-INDIRECT-MEMBER-ACCESS (round 33, the
+    user's decision of 2026-11-18 to close the largest analyser gaps of the
+    `current` run). The census of the access refusal on the user's 046accf6
+    `current` run ([report](../reports/ag1-indirect-member-access/README.md))
+    found the constructor shape `T *r = alloc(…); r->F = owned_call(…);
+    return r;` refused at the member store wherever `T` is a typedef that
+    *defines* its struct (`typedef struct TAG { … } T;`) or is declared twice
+    (`rdkafka.h`'s forward `typedef struct TAG T;` beside the defining one):
+    the lexical declaration reader answers `Opaque` for both (card
+    ABI-TYPEDEF-ADDRESS-OF-MEMBER kept that answer byte for byte; a
+    disagreeing pair it cannot compare is `None`), so O04-B08's premise 2
+    ("the base's declared type is exactly `struct TAG *`") never held.
+    C11 6.7.8p3 makes a typedef name a synonym for its type, so the premise
+    is true. (1) **The reading** (`typedef_aggregate_base.rs`; hooks in
+    `typed_field_access.rs`, `struct_alias_heads` and `struct_alias_tag`,
+    and in `aggregate_store.rs`, `AggregateStoreBases::alias_tags` /
+    `base_tag`): where every `typedef` declaration of `A` in the unit is
+    exactly `typedef struct TAG A;` or `typedef struct TAG { … } A;` with one
+    `TAG`, `struct TAG` has exactly one complete, non-union definition, and a
+    statement of the body is exactly `A * NAME ;` or `A * NAME = … ;` (one
+    declarator, one `*`, no qualifier or storage class) declaring a name no
+    other declaration of the body declares, that is not a formal and for which
+    the shared reader committed to nothing (`Opaque`), the aggregate store's
+    premise 2 and its member reads (`admitted_field`, the insulation scan's
+    `&NAME->F`, `member_address_actuals` for an admissible base) read `NAME`
+    as `struct TAG *`. Premises 1 and 3–7, the value classes, the
+    flow-sensitive owner check (one live identity this body acquired) and
+    P-B08-SHALLOW are unchanged and still decide; a refused reading leaves
+    the store exactly as before. (2) **`sizeof`**: a typedef name whose
+    declarations the shared table cannot compare (`None`) but which names one
+    struct under (1)'s alias table is never variably modified
+    (`never_variably_modified`), so `sizeof(*NAME)` is an unevaluated operand
+    (C11 6.5.3.4p2) for the readers that ask (W44-COLLECTION-ALLOCATION,
+    rule 37's checked spans). **Do not** read a union, anonymous, pointer,
+    disagreeing or incomplete alias, a qualified or multi-declarator
+    declaration, a formal, or a name the shared reader typed otherwise; do
+    not change the shared classifier's answer for any other consumer.
+    Measured re-attribution: a constructor that stores on one arm only
+    (`rd_kafka_Node_new`'s `rack`) now meets rule 11c's partial-link escape
+    refusal, which is honest and unchanged. Premises stated, not proved:
+    faithful token extraction of the declarations (trust boundary 28).
+    `QCore.TypedefAggregateBase`
+    (`an_agreeing_alias_names_its_struct_everywhere`,
+    `a_disagreeing_alias_names_nothing`, `an_other_declaration_names_nothing`,
+    `a_missing_fact_never_admits`, `decision_vectors_hold`,
+    `an_admitted_local_is_the_struct_pointer`,
+    `the_store_decides_alike_over_either_spelling`,
+    `a_refused_alias_keeps_the_refusal`,
+    `a_struct_alias_is_never_variably_modified`), bound to the Rust table by
+    `typedef_aggregate_base::tests` (`decision_vectors`);
+    `tests/ag1_indirect_member_access.rs`.
+
 <!-- generated:rules:end -->
