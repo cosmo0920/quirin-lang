@@ -807,6 +807,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [openssl-provider-remaining-callees](openssl-provider-remaining-callees/README.md) | OPENSSL-PROVIDER-REMAINING-CALLEES: the census's remaining OpenSSL callees, and the measured opt-in arbiter |
 
+| [openssl-ssl-ctx-callback-slots](openssl-ssl-ctx-callback-slots/README.md) | OPENSSL-SSL-CTX-CALLBACK-SLOTS: opaque callback slots replace the OpenSSL registered-callbacks premise |
+
 | [out-parameter-body-summary](out-parameter-body-summary/README.md) | OUT-PARAMETER-BODY-SUMMARY |
 
 | [out-parameter-scalar-frame-premise](out-parameter-scalar-frame-premise/README.md) | OUT-PARAMETER-SCALAR-FRAME-PREMISE |

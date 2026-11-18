@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 10,
-  "named_followups": 1003
+  "named_followups": 1004
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6882,11 +6882,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Landing integrate/r26 (base main 974434463; merges CONFIGURED-ROUTE-PLUGIN-BINDINGS 30632f31a, no conflicts; amendments applied in 2b37e92c4: W45-PLUGIN-ROUTE-COVERAGE retired as discharged, GATEWAY-API-USER-LOAD-PATH-BINDINGS and MANIFEST-ROUTE-USER-OVERRIDE-CHECK registered). Full landing gate on 2b37e92c4 (private/integrate-r26/gate, raw record beside this file as gate-scope.json) via scripts/gate_scope.py --base main --full --landing through private/toolchain/env.sh: Rust 655 units / 700 summaries, 9647 passed, 0 failed, 21 ignored; fmt, Clippy and both reevaluation examples exit 0; the scoper selected no Lean, so check_lean_audits.py was run separately: 445 audits passed (private/integrate-r26/lean.log); provider gate not selected (providers/ unchanged). Python (779 tests) exited 1 on one test_build_matrix_sections check only (named_followups dimension), because the committed matrix predates the amendments; it is regenerated from this record and the suite rerun is recorded in private/integrate-r26/python-rerun.log. Closes the fail-closed defect where the configured CONFIG.json route, and every route taking a schema-2 contract manifest naming a user load path, published a bound user contract's caller Safe without running its checker bindings: the configured and manifest routes now run user_plugins::run and fold checker links (fixture: five in-force runs Safe -> Pending), and the pinned corpus route refuses such a manifest (checker-bindings-not-run); gateway rule 53 amended in place, no new rule, no Lean change. No shipped manifest carries a binding (tested), so the measured routes are unchanged by construction; measure --declared was not run (no prepared live-route inputs on this host). provider_tests carries the previous landing record's figure. No profile baseline is changed and land.py publish is owed.",
-  "workspace_tests": 9647,
-  "provider_tests": 150,
+  "note": "Landing integrate/r27 (base main 46d97660c; merges OPENSSL-SSL-CTX-CALLBACK-SLOTS 8a3a51666, no conflicts; amendments applied in e900124f6: the card retired, OPENSSL-UNSTATED-CALLBACK-SLOTS and RETENTION-NULL-CONSTANT-ACTUAL registered). Full landing gate on e900124f6 (private/integrate-r27/gate, raw record beside this file as gate-scope.json) via scripts/gate_scope.py --base main --full --landing through private/toolchain/env.sh: Rust 656 units / 701 summaries, 9656 passed, 0 failed, 21 ignored; fmt, Clippy and both reevaluation examples exit 0; Lean selected: 446 audits passed (QCore.OpaqueCallbackSlots new); provider gate: package build, verify-all and verify exit 0, provider workspace tests 153 passed / 0 failed / 1 ignored, provider fmt and Clippy exit 0. Python (779 tests) exited 1 on two test_build_matrix_sections checks only (lean audit count and named_followups dimension), because the committed matrix predates the amendments; it is regenerated from this record and the suite rerun is recorded in private/integrate-r27/python-rerun.log. The named premise openssl_registered_callbacks is replaced: opaque callback slots (resource_callback_slot_registered / resource_callback_slot_invoked, rule 12n amended in place, C04.19.3 'An opaque slot', premise P-OPAQUE-SLOT-WRITERS) are decided only over a run's closed set of declared slot writers for a record no unit defines, else callback-member-open; SSL_CTX_set_default_passwd_cb, SSL_CTX_set_cert_cb and SSL_set_cert_cb declared; SSL_CTX_use_PrivateKey_file is premise-free; SSL_CTX_use_certificate_chain_file, SSL_write/read/connect/do_handshake, SSL_shutdown, SSL_free and SSL_CTX_free keep the narrowed premise openssl_unstated_callback_slots (OPENSSL-UNSTATED-CALLBACK-SLOTS). contracts.lock: 3 entries added, 9 digests changed, nothing else. The card's opt-in current --monkey-linked run over Fluent Bit 046accf6: 1098 Safe / 2 Pending / 3699 Unknown / 5 Unsafe on base and tip, no row moved, 10 rows changed content only; pinned routes unchanged by construction (no user load path reaches them, and r26's pinned-route refusal holds). No profile baseline is changed and land.py publish is owed.",
+  "workspace_tests": 9656,
+  "provider_tests": 153,
   "python_evidence_validator_tests": 779,
-  "lean_audits": 445,
+  "lean_audits": 446,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
    "AuditAggregateOwnedField.lean",
@@ -7152,6 +7152,7 @@
    "AuditObsReordering.lean",
    "AuditObservedWaitComposition.lean",
    "AuditOpCallbacks.lean",
+   "AuditOpaqueCallbackSlots.lean",
    "AuditOpensslCalleeShapes.lean",
    "AuditOpensslContractPlugin.lean",
    "AuditOrderedLifetimeReplay.lean",
@@ -7338,9 +7339,9 @@
   "reevaluation_followup_exit": 0,
   "cargo_fmt": "clean",
   "cargo_clippy": "clean",
-  "standing_gate": "full landing gate: every step exits 0 except the Python suite's one stale-matrix check, cleared by regenerating the matrix from this record (rerun disclosed in the note); Lean run separately as check_lean_audits.py",
+  "standing_gate": "full landing gate: every step exits 0 except the Python suite's two stale-matrix checks, cleared by regenerating the matrix from this record (rerun disclosed in the note); Lean selected and run in the gate",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/configured-route-plugin-bindings/integration/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/openssl-ssl-ctx-callback-slots/integration/gate.json)"
  },
  "named_followups": [
   {
