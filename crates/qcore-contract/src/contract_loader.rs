@@ -784,39 +784,8 @@ pub fn load_resource_contract_manifest_text_stamped(
     source: &str,
     stamps: &dyn crate::contract_supersession::DeclarationStamps,
 ) -> Result<ResourceContracts, String> {
-    #[derive(serde::Deserialize)]
-    #[serde(deny_unknown_fields)]
-    struct Manifest {
-        schema_version: u32,
-        #[serde(default)]
-        load_path: Option<String>,
-        modules: Vec<String>,
-    }
-    let manifest: Manifest =
-        serde_json::from_str(source).map_err(|e| format!("{}: {e}", path.display()))?;
-    let supported = match manifest.schema_version {
-        1 => manifest.load_path.is_none(),
-        2 => manifest.load_path.is_some(),
-        _ => false,
-    };
-    if !supported || manifest.modules.is_empty() {
-        return Err(format!(
-            "{}: unsupported version or empty module selection",
-            path.display()
-        ));
-    }
+    let manifest = parse_resource_contract_manifest(path, source)?;
     let parent = path.parent().unwrap_or_else(|| Path::new("."));
-    let relative = |entry: &str| -> Result<PathBuf, String> {
-        let module = Path::new(entry);
-        if entry.is_empty()
-            || module
-                .components()
-                .any(|part| !matches!(part, std::path::Component::Normal(_)))
-        {
-            return Err("contract module paths must be relative without traversal".to_owned());
-        }
-        Ok(parent.join(module))
-    };
     let mut paths = Vec::new();
     let mut references = Vec::new();
     for entry in &manifest.modules {
@@ -826,7 +795,7 @@ pub fn load_resource_contract_manifest_text_stamped(
                     .map_err(|e| format!("{}: {e}", path.display()))?,
             );
         } else {
-            paths.push(relative(entry)?);
+            paths.push(manifest_relative(parent, entry)?);
         }
     }
     let Some(load_path) = manifest.load_path else {
@@ -835,7 +804,7 @@ pub fn load_resource_contract_manifest_text_stamped(
             stamps,
         );
     };
-    let load_path = relative(&load_path)?;
+    let load_path = manifest_relative(parent, &load_path)?;
     // Validated even when every entry is a path: a schema-2 manifest names a
     // load path, so a stale one is refused rather than ignored.
     let load_path = crate::load_path_manifest::load_contract_load_path_manifest(&load_path)?;
@@ -849,6 +818,76 @@ pub fn load_resource_contract_manifest_text_stamped(
         &references,
         stamps,
     )
+}
+
+/// A resource-contract manifest as [`load_resource_contract_manifest_text`]
+/// reads it: schema 1 names no load path, schema 2 names one.
+#[derive(serde::Deserialize)]
+#[serde(deny_unknown_fields)]
+struct ResourceContractManifest {
+    schema_version: u32,
+    #[serde(default)]
+    load_path: Option<String>,
+    modules: Vec<String>,
+}
+
+fn parse_resource_contract_manifest(
+    path: &Path,
+    source: &str,
+) -> Result<ResourceContractManifest, String> {
+    let manifest: ResourceContractManifest =
+        serde_json::from_str(source).map_err(|e| format!("{}: {e}", path.display()))?;
+    let supported = match manifest.schema_version {
+        1 => manifest.load_path.is_none(),
+        2 => manifest.load_path.is_some(),
+        _ => false,
+    };
+    if !supported || manifest.modules.is_empty() {
+        return Err(format!(
+            "{}: unsupported version or empty module selection",
+            path.display()
+        ));
+    }
+    Ok(manifest)
+}
+
+/// A manifest entry resolved against the manifest's directory: relative,
+/// without traversal.
+fn manifest_relative(parent: &Path, entry: &str) -> Result<PathBuf, String> {
+    let module = Path::new(entry);
+    if entry.is_empty()
+        || module
+            .components()
+            .any(|part| !matches!(part, std::path::Component::Normal(_)))
+    {
+        return Err("contract module paths must be relative without traversal".to_owned());
+    }
+    Ok(parent.join(module))
+}
+
+/// The load path a resource-contract manifest names, loaded exactly as
+/// [`load_resource_contract_manifest_text`] loads it; `None` for a schema-1
+/// manifest. Card **CONFIGURED-ROUTE-PLUGIN-BINDINGS**: a route reads the
+/// load path's user extension (its checker bindings among them) from here,
+/// so a manifest naming a user load path either runs those bindings or is
+/// refused, never loaded without them.
+///
+/// # Errors
+///
+/// Every error the loader reports for the manifest or its load path.
+pub fn resource_contract_manifest_load_path(
+    path: &Path,
+    source: &str,
+) -> Result<Option<crate::load_path_manifest::LoadPathManifest>, String> {
+    let manifest = parse_resource_contract_manifest(path, source)?;
+    let Some(load_path) = manifest.load_path else {
+        return Ok(None);
+    };
+    let parent = path.parent().unwrap_or_else(|| Path::new("."));
+    let load_path = manifest_relative(parent, &load_path)?;
+    Ok(Some(
+        crate::load_path_manifest::load_contract_load_path_manifest(&load_path)?,
+    ))
 }
 
 /// Parse a manifest's `crate:module` entry, with the `#include` target's

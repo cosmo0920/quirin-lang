@@ -599,6 +599,20 @@ pub fn run_config_with_jobs(path: &Path, flag_jobs: Option<usize>) -> Result<Aud
         }
     }
     let mut report = AuditReport::new(&revision);
+    // Card CONFIGURED-ROUTE-PLUGIN-BINDINGS: every checker binding of the
+    // user load path the configuration resolves (a provider selection, the
+    // per-library table's union, or a schema-2 manifest naming it) runs once,
+    // before any unit, exactly as on `current` and `contracts`; every unit's
+    // fragment folds the links (`AuditReport::fragment`).
+    let plugin_checks = user_plugins::run(
+        contract_input.extension(),
+        user_plugins::PluginCheckers::default(),
+    )
+    .map(|plugins| {
+        println!("{}", user_plugins::tally(&plugins.section));
+        report.set_plugin_links(plugins.links);
+        plugins.section
+    });
     let evidence_record = config
         .mode
         .is_contracts_only()
@@ -678,7 +692,7 @@ pub fn run_config_with_jobs(path: &Path, flag_jobs: Option<usize>) -> Result<Aud
                                 task_dependencies: &slice_task_dependencies,
                                 contracts: &active_contracts,
                                 source_profile_sha256: &source_profile_sha256,
-                                fragment: AuditReport::new(&revision),
+                                fragment: report.fragment(),
                                 retain_unit: retain_units,
                                 out: &mut out,
                             });
@@ -783,7 +797,7 @@ pub fn run_config_with_jobs(path: &Path, flag_jobs: Option<usize>) -> Result<Aud
                             task_dependencies: &task_dependencies,
                             contracts: &contracts,
                             source_profile_sha256: &source_profile_sha256,
-                            fragment: AuditReport::new(&revision),
+                            fragment: report.fragment(),
                             retain_unit: retain_units,
                             out: &mut out,
                         });
@@ -881,6 +895,11 @@ pub fn run_config_with_jobs(path: &Path, flag_jobs: Option<usize>) -> Result<Aud
     }
     if let Some(library_table) = &resolved_library_table {
         assumptions["library_provider_selection"] = library_table.record();
+    }
+    // Card CONFIGURED-ROUTE-PLUGIN-BINDINGS: the checker plugins' section,
+    // absent without a binding.
+    if let Some(section) = plugin_checks {
+        assumptions["plugin_checks"] = section;
     }
     if let Some(record) = evidence_record {
         assumptions["evidence"] = record;

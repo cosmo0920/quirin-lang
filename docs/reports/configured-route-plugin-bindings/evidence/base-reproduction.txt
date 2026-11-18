@@ -1,0 +1,12 @@
+test the_configured_route_holds_by_reason_with_a_checker_binding ... FAILED
+test the_configured_route_runs_bindings_under_per_library_providers ... FAILED
+test the_contracts_route_holds_by_reason_with_a_checker_binding ... ok
+test the_current_route_holds_by_reason_with_a_checker_binding ... ok
+test the_manifest_routes_run_the_bindings_of_the_load_path_they_name ... FAILED
+thread 'the_configured_route_holds_by_reason_with_a_checker_binding' (1297154) panicked at crates/qcore-audit/tests/library_version_hold_routes.rs:656:9:
+assertion `left == right` failed: configured InForce: status Safe diagnostics {} links null record {"audited_version":"2.5.0","detail":"","function":"fakelib_reset","in_force":true,"library":"fakelib","pinned_version":"2.5.0","range":"resource_library_version(fakelib, since \"2.0.0\")","reason":null}
+thread 'the_configured_route_runs_bindings_under_per_library_providers' (1298545) panicked at crates/qcore-audit/tests/library_version_hold_routes.rs:656:9:
+assertion `left == right` failed: configured-scoped InForce: status Safe diagnostics {} links null record {"audited_version":"2.5.0","detail":"","function":"fakelib_reset","in_force":true,"library":"fakelib","pinned_version":"2.5.0","range":"resource_library_version(fakelib, since \"2.0.0\")","reason":null}
+thread 'the_manifest_routes_run_the_bindings_of_the_load_path_they_name' (1306269) panicked at crates/qcore-audit/tests/library_version_hold_routes.rs:656:9:
+assertion `left == right` failed: current-manifest InForce: status Safe diagnostics {} links null record {"audited_version":"2.5.0","detail":"","function":"fakelib_reset","in_force":true,"library":"fakelib","pinned_version":"2.5.0","range":"resource_library_version(fakelib, since \"2.0.0\")","reason":null}
+test result: FAILED. 2 passed; 3 failed; 0 ignored; 0 measured; 0 filtered out; finished in 120.98s
