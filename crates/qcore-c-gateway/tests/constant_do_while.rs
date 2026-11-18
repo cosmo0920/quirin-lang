@@ -46,8 +46,10 @@ use qcore_contract::contract_loader::load_resource_contract_sources;
 
 /// The refusal an unmodeled do-while condition keeps. These are the 32 leaves
 /// of a *different* question (an unmodeled condition), and this card leaves
-/// every one of them refused.
-const DO_WHILE_REFUSAL: &str = "unmodeled call, aggregate or indirect access in do-while condition";
+/// every one of them refused. Re-pinned deliberately by
+/// AG3-CONDITION-RETURN-CALLS (gateway rule 63 (2)): the fixture's
+/// uncontracted callee is now named with the position's suffix.
+const DO_WHILE_REFUSAL: &str = "call to uncontracted function `z_unknown` in do-while condition";
 
 const DECLARATIONS: &str = "\
 void *q_alloc(void); void q_free(void *); \
@@ -332,11 +334,10 @@ fn an_unmodeled_do_while_condition_keeps_its_refusal() {
         return;
     }
     let run = run("void subject(void) { do { } while (z_unknown(1)); }");
-    // Re-pinned deliberately by AG3-CONDITION-RETURN-CALLS (gateway rule 63) (2): the do-while refusal names the
-    // uncontracted callee with the position's own suffix.
     assert!(
-        run.unsupported().iter().any(|description| description
-            == "call to uncontracted function `z_unknown` in do-while condition"),
+        run.unsupported()
+            .iter()
+            .any(|description| description == DO_WHILE_REFUSAL),
         "the unmodeled condition keeps its own refusal: {:?}",
         run.unsupported()
     );

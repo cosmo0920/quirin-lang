@@ -135,24 +135,35 @@ fixture contracts) on base `a9c6dcf44`:
 ## 2. Chosen shapes and why each is sound
 
 Rule [63](../../agents/gateway.md#constraint-63), in
-`crates/qcore-c-gateway/src/legacy_condition_leaf_reads.rs` (a child module of
-`legacy_condition_desugar.rs`); Lean `QCore.ConditionLeafReads`
-(`proof/AuditConditionLeafReads.lean`).
+`crates/qcore-c-gateway/src/legacy_condition_leaf_reads.rs`, a child of
+`legacy_c` reached through one hook per position (`if`, `while`, `for`,
+`do`-`while`) in `parse_statement`, asked **after** `planned_condition` (rule
+5h, then the elaborator 10s, then the `va_arg` route 12c) answered no plan.
+Lean `QCore.ConditionLeafReads` (`proof/AuditConditionLeafReads.lean`, 16
+theorems). Both readings require a condition with no brace, no opaque callee,
+no tracked descriptor read as data, and direct calls only: none nested in
+another's actuals, none through a member or a parenthesised expression;
+`__builtin_expect(E, K)` with `K` one token of decimal digits is read through
+as rule 5h reads it, any other hint refuses.
 
-**(1) S1, a residual read beside identity calls.** Rule 5h lowered each call
-of a leaf through the one application point (rule 10u) and then required the
-leaf's residual, every call replaced by `0`, to be custody-neutral as written.
-A residual that reads memory was refused, though the same read alone is
-decided by the typed condition read. The leaf is now decided as the calls,
-then that read, when:
+**(1) S1, a residual read beside identity calls.** Rule 5h lowers each call
+of a leaf through the one application point (rule 10u) and then requires the
+leaf's residual, every call replaced by `0`, to be custody-neutral as written;
+a residual that reads memory (`d_len(s) > b->n`, `expected[i] !=
+tolower(value[i])`) was refused although the same read alone is decided by
+the typed condition read. Rule 63 decides it as the calls, then that read,
+when:
 
-- the leaf has no assignment and is not a `switch` dispatch;
-- **every** instruction the leaf's calls lowered to is the identity on the
-  abstract state: an identity contract call (every position borrowed, no
-  container effect, a `None` or derived result, no produced site, no aggregate
-  effect) or an actual read with no destination and no frame;
-- the residual is read by `condition_access` (the lexical typed condition
-  read), and its answer is a read with no destination and no frame.
+- the condition is one leaf (no top-level `&&`, `||`, `?:`), with no
+  assignment, compound assignment, increment or decrement, and no hint;
+- each call is instantiated with use `Tested` (as rule 5h does) and **every**
+  instruction they lower to is the identity on the abstract state: an
+  identity contract call (every position borrowed, no container effect, a
+  `None` or derived result, no produced site, no aggregate effect) or an
+  actual read with no destination and no frame;
+- the residual is not custody-neutral as written, and `condition_access` (the
+  lexical typed condition read) answers a read with no destination and no
+  frame.
 
 *Soundness.* C leaves the order of a leaf's call and its operand reads
 unspecified (C11 6.5p2-3). Identity calls change no map, so every order
@@ -163,23 +174,28 @@ same state (`every_order_reaches_the_same_state`,
 read" chooses nothing. The read keeps every dereferenced base's flow
 obligation (unbound, a non-null untracked binding, or one known, non-null,
 live identity; a released base is a `use_after_release` candidate). It is the
-leaf's branch instruction and refines neither edge (`the_read_refines_no_edge`):
-the residual's `0` is not the call's value, so no path is pruned on it. A
-call that is not the identity (`k_close(fd) > b->n`), a release sequenced
-inside the leaf (`(k_free(b), d_len(s)) > b->n`), an assignment and a switch
-keep the refusal (fixtures).
+condition's branch instruction and refines neither edge
+(`the_read_refines_no_edge`): the residual's `0` is not the call's value, so
+no path is pruned on it. A call that is not the identity (`k_close(fd) >
+b->n`), a release sequenced inside the leaf (`(k_free(b), d_len(s)) > b->n`),
+an assignment, a connective and a switch keep the refusal (fixtures).
 
-**(2) S2, the named refusal of an uncontracted call.** When the position's
-routes, the desugaring, the elaborator (rule 10s) and the `va_arg` route
-(rule 12c) all refused, and the desugaring's terminal refusal was a leaf call
-the classifier refused with exactly ``call to uncontracted function `F` ``
-(`F` the call's own callee and named in the condition), the position's
+**(2) S2, the named refusal of an uncontracted call.** Otherwise, when the
+condition's direct calls are, in textual order, calls the application point
+instantiates followed by one the classifier refuses with exactly
+``call to uncontracted function `F` `` for its own callee `F`, and `F` names a
+function (no formal, no declared local, no `( * F )` declarator in the unit:
+a call through a pointer object is an open set, rule 11p), the position's
 refusal node becomes one plan node holding `Unknown` with the text
 ``call to uncontracted function `F` in branch condition`` (or `loop`,
-`for-loop`, `do-while`), the condition's writes and both exits. It is rule
-12k's re-attribution for controlling expressions: never an admission
-(`the_attribution_never_admits`, `the_attribution_keeps_the_verdict`,
-`the_attribution_keeps_writes_and_edges`).
+`for-loop`, `do-while`), the condition's writes and both exits. Every probe's
+state is restored. It is rule 12k's re-attribution for controlling
+expressions: never an admission (`the_attribution_never_admits`,
+`the_attribution_keeps_the_verdict`, `the_attribution_keeps_writes_and_edges`).
+A `switch`, a held call, any other classifier text (an indirect actual's
+`indirect memory access …` stays the position's text: AG1's subject), a
+recursive-component or custody refusal and a condition reading a tracked
+descriptor keep the position's text.
 
 *The suffix is load-bearing.* The refused-operand hand-on rule
 (`legacy_refused_operands.rs`, `refuses_a_condition`) reads whether a refusal
@@ -190,10 +206,24 @@ fixture (`void *p = k_alloc(4); if (ext(a) == 2) return 1; k_free(p);`: base
 statement refusal and handed on its line's statement table. With the suffix
 the node keeps its class (`the_named_text_keeps_the_condition_class`) and the
 fixture keeps the leak beside the named refusal, exactly as beside the
-generic one. A held call, any other classifier text (an indirect actual's
-`indirect memory access …` stays the position's text: AG1's subject), a
-recursive-component or custody refusal, a `switch` and a condition reading a
-tracked descriptor keep the position's text.
+generic one.
+
+*Where the rule is asked, and why.* The first implementation put both
+readings inside `legacy_condition_desugar.rs` (`leaf_plan`'s residual
+decision and `planned_condition`'s last route). Two findings moved it out:
+(a) that file is a pinned artifact of the libc reading-site evidence
+(`docs/reports/libc-reading-site-evidence/bindings.json`, `scalar-reader`,
+SHA-256 of the whole file), so any edit failed `reading_site_domain` and
+`libc_reading_site_evidence` (gate attempt 2); (b) the value-connective route
+(rule 10z, `legacy_value_connective.rs`) also asks `planned_condition` and
+reads any plan as a decided condition, so a named refusal changed its answers
+on the first corpus measurement (`rd_kafka_path_is_dir` and
+`rd_kafka_racks_mismatch` exchanged their return refusal;
+`rd_kafka_consumer_close` lowered the arms after the refusal, two
+`unknown_alias`). Both files are back to the base bytes; the rule is asked
+only at the four statement positions, after every older route, so it can
+change no older admission. Its residual read is therefore one leaf only: a
+connective's leaves stay rule 5h's.
 
 ## 3. Refused shapes and their named reasons
 

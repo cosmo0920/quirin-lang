@@ -156,7 +156,6 @@ fn unknown(keys: &[&str]) -> (&'static str, Vec<String>) {
     )
 }
 
-const BRANCH: &str = "unsupported:unmodeled call, aggregate or indirect access in branch condition";
 const RETURN: &str =
     "unsupported:unmodeled call, aggregate or indirect access in return expression";
 const GATE: &str = "unsupported:indirect memory access is outside the resource projection";
