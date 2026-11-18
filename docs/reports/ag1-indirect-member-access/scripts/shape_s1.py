@@ -28,7 +28,7 @@ def spelling(text, function, root):
     words = [w for w in words if w not in ("const", "volatile", "register")]
     if len(words) >= 2 and words[-2] in ("struct", "union"):
         return "keyword"
-    return "typedef:" + words[-1]
+    return "typedef:" + words[-1] if words else "?"
 
 
 def main() -> int:
