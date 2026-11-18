@@ -1028,6 +1028,125 @@ mod tests {
         assert!(check_function(path, &older, "SSL_CTX_set_options").is_err());
     }
 
+    /// Card OPENSSL-SSL-CTX-CALLBACK-SLOTS: the slot readings drift-refused.
+    #[test]
+    fn a_drifted_slot_reading_is_refused() {
+        // A stated invocation dropped: the certificate callback would read
+        // benign under no clause at all.
+        let (path, text) = module_of("SSL_write");
+        let invocation =
+            "    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.cert_cb, ssl, _);\n";
+        assert!(text.contains(invocation));
+        let dropped = text.replacen(invocation, "", 1);
+        assert!(check_function(path, &dropped, "SSL_write").is_err());
+        // The invocation read through the wrong slot or with the connection
+        // dropped from its actuals.
+        let wrong = text.replacen(
+            "resource_callback_slot_invoked(ssl, ssl_ctx_st.cert_cb, ssl, _)",
+            "resource_callback_slot_invoked(ssl, ssl_ctx_st.default_passwd_cb, ssl, _)",
+            1,
+        );
+        assert!(check_function(path, &wrong, "SSL_write").is_err());
+        let supplied = text.replacen(
+            "resource_callback_slot_invoked(ssl, ssl_ctx_st.cert_cb, ssl, _)",
+            "resource_callback_slot_invoked(ssl, ssl_ctx_st.cert_cb, _, _)",
+            1,
+        );
+        assert!(check_function(path, &supplied, "SSL_write").is_err());
+        // The member form in place of the slot form.
+        let member = text.replacen(
+            "resource_callback_slot_invoked(ssl, ssl_ctx_st.cert_cb, ssl, _)",
+            "resource_callback_member_invoked(ssl, ssl_ctx_st.cert_cb, ssl, _)",
+            1,
+        );
+        assert!(check_function(path, &member, "SSL_write").is_err());
+        // The premise-free loader given the premise back, and its stated
+        // invocation removed.
+        let (path, text) = module_of("SSL_CTX_use_PrivateKey_file");
+        let premise = format!(
+            "    requires resource_premise({UNSTATED_SLOTS}, \"{UNSTATED_SLOTS_STATEMENT}\");\n"
+        );
+        let head = "    requires resource_library_version(openssl, documented \"1.0.2\");\n";
+        let start = text.find("extern fn SSL_CTX_use_PrivateKey_file(").unwrap();
+        let at = start + text[start..].find(head).unwrap() + head.len();
+        let premised = format!("{}{premise}{}", &text[..at], &text[at..]);
+        assert!(check_function(path, &premised, "SSL_CTX_use_PrivateKey_file").is_err());
+        let unstated = text.replacen(
+            "    ensures normal resource_callback_slot_invoked(ctx, ssl_ctx_st.default_passwd_cb, _, _, _, _);\n",
+            "",
+            1,
+        );
+        assert_ne!(unstated, text);
+        assert!(check_function(path, &unstated, "SSL_CTX_use_PrivateKey_file").is_err());
+        // A setter's retention of `arg` dropped (the borrowed-and-forgotten
+        // reading), and its registration dropped.
+        let (path, text) = module_of("SSL_CTX_set_cert_cb");
+        let forgotten = text.replacen("    ensures normal resource_retained_by(arg, c);\n", "", 1);
+        assert!(check_function(path, &forgotten, "SSL_CTX_set_cert_cb").is_err());
+        let unregistered = text.replacen(
+            "    ensures normal resource_callback_slot_registered(c, ssl_ctx_st.cert_cb, cert_cb);\n",
+            "",
+            1,
+        );
+        assert!(check_function(path, &unregistered, "SSL_CTX_set_cert_cb").is_err());
+        // The frees keep the NULL-accepting drop and name the premise.
+        let (path, text) = module_of("SSL_free");
+        let start = text.find("extern fn SSL_free(").unwrap();
+        let at = start + text[start..].find(&premise).unwrap();
+        let unpremised = format!("{}{}", &text[..at], &text[at + premise.len()..]);
+        assert!(check_function(path, &unpremised, "SSL_free").is_err());
+    }
+
+    /// Card OPENSSL-SSL-CTX-CALLBACK-SLOTS: every stated slot has every
+    /// writer its page names declared as its setter; an unknown slot is
+    /// refused.
+    #[test]
+    fn every_slot_has_every_writer_declared() {
+        let snapshots: Value = serde_json::from_str(crate::DOC_SNAPSHOTS).unwrap();
+        for slot in SLOTS {
+            slot_writers_declared(slot.key, &snapshots).unwrap();
+        }
+        assert_eq!(SLOTS.len(), 2);
+        assert!(slot_writers_declared("ssl_ctx_st.sec_cb", &snapshots).is_err());
+        // A page that does not name a writer refuses the slot.
+        let mut stripped = snapshots.clone();
+        for page in stripped["pages"].as_array_mut().unwrap() {
+            if page["page"] == "SSL_CTX_set_cert_cb" {
+                page["name"] =
+                    Value::from("SSL_CTX_set_cert_cb - handle certificate callback function");
+            }
+        }
+        assert!(slot_writers_declared("ssl_ctx_st.cert_cb", &stripped).is_err());
+        // Every entry that registers or invokes a slot names a known one.
+        for documented in DOCUMENTED {
+            for slot in stated_slots(documented) {
+                assert!(SLOTS.iter().any(|known| known.key == slot), "{slot}");
+            }
+        }
+    }
+
+    #[test]
+    fn an_in_place_function_pointer_is_fnptr() {
+        assert_eq!(
+            prototype_types(
+                "void SSL_CTX_set_cert_cb(SSL_CTX *c, int (*cb)(SSL *ssl, void *arg), void *arg)",
+                "SSL_CTX_set_cert_cb"
+            ),
+            Some((
+                vec![
+                    "SSL_CTX *".into(),
+                    "int (*)(SSL *, void *)".into(),
+                    "void *".into()
+                ],
+                "void".into()
+            ))
+        );
+        assert_eq!(contract_type("int (*)(SSL *, void *)"), Some("fnptr"));
+        assert_eq!(contract_type("int (**)(SSL *, void *)"), None);
+        assert_eq!(contract_type("int (*)(int (*)(void))"), None);
+        assert_eq!(contract_type("(*)(void)"), None);
+    }
+
     #[test]
     fn every_documented_page_was_fetched() {
         let snapshots: Value = serde_json::from_str(crate::DOC_SNAPSHOTS).unwrap();

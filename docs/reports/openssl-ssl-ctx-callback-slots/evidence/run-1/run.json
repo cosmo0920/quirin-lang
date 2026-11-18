@@ -1,0 +1,148 @@
+{
+ "rows": [
+  {
+   "unit": "tls_other.c",
+   "function": "read_some",
+   "status": "Unknown",
+   "host_status": "Unknown",
+   "diagnostics": [
+    "call to `SSL_read`: callback `app_certificate` (from `ssl_ctx_st.cert_cb`) has no contract in force (callback-uncontracted)"
+   ],
+   "links": [
+    {
+     "callee": "SSL_read",
+     "verdict": "Pending"
+    }
+   ],
+   "rests_on": [
+    "SSL_read"
+   ]
+  },
+  {
+   "unit": "tls_slots.c",
+   "function": "app_certificate",
+   "status": "Safe",
+   "host_status": null,
+   "diagnostics": [],
+   "links": [],
+   "rests_on": []
+  },
+  {
+   "unit": "tls_slots.c",
+   "function": "app_password",
+   "status": "Safe",
+   "host_status": null,
+   "diagnostics": [],
+   "links": [],
+   "rests_on": []
+  },
+  {
+   "unit": "tls_slots.c",
+   "function": "configure",
+   "status": "Unknown",
+   "host_status": "Unknown",
+   "diagnostics": [
+    "call to `SSL_CTX_set_cert_cb` retains `( void * ) 0` in `ctx`, whose lifetime this body does not decide against it (retention-undecided)"
+   ],
+   "links": [
+    {
+     "callee": "SSL_CTX_set_default_passwd_cb",
+     "verdict": "Pending"
+    },
+    {
+     "callee": "SSL_CTX_set_cert_cb",
+     "verdict": "Pending"
+    }
+   ],
+   "rests_on": [
+    "SSL_CTX_set_cert_cb",
+    "SSL_CTX_set_default_passwd_cb"
+   ]
+  },
+  {
+   "unit": "tls_slots.c",
+   "function": "handshake",
+   "status": "Pending",
+   "host_status": "Safe",
+   "diagnostics": [],
+   "links": [
+    {
+     "callee": "SSL_do_handshake",
+     "verdict": "Pending"
+    }
+   ],
+   "rests_on": [
+    "SSL_do_handshake"
+   ]
+  },
+  {
+   "unit": "tls_slots.c",
+   "function": "load_chain",
+   "status": "Pending",
+   "host_status": "Safe",
+   "diagnostics": [],
+   "links": [
+    {
+     "callee": "SSL_CTX_use_certificate_chain_file",
+     "verdict": "Pending"
+    }
+   ],
+   "rests_on": [
+    "SSL_CTX_use_certificate_chain_file"
+   ]
+  },
+  {
+   "unit": "tls_slots.c",
+   "function": "load_key",
+   "status": "Pending",
+   "host_status": "Safe",
+   "diagnostics": [],
+   "links": [
+    {
+     "callee": "SSL_CTX_use_PrivateKey_file",
+     "verdict": "Pending"
+    }
+   ],
+   "rests_on": [
+    "SSL_CTX_use_PrivateKey_file"
+   ]
+  },
+  {
+   "unit": "tls_slots.c",
+   "function": "shut",
+   "status": "Pending",
+   "host_status": "Safe",
+   "diagnostics": [],
+   "links": [
+    {
+     "callee": "SSL_shutdown",
+     "verdict": "Pending"
+    }
+   ],
+   "rests_on": [
+    "SSL_shutdown"
+   ]
+  },
+  {
+   "unit": "tls_slots.c",
+   "function": "write_some",
+   "status": "Pending",
+   "host_status": "Safe",
+   "diagnostics": [],
+   "links": [
+    {
+     "callee": "SSL_write",
+     "verdict": "Pending"
+    }
+   ],
+   "rests_on": [
+    "SSL_write"
+   ]
+  }
+ ],
+ "bindings": 60,
+ "binding_verdicts": [
+  "Pending"
+ ],
+ "library_versions": null
+}
