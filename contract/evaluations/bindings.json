@@ -26,7 +26,8 @@
         "routes/system": "fluent-bit-system",
         "routes/slice": "fluent-bit-tail-pause"
       }
-    }
+    },
+    "conditional_twelve_home_callback_comparators": "twelve-home"
   },
   "pinned_cycle_documents": {
     "docs/cycles/CYCLE_18_LIBEVENT_VALIDATION.md": {

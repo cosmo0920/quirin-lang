@@ -1,0 +1,319 @@
+{
+  "description": "The twelve-home profile's stated link premise (rule 4c), written as data for human approval by docs/reports/cg22-callback-candidate-link-premise/artifacts/link_premise.py. The premise text is the eight-home map's, unchanged; the profile states it for four more symbols. The evidence is one static link of the fluent-bit executable at the source revision on this card's preparation; it supports the premise and does not replace it (the pinned corpus route reads only the stated map).",
+  "premise": "For the selected linked program and each selected compilation configuration, every external call to each listed symbol has a compatible function type and calling convention and resolves to its listed external definition. This assertion requires the actual link and interposition environment; the source audit conditions its result on it.",
+  "extends": {
+    "path": "contract/evaluations/eight-home/link-map.json",
+    "sha256": "98a4db761ace9fd4846b000c4c98defdc2e39ce6f95684c67c30f9b8b6f38ad3"
+  },
+  "map": {
+    "path": "contract/evaluations/twelve-home/link-map.json",
+    "sha256": "d338e3798bcd126426495af123f18523f46c895e2df21a359cc47ed86efbbd2a"
+  },
+  "added_homes": [
+    {
+      "function": "rd_kafka_metadata_broker_cmp",
+      "home_unit": "librdkafka/rdkafka_metadata.c"
+    },
+    {
+      "function": "rd_kafka_metadata_broker_internal_cmp",
+      "home_unit": "librdkafka/rdkafka_metadata.c"
+    },
+    {
+      "function": "rd_strcmp3",
+      "home_unit": "librdkafka/rdstring.c"
+    },
+    {
+      "function": "rd_kafka_assignor_topic_cmp",
+      "home_unit": "librdkafka/rdkafka_assignor.c"
+    }
+  ],
+  "approval": "stated, not proved: the four added homes are a premise a human approves (card CG22-CALLBACK-CANDIDATE-LINK-PREMISE asks for that decision)",
+  "link_evidence": {
+    "source": "quirin-audit prepare clang-build --link (base 974434463, system Clang 21) of Fluent Bit 66910c10; artifacts/prep.sh",
+    "artifact_schema": "quirin-link-resolution/1",
+    "artifact_sha256": "cc70e14a46e6f69aa6a4d6b855c8e3e469db153f5b708ad2ec33fadbc63a211d",
+    "executable_sha256": "cf537afa0973edbc946e4ae6ddf90fe17007ec6911d56a7323e746dbfb24b2f9",
+    "executable": {
+      "is_executable": true,
+      "pie": true
+    },
+    "compile_database_sha256": "0b9c765b95e3ba3f99fc42469e44abed0cbea179ff7fb6705797a9625e30cc46",
+    "map_sha256": "994c5ae4f3270a914a0fe2500bcf4d63f64e2ea5fdb1d0e776e7645469406cfa",
+    "relinked_equal": true,
+    "linker": "GNU ld (GNU Binutils for Ubuntu) 2.46",
+    "driver": "Ubuntu clang version 21.1.8 (6ubuntu1)",
+    "not_established": "the call-site function type and calling convention, and interposition by a preloaded object at run time; the executable is linked with --export-dynamic",
+    "symbols": [
+      {
+        "function": "cio_file_hash",
+        "stated_home_unit": "chunkio/cio_file.c",
+        "added_by_this_profile": false,
+        "rule_40_decision": "derived",
+        "rule_40_reason": null,
+        "linked_home_unit": "chunkio/lib/chunkio/src/cio_file.c",
+        "definition": {
+          "member": "../library/libchunkio-static.a(cio_file.c.o)",
+          "in": "executable",
+          "binding": "global",
+          "visibility": "default",
+          "type": "function"
+        },
+        "linked_definitions": 1,
+        "executable_dynamic_relocations": 0,
+        "referenced_by": [
+          "../library/libchunkio-static.a(cio_chunk.c.o)"
+        ]
+      },
+      {
+        "function": "LZ4_sizeofState",
+        "stated_home_unit": "librdkafka/lz4.c",
+        "added_by_this_profile": false,
+        "rule_40_decision": "derived",
+        "rule_40_reason": null,
+        "linked_home_unit": "librdkafka/lib/librdkafka-2.15.0/src/lz4.c",
+        "definition": {
+          "member": "../library/librdkafka.a(lz4.c.o)",
+          "in": "executable",
+          "binding": "global",
+          "visibility": "default",
+          "type": "function"
+        },
+        "linked_definitions": 1,
+        "executable_dynamic_relocations": 0,
+        "referenced_by": [
+          "../library/librdkafka.a(lz4frame.c.o)"
+        ]
+      },
+      {
+        "function": "LZ4_sizeofStateHC",
+        "stated_home_unit": "librdkafka/lz4hc.c",
+        "added_by_this_profile": false,
+        "rule_40_decision": "derived",
+        "rule_40_reason": null,
+        "linked_home_unit": "librdkafka/lib/librdkafka-2.15.0/src/lz4hc.c",
+        "definition": {
+          "member": "../library/librdkafka.a(lz4hc.c.o)",
+          "in": "executable",
+          "binding": "global",
+          "visibility": "default",
+          "type": "function"
+        },
+        "linked_definitions": 1,
+        "executable_dynamic_relocations": 0,
+        "referenced_by": [
+          "../library/librdkafka.a(lz4frame.c.o)"
+        ]
+      },
+      {
+        "function": "rd_kafka_error_code",
+        "stated_home_unit": "librdkafka/rdkafka_error.c",
+        "added_by_this_profile": false,
+        "rule_40_decision": "derived",
+        "rule_40_reason": null,
+        "linked_home_unit": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_error.c",
+        "definition": {
+          "member": "../library/librdkafka.a(rdkafka_error.c.o)",
+          "in": "executable",
+          "binding": "global",
+          "visibility": "default",
+          "type": "function"
+        },
+        "linked_definitions": 1,
+        "executable_dynamic_relocations": 0,
+        "referenced_by": [
+          "../library/librdkafka.a(rdkafka.c.o)",
+          "../library/librdkafka.a(rdkafka_admin.c.o)",
+          "../library/librdkafka.a(rdkafka_op.c.o)",
+          "../library/librdkafka.a(rdkafka_share_acknowledgement.c.o)",
+          "../library/librdkafka.a(rdkafka_subscription.c.o)",
+          "../library/librdkafka.a(rdkafka_txnmgr.c.o)"
+        ]
+      },
+      {
+        "function": "rd_kafka_error_destroy",
+        "stated_home_unit": "librdkafka/rdkafka_error.c",
+        "added_by_this_profile": false,
+        "rule_40_decision": "derived",
+        "rule_40_reason": null,
+        "linked_home_unit": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_error.c",
+        "definition": {
+          "member": "../library/librdkafka.a(rdkafka_error.c.o)",
+          "in": "executable",
+          "binding": "global",
+          "visibility": "default",
+          "type": "function"
+        },
+        "linked_definitions": 1,
+        "executable_dynamic_relocations": 0,
+        "referenced_by": [
+          "../library/librdkafka.a(rdkafka.c.o)",
+          "../library/librdkafka.a(rdkafka_admin.c.o)",
+          "../library/librdkafka.a(rdkafka_aux.c.o)",
+          "../library/librdkafka.a(rdkafka_cgrp.c.o)",
+          "../library/librdkafka.a(rdkafka_op.c.o)",
+          "../library/librdkafka.a(rdkafka_share_acknowledgement.c.o)",
+          "../library/librdkafka.a(rdkafka_subscription.c.o)",
+          "../library/librdkafka.a(rdkafka_txnmgr.c.o)"
+        ]
+      },
+      {
+        "function": "LZ4_compressBound",
+        "stated_home_unit": "librdkafka/lz4.c",
+        "added_by_this_profile": false,
+        "rule_40_decision": "derived",
+        "rule_40_reason": null,
+        "linked_home_unit": "librdkafka/lib/librdkafka-2.15.0/src/lz4.c",
+        "definition": {
+          "member": "../library/librdkafka.a(lz4.c.o)",
+          "in": "executable",
+          "binding": "global",
+          "visibility": "default",
+          "type": "function"
+        },
+        "linked_definitions": 1,
+        "executable_dynamic_relocations": 0,
+        "referenced_by": [
+          "../library/librdkafka.a(lz4hc.c.o)"
+        ]
+      },
+      {
+        "function": "mk_fifo_send",
+        "stated_home_unit": "monkey-libevent/mk_server/mk_fifo.c",
+        "added_by_this_profile": false,
+        "rule_40_decision": "derived",
+        "rule_40_reason": null,
+        "linked_home_unit": "monkey/lib/monkey/mk_server/mk_fifo.c",
+        "definition": {
+          "member": "../lib/monkey/library/libmonkey.a(mk_fifo.c.o)",
+          "in": "executable",
+          "binding": "global",
+          "visibility": "default",
+          "type": "function"
+        },
+        "linked_definitions": 1,
+        "executable_dynamic_relocations": 0,
+        "referenced_by": [
+          "../lib/monkey/library/libmonkey.a(mk_lib.c.o)"
+        ]
+      },
+      {
+        "function": "cio_file_is_up",
+        "stated_home_unit": "chunkio/cio_file.c",
+        "added_by_this_profile": false,
+        "rule_40_decision": "derived",
+        "rule_40_reason": null,
+        "linked_home_unit": "chunkio/lib/chunkio/src/cio_file.c",
+        "definition": {
+          "member": "../library/libchunkio-static.a(cio_file.c.o)",
+          "in": "executable",
+          "binding": "global",
+          "visibility": "default",
+          "type": "function"
+        },
+        "linked_definitions": 1,
+        "executable_dynamic_relocations": 0,
+        "referenced_by": [
+          "../library/libchunkio-static.a(cio_chunk.c.o)"
+        ]
+      },
+      {
+        "function": "rd_kafka_metadata_broker_cmp",
+        "stated_home_unit": "librdkafka/rdkafka_metadata.c",
+        "added_by_this_profile": true,
+        "rule_40_decision": "derived",
+        "rule_40_reason": null,
+        "linked_home_unit": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_metadata.c",
+        "definition": {
+          "member": "../library/librdkafka.a(rdkafka_metadata.c.o)",
+          "in": "executable",
+          "binding": "global",
+          "visibility": "default",
+          "type": "function"
+        },
+        "linked_definitions": 1,
+        "executable_dynamic_relocations": 0,
+        "referenced_by": [
+          "../library/librdkafka.a(rdkafka_aux.c.o)",
+          "../library/librdkafka.a(rdkafka_request.c.o)"
+        ],
+        "handed_to_invocations": [
+          "librdkafka/rdkafka_aux.c::rd_kafka_Node_new_from_brokers (bsearch)"
+        ]
+      },
+      {
+        "function": "rd_kafka_metadata_broker_internal_cmp",
+        "stated_home_unit": "librdkafka/rdkafka_metadata.c",
+        "added_by_this_profile": true,
+        "rule_40_decision": "derived",
+        "rule_40_reason": null,
+        "linked_home_unit": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_metadata.c",
+        "definition": {
+          "member": "../library/librdkafka.a(rdkafka_metadata.c.o)",
+          "in": "executable",
+          "binding": "global",
+          "visibility": "default",
+          "type": "function"
+        },
+        "linked_definitions": 1,
+        "executable_dynamic_relocations": 0,
+        "referenced_by": [
+          "../library/librdkafka.a(rdkafka_assignor.c.o)",
+          "../library/librdkafka.a(rdkafka_aux.c.o)",
+          "../library/librdkafka.a(rdkafka_request.c.o)"
+        ],
+        "handed_to_invocations": [
+          "librdkafka/rdkafka_aux.c::rd_kafka_Node_new_from_brokers (bsearch)",
+          "librdkafka/rdkafka_assignor.c::ut_populate_internal_topic_metadata (bsearch)"
+        ]
+      },
+      {
+        "function": "rd_strcmp3",
+        "stated_home_unit": "librdkafka/rdstring.c",
+        "added_by_this_profile": true,
+        "rule_40_decision": "derived",
+        "rule_40_reason": null,
+        "linked_home_unit": "librdkafka/lib/librdkafka-2.15.0/src/rdstring.c",
+        "definition": {
+          "member": "../library/librdkafka.a(rdstring.c.o)",
+          "in": "executable",
+          "binding": "global",
+          "visibility": "default",
+          "type": "function"
+        },
+        "linked_definitions": 1,
+        "executable_dynamic_relocations": 0,
+        "referenced_by": [
+          "../library/librdkafka.a(rdkafka_range_assignor.c.o)",
+          "../library/librdkafka.a(rdkafka_sticky_assignor.c.o)"
+        ],
+        "handed_to_invocations": [
+          "librdkafka/rdkafka_range_assignor.c::rd_kafka_topic_assignment_state_rack_search (bsearch)",
+          "librdkafka/rdkafka_sticky_assignor.c::rd_kafka_partition_internal_find_rack (bsearch)"
+        ]
+      },
+      {
+        "function": "rd_kafka_assignor_topic_cmp",
+        "stated_home_unit": "librdkafka/rdkafka_assignor.c",
+        "added_by_this_profile": true,
+        "rule_40_decision": "derived",
+        "rule_40_reason": null,
+        "linked_home_unit": "librdkafka/lib/librdkafka-2.15.0/src/rdkafka_assignor.c",
+        "definition": {
+          "member": "../library/librdkafka.a(rdkafka_assignor.c.o)",
+          "in": "executable",
+          "binding": "global",
+          "visibility": "default",
+          "type": "function"
+        },
+        "linked_definitions": 1,
+        "executable_dynamic_relocations": 0,
+        "referenced_by": [
+          "../library/librdkafka.a(rdkafka_roundrobin_assignor.c.o)"
+        ],
+        "handed_to_invocations": [
+          "librdkafka/rdkafka_roundrobin_assignor.c::rd_kafka_roundrobin_assignor_assign_cb (qsort)"
+        ]
+      }
+    ]
+  }
+}

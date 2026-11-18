@@ -1,0 +1,41 @@
+{
+  "schema": "quirin-amendments/1",
+  "card": "CG22-CALLBACK-CANDIDATE-LINK-PREMISE",
+  "base": "974434463",
+  "measured_tip": "7b2fbb7c6",
+  "profiles": ["twelve-home"],
+  "increment_paragraph": "**CG22-CALLBACK-CANDIDATE-LINK-PREMISE** (launched by the user 2026-11-18; data only, no rule or Lean change; [report](../../reports/cg22-callback-candidate-link-premise/README.md)). Four external comparators with Safe home rows (`rd_kafka_metadata_broker_cmp`, `rd_kafka_metadata_broker_internal_cmp`, `rd_strcmp3`, `rd_kafka_assignor_topic_cmp`) were not in force at their callers' `bsearch`/`qsort` invocations because the eight-home stated link map does not name them. The card adds a new live evaluation profile, `twelve-home` (the eight-home corpus route on the same inputs under the eight-home premise plus those four homes; `contract/evaluations/twelve-home/link-premise.json` states the premise for approval with one static link's evidence: rule 40's checks derive every stated home in the `fluent-bit` executable), and leaves `eight-home` untouched; `inputs/live.json` gains the route and the profile is bound to a matrix corpus key the integrator adds. Measured by `quirin-audit measure --declared` against eight-home with one base binary on the card's own preparation (declared match, route complete): corpus 1,083 / 6 / 3,615 under both maps, row, unit and null verdict digests equal, `callback-uncontracted` 50 / 48 / 17 -> 44 / 44 / 17 (the six leaves at those invocations discharged; three now refuse the `bsearch` argument reading instead), 25 rows changing content only, no Safe -> non-Safe, no Unsafe added. A comparator the stated map does not name stays refused (tested over the committed map).",
+  "status_paragraph": "CG22-CALLBACK-CANDIDATE-LINK-PREMISE (base `974434463`, data only): a new live evaluation profile `twelve-home` states the eight-home link premise plus four librdkafka comparator homes; the premise awaits the user's approval. On the card's own corpus preparation (declared match) both maps give 1,083 / 6 / 3,615; the six `callback-uncontracted` leaves at the comparators' invocations are discharged and no function status moves, each caller keeping another blocker.",
+  "ledger": [
+    {
+      "id": "CG22-CALLBACK-CANDIDATE-LINK-PREMISE",
+      "operation": "amend",
+      "text": "AMENDED (CG22-CALLBACK-CANDIDATE-LINK-PREMISE, corpus 66910c10 on the card's own preparation, base 974434463, one binary under both maps, declared match): the integrator's route was taken, a new live profile contract/evaluations/twelve-home (eight-home's premise and symbols plus the four homes, rd_kafka_assignor_topic_cmp included; link-premise.json records for every symbol that rule 40's checks derive the stated home in the fluent-bit executable). Under it the six callback-uncontracted leaves are discharged (50/48/17 -> 44/44/17), no status moves (1,083/6/3,615 both), each caller keeps another blocker (CG22-COMPARATOR-CALLER-RESIDUALS). DISCHARGE: the user's approval of the stated premise and the landing of the profile with its matrix corpus row (docs/reports/cg22-callback-candidate-link-premise/integration/matrix_corpus_row.py); retire at that landing.",
+      "source": "docs/reports/cg22-callback-candidate-link-premise/README.md"
+    },
+    {
+      "id": "CG22-COMPARATOR-CALLER-RESIDUALS",
+      "operation": "register",
+      "title": "The five callers of the four external comparators stay Unknown on other blockers once the comparators are in force",
+      "text": "Registered by CG22-CALLBACK-CANDIDATE-LINK-PREMISE (corpus 66910c10 on the card's own preparation, twelve-home map, base 974434463). With the comparators imported (rule 4c), the callers' remaining leaves are: rd_kafka_partition_internal_find_rack 1 (unmodeled call in the return expression: the bsearch result); rd_kafka_topic_assignment_state_rack_search 2 (unresolved partition_racks, unmodeled call in the return expression); rd_kafka_Node_new_from_brokers 6 (two 'arguments do not match resource contract for bsearch' at rdkafka_aux.c:269/274, two indirect accesses outside the projection, unresolved broker and broker_internal); ut_populate_internal_topic_metadata 18 (a bsearch argument mismatch at rdkafka_assignor.c:867, rd_list_add retention and registry undecided, rd_list_deduplicate uncontracted, unresolved identities); rd_kafka_roundrobin_assignor_assign_cb 8 (the other qsort, rd_kafka_group_member_cmp Unknown in its unit, rd_kafka_topic_partition_list_add uncontracted, unresolved identities). The bsearch argument mismatch was masked by the callback refusal before. DISCHARGE: each caller's leaves by their own routes, measured under the twelve-home profile; never by reading the comparator benign.",
+      "source": "docs/reports/cg22-callback-candidate-link-premise/README.md",
+      "recorded_by": "CG22-CALLBACK-CANDIDATE-LINK-PREMISE"
+    },
+    {
+      "id": "CROSS-UNIT-REPLAY-DEPENDENCY-ATTRIBUTION",
+      "operation": "register",
+      "title": "A caller unit's rule 13f dependency fields absorb its cross-unit home replays' records",
+      "text": "Registered by CG22-CALLBACK-CANDIDATE-LINK-PREMISE (corpus 66910c10, eight-home vs twelve-home map, one binary). In the four caller units that newly hold home replays, rows whose status and leaves do not change report rd_calloc (and rd_strdup in rdkafka_sticky_assignor.c) as withdrawn (C06.3-no-body) instead of declarations in force, and rows calling rd_strcmp or rd_kafka_metadata_destroy list them as consulted summaries although their calls stay unmodeled: the home units' replay records, written into the caller's recording as rule 4c specifies, are attributed to the caller's own rows (14 rows relabel a declaration, 4 list a summary). The labels move in the conservative direction and no verdict reads them, but the contract_dependencies section's counts depend on which homes a unit holds. DISCHARGE: keep a home replay's record apart from the caller's row attribution (or name it as the replay's), with a test that adding a home to the map changes no row's dependency field except where the row consults the import.",
+      "source": "docs/reports/cg22-callback-candidate-link-premise/README.md",
+      "recorded_by": "CG22-CALLBACK-CANDIDATE-LINK-PREMISE"
+    },
+    {
+      "id": "EVALUATION-PROFILES-ADDED-PROFILE",
+      "operation": "register",
+      "title": "Adding a live evaluation profile has no records path for its binding and no publication bootstrap for its route",
+      "text": "Registered by CG22-CALLBACK-CANDIDATE-LINK-PREMISE (the first live profile added after EVALUATION-PROFILES). evaluation_profiles.py check refuses a profile no cycle document or matrix corpus row binds, but the amendments schema has no operation for the matrix's carried corpus section, so a card adding a profile must hand its matrix row to the integrator (docs/reports/cg22-callback-candidate-link-premise/integration/matrix_corpus_row.py) and its branch fails the Python suite until then. land.py publish refuses a live profile it did not measure, so the route joins inputs/live.json, but measure verifies a baseline:<prior> side route by route and the previous published baseline has no such route, so the first publication after the profile lands fails without a bootstrap of that route; every live-routes measurement also runs the extra corpus route unless --routes narrows it. DISCHARGE: an amendments operation (or bindings entry) that binds a new profile, and a publication path that measures a route absent from the previous baseline as rev:<prior> once, each tested.",
+      "source": "docs/reports/cg22-callback-candidate-link-premise/README.md",
+      "recorded_by": "CG22-CALLBACK-CANDIDATE-LINK-PREMISE"
+    }
+  ]
+}

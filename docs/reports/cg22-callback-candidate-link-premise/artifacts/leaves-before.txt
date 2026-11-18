@@ -1,0 +1,99 @@
+cmt_decode_msgpack.c::unpack_basic_type Unknown (29 leaves)
+    cmt_mpack_unpack_map -> unpack_basic_type_meta=cmt_decode_msgpack.c:Unknown
+cmt_decode_msgpack.c::unpack_basic_type_meta Unknown (17 leaves)
+    cmt_mpack_unpack_map -> unpack_meta_buckets=cmt_decode_msgpack.c:Unknown
+cmt_decode_msgpack.c::unpack_basic_type_values Unknown ALONE (1 leaves)
+    cmt_mpack_unpack_array -> unpack_metric_array_entry=cmt_decode_msgpack.c:Unknown
+cmt_decode_msgpack.c::unpack_context Unknown ALONE (1 leaves)
+    cmt_mpack_unpack_map -> unpack_context_header=cmt_decode_msgpack.c:Unknown
+cmt_decode_msgpack.c::unpack_context_header Unknown ALONE (1 leaves)
+    cmt_mpack_unpack_map -> unpack_context_external_metadata=cmt_decode_msgpack.c:Unknown
+cmt_decode_msgpack.c::unpack_context_metrics Unknown ALONE (1 leaves)
+    cmt_mpack_unpack_array -> unpack_basic_type_entry=cmt_decode_msgpack.c:Unknown
+cmt_decode_msgpack.c::unpack_context_processing_section Unknown ALONE (1 leaves)
+    cmt_mpack_unpack_map -> unpack_meta_static_labels=cmt_decode_msgpack.c:Unknown
+cmt_decode_msgpack.c::unpack_exp_histogram_negative_buckets Unknown (10 leaves)
+    cmt_mpack_unpack_array -> unpack_exp_histogram_negative_bucket=cmt_decode_msgpack.c:Unknown
+cmt_decode_msgpack.c::unpack_exp_histogram_positive_buckets Unknown (10 leaves)
+    cmt_mpack_unpack_array -> unpack_exp_histogram_positive_bucket=cmt_decode_msgpack.c:Unknown
+cmt_decode_msgpack.c::unpack_histogram_buckets Unknown (6 leaves)
+    cmt_mpack_unpack_array -> unpack_histogram_bucket=cmt_decode_msgpack.c:Unknown
+cmt_decode_msgpack.c::unpack_meta_buckets Unknown (4 leaves)
+    cmt_mpack_unpack_array -> unpack_meta_bucket=cmt_decode_msgpack.c:Unknown
+cmt_decode_msgpack.c::unpack_meta_labels Unknown ALONE (1 leaves)
+    cmt_mpack_unpack_array -> unpack_meta_label=cmt_decode_msgpack.c:Unknown
+cmt_decode_msgpack.c::unpack_meta_quantiles Unknown (4 leaves)
+    cmt_mpack_unpack_array -> unpack_meta_quantile=cmt_decode_msgpack.c:Unknown
+cmt_decode_msgpack.c::unpack_meta_static_labels Unknown ALONE (1 leaves)
+    cmt_mpack_unpack_array -> unpack_static_label=cmt_decode_msgpack.c:Unknown
+cmt_decode_msgpack.c::unpack_metric Unknown (26 leaves)
+    cmt_mpack_unpack_map -> unpack_metric_exp_histogram=cmt_decode_msgpack.c:Unknown
+cmt_decode_msgpack.c::unpack_metric_exp_histogram Unknown (4 leaves)
+    cmt_mpack_unpack_map -> unpack_exp_histogram_count=cmt_decode_msgpack.c:Unknown
+cmt_decode_msgpack.c::unpack_metric_histogram Unknown (2 leaves)
+    cmt_mpack_unpack_map -> unpack_histogram_buckets=cmt_decode_msgpack.c:Unknown
+cmt_decode_msgpack.c::unpack_metric_labels Unknown ALONE (1 leaves)
+    cmt_mpack_unpack_array -> unpack_metric_label=cmt_decode_msgpack.c:Unknown
+cmt_decode_msgpack.c::unpack_metric_summary Unknown (2 leaves)
+    cmt_mpack_unpack_map -> unpack_summary_count=cmt_decode_msgpack.c:Unknown
+cmt_decode_msgpack.c::unpack_opts Unknown (19 leaves)
+    cmt_mpack_unpack_map -> unpack_opts_desc=cmt_decode_msgpack.c:Unknown
+cmt_decode_msgpack.c::unpack_static_label Unknown (8 leaves)
+    cmt_mpack_unpack_array -> unpack_static_label_component=cmt_decode_msgpack.c:Unknown
+cmt_decode_msgpack.c::unpack_summary_quantiles Unknown (4 leaves)
+    cmt_mpack_unpack_array -> unpack_summary_quantile=cmt_decode_msgpack.c:Unknown
+ctr_decode_msgpack.c::unpack_context Unknown ALONE (1 leaves)
+    ctr_mpack_unpack_map -> unpack_resource_spans=ctr_decode_msgpack.c:Unknown
+ctr_decode_msgpack.c::unpack_event Unknown (3 leaves)
+    ctr_mpack_unpack_map -> unpack_event_attributes=ctr_decode_msgpack.c:Unknown
+ctr_decode_msgpack.c::unpack_link Unknown (3 leaves)
+    ctr_mpack_unpack_map -> unpack_link_attributes=ctr_decode_msgpack.c:Unknown
+ctr_decode_msgpack.c::unpack_resource Unknown ALONE (1 leaves)
+    ctr_mpack_unpack_map -> unpack_resource_attributes=ctr_decode_msgpack.c:Unknown
+ctr_decode_msgpack.c::unpack_resource_span Unknown (4 leaves)
+    ctr_mpack_unpack_map -> unpack_resource=ctr_decode_msgpack.c:Unknown
+ctr_decode_msgpack.c::unpack_resource_span_scope_spans Unknown ALONE (1 leaves)
+    ctr_mpack_unpack_array -> unpack_scope_span=ctr_decode_msgpack.c:Unknown
+ctr_decode_msgpack.c::unpack_resource_spans Unknown ALONE (1 leaves)
+    ctr_mpack_unpack_array -> unpack_resource_span=ctr_decode_msgpack.c:Unknown
+ctr_decode_msgpack.c::unpack_scope_span Unknown (5 leaves)
+    ctr_mpack_unpack_map -> unpack_scope_span_instrumentation_scope=ctr_decode_msgpack.c:Unknown
+ctr_decode_msgpack.c::unpack_scope_span_instrumentation_scope Unknown (8 leaves)
+    ctr_mpack_unpack_map -> unpack_instrumentation_scope_attributes=ctr_decode_msgpack.c:Unknown
+ctr_decode_msgpack.c::unpack_scope_span_spans Unknown ALONE (1 leaves)
+    ctr_mpack_unpack_array -> unpack_span=ctr_decode_msgpack.c:Unknown
+ctr_decode_msgpack.c::unpack_span Unknown (5 leaves)
+    ctr_mpack_unpack_map -> unpack_span_attributes=ctr_decode_msgpack.c:Unknown
+ctr_decode_msgpack.c::unpack_span_events Unknown ALONE (1 leaves)
+    ctr_mpack_unpack_array -> unpack_event=ctr_decode_msgpack.c:Unknown
+ctr_decode_msgpack.c::unpack_span_links Unknown ALONE (1 leaves)
+    ctr_mpack_unpack_array -> unpack_link=ctr_decode_msgpack.c:Unknown
+ctr_decode_msgpack.c::unpack_span_status Unknown ALONE (1 leaves)
+    ctr_mpack_unpack_map -> unpack_span_status_code=ctr_decode_msgpack.c:Unknown
+rdkafka.c::rd_kafka_consume0 Unknown (7 leaves)
+    rd_kafka_poll_cb -> rd_kafka_coord_rkb_monitor_cb=rdkafka_coord.c:Unknown
+rdkafka.c::rd_kafka_consume_callback0 Unknown (2 leaves)
+    rd_kafka_q_serve -> rd_kafka_toppar_op_serve=rdkafka_partition.c:Unknown
+rdkafka.c::rd_kafka_consumer_close0 Unknown (24 leaves)
+    rd_kafka_poll_cb -> rd_kafka_coord_rkb_monitor_cb=rdkafka_coord.c:Unknown
+rdkafka_assignor.c::ut_populate_internal_topic_metadata Unknown (17 leaves)
+    bsearch -> rd_kafka_metadata_broker_internal_cmp=rdkafka_metadata.c:Safe
+rdkafka_aux.c::rd_kafka_Node_new_from_brokers Unknown (6 leaves)
+    bsearch -> rd_kafka_metadata_broker_cmp=rdkafka_metadata.c:Safe
+    bsearch -> rd_kafka_metadata_broker_internal_cmp=rdkafka_metadata.c:Safe
+rdkafka_op.c::rd_kafka_op_req Unknown (3 leaves)
+    rd_kafka_op_req0 -> rd_kafka_toppar_op_serve=rdkafka_partition.c:Unknown
+rdkafka_op.c::rd_kafka_op_req2 Unknown ALONE (1 leaves)
+    rd_kafka_op_req -> rd_kafka_toppar_op_serve=rdkafka_partition.c:Unknown
+rdkafka_range_assignor.c::rd_kafka_topic_assignment_state_rack_search Unknown (4 leaves)
+    bsearch -> rd_strcmp3=rdstring.c:Safe
+rdkafka_roundrobin_assignor.c::rd_kafka_roundrobin_assignor_assign_cb Unknown (9 leaves)
+    qsort -> rd_kafka_assignor_topic_cmp=rdkafka_assignor.c:Safe
+    qsort -> rd_kafka_group_member_cmp=rdkafka_assignor.c:Unknown
+rdkafka_sticky_assignor.c::rd_kafka_partition_internal_find_rack Unknown (2 leaves)
+    bsearch -> rd_strcmp3=rdstring.c:Safe
+rdkafka_sticky_assignor.c::sortPartitions Unknown (50 leaves)
+    rd_kafka_topic_partition_list_sort -> toppar_sort_by_list_cnt=rdkafka_sticky_assignor.c:Unknown
+rdports.c::rd_qsort_r Unknown (3 leaves)
+    qsort -> rd_qsort_r_trampoline=rdports.c:Unknown
+candidates named: 45
