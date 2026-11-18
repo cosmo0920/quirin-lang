@@ -11326,7 +11326,19 @@ an undeclared OpenSSL producer). `QCore.NullableReferenceDrop` (12 audited,
     `contracts.py check` refuses a declaration no checker binds. The
     checker's `Safe` is `Pending` (`plugin-claim-uncertified`) while no
     trusted certificate checker exists, so these contracts move a row
-    `Unknown -> Pending` at most. Premises stated, not proved: Clang
+    `Unknown -> Pending` at most. Card CONFIGURED-ROUTE-PLUGIN-BINDINGS:
+    that holds on every route that resolves a user load path, whether by a
+    provider selection, a per-library table or a schema-2 manifest naming
+    it (`ContractInput::manifest` reads the manifest's load path with
+    `resource_contract_manifest_load_path` and refuses to load when it
+    cannot): `current`, `contracts` and a configuration run its bindings
+    through the same code (`user_plugins::run`, report fragments that fold
+    the links), and the pinned route, which runs none, refuses a manifest
+    whose load path carries one before any work
+    (`user_plugins::refuse_unrun_bindings`, `checker-bindings-not-run`).
+    **Do not** load a user load path's contracts on a route that neither
+    runs nor refuses its bindings: the configured route did, and published
+    a bound contract's caller `Safe`. Premises stated, not proved: Clang
     reports the macros' values, the official documentation's HISTORY is
     accurate, and the probe's include configurations are the build's (the
     default search path is the build's only when the build passes the
