@@ -41,7 +41,13 @@
 //!    be NULL, a getter returning what its argument owns is a borrowed result,
 //!    a holder keeping a pointer is a retention, every other position is
 //!    borrowed, and nothing else is stated. Card
-//!    **REFERENCE-DROP-NULL-ACCEPTING**: a release whose page states that a
+//!    **OPENSSL-SSL-CTX-CALLBACK-SLOTS**: a setter of a callback slot of an
+//!    opaque object states its slot registration (and its retention of
+//!    `arg`), a call that may run a stated slot states its invocation, every
+//!    writer the slot's page names must be declared as such a setter
+//!    ([`slot_writers_declared`]), and a call that may run a slot whose
+//!    setters are not declared names the premise `openssl_unstated_callback_slots`.
+//!    Card **REFERENCE-DROP-NULL-ACCEPTING**: a release whose page states that a
 //!    NULL argument does nothing is a NULL-accepting drop,
 //!    `resource_reference_dropped(p, nullable)`, and the cited snapshot must
 //!    record that exact sentence; the range's series is then the oldest one
@@ -62,8 +68,8 @@ use qcore_schemas::plugin::{
 use serde_json::Value;
 
 pub use crate::documented::{
-    DOCUMENTED, Documented, DocumentedFunction, Null, Premise, REGISTERED_CALLBACKS,
-    REGISTERED_CALLBACKS_STATEMENT,
+    DOCUMENTED, Documented, DocumentedFunction, Null, Premise, SLOTS, Slot, UNSTATED_SLOTS,
+    UNSTATED_SLOTS_STATEMENT,
 };
 
 /// The crate name a request's translation unit carries.
@@ -145,6 +151,18 @@ pub const FUNCTION_TYPEDEFS: &[&str] = &["pem_password_cb"];
 #[must_use]
 pub fn contract_type(c_type: &str) -> Option<&'static str> {
     let c_type = collapse(c_type);
+    // Card OPENSSL-SSL-CTX-CALLBACK-SLOTS: a pointer to a function spelled in
+    // place, `R (*)(P…)` (its name dropped by [`prototype_types`]), is
+    // `fnptr`; nothing else with parentheses has a spelling.
+    if c_type.contains('(') {
+        let is_function_pointer = c_type.split_once("(*)(").is_some_and(|(result, rest)| {
+            !result.trim().is_empty()
+                && !result.contains(['(', ')'])
+                && rest.ends_with(')')
+                && !rest[..rest.len() - 1].contains(['(', ')'])
+        });
+        return is_function_pointer.then_some("fnptr");
+    }
     let stars = c_type.matches('*').count();
     let base = c_type.trim_end_matches(['*', ' ']);
     if FUNCTION_TYPEDEFS.contains(&base) {
@@ -188,12 +206,53 @@ pub fn prototype_types(declaration: &str, function: &str) -> Option<(Vec<String>
     let open = declaration.find(&format!("{function}("))?;
     let result = declaration[..open].trim().to_owned();
     let inner = declaration[open + function.len() + 1..].strip_suffix(')')?;
+    // Split at the commas outside parentheses (an in-place function pointer
+    // `int (*cb)(SSL *ssl, void *arg)` holds one).
+    let mut pieces = Vec::new();
+    let (mut depth, mut start) = (0usize, 0usize);
+    for (index, character) in inner.char_indices() {
+        match character {
+            '(' => depth += 1,
+            ')' => depth = depth.checked_sub(1)?,
+            ',' if depth == 0 => {
+                pieces.push(&inner[start..index]);
+                start = index + 1;
+            }
+            _ => {}
+        }
+    }
+    pieces.push(&inner[start..]);
     let parameters = if inner.trim() == "void" {
         Vec::new()
     } else {
-        inner
-            .split(',')
+        pieces
+            .into_iter()
             .map(|parameter| {
+                // An in-place function pointer: drop its name, `R (*name)(P…)`
+                // to `R (*)(P…)`, and the parameter names inside.
+                if let Some((result, rest)) = parameter.split_once("(*")
+                    && let Some((name, list)) = rest.split_once(")(")
+                    && name.trim().chars().all(|c| c.is_alphanumeric() || c == '_')
+                {
+                    let list = list.strip_suffix(')').unwrap_or(list);
+                    let types = list
+                        .split(',')
+                        .map(|inner| {
+                            let inner = inner.trim();
+                            let cut = inner.rfind([' ', '*']).map_or(0, |index| index + 1);
+                            let (base, name) = inner.split_at(cut);
+                            if !base.trim().is_empty()
+                                && !name.is_empty()
+                                && name.chars().all(|c| c.is_alphanumeric() || c == '_')
+                            {
+                                collapse(base)
+                            } else {
+                                collapse(inner)
+                            }
+                        })
+                        .collect::<Vec<_>>();
+                    return collapse(&format!("{} (*)({})", result.trim(), types.join(", ")));
+                }
                 // Drop a trailing parameter name, if any: the identifier
                 // after the last space or `*`, when a type remains before it.
                 let parameter = parameter.trim();
@@ -351,6 +410,12 @@ pub fn check_function(module_path: &str, module: &str, function: &str) -> Result
             ));
         }
     }
+    // Card OPENSSL-SSL-CTX-CALLBACK-SLOTS: every slot the declaration states
+    // has every writer its page names declared as its setter.
+    for slot in stated_slots(documented) {
+        slot_writers_declared(slot, &snapshots)
+            .map_err(|failure| format!("{function}: {failure}"))?;
+    }
     Ok(format!(
         "{function}: prototype `{prototype}` ({header}, sha256 {}) matches the contract; `{range}` \
          admits the pinned OpenSSL {pinned_version}; custody as documented at {} (sha256 {} as \
@@ -377,7 +442,101 @@ pub fn describe(shape: Documented) -> &'static str {
         Documented::Release(..) => "release of an object that is not reference counted",
         Documented::BorrowedResult(..) => "borrowed result (owned by the argument)",
         Documented::Retains { .. } => "retention (the holder keeps the pointer)",
+        Documented::RegistersSlot { .. } => {
+            "slot registration (the holder keeps the callback in one of its slots)"
+        }
     }
+}
+
+/// Card OPENSSL-SSL-CTX-CALLBACK-SLOTS: the slots an entry registers or
+/// invokes.
+#[must_use]
+pub fn stated_slots(documented: &DocumentedFunction) -> Vec<&'static str> {
+    let mut slots = documented
+        .premises
+        .iter()
+        .filter_map(|premise| match premise {
+            Premise::SlotInvoked { slot, .. } => Some(*slot),
+            _ => None,
+        })
+        .collect::<Vec<_>>();
+    if let Documented::RegistersSlot { slot, .. } = documented.shape {
+        slots.push(slot);
+    }
+    slots
+}
+
+/// Card OPENSSL-SSL-CTX-CALLBACK-SLOTS: `slot` is one of [`SLOTS`]; its
+/// page, as fetched at the pinned series (3.5), names every one of its
+/// writers; each writer is documented as a [`Documented::RegistersSlot`] of
+/// this slot and declared in a module of this crate; and no other entry
+/// registers it. Then the run's candidates of the slot (what its declared
+/// setters are handed) are every value it can hold.
+///
+/// # Errors
+///
+/// The first writer that is not so, as the diagnostic text.
+pub fn slot_writers_declared(slot: &str, snapshots: &Value) -> Result<(), String> {
+    let stated = SLOTS
+        .iter()
+        .find(|known| known.key == slot)
+        .ok_or_else(|| format!("`{slot}` is not a slot this checker documents"))?;
+    let name = snapshots["pages"]
+        .as_array()
+        .into_iter()
+        .flatten()
+        .find(|page| {
+            page["page"] == stated.page && page["series"] == "3.5" && page["fetched"] == true
+        })
+        .and_then(|page| page["name"].as_str())
+        .ok_or_else(|| {
+            format!(
+                "no fetched snapshot of {} at 3.5 records its NAME",
+                stated.page
+            )
+        })?;
+    let named = name
+        .split(" - ")
+        .next()
+        .unwrap_or_default()
+        .split(',')
+        .map(str::trim)
+        .collect::<Vec<_>>();
+    for writer in stated.writers {
+        if !named.contains(writer) {
+            return Err(format!(
+                "`{slot}`'s writer {writer} is not named by {} (3.5)",
+                stated.page
+            ));
+        }
+        let registers = DOCUMENTED.iter().any(|entry| {
+            entry.function == *writer
+                && matches!(entry.shape, Documented::RegistersSlot { slot: at, .. } if at == slot)
+        });
+        if !registers {
+            return Err(format!(
+                "`{slot}`'s writer {writer} is not documented as its registration"
+            ));
+        }
+        let declared = crate::MODULES
+            .iter()
+            .any(|(_, text)| strip_comments(text).contains(&format!("extern fn {writer}(")));
+        if !declared {
+            return Err(format!("`{slot}`'s writer {writer} is not declared"));
+        }
+    }
+    for entry in DOCUMENTED {
+        if let Documented::RegistersSlot { slot: at, .. } = entry.shape
+            && at == slot
+            && !stated.writers.contains(&entry.function)
+        {
+            return Err(format!(
+                "{} registers `{slot}` but is not one of its writers",
+                entry.function
+            ));
+        }
+    }
+    Ok(())
 }
 
 /// The exact clause set, sorted, of a declaration stating `documented` over
@@ -397,11 +556,31 @@ pub fn expected_clauses(
     for premise in documented.premises {
         clauses.push(match premise {
             Premise::NullArgument(position) => {
-                format!("requires resource_literal_argument({}, 0)", name(*position)?)
+                format!(
+                    "requires resource_literal_argument({}, 0)",
+                    name(*position)?
+                )
             }
-            Premise::RegisteredCallbacks => format!(
-                "requires resource_premise({REGISTERED_CALLBACKS}, \"{REGISTERED_CALLBACKS_STATEMENT}\")"
+            Premise::UnstatedSlots => format!(
+                "requires resource_premise({UNSTATED_SLOTS}, \"{UNSTATED_SLOTS_STATEMENT}\")"
             ),
+            Premise::SlotInvoked {
+                object,
+                slot,
+                arguments,
+            } => {
+                let mut actuals = vec![name(*object)?, (*slot).to_owned()];
+                for argument in *arguments {
+                    actuals.push(match argument {
+                        Some(position) => name(*position)?,
+                        None => "_".to_owned(),
+                    });
+                }
+                format!(
+                    "ensures normal resource_callback_slot_invoked({})",
+                    actuals.join(", ")
+                )
+            }
             Premise::CallbackInvoked {
                 callback,
                 arguments,
@@ -413,7 +592,10 @@ pub fn expected_clauses(
                         None => "_".to_owned(),
                     });
                 }
-                format!("ensures normal resource_callback_invoked({})", actuals.join(", "))
+                format!(
+                    "ensures normal resource_callback_invoked({})",
+                    actuals.join(", ")
+                )
             }
         });
     }
@@ -466,6 +648,26 @@ pub fn expected_clauses(
                 name(item)?,
                 name(holder)?
             ));
+            clauses.push("ensures normal resource_return_none()".to_owned());
+        }
+        Documented::RegistersSlot {
+            holder,
+            callback,
+            slot,
+            retains,
+        } => {
+            clauses.push(format!(
+                "ensures normal resource_callback_slot_registered({}, {slot}, {})",
+                name(holder)?,
+                name(callback)?
+            ));
+            if let Some(item) = retains {
+                clauses.push(format!(
+                    "ensures normal resource_retained_by({}, {})",
+                    name(item)?,
+                    name(holder)?
+                ));
+            }
             clauses.push("ensures normal resource_return_none()".to_owned());
         }
     }
@@ -785,10 +987,10 @@ mod tests {
             1,
         );
         assert!(check_function(path, &heap, "X509_new").is_err());
-        // The callbacks premise removed from an I/O call.
+        // The unstated-slots premise removed from an I/O call.
         let (path, text) = module_of("SSL_write");
         let premise = format!(
-            "    requires resource_premise({REGISTERED_CALLBACKS}, \"{REGISTERED_CALLBACKS_STATEMENT}\");\n"
+            "    requires resource_premise({UNSTATED_SLOTS}, \"{UNSTATED_SLOTS_STATEMENT}\");\n"
         );
         assert!(text.contains(&premise));
         let unpremised = text.replacen(&premise, "", 1);

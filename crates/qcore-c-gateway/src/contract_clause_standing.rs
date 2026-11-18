@@ -725,6 +725,7 @@ fn callback_clause(clause: &qcore_schemas::callback::CallbackClause) -> Clause {
             object,
             member,
             actuals: a,
+            ..
         } => {
             let object = match object {
                 qcore_schemas::callback::MemberObject::Parameter { index } => format!("#{index}"),
@@ -742,6 +743,7 @@ fn callback_clause(clause: &qcore_schemas::callback::CallbackClause) -> Clause {
             member,
             callback,
             by_id: None,
+            ..
         } => (
             ClauseKind::Callback,
             format!("#{object}, {}, #{callback}", member.spelling()),
@@ -753,6 +755,7 @@ fn callback_clause(clause: &qcore_schemas::callback::CallbackClause) -> Clause {
             member,
             callback,
             by_id: Some(link),
+            ..
         } => (
             ClauseKind::Callback,
             format!("#{}, {}, #{callback}", link.binder, member.spelling()),

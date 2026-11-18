@@ -6086,6 +6086,43 @@ own anchor here.
     `tests/log_print_member_contracts.rs`;
     [report](../reports/log-print-body-contracts/README.md).
 
+    **A callback slot of an opaque record** (card
+    OPENSSL-SSL-CTX-CALLBACK-SLOTS, amended in place; contract specification
+    C04.19.3; user decision 2026-11-18, replacing the OpenSSL premise
+    `openssl_registered_callbacks`). `resource_callback_slot_registered(P,
+    TAG.FIELD, F)` and `resource_callback_slot_invoked(OBJ, TAG.FIELD, A…)`
+    are the member forms marked `slot` (`CallbackClause::MemberInvoked` /
+    `MemberRegistered` with `slot: true`; one field below the tag, a
+    borrowed parameter object, no `supplied_owned`, no id). A slot is decided
+    only over the run's facts (`Parser::member_candidates` refuses one
+    without them), only while no unit of the run defines `struct TAG` and
+    only when a declaration registers it
+    (`RunMemberFacts::decides`: a store of a setter's formal under exactly
+    that key), then over the run's closed set with rule 13u's composition;
+    otherwise `callback-member-open`, naming why. The member form keeps
+    requiring a function-pointer member of a record the run defines, so a run
+    that does not compile a library never decides that library's members over
+    its declared setters alone. Premise `P-OPAQUE-SLOT-WRITERS`: every writer
+    of the slot is declared (no unit can write through an incomplete type);
+    the OpenSSL checker requires every writer the slot's manual page names to
+    be declared as its setter (`slot_writers_declared`). **Do not** decide a
+    member of an undefined record by the slot reading, decide a slot nothing
+    registers (its closed empty set is not "invokes nothing"), or read a slot
+    without the run's facts. Declarations: `quirin-provider-openssl`'s
+    `SSL_CTX_set_default_passwd_cb`, `SSL_CTX_set_cert_cb`,
+    `SSL_set_cert_cb` and the six invocations in `ssl_ctx.qv` / `ssl_io.qv`.
+    `QCore.OpaqueCallbackSlots`
+    (`a_slot_without_the_run_facts_never_decides`,
+    `a_slot_whose_record_a_unit_defines_never_decides`,
+    `a_slot_nothing_registers_never_decides`,
+    `an_uncontracted_candidate_refuses`, `an_effectful_candidate_refuses`,
+    `identity_needs_every_candidate_identity`,
+    `the_member_form_never_decides_an_undefined_record`,
+    `every_declared_writers_value_is_a_candidate`,
+    `a_refused_slot_never_publishes_safe`);
+    `tests/openssl_callback_slots.rs`;
+    [report](../reports/openssl-ssl-ctx-callback-slots/README.md).
+
 <a id="constraint-12o"></a>
 
 12o. **A type-switched release reads, under an undecided discriminant, the

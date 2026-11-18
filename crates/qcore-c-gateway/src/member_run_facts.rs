@@ -220,6 +220,54 @@ impl RunMemberFacts {
         self.prepared().tables.normalise(member)
     }
 
+    /// Whether a declared member key is decided over the run's set (rule
+    /// 12n); `Err` with why it is not.
+    ///
+    /// A member (`slot` false) is decided only when it is a function-pointer
+    /// member of a record the run defines ([`Self::normalise`]). Card
+    /// **OPENSSL-SSL-CTX-CALLBACK-SLOTS** (rule 12n, amended in place;
+    /// C04.19.3): a slot of a record the library keeps opaque (`slot` true,
+    /// `resource_callback_slot_invoked`) is decided only while no unit of the
+    /// run defines `struct TAG` (no unit can then store into it: C admits no
+    /// member access through an incomplete type, so its only writers are the
+    /// declarations) and only when a declaration registers it (some unit,
+    /// the declarations' own, stores a setter's formal under exactly that
+    /// key). A slot whose record a unit defines, or that nothing registers,
+    /// is never decided: its writers are not the declarations alone.
+    ///
+    /// # Errors
+    /// Why the key is not decided.
+    pub fn decides(&self, member: &str, slot: bool) -> Result<(), String> {
+        if !slot {
+            return self.normalise(member).map(|_| ()).map_err(|why| {
+                format!("`{member}` is not a member the run's records define ({why})")
+            });
+        }
+        let Some((tag, field)) = member.split_once('.') else {
+            return Err(format!("`{member}` names no slot"));
+        };
+        if field.is_empty() || field.contains('.') {
+            return Err(format!("`{member}` is not one field below a record's tag"));
+        }
+        if self.prepared().tables.defines(tag) {
+            return Err(format!(
+                "`{member}` is a slot of a record the library keeps opaque, but a unit of the run \
+                 defines `struct {tag}`: its stores are not the declarations' alone"
+            ));
+        }
+        let registered = self.units.iter().any(|unit| {
+            unit.stores
+                .get(member)
+                .is_some_and(|flows| flows.iter().any(|flow| matches!(flow, Flow::Formal { .. })))
+        });
+        if !registered {
+            return Err(format!(
+                "no declaration registers the slot `{member}`: its writers are not declared"
+            ));
+        }
+        Ok(())
+    }
+
     /// The run's closure of `member`: open while any unread unit opens it
     /// ([`Self::opens`]).
     pub fn closure(&self, member: &str) -> Closure {
