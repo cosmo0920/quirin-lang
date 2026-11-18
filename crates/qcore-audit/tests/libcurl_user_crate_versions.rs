@@ -254,7 +254,18 @@ fn succeeded(output: &Output) {
     );
 }
 
+// The `contracts --source-root` route compiles the fixture with the host
+// Clang's default target. The contracts state libcurl's LP64 ABI
+// (`curl_global_init(flags: i64)` for a C `long`), as the audited build's is;
+// on Windows the default target is LLP64, where `long` is 32 bits, so the
+// declared ABI correctly refuses `curl_global_init` and `init_once` is
+// `Unknown` rather than in force. The version ranges this test pins are
+// host-independent; the ABI refusal is the fail-closed answer there.
 #[test]
+#[cfg_attr(
+    windows,
+    ignore = "LLP64 host target: C long is 32 bits against the contracts' LP64 i64"
+)]
 fn the_libcurl_ranges_follow_the_audited_curlver_header() {
     if !clang_available() {
         return;
