@@ -6806,6 +6806,44 @@
    "unexplained": 0,
    "source_binding": "Open",
    "unsafe": "provisional, not upstream defects"
+  },
+  "conditional_twelve_home_callback_comparators": {
+   "source": "docs/reports/cg22-callback-candidate-link-premise/artifacts/native-comparison-arbiter-1.json.gz",
+   "scope": "conditional twelve-home link map (the eight-home map plus four comparator homes; contract/evaluations/twelve-home/link-premise.json); no --library-providers; not the default corpus scope; card CG22-CALLBACK-CANDIDATE-LINK-PREMISE's worktree-private preparation of the pinned corpus inputs",
+   "link_map_sha256": "d338e3798bcd126426495af123f18523f46c895e2df21a359cc47ed86efbbd2a",
+   "compared_with_link_map_sha256": "98a4db761ace9fd4846b000c4c98defdc2e39ce6f95684c67c30f9b8b6f38ad3",
+   "analyzer_source_revision": "9744344634a7c6e7141d8cd11c87ce0ad8dd9114",
+   "corpus": {
+    "rows": 4704,
+    "eight_home": {
+     "Safe": 1083,
+     "Unknown": 3615,
+     "Unsafe": 6
+    },
+    "twelve_home": {
+     "Safe": 1083,
+     "Unknown": 3615,
+     "Unsafe": 6
+    },
+    "null_rows": 4796,
+    "null_verdicts_unchanged": true,
+    "status_moves": 0,
+    "content_changes": 25,
+    "callback_uncontracted": {
+     "eight_home": [
+      50,
+      48,
+      17
+     ],
+     "twelve_home": [
+      44,
+      44,
+      17
+     ],
+     "unit": "leaves, functions, decided alone"
+    },
+    "declared": "match"
+   }
   }
  },
  "workspace": {
@@ -14262,13 +14300,6 @@
    "recorded_by": "OPENSSL-PROVIDER-REMAINING-CALLEES"
   },
   {
-   "id": "CG22-CALLBACK-CANDIDATE-LINK-PREMISE",
-   "title": "Four external comparators Safe in their home unit are not in force at their callers' invocations: the stated link map does not name them",
-   "why": "Registered by CG22-CALLBACK-CANDIDATE-CONTRACTS (corpus 66910c10 on the card's own preparation, tip c89aac4c9). rd_kafka_metadata_broker_cmp and rd_kafka_metadata_broker_internal_cmp (home librdkafka/rdkafka_metadata.c), rd_strcmp3 (librdkafka/rdstring.c) and rd_kafka_assignor_topic_cmp (librdkafka/rdkafka_assignor.c) are external definitions with Safe home rows; their callers' bsearch/qsort invocations refuse callback-uncontracted (6 leaves / 5 functions / 0 decided alone: rd_kafka_Node_new_from_brokers 2, ut_populate_internal_topic_metadata, rd_kafka_topic_assignment_state_rack_search, rd_kafka_partition_internal_find_rack, rd_kafka_roundrobin_assignor_assign_cb, each with another blocker). The callback route already admits rule 4c's import at a callback position (tests/callback_candidate_scope.rs, a_candidate_from_another_unit_is_in_force_only_under_its_import), so the gap is the premise: the eight-home link map (contract/evaluations/eight-home/link-map.json) does not list them. A variant map is in docs/reports/cg22-callback-candidate-contracts/artifacts/link-map.eleven-home.json, unmeasured. DISCHARGE: a decision to extend the stated link premise (a new or re-baselined evaluation profile, measured), or declared contracts for the four comparators read from their bodies and pinned; no status is predicted to move until the callers' other blockers are discharged.",
-   "source": "docs/reports/cg22-callback-candidate-contracts/README.md",
-   "recorded_by": "CG22-CALLBACK-CANDIDATE-CONTRACTS"
-  },
-  {
    "id": "REFERENCE-DROP-NULL-ACCEPTING-CANDIDATES",
    "title": "Further NULL-accepting reference drops to declare",
    "why": "Registered by REFERENCE-DROP-NULL-ACCEPTING. Read at Fluent Bit 046accf6, none of librdkafka's six declared drops accepts NULL (rd_kafka_toppar_destroy0 rdkafka_partition.h:549, rd_kafka_q_destroy0 rdkafka_queue.h:232 and its owner wrapper, rd_kafka_topic_destroy0 rdkafka_topic.h:249 dereference their argument unconditionally; rd_kafka_enq_once_trigger and ut_destroy_mock_queue likewise), so none takes the form. Candidates elsewhere: the OpenSSL reference-counted frees the census lists but OPENSSL-PROVIDER-PLUGIN did not declare (X509_STORE_free in rd_kafka_cert_destroy, the stack frees over X509 elements) should use resource_reference_dropped(p, nullable) wherever their official page states the NULL behaviour, from the oldest series stating it (OPENSSL-PROVIDER-REMAINING-CALLEES). DISCHARGE: each candidate's body or official documentation read and declared with or without the form, measured.",
@@ -14302,6 +14333,27 @@
    "why": "C04.14's consumer refuses SSL_CTX_set_cert_cb(ctx, cb, NULL): it reads the retained actual (void *) 0 as a pointer whose lifetime it must decide against the holder (retention-undecided; the fixture's configure, docs/reports/openssl-ssl-ctx-callback-slots/evidence/run-1/run.json). A null pointer constant designates no object, so nothing is kept. DISCHARGE: the retention route reads a null pointer constant actual (after the usual cast reading) as retaining nothing; Lean beside QCore's retention model; a test. Size: small.",
    "source": "docs/reports/openssl-ssl-ctx-callback-slots/README.md",
    "recorded_by": "OPENSSL-SSL-CTX-CALLBACK-SLOTS"
+  },
+  {
+   "id": "CG22-COMPARATOR-CALLER-RESIDUALS",
+   "title": "The five callers of the four external comparators stay Unknown on other blockers once the comparators are in force",
+   "why": "Registered by CG22-CALLBACK-CANDIDATE-LINK-PREMISE (corpus 66910c10 on the card's own preparation, twelve-home map, base 974434463). With the comparators imported (rule 4c), the callers' remaining leaves are: rd_kafka_partition_internal_find_rack 1 (unmodeled call in the return expression: the bsearch result); rd_kafka_topic_assignment_state_rack_search 2 (unresolved partition_racks, unmodeled call in the return expression); rd_kafka_Node_new_from_brokers 6 (two 'arguments do not match resource contract for bsearch' at rdkafka_aux.c:269/274, two indirect accesses outside the projection, unresolved broker and broker_internal); ut_populate_internal_topic_metadata 18 (a bsearch argument mismatch at rdkafka_assignor.c:867, rd_list_add retention and registry undecided, rd_list_deduplicate uncontracted, unresolved identities); rd_kafka_roundrobin_assignor_assign_cb 8 (the other qsort, rd_kafka_group_member_cmp Unknown in its unit, rd_kafka_topic_partition_list_add uncontracted, unresolved identities). The bsearch argument mismatch was masked by the callback refusal before. DISCHARGE: each caller's leaves by their own routes, measured under the twelve-home profile; never by reading the comparator benign.",
+   "source": "docs/reports/cg22-callback-candidate-link-premise/README.md",
+   "recorded_by": "CG22-CALLBACK-CANDIDATE-LINK-PREMISE"
+  },
+  {
+   "id": "CROSS-UNIT-REPLAY-DEPENDENCY-ATTRIBUTION",
+   "title": "A caller unit's rule 13f dependency fields absorb its cross-unit home replays' records",
+   "why": "Registered by CG22-CALLBACK-CANDIDATE-LINK-PREMISE (corpus 66910c10, eight-home vs twelve-home map, one binary). In the four caller units that newly hold home replays, rows whose status and leaves do not change report rd_calloc (and rd_strdup in rdkafka_sticky_assignor.c) as withdrawn (C06.3-no-body) instead of declarations in force, and rows calling rd_strcmp or rd_kafka_metadata_destroy list them as consulted summaries although their calls stay unmodeled: the home units' replay records, written into the caller's recording as rule 4c specifies, are attributed to the caller's own rows (14 rows relabel a declaration, 4 list a summary). The labels move in the conservative direction and no verdict reads them, but the contract_dependencies section's counts depend on which homes a unit holds. DISCHARGE: keep a home replay's record apart from the caller's row attribution (or name it as the replay's), with a test that adding a home to the map changes no row's dependency field except where the row consults the import.",
+   "source": "docs/reports/cg22-callback-candidate-link-premise/README.md",
+   "recorded_by": "CG22-CALLBACK-CANDIDATE-LINK-PREMISE"
+  },
+  {
+   "id": "EVALUATION-PROFILES-ADDED-PROFILE",
+   "title": "Adding a live evaluation profile has no records path for its binding and no publication bootstrap for its route",
+   "why": "Registered by CG22-CALLBACK-CANDIDATE-LINK-PREMISE (the first live profile added after EVALUATION-PROFILES). evaluation_profiles.py check refuses a profile no cycle document or matrix corpus row binds, but the amendments schema has no operation for the matrix's carried corpus section, so a card adding a profile must hand its matrix row to the integrator (docs/reports/cg22-callback-candidate-link-premise/integration/matrix_corpus_row.py) and its branch fails the Python suite until then. land.py publish refuses a live profile it did not measure, so the route joins inputs/live.json, but measure verifies a baseline:<prior> side route by route and the previous published baseline has no such route, so the first publication after the profile lands fails without a bootstrap of that route; every live-routes measurement also runs the extra corpus route unless --routes narrows it. DISCHARGE: an amendments operation (or bindings entry) that binds a new profile, and a publication path that measures a route absent from the previous baseline as rev:<prior> once, each tested.",
+   "source": "docs/reports/cg22-callback-candidate-link-premise/README.md",
+   "recorded_by": "CG22-CALLBACK-CANDIDATE-LINK-PREMISE"
   }
  ],
  "updated": "Completed plugin premise integration; exact hand-maintained union retains810followups, borrowed measured-source8419Rust/354Lean/freshcard133provider, exact source equivalence checked; authoritative root committed-matrix Python confirmation in integration receipt. CMetrics map/opts API model specifications added at the explicit user request. Eight declared-model API contracts remain outside interpreted views, with CMT-MAP-OPTS-CONTRACT-ADOPTION and CMT-LABELED-HASH-ZERO-STATIC-STORAGE Open. No trusted API coverage is claimed; the source gate is recorded by this card alongside its separate initializer native checkpoint. W48-CMT-TRACKED-INTERIOR-SELF-INIT implements rule 36b's checked initializer effect transport for an exact live owned root or embedded record, retaining actual self writes, invalidating aliased member facts and preserving resource obligations; nondefault custody frames refuse and no ordinary summary is exported. The canonical CFL intrusive_list.qv declares matching audit preconditions/effects; two CMetrics .qv modules add six map and two opts lifecycle models, including transitive ownership, partial failure, borrowed results and uncleared cleanup fields. All remain outside interpreted views; checked API adoption and labeled zero-hash storage accounting have named Open follow-ups. Fresh BASE/planner precedes prediction f18d96065 and implementation; the later contract amendment 08da23123 precedes .qv edits. Native corpus BASE/TIP Safe/Unknown/Pending/provisional-Unsafe: 1009 / 3816 / 0 / 9 to 1011 / 3814 / 0 / 9; full system/slice, 5781 NULL dictionaries and runtime projections are compared, 241 semantic leaves accounted, zero unexplained leaves and no prior Safe loss. Gate 8654 Rust / 370 Lean / 374 Python, provider 133 Rust / 25 Python and all five package verifies pass. The actual deep source reader uses 328 KiB below 1 MiB. Full getter closure remains Open; W48-CMT-SELF-INIT-DISJOINT-FRAMES tracks the next bounded frame extension, and W48-EXACT-RETURN-WITNESS-PRECISION is unchanged. Native evidence is isolated to measured e92d8aef35a8bd14550e90219d19a56eb3b196e7; later source gate 2d0d85299b830aa24d7f200d63a308653582363f validates the added declared API models separately; see docs/reports/w48-cmt-tracked-interior-self-init/README.md."

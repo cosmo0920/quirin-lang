@@ -216,3 +216,14 @@ also failed `test_every_directory_literal_is_declared` and
 then read the maps through a `contract/evaluations` directory literal. It now
 reads them with `include_str!`, and the records test accepts a crate that
 claims a record through a test target (`scripts/tests/test_gate_scope.py`).
+
+## Landing
+
+The user approved the stated premise of section 1 on 2026-11-18, at its
+landing as integrate/r28; the integrator turned the ledger's `amend` into the
+`retire` this report asked for, recorded that approval in the status
+paragraph, and added the matrix corpus row with
+`integration/matrix_corpus_row.py`. The profile's own data
+(`contract/evaluations/twelve-home/link-premise.json`) keeps its
+"stated, not proved" wording: the approval is a human decision on a premise,
+not a proof of it. Integration record: [integration/gate.json](integration/gate.json).
