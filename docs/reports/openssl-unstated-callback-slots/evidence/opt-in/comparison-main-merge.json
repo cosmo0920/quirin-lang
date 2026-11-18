@@ -1,0 +1,106 @@
+{
+ "before": "private/opt-in-main-1/resource-diagnostics.json",
+ "after": "private/opt-in-tip-2/resource-diagnostics.json",
+ "function_totals": {
+  "before": {
+   "Pending": 2,
+   "Safe": 1098,
+   "Unknown": 3699,
+   "Unsafe": 5
+  },
+  "after": {
+   "Pending": 2,
+   "Safe": 1098,
+   "Unknown": 3699,
+   "Unsafe": 5
+  }
+ },
+ "unit_totals": {
+  "before": {
+   "Unknown": 163,
+   "Safe": 9,
+   "Unsafe": 5,
+   "data_only": 4
+  },
+  "after": {
+   "Unknown": 163,
+   "Safe": 9,
+   "Unsafe": 5,
+   "data_only": 4
+  }
+ },
+ "unmatched": {
+  "before_only": [],
+  "after_only": []
+ },
+ "rows_changed": 5,
+ "content_changes": [
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_ssl.c::0::rd_kafka_ssl_ctx_init",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [
+    "SSL_CTX_set_verify"
+   ],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": []
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_ssl.c::0::rd_kafka_transport_ssl_close",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "row": "monkey::lib/monkey/mk_server/mk_http_thread.c::0::mk_http_thread_destroy",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [
+    "call to `pthread_setspecific` retains `( void * ) ( ( void * ) 0 )` in `global`, whose lifetime this body does not decide against it (retention-undecided)"
+   ],
+   "other_new": []
+  },
+  {
+   "row": "monkey::lib/monkey/tls/tls_openssl.c::0::context_unset",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "row": "monkey::lib/monkey/tls/tls_openssl.c::0::mk_tls_init",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [
+    "SSL_CTX_set_verify"
+   ],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": []
+  }
+ ],
+ "moves": [],
+ "unit_moves": []
+}

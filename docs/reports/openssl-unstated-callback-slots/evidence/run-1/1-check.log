@@ -1,0 +1,3 @@
+$ private/bin-tip/quirin-plugin check providers/quirin-provider-openssl
+quirin-provider-openssl: 15 module(s), 72 checker(s), 0 override(s)
+exit 0

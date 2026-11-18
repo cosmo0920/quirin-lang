@@ -681,6 +681,12 @@ impl Parser<'_> {
                     continue;
                 }
             }
+            // Card RETENTION-NULL-CONSTANT-ACTUAL (rule 12t, amended in
+            // place): a null pointer constant designates no object, so
+            // nothing is retained, whatever the holder.
+            if null_retention(actual(retention.retained)) {
+                continue;
+            }
             let retained_text = actual(retention.retained).map(|a| a.join(" "));
             let retained = self.retained_spelling(actual(retention.retained));
             let held = match retention.holder {
@@ -789,6 +795,9 @@ impl Parser<'_> {
         // retention whose declared holder is a path below a formal: the
         // actual at that formal followed by the path's members.
         for retention in &declaration.path_retentions {
+            if null_retention(actual(retention.retained)) {
+                continue;
+            }
             let retained_text =
                 actual(retention.retained).map_or_else(|| "?".to_owned(), |a| a.join(" "));
             let root = actual(retention.root);
@@ -1161,6 +1170,15 @@ pub(super) fn holder_class(
             }
         }
     }
+}
+
+/// Card **RETENTION-NULL-CONSTANT-ACTUAL** (rule 12t): whether a retained
+/// actual is a null pointer constant, which rule 12t's table decides outright
+/// (`Retained::Nothing`): the call records nothing and refuses nothing for
+/// it. Every other actual is read as before.
+fn null_retention(actual: Option<&[&str]>) -> bool {
+    actual.is_some_and(crate::retained_by::null_pointer_constant)
+        && decide(&Retained::Nothing, &Holder::Foreign) == Decision::Outlives
 }
 
 pub(super) fn retained_class(state: &AbstractState, retained: &RetainedSpelling) -> Retained {

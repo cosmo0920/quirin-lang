@@ -102,14 +102,23 @@ pub enum Premise {
     /// (C04.5).
     NullArgument(usize),
     /// `requires resource_premise(openssl_unstated_callback_slots, "…")`: the
-    /// call may run callbacks of slots no clause of the declaration states
-    /// (their setters are not declared); the declaration reads them as
-    /// changing no custody the caller holds (C04.18, a named premise
+    /// call may run callbacks no clause of the declaration states (a slot
+    /// whose setters are not declared, a slot whose invocation the
+    /// vocabulary cannot state beside the declaration's other clauses, a
+    /// BIO's method or callback, an ex_data callback); the declaration reads
+    /// them as changing no custody the caller holds (C04.18, a named premise
     /// published with every row resting on it). Card
     /// **OPENSSL-SSL-CTX-CALLBACK-SLOTS**: it replaced
     /// `openssl_registered_callbacks`, which covered every slot, stated or
-    /// not.
+    /// not; card **OPENSSL-UNSTATED-CALLBACK-SLOTS** narrowed it again.
     UnstatedSlots,
+    /// Card **OPENSSL-UNSTATED-CALLBACK-SLOTS**: `requires
+    /// resource_premise(openssl_ex_data_callbacks, "…")`: every slot the call
+    /// may run is stated, and the call may still run the ex_data callbacks
+    /// `CRYPTO_get_ex_new_index` registers per object class (a global
+    /// registry, not a slot of an object), which the declaration reads as
+    /// changing no custody the caller holds.
+    ExDataCallbacks,
     /// Card **OPENSSL-SSL-CTX-CALLBACK-SLOTS**: `ensures normal
     /// resource_callback_slot_invoked(OBJ, slot, A…)` (C04.19.3): during the
     /// call the function pointer the object at `object` keeps in `slot` (one
@@ -142,10 +151,22 @@ pub enum Premise {
 pub const UNSTATED_SLOTS: &str = "openssl_unstated_callback_slots";
 
 /// Its statement (no `;`, `"` or `//`: the checker reads clauses lexically).
+/// Card OPENSSL-UNSTATED-CALLBACK-SLOTS: every slot this crate declares the
+/// setters of is stated where a declaration may run it, so what remains is
+/// named by kind.
 pub const UNSTATED_SLOTS_STATEMENT: &str = "a callback the call may run that no clause of this \
-declaration states (a verify, info, message, security, session or client certificate callback of \
-the SSL object or its SSL_CTX, or an ex_data callback) takes, releases or retains nothing the \
-caller holds";
+declaration states (a callback slot of the SSL object or its SSL_CTX whose invocation the \
+declaration does not state, among them the SSL_CTX_callback_ctrl arms such as the servername, \
+status and ticket key callbacks, a method or callback of a BIO the SSL object holds, or an \
+ex_data callback) takes, releases or retains nothing the caller holds";
+
+/// Card **OPENSSL-UNSTATED-CALLBACK-SLOTS**: the name of the ex_data premise.
+pub const EX_DATA: &str = "openssl_ex_data_callbacks";
+
+/// Its statement.
+pub const EX_DATA_STATEMENT: &str = "an ex_data callback the call may run (a new, dup or free \
+callback CRYPTO_get_ex_new_index registers for the class of an object the call creates, copies \
+or frees) takes, releases or retains nothing the caller holds";
 
 /// Card **OPENSSL-SSL-CTX-CALLBACK-SLOTS**: a callback slot of an opaque
 /// OpenSSL object, stated as C04.19.3's opaque slot. Its `writers` are every
@@ -153,11 +174,19 @@ caller holds";
 /// sets the slot; the checker requires each to be declared with
 /// [`Documented::RegistersSlot`] of this slot, so the run's candidates (what
 /// the declared setters are handed) are every value the slot can hold.
+///
+/// Card **OPENSSL-UNSTATED-CALLBACK-SLOTS**: `not_writers` lists every other
+/// function the page's NAME section names (getters, the userdata setters,
+/// writers of a copy no declaration invokes). The checker requires the NAME
+/// list to be exactly the union, over the slots citing the page, of their
+/// writers and not-writers, so a writer the page names cannot be left out
+/// unremarked.
 #[derive(Clone, Copy, Debug)]
 pub struct Slot {
     pub key: &'static str,
     pub page: &'static str,
     pub writers: &'static [&'static str],
+    pub not_writers: &'static [&'static str],
 }
 
 /// The stated slots.
@@ -169,6 +198,7 @@ pub const SLOTS: &[Slot] = &[
         key: "ssl_ctx_st.cert_cb",
         page: "SSL_CTX_set_cert_cb",
         writers: &["SSL_CTX_set_cert_cb", "SSL_set_cert_cb"],
+        not_writers: &[],
     },
     // SSL_CTX_set_default_passwd_cb (3.5): the context's slot. The page's
     // SSL_set_default_passwd_cb writes the SSL's copy, which no declaration
@@ -177,6 +207,106 @@ pub const SLOTS: &[Slot] = &[
         key: "ssl_ctx_st.default_passwd_cb",
         page: "SSL_CTX_set_default_passwd_cb",
         writers: &["SSL_CTX_set_default_passwd_cb"],
+        not_writers: &[
+            "SSL_CTX_set_default_passwd_cb_userdata",
+            "SSL_CTX_get_default_passwd_cb",
+            "SSL_CTX_get_default_passwd_cb_userdata",
+            "SSL_set_default_passwd_cb",
+            "SSL_set_default_passwd_cb_userdata",
+            "SSL_get_default_passwd_cb",
+            "SSL_get_default_passwd_cb_userdata",
+        ],
+    },
+    // Card OPENSSL-UNSTATED-CALLBACK-SLOTS. SSL_CTX_set_verify (3.5): the
+    // verify callback of the context and of the SSL ("If no special callback
+    // was set before, the default callback for the underlying ctx is used,
+    // that was valid at the time ssl was created"): one key.
+    Slot {
+        key: "ssl_ctx_st.verify_callback",
+        page: "SSL_CTX_set_verify",
+        writers: &["SSL_CTX_set_verify", "SSL_set_verify"],
+        not_writers: &[
+            "SSL_get_ex_data_X509_STORE_CTX_idx",
+            "SSL_CTX_set_verify_depth",
+            "SSL_set_verify_depth",
+            "SSL_verify_cb",
+            "SSL_verify_client_post_handshake",
+            "SSL_set_post_handshake_auth",
+            "SSL_CTX_set_post_handshake_auth",
+        ],
+    },
+    // SSL_CTX_set_info_callback (3.5): "The setting for ctx is overridden
+    // from the setting for a specific SSL object, if specified": one key.
+    Slot {
+        key: "ssl_ctx_st.info_callback",
+        page: "SSL_CTX_set_info_callback",
+        writers: &["SSL_CTX_set_info_callback", "SSL_set_info_callback"],
+        not_writers: &["SSL_CTX_get_info_callback", "SSL_get_info_callback"],
+    },
+    // SSL_CTX_set_msg_callback (3.5): the context's settings "will be copied
+    // to new SSL objects by SSL_new"; SSL_set_msg_callback modifies the
+    // SSL's: one key. The *_arg setters keep the callback's argument, not
+    // the callback; SSL_trace is a callback a setter may be handed.
+    Slot {
+        key: "ssl_ctx_st.msg_callback",
+        page: "SSL_CTX_set_msg_callback",
+        writers: &["SSL_CTX_set_msg_callback", "SSL_set_msg_callback"],
+        not_writers: &[
+            "SSL_CTX_set_msg_callback_arg",
+            "SSL_set_msg_callback_arg",
+            "SSL_trace",
+        ],
+    },
+    // SSL_CTX_set_security_level (3.5): "An application defined security
+    // callback is installed with SSL_CTX_set_security_callback() or
+    // SSL_set_security_callback()"; SSL_new copies the context's: one key.
+    Slot {
+        key: "ssl_ctx_st.sec_cb",
+        page: "SSL_CTX_set_security_level",
+        writers: &["SSL_CTX_set_security_callback", "SSL_set_security_callback"],
+        not_writers: &[
+            "SSL_CTX_set_security_level",
+            "SSL_set_security_level",
+            "SSL_CTX_get_security_level",
+            "SSL_get_security_level",
+            "SSL_CTX_get_security_callback",
+            "SSL_get_security_callback",
+            "SSL_CTX_set0_security_ex_data",
+            "SSL_set0_security_ex_data",
+            "SSL_CTX_get0_security_ex_data",
+            "SSL_get0_security_ex_data",
+        ],
+    },
+    // SSL_CTX_sess_set_get_cb (3.5): three slots of the context, one setter
+    // each; the getters are listed once.
+    Slot {
+        key: "ssl_ctx_st.new_session_cb",
+        page: "SSL_CTX_sess_set_get_cb",
+        writers: &["SSL_CTX_sess_set_new_cb"],
+        not_writers: &[
+            "SSL_CTX_sess_get_new_cb",
+            "SSL_CTX_sess_get_remove_cb",
+            "SSL_CTX_sess_get_get_cb",
+        ],
+    },
+    Slot {
+        key: "ssl_ctx_st.remove_session_cb",
+        page: "SSL_CTX_sess_set_get_cb",
+        writers: &["SSL_CTX_sess_set_remove_cb"],
+        not_writers: &[],
+    },
+    Slot {
+        key: "ssl_ctx_st.get_session_cb",
+        page: "SSL_CTX_sess_set_get_cb",
+        writers: &["SSL_CTX_sess_set_get_cb"],
+        not_writers: &[],
+    },
+    // SSL_CTX_set_client_cert_cb (3.5): the context's one writer.
+    Slot {
+        key: "ssl_ctx_st.client_cert_cb",
+        page: "SSL_CTX_set_client_cert_cb",
+        writers: &["SSL_CTX_set_client_cert_cb"],
+        not_writers: &["SSL_CTX_get_client_cert_cb"],
     },
 ];
 
@@ -233,18 +363,81 @@ const DOC_1_1_1: &str = "resource_library_version(openssl, documented \"1.1.1\")
 const DOC_3_0: &str = "resource_library_version(openssl, documented \"3.0\")";
 const SINCE_1_1_0: &str = "resource_library_version(openssl, since \"1.1.0\")";
 const SINCE_3_0_0: &str = "resource_library_version(openssl, since \"3.0.0\")";
+const SINCE_0_9_7: &str = "resource_library_version(openssl, since \"0.9.7\")";
+
+/// Card **OPENSSL-UNSTATED-CALLBACK-SLOTS**: a setter that registers the
+/// function pointer at `callback` into `slot` of the object at position 0,
+/// keeping no other pointer.
+const fn registers(callback: usize, slot: &'static str) -> Documented {
+    Documented::RegistersSlot {
+        holder: 0,
+        callback,
+        slot,
+        retains: None,
+    }
+}
+
+/// Card **OPENSSL-UNSTATED-CALLBACK-SLOTS**: a slot of the connection at
+/// position 0, invoked with these actuals.
+const fn on_ssl(slot: &'static str, arguments: &'static [Option<usize>]) -> Premise {
+    Premise::SlotInvoked {
+        object: 0,
+        slot,
+        arguments,
+    }
+}
+
+/// The verify callback, `verify_callback(preverify_ok, x509_ctx)`: two
+/// values the callee supplies.
+const VERIFY: Premise = on_ssl("ssl_ctx_st.verify_callback", &[None, None]);
+/// The info callback, `callback(ssl, where, ret)`.
+const INFO: Premise = on_ssl("ssl_ctx_st.info_callback", &[Some(0), None, None]);
+/// The message callback, `cb(write_p, version, content_type, buf, len, ssl,
+/// arg)`: `ssl` is "The SSL object that received or sent the message".
+const MESSAGE: Premise = on_ssl(
+    "ssl_ctx_st.msg_callback",
+    &[None, None, None, None, None, Some(0), None],
+);
+/// The security callback of a connection's check, `cb(s, ctx, op, bits, nid,
+/// other, ex)`: "checks originating from a connection pass s (with ctx
+/// NULL)".
+const SECURITY: Premise = on_ssl(
+    "ssl_ctx_st.sec_cb",
+    &[Some(0), None, None, None, None, None, None],
+);
+/// The session callbacks: `new_session_cb(ssl, sess)`,
+/// `remove_session_cb(ctx, sess)` (the session's context, not a formal) and
+/// `get_session_cb(ssl, data, len, copy)`.
+const NEW_SESSION: Premise = on_ssl("ssl_ctx_st.new_session_cb", &[Some(0), None]);
+const REMOVE_SESSION: Premise = on_ssl("ssl_ctx_st.remove_session_cb", &[None, None]);
+const GET_SESSION: Premise = on_ssl("ssl_ctx_st.get_session_cb", &[Some(0), None, None, None]);
+/// The client certificate callback, `client_cert_cb(ssl, x509, pkey)`.
+const CLIENT_CERT: Premise = on_ssl("ssl_ctx_st.client_cert_cb", &[Some(0), None, None]);
 
 /// Card OPENSSL-SSL-CTX-CALLBACK-SLOTS: a handshake or I/O call on `ssl` at
 /// position 0: the certificate slot, `cert_cb(ssl, arg)`, and the premise
-/// for every slot whose setters are not declared.
+/// for every slot whose setters are not declared. Card
+/// OPENSSL-UNSTATED-CALLBACK-SLOTS: and every slot this crate now declares
+/// the setters of, each run during a handshake (which the I/O calls run when
+/// needed).
 const HANDSHAKE: &[Premise] = &[
     Premise::UnstatedSlots,
-    Premise::SlotInvoked {
-        object: 0,
-        slot: "ssl_ctx_st.cert_cb",
-        arguments: &[Some(0), None],
-    },
+    on_ssl("ssl_ctx_st.cert_cb", &[Some(0), None]),
+    VERIFY,
+    INFO,
+    MESSAGE,
+    SECURITY,
+    NEW_SESSION,
+    REMOVE_SESSION,
+    GET_SESSION,
+    CLIENT_CERT,
 ];
+
+/// Card OPENSSL-UNSTATED-CALLBACK-SLOTS: `SSL_shutdown` sends or reads the
+/// close_notify alert: the info callback ("an alert appears") and the
+/// message callback (every protocol message sent or received); the premise
+/// for every other callback it may run.
+const SHUTDOWN: &[Premise] = &[Premise::UnstatedSlots, INFO, MESSAGE];
 
 /// The context's password slot, `pem_password_cb(buf, size, rwflag, u)`:
 /// four values the callee supplies.
@@ -252,6 +445,24 @@ const PASSWORD: Premise = Premise::SlotInvoked {
     object: 0,
     slot: "ssl_ctx_st.default_passwd_cb",
     arguments: &[None, None, None, None],
+};
+
+/// Card OPENSSL-UNSTATED-CALLBACK-SLOTS: the security callback of a context's
+/// check on the certificates the call loads from a file: `s` NULL (a value
+/// the callee supplies), `ctx` the context, `other` a certificate the callee
+/// read.
+const SECURITY_CTX_LOADED: Premise = Premise::SlotInvoked {
+    object: 0,
+    slot: "ssl_ctx_st.sec_cb",
+    arguments: &[None, Some(0), None, None, None, None, None],
+};
+
+/// The same check on the caller's certificate at position 1: `other` "is
+/// the X509 certificate" (SSL_SECOP_EE_KEY, SSL_SECOP_CA_KEY).
+const SECURITY_CTX_CERTIFICATE: Premise = Premise::SlotInvoked {
+    object: 0,
+    slot: "ssl_ctx_st.sec_cb",
+    arguments: &[None, Some(0), None, None, None, Some(1), None],
 };
 
 /// The premise alone: a call that may run callbacks of no stated slot.
@@ -459,6 +670,27 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
         CountedConstructor,
     ),
     entry(
+        "SSL_CTX_sess_set_get_cb",
+        "SSL_CTX_sess_set_get_cb",
+        "1.0.2",
+        DOC_1_0_2,
+        registers(1, "ssl_ctx_st.get_session_cb"),
+    ),
+    entry(
+        "SSL_CTX_sess_set_new_cb",
+        "SSL_CTX_sess_set_get_cb",
+        "1.0.2",
+        DOC_1_0_2,
+        registers(1, "ssl_ctx_st.new_session_cb"),
+    ),
+    entry(
+        "SSL_CTX_sess_set_remove_cb",
+        "SSL_CTX_sess_set_get_cb",
+        "1.0.2",
+        DOC_1_0_2,
+        registers(1, "ssl_ctx_st.remove_session_cb"),
+    ),
+    entry(
         "SSL_CTX_set_cert_cb",
         "SSL_CTX_set_cert_cb",
         "1.0.2",
@@ -469,6 +701,13 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
             slot: "ssl_ctx_st.cert_cb",
             retains: Some(2),
         },
+    ),
+    entry(
+        "SSL_CTX_set_client_cert_cb",
+        "SSL_CTX_set_client_cert_cb",
+        "1.0.2",
+        DOC_1_0_2,
+        registers(1, "ssl_ctx_st.client_cert_cb"),
     ),
     entry(
         "SSL_CTX_set_default_passwd_cb",
@@ -497,11 +736,39 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
         Plain,
     ),
     entry(
+        "SSL_CTX_set_info_callback",
+        "SSL_CTX_set_info_callback",
+        "1.0.2",
+        DOC_1_0_2,
+        registers(1, "ssl_ctx_st.info_callback"),
+    ),
+    entry(
+        "SSL_CTX_set_msg_callback",
+        "SSL_CTX_set_msg_callback",
+        "1.0.2",
+        SINCE_0_9_7,
+        registers(1, "ssl_ctx_st.msg_callback"),
+    ),
+    entry(
         "SSL_CTX_set_options",
         "SSL_CTX_set_options",
         "3.5",
         SINCE_3_0_0,
         Plain,
+    ),
+    entry(
+        "SSL_CTX_set_security_callback",
+        "SSL_CTX_set_security_level",
+        "3.5",
+        SINCE_1_1_0,
+        registers(1, "ssl_ctx_st.sec_cb"),
+    ),
+    entry(
+        "SSL_CTX_set_verify",
+        "SSL_CTX_set_verify",
+        "1.0.2",
+        DOC_1_0_2,
+        registers(2, "ssl_ctx_st.verify_callback"),
     ),
     entry(
         "SSL_CTX_use_PrivateKey",
@@ -518,12 +785,13 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
         Plain,
         &[PASSWORD],
     ),
-    entry(
+    with(
         "SSL_CTX_use_certificate",
         "SSL_CTX_use_certificate",
         "1.0.2",
         DOC_1_0_2,
         Plain,
+        &[SECURITY_CTX_CERTIFICATE],
     ),
     with(
         "SSL_CTX_use_certificate_chain_file",
@@ -531,7 +799,7 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
         "1.0.2",
         DOC_1_0_2,
         Plain,
-        &[Premise::UnstatedSlots, PASSWORD],
+        &[Premise::ExDataCallbacks, PASSWORD, SECURITY_CTX_LOADED],
     ),
     with(
         "SSL_connect",
@@ -603,13 +871,41 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
         DOC_1_0_2,
         Plain,
     ),
+    entry(
+        "SSL_set_info_callback",
+        "SSL_CTX_set_info_callback",
+        "1.0.2",
+        DOC_1_0_2,
+        registers(1, "ssl_ctx_st.info_callback"),
+    ),
+    entry(
+        "SSL_set_msg_callback",
+        "SSL_CTX_set_msg_callback",
+        "1.0.2",
+        SINCE_0_9_7,
+        registers(1, "ssl_ctx_st.msg_callback"),
+    ),
+    entry(
+        "SSL_set_security_callback",
+        "SSL_CTX_set_security_level",
+        "3.5",
+        SINCE_1_1_0,
+        registers(1, "ssl_ctx_st.sec_cb"),
+    ),
+    entry(
+        "SSL_set_verify",
+        "SSL_CTX_set_verify",
+        "1.0.2",
+        DOC_1_0_2,
+        registers(2, "ssl_ctx_st.verify_callback"),
+    ),
     with(
         "SSL_shutdown",
         "SSL_shutdown",
         "1.0.2",
         DOC_1_0_2,
         Plain,
-        UNSTATED,
+        SHUTDOWN,
     ),
     with(
         "SSL_write",

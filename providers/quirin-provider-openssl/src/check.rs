@@ -47,6 +47,10 @@
 //!    writer the slot's page names must be declared as such a setter
 //!    ([`slot_writers_declared`]), and a call that may run a slot whose
 //!    setters are not declared names the premise `openssl_unstated_callback_slots`.
+//!    Card **OPENSSL-UNSTATED-CALLBACK-SLOTS**: a slot's page's NAME list must
+//!    be exactly the writers and not-writers of the slots citing it, and a
+//!    call whose every slot is stated names only `openssl_ex_data_callbacks`
+//!    for the ex_data registry.
 //!    Card **REFERENCE-DROP-NULL-ACCEPTING**: a release whose page states that a
 //!    NULL argument does nothing is a NULL-accepting drop,
 //!    `resource_reference_dropped(p, nullable)`, and the cited snapshot must
@@ -68,8 +72,8 @@ use qcore_schemas::plugin::{
 use serde_json::Value;
 
 pub use crate::documented::{
-    DOCUMENTED, Documented, DocumentedFunction, Null, Premise, SLOTS, Slot, UNSTATED_SLOTS,
-    UNSTATED_SLOTS_STATEMENT,
+    DOCUMENTED, Documented, DocumentedFunction, EX_DATA, EX_DATA_STATEMENT, Null, Premise, SLOTS,
+    Slot, UNSTATED_SLOTS, UNSTATED_SLOTS_STATEMENT,
 };
 
 /// The crate name a request's translation unit carries.
@@ -147,6 +151,11 @@ pub fn declaration(module: &str, function: &str) -> Option<Declaration> {
 /// `fnptr`.
 pub const FUNCTION_TYPEDEFS: &[&str] = &["pem_password_cb"];
 
+/// Card **OPENSSL-UNSTATED-CALLBACK-SLOTS**: the pinned headers' typedefs of
+/// function *pointer* types (`typedef int (*SSL_verify_cb)(int preverify_ok,
+/// X509_STORE_CTX *x509_ctx);`), which are `fnptr` themselves.
+pub const FUNCTION_POINTER_TYPEDEFS: &[&str] = &["SSL_verify_cb"];
+
 /// The contract type a C type from a pinned prototype corresponds to.
 #[must_use]
 pub fn contract_type(c_type: &str) -> Option<&'static str> {
@@ -169,6 +178,10 @@ pub fn contract_type(c_type: &str) -> Option<&'static str> {
         // A pointer to a function type is `fnptr`; a pointer to that pointer
         // has no spelling.
         return (stars == 1).then_some("fnptr");
+    }
+    if FUNCTION_POINTER_TYPEDEFS.contains(&base) {
+        // The typedef is the pointer itself; a pointer to it has no spelling.
+        return (stars == 0).then_some("fnptr");
     }
     match stars {
         0 => {}
@@ -502,6 +515,32 @@ pub fn slot_writers_declared(slot: &str, snapshots: &Value) -> Result<(), String
         .split(',')
         .map(str::trim)
         .collect::<Vec<_>>();
+    // Card OPENSSL-UNSTATED-CALLBACK-SLOTS: every function the page names is
+    // a writer or a not-writer of a slot citing the page, and nothing else is
+    // listed, so a writer the page names is never left out unremarked.
+    let accounted = SLOTS
+        .iter()
+        .filter(|known| known.page == stated.page)
+        .flat_map(|known| known.writers.iter().chain(known.not_writers))
+        .copied()
+        .collect::<std::collections::BTreeSet<_>>();
+    let listed = named
+        .iter()
+        .copied()
+        .collect::<std::collections::BTreeSet<_>>();
+    if let Some(unaccounted) = listed.difference(&accounted).next() {
+        return Err(format!(
+            "{} (3.5) names {unaccounted}, which no slot citing the page lists as a writer or \
+             a not-writer",
+            stated.page
+        ));
+    }
+    if let Some(unnamed) = accounted.difference(&listed).next() {
+        return Err(format!(
+            "`{slot}`'s page {} (3.5) does not name {unnamed}",
+            stated.page
+        ));
+    }
     for writer in stated.writers {
         if !named.contains(writer) {
             return Err(format!(
@@ -564,6 +603,9 @@ pub fn expected_clauses(
             Premise::UnstatedSlots => format!(
                 "requires resource_premise({UNSTATED_SLOTS}, \"{UNSTATED_SLOTS_STATEMENT}\")"
             ),
+            Premise::ExDataCallbacks => {
+                format!("requires resource_premise({EX_DATA}, \"{EX_DATA_STATEMENT}\")")
+            }
             Premise::SlotInvoked {
                 object,
                 slot,
@@ -1134,8 +1176,9 @@ mod tests {
         for slot in SLOTS {
             slot_writers_declared(slot.key, &snapshots).unwrap();
         }
-        assert_eq!(SLOTS.len(), 2);
-        assert!(slot_writers_declared("ssl_ctx_st.sec_cb", &snapshots).is_err());
+        assert_eq!(SLOTS.len(), 10);
+        // Card OPENSSL-UNSTATED-CALLBACK-SLOTS: a ctrl arm stays unstated.
+        assert!(slot_writers_declared("ssl_ctx_st.servername_cb", &snapshots).is_err());
         // A page that does not name a writer refuses the slot.
         let mut stripped = snapshots.clone();
         for page in stripped["pages"].as_array_mut().unwrap() {
@@ -1151,6 +1194,161 @@ mod tests {
                 assert!(SLOTS.iter().any(|known| known.key == slot), "{slot}");
             }
         }
+    }
+
+    /// Card OPENSSL-UNSTATED-CALLBACK-SLOTS: a page's NAME list is exactly
+    /// the writers and not-writers of the slots citing it, so a writer the
+    /// page names is never left out, and a writer it does not name refuses.
+    #[test]
+    fn a_page_naming_an_unlisted_function_refuses_its_slots() {
+        let snapshots: Value = serde_json::from_str(crate::DOC_SNAPSHOTS).unwrap();
+        let rename = |page_name: &str, name: &str| {
+            let mut changed = snapshots.clone();
+            for page in changed["pages"].as_array_mut().unwrap() {
+                if page["page"] == page_name && page["series"] == "3.5" {
+                    page["name"] = Value::from(name);
+                }
+            }
+            changed
+        };
+        // A setter the page names that no slot lists (a writer left out).
+        let extra = rename(
+            "SSL_CTX_set_info_callback",
+            "SSL_CTX_set_info_callback, SSL_CTX_get_info_callback, SSL_set_info_callback, \
+             SSL_get_info_callback, SSL_set_other_info_callback - handle information callback",
+        );
+        let refused = slot_writers_declared("ssl_ctx_st.info_callback", &extra).unwrap_err();
+        assert!(refused.contains("SSL_set_other_info_callback"), "{refused}");
+        // A writer the page no longer names.
+        let missing = rename(
+            "SSL_CTX_set_verify",
+            "SSL_CTX_set_verify, SSL_CTX_set_verify_depth - set peer certificate verification \
+             parameters",
+        );
+        assert!(slot_writers_declared("ssl_ctx_st.verify_callback", &missing).is_err());
+        // Three slots of one page: a getter dropped from the page refuses
+        // each of them.
+        let session = rename(
+            "SSL_CTX_sess_set_get_cb",
+            "SSL_CTX_sess_set_new_cb, SSL_CTX_sess_set_remove_cb, SSL_CTX_sess_set_get_cb - \
+             provide callback functions",
+        );
+        for key in [
+            "ssl_ctx_st.new_session_cb",
+            "ssl_ctx_st.remove_session_cb",
+            "ssl_ctx_st.get_session_cb",
+        ] {
+            assert!(slot_writers_declared(key, &session).is_err(), "{key}");
+        }
+    }
+
+    /// Card OPENSSL-UNSTATED-CALLBACK-SLOTS: the new slot readings
+    /// drift-refused.
+    #[test]
+    fn a_drifted_unstated_slot_reading_is_refused() {
+        let premise = format!(
+            "    requires resource_premise({UNSTATED_SLOTS}, \"{UNSTATED_SLOTS_STATEMENT}\");\n"
+        );
+        let ex_data =
+            format!("    requires resource_premise({EX_DATA}, \"{EX_DATA_STATEMENT}\");\n");
+        // Each newly stated invocation of a handshake call dropped, or read
+        // with a supplied value where the page names the connection.
+        let (path, text) = module_of("SSL_read");
+        let start = text.find("extern fn SSL_read(").unwrap();
+        let end = start + text[start..].find("};").unwrap();
+        let body = &text[start..end];
+        for slot in [
+            "verify_callback",
+            "info_callback",
+            "msg_callback",
+            "sec_cb",
+            "new_session_cb",
+            "remove_session_cb",
+            "get_session_cb",
+            "client_cert_cb",
+        ] {
+            let line = body
+                .lines()
+                .find(|line| line.contains(&format!("ssl_ctx_st.{slot},")))
+                .unwrap_or_else(|| panic!("SSL_read states {slot}"));
+            let dropped = format!(
+                "{}{}",
+                &text[..start],
+                text[start..].replacen(&format!("{line}\n"), "", 1)
+            );
+            assert!(
+                check_function(path, &dropped, "SSL_read").is_err(),
+                "{slot}"
+            );
+        }
+        let supplied = format!(
+            "{}{}",
+            &text[..start],
+            text[start..].replacen(
+                "resource_callback_slot_invoked(ssl, ssl_ctx_st.info_callback, ssl, _, _)",
+                "resource_callback_slot_invoked(ssl, ssl_ctx_st.info_callback, _, _, _)",
+                1,
+            )
+        );
+        assert_ne!(supplied, text);
+        assert!(check_function(path, &supplied, "SSL_read").is_err());
+        // The handshake calls keep the narrowed premise (the ctrl arms).
+        let unpremised = format!(
+            "{}{}",
+            &text[..start],
+            text[start..].replacen(&premise, "", 1)
+        );
+        assert!(check_function(path, &unpremised, "SSL_read").is_err());
+        // SSL_CTX_use_certificate: its security invocation dropped, the
+        // caller's certificate read as a supplied value, the context's check
+        // read as the connection's.
+        let (path, text) = module_of("SSL_CTX_use_certificate");
+        let invocation = "    ensures normal resource_callback_slot_invoked(ctx, ssl_ctx_st.sec_cb, _, ctx, _, _, _, x, _);\n";
+        assert!(text.contains(invocation));
+        let silent = text.replacen(invocation, "", 1);
+        assert!(check_function(path, &silent, "SSL_CTX_use_certificate").is_err());
+        let supplied = text.replacen(
+            "ssl_ctx_st.sec_cb, _, ctx, _, _, _, x, _)",
+            "ssl_ctx_st.sec_cb, _, ctx, _, _, _, _, _)",
+            1,
+        );
+        assert!(check_function(path, &supplied, "SSL_CTX_use_certificate").is_err());
+        let connection = text.replacen(
+            "ssl_ctx_st.sec_cb, _, ctx, _, _, _, x, _)",
+            "ssl_ctx_st.sec_cb, ctx, _, _, _, _, x, _)",
+            1,
+        );
+        assert!(check_function(path, &connection, "SSL_CTX_use_certificate").is_err());
+        // SSL_CTX_use_certificate_chain_file: the slot premise given back in
+        // place of the ex_data one, and the ex_data premise dropped.
+        let (path, text) = module_of("SSL_CTX_use_certificate_chain_file");
+        assert!(text.contains(&ex_data));
+        let widened = text.replacen(&ex_data, &premise, 1);
+        assert!(check_function(path, &widened, "SSL_CTX_use_certificate_chain_file").is_err());
+        let silent = text.replacen(&ex_data, "", 1);
+        assert!(check_function(path, &silent, "SSL_CTX_use_certificate_chain_file").is_err());
+        // A setter registering the wrong slot, or a callback the prototype
+        // does not give it.
+        let (path, text) = module_of("SSL_CTX_set_verify");
+        let wrong = text.replacen(
+            "resource_callback_slot_registered(ctx, ssl_ctx_st.verify_callback, verify_callback)",
+            "resource_callback_slot_registered(ctx, ssl_ctx_st.cert_cb, verify_callback)",
+            1,
+        );
+        assert!(check_function(path, &wrong, "SSL_CTX_set_verify").is_err());
+        // SSL_shutdown keeps its premise beside the info and message
+        // invocations.
+        let (path, text) = module_of("SSL_shutdown");
+        let start = text.find("extern fn SSL_shutdown(").unwrap();
+        let unpremised = format!(
+            "{}{}",
+            &text[..start],
+            text[start..].replacen(&premise, "", 1)
+        );
+        assert!(check_function(path, &unpremised, "SSL_shutdown").is_err());
+        // The pointer typedef is `fnptr` only by value.
+        assert_eq!(contract_type("SSL_verify_cb"), Some("fnptr"));
+        assert_eq!(contract_type("SSL_verify_cb *"), None);
     }
 
     #[test]
