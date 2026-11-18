@@ -135,6 +135,12 @@ contract {
 // bound for SSL_shutdown is the oldest series that documents it. "ssl MUST
 // NOT be NULL" (3.5). Pinned prototype: `int SSL_shutdown(SSL *s)`. It
 // sends or reads the close_notify alert on `ssl`; custody is unchanged.
+// Card OPENSSL-UNDECLARED-HANDSHAKE-CALLBACKS: the alert is a record, and the
+// record padding callback "is invoked for every record before encryption",
+// its `type` "may be one of SSL3_RT_APPLICATION_DATA, SSL3_RT_HANDSHAKE, or
+// SSL3_RT_ALERT" (SSL_CTX_set_record_padding_callback, 3.5): a stated
+// invocation. The premise stays for what reading records may still run (a
+// post-handshake message's callbacks, a BIO's method).
 extern fn SSL_shutdown(ssl: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
@@ -144,5 +150,6 @@ contract {
     ensures normal resource_borrowed(ssl);
     ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.info_callback, ssl, _, _);
     ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.msg_callback, _, _, _, _, _, ssl, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.record_padding_cb, ssl, _, _, _);
     ensures normal resource_return_none();
 };

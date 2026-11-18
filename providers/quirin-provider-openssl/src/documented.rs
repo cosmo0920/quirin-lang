@@ -129,6 +129,21 @@ pub enum Premise {
         slot: &'static str,
         arguments: &'static [Option<usize>],
     },
+    /// Card **OPENSSL-UNDECLARED-HANDSHAKE-CALLBACKS**: `ensures normal
+    /// resource_callback_slot_registered(H, slot, F)` beside the shape's own
+    /// registration: a setter that registers several callbacks at once
+    /// (`SSL_CTX_add_custom_ext`'s `add_cb`, `free_cb` and `parse_cb`) is a
+    /// writer of each of their slots.
+    SlotRegistered {
+        holder: usize,
+        callback: usize,
+        slot: &'static str,
+    },
+    /// Card **OPENSSL-UNDECLARED-HANDSHAKE-CALLBACKS**: `ensures normal
+    /// resource_retained_by(item, holder)` beside the shape's own retention
+    /// (C04.14): the holder keeps a second pointer for its callbacks
+    /// (`SSL_CTX_add_custom_ext`'s `parse_arg` beside `add_arg`).
+    RetainedBy { item: usize, holder: usize },
     /// `ensures normal resource_callback_invoked(F, A…)` (C04.19): the
     /// callback at `callback` is called during the call only, with these
     /// arguments (`Some(i)`: parameter `i`; `None`: a value the callee
@@ -308,6 +323,221 @@ pub const SLOTS: &[Slot] = &[
         writers: &["SSL_CTX_set_client_cert_cb"],
         not_writers: &["SSL_CTX_get_client_cert_cb"],
     },
+    // Card OPENSSL-UNDECLARED-HANDSHAKE-CALLBACKS. SSL_CTX_set_keylog_callback
+    // (3.5): the context's one writer; the callback type is named too.
+    Slot {
+        key: "ssl_ctx_st.keylog_callback",
+        page: "SSL_CTX_set_keylog_callback",
+        writers: &["SSL_CTX_set_keylog_callback"],
+        not_writers: &["SSL_CTX_get_keylog_callback", "SSL_CTX_keylog_cb_func"],
+    },
+    // SSL_CTX_set_alpn_select_cb (3.5): three slots of the context, one
+    // writer each (ALPN selection, NPN selection, NPN advertisement); the
+    // protocol list setters, the selection helper and the getters are listed
+    // once.
+    Slot {
+        key: "ssl_ctx_st.alpn_select_cb",
+        page: "SSL_CTX_set_alpn_select_cb",
+        writers: &["SSL_CTX_set_alpn_select_cb"],
+        not_writers: &[
+            "SSL_CTX_set_alpn_protos",
+            "SSL_set_alpn_protos",
+            "SSL_select_next_proto",
+            "SSL_get0_alpn_selected",
+            "SSL_get0_next_proto_negotiated",
+        ],
+    },
+    Slot {
+        key: "ssl_ctx_st.npn_select_cb",
+        page: "SSL_CTX_set_alpn_select_cb",
+        writers: &["SSL_CTX_set_next_proto_select_cb"],
+        not_writers: &[],
+    },
+    Slot {
+        key: "ssl_ctx_st.npn_advertised_cb",
+        page: "SSL_CTX_set_alpn_select_cb",
+        writers: &["SSL_CTX_set_next_protos_advertised_cb"],
+        not_writers: &[],
+    },
+    // SSL_CTX_set_cert_verify_callback (3.5): "SSL objects that are created
+    // from ctx inherit the setting": the context's one writer.
+    Slot {
+        key: "ssl_ctx_st.app_verify_callback",
+        page: "SSL_CTX_set_cert_verify_callback",
+        writers: &["SSL_CTX_set_cert_verify_callback"],
+        not_writers: &[],
+    },
+    // SSL_CTX_set_psk_client_callback (3.5): two slots (the TLSv1.2 client
+    // callback and the TLSv1.3 use-session callback), each with its context
+    // and SSL writer; the callback types are listed once.
+    Slot {
+        key: "ssl_ctx_st.psk_client_callback",
+        page: "SSL_CTX_set_psk_client_callback",
+        writers: &[
+            "SSL_CTX_set_psk_client_callback",
+            "SSL_set_psk_client_callback",
+        ],
+        not_writers: &["SSL_psk_client_cb_func", "SSL_psk_use_session_cb_func"],
+    },
+    Slot {
+        key: "ssl_ctx_st.psk_use_session_cb",
+        page: "SSL_CTX_set_psk_client_callback",
+        writers: &[
+            "SSL_CTX_set_psk_use_session_callback",
+            "SSL_set_psk_use_session_callback",
+        ],
+        not_writers: &[],
+    },
+    // SSL_CTX_use_psk_identity_hint (3.5): the two server slots (TLSv1.2
+    // server callback, TLSv1.3 find-session callback); the identity hint
+    // setters keep a copy of a string, not a callback.
+    Slot {
+        key: "ssl_ctx_st.psk_server_callback",
+        page: "SSL_CTX_use_psk_identity_hint",
+        writers: &[
+            "SSL_CTX_set_psk_server_callback",
+            "SSL_set_psk_server_callback",
+        ],
+        not_writers: &[
+            "SSL_psk_server_cb_func",
+            "SSL_psk_find_session_cb_func",
+            "SSL_CTX_use_psk_identity_hint",
+            "SSL_use_psk_identity_hint",
+        ],
+    },
+    Slot {
+        key: "ssl_ctx_st.psk_find_session_cb",
+        page: "SSL_CTX_use_psk_identity_hint",
+        writers: &[
+            "SSL_CTX_set_psk_find_session_callback",
+            "SSL_set_psk_find_session_callback",
+        ],
+        not_writers: &[],
+    },
+    // SSL_CTX_set_client_hello_cb (3.5): the context's one writer; the
+    // other names are the callback type and the accessors it may call.
+    Slot {
+        key: "ssl_ctx_st.client_hello_cb",
+        page: "SSL_CTX_set_client_hello_cb",
+        writers: &["SSL_CTX_set_client_hello_cb"],
+        not_writers: &[
+            "SSL_client_hello_cb_fn",
+            "SSL_client_hello_isv2",
+            "SSL_client_hello_get0_legacy_version",
+            "SSL_client_hello_get0_random",
+            "SSL_client_hello_get0_session_id",
+            "SSL_client_hello_get0_ciphers",
+            "SSL_client_hello_get0_compression_methods",
+            "SSL_client_hello_get1_extensions_present",
+            "SSL_client_hello_get_extension_order",
+            "SSL_client_hello_get0_ext",
+        ],
+    },
+    // SSL_CTX_set_record_padding_callback (3.5): "The value set in ctx is
+    // copied to a new SSL by SSL_new()": one key. The `_arg` setters keep the
+    // callback's argument, not the callback; block padding is a size.
+    Slot {
+        key: "ssl_ctx_st.record_padding_cb",
+        page: "SSL_CTX_set_record_padding_callback",
+        writers: &[
+            "SSL_CTX_set_record_padding_callback",
+            "SSL_set_record_padding_callback",
+        ],
+        not_writers: &[
+            "SSL_CTX_set_record_padding_callback_arg",
+            "SSL_set_record_padding_callback_arg",
+            "SSL_CTX_get_record_padding_callback_arg",
+            "SSL_get_record_padding_callback_arg",
+            "SSL_CTX_set_block_padding",
+            "SSL_CTX_set_block_padding_ex",
+            "SSL_set_block_padding",
+            "SSL_set_block_padding_ex",
+        ],
+    },
+    // SSL_read_early_data (3.5): the early data slot's two writers, beside
+    // the early data I/O calls and limits (none declared).
+    Slot {
+        key: "ssl_ctx_st.allow_early_data_cb",
+        page: "SSL_read_early_data",
+        writers: &[
+            "SSL_CTX_set_allow_early_data_cb",
+            "SSL_set_allow_early_data_cb",
+        ],
+        not_writers: &[
+            "SSL_set_max_early_data",
+            "SSL_CTX_set_max_early_data",
+            "SSL_get_max_early_data",
+            "SSL_CTX_get_max_early_data",
+            "SSL_set_recv_max_early_data",
+            "SSL_CTX_set_recv_max_early_data",
+            "SSL_get_recv_max_early_data",
+            "SSL_CTX_get_recv_max_early_data",
+            "SSL_SESSION_get_max_early_data",
+            "SSL_SESSION_set_max_early_data",
+            "SSL_write_early_data",
+            "SSL_read_early_data",
+            "SSL_get_early_data_status",
+            "SSL_allow_early_data_cb_fn",
+        ],
+    },
+    // SSL_extension_supported (3.5): six slots, the add, free and parse
+    // callbacks of the `_ex` style (SSL_CTX_add_custom_ext) and of the older
+    // style (SSL_CTX_add_client_custom_ext, SSL_CTX_add_server_custom_ext),
+    // each setter registering three; the callback types and
+    // SSL_extension_supported are listed once.
+    Slot {
+        key: "ssl_ctx_st.custom_ext_add_cb_ex",
+        page: "SSL_extension_supported",
+        writers: &["SSL_CTX_add_custom_ext"],
+        not_writers: &[
+            "SSL_extension_supported",
+            "SSL_custom_ext_add_cb_ex",
+            "SSL_custom_ext_free_cb_ex",
+            "SSL_custom_ext_parse_cb_ex",
+            "custom_ext_add_cb",
+            "custom_ext_free_cb",
+            "custom_ext_parse_cb",
+        ],
+    },
+    Slot {
+        key: "ssl_ctx_st.custom_ext_free_cb_ex",
+        page: "SSL_extension_supported",
+        writers: &["SSL_CTX_add_custom_ext"],
+        not_writers: &[],
+    },
+    Slot {
+        key: "ssl_ctx_st.custom_ext_parse_cb_ex",
+        page: "SSL_extension_supported",
+        writers: &["SSL_CTX_add_custom_ext"],
+        not_writers: &[],
+    },
+    Slot {
+        key: "ssl_ctx_st.custom_ext_add_cb",
+        page: "SSL_extension_supported",
+        writers: &[
+            "SSL_CTX_add_client_custom_ext",
+            "SSL_CTX_add_server_custom_ext",
+        ],
+        not_writers: &[],
+    },
+    Slot {
+        key: "ssl_ctx_st.custom_ext_free_cb",
+        page: "SSL_extension_supported",
+        writers: &[
+            "SSL_CTX_add_client_custom_ext",
+            "SSL_CTX_add_server_custom_ext",
+        ],
+        not_writers: &[],
+    },
+    Slot {
+        key: "ssl_ctx_st.custom_ext_parse_cb",
+        page: "SSL_extension_supported",
+        writers: &[
+            "SSL_CTX_add_client_custom_ext",
+            "SSL_CTX_add_server_custom_ext",
+        ],
+        not_writers: &[],
+    },
 ];
 
 /// What the documentation supports for one function.
@@ -364,6 +594,7 @@ const DOC_3_0: &str = "resource_library_version(openssl, documented \"3.0\")";
 const SINCE_1_1_0: &str = "resource_library_version(openssl, since \"1.1.0\")";
 const SINCE_3_0_0: &str = "resource_library_version(openssl, since \"3.0.0\")";
 const SINCE_0_9_7: &str = "resource_library_version(openssl, since \"0.9.7\")";
+const SINCE_1_1_1: &str = "resource_library_version(openssl, since \"1.1.1\")";
 
 /// Card **OPENSSL-UNSTATED-CALLBACK-SLOTS**: a setter that registers the
 /// function pointer at `callback` into `slot` of the object at position 0,
@@ -374,6 +605,18 @@ const fn registers(callback: usize, slot: &'static str) -> Documented {
         callback,
         slot,
         retains: None,
+    }
+}
+
+/// Card **OPENSSL-UNDECLARED-HANDSHAKE-CALLBACKS**: a setter that registers
+/// the function pointer at `callback` into `slot` of the object at position 0
+/// and keeps the pointer at `arg` for it.
+const fn registers_with_arg(callback: usize, slot: &'static str, arg: usize) -> Documented {
+    Documented::RegistersSlot {
+        holder: 0,
+        callback,
+        slot,
+        retains: Some(arg),
     }
 }
 
@@ -414,12 +657,92 @@ const GET_SESSION: Premise = on_ssl("ssl_ctx_st.get_session_cb", &[Some(0), None
 /// The client certificate callback, `client_cert_cb(ssl, x509, pkey)`.
 const CLIENT_CERT: Premise = on_ssl("ssl_ctx_st.client_cert_cb", &[Some(0), None, None]);
 
+/// Card OPENSSL-UNDECLARED-HANDSHAKE-CALLBACKS: the keylog callback, called
+/// "with two items: the ssl object associated with the connection, and line".
+const KEYLOG: Premise = on_ssl("ssl_ctx_st.keylog_callback", &[Some(0), None]);
+/// The ALPN selection callback, `cb(ssl, out, outlen, in, inlen, arg)`.
+const ALPN_SELECT: Premise = on_ssl(
+    "ssl_ctx_st.alpn_select_cb",
+    &[Some(0), None, None, None, None, None],
+);
+/// The NPN selection callback, `cb(s, out, outlen, in, inlen, arg)`.
+const NPN_SELECT: Premise = on_ssl(
+    "ssl_ctx_st.npn_select_cb",
+    &[Some(0), None, None, None, None, None],
+);
+/// The NPN advertisement callback, `cb(ssl, out, outlen, arg)`.
+const NPN_ADVERTISED: Premise =
+    on_ssl("ssl_ctx_st.npn_advertised_cb", &[Some(0), None, None, None]);
+/// The certificate verification callback, `callback(x509_store_ctx, arg)`:
+/// two values the callee supplies (the connection is not an argument).
+const APP_VERIFY: Premise = on_ssl("ssl_ctx_st.app_verify_callback", &[None, None]);
+/// The PSK callbacks: `client(ssl, hint, identity, max_identity_len, psk,
+/// max_psk_len)`, `use_session(ssl, md, id, idlen, sess)`, `server(ssl,
+/// identity, psk, max_psk_len)`, `find_session(ssl, identity, identity_len,
+/// sess)`.
+const PSK_CLIENT: Premise = on_ssl(
+    "ssl_ctx_st.psk_client_callback",
+    &[Some(0), None, None, None, None, None],
+);
+const PSK_USE_SESSION: Premise = on_ssl(
+    "ssl_ctx_st.psk_use_session_cb",
+    &[Some(0), None, None, None, None],
+);
+const PSK_SERVER: Premise = on_ssl(
+    "ssl_ctx_st.psk_server_callback",
+    &[Some(0), None, None, None],
+);
+const PSK_FIND_SESSION: Premise = on_ssl(
+    "ssl_ctx_st.psk_find_session_cb",
+    &[Some(0), None, None, None],
+);
+/// The ClientHello callback, `cb(s, al, arg)`.
+const CLIENT_HELLO: Premise = on_ssl("ssl_ctx_st.client_hello_cb", &[Some(0), None, None]);
+/// The record padding callback, `cb(ssl, type, len, arg)`: "invoked for every
+/// record before encryption".
+const RECORD_PADDING: Premise =
+    on_ssl("ssl_ctx_st.record_padding_cb", &[Some(0), None, None, None]);
+/// The early data callback, `cb(s, arg)`.
+const ALLOW_EARLY_DATA: Premise = on_ssl("ssl_ctx_st.allow_early_data_cb", &[Some(0), None]);
+/// The custom extension callbacks. `_ex` style: `add_cb(s, ext_type, context,
+/// out, outlen, x, chainidx, al, add_arg)`, `free_cb(s, ext_type, context, out,
+/// add_arg)`, `parse_cb(s, ext_type, context, in, inlen, x, chainidx, al,
+/// parse_arg)`; older style: `add_cb(s, ext_type, out, outlen, al, add_arg)`,
+/// `free_cb(s, ext_type, out, add_arg)`, `parse_cb(s, ext_type, in, inlen, al,
+/// parse_arg)`.
+const CUSTOM_ADD_EX: Premise = on_ssl(
+    "ssl_ctx_st.custom_ext_add_cb_ex",
+    &[Some(0), None, None, None, None, None, None, None, None],
+);
+const CUSTOM_FREE_EX: Premise = on_ssl(
+    "ssl_ctx_st.custom_ext_free_cb_ex",
+    &[Some(0), None, None, None, None],
+);
+const CUSTOM_PARSE_EX: Premise = on_ssl(
+    "ssl_ctx_st.custom_ext_parse_cb_ex",
+    &[Some(0), None, None, None, None, None, None, None, None],
+);
+const CUSTOM_ADD: Premise = on_ssl(
+    "ssl_ctx_st.custom_ext_add_cb",
+    &[Some(0), None, None, None, None, None],
+);
+const CUSTOM_FREE: Premise = on_ssl(
+    "ssl_ctx_st.custom_ext_free_cb",
+    &[Some(0), None, None, None],
+);
+const CUSTOM_PARSE: Premise = on_ssl(
+    "ssl_ctx_st.custom_ext_parse_cb",
+    &[Some(0), None, None, None, None, None],
+);
+
 /// Card OPENSSL-SSL-CTX-CALLBACK-SLOTS: a handshake or I/O call on `ssl` at
 /// position 0: the certificate slot, `cert_cb(ssl, arg)`, and the premise
 /// for every slot whose setters are not declared. Card
 /// OPENSSL-UNSTATED-CALLBACK-SLOTS: and every slot this crate now declares
 /// the setters of, each run during a handshake (which the I/O calls run when
-/// needed).
+/// needed). Card OPENSSL-UNDECLARED-HANDSHAKE-CALLBACKS: and the keylog,
+/// ALPN/NPN, certificate verification, PSK, ClientHello, record padding,
+/// early data and custom extension slots.
 const HANDSHAKE: &[Premise] = &[
     Premise::UnstatedSlots,
     on_ssl("ssl_ctx_st.cert_cb", &[Some(0), None]),
@@ -431,13 +754,34 @@ const HANDSHAKE: &[Premise] = &[
     REMOVE_SESSION,
     GET_SESSION,
     CLIENT_CERT,
+    KEYLOG,
+    ALPN_SELECT,
+    NPN_SELECT,
+    NPN_ADVERTISED,
+    APP_VERIFY,
+    PSK_CLIENT,
+    PSK_USE_SESSION,
+    PSK_SERVER,
+    PSK_FIND_SESSION,
+    CLIENT_HELLO,
+    RECORD_PADDING,
+    ALLOW_EARLY_DATA,
+    CUSTOM_ADD_EX,
+    CUSTOM_FREE_EX,
+    CUSTOM_PARSE_EX,
+    CUSTOM_ADD,
+    CUSTOM_FREE,
+    CUSTOM_PARSE,
 ];
 
 /// Card OPENSSL-UNSTATED-CALLBACK-SLOTS: `SSL_shutdown` sends or reads the
 /// close_notify alert: the info callback ("an alert appears") and the
 /// message callback (every protocol message sent or received); the premise
-/// for every other callback it may run.
-const SHUTDOWN: &[Premise] = &[Premise::UnstatedSlots, INFO, MESSAGE];
+/// for every other callback it may run. Card
+/// OPENSSL-UNDECLARED-HANDSHAKE-CALLBACKS: and the record padding callback,
+/// "invoked for every record before encryption", whose `type` may be
+/// `SSL3_RT_ALERT` (SSL_CTX_set_record_padding_callback, 3.5).
+const SHUTDOWN: &[Premise] = &[Premise::UnstatedSlots, INFO, MESSAGE, RECORD_PADDING];
 
 /// The context's password slot, `pem_password_cb(buf, size, rwflag, u)`:
 /// four values the callee supplies.
@@ -464,6 +808,40 @@ const SECURITY_CTX_CERTIFICATE: Premise = Premise::SlotInvoked {
     slot: "ssl_ctx_st.sec_cb",
     arguments: &[None, Some(0), None, None, None, Some(1), None],
 };
+
+/// Card OPENSSL-UNDECLARED-HANDSHAKE-CALLBACKS: `SSL_CTX_add_custom_ext`'s
+/// two other registrations (`free_cb` at 4, `parse_cb` at 6) and its second
+/// retention (`parse_arg` at 7), beside the shape's `add_cb` (3) and
+/// `add_arg` (5).
+const CUSTOM_EXT_EX: &[Premise] = &[
+    Premise::SlotRegistered {
+        holder: 0,
+        callback: 4,
+        slot: "ssl_ctx_st.custom_ext_free_cb_ex",
+    },
+    Premise::SlotRegistered {
+        holder: 0,
+        callback: 6,
+        slot: "ssl_ctx_st.custom_ext_parse_cb_ex",
+    },
+    Premise::RetainedBy { item: 7, holder: 0 },
+];
+
+/// The older style setters' (`free_cb` at 3, `parse_cb` at 5, `parse_arg` at
+/// 6), beside `add_cb` (2) and `add_arg` (4).
+const CUSTOM_EXT: &[Premise] = &[
+    Premise::SlotRegistered {
+        holder: 0,
+        callback: 3,
+        slot: "ssl_ctx_st.custom_ext_free_cb",
+    },
+    Premise::SlotRegistered {
+        holder: 0,
+        callback: 5,
+        slot: "ssl_ctx_st.custom_ext_parse_cb",
+    },
+    Premise::RetainedBy { item: 6, holder: 0 },
+];
 
 /// The premise alone: a call that may run callbacks of no stated slot.
 const UNSTATED: &[Premise] = &[Premise::UnstatedSlots];
@@ -638,6 +1016,30 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
         Release(0, Nullable),
     ),
     with(
+        "SSL_CTX_add_client_custom_ext",
+        "SSL_extension_supported",
+        "1.1.1",
+        DOC_1_1_1,
+        registers_with_arg(2, "ssl_ctx_st.custom_ext_add_cb", 4),
+        CUSTOM_EXT,
+    ),
+    with(
+        "SSL_CTX_add_custom_ext",
+        "SSL_extension_supported",
+        "3.5",
+        SINCE_1_1_1,
+        registers_with_arg(3, "ssl_ctx_st.custom_ext_add_cb_ex", 5),
+        CUSTOM_EXT_EX,
+    ),
+    with(
+        "SSL_CTX_add_server_custom_ext",
+        "SSL_extension_supported",
+        "1.1.1",
+        DOC_1_1_1,
+        registers_with_arg(2, "ssl_ctx_st.custom_ext_add_cb", 4),
+        CUSTOM_EXT,
+    ),
+    with(
         "SSL_CTX_free",
         "SSL_CTX_free",
         "1.1.1",
@@ -691,6 +1093,20 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
         registers(1, "ssl_ctx_st.remove_session_cb"),
     ),
     entry(
+        "SSL_CTX_set_allow_early_data_cb",
+        "SSL_read_early_data",
+        "3.5",
+        SINCE_1_1_1,
+        registers_with_arg(1, "ssl_ctx_st.allow_early_data_cb", 2),
+    ),
+    entry(
+        "SSL_CTX_set_alpn_select_cb",
+        "SSL_CTX_set_alpn_select_cb",
+        "1.0.2",
+        DOC_1_0_2,
+        registers_with_arg(1, "ssl_ctx_st.alpn_select_cb", 2),
+    ),
+    entry(
         "SSL_CTX_set_cert_cb",
         "SSL_CTX_set_cert_cb",
         "1.0.2",
@@ -703,11 +1119,25 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
         },
     ),
     entry(
+        "SSL_CTX_set_cert_verify_callback",
+        "SSL_CTX_set_cert_verify_callback",
+        "1.0.2",
+        SINCE_0_9_7,
+        registers_with_arg(1, "ssl_ctx_st.app_verify_callback", 2),
+    ),
+    entry(
         "SSL_CTX_set_client_cert_cb",
         "SSL_CTX_set_client_cert_cb",
         "1.0.2",
         DOC_1_0_2,
         registers(1, "ssl_ctx_st.client_cert_cb"),
+    ),
+    entry(
+        "SSL_CTX_set_client_hello_cb",
+        "SSL_CTX_set_client_hello_cb",
+        "3.5",
+        SINCE_1_1_1,
+        registers_with_arg(1, "ssl_ctx_st.client_hello_cb", 2),
     ),
     entry(
         "SSL_CTX_set_default_passwd_cb",
@@ -743,6 +1173,13 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
         registers(1, "ssl_ctx_st.info_callback"),
     ),
     entry(
+        "SSL_CTX_set_keylog_callback",
+        "SSL_CTX_set_keylog_callback",
+        "1.1.1",
+        DOC_1_1_1,
+        registers(1, "ssl_ctx_st.keylog_callback"),
+    ),
+    entry(
         "SSL_CTX_set_msg_callback",
         "SSL_CTX_set_msg_callback",
         "1.0.2",
@@ -750,11 +1187,60 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
         registers(1, "ssl_ctx_st.msg_callback"),
     ),
     entry(
+        "SSL_CTX_set_next_proto_select_cb",
+        "SSL_CTX_set_alpn_select_cb",
+        "1.1.1",
+        DOC_1_1_1,
+        registers_with_arg(1, "ssl_ctx_st.npn_select_cb", 2),
+    ),
+    entry(
+        "SSL_CTX_set_next_protos_advertised_cb",
+        "SSL_CTX_set_alpn_select_cb",
+        "1.1.1",
+        DOC_1_1_1,
+        registers_with_arg(1, "ssl_ctx_st.npn_advertised_cb", 2),
+    ),
+    entry(
         "SSL_CTX_set_options",
         "SSL_CTX_set_options",
         "3.5",
         SINCE_3_0_0,
         Plain,
+    ),
+    entry(
+        "SSL_CTX_set_psk_client_callback",
+        "SSL_CTX_set_psk_client_callback",
+        "1.0.2",
+        DOC_1_0_2,
+        registers(1, "ssl_ctx_st.psk_client_callback"),
+    ),
+    entry(
+        "SSL_CTX_set_psk_find_session_callback",
+        "SSL_CTX_use_psk_identity_hint",
+        "3.5",
+        SINCE_1_1_1,
+        registers(1, "ssl_ctx_st.psk_find_session_cb"),
+    ),
+    entry(
+        "SSL_CTX_set_psk_server_callback",
+        "SSL_CTX_use_psk_identity_hint",
+        "1.0.2",
+        DOC_1_0_2,
+        registers(1, "ssl_ctx_st.psk_server_callback"),
+    ),
+    entry(
+        "SSL_CTX_set_psk_use_session_callback",
+        "SSL_CTX_set_psk_client_callback",
+        "3.5",
+        SINCE_1_1_1,
+        registers(1, "ssl_ctx_st.psk_use_session_cb"),
+    ),
+    entry(
+        "SSL_CTX_set_record_padding_callback",
+        "SSL_CTX_set_record_padding_callback",
+        "3.5",
+        SINCE_1_1_1,
+        registers(1, "ssl_ctx_st.record_padding_cb"),
     ),
     entry(
         "SSL_CTX_set_security_callback",
@@ -853,6 +1339,20 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
     entry("SSL_new", "SSL_new", "1.0.2", DOC_1_0_2, CountedConstructor),
     with("SSL_read", "SSL_read", "1.0.2", DOC_1_0_2, Plain, HANDSHAKE),
     entry(
+        "SSL_set_accept_state",
+        "SSL_set_connect_state",
+        "1.0.2",
+        DOC_1_0_2,
+        Plain,
+    ),
+    entry(
+        "SSL_set_allow_early_data_cb",
+        "SSL_read_early_data",
+        "3.5",
+        SINCE_1_1_1,
+        registers_with_arg(1, "ssl_ctx_st.allow_early_data_cb", 2),
+    ),
+    entry(
         "SSL_set_cert_cb",
         "SSL_CTX_set_cert_cb",
         "1.0.2",
@@ -863,13 +1363,6 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
             slot: "ssl_ctx_st.cert_cb",
             retains: Some(2),
         },
-    ),
-    entry(
-        "SSL_set_accept_state",
-        "SSL_set_connect_state",
-        "1.0.2",
-        DOC_1_0_2,
-        Plain,
     ),
     entry(
         "SSL_set_info_callback",
@@ -884,6 +1377,41 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
         "1.0.2",
         SINCE_0_9_7,
         registers(1, "ssl_ctx_st.msg_callback"),
+    ),
+    entry(
+        "SSL_set_psk_client_callback",
+        "SSL_CTX_set_psk_client_callback",
+        "1.0.2",
+        DOC_1_0_2,
+        registers(1, "ssl_ctx_st.psk_client_callback"),
+    ),
+    entry(
+        "SSL_set_psk_find_session_callback",
+        "SSL_CTX_use_psk_identity_hint",
+        "3.5",
+        SINCE_1_1_1,
+        registers(1, "ssl_ctx_st.psk_find_session_cb"),
+    ),
+    entry(
+        "SSL_set_psk_server_callback",
+        "SSL_CTX_use_psk_identity_hint",
+        "1.0.2",
+        DOC_1_0_2,
+        registers(1, "ssl_ctx_st.psk_server_callback"),
+    ),
+    entry(
+        "SSL_set_psk_use_session_callback",
+        "SSL_CTX_set_psk_client_callback",
+        "3.5",
+        SINCE_1_1_1,
+        registers(1, "ssl_ctx_st.psk_use_session_cb"),
+    ),
+    entry(
+        "SSL_set_record_padding_callback",
+        "SSL_CTX_set_record_padding_callback",
+        "3.5",
+        SINCE_1_1_1,
+        registers(1, "ssl_ctx_st.record_padding_cb"),
     ),
     entry(
         "SSL_set_security_callback",

@@ -64,15 +64,51 @@ module contract;
 //   requested by a server", `client_cert_cb(SSL *ssl, X509 **x509, EVP_PKEY
 //   **pkey)` (SSL_CTX_set_client_cert_cb, 3.5).
 //
+// Card OPENSSL-UNDECLARED-HANDSHAKE-CALLBACKS: and the handshake slots whose
+// setters ssl_handshake.qv now declares, each with every writer its 3.5 page
+// names:
+//
+// * the keylog callback, "called whenever TLS key material is generated or
+//   received" with "the ssl object associated with the connection, and
+//   line" (SSL_CTX_set_keylog_callback), `ssl_ctx_st.keylog_callback`;
+// * the ALPN selection callback, `cb(ssl, out, outlen, in, inlen, arg)` "used
+//   by a server to select which protocol to use for the incoming
+//   connection", and the NPN selection and advertisement callbacks of the
+//   same page (SSL_CTX_set_alpn_select_cb), `ssl_ctx_st.alpn_select_cb`,
+//   `.npn_select_cb`, `.npn_advertised_cb`;
+// * the certificate verification callback, "called instead with the
+//   arguments callback(X509_STORE_CTX *x509_store_ctx, void *arg)" when "a
+//   peer certificate has been received during an SSL/TLS handshake"
+//   (SSL_CTX_set_cert_verify_callback), `ssl_ctx_st.app_verify_callback`;
+// * the PSK callbacks, each "given the connection in parameter ssl"
+//   (SSL_CTX_set_psk_client_callback, SSL_CTX_use_psk_identity_hint),
+//   `.psk_client_callback`, `.psk_use_session_cb`, `.psk_server_callback`,
+//   `.psk_find_session_cb`;
+// * the ClientHello callback, "called during the early stages of ClientHello
+//   processing on the server" (SSL_CTX_set_client_hello_cb),
+//   `.client_hello_cb`;
+// * the record padding callback, "invoked for every record before
+//   encryption" (SSL_CTX_set_record_padding_callback), `.record_padding_cb`;
+// * the early data callback, "called at a point in the handshake immediately
+//   before a decision is made to accept or reject early data"
+//   (SSL_read_early_data), `.allow_early_data_cb`;
+// * the custom extension callbacks, add_cb "called to send custom extension
+//   data", free_cb "with the value of out set by the add callback", parse_cb
+//   "receives data for TLS extensions", in both callback styles
+//   (SSL_extension_supported), `.custom_ext_add_cb_ex` and its five
+//   siblings.
+//
 // What each callback hands back (a session reference a new-session callback
 // keeps by returning 1, the certificate and key a client certificate
 // callback sets) is outside C04.19's identity composition, so a run that
 // registers such a callback refuses these calls; one that registers none, or
 // only identity candidates, decides them. What these calls may still run
 // unstated (an SSL_CTX_callback_ctrl arm: the servername, status or ticket
-// key callback; another slot whose setters this crate does not declare, such
-// as the keylog or ALPN selection callback; a BIO's method or callback; an
-// ex_data callback) stays under the narrowed premise
+// key callback; the certificate transparency validation callback, which
+// SSL_CTX_enable_ct writes with the library's own; another slot whose
+// setters this crate does not declare, such as the session ticket or session
+// id generation callback; a BIO's method or callback; an ex_data callback)
+// stays under the narrowed premise
 // `openssl_unstated_callback_slots` (C04.18), published with every row that
 // applies these declarations. The callbacks themselves are the application's
 // functions, analysed on their own rows.
@@ -103,6 +139,24 @@ contract {
     ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.remove_session_cb, _, _);
     ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.get_session_cb, ssl, _, _, _);
     ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.client_cert_cb, ssl, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.keylog_callback, ssl, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.alpn_select_cb, ssl, _, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.npn_select_cb, ssl, _, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.npn_advertised_cb, ssl, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.app_verify_callback, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.psk_client_callback, ssl, _, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.psk_use_session_cb, ssl, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.psk_server_callback, ssl, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.psk_find_session_cb, ssl, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.client_hello_cb, ssl, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.record_padding_cb, ssl, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.allow_early_data_cb, ssl, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.custom_ext_add_cb_ex, ssl, _, _, _, _, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.custom_ext_free_cb_ex, ssl, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.custom_ext_parse_cb_ex, ssl, _, _, _, _, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.custom_ext_add_cb, ssl, _, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.custom_ext_free_cb, ssl, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.custom_ext_parse_cb, ssl, _, _, _, _, _);
     ensures normal resource_return_none();
 };
 
@@ -129,6 +183,24 @@ contract {
     ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.remove_session_cb, _, _);
     ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.get_session_cb, ssl, _, _, _);
     ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.client_cert_cb, ssl, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.keylog_callback, ssl, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.alpn_select_cb, ssl, _, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.npn_select_cb, ssl, _, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.npn_advertised_cb, ssl, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.app_verify_callback, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.psk_client_callback, ssl, _, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.psk_use_session_cb, ssl, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.psk_server_callback, ssl, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.psk_find_session_cb, ssl, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.client_hello_cb, ssl, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.record_padding_cb, ssl, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.allow_early_data_cb, ssl, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.custom_ext_add_cb_ex, ssl, _, _, _, _, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.custom_ext_free_cb_ex, ssl, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.custom_ext_parse_cb_ex, ssl, _, _, _, _, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.custom_ext_add_cb, ssl, _, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.custom_ext_free_cb, ssl, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.custom_ext_parse_cb, ssl, _, _, _, _, _);
     ensures normal resource_return_none();
 };
 
@@ -151,6 +223,24 @@ contract {
     ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.remove_session_cb, _, _);
     ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.get_session_cb, ssl, _, _, _);
     ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.client_cert_cb, ssl, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.keylog_callback, ssl, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.alpn_select_cb, ssl, _, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.npn_select_cb, ssl, _, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.npn_advertised_cb, ssl, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.app_verify_callback, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.psk_client_callback, ssl, _, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.psk_use_session_cb, ssl, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.psk_server_callback, ssl, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.psk_find_session_cb, ssl, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.client_hello_cb, ssl, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.record_padding_cb, ssl, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.allow_early_data_cb, ssl, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.custom_ext_add_cb_ex, ssl, _, _, _, _, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.custom_ext_free_cb_ex, ssl, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.custom_ext_parse_cb_ex, ssl, _, _, _, _, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.custom_ext_add_cb, ssl, _, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.custom_ext_free_cb, ssl, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.custom_ext_parse_cb, ssl, _, _, _, _, _);
     ensures normal resource_return_none();
 };
 
@@ -174,6 +264,24 @@ contract {
     ensures normal resource_callback_slot_invoked(s, ssl_ctx_st.remove_session_cb, _, _);
     ensures normal resource_callback_slot_invoked(s, ssl_ctx_st.get_session_cb, s, _, _, _);
     ensures normal resource_callback_slot_invoked(s, ssl_ctx_st.client_cert_cb, s, _, _);
+    ensures normal resource_callback_slot_invoked(s, ssl_ctx_st.keylog_callback, s, _);
+    ensures normal resource_callback_slot_invoked(s, ssl_ctx_st.alpn_select_cb, s, _, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(s, ssl_ctx_st.npn_select_cb, s, _, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(s, ssl_ctx_st.npn_advertised_cb, s, _, _, _);
+    ensures normal resource_callback_slot_invoked(s, ssl_ctx_st.app_verify_callback, _, _);
+    ensures normal resource_callback_slot_invoked(s, ssl_ctx_st.psk_client_callback, s, _, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(s, ssl_ctx_st.psk_use_session_cb, s, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(s, ssl_ctx_st.psk_server_callback, s, _, _, _);
+    ensures normal resource_callback_slot_invoked(s, ssl_ctx_st.psk_find_session_cb, s, _, _, _);
+    ensures normal resource_callback_slot_invoked(s, ssl_ctx_st.client_hello_cb, s, _, _);
+    ensures normal resource_callback_slot_invoked(s, ssl_ctx_st.record_padding_cb, s, _, _, _);
+    ensures normal resource_callback_slot_invoked(s, ssl_ctx_st.allow_early_data_cb, s, _);
+    ensures normal resource_callback_slot_invoked(s, ssl_ctx_st.custom_ext_add_cb_ex, s, _, _, _, _, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(s, ssl_ctx_st.custom_ext_free_cb_ex, s, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(s, ssl_ctx_st.custom_ext_parse_cb_ex, s, _, _, _, _, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(s, ssl_ctx_st.custom_ext_add_cb, s, _, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(s, ssl_ctx_st.custom_ext_free_cb, s, _, _, _);
+    ensures normal resource_callback_slot_invoked(s, ssl_ctx_st.custom_ext_parse_cb, s, _, _, _, _, _);
     ensures normal resource_return_none();
 };
 
