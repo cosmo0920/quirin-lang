@@ -160,7 +160,27 @@ places in `crates/qcore-audit/src` call a resource-contract manifest loader:
   measure --declared` was not run. The integrator's landing measurement
   (`land.py publish`) compares the three live routes against the baseline.
 
-## 6. Residuals
+## 6. Gate
+
+`python3 scripts/gate_scope.py --base 974434463` ran at `a9b180750` in full
+mode, because the diff reaches `qcore-contract`
+([gate.json](evidence/gate.json)):
+
+* fmt, clippy and both reevaluation probes exit 0.
+* The Rust suite exits 0: 655 units, 9647 passed, 0 failed, 21 ignored.
+* The Python suite exits 1 on one known load-sensitive flake,
+  `test_gate_slot_lane.Status.test_status_shows_lane_holders_and_waiters`.
+  Rerun in isolation, `scripts.tests.test_gate_slot_lane` passes all 32
+  tests.
+
+The first attempt failed on two Python tests:
+
+* the flake `test_gate_slot_queue`, which passes in isolation (39 tests);
+* rule 29's tree-walk tripwire, because the shipped-manifest test used
+  `read_dir`. That test now lists profiles with
+  `tests/support/tracked_files.rs`.
+
+## 7. Residuals
 
 * `GATEWAY-API-USER-LOAD-PATH-BINDINGS` (registered). Library callers of
   `load_resource_contract_manifest*`, such as the census and probe examples,
