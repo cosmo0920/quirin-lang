@@ -1,0 +1,47 @@
+regex/sizeof-object/pre	Safe	
+regex/sizeof-object/post	Safe	
+regex/sizeof-paren/pre	Safe	
+regex/sizeof-paren/post	Safe	
+regex/void-sizeof/pre	Unknown	UnknownAlias | unsupported:tracked in-place object `re` used outside a declared in-place position is outside the resource projection (rule 11v)
+regex/void-sizeof/post	Unknown	unsupported:tracked in-place object `re` used outside a declared in-place position is outside the resource projection (rule 11v)
+regex/not-member/pre	Unknown	UnknownAlias | unsupported:tracked in-place object `re` used outside a declared in-place position is outside the resource projection (rule 11v)
+regex/not-member/post	Unknown	unsupported:tracked in-place object `re` used outside a declared in-place position is outside the resource projection (rule 11v)
+regex/member-plus/pre	Unknown	UnknownAlias | unsupported:tracked in-place object `re` used outside a declared in-place position is outside the resource projection (rule 11v)
+regex/member-plus/post	Unknown	unsupported:tracked in-place object `re` used outside a declared in-place position is outside the resource projection (rule 11v)
+regex/while-member/pre	Safe	
+regex/while-member/post	Safe	
+regex/for-member/pre	Unknown	UnknownAlias | unsupported:nullable resource `re` used by a non-null contract | unsupported:tracked in-place object `re` used outside a declared in-place position is outside the resource projection (rule 11v)
+regex/for-member/post	Unknown	unsupported:tracked in-place object `re` used outside a declared in-place position is outside the resource projection (rule 11v)
+regex/switch-member/pre	Safe	
+regex/switch-member/post	Safe	
+regex/do-member/pre	Safe	
+regex/do-member/post	Safe	
+regex/void-ternary-member/pre	Safe	
+regex/void-ternary-member/post	Safe	
+regex/kinded-comma-void-member/pre	Unknown	UnknownAlias | unsupported:indirect memory access is outside the resource projection
+regex/kinded-comma-void-member/post	Unknown	unsupported:indirect memory access is outside the resource projection
+regex/array-store-member/pre	Unknown	UnknownAlias | unsupported:tracked in-place object `re` used outside a declared in-place position is outside the resource projection (rule 11v)
+regex/array-store-member/post	Unknown	unsupported:tracked in-place object `re` used outside a declared in-place position is outside the resource projection (rule 11v)
+regex/cond-kinded-and-member/pre	Safe	
+regex/cond-kinded-and-member/post	Unsafe	UnknownAlias | UseAfterClose
+regex/cond-assign-member/pre	Safe	
+regex/cond-assign-member/post	Safe	
+regex/void-paren-address/pre	Unknown	UnknownAlias | unsupported:tracked in-place object `re` used outside a declared in-place position is outside the resource projection (rule 11v)
+regex/void-paren-address/post	Unknown	unsupported:tracked in-place object `re` used outside a declared in-place position is outside the resource projection (rule 11v)
+regex/void-address-member/pre	Unknown	UnknownAlias | unsupported:indirect memory access is outside the resource projection
+regex/void-address-member/post	Unknown	unsupported:indirect memory access is outside the resource projection
+regex/take-address-member/pre	Unknown	UnknownAlias | unsupported:indirect memory access is outside the resource projection
+regex/take-address-member/post	Unknown	unsupported:indirect memory access is outside the resource projection
+regex/void-regcomp-again/pre/kinded	Unknown	UnknownAlias | unsupported:resource call with a formal embedded in an unmodeled expression
+regex/void-regcomp-again/post/kinded	Unknown	unsupported:resource call with a formal embedded in an unmodeled expression
+unit/current/rd_regex_match	Unknown	
+unit/corpus/rd_regex_match	Unknown	
+unit/current/rd_regex_exec	Unknown	
+unit/corpus/rd_regex_exec	Unknown	
+unit/current/rd_regex_comp	Unknown	unsupported:call to uncontracted function `rd_calloc` | unsupported:call to uncontracted function `rd_free` | unsupported:indirect memory access is outside the resource projection
+unit/corpus/rd_regex_comp	Unknown	unsupported:call to uncontracted function `rd_calloc` | unsupported:call to uncontracted function `rd_free` | unsupported:indirect memory access is outside the resource projection
+unit/current/rd_regex_destroy	Unknown	unsupported:call to uncontracted function `rd_free` | unsupported:indirect memory access is outside the resource projection
+unit/corpus/rd_regex_destroy	Unknown	unsupported:call to uncontracted function `rd_free` | unsupported:indirect memory access is outside the resource projection
+unit/mutant-void-member/rd_regex_match	Unknown	
+unit/mutant-cond-member/rd_regex_match	Unknown	
+unit/mutant-void-peek/rd_regex_match	CLANG-REJECT	Err(ProductionParserRejected("<stdin>:3052:51: error: use of undeclared identifier 'NULL'\n 3052 |         regfree(&re); (void) regexec(&re, str, 0, NULL, 0);\n      |                                                   ^~~~\n1 error generated."))

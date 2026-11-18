@@ -1,0 +1,139 @@
+regex/call-plain-kinded/pre/kinded	Safe	
+regex/call-plain-kinded/post/kinded	Unsafe	UnknownAlias | UseAfterClose
+regex/void-cast-kinded/pre/kinded	Unknown	UnknownAlias | unsupported:resource call with a formal embedded in an unmodeled expression
+regex/void-cast-kinded/post/kinded	Unknown	unsupported:resource call with a formal embedded in an unmodeled expression
+regex/assign-kinded/pre/kinded	Safe	
+regex/assign-kinded/post/kinded	Unsafe	UnknownAlias | UseAfterClose
+regex/assign-ne-kinded/pre/kinded	Safe	
+regex/assign-ne-kinded/post/kinded	Unsafe	UnknownAlias | UseAfterClose
+regex/void-cast-assign-kinded/pre/kinded	Unknown	UnknownAlias | unsupported:unmodeled expression may mutate a formal resource identity
+regex/void-cast-assign-kinded/post/kinded	Unknown	unsupported:unmodeled expression may mutate a formal resource identity
+regex/cast-int-kinded/pre/kinded	Safe	
+regex/cast-int-kinded/post/kinded	Unsafe	UnknownAlias | UseAfterClose
+regex/comma-kinded/pre/kinded	Unknown	UnknownAlias | unsupported:resource call with a formal embedded in an unmodeled expression
+regex/comma-kinded/post/kinded	Unknown	unsupported:resource call with a formal embedded in an unmodeled expression
+regex/void-comma-kinded/pre/kinded	Unknown	UnknownAlias | unsupported:unmodeled expression may mutate a formal resource identity
+regex/void-comma-kinded/post/kinded	Unknown	unsupported:unmodeled expression may mutate a formal resource identity
+regex/stmt-expr-kinded/pre/kinded	Safe	
+regex/stmt-expr-kinded/post/kinded	Unsafe	UnknownAlias | UseAfterClose
+regex/cond-kinded/pre/kinded	Safe	
+regex/cond-kinded/post/kinded	Unsafe	UnknownAlias | UseAfterClose
+regex/call-plain-peek/pre	Unknown	UnknownAlias | unsupported:call has an unmodeled formal address or borrowed expression
+regex/call-plain-peek/post	Unknown	unsupported:call has an unmodeled formal address or borrowed expression
+regex/void-cast-peek/pre	Unknown	UnknownAlias | unsupported:resource call with a formal embedded in an unmodeled expression
+regex/void-cast-peek/post	Unknown	unsupported:resource call with a formal embedded in an unmodeled expression
+regex/assign-peek/pre	Unknown	UnknownAlias | unsupported:call has an unmodeled formal address or borrowed expression
+regex/assign-peek/post	Unknown	unsupported:call has an unmodeled formal address or borrowed expression
+regex/assign-ne-peek/pre	Unknown	UnknownAlias | unsupported:resource call with a formal embedded in an unmodeled expression
+regex/assign-ne-peek/post	Unknown	unsupported:resource call with a formal embedded in an unmodeled expression
+regex/void-cast-assign-peek/pre	Unknown	UnknownAlias | unsupported:unmodeled expression may mutate a formal resource identity
+regex/void-cast-assign-peek/post	Unknown	unsupported:unmodeled expression may mutate a formal resource identity
+regex/cast-int-peek/pre	Unknown	UnknownAlias | unsupported:resource call with a formal embedded in an unmodeled expression
+regex/cast-int-peek/post	Unknown	unsupported:resource call with a formal embedded in an unmodeled expression
+regex/cast-ptr-peek/pre	Unknown	UnknownAlias | unsupported:call has an unmodeled formal address or borrowed expression
+regex/cast-ptr-peek/post	Unknown	unsupported:call has an unmodeled formal address or borrowed expression
+regex/void-cast-ptr-peek/pre	Unknown	UnknownAlias | unsupported:resource call with a formal embedded in an unmodeled expression
+regex/void-cast-ptr-peek/post	Unknown	unsupported:resource call with a formal embedded in an unmodeled expression
+regex/comma-peek/pre	Unknown	UnknownAlias | unsupported:resource call with a formal embedded in an unmodeled expression
+regex/comma-peek/post	Unknown	unsupported:resource call with a formal embedded in an unmodeled expression
+regex/void-comma-peek/pre	Unknown	UnknownAlias | unsupported:unmodeled expression may mutate a formal resource identity
+regex/void-comma-peek/post	Unknown	unsupported:unmodeled expression may mutate a formal resource identity
+regex/stmt-expr-peek/pre	Unknown	UnknownAlias | unsupported:call has an unmodeled formal address or borrowed expression
+regex/stmt-expr-peek/post	Unknown	unsupported:call has an unmodeled formal address or borrowed expression
+regex/void-stmt-expr-peek/pre	Unknown	UnknownAlias | unsupported:call has an unmodeled formal address or borrowed expression
+regex/void-stmt-expr-peek/post	Unknown	unsupported:call has an unmodeled formal address or borrowed expression
+regex/cond-peek/pre	Unknown	UnknownAlias | unsupported:nullable resource `re` used by a non-null contract | unsupported:unmodeled call, aggregate or indirect access in branch condition
+regex/cond-peek/post	Unknown	unsupported:unmodeled call, aggregate or indirect access in branch condition
+regex/ternary-peek/pre	Unknown	UnknownAlias | unsupported:resource call with a formal embedded in an unmodeled expression
+regex/ternary-peek/post	Unknown	unsupported:resource call with a formal embedded in an unmodeled expression
+regex/void-wipe/pre	Unknown	UnknownAlias | unsupported:resource call with a formal embedded in an unmodeled expression
+regex/void-wipe/post	Unknown	unsupported:resource call with a formal embedded in an unmodeled expression
+regex/wipe/pre	Unknown	UnknownAlias | unsupported:call has an unmodeled formal address or borrowed expression
+regex/wipe/post	Unknown	unsupported:call has an unmodeled formal address or borrowed expression
+regex/void-take-member/pre	Safe	
+regex/void-take-member/post	Safe	
+regex/take-member/pre	Unknown	UnknownAlias | unsupported:indirect memory access is outside the resource projection
+regex/take-member/post	Unknown	unsupported:indirect memory access is outside the resource projection
+regex/assign-take-member/pre	Unknown	UnknownAlias | unsupported:indirect memory access is outside the resource projection
+regex/assign-take-member/post	Unknown	unsupported:indirect memory access is outside the resource projection
+regex/void-take-member-cast/pre	Safe	
+regex/void-take-member-cast/post	Safe	
+regex/member-read/pre	Unknown	UnknownAlias | unsupported:tracked in-place object `re` used outside a declared in-place position is outside the resource projection (rule 11v)
+regex/member-read/post	Unknown	unsupported:tracked in-place object `re` used outside a declared in-place position is outside the resource projection (rule 11v)
+regex/member-read-cast/pre	Unknown	UnknownAlias | unsupported:tracked in-place object `re` used outside a declared in-place position is outside the resource projection (rule 11v)
+regex/member-read-cast/post	Unknown	unsupported:tracked in-place object `re` used outside a declared in-place position is outside the resource projection (rule 11v)
+regex/void-member/pre	Safe	
+regex/void-member/post	Safe	
+regex/void-object/pre	Unknown	UnknownAlias | unsupported:tracked in-place object `re` used outside a declared in-place position is outside the resource projection (rule 11v)
+regex/void-object/post	Unknown	unsupported:tracked in-place object `re` used outside a declared in-place position is outside the resource projection (rule 11v)
+regex/void-member-assign/pre	Safe	
+regex/void-member-assign/post	Safe	
+regex/comma-member/pre	Unknown	UnknownAlias | unsupported:indirect memory access is outside the resource projection
+regex/comma-member/post	Unknown	unsupported:indirect memory access is outside the resource projection
+regex/stmt-expr-member/pre	Unknown	UnknownAlias | unsupported:indirect memory access is outside the resource projection
+regex/stmt-expr-member/post	Unknown	unsupported:indirect memory access is outside the resource projection
+regex/struct-copy/pre	Unknown	UnknownAlias | unsupported:tracked in-place object `re` used outside a declared in-place position is outside the resource projection (rule 11v)
+regex/struct-copy/post	Unknown	unsupported:tracked in-place object `re` used outside a declared in-place position is outside the resource projection (rule 11v)
+regex/void-struct-copy/pre	Unknown	UnknownAlias | unsupported:unmodeled expression may mutate a formal resource identity
+regex/void-struct-copy/post	Unknown	unsupported:unmodeled expression may mutate a formal resource identity
+regex/address-store/pre	Unknown	UnknownAlias | unsupported:unsupported assignment expression
+regex/address-store/post	Unknown	unsupported:unsupported assignment expression
+regex/address-store-cast/pre	Unknown	UnknownAlias | unsupported:unsupported assignment expression
+regex/address-store-cast/post	Unknown	unsupported:unsupported assignment expression
+regex/void-address-store/pre	Unknown	UnknownAlias | unsupported:unmodeled expression may mutate a formal resource identity
+regex/void-address-store/post	Unknown	unsupported:unmodeled expression may mutate a formal resource identity
+regex/member-write/pre	Unknown	UnknownAlias | unsupported:tracked in-place object `re` used outside a declared in-place position is outside the resource projection (rule 11v)
+regex/member-write/post	Unknown	unsupported:tracked in-place object `re` used outside a declared in-place position is outside the resource projection (rule 11v)
+regex/void-member-write/pre	Safe	
+regex/void-member-write/post	Safe	
+regex/cond-member/pre	Safe	
+regex/cond-member/post	Safe	
+regex/kinded-plus-member/pre	Safe	
+regex/kinded-plus-member/post	Unsafe	UnknownAlias | UseAfterClose
+regex/void-kinded-plus-member/pre	Unknown	UnknownAlias | unsupported:indirect memory access is outside the resource projection
+regex/void-kinded-plus-member/post	Unknown	unsupported:indirect memory access is outside the resource projection
+regex/free-address/pre	Unknown	UnknownAlias | unsupported:call has an unmodeled formal address or borrowed expression
+regex/free-address/post	Unknown	unsupported:call has an unmodeled formal address or borrowed expression
+regex/void-free-address/pre	Unknown	UnknownAlias | unsupported:resource call with a formal embedded in an unmodeled expression
+regex/void-free-address/post	Unknown	unsupported:resource call with a formal embedded in an unmodeled expression
+regex/void-free-address-cast/pre	Unknown	UnknownAlias | unsupported:resource call with a formal embedded in an unmodeled expression
+regex/void-free-address-cast/post	Unknown	unsupported:resource call with a formal embedded in an unmodeled expression
+regex/void-regfree/pre/kinded	Unknown	UnknownAlias | unsupported:resource call with a formal embedded in an unmodeled expression
+regex/void-regfree/post/kinded	Unknown	unsupported:resource call with a formal embedded in an unmodeled expression
+regex/decl-kinded/pre/kinded	Safe	
+regex/decl-kinded/post/kinded	Unsafe	UnknownAlias | UseAfterClose
+regex/decl-ne-kinded/pre/kinded	Safe	
+regex/decl-ne-kinded/post/kinded	Unsafe	UnknownAlias | UseAfterClose
+regex/decl-peek/pre	Unknown	UnknownAlias | unsupported:call has an unmodeled formal address or borrowed expression
+regex/decl-peek/post	Unknown	unsupported:call has an unmodeled formal address or borrowed expression
+regex/decl-cast-peek/pre	Unknown	UnknownAlias | unsupported:resource call with a formal embedded in an unmodeled expression
+regex/decl-cast-peek/post	Unknown	unsupported:resource call with a formal embedded in an unmodeled expression
+regex/decl-member/pre	Unknown	UnknownAlias | unsupported:tracked in-place object `re` used outside a declared in-place position is outside the resource projection (rule 11v)
+regex/decl-member/post	Unknown	unsupported:tracked in-place object `re` used outside a declared in-place position is outside the resource projection (rule 11v)
+regex/decl-copy/pre	Unknown	UnknownAlias | unsupported:tracked in-place object `re` used outside a declared in-place position is outside the resource projection (rule 11v)
+regex/decl-copy/post	Unknown	unsupported:tracked in-place object `re` used outside a declared in-place position is outside the resource projection (rule 11v)
+regex/decl-address/pre	Unknown	UnknownAlias | unsupported:unsupported assignment expression
+regex/decl-address/post	Unknown	unsupported:unsupported assignment expression
+regex/decl-take-member/pre	Unknown	UnknownAlias | unsupported:indirect memory access is outside the resource projection
+regex/decl-take-member/post	Unknown	unsupported:indirect memory access is outside the resource projection
+regex/return-kinded/post/kinded	Unsafe	UnknownAlias | UseAfterClose
+regex/return-cast-kinded/post/kinded	Unsafe	UnknownAlias | UseAfterClose
+regex/return-ne-kinded/post/kinded	Unsafe	UnknownAlias | UseAfterClose
+regex/return-peek/post	Unknown	unsupported:call has an unmodeled formal address or borrowed expression
+regex/return-cast-peek/post	Unknown	unsupported:call has an unmodeled formal address or borrowed expression
+regex/return-member/post	Safe	
+regex/return-take-member/post	Unknown	unsupported:indirect memory access is outside the resource projection
+regex/return-stmt-expr-peek/post	Unknown	unsupported:call has an unmodeled formal address or borrowed expression
+regex/return-comma-peek/post	Unknown	unsupported:unmodeled call, aggregate or indirect access in return expression
+thread/auto/void-get/post	Unknown	unsupported:in-place resource object is not the address of one automatic object of this function (rule 11v) | unsupported:thread key created into an object that is not of static storage duration (rule 11v (5))
+thread/static/void-get	Safe	
+thread/auto/get/post	Unknown	unsupported:in-place resource object is not the address of one automatic object of this function (rule 11v) | unsupported:thread key created into an object that is not of static storage duration (rule 11v (5))
+thread/static/get	Safe	
+thread/auto/assign-get/post	Unknown	unsupported:in-place resource object is not the address of one automatic object of this function (rule 11v) | unsupported:thread key created into an object that is not of static storage duration (rule 11v (5))
+thread/static/assign-get	Safe	
+thread/auto/comma-get/post	Unknown	unsupported:in-place resource object is not the address of one automatic object of this function (rule 11v) | unsupported:thread key created into an object that is not of static storage duration (rule 11v (5))
+thread/static/comma-get	CLANG-REJECT	Err(ProductionParserRejected("<stdin>:6:73: error: use of undeclared identifier 'r'\n    6 | pthread_key_t key; void w(void) { void *v; pthread_key_create(&key, 0); r = 0, pthread_getspecific(key); }\n      |                                                                         ^\n1 error generated."))
+thread/auto/stmt-expr-get/post	Unknown	unsupported:in-place resource object is not the address of one automatic object of this function (rule 11v) | unsupported:thread key created into an object that is not of static storage duration (rule 11v (5))
+thread/static/stmt-expr-get	Safe	
+thread/auto/void-set/post	Unknown	unsupported:call to `pthread_setspecific` retains `0` in `global`, whose lifetime this body does not decide against it (retention-undecided) | unsupported:in-place resource object is not the address of one automatic object of this function (rule 11v) | unsupported:thread key created into an object that is not of static storage duration (rule 11v (5))
+thread/static/void-set	Unknown	unsupported:call to `pthread_setspecific` retains `0` in `global`, whose lifetime this body does not decide against it (retention-undecided)
