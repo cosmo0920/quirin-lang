@@ -38,6 +38,20 @@ module contract;
 // SSL_CTX_free()) then the free_func() is called for every defined index",
 // CRYPTO_get_ex_new_index 3.5). None of those setters is declared, so no
 // slot is stated; the frees keep their NULL-accepting reference drop.
+//
+// Card OPENSSL-UNSTATED-CALLBACK-SLOTS: the info, message and session-remove
+// setters are now declared (ssl_ctx.qv, ssl_io.qv). SSL_shutdown states the
+// info and message invocations (the close_notify alert it sends or reads is
+// a protocol message and an alert); it keeps the premise for what else
+// reading records may run (a post-handshake message, a record padding or
+// keylog callback, a BIO's method). The frees cannot state the
+// session-remove invocation: C04.19 admits no callback clause beside a
+// reference drop (`contract_loader.rs`: "a callback clause stands only
+// beside retentions and plain predicates"), so they keep the premise, which
+// covers it ("a callback slot ... whose invocation the declaration does not
+// state"), the ex_data free callbacks and the BIOs SSL_free frees (SSL_free
+// 3.5: "the read and write BIOs"). Follow-up
+// OPENSSL-FREE-SESSION-REMOVE-INVOCATION.
 
 // TLS_server_method: https://docs.openssl.org/3.5/man3/SSL_CTX_new/
 // HISTORY (3.5, 1.1.1): TLS_method(), TLS_server_method() and
@@ -79,7 +93,7 @@ contract {
     requires resource_contract_v1;
     requires resource_revision(flexible);
     requires resource_library_version(openssl, documented "1.1.1");
-    requires resource_premise(openssl_unstated_callback_slots, "a callback the call may run that no clause of this declaration states (a verify, info, message, security, session or client certificate callback of the SSL object or its SSL_CTX, or an ex_data callback) takes, releases or retains nothing the caller holds");
+    requires resource_premise(openssl_unstated_callback_slots, "a callback the call may run that no clause of this declaration states (a callback slot of the SSL object or its SSL_CTX whose invocation the declaration does not state, among them the SSL_CTX_callback_ctrl arms such as the servername, status and ticket key callbacks, a method or callback of a BIO the SSL object holds, or an ex_data callback) takes, releases or retains nothing the caller holds");
     ensures normal resource_borrowed(ctx);
     ensures normal resource_reference_dropped(ctx, nullable);
     ensures normal resource_return_none();
@@ -110,7 +124,7 @@ contract {
     requires resource_contract_v1;
     requires resource_revision(flexible);
     requires resource_library_version(openssl, documented "1.1.1");
-    requires resource_premise(openssl_unstated_callback_slots, "a callback the call may run that no clause of this declaration states (a verify, info, message, security, session or client certificate callback of the SSL object or its SSL_CTX, or an ex_data callback) takes, releases or retains nothing the caller holds");
+    requires resource_premise(openssl_unstated_callback_slots, "a callback the call may run that no clause of this declaration states (a callback slot of the SSL object or its SSL_CTX whose invocation the declaration does not state, among them the SSL_CTX_callback_ctrl arms such as the servername, status and ticket key callbacks, a method or callback of a BIO the SSL object holds, or an ex_data callback) takes, releases or retains nothing the caller holds");
     ensures normal resource_borrowed(ssl);
     ensures normal resource_reference_dropped(ssl, nullable);
     ensures normal resource_return_none();
@@ -126,7 +140,9 @@ contract {
     requires resource_contract_v1;
     requires resource_revision(flexible);
     requires resource_library_version(openssl, documented "1.0.2");
-    requires resource_premise(openssl_unstated_callback_slots, "a callback the call may run that no clause of this declaration states (a verify, info, message, security, session or client certificate callback of the SSL object or its SSL_CTX, or an ex_data callback) takes, releases or retains nothing the caller holds");
+    requires resource_premise(openssl_unstated_callback_slots, "a callback the call may run that no clause of this declaration states (a callback slot of the SSL object or its SSL_CTX whose invocation the declaration does not state, among them the SSL_CTX_callback_ctrl arms such as the servername, status and ticket key callbacks, a method or callback of a BIO the SSL object holds, or an ex_data callback) takes, releases or retains nothing the caller holds");
     ensures normal resource_borrowed(ssl);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.info_callback, ssl, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.msg_callback, _, _, _, _, _, ssl, _);
     ensures normal resource_return_none();
 };

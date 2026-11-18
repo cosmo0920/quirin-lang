@@ -1,0 +1,54 @@
+{
+ "schema": "quirin-amendments/1",
+ "card": "OPENSSL-UNSTATED-CALLBACK-SLOTS",
+ "base": "bd6b63ead",
+ "measured_tip": "7928ac4d4",
+ "increment_paragraph": "**OPENSSL-UNSTATED-CALLBACK-SLOTS (2026-11-18).** User decision 2026-11-18 launches the follow-up OPENSSL-SSL-CTX-CALLBACK-SLOTS recorded, with RETENTION-NULL-CONSTANT-ACTUAL. quirin-provider-openssl states eight more opaque slots (C04.19.3, rule 12n amended in place), one key per documented slot shared by the context and the SSL's copy: verify, info, message, security, new-, remove- and get-session and client certificate, each registered by every writer its 3.5 manual page names (twelve new setter declarations; six page snapshots added with fetch_docs.py --merge) and invoked by SSL_write/read/connect/do_handshake (all eight, beside the certificate slot), SSL_shutdown (info, message), SSL_CTX_use_certificate (security on the caller's certificate, until now read silently) and SSL_CTX_use_certificate_chain_file (security). The checker now also requires each slot page's NAME list to be exactly its slots' writers and not-writers. SSL_CTX_use_certificate_chain_file states every slot it may run and drops openssl_unstated_callback_slots for the narrower openssl_ex_data_callbacks (CRYPTO_get_ex_new_index's per-class registry, not a slot); the narrowed premise stays on the handshake and I/O calls and SSL_shutdown (the SSL_CTX_callback_ctrl arms, other undeclared slots, BIO methods, ex_data) and on SSL_free/SSL_CTX_free (no callback clause stands beside a reference drop). Rule 12t amended in place (C04.14): a null pointer constant at a retained position (after the cast reading) retains nothing and decides in every holder class; every other actual is decided as before. Lean QCore.OpensslUnstatedSlots (9 theorems) and QCore.RetentionNullConstant (10), audited. contracts.lock adds 12 entries and changes the 9 re-stated digests only. Fail-closed tests on the crate's own modules: an uncontracted new-slot candidate, a slot registered from an undecidable value, a slot no declaration registers, an effectful security candidate on the premise-dropped loader. Opt-in current over Fluent Bit 046accf6 (base vs tip): 1098 Safe / 2 Pending / 3699 Unknown / 5 Unsafe in both, no row moved, as predicted, and identically against main caaf5304e after the merge; slot sets closed as predicted (verify {rd_kafka_transport_ssl_cert_verify_cb}, info {tls_info_callback}, the others new empty); 5 rows change content (SSL_CTX_set_verify links, SSL_shutdown refusing on its indirect object operand, Monkey mk_http_thread_destroy losing a pthread_setspecific(key, NULL) retention refusal, a lib/monkey row the corpus route may also show as content). Pinned routes read no user load path and no shipped declaration receives a null constant at a retained position in their sources: no move predicted, measure --declared deferred to the integrator.",
+ "status_paragraph": null,
+ "ledger": [
+  {
+   "id": "OPENSSL-UNSTATED-CALLBACK-SLOTS",
+   "operation": "retire",
+   "why": "OPENSSL-UNSTATED-CALLBACK-SLOTS (2026-11-18): the verify, info, message, security, three session and client certificate slots are stated with every writer their pages name (twelve setters) and invoked where the pages say; SSL_CTX_use_certificate states its security invocation; SSL_CTX_use_certificate_chain_file drops openssl_unstated_callback_slots for openssl_ex_data_callbacks. What the narrowed premise still covers is tracked by OPENSSL-CTRL-COMMAND-ARMS (the ctrl arms), OPENSSL-UNDECLARED-HANDSHAKE-CALLBACKS (other undeclared slots and BIO methods), OPENSSL-FREE-SESSION-REMOVE-INVOCATION (the frees' session-remove invocation) and OPENSSL-EX-DATA-REGISTRY (ex_data).",
+   "source": "docs/reports/openssl-unstated-callback-slots/README.md"
+  },
+  {
+   "id": "RETENTION-NULL-CONSTANT-ACTUAL",
+   "operation": "retire",
+   "why": "OPENSSL-UNSTATED-CALLBACK-SLOTS (2026-11-18): rule 12t amended in place (C04.14 'No object'): a null pointer constant at a retained position, after the cast reading, retains nothing and decides in every holder class (retained_by::null_pointer_constant, Retained::Nothing; legacy_retained_by null_retention); every other actual is decided as before. Lean QCore.RetentionNullConstant; tests/retention_null_constant.rs; SSL_CTX_set_cert_cb(ctx, cb, NULL) no longer refuses (the user-path fixture's configure).",
+   "source": "docs/reports/openssl-unstated-callback-slots/README.md"
+  },
+  {
+   "id": "OPENSSL-FREE-SESSION-REMOVE-INVOCATION",
+   "operation": "register",
+   "title": "SSL_free and SSL_CTX_free cannot state the session-remove invocation",
+   "text": "SSL_CTX_sess_set_get_cb (3.5): the remove callback runs 'for all sessions in the internal session cache when SSL_CTX_free(3) is called' and 'when a connection was not shutdown cleanly' (SSL_free). Its slot ssl_ctx_st.remove_session_cb is now stated with its setter, but C04.19 admits no callback clause beside a reference drop (contract_loader.rs: 'a callback clause stands only beside retentions and plain predicates'), so the frees keep openssl_unstated_callback_slots for it. DISCHARGE: admit a slot invocation beside resource_reference_dropped (the slot read before the drop, as a member invocation beside a release), compose it in the gateway, Lean, then state it on SSL_free and SSL_CTX_free, leaving them on openssl_ex_data_callbacks and the BIO methods SSL_free frees. Size: medium.",
+   "source": "docs/reports/openssl-unstated-callback-slots/README.md",
+   "recorded_by": "OPENSSL-UNSTATED-CALLBACK-SLOTS"
+  },
+  {
+   "id": "OPENSSL-EX-DATA-REGISTRY",
+   "operation": "register",
+   "title": "OpenSSL ex_data callbacks are a global registry no clause states",
+   "text": "CRYPTO_get_ex_new_index (3.5): new_func runs 'when a structure is initially allocated', free_func 'for every defined index' when it is freed, per object class (a global registry: the setter takes a class index, no object). Only the premises on eight declarations name them (openssl_ex_data_callbacks on SSL_CTX_use_certificate_chain_file, openssl_unstated_callback_slots on the handshake and I/O calls, SSL_shutdown and the frees); every other constructor, dup and final free of an ex_data class in quirin-provider-openssl (X509_new, X509_free, EVP_PKEY_free, the PEM readers, d2i_PKCS12_bio, SSL_CTX_use_certificate's replaced certificate) reads them silently. DISCHARGE: a registry reading (a run-wide closed set over CRYPTO_get_ex_new_index's and the SSL_get_ex_new_index family's actuals, keyed by class, invoked at the class's constructors and frees, with the data the free callback receives) or the premise on every such declaration. Size: medium to large.",
+   "source": "docs/reports/openssl-unstated-callback-slots/README.md",
+   "recorded_by": "OPENSSL-UNSTATED-CALLBACK-SLOTS"
+  },
+  {
+   "id": "OPENSSL-UNDECLARED-HANDSHAKE-CALLBACKS",
+   "operation": "register",
+   "title": "Handshake callbacks whose setters quirin-provider-openssl does not declare",
+   "text": "Beside the SSL_CTX_callback_ctrl arms (OPENSSL-CTRL-COMMAND-ARMS), SSL_write/read/connect/do_handshake and SSL_shutdown may run slots whose setters are undeclared: keylog (SSL_CTX_set_keylog_callback; Fluent Bit registers ssl_key_logger), ALPN selection (SSL_CTX_set_alpn_select_cb; Fluent Bit's tls_context_server_alpn_select_callback), certificate verify (SSL_CTX_set_cert_verify_callback), PSK, client hello, record padding, early data, CT validation and custom extension callbacks, and the methods and callbacks of the BIOs the SSL holds (BIO_meth_*, BIO_set_callback_ex). They keep openssl_unstated_callback_slots on those five declarations. DISCHARGE: declare each slot's writers (every writer its page names) and state the invocations as OPENSSL-UNSTATED-CALLBACK-SLOTS did; a BIO method table needs its own reading. Size: medium.",
+   "source": "docs/reports/openssl-unstated-callback-slots/README.md",
+   "recorded_by": "OPENSSL-UNSTATED-CALLBACK-SLOTS"
+  },
+  {
+   "id": "CALLBACK-SUPPLIED-NULL-ACTUAL",
+   "operation": "register",
+   "title": "A callee-supplied callback actual the page says may be NULL",
+   "text": "C04.19's loop-safe composition reads a candidate's resource_owned requirement at a `_` actual as met by what the callee supplies. OpenSSL's security callback (SSL_CTX_set_security_level, 3.5) receives s and ctx of which 'One of the two is NULL', and other 'is NULL when no object is associated', so a candidate whose contract requires a live object there is admitted although the library may pass NULL. The caller's row is unaffected (the composition is the identity on its state); the candidate's own row is analysed under a precondition the library does not meet. DISCHARGE: a nullable supplied actual (`_?` or a page-cited nullable marker) whose candidate must accept NULL there, refusing resource_owned(nonnull); Lean beside QCore.CallbackContracts. Size: small to medium.",
+   "source": "docs/reports/openssl-unstated-callback-slots/README.md",
+   "recorded_by": "OPENSSL-UNSTATED-CALLBACK-SLOTS"
+  }
+ ]
+}

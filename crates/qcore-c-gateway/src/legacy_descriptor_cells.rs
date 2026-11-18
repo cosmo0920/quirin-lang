@@ -469,7 +469,9 @@ fn cell_key(state: &AbstractState, spelled: &CellSpelling) -> Option<CellKey> {
                 crate::retained_by::Retained::TrackedInterior(site, fields) => {
                     HeldObject::SiteInterior(site, fields)
                 }
-                crate::retained_by::Retained::Static | crate::retained_by::Retained::Other => {
+                crate::retained_by::Retained::Static
+                | crate::retained_by::Retained::Other
+                | crate::retained_by::Retained::Nothing => {
                     return None;
                 }
             };

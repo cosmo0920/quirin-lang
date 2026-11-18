@@ -267,7 +267,39 @@
     {
       "crate": "quirin-provider-openssl",
       "functions": [
+        "SSL_CTX_sess_set_get_cb"
+      ],
+      "module": "openssl/ssl_ctx.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
+        "SSL_CTX_sess_set_new_cb"
+      ],
+      "module": "openssl/ssl_ctx.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
+        "SSL_CTX_sess_set_remove_cb"
+      ],
+      "module": "openssl/ssl_ctx.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
         "SSL_CTX_set_cert_cb"
+      ],
+      "module": "openssl/ssl_ctx.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
+        "SSL_CTX_set_client_cert_cb"
       ],
       "module": "openssl/ssl_ctx.qv",
       "package": "quirin-provider-openssl/checkers/openssl-check"
@@ -299,7 +331,39 @@
     {
       "crate": "quirin-provider-openssl",
       "functions": [
+        "SSL_CTX_set_info_callback"
+      ],
+      "module": "openssl/ssl_ctx.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
+        "SSL_CTX_set_msg_callback"
+      ],
+      "module": "openssl/ssl_ctx.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
         "SSL_CTX_set_options"
+      ],
+      "module": "openssl/ssl_ctx.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
+        "SSL_CTX_set_security_callback"
+      ],
+      "module": "openssl/ssl_ctx.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
+        "SSL_CTX_set_verify"
       ],
       "module": "openssl/ssl_ctx.qv",
       "package": "quirin-provider-openssl/checkers/openssl-check"
@@ -404,6 +468,38 @@
       "crate": "quirin-provider-openssl",
       "functions": [
         "SSL_set_cert_cb"
+      ],
+      "module": "openssl/ssl_io.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
+        "SSL_set_info_callback"
+      ],
+      "module": "openssl/ssl_io.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
+        "SSL_set_msg_callback"
+      ],
+      "module": "openssl/ssl_io.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
+        "SSL_set_security_callback"
+      ],
+      "module": "openssl/ssl_io.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
+        "SSL_set_verify"
       ],
       "module": "openssl/ssl_io.qv",
       "package": "quirin-provider-openssl/checkers/openssl-check"
