@@ -29,16 +29,18 @@ module contract;
 //   other call stays uncontracted.
 // * `cb`: "the callback to use when querying for the pass phrase", called
 //   during the read with `u` ("The u parameter has the same value as the u
-//   parameter passed to the PEM routine"). A caller's callback would be a
-//   synchronous invocation (C04.19), but the vocabulary admits no callback
-//   clause beside the literal-argument premise the `x` arm needs, so each
-//   declaration also holds only at calls passing a null pointer constant
-//   for `cb`: then "If the cb parameters is set to NULL and the u parameter
-//   is not NULL then the u parameter is interpreted as a NUL terminated
-//   string to use as the passphrase"; if both are NULL "the default
-//   callback routine is used", OpenSSL's own. Either way `u` is read, not
-//   kept. A call passing a callback (librdkafka's
-//   rd_kafka_transport_ssl_passwd_cb) stays uncontracted.
+//   parameter passed to the PEM routine"); the pem_password_cb prototype is
+//   `int (char *buf, int size, int rwflag, void *u)`, and `buf`, `size` and
+//   `rwflag` are the routine's own values. Card OPENSSL-PEM-CALLBACK-ARM
+//   states it as a synchronous invocation (C04.19) beside the `x` premise
+//   (C04.5, gateway rule 57): `resource_callback_invoked(cb, _, _, _, u)`.
+//   Nothing keeps `cb` or `u` after the call. A consumer decides the
+//   callback as C04.19 requires: every candidate's own contract in force
+//   must be the identity, so no callback is read as benign. A null `cb`
+//   ("the default callback routine is used", or `u` read as the passphrase
+//   string) is an open candidate set to that reading and refuses: the
+//   vocabulary has no spelling for a callee's own default behind a null
+//   callback.
 // * RETURN VALUES: "The read routines return either a pointer to the
 //   structure read or NULL if an error occurred." X509 and EVP_PKEY are
 //   reference counted (X509_new, EVP_PKEY_new), so the result is one
@@ -52,11 +54,11 @@ contract {
     requires resource_revision(flexible);
     requires resource_library_version(openssl, documented "1.0.2");
     requires resource_literal_argument(x, 0);
-    requires resource_literal_argument(cb, 0);
     ensures normal resource_borrowed(out);
     ensures normal resource_borrowed(x);
     ensures normal resource_borrowed(cb);
     ensures normal resource_borrowed(u);
+    ensures normal resource_callback_invoked(cb, _, _, _, u);
     ensures normal resource_return_owned(nullable);
     ensures normal resource_return_kind(reference);
 };
@@ -70,11 +72,11 @@ contract {
     requires resource_revision(flexible);
     requires resource_library_version(openssl, documented "1.0.2");
     requires resource_literal_argument(x, 0);
-    requires resource_literal_argument(cb, 0);
     ensures normal resource_borrowed(out);
     ensures normal resource_borrowed(x);
     ensures normal resource_borrowed(cb);
     ensures normal resource_borrowed(u);
+    ensures normal resource_callback_invoked(cb, _, _, _, u);
     ensures normal resource_return_owned(nullable);
     ensures normal resource_return_kind(reference);
 };

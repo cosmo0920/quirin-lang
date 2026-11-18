@@ -11403,4 +11403,45 @@ an undeclared OpenSSL producer). `QCore.NullableReferenceDrop` (12 audited,
     (`tests/thread_local_custody_free_read.rs`);
     [report](../reports/thread-local-custody-free-read/README.md).
 
+<a id="constraint-57"></a>
+
+57. **A literal-argument premise bounds a synchronous invocation's
+    declaration exactly as it bounds a plain one.** Card
+    OPENSSL-PEM-CALLBACK-ARM, on the user's decision of 2026-11-18 (remove
+    the PEM readers' `x = cb = NULL` restriction; contract specification
+    C04.5 "Beside a synchronous invocation", C04.19 placement; grammar G05).
+    Loader (`contract_loader.rs`, the retaining branch): a premise stands
+    beside retaining clauses only when every one is
+    `resource_callback_invoked`; a table, a registration, a registry,
+    element or member clause, a retention and every other retaining clause
+    beside a premise reject the module (`a literal-argument premise stands
+    beside a synchronous invocation only`, or the retention branch's
+    refusal). Route G (`legacy_literal_premise::restrict_to_declared_literals`):
+    a callback declaration is withheld from the function map, so the rewrite
+    treats a retaining declaration as a contracted callee too (the map is
+    read directly, not consulted): an unmet premise, a missing actual or a
+    poisoned premise set renames the call (`call to … outside its declared
+    literal-argument premise`) before the callback route, the retaining
+    environment or any other reader sees it, so the callback is never
+    decided there. A met call keeps its name and rule 13u decides the
+    invocation unchanged: an open set (a formal, a null pointer constant)
+    `callback-undecided`, a candidate with no contract in force
+    `callback-uncontracted`, a non-identity one `callback-effectful`; the
+    premise adds no candidate, contract or mode. Measured before the route
+    change: a premise-carrying invocation declaration was applied at a
+    non-null `x` (`Safe` on the fixture's `reuse_arm`). **Do not** admit a
+    premise beside any other callback or retaining clause, read a
+    premise-carrying withheld declaration at a call that does not meet it,
+    or read a null callback as no invocation (a callee's own default behind
+    a null callback has no spelling: `OPENSSL-PEM-NULL-CALLBACK-DEFAULT`).
+    `QCore.CallbackLiteralPremise`
+    (`a_premise_stands_only_beside_invocations`,
+    `an_unmet_premise_withdraws_a_callback_declaration`,
+    `a_met_premise_defers_to_the_invocation`, `applied_only_over_identities`,
+    `the_new_rewrite_refuses_at_least_the_old`,
+    `the_rewrite_is_unchanged_on_the_function_map`, the `pem_*` vectors);
+    `crates/qcore-contract/tests/callback_literal_premise.rs`,
+    `crates/qcore-c-gateway/tests/callback_literal_premise.rs`.
+    [Report](../reports/openssl-pem-callback-arm/README.md).
+
 <!-- generated:rules:end -->

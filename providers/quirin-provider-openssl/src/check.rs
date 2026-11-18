@@ -798,12 +798,27 @@ mod tests {
         let (path, text) = module_of("PEM_read_bio_X509");
         let widened = text.replacen("    requires resource_literal_argument(x, 0);\n", "", 1);
         assert!(check_function(path, &widened, "PEM_read_bio_X509").is_err());
-        // The null-callback premise removed: a caller's password callback
-        // would read as a benign borrowed pointer.
-        let premise = "    requires resource_literal_argument(cb, 0);\n";
-        assert!(text.contains(premise));
-        let benign = text.replacen(premise, "", 1);
+        // Card OPENSSL-PEM-CALLBACK-ARM: the invocation removed (a caller's
+        // password callback would read as a benign borrowed pointer), its
+        // `u` actual dropped to `_`, and the retired null-callback premise
+        // restored are each refused.
+        let invoked = "    ensures normal resource_callback_invoked(cb, _, _, _, u);\n";
+        assert!(text.contains(invoked));
+        assert!(!text.contains("resource_literal_argument(cb, 0)"));
+        let benign = text.replacen(invoked, "", 1);
         assert!(check_function(path, &benign, "PEM_read_bio_X509").is_err());
+        let unnamed = text.replacen(
+            invoked,
+            "    ensures normal resource_callback_invoked(cb, _, _, _, _);\n",
+            1,
+        );
+        assert!(check_function(path, &unnamed, "PEM_read_bio_X509").is_err());
+        let narrowed = text.replacen(
+            "    requires resource_literal_argument(x, 0);\n",
+            "    requires resource_literal_argument(x, 0);\n    requires resource_literal_argument(cb, 0);\n",
+            1,
+        );
+        assert!(check_function(path, &narrowed, "PEM_read_bio_X509").is_err());
         // A release of a non-counted object read as a counted drop, and a
         // counted drop read as a final free.
         let (path, text) = module_of("PKCS12_free");

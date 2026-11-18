@@ -124,14 +124,14 @@
     {
       "function": "PEM_read_bio_PrivateKey",
       "module": "openssl/pem.qv",
-      "contract_sha256": "3e91f80705cc7de67aff7ebb075eaa1a98b047ff24364f1383a7d052265467ac",
-      "pinned_at": "2026-11-17T12:04:42Z"
+      "contract_sha256": "e70f8404393690819f1fa59ed77b838ee2777261f329b7d7efd4f4b6c616ffb5",
+      "pinned_at": "2026-11-18T01:55:54Z"
     },
     {
       "function": "PEM_read_bio_X509",
       "module": "openssl/pem.qv",
-      "contract_sha256": "a204c108b8f8d59bfe33b5d51ef0f48756343727f276a468bb9cac0d5c74ce5e",
-      "pinned_at": "2026-11-17T12:04:42Z"
+      "contract_sha256": "76c1dcea270deea0b8d140dda902cfff01b2a77dca93ddd62309acaf4ff278f2",
+      "pinned_at": "2026-11-18T01:55:54Z"
     },
     {
       "function": "PKCS12_free",

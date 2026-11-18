@@ -169,11 +169,18 @@ const SINCE_3_0_0: &str = "resource_library_version(openssl, since \"3.0.0\")";
 /// The registered-callbacks premise alone.
 const CALLBACKS: &[Premise] = &[Premise::RegisteredCallbacks];
 
-/// `PEM_read_bio_*(bp, x, cb, u)`: a NULL `x` (no object to reuse) and a
-/// NULL `cb` (OpenSSL's own passphrase routine, or `u` read as the
-/// passphrase): the vocabulary admits no callback clause beside the `x`
-/// premise, so a caller's callback stays outside the declaration.
-const PEM_READ: &[Premise] = &[Premise::NullArgument(1), Premise::NullArgument(2)];
+/// `PEM_read_bio_*(bp, x, cb, u)`: a NULL `x` (no object to reuse), and the
+/// password callback `cb` called during the read with `u` as its last
+/// argument (card OPENSSL-PEM-CALLBACK-ARM: a premise stands beside a
+/// synchronous invocation, gateway rule 57). The other three arguments
+/// (`buf`, `size`, `rwflag`) are values the callee supplies.
+const PEM_READ: &[Premise] = &[
+    Premise::NullArgument(1),
+    Premise::CallbackInvoked {
+        callback: 2,
+        arguments: &[None, None, None, Some(3)],
+    },
+];
 
 use Documented::{
     BorrowedResult, Constructor, CountedConstructor, CountedRelease, NullAcceptingRelease, Plain,
