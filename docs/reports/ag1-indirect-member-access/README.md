@@ -200,6 +200,15 @@ Every edit outside the new module is a delimited hook
   of premise 2 in `store_bases`; `insulated_bases`' extra parameter and its
   `&BASE->F` arm; `admitted_field`'s tag; `member_address_actuals`' tag.
 - `crates/qcore-c-gateway/src/lib.rs`: `mod typedef_aggregate_base;`.
+- `docs/reports/libc-reading-site-evidence/bindings.json`: the
+  declaration-reader digest of `typed_field_access.rs` (re-pinned; a card
+  that also edits `typed_field_access.rs` must recompute it after the merge).
+- Fallback for the integrator if the `typed_field_access.rs` hooks conflict:
+  every row this card moved uses a **defining** typedef only, which the
+  existing `TypedAccessModel::defining_struct_alias` already answers; reading
+  through it instead (no `struct_alias_heads`, no `never_variably_modified_at`
+  arm) keeps the eight moves and loses only the forward-and-defining pair
+  (`rd_kafka_Node_new`'s re-attribution). Not measured.
 - None of `legacy_c.rs`, `legacy_cfg_builder.rs`, `legacy_transfer.rs` or
   `typed_access_path.rs` is touched.
 
@@ -278,7 +287,48 @@ slice: none.
 
 ## 5. Gate
 
-GATE
+Scoped card gate `python3 scripts/gate_scope.py --base a9c6dcf44 --out
+private/gate-2` (`scripts/gate.sh 2`) at `da221ce11` (code as `c3c57d83d`;
+mode full: the diff reaches qcore-c-gateway), exit 1; logs in the worktree's
+`private/gate-2/`, summary `private/gate-2/gate.json`:
+
+| step | exit | result |
+|---|---:|---|
+| submodules | 0 | 1 submodule |
+| `cargo fmt --all -- --check` | 0 | |
+| `cargo clippy --all-targets -- -D warnings` | 0 | |
+| `run_test_binaries.py` (rust-suite slot) | 101 | 661 units, 706 summaries; 9,699 passed, **5 failed**, 21 ignored, 148 filtered (`private/gate-2/rust-suite/`) |
+| `reevaluation_probe` / `reevaluation_followup` | 0 / 0 | |
+| `check_lean_audits.py` | 0 | 449 audits |
+| `python3 -m unittest discover -s scripts/tests` | 1 | 779 tests, 1 failure: `test_gate_slot_starvation.Resident.test_it_is_reported_while_the_job_runs` (resident set 60,140 KiB < 65,536) |
+
+**The five Rust failures.** `libc_reading_site_evidence` (3) and
+`reading_site_domain` (1) failed only with `reading-site: artifact reference
+mismatch: crates/qcore-c-gateway/src/typed_field_access.rs`:
+LIBC-READING-SITE-EVIDENCE's binding manifest pins that file's sha256 as its
+declaration-reader artifact. Rule 61's hooks change the file, so the digest
+was re-pinned deliberately (`748c82224`, `f2429ce0…` -> `9f155d2d…`, anchor
+`fn scalar_pointer_result` unchanged); both binaries then pass alone (6 and 1
+tests, `private/ag1/rerun1/reading-site.log`, exit 0).
+`libcurl_user_crate_versions` (1): `the_libcurl_ranges_follow_the_audited_curlver_header`
+expects `Unknown` once the fixture tree's `curl/curlver.h` is removed, but the
+audit then reads the host's `/usr/include/x86_64-linux-gnu/curl/curlver.h`
+(8.18.0, installed 2026-10-13) and answers `Safe`: an environment dependence
+of that test, untouched by this card (no libcurl, header or version reader
+changed). Its rerun alone was queued in a rust-suite slot
+(`private/ag1/rerun1/libcurl.log`) and had not run at hand-back.
+**The Python failure** is the timing- and load-sensitive gate-slot resident
+test; rerun alone it passes (`private/ag1/py-rerun.log`, exit 0), recorded
+per the brief.
+
+Targeted runs before the gate: `cargo test -p qcore-c-gateway --lib` (1,317
+passed at the first rule; the module's 6 unit tests at the narrowed rule),
+`tests/ag1_indirect_member_access.rs` (6 passed), `cargo clippy -p
+qcore-c-gateway --all-targets -- -D warnings` 0, `lake build` of every Lean
+target 0 (508 jobs), `apply_amendments.py --check` 0. An earlier gate,
+`private/gate-1`, was cancelled when the rule was narrowed and is not
+evidence; one AFTER build failed for a full disk (`private/ag1/build-after.log`)
+and is not evidence.
 
 ## 6. Follow-ups (registered in [integration-amendments.json](integration-amendments.json))
 
