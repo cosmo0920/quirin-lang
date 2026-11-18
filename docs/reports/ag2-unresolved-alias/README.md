@@ -158,3 +158,69 @@ already gets (the formal-direct controls), instead of the stricter `Owned`.
 | S8 `__qcore_nested_value_N` (`mk_mem_free(MK_TLS_GET(x))`) | a release of a `return_none` value this body holds no custody for: a correct refusal until the thread-local slot's teardown relation is modelled | `W43-RESULT-ALIAS-CONDITIONAL-AND-RETAINED` (amended) |
 | S2/S3 sources outside a copy into a local (scalar names in conditions and returns, literal call actuals, arrays) | not copies; the destination rule does not apply | `W47-ALIAS-TYPED-SCALAR-NAMES` (amended) |
 | secondary leaves (8,932) | a consequence of another refusal on the row | AG1, AG3 and the callee-closure cards |
+
+## 4. Fixtures and Lean
+
+[`tests/ag2_unresolved_alias.rs`](../../../crates/qcore-c-gateway/tests/ag2_unresolved_alias.rs)
+(14 tests; every `Safe` rechecks its certificate). Admitted: a literal copy
+on one or both arms (`Safe`, base `Unknown` on `__qcore_literal__`), an
+enumerator of an anonymous-enum typedef (`Safe`, base `Unknown` on both
+enumerators and the local), a callback context copied under a null test and
+read through a member chain, and a copy whose member is returned (`Safe`,
+base `Unknown` on the formal), each beside the same body on the formal
+itself (`Safe` at base and tip). Near misses, unchanged from base: a release
+of a literal copy, a literal joined with a live binding then released
+(`unknown_alias:s`), a literal over a live acquisition (the `Leak` stays), a
+literal into a formal, a shadowed destination, a file-scope scalar and
+pointer object, a released same-type peer (`r/q` stays), a second copy
+released, a copy stored, returned, handed to an uncontracted callee or
+address-taken, a rebound formal, a loop cursor, and three release wrappers
+whose W4 summary still validates (`a_released_copy_keeps_the_w4_signal`).
+`may_alias_boundary` (32) and `thread_local_custody_free_read` (9) pass
+unchanged. Unit tests (`tests/unit/custody_free_copy.rs`, 5): the decision
+table against the vectors, the withholding uses, the type readers (a
+pointer-to-pointer formal is not single-level) and `admits`.
+
+[`QCore.CustodyFreeCopy`](../../../proof/QCore/CustodyFreeCopy.lean), audited
+by `proof/AuditCustodyFreeCopy.lean` (17 theorems, axioms `propext`,
+`Classical.choice`, `Quot.sound` only): `decision_vectors_hold` (bound to the
+Rust table by `the_lean_decision_vectors_match_the_shared_table`),
+`a_copy_is_admitted_exactly_on_a_read`, `a_custody_use_of_a_copy_withholds`,
+`a_write_to_the_formal_withholds`, `no_premise_no_reading`,
+`the_copy_changes_no_obligation`, `the_copy_denotes_what_the_source_denotes`,
+`every_binding_decision_agrees`, `no_other_binding_changes`,
+`the_admitted_copy_reports_nothing`, `the_withheld_answer_is_unchanged`,
+`withheld_keeps_the_report`, `a_bound_source_keeps_the_old_answer`,
+`a_release_of_the_copy_refuses`, `handing_the_copy_out_escapes_nothing`,
+`step_keeps_other_bindings`, `a_never_written_name_stays_unbound`.
+
+## 5. Shared-file hook points
+
+All new logic is in `custody_free_copy.rs` (the reading) and
+`legacy_custody_free_copy.rs` (the parser adapter). Shared files carry only
+delimited hooks, each between `AG2-UNRESOLVED-ALIAS hook (rule 62): begin` and
+`end` comments:
+
+| File | Hook |
+|---|---|
+| `legacy_c.rs` | the `#[path = "legacy_custody_free_copy.rs"] mod custody_free_copy_route;` declaration after `typed_roots`; the `custody_free` field of `TraversalNames` (serde default, skipped when empty); the call `parser.custody_free_copies(&cfg, &scalars, &pointers)` before `cfg.traversal` is assigned, and the struct literal there |
+| `legacy_transfer.rs` | one `LegacyInstruction::Alias` arm in `transfer_base`, after rule 54's and before the generic alias arm |
+| `lib.rs` | `pub mod custody_free_copy;` after `thread_local_read` |
+
+No change to `legacy_cfg_builder.rs` or `typed_access_path.rs`
+(`TraversalNames::default()` covers every other CFG constructor).
+
+## 6. Records
+
+- [PREDICTION.md](PREDICTION.md), committed before the semantic commit, with
+  its `measure-prediction` block (29 declared moves on corpus and
+  twelve-home).
+- [integration-amendments.json](integration-amendments.json): retires
+  `W47-ALIAS-FORMAL-COPY`; amends `W43-INDEX-TRAVERSAL-FORMAL-COPY`,
+  `W47-ALIAS-TYPED-SCALAR-NAMES`, `W47-ALIAS-FLOW-RESIDUALS` and
+  `W43-RESULT-ALIAS-CONDITIONAL-AND-RETAINED`; registers
+  `AG2-STATIC-OBJECT-COPY` and `AG2-LITERAL-OR-CONSTANT-INTO-FORMAL`.
+- Measurement command (the integrator's): `quirin-audit measure --side
+  base=rev:a9c6dcf44 --side tip=rev:<tip> --declared
+  docs/reports/ag2-unresolved-alias/PREDICTION.md` on corpus, twelve-home,
+  system and slice, then the user's `current --monkey-linked` rerun.

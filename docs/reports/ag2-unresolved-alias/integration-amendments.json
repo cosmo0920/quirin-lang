@@ -1,0 +1,57 @@
+{
+  "schema": "quirin-amendments/1",
+  "card": "AG2-UNRESOLVED-ALIAS",
+  "base": "a9c6dcf44",
+  "measured_tip": "cda5bfff6",
+  "profiles": [],
+  "increment_paragraph": "**AG2-UNRESOLVED-ALIAS** (USER DECISION 2026-11-18 \"We need to launch those of the implementation cards to resolve the biggest gaps of analyzing works of the corpus of fluent-bit source tree.\"; gateway rule 62; Lean `QCore.CustodyFreeCopy`; [report](../../reports/ag2-unresolved-alias/README.md)). A lexical census of the 11,233 `unknown_alias` leaves on 2,280 Unknown rows of the user's `current` run splits them into 2,301 primary and 8,932 secondary leaves (a consequence of another refusal on the row); of the 69 rows blocked by `unknown_alias` alone, 27 are blocked only by a pointer formal copied into a local (S1: decode callbacks, comparators, timer and password callbacks), one by a literal copy (S3) and one by an enumerator (S2). Rule 62 reads three copy sources from Clang's AST that carry no identity: a string or character literal, an enumeration constant (the traversal exemption missed typedefs of anonymous enums), and an unbound single-level pointer formal whose copies are only read through (rebinding, copy, null test, dereference base, call actual; the never-bound premise for the formal and every copy). A copy from such an unbound source into an automatic local with one declaration leaves the local unbound with no report, exactly the transfer W43-INDEX-TRAVERSAL and rule 54 apply; any return, store, address, write or custody-taking actual of a copy withholds the reading so the old report, W4's binding signal, stands (release wrappers keep their `Released` summaries). File-scope objects (rule 54's boundary), locals bound from members or calls, formals used directly and destinations that are formals stay refused with named owners. Predicted: 29 `Unknown -> Safe` rows on corpus, twelve-home and `current` (27 S1, the two-line S1 comparator, one S3); system and slice not derived.",
+  "status_paragraph": null,
+  "ledger": [
+    {
+      "id": "W47-ALIAS-FORMAL-COPY",
+      "operation": "retire",
+      "why": "Discharged by card AG2-UNRESOLVED-ALIAS (gateway rule 62, Lean QCore.CustodyFreeCopy): the copy of an unbound single-level pointer formal is read from Clang's AST (any object pointer, `void *` included, typedefs desugared) with the formal's never-bound premise (rule 10l's pointer root) still required and every copy's never-bound closure, and leaves the copy unbound with no report wherever every copy use is a read-through (rebinding, copy, null test, dereference base, call actual). Negative controls in tests/ag2_unresolved_alias.rs (a released copy, a stored, returned, address-taken or uncontracted-handed copy, a rebound formal, a loop cursor, a released same-type peer) and a pointer-to-pointer formal (single_level_pointer unit test); a W4-bound formal keeps the old transfer (a_bound_source_keeps_the_old_answer, a_released_copy_keeps_the_w4_signal). Copies with a custody use stay with W43-INDEX-TRAVERSAL-FORMAL-COPY.",
+      "source": "docs/reports/ag2-unresolved-alias/README.md"
+    },
+    {
+      "id": "W43-INDEX-TRAVERSAL-FORMAL-COPY",
+      "operation": "amend",
+      "text": "AG2-UNRESOLVED-ALIAS (rule 62) admits a formal's copy as unbound only where every copy use is a read-through, which is exactly where W4 needs no binding signal: any return, store of the copy's value, `&`, write or step (the walk `p = s; while (*p) p++;` is a step) or custody-taking actual withholds the reading for the formal and its copies, so the old report, W4's signal, stands there (Lean withheld_keeps_the_report). Open here: a stepped walk over a caller's string, and a copy handed back or stored, which need W4 its own binding signal before the copy can be unbound.",
+      "source": "docs/reports/ag2-unresolved-alias/README.md"
+    },
+    {
+      "id": "W47-ALIAS-TYPED-SCALAR-NAMES",
+      "operation": "amend",
+      "text": "AG2-UNRESOLVED-ALIAS (rule 62) discharges the copy case: a string or character literal (`__qcore_literal__`, unless the function spells the placeholder) or an enumeration constant (every reference an EnumConstantDecl, no declaration of the spelling) copied into an automatic local with one declaration leaves the local unbound with no report (the user's 2026-11-18 current run: 217 primary S2 copy leaves, 133 S3 literal leaves). Still open: an enumerator or literal copied into a formal (`LZ4F_getBlockSize`'s `blockSizeID = LZ4F_BLOCKSIZEID_DEFAULT`), scalar names unresolved in conditions and returns, literal call actuals, arrays.",
+      "source": "docs/reports/ag2-unresolved-alias/README.md"
+    },
+    {
+      "id": "W47-ALIAS-FLOW-RESIDUALS",
+      "operation": "amend",
+      "text": "AG2-UNRESOLVED-ALIAS census of the user's 2026-11-18 current run: locals bound from a member read, a call or a loop cursor and unresolved at a condition (S4, 468 primary leaves, 6 rows alone: `if (!(parpriv = rktpar->_private))`, cJSON_GetArraySize, rd_kafka_toppar_get0) or at a dereference, actual or return (S5, 485 primary leaves, 11 rows alone: mk_fifo_queue_destroy_all's list-entry cursor, snappy append, get_hash_table) are the largest primary alias classes after S1; rule 62 does not read them (the value comes from a place this body does not track).",
+      "source": "docs/reports/ag2-unresolved-alias/README.md"
+    },
+    {
+      "id": "W43-RESULT-ALIAS-CONDITIONAL-AND-RETAINED",
+      "operation": "amend",
+      "text": "AG2-UNRESOLVED-ALIAS: Monkey's `mk_mem_free(MK_TLS_GET(x))` (mk_cache_worker_exit, mk_sched_worker_free, mk_server_worker_loop; 8 `__qcore_nested_value_N` leaves) releases a `pthread_getspecific` (`return_none`) value, a correct unresolved-identity refusal until the thread-local slot's set/get/teardown relation is modelled.",
+      "source": "docs/reports/ag2-unresolved-alias/README.md"
+    },
+    {
+      "id": "AG2-STATIC-OBJECT-COPY",
+      "operation": "register",
+      "title": "A copy of a file-scope object into a local reports the object as an unresolved identity",
+      "text": "Measured by AG2-UNRESOLVED-ALIAS (sub-shape S7, the user's 2026-11-18 current run: 123 primary leaves on 183 Unknown rows, one row alone, `rd_kafka_global_cnt_get`'s `r = rd_kafka_global_cnt;`; the lexical class also holds lower-case enumerators such as lz4's `byPtr`, which rule 62 already reads). Rule 54 reads thread-local objects only and says not to read a static object under it; rule 11h (3) says a static object's value carries no identity. A scalar static (an `int` counter) is custody-free, but a static pointer object may be released or replaced through its copy elsewhere in the run, so admitting either needs the user's decision on rule 54's boundary and, for pointers, a cross-function account of the object's writes.",
+      "source": "docs/reports/ag2-unresolved-alias/README.md",
+      "recorded_by": "AG2-UNRESOLVED-ALIAS"
+    },
+    {
+      "id": "AG2-LITERAL-OR-CONSTANT-INTO-FORMAL",
+      "operation": "register",
+      "title": "A literal or enumeration constant stored into a formal keeps its unresolved-identity report",
+      "text": "Rule 62 (AG2-UNRESOLVED-ALIAS) writes only automatic locals. `if (blockSizeID == 0) blockSizeID = LZ4F_BLOCKSIZEID_DEFAULT;` (LZ4F_getBlockSize, the one S2 row blocked alone in the user's 2026-11-18 current run) rebinds a by-value scalar formal to an enumerator. A formal's binding is the entry custody a contract or W4 summary seeds, so unbinding it needs the same argument as rule 41's protected-formal exclusion: safe for a scalar formal no contract binds, to be stated and proved before admission.",
+      "source": "docs/reports/ag2-unresolved-alias/README.md",
+      "recorded_by": "AG2-UNRESOLVED-ALIAS"
+    }
+  ]
+}
