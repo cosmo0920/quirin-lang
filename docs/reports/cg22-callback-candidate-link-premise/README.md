@@ -192,5 +192,27 @@ own map, and `live.json` measures it.
 
 ## 6. Gate
 
-See [gate/gate.json](gate/gate.json) once recorded; the scoped run and its
-known failures are stated there and in the card's reply.
+Scoped card gate **gate-2** on `7b2fbb7c6` (code, data and tests; the later
+commit adds only this section and the gate record), `python3
+scripts/gate_scope.py --base 974434463` through `private/toolchain/env.sh`
+(Clang 21.1.8), mode **scoped** (qcore-audit and its dependants, the measure
+plugin, `composition_bounds`; no Lean, no provider gate), exit **1**
+([gate.json](gate/gate.json), [Python log](gate/python.log); logs
+`private/gate-2/`): submodules 0; `cargo fmt --check` 0; clippy `-D
+warnings` 0 (both steps); `run_test_binaries.py` **218 units, 222
+summaries, 2,752 passed, 0 failed, 8 ignored**, exit 0; `reevaluation_probe`
+0; `reevaluation_followup` 0; Python suite **779 tests, exit 1: 1 failure, 1
+error**, both `test_evaluation_profiles.CommittedProfiles`
+(`test_cli_check`, `test_tree_bindings_and_history`), both the one refusal
+"bindings.json binds matrix key(s) ['conditional_twelve_home_callback_comparators']
+the matrix no longer has": the integrator's matrix row of section 2. With
+that row supplied in memory (nothing written), `check_tree` and
+`check_bindings` pass with four live profiles and `check_history` passes (44
+commits).
+
+**gate-1** on `23065a145` (`private/gate-1/`, exit 1, not the closing run)
+also failed `test_every_directory_literal_is_declared` and
+`test_evaluation_records_are_claimed_by_their_readers`: the link-premise test
+then read the maps through a `contract/evaluations` directory literal. It now
+reads them with `include_str!`, and the records test accepts a crate that
+claims a record through a test target (`scripts/tests/test_gate_scope.py`).
