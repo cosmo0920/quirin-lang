@@ -218,6 +218,9 @@ pub(super) struct DesugarState {
     /// Card AG3-CONDITION-RETURN-CALLS (rule 63 (2)): the last leaf call the
     /// classifier refused, `(callee, description)`.
     refused_call: Option<(String, String)>,
+    /// Card AG3-CONDITION-RETURN-CALLS (rule 63 (2)): the last
+    /// `planned_condition` answered with a named refusal, not a decision.
+    named_refusal: bool,
 }
 
 // Card AG3-CONDITION-RETURN-CALLS (gateway rule 63): a residual read beside
@@ -495,6 +498,7 @@ impl Parser<'_> {
         refused: bool,
     ) -> Option<Box<ConditionPlan>> {
         self.desugar.refused_call = None;
+        self.desugar.named_refusal = false;
         let plan = self.planned_condition_routes(line, condition, position, refused);
         // Card AG3-CONDITION-RETURN-CALLS (rule 63 (2)): this condition's own
         // refused call, taken before any later route consults a leaf.
@@ -514,7 +518,9 @@ impl Parser<'_> {
             }
             // Card AG3-CONDITION-RETURN-CALLS (rule 63 (2)): asked last; a
             // re-attribution of the refusal, never an admission.
-            return self.attributed_condition_refusal(condition, position, refused_call);
+            let named = self.attributed_condition_refusal(condition, position, refused_call);
+            self.desugar.named_refusal = named.is_some();
+            return named;
         }
         plan
     }

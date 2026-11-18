@@ -95,6 +95,24 @@ pub(super) fn all_identity(lowered: &[LegacyInstruction]) -> bool {
 }
 
 impl Parser<'_> {
+    /// Rule 63 (2) for a consumer that reads a plan as a decision (the value
+    /// connective route, rule 10z): `planned_condition` with a named refusal
+    /// read as no plan, so that consumer keeps exactly its older answer.
+    pub(in super::super) fn planned_condition_decision(
+        &mut self,
+        line: usize,
+        condition: &[Token],
+        position: Position,
+        refused: bool,
+    ) -> Option<Box<ConditionPlan>> {
+        let plan = self.planned_condition(line, condition, position, refused);
+        if self.desugar.named_refusal {
+            self.desugar.named_refusal = false;
+            return None;
+        }
+        plan
+    }
+
     /// Rule 63 (1): the decision of a call-bearing leaf whose residual the
     /// neutral route refused: the typed condition read of the residual, when
     /// every lowered instruction is the identity. `None` keeps the refusal.

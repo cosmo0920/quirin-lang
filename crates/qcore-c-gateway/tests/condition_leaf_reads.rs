@@ -294,6 +294,20 @@ fn the_named_refusal_keeps_the_node_and_its_exceptions() {
         "Unsafe",
         &["leak", BRANCH],
     );
+    // A consumer that reads a plan as a decision (the value-connective route,
+    // rule 10z) never receives the named refusal: its older answer stands.
+    expect(
+        "a conditional value keeps the value route's answer",
+        "int w(int a) { int r = ext(a) == 2 ? 1 : 0; return r; }",
+        "Unknown",
+        &["unsupported:call to uncontracted function `ext`"],
+    );
+    expect(
+        "a connective return keeps the return refusal",
+        "int w(int a, int b) { return ext(a) && b; }",
+        "Unknown",
+        &["unsupported:unmodeled call, aggregate or indirect access in return expression"],
+    );
     expect(
         "a descriptor read keeps the position's text",
         "int w(const char *p) { int fd = k_open(p); if (fd < 0) return 0; if (ext(fd) == 2) { k_close(fd); return 1; } k_close(fd); return 0; }",
