@@ -47,6 +47,9 @@ use serde_json::{Value, json};
 mod process_fixture;
 use process_fixture::write_executable;
 
+#[path = "../../../tests/support/tracked_files.rs"]
+mod tracked_files;
+
 static NEXT: AtomicUsize = AtomicUsize::new(0);
 
 const VARIABLE: &str = "QCORE_LIBRARY_VERSION_COMPILE_DATABASE";
@@ -853,12 +856,12 @@ fn the_pinned_route_refuses_a_manifest_whose_load_path_carries_bindings() {
 #[test]
 fn shipped_manifests_carry_no_checker_binding() {
     let mut manifests = vec![repository().join("cycle19-resource-contracts.json")];
-    for entry in fs::read_dir(repository().join("contract/profiles")).unwrap() {
-        let directory = entry.unwrap().path();
-        let Ok(text) = fs::read_to_string(directory.join("profile.json")) else {
+    for path in tracked_files::tracked_files(&repository().join("contract/profiles")) {
+        if path.file_name().is_none_or(|name| name != "profile.json") {
             continue;
-        };
-        let document: Value = serde_json::from_str(&text).unwrap();
+        }
+        let directory = path.parent().unwrap().to_path_buf();
+        let document: Value = serde_json::from_slice(&fs::read(&path).unwrap()).unwrap();
         if let Some(relative) = document["resource_contract_manifest"].as_str() {
             manifests.push(directory.join(relative));
         }

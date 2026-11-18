@@ -3,7 +3,7 @@ test a_manifest_whose_load_path_cannot_be_read_does_not_load ... ok
 test the_pinned_route_refuses_a_manifest_whose_load_path_carries_bindings ... ok
 test the_configured_route_runs_bindings_under_per_library_providers ... ok
 test the_manifest_routes_run_the_bindings_of_the_load_path_they_name ... ok
-test the_contracts_route_holds_by_reason_with_a_checker_binding ... ok
-test the_configured_route_holds_by_reason_with_a_checker_binding ... ok
 test the_current_route_holds_by_reason_with_a_checker_binding ... ok
-test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 22.32s
+test the_configured_route_holds_by_reason_with_a_checker_binding ... ok
+test the_contracts_route_holds_by_reason_with_a_checker_binding ... ok
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 24.19s
