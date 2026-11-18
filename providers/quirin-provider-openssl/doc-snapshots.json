@@ -2287,6 +2287,24 @@
    "reference_sentences": [],
    "page": "SSL_CTX_set_client_cert_cb",
    "fetched_on": "2026-11-18"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/CRYPTO_get_ex_new_index/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "df21847c71bfb2082a55075beb4a27b6b18f90421f3d2e1402d39bff90468689",
+   "bytes": 1087286,
+   "name": "CRYPTO_EX_new, CRYPTO_EX_free, CRYPTO_EX_dup, CRYPTO_free_ex_index, CRYPTO_get_ex_new_index, CRYPTO_alloc_ex_data, CRYPTO_set_ex_data, CRYPTO_get_ex_data, CRYPTO_free_ex_data, CRYPTO_new_ex_data - functions supporting application-specific data",
+   "history": "CRYPTO_alloc_ex_data() was added in OpenSSL 3.0. The signature of the dup_func() callback was changed in OpenSSL 3.0 to use the type void ** for from_d . Previously this parameter was of type void * . Support for ENGINE \"exdata\" was deprecated in OpenSSL 3.0.",
+   "null_sentences": [
+    "If the application is going to release the data, it must make sure to set a NULL value at the index, to avoid likely double-free crashes.",
+    "The free_func() may be called with a NULL pointer.",
+    "The ptr is the current exdata item; for new_func() this will typically be NULL.",
+    "CRYPTO_get_ex_data() returns the application data or NULL on failure; note that NULL may be a valid value."
+   ],
+   "reference_sentences": [],
+   "page": "CRYPTO_get_ex_new_index",
+   "fetched_on": "2026-11-18"
   }
  ]
 }

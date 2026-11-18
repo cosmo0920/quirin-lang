@@ -34,7 +34,9 @@ module contract;
 // session-remove callback ("If a session-remove callback is set
 // (SSL_CTX_sess_set_remove_cb()), this callback will be called for each
 // session being freed from ctx's session cache", SSL_CTX_free 3.5); a free
-// runs the ex_data free callbacks. None of those setters is declared, so no
+// runs the ex_data free callbacks ("When a structure is free'd (such as
+// SSL_CTX_free()) then the free_func() is called for every defined index",
+// CRYPTO_get_ex_new_index 3.5). None of those setters is declared, so no
 // slot is stated; the frees keep their NULL-accepting reference drop.
 
 // TLS_server_method: https://docs.openssl.org/3.5/man3/SSL_CTX_new/
