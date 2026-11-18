@@ -315,8 +315,10 @@ expects `Unknown` once the fixture tree's `curl/curlver.h` is removed, but the
 audit then reads the host's `/usr/include/x86_64-linux-gnu/curl/curlver.h`
 (8.18.0, installed 2026-10-13) and answers `Safe`: an environment dependence
 of that test, untouched by this card (no libcurl, header or version reader
-changed). Its rerun alone was queued in a rust-suite slot
-(`private/ag1/rerun1/libcurl.log`) and had not run at hand-back.
+changed). Rerun alone in a rust-suite slot it fails the same assertion
+(`libcurl_user_crate_versions.rs:335`, 1 passed, 1 failed, exit 101,
+`private/ag1/rerun1/libcurl.log`): a host-environment failure, recorded, not
+caused by this card.
 **The Python failure** is the timing- and load-sensitive gate-slot resident
 test; rerun alone it passes (`private/ag1/py-rerun.log`, exit 0), recorded
 per the brief.
