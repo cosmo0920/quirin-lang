@@ -292,3 +292,15 @@ provider gate was not selected.
 Logs: `private/gate-1/` (Rust per-unit logs in `private/gate-1/rust-suite/`).
 The console log is outside the worktree, in the session scratchpad
 (`gate-1.console.log`).
+
+## Integrator measurement (2026-11-17)
+
+Declared measurement, base `rev:36b2cf931` (main at the card's base), tip `rev:67fdd5c28` (the measured code tip; the card tip 5c824e443 adds only records under this directory), run from the main checkout (`private/measure/cg25-20261117T105504Z`): exit 0, all three routes complete, no unmatched rows, declared result **match**.
+
+- corpus: 0 rows moved, 0 changed content (4,834 environment-only).
+- system: 0 rows moved, 0 changed content (448 environment-only).
+- slice: 0 rows moved, 0 changed content (404 environment-only).
+
+No row moves in any direction, as predicted: the guard closes an escape no measured row reached. [Comparison](integration/native-comparison.json.gz) (gzip of `native-comparison.json`, sha256 `2e3febd2557589586219ea81e6c777fba439a44ce46532a256c8ccd94ade0213`).
+
+Landed with CG25-THREAD-KEY-AUTOMATIC-REVISIT through integrate/cg25-thread-key. The landing gate record is [here](integration/gate.json) (full gate on a9c6dcf44; see its note for the two failures and why neither comes from these cards).

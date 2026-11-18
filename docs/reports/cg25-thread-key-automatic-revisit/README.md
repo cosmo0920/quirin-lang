@@ -276,3 +276,15 @@ Other checks:
   --check`: 0. It was run against a `git archive` of the card tree with
   CG25-VOID-CAST-GUARD-ESCAPE's amendments applied first, because the
   revisit entry it retires is registered by those amendments.
+
+## Integrator measurement (2026-11-17)
+
+Declared measurement, base `rev:5c824e443` (CG25-VOID-CAST-GUARD-ESCAPE's tip, this card's base), tip `rev:08ce3ade6` (the measured code tip; the card tip 9b6ef2aac adds only records under this directory), run from the main checkout (`private/measure/tkrev-20261117T161919Z`): exit 0, all three routes complete, no unmatched rows, declared result **match**.
+
+- corpus: 0 rows moved, 0 changed content (4,834 environment-only).
+- system: 0 rows moved, 0 changed content (448 environment-only).
+- slice: 0 rows moved, 0 changed content (404 environment-only).
+
+No row moves, as the automatic-key census predicted: no measured Fluent Bit or Monkey row creates an automatic `pthread_key_t`. [Comparison](integration/native-comparison.json.gz) (gzip of `native-comparison.json`, sha256 `479d24ac70097980abd09c59f8d48608823f11b1c7c6b5658f503ae3ce517d0f`).
+
+The twelve-home profile was added on main (r28) after both cards' bases and was not measured separately for either card. The amendments were applied with `--profiles-base caaf5304e`. Twelve-home reads the corpus inputs, where both cards moved 0 rows, but it is a different evaluation profile and its own result for these cards is unmeasured. Landed with CG25-VOID-CAST-GUARD-ESCAPE through integrate/cg25-thread-key; the landing gate record is in [that card's integration directory](../cg25-void-cast-guard-escape/integration/gate.json).
