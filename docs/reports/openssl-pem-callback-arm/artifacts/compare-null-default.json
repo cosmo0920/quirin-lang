@@ -1,0 +1,64 @@
+{
+ "base_rows": 422,
+ "base_status": {
+  "Pending": 2,
+  "Safe": 131,
+  "Unknown": 289
+ },
+ "base_units": {
+  "lib/librdkafka-2.15.0/src/rdhttp.c#0": "Unknown",
+  "lib/librdkafka-2.15.0/src/rdkafka_admin.c#1": "Unknown",
+  "lib/librdkafka-2.15.0/src/rdkafka_cert.c#2": "Unknown",
+  "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer.c#3": "Unknown",
+  "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer_oidc.c#4": "Unknown",
+  "lib/librdkafka-2.15.0/src/rdkafka_ssl.c#5": "Unknown",
+  "lib/monkey/tls/tls_openssl.c#6": "Unknown"
+ },
+ "content_changes": [
+  {
+   "added": [
+    "{\"category\": \"unsupported\", \"description\": \"indirect memory access is outside the resource projection\", \"line\": 20351, \"origin\": \"lib/librdkafka-2.15.0/src/rdkafka_cert.c:349\"}",
+    "{\"category\": \"unsupported\", \"description\": \"indirect memory access is outside the resource projection\", \"line\": 20397, \"origin\": \"lib/librdkafka-2.15.0/src/rdkafka_cert.c:405\"}"
+   ],
+   "removed": [
+    "{\"category\": \"unsupported\", \"description\": \"call to `PEM_read_bio_PrivateKey` outside its declared literal-argument premise\", \"line\": 20397, \"origin\": \"lib/librdkafka-2.15.0/src/rdkafka_cert.c:405\"}",
+    "{\"category\": \"unsupported\", \"description\": \"call to `PEM_read_bio_X509` outside its declared literal-argument premise\", \"line\": 20351, \"origin\": \"lib/librdkafka-2.15.0/src/rdkafka_cert.c:349\"}"
+   ],
+   "row": "lib/librdkafka-2.15.0/src/rdkafka_cert.c#2::rd_kafka_cert_new"
+  },
+  {
+   "added": [
+    "{\"category\": \"unsupported\", \"description\": \"call to `PEM_read_bio_PrivateKey`: callback `rd_kafka_transport_ssl_passwd_cb` (from `rd_kafka_transport_ssl_passwd_cb`) has no contract in force (callback-uncontracted)\", \"line\": 20594, \"origin\": \"lib/librdkafka-2.15.0/src/rdkafka_ssl.c:761\"}"
+   ],
+   "removed": [
+    "{\"category\": \"unsupported\", \"description\": \"call to `PEM_read_bio_PrivateKey` outside its declared literal-argument premise\", \"line\": 20594, \"origin\": \"lib/librdkafka-2.15.0/src/rdkafka_ssl.c:761\"}"
+   ],
+   "row": "lib/librdkafka-2.15.0/src/rdkafka_ssl.c#5::rd_kafka_ssl_PKEY_from_string"
+  },
+  {
+   "added": [
+    "{\"category\": \"unsupported\", \"description\": \"call to `PEM_read_bio_X509`: callback `rd_kafka_transport_ssl_passwd_cb` (from `rd_kafka_transport_ssl_passwd_cb`) has no contract in force (callback-uncontracted)\", \"line\": 20639, \"origin\": \"lib/librdkafka-2.15.0/src/rdkafka_ssl.c:832\"}"
+   ],
+   "removed": [
+    "{\"category\": \"unsupported\", \"description\": \"call to `PEM_read_bio_X509` outside its declared literal-argument premise\", \"line\": 20639, \"origin\": \"lib/librdkafka-2.15.0/src/rdkafka_ssl.c:832\"}"
+   ],
+   "row": "lib/librdkafka-2.15.0/src/rdkafka_ssl.c#5::rd_kafka_ssl_X509_from_string"
+  }
+ ],
+ "moves": [],
+ "tip_rows": 422,
+ "tip_status": {
+  "Pending": 2,
+  "Safe": 131,
+  "Unknown": 289
+ },
+ "tip_units": {
+  "lib/librdkafka-2.15.0/src/rdhttp.c#0": "Unknown",
+  "lib/librdkafka-2.15.0/src/rdkafka_admin.c#1": "Unknown",
+  "lib/librdkafka-2.15.0/src/rdkafka_cert.c#2": "Unknown",
+  "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer.c#3": "Unknown",
+  "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer_oidc.c#4": "Unknown",
+  "lib/librdkafka-2.15.0/src/rdkafka_ssl.c#5": "Unknown",
+  "lib/monkey/tls/tls_openssl.c#6": "Unknown"
+ }
+}

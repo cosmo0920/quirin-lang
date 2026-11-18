@@ -110,6 +110,13 @@ pub enum CallbackClause {
     Invoked {
         callback: usize,
         actuals: Vec<CallbackActual>,
+        /// Card **OPENSSL-PEM-CALLBACK-ARM** (rule 57, §C04.19):
+        /// `resource_callback_invoked_or_default(F, A…)`: a null pointer
+        /// constant at `callback` invokes nothing (the callee uses its own
+        /// default behaviour, which the declaration's other clauses state).
+        /// Omitted when false.
+        #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+        null_default: bool,
     },
     /// Rule 13v: during the call only, function pointers read from the array
     /// the parameter at `table` designates are called zero or more times with
@@ -201,6 +208,9 @@ impl CallbackClause {
     #[must_use]
     pub const fn keyword(&self) -> &'static str {
         match self {
+            Self::Invoked {
+                null_default: true, ..
+            } => "resource_callback_invoked_or_default",
             Self::Invoked { .. } => "resource_callback_invoked",
             Self::Table { .. } => "resource_callback_table",
             Self::Registered { .. } => "resource_callback_registered",

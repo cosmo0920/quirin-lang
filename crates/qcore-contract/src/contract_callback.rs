@@ -49,6 +49,9 @@ use qcore_schemas::contract::{
 };
 
 pub(super) const INVOKED: &str = "resource_callback_invoked";
+/// Card OPENSSL-PEM-CALLBACK-ARM (§C04.19, rule 57): a synchronous invocation
+/// whose null callback invokes nothing (the callee's own default).
+pub(super) const INVOKED_OR_DEFAULT: &str = "resource_callback_invoked_or_default";
 pub(super) const TABLE: &str = "resource_callback_table";
 pub(super) const REGISTERED: &str = "resource_callback_registered";
 pub(super) const REGISTRY_INVOKED: &str = "resource_callback_registry_invoked";
@@ -192,6 +195,7 @@ pub(super) fn clause(words: &[&str]) -> Option<WrittenCallback> {
     let (keyword, arguments) = words.split_first()?;
     let keyword = [
         INVOKED,
+        INVOKED_OR_DEFAULT,
         TABLE,
         REGISTERED,
         REGISTRY_INVOKED,
@@ -374,7 +378,7 @@ pub(super) fn declaration(
         let arguments = clause.arguments.as_slice();
         let shape = || format!("malformed `{}` clause", clause.keyword);
         let declared = match clause.keyword {
-            INVOKED => {
+            INVOKED | INVOKED_OR_DEFAULT => {
                 let (callback, rest) = arguments.split_first().ok_or_else(shape)?;
                 let callback = function_pointer(callback)?;
                 if !callbacks_named.insert(callback) {
@@ -383,6 +387,7 @@ pub(super) fn declaration(
                 CallbackClause::Invoked {
                     callback,
                     actuals: actuals(rest, Some(callback), false, true)?,
+                    null_default: clause.keyword == INVOKED_OR_DEFAULT,
                 }
             }
             TABLE => {

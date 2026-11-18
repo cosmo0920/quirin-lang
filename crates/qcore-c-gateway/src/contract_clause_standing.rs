@@ -687,9 +687,17 @@ fn callback_clause(clause: &qcore_schemas::callback::CallbackClause) -> Clause {
     };
     let keyword = clause.keyword();
     let (kind, arguments) = match clause {
+        // Card OPENSSL-PEM-CALLBACK-ARM (rule 57): a null default is a
+        // declared assumption no body check covers.
         CallbackClause::Invoked {
             callback,
             actuals: a,
+            null_default: true,
+        } => (ClauseKind::Callback, format!("#{callback}{}", actuals(a))),
+        CallbackClause::Invoked {
+            callback,
+            actuals: a,
+            ..
         } => (
             ClauseKind::CallbackChecked,
             format!("#{callback}{}", actuals(a)),
