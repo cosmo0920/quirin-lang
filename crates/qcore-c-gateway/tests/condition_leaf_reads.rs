@@ -162,7 +162,6 @@ fn a_residual_read_beside_an_identity_call_is_decided() {
         "int w(const char *s, struct box *b) { int i = 0; while (d_len(s) > b->n) { i++; b->n++; } return i; }",
         "int w(const char *s, struct box *b) { int i; for (i = 0; d_len(s) > b->n; i++) b->n++; return i; }",
         "int w(const char *s, struct box *b) { do { b->n++; } while (d_len(s) > b->n); return 0; }",
-        "int w(const char *s, struct box *b) { if (d_chr(s, 'x') != 0 && d_len(s) < b->n) return 1; return 0; }",
         "int w(const char *s, struct box *b) { if (!(d_len(s) == b->next->n)) return 1; return 0; }",
     ] {
         expect("residual read", body, "Safe", &[]);
@@ -204,7 +203,7 @@ fn the_residual_read_keeps_its_base_obligation() {
 }
 
 /// Near misses keep the refusal: a call that releases, a release sequenced
-/// inside the leaf, an assignment, a switch.
+/// inside the leaf, an assignment, a connective, a switch.
 #[test]
 fn a_non_identity_call_an_assignment_or_a_switch_keeps_the_refusal() {
     if !clang_available() {
@@ -225,6 +224,14 @@ fn a_non_identity_call_an_assignment_or_a_switch_keeps_the_refusal() {
     expect(
         "an assignment in the leaf",
         "int w(const char *s, struct box *b) { __SIZE_TYPE__ n; if ((n = d_len(s)) > b->n) return 1; return 0; }",
+        "Unknown",
+        &[BRANCH],
+    );
+    // Rule 63 (1) reads one leaf: a connective keeps rule 5h's answer, which
+    // refuses a leaf whose residual reads memory.
+    expect(
+        "a residual read below a connective",
+        "int w(const char *s, struct box *b) { if (d_chr(s, 'x') != 0 && d_len(s) < b->n) return 1; return 0; }",
         "Unknown",
         &[BRANCH],
     );

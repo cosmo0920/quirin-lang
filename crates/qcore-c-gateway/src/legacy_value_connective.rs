@@ -389,9 +389,7 @@ impl Parser<'_> {
             self.element_lowerings += 1;
         }
         let distinct_condition = self.distinct_condition(condition);
-        // Card AG3-CONDITION-RETURN-CALLS (rule 63 (2)): a named refusal is
-        // not a decision here.
-        let condition_plan = self.planned_condition_decision(
+        let condition_plan = self.planned_condition(
             line,
             condition,
             Position::Branch,

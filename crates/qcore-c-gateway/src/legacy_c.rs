@@ -199,6 +199,13 @@ pub use descriptor_custody::ValidityFact;
 #[path = "legacy_condition_desugar.rs"]
 mod condition_desugar;
 
+// Card AG3-CONDITION-RETURN-CALLS (gateway rule 63): a residual read beside
+// identity calls and an uncontracted call's named refusal, asked at each
+// controlling-expression position after rule 5h answered no plan (one thin
+// hook per position below naming the card).
+#[path = "legacy_condition_leaf_reads.rs"]
+mod condition_leaf_reads;
+
 // Card W47-ACCESS-PATH-POSITIONS (rule 10k): the Clang-typed access-path layer
 // in condition operands, returns and call actuals, each a fallback after the
 // position's existing routes. The hooks below naming the card are thin.
@@ -5336,17 +5343,28 @@ impl Parser<'_> {
                 // route above refused the condition.
                 let condition_plan = match relational_plan {
                     Some(plan) => Some(plan),
-                    None => self.planned_condition(
-                        line,
-                        &condition,
-                        condition_desugar::Position::Branch,
-                        !condition_supported
+                    None => {
+                        let refused = !condition_supported
                             && condition_call.is_none()
                             && condition_access.is_none()
                             && element_condition.is_none()
                             && null_condition.is_none()
-                            && distinct_condition.is_none(),
-                    ),
+                            && distinct_condition.is_none();
+                        self.planned_condition(
+                            line,
+                            &condition,
+                            condition_desugar::Position::Branch,
+                            refused,
+                        )
+                        // Card AG3-CONDITION-RETURN-CALLS (rule 63).
+                        .or_else(|| {
+                            self.condition_leaf_reads(
+                                &condition,
+                                condition_desugar::Position::Branch,
+                                refused,
+                            )
+                        })
+                    }
                 };
                 // Card MK-EVENT-CELL-CROSS-FUNCTION (rule 38c): a guard test
                 // of a record with a declared cell protocol; a desugared plan
@@ -5397,15 +5415,20 @@ impl Parser<'_> {
                     !condition_supported && condition_call.is_none() && null_condition.is_none(),
                 );
                 // Card W44-BRANCH-CONDITION-CALLS.
-                let condition_plan = self.planned_condition(
-                    line,
-                    &condition,
-                    condition_desugar::Position::Loop,
-                    !condition_supported
-                        && condition_call.is_none()
-                        && condition_access.is_none()
-                        && null_condition.is_none(),
-                );
+                let refused = !condition_supported
+                    && condition_call.is_none()
+                    && condition_access.is_none()
+                    && null_condition.is_none();
+                let condition_plan = self
+                    .planned_condition(line, &condition, condition_desugar::Position::Loop, refused)
+                    // Card AG3-CONDITION-RETURN-CALLS (rule 63).
+                    .or_else(|| {
+                        self.condition_leaf_reads(
+                            &condition,
+                            condition_desugar::Position::Loop,
+                            refused,
+                        )
+                    });
                 let body = self.parse_statement_body()?;
                 Ok(Statement::While {
                     line,
@@ -5470,15 +5493,25 @@ impl Parser<'_> {
                     !condition_supported && condition_call.is_none() && null_condition.is_none(),
                 );
                 // Card W44-BRANCH-CONDITION-CALLS.
-                let condition_plan = self.planned_condition(
-                    line,
-                    &condition,
-                    condition_desugar::Position::ForLoop,
-                    !condition_supported
-                        && condition_call.is_none()
-                        && condition_access.is_none()
-                        && null_condition.is_none(),
-                );
+                let refused = !condition_supported
+                    && condition_call.is_none()
+                    && condition_access.is_none()
+                    && null_condition.is_none();
+                let condition_plan = self
+                    .planned_condition(
+                        line,
+                        &condition,
+                        condition_desugar::Position::ForLoop,
+                        refused,
+                    )
+                    // Card AG3-CONDITION-RETURN-CALLS (rule 63).
+                    .or_else(|| {
+                        self.condition_leaf_reads(
+                            &condition,
+                            condition_desugar::Position::ForLoop,
+                            refused,
+                        )
+                    });
                 let body = self.parse_statement_body()?;
                 let body_end = self.cursor;
                 // Card W45-PARENTHESISED-CALLEE: a clause whose stripped
@@ -5571,15 +5604,25 @@ impl Parser<'_> {
                 );
                 // Card W44-BRANCH-CONDITION-CALLS. The body was parsed first,
                 // as C writes it; its sites precede the condition's.
-                let condition_plan = self.planned_condition(
-                    line,
-                    &condition,
-                    condition_desugar::Position::DoWhile,
-                    !condition_supported
-                        && condition_call.is_none()
-                        && condition_access.is_none()
-                        && null_condition.is_none(),
-                );
+                let refused = !condition_supported
+                    && condition_call.is_none()
+                    && condition_access.is_none()
+                    && null_condition.is_none();
+                let condition_plan = self
+                    .planned_condition(
+                        line,
+                        &condition,
+                        condition_desugar::Position::DoWhile,
+                        refused,
+                    )
+                    // Card AG3-CONDITION-RETURN-CALLS (rule 63).
+                    .or_else(|| {
+                        self.condition_leaf_reads(
+                            &condition,
+                            condition_desugar::Position::DoWhile,
+                            refused,
+                        )
+                    });
                 Ok(Statement::DoWhile {
                     line,
                     writes: self.expression_writes(&condition),
