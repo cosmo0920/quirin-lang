@@ -16,13 +16,22 @@ module contract;
 
 // Card OPENSSL-PROVIDER-REMAINING-CALLEES. Configuring an SSL_CTX (see
 // err.qv for what every declaration of this crate shares; ssl_io.qv for the
-// registered-callbacks premise). Not declared here, each fail-closed:
-// SSL_CTX_ctrl (its custody depends on `cmd`: SSL_CTX_add_extra_chain_cert
-// hands the context the caller's certificate), SSL_CTX_set_cert_cb and
-// SSL_CTX_set_default_passwd_cb (a registration into one of the context's
-// several callback slots, which C04.19's single registration per holder
-// does not state) and SSL_CTX_use_cert_and_key (the page states the custody
-// of the key only, not of the certificate or the chain).
+// callback slots). Not declared here, each fail-closed: SSL_CTX_ctrl (its
+// custody depends on `cmd`: SSL_CTX_add_extra_chain_cert hands the context
+// the caller's certificate) and SSL_CTX_use_cert_and_key (the page states the
+// custody of the key only, not of the certificate or the chain).
+//
+// Card OPENSSL-SSL-CTX-CALLBACK-SLOTS. An SSL_CTX carries several callback
+// slots. SSL_CTX is opaque (`typedef struct ssl_ctx_st SSL_CTX;` in
+// openssl/types.h), so a slot is stated as one of an opaque record
+// (C04.19.3, `resource_callback_slot_registered` /
+// `resource_callback_slot_invoked`, rule 12n): its writers are exactly its
+// declared setters, the run's candidates every function those setters are
+// handed. Two slots are stated: the password callback
+// (`ssl_ctx_st.default_passwd_cb`) and the certificate callback
+// (`ssl_ctx_st.cert_cb`, see ssl_io.qv for the SSL's copy). Every other slot
+// a call may run is named by the premise `openssl_unstated_callback_slots`
+// where the call may run it.
 
 // SSL_CTX_set_options: https://docs.openssl.org/3.5/man3/SSL_CTX_set_options/
 // HISTORY (3.5): "The SSL_OP_ constants and the corresponding parameter and
@@ -108,33 +117,49 @@ contract {
 // first private key found in file to ctx"; NOTES: "In order to successfully
 // load encrypted keys, a function returning the passphrase must have been
 // supplied, see SSL_CTX_set_default_passwd_cb", so the call may run the
-// context's password callback: the registered-callbacks premise. Pinned
-// prototype: `int SSL_CTX_use_PrivateKey_file(SSL_CTX *ctx, const char
-// *file, int type)`.
+// context's password callback (SSL_CTX_set_default_passwd_cb page, 3.5: "the
+// default password callback called when loading/storing a PEM certificate
+// with encryption"), with a buffer, its size, the read/write flag and the
+// context's userdata (`pem_password_cb(char *buf, int size, int rwflag, void
+// *u)`): four values the callee supplies. No page names another callback the
+// call runs (card OPENSSL-SSL-CTX-CALLBACK-SLOTS: the registered-callbacks
+// premise is replaced by this stated invocation). Pinned prototype: `int
+// SSL_CTX_use_PrivateKey_file(SSL_CTX *ctx, const char *file, int type)`.
 extern fn SSL_CTX_use_PrivateKey_file(ctx: ptr<mut, u8>, file: ptr<const, u8>, filetype: i32) -> i32
 contract {
     requires resource_contract_v1;
     requires resource_revision(flexible);
     requires resource_library_version(openssl, documented "1.0.2");
-    requires resource_premise(openssl_registered_callbacks, "a callback the SSL object or its SSL_CTX carries (verify, certificate, password, info, message or ex_data callbacks) and the call may run takes, releases or retains nothing the caller holds");
     ensures normal resource_borrowed(ctx);
     ensures normal resource_borrowed(file);
     ensures normal resource_borrowed(filetype);
+    ensures normal resource_callback_slot_invoked(ctx, ssl_ctx_st.default_passwd_cb, _, _, _, _);
     ensures normal resource_return_none();
 };
 
 // SSL_CTX_use_certificate_chain_file: same page. DESCRIPTION (3.5): it
-// "loads a certificate chain from file into ctx"; it may run the password
-// callback as SSL_CTX_use_PrivateKey_file does. Pinned prototype: `int
+// "loads a certificate chain from file into ctx"; NOTES: "Certificate files
+// might be encrypted as well", and the password callback is "called when
+// loading/storing a PEM certificate with encryption" (SSL_CTX_set_default_passwd_cb,
+// 3.5): the stated invocation, as for SSL_CTX_use_PrivateKey_file. Card
+// OPENSSL-SSL-CTX-CALLBACK-SLOTS: the call also sets certificates, which the
+// security callback is consulted on (SSL_CTX_set_security_level, 3.5:
+// "Attempts to set certificates or parameters with insufficient security
+// are also blocked"; the callback "is consulted whenever the library needs to
+// decide whether an algorithm, key, parameter or protocol version meets the
+// configured security level"). Its setters (SSL_CTX_set_security_callback,
+// SSL_set_security_callback) are not declared, so that slot stays under the
+// narrowed premise. Pinned prototype: `int
 // SSL_CTX_use_certificate_chain_file(SSL_CTX *ctx, const char *file)`.
 extern fn SSL_CTX_use_certificate_chain_file(ctx: ptr<mut, u8>, file: ptr<const, u8>) -> i32
 contract {
     requires resource_contract_v1;
     requires resource_revision(flexible);
     requires resource_library_version(openssl, documented "1.0.2");
-    requires resource_premise(openssl_registered_callbacks, "a callback the SSL object or its SSL_CTX carries (verify, certificate, password, info, message or ex_data callbacks) and the call may run takes, releases or retains nothing the caller holds");
+    requires resource_premise(openssl_unstated_callback_slots, "a callback the call may run that no clause of this declaration states (a verify, info, message, security, session or client certificate callback of the SSL object or its SSL_CTX, or an ex_data callback) takes, releases or retains nothing the caller holds");
     ensures normal resource_borrowed(ctx);
     ensures normal resource_borrowed(file);
+    ensures normal resource_callback_slot_invoked(ctx, ssl_ctx_st.default_passwd_cb, _, _, _, _);
     ensures normal resource_return_none();
 };
 
@@ -171,5 +196,50 @@ contract {
     ensures normal resource_borrowed(ctx);
     ensures normal resource_borrowed(u);
     ensures normal resource_retained_by(u, ctx);
+    ensures normal resource_return_none();
+};
+
+// SSL_CTX_set_default_passwd_cb: https://docs.openssl.org/1.0.2/man3/SSL_CTX_set_default_passwd_cb/
+// (also 3.5, 1.1.1). HISTORY (3.5) names only the getters and the SSL_*
+// setters (1.1.0). DESCRIPTION (3.5): it "sets the default password callback
+// called when loading/storing a PEM certificate with encryption"; the SSL_*
+// setters "perform the same function as their SSL_CTX counterparts, but
+// using an SSL object", so they write the SSL's copy, which no declaration
+// here invokes: the context's slot has this one writer. A registration into
+// the opaque context's password slot (card OPENSSL-SSL-CTX-CALLBACK-SLOTS,
+// C04.19.3). Pinned prototype: `void SSL_CTX_set_default_passwd_cb(SSL_CTX
+// *ctx, pem_password_cb *cb)`.
+extern fn SSL_CTX_set_default_passwd_cb(ctx: ptr<mut, u8>, cb: fnptr) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, documented "1.0.2");
+    ensures normal resource_borrowed(ctx);
+    ensures normal resource_borrowed(cb);
+    ensures normal resource_callback_slot_registered(ctx, ssl_ctx_st.default_passwd_cb, cb);
+    ensures normal resource_return_none();
+};
+
+// SSL_CTX_set_cert_cb: https://docs.openssl.org/1.0.2/man3/SSL_CTX_set_cert_cb/
+// (also 3.5, 1.1.1). No HISTORY entry. NAME (3.5, 1.0.2):
+// "SSL_CTX_set_cert_cb, SSL_set_cert_cb - handle certificate callback
+// function": the slot's two writers, both declared. DESCRIPTION (3.5): they
+// set "the cert_cb callback, arg value is pointer which is passed to the
+// application callback"; "When cert_cb is NULL, no callback function is
+// used". The context keeps `arg` for the callback (C04.14); the caller keeps
+// custody of its object. A registration into the certificate slot (card
+// OPENSSL-SSL-CTX-CALLBACK-SLOTS). Pinned prototype: `void
+// SSL_CTX_set_cert_cb(SSL_CTX *c, int (*cb)(SSL *ssl, void *arg), void
+// *arg)`.
+extern fn SSL_CTX_set_cert_cb(c: ptr<mut, u8>, cert_cb: fnptr, arg: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, documented "1.0.2");
+    ensures normal resource_borrowed(c);
+    ensures normal resource_borrowed(cert_cb);
+    ensures normal resource_borrowed(arg);
+    ensures normal resource_callback_slot_registered(c, ssl_ctx_st.cert_cb, cert_cb);
+    ensures normal resource_retained_by(arg, c);
     ensures normal resource_return_none();
 };

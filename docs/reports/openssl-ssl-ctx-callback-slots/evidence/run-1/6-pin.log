@@ -1,0 +1,15 @@
+$ private/bin-tip/quirin-audit pin --load-path providers/user-crates-load-path.json --source-root docs/reports/openssl-ssl-ctx-callback-slots/evidence/fixture
+pin: quirin-provider-openssl: 0 pinned, 60 flexible; recorded at directory; wrote /home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a3e0cfb5e804aa198/providers/quirin-provider-openssl/contracts.lock
+  ~ SSL_CTX_free: flexible
+  ~ SSL_CTX_set_cert_cb: flexible
+  ~ SSL_CTX_set_default_passwd_cb: flexible
+  ~ SSL_CTX_use_PrivateKey_file: flexible
+  ~ SSL_CTX_use_certificate_chain_file: flexible
+  ~ SSL_connect: flexible
+  ~ SSL_do_handshake: flexible
+  ~ SSL_free: flexible
+  ~ SSL_read: flexible
+  ~ SSL_set_cert_cb: flexible
+  ~ SSL_shutdown: flexible
+  ~ SSL_write: flexible
+exit 0

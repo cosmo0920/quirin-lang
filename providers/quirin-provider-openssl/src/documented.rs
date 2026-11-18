@@ -79,6 +79,18 @@ pub enum Documented {
     /// The object at `holder` keeps the pointer at `item` (C04.14); the
     /// caller keeps custody of `item`'s object.
     Retains { item: usize, holder: usize },
+    /// Card **OPENSSL-SSL-CTX-CALLBACK-SLOTS**: a setter of a callback slot
+    /// of an opaque object (C04.19.3): after the call the object at
+    /// `holder` keeps the function pointer at `callback` in `slot` (one of
+    /// [`SLOTS`]), `resource_callback_slot_registered(H, slot, F)`; with
+    /// `retains`, it also keeps the pointer at that position for the
+    /// callback (`resource_retained_by(arg, H)`).
+    RegistersSlot {
+        holder: usize,
+        callback: usize,
+        slot: &'static str,
+        retains: Option<usize>,
+    },
 }
 
 /// A premise bounding where a declaration is believed, or a callback it
@@ -89,11 +101,25 @@ pub enum Premise {
     /// only at calls passing a null pointer constant at this position
     /// (C04.5).
     NullArgument(usize),
-    /// `requires resource_premise(openssl_registered_callbacks, "…")`: the
-    /// call may run callbacks registered on the SSL object or its SSL_CTX;
-    /// the declaration reads them as changing no custody the caller holds
-    /// (C04.18, a named premise published with every row resting on it).
-    RegisteredCallbacks,
+    /// `requires resource_premise(openssl_unstated_callback_slots, "…")`: the
+    /// call may run callbacks of slots no clause of the declaration states
+    /// (their setters are not declared); the declaration reads them as
+    /// changing no custody the caller holds (C04.18, a named premise
+    /// published with every row resting on it). Card
+    /// **OPENSSL-SSL-CTX-CALLBACK-SLOTS**: it replaced
+    /// `openssl_registered_callbacks`, which covered every slot, stated or
+    /// not.
+    UnstatedSlots,
+    /// Card **OPENSSL-SSL-CTX-CALLBACK-SLOTS**: `ensures normal
+    /// resource_callback_slot_invoked(OBJ, slot, A…)` (C04.19.3): during the
+    /// call the function pointer the object at `object` keeps in `slot` (one
+    /// of [`SLOTS`]) is called zero or more times with `arguments` (`Some(i)`:
+    /// parameter `i`; `None`: a value the callee supplies, `_`).
+    SlotInvoked {
+        object: usize,
+        slot: &'static str,
+        arguments: &'static [Option<usize>],
+    },
     /// `ensures normal resource_callback_invoked(F, A…)` (C04.19): the
     /// callback at `callback` is called during the call only, with these
     /// arguments (`Some(i)`: parameter `i`; `None`: a value the callee
@@ -104,13 +130,47 @@ pub enum Premise {
     },
 }
 
-/// The name of the registered-callbacks premise.
-pub const REGISTERED_CALLBACKS: &str = "openssl_registered_callbacks";
+/// The name of the unstated-slots premise.
+pub const UNSTATED_SLOTS: &str = "openssl_unstated_callback_slots";
 
 /// Its statement (no `;`, `"` or `//`: the checker reads clauses lexically).
-pub const REGISTERED_CALLBACKS_STATEMENT: &str = "a callback the SSL object or its SSL_CTX \
-carries (verify, certificate, password, info, message or ex_data callbacks) and the call may \
-run takes, releases or retains nothing the caller holds";
+pub const UNSTATED_SLOTS_STATEMENT: &str = "a callback the call may run that no clause of this \
+declaration states (a verify, info, message, security, session or client certificate callback of \
+the SSL object or its SSL_CTX, or an ex_data callback) takes, releases or retains nothing the \
+caller holds";
+
+/// Card **OPENSSL-SSL-CTX-CALLBACK-SLOTS**: a callback slot of an opaque
+/// OpenSSL object, stated as C04.19.3's opaque slot. Its `writers` are every
+/// function the manual page `page` (at the pinned series, 3.5) names that
+/// sets the slot; the checker requires each to be declared with
+/// [`Documented::RegistersSlot`] of this slot, so the run's candidates (what
+/// the declared setters are handed) are every value the slot can hold.
+#[derive(Clone, Copy, Debug)]
+pub struct Slot {
+    pub key: &'static str,
+    pub page: &'static str,
+    pub writers: &'static [&'static str],
+}
+
+/// The stated slots.
+pub const SLOTS: &[Slot] = &[
+    // SSL_CTX_set_cert_cb (3.5) NAME: "SSL_CTX_set_cert_cb, SSL_set_cert_cb".
+    // The SSL's copy (SSL_set_cert_cb, and SSL_new's copy of its context's)
+    // shares the key: the set is every value either can hold.
+    Slot {
+        key: "ssl_ctx_st.cert_cb",
+        page: "SSL_CTX_set_cert_cb",
+        writers: &["SSL_CTX_set_cert_cb", "SSL_set_cert_cb"],
+    },
+    // SSL_CTX_set_default_passwd_cb (3.5): the context's slot. The page's
+    // SSL_set_default_passwd_cb writes the SSL's copy, which no declaration
+    // invokes (only the context's loaders are declared).
+    Slot {
+        key: "ssl_ctx_st.default_passwd_cb",
+        page: "SSL_CTX_set_default_passwd_cb",
+        writers: &["SSL_CTX_set_default_passwd_cb"],
+    },
+];
 
 /// What the documentation supports for one function.
 #[derive(Clone, Copy, Debug)]
@@ -166,8 +226,28 @@ const DOC_3_0: &str = "resource_library_version(openssl, documented \"3.0\")";
 const SINCE_1_1_0: &str = "resource_library_version(openssl, since \"1.1.0\")";
 const SINCE_3_0_0: &str = "resource_library_version(openssl, since \"3.0.0\")";
 
-/// The registered-callbacks premise alone.
-const CALLBACKS: &[Premise] = &[Premise::RegisteredCallbacks];
+/// Card OPENSSL-SSL-CTX-CALLBACK-SLOTS: a handshake or I/O call on `ssl` at
+/// position 0: the certificate slot, `cert_cb(ssl, arg)`, and the premise
+/// for every slot whose setters are not declared.
+const HANDSHAKE: &[Premise] = &[
+    Premise::UnstatedSlots,
+    Premise::SlotInvoked {
+        object: 0,
+        slot: "ssl_ctx_st.cert_cb",
+        arguments: &[Some(0), None],
+    },
+];
+
+/// The context's password slot, `pem_password_cb(buf, size, rwflag, u)`:
+/// four values the callee supplies.
+const PASSWORD: Premise = Premise::SlotInvoked {
+    object: 0,
+    slot: "ssl_ctx_st.default_passwd_cb",
+    arguments: &[None, None, None, None],
+};
+
+/// The premise alone: a call that may run callbacks of no stated slot.
+const UNSTATED: &[Premise] = &[Premise::UnstatedSlots];
 
 /// `PEM_read_bio_*(bp, x, cb, u)`: a NULL `x` (no object to reuse) and a
 /// NULL `cb` (OpenSSL's own passphrase routine, or `u` read as the
@@ -177,7 +257,7 @@ const PEM_READ: &[Premise] = &[Premise::NullArgument(1), Premise::NullArgument(2
 
 use Documented::{
     BorrowedResult, Constructor, CountedConstructor, CountedRelease, NullAcceptingRelease, Plain,
-    Release, Retains,
+    RegistersSlot, Release, Retains,
 };
 use Null::Nullable;
 
@@ -330,7 +410,7 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
         DOC_1_1_1,
         Release(0, Nullable),
     ),
-    entry(
+    with(
         "SSL_CTX_free",
         "SSL_CTX_free",
         "1.1.1",
@@ -339,6 +419,7 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
             position: 0,
             sentence: "If ctx is NULL nothing is done.",
         },
+        UNSTATED,
     ),
     entry(
         "SSL_CTX_get_cert_store",
@@ -360,6 +441,30 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
         "1.0.2",
         DOC_1_0_2,
         CountedConstructor,
+    ),
+    entry(
+        "SSL_CTX_set_cert_cb",
+        "SSL_CTX_set_cert_cb",
+        "1.0.2",
+        DOC_1_0_2,
+        RegistersSlot {
+            holder: 0,
+            callback: 1,
+            slot: "ssl_ctx_st.cert_cb",
+            retains: Some(2),
+        },
+    ),
+    entry(
+        "SSL_CTX_set_default_passwd_cb",
+        "SSL_CTX_set_default_passwd_cb",
+        "1.0.2",
+        DOC_1_0_2,
+        RegistersSlot {
+            holder: 0,
+            callback: 1,
+            slot: "ssl_ctx_st.default_passwd_cb",
+            retains: None,
+        },
     ),
     entry(
         "SSL_CTX_set_default_passwd_cb_userdata",
@@ -395,7 +500,7 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
         "1.0.2",
         DOC_1_0_2,
         Plain,
-        CALLBACKS,
+        &[PASSWORD],
     ),
     entry(
         "SSL_CTX_use_certificate",
@@ -410,7 +515,7 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
         "1.0.2",
         DOC_1_0_2,
         Plain,
-        CALLBACKS,
+        &[Premise::UnstatedSlots, PASSWORD],
     ),
     with(
         "SSL_connect",
@@ -418,7 +523,7 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
         "1.0.2",
         DOC_1_0_2,
         Plain,
-        CALLBACKS,
+        HANDSHAKE,
     ),
     with(
         "SSL_do_handshake",
@@ -426,9 +531,9 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
         "1.0.2",
         DOC_1_0_2,
         Plain,
-        CALLBACKS,
+        HANDSHAKE,
     ),
-    entry(
+    with(
         "SSL_free",
         "SSL_free",
         "1.1.1",
@@ -437,6 +542,7 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
             position: 0,
             sentence: "If ssl is NULL nothing is done.",
         },
+        UNSTATED,
     ),
     entry(
         "SSL_get1_peer_certificate",
@@ -461,7 +567,19 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
     ),
     entry("SSL_get_error", "SSL_get_error", "1.0.2", DOC_1_0_2, Plain),
     entry("SSL_new", "SSL_new", "1.0.2", DOC_1_0_2, CountedConstructor),
-    with("SSL_read", "SSL_read", "1.0.2", DOC_1_0_2, Plain, CALLBACKS),
+    with("SSL_read", "SSL_read", "1.0.2", DOC_1_0_2, Plain, HANDSHAKE),
+    entry(
+        "SSL_set_cert_cb",
+        "SSL_CTX_set_cert_cb",
+        "1.0.2",
+        DOC_1_0_2,
+        RegistersSlot {
+            holder: 0,
+            callback: 1,
+            slot: "ssl_ctx_st.cert_cb",
+            retains: Some(2),
+        },
+    ),
     entry(
         "SSL_set_accept_state",
         "SSL_set_connect_state",
@@ -469,14 +587,21 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
         DOC_1_0_2,
         Plain,
     ),
-    entry("SSL_shutdown", "SSL_shutdown", "1.0.2", DOC_1_0_2, Plain),
+    with(
+        "SSL_shutdown",
+        "SSL_shutdown",
+        "1.0.2",
+        DOC_1_0_2,
+        Plain,
+        UNSTATED,
+    ),
     with(
         "SSL_write",
         "SSL_write",
         "1.0.2",
         DOC_1_0_2,
         Plain,
-        CALLBACKS,
+        HANDSHAKE,
     ),
     entry(
         "TLS_server_method",

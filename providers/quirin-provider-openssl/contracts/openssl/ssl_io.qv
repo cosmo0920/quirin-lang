@@ -19,13 +19,29 @@ module contract;
 // declaration of this crate shares).
 //
 // The handshake and I/O calls may run callbacks the SSL object or its
-// SSL_CTX carries (certificate verification, the certificate callback, info
-// and message callbacks). No clause of the vocabulary states such a hidden
-// registry on a holder with several callback slots, so the declarations
-// name the reading they rest on as a premise (C04.18), published with every
-// row that applies them: those callbacks take, release or retain nothing the
-// caller holds. The callbacks themselves are the application's functions,
-// analysed on their own rows.
+// SSL_CTX carries. Card OPENSSL-SSL-CTX-CALLBACK-SLOTS: the certificate
+// callback is a stated invocation of the opaque slot `ssl_ctx_st.cert_cb`
+// (C04.19.3, rule 12n), decided over the run's closed set of what its two
+// declared setters are handed. SSL_set_cert_cb writes the SSL's own copy and
+// SSL_new copies its context's ("The new structure inherits the settings of
+// the underlying context", SSL_new, 3.5), so the SSL's slot holds a value one
+// of the two setters was handed (or none): the two share one key, whose set
+// is every value either can hold. The page (SSL_CTX_set_cert_cb, 3.5): it "is
+// called before a certificate will be used by a client or server", with the
+// connection and `arg` ("The callback can then inspect the passed ssl
+// structure"), and "The next call to the handshake function will again lead
+// to the call of cert_cb". The I/O calls run the handshake when needed
+// ("If necessary, a read function will negotiate a TLS/SSL session", SSL_read
+// 3.5; likewise SSL_write) and renegotiate on request.
+//
+// The other slots these calls may run (the verify callback, SSL_CTX_set_verify
+// 3.5; the info callback, "called whenever a significant event occurs",
+// SSL_CTX_set_info_callback 3.5; the message, security, session and client
+// certificate callbacks) have setters this crate does not declare, several of
+// them SSL_CTX_ctrl command arms, so they stay under the narrowed premise
+// `openssl_unstated_callback_slots` (C04.18), published with every row that
+// applies these declarations. The callbacks themselves are the application's
+// functions, analysed on their own rows.
 
 // SSL_write: https://docs.openssl.org/1.0.2/man3/SSL_write/ (also 3.5,
 // 1.1.1). HISTORY (3.5) names only SSL_write_ex(), SSL_sendfile() and
@@ -40,10 +56,11 @@ contract {
     requires resource_contract_v1;
     requires resource_revision(flexible);
     requires resource_library_version(openssl, documented "1.0.2");
-    requires resource_premise(openssl_registered_callbacks, "a callback the SSL object or its SSL_CTX carries (verify, certificate, password, info, message or ex_data callbacks) and the call may run takes, releases or retains nothing the caller holds");
+    requires resource_premise(openssl_unstated_callback_slots, "a callback the call may run that no clause of this declaration states (a verify, info, message, security, session or client certificate callback of the SSL object or its SSL_CTX, or an ex_data callback) takes, releases or retains nothing the caller holds");
     ensures normal resource_borrowed(ssl);
     ensures normal resource_borrowed(buf);
     ensures normal resource_borrowed(num);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.cert_cb, ssl, _);
     ensures normal resource_return_none();
 };
 
@@ -57,10 +74,11 @@ contract {
     requires resource_contract_v1;
     requires resource_revision(flexible);
     requires resource_library_version(openssl, documented "1.0.2");
-    requires resource_premise(openssl_registered_callbacks, "a callback the SSL object or its SSL_CTX carries (verify, certificate, password, info, message or ex_data callbacks) and the call may run takes, releases or retains nothing the caller holds");
+    requires resource_premise(openssl_unstated_callback_slots, "a callback the call may run that no clause of this declaration states (a verify, info, message, security, session or client certificate callback of the SSL object or its SSL_CTX, or an ex_data callback) takes, releases or retains nothing the caller holds");
     ensures normal resource_borrowed(ssl);
     ensures normal resource_borrowed(buf);
     ensures normal resource_borrowed(num);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.cert_cb, ssl, _);
     ensures normal resource_return_none();
 };
 
@@ -72,8 +90,9 @@ contract {
     requires resource_contract_v1;
     requires resource_revision(flexible);
     requires resource_library_version(openssl, documented "1.0.2");
-    requires resource_premise(openssl_registered_callbacks, "a callback the SSL object or its SSL_CTX carries (verify, certificate, password, info, message or ex_data callbacks) and the call may run takes, releases or retains nothing the caller holds");
+    requires resource_premise(openssl_unstated_callback_slots, "a callback the call may run that no clause of this declaration states (a verify, info, message, security, session or client certificate callback of the SSL object or its SSL_CTX, or an ex_data callback) takes, releases or retains nothing the caller holds");
     ensures normal resource_borrowed(ssl);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.cert_cb, ssl, _);
     ensures normal resource_return_none();
 };
 
@@ -86,8 +105,9 @@ contract {
     requires resource_contract_v1;
     requires resource_revision(flexible);
     requires resource_library_version(openssl, documented "1.0.2");
-    requires resource_premise(openssl_registered_callbacks, "a callback the SSL object or its SSL_CTX carries (verify, certificate, password, info, message or ex_data callbacks) and the call may run takes, releases or retains nothing the caller holds");
+    requires resource_premise(openssl_unstated_callback_slots, "a callback the call may run that no clause of this declaration states (a verify, info, message, security, session or client certificate callback of the SSL object or its SSL_CTX, or an ex_data callback) takes, releases or retains nothing the caller holds");
     ensures normal resource_borrowed(s);
+    ensures normal resource_callback_slot_invoked(s, ssl_ctx_st.cert_cb, s, _);
     ensures normal resource_return_none();
 };
 
@@ -169,4 +189,23 @@ contract {
     ensures normal resource_borrowed(s);
     ensures normal resource_return_owned(nullable);
     ensures normal resource_return_kind(reference);
+};
+
+// SSL_set_cert_cb: https://docs.openssl.org/1.0.2/man3/SSL_CTX_set_cert_cb/
+// (also 3.5, 1.1.1). No HISTORY entry. DESCRIPTION (3.5): it "sets the
+// cert_cb callback" for `s`; the SSL keeps `arg` for the callback (C04.14).
+// The SSL's copy of the certificate slot, keyed with its context's (see the
+// head of this module). Pinned prototype: `void SSL_set_cert_cb(SSL *s, int
+// (*cb)(SSL *ssl, void *arg), void *arg)`.
+extern fn SSL_set_cert_cb(s: ptr<mut, u8>, cert_cb: fnptr, arg: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, documented "1.0.2");
+    ensures normal resource_borrowed(s);
+    ensures normal resource_borrowed(cert_cb);
+    ensures normal resource_borrowed(arg);
+    ensures normal resource_callback_slot_registered(s, ssl_ctx_st.cert_cb, cert_cb);
+    ensures normal resource_retained_by(arg, s);
+    ensures normal resource_return_none();
 };
