@@ -895,6 +895,16 @@
    "literal": "providers",
    "reads": [],
    "why": "a base path inside the test's scratch directory under std::env::temp_dir() (lock_totals_agree_with_the_shared_cases writes providers/contract-load-path.json and per-crate locks there from tests/support/contract_locks_cases.json); the repository's locks are read by tests/support/contract_locks.rs through providers/contract-load-path.json, which the plan attributes exactly (added by the integrator at the CONTRACT-COUNT-PINS-FROM-LOCKS merge)"
+  },
+  {
+   "source": "crates/qcore-audit/tests/library_version_hold_routes.rs",
+   "literal": "contract/profiles",
+   "reads": [
+    "contract/profiles/**",
+    "cycle19-resource-contracts.json",
+    "providers/**"
+   ],
+   "why": "shipped_manifests_carry_no_checker_binding lists every profile directory, reads its profile.json and loads the resource_contract_manifest it names with the load path that manifest names, which reads every crate module on it"
   }
  ],
  "expansions": [
