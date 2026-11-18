@@ -102,6 +102,14 @@ pub enum Premise {
         callback: usize,
         arguments: &'static [Option<usize>],
     },
+    /// `ensures normal resource_callback_invoked_or_default(F, A…)` (C04.19,
+    /// card OPENSSL-PEM-CALLBACK-ARM): as [`Premise::CallbackInvoked`], and
+    /// the page documents what the function does itself at a NULL callback
+    /// (its own default), so a NULL callback invokes nothing.
+    CallbackInvokedOrDefault {
+        callback: usize,
+        arguments: &'static [Option<usize>],
+    },
 }
 
 /// The name of the registered-callbacks premise.
@@ -171,12 +179,13 @@ const CALLBACKS: &[Premise] = &[Premise::RegisteredCallbacks];
 
 /// `PEM_read_bio_*(bp, x, cb, u)`: a NULL `x` (no object to reuse), and the
 /// password callback `cb` called during the read with `u` as its last
-/// argument (card OPENSSL-PEM-CALLBACK-ARM: a premise stands beside a
-/// synchronous invocation, gateway rule 57). The other three arguments
-/// (`buf`, `size`, `rwflag`) are values the callee supplies.
+/// argument, a NULL `cb` meaning OpenSSL's own default routine (card
+/// OPENSSL-PEM-CALLBACK-ARM: a premise stands beside a synchronous
+/// invocation, gateway rule 57). The other three arguments (`buf`, `size`,
+/// `rwflag`) are values the callee supplies.
 const PEM_READ: &[Premise] = &[
     Premise::NullArgument(1),
-    Premise::CallbackInvoked {
+    Premise::CallbackInvokedOrDefault {
         callback: 2,
         arguments: &[None, None, None, Some(3)],
     },

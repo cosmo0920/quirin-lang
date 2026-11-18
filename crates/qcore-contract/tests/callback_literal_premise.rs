@@ -70,6 +70,7 @@ fn a_premise_stands_beside_a_synchronous_invocation() {
                 CallbackActual::Supplied,
                 CallbackActual::Parameter { index: 3 },
             ],
+            null_default: false,
         }]
     );
     // The premise is rederived from the text, as for a plain declaration.
@@ -149,4 +150,45 @@ fn an_invocation_without_a_premise_is_unchanged() {
             .expect("premises")
             .contains_key("read_pem")
     );
+}
+
+#[test]
+fn the_null_default_spelling_loads_as_a_marked_invocation() {
+    let invoked = "resource_callback_invoked(cb, _, _, _, u)";
+    let text = READER.replacen(
+        invoked,
+        "resource_callback_invoked_or_default(cb, _, _, _, u)",
+        1,
+    );
+    let contracts = load(&text).expect("the null default loads beside a premise");
+    let declared = &contracts.retaining()["read_pem"];
+    assert_eq!(
+        declared.callbacks,
+        vec![CallbackClause::Invoked {
+            callback: 2,
+            actuals: vec![
+                CallbackActual::Supplied,
+                CallbackActual::Supplied,
+                CallbackActual::Supplied,
+                CallbackActual::Parameter { index: 3 },
+            ],
+            null_default: true,
+        }]
+    );
+    assert_eq!(
+        declared.callbacks[0].keyword(),
+        "resource_callback_invoked_or_default"
+    );
+    // One clause per callback: both spellings on one callback reject.
+    let both = text.replacen(
+        "    ensures normal resource_callback_invoked_or_default(cb, _, _, _, u);\n",
+        "    ensures normal resource_callback_invoked_or_default(cb, _, _, _, u);\n    ensures normal resource_callback_invoked(cb, _, _, _, u);\n",
+        1,
+    );
+    assert_ne!(both, text);
+    assert!(load(&both).is_err());
+    // Its placement is the invocation's: a callback that is not `fnptr`.
+    let misplaced = text.replacen("_or_default(cb,", "_or_default(u,", 1);
+    assert_ne!(misplaced, text);
+    assert!(load(&misplaced).is_err());
 }

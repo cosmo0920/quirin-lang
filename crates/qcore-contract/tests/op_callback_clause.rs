@@ -74,6 +74,7 @@ fn the_clauses_load_withheld() {
                     CallbackActual::SuppliedOwned,
                     CallbackActual::Parameter { index: 2 }
                 ],
+                null_default: false,
             },
             CallbackClause::MemberInvoked {
                 object: MemberObject::SuppliedOwned,

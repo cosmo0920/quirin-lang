@@ -405,6 +405,10 @@ pub fn expected_clauses(
             Premise::CallbackInvoked {
                 callback,
                 arguments,
+            }
+            | Premise::CallbackInvokedOrDefault {
+                callback,
+                arguments,
             } => {
                 let mut actuals = vec![name(*callback)?];
                 for argument in *arguments {
@@ -413,7 +417,12 @@ pub fn expected_clauses(
                         None => "_".to_owned(),
                     });
                 }
-                format!("ensures normal resource_callback_invoked({})", actuals.join(", "))
+                let keyword = if matches!(premise, Premise::CallbackInvokedOrDefault { .. }) {
+                    "resource_callback_invoked_or_default"
+                } else {
+                    "resource_callback_invoked"
+                };
+                format!("ensures normal {keyword}({})", actuals.join(", "))
             }
         });
     }
@@ -800,19 +809,26 @@ mod tests {
         assert!(check_function(path, &widened, "PEM_read_bio_X509").is_err());
         // Card OPENSSL-PEM-CALLBACK-ARM: the invocation removed (a caller's
         // password callback would read as a benign borrowed pointer), its
-        // `u` actual dropped to `_`, and the retired null-callback premise
-        // restored are each refused.
-        let invoked = "    ensures normal resource_callback_invoked(cb, _, _, _, u);\n";
+        // `u` actual dropped to `_`, the null default dropped (the plain
+        // invocation), and the retired null-callback premise restored are
+        // each refused.
+        let invoked = "    ensures normal resource_callback_invoked_or_default(cb, _, _, _, u);\n";
         assert!(text.contains(invoked));
         assert!(!text.contains("resource_literal_argument(cb, 0)"));
         let benign = text.replacen(invoked, "", 1);
         assert!(check_function(path, &benign, "PEM_read_bio_X509").is_err());
         let unnamed = text.replacen(
             invoked,
-            "    ensures normal resource_callback_invoked(cb, _, _, _, _);\n",
+            "    ensures normal resource_callback_invoked_or_default(cb, _, _, _, _);\n",
             1,
         );
         assert!(check_function(path, &unnamed, "PEM_read_bio_X509").is_err());
+        let plain = text.replacen(
+            invoked,
+            "    ensures normal resource_callback_invoked(cb, _, _, _, u);\n",
+            1,
+        );
+        assert!(check_function(path, &plain, "PEM_read_bio_X509").is_err());
         let narrowed = text.replacen(
             "    requires resource_literal_argument(x, 0);\n",
             "    requires resource_literal_argument(x, 0);\n    requires resource_literal_argument(cb, 0);\n",

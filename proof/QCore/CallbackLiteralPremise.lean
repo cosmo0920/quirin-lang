@@ -32,6 +32,11 @@ Two decisions, modelled as the Rust code makes them:
   its name exactly as rule 13u does (`QCore.CallbackContracts`): applied only
   over a closed candidate set whose every candidate is the identity.
 
+The null default (user decision 2026-11-18): under
+`resource_callback_invoked_or_default` a null pointer constant actual invokes
+nothing, a non-null actual is decided exactly as before, the default never
+crosses the premise, and a declaration carrying it is never forwarded.
+
 Proved: an unmet premise withdraws a callback declaration whatever the
 callback is (so nothing outside the premise is applied); a met premise
 defers to the invocation decision unchanged (the premise adds no candidate
@@ -302,5 +307,97 @@ theorem pem_uncontracted_callback_refuses :
     outcome pemEnv pemNullX (.closed [.uncontracted]) = .refused := by decide
 
 theorem pem_null_callback_refuses : outcome pemEnv pemNullX .opened = .refused := by decide
+
+/-! ### The null default (`resource_callback_invoked_or_default`)
+
+The user decision of 2026-11-18 extends the card: a declaration may state
+that a null callback invokes nothing (the callee's own default). The route
+reads a callback actual either as a null pointer constant (Clang's
+`null_leaf`) or as rule 11p's resolution of anything else. -/
+
+/-- The callback actual at a call: a null pointer constant, or anything else
+with its rule 11p resolution. -/
+inductive Actual where
+  | nullConstant
+  | other (r : Resolution)
+  deriving DecidableEq, Repr
+
+/-- Without a null default a null constant is an open set (rule 13u). -/
+def asResolution : Actual → Resolution
+  | .nullConstant => .opened
+  | .other r => r
+
+/-- The invocation decision under the declaration's null-default flag. -/
+def decideDefaulted (nullDefault : Bool) : Actual → Outcome
+  | .nullConstant => if nullDefault then .applied else .refused
+  | .other r => decideInvocation r
+
+/-- The outcome of a call whose retaining declaration carries the flag. -/
+def outcomeDefaulted (e : Environment) (c : Call) (nullDefault : Bool) (a : Actual) :
+    Outcome :=
+  if renamed e c then .undeclared
+  else if e.retaining c.callee then decideDefaulted nullDefault a
+  else if e.functions c.callee then .applied
+  else .undeclared
+
+theorem a_null_callback_under_the_default_invokes_nothing {e : Environment} {c : Call}
+    (hr : e.retaining c.callee = true) (hu : unmet e c = false) :
+    outcomeDefaulted e c true .nullConstant = .applied := by
+  unfold outcomeDefaulted renamed
+  simp [hr, hu, decideDefaulted]
+
+theorem without_the_default_a_null_callback_refuses {e : Environment} {c : Call}
+    (hr : e.retaining c.callee = true) (hu : unmet e c = false) :
+    outcomeDefaulted e c false .nullConstant = .refused := by
+  unfold outcomeDefaulted renamed
+  simp [hr, hu, decideDefaulted]
+
+theorem the_plain_invocation_is_the_flag_off {e : Environment} {c : Call} {a : Actual} :
+    outcomeDefaulted e c false a = outcome e c (asResolution a) := by
+  cases a <;> rfl
+
+theorem a_non_null_callback_is_decided_as_before {e : Environment} {c : Call} {nd : Bool}
+    {r : Resolution} : outcomeDefaulted e c nd (.other r) = outcome e c r := by
+  rfl
+
+theorem the_default_never_crosses_the_premise {e : Environment} {c : Call} {nd : Bool}
+    {a : Actual} (hr : e.retaining c.callee = true) (hu : unmet e c = true) :
+    outcomeDefaulted e c nd a = .undeclared := by
+  unfold outcomeDefaulted renamed
+  simp [hr, hu]
+
+theorem applied_only_by_the_default_or_over_identities {e : Environment} {c : Call}
+    {nd : Bool} {a : Actual} (hr : e.retaining c.callee = true)
+    (h : outcomeDefaulted e c nd a = .applied) :
+    (nd = true ∧ a = .nullConstant) ∨ ∃ cs, a = .other (.closed cs) ∧ ∀ k ∈ cs, k = .identity := by
+  cases a with
+  | nullConstant =>
+      cases nd with
+      | true => exact Or.inl ⟨rfl, rfl⟩
+      | false =>
+          cases hu : unmet e c with
+          | true => rw [the_default_never_crosses_the_premise hr hu] at h; cases h
+          | false => rw [without_the_default_a_null_callback_refuses hr hu] at h; cases h
+  | other r =>
+      rw [a_non_null_callback_is_decided_as_before] at h
+      obtain ⟨cs, hcs, hall⟩ := applied_only_over_identities hr h
+      exact Or.inr ⟨cs, by rw [hcs], hall⟩
+
+/-- Rule 15w forwards a caller's own callback formal to a callee's stated
+invocation only when neither declaration carries a null default. -/
+def forwardable (ownDefault calleeDefault : Bool) : Bool := !ownDefault && !calleeDefault
+
+theorem a_null_default_is_never_forwarded {own callee : Bool}
+    (h : forwardable own callee = true) : own = false ∧ callee = false := by
+  cases own <;> cases callee <;> simp_all [forwardable]
+
+theorem pem_null_callback_with_the_default_applies :
+    outcomeDefaulted pemEnv pemNullX true .nullConstant = .applied := by decide
+
+theorem pem_null_callback_reuse_arm_is_withdrawn :
+    outcomeDefaulted pemEnv pemReuse true .nullConstant = .undeclared := by decide
+
+theorem pem_formal_callback_with_the_default_refuses :
+    outcomeDefaulted pemEnv pemNullX true (.other .opened) = .refused := by decide
 
 end QCore.CallbackLiteralPremise

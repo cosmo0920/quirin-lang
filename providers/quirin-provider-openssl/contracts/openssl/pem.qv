@@ -32,15 +32,17 @@ module contract;
 //   parameter passed to the PEM routine"); the pem_password_cb prototype is
 //   `int (char *buf, int size, int rwflag, void *u)`, and `buf`, `size` and
 //   `rwflag` are the routine's own values. Card OPENSSL-PEM-CALLBACK-ARM
-//   states it as a synchronous invocation (C04.19) beside the `x` premise
-//   (C04.5, gateway rule 57): `resource_callback_invoked(cb, _, _, _, u)`.
-//   Nothing keeps `cb` or `u` after the call. A consumer decides the
-//   callback as C04.19 requires: every candidate's own contract in force
-//   must be the identity, so no callback is read as benign. A null `cb`
-//   ("the default callback routine is used", or `u` read as the passphrase
-//   string) is an open candidate set to that reading and refuses: the
-//   vocabulary has no spelling for a callee's own default behind a null
-//   callback.
+//   states it as a synchronous invocation with a null default (C04.19)
+//   beside the `x` premise (C04.5, gateway rule 57):
+//   `resource_callback_invoked_or_default(cb, _, _, _, u)`. Nothing keeps
+//   `cb` or `u` after the call. A non-null `cb` is decided as C04.19
+//   requires: every candidate's own contract in force must be the identity,
+//   so no callback is read as benign. A null `cb` invokes no caller
+//   function: "If the cb parameters is set to NULL and the u parameter is
+//   not NULL then the u parameter is interpreted as a NUL terminated string
+//   to use as the passphrase. If both cb and u are NULL then the default
+//   callback routine is used", OpenSSL's own; either way `u` is read, not
+//   kept, which `resource_borrowed(u)` states.
 // * RETURN VALUES: "The read routines return either a pointer to the
 //   structure read or NULL if an error occurred." X509 and EVP_PKEY are
 //   reference counted (X509_new, EVP_PKEY_new), so the result is one
@@ -58,7 +60,7 @@ contract {
     ensures normal resource_borrowed(x);
     ensures normal resource_borrowed(cb);
     ensures normal resource_borrowed(u);
-    ensures normal resource_callback_invoked(cb, _, _, _, u);
+    ensures normal resource_callback_invoked_or_default(cb, _, _, _, u);
     ensures normal resource_return_owned(nullable);
     ensures normal resource_return_kind(reference);
 };
@@ -76,7 +78,7 @@ contract {
     ensures normal resource_borrowed(x);
     ensures normal resource_borrowed(cb);
     ensures normal resource_borrowed(u);
-    ensures normal resource_callback_invoked(cb, _, _, _, u);
+    ensures normal resource_callback_invoked_or_default(cb, _, _, _, u);
     ensures normal resource_return_owned(nullable);
     ensures normal resource_return_kind(reference);
 };

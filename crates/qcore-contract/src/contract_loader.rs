@@ -249,7 +249,8 @@
 //! ## Beside a synchronous invocation (card OPENSSL-PEM-CALLBACK-ARM)
 //!
 //! A premise stands beside retaining clauses only when every one of them is a
-//! synchronous invocation, `resource_callback_invoked` (§C04.19): the PEM
+//! synchronous invocation, `resource_callback_invoked` or
+//! `resource_callback_invoked_or_default` (§C04.19): the PEM
 //! readers' `x` reuse arm is withdrawn by a premise while their password
 //! callback is stated exactly. Such a declaration is withheld from the
 //! function map like every callback declaration, so the gateway's premise

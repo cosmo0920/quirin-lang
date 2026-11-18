@@ -52,6 +52,18 @@ contract {
     ensures normal resource_borrowed(x);
     ensures normal resource_borrowed(cb);
     ensures normal resource_borrowed(u);
+    ensures normal resource_callback_invoked_or_default(cb, _, _, _, u);
+    ensures normal resource_return_owned(nullable);
+};
+
+extern fn p_read_plain(out: ptr<mut, u8>, x: ptr<mut, ptr<mut, u8>>, cb: fnptr, u: ptr<mut, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    requires resource_literal_argument(x, 0);
+    ensures normal resource_borrowed(out);
+    ensures normal resource_borrowed(x);
+    ensures normal resource_borrowed(cb);
+    ensures normal resource_borrowed(u);
     ensures normal resource_callback_invoked(cb, _, _, _, u);
     ensures normal resource_return_owned(nullable);
 };
@@ -62,7 +74,9 @@ const PRELUDE: &str = "\
 typedef int pass_cb(char *buf, int size, int rwflag, void *u);
 void *p_alloc(__SIZE_TYPE__ n); void p_free(void *p);
 void *p_read(void *out, void **x, pass_cb *cb, void *u);
+void *p_read_plain(void *out, void **x, pass_cb *cb, void *u);
 void unknown_effect(void *p);
+pass_cb *pick(void);
 ";
 
 const UNIT: &str = "\
@@ -80,6 +94,14 @@ void reuse_formal(void *bio, void **x, void *u) { void *r = p_read(bio, x, quiet
 void effectful(void *bio, void *u) { void *r = p_read(bio, NULL, frees, u); p_free(r); }
 void uncontracted(void *bio, void *u) { void *r = p_read(bio, NULL, opaque, u); p_free(r); }
 void null_callback(void *bio, void *u) { void *r = p_read(bio, NULL, NULL, u); p_free(r); }
+void null_callback_zero(void *bio, void *u) { void *r = p_read(bio, 0, 0, u); p_free(r); }
+void null_callback_cast(void *bio, void *u) { void *r = p_read(bio, NULL, (pass_cb *)0, u); p_free(r); }
+void null_callback_leak(void *bio, void *u) { void *r = p_read(bio, NULL, NULL, u); }
+void null_callback_reuse(void *bio, void *u) { void *slot = NULL; void *r = p_read(bio, &slot, NULL, u); p_free(r); }
+void null_callback_plain(void *bio, void *u) { void *r = p_read_plain(bio, NULL, NULL, u); p_free(r); }
+void plain_identity(void *bio, void *u) { void *r = p_read_plain(bio, NULL, quiet, u); p_free(r); }
+void result_callback(void *bio, void *u) { void *r = p_read(bio, NULL, pick(), u); p_free(r); }
+void local_callback(void *bio, void *u, int which) { pass_cb *cb = which ? quiet : NULL; void *r = p_read(bio, NULL, cb, u); p_free(r); }
 void formal_callback(void *bio, pass_cb *cb, void *u) { void *r = p_read(bio, NULL, cb, u); p_free(r); }
 void requires_u(void *bio, void *u) { void *r = p_read(bio, NULL, reads, u); p_free(r); }
 void requires_u_direct(void *bio, void *u) { int n = reads(NULL, 0, 0, u); (void)n; }
@@ -131,13 +153,17 @@ fn summary_of(outcome: &UnrestrictedLegacyResult) -> Option<&LegacyProgramSummar
 }
 
 fn rows() -> BTreeMap<String, Row> {
-    let text = format!("{PRELUDE}\n{UNIT}\n");
+    rows_of(UNIT, "requires_u_direct")
+}
+
+fn rows_of(unit: &str, entry: &str) -> BTreeMap<String, Row> {
+    let text = format!("{PRELUDE}\n{unit}\n");
     let outcome = analyze_unrestricted_c11(
         &C11TranslationUnit {
             source: &text,
             ..Default::default()
         },
-        "requires_u_direct",
+        entry,
         &environment(),
     )
     .unwrap_or_else(|error| panic!("fixture rejected by Clang: {error:?}\n{text}"));
@@ -233,9 +259,9 @@ fn no_callback_is_assumed_benign_within_the_premise() {
         "{:?}",
         rows["effectful"]
     );
-    // A null callback and a formal are open candidate sets: the premise adds
-    // no candidate (the PEM null-callback default has no spelling).
-    for name in ["null_callback", "formal_callback"] {
+    // A formal and a call's result are open candidate sets: the null
+    // default admits only a null pointer constant.
+    for name in ["formal_callback", "result_callback"] {
         assert!(
             rows[name].refused_with("callback-undecided"),
             "{name}: {:?}",
@@ -260,5 +286,77 @@ fn a_callback_reading_u_puts_its_requirement_on_the_call() {
     assert_eq!(
         rows["requires_u"].unsupported.is_empty(),
         rows["requires_u_direct"].unsupported.is_empty()
+    );
+}
+
+#[test]
+fn a_null_callback_under_the_null_default_invokes_nothing() {
+    if !clang_available() {
+        return;
+    }
+    let rows = rows();
+    for name in ["null_callback", "null_callback_zero", "null_callback_cast"] {
+        assert!(rows[name].safe(), "{name}: {:?}", rows[name]);
+    }
+    // The declaration still applies: the result is owed.
+    assert_eq!(
+        rows["null_callback_leak"].status,
+        AnalysisStatus::Unsafe,
+        "{:?}",
+        rows["null_callback_leak"]
+    );
+    // The null default changes nothing outside the `x` premise.
+    assert!(
+        rows["null_callback_reuse"].refused_with(OUTSIDE),
+        "{:?}",
+        rows["null_callback_reuse"]
+    );
+}
+
+#[test]
+fn without_the_null_default_a_null_callback_still_refuses() {
+    if !clang_available() {
+        return;
+    }
+    let rows = rows();
+    assert!(
+        rows["null_callback_plain"].refused_with("callback-undecided"),
+        "{:?}",
+        rows["null_callback_plain"]
+    );
+    // A non-null callback reads the same under either clause.
+    assert!(
+        rows["plain_identity"].safe(),
+        "{:?}",
+        rows["plain_identity"]
+    );
+    // A local that may hold a function or null is not a null pointer
+    // constant: decided as rule 13u decides it, never read as no invocation.
+    assert!(
+        rows["local_callback"].refused_with("callback-undecided"),
+        "{:?}",
+        rows["local_callback"]
+    );
+}
+
+/// No structural check establishes a null default: a unit defining the
+/// declared function withdraws the declaration there (rule 13y), whatever
+/// its body does with the callback.
+const DEFINING: &str = "\
+static int quiet(char *buf, int size, int rwflag, void *u) { return size; }
+void *p_read(void *out, void **x, pass_cb *cb, void *u) { if (cb) cb(0, 0, 0, u); return p_alloc(1); }
+void caller(void *bio, void *u) { void *r = p_read(bio, NULL, quiet, u); p_free(r); }
+";
+
+#[test]
+fn a_defining_body_never_validates_a_null_default() {
+    if !clang_available() {
+        return;
+    }
+    let rows = rows_of(DEFINING, "caller");
+    assert!(
+        rows["caller"].refused_with("callback-withdrawn"),
+        "{:?}",
+        rows["caller"]
     );
 }

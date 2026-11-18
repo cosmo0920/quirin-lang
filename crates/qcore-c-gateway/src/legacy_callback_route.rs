@@ -1407,7 +1407,11 @@ impl Parser<'_> {
         }
         for clause in &declaration.callbacks {
             match clause {
-                CallbackClause::Invoked { callback, actuals } => {
+                CallbackClause::Invoked {
+                    callback,
+                    actuals,
+                    null_default,
+                } => {
                     // Card SERVE-FORWARDED-CALLBACK-FORMALS (rule 15w): the
                     // calling function's own callback formal, handed on
                     // exactly as its declaration in force states it, is that
@@ -1415,7 +1419,20 @@ impl Parser<'_> {
                     if self.forwarded_invocation(declaration, *callback, actual) {
                         continue;
                     }
-                    let resolution = self.callback_candidates(function, line, *callback, false);
+                    // Card OPENSSL-PEM-CALLBACK-ARM (rule 57): under a null
+                    // default, a null pointer constant actual (and only that:
+                    // `null_leaf`) invokes nothing, so the call is its
+                    // custody contract with nothing to decide or require.
+                    // Every other actual is decided exactly as rule 13u.
+                    let resolution =
+                        self.callback_candidates(function, line, *callback, *null_default);
+                    if *null_default
+                        && resolution
+                            .as_ref()
+                            .is_ok_and(|candidates| candidates.is_empty())
+                    {
+                        continue;
+                    }
                     let at = HandOffAt {
                         invoker: function,
                         invocation: crate::handoff_branch::Invocation::Formal(*callback),
@@ -2604,16 +2621,25 @@ pub(crate) fn settle(
         in_force: &dyn Fn(&str) -> Option<&'c RetainingContract>,
     ) -> bool {
         match clause {
-            CallbackClause::Invoked { callback, actuals } => {
-                invocation_validates(&entry.body, &entry.parameters, *callback, actuals)
-                    || forward
-                        && super::callback_forward::forward_validates(
-                            &entry.body,
-                            &entry.parameters,
-                            *callback,
-                            actuals,
-                            in_force,
-                        )
+            CallbackClause::Invoked {
+                callback,
+                actuals,
+                null_default,
+            } => {
+                // Card OPENSSL-PEM-CALLBACK-ARM (rule 57): no structural check
+                // establishes a null default (the callee's own behaviour on a
+                // null callback), so a defining body never validates one: the
+                // declaration is withdrawn there (`callback-withdrawn`).
+                !*null_default
+                    && (invocation_validates(&entry.body, &entry.parameters, *callback, actuals)
+                        || forward
+                            && super::callback_forward::forward_validates(
+                                &entry.body,
+                                &entry.parameters,
+                                *callback,
+                                actuals,
+                                in_force,
+                            ))
             }
             CallbackClause::Registered {
                 callback,
