@@ -1,0 +1,24 @@
+{
+  "null_rows": 4796,
+  "null_verdicts": {
+    "Safe": 2476,
+    "Unknown": 2303,
+    "Unsafe": 17
+  },
+  "null_verdicts_sha256": "dd7bcfc4e7cfc1bc1c12ef2894925264178ed7d83108685047d3297f9ba456e7",
+  "row_statuses": {
+    "Safe": 1083,
+    "Unknown": 3615,
+    "Unsafe": 6
+  },
+  "row_verdicts_sha256": "746e221b6726b7a7f208b4f9db99fb43af2f4be56c74b3531dbfad2ea5ec9d7d",
+  "rows": 4704,
+  "unit_statuses": {
+    "Safe": 9,
+    "Unknown": 160,
+    "Unsafe": 6,
+    "data_only": 4
+  },
+  "unit_verdicts_sha256": "b88d170b120055ffcbbc4ca2738d32203af0a23f496ec60ce8454a47328fac1f",
+  "units": 179
+}

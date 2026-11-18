@@ -28,7 +28,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import evaluation_profiles as ep  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[2]
-LIVE = {"eight-home", "fluent-bit-system", "fluent-bit-tail-pause"}
+LIVE = {"eight-home", "twelve-home", "fluent-bit-system", "fluent-bit-tail-pause"}
 SHA_A = "a" * 64
 SHA_B = "b" * 64
 REV = "1" * 40
@@ -193,7 +193,7 @@ class CommittedProfiles(unittest.TestCase):
         result = subprocess.run([sys.executable, str(ROOT / "scripts/evaluation_profiles.py"),
                                  "check", "--history"], capture_output=True, text=True)
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertIn("3 live", result.stdout)
+        self.assertIn("4 live", result.stdout)
 
 
 class Records(unittest.TestCase):
