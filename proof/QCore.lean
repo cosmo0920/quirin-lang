@@ -316,6 +316,7 @@ import QCore.OpCallbacks
 import QCore.OpaqueCallbackSlots
 import QCore.OpensslCalleeShapes
 import QCore.OpensslContractPlugin
+import QCore.OpensslUnstatedSlots
 import QCore.OrderedLifetimeReplay
 import QCore.OsEndpointPostState
 import QCore.OutParameterBodySummary
@@ -393,6 +394,7 @@ import QCore.ResultSet
 import QCore.RetainedBy
 import QCore.RetainingCallMintedName
 import QCore.RetentionGuard
+import QCore.RetentionNullConstant
 import QCore.RetentionPath
 import QCore.ReturnCallActuals
 import QCore.ReturnCallCustody

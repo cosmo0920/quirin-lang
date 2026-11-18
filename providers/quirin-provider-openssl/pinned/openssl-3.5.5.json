@@ -187,8 +187,24 @@
    "declaration": "SSL_CTX *SSL_CTX_new(const SSL_METHOD *meth)",
    "header": "/usr/include/openssl/ssl.h"
   },
+  "SSL_CTX_sess_set_get_cb": {
+   "declaration": "void SSL_CTX_sess_set_get_cb(SSL_CTX *ctx, SSL_SESSION *(*get_session_cb)(struct ssl_st *ssl, const unsigned char *data, int len, int *copy))",
+   "header": "/usr/include/openssl/ssl.h"
+  },
+  "SSL_CTX_sess_set_new_cb": {
+   "declaration": "void SSL_CTX_sess_set_new_cb(SSL_CTX *ctx, int (*new_session_cb)(struct ssl_st *ssl, SSL_SESSION *sess))",
+   "header": "/usr/include/openssl/ssl.h"
+  },
+  "SSL_CTX_sess_set_remove_cb": {
+   "declaration": "void SSL_CTX_sess_set_remove_cb(SSL_CTX *ctx, void (*remove_session_cb)(struct ssl_ctx_st *ctx, SSL_SESSION *sess))",
+   "header": "/usr/include/openssl/ssl.h"
+  },
   "SSL_CTX_set_cert_cb": {
    "declaration": "void SSL_CTX_set_cert_cb(SSL_CTX *c, int (*cb)(SSL *ssl, void *arg), void *arg)",
+   "header": "/usr/include/openssl/ssl.h"
+  },
+  "SSL_CTX_set_client_cert_cb": {
+   "declaration": "void SSL_CTX_set_client_cert_cb(SSL_CTX *ctx, int (*client_cert_cb)(SSL *ssl, X509 **x509, EVP_PKEY **pkey))",
    "header": "/usr/include/openssl/ssl.h"
   },
   "SSL_CTX_set_default_passwd_cb": {
@@ -203,8 +219,24 @@
    "declaration": "int SSL_CTX_set_default_verify_paths(SSL_CTX *ctx)",
    "header": "/usr/include/openssl/ssl.h"
   },
+  "SSL_CTX_set_info_callback": {
+   "declaration": "void SSL_CTX_set_info_callback(SSL_CTX *ctx, void (*cb)(const SSL *ssl, int type, int val))",
+   "header": "/usr/include/openssl/ssl.h"
+  },
+  "SSL_CTX_set_msg_callback": {
+   "declaration": "void SSL_CTX_set_msg_callback(SSL_CTX *ctx, void (*cb)(int write_p, int version, int content_type, const void *buf, size_t len, SSL *ssl, void *arg))",
+   "header": "/usr/include/openssl/ssl.h"
+  },
   "SSL_CTX_set_options": {
    "declaration": "uint64_t SSL_CTX_set_options(SSL_CTX *ctx, uint64_t op)",
+   "header": "/usr/include/openssl/ssl.h"
+  },
+  "SSL_CTX_set_security_callback": {
+   "declaration": "void SSL_CTX_set_security_callback(SSL_CTX *ctx, int (*cb)(const SSL *s, const SSL_CTX *ctx, int op, int bits, int nid, void *other, void *ex))",
+   "header": "/usr/include/openssl/ssl.h"
+  },
+  "SSL_CTX_set_verify": {
+   "declaration": "void SSL_CTX_set_verify(SSL_CTX *ctx, int mode, SSL_verify_cb callback)",
    "header": "/usr/include/openssl/ssl.h"
   },
   "SSL_CTX_use_PrivateKey": {
@@ -265,6 +297,22 @@
   },
   "SSL_set_cert_cb": {
    "declaration": "void SSL_set_cert_cb(SSL *s, int (*cb)(SSL *ssl, void *arg), void *arg)",
+   "header": "/usr/include/openssl/ssl.h"
+  },
+  "SSL_set_info_callback": {
+   "declaration": "void SSL_set_info_callback(SSL *ssl, void (*cb)(const SSL *ssl, int type, int val))",
+   "header": "/usr/include/openssl/ssl.h"
+  },
+  "SSL_set_msg_callback": {
+   "declaration": "void SSL_set_msg_callback(SSL *ssl, void (*cb)(int write_p, int version, int content_type, const void *buf, size_t len, SSL *ssl, void *arg))",
+   "header": "/usr/include/openssl/ssl.h"
+  },
+  "SSL_set_security_callback": {
+   "declaration": "void SSL_set_security_callback(SSL *s, int (*cb)(const SSL *s, const SSL_CTX *ctx, int op, int bits, int nid, void *other, void *ex))",
+   "header": "/usr/include/openssl/ssl.h"
+  },
+  "SSL_set_verify": {
+   "declaration": "void SSL_set_verify(SSL *s, int mode, SSL_verify_cb callback)",
    "header": "/usr/include/openssl/ssl.h"
   },
   "SSL_shutdown": {

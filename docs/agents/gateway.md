@@ -6123,6 +6123,40 @@ own anchor here.
     `tests/openssl_callback_slots.rs`;
     [report](../reports/openssl-ssl-ctx-callback-slots/README.md).
 
+    **The OpenSSL slots the narrowed premise covered** (card
+    OPENSSL-UNSTATED-CALLBACK-SLOTS, amended in place; contract specification
+    C04.18, C04.19.3; user decision 2026-11-18). `quirin-provider-openssl`
+    states eight more opaque slots, one key per documented slot shared by the
+    context and the SSL's copy: `ssl_ctx_st.verify_callback`,
+    `.info_callback`, `.msg_callback`, `.sec_cb`, `.new_session_cb`,
+    `.remove_session_cb`, `.get_session_cb`, `.client_cert_cb`, registered by
+    every writer the slot's 3.5 page names (`SSL_CTX_set_verify`,
+    `SSL_set_verify`, `SSL_CTX_set_info_callback`, `SSL_set_info_callback`,
+    `SSL_CTX_set_msg_callback`, `SSL_set_msg_callback`,
+    `SSL_CTX_set_security_callback`, `SSL_set_security_callback`,
+    `SSL_CTX_sess_set_new_cb`, `SSL_CTX_sess_set_remove_cb`,
+    `SSL_CTX_sess_set_get_cb`, `SSL_CTX_set_client_cert_cb`) and invoked by
+    `SSL_write`, `SSL_read`, `SSL_connect`, `SSL_do_handshake` (all eight),
+    `SSL_shutdown` (info, message), `SSL_CTX_use_certificate` and
+    `SSL_CTX_use_certificate_chain_file` (security, the context's check). The
+    checker requires each page's NAME list to be exactly its slots' writers
+    and not-writers (`Slot::not_writers`, `slot_writers_declared`).
+    `SSL_CTX_use_certificate_chain_file` drops `openssl_unstated_callback_slots`
+    for `openssl_ex_data_callbacks` (the ex_data registry, not a slot); the
+    narrowed premise stays on the handshake and I/O calls, `SSL_shutdown` and
+    the frees (no callback clause stands beside a reference drop). No gateway
+    code changed for the slots: the decision is the one above. **Do not**
+    drop the premise from a declaration whose slots are not all stated, or
+    read an ex_data callback, a ctrl arm or a BIO method as a slot.
+    `QCore.OpensslUnstatedSlots`
+    (`a_named_function_is_a_writer_or_a_not_writer`,
+    `an_unclassified_name_refuses`, `the_ex_data_premise_never_covers_a_slot`,
+    `dropping_the_slot_premise_needs_every_slot_stated`,
+    `a_row_is_safe_only_if_every_invocation_decides`,
+    `stating_an_invocation_never_improves_a_verdict`);
+    `tests/openssl_unstated_callback_slots.rs`;
+    [report](../reports/openssl-unstated-callback-slots/README.md).
+
 <a id="constraint-12o"></a>
 
 12o. **A type-switched release reads, under an undecided discriminant, the
@@ -6663,6 +6697,29 @@ own anchor here.
     or backend-body proof. Faithful extraction and Rust/Lean correspondence
     remain premises. `QCore.CollectorIdentity`;
     [report](../reports/event-collector-selection/README.md).
+
+    **A null pointer constant retains nothing** (card
+    RETENTION-NULL-CONSTANT-ACTUAL, carried by OPENSSL-UNSTATED-CALLBACK-SLOTS;
+    amended in place; contract specification C04.14). A retained actual that
+    is a null pointer constant after the cast reading
+    (`retained_by::null_pointer_constant`: matched parentheses and pointer
+    casts `( T * )` stripped, then `0`, `NULL` or `nullptr`; the preprocessed
+    `NULL` is `( ( void * ) 0 )`) designates no object: `Retained::Nothing`
+    decides `Outlives` in every holder class, so route G records and refuses
+    nothing for it (`legacy_retained_by.rs` `null_retention`, both the
+    parameter-holder and the path-holder retentions), `global` and a holder
+    the caller supplied included. `SSL_CTX_set_cert_cb(ctx, cb, NULL)` no
+    longer refuses on `(void *) 0`. **Do not** evaluate an expression to
+    reach the reading (`(char *) (1 - 1)` stays undecided) or read a local, a
+    formal or a call result that may be null as one: each is decided as
+    before. A removal naming a null constant still keys on no object.
+    `QCore.RetentionNullConstant` (`a_null_constant_retains_nothing`,
+    `a_null_constant_never_records`, `every_other_actual_is_decided_as_before`,
+    `a_non_static_actual_in_an_unknown_holder_still_refuses`,
+    `a_null_retention_never_changes_a_replay`, `null_decision_vectors_hold`);
+    `NULL_DECISION_VECTORS`, `NULL_SPELLING_VECTORS`;
+    `tests/retention_null_constant.rs`;
+    [report](../reports/openssl-unstated-callback-slots/README.md).
 
 <a id="constraint-12u"></a>
 

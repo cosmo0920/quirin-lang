@@ -2305,6 +2305,205 @@
    "reference_sentences": [],
    "page": "CRYPTO_get_ex_new_index",
    "fetched_on": "2026-11-18"
+  },
+  {
+   "url": "https://docs.openssl.org/1.1.1/man3/SSL_CTX_set_verify/",
+   "series": "1.1.1",
+   "fetched": true,
+   "sha256": "7d8f80224907871c90bdae7d588d52eb59b289345defe539b16ed389dc002a48",
+   "bytes": 695136,
+   "name": "SSL_get_ex_data_X509_STORE_CTX_idx, SSL_CTX_set_verify, SSL_set_verify, SSL_CTX_set_verify_depth, SSL_set_verify_depth, SSL_verify_cb, SSL_verify_client_post_handshake, SSL_set_post_handshake_auth, SSL_CTX_set_post_handshake_auth - set peer certificate verification parameters",
+   "history": "The SSL_VERIFY_POST_HANDSHAKE option, and the SSL_verify_client_post_handshake() and SSL_set_post_handshake_auth() functions were added in OpenSSL 1.1.1.",
+   "null_sentences": [
+    "If no callback function shall be specified, the NULL pointer can be used for verify_callback .",
+    "If no callback function shall be specified, the NULL pointer can be used for verify_callback ."
+   ],
+   "reference_sentences": [],
+   "page": "SSL_CTX_set_verify",
+   "fetched_on": "2026-11-18"
+  },
+  {
+   "url": "https://docs.openssl.org/1.0.2/man3/SSL_CTX_set_verify/",
+   "series": "1.0.2",
+   "fetched": true,
+   "sha256": "38e62303fda6bfed276509bc58362d5d5ce51fe388f63164276ee564363c32ab",
+   "bytes": 301432,
+   "name": "SSL_CTX_set_verify, SSL_set_verify, SSL_CTX_set_verify_depth, SSL_set_verify_depth - set peer certificate verification parameters",
+   "history": null,
+   "null_sentences": [
+    "If no callback function shall be specified, the NULL pointer can be used for verify_callback .",
+    "If no callback function shall be specified, the NULL pointer can be used for verify_callback ."
+   ],
+   "reference_sentences": [],
+   "page": "SSL_CTX_set_verify",
+   "fetched_on": "2026-11-18"
+  },
+  {
+   "url": "https://docs.openssl.org/1.1.1/man3/SSL_CTX_set_info_callback/",
+   "series": "1.1.1",
+   "fetched": true,
+   "sha256": "70b00002841fcceee702462fffe30f0852c3eac8650eae6172a1b188e5ed0360",
+   "bytes": 679644,
+   "name": "SSL_CTX_set_info_callback, SSL_CTX_get_info_callback, SSL_set_info_callback, SSL_get_info_callback - handle information callback for SSL connections",
+   "history": null,
+   "null_sentences": [
+    "When callback is NULL, no callback function is used.",
+    "When callback is NULL, the callback setting currently valid for ctx is used."
+   ],
+   "reference_sentences": [],
+   "page": "SSL_CTX_set_info_callback",
+   "fetched_on": "2026-11-18"
+  },
+  {
+   "url": "https://docs.openssl.org/1.0.2/man3/SSL_CTX_set_info_callback/",
+   "series": "1.0.2",
+   "fetched": true,
+   "sha256": "b8f866302302ce9951ce25c6ab66482ee5791d9c6f15cf48111ef08ff3a8792a",
+   "bytes": 288759,
+   "name": "SSL_CTX_set_info_callback, SSL_CTX_get_info_callback, SSL_set_info_callback, SSL_get_info_callback - handle information callback for SSL connections",
+   "history": null,
+   "null_sentences": [
+    "When callback is NULL, not callback function is used.",
+    "When callback is NULL, the callback setting currently valid for ctx is used."
+   ],
+   "reference_sentences": [],
+   "page": "SSL_CTX_set_info_callback",
+   "fetched_on": "2026-11-18"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/SSL_CTX_set_msg_callback/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "efc45f59bb83fb1090dae5cb989afcaa1b9bc9249ac5e2eb00625ac013e65157",
+   "bytes": 1085267,
+   "name": "SSL_CTX_set_msg_callback, SSL_CTX_set_msg_callback_arg, SSL_set_msg_callback, SSL_set_msg_callback_arg, SSL_trace - install callback for observing protocol messages",
+   "history": "The pseudo content type SSL3_RT_INNER_CONTENT_TYPE was added in OpenSSL 1.1.1. The pseudo content types SSL3_RT_QUIC_DATAGRAM , SSL3_RT_QUIC_PACKET , SSL3_RT_QUIC_FRAME_FULL , SSL3_RT_QUIC_FRAME_HEADER and SSL3_RT_QUIC_FRAME_PADDING were added in OpenSSL 3.2. In versions previous to OpenSSL 3.0 cb was called with 0 as version for the pseudo content type SSL3_RT_HEADER for TLS records. In versions previous to OpenSSL 3.2 cb was called with 0 as version for the pseudo content type SSL3_RT_HEADER for DTLS records.",
+   "null_sentences": [
+    "Using a NULL pointer for cb disables the message callback."
+   ],
+   "reference_sentences": [],
+   "page": "SSL_CTX_set_msg_callback",
+   "fetched_on": "2026-11-18"
+  },
+  {
+   "url": "https://docs.openssl.org/1.1.1/man3/SSL_CTX_set_msg_callback/",
+   "series": "1.1.1",
+   "fetched": true,
+   "sha256": "61295a59392d2a1318aa91ac0b69d3c4fc15cf6502ee50396e7d42f0b0cee914",
+   "bytes": 675500,
+   "name": "SSL_CTX_set_msg_callback, SSL_CTX_set_msg_callback_arg, SSL_set_msg_callback, SSL_set_msg_callback_arg - install callback for observing protocol messages",
+   "history": "The pseudo content type SSL3_RT_INNER_CONTENT_TYPE was added in OpenSSL 1.1.1.",
+   "null_sentences": [
+    "Using a NULL pointer for cb disables the message callback."
+   ],
+   "reference_sentences": [],
+   "page": "SSL_CTX_set_msg_callback",
+   "fetched_on": "2026-11-18"
+  },
+  {
+   "url": "https://docs.openssl.org/1.0.2/man3/SSL_CTX_set_msg_callback/",
+   "series": "1.0.2",
+   "fetched": true,
+   "sha256": "6d2ad3750e5fdcb9c128b349a9657c6e5cd311d50777ba1dbdb8431d69573d6d",
+   "bytes": 283797,
+   "name": "SSL_CTX_set_msg_callback, SSL_CTX_set_msg_callback_arg, SSL_set_msg_callback, SSL_get_msg_callback_arg - install callback for observing protocol messages",
+   "history": "SSL_CTX_set_msg_callback(), SSL_CTX_set_msg_callback_arg(), SSL_set_msg_callback() and SSL_get_msg_callback_arg() were added in OpenSSL 0.9.7.",
+   "null_sentences": [],
+   "reference_sentences": [],
+   "page": "SSL_CTX_set_msg_callback",
+   "fetched_on": "2026-11-18"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/SSL_CTX_sess_set_get_cb/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "8520bd7436ec1b344a53b90d2d84091abfce8cbb3bb1019b738867fecf679acf",
+   "bytes": 1083711,
+   "name": "SSL_CTX_sess_set_new_cb, SSL_CTX_sess_set_remove_cb, SSL_CTX_sess_set_get_cb, SSL_CTX_sess_get_new_cb, SSL_CTX_sess_get_remove_cb, SSL_CTX_sess_get_get_cb - provide callback functions for server side external session caching",
+   "history": null,
+   "null_sentences": [
+    "If a callback function has not been set, the NULL pointer is returned."
+   ],
+   "reference_sentences": [],
+   "page": "SSL_CTX_sess_set_get_cb",
+   "fetched_on": "2026-11-18"
+  },
+  {
+   "url": "https://docs.openssl.org/1.1.1/man3/SSL_CTX_sess_set_get_cb/",
+   "series": "1.1.1",
+   "fetched": true,
+   "sha256": "610306945dc9df06a181ae73aeed71a0eff2c3b438dbc4794c0f427fb2d9abb4",
+   "bytes": 677027,
+   "name": "SSL_CTX_sess_set_new_cb, SSL_CTX_sess_set_remove_cb, SSL_CTX_sess_set_get_cb, SSL_CTX_sess_get_new_cb, SSL_CTX_sess_get_remove_cb, SSL_CTX_sess_get_get_cb - provide callback functions for server side external session caching",
+   "history": null,
+   "null_sentences": [
+    "If a callback function has not been set, the NULL pointer is returned."
+   ],
+   "reference_sentences": [],
+   "page": "SSL_CTX_sess_set_get_cb",
+   "fetched_on": "2026-11-18"
+  },
+  {
+   "url": "https://docs.openssl.org/1.0.2/man3/SSL_CTX_sess_set_get_cb/",
+   "series": "1.0.2",
+   "fetched": true,
+   "sha256": "d810b46945337dc7b84fc3324ae235d168bccdf95bf08c473f6dc893e4469ad9",
+   "bytes": 286088,
+   "name": "SSL_CTX_sess_set_new_cb, SSL_CTX_sess_set_remove_cb, SSL_CTX_sess_set_get_cb, SSL_CTX_sess_get_new_cb, SSL_CTX_sess_get_remove_cb, SSL_CTX_sess_get_get_cb - provide callback functions for server side external session caching",
+   "history": null,
+   "null_sentences": [
+    "If a callback function has not been set, the NULL pointer is returned."
+   ],
+   "reference_sentences": [],
+   "page": "SSL_CTX_sess_set_get_cb",
+   "fetched_on": "2026-11-18"
+  },
+  {
+   "url": "https://docs.openssl.org/1.1.1/man3/SSL_CTX_set_client_cert_cb/",
+   "series": "1.1.1",
+   "fetched": true,
+   "sha256": "e095b1edfe026de2e8adf9e1c302466fee67f04d9d90cd0a4b5eebd9add0646f",
+   "bytes": 674287,
+   "name": "SSL_CTX_set_client_cert_cb, SSL_CTX_get_client_cert_cb - handle client certificate callback function",
+   "history": null,
+   "null_sentences": [
+    "When client_cert_cb() is NULL, no callback function is used.",
+    "SSL_CTX_get_client_cert_cb() returns function pointer of client_cert_cb() or NULL if the callback is not set."
+   ],
+   "reference_sentences": [],
+   "page": "SSL_CTX_set_client_cert_cb",
+   "fetched_on": "2026-11-18"
+  },
+  {
+   "url": "https://docs.openssl.org/1.0.2/man3/SSL_CTX_set_client_cert_cb/",
+   "series": "1.0.2",
+   "fetched": true,
+   "sha256": "169375f9864074786198bbd97de59bbf6acb231a0eb51e6f8a104e3efb59a34b",
+   "bytes": 283496,
+   "name": "SSL_CTX_set_client_cert_cb, SSL_CTX_get_client_cert_cb - handle client certificate callback function",
+   "history": null,
+   "null_sentences": [
+    "When client_cert_cb() is NULL, no callback function is used."
+   ],
+   "reference_sentences": [],
+   "page": "SSL_CTX_set_client_cert_cb",
+   "fetched_on": "2026-11-18"
+  },
+  {
+   "url": "https://docs.openssl.org/1.1.1/man3/SSL_CTX_set_security_level/",
+   "series": "1.1.1",
+   "fetched": true,
+   "sha256": "9bebe6a48dd055610f655f3c5702e739ada7511b6ce219766e5cda3f8f9bcdc9",
+   "bytes": 682187,
+   "name": "SSL_CTX_set_security_level, SSL_set_security_level, SSL_CTX_get_security_level, SSL_get_security_level, SSL_CTX_set_security_callback, SSL_set_security_callback, SSL_CTX_get_security_callback, SSL_get_security_callback, SSL_CTX_set0_security_ex_data, SSL_set0_security_ex_data, SSL_CTX_get0_security_ex_data, SSL_get0_security_ex_data - SSL/TLS security framework",
+   "history": "These functions were added in OpenSSL 1.1.0.",
+   "null_sentences": [
+    "SSL_CTX_get_security_callback() and SSL_get_security_callback() return the pointer to the security callback or NULL if the callback is not set.",
+    "SSL_CTX_get0_security_ex_data() and SSL_get0_security_ex_data() return the extra data pointer or NULL if the ex data is not set."
+   ],
+   "reference_sentences": [],
+   "page": "SSL_CTX_set_security_level",
+   "fetched_on": "2026-11-18"
   }
  ]
 }

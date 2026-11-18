@@ -113,6 +113,11 @@ pub enum Retained {
     TrackedInterior(usize, Vec<String>),
     /// Anything else.
     Other,
+    /// Card **RETENTION-NULL-CONSTANT-ACTUAL** (rule 12t, amended in place):
+    /// a null pointer constant (after the cast reading,
+    /// [`null_pointer_constant`]). It designates no object, so nothing is
+    /// retained: the call decides with no record, whatever the holder.
+    Nothing,
 }
 
 /// Card **FB-EVENT-LOOP-RETENTION-AND-REGISTRATION**: what a path holder
@@ -204,7 +209,7 @@ pub enum Decision {
 #[must_use]
 pub fn decide(retained: &Retained, holder: &Holder) -> Decision {
     match (retained, holder) {
-        (Retained::Static, _) => Decision::Outlives,
+        (Retained::Static | Retained::Nothing, _) => Decision::Outlives,
         (Retained::Other, _) | (_, Holder::Foreign | Holder::Global) => Decision::Undecided,
         (Retained::CallerObject(_), Holder::Frame(_)) => Decision::Outlives,
         (Retained::CallerObject(name), Holder::Tracked(site)) => {
@@ -260,7 +265,7 @@ pub fn removal_key(retained: &Retained, holder: &Holder) -> RemovalKey {
         Retained::TrackedInterior(site, fields) => {
             Some(HeldObject::SiteInterior(*site, fields.clone()))
         }
-        Retained::Static | Retained::Other => None,
+        Retained::Static | Retained::Other | Retained::Nothing => None,
     };
     let holder = match holder {
         Holder::Frame(name) => Some(HeldBy::Frame(name.clone())),
@@ -318,6 +323,96 @@ pub fn end_holder(
     held.retain(|(_, holder)| holder != by);
     poisoned.retain(|(_, holder)| holder != by);
 }
+
+/// Card **RETENTION-NULL-CONSTANT-ACTUAL** (rule 12t, amended in place):
+/// whether a retained actual, as spelled, is a null pointer: matched
+/// enclosing parentheses and any number of leading pointer casts `( T * )`
+/// (a type name of identifiers and `*`, ending in `*`) stripped, then `0`,
+/// `NULL` or `nullptr`. The preprocessed `NULL` is `( ( void * ) 0 )`, a
+/// C11 6.3.2.3p3 null pointer constant; a pointer cast of one is a null
+/// pointer (6.3.2.3p4), which designates no object either. Structural:
+/// nothing is evaluated, and every other spelling (a local, a formal, a call
+/// result that may be null, `(void *) 1`, an integer cast) is not one.
+#[must_use]
+pub fn null_pointer_constant(words: &[&str]) -> bool {
+    let mut words = words;
+    loop {
+        if words.len() >= 2 && words[0] == "(" && matching_close(words, 0) == Some(words.len() - 1)
+        {
+            words = &words[1..words.len() - 1];
+            continue;
+        }
+        if words.first() == Some(&"(")
+            && let Some(close) = matching_close(words, 0)
+            && close >= 2
+            && close + 1 < words.len()
+            && words[close - 1] == "*"
+            && words[1..close].iter().all(|word| {
+                *word == "*"
+                    || (!word.is_empty()
+                        && word
+                            .chars()
+                            .all(|character| character.is_ascii_alphanumeric() || character == '_')
+                        && !word.starts_with(|character: char| character.is_ascii_digit()))
+            })
+        {
+            words = &words[close + 1..];
+            continue;
+        }
+        return matches!(words, ["0" | "NULL" | "nullptr"]);
+    }
+}
+
+/// The index of the `)` closing the `(` at `open`.
+fn matching_close(words: &[&str], open: usize) -> Option<usize> {
+    let mut depth = 0usize;
+    for (index, word) in words.iter().enumerate().skip(open) {
+        match *word {
+            "(" => depth += 1,
+            ")" => {
+                depth = depth.checked_sub(1)?;
+                if depth == 0 {
+                    return Some(index);
+                }
+            }
+            _ => {}
+        }
+    }
+    None
+}
+
+/// Card **RETENTION-NULL-CONSTANT-ACTUAL**: `nullDecisionVectors` of
+/// `QCore.RetentionNullConstant`: a null pointer constant decides outright
+/// in every holder class (rule 12t's table otherwise unchanged).
+pub const NULL_DECISION_VECTORS: &[(&str, &str, &str)] = &[
+    ("nothing", "frame", "outlives"),
+    ("nothing", "tracked", "outlives"),
+    ("nothing", "global", "outlives"),
+    ("nothing", "foreign", "outlives"),
+    ("nothing", "path", "outlives"),
+];
+
+/// Card **RETENTION-NULL-CONSTANT-ACTUAL**: the spellings the reading
+/// decides, and whether each is a null pointer (the brief's controls: a null
+/// constant retains nothing; a local, a formal or a call result that may be
+/// null is not one).
+pub const NULL_SPELLING_VECTORS: &[(&str, bool)] = &[
+    ("0", true),
+    ("NULL", true),
+    ("( ( void * ) 0 )", true),
+    ("( void * ) 0", true),
+    ("( char * ) ( void * ) 0", true),
+    ("( ( struct x * ) 0 )", true),
+    ("nullptr", true),
+    ("p", false),
+    ("( void * ) p", false),
+    ("( void * ) 1", false),
+    ("( int ) 0", false),
+    ("f ( )", false),
+    ("( void * ) f ( 0 )", false),
+    ("1 - 1", false),
+    ("( ) 0", false),
+];
 
 /// The refusal of an undecided retention.
 #[must_use]
@@ -741,6 +836,55 @@ mod tests {
             assert!(!path_trace(name).is_empty(), "{name}");
             assert_eq!(replay(&path_trace(name)) == Outcome::Safe, *safe, "{name}");
         }
+    }
+
+    /// Card RETENTION-NULL-CONSTANT-ACTUAL: the shared decision vectors, the
+    /// spellings, and that a null constant leaves every path's records as
+    /// they were (a retention of nothing is the identity).
+    #[test]
+    fn null_vectors_bind_the_table_and_the_reading() {
+        let holder = |name: &str| match name {
+            "path" => Holder::Path(PathRoot::Formal("h".into()), vec!["evl".into()]),
+            "frame" => Holder::Frame("L".into()),
+            "tracked" => Holder::Tracked(2),
+            "global" => Holder::Global,
+            _ => Holder::Foreign,
+        };
+        for (p, h, expected) in NULL_DECISION_VECTORS {
+            assert_eq!(*p, "nothing");
+            assert_eq!(*expected, "outlives");
+            assert_eq!(decide(&Retained::Nothing, &holder(h)), Decision::Outlives);
+        }
+        for (spelling, null) in NULL_SPELLING_VECTORS {
+            let words = spelling.split_whitespace().collect::<Vec<_>>();
+            assert_eq!(null_pointer_constant(&words), *null, "{spelling}");
+        }
+        // Every other class's decision is unchanged by the reading.
+        for (p, h, expected) in DECISION_VECTORS {
+            let label = match decide(&retained(p), &holder(h)) {
+                Decision::Outlives => "outlives",
+                Decision::Record(..) => "record",
+                Decision::Undecided => "undecided",
+            };
+            assert_eq!(label, *expected, "{p} {h}");
+        }
+        // A null retention between two events of a path changes nothing.
+        for (name, _) in TRACE_VECTORS {
+            let events = trace(name);
+            for at in 0..=events.len() {
+                let mut with = events.clone();
+                with.insert(
+                    at,
+                    Event::Retain(decide(&Retained::Nothing, &Holder::Foreign)),
+                );
+                assert_eq!(replay(&with), replay(&events), "{name} at {at}");
+            }
+        }
+        // A removal naming a null constant keys on no object, as before.
+        assert_eq!(
+            removal_key(&Retained::Nothing, &Holder::Tracked(2)).object,
+            None
+        );
     }
 
     #[test]
