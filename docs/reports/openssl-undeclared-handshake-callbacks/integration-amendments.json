@@ -1,0 +1,48 @@
+{
+ "schema": "quirin-amendments/1",
+ "card": "OPENSSL-UNDECLARED-HANDSHAKE-CALLBACKS",
+ "base": "65fc06fca",
+ "measured_tip": "4b8b31361",
+ "increment_paragraph": "**OPENSSL-UNDECLARED-HANDSHAKE-CALLBACKS (2026-11-18).** User decision 2026-11-18 launches the follow-up OPENSSL-UNSTATED-CALLBACK-SLOTS recorded. quirin-provider-openssl states eighteen more opaque slots (C04.19.3, rule 12n amended in place), one key per documented callback: keylog, ALPN selection, NPN selection and advertisement, certificate verification (app_verify_callback), the four PSK callbacks, ClientHello, record padding, early data and the six custom extension callbacks (add, free, parse, in the _ex and the older style), registered by the 21 setters their 3.5 manual pages name (new module ssl_handshake.qv; nine page snapshots added with fetch_docs.py --merge; prototypes pinned, every existing entry byte-identical) and invoked by SSL_write/read/connect/do_handshake (all eighteen, beside the nine already stated) and SSL_shutdown (record padding: its close_notify alert is a record). The checker reads a setter registering several slots (the custom extension setters: a writer of each), maps unsigned int to u32 and the new function pointer typedefs; each page's NAME list is exactly its slots' writers and not-writers. openssl_unstated_callback_slots keeps its statement and its five declarations: the SSL_CTX_callback_ctrl arms, the CT validation slot (SSL_CTX_enable_ct writes the library's own callback through no function pointer formal, so no registration can declare that writer), the slots of setters still undeclared, a BIO's methods and callbacks (their own reading, a named follow-up), ex_data. No gateway code changed. Lean QCore.OpensslHandshakeSlots (10 theorems), audited. contracts.lock adds 21 entries and changes the 5 re-stated digests only. Fail-closed tests on the crate's own modules: an uncontracted keylog or ALPN candidate (Fluent Bit's shape), an effectful free callback of a multi-slot setter, a slot no declaration registers, SSL_shutdown's record padding candidate. Opt-in current over Fluent Bit 046accf6 (base 65fc06fca vs tip 4b8b31361): 1098 Safe / 2 Pending / 3699 Unknown / 5 Unsafe in both, no row moved and no row changed content; bindings 78 to 99, all Pending; slot sets closed as predicted (alpn_select_cb {tls_context_server_alpn_select_callback}, keylog_callback {ssl_key_logger}, FLB_HAVE_DEV being defined; every other new slot empty). The predicted content changes did not occur: src/tls/flb_tls.c (which includes openssl.c) is not in the run's selection, so its setter rows are not analysed, and every I/O row in the selection refuses first on its object operand. Pinned routes read no user load path and no gateway code changed: no move predicted, measure --declared deferred to the integrator.",
+ "status_paragraph": null,
+ "ledger": [
+  {
+   "id": "OPENSSL-UNDECLARED-HANDSHAKE-CALLBACKS",
+   "operation": "retire",
+   "why": "OPENSSL-UNDECLARED-HANDSHAKE-CALLBACKS (2026-11-18): the keylog, ALPN/NPN, certificate verification, PSK, ClientHello, record padding, early data and custom extension slots are stated with every writer their 3.5 pages name (21 setters in ssl_handshake.qv) and invoked by the four handshake and I/O calls (SSL_shutdown: record padding). What the premise still covers on the five declarations is tracked by OPENSSL-CTRL-COMMAND-ARMS (ctrl arms), OPENSSL-CT-VALIDATION-LIBRARY-WRITER (CT), OPENSSL-REMAINING-HANDSHAKE-SETTERS (setters still undeclared), OPENSSL-BIO-METHODS-AND-CALLBACKS (BIOs) and OPENSSL-EX-DATA-REGISTRY (ex_data).",
+   "source": "docs/reports/openssl-undeclared-handshake-callbacks/README.md"
+  },
+  {
+   "id": "OPENSSL-BIO-METHODS-AND-CALLBACKS",
+   "operation": "register",
+   "title": "A BIO's method table and callbacks have no reading",
+   "text": "The handshake and I/O calls and SSL_shutdown read and write through the BIOs the SSL holds, running each BIO's methods and its callback; they keep openssl_unstated_callback_slots for them. Neither is a slot of the SSL object: a method table is an object of its own (BIO_meth_new, written by the BIO_meth_set_* setters, BIO_meth_new 3.5), the built-in methods (BIO_s_socket, BIO_s_mem, ...) are the library's own values no setter is handed, and a BIO_METHOD reaches the SSL through BIO_new and SSL_set_bio; a BIO's callback (BIO_set_callback_ex, BIO_set_callback; BIO_set_callback 3.5) is also run by BIO_free with BIO_CB_FREE, beside a reference drop no callback clause may stand beside, and the crate's BIO_free reads it silently today. DISCHARGE: a reading of the method table as a holder-to-holder slot (BIO_meth_set_* writers, a library-value premise for the built-ins, the SSL's BIOs as the object), the BIO callback slot with its writers, its invocation at BIO_free (with OPENSSL-FREE-SESSION-REMOVE-INVOCATION's clause beside a drop) or the premise there, Lean. Size: medium to large.",
+   "source": "docs/reports/openssl-undeclared-handshake-callbacks/README.md",
+   "recorded_by": "OPENSSL-UNDECLARED-HANDSHAKE-CALLBACKS"
+  },
+  {
+   "id": "OPENSSL-CT-VALIDATION-LIBRARY-WRITER",
+   "operation": "register",
+   "title": "The CT validation slot has a writer that stores the library's own callback",
+   "text": "SSL_CTX_set_ct_validation_callback (3.5) names SSL_CTX_set_ct_validation_callback and SSL_set_ct_validation_callback (function pointer setters) beside SSL_CTX_enable_ct / SSL_enable_ct, which set the library's own permissive or strict callback, and SSL_CTX_disable_ct / SSL_disable_ct (macros clearing it). A slot's run set is what its declared setters are handed, so a value the library writes itself is never a candidate; the slot stays under openssl_unstated_callback_slots on the handshake and I/O calls. DISCHARGE: a reading of a library-written slot value (a library callback declared by name with its own contract, admitted as a candidate wherever an enable call is reachable, or a premise naming it), the CT setters declared, the invocation stated, Lean beside QCore.OpensslHandshakeSlots (a_library_written_slot_is_never_accepted). Size: small to medium.",
+   "source": "docs/reports/openssl-undeclared-handshake-callbacks/README.md",
+   "recorded_by": "OPENSSL-UNDECLARED-HANDSHAKE-CALLBACKS"
+  },
+  {
+   "id": "OPENSSL-REMAINING-HANDSHAKE-SETTERS",
+   "operation": "register",
+   "title": "Handshake callback setters quirin-provider-openssl still does not declare",
+   "text": "Beside the ctrl arms, CT and the BIOs, the pinned openssl/ssl.h declares further function pointer setters of slots a handshake or I/O call may run, still covered only by openssl_unstated_callback_slots: SSL_CTX_set_session_ticket_cb, SSL_CTX_set_not_resumable_session_callback / SSL_set_not_resumable_session_callback, SSL_CTX_set_generate_session_id / SSL_set_generate_session_id, SSL_CTX_set_tmp_dh_callback / SSL_set_tmp_dh_callback, SSL_CTX_set_cookie_generate_cb / _verify_cb and the stateless cookie pair (DTLS / HelloRetryRequest), SSL_set_session_secret_cb, SSL_set_session_ticket_ext_cb, the SRP callbacks, SSL_CTX_set_async_callback / SSL_set_async_callback, SSL_CTX_set_new_pending_conn_cb (QUIC), and the verify and lookup callbacks of the context's X509_STORE (X509_STORE_set_verify_cb). DISCHARGE: as OPENSSL-UNDECLARED-HANDSHAKE-CALLBACKS did, each slot's writers declared from its page with the NAME check and the invocations stated; then the premise names only the ctrl arms, CT, the BIOs and ex_data. Size: medium.",
+   "source": "docs/reports/openssl-undeclared-handshake-callbacks/README.md",
+   "recorded_by": "OPENSSL-UNDECLARED-HANDSHAKE-CALLBACKS"
+  },
+  {
+   "id": "CALLBACK-SUPPLIED-OUTPUT-OBLIGATION",
+   "operation": "register",
+   "title": "What a slot candidate hands back through a supplied pointer is not composed",
+   "text": "Several of the new slots' pages put obligations on what the callback stores through a pointer the library supplies: the ALPN selection callback's out 'may point directly into in, or to a buffer that outlives the handshake'; the NPN advertisement callback's list: 'the SSL does keep a reference to it'; the PSK use-session and find-session callbacks' *sess: 'Ownership of the SSL_SESSION object is passed to the OpenSSL library'; a custom extension add callback's *out is later handed to its free callback. C04.19's composition reads a `_` actual as the callee's, so a candidate whose own contract states nothing about the pointee is admitted as the identity without these lifetime and ownership transfers (a candidate allocating a session into *sess, or pointing out at a stack buffer, is analysed on its own row only). DISCHARGE: a supplied-output marker for such actuals (an out-pointer whose stored value the library keeps or takes), a candidate admitted only where its contract states the matching retention or hand-off, Lean beside QCore.CallbackContracts; with CALLBACK-SUPPLIED-NULL-ACTUAL. Size: medium.",
+   "source": "docs/reports/openssl-undeclared-handshake-callbacks/README.md",
+   "recorded_by": "OPENSSL-UNDECLARED-HANDSHAKE-CALLBACKS"
+  }
+ ]
+}
