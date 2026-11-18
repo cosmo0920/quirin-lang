@@ -243,6 +243,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [composed-window-reach](composed-window-reach/README.md) | `COMPOSED-WINDOW-REACH` (wave 41) — the composed route's window function, measured |
 
+| [configured-route-plugin-bindings](configured-route-plugin-bindings/README.md) | CONFIGURED-ROUTE-PLUGIN-BINDINGS |
+
 | [confined-exit-precedence](confined-exit-precedence/README.md) | Confined process failure precedence |
 
 | [contract-adoption-not-in-force](contract-adoption-not-in-force/README.md) | CONTRACT-ADOPTION-NOT-IN-FORCE |

@@ -1,0 +1,13 @@
+{
+  "note": "Landing integrate/r26 (base main 974434463; merges CONFIGURED-ROUTE-PLUGIN-BINDINGS 30632f31a, no conflicts; amendments applied in 2b37e92c4: W45-PLUGIN-ROUTE-COVERAGE retired as discharged, GATEWAY-API-USER-LOAD-PATH-BINDINGS and MANIFEST-ROUTE-USER-OVERRIDE-CHECK registered). Full landing gate on 2b37e92c4 (private/integrate-r26/gate, raw record beside this file as gate-scope.json) via scripts/gate_scope.py --base main --full --landing through private/toolchain/env.sh: Rust 655 units / 700 summaries, 9647 passed, 0 failed, 21 ignored; fmt, Clippy and both reevaluation examples exit 0; the scoper selected no Lean, so check_lean_audits.py was run separately: 445 audits passed (private/integrate-r26/lean.log); provider gate not selected (providers/ unchanged). Python (779 tests) exited 1 on one test_build_matrix_sections check only (named_followups dimension), because the committed matrix predates the amendments; it is regenerated from this record and the suite rerun is recorded in private/integrate-r26/python-rerun.log. Closes the fail-closed defect where the configured CONFIG.json route, and every route taking a schema-2 contract manifest naming a user load path, published a bound user contract's caller Safe without running its checker bindings: the configured and manifest routes now run user_plugins::run and fold checker links (fixture: five in-force runs Safe -> Pending), and the pinned corpus route refuses such a manifest (checker-bindings-not-run); gateway rule 53 amended in place, no new rule, no Lean change. No shipped manifest carries a binding (tested), so the measured routes are unchanged by construction; measure --declared was not run (no prepared live-route inputs on this host). provider_tests carries the previous landing record's figure. No profile baseline is changed and land.py publish is owed.",
+  "workspace_tests": 9647,
+  "provider_tests": 150,
+  "python_evidence_validator_tests": 779,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "full landing gate: every step exits 0 except the Python suite's one stale-matrix check, cleared by regenerating the matrix from this record (rerun disclosed in the note); Lean run separately as check_lean_audits.py",
+  "lean_audits": 445,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
