@@ -137,6 +137,7 @@ import QCore.Ct07LeaseLedger
 import QCore.Ct37CompletionCapsule
 import QCore.Ct50LifetimeIdentity
 import QCore.CtReasons
+import QCore.CustodyFreeCopy
 import QCore.CustodySummary
 import QCore.Cycle18CallbackObligations
 import QCore.Cycle18Composition

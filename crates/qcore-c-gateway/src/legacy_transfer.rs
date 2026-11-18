@@ -4340,6 +4340,23 @@ pub(super) fn transfer_base(
         {
             state.pointers.remove(destination);
         }
+        // AG2-UNRESOLVED-ALIAS hook (rule 62): begin. A copy whose unbound
+        // source carries no identity (a literal, an enumeration constant, or
+        // an unbound pointer formal whose copies are only read through)
+        // leaves the destination unbound, exactly as the two arms above.
+        LegacyInstruction::Alias {
+            destination,
+            source,
+        } if !state.pointers.contains_key(source)
+            && context
+                .traversal
+                .custody_free
+                .admits(destination, source)
+                .is_some() =>
+        {
+            state.pointers.remove(destination);
+        }
+        // AG2-UNRESOLVED-ALIAS hook (rule 62): end
         LegacyInstruction::Alias {
             destination,
             source,

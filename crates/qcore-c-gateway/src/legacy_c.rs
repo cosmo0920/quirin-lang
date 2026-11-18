@@ -216,6 +216,12 @@ mod typed_declaration_gate;
 #[path = "legacy_typed_roots.rs"]
 mod typed_roots;
 
+// AG2-UNRESOLVED-ALIAS hook (rule 62): begin. Copy sources that carry no
+// resource identity, read from the Clang AST; the hook below is thin.
+#[path = "legacy_custody_free_copy.rs"]
+mod custody_free_copy_route;
+// AG2-UNRESOLVED-ALIAS hook (rule 62): end
+
 // Card CG02-ELABORATION-CORE (rule 10s): the elaborator's route-G adapter, a
 // fallback after every existing route of a statement, a `return` and a
 // call-free controlling expression. The hooks below naming the card are thin.
@@ -979,10 +985,22 @@ pub enum StepOffset {
 ///
 /// Both are empty when the declaration reader refused the function, which
 /// restores every pre-card answer there.
+///
+/// * `custody_free` (card AG2-UNRESOLVED-ALIAS, rule 62): the copy sources
+///   Clang's AST shows carry no identity, read independently of the
+///   declaration reader ([`crate::custody_free_copy`]). Empty (and omitted)
+///   wherever nothing is admitted.
 #[derive(Clone, Debug, Default, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub struct TraversalNames {
     pub scalars: BTreeSet<String>,
     pub pointers: BTreeSet<String>,
+    // AG2-UNRESOLVED-ALIAS hook (rule 62): begin
+    #[serde(
+        default,
+        skip_serializing_if = "crate::custody_free_copy::CustodyFreeCopies::is_empty"
+    )]
+    pub custody_free: crate::custody_free_copy::CustodyFreeCopies,
+    // AG2-UNRESOLVED-ALIAS hook (rule 62): end
 }
 
 /// Card **AOM-BINDING-POISON**. What a refused statement may do to the binding
@@ -4250,7 +4268,14 @@ fn build_function_cfg_unscoped(
     // binds is then seeded, copied and walked as a tracked identity. Only a
     // local's copy (an automatic array, a never-bound pointer) is unbound.
     pointers.retain(|name| !parser.formal_parameters.contains(name));
-    cfg.traversal = TraversalNames { scalars, pointers };
+    // AG2-UNRESOLVED-ALIAS hook (rule 62): begin
+    let custody_free = parser.custody_free_copies(&cfg, &scalars, &pointers);
+    // AG2-UNRESOLVED-ALIAS hook (rule 62): end
+    cfg.traversal = TraversalNames {
+        scalars,
+        pointers,
+        custody_free,
+    };
     // Card THREAD-LOCAL-CUSTODY-FREE-READ (rule 54). Asked only where the
     // unit spells a thread-local storage class before the body's end, so a
     // unit with none asks Clang for nothing more.
