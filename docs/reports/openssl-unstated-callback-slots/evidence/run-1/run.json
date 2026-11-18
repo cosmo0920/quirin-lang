@@ -1,0 +1,167 @@
+{
+ "rows": [
+  {
+   "unit": "tls_other.c",
+   "function": "load_other",
+   "status": "Unknown",
+   "host_status": "Unknown",
+   "diagnostics": [
+    "call to `SSL_CTX_use_certificate`: callback `app_security` (from `ssl_ctx_st.sec_cb`) has no contract in force (callback-uncontracted)"
+   ],
+   "links": [
+    {
+     "callee": "SSL_CTX_use_certificate",
+     "verdict": "Pending"
+    }
+   ],
+   "rests_on": [
+    "SSL_CTX_use_certificate"
+   ]
+  },
+  {
+   "unit": "tls_other.c",
+   "function": "read_some",
+   "status": "Unknown",
+   "host_status": "Unknown",
+   "diagnostics": [
+    "call to `SSL_read`: callback `app_certificate` (from `ssl_ctx_st.cert_cb`) has no contract in force (callback-uncontracted)"
+   ],
+   "links": [
+    {
+     "callee": "SSL_read",
+     "verdict": "Pending"
+    }
+   ],
+   "rests_on": [
+    "SSL_read"
+   ]
+  },
+  {
+   "unit": "tls_slots.c",
+   "function": "app_certificate",
+   "status": "Safe",
+   "host_status": null,
+   "diagnostics": [],
+   "links": [],
+   "rests_on": []
+  },
+  {
+   "unit": "tls_slots.c",
+   "function": "app_info",
+   "status": "Safe",
+   "host_status": null,
+   "diagnostics": [],
+   "links": [],
+   "rests_on": []
+  },
+  {
+   "unit": "tls_slots.c",
+   "function": "app_security",
+   "status": "Safe",
+   "host_status": null,
+   "diagnostics": [],
+   "links": [],
+   "rests_on": []
+  },
+  {
+   "unit": "tls_slots.c",
+   "function": "configure",
+   "status": "Pending",
+   "host_status": "Safe",
+   "diagnostics": [],
+   "links": [
+    {
+     "callee": "SSL_CTX_set_cert_cb",
+     "verdict": "Pending"
+    },
+    {
+     "callee": "SSL_CTX_set_info_callback",
+     "verdict": "Pending"
+    },
+    {
+     "callee": "SSL_CTX_set_security_callback",
+     "verdict": "Pending"
+    },
+    {
+     "callee": "SSL_CTX_set_verify",
+     "verdict": "Pending"
+    }
+   ],
+   "rests_on": [
+    "SSL_CTX_set_cert_cb",
+    "SSL_CTX_set_info_callback",
+    "SSL_CTX_set_security_callback",
+    "SSL_CTX_set_verify"
+   ]
+  },
+  {
+   "unit": "tls_slots.c",
+   "function": "load_certificate",
+   "status": "Pending",
+   "host_status": "Safe",
+   "diagnostics": [],
+   "links": [
+    {
+     "callee": "SSL_CTX_use_certificate",
+     "verdict": "Pending"
+    }
+   ],
+   "rests_on": [
+    "SSL_CTX_use_certificate"
+   ]
+  },
+  {
+   "unit": "tls_slots.c",
+   "function": "load_chain",
+   "status": "Pending",
+   "host_status": "Safe",
+   "diagnostics": [],
+   "links": [
+    {
+     "callee": "SSL_CTX_use_certificate_chain_file",
+     "verdict": "Pending"
+    }
+   ],
+   "rests_on": [
+    "SSL_CTX_use_certificate_chain_file"
+   ]
+  },
+  {
+   "unit": "tls_slots.c",
+   "function": "shut",
+   "status": "Pending",
+   "host_status": "Safe",
+   "diagnostics": [],
+   "links": [
+    {
+     "callee": "SSL_shutdown",
+     "verdict": "Pending"
+    }
+   ],
+   "rests_on": [
+    "SSL_shutdown"
+   ]
+  },
+  {
+   "unit": "tls_slots.c",
+   "function": "write_some",
+   "status": "Pending",
+   "host_status": "Safe",
+   "diagnostics": [],
+   "links": [
+    {
+     "callee": "SSL_write",
+     "verdict": "Pending"
+    }
+   ],
+   "rests_on": [
+    "SSL_write"
+   ]
+  }
+ ],
+ "bindings": 78,
+ "binding_verdicts": [
+  "Pending"
+ ],
+ "library_versions": null
+}
