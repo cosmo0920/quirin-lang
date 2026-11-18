@@ -1,0 +1,13 @@
+{
+  "note": "Landing integrate/r29 (base main 3fdb61bf6; merges OPENSSL-PEM-CALLBACK-ARM 86fe8108f, no conflicts; the card had merged main 016ce2639 itself, resolving its one conflict in the OpenSSL checker's check.rs by keeping both sides). Amendments applied in e6e51b8a6 with --profiles-base 3fdb61bf6, because the twelve-home baseline added by r28 postdates the card's base: OPENSSL-PEM-CALLBACK-ARM retired, RDKAFKA-PASSWD-CB-CONTRACTS registered, profiles []. Full landing gate on e6e51b8a6 (private/integrate-r29/gate, raw record beside this file as gate-scope.json) via scripts/gate_scope.py --base main --full --landing through private/toolchain/env.sh: Rust 659 units / 704 summaries, 9673 passed, 0 failed, 21 ignored; fmt, Clippy and both reevaluation examples exit 0; Lean 447 audits (new rule 57 module QCore.CallbackLiteralPremise); provider package build/verify, provider tests (153 passed, 0 failed, 1 ignored), provider fmt and Clippy exit 0. Python (779 tests) exited 1 on the stale-matrix check test_build_matrix_sections (the committed matrix predates the amendments; regenerated from this record) and on the two known test_gate_slot_lane timing flakes; the suite rerun after regeneration is recorded in private/integrate-r29/python-rerun.log. The card adds the clause resource_callback_invoked_or_default (null_default) and lets the loader admit a literal-argument premise beside callback invocations; pem.qv readers keep the x=0 premise. OpenSSL contract-inventory lock: only the PEM_read_bio_PrivateKey and PEM_read_bio_X509 digests change. The card's opt-in measurement: 0 status moves, 3 rows change content; Monkey's tls_load_builtin_credentials matches base and the fixture's read_cert stays Pending. Known limit: the checker cannot tie the null default to the page snapshot. No profile baseline is changed and land.py publish is owed.",
+  "workspace_tests": 9673,
+  "provider_tests": 153,
+  "python_evidence_validator_tests": 779,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "full landing gate: every step exits 0 except the Python suite's stale-matrix check, cleared by regenerating the matrix from this record, and two known gate-slot-lane timing flakes (rerun disclosed in the note)",
+  "lean_audits": 447,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
