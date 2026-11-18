@@ -39,13 +39,12 @@ def main() -> int:
         "--jobs", jobs,
     ]
     environment["QCORE_CLANG"] = "/usr/lib/llvm-21/bin/clang"
-    environment["QCORE_ACCESS_PATH_CENSUS"] = str(out / "access-path-units")
-    environment["QCORE_TYPED_PATH_PARITY"] = str(out / "parity.jsonl")
-    environment["QCORE_INDIRECT_CENSUS"] = str(out / "indirect.jsonl")
-    environment["QCORE_CALL_ARGUMENT_CENSUS"] = str(out / "call-arguments.jsonl")
-    environment["QCORE_CHAIN_CENSUS"] = str(out / "chains.jsonl")
-    environment["QCORE_SUB_OBJECT_STORE_CENSUS"] = str(out / "sub-object-stores.jsonl")
-    environment["QCORE_DESTINATION_SUFFIX_CENSUS"] = str(out / "destination-suffix.jsonl")
+    if os.environ.get("AG1_REPORT_ONLY") == "1":
+        # AG1: the report alone (no census streams), for the wide
+        # BEFORE/AFTER comparison where only verdict rows and leaves are read.
+        pass
+    else:
+        set_streams(environment, out)
     record = {
         "command": command,
         "binary_sha256": hashlib.sha256(binary.read_bytes()).hexdigest(),
@@ -60,6 +59,16 @@ def main() -> int:
     (out / "run.json").write_text(json.dumps(record, indent=2) + "\n")
     print(json.dumps(record, indent=2))
     return exit_code
+
+
+def set_streams(environment, out):
+    environment["QCORE_ACCESS_PATH_CENSUS"] = str(out / "access-path-units")
+    environment["QCORE_TYPED_PATH_PARITY"] = str(out / "parity.jsonl")
+    environment["QCORE_INDIRECT_CENSUS"] = str(out / "indirect.jsonl")
+    environment["QCORE_CALL_ARGUMENT_CENSUS"] = str(out / "call-arguments.jsonl")
+    environment["QCORE_CHAIN_CENSUS"] = str(out / "chains.jsonl")
+    environment["QCORE_SUB_OBJECT_STORE_CENSUS"] = str(out / "sub-object-stores.jsonl")
+    environment["QCORE_DESTINATION_SUFFIX_CENSUS"] = str(out / "destination-suffix.jsonl")
 
 
 if __name__ == "__main__":
