@@ -809,7 +809,10 @@ fn the_manifest_routes_run_the_bindings_of_the_load_path_they_name() {
             let object = configuration.as_object_mut().unwrap();
             object.remove("providers");
             object.remove("load_path");
-            object.insert("profile_directory".into(), json!("../profiles-manifest/sample"));
+            object.insert(
+                "profile_directory".into(),
+                json!("../profiles-manifest/sample"),
+            );
         })
         .check("configured-manifest", Standing::InForce);
 }
