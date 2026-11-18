@@ -229,9 +229,10 @@ connective's leaves stay rule 5h's.
 
 | Shape (census) | AG3-only rows | Kept refused because | Follow-up |
 |---|---:|---|---|
-| uncontracted callee in a condition (S2) | most of the 37 branch-call rows | the callee has no contract in force: fail-closed; now named per callee | `W44-CONDITION-CALL-UNCONTRACTED` (amended) |
+| uncontracted callee in a condition (S2) | most of the 37 branch-call rows | the callee has no contract in force: fail-closed; now named per callee (corpus: 892 leaves, 298 callees) | `W44-CONDITION-CALL-UNCONTRACTED` (amended) |
 | pointer-valued return read, member, chain, subscript | 15 | load vs interior address; a derived result must keep its base (W45) | `W45-RETURN-POINTER-RESULT-READS` (amended) |
 | returned address of a member (`&p->f`) | 6 | an interior address escapes derived from `p`; needs a `Derived` (`Interior`/`Borrowed`) result through the derived-summary route, not `None` | `AG3-RETURN-MEMBER-ADDRESS-DERIVED` (new) |
+| a residual read below a connective | — | rule 63 (1) reads one leaf; the desugaring file that reads connectives is pinned | `AG3-CONDITION-LEAF-READS-CONNECTIVES` (new) |
 | call through a member (`provider->init(…)`) | 2 + 1 | an open set (rule 11p) | none (by design) |
 | function-pointer member test (`s->cb != NULL`) | 0 alone (5 with an indirect call) | the lexical typed model has no function-pointer field class | `AG3-FUNCTION-POINTER-MEMBER-TEST` (new) |
 | `PB_RETURN_ERROR` comma store | 2 | the member store of a `?:` of the member and a literal (store rules) | `CG02-COMMA-OPERAND-RESIDUALS` |
@@ -239,3 +240,174 @@ connective's leaves stay rule 5h's.
 | `<ctype.h>` table read (`(*__ctype_b_loc())[c]`) | 3 | a table read through a call result: no route | `W44-CONDITION-CALL-REFUSED-SHAPES` |
 | macros (`rd_assert`, `RD_LIST_FOREACH`, `RD_KAFKAP_STR_*`) | 7 | expand to the classes above (`RD_LIST_FOREACH` to `(elem = rd_list_elem(l, i))`, an uncontracted cross-unit callee) | S2 names them |
 | an assignment beside a residual read | — | rule 10x's split owns assigned calls | none |
+
+## 4. Measurement (corpus, eight-home route)
+
+Both sides on this worktree, the eight-home command of
+`contract/evaluations/eight-home/evaluation.json` (link map, null and outer
+projections, `--jobs 8`, inputs read in place from the shared
+`build/cycle19`), [`census/scripts/run_corpus.sh`](census/scripts/run_corpus.sh):
+
+| Side | Binary (source) | SHA-256 | Exit |
+|---|---|---|---|
+| base | `a9c6dcf44` | `1ed3361d…` ([run](artifacts/base/run.json)) | 0 |
+| tip | `78427060e` (analyzer bytes of the tip: later commits change tests and records only) | `36c1fbf1…` ([run](artifacts/tip/run.json)) | 0 |
+
+Diagnostics digests: [artifacts/diagnostics.sha256](artifacts/diagnostics.sha256).
+
+| Measure | Base | Tip | Delta |
+|---|---:|---:|---:|
+| Functions Safe / provisional Unsafe / Unknown | 1,079 / 10 / 3,745 | **1,080** / 10 / **3,744** | +1 / 0 / −1 |
+| Generic condition leaves (branch / for / loop / do-while) | — | — | −777 / −75 / −36 / −6 |
+| Named condition leaves | 0 | 892 (298 callees, 497 rows) | +892 |
+| `unknown_alias` | — | — | +3 |
+| leak, double release, use after release, summary conflict | — | — | 0 |
+| AG3-only Unknown rows (generic text) | 115 | 87 | −28 |
+
+**Move:** `header_cmp` (Monkey `mk_server/mk_http_parser.c`) Unknown → Safe:
+its nine leaves were `if (expected[k] != tolower(value[k]))` (eight constant
+indices and one loop index), each an identity call of `tolower` (borrowed,
+`None`) beside the typed read of `expected[k]`, rule 63 (1).
+
+**Attribution** ([artifacts/attribution.txt](artifacts/attribution.txt),
+[artifacts/compare.json.gz](artifacts/compare.json.gz), every delta keyed by
+file, function and preprocessed line; `attribution_complete`):
+
+- **rule 63 (1), admission:** 12 branch leaves removed: `header_cmp` 9;
+  `header_lookup` 3, each exchanged at its line for `unknown_alias` of
+  `header` (the read's base obligation on a base the body binds: a refusal,
+  not an accusation).
+- **rule 63 (2), exchange:** 882 generic leaves replaced on the same node and
+  line by the named text (765 branch, 75 for-loop, 36 loop, 6 do-while).
+- **rule 63 (2), split line:** 10 named leaves added at a preprocessed line
+  that holds two refused conditions (a macro expansion: librdkafka's
+  `verifyMultipleAssignment0` unit tests ×6, `snappy.c`'s `refill_tag` ×4):
+  one condition is named, the other keeps the generic text, so the line
+  carries both.
+- nothing else: no leak, accusation, row or unit changes elsewhere.
+
+**Named reasons now carried** ([artifacts/summary.txt](artifacts/summary.txt)):
+892 leaves name 298 callees; top `rd_list_elem` 75 (`RD_LIST_FOREACH`),
+`rd_kafka_conf_is_modified` 44, `verifyValidityAndBalance0` 43,
+`verifyMultipleAssignment0` 34, `verifyNumPartitionsWithRackMismatch0` 30,
+`mpack_reader_error` 29, `__builtin_constant_p` 26 (the classifier's own text
+for that builtin), `ut_ack_get_type` 26, `isFullyBalanced0` 23. Of the 115
+rows the generic condition text alone blocked, one is Safe and 27 now carry
+named reasons; 17 Unknown rows are blocked only by named condition refusals,
+15 of them by exactly one callee (`pb_decode_svarint` ← `pb_decode_varint`,
+`pb_skip_varint` ← `pb_read`, `rd_kafka_conf_finalize_oauthbearer_oidc_grant_type`
+← `rd_kafka_conf_is_modified`, `rd_kafka_filter_broker_by_GetTelemetrySubscription`
+← `rd_kafka_broker_ApiVersion_at_least_no_lock`, `mk_utils_gmt2utime` ←
+`strptime`, `rd_rand_bytes_by_ossl` ← `RAND_priv_bytes`, …): the bottom-up
+lane can now see them as waiting on one callee.
+
+**Prediction** ([PREDICTION.md](PREDICTION.md)): the one declared move
+(`header_cmp`) is the one measured move; no unpredicted move. Leaf forecasts:
+rule 63 (1) 20–120 removed → 12 measured (below the range); rule 63 (2)
+300–900 exchanged → 882 (+10 split-line additions), in range; no change of
+leak or accusation counts, as forecast. System and slice were not measured by
+this card (no position the rule reads is forecast to move there); the
+integrator measures all live routes with base `rev:a9c6dcf44`.
+
+**Measurement attempts, all retained** (the shared `/media/Data` disk filled
+repeatedly during this card):
+
+1. base with the typed-path parity stream: the disk filled 3 minutes in
+   (`private/ag3/corpus-base-attempt1-disk-full/`); the parity stream (93 MB
+   by then) was deleted and switched off for every later run;
+2. a targeted Rust test build of this card (a 20 GB non-dylib debug target)
+   filled the disk again; it was deleted and every later test build used the
+   `scripts/test_link_config.py` dylib configuration;
+3. tip attempt 1 never started (disk full while queued); tip attempt 2 at
+   `2fd136288` measured the first implementation (inside the desugaring file)
+   and found the value-connective interaction of §2 (899 exchanges, 2 return
+   exchanges and the `rd_kafka_consumer_close` arm lowering); tip attempts 3
+   and 4 were stopped before running (the code changed under them); attempt 5
+   is the one of record.
+
+## 5. Lean
+
+`proof/QCore/ConditionLeafReads.lean`, audited by
+`proof/AuditConditionLeafReads.lean` (16 `#print axioms`, only `propext` and
+`Quot.sound`; no `sorry`, no project axiom): `run_identities`,
+`checks_identities`, `every_order_reaches_the_same_state`,
+`every_order_checks_the_same_obligations`,
+`the_read_sees_the_same_state_in_either_order`, `admission_needs_identity_calls`,
+`admission_needs_a_decided_read`, `a_switch_keeps_its_refusal`,
+`admission_exactly`, `the_read_refines_no_edge`, `the_attribution_never_admits`,
+`the_attribution_keeps_the_verdict`, `the_attribution_keeps_writes_and_edges`,
+`the_named_text_keeps_the_condition_class`, `attribution_needs_the_exact_text`,
+`a_descriptor_read_keeps_the_text`. Token extraction, the classifier's
+answers and the Rust-to-Lean correspondence are premises (trust boundary 28).
+
+## 6. Fixtures and deliberate re-pins
+
+`crates/qcore-c-gateway/tests/condition_leaf_reads.rs` (5 tests, real Clang,
+every row the status and the complete diagnostic set, every `Safe` rechecked
+through its certificate): the residual read in each loop and branch position;
+the base obligation kept (a live owned base read, a read after release a
+`use_after_release` candidate, a base released in the loop body never
+`Safe`, a leak beside the decided condition still reported); near misses (a
+releasing call, a release sequenced in the leaf, an assignment, a residual
+read below a connective, a switch); the named refusal in each position and
+after an instantiable call; its exceptions (the leak beside it reported as
+beside the generic refusal, a descriptor read, a switch, a call-free refusal,
+a conditional value and a connective return keeping the value route's
+answer, a literal hint read through, a hint with a call, a call through a
+function-pointer formal).
+
+Re-pinned deliberately, each marked in place: the uncontracted-call refusal
+of a condition now names the callee in `access_path_positions`,
+`branch_condition_calls`, `clang_gap_phase1` (E13), `condition_call_desugar`,
+`constant_do_while`, `index_traversal`, `neutral_expression_positions`
+(each position keeps its own suffix; the switch its text),
+`out_parameter_body_summary`, `out_parameter_scalar_frame_premise`,
+`out_slot_call_write_aliasing` and `prod_contracts`;
+`branch_condition_calls::an_indirect_residual_cannot_be_masked_by_the_modeled_call`
+is now `Safe` and asserts the residual's typed read of `table` is a node of
+the plan (the residual is read, not masked); the condition-acquisition unit
+test keeps the desugaring's `ResidualRefused` answer and records that rule 63
+then decides that condition.
+
+## 7. Shared-file hook points (for the AG1/AG2 merge)
+
+- `crates/qcore-c-gateway/src/legacy_c.rs`: one module declaration after
+  `mod condition_desugar;` (`mod condition_leaf_reads;`), and in
+  `parse_statement` the four `planned_condition(…)` calls of `if`, `while`,
+  `for` and `do`-`while`, each now `let refused = …;` (the same expression it
+  passed) followed by `.or_else(|| self.condition_leaf_reads(&condition,
+  Position::…, refused))`, marked `Card AG3-CONDITION-RETURN-CALLS (rule 63)`.
+- No edit to `legacy_cfg_builder.rs`, `legacy_transfer.rs`,
+  `typed_access_path.rs`, `legacy_condition_desugar.rs` (pinned) or
+  `legacy_value_connective.rs`.
+- New files: `legacy_condition_leaf_reads.rs`, `tests/condition_leaf_reads.rs`,
+  `docs/agents/rules/63.md`, `proof/QCore/ConditionLeafReads.lean`,
+  `proof/AuditConditionLeafReads.lean`; generated: `docs/agents/gateway.md`,
+  `docs/agents/README.md`, `proof/QCore.lean`.
+- The re-pinned test files of §6 hold the generic condition text today; an
+  AG1/AG2 change to the same rows conflicts textually, not semantically.
+
+## 8. Follow-ups
+
+Registered or amended in [integration-amendments.json](integration-amendments.json):
+
+- `AG3-RETURN-MEMBER-ADDRESS-DERIVED` (new): `return &p->f;` /
+  `return &p->a[i];` (6 AG3-only rows in `current`) needs a `Derived`
+  (`Interior` or `Borrowed`) result through the derived-summary route, never
+  `None`.
+- `AG3-FUNCTION-POINTER-MEMBER-TEST` (new): `s->cb != NULL`, `p && p->cb` (58
+  sites, 35 rows; every AG3-only row also calls through the member).
+- `AG3-ERRNO-RETURN` (new): `return errno;` (`rd_kafka_errno`, 1 AG3-only row).
+- `AG3-CONDITION-LEAF-READS-CONNECTIVES` (new): rule 63 (1) reads one leaf; a
+  residual read below `&&`/`||`/`?:` stays rule 5h's refusal (the pinned
+  desugaring file is where a connective leaf would be read).
+- `AG3-RD-LIST-ELEM-CALLEE` (new): `rd_list_elem` is the most-named callee
+  (75 leaves, `RD_LIST_FOREACH`); a checked declaration or cross-unit summary
+  of it (and of `rd_kafka_conf_is_modified`, 44) would let rule 5h desugar
+  those loops.
+- `LIBCURL-USER-CRATE-VERSIONS-UNREADABLE-HEADER` (new): the
+  `qcore-audit` test `the_libcurl_ranges_follow_the_audited_curlver_header`
+  fails on this host with and without rule 63 (both switches off: same
+  failure), so it is not this card's; recorded for the integrator.
+- `W44-CONDITION-CALL-UNCONTRACTED`, `W45-RETURN-POINTER-RESULT-READS`,
+  `W43-RETURN-COMPOUND-CALL` (amended with this card's measurement).

@@ -1,0 +1,25 @@
+{
+  "command": [
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-abedc2c4207eed53b/target/release/quirin-audit",
+    "pinned",
+    "--jobs",
+    "8",
+    "/media/Data/GitHub/quirin-lang/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source",
+    "/media/Data/GitHub/quirin-lang/build/cycle19/c-gateway-wave-pin/monkey/monkey-build/compile_commands.json",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-abedc2c4207eed53b/private/ag3/corpus-base2/corpus/monkey-source.json",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-abedc2c4207eed53b/private/ag3/corpus-base2/corpus/resource-diagnostics.json"
+  ],
+  "source_commit": "66910c10",
+  "binary_sha256": "1ed3361dc8fbb7c4b2481f0e7d4dcfe7a29ee2010187383edbf3f2633ff3a7d2",
+  "environment": {
+    "QCORE_CLANG": "/usr/bin/clang",
+    "QCORE_CHUNKIO_PACKAGE": "/media/Data/GitHub/quirin-lang/build/cycle19/provider-packages-wave20/qcore.chunkio",
+    "QCORE_SOURCE_CONTRACTS": "unset",
+    "QCORE_RETURN_CENSUS": "unset",
+    "QCORE_AUDIT_JOBS": "8",
+    "QCORE_GATEWAY_RULES_OFF": "unset"
+  },
+  "start": "2026-11-18T12:17:59.336377+00:00",
+  "exit": 0,
+  "end": "2026-11-18T13:45:27.154914+00:00"
+}

@@ -1,0 +1,77 @@
+{
+  "schema": "quirin-amendments/1",
+  "card": "AG3-CONDITION-RETURN-CALLS",
+  "base": "a9c6dcf44",
+  "measured_tip": "78427060e",
+  "profiles": [],
+  "increment_paragraph": "**AG3-CONDITION-RETURN-CALLS** (round 33, USER DECISION 2026-11-18 to launch the analyser-gap cards; gateway rule 63; Lean `QCore.ConditionLeafReads`; [report](../../reports/ag3-condition-return-calls/README.md)). Census of the user's `current` run (046accf6): 1,370 rows carry a condition or return refusal, 119 nothing else; the AG3-only rows are dominated by uncontracted callees in conditions (pb_readbyte, rd_kafka_conf_is_modified, libc seteuid/strptime), pointer-valued and address-of returns (kept refused: W45's derivation decision), calls through members (open sets) and macros. Rule 63, asked at `if`/`while`/`for`/`do`-`while` after rule 5h, 10s and 12c refused, from one hook per position in `legacy_c.rs` (the desugaring file is a pinned reading-site artifact and is not edited): (1) one call-bearing leaf whose residual reads memory is the calls, then the typed condition read of the residual, when every lowered instruction is the identity on the abstract state (C leaves the order unspecified; identities make every order reach the same state); the read keeps its base obligations and refines no edge; (2) a condition whose first non-instantiable direct call the classifier refuses as `call to uncontracted function `F`` names `F` with the position's suffix on the same refusal node (the suffix keeps the refused-operand hand-on reading, so no accusation moves). Corpus (eight-home, base a9c6dcf44 vs tip 78427060e): 1,079/10/3,745 -> 1,080/10/3,744, `header_cmp` Unknown -> Safe as predicted; 12 condition leaves admitted (3 exchanged for `unknown_alias` of a bound base), 882 generic condition leaves renamed (892 named leaves over 298 callees, top `rd_list_elem` 75), no leak or accusation change. Re-pins in eleven test files are marked in place.",
+  "status_paragraph": "AG3-CONDITION-RETURN-CALLS (gateway rule 63, base `a9c6dcf44`, measured tip `78427060e`): a call-bearing condition leaf whose residual reads memory is decided beside identity calls, and a condition refused at an uncontracted call now names the callee (`call to uncontracted function `F` in branch condition`). Corpus 1,079 / 10 / 3,745 -> 1,080 / 10 / 3,744 (`header_cmp` Unknown -> Safe); 892 condition leaves now name 298 callees; 17 Unknown rows are blocked only by named condition refusals, 15 by one callee. System, slice and `current` are measured by the integrator.",
+  "ledger": [
+    {
+      "id": "W44-CONDITION-CALL-UNCONTRACTED",
+      "operation": "amend",
+      "text": "AMENDED (AG3-CONDITION-RETURN-CALLS, gateway rule 63 (2), corpus 66910c10 eight-home, base a9c6dcf44 vs tip 78427060e): a condition every route refused, whose first non-instantiable direct call the classifier refuses as `call to uncontracted function `F`` (F a function, not a pointer object), now carries `call to uncontracted function `F` in branch condition` (loop, for-loop, do-while) on the same node: 892 leaves over 298 callees and 497 rows (top rd_list_elem 75, rd_kafka_conf_is_modified 44, verifyValidityAndBalance0 43, mpack_reader_error 29); 17 Unknown rows are blocked only by named condition refusals, 15 by one callee. No verdict moves by construction; the class stays open until the callees are contracted or summarised.",
+      "source": "docs/reports/ag3-condition-return-calls/README.md"
+    },
+    {
+      "id": "W45-RETURN-POINTER-RESULT-READS",
+      "operation": "amend",
+      "text": "RE-MEASURED by AG3-CONDITION-RETURN-CALLS on the user's current run (046accf6): pointer-valued return reads (member, member chain, subscript) are 15 AG3-only rows and returned member addresses 6 more (registered as AG3-RETURN-MEMBER-ADDRESS-DERIVED); none admitted, the derivation decision of W45 stands.",
+      "source": "docs/reports/ag3-condition-return-calls/README.md"
+    },
+    {
+      "id": "W43-RETURN-COMPOUND-CALL",
+      "operation": "amend",
+      "text": "RE-MEASURED by AG3-CONDITION-RETURN-CALLS on the user's current run (046accf6): a call inside a larger return value is 38 sites / 38 rows / 22 AG3-only rows; unit probes on base a9c6dcf44 show rules 10u and 10y already decide `return f(x) == 0`, `return !f(a) && !f(b)` and `return f(s) > b->n` with contracted callees, so the residual is uncontracted callees (rd_file_stat, rd_fnv1a, rd_murmur2, rd_kafka_broker_ApiVersion_supported0) and casts (`(long) f(s) - b->n`).",
+      "source": "docs/reports/ag3-condition-return-calls/README.md"
+    },
+    {
+      "id": "AG3-RETURN-MEMBER-ADDRESS-DERIVED",
+      "operation": "register",
+      "title": "A returned member address `&p->f` needs a derived result, not None",
+      "text": "Registered by AG3-CONDITION-RETURN-CALLS. `return &p->f;` and `return &p->a[i];` (rd_kafka_conf, rd_kafka_MemberDescription_assignment, rd_kafka_TopicDescription_topic_id, mk_plugin_time_now_human, mk_sched_next_target, rd_kafka_mock_partition_find: 6 AG3-only rows of the user's current run) return an interior address of a formal's object. Published as a result that carries nothing it would let a caller release p and keep using the result unaccused (W45's reason). DISCHARGE: lower the return as a pointer step derived from p (extent Interior or Borrowed, rule 12y) so the derived-summary route (W43-RESULT-ALIAS-RETURNED) validates `Derived { parameter, extent }`, with fixtures for a caller that releases p before using the result, and Lean parity.",
+      "source": "docs/reports/ag3-condition-return-calls/README.md",
+      "recorded_by": "AG3-CONDITION-RETURN-CALLS"
+    },
+    {
+      "id": "AG3-FUNCTION-POINTER-MEMBER-TEST",
+      "operation": "register",
+      "title": "A function-pointer member truth or NULL test in a condition stays refused",
+      "text": "Registered by AG3-CONDITION-RETURN-CALLS. `if (s->cb != NULL)`, `if (p && p->init)` read a function pointer value, which carries no custody, but the lexical typed model has no function-pointer field class (`borrowable_field` excludes them), so the condition keeps the refusal: 58 sites over 35 rows of the user's current run, 5 AG3-only rows, every one of which also calls through that member (an open set, rule 11p), so no row would move today. DISCHARGE: a field class for function-pointer members read only as a truth value, with each base's dereference obligation, fixtures and Lean parity.",
+      "source": "docs/reports/ag3-condition-return-calls/README.md",
+      "recorded_by": "AG3-CONDITION-RETURN-CALLS"
+    },
+    {
+      "id": "AG3-ERRNO-RETURN",
+      "operation": "register",
+      "title": "`return errno;` stays refused",
+      "text": "Registered by AG3-CONDITION-RETURN-CALLS. `return (*__errno_location ());` (rd_kafka_errno, one AG3-only row of the user's current run) is refused: the scalar accessor route (W48-BOTTOM-UP-BATCH3) reads `__errno_location` only in a controlling expression. DISCHARGE: the same exact scalar observation in a scalar-result return, with its reading-site evidence, fixtures and Lean parity.",
+      "source": "docs/reports/ag3-condition-return-calls/README.md",
+      "recorded_by": "AG3-CONDITION-RETURN-CALLS"
+    },
+    {
+      "id": "AG3-CONDITION-LEAF-READS-CONNECTIVES",
+      "operation": "register",
+      "title": "Rule 63 (1) reads one leaf; a residual read below a connective stays refused",
+      "text": "Registered by AG3-CONDITION-RETURN-CALLS. Rule 63 (1) decides a call-bearing leaf whose residual reads memory only when the condition is that one leaf (`if (d_chr(s, 'x') != 0 && d_len(s) < b->n)` keeps the refusal, fixture condition_leaf_reads). The reading belongs in rule 5h's `leaf_plan`, but legacy_condition_desugar.rs is a pinned artifact of the libc reading-site evidence (bindings.json, scalar-reader, whole-file SHA-256), so this card did not edit it. DISCHARGE: move the scalar reader out of the pinned file (or rebind the artifact with its receipts re-measured, as BUILTIN-EXPECT-NULL-TEST's follow-up describes), then read the residual per leaf in `leaf_plan` with the same identity premise.",
+      "source": "docs/reports/ag3-condition-return-calls/README.md",
+      "recorded_by": "AG3-CONDITION-RETURN-CALLS"
+    },
+    {
+      "id": "AG3-RD-LIST-ELEM-CALLEE",
+      "operation": "register",
+      "title": "rd_list_elem and rd_kafka_conf_is_modified block the most conditions",
+      "text": "Measured by AG3-CONDITION-RETURN-CALLS (corpus eight-home, tip 78427060e): the named condition refusals name rd_list_elem 75 times (every RD_LIST_FOREACH header, `(elem = rd_list_elem(l, i))`, a callee defined in rdlist.c and called across units) and rd_kafka_conf_is_modified 44 times. Its own body `return (void *)rl->rl_elems[idx];` is a pointer-valued element read (W45-RETURN-POINTER-RESULT-READS), so no W4 summary validates. DISCHARGE: a checked declaration (element borrowed from the list, rule 12y's Borrowed extent) or a cross-unit summary for rd_list_elem, and a summary for rd_kafka_conf_is_modified; each reaches the conditions through rule 5h and 10x unchanged.",
+      "source": "docs/reports/ag3-condition-return-calls/README.md",
+      "recorded_by": "AG3-CONDITION-RETURN-CALLS"
+    },
+    {
+      "id": "LIBCURL-USER-CRATE-VERSIONS-UNREADABLE-HEADER",
+      "operation": "register",
+      "title": "qcore-audit's libcurl curlver test fails on the round-33 host independently of rule 63",
+      "text": "Recorded by AG3-CONDITION-RETURN-CALLS: crates/qcore-audit/tests/libcurl_user_crate_versions.rs::the_libcurl_ranges_follow_the_audited_curlver_header fails at :335 (init_once is Safe where the removed curl/curlver.h should hold it Unknown) in gate attempts 2 and 3, alone, and alone with both rule-63 switches off (the fixture curl_user.c has no controlling expression). Not caused by this card; not investigated further. DISCHARGE: reproduce on the base and repair the test or the unreadable-header hold.",
+      "source": "docs/reports/ag3-condition-return-calls/README.md",
+      "recorded_by": "AG3-CONDITION-RETURN-CALLS"
+    }
+  ]
+}
