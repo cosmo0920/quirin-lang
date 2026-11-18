@@ -1,0 +1,43 @@
+moves: 0 content changes: 25
+rdkafka_assignor.c::rd_kafka_assignor_add#0 Unknown->Unknown leaves -0 +0; declarations +[] -['rd_calloc']; withdrawn +['rd_calloc'] -[]
+rdkafka_assignor.c::rd_kafka_member_subscriptions_map#0 Unknown->Unknown leaves -0 +0; declarations +[] -['rd_calloc']; withdrawn +['rd_calloc'] -[]
+rdkafka_assignor.c::ut_destroy_metadata#0 Unknown->Unknown leaves -0 +0; summaries +['rd_kafka_metadata_destroy'] -[]
+rdkafka_assignor.c::ut_populate_internal_topic_metadata#0 Unknown->Unknown leaves -1 +2; null_premises +['null-deref:rd_kafka_metadata_broker_internal_cmp:20182:a', 'null-deref:rd_kafka_metadata_broker_internal_cmp:20182:b'] -[]; summaries +['rd_kafka_metadata_broker_internal_cmp'] -[]
+    - call to `bsearch`: callback `rd_kafka_metadata_broker_internal_cmp` (from `rd_kafka_metadata_broker_internal_cmp`) has no contract in force (callback-uncontracted)
+    + arguments do not match resource contract for `bsearch`
+    + call to `rd_list_add` retains `broker - > rack_id` in `curr_list`, whose lifetime this body does not decide against it (retention-undecided)
+rdkafka_assignor.c::verifyNumPartitionsWithRackMismatch0#0 Unknown->Unknown leaves -0 +0; null_premises +['null-deref:rd_kafka_metadata_broker_internal_cmp:20182:a', 'null-deref:rd_kafka_metadata_broker_internal_cmp:20182:b'] -[]; summaries +['rd_kafka_metadata_broker_internal_cmp'] -[]
+rdkafka_aux.c::rd_kafka_Node_new_from_brokers#0 Unknown->Unknown leaves -2 +2; null_premises +['null-deref:rd_kafka_metadata_broker_cmp:20187:a', 'null-deref:rd_kafka_metadata_broker_cmp:20187:b', 'null-deref:rd_kafka_metadata_broker_internal_cmp:20182:a', 'null-deref:rd_kafka_metadata_broker_internal_cmp:20182:b'] -[]; summaries +['rd_kafka_metadata_broker_cmp', 'rd_kafka_metadata_broker_internal_cmp'] -[]
+    - call to `bsearch`: callback `rd_kafka_metadata_broker_cmp` (from `rd_kafka_metadata_broker_cmp`) has no contract in force (callback-uncontracted)
+    - call to `bsearch`: callback `rd_kafka_metadata_broker_internal_cmp` (from `rd_kafka_metadata_broker_internal_cmp`) has no contract in force (callback-uncontracted)
+    + arguments do not match resource contract for `bsearch`
+    + arguments do not match resource contract for `bsearch`
+rdkafka_range_assignor.c::rd_kafka_member_assigned_partitions_pair_new#0 Unknown->Unknown leaves -0 +0; declarations +[] -['rd_calloc']; withdrawn +['rd_calloc'] -[]
+rdkafka_range_assignor.c::rd_kafka_topic_assignment_state_new#0 Unknown->Unknown leaves -0 +0; declarations +[] -['rd_calloc']; withdrawn +['rd_calloc'] -[]
+rdkafka_range_assignor.c::rd_kafka_topic_assignment_state_rack_search#0 Unknown->Unknown leaves -2 +0; declarations +['strcmp'] -[]; summaries +['rd_strcmp', 'rd_strcmp3'] -[]
+    - unresolved resource identity `res`
+    - call to `bsearch`: callback `rd_strcmp3` (from `rd_strcmp3`) has no contract in force (callback-uncontracted)
+rdkafka_request.c::rd_kafka_ListOffsetRequest_parameters_new#0 Unknown->Unknown leaves -0 +0; declarations +[] -['rd_calloc']; withdrawn +['rd_calloc'] -[]
+rdkafka_request.c::rd_kafka_MetadataRequest0#0 Unknown->Unknown leaves -0 +0; summaries +['rd_list_string_copy'] -[]
+rdkafka_request.c::rd_kafka_buf_read_NodeEndpoints#0 Unknown->Unknown leaves -0 +0; declarations +[] -['rd_calloc']; withdrawn +['rd_calloc'] -[]
+rdkafka_request.c::rd_kafka_handle_GetTelemetrySubscriptions#0 Unknown->Unknown leaves -0 +0; declarations +[] -['rd_calloc']; withdrawn +['rd_calloc'] -[]
+rdkafka_request.c::rd_kafka_handle_Produce_parse#0 Unknown->Unknown leaves -0 +0; declarations +[] -['rd_calloc']; withdrawn +['rd_calloc'] -[]
+rdkafka_request.c::rd_kafkap_leader_discovery_set_brokers#0 Unknown->Unknown leaves -2 +4; null_premises +['null-deref:rd_kafka_metadata_broker_cmp:20187:a', 'null-deref:rd_kafka_metadata_broker_cmp:20187:b', 'null-deref:rd_kafka_metadata_broker_internal_cmp:20182:a', 'null-deref:rd_kafka_metadata_broker_internal_cmp:20182:b'] -[]; summaries +['rd_kafka_metadata_broker_cmp', 'rd_kafka_metadata_broker_internal_cmp'] -[]
+    - indirect memory access is outside the resource projection
+    - indirect memory access is outside the resource projection
+    + unresolved resource identity `md`
+    + unresolved resource identity `md`
+    + unresolved resource identity `mdi`
+    + unresolved resource identity `mdi`
+rdkafka_request.c::rd_kafkap_share_leader_changes_apply#0 Unknown->Unknown leaves -0 +0; declarations +[] -['rd_calloc']; withdrawn +['rd_calloc'] -[]
+rdkafka_roundrobin_assignor.c::rd_kafka_roundrobin_assignor_assign_cb#0 Unknown->Unknown leaves -1 +0; declarations +['strcmp'] -[]; null_premises +['null-deref:rd_kafka_assignor_topic_cmp:20331:a', 'null-deref:rd_kafka_assignor_topic_cmp:20331:b'] -[]; summaries +['rd_kafka_assignor_topic_cmp'] -[]
+    - call to `qsort`: callback `rd_kafka_assignor_topic_cmp` (from `rd_kafka_assignor_topic_cmp`) has no contract in force (callback-uncontracted)
+rdkafka_sticky_assignor.c::ConsumerPair_new#0 Unknown->Unknown leaves -0 +0; declarations +[] -['rd_strdup']; withdrawn +['rd_strdup'] -[]
+rdkafka_sticky_assignor.c::PartitionMovements_getTheActualPartitionToBeMoved#0 Unknown->Unknown leaves -0 +0; declarations +['strcmp'] -[]; summaries +['rd_strcmp'] -[]
+rdkafka_sticky_assignor.c::PartitionMovements_movePartition#0 Unknown->Unknown leaves -0 +0; declarations +['strcmp'] -[]; summaries +['rd_strcmp'] -[]
+rdkafka_sticky_assignor.c::map_cpair_toppar_list_t_new#0 Unknown->Unknown leaves -0 +0; declarations +[] -['rd_calloc']; withdrawn +['rd_calloc'] -[]
+rdkafka_sticky_assignor.c::rd_kafka_partition_internal_find_rack#0 Unknown->Unknown leaves -1 +0; declarations +['strcmp'] -[]; summaries +['rd_strcmp', 'rd_strcmp3'] -[]
+    - call to `bsearch`: callback `rd_strcmp3` (from `rd_strcmp3`) has no contract in force (callback-uncontracted)
+rdkafka_sticky_assignor.c::rd_kafka_rack_info_new#0 Unknown->Unknown leaves -0 +0; declarations +[] -['rd_calloc']; withdrawn +['rd_calloc'] -[]
+rdkafka_sticky_assignor.c::rd_kafka_sticky_assignor_on_assignment_cb#0 Unknown->Unknown leaves -0 +0; declarations +[] -['rd_calloc']; withdrawn +['rd_calloc'] -[]
+rdkafka_sticky_assignor.c::ut_create_topic_partition_lists#0 Unknown->Unknown leaves -0 +0; declarations +[] -['rd_calloc']; withdrawn +['rd_calloc'] -[]

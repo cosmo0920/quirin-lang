@@ -138,9 +138,9 @@ fn names_position(clause: &CallbackClause, position: usize) -> usize {
             .count()
     };
     match clause {
-        CallbackClause::Invoked { callback, actuals } => {
-            usize::from(*callback == position) + in_actuals(actuals)
-        }
+        CallbackClause::Invoked {
+            callback, actuals, ..
+        } => usize::from(*callback == position) + in_actuals(actuals),
         CallbackClause::Table { table, actuals } => {
             usize::from(*table == position) + in_actuals(actuals)
         }
@@ -196,10 +196,15 @@ pub(crate) fn stated_invocation(
     if naming != 1 {
         return None;
     }
+    // Card OPENSSL-PEM-CALLBACK-ARM (rule 57): an invocation with a null
+    // default is never a forward target, nor forwarded (below): a null the
+    // caller's callers may pass is never handed to a callee that calls it.
     callee.callbacks.iter().find_map(|clause| match clause {
-        CallbackClause::Invoked { callback, actuals } if *callback == position => {
-            Some(actuals.as_slice())
-        }
+        CallbackClause::Invoked {
+            callback,
+            actuals,
+            null_default: false,
+        } if *callback == position => Some(actuals.as_slice()),
         _ => None,
     })
 }
@@ -320,7 +325,11 @@ impl Parser<'_> {
             .peekable();
         own_clauses.peek().is_some()
             && own_clauses.all(|clause| match clause {
-                CallbackClause::Invoked { callback, actuals } if *callback == index => {
+                CallbackClause::Invoked {
+                    callback,
+                    actuals,
+                    null_default: false,
+                } if *callback == index => {
                     corresponds(&parameters, actuals, theirs, &arguments, &unchanged)
                 }
                 _ => false,

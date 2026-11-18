@@ -1,0 +1,38 @@
+{
+  "schema": "quirin-measure-inputs/1",
+  "description": "CG22-CALLBACK-CANDIDATE-LINK-PREMISE worktree-private preparation of the pinned corpus route (artifacts/prep.sh: quirin-audit prepare clang-build --link with the base 974434463 binary and system Clang 21 of the local Fluent Bit clone at 66910c10, prepare monkey, providers/package.py build). --inputs-base and --repository are this card's worktree. Route `corpus` under the twelve-home profile's stated link map; the two inputs files differ only in it.",
+  "routes": [
+    {
+      "name": "corpus",
+      "profile": "twelve-home",
+      "kind": "pinned-corpus",
+      "source_commit": "66910c10",
+      "inputs_root": "private/corpus-inputs",
+      "compile_databases": [
+        {
+          "path": "c-gateway-wave-pin/fluent-bit-clang-source/build/compile_commands.json",
+          "sha256": "0b9c765b95e3ba3f99fc42469e44abed0cbea179ff7fb6705797a9625e30cc46"
+        },
+        {
+          "path": "c-gateway-wave-pin/monkey/monkey-build/compile_commands.json",
+          "sha256": "168d896d3384247abd3291df2a1764dc6f3c0ae035358de454dbe6def74358c7"
+        }
+      ],
+      "mirror_trees": [
+        "c-gateway-wave-pin/fluent-bit-clang-source",
+        "c-gateway-wave-pin/monkey",
+        "provider-packages-wave20"
+      ],
+      "link_map": {
+        "path": "contract/evaluations/twelve-home/link-map.json",
+        "sha256": "d338e3798bcd126426495af123f18523f46c895e2df21a359cc47ed86efbbd2a"
+      },
+      "clang": "/usr/lib/llvm-21/bin/clang",
+      "tracked": [
+        "contract/profiles/fluent-bit/audit.json",
+        "contract/profiles/fluent-bit/profile.json",
+        "contract/profiles/fluent-bit/member-facts-scope.json"
+      ]
+    }
+  ]
+}

@@ -137,6 +137,14 @@ pub enum Premise {
         callback: usize,
         arguments: &'static [Option<usize>],
     },
+    /// `ensures normal resource_callback_invoked_or_default(F, A…)` (C04.19,
+    /// card OPENSSL-PEM-CALLBACK-ARM): as [`Premise::CallbackInvoked`], and
+    /// the page documents what the function does itself at a NULL callback
+    /// (its own default), so a NULL callback invokes nothing.
+    CallbackInvokedOrDefault {
+        callback: usize,
+        arguments: &'static [Option<usize>],
+    },
 }
 
 /// The name of the unstated-slots premise.
@@ -460,11 +468,19 @@ const SECURITY_CTX_CERTIFICATE: Premise = Premise::SlotInvoked {
 /// The premise alone: a call that may run callbacks of no stated slot.
 const UNSTATED: &[Premise] = &[Premise::UnstatedSlots];
 
-/// `PEM_read_bio_*(bp, x, cb, u)`: a NULL `x` (no object to reuse) and a
-/// NULL `cb` (OpenSSL's own passphrase routine, or `u` read as the
-/// passphrase): the vocabulary admits no callback clause beside the `x`
-/// premise, so a caller's callback stays outside the declaration.
-const PEM_READ: &[Premise] = &[Premise::NullArgument(1), Premise::NullArgument(2)];
+/// `PEM_read_bio_*(bp, x, cb, u)`: a NULL `x` (no object to reuse), and the
+/// password callback `cb` called during the read with `u` as its last
+/// argument, a NULL `cb` meaning OpenSSL's own default routine (card
+/// OPENSSL-PEM-CALLBACK-ARM: a premise stands beside a synchronous
+/// invocation, gateway rule 57). The other three arguments (`buf`, `size`,
+/// `rwflag`) are values the callee supplies.
+const PEM_READ: &[Premise] = &[
+    Premise::NullArgument(1),
+    Premise::CallbackInvokedOrDefault {
+        callback: 2,
+        arguments: &[None, None, None, Some(3)],
+    },
+];
 
 use Documented::{
     BorrowedResult, Constructor, CountedConstructor, CountedRelease, NullAcceptingRelease, Plain,

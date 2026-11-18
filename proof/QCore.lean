@@ -58,6 +58,7 @@ import QCore.CallbackCandidateScope
 import QCore.CallbackContracts
 import QCore.CallbackCoverage
 import QCore.CallbackForward
+import QCore.CallbackLiteralPremise
 import QCore.CallbackSource
 import QCore.CallbackTaskHandoff
 import QCore.CalleeSummaryScope

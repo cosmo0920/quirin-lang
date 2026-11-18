@@ -281,6 +281,30 @@ fn the_profile_adapter_reads_the_committed_evaluation_profiles() {
     assert!(error.contains("frozen"), "{error}");
 }
 
+/// Card CG22-CALLBACK-CANDIDATE-LINK-PREMISE: the `twelve-home` profile is
+/// the eight-home corpus route on the same inputs under its own stated link
+/// map, and `inputs/live.json` measures it as route `twelve-home`.
+#[test]
+fn the_twelve_home_profile_is_the_corpus_route_under_its_own_link_map() {
+    let eight = inputs::read_profile(&record("eight-home")).unwrap();
+    let twelve = inputs::read_profile(&record("twelve-home")).unwrap();
+    let expected = live("twelve-home");
+    assert_eq!(
+        (twelve.name.as_str(), twelve.profile.as_str()),
+        ("twelve-home", "twelve-home")
+    );
+    assert_eq!(
+        twelve.link_map.path,
+        "contract/evaluations/twelve-home/link-map.json"
+    );
+    assert_eq!(twelve.link_map.sha256, expected.link_map.sha256);
+    assert_ne!(twelve.link_map.sha256, eight.link_map.sha256);
+    assert_eq!(twelve.kind, eight.kind, "the same prepared corpus inputs");
+    assert_eq!(expected.kind, live("corpus").kind);
+    assert_eq!(twelve.required_inputs, eight.required_inputs);
+    assert_eq!(twelve.clang, eight.clang);
+}
+
 // ---- the baseline digest formula ---------------------------------------------
 
 #[test]

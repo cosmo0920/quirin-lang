@@ -479,7 +479,14 @@ pub(super) fn restrict_to_declared_literals(
             continue;
         }
         let callee = &tokens[index].text;
-        if !is_c_identifier(callee) || contracts.contract(callee).is_none() {
+        // Card OPENSSL-PEM-CALLBACK-ARM (rule 57): a callback declaration may
+        // carry a premise and is withheld from the function map, so a
+        // retaining declaration is a contracted callee here too. The map is
+        // read directly: this test is not a consultation of the contract.
+        if !is_c_identifier(callee)
+            || (contracts.contract(callee).is_none()
+                && !contracts.retaining().contains_key(callee.as_str()))
+        {
             continue;
         }
         if !is_call_position(tokens, index) {

@@ -139,6 +139,7 @@ fn callback_clauses_load_withheld() {
                 CallbackActual::Supplied,
                 CallbackActual::Parameter { index: 2 },
             ],
+            null_default: false,
         }]
     );
     assert!(!each.retains());
@@ -148,6 +149,7 @@ fn callback_clauses_load_withheld() {
         [CallbackClause::Invoked {
             callback: 1,
             actuals: vec![],
+            null_default: false,
         }]
     );
     let new = contracts.retaining_contract("list_new").expect("withheld");

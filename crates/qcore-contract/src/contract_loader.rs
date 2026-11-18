@@ -246,6 +246,19 @@
 //! What the loader does still refuse is unchanged: the name must be a parameter
 //! of this declaration, and at most one premise may name each parameter.
 //!
+//! ## Beside a synchronous invocation (card OPENSSL-PEM-CALLBACK-ARM)
+//!
+//! A premise stands beside retaining clauses only when every one of them is a
+//! synchronous invocation, `resource_callback_invoked` or
+//! `resource_callback_invoked_or_default` (§C04.19): the PEM
+//! readers' `x` reuse arm is withdrawn by a premise while their password
+//! callback is stated exactly. Such a declaration is withheld from the
+//! function map like every callback declaration, so the gateway's premise
+//! rewrite reaches retaining declarations too
+//! (`qcore_c_gateway::legacy_literal_premise`, gateway rule 57). A table, a
+//! registration, a registry or member clause, and every other retaining
+//! clause beside a premise still reject.
+//!
 //! Total-or-reject applies in full: an unknown parameter name, a malformed
 //! literal, a second premise on the same parameter, and any other `requires`
 //! spelling each reject the **whole module**, so a typo can never leave a
@@ -2936,12 +2949,33 @@ fn load_function_in(
                         Some(ResourceParameterMode::Released { .. })
                     )
             });
+        // Card OPENSSL-PEM-CALLBACK-ARM (gateway rule 57, §C04.5): a
+        // literal-argument premise stands beside callback clauses that are
+        // the declaration's only retaining clauses; which callback clauses
+        // is decided once they are read below (a synchronous invocation
+        // only). Every other retaining clause beside a premise rejects.
+        let callbacks_only = !callback_clauses.is_empty()
+            && retentions.is_empty()
+            && resets.is_empty()
+            && path_retentions.is_empty()
+            && removals.is_empty()
+            && slot_clauses.is_empty()
+            && reference_clauses.is_empty()
+            && discriminants.is_empty()
+            && arm_clauses.is_empty()
+            && constructed_clauses.is_empty()
+            && handoff_clauses.is_empty()
+            && member_path_clauses.is_empty()
+            && cell_clauses.is_empty()
+            && cell_releases.is_empty()
+            && removal_guards.is_empty()
+            && collected.container_effects.is_empty();
         if is_relational
             || !review.is_empty()
             || body_checked
             || variadic_data_tail
             || no_return
-            || !literal_arguments.is_empty()
+            || (!literal_arguments.is_empty() && !callbacks_only)
             || loop_owner.is_some()
             || thread_sync.is_some()
             || lifecycle.is_some()
@@ -3058,6 +3092,22 @@ fn load_function_in(
             {
                 return Err(
                     "a callback clause stands only beside retentions and plain predicates".into(),
+                );
+            }
+            // Card OPENSSL-PEM-CALLBACK-ARM (gateway rule 57): beside a
+            // premise, only synchronous invocations (during the call only,
+            // nothing kept); a table, a registration, a registry or member
+            // clause beside a premise rejects.
+            if !literal_arguments.is_empty()
+                && callbacks.iter().any(|clause| {
+                    !matches!(
+                        clause,
+                        qcore_schemas::callback::CallbackClause::Invoked { .. }
+                    )
+                })
+            {
+                return Err(
+                    "a literal-argument premise stands beside a synchronous invocation only".into(),
                 );
             }
             if callbacks.iter().any(|clause| {

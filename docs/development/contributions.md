@@ -81,3 +81,9 @@ Measurement `78a83e75ed31` (docs/reports/rule37-pilot/native-comparison.json), r
 - rule 37: no rows
 - interactions of rule 37 with other rules: not measured (switched alone)
 - stale: measured on baseline `dce03b504b89`; the profile's baseline has moved since. Not counted; re-measure with `quirin-audit measure --rules-off`.
+
+## twelve-home
+
+Real-run total (baseline `49be18b80011`, measured at `9744344634a7`): Safe 1083, Unknown 3615, Unsafe 6.
+
+No contribution ledger is recorded for this profile.

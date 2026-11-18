@@ -197,6 +197,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [cg22-callback-candidate-contracts](cg22-callback-candidate-contracts/README.md) | CG22-CALLBACK-CANDIDATE-CONTRACTS: callback candidates in force |
 
+| [cg22-callback-candidate-link-premise](cg22-callback-candidate-link-premise/README.md) | CG22-CALLBACK-CANDIDATE-LINK-PREMISE: the twelve-home link premise |
+
 | [cg22-callback-registry-contract](cg22-callback-registry-contract/README.md) | CG22-CALLBACK-REGISTRY-CONTRACT: callback contracts |
 
 | [cg22-indirect-calls-and-callbacks](cg22-indirect-calls-and-callbacks/README.md) | CG22-INDIRECT-CALLS-AND-CALLBACKS: candidate callee sets and the callback relation |
@@ -802,6 +804,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [op-callback-member-path-release](op-callback-member-path-release/README.md) | OP-CALLBACK-MEMBER-PATH-RELEASE: a callback's release or move-out at a member path |
 
 | [op-constructor-declarations](op-constructor-declarations/README.md) | OP-CONSTRUCTOR-DECLARATIONS: op constructors and their result states |
+
+| [openssl-pem-callback-arm](openssl-pem-callback-arm/README.md) | OPENSSL-PEM-CALLBACK-ARM: a literal-argument premise beside a synchronous invocation |
 
 | [openssl-provider-plugin](openssl-provider-plugin/README.md) | OPENSSL-PROVIDER-PLUGIN: OpenSSL contracts on the user-contract SDK, with version-ranged declarations |
 
