@@ -372,11 +372,22 @@ contract {
     ensures normal resource_return_none();
 };
 
+// Card CG25-THREAD-KEY-AUTOMATIC-REVISIT (gateway rule 11v (7)): the key is a
+// by-value USE of the in-place kind `thread_key` (`resource_kind(key,
+// thread_key)` at a borrowed position, contract specification §C04.6.1), so a
+// read of a key this frame created and deleted is a `use_after_close`
+// candidate. A key this frame does not track (a static key, a formal, a
+// member) keeps the plain borrowed reading. POSIX pthread_getspecific():
+// calling it "after key has been deleted with pthread_key_delete()" is
+// undefined. `pthread_setspecific`'s key stays unkinded: its declaration is
+// withheld from the function map (rule 12t), so a setter naming a tracked key
+// is refused by rule 11v (6).
 extern fn pthread_getspecific(key: u32) -> ptr<mut, u8>
 contract {
     requires resource_contract_v1;
     requires resource_revision(flexible);
     ensures normal resource_borrowed(key);
+    ensures normal resource_kind(key, thread_key);
     ensures normal resource_return_none();
 };
 

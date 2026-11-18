@@ -4693,7 +4693,8 @@ own anchor here.
     storage refuses (`THREAD_KEY_STORAGE_REFUSAL`): an automatic key would be
     tracked by value, and the card's gate found a statement fallback that
     re-lowered `(void) pthread_getspecific(k)` as a plain borrowed call even
-    after `pthread_key_delete(k)`, so no key is tracked. The null destructor is spelled `0` or the C11 null pointer
+    after `pthread_key_delete(k)`, so no key is tracked (narrowed by (7): the
+    one automatic key object is tracked). The null destructor is spelled `0` or the C11 null pointer
     constant `(void *) 0` (glibc's `NULL`), admitted at a pointer premise of
     `0` by §C04.5.1 (user decision 2026-11-16 "Admit (void *) 0
     (Recommended)"; `legacy_literal_premise::void_pointer_null_constant`,
@@ -4704,8 +4705,8 @@ own anchor here.
     destructor, not owed a delete); the call is read with that position
     borrowed (`legacy_classify.rs`). A by-value delete of such a `G` refuses
     (`STATIC_KEY_RELEASE_REFUSAL`), as does a key reached through a pointer,
-    a thread-local key and a delete of an untracked key; the getters are not
-    kinded, and the guard's own refusal is final (`is_guard_refusal`). The
+    a thread-local key and a delete of an untracked key; the getters were not
+    kinded until (7), and the guard's own refusal is final (`is_guard_refusal`). The
     same fallback escape for the `regex` kind is closed by (6). **Do not** read
     a thread-local, member or pointer-reached key as static, drop the literal
     destructor premise, or accept a static key's delete without a reading of
@@ -4752,6 +4753,53 @@ own anchor here.
     route, passed the guard; `shapeAdmissions` bound to
     `tests/in_place_mention_guard.rs`);
     [report](../reports/cg25-void-cast-guard-escape/README.md).
+    (7) **Automatic thread keys, used only when certified** (card
+    CG25-THREAD-KEY-AUTOMATIC-REVISIT; user decision 2026-11-17
+    "CG25-THREAD-KEY-AUTOMATIC-REVISIT -> Let's get started."). With (6) in
+    force, (5)'s refusal of an automatic key no longer has its stated reason.
+    `pthread_key_create(&k, 0)` with `k` **the one automatic key object** of
+    the function is now CG25's in-place initialiser. "The one automatic key
+    object" means exactly one `VarDecl` of the name, automatic, not
+    `register`, `volatile`, a pointer or an array, and every `DeclRefExpr`
+    naming it refers to that declaration (`every_reference_is`).
+    `pthread_key_delete(k)` is its by-value finaliser. libc's
+    `pthread_getspecific` key is kinded `thread_key`, a by-value use; a use
+    whose actual names no tracked key keeps the plain borrowed reading.
+    Several creations keep (5)'s `THREAD_KEY_STORAGE_REFUSAL`, text
+    unchanged: into a member, into a formal, through a pointer, and into a
+    name that also designates a file-scope object (before the local's
+    declarator, or after its block). The soundness analysis read every use
+    of a tracked key against (1)-(6) (report §1). Every one is refused or
+    decided, except a by-value use **before the status test**, **on the
+    failure edge** or **before any creation**. (1)-(6) would admit those
+    `Safe`, yet POSIX leaves a use of a key value not obtained from
+    `pthread_key_create` undefined, and CG25's in-place use checks only the
+    released bit. So a by-value use of a tracked key is admitted only where
+    the **settled state certifies** the key (`report_uncertified_key_uses`,
+    read as `report_kind_violations` reads its candidates): one identity,
+    not unknown, not possibly failed, site live or released. A released key
+    is the `use_after_close` candidate; any other state refuses ("use of
+    thread key `k` not certified by its creation status (rule 11v (7))").
+    `&k` is never custody at a by-value position, in the mention reading or
+    in `in_place_actuals`. A nested by-value use is not refused by the CFG
+    check (`has_in_place_custody_position`): an untracked key's nested getter
+    keeps its pre-(7) reading, and a tracked key's is uncarried, so (6)
+    refuses it. `pthread_setspecific` stays unkinded: its declaration is
+    withheld from the function map (rule 12t), so a setter naming a tracked
+    key is a stray mention under (6), and the function is refused.
+    Candidates on a tracked key are provisional, never upstream findings:
+    `leak` (a missing delete, an early return, a re-creation of a live key),
+    `double_release` and `use_after_close`. **Do not** track a key that a
+    reference outside its one declaration can name, admit an uncertified use,
+    read `&k` as a by-value actual, or drop the literal destructor premise (a
+    destructor is a callback no declaration states). Census: no Fluent Bit or
+    Monkey evidence tree creates an automatic key. A unit differential of
+    the 40 evidence units that name a key call is identical at base and tip
+    (report §2). `QCore.ThreadKeyStatic` (`AuditThreadKeyStatic.lean`:
+    `a_safe_verdict_used_only_certified_keys`, the witness programs);
+    `QCore.InPlaceMentionGuard.the_void_cast_getter_is_refused` restated for
+    the kinded getter; `tests/thread_key_in_place.rs`;
+    [report](../reports/cg25-thread-key-automatic-revisit/README.md).
 
 <a id="constraint-11w"></a>
 

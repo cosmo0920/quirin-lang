@@ -2255,6 +2255,10 @@ fn analyze_cfg_with_entry_collected(
         &context.site_kinds,
         &mut diagnostics,
     );
+    // Card CG25-THREAD-KEY-AUTOMATIC-REVISIT (rule 11v (7)): a by-value use of
+    // a tracked key that its creation status has not certified, from the same
+    // settled states.
+    in_place_custody::report_uncertified_key_uses(&cfg, &incoming, &mut diagnostics);
     // Card W43-LIBC-RESULT-ALIAS: the two derived-pointer violation candidates,
     // read from the same settled states for the same reason — a binding's
     // derivation can still widen to `Mixed` on a later iterate.

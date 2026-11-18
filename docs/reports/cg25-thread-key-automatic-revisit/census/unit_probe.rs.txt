@@ -1,0 +1,93 @@
+//! Temporary differential probe (not committed). QCORE_UNIT_PROBE=<dir> with
+//! `*.i` units; QCORE_UNIT_PROBE_OUT=<file>. Every libc module loads.
+
+use std::collections::BTreeMap;
+use std::io::Write;
+
+use qcore_c_gateway::legacy_c::{
+    C11TranslationUnit, UnrestrictedLegacyResult, analyze_unrestricted_c11,
+};
+use qcore_contract::contract_loader::load_resource_contract_sources;
+
+#[test]
+fn unit_probe() {
+    let Some(dir) = std::env::var_os("QCORE_UNIT_PROBE") else {
+        return;
+    };
+    let out = std::env::var_os("QCORE_UNIT_PROBE_OUT").expect("out");
+    let libc = concat!(
+        env!("CARGO_MANIFEST_DIR"),
+        "/../../providers/quirin-provider-libc/contracts/libc"
+    );
+    let mut sources = BTreeMap::new();
+    for entry in std::fs::read_dir(libc).expect("libc dir") {
+        let path = entry.expect("entry").path();
+        if path.extension().is_some_and(|ext| ext == "qv") {
+            let name = format!(
+                "libc/{}",
+                path.file_name().expect("name").to_string_lossy()
+            );
+            let text = std::fs::read_to_string(&path).expect("read");
+            if load_resource_contract_sources(&BTreeMap::from([(name.clone(), text.clone())]))
+                .is_ok()
+            {
+                sources.insert(name, text);
+            } else {
+                eprintln!("skipping {name}");
+            }
+        }
+    }
+    let contracts = load_resource_contract_sources(&sources).expect("libc loads");
+    let mut units = std::fs::read_dir(&dir)
+        .expect("dir")
+        .map(|entry| entry.expect("entry").path())
+        .filter(|path| path.extension().is_some_and(|ext| ext == "i"))
+        .collect::<Vec<_>>();
+    units.sort();
+    let mut file = std::fs::File::create(out).expect("out file");
+    for unit in units {
+        let text = std::fs::read_to_string(&unit).expect("unit");
+        let label = unit.file_name().expect("name").to_string_lossy().to_string();
+        let outcome = analyze_unrestricted_c11(
+            &C11TranslationUnit {
+                source: &text, dialect: qcore_c_gateway::legacy_c::CCompilerDialect::Gnu11,
+                ..Default::default()
+            },
+            std::fs::read_to_string(unit.with_extension("entry")).expect("entry").trim(),
+            &contracts,
+        );
+        let outcome = match outcome {
+            Ok(outcome) => outcome,
+            Err(error) => {
+                let error = format!("{error:?}");
+                writeln!(file, "{label}\t-\tERROR\t{}", &error[..error.len().min(200)])
+                    .expect("write");
+                continue;
+            }
+        };
+        let summary = match &outcome {
+            UnrestrictedLegacyResult::Safe(certificate) => Some(&certificate.summary),
+            UnrestrictedLegacyResult::Unsafe(summary) => Some(summary),
+            UnrestrictedLegacyResult::Unknown { partial, .. } => partial.as_ref(),
+        };
+        let Some(summary) = summary else {
+            writeln!(file, "{label}\t-\tNO-SUMMARY\t{outcome:?}").expect("write");
+            continue;
+        };
+        for (function, result) in &summary.functions {
+            let mut diagnostics = result
+                .diagnostics
+                .iter()
+                .map(|diagnostic| format!("L{} {:?}", diagnostic.line, diagnostic.kind))
+                .collect::<Vec<_>>();
+            diagnostics.sort();
+            writeln!(
+                file,
+                "{label}\t{function}\t{:?}\t{}",
+                result.status,
+                diagnostics.join(" | ")
+            )
+            .expect("write");
+        }
+    }
+}

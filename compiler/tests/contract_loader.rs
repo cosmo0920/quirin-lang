@@ -1127,7 +1127,6 @@ fn production_contracts_preserve_the_previous_resource_modes() {
         "poll",
         "posix_fallocate",
         "pthread_cancel",
-        "pthread_getspecific",
         "readlink",
         "sendmsg",
         "shutdown",
@@ -1138,6 +1137,13 @@ fn production_contracts_preserve_the_previous_resource_modes() {
     ] {
         old.insert_contract(name, ResourceFunctionContract::new([], R::None));
     }
+    // Card CG25-THREAD-KEY-AUTOMATIC-REVISIT (rule 11v (7)) deliberately
+    // kinds `pthread_getspecific`'s key: a by-value `thread_key` use.
+    old.insert_contract(
+        "pthread_getspecific",
+        ResourceFunctionContract::new([P::Borrowed], R::None)
+            .with_parameter_kind(0, ResourceKind::ThreadKey),
+    );
     old.insert_contract(
         "strcat",
         ResourceFunctionContract::new(
