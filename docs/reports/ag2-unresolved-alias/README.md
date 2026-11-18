@@ -293,7 +293,21 @@ finds through the default include path; `init_once` is Safe with
 (`private/ag2/t-libcurl.log`); registered as
 `LIBCURL-VERSION-TEST-SYSTEM-HEADER`.
 
-## 8. Records
+## 8. Gate
+
+`python3 scripts/gate_scope.py --base a9c6dcf44 --out private/gate-4` on
+`a354a5783` (mode full: the diff reaches `qcore-c-gateway`; Clang 21.1.8 via
+`QCORE_CLANG`): submodules, fmt, clippy, both reevaluation probes, Lean
+(449 audits) and the Python suite (779 tests) exit 0; the Rust suite exits
+101 with 661 units, 706 summaries, 9,710 passed, **1 failed**, 21 ignored:
+`libcurl_user_crate_versions` at line 335, the host-header failure of §7, the
+same in isolation. Earlier attempts are retained and not used as evidence:
+`gate-1-setup-failed` (the output directory pre-existed), `gate-2-failed-enospc`
+(the host disk filled during the Rust build) and `gate-3` (on `3fe4611bd`,
+before the five flips of §7; otherwise the same results). This section was
+added after the gated commit and changes no code.
+
+## 9. Records
 
 - [PREDICTION.md](PREDICTION.md), committed before the semantic commit, with
   its `measure-prediction` block (29 declared moves on corpus and
