@@ -243,6 +243,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [composed-window-reach](composed-window-reach/README.md) | `COMPOSED-WINDOW-REACH` (wave 41) — the composed route's window function, measured |
 
+| [configured-route-plugin-bindings](configured-route-plugin-bindings/README.md) | CONFIGURED-ROUTE-PLUGIN-BINDINGS |
+
 | [confined-exit-precedence](confined-exit-precedence/README.md) | Confined process failure precedence |
 
 | [contract-adoption-not-in-force](contract-adoption-not-in-force/README.md) | CONTRACT-ADOPTION-NOT-IN-FORCE |
@@ -804,6 +806,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [openssl-provider-plugin](openssl-provider-plugin/README.md) | OPENSSL-PROVIDER-PLUGIN: OpenSSL contracts on the user-contract SDK, with version-ranged declarations |
 
 | [openssl-provider-remaining-callees](openssl-provider-remaining-callees/README.md) | OPENSSL-PROVIDER-REMAINING-CALLEES: the census's remaining OpenSSL callees, and the measured opt-in arbiter |
+
+| [openssl-ssl-ctx-callback-slots](openssl-ssl-ctx-callback-slots/README.md) | OPENSSL-SSL-CTX-CALLBACK-SLOTS: opaque callback slots replace the OpenSSL registered-callbacks premise |
 
 | [out-parameter-body-summary](out-parameter-body-summary/README.md) | OUT-PARAMETER-BODY-SUMMARY |
 

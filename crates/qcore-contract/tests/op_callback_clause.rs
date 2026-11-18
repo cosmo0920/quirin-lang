@@ -87,6 +87,7 @@ fn the_clauses_load_withheld() {
                     CallbackActual::Supplied,
                     CallbackActual::SuppliedOwned
                 ],
+                slot: false,
             },
         ]
     );

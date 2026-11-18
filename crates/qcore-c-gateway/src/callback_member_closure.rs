@@ -2159,6 +2159,13 @@ impl Tables {
         Ok(())
     }
 
+    /// Card OPENSSL-SSL-CTX-CALLBACK-SLOTS: whether some unit defines
+    /// `struct TAG` (once, or differently within one unit).
+    #[must_use]
+    pub fn defines(&self, tag: &str) -> bool {
+        self.records.contains_key(tag) || self.ambiguous.contains(tag)
+    }
+
     /// The normal forms of a member key `TAG.PATH`: keyed by its innermost
     /// named record, a union's members as `….*`; several where the units
     /// define a record differently. `Err` when the path is not a

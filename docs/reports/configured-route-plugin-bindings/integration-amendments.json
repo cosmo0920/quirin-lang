@@ -1,0 +1,32 @@
+{
+  "schema": "quirin-amendments/1",
+  "card": "CONFIGURED-ROUTE-PLUGIN-BINDINGS",
+  "base": "974434463",
+  "measured_tip": "a9b180750",
+  "increment_paragraph": "**CONFIGURED-ROUTE-PLUGIN-BINDINGS** (fail-closed defect, launched by the user 2026-11-18; rule 53 amended in place, no new rule; [report](../../reports/configured-route-plugin-bindings/README.md)). The configured `quirin-audit CONFIG.json` route resolved a user load path but ran none of its checker bindings. It never called `user_plugins::run` and built unit fragments with no links, so a bound user contract in force published its caller `Safe` where `current` and `contracts` publish the binding's `Pending`. That is below rule 53's `Unknown -> Pending` at most and the firewall's uncertified-`Safe`-is-`Pending` (rule 10h). The same gap held on every route that reached a user load path through a schema-2 contract manifest: `ContractInput::manifest` carried no extension, which affected `current --contract-manifest`, `contracts --contract-manifest`, the configured profile manifest and the pinned manifest argument. The configured route now runs the bindings once, before any unit, with the same call as `current`, and folds them through `AuditReport::fragment`, `fold_unit` and `fold_dependencies`; its sidecar carries `plugin_checks`. `ContractInput::manifest` now keeps the extension of the load path its manifest names (`contract_loader::resource_contract_manifest_load_path`, sharing the loader's parser) and refuses to load if that load path cannot be read. The pinned corpus route, which runs no binding and whose group checkpoints refuse linked fragments, refuses before any work a manifest whose load path carries one (`user_plugins::refuse_unrun_bindings`, `checker-bindings-not-run`). Tests (library_version_hold_routes.rs, report.rs): base sources publish `use_reset` `Safe` in force on the configured route, under `library_providers` and on `current --contract-manifest`. The tip publishes `Pending` with the binding's link on all of those, on `contracts --contract-manifest` and on the configured profile manifest, and keeps the four held standings unchanged. Further tests cover the pinned refusal, shipped manifests carrying no binding, an unreadable load path refusing to load, and a linked fragment never being checkpointed. The report holds a route inventory of every built-in, the configuration route, the subcommand host, `measure`, `checkpoint` and the library callers. No Lean change: the same join and firewall now apply on more routes. Live and pinned routes are unchanged by construction, because their manifests name the shipped load path, which carries no binding. `measure --declared` was not run: this host has no prepared live inputs.",
+  "status_paragraph": null,
+  "ledger": [
+    {
+      "id": "W45-PLUGIN-ROUTE-COVERAGE",
+      "operation": "retire",
+      "why": "Discharged by CONFIGURED-ROUTE-PLUGIN-BINDINGS. The report's inventory covers every verdict-publishing route. current, contracts and the configured route run the bindings of the user load path they resolve, whether by provider selection, per-library table or schema-2 manifest, through user_plugins::run and AuditReport::fragment. The pinned corpus arbiter refuses a manifest whose load path carries a binding (checker-bindings-not-run). measure and checkpoint inherit from those routes. The subcommand host cannot publish Safe from a claim. Each route has a test in library_version_hold_routes.rs, report.rs or subcommand_plugins.rs. The fixture's configured in-force row moves Safe -> Pending. The libcurl amendments' note that its bindings are invisible to the corpus and system arbiter is a property of those routes' selections, which name only the shipped load path, not a route gap. The gateway-API residual moves to GATEWAY-API-USER-LOAD-PATH-BINDINGS.",
+      "source": "docs/reports/configured-route-plugin-bindings/README.md"
+    },
+    {
+      "id": "GATEWAY-API-USER-LOAD-PATH-BINDINGS",
+      "operation": "register",
+      "title": "Library callers of the manifest loader load a user load path's contracts without running or refusing its checker bindings",
+      "text": "Every quirin-audit route runs or refuses a user load path's checker bindings (CONFIGURED-ROUTE-PLUGIN-BINDINGS). But qcore_contract::contract_loader::load_resource_contract_manifest* loads a schema-2 manifest's user modules for any caller, and nothing runs their bindings. The callers are the qcore-audit examples member_prepass_run, premise_environment and libc_local_source_domains, the qcore-c-gateway examples declared_abi_census and declared_mode_census, and any library user of the gateway API. None of these is a quirin-audit verdict route, but a caller that publishes verdicts from such an environment would publish a bound contract's callers without the binding's verdict. DISCHARGE: each such caller refuses a manifest whose load path carries a checker binding (user_plugins::refuse_unrun_bindings or a loader-level equivalent) or runs the bindings, with a test; or a recorded argument that it publishes no verdict.",
+      "source": "docs/reports/configured-route-plugin-bindings/README.md",
+      "recorded_by": "CONFIGURED-ROUTE-PLUGIN-BINDINGS"
+    },
+    {
+      "id": "MANIFEST-ROUTE-USER-OVERRIDE-CHECK",
+      "operation": "register",
+      "title": "A schema-2 manifest naming a user load path skips the user-contract collision check",
+      "text": "A provider selection on a user load path refuses a selected user module that declares a shipped function unless an explicit override names it, and records the overrides applied (user_plugins::check_overrides, W45-USER-CONTRACT-PLUGINS). Since CONFIGURED-ROUTE-PLUGIN-BINDINGS, a hand-written schema-2 manifest naming the same user load path runs its checker bindings on current, contracts and the configured route, but it does not run that check. Its duplicate declarations are decided by contract supersession (C06.6, lock stamps) instead. DISCHARGE: ContractInput::manifest applies check_overrides to the user modules its manifest references (and records user_load_path), with a test of a colliding manifest; or the manifest route refuses user module references.",
+      "source": "docs/reports/configured-route-plugin-bindings/README.md",
+      "recorded_by": "CONFIGURED-ROUTE-PLUGIN-BINDINGS"
+    }
+  ]
+}

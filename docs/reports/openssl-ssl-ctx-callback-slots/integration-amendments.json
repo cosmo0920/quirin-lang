@@ -1,0 +1,32 @@
+{
+ "schema": "quirin-amendments/1",
+ "card": "OPENSSL-SSL-CTX-CALLBACK-SLOTS",
+ "base": "974434463",
+ "measured_tip": "4b3174f75",
+ "increment_paragraph": "**OPENSSL-SSL-CTX-CALLBACK-SLOTS (2026-11-18).** User decision 2026-11-18 replaces the OpenSSL user crate's named premise openssl_registered_callbacks with stated registrations and invocations. C04.19.3's member forms, evaluated first, cannot decide an opaque record (rule 12n decides only members of records the run defines, and relaxing that generally would decide undefined library records over their declared setters alone), so they gain marked slot forms, resource_callback_slot_registered(P, TAG.FIELD, F) and resource_callback_slot_invoked(OBJ, TAG.FIELD, A…) (CallbackClause slot flag, loader, G05): a slot is decided only over the run's facts, only while no unit defines the record and only when a declaration registers it, then over the run's closed set with rule 13u's composition (rule 12n amended in place, premise P-OPAQUE-SLOT-WRITERS; Lean QCore.OpaqueCallbackSlots, 16 audited theorems). quirin-provider-openssl declares SSL_CTX_set_default_passwd_cb (slot ssl_ctx_st.default_passwd_cb) and SSL_CTX_set_cert_cb/SSL_set_cert_cb (slot ssl_ctx_st.cert_cb, each retaining arg); SSL_CTX_use_PrivateKey_file invokes the password slot and rests on no premise; SSL_CTX_use_certificate_chain_file (password slot) and SSL_write/read/connect/do_handshake (certificate slot) keep the narrowed premise openssl_unstated_callback_slots for slots whose setters are not declared; SSL_shutdown, SSL_free and SSL_CTX_free name it (NULL-accepting drops kept). The checker derives each clause set exactly and requires every writer a slot's manual page names to be declared; five page snapshots added; contracts.lock adds 3 entries and changes the 9 re-stated digests only. Fail-closed tests: an uncontracted or effectful candidate, an open set, an unregistered slot, a defined record, no run facts, the member form over an undefined record. Opt-in current over Fluent Bit 046accf6 (base vs tip): 1098 Safe / 2 Pending / 3699 Unknown / 5 Unsafe in both, no row moved, as predicted; both slot sets closed ({rd_kafka_ssl_cert_callback}, {rd_kafka_transport_ssl_passwd_cb}); 10 rows change content (Monkey SSL_write refuses callback-uncontracted, rd_kafka_ssl_set_certs gains the arg retention refusal). Pinned routes read no user load path: no move by construction, measure --declared deferred to the integrator.",
+ "status_paragraph": null,
+ "ledger": [
+  {
+   "id": "OPENSSL-SSL-CTX-CALLBACK-SLOTS",
+   "operation": "retire",
+   "why": "OPENSSL-SSL-CTX-CALLBACK-SLOTS (2026-11-18): C04.19.3's member forms gain the marked slot forms resource_callback_slot_registered/_invoked for a record the library keeps opaque (rule 12n amended in place; Lean QCore.OpaqueCallbackSlots); SSL_CTX_set_default_passwd_cb, SSL_CTX_set_cert_cb and SSL_set_cert_cb declared as slot registrations; the premise openssl_registered_callbacks is gone: SSL_CTX_use_PrivateKey_file invokes the password slot and rests on no premise, SSL_CTX_use_certificate_chain_file and SSL_write/read/connect/do_handshake state their slot and keep the narrowed openssl_unstated_callback_slots, SSL_shutdown/SSL_free/SSL_CTX_free name it. The slots it still covers are OPENSSL-UNSTATED-CALLBACK-SLOTS.",
+   "source": "docs/reports/openssl-ssl-ctx-callback-slots/README.md"
+  },
+  {
+   "id": "OPENSSL-UNSTATED-CALLBACK-SLOTS",
+   "operation": "register",
+   "title": "The OpenSSL callback slots still under openssl_unstated_callback_slots",
+   "text": "The narrowed premise openssl_unstated_callback_slots (C04.18) still covers the callbacks the handshake and I/O calls, SSL_CTX_use_certificate_chain_file, SSL_shutdown, SSL_free and SSL_CTX_free may run whose setters are not declared: verify (SSL_CTX_set_verify, SSL_set_verify), info (SSL_CTX_set_info_callback, SSL_set_info_callback), message (SSL_CTX_set_msg_callback), security (SSL_CTX_set_security_callback, SSL_set_security_callback), session (SSL_CTX_sess_set_new_cb, SSL_CTX_sess_set_remove_cb), client certificate (SSL_CTX_set_client_cert_cb), the SSL_CTX_callback_ctrl arms (servername, status, ticket key; with OPENSSL-CTRL-COMMAND-ARMS) and the ex_data free callbacks (CRYPTO_get_ex_new_index, a global registry, not a slot). SSL_CTX_use_certificate (declared plain) reads the security callback silently: SSL_CTX_set_security_level (3.5) says setting a certificate consults it. DISCHARGE: declare each slot's writers as resource_callback_slot_registered (every writer its page names, which the checker requires), state the invocations from the pages, give SSL_CTX_use_certificate its security invocation, and drop the premise from each declaration whose slots are all stated; ex_data needs a global-registry reading. Size: medium (about twelve setters, a page each; the ctrl arms wait for OPENSSL-CTRL-COMMAND-ARMS).",
+   "source": "docs/reports/openssl-ssl-ctx-callback-slots/README.md",
+   "recorded_by": "OPENSSL-SSL-CTX-CALLBACK-SLOTS"
+  },
+  {
+   "id": "RETENTION-NULL-CONSTANT-ACTUAL",
+   "operation": "register",
+   "title": "A null pointer constant at a retained position retains nothing",
+   "text": "C04.14's consumer refuses SSL_CTX_set_cert_cb(ctx, cb, NULL): it reads the retained actual (void *) 0 as a pointer whose lifetime it must decide against the holder (retention-undecided; the fixture's configure, docs/reports/openssl-ssl-ctx-callback-slots/evidence/run-1/run.json). A null pointer constant designates no object, so nothing is kept. DISCHARGE: the retention route reads a null pointer constant actual (after the usual cast reading) as retaining nothing; Lean beside QCore's retention model; a test. Size: small.",
+   "source": "docs/reports/openssl-ssl-ctx-callback-slots/README.md",
+   "recorded_by": "OPENSSL-SSL-CTX-CALLBACK-SLOTS"
+  }
+ ]
+}

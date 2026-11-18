@@ -1,0 +1,13 @@
+{
+  "note": "Landing integrate/r27 (base main 46d97660c; merges OPENSSL-SSL-CTX-CALLBACK-SLOTS 8a3a51666, no conflicts; amendments applied in e900124f6: the card retired, OPENSSL-UNSTATED-CALLBACK-SLOTS and RETENTION-NULL-CONSTANT-ACTUAL registered). Full landing gate on e900124f6 (private/integrate-r27/gate, raw record beside this file as gate-scope.json) via scripts/gate_scope.py --base main --full --landing through private/toolchain/env.sh: Rust 656 units / 701 summaries, 9656 passed, 0 failed, 21 ignored; fmt, Clippy and both reevaluation examples exit 0; Lean selected: 446 audits passed (QCore.OpaqueCallbackSlots new); provider gate: package build, verify-all and verify exit 0, provider workspace tests 153 passed / 0 failed / 1 ignored, provider fmt and Clippy exit 0. Python (779 tests) exited 1 on two test_build_matrix_sections checks only (lean audit count and named_followups dimension), because the committed matrix predates the amendments; it is regenerated from this record and the suite rerun is recorded in private/integrate-r27/python-rerun.log. The named premise openssl_registered_callbacks is replaced: opaque callback slots (resource_callback_slot_registered / resource_callback_slot_invoked, rule 12n amended in place, C04.19.3 'An opaque slot', premise P-OPAQUE-SLOT-WRITERS) are decided only over a run's closed set of declared slot writers for a record no unit defines, else callback-member-open; SSL_CTX_set_default_passwd_cb, SSL_CTX_set_cert_cb and SSL_set_cert_cb declared; SSL_CTX_use_PrivateKey_file is premise-free; SSL_CTX_use_certificate_chain_file, SSL_write/read/connect/do_handshake, SSL_shutdown, SSL_free and SSL_CTX_free keep the narrowed premise openssl_unstated_callback_slots (OPENSSL-UNSTATED-CALLBACK-SLOTS). contracts.lock: 3 entries added, 9 digests changed, nothing else. The card's opt-in current --monkey-linked run over Fluent Bit 046accf6: 1098 Safe / 2 Pending / 3699 Unknown / 5 Unsafe on base and tip, no row moved, 10 rows changed content only; pinned routes unchanged by construction (no user load path reaches them, and r26's pinned-route refusal holds). No profile baseline is changed and land.py publish is owed.",
+  "workspace_tests": 9656,
+  "provider_tests": 153,
+  "python_evidence_validator_tests": 779,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "full landing gate: every step exits 0 except the Python suite's two stale-matrix checks, cleared by regenerating the matrix from this record (rerun disclosed in the note); Lean selected and run in the gate",
+  "lean_audits": 446,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

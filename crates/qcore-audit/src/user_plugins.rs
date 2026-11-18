@@ -444,6 +444,50 @@ pub fn run(
     })
 }
 
+/// The named reason a route that runs no checker binding refuses a user load
+/// path carrying one (card CONFIGURED-ROUTE-PLUGIN-BINDINGS).
+pub const UNRUN_BINDINGS: &str = "checker-bindings-not-run";
+
+/// Card **CONFIGURED-ROUTE-PLUGIN-BINDINGS**: refuse, before any work, a
+/// contract manifest whose load path carries a checker binding, on a route
+/// that loads the manifest without running bindings (the pinned corpus
+/// route, whose group checkpoints carry no checker links). Loading it would
+/// publish a bound user contract's caller from the host's analysis alone,
+/// possibly `Safe`, where `current`, `contracts` and the configured route
+/// publish the binding's verdict joined in (`Pending` at most for an
+/// uncertified claim, rules 10h and 53). A schema-1 manifest, and one naming
+/// the shipped load path (which carries no binding), pass.
+///
+/// # Errors
+///
+/// The refusal, or any error the manifest loader reports for the manifest
+/// or its load path.
+pub fn refuse_unrun_bindings(route: &str, manifest: &std::path::Path) -> Result<(), String> {
+    let text = std::fs::read_to_string(manifest)
+        .map_err(|error| format!("{}: {error}", manifest.display()))?;
+    let load_path =
+        qcore_contract::contract_loader::resource_contract_manifest_load_path(manifest, &text)?;
+    let Some(extension) = load_path
+        .and_then(|load_path| load_path.extension)
+        .filter(|extension| !extension.checkers.is_empty())
+    else {
+        return Ok(());
+    };
+    let bound = extension
+        .checkers
+        .iter()
+        .map(|binding| format!("{}:{}", binding.user_crate, binding.module))
+        .collect::<Vec<_>>();
+    Err(format!(
+        "{UNRUN_BINDINGS}: the {route} route runs no checker binding, and the contract manifest \
+         {} names a user load path whose checkers bind {}; its contracts would be published \
+         without their checkers' verdicts (Unknown, refused). Run the selection on \
+         `quirin-audit current`, `contracts` or a configuration, which run the bindings",
+        manifest.display(),
+        bound.join(", ")
+    ))
+}
+
 /// The console tally of a [`PluginRun`]'s section.
 #[must_use]
 pub fn tally(section: &Value) -> String {

@@ -2221,6 +2221,90 @@
    "reference_sentences": [],
    "page": "SSL_get_certificate",
    "fetched_on": "2026-11-17"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/SSL_CTX_set_security_level/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "673dbbd9698fbef6d83cdc3456f11833e04a27b708bc97e680fcf76c320d75dd",
+   "bytes": 1093670,
+   "name": "SSL_CTX_set_security_level, SSL_set_security_level, SSL_CTX_get_security_level, SSL_get_security_level, SSL_CTX_set_security_callback, SSL_set_security_callback, SSL_CTX_get_security_callback, SSL_get_security_callback, SSL_CTX_set0_security_ex_data, SSL_set0_security_ex_data, SSL_CTX_get0_security_ex_data, SSL_get0_security_ex_data - SSL/TLS security framework",
+   "history": "These functions were added in OpenSSL 1.1.0.",
+   "null_sentences": [
+    "SSL_CTX_get_security_callback() and SSL_get_security_callback() return the pointer to the security callback or NULL if the callback is not set.",
+    "SSL_CTX_get0_security_ex_data() and SSL_get0_security_ex_data() return the extra data pointer or NULL if the ex data is not set."
+   ],
+   "reference_sentences": [],
+   "page": "SSL_CTX_set_security_level",
+   "fetched_on": "2026-11-18"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/SSL_CTX_set_info_callback/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "9fc1a231fcf7710c85f7f9dda99fc730f6bd710add43b8d174b75d51d7b2de6c",
+   "bytes": 1088184,
+   "name": "SSL_CTX_set_info_callback, SSL_CTX_get_info_callback, SSL_set_info_callback, SSL_get_info_callback - handle information callback for SSL connections",
+   "history": null,
+   "null_sentences": [
+    "When callback is NULL, no callback function is used.",
+    "When callback is NULL, the callback setting currently valid for ctx is used.",
+    "ssl MUST NOT be NULL."
+   ],
+   "reference_sentences": [],
+   "page": "SSL_CTX_set_info_callback",
+   "fetched_on": "2026-11-18"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/SSL_CTX_set_verify/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "62d34f046438cb6103e8d2a01dfcde93e0c9c98fe04c5519052342a9a156d954",
+   "bytes": 1103306,
+   "name": "SSL_get_ex_data_X509_STORE_CTX_idx, SSL_CTX_set_verify, SSL_set_verify, SSL_CTX_set_verify_depth, SSL_set_verify_depth, SSL_verify_cb, SSL_verify_client_post_handshake, SSL_set_post_handshake_auth, SSL_CTX_set_post_handshake_auth - set various SSL/TLS parameters for peer certificate verification",
+   "history": "The SSL_VERIFY_POST_HANDSHAKE option, and the SSL_verify_client_post_handshake() and SSL_set_post_handshake_auth() functions were added in OpenSSL 1.1.1.",
+   "null_sentences": [
+    "If no callback function shall be specified, the NULL pointer can be used for verify_callback .",
+    "ctx MUST NOT be NULL.",
+    "If no callback function shall be specified, the NULL pointer can be used for verify_callback ."
+   ],
+   "reference_sentences": [],
+   "page": "SSL_CTX_set_verify",
+   "fetched_on": "2026-11-18"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/SSL_CTX_set_client_cert_cb/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "2bd21d5b52208200fafeaa8274909730d247133609ca650545b4d7c5c0fd02ad",
+   "bytes": 1080449,
+   "name": "SSL_CTX_set_client_cert_cb, SSL_CTX_get_client_cert_cb - handle client certificate callback function",
+   "history": null,
+   "null_sentences": [
+    "When client_cert_cb is NULL, no callback function is used.",
+    "SSL_CTX_get_client_cert_cb() returns function pointer of client_cert_cb or NULL if the callback is not set."
+   ],
+   "reference_sentences": [],
+   "page": "SSL_CTX_set_client_cert_cb",
+   "fetched_on": "2026-11-18"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/CRYPTO_get_ex_new_index/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "df21847c71bfb2082a55075beb4a27b6b18f90421f3d2e1402d39bff90468689",
+   "bytes": 1087286,
+   "name": "CRYPTO_EX_new, CRYPTO_EX_free, CRYPTO_EX_dup, CRYPTO_free_ex_index, CRYPTO_get_ex_new_index, CRYPTO_alloc_ex_data, CRYPTO_set_ex_data, CRYPTO_get_ex_data, CRYPTO_free_ex_data, CRYPTO_new_ex_data - functions supporting application-specific data",
+   "history": "CRYPTO_alloc_ex_data() was added in OpenSSL 3.0. The signature of the dup_func() callback was changed in OpenSSL 3.0 to use the type void ** for from_d . Previously this parameter was of type void * . Support for ENGINE \"exdata\" was deprecated in OpenSSL 3.0.",
+   "null_sentences": [
+    "If the application is going to release the data, it must make sure to set a NULL value at the index, to avoid likely double-free crashes.",
+    "The free_func() may be called with a NULL pointer.",
+    "The ptr is the current exdata item; for new_func() this will typically be NULL.",
+    "CRYPTO_get_ex_data() returns the application data or NULL on failure; note that NULL may be a valid value."
+   ],
+   "reference_sentences": [],
+   "page": "CRYPTO_get_ex_new_index",
+   "fetched_on": "2026-11-18"
   }
  ]
 }

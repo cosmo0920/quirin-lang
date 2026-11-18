@@ -187,6 +187,14 @@
    "declaration": "SSL_CTX *SSL_CTX_new(const SSL_METHOD *meth)",
    "header": "/usr/include/openssl/ssl.h"
   },
+  "SSL_CTX_set_cert_cb": {
+   "declaration": "void SSL_CTX_set_cert_cb(SSL_CTX *c, int (*cb)(SSL *ssl, void *arg), void *arg)",
+   "header": "/usr/include/openssl/ssl.h"
+  },
+  "SSL_CTX_set_default_passwd_cb": {
+   "declaration": "void SSL_CTX_set_default_passwd_cb(SSL_CTX *ctx, pem_password_cb *cb)",
+   "header": "/usr/include/openssl/ssl.h"
+  },
   "SSL_CTX_set_default_passwd_cb_userdata": {
    "declaration": "void SSL_CTX_set_default_passwd_cb_userdata(SSL_CTX *ctx, void *u)",
    "header": "/usr/include/openssl/ssl.h"
@@ -253,6 +261,10 @@
   },
   "SSL_set_accept_state": {
    "declaration": "void SSL_set_accept_state(SSL *s)",
+   "header": "/usr/include/openssl/ssl.h"
+  },
+  "SSL_set_cert_cb": {
+   "declaration": "void SSL_set_cert_cb(SSL *s, int (*cb)(SSL *ssl, void *arg), void *arg)",
    "header": "/usr/include/openssl/ssl.h"
   },
   "SSL_shutdown": {

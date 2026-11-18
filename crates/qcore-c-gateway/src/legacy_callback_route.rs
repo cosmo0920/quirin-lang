@@ -344,6 +344,7 @@ fn member_path_helper<'a>(
         let CallbackClause::MemberInvoked {
             object: MemberObject::Parameter { index },
             member,
+            slot,
             ..
         } = clause
         else {
@@ -360,11 +361,8 @@ fn member_path_helper<'a>(
                  not read"
             )),
             Some(run) => run
-                .normalise(&spelled)
-                .map_err(|why| {
-                    format!("`{spelled}` is not a member the run's records define ({why})")
-                })
-                .and_then(|_| {
+                .decides(&spelled, *slot)
+                .and_then(|()| {
                     run.closure(&spelled).map_err(|open| {
                         format!(
                             "`{spelled}`'s run set is open ({})",
@@ -866,12 +864,13 @@ impl Parser<'_> {
                     object,
                     member,
                     actuals,
+                    slot,
                 } = clause
                 else {
                     return Err("an own callback clause that is not a member invocation".into());
                 };
                 let spelled = member.spelling();
-                let candidates = self.member_candidates(&spelled).map_err(|why| {
+                let candidates = self.member_candidates(&spelled, *slot).map_err(|why| {
                     format!(
                         "its own invocation of `{spelled}` does not decide: the callbacks stored \
                          there are not a closed set of functions ({why}) ({MEMBER_OPEN})"
@@ -1031,19 +1030,26 @@ impl Parser<'_> {
     /// Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (rule 12n): the candidates
     /// of `member` over this unit's stores, `Err` with why the unit does not
     /// close it.
-    fn member_candidates(&self, member: &str) -> Result<BTreeSet<String>, String> {
+    fn member_candidates(&self, member: &str, slot: bool) -> Result<BTreeSet<String>, String> {
         // Card OP-APP-RK-CALLBACKS-VIA-POLL-CB (rule 12n; user decisions R1,
         // E1): with the run's facts installed by the pre-pass, the unit
         // decides over the run's set, and a closed empty set invokes nothing;
         // a member that is not a function-pointer member of a record the run
-        // defines is never decided so.
+        // defines is never decided so. Card OPENSSL-SSL-CTX-CALLBACK-SLOTS: a
+        // slot of a record the library keeps opaque is decided only over the
+        // run's facts, only while no unit defines the record, and only when a
+        // declaration registers it ([`crate::member_run_facts::RunMemberFacts::decides`]).
         if let Some(run) = crate::member_run_facts::installed() {
-            run.normalise(member).map_err(|why| {
-                format!("`{member}` is not a member the run's records define ({why})")
-            })?;
+            run.decides(member, slot)?;
             return run
                 .closure(member)
                 .map_err(|open| open.into_iter().take(3).collect::<Vec<_>>().join("; "));
+        }
+        if slot {
+            return Err(format!(
+                "`{member}` is a slot of a record the library keeps opaque, decided only over the \
+                 run's member facts, which this route does not read"
+            ));
         }
         let closure = crate::typed_access_path::with_indirect_call_unit(|unit| {
             crate::callback_member_closure::closure(&[unit.member_facts()], member)
@@ -1148,19 +1154,14 @@ impl Parser<'_> {
                 );
             };
             for clause in &declared.callbacks {
-                let CallbackClause::MemberInvoked { member, .. } = clause else {
+                let CallbackClause::MemberInvoked { member, slot, .. } = clause else {
                     continue;
                 };
                 let spelled = member.spelling();
-                let set = run
-                    .normalise(&spelled)
-                    .map_err(|why| {
-                        format!("`{spelled}` is not a member the run's records define ({why})")
-                    })
-                    .and_then(|_| {
-                        run.closure(&spelled)
-                            .map_err(|open| open.into_iter().take(3).collect::<Vec<_>>().join("; "))
-                    });
+                let set = run.decides(&spelled, *slot).and_then(|()| {
+                    run.closure(&spelled)
+                        .map_err(|open| open.into_iter().take(3).collect::<Vec<_>>().join("; "))
+                });
                 match set {
                     Err(why) => {
                         return refuse(
@@ -1591,6 +1592,7 @@ impl Parser<'_> {
                     object,
                     member,
                     actuals,
+                    slot,
                 } => {
                     let spelled = member.spelling();
                     // Card OP-CONSTRUCTOR-DECLARATIONS (rules 13w, 14e): a
@@ -1640,7 +1642,7 @@ impl Parser<'_> {
                                 .collect(),
                         })
                     };
-                    let candidates = match self.member_candidates(&spelled) {
+                    let candidates = match self.member_candidates(&spelled, *slot) {
                         Ok(candidates) => candidates,
                         Err(why) => {
                             let description = refusal(
@@ -2710,6 +2712,7 @@ pub(crate) fn settle(
                     member,
                     callback,
                     by_id: Some(link),
+                    ..
                 } => Some((*object, member, *callback, &link.list)),
                 _ => None,
             })

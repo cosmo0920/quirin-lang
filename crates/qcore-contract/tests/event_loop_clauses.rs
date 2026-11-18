@@ -102,6 +102,7 @@ fn the_three_forms_load_and_are_withheld() {
                 binder: "id".into(),
                 list: vec!["collectors".into()],
             }),
+            slot: false,
         }]
     );
     check_source_assumptions(&contracts).expect("the retained texts reload to the same tables");

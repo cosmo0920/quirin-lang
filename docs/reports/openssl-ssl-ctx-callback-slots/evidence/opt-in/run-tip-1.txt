@@ -1,0 +1,6 @@
+exit 0
+started 2026-11-18T02:23:39Z
+finished 2026-11-18T03:08:12Z
+current revision: 180 source file(s), 181 configuration(s): 9 Safe / 0 Pending / 5 provisional Unsafe / 163 Unknown / 4 data-only / 0 gateway failures
+checker plugins: 66 binding(s): 0 Safe / 66 Pending / 0 Unknown / 0 provisional Unsafe
+contract dependencies: 1098 Safe row(s): 417 on no declaration, 124 only on validated declarations, 39 on a partly validated declaration, 490 on a declared assumption, 0 consulting a held or withdrawn declaration, 28 only on a null premise (51 carrying one); 637 declaration(s) consulted (74 validated, 51 partly validated)

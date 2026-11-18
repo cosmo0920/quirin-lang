@@ -142,8 +142,8 @@
     {
       "function": "SSL_CTX_free",
       "module": "openssl/ssl.qv",
-      "contract_sha256": "db9a7f8ee26599b9dcfeec2203a896b7be2b81de98c790da1edd8eb699a9d16b",
-      "pinned_at": "2026-11-17T20:27:00Z"
+      "contract_sha256": "ad3660259befe097192f801cdc44a40b0c0be8d35649cdf6ba467e14f6562a55",
+      "pinned_at": "2026-11-18T02:05:44Z"
     },
     {
       "function": "SSL_CTX_get_cert_store",
@@ -162,6 +162,18 @@
       "module": "openssl/ssl.qv",
       "contract_sha256": "b9aba97d01d38c138dc27441b693b0a2474880beffd064167c118ce1d92504f2",
       "pinned_at": "2026-11-16T02:51:04Z"
+    },
+    {
+      "function": "SSL_CTX_set_cert_cb",
+      "module": "openssl/ssl_ctx.qv",
+      "contract_sha256": "58f227000bbb3036efd7598b22a8b6e957c23f81798c769d9745160c1485f358",
+      "pinned_at": "2026-11-18T02:05:44Z"
+    },
+    {
+      "function": "SSL_CTX_set_default_passwd_cb",
+      "module": "openssl/ssl_ctx.qv",
+      "contract_sha256": "0a7d39b808ab25652aa525fbf3f5eb2d7f04b9d07f6ab769d386f23e5f1d072f",
+      "pinned_at": "2026-11-18T02:05:44Z"
     },
     {
       "function": "SSL_CTX_set_default_passwd_cb_userdata",
@@ -190,8 +202,8 @@
     {
       "function": "SSL_CTX_use_PrivateKey_file",
       "module": "openssl/ssl_ctx.qv",
-      "contract_sha256": "00fe87a4cbf4a2ddc1cc655fd32277b3c1a7bcc3050f8035eb23fa3bfd0bd3d4",
-      "pinned_at": "2026-11-17T12:03:50Z"
+      "contract_sha256": "a19c0a8821198f6a9a4a49bce1f2766514bd7de773b2bb88016221ec024c28c4",
+      "pinned_at": "2026-11-18T02:05:44Z"
     },
     {
       "function": "SSL_CTX_use_certificate",
@@ -202,26 +214,26 @@
     {
       "function": "SSL_CTX_use_certificate_chain_file",
       "module": "openssl/ssl_ctx.qv",
-      "contract_sha256": "3bfd88ba12fae05a8cb6cc5cf1719c5f6804a86ecdb1fcb5b86c3f8cf8e70189",
-      "pinned_at": "2026-11-17T12:03:50Z"
+      "contract_sha256": "106faf903c5270ab76ac4ee44326d0a3716214541c12dec0c615e6a1f807137f",
+      "pinned_at": "2026-11-18T02:05:44Z"
     },
     {
       "function": "SSL_connect",
       "module": "openssl/ssl_io.qv",
-      "contract_sha256": "6491e15ab4ffd9126353d3746d3a3ea7b578c0d460c072e8acc1bd9e04c9eafb",
-      "pinned_at": "2026-11-17T12:03:50Z"
+      "contract_sha256": "66bc7c07062a25dc07383c3afcb33c4b537c4543cfdadfedf8437905b9de971c",
+      "pinned_at": "2026-11-18T02:05:44Z"
     },
     {
       "function": "SSL_do_handshake",
       "module": "openssl/ssl_io.qv",
-      "contract_sha256": "887fd6beeb710a969247c3d8c4b4f5c13cf6531d9a7bfc101dc74507c7c50d67",
-      "pinned_at": "2026-11-17T12:03:50Z"
+      "contract_sha256": "3e87605acc8d34e1d3d697463f3cbf2242634098b24613b91127f6b498aaba2e",
+      "pinned_at": "2026-11-18T02:05:44Z"
     },
     {
       "function": "SSL_free",
       "module": "openssl/ssl.qv",
-      "contract_sha256": "ac75ed87236f403f0bc5db27183dfd9215c8d2905d846884763326935ce96d86",
-      "pinned_at": "2026-11-17T20:27:00Z"
+      "contract_sha256": "2bb31dba3210a8d6e59132c71a99f1035804f395c3ad4518f93f6f2d842e64a1",
+      "pinned_at": "2026-11-18T02:05:44Z"
     },
     {
       "function": "SSL_get1_peer_certificate",
@@ -256,8 +268,8 @@
     {
       "function": "SSL_read",
       "module": "openssl/ssl_io.qv",
-      "contract_sha256": "66b8bde9a113d5ffbb805d8abef09060ab61e0f195b54add3aaa5f09b3756f7e",
-      "pinned_at": "2026-11-17T12:03:50Z"
+      "contract_sha256": "22cd4f8111d25e759f06ba511739c58c17cc7920c4582f58c9172a7831bb1717",
+      "pinned_at": "2026-11-18T02:05:44Z"
     },
     {
       "function": "SSL_set_accept_state",
@@ -266,16 +278,22 @@
       "pinned_at": "2026-11-17T12:03:50Z"
     },
     {
+      "function": "SSL_set_cert_cb",
+      "module": "openssl/ssl_io.qv",
+      "contract_sha256": "5168bece59f6cccacc42f567d5df0a9eea0178d35ed934abe1a101a8038c1445",
+      "pinned_at": "2026-11-18T02:05:44Z"
+    },
+    {
       "function": "SSL_shutdown",
       "module": "openssl/ssl.qv",
-      "contract_sha256": "e3a32ea7f4ef5dcbb6c86c37b88af748514da4bebe61171e84aa1c4f37a6c363",
-      "pinned_at": "2026-11-16T02:51:04Z"
+      "contract_sha256": "6c6eee396ec4cd21a24490310e2c1dd6ecc0d7a587da50e6d93078d80aae56b5",
+      "pinned_at": "2026-11-18T02:05:44Z"
     },
     {
       "function": "SSL_write",
       "module": "openssl/ssl_io.qv",
-      "contract_sha256": "0035b756ed320295c52d797786ad5cb6dfe9c430eca5912e03c1ea9285eb4345",
-      "pinned_at": "2026-11-17T12:03:50Z"
+      "contract_sha256": "bc6d56e60fecf844801aead34fbb97d4068a787ca4829aee0b380e9f7ae37c1d",
+      "pinned_at": "2026-11-18T02:05:44Z"
     },
     {
       "function": "TLS_server_method",

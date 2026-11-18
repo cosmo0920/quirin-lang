@@ -25,6 +25,8 @@
 //! ensures normal resource_element_added(E, H);              // rule 13x
 //! ensures normal resource_elements_dropped(H);              // rule 13x
 //! ensures normal resource_released_if_constructed(H);       // rule 13x
+//! ensures normal resource_callback_slot_registered(P, T.F, F); // rule 12n, an opaque slot
+//! ensures normal resource_callback_slot_invoked(O, T.F, A…);    // rule 12n, an opaque slot
 //! ```
 //!
 //! `F` names a `fnptr` parameter (whose only mode is `resource_borrowed`);
@@ -63,6 +65,12 @@ pub(super) const MEMBER_INVOKED: &str = "resource_callback_member_invoked";
 /// Q2): a registration into a parameter's member, a setter. The `result`
 /// holder of the same word is a constructor's result state (§C04.19.4).
 pub(super) const MEMBER_REGISTERED: &str = "resource_callback_member_registered";
+/// Card OPENSSL-SSL-CTX-CALLBACK-SLOTS (§C04.19.3, rule 12n amended): an
+/// invocation of a slot of a record the library keeps opaque.
+pub(super) const SLOT_INVOKED: &str = "resource_callback_slot_invoked";
+/// Card OPENSSL-SSL-CTX-CALLBACK-SLOTS: a setter's registration into such a
+/// slot.
+pub(super) const SLOT_REGISTERED: &str = "resource_callback_slot_registered";
 
 /// The actual word for a value the callee supplies.
 pub(super) const SUPPLIED: &str = "_";
@@ -218,12 +226,23 @@ pub(super) fn member_clause(expression: &str) -> Result<Option<WrittenCallback>,
     // a parameter's member, `resource_callback_member_registered(P,
     // TAG.FIELD, F)` (the `result` holder is read by the result-state reader
     // first, so only a parameter holder reaches here).
-    let (keyword, rest) = match expression.trim().strip_prefix(MEMBER_INVOKED) {
-        Some(rest) => (MEMBER_INVOKED, rest),
-        None => match expression.trim().strip_prefix(MEMBER_REGISTERED) {
-            Some(rest) => (MEMBER_REGISTERED, rest),
-            None => return Ok(None),
-        },
+    // Card OPENSSL-SSL-CTX-CALLBACK-SLOTS: the slot forms share the member
+    // forms' reading.
+    let Some((keyword, rest)) = [
+        MEMBER_INVOKED,
+        MEMBER_REGISTERED,
+        SLOT_INVOKED,
+        SLOT_REGISTERED,
+    ]
+    .into_iter()
+    .find_map(|keyword| {
+        expression
+            .trim()
+            .strip_prefix(keyword)
+            .filter(|rest| rest.trim_start().starts_with('('))
+            .map(|rest| (keyword, rest))
+    }) else {
+        return Ok(None);
     };
     let malformed = || format!("malformed `{keyword}` clause `{expression}`");
     let inner = rest
@@ -244,7 +263,7 @@ pub(super) fn member_clause(expression: &str) -> Result<Option<WrittenCallback>,
             && (dotted || !text.contains('.'))
     };
     if arguments.len() < 2
-        || (keyword == MEMBER_REGISTERED && arguments.len() != 3)
+        || ((keyword == MEMBER_REGISTERED || keyword == SLOT_REGISTERED) && arguments.len() != 3)
         || arguments
             .iter()
             .enumerate()
@@ -257,6 +276,20 @@ pub(super) fn member_clause(expression: &str) -> Result<Option<WrittenCallback>,
         arguments: arguments.into_iter().map(str::to_owned).collect(),
         by_id: None,
     }))
+}
+
+/// Card OPENSSL-SSL-CTX-CALLBACK-SLOTS: a slot's `TAG.FIELD`, one named field
+/// below the record's tag.
+fn slot_member(member: &str) -> Result<CallbackMember, String> {
+    match member.split_once('.') {
+        Some((tag, field)) if !field.contains('.') => Ok(CallbackMember {
+            tag: tag.to_owned(),
+            path: field.to_owned(),
+        }),
+        _ => Err(format!(
+            "a slot is spelled `TAG.FIELD`, one field below the record's tag, not `{member}`"
+        )),
+    }
 }
 
 /// Validate the callback clauses of one declaration whose custody contract
@@ -480,6 +513,51 @@ pub(super) fn declaration(
                     object,
                     member,
                     actuals,
+                    slot: false,
+                }
+            }
+            // Card OPENSSL-SSL-CTX-CALLBACK-SLOTS (§C04.19.3, rule 12n): a
+            // slot of a record the library keeps opaque, read through a
+            // borrowed parameter; one named field, never a path into a layout
+            // the run does not see, and no object the callee supplies.
+            SLOT_INVOKED => {
+                let [read, member, rest @ ..] = arguments else {
+                    return Err(shape());
+                };
+                let at = object(read, "slot invocation's object")?;
+                let member = slot_member(member)?;
+                let actuals = actuals(rest, None, false, false)?;
+                if !members_named.insert((MemberObject::Parameter { index: at }, member.clone())) {
+                    return Err(format!("duplicate `{SLOT_INVOKED}` clause"));
+                }
+                CallbackClause::MemberInvoked {
+                    object: MemberObject::Parameter { index: at },
+                    member,
+                    actuals,
+                    slot: true,
+                }
+            }
+            SLOT_REGISTERED => {
+                let [holder, member, callback] = arguments else {
+                    return Err(shape());
+                };
+                let holder = object(holder, "slot registration's holder")?;
+                let callback = function_pointer(callback)?;
+                if !callbacks_named.insert(callback) {
+                    return Err("a callback is invoked or registered by one clause".into());
+                }
+                let member = slot_member(member)?;
+                if !members_named
+                    .insert((MemberObject::Parameter { index: holder }, member.clone()))
+                {
+                    return Err(format!("duplicate `{SLOT_REGISTERED}` clause"));
+                }
+                CallbackClause::MemberRegistered {
+                    object: holder,
+                    member,
+                    callback,
+                    by_id: None,
+                    slot: true,
                 }
             }
             // Card OP-APP-RK-CALLBACKS-VIA-POLL-CB (§C04.19.3, Q2): a setter
@@ -526,6 +604,7 @@ pub(super) fn declaration(
                         binder: binder.clone(),
                         list: list.clone(),
                     }),
+                    slot: false,
                 }
             }
             MEMBER_REGISTERED => {
@@ -559,6 +638,7 @@ pub(super) fn declaration(
                     member,
                     callback,
                     by_id: None,
+                    slot: false,
                 }
             }
             other => return Err(format!("unsupported callback clause `{other}`")),

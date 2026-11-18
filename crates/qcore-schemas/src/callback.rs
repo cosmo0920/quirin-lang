@@ -151,10 +151,18 @@ pub enum CallbackClause {
     /// call the function pointer stored in `object`'s `member` is called zero
     /// or more times with `actuals`. Its candidates are the run's closed set
     /// of stores into `member` (premise `P-CG22-MEMBER-CLOSED-WORLD`).
+    ///
+    /// Card **OPENSSL-SSL-CTX-CALLBACK-SLOTS** (rule 12n, amended): with
+    /// `slot`, `resource_callback_slot_invoked(OBJ, TAG.FIELD, A…)`, an
+    /// invocation of a slot of a record the library keeps opaque: decided
+    /// only over the run's facts, only while no unit of the run defines
+    /// `struct TAG`, over exactly the declared registrations of the slot.
     MemberInvoked {
         object: MemberObject,
         member: CallbackMember,
         actuals: Vec<CallbackActual>,
+        #[serde(default, skip_serializing_if = "core::ops::Not::not")]
+        slot: bool,
     },
     /// Card **OP-APP-RK-CALLBACKS-VIA-POLL-CB** (rule 12n; user decision Q2):
     /// after the call the object the parameter at `object` designates holds
@@ -177,6 +185,11 @@ pub enum CallbackClause {
         callback: usize,
         #[serde(default, skip_serializing_if = "Option::is_none")]
         by_id: Option<IdLink>,
+        /// Card **OPENSSL-SSL-CTX-CALLBACK-SLOTS**: the registration is
+        /// `resource_callback_slot_registered(P, TAG.FIELD, F)`, into a slot
+        /// of a record the library keeps opaque (never forwarded by id).
+        #[serde(default, skip_serializing_if = "core::ops::Not::not")]
+        slot: bool,
     },
 }
 
@@ -206,7 +219,9 @@ impl CallbackClause {
             Self::ElementAdded { .. } => "resource_element_added",
             Self::ElementsDropped { .. } => "resource_elements_dropped",
             Self::ReleasedIfConstructed { .. } => "resource_released_if_constructed",
+            Self::MemberInvoked { slot: true, .. } => "resource_callback_slot_invoked",
             Self::MemberInvoked { .. } => "resource_callback_member_invoked",
+            Self::MemberRegistered { slot: true, .. } => "resource_callback_slot_registered",
             Self::MemberRegistered { .. } => "resource_callback_member_registered",
         }
     }

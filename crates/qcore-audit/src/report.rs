@@ -2113,6 +2113,26 @@ impl ParkedReport {
 mod retained_tests {
     use super::*;
 
+    /// Card CONFIGURED-ROUTE-PLUGIN-BINDINGS: a fragment that folds checker
+    /// links never becomes a pinned group checkpoint, so the pinned route
+    /// cannot carry a binding through its checkpoints even if one reached it;
+    /// its manifest refusal (`user_plugins::refuse_unrun_bindings`) keeps
+    /// one from reaching it.
+    #[test]
+    fn a_fragment_with_checker_links_is_never_checkpointed() {
+        let mut report = AuditReport::new("revision");
+        assert!(report.fragment().into_fragment_parts().is_ok());
+        report.set_plugin_links(std::sync::Arc::new(
+            crate::user_plugins::PluginLinks::default(),
+        ));
+        let refusal = report
+            .fragment()
+            .into_fragment_parts()
+            .err()
+            .expect("a fragment with checker links is refused");
+        assert!(refusal.contains("checker links"), "{refusal}");
+    }
+
     #[test]
     fn parked_report_preserves_exact_document_and_every_sidecar() {
         let mut report = AuditReport::new("revision");
