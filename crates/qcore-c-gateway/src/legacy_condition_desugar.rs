@@ -215,7 +215,15 @@ pub(super) struct DesugarState {
     function: String,
     definitions: Option<BTreeSet<String>>,
     calls: BTreeMap<String, BTreeSet<String>>,
+    /// Card AG3-CONDITION-RETURN-CALLS (rule 63 (2)): the last leaf call the
+    /// classifier refused, `(callee, description)`.
+    refused_call: Option<(String, String)>,
 }
+
+// Card AG3-CONDITION-RETURN-CALLS (gateway rule 63): a residual read beside
+// identity calls, and the uncontracted call's named refusal.
+#[path = "legacy_condition_leaf_reads.rs"]
+mod leaf_reads;
 
 impl DesugarState {
     pub(super) fn new(function: &str) -> Self {
@@ -486,7 +494,11 @@ impl Parser<'_> {
         position: Position,
         refused: bool,
     ) -> Option<Box<ConditionPlan>> {
+        self.desugar.refused_call = None;
         let plan = self.planned_condition_routes(line, condition, position, refused);
+        // Card AG3-CONDITION-RETURN-CALLS (rule 63 (2)): this condition's own
+        // refused call, taken before any later route consults a leaf.
+        let refused_call = self.desugar.refused_call.take();
         // Card CG02-ELABORATION-CORE (rule 10s): asked last, only where every
         // route above refused.
         if plan.is_none() && refused && !self.opaque_callee(condition) {
@@ -496,7 +508,13 @@ impl Parser<'_> {
             }
             // Card VA-LOOP-AND-POINTER-ARG (rule 12c): asked after the
             // elaborator, only for an expression holding a `va_arg`.
-            return self.va_arg_condition(condition, line, position);
+            let va_arg = self.va_arg_condition(condition, line, position);
+            if va_arg.is_some() {
+                return va_arg;
+            }
+            // Card AG3-CONDITION-RETURN-CALLS (rule 63 (2)): asked last; a
+            // re-attribution of the refusal, never an admission.
+            return self.attributed_condition_refusal(condition, position, refused_call);
         }
         plan
     }
@@ -887,6 +905,8 @@ impl Parser<'_> {
                     ));
                 }
                 Err(CallRefusal::Unapplied(description)) => {
+                    // Card AG3-CONDITION-RETURN-CALLS (rule 63 (2)).
+                    self.desugar.refused_call = Some((callee.to_owned(), description.clone()));
                     return Err(Refusal::CallRefused(
                         callee.to_owned(),
                         census_reason(&description),
@@ -975,6 +995,9 @@ impl Parser<'_> {
             }
         } else if self.supported_expression(&residual, ExpressionRole::Decides) {
             LegacyInstruction::NoOp
+        } else if let Some(read) = self.residual_read_decision(&lowered, &residual, position) {
+            // Card AG3-CONDITION-RETURN-CALLS (rule 63 (1)).
+            read
         } else {
             return Err(Refusal::ResidualRefused);
         };
