@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 10,
-  "named_followups": 1006
+  "named_followups": 1008
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6924,7 +6924,7 @@
   "workspace_tests": 9673,
   "provider_tests": 153,
   "python_evidence_validator_tests": 779,
-  "lean_audits": 447,
+  "lean_audits": 448,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
    "AuditAggregateOwnedField.lean",
@@ -7101,6 +7101,7 @@
    "AuditHttpComputedLength.lean",
    "AuditHypothesisGraph.lean",
    "AuditIeee754.lean",
+   "AuditInPlaceMentionGuard.lean",
    "AuditIndexExtent.lean",
    "AuditIndexExtentFrames.lean",
    "AuditIndexQuant.lean",
@@ -7380,7 +7381,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "full landing gate: every step exits 0 except the Python suite's stale-matrix check, cleared by regenerating the matrix from this record, and two known gate-slot-lane timing flakes (rerun disclosed in the note)",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/openssl-pem-callback-arm/integration/gate.json)"
+  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
  },
  "named_followups": [
   {
@@ -14161,13 +14162,6 @@
    "recorded_by": "CURRENT-CONTEXT-NEW-TRIAGE-D3"
   },
   {
-   "id": "CG25-VOID-CAST-GUARD-ESCAPE",
-   "title": "A statement fallback can re-lower a cast-to-void call over a tracked in-place object as a plain borrowed call",
-   "why": "CURRENT-CONTEXT-NEW-TRIAGE (D3) measured (private/repro/probe-getter.log): with a tracked automatic thread key, `(void) pthread_getspecific(key)` was admitted Safe even after `pthread_key_delete(key)`, while `pthread_getspecific(key);` and `v = pthread_getspecific(key);` were refused by rule 11v (4)'s guard. The cast statement's first classification is an older refusal, which the guard skips, and a later statement fallback (the cast route's uncast lowering) re-lowers the uncast call without the guard. D3 avoids it by never tracking a thread key. The same shape over a tracked regex object (`(void) f(&re, …)` at an unkinded position) is not measured. A guard widened to every refusal mentioning a tracked object broke rd_regex_match's admitted `r = k_regexec(&re, str) != 1;`, and a CFG-level name check misses a by-value scalar actual (no place is recorded). DISCHARGE: apply rule 11v (4)'s guard to every fallback's admitted lowering (or carry the actual's name for by-value scalars into the node), with a fixture per kind, and measure.",
-   "source": "docs/reports/current-context-new-triage/README.md",
-   "recorded_by": "CURRENT-CONTEXT-NEW-TRIAGE-D3"
-  },
-  {
    "id": "CROSS-UNIT-MEMBER-NAMED-SCOPE-PER-UNIT",
    "title": "Every caller that declares a member-named home holds and replays it, though it may invoke no member that delivers it",
    "why": "Rule 4c's reachability counts the run-wide member-named set (RunMemberFacts::named_functions) in every caller. LINK-STANDING-IMPORT-LIMITERS leaves out, on a derived run, the names a caller has no token for; a caller that declares them (Monkey units through their headers: 16 plugin-API homes in mk_http.c; librdkafka units: the 5 list destructors) still holds and replays them and spends budget on them. A caller can reach such a home only by invoking a member whose closure delivers it, or by calling a declaration whose callback clause invokes one. Holding fewer homes is fail-closed, so this is cost and budget precision only. DISCHARGE: scope the member-named homes per caller to the members it can invoke (spelled fields, and members named by the callback clauses of declarations it calls, transitively), with Lean parity in QCore.CrossUnitReplayBudget, and measure replay cost.",
@@ -14355,6 +14349,27 @@
    "why": "Registered by OPENSSL-PEM-CALLBACK-ARM (opt-in current run at 046accf6). rd_kafka_ssl_PKEY_from_string and rd_kafka_ssl_X509_from_string (rdkafka_ssl.c:761, 833) refuse callback-uncontracted: rd_kafka_transport_ssl_passwd_cb has no validated summary (it calls rd_kafka_dbg and rd_kafka_log). rd_kafka_conf_ssl_passwd_cb (rdkafka_cert.c:51) is reached at rdkafka_cert.c:349, 405 only behind the member store cert->x509 / cert->pkey of the returned reference (indirect memory access is outside the resource projection); rdkafka_cert.c:272 and rdkafka_ssl.c:1292 call the reader in a while condition and rdkafka_ssl.c:790 in an if condition (unmodeled call in a condition). DISCHARGE: an identity contract in force for rd_kafka_transport_ssl_passwd_cb (its logging contracted or a declared summary), and the member-store and condition-call readings, measured on the opt-in run.",
    "source": "docs/reports/openssl-pem-callback-arm/README.md",
    "recorded_by": "OPENSSL-PEM-CALLBACK-ARM"
+  },
+  {
+   "id": "CG25-THREAD-KEY-SETTER-PLACE",
+   "title": "Admit pthread_setspecific on a tracked automatic key",
+   "why": "Rule 11v (7) tracks the one automatic thread key object and admits a certified getter, but pthread_setspecific's declaration is withheld from the function map (rule 12t's retained_by route), so its key is no custody actual and a setter naming a tracked key refuses the function under rule 11v (6). Admitting it needs the retention route to carry the key's place at a kinded by-value use position (and rule 11v (7)'s certified-use check over it). No Fluent Bit or Monkey row tracks a key, so nothing measured waits on it.",
+   "source": "docs/reports/cg25-thread-key-automatic-revisit/README.md",
+   "recorded_by": "CG25-THREAD-KEY-AUTOMATIC-REVISIT"
+  },
+  {
+   "id": "CG25-IN-PLACE-REGEX-USE-CERTIFIED",
+   "title": "A regex use before the status test or on the failure edge is admitted Safe",
+   "why": "CG25's in-place use (QCore.ResourceKinds.transferI .use, route G's report_kind_violations) checks only the released bit, so for the regex kind `t = regexec(&re, …)` before `if (r)` tests regcomp's status, or on the nonzero (failure) edge, is admitted Safe (probe R3/R4 in the CG25-THREAD-KEY-AUTOMATIC-REVISIT report). Rule 11v (7) closes the same shape for thread keys only (report_uncertified_key_uses). The only tracked regex object on any route, rd_regex_match, uses `re` only after the zero edge, so no published Safe rests on it. Extending the certified-use check to by-address uses of every in-place kind is a semantic change for the regex kind.",
+   "source": "docs/reports/cg25-thread-key-automatic-revisit/README.md",
+   "recorded_by": "CG25-THREAD-KEY-AUTOMATIC-REVISIT"
+  },
+  {
+   "id": "CG25-IN-PLACE-REGEX-SHADOWED-NAME",
+   "title": "A regex local shadowing a file-scope object is tracked across both",
+   "why": "one_automatic_object counts only the VarDecls inside the function, so a block-scope `regex_t g;` that shadows a file-scope `regex_t g;` is tracked under a name the body also uses for the file-scope object: `{ regex_t g; r = regcomp(&g, p, 0); if (r) return 0; } regfree(&g);` is certified Safe though the local is never freed and the regfree frees the file-scope object (probe R2 in the CG25-THREAD-KEY-AUTOMATIC-REVISIT report). Rule 11v (7) requires every DeclRefExpr of a tracked key to designate its one declaration (every_reference_is); the regex kind lacks that check. rd_regex_match, the only tracked regex object on any route, shadows nothing, so no published Safe rests on it.",
+   "source": "docs/reports/cg25-thread-key-automatic-revisit/README.md",
+   "recorded_by": "CG25-THREAD-KEY-AUTOMATIC-REVISIT"
   }
  ],
  "updated": "Completed plugin premise integration; exact hand-maintained union retains810followups, borrowed measured-source8419Rust/354Lean/freshcard133provider, exact source equivalence checked; authoritative root committed-matrix Python confirmation in integration receipt. CMetrics map/opts API model specifications added at the explicit user request. Eight declared-model API contracts remain outside interpreted views, with CMT-MAP-OPTS-CONTRACT-ADOPTION and CMT-LABELED-HASH-ZERO-STATIC-STORAGE Open. No trusted API coverage is claimed; the source gate is recorded by this card alongside its separate initializer native checkpoint. W48-CMT-TRACKED-INTERIOR-SELF-INIT implements rule 36b's checked initializer effect transport for an exact live owned root or embedded record, retaining actual self writes, invalidating aliased member facts and preserving resource obligations; nondefault custody frames refuse and no ordinary summary is exported. The canonical CFL intrusive_list.qv declares matching audit preconditions/effects; two CMetrics .qv modules add six map and two opts lifecycle models, including transitive ownership, partial failure, borrowed results and uncleared cleanup fields. All remain outside interpreted views; checked API adoption and labeled zero-hash storage accounting have named Open follow-ups. Fresh BASE/planner precedes prediction f18d96065 and implementation; the later contract amendment 08da23123 precedes .qv edits. Native corpus BASE/TIP Safe/Unknown/Pending/provisional-Unsafe: 1009 / 3816 / 0 / 9 to 1011 / 3814 / 0 / 9; full system/slice, 5781 NULL dictionaries and runtime projections are compared, 241 semantic leaves accounted, zero unexplained leaves and no prior Safe loss. Gate 8654 Rust / 370 Lean / 374 Python, provider 133 Rust / 25 Python and all five package verifies pass. The actual deep source reader uses 328 KiB below 1 MiB. Full getter closure remains Open; W48-CMT-SELF-INIT-DISJOINT-FRAMES tracks the next bounded frame extension, and W48-EXACT-RETURN-WITNESS-PRECISION is unchanged. Native evidence is isolated to measured e92d8aef35a8bd14550e90219d19a56eb3b196e7; later source gate 2d0d85299b830aa24d7f200d63a308653582363f validates the added declared API models separately; see docs/reports/w48-cmt-tracked-interior-self-init/README.md."

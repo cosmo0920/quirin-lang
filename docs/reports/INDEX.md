@@ -211,6 +211,10 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [cg25-resource-kinds](cg25-resource-kinds/README.md) | CG25-RESOURCE-KINDS: a library-handle kind and an in-place kind |
 
+| [cg25-thread-key-automatic-revisit](cg25-thread-key-automatic-revisit/README.md) | CG25-THREAD-KEY-AUTOMATIC-REVISIT |
+
+| [cg25-void-cast-guard-escape](cg25-void-cast-guard-escape/README.md) | CG25-VOID-CAST-GUARD-ESCAPE |
+
 | [cg26-tail-residual-actuals](cg26-tail-residual-actuals/README.md) | CG26-TAIL-RESIDUAL-ACTUALS |
 
 | [cg26-variadics](cg26-variadics/README.md) | CG26-VARIADICS: the `va_list` protocol and trailing actuals per position |
