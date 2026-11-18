@@ -298,6 +298,25 @@ are exactly the predicted ones:
   projection`), as the I/O rows did in the SSL_CTX slots card.
 * `mk_http_thread_destroy`: the null retention refusal leaves (above).
 
+**On the merge with main `caaf5304e`** (r29, OPENSSL-PEM-CALLBACK-ARM;
+merge `a3c93bc66`, no conflict), the pair was run again with the same script
+and inputs:
+
+* main: main's binary and tree `caaf5304e`;
+* merge: the merge's binary and tree `a3c93bc66`.
+
+The results ([comparison](evidence/opt-in/comparison-main-merge.json),
+[summaries](evidence/opt-in/)):
+
+* Both runs exit 0, with checkers exit 0.
+* Both show 1098 / 2 / 3699 / 5. Bindings go from 66 to 78, all `Pending`.
+* No move and no unmatched row. The same 5 rows change content, identically.
+
+After the merge, the OpenSSL lock against main differs only by this card's
+12 added and 9 changed entries; main's PEM digests are untouched. That
+comes from `quirin-audit pin` rerun on the merge, which left the merged lock
+byte-identical, and from the regenerated load path, likewise identical.
+
 **Where the prediction was wrong in detail:**
 
 * No row reached candidate classification on a new slot, so no
@@ -312,7 +331,35 @@ are exactly the predicted ones:
 
 ## 7. Gate
 
-GATE-PLACEHOLDER
+Command: `python3 scripts/gate_scope.py --base caaf5304e --out private/gate-2`,
+run through `private/toolchain/env.sh` (Clang 21.1.8, Lean 4.35.0).
+
+* Tree: `7928ac4d4`, the merge with main plus its measurement evidence. The
+  report and amendment edits were uncommitted, docs only.
+* Mode: full scope, because the diff reaches `qcore-c-gateway`. The provider
+  gate is included.
+* Record: [`gate/gate-1.json`](gate/gate-1.json). Logs: `private/gate-2/`.
+* Result: `gate_scope: 14 steps passed`, exit 0.
+
+| Step | Exit | Counts |
+|---|---:|---|
+| submodules, `fmt`, `clippy` | 0, 0, 0 | 1 submodule |
+| Rust suite | 0 | 661 units, 706 summaries; 9683 passed, 0 failed, 21 ignored, 148 filtered |
+| `reevaluation_probe`, `reevaluation_followup` | 0, 0 | |
+| Lean (`check_lean_audits.py`) | 0 | 449 audits |
+| Python suite | 0 | 779 tests |
+| provider package build, verify-all, verify `qcore.libevent` | 0, 0, 0 | |
+| provider tests | 0 | 49 summaries; 155 passed, 0 failed, 1 ignored |
+| provider fmt, provider clippy | 0, 0 | |
+
+**Before the merge**, outside the gate on `d9acdc80e`, a plain Python run
+failed 2 of 779 tests (`private/python-pre.log`), both known noise:
+
+* the committed matrix's `lean_audits` read 446 against 448 produced;
+* the `test_gate_slot_lane` status flake.
+
+A first gate against `bd6b63ead` (`private/gate-1`) was stopped unfinished
+when the coordinator asked for the merge. It is not evidence.
 
 ## 8. Follow-ups
 
