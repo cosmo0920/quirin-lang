@@ -11608,7 +11608,9 @@ an undeclared OpenSSL producer). `QCore.NullableReferenceDrop` (12 audited,
     elaborator (rule 10s) and the `va_arg` route (rule 12c) all refused, with
     no brace, no opaque callee, no tracked descriptor read as data, and
     direct calls only (none nested in another's actuals, none through a
-    member or a parenthesised expression, no `__builtin_expect` hint).
+    member or a parenthesised expression; `__builtin_expect(E, K)` with `K`
+    one token of decimal digits is read through as rule 5h reads it, any
+    other hint refuses, and (1) is not asked under a hint).
     (1) **The residual read.** One leaf (no top-level `&&`, `||` or `?:`), no
     assignment, compound assignment, increment or decrement. Each call is
     instantiated through the one application point (rule 10u, use
@@ -11630,7 +11632,9 @@ an undeclared OpenSSL producer). `QCore.NullableReferenceDrop` (12 audited,
     refusal.** Otherwise, when the condition's direct calls are, in textual
     order, instantiable calls followed by one the classifier refuses with
     exactly ``call to uncontracted function `F` `` for its own callee `F`,
-    the position's refusal node is replaced by a one-node plan holding
+    and `F` names a function (no formal, no declared local, no `( * F )`
+    declarator in the unit: a call through a pointer object is an open set,
+    rule 11p), the position's refusal node is replaced by a one-node plan holding
     `Unknown` with the description ``call to uncontracted function `F` in
     branch condition`` (`loop`, `for-loop`, `do-while` for the other
     positions), the condition's writes and both exits, which the planned

@@ -315,6 +315,28 @@ fn the_named_refusal_keeps_the_node_and_its_exceptions() {
         "Unknown",
         &["unsupported:unmodeled call, aggregate or indirect access in return expression"],
     );
+    // A literal branch hint is read through, as rule 5h reads it; a hint
+    // whose second operand is not one literal keeps the position's text.
+    expect(
+        "a literal hint is transparent",
+        "int w(int a) { if (__builtin_expect(ext(a) == 2, 0)) return 1; return 0; }",
+        "Unknown",
+        &[EXT],
+    );
+    expect(
+        "a hint with a call keeps the position's text",
+        "int w(int a) { if (__builtin_expect(a == 2, ext(a))) return 1; return 0; }",
+        "Unknown",
+        &[BRANCH],
+    );
+    // A call through a function-pointer formal is an open set, not an
+    // uncontracted function: the position's text.
+    expect(
+        "a call through a function pointer keeps the position's text",
+        "int w(int (*f)(int), int a) { if (f(a) == 2) return 1; return 0; }",
+        "Unknown",
+        &[BRANCH],
+    );
     expect(
         "a descriptor read keeps the position's text",
         "int w(const char *p) { int fd = k_open(p); if (fd < 0) return 0; if (ext(fd) == 2) { k_close(fd); return 1; } k_close(fd); return 0; }",

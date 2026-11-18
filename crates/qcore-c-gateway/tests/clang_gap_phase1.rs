@@ -470,16 +470,23 @@ fn e13_condition_leaf_composition_is_partial() {
         ));
         assert!(run.safe(), "{condition}: {run:?}");
     }
-    for condition in [
-        "r_borrow_code(p) == i++",
-        "r_borrow_code(p) == s->a",
-        "!(r_borrow_code(p) == 0 || (r_borrow_code(p) == 1 && opaque()))",
-    ] {
+    // Re-pinned deliberately by AG3-CONDITION-RETURN-CALLS (gateway rule
+    // 63): the `opaque()` operand's refusal is named by rule 63 (2). The
+    // `s->a` residual stays refused: the lexical typed read does not read
+    // this fixture's `struct S` member, so rule 63 (1) declines.
+    for condition in ["r_borrow_code(p) == i++", "r_borrow_code(p) == s->a"] {
         let run = gs(&format!(
             "void subject(struct S *s) {{ void *p = q_alloc(); int i = 0; if ({condition}) {{ }} q_free(p); }}"
         ));
         assert!(run.refused(BRANCH), "{condition}: {run:?}");
     }
+    let run = gs(
+        "void subject(struct S *s) { void *p = q_alloc(); int i = 0; if (!(r_borrow_code(p) == 0 || (r_borrow_code(p) == 1 && opaque()))) { } q_free(p); }",
+    );
+    assert!(
+        run.refused("call to uncontracted function `opaque` in branch condition"),
+        "{run:?}"
+    );
     let run =
         gs("void subject(int (*f)(void *)) { void *p = q_alloc(); if (f(p)) { } q_free(p); }");
     assert!(run.refused(BRANCH), "{run:?}");

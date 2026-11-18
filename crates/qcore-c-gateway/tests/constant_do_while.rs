@@ -332,10 +332,11 @@ fn an_unmodeled_do_while_condition_keeps_its_refusal() {
         return;
     }
     let run = run("void subject(void) { do { } while (z_unknown(1)); }");
+    // Re-pinned deliberately by AG3-CONDITION-RETURN-CALLS (gateway rule 63) (2): the do-while refusal names the
+    // uncontracted callee with the position's own suffix.
     assert!(
-        run.unsupported()
-            .iter()
-            .any(|description| description == DO_WHILE_REFUSAL),
+        run.unsupported().iter().any(|description| description
+            == "call to uncontracted function `z_unknown` in do-while condition"),
         "the unmodeled condition keeps its own refusal: {:?}",
         run.unsupported()
     );

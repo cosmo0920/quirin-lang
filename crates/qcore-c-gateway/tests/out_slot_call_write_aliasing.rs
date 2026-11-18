@@ -210,8 +210,7 @@ fn caller_refused(variable: &str) -> Outcome {
         "Unknown".to_owned(),
         vec![
             format!("unknown_alias:{variable}"),
-            "unsupported:unmodeled call, aggregate or indirect access in branch condition"
-                .to_owned(),
+            "unsupported:call to uncontracted function `r` in branch condition".to_owned(),
         ],
         Vec::new(),
     )
@@ -407,7 +406,7 @@ fn a_stated_out_position_beside_a_reaching_one_poisons_the_slot() {
                     vec![
                         "unknown_alias:p".to_owned(),
                         "unknown_alias:q".to_owned(),
-                        "unsupported:unmodeled call, aggregate or indirect access in branch condition"
+                        "unsupported:call to uncontracted function `r` in branch condition"
                             .to_owned(),
                     ],
                     Vec::new(),

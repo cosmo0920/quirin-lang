@@ -159,10 +159,6 @@ fn every_refusal_arm_is_pinned() {
             "void *p = q_alloc(); if ((n = r_borrow_code(p)) != 0) { } q_free(p);",
             "AssignmentDestination(\"n\")",
         ),
-        (
-            "void *p = q_alloc(); int a[2] = {0}; if (r_borrow_code(p) == a[n]) { } q_free(p);",
-            "ResidualRefused",
-        ),
         // Card CG08-CASTS-AND-TYPE-QUERIES (rule 11b) admits the unevaluated
         // `sizeof(buf)` this arm's fixture used; an evaluated operand with a
         // store (`char[n++]`) is still refused by the elaborator.
@@ -182,4 +178,15 @@ fn every_refusal_arm_is_pinned() {
         );
         assert!(refused, "{body}: {answers:?}");
     }
+    // Re-pinned deliberately by AG3-CONDITION-RETURN-CALLS (gateway rule 63) (1): the desugaring still answers
+    // `ResidualRefused` for a call-bearing leaf whose residual reads memory;
+    // the condition is then decided by rule 63 after it, so the lowering is
+    // no longer the refusal.
+    let body = "void *p = q_alloc(); int a[2] = {0}; if (r_borrow_code(p) == a[n]) { } q_free(p);";
+    let (answers, refused) = consultations(body);
+    assert!(
+        answers.iter().any(|answer| answer == "ResidualRefused"),
+        "{body}: {answers:?}"
+    );
+    assert!(!refused, "{body}: {answers:?}");
 }

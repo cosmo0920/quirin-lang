@@ -65,11 +65,11 @@ pub(crate) const RESIDUAL_READS: bool = true;
 pub(crate) const UNCONTRACTED_ATTRIBUTION: bool = true;
 
 /// Names a call-shaped token pair that this rule never reads as a call.
-const NOT_CALLEES: [&str; 3] = [
-    "__builtin_expect",
-    "__builtin_expect_with_probability",
-    "__builtin_choose_expr",
-];
+const NOT_CALLEES: [&str; 2] = ["__builtin_expect_with_probability", "__builtin_choose_expr"];
+
+/// The branch hint rule 5h reads as its first operand when its second is one
+/// token of decimal digits (`likely`/`unlikely`).
+const HINT: &str = "__builtin_expect";
 
 /// The classifier's text for a call whose callee has no contract in force.
 pub(super) fn uncontracted_description(callee: &str) -> String {
@@ -123,16 +123,41 @@ fn close_of(texts: &[&str], open: usize) -> Option<usize> {
     None
 }
 
-/// The direct calls of `texts`, `(callee, close)` in textual order, or
-/// `None` when a call is nested in another call's actuals, is made through
-/// a member or a parenthesised expression, or is a hint.
-fn direct_calls(texts: &[&str]) -> Option<Vec<(usize, usize)>> {
+/// The second operand of `__builtin_expect ( E , K )` at `open` (its `(`)
+/// when it is one token of decimal digits: rule 5h reads the hint as `E`.
+fn literal_hint(texts: &[&str], open: usize, close: usize) -> bool {
+    let mut depth = 0usize;
+    let mut comma = None;
+    for (index, text) in texts.iter().enumerate().take(close).skip(open + 1) {
+        match *text {
+            "(" | "[" => depth += 1,
+            ")" | "]" => depth = depth.saturating_sub(1),
+            "," if depth == 0 => {
+                if comma.is_some() {
+                    return false;
+                }
+                comma = Some(index);
+            }
+            _ => {}
+        }
+    }
+    comma.is_some_and(|comma| {
+        close == comma + 2 && texts[comma + 1].chars().all(|ch| ch.is_ascii_digit())
+    })
+}
+
+/// The direct calls of `texts`, `(callee, close)` in textual order, and
+/// whether a literal branch hint was read through; `None` when a call is
+/// nested in another call's actuals, is made through a member or a
+/// parenthesised expression, or is another hint.
+fn direct_calls(texts: &[&str]) -> Option<(Vec<(usize, usize)>, bool)> {
     // A call through a parenthesised expression (or a cast of a group):
     // `( … ) (`.
     if texts.windows(2).any(|pair| pair == [")", "("]) {
         return None;
     }
     let mut calls: Vec<(usize, usize)> = Vec::new();
+    let mut hinted = false;
     for index in 0..texts.len().saturating_sub(1) {
         if texts[index + 1] != "(" {
             continue;
@@ -151,9 +176,17 @@ fn direct_calls(texts: &[&str]) -> Option<Vec<(usize, usize)>> {
         if calls.iter().any(|(_, end)| index < *end) {
             return None;
         }
+        if name == HINT {
+            // Transparent, as rule 5h reads it; anything else refuses.
+            if !literal_hint(texts, index + 1, close) {
+                return None;
+            }
+            hinted = true;
+            continue;
+        }
         calls.push((index, close));
     }
-    Some(calls)
+    Some((calls, hinted))
 }
 
 /// Whether `texts` holds an assignment, compound assignment, increment or
@@ -216,11 +249,12 @@ impl Parser<'_> {
         if descriptor_custody::value_carries_descriptor(&texts, &self.descriptor_names).is_some() {
             return None;
         }
-        let calls = direct_calls(&texts)?;
+        let (calls, hinted) = direct_calls(&texts)?;
         if calls.is_empty() {
             return None;
         }
-        if let Some(plan) = self.residual_read_plan(condition, &texts, &calls) {
+        // The residual read is asked only for a condition with no hint.
+        if !hinted && let Some(plan) = self.residual_read_plan(condition, &texts, &calls) {
             return Some(plan);
         }
         self.named_uncontracted_refusal(condition, &texts, &calls, position)
@@ -303,6 +337,22 @@ impl Parser<'_> {
         Some(Box::new(ConditionPlan { nodes, entry: 0 }))
     }
 
+    /// Whether `name` designates a function rather than a function pointer
+    /// object: no formal, no declared local, and no `( * name )` declarator
+    /// anywhere in the unit. A call through a pointer object is an open set
+    /// (rule 11p), never an "uncontracted function"; it keeps the
+    /// position's text.
+    fn names_a_function(&self, name: &str) -> bool {
+        !self.formal_parameters.contains(name)
+            && !self.position_declared_local(name)
+            && !self.tokens.windows(4).any(|window| {
+                window[0].text == "("
+                    && window[1].text == "*"
+                    && window[2].text == name
+                    && window[3].text == ")"
+            })
+    }
+
     /// Rule 63 (2).
     fn named_uncontracted_refusal(
         &mut self,
@@ -321,7 +371,8 @@ impl Parser<'_> {
             match self.instantiate_call(name, &condition[callee..=close], None, ResultUse::Tested) {
                 Ok(_) => continue,
                 Err(CallRefusal::Unapplied(description))
-                    if description == uncontracted_description(name) =>
+                    if description == uncontracted_description(name)
+                        && self.names_a_function(name) =>
                 {
                     named = attributed_description(name, position);
                     break;
