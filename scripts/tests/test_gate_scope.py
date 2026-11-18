@@ -416,7 +416,12 @@ class RealRepository(unittest.TestCase):
             readers = sorted({reader.crate for reader in self.model.readers_of(path)})
             result = scope_mod.plan([path], self.model)
             self.assertEqual(result["mode"], "scoped", (path, result["full_reasons"]))
-            self.assertTrue(set(readers) <= set(result["rust_packages"]), (path, readers))
+            # A crate claims the record through its package or, when only a
+            # test target reads it (CG22-CALLBACK-CANDIDATE-LINK-PREMISE's
+            # qcore-audit test of the profiles' link maps), that target.
+            claimed = set(result["rust_packages"]) | {
+                target.split("::")[0] for target in result["rust_targets"]}
+            self.assertTrue(set(readers) <= claimed, (path, readers))
             self.assertTrue(result["python_reasons"], path)
 
     def test_the_census_is_json(self):

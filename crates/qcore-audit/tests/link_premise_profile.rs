@@ -59,18 +59,28 @@ const ADDED: [(&str, &str); 4] = [
     ),
 ];
 
-fn repository() -> PathBuf {
-    Path::new(env!("CARGO_MANIFEST_DIR")).join("../..")
-}
+/// The committed profiles' stated link maps, byte for byte.
+const EIGHT_HOME_MAP: &str = include_str!("../../../contract/evaluations/eight-home/link-map.json");
+const TWELVE_HOME_MAP: &str =
+    include_str!("../../../contract/evaluations/twelve-home/link-map.json");
 
+/// Rule 4c's loader over a profile's committed map (written to a private
+/// file, as the route reads it from `QCORE_CROSS_UNIT_LINK_MAP`).
 fn profile_map(profile: &str) -> LinkMap {
-    LinkMap::load(
-        &repository()
-            .join("contract/evaluations")
-            .join(profile)
-            .join("link-map.json"),
-    )
-    .expect("the profile's stated link map loads")
+    let bytes = match profile {
+        "eight-home" => EIGHT_HOME_MAP,
+        "twelve-home" => TWELVE_HOME_MAP,
+        other => panic!("no committed map for {other}"),
+    };
+    let path: PathBuf = std::env::temp_dir().join(format!(
+        "qcore-link-premise-{profile}-{}-{:?}.json",
+        std::process::id(),
+        std::thread::current().id()
+    ));
+    std::fs::write(&path, bytes).expect("a private copy of the map");
+    let map = LinkMap::load(Path::new(&path)).expect("the profile's stated link map loads");
+    std::fs::remove_file(&path).expect("cleanup");
+    map
 }
 
 fn clang_available() -> bool {
