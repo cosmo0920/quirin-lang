@@ -411,3 +411,37 @@ Registered or amended in [integration-amendments.json](integration-amendments.js
   failure), so it is not this card's; recorded for the integrator.
 - `W44-CONDITION-CALL-UNCONTRACTED`, `W45-RETURN-POINTER-RESULT-READS`,
   `W43-RETURN-COMPOUND-CALL` (amended with this card's measurement).
+
+## 9. Gate
+
+`python3 scripts/gate_scope.py --base a9c6dcf44 --out private/gate-N` (mode
+full: the diff reaches `qcore-c-gateway`), logs under `private/gate-N/`:
+
+- **Attempt 1** (tip `fd53cf421` era): never ran its steps (the shared disk
+  filled while it queued); exit 120.
+- **Attempt 2** (tree between `2fd136288` and `fd53cf421`): Rust 16 failing
+  units, the rule's first placement (reading-site artifact digest of the
+  pinned desugaring file, text re-pins, the value-connective interaction);
+  exit 1. It drove §2's relocation and §6's re-pins.
+- **Attempt 3** (tip `78427060e`, the measured analyzer): submodules 0, fmt
+  0, **Clippy 101** (two test constants left unused by the re-pins), **Rust
+  101: 661 units, 9,696 passed, 1 failed, 21 ignored** (the failure is
+  `qcore-audit::libcurl_user_crate_versions`, below), reevaluation probe 0
+  and follow-up 0, **Lean 0 (449 audits)**, Python 0 (779 tests).
+- **Fixes after attempt 3** (`f61407d64`, tests only): the two constants.
+  Clippy `cargo clippy --all-targets -- -D warnings` on the fixed tree: 0
+  (`private/ag3/clippy-check2.log`; attempt 4's own Clippy step: 0).
+- **Attempt 4** (final tree `1bf6deb15`): fmt 0, Clippy 0; its Rust suite was
+  still 11th in the shared audit queue after more than an hour and was
+  stopped by this card (its own PID); not run.
+- **Python on the final tree** (`python3 -m unittest discover -s
+  scripts/tests`, `private/ag3/python-final.log`): exit 1, 779 tests, the one
+  failure the stale matrix Lean-audit count (`['28.0.0', 448] !=
+  ['28.0.0', 449]`, the new audit; the integrator's matrix regeneration
+  clears it).
+- **libcurl test**: `the_libcurl_ranges_follow_the_audited_curlver_header`
+  failed in attempts 2 and 3, alone (`private/ag3/libcurl-rerun.log`), and
+  alone with both rule-63 switches off (`private/ag3/libcurl-off.log`): not
+  this card's (`LIBCURL-USER-CRATE-VERSIONS-UNREADABLE-HEADER`).
+- Targeted Rust reruns of every unit attempt 2 failed, on the final rule
+  (`private/ag3/targeted3.log` … `targeted6.log`): all pass.
