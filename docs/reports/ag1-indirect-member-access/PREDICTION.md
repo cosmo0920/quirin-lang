@@ -79,3 +79,59 @@ none
   was their cause.
 - Sole-blocker rows of the access refusal: 232 -> about 225–230.
 - No Safe -> non-Safe move.
+
+## Revision 2 (after the first unit reproduction, before the narrowing commit)
+
+The first AFTER run of the committed rule (`b10211ad4`; unit-scoped `current`,
+135 units, BEFORE binary `400317f6…`, AFTER `ff179785…`;
+[artifacts/compare-current-v1.json](artifacts/compare-current-v1.json))
+moved 11 rows: Unknown -> Safe `rd_kafka_topic_partition_new` (predicted),
+`rd_kafka_topic_partition_new_with_id_and_name`, `ut_ack_create_message`,
+`cJSON_CreateStringReference`, `cJSON_CreateObjectReference`,
+`cJSON_CreateArrayReference`; **Safe -> Unknown**
+`rd_kafka_topic_partition_set_leader_epoch`,
+`rd_kafka_topic_partition_set_current_leader_epoch` (`unresolved resource
+identity parpriv`) and `rd_kafka_topic_partition_set_from_fetch_pos` (its
+callee lost its summary); **Unknown -> Unsafe** `ut_case_acknowledge_accept`
+and `ut_case_acknowledge_multiple_partitions`.
+`rd_kafka_share_ack_batch_entry_new` did not move (a finding to explain in
+the README). The prediction's "no Safe -> non-Safe move" was wrong.
+
+**Cause of the Safe -> Unknown rows.** `parpriv =
+rd_kafka_topic_partition_get_private(rktpar); parpriv->leader_epoch = e;`:
+the accessor's declared result is `resource_return_borrowed_from(rktpar,
+nonnull)`, so the aggregate store, now reading `parpriv` as its base, refuses
+the owner (not an identity this body acquired) where the typed route (rule
+10t) read the scalar store before. **Narrowing (revision 2):** rule 61 also
+requires the local's one binding to be a direct call whose contract in force
+returns an **owned** result (a record this body allocated). Predicted on the
+same 135 units: the three Safe -> Unknown rows stay Safe (no move); every
+Unknown -> Safe row above still moves (each binds its record from
+`rd_calloc` or the owned `cJSON_New_Item`); the two Unknown -> Unsafe rows
+still move: `ut_ack_create_message` (`rkmessage = rd_calloc(…)`) now has a
+validated summary returning an owned message, and both unit-test callers
+return early from `RD_UT_ASSERT` failure paths before
+`ut_ack_destroy_message(msg)` (`rdunittest_acknowledge.c:261`, `:533–534`). That
+is a provisional `Unsafe` on librdkafka's unit-test failure paths, reported as
+the analysis's finding and never as an upstream defect.
+
+```measure-prediction
+route corpus
+move rdkafka_partition.c::rd_kafka_topic_partition_new Unknown -> Safe
+move rdkafka_partition.c::rd_kafka_topic_partition_new_with_id_and_name Unknown -> Safe
+move cJSON.c::cJSON_CreateStringReference Unknown -> Safe
+move cJSON.c::cJSON_CreateObjectReference Unknown -> Safe
+move cJSON.c::cJSON_CreateArrayReference Unknown -> Safe
+move rdunittest_acknowledge.c::ut_ack_create_message Unknown -> Safe
+move rdunittest_acknowledge.c::ut_case_acknowledge_accept Unknown -> Unsafe
+move rdunittest_acknowledge.c::ut_case_acknowledge_multiple_partitions Unknown -> Unsafe
+route system
+none
+route slice
+none
+```
+
+Corpus and twelve-home: these rows where the corpus analyses the same units
+(its `rdkafka_partition.c` and `rdkafka_share_acknowledgement.c` are
+byte-identical; the others are to be confirmed by the integrator's
+measurement). `current`: the same moves, no Safe -> non-Safe move.
