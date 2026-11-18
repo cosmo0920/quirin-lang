@@ -1,0 +1,55 @@
+{
+ "schema": "quirin-amendments/1",
+ "card": "AG1-INDIRECT-MEMBER-ACCESS",
+ "base": "a9c6dcf44",
+ "measured_tip": "c3c57d83d",
+ "profiles": [],
+ "increment_paragraph": "**AG1-INDIRECT-MEMBER-ACCESS** (round 33; USER DECISION 2026-11-18, \"We need to launch those of the implementation cards to resolve the biggest gaps of analyzing works of the corpus of fluent-bit source tree.\"; gateway rule 61; Lean `QCore.TypedefAggregateBase`; [report](../../reports/ag1-indirect-member-access/README.md)). Census of `indirect memory access is outside the resource projection` on the user's 046accf6 `current` run (186 of 186 analysed texts rebuilt sha256-exact, MEMBER-ACCESS-PROJECTION's AST census reused; a unit-scoped indirect-census run reproduces 3,393 of 3,394 rows): 9,560 leaf groups on 2,265 Unknown rows, 232 rows blocked by it alone, split into concrete sub-shapes with owners; every sub-shape blocking more than three rows alone is a decision class (class 1 list/member retention, class 3 reference counts), a design refusal (rule 5k element releases, rule 10v identity-carrying values, rule 10w union pointer stores, rule 14a's one call), a contract question (uncontracted callees whose actuals no reader reads; `rd_kafka_op_err_destroy` behind the mock API's nested return) or MEMBER-EFFECT-STORES. Rule 61 reads the one sound sub-shape that is a reading defect: a local declared exactly `A * NAME` through a typedef every declaration of which names one complete, non-union struct (a defining `typedef struct TAG { … } A;`, or librdkafka's forward-and-defining pair the shared reader could not compare), bound once from a call returning an owned result, is `struct TAG *` for O04-B08's base premises; such an alias's pointee is never variably modified for a `sizeof` operand. The first unit reproduction moved three rows Safe -> Unknown (an accessor's borrowed child read as the base), so the owned-binding fact was added before any record. Measured by unit reproduction (135 units, the narrowed rule): see the report's section 4. Follow-ups AG1-TWO-BORROWED-CALLS, RK-OP-ERR-DESTROY-CONTRACT, AG1-POINTER-TYPEDEF-MEMBER, AG1-FORMAL-ARRAY-ELEMENTS-RELEASED.",
+ "status_paragraph": null,
+ "ledger": [
+  {
+   "id": "W44-CALL-RESULT-INDIRECT-DESTINATION",
+   "operation": "amend",
+   "text": "AG1-INDIRECT-MEMBER-ACCESS (gateway rule 61): a call result stored into `L->F` of a local aggregate this body acquired is now read by O04-B08 also where `L` is spelled through a struct alias (a defining typedef, or a forward and a defining pair), the librdkafka constructor shape (`rd_kafka_topic_partition_new`). Still refused: a formal parent (MEMBER-EFFECT-STORES), a union member path, a member of a member (`rko->rko_u.mock.name`), an element (`ret->topics[i]`), a pointer-typedef member (AG1-POINTER-TYPEDEF-MEMBER) and a store on one arm only (rule 11c's escape refusal).",
+   "source": "docs/reports/ag1-indirect-member-access/README.md"
+  },
+  {
+   "id": "MEMBER-EFFECT-STORES",
+   "operation": "amend",
+   "text": "AG1-INDIRECT-MEMBER-ACCESS census on the 046accf6 current run: an owned result stored into a formal's member blocks 11 Unknown rows alone and is mentioned by 15 of the 232 rows the access refusal alone blocks (`rd_buf_init`, `rd_kafka_snappy_init_env`, `rd_kafka_topic_partition_list_grow`, `rd_list_grow`, `otel_span_set_attributes`); the leaf stays the gate's text where rule 38i's premises (a whole call whose actuals read no memory) do not hold.",
+   "source": "docs/reports/ag1-indirect-member-access/README.md"
+  },
+  {
+   "id": "AG1-TWO-BORROWED-CALLS",
+   "operation": "register",
+   "title": "A scalar statement or a nested call holding several Borrowed-only, None-result calls stays refused (rule 14a reads exactly one)",
+   "text": "Rule 14a admits a scalar statement whose value holds exactly one call whose contract has a None result and every position Borrowed, and says `Do not admit two calls` (QCore.ResidualAccessReadings.two_calls_are_never_read). Its own argument (such a call changes no binding any read decides on) holds for each of several calls, and for a nested `store(&d->x, load(&s->x))`. Shapes: `len = strlen(a->p) + strlen(b->q) + 2` (get_stream_path), `cmt_atomic_store(&dst->f, cmt_atomic_load(&src->f))` (cat_summary_values), `cmt_math_uint64_to_d64(cmt_atomic_load(&m->f))` (append_metric_value); AG1 probes s11 and s12 refused at a9c6dcf44. DISCHARGE: amend rule 14a (or 10y's data reading) with the generalised commutation lemma in Lean, fixtures with a releasing or owned call as the near-miss, and a measurement.",
+   "source": "docs/reports/ag1-indirect-member-access/README.md",
+   "recorded_by": "AG1-INDIRECT-MEMBER-ACCESS"
+  },
+  {
+   "id": "RK-OP-ERR-DESTROY-CONTRACT",
+   "operation": "register",
+   "title": "The librdkafka mock API's `return rd_kafka_op_err_destroy(rd_kafka_op_req(mcluster->ops, rko, -1));` stays refused: rd_kafka_op_err_destroy has no contract",
+   "text": "AG1-INDIRECT-MEMBER-ACCESS census on the 046accf6 current run: 8 Unknown rows are blocked by this return alone and 18 mention it (rd_kafka_mock_broker_set_down, _set_up, _set_rtt, _add, _decommission, _remove_from_metadata, rd_kafka_mock_set_apiversion, …; the other ten also store `rd_strdup` into the union member `rko->rko_u.mock.name`). rd_kafka_op_req is declared (rko consumed, owned nullable result); rd_kafka_op_err_destroy (rdkafka_op.c:903, `if (rko) { err = rko->rko_err; rd_kafka_op_destroy(rko); } return err;`) is not, and its body is in another unit, so the nested return cannot be read and rule 12k cannot name it. DISCHARGE: a provider declaration (resource_released(rko, nullable), scalar result) read off its body at the pinned revisions, with the provider gate, then the nested return under rule 10y.",
+   "source": "docs/reports/ag1-indirect-member-access/README.md",
+   "recorded_by": "AG1-INDIRECT-MEMBER-ACCESS"
+  },
+  {
+   "id": "AG1-POINTER-TYPEDEF-MEMBER",
+   "operation": "register",
+   "title": "A member declared through a pointer typedef (`cfl_sds_t name;`, `typedef char *cfl_sds_t`) is not a single-pointer member for the aggregate store",
+   "text": "The lexical reader records a pointer typedef unresolved, so a member spelled through one is in none of O04-B08's member classes and `ins_scope->name = cfl_sds_create(name)` stays refused on an acquired local (ctr_instrumentation_scope_create; AG1 probe s6). C11 6.7.8p3 makes the member exactly `char *`. 19 + 9 census leaf groups of owned-result stores into local members have a member type with no `*` in Clang's spelling. DISCHARGE: read a typedef whose every declaration is exactly `T *` over a resolved scalar or struct specifier as a single-pointer member for B08 only (as rule 61 reads the base), with Lean parity and fixtures.",
+   "source": "docs/reports/ag1-indirect-member-access/README.md",
+   "recorded_by": "AG1-INDIRECT-MEMBER-ACCESS"
+  },
+  {
+   "id": "AG1-FORMAL-ARRAY-ELEMENTS-RELEASED",
+   "operation": "register",
+   "title": "`for (i = 0; i < cnt; i++) X_destroy(arr[i]);` over a formal array stays refused (12 sole-blocker rows)",
+   "text": "AG1-INDIRECT-MEMBER-ACCESS census on the 046accf6 current run: the librdkafka `*_destroy_array` helpers (rd_kafka_AclBinding_destroy_array, rd_kafka_NewTopic_destroy_array, rd_kafka_DeleteGroup_destroy_array, … 12 rows) release every element of a caller's array and keep the array; rule 5k excludes an element release by design and rule 38j's member effect reads no loop. DISCHARGE: a stated elements-released effect over a formal array and its count (a summary the caller applies to its array's elements), a decision for the user since no existing mode states it.",
+   "source": "docs/reports/ag1-indirect-member-access/README.md",
+   "recorded_by": "AG1-INDIRECT-MEMBER-ACCESS"
+  }
+ ]
+}
