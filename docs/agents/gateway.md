@@ -6157,6 +6157,39 @@ own anchor here.
     `tests/openssl_unstated_callback_slots.rs`;
     [report](../reports/openssl-unstated-callback-slots/README.md).
 
+    **The OpenSSL handshake slots whose setters were undeclared** (card
+    OPENSSL-UNDECLARED-HANDSHAKE-CALLBACKS, amended in place; contract
+    specification C04.18, C04.19.3; user decision 2026-11-18).
+    `quirin-provider-openssl` states eighteen more opaque slots, one key per
+    documented callback: `ssl_ctx_st.keylog_callback`, `.alpn_select_cb`,
+    `.npn_select_cb`, `.npn_advertised_cb`, `.app_verify_callback`,
+    `.psk_client_callback`, `.psk_use_session_cb`, `.psk_server_callback`,
+    `.psk_find_session_cb`, `.client_hello_cb`, `.record_padding_cb`,
+    `.allow_early_data_cb` and the six custom extension callbacks
+    (`.custom_ext_{add,free,parse}_cb` and their `_ex` forms), registered by
+    the 21 setters their 3.5 pages name (`ssl_handshake.qv`) and invoked by
+    the four handshake and I/O calls (all eighteen) and `SSL_shutdown`
+    (record padding). A setter may register several slots, one clause each
+    (`SSL_CTX_add_custom_ext`, `SSL_CTX_add_client_custom_ext`,
+    `SSL_CTX_add_server_custom_ext`), and is a writer of each
+    (`Premise::SlotRegistered`, `registered_slots`). The narrowed premise,
+    statement unchanged, stays on the five declarations for the ctrl arms,
+    the CT validation slot (`SSL_CTX_enable_ct` writes the library's own
+    callback through no function pointer formal, so no registration can
+    declare its writer), the slots of setters still undeclared, a BIO's
+    methods and callbacks, and ex_data. No gateway code changed. **Do not**
+    state a slot one of whose page's writers takes no function pointer, or
+    read a registration of a multi-slot setter as covering only its shape's
+    slot. `QCore.OpensslHandshakeSlots`
+    (`a_further_registration_is_a_registration`,
+    `an_unlisted_registering_entry_refuses`,
+    `a_writer_without_the_registration_refuses`,
+    `a_library_written_slot_is_never_accepted`,
+    `an_unstated_slot_needs_the_premise`,
+    `stating_more_invocations_never_improves_a_verdict`);
+    `tests/openssl_undeclared_handshake_callbacks.rs`;
+    [report](../reports/openssl-undeclared-handshake-callbacks/README.md).
+
 <a id="constraint-12o"></a>
 
 12o. **A type-switched release reads, under an undecided discriminant, the

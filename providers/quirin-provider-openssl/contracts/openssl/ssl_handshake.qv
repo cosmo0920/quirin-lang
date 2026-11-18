@@ -1,0 +1,500 @@
+// SPDX-License-Identifier: Apache-2.0
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+module contract;
+
+// Card OPENSSL-UNDECLARED-HANDSHAKE-CALLBACKS. The setters of the handshake
+// callback slots OPENSSL-UNSTATED-CALLBACK-SLOTS left under the premise
+// `openssl_unstated_callback_slots` (see err.qv for what every declaration of
+// this crate shares, and ssl_io.qv for the invocations).
+//
+// Each slot is C04.19.3's opaque slot (rule 12n): a setter's registration
+// `resource_callback_slot_registered(H, ssl_ctx_st.FIELD, F)`, decided over
+// the run's closed set of what the slot's declared setters are handed. Every
+// writer the slot's 3.5 manual page names is declared here, and the page's
+// NAME list is exactly the slot's writers and not-writers (the checker's
+// `slot_writers_declared`). Where the page names an SSL setter beside the
+// context's, the two share one key: the page says the SSL inherits the
+// context's setting at SSL_new, so the SSL's slot holds a value one of the
+// setters was handed. A key whose field the library spells differently
+// internally (the custom extension callbacks live in a per-extension table)
+// names the documented callback, not a layout: the run never defines the
+// record, so the key is only the slot's name.
+//
+// A setter that the page says passes `arg` back to the callback keeps it for
+// the callback (C04.14, `resource_retained_by(arg, ctx)`); the caller keeps
+// custody of its object.
+//
+// Not stated here, and left under the premise on the handshake and I/O
+// calls: the certificate transparency validation slot, which
+// SSL_CTX_enable_ct and SSL_enable_ct write with the library's own callback
+// through no function pointer formal (SSL_CTX_set_ct_validation_callback,
+// 3.5), so no declaration can register what they write and the run's set
+// would miss it; and the methods and callbacks of a BIO the SSL holds.
+
+// SSL_CTX_set_keylog_callback: https://docs.openssl.org/1.1.1/man3/SSL_CTX_set_keylog_callback/
+// (also 3.5; no page at 1.0.2). No HISTORY entry, so the bound is the oldest
+// series that documents it. NAME (3.5): "SSL_CTX_set_keylog_callback,
+// SSL_CTX_get_keylog_callback, SSL_CTX_keylog_cb_func": the slot's one
+// writer. DESCRIPTION (3.5): it "sets the TLS key logging callback. This
+// callback is called whenever TLS key material is generated or received"
+// with "the ssl object associated with the connection, and line"; with NULL
+// "no logging of key material will be done". A registration into the keylog
+// slot. Pinned prototype: `void SSL_CTX_set_keylog_callback(SSL_CTX *ctx,
+// SSL_CTX_keylog_cb_func cb)`, with `typedef void (*SSL_CTX_keylog_cb_func)(const
+// SSL *ssl, const char *line)`.
+extern fn SSL_CTX_set_keylog_callback(ctx: ptr<mut, u8>, cb: fnptr) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, documented "1.1.1");
+    ensures normal resource_borrowed(ctx);
+    ensures normal resource_borrowed(cb);
+    ensures normal resource_callback_slot_registered(ctx, ssl_ctx_st.keylog_callback, cb);
+    ensures normal resource_return_none();
+};
+
+// SSL_CTX_set_alpn_select_cb: https://docs.openssl.org/1.0.2/man3/SSL_CTX_set_alpn_select_cb/
+// (also 3.5, 1.1.1). No HISTORY entry. NAME (3.5) names three slots'
+// writers: SSL_CTX_set_alpn_select_cb, SSL_CTX_set_next_proto_select_cb and
+// SSL_CTX_set_next_protos_advertised_cb, all declared here. DESCRIPTION
+// (3.5): it "sets the application callback cb used by a server to select
+// which protocol to use for the incoming connection. When cb is NULL, ALPN is
+// not used. The arg value is a pointer which is passed to the application
+// callback." A registration into the ALPN selection slot, keeping `arg`.
+// Pinned prototype: `void SSL_CTX_set_alpn_select_cb(SSL_CTX *ctx,
+// SSL_CTX_alpn_select_cb_func cb, void *arg)`.
+extern fn SSL_CTX_set_alpn_select_cb(ctx: ptr<mut, u8>, cb: fnptr, arg: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, documented "1.0.2");
+    ensures normal resource_borrowed(ctx);
+    ensures normal resource_borrowed(cb);
+    ensures normal resource_borrowed(arg);
+    ensures normal resource_callback_slot_registered(ctx, ssl_ctx_st.alpn_select_cb, cb);
+    ensures normal resource_retained_by(arg, ctx);
+    ensures normal resource_return_none();
+};
+
+// SSL_CTX_set_next_proto_select_cb: https://docs.openssl.org/1.1.1/man3/SSL_CTX_set_alpn_select_cb/
+// (also 3.5; the 1.0.2 page does not name it). No HISTORY entry.
+// DESCRIPTION (3.5): it "sets a callback cb that is called when a client
+// needs to select a protocol from the server's provided list, and a
+// user-defined pointer argument arg which will be passed to this callback". A
+// registration into the NPN selection slot, keeping `arg`. Pinned
+// prototype: `void SSL_CTX_set_next_proto_select_cb(SSL_CTX *s,
+// SSL_CTX_npn_select_cb_func cb, void *arg)`.
+extern fn SSL_CTX_set_next_proto_select_cb(s: ptr<mut, u8>, cb: fnptr, arg: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, documented "1.1.1");
+    ensures normal resource_borrowed(s);
+    ensures normal resource_borrowed(cb);
+    ensures normal resource_borrowed(arg);
+    ensures normal resource_callback_slot_registered(s, ssl_ctx_st.npn_select_cb, cb);
+    ensures normal resource_retained_by(arg, s);
+    ensures normal resource_return_none();
+};
+
+// SSL_CTX_set_next_protos_advertised_cb: https://docs.openssl.org/1.1.1/man3/SSL_CTX_set_alpn_select_cb/
+// (also 3.5). No HISTORY entry. DESCRIPTION (3.5): it "sets a callback cb
+// that is called when a TLS server needs a list of supported protocols for
+// Next Protocol Negotiation". The arg is the setter's (`void *arg`), passed to
+// the callback (its fourth parameter). A registration into the NPN
+// advertisement slot, keeping `arg`. Pinned prototype: `void
+// SSL_CTX_set_next_protos_advertised_cb(SSL_CTX *s,
+// SSL_CTX_npn_advertised_cb_func cb, void *arg)`.
+extern fn SSL_CTX_set_next_protos_advertised_cb(s: ptr<mut, u8>, cb: fnptr, arg: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, documented "1.1.1");
+    ensures normal resource_borrowed(s);
+    ensures normal resource_borrowed(cb);
+    ensures normal resource_borrowed(arg);
+    ensures normal resource_callback_slot_registered(s, ssl_ctx_st.npn_advertised_cb, cb);
+    ensures normal resource_retained_by(arg, s);
+    ensures normal resource_return_none();
+};
+
+// SSL_CTX_set_cert_verify_callback: https://docs.openssl.org/1.0.2/man3/SSL_CTX_set_cert_verify_callback/
+// (also 3.5, 1.1.1). HISTORY (1.0.2): "Previous to OpenSSL 0.9.7, the arg
+// argument to SSL_CTX_set_cert_verify_callback was ignored, and callback was
+// called simply as int (*callback)(X509_STORE_CTX *)", so the reading (the
+// callback receives `arg`) holds since 0.9.7. NAME (3.5): its one writer.
+// DESCRIPTION (3.5): "SSL objects that are created from ctx inherit the
+// setting valid at the time when SSL_new(3) is called"; NOTES: the callback
+// "is called instead with the arguments callback(X509_STORE_CTX
+// *x509_store_ctx, void *arg)"; "By setting callback to NULL, the default
+// behaviour is restored." A registration into the certificate verification
+// slot, keeping `arg`. Pinned prototype: `void
+// SSL_CTX_set_cert_verify_callback(SSL_CTX *ctx, int (*cb)(X509_STORE_CTX *,
+// void *), void *arg)`.
+extern fn SSL_CTX_set_cert_verify_callback(ctx: ptr<mut, u8>, cb: fnptr, arg: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, since "0.9.7");
+    ensures normal resource_borrowed(ctx);
+    ensures normal resource_borrowed(cb);
+    ensures normal resource_borrowed(arg);
+    ensures normal resource_callback_slot_registered(ctx, ssl_ctx_st.app_verify_callback, cb);
+    ensures normal resource_retained_by(arg, ctx);
+    ensures normal resource_return_none();
+};
+
+// SSL_CTX_set_psk_client_callback: https://docs.openssl.org/1.0.2/man3/SSL_CTX_set_psk_client_callback/
+// (also 3.5, 1.1.1). HISTORY (3.5) names only the use-session setters
+// (1.1.1). NAME (3.5) names two slots' writers: SSL_CTX_set_psk_client_callback
+// and SSL_set_psk_client_callback (the TLSv1.2 client callback), and
+// SSL_CTX_set_psk_use_session_callback and SSL_set_psk_use_session_callback
+// (TLSv1.3), all declared here. DESCRIPTION (3.5): "The callback is set using
+// functions SSL_CTX_set_psk_client_callback() or
+// SSL_set_psk_client_callback()"; it "is given the connection in parameter
+// ssl". A registration into the PSK client slot. Pinned prototype: `void
+// SSL_CTX_set_psk_client_callback(SSL_CTX *ctx, SSL_psk_client_cb_func cb)`.
+extern fn SSL_CTX_set_psk_client_callback(ctx: ptr<mut, u8>, cb: fnptr) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, documented "1.0.2");
+    ensures normal resource_borrowed(ctx);
+    ensures normal resource_borrowed(cb);
+    ensures normal resource_callback_slot_registered(ctx, ssl_ctx_st.psk_client_callback, cb);
+    ensures normal resource_return_none();
+};
+
+// SSL_set_psk_client_callback: same page (1.0.2, 3.5, 1.1.1). The SSL's copy
+// of the PSK client slot. Pinned prototype: `void
+// SSL_set_psk_client_callback(SSL *ssl, SSL_psk_client_cb_func cb)`.
+extern fn SSL_set_psk_client_callback(ssl: ptr<mut, u8>, cb: fnptr) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, documented "1.0.2");
+    ensures normal resource_borrowed(ssl);
+    ensures normal resource_borrowed(cb);
+    ensures normal resource_callback_slot_registered(ssl, ssl_ctx_st.psk_client_callback, cb);
+    ensures normal resource_return_none();
+};
+
+// SSL_CTX_set_psk_use_session_callback: https://docs.openssl.org/3.5/man3/SSL_CTX_set_psk_client_callback/
+// HISTORY (3.5): "SSL_CTX_set_psk_use_session_callback() and
+// SSL_set_psk_use_session_callback() were added in OpenSSL 1.1.1."
+// DESCRIPTION (3.5): "A client application wishing to use TLSv1.3 PSKs should
+// use either SSL_CTX_set_psk_use_session_callback() or
+// SSL_set_psk_use_session_callback()"; "The callback function is given a
+// pointer to the SSL connection in ssl." A registration into the PSK
+// use-session slot. Pinned prototype: `void
+// SSL_CTX_set_psk_use_session_callback(SSL_CTX *ctx,
+// SSL_psk_use_session_cb_func cb)`.
+extern fn SSL_CTX_set_psk_use_session_callback(ctx: ptr<mut, u8>, cb: fnptr) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, since "1.1.1");
+    ensures normal resource_borrowed(ctx);
+    ensures normal resource_borrowed(cb);
+    ensures normal resource_callback_slot_registered(ctx, ssl_ctx_st.psk_use_session_cb, cb);
+    ensures normal resource_return_none();
+};
+
+// SSL_set_psk_use_session_callback: same page and HISTORY. The SSL's copy of
+// the PSK use-session slot. Pinned prototype: `void
+// SSL_set_psk_use_session_callback(SSL *s, SSL_psk_use_session_cb_func cb)`.
+extern fn SSL_set_psk_use_session_callback(s: ptr<mut, u8>, cb: fnptr) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, since "1.1.1");
+    ensures normal resource_borrowed(s);
+    ensures normal resource_borrowed(cb);
+    ensures normal resource_callback_slot_registered(s, ssl_ctx_st.psk_use_session_cb, cb);
+    ensures normal resource_return_none();
+};
+
+// SSL_CTX_set_psk_server_callback: https://docs.openssl.org/1.0.2/man3/SSL_CTX_use_psk_identity_hint/
+// (also 3.5, 1.1.1). HISTORY (3.5) names only the find-session setters
+// (1.1.1). NAME (3.5) names two slots' writers: SSL_CTX_set_psk_server_callback
+// and SSL_set_psk_server_callback (TLSv1.2), and
+// SSL_CTX_set_psk_find_session_callback and SSL_set_psk_find_session_callback
+// (TLSv1.3), all declared here. DESCRIPTION (3.5): "The callback is set using
+// the functions SSL_CTX_set_psk_server_callback() or
+// SSL_set_psk_server_callback(). The callback function is given the
+// connection in parameter ssl". A registration into the PSK server slot.
+// Pinned prototype: `void SSL_CTX_set_psk_server_callback(SSL_CTX *ctx,
+// SSL_psk_server_cb_func cb)`.
+extern fn SSL_CTX_set_psk_server_callback(ctx: ptr<mut, u8>, cb: fnptr) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, documented "1.0.2");
+    ensures normal resource_borrowed(ctx);
+    ensures normal resource_borrowed(cb);
+    ensures normal resource_callback_slot_registered(ctx, ssl_ctx_st.psk_server_callback, cb);
+    ensures normal resource_return_none();
+};
+
+// SSL_set_psk_server_callback: same page (1.0.2, 3.5, 1.1.1). The SSL's copy
+// of the PSK server slot. Pinned prototype: `void
+// SSL_set_psk_server_callback(SSL *ssl, SSL_psk_server_cb_func cb)`.
+extern fn SSL_set_psk_server_callback(ssl: ptr<mut, u8>, cb: fnptr) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, documented "1.0.2");
+    ensures normal resource_borrowed(ssl);
+    ensures normal resource_borrowed(cb);
+    ensures normal resource_callback_slot_registered(ssl, ssl_ctx_st.psk_server_callback, cb);
+    ensures normal resource_return_none();
+};
+
+// SSL_CTX_set_psk_find_session_callback: https://docs.openssl.org/3.5/man3/SSL_CTX_use_psk_identity_hint/
+// HISTORY (3.5): "SSL_CTX_set_psk_find_session_callback() and
+// SSL_set_psk_find_session_callback() were added in OpenSSL 1.1.1."
+// DESCRIPTION (3.5): "A server application wishing to use TLSv1.3 PSKs should
+// set a callback using either SSL_CTX_set_psk_find_session_callback() or
+// SSL_set_psk_find_session_callback()"; "The callback function is given a
+// pointer to the SSL connection in ssl and an identity in identity of length
+// identity_len." A registration into the PSK find-session slot. Pinned
+// prototype: `void SSL_CTX_set_psk_find_session_callback(SSL_CTX *ctx,
+// SSL_psk_find_session_cb_func cb)`.
+extern fn SSL_CTX_set_psk_find_session_callback(ctx: ptr<mut, u8>, cb: fnptr) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, since "1.1.1");
+    ensures normal resource_borrowed(ctx);
+    ensures normal resource_borrowed(cb);
+    ensures normal resource_callback_slot_registered(ctx, ssl_ctx_st.psk_find_session_cb, cb);
+    ensures normal resource_return_none();
+};
+
+// SSL_set_psk_find_session_callback: same page and HISTORY. The SSL's copy of
+// the PSK find-session slot. Pinned prototype: `void
+// SSL_set_psk_find_session_callback(SSL *s, SSL_psk_find_session_cb_func
+// cb)`.
+extern fn SSL_set_psk_find_session_callback(s: ptr<mut, u8>, cb: fnptr) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, since "1.1.1");
+    ensures normal resource_borrowed(s);
+    ensures normal resource_borrowed(cb);
+    ensures normal resource_callback_slot_registered(s, ssl_ctx_st.psk_find_session_cb, cb);
+    ensures normal resource_return_none();
+};
+
+// SSL_CTX_set_client_hello_cb: https://docs.openssl.org/3.5/man3/SSL_CTX_set_client_hello_cb/
+// HISTORY (3.5): "The SSL ClientHello callback ... were added in OpenSSL
+// 1.1.1." NAME (3.5): its one writer; the other names are the callback type
+// and the accessors the callback may call. DESCRIPTION (3.5): it "sets the
+// callback function, which is automatically called during the early stages
+// of ClientHello processing on the server. The argument supplied when setting
+// the callback is passed back to the callback at run time." A registration
+// into the ClientHello slot, keeping `arg`. Pinned prototype: `void
+// SSL_CTX_set_client_hello_cb(SSL_CTX *c, SSL_client_hello_cb_fn cb, void
+// *arg)` (the page's synopsis spells `SSL_client_hello_cb_fn *f`; the header
+// is the cross-check).
+extern fn SSL_CTX_set_client_hello_cb(c: ptr<mut, u8>, cb: fnptr, arg: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, since "1.1.1");
+    ensures normal resource_borrowed(c);
+    ensures normal resource_borrowed(cb);
+    ensures normal resource_borrowed(arg);
+    ensures normal resource_callback_slot_registered(c, ssl_ctx_st.client_hello_cb, cb);
+    ensures normal resource_retained_by(arg, c);
+    ensures normal resource_return_none();
+};
+
+// SSL_CTX_set_record_padding_callback: https://docs.openssl.org/3.5/man3/SSL_CTX_set_record_padding_callback/
+// HISTORY (3.5): "The record padding API was added for TLS 1.3 support in
+// OpenSSL 1.1.1." NAME (3.5): the writers SSL_CTX_set_record_padding_callback
+// and SSL_set_record_padding_callback; the `_arg` setters keep the
+// callback's argument, not the callback (an undeclared retention, which
+// fails closed). DESCRIPTION (3.5): they "can be used to assign a callback
+// function cb to specify the padding for TLS 1.3 records. The value set in
+// ctx is copied to a new SSL by SSL_new()"; "Setting the user-supplied
+// callback to NULL will restore the configured block padding behavior." A
+// registration into the record padding slot. Pinned prototype: `void
+// SSL_CTX_set_record_padding_callback(SSL_CTX *ctx, size_t (*cb)(SSL *ssl,
+// int type, size_t len, void *arg))` (HISTORY says the return type became
+// int in 3.0; the pinned 3.5.5 header declares void, and the declaration
+// follows the header).
+extern fn SSL_CTX_set_record_padding_callback(ctx: ptr<mut, u8>, cb: fnptr) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, since "1.1.1");
+    ensures normal resource_borrowed(ctx);
+    ensures normal resource_borrowed(cb);
+    ensures normal resource_callback_slot_registered(ctx, ssl_ctx_st.record_padding_cb, cb);
+    ensures normal resource_return_none();
+};
+
+// SSL_set_record_padding_callback: same page and HISTORY. The SSL's copy of
+// the record padding slot; it may fail ("the callback function cannot be set
+// if Kernel TLS is already configured"), which leaves the slot as it was.
+// Pinned prototype: `int SSL_set_record_padding_callback(SSL *ssl, size_t
+// (*cb)(SSL *ssl, int type, size_t len, void *arg))`.
+extern fn SSL_set_record_padding_callback(ssl: ptr<mut, u8>, cb: fnptr) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, since "1.1.1");
+    ensures normal resource_borrowed(ssl);
+    ensures normal resource_borrowed(cb);
+    ensures normal resource_callback_slot_registered(ssl, ssl_ctx_st.record_padding_cb, cb);
+    ensures normal resource_return_none();
+};
+
+// SSL_CTX_set_allow_early_data_cb: https://docs.openssl.org/3.5/man3/SSL_read_early_data/
+// HISTORY (3.5): "All of the functions described above were added in OpenSSL
+// 1.1.1." NAME (3.5): the writers SSL_CTX_set_allow_early_data_cb and
+// SSL_set_allow_early_data_cb, beside the early data I/O and limit
+// functions. DESCRIPTION (3.5): they "set a callback which is called at a
+// point in the handshake immediately before a decision is made to accept or
+// reject early data. The callback is provided with a pointer to the user data
+// argument that was provided when the callback was first set." A
+// registration into the early data slot, keeping `arg`. Pinned prototype:
+// `void SSL_CTX_set_allow_early_data_cb(SSL_CTX *ctx,
+// SSL_allow_early_data_cb_fn cb, void *arg)`.
+extern fn SSL_CTX_set_allow_early_data_cb(ctx: ptr<mut, u8>, cb: fnptr, arg: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, since "1.1.1");
+    ensures normal resource_borrowed(ctx);
+    ensures normal resource_borrowed(cb);
+    ensures normal resource_borrowed(arg);
+    ensures normal resource_callback_slot_registered(ctx, ssl_ctx_st.allow_early_data_cb, cb);
+    ensures normal resource_retained_by(arg, ctx);
+    ensures normal resource_return_none();
+};
+
+// SSL_set_allow_early_data_cb: same page and HISTORY. The SSL's copy of the
+// early data slot, keeping `arg`. Pinned prototype: `void
+// SSL_set_allow_early_data_cb(SSL *s, SSL_allow_early_data_cb_fn cb, void
+// *arg)`.
+extern fn SSL_set_allow_early_data_cb(s: ptr<mut, u8>, cb: fnptr, arg: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, since "1.1.1");
+    ensures normal resource_borrowed(s);
+    ensures normal resource_borrowed(cb);
+    ensures normal resource_borrowed(arg);
+    ensures normal resource_callback_slot_registered(s, ssl_ctx_st.allow_early_data_cb, cb);
+    ensures normal resource_retained_by(arg, s);
+    ensures normal resource_return_none();
+};
+
+// SSL_CTX_add_custom_ext: https://docs.openssl.org/3.5/man3/SSL_extension_supported/
+// HISTORY (3.5): "The SSL_CTX_add_custom_ext() function was added in OpenSSL
+// 1.1.1." NAME (3.5): the writers SSL_CTX_add_custom_ext (the `_ex` style
+// callbacks) and SSL_CTX_add_client_custom_ext / SSL_CTX_add_server_custom_ext
+// (the older style), beside the callback types and SSL_extension_supported.
+// DESCRIPTION (3.5): it "adds a custom extension ... with extension type
+// ext_type and callbacks add_cb, free_cb and parse_cb"; EXTENSION CALLBACKS:
+// add_cb is called with "add_arg to the value set when the extension handler
+// was added", free_cb "is called (if it is set) with the value of out set by
+// the add callback", parse_cb "receives data for TLS extensions". Each call
+// adds an extension, so a slot holds every callback any call registered: the
+// run's set is the union. Three registrations, one per callback slot, and
+// the context keeps `add_arg` and `parse_arg` for them. Pinned prototype:
+// `int SSL_CTX_add_custom_ext(SSL_CTX *ctx, unsigned int ext_type, unsigned
+// int context, SSL_custom_ext_add_cb_ex add_cb, SSL_custom_ext_free_cb_ex
+// free_cb, void *add_arg, SSL_custom_ext_parse_cb_ex parse_cb, void
+// *parse_arg)`.
+extern fn SSL_CTX_add_custom_ext(ctx: ptr<mut, u8>, ext_type: u32, context: u32, add_cb: fnptr, free_cb: fnptr, add_arg: ptr<mut, u8>, parse_cb: fnptr, parse_arg: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, since "1.1.1");
+    ensures normal resource_borrowed(ctx);
+    ensures normal resource_borrowed(ext_type);
+    ensures normal resource_borrowed(context);
+    ensures normal resource_borrowed(add_cb);
+    ensures normal resource_borrowed(free_cb);
+    ensures normal resource_borrowed(add_arg);
+    ensures normal resource_borrowed(parse_cb);
+    ensures normal resource_borrowed(parse_arg);
+    ensures normal resource_callback_slot_registered(ctx, ssl_ctx_st.custom_ext_add_cb_ex, add_cb);
+    ensures normal resource_callback_slot_registered(ctx, ssl_ctx_st.custom_ext_free_cb_ex, free_cb);
+    ensures normal resource_callback_slot_registered(ctx, ssl_ctx_st.custom_ext_parse_cb_ex, parse_cb);
+    ensures normal resource_retained_by(add_arg, ctx);
+    ensures normal resource_retained_by(parse_arg, ctx);
+    ensures normal resource_return_none();
+};
+
+// SSL_CTX_add_client_custom_ext: https://docs.openssl.org/1.1.1/man3/SSL_extension_supported/
+// (also 3.5; no page of that name at 1.0.2). No HISTORY entry for it, so the
+// bound is the oldest series checked that documents it. DESCRIPTION (3.5): it
+// "adds a custom extension for a TLS/DTLS client with extension type ext_type
+// and callbacks add_cb, free_cb and parse_cb" and "uses the older style of
+// callbacks". Three registrations into the older style slots, keeping
+// `add_arg` and `parse_arg`. Pinned prototype: `int
+// SSL_CTX_add_client_custom_ext(SSL_CTX *ctx, unsigned int ext_type,
+// custom_ext_add_cb add_cb, custom_ext_free_cb free_cb, void *add_arg,
+// custom_ext_parse_cb parse_cb, void *parse_arg)`.
+extern fn SSL_CTX_add_client_custom_ext(ctx: ptr<mut, u8>, ext_type: u32, add_cb: fnptr, free_cb: fnptr, add_arg: ptr<mut, u8>, parse_cb: fnptr, parse_arg: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, documented "1.1.1");
+    ensures normal resource_borrowed(ctx);
+    ensures normal resource_borrowed(ext_type);
+    ensures normal resource_borrowed(add_cb);
+    ensures normal resource_borrowed(free_cb);
+    ensures normal resource_borrowed(add_arg);
+    ensures normal resource_borrowed(parse_cb);
+    ensures normal resource_borrowed(parse_arg);
+    ensures normal resource_callback_slot_registered(ctx, ssl_ctx_st.custom_ext_add_cb, add_cb);
+    ensures normal resource_callback_slot_registered(ctx, ssl_ctx_st.custom_ext_free_cb, free_cb);
+    ensures normal resource_callback_slot_registered(ctx, ssl_ctx_st.custom_ext_parse_cb, parse_cb);
+    ensures normal resource_retained_by(add_arg, ctx);
+    ensures normal resource_retained_by(parse_arg, ctx);
+    ensures normal resource_return_none();
+};
+
+// SSL_CTX_add_server_custom_ext: same page (1.1.1, 3.5). DESCRIPTION (3.5): it
+// "adds a custom extension for a TLS/DTLS server" and "uses the older style
+// of callbacks". Three registrations into the older style slots, keeping
+// `add_arg` and `parse_arg`. Pinned prototype: `int
+// SSL_CTX_add_server_custom_ext(SSL_CTX *ctx, unsigned int ext_type,
+// custom_ext_add_cb add_cb, custom_ext_free_cb free_cb, void *add_arg,
+// custom_ext_parse_cb parse_cb, void *parse_arg)`.
+extern fn SSL_CTX_add_server_custom_ext(ctx: ptr<mut, u8>, ext_type: u32, add_cb: fnptr, free_cb: fnptr, add_arg: ptr<mut, u8>, parse_cb: fnptr, parse_arg: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, documented "1.1.1");
+    ensures normal resource_borrowed(ctx);
+    ensures normal resource_borrowed(ext_type);
+    ensures normal resource_borrowed(add_cb);
+    ensures normal resource_borrowed(free_cb);
+    ensures normal resource_borrowed(add_arg);
+    ensures normal resource_borrowed(parse_cb);
+    ensures normal resource_borrowed(parse_arg);
+    ensures normal resource_callback_slot_registered(ctx, ssl_ctx_st.custom_ext_add_cb, add_cb);
+    ensures normal resource_callback_slot_registered(ctx, ssl_ctx_st.custom_ext_free_cb, free_cb);
+    ensures normal resource_callback_slot_registered(ctx, ssl_ctx_st.custom_ext_parse_cb, parse_cb);
+    ensures normal resource_retained_by(add_arg, ctx);
+    ensures normal resource_retained_by(parse_arg, ctx);
+    ensures normal resource_return_none();
+};

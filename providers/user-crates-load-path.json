@@ -403,6 +403,174 @@
     {
       "crate": "quirin-provider-openssl",
       "functions": [
+        "SSL_CTX_add_client_custom_ext"
+      ],
+      "module": "openssl/ssl_handshake.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
+        "SSL_CTX_add_custom_ext"
+      ],
+      "module": "openssl/ssl_handshake.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
+        "SSL_CTX_add_server_custom_ext"
+      ],
+      "module": "openssl/ssl_handshake.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
+        "SSL_CTX_set_allow_early_data_cb"
+      ],
+      "module": "openssl/ssl_handshake.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
+        "SSL_CTX_set_alpn_select_cb"
+      ],
+      "module": "openssl/ssl_handshake.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
+        "SSL_CTX_set_cert_verify_callback"
+      ],
+      "module": "openssl/ssl_handshake.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
+        "SSL_CTX_set_client_hello_cb"
+      ],
+      "module": "openssl/ssl_handshake.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
+        "SSL_CTX_set_keylog_callback"
+      ],
+      "module": "openssl/ssl_handshake.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
+        "SSL_CTX_set_next_proto_select_cb"
+      ],
+      "module": "openssl/ssl_handshake.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
+        "SSL_CTX_set_next_protos_advertised_cb"
+      ],
+      "module": "openssl/ssl_handshake.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
+        "SSL_CTX_set_psk_client_callback"
+      ],
+      "module": "openssl/ssl_handshake.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
+        "SSL_CTX_set_psk_find_session_callback"
+      ],
+      "module": "openssl/ssl_handshake.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
+        "SSL_CTX_set_psk_server_callback"
+      ],
+      "module": "openssl/ssl_handshake.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
+        "SSL_CTX_set_psk_use_session_callback"
+      ],
+      "module": "openssl/ssl_handshake.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
+        "SSL_CTX_set_record_padding_callback"
+      ],
+      "module": "openssl/ssl_handshake.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
+        "SSL_set_allow_early_data_cb"
+      ],
+      "module": "openssl/ssl_handshake.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
+        "SSL_set_psk_client_callback"
+      ],
+      "module": "openssl/ssl_handshake.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
+        "SSL_set_psk_find_session_callback"
+      ],
+      "module": "openssl/ssl_handshake.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
+        "SSL_set_psk_server_callback"
+      ],
+      "module": "openssl/ssl_handshake.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
+        "SSL_set_psk_use_session_callback"
+      ],
+      "module": "openssl/ssl_handshake.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
+        "SSL_set_record_padding_callback"
+      ],
+      "module": "openssl/ssl_handshake.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
         "SSL_connect"
       ],
       "module": "openssl/ssl_io.qv",
@@ -661,6 +829,7 @@
         "openssl/pkcs12.qv",
         "openssl/ssl.qv",
         "openssl/ssl_ctx.qv",
+        "openssl/ssl_handshake.qv",
         "openssl/ssl_io.qv",
         "openssl/stack.qv",
         "openssl/x509.qv",
@@ -681,6 +850,7 @@
         "openssl/pkcs12.qv",
         "openssl/ssl.qv",
         "openssl/ssl_ctx.qv",
+        "openssl/ssl_handshake.qv",
         "openssl/ssl_io.qv",
         "openssl/stack.qv",
         "openssl/x509.qv",

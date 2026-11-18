@@ -171,6 +171,18 @@
    "declaration": "void PKCS12_free(PKCS12 *a)",
    "header": "/usr/include/openssl/pkcs12.h"
   },
+  "SSL_CTX_add_client_custom_ext": {
+   "declaration": "int SSL_CTX_add_client_custom_ext(SSL_CTX *ctx, unsigned int ext_type, custom_ext_add_cb add_cb, custom_ext_free_cb free_cb, void *add_arg, custom_ext_parse_cb parse_cb, void *parse_arg)",
+   "header": "/usr/include/openssl/ssl.h"
+  },
+  "SSL_CTX_add_custom_ext": {
+   "declaration": "int SSL_CTX_add_custom_ext(SSL_CTX *ctx, unsigned int ext_type, unsigned int context, SSL_custom_ext_add_cb_ex add_cb, SSL_custom_ext_free_cb_ex free_cb, void *add_arg, SSL_custom_ext_parse_cb_ex parse_cb, void *parse_arg)",
+   "header": "/usr/include/openssl/ssl.h"
+  },
+  "SSL_CTX_add_server_custom_ext": {
+   "declaration": "int SSL_CTX_add_server_custom_ext(SSL_CTX *ctx, unsigned int ext_type, custom_ext_add_cb add_cb, custom_ext_free_cb free_cb, void *add_arg, custom_ext_parse_cb parse_cb, void *parse_arg)",
+   "header": "/usr/include/openssl/ssl.h"
+  },
   "SSL_CTX_free": {
    "declaration": "void SSL_CTX_free(SSL_CTX *)",
    "header": "/usr/include/openssl/ssl.h"
@@ -199,12 +211,28 @@
    "declaration": "void SSL_CTX_sess_set_remove_cb(SSL_CTX *ctx, void (*remove_session_cb)(struct ssl_ctx_st *ctx, SSL_SESSION *sess))",
    "header": "/usr/include/openssl/ssl.h"
   },
+  "SSL_CTX_set_allow_early_data_cb": {
+   "declaration": "void SSL_CTX_set_allow_early_data_cb(SSL_CTX *ctx, SSL_allow_early_data_cb_fn cb, void *arg)",
+   "header": "/usr/include/openssl/ssl.h"
+  },
+  "SSL_CTX_set_alpn_select_cb": {
+   "declaration": "void SSL_CTX_set_alpn_select_cb(SSL_CTX *ctx, SSL_CTX_alpn_select_cb_func cb, void *arg)",
+   "header": "/usr/include/openssl/ssl.h"
+  },
   "SSL_CTX_set_cert_cb": {
    "declaration": "void SSL_CTX_set_cert_cb(SSL_CTX *c, int (*cb)(SSL *ssl, void *arg), void *arg)",
    "header": "/usr/include/openssl/ssl.h"
   },
+  "SSL_CTX_set_cert_verify_callback": {
+   "declaration": "void SSL_CTX_set_cert_verify_callback(SSL_CTX *ctx, int (*cb)(X509_STORE_CTX *, void *), void *arg)",
+   "header": "/usr/include/openssl/ssl.h"
+  },
   "SSL_CTX_set_client_cert_cb": {
    "declaration": "void SSL_CTX_set_client_cert_cb(SSL_CTX *ctx, int (*client_cert_cb)(SSL *ssl, X509 **x509, EVP_PKEY **pkey))",
+   "header": "/usr/include/openssl/ssl.h"
+  },
+  "SSL_CTX_set_client_hello_cb": {
+   "declaration": "void SSL_CTX_set_client_hello_cb(SSL_CTX *c, SSL_client_hello_cb_fn cb, void *arg)",
    "header": "/usr/include/openssl/ssl.h"
   },
   "SSL_CTX_set_default_passwd_cb": {
@@ -223,12 +251,44 @@
    "declaration": "void SSL_CTX_set_info_callback(SSL_CTX *ctx, void (*cb)(const SSL *ssl, int type, int val))",
    "header": "/usr/include/openssl/ssl.h"
   },
+  "SSL_CTX_set_keylog_callback": {
+   "declaration": "void SSL_CTX_set_keylog_callback(SSL_CTX *ctx, SSL_CTX_keylog_cb_func cb)",
+   "header": "/usr/include/openssl/ssl.h"
+  },
   "SSL_CTX_set_msg_callback": {
    "declaration": "void SSL_CTX_set_msg_callback(SSL_CTX *ctx, void (*cb)(int write_p, int version, int content_type, const void *buf, size_t len, SSL *ssl, void *arg))",
    "header": "/usr/include/openssl/ssl.h"
   },
+  "SSL_CTX_set_next_proto_select_cb": {
+   "declaration": "void SSL_CTX_set_next_proto_select_cb(SSL_CTX *s, SSL_CTX_npn_select_cb_func cb, void *arg)",
+   "header": "/usr/include/openssl/ssl.h"
+  },
+  "SSL_CTX_set_next_protos_advertised_cb": {
+   "declaration": "void SSL_CTX_set_next_protos_advertised_cb(SSL_CTX *s, SSL_CTX_npn_advertised_cb_func cb, void *arg)",
+   "header": "/usr/include/openssl/ssl.h"
+  },
   "SSL_CTX_set_options": {
    "declaration": "uint64_t SSL_CTX_set_options(SSL_CTX *ctx, uint64_t op)",
+   "header": "/usr/include/openssl/ssl.h"
+  },
+  "SSL_CTX_set_psk_client_callback": {
+   "declaration": "void SSL_CTX_set_psk_client_callback(SSL_CTX *ctx, SSL_psk_client_cb_func cb)",
+   "header": "/usr/include/openssl/ssl.h"
+  },
+  "SSL_CTX_set_psk_find_session_callback": {
+   "declaration": "void SSL_CTX_set_psk_find_session_callback(SSL_CTX *ctx, SSL_psk_find_session_cb_func cb)",
+   "header": "/usr/include/openssl/ssl.h"
+  },
+  "SSL_CTX_set_psk_server_callback": {
+   "declaration": "void SSL_CTX_set_psk_server_callback(SSL_CTX *ctx, SSL_psk_server_cb_func cb)",
+   "header": "/usr/include/openssl/ssl.h"
+  },
+  "SSL_CTX_set_psk_use_session_callback": {
+   "declaration": "void SSL_CTX_set_psk_use_session_callback(SSL_CTX *ctx, SSL_psk_use_session_cb_func cb)",
+   "header": "/usr/include/openssl/ssl.h"
+  },
+  "SSL_CTX_set_record_padding_callback": {
+   "declaration": "void SSL_CTX_set_record_padding_callback(SSL_CTX *ctx, size_t (*cb)(SSL *ssl, int type, size_t len, void *arg))",
    "header": "/usr/include/openssl/ssl.h"
   },
   "SSL_CTX_set_security_callback": {
@@ -295,6 +355,10 @@
    "declaration": "void SSL_set_accept_state(SSL *s)",
    "header": "/usr/include/openssl/ssl.h"
   },
+  "SSL_set_allow_early_data_cb": {
+   "declaration": "void SSL_set_allow_early_data_cb(SSL *s, SSL_allow_early_data_cb_fn cb, void *arg)",
+   "header": "/usr/include/openssl/ssl.h"
+  },
   "SSL_set_cert_cb": {
    "declaration": "void SSL_set_cert_cb(SSL *s, int (*cb)(SSL *ssl, void *arg), void *arg)",
    "header": "/usr/include/openssl/ssl.h"
@@ -305,6 +369,26 @@
   },
   "SSL_set_msg_callback": {
    "declaration": "void SSL_set_msg_callback(SSL *ssl, void (*cb)(int write_p, int version, int content_type, const void *buf, size_t len, SSL *ssl, void *arg))",
+   "header": "/usr/include/openssl/ssl.h"
+  },
+  "SSL_set_psk_client_callback": {
+   "declaration": "void SSL_set_psk_client_callback(SSL *ssl, SSL_psk_client_cb_func cb)",
+   "header": "/usr/include/openssl/ssl.h"
+  },
+  "SSL_set_psk_find_session_callback": {
+   "declaration": "void SSL_set_psk_find_session_callback(SSL *s, SSL_psk_find_session_cb_func cb)",
+   "header": "/usr/include/openssl/ssl.h"
+  },
+  "SSL_set_psk_server_callback": {
+   "declaration": "void SSL_set_psk_server_callback(SSL *ssl, SSL_psk_server_cb_func cb)",
+   "header": "/usr/include/openssl/ssl.h"
+  },
+  "SSL_set_psk_use_session_callback": {
+   "declaration": "void SSL_set_psk_use_session_callback(SSL *s, SSL_psk_use_session_cb_func cb)",
+   "header": "/usr/include/openssl/ssl.h"
+  },
+  "SSL_set_record_padding_callback": {
+   "declaration": "int SSL_set_record_padding_callback(SSL *ssl, size_t (*cb)(SSL *ssl, int type, size_t len, void *arg))",
    "header": "/usr/include/openssl/ssl.h"
   },
   "SSL_set_security_callback": {
