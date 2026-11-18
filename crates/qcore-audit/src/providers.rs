@@ -685,16 +685,34 @@ pub struct ContractInput {
     providers: Option<Value>,
     /// Card W45-USER-CONTRACT-PLUGINS: a user load path's additions.
     extension: Option<LoadPathExtension>,
+    /// Card CONFIGURED-ROUTE-PLUGIN-BINDINGS: why a manifest's load path
+    /// could not be read for its extension. [`Self::load`] returns it before
+    /// loading anything, so no route loads a manifest whose bindings it could
+    /// not see.
+    extension_refusal: Option<String>,
 }
 
 impl ContractInput {
-    /// A manifest file, read once.
+    /// A manifest file, read once. Card **CONFIGURED-ROUTE-PLUGIN-BINDINGS**:
+    /// a schema-2 manifest naming a user load path carries that load path's
+    /// extension, so its checker bindings run exactly as a provider
+    /// selection's do; the shipped load path has none.
     pub fn manifest(path: &Path) -> Result<Self, String> {
+        let manifest_text = fs::read_to_string(path).map_err(|error| error.to_string())?;
+        let (extension, extension_refusal) =
+            match qcore_contract::contract_loader::resource_contract_manifest_load_path(
+                path,
+                &manifest_text,
+            ) {
+                Ok(load_path) => (load_path.and_then(|load_path| load_path.extension), None),
+                Err(error) => (None, Some(error)),
+            };
         Ok(Self {
             manifest_path: path.to_path_buf(),
-            manifest_text: fs::read_to_string(path).map_err(|error| error.to_string())?,
+            manifest_text,
             providers: None,
-            extension: None,
+            extension,
+            extension_refusal,
         })
     }
 
@@ -707,6 +725,7 @@ impl ContractInput {
             manifest_text: resolved.manifest_text().to_owned(),
             providers: Some(resolved.record(profile_manifest)),
             extension: resolved.extension().cloned(),
+            extension_refusal: None,
         }
     }
 
@@ -740,6 +759,9 @@ impl ContractInput {
     /// duplicate no stamp is read and the environment is the one loaded
     /// before.
     pub fn load(&self) -> Result<qcore_schemas::contract::ResourceContracts, String> {
+        if let Some(refusal) = &self.extension_refusal {
+            return Err(refusal.clone());
+        }
         let owners = crate::contract_revision::ModuleOwners::for_manifest(
             &self.manifest_path,
             &self.manifest_text,

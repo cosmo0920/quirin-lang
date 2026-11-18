@@ -455,28 +455,112 @@ impl Fixture {
 
     /// The configured route over the standing's database.
     fn configured(&self, standing: Standing) -> Run {
-        let out = format!("configured-{standing:?}");
+        self.configured_as("configured", standing, |_| {})
+    }
+
+    /// The configured route over the standing's database, its configuration
+    /// edited by `edit` (card CONFIGURED-ROUTE-PLUGIN-BINDINGS: the other
+    /// ways a configuration resolves a user load path).
+    fn configured_as(&self, name: &str, standing: Standing, edit: impl FnOnce(&mut Value)) -> Run {
+        let out = format!("{name}-{standing:?}");
         fs::create_dir_all(self.0.join(&out)).unwrap();
         let config = format!("{out}/audit.json");
-        fs::write(
-            self.0.join(&config),
-            json!({
-                "schema_version": 1,
-                "profile_directory": "../profiles/sample",
-                "checkout": "../checkout",
-                "compile_database": format!("../{}", standing.database()),
-                "libraries": ["lib"],
-                "report": "report.json",
-                "source_revision_policy": "checkout_head",
-                "load_path": "../user/user-load-path.json",
-                "providers": ["quirin-provider-fakelib"],
-                "jobs": 1,
-            })
-            .to_string(),
-        )
-        .unwrap();
+        let mut configuration = json!({
+            "schema_version": 1,
+            "profile_directory": "../profiles/sample",
+            "checkout": "../checkout",
+            "compile_database": format!("../{}", standing.database()),
+            "libraries": ["lib"],
+            "report": "report.json",
+            "source_revision_policy": "checkout_head",
+            "load_path": "../user/user-load-path.json",
+            "providers": ["quirin-provider-fakelib"],
+            "jobs": 1,
+        });
+        edit(&mut configuration);
+        fs::write(self.0.join(&config), configuration.to_string()).unwrap();
         succeeded(&self.quirin(&[&config]));
         Run::read(self, &out, "report.assumptions.json")
+    }
+
+    /// Card CONFIGURED-ROUTE-PLUGIN-BINDINGS: a hand-written schema-2
+    /// manifest naming the user load path (the selection the provider route
+    /// lowers to), and a profile whose default it is.
+    fn write_manifest(&self) {
+        fs::write(
+            self.manifest(),
+            serde_json::to_vec_pretty(&json!({
+                "schema_version": 2,
+                "load_path": "user-load-path.json",
+                "modules": ["quirin-provider-fakelib:fakelib/reset.qv",
+                            "quirin-provider-fakelib:fakelib/size.qv"],
+            }))
+            .unwrap(),
+        )
+        .unwrap();
+        let sample = self.0.join("profiles/sample");
+        let profile = self.0.join("profiles-manifest/sample");
+        fs::create_dir_all(&profile).unwrap();
+        let mut document = self.json("profiles/sample/profile.json");
+        document["resource_contract_manifest"] = json!("../../user/manifest.json");
+        fs::write(profile.join("profile.json"), document.to_string()).unwrap();
+        fs::copy(sample.join("audit.json"), profile.join("audit.json")).unwrap();
+    }
+
+    fn manifest(&self) -> PathBuf {
+        self.0.join("user/manifest.json")
+    }
+
+    /// The current route with `--contract-manifest`.
+    fn current_manifest(&self, standing: Standing) -> Run {
+        let out = format!("current-manifest-{standing:?}");
+        succeeded(
+            &self
+                .command()
+                .args([
+                    "current",
+                    "--checkout",
+                    "checkout",
+                    "--profile-directory",
+                    "profiles/sample",
+                    "--compile-database",
+                    standing.database(),
+                    "--contract-manifest",
+                    "user/manifest.json",
+                    "--report",
+                    &format!("{out}/report.json"),
+                    "--monkey-source-report",
+                    &format!("{out}/monkey-source.json"),
+                    "--jobs",
+                    "1",
+                ])
+                .output()
+                .unwrap(),
+        );
+        Run::read(self, &out, "report.contracts.json")
+    }
+
+    /// The contracts route with `--contract-manifest`.
+    fn contracts_manifest(&self, standing: Standing) -> Run {
+        let out = format!("contracts-manifest-{standing:?}");
+        fs::create_dir_all(self.0.join(&out)).unwrap();
+        succeeded(
+            &self
+                .command()
+                .env(VARIABLE, self.0.join(standing.database()))
+                .args([
+                    "contracts",
+                    "--source-root",
+                    "checkout/src",
+                    "--contract-manifest",
+                    "user/manifest.json",
+                    "--report",
+                    &format!("{out}/report.json"),
+                ])
+                .output()
+                .unwrap(),
+        );
+        Run::read(self, &out, "report.contracts.json")
     }
 
     /// The contracts route (no database of its own), probing the standing's
@@ -565,19 +649,13 @@ impl Run {
             standing.reason(),
             "{context}"
         );
-        // The configured route runs no checker binding at all
-        // (CONFIGURED-ROUTE-CHECKER-BINDINGS, registered by this card), so
-        // only the hold's classification is checked there.
-        let bound = route != "configured";
-        if bound {
-            // The binding ran and answered an uncertified `Safe`.
-            assert_eq!(self.plugin_checks["Pending"], 1, "{context}");
-        }
-        if bound || standing.hold().is_some() {
-            assert_eq!(self.status, standing.status(), "{context}");
-        }
+        // Every route runs the binding (card CONFIGURED-ROUTE-PLUGIN-BINDINGS
+        // brought the configured route to parity: it published the in-force
+        // row `Safe`, with no `plugin_checks` section and no link), and it
+        // answered an uncertified `Safe`.
+        assert_eq!(self.plugin_checks["Pending"], 1, "{context}");
+        assert_eq!(self.status, standing.status(), "{context}");
         match standing.hold() {
-            None if !bound => {}
             None => {
                 // In force: the row applies the bound contract, and the
                 // binding's `Pending` is the row's.
@@ -678,4 +756,136 @@ fn the_contracts_route_holds_by_reason_with_a_checker_binding() {
     for standing in Standing::ALL {
         fixture.contracts(standing).check("contracts", standing);
     }
+}
+
+// Card CONFIGURED-ROUTE-PLUGIN-BINDINGS: the route inventory. Every
+// verdict-publishing route that resolves a user load path runs its checker
+// bindings through the same code (`user_plugins::run`, the fragments' links,
+// `fold_unit`, `fold_dependencies`), or refuses it. The tests below drive each
+// way a route resolves one, with the declaration in force (the standing where
+// a route that skipped the binding would publish `Safe`).
+
+/// The configured route under per-library provider scoping
+/// (`library_providers`, resolved to its union on the user load path).
+#[test]
+fn the_configured_route_runs_bindings_under_per_library_providers() {
+    if !clang_available() {
+        return;
+    }
+    let fixture = Fixture::new();
+    fixture.pin();
+    fixture
+        .configured_as("configured-scoped", Standing::InForce, |configuration| {
+            let object = configuration.as_object_mut().unwrap();
+            object.remove("providers");
+            object.insert(
+                "library_providers".into(),
+                json!({"lib": {"providers": ["quirin-provider-fakelib"],
+                               "dependent_libraries": []}}),
+            );
+        })
+        .check("configured-scoped", Standing::InForce);
+}
+
+/// A schema-2 manifest naming the user load path: `current
+/// --contract-manifest`, `contracts --contract-manifest`, and the configured
+/// route reading it as the profile's default manifest.
+#[test]
+fn the_manifest_routes_run_the_bindings_of_the_load_path_they_name() {
+    if !clang_available() {
+        return;
+    }
+    let fixture = Fixture::new();
+    fixture.pin();
+    fixture.write_manifest();
+    fixture
+        .current_manifest(Standing::InForce)
+        .check("current-manifest", Standing::InForce);
+    fixture
+        .contracts_manifest(Standing::InForce)
+        .check("contracts-manifest", Standing::InForce);
+    fixture
+        .configured_as("configured-manifest", Standing::InForce, |configuration| {
+            let object = configuration.as_object_mut().unwrap();
+            object.remove("providers");
+            object.remove("load_path");
+            object.insert("profile_directory".into(), json!("../profiles-manifest/sample"));
+        })
+        .check("configured-manifest", Standing::InForce);
+}
+
+/// The pinned corpus route runs no checker binding and checkpoints fragments
+/// that cannot carry links, so it refuses a manifest whose load path carries
+/// one, before any work: nothing is written.
+#[test]
+fn the_pinned_route_refuses_a_manifest_whose_load_path_carries_bindings() {
+    if !clang_available() {
+        return;
+    }
+    let fixture = Fixture::new();
+    fixture.write_manifest();
+    let output = fixture.quirin(&[
+        "pinned",
+        "checkout",
+        "absent-monkey.json",
+        "absent-monkey-source.json",
+        "pinned/report.json",
+        "absent-observations",
+        "user/manifest.json",
+    ]);
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    assert!(!output.status.success(), "{stderr}");
+    assert!(
+        stderr.contains(qcore_audit::user_plugins::UNRUN_BINDINGS)
+            && stderr.contains("quirin-provider-fakelib:fakelib/reset.qv"),
+        "{stderr}"
+    );
+    assert!(!fixture.0.join("pinned").exists());
+}
+
+/// The pinned route's own inputs, and every shipped profile's manifest, name
+/// the shipped load path, which carries no binding: the refusal never fires
+/// there, and no manifest input carries an extension, so no measured route
+/// runs a binding.
+#[test]
+fn shipped_manifests_carry_no_checker_binding() {
+    let mut manifests = vec![repository().join("cycle19-resource-contracts.json")];
+    for entry in fs::read_dir(repository().join("contract/profiles")).unwrap() {
+        let directory = entry.unwrap().path();
+        let Ok(text) = fs::read_to_string(directory.join("profile.json")) else {
+            continue;
+        };
+        let document: Value = serde_json::from_str(&text).unwrap();
+        if let Some(relative) = document["resource_contract_manifest"].as_str() {
+            manifests.push(directory.join(relative));
+        }
+    }
+    assert!(manifests.len() > 1);
+    for manifest in manifests {
+        qcore_audit::user_plugins::refuse_unrun_bindings("pinned", &manifest)
+            .unwrap_or_else(|error| panic!("{}: {error}", manifest.display()));
+        let input = qcore_audit::providers::ContractInput::manifest(&manifest).unwrap();
+        assert!(input.extension().is_none(), "{}", manifest.display());
+    }
+}
+
+/// A manifest naming a user load path that cannot be read for its bindings
+/// is never loaded without them: the input refuses to load.
+#[test]
+fn a_manifest_whose_load_path_cannot_be_read_does_not_load() {
+    if !clang_available() {
+        return;
+    }
+    let fixture = Fixture::new();
+    let broken = fixture.0.join("user/broken.json");
+    fs::write(
+        &broken,
+        json!({"schema_version": 2, "load_path": "absent-load-path.json",
+               "modules": ["quirin-provider-fakelib:fakelib/reset.qv"]})
+        .to_string(),
+    )
+    .unwrap();
+    let input = qcore_audit::providers::ContractInput::manifest(&broken).unwrap();
+    assert!(input.load().is_err());
+    assert!(qcore_audit::user_plugins::refuse_unrun_bindings("pinned", &broken).is_err());
 }

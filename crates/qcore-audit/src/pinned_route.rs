@@ -123,6 +123,13 @@ pub fn run_with_checkpoints(
     jobs: usize,
     checkpoints: Option<&CheckpointOptions>,
 ) -> Result<bool, String> {
+    // Card CONFIGURED-ROUTE-PLUGIN-BINDINGS: this route runs no checker
+    // binding, so a manifest naming a user load path that carries one is
+    // refused before any work (the profile's default manifest is checked
+    // where it is resolved, below).
+    if let Some(manifest) = contract_manifest {
+        crate::user_plugins::refuse_unrun_bindings("pinned", manifest)?;
+    }
     // Card CORPUS-GROUP-CHECKPOINTS: an environment a checkpoint cannot stand
     // for is refused before any work.
     if checkpoints.is_some() {
@@ -191,6 +198,7 @@ pub fn run_with_checkpoints(
     let contract_manifest = contract_manifest
         .or(default_manifest.as_deref())
         .ok_or("source-set profile supplies no resource contracts")?;
+    crate::user_plugins::refuse_unrun_bindings("pinned", contract_manifest)?;
     let owners = crate::contract_revision::ModuleOwners::for_manifest(
         contract_manifest,
         &fs::read_to_string(contract_manifest).map_err(|e| e.to_string())?,
