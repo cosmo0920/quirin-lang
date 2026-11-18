@@ -165,8 +165,8 @@ fn e14_t_legacy_consumer_refuses_floating_and_character_literals_by_name() {
 }
 
 /// Correction to the input: G reads a floating literal and a character literal
-/// in a comparison or a return, but a `char` local initialised from a
-/// character literal binds the literal as an unresolved resource identity.
+/// in a comparison or a return; a `char` local initialised from a character
+/// literal bound the literal as an unresolved resource identity until rule 62.
 #[test]
 fn e14_g_reads_literals_except_a_character_initializer() {
     if !clang_available() {
@@ -175,9 +175,10 @@ fn e14_g_reads_literals_except_a_character_initializer() {
     assert!(gs("double subject(void) { double d = 1.5; return d; }").safe());
     assert!(gs("int subject(void) { return 'a'; }").safe());
     assert!(gs("int subject(struct S *s) { return s->a == 'a'; }").safe());
+    // FLIPPED by AG2-UNRESOLVED-ALIAS (rule 62): a literal copied into an
+    // automatic local leaves it unbound; the literal is never an identity.
     let run = gs("int subject(void) { char c = 'a'; return c; }");
-    assert!(run.unknown(), "{run:?}");
-    assert!(run.has("UnknownAlias { variable: \"__qcore_literal__\" }"));
+    assert!(run.safe(), "{run:?}");
 }
 
 // ---------------------------------------------------------------------------

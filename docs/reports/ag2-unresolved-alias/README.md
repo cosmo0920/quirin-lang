@@ -269,7 +269,31 @@ and the `constructed-state-open` above. No row left `Safe`; no Unsafe row
 changed. Wall time is comparable (about ten minutes each, under host
 contention).
 
-## 7. Records
+## 7. Pinned expectations this card flips
+
+The scoped gate's Rust suite (attempt 3, on `3fe4611bd`) failed six units.
+Five are pinned expectations of exactly the old answers rule 62 replaces,
+updated deliberately in the next commit with a `FLIPPED by
+AG2-UNRESOLVED-ALIAS` note:
+
+| Test | Old pin | New |
+|---|---|---|
+| `clang_gap_phase1::e14_g_reads_literals_except_a_character_initializer` | `char c = 'a'; return c;` Unknown on `__qcore_literal__` | Safe |
+| `cg14_aggregate_values::a_string_initializer_is_a_declaration_with_no_bound_claimed` | `const char *s = "abc"; return s[3];` Unknown on `__qcore_literal__` | Safe |
+| `clang_gap_phase2::m11_string_initializers_are_refused_or_unresolved` | the same body | Safe |
+| `summary_validation_premises::a_copy_whose_reads_certify_under_protection_still_validates` | `get`'s W4 summary `Owned` (two bodies) | `Borrowed`; rows Safe as before |
+| `summary_validation_premises::read_only_released_and_forwarded_formals_still_validate` | `k`'s summary `Owned` | `Borrowed`; the `Released` wrappers unchanged |
+
+The sixth, `qcore-audit::libcurl_user_crate_versions`, is not this card's: its
+"unreadable header" case removes the fixture's `curlver.h` and expects every
+libcurl call held Unknown, but this host carries libcurl 8.18.0 development
+headers (`/usr/include/x86_64-linux-gnu/curl/curlver.h`), which the probe
+finds through the default include path; `init_once` is Safe with
+`audited_version` 8.18.0 in force. Deterministic in isolation
+(`private/ag2/t-libcurl.log`); registered as
+`LIBCURL-VERSION-TEST-SYSTEM-HEADER`.
+
+## 8. Records
 
 - [PREDICTION.md](PREDICTION.md), committed before the semantic commit, with
   its `measure-prediction` block (29 declared moves on corpus and
@@ -278,7 +302,8 @@ contention).
   `W47-ALIAS-FORMAL-COPY`; amends `W43-INDEX-TRAVERSAL-FORMAL-COPY`,
   `W47-ALIAS-TYPED-SCALAR-NAMES`, `W47-ALIAS-FLOW-RESIDUALS` and
   `W43-RESULT-ALIAS-CONDITIONAL-AND-RETAINED`; registers
-  `AG2-STATIC-OBJECT-COPY` and `AG2-LITERAL-OR-CONSTANT-INTO-FORMAL`.
+  `AG2-STATIC-OBJECT-COPY`, `AG2-LITERAL-OR-CONSTANT-INTO-FORMAL` and
+  `LIBCURL-VERSION-TEST-SYSTEM-HEADER`.
 - Measurement command (the integrator's): `quirin-audit measure --side
   base=rev:a9c6dcf44 --side tip=rev:<tip> --declared
   docs/reports/ag2-unresolved-alias/PREDICTION.md` on corpus, twelve-home,

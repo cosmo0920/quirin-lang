@@ -52,6 +52,14 @@
       "text": "Rule 62 (AG2-UNRESOLVED-ALIAS) writes only automatic locals. `if (blockSizeID == 0) blockSizeID = LZ4F_BLOCKSIZEID_DEFAULT;` (LZ4F_getBlockSize, the one S2 row blocked alone in the user's 2026-11-18 current run) rebinds a by-value scalar formal to an enumerator. A formal's binding is the entry custody a contract or W4 summary seeds, so unbinding it needs the same argument as rule 41's protected-formal exclusion: safe for a scalar formal no contract binds, to be stated and proved before admission.",
       "source": "docs/reports/ag2-unresolved-alias/README.md",
       "recorded_by": "AG2-UNRESOLVED-ALIAS"
+    },
+    {
+      "id": "LIBCURL-VERSION-TEST-SYSTEM-HEADER",
+      "operation": "register",
+      "title": "The libcurl unreadable-header case finds the host's system curlver.h",
+      "text": "qcore-audit's tests/libcurl_user_crate_versions.rs (the_libcurl_ranges_follow_the_audited_curlver_header) removes the fixture's include/curl/curlver.h and expects every libcurl call held Unknown (library-version-unreadable). On a host with libcurl development headers installed (here /usr/include/x86_64-linux-gnu/curl/curlver.h, LIBCURL_VERSION 8.18.0, installed 2026-10-13) the version probe finds the system header through the default include path, records audited_version 8.18.0 in force, and init_once is Safe: the test fails at line 335 independently of the analyzer (seen in AG2-UNRESOLVED-ALIAS's gate, deterministic in isolation). The probe or the test should exclude system include directories (-nostdinc or an explicit sysroot) so the unreadable case is hermetic; until then a published library-version record can depend on the host's installed headers.",
+      "source": "docs/reports/ag2-unresolved-alias/README.md",
+      "recorded_by": "AG2-UNRESOLVED-ALIAS"
     }
   ]
 }
