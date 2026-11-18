@@ -1,0 +1,80 @@
+{
+ "base_rows": 422,
+ "base_status": {
+  "Pending": 2,
+  "Safe": 131,
+  "Unknown": 289
+ },
+ "base_units": {
+  "lib/librdkafka-2.15.0/src/rdhttp.c#0": "Unknown",
+  "lib/librdkafka-2.15.0/src/rdkafka_admin.c#1": "Unknown",
+  "lib/librdkafka-2.15.0/src/rdkafka_cert.c#2": "Unknown",
+  "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer.c#3": "Unknown",
+  "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer_oidc.c#4": "Unknown",
+  "lib/librdkafka-2.15.0/src/rdkafka_ssl.c#5": "Unknown",
+  "lib/monkey/tls/tls_openssl.c#6": "Unknown"
+ },
+ "content_changes": [
+  {
+   "added": [
+    "{\"category\": \"unsupported\", \"description\": \"indirect memory access is outside the resource projection\", \"line\": 20351, \"origin\": \"lib/librdkafka-2.15.0/src/rdkafka_cert.c:349\"}",
+    "{\"category\": \"unsupported\", \"description\": \"indirect memory access is outside the resource projection\", \"line\": 20397, \"origin\": \"lib/librdkafka-2.15.0/src/rdkafka_cert.c:405\"}"
+   ],
+   "removed": [
+    "{\"category\": \"unsupported\", \"description\": \"call to `PEM_read_bio_PrivateKey` outside its declared literal-argument premise\", \"line\": 20397, \"origin\": \"lib/librdkafka-2.15.0/src/rdkafka_cert.c:405\"}",
+    "{\"category\": \"unsupported\", \"description\": \"call to `PEM_read_bio_X509` outside its declared literal-argument premise\", \"line\": 20351, \"origin\": \"lib/librdkafka-2.15.0/src/rdkafka_cert.c:349\"}"
+   ],
+   "row": "lib/librdkafka-2.15.0/src/rdkafka_cert.c#2::rd_kafka_cert_new"
+  },
+  {
+   "added": [
+    "{\"category\": \"unsupported\", \"description\": \"call to `PEM_read_bio_PrivateKey`: callback `rd_kafka_transport_ssl_passwd_cb` (from `rd_kafka_transport_ssl_passwd_cb`) has no contract in force (callback-uncontracted)\", \"line\": 20594, \"origin\": \"lib/librdkafka-2.15.0/src/rdkafka_ssl.c:761\"}"
+   ],
+   "removed": [
+    "{\"category\": \"unsupported\", \"description\": \"call to `PEM_read_bio_PrivateKey` outside its declared literal-argument premise\", \"line\": 20594, \"origin\": \"lib/librdkafka-2.15.0/src/rdkafka_ssl.c:761\"}"
+   ],
+   "row": "lib/librdkafka-2.15.0/src/rdkafka_ssl.c#5::rd_kafka_ssl_PKEY_from_string"
+  },
+  {
+   "added": [
+    "{\"category\": \"unsupported\", \"description\": \"call to `PEM_read_bio_X509`: callback `rd_kafka_transport_ssl_passwd_cb` (from `rd_kafka_transport_ssl_passwd_cb`) has no contract in force (callback-uncontracted)\", \"line\": 20639, \"origin\": \"lib/librdkafka-2.15.0/src/rdkafka_ssl.c:832\"}"
+   ],
+   "removed": [
+    "{\"category\": \"unsupported\", \"description\": \"call to `PEM_read_bio_X509` outside its declared literal-argument premise\", \"line\": 20639, \"origin\": \"lib/librdkafka-2.15.0/src/rdkafka_ssl.c:832\"}"
+   ],
+   "row": "lib/librdkafka-2.15.0/src/rdkafka_ssl.c#5::rd_kafka_ssl_X509_from_string"
+  },
+  {
+   "added": [
+    "{\"category\": \"unsupported\", \"description\": \"call to `EVP_PKEY_free` with `key`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)\", \"line\": 12456, \"origin\": \"lib/monkey/tls/tls_openssl.c:196\"}",
+    "{\"category\": \"unsupported\", \"description\": \"call to `EVP_PKEY_free` with `key`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)\", \"line\": 12461, \"origin\": \"lib/monkey/tls/tls_openssl.c:202\"}",
+    "{\"category\": \"unsupported\", \"description\": \"call to `EVP_PKEY_free` with `key`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)\", \"line\": 12465, \"origin\": \"lib/monkey/tls/tls_openssl.c:207\"}",
+    "{\"category\": \"unsupported\", \"description\": \"call to `PEM_read_bio_PrivateKey`: the callback `( void * ) 0` is not a closed set of functions (null pointer constant) (callback-undecided)\", \"line\": 12449, \"origin\": \"lib/monkey/tls/tls_openssl.c:188\"}",
+    "{\"category\": \"unsupported\", \"description\": \"call to `PEM_read_bio_X509`: the callback `( void * ) 0` is not a closed set of functions (null pointer constant) (callback-undecided)\", \"line\": 12439, \"origin\": \"lib/monkey/tls/tls_openssl.c:176\"}",
+    "{\"category\": \"unsupported\", \"description\": \"call to `X509_free` with `cert`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)\", \"line\": 12446, \"origin\": \"lib/monkey/tls/tls_openssl.c:184\"}",
+    "{\"category\": \"unsupported\", \"description\": \"call to `X509_free` with `cert`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)\", \"line\": 12452, \"origin\": \"lib/monkey/tls/tls_openssl.c:191\"}",
+    "{\"category\": \"unsupported\", \"description\": \"call to `X509_free` with `cert`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)\", \"line\": 12457, \"origin\": \"lib/monkey/tls/tls_openssl.c:197\"}",
+    "{\"category\": \"unsupported\", \"description\": \"call to `X509_free` with `cert`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)\", \"line\": 12462, \"origin\": \"lib/monkey/tls/tls_openssl.c:203\"}",
+    "{\"category\": \"unsupported\", \"description\": \"call to `X509_free` with `cert`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)\", \"line\": 12466, \"origin\": \"lib/monkey/tls/tls_openssl.c:208\"}"
+   ],
+   "removed": [],
+   "row": "lib/monkey/tls/tls_openssl.c#6::tls_load_builtin_credentials"
+  }
+ ],
+ "moves": [],
+ "tip_rows": 422,
+ "tip_status": {
+  "Pending": 2,
+  "Safe": 131,
+  "Unknown": 289
+ },
+ "tip_units": {
+  "lib/librdkafka-2.15.0/src/rdhttp.c#0": "Unknown",
+  "lib/librdkafka-2.15.0/src/rdkafka_admin.c#1": "Unknown",
+  "lib/librdkafka-2.15.0/src/rdkafka_cert.c#2": "Unknown",
+  "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer.c#3": "Unknown",
+  "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer_oidc.c#4": "Unknown",
+  "lib/librdkafka-2.15.0/src/rdkafka_ssl.c#5": "Unknown",
+  "lib/monkey/tls/tls_openssl.c#6": "Unknown"
+ }
+}
