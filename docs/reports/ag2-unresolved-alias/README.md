@@ -210,7 +210,66 @@ delimited hooks, each between `AG2-UNRESOLVED-ALIAS hook (rule 62): begin` and
 No change to `legacy_cfg_builder.rs` or `typed_access_path.rs`
 (`TraversalNames::default()` covers every other CFG constructor).
 
-## 6. Records
+## 6. Unit-scoped reproduction of `current`
+
+Run after the semantic commit, against the frozen prediction. `quirin-audit
+current --monkey-linked` with the user's argv, on a compile database filtered
+to the 46 units of the alias-only rows, the brief's sample units, one
+ctraces unit and `src/flb_input_chunk.c` (the route requires every selected
+library; [artifacts/repro-units.txt](artifacts/repro-units.txt)), and the full
+Monkey database: 49 configurations, 1,894 rows, through `gate_slot.py audit`
+(`--jobs 3`, peak 2.1 GB). Base `a9c6dcf44` (binary sha256 `7745a8a3…`)
+reproduces the user's report on these rows exactly in status; eight rows
+differ only in run-wide callback-closure diagnostics a unit subset cannot
+see ([artifacts/repro-fidelity.json](artifacts/repro-fidelity.json)). One
+earlier base attempt died writing its report on a full disk (`No space left
+on device`, the host's, not this card's) and is retained as
+`private/ag2/repro-base-failed-enospc/`, not used. Tip (binary sha256 `5aa7ba7e…`, built from the
+working tree committed as `cda5bfff6`, which then still held a test-only
+off-switch read from `QCORE_AG2_PROTOTYPE_OFF`, unset in the run and removed
+before the commit) against base
+([scripts/compare.py](scripts/compare.py),
+[artifacts/repro-compare.json](artifacts/repro-compare.json)):
+
+| Measure | Base | Tip |
+|---|---:|---:|
+| rows Safe / Unknown / Unsafe | 335 / 1,557 / 2 | **368 / 1,524 / 2** |
+| `Unknown -> Safe` | | 33 |
+| other moves | | 0 |
+| `unknown_alias` leaves removed | | 278 |
+| rows with changed content, status unchanged | | 118 (all Unknown) |
+
+Moves against the prediction: 28 of the 29 declared moves happened. Missing:
+`rd_kafka_broker_start_reauth_cb`, whose alias leaf is gone but which now
+shows the refusal it hid, `rd_kafka_op_new0`'s constructed-state check
+(`constructed-state-open`, a run-wide check of the stores into
+`rd_kafka_op_s.rko_op_cb` that a unit subset may not decide as the full run
+does). Unpredicted, all `Unknown -> Safe`:
+
+* `LZ4F_optimalBSID` (S2 plus the returned scalar it unbinds), noted as
+  possible in the prediction;
+* `rd_kafka_op_err_destroy`: with the enumerator no longer reported, W4's
+  retry with `rko` bound validates a `Released` summary (the body destroys
+  `rko`), and the row is decided under it, as every W4 wrapper is;
+* `rd_kafka_topic_partition_cmp_opaque`: a same-unit caller of
+  `rd_kafka_topic_partition_cmp`, which now publishes a validated summary;
+* `input_chunk_has_magic_bytes` (two configurations): its base row carried
+  a `summary_conflict` because W4 bound `buf` through the copy
+  `p = (unsigned char *) buf` and inferred `Owned`, against the declared
+  `Borrowed`; with the copy read through, W4 infers `Borrowed`, the conflict
+  disappears and the row is `Safe` under the declaration
+  (`W43-INDEX-TRAVERSAL-FORMAL-COPY`'s "stricter than the `Borrowed` the walk
+  needs", observed).
+
+Diagnostics newly visible on rows that stay Unknown (each was hidden behind
+a removed alias leaf): two `callback-uncontracted` (`unpack_metric_exp_histogram`,
+`unpack_metric_summary`: callbacks that still have no summary), four
+`derived result … from an unmodeled base expression` (`append_sample_to_metric`)
+and the `constructed-state-open` above. No row left `Safe`; no Unsafe row
+changed. Wall time is comparable (about ten minutes each, under host
+contention).
+
+## 7. Records
 
 - [PREDICTION.md](PREDICTION.md), committed before the semantic commit, with
   its `measure-prediction` block (29 declared moves on corpus and
