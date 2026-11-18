@@ -76,3 +76,21 @@ generated user load path.
 * **Risk in the other direction.** A held reference acquired and not
   released on a refusal-free path is a leak candidate (provisional
   `Unsafe`, never an upstream defect); none is predicted.
+
+## Addendum before the null-default measurement (user decision 2026-11-18)
+
+The table above is unchanged as committed (`bcdb9b3b2`); its first opt-in
+run (`fbe57c2d8`) measured it. The card now also states the null-`cb` arm
+(`resource_callback_invoked_or_default`), predicted against the same base:
+
+* The null-`cb` reads return to the base reading: Monkey's
+  `tls_load_builtin_credentials` loses both `callback-undecided` and the six
+  `reference-drop-unheld` drops it regained, so its row equals base (still
+  `Unknown` on its other diagnostics); the predecessor fixture's `read_cert`
+  is `Pending` again.
+* The seven calls read as in the first run (a non-null callback is decided
+  unchanged): `rdkafka_ssl.c:761, 833` `callback-uncontracted`,
+  `rdkafka_cert.c:349, 405` the member store, the three condition calls
+  unchanged. Base to tip: 0 moves, 3 rows changing content.
+* The pinned-route block is unchanged (no move): `pem.qv` is read by none,
+  and no pinned contract states the new spelling.
