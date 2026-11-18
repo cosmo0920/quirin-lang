@@ -292,7 +292,17 @@ target now crosses the line. The discharge is
 GATE-READ-CENSUS-REFRESH's: re-record the census with
 `scripts/gate_read_census.py` (about 25 minutes, all root units under strace).
 That is integrator work, so it was not done here. Neither the
-`test_gate_slot_lane` flake nor a stale-matrix check failed in this run.
+`test_gate_slot_lane` flake nor a stale-matrix check failed in the gate's
+Python run.
+
+A plain rerun of the Python suite on the final tree `aff696736`
+(`private/logs/python-final.log`) failed two of 779 tests:
+
+* the same census check;
+* the stale-matrix check
+  `test_the_derived_facts_are_recomputed_rather_than_carried`. The committed
+  matrix's `lean_audits` reads 449 against the 450 produced, the new audit.
+  It is regenerated when the integrator applies the amendments.
 
 Outside the gate, during the work:
 
