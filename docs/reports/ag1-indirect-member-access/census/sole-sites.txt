@@ -1,0 +1,974 @@
+== lib/chunkio/src/chunkio.c cio_set_log_callback ['store:pointer-name']
+   [store:pointer-name] ctx->options.log_cb = log_cb;
+      store/function_pointer/formal/formal/
+== lib/chunkio/src/cio_file_unix.c cio_file_native_close ['read:custody-free']
+   [read:custody-free] result = close(cf->fd);
+      read/scalar/formal//close
+== lib/chunkio/src/cio_file_unix.c cio_file_native_open ['read:pointer-member']
+   [read:pointer-member] cf->fd = open(cf->path, 02 | 0100, (mode_t) 0600);
+      store/scalar/formal/call:open/; read/pointer/formal//open
+   [read:pointer-member] cf->fd = open(cf->path, 00);
+      store/scalar/formal/call:open/; read/pointer/formal//open
+== lib/chunkio/src/cio_stream.c get_stream_path ['read:pointer-member']
+   [read:pointer-member] len = strlen(ctx->options.root_path) + strlen(st->name) + 2;
+      read/pointer/formal//strlen; read/pointer/formal//strlen
+== lib/cmetrics/src/cmt_cat.c cat_histogram_values ['address:sub-object', 'store:pointer-call-result']
+   [store:pointer-call-result] metric_dst->hist_buckets = calloc(1, sizeof(uint64_t) * (bucket_count_dst + 1));
+      store/pointer/formal/call:calloc/
+   [address:sub-object] new_value = cmt_math_sum_native_uint64_as_d64( old_value, cmt_atomic_load(&metric_src->hist_count));
+      address/address/formal//cmt_atomic_load
+   [address:sub-object] new_value = cmt_math_sum_native_uint64_as_d64( old_value, cmt_atomic_load(&metric_src->hist_sum));
+      address/address/formal//cmt_atomic_load
+== lib/cmetrics/src/cmt_cat.c cat_summary_values ['address:sub-object', 'store:pointer-call-result']
+   [store:pointer-call-result] metric_dst->sum_quantiles = calloc(1, sizeof(uint64_t) * (summary->quantiles_count));
+      store/pointer/formal/call:calloc/; read/scalar/formal//calloc
+   [address:sub-object] cmt_atomic_store(&metric_dst->sum_quantiles[i], cmt_atomic_load(&metric_src->sum_quantiles[i]));
+      address/address/formal//cmt_atomic_store; address/address/formal//cmt_atomic_load
+   [address:sub-object] cmt_atomic_store(&metric_dst->sum_quantiles_set, cmt_atomic_load(&metric_src->sum_quantiles_set));
+      address/address/formal//cmt_atomic_store; address/address/formal//cmt_atomic_load
+   [address:sub-object] cmt_atomic_store(&metric_dst->sum_count, cmt_atomic_load(&metric_src->sum_count));
+      address/address/formal//cmt_atomic_store; address/address/formal//cmt_atomic_load
+   [address:sub-object] cmt_atomic_store(&metric_dst->sum_sum, cmt_atomic_load(&metric_src->sum_sum));
+      address/address/formal//cmt_atomic_store; address/address/formal//cmt_atomic_load
+== lib/cmetrics/src/cmt_decode_msgpack.c create_counter_instance ['store:pointer-name']
+   [store:pointer-name] map->parent = (void *) counter;
+      store/pointer/formal/variable+cast/
+== lib/cmetrics/src/cmt_decode_msgpack.c create_exp_histogram_instance ['store:pointer-name']
+   [store:pointer-name] map->parent = (void *) exp_histogram;
+      store/pointer/formal/variable+cast/
+== lib/cmetrics/src/cmt_decode_msgpack.c create_gauge_instance ['store:pointer-name']
+   [store:pointer-name] map->parent = (void *) gauge;
+      store/pointer/formal/variable+cast/
+== lib/cmetrics/src/cmt_decode_msgpack.c create_histogram_instance ['store:pointer-name']
+   [store:pointer-name] map->parent = (void *) histogram;
+      store/pointer/formal/variable+cast/
+== lib/cmetrics/src/cmt_decode_msgpack.c create_summary_instance ['store:pointer-name']
+   [store:pointer-name] map->parent = (void *) summary;
+      store/pointer/formal/variable+cast/
+== lib/cmetrics/src/cmt_decode_msgpack.c create_untyped_instance ['store:pointer-name']
+   [store:pointer-name] map->parent = (void *) untyped;
+      store/pointer/formal/variable+cast/
+== lib/cmetrics/src/cmt_encode_opentelemetry.c kvlist_fetch_string ['form:union']
+   [form:union] *out = value->data.as_string;
+      store/pointer/formal/memory-read/; read/pointer/local//
+== lib/cmetrics/src/cmt_encode_prometheus.c append_metric_value ['address:sub-object']
+   [address:sub-object] val = cmt_math_uint64_to_d64( cmt_atomic_load(&metric->exp_hist_sum));
+      address/address/formal//cmt_atomic_load
+== lib/cmetrics/src/cmt_filter.c compare_fqname ['call:indirect-callee']
+   [call:indirect-callee] return compare(compare_ctx, src->fqname, fqname_size);
+      read/pointer/formal//<indirect>
+== lib/cmetrics/src/cmt_filter.c compare_label_keys ['call:indirect-callee']
+   [call:indirect-callee] return compare(compare_ctx, label->name, strlen(label->name));
+      read/pointer/local//<indirect>; read/pointer/local//strlen
+== lib/cmetrics/src/cmt_label.c cmt_labels_create ['root:call-result']
+   [root:call-result] cmt_errno_print((*__errno_location ()), "/media/Data/GitHub/quirin-lang/build/cycle19/clang/046accf6aded7906f66a1baf0202da349e521736/fluent-bit-clang-
+      read/scalar/call-result//cmt_errno_print
+== lib/ctraces/src/ctr_encode_opentelemetry.c otel_span_set_attributes ['store:pointer-call-result']
+   [store:pointer-call-result] span->attributes = set_attributes_from_ctr(attr);
+      store/pointer/formal/call:set_attributes_from_ctr/
+== lib/ctraces/src/ctr_encode_opentelemetry.c otel_span_set_events ['store:pointer-call-result']
+   [store:pointer-call-result] otel_span->events = set_events_from_ctr(events);
+      store/pointer/formal/call:set_events_from_ctr/
+== lib/ctraces/src/ctr_scope.c ctr_instrumentation_scope_create ['read:pointer-member', 'store:pointer-call-result']
+   [store:pointer-call-result] ins_scope->name = cfl_sds_create(name);
+      store/pointer/local/call:cfl_sds_create/
+   [store:pointer-call-result] ins_scope->version = cfl_sds_create(version);
+      store/pointer/local/call:cfl_sds_create/
+   [read:pointer-member] cfl_sds_destroy(ins_scope->name);
+      read/pointer/local//cfl_sds_destroy
+== lib/librdkafka-2.15.0/src/cJSON.c cJSON_New_Item ['form:indirect-call']
+   [form:indirect-call] cJSON* node = (cJSON*)hooks->allocate(sizeof(cJSON));
+      read/function_pointer/formal//
+== lib/librdkafka-2.15.0/src/cJSON.c cJSON_free ['form:indirect-call']
+   [form:indirect-call] global_hooks.deallocate(object);
+      read/function_pointer/global//
+== lib/librdkafka-2.15.0/src/cJSON.c create_reference ['store:pointer-null', 'store:pointer-other']
+   [store:pointer-null] reference->string = ((void*)0);
+      null-store/pointer/local/null+cast/
+   [store:pointer-other] reference->next = reference->prev = ((void*)0);
+      store/pointer/local/other:BinaryOperator/; null-store/pointer/local/null+cast/
+== lib/librdkafka-2.15.0/src/cJSON.c print_string ['read:pointer-member']
+   [read:pointer-member] return print_string_ptr((unsigned char*)item->valuestring, p);
+      read/pointer/formal//print_string_ptr
+== lib/librdkafka-2.15.0/src/cJSON.c suffix_object ['store:pointer-name']
+   [store:pointer-name] prev->next = item;
+      store/pointer/formal/formal/
+   [store:pointer-name] item->prev = prev;
+      store/pointer/formal/formal/
+== lib/librdkafka-2.15.0/src/lz4.c LZ4_prepareTable ['address:sub-object']
+   [address:sub-object] memset(((cctx->hashTable)),((0)),(((1 << 14))));
+      address/address/formal//memset
+== lib/librdkafka-2.15.0/src/lz4.c LZ4_renormDictT ['store:pointer-other']
+   [store:pointer-other] LZ4_dict->dictionary = dictEnd - LZ4_dict->dictSize;
+      store/pointer/formal/arithmetic/; read/scalar/formal//
+== lib/librdkafka-2.15.0/src/lz4.c LZ4_resetStream_fast ['form:union']
+   [form:union] LZ4_prepareTable(&(ctx->internal_donotuse), 0, byU32);
+      address/address/formal//LZ4_prepareTable
+== lib/librdkafka-2.15.0/src/lz4frame.c LZ4F_freeCDict ['form:aggregate-value']
+   [form:aggregate-value] LZ4F_free(cdict->dictContent, cdict->cmem);
+      read/pointer/formal//LZ4F_free; read/aggregate/formal//LZ4F_free
+   [form:aggregate-value] LZ4F_free(cdict->fastCtx, cdict->cmem);
+      read/pointer/formal//LZ4F_free; read/aggregate/formal//LZ4F_free
+   [form:aggregate-value] LZ4F_free(cdict->HCCtx, cdict->cmem);
+      read/pointer/formal//LZ4F_free; read/aggregate/formal//LZ4F_free
+   [form:aggregate-value] LZ4F_free(cdict, cdict->cmem);
+      read/aggregate/formal//LZ4F_free
+== lib/librdkafka-2.15.0/src/lz4frame.c LZ4F_freeCompressionContext ['form:aggregate-value']
+   [form:aggregate-value] LZ4F_free(cctxPtr->lz4CtxPtr, cctxPtr->cmem);
+      read/pointer/formal//LZ4F_free; read/aggregate/formal//LZ4F_free
+   [form:aggregate-value] LZ4F_free(cctxPtr->tmpBuff, cctxPtr->cmem);
+      read/pointer/formal//LZ4F_free; read/aggregate/formal//LZ4F_free
+   [form:aggregate-value] LZ4F_free(cctxPtr, cctxPtr->cmem);
+      read/aggregate/formal//LZ4F_free
+== lib/librdkafka-2.15.0/src/lz4frame.c LZ4F_freeDecompressionContext ['form:aggregate-value']
+   [form:aggregate-value] LZ4F_free(dctx->tmpIn, dctx->cmem);
+      read/pointer/formal//LZ4F_free; read/aggregate/formal//LZ4F_free
+   [form:aggregate-value] LZ4F_free(dctx->tmpOutBuffer, dctx->cmem);
+      read/pointer/formal//LZ4F_free; read/aggregate/formal//LZ4F_free
+   [form:aggregate-value] LZ4F_free(dctx, dctx->cmem);
+      read/aggregate/formal//LZ4F_free
+== lib/librdkafka-2.15.0/src/lz4frame.c LZ4F_localSaveDict ['read:pointer-member']
+   [read:pointer-member] if (cctxPtr->prefs.compressionLevel < 3) return LZ4_saveDict ((LZ4_stream_t*)(cctxPtr->lz4CtxPtr), (char*)(cctxPtr->tmpBuff), 64 *(1<<10));
+      read/pointer/formal//LZ4_saveDict; read/pointer/formal//LZ4_saveDict
+   [read:pointer-member] return LZ4_saveDictHC ((LZ4_streamHC_t*)(cctxPtr->lz4CtxPtr), (char*)(cctxPtr->tmpBuff), 64 *(1<<10));
+      read/pointer/formal//LZ4_saveDictHC; read/pointer/formal//LZ4_saveDictHC
+== lib/librdkafka-2.15.0/src/lz4hc.c LZ4HC_clearTables ['address:sub-object']
+   [address:sub-object] memset(((hc4->hashTable)),((0)),((sizeof(hc4->hashTable))));
+      address/address/formal//memset
+   [address:sub-object] memset(((hc4->chainTable)),((0xFF)),((sizeof(hc4->chainTable))));
+      address/address/formal//memset
+== lib/librdkafka-2.15.0/src/lz4hc.c LZ4_attach_HC_dictionary ['form:union']
+   [form:union] working_stream->internal_donotuse.dictCtx = dictionary_stream != ((void*)0) ? &(dictionary_stream->internal_donotuse) : ((void*)0);
+      store/pointer/formal/conditional/; address/address/formal//
+== lib/librdkafka-2.15.0/src/lz4hc.c LZ4_compressHC2_continue ['form:union']
+   [form:union] return LZ4HC_compress_generic (&((LZ4_streamHC_t*)LZ4HC_Data)->internal_donotuse, src, dst, &srcSize, 0, cLevel, notLimited);
+      address/address/formal//LZ4HC_compress_generic
+== lib/librdkafka-2.15.0/src/lz4hc.c LZ4_compressHC2_limitedOutput_continue ['form:union']
+   [form:union] return LZ4HC_compress_generic (&((LZ4_streamHC_t*)LZ4HC_Data)->internal_donotuse, src, dst, &srcSize, dstCapacity, cLevel, limitedOutput);
+      address/address/formal//LZ4HC_compress_generic
+== lib/librdkafka-2.15.0/src/nanopb/pb_common.c load_descriptor_values ['form:cast', 'store:pointer-other']
+   [store:pointer-other] iter->pField = (char*)iter->message + data_offset;
+      store/pointer/formal/arithmetic/; read/pointer/formal//
+   [store:pointer-other] iter->pSize = (char*)iter->pField - size_offset;
+      store/pointer/formal/arithmetic/; read/pointer/formal//
+   [store:pointer-other] iter->pSize = &iter->array_size;
+      store/pointer/formal/address/; address/address/formal//
+   [form:cast] iter->pData = *(void**)iter->pField;
+      store/pointer/formal/memory-read/; read/pointer/formal//
+   [store:pointer-other] iter->pData = iter->pField;
+      store/pointer/formal/memory-read/; read/pointer/formal//
+   [store:pointer-other] iter->submsg_desc = iter->descriptor->submsg_info[iter->submessage_index];
+      store/pointer/formal/memory-read/; read/scalar/formal//; read/pointer/formal//
+== lib/librdkafka-2.15.0/src/nanopb/pb_decode.c buf_read ['store:pointer-other']
+   [store:pointer-other] stream->state = (pb_byte_t*)stream->state + count;
+      store/pointer/formal/arithmetic/; read/pointer/formal//
+== lib/librdkafka-2.15.0/src/nanopb/pb_decode.c pb_dec_bool ['read:pointer-member']
+   [read:pointer-member] return pb_decode_bool(stream, (_Bool*)field->pData);
+      read/pointer/formal//pb_decode_bool
+== lib/librdkafka-2.15.0/src/nanopb/pb_encode.c buf_write ['store:pointer-other']
+   [store:pointer-other] stream->state = dest + count;
+      store/pointer/formal/arithmetic/
+== lib/librdkafka-2.15.0/src/nanopb/pb_encode.c pb_enc_fixed_length_bytes ['call:uncontracted-callee']
+   [call:uncontracted-callee] return pb_encode_string(stream, (const pb_byte_t*)field->pData, (size_t)field->data_size);
+      read/pointer/formal//pb_encode_string; read/scalar/formal//pb_encode_string
+== lib/librdkafka-2.15.0/src/nanopb/pb_encode.c pb_ostream_from_buffer ['store:pointer-name', 'store:pointer-other']
+   [store:pointer-other] stream.callback = &buf_write;
+      store/function_pointer/local/address/
+   [store:pointer-name] stream.state = buf;
+      store/pointer/local/formal/
+== lib/librdkafka-2.15.0/src/rdbuf.c extra_alloc ['read:pointer-member']
+   [read:pointer-member] p = rbuf->rbuf_extra + of;
+      read/pointer/formal//
+== lib/librdkafka-2.15.0/src/rdbuf.c rd_buf_init ['store:pointer-call-result']
+   [store:pointer-call-result] rbuf->rbuf_extra = rd_malloc(rbuf->rbuf_extra_size);
+      store/pointer/formal/call:rd_malloc/; read/scalar/formal//rd_malloc
+== lib/librdkafka-2.15.0/src/rdhdrhistogram.c rd_hdr_iter_next ['store:custody-free']
+   [store:custody-free] it->countAtIdx = rd_hdr_getCountAtIndex(hdr, it->bucketIdx, it->subBucketIdx);
+      store/scalar/formal/call:rd_hdr_getCountAtIndex/; read/scalar/formal//rd_hdr_getCountAtIndex; read/scalar/formal//rd_hdr_getCountAtIndex
+== lib/librdkafka-2.15.0/src/rdkafka.c rd_kafka_Uuid_copy ['address:sub-object']
+   [address:sub-object] if (*uuid->base64str) memcpy(copy_uuid->base64str, uuid->base64str, 23);
+      address/address/local//memcpy; address/address/formal//memcpy
+== lib/librdkafka-2.15.0/src/rdkafka.c rd_kafka_poll ['read:pointer-member']
+   [read:pointer-member] r = rd_kafka_q_serve_maybe_consume(rk->rk_rep, timeout_ms, 0, RD_KAFKA_Q_CB_CALLBACK, rd_kafka_poll_cb, ((void*)0));
+      read/pointer/formal//rd_kafka_q_serve_maybe_consume
+== lib/librdkafka-2.15.0/src/rdkafka.c rd_kafka_queue_poll ['read:pointer-member']
+   [read:pointer-member] rko = rd_kafka_q_pop_serve_maybe_consume( rkqu->rkqu_q, rd_timeout_us(timeout_ms), 0, RD_KAFKA_Q_CB_EVENT, rd_kafka_poll_cb, ((void*)0));
+      read/pointer/formal//rd_kafka_q_pop_serve_maybe_consume
+== lib/librdkafka-2.15.0/src/rdkafka.c rd_kafka_queue_poll_callback ['read:pointer-member']
+   [read:pointer-member] r = rd_kafka_q_serve_maybe_consume(rkqu->rkqu_q, timeout_ms, 0, RD_KAFKA_Q_CB_CALLBACK, rd_kafka_poll_cb, ((void*)0));
+      read/pointer/formal//rd_kafka_q_serve_maybe_consume
+== lib/librdkafka-2.15.0/src/rdkafka.c rd_kafka_simple_consumer_add ['call:uncontracted-callee']
+   [call:uncontracted-callee] return (int)rd_atomic32_add(&rk->rk_simple_cnt, 1);
+      address/address/formal//rd_atomic32_add
+== lib/librdkafka-2.15.0/src/rdkafka.c rd_kafka_stats_emit_broker_reqs ['address:sub-object', 'store:pointer-call-result']
+   [store:pointer-call-result] do { ssize_t _r; ssize_t _rem = st->size - st->of; _r = snprintf(st->buf + st->of, _rem, "\"req\": { "); if (_r >= _rem) { st->size *= 2; _rem = st->s
+      read/scalar/formal//; read/scalar/formal//; read/pointer/formal//snprintf; read/scalar/formal//snprintf; store/scalar/formal//; read/scalar/formal//; read/scalar/formal//; store/pointer/formal/call:rd
+   [address:sub-object] v = rd_atomic64_get(&rkb->rkb_c.reqtype[i]);
+      address/address/formal//rd_atomic64_get
+   [store:pointer-call-result] do { ssize_t _r; ssize_t _rem = st->size - st->of; _r = snprintf(st->buf + st->of, _rem, "%s\"%s\": %" "l" "d", cnt > 0 ? ", " : "", rd_kafka_ApiKey2s
+      read/scalar/formal//; read/scalar/formal//; read/pointer/formal//snprintf; read/scalar/formal//snprintf; store/scalar/formal//; read/scalar/formal//; read/scalar/formal//; store/pointer/formal/call:rd
+   [store:pointer-call-result] do { ssize_t _r; ssize_t _rem = st->size - st->of; _r = snprintf(st->buf + st->of, _rem, " }, "); if (_r >= _rem) { st->size *= 2; _rem = st->size - s
+      read/scalar/formal//; read/scalar/formal//; read/pointer/formal//snprintf; read/scalar/formal//snprintf; store/scalar/formal//; read/scalar/formal//; read/scalar/formal//; store/pointer/formal/call:rd
+== lib/librdkafka-2.15.0/src/rdkafka.c rd_kafka_toppar_dump ['address:sub-object', 'read:pointer-member']
+   [read:pointer-member] fprintf(fp, "%s%.*s [%" "d" "] broker %s, " "leader_id %s\n", indent, (int)((rktp->rktp_rkt->rkt_topic)->len == -1 ? 0 : (rktp->rktp_rkt->rkt_topic)->
+      read/scalar/formal//fprintf; read/scalar/formal//fprintf; read/pointer/formal//fprintf; read/scalar/formal//fprintf; read/pointer/formal//fprintf; address/address/formal//fprintf; read/pointer/formal/
+   [address:sub-object] fprintf(fp, "%s refcnt %i\n" "%s msgq:      %i messages\n" "%s xmit_msgq: %i messages\n" "%s total:     %" "l" "u" " messages, %" "l" "u" " bytes\n", 
+      address/address/formal//rd_atomic32_get; read/scalar/formal//fprintf; read/scalar/formal//fprintf; address/address/formal//rd_atomic64_get; address/address/formal//rd_atomic64_get
+== lib/librdkafka-2.15.0/src/rdkafka_admin.c rd_kafka_AclBinding_destroy_array ['read:pointer-member']
+   [read:pointer-member] for (i = 0; i < acl_bindings_cnt; i++) rd_kafka_AclBinding_destroy(acl_bindings[i]);
+      read/pointer/formal//rd_kafka_AclBinding_destroy
+== lib/librdkafka-2.15.0/src/rdkafka_admin.c rd_kafka_AdminOptions_set_broker ['address:sub-object']
+   [address:sub-object] return rd_kafka_confval_set_type(&options->broker, RD_KAFKA_CONFVAL_INT, &ibroker_id, errstr, errstr_size);
+      address/address/formal//rd_kafka_confval_set_type
+== lib/librdkafka-2.15.0/src/rdkafka_admin.c rd_kafka_AdminOptions_set_opaque ['address:sub-object']
+   [address:sub-object] rd_kafka_confval_set_type(&options->opaque, RD_KAFKA_CONFVAL_PTR, opaque, ((void*)0), 0);
+      address/address/formal//rd_kafka_confval_set_type
+== lib/librdkafka-2.15.0/src/rdkafka_admin.c rd_kafka_AdminOptions_set_operation_timeout ['address:sub-object']
+   [address:sub-object] return rd_kafka_confval_set_type(&options->operation_timeout, RD_KAFKA_CONFVAL_INT, &timeout_ms, errstr, errstr_size);
+      address/address/formal//rd_kafka_confval_set_type
+== lib/librdkafka-2.15.0/src/rdkafka_admin.c rd_kafka_AdminOptions_set_request_timeout ['address:sub-object']
+   [address:sub-object] return rd_kafka_confval_set_type(&options->request_timeout, RD_KAFKA_CONFVAL_INT, &timeout_ms, errstr, errstr_size);
+      address/address/formal//rd_kafka_confval_set_type
+== lib/librdkafka-2.15.0/src/rdkafka_admin.c rd_kafka_AdminOptions_set_validate_only ['address:sub-object']
+   [address:sub-object] return rd_kafka_confval_set_type(&options->validate_only, RD_KAFKA_CONFVAL_INT, &true_or_false, errstr, errstr_size);
+      address/address/formal//rd_kafka_confval_set_type
+== lib/librdkafka-2.15.0/src/rdkafka_admin.c rd_kafka_AlterConsumerGroupOffsets_destroy_array ['read:pointer-member']
+   [read:pointer-member] for (i = 0; i < alter_grpoffsets_cnt; i++) rd_kafka_AlterConsumerGroupOffsets_destroy(alter_grpoffsets[i]);
+      read/pointer/formal//rd_kafka_AlterConsumerGroupOffsets_destroy
+== lib/librdkafka-2.15.0/src/rdkafka_admin.c rd_kafka_ConfigResource_add_ConfigEntry ['address:sub-object']
+   [address:sub-object] rd_list_add(&config->config, entry);
+      address/address/formal//rd_list_add
+== lib/librdkafka-2.15.0/src/rdkafka_admin.c rd_kafka_ConfigResource_destroy_array ['read:pointer-member']
+   [read:pointer-member] for (i = 0; i < config_cnt; i++) rd_kafka_ConfigResource_destroy(config[i]);
+      read/pointer/formal//rd_kafka_ConfigResource_destroy
+== lib/librdkafka-2.15.0/src/rdkafka_admin.c rd_kafka_ConsumerGroupDescription_member ['call:uncontracted-callee']
+   [call:uncontracted-callee] return (rd_kafka_MemberDescription_t *)rd_list_elem(&grpdesc->members, idx);
+      address/address/formal//rd_list_elem
+== lib/librdkafka-2.15.0/src/rdkafka_admin.c rd_kafka_DeleteConsumerGroupOffsets_destroy_array ['read:pointer-member']
+   [read:pointer-member] for (i = 0; i < del_grpoffsets_cnt; i++) rd_kafka_DeleteConsumerGroupOffsets_destroy(del_grpoffsets[i]);
+      read/pointer/formal//rd_kafka_DeleteConsumerGroupOffsets_destroy
+== lib/librdkafka-2.15.0/src/rdkafka_admin.c rd_kafka_DeleteGroup_destroy_array ['read:pointer-member']
+   [read:pointer-member] for (i = 0; i < del_group_cnt; i++) rd_kafka_DeleteGroup_destroy(del_groups[i]);
+      read/pointer/formal//rd_kafka_DeleteGroup_destroy
+== lib/librdkafka-2.15.0/src/rdkafka_admin.c rd_kafka_DeleteRecords_new ['call:uncontracted-callee']
+   [call:uncontracted-callee] del_records->offsets = rd_kafka_topic_partition_list_copy(before_offsets);
+      store/pointer/local/call:rd_kafka_topic_partition_list_copy/
+== lib/librdkafka-2.15.0/src/rdkafka_admin.c rd_kafka_DeleteTopic_destroy_array ['read:pointer-member']
+   [read:pointer-member] for (i = 0; i < del_topic_cnt; i++) rd_kafka_DeleteTopic_destroy(del_topics[i]);
+      read/pointer/formal//rd_kafka_DeleteTopic_destroy
+== lib/librdkafka-2.15.0/src/rdkafka_admin.c rd_kafka_ElectLeaders_new ['call:uncontracted-callee']
+   [call:uncontracted-callee] if (partitions) elect_leaders->partitions = rd_kafka_topic_partition_list_copy(partitions);
+      store/pointer/local/call:rd_kafka_topic_partition_list_copy/
+== lib/librdkafka-2.15.0/src/rdkafka_admin.c rd_kafka_ElectLeaders_result_result ['form:union']
+   [form:union] return (const rd_kafka_ElectLeadersResult_t *)rd_list_elem( &result->rko_u.admin_result.results, 0);
+      address/address/formal//rd_list_elem
+== lib/librdkafka-2.15.0/src/rdkafka_admin.c rd_kafka_ListConsumerGroupOffsets_destroy_array ['read:pointer-member']
+   [read:pointer-member] for (i = 0; i < list_grpoffsets_cnt; i++) rd_kafka_ListConsumerGroupOffsets_destroy(list_grpoffsets[i]);
+      read/pointer/formal//rd_kafka_ListConsumerGroupOffsets_destroy
+== lib/librdkafka-2.15.0/src/rdkafka_admin.c rd_kafka_ListOffsetsResultInfo_new ['call:uncontracted-callee']
+   [call:uncontracted-callee] result_info->topic_partition = rd_kafka_topic_partition_copy(rktpar);
+      store/pointer/local/call:rd_kafka_topic_partition_copy/
+== lib/librdkafka-2.15.0/src/rdkafka_admin.c rd_kafka_MemberDescription_copy ['call:uncontracted-callee']
+   [call:uncontracted-callee] return rd_kafka_MemberDescription_new( src->client_id, src->consumer_id, src->group_instance_id, src->host, src->assignment.partitions, src->target_as
+      read/pointer/formal//rd_kafka_MemberDescription_new; read/pointer/formal//rd_kafka_MemberDescription_new; read/pointer/formal//rd_kafka_MemberDescription_new; read/pointer/formal//rd_kafka_MemberDescr
+== lib/librdkafka-2.15.0/src/rdkafka_admin.c rd_kafka_NewPartitions_destroy_array ['read:pointer-member']
+   [read:pointer-member] for (i = 0; i < newps_cnt; i++) rd_kafka_NewPartitions_destroy(newps[i]);
+      read/pointer/formal//rd_kafka_NewPartitions_destroy
+== lib/librdkafka-2.15.0/src/rdkafka_admin.c rd_kafka_NewTopic_destroy_array ['read:pointer-member']
+   [read:pointer-member] for (i = 0; i < new_topic_cnt; i++) rd_kafka_NewTopic_destroy(new_topics[i]);
+      read/pointer/formal//rd_kafka_NewTopic_destroy
+== lib/librdkafka-2.15.0/src/rdkafka_admin.c rd_kafka_TopicCollection_of_topic_names ['store:pointer-call-result']
+   [store:pointer-call-result] ret->topics = rd_calloc(topics_cnt, sizeof(char *));
+      store/pointer/local/call:rd_calloc/
+   [store:pointer-call-result] for (i = 0; i < topics_cnt; i++) ret->topics[i] = rd_strdup(topics[i]);
+      store/pointer/local/call:rd_strdup/; read/pointer/formal//rd_strdup
+== lib/librdkafka-2.15.0/src/rdkafka_admin.c rd_kafka_UserScramCredentialAlteration_destroy_array ['read:pointer-member']
+   [read:pointer-member] for (i = 0; i < alteration_cnt; i++) rd_kafka_UserScramCredentialAlteration_destroy(alterations[i]);
+      read/pointer/formal//rd_kafka_UserScramCredentialAlteration_destroy
+== lib/librdkafka-2.15.0/src/rdkafka_admin.c rd_kafka_UserScramCredentialDeletion_new ['store:pointer-call-result']
+   [store:pointer-call-result] alteration->user = rd_strdup(username);
+      store/pointer/local/call:rd_strdup/
+== lib/librdkafka-2.15.0/src/rdkafka_admin.c rd_kafka_admin_request_op_result_cb_set ['form:union']
+   [form:union] op->rko_u.admin_result.result_cb = result_cb;
+      store/function_pointer/formal/formal/
+== lib/librdkafka-2.15.0/src/rdkafka_admin.c rd_kafka_admin_result_set_err0 ['form:union']
+   [form:union] if (rko->rko_u.admin_result.errstr) rd_free(rko->rko_u.admin_result.errstr);
+      read/pointer/formal//rd_free
+   [form:union] rko->rko_u.admin_result.errstr = rd_strdup(buf);
+      store/pointer/formal/call:rd_strdup/
+   [form:union] do { if ((__builtin_expect(((rko->rko_rk->rk_conf).debug &(0x4000)), 0))) rd_kafka_log0(&rko->rko_rk->rk_conf, rko->rko_rk, ((void*)0), 7, (0x4000), "
+      address/address/formal//rd_kafka_log0; read/pointer/formal//rd_kafka_log0; read/scalar/formal//rd_kafka_op2str; read/pointer/formal//rd_kafka_log0
+== lib/librdkafka-2.15.0/src/rdkafka_assignment.c rd_kafka_assignment_destroy ['read:pointer-member']
+   [read:pointer-member] rd_kafka_topic_partition_list_destroy(rk->rk_consumer.assignment.all);
+      read/pointer/formal//rd_kafka_topic_partition_list_destroy
+   [read:pointer-member] rd_kafka_topic_partition_list_destroy( rk->rk_consumer.assignment.pending);
+      read/pointer/formal//rd_kafka_topic_partition_list_destroy
+   [read:pointer-member] rd_kafka_topic_partition_list_destroy( rk->rk_consumer.assignment.queried);
+      read/pointer/formal//rd_kafka_topic_partition_list_destroy
+   [read:pointer-member] rd_kafka_topic_partition_list_destroy( rk->rk_consumer.assignment.removed);
+      read/pointer/formal//rd_kafka_topic_partition_list_destroy
+== lib/librdkafka-2.15.0/src/rdkafka_assignment.c rd_kafka_assignment_init ['call:uncontracted-callee']
+   [call:uncontracted-callee] rk->rk_consumer.assignment.all = rd_kafka_topic_partition_list_new(100);
+      store/pointer/formal/call:rd_kafka_topic_partition_list_new/
+   [call:uncontracted-callee] rk->rk_consumer.assignment.pending = rd_kafka_topic_partition_list_new(100);
+      store/pointer/formal/call:rd_kafka_topic_partition_list_new/
+   [call:uncontracted-callee] rk->rk_consumer.assignment.queried = rd_kafka_topic_partition_list_new(100);
+      store/pointer/formal/call:rd_kafka_topic_partition_list_new/
+   [call:uncontracted-callee] rk->rk_consumer.assignment.removed = rd_kafka_topic_partition_list_new(100);
+      store/pointer/formal/call:rd_kafka_topic_partition_list_new/
+== lib/librdkafka-2.15.0/src/rdkafka_assignor.c rd_kafka_assignor_find ['call:uncontracted-callee']
+   [call:uncontracted-callee] return (rd_kafka_assignor_t *)rd_list_find( &rk->rk_conf.partition_assignors, protocol, rd_kafka_assignor_cmp_str);
+      address/address/formal//rd_list_find
+== lib/librdkafka-2.15.0/src/rdkafka_assignor.c rd_kafka_assignors_term ['address:sub-object']
+   [address:sub-object] rd_list_destroy(&rk->rk_conf.partition_assignors);
+      address/address/formal//rd_list_destroy
+== lib/librdkafka-2.15.0/src/rdkafka_assignor.c ut_populate_internal_broker_metadata ['store:pointer-other']
+   [store:pointer-other] mdi->brokers[i].rack_id = (char *)(num_broker_racks ? all_racks[i % num_broker_racks]->str : ((void*)0));
+      store/pointer/formal/conditional+cast/; read/pointer/formal//
+== lib/librdkafka-2.15.0/src/rdkafka_aux.c rd_kafka_Node_new ['store:pointer-call-result']
+   [store:pointer-call-result] ret->host = rd_strdup(host);
+      store/pointer/local/call:rd_strdup/
+   [store:pointer-call-result] if (rack != ((void*)0)) ret->rack = rd_strdup(rack);
+      store/pointer/local/call:rd_strdup/
+== lib/librdkafka-2.15.0/src/rdkafka_aux.c rd_kafka_group_result_copy ['call:uncontracted-callee']
+   [call:uncontracted-callee] return rd_kafka_group_result_new( groupres->group, -1, groupres->partitions, groupres->error ? rd_kafka_error_copy(groupres->error) : ((void*)0));
+      read/pointer/formal//rd_kafka_group_result_new; read/pointer/formal//rd_kafka_group_result_new; read/pointer/formal//rd_kafka_group_result_new; read/pointer/formal//rd_kafka_error_copy
+== lib/librdkafka-2.15.0/src/rdkafka_aux.c rd_kafka_topic_partition_result_destroy_array ['read:pointer-member']
+   [read:pointer-member] rd_kafka_topic_partition_result_destroy(partition_results[i]);
+      read/pointer/formal//rd_kafka_topic_partition_result_destroy
+== lib/librdkafka-2.15.0/src/rdkafka_broker.c rd_kafka_broker_monitor_op_cb ['form:indirect-call']
+   [form:indirect-call] if (rko->rko_err != RD_KAFKA_RESP_ERR__DESTROY) rko->rko_u.broker_monitor.cb(rko->rko_u.broker_monitor.rkb);
+      read/function_pointer/formal//; read/pointer/formal//<indirect>
+== lib/librdkafka-2.15.0/src/rdkafka_broker.c rd_kafka_broker_update_reconnect_backoff ['call:uncontracted-callee']
+   [call:uncontracted-callee] backoff = rd_jitter((int)((float)rkb->rkb_reconnect_backoff_ms * 0.75), (int)((float)rkb->rkb_reconnect_backoff_ms * 1.5));
+      read/scalar/formal//rd_jitter; read/scalar/formal//rd_jitter
+== lib/librdkafka-2.15.0/src/rdkafka_broker.c rd_kafka_broker_weight_usable ['read:custody-free']
+   [read:custody-free] int idle = (int)((rd_clock() - (tx_last > 0 ? tx_last : rkb->rkb_ts_state)) / 1000000);
+      read/scalar/formal//
+== lib/librdkafka-2.15.0/src/rdkafka_broker.c rd_kafka_brokers_wait_state_change_async ['address:sub-object']
+   [address:sub-object] rd_list_add(&rk->rk_broker_state_change_waiters, eonce);
+      address/address/formal//rd_list_add
+== lib/librdkafka-2.15.0/src/rdkafka_buf.c rd_kafka_buf_set_maker ['store:pointer-name']
+   [store:pointer-name] rkbuf->rkbuf_make_req_cb = make_cb;
+      store/pointer/formal/formal/
+   [store:pointer-name] rkbuf->rkbuf_make_opaque = make_opaque;
+      store/pointer/formal/formal/
+== lib/librdkafka-2.15.0/src/rdkafka_cgrp.c PartitionMemberInfo_new ['store:pointer-name']
+   [store:pointer-name] pmi->member = member;
+      store/pointer/local/formal/
+== lib/librdkafka-2.15.0/src/rdkafka_cgrp.c rd_kafka_cgrp_group_leader_reset ['call:uncontracted-callee', 'read:pointer-member']
+   [read:pointer-member] do { if ((__builtin_expect(((rkcg->rkcg_rk->rk_conf).debug &(0x100)), 0))) rd_kafka_log0(&rkcg->rkcg_rk->rk_conf, rkcg->rkcg_rk, ((void*)0), 7, (0x100
+      address/address/formal//rd_kafka_log0; read/pointer/formal//rd_kafka_log0; read/scalar/formal//rd_kafka_log0; read/scalar/formal//rd_kafka_log0; read/pointer/formal//rd_kafka_log0
+   [call:uncontracted-callee] for (i = 0; i < rkcg->rkcg_group_leader.member_cnt; i++) rd_kafka_group_member_clear( &rkcg->rkcg_group_leader.members[i]);
+      address/address/formal//rd_kafka_group_member_clear
+   [read:pointer-member] rd_free(rkcg->rkcg_group_leader.members);
+      read/pointer/formal//rd_free
+== lib/librdkafka-2.15.0/src/rdkafka_cgrp.c rd_kafka_cgrp_heartbeat ['call:uncontracted-callee']
+   [call:uncontracted-callee] rd_kafka_HeartbeatRequest( rkcg->rkcg_coord, rkcg->rkcg_group_id, rkcg->rkcg_generation_id, rkcg->rkcg_member_id, rkcg->rkcg_group_instance_id, rd_kaf
+      read/pointer/formal//rd_kafka_HeartbeatRequest; read/pointer/formal//rd_kafka_HeartbeatRequest; read/scalar/formal//rd_kafka_HeartbeatRequest; read/pointer/formal//rd_kafka_HeartbeatRequest; read/poin
+== lib/librdkafka-2.15.0/src/rdkafka_cgrp.c rd_kafka_cgrp_op ['form:aggregate-value', 'store:pointer-call-result']
+   [form:aggregate-value] rko->rko_replyq = replyq;
+      store/aggregate/local/formal/
+   [store:pointer-call-result] if (rktp) rko->rko_rktp = rd_kafka_toppar_keep0(__FUNCTION__, 7361, rktp);
+      store/pointer/local/call:rd_kafka_toppar_keep0/
+== lib/librdkafka-2.15.0/src/rdkafka_cgrp.c rd_kafka_cgrp_set_join_state ['address:sub-object', 'root:file-scope']
+   [address:sub-object] rd_avg_add(&rkcg->rkcg_rk->rk_telemetry.rd_avg_current .rk_avg_rebalance_latency, rd_clock() - rkcg->rkcg_ts_rebalance_start);
+      address/address/formal//rd_avg_add; read/scalar/formal//rd_avg_add
+   [root:file-scope] do { if ((__builtin_expect(((rkcg->rkcg_rk->rk_conf).debug &(0x100)), 0))) rd_kafka_log0(&rkcg->rkcg_rk->rk_conf, rkcg->rkcg_rk, ((void*)0), 7, (0x100
+      address/address/formal//rd_kafka_log0; read/pointer/formal//rd_kafka_log0; read/scalar/formal//rd_kafka_log0; read/scalar/formal//rd_kafka_log0; read/pointer/formal//rd_kafka_log0; read/scalar/formal/
+== lib/librdkafka-2.15.0/src/rdkafka_cgrp.c rd_kafka_cgrp_start_max_poll_interval_timer ['call:uncontracted-callee']
+   [call:uncontracted-callee] rd_kafka_timer_start0(&rkcg->rkcg_rk->rk_timers, &rkcg->rkcg_max_poll_interval_tmr, 500 * 1000ll, 0, 1, rd_kafka_cgrp_max_poll_interval_check_tmr_cb, 
+      address/address/formal//rd_kafka_timer_start0; address/address/formal//rd_kafka_timer_start0
+== lib/librdkafka-2.15.0/src/rdkafka_conf.c rd_kafka_conf_flags2str ['read:pointer-member']
+   [read:pointer-member] r = snprintf(dest + of, dest_size - of, "%s%s", of > 0 ? delim : "", prop->s2i[j].str);
+      read/pointer/formal//snprintf
+== lib/librdkafka-2.15.0/src/rdkafka_conf.c rd_kafka_sw_str_sanitize_inplace ['no-evaluated-path']
+   [no-evaluated-path] char *s = str, *d = str;
+      
+== lib/librdkafka-2.15.0/src/rdkafka_fetcher.c rd_kafka_broker_session_update_added_partitions ['address:sub-object']
+   [address:sub-object] rd_kafka_broker_session_update_toppars_list( rkb, &rkb->rkb_share_fetch_session.adding_toppars, &rkb->rkb_share_fetch_session.toppars_to_add, 1);
+      address/address/formal//rd_kafka_broker_session_update_toppars_list; address/address/formal//rd_kafka_broker_session_update_toppars_list
+== lib/librdkafka-2.15.0/src/rdkafka_fetcher.c rd_kafka_broker_session_update_removed_partitions ['address:sub-object']
+   [address:sub-object] rd_kafka_broker_session_update_toppars_list( rkb, &rkb->rkb_share_fetch_session.forgetting_toppars, &rkb->rkb_share_fetch_session.toppars_to_forget, 0
+      address/address/formal//rd_kafka_broker_session_update_toppars_list; address/address/formal//rd_kafka_broker_session_update_toppars_list
+== lib/librdkafka-2.15.0/src/rdkafka_fetcher.c rd_kafkap_Fetch_reply_tags_set_topic ['store:pointer-call-result']
+   [store:pointer-call-result] reply_tags->Topics[TopicIdx].Partitions = rd_calloc( PartitionCnt, sizeof(*reply_tags->Topics[TopicIdx].Partitions));
+      store/pointer/formal/call:rd_calloc/
+== lib/librdkafka-2.15.0/src/rdkafka_fetcher.c rd_kafkap_Fetch_reply_tags_set_topic_cnt ['store:pointer-call-result']
+   [store:pointer-call-result] reply_tags->Topics = rd_calloc(TopicCnt, sizeof(*reply_tags->Topics));
+      store/pointer/formal/call:rd_calloc/
+== lib/librdkafka-2.15.0/src/rdkafka_idempotence.c rd_kafka_idemp_drain_toppar ['read:pointer-member']
+   [read:pointer-member] do { if ((__builtin_expect(((rktp->rktp_rkt->rkt_rk->rk_conf).debug &(0x8000 | 0x4)), 0))) rd_kafka_log0(&rktp->rktp_rkt->rkt_rk->rk_conf, rktp->rktp_
+      address/address/formal//rd_kafka_log0; read/pointer/formal//rd_kafka_log0; read/scalar/formal//rd_kafka_log0; read/scalar/formal//rd_kafka_log0; read/pointer/formal//rd_kafka_log0; read/scalar/formal/
+== lib/librdkafka-2.15.0/src/rdkafka_idempotence.c rd_kafka_idemp_pid_timer_restart ['address:sub-object', 'call:uncontracted-callee']
+   [address:sub-object] do { if ((__builtin_expect(((rk->rk_conf).debug &(0x8000)), 0))) rd_kafka_log0(&rk->rk_conf, rk, ((void*)0), 7, (0x8000), "TXN", "Starting PID FSM tim
+      address/address/formal//rd_kafka_log0
+   [call:uncontracted-callee] rd_kafka_timer_start0(&rk->rk_timers, &rk->rk_eos.pid_tmr, 1000 * (immediate ? 1 : 500 ), 1, 1, rd_kafka_idemp_pid_timer_cb, rk);
+      address/address/formal//rd_kafka_timer_start0; address/address/formal//rd_kafka_timer_start0
+== lib/librdkafka-2.15.0/src/rdkafka_interceptor.c rd_kafka_conf_interceptor_add_on_conf_destroy ['address:sub-object']
+   [address:sub-object] return rd_kafka_interceptor_method_add( &conf->interceptors.on_conf_destroy, ic_name, (void *)on_conf_destroy, ic_opaque);
+      address/address/formal//rd_kafka_interceptor_method_add
+== lib/librdkafka-2.15.0/src/rdkafka_interceptor.c rd_kafka_conf_interceptor_add_on_conf_dup ['address:sub-object']
+   [address:sub-object] return rd_kafka_interceptor_method_add(&conf->interceptors.on_conf_dup, ic_name, (void *)on_conf_dup, ic_opaque);
+      address/address/formal//rd_kafka_interceptor_method_add
+== lib/librdkafka-2.15.0/src/rdkafka_interceptor.c rd_kafka_conf_interceptor_add_on_conf_set ['address:sub-object']
+   [address:sub-object] return rd_kafka_interceptor_method_add(&conf->interceptors.on_conf_set, ic_name, (void *)on_conf_set, ic_opaque);
+      address/address/formal//rd_kafka_interceptor_method_add
+== lib/librdkafka-2.15.0/src/rdkafka_interceptor.c rd_kafka_conf_interceptor_add_on_new ['address:sub-object']
+   [address:sub-object] return rd_kafka_interceptor_method_add( &conf->interceptors.on_new, ic_name, (void *)on_new, ic_opaque);
+      address/address/formal//rd_kafka_interceptor_method_add
+== lib/librdkafka-2.15.0/src/rdkafka_interceptor.c rd_kafka_interceptor_add_on_acknowledgement ['address:sub-object']
+   [address:sub-object] return rd_kafka_interceptor_method_add( &rk->rk_conf.interceptors.on_acknowledgement, ic_name, (void *)on_acknowledgement, ic_opaque);
+      address/address/formal//rd_kafka_interceptor_method_add
+== lib/librdkafka-2.15.0/src/rdkafka_interceptor.c rd_kafka_interceptor_add_on_broker_state_change ['address:sub-object']
+   [address:sub-object] return rd_kafka_interceptor_method_add( &rk->rk_conf.interceptors.on_broker_state_change, ic_name, (void *)on_broker_state_change, ic_opaque);
+      address/address/formal//rd_kafka_interceptor_method_add
+== lib/librdkafka-2.15.0/src/rdkafka_interceptor.c rd_kafka_interceptor_add_on_commit ['address:sub-object']
+   [address:sub-object] return rd_kafka_interceptor_method_add( &rk->rk_conf.interceptors.on_commit, ic_name, (void *)on_commit, ic_opaque);
+      address/address/formal//rd_kafka_interceptor_method_add
+== lib/librdkafka-2.15.0/src/rdkafka_interceptor.c rd_kafka_interceptor_add_on_consume ['address:sub-object']
+   [address:sub-object] return rd_kafka_interceptor_method_add( &rk->rk_conf.interceptors.on_consume, ic_name, (void *)on_consume, ic_opaque);
+      address/address/formal//rd_kafka_interceptor_method_add
+== lib/librdkafka-2.15.0/src/rdkafka_interceptor.c rd_kafka_interceptor_add_on_destroy ['address:sub-object']
+   [address:sub-object] return rd_kafka_interceptor_method_add( &rk->rk_conf.interceptors.on_destroy, ic_name, (void *)on_destroy, ic_opaque);
+      address/address/formal//rd_kafka_interceptor_method_add
+== lib/librdkafka-2.15.0/src/rdkafka_interceptor.c rd_kafka_interceptor_add_on_request_sent ['address:sub-object']
+   [address:sub-object] return rd_kafka_interceptor_method_add( &rk->rk_conf.interceptors.on_request_sent, ic_name, (void *)on_request_sent, ic_opaque);
+      address/address/formal//rd_kafka_interceptor_method_add
+== lib/librdkafka-2.15.0/src/rdkafka_interceptor.c rd_kafka_interceptor_add_on_response_received ['address:sub-object']
+   [address:sub-object] return rd_kafka_interceptor_method_add( &rk->rk_conf.interceptors.on_response_received, ic_name, (void *)on_response_received, ic_opaque);
+      address/address/formal//rd_kafka_interceptor_method_add
+== lib/librdkafka-2.15.0/src/rdkafka_interceptor.c rd_kafka_interceptor_add_on_send ['address:sub-object']
+   [address:sub-object] return rd_kafka_interceptor_method_add( &rk->rk_conf.interceptors.on_send, ic_name, (void *)on_send, ic_opaque);
+      address/address/formal//rd_kafka_interceptor_method_add
+== lib/librdkafka-2.15.0/src/rdkafka_interceptor.c rd_kafka_interceptor_add_on_thread_exit ['address:sub-object']
+   [address:sub-object] return rd_kafka_interceptor_method_add( &rk->rk_conf.interceptors.on_thread_exit, ic_name, (void *)on_thread_exit, ic_opaque);
+      address/address/formal//rd_kafka_interceptor_method_add
+== lib/librdkafka-2.15.0/src/rdkafka_interceptor.c rd_kafka_interceptor_add_on_thread_start ['address:sub-object']
+   [address:sub-object] return rd_kafka_interceptor_method_add( &rk->rk_conf.interceptors.on_thread_start, ic_name, (void *)on_thread_start, ic_opaque);
+      address/address/formal//rd_kafka_interceptor_method_add
+== lib/librdkafka-2.15.0/src/rdkafka_interceptor.c rd_kafka_interceptor_failed ['call:uncontracted-callee']
+   [call:uncontracted-callee] if (rkmessage) rd_kafka_log0(&rk->rk_conf, rk, ((void*)0), 4, 0x0, "ICFAIL", "Interceptor %s failed %s for " "message on %s [%" "d" "] @ %" "l" "d" ":
+      address/address/formal//rd_kafka_log0; read/pointer/formal//rd_kafka_log0; read/pointer/formal//rd_kafka_topic_name; read/scalar/formal//rd_kafka_log0; read/scalar/formal//rd_kafka_log0
+   [call:uncontracted-callee] else rd_kafka_log0(&rk->rk_conf, rk, ((void*)0), 4, 0x0, "ICFAIL", "Interceptor %s failed %s: %s%s%s", method->ic_name, method_name, rd_kafka_err2str(
+      address/address/formal//rd_kafka_log0; read/pointer/formal//rd_kafka_log0
+== lib/librdkafka-2.15.0/src/rdkafka_interceptor.c rd_kafka_interceptor_method_new ['form:union', 'store:pointer-call-result', 'store:pointer-name']
+   [store:pointer-call-result] method->ic_name = rd_strdup(ic_name);
+      store/pointer/local/call:rd_strdup/
+   [store:pointer-name] method->ic_opaque = ic_opaque;
+      store/pointer/local/formal/
+   [form:union] method->u.generic = func;
+      store/pointer/local/formal/
+== lib/librdkafka-2.15.0/src/rdkafka_interceptor.c rd_kafka_interceptors_destroy ['address:sub-object']
+   [address:sub-object] rd_list_destroy(&conf->interceptors.on_conf_set);
+      address/address/formal//rd_list_destroy
+   [address:sub-object] rd_list_destroy(&conf->interceptors.on_conf_dup);
+      address/address/formal//rd_list_destroy
+   [address:sub-object] rd_list_destroy(&conf->interceptors.on_conf_destroy);
+      address/address/formal//rd_list_destroy
+   [address:sub-object] rd_list_destroy(&conf->interceptors.on_new);
+      address/address/formal//rd_list_destroy
+   [address:sub-object] rd_list_destroy(&conf->interceptors.on_destroy);
+      address/address/formal//rd_list_destroy
+   [address:sub-object] rd_list_destroy(&conf->interceptors.on_send);
+      address/address/formal//rd_list_destroy
+   [address:sub-object] rd_list_destroy(&conf->interceptors.on_acknowledgement);
+      address/address/formal//rd_list_destroy
+   [address:sub-object] rd_list_destroy(&conf->interceptors.on_consume);
+      address/address/formal//rd_list_destroy
+   [address:sub-object] rd_list_destroy(&conf->interceptors.on_commit);
+      address/address/formal//rd_list_destroy
+   [address:sub-object] rd_list_destroy(&conf->interceptors.on_request_sent);
+      address/address/formal//rd_list_destroy
+   [address:sub-object] rd_list_destroy(&conf->interceptors.on_response_received);
+      address/address/formal//rd_list_destroy
+   [address:sub-object] rd_list_destroy(&conf->interceptors.on_thread_start);
+      address/address/formal//rd_list_destroy
+   [address:sub-object] rd_list_destroy(&conf->interceptors.on_thread_exit);
+      address/address/formal//rd_list_destroy
+   [address:sub-object] rd_list_destroy(&conf->interceptors.on_broker_state_change);
+      address/address/formal//rd_list_destroy
+   [address:sub-object] rd_list_destroy(&conf->interceptors.config);
+      address/address/formal//rd_list_destroy
+== lib/librdkafka-2.15.0/src/rdkafka_metadata.c rd_kafka_metadata_log ['call:uncontracted-callee']
+   [call:uncontracted-callee] do { if ((__builtin_expect(((rk->rk_conf).debug &(0x8)), 0))) rd_kafka_log0(&rk->rk_conf, rk, ((void*)0), 7, (0x8), fac, "  Topic #%i/%i: %s with %i p
+      address/address/formal//rd_kafka_log0; read/scalar/formal//rd_kafka_log0; read/pointer/formal//rd_kafka_topic_name_str_safe; read/scalar/formal//rd_kafka_log0; read/scalar/formal//rd_kafka_log0; read/
+== lib/librdkafka-2.15.0/src/rdkafka_metadata_cache.c rd_kafka_metadata_cache_dump ['call:uncontracted-callee', 'read:pointer-member']
+   [read:pointer-member] for ((rkmce) = ((&rkmc->rkmc_expiry)->tqh_first); (rkmce) != (((void*)0)); (rkmce) = ((rkmce)->rkmce_link.tqe_next)) {
+      read/pointer/local//; read/pointer/local//
+   [call:uncontracted-callee] fprintf(fp, "  %s (inserted %dms ago, expires in %dms, " "%d partition(s), %s)%s%s\n", rkmce->rkmce_mtopic.topic, (int)((now - rkmce->rkmce_ts_insert)
+      read/pointer/local//fprintf; read/scalar/local//fprintf; read/scalar/local//fprintf; read/scalar/local//fprintf; read/scalar/local//fprintf; read/scalar/local//fprintf; read/scalar/local//fprintf; rea
+== lib/librdkafka-2.15.0/src/rdkafka_metadata_cache.c rd_kafka_metadata_cache_entry_by_id_cmp ['form:aggregate-value']
+   [form:aggregate-value] return rd_kafka_Uuid_cmp(a->rkmce_metadata_internal_topic.topic_id, b->rkmce_metadata_internal_topic.topic_id);
+      read/aggregate/local//rd_kafka_Uuid_cmp; read/aggregate/local//rd_kafka_Uuid_cmp
+== lib/librdkafka-2.15.0/src/rdkafka_metadata_cache.c rd_kafka_metadata_cache_wait_state_change_async ['address:sub-object']
+   [address:sub-object] rd_list_add(&rk->rk_metadata_cache.rkmc_observers, eonce);
+      address/address/formal//rd_list_add
+== lib/librdkafka-2.15.0/src/rdkafka_mock.c rd_kafka_mock_broker_add ['read:pointer-member']
+   [read:pointer-member] return rd_kafka_op_err_destroy( rd_kafka_op_req(mcluster->ops, rko, -1));
+      read/pointer/formal//rd_kafka_op_req
+== lib/librdkafka-2.15.0/src/rdkafka_mock.c rd_kafka_mock_broker_decommission ['read:pointer-member']
+   [read:pointer-member] return rd_kafka_op_err_destroy( rd_kafka_op_req(mcluster->ops, rko, -1));
+      read/pointer/formal//rd_kafka_op_req
+== lib/librdkafka-2.15.0/src/rdkafka_mock.c rd_kafka_mock_broker_remove_from_metadata ['read:pointer-member']
+   [read:pointer-member] return rd_kafka_op_err_destroy( rd_kafka_op_req(mcluster->ops, rko, -1));
+      read/pointer/formal//rd_kafka_op_req
+== lib/librdkafka-2.15.0/src/rdkafka_mock.c rd_kafka_mock_broker_set_down ['read:pointer-member']
+   [read:pointer-member] return rd_kafka_op_err_destroy( rd_kafka_op_req(mcluster->ops, rko, -1));
+      read/pointer/formal//rd_kafka_op_req
+== lib/librdkafka-2.15.0/src/rdkafka_mock.c rd_kafka_mock_broker_set_rack ['form:union', 'read:pointer-member']
+   [form:union] rko->rko_u.mock.name = rd_strdup(rack);
+      store/pointer/local/call:rd_strdup/
+   [read:pointer-member] return rd_kafka_op_err_destroy( rd_kafka_op_req(mcluster->ops, rko, -1));
+      read/pointer/formal//rd_kafka_op_req
+== lib/librdkafka-2.15.0/src/rdkafka_mock.c rd_kafka_mock_broker_set_rtt ['read:pointer-member']
+   [read:pointer-member] return rd_kafka_op_err_destroy( rd_kafka_op_req(mcluster->ops, rko, -1));
+      read/pointer/formal//rd_kafka_op_req
+== lib/librdkafka-2.15.0/src/rdkafka_mock.c rd_kafka_mock_broker_set_up ['read:pointer-member']
+   [read:pointer-member] return rd_kafka_op_err_destroy( rd_kafka_op_req(mcluster->ops, rko, -1));
+      read/pointer/formal//rd_kafka_op_req
+== lib/librdkafka-2.15.0/src/rdkafka_mock.c rd_kafka_mock_clear_requests ['address:sub-object']
+   [address:sub-object] rd_list_clear(&mcluster->request_list);
+      address/address/formal//rd_list_clear
+== lib/librdkafka-2.15.0/src/rdkafka_mock.c rd_kafka_mock_coordinator_set ['form:union', 'read:pointer-member']
+   [form:union] rko->rko_u.mock.name = rd_strdup(key_type);
+      store/pointer/local/call:rd_strdup/
+   [form:union] rko->rko_u.mock.str = rd_strdup(key);
+      store/pointer/local/call:rd_strdup/
+   [read:pointer-member] return rd_kafka_op_err_destroy( rd_kafka_op_req(mcluster->ops, rko, -1));
+      read/pointer/formal//rd_kafka_op_req
+== lib/librdkafka-2.15.0/src/rdkafka_mock.c rd_kafka_mock_error_stack_find ['read:pointer-member']
+   [read:pointer-member] for ((errstack) = ((shead)->tqh_first); (errstack) != (((void*)0)); (errstack) = ((errstack)->link.tqe_next))
+      read/pointer/formal//; read/pointer/local//
+== lib/librdkafka-2.15.0/src/rdkafka_mock.c rd_kafka_mock_error_stack_next ['read:pointer-member']
+   [read:pointer-member] if (errstack->cnt > 0) memmove(errstack->errs, &errstack->errs[1], sizeof(*errstack->errs) * errstack->cnt);
+      read/pointer/formal//memmove; address/address/formal//memmove; read/scalar/formal//memmove
+== lib/librdkafka-2.15.0/src/rdkafka_mock.c rd_kafka_mock_partition_delete_records ['form:union', 'read:pointer-member']
+   [form:union] rko->rko_u.mock.name = rd_strdup(topic);
+      store/pointer/local/call:rd_strdup/
+   [read:pointer-member] return rd_kafka_op_err_destroy( rd_kafka_op_req(mcluster->ops, rko, -1));
+      read/pointer/formal//rd_kafka_op_req
+== lib/librdkafka-2.15.0/src/rdkafka_mock.c rd_kafka_mock_partition_push_leader_response ['form:union', 'read:pointer-member']
+   [form:union] rko->rko_u.mock.name = rd_strdup(topic);
+      store/pointer/local/call:rd_strdup/
+   [read:pointer-member] return rd_kafka_op_err_destroy( rd_kafka_op_req(mcluster->ops, rko, -1));
+      read/pointer/formal//rd_kafka_op_req
+== lib/librdkafka-2.15.0/src/rdkafka_mock.c rd_kafka_mock_partition_set_follower ['form:union', 'read:pointer-member']
+   [form:union] rko->rko_u.mock.name = rd_strdup(topic);
+      store/pointer/local/call:rd_strdup/
+   [read:pointer-member] return rd_kafka_op_err_destroy( rd_kafka_op_req(mcluster->ops, rko, -1));
+      read/pointer/formal//rd_kafka_op_req
+== lib/librdkafka-2.15.0/src/rdkafka_mock.c rd_kafka_mock_partition_set_follower_wmarks ['form:union', 'read:pointer-member']
+   [form:union] rko->rko_u.mock.name = rd_strdup(topic);
+      store/pointer/local/call:rd_strdup/
+   [read:pointer-member] return rd_kafka_op_err_destroy( rd_kafka_op_req(mcluster->ops, rko, -1));
+      read/pointer/formal//rd_kafka_op_req
+== lib/librdkafka-2.15.0/src/rdkafka_mock.c rd_kafka_mock_partition_set_leader ['form:union', 'read:pointer-member']
+   [form:union] rko->rko_u.mock.name = rd_strdup(topic);
+      store/pointer/local/call:rd_strdup/
+   [read:pointer-member] return rd_kafka_op_err_destroy( rd_kafka_op_req(mcluster->ops, rko, -1));
+      read/pointer/formal//rd_kafka_op_req
+== lib/librdkafka-2.15.0/src/rdkafka_mock.c rd_kafka_mock_partition_set_leader0 ['store:pointer-name']
+   [store:pointer-name] mpart->leader = mrkb;
+      store/pointer/formal/formal/
+== lib/librdkafka-2.15.0/src/rdkafka_mock.c rd_kafka_mock_set_apiversion ['read:pointer-member']
+   [read:pointer-member] return rd_kafka_op_err_destroy( rd_kafka_op_req(mcluster->ops, rko, -1));
+      read/pointer/formal//rd_kafka_op_req
+== lib/librdkafka-2.15.0/src/rdkafka_mock.c rd_kafka_mock_start_request_tracking ['address:sub-object']
+   [address:sub-object] rd_list_clear(&mcluster->request_list);
+      address/address/formal//rd_list_clear
+== lib/librdkafka-2.15.0/src/rdkafka_mock.c rd_kafka_mock_stop_request_tracking ['address:sub-object']
+   [address:sub-object] rd_list_clear(&mcluster->request_list);
+      address/address/formal//rd_list_clear
+== lib/librdkafka-2.15.0/src/rdkafka_mock.c rd_kafka_mock_telemetry_set_push_interval ['read:pointer-member']
+   [read:pointer-member] return rd_kafka_op_err_destroy( rd_kafka_op_req(mcluster->ops, rko, -1));
+      read/pointer/formal//rd_kafka_op_req
+== lib/librdkafka-2.15.0/src/rdkafka_mock.c rd_kafka_mock_telemetry_set_requested_metrics ['form:union', 'read:pointer-member']
+   [form:union] rko->rko_u.mock.metrics = ((void*)0);
+      null-store/pointer/local/null+cast/
+   [form:union] rko->rko_u.mock.metrics = rd_calloc(metrics_cnt, sizeof(char *));
+      store/pointer/local/call:rd_calloc/
+   [form:union] for (i = 0; i < metrics_cnt; i++) rko->rko_u.mock.metrics[i] = rd_strdup(metrics[i]);
+      store/pointer/local/call:rd_strdup/; read/pointer/formal//rd_strdup
+   [read:pointer-member] return rd_kafka_op_err_destroy( rd_kafka_op_req(mcluster->ops, rko, -1));
+      read/pointer/formal//rd_kafka_op_req
+== lib/librdkafka-2.15.0/src/rdkafka_mock.c rd_kafka_mock_topic_create ['form:union', 'read:pointer-member']
+   [form:union] rko->rko_u.mock.name = rd_strdup(topic);
+      store/pointer/local/call:rd_strdup/
+   [read:pointer-member] return rd_kafka_op_err_destroy( rd_kafka_op_req(mcluster->ops, rko, -1));
+      read/pointer/formal//rd_kafka_op_req
+== lib/librdkafka-2.15.0/src/rdkafka_mock.c rd_kafka_mock_topic_delete ['form:union', 'read:pointer-member']
+   [form:union] rko->rko_u.mock.name = rd_strdup(topic);
+      store/pointer/local/call:rd_strdup/
+   [read:pointer-member] return rd_kafka_op_err_destroy( rd_kafka_op_req(mcluster->ops, rko, -1));
+      read/pointer/formal//rd_kafka_op_req
+== lib/librdkafka-2.15.0/src/rdkafka_mock_cgrp.c rd_kafka_mock_cgrp_classic_rebalance_timer_restart ['call:uncontracted-callee']
+   [call:uncontracted-callee] rd_kafka_timer_start0(&mcgrp->cluster->timers, &mcgrp->rebalance_tmr, timeout_ms * 1000, 1, 1, rd_kafka_mcgrp_rebalance_timer_cb, mcgrp);
+      address/address/formal//rd_kafka_timer_start0; address/address/formal//rd_kafka_timer_start0
+== lib/librdkafka-2.15.0/src/rdkafka_mock_cgrp.c rd_kafka_mock_cgrp_consumer_target_assignment_new0 ['call:uncontracted-callee']
+   [call:uncontracted-callee] target_assignment->member_ids = rd_list_copy(member_ids, rd_list_string_copy, ((void*)0));
+      store/pointer/local/call:rd_list_copy/
+   [call:uncontracted-callee] target_assignment->assignment = rd_list_copy( assignment, rd_kafka_topic_partition_list_copy_opaque, ((void*)0));
+      store/pointer/local/call:rd_list_copy/
+== lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c rd_kafka_mock_msgset_est_record_size ['read:custody-free']
+   [read:custody-free] size = (int32_t)((((&mset->bytes)->len) == -1 ? 0 : ((&mset->bytes)->len)) / record_cnt);
+      read/scalar/formal//; read/scalar/formal//
+== lib/librdkafka-2.15.0/src/rdkafka_msg.c rd_kafka_msgq_enq_sorted ['call:uncontracted-callee']
+   [call:uncontracted-callee] return rd_kafka_msgq_enq_sorted0(rkmq, rkm, rkt->rkt_conf.msg_order_cmp);
+      read/function_pointer/formal//rd_kafka_msgq_enq_sorted0
+== lib/librdkafka-2.15.0/src/rdkafka_msg.c rd_kafka_msgq_split ['form:cast', 'store:pointer-name', 'store:pointer-null', 'store:pointer-other']
+   [form:cast] llast = (*(((struct rd_kafka_msg_head_s *)((first_right)->rkm_link.tqe_prev))->tqh_last));
+      read/pointer/formal//
+   [store:pointer-name] rightq->rkmq_msgs.tqh_first = first_right;
+      store/pointer/formal/formal/
+   [store:pointer-other] rightq->rkmq_msgs.tqh_last = leftq->rkmq_msgs.tqh_last;
+      store/pointer/formal/memory-read/; read/pointer/formal//
+   [store:pointer-other] first_right->rkm_link.tqe_prev = &rightq->rkmq_msgs.tqh_first;
+      store/pointer/formal/address/; address/address/formal//
+   [store:pointer-other] leftq->rkmq_msgs.tqh_last = &llast->rkm_link.tqe_next;
+      store/pointer/formal/address/; address/address/local//
+   [store:pointer-null] llast->rkm_link.tqe_next = ((void*)0);
+      null-store/pointer/local/null+cast/
+== lib/librdkafka-2.15.0/src/rdkafka_msgset_writer.c rd_kafka_msgset_writer_compress_gzip ['call:uncontracted-callee']
+   [call:uncontracted-callee] err = rd_kafka_gzip_compress(msetw->msetw_rkb, comp_level, slice, &ciov->iov_base, &ciov->iov_len);
+      read/pointer/formal//rd_kafka_gzip_compress; address/address/formal//rd_kafka_gzip_compress; address/address/formal//rd_kafka_gzip_compress
+== lib/librdkafka-2.15.0/src/rdkafka_msgset_writer.c rd_kafka_msgset_writer_compress_lz4 ['call:uncontracted-callee']
+   [call:uncontracted-callee] err = rd_kafka_lz4_compress(msetw->msetw_rkb, msetw->msetw_MsgVersion >= 1 ? 1 : 0, comp_level, slice, &ciov->iov_base, &ciov->iov_len);
+      read/pointer/formal//rd_kafka_lz4_compress; read/scalar/formal//rd_kafka_lz4_compress; address/address/formal//rd_kafka_lz4_compress; address/address/formal//rd_kafka_lz4_compress
+== lib/librdkafka-2.15.0/src/rdkafka_msgset_writer.c rd_kafka_msgset_writer_compress_snappy ['call:uncontracted-callee']
+   [call:uncontracted-callee] err = rd_kafka_snappy_compress_slice(msetw->msetw_rkb, slice, &ciov->iov_base, &ciov->iov_len);
+      read/pointer/formal//rd_kafka_snappy_compress_slice; address/address/formal//rd_kafka_snappy_compress_slice; address/address/formal//rd_kafka_snappy_compress_slice
+== lib/librdkafka-2.15.0/src/rdkafka_msgset_writer.c rd_kafka_msgset_writer_compress_zstd ['call:uncontracted-callee']
+   [call:uncontracted-callee] err = rd_kafka_zstd_compress(msetw->msetw_rkb, comp_level, slice, &ciov->iov_base, &ciov->iov_len);
+      read/pointer/formal//rd_kafka_zstd_compress; address/address/formal//rd_kafka_zstd_compress; address/address/formal//rd_kafka_zstd_compress
+== lib/librdkafka-2.15.0/src/rdkafka_offset.c rd_kafka_offset_file_sync ['read:pointer-member']
+   [read:pointer-member] (void)fsync(fileno(rktp->rktp_offset_fp));
+      read/pointer/formal//fileno
+== lib/librdkafka-2.15.0/src/rdkafka_offset.c rd_kafka_offset_reset_op_cb ['address:sub-object', 'form:union']
+   [address:sub-object] mtx_lock(&(rktp)->rktp_lock);
+      address/address/local//mtx_lock
+   [form:union] rd_kafka_offset_reset(rktp, rko->rko_u.offset_reset.broker_id, rko->rko_u.offset_reset.pos, rko->rko_err, "%s", rko->rko_u.offset_reset.reason);
+      read/scalar/formal//rd_kafka_offset_reset; read/aggregate/formal//rd_kafka_offset_reset; read/scalar/formal//rd_kafka_offset_reset; read/pointer/formal//rd_kafka_offset_reset
+   [address:sub-object] mtx_unlock(&(rktp)->rktp_lock);
+      address/address/local//mtx_unlock
+== lib/librdkafka-2.15.0/src/rdkafka_op.c rd_kafka_consumer_err ['form:union', 'store:pointer-call-result']
+   [form:union] rko->rko_u.err.errstr = rd_strdup(buf);
+      store/pointer/local/call:rd_strdup/
+   [store:pointer-call-result] if (rktp) rko->rko_rktp = rd_kafka_toppar_keep0(__FUNCTION__, 690, rktp);
+      store/pointer/local/call:rd_kafka_toppar_keep0/
+   [form:union] else if (topic) rko->rko_u.err.rkm.rkm_rkmessage.rkt = (rd_kafka_topic_t *)rd_kafka_lwtopic_new(rkq->rkq_rk, topic);
+      store/pointer/local/call:rd_kafka_lwtopic_new+cast/; read/pointer/formal//rd_kafka_lwtopic_new
+== lib/librdkafka-2.15.0/src/rdkafka_op.c rd_kafka_op_call ['form:indirect-call', 'store:pointer-null']
+   [form:indirect-call] res = rko->rko_op_cb(rk, rkq, rko);
+      read/pointer/formal//
+   [store:pointer-null] if (res != RD_KAFKA_OP_RES_KEEP) rko->rko_op_cb = ((void*)0);
+      null-store/pointer/formal/null+cast/
+== lib/librdkafka-2.15.0/src/rdkafka_op.c rd_kafka_op_new_cb ['store:pointer-name']
+   [store:pointer-name] rko->rko_op_cb = cb;
+      store/pointer/local/formal/
+   [store:pointer-name] rko->rko_rk = rk;
+      store/pointer/local/formal/
+== lib/librdkafka-2.15.0/src/rdkafka_op.c rd_kafka_op_new_reply ['store:pointer-call-result']
+   [store:pointer-call-result] if (rko_orig->rko_rktp) rko->rko_rktp = rd_kafka_toppar_keep0(__FUNCTION__, 776, rko_orig->rko_rktp);
+      store/pointer/local/call:rd_kafka_toppar_keep0/; read/pointer/formal//rd_kafka_toppar_keep0
+== lib/librdkafka-2.15.0/src/rdkafka_op.c rd_kafka_op_print ['call:uncontracted-callee', 'form:union', 'read:pointer-member']
+   [call:uncontracted-callee] fprintf(fp, "%s((rd_kafka_op_t*)%p)\n" "%s Type: %s (0x%x), Version: %" "d" "\n", prefix, rko, prefix, rd_kafka_op2str(rko->rko_type), rko->rko_type, 
+      read/scalar/formal//rd_kafka_op2str; read/scalar/formal//fprintf; read/scalar/formal//fprintf
+   [call:uncontracted-callee] if (rko->rko_err) fprintf(fp, "%s Error: %s\n", prefix, rd_kafka_err2str(rko->rko_err));
+      read/scalar/formal//rd_kafka_err2str
+   [read:pointer-member] fprintf(fp, "%s ((rd_kafka_toppar_t*)%p) " "%s [%" "d" "] v%d\n", prefix, rko->rko_rktp, rko->rko_rktp->rktp_rkt->rkt_topic->str, rko->rko_rktp->rktp_
+      read/pointer/formal//fprintf; read/pointer/formal//fprintf; read/scalar/formal//fprintf; address/address/formal//rd_atomic32_get
+   [form:union] case RD_KAFKA_OP_OFFSET_COMMIT: fprintf(fp, "%s Callback: %p (opaque %p)\n", prefix, rko->rko_u.offset_commit.cb, rko->rko_u.offset_commit.opaque);
+      read/function_pointer/formal//fprintf; read/pointer/formal//fprintf
+== lib/librdkafka-2.15.0/src/rdkafka_op.c rd_kafka_q_op_err ['form:union']
+   [form:union] rko->rko_u.err.errstr = rd_strdup(buf);
+      store/pointer/local/call:rd_strdup/
+== lib/librdkafka-2.15.0/src/rdkafka_op.c rd_kafka_share_msgset_err_ops ['form:union', 'store:pointer-call-result']
+   [form:union] rko->rko_u.err.errstr = rd_strdup(buf);
+      store/pointer/local/call:rd_strdup/
+   [store:pointer-call-result] if (rktp) rko->rko_rktp = rd_kafka_toppar_keep0(__FUNCTION__, 755, rktp);
+      store/pointer/local/call:rd_kafka_toppar_keep0/
+== lib/librdkafka-2.15.0/src/rdkafka_partition.c rd_kafka_fetch_pos2str ['root:static-local']
+   [root:static-local] snprintf(ret[idx], sizeof(ret[idx]), "offset %s (leader epoch %" "d" ")", rd_kafka_offset2str(fetchpos.offset), fetchpos.leader_epoch);
+      address/address/global//snprintf; read/scalar/formal//rd_kafka_offset2str; read/scalar/formal//snprintf
+== lib/librdkafka-2.15.0/src/rdkafka_partition.c rd_kafka_topic_partition_list_cmp ['call:indirect-callee']
+   [call:indirect-callee] r = cmp(&a->elems[i], &b->elems[j]);
+      address/address/local//<indirect>; address/address/local//<indirect>
+== lib/librdkafka-2.15.0/src/rdkafka_partition.c rd_kafka_topic_partition_list_grow ['store:pointer-call-result']
+   [store:pointer-call-result] rktparlist->elems = rd_realloc( rktparlist->elems, sizeof(*rktparlist->elems) * rktparlist->size);
+      store/pointer/formal/call:rd_realloc/; read/pointer/formal//rd_realloc; read/scalar/formal//rd_realloc
+== lib/librdkafka-2.15.0/src/rdkafka_partition.c rd_kafka_topic_partition_list_log ['call:uncontracted-callee']
+   [call:uncontracted-callee] do { if ((__builtin_expect(((rk->rk_conf).debug &(0x0 | dbg)), 0))) rd_kafka_log0(&rk->rk_conf, rk, ((void*)0), 7, (0x0 | dbg), fac, " %s [%" "d" "] o
+      address/address/formal//rd_kafka_log0; read/pointer/local//rd_kafka_log0; read/scalar/local//rd_kafka_log0; read/scalar/local//rd_kafka_offset2str; read/scalar/local//rd_kafka_log0; read/scalar/local/
+== lib/librdkafka-2.15.0/src/rdkafka_partition.c rd_kafka_topic_partition_new ['store:pointer-call-result']
+   [store:pointer-call-result] rktpar->topic = rd_strdup(topic);
+      store/pointer/local/call:rd_strdup/
+== lib/librdkafka-2.15.0/src/rdkafka_partition.c rd_kafka_topic_partition_new_from_rktp ['store:pointer-call-result']
+   [store:pointer-call-result] rktpar->topic = rd_strndup((rktp->rktp_rkt->rkt_topic)->str, (((rktp->rktp_rkt->rkt_topic)->len) == -1 ? 0 : ((rktp->rktp_rkt->rkt_topic)->len)));
+      store/pointer/local/call:rd_strndup/; read/pointer/formal//rd_strndup; read/scalar/formal//rd_strndup; read/scalar/formal//rd_strndup
+== lib/librdkafka-2.15.0/src/rdkafka_partition.c rd_kafka_topic_partition_set_metadata_from_rktp_stored ['store:pointer-call-result']
+   [store:pointer-call-result] rktpar->metadata = rd_malloc(rktp->rktp_stored_metadata_size);
+      store/pointer/formal/call:rd_malloc/; read/scalar/formal//rd_malloc
+== lib/librdkafka-2.15.0/src/rdkafka_partition.c rd_kafka_toppar_insert_msgq ['address:sub-object', 'call:uncontracted-callee']
+   [address:sub-object] mtx_lock(&(rktp)->rktp_lock);
+      address/address/formal//mtx_lock
+   [call:uncontracted-callee] rd_kafka_msgq_insert_msgq(&rktp->rktp_msgq, rkmq, rktp->rktp_rkt->rkt_conf.msg_order_cmp);
+      address/address/formal//rd_kafka_msgq_insert_msgq; read/function_pointer/formal//rd_kafka_msgq_insert_msgq
+   [address:sub-object] mtx_unlock(&(rktp)->rktp_lock);
+      address/address/formal//mtx_unlock
+== lib/librdkafka-2.15.0/src/rdkafka_partition.c rd_kafka_toppar_reset_base_msgid ['read:pointer-member']
+   [read:pointer-member] do { if ((__builtin_expect(((rktp->rktp_rkt->rkt_rk->rk_conf).debug &(0x4 | 0x8000)), 0))) rd_kafka_log0(&rktp->rktp_rkt->rkt_rk->rk_conf, rktp->rktp_
+      address/address/formal//rd_kafka_log0; read/pointer/formal//rd_kafka_log0; read/scalar/formal//rd_kafka_log0; read/scalar/formal//rd_kafka_log0; read/pointer/formal//rd_kafka_log0; read/scalar/formal/
+== lib/librdkafka-2.15.0/src/rdkafka_queue.c rd_kafka_q_pop_serve_maybe_consume ['read:custody-free']
+   [read:custody-free] return rd_kafka_q_pop_serve0(rkq, timeout_us, version, cb_type, callback, opaque, rkq->rkq_rk->rk_type == RD_KAFKA_CONSUMER);
+      read/scalar/formal//rd_kafka_q_pop_serve0
+== lib/librdkafka-2.15.0/src/rdkafka_queue.c rd_kafka_q_serve_maybe_consume ['read:custody-free']
+   [read:custody-free] return rd_kafka_q_serve0(rkq, timeout_ms, max_cnt, cb_type, callback, opaque, rkq->rkq_rk->rk_type == RD_KAFKA_CONSUMER);
+      read/scalar/formal//rd_kafka_q_serve0
+== lib/librdkafka-2.15.0/src/rdkafka_queue.c rd_kafka_queue_forward ['call:uncontracted-callee']
+   [call:uncontracted-callee] rd_kafka_q_fwd_set0(src->rkqu_q, dst ? dst->rkqu_q : ((void*)0), 1, 1 );
+      read/pointer/formal//rd_kafka_q_fwd_set0; read/pointer/formal//rd_kafka_q_fwd_set0
+== lib/librdkafka-2.15.0/src/rdkafka_range_assignor.c rd_kafka_member_assigned_partitions_pair_new ['store:pointer-call-result', 'store:pointer-name']
+   [store:pointer-name] pair->member_id = member_id;
+      store/pointer/local/formal/
+   [store:pointer-call-result] pair->assigned_partitions = rd_list_new(0, ((void*)0));
+      store/pointer/local/call:rd_list_new/
+== lib/librdkafka-2.15.0/src/rdkafka_request.c rd_kafka_ListOffsetRequest_parameters_make ['store:pointer-name']
+   [store:pointer-name] params.rktpars = rktpars;
+      store/pointer/local/formal/
+   [store:pointer-name] params.errstr = errstr;
+      store/pointer/local/formal/
+== lib/librdkafka-2.15.0/src/rdkafka_request.c rd_kafkap_Produce_reply_tags_destroy ['read:pointer-member']
+   [read:pointer-member] do { if ((reply_tags->Topic.TopicName)) rd_free(reply_tags->Topic.TopicName); } while (0);
+      read/pointer/formal//rd_free
+   [read:pointer-member] do { if ((reply_tags->NodeEndpoints.NodeEndpoints)) rd_free(reply_tags->NodeEndpoints.NodeEndpoints); } while (0);
+      read/pointer/formal//rd_free
+== lib/librdkafka-2.15.0/src/rdkafka_request.c rd_kafkap_leader_discovery_set_topic_cnt ['address:sub-object', 'call:uncontracted-callee']
+   [address:sub-object] rd_kafka_metadata_t *md = &mdi->metadata;
+      address/address/formal//
+   [call:uncontracted-callee] md->topics = rd_tmpabuf_alloc0(__FUNCTION__, 3677, tbuf, sizeof(*md->topics) * topic_cnt);
+      store/pointer/local/call:rd_tmpabuf_alloc0/
+   [call:uncontracted-callee] mdi->topics = rd_tmpabuf_alloc0(__FUNCTION__, 3678, tbuf, sizeof(*mdi->topics) * topic_cnt);
+      store/pointer/formal/call:rd_tmpabuf_alloc0/
+== lib/librdkafka-2.15.0/src/rdkafka_request.c rd_kafkap_leader_discovery_tmpabuf_add_alloc_brokers ['read:custody-free']
+   [read:custody-free] size_t HostSize = (((&NodeEndpoints->NodeEndpoints[i].Host)->len) == -1 ? 0 : ((&NodeEndpoints->NodeEndpoints[i].Host)->len)) + 1;
+      read/scalar/formal//; read/scalar/formal//
+== lib/librdkafka-2.15.0/src/rdkafka_sasl_cyrus.c rd_kafka_sasl_cyrus_init ['address:sub-object', 'call:uncontracted-callee', 'store:pointer-name']
+   [store:pointer-name] rk->rk_sasl.handle = handle;
+      store/pointer/formal/variable/
+   [call:uncontracted-callee] rd_kafka_timer_start0(&rk->rk_timers, &handle->kinit_refresh_tmr, rk->rk_conf.sasl.relogin_min_time * 1000ll, 0, 1, rd_kafka_sasl_cyrus_kinit_refresh_
+      address/address/formal//rd_kafka_timer_start0; address/address/local//rd_kafka_timer_start0; read/scalar/formal//rd_kafka_timer_start0
+   [address:sub-object] rd_kafka_timer_override_once(&rk->rk_timers, &handle->kinit_refresh_tmr, 0 );
+      address/address/formal//rd_kafka_timer_override_once; address/address/local//rd_kafka_timer_override_once
+== lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer.c do_unittest_illegal_extension_keys_should_fail ['root:static-local']
+   [root:static-local] r = check_oauthbearer_extension_key(illegal_keys[i], errstr, sizeof(errstr));
+      read/pointer/global//check_oauthbearer_extension_key
+   [root:static-local] do { if (!(r == -1)) { fprintf(stderr, "\033[31mRDUT: FAIL: %s:%d: %s: " "assert failed: " "r == -1" ": ", "/media/Data/GitHub/quirin-lang/build/cycle
+      read/pointer/global//fprintf
+== lib/librdkafka-2.15.0/src/rdkafka_sasl_scram.c rd_kafka_sasl_scram_H ['form:indirect-call']
+   [form:indirect-call] rktrans->rktrans_rkb->rkb_rk->rk_conf.sasl.scram_H( (const unsigned char *)str->ptr, str->size, (unsigned char *)out->ptr);
+      read/function_pointer/formal//; read/pointer/formal//<indirect>; read/scalar/formal//<indirect>; read/pointer/formal//<indirect>
+== lib/librdkafka-2.15.0/src/rdkafka_sasl_scram.c rd_kafka_sasl_scram_conf_validate ['call:uncontracted-callee', 'store:pointer-call-result']
+   [store:pointer-call-result] rk->rk_conf.sasl.scram_evp = EVP_sha1();
+      store/pointer/formal/call:EVP_sha1/
+   [call:uncontracted-callee] rk->rk_conf.sasl.scram_evp = EVP_sha256();
+      store/pointer/formal/call:EVP_sha256/
+   [call:uncontracted-callee] rk->rk_conf.sasl.scram_evp = EVP_sha512();
+      store/pointer/formal/call:EVP_sha512/
+== lib/librdkafka-2.15.0/src/rdkafka_share_acknowledgement.c rd_kafka_share_ack_batch_entry_new ['store:pointer-call-result']
+   [store:pointer-call-result] entry->types = rd_calloc((size_t)types_cnt, sizeof(rd_kafka_share_internal_acknowledgement_type));
+      store/pointer/local/call:rd_calloc/
+== lib/librdkafka-2.15.0/src/rdkafka_share_acknowledgement.c rd_kafka_share_partition_offsets_list_new ['no-evaluated-path']
+   [no-evaluated-path] size = sizeof(*list) + (capacity * sizeof(rd_kafka_share_partition_offsets_t *));
+      
+== lib/librdkafka-2.15.0/src/rdkafka_share_acknowledgement.c rd_kafka_share_partition_offsets_new ['call:uncontracted-callee', 'no-evaluated-path']
+   [no-evaluated-path] size = sizeof(*elem) + (offsets_cnt * sizeof(int64_t));
+      
+   [call:uncontracted-callee] elem->partition = rd_kafka_topic_partition_new_with_id_and_name( rd_kafka_topic_partition_get_topic_id(tp), tp->topic, tp->partition);
+      store/pointer/local/call:rd_kafka_topic_partition_new_with_id_and_name/; read/pointer/formal//rd_kafka_topic_partition_new_with_id_and_name; read/scalar/formal//rd_kafka_topic_partition_new_with_id_an
+== lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c ConsumerPair_cmp ['read:pointer-member']
+   [read:pointer-member] return strcmp(a->dst ? a->dst : "", b->dst ? b->dst : "");
+      read/pointer/local//strcmp; read/pointer/local//strcmp; read/pointer/local//strcmp; read/pointer/local//strcmp
+== lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c sort_by_map_elem_val_toppar_list_cnt ['read:pointer-member']
+   [read:pointer-member] const rd_kafka_topic_partition_list_t *al = a->value, *bl = b->value;
+      read/pointer/local//; read/pointer/local//
+   [read:pointer-member] return strcmp((const char *)a->key, (const char *)b->key);
+      read/pointer/local//strcmp; read/pointer/local//strcmp
+== lib/librdkafka-2.15.0/src/rdkafka_telemetry_decode.c clear_unit_test_data ['root:file-scope']
+   [root:file-scope] unit_test_data.type = RD_KAFKA_TELEMETRY_METRIC_TYPE_GAUGE;
+      store/scalar/global/constant/
+   [root:file-scope] unit_test_data.state = STATE_LABELS;
+      store/scalar/global/constant/
+   [root:file-scope] unit_test_data.expecting_label_value = 0;
+      store/scalar/global/null/
+   [root:file-scope] unit_test_data.version[0] = '\0';
+      store/scalar/global/literal/
+   [root:file-scope] unit_test_data.metric_name[0] = '\0';
+      store/scalar/global/literal/
+   [root:file-scope] unit_test_data.metric_description[0] = '\0';
+      store/scalar/global/literal/
+   [root:file-scope] unit_test_data.current_field = 0;
+      store/scalar/global/null/
+   [root:file-scope] unit_test_data.label_count = 0;
+      store/scalar/global/null/
+   [root:file-scope] unit_test_data.metric_value_int = 0;
+      store/scalar/global/null/
+   [root:file-scope] unit_test_data.metric_value_double = 0.0;
+      store/scalar/global/literal/
+   [root:file-scope] unit_test_data.metric_time = 0;
+      store/scalar/global/null/
+   [root:file-scope] unit_test_data.int64_value = 0;
+      store/scalar/global/null/
+   [root:file-scope] unit_test_data.expected_metric_value_int = expected_value_int;
+      store/scalar/global/formal/
+   [root:file-scope] unit_test_data.expected_metric_value_double = expected_value_double;
+      store/scalar/global/formal/
+== lib/librdkafka-2.15.0/src/rdkafka_telemetry_decode.c unit_test_telemetry_decoded_int64 ['root:file-scope']
+   [root:file-scope] unit_test_data.int64_value = int64_value;
+      store/scalar/global/formal/
+== lib/librdkafka-2.15.0/src/rdkafka_telemetry_encode.c calculate_connection_creation_rate ['form:union', 'read:pointer-member']
+   [read:pointer-member] for ((rkb) = ((&rk->rk_brokers)->tqh_first); (rkb) != (((void*)0)); (rkb) = ((rkb)->rkb_link.tqe_next)) {
+      read/pointer/formal//; read/pointer/local//
+   [form:union] total.double_value += rd_atomic32_get(&rkb->rkb_c.connects) - rkb->rkb_telemetry.rkb_historic_c.connects;
+      store/scalar/local//; address/address/local//rd_atomic32_get; read/scalar/local//
+== lib/librdkafka-2.15.0/src/rdkafka_telemetry_encode.c set_attributes ['form:indirect-call', 'store:pointer-name', 'store:pointer-other']
+   [form:indirect-call] const char *value = configs[i].getValue(rk);
+      read/function_pointer/formal//
+   [store:pointer-other] attributes[attr_idx].name = configs[i].name;
+      store/pointer/formal/memory-read/; read/pointer/formal//
+   [store:pointer-name] attributes[attr_idx].value = value;
+      store/pointer/formal/variable/
+== lib/librdkafka-2.15.0/src/rdkafka_timer.c rd_kafka_timer_schedule ['call:uncontracted-callee']
+   [call:uncontracted-callee] rd_kafka_timer_schedule_next( rkts, rtmr, rd_clock() + rtmr->rtmr_interval + extra_us);
+      read/scalar/formal//rd_kafka_timer_schedule_next
+== lib/librdkafka-2.15.0/src/rdkafka_timer.c rd_kafka_timer_unschedule ['store:pointer-other']
+   [store:pointer-other] do { if (((rtmr)->rtmr_link.tqe_next) != (((void*)0))) (rtmr)->rtmr_link.tqe_next->rtmr_link.tqe_prev = (rtmr)->rtmr_link.tqe_prev; else (&rkts->rkts_
+      store/pointer/formal/memory-read/; read/pointer/formal//; store/pointer/formal/memory-read/; read/pointer/formal//; store/pointer/formal/memory-read/; read/pointer/formal//
+== lib/librdkafka-2.15.0/src/rdkafka_topic.c rd_kafka_topic_cmp_rkt ['no-evaluated-path']
+   [no-evaluated-path] rd_kafka_topic_t *rkt_a = (void *)_a, *rkt_b = (void *)_b;
+      
+== lib/librdkafka-2.15.0/src/rdkafka_transport.c rd_kafka_transport_poll ['address:sub-object']
+   [address:sub-object] r = poll(rktrans->rktrans_pfd, rktrans->rktrans_pfd_cnt, tmout);
+      address/address/formal//poll; read/scalar/formal//poll
+== lib/librdkafka-2.15.0/src/rdkafka_txnmgr.c rd_kafka_txn_coord_timer_start ['call:uncontracted-callee']
+   [call:uncontracted-callee] rd_kafka_timer_start0(&rk->rk_timers, &rk->rk_eos.txn_coord_tmr, 1000 * timeout_ms, 1, 0, rd_kafka_txn_coord_timer_cb, rk);
+      address/address/formal//rd_kafka_timer_start0; address/address/formal//rd_kafka_timer_start0
+== lib/librdkafka-2.15.0/src/rdkafka_txnmgr.c rd_kafka_txn_schedule_register_partitions ['call:uncontracted-callee']
+   [call:uncontracted-callee] rd_kafka_timer_start0(&rk->rk_timers, &rk->rk_eos.txn_register_parts_tmr, backoff_ms ? backoff_ms * 1000 : 1, 1, 0, rd_kafka_txn_register_partitions_t
+      address/address/formal//rd_kafka_timer_start0; address/address/formal//rd_kafka_timer_start0
+== lib/librdkafka-2.15.0/src/rdkafka_txnmgr.c rd_kafka_txns_init ['address:sub-object', 'call:uncontracted-callee', 'read:pointer-member', 'store:pointer-other']
+   [address:sub-object] rd_atomic32_init(&rk->rk_eos.txn_may_enq, 0);
+      address/address/formal//rd_atomic32_init
+   [call:uncontracted-callee] mtx_init(&rk->rk_eos.txn_pending_lock, mtx_plain);
+      address/address/formal//mtx_init
+   [store:pointer-other] do { (&rk->rk_eos.txn_pending_rktps)->tqh_first = (((void*)0)); (&rk->rk_eos.txn_pending_rktps)->tqh_last = &(&rk->rk_eos.txn_pending_rktps)->tqh_firs
+      null-store/pointer/formal/null+cast/; store/pointer/formal/address/; address/address/formal//
+   [store:pointer-other] do { (&rk->rk_eos.txn_waitresp_rktps)->tqh_first = (((void*)0)); (&rk->rk_eos.txn_waitresp_rktps)->tqh_last = &(&rk->rk_eos.txn_waitresp_rktps)->tqh_f
+      null-store/pointer/formal/null+cast/; store/pointer/formal/address/; address/address/formal//
+   [store:pointer-other] do { (&rk->rk_eos.txn_rktps)->tqh_first = (((void*)0)); (&rk->rk_eos.txn_rktps)->tqh_last = &(&rk->rk_eos.txn_rktps)->tqh_first; } while ( 0);
+      null-store/pointer/formal/null+cast/; store/pointer/formal/address/; address/address/formal//
+   [call:uncontracted-callee] mtx_init(&rk->rk_eos.txn_curr_api.lock, mtx_plain);
+      address/address/formal//mtx_init
+   [call:uncontracted-callee] cnd_init(&rk->rk_eos.txn_curr_api.cnd);
+      address/address/formal//cnd_init
+   [call:uncontracted-callee] rk->rk_eos.txn_coord = rd_kafka_broker_add_logical(rk, "TxnCoordinator");
+      store/pointer/formal/call:rd_kafka_broker_add_logical/
+   [read:pointer-member] rd_kafka_broker_monitor_add(&rk->rk_eos.txn_coord_mon, rk->rk_eos.txn_coord, rk->rk_ops, rd_kafka_txn_coord_monitor_cb);
+      address/address/formal//rd_kafka_broker_monitor_add; read/pointer/formal//rd_kafka_broker_monitor_add; read/pointer/formal//rd_kafka_broker_monitor_add
+   [read:pointer-member] rd_kafka_broker_persistent_connection_add( rk->rk_eos.txn_coord, &rk->rk_eos.txn_coord->rkb_persistconn.coord);
+      read/pointer/formal//rd_kafka_broker_persistent_connection_add; address/address/formal//rd_kafka_broker_persistent_connection_add
+   [address:sub-object] rd_atomic64_init(&rk->rk_eos.txn_dr_fails, 0);
+      address/address/formal//rd_atomic64_init
+== lib/librdkafka-2.15.0/src/rdlist.c rd_list_cmp ['call:indirect-callee']
+   [call:indirect-callee] int r = cmp(a->rl_elems[i], b->rl_elems[i]);
+      read/pointer/formal//<indirect>; read/pointer/formal//<indirect>
+== lib/librdkafka-2.15.0/src/rdlist.c rd_list_dump ['read:pointer-member']
+   [read:pointer-member] for (i = 0; i < rl->rl_cnt; i++) printf("  #%d: %p at &%p\n", i, rl->rl_elems[i], &rl->rl_elems[i]);
+      read/pointer/formal//printf; address/address/formal//printf
+== lib/librdkafka-2.15.0/src/rdlist.c rd_list_grow ['store:pointer-call-result']
+   [store:pointer-call-result] rl->rl_elems = rd_realloc(rl->rl_elems, sizeof(*rl->rl_elems) * rl->rl_size);
+      store/pointer/formal/call:rd_realloc/; read/pointer/formal//rd_realloc; read/scalar/formal//rd_realloc
+== lib/librdkafka-2.15.0/src/rdlog.c rd_msghdr_print ['address:sub-object', 'read:custody-free']
+   [read:custody-free] printf("%s: iovlen %" "zu" "\n", what, (size_t)msg->msg_iovlen);
+      read/scalar/formal//printf
+   [address:sub-object] rd_iov_print(what, i, &msg->msg_iov[i], hexdump);
+      address/address/formal//rd_iov_print
+   [read:custody-free] len += msg->msg_iov[i].iov_len;
+      read/scalar/formal//
+== lib/librdkafka-2.15.0/src/rdmap.c rd_map_alloc_buckets ['store:pointer-call-result']
+   [store:pointer-call-result] buckets.p = rd_calloc(buckets.cnt, sizeof(*buckets.p));
+      store/pointer/local/call:rd_calloc/; read/scalar/local//rd_calloc
+== lib/librdkafka-2.15.0/src/rdmap.c rd_map_init ['form:aggregate-value']
+   [form:aggregate-value] rmap->rmap_buckets = rd_map_alloc_buckets(expected_cnt);
+      store/aggregate/formal/call:rd_map_alloc_buckets/
+== lib/librdkafka-2.15.0/src/rdmap.c rd_map_iter_begin ['store:pointer-other']
+   [store:pointer-other] *elem = ((&rmap->rmap_iter)->lh_first);
+      store/pointer/formal/memory-read/; read/pointer/formal//
+== lib/librdkafka-2.15.0/src/rdunittest_acknowledge.c ut_ack_create_message ['store:pointer-name']
+   [store:pointer-name] rkmessage->rkt = rkt;
+      store/pointer/local/formal/
+== lib/librdkafka-2.15.0/src/rdunittest_fetcher.c ut_create_share_fetch_response_rko ['form:union']
+   [form:union] rko->rko_u.share_fetch_response.inflight_acks = rd_list_new(0, ((void*)0));
+      store/pointer/local/call:rd_list_new/
+   [form:union] rko->rko_u.share_fetch_response.message_rkos = rd_list_new(0, ((void*)0));
+      store/pointer/local/call:rd_list_new/
+== lib/librdkafka-2.15.0/src/rdxxhash.c XXH32_digest_endian ['call:uncontracted-callee']
+   [call:uncontracted-callee] return XXH32_finalize(h32, state->mem32, state->memsize, endian, XXH_aligned);
+      address/address/formal//XXH32_finalize; read/scalar/formal//XXH32_finalize
+== lib/librdkafka-2.15.0/src/rdxxhash.c XXH64_digest_endian ['call:uncontracted-callee']
+   [call:uncontracted-callee] return XXH64_finalize(h64, state->mem64, (size_t)state->total_len, endian, XXH_aligned);
+      address/address/formal//XXH64_finalize; read/scalar/formal//XXH64_finalize
+== lib/librdkafka-2.15.0/src/snappy.c rd_kafka_snappy_init_env ['store:pointer-call-result']
+   [store:pointer-call-result] env->hash_table = rd_malloc(sizeof(u16) * (1U << 14));
+      store/pointer/formal/call:rd_malloc/
+== lib/librdkafka-2.15.0/src/snappy.c writer_set_expected_length ['store:pointer-other']
+   [store:pointer-other] w->op_limit = w->op + len;
+      store/pointer/formal/arithmetic/; read/pointer/formal//
+== lib/monkey/mk_core/mk_iov.c mk_iov_consume ['store:pointer-other']
+   [store:pointer-other] mk_io->io[i].iov_base = (uint8_t *)mk_io->io[i].iov_base + bytes;
+      store/pointer/formal/arithmetic/; read/pointer/formal//
+== lib/monkey/mk_core/mk_iov.c mk_iov_free_marked ['read:pointer-member']
+   [read:pointer-member] mk_mem_free(mk_io->buf_to_free[i]);
+      read/pointer/formal//mk_mem_free
+== lib/monkey/mk_core/mk_memory.c mk_ptr_create ['store:pointer-other']
+   [store:pointer-other] p.data = buf + init;
+      store/pointer/local/arithmetic/
+== lib/monkey/mk_server/mk_clock.c mk_clock_headers_preset ['address:sub-object', 'store:pointer-name']
+   [address:sub-object] buffer = _next_buffer(&server->clock_context->headers_preset, server->clock_context->header_time_buffers);
+      address/address/formal//_next_buffer; address/address/formal//_next_buffer
+   [store:pointer-name] server->clock_context->headers_preset.data = buffer;
+      store/pointer/formal/variable/
+== lib/monkey/mk_server/mk_config.c mk_config_set_init_values ['call:uncontracted-callee']
+   [call:uncontracted-callee] mk_list_init(&server->hosts);
+      address/address/formal//mk_list_init
+   [call:uncontracted-callee] mk_list_init(&server->plugins);
+      address/address/formal//mk_list_init
+   [call:uncontracted-callee] mk_list_init(&server->listeners);
+      address/address/formal//mk_list_init
+== lib/monkey/mk_server/mk_http_parser.c cb_copy_chunk ['read:custody-free']
+   [read:custody-free] memcpy(out + *out_len_processed, in, in_len);
+      read/scalar/formal//memcpy
+== lib/monkey/mk_server/mk_http_parser.c request_set ['store:pointer-other']
+   [store:pointer-other] ptr->data = buffer + p->start;
+      store/pointer/formal/arithmetic/; read/scalar/formal//
+== lib/monkey/mk_server/mk_lib.c mk_vhost_set_property ['store:pointer-call-result']
+   [store:pointer-call-result] vh->documentroot.data = mk_string_dup(v);
+      store/pointer/formal/call:mk_string_dup/
+== lib/monkey/mk_server/mk_mimetype.c mk_mimetype_find ['read:pointer-member']
+   [read:pointer-member] return mk_mimetype_lookup(server, filename->data + j + 1);
+      read/pointer/formal//mk_mimetype_lookup
+== lib/monkey/mk_server/mk_plugin.c mk_plugin_load_static ['call:uncontracted-callee']
+   [call:uncontracted-callee] mk_list_init(&server->plugins);
+      address/address/formal//mk_list_init
+== lib/monkey/mk_server/mk_plugin.c mk_plugin_preworker_calls ['read:pointer-member']
+   [read:pointer-member] ret = pthread_key_create(node->thread_key, ((void*)0));
+      read/pointer/local//pthread_key_create
+== lib/monkey/mk_server/mk_stream.c channel_write_in_file ['form:indirect-call']
+   [form:indirect-call] bytes = channel->io->send_file(channel->io->plugin, channel->fd, in->fd, &in->bytes_offset, in->bytes_total);
+      read/function_pointer/formal//; read/pointer/formal//<indirect>; read/scalar/formal//<indirect>; read/scalar/formal//<indirect>; address/address/formal//<indirect>; read/scalar/formal//<indirect>
+== lib/monkey/mk_server/mk_utils.c mk_buffer_cat ['store:pointer-call-result']
+   [store:pointer-call-result] p->data = (char *) mk_mem_alloc(len1 + len2 + 1);
+      store/pointer/formal/call:mk_mem_alloc+cast/
+== lib/monkey/mk_server/mk_utils.c mk_utils_gmt_cache_add ['address:sub-object']
+   [address:sub-object] memcpy(gcache[min].text, data, 32);
+      address/address/local//memcpy
