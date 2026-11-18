@@ -11620,7 +11620,12 @@ an undeclared OpenSSL producer). `QCore.NullableReferenceDrop` (12 audited,
     statement of the body is exactly `A * NAME ;` or `A * NAME = … ;` (one
     declarator, one `*`, no qualifier or storage class) declaring a name no
     other declaration of the body declares, that is not a formal and for which
-    the shared reader committed to nothing (`Opaque`), the aggregate store's
+    the shared reader committed to nothing (`Opaque`), and whose one binding in
+    the body is a direct call (under at most one pointer cast) whose
+    contract in force returns an **owned** result (a record this body
+    allocated: an accessor's borrowed child, `parpriv =
+    rd_kafka_topic_partition_get_private(rktpar)`, stays with the typed
+    routes, which read its scalar stores), the aggregate store's
     premise 2 and its member reads (`admitted_field`, the insulation scan's
     `&NAME->F`, `member_address_actuals` for an admissible base) read `NAME`
     as `struct TAG *`. Premises 1 and 3–7, the value classes, the
@@ -11631,7 +11636,8 @@ an undeclared OpenSSL producer). `QCore.NullableReferenceDrop` (12 audited,
     struct under (1)'s alias table is never variably modified
     (`never_variably_modified`), so `sizeof(*NAME)` is an unevaluated operand
     (C11 6.5.3.4p2) for the readers that ask (W44-COLLECTION-ALLOCATION,
-    rule 37's checked spans). **Do not** read a union, anonymous, pointer,
+    rule 37's checked spans). **Do not** read a base bound from a borrowed,
+    derived or uncontracted call or a copy, or a union, anonymous, pointer,
     disagreeing or incomplete alias, a qualified or multi-declarator
     declaration, a formal, or a name the shared reader typed otherwise; do
     not change the shared classifier's answer for any other consumer.

@@ -59,7 +59,9 @@ the census read.
 `struct` keyword; a scalar member access through an alias-typed local is
 already read by the typed routes).
 
-```measure-prediction
+Revision 1's block (superseded by revision 2's, below; kept as written):
+
+```text
 route corpus
 move rdkafka_partition.c::rd_kafka_topic_partition_new Unknown -> Safe
 move rdkafka_share_acknowledgement.c::rd_kafka_share_ack_batch_entry_new Unknown -> Safe

@@ -277,8 +277,13 @@ pub(crate) fn store_bases(
     // non-nullness; off, the scan counts every mention as before rule 37.
     let unevaluated = crate::result_constructor_rule::exempt_operand_spans(model, parameters, body);
     // Rule 61 (1): locals spelled through a struct alias.
-    let alias_tags =
-        crate::typedef_aggregate_base::alias_record_locals(body, formal_parameters, model, types);
+    let alias_tags = crate::typedef_aggregate_base::alias_record_locals(
+        body,
+        formal_parameters,
+        contracts,
+        model,
+        types,
+    );
     let mut candidates = BTreeSet::new();
     let mut refused = BTreeSet::new();
     let mut assignments: Vec<&str> = Vec::new();

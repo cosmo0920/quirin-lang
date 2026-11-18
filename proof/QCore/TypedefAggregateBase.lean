@@ -44,8 +44,10 @@ Proved here:
   (`an_admitted_local_is_the_struct_pointer`), the same as its keyword
   spelling; so `QCore.AggregateStore.admitsStore` decides alike over either
   spelling (`the_store_decides_alike_over_either_spelling`).
-* **Every fact refuses on its own** (`a_missing_fact_never_admits`), and the
-  decision is exactly the shared vectors (`decision_vectors_hold`).
+* **Every fact refuses on its own** (`a_missing_fact_never_admits`), the
+  owned binding included (a record this body allocated; an accessor's
+  borrowed child is left to the older routes), and the decision is exactly
+  the shared vectors (`decision_vectors_hold`).
 * **A struct type is never variably modified** (C11 6.7.6.2p2: only an array
   type with a non-constant size, or a type derived from one, is), so a
   `sizeof` operand of such a pointee is unevaluated
@@ -214,31 +216,38 @@ structure Facts where
   unique : Bool
   isLocal : Bool
   sharedOpaque : Bool
+  /-- The name's one binding is a direct call whose contract in force returns
+      an owned result: a record this body allocated, never a borrowed or
+      derived one (an accessor's child keeps the older routes). -/
+  ownedBinding : Bool
   deriving DecidableEq, Repr
 
 /-- `typedef_aggregate_base::admits`. -/
 def admits (f : Facts) : Bool :=
   f.aliasAgrees && f.recordComplete && f.exactSpelling && f.unique && f.isLocal && f.sharedOpaque
+    && f.ownedBinding
 
 /-- Every fact refuses on its own. -/
 theorem a_missing_fact_never_admits (f : Facts)
     (h : f.aliasAgrees = false ∨ f.recordComplete = false ∨ f.exactSpelling = false ∨
-      f.unique = false ∨ f.isLocal = false ∨ f.sharedOpaque = false) :
+      f.unique = false ∨ f.isLocal = false ∨ f.sharedOpaque = false ∨
+      f.ownedBinding = false) :
     admits f = false := by
-  rcases h with h | h | h | h | h | h <;> simp [admits, h]
+  rcases h with h | h | h | h | h | h | h <;> simp [admits, h]
 
 /-- The shared vectors (`decision_vectors`): bit `i` of the index is the
-    `i`-th fact, admitted exactly at 63. -/
+    `i`-th fact, admitted exactly at 127. -/
 def factsOf (bits : Nat) : Facts :=
   { aliasAgrees := bits % 2 = 1
     recordComplete := bits / 2 % 2 = 1
     exactSpelling := bits / 4 % 2 = 1
     unique := bits / 8 % 2 = 1
     isLocal := bits / 16 % 2 = 1
-    sharedOpaque := bits / 32 % 2 = 1 }
+    sharedOpaque := bits / 32 % 2 = 1
+    ownedBinding := bits / 64 % 2 = 1 }
 
 theorem decision_vectors_hold :
-    ∀ bits, bits < 64 → admits (factsOf bits) = (bits == 63) := by
+    ∀ bits, bits < 128 → admits (factsOf bits) = (bits == 127) := by
   decide
 
 /-- The declared type of a local written `A * NAME`. -/
