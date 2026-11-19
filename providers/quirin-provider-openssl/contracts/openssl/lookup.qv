@@ -29,11 +29,14 @@ module contract;
 // result is one returned reference. `filename` and `mode` are read, not
 // kept. Pinned prototype: `BIO *BIO_new_file(const char *filename, const
 // char *mode)` (openssl/bio.h).
+// Card OPENSSL-EX-DATA-REGISTRY: it allocates a BIO: the BIO class's new
+// callbacks run.
 extern fn BIO_new_file(filename: ptr<const, u8>, mode: ptr<const, u8>) -> ptr<mut, u8>
 contract {
     requires resource_contract_v1;
     requires resource_revision(flexible);
     requires resource_library_version(openssl, documented "1.0.2");
+    requires resource_premise(openssl_ex_data_callbacks, "an ex_data callback the call may run (a new, dup or free callback CRYPTO_get_ex_new_index registers for the class of an object the call creates, copies or frees) takes, releases or retains nothing the caller holds");
     ensures normal resource_borrowed(filename);
     ensures normal resource_borrowed(mode);
     ensures normal resource_return_owned(nullable);
@@ -48,11 +51,14 @@ contract {
 // RETURN VALUES: "a valid ENGINE structure or NULL if an error occurred".
 // One returned reference. Pinned prototype: `ENGINE *ENGINE_by_id(const char
 // *id)` (openssl/engine.h).
+// Card OPENSSL-EX-DATA-REGISTRY: a dynamic engine is allocated (an ENGINE:
+// ex_data class), and freed when it fails to load.
 extern fn ENGINE_by_id(id: ptr<const, u8>) -> ptr<mut, u8>
 contract {
     requires resource_contract_v1;
     requires resource_revision(flexible);
     requires resource_library_version(openssl, documented "1.1.1");
+    requires resource_premise(openssl_ex_data_callbacks, "an ex_data callback the call may run (a new, dup or free callback CRYPTO_get_ex_new_index registers for the class of an object the call creates, copies or frees) takes, releases or retains nothing the caller holds");
     ensures normal resource_borrowed(id);
     ensures normal resource_return_owned(nullable);
     ensures normal resource_return_kind(reference);
