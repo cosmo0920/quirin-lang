@@ -675,10 +675,12 @@ fn the_crate_states_every_bio_slot() {
             let Some(CallbackClause::MemberInvoked { actuals, .. }) = invoked else {
                 panic!("{call} invokes {key}");
             };
-            assert!(
-                actuals
-                    .iter()
-                    .all(|actual| matches!(actual, CallbackActual::Supplied)),
+            // Card CALLBACK-SUPPLIED-NULL-ACTUAL: every actual is the
+            // callee's; the callback's `argp` (and the `_ex` form's
+            // `processed`) may be NULL by BIO_set_callback (3.5).
+            assert_eq!(
+                actuals,
+                &bio_actuals(key, actuals.len()),
                 "{call} {key}: {actuals:?}"
             );
         }
@@ -954,10 +956,12 @@ fn the_readers_state_every_bio_slot() {
                 ),
                 "{reader} {key}"
             );
-            assert!(
-                actuals
-                    .iter()
-                    .all(|actual| matches!(actual, CallbackActual::Supplied)),
+            // Card CALLBACK-SUPPLIED-NULL-ACTUAL: every actual is the
+            // callee's; the callback's `argp` (and the `_ex` form's
+            // `processed`) may be NULL by BIO_set_callback (3.5).
+            assert_eq!(
+                actuals,
+                &bio_actuals(key, actuals.len()),
                 "{reader} {key}: {actuals:?}"
             );
         }
@@ -1087,4 +1091,24 @@ fn a_reader_bio_slot_without_registrations_or_run_facts_refuses() {
         let (status, leaves) = reader_row(name, None, &contracts);
         assert_ne!(status, AnalysisStatus::Safe, "{name}: {leaves:?}");
     }
+}
+
+/// Card CALLBACK-SUPPLIED-NULL-ACTUAL: the actuals a BIO slot invocation
+/// states: every one `_`, but `supplied_nullable` where `BIO_set_callback`
+/// (3.5) passes NULL (`argp`; `processed` of the `_ex` form).
+fn bio_actuals(key: &str, arity: usize) -> Vec<CallbackActual> {
+    let nullable: &[usize] = match key {
+        "bio_st.bio_callback_ex" => &[2, 7],
+        "bio_st.bio_callback" => &[2],
+        _ => &[],
+    };
+    (0..arity)
+        .map(|at| {
+            if nullable.contains(&at) {
+                CallbackActual::SuppliedNullable
+            } else {
+                CallbackActual::Supplied
+            }
+        })
+        .collect()
 }

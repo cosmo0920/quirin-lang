@@ -1,0 +1,97 @@
+{
+ "before": "private/opt-in/tip-1/resource-diagnostics.json",
+ "after": "private/opt-in/exp-1/resource-diagnostics.json",
+ "function_totals": {
+  "before": {
+   "Pending": 2,
+   "Safe": 1098,
+   "Unknown": 3699,
+   "Unsafe": 5
+  },
+  "after": {
+   "Pending": 2,
+   "Safe": 1097,
+   "Unknown": 3700,
+   "Unsafe": 5
+  }
+ },
+ "unit_totals": {
+  "before": {
+   "Unknown": 163,
+   "Safe": 9,
+   "Unsafe": 5,
+   "data_only": 4
+  },
+  "after": {
+   "Unknown": 163,
+   "Safe": 9,
+   "Unsafe": 5,
+   "data_only": 4
+  }
+ },
+ "unmatched": {
+  "before_only": [],
+  "after_only": []
+ },
+ "rows_changed": 4,
+ "content_changes": [
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_feature.c::0::rd_kafka_features_check",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [
+    "rd_kafka_ApiVersion_check"
+   ],
+   "other_left": [
+    "unresolved resource identity `match`"
+   ],
+   "other_new": []
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_metadata.c::0::rd_kafka_parse_Metadata0",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": []
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_metadata.c::0::rd_kafka_populate_metadata_topic_racks",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [
+    "arguments do not match resource contract for `bsearch`",
+    "call to `rd_list_add` retains `broker - > rack_id` in `curr_list`, whose lifetime this body does not decide against it (retention-undecided)"
+   ],
+   "other_new": [
+    "call to `bsearch`: callback `rd_kafka_metadata_broker_internal_cmp` (from `rd_kafka_metadata_broker_internal_cmp`) requires a live object where the callee may pass NULL (callback-supplied-null)"
+   ]
+  }
+ ],
+ "moves": [
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_feature.c::0::rd_kafka_ApiVersion_check",
+   "before": "Safe",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `bsearch`: callback `rd_kafka_ApiVersion_key_cmp` (from `rd_kafka_ApiVersion_key_cmp`) requires a live object where the callee may pass NULL (callback-supplied-null)"
+   ]
+  }
+ ],
+ "unit_moves": []
+}
