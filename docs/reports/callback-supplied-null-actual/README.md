@@ -298,6 +298,39 @@ the provider gate. Result: `gate_scope: 14 steps passed`, exit 0. Record:
 
 No test target was added, so the read census was not re-recorded.
 
+**After merging main `3b12177a3`** (r34 OPENSSL-EX-DATA-REGISTRY, r35
+CALLBACK-CANDIDATE-LITERAL-PREMISE; merge `1d75fe250`):
+
+* **The merge.** `check.rs` conflicted in its imports and its tests module,
+  and both cards' imports and tests were kept. `callback_contracts.rs`
+  merged cleanly with r35. The 30 marked invocation lines sit beside r34's
+  `openssl_ex_data_callbacks` premises, and r34's ex_data declarations are
+  unchanged.
+* **The lock.** `contracts.lock` was not hand-merged. It was regenerated in
+  the documented order: load-path, checkers (failing on the absent views,
+  as expected), `views --write`, `pin`, `contracts.py sync`, checkers.
+  Against `3b12177a3`, exactly the same 10 `flexible` entries change
+  `contract_sha256` and `pinned_at`:
+  * `PEM_read_bio_PrivateKey`, `PEM_read_bio_X509`;
+  * `SSL_CTX_use_certificate`, `SSL_CTX_use_certificate_chain_file`;
+  * `SSL_connect`, `SSL_do_handshake`, `SSL_read`, `SSL_shutdown`,
+    `SSL_write`;
+  * `d2i_PKCS12_bio`.
+
+  107 entries are on both sides. `pinned`, `library_versions` and every
+  other top-level key are unchanged, and the load path is byte-identical to
+  main's.
+* **The gate.** `gate_scope.py --base 3b12177a3 --out private/gate-3`
+  ([`gate/gate-3.json`](gate/gate-3.json)): `14 steps passed`, exit 0.
+  * Rust: 662 units and 707 summaries; 9710 passed, 0 failed, 21 ignored,
+    148 filtered.
+  * Lean: 455 audits. Python: 779 tests.
+  * Providers: 161 passed, 1 ignored. Every other step exits 0.
+* **The amendments.** `apply_amendments.py --check --profiles-base
+  3b12177a3` exits 0.
+
+The opt-in measurement was not rerun on the merge.
+
 ## 8. Follow-ups
 
 [`integration-amendments.json`](integration-amendments.json) retires
