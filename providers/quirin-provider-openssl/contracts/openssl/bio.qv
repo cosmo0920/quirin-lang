@@ -46,6 +46,18 @@ module contract;
 // premise `openssl_bio_free_callbacks` (C04.18) for exactly those three,
 // published with every row that applies it. Follow-up
 // OPENSSL-FREE-SESSION-REMOVE-INVOCATION (the clause beside a drop).
+//
+// Card OPENSSL-FREE-SESSION-REMOVE-INVOCATION: C04.19 now admits a slot
+// invocation beside a reference drop (the transfer applies the callback
+// route before the reference route, and a candidate effect on the dropped
+// object refuses, since the call does not decide whether its drop is the
+// last). So the callback (both kinds) and the destroy function are stated,
+// on `a` with every actual `_` (a slot that is handed `a` and releases,
+// consumes or keeps it refuses). The destroy function of a method the
+// library defines itself, which no setter is handed, is under
+// `openssl_builtin_bio_methods`, whose statement covers a BIO the call
+// frees; `openssl_bio_free_callbacks` is narrowed to the ex_data free
+// callbacks.
 // Card OPENSSL-EX-DATA-REGISTRY: openssl_bio_free_callbacks names the BIO
 // class's free callbacks; the ex_data premise is named too, so every
 // declaration that may run an ex_data callback names it.
@@ -54,9 +66,13 @@ contract {
     requires resource_contract_v1;
     requires resource_revision(flexible);
     requires resource_library_version(openssl, documented "1.1.1");
-    requires resource_premise(openssl_bio_free_callbacks, "when the call drops the last reference to a BIO (its BIO argument, or a BIO the SSL object holds and the BIOs chained to it), the callback the BIO holds, run with BIO_CB_FREE, the destroy function of its method and the ex_data free callbacks of the BIO class take, release or retain nothing the caller holds");
+    requires resource_premise(openssl_bio_free_callbacks, "when the call drops the last reference to a BIO (its BIO argument, or a BIO the SSL object holds and the BIOs chained to it), the ex_data free callbacks of the BIO class take, release or retain nothing the caller holds");
     requires resource_premise(openssl_ex_data_callbacks, "an ex_data callback the call may run (a new, dup or free callback CRYPTO_get_ex_new_index registers for the class of an object the call creates, copies or frees) takes, releases or retains nothing the caller holds");
+    requires resource_premise(openssl_builtin_bio_methods, "a function of a BIO method the library defines itself (the BIO_METHOD that BIO_s_socket, BIO_s_mem, BIO_f_buffer or another built-in BIO_s_ or BIO_f_ function returns, which no setter is handed), run on a BIO the call reads or writes through or frees (its BIO argument or a BIO the SSL object holds) or one chained to it, takes, releases or retains nothing the caller holds, and so does any callback it runs in turn on an object other than the arguments of the call (the SSL object of a BIO_f_ssl BIO)");
     ensures normal resource_borrowed(a);
     ensures normal resource_reference_dropped(a, nullable);
+    ensures normal resource_callback_slot_invoked(a, bio_st.bio_callback_ex, _, _, supplied_nullable, _, _, _, _, supplied_nullable);
+    ensures normal resource_callback_slot_invoked(a, bio_st.bio_callback, _, _, supplied_nullable, _, _, _);
+    ensures normal resource_callback_slot_invoked(a, bio_method_st.meth_destroy, _);
     ensures normal resource_return_none();
 };

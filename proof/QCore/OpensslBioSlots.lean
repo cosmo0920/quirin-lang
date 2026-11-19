@@ -18,8 +18,9 @@ import QCore.OpensslHandshakeSlots
 # A BIO's method table and callback as opaque slots (card OPENSSL-BIO-METHODS-AND-CALLBACKS)
 
 Gateway rule 12n and contract specification C04.19.3 (the opaque slot,
-`QCore.OpaqueCallbackSlots`), C04.18 (named premises), C04.19 (no callback
-clause beside a reference drop). Abstract rule theorems over the checker
+`QCore.OpaqueCallbackSlots`), C04.18 (named premises), C04.19 (amended in
+place by OPENSSL-FREE-SESSION-REMOVE-INVOCATION: a slot invocation beside a
+reference drop, `QCore.OpensslFreeInvocations`). Abstract rule theorems over the checker
 `providers/quirin-provider-openssl/src/check.rs` (`expected_clauses`,
 `slot_writers_declared`) and the crate's declarations, not an extraction of
 them.
@@ -37,13 +38,12 @@ them.
   (`covers`). So a declaration is accepted only where every BIO slot it runs
   is stated (`a_bio_slot_must_be_stated`), a built-in method it runs is
   covered only by `openssl_builtin_bio_methods`
-  (`a_builtin_method_needs_its_premise`), and a BIO's free callbacks only by
-  `openssl_bio_free_callbacks` (`a_bio_drop_needs_the_free_premise`).
-* **No invocation beside a drop.** The loader rejects a declaration stating
-  both a callback clause and a reference clause (`admitted`), so an accepted
-  dropping declaration states no invocation
-  (`an_admitted_drop_states_no_invocation`) and its free callbacks rest on
-  the premise alone.
+  (`a_builtin_method_needs_its_premise`). Card
+  OPENSSL-FREE-SESSION-REMOVE-INVOCATION: what a BIO's last drop runs is its
+  callback and destroy slots, stated beside the drop, and the free premise
+  covers only the ex_data free callbacks
+  (`the_free_premise_covers_only_ex_data`), so a BIO's free callbacks are
+  stated (`a_bio_slot_must_be_stated`).
 * **Stating the BIO slots never improves a verdict**
   (`stating_the_bio_slots_never_improves_a_verdict`, by
   `QCore.OpensslHandshakeSlots`), and a row is `Safe` only where each new
@@ -98,13 +98,12 @@ theorem a_held_function_outside_the_set_is_builtin {os : List Origin} {o : Origi
 
 /-! ## What each premise covers -/
 
-/-- What a call may run: a slot (by key), a built-in method's function, what
-a BIO's last drop runs (its callback with `BIO_CB_FREE`, its destroy
-function), or an ex_data callback. -/
+/-- What a call may run: a slot (by key; a BIO's last drop runs its callback
+with `BIO_CB_FREE` and its destroy function, both slots), a built-in
+method's function, or an ex_data callback. -/
 inductive Runnable where
   | slot (key : String)
   | builtinMethod
-  | freeCallback
   | exData
   deriving DecidableEq, Repr
 
@@ -122,7 +121,6 @@ def covers (bio : String → Bool) : Premise → Runnable → Bool
   | .unstatedSlots, .slot key => !bio key
   | .unstatedSlots, .exData => true
   | .builtinBioMethods, .builtinMethod => true
-  | .bioFreeCallbacks, .freeCallback => true
   | .bioFreeCallbacks, .exData => true
   | .exData, .exData => true
   | _, _ => false
@@ -162,14 +160,11 @@ theorem a_builtin_method_needs_its_premise {bio : String → Bool} {runs : List 
   obtain ⟨p, hp, hc⟩ := this
   cases p <;> simp_all [covers]
 
-theorem a_bio_drop_needs_the_free_premise {bio : String → Bool} {runs : List Runnable}
-    {stated : List String} {ps : List Premise} (h : wellCovered bio runs stated ps = true)
-    (hr : Runnable.freeCallback ∈ runs) : Premise.bioFreeCallbacks ∈ ps := by
-  simp only [wellCovered, List.all_eq_true] at h
-  have := h _ hr
-  simp only [covered, List.any_eq_true] at this
-  obtain ⟨p, hp, hc⟩ := this
-  cases p <;> simp_all [covers]
+/-- Card OPENSSL-FREE-SESSION-REMOVE-INVOCATION: the narrowed free premise
+covers the ex_data free callbacks and nothing else. -/
+theorem the_free_premise_covers_only_ex_data {bio : String → Bool} {r : Runnable}
+    (h : covers bio .bioFreeCallbacks r = true) : r = .exData := by
+  cases r <;> simp_all [covers]
 
 /-- The narrowed premise alone never accepts a declaration running a BIO
 slot it does not state. -/
@@ -178,31 +173,17 @@ theorem the_narrowed_premise_never_covers_a_bio_slot {bio : String → Bool} {ke
     covered bio stated [.unstatedSlots] (.slot key) = false := by
   simp [covered, covers, hb, hs]
 
-/-! ## No invocation beside a drop -/
+/-! ## A BIO's drop states its slots
 
-/-- A declaration's clause kinds, as the loader reads them. -/
-structure Declared where
-  invocations : List String
-  drops : Bool
-  deriving DecidableEq, Repr
+Card OPENSSL-FREE-SESSION-REMOVE-INVOCATION: C04.19 admits slot invocations
+beside a reference drop (`QCore.OpensslFreeInvocations.admitted`), so a
+dropping declaration that may run a BIO's callback or destroy slot is
+accepted only where it states it, whatever premise it names. -/
 
-/-- C04.19 (`contract_loader.rs`): a callback clause stands only beside
-retentions and plain predicates, never beside a reference clause. -/
-def admitted (d : Declared) : Bool := d.invocations.isEmpty || !d.drops
-
-theorem an_admitted_drop_states_no_invocation {d : Declared} (h : admitted d = true)
-    (hd : d.drops = true) : d.invocations = [] := by
-  simp only [admitted, Bool.or_eq_true, List.isEmpty_iff, hd, Bool.not_true,
-    Bool.false_eq_true, or_false] at h
-  exact h
-
-/-- So a dropping declaration that may run a BIO's free callbacks is
-accepted only under the free premise, whatever slots exist. -/
-theorem a_bio_drop_rests_on_the_premise {bio : String → Bool} {runs : List Runnable}
-    {d : Declared} {ps : List Premise} (ha : admitted d = true) (hd : d.drops = true)
-    (h : wellCovered bio runs d.invocations ps = true) (hr : Runnable.freeCallback ∈ runs) :
-    d.invocations = [] ∧ Premise.bioFreeCallbacks ∈ ps :=
-  ⟨an_admitted_drop_states_no_invocation ha hd, a_bio_drop_needs_the_free_premise h hr⟩
+theorem a_bio_drop_states_its_slots {bio : String → Bool} {runs : List Runnable}
+    {stated : List String} {ps : List Premise} (h : wellCovered bio runs stated ps = true)
+    {key : String} (hk : Runnable.slot key ∈ runs) (hb : bio key = true) : key ∈ stated :=
+  a_bio_slot_must_be_stated h hk hb
 
 /-! ## Stating the BIO slots never improves a verdict -/
 

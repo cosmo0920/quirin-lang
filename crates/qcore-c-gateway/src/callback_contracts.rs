@@ -87,6 +87,12 @@ pub const SUPPLIED_NULL: &str = "callback-supplied-null";
 /// Card **CG22-OP-CALLBACKS-AND-SERVED-QUEUES** (rule 12n): a member whose
 /// stores do not close into a set of functions.
 pub const MEMBER_OPEN: &str = "callback-member-open";
+/// Card **OPENSSL-FREE-SESSION-REMOVE-INVOCATION** (C04.19 amended, rule
+/// 12n): a slot invocation beside a reference drop whose candidates would
+/// change or read the dropped object (a member-path state, a member
+/// invocation deferred to its constructed state), when the call does not
+/// decide whether its drop is the last.
+pub const BESIDE_DROP: &str = "callback-beside-drop";
 /// Card **CG22-OP-CALLBACKS-AND-SERVED-QUEUES** (rule 12o): a discriminant
 /// value no arm declares.
 pub const ARM_UNDECLARED: &str = "arm-undeclared";
