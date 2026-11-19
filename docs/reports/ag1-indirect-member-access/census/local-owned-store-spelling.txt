@@ -1,0 +1,5 @@
+('typedef', 'plain') 232 sole functions touched: 13
+('keyword', 'plain') 110 sole functions touched: 1
+('?', 'plain') 99 sole functions touched: 15
+('typedef', 'other') 19 sole functions touched: 0
+('?', 'other') 9 sole functions touched: 2

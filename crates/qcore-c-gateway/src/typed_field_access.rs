@@ -277,6 +277,14 @@ pub(crate) struct TypedAccessModel {
     /// only by the dereference-of-a-call-result rule in
     /// [`crate::variadic_nested`].
     scalar_pointer_results: BTreeMap<String, bool>,
+    // --- AG1-INDIRECT-MEMBER-ACCESS (rule 61) hook: begin ---
+    /// The struct tag every `typedef` declaration of a name denotes, when each
+    /// one is exactly `typedef struct TAG NAME;` or the defining
+    /// `typedef struct TAG { … } NAME;`; `None` once any declaration of the
+    /// name says anything else. Read only by
+    /// [`crate::typedef_aggregate_base`]; the shared classifier is unchanged.
+    struct_alias_heads: BTreeMap<String, Option<String>>,
+    // --- AG1-INDIRECT-MEMBER-ACCESS (rule 61) hook: end ---
     /// Card **BASE-TYPE-READER-CENSUS**: names this unit declares at **file
     /// scope**, read by the same declaration reader the function bodies use.
     ///
@@ -430,6 +438,22 @@ pub(crate) fn is_name(text: &str) -> bool {
 fn is_numeric_literal(text: &str) -> bool {
     text.as_bytes().first().is_some_and(u8::is_ascii_digit)
 }
+
+// --- AG1-INDIRECT-MEMBER-ACCESS (rule 61) hook: begin ---
+/// The struct tag one typedef reading names: exactly the specifiers
+/// `struct TAG`, or a definition headed exactly `struct TAG`.
+fn struct_head(resolved: Option<&TypedefTarget>) -> Option<String> {
+    match resolved? {
+        TypedefTarget::Specifiers(words) => match words.as_slice() {
+            [keyword, tag] if keyword == "struct" && is_name(tag) => Some(tag.clone()),
+            _ => None,
+        },
+        TypedefTarget::Aggregate(head) => {
+            crate::typedef_aggregate_base::struct_tag_of_head(head).map(ToOwned::to_owned)
+        }
+    }
+}
+// --- AG1-INDIRECT-MEMBER-ACCESS (rule 61) hook: end ---
 
 /// Read one `typedef` declaration that **defines** the aggregate it names
 /// (card **ABI-TYPEDEF-ADDRESS-OF-MEMBER**).
@@ -617,6 +641,19 @@ impl TypedAccessModel {
         let record = self.records.get(tag)?;
         (record.complete && record.definitions == 1 && !record.union_tag).then_some(tag)
     }
+
+    // --- AG1-INDIRECT-MEMBER-ACCESS (rule 61) hook: begin ---
+    /// The struct an alias names when **every** `typedef` declaration of it in
+    /// this unit names that one struct (a forward `typedef struct TAG A;`, the
+    /// defining `typedef struct TAG { … } A;`, or both), and the struct has
+    /// exactly one complete, non-union definition here. Anonymous, union,
+    /// pointer and disagreeing aliases refuse. Read only by
+    /// [`crate::typedef_aggregate_base`].
+    pub(crate) fn struct_alias_tag(&self, alias: &str) -> Option<&str> {
+        let tag = self.struct_alias_heads.get(alias)?.as_deref()?;
+        self.record_definition_is_complete(tag).then_some(tag)
+    }
+    // --- AG1-INDIRECT-MEMBER-ACCESS (rule 61) hook: end ---
 
     /// Whether this unit declares `name` at file scope, as far as the same
     /// declaration reader will read it. Card **BASE-TYPE-READER-CENSUS**;
@@ -827,6 +864,12 @@ impl TypedAccessModel {
                     specifiers.iter().map(|text| (*text).to_owned()).collect(),
                 ))
             };
+            // AG1-INDIRECT-MEMBER-ACCESS (rule 61) hook.
+            crate::typedef_aggregate_base::note_struct_alias_head(
+                &mut self.struct_alias_heads,
+                last,
+                struct_head(resolved.as_ref()),
+            );
             match self.typedefs.get(*last) {
                 Some(existing) if *existing == resolved => {}
                 Some(_) => {
@@ -3139,6 +3182,11 @@ impl TypedAccessModel {
                         head.split(' ').next(),
                         Some("struct") | Some("union") | Some("enum")
                     ),
+                    // AG1-INDIRECT-MEMBER-ACCESS (rule 61) hook: a name whose
+                    // every typedef declaration names one struct (a forward
+                    // and a defining declaration the table above cannot
+                    // compare) is a struct type, never variably modified.
+                    Some(None) => self.struct_alias_tag(name).is_some(),
                     _ => false,
                 }
             }

@@ -1,0 +1,34 @@
+{
+ "totals": {
+  "before": {
+   "Unknown": 2719,
+   "Safe": 674,
+   "Unsafe": 1
+  },
+  "after": {
+   "Unknown": 2719,
+   "Safe": 674,
+   "Unsafe": 1
+  }
+ },
+ "moves": [],
+ "leaves": {
+  "rows_with_changed_leaves": 0,
+  "access_removed": 0,
+  "access_added": 0,
+  "removed": [],
+  "added": []
+ },
+ "reproduction": {
+  "rows": 3394,
+  "mismatched": 1,
+  "mismatched_rows": [
+   [
+    "lib/librdkafka-2.15.0/src/rdunittest_fetcher.c",
+    "ut_create_fetch_op_with_offset",
+    1
+   ]
+  ],
+  "missing": []
+ }
+}

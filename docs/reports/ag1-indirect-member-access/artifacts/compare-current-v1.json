@@ -1,0 +1,409 @@
+{
+ "totals": {
+  "before": {
+   "Unknown": 3485,
+   "Safe": 939,
+   "Unsafe": 7
+  },
+  "after": {
+   "Unknown": 3480,
+   "Safe": 942,
+   "Unsafe": 9
+  }
+ },
+ "moves": [
+  {
+   "row": [
+    "lib/librdkafka-2.15.0/src/cJSON.c",
+    "cJSON_CreateArrayReference",
+    1
+   ],
+   "before": "Unknown",
+   "after": "Safe",
+   "after_leaves": []
+  },
+  {
+   "row": [
+    "lib/librdkafka-2.15.0/src/cJSON.c",
+    "cJSON_CreateObjectReference",
+    1
+   ],
+   "before": "Unknown",
+   "after": "Safe",
+   "after_leaves": []
+  },
+  {
+   "row": [
+    "lib/librdkafka-2.15.0/src/cJSON.c",
+    "cJSON_CreateStringReference",
+    1
+   ],
+   "before": "Unknown",
+   "after": "Safe",
+   "after_leaves": []
+  },
+  {
+   "row": [
+    "lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+    "rd_kafka_topic_partition_new",
+    1
+   ],
+   "before": "Unknown",
+   "after": "Safe",
+   "after_leaves": []
+  },
+  {
+   "row": [
+    "lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+    "rd_kafka_topic_partition_new_with_id_and_name",
+    1
+   ],
+   "before": "Unknown",
+   "after": "Safe",
+   "after_leaves": []
+  },
+  {
+   "row": [
+    "lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+    "rd_kafka_topic_partition_set_current_leader_epoch",
+    1
+   ],
+   "before": "Safe",
+   "after": "Unknown",
+   "after_leaves": [
+    "unresolved resource identity `parpriv`"
+   ]
+  },
+  {
+   "row": [
+    "lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+    "rd_kafka_topic_partition_set_from_fetch_pos",
+    1
+   ],
+   "before": "Safe",
+   "after": "Unknown",
+   "after_leaves": [
+    "call to uncontracted function `rd_kafka_topic_partition_set_leader_epoch`"
+   ]
+  },
+  {
+   "row": [
+    "lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+    "rd_kafka_topic_partition_set_leader_epoch",
+    1
+   ],
+   "before": "Safe",
+   "after": "Unknown",
+   "after_leaves": [
+    "unresolved resource identity `parpriv`"
+   ]
+  },
+  {
+   "row": [
+    "lib/librdkafka-2.15.0/src/rdunittest_acknowledge.c",
+    "ut_ack_create_message",
+    1
+   ],
+   "before": "Unknown",
+   "after": "Safe",
+   "after_leaves": []
+  },
+  {
+   "row": [
+    "lib/librdkafka-2.15.0/src/rdunittest_acknowledge.c",
+    "ut_case_acknowledge_accept",
+    1
+   ],
+   "before": "Unknown",
+   "after": "Unsafe",
+   "after_leaves": [
+    "call to uncontracted function `rd_kafka_share_acknowledge`",
+    "call to uncontracted function `rd_kafka_topic_name`",
+    "call to uncontracted function `ut_ack_add_partition`",
+    "call to uncontracted function `ut_ack_clear_inflight_map`",
+    "live obligation acquired at lib/librdkafka-2.15.0/src/rdunittest_acknowledge.c:261",
+    "nested call `rd_kafka_err2str` inside a modeled call is outside the resource projection",
+    "unmodeled call, aggregate or indirect access in branch condition"
+   ]
+  },
+  {
+   "row": [
+    "lib/librdkafka-2.15.0/src/rdunittest_acknowledge.c",
+    "ut_case_acknowledge_multiple_partitions",
+    1
+   ],
+   "before": "Unknown",
+   "after": "Unsafe",
+   "after_leaves": [
+    "call to uncontracted function `rd_kafka_share_acknowledge_type`",
+    "call to uncontracted function `rd_kafka_topic_name`",
+    "call to uncontracted function `ut_ack_add_partition`",
+    "call to uncontracted function `ut_ack_clear_inflight_map`",
+    "live obligation acquired at lib/librdkafka-2.15.0/src/rdunittest_acknowledge.c:533",
+    "live obligation acquired at lib/librdkafka-2.15.0/src/rdunittest_acknowledge.c:534",
+    "unmodeled call, aggregate or indirect access in branch condition"
+   ]
+  }
+ ],
+ "leaves": {
+  "rows_with_changed_leaves": 53,
+  "access_removed": 28,
+  "access_added": 0,
+  "removed": [
+   [
+    "unsupported",
+    "indirect memory access is outside the resource projection",
+    28
+   ],
+   [
+    "unsupported",
+    "call to uncontracted function `ut_ack_create_message`",
+    10
+   ],
+   [
+    "unsupported",
+    "unmodeled call, aggregate or indirect access in branch condition",
+    7
+   ],
+   [
+    "unknown_alias",
+    "unresolved resource identity `msg`",
+    7
+   ],
+   [
+    "unknown_alias",
+    "unresolved resource identity `item`",
+    3
+   ],
+   [
+    "unsupported",
+    "nullable resource `item` used by a non-null contract",
+    3
+   ],
+   [
+    "unsupported",
+    "call to `rd_list_add`: the registry holder `curr_list` is not one this body tracks (callback-registry-undecided)",
+    3
+   ],
+   [
+    "unknown_alias",
+    "unresolved resource identity `broker`",
+    2
+   ],
+   [
+    "unsupported",
+    "call to uncontracted function `rd_kafka_topic_partition_new`",
+    2
+   ],
+   [
+    "unknown_alias",
+    "unresolved resource identity `rktp`",
+    2
+   ],
+   [
+    "unsupported",
+    "use of `rktp` after its object moved or its parent changed (interior-borrow-ended)",
+    1
+   ],
+   [
+    "unknown_alias",
+    "unresolved resource identity `broker_internal`",
+    1
+   ],
+   [
+    "unsupported",
+    "loop re-acquisition: an earlier generation that may be live is still held",
+    1
+   ],
+   [
+    "unsupported",
+    "call to `rd_list_add`: the registry at `inflight_acks` would take `batches`, which this body cannot hand it (callback-element-custody-undecided)",
+    1
+   ],
+   [
+    "unknown_alias",
+    "unresolved resource identity `found`",
+    1
+   ],
+   [
+    "unsupported",
+    "call to `rd_list_add` retains `broker - > rack_id` in `curr_list`, whose lifetime this body does not decide against it (retention-undecided)",
+    1
+   ],
+   [
+    "unknown_alias",
+    "unresolved resource identity `mdpi`",
+    1
+   ],
+   [
+    "unknown_alias",
+    "unresolved resource identity `msg1`",
+    1
+   ],
+   [
+    "unknown_alias",
+    "unresolved resource identity `msg2`",
+    1
+   ],
+   [
+    "unknown_alias",
+    "unresolved resource identity `msg3`",
+    1
+   ]
+  ],
+  "added": [
+   [
+    "unknown_alias",
+    "unresolved resource identity `batches`",
+    8
+   ],
+   [
+    "unknown_alias",
+    "unresolved resource identity `out_batch`",
+    6
+   ],
+   [
+    "unsupported",
+    "unmodeled call, aggregate or indirect access in branch condition",
+    4
+   ],
+   [
+    "unknown_alias",
+    "unresolved resource identity `rktpar`",
+    3
+   ],
+   [
+    "unknown_alias",
+    "unresolved resource identity `parpriv`",
+    3
+   ],
+   [
+    "unsupported",
+    "call to uncontracted function `rd_kafka_topic_partition_set_current_leader_epoch`",
+    3
+   ],
+   [
+    "unsupported",
+    "call to uncontracted function `cJSON_strdup`",
+    2
+   ],
+   [
+    "unknown_alias",
+    "unresolved resource identity `node`",
+    2
+   ],
+   [
+    "unsupported",
+    "call to uncontracted function `rd_kafka_topic_partition_set_leader_epoch`",
+    2
+   ],
+   [
+    "unknown_alias",
+    "unresolved resource identity `cpair`",
+    2
+   ],
+   [
+    "leak",
+    "live obligation acquired at lib/librdkafka-2.15.0/src/rdunittest_acknowledge.c:534",
+    2
+   ],
+   [
+    "unknown_alias",
+    "unresolved resource identity `herr`",
+    1
+   ],
+   [
+    "unknown_alias",
+    "unresolved resource identity `rktpar_copy`",
+    1
+   ],
+   [
+    "unsupported",
+    "field-link escape: a linked child may still be live on a path the escape does not carry it",
+    1
+   ],
+   [
+    "unknown_alias",
+    "unresolved resource identity `broker`",
+    1
+   ],
+   [
+    "unknown_alias",
+    "unresolved resource identity `broker_internal`",
+    1
+   ],
+   [
+    "unsupported",
+    "nullable resource `node` used by a non-null contract",
+    1
+   ],
+   [
+    "unknown_alias",
+    "unresolved resource identity `inflight_acks`",
+    1
+   ],
+   [
+    "unknown_alias",
+    "unresolved resource identity `filtered_msgs`",
+    1
+   ],
+   [
+    "unknown_alias",
+    "unresolved resource identity `aborted_txns`",
+    1
+   ],
+   [
+    "unsupported",
+    "call to uncontracted function `rd_kafka_topic_partition_set_from_fetch_pos`",
+    1
+   ],
+   [
+    "unknown_alias",
+    "unresolved resource identity `headers`",
+    1
+   ],
+   [
+    "unsupported",
+    "call to uncontracted function `curl_slist_free_all`",
+    1
+   ],
+   [
+    "unknown_alias",
+    "unresolved resource identity `cgpair`",
+    1
+   ],
+   [
+    "unknown_alias",
+    "unresolved resource identity `ti`",
+    1
+   ],
+   [
+    "unknown_alias",
+    "unresolved resource identity `strtup`",
+    1
+   ],
+   [
+    "leak",
+    "live obligation acquired at lib/librdkafka-2.15.0/src/rdunittest_acknowledge.c:261",
+    1
+   ],
+   [
+    "leak",
+    "live obligation acquired at lib/librdkafka-2.15.0/src/rdunittest_acknowledge.c:533",
+    1
+   ]
+  ]
+ },
+ "reproduction": {
+  "rows": 4431,
+  "mismatched": 1,
+  "mismatched_rows": [
+   [
+    "lib/librdkafka-2.15.0/src/rdunittest_fetcher.c",
+    "ut_create_fetch_op_with_offset",
+    1
+   ]
+  ],
+  "missing": []
+ }
+}

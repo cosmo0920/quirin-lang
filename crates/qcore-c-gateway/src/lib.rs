@@ -301,6 +301,8 @@ mod typed_field_access;
 mod typed_root_declarations;
 pub mod typed_source;
 pub mod typed_source_match;
+// Card AG1-INDIRECT-MEMBER-ACCESS (rule 61).
+mod typedef_aggregate_base;
 // Card CG01-T-OPERATOR-CLOSURE (rule 10r): route T's operator and literal
 // closure and the per-consumer admission that gates it.
 pub mod typed_source_nodes;
