@@ -240,12 +240,60 @@ lock count matched.
 on corpus, twelve-home, system or slice. The `measure-prediction` block is for
 the integrator's `quirin-audit measure --declared`.
 
-**The user path** on the predecessor's fixture (`quirin-audit contracts` with
-the user load path, libc and openssl): see §8a.
+**The user path** on the predecessor's fixture: `quirin-audit contracts
+--load-path providers/user-crates-load-path.json --provider
+quirin-provider-libc --provider quirin-provider-openssl --source-root
+docs/reports/openssl-provider-remaining-callees/evidence/fixture`, run with the
+tip's debug binary through an `audit` slot (`private/logs/userpath-tip-2.log`,
+exit 0; a first attempt hit its own wall timeout while queued for a slot and
+never ran, `userpath-tip.log`). All 12 fixture functions have the status
+OPENSSL-EX-DATA-REGISTRY recorded for its tip, so none moved. `read_cert`,
+`pkcs12_cycle` and seven others are `Pending`; `read_cert_reuse`,
+`keep_userdata` and `verify_depth` are `Unknown`. All 113 bindings are
+`Pending` ([comparison](evidence/user-path/fixture-r34-tip.txt)). The
+report and its contract sidecar print the canonical formula
+(`quant all #o in #created | …`) and no longer the English sentence: the
+predicted content change. This comparison is against the predecessor's
+recorded tip, not a base binary rebuilt at `3c0f8e474`.
 
 ## 9. Gate
 
-See §9a.
+`python3 scripts/gate_scope.py --base 3c0f8e474 --out private/gate-1` on
+`ca39093c0` ([record](gate/gate-1.json); mode full, because the diff reaches
+`qcore-contract`). The gate exited 1:
+
+| Step | Exit | Counts |
+|---|---|---|
+| fmt, clippy | 0, 0 | |
+| rust-suite | 101 | 667 units, 9770 passed, **1 failed**, 21 ignored |
+| reevaluation probe, follow-up | 0, 0 | |
+| lean (`check_lean_audits.py`) | 0 | 459 audits |
+| python | 1 | 779 tests, **2 failed** |
+| provider package build, verify (all, libevent) | 0, 0, 0 | |
+| provider test | 0 | 161 passed, 1 ignored |
+| provider fmt, clippy | 0, 0 | |
+
+* **Rust.** The one failure is the known host failure the brief records,
+  `qcore-audit::test::libcurl_user_crate_versions::the_libcurl_ranges_follow_the_audited_curlver_header`
+  (the system `curlver.h`). It is not fixed here.
+* **Python.** The two failures were this card's:
+  * `test_tracked_files::…every_remaining_tree_walk_in_the_tests_is_a_reviewed_one`
+    refused the formula test's `read_dir` of the OpenSSL contract directory
+    (rule 29's tripwire);
+  * `test_gate_scope_census::…every_walker_entry_is_walked` refused the walker
+    entry declaring it.
+
+  Fixed in `35fd35136`: the 17 modules are `include_str!`ed and the walker
+  entry is gone. Targeted reruns on that tip are in `private/gate-2/`:
+  * `cargo test -p qcore-frontend --test premise_formula`: 7 passed, exit 0;
+  * `cargo clippy -p qcore-frontend --all-targets -- -D warnings`: exit 0;
+  * `cargo fmt --all -- --check`: exit 0;
+  * the full Python suite: 779 tests, exit 1. Both earlier failures pass.
+    `test_gate_slot_queue`'s stale-waiter test timed out under load and passed
+    alone (39 tests, exit 0). `test_build_matrix_sections`'s derived-facts test
+    fails only on the matrix's Lean-audit count, 458 committed against 459
+    with this card's audit: the expected stale count, which the integrator's
+    matrix rebuild carries.
 
 ## 10. Follow-ups
 
