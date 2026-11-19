@@ -1,0 +1,314 @@
+// SPDX-License-Identifier: Apache-2.0
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+
+module contract;
+
+// Card OPENSSL-BIO-METHODS-AND-CALLBACKS. The setters of a BIO's callback and
+// of a BIO method table's functions (see err.qv for what every declaration of
+// this crate shares, and ssl_io.qv / ssl.qv for the invocations).
+//
+// Each slot is C04.19.3's opaque slot (rule 12n): a setter's registration
+// `resource_callback_slot_registered(H, TAG.FIELD, F)`, decided over the run's
+// closed set of what the slot's declared setters are handed. Every writer the
+// slot's 3.5 manual page names is declared here, and the page's NAME list is
+// exactly the slots' writers and not-writers (the checker's
+// `slot_writers_declared`).
+//
+// * A BIO's callback: `bio_st.callback_ex` (BIO_set_callback_ex) and
+//   `bio_st.callback`, the old format (BIO_set_callback). BIO_set_callback
+//   (3.5): "Any callback set via BIO_set_callback_ex() will get called in
+//   preference to any set by BIO_set_callback()"; both are stated, so either
+//   may run.
+// * A method table's functions: one key `bio_method_st.FIELD` per function
+//   BIO_meth_new (3.5) documents, each written by its one setter. The holder
+//   is the BIO_METHOD the setter is handed, a separate object that reaches a
+//   BIO through BIO_new and an SSL object through SSL_set_bio. The key is
+//   run-wide, so its set is every function any table's setter is handed, a
+//   superset of what the methods of the BIOs an SSL object holds can be,
+//   apart from the methods the library defines itself (BIO_s_socket,
+//   BIO_s_mem, BIO_f_buffer, ...), which no setter is handed. Those are the
+//   library-value premise `openssl_builtin_bio_methods` on every declaration
+//   that runs the slots. BIO_METHOD has been opaque since 1.1.0 (the
+//   setters' range), so no unit writes a table except through the setters,
+//   and a unit that defines `struct bio_method_st` (1.0.2's public layout)
+//   refuses the slot. The field names are the library's
+//   (`include/internal/bio.h`); the run never defines the record, so a key
+//   is only the slot's name.
+//
+// No setter keeps anything but the function pointer: BIO_set_callback_arg,
+// which keeps the callback's argument, is not declared.
+
+// BIO_set_callback_ex: https://docs.openssl.org/1.1.1/man3/BIO_set_callback/
+// (also 3.5; the 1.0.2 page does not name it). No HISTORY entry names it, so
+// the bound is the oldest series that documents it. NAME (3.5):
+// "BIO_set_callback_ex, BIO_get_callback_ex, BIO_set_callback,
+// BIO_get_callback, BIO_set_callback_arg, BIO_get_callback_arg,
+// BIO_debug_callback, BIO_debug_callback_ex, BIO_callback_fn_ex,
+// BIO_callback_fn". DESCRIPTION (3.5): "BIO_set_callback_ex() and
+// BIO_get_callback_ex() set and retrieve the BIO callback. The callback is
+// called during most high-level BIO operations", among them BIO_free
+// ("callback_ex(b, BIO_CB_FREE, NULL, 0, 0, 0L, 1L, NULL) ... is called
+// before the free operation"). A registration into the BIO's callback slot.
+// Pinned prototype: `void BIO_set_callback_ex(BIO *b, BIO_callback_fn_ex
+// callback)`, with `typedef long (*BIO_callback_fn_ex)(BIO *b, int oper,
+// const char *argp, size_t len, int argi, long argl, int ret, size_t
+// *processed)` (openssl/bio.h).
+extern fn BIO_set_callback_ex(b: ptr<mut, u8>, callback: fnptr) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, documented "1.1.1");
+    ensures normal resource_borrowed(b);
+    ensures normal resource_borrowed(callback);
+    ensures normal resource_callback_slot_registered(b, bio_st.callback_ex, callback);
+    ensures normal resource_return_none();
+};
+
+// BIO_set_callback: https://docs.openssl.org/1.1.1/man3/BIO_set_callback/
+// (also 3.5). The 1.0.2 page documents it as a macro ("they are both
+// macros"), which stores into the then public `struct bio_st` and calls
+// nothing, so the function's bound is the oldest series documenting the
+// function. HISTORY (3.5): "BIO_set_callback(), BIO_get_callback(), and
+// BIO_debug_callback() were deprecated in OpenSSL 3.0" (deprecated, not
+// removed: the pinned 3.5.5 header still declares it). DESCRIPTION (3.5):
+// "BIO_set_callback() and BIO_get_callback() set and retrieve the old format
+// BIO callback". A registration into the old format slot. Pinned prototype:
+// `void BIO_set_callback(BIO *b, BIO_callback_fn callback)`, with `typedef
+// long (*BIO_callback_fn)(BIO *b, int oper, const char *argp, int argi, long
+// argl, long ret)`.
+extern fn BIO_set_callback(b: ptr<mut, u8>, callback: fnptr) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, documented "1.1.1");
+    ensures normal resource_borrowed(b);
+    ensures normal resource_borrowed(callback);
+    ensures normal resource_callback_slot_registered(b, bio_st.callback, callback);
+    ensures normal resource_return_none();
+};
+
+// The method table setters. BIO_meth_new: https://docs.openssl.org/3.5/man3/BIO_meth_new/
+// (also 1.1.1; no page at 1.0.2). NAME (3.5): BIO_get_new_index,
+// BIO_meth_new, BIO_meth_free, the twelve BIO_meth_get_ getters and the
+// twelve BIO_meth_set_ setters declared here. HISTORY (3.5): "The functions
+// BIO_meth_get_sendmmsg(), BIO_meth_set_sendmmsg(), BIO_meth_get_recvmmsg()
+// and BIO_meth_set_recvmmsg() were added in OpenSSL 3.2. All the other
+// functions described here were added in OpenSSL 1.1.0." (1.1.1: "The
+// functions described here were added in OpenSSL 1.1.0."). RETURN VALUES:
+// "The BIO_meth_set functions return 1 on success or 0 on error": no
+// custody. Each setter gets and sets one function of the table, a
+// registration into that function's slot of the table it is handed.
+
+// BIO_meth_set_write_ex: cited at 1.1.1 (BIO_meth_new), since 1.1.0.
+// DESCRIPTION (3.5): "BIO_meth_get_write_ex() and BIO_meth_set_write_ex() get and set the
+// function used for writing arbitrary length data to the BIO
+// respectively. This function will be called in response to the
+// application calling BIO_write_ex() or BIO_write()". A registration into
+// `bio_method_st.bwrite`. Pinned prototype: `int BIO_meth_set_write_ex(BIO_METHOD
+// *biom, int (*bwrite)(BIO *, const char *, size_t, size_t *))`.
+extern fn BIO_meth_set_write_ex(biom: ptr<mut, u8>, bwrite: fnptr) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, since "1.1.0");
+    ensures normal resource_borrowed(biom);
+    ensures normal resource_borrowed(bwrite);
+    ensures normal resource_callback_slot_registered(biom, bio_method_st.bwrite, bwrite);
+    ensures normal resource_return_none();
+};
+
+// BIO_meth_set_write: cited at 1.1.1 (BIO_meth_new), since 1.1.0.
+// DESCRIPTION (3.5): "Older code may call BIO_meth_get_write() and BIO_meth_set_write()
+// instead" (of the write_ex pair). A registration into
+// `bio_method_st.bwrite_old`. Pinned prototype: `int BIO_meth_set_write(BIO_METHOD
+// *biom, int (*write)(BIO *, const char *, int))`.
+extern fn BIO_meth_set_write(biom: ptr<mut, u8>, write: fnptr) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, since "1.1.0");
+    ensures normal resource_borrowed(biom);
+    ensures normal resource_borrowed(write);
+    ensures normal resource_callback_slot_registered(biom, bio_method_st.bwrite_old, write);
+    ensures normal resource_return_none();
+};
+
+// BIO_meth_set_read_ex: cited at 1.1.1 (BIO_meth_new), since 1.1.0.
+// DESCRIPTION (3.5): "BIO_meth_get_read_ex() and BIO_meth_set_read_ex() get and set the
+// function used for reading arbitrary length data from the BIO
+// respectively. This function will be called in response to the
+// application calling BIO_read_ex() or BIO_read()". A registration into
+// `bio_method_st.bread`. Pinned prototype: `int BIO_meth_set_read_ex(BIO_METHOD
+// *biom, int (*bread)(BIO *, char *, size_t, size_t *))`.
+extern fn BIO_meth_set_read_ex(biom: ptr<mut, u8>, bread: fnptr) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, since "1.1.0");
+    ensures normal resource_borrowed(biom);
+    ensures normal resource_borrowed(bread);
+    ensures normal resource_callback_slot_registered(biom, bio_method_st.bread, bread);
+    ensures normal resource_return_none();
+};
+
+// BIO_meth_set_read: cited at 1.1.1 (BIO_meth_new), since 1.1.0.
+// DESCRIPTION (3.5): "Older code may call BIO_meth_get_read() and BIO_meth_set_read()
+// instead" (of the read_ex pair). A registration into
+// `bio_method_st.bread_old`. Pinned prototype: `int BIO_meth_set_read(BIO_METHOD
+// *biom, int (*read)(BIO *, char *, int))`.
+extern fn BIO_meth_set_read(biom: ptr<mut, u8>, read: fnptr) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, since "1.1.0");
+    ensures normal resource_borrowed(biom);
+    ensures normal resource_borrowed(read);
+    ensures normal resource_callback_slot_registered(biom, bio_method_st.bread_old, read);
+    ensures normal resource_return_none();
+};
+
+// BIO_meth_set_puts: cited at 1.1.1 (BIO_meth_new), since 1.1.0.
+// DESCRIPTION (3.5): the function "used for writing a NULL terminated string to the BIO
+// respectively. This function will be called in response to the
+// application calling BIO_puts()". A registration into
+// `bio_method_st.bputs`. Pinned prototype: `int BIO_meth_set_puts(BIO_METHOD
+// *biom, int (*puts)(BIO *, const char *))`.
+extern fn BIO_meth_set_puts(biom: ptr<mut, u8>, puts: fnptr) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, since "1.1.0");
+    ensures normal resource_borrowed(biom);
+    ensures normal resource_borrowed(puts);
+    ensures normal resource_callback_slot_registered(biom, bio_method_st.bputs, puts);
+    ensures normal resource_return_none();
+};
+
+// BIO_meth_set_gets: cited at 1.1.1 (BIO_meth_new), since 1.1.0.
+// DESCRIPTION (3.5): the function "typically used for reading a line of data from the
+// BIO respectively", called "in response to the application calling
+// BIO_gets()". A registration into
+// `bio_method_st.bgets`. Pinned prototype: `int BIO_meth_set_gets(BIO_METHOD
+// *biom, int (*ossl_gets)(BIO *, char *, int))`.
+extern fn BIO_meth_set_gets(biom: ptr<mut, u8>, ossl_gets: fnptr) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, since "1.1.0");
+    ensures normal resource_borrowed(biom);
+    ensures normal resource_borrowed(ossl_gets);
+    ensures normal resource_callback_slot_registered(biom, bio_method_st.bgets, ossl_gets);
+    ensures normal resource_return_none();
+};
+
+// BIO_meth_set_ctrl: cited at 1.1.1 (BIO_meth_new), since 1.1.0.
+// DESCRIPTION (3.5): the function "used for processing ctrl messages in the BIO
+// respectively", called "in response to the application calling
+// BIO_ctrl()". A registration into
+// `bio_method_st.ctrl`. Pinned prototype: `int BIO_meth_set_ctrl(BIO_METHOD
+// *biom, long (*ctrl)(BIO *, int, long, void *))`.
+extern fn BIO_meth_set_ctrl(biom: ptr<mut, u8>, ctrl: fnptr) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, since "1.1.0");
+    ensures normal resource_borrowed(biom);
+    ensures normal resource_borrowed(ctrl);
+    ensures normal resource_callback_slot_registered(biom, bio_method_st.ctrl, ctrl);
+    ensures normal resource_return_none();
+};
+
+// BIO_meth_set_create: cited at 1.1.1 (BIO_meth_new), since 1.1.0.
+// DESCRIPTION (3.5): the function "used for creating a new instance of the BIO
+// respectively. This function will be called in response to the
+// application calling BIO_new()". A registration into
+// `bio_method_st.create`. Pinned prototype: `int BIO_meth_set_create(BIO_METHOD
+// *biom, int (*create)(BIO *))`.
+extern fn BIO_meth_set_create(biom: ptr<mut, u8>, create: fnptr) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, since "1.1.0");
+    ensures normal resource_borrowed(biom);
+    ensures normal resource_borrowed(create);
+    ensures normal resource_callback_slot_registered(biom, bio_method_st.create, create);
+    ensures normal resource_return_none();
+};
+
+// BIO_meth_set_destroy: cited at 1.1.1 (BIO_meth_new), since 1.1.0.
+// DESCRIPTION (3.5): the function "used for destroying an instance of a BIO
+// respectively. This function will be called in response to the
+// application calling BIO_free()". A registration into
+// `bio_method_st.destroy`. Pinned prototype: `int BIO_meth_set_destroy(BIO_METHOD
+// *biom, int (*destroy)(BIO *))`.
+extern fn BIO_meth_set_destroy(biom: ptr<mut, u8>, destroy: fnptr) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, since "1.1.0");
+    ensures normal resource_borrowed(biom);
+    ensures normal resource_borrowed(destroy);
+    ensures normal resource_callback_slot_registered(biom, bio_method_st.destroy, destroy);
+    ensures normal resource_return_none();
+};
+
+// BIO_meth_set_callback_ctrl: cited at 1.1.1 (BIO_meth_new), since 1.1.0.
+// DESCRIPTION (3.5): the function "used for processing callback ctrl messages in
+// the BIO respectively", called "in response to the application
+// calling BIO_callback_ctrl()". A registration into
+// `bio_method_st.callback_ctrl`. Pinned prototype: `int BIO_meth_set_callback_ctrl(BIO_METHOD
+// *biom, long (*callback_ctrl)(BIO *, int, BIO_info_cb *))`.
+extern fn BIO_meth_set_callback_ctrl(biom: ptr<mut, u8>, callback_ctrl: fnptr) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, since "1.1.0");
+    ensures normal resource_borrowed(biom);
+    ensures normal resource_borrowed(callback_ctrl);
+    ensures normal resource_callback_slot_registered(biom, bio_method_st.callback_ctrl, callback_ctrl);
+    ensures normal resource_return_none();
+};
+
+// BIO_meth_set_sendmmsg: cited at 3.5 (BIO_meth_new), since 3.2.0.
+// DESCRIPTION (3.5): the setters "get and set the functions used for handling
+// BIO_sendmmsg() and BIO_recvmmsg() calls respectively". A registration into
+// `bio_method_st.bsendmmsg`. Pinned prototype: `int BIO_meth_set_sendmmsg(BIO_METHOD
+// *biom, int (*f)(BIO *, BIO_MSG *, size_t, size_t, uint64_t, size_t *))`.
+extern fn BIO_meth_set_sendmmsg(biom: ptr<mut, u8>, f: fnptr) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, since "3.2.0");
+    ensures normal resource_borrowed(biom);
+    ensures normal resource_borrowed(f);
+    ensures normal resource_callback_slot_registered(biom, bio_method_st.bsendmmsg, f);
+    ensures normal resource_return_none();
+};
+
+// BIO_meth_set_recvmmsg: cited at 3.5 (BIO_meth_new), since 3.2.0.
+// DESCRIPTION (3.5): the setters "get and set the functions used for handling
+// BIO_sendmmsg() and BIO_recvmmsg() calls respectively". A registration into
+// `bio_method_st.brecvmmsg`. Pinned prototype: `int BIO_meth_set_recvmmsg(BIO_METHOD
+// *biom, int (*f)(BIO *, BIO_MSG *, size_t, size_t, uint64_t, size_t *))`.
+extern fn BIO_meth_set_recvmmsg(biom: ptr<mut, u8>, f: fnptr) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, since "3.2.0");
+    ensures normal resource_borrowed(biom);
+    ensures normal resource_borrowed(f);
+    ensures normal resource_callback_slot_registered(biom, bio_method_st.brecvmmsg, f);
+    ensures normal resource_return_none();
+};

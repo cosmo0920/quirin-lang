@@ -49,6 +49,10 @@ pub const MODULES: &[(&str, &str)] = &[
         include_str!("../contracts/openssl/bio.qv"),
     ),
     (
+        "openssl/bio_slots.qv",
+        include_str!("../contracts/openssl/bio_slots.qv"),
+    ),
+    (
         "openssl/engine.qv",
         include_str!("../contracts/openssl/engine.qv"),
     ),

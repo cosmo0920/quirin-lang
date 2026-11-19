@@ -119,6 +119,19 @@ pub enum Premise {
     /// registry, not a slot of an object), which the declaration reads as
     /// changing no custody the caller holds.
     ExDataCallbacks,
+    /// Card **OPENSSL-BIO-METHODS-AND-CALLBACKS**: `requires
+    /// resource_premise(openssl_builtin_bio_methods, "…")`, the library-value
+    /// premise beside the stated method slots: a function of a method the
+    /// library defines itself (`BIO_s_socket`, `BIO_s_mem`, …), which no
+    /// setter is handed and so is in no run's slot set, changes no custody
+    /// the caller holds.
+    BuiltinBioMethods,
+    /// Card **OPENSSL-BIO-METHODS-AND-CALLBACKS**: `requires
+    /// resource_premise(openssl_bio_free_callbacks, "…")`: a drop of a BIO's
+    /// last reference runs its callback (`BIO_CB_FREE`), its method's destroy
+    /// function and the BIO class's ex_data free callbacks, which no clause
+    /// can state beside the reference drop (C04.19).
+    BioFreeCallbacks,
     /// Card **OPENSSL-SSL-CTX-CALLBACK-SLOTS**: `ensures normal
     /// resource_callback_slot_invoked(OBJ, slot, A…)` (C04.19.3): during the
     /// call the function pointer the object at `object` keeps in `slot` (one
@@ -168,12 +181,35 @@ pub const UNSTATED_SLOTS: &str = "openssl_unstated_callback_slots";
 /// Its statement (no `;`, `"` or `//`: the checker reads clauses lexically).
 /// Card OPENSSL-UNSTATED-CALLBACK-SLOTS: every slot this crate declares the
 /// setters of is stated where a declaration may run it, so what remains is
-/// named by kind.
+/// named by kind. Card OPENSSL-BIO-METHODS-AND-CALLBACKS: a BIO's methods and
+/// callback are stated slots now, so the statement no longer names them.
 pub const UNSTATED_SLOTS_STATEMENT: &str = "a callback the call may run that no clause of this \
 declaration states (a callback slot of the SSL object or its SSL_CTX whose invocation the \
 declaration does not state, among them the SSL_CTX_callback_ctrl arms such as the servername, \
-status and ticket key callbacks, a method or callback of a BIO the SSL object holds, or an \
-ex_data callback) takes, releases or retains nothing the caller holds";
+status and ticket key callbacks, or an ex_data callback) takes, releases or retains nothing the \
+caller holds";
+
+/// Card **OPENSSL-BIO-METHODS-AND-CALLBACKS**: the name of the built-in BIO
+/// methods premise.
+pub const BUILTIN_BIO_METHODS: &str = "openssl_builtin_bio_methods";
+
+/// Its statement.
+pub const BUILTIN_BIO_METHODS_STATEMENT: &str = "a function of a BIO method the library defines \
+itself (the BIO_METHOD that BIO_s_socket, BIO_s_mem, BIO_f_buffer or another built-in BIO_s_ or \
+BIO_f_ function returns, which no setter is handed), run on a BIO the SSL object holds or one \
+chained to it, takes, releases or retains nothing the caller holds, and so does any callback it \
+runs in turn on an object other than the arguments of the call (the SSL object of a BIO_f_ssl \
+BIO)";
+
+/// Card **OPENSSL-BIO-METHODS-AND-CALLBACKS**: the name of the BIO free
+/// premise.
+pub const BIO_FREE: &str = "openssl_bio_free_callbacks";
+
+/// Its statement.
+pub const BIO_FREE_STATEMENT: &str = "when the call drops the last reference to a BIO (its BIO \
+argument, or a BIO the SSL object holds and the BIOs chained to it), the callback the BIO holds, \
+run with BIO_CB_FREE, the destroy function of its method and the ex_data free callbacks of the \
+BIO class take, release or retain nothing the caller holds";
 
 /// Card **OPENSSL-UNSTATED-CALLBACK-SLOTS**: the name of the ex_data premise.
 pub const EX_DATA: &str = "openssl_ex_data_callbacks";
@@ -538,6 +574,124 @@ pub const SLOTS: &[Slot] = &[
         ],
         not_writers: &[],
     },
+    // Card OPENSSL-BIO-METHODS-AND-CALLBACKS. BIO_set_callback (3.5): a BIO's
+    // callback in two formats, one writer each; the getters, the callback
+    // argument macros, the debugging callbacks (values a setter may be
+    // handed) and the callback types are listed once.
+    Slot {
+        key: "bio_st.callback_ex",
+        page: "BIO_set_callback",
+        writers: &["BIO_set_callback_ex"],
+        not_writers: &[
+            "BIO_get_callback_ex",
+            "BIO_get_callback",
+            "BIO_set_callback_arg",
+            "BIO_get_callback_arg",
+            "BIO_debug_callback",
+            "BIO_debug_callback_ex",
+            "BIO_callback_fn_ex",
+            "BIO_callback_fn",
+        ],
+    },
+    Slot {
+        key: "bio_st.callback",
+        page: "BIO_set_callback",
+        writers: &["BIO_set_callback"],
+        not_writers: &[],
+    },
+    // BIO_meth_new (3.5): one slot per function of a method table, one setter
+    // each; the type index, the table's constructor and destructor and the
+    // twelve getters are listed once. The holder is the BIO_METHOD a setter
+    // is handed; the library's own methods are no setter's value (premise
+    // `openssl_builtin_bio_methods`).
+    Slot {
+        key: "bio_method_st.bwrite",
+        page: "BIO_meth_new",
+        writers: &["BIO_meth_set_write_ex"],
+        not_writers: &[
+            "BIO_get_new_index",
+            "BIO_meth_new",
+            "BIO_meth_free",
+            "BIO_meth_get_read_ex",
+            "BIO_meth_get_write_ex",
+            "BIO_meth_get_write",
+            "BIO_meth_get_read",
+            "BIO_meth_get_puts",
+            "BIO_meth_get_gets",
+            "BIO_meth_get_ctrl",
+            "BIO_meth_get_create",
+            "BIO_meth_get_destroy",
+            "BIO_meth_get_callback_ctrl",
+            "BIO_meth_get_sendmmsg",
+            "BIO_meth_get_recvmmsg",
+        ],
+    },
+    Slot {
+        key: "bio_method_st.bwrite_old",
+        page: "BIO_meth_new",
+        writers: &["BIO_meth_set_write"],
+        not_writers: &[],
+    },
+    Slot {
+        key: "bio_method_st.bread",
+        page: "BIO_meth_new",
+        writers: &["BIO_meth_set_read_ex"],
+        not_writers: &[],
+    },
+    Slot {
+        key: "bio_method_st.bread_old",
+        page: "BIO_meth_new",
+        writers: &["BIO_meth_set_read"],
+        not_writers: &[],
+    },
+    Slot {
+        key: "bio_method_st.bputs",
+        page: "BIO_meth_new",
+        writers: &["BIO_meth_set_puts"],
+        not_writers: &[],
+    },
+    Slot {
+        key: "bio_method_st.bgets",
+        page: "BIO_meth_new",
+        writers: &["BIO_meth_set_gets"],
+        not_writers: &[],
+    },
+    Slot {
+        key: "bio_method_st.ctrl",
+        page: "BIO_meth_new",
+        writers: &["BIO_meth_set_ctrl"],
+        not_writers: &[],
+    },
+    Slot {
+        key: "bio_method_st.create",
+        page: "BIO_meth_new",
+        writers: &["BIO_meth_set_create"],
+        not_writers: &[],
+    },
+    Slot {
+        key: "bio_method_st.destroy",
+        page: "BIO_meth_new",
+        writers: &["BIO_meth_set_destroy"],
+        not_writers: &[],
+    },
+    Slot {
+        key: "bio_method_st.callback_ctrl",
+        page: "BIO_meth_new",
+        writers: &["BIO_meth_set_callback_ctrl"],
+        not_writers: &[],
+    },
+    Slot {
+        key: "bio_method_st.bsendmmsg",
+        page: "BIO_meth_new",
+        writers: &["BIO_meth_set_sendmmsg"],
+        not_writers: &[],
+    },
+    Slot {
+        key: "bio_method_st.brecvmmsg",
+        page: "BIO_meth_new",
+        writers: &["BIO_meth_set_recvmmsg"],
+        not_writers: &[],
+    },
 ];
 
 /// What the documentation supports for one function.
@@ -595,6 +749,21 @@ const SINCE_1_1_0: &str = "resource_library_version(openssl, since \"1.1.0\")";
 const SINCE_3_0_0: &str = "resource_library_version(openssl, since \"3.0.0\")";
 const SINCE_0_9_7: &str = "resource_library_version(openssl, since \"0.9.7\")";
 const SINCE_1_1_1: &str = "resource_library_version(openssl, since \"1.1.1\")";
+const SINCE_3_2_0: &str = "resource_library_version(openssl, since \"3.2.0\")";
+
+/// Card **OPENSSL-BIO-METHODS-AND-CALLBACKS**: a method table setter added in
+/// 1.1.0 (`BIO_meth_new` 1.1.1 HISTORY: "The functions described here were
+/// added in OpenSSL 1.1.0"), registering the function pointer at position 1
+/// into `slot` of the table at position 0.
+const fn meth(function: &'static str, slot: &'static str) -> DocumentedFunction {
+    entry(
+        function,
+        "BIO_meth_new",
+        "1.1.1",
+        SINCE_1_1_0,
+        registers(1, slot),
+    )
+}
 
 /// Card **OPENSSL-UNSTATED-CALLBACK-SLOTS**: a setter that registers the
 /// function pointer at `callback` into `slot` of the object at position 0,
@@ -735,6 +904,41 @@ const CUSTOM_PARSE: Premise = on_ssl(
     &[Some(0), None, None, None, None, None],
 );
 
+/// Card **OPENSSL-BIO-METHODS-AND-CALLBACKS**: a slot of a BIO the
+/// connection at position 0 holds, every actual the callee's own (the BIO,
+/// never the connection).
+const fn on_bio(slot: &'static str, arguments: &'static [Option<usize>]) -> Premise {
+    Premise::SlotInvoked {
+        object: 0,
+        slot,
+        arguments,
+    }
+}
+
+/// The BIO callback slots and the method table slots, each with its
+/// function's arity (`callback_ex(b, oper, argp, len, argi, argl, ret,
+/// processed)`, `callback(b, oper, argp, argi, argl, ret)`, then the method
+/// functions' prototypes in `BIO_meth_new`'s synopsis and the pinned header),
+/// and the library-value premise for the built-in methods. Run wherever the
+/// call writes or reads a record through the SSL's BIOs.
+const BIO_SLOTS: [Premise; 15] = [
+    Premise::BuiltinBioMethods,
+    on_bio("bio_st.callback_ex", &[None; 8]),
+    on_bio("bio_st.callback", &[None; 6]),
+    on_bio("bio_method_st.bwrite", &[None; 4]),
+    on_bio("bio_method_st.bwrite_old", &[None; 3]),
+    on_bio("bio_method_st.bread", &[None; 4]),
+    on_bio("bio_method_st.bread_old", &[None; 3]),
+    on_bio("bio_method_st.bputs", &[None; 2]),
+    on_bio("bio_method_st.bgets", &[None; 3]),
+    on_bio("bio_method_st.ctrl", &[None; 4]),
+    on_bio("bio_method_st.create", &[None; 1]),
+    on_bio("bio_method_st.destroy", &[None; 1]),
+    on_bio("bio_method_st.callback_ctrl", &[None; 3]),
+    on_bio("bio_method_st.bsendmmsg", &[None; 6]),
+    on_bio("bio_method_st.brecvmmsg", &[None; 6]),
+];
+
 /// Card OPENSSL-SSL-CTX-CALLBACK-SLOTS: a handshake or I/O call on `ssl` at
 /// position 0: the certificate slot, `cert_cb(ssl, arg)`, and the premise
 /// for every slot whose setters are not declared. Card
@@ -772,6 +976,22 @@ const HANDSHAKE: &[Premise] = &[
     CUSTOM_ADD,
     CUSTOM_FREE,
     CUSTOM_PARSE,
+    // Card OPENSSL-BIO-METHODS-AND-CALLBACKS.
+    BIO_SLOTS[0],
+    BIO_SLOTS[1],
+    BIO_SLOTS[2],
+    BIO_SLOTS[3],
+    BIO_SLOTS[4],
+    BIO_SLOTS[5],
+    BIO_SLOTS[6],
+    BIO_SLOTS[7],
+    BIO_SLOTS[8],
+    BIO_SLOTS[9],
+    BIO_SLOTS[10],
+    BIO_SLOTS[11],
+    BIO_SLOTS[12],
+    BIO_SLOTS[13],
+    BIO_SLOTS[14],
 ];
 
 /// Card OPENSSL-UNSTATED-CALLBACK-SLOTS: `SSL_shutdown` sends or reads the
@@ -781,7 +1001,34 @@ const HANDSHAKE: &[Premise] = &[
 /// OPENSSL-UNDECLARED-HANDSHAKE-CALLBACKS: and the record padding callback,
 /// "invoked for every record before encryption", whose `type` may be
 /// `SSL3_RT_ALERT` (SSL_CTX_set_record_padding_callback, 3.5).
-const SHUTDOWN: &[Premise] = &[Premise::UnstatedSlots, INFO, MESSAGE, RECORD_PADDING];
+/// Card OPENSSL-BIO-METHODS-AND-CALLBACKS: and the BIO slots, through which
+/// the alert is written and read.
+const SHUTDOWN: &[Premise] = &[
+    Premise::UnstatedSlots,
+    INFO,
+    MESSAGE,
+    RECORD_PADDING,
+    BIO_SLOTS[0],
+    BIO_SLOTS[1],
+    BIO_SLOTS[2],
+    BIO_SLOTS[3],
+    BIO_SLOTS[4],
+    BIO_SLOTS[5],
+    BIO_SLOTS[6],
+    BIO_SLOTS[7],
+    BIO_SLOTS[8],
+    BIO_SLOTS[9],
+    BIO_SLOTS[10],
+    BIO_SLOTS[11],
+    BIO_SLOTS[12],
+    BIO_SLOTS[13],
+    BIO_SLOTS[14],
+];
+
+/// Card OPENSSL-BIO-METHODS-AND-CALLBACKS: `BIO_free` drops a BIO reference;
+/// `SSL_free` keeps the unstated-slots premise and frees the SSL's BIOs.
+const BIO_FREED: &[Premise] = &[Premise::BioFreeCallbacks];
+const SSL_FREED: &[Premise] = &[Premise::UnstatedSlots, Premise::BioFreeCallbacks];
 
 /// The context's password slot, `pem_password_cb(buf, size, rwflag, u)`:
 /// four values the callee supplies.
@@ -868,7 +1115,7 @@ use Null::Nullable;
 
 /// The documented semantics of every contracted function, sorted by name.
 pub const DOCUMENTED: &[DocumentedFunction] = &[
-    entry(
+    with(
         "BIO_free",
         "BIO_new",
         "1.1.1",
@@ -877,13 +1124,54 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
             position: 0,
             sentence: "If a is NULL nothing is done.",
         },
+        BIO_FREED,
     ),
+    meth("BIO_meth_set_callback_ctrl", "bio_method_st.callback_ctrl"),
+    meth("BIO_meth_set_create", "bio_method_st.create"),
+    meth("BIO_meth_set_ctrl", "bio_method_st.ctrl"),
+    meth("BIO_meth_set_destroy", "bio_method_st.destroy"),
+    meth("BIO_meth_set_gets", "bio_method_st.bgets"),
+    meth("BIO_meth_set_puts", "bio_method_st.bputs"),
+    meth("BIO_meth_set_read", "bio_method_st.bread_old"),
+    meth("BIO_meth_set_read_ex", "bio_method_st.bread"),
+    entry(
+        "BIO_meth_set_recvmmsg",
+        "BIO_meth_new",
+        "3.5",
+        SINCE_3_2_0,
+        registers(1, "bio_method_st.brecvmmsg"),
+    ),
+    entry(
+        "BIO_meth_set_sendmmsg",
+        "BIO_meth_new",
+        "3.5",
+        SINCE_3_2_0,
+        registers(1, "bio_method_st.bsendmmsg"),
+    ),
+    meth("BIO_meth_set_write", "bio_method_st.bwrite_old"),
+    meth("BIO_meth_set_write_ex", "bio_method_st.bwrite"),
     entry(
         "BIO_new_file",
         "BIO_s_file",
         "1.0.2",
         DOC_1_0_2,
         CountedConstructor,
+    ),
+    // Card OPENSSL-BIO-METHODS-AND-CALLBACKS: the 1.0.2 page documents
+    // BIO_set_callback as a macro, so both callback setters cite 1.1.1.
+    entry(
+        "BIO_set_callback",
+        "BIO_set_callback",
+        "1.1.1",
+        DOC_1_1_1,
+        registers(1, "bio_st.callback"),
+    ),
+    entry(
+        "BIO_set_callback_ex",
+        "BIO_set_callback",
+        "1.1.1",
+        DOC_1_1_1,
+        registers(1, "bio_st.callback_ex"),
     ),
     entry(
         "ENGINE_by_id",
@@ -1312,7 +1600,7 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
             position: 0,
             sentence: "If ssl is NULL nothing is done.",
         },
-        UNSTATED,
+        SSL_FREED,
     ),
     entry(
         "SSL_get1_peer_certificate",
