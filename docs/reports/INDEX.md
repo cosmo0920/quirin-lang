@@ -817,6 +817,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [openssl-ssl-ctx-callback-slots](openssl-ssl-ctx-callback-slots/README.md) | OPENSSL-SSL-CTX-CALLBACK-SLOTS: opaque callback slots replace the OpenSSL registered-callbacks premise |
 
+| [openssl-undeclared-handshake-callbacks](openssl-undeclared-handshake-callbacks/README.md) | OPENSSL-UNDECLARED-HANDSHAKE-CALLBACKS: the handshake slots whose setters were undeclared |
+
 | [openssl-unstated-callback-slots](openssl-unstated-callback-slots/README.md) | OPENSSL-UNSTATED-CALLBACK-SLOTS: the slots the narrowed OpenSSL premise covered, stated |
 
 | [out-parameter-body-summary](out-parameter-body-summary/README.md) | OUT-PARAMETER-BODY-SUMMARY |

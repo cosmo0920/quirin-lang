@@ -2504,6 +2504,364 @@
    "reference_sentences": [],
    "page": "SSL_CTX_set_security_level",
    "fetched_on": "2026-11-18"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/SSL_CTX_set_keylog_callback/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "ca003545a833f819247795044a606dcad99df035379f6ad5aa5473984dcb5678",
+   "bytes": 1076333,
+   "name": "SSL_CTX_set_keylog_callback, SSL_CTX_get_keylog_callback, SSL_CTX_keylog_cb_func - logging TLS key material",
+   "history": null,
+   "null_sentences": [
+    "If no callback has been set, this will return NULL.",
+    "When there is no key logging callback, or if SSL_CTX_set_keylog_callback is called with NULL as the value of cb, no logging of key material will be done.",
+    "SSL_CTX_get_keylog_callback() returns a pointer to SSL_CTX_keylog_cb_func or NULL if the callback is not set."
+   ],
+   "reference_sentences": [],
+   "page": "SSL_CTX_set_keylog_callback",
+   "fetched_on": "2026-11-18"
+  },
+  {
+   "url": "https://docs.openssl.org/1.1.1/man3/SSL_CTX_set_keylog_callback/",
+   "series": "1.1.1",
+   "fetched": true,
+   "sha256": "06e7908baeb78d558eb12efa70e5413d972a5bd0a7dbefbcd917cf29fedf2a73",
+   "bytes": 669650,
+   "name": "SSL_CTX_set_keylog_callback, SSL_CTX_get_keylog_callback, SSL_CTX_keylog_cb_func - logging TLS key material",
+   "history": null,
+   "null_sentences": [
+    "If no callback has been set, this will return NULL.",
+    "When there is no key logging callback, or if SSL_CTX_set_keylog_callback is called with NULL as the value of cb, no logging of key material will be done.",
+    "line will always be a NULL-terminated string.",
+    "SSL_CTX_get_keylog_callback() returns a pointer to SSL_CTX_keylog_cb_func or NULL if the callback is not set."
+   ],
+   "reference_sentences": [],
+   "page": "SSL_CTX_set_keylog_callback",
+   "fetched_on": "2026-11-18"
+  },
+  {
+   "url": "https://docs.openssl.org/1.0.2/man3/SSL_CTX_set_keylog_callback/",
+   "series": "1.0.2",
+   "fetched": false,
+   "error": "curl: (22) The requested URL returned error: 404",
+   "page": "SSL_CTX_set_keylog_callback",
+   "fetched_on": "2026-11-18"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/SSL_CTX_set_alpn_select_cb/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "49a44a93f196a8815b33570fc3095f564f3f442b8f5ab652d01ee9b3cb8b3f0c",
+   "bytes": 1093030,
+   "name": "SSL_CTX_set_alpn_protos, SSL_set_alpn_protos, SSL_CTX_set_alpn_select_cb, SSL_CTX_set_next_proto_select_cb, SSL_CTX_set_next_protos_advertised_cb, SSL_select_next_proto, SSL_get0_alpn_selected, SSL_get0_next_proto_negotiated - handle application layer protocol negotiation (ALPN)",
+   "history": null,
+   "null_sentences": [
+    "When cb is NULL, ALPN is not used.",
+    "data is set to NULL and len is set to 0 if no protocol has been selected.",
+    "If the client did not request any protocol or NPN is not enabled, then data is set to NULL and len to 0.",
+    "The first item in client , client_len is returned in out , outlen (or NULL and 0 in the case where the first entry in client is invalid)."
+   ],
+   "reference_sentences": [],
+   "page": "SSL_CTX_set_alpn_select_cb",
+   "fetched_on": "2026-11-18"
+  },
+  {
+   "url": "https://docs.openssl.org/1.1.1/man3/SSL_CTX_set_alpn_select_cb/",
+   "series": "1.1.1",
+   "fetched": true,
+   "sha256": "7bd263f5e4e414a268cfc6a815809b29ff8317ef3e2a16bec7daa8ad31eb9505",
+   "bytes": 685300,
+   "name": "SSL_CTX_set_alpn_protos, SSL_set_alpn_protos, SSL_CTX_set_alpn_select_cb, SSL_CTX_set_next_proto_select_cb, SSL_CTX_set_next_protos_advertised_cb, SSL_select_next_proto, SSL_get0_alpn_selected, SSL_get0_next_proto_negotiated - handle application layer protocol negotiation (ALPN)",
+   "history": null,
+   "null_sentences": [
+    "When cb is NULL, ALPN is not used.",
+    "data is set to NULL and len is set to 0 if no protocol has been selected.",
+    "If the client did not request any protocol or NPN is not enabled, then data is set to NULL and len to 0."
+   ],
+   "reference_sentences": [],
+   "page": "SSL_CTX_set_alpn_select_cb",
+   "fetched_on": "2026-11-18"
+  },
+  {
+   "url": "https://docs.openssl.org/1.0.2/man3/SSL_CTX_set_alpn_select_cb/",
+   "series": "1.0.2",
+   "fetched": true,
+   "sha256": "d8f1f9d5469138c993be5f55ee0fc7733d5c7bcba9be635a03d82076e5946982",
+   "bytes": 288285,
+   "name": "SSL_CTX_set_alpn_protos, SSL_set_alpn_protos, SSL_CTX_set_alpn_select_cb, SSL_select_next_proto, SSL_get0_alpn_selected - handle application layer protocol negotiation (ALPN)",
+   "history": null,
+   "null_sentences": [
+    "When cb is NULL, ALPN is not used.",
+    "data is set to NULL and len is set to 0 if no protocol has been selected."
+   ],
+   "reference_sentences": [],
+   "page": "SSL_CTX_set_alpn_select_cb",
+   "fetched_on": "2026-11-18"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/SSL_CTX_set_cert_verify_callback/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "6109ad2fc0150a869f434dd449483e079423a1f0907bb6c0a43b712d38a86686",
+   "bytes": 1080264,
+   "name": "SSL_CTX_set_cert_verify_callback - set peer certificate verification procedure",
+   "history": null,
+   "null_sentences": [],
+   "reference_sentences": [],
+   "page": "SSL_CTX_set_cert_verify_callback",
+   "fetched_on": "2026-11-18"
+  },
+  {
+   "url": "https://docs.openssl.org/1.1.1/man3/SSL_CTX_set_cert_verify_callback/",
+   "series": "1.1.1",
+   "fetched": true,
+   "sha256": "99e76cdda1ff5c846c30b6740ad5fbc7fee3eec1b0dce6f4a33e210f131e603b",
+   "bytes": 671586,
+   "name": "SSL_CTX_set_cert_verify_callback - set peer certificate verification procedure",
+   "history": null,
+   "null_sentences": [],
+   "reference_sentences": [],
+   "page": "SSL_CTX_set_cert_verify_callback",
+   "fetched_on": "2026-11-18"
+  },
+  {
+   "url": "https://docs.openssl.org/1.0.2/man3/SSL_CTX_set_cert_verify_callback/",
+   "series": "1.0.2",
+   "fetched": true,
+   "sha256": "32717a7eb3d16fdf6b6dfad808524adca52a8c83e2f43357b9136574d280f3f9",
+   "bytes": 281802,
+   "name": "SSL_CTX_set_cert_verify_callback - set peer certificate verification procedure",
+   "history": "Previous to OpenSSL 0.9.7, the arg argument to SSL_CTX_set_cert_verify_callback was ignored, and callback was called simply as int (*callback)(X509_STORE_CTX *) To compile software written for previous versions of OpenSSL, a dummy argument will have to be added to callback .",
+   "null_sentences": [],
+   "reference_sentences": [],
+   "page": "SSL_CTX_set_cert_verify_callback",
+   "fetched_on": "2026-11-18"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/SSL_CTX_set_psk_client_callback/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "eeac0971c4c94e59841cd93f3051f67714b907be6c815bdf32d34a139177bb29",
+   "bytes": 1085682,
+   "name": "SSL_psk_client_cb_func, SSL_psk_use_session_cb_func, SSL_CTX_set_psk_client_callback, SSL_set_psk_client_callback, SSL_CTX_set_psk_use_session_callback, SSL_set_psk_use_session_callback - set PSK client callback",
+   "history": "SSL_CTX_set_psk_use_session_callback() and SSL_set_psk_use_session_callback() were added in OpenSSL 1.1.1.",
+   "null_sentences": [
+    "The first time the callback is called for a connection the md parameter is NULL.",
+    "If md is not NULL the handshake digest for the ciphersuite should be the same.",
+    "To do this the callback should return successfully and ensure that *sess is NULL.",
+    "In this case the hint value will always be NULL and the handshake digest will default to SHA-256 for any returned PSK."
+   ],
+   "reference_sentences": [
+    "Since ownership of the SSL_SESSION is transferred to OpenSSL on each call, if the callback wishes to return the same SSL_SESSION pointer on a subsequent invocation, it must first call SSL_SESSION_up_ref(3) to increment the reference count."
+   ],
+   "page": "SSL_CTX_set_psk_client_callback",
+   "fetched_on": "2026-11-18"
+  },
+  {
+   "url": "https://docs.openssl.org/1.1.1/man3/SSL_CTX_set_psk_client_callback/",
+   "series": "1.1.1",
+   "fetched": true,
+   "sha256": "f3093cc9150a58431a7043d0f3308ddaa6eb88210db1ebfd8bb261d8b7579387",
+   "bytes": 678338,
+   "name": "SSL_psk_client_cb_func, SSL_psk_use_session_cb_func, SSL_CTX_set_psk_client_callback, SSL_set_psk_client_callback, SSL_CTX_set_psk_use_session_callback, SSL_set_psk_use_session_callback - set PSK client callback",
+   "history": "SSL_CTX_set_psk_use_session_callback() and SSL_set_psk_use_session_callback() were added in OpenSSL 1.1.1.",
+   "null_sentences": [
+    "The first time the callback is called for a connection the md parameter is NULL.",
+    "If md is not NULL the handshake digest for the ciphersuite should be the same.",
+    "To do this the callback should return successfully and ensure that *sess is NULL.",
+    "The callback function is given the connection in parameter ssl , a NULL -terminated PSK identity hint sent by the server in parameter hint , a buffer identity of length max_identity_len bytes where the resulting NUL -terminated identity is to be stored, and a buffer psk of length max_psk_len bytes where the resulting pre-shared key is to be stored.",
+    "In this case the hint value will always be NULL and the handshake digest will default to SHA-256 for any returned PSK."
+   ],
+   "reference_sentences": [],
+   "page": "SSL_CTX_set_psk_client_callback",
+   "fetched_on": "2026-11-18"
+  },
+  {
+   "url": "https://docs.openssl.org/1.0.2/man3/SSL_CTX_set_psk_client_callback/",
+   "series": "1.0.2",
+   "fetched": true,
+   "sha256": "f27f1c47dc96de7788b00b64a81f9787bcefe73eefe7bdd4c3cc969f103775d6",
+   "bytes": 281257,
+   "name": "SSL_CTX_set_psk_client_callback, SSL_set_psk_client_callback - set PSK client callback",
+   "history": null,
+   "null_sentences": [
+    "The callback function is given the connection in parameter ssl , a NULL -terminated PSK identity hint sent by the server in parameter hint , a buffer identity of length max_identity_len bytes where the the resulting NULL -terminated identity is to be stored, and a buffer psk of length max_psk_len bytes where the resulting pre-shared key is to be stored."
+   ],
+   "reference_sentences": [],
+   "page": "SSL_CTX_set_psk_client_callback",
+   "fetched_on": "2026-11-18"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/SSL_CTX_use_psk_identity_hint/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "c07072b68e6c6487d6425fd972cebf95414376451cfd4378c3ab0e6a322d4b24",
+   "bytes": 1084311,
+   "name": "SSL_psk_server_cb_func, SSL_psk_find_session_cb_func, SSL_CTX_use_psk_identity_hint, SSL_use_psk_identity_hint, SSL_CTX_set_psk_server_callback, SSL_set_psk_server_callback, SSL_CTX_set_psk_find_session_callback, SSL_set_psk_find_session_callback - set PSK identity hint to use",
+   "history": "SSL_CTX_set_psk_find_session_callback() and SSL_set_psk_find_session_callback() were added in OpenSSL 1.1.1.",
+   "null_sentences": [
+    "To do this the callback should return successfully and ensure that *sess is NULL.",
+    "If hint is NULL the current hint from ctx or ssl is deleted.",
+    "In the case where PSK identity hint is NULL , the server does not send the ServerKeyExchange message to the client."
+   ],
+   "reference_sentences": [],
+   "page": "SSL_CTX_use_psk_identity_hint",
+   "fetched_on": "2026-11-18"
+  },
+  {
+   "url": "https://docs.openssl.org/1.1.1/man3/SSL_CTX_use_psk_identity_hint/",
+   "series": "1.1.1",
+   "fetched": true,
+   "sha256": "6514683be9f6f080f39f9329830c0c27cfafbbd503f4f48ce4fe9c765fa14c10",
+   "bytes": 677885,
+   "name": "SSL_psk_server_cb_func, SSL_psk_find_session_cb_func, SSL_CTX_use_psk_identity_hint, SSL_use_psk_identity_hint, SSL_CTX_set_psk_server_callback, SSL_set_psk_server_callback, SSL_CTX_set_psk_find_session_callback, SSL_set_psk_find_session_callback - set PSK identity hint to use",
+   "history": "SSL_CTX_set_psk_find_session_callback() and SSL_set_psk_find_session_callback() were added in OpenSSL 1.1.1.",
+   "null_sentences": [
+    "To do this the callback should return successfully and ensure that *sess is NULL.",
+    "If hint is NULL the current hint from ctx or ssl is deleted.",
+    "In the case where PSK identity hint is NULL , the server does not send the ServerKeyExchange message to the client."
+   ],
+   "reference_sentences": [],
+   "page": "SSL_CTX_use_psk_identity_hint",
+   "fetched_on": "2026-11-18"
+  },
+  {
+   "url": "https://docs.openssl.org/1.0.2/man3/SSL_CTX_use_psk_identity_hint/",
+   "series": "1.0.2",
+   "fetched": true,
+   "sha256": "2f504b616c3e06c1446a24c0515ae32237fca1662a7a53100b4238f821550ba8",
+   "bytes": 281967,
+   "name": "SSL_CTX_use_psk_identity_hint, SSL_use_psk_identity_hint, SSL_CTX_set_psk_server_callback, SSL_set_psk_server_callback - set PSK identity hint to use",
+   "history": null,
+   "null_sentences": [
+    "SSL_CTX_use_psk_identity_hint() sets the given NULL -terminated PSK identity hint hint to SSL context object ctx .",
+    "SSL_use_psk_identity_hint() sets the given NULL -terminated PSK identity hint hint to SSL connection object ssl .",
+    "If hint is NULL the current hint from ctx or ssl is deleted.",
+    "In the case where PSK identity hint is NULL , the server does not send the ServerKeyExchange message to the client.",
+    "The callback function is given the connection in parameter ssl , NULL -terminated PSK identity sent by the client in parameter identity , and a buffer psk of length max_psk_len bytes where the pre-shared key is to be stored."
+   ],
+   "reference_sentences": [],
+   "page": "SSL_CTX_use_psk_identity_hint",
+   "fetched_on": "2026-11-18"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/SSL_CTX_set_client_hello_cb/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "d638715b3db4027bfd23ebfd0298cfcea1b31bfad7ddb7c14f2f7fc925646423",
+   "bytes": 1086860,
+   "name": "SSL_CTX_set_client_hello_cb, SSL_client_hello_cb_fn, SSL_client_hello_isv2, SSL_client_hello_get0_legacy_version, SSL_client_hello_get0_random, SSL_client_hello_get0_session_id, SSL_client_hello_get0_ciphers, SSL_client_hello_get0_compression_methods, SSL_client_hello_get1_extensions_present, SSL_client_hello_get_extension_order, SSL_client_hello_get0_ext - callback functions for early server-side ClientHello processing",
+   "history": "The SSL ClientHello callback, SSL_client_hello_isv2(), SSL_client_hello_get0_random(), SSL_client_hello_get0_session_id(), SSL_client_hello_get0_ciphers(), SSL_client_hello_get0_compression_methods(), SSL_client_hello_get0_ext(), and SSL_client_hello_get1_extensions_present() were added in OpenSSL 1.1.1. SSL_client_hello_get_extension_order() was added in OpenSSL 3.2.0.",
+   "null_sentences": [
+    "In situations when the ClientHello has no extensions, the function will return success with *out set to NULL and *outlen set to 0.",
+    "When called with exts set to NULL, returns the number of extensions (e.g., to allocate storage for a subsequent call).",
+    "A subsequent call with exts set to NULL can retrieve the size of storage needed."
+   ],
+   "reference_sentences": [],
+   "page": "SSL_CTX_set_client_hello_cb",
+   "fetched_on": "2026-11-18"
+  },
+  {
+   "url": "https://docs.openssl.org/1.1.1/man3/SSL_CTX_set_client_hello_cb/",
+   "series": "1.1.1",
+   "fetched": true,
+   "sha256": "005d7afe4a913330fd1b2bab31169e8adca98887c20d7524acf1ffa89ab7d578",
+   "bytes": 678095,
+   "name": "SSL_CTX_set_client_hello_cb, SSL_client_hello_cb_fn, SSL_client_hello_isv2, SSL_client_hello_get0_legacy_version, SSL_client_hello_get0_random, SSL_client_hello_get0_session_id, SSL_client_hello_get0_ciphers, SSL_client_hello_get0_compression_methods, SSL_client_hello_get1_extensions_present, SSL_client_hello_get0_ext - callback functions for early server-side ClientHello processing",
+   "history": "The SSL ClientHello callback, SSL_client_hello_isv2(), SSL_client_hello_get0_random(), SSL_client_hello_get0_session_id(), SSL_client_hello_get0_ciphers(), SSL_client_hello_get0_compression_methods(), SSL_client_hello_get0_ext(), and SSL_client_hello_get1_extensions_present() were added in OpenSSL 1.1.1.",
+   "null_sentences": [
+    "In situations when the ClientHello has no extensions, the function will return success with *out set to NULL and *outlen set to 0."
+   ],
+   "reference_sentences": [],
+   "page": "SSL_CTX_set_client_hello_cb",
+   "fetched_on": "2026-11-18"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/SSL_CTX_set_record_padding_callback/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "29a3dc4b68830050ab727600dab872a8d617327ae4520234b2fcd93521a7ded3",
+   "bytes": 1082924,
+   "name": "SSL_CTX_set_record_padding_callback, SSL_set_record_padding_callback, SSL_CTX_set_record_padding_callback_arg, SSL_set_record_padding_callback_arg, SSL_CTX_get_record_padding_callback_arg, SSL_get_record_padding_callback_arg, SSL_CTX_set_block_padding, SSL_CTX_set_block_padding_ex, SSL_set_block_padding, SSL_set_block_padding_ex - install callback to specify TLS 1.3 record padding",
+   "history": "The record padding API was added for TLS 1.3 support in OpenSSL 1.1.1. The return type of SSL_CTX_set_record_padding_callback() function was changed to int in OpenSSL 3.0. The functions SSL_set_block_padding_ex() and SSL_CTX_set_block_padding_ex() were added in OpenSSL 3.4.",
+   "null_sentences": [],
+   "reference_sentences": [],
+   "page": "SSL_CTX_set_record_padding_callback",
+   "fetched_on": "2026-11-18"
+  },
+  {
+   "url": "https://docs.openssl.org/1.1.1/man3/SSL_CTX_set_record_padding_callback/",
+   "series": "1.1.1",
+   "fetched": true,
+   "sha256": "424aab19a0f76ff780c82ece094796c4f22c35a4ee57f4ab508fcf51dddb07b4",
+   "bytes": 674369,
+   "name": "SSL_CTX_set_record_padding_callback, SSL_set_record_padding_callback, SSL_CTX_set_record_padding_callback_arg, SSL_set_record_padding_callback_arg, SSL_CTX_get_record_padding_callback_arg, SSL_get_record_padding_callback_arg, SSL_CTX_set_block_padding, SSL_set_block_padding - install callback to specify TLS 1.3 record padding",
+   "history": "The record padding API was added for TLS 1.3 support in OpenSSL 1.1.1.",
+   "null_sentences": [],
+   "reference_sentences": [],
+   "page": "SSL_CTX_set_record_padding_callback",
+   "fetched_on": "2026-11-18"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/SSL_read_early_data/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "02f510172ba004991ece429c92ea7355d22f465692eb315ff0628ec83df190d1",
+   "bytes": 1100425,
+   "name": "SSL_set_max_early_data, SSL_CTX_set_max_early_data, SSL_get_max_early_data, SSL_CTX_get_max_early_data, SSL_set_recv_max_early_data, SSL_CTX_set_recv_max_early_data, SSL_get_recv_max_early_data, SSL_CTX_get_recv_max_early_data, SSL_SESSION_get_max_early_data, SSL_SESSION_set_max_early_data, SSL_write_early_data, SSL_read_early_data, SSL_get_early_data_status, SSL_allow_early_data_cb_fn, SSL_CTX_set_allow_early_data_cb, SSL_set_allow_early_data_cb - functions for sending and receiving early data",
+   "history": "All of the functions described above were added in OpenSSL 1.1.1.",
+   "null_sentences": [],
+   "reference_sentences": [],
+   "page": "SSL_read_early_data",
+   "fetched_on": "2026-11-18"
+  },
+  {
+   "url": "https://docs.openssl.org/1.1.1/man3/SSL_read_early_data/",
+   "series": "1.1.1",
+   "fetched": true,
+   "sha256": "0b97077fa1e8122903687fb38cb4ec0f0e6465f14927d8328c45d974d44e7283",
+   "bytes": 693472,
+   "name": "SSL_set_max_early_data, SSL_CTX_set_max_early_data, SSL_get_max_early_data, SSL_CTX_get_max_early_data, SSL_set_recv_max_early_data, SSL_CTX_set_recv_max_early_data, SSL_get_recv_max_early_data, SSL_CTX_get_recv_max_early_data, SSL_SESSION_get_max_early_data, SSL_SESSION_set_max_early_data, SSL_write_early_data, SSL_read_early_data, SSL_get_early_data_status, SSL_allow_early_data_cb_fn, SSL_CTX_set_allow_early_data_cb, SSL_set_allow_early_data_cb - functions for sending and receiving early data",
+   "history": "All of the functions described above were added in OpenSSL 1.1.1.",
+   "null_sentences": [],
+   "reference_sentences": [],
+   "page": "SSL_read_early_data",
+   "fetched_on": "2026-11-18"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/SSL_extension_supported/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "eaf17a556ea85c765f37c2776fc2f65ddeb9f6a4cdf9f3dee8d904449324b0d7",
+   "bytes": 1097422,
+   "name": "SSL_extension_supported, SSL_custom_ext_add_cb_ex, SSL_custom_ext_free_cb_ex, SSL_custom_ext_parse_cb_ex, SSL_CTX_add_custom_ext, SSL_CTX_add_client_custom_ext, SSL_CTX_add_server_custom_ext, custom_ext_add_cb, custom_ext_free_cb, custom_ext_parse_cb - custom TLS extension handling",
+   "history": "The SSL_CTX_add_custom_ext() function was added in OpenSSL 1.1.1.",
+   "null_sentences": [],
+   "reference_sentences": [],
+   "page": "SSL_extension_supported",
+   "fetched_on": "2026-11-18"
+  },
+  {
+   "url": "https://docs.openssl.org/1.1.1/man3/SSL_extension_supported/",
+   "series": "1.1.1",
+   "fetched": true,
+   "sha256": "8fd7b49e5573ec96cdc08929504afcb034e998532ebb05d0323c67a0cb500a8f",
+   "bytes": 690530,
+   "name": "SSL_extension_supported, SSL_CTX_add_custom_ext, SSL_CTX_add_client_custom_ext, SSL_CTX_add_server_custom_ext, custom_ext_add_cb, custom_ext_free_cb, custom_ext_parse_cb - custom TLS extension handling",
+   "history": "The SSL_CTX_add_custom_ext() function was added in OpenSSL 1.1.1.",
+   "null_sentences": [],
+   "reference_sentences": [],
+   "page": "SSL_extension_supported",
+   "fetched_on": "2026-11-18"
+  },
+  {
+   "url": "https://docs.openssl.org/1.0.2/man3/SSL_extension_supported/",
+   "series": "1.0.2",
+   "fetched": false,
+   "error": "curl: (22) The requested URL returned error: 404",
+   "page": "SSL_extension_supported",
+   "fetched_on": "2026-11-18"
   }
  ]
 }

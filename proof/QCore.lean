@@ -318,6 +318,7 @@ import QCore.OpCallbacks
 import QCore.OpaqueCallbackSlots
 import QCore.OpensslCalleeShapes
 import QCore.OpensslContractPlugin
+import QCore.OpensslHandshakeSlots
 import QCore.OpensslUnstatedSlots
 import QCore.OrderedLifetimeReplay
 import QCore.OsEndpointPostState

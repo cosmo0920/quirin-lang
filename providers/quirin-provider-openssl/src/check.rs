@@ -51,6 +51,10 @@
 //!    be exactly the writers and not-writers of the slots citing it, and a
 //!    call whose every slot is stated names only `openssl_ex_data_callbacks`
 //!    for the ex_data registry.
+//!    Card **OPENSSL-UNDECLARED-HANDSHAKE-CALLBACKS**: a setter may register
+//!    several slots at once (each registration beside the shape's is a
+//!    [`Premise::SlotRegistered`], with a second retention a
+//!    [`Premise::RetainedBy`]), and it is a writer of each.
 //!    Card **REFERENCE-DROP-NULL-ACCEPTING**: a release whose page states that a
 //!    NULL argument does nothing is a NULL-accepting drop,
 //!    `resource_reference_dropped(p, nullable)`, and the cited snapshot must
@@ -153,8 +157,29 @@ pub const FUNCTION_TYPEDEFS: &[&str] = &["pem_password_cb"];
 
 /// Card **OPENSSL-UNSTATED-CALLBACK-SLOTS**: the pinned headers' typedefs of
 /// function *pointer* types (`typedef int (*SSL_verify_cb)(int preverify_ok,
-/// X509_STORE_CTX *x509_ctx);`), which are `fnptr` themselves.
-pub const FUNCTION_POINTER_TYPEDEFS: &[&str] = &["SSL_verify_cb"];
+/// X509_STORE_CTX *x509_ctx);`), which are `fnptr` themselves. Card
+/// **OPENSSL-UNDECLARED-HANDSHAKE-CALLBACKS**: and the handshake callback
+/// types its setters take, each `typedef R (*NAME)(P…);` in the pinned
+/// `openssl/ssl.h`.
+pub const FUNCTION_POINTER_TYPEDEFS: &[&str] = &[
+    "SSL_verify_cb",
+    "SSL_CTX_keylog_cb_func",
+    "SSL_CTX_alpn_select_cb_func",
+    "SSL_CTX_npn_select_cb_func",
+    "SSL_CTX_npn_advertised_cb_func",
+    "SSL_psk_client_cb_func",
+    "SSL_psk_use_session_cb_func",
+    "SSL_psk_server_cb_func",
+    "SSL_psk_find_session_cb_func",
+    "SSL_client_hello_cb_fn",
+    "SSL_allow_early_data_cb_fn",
+    "SSL_custom_ext_add_cb_ex",
+    "SSL_custom_ext_free_cb_ex",
+    "SSL_custom_ext_parse_cb_ex",
+    "custom_ext_add_cb",
+    "custom_ext_free_cb",
+    "custom_ext_parse_cb",
+];
 
 /// The contract type a C type from a pinned prototype corresponds to.
 #[must_use]
@@ -206,6 +231,9 @@ pub fn contract_type(c_type: &str) -> Option<&'static str> {
     match c_type.as_str() {
         "void" => Some("unit"),
         "int" => Some("i32"),
+        // Card OPENSSL-UNDECLARED-HANDSHAKE-CALLBACKS: the custom extension
+        // setters' `ext_type` and `context`.
+        "unsigned int" => Some("u32"),
         "long" => Some("i64"),
         "unsigned long" | "uint64_t" => Some("u64"),
         "size_t" => Some("usize"),
@@ -469,7 +497,25 @@ pub fn stated_slots(documented: &DocumentedFunction) -> Vec<&'static str> {
         .premises
         .iter()
         .filter_map(|premise| match premise {
-            Premise::SlotInvoked { slot, .. } => Some(*slot),
+            Premise::SlotInvoked { slot, .. } | Premise::SlotRegistered { slot, .. } => Some(*slot),
+            _ => None,
+        })
+        .collect::<Vec<_>>();
+    if let Documented::RegistersSlot { slot, .. } = documented.shape {
+        slots.push(slot);
+    }
+    slots
+}
+
+/// Card OPENSSL-UNDECLARED-HANDSHAKE-CALLBACKS: the slots an entry
+/// registers, by its shape and by its further registrations.
+#[must_use]
+pub fn registered_slots(documented: &DocumentedFunction) -> Vec<&'static str> {
+    let mut slots = documented
+        .premises
+        .iter()
+        .filter_map(|premise| match premise {
+            Premise::SlotRegistered { slot, .. } => Some(*slot),
             _ => None,
         })
         .collect::<Vec<_>>();
@@ -548,10 +594,9 @@ pub fn slot_writers_declared(slot: &str, snapshots: &Value) -> Result<(), String
                 stated.page
             ));
         }
-        let registers = DOCUMENTED.iter().any(|entry| {
-            entry.function == *writer
-                && matches!(entry.shape, Documented::RegistersSlot { slot: at, .. } if at == slot)
-        });
+        let registers = DOCUMENTED
+            .iter()
+            .any(|entry| entry.function == *writer && registered_slots(entry).contains(&slot));
         if !registers {
             return Err(format!(
                 "`{slot}`'s writer {writer} is not documented as its registration"
@@ -565,10 +610,7 @@ pub fn slot_writers_declared(slot: &str, snapshots: &Value) -> Result<(), String
         }
     }
     for entry in DOCUMENTED {
-        if let Documented::RegistersSlot { slot: at, .. } = entry.shape
-            && at == slot
-            && !stated.writers.contains(&entry.function)
-        {
+        if registered_slots(entry).contains(&slot) && !stated.writers.contains(&entry.function) {
             return Err(format!(
                 "{} registers `{slot}` but is not one of its writers",
                 entry.function
@@ -623,6 +665,20 @@ pub fn expected_clauses(
                     actuals.join(", ")
                 )
             }
+            Premise::SlotRegistered {
+                holder,
+                callback,
+                slot,
+            } => format!(
+                "ensures normal resource_callback_slot_registered({}, {slot}, {})",
+                name(*holder)?,
+                name(*callback)?
+            ),
+            Premise::RetainedBy { item, holder } => format!(
+                "ensures normal resource_retained_by({}, {})",
+                name(*item)?,
+                name(*holder)?
+            ),
             Premise::CallbackInvoked {
                 callback,
                 arguments,
@@ -974,7 +1030,11 @@ mod tests {
         assert_eq!(contract_type("char *const *"), None);
         assert_eq!(contract_type("X509 ***"), None);
         assert_eq!(contract_type("pem_password_cb **"), None);
-        assert_eq!(contract_type("unsigned int"), None);
+        // Card OPENSSL-UNDECLARED-HANDSHAKE-CALLBACKS: `unsigned int` is
+        // `u32`; `unsigned` alone and `unsigned char` have no spelling.
+        assert_eq!(contract_type("unsigned int"), Some("u32"));
+        assert_eq!(contract_type("unsigned"), None);
+        assert_eq!(contract_type("unsigned char"), None);
         assert_eq!(
             prototype_types(
                 "X509 *PEM_read_bio_X509(BIO *out, X509 **x, pem_password_cb *cb, void *u)",
@@ -1176,7 +1236,7 @@ mod tests {
         for slot in SLOTS {
             slot_writers_declared(slot.key, &snapshots).unwrap();
         }
-        assert_eq!(SLOTS.len(), 10);
+        assert_eq!(SLOTS.len(), 28);
         // Card OPENSSL-UNSTATED-CALLBACK-SLOTS: a ctrl arm stays unstated.
         assert!(slot_writers_declared("ssl_ctx_st.servername_cb", &snapshots).is_err());
         // A page that does not name a writer refuses the slot.
@@ -1371,6 +1431,210 @@ mod tests {
         assert_eq!(contract_type("int (**)(SSL *, void *)"), None);
         assert_eq!(contract_type("int (*)(int (*)(void))"), None);
         assert_eq!(contract_type("(*)(void)"), None);
+    }
+
+    /// Card OPENSSL-UNDECLARED-HANDSHAKE-CALLBACKS: the handshake slots this
+    /// card states, drift-refused.
+    #[test]
+    fn a_drifted_handshake_slot_reading_is_refused() {
+        let premise = format!(
+            "    requires resource_premise({UNSTATED_SLOTS}, \"{UNSTATED_SLOTS_STATEMENT}\");\n"
+        );
+        // Each new invocation of a handshake call dropped.
+        let (path, text) = module_of("SSL_connect");
+        let start = text.find("extern fn SSL_connect(").unwrap();
+        let end = start + text[start..].find("};").unwrap();
+        let body = &text[start..end];
+        let new_slots = [
+            "keylog_callback",
+            "alpn_select_cb",
+            "npn_select_cb",
+            "npn_advertised_cb",
+            "app_verify_callback",
+            "psk_client_callback",
+            "psk_use_session_cb",
+            "psk_server_callback",
+            "psk_find_session_cb",
+            "client_hello_cb",
+            "record_padding_cb",
+            "allow_early_data_cb",
+            "custom_ext_add_cb_ex",
+            "custom_ext_free_cb_ex",
+            "custom_ext_parse_cb_ex",
+            "custom_ext_add_cb",
+            "custom_ext_free_cb",
+            "custom_ext_parse_cb",
+        ];
+        for slot in new_slots {
+            let line = body
+                .lines()
+                .find(|line| line.contains(&format!("ssl_ctx_st.{slot},")))
+                .unwrap_or_else(|| panic!("SSL_connect states {slot}"));
+            let dropped = format!(
+                "{}{}",
+                &text[..start],
+                text[start..].replacen(&format!("{line}\n"), "", 1)
+            );
+            assert!(
+                check_function(path, &dropped, "SSL_connect").is_err(),
+                "{slot}"
+            );
+        }
+        // The connection read as a supplied value, and the keylog line read as
+        // the connection.
+        let supplied = format!(
+            "{}{}",
+            &text[..start],
+            text[start..].replacen(
+                "ssl_ctx_st.keylog_callback, ssl, _)",
+                "ssl_ctx_st.keylog_callback, _, _)",
+                1,
+            )
+        );
+        assert_ne!(supplied, text);
+        assert!(check_function(path, &supplied, "SSL_connect").is_err());
+        // The certificate verification callback receives no connection.
+        let connected = format!(
+            "{}{}",
+            &text[..start],
+            text[start..].replacen(
+                "ssl_ctx_st.app_verify_callback, _, _)",
+                "ssl_ctx_st.app_verify_callback, ssl, _)",
+                1,
+            )
+        );
+        assert_ne!(connected, text);
+        assert!(check_function(path, &connected, "SSL_connect").is_err());
+        // The handshake calls keep the narrowed premise (the ctrl arms, CT,
+        // the BIO methods).
+        let unpremised = format!(
+            "{}{}",
+            &text[..start],
+            text[start..].replacen(&premise, "", 1)
+        );
+        assert!(check_function(path, &unpremised, "SSL_connect").is_err());
+        // SSL_shutdown's record padding invocation dropped.
+        let (path, text) = module_of("SSL_shutdown");
+        let start = text.find("extern fn SSL_shutdown(").unwrap();
+        let padding = "    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.record_padding_cb, ssl, _, _, _);\n";
+        assert!(text[start..].contains(padding));
+        let silent = format!(
+            "{}{}",
+            &text[..start],
+            text[start..].replacen(padding, "", 1)
+        );
+        assert!(check_function(path, &silent, "SSL_shutdown").is_err());
+        // A setter's retention of `arg` dropped (borrowed and forgotten).
+        let (path, text) = module_of("SSL_CTX_set_alpn_select_cb");
+        let forgotten = text.replacen(
+            "    ensures normal resource_retained_by(arg, ctx);\n",
+            "",
+            1,
+        );
+        assert_ne!(forgotten, text);
+        assert!(check_function(path, &forgotten, "SSL_CTX_set_alpn_select_cb").is_err());
+        // A multi-slot setter: each registration and the second retention are
+        // required, and an `_ex` callback is not an older-style one.
+        let (path, text) = module_of("SSL_CTX_add_custom_ext");
+        let start = text.find("extern fn SSL_CTX_add_custom_ext(").unwrap();
+        for line in [
+            "    ensures normal resource_callback_slot_registered(ctx, ssl_ctx_st.custom_ext_add_cb_ex, add_cb);\n",
+            "    ensures normal resource_callback_slot_registered(ctx, ssl_ctx_st.custom_ext_free_cb_ex, free_cb);\n",
+            "    ensures normal resource_callback_slot_registered(ctx, ssl_ctx_st.custom_ext_parse_cb_ex, parse_cb);\n",
+            "    ensures normal resource_retained_by(add_arg, ctx);\n",
+            "    ensures normal resource_retained_by(parse_arg, ctx);\n",
+        ] {
+            assert!(text[start..].contains(line), "{line}");
+            let dropped = format!("{}{}", &text[..start], text[start..].replacen(line, "", 1));
+            assert!(
+                check_function(path, &dropped, "SSL_CTX_add_custom_ext").is_err(),
+                "{line}"
+            );
+        }
+        let old_style = format!(
+            "{}{}",
+            &text[..start],
+            text[start..].replacen(
+                "ssl_ctx_st.custom_ext_free_cb_ex, free_cb)",
+                "ssl_ctx_st.custom_ext_free_cb, free_cb)",
+                1,
+            )
+        );
+        assert!(check_function(path, &old_style, "SSL_CTX_add_custom_ext").is_err());
+        // The new callback types are `fnptr` only by value.
+        for typedef in FUNCTION_POINTER_TYPEDEFS {
+            assert_eq!(contract_type(typedef), Some("fnptr"), "{typedef}");
+            assert_eq!(contract_type(&format!("{typedef} *")), None, "{typedef}");
+        }
+    }
+
+    /// Card OPENSSL-UNDECLARED-HANDSHAKE-CALLBACKS: a setter registering
+    /// several slots is a writer of each; dropping one registration from its
+    /// documented entry leaves that slot's writer undeclared, and a slot no
+    /// page lists (the CT validation callback, written by the library's own
+    /// `SSL_CTX_enable_ct`) is not one this checker documents.
+    #[test]
+    fn a_multi_slot_writer_writes_each_slot() {
+        let snapshots: Value = serde_json::from_str(crate::DOC_SNAPSHOTS).unwrap();
+        let custom = DOCUMENTED
+            .iter()
+            .find(|entry| entry.function == "SSL_CTX_add_custom_ext")
+            .unwrap();
+        assert_eq!(
+            registered_slots(custom),
+            vec![
+                "ssl_ctx_st.custom_ext_free_cb_ex",
+                "ssl_ctx_st.custom_ext_parse_cb_ex",
+                "ssl_ctx_st.custom_ext_add_cb_ex",
+            ]
+        );
+        for key in [
+            "ssl_ctx_st.custom_ext_add_cb_ex",
+            "ssl_ctx_st.custom_ext_free_cb_ex",
+            "ssl_ctx_st.custom_ext_parse_cb_ex",
+            "ssl_ctx_st.custom_ext_add_cb",
+            "ssl_ctx_st.custom_ext_free_cb",
+            "ssl_ctx_st.custom_ext_parse_cb",
+        ] {
+            slot_writers_declared(key, &snapshots).unwrap();
+        }
+        assert!(slot_writers_declared("ssl_ctx_st.ct_validation_callback", &snapshots).is_err());
+        // A page naming a writer of the custom extension slots that no slot
+        // lists refuses all six.
+        let mut extra = snapshots.clone();
+        for page in extra["pages"].as_array_mut().unwrap() {
+            if page["page"] == "SSL_extension_supported" && page["series"] == "3.5" {
+                let name = page["name"].as_str().unwrap().replacen(
+                    "SSL_CTX_add_server_custom_ext,",
+                    "SSL_CTX_add_server_custom_ext, SSL_CTX_add_other_custom_ext,",
+                    1,
+                );
+                page["name"] = Value::from(name);
+            }
+        }
+        for key in [
+            "ssl_ctx_st.custom_ext_add_cb_ex",
+            "ssl_ctx_st.custom_ext_parse_cb",
+        ] {
+            let refused = slot_writers_declared(key, &extra).unwrap_err();
+            assert!(
+                refused.contains("SSL_CTX_add_other_custom_ext"),
+                "{refused}"
+            );
+        }
+        // Every page this card cites is fetched at 3.5 with its NAME.
+        for slot in SLOTS {
+            assert!(
+                snapshots["pages"].as_array().unwrap().iter().any(|page| {
+                    page["page"] == slot.page
+                        && page["series"] == "3.5"
+                        && page["fetched"] == true
+                        && page["name"].is_string()
+                }),
+                "{}",
+                slot.page
+            );
+        }
     }
 
     #[test]

@@ -58,6 +58,10 @@ const SSL_CTX: &str =
     include_str!("../../../providers/quirin-provider-openssl/contracts/openssl/ssl_ctx.qv");
 const SSL_IO: &str =
     include_str!("../../../providers/quirin-provider-openssl/contracts/openssl/ssl_io.qv");
+/// Card OPENSSL-UNDECLARED-HANDSHAKE-CALLBACKS: the handshake slots' setters,
+/// which the I/O calls' invocations now also need registered.
+const SSL_HANDSHAKE: &str =
+    include_str!("../../../providers/quirin-provider-openssl/contracts/openssl/ssl_handshake.qv");
 
 /// The application's candidates: identity contracts, and one that releases
 /// what the security callback is handed as `other`.
@@ -164,6 +168,7 @@ fn crate_contracts() -> ResourceContracts {
         ("ssl.qv", SSL),
         ("ssl_ctx.qv", SSL_CTX),
         ("ssl_io.qv", SSL_IO),
+        ("ssl_handshake.qv", SSL_HANDSHAKE),
     ])
 }
 
@@ -280,7 +285,8 @@ fn the_crate_states_every_new_slot() {
     }
     for call in ["SSL_write", "SSL_read", "SSL_connect", "SSL_do_handshake"] {
         let declaration = contracts.retaining_contract(call).expect("withheld");
-        assert_eq!(declaration.callbacks.len(), 9, "{call}");
+        // Nine since this card; 27 since OPENSSL-UNDECLARED-HANDSHAKE-CALLBACKS.
+        assert_eq!(declaration.callbacks.len(), 27, "{call}");
         assert!(
             declaration
                 .callbacks

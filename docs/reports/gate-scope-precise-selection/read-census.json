@@ -1,5 +1,5 @@
 {
-"commit": "21de8b024c1a40d2257dbf70febd4b80bd2e5e46",
+"commit": "f2a8b639ebefa05c05c1935ffe0faafe41493b16",
 "excluded": [
 "target/",
 ".git/",
@@ -56,39 +56,39 @@
 ],
 "exit": 0,
 "ls_files": [],
-"missing_count": 215,
+"missing_count": 210,
 "ok": true,
 "probed_count": 7,
 "read": [
 "contract/profiles/fluent-bit/source-contracts.json",
-"crates/qcore-audit/private/audit-retained-products/1221675-0",
-"crates/qcore-audit/private/audit-retained-products/1221675-0/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/1221675-0/product.qc",
-"crates/qcore-audit/private/audit-retained-products/1221675-1",
-"crates/qcore-audit/private/audit-retained-products/1221675-1/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/1221675-1/product.qc",
-"crates/qcore-audit/private/audit-retained-products/1221675-2",
-"crates/qcore-audit/private/audit-retained-products/1221675-2/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/1221675-2/product.qc",
-"crates/qcore-audit/private/audit-retained-products/1221675-3",
-"crates/qcore-audit/private/audit-retained-products/1221675-3/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/1221675-3/product.qc",
-"crates/qcore-audit/private/audit-retained-products/1221675-4",
-"crates/qcore-audit/private/audit-retained-products/1221675-4/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/1221675-4/product.qc",
-"crates/qcore-audit/private/audit-retained-products/1221675-5",
-"crates/qcore-audit/private/audit-retained-products/1221675-5/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/1221675-5/product.qc",
-"crates/qcore-audit/private/audit-retained-products/1221675-6",
-"crates/qcore-audit/private/audit-retained-products/1221675-6/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/1221675-7",
-"crates/qcore-audit/private/audit-retained-products/1221675-7/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/1221675-7/product.qc",
-"crates/qcore-audit/private/audit-retained-products/1221675-8",
-"crates/qcore-audit/private/audit-retained-products/1221675-8/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/1221675-8/product.qc",
-"crates/qcore-audit/private/audit-retained-products/1221675-9",
-"crates/qcore-audit/private/audit-retained-products/1221675-9/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1356967-0",
+"crates/qcore-audit/private/audit-retained-products/1356967-0/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1356967-0/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1356967-1",
+"crates/qcore-audit/private/audit-retained-products/1356967-1/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1356967-1/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1356967-2",
+"crates/qcore-audit/private/audit-retained-products/1356967-2/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1356967-2/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1356967-3",
+"crates/qcore-audit/private/audit-retained-products/1356967-3/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1356967-3/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1356967-4",
+"crates/qcore-audit/private/audit-retained-products/1356967-4/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1356967-4/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1356967-5",
+"crates/qcore-audit/private/audit-retained-products/1356967-5/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1356967-5/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1356967-6",
+"crates/qcore-audit/private/audit-retained-products/1356967-6/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1356967-7",
+"crates/qcore-audit/private/audit-retained-products/1356967-7/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1356967-8",
+"crates/qcore-audit/private/audit-retained-products/1356967-8/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1356967-8/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1356967-9",
+"crates/qcore-audit/private/audit-retained-products/1356967-9/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1356967-9/product.qc",
 "crates/qcore-audit/tests/fixtures/native_platform_probe.c",
 "docs/cycles/CYCLE_18_LIBEVENT_VALIDATION.md",
 "providers/contract-load-path.json",
@@ -245,137 +245,137 @@
 "providers/quirin-provider-shared/contracts/library/source_projection.qv",
 "third_party/libevent/.git"
 ],
-"seconds": 5.1
+"seconds": 2.9
 },
 "qcore-audit::test::bounds_pin_hold": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 1,
+"missing_count": 0,
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 3.2
+"seconds": 1.5
 },
 "qcore-audit::test::bounds_transport": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 0,
 "ok": true,
 "probed_count": 4,
 "read": [],
-"seconds": 3.3
+"seconds": 1.5
 },
 "qcore-audit::test::build_excluded_unit": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.8
+"seconds": 0.4
 },
 "qcore-audit::test::callback_member_non_c_units": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 0,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.9
+"seconds": 0.8
 },
 "qcore-audit::test::canonical_paths": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 0,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 2.1
+"seconds": 1.0
 },
 "qcore-audit::test::certificate_context": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.5
+"seconds": 0.2
 },
 "qcore-audit::test::cg30_target_identity": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.2
+"seconds": 0.1
 },
 "qcore-audit::test::checkpoint_cli": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 0,
 "ok": true,
 "probed_count": 2,
 "read": [],
-"seconds": 8.6
+"seconds": 4.4
 },
 "qcore-audit::test::clang_gap_flags": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 1,
+"missing_count": 0,
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.2
+"seconds": 0.1
 },
 "qcore-audit::test::compile_options": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 3,
+"missing_count": 2,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.9
+"seconds": 0.7
 },
 "qcore-audit::test::compile_task_identity": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.4
+"seconds": 0.5
 },
 "qcore-audit::test::configured_cli": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 3,
+"missing_count": 1,
 "ok": true,
 "probed_count": 3,
 "read": [],
-"seconds": 3.0
+"seconds": 1.3
 },
 "qcore-audit::test::contract_dependencies_report": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.6
+"seconds": 0.3
 },
 "qcore-audit::test::contract_inherit_identity": {
 "dirs": [],
@@ -385,13 +385,13 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.2
+"seconds": 0.1
 },
 "qcore-audit::test::contract_revision_audit": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 1,
+"missing_count": 0,
 "ok": true,
 "probed_count": 0,
 "read": [
@@ -399,20 +399,20 @@
 "crates/qcore-audit/tests/fixtures/revision_mode/queue.c",
 "crates/qcore-audit/tests/fixtures/revision_mode/queue.qv"
 ],
-"seconds": 8.0
+"seconds": 4.1
 },
 "qcore-audit::test::contract_revision_identities": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 0,
 "ok": true,
 "probed_count": 2,
 "read": [
 "crates/qcore-audit/tests/fixtures/revision_mode/queue.c",
 "crates/qcore-audit/tests/fixtures/revision_mode/queue.qv"
 ],
-"seconds": 4.8
+"seconds": 2.6
 },
 "qcore-audit::test::contract_supersession": {
 "dirs": [],
@@ -428,14 +428,14 @@
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 0,
 "ok": true,
 "probed_count": 2,
 "read": [
 "crates/qcore-audit/tests/fixtures/revision_mode/queue.c",
 "crates/qcore-audit/tests/fixtures/revision_mode/queue.qv"
 ],
-"seconds": 6.0
+"seconds": 3.3
 },
 "qcore-audit::test::current_cli": {
 "dirs": [
@@ -465,47 +465,47 @@
 ],
 "exit": 0,
 "ls_files": [],
-"missing_count": 3,
+"missing_count": 1,
 "ok": true,
 "probed_count": 4,
 "read": [
 "contract/profiles/fluent-bit/library-providers.json",
-"crates/qcore-audit/private/audit-retained-products/1228100-0",
-"crates/qcore-audit/private/audit-retained-products/1228100-0/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/1228100-0/product.qc",
-"crates/qcore-audit/private/audit-retained-products/1228100-1",
-"crates/qcore-audit/private/audit-retained-products/1228100-1/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/1228100-1/product.qc",
-"crates/qcore-audit/private/audit-retained-products/1228100-2",
-"crates/qcore-audit/private/audit-retained-products/1228100-2/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/1228100-2/product.qc",
-"crates/qcore-audit/private/audit-retained-products/1228100-3",
-"crates/qcore-audit/private/audit-retained-products/1228100-3/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/1228100-3/product.qc",
-"crates/qcore-audit/private/audit-retained-products/1228100-4",
-"crates/qcore-audit/private/audit-retained-products/1228100-4/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/1228100-4/product.qc",
-"crates/qcore-audit/private/audit-retained-products/1228100-5",
-"crates/qcore-audit/private/audit-retained-products/1228100-5/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/1228100-5/product.qc",
-"crates/qcore-audit/private/audit-retained-products/1230619-0",
-"crates/qcore-audit/private/audit-retained-products/1230619-0/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/1230619-0/product.qc",
-"crates/qcore-audit/private/audit-retained-products/1230619-1",
-"crates/qcore-audit/private/audit-retained-products/1230619-1/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/1230619-1/product.qc",
-"crates/qcore-audit/private/audit-retained-products/1230619-2",
-"crates/qcore-audit/private/audit-retained-products/1230619-2/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/1230619-2/product.qc",
-"crates/qcore-audit/private/audit-retained-products/1230619-3",
-"crates/qcore-audit/private/audit-retained-products/1230619-3/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/1230619-3/product.qc",
-"crates/qcore-audit/private/audit-retained-products/1230619-4",
-"crates/qcore-audit/private/audit-retained-products/1230619-4/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/1230619-4/product.qc",
-"crates/qcore-audit/private/audit-retained-products/1230619-5",
-"crates/qcore-audit/private/audit-retained-products/1230619-5/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/1230619-5/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1363392-0",
+"crates/qcore-audit/private/audit-retained-products/1363392-0/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1363392-0/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1363392-1",
+"crates/qcore-audit/private/audit-retained-products/1363392-1/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1363392-1/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1363392-2",
+"crates/qcore-audit/private/audit-retained-products/1363392-2/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1363392-2/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1363392-3",
+"crates/qcore-audit/private/audit-retained-products/1363392-3/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1363392-3/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1363392-4",
+"crates/qcore-audit/private/audit-retained-products/1363392-4/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1363392-4/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1363392-5",
+"crates/qcore-audit/private/audit-retained-products/1363392-5/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1363392-5/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1365915-0",
+"crates/qcore-audit/private/audit-retained-products/1365915-0/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1365915-0/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1365915-1",
+"crates/qcore-audit/private/audit-retained-products/1365915-1/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1365915-1/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1365915-2",
+"crates/qcore-audit/private/audit-retained-products/1365915-2/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1365915-2/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1365915-3",
+"crates/qcore-audit/private/audit-retained-products/1365915-3/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1365915-3/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1365915-4",
+"crates/qcore-audit/private/audit-retained-products/1365915-4/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1365915-4/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1365915-5",
+"crates/qcore-audit/private/audit-retained-products/1365915-5/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1365915-5/product.qc",
 "providers/contract-load-path.json",
 "providers/qcore-provider-chunkio/contracts/chunkio/chunk_destructor.qv",
 "providers/qcore-provider-chunkio/contracts/chunkio/chunk_residency.qv",
@@ -658,7 +658,7 @@
 "providers/quirin-provider-shared/contracts/library/descriptor_native_observation.qv",
 "providers/quirin-provider-shared/contracts/library/source_projection.qv"
 ],
-"seconds": 23.2
+"seconds": 12.1
 },
 "qcore-audit::test::cycle19_current_command": {
 "dirs": [
@@ -688,7 +688,7 @@
 ],
 "exit": 0,
 "ls_files": [],
-"missing_count": 76,
+"missing_count": 74,
 "ok": true,
 "probed_count": 6,
 "read": [
@@ -700,51 +700,51 @@
 "contract/profiles/fluent-bit/providers/qcore.ctraces.json",
 "contract/profiles/fluent-bit/providers/qcore.librdkafka.json",
 "contract/profiles/fluent-bit/source-contracts.json",
-"crates/qcore-audit/private/audit-retained-products/1228378-0",
-"crates/qcore-audit/private/audit-retained-products/1228378-0/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/1228378-0/product.qc",
-"crates/qcore-audit/private/audit-retained-products/1228378-1",
-"crates/qcore-audit/private/audit-retained-products/1228378-1/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/1228378-1/product.qc",
-"crates/qcore-audit/private/audit-retained-products/1228378-2",
-"crates/qcore-audit/private/audit-retained-products/1228378-2/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/1228378-2/product.qc",
-"crates/qcore-audit/private/audit-retained-products/1228378-3",
-"crates/qcore-audit/private/audit-retained-products/1228378-3/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/1228378-3/product.qc",
-"crates/qcore-audit/private/audit-retained-products/1228378-4",
-"crates/qcore-audit/private/audit-retained-products/1228378-4/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/1228378-4/product.qc",
-"crates/qcore-audit/private/audit-retained-products/1238280-0",
-"crates/qcore-audit/private/audit-retained-products/1238280-0/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/1238280-0/product.qc",
-"crates/qcore-audit/private/audit-retained-products/1238280-1",
-"crates/qcore-audit/private/audit-retained-products/1238280-1/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/1238280-1/product.qc",
-"crates/qcore-audit/private/audit-retained-products/1238280-2",
-"crates/qcore-audit/private/audit-retained-products/1238280-2/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/1238280-2/product.qc",
-"crates/qcore-audit/private/audit-retained-products/1238280-3",
-"crates/qcore-audit/private/audit-retained-products/1238280-3/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/1238280-3/product.qc",
-"crates/qcore-audit/private/audit-retained-products/1238280-4",
-"crates/qcore-audit/private/audit-retained-products/1238280-4/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/1238280-4/product.qc",
-"crates/qcore-audit/private/audit-retained-products/1252356-0",
-"crates/qcore-audit/private/audit-retained-products/1252356-0/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/1252356-0/product.qc",
-"crates/qcore-audit/private/audit-retained-products/1252356-1",
-"crates/qcore-audit/private/audit-retained-products/1252356-1/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/1252356-1/product.qc",
-"crates/qcore-audit/private/audit-retained-products/1252356-2",
-"crates/qcore-audit/private/audit-retained-products/1252356-2/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/1252356-2/product.qc",
-"crates/qcore-audit/private/audit-retained-products/1252356-3",
-"crates/qcore-audit/private/audit-retained-products/1252356-3/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/1252356-3/product.qc",
-"crates/qcore-audit/private/audit-retained-products/1252356-4",
-"crates/qcore-audit/private/audit-retained-products/1252356-4/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/1252356-4/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1363632-0",
+"crates/qcore-audit/private/audit-retained-products/1363632-0/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1363632-0/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1363632-1",
+"crates/qcore-audit/private/audit-retained-products/1363632-1/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1363632-1/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1363632-2",
+"crates/qcore-audit/private/audit-retained-products/1363632-2/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1363632-2/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1363632-3",
+"crates/qcore-audit/private/audit-retained-products/1363632-3/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1363632-3/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1363632-4",
+"crates/qcore-audit/private/audit-retained-products/1363632-4/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1363632-4/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1370944-0",
+"crates/qcore-audit/private/audit-retained-products/1370944-0/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1370944-0/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1370944-1",
+"crates/qcore-audit/private/audit-retained-products/1370944-1/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1370944-1/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1370944-2",
+"crates/qcore-audit/private/audit-retained-products/1370944-2/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1370944-2/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1370944-3",
+"crates/qcore-audit/private/audit-retained-products/1370944-3/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1370944-3/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1370944-4",
+"crates/qcore-audit/private/audit-retained-products/1370944-4/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1370944-4/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1389139-0",
+"crates/qcore-audit/private/audit-retained-products/1389139-0/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1389139-0/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1389139-1",
+"crates/qcore-audit/private/audit-retained-products/1389139-1/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1389139-1/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1389139-2",
+"crates/qcore-audit/private/audit-retained-products/1389139-2/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1389139-2/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1389139-3",
+"crates/qcore-audit/private/audit-retained-products/1389139-3/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1389139-3/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1389139-4",
+"crates/qcore-audit/private/audit-retained-products/1389139-4/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1389139-4/product.qc",
 "cycle19-resource-contracts.json",
 "providers/contract-load-path.json",
 "providers/qcore-provider-chunkio/contracts.lock",
@@ -908,7 +908,7 @@
 "providers/quirin-provider-shared/contracts/library/descriptor_native_observation.qv",
 "providers/quirin-provider-shared/contracts/library/source_projection.qv"
 ],
-"seconds": 221.1
+"seconds": 138.5
 },
 "qcore-audit::test::dependency_graph": {
 "dirs": [
@@ -944,7 +944,7 @@
 ],
 "exit": 0,
 "ls_files": [],
-"missing_count": 213,
+"missing_count": 211,
 "ok": true,
 "probed_count": 58,
 "read": [
@@ -975,7 +975,7 @@
 "crates/quirin-audit-plugin/Cargo.toml",
 "crates/quirin-source-analysis/Cargo.toml"
 ],
-"seconds": 0.2
+"seconds": 0.1
 },
 "qcore-audit::test::dump_checkpoint_cli": {
 "dirs": [],
@@ -985,7 +985,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.7
+"seconds": 0.4
 },
 "qcore-audit::test::guarded_contract_pin": {
 "dirs": [],
@@ -1037,10 +1037,10 @@
 "providers/quirin-provider-shared/contracts/language",
 "providers/quirin-provider-shared/contracts/library"
 ],
-"exit": 101,
+"exit": 0,
 "ls_files": [],
-"missing_count": 1,
-"ok": false,
+"missing_count": 0,
+"ok": true,
 "probed_count": 0,
 "read": [
 "crates/qcore-audit/tests/fixtures/libcurl_user_crate/src/curl_user.c",
@@ -1203,7 +1203,7 @@
 "providers/quirin-provider-shared/contracts/library/source_projection.qv",
 "providers/user-crates-load-path.json"
 ],
-"seconds": 48.1
+"seconds": 32.1
 },
 "qcore-audit::test::library_version_hold_routes": {
 "dirs": [
@@ -1235,7 +1235,7 @@
 "ls_files": [
 "[\"-z\", \"--cached\", \"--\", \".\"]"
 ],
-"missing_count": 8,
+"missing_count": 6,
 "ok": true,
 "probed_count": 25,
 "read": [
@@ -1399,7 +1399,7 @@
 "providers/quirin-provider-shared/contracts/library/descriptor_native_observation.qv",
 "providers/quirin-provider-shared/contracts/library/source_projection.qv"
 ],
-"seconds": 44.3
+"seconds": 24.2
 },
 "qcore-audit::test::library_version_ranges": {
 "dirs": [
@@ -1429,7 +1429,7 @@
 ],
 "exit": 0,
 "ls_files": [],
-"missing_count": 1,
+"missing_count": 0,
 "ok": true,
 "probed_count": 0,
 "read": [
@@ -1587,7 +1587,7 @@
 "providers/quirin-provider-shared/contracts/library/descriptor_native_observation.qv",
 "providers/quirin-provider-shared/contracts/library/source_projection.qv"
 ],
-"seconds": 43.8
+"seconds": 28.3
 },
 "qcore-audit::test::library_version_route_database": {
 "dirs": [
@@ -1617,7 +1617,7 @@
 ],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 0,
 "ok": true,
 "probed_count": 2,
 "read": [
@@ -1773,140 +1773,140 @@
 "providers/quirin-provider-shared/contracts/library/descriptor_native_observation.qv",
 "providers/quirin-provider-shared/contracts/library/source_projection.qv"
 ],
-"seconds": 28.5
+"seconds": 18.4
 },
 "qcore-audit::test::link_premise_profile": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.5
+"seconds": 0.4
 },
 "qcore-audit::test::link_standing": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 0,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 2.7
+"seconds": 1.8
 },
 "qcore-audit::test::link_standing_elements_released": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 0,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 2.6
+"seconds": 1.7
 },
 "qcore-audit::test::link_standing_two_configurations": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 0,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.9
+"seconds": 1.3
 },
 "qcore-audit::test::loop_measure_selection": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 0,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.5
+"seconds": 0.8
 },
 "qcore-audit::test::member_prepass_routes": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 0,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.5
+"seconds": 1.0
 },
 "qcore-audit::test::no_build_cli": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 1,
+"missing_count": 0,
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 3.7
+"seconds": 2.3
 },
 "qcore-audit::test::observer_compile_flags": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.3
+"seconds": 0.2
 },
 "qcore-audit::test::outer_projection": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 1,
+"missing_count": 0,
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 1.3
+"seconds": 0.9
 },
 "qcore-audit::test::pending_review_report": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 1,
+"missing_count": 0,
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.4
+"seconds": 0.3
 },
 "qcore-audit::test::pin_regenerate_stamps": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 1,
+"missing_count": 0,
 "ok": true,
 "probed_count": 0,
 "read": [
 "crates/qcore-audit/tests/fixtures/revision_mode/queue.c",
 "crates/qcore-audit/tests/fixtures/revision_mode/queue.qv"
 ],
-"seconds": 0.8
+"seconds": 0.5
 },
 "qcore-audit::test::pinned_cli": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 4,
+"missing_count": 3,
 "ok": true,
 "probed_count": 3,
 "read": [],
-"seconds": 1.2
+"seconds": 0.8
 },
 "qcore-audit::test::plugin_null_hypotheses": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 10.6
+"seconds": 6.8
 },
 "qcore-audit::test::prepare_cli": {
 "dirs": [],
@@ -1914,13 +1914,13 @@
 "ls_files": [
 "[\"-z\", \"--\", \"lib/monkey\"]"
 ],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 2,
 "read": [
 "contract/profiles/cmetrics-counter/profile.json"
 ],
-"seconds": 0.4
+"seconds": 0.2
 },
 "qcore-audit::test::provider_selection": {
 "dirs": [
@@ -2118,45 +2118,45 @@
 "providers/quirin-provider-shared/contracts/library/descriptor_native_observation.qv",
 "providers/quirin-provider-shared/contracts/library/source_projection.qv"
 ],
-"seconds": 253.1
+"seconds": 156.6
 },
 "qcore-audit::test::root_source_set": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 3,
+"missing_count": 1,
 "ok": true,
 "probed_count": 4,
 "read": [
-"crates/qcore-audit/private/audit-retained-products/1236363-0",
-"crates/qcore-audit/private/audit-retained-products/1236363-0/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/1236363-0/product.qc",
-"crates/qcore-audit/private/audit-retained-products/1236363-1",
-"crates/qcore-audit/private/audit-retained-products/1236363-1/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/1236363-1/product.qc",
-"crates/qcore-audit/private/audit-retained-products/1236363-2",
-"crates/qcore-audit/private/audit-retained-products/1236363-2/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/1236363-2/product.qc",
-"crates/qcore-audit/private/audit-retained-products/1236369-0",
-"crates/qcore-audit/private/audit-retained-products/1236369-0/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/1236369-0/product.qc",
-"crates/qcore-audit/private/audit-retained-products/1236369-1",
-"crates/qcore-audit/private/audit-retained-products/1236369-1/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/1236369-1/product.qc",
-"crates/qcore-audit/private/audit-retained-products/1236369-2",
-"crates/qcore-audit/private/audit-retained-products/1236369-2/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/1236369-2/product.qc",
-"crates/qcore-audit/private/audit-retained-products/1236372-0",
-"crates/qcore-audit/private/audit-retained-products/1236372-0/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/1236372-0/product.qc",
-"crates/qcore-audit/private/audit-retained-products/1236372-1",
-"crates/qcore-audit/private/audit-retained-products/1236372-1/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/1236372-1/product.qc",
-"crates/qcore-audit/private/audit-retained-products/1236372-2",
-"crates/qcore-audit/private/audit-retained-products/1236372-2/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/1236372-2/product.qc"
+"crates/qcore-audit/private/audit-retained-products/1369672-0",
+"crates/qcore-audit/private/audit-retained-products/1369672-0/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1369672-0/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1369672-1",
+"crates/qcore-audit/private/audit-retained-products/1369672-1/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1369672-1/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1369672-2",
+"crates/qcore-audit/private/audit-retained-products/1369672-2/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1369672-2/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1369673-0",
+"crates/qcore-audit/private/audit-retained-products/1369673-0/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1369673-0/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1369673-1",
+"crates/qcore-audit/private/audit-retained-products/1369673-1/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1369673-1/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1369673-2",
+"crates/qcore-audit/private/audit-retained-products/1369673-2/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1369673-2/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1369674-0",
+"crates/qcore-audit/private/audit-retained-products/1369674-0/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1369674-0/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1369674-1",
+"crates/qcore-audit/private/audit-retained-products/1369674-1/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1369674-1/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1369674-2",
+"crates/qcore-audit/private/audit-retained-products/1369674-2/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1369674-2/product.qc"
 ],
-"seconds": 1.8
+"seconds": 1.2
 },
 "qcore-audit::test::rule_switch_entry_points": {
 "dirs": [],
@@ -2164,9 +2164,9 @@
 "ls_files": [
 "[\"-z\", \"--cached\", \"--\", \".\"]"
 ],
-"missing_count": 1,
+"missing_count": 0,
 "ok": true,
-"probed_count": 29961,
+"probed_count": 29932,
 "read": [
 "Cargo.toml",
 "compiler/Cargo.toml",
@@ -2250,36 +2250,36 @@
 "providers/quirin-provider-plugin/Cargo.toml",
 "providers/quirin-provider-shared/Cargo.toml"
 ],
-"seconds": 6.2
+"seconds": 4.5
 },
 "qcore-audit::test::second_source_set": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 3,
+"missing_count": 1,
 "ok": true,
 "probed_count": 4,
 "read": [
-"crates/qcore-audit/private/audit-retained-products/1236820-0",
-"crates/qcore-audit/private/audit-retained-products/1236820-0/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/1236820-0/product.qc",
-"crates/qcore-audit/private/audit-retained-products/1236820-1",
-"crates/qcore-audit/private/audit-retained-products/1236820-1/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/1236820-1/product.qc",
-"crates/qcore-audit/private/audit-retained-products/1236820-2",
-"crates/qcore-audit/private/audit-retained-products/1236820-2/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/1236820-2/product.qc",
-"crates/qcore-audit/private/audit-retained-products/1236821-0",
-"crates/qcore-audit/private/audit-retained-products/1236821-0/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/1236821-0/product.qc",
-"crates/qcore-audit/private/audit-retained-products/1236821-1",
-"crates/qcore-audit/private/audit-retained-products/1236821-1/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/1236821-1/product.qc",
-"crates/qcore-audit/private/audit-retained-products/1236821-2",
-"crates/qcore-audit/private/audit-retained-products/1236821-2/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/1236821-2/product.qc"
+"crates/qcore-audit/private/audit-retained-products/1370133-0",
+"crates/qcore-audit/private/audit-retained-products/1370133-0/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1370133-0/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1370133-1",
+"crates/qcore-audit/private/audit-retained-products/1370133-1/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1370133-1/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1370133-2",
+"crates/qcore-audit/private/audit-retained-products/1370133-2/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1370133-2/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1370136-0",
+"crates/qcore-audit/private/audit-retained-products/1370136-0/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1370136-0/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1370136-1",
+"crates/qcore-audit/private/audit-retained-products/1370136-1/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1370136-1/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1370136-2",
+"crates/qcore-audit/private/audit-retained-products/1370136-2/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1370136-2/product.qc"
 ],
-"seconds": 0.5
+"seconds": 0.3
 },
 "qcore-audit::test::source_contract_config": {
 "dirs": [
@@ -2306,30 +2306,30 @@
 "providers/qcore-provider-cmetrics/contracts/cmetrics/opts_lifetime.qv",
 "providers/qcore-provider-cmetrics/contracts/cmetrics/typed_setters.qv"
 ],
-"seconds": 0.4
+"seconds": 0.2
 },
 "qcore-audit::test::sr5_pending_gates": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 1,
+"missing_count": 0,
 "ok": true,
 "probed_count": 0,
 "read": [
 "crates/qcore-audit/tests/fixtures/revision_mode/queue.c",
 "crates/qcore-audit/tests/fixtures/revision_mode/queue.qv"
 ],
-"seconds": 1.1
+"seconds": 0.7
 },
 "qcore-audit::test::subcommand_plugins": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 1,
+"missing_count": 0,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 14.5
+"seconds": 13.2
 },
 "qcore-audit::test::user_contract_plugins": {
 "dirs": [
@@ -2365,28 +2365,28 @@
 ],
 "exit": 0,
 "ls_files": [],
-"missing_count": 3,
+"missing_count": 1,
 "ok": true,
 "probed_count": 4,
 "read": [
-"crates/qcore-audit/private/audit-retained-products/1237260-0",
-"crates/qcore-audit/private/audit-retained-products/1237260-0/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/1237260-0/product.qc",
-"crates/qcore-audit/private/audit-retained-products/1237260-1",
-"crates/qcore-audit/private/audit-retained-products/1237260-1/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/1237260-1/product.qc",
-"crates/qcore-audit/private/audit-retained-products/1237260-2",
-"crates/qcore-audit/private/audit-retained-products/1237260-2/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/1237260-2/product.qc",
-"crates/qcore-audit/private/audit-retained-products/1237260-3",
-"crates/qcore-audit/private/audit-retained-products/1237260-3/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/1237260-3/product.qc",
-"crates/qcore-audit/private/audit-retained-products/1237260-4",
-"crates/qcore-audit/private/audit-retained-products/1237260-4/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/1237260-4/product.qc",
-"crates/qcore-audit/private/audit-retained-products/1237260-5",
-"crates/qcore-audit/private/audit-retained-products/1237260-5/pending.qc",
-"crates/qcore-audit/private/audit-retained-products/1237260-5/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1370362-0",
+"crates/qcore-audit/private/audit-retained-products/1370362-0/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1370362-0/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1370362-1",
+"crates/qcore-audit/private/audit-retained-products/1370362-1/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1370362-1/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1370362-2",
+"crates/qcore-audit/private/audit-retained-products/1370362-2/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1370362-2/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1370362-3",
+"crates/qcore-audit/private/audit-retained-products/1370362-3/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1370362-3/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1370362-4",
+"crates/qcore-audit/private/audit-retained-products/1370362-4/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1370362-4/product.qc",
+"crates/qcore-audit/private/audit-retained-products/1370362-5",
+"crates/qcore-audit/private/audit-retained-products/1370362-5/pending.qc",
+"crates/qcore-audit/private/audit-retained-products/1370362-5/product.qc",
 "crates/qcore-audit/tests/fixtures/user_plugins/src/plain.c",
 "crates/qcore-audit/tests/fixtures/user_plugins/src/pool_user.c",
 "crates/qcore-audit/tests/fixtures/user_plugins/src/queue.c",
@@ -2547,7 +2547,7 @@
 "providers/quirin-provider-shared/contracts/library/descriptor_native_observation.qv",
 "providers/quirin-provider-shared/contracts/library/source_projection.qv"
 ],
-"seconds": 62.1
+"seconds": 30.7
 },
 "qcore-c-gateway::lib::qcore_c_gateway": {
 "dirs": [],
@@ -2555,7 +2555,7 @@
 "ls_files": [
 "[\"-z\", \"--cached\", \"--\", \".\"]"
 ],
-"missing_count": 19,
+"missing_count": 13,
 "ok": true,
 "probed_count": 4,
 "read": [
@@ -2848,186 +2848,186 @@
 "crates/qcore-c-gateway/src/variadic_tail_actuals.rs",
 "crates/qcore-c-gateway/src/void_view.rs"
 ],
-"seconds": 33.4
+"seconds": 10.6
 },
 "qcore-c-gateway::test::abi_enum_const_pp": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.2
+"seconds": 0.1
 },
 "qcore-c-gateway::test::access_path_position_residuals": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.2
+"seconds": 0.6
 },
 "qcore-c-gateway::test::access_path_positions": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.3
+"seconds": 0.5
 },
 "qcore-c-gateway::test::access_path_statements": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 0.8
-},
-"qcore-c-gateway::test::address_of_member": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 1.1
-},
-"qcore-c-gateway::test::alias_aggregate": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 0.8
-},
-"qcore-c-gateway::test::app_rk_callbacks": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 0.5
-},
-"qcore-c-gateway::test::assignment_destination_suffix": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 0.5
-},
-"qcore-c-gateway::test::atomic_publication_source": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 1.2
-},
-"qcore-c-gateway::test::atomic_source_route": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 1.6
-},
-"qcore-c-gateway::test::atomic_weak_memory_events": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 2.0
-},
-"qcore-c-gateway::test::boolean_frame_helpers": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 1.4
-},
-"qcore-c-gateway::test::borrow_liveness_boundary": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
 "seconds": 0.4
 },
-"qcore-c-gateway::test::borrow_residuals_boundary": {
+"qcore-c-gateway::test::address_of_member": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
 "seconds": 0.5
 },
-"qcore-c-gateway::test::borrowed_field_actuals": {
+"qcore-c-gateway::test::alias_aggregate": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.4
+},
+"qcore-c-gateway::test::app_rk_callbacks": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.3
+},
+"qcore-c-gateway::test::assignment_destination_suffix": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.3
+},
+"qcore-c-gateway::test::atomic_publication_source": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.6
+},
+"qcore-c-gateway::test::atomic_source_route": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.9
+},
+"qcore-c-gateway::test::atomic_weak_memory_events": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 1.1
+},
+"qcore-c-gateway::test::boolean_frame_helpers": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
 "seconds": 1.0
 },
+"qcore-c-gateway::test::borrow_liveness_boundary": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.3
+},
+"qcore-c-gateway::test::borrow_residuals_boundary": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.3
+},
+"qcore-c-gateway::test::borrowed_field_actuals": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.7
+},
 "qcore-c-gateway::test::bound_untracked_roots": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 2.5
+"seconds": 1.9
 },
 "qcore-c-gateway::test::bounds_body_evidence": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [
 "providers/qcore-provider-chunkio/contracts/chunkio/file_st_bounds.qv",
 "providers/qcore-provider-chunkio/contracts/chunkio/meta_len_bounds.qv"
 ],
-"seconds": 0.2
+"seconds": 0.1
 },
 "qcore-c-gateway::test::branch_condition_calls": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
@@ -3037,73 +3037,53 @@
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.9
+"seconds": 1.3
 },
 "qcore-c-gateway::test::c03_neutral_frame_recursion_probe": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.6
+"seconds": 0.4
 },
 "qcore-c-gateway::test::c_numeric_abi_llp64": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 3,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.2
+"seconds": 0.1
 },
 "qcore-c-gateway::test::c_numeric_domain": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 3,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 1.0
-},
-"qcore-c-gateway::test::call_argument_access": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
 "seconds": 0.7
 },
-"qcore-c-gateway::test::callback_candidate_scope": {
+"qcore-c-gateway::test::call_argument_access": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 3,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
 "seconds": 0.5
 },
-"qcore-c-gateway::test::callback_literal_premise": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 0.6
-},
-"qcore-c-gateway::test::callback_member_data_only": {
+"qcore-c-gateway::test::callback_candidate_scope": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
@@ -3113,101 +3093,121 @@
 "read": [],
 "seconds": 0.3
 },
-"qcore-c-gateway::test::callee_retention_class1": {
+"qcore-c-gateway::test::callback_literal_premise": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
 "seconds": 0.4
 },
-"qcore-c-gateway::test::caller_frame_hold": {
+"qcore-c-gateway::test::callback_member_data_only": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
 "seconds": 0.2
 },
+"qcore-c-gateway::test::callee_retention_class1": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.3
+},
+"qcore-c-gateway::test::caller_frame_hold": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.1
+},
 "qcore-c-gateway::test::cast_formalization": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.2
+"seconds": 0.7
 },
 "qcore-c-gateway::test::cell_array_slots": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.3
+"seconds": 0.8
 },
 "qcore-c-gateway::test::cell_guard_result_range": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 2.3
+"seconds": 1.3
 },
 "qcore-c-gateway::test::cell_protocol_close_actual": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.8
+"seconds": 0.4
 },
 "qcore-c-gateway::test::cell_protocol_fb_declarations": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.8
+"seconds": 0.5
 },
 "qcore-c-gateway::test::cell_protocol_per_end_guards": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.4
+"seconds": 0.8
 },
 "qcore-c-gateway::test::cell_protocol_release_window_frames": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.6
+"seconds": 0.4
 },
 "qcore-c-gateway::test::cell_result_set_alignment": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
@@ -3217,251 +3217,251 @@
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 3,
+"missing_count": 2,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.7
+"seconds": 0.3
 },
 "qcore-c-gateway::test::cfl_mpack_external_declarations": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 4.3
+"seconds": 2.9
 },
 "qcore-c-gateway::test::cg02_elaboration": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.3
+"seconds": 0.9
 },
 "qcore-c-gateway::test::cg03_call_instantiation": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.1
+"seconds": 0.7
 },
 "qcore-c-gateway::test::cg05_elaborator_call_footprints": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.9
+"seconds": 0.7
 },
 "qcore-c-gateway::test::cg05_nested_call_effects": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 0.9
-},
-"qcore-c-gateway::test::cg06_connective_footprints": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
 "seconds": 0.6
 },
+"qcore-c-gateway::test::cg06_connective_footprints": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.4
+},
 "qcore-c-gateway::test::cg06_value_connectives": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 2.1
-},
-"qcore-c-gateway::test::cg07_statement_expressions": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 1.4
-},
-"qcore-c-gateway::test::cg08_casts_and_type_queries": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
 "seconds": 1.3
 },
-"qcore-c-gateway::test::cg10_sole_residual_contracts": {
+"qcore-c-gateway::test::cg07_statement_expressions": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 0.7
-},
-"qcore-c-gateway::test::cg11_pointer_stores": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 2.5
-},
-"qcore-c-gateway::test::cg12_void_view_readback": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 1.5
-},
-"qcore-c-gateway::test::cg14_aggregate_values": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 2.1
-},
-"qcore-c-gateway::test::cg16_index_extents": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 1.7
-},
-"qcore-c-gateway::test::cg21_call_exits": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 0.7
-},
-"qcore-c-gateway::test::cg22_callback_registry": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 0.5
-},
-"qcore-c-gateway::test::cg22_indirect_calls": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 1.0
-},
-"qcore-c-gateway::test::cg22_op_callbacks": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 0.7
-},
-"qcore-c-gateway::test::cg24_frames_and_relations": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
 "seconds": 0.9
 },
-"qcore-c-gateway::test::cg26_tail_residual_actuals": {
+"qcore-c-gateway::test::cg08_casts_and_type_queries": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 2.5
-},
-"qcore-c-gateway::test::cg26_variadics": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 0.7
-},
-"qcore-c-gateway::test::cg30_dialects_flags_types": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 3,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
 "seconds": 0.8
 },
+"qcore-c-gateway::test::cg10_sole_residual_contracts": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.5
+},
+"qcore-c-gateway::test::cg11_pointer_stores": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 1.5
+},
+"qcore-c-gateway::test::cg12_void_view_readback": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.9
+},
+"qcore-c-gateway::test::cg14_aggregate_values": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 1.2
+},
+"qcore-c-gateway::test::cg16_index_extents": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 1.0
+},
+"qcore-c-gateway::test::cg21_call_exits": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.4
+},
+"qcore-c-gateway::test::cg22_callback_registry": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.2
+},
+"qcore-c-gateway::test::cg22_indirect_calls": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.6
+},
+"qcore-c-gateway::test::cg22_op_callbacks": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.5
+},
+"qcore-c-gateway::test::cg24_frames_and_relations": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.6
+},
+"qcore-c-gateway::test::cg26_tail_residual_actuals": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 1.5
+},
+"qcore-c-gateway::test::cg26_variadics": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.4
+},
+"qcore-c-gateway::test::cg30_dialects_flags_types": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.5
+},
 "qcore-c-gateway::test::chained_assignment": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.1
+"seconds": 0.7
 },
 "qcore-c-gateway::test::chained_tail": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.4
+"seconds": 0.9
 },
 "qcore-c-gateway::test::checked_allocator_constructors": {
 "dirs": [
@@ -3491,7 +3491,7 @@
 ],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [
@@ -3648,17 +3648,17 @@
 "providers/quirin-provider-shared/contracts/library/descriptor_native_observation.qv",
 "providers/quirin-provider-shared/contracts/library/source_projection.qv"
 ],
-"seconds": 16.4
+"seconds": 9.8
 },
 "qcore-c-gateway::test::checked_result_null": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.3
+"seconds": 0.2
 },
 "qcore-c-gateway::test::chunk_source_reason_codes": {
 "dirs": [],
@@ -3668,99 +3668,99 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-c-gateway::test::chunkio_meta_len_bounds": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [
 "providers/qcore-provider-chunkio/contracts/chunkio/meta_len_bounds.qv"
 ],
-"seconds": 0.2
+"seconds": 0.1
 },
 "qcore-c-gateway::test::clang_gap_phase1": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 4.9
+"seconds": 2.5
 },
 "qcore-c-gateway::test::clang_gap_phase2": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.7
+"seconds": 0.8
 },
 "qcore-c-gateway::test::clang_gap_phase3": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.2
+"seconds": 0.5
 },
 "qcore-c-gateway::test::clang_gap_phase4": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.6
+"seconds": 0.8
 },
 "qcore-c-gateway::test::collector_identity": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.0
+"seconds": 0.6
 },
 "qcore-c-gateway::test::condition_acquisition": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 2.4
+"seconds": 1.6
 },
 "qcore-c-gateway::test::condition_call_desugar": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.1
+"seconds": 0.6
 },
 "qcore-c-gateway::test::constant_do_while": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.7
+"seconds": 0.5
 },
 "qcore-c-gateway::test::constructor_residuals": {
 "dirs": [
@@ -3790,7 +3790,7 @@
 ],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [
@@ -3947,33 +3947,33 @@
 "providers/quirin-provider-shared/contracts/library/descriptor_native_observation.qv",
 "providers/quirin-provider-shared/contracts/library/source_projection.qv"
 ],
-"seconds": 12.9
+"seconds": 9.3
 },
 "qcore-c-gateway::test::container_root_reach": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.8
+"seconds": 0.5
 },
 "qcore-c-gateway::test::contextual_recursion": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 4.3
+"seconds": 2.8
 },
 "qcore-c-gateway::test::contract_clause_standing": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
@@ -3983,53 +3983,93 @@
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.2
+"seconds": 0.1
 },
 "qcore-c-gateway::test::contract_deferred_review": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 0.3
-},
-"qcore-c-gateway::test::contract_dependencies": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
 "seconds": 0.2
 },
+"qcore-c-gateway::test::contract_dependencies": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.1
+},
 "qcore-c-gateway::test::contract_noreturn_borrowed_tails": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 3.8
+"seconds": 2.6
 },
 "qcore-c-gateway::test::contract_pin_hold": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.2
+},
+"qcore-c-gateway::test::cross_unit_elements_released": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.5
+},
+"qcore-c-gateway::test::cross_unit_summary": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.9
+},
+"qcore-c-gateway::test::custody_summary_regression": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.3
+},
+"qcore-c-gateway::test::declared_entry_check": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
 "missing_count": 2,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.4
+"seconds": 0.5
 },
-"qcore-c-gateway::test::cross_unit_elements_released": {
+"qcore-c-gateway::test::deep_unit_ast": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
@@ -4039,175 +4079,145 @@
 "read": [],
 "seconds": 0.8
 },
-"qcore-c-gateway::test::cross_unit_summary": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 1.4
-},
-"qcore-c-gateway::test::custody_summary_regression": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 0.6
-},
-"qcore-c-gateway::test::declared_entry_check": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 3,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 0.9
-},
-"qcore-c-gateway::test::deep_unit_ast": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 3,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 1.2
-},
 "qcore-c-gateway::test::deref_parts_null": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.4
+"seconds": 0.3
 },
 "qcore-c-gateway::test::derived_result": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.6
+"seconds": 0.4
 },
 "qcore-c-gateway::test::derived_result_returned": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 2.2
-},
-"qcore-c-gateway::test::descriptor_cell_protocols": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
 "seconds": 1.1
 },
+"qcore-c-gateway::test::descriptor_cell_protocols": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.5
+},
 "qcore-c-gateway::test::descriptor_cells": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 4.0
+"seconds": 2.5
 },
 "qcore-c-gateway::test::descriptor_custody": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.7
+"seconds": 1.1
 },
 "qcore-c-gateway::test::detach_lookup_membership": {
 "dirs": [],
 "exit": 101,
 "ls_files": [],
-"missing_count": 14,
+"missing_count": 11,
 "ok": false,
 "probed_count": 2,
 "read": [
 "crates/qcore-c-gateway/tests/fixtures/detach-lookup-membership/cjson_lookup_frame.h",
 "crates/qcore-c-gateway/tests/fixtures/detach-lookup-membership/native_case.c"
 ],
-"seconds": 0.7
+"seconds": 0.5
 },
 "qcore-c-gateway::test::detach_same_item": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 9,
+"missing_count": 6,
 "ok": true,
 "probed_count": 2,
 "read": [
 "crates/qcore-c-gateway/tests/fixtures/detach-same-item/detach_impl.h",
 "crates/qcore-c-gateway/tests/fixtures/detach-same-item/native_case.c"
 ],
-"seconds": 0.3
+"seconds": 0.2
 },
 "qcore-c-gateway::test::detach_wrapper_composition": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 3,
+"missing_count": 2,
 "ok": true,
 "probed_count": 2,
 "read": [
 "crates/qcore-c-gateway/tests/fixtures/detach-wrapper-composition/selection_replay.h"
 ],
-"seconds": 3.5
+"seconds": 2.4
 },
 "qcore-c-gateway::test::e01_denominator_coverage": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 0.4
-},
-"qcore-c-gateway::test::e01_f1_raw_tokenizer": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 0.3
-},
-"qcore-c-gateway::test::e01_raw_cond": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
 "seconds": 0.2
 },
+"qcore-c-gateway::test::e01_f1_raw_tokenizer": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.2
+},
+"qcore-c-gateway::test::e01_raw_cond": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.1
+},
 "qcore-c-gateway::test::e01_source_enumeration": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 3,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.2
+},
+"qcore-c-gateway::test::e01_stdin_attribution": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
@@ -4215,87 +4225,77 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.4
-},
-"qcore-c-gateway::test::e01_stdin_attribution": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 5,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 0.2
+"seconds": 0.1
 },
 "qcore-c-gateway::test::element_destroyer": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.3
+"seconds": 0.8
 },
 "qcore-c-gateway::test::element_release_summary": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 2.1
+"seconds": 1.5
 },
 "qcore-c-gateway::test::event_holder_frame": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.9
+"seconds": 1.2
 },
 "qcore-c-gateway::test::event_loop_retention": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.6
+"seconds": 0.4
 },
 "qcore-c-gateway::test::event_removal_wrapper": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.0
+"seconds": 0.6
 },
 "qcore-c-gateway::test::exposed_leak_mechanisms": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.3
+"seconds": 0.2
 },
 "qcore-c-gateway::test::field_link_join": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.8
+"seconds": 0.5
 },
 "qcore-c-gateway::test::fixture_text_support": {
 "dirs": [],
@@ -4311,247 +4311,237 @@
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.3
+"seconds": 0.9
 },
 "qcore-c-gateway::test::function_pointer_declarators": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 0.6
-},
-"qcore-c-gateway::test::gapo_return_correctness": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 0.7
-},
-"qcore-c-gateway::test::gateway_c_location": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 4,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 0.4
-},
-"qcore-c-gateway::test::gateway_rule_switches": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 0.7
-},
-"qcore-c-gateway::test::generic_selection": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 0.8
-},
-"qcore-c-gateway::test::guard_correlated_census": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 0.2
-},
-"qcore-c-gateway::test::handoff_candidate_own_callbacks": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
 "seconds": 0.5
 },
-"qcore-c-gateway::test::handoff_direct_call": {
+"qcore-c-gateway::test::gapo_return_correctness": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.8
+"seconds": 0.5
 },
-"qcore-c-gateway::test::hash_contracts": {
+"qcore-c-gateway::test::gateway_c_location": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 1.9
-},
-"qcore-c-gateway::test::in_place_mention_guard": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 3.3
-},
-"qcore-c-gateway::test::index_traversal": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 0.8
-},
-"qcore-c-gateway::test::indexed_collection": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 0.6
-},
-"qcore-c-gateway::test::indirect_access_sole_blockers": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 0.4
-},
-"qcore-c-gateway::test::indirect_access_sole_residuals": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 0.3
-},
-"qcore-c-gateway::test::indirect_access_sole_residuals_r2": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 0.7
-},
-"qcore-c-gateway::test::indirect_chain_access": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 0.9
-},
-"qcore-c-gateway::test::indirect_scalar_access": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 0.9
-},
-"qcore-c-gateway::test::intrusive_list_iteration": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 0.6
-},
-"qcore-c-gateway::test::layout_extents": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 1.2
-},
-"qcore-c-gateway::test::leak_pin_audit": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 1.1
-},
-"qcore-c-gateway::test::lexical_closure_nested_assignment": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 0.9
-},
-"qcore-c-gateway::test::libc_gap_declarations": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 12.8
-},
-"qcore-c-gateway::test::libc_reading_dependencies": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
+"missing_count": 3,
 "ok": true,
 "probed_count": 1,
 "read": [],
 "seconds": 0.2
 },
+"qcore-c-gateway::test::gateway_rule_switches": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.4
+},
+"qcore-c-gateway::test::generic_selection": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.6
+},
+"qcore-c-gateway::test::guard_correlated_census": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.1
+},
+"qcore-c-gateway::test::handoff_candidate_own_callbacks": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.3
+},
+"qcore-c-gateway::test::handoff_direct_call": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.5
+},
+"qcore-c-gateway::test::hash_contracts": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 1.3
+},
+"qcore-c-gateway::test::index_traversal": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.6
+},
+"qcore-c-gateway::test::indexed_collection": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.5
+},
+"qcore-c-gateway::test::indirect_access_sole_blockers": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.3
+},
+"qcore-c-gateway::test::indirect_access_sole_residuals": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.2
+},
+"qcore-c-gateway::test::indirect_access_sole_residuals_r2": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.4
+},
+"qcore-c-gateway::test::indirect_chain_access": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.5
+},
+"qcore-c-gateway::test::indirect_scalar_access": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.5
+},
+"qcore-c-gateway::test::intrusive_list_iteration": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.4
+},
+"qcore-c-gateway::test::layout_extents": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.7
+},
+"qcore-c-gateway::test::leak_pin_audit": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.7
+},
+"qcore-c-gateway::test::lexical_closure_nested_assignment": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.6
+},
+"qcore-c-gateway::test::libc_gap_declarations": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 8.4
+},
+"qcore-c-gateway::test::libc_reading_dependencies": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.1
+},
 "qcore-c-gateway::test::libc_reading_site_evidence": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [
@@ -4563,247 +4553,247 @@
 "proof/QCore/ScalarAccessorCondition.lean",
 "proof/QCore/VariadicNested.lean"
 ],
-"seconds": 0.7
+"seconds": 0.3
 },
 "qcore-c-gateway::test::librdkafka_header_inlines": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.8
+"seconds": 0.9
 },
 "qcore-c-gateway::test::link_member_premises": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 1.9
-},
-"qcore-c-gateway::test::list_length_bound": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 1.2
-},
-"qcore-c-gateway::test::literal_decay_readings": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 1.2
-},
-"qcore-c-gateway::test::loader_abi": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 0.4
-},
-"qcore-c-gateway::test::loader_abi_modes": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 0.4
-},
-"qcore-c-gateway::test::log_print_member_contracts": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 0.5
-},
-"qcore-c-gateway::test::loop_lifetime_s3": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 0.7
-},
-"qcore-c-gateway::test::loop_measure": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
 "seconds": 1.1
 },
-"qcore-c-gateway::test::loop_reacquisition_leak": {
+"qcore-c-gateway::test::list_length_bound": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.8
+"seconds": 0.6
 },
-"qcore-c-gateway::test::loop_site_generations": {
+"qcore-c-gateway::test::literal_decay_readings": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 1.3
-},
-"qcore-c-gateway::test::loop_switch_condition_calls": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 0.5
-},
-"qcore-c-gateway::test::loops_recursion_budgets": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 4.6
-},
-"qcore-c-gateway::test::may_alias_boundary": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 0.8
-},
-"qcore-c-gateway::test::member_access_projection": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
 "seconds": 0.7
 },
-"qcore-c-gateway::test::member_effect_component_scope": {
+"qcore-c-gateway::test::loader_abi": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.7
+"seconds": 0.2
 },
-"qcore-c-gateway::test::member_effect_summary": {
+"qcore-c-gateway::test::loader_abi_modes": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.0
+"seconds": 0.2
 },
-"qcore-c-gateway::test::member_path_direct_call": {
+"qcore-c-gateway::test::log_print_member_contracts": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.0
+"seconds": 0.3
 },
-"qcore-c-gateway::test::member_path_release": {
+"qcore-c-gateway::test::loop_lifetime_s3": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.4
+},
+"qcore-c-gateway::test::loop_measure": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.7
+},
+"qcore-c-gateway::test::loop_reacquisition_leak": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
 "seconds": 0.5
 },
+"qcore-c-gateway::test::loop_site_generations": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.6
+},
+"qcore-c-gateway::test::loop_switch_condition_calls": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.3
+},
+"qcore-c-gateway::test::loops_recursion_budgets": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 2.7
+},
+"qcore-c-gateway::test::may_alias_boundary": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.4
+},
+"qcore-c-gateway::test::member_access_projection": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.5
+},
+"qcore-c-gateway::test::member_effect_component_scope": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 1.3
+},
+"qcore-c-gateway::test::member_effect_summary": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.6
+},
+"qcore-c-gateway::test::member_path_direct_call": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.6
+},
+"qcore-c-gateway::test::member_path_release": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.3
+},
 "qcore-c-gateway::test::member_release_untyped_base": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.9
+"seconds": 1.4
 },
 "qcore-c-gateway::test::member_value_helper": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.6
+"seconds": 0.3
 },
 "qcore-c-gateway::test::metric_aggregate_contracts": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.8
+"seconds": 0.5
 },
 "qcore-c-gateway::test::metric_trace_contract_gaps": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.6
+"seconds": 0.4
 },
 "qcore-c-gateway::test::monkey_vhost_property_custody": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.6
+"seconds": 0.2
 },
 "qcore-c-gateway::test::neighbours": {
 "dirs": [
@@ -4833,7 +4823,7 @@
 ],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [
@@ -5001,93 +4991,93 @@
 "providers/quirin-provider-shared/contracts/library/descriptor_native_observation.qv",
 "providers/quirin-provider-shared/contracts/library/source_projection.qv"
 ],
-"seconds": 6.7
+"seconds": 4.2
 },
 "qcore-c-gateway::test::neutral_expression_positions": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.6
+"seconds": 0.7
 },
 "qcore-c-gateway::test::neutral_frame_recursion": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 1.9
-},
-"qcore-c-gateway::test::neutral_reach_census": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 0.3
-},
-"qcore-c-gateway::test::null_candidate_triage": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 0.4
-},
-"qcore-c-gateway::test::null_member_invariant_scope": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 0.2
-},
-"qcore-c-gateway::test::null_member_premise": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 0.3
-},
-"qcore-c-gateway::test::null_premise_custody": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 0.6
-},
-"qcore-c-gateway::test::null_safety_property": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
 "seconds": 0.9
 },
+"qcore-c-gateway::test::neutral_reach_census": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.2
+},
+"qcore-c-gateway::test::null_candidate_triage": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.3
+},
+"qcore-c-gateway::test::null_member_invariant_scope": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.1
+},
+"qcore-c-gateway::test::null_member_premise": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.2
+},
+"qcore-c-gateway::test::null_premise_custody": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.4
+},
+"qcore-c-gateway::test::null_safety_property": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.6
+},
 "qcore-c-gateway::test::null_triage_unresolved_paths": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
@@ -5097,191 +5087,201 @@
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.3
+"seconds": 0.2
 },
 "qcore-c-gateway::test::o04_arms": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.1
+"seconds": 0.6
 },
 "qcore-c-gateway::test::o04_b08": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 1.7
-},
-"qcore-c-gateway::test::o04_b09b10": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 0.9
-},
-"qcore-c-gateway::test::o04_constructor_caller": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 1.5
-},
-"qcore-c-gateway::test::o04_read_bound": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 1.1
-},
-"qcore-c-gateway::test::o04_trace": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 1.3
-},
-"qcore-c-gateway::test::op_constructor_declarations": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
 "seconds": 1.0
 },
-"qcore-c-gateway::test::openssl_callback_slots": {
+"qcore-c-gateway::test::o04_b09b10": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.6
+},
+"qcore-c-gateway::test::o04_constructor_caller": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
 "seconds": 0.9
+},
+"qcore-c-gateway::test::o04_read_bound": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.6
+},
+"qcore-c-gateway::test::o04_trace": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.7
+},
+"qcore-c-gateway::test::op_constructor_declarations": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.4
+},
+"qcore-c-gateway::test::openssl_callback_slots": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.4
+},
+"qcore-c-gateway::test::openssl_undeclared_handshake_callbacks": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.5
 },
 "qcore-c-gateway::test::openssl_unstated_callback_slots": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.1
+"seconds": 0.6
 },
 "qcore-c-gateway::test::ordered_lifetime": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.2
+"seconds": 0.1
 },
 "qcore-c-gateway::test::out_parameter_body_summary": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.9
+"seconds": 0.4
 },
 "qcore-c-gateway::test::out_parameter_scalar_frame_premise": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.8
+"seconds": 0.4
 },
 "qcore-c-gateway::test::out_slot_call_write_aliasing": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.8
+"seconds": 0.5
 },
 "qcore-c-gateway::test::outer_record_graph": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.3
+"seconds": 0.1
 },
 "qcore-c-gateway::test::parenthesised_callee": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.9
+"seconds": 0.5
 },
 "qcore-c-gateway::test::premise_flow_dependencies": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.3
+"seconds": 0.1
 },
 "qcore-c-gateway::test::prepared_failure": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.2
+"seconds": 0.1
 },
 "qcore-c-gateway::test::prepared_translation_unit": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 3,
+"missing_count": 2,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.2
+"seconds": 0.5
 },
 "qcore-c-gateway::test::prod_contracts": {
 "dirs": [
@@ -5311,7 +5311,7 @@
 ],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [
@@ -5479,43 +5479,43 @@
 "providers/quirin-provider-shared/contracts/library/descriptor_native_observation.qv",
 "providers/quirin-provider-shared/contracts/library/source_projection.qv"
 ],
-"seconds": 7.2
+"seconds": 4.1
 },
 "qcore-c-gateway::test::publication_custody": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 1.4
-},
-"qcore-c-gateway::test::quant_index_checks": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 1.1
-},
-"qcore-c-gateway::test::reach_gate_positions": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
 "seconds": 0.8
 },
+"qcore-c-gateway::test::quant_index_checks": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.8
+},
+"qcore-c-gateway::test::reach_gate_positions": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.6
+},
 "qcore-c-gateway::test::reading_site_domain": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [
@@ -5527,97 +5527,97 @@
 "proof/QCore/ScalarAccessorCondition.lean",
 "proof/QCore/VariadicNested.lean"
 ],
-"seconds": 0.5
+"seconds": 0.4
 },
 "qcore-c-gateway::test::refcount_reference_returning": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.8
+"seconds": 0.5
 },
 "qcore-c-gateway::test::refcount_resource_kind": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 0.9
-},
-"qcore-c-gateway::test::reference_drop_null_accepting": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
 "seconds": 0.6
 },
+"qcore-c-gateway::test::reference_drop_null_accepting": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.4
+},
 "qcore-c-gateway::test::refused_call_hand_on": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.2
+"seconds": 0.1
 },
 "qcore-c-gateway::test::refused_store_hand_on": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.3
+"seconds": 0.2
 },
 "qcore-c-gateway::test::refuted_contract_foreign_unlink": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.3
+"seconds": 0.1
 },
 "qcore-c-gateway::test::refuted_contract_withdrawal": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.7
+"seconds": 0.4
 },
 "qcore-c-gateway::test::relational_postconditions": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.9
+"seconds": 0.5
 },
 "qcore-c-gateway::test::resource_kinds": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.9
+"seconds": 0.6
 },
 "qcore-c-gateway::test::resource_kinds_lean": {
 "dirs": [],
@@ -5627,167 +5627,167 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-c-gateway::test::result_constructors": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.4
+"seconds": 0.2
 },
 "qcore-c-gateway::test::result_set_derivation": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.6
+"seconds": 0.2
 },
 "qcore-c-gateway::test::retaining_call_minted_name": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 20.7
+"seconds": 10.4
 },
 "qcore-c-gateway::test::retention_guard": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 2.9
-},
-"qcore-c-gateway::test::retention_null_constant": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 1.5
-},
-"qcore-c-gateway::test::retry_lifetime": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 1.6
-},
-"qcore-c-gateway::test::return_code_handoff": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 3.8
-},
-"qcore-c-gateway::test::return_expression_families": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 5.2
-},
-"qcore-c-gateway::test::return_position_modeled_call": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 3.7
-},
-"qcore-c-gateway::test::return_position_pointer_leaf": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 1.7
-},
-"qcore-c-gateway::test::return_refused_call_lowering": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 0.8
-},
-"qcore-c-gateway::test::review_hold_standing": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 0.8
-},
-"qcore-c-gateway::test::rko_union_layout": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
 "seconds": 0.5
 },
-"qcore-c-gateway::test::rule32a_hold": {
+"qcore-c-gateway::test::retention_null_constant": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
 "seconds": 0.3
 },
+"qcore-c-gateway::test::retry_lifetime": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.3
+},
+"qcore-c-gateway::test::return_code_handoff": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.5
+},
+"qcore-c-gateway::test::return_expression_families": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 1.1
+},
+"qcore-c-gateway::test::return_position_modeled_call": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 1.0
+},
+"qcore-c-gateway::test::return_position_pointer_leaf": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.9
+},
+"qcore-c-gateway::test::return_refused_call_lowering": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.5
+},
+"qcore-c-gateway::test::review_hold_standing": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.5
+},
+"qcore-c-gateway::test::rko_union_layout": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.4
+},
+"qcore-c-gateway::test::rule32a_hold": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.2
+},
 "qcore-c-gateway::test::rule33_switch": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.2
+"seconds": 0.8
 },
 "qcore-c-gateway::test::rule36_switch": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.3
+"seconds": 0.9
 },
 "qcore-c-gateway::test::rule37_switch": {
 "dirs": [
@@ -5817,7 +5817,7 @@
 ],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [
@@ -5974,17 +5974,17 @@
 "providers/quirin-provider-shared/contracts/library/descriptor_native_observation.qv",
 "providers/quirin-provider-shared/contracts/library/source_projection.qv"
 ],
-"seconds": 129.4
+"seconds": 92.0
 },
 "qcore-c-gateway::test::rule50_consumer_composition": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.9
+"seconds": 0.5
 },
 "qcore-c-gateway::test::scalar_form_census": {
 "dirs": [],
@@ -6000,321 +6000,321 @@
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.4
+"seconds": 0.3
 },
 "qcore-c-gateway::test::scalar_noop_alias": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 0.9
-},
-"qcore-c-gateway::test::scalar_precedence": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 0.7
-},
-"qcore-c-gateway::test::scalar_read_identity": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 0.7
-},
-"qcore-c-gateway::test::scalar_route_exit_edge": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 0.8
-},
-"qcore-c-gateway::test::scalar_statement_forms": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 0.4
-},
-"qcore-c-gateway::test::serve_forwarded_callback_formals": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 0.3
-},
-"qcore-c-gateway::test::sizeof_operand": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 0.5
-},
-"qcore-c-gateway::test::slot_move_interior_borrow": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
 "seconds": 0.6
 },
-"qcore-c-gateway::test::sr5_soundness": {
+"qcore-c-gateway::test::scalar_precedence": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.7
+"seconds": 0.5
 },
-"qcore-c-gateway::test::storage_duration_volatile": {
+"qcore-c-gateway::test::scalar_read_identity": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.7
+"seconds": 0.4
 },
-"qcore-c-gateway::test::sub_object_stores": {
+"qcore-c-gateway::test::scalar_route_exit_edge": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.7
+"seconds": 0.5
 },
-"qcore-c-gateway::test::summary_validation_premises": {
+"qcore-c-gateway::test::scalar_statement_forms": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 0.9
-},
-"qcore-c-gateway::test::sup07_refused_test_accusation": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
 "seconds": 0.3
 },
-"qcore-c-gateway::test::thread_key_in_place": {
+"qcore-c-gateway::test::serve_forwarded_callback_formals": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.6
+"seconds": 0.2
 },
-"qcore-c-gateway::test::thread_local_custody_free_read": {
+"qcore-c-gateway::test::sizeof_operand": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.1
+"seconds": 0.3
 },
-"qcore-c-gateway::test::typed_body_comparison": {
+"qcore-c-gateway::test::slot_move_interior_borrow": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 0.8
-},
-"qcore-c-gateway::test::typed_const_pointer_value": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 1.1
-},
-"qcore-c-gateway::test::typed_field_access": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 1.0
-},
-"qcore-c-gateway::test::typed_root_declarations": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 0.7
-},
-"qcore-c-gateway::test::union_bitfield_places": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 1.4
-},
-"qcore-c-gateway::test::union_opaque_writes": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
 "seconds": 0.4
 },
-"qcore-c-gateway::test::va_loop_pointer_arg": {
+"qcore-c-gateway::test::sr5_soundness": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 0.7
-},
-"qcore-c-gateway::test::verdict_fold": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
 "seconds": 0.4
 },
-"qcore-c-gateway::test::w46_external_callee_contracts": {
+"qcore-c-gateway::test::storage_duration_volatile": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 1.9
-},
-"qcore-c-gateway::test::w46_libc_event_contract_gaps": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 1.3
-},
-"qcore-c-gateway::test::w46_routing_query_contracts": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
-"ok": true,
-"probed_count": 1,
-"read": [],
-"seconds": 1.0
-},
-"qcore-c-gateway::test::w47_callee_closure_r2": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
 "seconds": 0.9
 },
-"qcore-c-gateway::test::w48_bottom_up_callee_bodies": {
+"qcore-c-gateway::test::sub_object_stores": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.0
+"seconds": 0.4
 },
-"qcore-c-gateway::test::w48_callee_closure_r3": {
+"qcore-c-gateway::test::summary_validation_premises": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.8
+"seconds": 0.6
 },
-"qcore-c-gateway::test::w48_external_callee_contracts": {
+"qcore-c-gateway::test::sup07_refused_test_accusation": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.2
+},
+"qcore-c-gateway::test::thread_key_in_place": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.4
+},
+"qcore-c-gateway::test::thread_local_custody_free_read": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.6
+},
+"qcore-c-gateway::test::typed_body_comparison": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.5
+},
+"qcore-c-gateway::test::typed_const_pointer_value": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.6
+},
+"qcore-c-gateway::test::typed_field_access": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.7
+},
+"qcore-c-gateway::test::typed_root_declarations": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.5
+},
+"qcore-c-gateway::test::union_bitfield_places": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.9
+},
+"qcore-c-gateway::test::union_opaque_writes": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.2
+},
+"qcore-c-gateway::test::va_loop_pointer_arg": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.4
+},
+"qcore-c-gateway::test::verdict_fold": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.3
+},
+"qcore-c-gateway::test::w46_external_callee_contracts": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
 "seconds": 1.2
 },
+"qcore-c-gateway::test::w46_libc_event_contract_gaps": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.8
+},
+"qcore-c-gateway::test::w46_routing_query_contracts": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.6
+},
+"qcore-c-gateway::test::w47_callee_closure_r2": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.6
+},
+"qcore-c-gateway::test::w48_bottom_up_callee_bodies": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.6
+},
+"qcore-c-gateway::test::w48_callee_closure_r3": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.5
+},
+"qcore-c-gateway::test::w48_external_callee_contracts": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.7
+},
 "qcore-c-gateway::test::written_set_derivation": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.4
+"seconds": 0.3
 },
 "qcore-compiler::lib::qcore_compiler": {
 "dirs": [
@@ -6340,7 +6340,7 @@
 ],
 "exit": 0,
 "ls_files": [],
-"missing_count": 275,
+"missing_count": 272,
 "ok": true,
 "probed_count": 13,
 "read": [
@@ -6381,7 +6381,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 11.3
+"seconds": 6.0
 },
 "qcore-compiler::test::aggregate_owned_field": {
 "dirs": [
@@ -6389,7 +6389,7 @@
 ],
 "exit": 101,
 "ls_files": [],
-"missing_count": 15,
+"missing_count": 9,
 "ok": false,
 "probed_count": 1,
 "read": [
@@ -6405,7 +6405,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.4
+"seconds": 0.2
 },
 "qcore-compiler::test::bitfield_concurrency": {
 "dirs": [
@@ -6437,7 +6437,7 @@
 ],
 "exit": 101,
 "ls_files": [],
-"missing_count": 15,
+"missing_count": 9,
 "ok": false,
 "probed_count": 1,
 "read": [
@@ -6453,7 +6453,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.6
+"seconds": 0.2
 },
 "qcore-compiler::test::branch_arms": {
 "dirs": [
@@ -6461,7 +6461,7 @@
 ],
 "exit": 101,
 "ls_files": [],
-"missing_count": 15,
+"missing_count": 9,
 "ok": false,
 "probed_count": 1,
 "read": [
@@ -6477,7 +6477,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.6
+"seconds": 0.2
 },
 "qcore-compiler::test::branch_statement": {
 "dirs": [
@@ -6485,7 +6485,7 @@
 ],
 "exit": 101,
 "ls_files": [],
-"missing_count": 15,
+"missing_count": 9,
 "ok": false,
 "probed_count": 1,
 "read": [
@@ -6501,17 +6501,17 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.5
+"seconds": 0.2
 },
 "qcore-compiler::test::call_use_route_parity": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 2.5
+"seconds": 1.2
 },
 "qcore-compiler::test::checked_mutex_guards": {
 "dirs": [
@@ -6519,7 +6519,7 @@
 ],
 "exit": 101,
 "ls_files": [],
-"missing_count": 16,
+"missing_count": 9,
 "ok": false,
 "probed_count": 1,
 "read": [
@@ -6535,7 +6535,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.3
+"seconds": 0.2
 },
 "qcore-compiler::test::chunk_lifecycle_coverage": {
 "dirs": [
@@ -6560,7 +6560,7 @@
 ],
 "exit": 0,
 "ls_files": [],
-"missing_count": 273,
+"missing_count": 272,
 "ok": true,
 "probed_count": 13,
 "read": [
@@ -6597,17 +6597,17 @@
 "docs/reports/w42-chunk-lifecycle-cert/inventory.json",
 "docs/reports/w43-chunk-source-profile/lifecycle-coverage.json"
 ],
-"seconds": 1.9
+"seconds": 1.1
 },
 "qcore-compiler::test::cleanup_replay_route_parity": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 18.1
+"seconds": 12.6
 },
 "qcore-compiler::test::cleanup_task_composition": {
 "dirs": [
@@ -6642,7 +6642,7 @@
 ],
 "exit": 0,
 "ls_files": [],
-"missing_count": 12,
+"missing_count": 9,
 "ok": true,
 "probed_count": 1,
 "read": [
@@ -6659,7 +6659,7 @@
 "contract/profiles/libevent/providers/qcore.libevent.json",
 "examples/threads/README.md"
 ],
-"seconds": 1.9
+"seconds": 1.5
 },
 "qcore-compiler::test::compose_event_lines": {
 "dirs": [
@@ -6667,7 +6667,7 @@
 ],
 "exit": 101,
 "ls_files": [],
-"missing_count": 15,
+"missing_count": 9,
 "ok": false,
 "probed_count": 1,
 "read": [
@@ -6737,11 +6737,11 @@
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 6.5
+"seconds": 4.8
 },
 "qcore-compiler::test::contract_consumers": {
 "dirs": [],
@@ -6941,7 +6941,7 @@
 "providers/quirin-provider-shared/contracts/library/descriptor_native_observation.qv",
 "providers/quirin-provider-shared/contracts/library/source_projection.qv"
 ],
-"seconds": 11.0
+"seconds": 8.7
 },
 "qcore-compiler::test::contract_inherit_parity": {
 "dirs": [],
@@ -6949,7 +6949,7 @@
 "ls_files": [
 "[\"-z\", \"--cached\", \"--\", \".\"]"
 ],
-"missing_count": 70,
+"missing_count": 69,
 "ok": true,
 "probed_count": 25,
 "read": [
@@ -7105,7 +7105,7 @@
 "providers/quirin-provider-shared/contracts/library/descriptor_native_observation.qv",
 "providers/quirin-provider-shared/contracts/library/source_projection.qv"
 ],
-"seconds": 2.9
+"seconds": 2.3
 },
 "qcore-compiler::test::contract_inherit_qcore_provider": {
 "dirs": [
@@ -7137,7 +7137,7 @@
 "ls_files": [
 "[\"-z\", \"--cached\", \"--\", \".\"]"
 ],
-"missing_count": 25,
+"missing_count": 24,
 "ok": true,
 "probed_count": 6,
 "read": [
@@ -7298,7 +7298,7 @@
 "providers/quirin-provider-shared/contracts/library/descriptor_native_observation.qv",
 "providers/quirin-provider-shared/contracts/library/source_projection.qv"
 ],
-"seconds": 13.4
+"seconds": 9.2
 },
 "qcore-compiler::test::contract_loader": {
 "dirs": [
@@ -7330,7 +7330,7 @@
 "ls_files": [
 "[\"-z\", \"--cached\", \"--\", \".\"]"
 ],
-"missing_count": 73,
+"missing_count": 71,
 "ok": true,
 "probed_count": 25,
 "read": [
@@ -7500,7 +7500,7 @@
 "providers/quirin-provider-shared/contracts/library/source_projection.qv",
 "tests/support/contract_locks_cases.json"
 ],
-"seconds": 15.4
+"seconds": 11.1
 },
 "qcore-compiler::test::contract_view_census": {
 "dirs": [
@@ -7532,7 +7532,7 @@
 "ls_files": [
 "[\"-z\", \"--cached\", \"--\", \".\"]"
 ],
-"missing_count": 70,
+"missing_count": 69,
 "ok": true,
 "probed_count": 25,
 "read": [
@@ -7689,17 +7689,17 @@
 "providers/quirin-provider-shared/contracts/library/descriptor_native_observation.qv",
 "providers/quirin-provider-shared/contracts/library/source_projection.qv"
 ],
-"seconds": 25.0
+"seconds": 20.8
 },
 "qcore-compiler::test::counter_route_parity": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.6
+"seconds": 1.1
 },
 "qcore-compiler::test::ct01_proof_leg": {
 "dirs": [
@@ -7857,7 +7857,7 @@
 "ls_files": [
 "[\"-z\", \"--cached\", \"--\", \".\"]"
 ],
-"missing_count": 26,
+"missing_count": 22,
 "ok": false,
 "probed_count": 5,
 "read": [
@@ -8325,7 +8325,7 @@
 "docs/reports/wave9-ctwin/ct_stage_evidence.json",
 "docs/reviews/r0_3/acceptance.json"
 ],
-"seconds": 1.0
+"seconds": 0.7
 },
 "qcore-compiler::test::cycle20_verifier_plugins": {
 "dirs": [
@@ -8349,7 +8349,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 1.5
+"seconds": 1.4
 },
 "qcore-compiler::test::emitted_c_werror": {
 "dirs": [
@@ -8357,7 +8357,7 @@
 ],
 "exit": 0,
 "ls_files": [],
-"missing_count": 12,
+"missing_count": 9,
 "ok": true,
 "probed_count": 1,
 "read": [
@@ -8373,7 +8373,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 1.0
+"seconds": 0.6
 },
 "qcore-compiler::test::epoch_credit_error_path": {
 "dirs": [
@@ -8461,7 +8461,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.2
+"seconds": 0.1
 },
 "qcore-compiler::test::error_payload_tasks": {
 "dirs": [
@@ -8469,7 +8469,7 @@
 ],
 "exit": 101,
 "ls_files": [],
-"missing_count": 12,
+"missing_count": 9,
 "ok": false,
 "probed_count": 1,
 "read": [
@@ -8485,7 +8485,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.3
+"seconds": 0.2
 },
 "qcore-compiler::test::examples_suite": {
 "dirs": [
@@ -8495,7 +8495,7 @@
 "ls_files": [
 "[\"-z\", \"--cached\", \"--\", \".\"]"
 ],
-"missing_count": 19,
+"missing_count": 12,
 "ok": false,
 "probed_count": 87,
 "read": [
@@ -8525,7 +8525,7 @@
 "examples/threads/README.md",
 "examples/unsafe-linkage/README.md"
 ],
-"seconds": 0.5
+"seconds": 0.2
 },
 "qcore-compiler::test::extension_compatibility": {
 "dirs": [
@@ -8549,7 +8549,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.2
+"seconds": 0.1
 },
 "qcore-compiler::test::extension_contract_compatibility": {
 "dirs": [],
@@ -8559,7 +8559,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-compiler::test::extern_call_deferred_review": {
 "dirs": [
@@ -8591,7 +8591,7 @@
 ],
 "exit": 101,
 "ls_files": [],
-"missing_count": 15,
+"missing_count": 9,
 "ok": false,
 "probed_count": 1,
 "read": [
@@ -8607,7 +8607,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.5
+"seconds": 0.2
 },
 "qcore-compiler::test::f02_trace_relation": {
 "dirs": [
@@ -8615,7 +8615,7 @@
 ],
 "exit": 0,
 "ls_files": [],
-"missing_count": 8,
+"missing_count": 5,
 "ok": true,
 "probed_count": 1,
 "read": [
@@ -8631,7 +8631,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.5
+"seconds": 0.3
 },
 "qcore-compiler::test::f02_windows_pin_agreement": {
 "dirs": [],
@@ -8649,7 +8649,7 @@
 ],
 "exit": 0,
 "ls_files": [],
-"missing_count": 39,
+"missing_count": 33,
 "ok": true,
 "probed_count": 2,
 "read": [
@@ -8670,13 +8670,13 @@
 "examples/ffi/qr_header.c",
 "examples/ffi/qr_header.h"
 ],
-"seconds": 1.2
+"seconds": 0.8
 },
 "qcore-compiler::test::file_close_route_parity": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 3,
+"missing_count": 2,
 "ok": true,
 "probed_count": 2,
 "read": [
@@ -8686,13 +8686,13 @@
 "contract/profiles/fluent-bit/providers/qcore.ctraces.json",
 "contract/profiles/fluent-bit/providers/qcore.librdkafka.json"
 ],
-"seconds": 35.9
+"seconds": 23.8
 },
 "qcore-compiler::test::filesystem_chunk_close_route_parity": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 3,
+"missing_count": 2,
 "ok": true,
 "probed_count": 2,
 "read": [
@@ -8702,7 +8702,7 @@
 "contract/profiles/fluent-bit/providers/qcore.ctraces.json",
 "contract/profiles/fluent-bit/providers/qcore.librdkafka.json"
 ],
-"seconds": 33.6
+"seconds": 21.9
 },
 "qcore-compiler::test::first_party_discovery": {
 "dirs": [],
@@ -8710,7 +8710,7 @@
 "ls_files": [
 "[\"-z\", \"--cached\", \"--\", \".\"]"
 ],
-"missing_count": 7,
+"missing_count": 6,
 "ok": true,
 "probed_count": 3,
 "read": [
@@ -8749,7 +8749,7 @@
 ],
 "exit": 0,
 "ls_files": [],
-"missing_count": 12,
+"missing_count": 9,
 "ok": true,
 "probed_count": 1,
 "read": [
@@ -8765,7 +8765,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 13.6
+"seconds": 7.5
 },
 "qcore-compiler::test::float_extern": {
 "dirs": [
@@ -8773,7 +8773,7 @@
 ],
 "exit": 0,
 "ls_files": [],
-"missing_count": 12,
+"missing_count": 9,
 "ok": true,
 "probed_count": 1,
 "read": [
@@ -8789,7 +8789,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 3.0
+"seconds": 2.4
 },
 "qcore-compiler::test::float_ffi": {
 "dirs": [
@@ -8797,7 +8797,7 @@
 ],
 "exit": 0,
 "ls_files": [],
-"missing_count": 14,
+"missing_count": 9,
 "ok": true,
 "probed_count": 1,
 "read": [
@@ -8813,7 +8813,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 1.2
+"seconds": 0.8
 },
 "qcore-compiler::test::float_ieee_vectors": {
 "dirs": [],
@@ -8828,7 +8828,7 @@
 "proof/QCore/Ieee754Vectors32.lean",
 "proof/QCore/Ieee754Vectors64.lean"
 ],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-compiler::test::float_tasks": {
 "dirs": [
@@ -8836,7 +8836,7 @@
 ],
 "exit": 0,
 "ls_files": [],
-"missing_count": 12,
+"missing_count": 9,
 "ok": true,
 "probed_count": 1,
 "read": [
@@ -8852,7 +8852,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 9.0
+"seconds": 6.0
 },
 "qcore-compiler::test::float_types": {
 "dirs": [
@@ -8860,7 +8860,7 @@
 ],
 "exit": 0,
 "ls_files": [],
-"missing_count": 12,
+"missing_count": 9,
 "ok": true,
 "probed_count": 1,
 "read": [
@@ -8876,7 +8876,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 9.9
+"seconds": 6.0
 },
 "qcore-compiler::test::http_computed_length": {
 "dirs": [
@@ -8884,7 +8884,7 @@
 ],
 "exit": 101,
 "ls_files": [],
-"missing_count": 15,
+"missing_count": 9,
 "ok": false,
 "probed_count": 1,
 "read": [
@@ -8900,13 +8900,13 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.4
+"seconds": 0.2
 },
 "qcore-compiler::test::libevent_submodule": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 1,
+"missing_count": 0,
 "ok": true,
 "probed_count": 273,
 "read": [
@@ -8934,7 +8934,7 @@
 ],
 "exit": 101,
 "ls_files": [],
-"missing_count": 15,
+"missing_count": 9,
 "ok": false,
 "probed_count": 1,
 "read": [
@@ -8950,7 +8950,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.3
+"seconds": 0.2
 },
 "qcore-compiler::test::loop_unroll_budget": {
 "dirs": [
@@ -8958,7 +8958,7 @@
 ],
 "exit": 101,
 "ls_files": [],
-"missing_count": 15,
+"missing_count": 9,
 "ok": false,
 "probed_count": 1,
 "read": [
@@ -8982,7 +8982,7 @@
 ],
 "exit": 101,
 "ls_files": [],
-"missing_count": 15,
+"missing_count": 9,
 "ok": false,
 "probed_count": 1,
 "read": [
@@ -8998,17 +8998,17 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.3
+"seconds": 0.2
 },
 "qcore-compiler::test::memory_close_route_parity": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 10.0
+"seconds": 6.5
 },
 "qcore-compiler::test::module_imports": {
 "dirs": [
@@ -9062,7 +9062,7 @@
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [
@@ -9072,7 +9072,7 @@
 "contract/profiles/fluent-bit/providers/qcore.ctraces.json",
 "contract/profiles/fluent-bit/providers/qcore.librdkafka.json"
 ],
-"seconds": 0.4
+"seconds": 0.3
 },
 "qcore-compiler::test::native_library": {
 "dirs": [
@@ -9208,11 +9208,11 @@
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.2
+"seconds": 0.8
 },
 "qcore-compiler::test::obs_reordering": {
 "dirs": [
@@ -9220,7 +9220,7 @@
 ],
 "exit": 101,
 "ls_files": [],
-"missing_count": 12,
+"missing_count": 9,
 "ok": false,
 "probed_count": 1,
 "read": [
@@ -9236,7 +9236,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.4
+"seconds": 0.2
 },
 "qcore-compiler::test::owned_field_route_reach": {
 "dirs": [
@@ -9268,7 +9268,7 @@
 ],
 "exit": 0,
 "ls_files": [],
-"missing_count": 8,
+"missing_count": 5,
 "ok": true,
 "probed_count": 1,
 "read": [
@@ -9284,7 +9284,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.4
+"seconds": 0.3
 },
 "qcore-compiler::test::pipe_drop_stage": {
 "dirs": [
@@ -9316,7 +9316,7 @@
 ],
 "exit": 101,
 "ls_files": [],
-"missing_count": 12,
+"missing_count": 9,
 "ok": false,
 "probed_count": 1,
 "read": [
@@ -9332,7 +9332,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.3
+"seconds": 0.2
 },
 "qcore-compiler::test::pipe_operator": {
 "dirs": [
@@ -9340,7 +9340,7 @@
 ],
 "exit": 101,
 "ls_files": [],
-"missing_count": 15,
+"missing_count": 9,
 "ok": false,
 "probed_count": 1,
 "read": [
@@ -9356,13 +9356,13 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.3
+"seconds": 0.2
 },
 "qcore-compiler::test::profile_loader": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 3,
+"missing_count": 2,
 "ok": true,
 "probed_count": 273,
 "read": [
@@ -9395,7 +9395,7 @@
 "ls_files": [
 "[\"-z\", \"--cached\", \"--\", \".\"]"
 ],
-"missing_count": 13,
+"missing_count": 12,
 "ok": true,
 "probed_count": 431,
 "read": [
@@ -9738,7 +9738,6 @@
 "proof/QCore/Ieee754Round.lean",
 "proof/QCore/Ieee754Vectors32.lean",
 "proof/QCore/Ieee754Vectors64.lean",
-"proof/QCore/InPlaceMentionGuard.lean",
 "proof/QCore/Index.lean",
 "proof/QCore/IndexExtent.lean",
 "proof/QCore/IndexExtentFrames.lean",
@@ -9844,6 +9843,7 @@
 "proof/QCore/OpaqueCallbackSlots.lean",
 "proof/QCore/OpensslCalleeShapes.lean",
 "proof/QCore/OpensslContractPlugin.lean",
+"proof/QCore/OpensslHandshakeSlots.lean",
 "proof/QCore/OpensslUnstatedSlots.lean",
 "proof/QCore/OrderedLifetimeReplay.lean",
 "proof/QCore/OsEndpointPostState.lean",
@@ -10047,7 +10047,7 @@
 "proof/QCore/WriteLendTasksExercise.lean",
 "proof/QCore/WrittenSetDerivation.lean"
 ],
-"seconds": 0.2
+"seconds": 0.1
 },
 "qcore-compiler::test::qcore_contract_corpus": {
 "dirs": [
@@ -10080,7 +10080,7 @@
 "ls_files": [
 "[\"-z\", \"--cached\", \"--\", \".\"]"
 ],
-"missing_count": 70,
+"missing_count": 69,
 "ok": true,
 "probed_count": 25,
 "read": [
@@ -10259,7 +10259,7 @@
 "providers/quirin-provider-shared/contracts/library/descriptor_native_observation.qv",
 "providers/quirin-provider-shared/contracts/library/source_projection.qv"
 ],
-"seconds": 12.2
+"seconds": 8.7
 },
 "qcore-compiler::test::qr_lexical_selector_census": {
 "dirs": [
@@ -10269,9 +10269,9 @@
 "ls_files": [
 "[\"-z\", \"--cached\", \"--\", \".\"]"
 ],
-"missing_count": 1,
+"missing_count": 0,
 "ok": true,
-"probed_count": 29251,
+"probed_count": 29221,
 "read": [
 "compiler/tests/fixtures/bitfield_concurrency/addressable.qr",
 "compiler/tests/fixtures/bitfield_concurrency/adjacent.qr",
@@ -11054,6 +11054,7 @@
 "providers/quirin-provider-openssl/contracts/openssl/pkcs12.qv",
 "providers/quirin-provider-openssl/contracts/openssl/ssl.qv",
 "providers/quirin-provider-openssl/contracts/openssl/ssl_ctx.qv",
+"providers/quirin-provider-openssl/contracts/openssl/ssl_handshake.qv",
 "providers/quirin-provider-openssl/contracts/openssl/ssl_io.qv",
 "providers/quirin-provider-openssl/contracts/openssl/stack.qv",
 "providers/quirin-provider-openssl/contracts/openssl/x509.qv",
@@ -11064,7 +11065,7 @@
 "providers/quirin-provider-shared/contracts/library/descriptor_native_observation.qv",
 "providers/quirin-provider-shared/contracts/library/source_projection.qv"
 ],
-"seconds": 15.4
+"seconds": 9.3
 },
 "qcore-compiler::test::qr_lexical_selector_selection": {
 "dirs": [
@@ -11088,7 +11089,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.2
+"seconds": 0.1
 },
 "qcore-compiler::test::qr_print_route_census": {
 "dirs": [],
@@ -11096,9 +11097,9 @@
 "ls_files": [
 "[\"-z\", \"--cached\", \"--\", \".\"]"
 ],
-"missing_count": 1,
+"missing_count": 0,
 "ok": true,
-"probed_count": 29262,
+"probed_count": 29232,
 "read": [
 "compiler/tests/fixtures/bitfield_concurrency/addressable.qr",
 "compiler/tests/fixtures/bitfield_concurrency/adjacent.qr",
@@ -11870,6 +11871,7 @@
 "providers/quirin-provider-openssl/contracts/openssl/pkcs12.qv",
 "providers/quirin-provider-openssl/contracts/openssl/ssl.qv",
 "providers/quirin-provider-openssl/contracts/openssl/ssl_ctx.qv",
+"providers/quirin-provider-openssl/contracts/openssl/ssl_handshake.qv",
 "providers/quirin-provider-openssl/contracts/openssl/ssl_io.qv",
 "providers/quirin-provider-openssl/contracts/openssl/stack.qv",
 "providers/quirin-provider-openssl/contracts/openssl/x509.qv",
@@ -11880,7 +11882,7 @@
 "providers/quirin-provider-shared/contracts/library/descriptor_native_observation.qv",
 "providers/quirin-provider-shared/contracts/library/source_projection.qv"
 ],
-"seconds": 2.4
+"seconds": 1.4
 },
 "qcore-compiler::test::qr_print_route_selection": {
 "dirs": [
@@ -11912,7 +11914,7 @@
 ],
 "exit": 0,
 "ls_files": [],
-"missing_count": 15,
+"missing_count": 9,
 "ok": true,
 "probed_count": 1,
 "read": [
@@ -11928,7 +11930,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 2.3
+"seconds": 1.4
 },
 "qcore-compiler::test::quant_check_connectives": {
 "dirs": [
@@ -11984,7 +11986,7 @@
 ],
 "exit": 101,
 "ls_files": [],
-"missing_count": 15,
+"missing_count": 9,
 "ok": false,
 "probed_count": 1,
 "read": [
@@ -12013,7 +12015,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-compiler::test::region_credit_joins": {
 "dirs": [
@@ -12053,7 +12055,7 @@
 ],
 "exit": 0,
 "ls_files": [],
-"missing_count": 8,
+"missing_count": 5,
 "ok": true,
 "probed_count": 1,
 "read": [
@@ -12077,7 +12079,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.2
+"seconds": 0.1
 },
 "qcore-compiler::test::region_joins_loan": {
 "dirs": [
@@ -12085,7 +12087,7 @@
 ],
 "exit": 0,
 "ls_files": [],
-"missing_count": 8,
+"missing_count": 5,
 "ok": true,
 "probed_count": 1,
 "read": [
@@ -12108,7 +12110,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.2
+"seconds": 0.1
 },
 "qcore-compiler::test::resource_helper_functions": {
 "dirs": [
@@ -12116,7 +12118,7 @@
 ],
 "exit": 101,
 "ls_files": [],
-"missing_count": 12,
+"missing_count": 9,
 "ok": false,
 "probed_count": 1,
 "read": [
@@ -12188,7 +12190,7 @@
 ],
 "exit": 0,
 "ls_files": [],
-"missing_count": 12,
+"missing_count": 9,
 "ok": true,
 "probed_count": 1,
 "read": [
@@ -12204,7 +12206,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 12.0
+"seconds": 7.6
 },
 "qcore-compiler::test::scalar_composed_string": {
 "dirs": [
@@ -12212,7 +12214,79 @@
 ],
 "exit": 0,
 "ls_files": [],
-"missing_count": 12,
+"missing_count": 9,
+"ok": true,
+"probed_count": 1,
+"read": [
+"contract/profiles/chunkio-core/profile.json",
+"contract/profiles/cmetrics-counter/profile.json",
+"contract/profiles/cycle18-task-handoff/profile.json",
+"contract/profiles/fluent-bit/profile.json",
+"contract/profiles/fluent-bit/providers/qcore.chunkio.json",
+"contract/profiles/fluent-bit/providers/qcore.cmetrics.json",
+"contract/profiles/fluent-bit/providers/qcore.ctraces.json",
+"contract/profiles/fluent-bit/providers/qcore.librdkafka.json",
+"contract/profiles/libevent-core/profile.json",
+"contract/profiles/libevent/profile.json",
+"contract/profiles/libevent/providers/qcore.libevent.json"
+],
+"seconds": 2.0
+},
+"qcore-compiler::test::scalar_epoch_tasks": {
+"dirs": [
+"contract/profiles"
+],
+"exit": 0,
+"ls_files": [],
+"missing_count": 9,
+"ok": true,
+"probed_count": 1,
+"read": [
+"contract/profiles/chunkio-core/profile.json",
+"contract/profiles/cmetrics-counter/profile.json",
+"contract/profiles/cycle18-task-handoff/profile.json",
+"contract/profiles/fluent-bit/profile.json",
+"contract/profiles/fluent-bit/providers/qcore.chunkio.json",
+"contract/profiles/fluent-bit/providers/qcore.cmetrics.json",
+"contract/profiles/fluent-bit/providers/qcore.ctraces.json",
+"contract/profiles/fluent-bit/providers/qcore.librdkafka.json",
+"contract/profiles/libevent-core/profile.json",
+"contract/profiles/libevent/profile.json",
+"contract/profiles/libevent/providers/qcore.libevent.json"
+],
+"seconds": 1.6
+},
+"qcore-compiler::test::scalar_extern_values": {
+"dirs": [
+"contract/profiles"
+],
+"exit": 0,
+"ls_files": [],
+"missing_count": 9,
+"ok": true,
+"probed_count": 1,
+"read": [
+"contract/profiles/chunkio-core/profile.json",
+"contract/profiles/cmetrics-counter/profile.json",
+"contract/profiles/cycle18-task-handoff/profile.json",
+"contract/profiles/fluent-bit/profile.json",
+"contract/profiles/fluent-bit/providers/qcore.chunkio.json",
+"contract/profiles/fluent-bit/providers/qcore.cmetrics.json",
+"contract/profiles/fluent-bit/providers/qcore.ctraces.json",
+"contract/profiles/fluent-bit/providers/qcore.librdkafka.json",
+"contract/profiles/libevent-core/profile.json",
+"contract/profiles/libevent/profile.json",
+"contract/profiles/libevent/providers/qcore.libevent.json"
+],
+"seconds": 10.3
+},
+"qcore-compiler::test::scalar_f02_outcomes": {
+"dirs": [
+"contract/profiles"
+],
+"exit": 0,
+"ls_files": [],
+"missing_count": 9,
 "ok": true,
 "probed_count": 1,
 "read": [
@@ -12230,85 +12304,13 @@
 ],
 "seconds": 2.8
 },
-"qcore-compiler::test::scalar_epoch_tasks": {
-"dirs": [
-"contract/profiles"
-],
-"exit": 0,
-"ls_files": [],
-"missing_count": 12,
-"ok": true,
-"probed_count": 1,
-"read": [
-"contract/profiles/chunkio-core/profile.json",
-"contract/profiles/cmetrics-counter/profile.json",
-"contract/profiles/cycle18-task-handoff/profile.json",
-"contract/profiles/fluent-bit/profile.json",
-"contract/profiles/fluent-bit/providers/qcore.chunkio.json",
-"contract/profiles/fluent-bit/providers/qcore.cmetrics.json",
-"contract/profiles/fluent-bit/providers/qcore.ctraces.json",
-"contract/profiles/fluent-bit/providers/qcore.librdkafka.json",
-"contract/profiles/libevent-core/profile.json",
-"contract/profiles/libevent/profile.json",
-"contract/profiles/libevent/providers/qcore.libevent.json"
-],
-"seconds": 3.9
-},
-"qcore-compiler::test::scalar_extern_values": {
-"dirs": [
-"contract/profiles"
-],
-"exit": 0,
-"ls_files": [],
-"missing_count": 12,
-"ok": true,
-"probed_count": 1,
-"read": [
-"contract/profiles/chunkio-core/profile.json",
-"contract/profiles/cmetrics-counter/profile.json",
-"contract/profiles/cycle18-task-handoff/profile.json",
-"contract/profiles/fluent-bit/profile.json",
-"contract/profiles/fluent-bit/providers/qcore.chunkio.json",
-"contract/profiles/fluent-bit/providers/qcore.cmetrics.json",
-"contract/profiles/fluent-bit/providers/qcore.ctraces.json",
-"contract/profiles/fluent-bit/providers/qcore.librdkafka.json",
-"contract/profiles/libevent-core/profile.json",
-"contract/profiles/libevent/profile.json",
-"contract/profiles/libevent/providers/qcore.libevent.json"
-],
-"seconds": 31.1
-},
-"qcore-compiler::test::scalar_f02_outcomes": {
-"dirs": [
-"contract/profiles"
-],
-"exit": 0,
-"ls_files": [],
-"missing_count": 12,
-"ok": true,
-"probed_count": 1,
-"read": [
-"contract/profiles/chunkio-core/profile.json",
-"contract/profiles/cmetrics-counter/profile.json",
-"contract/profiles/cycle18-task-handoff/profile.json",
-"contract/profiles/fluent-bit/profile.json",
-"contract/profiles/fluent-bit/providers/qcore.chunkio.json",
-"contract/profiles/fluent-bit/providers/qcore.cmetrics.json",
-"contract/profiles/fluent-bit/providers/qcore.ctraces.json",
-"contract/profiles/fluent-bit/providers/qcore.librdkafka.json",
-"contract/profiles/libevent-core/profile.json",
-"contract/profiles/libevent/profile.json",
-"contract/profiles/libevent/providers/qcore.libevent.json"
-],
-"seconds": 7.3
-},
 "qcore-compiler::test::scalar_loop_bounds": {
 "dirs": [
 "contract/profiles"
 ],
 "exit": 0,
 "ls_files": [],
-"missing_count": 12,
+"missing_count": 9,
 "ok": true,
 "probed_count": 1,
 "read": [
@@ -12324,7 +12326,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 12.0
+"seconds": 4.8
 },
 "qcore-compiler::test::scalar_payloads": {
 "dirs": [
@@ -12332,7 +12334,7 @@
 ],
 "exit": 0,
 "ls_files": [],
-"missing_count": 12,
+"missing_count": 9,
 "ok": true,
 "probed_count": 1,
 "read": [
@@ -12348,7 +12350,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 17.4
+"seconds": 7.0
 },
 "qcore-compiler::test::scalar_positions": {
 "dirs": [
@@ -12356,7 +12358,7 @@
 ],
 "exit": 0,
 "ls_files": [],
-"missing_count": 12,
+"missing_count": 9,
 "ok": true,
 "probed_count": 1,
 "read": [
@@ -12372,7 +12374,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 9.1
+"seconds": 3.3
 },
 "qcore-compiler::test::scalar_tasks": {
 "dirs": [
@@ -12380,7 +12382,7 @@
 ],
 "exit": 0,
 "ls_files": [],
-"missing_count": 12,
+"missing_count": 9,
 "ok": true,
 "probed_count": 1,
 "read": [
@@ -12396,7 +12398,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 40.1
+"seconds": 20.0
 },
 "qcore-compiler::test::scalar_typed_errors": {
 "dirs": [
@@ -12404,7 +12406,7 @@
 ],
 "exit": 0,
 "ls_files": [],
-"missing_count": 12,
+"missing_count": 9,
 "ok": true,
 "probed_count": 1,
 "read": [
@@ -12420,7 +12422,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 42.3
+"seconds": 19.2
 },
 "qcore-compiler::test::scalar_types": {
 "dirs": [
@@ -12428,7 +12430,7 @@
 ],
 "exit": 0,
 "ls_files": [],
-"missing_count": 12,
+"missing_count": 9,
 "ok": true,
 "probed_count": 1,
 "read": [
@@ -12444,7 +12446,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 33.1
+"seconds": 13.7
 },
 "qcore-compiler::test::scoped_read_loans": {
 "dirs": [
@@ -12452,7 +12454,7 @@
 ],
 "exit": 101,
 "ls_files": [],
-"missing_count": 12,
+"missing_count": 9,
 "ok": false,
 "probed_count": 1,
 "read": [
@@ -12468,7 +12470,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.5
+"seconds": 0.2
 },
 "qcore-compiler::test::scoped_read_shares": {
 "dirs": [
@@ -12476,7 +12478,7 @@
 ],
 "exit": 101,
 "ls_files": [],
-"missing_count": 12,
+"missing_count": 9,
 "ok": false,
 "probed_count": 1,
 "read": [
@@ -12492,7 +12494,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.5
+"seconds": 0.2
 },
 "qcore-compiler::test::slice_permissions": {
 "dirs": [
@@ -12500,7 +12502,7 @@
 ],
 "exit": 101,
 "ls_files": [],
-"missing_count": 15,
+"missing_count": 9,
 "ok": false,
 "probed_count": 1,
 "read": [
@@ -12516,7 +12518,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.4
+"seconds": 0.2
 },
 "qcore-compiler::test::socket_cell_route": {
 "dirs": [
@@ -12540,7 +12542,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.2
+"seconds": 0.1
 },
 "qcore-compiler::test::socket_event_compose": {
 "dirs": [
@@ -12548,7 +12550,7 @@
 ],
 "exit": 101,
 "ls_files": [],
-"missing_count": 15,
+"missing_count": 9,
 "ok": false,
 "probed_count": 1,
 "read": [
@@ -12564,7 +12566,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.5
+"seconds": 0.2
 },
 "qcore-compiler::test::source_loop": {
 "dirs": [
@@ -12572,7 +12574,7 @@
 ],
 "exit": 101,
 "ls_files": [],
-"missing_count": 15,
+"missing_count": 9,
 "ok": false,
 "probed_count": 1,
 "read": [
@@ -12588,7 +12590,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.4
+"seconds": 0.2
 },
 "qcore-compiler::test::source_record": {
 "dirs": [
@@ -12596,7 +12598,7 @@
 ],
 "exit": 101,
 "ls_files": [],
-"missing_count": 15,
+"missing_count": 9,
 "ok": false,
 "probed_count": 1,
 "read": [
@@ -12612,7 +12614,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.4
+"seconds": 0.2
 },
 "qcore-compiler::test::source_scalar_calls": {
 "dirs": [
@@ -12620,7 +12622,7 @@
 ],
 "exit": 101,
 "ls_files": [],
-"missing_count": 12,
+"missing_count": 9,
 "ok": false,
 "probed_count": 1,
 "read": [
@@ -12636,7 +12638,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.5
+"seconds": 0.2
 },
 "qcore-compiler::test::source_tasks": {
 "dirs": [
@@ -12644,7 +12646,7 @@
 ],
 "exit": 0,
 "ls_files": [],
-"missing_count": 8,
+"missing_count": 5,
 "ok": true,
 "probed_count": 1,
 "read": [
@@ -12660,7 +12662,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.7
+"seconds": 0.3
 },
 "qcore-compiler::test::std_buffer": {
 "dirs": [
@@ -12668,7 +12670,7 @@
 ],
 "exit": 101,
 "ls_files": [],
-"missing_count": 15,
+"missing_count": 9,
 "ok": false,
 "probed_count": 1,
 "read": [
@@ -12684,7 +12686,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.4
+"seconds": 0.2
 },
 "qcore-compiler::test::std_event": {
 "dirs": [
@@ -12692,7 +12694,7 @@
 ],
 "exit": 101,
 "ls_files": [],
-"missing_count": 15,
+"missing_count": 9,
 "ok": false,
 "probed_count": 1,
 "read": [
@@ -12708,7 +12710,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.4
+"seconds": 0.2
 },
 "qcore-compiler::test::std_http": {
 "dirs": [
@@ -12716,55 +12718,7 @@
 ],
 "exit": 101,
 "ls_files": [],
-"missing_count": 15,
-"ok": false,
-"probed_count": 1,
-"read": [
-"contract/profiles/chunkio-core/profile.json",
-"contract/profiles/cmetrics-counter/profile.json",
-"contract/profiles/cycle18-task-handoff/profile.json",
-"contract/profiles/fluent-bit/profile.json",
-"contract/profiles/fluent-bit/providers/qcore.chunkio.json",
-"contract/profiles/fluent-bit/providers/qcore.cmetrics.json",
-"contract/profiles/fluent-bit/providers/qcore.ctraces.json",
-"contract/profiles/fluent-bit/providers/qcore.librdkafka.json",
-"contract/profiles/libevent-core/profile.json",
-"contract/profiles/libevent/profile.json",
-"contract/profiles/libevent/providers/qcore.libevent.json"
-],
-"seconds": 0.5
-},
-"qcore-compiler::test::std_io_compose": {
-"dirs": [
-"contract/profiles"
-],
-"exit": 101,
-"ls_files": [],
-"missing_count": 15,
-"ok": false,
-"probed_count": 1,
-"read": [
-"contract/profiles/chunkio-core/profile.json",
-"contract/profiles/cmetrics-counter/profile.json",
-"contract/profiles/cycle18-task-handoff/profile.json",
-"contract/profiles/fluent-bit/profile.json",
-"contract/profiles/fluent-bit/providers/qcore.chunkio.json",
-"contract/profiles/fluent-bit/providers/qcore.cmetrics.json",
-"contract/profiles/fluent-bit/providers/qcore.ctraces.json",
-"contract/profiles/fluent-bit/providers/qcore.librdkafka.json",
-"contract/profiles/libevent-core/profile.json",
-"contract/profiles/libevent/profile.json",
-"contract/profiles/libevent/providers/qcore.libevent.json"
-],
-"seconds": 0.5
-},
-"qcore-compiler::test::std_modules": {
-"dirs": [
-"contract/profiles"
-],
-"exit": 101,
-"ls_files": [],
-"missing_count": 15,
+"missing_count": 9,
 "ok": false,
 "probed_count": 1,
 "read": [
@@ -12782,13 +12736,13 @@
 ],
 "seconds": 0.3
 },
-"qcore-compiler::test::std_socket": {
+"qcore-compiler::test::std_io_compose": {
 "dirs": [
 "contract/profiles"
 ],
 "exit": 101,
 "ls_files": [],
-"missing_count": 15,
+"missing_count": 9,
 "ok": false,
 "probed_count": 1,
 "read": [
@@ -12804,7 +12758,55 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.5
+"seconds": 0.3
+},
+"qcore-compiler::test::std_modules": {
+"dirs": [
+"contract/profiles"
+],
+"exit": 101,
+"ls_files": [],
+"missing_count": 9,
+"ok": false,
+"probed_count": 1,
+"read": [
+"contract/profiles/chunkio-core/profile.json",
+"contract/profiles/cmetrics-counter/profile.json",
+"contract/profiles/cycle18-task-handoff/profile.json",
+"contract/profiles/fluent-bit/profile.json",
+"contract/profiles/fluent-bit/providers/qcore.chunkio.json",
+"contract/profiles/fluent-bit/providers/qcore.cmetrics.json",
+"contract/profiles/fluent-bit/providers/qcore.ctraces.json",
+"contract/profiles/fluent-bit/providers/qcore.librdkafka.json",
+"contract/profiles/libevent-core/profile.json",
+"contract/profiles/libevent/profile.json",
+"contract/profiles/libevent/providers/qcore.libevent.json"
+],
+"seconds": 0.2
+},
+"qcore-compiler::test::std_socket": {
+"dirs": [
+"contract/profiles"
+],
+"exit": 101,
+"ls_files": [],
+"missing_count": 9,
+"ok": false,
+"probed_count": 1,
+"read": [
+"contract/profiles/chunkio-core/profile.json",
+"contract/profiles/cmetrics-counter/profile.json",
+"contract/profiles/cycle18-task-handoff/profile.json",
+"contract/profiles/fluent-bit/profile.json",
+"contract/profiles/fluent-bit/providers/qcore.chunkio.json",
+"contract/profiles/fluent-bit/providers/qcore.cmetrics.json",
+"contract/profiles/fluent-bit/providers/qcore.ctraces.json",
+"contract/profiles/fluent-bit/providers/qcore.librdkafka.json",
+"contract/profiles/libevent-core/profile.json",
+"contract/profiles/libevent/profile.json",
+"contract/profiles/libevent/providers/qcore.libevent.json"
+],
+"seconds": 0.2
 },
 "qcore-compiler::test::std_socket_inet": {
 "dirs": [
@@ -12814,9 +12816,9 @@
 "ls_files": [
 "[\"-z\", \"--cached\", \"--\", \".\"]"
 ],
-"missing_count": 16,
+"missing_count": 9,
 "ok": false,
-"probed_count": 29251,
+"probed_count": 29221,
 "read": [
 "compiler/tests/fixtures/bitfield_concurrency/addressable.qr",
 "compiler/tests/fixtures/bitfield_concurrency/adjacent.qr",
@@ -13599,6 +13601,7 @@
 "providers/quirin-provider-openssl/contracts/openssl/pkcs12.qv",
 "providers/quirin-provider-openssl/contracts/openssl/ssl.qv",
 "providers/quirin-provider-openssl/contracts/openssl/ssl_ctx.qv",
+"providers/quirin-provider-openssl/contracts/openssl/ssl_handshake.qv",
 "providers/quirin-provider-openssl/contracts/openssl/ssl_io.qv",
 "providers/quirin-provider-openssl/contracts/openssl/stack.qv",
 "providers/quirin-provider-openssl/contracts/openssl/x509.qv",
@@ -13609,7 +13612,7 @@
 "providers/quirin-provider-shared/contracts/library/descriptor_native_observation.qv",
 "providers/quirin-provider-shared/contracts/library/source_projection.qv"
 ],
-"seconds": 1.6
+"seconds": 1.0
 },
 "qcore-compiler::test::std_string": {
 "dirs": [
@@ -13617,7 +13620,7 @@
 ],
 "exit": 101,
 "ls_files": [],
-"missing_count": 15,
+"missing_count": 9,
 "ok": false,
 "probed_count": 1,
 "read": [
@@ -13633,7 +13636,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.3
+"seconds": 0.2
 },
 "qcore-compiler::test::string_concat": {
 "dirs": [
@@ -13641,7 +13644,7 @@
 ],
 "exit": 101,
 "ls_files": [],
-"missing_count": 15,
+"missing_count": 9,
 "ok": false,
 "probed_count": 1,
 "read": [
@@ -13657,7 +13660,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.3
+"seconds": 0.2
 },
 "qcore-compiler::test::string_slice_io": {
 "dirs": [
@@ -13665,7 +13668,7 @@
 ],
 "exit": 101,
 "ls_files": [],
-"missing_count": 15,
+"missing_count": 9,
 "ok": false,
 "probed_count": 1,
 "read": [
@@ -13681,7 +13684,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.3
+"seconds": 0.2
 },
 "qcore-compiler::test::system_trace_examples_windows": {
 "dirs": [],
@@ -13699,7 +13702,7 @@
 ],
 "exit": 101,
 "ls_files": [],
-"missing_count": 12,
+"missing_count": 9,
 "ok": false,
 "probed_count": 1,
 "read": [
@@ -13715,7 +13718,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.3
+"seconds": 0.2
 },
 "qcore-compiler::test::task_record_captures": {
 "dirs": [
@@ -13723,7 +13726,7 @@
 ],
 "exit": 0,
 "ls_files": [],
-"missing_count": 12,
+"missing_count": 9,
 "ok": true,
 "probed_count": 1,
 "read": [
@@ -13740,7 +13743,7 @@
 "contract/profiles/libevent/providers/qcore.libevent.json",
 "examples/threads/README.md"
 ],
-"seconds": 3.2
+"seconds": 1.9
 },
 "qcore-compiler::test::task_route_tsan": {
 "dirs": [
@@ -13748,7 +13751,7 @@
 ],
 "exit": 0,
 "ls_files": [],
-"missing_count": 12,
+"missing_count": 9,
 "ok": true,
 "probed_count": 1,
 "read": [
@@ -13764,17 +13767,17 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 58.4
+"seconds": 51.6
 },
 "qcore-compiler::test::teardown_route_parity": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.4
+"seconds": 0.9
 },
 "qcore-compiler::test::thread_examples": {
 "dirs": [
@@ -13782,7 +13785,7 @@
 ],
 "exit": 101,
 "ls_files": [],
-"missing_count": 12,
+"missing_count": 9,
 "ok": false,
 "probed_count": 1,
 "read": [
@@ -13798,7 +13801,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.3
+"seconds": 0.2
 },
 "qcore-compiler::test::toolchain_compatibility": {
 "dirs": [],
@@ -13808,7 +13811,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.2
+"seconds": 0.1
 },
 "qcore-compiler::test::trace_alphabet_lease_boundary": {
 "dirs": [
@@ -13840,11 +13843,11 @@
 "ls_files": [
 "[\"-z\", \"--cached\", \"--\", \".\"]"
 ],
-"missing_count": 1,
+"missing_count": 0,
 "ok": true,
-"probed_count": 30041,
+"probed_count": 30012,
 "read": [],
-"seconds": 0.7
+"seconds": 0.4
 },
 "qcore-compiler::test::unread_annotations": {
 "dirs": [
@@ -13868,7 +13871,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.4
+"seconds": 0.3
 },
 "qcore-compiler::test::unsafe_linkage": {
 "dirs": [
@@ -13876,7 +13879,7 @@
 ],
 "exit": 101,
 "ls_files": [],
-"missing_count": 15,
+"missing_count": 9,
 "ok": false,
 "probed_count": 1,
 "read": [
@@ -13892,13 +13895,13 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.3
+"seconds": 0.2
 },
 "qcore-compiler::test::unsupported_close_route_parity": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 3,
+"missing_count": 2,
 "ok": true,
 "probed_count": 2,
 "read": [
@@ -13908,7 +13911,7 @@
 "contract/profiles/fluent-bit/providers/qcore.ctraces.json",
 "contract/profiles/fluent-bit/providers/qcore.librdkafka.json"
 ],
-"seconds": 89.0
+"seconds": 40.4
 },
 "qcore-compiler::test::usable_records": {
 "dirs": [
@@ -13916,7 +13919,7 @@
 ],
 "exit": 101,
 "ls_files": [],
-"missing_count": 40,
+"missing_count": 34,
 "ok": false,
 "probed_count": 2,
 "read": [
@@ -13936,7 +13939,7 @@
 "examples/ffi/qr_point.h",
 "examples/records/nested_writes.qr"
 ],
-"seconds": 1.5
+"seconds": 0.9
 },
 "qcore-compiler::test::usable_records_survey": {
 "dirs": [
@@ -13946,7 +13949,7 @@
 "ls_files": [
 "[\"-z\", \"--cached\", \"--\", \".\"]"
 ],
-"missing_count": 35,
+"missing_count": 32,
 "ok": true,
 "probed_count": 5,
 "read": [
@@ -14019,7 +14022,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 1.8
+"seconds": 1.1
 },
 "qcore-compiler::test::w3_evidence_v2": {
 "dirs": [
@@ -14028,7 +14031,7 @@
 ],
 "exit": 0,
 "ls_files": [],
-"missing_count": 81,
+"missing_count": 72,
 "ok": true,
 "probed_count": 4,
 "read": [
@@ -14094,7 +14097,7 @@
 "crates/qcore-schemas/src/verdict.rs",
 "crates/qcore-schemas/src/witness.rs"
 ],
-"seconds": 18.1
+"seconds": 11.1
 },
 "qcore-compiler::test::windows_threads": {
 "dirs": [],
@@ -14112,7 +14115,7 @@
 "ls_files": [
 "[\"-z\", \"--cached\", \"--\", \".\"]"
 ],
-"missing_count": 7,
+"missing_count": 6,
 "ok": true,
 "probed_count": 32,
 "read": [
@@ -14150,7 +14153,7 @@
 ],
 "exit": 101,
 "ls_files": [],
-"missing_count": 15,
+"missing_count": 9,
 "ok": false,
 "probed_count": 1,
 "read": [
@@ -14166,7 +14169,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.3
+"seconds": 0.2
 },
 "qcore-compiler::test::write_lend_tasks": {
 "dirs": [
@@ -14174,7 +14177,7 @@
 ],
 "exit": 101,
 "ls_files": [],
-"missing_count": 12,
+"missing_count": 9,
 "ok": false,
 "probed_count": 1,
 "read": [
@@ -14190,7 +14193,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.4
+"seconds": 0.2
 },
 "qcore-compiler::test::write_lend_tasks_exercise": {
 "dirs": [
@@ -14198,7 +14201,7 @@
 ],
 "exit": 101,
 "ls_files": [],
-"missing_count": 12,
+"missing_count": 9,
 "ok": false,
 "probed_count": 1,
 "read": [
@@ -14214,7 +14217,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 1.0
+"seconds": 0.5
 },
 "qcore-contract::lib::qcore_contract": {
 "dirs": [],
@@ -14224,7 +14227,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.7
+"seconds": 0.3
 },
 "qcore-contract::test::boolean_conditions": {
 "dirs": [],
@@ -14234,7 +14237,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-contract::test::boolean_frame_policy": {
 "dirs": [],
@@ -14252,9 +14255,9 @@
 "ls_files": [
 "[\"-z\", \"--cached\", \"--\", \".\"]"
 ],
-"missing_count": 1,
+"missing_count": 0,
 "ok": true,
-"probed_count": 29868,
+"probed_count": 29838,
 "read": [
 "providers/conformance/tests/fixtures/configured_boolean_source/sample.qv",
 "providers/conformance/tests/fixtures/configured_boolean_source/sample_reset.qv",
@@ -14421,6 +14424,7 @@
 "providers/quirin-provider-openssl/contracts/openssl/pkcs12.qv",
 "providers/quirin-provider-openssl/contracts/openssl/ssl.qv",
 "providers/quirin-provider-openssl/contracts/openssl/ssl_ctx.qv",
+"providers/quirin-provider-openssl/contracts/openssl/ssl_handshake.qv",
 "providers/quirin-provider-openssl/contracts/openssl/ssl_io.qv",
 "providers/quirin-provider-openssl/contracts/openssl/stack.qv",
 "providers/quirin-provider-openssl/contracts/openssl/x509.qv",
@@ -14431,7 +14435,7 @@
 "providers/quirin-provider-shared/contracts/library/descriptor_native_observation.qv",
 "providers/quirin-provider-shared/contracts/library/source_projection.qv"
 ],
-"seconds": 2.1
+"seconds": 1.2
 },
 "qcore-contract::test::bounds_contract_frames": {
 "dirs": [],
@@ -14471,7 +14475,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-contract::test::caller_frame": {
 "dirs": [],
@@ -14481,7 +14485,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-contract::test::cfl_atomic_effects": {
 "dirs": [],
@@ -14511,7 +14515,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.3
+"seconds": 0.2
 },
 "qcore-contract::test::cmetrics_setter_models": {
 "dirs": [],
@@ -14521,7 +14525,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.4
+"seconds": 0.2
 },
 "qcore-contract::test::contract_body_checked": {
 "dirs": [],
@@ -14541,7 +14545,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 3.9
+"seconds": 2.4
 },
 "qcore-contract::test::contract_bundle_includes": {
 "dirs": [],
@@ -14598,7 +14602,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-contract::test::contract_premise": {
 "dirs": [],
@@ -14805,7 +14809,7 @@
 "providers/quirin-provider-shared/contracts/library/descriptor_native_observation.qv",
 "providers/quirin-provider-shared/contracts/library/source_projection.qv"
 ],
-"seconds": 292.8
+"seconds": 176.0
 },
 "qcore-contract::test::deref_parts": {
 "dirs": [],
@@ -14827,7 +14831,7 @@
 "read": [
 "providers/qcore-provider-libevent/contracts/monkey/event_loop.qv"
 ],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-contract::test::detach_same_item_clause": {
 "dirs": [],
@@ -14850,7 +14854,7 @@
 "providers/qcore-provider-libevent/contracts/monkey/event_loop.qv",
 "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_collector_registration.qv"
 ],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-contract::test::guarded_contract_adoption": {
 "dirs": [],
@@ -14865,7 +14869,7 @@
 "docs/reports/premise-guarded-decomposition/applications/cjson.qgd",
 "providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv"
 ],
-"seconds": 0.8
+"seconds": 0.3
 },
 "qcore-contract::test::guarded_decomposition": {
 "dirs": [],
@@ -14892,7 +14896,7 @@
 "providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv",
 "providers/qcore-provider-librdkafka/contracts/librdkafka/kafka_mem.qv"
 ],
-"seconds": 0.9
+"seconds": 0.5
 },
 "qcore-contract::test::hypothesis": {
 "dirs": [],
@@ -14902,7 +14906,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.4
+"seconds": 0.2
 },
 "qcore-contract::test::hypothesis_bindings": {
 "dirs": [],
@@ -14912,7 +14916,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 1.0
+"seconds": 0.4
 },
 "qcore-contract::test::libc_reading_hypotheses": {
 "dirs": [],
@@ -14922,7 +14926,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.2
+"seconds": 0.1
 },
 "qcore-contract::test::local_conditions": {
 "dirs": [],
@@ -14932,7 +14936,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-contract::test::logger_effects": {
 "dirs": [],
@@ -14942,7 +14946,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-contract::test::nonnull_member_qualifier": {
 "dirs": [],
@@ -14962,7 +14966,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-contract::test::op_constructor_clause": {
 "dirs": [],
@@ -14972,7 +14976,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-contract::test::outer_contract": {
 "dirs": [],
@@ -14992,7 +14996,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 10.8
+"seconds": 5.0
 },
 "qcore-contract::test::premise_flow": {
 "dirs": [],
@@ -15012,7 +15016,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-contract::test::production_symbolic_adoption": {
 "dirs": [],
@@ -15020,7 +15024,7 @@
 "ls_files": [
 "[\"-z\", \"--cached\", \"--\", \".\"]"
 ],
-"missing_count": 4,
+"missing_count": 3,
 "ok": true,
 "probed_count": 186,
 "read": [
@@ -15377,6 +15381,7 @@
 "providers/quirin-provider-openssl/contracts/openssl/pkcs12.qv",
 "providers/quirin-provider-openssl/contracts/openssl/ssl.qv",
 "providers/quirin-provider-openssl/contracts/openssl/ssl_ctx.qv",
+"providers/quirin-provider-openssl/contracts/openssl/ssl_handshake.qv",
 "providers/quirin-provider-openssl/contracts/openssl/ssl_io.qv",
 "providers/quirin-provider-openssl/contracts/openssl/stack.qv",
 "providers/quirin-provider-openssl/contracts/openssl/x509.qv",
@@ -15387,7 +15392,7 @@
 "providers/quirin-provider-shared/contracts/library/descriptor_native_observation.qv",
 "providers/quirin-provider-shared/contracts/library/source_projection.qv"
 ],
-"seconds": 719.8
+"seconds": 582.2
 },
 "qcore-contract::test::quant_condition": {
 "dirs": [],
@@ -15397,7 +15402,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-contract::test::quant_effect": {
 "dirs": [],
@@ -15427,7 +15432,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-contract::test::reference_clause": {
 "dirs": [],
@@ -15437,7 +15442,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-contract::test::resource_kinds": {
 "dirs": [],
@@ -15447,7 +15452,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-contract::test::resource_kinds_cg25": {
 "dirs": [],
@@ -15457,7 +15462,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-contract::test::result_set_contract": {
 "dirs": [],
@@ -15487,7 +15492,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-contract::test::return_code_handoff_clause": {
 "dirs": [],
@@ -15497,7 +15502,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-contract::test::scheduler_lifetime": {
 "dirs": [],
@@ -15543,11 +15548,11 @@
 "dirs": [],
 "exit": 101,
 "ls_files": [],
-"missing_count": 24,
+"missing_count": 9,
 "ok": false,
 "probed_count": 1,
 "read": [],
-"seconds": 2.6
+"seconds": 0.9
 },
 "qcore-core::test::bounds_body_standing": {
 "dirs": [],
@@ -15617,7 +15622,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.4
+"seconds": 0.1
 },
 "qcore-core::test::null_deref": {
 "dirs": [],
@@ -15757,7 +15762,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-frontend::test::module_imports": {
 "dirs": [],
@@ -15807,7 +15812,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-frontend::test::read_shares": {
 "dirs": [],
@@ -15827,7 +15832,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-frontend::test::runtime_import_syntax": {
 "dirs": [],
@@ -15857,7 +15862,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-frontend::test::source_mutex": {
 "dirs": [],
@@ -15867,7 +15872,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-frontend::test::source_mutex_footprint": {
 "dirs": [],
@@ -15947,7 +15952,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 3.2
+"seconds": 2.2
 },
 "qcore-schemas::test::boolean_result_abi": {
 "dirs": [],
@@ -16073,7 +16078,7 @@
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [
@@ -16083,23 +16088,23 @@
 "contract/profiles/fluent-bit/providers/qcore.ctraces.json",
 "contract/profiles/fluent-bit/providers/qcore.librdkafka.json"
 ],
-"seconds": 9.2
+"seconds": 3.1
 },
 "qcore-verification::test::atomic_publication_source": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.7
+"seconds": 0.4
 },
 "qcore-verification::test::call_use_dependents": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [
@@ -16109,13 +16114,13 @@
 "contract/profiles/fluent-bit/providers/qcore.ctraces.json",
 "contract/profiles/fluent-bit/providers/qcore.librdkafka.json"
 ],
-"seconds": 1.3
+"seconds": 0.6
 },
 "qcore-verification::test::call_use_source": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [
@@ -16125,7 +16130,7 @@
 "contract/profiles/fluent-bit/providers/qcore.ctraces.json",
 "contract/profiles/fluent-bit/providers/qcore.librdkafka.json"
 ],
-"seconds": 2.2
+"seconds": 1.1
 },
 "qcore-verification::test::callback_coverage": {
 "dirs": [],
@@ -16141,7 +16146,7 @@
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 9,
+"missing_count": 6,
 "ok": true,
 "probed_count": 2,
 "read": [
@@ -16153,7 +16158,7 @@
 "contract/profiles/fluent-bit/providers/qcore.ctraces.json",
 "contract/profiles/fluent-bit/providers/qcore.librdkafka.json"
 ],
-"seconds": 1.2
+"seconds": 0.5
 },
 "qcore-verification::test::chunk_lifecycle_coverage": {
 "dirs": [],
@@ -16169,7 +16174,7 @@
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [
@@ -16179,13 +16184,13 @@
 "contract/profiles/fluent-bit/providers/qcore.ctraces.json",
 "contract/profiles/fluent-bit/providers/qcore.librdkafka.json"
 ],
-"seconds": 15.4
+"seconds": 7.9
 },
 "qcore-verification::test::cleanup_replay_source": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [
@@ -16195,17 +16200,17 @@
 "contract/profiles/fluent-bit/providers/qcore.ctraces.json",
 "contract/profiles/fluent-bit/providers/qcore.librdkafka.json"
 ],
-"seconds": 1.9
+"seconds": 1.2
 },
 "qcore-verification::test::cleanup_vocabulary": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.4
+"seconds": 0.2
 },
 "qcore-verification::test::composition_bounds": {
 "dirs": [],
@@ -16213,7 +16218,7 @@
 "ls_files": [
 "[\"-z\", \"--cached\", \"--\", \".\"]"
 ],
-"missing_count": 12,
+"missing_count": 10,
 "ok": true,
 "probed_count": 905,
 "read": [
@@ -17007,13 +17012,13 @@
 "crates/quirin-source-analysis/src/test_support.rs",
 "crates/quirin-source-analysis/src/typed_source_match.rs"
 ],
-"seconds": 0.6
+"seconds": 0.3
 },
 "qcore-verification::test::composition_mutations": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [
@@ -17023,7 +17028,7 @@
 "contract/profiles/fluent-bit/providers/qcore.ctraces.json",
 "contract/profiles/fluent-bit/providers/qcore.librdkafka.json"
 ],
-"seconds": 45.0
+"seconds": 22.0
 },
 "qcore-verification::test::composition_relation": {
 "dirs": [],
@@ -17039,7 +17044,7 @@
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [
@@ -17049,13 +17054,13 @@
 "contract/profiles/fluent-bit/providers/qcore.ctraces.json",
 "contract/profiles/fluent-bit/providers/qcore.librdkafka.json"
 ],
-"seconds": 4.8
+"seconds": 1.5
 },
 "qcore-verification::test::counter_source": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [
@@ -17065,17 +17070,17 @@
 "contract/profiles/fluent-bit/providers/qcore.ctraces.json",
 "contract/profiles/fluent-bit/providers/qcore.librdkafka.json"
 ],
-"seconds": 1.3
+"seconds": 0.6
 },
 "qcore-verification::test::ctraces_capability_boundary": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.6
+"seconds": 0.3
 },
 "qcore-verification::test::emit_cleanup_replay_fixtures": {
 "dirs": [],
@@ -17101,7 +17106,7 @@
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [
@@ -17111,13 +17116,13 @@
 "contract/profiles/fluent-bit/providers/qcore.ctraces.json",
 "contract/profiles/fluent-bit/providers/qcore.librdkafka.json"
 ],
-"seconds": 4.3
+"seconds": 1.9
 },
 "qcore-verification::test::file_close_composition_mutations": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 4,
+"missing_count": 3,
 "ok": true,
 "probed_count": 2,
 "read": [
@@ -17127,13 +17132,13 @@
 "contract/profiles/fluent-bit/providers/qcore.ctraces.json",
 "contract/profiles/fluent-bit/providers/qcore.librdkafka.json"
 ],
-"seconds": 56.0
+"seconds": 28.3
 },
 "qcore-verification::test::file_close_composition_source": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 4,
+"missing_count": 3,
 "ok": true,
 "probed_count": 2,
 "read": [
@@ -17143,13 +17148,13 @@
 "contract/profiles/fluent-bit/providers/qcore.ctraces.json",
 "contract/profiles/fluent-bit/providers/qcore.librdkafka.json"
 ],
-"seconds": 15.4
+"seconds": 7.6
 },
 "qcore-verification::test::filesystem_chunk_close_composition_mutations": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 4,
+"missing_count": 3,
 "ok": true,
 "probed_count": 2,
 "read": [
@@ -17159,13 +17164,13 @@
 "contract/profiles/fluent-bit/providers/qcore.ctraces.json",
 "contract/profiles/fluent-bit/providers/qcore.librdkafka.json"
 ],
-"seconds": 44.6
+"seconds": 20.6
 },
 "qcore-verification::test::filesystem_chunk_close_composition_source": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 4,
+"missing_count": 3,
 "ok": true,
 "probed_count": 2,
 "read": [
@@ -17175,13 +17180,13 @@
 "contract/profiles/fluent-bit/providers/qcore.ctraces.json",
 "contract/profiles/fluent-bit/providers/qcore.librdkafka.json"
 ],
-"seconds": 25.2
+"seconds": 10.4
 },
 "qcore-verification::test::frame_source": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [
@@ -17191,13 +17196,13 @@
 "contract/profiles/fluent-bit/providers/qcore.ctraces.json",
 "contract/profiles/fluent-bit/providers/qcore.librdkafka.json"
 ],
-"seconds": 0.7
+"seconds": 0.4
 },
 "qcore-verification::test::frame_source_mutations": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [
@@ -17207,7 +17212,7 @@
 "contract/profiles/fluent-bit/providers/qcore.ctraces.json",
 "contract/profiles/fluent-bit/providers/qcore.librdkafka.json"
 ],
-"seconds": 0.8
+"seconds": 0.5
 },
 "qcore-verification::test::generic_driver": {
 "dirs": [],
@@ -17217,23 +17222,23 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-verification::test::generic_source": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.7
+"seconds": 0.4
 },
 "qcore-verification::test::memory_close_composition_mutations": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 4,
+"missing_count": 3,
 "ok": true,
 "probed_count": 2,
 "read": [
@@ -17243,13 +17248,13 @@
 "contract/profiles/fluent-bit/providers/qcore.ctraces.json",
 "contract/profiles/fluent-bit/providers/qcore.librdkafka.json"
 ],
-"seconds": 23.5
+"seconds": 12.7
 },
 "qcore-verification::test::memory_close_composition_source": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 4,
+"missing_count": 3,
 "ok": true,
 "probed_count": 2,
 "read": [
@@ -17259,13 +17264,13 @@
 "contract/profiles/fluent-bit/providers/qcore.ctraces.json",
 "contract/profiles/fluent-bit/providers/qcore.librdkafka.json"
 ],
-"seconds": 6.6
+"seconds": 3.9
 },
 "qcore-verification::test::monkey_wait_projection": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [
@@ -17275,13 +17280,13 @@
 "contract/profiles/fluent-bit/providers/qcore.ctraces.json",
 "contract/profiles/fluent-bit/providers/qcore.librdkafka.json"
 ],
-"seconds": 4.3
+"seconds": 2.5
 },
 "qcore-verification::test::observed_wait_composition": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [
@@ -17291,7 +17296,7 @@
 "contract/profiles/fluent-bit/providers/qcore.ctraces.json",
 "contract/profiles/fluent-bit/providers/qcore.librdkafka.json"
 ],
-"seconds": 1.6
+"seconds": 1.0
 },
 "qcore-verification::test::reactor_callback": {
 "dirs": [],
@@ -17311,7 +17316,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-verification::test::runtime_source_imports": {
 "dirs": [],
@@ -17337,7 +17342,7 @@
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [
@@ -17347,13 +17352,13 @@
 "contract/profiles/fluent-bit/providers/qcore.ctraces.json",
 "contract/profiles/fluent-bit/providers/qcore.librdkafka.json"
 ],
-"seconds": 2.3
+"seconds": 1.4
 },
 "qcore-verification::test::source_effect_helper_target": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [
@@ -17363,12 +17368,28 @@
 "contract/profiles/fluent-bit/providers/qcore.ctraces.json",
 "contract/profiles/fluent-bit/providers/qcore.librdkafka.json"
 ],
-"seconds": 1.0
+"seconds": 0.5
 },
 "qcore-verification::test::source_effect_mutations": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [
+"contract/profiles/fluent-bit/profile.json",
+"contract/profiles/fluent-bit/providers/qcore.chunkio.json",
+"contract/profiles/fluent-bit/providers/qcore.cmetrics.json",
+"contract/profiles/fluent-bit/providers/qcore.ctraces.json",
+"contract/profiles/fluent-bit/providers/qcore.librdkafka.json"
+],
+"seconds": 0.7
+},
+"qcore-verification::test::source_effect_obligations": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
 "missing_count": 2,
 "ok": true,
 "probed_count": 1,
@@ -17379,23 +17400,7 @@
 "contract/profiles/fluent-bit/providers/qcore.ctraces.json",
 "contract/profiles/fluent-bit/providers/qcore.librdkafka.json"
 ],
-"seconds": 1.2
-},
-"qcore-verification::test::source_effect_obligations": {
-"dirs": [],
-"exit": 0,
-"ls_files": [],
-"missing_count": 3,
-"ok": true,
-"probed_count": 1,
-"read": [
-"contract/profiles/fluent-bit/profile.json",
-"contract/profiles/fluent-bit/providers/qcore.chunkio.json",
-"contract/profiles/fluent-bit/providers/qcore.cmetrics.json",
-"contract/profiles/fluent-bit/providers/qcore.ctraces.json",
-"contract/profiles/fluent-bit/providers/qcore.librdkafka.json"
-],
-"seconds": 3.6
+"seconds": 1.8
 },
 "qcore-verification::test::source_profile_boundary": {
 "dirs": [],
@@ -17405,13 +17410,13 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-verification::test::teardown_prerequisites": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [
@@ -17421,13 +17426,13 @@
 "contract/profiles/fluent-bit/providers/qcore.ctraces.json",
 "contract/profiles/fluent-bit/providers/qcore.librdkafka.json"
 ],
-"seconds": 1.2
+"seconds": 0.7
 },
 "qcore-verification::test::teardown_source": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [
@@ -17437,7 +17442,7 @@
 "contract/profiles/fluent-bit/providers/qcore.ctraces.json",
 "contract/profiles/fluent-bit/providers/qcore.librdkafka.json"
 ],
-"seconds": 1.2
+"seconds": 0.8
 },
 "qcore-verification::test::timed_wait_observation_wire": {
 "dirs": [],
@@ -17453,7 +17458,7 @@
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [
@@ -17463,13 +17468,13 @@
 "contract/profiles/fluent-bit/providers/qcore.ctraces.json",
 "contract/profiles/fluent-bit/providers/qcore.librdkafka.json"
 ],
-"seconds": 1.0
+"seconds": 0.5
 },
 "qcore-verification::test::unsupported_close_composition_mutations": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 4,
+"missing_count": 3,
 "ok": true,
 "probed_count": 2,
 "read": [
@@ -17479,13 +17484,13 @@
 "contract/profiles/fluent-bit/providers/qcore.ctraces.json",
 "contract/profiles/fluent-bit/providers/qcore.librdkafka.json"
 ],
-"seconds": 44.0
+"seconds": 20.5
 },
 "qcore-verification::test::unsupported_close_composition_source": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 4,
+"missing_count": 3,
 "ok": true,
 "probed_count": 2,
 "read": [
@@ -17495,13 +17500,13 @@
 "contract/profiles/fluent-bit/providers/qcore.ctraces.json",
 "contract/profiles/fluent-bit/providers/qcore.librdkafka.json"
 ],
-"seconds": 30.1
+"seconds": 12.2
 },
 "qcore-verification::test::wait_failure_paths": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [
@@ -17511,7 +17516,7 @@
 "contract/profiles/fluent-bit/providers/qcore.ctraces.json",
 "contract/profiles/fluent-bit/providers/qcore.librdkafka.json"
 ],
-"seconds": 1.8
+"seconds": 0.9
 },
 "qcore-verifier-host::lib::qcore_verifier_host": {
 "dirs": [],
@@ -17531,7 +17536,7 @@
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.1
+"seconds": 0.0
 },
 "qcore-verifier-host::test::confined_process_execution": {
 "dirs": [],
@@ -17541,7 +17546,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.5
+"seconds": 0.4
 },
 "qcore-verifier-host::test::diagnostic_attribution": {
 "dirs": [],
@@ -17561,13 +17566,13 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 1.9
+"seconds": 1.8
 },
 "qcore-verifier-host::test::execution_quota": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 0,
 "ok": true,
 "probed_count": 1,
 "read": [],
@@ -17601,7 +17606,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 3.1
+"seconds": 3.0
 },
 "qcore-verifier-host::test::standalone_host": {
 "dirs": [],
@@ -17611,7 +17616,7 @@
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 2.1
+"seconds": 1.8
 },
 "qcorec::bin::quirin": {
 "dirs": [],
@@ -17629,7 +17634,7 @@
 ],
 "exit": 0,
 "ls_files": [],
-"missing_count": 17,
+"missing_count": 14,
 "ok": true,
 "probed_count": 2,
 "read": [
@@ -17651,7 +17656,7 @@
 "contract/profiles/libevent/providers/qcore.libevent.json",
 "examples/ffi/qr_header.h"
 ],
-"seconds": 0.4
+"seconds": 0.3
 },
 "qcorec::test::contract_load_path": {
 "dirs": [
@@ -17849,7 +17854,7 @@
 "providers/quirin-provider-shared/contracts/library/descriptor_native_observation.qv",
 "providers/quirin-provider-shared/contracts/library/source_projection.qv"
 ],
-"seconds": 0.7
+"seconds": 0.5
 },
 "qcorec::test::examples_cli": {
 "dirs": [
@@ -17859,7 +17864,7 @@
 "ls_files": [
 "[\"-z\", \"--cached\", \"--\", \".\"]"
 ],
-"missing_count": 15,
+"missing_count": 14,
 "ok": true,
 "probed_count": 57,
 "read": [
@@ -17907,7 +17912,7 @@
 "examples/unsafe-linkage/unchecked_calls.qr",
 "examples/unsafe-linkage/unchecked_demo.qrlib"
 ],
-"seconds": 0.7
+"seconds": 0.4
 },
 "qcorec::test::extension_compatibility": {
 "dirs": [
@@ -17932,7 +17937,7 @@
 "contract/profiles/libevent/providers/qcore.libevent.json",
 "docs/reports/remaining-v07/probes/d02_boundary_record.qr"
 ],
-"seconds": 0.3
+"seconds": 0.2
 },
 "qcorec::test::plugin_packages": {
 "dirs": [
@@ -17956,7 +17961,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.9
+"seconds": 0.6
 },
 "qcorec::test::runtime_imports": {
 "dirs": [
@@ -17980,7 +17985,7 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 0.3
+"seconds": 0.1
 },
 "quirin-audit-plugin-libcurl::lib::quirin_audit_plugin_libcurl": {
 "dirs": [],
@@ -18177,7 +18182,7 @@
 "providers/quirin-provider-shared/contracts/library/descriptor_native_observation.qv",
 "providers/quirin-provider-shared/contracts/library/source_projection.qv"
 ],
-"seconds": 1.0
+"seconds": 0.7
 },
 "quirin-audit-plugin-libevent::bin::quirin-audit-libevent": {
 "dirs": [],
@@ -18233,7 +18238,7 @@
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 1,
+"missing_count": 0,
 "ok": true,
 "probed_count": 1,
 "read": [],
@@ -18245,13 +18250,13 @@
 ],
 "exit": 0,
 "ls_files": [],
-"missing_count": 3,
+"missing_count": 0,
 "ok": true,
 "probed_count": 3,
 "read": [
 "scripts/contribution_ledgers.py"
 ],
-"seconds": 0.6
+"seconds": 0.5
 },
 "quirin-audit-plugin-measure::test::slot_wait": {
 "dirs": [
@@ -18259,19 +18264,19 @@
 ],
 "exit": 0,
 "ls_files": [],
-"missing_count": 3,
+"missing_count": 0,
 "ok": true,
 "probed_count": 2,
 "read": [
 "scripts/gate_slot.py"
 ],
-"seconds": 12.9
+"seconds": 12.5
 },
 "quirin-audit-plugin-measure::test::units": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 4,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [
@@ -18328,17 +18333,17 @@
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 1,
+"missing_count": 0,
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.4
+"seconds": 0.3
 },
 "quirin-audit-plugin-openssl::test::host": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 4,
+"missing_count": 0,
 "ok": true,
 "probed_count": 1,
 "read": [],
@@ -18348,7 +18353,7 @@
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 1,
+"missing_count": 0,
 "ok": true,
 "probed_count": 0,
 "read": [],
@@ -18398,7 +18403,7 @@
 ],
 "exit": 0,
 "ls_files": [],
-"missing_count": 213,
+"missing_count": 211,
 "ok": true,
 "probed_count": 58,
 "read": [
@@ -18445,7 +18450,7 @@
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [
@@ -18457,29 +18462,29 @@
 "contract/profiles/libevent/profile.json",
 "contract/profiles/libevent/providers/qcore.libevent.json"
 ],
-"seconds": 18.6
+"seconds": 8.0
 },
 "quirin-source-analysis::test::condvar_join_census": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.3
+"seconds": 0.1
 },
 "quirin-source-analysis::test::condvar_join_lifecycle": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [
 "providers/quirin-provider-fluent-bit/contracts/fluent_bit/lib_engine_thread.qv"
 ],
-"seconds": 0.3
+"seconds": 0.1
 },
 "quirin-source-analysis::test::condvar_join_stop_paths": {
 "dirs": [],
@@ -18495,21 +18500,21 @@
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.3
+"seconds": 0.1
 },
 "quirin-source-analysis::test::loop_owner_coro_plugin": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 1,
+"missing_count": 0,
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.7
+"seconds": 0.2
 },
 "quirin-source-analysis::test::loop_owner_coroutine": {
 "dirs": [],
@@ -18525,61 +18530,61 @@
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 1,
+"missing_count": 0,
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 2.0
+"seconds": 0.8
 },
 "quirin-source-analysis::test::loop_owner_instance_flow": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 1,
+"missing_count": 0,
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 1.1
+"seconds": 0.6
 },
 "quirin-source-analysis::test::loop_owner_predefined_macros": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 2,
+"missing_count": 1,
 "ok": true,
 "probed_count": 1,
 "read": [],
-"seconds": 0.2
+"seconds": 0.1
 },
 "quirin-source-analysis::test::loop_owner_premises_instance": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 1,
+"missing_count": 0,
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.9
+"seconds": 0.5
 },
 "quirin-source-analysis::test::loop_owner_property_keys": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 1,
+"missing_count": 0,
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.9
+"seconds": 0.6
 },
 "quirin-source-analysis::test::loop_owner_typed_route": {
 "dirs": [],
 "exit": 0,
 "ls_files": [],
-"missing_count": 1,
+"missing_count": 0,
 "ok": true,
 "probed_count": 0,
 "read": [],
-"seconds": 0.5
+"seconds": 0.4
 },
 "rule-32a-caller-frame-hold::lib::rule_32a_caller_frame_hold": {
 "dirs": [],
