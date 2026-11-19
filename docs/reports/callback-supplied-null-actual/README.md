@@ -331,6 +331,38 @@ CALLBACK-CANDIDATE-LITERAL-PREMISE; merge `1d75fe250`):
 
 The opt-in measurement was not rerun on the merge.
 
+**After merging main `80e4b0a25`** (r36 OPENSSL-FREE-SESSION-REMOVE-INVOCATION;
+merge `aa11d1991`):
+
+* **The merge.** C04.19's placement paragraph and the handshake-callbacks
+  test conflicted, and both sides were kept.
+* **The frees.** r36 states the BIO callback slots on `BIO_free` and
+  `SSL_free`. Those invocations now state `argp`, and the `_ex` form's
+  `processed`, as `supplied_nullable`, from the same cited sentence: it is
+  the `BIO_free` row itself. r36's test of the frees' actuals now expects
+  those positions. The `NULLABLE_ARGUMENTS` checker and the crate's tests
+  pass (18/18).
+* **The lock.** It was regenerated in the six-step order, with each step's
+  exit captured unpiped:
+  * load-path: 0;
+  * checkers: 1, the expected missing-views refusal;
+  * `views --write`: 0;
+  * `pin`: 0;
+  * `contracts.py sync`: 0;
+  * checkers: 0.
+
+  Against `80e4b0a25`, 12 `flexible` entries change `contract_sha256` and
+  `pinned_at`: this card's 10, plus `BIO_free` and `SSL_free`. 107 entries
+  are on both sides. `pinned`, `library_versions` and the load paths are
+  unchanged.
+* **The gate.** `gate_scope.py --base 80e4b0a25 --out private/gate-4`
+  ([`gate/gate-4.json`](gate/gate-4.json)): `14 steps passed`, exit 0.
+  * Rust: 662 units; 9715 passed, 0 failed, 21 ignored, 148 filtered.
+  * Lean: 456 audits. Python: 779 tests.
+  * Providers: 161 passed, 1 ignored.
+* **The amendments.** `apply_amendments.py --check --profiles-base
+  80e4b0a25` exits 0.
+
 ## 8. Follow-ups
 
 [`integration-amendments.json`](integration-amendments.json) retires
