@@ -322,3 +322,36 @@ added after the gated commit and changes no code.
   base=rev:a9c6dcf44 --side tip=rev:<tip> --declared
   docs/reports/ag2-unresolved-alias/PREDICTION.md` on corpus, twelve-home,
   system and slice, then the user's `current --monkey-linked` rerun.
+
+## Integrator measurement (2026-11-19)
+
+Measured by the integrator over the four live routes, base `rev:a9c6dcf44`,
+tip `rev:fb0648571`, declared against this card's PREDICTION.md
+(`private/measure/ag2-20261118T185554Z`; comparison beside this file as
+[integration/native-comparison.json.gz](integration/native-comparison.json.gz),
+sha256 `370961d587a65c06292c8e57dc15ba0b481e649a56ad6f1de9e9cb953af3f3d1`
+uncompressed). Missing 0 on every route; no move goes down.
+
+- corpus and twelve-home: 33 moved, 4 unpredicted, all Unknown→Safe:
+  `input_chunk_has_magic_bytes`, `LZ4F_optimalBSID`,
+  `rd_kafka_message_leader_epoch`, `rd_kafka_topic_partition_cmp_opaque`.
+- system: 5 unpredicted Unknown→Safe: `sb_is_rejected_stream`,
+  `input_chunk_has_magic_bytes` (two rows) and `flb_task_retry_count`
+  (two rows).
+- slice: match.
+
+Each unpredicted Safe was checked against the base diagnostics and the source.
+The removed blockers are of three kinds, all within rule 62:
+- an enumeration-constant or literal copy;
+- a callee-summary knock-on, since `rd_kafka_topic_partition_cmp` copies its
+  formals and its summary now stands;
+- a `summary_conflict` that disappears.
+
+The conflict was between an inferred `Owned` and the declared `Borrowed`. The
+bodies only read `buf` / `data`, so `Borrowed` is correct. The
+`summary_validation_premises` re-pins (Owned→Borrowed, section 7) are
+therefore a **correction**, not a weakening.
+
+The unpredicted rows were a prediction gap, not an unsound admission.
+The combined landing measurement is recorded in
+[AG1's report](../ag1-indirect-member-access/README.md#combined-landing-measurement).

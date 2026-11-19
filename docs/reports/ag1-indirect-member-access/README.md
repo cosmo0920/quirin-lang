@@ -358,3 +358,42 @@ contributor at 21:1x JST. One AFTER build attempt failed with ENOSPC
 (`private/ag1/build-after.log`, retained, not evidence) and was rebuilt; the
 first gate attempt (`private/gate-1`) was cancelled when the rule was
 narrowed and is not evidence.
+
+## Integrator measurement (2026-11-19)
+
+Measured by the integrator with `quirin-audit measure` over the four live routes
+(`crates/quirin-audit-plugin-measure/inputs/live.json`), base
+`rev:a9c6dcf44`, tip `rev:e94468466` (the only later commit, 03561d8ce, edits
+this README), declared against this card's PREDICTION.md
+(`private/measure/ag1-20261118T185528Z`; comparison beside this file as
+[integration/native-comparison.json.gz](integration/native-comparison.json.gz),
+sha256 `bfa7a076665267e95f85efdc18477b215c5ea5a648b77f550764224c3fbea284`
+uncompressed).
+
+- corpus: **match**: 8 moved, 0 missing, 0 unpredicted. Unknown→Safe:
+  `rd_kafka_topic_partition_new`, `rd_kafka_topic_partition_new_with_id_and_name`,
+  `cJSON_CreateStringReference`, `cJSON_CreateObjectReference`,
+  `cJSON_CreateArrayReference`, `ut_ack_create_message`. Unknown→Unsafe
+  (provisional): `ut_case_acknowledge_accept` and
+  `ut_case_acknowledge_multiple_partitions`, librdkafka's own unit tests in
+  `rdunittest_acknowledge.c`. Their new leaves are `leak` reports at the
+  assertion macros' early returns, where an object the test allocated is still
+  live; they are provisional and are not presented as upstream defects.
+- twelve-home: the measurement reports **mismatch** only because the
+  prediction carries no `route twelve-home` block (its prose says
+  "same as corpus"); the 8 unpredicted moves there are exactly the 8 declared
+  for corpus, with the same before/after statuses.
+- system, slice: match, 0 moves.
+
+### Combined landing measurement
+
+All three round-33 cards together (`integrate/ag-gaps` 8a85e233f against
+base `rev:2bf47a710`, the CG25 landing tip; no declaration;
+`private/measure/agall-20261119T081826Z`; beside this file as
+[integration/combined-native-comparison.json.gz](integration/combined-native-comparison.json.gz),
+sha256 `1b23b95f4b81679293be66bf9e3c0b485e37a7b41c20593feae68e033de553e9`
+uncompressed): corpus and twelve-home 42 moved (Unknown −42, Safe +40,
+Unsafe +2), system 5 moved (Unknown −5, Safe +5), slice 0. The moved row set,
+with statuses, equals the union of the three cards' separate measurements on
+every route: the readings do not interact. Gate:
+[integration/gate.json](integration/gate.json).

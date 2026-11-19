@@ -445,3 +445,18 @@ full: the diff reaches `qcore-c-gateway`), logs under `private/gate-N/`:
   this card's (`LIBCURL-USER-CRATE-VERSIONS-UNREADABLE-HEADER`).
 - Targeted Rust reruns of every unit attempt 2 failed, on the final rule
   (`private/ag3/targeted3.log` … `targeted6.log`): all pass.
+
+## Integrator measurement (2026-11-19)
+
+Measured by the integrator over the four live routes, base `rev:a9c6dcf44`,
+tip `rev:752c30c20` (analyser 78427060e; the later commits only re-pin tests),
+declared against this card's PREDICTION.md
+(`private/measure/ag3-20261118T213557Z`; comparison beside this file as
+[integration/native-comparison.json.gz](integration/native-comparison.json.gz),
+sha256 `cb59bb4c7c21bbed9dd63bf432bdc361a2e350ad17b7095f98f95b1b23a820bb`
+uncompressed). corpus, system and slice: **match** (corpus: `header_cmp`
+Unknown→Safe, 498 rows with content changes). twelve-home reports mismatch
+only because the prediction has no `route twelve-home` block; its one
+unpredicted move is the same `header_cmp` Unknown→Safe declared for corpus.
+The combined landing measurement is recorded in
+[AG1's report](../ag1-indirect-member-access/README.md#combined-landing-measurement).
