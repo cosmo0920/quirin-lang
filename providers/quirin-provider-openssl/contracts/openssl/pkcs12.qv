@@ -37,6 +37,9 @@ module contract;
 // library-value premise `openssl_builtin_bio_methods` (C04.18) and beside
 // the `p12` premise (C04.5 "Beside a slot invocation", gateway rule 57
 // amended).
+// Card OPENSSL-EX-DATA-REGISTRY: a safe in public-key integrity mode is a
+// signed PKCS#7 whose certificates are decoded as X509 objects (freed again
+// on a failed parse).
 extern fn d2i_PKCS12_bio(bp: ptr<mut, u8>, p12: ptr<mut, ptr<mut, u8>>) -> ptr<mut, u8>
 contract {
     requires resource_contract_v1;
@@ -44,6 +47,7 @@ contract {
     requires resource_library_version(openssl, documented "1.1.1");
     requires resource_literal_argument(p12, 0);
     requires resource_premise(openssl_builtin_bio_methods, "a function of a BIO method the library defines itself (the BIO_METHOD that BIO_s_socket, BIO_s_mem, BIO_f_buffer or another built-in BIO_s_ or BIO_f_ function returns, which no setter is handed), run on a BIO the call reads or writes through (its BIO argument or a BIO the SSL object holds) or one chained to it, takes, releases or retains nothing the caller holds, and so does any callback it runs in turn on an object other than the arguments of the call (the SSL object of a BIO_f_ssl BIO)");
+    requires resource_premise(openssl_ex_data_callbacks, "an ex_data callback the call may run (a new, dup or free callback CRYPTO_get_ex_new_index registers for the class of an object the call creates, copies or frees) takes, releases or retains nothing the caller holds");
     ensures normal resource_borrowed(bp);
     ensures normal resource_borrowed(p12);
     ensures normal resource_callback_slot_invoked(bp, bio_st.bio_callback_ex, _, _, supplied_nullable, _, _, _, _, supplied_nullable);
@@ -68,11 +72,14 @@ contract {
 // "TYPE_free() releases the object and all pointers and sub-objects within
 // it. If the argument is NULL, nothing is done." Pinned prototype: `void
 // PKCS12_free(PKCS12 *a)` (through DECLARE_ASN1_FUNCTIONS).
+// Card OPENSSL-EX-DATA-REGISTRY: it frees the certificates a signed PKCS#7
+// safe holds.
 extern fn PKCS12_free(a: ptr<mut, u8>) -> unit
 contract {
     requires resource_contract_v1;
     requires resource_revision(flexible);
     requires resource_library_version(openssl, documented "1.1.1");
+    requires resource_premise(openssl_ex_data_callbacks, "an ex_data callback the call may run (a new, dup or free callback CRYPTO_get_ex_new_index registers for the class of an object the call creates, copies or frees) takes, releases or retains nothing the caller holds");
     ensures normal resource_released(a, nullable);
     ensures normal resource_return_none();
 };

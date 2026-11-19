@@ -305,10 +305,12 @@ No test target was added, so the read census was not re-recorded.
 `CALLBACK-UNSET-ARGUMENT-NULL`: the user argument pointers and the other
 undocumented possibly-NULL `_` arguments listed in section 3.
 
-For OPENSSL-EX-DATA-REGISTRY (in flight): `CRYPTO_get_ex_new_index` (3.5)
-says "The free_func() may be called with a NULL pointer" and "for
-new_func() this will typically be NULL". A registry invocation it states
-should mark those arguments `supplied_nullable`.
+It also appends a note to OPENSSL-EX-DATA-CLASS-REGISTRY, registered by
+OPENSSL-EX-DATA-REGISTRY (r34). `CRYPTO_get_ex_new_index` (3.5) says "The
+free_func() may be called with a NULL pointer" and, of `ptr`, "for
+new_func() this will typically be NULL". A registry invocation that states
+the ex_data callbacks should mark those arguments `supplied_nullable`. This
+card leaves r34's ex_data declarations unchanged.
 
 Files likely to conflict:
 

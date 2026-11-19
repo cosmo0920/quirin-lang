@@ -67,11 +67,14 @@ contract {
 // certificates are loaded should be used"; RETURN VALUES: "1 on success or 0
 // on failure". Pinned prototype: `int
 // SSL_CTX_set_default_verify_paths(SSL_CTX *ctx)`.
+// Card OPENSSL-EX-DATA-REGISTRY: the default file lookup reads certificates
+// (new X509 objects) and frees each one the store already holds.
 extern fn SSL_CTX_set_default_verify_paths(ctx: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
     requires resource_revision(flexible);
     requires resource_library_version(openssl, documented "1.1.1");
+    requires resource_premise(openssl_ex_data_callbacks, "an ex_data callback the call may run (a new, dup or free callback CRYPTO_get_ex_new_index registers for the class of an object the call creates, copies or frees) takes, releases or retains nothing the caller holds");
     ensures normal resource_borrowed(ctx);
     ensures normal resource_return_none();
 };
@@ -83,11 +86,14 @@ contract {
 // SSL_CTX_load_verify_locations() function". The paths are read, not kept.
 // Pinned prototype: `int SSL_CTX_load_verify_locations(SSL_CTX *ctx, const
 // char *CAfile, const char *CApath)`.
+// Card OPENSSL-EX-DATA-REGISTRY: CAfile is read on execution: new X509
+// objects, each freed when the store already holds it.
 extern fn SSL_CTX_load_verify_locations(ctx: ptr<mut, u8>, CAfile: ptr<const, u8>, CApath: ptr<const, u8>) -> i32
 contract {
     requires resource_contract_v1;
     requires resource_revision(flexible);
     requires resource_library_version(openssl, documented "1.0.2");
+    requires resource_premise(openssl_ex_data_callbacks, "an ex_data callback the call may run (a new, dup or free callback CRYPTO_get_ex_new_index registers for the class of an object the call creates, copies or frees) takes, releases or retains nothing the caller holds");
     ensures normal resource_borrowed(ctx);
     ensures normal resource_borrowed(CAfile);
     ensures normal resource_borrowed(CApath);
@@ -109,11 +115,15 @@ contract {
 // X509 certificate" (SSL_SECOP_EE_KEY, SSL_SECOP_CA_KEY). Until this card
 // the declaration read that callback silently. Pinned prototype: `int
 // SSL_CTX_use_certificate(SSL_CTX *ctx, X509 *x)`.
+// Card OPENSSL-EX-DATA-REGISTRY: the certificate it replaces is freed (its
+// last reference may be the context's), and a private key that does not match
+// the new certificate is freed.
 extern fn SSL_CTX_use_certificate(ctx: ptr<mut, u8>, x: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
     requires resource_revision(flexible);
     requires resource_library_version(openssl, documented "1.0.2");
+    requires resource_premise(openssl_ex_data_callbacks, "an ex_data callback the call may run (a new, dup or free callback CRYPTO_get_ex_new_index registers for the class of an object the call creates, copies or frees) takes, releases or retains nothing the caller holds");
     ensures normal resource_borrowed(ctx);
     ensures normal resource_borrowed(x);
     ensures normal resource_callback_slot_invoked(ctx, ssl_ctx_st.sec_cb, supplied_nullable, ctx, _, _, _, x, supplied_nullable);
@@ -124,11 +134,14 @@ contract {
 // private key to ctx"; "On success the reference counter of the pkey / rsa
 // is incremented." `pkey` is borrowed as `x` is above. Pinned prototype:
 // `int SSL_CTX_use_PrivateKey(SSL_CTX *ctx, EVP_PKEY *pkey)`.
+// Card OPENSSL-EX-DATA-REGISTRY: the key it replaces is freed, and a
+// certificate that does not match the new key is freed.
 extern fn SSL_CTX_use_PrivateKey(ctx: ptr<mut, u8>, pkey: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
     requires resource_revision(flexible);
     requires resource_library_version(openssl, documented "1.0.2");
+    requires resource_premise(openssl_ex_data_callbacks, "an ex_data callback the call may run (a new, dup or free callback CRYPTO_get_ex_new_index registers for the class of an object the call creates, copies or frees) takes, releases or retains nothing the caller holds");
     ensures normal resource_borrowed(ctx);
     ensures normal resource_borrowed(pkey);
     ensures normal resource_return_none();
@@ -146,11 +159,14 @@ contract {
 // call runs (card OPENSSL-SSL-CTX-CALLBACK-SLOTS: the registered-callbacks
 // premise is replaced by this stated invocation). Pinned prototype: `int
 // SSL_CTX_use_PrivateKey_file(SSL_CTX *ctx, const char *file, int type)`.
+// Card OPENSSL-EX-DATA-REGISTRY: it reads a key into a new EVP_PKEY, frees it
+// after use, and replaces the context's key.
 extern fn SSL_CTX_use_PrivateKey_file(ctx: ptr<mut, u8>, file: ptr<const, u8>, filetype: i32) -> i32
 contract {
     requires resource_contract_v1;
     requires resource_revision(flexible);
     requires resource_library_version(openssl, documented "1.0.2");
+    requires resource_premise(openssl_ex_data_callbacks, "an ex_data callback the call may run (a new, dup or free callback CRYPTO_get_ex_new_index registers for the class of an object the call creates, copies or frees) takes, releases or retains nothing the caller holds");
     ensures normal resource_borrowed(ctx);
     ensures normal resource_borrowed(file);
     ensures normal resource_borrowed(filetype);

@@ -54,6 +54,7 @@ import QCore.CallInstantiation
 import QCore.CallResultUse
 import QCore.CallUseAdmission
 import QCore.CallbackBinding
+import QCore.CallbackCandidatePremise
 import QCore.CallbackCandidateScope
 import QCore.CallbackContracts
 import QCore.CallbackCoverage
@@ -320,6 +321,7 @@ import QCore.OpensslBioReaders
 import QCore.OpensslBioSlots
 import QCore.OpensslCalleeShapes
 import QCore.OpensslContractPlugin
+import QCore.OpensslExDataPremise
 import QCore.OpensslHandshakeSlots
 import QCore.OpensslUnstatedSlots
 import QCore.OrderedLifetimeReplay

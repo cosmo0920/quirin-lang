@@ -732,6 +732,25 @@ impl Parser<'_> {
         .unwrap_or_else(|| Err("the call is not placed in Clang's AST".to_owned()))
     }
 
+    /// Card **CALLBACK-CANDIDATE-LITERAL-PREMISE** (rule 57 amended): whether
+    /// candidate `name` has no contract in force at any invocation because
+    /// its declaration carries a literal-argument premise, or the premise
+    /// set route G read is poisoned. The premise is never checked against
+    /// the invocation's actuals: the invoker chooses them.
+    pub(super) fn candidate_withdrawn(&self, name: &str) -> bool {
+        self.literal_premises.withdraws_candidate(name)
+    }
+
+    /// The contract a registration stores for candidate `name` (rules 13w,
+    /// 12o): its function-map contract, or none when the candidate is
+    /// withdrawn ([`Self::candidate_withdrawn`]).
+    pub(super) fn candidate_contract(&self, name: &str) -> Option<ResourceFunctionContract> {
+        if self.candidate_withdrawn(name) {
+            return None;
+        }
+        self.contracts.contract(name).cloned()
+    }
+
     fn classified(
         &self,
         candidates: &BTreeSet<String>,
@@ -756,6 +775,14 @@ impl Parser<'_> {
         let classes = candidates
             .iter()
             .map(|name| {
+                // Card CALLBACK-CANDIDATE-LITERAL-PREMISE (rule 57 amended): a
+                // candidate whose declaration carries a literal-argument
+                // premise (or any under a poisoned set) has no contract in
+                // force here, before its contract, composition, hand-off or
+                // member paths are read.
+                if self.candidate_withdrawn(name) {
+                    return (name.clone(), CandidateClass::Missing);
+                }
                 let contract = self.contracts.contract(name);
                 // Card HANDOFF-CANDIDATE-OWN-CALLBACKS (rule 13u amended): a
                 // candidate whose declaration carries its own member
@@ -1539,7 +1566,7 @@ impl Parser<'_> {
                         holder,
                         candidates: candidates
                             .iter()
-                            .map(|name| (name.clone(), self.contracts.contract(name).cloned()))
+                            .map(|name| (name.clone(), self.candidate_contract(name)))
                             .collect(),
                     });
                 }

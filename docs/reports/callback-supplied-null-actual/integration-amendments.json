@@ -19,6 +19,12 @@
    "text": "CALLBACK-SUPPLIED-NULL-ACTUAL marks a `_` actual supplied_nullable only on a page sentence. Left `_` (a candidate's resource_owned(nonnull) there is read as met): the user argument pointers a setter keeps and the slot hands back, NULL when the application set none (OpenSSL cert_cb arg, default_passwd_cb u, msg_callback arg, the ALPN/NPN/cert-verify/ClientHello/record-padding/early-data arg, the custom extensions' add_arg/parse_arg; librdkafka's rk_conf opaque); the custom extension callbacks' x outside Certificate messages; BIO method meth_ctrl's parg. A supplementary run reading every `_` as nullable showed the blanket default costs a correct Safe row (bsearch comparators). DISCHARGE: read the argument's nullability from the run's closed set of the setter's retained actuals (nullable unless every registration hands a non-null value), or mark each from a source that states it; Lean beside QCore.CallbackSuppliedNull. Size: medium.",
    "source": "docs/reports/callback-supplied-null-actual/README.md",
    "recorded_by": "CALLBACK-SUPPLIED-NULL-ACTUAL"
+  },
+  {
+   "id": "OPENSSL-EX-DATA-CLASS-REGISTRY",
+   "operation": "append",
+   "text": "CALLBACK-SUPPLIED-NULL-ACTUAL (2026-11-20): CRYPTO_get_ex_new_index (3.5) says 'The free_func() may be called with a NULL pointer' and, of ptr, 'for new_func() this will typically be NULL'. A registry invocation stating the ex_data new_func/free_func calls should state those arguments supplied_nullable (C04.19 item 2, rule 13u amended), citing the sentences as quirin-provider-openssl's NULLABLE_ARGUMENTS does, so a candidate requiring a live object there is refused (callback-supplied-null).",
+   "source": "docs/reports/callback-supplied-null-actual/README.md"
   }
  ]
 }

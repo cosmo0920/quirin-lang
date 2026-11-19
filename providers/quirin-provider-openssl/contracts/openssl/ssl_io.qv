@@ -137,6 +137,8 @@ module contract;
 // "with the same arguments" (NOTES): a protocol on the caller, not a
 // retention of `buf`. Pinned prototype: `int SSL_write(SSL *ssl, const void
 // *buf, int num)` (openssl/ssl.h).
+// Card OPENSSL-EX-DATA-REGISTRY: a handshake run by the call creates and
+// frees sessions, peer certificates and keys.
 extern fn SSL_write(ssl: ptr<mut, u8>, buf: ptr<const, u8>, num: i32) -> i32
 contract {
     requires resource_contract_v1;
@@ -144,6 +146,7 @@ contract {
     requires resource_library_version(openssl, documented "1.0.2");
     requires resource_premise(openssl_unstated_callback_slots, "a callback the call may run that no clause of this declaration states (a callback slot of the SSL object or its SSL_CTX whose invocation the declaration does not state, among them the SSL_CTX_callback_ctrl arms such as the servername, status and ticket key callbacks, or an ex_data callback) takes, releases or retains nothing the caller holds");
     requires resource_premise(openssl_builtin_bio_methods, "a function of a BIO method the library defines itself (the BIO_METHOD that BIO_s_socket, BIO_s_mem, BIO_f_buffer or another built-in BIO_s_ or BIO_f_ function returns, which no setter is handed), run on a BIO the call reads or writes through (its BIO argument or a BIO the SSL object holds) or one chained to it, takes, releases or retains nothing the caller holds, and so does any callback it runs in turn on an object other than the arguments of the call (the SSL object of a BIO_f_ssl BIO)");
+    requires resource_premise(openssl_ex_data_callbacks, "an ex_data callback the call may run (a new, dup or free callback CRYPTO_get_ex_new_index registers for the class of an object the call creates, copies or frees) takes, releases or retains nothing the caller holds");
     ensures normal resource_borrowed(ssl);
     ensures normal resource_borrowed(buf);
     ensures normal resource_borrowed(num);
@@ -196,6 +199,8 @@ contract {
 // DESCRIPTION (3.5): it tries "to read num bytes from the specified ssl into
 // the buffer buf". Pinned prototype: `int SSL_read(SSL *ssl, void *buf, int
 // num)`.
+// Card OPENSSL-EX-DATA-REGISTRY: a handshake run by the call creates and
+// frees sessions, peer certificates and keys.
 extern fn SSL_read(ssl: ptr<mut, u8>, buf: ptr<mut, u8>, num: i32) -> i32
 contract {
     requires resource_contract_v1;
@@ -203,6 +208,7 @@ contract {
     requires resource_library_version(openssl, documented "1.0.2");
     requires resource_premise(openssl_unstated_callback_slots, "a callback the call may run that no clause of this declaration states (a callback slot of the SSL object or its SSL_CTX whose invocation the declaration does not state, among them the SSL_CTX_callback_ctrl arms such as the servername, status and ticket key callbacks, or an ex_data callback) takes, releases or retains nothing the caller holds");
     requires resource_premise(openssl_builtin_bio_methods, "a function of a BIO method the library defines itself (the BIO_METHOD that BIO_s_socket, BIO_s_mem, BIO_f_buffer or another built-in BIO_s_ or BIO_f_ function returns, which no setter is handed), run on a BIO the call reads or writes through (its BIO argument or a BIO the SSL object holds) or one chained to it, takes, releases or retains nothing the caller holds, and so does any callback it runs in turn on an object other than the arguments of the call (the SSL object of a BIO_f_ssl BIO)");
+    requires resource_premise(openssl_ex_data_callbacks, "an ex_data callback the call may run (a new, dup or free callback CRYPTO_get_ex_new_index registers for the class of an object the call creates, copies or frees) takes, releases or retains nothing the caller holds");
     ensures normal resource_borrowed(ssl);
     ensures normal resource_borrowed(buf);
     ensures normal resource_borrowed(num);
@@ -253,6 +259,8 @@ contract {
 // SSL_connect: https://docs.openssl.org/1.0.2/man3/SSL_connect/ (also 3.5,
 // 1.1.1). No HISTORY entry. DESCRIPTION (3.5): it "initiates the TLS/SSL
 // handshake with a server". Pinned prototype: `int SSL_connect(SSL *ssl)`.
+// Card OPENSSL-EX-DATA-REGISTRY: the handshake creates and frees sessions,
+// peer certificates and keys.
 extern fn SSL_connect(ssl: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
@@ -260,6 +268,7 @@ contract {
     requires resource_library_version(openssl, documented "1.0.2");
     requires resource_premise(openssl_unstated_callback_slots, "a callback the call may run that no clause of this declaration states (a callback slot of the SSL object or its SSL_CTX whose invocation the declaration does not state, among them the SSL_CTX_callback_ctrl arms such as the servername, status and ticket key callbacks, or an ex_data callback) takes, releases or retains nothing the caller holds");
     requires resource_premise(openssl_builtin_bio_methods, "a function of a BIO method the library defines itself (the BIO_METHOD that BIO_s_socket, BIO_s_mem, BIO_f_buffer or another built-in BIO_s_ or BIO_f_ function returns, which no setter is handed), run on a BIO the call reads or writes through (its BIO argument or a BIO the SSL object holds) or one chained to it, takes, releases or retains nothing the caller holds, and so does any callback it runs in turn on an object other than the arguments of the call (the SSL object of a BIO_f_ssl BIO)");
+    requires resource_premise(openssl_ex_data_callbacks, "an ex_data callback the call may run (a new, dup or free callback CRYPTO_get_ex_new_index registers for the class of an object the call creates, copies or frees) takes, releases or retains nothing the caller holds");
     ensures normal resource_borrowed(ssl);
     ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.cert_cb, ssl, _);
     ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.verify_callback, _, _);
@@ -309,6 +318,8 @@ contract {
 // (also 3.5, 1.1.1). No HISTORY entry. DESCRIPTION (3.5): it "will wait for
 // an SSL/TLS handshake to take place". Pinned prototype: `int
 // SSL_do_handshake(SSL *s)`.
+// Card OPENSSL-EX-DATA-REGISTRY: the handshake creates and frees sessions,
+// peer certificates and keys.
 extern fn SSL_do_handshake(s: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
@@ -316,6 +327,7 @@ contract {
     requires resource_library_version(openssl, documented "1.0.2");
     requires resource_premise(openssl_unstated_callback_slots, "a callback the call may run that no clause of this declaration states (a callback slot of the SSL object or its SSL_CTX whose invocation the declaration does not state, among them the SSL_CTX_callback_ctrl arms such as the servername, status and ticket key callbacks, or an ex_data callback) takes, releases or retains nothing the caller holds");
     requires resource_premise(openssl_builtin_bio_methods, "a function of a BIO method the library defines itself (the BIO_METHOD that BIO_s_socket, BIO_s_mem, BIO_f_buffer or another built-in BIO_s_ or BIO_f_ function returns, which no setter is handed), run on a BIO the call reads or writes through (its BIO argument or a BIO the SSL object holds) or one chained to it, takes, releases or retains nothing the caller holds, and so does any callback it runs in turn on an object other than the arguments of the call (the SSL object of a BIO_f_ssl BIO)");
+    requires resource_premise(openssl_ex_data_callbacks, "an ex_data callback the call may run (a new, dup or free callback CRYPTO_get_ex_new_index registers for the class of an object the call creates, copies or frees) takes, releases or retains nothing the caller holds");
     ensures normal resource_borrowed(s);
     ensures normal resource_callback_slot_invoked(s, ssl_ctx_st.cert_cb, s, _);
     ensures normal resource_callback_slot_invoked(s, ssl_ctx_st.verify_callback, _, _);
@@ -381,11 +393,15 @@ contract {
 // (also 3.5, 1.1.1). No HISTORY entry. DESCRIPTION (3.5): it "sets ssl to
 // work in server mode"; RETURN VALUES: it does "not return diagnostic
 // information". Pinned prototype: `void SSL_set_accept_state(SSL *s)`.
+// Card OPENSSL-EX-DATA-REGISTRY: it resets the record layer
+// (RECORD_LAYER_reset, 3.5 sources), which frees the old layers' memory BIOs
+// and creates new ones (BIO_new(BIO_s_mem())).
 extern fn SSL_set_accept_state(s: ptr<mut, u8>) -> unit
 contract {
     requires resource_contract_v1;
     requires resource_revision(flexible);
     requires resource_library_version(openssl, documented "1.0.2");
+    requires resource_premise(openssl_ex_data_callbacks, "an ex_data callback the call may run (a new, dup or free callback CRYPTO_get_ex_new_index registers for the class of an object the call creates, copies or frees) takes, releases or retains nothing the caller holds");
     ensures normal resource_borrowed(s);
     ensures normal resource_return_none();
 };

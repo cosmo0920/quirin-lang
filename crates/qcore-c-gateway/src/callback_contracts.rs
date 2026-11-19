@@ -33,7 +33,9 @@
 //!   cast, a null pointer, a call's result, a table the body writes):
 //!   [`UNDECIDED`];
 //! * a candidate with no contract in force (no declaration, no validated
-//!   summary; a withheld declaration is not one): [`UNCONTRACTED`];
+//!   summary; a withheld declaration is not one; since card
+//!   CALLBACK-CANDIDATE-LITERAL-PREMISE, rule 57 amended, neither is a
+//!   declaration carrying a literal-argument premise): [`UNCONTRACTED`];
 //! * a candidate whose contract is not the identity: [`EFFECTFUL`].
 //!
 //! # Registries (rules 13w, 13x)

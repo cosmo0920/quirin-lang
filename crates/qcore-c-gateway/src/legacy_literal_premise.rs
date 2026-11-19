@@ -274,6 +274,17 @@ impl LiteralPremises {
         self.lifecycle.contains(function)
     }
 
+    /// Card **CALLBACK-CANDIDATE-LITERAL-PREMISE** (rule 57 amended): whether
+    /// `function`, met as a callback candidate, has no contract in force
+    /// there. A candidate is a function designator, not a call: the invoker
+    /// chooses its actuals, so a declared premise is never established at an
+    /// invocation (a `_` or a supplied object never satisfies it, and a
+    /// parameter actual is the caller's, which the premise does not bound).
+    /// A poisoned set withdraws every candidate, as it renames every call.
+    pub(super) fn withdraws_candidate(&self, function: &str) -> bool {
+        self.malformed.is_some() || !self.declared(function).is_empty()
+    }
+
     /// The premises declared for `function`, in declaration order.
     pub(super) fn declared(&self, function: &str) -> &[LiteralArgument] {
         self.required
@@ -682,6 +693,34 @@ contract {
         contracts.set_source_assumptions(substituted);
         let premises = LiteralPremises::read(&contracts);
         assert!(premises.malformed().is_some(), "{premises:?}");
+    }
+
+    /// Card CALLBACK-CANDIDATE-LITERAL-PREMISE (rule 57 amended): a
+    /// premise-carrying declaration has no contract in force as a callback
+    /// candidate, a premise-free one is untouched, and a poisoned set
+    /// withdraws every candidate (`QCore.CallbackCandidatePremise`).
+    #[test]
+    fn a_premise_or_a_poisoned_set_withdraws_a_callback_candidate() {
+        let text = format!(
+            "{MODULE}extern fn plain(table: ptr<mut, u8>) -> i32\ncontract {{\n    requires \
+             resource_contract_v1;\n    ensures normal resource_borrowed(table);\n    ensures \
+             normal resource_return_none();\n}};\n"
+        );
+        let contracts = environment(&text);
+        let premises = LiteralPremises::read(&contracts);
+        assert!(premises.withdraws_candidate("publish"));
+        assert!(!premises.withdraws_candidate("plain"));
+        assert!(!premises.withdraws_candidate("undeclared"));
+        let mut poisoned = contracts;
+        poisoned.set_source_assumptions(BTreeMap::from([(
+            "premise.qcore".to_owned(),
+            text.replace("(size, 0)", "(absent, 0)"),
+        )]));
+        let premises = LiteralPremises::read(&poisoned);
+        assert!(premises.malformed().is_some(), "{premises:?}");
+        for name in ["publish", "plain", "undeclared"] {
+            assert!(premises.withdraws_candidate(name), "{name}");
+        }
     }
 
     // ----------------------------------------------------------------------

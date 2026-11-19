@@ -4146,6 +4146,7 @@ fn build_function_cfg_unscoped(
         alias_classes,
         variadic_tails,
         variadic_borrowed_tails,
+        literal_premises: premises,
         frame_protected,
         collection_types,
         sizeof_operands,
@@ -4998,6 +4999,11 @@ struct Parser<'a> {
     /// declaration is `resource_variadic_borrowed_tail()`; only these admit a
     /// trailing name as a `Borrowed` place (T8).
     variadic_borrowed_tails: BTreeSet<String>,
+    /// Card **CALLBACK-CANDIDATE-LITERAL-PREMISE** (rule 57 amended): the
+    /// literal-argument premises route G read for this body, so the callback
+    /// route withdraws a premise-carrying candidate (and every candidate under
+    /// a poisoned set) from the same set the rewrite enforced.
+    literal_premises: literal_premise::LiteralPremises,
     /// Card **AOM-BINDING-POISON**: the names of this body whose slot no lvalue
     /// but the name itself designates, per [`frame_protected_locals`]. It
     /// admits nothing; it only bounds what a refused statement destroys in the
