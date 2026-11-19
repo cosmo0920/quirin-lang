@@ -27,11 +27,14 @@ module contract;
 // bound is 1.1.1 (https://docs.openssl.org/1.1.1/man3/EVP_PKEY_new/), the
 // oldest series checked stating the NULL behaviour. Pinned prototype: `void
 // EVP_PKEY_free(EVP_PKEY *pkey)`.
+// Card OPENSSL-EX-DATA-REGISTRY: the last reference frees the EVP_PKEY: the
+// EVP_PKEY class's free callbacks run.
 extern fn EVP_PKEY_free(pkey: ptr<mut, u8>) -> unit
 contract {
     requires resource_contract_v1;
     requires resource_revision(flexible);
     requires resource_library_version(openssl, documented "1.1.1");
+    requires resource_premise(openssl_ex_data_callbacks, "an ex_data callback the call may run (a new, dup or free callback CRYPTO_get_ex_new_index registers for the class of an object the call creates, copies or frees) takes, releases or retains nothing the caller holds");
     ensures normal resource_borrowed(pkey);
     ensures normal resource_reference_dropped(pkey, nullable);
     ensures normal resource_return_none();

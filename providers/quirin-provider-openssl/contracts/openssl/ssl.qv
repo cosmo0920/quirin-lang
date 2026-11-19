@@ -79,9 +79,9 @@ module contract;
 // `openssl_unstated_callback_slots`: freeing the context frees its
 // certificate store (SSL_CTX_set_cert_store 3.5: the context takes
 // ownership), whose lookup methods' free and shutdown functions are
-// user-settable (X509_LOOKUP_meth_set_free, X509_LOOKUP_meth_set_shutdown),
-// besides the ex_data callbacks; SSL_free may drop the context's last
-// reference.
+// user-settable (X509_LOOKUP_meth_set_free, X509_LOOKUP_meth_set_shutdown);
+// SSL_free may drop the context's last reference. Both keep
+// `openssl_ex_data_callbacks` (card OPENSSL-EX-DATA-REGISTRY).
 
 // TLS_server_method: https://docs.openssl.org/3.5/man3/SSL_CTX_new/
 // HISTORY (3.5, 1.1.1): TLS_method(), TLS_server_method() and
@@ -101,11 +101,15 @@ contract {
 // the bound is the oldest series that documents it. RETURN VALUES: NULL when
 // creation failed. Pinned prototype: `SSL_CTX *SSL_CTX_new(const SSL_METHOD
 // *meth)`.
+// Card OPENSSL-EX-DATA-REGISTRY: it allocates an SSL_CTX and its X509_STORE,
+// both ex_data classes, so the new callbacks of both classes run (and the
+// free callbacks when a failed construction frees them).
 extern fn SSL_CTX_new(meth: ptr<const, u8>) -> ptr<mut, u8>
 contract {
     requires resource_contract_v1;
     requires resource_revision(flexible);
     requires resource_library_version(openssl, documented "1.0.2");
+    requires resource_premise(openssl_ex_data_callbacks, "an ex_data callback the call may run (a new, dup or free callback CRYPTO_get_ex_new_index registers for the class of an object the call creates, copies or frees) takes, releases or retains nothing the caller holds");
     ensures normal resource_borrowed(meth);
     ensures normal resource_return_owned(nullable);
     ensures normal resource_return_kind(reference);
@@ -118,12 +122,16 @@ contract {
 // REFERENCE-DROP-NULL-ACCEPTING: the drop is NULL-accepting (C04.17), so the
 // bound is the oldest series checked whose page states the NULL behaviour,
 // 1.1.1. Pinned prototype: `void SSL_CTX_free(SSL_CTX *)`.
+// Card OPENSSL-EX-DATA-REGISTRY: the last drop frees the SSL_CTX, its
+// X509_STORE, its certificates, keys and cached sessions: the free callbacks
+// of those classes run.
 extern fn SSL_CTX_free(ctx: ptr<mut, u8>) -> unit
 contract {
     requires resource_contract_v1;
     requires resource_revision(flexible);
     requires resource_library_version(openssl, documented "1.1.1");
     requires resource_premise(openssl_unstated_callback_slots, "a callback the call may run that no clause of this declaration states (a callback slot of the SSL object or its SSL_CTX whose invocation the declaration does not state, among them the SSL_CTX_callback_ctrl arms such as the servername, status and ticket key callbacks, or an ex_data callback) takes, releases or retains nothing the caller holds");
+    requires resource_premise(openssl_ex_data_callbacks, "an ex_data callback the call may run (a new, dup or free callback CRYPTO_get_ex_new_index registers for the class of an object the call creates, copies or frees) takes, releases or retains nothing the caller holds");
     ensures normal resource_borrowed(ctx);
     ensures normal resource_reference_dropped(ctx, nullable);
     ensures normal resource_callback_slot_invoked(ctx, ssl_ctx_st.remove_session_cb, _, _);
@@ -134,11 +142,14 @@ contract {
 // No HISTORY entry. RETURN VALUES: NULL when creation failed. The new SSL
 // takes its own reference on `ctx`; the caller's is unchanged. Pinned
 // prototype: `SSL *SSL_new(SSL_CTX *ctx)`.
+// Card OPENSSL-EX-DATA-REGISTRY: it allocates an SSL (and the memory BIOs of
+// its record layers): the new callbacks of the SSL and BIO classes run.
 extern fn SSL_new(ctx: ptr<mut, u8>) -> ptr<mut, u8>
 contract {
     requires resource_contract_v1;
     requires resource_revision(flexible);
     requires resource_library_version(openssl, documented "1.0.2");
+    requires resource_premise(openssl_ex_data_callbacks, "an ex_data callback the call may run (a new, dup or free callback CRYPTO_get_ex_new_index registers for the class of an object the call creates, copies or frees) takes, releases or retains nothing the caller holds");
     ensures normal resource_borrowed(ctx);
     ensures normal resource_return_owned(nullable);
     ensures normal resource_return_kind(reference);
@@ -150,6 +161,8 @@ contract {
 // say it). Card REFERENCE-DROP-NULL-ACCEPTING: the drop is NULL-accepting
 // (C04.17), so the bound is 1.1.1, the oldest series stating it. Pinned
 // prototype: `void SSL_free(SSL *ssl)`.
+// Card OPENSSL-EX-DATA-REGISTRY: the last drop frees the SSL, its session,
+// peer certificate and BIOs: the free callbacks of those classes run.
 extern fn SSL_free(ssl: ptr<mut, u8>) -> unit
 contract {
     requires resource_contract_v1;
@@ -157,6 +170,7 @@ contract {
     requires resource_library_version(openssl, documented "1.1.1");
     requires resource_premise(openssl_unstated_callback_slots, "a callback the call may run that no clause of this declaration states (a callback slot of the SSL object or its SSL_CTX whose invocation the declaration does not state, among them the SSL_CTX_callback_ctrl arms such as the servername, status and ticket key callbacks, or an ex_data callback) takes, releases or retains nothing the caller holds");
     requires resource_premise(openssl_bio_free_callbacks, "when the call drops the last reference to a BIO (its BIO argument, or a BIO the SSL object holds and the BIOs chained to it), the ex_data free callbacks of the BIO class take, release or retain nothing the caller holds");
+    requires resource_premise(openssl_ex_data_callbacks, "an ex_data callback the call may run (a new, dup or free callback CRYPTO_get_ex_new_index registers for the class of an object the call creates, copies or frees) takes, releases or retains nothing the caller holds");
     requires resource_premise(openssl_builtin_bio_methods, "a function of a BIO method the library defines itself (the BIO_METHOD that BIO_s_socket, BIO_s_mem, BIO_f_buffer or another built-in BIO_s_ or BIO_f_ function returns, which no setter is handed), run on a BIO the call reads or writes through or frees (its BIO argument or a BIO the SSL object holds) or one chained to it, takes, releases or retains nothing the caller holds, and so does any callback it runs in turn on an object other than the arguments of the call (the SSL object of a BIO_f_ssl BIO)");
     ensures normal resource_borrowed(ssl);
     ensures normal resource_reference_dropped(ssl, nullable);
@@ -181,6 +195,9 @@ contract {
 // the alert is written to and read from the SSL's BIOs, so the BIO callback
 // and method slots are stated invocations (every actual `_`), the built-in
 // methods under `openssl_builtin_bio_methods`.
+// Card OPENSSL-EX-DATA-REGISTRY: it may process post-handshake messages (a
+// NewSessionTicket creates an SSL_SESSION) while reading for the
+// close_notify.
 extern fn SSL_shutdown(ssl: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
@@ -188,6 +205,7 @@ contract {
     requires resource_library_version(openssl, documented "1.0.2");
     requires resource_premise(openssl_unstated_callback_slots, "a callback the call may run that no clause of this declaration states (a callback slot of the SSL object or its SSL_CTX whose invocation the declaration does not state, among them the SSL_CTX_callback_ctrl arms such as the servername, status and ticket key callbacks, or an ex_data callback) takes, releases or retains nothing the caller holds");
     requires resource_premise(openssl_builtin_bio_methods, "a function of a BIO method the library defines itself (the BIO_METHOD that BIO_s_socket, BIO_s_mem, BIO_f_buffer or another built-in BIO_s_ or BIO_f_ function returns, which no setter is handed), run on a BIO the call reads or writes through or frees (its BIO argument or a BIO the SSL object holds) or one chained to it, takes, releases or retains nothing the caller holds, and so does any callback it runs in turn on an object other than the arguments of the call (the SSL object of a BIO_f_ssl BIO)");
+    requires resource_premise(openssl_ex_data_callbacks, "an ex_data callback the call may run (a new, dup or free callback CRYPTO_get_ex_new_index registers for the class of an object the call creates, copies or frees) takes, releases or retains nothing the caller holds");
     ensures normal resource_borrowed(ssl);
     ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.info_callback, ssl, _, _);
     ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.msg_callback, _, _, _, _, _, ssl, _);

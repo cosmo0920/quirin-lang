@@ -117,7 +117,10 @@ pub enum Premise {
     /// may run is stated, and the call may still run the ex_data callbacks
     /// `CRYPTO_get_ex_new_index` registers per object class (a global
     /// registry, not a slot of an object), which the declaration reads as
-    /// changing no custody the caller holds.
+    /// changing no custody the caller holds. Card **OPENSSL-EX-DATA-REGISTRY**:
+    /// named by every declaration that allocates, copies or finally frees an
+    /// object of an ex_data class ([`EX_DATA_AUDIT`]), beside any other
+    /// premise whose statement also mentions ex_data.
     ExDataCallbacks,
     /// Card **OPENSSL-BIO-METHODS-AND-CALLBACKS**: `requires
     /// resource_premise(openssl_builtin_bio_methods, "…")`, the library-value
@@ -224,6 +227,296 @@ pub const EX_DATA: &str = "openssl_ex_data_callbacks";
 pub const EX_DATA_STATEMENT: &str = "an ex_data callback the call may run (a new, dup or free \
 callback CRYPTO_get_ex_new_index registers for the class of an object the call creates, copies \
 or frees) takes, releases or retains nothing the caller holds";
+
+/// Card **OPENSSL-EX-DATA-REGISTRY**: the classes whose objects carry
+/// ex_data, as `CRYPTO_get_ex_new_index` (3.5) DESCRIPTION lists them ("The
+/// specific structures are: …"). For each, "When a structure is initially
+/// allocated … the new_func() is called for every defined index", "When a
+/// structure is free'd … the free_func() is called for every defined index",
+/// and `dup_func()` runs when an SSL, SSL_SESSION, EC_KEY or BIO chain is
+/// copied. The registry is global per class: `CRYPTO_get_ex_new_index` takes
+/// a class index and no object.
+pub const EX_DATA_CLASSES: &[&str] = &[
+    "BIO",
+    "DH",
+    "DSA",
+    "EC_KEY",
+    "ENGINE",
+    "EVP_PKEY",
+    "RSA",
+    "SSL",
+    "SSL_CTX",
+    "SSL_SESSION",
+    "UI",
+    "UI_METHOD",
+    "X509",
+    "X509_STORE",
+    "X509_STORE_CTX",
+];
+
+/// Card **OPENSSL-EX-DATA-REGISTRY**: how a declaration stands to the ex_data
+/// registry.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum ExData {
+    /// The call allocates, copies or finally frees an object of each of
+    /// `classes` (one of [`EX_DATA_CLASSES`]), directly or as a replaced or
+    /// temporary object it frees inside, so it may run that class's ex_data
+    /// callbacks: the declaration names [`Premise::ExDataCallbacks`].
+    Runs {
+        classes: &'static [&'static str],
+        how: &'static str,
+    },
+    /// A shape that creates or frees an object, of no ex_data class and
+    /// freeing none: the declaration names no ex_data premise.
+    NoClass { why: &'static str },
+}
+
+/// Card **OPENSSL-EX-DATA-REGISTRY**: the audit. Every documented function
+/// carrying [`Premise::ExDataCallbacks`] is listed here as
+/// [`ExData::Runs`], and every one whose shape creates or frees an object
+/// (a constructor, a release, a reference drop) is listed either way, so a
+/// new constructor or free cannot read the registry silently
+/// ([`crate::check::ex_data_audited`]). A plain call is listed only when it
+/// runs the callbacks; a plain call not listed creates and frees no object of
+/// an ex_data class (the report records that audit).
+pub const EX_DATA_AUDIT: &[(&str, ExData)] = &[
+    (
+        "BIO_free",
+        ExData::Runs {
+            classes: &["BIO"],
+            how: "the last drop frees the BIO (and the BIOs chained to it)",
+        },
+    ),
+    (
+        "BIO_new_file",
+        ExData::Runs {
+            classes: &["BIO"],
+            how: "allocates a BIO",
+        },
+    ),
+    (
+        "ENGINE_by_id",
+        ExData::Runs {
+            classes: &["ENGINE"],
+            how: "allocates a dynamic engine, freed when it fails to load",
+        },
+    ),
+    (
+        "ENGINE_free",
+        ExData::Runs {
+            classes: &["ENGINE"],
+            how: "the last structural reference frees the ENGINE",
+        },
+    ),
+    (
+        "EVP_MD_CTX_free",
+        ExData::Runs {
+            classes: &["EVP_PKEY"],
+            how: "a signing context's EVP_PKEY_CTX may hold the last reference to its key",
+        },
+    ),
+    (
+        "EVP_MD_CTX_new",
+        ExData::NoClass {
+            why: "an EVP_MD_CTX is no ex_data class and a fresh one holds nothing",
+        },
+    ),
+    (
+        "EVP_PKEY_free",
+        ExData::Runs {
+            classes: &["EVP_PKEY"],
+            how: "the last reference frees the EVP_PKEY",
+        },
+    ),
+    (
+        "OPENSSL_init_ssl",
+        ExData::Runs {
+            classes: &["ENGINE"],
+            how: "the configuration it loads by default may create and free engines",
+        },
+    ),
+    (
+        "OPENSSL_sk_free",
+        ExData::NoClass {
+            why: "frees the stack only, never its elements",
+        },
+    ),
+    (
+        "OPENSSL_sk_new_null",
+        ExData::NoClass {
+            why: "a stack is no ex_data class",
+        },
+    ),
+    (
+        "PEM_read_bio_PrivateKey",
+        ExData::Runs {
+            classes: &["EVP_PKEY"],
+            how: "allocates the key it returns, freed on a failed read",
+        },
+    ),
+    (
+        "PEM_read_bio_X509",
+        ExData::Runs {
+            classes: &["X509"],
+            how: "allocates the certificate it returns, freed on a failed read",
+        },
+    ),
+    (
+        "PKCS12_free",
+        ExData::Runs {
+            classes: &["X509"],
+            how: "frees the certificates a signed PKCS#7 safe holds",
+        },
+    ),
+    (
+        "SSL_CTX_free",
+        ExData::Runs {
+            classes: &["SSL_CTX", "X509_STORE", "X509", "EVP_PKEY", "SSL_SESSION"],
+            how: "the last drop frees the context, its store, certificates, keys and cached \
+                  sessions",
+        },
+    ),
+    (
+        "SSL_CTX_load_verify_locations",
+        ExData::Runs {
+            classes: &["X509"],
+            how: "reads CAfile's certificates, freeing each the store already holds",
+        },
+    ),
+    (
+        "SSL_CTX_new",
+        ExData::Runs {
+            classes: &["SSL_CTX", "X509_STORE"],
+            how: "allocates the context and its certificate store",
+        },
+    ),
+    (
+        "SSL_CTX_set_default_verify_paths",
+        ExData::Runs {
+            classes: &["X509"],
+            how: "the default file lookup reads certificates, freeing each the store already holds",
+        },
+    ),
+    (
+        "SSL_CTX_use_PrivateKey",
+        ExData::Runs {
+            classes: &["EVP_PKEY", "X509"],
+            how: "frees the key it replaces, and a certificate the new key does not match",
+        },
+    ),
+    (
+        "SSL_CTX_use_PrivateKey_file",
+        ExData::Runs {
+            classes: &["EVP_PKEY", "X509"],
+            how: "reads a temporary key, freed after use, and replaces the context's key",
+        },
+    ),
+    (
+        "SSL_CTX_use_certificate",
+        ExData::Runs {
+            classes: &["X509", "EVP_PKEY"],
+            how: "frees the certificate it replaces, and a key the new certificate does not match",
+        },
+    ),
+    (
+        "SSL_CTX_use_certificate_chain_file",
+        ExData::Runs {
+            classes: &["X509"],
+            how: "reads certificates and frees the chain and certificate it replaces",
+        },
+    ),
+    (
+        "SSL_connect",
+        ExData::Runs {
+            classes: &["SSL_SESSION", "X509", "EVP_PKEY"],
+            how: "the handshake creates and frees sessions, peer certificates and keys",
+        },
+    ),
+    (
+        "SSL_do_handshake",
+        ExData::Runs {
+            classes: &["SSL_SESSION", "X509", "EVP_PKEY"],
+            how: "the handshake creates and frees sessions, peer certificates and keys",
+        },
+    ),
+    (
+        "SSL_free",
+        ExData::Runs {
+            classes: &["SSL", "SSL_SESSION", "X509", "BIO"],
+            how: "the last drop frees the connection, its session, peer certificate and BIOs",
+        },
+    ),
+    (
+        "SSL_get1_peer_certificate",
+        ExData::NoClass {
+            why: "takes one more reference on the peer certificate, allocating nothing",
+        },
+    ),
+    (
+        "SSL_new",
+        ExData::Runs {
+            classes: &["SSL", "BIO"],
+            how: "allocates the connection and the memory BIOs of its record layers",
+        },
+    ),
+    (
+        "SSL_read",
+        ExData::Runs {
+            classes: &["SSL_SESSION", "X509", "EVP_PKEY"],
+            how: "a handshake it runs creates and frees sessions, peer certificates and keys",
+        },
+    ),
+    (
+        "SSL_set_accept_state",
+        ExData::Runs {
+            classes: &["BIO"],
+            how: "resets the record layer (RECORD_LAYER_reset, 3.5 sources), freeing and \
+                  creating memory BIOs",
+        },
+    ),
+    (
+        "SSL_shutdown",
+        ExData::Runs {
+            classes: &["SSL_SESSION"],
+            how: "a NewSessionTicket read before the close_notify creates a session",
+        },
+    ),
+    (
+        "SSL_write",
+        ExData::Runs {
+            classes: &["SSL_SESSION", "X509", "EVP_PKEY"],
+            how: "a handshake it runs creates and frees sessions, peer certificates and keys",
+        },
+    ),
+    (
+        "X509_STORE_free",
+        ExData::Runs {
+            classes: &["X509_STORE", "X509"],
+            how: "the last reference frees the store and the certificates it holds",
+        },
+    ),
+    (
+        "X509_free",
+        ExData::Runs {
+            classes: &["X509"],
+            how: "the last reference frees the certificate",
+        },
+    ),
+    (
+        "X509_new",
+        ExData::Runs {
+            classes: &["X509"],
+            how: "allocates a certificate",
+        },
+    ),
+    (
+        "d2i_PKCS12_bio",
+        ExData::Runs {
+            classes: &["X509"],
+            how: "a signed PKCS#7 safe's certificates are decoded, freed on a failed parse",
+        },
+    ),
+];
 
 /// Card **OPENSSL-SSL-CTX-CALLBACK-SLOTS**: a callback slot of an opaque
 /// OpenSSL object, stated as C04.19.3's opaque slot. Its `writers` are every
@@ -958,6 +1251,8 @@ const BIO_SLOTS: [Premise; 15] = [
 /// early data and custom extension slots.
 const HANDSHAKE: &[Premise] = &[
     Premise::UnstatedSlots,
+    // Card OPENSSL-EX-DATA-REGISTRY.
+    Premise::ExDataCallbacks,
     on_ssl("ssl_ctx_st.cert_cb", &[Some(0), None]),
     VERIFY,
     INFO,
@@ -1014,6 +1309,8 @@ const HANDSHAKE: &[Premise] = &[
 /// the alert is written and read.
 const SHUTDOWN: &[Premise] = &[
     Premise::UnstatedSlots,
+    // Card OPENSSL-EX-DATA-REGISTRY.
+    Premise::ExDataCallbacks,
     INFO,
     MESSAGE,
     RECORD_PADDING,
@@ -1048,8 +1345,11 @@ const SHUTDOWN: &[Premise] = &[
 /// Both keep the unstated-slots premise: freeing the context frees its
 /// certificate store, whose lookup methods' free and shutdown functions are
 /// user-settable (`X509_LOOKUP_meth_set_free`).
+/// Card OPENSSL-EX-DATA-REGISTRY: all three name the ex_data premise too
+/// (each last drop frees an object of an ex_data class).
 const BIO_FREED: &[Premise] = &[
     Premise::BioFreeCallbacks,
+    Premise::ExDataCallbacks,
     BIO_SLOTS[0],
     BIO_SLOTS[1],
     BIO_SLOTS[2],
@@ -1058,13 +1358,18 @@ const BIO_FREED: &[Premise] = &[
 const SSL_FREED: &[Premise] = &[
     Premise::UnstatedSlots,
     Premise::BioFreeCallbacks,
+    Premise::ExDataCallbacks,
     REMOVE_SESSION,
     BIO_SLOTS[0],
     BIO_SLOTS[1],
     BIO_SLOTS[2],
     BIO_SLOTS[11],
 ];
-const SSL_CTX_FREED: &[Premise] = &[Premise::UnstatedSlots, REMOVE_SESSION];
+const SSL_CTX_FREED: &[Premise] = &[
+    Premise::UnstatedSlots,
+    Premise::ExDataCallbacks,
+    REMOVE_SESSION,
+];
 
 /// The context's password slot, `pem_password_cb(buf, size, rwflag, u)`:
 /// four values the callee supplies.
@@ -1126,6 +1431,11 @@ const CUSTOM_EXT: &[Premise] = &[
     Premise::RetainedBy { item: 6, holder: 0 },
 ];
 
+/// Card **OPENSSL-EX-DATA-REGISTRY**: the ex_data premise alone, for a
+/// declaration that may run no unstated slot but creates, copies or frees an
+/// object of an ex_data class ([`EX_DATA_AUDIT`]).
+const EX_DATA_ONLY: &[Premise] = &[Premise::ExDataCallbacks];
+
 /// `PEM_read_bio_*(bp, x, cb, u)`: a NULL `x` (no object to reuse), and the
 /// password callback `cb` called during the read with `u` as its last
 /// argument, a NULL `cb` meaning OpenSSL's own default routine (card
@@ -1134,6 +1444,8 @@ const CUSTOM_EXT: &[Premise] = &[
 /// `rwflag`) are values the callee supplies.
 const PEM_READ: &[Premise] = &[
     Premise::NullArgument(1),
+    // Card OPENSSL-EX-DATA-REGISTRY: the read allocates the X509 or EVP_PKEY.
+    Premise::ExDataCallbacks,
     Premise::CallbackInvokedOrDefault {
         callback: 2,
         arguments: &[None, None, None, Some(3)],
@@ -1163,6 +1475,8 @@ const PEM_READ: &[Premise] = &[
 /// position 0 it parses from.
 const PKCS12_READ: &[Premise] = &[
     Premise::NullArgument(1),
+    // Card OPENSSL-EX-DATA-REGISTRY: a signed safe's certificates are decoded.
+    Premise::ExDataCallbacks,
     BIO_SLOTS[0],
     BIO_SLOTS[1],
     BIO_SLOTS[2],
@@ -1226,12 +1540,13 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
     ),
     meth("BIO_meth_set_write", "bio_method_st.meth_write"),
     meth("BIO_meth_set_write_ex", "bio_method_st.meth_write_ex"),
-    entry(
+    with(
         "BIO_new_file",
         "BIO_s_file",
         "1.0.2",
         DOC_1_0_2,
         CountedConstructor,
+        EX_DATA_ONLY,
     ),
     // Card OPENSSL-BIO-METHODS-AND-CALLBACKS: the 1.0.2 page documents
     // BIO_set_callback as a macro, so both callback setters cite 1.1.1.
@@ -1249,14 +1564,15 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
         DOC_1_1_1,
         registers(1, "bio_st.bio_callback_ex"),
     ),
-    entry(
+    with(
         "ENGINE_by_id",
         "ENGINE_add",
         "1.1.1",
         DOC_1_1_1,
         CountedConstructor,
+        EX_DATA_ONLY,
     ),
-    entry(
+    with(
         "ENGINE_free",
         "ENGINE_add",
         "3.0",
@@ -1265,6 +1581,7 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
             position: 0,
             sentence: "If the argument to ENGINE_free() is NULL, nothing is done.",
         },
+        EX_DATA_ONLY,
     ),
     entry(
         "ERR_clear_error",
@@ -1295,12 +1612,13 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
         DOC_1_0_2,
         Plain,
     ),
-    entry(
+    with(
         "EVP_MD_CTX_free",
         "EVP_DigestInit",
         "3.5",
         SINCE_1_1_0,
         Release(0, Nullable),
+        EX_DATA_ONLY,
     ),
     entry(
         "EVP_MD_CTX_new",
@@ -1309,7 +1627,7 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
         SINCE_1_1_0,
         Constructor,
     ),
-    entry(
+    with(
         "EVP_PKEY_free",
         "EVP_PKEY_new",
         "1.1.1",
@@ -1318,15 +1636,17 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
             position: 0,
             sentence: "If key is NULL, nothing is done.",
         },
+        EX_DATA_ONLY,
     ),
     entry("EVP_sha256", "EVP_DigestInit", "1.0.2", DOC_1_0_2, Plain),
     entry("EVP_sha512", "EVP_DigestInit", "1.0.2", DOC_1_0_2, Plain),
-    entry(
+    with(
         "OPENSSL_init_ssl",
         "OPENSSL_init_ssl",
         "3.5",
         SINCE_1_1_0,
         Plain,
+        EX_DATA_ONLY,
     ),
     entry(
         "OPENSSL_sk_free",
@@ -1372,12 +1692,13 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
         CountedConstructor,
         PEM_READ,
     ),
-    entry(
+    with(
         "PKCS12_free",
         "X509_dup",
         "1.1.1",
         DOC_1_1_1,
         Release(0, Nullable),
+        EX_DATA_ONLY,
     ),
     with(
         "SSL_CTX_add_client_custom_ext",
@@ -1421,19 +1742,21 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
         DOC_1_0_2,
         BorrowedResult(0, Nullable),
     ),
-    entry(
+    with(
         "SSL_CTX_load_verify_locations",
         "SSL_CTX_load_verify_locations",
         "1.0.2",
         DOC_1_0_2,
         Plain,
+        EX_DATA_ONLY,
     ),
-    entry(
+    with(
         "SSL_CTX_new",
         "SSL_CTX_new",
         "1.0.2",
         DOC_1_0_2,
         CountedConstructor,
+        EX_DATA_ONLY,
     ),
     entry(
         "SSL_CTX_sess_set_get_cb",
@@ -1522,12 +1845,13 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
         DOC_1_0_2,
         Retains { item: 1, holder: 0 },
     ),
-    entry(
+    with(
         "SSL_CTX_set_default_verify_paths",
         "SSL_CTX_load_verify_locations",
         "1.1.1",
         DOC_1_1_1,
         Plain,
+        EX_DATA_ONLY,
     ),
     entry(
         "SSL_CTX_set_info_callback",
@@ -1620,12 +1944,13 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
         DOC_1_0_2,
         registers(2, "ssl_ctx_st.verify_callback"),
     ),
-    entry(
+    with(
         "SSL_CTX_use_PrivateKey",
         "SSL_CTX_use_certificate",
         "1.0.2",
         DOC_1_0_2,
         Plain,
+        EX_DATA_ONLY,
     ),
     with(
         "SSL_CTX_use_PrivateKey_file",
@@ -1633,7 +1958,7 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
         "1.0.2",
         DOC_1_0_2,
         Plain,
-        &[PASSWORD],
+        &[Premise::ExDataCallbacks, PASSWORD],
     ),
     with(
         "SSL_CTX_use_certificate",
@@ -1641,7 +1966,7 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
         "1.0.2",
         DOC_1_0_2,
         Plain,
-        &[SECURITY_CTX_CERTIFICATE],
+        &[Premise::ExDataCallbacks, SECURITY_CTX_CERTIFICATE],
     ),
     with(
         "SSL_CTX_use_certificate_chain_file",
@@ -1700,14 +2025,22 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
         BorrowedResult(0, Nullable),
     ),
     entry("SSL_get_error", "SSL_get_error", "1.0.2", DOC_1_0_2, Plain),
-    entry("SSL_new", "SSL_new", "1.0.2", DOC_1_0_2, CountedConstructor),
+    with(
+        "SSL_new",
+        "SSL_new",
+        "1.0.2",
+        DOC_1_0_2,
+        CountedConstructor,
+        EX_DATA_ONLY,
+    ),
     with("SSL_read", "SSL_read", "1.0.2", DOC_1_0_2, Plain, HANDSHAKE),
-    entry(
+    with(
         "SSL_set_accept_state",
         "SSL_set_connect_state",
         "1.0.2",
         DOC_1_0_2,
         Plain,
+        EX_DATA_ONLY,
     ),
     entry(
         "SSL_set_allow_early_data_cb",
@@ -1842,12 +2175,13 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
         DOC_1_0_2,
         Plain,
     ),
-    entry(
+    with(
         "X509_STORE_free",
         "X509_STORE_new",
         "1.1.1",
         DOC_1_1_1,
         CountedRelease(0),
+        EX_DATA_ONLY,
     ),
     entry(
         "X509_STORE_get0_objects",
@@ -1863,7 +2197,7 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
         DOC_1_1_1,
         Plain,
     ),
-    entry(
+    with(
         "X509_free",
         "X509_new",
         "1.1.1",
@@ -1872,6 +2206,7 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
             position: 0,
             sentence: "If a is NULL nothing is done.",
         },
+        EX_DATA_ONLY,
     ),
     entry(
         "X509_get_issuer_name",
@@ -1880,12 +2215,13 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
         DOC_1_1_1,
         BorrowedResult(0, Nullable),
     ),
-    entry(
+    with(
         "X509_new",
         "X509_new",
         "1.0.2",
         DOC_1_0_2,
         CountedConstructor,
+        EX_DATA_ONLY,
     ),
     with(
         "d2i_PKCS12_bio",

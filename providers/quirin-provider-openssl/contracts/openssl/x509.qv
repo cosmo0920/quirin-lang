@@ -27,11 +27,14 @@ module contract;
 // bound is 1.1.1, the oldest series checked stating the NULL behaviour.
 // Pinned prototype: `void X509_free(X509 *a)`, declared through
 // DECLARE_ASN1_FUNCTIONS in openssl/x509.h.
+// Card OPENSSL-EX-DATA-REGISTRY: the last reference frees the X509: the X509
+// class's free callbacks run.
 extern fn X509_free(a: ptr<mut, u8>) -> unit
 contract {
     requires resource_contract_v1;
     requires resource_revision(flexible);
     requires resource_library_version(openssl, documented "1.1.1");
+    requires resource_premise(openssl_ex_data_callbacks, "an ex_data callback the call may run (a new, dup or free callback CRYPTO_get_ex_new_index registers for the class of an object the call creates, copies or frees) takes, releases or retains nothing the caller holds");
     ensures normal resource_borrowed(a);
     ensures normal resource_reference_dropped(a, nullable);
     ensures normal resource_return_none();

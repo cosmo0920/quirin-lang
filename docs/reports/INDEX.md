@@ -809,6 +809,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [openssl-bio-reader-invocations](openssl-bio-reader-invocations/README.md) | OPENSSL-BIO-READER-INVOCATIONS: the BIO slots beside a literal-argument premise |
 
+| [openssl-ex-data-registry](openssl-ex-data-registry/README.md) | OPENSSL-EX-DATA-REGISTRY: the ex_data premise on every constructor and free |
+
 | [openssl-pem-callback-arm](openssl-pem-callback-arm/README.md) | OPENSSL-PEM-CALLBACK-ARM: a literal-argument premise beside a synchronous invocation |
 
 | [openssl-provider-plugin](openssl-provider-plugin/README.md) | OPENSSL-PROVIDER-PLUGIN: OpenSSL contracts on the user-contract SDK, with version-ranged declarations |

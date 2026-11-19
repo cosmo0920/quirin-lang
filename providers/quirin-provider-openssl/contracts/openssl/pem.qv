@@ -67,6 +67,8 @@ module contract;
 
 // PEM_read_bio_X509. Pinned prototype: `X509 *PEM_read_bio_X509(BIO *out,
 // X509 **x, pem_password_cb *cb, void *u)` (openssl/pem.h).
+// Card OPENSSL-EX-DATA-REGISTRY: it allocates the X509 it returns (and frees
+// it on a failed read).
 extern fn PEM_read_bio_X509(out: ptr<mut, u8>, x: ptr<mut, ptr<mut, u8>>, cb: fnptr, u: ptr<mut, u8>) -> ptr<mut, u8>
 contract {
     requires resource_contract_v1;
@@ -74,6 +76,7 @@ contract {
     requires resource_library_version(openssl, documented "1.0.2");
     requires resource_literal_argument(x, 0);
     requires resource_premise(openssl_builtin_bio_methods, "a function of a BIO method the library defines itself (the BIO_METHOD that BIO_s_socket, BIO_s_mem, BIO_f_buffer or another built-in BIO_s_ or BIO_f_ function returns, which no setter is handed), run on a BIO the call reads or writes through or frees (its BIO argument or a BIO the SSL object holds) or one chained to it, takes, releases or retains nothing the caller holds, and so does any callback it runs in turn on an object other than the arguments of the call (the SSL object of a BIO_f_ssl BIO)");
+    requires resource_premise(openssl_ex_data_callbacks, "an ex_data callback the call may run (a new, dup or free callback CRYPTO_get_ex_new_index registers for the class of an object the call creates, copies or frees) takes, releases or retains nothing the caller holds");
     ensures normal resource_borrowed(out);
     ensures normal resource_borrowed(x);
     ensures normal resource_borrowed(cb);
@@ -100,6 +103,8 @@ contract {
 // PEM_read_bio_PrivateKey. Pinned prototype: `EVP_PKEY
 // *PEM_read_bio_PrivateKey(BIO *out, EVP_PKEY **x, pem_password_cb *cb, void
 // *u)`.
+// Card OPENSSL-EX-DATA-REGISTRY: it allocates the EVP_PKEY it returns (and
+// frees it on a failed read).
 extern fn PEM_read_bio_PrivateKey(out: ptr<mut, u8>, x: ptr<mut, ptr<mut, u8>>, cb: fnptr, u: ptr<mut, u8>) -> ptr<mut, u8>
 contract {
     requires resource_contract_v1;
@@ -107,6 +112,7 @@ contract {
     requires resource_library_version(openssl, documented "1.0.2");
     requires resource_literal_argument(x, 0);
     requires resource_premise(openssl_builtin_bio_methods, "a function of a BIO method the library defines itself (the BIO_METHOD that BIO_s_socket, BIO_s_mem, BIO_f_buffer or another built-in BIO_s_ or BIO_f_ function returns, which no setter is handed), run on a BIO the call reads or writes through or frees (its BIO argument or a BIO the SSL object holds) or one chained to it, takes, releases or retains nothing the caller holds, and so does any callback it runs in turn on an object other than the arguments of the call (the SSL object of a BIO_f_ssl BIO)");
+    requires resource_premise(openssl_ex_data_callbacks, "an ex_data callback the call may run (a new, dup or free callback CRYPTO_get_ex_new_index registers for the class of an object the call creates, copies or frees) takes, releases or retains nothing the caller holds");
     ensures normal resource_borrowed(out);
     ensures normal resource_borrowed(x);
     ensures normal resource_borrowed(cb);

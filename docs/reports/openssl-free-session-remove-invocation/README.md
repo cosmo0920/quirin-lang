@@ -374,10 +374,39 @@ shown separately.
 * registers **CALLBACK-REQUIREMENT-BESIDE-DROP**. A slot candidate's
   `resource_owned` requirement on the dropped formal refuses the drop
   (`reference-drop-unheld`). This is fail-closed but imprecise (§1);
-* appends to **OPENSSL-EX-DATA-REGISTRY**: the BIO free premise now names
-  only ex_data.
+* appends to **OPENSSL-EX-DATA-CLASS-REGISTRY** (r34's follow-up; the first
+  version of these amendments appended to OPENSSL-EX-DATA-REGISTRY, which
+  r34 retired): a slot invocation now stands beside a drop, a registry
+  invocation still does not, and the BIO free premise names only ex_data.
 
-`scripts/apply_amendments.py … --check` exits 0.
+`scripts/apply_amendments.py … --check --profiles-base 41eb7e959` exits 0.
+
+## 8. Merged with main `41eb7e959` (r34, OPENSSL-EX-DATA-REGISTRY)
+
+Coordinator's request, 2026-11-20. The conflicts were resolved so both
+cards' readings hold:
+
+* **Declarations.** The `.qv` files were taken from main, and this card's
+  edits reapplied on them (`private/reapply_qv.py`): the stated slots, the
+  narrowed free premise and the widened built-in premise. `BIO_free`,
+  `SSL_free` and `SSL_CTX_free` keep r34's `openssl_ex_data_callbacks`.
+* **Checker.** `BIO_FREED`, `SSL_FREED` and `SSL_CTX_FREED` carry
+  `Premise::ExDataCallbacks` beside this card's slots. r34's `UNSTATED`
+  constant is removed again, because `SSL_CTX_free` was its only user.
+  `EX_DATA_AUDIT` and the crate's 17 checker tests pass.
+* **Spec C04.18.** Both paragraphs are kept, r34's first.
+* **Generated files.** `proof/QCore.lean` and `gateway.md` were regenerated.
+* **Lock.** Regenerated in the documented order (logs
+  `private/logs/m/regen-*.log`: load-path 0, checkers 1 as expected, views
+  0, pin 0, sync 0, checkers 0). Against `41eb7e959`, 11 `flexible`
+  entries change digest: the same 11 functions as before the merge. No
+  other entry or field changes, and the top-level `pinned` and
+  `library_versions` are unchanged. The user load path and
+  `quirin-plugin.json` equal main's.
+
+The opt-in measurement above was taken before the merge, against r33. The
+merge adds r34's premise lines, which move no verdict, so it was not
+repeated. The gate below was rerun on the merge.
 
 **Files likely to conflict:**
 

@@ -65,6 +65,11 @@
 //!    its callback and destroy slots, the frees of a connection or context
 //!    state the session-remove slot, and the free premise names only the
 //!    BIO class's ex_data free callbacks.
+//!    Card **OPENSSL-EX-DATA-REGISTRY**: a declaration that allocates,
+//!    copies or finally frees an object of an ex_data class (directly, or a
+//!    replaced or temporary object it frees inside) names
+//!    `openssl_ex_data_callbacks`, exactly as [`EX_DATA_AUDIT`] reads it, and
+//!    every constructor and free is in that audit ([`ex_data_audited`]).
 //!    Card **REFERENCE-DROP-NULL-ACCEPTING**: a release whose page states that a
 //!    NULL argument does nothing is a NULL-accepting drop,
 //!    `resource_reference_dropped(p, nullable)`, and the cited snapshot must
@@ -87,8 +92,8 @@ use serde_json::Value;
 
 pub use crate::documented::{
     BIO_FREE, BIO_FREE_STATEMENT, BUILTIN_BIO_METHODS, BUILTIN_BIO_METHODS_STATEMENT, DOCUMENTED,
-    Documented, DocumentedFunction, EX_DATA, EX_DATA_STATEMENT, Null, Premise, SLOTS, Slot,
-    UNSTATED_SLOTS, UNSTATED_SLOTS_STATEMENT,
+    Documented, DocumentedFunction, EX_DATA, EX_DATA_AUDIT, EX_DATA_CLASSES, EX_DATA_STATEMENT,
+    ExData, Null, Premise, SLOTS, Slot, UNSTATED_SLOTS, UNSTATED_SLOTS_STATEMENT,
 };
 
 /// The crate name a request's translation unit carries.
@@ -466,6 +471,11 @@ pub fn check_function(module_path: &str, module: &str, function: &str) -> Result
             ));
         }
     }
+    // Card OPENSSL-EX-DATA-REGISTRY: a declaration that creates or frees an
+    // object of an ex_data class names the ex_data premise, and the audit
+    // accounts for it.
+    ex_data_audited(documented, EX_DATA_AUDIT)
+        .map_err(|failure| format!("{function}: {failure}"))?;
     // Card OPENSSL-SSL-CTX-CALLBACK-SLOTS: every slot the declaration states
     // has every writer its page names declared as its setter.
     for slot in stated_slots(documented) {
@@ -480,6 +490,76 @@ pub fn check_function(module_path: &str, module: &str, function: &str) -> Result
         page["url"].as_str().unwrap_or_default(),
         &page["sha256"].as_str().unwrap_or_default()[..12],
     ))
+}
+
+/// Card **OPENSSL-EX-DATA-REGISTRY**: whether a shape creates or frees an
+/// object (a constructor, a release, a reference drop).
+#[must_use]
+pub const fn creates_or_frees(shape: Documented) -> bool {
+    matches!(
+        shape,
+        Documented::CountedConstructor
+            | Documented::Constructor
+            | Documented::Release(..)
+            | Documented::CountedRelease(_)
+            | Documented::NullAcceptingRelease { .. }
+    )
+}
+
+/// Card **OPENSSL-EX-DATA-REGISTRY**: the entry's reading in `audit` holds.
+///
+/// * The entry carries [`Premise::ExDataCallbacks`] exactly when `audit`
+///   lists it as [`ExData::Runs`], with at least one class, each one of
+///   [`EX_DATA_CLASSES`].
+/// * An entry whose shape creates or frees an object ([`creates_or_frees`])
+///   is listed, either way: a constructor or free is never left out of the
+///   audit, so none reads the registry silently.
+/// * `audit` lists the entry at most once.
+///
+/// # Errors
+///
+/// The first of these that fails, as the diagnostic text.
+pub fn ex_data_audited(
+    documented: &DocumentedFunction,
+    audit: &[(&str, ExData)],
+) -> Result<(), String> {
+    let listed = audit
+        .iter()
+        .filter(|(function, _)| *function == documented.function)
+        .map(|(_, reading)| *reading)
+        .collect::<Vec<_>>();
+    let carries = documented.premises.contains(&Premise::ExDataCallbacks);
+    match listed.as_slice() {
+        [] if carries => Err(format!(
+            "names `{EX_DATA}` but the ex_data audit does not list it"
+        )),
+        [] if creates_or_frees(documented.shape) => Err(format!(
+            "its {} creates or frees an object, and the ex_data audit does not list it",
+            describe(documented.shape)
+        )),
+        [] | [ExData::NoClass { .. }] if !carries => Ok(()),
+        [ExData::Runs { classes, .. }] => {
+            if !carries {
+                return Err(format!(
+                    "may run the ex_data callbacks of {classes:?} but does not name `{EX_DATA}`"
+                ));
+            }
+            if classes.is_empty() {
+                return Err("its ex_data audit entry names no class".to_owned());
+            }
+            if let Some(unknown) = classes.iter().find(|c| !EX_DATA_CLASSES.contains(c)) {
+                return Err(format!(
+                    "its ex_data audit entry names {unknown}, which is no ex_data class \
+                     (CRYPTO_get_ex_new_index 3.5)"
+                ));
+            }
+            Ok(())
+        }
+        [ExData::NoClass { .. }] => Err(format!(
+            "names `{EX_DATA}` but the ex_data audit reads it as touching no ex_data class"
+        )),
+        _ => Err("the ex_data audit lists it more than once".to_owned()),
+    }
 }
 
 /// What a shape is, for a diagnostic.
@@ -1402,11 +1482,24 @@ mod tests {
         assert!(check_function(path, &connection, "SSL_CTX_use_certificate").is_err());
         // SSL_CTX_use_certificate_chain_file: the slot premise given back in
         // place of the ex_data one, and the ex_data premise dropped.
+        // Card OPENSSL-EX-DATA-REGISTRY: other declarations of the module
+        // name the ex_data premise too, so the drift is applied to this one.
         let (path, text) = module_of("SSL_CTX_use_certificate_chain_file");
-        assert!(text.contains(&ex_data));
-        let widened = text.replacen(&ex_data, &premise, 1);
+        let start = text
+            .find("extern fn SSL_CTX_use_certificate_chain_file(")
+            .unwrap();
+        assert!(text[start..].contains(&ex_data));
+        let widened = format!(
+            "{}{}",
+            &text[..start],
+            text[start..].replacen(&ex_data, &premise, 1)
+        );
         assert!(check_function(path, &widened, "SSL_CTX_use_certificate_chain_file").is_err());
-        let silent = text.replacen(&ex_data, "", 1);
+        let silent = format!(
+            "{}{}",
+            &text[..start],
+            text[start..].replacen(&ex_data, "", 1)
+        );
         assert!(check_function(path, &silent, "SSL_CTX_use_certificate_chain_file").is_err());
         // A setter registering the wrong slot, or a callback the prototype
         // does not give it.
@@ -1971,6 +2064,177 @@ mod tests {
                 documented.function,
                 documented.page,
                 documented.series
+            );
+        }
+    }
+
+    /// Card OPENSSL-EX-DATA-REGISTRY: every declaration the audit reads as
+    /// running ex_data callbacks names the premise in its module, dropping it
+    /// refuses, and every constructor and free is audited.
+    #[test]
+    fn every_ex_data_class_object_names_the_premise() {
+        let ex_data =
+            format!("    requires resource_premise({EX_DATA}, \"{EX_DATA_STATEMENT}\");\n");
+        let mut runs = 0;
+        for (function, reading) in EX_DATA_AUDIT {
+            let documented = DOCUMENTED
+                .iter()
+                .filter(|entry| entry.function == *function)
+                .collect::<Vec<_>>();
+            assert_eq!(documented.len(), 1, "{function} is documented once");
+            assert_eq!(
+                EX_DATA_AUDIT.iter().filter(|(f, _)| f == function).count(),
+                1,
+                "{function} is audited once"
+            );
+            let (path, text) = module_of(function);
+            let start = text.find(&format!("extern fn {function}(")).unwrap();
+            let end = start + text[start..].find("};").unwrap();
+            let declared = text[start..end].contains(ex_data.trim());
+            match reading {
+                ExData::Runs { classes, .. } => {
+                    runs += 1;
+                    assert!(declared, "{function} names {EX_DATA}");
+                    assert!(!classes.is_empty(), "{function}");
+                    for class in *classes {
+                        assert!(EX_DATA_CLASSES.contains(class), "{function}: {class}");
+                    }
+                    let dropped = format!(
+                        "{}{}",
+                        &text[..start],
+                        text[start..].replacen(&ex_data, "", 1)
+                    );
+                    assert_ne!(dropped, *text, "{function}");
+                    let refused = check_function(path, &dropped, function).unwrap_err();
+                    assert!(refused.contains(EX_DATA), "{function}: {refused}");
+                }
+                ExData::NoClass { .. } => {
+                    assert!(!declared, "{function} names no ex_data premise");
+                    assert!(creates_or_frees(documented[0].shape), "{function}");
+                }
+            }
+        }
+        // The audit's count: the 29 declarations this card premised and
+        // SSL_CTX_use_certificate_chain_file.
+        assert_eq!(runs, 30);
+        for documented in DOCUMENTED {
+            let audited = EX_DATA_AUDIT.iter().any(|(f, _)| *f == documented.function);
+            if creates_or_frees(documented.shape) {
+                assert!(
+                    audited,
+                    "{} creates or frees an object",
+                    documented.function
+                );
+            }
+            if documented.premises.contains(&Premise::ExDataCallbacks) {
+                assert!(
+                    EX_DATA_AUDIT
+                        .iter()
+                        .any(|(f, reading)| *f == documented.function
+                            && matches!(reading, ExData::Runs { .. })),
+                    "{}",
+                    documented.function
+                );
+            }
+        }
+        // Every module names the premise only where the audit reads it.
+        let named = crate::MODULES
+            .iter()
+            .map(|(_, text)| strip_comments(text).matches(ex_data.trim()).count())
+            .sum::<usize>();
+        assert_eq!(named, runs);
+    }
+
+    /// Card OPENSSL-EX-DATA-REGISTRY: each way the audit can drift refuses.
+    #[test]
+    fn a_drifted_ex_data_reading_is_refused() {
+        const RUNS: ExData = ExData::Runs {
+            classes: &["X509"],
+            how: "allocates a certificate",
+        };
+        const NONE: ExData = ExData::NoClass { why: "no class" };
+        let premised = |shape| DocumentedFunction {
+            function: "X509_new",
+            page: "X509_new",
+            series: "1.0.2",
+            range: "",
+            shape,
+            premises: &[Premise::ExDataCallbacks],
+        };
+        let bare = |shape| DocumentedFunction {
+            function: "X509_new",
+            page: "X509_new",
+            series: "1.0.2",
+            range: "",
+            shape,
+            premises: &[],
+        };
+        let constructor = Documented::CountedConstructor;
+        // As landed.
+        ex_data_audited(&premised(constructor), &[("X509_new", RUNS)]).unwrap();
+        ex_data_audited(&bare(Documented::Plain), &[]).unwrap();
+        ex_data_audited(&bare(constructor), &[("X509_new", NONE)]).unwrap();
+        // A constructor, a release and a reference drop left out of the audit.
+        for shape in [
+            constructor,
+            Documented::Constructor,
+            Documented::Release(0, Null::Nullable),
+            Documented::CountedRelease(0),
+            Documented::NullAcceptingRelease {
+                position: 0,
+                sentence: "",
+            },
+        ] {
+            let refused = ex_data_audited(&bare(shape), &[]).unwrap_err();
+            assert!(refused.contains("does not list it"), "{refused}");
+        }
+        // The premise dropped from a declaration the audit reads as running.
+        let refused = ex_data_audited(&bare(constructor), &[("X509_new", RUNS)]).unwrap_err();
+        assert!(refused.contains("does not name"), "{refused}");
+        // The premise on a declaration the audit does not list, or reads as
+        // touching no class.
+        assert!(ex_data_audited(&premised(Documented::Plain), &[]).is_err());
+        assert!(ex_data_audited(&premised(constructor), &[("X509_new", NONE)]).is_err());
+        // A class that is none, no class, and a second listing.
+        let unknown = ExData::Runs {
+            classes: &["PKCS12"],
+            how: "",
+        };
+        let refused =
+            ex_data_audited(&premised(constructor), &[("X509_new", unknown)]).unwrap_err();
+        assert!(refused.contains("PKCS12"), "{refused}");
+        let empty = ExData::Runs {
+            classes: &[],
+            how: "",
+        };
+        assert!(ex_data_audited(&premised(constructor), &[("X509_new", empty)]).is_err());
+        assert!(
+            ex_data_audited(
+                &premised(constructor),
+                &[("X509_new", RUNS), ("X509_new", RUNS)]
+            )
+            .is_err()
+        );
+        // The checker refuses the crate's own X509_new with the premise
+        // dropped, and SSL_set_accept_state (a plain call the audit reads).
+        for function in [
+            "X509_new",
+            "SSL_set_accept_state",
+            "SSL_new",
+            "EVP_MD_CTX_free",
+        ] {
+            let (path, text) = module_of(function);
+            let start = text.find(&format!("extern fn {function}(")).unwrap();
+            let ex_data =
+                format!("    requires resource_premise({EX_DATA}, \"{EX_DATA_STATEMENT}\");\n");
+            let dropped = format!(
+                "{}{}",
+                &text[..start],
+                text[start..].replacen(&ex_data, "", 1)
+            );
+            assert!(
+                check_function(path, &dropped, function).is_err(),
+                "{function}"
             );
         }
     }

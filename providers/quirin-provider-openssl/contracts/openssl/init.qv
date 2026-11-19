@@ -23,11 +23,14 @@ module contract;
 // OPENSSL_INIT_SETTINGS *settings)` (openssl/ssl.h). `settings` is read
 // during the call (NULL for the defaults); no custody is taken or returned.
 // In OpenSSL 3, `SSL_load_error_strings()` is a macro over this function.
+// Card OPENSSL-EX-DATA-REGISTRY: the configuration it loads by default
+// (OPENSSL_INIT_LOAD_CONFIG) may create and free engines.
 extern fn OPENSSL_init_ssl(opts: u64, settings: ptr<const, u8>) -> i32
 contract {
     requires resource_contract_v1;
     requires resource_revision(flexible);
     requires resource_library_version(openssl, since "1.1.0");
+    requires resource_premise(openssl_ex_data_callbacks, "an ex_data callback the call may run (a new, dup or free callback CRYPTO_get_ex_new_index registers for the class of an object the call creates, copies or frees) takes, releases or retains nothing the caller holds");
     ensures normal resource_borrowed(opts);
     ensures normal resource_borrowed(settings);
     ensures normal resource_return_none();
