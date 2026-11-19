@@ -905,14 +905,6 @@
     "providers/**"
    ],
    "why": "shipped_manifests_carry_no_checker_binding lists every profile directory, reads its profile.json and loads the resource_contract_manifest it names with the load path that manifest names, which reads every crate module on it"
-  },
-  {
-   "source": "crates/qcore-frontend/tests/premise_formula.rs",
-   "literal": "providers/quirin-provider-openssl/contracts/openssl",
-   "reads": [
-    "providers/quirin-provider-openssl/contracts/openssl/*.qv"
-   ],
-   "why": "card SP1-SYMBOLIC-OPENSSL-PREMISES: the formula test lists the directory (read_dir, .qv only) and reads every module's resource_premise clauses to bind them to the Lean definitions: the directory's .qv files"
   }
  ],
  "expansions": [

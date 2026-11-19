@@ -27,26 +27,80 @@ use qcore_frontend::premise_formula::{
 
 const LEAN: &str = include_str!("../../../proof/QCore/PremiseFormula.lean");
 
-/// Every module of the OpenSSL user crate, read from the tree, so a module
-/// added later is covered too.
-fn openssl_modules() -> Vec<(String, String)> {
-    let dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("../../providers/quirin-provider-openssl/contracts/openssl");
-    let mut modules = std::fs::read_dir(&dir)
-        .unwrap()
-        .map(|entry| entry.unwrap().path())
-        .filter(|path| path.extension().is_some_and(|e| e == "qv"))
-        .map(|path| {
-            (
-                path.file_name().unwrap().to_string_lossy().into_owned(),
-                std::fs::read_to_string(&path).unwrap(),
-            )
-        })
-        .collect::<Vec<_>>();
-    modules.sort();
-    assert!(modules.len() >= 17, "{dir:?}");
-    modules
-}
+/// Every module of the OpenSSL user crate (`user-crates-load-path.json`'s
+/// 17), as shipped.
+const OPENSSL_MODULES: &[(&str, &str)] = &[
+    (
+        "bio.qv",
+        include_str!("../../../providers/quirin-provider-openssl/contracts/openssl/bio.qv"),
+    ),
+    (
+        "bio_slots.qv",
+        include_str!("../../../providers/quirin-provider-openssl/contracts/openssl/bio_slots.qv"),
+    ),
+    (
+        "engine.qv",
+        include_str!("../../../providers/quirin-provider-openssl/contracts/openssl/engine.qv"),
+    ),
+    (
+        "err.qv",
+        include_str!("../../../providers/quirin-provider-openssl/contracts/openssl/err.qv"),
+    ),
+    (
+        "evp.qv",
+        include_str!("../../../providers/quirin-provider-openssl/contracts/openssl/evp.qv"),
+    ),
+    (
+        "evp_digest.qv",
+        include_str!("../../../providers/quirin-provider-openssl/contracts/openssl/evp_digest.qv"),
+    ),
+    (
+        "init.qv",
+        include_str!("../../../providers/quirin-provider-openssl/contracts/openssl/init.qv"),
+    ),
+    (
+        "lookup.qv",
+        include_str!("../../../providers/quirin-provider-openssl/contracts/openssl/lookup.qv"),
+    ),
+    (
+        "pem.qv",
+        include_str!("../../../providers/quirin-provider-openssl/contracts/openssl/pem.qv"),
+    ),
+    (
+        "pkcs12.qv",
+        include_str!("../../../providers/quirin-provider-openssl/contracts/openssl/pkcs12.qv"),
+    ),
+    (
+        "ssl.qv",
+        include_str!("../../../providers/quirin-provider-openssl/contracts/openssl/ssl.qv"),
+    ),
+    (
+        "ssl_ctx.qv",
+        include_str!("../../../providers/quirin-provider-openssl/contracts/openssl/ssl_ctx.qv"),
+    ),
+    (
+        "ssl_handshake.qv",
+        include_str!(
+            "../../../providers/quirin-provider-openssl/contracts/openssl/ssl_handshake.qv"
+        ),
+    ),
+    (
+        "ssl_io.qv",
+        include_str!("../../../providers/quirin-provider-openssl/contracts/openssl/ssl_io.qv"),
+    ),
+    (
+        "stack.qv",
+        include_str!("../../../providers/quirin-provider-openssl/contracts/openssl/stack.qv"),
+    ),
+    (
+        "x509.qv",
+        include_str!("../../../providers/quirin-provider-openssl/contracts/openssl/x509.qv"),
+    ),
+    (
+        "x509_store.qv",
+        include_str!("../../../providers/quirin-provider-openssl/contracts/openssl/x509_store.qv"),
+    ),
+];
 
 fn tokens(source: &str) -> Vec<TokenKind> {
     lex(source)
@@ -156,9 +210,9 @@ fn inert_is_its_definition() {
 
 /// Every `resource_premise` clause of the OpenSSL crate's modules, read by
 /// the contract format's premise reader: `(module, name, statement)`.
-fn openssl_premises() -> Vec<(String, String, PremiseStatement)> {
+fn openssl_premises() -> Vec<(&'static str, String, PremiseStatement)> {
     let mut out = Vec::new();
-    for (module, text) in openssl_modules() {
+    for (module, text) in OPENSSL_MODULES {
         let stripped = text
             .lines()
             .map(|line| line.split("//").next().unwrap_or_default())
@@ -171,7 +225,7 @@ fn openssl_premises() -> Vec<(String, String, PremiseStatement)> {
             let (name, statement) = premise_clause(&tokens(&clause[..end]))
                 .unwrap_or_else(|e| panic!("{module}: {e}"))
                 .unwrap();
-            out.push((module.clone(), name, statement));
+            out.push((*module, name, statement));
             rest = &clause[end..];
         }
     }
