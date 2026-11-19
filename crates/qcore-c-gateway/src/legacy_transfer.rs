@@ -4600,6 +4600,24 @@ pub(super) fn transfer_base(
                     &mut state,
                     diagnostics,
                 );
+                // Card CG22-CALLBACK-REGISTRY-CONTRACT (rules 13w, 13x): the
+                // registry effects. Card OPENSSL-FREE-SESSION-REMOVE-INVOCATION
+                // (C04.19 amended): before the keeps and drops, so a slot
+                // invoked beside a drop reads the object before it. Before
+                // that card no admitted declaration carried both, so the order
+                // read nothing else.
+                if let Some(callbacks) = &operands.callbacks {
+                    callback_route::apply(
+                        function,
+                        node.line,
+                        called,
+                        callbacks,
+                        destination.as_deref(),
+                        &mut state,
+                        acquisition_lines,
+                        diagnostics,
+                    );
+                }
                 // Card REFCOUNT-RESOURCE-KIND (rule 13b): the keeps and drops.
                 if !operands.references.is_empty() {
                     reference_route::apply(
@@ -4611,20 +4629,6 @@ pub(super) fn transfer_base(
                         produced_sites,
                         acquisition_lines,
                         &mut state,
-                        diagnostics,
-                    );
-                }
-                // Card CG22-CALLBACK-REGISTRY-CONTRACT (rules 13w, 13x): the
-                // registry effects.
-                if let Some(callbacks) = &operands.callbacks {
-                    callback_route::apply(
-                        function,
-                        node.line,
-                        called,
-                        callbacks,
-                        destination.as_deref(),
-                        &mut state,
-                        acquisition_lines,
                         diagnostics,
                     );
                 }

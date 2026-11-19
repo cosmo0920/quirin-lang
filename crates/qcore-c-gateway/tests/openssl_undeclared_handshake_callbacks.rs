@@ -32,8 +32,12 @@
 //! (`bio_slots.qv`), with the same arms: an uncontracted method or callback
 //! candidate refuses the I/O call and `SSL_shutdown`, an effectful one
 //! refuses, a BIO slot no loaded declaration registers refuses, and identity
-//! candidates decide. `BIO_free` states no invocation (its callbacks rest on
-//! the premise `openssl_bio_free_callbacks`).
+//! candidates decide.
+//!
+//! Card OPENSSL-FREE-SESSION-REMOVE-INVOCATION (C04.19 amended in place, rule
+//! 12n; this target too): `BIO_free`, `SSL_free` and `SSL_CTX_free` state
+//! the slots their last drop runs beside the drop, and the loader admits a
+//! slot invocation beside drops only.
 
 use std::collections::BTreeMap;
 use std::sync::Arc;
@@ -793,39 +797,6 @@ fn a_bio_slot_no_declaration_registers_refuses() {
     }
 }
 
-/// `BIO_free` states no callback clause beside its reference drop (C04.19
-/// admits none): its callback, destroy function and ex_data callbacks rest
-/// on the premise `openssl_bio_free_callbacks`, and the loader still rejects
-/// a slot invocation beside the drop.
-#[test]
-fn bio_free_states_no_invocation_beside_its_drop() {
-    let bio = include_str!("../../../providers/quirin-provider-openssl/contracts/openssl/bio.qv");
-    assert!(bio.contains("resource_premise(openssl_bio_free_callbacks,"));
-    let contracts = contracts(&[("bio.qv", bio), ("bio_slots.qv", BIO_SLOTS)]);
-    assert!(
-        contracts
-            .retaining_contract("BIO_free")
-            .is_none_or(|declaration| declaration.callbacks.is_empty())
-    );
-    let stated = bio.replacen(
-        "    ensures normal resource_reference_dropped(a, nullable);\n",
-        "    ensures normal resource_reference_dropped(a, nullable);\n    ensures normal \
-         resource_callback_slot_invoked(a, bio_st.bio_callback_ex, a, _, _, _, _, _, _, _);\n",
-        1,
-    );
-    assert_ne!(stated, bio);
-    let mut sources = BTreeMap::new();
-    sources.insert("bio.qv".to_owned(), stated);
-    sources.insert("bio_slots.qv".to_owned(), BIO_SLOTS.to_owned());
-    let refused = load_resource_contract_sources(&sources).unwrap_err();
-    assert!(
-        refused
-            .to_string()
-            .contains("a callback clause stands only beside retentions and plain predicates"),
-        "{refused}"
-    );
-}
-
 // Card OPENSSL-BIO-READER-INVOCATIONS (gateway rule 57 amended; contract
 // specification C04.5 "Beside a slot invocation"): the PEM and PKCS#12
 // readers state the 14 BIO slots on their BIO formal beside their
@@ -1086,5 +1057,537 @@ fn a_reader_bio_slot_without_registrations_or_run_facts_refuses() {
     for name in WITHIN {
         let (status, leaves) = reader_row(name, None, &contracts);
         assert_ne!(status, AnalysisStatus::Safe, "{name}: {leaves:?}");
+    }
+}
+
+// Card OPENSSL-FREE-SESSION-REMOVE-INVOCATION (contract specification C04.19
+// amended in place, gateway rule 12n): a slot invocation beside a reference
+// drop. The frees state the session-remove slot (`SSL_free`,
+// `SSL_CTX_free`) and a BIO's callback and destroy slots (`BIO_free`,
+// `SSL_free`), every actual `_`.
+
+const BIO: &str =
+    include_str!("../../../providers/quirin-provider-openssl/contracts/openssl/bio.qv");
+const LOOKUP: &str =
+    include_str!("../../../providers/quirin-provider-openssl/contracts/openssl/lookup.qv");
+
+const FREE_HEADERS: &str = "\
+typedef struct ssl_method_st SSL_METHOD;
+typedef struct ssl_session_st SSL_SESSION;
+const SSL_METHOD *TLS_server_method(void);
+SSL_CTX *SSL_CTX_new(const SSL_METHOD *meth);
+SSL *SSL_new(SSL_CTX *ctx);
+void SSL_free(SSL *ssl);
+void SSL_CTX_free(SSL_CTX *ctx);
+void SSL_CTX_sess_set_remove_cb(SSL_CTX *ctx, void (*remove_session_cb)(SSL_CTX *ctx, SSL_SESSION *sess));
+BIO *BIO_new_file(const char *filename, const char *mode);
+int BIO_free(BIO *a);
+void remove_ok(SSL_CTX *ctx, SSL_SESSION *sess);
+void remove_uncontracted(SSL_CTX *ctx, SSL_SESSION *sess);
+";
+
+/// Each free acquires its object and drops the one reference it holds.
+const FREES: &str = "\
+void free_ctx(void) { const SSL_METHOD *m = TLS_server_method(); SSL_CTX *c = SSL_CTX_new(m); if (!c) return; SSL_CTX_free(c); }
+void free_ssl(SSL_CTX *c) { SSL *s = SSL_new(c); if (!s) return; SSL_free(s); }
+void free_bio(void) { BIO *b = BIO_new_file(\"f\", \"r\"); if (!b) return; BIO_free(b); }
+";
+
+const REMOVE_CANDIDATES: &str = "module contract;
+
+extern fn remove_ok(ctx: ptr<mut, u8>, sess: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(ctx);
+    ensures normal resource_borrowed(sess);
+    ensures normal resource_return_none();
+};
+";
+
+fn free_contracts(modules: &[(&str, &str)]) -> ResourceContracts {
+    let mut sources = modules
+        .iter()
+        .map(|(name, text)| ((*name).to_owned(), (*text).to_owned()))
+        .collect::<BTreeMap<_, _>>();
+    sources.insert("candidates.qv".to_owned(), CANDIDATES.to_owned());
+    sources.insert("remove.qv".to_owned(), REMOVE_CANDIDATES.to_owned());
+    load_resource_contract_sources(&sources).expect("the crate's modules load")
+}
+
+fn free_crate() -> ResourceContracts {
+    free_contracts(&[
+        ("ssl.qv", SSL),
+        ("ssl_ctx.qv", SSL_CTX),
+        ("bio.qv", BIO),
+        ("lookup.qv", LOOKUP),
+        ("bio_slots.qv", BIO_SLOTS),
+    ])
+}
+
+/// The row of `name` in `headers` + `body`, under `run`'s member facts.
+fn unit_row(
+    headers: &str,
+    body: &str,
+    name: &str,
+    run: Option<Arc<RunMemberFacts>>,
+    contracts: &ResourceContracts,
+) -> (AnalysisStatus, Vec<String>) {
+    let text = format!("{headers}{body}");
+    let outcome = scoped(run, || {
+        analyze_unrestricted_c11(
+            &C11TranslationUnit {
+                source: &text,
+                ..Default::default()
+            },
+            name,
+            contracts,
+        )
+    })
+    .unwrap_or_else(|error| panic!("analysed: {error:?}\n{text}"));
+    let summary = match &outcome {
+        UnrestrictedLegacyResult::Safe(certificate) => &certificate.summary,
+        UnrestrictedLegacyResult::Unsafe(summary) => summary,
+        UnrestrictedLegacyResult::Unknown { partial, .. } => {
+            partial.as_ref().expect("a partial summary")
+        }
+    };
+    let row = &summary.functions[name];
+    let leaves = row
+        .diagnostics
+        .iter()
+        .filter_map(|diagnostic| match &diagnostic.kind {
+            LegacyDiagnosticKind::Unsupported { description } => Some(description.clone()),
+            _ => None,
+        })
+        .collect();
+    (row.status, leaves)
+}
+
+fn unit_facts(headers: &str, body: &str) -> MemberFacts {
+    let text = format!("{headers}{body}");
+    read_unit(
+        &text,
+        &C11TranslationUnit {
+            source: &text,
+            ..Default::default()
+        },
+    )
+    .unwrap_or_else(|error| panic!("read: {error}\n{text}"))
+}
+
+fn free_run(registrar: &str, contracts: &ResourceContracts) -> Arc<RunMemberFacts> {
+    let headers = format!("{HEADERS}{FREE_HEADERS}");
+    Arc::new(RunMemberFacts::new(
+        vec![
+            unit_facts(&headers, registrar),
+            unit_facts(&headers, FREES),
+            declared(contracts),
+        ],
+        BTreeMap::new(),
+    ))
+}
+
+fn free_row(
+    name: &str,
+    run: Option<Arc<RunMemberFacts>>,
+    contracts: &ResourceContracts,
+) -> (AnalysisStatus, Vec<String>) {
+    unit_row(
+        &format!("{HEADERS}{FREE_HEADERS}"),
+        FREES,
+        name,
+        run,
+        contracts,
+    )
+}
+
+/// The declarations: each free keeps its NULL-accepting drop and states
+/// exactly its slots, every actual `_`.
+#[test]
+fn the_frees_state_their_slots_beside_the_drop() {
+    use qcore_schemas::reference_count::ReferenceOperation;
+    let contracts = free_crate();
+    let bio = [
+        "bio_st.bio_callback_ex",
+        "bio_st.bio_callback",
+        "bio_method_st.meth_destroy",
+    ];
+    let ssl = [
+        "ssl_ctx_st.remove_session_cb",
+        "bio_st.bio_callback_ex",
+        "bio_st.bio_callback",
+        "bio_method_st.meth_destroy",
+    ];
+    for (call, keys) in [
+        ("BIO_free", &bio[..]),
+        ("SSL_free", &ssl[..]),
+        ("SSL_CTX_free", &["ssl_ctx_st.remove_session_cb"][..]),
+    ] {
+        let declaration = contracts
+            .retaining_contract(call)
+            .unwrap_or_else(|| panic!("{call} is withheld"));
+        assert!(contracts.contract(call).is_none(), "{call}");
+        assert!(
+            matches!(declaration.references.as_slice(),
+                [reference] if reference.operation == ReferenceOperation::Dropped
+                    && reference.parameter == 0 && reference.nullable),
+            "{call}"
+        );
+        let invoked = declaration
+            .callbacks
+            .iter()
+            .map(|clause| match clause {
+                CallbackClause::MemberInvoked {
+                    slot: true,
+                    member,
+                    actuals,
+                    ..
+                } => {
+                    assert!(
+                        actuals
+                            .iter()
+                            .all(|actual| matches!(actual, CallbackActual::Supplied)),
+                        "{call}: {actuals:?}"
+                    );
+                    member.spelling()
+                }
+                other => panic!("{call}: {other:?}"),
+            })
+            .collect::<Vec<_>>();
+        assert_eq!(invoked, keys, "{call}");
+    }
+}
+
+/// C04.19 amended: beside reference clauses, only slot invocations, and only
+/// beside drops. A keep, a plain member invocation, a synchronous invocation
+/// and a registration beside a reference clause still reject.
+#[test]
+fn a_slot_invocation_stands_beside_drops_only() {
+    let module = |clauses: &str| {
+        format!(
+            "module contract;
+
+extern fn obj_put(o: ptr<mut, u8>, cb: fnptr) -> unit
+contract {{
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(o);
+    ensures normal resource_borrowed(cb);
+{clauses}    ensures normal resource_return_none();
+}};
+"
+        )
+    };
+    let load = |text: String| {
+        load_resource_contract_sources(&BTreeMap::from([("obj.qv".to_owned(), text)]))
+    };
+    let admitted = load(module(
+        "    ensures normal resource_reference_dropped(o, nullable);\n    ensures normal \
+         resource_callback_slot_invoked(o, obj_st.on_free, o);\n",
+    ))
+    .expect("a slot invocation beside a drop loads");
+    assert!(admitted.contract("obj_put").is_none());
+    let declaration = admitted.retaining_contract("obj_put").expect("withheld");
+    assert_eq!(declaration.references.len(), 1);
+    assert_eq!(declaration.callbacks.len(), 1);
+    for clauses in [
+        // A slot invocation beside a keep.
+        "    ensures normal resource_reference_kept(o);\n    ensures normal \
+         resource_callback_slot_invoked(o, obj_st.on_free, o);\n",
+        // A plain member invocation beside a drop.
+        "    ensures normal resource_reference_dropped(o, nullable);\n    ensures normal \
+         resource_callback_member_invoked(o, obj_st.on_free, o);\n",
+        // A synchronous invocation beside a drop.
+        "    ensures normal resource_reference_dropped(o, nullable);\n    ensures normal \
+         resource_callback_invoked(cb, o);\n",
+        // A slot registration beside a drop.
+        "    ensures normal resource_reference_dropped(o, nullable);\n    ensures normal \
+         resource_callback_slot_registered(o, obj_st.on_free, cb);\n",
+        // A slot invocation beside a drop and a registration.
+        "    ensures normal resource_reference_dropped(o, nullable);\n    ensures normal \
+         resource_callback_slot_invoked(o, obj_st.on_free, o);\n    ensures normal \
+         resource_callback_slot_registered(o, obj_st.on_other, cb);\n",
+    ] {
+        let refused = load(module(clauses)).unwrap_err().to_string();
+        assert!(
+            refused
+                .contains("a callback clause stands only beside retentions and plain predicates"),
+            "{clauses}: {refused}"
+        );
+    }
+}
+
+/// Identity candidates registered (or nothing): each free decides `Safe`.
+#[test]
+fn identity_candidates_decide_the_frees() {
+    if !clang_available() {
+        return;
+    }
+    let contracts = free_crate();
+    for registrar in [
+        "void reg(SSL_CTX *c, BIO *b) { SSL_CTX_sess_set_remove_cb(c, remove_ok); \
+         BIO_set_callback_ex(b, bio_cb_ok); }\n",
+        "void nothing(void) { }\n",
+    ] {
+        let run = free_run(registrar, &contracts);
+        for name in ["free_ctx", "free_ssl", "free_bio"] {
+            let (status, leaves) = free_row(name, Some(run.clone()), &contracts);
+            assert!(
+                !refused(&leaves, "callback-"),
+                "{name}: no callback refusal: {leaves:?}"
+            );
+            assert_eq!(status, AnalysisStatus::Safe, "{name}: {leaves:?}");
+        }
+    }
+}
+
+/// An uncontracted session-remove candidate refuses both frees that run it;
+/// a destroy function releasing the BIO it is handed, and an uncontracted
+/// BIO callback, refuse `BIO_free` and `SSL_free`. Each names the candidate,
+/// and the free that does not run the slot is unaffected.
+#[test]
+fn a_candidate_that_is_not_the_identity_refuses_the_frees() {
+    if !clang_available() {
+        return;
+    }
+    let contracts = free_crate();
+    for (registrar, candidate, runs, spared) in [
+        (
+            "void reg(SSL_CTX *c) { SSL_CTX_sess_set_remove_cb(c, remove_uncontracted); }\n",
+            "remove_uncontracted",
+            &["free_ctx", "free_ssl"][..],
+            "free_bio",
+        ),
+        (
+            "void reg(BIO_METHOD *m) { BIO_meth_set_destroy(m, bio_destroy_releasing); }\n",
+            "bio_destroy_releasing",
+            &["free_bio", "free_ssl"][..],
+            "free_ctx",
+        ),
+        (
+            "void reg(BIO *b) { BIO_set_callback_ex(b, bio_cb_uncontracted); }\n",
+            "bio_cb_uncontracted",
+            &["free_bio", "free_ssl"][..],
+            "free_ctx",
+        ),
+    ] {
+        let run = free_run(registrar, &contracts);
+        for name in runs {
+            let (status, leaves) = free_row(name, Some(run.clone()), &contracts);
+            assert_ne!(status, AnalysisStatus::Safe, "{name}");
+            assert!(
+                leaves
+                    .iter()
+                    .any(|leaf| leaf.contains(candidate) && leaf.contains("callback-")),
+                "{name}: {leaves:?}"
+            );
+        }
+        let (status, leaves) = free_row(spared, Some(run), &contracts);
+        assert_eq!(status, AnalysisStatus::Safe, "{spared}: {leaves:?}");
+    }
+}
+
+/// No run facts, or a key no loaded declaration registers (`bio_slots.qv` or
+/// `ssl_ctx.qv` absent): the free refuses, never `Safe`.
+#[test]
+fn a_free_slot_without_registrations_or_run_facts_refuses() {
+    if !clang_available() {
+        return;
+    }
+    let contracts = free_crate();
+    for name in ["free_ctx", "free_ssl", "free_bio"] {
+        let (status, _) = free_row(name, None, &contracts);
+        assert_ne!(status, AnalysisStatus::Safe, "{name} without run facts");
+    }
+    let without_bio_slots = free_contracts(&[
+        ("ssl.qv", SSL),
+        ("ssl_ctx.qv", SSL_CTX),
+        ("bio.qv", BIO),
+        ("lookup.qv", LOOKUP),
+    ]);
+    let run = free_run("void nothing(void) { }\n", &without_bio_slots);
+    for name in ["free_bio", "free_ssl"] {
+        let (status, leaves) = free_row(name, Some(run.clone()), &without_bio_slots);
+        assert_ne!(status, AnalysisStatus::Safe, "{name}");
+        assert!(
+            refused(&leaves, "no declaration registers"),
+            "{name}: {leaves:?}"
+        );
+    }
+    let without_setters = free_contracts(&[
+        ("ssl.qv", SSL),
+        ("bio.qv", BIO),
+        ("lookup.qv", LOOKUP),
+        ("bio_slots.qv", BIO_SLOTS),
+    ]);
+    let run = free_run("void nothing(void) { }\n", &without_setters);
+    let (status, leaves) = free_row("free_ctx", Some(run), &without_setters);
+    assert_ne!(status, AnalysisStatus::Safe);
+    assert!(refused(&leaves, "no declaration registers"), "{leaves:?}");
+}
+
+const OBJ: &str = "module contract;
+
+extern fn obj_new() -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_return_owned(nullable);
+    ensures normal resource_return_kind(reference);
+};
+
+extern fn obj_keep(o: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(o);
+    ensures normal resource_reference_kept(o);
+    ensures normal resource_return_none();
+};
+
+extern fn obj_set_on_free(o: ptr<mut, u8>, cb: fnptr) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(o);
+    ensures normal resource_borrowed(cb);
+    ensures normal resource_callback_slot_registered(o, obj_st.on_free, cb);
+    ensures normal resource_return_none();
+};
+
+extern fn obj_put(o: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(o);
+    ensures normal resource_reference_dropped(o, nullable);
+    ensures normal resource_callback_slot_invoked(o, obj_st.on_free, o);
+    ensures normal resource_return_none();
+};
+
+extern fn on_free_ok(o: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(o);
+    ensures normal resource_return_none();
+};
+
+extern fn on_free_live(o: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_owned(o, nonnull);
+    ensures normal resource_return_none();
+};
+
+extern fn on_free_payload(o: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(o);
+    ensures normal resource_return_none();
+    quant live #o: obj.payload |-> #released;
+};
+
+extern fn on_free_releasing(o: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(o, nonnull);
+    ensures normal resource_return_none();
+};
+";
+
+const OBJ_HEADERS: &str = "\
+struct obj { int x; struct obj *payload; };
+struct obj *obj_new(void);
+void obj_keep(struct obj *o);
+void obj_set_on_free(struct obj *o, int (*cb)(struct obj *));
+void obj_put(struct obj *o);
+int on_free_ok(struct obj *o);
+int on_free_live(struct obj *o);
+int on_free_payload(struct obj *o);
+int on_free_releasing(struct obj *o);
+";
+
+/// `once` drops its only reference; `twice` keeps a second one first, so its
+/// first drop is not the last.
+const OBJ_BODY: &str = "\
+void once(void) { struct obj *o = obj_new(); if (!o) return; obj_put(o); }
+void twice(void) { struct obj *o = obj_new(); if (!o) return; obj_keep(o); obj_put(o); obj_put(o); }
+";
+
+/// The order, and a drop that may not be the last, over a synthetic object
+/// whose drop invokes `obj_st.on_free` handing it the dropped formal:
+///
+/// * an identity candidate decides, whether the drop is the last or not;
+/// * a candidate requiring the object live (`resource_owned`) puts that
+///   requirement on the call's own position, read before the drop; on a
+///   reference the drop then reads as undecided, so the call refuses
+///   (`reference-drop-unheld`), never `Safe`;
+/// * a candidate stating a member-path state of the object it is handed
+///   (rule 30) refuses (`callback-beside-drop`): the call does not decide
+///   whether the slot runs, so it never applies the state;
+/// * a candidate releasing the object it is handed refuses.
+#[test]
+fn a_candidate_effect_on_the_dropped_object_refuses() {
+    if !clang_available() {
+        return;
+    }
+    let contracts =
+        load_resource_contract_sources(&BTreeMap::from([("obj.qv".to_owned(), OBJ.to_owned())]))
+            .expect("the synthetic module loads");
+    let run = |candidate: &str| {
+        Arc::new(RunMemberFacts::new(
+            vec![
+                unit_facts(
+                    OBJ_HEADERS,
+                    &format!("void reg(struct obj *o) {{ obj_set_on_free(o, {candidate}); }}\n"),
+                ),
+                unit_facts(OBJ_HEADERS, OBJ_BODY),
+                declared(&contracts),
+            ],
+            BTreeMap::new(),
+        ))
+    };
+    for name in ["once", "twice"] {
+        let (status, leaves) = unit_row(
+            OBJ_HEADERS,
+            OBJ_BODY,
+            name,
+            Some(run("on_free_ok")),
+            &contracts,
+        );
+        assert_eq!(status, AnalysisStatus::Safe, "{name}: {leaves:?}");
+        let (status, leaves) = unit_row(
+            OBJ_HEADERS,
+            OBJ_BODY,
+            name,
+            Some(run("on_free_live")),
+            &contracts,
+        );
+        assert_ne!(status, AnalysisStatus::Safe, "{name}");
+        assert!(
+            refused(&leaves, "reference-drop-unheld"),
+            "{name}: {leaves:?}"
+        );
+        let (status, leaves) = unit_row(
+            OBJ_HEADERS,
+            OBJ_BODY,
+            name,
+            Some(run("on_free_payload")),
+            &contracts,
+        );
+        assert_ne!(status, AnalysisStatus::Safe, "{name}");
+        assert!(
+            refused(&leaves, "callback-beside-drop"),
+            "{name}: {leaves:?}"
+        );
+        let (status, leaves) = unit_row(
+            OBJ_HEADERS,
+            OBJ_BODY,
+            name,
+            Some(run("on_free_releasing")),
+            &contracts,
+        );
+        assert_ne!(status, AnalysisStatus::Safe, "{name}");
+        assert!(
+            leaves
+                .iter()
+                .any(|leaf| leaf.contains("on_free_releasing") && leaf.contains("callback-")),
+            "{name}: {leaves:?}"
+        );
     }
 }
