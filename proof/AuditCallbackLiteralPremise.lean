@@ -17,7 +17,9 @@ import QCore.CallbackLiteralPremise
 /-! Card **OPENSSL-PEM-CALLBACK-ARM** (gateway rule 57; contract
 specification §C04.5 "Beside a synchronous invocation"): a literal-argument
 premise beside a synchronous invocation. Audited: the loader admits a
-premise beside invocations only; an unmet premise or a poisoned set
+premise beside invocations only (since OPENSSL-BIO-READER-INVOCATIONS, a
+synchronous or an opaque slot invocation; its growth theorems are audited by
+`AuditOpensslBioReaders.lean`); an unmet premise or a poisoned set
 withdraws a callback declaration whatever its callback; a met premise defers
 to rule 13u's decision unchanged; the rewrite grows only on withheld
 declarations; the PEM readers' vectors, including the reuse arm the old

@@ -193,13 +193,15 @@ caller holds";
 /// methods premise.
 pub const BUILTIN_BIO_METHODS: &str = "openssl_builtin_bio_methods";
 
-/// Its statement.
+/// Its statement. Card OPENSSL-BIO-READER-INVOCATIONS: the BIO is the one
+/// the call reads or writes through, its own BIO argument (the PEM and
+/// PKCS#12 readers) or one the SSL object holds (the I/O calls).
 pub const BUILTIN_BIO_METHODS_STATEMENT: &str = "a function of a BIO method the library defines \
 itself (the BIO_METHOD that BIO_s_socket, BIO_s_mem, BIO_f_buffer or another built-in BIO_s_ or \
-BIO_f_ function returns, which no setter is handed), run on a BIO the SSL object holds or one \
-chained to it, takes, releases or retains nothing the caller holds, and so does any callback it \
-runs in turn on an object other than the arguments of the call (the SSL object of a BIO_f_ssl \
-BIO)";
+BIO_f_ function returns, which no setter is handed), run on a BIO the call reads or writes \
+through (its BIO argument or a BIO the SSL object holds) or one chained to it, takes, releases or \
+retains nothing the caller holds, and so does any callback it runs in turn on an object other \
+than the arguments of the call (the SSL object of a BIO_f_ssl BIO)";
 
 /// Card **OPENSSL-BIO-METHODS-AND-CALLBACKS**: the name of the BIO free
 /// premise.
@@ -907,6 +909,8 @@ const CUSTOM_PARSE: Premise = on_ssl(
 /// Card **OPENSSL-BIO-METHODS-AND-CALLBACKS**: a slot of a BIO the
 /// connection at position 0 holds, every actual the callee's own (the BIO,
 /// never the connection).
+/// Card **OPENSSL-BIO-READER-INVOCATIONS**: or of the BIO at position 0 a
+/// reader reads through, or one chained to it (every actual `_` there too).
 const fn on_bio(slot: &'static str, arguments: &'static [Option<usize>]) -> Premise {
     Premise::SlotInvoked {
         object: 0,
@@ -920,7 +924,8 @@ const fn on_bio(slot: &'static str, arguments: &'static [Option<usize>]) -> Prem
 /// processed)`, `callback(b, oper, argp, argi, argl, ret)`, then the method
 /// functions' prototypes in `BIO_meth_new`'s synopsis and the pinned header),
 /// and the library-value premise for the built-in methods. Run wherever the
-/// call writes or reads a record through the SSL's BIOs.
+/// call writes or reads a record through the SSL's BIOs, and wherever a
+/// reader reads through its BIO argument.
 const BIO_SLOTS: [Premise; 15] = [
     Premise::BuiltinBioMethods,
     on_bio("bio_st.bio_callback_ex", &[None; 8]),
@@ -1105,6 +1110,46 @@ const PEM_READ: &[Premise] = &[
         callback: 2,
         arguments: &[None, None, None, Some(3)],
     },
+    // Card OPENSSL-BIO-READER-INVOCATIONS: the read runs the slots of the
+    // caller's BIO at position 0 (gateway rule 57 amended: a slot invocation
+    // stands beside the premise).
+    BIO_SLOTS[0],
+    BIO_SLOTS[1],
+    BIO_SLOTS[2],
+    BIO_SLOTS[3],
+    BIO_SLOTS[4],
+    BIO_SLOTS[5],
+    BIO_SLOTS[6],
+    BIO_SLOTS[7],
+    BIO_SLOTS[8],
+    BIO_SLOTS[9],
+    BIO_SLOTS[10],
+    BIO_SLOTS[11],
+    BIO_SLOTS[12],
+    BIO_SLOTS[13],
+    BIO_SLOTS[14],
+];
+
+/// Card **OPENSSL-BIO-READER-INVOCATIONS**: `d2i_PKCS12_bio(bp, p12)`: a NULL
+/// `p12` (no object to reuse or free), and the slots of the BIO `bp` at
+/// position 0 it parses from.
+const PKCS12_READ: &[Premise] = &[
+    Premise::NullArgument(1),
+    BIO_SLOTS[0],
+    BIO_SLOTS[1],
+    BIO_SLOTS[2],
+    BIO_SLOTS[3],
+    BIO_SLOTS[4],
+    BIO_SLOTS[5],
+    BIO_SLOTS[6],
+    BIO_SLOTS[7],
+    BIO_SLOTS[8],
+    BIO_SLOTS[9],
+    BIO_SLOTS[10],
+    BIO_SLOTS[11],
+    BIO_SLOTS[12],
+    BIO_SLOTS[13],
+    BIO_SLOTS[14],
 ];
 
 use Documented::{
@@ -1820,6 +1865,6 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
         "1.1.1",
         DOC_1_1_1,
         Constructor,
-        &[Premise::NullArgument(1)],
+        PKCS12_READ,
     ),
 ];

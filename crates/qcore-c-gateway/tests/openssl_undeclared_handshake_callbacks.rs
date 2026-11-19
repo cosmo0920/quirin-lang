@@ -825,3 +825,266 @@ fn bio_free_states_no_invocation_beside_its_drop() {
         "{refused}"
     );
 }
+
+// Card OPENSSL-BIO-READER-INVOCATIONS (gateway rule 57 amended; contract
+// specification C04.5 "Beside a slot invocation"): the PEM and PKCS#12
+// readers state the 14 BIO slots on their BIO formal beside their
+// literal-argument premise. In this target too, so the read census needs no
+// new unit.
+
+const PEM: &str =
+    include_str!("../../../providers/quirin-provider-openssl/contracts/openssl/pem.qv");
+const PKCS12: &str =
+    include_str!("../../../providers/quirin-provider-openssl/contracts/openssl/pkcs12.qv");
+const X509: &str =
+    include_str!("../../../providers/quirin-provider-openssl/contracts/openssl/x509.qv");
+const EVP: &str =
+    include_str!("../../../providers/quirin-provider-openssl/contracts/openssl/evp.qv");
+
+/// The readers' callers: each within its premise (a null `x` or `p12`, a null
+/// `cb`, the shape of the predecessor fixture's `read_cert` and Monkey's
+/// `tls_load_builtin_credentials`), and each reuse arm outside it.
+const READERS: &str = "\
+#define NULL ((void *)0)
+typedef struct x509_st X509;
+typedef struct evp_pkey_st EVP_PKEY;
+typedef struct PKCS12_st PKCS12;
+typedef int pem_password_cb(char *buf, int size, int rwflag, void *u);
+X509 *PEM_read_bio_X509(BIO *out, X509 **x, pem_password_cb *cb, void *u);
+EVP_PKEY *PEM_read_bio_PrivateKey(BIO *out, EVP_PKEY **x, pem_password_cb *cb, void *u);
+PKCS12 *d2i_PKCS12_bio(BIO *bp, PKCS12 **p12);
+void X509_free(X509 *a);
+void EVP_PKEY_free(EVP_PKEY *pkey);
+void PKCS12_free(PKCS12 *a);
+int read_cert(BIO *bio) { X509 *c = PEM_read_bio_X509(bio, NULL, NULL, NULL); if (!c) return -1; X509_free(c); return 0; }
+int read_key(BIO *bio) { EVP_PKEY *k = PEM_read_bio_PrivateKey(bio, NULL, NULL, NULL); if (!k) return -1; EVP_PKEY_free(k); return 0; }
+int read_p12(BIO *bio) { PKCS12 *p = d2i_PKCS12_bio(bio, NULL); if (!p) return -1; PKCS12_free(p); return 0; }
+int read_cert_reuse(BIO *bio, X509 **slot) { X509 *c = PEM_read_bio_X509(bio, slot, NULL, NULL); if (!c) return 0; return 1; }
+int read_p12_reuse(BIO *bio, PKCS12 **slot) { PKCS12 *p = d2i_PKCS12_bio(bio, slot); if (!p) return 0; return 1; }
+";
+
+const WITHIN: [&str; 3] = ["read_cert", "read_key", "read_p12"];
+const OUTSIDE: [&str; 2] = ["read_cert_reuse", "read_p12_reuse"];
+
+fn reader_contracts(with_slots: bool) -> ResourceContracts {
+    let mut modules = vec![
+        ("pem.qv", PEM),
+        ("pkcs12.qv", PKCS12),
+        ("x509.qv", X509),
+        ("evp.qv", EVP),
+    ];
+    if with_slots {
+        modules.push(("bio_slots.qv", BIO_SLOTS));
+    }
+    contracts(&modules)
+}
+
+fn reader_run(registrar: &str, contracts: &ResourceContracts) -> Arc<RunMemberFacts> {
+    Arc::new(RunMemberFacts::new(
+        vec![facts(registrar), facts(READERS), declared(contracts)],
+        BTreeMap::new(),
+    ))
+}
+
+fn reader_row(
+    name: &str,
+    run: Option<Arc<RunMemberFacts>>,
+    contracts: &ResourceContracts,
+) -> (AnalysisStatus, Vec<String>) {
+    let text = format!("{HEADERS}{READERS}");
+    let outcome = scoped(run, || {
+        analyze_unrestricted_c11(
+            &C11TranslationUnit {
+                source: &text,
+                ..Default::default()
+            },
+            name,
+            contracts,
+        )
+    })
+    .expect("analysed");
+    let summary = match &outcome {
+        UnrestrictedLegacyResult::Safe(certificate) => &certificate.summary,
+        UnrestrictedLegacyResult::Unsafe(summary) => summary,
+        UnrestrictedLegacyResult::Unknown { partial, .. } => {
+            partial.as_ref().expect("a partial summary")
+        }
+    };
+    let row = &summary.functions[name];
+    let leaves = row
+        .diagnostics
+        .iter()
+        .filter_map(|diagnostic| match &diagnostic.kind {
+            LegacyDiagnosticKind::Unsupported { description } => Some(description.clone()),
+            _ => None,
+        })
+        .collect();
+    (row.status, leaves)
+}
+
+/// Each reader is withheld and invokes every BIO key on its BIO formal
+/// (position 0) with every actual the callee's own; the PEM readers keep
+/// their password callback's null default.
+#[test]
+fn the_readers_state_every_bio_slot() {
+    let contracts = reader_contracts(true);
+    for (reader, invocations) in [
+        ("PEM_read_bio_X509", 15),
+        ("PEM_read_bio_PrivateKey", 15),
+        ("d2i_PKCS12_bio", 14),
+    ] {
+        assert!(contracts.contract(reader).is_none(), "{reader}");
+        let declaration = contracts.retaining_contract(reader).expect("withheld");
+        assert_eq!(declaration.callbacks.len(), invocations, "{reader}");
+        for key in BIO_KEYS {
+            let invoked = declaration.callbacks.iter().find(|clause| {
+                matches!(clause, CallbackClause::MemberInvoked { slot: true, member, .. }
+                    if member.spelling() == key)
+            });
+            let Some(CallbackClause::MemberInvoked {
+                object, actuals, ..
+            }) = invoked
+            else {
+                panic!("{reader} invokes {key}");
+            };
+            assert!(
+                matches!(
+                    object,
+                    qcore_schemas::callback::MemberObject::Parameter { index: 0 }
+                ),
+                "{reader} {key}"
+            );
+            assert!(
+                actuals
+                    .iter()
+                    .all(|actual| matches!(actual, CallbackActual::Supplied)),
+                "{reader} {key}: {actuals:?}"
+            );
+        }
+        let defaults = declaration
+            .callbacks
+            .iter()
+            .filter(|clause| {
+                matches!(
+                    clause,
+                    CallbackClause::Invoked {
+                        null_default: true,
+                        ..
+                    }
+                )
+            })
+            .count();
+        assert_eq!(defaults, invocations - 14, "{reader}");
+    }
+}
+
+/// Within the premise, with nothing or only identity candidates registered,
+/// the readers decide: the r29 null-callback reading does not regress.
+#[test]
+fn identity_bio_candidates_decide_the_readers() {
+    if !clang_available() {
+        return;
+    }
+    let contracts = reader_contracts(true);
+    for registrar in [
+        "void nothing(void) { }\n",
+        "void reg(BIO *b, BIO_METHOD *m) { BIO_set_callback_ex(b, bio_cb_ok); \
+         BIO_meth_set_write(m, bio_write_ok); }\n",
+    ] {
+        let run = reader_run(registrar, &contracts);
+        for name in WITHIN {
+            let (status, leaves) = reader_row(name, Some(run.clone()), &contracts);
+            assert!(!refused(&leaves, "callback-"), "{name}: {leaves:?}");
+            assert_eq!(status, AnalysisStatus::Safe, "{name}: {leaves:?}");
+        }
+    }
+}
+
+/// A BIO candidate with no contract in force, or one releasing the BIO it is
+/// handed, refuses every reader within its premise, naming the candidate.
+#[test]
+fn a_bio_candidate_that_is_not_the_identity_refuses_the_readers() {
+    if !clang_available() {
+        return;
+    }
+    let contracts = reader_contracts(true);
+    for (registrar, candidate) in [
+        (
+            "void reg(BIO_METHOD *m) { BIO_meth_set_write(m, bio_write_uncontracted); }\n",
+            "bio_write_uncontracted",
+        ),
+        (
+            "void reg(BIO *b) { BIO_set_callback_ex(b, bio_cb_uncontracted); }\n",
+            "bio_cb_uncontracted",
+        ),
+        (
+            "void reg(BIO_METHOD *m) { BIO_meth_set_destroy(m, bio_destroy_releasing); }\n",
+            "bio_destroy_releasing",
+        ),
+    ] {
+        let run = reader_run(registrar, &contracts);
+        for name in WITHIN {
+            let (status, leaves) = reader_row(name, Some(run.clone()), &contracts);
+            assert_ne!(status, AnalysisStatus::Safe, "{name}");
+            assert!(
+                leaves
+                    .iter()
+                    .any(|leaf| leaf.contains(candidate) && leaf.contains("callback-")),
+                "{name}: {leaves:?}"
+            );
+        }
+    }
+}
+
+/// Outside the premise the call is undeclared before the callback route:
+/// no BIO slot is decided there, even with an uncontracted candidate
+/// registered.
+#[test]
+fn a_reader_outside_its_premise_decides_no_bio_slot() {
+    if !clang_available() {
+        return;
+    }
+    let contracts = reader_contracts(true);
+    let run = reader_run(
+        "void reg(BIO *b) { BIO_set_callback_ex(b, bio_cb_uncontracted); }\n",
+        &contracts,
+    );
+    for name in OUTSIDE {
+        let (status, leaves) = reader_row(name, Some(run.clone()), &contracts);
+        assert_ne!(status, AnalysisStatus::Safe, "{name}");
+        assert!(
+            refused(&leaves, "outside its declared literal-argument premise"),
+            "{name}: {leaves:?}"
+        );
+        assert!(!refused(&leaves, "callback-"), "{name}: {leaves:?}");
+        assert!(
+            !refused(&leaves, "bio_cb_uncontracted"),
+            "{name}: {leaves:?}"
+        );
+    }
+}
+
+/// Without `bio_slots.qv` no loaded declaration registers a BIO key, and
+/// without the run's facts no slot is decided: either way the readers
+/// refuse within their premise.
+#[test]
+fn a_reader_bio_slot_without_registrations_or_run_facts_refuses() {
+    if !clang_available() {
+        return;
+    }
+    let unregistered = reader_contracts(false);
+    let run = reader_run("void nothing(void) { }\n", &unregistered);
+    for name in WITHIN {
+        let (status, leaves) = reader_row(name, Some(run.clone()), &unregistered);
+        assert_ne!(status, AnalysisStatus::Safe, "{name}");
+        assert!(
+            refused(&leaves, "no declaration registers"),
+            "{name}: {leaves:?}"
+        );
+    }
+    let contracts = reader_contracts(true);
+    for name in WITHIN {
+        let (status, leaves) = reader_row(name, None, &contracts);
+        assert_ne!(status, AnalysisStatus::Safe, "{name}: {leaves:?}");
+    }
+}

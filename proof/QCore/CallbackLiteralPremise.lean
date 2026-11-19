@@ -22,7 +22,11 @@ Two decisions, modelled as the Rust code makes them:
 
 * **Admission** (`contract_loader.rs`, the retaining branch): a premise
   stands beside retaining clauses only when every one of them is a
-  synchronous invocation (`resource_callback_invoked`).
+  synchronous invocation (`resource_callback_invoked`) or, since card
+  **OPENSSL-BIO-READER-INVOCATIONS** (rule 57 amended), an opaque slot
+  invocation (`resource_callback_slot_invoked`). A plain member invocation
+  (`member`) still rejects. What the route does with a slot invocation at a
+  met or unmet call is `QCore.OpensslBioReaders`.
 * **Route G's rewrite** (`legacy_literal_premise::restrict_to_declared_literals`):
   a call whose premise is unmet, or any declared call under a poisoned
   premise set, is renamed to an undeclared callee before any reader. Before
@@ -67,19 +71,30 @@ structure Premise where
   literal : Tokens
   deriving DecidableEq, Repr
 
-/-- The retaining clause kinds the loader distinguishes here. -/
+/-- The retaining clause kinds the loader distinguishes here. `member` is a
+plain member invocation (rule 12n without `slot`); `slotInvoked` an opaque
+slot invocation (C04.19.3). -/
 inductive Retaining where
   | invoked
   | table
   | registered
   | registry
   | member
+  | slotInvoked
   | retention
   | other
   deriving DecidableEq, Repr
 
+/-- The kinds that stand beside a premise: each holds nothing after the call. -/
+def besidePremise (clause : Retaining) : Bool :=
+  clause == .invoked || clause == .slotInvoked
+
 /-- The loader's admission of a retaining declaration's premises. -/
 def admits (premises : List Premise) (clauses : List Retaining) : Bool :=
+  premises.isEmpty || clauses.all besidePremise
+
+/-- The admission before card OPENSSL-BIO-READER-INVOCATIONS. -/
+def admitsOld (premises : List Premise) (clauses : List Retaining) : Bool :=
   premises.isEmpty || clauses.all (fun clause => clause == .invoked)
 
 /-- One call site. -/
@@ -151,7 +166,8 @@ def outcome (e : Environment) (c : Call) (r : Resolution) : Outcome :=
 /-! ### Admission -/
 
 theorem a_premise_stands_only_beside_invocations {ps : List Premise} {cs : List Retaining}
-    (h : admits ps cs = true) (hp : ps ≠ []) : ∀ c ∈ cs, c = .invoked := by
+    (h : admits ps cs = true) (hp : ps ≠ []) :
+    ∀ c ∈ cs, c = .invoked ∨ c = .slotInvoked := by
   intro c hc
   unfold admits at h
   have hne : ps.isEmpty = false := by
@@ -159,19 +175,69 @@ theorem a_premise_stands_only_beside_invocations {ps : List Premise} {cs : List 
     | nil => exact absurd rfl hp
     | cons _ _ => rfl
   rw [hne, Bool.false_or, List.all_eq_true] at h
-  simpa using h c hc
+  have := h c hc
+  unfold besidePremise at this
+  cases c <;> simp_all
 
 theorem every_other_clause_beside_a_premise_rejects {ps : List Premise} {cs : List Retaining}
-    {c : Retaining} (hc : c ∈ cs) (hk : c ≠ .invoked) (hp : ps ≠ []) :
-    admits ps cs = false := by
+    {c : Retaining} (hc : c ∈ cs) (hk : c ≠ .invoked) (hs : c ≠ .slotInvoked)
+    (hp : ps ≠ []) : admits ps cs = false := by
   cases h : admits ps cs with
   | false => rfl
-  | true => exact absurd (a_premise_stands_only_beside_invocations h hp c hc) hk
+  | true =>
+      rcases a_premise_stands_only_beside_invocations h hp c hc with h1 | h1
+      · exact absurd h1 hk
+      · exact absurd h1 hs
+
+theorem a_plain_member_invocation_beside_a_premise_rejects {ps : List Premise}
+    {cs : List Retaining} (hc : Retaining.member ∈ cs) (hp : ps ≠ []) :
+    admits ps cs = false :=
+  every_other_clause_beside_a_premise_rejects hc (by decide) (by decide) hp
 
 theorem invocations_with_a_premise_are_admitted {ps : List Premise} {n : Nat} :
     admits ps (List.replicate n .invoked) = true := by
-  unfold admits
+  unfold admits besidePremise
   simp
+
+/-- The admission grows: whatever the old admission took, the new one does. -/
+theorem the_admission_only_grows {ps : List Premise} {cs : List Retaining}
+    (h : admitsOld ps cs = true) : admits ps cs = true := by
+  unfold admitsOld at h
+  unfold admits
+  simp only [Bool.or_eq_true, List.all_eq_true] at *
+  rcases h with h | h
+  · exact Or.inl h
+  · exact Or.inr (fun c hc => by have := h c hc; unfold besidePremise; simp_all)
+
+/-- And it grows only by slot invocations: a declaration the new admission
+takes and the old one refused states one. -/
+theorem the_admission_grows_only_by_slot_invocations {ps : List Premise}
+    {cs : List Retaining} (h : admits ps cs = true) (hold : admitsOld ps cs = false) :
+    Retaining.slotInvoked ∈ cs := by
+  cases hm : decide (Retaining.slotInvoked ∈ cs) with
+  | true => exact of_decide_eq_true hm
+  | false =>
+      have hm' : Retaining.slotInvoked ∉ cs := of_decide_eq_false hm
+      have hne : ps.isEmpty = false := by
+        cases he : ps.isEmpty with
+        | false => rfl
+        | true => simp [admitsOld, he] at hold
+      have hall : cs.all besidePremise = true := by
+        unfold admits at h
+        rw [hne, Bool.false_or] at h
+        exact h
+      have hold' : admitsOld ps cs = true := by
+        unfold admitsOld
+        rw [hne, Bool.false_or]
+        apply List.all_eq_true.mpr
+        intro c hc
+        have hb := List.all_eq_true.mp hall c hc
+        cases c with
+        | invoked => rfl
+        | slotInvoked => exact absurd hc hm'
+        | _ => simp [besidePremise] at hb
+      rw [hold'] at hold
+      cases hold
 
 theorem no_premise_is_always_admitted {cs : List Retaining} : admits [] cs = true := by
   simp [admits]

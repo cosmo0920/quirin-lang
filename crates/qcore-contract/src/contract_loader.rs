@@ -250,14 +250,16 @@
 //!
 //! A premise stands beside retaining clauses only when every one of them is a
 //! synchronous invocation, `resource_callback_invoked` or
-//! `resource_callback_invoked_or_default` (§C04.19): the PEM
+//! `resource_callback_invoked_or_default` (§C04.19), or (card
+//! OPENSSL-BIO-READER-INVOCATIONS) an opaque slot invocation,
+//! `resource_callback_slot_invoked` (§C04.19.3): the PEM
 //! readers' `x` reuse arm is withdrawn by a premise while their password
-//! callback is stated exactly. Such a declaration is withheld from the
-//! function map like every callback declaration, so the gateway's premise
-//! rewrite reaches retaining declarations too
+//! callback and the BIO's slots are stated exactly. Such a declaration is
+//! withheld from the function map like every callback declaration, so the
+//! gateway's premise rewrite reaches retaining declarations too
 //! (`qcore_c_gateway::legacy_literal_premise`, gateway rule 57). A table, a
-//! registration, a registry or member clause, and every other retaining
-//! clause beside a premise still reject.
+//! registration, a registry, a plain member invocation, and every other
+//! retaining clause beside a premise still reject.
 //!
 //! Total-or-reject applies in full: an unknown parameter name, a malformed
 //! literal, a second premise on the same parameter, and any other `requires`
@@ -3097,12 +3099,22 @@ fn load_function_in(
             // Card OPENSSL-PEM-CALLBACK-ARM (gateway rule 57): beside a
             // premise, only synchronous invocations (during the call only,
             // nothing kept); a table, a registration, a registry or member
-            // clause beside a premise rejects.
+            // clause beside a premise rejects. Card
+            // OPENSSL-BIO-READER-INVOCATIONS (rule 57 amended): an opaque
+            // slot invocation (`resource_callback_slot_invoked`) also holds
+            // nothing after the call, and route G renames every unmet call
+            // of a retaining declaration before the callback route reads
+            // it, so it is decided only where the premise holds. A plain
+            // member invocation (no `slot`) still rejects.
             if !literal_arguments.is_empty()
                 && callbacks.iter().any(|clause| {
                     !matches!(
                         clause,
                         qcore_schemas::callback::CallbackClause::Invoked { .. }
+                            | qcore_schemas::callback::CallbackClause::MemberInvoked {
+                                slot: true,
+                                ..
+                            }
                     )
                 })
             {

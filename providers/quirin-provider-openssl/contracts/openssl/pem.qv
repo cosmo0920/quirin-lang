@@ -47,6 +47,23 @@ module contract;
 //   structure read or NULL if an error occurred." X509 and EVP_PKEY are
 //   reference counted (X509_new, EVP_PKEY_new), so the result is one
 //   returned reference, which X509_free / EVP_PKEY_free drops.
+// * `out`: both are the BIO forms of the PEM read routines, so each reads
+//   the PEM text through the caller's BIO. Card OPENSSL-BIO-READER-INVOCATIONS
+//   states what a read through a BIO runs (bio_slots.qv): its callback,
+//   "called during most high-level BIO operations" (BIO_set_callback, 3.5),
+//   `bio_st.bio_callback_ex` and `bio_st.bio_callback`, and the functions of
+//   its method table, each called "in response to" the BIO operation it
+//   implements (BIO_meth_new, 3.5), the twelve `bio_method_st.meth_*` keys.
+//   The page does not say which BIO operations a read performs, and a filter
+//   BIO forwards operations down its chain, so all 14 slots are stated on
+//   `out` exactly as the SSL I/O calls state them (ssl_io.qv). Each is
+//   handed `out` or a BIO chained to it, so every actual is `_`, which
+//   refuses every candidate that is not the identity there. A method the
+//   library defines itself is in no run's set and is the library-value
+//   premise `openssl_builtin_bio_methods` (C04.18). The invocations stand
+//   beside the `x` premise as C04.5 "Beside a slot invocation" admits
+//   (gateway rule 57 amended): a call outside the premise is undeclared, so
+//   no slot is decided there.
 
 // PEM_read_bio_X509. Pinned prototype: `X509 *PEM_read_bio_X509(BIO *out,
 // X509 **x, pem_password_cb *cb, void *u)` (openssl/pem.h).
@@ -56,11 +73,26 @@ contract {
     requires resource_revision(flexible);
     requires resource_library_version(openssl, documented "1.0.2");
     requires resource_literal_argument(x, 0);
+    requires resource_premise(openssl_builtin_bio_methods, "a function of a BIO method the library defines itself (the BIO_METHOD that BIO_s_socket, BIO_s_mem, BIO_f_buffer or another built-in BIO_s_ or BIO_f_ function returns, which no setter is handed), run on a BIO the call reads or writes through (its BIO argument or a BIO the SSL object holds) or one chained to it, takes, releases or retains nothing the caller holds, and so does any callback it runs in turn on an object other than the arguments of the call (the SSL object of a BIO_f_ssl BIO)");
     ensures normal resource_borrowed(out);
     ensures normal resource_borrowed(x);
     ensures normal resource_borrowed(cb);
     ensures normal resource_borrowed(u);
     ensures normal resource_callback_invoked_or_default(cb, _, _, _, u);
+    ensures normal resource_callback_slot_invoked(out, bio_st.bio_callback_ex, _, _, _, _, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(out, bio_st.bio_callback, _, _, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(out, bio_method_st.meth_write_ex, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(out, bio_method_st.meth_write, _, _, _);
+    ensures normal resource_callback_slot_invoked(out, bio_method_st.meth_read_ex, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(out, bio_method_st.meth_read, _, _, _);
+    ensures normal resource_callback_slot_invoked(out, bio_method_st.meth_puts, _, _);
+    ensures normal resource_callback_slot_invoked(out, bio_method_st.meth_gets, _, _, _);
+    ensures normal resource_callback_slot_invoked(out, bio_method_st.meth_ctrl, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(out, bio_method_st.meth_create, _);
+    ensures normal resource_callback_slot_invoked(out, bio_method_st.meth_destroy, _);
+    ensures normal resource_callback_slot_invoked(out, bio_method_st.meth_callback_ctrl, _, _, _);
+    ensures normal resource_callback_slot_invoked(out, bio_method_st.meth_sendmmsg, _, _, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(out, bio_method_st.meth_recvmmsg, _, _, _, _, _, _);
     ensures normal resource_return_owned(nullable);
     ensures normal resource_return_kind(reference);
 };
@@ -74,11 +106,26 @@ contract {
     requires resource_revision(flexible);
     requires resource_library_version(openssl, documented "1.0.2");
     requires resource_literal_argument(x, 0);
+    requires resource_premise(openssl_builtin_bio_methods, "a function of a BIO method the library defines itself (the BIO_METHOD that BIO_s_socket, BIO_s_mem, BIO_f_buffer or another built-in BIO_s_ or BIO_f_ function returns, which no setter is handed), run on a BIO the call reads or writes through (its BIO argument or a BIO the SSL object holds) or one chained to it, takes, releases or retains nothing the caller holds, and so does any callback it runs in turn on an object other than the arguments of the call (the SSL object of a BIO_f_ssl BIO)");
     ensures normal resource_borrowed(out);
     ensures normal resource_borrowed(x);
     ensures normal resource_borrowed(cb);
     ensures normal resource_borrowed(u);
     ensures normal resource_callback_invoked_or_default(cb, _, _, _, u);
+    ensures normal resource_callback_slot_invoked(out, bio_st.bio_callback_ex, _, _, _, _, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(out, bio_st.bio_callback, _, _, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(out, bio_method_st.meth_write_ex, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(out, bio_method_st.meth_write, _, _, _);
+    ensures normal resource_callback_slot_invoked(out, bio_method_st.meth_read_ex, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(out, bio_method_st.meth_read, _, _, _);
+    ensures normal resource_callback_slot_invoked(out, bio_method_st.meth_puts, _, _);
+    ensures normal resource_callback_slot_invoked(out, bio_method_st.meth_gets, _, _, _);
+    ensures normal resource_callback_slot_invoked(out, bio_method_st.meth_ctrl, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(out, bio_method_st.meth_create, _);
+    ensures normal resource_callback_slot_invoked(out, bio_method_st.meth_destroy, _);
+    ensures normal resource_callback_slot_invoked(out, bio_method_st.meth_callback_ctrl, _, _, _);
+    ensures normal resource_callback_slot_invoked(out, bio_method_st.meth_sendmmsg, _, _, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(out, bio_method_st.meth_recvmmsg, _, _, _, _, _, _);
     ensures normal resource_return_owned(nullable);
     ensures normal resource_return_kind(reference);
 };

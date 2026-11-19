@@ -11635,5 +11635,30 @@ an undeclared OpenSSL producer). `QCore.NullableReferenceDrop` (12 audited,
     `crates/qcore-contract/tests/callback_literal_premise.rs`,
     `crates/qcore-c-gateway/tests/callback_literal_premise.rs`.
     [Report](../reports/openssl-pem-callback-arm/README.md).
+    **Beside a slot invocation** (card OPENSSL-BIO-READER-INVOCATIONS, rule
+    57 amended in place; contract specification C04.5 "Beside a slot
+    invocation"): the loader also admits `resource_callback_slot_invoked(OBJ,
+    TAG.FIELD, A…)` (`CallbackClause::MemberInvoked { slot: true }`) beside a
+    premise. It keeps nothing after the call, like the synchronous
+    invocation, and route G's rename already covers every retaining
+    declaration, so at an unmet call no slot is decided and the call is
+    undeclared; at a met call rule 12n decides the slot unchanged (only over
+    the run's facts, over the slot's declared registrations, every candidate
+    the identity; a key no declaration registers refuses), and the premise
+    adds no candidate. A plain member invocation (no `slot`) beside a premise
+    still rejects. Used by `PEM_read_bio_X509`, `PEM_read_bio_PrivateKey` and
+    `d2i_PKCS12_bio`, which state the 14 BIO slots on their BIO formal with
+    `_` actuals. **Do not** admit a plain member invocation, a registration
+    or any other clause beside a premise on this ground, or decide a slot at
+    a call outside the premise. `QCore.OpensslBioReaders`
+    (`a_slot_invocation_stands_beside_a_premise`,
+    `an_unmet_premise_decides_no_slot`, `a_met_premise_defers_to_the_slots`,
+    `applied_only_over_closed_identity_slots`,
+    `the_premise_adds_no_candidate`, the `reader_*` vectors) and
+    `QCore.CallbackLiteralPremise` (`the_admission_grows_only_by_slot_invocations`,
+    `a_plain_member_invocation_beside_a_premise_rejects`);
+    `crates/qcore-contract/tests/callback_literal_premise.rs`,
+    `crates/qcore-c-gateway/tests/openssl_undeclared_handshake_callbacks.rs`.
+    [Report](../reports/openssl-bio-reader-invocations/README.md).
 
 <!-- generated:rules:end -->
