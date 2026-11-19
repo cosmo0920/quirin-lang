@@ -1745,6 +1745,65 @@ mod tests {
             assert_ne!(old, text);
             assert!(check_function(path, &old, call).is_err(), "{call}");
         }
+        // Card OPENSSL-BIO-READER-INVOCATIONS: the PEM and PKCS#12 readers
+        // state the 14 slots on their BIO formal beside the premise: each
+        // invocation dropped, the BIO given as the callback's actual, the
+        // built-in premise dropped or read in its old SSL-only statement, and
+        // the literal-argument premise dropped each refuse.
+        let ssl_only = BUILTIN_BIO_METHODS_STATEMENT.replacen(
+            "run on a BIO the call reads or writes through (its BIO argument or a BIO the SSL \
+             object holds) or one chained to it",
+            "run on a BIO the SSL object holds or one chained to it",
+            1,
+        );
+        assert_ne!(ssl_only, BUILTIN_BIO_METHODS_STATEMENT);
+        for (call, object, premise) in [
+            ("PEM_read_bio_X509", "out", "x"),
+            ("PEM_read_bio_PrivateKey", "out", "x"),
+            ("d2i_PKCS12_bio", "bp", "p12"),
+        ] {
+            let (path, text) = module_of(call);
+            check_function(path, text, call).unwrap();
+            let start = text.find(&format!("extern fn {call}(")).unwrap();
+            let end = start + text[start..].find("};").unwrap();
+            let body = &text[start..end];
+            let edited = |from: &str, to: &str| {
+                let edited = format!("{}{}", &text[..start], text[start..].replacen(from, to, 1));
+                assert_ne!(edited, text, "{call}: {from}");
+                edited
+            };
+            for key in bio_keys {
+                let line = body
+                    .lines()
+                    .find(|line| line.contains(&format!("({object}, {key}, ")))
+                    .unwrap_or_else(|| panic!("{call} states {key}"));
+                let dropped = edited(&format!("{line}\n"), "");
+                assert!(
+                    check_function(path, &dropped, call).is_err(),
+                    "{call} {key}"
+                );
+            }
+            let handed = edited(
+                &format!("({object}, bio_st.bio_callback_ex, _,"),
+                &format!("({object}, bio_st.bio_callback_ex, {object},"),
+            );
+            assert!(check_function(path, &handed, call).is_err(), "{call}");
+            assert!(body.contains(builtin.trim_end()), "{call}");
+            let unpremised = edited(&builtin, "");
+            assert!(check_function(path, &unpremised, call).is_err(), "{call}");
+            let old = edited(BUILTIN_BIO_METHODS_STATEMENT, &ssl_only);
+            assert!(check_function(path, &old, call).is_err(), "{call}");
+            let unrestricted = edited(
+                &format!("    requires resource_literal_argument({premise}, 0);\n"),
+                "",
+            );
+            assert!(check_function(path, &unrestricted, call).is_err(), "{call}");
+        }
+        // The old statement is no longer the premise on the I/O calls either.
+        let (path, text) = module_of("SSL_write");
+        let old = text.replacen(BUILTIN_BIO_METHODS_STATEMENT, &ssl_only, 1);
+        assert_ne!(old, text);
+        assert!(check_function(path, &old, "SSL_write").is_err());
         // BIO_free and SSL_free: the free premise dropped refuses; a BIO
         // callback invocation stated beside the drop is not the documented
         // reading either (and C04.19 rejects it).
