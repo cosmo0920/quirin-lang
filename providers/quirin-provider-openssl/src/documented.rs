@@ -696,6 +696,102 @@ pub const SLOTS: &[Slot] = &[
     },
 ];
 
+/// Card **CALLBACK-SUPPLIED-NULL-ACTUAL**: an argument a slot's callback may
+/// receive as NULL, by its page. At every invocation of `slot` whose actual
+/// at `position` is a value the callee supplies (`_`), the declaration
+/// states `supplied_nullable` instead (C04.19 item 2), so a candidate
+/// requiring a live object there (`resource_owned(nonnull)`) is refused. A
+/// parameter actual there is unchanged: it is the caller's value.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct NullableArgument {
+    /// The slot, one of [`SLOTS`].
+    pub slot: &'static str,
+    /// The callback's argument position.
+    pub position: usize,
+    /// The sentence of the slot's page at 3.5 saying so, exactly as its
+    /// snapshot records it (`null_sentences` or `argument_null_sentences`).
+    pub sentence: &'static str,
+}
+
+/// The arguments the stated slots' pages (3.5) say may be NULL. The survey
+/// of every stated slot is in `docs/reports/callback-supplied-null-actual/`;
+/// an argument no page sentence covers stays `_`.
+pub const NULLABLE_ARGUMENTS: &[NullableArgument] = &[
+    // SSL_CTX_set_security_level (3.5), "APPLICATION-DEFINED SECURITY
+    // CALLBACKS": `cb(s, ctx, op, bits, nid, other, ex)`.
+    NullableArgument {
+        slot: "ssl_ctx_st.sec_cb",
+        position: 0,
+        sentence: "One of the two is NULL: checks originating from a connection pass s (with \
+                   ctx NULL), and checks originating from a context pass ctx (with s NULL).",
+    },
+    NullableArgument {
+        slot: "ssl_ctx_st.sec_cb",
+        position: 1,
+        sentence: "One of the two is NULL: checks originating from a connection pass s (with \
+                   ctx NULL), and checks originating from a context pass ctx (with s NULL).",
+    },
+    NullableArgument {
+        slot: "ssl_ctx_st.sec_cb",
+        position: 5,
+        sentence: "It is NULL when no object is associated with the operation.",
+    },
+    NullableArgument {
+        slot: "ssl_ctx_st.sec_cb",
+        position: 6,
+        sentence: "ex The extra data pointer previously set with \
+                   SSL_CTX_set0_security_ex_data() or SSL_set0_security_ex_data(), or NULL.",
+    },
+    // SSL_CTX_set_psk_client_callback (3.5): `client(ssl, hint, identity,
+    // max_identity_len, psk, max_psk_len)` (NOTES) and `use_session(ssl, md,
+    // id, idlen, sess)` (DESCRIPTION).
+    NullableArgument {
+        slot: "ssl_ctx_st.psk_client_callback",
+        position: 1,
+        sentence: "Note that parameter hint given to the callback may be NULL .",
+    },
+    NullableArgument {
+        slot: "ssl_ctx_st.psk_use_session_cb",
+        position: 1,
+        sentence: "The first time the callback is called for a connection the md parameter is \
+                   NULL.",
+    },
+    // BIO_set_callback (3.5), "CALLBACK OPERATIONS": `callback_ex(b, oper,
+    // argp, len, argi, argl, ret, processed)` and `callback(b, oper, argp,
+    // argi, argl, ret)`; the table of calls passes NULL at `argp` and
+    // `processed`.
+    NullableArgument {
+        slot: "bio_st.bio_callback_ex",
+        position: 2,
+        sentence: "BIO_free(b) callback_ex(b, BIO_CB_FREE, NULL, 0, 0, 0L, 1L, NULL) or \
+                   callback(b, BIO_CB_FREE, NULL, 0L, 0L, 1L) is called before the free \
+                   operation.",
+    },
+    NullableArgument {
+        slot: "bio_st.bio_callback_ex",
+        position: 7,
+        sentence: "BIO_free(b) callback_ex(b, BIO_CB_FREE, NULL, 0, 0, 0L, 1L, NULL) or \
+                   callback(b, BIO_CB_FREE, NULL, 0L, 0L, 1L) is called before the free \
+                   operation.",
+    },
+    NullableArgument {
+        slot: "bio_st.bio_callback",
+        position: 2,
+        sentence: "BIO_free(b) callback_ex(b, BIO_CB_FREE, NULL, 0, 0, 0L, 1L, NULL) or \
+                   callback(b, BIO_CB_FREE, NULL, 0L, 0L, 1L) is called before the free \
+                   operation.",
+    },
+];
+
+/// Whether `slot`'s argument at `position` may be NULL by its page
+/// ([`NULLABLE_ARGUMENTS`]).
+#[must_use]
+pub fn nullable_argument(slot: &str, position: usize) -> bool {
+    NULLABLE_ARGUMENTS
+        .iter()
+        .any(|nullable| nullable.slot == slot && nullable.position == position)
+}
+
 /// What the documentation supports for one function.
 #[derive(Clone, Copy, Debug)]
 pub struct DocumentedFunction {

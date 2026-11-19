@@ -58,6 +58,12 @@ pub enum CallbackActual {
     /// `rd_kafka_q_serve0` dequeued). The callback must take it on every
     /// return; the caller's state never holds it.
     SuppliedOwned,
+    /// Card **CALLBACK-SUPPLIED-NULL-ACTUAL** (§C04.19, rule 13u):
+    /// `supplied_nullable`, a value the callee supplies, as `_`, that may be
+    /// a null pointer (the library's page says so). A candidate is admitted
+    /// only where it accepts NULL there (`resource_borrowed` or
+    /// `resource_owned(nullable)`); `resource_owned(nonnull)` refuses.
+    SuppliedNullable,
 }
 
 /// Card **CG22-OP-CALLBACKS-AND-SERVED-QUEUES** (§C04.19.3, rule 12n): a

@@ -233,7 +233,8 @@ pub(crate) fn corresponds(
                 })
             }
             (CallbackActual::Supplied, CallbackActual::Supplied)
-            | (CallbackActual::SuppliedOwned, CallbackActual::SuppliedOwned) => true,
+            | (CallbackActual::SuppliedOwned, CallbackActual::SuppliedOwned)
+            | (CallbackActual::SuppliedNullable, CallbackActual::SuppliedNullable) => true,
             _ => false,
         })
 }

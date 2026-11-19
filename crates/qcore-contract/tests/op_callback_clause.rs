@@ -243,3 +243,70 @@ fn every_misplaced_clause_rejects_the_module() {
         assert!(load(&text).is_err(), "accepted:\n{text}");
     }
 }
+
+/// Card CALLBACK-SUPPLIED-NULL-ACTUAL (§C04.19, rule 13u amended): the
+/// `supplied_nullable` actual stands wherever `_` does (a synchronous, table,
+/// member or slot invocation), reads as its own actual, survives the
+/// retained-text reload, is reserved as a parameter name, and is never a
+/// member's object.
+#[test]
+fn the_nullable_actual_loads_where_a_supplied_one_does() {
+    let contracts = load(
+        "
+extern fn walk(q: ptr<mut, u8>, cb: fnptr, t: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(q);
+    ensures normal resource_borrowed(cb);
+    ensures normal resource_borrowed(t);
+    ensures normal resource_callback_invoked(cb, q, supplied_nullable, _);
+    ensures normal resource_callback_table(t, supplied_nullable);
+    ensures normal resource_callback_member_invoked(q, op_s.cb, supplied_nullable, q);
+    ensures normal resource_callback_slot_invoked(q, op_s.slot, _, supplied_nullable);
+    ensures normal resource_return_none();
+};
+",
+    )
+    .expect("loads");
+    let walk = contracts.retaining_contract("walk").expect("withheld");
+    let lists = walk
+        .callbacks
+        .iter()
+        .map(|clause| match clause {
+            CallbackClause::Invoked { actuals, .. }
+            | CallbackClause::Table { actuals, .. }
+            | CallbackClause::MemberInvoked { actuals, .. } => actuals.clone(),
+            other => panic!("{other:?}"),
+        })
+        .collect::<Vec<_>>();
+    assert_eq!(
+        lists,
+        [
+            vec![
+                CallbackActual::Parameter { index: 0 },
+                CallbackActual::SuppliedNullable,
+                CallbackActual::Supplied,
+            ],
+            vec![CallbackActual::SuppliedNullable],
+            vec![
+                CallbackActual::SuppliedNullable,
+                CallbackActual::Parameter { index: 0 },
+            ],
+            vec![CallbackActual::Supplied, CallbackActual::SuppliedNullable],
+        ]
+    );
+    check_source_assumptions(&contracts).expect("the retained texts reload");
+    // A parameter named `supplied_nullable` rejects every callback clause.
+    let reserved = declaration(
+        "f: fnptr, supplied_nullable: ptr<mut, u8>",
+        "    ensures normal resource_borrowed(f);\n    ensures normal resource_borrowed(supplied_nullable);\n    ensures normal resource_callback_invoked(f, _);\n",
+    );
+    let refused = load(&reserved).unwrap_err();
+    assert!(refused.contains("supplied_nullable"), "{refused}");
+    // It is never a member's object.
+    let object = declaration(
+        "q: ptr<mut, u8>",
+        "    ensures normal resource_borrowed(q);\n    ensures normal resource_callback_member_invoked(supplied_nullable, op_s.cb, _);\n",
+    );
+    assert!(load(&object).is_err());
+}

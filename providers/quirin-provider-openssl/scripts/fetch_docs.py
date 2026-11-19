@@ -24,6 +24,15 @@ and stamps each new entry's `fetched_on`, but silently skips every
 page/series already held (never refetching it), so a whole page list can be
 re-run to fill only the gaps. The two flags are exclusive; both leave every
 recorded digest as reviewed.
+
+Card CALLBACK-SUPPLIED-NULL-ACTUAL: `argument_null_sentences` records the
+NULL sentences of every section other than DESCRIPTION and RETURN VALUES
+(those are `null_sentences`): a callback's arguments are often described in a
+section of their own ("APPLICATION-DEFINED SECURITY CALLBACKS", "CALLBACK
+OPERATIONS", NOTES). New fetches record it. `--argument-sentences` adds it to
+pages the record already holds: each is refetched and refused unless its
+SHA-256 is exactly the recorded one, so the sentences are read from the page
+as reviewed and no digest changes.
 """
 import argparse
 import datetime
@@ -62,6 +71,24 @@ def null_sentences(page_html):
     return sentences
 
 
+def section_names(page_html):
+    """The ids of the page's `<h2>` sections, in order."""
+    return re.findall(r'<h2 id="?([A-Za-z0-9_-]+)"?[^>]*>', page_html)
+
+
+def argument_null_sentences(page_html):
+    """The sentences that mention NULL in every section but DESCRIPTION and
+    RETURN VALUES (card CALLBACK-SUPPLIED-NULL-ACTUAL): where a callback's
+    arguments are described."""
+    sentences = []
+    for name in section_names(page_html):
+        if name.lower() in ("description", "return-values"):
+            continue
+        text = section(page_html, re.escape(name)) or ""
+        sentences += [s.strip() for s in re.split(r"(?<=[.])\s+", text) if "NULL" in s]
+    return sentences
+
+
 def reference_sentences(page_html):
     """The DESCRIPTION sentences that speak of a reference count: the
     documented reading of a release as a counted drop."""
@@ -84,7 +111,8 @@ def fetch(series, page, out):
     return {"url": url, "series": series, "fetched": True,
             "sha256": hashlib.sha256(data).hexdigest(), "bytes": len(data),
             "name": section(text, "name"), "history": history(text), "null_sentences": null_sentences(text),
-            "reference_sentences": reference_sentences(text)}
+            "reference_sentences": reference_sentences(text),
+            "argument_null_sentences": argument_null_sentences(text)}
 
 
 def main():
@@ -95,6 +123,10 @@ def main():
     mode.add_argument("--append", action="store_true",
                       help="add to an existing record; refuse a page/series it already holds "
                            "(card REFERENCE-DROP-NULL-ACCEPTING)")
+    mode.add_argument("--argument-sentences", action="store_true",
+                      help="refetch pages the record holds, refuse any whose SHA-256 differs "
+                           "from the recorded one, and record their argument_null_sentences "
+                           "(card CALLBACK-SUPPLIED-NULL-ACTUAL)")
     mode.add_argument("--merge", action="store_true",
                       help="keep the record's existing pages and add only the (page, series) "
                            "pairs it lacks, each with its own `fetched_on` (card "
@@ -103,6 +135,23 @@ def main():
     parser.add_argument("pages", nargs="+", help="PAGE@SERIES[,SERIES...]")
     args = parser.parse_args()
     date = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d")
+    if args.argument_sentences:
+        record = json.loads(args.record.read_text())
+        for spec in args.pages:
+            page, series = spec.split("@", 1)
+            for one in series.split(","):
+                held = [entry for entry in record["pages"]
+                        if entry["page"] == page and entry["series"] == one
+                        and entry.get("fetched")]
+                if len(held) != 1:
+                    raise SystemExit(f"{page}@{one} is not recorded as fetched exactly once")
+                entry = fetch(one, page, args.out)
+                if not entry.get("fetched") or entry["sha256"] != held[0]["sha256"]:
+                    raise SystemExit(f"{page}@{one}: the page fetched now is not the one "
+                                     f"recorded ({entry.get('sha256')} != {held[0]['sha256']})")
+                held[0]["argument_null_sentences"] = entry["argument_null_sentences"]
+        args.record.write_text(json.dumps(record, indent=1) + "\n")
+        return
     if args.append or args.merge:
         record = json.loads(args.record.read_text())
     else:

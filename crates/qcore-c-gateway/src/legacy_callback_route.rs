@@ -999,7 +999,11 @@ impl Parser<'_> {
         use crate::handoff_branch::{Handed, Query, UnitBodies, admit, resolve};
         let at = at.ok_or("a table dispatch reads no invoker's branch")?;
         let handed = match actuals.get(handoff.parameter) {
-            Some(CallbackActual::SuppliedOwned | CallbackActual::Supplied) => Handed::Own,
+            Some(
+                CallbackActual::SuppliedOwned
+                | CallbackActual::Supplied
+                | CallbackActual::SuppliedNullable,
+            ) => Handed::Own,
             Some(CallbackActual::Parameter { index }) => Handed::Parameter(*index),
             _ => return Err("the handed formal has no handed actual".into()),
         };
@@ -2413,9 +2417,9 @@ fn invocation_validates(
                             && !rebound(body, formal)
                     })
                 }
-                CallbackActual::Supplied | CallbackActual::SuppliedOwned => {
-                    !argument.contains(&name.as_str())
-                }
+                CallbackActual::Supplied
+                | CallbackActual::SuppliedOwned
+                | CallbackActual::SuppliedNullable => !argument.contains(&name.as_str()),
                 CallbackActual::Element => false,
             };
             if !fits {
