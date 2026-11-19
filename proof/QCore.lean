@@ -54,6 +54,7 @@ import QCore.CallInstantiation
 import QCore.CallResultUse
 import QCore.CallUseAdmission
 import QCore.CallbackBinding
+import QCore.CallbackCandidatePremise
 import QCore.CallbackCandidateScope
 import QCore.CallbackContracts
 import QCore.CallbackCoverage
