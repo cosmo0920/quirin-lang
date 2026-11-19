@@ -13,6 +13,12 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | Card directory | Original report title |
 |---|---|
 
+| [ag1-indirect-member-access](ag1-indirect-member-access/README.md) | AG1-INDIRECT-MEMBER-ACCESS: the access refusal, by sub-shape; rule 61 |
+
+| [ag2-unresolved-alias](ag2-unresolved-alias/README.md) | AG2-UNRESOLVED-ALIAS: copy sources that carry no resource identity |
+
+| [ag3-condition-return-calls](ag3-condition-return-calls/README.md) | AG3-CONDITION-RETURN-CALLS: calls, aggregates and indirect access in conditions and returns |
+
 | [aggregate-owned-field](aggregate-owned-field/README.md) | `AGGREGATE-OWNED-FIELD` (wave 39) — an owned buffer inside a record: the IR first, then the route |
 
 | [aggregates-v1](aggregates-v1/README.md) | AGGREGATES-V1 — the first source-level aggregate type (wave 27) |
