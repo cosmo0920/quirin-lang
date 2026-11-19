@@ -1,0 +1,281 @@
+# SP1-SYMBOLIC-OPENSSL-PREMISES
+
+Base `3c0f8e474` (integrate/ag-gaps). User decision 2026-11-20 (verbatim):
+"we don't want to write down the sentences on premise clauses. We really
+dislike this kind of results so we must write down as condition symbols like
+|-> or other types of logical symbols to represent the prerequisites which
+compose for premise conditions. This must be applied for OpenSSL's premises."
+Same day: ASCII tokens reusing the language's existing tokens; convert every
+OpenSSL premise, then the OpenSSL provider refuses a prose statement; other
+providers' prose premises become registered follow-ups.
+
+[Prediction](PREDICTION.md) (committed first, `431131947`): no status move on
+any route, content changes only where a premise is rendered, 30 lock digests.
+
+## 1. What changed
+
+* **The statement form** (contract specification C04.18.9, grammar
+  G05-formula). `requires resource_premise(NAME, FORMULA);` beside the string
+  form, read by one reader, `qcore_frontend::premise_formula`, which the
+  contract format (`frontend.rs`), the loader (`contract_loader::premise_clause`)
+  and the S3 prerequisite reader (`local_condition::named_prerequisite`) share.
+  The reader is syntax then sorts, both total-or-reject, bounded at 1024
+  tokens, depth 48 and 512 nodes.
+* **The statement** of a formula premise is its canonical printing, so the
+  premise's identity is the name plus that text and every rendering prints
+  it. A string statement that is itself a formula is refused, so the two
+  forms never share a statement.
+* **Semantics unchanged.** A formula premise is metadata exactly as a string
+  one: no consumer that decides a verdict reads it.
+* **OpenSSL.** All 47 `resource_premise` clauses of
+  `quirin-provider-openssl` state formulas (`documented.rs`'s four
+  `*_STATEMENT` constants, the 30 declarations in 13 modules). The checker
+  refuses a premise whose statement is a string (`check::prose_premise`,
+  before the documented-clause comparison).
+* **Rule 13h** amended; no new rule id (64 stays free).
+
+## 2. Grammar and vocabulary
+
+Loosest to tightest: `->` (right-associative), `&&`, `|->` (no chaining),
+`in` and `==` (no chaining), `|` and `-` (a union chain or one difference,
+never mixed), then `( F )`, `quant all #x in SET: F` (the body extends as far
+as it can), `#name`, `#name(A)`, `#name(A, B)`, an upper-case constant, `{}`.
+Every token is an existing one; no lexer token was added.
+
+| Term | Sort | Meaning |
+|---|---|---|
+| `#args` | set(obj) | the objects the call's pointer arguments designate |
+| `#created` | set(obj) | the objects the call allocates, directly or as a temporary inside the call |
+| `#copied` | set(obj) | the objects the call copies (the source of a dup) |
+| `#freed` | set(obj) | the objects whose last reference the call drops, directly or as a replaced or temporary object |
+| `#class(o)` | obj → cls | the object's class |
+| `#of(k, S)` | cls, set(obj) → set(obj) | the members of `S` of class `k` |
+| `#ctx(S)` | set(obj) → set(obj) | the SSL_CTX of each SSL object of `S` |
+| `#bios(S)` | set(obj) → set(obj) | the BIOs each SSL object of `S` holds |
+| `#chain(S)` | set(obj) → set(obj) | the BIOs of `S` and every BIO chained after one, transitively |
+| `#ssl_of(b)` | obj → set(obj) | the SSL object a BIO_f_ssl BIO holds |
+| `#slots(S)` | set(obj) → set(fn) | every callback slot of an object of `S`, the `SSL_CTX_callback_ctrl` arms included |
+| `#stated` | set(fn) | the callbacks a clause of the declaration states the call runs |
+| `#ex_data(k)` | cls → set(fn) | the new, dup and free callbacks `CRYPTO_get_ex_new_index` registers for `k` |
+| `#ex_data_free(k)` | cls → set(fn) | the free callbacks registered for `k` |
+| `#method(b)` | obj → meth | the BIO_METHOD of a BIO |
+| `#builtin` | set(meth) | the BIO_METHODs the library defines itself (a `BIO_s_`/`BIO_f_` function's, handed to no setter) |
+| `#fns(b)` | obj → set(fn) | the functions of the BIO's method table, each as run on that BIO |
+| `#destroy(b)` | obj → fn | the destroy function of the BIO's method, as run on that BIO |
+| `#callback(b, c)` | obj, cmd → fn | the callback the BIO holds, as run on it with command `c` |
+| `#in_turn(f, S)` | fn, set(obj) → set(fn) | the callbacks a run of `f` runs in turn on an object of `S` |
+| `#caller_held` | set(res) | the resources the caller holds when the run starts |
+| `#takes(R)`, `#releases(R)`, `#retains(R)` | set(res) → set(res) | the members of `R` the run takes over, releases, keeps |
+| `#inert` | eff | `#takes(#caller_held) == {} && #releases(#caller_held) == {} && #retains(#caller_held) == {}` |
+
+Constants: the fifteen ex_data classes (sort cls) and `BIO_CB_FREE` (cmd).
+`F |-> E`: every run of callback `F` (of every member of set `F`) during the
+call has effect `E`.
+
+**`|->` in the tokenizer.** The lexer has one `MapsTo` token: three bytes,
+matched before every two-byte spelling, so `A |-> B` never lexes as a union
+followed by an implication, and `|>`, `||`, `||->`, `->|` stay their own
+tokens (each refused inside a formula). Its meaning is the delimited
+context's: a state clause, a `resource_premise_flow_v1` expression, or this
+formula, which is exactly the tokens between the comma after `NAME` and the
+clause's closing parenthesis. The two other meanings are unchanged (their
+readers and tests are untouched).
+
+**Set difference is `-`, not `\`.** The brief listed `\` among "the
+language's existing ASCII tokens", but `\` is not a token: the lexer refuses it
+(`unexpected character`). Admitting it would add a lexer token, against the
+user's choice of existing tokens, and the hypothesis graph's opaque legacy
+atoms refuse a statement containing a backslash (`hypothesis::plain`), so every
+premise statement printing `\` would also need that check changed. `-` is the
+existing `Minus`, as union is the existing `Pipe`. If the user prefers `\`,
+the change is the lexer token with its census, `hypothesis::plain`, and the
+four constants.
+
+## 3. The four formulas
+
+* `openssl_ex_data_callbacks` (30):
+  `quant all #o in #created | #copied | #freed: #ex_data(#class(#o)) |-> #inert`
+* `openssl_unstated_callback_slots` (7):
+  `#slots(#of(SSL, #args) | #ctx(#of(SSL, #args)) | #of(SSL_CTX, #args)) - #stated |-> #inert && quant all #o in #created | #copied | #freed: #ex_data(#class(#o)) - #stated |-> #inert`
+* `openssl_builtin_bio_methods` (8):
+  `quant all #b in #chain(#of(BIO, #args) | #bios(#of(SSL, #args))): #method(#b) in #builtin -> #fns(#b) |-> #inert && quant all #f in #fns(#b): #in_turn(#f, #ssl_of(#b) - #args) |-> #inert`
+* `openssl_bio_free_callbacks` (2):
+  `quant all #b in #of(BIO, #args) | #chain(#bios(#of(SSL, #args))): #b in #freed -> #callback(#b, BIO_CB_FREE) |-> #inert && #destroy(#b) |-> #inert && #ex_data_free(BIO) |-> #inert`
+
+The modules lay each out one step per line (a break before every `->` and
+`&&`); the checker and the loader read whitespace-insensitively.
+
+## 4. Faithfulness: prose to formula
+
+| Premise | Prose | Formula |
+|---|---|---|
+| ex_data | "an ex_data callback" | `#ex_data(…)` |
+| | "the call may run" | `\|->`: only runs during the call count; a callback not run satisfies it |
+| | "a new, dup or free callback CRYPTO_get_ex_new_index registers" | `#ex_data(k)`: the new, dup and free callbacks registered for `k` |
+| | "for the class of an object" | `#class(#o)` |
+| | "the call creates, copies or frees" | `quant all #o in #created \| #copied \| #freed` |
+| | "takes, releases or retains nothing the caller holds" | `#inert` |
+| unstated | "a callback the call may run" | `\|->` |
+| | "that no clause of this declaration states" | `- #stated`, on both conjuncts |
+| | "a callback slot of" | `#slots(…)` |
+| | "the SSL object" | `#of(SSL, #args)` |
+| | "or its SSL_CTX" | `#ctx(#of(SSL, #args))`; on `SSL_CTX_free`, the SSL_CTX argument, `#of(SSL_CTX, #args)` (R3) |
+| | "whose invocation the declaration does not state" | `- #stated` |
+| | "among them the SSL_CTX_callback_ctrl arms such as the servername, status and ticket key callbacks" | members of `#slots` (its meaning names the arms); "among them" adds no set |
+| | "or an ex_data callback" | `&& quant all #o in #created \| #copied \| #freed: #ex_data(#class(#o)) - #stated \|-> #inert` (R2) |
+| | "takes, releases or retains nothing the caller holds" | `\|-> #inert`, each conjunct |
+| builtin | "a function of a BIO method" | `#fns(#b)` |
+| | "the library defines itself (the BIO_METHOD that BIO_s_socket, BIO_s_mem, BIO_f_buffer or another built-in BIO_s_ or BIO_f_ function returns, which no setter is handed)" | `#method(#b) in #builtin ->`; `#builtin`'s meaning carries the parenthetical |
+| | "run on a BIO" | `#fns(#b)`: each function as run on `#b` |
+| | "the call reads or writes through (its BIO argument or a BIO the SSL object holds)" | `#of(BIO, #args) \| #bios(#of(SSL, #args))` |
+| | "or one chained to it" | `#chain(…)` |
+| | "takes, releases or retains nothing the caller holds" | `#fns(#b) \|-> #inert` |
+| | "and so does any callback it runs in turn" | `&& quant all #f in #fns(#b): #in_turn(#f, …) \|-> #inert` |
+| | "on an object other than the arguments of the call" | `… - #args` |
+| | "(the SSL object of a BIO_f_ssl BIO)" | `#ssl_of(#b)` (R4) |
+| BIO free | "when the call drops the last reference to a BIO" | `quant all #b in …: #b in #freed ->` |
+| | "its BIO argument" | `#of(BIO, #args)` |
+| | "or a BIO the SSL object holds and the BIOs chained to it" | `\| #chain(#bios(#of(SSL, #args)))` (R5) |
+| | "the callback the BIO holds, run with BIO_CB_FREE" | `#callback(#b, BIO_CB_FREE)` |
+| | "the destroy function of its method" | `#destroy(#b)` |
+| | "and the ex_data free callbacks of the BIO class" | `#ex_data_free(BIO)` |
+| | "take, release or retain nothing the caller holds" | `\|-> #inert`, each, joined by `&&` |
+
+**Readings recorded** where a phrase admitted more than one parse:
+
+* **R1** (ex_data). "a new, dup or free callback … for the class of an object
+  the call creates, copies or frees" is read as written: any of the three
+  kinds, for an object in any of the three relations. The pairwise reading
+  (new with creates, dup with copies, free with frees) is narrower in the
+  abstract model. Under `CRYPTO_get_ex_new_index`'s documented run discipline
+  the two agree, since `#created` and `#freed` include temporaries.
+* **R2** (unstated). "an ex_data callback" is read as the ex_data premise
+  defines it, by the objects the call creates, copies or frees. With it the
+  unstated premise entails the ex_data premise (§6).
+* **R3** (unstated on `SSL_CTX_free`, which has no SSL object). "the SSL object
+  or its SSL_CTX" is the SSL_CTX argument there. C04.18 records that the premise
+  stands on `SSL_CTX_free` for the session-remove callback, a slot of the
+  SSL_CTX. On every other declaration, `#of(SSL_CTX, #args)` is empty.
+* **R4** (builtin). "(the SSL object of a BIO_f_ssl BIO)" is read as defining
+  "an object other than the arguments", as every other parenthetical in these
+  statements defines. Examples are marked "such as", "among them" and "or
+  another". The wider reading, any callback on any object that is not an
+  argument, would also assume something of, for example, a chained
+  `BIO_s_connect` BIO's info callback. That alternative is
+  `#in_turn(#f, #all - #args)`, a new term; see the hand-back.
+* **R5** (BIO free). "and the BIOs chained to it" attaches to the SSL
+  object's BIOs only: `BIO_free` frees one BIO (`BIO_free_all` frees a chain).
+  The `#b in #freed` guard makes the other grouping assume nothing more of a
+  BIO the call does not free.
+
+## 5. Fail-closed arms, each with a test
+
+`crates/qcore-frontend/tests/premise_formula.rs` (7 tests) and
+`crates/qcore-contract/tests/contract_premise.rs` (2 new):
+
+* an unknown term or constant, an ill-sorted application, a term without its
+  arguments, an unbound variable, a variable shadowing a term or a variable, a
+  non-proposition, and a quoted formula each reject the module through the
+  loader (`every_malformed_formula_rejects_the_module`) and the reader
+  (`a_premise_clause_is_prose_or_a_formula`);
+* 28 malformed token sequences, the depth and token bounds
+  (`malformed_syntax_is_refused`);
+* the canonical printing reads back as the same tree, with parentheses exactly
+  where precedence needs them (`the_printing_parenthesizes_exactly_where_needed`);
+* a formula premise changes no contract, and two spellings of one tree are one
+  premise (`a_formula_premise_is_admitted_with_its_canonical_statement`);
+* the OpenSSL checker refuses each of the 47 clauses rewritten as prose
+  (`check::tests::a_prose_premise_is_refused`); its drift tests
+  (`a_drifted_bio_slot_reading_is_refused`, the unstated-slot and ex_data
+  drifts) now drift the formulas.
+
+## 6. Lean
+
+`QCore.PremiseFormula`, audited by `proof/AuditPremiseFormula.lean` (12
+theorems). It has the syntax (`Raw`), sorts (`Srt`), the vocabulary (`vocab`,
+`classes`, `commands`), the judgment (`check`, `wf`), and a denotation
+(`eval`) over an abstract `Model` of the call's objects, callback sets, runs
+and per-run resource effects.
+
+* `check_denotes`, `wf_denotes`, `quant_body_denotes`: a well-sorted term
+  denotes a value of its sort, and a well-formed formula a proposition.
+* `decision_vectors_agree`: the judgment decides the 22 shared vectors as
+  the Rust reader does. The Rust test `the_decision_vectors_are_the_lean_table`
+  binds each row's tree and decision. `the_vocabulary_is_the_lean_table` binds
+  the vocabulary, classes and commands.
+* `openssl_formulas_wf`: the four formulas are well-formed. The Rust test
+  `the_openssl_formulas_are_the_lean_definitions` binds the Lean definitions
+  to every one of the 47 clauses as read from the modules.
+* `inert_definition`: `#inert` denotes its definition.
+* `unstated_entails_ex_data`: in every model where no clause states an
+  ex_data callback (`Model.Coherent`), `openssl_unstated_callback_slots`
+  entails `openssl_ex_data_callbacks`. `unstated_entails_ex_data_for_ssl`
+  specializes it to the SSL object's ex_data class.
+  `ex_data_does_not_entail_unstated` shows the converse fails.
+
+Placeholder-free, no project axioms (gate log below).
+
+## 7. Lock diff, reviewed
+
+Order: `package.py checkers` (exit 1, the expected stale lock;
+`private/logs/regen-checkers-1.log`), `quirin-audit pin --source-root
+docs/reports/openssl-provider-remaining-callees/evidence/fixture --load-path
+providers/user-crates-load-path.json --crate quirin-provider-openssl` (exit 0,
+`regen-pin-2.log`), `contracts.py sync` (exit 0), `package.py checkers`
+(exit 0, `regen-checkers-2.log`), `plugin views --write` ("every user crate's
+resource view is current").
+
+`contracts.lock` changes exactly the 30 `contract_sha256` and `pinned_at`
+values of the declarations naming a premise. The other 77 entries and every
+top-level key are unchanged, and no entry is added or removed.
+`providers/user-crates-load-path.json`, `providers/contract-load-path.json`
+and `quirin-plugin.json` are byte-identical to base. The prediction expected
+changed module digests in `user-crates-load-path.json`, but that file lists
+modules and bindings, not digests, so that line of the prediction missed. The
+lock count matched.
+
+## 8. Measurement
+
+**Pinned routes.** None loads the OpenSSL user crate, so no move is predicted
+on corpus, twelve-home, system or slice. The `measure-prediction` block is for
+the integrator's `quirin-audit measure --declared`.
+
+**The user path** on the predecessor's fixture (`quirin-audit contracts` with
+the user load path, libc and openssl): see §8a.
+
+## 9. Gate
+
+See §9a.
+
+## 10. Follow-ups
+
+These are registered in [`integration-amendments.json`](integration-amendments.json).
+Prose `resource_premise` clauses remain only outside OpenSSL. Counted per clause,
+comments excluded:
+
+* **SP2-SYMBOLIC-LIBRDKAFKA-PREMISES**: `qcore-provider-librdkafka` has 220
+  clauses under 12 names in 9 files: `client.qv` 119, `null_deref.qv` 71,
+  `header_inlines.qv` 12, `log_caller_frame.qv` 6, `cjson.qv` 4, `logging.qv`
+  3, `memory.qv` 3, `kafka_mem.qv` 1 and `queue_destructor.qv` 1. `cjson.qv`
+  also has 9 prose `resource_hypothesis` atoms.
+* **SP3-SYMBOLIC-FLUENT-BIT-PREMISES**: `quirin-provider-fluent-bit` has 3
+  clauses (`input_chunk_name.qv`, `loop_owner.qv`, `output_singleplex.qv`).
+* **SP4-SYMBOLIC-LIBEVENT-PREMISES**: `qcore-provider-libevent` has 7 clauses
+  (`monkey/intrusive_list.qv`).
+* `quirin-provider-libc` has no prose `resource_premise` clause. Its two
+  `nested_call_admission` premises are `resource_premise_all` conjunctions, so
+  no libc follow-up is registered. The brief counted one.
+
+Each will need terms beyond this vocabulary. Adding one is a specification row
+(C04.18.9), a Rust vocabulary entry and a Lean `vocab` row.
+
+**Files likely to conflict:**
+
+* the OpenSSL lane: the 13 modules, `documented.rs`, `check.rs` and
+  `contracts.lock` (regenerate the lock, do not merge it);
+* C04.18 of the contract specification;
+* `crates/qcore-frontend/src/frontend.rs` (`premise_clause`) and
+  `crates/qcore-contract/src/contract_loader.rs` (`premise_clause`);
+* the generated `proof/QCore.lean`, `docs/agents/gateway.md` and
+  `docs/agents/README.md` (rerun their generators);
+* `scripts/gate_scope_walkers.json` (one appended entry).
