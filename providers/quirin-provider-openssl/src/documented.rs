@@ -129,8 +129,10 @@ pub enum Premise {
     /// Card **OPENSSL-BIO-METHODS-AND-CALLBACKS**: `requires
     /// resource_premise(openssl_bio_free_callbacks, "…")`: a drop of a BIO's
     /// last reference runs its callback (`BIO_CB_FREE`), its method's destroy
-    /// function and the BIO class's ex_data free callbacks, which no clause
-    /// can state beside the reference drop (C04.19).
+    /// function and the BIO class's ex_data free callbacks. Card
+    /// **OPENSSL-FREE-SESSION-REMOVE-INVOCATION**: the first two are stated
+    /// beside the drop now (C04.19 amended), so the premise covers only the
+    /// ex_data free callbacks, which are no slot.
     BioFreeCallbacks,
     /// Card **OPENSSL-SSL-CTX-CALLBACK-SLOTS**: `ensures normal
     /// resource_callback_slot_invoked(OBJ, slot, A…)` (C04.19.3): during the
@@ -195,23 +197,25 @@ pub const BUILTIN_BIO_METHODS: &str = "openssl_builtin_bio_methods";
 
 /// Its statement. Card OPENSSL-BIO-READER-INVOCATIONS: the BIO is the one
 /// the call reads or writes through, its own BIO argument (the PEM and
-/// PKCS#12 readers) or one the SSL object holds (the I/O calls).
+/// PKCS#12 readers) or one the SSL object holds (the I/O calls). Card
+/// OPENSSL-FREE-SESSION-REMOVE-INVOCATION: or frees (`BIO_free`, `SSL_free`:
+/// a built-in method's destroy function).
 pub const BUILTIN_BIO_METHODS_STATEMENT: &str = "a function of a BIO method the library defines \
 itself (the BIO_METHOD that BIO_s_socket, BIO_s_mem, BIO_f_buffer or another built-in BIO_s_ or \
 BIO_f_ function returns, which no setter is handed), run on a BIO the call reads or writes \
-through (its BIO argument or a BIO the SSL object holds) or one chained to it, takes, releases or \
-retains nothing the caller holds, and so does any callback it runs in turn on an object other \
-than the arguments of the call (the SSL object of a BIO_f_ssl BIO)";
+through or frees (its BIO argument or a BIO the SSL object holds) or one chained to it, takes, \
+releases or retains nothing the caller holds, and so does any callback it runs in turn on an \
+object other than the arguments of the call (the SSL object of a BIO_f_ssl BIO)";
 
 /// Card **OPENSSL-BIO-METHODS-AND-CALLBACKS**: the name of the BIO free
 /// premise.
 pub const BIO_FREE: &str = "openssl_bio_free_callbacks";
 
-/// Its statement.
+/// Its statement. Card OPENSSL-FREE-SESSION-REMOVE-INVOCATION: narrowed to
+/// the ex_data free callbacks; the callback and destroy slots are stated.
 pub const BIO_FREE_STATEMENT: &str = "when the call drops the last reference to a BIO (its BIO \
-argument, or a BIO the SSL object holds and the BIOs chained to it), the callback the BIO holds, \
-run with BIO_CB_FREE, the destroy function of its method and the ex_data free callbacks of the \
-BIO class take, release or retain nothing the caller holds";
+argument, or a BIO the SSL object holds and the BIOs chained to it), the ex_data free callbacks \
+of the BIO class take, release or retain nothing the caller holds";
 
 /// Card **OPENSSL-UNSTATED-CALLBACK-SLOTS**: the name of the ex_data premise.
 pub const EX_DATA: &str = "openssl_ex_data_callbacks";
@@ -1032,8 +1036,35 @@ const SHUTDOWN: &[Premise] = &[
 
 /// Card OPENSSL-BIO-METHODS-AND-CALLBACKS: `BIO_free` drops a BIO reference;
 /// `SSL_free` keeps the unstated-slots premise and frees the SSL's BIOs.
-const BIO_FREED: &[Premise] = &[Premise::BioFreeCallbacks];
-const SSL_FREED: &[Premise] = &[Premise::UnstatedSlots, Premise::BioFreeCallbacks];
+/// Card **OPENSSL-FREE-SESSION-REMOVE-INVOCATION** (C04.19 amended: a slot
+/// invocation stands beside a reference drop): a BIO's last drop runs its
+/// callback with `BIO_CB_FREE` and its method's destroy function, stated
+/// with every actual `_`, a built-in method's destroy function under
+/// [`Premise::BuiltinBioMethods`], and the narrowed free premise names only
+/// the BIO class's ex_data free callbacks. `SSL_free` and `SSL_CTX_free`
+/// state the session-remove invocation ("called for all sessions in the
+/// internal session cache when SSL_CTX_free(3) is called" and "when a
+/// connection was not shutdown cleanly", `SSL_CTX_sess_set_get_cb` 3.5).
+/// Both keep the unstated-slots premise: freeing the context frees its
+/// certificate store, whose lookup methods' free and shutdown functions are
+/// user-settable (`X509_LOOKUP_meth_set_free`).
+const BIO_FREED: &[Premise] = &[
+    Premise::BioFreeCallbacks,
+    BIO_SLOTS[0],
+    BIO_SLOTS[1],
+    BIO_SLOTS[2],
+    BIO_SLOTS[11],
+];
+const SSL_FREED: &[Premise] = &[
+    Premise::UnstatedSlots,
+    Premise::BioFreeCallbacks,
+    REMOVE_SESSION,
+    BIO_SLOTS[0],
+    BIO_SLOTS[1],
+    BIO_SLOTS[2],
+    BIO_SLOTS[11],
+];
+const SSL_CTX_FREED: &[Premise] = &[Premise::UnstatedSlots, REMOVE_SESSION];
 
 /// The context's password slot, `pem_password_cb(buf, size, rwflag, u)`:
 /// four values the callee supplies.
@@ -1094,9 +1125,6 @@ const CUSTOM_EXT: &[Premise] = &[
     },
     Premise::RetainedBy { item: 6, holder: 0 },
 ];
-
-/// The premise alone: a call that may run callbacks of no stated slot.
-const UNSTATED: &[Premise] = &[Premise::UnstatedSlots];
 
 /// `PEM_read_bio_*(bp, x, cb, u)`: a NULL `x` (no object to reuse), and the
 /// password callback `cb` called during the read with `u` as its last
@@ -1384,7 +1412,7 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
             position: 0,
             sentence: "If ctx is NULL nothing is done.",
         },
-        UNSTATED,
+        SSL_CTX_FREED,
     ),
     entry(
         "SSL_CTX_get_cert_store",
