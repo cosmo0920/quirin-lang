@@ -248,7 +248,9 @@ impl Parser<'_> {
                     ObjectState::Member(Registration::InForce {
                         candidates: names
                             .iter()
-                            .map(|name| (name.clone(), self.contracts.contract(name).cloned()))
+                            // Card CALLBACK-CANDIDATE-LITERAL-PREMISE: none
+                            // for a premise-carrying candidate.
+                            .map(|name| (name.clone(), self.candidate_contract(name)))
                             .collect(),
                         constructed: true,
                     }),
