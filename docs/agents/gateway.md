@@ -11700,5 +11700,42 @@ an undeclared OpenSSL producer). `QCore.NullableReferenceDrop` (12 audited,
     `crates/qcore-contract/tests/callback_literal_premise.rs`,
     `crates/qcore-c-gateway/tests/openssl_undeclared_handshake_callbacks.rs`.
     [Report](../reports/openssl-bio-reader-invocations/README.md).
+    **At a callback candidate** (card CALLBACK-CANDIDATE-LITERAL-PREMISE,
+    rule 57 amended in place; contract specification C04.5 "At a callback
+    candidate"): route G's rewrite bounds the *calls* of a premise-carrying
+    declaration, but a callback candidate is a function designator handed
+    to an invoker, which chooses its actuals, so the rewrite never sees it.
+    The callback route now reads the premise set route G read for the body
+    (the parser's `literal_premises`) and gives a candidate whose
+    declaration carries a literal-argument premise, and every candidate
+    under a poisoned set, no contract in force wherever it is a candidate
+    (`LiteralPremises::withdraws_candidate`): `Parser::candidate_withdrawn`
+    classifies it `Missing` first in `classified_in`, before its contract,
+    its composition (rule 13u amended, `candidate_composition`), its
+    hand-off (rule 12m) or its member paths (rule 30) are read, so a
+    synchronous, table, member or slot invocation refuses it
+    (`callback-uncontracted`, naming it); `Parser::candidate_contract`
+    stores no contract for it at a registration (rule 13w) or a constructed
+    member registration (rule 12o), so a registry holding it is not
+    releasing and an invocation of the member refuses it. The premise is
+    not checked against the invocation's actuals: a `_` or a supplied
+    object never satisfies it, and a parameter actual is the caller's,
+    which the declaration does not bound. Measured before the route change:
+    each candidate path applied a premise-carrying identity (or releasing)
+    candidate (`Safe` on the fixture's `each_premise`, `each_slot_premise`,
+    `list_premise`, `op_premise`). **Do not** apply a premise-carrying
+    declaration as a candidate by its contract or its composition, or check
+    its premise against an invocation's `_` or supplied actual.
+    `QCore.CallbackCandidatePremise`
+    (`a_premise_carrying_candidate_is_missing`,
+    `a_poisoned_set_leaves_no_candidate_contracted`,
+    `a_premise_free_candidate_is_classified_as_before`,
+    `applied_only_over_premise_free_identities`,
+    `releasing_only_over_premise_free_candidates`,
+    `the_guarded_decision_applies_only_where_the_old_did`, the `cand_*`
+    vectors); `crates/qcore-c-gateway/tests/callback_literal_premise.rs`
+    and `legacy_literal_premise.rs`'s
+    `a_premise_or_a_poisoned_set_withdraws_a_callback_candidate`.
+    [Report](../reports/callback-candidate-literal-premise/README.md).
 
 <!-- generated:rules:end -->

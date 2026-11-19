@@ -1,0 +1,13 @@
+{
+  "note": "Landing integrate/r35 (base main 41eb7e959; merges CALLBACK-CANDIDATE-LITERAL-PREMISE df3879913 in 9ac5742ad, no conflicts; the card was based on main 062974679, before r34; third_party/libevent checked out at d82464a27). Amendments applied in 9860fd779 with --profiles-base 41eb7e959: CALLBACK-CANDIDATE-LITERAL-PREMISE retired; CALLBACK-CANDIDATE-OBLIGATION-PREMISE and CONSTRUCTOR-PARAMETER-REGISTRATION-RUN-STORE registered; profiles []. Full landing gate on 9860fd779 (private/integrate-r35/gate, raw record beside this file as gate-scope.json) via scripts/gate_scope.py --base main --full --landing through private/toolchain/env.sh: Rust 662 units / 707 summaries, 9707 passed, 0 failed, 21 ignored; fmt, Clippy and both reevaluation examples exit 0; Lean 454 audits (new QCore.CallbackCandidatePremise, 18 theorems). The diff against main touches no provider, so the gate ran no provider steps. Python (779 tests) exited 1 on two stale-matrix checks of test_build_matrix_sections only (the committed matrix predates the amendments; regenerated from this record); the suite rerun after regeneration is recorded in private/integrate-r35/python-rerun.log. Rule 57 and C04.5 amended in place (rule id 58 unused): the route change is gateway-only, with no contract or lock change. Pinned-route parity (quirin-audit measure --declared) was not run: this host holds no build/cycle19 inputs or baselines. No profile baseline is changed and land.py publish is owed.",
+  "workspace_tests": 9707,
+  "provider_tests": 160,
+  "python_evidence_validator_tests": 779,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "full landing gate: every step exits 0 except the Python suite's two stale-matrix checks, cleared by regenerating the matrix from this record (rerun disclosed in the note); no provider steps (no provider diff; provider_tests carried from r34)",
+  "lean_audits": 454,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

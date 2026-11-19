@@ -1,0 +1,13 @@
+# The card's fixture rows at base 062974679 (route code unchanged), read by
+# the card's new fixture with a temporary printing test, run facts installed
+# (cargo test -p qcore-c-gateway --test callback_literal_premise --
+# --include-ignored --nocapture --test-threads 1; log private/logs/gtest-base-3.log).
+# direct_in_premise was the entry; each premise row is Safe before the card.
+each_plain: Safe []
+each_premise: Safe []
+each_slot_plain: Safe []
+each_slot_premise: Safe []
+list_plain: Safe []
+list_premise: Safe []
+op_plain: Safe []
+op_premise: Safe []

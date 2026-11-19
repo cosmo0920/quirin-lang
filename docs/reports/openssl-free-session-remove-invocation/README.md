@@ -379,7 +379,7 @@ shown separately.
   r34 retired): a slot invocation now stands beside a drop, a registry
   invocation still does not, and the BIO free premise names only ex_data.
 
-`scripts/apply_amendments.py … --check --profiles-base 41eb7e959` exits 0.
+`scripts/apply_amendments.py … --check --profiles-base 3b12177a3` exits 0.
 
 ## 8. Merged with main `41eb7e959` (r34, OPENSSL-EX-DATA-REGISTRY)
 
@@ -404,7 +404,19 @@ cards' readings hold:
   `library_versions` are unchanged. The user load path and
   `quirin-plugin.json` equal main's.
 
-The opt-in measurement above was taken before the merge, against r33. The
+**Then main `3b12177a3` (r35, CALLBACK-CANDIDATE-LITERAL-PREMISE)** was
+merged on top, and it merged cleanly.
+
+* r35 changes `callback_contracts.rs`, `legacy_callback_route.rs`,
+  `legacy_literal_premise.rs`, rule 57 and C04.5. It touches neither
+  `legacy_transfer.rs` nor `legacy_retained_by.rs`, nor any provider file.
+* So the lock and the load path are unchanged by it, and the regenerated
+  `QCore.lean` and `gateway.md` are byte-identical to the merge result.
+* r35 classifies a premise-carrying candidate as having no contract in
+  force. That is independent of this card's reading beside a drop.
+* The amendments check passes with `--profiles-base 3b12177a3`.
+
+The opt-in measurement above was taken before the merges, against r33. The
 merge adds r34's premise lines, which move no verdict, so it was not
 repeated. The gate below was rerun on the merge.
 

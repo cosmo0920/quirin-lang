@@ -1,0 +1,6 @@
+callback members: 0 demoted
+current revision: 180 source file(s), 181 configuration(s): 9 Safe / 0 Pending / 5 provisional Unsafe / 163 Unknown / 4 data-only / 0 gateway failures
+preparation: 180 unit(s), 540 Clang invocation(s); -E -P 9169395 us / syntax 14620297 us / line markers 9319291 us
+pending human review: 11 declaration(s), 14 marker(s); 0 function(s) and 0 call site(s) held Pending (awaiting-human-review); 5 marker(s) must be rewritten before acceptance
+checker plugins: 113 binding(s): 0 Safe / 113 Pending / 0 Unknown / 0 provisional Unsafe
+contract dependencies: 1098 Safe row(s): 417 on no declaration, 124 only on validated declarations, 39 on a partly validated declaration, 490 on a declared assumption, 0 consulting a held or withdrawn declaration, 28 only on a null premise (51 carrying one); 638 declaration(s) consulted (74 validated, 51 partly validated)
