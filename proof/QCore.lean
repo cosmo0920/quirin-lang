@@ -319,6 +319,7 @@ import QCore.OpensslBioReaders
 import QCore.OpensslBioSlots
 import QCore.OpensslCalleeShapes
 import QCore.OpensslContractPlugin
+import QCore.OpensslExDataPremise
 import QCore.OpensslHandshakeSlots
 import QCore.OpensslUnstatedSlots
 import QCore.OrderedLifetimeReplay
