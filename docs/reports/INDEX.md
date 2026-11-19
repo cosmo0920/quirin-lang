@@ -105,6 +105,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [c-gateway-wave](c-gateway-wave/README.md) | C gateway refinements after the worktree sweep |
 
+| [callback-candidate-literal-premise](callback-candidate-literal-premise/README.md) | CALLBACK-CANDIDATE-LITERAL-PREMISE: a premise at a callback candidate |
+
 | [callback-member-cxx-ast-stores](callback-member-cxx-ast-stores/README.md) | CALLBACK-MEMBER-CXX-AST-STORES |
 
 | [callback-member-data-only-units](callback-member-data-only-units/README.md) | CALLBACK-MEMBER-DATA-ONLY-UNITS: every unit read for the member closure |
@@ -818,6 +820,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [openssl-bio-methods-and-callbacks](openssl-bio-methods-and-callbacks/README.md) | OPENSSL-BIO-METHODS-AND-CALLBACKS: a BIO's callback and method table as opaque slots |
 
 | [openssl-bio-reader-invocations](openssl-bio-reader-invocations/README.md) | OPENSSL-BIO-READER-INVOCATIONS: the BIO slots beside a literal-argument premise |
+
+| [openssl-ex-data-registry](openssl-ex-data-registry/README.md) | OPENSSL-EX-DATA-REGISTRY: the ex_data premise on every constructor and free |
 
 | [openssl-pem-callback-arm](openssl-pem-callback-arm/README.md) | OPENSSL-PEM-CALLBACK-ARM: a literal-argument premise beside a synchronous invocation |
 

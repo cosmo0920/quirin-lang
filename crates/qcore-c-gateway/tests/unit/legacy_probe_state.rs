@@ -158,6 +158,7 @@ pub(in crate::legacy_c) fn bare<'a>(
         alias_classes: Default::default(),
         variadic_tails: BTreeSet::new(),
         variadic_borrowed_tails: BTreeSet::new(),
+        literal_premises: super::super::literal_premise::LiteralPremises::default(),
         frame_protected: BTreeSet::new(),
         collection_types: Default::default(),
         sizeof_operands: Default::default(),

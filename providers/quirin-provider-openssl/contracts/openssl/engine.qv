@@ -28,11 +28,14 @@ module contract;
 // REFERENCE-DROP-NULL-ACCEPTING: the drop is NULL-accepting (C04.17), so the
 // bound is 3.0, the oldest series checked stating the NULL behaviour. Pinned
 // prototype: `int ENGINE_free(ENGINE *e)` (openssl/engine.h).
+// Card OPENSSL-EX-DATA-REGISTRY: the last structural reference frees the
+// ENGINE: the ENGINE class's free callbacks run.
 extern fn ENGINE_free(e: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
     requires resource_revision(flexible);
     requires resource_library_version(openssl, documented "3.0");
+    requires resource_premise(openssl_ex_data_callbacks, "an ex_data callback the call may run (a new, dup or free callback CRYPTO_get_ex_new_index registers for the class of an object the call creates, copies or frees) takes, releases or retains nothing the caller holds");
     ensures normal resource_borrowed(e);
     ensures normal resource_reference_dropped(e, nullable);
     ensures normal resource_return_none();
