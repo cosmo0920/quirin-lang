@@ -41,7 +41,8 @@ module contract;
 // SSL_CTX_enable_ct and SSL_enable_ct write with the library's own callback
 // through no function pointer formal (SSL_CTX_set_ct_validation_callback,
 // 3.5), so no declaration can register what they write and the run's set
-// would miss it; and the methods and callbacks of a BIO the SSL holds.
+// would miss it. (The methods and callbacks of a BIO the SSL holds were left
+// here too; card OPENSSL-BIO-METHODS-AND-CALLBACKS states them, bio_slots.qv.)
 
 // SSL_CTX_set_keylog_callback: https://docs.openssl.org/1.1.1/man3/SSL_CTX_set_keylog_callback/
 // (also 3.5; no page at 1.0.2). No HISTORY entry, so the bound is the oldest

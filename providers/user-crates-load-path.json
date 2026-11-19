@@ -59,6 +59,118 @@
     {
       "crate": "quirin-provider-openssl",
       "functions": [
+        "BIO_set_callback_ex"
+      ],
+      "module": "openssl/bio_slots.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
+        "BIO_set_callback"
+      ],
+      "module": "openssl/bio_slots.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
+        "BIO_meth_set_write_ex"
+      ],
+      "module": "openssl/bio_slots.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
+        "BIO_meth_set_write"
+      ],
+      "module": "openssl/bio_slots.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
+        "BIO_meth_set_read_ex"
+      ],
+      "module": "openssl/bio_slots.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
+        "BIO_meth_set_read"
+      ],
+      "module": "openssl/bio_slots.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
+        "BIO_meth_set_puts"
+      ],
+      "module": "openssl/bio_slots.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
+        "BIO_meth_set_gets"
+      ],
+      "module": "openssl/bio_slots.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
+        "BIO_meth_set_ctrl"
+      ],
+      "module": "openssl/bio_slots.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
+        "BIO_meth_set_create"
+      ],
+      "module": "openssl/bio_slots.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
+        "BIO_meth_set_destroy"
+      ],
+      "module": "openssl/bio_slots.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
+        "BIO_meth_set_callback_ctrl"
+      ],
+      "module": "openssl/bio_slots.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
+        "BIO_meth_set_sendmmsg"
+      ],
+      "module": "openssl/bio_slots.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
+        "BIO_meth_set_recvmmsg"
+      ],
+      "module": "openssl/bio_slots.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
         "ENGINE_free"
       ],
       "module": "openssl/engine.qv",
@@ -819,6 +931,7 @@
       "dependencies": [],
       "modules": [
         "openssl/bio.qv",
+        "openssl/bio_slots.qv",
         "openssl/engine.qv",
         "openssl/err.qv",
         "openssl/evp.qv",
@@ -840,6 +953,7 @@
       "published": {},
       "resource_view": [
         "openssl/bio.qv",
+        "openssl/bio_slots.qv",
         "openssl/engine.qv",
         "openssl/err.qv",
         "openssl/evp.qv",
