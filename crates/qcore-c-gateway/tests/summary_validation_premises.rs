@@ -261,9 +261,12 @@ fn a_withdrawn_summary_withdraws_its_callers_summaries() {
     );
 }
 
-/// Positive controls. A copy of a seeded formal whose reads the reported run
-/// also admits (a scalar read through the tracked alias) still validates on
-/// the protected premises, and the caller certifies on the `Owned` summary.
+/// Positive controls. A copy of a formal whose reads the reported run also
+/// admits (a scalar read through the copy) validates, and the caller
+/// certifies. FLIPPED by AG2-UNRESOLVED-ALIAS (rule 62): the copy is only
+/// read through, so it no longer names the formal and W4 no longer binds it;
+/// the summary is `Borrowed` (a direct read of the formal's own), where it
+/// was `Owned`.
 #[test]
 fn a_copy_whose_reads_certify_under_protection_still_validates() {
     if !clang_available() {
@@ -279,7 +282,7 @@ fn a_copy_whose_reads_certify_under_protection_still_validates() {
         assert_eq!(row(&rows, "w"), ("Safe", vec![]), "{source}");
         assert_eq!(row(&rows, "get"), ("Safe", vec![]), "{source}");
         assert!(
-            summaries(source).contains(&"get: [Owned { nullable: false }]".to_owned()),
+            summaries(source).contains(&"get: [Borrowed]".to_owned()),
             "{source}"
         );
     }
@@ -310,9 +313,11 @@ fn read_only_released_and_forwarded_formals_still_validate() {
             "kd: [Released { nullable: false }]",
         ),
         (
+            // FLIPPED by AG2-UNRESOLVED-ALIAS (rule 62): a copy handed only
+            // to a `Borrowed` position is read through; `Owned` before.
             "void k(struct c_leaf *_l) { struct c_leaf *l = _l; c_peek(l); } \
              int w(struct c_leaf *q) { k(q); return 0; }",
-            "k: [Owned { nullable: false }]",
+            "k: [Borrowed]",
         ),
     ] {
         let rows = rows(source);

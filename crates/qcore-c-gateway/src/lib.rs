@@ -210,6 +210,9 @@ pub mod thread_entry_census;
 // Card THREAD-LOCAL-CUSTODY-FREE-READ (rule 54): a whole read of a
 // thread-local pointer object is a custody-free value.
 pub mod thread_local_read;
+// Card AG2-UNRESOLVED-ALIAS (rule 62): copy sources that carry no resource
+// identity (literals, enumerators, read-only copies of unbound formals).
+pub mod custody_free_copy;
 #[cfg(feature = "indirect-census")]
 pub mod traversal_census;
 mod type_query;

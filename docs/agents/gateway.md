@@ -11746,4 +11746,67 @@ an undeclared OpenSSL producer). `QCore.NullableReferenceDrop` (12 audited,
     `typedef_aggregate_base::tests` (`decision_vectors`);
     `tests/ag1_indirect_member_access.rs`.
 
+<a id="constraint-62"></a>
+
+62. **A copy of a source that carries no identity leaves its destination
+    unbound.** Card AG2-UNRESOLVED-ALIAS, on the user's decision of
+    2026-11-18 to close the largest analyser gaps of the Fluent Bit corpus
+    (`custody_free_copy.rs`: `read`, `decide`, `CustodyFreeCopies::admits`;
+    the parser adapter `legacy_custody_free_copy.rs`; the field
+    `TraversalNames::custody_free` in `legacy_c.rs`; one `Alias` arm in
+    `legacy_transfer::transfer_base`, after rule 54's). It completes
+    W43-INDEX-TRAVERSAL's copy exemption and rule 54 for the three sources
+    the user's `current` run still reported as unresolved identities
+    ([report](../reports/ag2-unresolved-alias/README.md)). Read from Clang's
+    AST of the function, asked only where some alias copies a source the
+    traversal names do not cover. (1) **Destinations.** Only an automatic
+    local: exactly one declaration of the spelling in the function, a
+    block-scope `VarDecl` with automatic storage whose type is neither
+    `volatile` nor `_Atomic` at the top level, no parameter of that
+    spelling, and every reference to it designating that declaration (a
+    shadowed spelling is refused: the projection names objects by
+    spelling). (2)
+    **Literals.** The tokenizer's `__qcore_literal__` (a string literal is a
+    static array, C11 6.4.5p6; a character constant an `int`, 6.4.4.4p10),
+    unless some declaration or reference of the function spells that
+    placeholder. (3) **Enumeration constants.** A spelling every reference
+    of which is a `DeclRefExpr` to an `EnumConstantDecl` and that no
+    declaration of the function spells (an enumerator designates no object,
+    6.4.4.3p2). (4) **Formal copies.** A parameter of object-pointer type,
+    declared once and spelled by no local, that rule 10l's pointer-root
+    premise answers for (rule 5b's closure joined with the AST closure and
+    the declaration reader's `may_bind`), never the target of `=`, a
+    compound assignment or a step, never address-taken; its copies are the
+    automatic object-pointer locals receiving its whole value by a plain
+    `=` or an initializer (through parentheses and `NoOp`/`BitCast` casts),
+    closed under copying. Every reference to a copy must be a rebinding, a
+    copy into another copy, a null test, the base of `->`, `[]` or unary
+    `*`, or a call actual, and the never-bound closure must answer for every
+    copy; a `return` of a copy, a store of its value, `&` of it, a write or
+    any other use withholds the reading for the formal and all its copies.
+    (5) **Transfer.** Where admitted and the source has no binding on the
+    incoming state, `D = S` removes `D`'s binding and reports nothing: no
+    obligation is created or discharged, the destination denotes exactly
+    what the unbound source denotes, and every later custody use of it (a
+    release, a transfer, an owned or custody-taking position, a return)
+    finds no binding and refuses or escapes nothing. A bound source, a
+    withheld reading or any other destination keeps the old alias transfer
+    and its unresolved-identity report, which is W4's signal to bind the
+    formal (`legacy_summary::bind_unresolved_formals`): a body that releases
+    or hands out a formal through a copy still derives the summary it did.
+    **Do not** read a file-scope or static object (rule 54's boundary), a
+    formal destination, a member, a value read from a member or a call, a
+    loop cursor's later values, or a formal whose copy is returned or stored
+    under this rule, and do not give any of these sources an identity or an
+    owner. Premises stated, not proved: faithful Clang extraction of
+    declaration kinds, storage, types and parent nodes, the tokenizer's
+    literal placeholder, route G's lowering of a copy as one alias node
+    (trust boundary 28), and the never-bound closures of rules 5b and 10l.
+    `QCore.CustodyFreeCopy` (`decision_vectors_hold`,
+    `a_custody_use_of_a_copy_withholds`, `a_write_to_the_formal_withholds`,
+    `the_copy_denotes_what_the_source_denotes`,
+    `every_binding_decision_agrees`, `withheld_keeps_the_report`,
+    `a_never_written_name_stays_unbound`), bound to `DECISION_VECTORS` by a
+    shared-vector test.
+
 <!-- generated:rules:end -->
