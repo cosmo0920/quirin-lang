@@ -320,7 +320,7 @@ fn a_slot_written_on_some_exit_of_the_failure_class_stays_refused() {
                 "Unknown",
                 &[
                     "unknown_alias:b",
-                    "unsupported:unmodeled call, aggregate or indirect access in branch condition",
+                    "unsupported:call to uncontracted function `r` in branch condition",
                 ],
             ),
         ],
@@ -348,7 +348,7 @@ fn a_store_after_release_stays_refused() {
                 "Unknown",
                 &[
                     "unknown_alias:b",
-                    "unsupported:unmodeled call, aggregate or indirect access in branch condition",
+                    "unsupported:call to uncontracted function `r` in branch condition",
                 ],
             ),
         ],
@@ -376,7 +376,7 @@ fn two_slots_receiving_one_site_stay_refused() {
                 "Unknown",
                 &[
                     "unknown_alias:p",
-                    "unsupported:unmodeled call, aggregate or indirect access in branch condition",
+                    "unsupported:call to uncontracted function `r` in branch condition",
                 ],
             ),
         ],
@@ -409,7 +409,7 @@ fn a_scalar_store_through_a_second_formal_after_the_slot_stays_refused() {
                 "Unknown",
                 &[
                     "unknown_alias:b",
-                    "unsupported:unmodeled call, aggregate or indirect access in branch condition",
+                    "unsupported:call to uncontracted function `r` in branch condition",
                 ],
             ),
         ],

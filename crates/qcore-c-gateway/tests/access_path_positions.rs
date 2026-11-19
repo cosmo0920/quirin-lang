@@ -156,7 +156,6 @@ fn unknown(keys: &[&str]) -> (&'static str, Vec<String>) {
     )
 }
 
-const BRANCH: &str = "unsupported:unmodeled call, aggregate or indirect access in branch condition";
 const RETURN: &str =
     "unsupported:unmodeled call, aggregate or indirect access in return expression";
 const GATE: &str = "unsupported:indirect memory access is outside the resource projection";
@@ -239,7 +238,9 @@ fn a_condition_keeps_every_path_refusal() {
         outcome(
             "int w(struct c_box *b, int i) { if (b->items[c_count(b)].count) return 1; return 0; }"
         ),
-        unknown(&[BRANCH])
+        // Re-pinned deliberately by AG3-CONDITION-RETURN-CALLS (gateway rule 63) (2): the refusal names the
+        // uncontracted callee; still Unknown.
+        unknown(&["unsupported:call to uncontracted function `c_count` in branch condition"])
     );
     // Card CG10 (rule 10t): the tracked mixed path is now read, and its
     // `b->items` link, which no admitted store bound, refuses at the flow.

@@ -190,8 +190,7 @@ fn caller_refused(variable: &str) -> Outcome {
         "Unknown".to_owned(),
         vec![
             format!("unknown_alias:{variable}"),
-            "unsupported:unmodeled call, aggregate or indirect access in branch condition"
-                .to_owned(),
+            "unsupported:call to uncontracted function `r` in branch condition".to_owned(),
         ],
         Vec::new(),
     )

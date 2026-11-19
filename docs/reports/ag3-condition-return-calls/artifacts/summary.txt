@@ -1,0 +1,19 @@
+rule 63 (1) admissions (removed generic leaf, no named leaf at its line):
+   ('mk_server/mk_http_parser.c', 'header_cmp', 5540, [])
+   ('mk_server/mk_http_parser.c', 'header_cmp', 5541, [])
+   ('mk_server/mk_http_parser.c', 'header_cmp', 5542, [])
+   ('mk_server/mk_http_parser.c', 'header_cmp', 5543, [])
+   ('mk_server/mk_http_parser.c', 'header_cmp', 5544, [])
+   ('mk_server/mk_http_parser.c', 'header_cmp', 5545, [])
+   ('mk_server/mk_http_parser.c', 'header_cmp', 5546, [])
+   ('mk_server/mk_http_parser.c', 'header_cmp', 5547, [])
+   ('mk_server/mk_http_parser.c', 'header_cmp', 5551, [])
+   ('mk_server/mk_http_parser.c', 'header_lookup', 5666, ['unresolved resource identity `header`'])
+   ('mk_server/mk_http_parser.c', 'header_lookup', 5673, ['unresolved resource identity `header`'])
+   ('mk_server/mk_http_parser.c', 'header_lookup', 5740, ['unresolved resource identity `header`'])
+rows carrying a named refusal: 497
+named leaves: 892 distinct callees: 298
+top callees: [('rd_list_elem', 75), ('rd_kafka_conf_is_modified', 44), ('verifyValidityAndBalance0', 43), ('verifyMultipleAssignment0', 34), ('verifyNumPartitionsWithRackMismatch0', 30), ('mpack_reader_error', 29), ('__builtin_constant_p', 26), ('ut_ack_get_type', 26), ('isFullyBalanced0', 23), ('ut_verify_msgq_order', 20), ('rd_kafka_share_acquire', 13), ('rd_kafka_buf_retry', 12), ('add_item_to_object', 9), ('ctr_mpack_peek_type', 9), ('LZ4F_isError', 9)]
+AG3-only (generic) Unknown rows: base 115 tip 87
+tip rows blocked only by named condition refusals: 17 of which one callee: 15
+   ['flb_input_chunk_prefers_physical_delete<-flb_input_chunk_has_other_routes', 'mk_file_to_buffer<-mk_file_get_info', 'mk_utils_gmt2utime<-strptime', 'pb_decode_svarint<-pb_decode_varint', 'pb_get_encoded_size<-pb_encode', 'pb_skip_varint<-pb_read', 'rd_kafka_ApiVersion_is_queryable<-rd_kafka_get_legacy_ApiVersions', 'rd_kafka_conf_finalize_oauthbearer_oidc_grant_type<-rd_kafka_conf_is_modified', 'rd_kafka_filter_broker_by_GetTelemetrySubscription<-rd_kafka_broker_ApiVersion_at_least_no_lock', 'rd_kafka_pattern_list_new<-rd_kafka_pattern_list_init', 'rd_kafka_snappy_uncompressed_length<-varint_parse32_with_limit', 'rd_kafka_test_fatal_error<-rd_kafka_set_fatal_error0', 'rd_kafka_topic_partition_list_set_offset<-rd_kafka_topic_partition_list_find', 'rd_kafka_wait_destroyed<-rd_kafka_global_cnt_get', 'rd_rand_bytes_by_ossl<-RAND_priv_bytes']

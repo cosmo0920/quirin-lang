@@ -108,6 +108,7 @@ import QCore.Concurrency
 import QCore.ConcurrencyPrelude
 import QCore.ConditionAcquisition
 import QCore.ConditionCallDesugar
+import QCore.ConditionLeafReads
 import QCore.ConditionalGroupDepth
 import QCore.CondvarJoin
 import QCore.Connectives

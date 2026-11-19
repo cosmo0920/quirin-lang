@@ -1,0 +1,19 @@
+     9 admission branch condition
+   765 exchange branch condition
+     6 exchange do-while condition
+    75 exchange for-loop condition
+    36 exchange loop condition
+other deltas: 13
+{"key": ["mk_server/mk_http_parser.c", "header_lookup", 5666], "removed": [["unsupported", "unmodeled call, aggregate or indirect access in branch condition"]], "added": [["unknown_alias", "unresolved resource identity `header`"]]}
+{"key": ["mk_server/mk_http_parser.c", "header_lookup", 5673], "removed": [["unsupported", "unmodeled call, aggregate or indirect access in branch condition"]], "added": [["unknown_alias", "unresolved resource identity `header`"]]}
+{"key": ["mk_server/mk_http_parser.c", "header_lookup", 5740], "removed": [["unsupported", "unmodeled call, aggregate or indirect access in branch condition"]], "added": [["unknown_alias", "unresolved resource identity `header`"]]}
+{"key": ["rdkafka_range_assignor.c", "ut_testRackAwareAssignmentWithNonEqualSubscription", 20233], "removed": [], "added": [["unsupported", "call to uncontracted function `verifyMultipleAssignment0` in branch condition"]]}
+{"key": ["rdkafka_range_assignor.c", "ut_testRackAwareAssignmentWithUniformPartitions", 20279], "removed": [], "added": [["unsupported", "call to uncontracted function `verifyMultipleAssignment0` in branch condition"]]}
+{"key": ["rdkafka_range_assignor.c", "ut_testRackAwareAssignmentWithUniformPartitionsNonEqualSubscription", 20313], "removed": [], "added": [["unsupported", "call to uncontracted function `verifyMultipleAssignment0` in branch condition"]]}
+{"key": ["rdkafka_range_assignor.c", "ut_testRackAwareAssignmentWithUniformSubscription", 20187], "removed": [], "added": [["unsupported", "call to uncontracted function `verifyMultipleAssignment0` in branch condition"]]}
+{"key": ["rdkafka_sticky_assignor.c", "ut_testRackAwareAssignmentWithNonEqualSubscription", 23799], "removed": [], "added": [["unsupported", "call to uncontracted function `verifyMultipleAssignment0` in branch condition"]]}
+{"key": ["rdkafka_sticky_assignor.c", "ut_testRackAwareAssignmentWithUniformSubscription", 23704], "removed": [], "added": [["unsupported", "call to uncontracted function `verifyMultipleAssignment0` in branch condition"]]}
+{"key": ["snappy.c", "decompress_all_tags", 20218], "removed": [], "added": [["unsupported", "call to uncontracted function `refill_tag` in branch condition"]]}
+{"key": ["snappy.c", "decompress_all_tags", 20233], "removed": [], "added": [["unsupported", "call to uncontracted function `refill_tag` in branch condition"]]}
+{"key": ["snappy.c", "decompress_all_tags", 20259], "removed": [], "added": [["unsupported", "call to uncontracted function `refill_tag` in branch condition"]]}
+{"key": ["snappy.c", "decompress_all_tags", 20271], "removed": [], "added": [["unsupported", "call to uncontracted function `refill_tag` in branch condition"]]}

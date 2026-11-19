@@ -1,0 +1,12 @@
+S4 member truth/NULL test, no call       sites    58 rows    35 sole   5
+    sole: ('encode_callback_field', 'lib/librdkafka-2.15.0/src/nanopb/pb_encode.c')
+    sole: ('mk_net_transport_event_interest', 'lib/monkey/mk_server/mk_net.c')
+    sole: ('pb_write', 'lib/librdkafka-2.15.0/src/nanopb/pb_encode.c')
+    sole: ('rd_kafka_sasl_init', 'lib/librdkafka-2.15.0/src/rdkafka_sasl.c')
+    sole: ('rd_kafka_sasl_ready', 'lib/librdkafka-2.15.0/src/rdkafka_sasl.c')
+S1 call + residual memory read           sites   177 rows   129 sole   5
+    sole: ('buffer_skip_whitespace', 'lib/librdkafka-2.15.0/src/cJSON.c')
+    sole: ('header_cmp', 'lib/monkey/mk_server/mk_http_parser.c')
+    sole: ('rd_kafka_init_wait', 'lib/librdkafka-2.15.0/src/rdkafka.c')
+    sole: ('rd_kafka_message_leader_epoch', 'lib/librdkafka-2.15.0/src/rdkafka_msg.c')
+    sole: ('rd_kafka_share_find_ack_batch_by_id', 'lib/librdkafka-2.15.0/src/rdkafka_share_acknowledgement.c')

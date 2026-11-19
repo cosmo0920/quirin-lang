@@ -1,0 +1,146 @@
+position               primary shape                     sites   rows  sole  only
+branch condition       call                               2379    884    49    37
+return expression      call                                 38     38    22    19
+return expression      member-chain                         23     21    12    10
+loop condition         call                                 77     62     7     6
+return expression      address-of                           15     15     6     6
+return expression      member                               22     20     4     3
+return expression      macro                                70     35     8     2
+branch condition       macro                               576    226     5     2
+return expression      call-through-member                  12     11     5     2
+return expression      subscript                             9      7     5     2
+branch condition       call-through-member                  16     16     4     1
+branch condition       deref                                 7      6     1     1
+return expression      plain-other                           5      5     1     1
+loop condition         assignment                            5      5     1     1
+return expression      builtin-call                          4      1     1     1
+branch condition       connective                            3      2     1     1
+switch expression      member                                2      2     1     1
+branch condition       member                              114     74     4     0
+for-loop condition     macro                               216    168     3     0
+do-while condition     do-while (condition at loop end; text not read)     19     18     3     0
+branch condition       member-chain                        143     86     2     0
+branch condition       subscript                            24     17     2     0
+for-loop condition     subscript                            23     17     0     0
+loop condition         macro                                 8      7     0     0
+for-loop condition     call                                  6      6     0     0
+for-loop condition     member-chain                          6      5     0     0
+branch condition       assignment                            4      4     0     0
+return expression      deref                                 4      4     0     0
+branch condition       plain-other                           3      3     0     0
+loop condition         plain-other                           3      3     0     0
+loop condition         incdec                                3      2     0     0
+switch expression      call                                  1      1     0     0
+loop condition         member-chain                          1      1     0     0
+branch condition       incdec                                1      1     0     0
+loop condition         subscript                             1      1     0     0
+for-loop condition     deref                                 1      1     0     0
+loop condition         deref                                 1      1     0     0
+return expression      connective                            1      1     0     0
+return expression      incdec                                1      1     0     0
+
+== ('branch condition', 'call')
+    line_protocol_escape @ lib/cmetrics/src/cmt_encode_influx.c:234: quote ? (ch == '"' || ch == '\\') : (isspace(ch) || ch == ',' || ch == '=')
+    skip_utf8_bom @ lib/librdkafka-2.15.0/src/cJSON.c:1118: can_access_at_index(buffer, 4) && (strncmp((const char*)buffer_at_offset(buffer), "\xEF\xBB\xBF", 3) == 0)
+    pb_dec_string @ lib/librdkafka-2.15.0/src/nanopb/pb_decode.c:1542: !pb_decode_varint32(stream, &size)
+    pb_dec_string @ lib/librdkafka-2.15.0/src/nanopb/pb_decode.c:1575: !pb_read(stream, dest, (size_t)size)
+    pb_decode_svarint @ lib/librdkafka-2.15.0/src/nanopb/pb_decode.c:1358: !pb_decode_varint(stream, &value)
+    pb_decode_varint @ lib/librdkafka-2.15.0/src/nanopb/pb_decode.c:250: !pb_readbyte(stream, &byte)
+== ('return expression', 'call')
+    cJSON_DetachItemFromObject @ lib/librdkafka-2.15.0/src/cJSON.c:2298: cJSON_DetachItemViaPointer(object, to_detach)
+    cJSON_DetachItemFromObjectCaseSensitive @ lib/librdkafka-2.15.0/src/cJSON.c:2305: cJSON_DetachItemViaPointer(object, to_detach)
+    pb_check_proto3_default_value @ lib/librdkafka-2.15.0/src/nanopb/pb_encode.c:268: safe_read_bool(field->pSize) == false
+    rd_hdr_getCountAtIndex @ lib/librdkafka-2.15.0/src/rdhdrhistogram.c:176: hdr->counts[rd_hdr_countsIndex(hdr, bucketIdx, subBucketIdx)]
+    rd_kafka_path_is_dir @ lib/librdkafka-2.15.0/src/rdkafka.c:7073: rd_file_stat(path, &is_dir) && is_dir
+    rd_kafka_purge_flags2str @ lib/librdkafka-2.15.0/src/rdkafka.c:6576: rd_flags2str(ret, sizeof(ret), names, flags)
+== ('return expression', 'member-chain')
+    fetch_array_kvlist_entry @ lib/cmetrics/src/cmt_encode_opentelemetry.c:124: entry_variant->data.as_kvlist
+    fetch_metadata_array_key @ lib/cmetrics/src/cmt_encode_opentelemetry.c:108: entry_variant->data.as_array
+    fetch_metadata_kvlist_key @ lib/cmetrics/src/cmt_encode_text.c:65: entry_variant->data.as_kvlist
+    cJSON_GetErrorPtr @ lib/librdkafka-2.15.0/src/cJSON.c:96: (const char*) (global_error.json + global_error.position)
+    LZ4_slideInputBuffer @ lib/librdkafka-2.15.0/src/lz4.c:2724: (char *)(uptrval)((LZ4_stream_t*)state)->internal_donotuse.dictionary
+    rd_kafka_ConfigEntry_name @ lib/librdkafka-2.15.0/src/rdkafka_admin.c:2823: entry->kv->name
+== ('return expression', 'macro')
+    decode_pointer_field @ lib/librdkafka-2.15.0/src/nanopb/pb_decode.c:628: PB_RETURN_ERROR(stream, "no malloc support");
+    pb_dec_string @ lib/librdkafka-2.15.0/src/nanopb/pb_decode.c:1546: PB_RETURN_ERROR(stream, "size too large");
+    pb_dec_string @ lib/librdkafka-2.15.0/src/nanopb/pb_decode.c:1552: PB_RETURN_ERROR(stream, "size too large");
+    pb_dec_string @ lib/librdkafka-2.15.0/src/nanopb/pb_decode.c:1557: PB_RETURN_ERROR(stream, "no malloc support");
+    pb_dec_string @ lib/librdkafka-2.15.0/src/nanopb/pb_decode.c:1570: PB_RETURN_ERROR(stream, "string overflow");
+    pb_decode_varint @ lib/librdkafka-2.15.0/src/nanopb/pb_decode.c:254: PB_RETURN_ERROR(stream, "varint overflow");
+== ('loop condition', 'call')
+    buffer_skip_whitespace @ lib/librdkafka-2.15.0/src/cJSON.c:1097: can_access_at_index(buffer, 0) && (buffer_at_offset(buffer)[0] <= 32)
+    rd_kafka_dir_is_empty @ lib/librdkafka-2.15.0/src/rdkafka.c:7096: (d = readdir(dir))
+    rd_kafka_init_wait @ lib/librdkafka-2.15.0/src/rdkafka.c:2350: rk->rk_init_wait_cnt > 0 && cnd_timedwait_abs(&rk->rk_init_cnd, &rk->rk_init_lock, abs_timeout) == thrd_success
+    rd_kafka_wait_destroyed @ lib/librdkafka-2.15.0/src/rdkafka.c:268: rd_kafka_thread_cnt() > 0 || rd_kafka_global_cnt_get() > 0
+    rtrim @ lib/librdkafka-2.15.0/src/rdkafka_assignor.c:574: e >= s && isspace(*e)
+    rd_kafka_broker_ops_serve @ lib/librdkafka-2.15.0/src/rdkafka_broker.c:3868: (rko = rd_kafka_q_pop(rkb->rkb_ops, timeout_us, 0)) && (cnt++, !rd_kafka_broker_op_serve(rkb, rko))
+== ('return expression', 'address-of')
+    rd_kafka_MemberDescription_assignment @ lib/librdkafka-2.15.0/src/rdkafka_admin.c:7957: &member->assignment
+    rd_kafka_TopicDescription_topic_id @ lib/librdkafka-2.15.0/src/rdkafka_admin.c:9140: &topicdesc->topic_id
+    rd_kafka_UserScramCredentialsDescription_scramcredentialinfo @ lib/librdkafka-2.15.0/src/rdkafka_admin.c:5789: &description->credential_infos[idx]
+    rd_kafka_conf @ lib/librdkafka-2.15.0/src/rdkafka_conf.c:4955: &rk->rk_conf
+    mk_plugin_time_now_human @ lib/monkey/mk_server/mk_plugin.c:719: &server->clock_context->log_current_time
+    mk_sched_next_target @ lib/monkey/mk_server/mk_scheduler.c:105: &ctx->workers[t]
+== ('return expression', 'call-through-member')
+    cJSON_malloc @ lib/librdkafka-2.15.0/src/cJSON.c:3184: global_hooks.allocate(size)
+    rd_kafka_sasl_init @ lib/librdkafka-2.15.0/src/rdkafka_sasl.c:332: provider->init(rk, errstr, errstr_size)
+    rd_kafka_sasl_ready @ lib/librdkafka-2.15.0/src/rdkafka_sasl.c:366: provider->ready(rk)
+    rd_map_elem_cmp @ lib/librdkafka-2.15.0/src/rdmap.c:42: rmap->rmap_cmp(a->key, b->key)
+    mk_net_transport_event_interest @ lib/monkey/mk_server/mk_net.c:207: transport->event_interest(transport->plugin, fd, fallback)
+== ('return expression', 'subscript')
+    rd_kafka_err2name @ lib/librdkafka-2.15.0/src/rdkafka.c:826: rd_kafka_err_descs[idx].name
+    rd_kafka_err2str @ lib/librdkafka-2.15.0/src/rdkafka.c:811: rd_kafka_err_descs[idx].desc
+    rd_kafka_mock_partition_find @ lib/librdkafka-2.15.0/src/rdkafka_mock.c:943: (rd_kafka_mock_partition_t *)&mtopic->partitions[partition]
+    rd_list_elem @ lib/librdkafka-2.15.0/src/rdlist.c:328: (void *)rl->rl_elems[idx]
+    rd_list_find_duplicate @ lib/librdkafka-2.15.0/src/rdlist.c:392: rl->rl_elems[i]
+== ('branch condition', 'macro')
+    can_use_topic_ids @ lib/librdkafka-2.15.0/src/rdkafka_fetcher.c:2494: RD_KAFKA_UUID_IS_ZERO(rktp->rktp_rkt->rkt_topic_id)
+    validate_subscription @ lib/librdkafka-2.15.0/src/rdkafka_mock_cgrp.c:1398: rd_assert((SubscribedTopicNames == NULL) == RD_KAFKAP_STR_IS_NULL(SubscribedTopicRegex));
+    validate_subscription @ lib/librdkafka-2.15.0/src/rdkafka_mock_cgrp.c:1401: rd_assert(SubscribedTopicNames == NULL || SubscribedTopicNamesCnt > 0 || RD_KAFKAP_STR_LEN(SubscribedTop
+    rd_kafka_racks_match @ lib/librdkafka-2.15.0/src/rdkafka_range_assignor.c:330: !consumer_rack || RD_KAFKAP_STR_LEN(consumer_rack) == 0
+    partitionCanParticipateInReassignment @ lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c:572: !(consumers = RD_MAP_GET(partition2AllPotentialConsumers, partition))
+    rd_kafka_topic_info_cmp @ lib/librdkafka-2.15.0/src/rdkafka_topic.c:2098: (r = RD_CMP(a->partition_cnt, b->partition_cnt))
+== ('return expression', 'member')
+    cJSON_GetStringValue @ lib/librdkafka-2.15.0/src/cJSON.c:106: item->valuestring
+    rd_kafka_name @ lib/librdkafka-2.15.0/src/rdkafka.c:6292: rk->rk_name
+    rd_kafka_toppar_fetch_decide_next_fetch_start_pos @ lib/librdkafka-2.15.0/src/rdkafka_fetcher.c:3651: rktp->rktp_next_fetch_start
+    rd_kafka_share_partition_offsets_offsets @ lib/librdkafka-2.15.0/src/rdkafka_share_acknowledgement.c:1228: partition_offsets->offsets
+== ('branch condition', 'call-through-member')
+    pb_readbyte @ lib/librdkafka-2.15.0/src/nanopb/pb_decode.c:130: !stream->callback(stream, buf, 1)
+    encode_callback_field @ lib/librdkafka-2.15.0/src/nanopb/pb_encode.c:410: !field->descriptor->field_callback(NULL, stream, field)
+    pb_write @ lib/librdkafka-2.15.0/src/nanopb/pb_encode.c:97: !stream->callback(stream, buf, count)
+    count_attributes @ lib/librdkafka-2.15.0/src/rdkafka_telemetry_encode.c:699: configs[i].getValue(rk)
+== ('branch condition', 'member')
+    pb_write @ lib/librdkafka-2.15.0/src/nanopb/pb_encode.c:85: count > 0 && stream->callback != NULL
+    rd_kafka_sasl_init @ lib/librdkafka-2.15.0/src/rdkafka_sasl.c:331: provider && provider->init
+    rd_kafka_sasl_ready @ lib/librdkafka-2.15.0/src/rdkafka_sasl.c:365: provider && provider->ready
+    mk_net_transport_event_interest @ lib/monkey/mk_server/mk_net.c:206: transport != NULL && transport->event_interest != NULL
+== ('do-while condition', 'do-while (condition at loop end; text not read)')
+    pb_check_proto3_default_value @ lib/librdkafka-2.15.0/src/nanopb/pb_encode.c:323: do
+    pb_encode @ lib/librdkafka-2.15.0/src/nanopb/pb_encode.c:517: do {
+    can_use_topic_ids @ lib/librdkafka-2.15.0/src/rdkafka_fetcher.c:2493: do {
+== ('for-loop condition', 'macro')
+    rd_kafka_share_find_ack_batch @ lib/librdkafka-2.15.0/src/rdkafka_share_acknowledgement.c:297: RD_LIST_FOREACH(existing, ack_list, i) {
+    rd_kafka_share_find_ack_batch_by_id @ lib/librdkafka-2.15.0/src/rdkafka_share_acknowledgement.c:328: RD_LIST_FOREACH(existing, ack_list, i) {
+    rd_list_index @ lib/librdkafka-2.15.0/src/rdlist.c:338: RD_LIST_FOREACH(elem, rl, i) {
+== ('branch condition', 'member-chain')
+    encode_callback_field @ lib/librdkafka-2.15.0/src/nanopb/pb_encode.c:408: field->descriptor->field_callback != NULL
+    pb_check_proto3_default_value @ lib/librdkafka-2.15.0/src/nanopb/pb_encode.c:345: field->descriptor->field_callback == pb_default_field_callback
+== ('branch condition', 'subscript')
+    rd_kafka_err2name @ lib/librdkafka-2.15.0/src/rdkafka.c:819: unlikely(err <= RD_KAFKA_RESP_ERR__BEGIN || err >= RD_KAFKA_RESP_ERR_END_ALL || !rd_kafka_err_descs[idx].desc)
+    rd_kafka_err2str @ lib/librdkafka-2.15.0/src/rdkafka.c:804: unlikely(err <= RD_KAFKA_RESP_ERR__BEGIN || err >= RD_KAFKA_RESP_ERR_END_ALL || !rd_kafka_err_descs[idx].desc)
+== ('branch condition', 'deref')
+    cmt_get_statsd_type @ lib/cmetrics/src/cmt_decode_statsd.c:505: *(str + 1) == 's'
+== ('return expression', 'builtin-call')
+    LZ4_NbCommonBytes @ lib/librdkafka-2.15.0/src/lz4.c:589: (unsigned)__builtin_ctzll((U64)val) >> 3
+    LZ4_NbCommonBytes @ lib/librdkafka-2.15.0/src/lz4.c:603: (unsigned)__builtin_ctz((U32)val) >> 3
+    LZ4_NbCommonBytes @ lib/librdkafka-2.15.0/src/lz4.c:614: (unsigned)__builtin_clzll((U64)val) >> 3
+    LZ4_NbCommonBytes @ lib/librdkafka-2.15.0/src/lz4.c:650: (unsigned)__builtin_clz((U32)val) >> 3
+== ('branch condition', 'connective')
+    LZ4_hashPosition @ lib/librdkafka-2.15.0/src/lz4.c:783: (sizeof(reg_t)==8) && (tableType != byU16)
+== ('return expression', 'plain-other')
+    rd_kafka_errno @ lib/librdkafka-2.15.0/src/rdkafka.c:7137: errno
+== ('switch expression', 'member')
+    rd_kafka_event_name @ lib/librdkafka-2.15.0/src/rdkafka_event.c:39: rkev ? rkev->rko_evtype : RD_KAFKA_EVENT_NONE
+== ('loop condition', 'assignment')
+    mk_utils_hex2int @ lib/monkey/mk_server/mk_utils.c:425: (c = *hex++) && i < len

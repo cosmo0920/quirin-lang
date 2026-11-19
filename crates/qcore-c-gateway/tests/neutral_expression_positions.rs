@@ -729,6 +729,9 @@ fn an_unconditional_releasing_call_in_a_branch_condition_is_modeled() {
 
 /// An uncontracted call in each of the five stage-2 positions keeps its own
 /// existing diagnostic, so no position silently borrows another's answer.
+/// Re-pinned deliberately by AG3-CONDITION-RETURN-CALLS (gateway rule 63) (2): the four
+/// condition positions name the callee, each with its own suffix; the switch
+/// keeps its text.
 #[test]
 fn an_uncontracted_call_keeps_each_positions_own_diagnostic() {
     if !clang_available() {
@@ -737,19 +740,19 @@ fn an_uncontracted_call_keeps_each_positions_own_diagnostic() {
     for (header, description) in [
         (
             "if (external(n)) { }",
-            "unmodeled call, aggregate or indirect access in branch condition",
+            "call to uncontracted function `external` in branch condition",
         ),
         (
             "while (external(n)) { n = n + 1; }",
-            "unmodeled call, aggregate or indirect access in loop condition",
+            "call to uncontracted function `external` in loop condition",
         ),
         (
             "for (; external(n); ) { n = n + 1; }",
-            "unmodeled call, aggregate or indirect access in for-loop condition",
+            "call to uncontracted function `external` in for-loop condition",
         ),
         (
             "do { n = n + 1; } while (external(n));",
-            "unmodeled call, aggregate or indirect access in do-while condition",
+            "call to uncontracted function `external` in do-while condition",
         ),
         (
             "switch (external(n)) { default: break; }",
@@ -825,7 +828,8 @@ fn a_for_condition_is_classified_from_its_original_spelling() {
     assert_eq!(run.status("subject"), AnalysisStatus::Unknown, "{header}");
     assert!(
         run.unsupported("subject").iter().any(|description| {
-            description == "unmodeled call, aggregate or indirect access in for-loop condition"
+            // Re-pinned deliberately by AG3-CONDITION-RETURN-CALLS (gateway rule 63) (2).
+            description == "call to uncontracted function `external` in for-loop condition"
         }),
         "`{header}` unsupported: {:?}",
         run.unsupported("subject")

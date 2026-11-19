@@ -395,9 +395,10 @@ fn a_condition_with_a_call_or_a_write_keeps_its_refusal() {
         // The copy of the formal keeps its unresolved alias (the signal W4
         // binds a formal on), and the refused condition keeps W4 from
         // producing a summary that would seed it.
+        // Re-pinned deliberately by AG3-CONDITION-RETURN-CALLS (gateway rule 63) (2): the refusal is named.
         &[
             "unknown_alias:s",
-            "unsupported:unmodeled call, aggregate or indirect access in loop condition",
+            "unsupported:call to uncontracted function `u` in loop condition",
         ],
     );
     expect(
