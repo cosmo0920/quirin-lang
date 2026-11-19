@@ -280,7 +280,23 @@ asserted every BIO slot actual is `_`. They now assert exactly the
 documented `supplied_nullable` positions (`bio_actuals`), and the target
 passes 17/17. The record is [`gate/gate-1.json`](gate/gate-1.json).
 
-**Second run** on the fixed tree: see [`gate/gate-2.json`](gate/gate-2.json).
+**Second run.** The same command was run on `b8d154d6a` (the fix, the
+report and the evidence) with `--out private/gate-2`, in full scope with
+the provider gate. Result: `gate_scope: 14 steps passed`, exit 0. Record:
+[`gate/gate-2.json`](gate/gate-2.json).
+
+| Step | Exit | Counts |
+|---|---:|---|
+| submodules, `fmt`, `clippy` | 0, 0, 0 | 1 submodule (`third_party/libevent` at `d82464a27`) |
+| Rust suite | 0 | 662 units, 707 summaries; 9705 passed, 0 failed, 21 ignored, 148 filtered |
+| `reevaluation_probe`, `reevaluation_followup` | 0, 0 | |
+| Lean (`check_lean_audits.py`) | 0 | 453 audits (new `AuditCallbackSuppliedNull`) |
+| Python suite | 0 | 779 tests |
+| provider package build, verify-all, verify `qcore.libevent` | 0, 0, 0 | |
+| provider tests | 0 | 49 summaries; 159 passed, 0 failed, 1 ignored |
+| provider fmt, provider clippy | 0, 0 | |
+
+No test target was added, so the read census was not re-recorded.
 
 ## 8. Follow-ups
 
