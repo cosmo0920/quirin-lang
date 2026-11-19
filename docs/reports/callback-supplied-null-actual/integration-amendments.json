@@ -1,0 +1,30 @@
+{
+ "schema": "quirin-amendments/1",
+ "card": "CALLBACK-SUPPLIED-NULL-ACTUAL",
+ "base": "062974679",
+ "measured_tip": "509ee5b1e",
+ "increment_paragraph": "**CALLBACK-SUPPLIED-NULL-ACTUAL (2026-11-19).** User decision 2026-11-19 launches the follow-up OPENSSL-UNSTATED-CALLBACK-SLOTS recorded. Gateway rule 13u amended in place (C04.19 item 2, grammar G05): the actual word supplied_nullable (CallbackActual::SuppliedNullable, beside Supplied and SuppliedOwned) is a value the callee supplies that may be NULL; it stands wherever `_` does and is a reserved parameter name. A candidate requiring resource_owned(nonnull) there is RequiresNonNullSupplied and refuses the call (callback-supplied-null); resource_borrowed and resource_owned(nullable) are admitted as at `_`; the position puts no requirement on the call, rule 13y matches it as `_`, rule 15w forwards it only to itself. Lean QCore.CallbackSuppliedNull (8 audited theorems: the refusal, an admitted candidate accepts NULL, marking never admits more, no nullable actual reads exactly as CallbackContracts.classifyModes, vectors bound to the Rust). quirin-provider-openssl marks, page-cited (documented::NULLABLE_ARGUMENTS; the checker refuses an uncited sentence or an entry no `_` reads): the security callback's s/ctx/other/ex (SSL_CTX_set_security_level 3.5), the PSK client hint and use-session md, and the BIO callbacks' argp/processed (BIO_set_callback); fetch_docs.py --argument-sentences records argument_null_sentences on three snapshots after refetching each at its recorded SHA-256. contracts.lock: the 10 re-stated declarations' digests change (the four handshake/I/O calls, SSL_shutdown, SSL_CTX_use_certificate(_chain_file), the PEM and PKCS#12 readers), and after the merge with r36 also BIO_free and SSL_free, whose BIO callback invocations r36 states (12 against 80e4b0a25); no entry added; load path byte-identical. Opt-in current over Fluent Bit 046accf6 (main 062974679 vs tip): 1098 Safe / 2 Pending / 3699 Unknown / 5 Unsafe on both, 0 moves, 0 content changes, as predicted (no marked slot has a candidate). A supplementary run reading every plain `_` as nullable moved one row Safe to Unknown (librdkafka rd_kafka_ApiVersion_check: its bsearch comparator requires a live element, a false refusal) and changed three rows' content; the default stays (a user decision if it should change). Pinned routes read no user load path and no pinned module carries the word: no move predicted, measure --declared deferred to the integrator.",
+ "status_paragraph": null,
+ "ledger": [
+  {
+   "id": "CALLBACK-SUPPLIED-NULL-ACTUAL",
+   "operation": "retire",
+   "why": "CALLBACK-SUPPLIED-NULL-ACTUAL (2026-11-19): rule 13u amended in place (C04.19 item 2, G05): supplied_nullable, a supplied actual that may be NULL; a candidate requiring resource_owned(nonnull) there refuses (callback-supplied-null). Lean QCore.CallbackSuppliedNull. quirin-provider-openssl states it, page-cited and checked, at the security callback's s/ctx/other/ex, the PSK client hint and use-session md, and the BIO callbacks' argp/processed. What no page states is tracked by CALLBACK-UNSET-ARGUMENT-NULL.",
+   "source": "docs/reports/callback-supplied-null-actual/README.md"
+  },
+  {
+   "id": "CALLBACK-UNSET-ARGUMENT-NULL",
+   "operation": "register",
+   "title": "Callback arguments that are NULL when unset, which no page states",
+   "text": "CALLBACK-SUPPLIED-NULL-ACTUAL marks a `_` actual supplied_nullable only on a page sentence. Left `_` (a candidate's resource_owned(nonnull) there is read as met): the user argument pointers a setter keeps and the slot hands back, NULL when the application set none (OpenSSL cert_cb arg, default_passwd_cb u, msg_callback arg, the ALPN/NPN/cert-verify/ClientHello/record-padding/early-data arg, the custom extensions' add_arg/parse_arg; librdkafka's rk_conf opaque); the custom extension callbacks' x outside Certificate messages; BIO method meth_ctrl's parg. A supplementary run reading every `_` as nullable showed the blanket default costs a correct Safe row (bsearch comparators). DISCHARGE: read the argument's nullability from the run's closed set of the setter's retained actuals (nullable unless every registration hands a non-null value), or mark each from a source that states it; Lean beside QCore.CallbackSuppliedNull. Size: medium.",
+   "source": "docs/reports/callback-supplied-null-actual/README.md",
+   "recorded_by": "CALLBACK-SUPPLIED-NULL-ACTUAL"
+  },
+  {
+   "id": "OPENSSL-EX-DATA-CLASS-REGISTRY",
+   "operation": "append",
+   "text": "CALLBACK-SUPPLIED-NULL-ACTUAL (2026-11-20): CRYPTO_get_ex_new_index (3.5) says 'The free_func() may be called with a NULL pointer' and, of ptr, 'for new_func() this will typically be NULL'. A registry invocation stating the ex_data new_func/free_func calls should state those arguments supplied_nullable (C04.19 item 2, rule 13u amended), citing the sentences as quirin-provider-openssl's NULLABLE_ARGUMENTS does, so a candidate requiring a live object there is refused (callback-supplied-null).",
+   "source": "docs/reports/callback-supplied-null-actual/README.md"
+  }
+ ]
+}

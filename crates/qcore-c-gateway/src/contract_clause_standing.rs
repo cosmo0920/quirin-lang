@@ -682,6 +682,7 @@ fn callback_clause(clause: &qcore_schemas::callback::CallbackClause) -> Clause {
                 CallbackActual::Supplied => ", _".to_owned(),
                 CallbackActual::Element => ", element".to_owned(),
                 CallbackActual::SuppliedOwned => ", supplied_owned".to_owned(),
+                CallbackActual::SuppliedNullable => ", supplied_nullable".to_owned(),
             })
             .collect::<String>()
     };

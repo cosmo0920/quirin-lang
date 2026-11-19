@@ -126,7 +126,7 @@ contract {
     requires resource_premise(openssl_ex_data_callbacks, "an ex_data callback the call may run (a new, dup or free callback CRYPTO_get_ex_new_index registers for the class of an object the call creates, copies or frees) takes, releases or retains nothing the caller holds");
     ensures normal resource_borrowed(ctx);
     ensures normal resource_borrowed(x);
-    ensures normal resource_callback_slot_invoked(ctx, ssl_ctx_st.sec_cb, _, ctx, _, _, _, x, _);
+    ensures normal resource_callback_slot_invoked(ctx, ssl_ctx_st.sec_cb, supplied_nullable, ctx, _, _, _, x, supplied_nullable);
     ensures normal resource_return_none();
 };
 
@@ -207,7 +207,7 @@ contract {
     ensures normal resource_borrowed(ctx);
     ensures normal resource_borrowed(file);
     ensures normal resource_callback_slot_invoked(ctx, ssl_ctx_st.default_passwd_cb, _, _, _, _);
-    ensures normal resource_callback_slot_invoked(ctx, ssl_ctx_st.sec_cb, _, ctx, _, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(ctx, ssl_ctx_st.sec_cb, supplied_nullable, ctx, _, _, _, supplied_nullable, supplied_nullable);
     ensures normal resource_return_none();
 };
 

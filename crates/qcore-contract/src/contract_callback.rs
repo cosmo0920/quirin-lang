@@ -80,6 +80,9 @@ pub(super) const ELEMENT: &str = "element";
 /// DECISION 2026-10-14, clause 1's word): a live object the callee supplies
 /// and hands the callback, which must take it.
 pub(super) const SUPPLIED_OWNED: &str = "supplied_owned";
+/// Card CALLBACK-SUPPLIED-NULL-ACTUAL (§C04.19, rule 13u): a value the callee
+/// supplies, as `_`, that may be a null pointer.
+pub(super) const SUPPLIED_NULLABLE: &str = "supplied_nullable";
 /// The holder word for the object the call returns.
 pub(super) const RESULT: &str = "result";
 
@@ -304,7 +307,7 @@ pub(super) fn declaration(
     if written.is_empty() {
         return Ok(Vec::new());
     }
-    for reserved in [SUPPLIED, ELEMENT, SUPPLIED_OWNED] {
+    for reserved in [SUPPLIED, ELEMENT, SUPPLIED_OWNED, SUPPLIED_NULLABLE] {
         if names.contains_key(reserved) {
             return Err(format!(
                 "a callback clause reads `{reserved}` as an actual word: rename the parameter \
@@ -352,6 +355,7 @@ pub(super) fn declaration(
             .iter()
             .map(|word| match word.as_str() {
                 SUPPLIED => Ok(CallbackActual::Supplied),
+                SUPPLIED_NULLABLE => Ok(CallbackActual::SuppliedNullable),
                 SUPPLIED_OWNED if owned => Ok(CallbackActual::SuppliedOwned),
                 SUPPLIED_OWNED => Err(format!(
                     "`{SUPPLIED_OWNED}` is an actual of a synchronous or member invocation only"
