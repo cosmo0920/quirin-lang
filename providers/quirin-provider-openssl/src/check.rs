@@ -1660,20 +1660,20 @@ mod tests {
     fn a_drifted_bio_slot_reading_is_refused() {
         let snapshots: Value = serde_json::from_str(crate::DOC_SNAPSHOTS).unwrap();
         let bio_keys = [
-            "bio_st.callback_ex",
-            "bio_st.callback",
-            "bio_method_st.bwrite",
-            "bio_method_st.bwrite_old",
-            "bio_method_st.bread",
-            "bio_method_st.bread_old",
-            "bio_method_st.bputs",
-            "bio_method_st.bgets",
-            "bio_method_st.ctrl",
-            "bio_method_st.create",
-            "bio_method_st.destroy",
-            "bio_method_st.callback_ctrl",
-            "bio_method_st.bsendmmsg",
-            "bio_method_st.brecvmmsg",
+            "bio_st.bio_callback_ex",
+            "bio_st.bio_callback",
+            "bio_method_st.meth_write_ex",
+            "bio_method_st.meth_write",
+            "bio_method_st.meth_read_ex",
+            "bio_method_st.meth_read",
+            "bio_method_st.meth_puts",
+            "bio_method_st.meth_gets",
+            "bio_method_st.meth_ctrl",
+            "bio_method_st.meth_create",
+            "bio_method_st.meth_destroy",
+            "bio_method_st.meth_callback_ctrl",
+            "bio_method_st.meth_sendmmsg",
+            "bio_method_st.meth_recvmmsg",
         ];
         for key in bio_keys {
             slot_writers_declared(key, &snapshots).unwrap();
@@ -1716,8 +1716,8 @@ mod tests {
                 "{}{}",
                 &text[..start],
                 text[start..].replacen(
-                    &format!("({object}, bio_st.callback_ex, _,"),
-                    &format!("({object}, bio_st.callback_ex, {object},"),
+                    &format!("({object}, bio_st.bio_callback_ex, _,"),
+                    &format!("({object}, bio_st.bio_callback_ex, {object},"),
                     1,
                 )
             );
@@ -1766,7 +1766,7 @@ mod tests {
                     &freed,
                     &format!(
                         "    ensures normal resource_callback_slot_invoked({object}, \
-                         bio_st.callback_ex, {object}, _, _, _, _, _, _, _);\n"
+                         bio_st.bio_callback_ex, {object}, _, _, _, _, _, _, _);\n"
                     ),
                     1,
                 )
@@ -1776,15 +1776,15 @@ mod tests {
         // A setter's registration moved to another slot, or dropped.
         let (path, text) = module_of("BIO_meth_set_write");
         let moved = text.replacen(
-            "(biom, bio_method_st.bwrite_old, write)",
-            "(biom, bio_method_st.bwrite, write)",
+            "(biom, bio_method_st.meth_write, write)",
+            "(biom, bio_method_st.meth_write_ex, write)",
             1,
         );
         assert_ne!(moved, text);
         assert!(check_function(path, &moved, "BIO_meth_set_write").is_err());
         let (path, text) = module_of("BIO_set_callback");
         let dropped = text.replacen(
-            "    ensures normal resource_callback_slot_registered(b, bio_st.callback, callback);\n",
+            "    ensures normal resource_callback_slot_registered(b, bio_st.bio_callback, callback);\n",
             "",
             1,
         );

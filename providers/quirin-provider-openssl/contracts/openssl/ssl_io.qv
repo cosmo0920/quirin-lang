@@ -101,11 +101,11 @@ module contract;
 // Card OPENSSL-BIO-METHODS-AND-CALLBACKS: and the slots of the BIOs the SSL
 // object holds (bio_slots.qv), through which every record is written and
 // read: the BIO's callback, "called during most high-level BIO operations"
-// (BIO_set_callback, 3.5), `bio_st.callback_ex` and `bio_st.callback`; and
+// (BIO_set_callback, 3.5), `bio_st.bio_callback_ex` and `bio_st.bio_callback`; and
 // each function of its method table, called "in response to" the BIO
-// operation it implements (BIO_meth_new, 3.5), `bio_method_st.bwrite`,
-// `.bwrite_old`, `.bread`, `.bread_old`, `.bputs`, `.bgets`, `.ctrl`,
-// `.create`, `.destroy`, `.callback_ctrl`, `.bsendmmsg`, `.brecvmmsg`. The
+// operation it implements (BIO_meth_new, 3.5), `bio_method_st.meth_write_ex`,
+// `.meth_write`, `.meth_read_ex`, `.meth_read`, `.meth_puts`, `.meth_gets`, `.meth_ctrl`,
+// `.meth_create`, `.meth_destroy`, `.meth_callback_ctrl`, `.meth_sendmmsg`, `.meth_recvmmsg`. The
 // SSL pages do not say which BIO operations the record layer performs, so
 // every one is stated (stating more never improves a verdict). Each is
 // handed the BIO, never the connection, so every actual is `_`. The keys are
@@ -174,20 +174,20 @@ contract {
     ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.custom_ext_add_cb, ssl, _, _, _, _, _);
     ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.custom_ext_free_cb, ssl, _, _, _);
     ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.custom_ext_parse_cb, ssl, _, _, _, _, _);
-    ensures normal resource_callback_slot_invoked(ssl, bio_st.callback_ex, _, _, _, _, _, _, _, _);
-    ensures normal resource_callback_slot_invoked(ssl, bio_st.callback, _, _, _, _, _, _);
-    ensures normal resource_callback_slot_invoked(ssl, bio_method_st.bwrite, _, _, _, _);
-    ensures normal resource_callback_slot_invoked(ssl, bio_method_st.bwrite_old, _, _, _);
-    ensures normal resource_callback_slot_invoked(ssl, bio_method_st.bread, _, _, _, _);
-    ensures normal resource_callback_slot_invoked(ssl, bio_method_st.bread_old, _, _, _);
-    ensures normal resource_callback_slot_invoked(ssl, bio_method_st.bputs, _, _);
-    ensures normal resource_callback_slot_invoked(ssl, bio_method_st.bgets, _, _, _);
-    ensures normal resource_callback_slot_invoked(ssl, bio_method_st.ctrl, _, _, _, _);
-    ensures normal resource_callback_slot_invoked(ssl, bio_method_st.create, _);
-    ensures normal resource_callback_slot_invoked(ssl, bio_method_st.destroy, _);
-    ensures normal resource_callback_slot_invoked(ssl, bio_method_st.callback_ctrl, _, _, _);
-    ensures normal resource_callback_slot_invoked(ssl, bio_method_st.bsendmmsg, _, _, _, _, _, _);
-    ensures normal resource_callback_slot_invoked(ssl, bio_method_st.brecvmmsg, _, _, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, bio_st.bio_callback_ex, _, _, _, _, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, bio_st.bio_callback, _, _, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, bio_method_st.meth_write_ex, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, bio_method_st.meth_write, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, bio_method_st.meth_read_ex, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, bio_method_st.meth_read, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, bio_method_st.meth_puts, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, bio_method_st.meth_gets, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, bio_method_st.meth_ctrl, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, bio_method_st.meth_create, _);
+    ensures normal resource_callback_slot_invoked(ssl, bio_method_st.meth_destroy, _);
+    ensures normal resource_callback_slot_invoked(ssl, bio_method_st.meth_callback_ctrl, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, bio_method_st.meth_sendmmsg, _, _, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, bio_method_st.meth_recvmmsg, _, _, _, _, _, _);
     ensures normal resource_return_none();
 };
 
@@ -233,20 +233,20 @@ contract {
     ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.custom_ext_add_cb, ssl, _, _, _, _, _);
     ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.custom_ext_free_cb, ssl, _, _, _);
     ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.custom_ext_parse_cb, ssl, _, _, _, _, _);
-    ensures normal resource_callback_slot_invoked(ssl, bio_st.callback_ex, _, _, _, _, _, _, _, _);
-    ensures normal resource_callback_slot_invoked(ssl, bio_st.callback, _, _, _, _, _, _);
-    ensures normal resource_callback_slot_invoked(ssl, bio_method_st.bwrite, _, _, _, _);
-    ensures normal resource_callback_slot_invoked(ssl, bio_method_st.bwrite_old, _, _, _);
-    ensures normal resource_callback_slot_invoked(ssl, bio_method_st.bread, _, _, _, _);
-    ensures normal resource_callback_slot_invoked(ssl, bio_method_st.bread_old, _, _, _);
-    ensures normal resource_callback_slot_invoked(ssl, bio_method_st.bputs, _, _);
-    ensures normal resource_callback_slot_invoked(ssl, bio_method_st.bgets, _, _, _);
-    ensures normal resource_callback_slot_invoked(ssl, bio_method_st.ctrl, _, _, _, _);
-    ensures normal resource_callback_slot_invoked(ssl, bio_method_st.create, _);
-    ensures normal resource_callback_slot_invoked(ssl, bio_method_st.destroy, _);
-    ensures normal resource_callback_slot_invoked(ssl, bio_method_st.callback_ctrl, _, _, _);
-    ensures normal resource_callback_slot_invoked(ssl, bio_method_st.bsendmmsg, _, _, _, _, _, _);
-    ensures normal resource_callback_slot_invoked(ssl, bio_method_st.brecvmmsg, _, _, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, bio_st.bio_callback_ex, _, _, _, _, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, bio_st.bio_callback, _, _, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, bio_method_st.meth_write_ex, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, bio_method_st.meth_write, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, bio_method_st.meth_read_ex, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, bio_method_st.meth_read, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, bio_method_st.meth_puts, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, bio_method_st.meth_gets, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, bio_method_st.meth_ctrl, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, bio_method_st.meth_create, _);
+    ensures normal resource_callback_slot_invoked(ssl, bio_method_st.meth_destroy, _);
+    ensures normal resource_callback_slot_invoked(ssl, bio_method_st.meth_callback_ctrl, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, bio_method_st.meth_sendmmsg, _, _, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, bio_method_st.meth_recvmmsg, _, _, _, _, _, _);
     ensures normal resource_return_none();
 };
 
@@ -288,20 +288,20 @@ contract {
     ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.custom_ext_add_cb, ssl, _, _, _, _, _);
     ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.custom_ext_free_cb, ssl, _, _, _);
     ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.custom_ext_parse_cb, ssl, _, _, _, _, _);
-    ensures normal resource_callback_slot_invoked(ssl, bio_st.callback_ex, _, _, _, _, _, _, _, _);
-    ensures normal resource_callback_slot_invoked(ssl, bio_st.callback, _, _, _, _, _, _);
-    ensures normal resource_callback_slot_invoked(ssl, bio_method_st.bwrite, _, _, _, _);
-    ensures normal resource_callback_slot_invoked(ssl, bio_method_st.bwrite_old, _, _, _);
-    ensures normal resource_callback_slot_invoked(ssl, bio_method_st.bread, _, _, _, _);
-    ensures normal resource_callback_slot_invoked(ssl, bio_method_st.bread_old, _, _, _);
-    ensures normal resource_callback_slot_invoked(ssl, bio_method_st.bputs, _, _);
-    ensures normal resource_callback_slot_invoked(ssl, bio_method_st.bgets, _, _, _);
-    ensures normal resource_callback_slot_invoked(ssl, bio_method_st.ctrl, _, _, _, _);
-    ensures normal resource_callback_slot_invoked(ssl, bio_method_st.create, _);
-    ensures normal resource_callback_slot_invoked(ssl, bio_method_st.destroy, _);
-    ensures normal resource_callback_slot_invoked(ssl, bio_method_st.callback_ctrl, _, _, _);
-    ensures normal resource_callback_slot_invoked(ssl, bio_method_st.bsendmmsg, _, _, _, _, _, _);
-    ensures normal resource_callback_slot_invoked(ssl, bio_method_st.brecvmmsg, _, _, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, bio_st.bio_callback_ex, _, _, _, _, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, bio_st.bio_callback, _, _, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, bio_method_st.meth_write_ex, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, bio_method_st.meth_write, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, bio_method_st.meth_read_ex, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, bio_method_st.meth_read, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, bio_method_st.meth_puts, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, bio_method_st.meth_gets, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, bio_method_st.meth_ctrl, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, bio_method_st.meth_create, _);
+    ensures normal resource_callback_slot_invoked(ssl, bio_method_st.meth_destroy, _);
+    ensures normal resource_callback_slot_invoked(ssl, bio_method_st.meth_callback_ctrl, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, bio_method_st.meth_sendmmsg, _, _, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, bio_method_st.meth_recvmmsg, _, _, _, _, _, _);
     ensures normal resource_return_none();
 };
 
@@ -344,20 +344,20 @@ contract {
     ensures normal resource_callback_slot_invoked(s, ssl_ctx_st.custom_ext_add_cb, s, _, _, _, _, _);
     ensures normal resource_callback_slot_invoked(s, ssl_ctx_st.custom_ext_free_cb, s, _, _, _);
     ensures normal resource_callback_slot_invoked(s, ssl_ctx_st.custom_ext_parse_cb, s, _, _, _, _, _);
-    ensures normal resource_callback_slot_invoked(s, bio_st.callback_ex, _, _, _, _, _, _, _, _);
-    ensures normal resource_callback_slot_invoked(s, bio_st.callback, _, _, _, _, _, _);
-    ensures normal resource_callback_slot_invoked(s, bio_method_st.bwrite, _, _, _, _);
-    ensures normal resource_callback_slot_invoked(s, bio_method_st.bwrite_old, _, _, _);
-    ensures normal resource_callback_slot_invoked(s, bio_method_st.bread, _, _, _, _);
-    ensures normal resource_callback_slot_invoked(s, bio_method_st.bread_old, _, _, _);
-    ensures normal resource_callback_slot_invoked(s, bio_method_st.bputs, _, _);
-    ensures normal resource_callback_slot_invoked(s, bio_method_st.bgets, _, _, _);
-    ensures normal resource_callback_slot_invoked(s, bio_method_st.ctrl, _, _, _, _);
-    ensures normal resource_callback_slot_invoked(s, bio_method_st.create, _);
-    ensures normal resource_callback_slot_invoked(s, bio_method_st.destroy, _);
-    ensures normal resource_callback_slot_invoked(s, bio_method_st.callback_ctrl, _, _, _);
-    ensures normal resource_callback_slot_invoked(s, bio_method_st.bsendmmsg, _, _, _, _, _, _);
-    ensures normal resource_callback_slot_invoked(s, bio_method_st.brecvmmsg, _, _, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(s, bio_st.bio_callback_ex, _, _, _, _, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(s, bio_st.bio_callback, _, _, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(s, bio_method_st.meth_write_ex, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(s, bio_method_st.meth_write, _, _, _);
+    ensures normal resource_callback_slot_invoked(s, bio_method_st.meth_read_ex, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(s, bio_method_st.meth_read, _, _, _);
+    ensures normal resource_callback_slot_invoked(s, bio_method_st.meth_puts, _, _);
+    ensures normal resource_callback_slot_invoked(s, bio_method_st.meth_gets, _, _, _);
+    ensures normal resource_callback_slot_invoked(s, bio_method_st.meth_ctrl, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(s, bio_method_st.meth_create, _);
+    ensures normal resource_callback_slot_invoked(s, bio_method_st.meth_destroy, _);
+    ensures normal resource_callback_slot_invoked(s, bio_method_st.meth_callback_ctrl, _, _, _);
+    ensures normal resource_callback_slot_invoked(s, bio_method_st.meth_sendmmsg, _, _, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(s, bio_method_st.meth_recvmmsg, _, _, _, _, _, _);
     ensures normal resource_return_none();
 };
 

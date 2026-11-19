@@ -607,20 +607,20 @@ fn shutdown_reads_the_record_padding_slot() {
 /// Card OPENSSL-BIO-METHODS-AND-CALLBACKS: the BIO keys every I/O call and
 /// `SSL_shutdown` invoke.
 const BIO_KEYS: [&str; 14] = [
-    "bio_st.callback_ex",
-    "bio_st.callback",
-    "bio_method_st.bwrite",
-    "bio_method_st.bwrite_old",
-    "bio_method_st.bread",
-    "bio_method_st.bread_old",
-    "bio_method_st.bputs",
-    "bio_method_st.bgets",
-    "bio_method_st.ctrl",
-    "bio_method_st.create",
-    "bio_method_st.destroy",
-    "bio_method_st.callback_ctrl",
-    "bio_method_st.bsendmmsg",
-    "bio_method_st.brecvmmsg",
+    "bio_st.bio_callback_ex",
+    "bio_st.bio_callback",
+    "bio_method_st.meth_write_ex",
+    "bio_method_st.meth_write",
+    "bio_method_st.meth_read_ex",
+    "bio_method_st.meth_read",
+    "bio_method_st.meth_puts",
+    "bio_method_st.meth_gets",
+    "bio_method_st.meth_ctrl",
+    "bio_method_st.meth_create",
+    "bio_method_st.meth_destroy",
+    "bio_method_st.meth_callback_ctrl",
+    "bio_method_st.meth_sendmmsg",
+    "bio_method_st.meth_recvmmsg",
 ];
 
 /// The 14 setters load as their registrations; each I/O call and
@@ -630,20 +630,23 @@ const BIO_KEYS: [&str; 14] = [
 fn the_crate_states_every_bio_slot() {
     let contracts = crate_contracts();
     for (setter, key) in [
-        ("BIO_set_callback_ex", "bio_st.callback_ex"),
-        ("BIO_set_callback", "bio_st.callback"),
-        ("BIO_meth_set_write_ex", "bio_method_st.bwrite"),
-        ("BIO_meth_set_write", "bio_method_st.bwrite_old"),
-        ("BIO_meth_set_read_ex", "bio_method_st.bread"),
-        ("BIO_meth_set_read", "bio_method_st.bread_old"),
-        ("BIO_meth_set_puts", "bio_method_st.bputs"),
-        ("BIO_meth_set_gets", "bio_method_st.bgets"),
-        ("BIO_meth_set_ctrl", "bio_method_st.ctrl"),
-        ("BIO_meth_set_create", "bio_method_st.create"),
-        ("BIO_meth_set_destroy", "bio_method_st.destroy"),
-        ("BIO_meth_set_callback_ctrl", "bio_method_st.callback_ctrl"),
-        ("BIO_meth_set_sendmmsg", "bio_method_st.bsendmmsg"),
-        ("BIO_meth_set_recvmmsg", "bio_method_st.brecvmmsg"),
+        ("BIO_set_callback_ex", "bio_st.bio_callback_ex"),
+        ("BIO_set_callback", "bio_st.bio_callback"),
+        ("BIO_meth_set_write_ex", "bio_method_st.meth_write_ex"),
+        ("BIO_meth_set_write", "bio_method_st.meth_write"),
+        ("BIO_meth_set_read_ex", "bio_method_st.meth_read_ex"),
+        ("BIO_meth_set_read", "bio_method_st.meth_read"),
+        ("BIO_meth_set_puts", "bio_method_st.meth_puts"),
+        ("BIO_meth_set_gets", "bio_method_st.meth_gets"),
+        ("BIO_meth_set_ctrl", "bio_method_st.meth_ctrl"),
+        ("BIO_meth_set_create", "bio_method_st.meth_create"),
+        ("BIO_meth_set_destroy", "bio_method_st.meth_destroy"),
+        (
+            "BIO_meth_set_callback_ctrl",
+            "bio_method_st.meth_callback_ctrl",
+        ),
+        ("BIO_meth_set_sendmmsg", "bio_method_st.meth_sendmmsg"),
+        ("BIO_meth_set_recvmmsg", "bio_method_st.meth_recvmmsg"),
     ] {
         let declaration = contracts
             .retaining_contract(setter)
@@ -807,7 +810,7 @@ fn bio_free_states_no_invocation_beside_its_drop() {
     let stated = bio.replacen(
         "    ensures normal resource_reference_dropped(a, nullable);\n",
         "    ensures normal resource_reference_dropped(a, nullable);\n    ensures normal \
-         resource_callback_slot_invoked(a, bio_st.callback_ex, a, _, _, _, _, _, _, _);\n",
+         resource_callback_slot_invoked(a, bio_st.bio_callback_ex, a, _, _, _, _, _, _, _);\n",
         1,
     );
     assert_ne!(stated, bio);
