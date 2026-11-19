@@ -55,6 +55,11 @@
 //!    several slots at once (each registration beside the shape's is a
 //!    [`Premise::SlotRegistered`], with a second retention a
 //!    [`Premise::RetainedBy`]), and it is a writer of each.
+//!    Card **OPENSSL-BIO-METHODS-AND-CALLBACKS**: a BIO's callback and its
+//!    method table's functions are slots too (`bio_st.*`, `bio_method_st.*`),
+//!    run by the handshake and I/O calls and `SSL_shutdown` beside the
+//!    library-value premise `openssl_builtin_bio_methods`; a drop of a BIO
+//!    (`BIO_free`, `SSL_free`) names `openssl_bio_free_callbacks`.
 //!    Card **REFERENCE-DROP-NULL-ACCEPTING**: a release whose page states that a
 //!    NULL argument does nothing is a NULL-accepting drop,
 //!    `resource_reference_dropped(p, nullable)`, and the cited snapshot must
@@ -76,8 +81,9 @@ use qcore_schemas::plugin::{
 use serde_json::Value;
 
 pub use crate::documented::{
-    DOCUMENTED, Documented, DocumentedFunction, EX_DATA, EX_DATA_STATEMENT, Null, Premise, SLOTS,
-    Slot, UNSTATED_SLOTS, UNSTATED_SLOTS_STATEMENT,
+    BIO_FREE, BIO_FREE_STATEMENT, BUILTIN_BIO_METHODS, BUILTIN_BIO_METHODS_STATEMENT, DOCUMENTED,
+    Documented, DocumentedFunction, EX_DATA, EX_DATA_STATEMENT, Null, Premise, SLOTS, Slot,
+    UNSTATED_SLOTS, UNSTATED_SLOTS_STATEMENT,
 };
 
 /// The crate name a request's translation unit carries.
@@ -179,6 +185,10 @@ pub const FUNCTION_POINTER_TYPEDEFS: &[&str] = &[
     "custom_ext_add_cb",
     "custom_ext_free_cb",
     "custom_ext_parse_cb",
+    // Card OPENSSL-BIO-METHODS-AND-CALLBACKS: the BIO callback types,
+    // `typedef long (*NAME)(BIO *b, …);` in the pinned `openssl/bio.h`.
+    "BIO_callback_fn_ex",
+    "BIO_callback_fn",
 ];
 
 /// The contract type a C type from a pinned prototype corresponds to.
@@ -647,6 +657,12 @@ pub fn expected_clauses(
             ),
             Premise::ExDataCallbacks => {
                 format!("requires resource_premise({EX_DATA}, \"{EX_DATA_STATEMENT}\")")
+            }
+            Premise::BuiltinBioMethods => format!(
+                "requires resource_premise({BUILTIN_BIO_METHODS}, \"{BUILTIN_BIO_METHODS_STATEMENT}\")"
+            ),
+            Premise::BioFreeCallbacks => {
+                format!("requires resource_premise({BIO_FREE}, \"{BIO_FREE_STATEMENT}\")")
             }
             Premise::SlotInvoked {
                 object,
@@ -1236,7 +1252,7 @@ mod tests {
         for slot in SLOTS {
             slot_writers_declared(slot.key, &snapshots).unwrap();
         }
-        assert_eq!(SLOTS.len(), 28);
+        assert_eq!(SLOTS.len(), 42);
         // Card OPENSSL-UNSTATED-CALLBACK-SLOTS: a ctrl arm stays unstated.
         assert!(slot_writers_declared("ssl_ctx_st.servername_cb", &snapshots).is_err());
         // A page that does not name a writer refuses the slot.
@@ -1506,7 +1522,7 @@ mod tests {
         assert_ne!(connected, text);
         assert!(check_function(path, &connected, "SSL_connect").is_err());
         // The handshake calls keep the narrowed premise (the ctrl arms, CT,
-        // the BIO methods).
+        // ex_data).
         let unpremised = format!(
             "{}{}",
             &text[..start],
@@ -1634,6 +1650,227 @@ mod tests {
                 "{}",
                 slot.page
             );
+        }
+    }
+
+    /// Card OPENSSL-BIO-METHODS-AND-CALLBACKS: the BIO callback and method
+    /// slots, the built-in methods premise and the BIO free premise, each
+    /// drift-refused.
+    #[test]
+    fn a_drifted_bio_slot_reading_is_refused() {
+        let snapshots: Value = serde_json::from_str(crate::DOC_SNAPSHOTS).unwrap();
+        let bio_keys = [
+            "bio_st.bio_callback_ex",
+            "bio_st.bio_callback",
+            "bio_method_st.meth_write_ex",
+            "bio_method_st.meth_write",
+            "bio_method_st.meth_read_ex",
+            "bio_method_st.meth_read",
+            "bio_method_st.meth_puts",
+            "bio_method_st.meth_gets",
+            "bio_method_st.meth_ctrl",
+            "bio_method_st.meth_create",
+            "bio_method_st.meth_destroy",
+            "bio_method_st.meth_callback_ctrl",
+            "bio_method_st.meth_sendmmsg",
+            "bio_method_st.meth_recvmmsg",
+        ];
+        for key in bio_keys {
+            slot_writers_declared(key, &snapshots).unwrap();
+        }
+        let builtin = format!(
+            "    requires resource_premise({BUILTIN_BIO_METHODS}, \"{BUILTIN_BIO_METHODS_STATEMENT}\");\n"
+        );
+        let freed =
+            format!("    requires resource_premise({BIO_FREE}, \"{BIO_FREE_STATEMENT}\");\n");
+        // Each I/O call and SSL_shutdown: every BIO invocation dropped, an
+        // actual read as the connection, the built-in premise dropped.
+        for (call, object) in [
+            ("SSL_write", "ssl"),
+            ("SSL_read", "ssl"),
+            ("SSL_connect", "ssl"),
+            ("SSL_do_handshake", "s"),
+            ("SSL_shutdown", "ssl"),
+        ] {
+            let (path, text) = module_of(call);
+            check_function(path, text, call).unwrap();
+            let start = text.find(&format!("extern fn {call}(")).unwrap();
+            let end = start + text[start..].find("};").unwrap();
+            let body = &text[start..end];
+            for key in bio_keys {
+                let line = body
+                    .lines()
+                    .find(|line| line.contains(&format!("({object}, {key}, ")))
+                    .unwrap_or_else(|| panic!("{call} states {key}"));
+                let dropped = format!(
+                    "{}{}",
+                    &text[..start],
+                    text[start..].replacen(&format!("{line}\n"), "", 1)
+                );
+                assert!(
+                    check_function(path, &dropped, call).is_err(),
+                    "{call} {key}"
+                );
+            }
+            let connected = format!(
+                "{}{}",
+                &text[..start],
+                text[start..].replacen(
+                    &format!("({object}, bio_st.bio_callback_ex, _,"),
+                    &format!("({object}, bio_st.bio_callback_ex, {object},"),
+                    1,
+                )
+            );
+            assert_ne!(connected, text);
+            assert!(check_function(path, &connected, call).is_err(), "{call}");
+            assert!(body.contains(builtin.trim_end()), "{call}");
+            let unpremised = format!(
+                "{}{}",
+                &text[..start],
+                text[start..].replacen(&builtin, "", 1)
+            );
+            assert!(check_function(path, &unpremised, call).is_err(), "{call}");
+            // The narrowed statement: the old one, naming a BIO's methods,
+            // is no longer the premise.
+            let old = format!(
+                "{}{}",
+                &text[..start],
+                text[start..].replacen(
+                    "ticket key callbacks, or an ex_data callback)",
+                    "ticket key callbacks, a method or callback of a BIO the SSL object holds, \
+                     or an ex_data callback)",
+                    1,
+                )
+            );
+            assert_ne!(old, text);
+            assert!(check_function(path, &old, call).is_err(), "{call}");
+        }
+        // Card OPENSSL-BIO-READER-INVOCATIONS: the PEM and PKCS#12 readers
+        // state the 14 slots on their BIO formal beside the premise: each
+        // invocation dropped, the BIO given as the callback's actual, the
+        // built-in premise dropped or read in its old SSL-only statement, and
+        // the literal-argument premise dropped each refuse.
+        let ssl_only = BUILTIN_BIO_METHODS_STATEMENT.replacen(
+            "run on a BIO the call reads or writes through (its BIO argument or a BIO the SSL \
+             object holds) or one chained to it",
+            "run on a BIO the SSL object holds or one chained to it",
+            1,
+        );
+        assert_ne!(ssl_only, BUILTIN_BIO_METHODS_STATEMENT);
+        for (call, object, premise) in [
+            ("PEM_read_bio_X509", "out", "x"),
+            ("PEM_read_bio_PrivateKey", "out", "x"),
+            ("d2i_PKCS12_bio", "bp", "p12"),
+        ] {
+            let (path, text) = module_of(call);
+            check_function(path, text, call).unwrap();
+            let start = text.find(&format!("extern fn {call}(")).unwrap();
+            let end = start + text[start..].find("};").unwrap();
+            let body = &text[start..end];
+            let edited = |from: &str, to: &str| {
+                let edited = format!("{}{}", &text[..start], text[start..].replacen(from, to, 1));
+                assert_ne!(edited, text, "{call}: {from}");
+                edited
+            };
+            for key in bio_keys {
+                let line = body
+                    .lines()
+                    .find(|line| line.contains(&format!("({object}, {key}, ")))
+                    .unwrap_or_else(|| panic!("{call} states {key}"));
+                let dropped = edited(&format!("{line}\n"), "");
+                assert!(
+                    check_function(path, &dropped, call).is_err(),
+                    "{call} {key}"
+                );
+            }
+            let handed = edited(
+                &format!("({object}, bio_st.bio_callback_ex, _,"),
+                &format!("({object}, bio_st.bio_callback_ex, {object},"),
+            );
+            assert!(check_function(path, &handed, call).is_err(), "{call}");
+            assert!(body.contains(builtin.trim_end()), "{call}");
+            let unpremised = edited(&builtin, "");
+            assert!(check_function(path, &unpremised, call).is_err(), "{call}");
+            let old = edited(BUILTIN_BIO_METHODS_STATEMENT, &ssl_only);
+            assert!(check_function(path, &old, call).is_err(), "{call}");
+            let unrestricted = edited(
+                &format!("    requires resource_literal_argument({premise}, 0);\n"),
+                "",
+            );
+            assert!(check_function(path, &unrestricted, call).is_err(), "{call}");
+        }
+        // The old statement is no longer the premise on the I/O calls either.
+        let (path, text) = module_of("SSL_write");
+        let old = text.replacen(BUILTIN_BIO_METHODS_STATEMENT, &ssl_only, 1);
+        assert_ne!(old, text);
+        assert!(check_function(path, &old, "SSL_write").is_err());
+        // BIO_free and SSL_free: the free premise dropped refuses; a BIO
+        // callback invocation stated beside the drop is not the documented
+        // reading either (and C04.19 rejects it).
+        for (call, object) in [("BIO_free", "a"), ("SSL_free", "ssl")] {
+            let (path, text) = module_of(call);
+            check_function(path, text, call).unwrap();
+            let start = text.find(&format!("extern fn {call}(")).unwrap();
+            assert!(text[start..].contains(&freed), "{call}");
+            let silent = format!(
+                "{}{}",
+                &text[..start],
+                text[start..].replacen(&freed, "", 1)
+            );
+            assert!(check_function(path, &silent, call).is_err(), "{call}");
+            let stated = format!(
+                "{}{}",
+                &text[..start],
+                text[start..].replacen(
+                    &freed,
+                    &format!(
+                        "    ensures normal resource_callback_slot_invoked({object}, \
+                         bio_st.bio_callback_ex, {object}, _, _, _, _, _, _, _);\n"
+                    ),
+                    1,
+                )
+            );
+            assert!(check_function(path, &stated, call).is_err(), "{call}");
+        }
+        // A setter's registration moved to another slot, or dropped.
+        let (path, text) = module_of("BIO_meth_set_write");
+        let moved = text.replacen(
+            "(biom, bio_method_st.meth_write, write)",
+            "(biom, bio_method_st.meth_write_ex, write)",
+            1,
+        );
+        assert_ne!(moved, text);
+        assert!(check_function(path, &moved, "BIO_meth_set_write").is_err());
+        let (path, text) = module_of("BIO_set_callback");
+        let dropped = text.replacen(
+            "    ensures normal resource_callback_slot_registered(b, bio_st.bio_callback, callback);\n",
+            "",
+            1,
+        );
+        assert_ne!(dropped, text);
+        assert!(check_function(path, &dropped, "BIO_set_callback").is_err());
+        // A page naming one more method setter refuses every method slot; a
+        // built-in method is not a slot this checker documents.
+        let mut extra = snapshots.clone();
+        for page in extra["pages"].as_array_mut().unwrap() {
+            if page["page"] == "BIO_meth_new" && page["series"] == "3.5" {
+                let name = page["name"].as_str().unwrap().replacen(
+                    "BIO_meth_set_ctrl,",
+                    "BIO_meth_set_ctrl, BIO_meth_set_other,",
+                    1,
+                );
+                page["name"] = Value::from(name);
+            }
+        }
+        for key in &bio_keys[2..] {
+            let refused = slot_writers_declared(key, &extra).unwrap_err();
+            assert!(refused.contains("BIO_meth_set_other"), "{refused}");
+        }
+        assert!(slot_writers_declared("bio_method_st.socket_write", &snapshots).is_err());
+        // The new callback types are `fnptr` only by value.
+        for typedef in ["BIO_callback_fn_ex", "BIO_callback_fn"] {
+            assert_eq!(contract_type(typedef), Some("fnptr"));
+            assert_eq!(contract_type(&format!("{typedef} *")), None);
         }
     }
 

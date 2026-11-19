@@ -87,8 +87,64 @@
    "declaration": "int BIO_free(BIO *a)",
    "header": "/usr/include/openssl/bio.h"
   },
+  "BIO_meth_set_callback_ctrl": {
+   "declaration": "int BIO_meth_set_callback_ctrl(BIO_METHOD *biom, long (*callback_ctrl)(BIO *, int, BIO_info_cb *))",
+   "header": "/usr/include/openssl/bio.h"
+  },
+  "BIO_meth_set_create": {
+   "declaration": "int BIO_meth_set_create(BIO_METHOD *biom, int (*create)(BIO *))",
+   "header": "/usr/include/openssl/bio.h"
+  },
+  "BIO_meth_set_ctrl": {
+   "declaration": "int BIO_meth_set_ctrl(BIO_METHOD *biom, long (*ctrl)(BIO *, int, long, void *))",
+   "header": "/usr/include/openssl/bio.h"
+  },
+  "BIO_meth_set_destroy": {
+   "declaration": "int BIO_meth_set_destroy(BIO_METHOD *biom, int (*destroy)(BIO *))",
+   "header": "/usr/include/openssl/bio.h"
+  },
+  "BIO_meth_set_gets": {
+   "declaration": "int BIO_meth_set_gets(BIO_METHOD *biom, int (*ossl_gets)(BIO *, char *, int))",
+   "header": "/usr/include/openssl/bio.h"
+  },
+  "BIO_meth_set_puts": {
+   "declaration": "int BIO_meth_set_puts(BIO_METHOD *biom, int (*puts)(BIO *, const char *))",
+   "header": "/usr/include/openssl/bio.h"
+  },
+  "BIO_meth_set_read": {
+   "declaration": "int BIO_meth_set_read(BIO_METHOD *biom, int (*read)(BIO *, char *, int))",
+   "header": "/usr/include/openssl/bio.h"
+  },
+  "BIO_meth_set_read_ex": {
+   "declaration": "int BIO_meth_set_read_ex(BIO_METHOD *biom, int (*bread)(BIO *, char *, size_t, size_t *))",
+   "header": "/usr/include/openssl/bio.h"
+  },
+  "BIO_meth_set_recvmmsg": {
+   "declaration": "int BIO_meth_set_recvmmsg(BIO_METHOD *biom, int (*f)(BIO *, BIO_MSG *, size_t, size_t, uint64_t, size_t *))",
+   "header": "/usr/include/openssl/bio.h"
+  },
+  "BIO_meth_set_sendmmsg": {
+   "declaration": "int BIO_meth_set_sendmmsg(BIO_METHOD *biom, int (*f)(BIO *, BIO_MSG *, size_t, size_t, uint64_t, size_t *))",
+   "header": "/usr/include/openssl/bio.h"
+  },
+  "BIO_meth_set_write": {
+   "declaration": "int BIO_meth_set_write(BIO_METHOD *biom, int (*write)(BIO *, const char *, int))",
+   "header": "/usr/include/openssl/bio.h"
+  },
+  "BIO_meth_set_write_ex": {
+   "declaration": "int BIO_meth_set_write_ex(BIO_METHOD *biom, int (*bwrite)(BIO *, const char *, size_t, size_t *))",
+   "header": "/usr/include/openssl/bio.h"
+  },
   "BIO_new_file": {
    "declaration": "BIO *BIO_new_file(const char *filename, const char *mode)",
+   "header": "/usr/include/openssl/bio.h"
+  },
+  "BIO_set_callback": {
+   "declaration": "void BIO_set_callback(BIO *b, BIO_callback_fn callback)",
+   "header": "/usr/include/openssl/bio.h"
+  },
+  "BIO_set_callback_ex": {
+   "declaration": "void BIO_set_callback_ex(BIO *b, BIO_callback_fn_ex callback)",
    "header": "/usr/include/openssl/bio.h"
   },
   "ENGINE_by_id": {

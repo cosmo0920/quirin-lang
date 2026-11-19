@@ -26,6 +26,14 @@
 //! `SSL_shutdown`'s record padding invocation refuses an uncontracted
 //! candidate. A row is `Safe` only where every candidate of every stated slot
 //! is the identity.
+//!
+//! Card OPENSSL-BIO-METHODS-AND-CALLBACKS (same rule; this target, so the
+//! read census needs no new unit): the BIO callback and method table slots
+//! (`bio_slots.qv`), with the same arms: an uncontracted method or callback
+//! candidate refuses the I/O call and `SSL_shutdown`, an effectful one
+//! refuses, a BIO slot no loaded declaration registers refuses, and identity
+//! candidates decide. `BIO_free` states no invocation (its callbacks rest on
+//! the premise `openssl_bio_free_callbacks`).
 
 use std::collections::BTreeMap;
 use std::sync::Arc;
@@ -37,7 +45,7 @@ use qcore_c_gateway::legacy_c::{
 };
 use qcore_c_gateway::member_run_facts::{DeclaredStore, RunMemberFacts, declarations_unit, scoped};
 use qcore_contract::contract_loader::load_resource_contract_sources;
-use qcore_schemas::callback::CallbackClause;
+use qcore_schemas::callback::{CallbackActual, CallbackClause};
 use qcore_schemas::contract::ResourceContracts;
 
 fn clang_available() -> bool {
@@ -62,6 +70,8 @@ const SSL_IO: &str =
     include_str!("../../../providers/quirin-provider-openssl/contracts/openssl/ssl_io.qv");
 const SSL_HANDSHAKE: &str =
     include_str!("../../../providers/quirin-provider-openssl/contracts/openssl/ssl_handshake.qv");
+const BIO_SLOTS: &str =
+    include_str!("../../../providers/quirin-provider-openssl/contracts/openssl/bio_slots.qv");
 
 /// The application's candidates: identity contracts, and an older-style
 /// custom extension free callback that releases the `add_arg` the library
@@ -141,6 +151,36 @@ contract {
     ensures normal resource_borrowed(parse_arg);
     ensures normal resource_return_none();
 };
+
+extern fn bio_cb_ok(b: ptr<mut, u8>, oper: i32, argp: ptr<const, u8>, len: usize, argi: i32, argl: i64, ret: i32, processed: ptr<mut, u8>) -> i64
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(b);
+    ensures normal resource_borrowed(oper);
+    ensures normal resource_borrowed(argp);
+    ensures normal resource_borrowed(len);
+    ensures normal resource_borrowed(argi);
+    ensures normal resource_borrowed(argl);
+    ensures normal resource_borrowed(ret);
+    ensures normal resource_borrowed(processed);
+    ensures normal resource_return_none();
+};
+
+extern fn bio_write_ok(b: ptr<mut, u8>, data: ptr<const, u8>, len: i32) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(b);
+    ensures normal resource_borrowed(data);
+    ensures normal resource_borrowed(len);
+    ensures normal resource_return_none();
+};
+
+extern fn bio_destroy_releasing(b: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(b, nonnull);
+    ensures normal resource_return_none();
+};
 ";
 
 /// The public headers' view: the objects are opaque; the prototypes as the
@@ -169,6 +209,17 @@ int ext_add_ok(SSL *s, unsigned int ext_type, const unsigned char **out, __SIZE_
 void ext_free_ok(SSL *s, unsigned int ext_type, const unsigned char *out, void *add_arg);
 void ext_free_releasing(SSL *s, unsigned int ext_type, const unsigned char *out, void *add_arg);
 int ext_parse_ok(SSL *s, unsigned int ext_type, const unsigned char *in, __SIZE_TYPE__ inlen, int *al, void *parse_arg);
+typedef struct bio_st BIO;
+typedef struct bio_method_st BIO_METHOD;
+typedef long (*BIO_callback_fn_ex)(BIO *b, int oper, const char *argp, __SIZE_TYPE__ len, int argi, long argl, int ret, __SIZE_TYPE__ *processed);
+void BIO_set_callback_ex(BIO *b, BIO_callback_fn_ex callback);
+int BIO_meth_set_write(BIO_METHOD *biom, int (*write)(BIO *, const char *, int));
+int BIO_meth_set_destroy(BIO_METHOD *biom, int (*destroy)(BIO *));
+long bio_cb_ok(BIO *b, int oper, const char *argp, __SIZE_TYPE__ len, int argi, long argl, int ret, __SIZE_TYPE__ *processed);
+long bio_cb_uncontracted(BIO *b, int oper, const char *argp, __SIZE_TYPE__ len, int argi, long argl, int ret, __SIZE_TYPE__ *processed);
+int bio_write_ok(BIO *b, const char *data, int len);
+int bio_write_uncontracted(BIO *b, const char *data, int len);
+int bio_destroy_releasing(BIO *b);
 ";
 
 const CALLER: &str = "\
@@ -192,6 +243,7 @@ fn crate_contracts() -> ResourceContracts {
         ("ssl_ctx.qv", SSL_CTX),
         ("ssl_io.qv", SSL_IO),
         ("ssl_handshake.qv", SSL_HANDSHAKE),
+        ("bio_slots.qv", BIO_SLOTS),
     ])
 }
 
@@ -277,8 +329,9 @@ fn refused(leaves: &[String], word: &str) -> bool {
 }
 
 /// The new declarations load as slot clauses: each setter its registrations
-/// (three for a custom extension setter), each handshake and I/O call 27
-/// slot invocations, `SSL_shutdown` three.
+/// (three for a custom extension setter), each handshake and I/O call 41
+/// slot invocations, `SSL_shutdown` 17 (since OPENSSL-BIO-METHODS-AND-CALLBACKS,
+/// which adds the 14 BIO slots to each).
 #[test]
 fn the_crate_states_every_handshake_slot() {
     let contracts = crate_contracts();
@@ -395,7 +448,7 @@ fn the_crate_states_every_handshake_slot() {
     }
     for call in ["SSL_write", "SSL_read", "SSL_connect", "SSL_do_handshake"] {
         let declaration = contracts.retaining_contract(call).expect("withheld");
-        assert_eq!(declaration.callbacks.len(), 27, "{call}");
+        assert_eq!(declaration.callbacks.len(), 41, "{call}");
         assert!(
             declaration
                 .callbacks
@@ -410,7 +463,7 @@ fn the_crate_states_every_handshake_slot() {
             .expect("withheld")
             .callbacks
             .len(),
-        3
+        17
     );
 }
 
@@ -549,4 +602,489 @@ fn shutdown_reads_the_record_padding_slot() {
                 && leaf.contains("callback-uncontracted")),
         "{leaves:?}"
     );
+}
+
+/// Card OPENSSL-BIO-METHODS-AND-CALLBACKS: the BIO keys every I/O call and
+/// `SSL_shutdown` invoke.
+const BIO_KEYS: [&str; 14] = [
+    "bio_st.bio_callback_ex",
+    "bio_st.bio_callback",
+    "bio_method_st.meth_write_ex",
+    "bio_method_st.meth_write",
+    "bio_method_st.meth_read_ex",
+    "bio_method_st.meth_read",
+    "bio_method_st.meth_puts",
+    "bio_method_st.meth_gets",
+    "bio_method_st.meth_ctrl",
+    "bio_method_st.meth_create",
+    "bio_method_st.meth_destroy",
+    "bio_method_st.meth_callback_ctrl",
+    "bio_method_st.meth_sendmmsg",
+    "bio_method_st.meth_recvmmsg",
+];
+
+/// The 14 setters load as their registrations; each I/O call and
+/// `SSL_shutdown` invoke every BIO key on the connection with every actual
+/// the callee's own.
+#[test]
+fn the_crate_states_every_bio_slot() {
+    let contracts = crate_contracts();
+    for (setter, key) in [
+        ("BIO_set_callback_ex", "bio_st.bio_callback_ex"),
+        ("BIO_set_callback", "bio_st.bio_callback"),
+        ("BIO_meth_set_write_ex", "bio_method_st.meth_write_ex"),
+        ("BIO_meth_set_write", "bio_method_st.meth_write"),
+        ("BIO_meth_set_read_ex", "bio_method_st.meth_read_ex"),
+        ("BIO_meth_set_read", "bio_method_st.meth_read"),
+        ("BIO_meth_set_puts", "bio_method_st.meth_puts"),
+        ("BIO_meth_set_gets", "bio_method_st.meth_gets"),
+        ("BIO_meth_set_ctrl", "bio_method_st.meth_ctrl"),
+        ("BIO_meth_set_create", "bio_method_st.meth_create"),
+        ("BIO_meth_set_destroy", "bio_method_st.meth_destroy"),
+        (
+            "BIO_meth_set_callback_ctrl",
+            "bio_method_st.meth_callback_ctrl",
+        ),
+        ("BIO_meth_set_sendmmsg", "bio_method_st.meth_sendmmsg"),
+        ("BIO_meth_set_recvmmsg", "bio_method_st.meth_recvmmsg"),
+    ] {
+        let declaration = contracts
+            .retaining_contract(setter)
+            .unwrap_or_else(|| panic!("{setter} is withheld"));
+        assert!(
+            matches!(declaration.callbacks.as_slice(),
+                [CallbackClause::MemberRegistered { slot: true, member, .. }]
+                    if member.spelling() == key),
+            "{setter}"
+        );
+        assert!(contracts.contract(setter).is_none(), "{setter}");
+    }
+    for call in [
+        "SSL_write",
+        "SSL_read",
+        "SSL_connect",
+        "SSL_do_handshake",
+        "SSL_shutdown",
+    ] {
+        let declaration = contracts.retaining_contract(call).expect("withheld");
+        for key in BIO_KEYS {
+            let invoked = declaration.callbacks.iter().find(|clause| {
+                matches!(clause, CallbackClause::MemberInvoked { slot: true, member, .. }
+                    if member.spelling() == key)
+            });
+            let Some(CallbackClause::MemberInvoked { actuals, .. }) = invoked else {
+                panic!("{call} invokes {key}");
+            };
+            assert!(
+                actuals
+                    .iter()
+                    .all(|actual| matches!(actual, CallbackActual::Supplied)),
+                "{call} {key}: {actuals:?}"
+            );
+        }
+    }
+}
+
+/// Identity BIO candidates beside the identity handshake candidates: the
+/// I/O call and `SSL_shutdown` decide.
+#[test]
+fn identity_bio_candidates_decide_the_io_call() {
+    if !clang_available() {
+        return;
+    }
+    let contracts = crate_contracts();
+    let registrar = "\
+void reg(BIO *b, BIO_METHOD *m) {
+    BIO_set_callback_ex(b, bio_cb_ok);
+    BIO_meth_set_write(m, bio_write_ok);
+}
+";
+    let run = run_of(registrar, &contracts);
+    for name in ["write_some", "shut"] {
+        let (status, leaves) = row_of(name, run.clone(), &contracts);
+        assert!(
+            !refused(&leaves, "callback-"),
+            "{name}: no callback refusal: {leaves:?}"
+        );
+        assert_eq!(status, AnalysisStatus::Safe, "{name}: {leaves:?}");
+    }
+}
+
+/// libevent's `bufferevent_openssl.c` shape (`BIO_meth_set_write(methods,
+/// bio_bufferevent_write)`) and a BIO callback with no contract in force:
+/// each refuses the I/O call and `SSL_shutdown`, naming the candidate.
+#[test]
+fn an_uncontracted_bio_candidate_refuses() {
+    if !clang_available() {
+        return;
+    }
+    let contracts = crate_contracts();
+    for (registrar, candidate) in [
+        (
+            "void reg(BIO_METHOD *m) { BIO_meth_set_write(m, bio_write_uncontracted); }\n",
+            "bio_write_uncontracted",
+        ),
+        (
+            "void reg(BIO *b) { BIO_set_callback_ex(b, bio_cb_uncontracted); }\n",
+            "bio_cb_uncontracted",
+        ),
+    ] {
+        let run = run_of(registrar, &contracts);
+        for name in ["write_some", "shut"] {
+            let (status, leaves) = row_of(name, run.clone(), &contracts);
+            assert_ne!(status, AnalysisStatus::Safe, "{name}");
+            assert!(
+                leaves
+                    .iter()
+                    .any(|leaf| leaf.contains(candidate) && leaf.contains("callback-uncontracted")),
+                "{name}: {leaves:?}"
+            );
+        }
+    }
+}
+
+/// A destroy function that releases the BIO the library hands it is not the
+/// identity: the I/O call refuses (the method slots are stated beyond the
+/// ones a record write needs, and stating more never improves a verdict).
+#[test]
+fn an_effectful_bio_method_refuses() {
+    if !clang_available() {
+        return;
+    }
+    let contracts = crate_contracts();
+    let run = run_of(
+        "void reg(BIO_METHOD *m) { BIO_meth_set_destroy(m, bio_destroy_releasing); }\n",
+        &contracts,
+    );
+    let (status, leaves) = row_of("write_some", run, &contracts);
+    assert_ne!(status, AnalysisStatus::Safe);
+    assert!(
+        leaves
+            .iter()
+            .any(|leaf| leaf.contains("bio_destroy_releasing") && leaf.contains("callback-")),
+        "{leaves:?}"
+    );
+}
+
+/// Without `bio_slots.qv` no loaded declaration registers a BIO key: the
+/// slots are never decided, even with nothing registered.
+#[test]
+fn a_bio_slot_no_declaration_registers_refuses() {
+    if !clang_available() {
+        return;
+    }
+    let contracts = contracts(&[
+        ("ssl.qv", SSL),
+        ("ssl_ctx.qv", SSL_CTX),
+        ("ssl_io.qv", SSL_IO),
+        ("ssl_handshake.qv", SSL_HANDSHAKE),
+    ]);
+    let run = run_of("void nothing(void) { }\n", &contracts);
+    for key in BIO_KEYS {
+        assert!(run.decides(key, true).is_err(), "{key}");
+    }
+    for name in ["write_some", "shut"] {
+        let (status, leaves) = row_of(name, run.clone(), &contracts);
+        assert_ne!(status, AnalysisStatus::Safe, "{name}");
+        assert!(
+            refused(&leaves, "no declaration registers"),
+            "{name}: {leaves:?}"
+        );
+    }
+}
+
+/// `BIO_free` states no callback clause beside its reference drop (C04.19
+/// admits none): its callback, destroy function and ex_data callbacks rest
+/// on the premise `openssl_bio_free_callbacks`, and the loader still rejects
+/// a slot invocation beside the drop.
+#[test]
+fn bio_free_states_no_invocation_beside_its_drop() {
+    let bio = include_str!("../../../providers/quirin-provider-openssl/contracts/openssl/bio.qv");
+    assert!(bio.contains("resource_premise(openssl_bio_free_callbacks,"));
+    let contracts = contracts(&[("bio.qv", bio), ("bio_slots.qv", BIO_SLOTS)]);
+    assert!(
+        contracts
+            .retaining_contract("BIO_free")
+            .is_none_or(|declaration| declaration.callbacks.is_empty())
+    );
+    let stated = bio.replacen(
+        "    ensures normal resource_reference_dropped(a, nullable);\n",
+        "    ensures normal resource_reference_dropped(a, nullable);\n    ensures normal \
+         resource_callback_slot_invoked(a, bio_st.bio_callback_ex, a, _, _, _, _, _, _, _);\n",
+        1,
+    );
+    assert_ne!(stated, bio);
+    let mut sources = BTreeMap::new();
+    sources.insert("bio.qv".to_owned(), stated);
+    sources.insert("bio_slots.qv".to_owned(), BIO_SLOTS.to_owned());
+    let refused = load_resource_contract_sources(&sources).unwrap_err();
+    assert!(
+        refused
+            .to_string()
+            .contains("a callback clause stands only beside retentions and plain predicates"),
+        "{refused}"
+    );
+}
+
+// Card OPENSSL-BIO-READER-INVOCATIONS (gateway rule 57 amended; contract
+// specification C04.5 "Beside a slot invocation"): the PEM and PKCS#12
+// readers state the 14 BIO slots on their BIO formal beside their
+// literal-argument premise. In this target too, so the read census needs no
+// new unit.
+
+const PEM: &str =
+    include_str!("../../../providers/quirin-provider-openssl/contracts/openssl/pem.qv");
+const PKCS12: &str =
+    include_str!("../../../providers/quirin-provider-openssl/contracts/openssl/pkcs12.qv");
+const X509: &str =
+    include_str!("../../../providers/quirin-provider-openssl/contracts/openssl/x509.qv");
+const EVP: &str =
+    include_str!("../../../providers/quirin-provider-openssl/contracts/openssl/evp.qv");
+
+/// The readers' callers: each within its premise (a null `x` or `p12`, a null
+/// `cb`, the shape of the predecessor fixture's `read_cert` and Monkey's
+/// `tls_load_builtin_credentials`), and each reuse arm outside it.
+const READERS: &str = "\
+#define NULL ((void *)0)
+typedef struct x509_st X509;
+typedef struct evp_pkey_st EVP_PKEY;
+typedef struct PKCS12_st PKCS12;
+typedef int pem_password_cb(char *buf, int size, int rwflag, void *u);
+X509 *PEM_read_bio_X509(BIO *out, X509 **x, pem_password_cb *cb, void *u);
+EVP_PKEY *PEM_read_bio_PrivateKey(BIO *out, EVP_PKEY **x, pem_password_cb *cb, void *u);
+PKCS12 *d2i_PKCS12_bio(BIO *bp, PKCS12 **p12);
+void X509_free(X509 *a);
+void EVP_PKEY_free(EVP_PKEY *pkey);
+void PKCS12_free(PKCS12 *a);
+int read_cert(BIO *bio) { X509 *c = PEM_read_bio_X509(bio, NULL, NULL, NULL); if (!c) return -1; X509_free(c); return 0; }
+int read_key(BIO *bio) { EVP_PKEY *k = PEM_read_bio_PrivateKey(bio, NULL, NULL, NULL); if (!k) return -1; EVP_PKEY_free(k); return 0; }
+int read_p12(BIO *bio) { PKCS12 *p = d2i_PKCS12_bio(bio, NULL); if (!p) return -1; PKCS12_free(p); return 0; }
+int read_cert_reuse(BIO *bio, X509 **slot) { X509 *c = PEM_read_bio_X509(bio, slot, NULL, NULL); if (!c) return 0; return 1; }
+int read_p12_reuse(BIO *bio, PKCS12 **slot) { PKCS12 *p = d2i_PKCS12_bio(bio, slot); if (!p) return 0; return 1; }
+";
+
+const WITHIN: [&str; 3] = ["read_cert", "read_key", "read_p12"];
+const OUTSIDE: [&str; 2] = ["read_cert_reuse", "read_p12_reuse"];
+
+fn reader_contracts(with_slots: bool) -> ResourceContracts {
+    let mut modules = vec![
+        ("pem.qv", PEM),
+        ("pkcs12.qv", PKCS12),
+        ("x509.qv", X509),
+        ("evp.qv", EVP),
+    ];
+    if with_slots {
+        modules.push(("bio_slots.qv", BIO_SLOTS));
+    }
+    contracts(&modules)
+}
+
+fn reader_run(registrar: &str, contracts: &ResourceContracts) -> Arc<RunMemberFacts> {
+    Arc::new(RunMemberFacts::new(
+        vec![facts(registrar), facts(READERS), declared(contracts)],
+        BTreeMap::new(),
+    ))
+}
+
+fn reader_row(
+    name: &str,
+    run: Option<Arc<RunMemberFacts>>,
+    contracts: &ResourceContracts,
+) -> (AnalysisStatus, Vec<String>) {
+    let text = format!("{HEADERS}{READERS}");
+    let outcome = scoped(run, || {
+        analyze_unrestricted_c11(
+            &C11TranslationUnit {
+                source: &text,
+                ..Default::default()
+            },
+            name,
+            contracts,
+        )
+    })
+    .expect("analysed");
+    let summary = match &outcome {
+        UnrestrictedLegacyResult::Safe(certificate) => &certificate.summary,
+        UnrestrictedLegacyResult::Unsafe(summary) => summary,
+        UnrestrictedLegacyResult::Unknown { partial, .. } => {
+            partial.as_ref().expect("a partial summary")
+        }
+    };
+    let row = &summary.functions[name];
+    let leaves = row
+        .diagnostics
+        .iter()
+        .filter_map(|diagnostic| match &diagnostic.kind {
+            LegacyDiagnosticKind::Unsupported { description } => Some(description.clone()),
+            _ => None,
+        })
+        .collect();
+    (row.status, leaves)
+}
+
+/// Each reader is withheld and invokes every BIO key on its BIO formal
+/// (position 0) with every actual the callee's own; the PEM readers keep
+/// their password callback's null default.
+#[test]
+fn the_readers_state_every_bio_slot() {
+    let contracts = reader_contracts(true);
+    for (reader, invocations) in [
+        ("PEM_read_bio_X509", 15),
+        ("PEM_read_bio_PrivateKey", 15),
+        ("d2i_PKCS12_bio", 14),
+    ] {
+        assert!(contracts.contract(reader).is_none(), "{reader}");
+        let declaration = contracts.retaining_contract(reader).expect("withheld");
+        assert_eq!(declaration.callbacks.len(), invocations, "{reader}");
+        for key in BIO_KEYS {
+            let invoked = declaration.callbacks.iter().find(|clause| {
+                matches!(clause, CallbackClause::MemberInvoked { slot: true, member, .. }
+                    if member.spelling() == key)
+            });
+            let Some(CallbackClause::MemberInvoked {
+                object, actuals, ..
+            }) = invoked
+            else {
+                panic!("{reader} invokes {key}");
+            };
+            assert!(
+                matches!(
+                    object,
+                    qcore_schemas::callback::MemberObject::Parameter { index: 0 }
+                ),
+                "{reader} {key}"
+            );
+            assert!(
+                actuals
+                    .iter()
+                    .all(|actual| matches!(actual, CallbackActual::Supplied)),
+                "{reader} {key}: {actuals:?}"
+            );
+        }
+        let defaults = declaration
+            .callbacks
+            .iter()
+            .filter(|clause| {
+                matches!(
+                    clause,
+                    CallbackClause::Invoked {
+                        null_default: true,
+                        ..
+                    }
+                )
+            })
+            .count();
+        assert_eq!(defaults, invocations - 14, "{reader}");
+    }
+}
+
+/// Within the premise, with nothing or only identity candidates registered,
+/// the readers decide: the r29 null-callback reading does not regress.
+#[test]
+fn identity_bio_candidates_decide_the_readers() {
+    if !clang_available() {
+        return;
+    }
+    let contracts = reader_contracts(true);
+    for registrar in [
+        "void nothing(void) { }\n",
+        "void reg(BIO *b, BIO_METHOD *m) { BIO_set_callback_ex(b, bio_cb_ok); \
+         BIO_meth_set_write(m, bio_write_ok); }\n",
+    ] {
+        let run = reader_run(registrar, &contracts);
+        for name in WITHIN {
+            let (status, leaves) = reader_row(name, Some(run.clone()), &contracts);
+            assert!(!refused(&leaves, "callback-"), "{name}: {leaves:?}");
+            assert_eq!(status, AnalysisStatus::Safe, "{name}: {leaves:?}");
+        }
+    }
+}
+
+/// A BIO candidate with no contract in force, or one releasing the BIO it is
+/// handed, refuses every reader within its premise, naming the candidate.
+#[test]
+fn a_bio_candidate_that_is_not_the_identity_refuses_the_readers() {
+    if !clang_available() {
+        return;
+    }
+    let contracts = reader_contracts(true);
+    for (registrar, candidate) in [
+        (
+            "void reg(BIO_METHOD *m) { BIO_meth_set_write(m, bio_write_uncontracted); }\n",
+            "bio_write_uncontracted",
+        ),
+        (
+            "void reg(BIO *b) { BIO_set_callback_ex(b, bio_cb_uncontracted); }\n",
+            "bio_cb_uncontracted",
+        ),
+        (
+            "void reg(BIO_METHOD *m) { BIO_meth_set_destroy(m, bio_destroy_releasing); }\n",
+            "bio_destroy_releasing",
+        ),
+    ] {
+        let run = reader_run(registrar, &contracts);
+        for name in WITHIN {
+            let (status, leaves) = reader_row(name, Some(run.clone()), &contracts);
+            assert_ne!(status, AnalysisStatus::Safe, "{name}");
+            assert!(
+                leaves
+                    .iter()
+                    .any(|leaf| leaf.contains(candidate) && leaf.contains("callback-")),
+                "{name}: {leaves:?}"
+            );
+        }
+    }
+}
+
+/// Outside the premise the call is undeclared before the callback route:
+/// no BIO slot is decided there, even with an uncontracted candidate
+/// registered.
+#[test]
+fn a_reader_outside_its_premise_decides_no_bio_slot() {
+    if !clang_available() {
+        return;
+    }
+    let contracts = reader_contracts(true);
+    let run = reader_run(
+        "void reg(BIO *b) { BIO_set_callback_ex(b, bio_cb_uncontracted); }\n",
+        &contracts,
+    );
+    for name in OUTSIDE {
+        let (status, leaves) = reader_row(name, Some(run.clone()), &contracts);
+        assert_ne!(status, AnalysisStatus::Safe, "{name}");
+        assert!(
+            refused(&leaves, "outside its declared literal-argument premise"),
+            "{name}: {leaves:?}"
+        );
+        assert!(!refused(&leaves, "callback-"), "{name}: {leaves:?}");
+        assert!(
+            !refused(&leaves, "bio_cb_uncontracted"),
+            "{name}: {leaves:?}"
+        );
+    }
+}
+
+/// Without `bio_slots.qv` no loaded declaration registers a BIO key, and
+/// without the run's facts no slot is decided: either way the readers
+/// refuse within their premise.
+#[test]
+fn a_reader_bio_slot_without_registrations_or_run_facts_refuses() {
+    if !clang_available() {
+        return;
+    }
+    let unregistered = reader_contracts(false);
+    let run = reader_run("void nothing(void) { }\n", &unregistered);
+    for name in WITHIN {
+        let (status, leaves) = reader_row(name, Some(run.clone()), &unregistered);
+        assert_ne!(status, AnalysisStatus::Safe, "{name}");
+        assert!(
+            refused(&leaves, "no declaration registers"),
+            "{name}: {leaves:?}"
+        );
+    }
+    let contracts = reader_contracts(true);
+    for name in WITHIN {
+        let (status, leaves) = reader_row(name, None, &contracts);
+        assert_ne!(status, AnalysisStatus::Safe, "{name}: {leaves:?}");
+    }
 }

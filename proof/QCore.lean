@@ -316,6 +316,8 @@ import QCore.ObsReordering
 import QCore.ObservedWaitComposition
 import QCore.OpCallbacks
 import QCore.OpaqueCallbackSlots
+import QCore.OpensslBioReaders
+import QCore.OpensslBioSlots
 import QCore.OpensslCalleeShapes
 import QCore.OpensslContractPlugin
 import QCore.OpensslHandshakeSlots
