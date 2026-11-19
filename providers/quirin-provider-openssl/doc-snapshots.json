@@ -2862,6 +2862,86 @@
    "error": "curl: (22) The requested URL returned error: 404",
    "page": "SSL_extension_supported",
    "fetched_on": "2026-11-18"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/BIO_set_callback/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "bcc25c0b1dee067013f3f18c969c71bcbc10d449627ac803d296fcafcd822efe",
+   "bytes": 1091600,
+   "name": "BIO_set_callback_ex, BIO_get_callback_ex, BIO_set_callback, BIO_get_callback, BIO_set_callback_arg, BIO_get_callback_arg, BIO_debug_callback, BIO_debug_callback_ex, BIO_callback_fn_ex, BIO_callback_fn - BIO callback functions",
+   "history": "The BIO_debug_callback_ex() function was added in OpenSSL 3.0. BIO_set_callback(), BIO_get_callback(), and BIO_debug_callback() were deprecated in OpenSSL 3.0. Use the non-deprecated _ex functions instead.",
+   "null_sentences": [],
+   "reference_sentences": [],
+   "page": "BIO_set_callback",
+   "fetched_on": "2026-11-19"
+  },
+  {
+   "url": "https://docs.openssl.org/1.1.1/man3/BIO_set_callback/",
+   "series": "1.1.1",
+   "fetched": true,
+   "sha256": "a408da1b2a2e967c73a8c48826bb27f0c9b5c66daab821a73b0751b27cd2eb52",
+   "bytes": 680471,
+   "name": "BIO_set_callback_ex, BIO_get_callback_ex, BIO_set_callback, BIO_get_callback, BIO_set_callback_arg, BIO_get_callback_arg, BIO_debug_callback, BIO_callback_fn_ex, BIO_callback_fn - BIO callback functions",
+   "history": null,
+   "null_sentences": [],
+   "reference_sentences": [],
+   "page": "BIO_set_callback",
+   "fetched_on": "2026-11-19"
+  },
+  {
+   "url": "https://docs.openssl.org/1.0.2/man3/BIO_set_callback/",
+   "series": "1.0.2",
+   "fetched": true,
+   "sha256": "2e8987c661de7bf85378fcef83fa25d483a3edacefc442bc38bd89998ec66f48",
+   "bytes": 282488,
+   "name": "BIO_set_callback, BIO_get_callback, BIO_set_callback_arg, BIO_get_callback_arg, BIO_debug_callback - BIO callback functions",
+   "history": null,
+   "null_sentences": [],
+   "reference_sentences": [],
+   "page": "BIO_set_callback",
+   "fetched_on": "2026-11-19"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/BIO_meth_new/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "c8e17502151429c08ccf1a0c204e85cb182f7e8b581ee98250c6e0451dacdc0e",
+   "bytes": 1099402,
+   "name": "BIO_get_new_index, BIO_meth_new, BIO_meth_free, BIO_meth_get_read_ex, BIO_meth_set_read_ex, BIO_meth_get_write_ex, BIO_meth_set_write_ex, BIO_meth_get_write, BIO_meth_set_write, BIO_meth_get_read, BIO_meth_set_read, BIO_meth_get_puts, BIO_meth_set_puts, BIO_meth_get_gets, BIO_meth_set_gets, BIO_meth_get_ctrl, BIO_meth_set_ctrl, BIO_meth_get_create, BIO_meth_set_create, BIO_meth_get_destroy, BIO_meth_set_destroy, BIO_meth_get_callback_ctrl, BIO_meth_set_callback_ctrl, BIO_meth_set_sendmmsg, BIO_meth_get_sendmmsg, BIO_meth_set_recvmmsg, BIO_meth_get_recvmmsg - Routines to build up BIO methods",
+   "history": "The functions BIO_meth_get_sendmmsg(), BIO_meth_set_sendmmsg(), BIO_meth_get_recvmmsg() and BIO_meth_set_recvmmsg() were added in OpenSSL 3.2. All the other functions described here were added in OpenSSL 1.1.0. The functions BIO_meth_get_read_ex(), BIO_meth_get_write_ex(), BIO_meth_get_write(), BIO_meth_get_read(), BIO_meth_get_puts(), BIO_meth_get_gets(), BIO_meth_get_ctrl(), BIO_meth_get_create(), BIO_meth_get_destroy(), BIO_meth_get_callback_ctrl(), BIO_meth_get_sendmmsg() and BIO_meth_get_recvmmsg() are deprecated since OpenSSL 3.5.",
+   "null_sentences": [
+    "If the argument is NULL, nothing is done.",
+    "BIO_meth_get_puts() and BIO_meth_set_puts() get and set the function used for writing a NULL terminated string to the BIO respectively.",
+    "BIO_meth_new(int type, const char *name) returns a valid BIO_METHOD or NULL if an error occurred."
+   ],
+   "reference_sentences": [],
+   "page": "BIO_meth_new",
+   "fetched_on": "2026-11-19"
+  },
+  {
+   "url": "https://docs.openssl.org/1.1.1/man3/BIO_meth_new/",
+   "series": "1.1.1",
+   "fetched": true,
+   "sha256": "dfbba310560ac44c4c04a84cf100188fc8b9fc6a445cbc1fd6cc51aec06c8ab8",
+   "bytes": 686775,
+   "name": "BIO_get_new_index, BIO_meth_new, BIO_meth_free, BIO_meth_get_read_ex, BIO_meth_set_read_ex, BIO_meth_get_write_ex, BIO_meth_set_write_ex, BIO_meth_get_write, BIO_meth_set_write, BIO_meth_get_read, BIO_meth_set_read, BIO_meth_get_puts, BIO_meth_set_puts, BIO_meth_get_gets, BIO_meth_set_gets, BIO_meth_get_ctrl, BIO_meth_set_ctrl, BIO_meth_get_create, BIO_meth_set_create, BIO_meth_get_destroy, BIO_meth_set_destroy, BIO_meth_get_callback_ctrl, BIO_meth_set_callback_ctrl - Routines to build up BIO methods",
+   "history": "The functions described here were added in OpenSSL 1.1.0.",
+   "null_sentences": [
+    "BIO_meth_get_puts() and BIO_meth_set_puts() get and set the function used for writing a NULL terminated string to the BIO respectively.",
+    "BIO_meth_new(int type, const char *name) returns a valid BIO_METHOD or NULL if an error occurred."
+   ],
+   "reference_sentences": [],
+   "page": "BIO_meth_new",
+   "fetched_on": "2026-11-19"
+  },
+  {
+   "url": "https://docs.openssl.org/1.0.2/man3/BIO_meth_new/",
+   "series": "1.0.2",
+   "fetched": false,
+   "error": "curl: (22) The requested URL returned error: 404",
+   "page": "BIO_meth_new",
+   "fetched_on": "2026-11-19"
   }
  ]
 }

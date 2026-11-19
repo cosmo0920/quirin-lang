@@ -1,0 +1,36 @@
+{
+ "schema": "quirin-amendments/1",
+ "card": "OPENSSL-BIO-METHODS-AND-CALLBACKS",
+ "base": "f659b24f5",
+ "measured_tip": "b57e81305",
+ "increment_paragraph": "**OPENSSL-BIO-METHODS-AND-CALLBACKS (2026-11-19).** User decision 2026-11-19 launches the follow-up OPENSSL-UNDECLARED-HANDSHAKE-CALLBACKS recorded. BIO_free read silently that dropping a BIO's last reference runs its callback (BIO_CB_FREE), its method's destroy function and the BIO class's ex_data free callbacks; it now names the premise openssl_bio_free_callbacks (C04.18), as SSL_free does for the BIOs it frees. Stating the invocation was checked and not done: C04.19 rejects a callback clause beside a reference drop, and lifting that check alone is unsound because a candidate's requirement on the dropped formal is applied by the callback route after the reference route in the transfer (OPENSSL-FREE-SESSION-REMOVE-INVOCATION, whose discharge now includes these invocations). quirin-provider-openssl states fourteen more opaque slots (C04.19.3, rule 12n amended in place): a BIO's callback (bio_st.bio_callback_ex, bio_st.bio_callback) and one key per function of a method table (bio_method_st.meth_write_ex ... meth_recvmmsg), each written by the one setter its 3.5 page names (new module bio_slots.qv, 14 setters; two page snapshots added, prototypes pinned, every existing entry byte-identical). The method table is a holder-to-holder slot: its holder is the BIO_METHOD a setter is handed, which reaches the SSL through BIO_new and SSL_set_bio; the key is run-wide, so the set is every function any table's setter is handed, beside the built-in methods, which the new library-value premise openssl_builtin_bio_methods names. SSL_write/read/connect/do_handshake and SSL_shutdown invoke all fourteen on ssl with every actual _ (41 and 17 invocations); openssl_unstated_callback_slots drops the BIOs from its statement. Keys are named after their setters: a first tip run with the library's field names (ctrl, create, destroy, callback) found every BIO key open, since rule 12n's pre-pass then read units naming those generic tokens, among them wasm_loader.c, whose AST exceeds the reader's recursion limit and so also opened rd_kafka_op_s.rko_op_cb and moved 6 rows Safe to Unknown (fail-closed, evidence kept). No gateway code changed. Lean QCore.OpensslBioSlots (11 theorems), audited. contracts.lock adds 14 entries and changes 8 digests (BIO_free, SSL_free, SSL_CTX_free, the five I/O and shutdown calls). Opt-in current over Fluent Bit 046accf6 (base f659b24f5 vs tip b57e81305): 1098 Safe / 2 Pending / 3699 Unknown / 5 Unsafe in both, no row moved, no row changed content; bindings 99 to 113, all Pending; all fourteen BIO slots closed and empty, as predicted. Pinned routes read no user load path and no gateway code changed: no move predicted, measure --declared deferred to the integrator.",
+ "status_paragraph": null,
+ "ledger": [
+  {
+   "id": "OPENSSL-BIO-METHODS-AND-CALLBACKS",
+   "operation": "retire",
+   "why": "OPENSSL-BIO-METHODS-AND-CALLBACKS (2026-11-19): a BIO's callback and the twelve functions of its method table are stated opaque slots with every writer their 3.5 pages name (14 setters in bio_slots.qv), the method table read as a holder-to-holder slot (run-wide key, BIO_METHOD holder reaching the SSL through BIO_new and SSL_set_bio) beside the library-value premise openssl_builtin_bio_methods for the built-in methods; the four handshake and I/O calls and SSL_shutdown invoke all fourteen, and openssl_unstated_callback_slots no longer names the BIOs. BIO_free (and SSL_free) name openssl_bio_free_callbacks for the callback, destroy function and ex_data free callbacks a BIO's last drop runs; stating those invocations waits on OPENSSL-FREE-SESSION-REMOVE-INVOCATION's clause beside a drop (appended there). The BIO readers' silent invocations are OPENSSL-BIO-READER-INVOCATIONS.",
+   "source": "docs/reports/openssl-bio-methods-and-callbacks/README.md"
+  },
+  {
+   "id": "OPENSSL-BIO-READER-INVOCATIONS",
+   "operation": "register",
+   "title": "The PEM and PKCS#12 BIO readers run the BIO's callback and methods unstated",
+   "text": "PEM_read_bio_X509, PEM_read_bio_PrivateKey and d2i_PKCS12_bio read through the caller's BIO, so they run its callback (bio_st.bio_callback_ex / bio_callback: 'called during most high-level BIO operations', BIO_set_callback 3.5) and its method table's read, gets and ctrl functions (bio_method_st.*), and their declarations neither state that nor name a premise for it. The slots are stated since OPENSSL-BIO-METHODS-AND-CALLBACKS, but a slot invocation cannot stand beside these declarations' literal-argument premise (rule 57: 'a literal-argument premise stands beside a synchronous invocation only'). DISCHARGE: admit a slot invocation beside a literal-argument premise (rule 57 amended, the invocation decided only at calls the premise holds for) and state the BIO slots on the readers with openssl_builtin_bio_methods, or name a premise for them; Lean beside QCore.OpensslBioSlots. Size: small to medium.",
+   "source": "docs/reports/openssl-bio-methods-and-callbacks/README.md",
+   "recorded_by": "OPENSSL-BIO-METHODS-AND-CALLBACKS"
+  },
+  {
+   "id": "OPENSSL-FREE-SESSION-REMOVE-INVOCATION",
+   "operation": "append",
+   "text": "OPENSSL-BIO-METHODS-AND-CALLBACKS adds to the same discharge: BIO_free and SSL_free run a BIO's callback (bio_st.bio_callback_ex, bio_callback, with BIO_CB_FREE and the BIO as `a`) and its destroy function (bio_method_st.meth_destroy) beside their reference drop, now covered by openssl_bio_free_callbacks; once a slot invocation stands beside a drop (the candidates' requirements on the dropped formal applied before the drop, which legacy_transfer.rs orders after it today), state them there and narrow that premise to the ex_data free callbacks.",
+   "source": "docs/reports/openssl-bio-methods-and-callbacks/README.md"
+  },
+  {
+   "id": "OPENSSL-REMAINING-HANDSHAKE-SETTERS",
+   "operation": "append",
+   "text": "Since OPENSSL-BIO-METHODS-AND-CALLBACKS the BIOs are stated slots, so after this card the premise names only the ctrl arms, CT and ex_data.",
+   "source": "docs/reports/openssl-bio-methods-and-callbacks/README.md"
+  }
+ ]
+}

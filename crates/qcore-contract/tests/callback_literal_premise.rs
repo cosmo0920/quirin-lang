@@ -192,3 +192,75 @@ fn the_null_default_spelling_loads_as_a_marked_invocation() {
     assert_ne!(misplaced, text);
     assert!(load(&misplaced).is_err());
 }
+
+/// Card OPENSSL-BIO-READER-INVOCATIONS (rule 57 amended, §C04.5 "Beside a
+/// slot invocation"): the BIO slots a reader runs through `out`.
+const SLOT_CALLBACK: &str = "    ensures normal resource_callback_slot_invoked(out, bio_st.bio_callback_ex, _, _, _, _, _, _, _, _);\n";
+const SLOT_READ: &str =
+    "    ensures normal resource_callback_slot_invoked(out, bio_method_st.meth_read, _, _, _);\n";
+
+#[test]
+fn a_premise_stands_beside_a_slot_invocation() {
+    let invoked = "    ensures normal resource_callback_invoked(cb, _, _, _, u);\n";
+    // Beside the synchronous invocation (the PEM readers' shape) and alone
+    // (`d2i_PKCS12_bio`'s).
+    let beside = READER.replacen(invoked, &format!("{invoked}{SLOT_CALLBACK}{SLOT_READ}"), 1);
+    let alone = READER.replacen(invoked, &format!("{SLOT_CALLBACK}{SLOT_READ}"), 1);
+    for (text, invocations) in [(&beside, 3), (&alone, 2)] {
+        assert_ne!(text, READER);
+        let contracts = load(text).expect("a premise beside a slot invocation loads");
+        assert!(contracts.functions().get("read_pem").is_none());
+        let declared = &contracts.retaining()["read_pem"];
+        assert_eq!(declared.callbacks.len(), invocations);
+        let slots = declared
+            .callbacks
+            .iter()
+            .filter(|clause| matches!(clause, CallbackClause::MemberInvoked { slot: true, .. }))
+            .count();
+        assert_eq!(slots, 2);
+        // The premise is rederived from the text, so route G withdraws the
+        // declaration, slot invocations included, at every unmet call.
+        let premises = literal_argument_premises(&sources(text)).expect("premises");
+        assert_eq!(premises["read_pem"].len(), 1);
+        assert_eq!(premises["read_pem"][0].parameter, 1);
+    }
+}
+
+#[test]
+fn a_plain_member_invocation_or_a_slot_registration_beside_a_premise_still_rejects() {
+    let invoked = "    ensures normal resource_callback_invoked(cb, _, _, _, u);\n";
+    for (replacement, why) in [
+        (
+            "    ensures normal resource_callback_member_invoked(out, bio_st.bio_callback_ex, _, _, _, _, _, _, _, _);\n",
+            "a plain member invocation",
+        ),
+        (
+            "    ensures normal resource_callback_slot_registered(out, bio_st.bio_callback_ex, cb);\n",
+            "a slot registration",
+        ),
+        (
+            "    ensures normal resource_callback_member_registered(out, bio_st.bio_callback_ex, cb);\n",
+            "a member registration",
+        ),
+    ] {
+        // Beside an admitted slot invocation (the callback `cb` is then the
+        // registration's own, not also invoked).
+        let text = READER.replacen(invoked, &format!("{SLOT_READ}{replacement}"), 1);
+        assert_ne!(text, READER, "{why}");
+        let error = load(&text).expect_err(why);
+        assert!(
+            error.contains("stands only beside") || error.contains("synchronous invocation only"),
+            "{why}: {error}"
+        );
+        assert!(literal_argument_premises(&sources(&text)).is_err(), "{why}");
+        // Without the premise the same clauses do not reject on the
+        // premise's ground, so the refusal above is the premise's.
+        let unpremised = text.replacen("    requires resource_literal_argument(x, 0);\n", "", 1);
+        if let Err(other) = load(&unpremised) {
+            assert!(
+                !other.contains("synchronous invocation only"),
+                "{why}: {other}"
+            );
+        }
+    }
+}
