@@ -99,6 +99,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [c-gateway-wave](c-gateway-wave/README.md) | C gateway refinements after the worktree sweep |
 
+| [callback-candidate-literal-premise](callback-candidate-literal-premise/README.md) | CALLBACK-CANDIDATE-LITERAL-PREMISE: a premise at a callback candidate |
+
 | [callback-member-cxx-ast-stores](callback-member-cxx-ast-stores/README.md) | CALLBACK-MEMBER-CXX-AST-STORES |
 
 | [callback-member-data-only-units](callback-member-data-only-units/README.md) | CALLBACK-MEMBER-DATA-ONLY-UNITS: every unit read for the member closure |
