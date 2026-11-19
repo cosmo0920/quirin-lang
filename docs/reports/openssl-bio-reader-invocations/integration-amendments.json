@@ -1,0 +1,24 @@
+{
+ "schema": "quirin-amendments/1",
+ "card": "OPENSSL-BIO-READER-INVOCATIONS",
+ "base": "dd0225012",
+ "measured_tip": "a3896c10c",
+ "increment_paragraph": "**OPENSSL-BIO-READER-INVOCATIONS (2026-11-19).** User decision 2026-11-19 launches the follow-up OPENSSL-BIO-METHODS-AND-CALLBACKS recorded. PEM_read_bio_X509, PEM_read_bio_PrivateKey and d2i_PKCS12_bio read through the caller's BIO, so they run its callback and its method table's functions, and until now their declarations said neither. Gateway rule 57 is amended in place: the loader admits an opaque slot invocation (resource_callback_slot_invoked, C04.19.3) beside a literal-argument premise, as it admits a synchronous invocation. Both keep nothing after the call, and route G already renames every unmet call of a retaining declaration before the callback route reads it, so a slot is decided only at calls the premise holds for, exactly as rule 12n decides it there. A plain member invocation, a registration and every other retaining clause beside a premise still reject. No gateway route code changed. The three readers state all 14 BIO slot invocations on their BIO formal with every actual _ (a chained BIO may be the one handed) and name openssl_builtin_bio_methods, whose statement now covers the call's own BIO argument; the five SSL I/O and shutdown declarations carry the same statement. No other declaration in the crate reads or writes through a caller's BIO. contracts.lock changes 8 digests (the readers, SSL_connect, SSL_do_handshake, SSL_read, SSL_shutdown, SSL_write); the user load path and quirin-plugin.json are unchanged. Lean: QCore.CallbackLiteralPremise's admission takes the slot invocation (it only grows, and only by slot invocations); new QCore.OpensslBioReaders, audited. The predecessor fixture's read_cert and pkcs12_cycle stay Pending. Opt-in current over Fluent Bit 046accf6 (base main 54d067729 vs tip a3896c10c): 1098 Safe / 2 Pending / 3699 Unknown / 5 Unsafe in both, no row moved, no row changed content (the reader rows, Monkey tls_load_builtin_credentials and librdkafka certificate loading, are Unknown on both sides with identical content); bindings 113, all Pending, as predicted. Pinned routes read no user load path: no move predicted, measure --declared deferred to the integrator.",
+ "status_paragraph": null,
+ "ledger": [
+  {
+   "id": "OPENSSL-BIO-READER-INVOCATIONS",
+   "operation": "retire",
+   "why": "OPENSSL-BIO-READER-INVOCATIONS (2026-11-19): gateway rule 57 amended in place admits an opaque slot invocation beside a literal-argument premise (decided only at calls the premise holds for, since route G renames every unmet call of a retaining declaration first); PEM_read_bio_X509, PEM_read_bio_PrivateKey and d2i_PKCS12_bio state all 14 BIO slot invocations on their BIO formal beside openssl_builtin_bio_methods, whose statement now covers the call's own BIO. Lean QCore.OpensslBioReaders beside QCore.OpensslBioSlots; no other declaration of the crate reads or writes through a caller's BIO.",
+   "source": "docs/reports/openssl-bio-reader-invocations/README.md"
+  },
+  {
+   "id": "CALLBACK-CANDIDATE-LITERAL-PREMISE",
+   "operation": "register",
+   "title": "A callback candidate's literal-argument premise is not checked at the invocation",
+   "text": "Found by OPENSSL-BIO-READER-INVOCATIONS, pre-existing. A declaration carrying a literal-argument premise (C04.5) is restricted at direct calls by route G's token rewrite, but when the same function is a callback candidate (rule 13u, rule 12n), the callback route classifies it by its contract (function-map declarations through callback_contracts::classify; withheld member-invocation declarations through candidate_composition) without checking its premise against the invocation's actuals. The three OpenSSL readers return a result, which classify reads as not the identity, so they are never applied as candidates; premise-carrying declarations in the libc, Fluent Bit, cfl and librdkafka crates were not surveyed, and one with no result could be. DISCHARGE: classify a candidate whose declaration carries a literal-argument premise as having no contract in force (or check the premise against the invocation's actuals, where a `_` never satisfies it), with a test and Lean beside QCore.CallbackLiteralPremise. Size: small.",
+   "source": "docs/reports/openssl-bio-reader-invocations/README.md",
+   "recorded_by": "OPENSSL-BIO-READER-INVOCATIONS"
+  }
+ ]
+}

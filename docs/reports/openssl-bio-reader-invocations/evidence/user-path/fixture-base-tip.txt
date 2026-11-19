@@ -1,0 +1,12 @@
+digest_cycle Pending Pending 
+engine_cycle Pending Pending 
+error_string Pending Pending 
+keep_userdata Unknown Unknown 
+peek Pending Pending 
+peer_check Pending Pending 
+pkcs12_cycle Pending Pending 
+read_cert Pending Pending 
+read_cert_reuse Unknown Unknown 
+store_flags Pending Pending 
+verify_depth Unknown Unknown 
+write_some Pending Pending 
