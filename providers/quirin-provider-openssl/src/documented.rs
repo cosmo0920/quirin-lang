@@ -186,11 +186,15 @@ pub const UNSTATED_SLOTS: &str = "openssl_unstated_callback_slots";
 /// setters of is stated where a declaration may run it, so what remains is
 /// named by kind. Card OPENSSL-BIO-METHODS-AND-CALLBACKS: a BIO's methods and
 /// callback are stated slots now, so the statement no longer names them.
-pub const UNSTATED_SLOTS_STATEMENT: &str = "a callback the call may run that no clause of this \
-declaration states (a callback slot of the SSL object or its SSL_CTX whose invocation the \
-declaration does not state, among them the SSL_CTX_callback_ctrl arms such as the servername, \
-status and ticket key callbacks, or an ex_data callback) takes, releases or retains nothing the \
-caller holds";
+/// Card **SP1-SYMBOLIC-OPENSSL-PREMISES** (C04.18.9; user decision
+/// 2026-11-20): the statement is a formula, in its canonical printing. A
+/// callback slot of the SSL object or its SSL_CTX (the `SSL_CTX_callback_ctrl`
+/// arms among them), or an ex_data callback the call may run, that no clause
+/// of the declaration states takes, releases or retains nothing the caller
+/// holds.
+pub const UNSTATED_SLOTS_STATEMENT: &str = "#slots(#of(SSL, #args) | #ctx(#of(SSL, #args)) | \
+#of(SSL_CTX, #args)) - #stated |-> #inert && quant all #o in #created | #copied | #freed: \
+#ex_data(#class(#o)) - #stated |-> #inert";
 
 /// Card **OPENSSL-BIO-METHODS-AND-CALLBACKS**: the name of the built-in BIO
 /// methods premise.
@@ -198,31 +202,39 @@ pub const BUILTIN_BIO_METHODS: &str = "openssl_builtin_bio_methods";
 
 /// Its statement. Card OPENSSL-BIO-READER-INVOCATIONS: the BIO is the one
 /// the call reads or writes through, its own BIO argument (the PEM and
-/// PKCS#12 readers) or one the SSL object holds (the I/O calls).
-pub const BUILTIN_BIO_METHODS_STATEMENT: &str = "a function of a BIO method the library defines \
-itself (the BIO_METHOD that BIO_s_socket, BIO_s_mem, BIO_f_buffer or another built-in BIO_s_ or \
-BIO_f_ function returns, which no setter is handed), run on a BIO the call reads or writes \
-through (its BIO argument or a BIO the SSL object holds) or one chained to it, takes, releases or \
-retains nothing the caller holds, and so does any callback it runs in turn on an object other \
-than the arguments of the call (the SSL object of a BIO_f_ssl BIO)";
+/// PKCS#12 readers) or one the SSL object holds (the I/O calls). Card
+/// **SP1-SYMBOLIC-OPENSSL-PREMISES**: a formula. For every BIO of that chain
+/// whose method the library defines itself, each function of the method, as
+/// run on that BIO, takes, releases or retains nothing the caller holds, and
+/// so does every callback it runs in turn on the SSL object of a BIO_f_ssl
+/// BIO when that object is not an argument of the call.
+pub const BUILTIN_BIO_METHODS_STATEMENT: &str = "quant all #b in #chain(#of(BIO, #args) | \
+#bios(#of(SSL, #args))): #method(#b) in #builtin -> #fns(#b) |-> #inert && quant all #f in \
+#fns(#b): #in_turn(#f, #ssl_of(#b) - #args) |-> #inert";
 
 /// Card **OPENSSL-BIO-METHODS-AND-CALLBACKS**: the name of the BIO free
 /// premise.
 pub const BIO_FREE: &str = "openssl_bio_free_callbacks";
 
-/// Its statement.
-pub const BIO_FREE_STATEMENT: &str = "when the call drops the last reference to a BIO (its BIO \
-argument, or a BIO the SSL object holds and the BIOs chained to it), the callback the BIO holds, \
-run with BIO_CB_FREE, the destroy function of its method and the ex_data free callbacks of the \
-BIO class take, release or retain nothing the caller holds";
+/// Its statement. Card **SP1-SYMBOLIC-OPENSSL-PREMISES**: a formula. For its
+/// BIO argument, or a BIO the SSL object holds and the BIOs chained to it,
+/// whose last reference the call drops, the callback the BIO holds run with
+/// `BIO_CB_FREE`, the destroy function of its method and the ex_data free
+/// callbacks of the BIO class take, release or retain nothing the caller
+/// holds.
+pub const BIO_FREE_STATEMENT: &str = "quant all #b in #of(BIO, #args) | \
+#chain(#bios(#of(SSL, #args))): #b in #freed -> #callback(#b, BIO_CB_FREE) |-> #inert && \
+#destroy(#b) |-> #inert && #ex_data_free(BIO) |-> #inert";
 
 /// Card **OPENSSL-UNSTATED-CALLBACK-SLOTS**: the name of the ex_data premise.
 pub const EX_DATA: &str = "openssl_ex_data_callbacks";
 
-/// Its statement.
-pub const EX_DATA_STATEMENT: &str = "an ex_data callback the call may run (a new, dup or free \
-callback CRYPTO_get_ex_new_index registers for the class of an object the call creates, copies \
-or frees) takes, releases or retains nothing the caller holds";
+/// Its statement. Card **SP1-SYMBOLIC-OPENSSL-PREMISES**: a formula. Every
+/// new, dup or free callback `CRYPTO_get_ex_new_index` registers for the
+/// class of an object the call creates, copies or frees takes, releases or
+/// retains nothing the caller holds when the call runs it.
+pub const EX_DATA_STATEMENT: &str = "quant all #o in #created | #copied | #freed: \
+#ex_data(#class(#o)) |-> #inert";
 
 /// Card **OPENSSL-EX-DATA-REGISTRY**: the classes whose objects carry
 /// ex_data, as `CRYPTO_get_ex_new_index` (3.5) DESCRIPTION lists them ("The

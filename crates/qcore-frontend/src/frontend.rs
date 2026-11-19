@@ -1500,7 +1500,10 @@ impl<'a> SourceParser<'a> {
     /// resource_premise(NAME, "STATEMENT")`: `NAME` a lowercase identifier
     /// (`[a-z][a-z0-9_]*`), the statement one plain, non-blank string with
     /// no escape and no control character, each name at most once per
-    /// declaration. Anything else rejects the module. Where a vocabulary
+    /// declaration. Card SP1-SYMBOLIC-OPENSSL-PREMISES: or `requires
+    /// resource_premise(NAME, FORMULA)`, a well-formed formula of
+    /// [`crate::premise_formula`] (C04.18.9). Anything else rejects the
+    /// module. Where a vocabulary
     /// admits the clause is its loader's (resource v1 anywhere; bounds v1
     /// only beside a `nonnull_member` clause, of any kind since card
     /// NONNULL-MEMBER-UNIFIED-QUALIFIER).
@@ -1511,48 +1514,29 @@ impl<'a> SourceParser<'a> {
         semicolon: usize,
         names: &mut BTreeSet<String>,
     ) -> Result<(), SourceParseError> {
-        let malformed = || {
-            self.error(
-                start,
-                "malformed premise: write `requires resource_premise(NAME, \"STATEMENT\");` \
-                 with a lowercase identifier and one plain string",
-            )
-        };
         if *kind != SourceContractClauseKind::Requires {
             return Err(self.error(
                 start,
-                "a named premise is a `requires` clause: `requires resource_premise(NAME, \"STATEMENT\");`",
+                "a named premise is a `requires` clause: `requires resource_premise(NAME, \"STATEMENT\");` or `requires resource_premise(NAME, FORMULA);`",
             ));
         }
+        // Card SP1-SYMBOLIC-OPENSSL-PREMISES (C04.18.9): the statement is a
+        // plain string or a symbolic formula over the closed vocabulary,
+        // read by the one reader the contract loader also uses.
         let kinds = self.tokens[start..semicolon]
             .iter()
-            .map(|token| &token.kind)
+            .map(|token| token.kind.clone())
             .collect::<Vec<_>>();
-        let [
-            _,
-            TokenKind::Symbol(Symbol::LeftParen),
-            TokenKind::Word(name),
-            TokenKind::Symbol(Symbol::Comma),
-            TokenKind::StringLiteral(statement),
-            TokenKind::Symbol(Symbol::RightParen),
-        ] = kinds.as_slice()
-        else {
-            return Err(malformed());
+        let name = match crate::premise_formula::premise_clause(&kinds) {
+            Ok(Some((name, _))) => name,
+            Ok(None) => {
+                return Err(self.error(
+                    start,
+                    "malformed premise: write `requires resource_premise(NAME, \"STATEMENT\");` or `requires resource_premise(NAME, FORMULA);` with a lowercase identifier",
+                ));
+            }
+            Err(message) => return Err(self.error(start, message)),
         };
-        let identifier = name
-            .chars()
-            .next()
-            .is_some_and(|first| first.is_ascii_lowercase())
-            && name
-                .chars()
-                .all(|c| c.is_ascii_lowercase() || c.is_ascii_digit() || c == '_');
-        if !identifier
-            || statement.trim().is_empty()
-            || statement.contains('\\')
-            || statement.chars().any(char::is_control)
-        {
-            return Err(malformed());
-        }
         if !names.insert(name.clone()) {
             return Err(self.error(
                 start,

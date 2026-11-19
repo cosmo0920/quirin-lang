@@ -114,6 +114,16 @@ fn collapse(text: &str) -> String {
     text.split_whitespace().collect::<Vec<_>>().join(" ")
 }
 
+/// Card **SP1-SYMBOLIC-OPENSSL-PREMISES**: a clause `requires
+/// resource_premise(NAME, "STATEMENT")`, a premise stated in prose.
+#[must_use]
+pub fn prose_premise(clause: &str) -> bool {
+    clause
+        .strip_prefix("requires resource_premise(")
+        .and_then(|rest| rest.split_once(','))
+        .is_some_and(|(_, statement)| statement.trim_start().starts_with('"'))
+}
+
 /// The declaration of `function` in a module's text.
 #[must_use]
 pub fn declaration(module: &str, function: &str) -> Option<Declaration> {
@@ -404,6 +414,19 @@ pub fn check_function(module_path: &str, module: &str, function: &str) -> Result
     if !(bound.0 <= pinned_version && bound.1.is_none_or(|removed| pinned_version < removed)) {
         return Err(format!(
             "{function}: `{range}` does not admit the pinned OpenSSL {pinned_version}"
+        ));
+    }
+    // Card SP1-SYMBOLIC-OPENSSL-PREMISES (contract specification C04.18.9;
+    // user decision 2026-11-20): a premise of this crate states a formula,
+    // never an English sentence.
+    if let Some(prose) = declaration
+        .clauses
+        .iter()
+        .find(|clause| prose_premise(clause))
+    {
+        return Err(format!(
+            "{function}: `{prose}` states its premise in prose; a premise of this crate is a \
+             formula (C04.18.9)"
         ));
     }
     // 4. The documented semantics.
@@ -732,17 +755,17 @@ pub fn expected_clauses(
                     name(*position)?
                 )
             }
-            Premise::UnstatedSlots => format!(
-                "requires resource_premise({UNSTATED_SLOTS}, \"{UNSTATED_SLOTS_STATEMENT}\")"
-            ),
+            Premise::UnstatedSlots => {
+                format!("requires resource_premise({UNSTATED_SLOTS}, {UNSTATED_SLOTS_STATEMENT})")
+            }
             Premise::ExDataCallbacks => {
-                format!("requires resource_premise({EX_DATA}, \"{EX_DATA_STATEMENT}\")")
+                format!("requires resource_premise({EX_DATA}, {EX_DATA_STATEMENT})")
             }
             Premise::BuiltinBioMethods => format!(
-                "requires resource_premise({BUILTIN_BIO_METHODS}, \"{BUILTIN_BIO_METHODS_STATEMENT}\")"
+                "requires resource_premise({BUILTIN_BIO_METHODS}, {BUILTIN_BIO_METHODS_STATEMENT})"
             ),
             Premise::BioFreeCallbacks => {
-                format!("requires resource_premise({BIO_FREE}, \"{BIO_FREE_STATEMENT}\")")
+                format!("requires resource_premise({BIO_FREE}, {BIO_FREE_STATEMENT})")
             }
             Premise::SlotInvoked {
                 object,
@@ -959,6 +982,64 @@ pub fn answer(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    /// Card SP1-SYMBOLIC-OPENSSL-PREMISES: a premise clause as the modules
+    /// lay it out, one line per step of its formula (a line break before each
+    /// `->` and `&&`), which the checker reads with whitespace collapsed.
+    fn premise_text(name: &str, statement: &str) -> String {
+        let body = statement
+            .replace(" && ", "\n        && ")
+            .replace(" -> ", "\n        -> ");
+        format!("    requires resource_premise({name},\n        {body});\n")
+    }
+
+    /// Card SP1-SYMBOLIC-OPENSSL-PREMISES: a premise stated in prose is
+    /// refused, whatever it says, on every declaration naming a premise;
+    /// the formula form passes.
+    #[test]
+    fn a_prose_premise_is_refused() {
+        assert!(prose_premise(
+            "requires resource_premise(openssl_ex_data_callbacks, \"anything\")"
+        ));
+        assert!(!prose_premise(&format!(
+            "requires resource_premise({EX_DATA}, {EX_DATA_STATEMENT})"
+        )));
+        assert!(!prose_premise("requires resource_contract_v1"));
+        let mut refused = 0;
+        for (name, statement) in [
+            (EX_DATA, EX_DATA_STATEMENT),
+            (UNSTATED_SLOTS, UNSTATED_SLOTS_STATEMENT),
+            (BUILTIN_BIO_METHODS, BUILTIN_BIO_METHODS_STATEMENT),
+            (BIO_FREE, BIO_FREE_STATEMENT),
+        ] {
+            let formula = premise_text(name, statement);
+            let prose = format!(
+                "    requires resource_premise({name}, \"the callbacks take, release or retain \
+                 nothing the caller holds\");\n"
+            );
+            for documented in DOCUMENTED {
+                let (path, text) = module_of(documented.function);
+                let start = text
+                    .find(&format!("extern fn {}(", documented.function))
+                    .unwrap();
+                let end = start + text[start..].find("};").unwrap();
+                if !text[start..end].contains(&formula) {
+                    continue;
+                }
+                let edited = format!(
+                    "{}{}{}",
+                    &text[..start],
+                    text[start..end].replacen(&formula, &prose, 1),
+                    &text[end..]
+                );
+                let failure = check_function(path, &edited, documented.function).unwrap_err();
+                assert!(failure.contains("in prose"), "{failure}");
+                refused += 1;
+            }
+        }
+        // Every one of the 47 premise clauses.
+        assert_eq!(refused, 47);
+    }
 
     #[test]
     fn every_contract_passes_its_own_checks() {
@@ -1193,9 +1274,7 @@ mod tests {
         assert!(check_function(path, &heap, "X509_new").is_err());
         // The unstated-slots premise removed from an I/O call.
         let (path, text) = module_of("SSL_write");
-        let premise = format!(
-            "    requires resource_premise({UNSTATED_SLOTS}, \"{UNSTATED_SLOTS_STATEMENT}\");\n"
-        );
+        let premise = premise_text(UNSTATED_SLOTS, UNSTATED_SLOTS_STATEMENT);
         assert!(text.contains(&premise));
         let unpremised = text.replacen(&premise, "", 1);
         assert!(check_function(path, &unpremised, "SSL_write").is_err());
@@ -1289,9 +1368,7 @@ mod tests {
         // The premise-free loader given the premise back, and its stated
         // invocation removed.
         let (path, text) = module_of("SSL_CTX_use_PrivateKey_file");
-        let premise = format!(
-            "    requires resource_premise({UNSTATED_SLOTS}, \"{UNSTATED_SLOTS_STATEMENT}\");\n"
-        );
+        let premise = premise_text(UNSTATED_SLOTS, UNSTATED_SLOTS_STATEMENT);
         let head = "    requires resource_library_version(openssl, documented \"1.0.2\");\n";
         let start = text.find("extern fn SSL_CTX_use_PrivateKey_file(").unwrap();
         let at = start + text[start..].find(head).unwrap() + head.len();
@@ -1402,11 +1479,8 @@ mod tests {
     /// drift-refused.
     #[test]
     fn a_drifted_unstated_slot_reading_is_refused() {
-        let premise = format!(
-            "    requires resource_premise({UNSTATED_SLOTS}, \"{UNSTATED_SLOTS_STATEMENT}\");\n"
-        );
-        let ex_data =
-            format!("    requires resource_premise({EX_DATA}, \"{EX_DATA_STATEMENT}\");\n");
+        let premise = premise_text(UNSTATED_SLOTS, UNSTATED_SLOTS_STATEMENT);
+        let ex_data = premise_text(EX_DATA, EX_DATA_STATEMENT);
         // Each newly stated invocation of a handshake call dropped, or read
         // with a supplied value where the page names the connection.
         let (path, text) = module_of("SSL_read");
@@ -1546,9 +1620,7 @@ mod tests {
     /// card states, drift-refused.
     #[test]
     fn a_drifted_handshake_slot_reading_is_refused() {
-        let premise = format!(
-            "    requires resource_premise({UNSTATED_SLOTS}, \"{UNSTATED_SLOTS_STATEMENT}\");\n"
-        );
+        let premise = premise_text(UNSTATED_SLOTS, UNSTATED_SLOTS_STATEMENT);
         // Each new invocation of a handshake call dropped.
         let (path, text) = module_of("SSL_connect");
         let start = text.find("extern fn SSL_connect(").unwrap();
@@ -1771,11 +1843,8 @@ mod tests {
         for key in bio_keys {
             slot_writers_declared(key, &snapshots).unwrap();
         }
-        let builtin = format!(
-            "    requires resource_premise({BUILTIN_BIO_METHODS}, \"{BUILTIN_BIO_METHODS_STATEMENT}\");\n"
-        );
-        let freed =
-            format!("    requires resource_premise({BIO_FREE}, \"{BIO_FREE_STATEMENT}\");\n");
+        let builtin = premise_text(BUILTIN_BIO_METHODS, BUILTIN_BIO_METHODS_STATEMENT);
+        let freed = premise_text(BIO_FREE, BIO_FREE_STATEMENT);
         // Each I/O call and SSL_shutdown: every BIO invocation dropped, an
         // actual read as the connection, the built-in premise dropped.
         for (call, object) in [
@@ -1823,15 +1892,15 @@ mod tests {
                 text[start..].replacen(&builtin, "", 1)
             );
             assert!(check_function(path, &unpremised, call).is_err(), "{call}");
-            // The narrowed statement: the old one, naming a BIO's methods,
-            // is no longer the premise.
+            // The narrowed statement: the old one, naming a BIO's methods
+            // (the slots of the BIOs the SSL object holds), is no longer the
+            // premise.
             let old = format!(
                 "{}{}",
                 &text[..start],
                 text[start..].replacen(
-                    "ticket key callbacks, or an ex_data callback)",
-                    "ticket key callbacks, a method or callback of a BIO the SSL object holds, \
-                     or an ex_data callback)",
+                    "#of(SSL_CTX, #args)) - #stated |-> #inert",
+                    "#of(SSL_CTX, #args) | #bios(#of(SSL, #args))) - #stated |-> #inert",
                     1,
                 )
             );
@@ -1843,13 +1912,13 @@ mod tests {
         // invocation dropped, the BIO given as the callback's actual, the
         // built-in premise dropped or read in its old SSL-only statement, and
         // the literal-argument premise dropped each refuse.
-        let ssl_only = BUILTIN_BIO_METHODS_STATEMENT.replacen(
-            "run on a BIO the call reads or writes through (its BIO argument or a BIO the SSL \
-             object holds) or one chained to it",
-            "run on a BIO the SSL object holds or one chained to it",
-            1,
+        // The SSL-only domain: the BIOs the SSL object holds and those chained
+        // to them, without the call's own BIO argument.
+        let (all_bios, ssl_only) = (
+            "quant all #b in #chain(#of(BIO, #args) | #bios(#of(SSL, #args))):",
+            "quant all #b in #chain(#bios(#of(SSL, #args))):",
         );
-        assert_ne!(ssl_only, BUILTIN_BIO_METHODS_STATEMENT);
+        assert!(BUILTIN_BIO_METHODS_STATEMENT.starts_with(all_bios));
         for (call, object, premise) in [
             ("PEM_read_bio_X509", "out", "x"),
             ("PEM_read_bio_PrivateKey", "out", "x"),
@@ -1884,7 +1953,7 @@ mod tests {
             assert!(body.contains(builtin.trim_end()), "{call}");
             let unpremised = edited(&builtin, "");
             assert!(check_function(path, &unpremised, call).is_err(), "{call}");
-            let old = edited(BUILTIN_BIO_METHODS_STATEMENT, &ssl_only);
+            let old = edited(all_bios, ssl_only);
             assert!(check_function(path, &old, call).is_err(), "{call}");
             let unrestricted = edited(
                 &format!("    requires resource_literal_argument({premise}, 0);\n"),
@@ -1894,7 +1963,7 @@ mod tests {
         }
         // The old statement is no longer the premise on the I/O calls either.
         let (path, text) = module_of("SSL_write");
-        let old = text.replacen(BUILTIN_BIO_METHODS_STATEMENT, &ssl_only, 1);
+        let old = text.replacen(all_bios, ssl_only, 1);
         assert_ne!(old, text);
         assert!(check_function(path, &old, "SSL_write").is_err());
         // BIO_free and SSL_free: the free premise dropped refuses; a BIO
@@ -1990,8 +2059,7 @@ mod tests {
     /// refuses, and every constructor and free is audited.
     #[test]
     fn every_ex_data_class_object_names_the_premise() {
-        let ex_data =
-            format!("    requires resource_premise({EX_DATA}, \"{EX_DATA_STATEMENT}\");\n");
+        let ex_data = premise_text(EX_DATA, EX_DATA_STATEMENT);
         let mut runs = 0;
         for (function, reading) in EX_DATA_AUDIT {
             let documented = DOCUMENTED
@@ -2142,8 +2210,7 @@ mod tests {
         ] {
             let (path, text) = module_of(function);
             let start = text.find(&format!("extern fn {function}(")).unwrap();
-            let ex_data =
-                format!("    requires resource_premise({EX_DATA}, \"{EX_DATA_STATEMENT}\");\n");
+            let ex_data = premise_text(EX_DATA, EX_DATA_STATEMENT);
             let dropped = format!(
                 "{}{}",
                 &text[..start],

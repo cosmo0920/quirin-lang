@@ -129,6 +129,66 @@ fn every_malformed_premise_rejects_the_module() {
     }
 }
 
+/// Card SP1-SYMBOLIC-OPENSSL-PREMISES (C04.18.9): a premise may state a
+/// formula. It changes no contract either, and its statement, which every
+/// rendering prints, is the formula's canonical printing.
+#[test]
+fn a_formula_premise_is_admitted_with_its_canonical_statement() {
+    let prose = "    requires resource_premise(served_queue, \"a callback the call runs takes over no reference the caller holds on q\");\n";
+    let formula = "    requires resource_premise(served_queue,\n        quant all #f in #stated:\n        #f |-> #inert);\n";
+    let text = MODULE.replace(prose, formula);
+    assert_ne!(text, MODULE);
+    let with = load_resource_contract_sources(&sources(&text)).unwrap();
+    let without = load_resource_contract_sources(&sources(&MODULE.replace(prose, ""))).unwrap();
+    assert_eq!(with.functions(), without.functions());
+    assert_eq!(
+        declared_premises(&with).unwrap()["q_wait"],
+        vec![DeclaredPremise {
+            name: "served_queue".to_owned(),
+            statement: "quant all #f in #stated: #f |-> #inert".to_owned(),
+            origin: PremiseOrigin::Declared,
+        }]
+    );
+    // The same formula spelled with other spacing and parentheses is the
+    // same premise.
+    let respelled = MODULE.replace(
+        prose,
+        "    requires resource_premise(served_queue, (quant all #f in #stated : (#f |-> #inert)));\n",
+    );
+    assert_eq!(
+        declaration_premises(&sources(&respelled)).unwrap()["q_wait"],
+        declared_premises(&with).unwrap()["q_wait"]
+    );
+}
+
+/// Fail-closed: a malformed formula, an unknown term, an ill-sorted
+/// application or an unbound variable rejects the whole module, and so does
+/// a formula quoted as prose; the premise is never dropped.
+#[test]
+fn every_malformed_formula_rejects_the_module() {
+    let good = "requires resource_premise(served_queue, \"a callback the call runs takes over no reference the caller holds on q\");";
+    for bad in [
+        "requires resource_premise(served_queue, #unknown |-> #inert);",
+        "requires resource_premise(served_queue, #freed |-> #inert);",
+        "requires resource_premise(served_queue, #x |-> #inert);",
+        "requires resource_premise(served_queue, quant all #o in #created: #ex_data(#class(#x)) |-> #inert);",
+        "requires resource_premise(served_queue, #stated);",
+        "requires resource_premise(served_queue, #stated |-> #inert &&);",
+        "requires resource_premise(served_queue, #args | #created - #freed);",
+        "requires resource_premise(served_queue, #ex_data(NOT_A_CLASS) |-> #inert);",
+        "requires resource_premise(served_queue, \"#stated |-> #inert\");",
+        "requires resource_premise(served_queue, #stated |-> #inert); requires resource_premise(served_queue, #stated |-> #inert);",
+    ] {
+        let text = MODULE.replace(good, bad);
+        assert_ne!(text, MODULE);
+        assert!(
+            load_resource_contract_sources(&sources(&text)).is_err(),
+            "{bad} must reject the module"
+        );
+        assert!(declaration_premises(&sources(&text)).is_err(), "{bad}");
+    }
+}
+
 #[test]
 fn an_environment_without_sources_declares_no_premise() {
     let contracts = qcore_schemas::contract::ResourceContracts::new([(

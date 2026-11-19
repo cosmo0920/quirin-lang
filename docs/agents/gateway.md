@@ -7467,6 +7467,25 @@ an undeclared OpenSSL producer). `QCore.NullableReferenceDrop` (12 audited,
     (`publishing_the_set_changes_no_verdict`,
     `two_sets_publish_the_same_verdict_row`); `QCore.OuterContract`
     (`static_projection_is_identity`, `runtime_never_promotes`).
+    **Amended by card SP1-SYMBOLIC-OPENSSL-PREMISES** (contract
+    specification C04.18.9; USER DECISION 2026-11-20): the statement may be
+    a formula, `requires resource_premise(NAME, FORMULA);`, over the closed,
+    sorted vocabulary C04.18.9 registers (`qcore_frontend::premise_formula`,
+    the one reader the format and the loader share). A malformed formula, an
+    unknown term or constant, an ill-sorted application, an unbound or
+    shadowing variable, and a string that is itself a formula reject the
+    whole module; the premise is never dropped. Its identity, and what
+    every reader of the record prints, is the name plus the canonical
+    printing. It is still read by no verdict: a formula that reads makes
+    nothing `Safe`. `quirin-provider-openssl` states all 47 of its premises
+    as formulas and its checker refuses a string statement
+    (`prose_premise`). **Do not** drop or weaken a premise whose formula
+    does not read, read a premise's formula as a discharged fact, or admit
+    a term outside the registered vocabulary without its specification row
+    and Lean model. `QCore.PremiseFormula` (`check_denotes`, `wf_denotes`,
+    `decision_vectors_agree`, `openssl_formulas_wf`,
+    `unstated_entails_ex_data`, `ex_data_does_not_entail_unstated`, …);
+    [report](../reports/sp1-symbolic-openssl-premises/README.md).
 
 <a id="constraint-13i"></a>
 
