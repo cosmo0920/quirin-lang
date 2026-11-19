@@ -418,7 +418,40 @@ merged on top, and it merged cleanly.
 
 The opt-in measurement above was taken before the merges, against r33. The
 merge adds r34's premise lines, which move no verdict, so it was not
-repeated. The gate below was rerun on the merge.
+repeated.
+
+**Gate on the merged tree.** Command: `sh private/toolchain/env.sh python3
+scripts/gate_scope.py --base 3b12177a3 --out private/gate-3`, on tree
+`71f17bffc`.
+
+* **Record.** [`gate/gate-3.json`](gate/gate-3.json), logs `private/gate-3/`
+  and `private/logs/gate-3.log`.
+* **Result.** Exit 0, `gate_scope: 14 steps passed`.
+* **An abandoned attempt.** A first attempt against `41eb7e959`
+  (`private/gate-2`) was stopped before its provider tests when main moved
+  to r35. It is not evidence.
+
+| Step | Exit | Counts |
+|---|---:|---|
+| submodules, `fmt`, `clippy` | 0 | 1 submodule |
+| Rust suite | 0 | 662 units, 707 summaries; 9712 passed, 0 failed, 21 ignored, 148 filtered |
+| `reevaluation_probe`, `reevaluation_followup` | 0, 0 | |
+| Lean | 0 | 455 audits |
+| Python suite | 0 | 779 tests |
+| provider package build, verify-all, verify `qcore.libevent` | 0, 0, 0 | |
+| provider tests | 0 | 49 summaries; 160 passed, 0 failed, 1 ignored |
+| provider fmt, provider clippy | 0, 0 | |
+
+**Lock against `3b12177a3`.** It is identical to the comparison against
+`41eb7e959`, because r35 did not change the lock. 11 `flexible` digests
+change:
+
+* `BIO_free`, `SSL_free`, `SSL_CTX_free`;
+* `SSL_connect`, `SSL_do_handshake`, `SSL_read`, `SSL_shutdown`,
+  `SSL_write`;
+* `PEM_read_bio_X509`, `PEM_read_bio_PrivateKey`, `d2i_PKCS12_bio`.
+
+Nothing else changes; `pinned` and `library_versions` are unchanged.
 
 **Files likely to conflict:**
 
