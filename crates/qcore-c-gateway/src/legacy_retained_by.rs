@@ -666,6 +666,38 @@ impl Parser<'_> {
                 Err(description) => return Some(refuse(self, description)),
             }
         }
+        // Card OPENSSL-FREE-SESSION-REMOVE-INVOCATION (C04.19 amended, rule
+        // 12n): a slot invocation beside a reference drop runs only when the
+        // drop is the last, which the call does not decide. What stands
+        // there is the candidates' static decision and their
+        // `resource_owned(n)` requirements, which hold before the drop
+        // whether or not it is the last (folded into the custody contract
+        // below, applied before the drop). A candidate's member-path state
+        // or a member invocation deferred to the object's constructed state
+        // would change or read the dropped object as if the slot had run:
+        // the call refuses.
+        if let Some(callbacks) = &operands.callbacks
+            && operands.references.iter().any(|reference| {
+                reference.operation == qcore_schemas::reference_count::ReferenceOperation::Dropped
+            })
+            && (!callbacks.member_paths.is_empty()
+                || !callbacks.member_uses.is_empty()
+                || !callbacks.uses.is_empty()
+                || callbacks.arms.is_some()
+                || callbacks.constructed.is_some()
+                || !callbacks.direct_member_paths.is_empty())
+        {
+            return Some(refuse(
+                self,
+                crate::callback_contracts::refusal(
+                    function,
+                    "a callback slot it invokes beside its reference drop runs only at the last \
+                     drop, which this call does not decide, and a candidate would change or read \
+                     the dropped object",
+                    crate::callback_contracts::BESIDE_DROP,
+                ),
+            ));
+        }
         for retention in &declaration.retentions {
             // Card W43-ABI-ENUM-AND-CONST-PP (rule 12w): a guarded clause a
             // decided actual fails is not in force at this call; a decided

@@ -1,0 +1,38 @@
+{
+ "schema": "quirin-amendments/1",
+ "card": "OPENSSL-FREE-SESSION-REMOVE-INVOCATION",
+ "base": "062974679",
+ "measured_tip": "76c2b4bd0",
+ "increment_paragraph": "**OPENSSL-FREE-SESSION-REMOVE-INVOCATION (2026-11-19).** User decision 2026-11-19 launches the follow-up OPENSSL-UNSTATED-CALLBACK-SLOTS recorded (appended by OPENSSL-BIO-METHODS-AND-CALLBACKS). Contract specification C04.19 is amended in place (gateway rule 12n): the loader admits opaque slot invocations (resource_callback_slot_invoked) beside reference clauses when every reference clause is a drop and every callback clause a slot invocation; a keep, a plain member invocation, a synchronous invocation, a table, a registration and a registry beside a reference clause still reject. legacy_transfer.rs now applies the callback route before the reference route, so a candidate reads the dropped object before the drop; no admitted declaration carried both before, so the swap reads nothing else. A candidate's resource_owned(n) requirement was already folded into the call's own custody mode and read before the drop. The call does not decide whether its drop is the last (the only one that runs the slot), so at a dropping call a candidate's member-path state or a member invocation deferred to the object's constructed state refuses the call (callback-beside-drop, legacy_retained_by.rs). quirin-provider-openssl: SSL_CTX_free and SSL_free state ssl_ctx_st.remove_session_cb; BIO_free and SSL_free state bio_st.bio_callback_ex, bio_st.bio_callback and bio_method_st.meth_destroy; every actual _. They name openssl_builtin_bio_methods, whose statement now covers a BIO the call frees; openssl_bio_free_callbacks names only the BIO class's ex_data free callbacks. Merged with r34 (OPENSSL-EX-DATA-REGISTRY): BIO_free, SSL_free and SSL_CTX_free keep openssl_ex_data_callbacks, and the checker's EX_DATA_AUDIT passes. Both frees keep openssl_unstated_callback_slots, against the registered discharge's reading: freeing a context frees its certificate store, whose lookup methods' free and shutdown functions are user-settable (X509_LOOKUP_meth_set_free, _set_shutdown) and no clause states (follow-up OPENSSL-FREE-INDIRECT-CALLBACKS). contracts.lock changes 11 digests; the user load path and quirin-plugin.json are unchanged. Lean: new QCore.OpensslFreeInvocations, audited; QCore.OpensslBioSlots amended (the free premise covers only ex_data). The predecessor fixture's statuses are unchanged. Opt-in current over Fluent Bit 046accf6 (base main 062974679 vs tip 76c2b4bd0): 1098 Safe / 2 Pending / 3699 Unknown / 5 Unsafe in both, no row moved, no row changed content (the rows calling a free, in librdkafka and Monkey's tls_openssl.c, are Unknown on both sides with identical content); bindings 113, all Pending, as predicted. Pinned routes read no user load path and no pinned module carries a callback clause beside a reference clause: no move predicted; this host has no pinned inputs, so measure --declared is deferred to the integrator.",
+ "status_paragraph": null,
+ "ledger": [
+  {
+   "id": "OPENSSL-FREE-SESSION-REMOVE-INVOCATION",
+   "operation": "retire",
+   "why": "OPENSSL-FREE-SESSION-REMOVE-INVOCATION (2026-11-19): C04.19 amended in place (rule 12n) admits slot invocations beside reference drops only; legacy_transfer.rs applies the callback route before the reference route, and a candidate's effect on the dropped object (member-path state, deferred member reading) refuses at a dropping call (callback-beside-drop), since the call does not decide whether its drop is the last. SSL_CTX_free and SSL_free state the session-remove slot, BIO_free and SSL_free the BIO callback and destroy slots, every actual _; openssl_bio_free_callbacks names only the BIO ex_data free callbacks. The frees keep openssl_unstated_callback_slots for the certificate store's lookup methods (OPENSSL-FREE-INDIRECT-CALLBACKS). Lean QCore.OpensslFreeInvocations.",
+   "source": "docs/reports/openssl-free-session-remove-invocation/README.md"
+  },
+  {
+   "id": "OPENSSL-FREE-INDIRECT-CALLBACKS",
+   "operation": "register",
+   "title": "The OpenSSL frees run callbacks of objects they free in turn, which no clause states",
+   "text": "Found by OPENSSL-FREE-SESSION-REMOVE-INVOCATION. The registered discharge of OPENSSL-FREE-SESSION-REMOVE-INVOCATION would have left SSL_free and SSL_CTX_free on openssl_ex_data_callbacks once the session-remove slot is stated. That premise does not cover everything the frees may run: freeing a context frees its certificate store (SSL_CTX_set_cert_store 3.5: the context takes ownership of the store), and an X509_STORE's lookup methods carry user-settable free and shutdown functions (X509_LOOKUP_meth_set_free, X509_LOOKUP_meth_set_shutdown, X509_LOOKUP_meth_new 3.5); SSL_free may drop the context's last reference. So both frees keep openssl_unstated_callback_slots. The source was not read for further indirectly freed objects (for example a client certificate engine). DISCHARGE: declare the X509_LOOKUP_meth_set_* setters as slot registrations and state the lookup slots where a store is freed (X509_STORE_free, SSL_CTX_free, SSL_free), survey the other objects the frees release for user-settable callbacks, then replace the unstated premise on the frees with openssl_ex_data_callbacks. Size: medium.",
+   "source": "docs/reports/openssl-free-session-remove-invocation/README.md",
+   "recorded_by": "OPENSSL-FREE-SESSION-REMOVE-INVOCATION"
+  },
+  {
+   "id": "CALLBACK-REQUIREMENT-BESIDE-DROP",
+   "operation": "register",
+   "title": "A slot candidate requiring the dropped object live refuses the drop",
+   "text": "Found by OPENSSL-FREE-SESSION-REMOVE-INVOCATION. Beside a reference drop, a slot candidate's resource_owned(n) requirement on the dropped formal is folded into the call's own custody mode (legacy_retained_by.rs), read before the drop, as rule 13u does elsewhere. On a reference family that rewrite leaves the drop undecided: the call refuses with reference-drop-unheld (pinned by a_candidate_effect_on_the_dropped_object_refuses), never Safe. That is fail-closed but imprecise: the caller holds the reference it drops, so the requirement holds. No OpenSSL declaration hands a slot the dropped formal (every actual is _), so no measured row reads it. DISCHARGE: at a dropping call, check a candidate's requirement on the dropped formal against the reference family before the drop instead of rewriting the custody mode, with a test and Lean beside QCore.OpensslFreeInvocations. Size: small.",
+   "source": "docs/reports/openssl-free-session-remove-invocation/README.md",
+   "recorded_by": "OPENSSL-FREE-SESSION-REMOVE-INVOCATION"
+  },
+  {
+   "id": "OPENSSL-EX-DATA-CLASS-REGISTRY",
+   "operation": "append",
+   "text": "OPENSSL-FREE-SESSION-REMOVE-INVOCATION: C04.19 now admits an opaque slot invocation beside a reference drop (applied before the drop; a candidate effect on the dropped object refuses), but still no registry invocation and no invocation beside a release, so the third gap stands for a registry read. BIO_free's and SSL_free's openssl_bio_free_callbacks now names only the BIO class's ex_data free callbacks, beside openssl_ex_data_callbacks, which every free keeps.",
+   "source": "docs/reports/openssl-free-session-remove-invocation/README.md"
+  }
+ ]
+}

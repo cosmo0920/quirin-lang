@@ -60,6 +60,11 @@
 //!    run by the handshake and I/O calls and `SSL_shutdown` beside the
 //!    library-value premise `openssl_builtin_bio_methods`; a drop of a BIO
 //!    (`BIO_free`, `SSL_free`) names `openssl_bio_free_callbacks`.
+//!    Card **OPENSSL-FREE-SESSION-REMOVE-INVOCATION**: a slot invocation
+//!    stands beside a reference drop (C04.19 amended), so a BIO's drop states
+//!    its callback and destroy slots, the frees of a connection or context
+//!    state the session-remove slot, and the free premise names only the
+//!    BIO class's ex_data free callbacks.
 //!    Card **OPENSSL-EX-DATA-REGISTRY**: a declaration that allocates,
 //!    copies or finally frees an object of an ex_data class (directly, or a
 //!    replaced or temporary object it frees inside) names
@@ -1844,8 +1849,8 @@ mod tests {
         // built-in premise dropped or read in its old SSL-only statement, and
         // the literal-argument premise dropped each refuse.
         let ssl_only = BUILTIN_BIO_METHODS_STATEMENT.replacen(
-            "run on a BIO the call reads or writes through (its BIO argument or a BIO the SSL \
-             object holds) or one chained to it",
+            "run on a BIO the call reads or writes through or frees (its BIO argument or a BIO \
+             the SSL object holds) or one chained to it",
             "run on a BIO the SSL object holds or one chained to it",
             1,
         );
@@ -1897,33 +1902,111 @@ mod tests {
         let old = text.replacen(BUILTIN_BIO_METHODS_STATEMENT, &ssl_only, 1);
         assert_ne!(old, text);
         assert!(check_function(path, &old, "SSL_write").is_err());
-        // BIO_free and SSL_free: the free premise dropped refuses; a BIO
-        // callback invocation stated beside the drop is not the documented
-        // reading either (and C04.19 rejects it).
+        // Card OPENSSL-FREE-SESSION-REMOVE-INVOCATION: BIO_free and SSL_free
+        // state the callback and destroy slots beside their drop (C04.19
+        // amended), on the freed object with every actual `_`, beside the
+        // built-in premise and the free premise narrowed to ex_data. Each
+        // invocation dropped, the freed BIO handed to the callback, the
+        // built-in premise dropped, the free premise dropped or read in its
+        // old statement (covering the callback and destroy function), and
+        // the frees' old reading (premise, no invocation) each refuse.
+        let old_freed = freed.replacen(
+            "the ex_data free callbacks of the BIO class",
+            "the callback the BIO holds, run with BIO_CB_FREE, the destroy function of its \
+             method and the ex_data free callbacks of the BIO class",
+            1,
+        );
+        assert_ne!(old_freed, freed);
+        let free_keys = [
+            "bio_st.bio_callback_ex",
+            "bio_st.bio_callback",
+            "bio_method_st.meth_destroy",
+        ];
         for (call, object) in [("BIO_free", "a"), ("SSL_free", "ssl")] {
             let (path, text) = module_of(call);
             check_function(path, text, call).unwrap();
             let start = text.find(&format!("extern fn {call}(")).unwrap();
-            assert!(text[start..].contains(&freed), "{call}");
-            let silent = format!(
-                "{}{}",
-                &text[..start],
-                text[start..].replacen(&freed, "", 1)
+            let end = start + text[start..].find("};").unwrap();
+            let body = &text[start..end];
+            let edited = |from: &str, to: &str| {
+                let edited = format!("{}{}", &text[..start], text[start..].replacen(from, to, 1));
+                assert_ne!(edited, text, "{call}: {from}");
+                edited
+            };
+            assert!(body.contains(freed.trim_end()), "{call}");
+            assert!(body.contains(builtin.trim_end()), "{call}");
+            let mut lines = Vec::new();
+            for key in free_keys {
+                let line = body
+                    .lines()
+                    .find(|line| line.contains(&format!("({object}, {key}, ")))
+                    .unwrap_or_else(|| panic!("{call} states {key}"));
+                lines.push(line);
+                let dropped = edited(&format!("{line}\n"), "");
+                assert!(
+                    check_function(path, &dropped, call).is_err(),
+                    "{call} {key}"
+                );
+            }
+            // No other BIO slot is stated beside the drop.
+            for key in bio_keys {
+                assert_eq!(
+                    body.matches(&format!("({object}, {key}, ")).count(),
+                    usize::from(free_keys.contains(&key)),
+                    "{call} {key}"
+                );
+            }
+            let handed = edited(
+                &format!("({object}, bio_st.bio_callback_ex, _,"),
+                &format!("({object}, bio_st.bio_callback_ex, {object},"),
             );
+            assert!(check_function(path, &handed, call).is_err(), "{call}");
+            let silent = edited(&freed, "");
             assert!(check_function(path, &silent, call).is_err(), "{call}");
-            let stated = format!(
+            let unbuilt = edited(&builtin, "");
+            assert!(check_function(path, &unbuilt, call).is_err(), "{call}");
+            let widened = edited(&freed, &old_freed);
+            assert!(check_function(path, &widened, call).is_err(), "{call}");
+            let mut old = text[start..].to_owned();
+            for line in &lines {
+                old = old.replacen(&format!("{line}\n"), "", 1);
+            }
+            let old = format!(
                 "{}{}",
                 &text[..start],
-                text[start..].replacen(
-                    &freed,
-                    &format!(
-                        "    ensures normal resource_callback_slot_invoked({object}, \
-                         bio_st.bio_callback_ex, {object}, _, _, _, _, _, _, _);\n"
-                    ),
-                    1,
-                )
+                old.replacen(&builtin, "", 1)
+                    .replacen(&freed, &old_freed, 1)
             );
-            assert!(check_function(path, &stated, call).is_err(), "{call}");
+            assert!(check_function(path, &old, call).is_err(), "{call}");
+        }
+        // The session-remove invocation on both frees: dropped, or handed
+        // the freed object, refuses; the frees keep the unstated premise.
+        let unstated = format!(
+            "    requires resource_premise({UNSTATED_SLOTS}, \"{UNSTATED_SLOTS_STATEMENT}\");\n"
+        );
+        for (call, object) in [("SSL_CTX_free", "ctx"), ("SSL_free", "ssl")] {
+            let (path, text) = module_of(call);
+            check_function(path, text, call).unwrap();
+            let start = text.find(&format!("extern fn {call}(")).unwrap();
+            let line = format!(
+                "    ensures normal resource_callback_slot_invoked({object}, \
+                 ssl_ctx_st.remove_session_cb, _, _);\n"
+            );
+            assert!(text[start..].contains(&line), "{call}");
+            let edited = |from: &str, to: &str| {
+                let edited = format!("{}{}", &text[..start], text[start..].replacen(from, to, 1));
+                assert_ne!(edited, text, "{call}: {from}");
+                edited
+            };
+            let dropped = edited(&line, "");
+            assert!(check_function(path, &dropped, call).is_err(), "{call}");
+            let handed = edited(
+                &format!("({object}, ssl_ctx_st.remove_session_cb, _,"),
+                &format!("({object}, ssl_ctx_st.remove_session_cb, {object},"),
+            );
+            assert!(check_function(path, &handed, call).is_err(), "{call}");
+            let unpremised = edited(&unstated, "");
+            assert!(check_function(path, &unpremised, call).is_err(), "{call}");
         }
         // A setter's registration moved to another slot, or dropped.
         let (path, text) = module_of("BIO_meth_set_write");
