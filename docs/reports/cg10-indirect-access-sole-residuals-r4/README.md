@@ -50,8 +50,15 @@ it; the finalizers' callers also need rule 66.
 
 ## 2. Declarations (step b)
 
-`providers/qcore-provider-librdkafka/contracts/librdkafka/memory.qv`, beside
-round 2's neutral helpers, each with its body quoted and its ABI stated:
+`providers/qcore-provider-librdkafka/contracts/librdkafka/lz4_stream.qv`, beside
+the neutral LZ4 codec declarations, each with its body quoted and its ABI
+stated. They were first written beside round 2's helpers in `memory.qv`
+(the tip-1 measurement); the first gate failed
+`production_symbolic_adoption` there, because `memory.qv`'s bytes are
+registered by QUANT-CONTRACT-HYPOTHESES' frozen migration record
+(`after_sha256`), so they moved, unchanged, to `lz4_stream.qv`
+(`1bcd0ebe4`; `memory.qv` is byte-identical to the base) and were
+measured again (tip 2, section 4):
 
 * `rd_jitter(int low, int high)` (`rdrand.c:130-133`): `rd_rand()` (a
   `rand_r` over a thread-local seed, or `rand()`) mixed with two `int`
@@ -124,7 +131,11 @@ vectors, the element parser, agreement, the node reading).
 | run | Safe / Pending / Unknown / Unsafe | access rows | access alone | access leaves |
 |---|---|---:|---:|---:|
 | base `9b107caf1` (`6acb901c…`) | 1,150 / 2 / 3,645 / 7 | 2,154 | 222 | 9,066 |
-| **tip `df45ff563` (`40a3b51e…`)** | **1,157 / 2 / 3,638 / 7** | **2,148** | **218** | **9,046** |
+| tip 1 `df45ff563` (`40a3b51e…`, declarations in `memory.qv`) | 1,157 / 2 / 3,638 / 7 | 2,148 | 218 | 9,046 |
+| **tip 2 `1bcd0ebe4` (same binary, declarations in `lz4_stream.qv`)** | **1,157 / 2 / 3,638 / 7** | **2,148** | **218** | **9,046** |
+
+Tip 2's report equals tip 1's row for row (statuses and leaves), so the
+evidence below, computed against tip 1, holds for tip 2.
 
 **Seven moves, every one Unknown -> Safe** ([evidence/moved-rows.jsonl](evidence/moved-rows.jsonl)):
 
@@ -225,7 +236,7 @@ card's reply for the commands, exits and counts.
 **Files likely to conflict.** `typed_access_path.rs` (the `EnumFacts` field,
 one call in `EnumFacts::collect`, the `Reader::scalar_typedefs` accessor),
 `rule_hosts.rs` (`decayed_address`), `lib.rs` (one `mod` line),
-`providers/qcore-provider-librdkafka/contracts/librdkafka/memory.qv`, its
+`providers/qcore-provider-librdkafka/contracts/librdkafka/lz4_stream.qv`, its
 `contracts.lock`, `contracts.json` and `contract-inventory.lock`,
 `compiler/tests/contract_loader.rs`, the generated `docs/agents/gateway.md`,
 `docs/agents/README.md`, `proof/QCore.lean` (`proof/AuditAll.lean` is unchanged). The OpenSSL

@@ -20,13 +20,20 @@ CG10-MEMBER-STORE-RETAINED-BY's tip (1,150 / 2 / 3,645 / 7).
 **Side trees.** The declarations live in the tree the load path reads, so
 each run reads its own revision's tree: base `git archive 9b107caf1`, tip
 `git archive df45ff563` (the code of `e9aeaa511`, the rule 66 text, Lean and
-the regenerated inventory). The tip binary was built from `e9aeaa511`'s code;
+the regenerated inventory; tip2 `git archive 1bcd0ebe4`). The tip binary was built from `e9aeaa511`'s code;
 `b5758c406` is `cargo fmt` only.
 
 | run | tree | binary sha256 | started / finished (UTC) | exit | Safe / Pending / Unknown / Unsafe | access rows | alone | leaves |
 |---|---|---|---|---:|---|---:|---:|---:|
 | base | `9b107caf1` | `6acb901c…` | 18:13:23 / 19:10:53 | 0 | 1,150 / 2 / 3,645 / 7 | 2,154 | 222 | 9,066 |
-| **tip1** | `df45ff563` | `40a3b51e…` | 19:40:24 / 20:22:12 | 0 | **1,157 / 2 / 3,638 / 7** | **2,148** | **218** | **9,046** |
+| tip1 | `df45ff563` | `40a3b51e…` | 19:40:24 / 20:22:12 | 0 | 1,157 / 2 / 3,638 / 7 | 2,148 | 218 | 9,046 |
+| **tip2** | `1bcd0ebe4` | `40a3b51e…` | 20:34:45 / 21:12:58 | 0 | **1,157 / 2 / 3,638 / 7** | **2,148** | **218** | **9,046** |
+
+tip2 is the tree after the declarations moved, unchanged, from `memory.qv`
+to `lz4_stream.qv` (the report's section 2); the binary is the same. Its
+report equals tip1's row for row (CG10-MEMBER-STORE-RETAINED-BY's
+`changed_rows.py` tip1 vs tip2: no row differs in status or leaves), so
+every tip figure and file below holds for both.
 
 Console dependency lines: base `1150 Safe row(s): 439 on no declaration, 124
 only on validated declarations, 44 on a partly validated declaration, 527 on
