@@ -83,15 +83,26 @@ contract {
 // x_crl.c 3.5.5), and so runs those keys' provider, method and engine
 // functions and a CRL's X509_CRL_METHOD free: the unstated-slots premise of a
 // free names them.
+// Card OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS: the free releases its
+// argument, so it can state none of the teardown slots of the keys it frees
+// in turn (C04.19.3 reads a slot through a borrowed parameter); it names the
+// free statement through a released argument, beside the two teardown
+// premises. A CRL's X509_CRL_METHOD free function is left too.
 extern fn PKCS12_free(a: ptr<mut, u8>) -> unit
 contract {
     requires resource_contract_v1;
     requires resource_revision(flexible);
     requires resource_library_version(openssl, documented "1.1.1");
-    requires resource_premise(openssl_unstated_callback_slots,
-        quant all #o in #freed: #teardown(#o) \ (#stated | #settable) |-> #inert);
     requires resource_premise(openssl_ex_data_callbacks,
         quant all #o in #created | #copied | #freed: #ex_data(#class(#o)) |-> #inert);
+    requires resource_premise(openssl_builtin_teardown_functions,
+        quant all #o in #freed: quant all #f in #teardown(#o): #f in #library
+        -> #f |-> #inert);
+    requires resource_premise(openssl_loaded_module_functions,
+        quant all #o in #freed: quant all #f in #teardown(#o): #f in #loaded
+        -> #f |-> #inert);
+    requires resource_premise(openssl_unstated_callback_slots,
+        quant all #o in #freed: #teardown(#o) \ #stated |-> #inert);
     ensures normal resource_released(a, nullable);
     ensures normal resource_return_none();
 };

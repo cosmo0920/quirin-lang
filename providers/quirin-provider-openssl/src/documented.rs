@@ -126,6 +126,30 @@ pub enum Premise {
     /// call's own `#freed`, so one statement names exactly what each free
     /// runs.
     UnstatedFreeSlots,
+    /// Card **OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS**: `requires
+    /// resource_premise(openssl_unstated_callback_slots, …)` with the
+    /// statement of a free through a released parameter
+    /// ([`UNSTATED_RELEASED_FREE_STATEMENT`]): a free whose argument the
+    /// declaration releases (`resource_released`) can state no slot
+    /// invocation (C04.19.3 reads a slot through a borrowed parameter), so
+    /// its premise names every teardown function no clause states, the
+    /// settable ones included.
+    UnstatedReleasedFreeSlots,
+    /// Card **OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS**: `requires
+    /// resource_premise(openssl_builtin_teardown_functions, …)`
+    /// ([`BUILTIN_TEARDOWN_STATEMENT`]), the library-value premise beside the
+    /// stated teardown slots: a teardown function the library defines itself
+    /// (a built-in method table's, a built-in engine's, or a dispatch function
+    /// of the default, base, legacy or null provider, read at 3.5.5), which
+    /// no setter of the run is handed, changes no custody the caller holds.
+    BuiltinTeardown,
+    /// Card **OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS** (user decision
+    /// 2026-11-21, "Named premise + built-in source"): `requires
+    /// resource_premise(openssl_loaded_module_functions, …)`
+    /// ([`LOADED_TEARDOWN_STATEMENT`]): a teardown function of a provider or
+    /// engine module the library loads from outside the run changes no
+    /// custody the caller holds.
+    LoadedTeardown,
     /// Card **OPENSSL-FREE-INDIRECT-CALLBACKS**: `requires
     /// resource_premise(openssl_builtin_lookup_methods, "…")`, the
     /// library-value premise beside the stated lookup method slots: a
@@ -250,14 +274,85 @@ pub const UNSTATED_SLOTS_STATEMENT: &str = "#slots(#of(SSL, #args) | #ctx(#of(SS
 pub const UNSTATED_FREE_STATEMENT: &str =
     "quant all #o in #freed: #teardown(#o) \\ (#stated | #settable) |-> #inert";
 
+/// Card **OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS**: the name of the
+/// library-value premise of the frees.
+pub const BUILTIN_TEARDOWN: &str = "openssl_builtin_teardown_functions";
+
+/// Its statement (C04.18.9). For every object the call frees, directly or in
+/// turn, each function of its teardown that the library defines itself
+/// (`#library`) takes, releases or retains nothing the caller holds. A
+/// callback such a function runs in turn on an object it frees is a member
+/// of that object's own teardown, so it is stated, or under this premise or
+/// the loaded one, on its own (reading R6 of the report).
+pub const BUILTIN_TEARDOWN_STATEMENT: &str =
+    "quant all #o in #freed: quant all #f in #teardown(#o): #f in #library -> #f |-> #inert";
+
+/// Card **OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS**: the name of the one
+/// premise the user decided for the providers (and engine modules) the
+/// library loads.
+pub const LOADED_TEARDOWN: &str = "openssl_loaded_module_functions";
+
+/// Its statement. For every object the call frees, each function of its
+/// teardown that a module the library loads defines (`#loaded`: a provider
+/// other than the built-in default, base, legacy and null providers, or an
+/// engine the dynamic engine loads) takes, releases or retains nothing the
+/// caller holds.
+pub const LOADED_TEARDOWN_STATEMENT: &str =
+    "quant all #o in #freed: quant all #f in #teardown(#o): #f in #loaded -> #f |-> #inert";
+
+/// Card **OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS**: every teardown slot
+/// (a [`SLOTS`] or [`SOURCE_SLOTS`] key run when an object is freed in
+/// turn). A free states exactly the ones its audit lists.
+pub const TEARDOWN_SLOTS: &[&str] = &[
+    "evp_pkey_asn1_method_st.asn1_meth_pkey_free",
+    "rsa_meth_st.rsa_meth_finish",
+    "dsa_method.dsa_meth_finish",
+    "dh_method.dh_meth_finish",
+    "ec_key_method_st.ec_key_meth_finish",
+    "engine_st.engine_finish",
+    "engine_st.engine_destroy",
+    "engine_st.engine_pkey_meths",
+    "engine_st.engine_pkey_asn1_meths",
+    "evp_md_st.md_meth_cleanup",
+    "evp_cipher_st.cipher_meth_cleanup",
+    "evp_pkey_method_st.pkey_meth_cleanup",
+    "async_wait_ctx_st.wait_fd_cleanup",
+];
+
+/// Card **OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS**: the statement of the
+/// unstated-slots premise on a free through a released parameter
+/// (`PKCS12_free`, `EVP_MD_CTX_free`). Every callback the free of an object
+/// the call frees runs from the object's methods, provider or engine, or
+/// holds itself, that no clause states, takes, releases or retains nothing
+/// the caller holds. It does not subtract `#settable`: such a free cannot
+/// state the slots whose setters are declared.
+pub const UNSTATED_RELEASED_FREE_STATEMENT: &str =
+    "quant all #o in #freed: #teardown(#o) \\ #stated |-> #inert";
+
 /// Card **OPENSSL-OBJECT-FREES-SILENT-METHOD-CALLBACKS**: how a free stands
 /// to the functions of methods, providers and engines of the objects it
 /// frees (the free audit, read like [`EX_DATA_AUDIT`]).
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Frees {
-    /// The free may run such functions that no clause states (OpenSSL 3.5.5,
-    /// `how`): the declaration names [`Premise::UnstatedFreeSlots`].
-    Runs { how: &'static str },
+    /// The free may run such functions (OpenSSL 3.5.5, `how`). Card
+    /// **OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS**: it states exactly the
+    /// teardown slots `slots` (each one of [`TEARDOWN_SLOTS`]) and names
+    /// [`Premise::BuiltinTeardown`] and [`Premise::LoadedTeardown`]; it names
+    /// [`Premise::UnstatedFreeSlots`] exactly when `left` is not empty, the
+    /// items no declaration can state yet.
+    Runs {
+        how: &'static str,
+        slots: &'static [&'static str],
+        left: &'static [&'static str],
+    },
+    /// Card **OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS**: the free releases
+    /// its argument (`resource_released`), so it can state no teardown slot:
+    /// it names [`Premise::UnstatedReleasedFreeSlots`] and both teardown
+    /// premises, and states no teardown slot. `left` names why.
+    RunsThroughRelease {
+        how: &'static str,
+        left: &'static [&'static str],
+    },
     /// What the free may run in turn is named by this other premise, which
     /// the declaration names; it names no free statement.
     NamedBy { premise: Premise, why: &'static str },
@@ -288,13 +383,17 @@ pub const FREE_AUDIT: &[(&str, Frees)] = &[
         Frees::Runs {
             how: "the last structural reference runs the engine's public key method and ASN.1 \
                   method callbacks and its destroy function (engine_free_util)",
+            slots: ENGINE_STRUCTURAL,
+            left: &[],
         },
     ),
     (
         "EVP_MD_CTX_free",
-        Frees::Runs {
-            how: "frees the EVP_PKEY_CTX (method cleanup, provider freectx, engine, keys) and \
-                  clears the digest (cleanup, provider freectx, engine)",
+        Frees::RunsThroughRelease {
+            how: "frees the EVP_PKEY_CTX (method cleanup, provider freectx, engine, keys, a \
+                  MAC context's cipher context) and clears the digest (cleanup, provider \
+                  freectx, engine)",
+            left: &[RELEASED_ARGUMENT],
         },
     ),
     (
@@ -302,6 +401,8 @@ pub const FREE_AUDIT: &[(&str, Frees)] = &[
         Frees::Runs {
             how: "the last reference runs the key's key management free, ASN.1 method free, \
                   RSA/DSA/DH/EC_KEY method finish and ENGINE finish",
+            slots: KEY_TEARDOWN,
+            left: &[],
         },
     ),
     (
@@ -312,9 +413,10 @@ pub const FREE_AUDIT: &[(&str, Frees)] = &[
     ),
     (
         "PKCS12_free",
-        Frees::Runs {
+        Frees::RunsThroughRelease {
             how: "frees the PKCS#7 safes' certificates (and so their keys), signer info keys \
                   and CRLs",
+            left: &[RELEASED_ARGUMENT, CRL_METHOD_FREE],
         },
     ),
     (
@@ -322,13 +424,18 @@ pub const FREE_AUDIT: &[(&str, Frees)] = &[
         Frees::Runs {
             how: "the last drop frees the context's keys, certificates, stores and client \
                   certificate engine",
+            slots: KEY_TEARDOWN,
+            left: &[CRL_METHOD_FREE],
         },
     ),
     (
         "SSL_free",
         Frees::Runs {
-            how: "the last drop frees the connection's keys, certificates, stores, async wait \
-                  context and QUIC objects, and may free its context",
+            how: "the last drop frees the connection's keys, certificates, stores, digest and \
+                  cipher contexts, async wait context and QUIC objects, and may free its \
+                  context",
+            slots: CONNECTION_TEARDOWN,
+            left: &[CRL_METHOD_FREE, QUIC_TLS_RELEASE],
         },
     ),
     (
@@ -336,15 +443,65 @@ pub const FREE_AUDIT: &[(&str, Frees)] = &[
         Frees::Runs {
             how: "the last reference frees the certificates (and so their keys) and CRLs the \
                   store holds",
+            slots: KEY_TEARDOWN,
+            left: &[CRL_METHOD_FREE],
         },
     ),
     (
         "X509_free",
         Frees::Runs {
             how: "the last reference frees the certificate's public key",
+            slots: KEY_TEARDOWN,
+            left: &[],
         },
     ),
 ];
+
+/// Card **OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS**: what a free can run
+/// that no declaration can state yet. A CRL's `X509_CRL_METHOD` free
+/// function: its only writer, `X509_CRL_METHOD_new`, stores into the method
+/// it returns, and a slot registration's holder is a parameter (C04.19.3).
+pub const CRL_METHOD_FREE: &str = "the crl_free function of the X509_CRL_METHOD of a CRL freed in \
+     turn (X509_CRL_METHOD_new registers into its result)";
+
+/// The teardown slots of a free whose argument the declaration releases: a
+/// slot invocation reads a borrowed parameter (C04.19.3), so none can be
+/// stated through it.
+pub const RELEASED_ARGUMENT: &str = "the teardown slots of the objects it frees in turn, which a \
+     slot invocation cannot read through the released argument (C04.19.3)";
+
+/// The QUIC TLS `crypto_release_rcd` callback of a TLS SSL object given
+/// `SSL_set_quic_tls_cbs`, run by `RECORD_LAYER_clear` at its free: the setter
+/// is handed a dispatch table, not a function pointer (C04.19.3).
+pub const QUIC_TLS_RELEASE: &str = "the crypto_release_rcd function of the QUIC TLS dispatch table \
+     SSL_set_quic_tls_cbs installs (a dispatch table, not a function pointer)";
+
+/// The teardown slots of a key (and so of a certificate, a store, a context
+/// or a PKCS#12 object, which free keys in turn): the ASN.1 method's free,
+/// the RSA, DSA, DH or EC_KEY method's finish, and an engine's finish,
+/// destroy and method enumerators (a key's engine may drop its last
+/// reference).
+pub const KEY_TEARDOWN: &[&str] = &[
+    "evp_pkey_asn1_method_st.asn1_meth_pkey_free",
+    "rsa_meth_st.rsa_meth_finish",
+    "dsa_method.dsa_meth_finish",
+    "dh_method.dh_meth_finish",
+    "ec_key_method_st.ec_key_meth_finish",
+    "engine_st.engine_finish",
+    "engine_st.engine_destroy",
+    "engine_st.engine_pkey_meths",
+    "engine_st.engine_pkey_asn1_meths",
+];
+
+/// `ENGINE_free`: a structural free runs no finish function.
+pub const ENGINE_STRUCTURAL: &[&str] = &[
+    "engine_st.engine_destroy",
+    "engine_st.engine_pkey_meths",
+    "engine_st.engine_pkey_asn1_meths",
+];
+
+/// `SSL_free`: every teardown slot.
+pub const CONNECTION_TEARDOWN: &[&str] = TEARDOWN_SLOTS;
 
 /// Card **OPENSSL-FREE-INDIRECT-CALLBACKS**: the name of the built-in lookup
 /// methods premise.
@@ -550,7 +707,22 @@ pub const EX_DATA_AUDIT: &[(&str, ExData)] = &[
     (
         "SSL_CTX_free",
         ExData::Runs {
-            classes: &["SSL_CTX", "X509_STORE", "X509", "EVP_PKEY", "SSL_SESSION"],
+            // Card OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS: a legacy key's
+            // free frees its RSA, DSA, DH or EC_KEY, and an ENGINE's last
+            // reference may drop with a key's or the client certificate
+            // engine's.
+            classes: &[
+                "SSL_CTX",
+                "X509_STORE",
+                "X509",
+                "EVP_PKEY",
+                "SSL_SESSION",
+                "RSA",
+                "DSA",
+                "DH",
+                "EC_KEY",
+                "ENGINE",
+            ],
             how: "the last drop frees the context, its store, certificates, keys and cached \
                   sessions",
         },
@@ -629,6 +801,11 @@ pub const EX_DATA_AUDIT: &[(&str, ExData)] = &[
                 "EVP_PKEY",
                 "X509_STORE",
                 "SSL_CTX",
+                "RSA",
+                "DSA",
+                "DH",
+                "EC_KEY",
+                "ENGINE",
             ],
             how: "the last drop frees the connection, its session, peer certificate, BIOs and \
                   certificate stores, and may drop its context's last reference",
@@ -679,8 +856,17 @@ pub const EX_DATA_AUDIT: &[(&str, ExData)] = &[
     (
         "X509_STORE_free",
         ExData::Runs {
-            classes: &["X509_STORE", "X509"],
-            how: "the last reference frees the store and the certificates it holds",
+            classes: &[
+                "X509_STORE",
+                "X509",
+                "EVP_PKEY",
+                "RSA",
+                "DSA",
+                "DH",
+                "EC_KEY",
+                "ENGINE",
+            ],
+            how: "the last reference frees the store, the certificates it holds and their keys",
         },
     ),
     (
@@ -1516,6 +1702,402 @@ pub const SLOTS: &[Slot] = &[
         writers: &["X509_LOOKUP_meth_set_get_by_alias"],
         not_writers: &[],
     },
+    // Card OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS: the teardown slots the
+    // frees run on the objects they free in turn (teardown_slots.qv). Each
+    // key is spelled after its setter, never a bare field word (`finish`,
+    // `cleanup`, `destroy`): a key segment is a member pre-pass token. The
+    // holder is the method table or engine a setter is handed; the tables
+    // and engines the library defines itself are no setter's value (premise
+    // `openssl_builtin_teardown_functions`).
+    // RSA_meth_new (3.5): the finish function "will be called in response to the
+    // application calling RSA_free()" (`r->meth->finish(r)`,
+    // crypto/rsa/rsa_lib.c:149-150 at 3.5.5). Only the finish slot runs at a
+    // free; the page's other names write slots no declaration invokes and are
+    // listed as not-writers.
+    Slot {
+        key: "rsa_meth_st.rsa_meth_finish",
+        page: "RSA_meth_new",
+        writers: &["RSA_meth_set_finish"],
+        not_writers: &[
+            "RSA_meth_get0_app_data",
+            "RSA_meth_set0_app_data",
+            "RSA_meth_new",
+            "RSA_meth_free",
+            "RSA_meth_dup",
+            "RSA_meth_get0_name",
+            "RSA_meth_set1_name",
+            "RSA_meth_get_flags",
+            "RSA_meth_set_flags",
+            "RSA_meth_get_pub_enc",
+            "RSA_meth_set_pub_enc",
+            "RSA_meth_get_pub_dec",
+            "RSA_meth_set_pub_dec",
+            "RSA_meth_get_priv_enc",
+            "RSA_meth_set_priv_enc",
+            "RSA_meth_get_priv_dec",
+            "RSA_meth_set_priv_dec",
+            "RSA_meth_get_mod_exp",
+            "RSA_meth_set_mod_exp",
+            "RSA_meth_get_bn_mod_exp",
+            "RSA_meth_set_bn_mod_exp",
+            "RSA_meth_get_init",
+            "RSA_meth_set_init",
+            "RSA_meth_get_finish",
+            "RSA_meth_get_sign",
+            "RSA_meth_set_sign",
+            "RSA_meth_get_verify",
+            "RSA_meth_set_verify",
+            "RSA_meth_get_keygen",
+            "RSA_meth_set_keygen",
+            "RSA_meth_get_multi_prime_keygen",
+            "RSA_meth_set_multi_prime_keygen",
+        ],
+    },
+    // DSA_meth_new (3.5): the finish function, "called in response to the
+    // application calling DSA_free()" (`r->meth->finish(r)`,
+    // crypto/dsa/dsa_lib.c:225-226 at 3.5.5).
+    Slot {
+        key: "dsa_method.dsa_meth_finish",
+        page: "DSA_meth_new",
+        writers: &["DSA_meth_set_finish"],
+        not_writers: &[
+            "DSA_meth_new",
+            "DSA_meth_free",
+            "DSA_meth_dup",
+            "DSA_meth_get0_name",
+            "DSA_meth_set1_name",
+            "DSA_meth_get_flags",
+            "DSA_meth_set_flags",
+            "DSA_meth_get0_app_data",
+            "DSA_meth_set0_app_data",
+            "DSA_meth_get_sign",
+            "DSA_meth_set_sign",
+            "DSA_meth_get_sign_setup",
+            "DSA_meth_set_sign_setup",
+            "DSA_meth_get_verify",
+            "DSA_meth_set_verify",
+            "DSA_meth_get_mod_exp",
+            "DSA_meth_set_mod_exp",
+            "DSA_meth_get_bn_mod_exp",
+            "DSA_meth_set_bn_mod_exp",
+            "DSA_meth_get_init",
+            "DSA_meth_set_init",
+            "DSA_meth_get_finish",
+            "DSA_meth_get_paramgen",
+            "DSA_meth_set_paramgen",
+            "DSA_meth_get_keygen",
+            "DSA_meth_set_keygen",
+        ],
+    },
+    // DH_meth_new (3.5): the finish function, run by DH_free
+    // (`r->meth->finish(r)`, crypto/dh/dh_lib.c:149-150 at 3.5.5).
+    Slot {
+        key: "dh_method.dh_meth_finish",
+        page: "DH_meth_new",
+        writers: &["DH_meth_set_finish"],
+        not_writers: &[
+            "DH_meth_new",
+            "DH_meth_free",
+            "DH_meth_dup",
+            "DH_meth_get0_name",
+            "DH_meth_set1_name",
+            "DH_meth_get_flags",
+            "DH_meth_set_flags",
+            "DH_meth_get0_app_data",
+            "DH_meth_set0_app_data",
+            "DH_meth_get_generate_key",
+            "DH_meth_set_generate_key",
+            "DH_meth_get_compute_key",
+            "DH_meth_set_compute_key",
+            "DH_meth_get_bn_mod_exp",
+            "DH_meth_set_bn_mod_exp",
+            "DH_meth_get_init",
+            "DH_meth_set_init",
+            "DH_meth_get_finish",
+            "DH_meth_get_generate_params",
+            "DH_meth_set_generate_params",
+        ],
+    },
+    // ENGINE_add (3.5): an engine's finish function runs when its last
+    // functional reference is released (`e->finish(e)`,
+    // crypto/engine/eng_init.c:66-69 at 3.5.5) and its destroy function at its
+    // last structural reference (`e->destroy(e)`,
+    // crypto/engine/eng_lib.c:95-96). Every other name on the page writes no
+    // slot a declaration invokes.
+    Slot {
+        key: "engine_st.engine_finish",
+        page: "ENGINE_add",
+        writers: &["ENGINE_set_finish_function"],
+        not_writers: &[
+            "ENGINE_get_DH",
+            "ENGINE_get_DSA",
+            "ENGINE_by_id",
+            "ENGINE_get_cipher_engine",
+            "ENGINE_get_default_DH",
+            "ENGINE_get_default_DSA",
+            "ENGINE_get_default_RAND",
+            "ENGINE_get_default_RSA",
+            "ENGINE_get_digest_engine",
+            "ENGINE_get_first",
+            "ENGINE_get_last",
+            "ENGINE_get_next",
+            "ENGINE_get_prev",
+            "ENGINE_new",
+            "ENGINE_get_ciphers",
+            "ENGINE_get_ctrl_function",
+            "ENGINE_get_digests",
+            "ENGINE_get_destroy_function",
+            "ENGINE_get_finish_function",
+            "ENGINE_get_init_function",
+            "ENGINE_get_load_privkey_function",
+            "ENGINE_get_load_pubkey_function",
+            "ENGINE_load_private_key",
+            "ENGINE_load_public_key",
+            "ENGINE_get_RAND",
+            "ENGINE_get_RSA",
+            "ENGINE_get_id",
+            "ENGINE_get_name",
+            "ENGINE_get_cmd_defns",
+            "ENGINE_get_cipher",
+            "ENGINE_get_digest",
+            "ENGINE_add",
+            "ENGINE_cmd_is_executable",
+            "ENGINE_ctrl",
+            "ENGINE_ctrl_cmd",
+            "ENGINE_ctrl_cmd_string",
+            "ENGINE_finish",
+            "ENGINE_free",
+            "ENGINE_get_flags",
+            "ENGINE_init",
+            "ENGINE_register_DH",
+            "ENGINE_register_DSA",
+            "ENGINE_register_RAND",
+            "ENGINE_register_RSA",
+            "ENGINE_register_all_complete",
+            "ENGINE_register_ciphers",
+            "ENGINE_register_complete",
+            "ENGINE_register_digests",
+            "ENGINE_remove",
+            "ENGINE_set_DH",
+            "ENGINE_set_DSA",
+            "ENGINE_set_RAND",
+            "ENGINE_set_RSA",
+            "ENGINE_set_ciphers",
+            "ENGINE_set_cmd_defns",
+            "ENGINE_set_ctrl_function",
+            "ENGINE_set_default",
+            "ENGINE_set_default_DH",
+            "ENGINE_set_default_DSA",
+            "ENGINE_set_default_RAND",
+            "ENGINE_set_default_RSA",
+            "ENGINE_set_default_ciphers",
+            "ENGINE_set_default_digests",
+            "ENGINE_set_default_string",
+            "ENGINE_set_digests",
+            "ENGINE_set_flags",
+            "ENGINE_set_id",
+            "ENGINE_set_init_function",
+            "ENGINE_set_load_privkey_function",
+            "ENGINE_set_load_pubkey_function",
+            "ENGINE_set_name",
+            "ENGINE_up_ref",
+            "ENGINE_get_table_flags",
+            "ENGINE_cleanup",
+            "ENGINE_load_builtin_engines",
+            "ENGINE_register_all_DH",
+            "ENGINE_register_all_DSA",
+            "ENGINE_register_all_RAND",
+            "ENGINE_register_all_RSA",
+            "ENGINE_register_all_ciphers",
+            "ENGINE_register_all_digests",
+            "ENGINE_set_table_flags",
+            "ENGINE_unregister_DH",
+            "ENGINE_unregister_DSA",
+            "ENGINE_unregister_RAND",
+            "ENGINE_unregister_RSA",
+            "ENGINE_unregister_ciphers",
+            "ENGINE_unregister_digests",
+        ],
+    },
+    Slot {
+        key: "engine_st.engine_destroy",
+        page: "ENGINE_add",
+        writers: &["ENGINE_set_destroy_function"],
+        not_writers: &[],
+    },
+    // EVP_PKEY_ASN1_METHOD (3.5): "The pkey_free() method helps freeing the
+    // internals of pkey", run when a legacy EVP_PKEY whose method this is is
+    // freed (evp_pkey_free_legacy, crypto/evp/p_lib.c at 3.5.5).
+    Slot {
+        key: "evp_pkey_asn1_method_st.asn1_meth_pkey_free",
+        page: "EVP_PKEY_ASN1_METHOD",
+        writers: &["EVP_PKEY_asn1_set_free"],
+        not_writers: &[
+            "EVP_PKEY_ASN1_METHOD",
+            "EVP_PKEY_asn1_new",
+            "EVP_PKEY_asn1_copy",
+            "EVP_PKEY_asn1_free",
+            "EVP_PKEY_asn1_add0",
+            "EVP_PKEY_asn1_add_alias",
+            "EVP_PKEY_asn1_set_public",
+            "EVP_PKEY_asn1_set_private",
+            "EVP_PKEY_asn1_set_param",
+            "EVP_PKEY_asn1_set_ctrl",
+            "EVP_PKEY_asn1_set_item",
+            "EVP_PKEY_asn1_set_siginf",
+            "EVP_PKEY_asn1_set_check",
+            "EVP_PKEY_asn1_set_public_check",
+            "EVP_PKEY_asn1_set_param_check",
+            "EVP_PKEY_asn1_set_security_bits",
+            "EVP_PKEY_asn1_set_set_priv_key",
+            "EVP_PKEY_asn1_set_set_pub_key",
+            "EVP_PKEY_asn1_set_get_priv_key",
+            "EVP_PKEY_asn1_set_get_pub_key",
+            "EVP_PKEY_get0_asn1",
+        ],
+    },
+    // ASYNC_WAIT_CTX_new (3.5): the cleanup routine "will automatically get
+    // called when the ASYNC_WAIT_CTX is freed" (`curr->cleanup(ctx, curr->key,
+    // curr->fd, curr->custom_data)`, crypto/async/async_wait.c:32-33 at 3.5.5).
+    Slot {
+        key: "async_wait_ctx_st.wait_fd_cleanup",
+        page: "ASYNC_WAIT_CTX_new",
+        writers: &["ASYNC_WAIT_CTX_set_wait_fd"],
+        not_writers: &[
+            "ASYNC_WAIT_CTX_new",
+            "ASYNC_WAIT_CTX_free",
+            "ASYNC_WAIT_CTX_get_fd",
+            "ASYNC_WAIT_CTX_get_all_fds",
+            "ASYNC_WAIT_CTX_get_changed_fds",
+            "ASYNC_WAIT_CTX_clear_fd",
+            "ASYNC_WAIT_CTX_set_callback",
+            "ASYNC_WAIT_CTX_get_callback",
+            "ASYNC_WAIT_CTX_set_status",
+            "ASYNC_WAIT_CTX_get_status",
+            "ASYNC_callback_fn",
+            "ASYNC_STATUS_UNSUPPORTED",
+            "ASYNC_STATUS_ERR",
+            "ASYNC_STATUS_OK",
+            "ASYNC_STATUS_EAGAIN",
+        ],
+    },
+    // EVP_MD_meth_new (3.5): "This cleanup function is called by
+    // EVP_MD_CTX_reset() and EVP_MD_CTX_free()" (`ctx->digest->cleanup(ctx)`,
+    // crypto/evp/digest.c:32-34 at 3.5.5).
+    Slot {
+        key: "evp_md_st.md_meth_cleanup",
+        page: "EVP_MD_meth_new",
+        writers: &["EVP_MD_meth_set_cleanup"],
+        not_writers: &[
+            "EVP_MD_meth_new",
+            "EVP_MD_meth_dup",
+            "EVP_MD_meth_free",
+            "EVP_MD_meth_set_input_blocksize",
+            "EVP_MD_meth_set_result_size",
+            "EVP_MD_meth_set_app_datasize",
+            "EVP_MD_meth_set_flags",
+            "EVP_MD_meth_set_init",
+            "EVP_MD_meth_set_update",
+            "EVP_MD_meth_set_final",
+            "EVP_MD_meth_set_copy",
+            "EVP_MD_meth_set_ctrl",
+            "EVP_MD_meth_get_input_blocksize",
+            "EVP_MD_meth_get_result_size",
+            "EVP_MD_meth_get_app_datasize",
+            "EVP_MD_meth_get_flags",
+            "EVP_MD_meth_get_init",
+            "EVP_MD_meth_get_update",
+            "EVP_MD_meth_get_final",
+            "EVP_MD_meth_get_copy",
+            "EVP_MD_meth_get_cleanup",
+            "EVP_MD_meth_get_ctrl",
+        ],
+    },
+    // EVP_CIPHER_meth_new (3.5): the cleanup function "to do extra cleanup
+    // before the method's private data structure is cleaned out", run when a
+    // context using a legacy cipher is reset or freed (EVP_CIPHER_CTX_reset,
+    // `ctx->cipher->cleanup(ctx)`, crypto/evp/evp_enc.c:57 at 3.5.5). Found by
+    // this card's census: the record layer's cipher contexts and a MAC
+    // context's cipher context are freed in turn.
+    Slot {
+        key: "evp_cipher_st.cipher_meth_cleanup",
+        page: "EVP_CIPHER_meth_new",
+        writers: &["EVP_CIPHER_meth_set_cleanup"],
+        not_writers: &[
+            "EVP_CIPHER_meth_new",
+            "EVP_CIPHER_meth_dup",
+            "EVP_CIPHER_meth_free",
+            "EVP_CIPHER_meth_set_iv_length",
+            "EVP_CIPHER_meth_set_flags",
+            "EVP_CIPHER_meth_set_impl_ctx_size",
+            "EVP_CIPHER_meth_set_init",
+            "EVP_CIPHER_meth_set_do_cipher",
+            "EVP_CIPHER_meth_set_set_asn1_params",
+            "EVP_CIPHER_meth_set_get_asn1_params",
+            "EVP_CIPHER_meth_set_ctrl",
+            "EVP_CIPHER_meth_get_init",
+            "EVP_CIPHER_meth_get_do_cipher",
+            "EVP_CIPHER_meth_get_cleanup",
+            "EVP_CIPHER_meth_get_set_asn1_params",
+            "EVP_CIPHER_meth_get_get_asn1_params",
+            "EVP_CIPHER_meth_get_ctrl",
+        ],
+    },
+    // EVP_PKEY_meth_new (3.5): the cleanup function, run by EVP_PKEY_CTX_free
+    // (`ctx->pmeth->cleanup(ctx)`, crypto/evp/pmeth_lib.c:394-395 at 3.5.5).
+    Slot {
+        key: "evp_pkey_method_st.pkey_meth_cleanup",
+        page: "EVP_PKEY_meth_new",
+        writers: &["EVP_PKEY_meth_set_cleanup"],
+        not_writers: &[
+            "EVP_PKEY_meth_new",
+            "EVP_PKEY_meth_free",
+            "EVP_PKEY_meth_copy",
+            "EVP_PKEY_meth_find",
+            "EVP_PKEY_meth_add0",
+            "EVP_PKEY_METHOD",
+            "EVP_PKEY_meth_set_init",
+            "EVP_PKEY_meth_set_copy",
+            "EVP_PKEY_meth_set_paramgen",
+            "EVP_PKEY_meth_set_keygen",
+            "EVP_PKEY_meth_set_sign",
+            "EVP_PKEY_meth_set_verify",
+            "EVP_PKEY_meth_set_verify_recover",
+            "EVP_PKEY_meth_set_signctx",
+            "EVP_PKEY_meth_set_verifyctx",
+            "EVP_PKEY_meth_set_encrypt",
+            "EVP_PKEY_meth_set_decrypt",
+            "EVP_PKEY_meth_set_derive",
+            "EVP_PKEY_meth_set_ctrl",
+            "EVP_PKEY_meth_set_digestsign",
+            "EVP_PKEY_meth_set_digestverify",
+            "EVP_PKEY_meth_set_check",
+            "EVP_PKEY_meth_set_public_check",
+            "EVP_PKEY_meth_set_param_check",
+            "EVP_PKEY_meth_set_digest_custom",
+            "EVP_PKEY_meth_get_init",
+            "EVP_PKEY_meth_get_copy",
+            "EVP_PKEY_meth_get_cleanup",
+            "EVP_PKEY_meth_get_paramgen",
+            "EVP_PKEY_meth_get_keygen",
+            "EVP_PKEY_meth_get_sign",
+            "EVP_PKEY_meth_get_verify",
+            "EVP_PKEY_meth_get_verify_recover",
+            "EVP_PKEY_meth_get_signctx",
+            "EVP_PKEY_meth_get_verifyctx",
+            "EVP_PKEY_meth_get_encrypt",
+            "EVP_PKEY_meth_get_decrypt",
+            "EVP_PKEY_meth_get_derive",
+            "EVP_PKEY_meth_get_ctrl",
+            "EVP_PKEY_meth_get_digestsign",
+            "EVP_PKEY_meth_get_digestverify",
+            "EVP_PKEY_meth_get_check",
+            "EVP_PKEY_meth_get_public_check",
+            "EVP_PKEY_meth_get_param_check",
+            "EVP_PKEY_meth_get_digest_custom",
+            "EVP_PKEY_meth_remove",
+        ],
+    },
 ];
 
 /// Card **CALLBACK-SUPPLIED-NULL-ACTUAL**: an argument a slot's callback may
@@ -1623,7 +2205,163 @@ pub fn nullable_argument(slot: &str, position: usize) -> bool {
     NULLABLE_ARGUMENTS
         .iter()
         .any(|nullable| nullable.slot == slot && nullable.position == position)
+        // Card OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS: or by the pinned
+        // source, for a source-derived slot.
+        || SOURCE_NULLABLE_ARGUMENTS
+            .iter()
+            .any(|nullable| nullable.slot == slot && nullable.position == position)
 }
+
+/// Card **OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS** (user decision
+/// 2026-11-21, "Admit pinned source"): the series of an entry that no 3.5
+/// manual page documents and that the pinned OpenSSL 3.5.5 release source
+/// specifies instead. Such an entry's `page` is the source file defining the
+/// function, its range is `since "3.5.5"` (the only release read), and it is
+/// cited in [`SOURCE_CITATIONS`]; it is source-derived, never documented.
+pub const SOURCE_SERIES: &str = "source 3.5.5";
+
+/// The sha256 of the pinned release tarball the source citations read
+/// (`openssl-3.5.5.tar.gz`, as published by openssl.org).
+pub const SOURCE_TARBALL_SHA256: &str =
+    "b28c91532a8b65a1f983b4c28b7488174e4a01008e29ce8e69bd789f28bc2a89";
+
+/// Card **OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS**: where the pinned
+/// source defines a source-derived function, and what its body does.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct SourceCitation {
+    pub function: &'static str,
+    /// The defining file, relative to the release's root.
+    pub file: &'static str,
+    /// The line of the definition's first line.
+    pub line: u32,
+    /// What the body does, as read.
+    pub reading: &'static str,
+}
+
+/// The source-derived functions (user decision 2026-11-21), each read at
+/// OpenSSL 3.5.5 ([`SOURCE_TARBALL_SHA256`]).
+pub const SOURCE_CITATIONS: &[SourceCitation] = &[
+    SourceCitation {
+        function: "EC_KEY_METHOD_set_init",
+        file: "crypto/ec/ec_kmeth.c",
+        line: 194,
+        reading: "stores init, finish, copy, set_group, set_private and set_public into the \
+                  method (lines 204-209) and returns nothing; EC_KEY_free runs the finish \
+                  function (crypto/ec/ec_key.c:84-85)",
+    },
+    SourceCitation {
+        function: "ENGINE_set_pkey_meths",
+        file: "crypto/engine/tb_pkmeth.c",
+        line: 92,
+        reading: "stores the function into the engine (line 94) and returns 1; the last \
+                  structural reference calls it to enumerate the methods to free \
+                  (engine_pkey_meths_free, lines 110 and 112)",
+    },
+    SourceCitation {
+        function: "ENGINE_set_pkey_asn1_meths",
+        file: "crypto/engine/tb_asnmth.c",
+        line: 105,
+        reading: "stores the function into the engine (line 107) and returns 1; the last \
+                  structural reference calls it to enumerate the methods to free \
+                  (engine_pkey_asn1_meths_free, lines 123 and 125)",
+    },
+];
+
+/// Card **OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS**: a callback slot whose
+/// writers no 3.5 manual page names (so [`Slot`]'s NAME accounting cannot
+/// apply). Its writers are every function of the pinned source that stores
+/// into the field, each declared with a source-derived entry; `invoked` cites
+/// where the source runs it.
+#[derive(Clone, Copy, Debug)]
+pub struct SourceSlot {
+    pub key: &'static str,
+    pub writers: &'static [&'static str],
+    pub invoked: &'static str,
+}
+
+/// The source-derived slots. A search of the 3.5.5 source for stores into
+/// each field (`->pkey_meths =`, `->pkey_asn1_meths =`, `->finish =` of an
+/// `EC_KEY_METHOD` and the other five) finds only these writers, beside
+/// `EC_KEY_METHOD_new`'s copy of a method (the library's own or one the
+/// writers built) and `ENGINE_cpy` in the dynamic engine.
+pub const SOURCE_SLOTS: &[SourceSlot] = &[
+    SourceSlot {
+        key: "ec_key_method_st.ec_key_meth_init",
+        writers: &["EC_KEY_METHOD_set_init"],
+        invoked: "crypto/ec/ec_key.c (EC_KEY_new_ex's init); no declaration invokes it",
+    },
+    SourceSlot {
+        key: "ec_key_method_st.ec_key_meth_finish",
+        writers: &["EC_KEY_METHOD_set_init"],
+        invoked: "crypto/ec/ec_key.c:84-85 (EC_KEY_free)",
+    },
+    SourceSlot {
+        key: "ec_key_method_st.ec_key_meth_copy",
+        writers: &["EC_KEY_METHOD_set_init"],
+        invoked: "crypto/ec/ec_key.c (EC_KEY_copy); no declaration invokes it",
+    },
+    SourceSlot {
+        key: "ec_key_method_st.ec_key_meth_set_group",
+        writers: &["EC_KEY_METHOD_set_init"],
+        invoked: "crypto/ec/ec_key.c (EC_KEY_set_group); no declaration invokes it",
+    },
+    SourceSlot {
+        key: "ec_key_method_st.ec_key_meth_set_private",
+        writers: &["EC_KEY_METHOD_set_init"],
+        invoked: "crypto/ec/ec_key.c (EC_KEY_set_private_key); no declaration invokes it",
+    },
+    SourceSlot {
+        key: "ec_key_method_st.ec_key_meth_set_public",
+        writers: &["EC_KEY_METHOD_set_init"],
+        invoked: "crypto/ec/ec_key.c (EC_KEY_set_public_key); no declaration invokes it",
+    },
+    SourceSlot {
+        key: "engine_st.engine_pkey_meths",
+        writers: &["ENGINE_set_pkey_meths"],
+        invoked: "crypto/engine/tb_pkmeth.c:110,112 (engine_pkey_meths_free)",
+    },
+    SourceSlot {
+        key: "engine_st.engine_pkey_asn1_meths",
+        writers: &["ENGINE_set_pkey_asn1_meths"],
+        invoked: "crypto/engine/tb_asnmth.c:123,125 (engine_pkey_asn1_meths_free)",
+    },
+];
+
+/// Card **OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS**: an argument the pinned
+/// source passes as NULL to a source-derived slot's callback, the source-side
+/// counterpart of [`NULLABLE_ARGUMENTS`].
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct SourceNullableArgument {
+    pub slot: &'static str,
+    pub position: usize,
+    pub citation: &'static str,
+}
+
+/// The engine's method enumerators are called first with a NULL method
+/// pointer (to read the nids), then with a NULL nids pointer (to fetch each
+/// method).
+pub const SOURCE_NULLABLE_ARGUMENTS: &[SourceNullableArgument] = &[
+    SourceNullableArgument {
+        slot: "engine_st.engine_pkey_meths",
+        position: 1,
+        citation: "crypto/engine/tb_pkmeth.c:110 `e->pkey_meths(e, NULL, &pknids, 0)`",
+    },
+    SourceNullableArgument {
+        slot: "engine_st.engine_pkey_meths",
+        position: 2,
+        citation: "crypto/engine/tb_pkmeth.c:112 `e->pkey_meths(e, &pkm, NULL, pknids[i])`",
+    },
+    SourceNullableArgument {
+        slot: "engine_st.engine_pkey_asn1_meths",
+        position: 1,
+        citation: "crypto/engine/tb_asnmth.c:123 `e->pkey_asn1_meths(e, NULL, &pknids, 0)`",
+    },
+    SourceNullableArgument {
+        slot: "engine_st.engine_pkey_asn1_meths",
+        position: 2,
+        citation: "crypto/engine/tb_asnmth.c:125 `e->pkey_asn1_meths(e, &pkm, NULL, pknids[i])`",
+    },
+];
 
 /// What the documentation supports for one function.
 #[derive(Clone, Copy, Debug)]
@@ -1684,6 +2422,9 @@ const SINCE_3_2_0: &str = "resource_library_version(openssl, since \"3.2.0\")";
 // Card OPENSSL-REMAINING-HANDSHAKE-SETTERS.
 const SINCE_1_0_1: &str = "resource_library_version(openssl, since \"1.0.1\")";
 const SINCE_3_5_0: &str = "resource_library_version(openssl, since \"3.5.0\")";
+// Card OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS: a source-derived entry
+// ([`SOURCE_SERIES`]) admits the release whose source was read.
+const SINCE_3_5_5: &str = "resource_library_version(openssl, since \"3.5.5\")";
 const DOC_3_2: &str = "resource_library_version(openssl, documented \"3.2\")";
 
 /// Card **OPENSSL-BIO-METHODS-AND-CALLBACKS**: a method table setter added in
@@ -2124,11 +2865,19 @@ const BIO_FREED: &[Premise] = &[
     BIO_SLOTS[2],
     BIO_SLOTS[11],
 ];
+/// Card **OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS**: `SSL_free` also
+/// states the teardown slots of the keys, engines, digest, cipher and public
+/// key contexts and async wait context it frees in turn, and the message
+/// and info callbacks, which the record layer's clear can run on its error
+/// path (`ossl_statem_fatal`, then `ssl3_send_alert`, `s3_msg.c` 3.5.5, the
+/// QUIC trace of the report).
 const SSL_FREED: &[Premise] = &[
     Premise::UnstatedFreeSlots,
     Premise::BioFreeCallbacks,
     Premise::ExDataCallbacks,
     REMOVE_SESSION,
+    MESSAGE,
+    INFO,
     BIO_SLOTS[0],
     BIO_SLOTS[1],
     BIO_SLOTS[2],
@@ -2136,6 +2885,21 @@ const SSL_FREED: &[Premise] = &[
     LOOKUP_FREED[0],
     LOOKUP_FREED[1],
     LOOKUP_FREED[2],
+    KEY_FREED[0],
+    KEY_FREED[1],
+    KEY_FREED[2],
+    KEY_FREED[3],
+    KEY_FREED[4],
+    KEY_FREED[5],
+    KEY_FREED[6],
+    KEY_FREED[7],
+    KEY_FREED[8],
+    KEY_FREED[9],
+    KEY_FREED[10],
+    CONTEXT_FREED[0],
+    CONTEXT_FREED[1],
+    CONTEXT_FREED[2],
+    ASYNC_FREED,
 ];
 const SSL_CTX_FREED: &[Premise] = &[
     Premise::UnstatedFreeSlots,
@@ -2144,6 +2908,17 @@ const SSL_CTX_FREED: &[Premise] = &[
     LOOKUP_FREED[0],
     LOOKUP_FREED[1],
     LOOKUP_FREED[2],
+    KEY_FREED[0],
+    KEY_FREED[1],
+    KEY_FREED[2],
+    KEY_FREED[3],
+    KEY_FREED[4],
+    KEY_FREED[5],
+    KEY_FREED[6],
+    KEY_FREED[7],
+    KEY_FREED[8],
+    KEY_FREED[9],
+    KEY_FREED[10],
 ];
 
 /// Card **OPENSSL-FREE-INDIRECT-CALLBACKS**: the last drop of a certificate
@@ -2172,7 +2947,160 @@ const X509_STORE_FREED: &[Premise] = &[
     LOOKUP_FREED[0],
     LOOKUP_FREED[1],
     LOOKUP_FREED[2],
+    KEY_FREED[0],
+    KEY_FREED[1],
+    KEY_FREED[2],
+    KEY_FREED[3],
+    KEY_FREED[4],
+    KEY_FREED[5],
+    KEY_FREED[6],
+    KEY_FREED[7],
+    KEY_FREED[8],
+    KEY_FREED[9],
+    KEY_FREED[10],
 ];
+
+/// Card **OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS**: a teardown slot run
+/// at a free on an object the free reaches in turn (`_`, the library's) or
+/// on its own argument (`Some(0)`).
+const fn on_freed(slot: &'static str, arguments: &'static [Option<usize>]) -> Premise {
+    Premise::SlotInvoked {
+        object: 0,
+        slot,
+        arguments,
+    }
+}
+
+/// The teardown slots of a key freed in turn (every actual the library's):
+/// `pkey_free(pkey)`, `finish(rsa)` and its siblings, an engine's
+/// `finish(e)`, `destroy(e)` and its method enumerators `(e, pmeth, nids,
+/// nid)`, and the two premises for the teardown functions no setter is
+/// handed.
+const KEY_FREED: [Premise; 11] = [
+    Premise::BuiltinTeardown,
+    Premise::LoadedTeardown,
+    on_freed("evp_pkey_asn1_method_st.asn1_meth_pkey_free", &[None]),
+    on_freed("rsa_meth_st.rsa_meth_finish", &[None]),
+    on_freed("dsa_method.dsa_meth_finish", &[None]),
+    on_freed("dh_method.dh_meth_finish", &[None]),
+    on_freed("ec_key_method_st.ec_key_meth_finish", &[None]),
+    on_freed("engine_st.engine_finish", &[None]),
+    on_freed("engine_st.engine_destroy", &[None]),
+    on_freed("engine_st.engine_pkey_meths", &[None; 4]),
+    on_freed("engine_st.engine_pkey_asn1_meths", &[None; 4]),
+];
+
+/// The legacy digest, cipher and public key method cleanups of contexts
+/// freed in turn, each handed the library's context.
+const CONTEXT_FREED: [Premise; 3] = [
+    on_freed("evp_md_st.md_meth_cleanup", &[None]),
+    on_freed("evp_cipher_st.cipher_meth_cleanup", &[None]),
+    on_freed("evp_pkey_method_st.pkey_meth_cleanup", &[None]),
+];
+
+/// The async wait context's fd cleanup functions, `cleanup(ctx, key, fd,
+/// custom_data)`, every actual the library's.
+const ASYNC_FREED: Premise = on_freed("async_wait_ctx_st.wait_fd_cleanup", &[None; 4]);
+
+/// `X509_free`: what a key freed in turn runs, beside the ex_data premise.
+/// `PKCS12_free` releases its argument, so it states no slot and names the
+/// released free's statement.
+const CERTIFICATE_FREED: &[Premise] = &[
+    Premise::ExDataCallbacks,
+    KEY_FREED[0],
+    KEY_FREED[1],
+    KEY_FREED[2],
+    KEY_FREED[3],
+    KEY_FREED[4],
+    KEY_FREED[5],
+    KEY_FREED[6],
+    KEY_FREED[7],
+    KEY_FREED[8],
+    KEY_FREED[9],
+    KEY_FREED[10],
+];
+const PKCS12_FREED: &[Premise] = &[
+    Premise::UnstatedReleasedFreeSlots,
+    Premise::ExDataCallbacks,
+    Premise::BuiltinTeardown,
+    Premise::LoadedTeardown,
+];
+
+/// `EVP_PKEY_free`: the key's own ASN.1 method free is handed the argument.
+const PKEY_FREED: &[Premise] = &[
+    Premise::ExDataCallbacks,
+    KEY_FREED[0],
+    KEY_FREED[1],
+    on_freed("evp_pkey_asn1_method_st.asn1_meth_pkey_free", &[Some(0)]),
+    KEY_FREED[3],
+    KEY_FREED[4],
+    KEY_FREED[5],
+    KEY_FREED[6],
+    KEY_FREED[7],
+    KEY_FREED[8],
+    KEY_FREED[9],
+    KEY_FREED[10],
+];
+
+/// `ENGINE_free`: a structural free, handed the argument: its destroy
+/// function and method enumerators, never its finish function.
+const ENGINE_FREED: &[Premise] = &[
+    Premise::ExDataCallbacks,
+    Premise::BuiltinTeardown,
+    Premise::LoadedTeardown,
+    on_freed("engine_st.engine_destroy", &[Some(0)]),
+    on_freed("engine_st.engine_pkey_meths", &[Some(0), None, None, None]),
+    on_freed(
+        "engine_st.engine_pkey_asn1_meths",
+        &[Some(0), None, None, None],
+    ),
+];
+
+/// `EVP_MD_CTX_free`: it releases its argument, so it states no teardown
+/// slot and names the released free's statement.
+const DIGEST_CONTEXT_FREED: &[Premise] = &[
+    Premise::UnstatedReleasedFreeSlots,
+    Premise::ExDataCallbacks,
+    Premise::BuiltinTeardown,
+    Premise::LoadedTeardown,
+];
+
+/// Card **OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS**:
+/// `EC_KEY_METHOD_set_init(meth, init, finish, copy, set_group, set_private,
+/// set_public)` stores all six (crypto/ec/ec_kmeth.c:204-209 at 3.5.5): the
+/// shape registers `finish` (2), these the other five.
+const EC_KEY_METHOD_INIT: &[Premise] = &[
+    Premise::SlotRegistered {
+        holder: 0,
+        callback: 1,
+        slot: "ec_key_method_st.ec_key_meth_init",
+    },
+    Premise::SlotRegistered {
+        holder: 0,
+        callback: 3,
+        slot: "ec_key_method_st.ec_key_meth_copy",
+    },
+    Premise::SlotRegistered {
+        holder: 0,
+        callback: 4,
+        slot: "ec_key_method_st.ec_key_meth_set_group",
+    },
+    Premise::SlotRegistered {
+        holder: 0,
+        callback: 5,
+        slot: "ec_key_method_st.ec_key_meth_set_private",
+    },
+    Premise::SlotRegistered {
+        holder: 0,
+        callback: 6,
+        slot: "ec_key_method_st.ec_key_meth_set_public",
+    },
+];
+
+/// `ASYNC_WAIT_CTX_set_wait_fd(ctx, key, fd, custom_data, cleanup)`: the
+/// context keeps `key` (1) beside `custom_data` (3), the shape's retention
+/// (async_wait.c:54-56 at 3.5.5).
+const WAIT_FD_KEY: &[Premise] = &[Premise::RetainedBy { item: 1, holder: 0 }];
 
 /// The context's password slot, `pem_password_cb(buf, size, rwflag, u)`:
 /// four values the callee supplies.
@@ -2247,12 +3175,6 @@ const SESSION_TICKET_CB: &[Premise] = &[Premise::SlotRegistered {
 /// declaration that may run no unstated slot but creates, copies or frees an
 /// object of an ex_data class ([`EX_DATA_AUDIT`]).
 const EX_DATA_ONLY: &[Premise] = &[Premise::ExDataCallbacks];
-
-/// Card **OPENSSL-OBJECT-FREES-SILENT-METHOD-CALLBACKS**: a free of a key, a
-/// certificate, a PKCS#12 object, an engine or a digest context names the
-/// unstated-slots premise in the statement of a free ([`FREE_AUDIT`]) beside
-/// the ex_data premise it named before.
-const OBJECT_FREED: &[Premise] = &[Premise::UnstatedFreeSlots, Premise::ExDataCallbacks];
 
 /// `PEM_read_bio_*(bp, x, cb, u)`: a NULL `x` (no object to reuse), and the
 /// password callback `cb` called during the read with `u` as its last
@@ -2399,7 +3321,7 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
             position: 0,
             sentence: "If the argument to ENGINE_free() is NULL, nothing is done.",
         },
-        OBJECT_FREED,
+        ENGINE_FREED,
     ),
     entry(
         "ERR_clear_error",
@@ -2436,7 +3358,7 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
         "3.5",
         SINCE_1_1_0,
         Release(0, Nullable),
-        OBJECT_FREED,
+        DIGEST_CONTEXT_FREED,
     ),
     entry(
         "EVP_MD_CTX_new",
@@ -2454,7 +3376,7 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
             position: 0,
             sentence: "If key is NULL, nothing is done.",
         },
-        OBJECT_FREED,
+        PKEY_FREED,
     ),
     entry("EVP_sha256", "EVP_DigestInit", "1.0.2", DOC_1_0_2, Plain),
     entry("EVP_sha512", "EVP_DigestInit", "1.0.2", DOC_1_0_2, Plain),
@@ -2516,7 +3438,7 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
         "1.1.1",
         DOC_1_1_1,
         Release(0, Nullable),
-        OBJECT_FREED,
+        PKCS12_FREED,
     ),
     with(
         "SSL_CTX_add_client_custom_ext",
@@ -3189,7 +4111,7 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
             position: 0,
             sentence: "If a is NULL nothing is done.",
         },
-        OBJECT_FREED,
+        CERTIFICATE_FREED,
     ),
     entry(
         "X509_get_issuer_name",
@@ -3213,5 +4135,103 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
         DOC_1_1_1,
         Constructor,
         PKCS12_READ,
+    ),
+    // Card OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS: the setters of the
+    // teardown slots (teardown_slots.qv). The documented ones cite their 3.5
+    // page's HISTORY; the source-derived ones (user decision 2026-11-21,
+    // "Admit pinned source") cite the pinned 3.5.5 source in
+    // [`SOURCE_CITATIONS`] and are never documented.
+    entry(
+        "RSA_meth_set_finish",
+        "RSA_meth_new",
+        "3.5",
+        SINCE_1_1_0,
+        registers(1, "rsa_meth_st.rsa_meth_finish"),
+    ),
+    entry(
+        "DSA_meth_set_finish",
+        "DSA_meth_new",
+        "3.5",
+        SINCE_1_1_0,
+        registers(1, "dsa_method.dsa_meth_finish"),
+    ),
+    entry(
+        "DH_meth_set_finish",
+        "DH_meth_new",
+        "3.5",
+        SINCE_1_1_0,
+        registers(1, "dh_method.dh_meth_finish"),
+    ),
+    with(
+        "EC_KEY_METHOD_set_init",
+        "crypto/ec/ec_kmeth.c",
+        SOURCE_SERIES,
+        SINCE_3_5_5,
+        registers(2, "ec_key_method_st.ec_key_meth_finish"),
+        EC_KEY_METHOD_INIT,
+    ),
+    entry(
+        "ENGINE_set_finish_function",
+        "ENGINE_add",
+        "1.1.1",
+        DOC_1_1_1,
+        registers(1, "engine_st.engine_finish"),
+    ),
+    entry(
+        "ENGINE_set_destroy_function",
+        "ENGINE_add",
+        "1.1.1",
+        DOC_1_1_1,
+        registers(1, "engine_st.engine_destroy"),
+    ),
+    entry(
+        "ENGINE_set_pkey_meths",
+        "crypto/engine/tb_pkmeth.c",
+        SOURCE_SERIES,
+        SINCE_3_5_5,
+        registers(1, "engine_st.engine_pkey_meths"),
+    ),
+    entry(
+        "ENGINE_set_pkey_asn1_meths",
+        "crypto/engine/tb_asnmth.c",
+        SOURCE_SERIES,
+        SINCE_3_5_5,
+        registers(1, "engine_st.engine_pkey_asn1_meths"),
+    ),
+    entry(
+        "EVP_PKEY_asn1_set_free",
+        "EVP_PKEY_ASN1_METHOD",
+        "1.1.1",
+        DOC_1_1_1,
+        registers(1, "evp_pkey_asn1_method_st.asn1_meth_pkey_free"),
+    ),
+    with(
+        "ASYNC_WAIT_CTX_set_wait_fd",
+        "ASYNC_WAIT_CTX_new",
+        "3.5",
+        SINCE_1_1_0,
+        registers_with_arg(4, "async_wait_ctx_st.wait_fd_cleanup", 3),
+        WAIT_FD_KEY,
+    ),
+    entry(
+        "EVP_MD_meth_set_cleanup",
+        "EVP_MD_meth_new",
+        "3.5",
+        SINCE_1_1_0,
+        registers(1, "evp_md_st.md_meth_cleanup"),
+    ),
+    entry(
+        "EVP_CIPHER_meth_set_cleanup",
+        "EVP_CIPHER_meth_new",
+        "3.5",
+        SINCE_1_1_0,
+        registers(1, "evp_cipher_st.cipher_meth_cleanup"),
+    ),
+    entry(
+        "EVP_PKEY_meth_set_cleanup",
+        "EVP_PKEY_meth_new",
+        "1.0.2",
+        DOC_1_0_2,
+        registers(1, "evp_pkey_method_st.pkey_meth_cleanup"),
     ),
 ];

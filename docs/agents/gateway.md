@@ -6450,6 +6450,27 @@ own anchor here.
     `the_statement_is_named_only_where_audited`,
     `the_free_premise_moves_no_verdict`);
     [report](../reports/openssl-object-frees-silent-method-callbacks/README.md).
+    Card OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS (USER DECISIONS
+    2026-11-21): the teardown slots' 13 setters are declared
+    (`teardown_slots.qv`; three source-derived from the pinned 3.5.5
+    source, `SOURCE_SLOTS`, `SOURCE_CITATIONS`), and every free running
+    them states them beside `openssl_builtin_teardown_functions` and
+    `openssl_loaded_module_functions` (C04.18.9 `#library`, `#loaded`).
+    The free audit lists each free's teardown slots and what it leaves; a
+    free names the free statement exactly when something is left
+    (`EVP_PKEY_free`, `X509_free`, `ENGINE_free` drop it), and a free
+    releasing its argument (`PKCS12_free`, `EVP_MD_CTX_free`) states no
+    slot and names the released free's statement. No gateway code
+    changed; the slots decide over the run's registrations like every
+    opaque slot. **Do not** declare a teardown setter without stating its
+    slot at every free that runs it: a declared setter makes its functions
+    `#settable`, which the free statement no longer covers.
+    `QCore.OpensslFreeTeardownSlots`
+    (`teardown_premises_cover_the_free_statement`,
+    `released_statement_entails_free_statement`,
+    `a_left_item_keeps_the_premise`, `nothing_left_drops_the_premise`,
+    `the_stated_slots_are_the_audited`);
+    [report](../reports/openssl-free-remaining-indirect-callbacks/README.md).
 
 <a id="constraint-12o"></a>
 

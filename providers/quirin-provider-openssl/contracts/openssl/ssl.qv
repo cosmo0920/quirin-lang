@@ -139,6 +139,12 @@ contract {
 // client certificate engine (tls_engine_finish), and a CRL's method. The
 // ctrl arms, CT and the undocumented handshake setters run during a
 // handshake, not here, and ex_data is `openssl_ex_data_callbacks`.
+// Card OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS: the teardown slots of the
+// keys and engines the last drop frees in turn are stated (teardown_slots.qv;
+// the client certificate engine's finish and destroy functions are the
+// engine slots), beside the two teardown premises. A CRL's X509_CRL_METHOD
+// free function stays under the free statement (its writer registers into
+// its result, C04.19.3).
 extern fn SSL_CTX_free(ctx: ptr<mut, u8>) -> unit
 contract {
     requires resource_contract_v1;
@@ -151,11 +157,26 @@ contract {
     requires resource_premise(openssl_builtin_lookup_methods,
         quant all #l in #lookups(#of(X509_STORE, #freed)): #method(#l) in #builtin
         -> #fns(#l) |-> #inert);
+    requires resource_premise(openssl_builtin_teardown_functions,
+        quant all #o in #freed: quant all #f in #teardown(#o): #f in #library
+        -> #f |-> #inert);
+    requires resource_premise(openssl_loaded_module_functions,
+        quant all #o in #freed: quant all #f in #teardown(#o): #f in #loaded
+        -> #f |-> #inert);
     ensures normal resource_borrowed(ctx);
     ensures normal resource_reference_dropped(ctx, nullable);
     ensures normal resource_callback_slot_invoked(ctx, ssl_ctx_st.remove_session_cb, _, _);
     ensures normal resource_callback_slot_invoked(ctx, x509_lookup_method_st.lookup_meth_shutdown, _);
     ensures normal resource_callback_slot_invoked(ctx, x509_lookup_method_st.lookup_meth_free, _);
+    ensures normal resource_callback_slot_invoked(ctx, dh_method.dh_meth_finish, _);
+    ensures normal resource_callback_slot_invoked(ctx, dsa_method.dsa_meth_finish, _);
+    ensures normal resource_callback_slot_invoked(ctx, ec_key_method_st.ec_key_meth_finish, _);
+    ensures normal resource_callback_slot_invoked(ctx, engine_st.engine_destroy, _);
+    ensures normal resource_callback_slot_invoked(ctx, engine_st.engine_finish, _);
+    ensures normal resource_callback_slot_invoked(ctx, engine_st.engine_pkey_asn1_meths, _, supplied_nullable, supplied_nullable, _);
+    ensures normal resource_callback_slot_invoked(ctx, engine_st.engine_pkey_meths, _, supplied_nullable, supplied_nullable, _);
+    ensures normal resource_callback_slot_invoked(ctx, evp_pkey_asn1_method_st.asn1_meth_pkey_free, _);
+    ensures normal resource_callback_slot_invoked(ctx, rsa_meth_st.rsa_meth_finish, _);
     ensures normal resource_return_none();
 };
 
@@ -194,6 +215,17 @@ contract {
 // functions (ASYNC_WAIT_CTX_free), the QUIC TLS callbacks
 // (SSL_set_quic_tls_cbs, run when RECORD_LAYER_clear releases a record), and
 // what a QUIC object's free runs, which was not traced.
+// Card OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS: the teardown slots of the
+// keys, engines, digest, cipher and public key method contexts and async
+// wait context the last drop frees in turn are stated (teardown_slots.qv),
+// beside the two teardown premises, and so are the message and info
+// callbacks, which the record layer's clear runs on its error path (a fatal
+// record release, ossl_statem_fatal then ssl3_send_alert, s3_msg.c at
+// 3.5.5). The QUIC free path was traced past quic_impl.c (report section 3):
+// it runs nothing beyond these, the stated BIO and session-remove slots and
+// ex_data. A CRL's X509_CRL_METHOD free function and the QUIC TLS
+// crypto_release_rcd function of a TLS object given SSL_set_quic_tls_cbs (a
+// dispatch table) stay under the free statement.
 extern fn SSL_free(ssl: ptr<mut, u8>) -> unit
 contract {
     requires resource_contract_v1;
@@ -213,6 +245,12 @@ contract {
         quant all #b in #chain(#of(BIO, #args) | #bios(#of(SSL, #args))): #method(#b) in #builtin
         -> #fns(#b) |-> #inert
         && quant all #f in #fns(#b): #in_turn(#f, #ssl_of(#b) \ #args) |-> #inert);
+    requires resource_premise(openssl_builtin_teardown_functions,
+        quant all #o in #freed: quant all #f in #teardown(#o): #f in #library
+        -> #f |-> #inert);
+    requires resource_premise(openssl_loaded_module_functions,
+        quant all #o in #freed: quant all #f in #teardown(#o): #f in #loaded
+        -> #f |-> #inert);
     ensures normal resource_borrowed(ssl);
     ensures normal resource_reference_dropped(ssl, nullable);
     ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.remove_session_cb, _, _);
@@ -221,6 +259,21 @@ contract {
     ensures normal resource_callback_slot_invoked(ssl, bio_method_st.meth_destroy, _);
     ensures normal resource_callback_slot_invoked(ssl, x509_lookup_method_st.lookup_meth_shutdown, _);
     ensures normal resource_callback_slot_invoked(ssl, x509_lookup_method_st.lookup_meth_free, _);
+    ensures normal resource_callback_slot_invoked(ssl, async_wait_ctx_st.wait_fd_cleanup, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, dh_method.dh_meth_finish, _);
+    ensures normal resource_callback_slot_invoked(ssl, dsa_method.dsa_meth_finish, _);
+    ensures normal resource_callback_slot_invoked(ssl, ec_key_method_st.ec_key_meth_finish, _);
+    ensures normal resource_callback_slot_invoked(ssl, engine_st.engine_destroy, _);
+    ensures normal resource_callback_slot_invoked(ssl, engine_st.engine_finish, _);
+    ensures normal resource_callback_slot_invoked(ssl, engine_st.engine_pkey_asn1_meths, _, supplied_nullable, supplied_nullable, _);
+    ensures normal resource_callback_slot_invoked(ssl, engine_st.engine_pkey_meths, _, supplied_nullable, supplied_nullable, _);
+    ensures normal resource_callback_slot_invoked(ssl, evp_cipher_st.cipher_meth_cleanup, _);
+    ensures normal resource_callback_slot_invoked(ssl, evp_md_st.md_meth_cleanup, _);
+    ensures normal resource_callback_slot_invoked(ssl, evp_pkey_asn1_method_st.asn1_meth_pkey_free, _);
+    ensures normal resource_callback_slot_invoked(ssl, evp_pkey_method_st.pkey_meth_cleanup, _);
+    ensures normal resource_callback_slot_invoked(ssl, rsa_meth_st.rsa_meth_finish, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.info_callback, ssl, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.msg_callback, _, _, _, _, _, ssl, _);
     ensures normal resource_return_none();
 };
 

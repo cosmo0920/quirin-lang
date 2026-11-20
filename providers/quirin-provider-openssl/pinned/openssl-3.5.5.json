@@ -83,6 +83,10 @@
   "/usr/include/x86_64-linux-gnu/openssl/opensslconf.h": "7f4b522c049d0bd0d651e6f6ebe71d6df0c37231a94e32524da3f4642ebda3be"
  },
  "prototypes": {
+  "ASYNC_WAIT_CTX_set_wait_fd": {
+   "declaration": "int ASYNC_WAIT_CTX_set_wait_fd(ASYNC_WAIT_CTX *ctx, const void *key, int fd, void *custom_data, void (*cleanup)(ASYNC_WAIT_CTX *, const void *, int, void *))",
+   "header": "/usr/include/openssl/async.h"
+  },
   "BIO_free": {
    "declaration": "int BIO_free(BIO *a)",
    "header": "/usr/include/openssl/bio.h"
@@ -147,12 +151,40 @@
    "declaration": "void BIO_set_callback_ex(BIO *b, BIO_callback_fn_ex callback)",
    "header": "/usr/include/openssl/bio.h"
   },
+  "DH_meth_set_finish": {
+   "declaration": "int DH_meth_set_finish(DH_METHOD *dhm, int (*finish)(DH *))",
+   "header": "/usr/include/openssl/dh.h"
+  },
+  "DSA_meth_set_finish": {
+   "declaration": "int DSA_meth_set_finish(DSA_METHOD *dsam, int (*finish)(DSA *))",
+   "header": "/usr/include/openssl/dsa.h"
+  },
+  "EC_KEY_METHOD_set_init": {
+   "declaration": "void EC_KEY_METHOD_set_init(EC_KEY_METHOD *meth, int (*init)(EC_KEY *key), void (*finish)(EC_KEY *key), int (*copy)(EC_KEY *dest, const EC_KEY *src), int (*set_group)(EC_KEY *key, const EC_GROUP *grp), int (*set_private)(EC_KEY *key, const BIGNUM *priv_key), int (*set_public)(EC_KEY *key, const EC_POINT *pub_key))",
+   "header": "/usr/include/openssl/ec.h"
+  },
   "ENGINE_by_id": {
    "declaration": "ENGINE *ENGINE_by_id(const char *id)",
    "header": "/usr/include/openssl/engine.h"
   },
   "ENGINE_free": {
    "declaration": "int ENGINE_free(ENGINE *e)",
+   "header": "/usr/include/openssl/engine.h"
+  },
+  "ENGINE_set_destroy_function": {
+   "declaration": "int ENGINE_set_destroy_function(ENGINE *e, ENGINE_GEN_INT_FUNC_PTR destroy_f)",
+   "header": "/usr/include/openssl/engine.h"
+  },
+  "ENGINE_set_finish_function": {
+   "declaration": "int ENGINE_set_finish_function(ENGINE *e, ENGINE_GEN_INT_FUNC_PTR finish_f)",
+   "header": "/usr/include/openssl/engine.h"
+  },
+  "ENGINE_set_pkey_asn1_meths": {
+   "declaration": "int ENGINE_set_pkey_asn1_meths(ENGINE *e, ENGINE_PKEY_ASN1_METHS_PTR f)",
+   "header": "/usr/include/openssl/engine.h"
+  },
+  "ENGINE_set_pkey_meths": {
+   "declaration": "int ENGINE_set_pkey_meths(ENGINE *e, ENGINE_PKEY_METHS_PTR f)",
    "header": "/usr/include/openssl/engine.h"
   },
   "ERR_clear_error": {
@@ -171,6 +203,10 @@
    "declaration": "unsigned long ERR_peek_last_error(void)",
    "header": "/usr/include/openssl/err.h"
   },
+  "EVP_CIPHER_meth_set_cleanup": {
+   "declaration": "int EVP_CIPHER_meth_set_cleanup(EVP_CIPHER *cipher, int (*cleanup)(EVP_CIPHER_CTX *))",
+   "header": "/usr/include/openssl/evp.h"
+  },
   "EVP_EncodeBlock": {
    "declaration": "int EVP_EncodeBlock(unsigned char *t, const unsigned char *f, int n)",
    "header": "/usr/include/openssl/evp.h"
@@ -183,8 +219,20 @@
    "declaration": "EVP_MD_CTX *EVP_MD_CTX_new(void)",
    "header": "/usr/include/openssl/evp.h"
   },
+  "EVP_MD_meth_set_cleanup": {
+   "declaration": "int EVP_MD_meth_set_cleanup(EVP_MD *md, int (*cleanup)(EVP_MD_CTX *ctx))",
+   "header": "/usr/include/openssl/evp.h"
+  },
+  "EVP_PKEY_asn1_set_free": {
+   "declaration": "void EVP_PKEY_asn1_set_free(EVP_PKEY_ASN1_METHOD *ameth, void (*pkey_free)(EVP_PKEY *pkey))",
+   "header": "/usr/include/openssl/evp.h"
+  },
   "EVP_PKEY_free": {
    "declaration": "void EVP_PKEY_free(EVP_PKEY *pkey)",
+   "header": "/usr/include/openssl/evp.h"
+  },
+  "EVP_PKEY_meth_set_cleanup": {
+   "declaration": "void EVP_PKEY_meth_set_cleanup(EVP_PKEY_METHOD *pmeth, void (*cleanup)(EVP_PKEY_CTX *ctx))",
    "header": "/usr/include/openssl/evp.h"
   },
   "EVP_sha256": {
@@ -226,6 +274,10 @@
   "PKCS12_free": {
    "declaration": "void PKCS12_free(PKCS12 *a)",
    "header": "/usr/include/openssl/pkcs12.h"
+  },
+  "RSA_meth_set_finish": {
+   "declaration": "int RSA_meth_set_finish(RSA_METHOD *rsa, int (*finish)(RSA *rsa))",
+   "header": "/usr/include/openssl/rsa.h"
   },
   "SSL_CTX_add_client_custom_ext": {
    "declaration": "int SSL_CTX_add_client_custom_ext(SSL_CTX *ctx, unsigned int ext_type, custom_ext_add_cb add_cb, custom_ext_free_cb free_cb, void *add_arg, custom_ext_parse_cb parse_cb, void *parse_arg)",

@@ -335,7 +335,8 @@
     "*/ abort (); ENGINE_set_default_DSA ( e ); ENGINE_set_default_ciphers ( e ); /* Release the functional reference from ENGINE_init() */ ENGINE_finish ( e ); /* Release the structural reference from ENGINE_by_id() */ ENGINE_free ( e ); Automatically using built-in ENGINE implementations Here we'll assume we want to load and register all ENGINE implementations bundled with OpenSSL, such that for any cryptographic algorithm required by OpenSSL - if there is an ENGINE that implements it and can be initialised, it should be used.",
     "Discovering supported control commands It is possible to discover at run-time the names, numerical-ids, descriptions and input parameters of the control commands supported by an ENGINE using a structural reference."
    ],
-   "page": "ENGINE_add"
+   "page": "ENGINE_add",
+   "name": "ENGINE_get_DH, ENGINE_get_DSA, ENGINE_by_id, ENGINE_get_cipher_engine, ENGINE_get_default_DH, ENGINE_get_default_DSA, ENGINE_get_default_RAND, ENGINE_get_default_RSA, ENGINE_get_digest_engine, ENGINE_get_first, ENGINE_get_last, ENGINE_get_next, ENGINE_get_prev, ENGINE_new, ENGINE_get_ciphers, ENGINE_get_ctrl_function, ENGINE_get_digests, ENGINE_get_destroy_function, ENGINE_get_finish_function, ENGINE_get_init_function, ENGINE_get_load_privkey_function, ENGINE_get_load_pubkey_function, ENGINE_load_private_key, ENGINE_load_public_key, ENGINE_get_RAND, ENGINE_get_RSA, ENGINE_get_id, ENGINE_get_name, ENGINE_get_cmd_defns, ENGINE_get_cipher, ENGINE_get_digest, ENGINE_add, ENGINE_cmd_is_executable, ENGINE_ctrl, ENGINE_ctrl_cmd, ENGINE_ctrl_cmd_string, ENGINE_finish, ENGINE_free, ENGINE_get_flags, ENGINE_init, ENGINE_register_DH, ENGINE_register_DSA, ENGINE_register_RAND, ENGINE_register_RSA, ENGINE_register_all_complete, ENGINE_register_ciphers, ENGINE_register_complete, ENGINE_register_digests, ENGINE_remove, ENGINE_set_DH, ENGINE_set_DSA, ENGINE_set_RAND, ENGINE_set_RSA, ENGINE_set_ciphers, ENGINE_set_cmd_defns, ENGINE_set_ctrl_function, ENGINE_set_default, ENGINE_set_default_DH, ENGINE_set_default_DSA, ENGINE_set_default_RAND, ENGINE_set_default_RSA, ENGINE_set_default_ciphers, ENGINE_set_default_digests, ENGINE_set_default_string, ENGINE_set_destroy_function, ENGINE_set_digests, ENGINE_set_finish_function, ENGINE_set_flags, ENGINE_set_id, ENGINE_set_init_function, ENGINE_set_load_privkey_function, ENGINE_set_load_pubkey_function, ENGINE_set_name, ENGINE_up_ref, ENGINE_get_table_flags, ENGINE_cleanup, ENGINE_load_builtin_engines, ENGINE_register_all_DH, ENGINE_register_all_DSA, ENGINE_register_all_RAND, ENGINE_register_all_RSA, ENGINE_register_all_ciphers, ENGINE_register_all_digests, ENGINE_set_table_flags, ENGINE_unregister_DH, ENGINE_unregister_DSA, ENGINE_unregister_RAND, ENGINE_unregister_RSA, ENGINE_unregister_ciphers, ENGINE_unregister_digests - ENGINE cryptographic module support"
   },
   {
    "url": "https://docs.openssl.org/1.1.1/man3/ENGINE_add/",
@@ -3408,6 +3409,269 @@
    ],
    "argument_null_sentences": [],
    "page": "X509_LOOKUP_meth_new",
+   "fetched_on": "2026-11-20"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/RSA_meth_new/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "fc96baa8db63d6c1414650c4a0e6aef6b2580e80b11421ca08ca36daff64462c",
+   "bytes": 1111238,
+   "name": "RSA_meth_get0_app_data, RSA_meth_set0_app_data, RSA_meth_new, RSA_meth_free, RSA_meth_dup, RSA_meth_get0_name, RSA_meth_set1_name, RSA_meth_get_flags, RSA_meth_set_flags, RSA_meth_get_pub_enc, RSA_meth_set_pub_enc, RSA_meth_get_pub_dec, RSA_meth_set_pub_dec, RSA_meth_get_priv_enc, RSA_meth_set_priv_enc, RSA_meth_get_priv_dec, RSA_meth_set_priv_dec, RSA_meth_get_mod_exp, RSA_meth_set_mod_exp, RSA_meth_get_bn_mod_exp, RSA_meth_set_bn_mod_exp, RSA_meth_get_init, RSA_meth_set_init, RSA_meth_get_finish, RSA_meth_set_finish, RSA_meth_get_sign, RSA_meth_set_sign, RSA_meth_get_verify, RSA_meth_set_verify, RSA_meth_get_keygen, RSA_meth_set_keygen, RSA_meth_get_multi_prime_keygen, RSA_meth_set_multi_prime_keygen - Routines to build up RSA methods",
+   "history": "All of these functions were deprecated in OpenSSL 3.0. RSA_meth_get_multi_prime_keygen() and RSA_meth_set_multi_prime_keygen() were added in OpenSSL 1.1.1. Other functions described here were added in OpenSSL 1.1.0.",
+   "null_sentences": [
+    "The name should be a NULL terminated string, which will be duplicated and stored in the RSA_METHOD object.",
+    "If the argument is NULL, nothing is done.",
+    "This function may be NULL.",
+    "This function may be NULL.",
+    "RSA_meth_new() and RSA_meth_dup() return the newly allocated RSA_METHOD object or NULL on failure.",
+    "All other RSA_meth_get_*() functions return the appropriate function pointer that has been set in the RSA_METHOD, or NULL if no such pointer has yet been set."
+   ],
+   "reference_sentences": [],
+   "argument_null_sentences": [],
+   "page": "RSA_meth_new",
+   "fetched_on": "2026-11-20"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/DSA_meth_new/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "cecea97fc6c1497652a872f971771aa60ca4b63b0097797491ec61d291cd0858",
+   "bytes": 1101608,
+   "name": "DSA_meth_new, DSA_meth_free, DSA_meth_dup, DSA_meth_get0_name, DSA_meth_set1_name, DSA_meth_get_flags, DSA_meth_set_flags, DSA_meth_get0_app_data, DSA_meth_set0_app_data, DSA_meth_get_sign, DSA_meth_set_sign, DSA_meth_get_sign_setup, DSA_meth_set_sign_setup, DSA_meth_get_verify, DSA_meth_set_verify, DSA_meth_get_mod_exp, DSA_meth_set_mod_exp, DSA_meth_get_bn_mod_exp, DSA_meth_set_bn_mod_exp, DSA_meth_get_init, DSA_meth_set_init, DSA_meth_get_finish, DSA_meth_set_finish, DSA_meth_get_paramgen, DSA_meth_set_paramgen, DSA_meth_get_keygen, DSA_meth_set_keygen - Routines to build up DSA methods",
+   "history": "The functions described here were deprecated in OpenSSL 3.0. The functions described here were added in OpenSSL 1.1.0.",
+   "null_sentences": [
+    "The name should be a NULL terminated string, which will be duplicated and stored in the DSA_METHOD object.",
+    "If the argument is NULL, nothing is done.",
+    "This function may be NULL.",
+    "This function may be NULL.",
+    "This function may be NULL.",
+    "This function may be NULL.",
+    "DSA_meth_new() and DSA_meth_dup() return the newly allocated DSA_METHOD object or NULL on failure.",
+    "All other DSA_meth_get_*() functions return the appropriate function pointer that has been set in the DSA_METHOD, or NULL if no such pointer has yet been set."
+   ],
+   "reference_sentences": [],
+   "argument_null_sentences": [],
+   "page": "DSA_meth_new",
+   "fetched_on": "2026-11-20"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/DH_meth_new/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "daa97c3fba36728eaaf43b5c13f7b4b64b9066f09cb9b9b9aa32b9fd9b7a3d3e",
+   "bytes": 1092023,
+   "name": "DH_meth_new, DH_meth_free, DH_meth_dup, DH_meth_get0_name, DH_meth_set1_name, DH_meth_get_flags, DH_meth_set_flags, DH_meth_get0_app_data, DH_meth_set0_app_data, DH_meth_get_generate_key, DH_meth_set_generate_key, DH_meth_get_compute_key, DH_meth_set_compute_key, DH_meth_get_bn_mod_exp, DH_meth_set_bn_mod_exp, DH_meth_get_init, DH_meth_set_init, DH_meth_get_finish, DH_meth_set_finish, DH_meth_get_generate_params, DH_meth_set_generate_params - Routines to build up DH methods",
+   "history": "All of these functions were deprecated in OpenSSL 3.0. The functions described here were added in OpenSSL 1.1.0.",
+   "null_sentences": [
+    "The name should be a NULL terminated string, which will be duplicated and stored in the DH_METHOD object.",
+    "If the argument is NULL, nothing is done.",
+    "This function may be NULL unless using the default generate key function, in which case it must be present.",
+    "This function may be NULL.",
+    "This function may be NULL.",
+    "This function may be NULL.",
+    "DH_meth_new() and DH_meth_dup() return the newly allocated DH_METHOD object or NULL on failure.",
+    "All other DH_meth_get_*() functions return the appropriate function pointer that has been set in the DH_METHOD, or NULL if no such pointer has yet been set."
+   ],
+   "reference_sentences": [],
+   "argument_null_sentences": [],
+   "page": "DH_meth_new",
+   "fetched_on": "2026-11-20"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/ASYNC_WAIT_CTX_new/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "16a32a54ac441739ad36fc5bad574955b41070f7b0ac6eb0642472d69c0228b3",
+   "bytes": 1090743,
+   "name": "ASYNC_WAIT_CTX_new, ASYNC_WAIT_CTX_free, ASYNC_WAIT_CTX_set_wait_fd, ASYNC_WAIT_CTX_get_fd, ASYNC_WAIT_CTX_get_all_fds, ASYNC_WAIT_CTX_get_changed_fds, ASYNC_WAIT_CTX_clear_fd, ASYNC_WAIT_CTX_set_callback, ASYNC_WAIT_CTX_get_callback, ASYNC_WAIT_CTX_set_status, ASYNC_WAIT_CTX_get_status, ASYNC_callback_fn, ASYNC_STATUS_UNSUPPORTED, ASYNC_STATUS_ERR, ASYNC_STATUS_OK, ASYNC_STATUS_EAGAIN - functions to manage waiting for asynchronous jobs to complete",
+   "history": "ASYNC_WAIT_CTX_new(), ASYNC_WAIT_CTX_free(), ASYNC_WAIT_CTX_set_wait_fd(), ASYNC_WAIT_CTX_get_fd(), ASYNC_WAIT_CTX_get_all_fds(), ASYNC_WAIT_CTX_get_changed_fds() and ASYNC_WAIT_CTX_clear_fd() were added in OpenSSL 1.1.0. ASYNC_WAIT_CTX_set_callback(), ASYNC_WAIT_CTX_get_callback(), ASYNC_WAIT_CTX_set_status(), and ASYNC_WAIT_CTX_get_status() were added in OpenSSL 3.0.",
+   "null_sentences": [
+    "Calling ASYNC_WAIT_CTX_get_all_fds() with a NULL fd value will return no file descriptors but will still populate *numfds .",
+    "Similarly to ASYNC_WAIT_CTX_get_all_fds() either of these can be NULL, but if they are not NULL then the caller is responsible for ensuring sufficient memory is allocated.",
+    "This can be NULL but if provided will automatically get called when the ASYNC_WAIT_CTX is freed, and gives the engine the opportunity to close the fd or any other resources.",
+    "If the argument is NULL, nothing is done.",
+    "ASYNC_WAIT_CTX_new() returns a pointer to the newly allocated ASYNC_WAIT_CTX or NULL on error."
+   ],
+   "reference_sentences": [],
+   "argument_null_sentences": [],
+   "page": "ASYNC_WAIT_CTX_new",
+   "fetched_on": "2026-11-20"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/EVP_MD_meth_new/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "019cef9888a10522c7033f9983cd143ce66858ad5699c5b7a0a2d7b815b0beb6",
+   "bytes": 1091938,
+   "name": "EVP_MD_meth_new, EVP_MD_meth_dup, EVP_MD_meth_free, EVP_MD_meth_set_input_blocksize, EVP_MD_meth_set_result_size, EVP_MD_meth_set_app_datasize, EVP_MD_meth_set_flags, EVP_MD_meth_set_init, EVP_MD_meth_set_update, EVP_MD_meth_set_final, EVP_MD_meth_set_copy, EVP_MD_meth_set_cleanup, EVP_MD_meth_set_ctrl, EVP_MD_meth_get_input_blocksize, EVP_MD_meth_get_result_size, EVP_MD_meth_get_app_datasize, EVP_MD_meth_get_flags, EVP_MD_meth_get_init, EVP_MD_meth_get_update, EVP_MD_meth_get_final, EVP_MD_meth_get_copy, EVP_MD_meth_get_cleanup, EVP_MD_meth_get_ctrl - Routines to build up legacy EVP_MD methods",
+   "history": "All of these functions were deprecated in OpenSSL 3.0. The EVP_MD structure was openly available in OpenSSL before version 1.1. The functions described here were added in OpenSSL 1.1. The EVP_MD structure created with these functions became reference counted in OpenSSL 3.0.",
+   "null_sentences": [
+    "If the argument is NULL, nothing is done.",
+    "EVP_MD_FLAG_DIGALGID_NULL When setting up a DigestAlgorithmIdentifier, this flag will have the parameter set to NULL by default.",
+    "Note: if combined with EVP_MD_FLAG_DIGALGID_NULL, the latter will be overridden.",
+    "Note: if combined with EVP_MD_FLAG_DIGALGID_NULL, the latter will be overridden.",
+    "EVP_MD_meth_new() and EVP_MD_meth_dup() return a pointer to a newly created EVP_MD , or NULL on failure."
+   ],
+   "reference_sentences": [
+    "These EVP_MD structures are reference counted.",
+    "EVP_MD_meth_free() decrements the reference count for the EVP_MD structure.",
+    "If the reference count drops to 0 then the structure is freed."
+   ],
+   "argument_null_sentences": [],
+   "page": "EVP_MD_meth_new",
+   "fetched_on": "2026-11-20"
+  },
+  {
+   "url": "https://docs.openssl.org/1.0.2/man3/EVP_PKEY_ASN1_METHOD/",
+   "series": "1.0.2",
+   "fetched": false,
+   "error": "curl: (22) The requested URL returned error: 404",
+   "page": "EVP_PKEY_ASN1_METHOD",
+   "fetched_on": "2026-11-20"
+  },
+  {
+   "url": "https://docs.openssl.org/1.1.1/man3/EVP_PKEY_ASN1_METHOD/",
+   "series": "1.1.1",
+   "fetched": true,
+   "sha256": "227f44afe1c14000bd11a3479bab26caf5cf770973f3236f94e65e482be37e15",
+   "bytes": 722384,
+   "name": "EVP_PKEY_ASN1_METHOD, EVP_PKEY_asn1_new, EVP_PKEY_asn1_copy, EVP_PKEY_asn1_free, EVP_PKEY_asn1_add0, EVP_PKEY_asn1_add_alias, EVP_PKEY_asn1_set_public, EVP_PKEY_asn1_set_private, EVP_PKEY_asn1_set_param, EVP_PKEY_asn1_set_free, EVP_PKEY_asn1_set_ctrl, EVP_PKEY_asn1_set_item, EVP_PKEY_asn1_set_siginf, EVP_PKEY_asn1_set_check, EVP_PKEY_asn1_set_public_check, EVP_PKEY_asn1_set_param_check, EVP_PKEY_asn1_set_security_bits, EVP_PKEY_asn1_set_set_priv_key, EVP_PKEY_asn1_set_set_pub_key, EVP_PKEY_asn1_set_get_priv_key, EVP_PKEY_asn1_set_get_pub_key, EVP_PKEY_get0_asn1 - manipulating and registering EVP_PKEY_ASN1_METHOD structure",
+   "history": null,
+   "null_sentences": [
+    "The following flags are supported: ASN1_PKEY_SIGPARAM_NULL If ASN1_PKEY_SIGPARAM_NULL is set, then the signature algorithm parameters are given the type V_ASN1_NULL by default, otherwise they will be given the type V_ASN1_UNDEF (i.e.",
+    "EVP_PKEY_asn1_new() returns NULL on error, or a pointer to an EVP_PKEY_ASN1_METHOD object otherwise.",
+    "EVP_PKEY_get0_asn1() returns NULL on error, or a pointer to a constant EVP_PKEY_ASN1_METHOD object otherwise."
+   ],
+   "reference_sentences": [],
+   "argument_null_sentences": [],
+   "page": "EVP_PKEY_ASN1_METHOD",
+   "fetched_on": "2026-11-20"
+  },
+  {
+   "url": "https://docs.openssl.org/3.0/man3/EVP_PKEY_ASN1_METHOD/",
+   "series": "3.0",
+   "fetched": true,
+   "sha256": "34ae8c2b9022c842beba6eb6b29e34183faf5a588fdd0202e9ff969010686ea3",
+   "bytes": 983606,
+   "name": "EVP_PKEY_ASN1_METHOD, EVP_PKEY_asn1_new, EVP_PKEY_asn1_copy, EVP_PKEY_asn1_free, EVP_PKEY_asn1_add0, EVP_PKEY_asn1_add_alias, EVP_PKEY_asn1_set_public, EVP_PKEY_asn1_set_private, EVP_PKEY_asn1_set_param, EVP_PKEY_asn1_set_free, EVP_PKEY_asn1_set_ctrl, EVP_PKEY_asn1_set_item, EVP_PKEY_asn1_set_siginf, EVP_PKEY_asn1_set_check, EVP_PKEY_asn1_set_public_check, EVP_PKEY_asn1_set_param_check, EVP_PKEY_asn1_set_security_bits, EVP_PKEY_asn1_set_set_priv_key, EVP_PKEY_asn1_set_set_pub_key, EVP_PKEY_asn1_set_get_priv_key, EVP_PKEY_asn1_set_get_pub_key, EVP_PKEY_get0_asn1 - manipulating and registering EVP_PKEY_ASN1_METHOD structure",
+   "history": "The signature of the pub_decode functional argument of EVP_PKEY_asn1_set_public() has changed in OpenSSL 3.0 so its pub parameter is now constified.",
+   "null_sentences": [
+    "The following flags are supported: ASN1_PKEY_SIGPARAM_NULL If ASN1_PKEY_SIGPARAM_NULL is set, then the signature algorithm parameters are given the type V_ASN1_NULL by default, otherwise they will be given the type V_ASN1_UNDEF (i.e.",
+    "If the argument is NULL, nothing is done.",
+    "EVP_PKEY_asn1_new() returns NULL on error, or a pointer to an EVP_PKEY_ASN1_METHOD object otherwise.",
+    "EVP_PKEY_get0_asn1() returns NULL on error, or a pointer to a constant EVP_PKEY_ASN1_METHOD object otherwise."
+   ],
+   "reference_sentences": [],
+   "argument_null_sentences": [],
+   "page": "EVP_PKEY_ASN1_METHOD",
+   "fetched_on": "2026-11-20"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/EVP_PKEY_ASN1_METHOD/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "40893c3d689ebf711a82673ac3e9c5e292fe2ee1babd1c1920a5f457acb288e2",
+   "bytes": 1130924,
+   "name": "EVP_PKEY_ASN1_METHOD, EVP_PKEY_asn1_new, EVP_PKEY_asn1_copy, EVP_PKEY_asn1_free, EVP_PKEY_asn1_add0, EVP_PKEY_asn1_add_alias, EVP_PKEY_asn1_set_public, EVP_PKEY_asn1_set_private, EVP_PKEY_asn1_set_param, EVP_PKEY_asn1_set_free, EVP_PKEY_asn1_set_ctrl, EVP_PKEY_asn1_set_item, EVP_PKEY_asn1_set_siginf, EVP_PKEY_asn1_set_check, EVP_PKEY_asn1_set_public_check, EVP_PKEY_asn1_set_param_check, EVP_PKEY_asn1_set_security_bits, EVP_PKEY_asn1_set_set_priv_key, EVP_PKEY_asn1_set_set_pub_key, EVP_PKEY_asn1_set_get_priv_key, EVP_PKEY_asn1_set_get_pub_key, EVP_PKEY_get0_asn1 - manipulating and registering EVP_PKEY_ASN1_METHOD structure",
+   "history": "The signature of the pub_decode functional argument of EVP_PKEY_asn1_set_public() has changed in OpenSSL 3.0 so its pub parameter is now constified.",
+   "null_sentences": [
+    "The following flags are supported: ASN1_PKEY_SIGPARAM_NULL If ASN1_PKEY_SIGPARAM_NULL is set, then the signature algorithm parameters are given the type V_ASN1_NULL by default, otherwise they will be given the type V_ASN1_UNDEF (i.e.",
+    "If the argument is NULL, nothing is done.",
+    "EVP_PKEY_asn1_new() returns NULL on error, or a pointer to an EVP_PKEY_ASN1_METHOD object otherwise.",
+    "EVP_PKEY_get0_asn1() returns NULL on error, or a pointer to a constant EVP_PKEY_ASN1_METHOD object otherwise."
+   ],
+   "reference_sentences": [],
+   "argument_null_sentences": [],
+   "page": "EVP_PKEY_ASN1_METHOD",
+   "fetched_on": "2026-11-20"
+  },
+  {
+   "url": "https://docs.openssl.org/1.0.2/man3/EVP_PKEY_meth_new/",
+   "series": "1.0.2",
+   "fetched": true,
+   "sha256": "9c86a0ec247eb3e36a4bd12365505875c6f08338239b5db3e766d454fd57a754",
+   "bytes": 345653,
+   "name": "EVP_PKEY_meth_new, EVP_PKEY_meth_free, EVP_PKEY_meth_copy, EVP_PKEY_meth_find, EVP_PKEY_meth_add0, EVP_PKEY_METHOD, EVP_PKEY_meth_set_init, EVP_PKEY_meth_set_copy, EVP_PKEY_meth_set_cleanup, EVP_PKEY_meth_set_paramgen, EVP_PKEY_meth_set_keygen, EVP_PKEY_meth_set_sign, EVP_PKEY_meth_set_verify, EVP_PKEY_meth_set_verify_recover, EVP_PKEY_meth_set_signctx, EVP_PKEY_meth_set_verifyctx, EVP_PKEY_meth_set_encrypt, EVP_PKEY_meth_set_decrypt, EVP_PKEY_meth_set_derive, EVP_PKEY_meth_set_ctrl, EVP_PKEY_meth_get_init, EVP_PKEY_meth_get_copy, EVP_PKEY_meth_get_cleanup, EVP_PKEY_meth_get_paramgen, EVP_PKEY_meth_get_keygen, EVP_PKEY_meth_get_sign, EVP_PKEY_meth_get_verify, EVP_PKEY_meth_get_verify_recover, EVP_PKEY_meth_get_signctx, EVP_PKEY_meth_get_verifyctx, EVP_PKEY_meth_get_encrypt, EVP_PKEY_meth_get_decrypt, EVP_PKEY_meth_get_derive, EVP_PKEY_meth_get_ctrl - manipulating EVP_PKEY_METHOD structure",
+   "history": null,
+   "null_sentences": [
+    "EVP_PKEY_meth_new() returns a pointer to a new EVP_PKEY_METHOD object or returns NULL on error.",
+    "EVP_PKEY_meth_find() returns a pointer to the found EVP_PKEY_METHOD object or returns NULL if not found."
+   ],
+   "reference_sentences": [],
+   "argument_null_sentences": [],
+   "page": "EVP_PKEY_meth_new",
+   "fetched_on": "2026-11-20"
+  },
+  {
+   "url": "https://docs.openssl.org/1.1.1/man3/EVP_PKEY_meth_new/",
+   "series": "1.1.1",
+   "fetched": true,
+   "sha256": "7f7d18f0fb9788ac6674203c868d03fab53eb8ae0299c6899a2910afb010c721",
+   "bytes": 750627,
+   "name": "EVP_PKEY_meth_new, EVP_PKEY_meth_free, EVP_PKEY_meth_copy, EVP_PKEY_meth_find, EVP_PKEY_meth_add0, EVP_PKEY_METHOD, EVP_PKEY_meth_set_init, EVP_PKEY_meth_set_copy, EVP_PKEY_meth_set_cleanup, EVP_PKEY_meth_set_paramgen, EVP_PKEY_meth_set_keygen, EVP_PKEY_meth_set_sign, EVP_PKEY_meth_set_verify, EVP_PKEY_meth_set_verify_recover, EVP_PKEY_meth_set_signctx, EVP_PKEY_meth_set_verifyctx, EVP_PKEY_meth_set_encrypt, EVP_PKEY_meth_set_decrypt, EVP_PKEY_meth_set_derive, EVP_PKEY_meth_set_ctrl, EVP_PKEY_meth_set_digestsign, EVP_PKEY_meth_set_digestverify, EVP_PKEY_meth_set_check, EVP_PKEY_meth_set_public_check, EVP_PKEY_meth_set_param_check, EVP_PKEY_meth_set_digest_custom, EVP_PKEY_meth_get_init, EVP_PKEY_meth_get_copy, EVP_PKEY_meth_get_cleanup, EVP_PKEY_meth_get_paramgen, EVP_PKEY_meth_get_keygen, EVP_PKEY_meth_get_sign, EVP_PKEY_meth_get_verify, EVP_PKEY_meth_get_verify_recover, EVP_PKEY_meth_get_signctx, EVP_PKEY_meth_get_verifyctx, EVP_PKEY_meth_get_encrypt, EVP_PKEY_meth_get_decrypt, EVP_PKEY_meth_get_derive, EVP_PKEY_meth_get_ctrl, EVP_PKEY_meth_get_digestsign, EVP_PKEY_meth_get_digestverify, EVP_PKEY_meth_get_check, EVP_PKEY_meth_get_public_check, EVP_PKEY_meth_get_param_check, EVP_PKEY_meth_get_digest_custom, EVP_PKEY_meth_remove - manipulating EVP_PKEY_METHOD structure",
+   "history": null,
+   "null_sentences": [
+    "EVP_PKEY_meth_new() returns a pointer to a new EVP_PKEY_METHOD object or returns NULL on error.",
+    "EVP_PKEY_meth_find() returns a pointer to the found EVP_PKEY_METHOD object or returns NULL if not found."
+   ],
+   "reference_sentences": [],
+   "argument_null_sentences": [],
+   "page": "EVP_PKEY_meth_new",
+   "fetched_on": "2026-11-20"
+  },
+  {
+   "url": "https://docs.openssl.org/3.0/man3/EVP_PKEY_meth_new/",
+   "series": "3.0",
+   "fetched": true,
+   "sha256": "a1d5633bcfa6d5368ffcde6ccc8e31deb4d7d14bfe3134b7bf59e01e173ef567",
+   "bytes": 1011188,
+   "name": "EVP_PKEY_meth_new, EVP_PKEY_meth_free, EVP_PKEY_meth_copy, EVP_PKEY_meth_find, EVP_PKEY_meth_add0, EVP_PKEY_METHOD, EVP_PKEY_meth_set_init, EVP_PKEY_meth_set_copy, EVP_PKEY_meth_set_cleanup, EVP_PKEY_meth_set_paramgen, EVP_PKEY_meth_set_keygen, EVP_PKEY_meth_set_sign, EVP_PKEY_meth_set_verify, EVP_PKEY_meth_set_verify_recover, EVP_PKEY_meth_set_signctx, EVP_PKEY_meth_set_verifyctx, EVP_PKEY_meth_set_encrypt, EVP_PKEY_meth_set_decrypt, EVP_PKEY_meth_set_derive, EVP_PKEY_meth_set_ctrl, EVP_PKEY_meth_set_digestsign, EVP_PKEY_meth_set_digestverify, EVP_PKEY_meth_set_check, EVP_PKEY_meth_set_public_check, EVP_PKEY_meth_set_param_check, EVP_PKEY_meth_set_digest_custom, EVP_PKEY_meth_get_init, EVP_PKEY_meth_get_copy, EVP_PKEY_meth_get_cleanup, EVP_PKEY_meth_get_paramgen, EVP_PKEY_meth_get_keygen, EVP_PKEY_meth_get_sign, EVP_PKEY_meth_get_verify, EVP_PKEY_meth_get_verify_recover, EVP_PKEY_meth_get_signctx, EVP_PKEY_meth_get_verifyctx, EVP_PKEY_meth_get_encrypt, EVP_PKEY_meth_get_decrypt, EVP_PKEY_meth_get_derive, EVP_PKEY_meth_get_ctrl, EVP_PKEY_meth_get_digestsign, EVP_PKEY_meth_get_digestverify, EVP_PKEY_meth_get_check, EVP_PKEY_meth_get_public_check, EVP_PKEY_meth_get_param_check, EVP_PKEY_meth_get_digest_custom, EVP_PKEY_meth_remove - manipulating EVP_PKEY_METHOD structure",
+   "history": "All of these functions were deprecated in OpenSSL 3.0. The signature of the copy functional argument of EVP_PKEY_meth_set_copy() has changed in OpenSSL 3.0 so its src parameter is now constified.",
+   "null_sentences": [
+    "If the argument is NULL, nothing is done.",
+    "EVP_PKEY_meth_new() returns a pointer to a new EVP_PKEY_METHOD object or returns NULL on error.",
+    "EVP_PKEY_meth_find() returns a pointer to the found EVP_PKEY_METHOD object or returns NULL if not found."
+   ],
+   "reference_sentences": [],
+   "argument_null_sentences": [],
+   "page": "EVP_PKEY_meth_new",
+   "fetched_on": "2026-11-20"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/EVP_PKEY_meth_new/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "531605c77f3298b73f3736ce16f1415ed00b03967e65cc2e387cb89300cab9d6",
+   "bytes": 1158506,
+   "name": "EVP_PKEY_meth_new, EVP_PKEY_meth_free, EVP_PKEY_meth_copy, EVP_PKEY_meth_find, EVP_PKEY_meth_add0, EVP_PKEY_METHOD, EVP_PKEY_meth_set_init, EVP_PKEY_meth_set_copy, EVP_PKEY_meth_set_cleanup, EVP_PKEY_meth_set_paramgen, EVP_PKEY_meth_set_keygen, EVP_PKEY_meth_set_sign, EVP_PKEY_meth_set_verify, EVP_PKEY_meth_set_verify_recover, EVP_PKEY_meth_set_signctx, EVP_PKEY_meth_set_verifyctx, EVP_PKEY_meth_set_encrypt, EVP_PKEY_meth_set_decrypt, EVP_PKEY_meth_set_derive, EVP_PKEY_meth_set_ctrl, EVP_PKEY_meth_set_digestsign, EVP_PKEY_meth_set_digestverify, EVP_PKEY_meth_set_check, EVP_PKEY_meth_set_public_check, EVP_PKEY_meth_set_param_check, EVP_PKEY_meth_set_digest_custom, EVP_PKEY_meth_get_init, EVP_PKEY_meth_get_copy, EVP_PKEY_meth_get_cleanup, EVP_PKEY_meth_get_paramgen, EVP_PKEY_meth_get_keygen, EVP_PKEY_meth_get_sign, EVP_PKEY_meth_get_verify, EVP_PKEY_meth_get_verify_recover, EVP_PKEY_meth_get_signctx, EVP_PKEY_meth_get_verifyctx, EVP_PKEY_meth_get_encrypt, EVP_PKEY_meth_get_decrypt, EVP_PKEY_meth_get_derive, EVP_PKEY_meth_get_ctrl, EVP_PKEY_meth_get_digestsign, EVP_PKEY_meth_get_digestverify, EVP_PKEY_meth_get_check, EVP_PKEY_meth_get_public_check, EVP_PKEY_meth_get_param_check, EVP_PKEY_meth_get_digest_custom, EVP_PKEY_meth_remove - manipulating EVP_PKEY_METHOD structure",
+   "history": "All of these functions were deprecated in OpenSSL 3.0. The signature of the copy functional argument of EVP_PKEY_meth_set_copy() has changed in OpenSSL 3.0 so its src parameter is now constified.",
+   "null_sentences": [
+    "If the argument is NULL, nothing is done.",
+    "EVP_PKEY_meth_new() returns a pointer to a new EVP_PKEY_METHOD object or returns NULL on error.",
+    "EVP_PKEY_meth_find() returns a pointer to the found EVP_PKEY_METHOD object or returns NULL if not found."
+   ],
+   "reference_sentences": [],
+   "argument_null_sentences": [],
+   "page": "EVP_PKEY_meth_new",
+   "fetched_on": "2026-11-20"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/EVP_CIPHER_meth_new/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "30d7e01f23b599feb21e689073b9ff0ae82ed480358b8e00a9f5c3ba8e1f00a4",
+   "bytes": 1094012,
+   "name": "EVP_CIPHER_meth_new, EVP_CIPHER_meth_dup, EVP_CIPHER_meth_free, EVP_CIPHER_meth_set_iv_length, EVP_CIPHER_meth_set_flags, EVP_CIPHER_meth_set_impl_ctx_size, EVP_CIPHER_meth_set_init, EVP_CIPHER_meth_set_do_cipher, EVP_CIPHER_meth_set_cleanup, EVP_CIPHER_meth_set_set_asn1_params, EVP_CIPHER_meth_set_get_asn1_params, EVP_CIPHER_meth_set_ctrl, EVP_CIPHER_meth_get_init, EVP_CIPHER_meth_get_do_cipher, EVP_CIPHER_meth_get_cleanup, EVP_CIPHER_meth_get_set_asn1_params, EVP_CIPHER_meth_get_get_asn1_params, EVP_CIPHER_meth_get_ctrl - Routines to build up EVP_CIPHER methods",
+   "history": "All of these functions were deprecated in OpenSSL 3.0. The functions described here were added in OpenSSL 1.1.0. The EVP_CIPHER structure created with these functions became reference counted in OpenSSL 3.0.",
+   "null_sentences": [
+    "If the argument is NULL, nothing is done.",
+    "EVP_CIPH_ALWAYS_CALL_INIT Set this if the implementation's init() function should be called even if key is NULL .",
+    "EVP_CIPHER_meth_new() and EVP_CIPHER_meth_dup() return a pointer to a newly created EVP_CIPHER , or NULL on failure."
+   ],
+   "reference_sentences": [],
+   "argument_null_sentences": [],
+   "page": "EVP_CIPHER_meth_new",
    "fetched_on": "2026-11-20"
   }
  ]

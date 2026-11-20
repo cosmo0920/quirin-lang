@@ -98,10 +98,14 @@ use serde_json::Value;
 
 pub use crate::documented::{
     BIO_FREE, BIO_FREE_STATEMENT, BUILTIN_BIO_METHODS, BUILTIN_BIO_METHODS_STATEMENT,
-    BUILTIN_LOOKUP_METHODS, BUILTIN_LOOKUP_METHODS_STATEMENT, DOCUMENTED, Documented,
-    DocumentedFunction, EX_DATA, EX_DATA_AUDIT, EX_DATA_CLASSES, EX_DATA_STATEMENT, ExData,
-    FREE_AUDIT, Frees, NULLABLE_ARGUMENTS, Null, NullableArgument, Premise, SLOTS, Slot,
-    UNSTATED_FREE_STATEMENT, UNSTATED_SLOTS, UNSTATED_SLOTS_STATEMENT, nullable_argument,
+    BUILTIN_LOOKUP_METHODS, BUILTIN_LOOKUP_METHODS_STATEMENT, BUILTIN_TEARDOWN,
+    BUILTIN_TEARDOWN_STATEMENT, DOCUMENTED, Documented, DocumentedFunction, EX_DATA, EX_DATA_AUDIT,
+    EX_DATA_CLASSES, EX_DATA_STATEMENT, ExData, FREE_AUDIT, Frees, LOADED_TEARDOWN,
+    LOADED_TEARDOWN_STATEMENT, NULLABLE_ARGUMENTS, Null, NullableArgument, Premise, SLOTS,
+    SOURCE_CITATIONS, SOURCE_NULLABLE_ARGUMENTS, SOURCE_SERIES, SOURCE_SLOTS,
+    SOURCE_TARBALL_SHA256, Slot, SourceCitation, SourceNullableArgument, SourceSlot,
+    TEARDOWN_SLOTS, UNSTATED_FREE_STATEMENT, UNSTATED_RELEASED_FREE_STATEMENT, UNSTATED_SLOTS,
+    UNSTATED_SLOTS_STATEMENT, nullable_argument,
 };
 
 /// The crate name a request's translation unit carries.
@@ -247,6 +251,11 @@ pub const FUNCTION_POINTER_TYPEDEFS: &[&str] = &[
     "X509_LOOKUP_get_by_issuer_serial_fn",
     "X509_LOOKUP_get_by_fingerprint_fn",
     "X509_LOOKUP_get_by_alias_fn",
+    // Card OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS: the engine function
+    // types the teardown setters take (pinned `openssl/engine.h`).
+    "ENGINE_GEN_INT_FUNC_PTR",
+    "ENGINE_PKEY_METHS_PTR",
+    "ENGINE_PKEY_ASN1_METHS_PTR",
 ];
 
 /// The contract type a C type from a pinned prototype corresponds to.
@@ -475,21 +484,29 @@ pub fn check_function(module_path: &str, module: &str, function: &str) -> Result
     // 4. The documented semantics.
     let snapshots: Value = serde_json::from_str(crate::DOC_SNAPSHOTS)
         .map_err(|error| format!("doc snapshots: {error}"))?;
-    let page = snapshots["pages"]
-        .as_array()
-        .into_iter()
-        .flatten()
-        .find(|page| {
-            page["page"] == documented.page
-                && page["series"] == documented.series
-                && page["fetched"] == true
-        })
-        .ok_or_else(|| {
-            format!(
-                "{function}: no fetched snapshot of {} at series {}",
-                documented.page, documented.series
-            )
-        })?;
+    // Card OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS (user decision
+    // 2026-11-21, "Admit pinned source"): a source-derived entry stands on its
+    // citation of the pinned source instead of a page snapshot.
+    let source = source_cited(documented).map_err(|failure| format!("{function}: {failure}"))?;
+    let missing = Value::Null;
+    let page = match source {
+        Some(_) => &missing,
+        None => snapshots["pages"]
+            .as_array()
+            .into_iter()
+            .flatten()
+            .find(|page| {
+                page["page"] == documented.page
+                    && page["series"] == documented.series
+                    && page["fetched"] == true
+            })
+            .ok_or_else(|| {
+                format!(
+                    "{function}: no fetched snapshot of {} at series {}",
+                    documented.page, documented.series
+                )
+            })?,
+    };
     let names = declaration
         .parameters
         .iter()
@@ -550,6 +567,17 @@ pub fn check_function(module_path: &str, module: &str, function: &str) -> Result
         nullable_arguments_cited(slot, &snapshots)
             .map_err(|failure| format!("{function}: {failure}"))?;
     }
+    if let Some(citation) = source {
+        return Ok(format!(
+            "{function}: prototype `{prototype}` ({header}, sha256 {}) matches the contract; \
+             `{range}` admits the pinned OpenSSL {pinned_version}; custody source-derived, not \
+             documented: {}:{} of the 3.5.5 release (tarball sha256 {})",
+            &header_sha256[..header_sha256.len().min(12)],
+            citation.file,
+            citation.line,
+            &SOURCE_TARBALL_SHA256[..12],
+        ));
+    }
     Ok(format!(
         "{function}: prototype `{prototype}` ({header}, sha256 {}) matches the contract; `{range}` \
          admits the pinned OpenSSL {pinned_version}; custody as documented at {} (sha256 {} as \
@@ -558,6 +586,51 @@ pub fn check_function(module_path: &str, module: &str, function: &str) -> Result
         page["url"].as_str().unwrap_or_default(),
         &page["sha256"].as_str().unwrap_or_default()[..12],
     ))
+}
+
+/// Card **OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS**: an entry of
+/// [`SOURCE_SERIES`] is cited exactly once in [`SOURCE_CITATIONS`], by its
+/// own file, and admits only the release read (`since "3.5.5"`); an entry
+/// citing a page is cited nowhere. `Ok(None)` for a documented entry.
+///
+/// # Errors
+///
+/// The first of these that fails, as the diagnostic text.
+pub fn source_cited(
+    documented: &DocumentedFunction,
+) -> Result<Option<&'static SourceCitation>, String> {
+    let cited = SOURCE_CITATIONS
+        .iter()
+        .filter(|citation| citation.function == documented.function)
+        .collect::<Vec<_>>();
+    if documented.series != SOURCE_SERIES {
+        return match cited.as_slice() {
+            [] => Ok(None),
+            _ => Err("is documented by a page but also cited from the source".to_owned()),
+        };
+    }
+    let [citation] = cited.as_slice() else {
+        return Err(format!(
+            "is source-derived but cited {} times in the source citations",
+            cited.len()
+        ));
+    };
+    if citation.file != documented.page {
+        return Err(format!(
+            "is source-derived from {} but cited at {}",
+            documented.page, citation.file
+        ));
+    }
+    if documented.range != "resource_library_version(openssl, since \"3.5.5\")" {
+        return Err(format!(
+            "is source-derived from the 3.5.5 release but states `{}`",
+            documented.range
+        ));
+    }
+    if citation.line == 0 || citation.reading.is_empty() {
+        return Err("its source citation names no line or no reading".to_owned());
+    }
+    Ok(Some(*citation))
 }
 
 /// Card **OPENSSL-EX-DATA-REGISTRY**: whether a shape creates or frees an
@@ -649,10 +722,15 @@ pub const fn releases(shape: Documented) -> bool {
 ///   so is every entry naming the free statement
 ///   ([`Premise::UnstatedFreeSlots`]): no free reads the functions of the
 ///   objects it frees silently.
-/// * [`Frees::Runs`]: the entry names the free statement, and not the
-///   handshake's statement as well.
+/// * [`Frees::Runs`] (card **OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS**):
+///   the entry names the free statement exactly when the audit leaves items
+///   (`left`), and never the handshake's statement as well; it names
+///   [`Premise::BuiltinTeardown`] and [`Premise::LoadedTeardown`]; and the
+///   teardown slots it states are exactly `slots`, each one of
+///   [`TEARDOWN_SLOTS`].
 /// * [`Frees::NamedBy`]: the entry names that premise and no free statement.
-/// * [`Frees::Nothing`]: the entry names no free statement.
+/// * [`Frees::Nothing`]: the entry names no free statement and states no
+///   teardown slot.
 /// * `audit` lists the entry at most once.
 ///
 /// # Errors
@@ -667,7 +745,19 @@ pub fn free_audited(
         .filter(|(function, _)| *function == documented.function)
         .map(|(_, reading)| *reading)
         .collect::<Vec<_>>();
-    let named = documented.premises.contains(&Premise::UnstatedFreeSlots);
+    let free_statement = documented.premises.contains(&Premise::UnstatedFreeSlots);
+    let released_statement = documented
+        .premises
+        .contains(&Premise::UnstatedReleasedFreeSlots);
+    let named = free_statement || released_statement;
+    let teardown = documented
+        .premises
+        .iter()
+        .filter_map(|premise| match premise {
+            Premise::SlotInvoked { slot, .. } if TEARDOWN_SLOTS.contains(slot) => Some(*slot),
+            _ => None,
+        })
+        .collect::<std::collections::BTreeSet<_>>();
     match listed.as_slice() {
         [] if named => Err(format!(
             "names `{UNSTATED_SLOTS}` in the statement of a free but the free audit does not \
@@ -678,14 +768,84 @@ pub fn free_audited(
             describe(documented.shape)
         )),
         [] => Ok(()),
-        [Frees::Runs { .. }] if !named => Err(format!(
-            "may run functions of methods, providers or engines of the objects it frees but \
-             does not name `{UNSTATED_SLOTS}` in the statement of a free"
+        [Frees::Runs { .. }] if released_statement => Err(format!(
+            "names `{UNSTATED_SLOTS}` in the statement of a free through a released argument, \
+             but the free audit reads it as stating its teardown slots"
+        )),
+        [Frees::RunsThroughRelease { .. }] if !released_statement || free_statement => {
+            Err(format!(
+                "releases its argument, so it states no teardown slot, but does not name \
+                 `{UNSTATED_SLOTS}` in the statement of a free through a released argument \
+                 alone"
+            ))
+        }
+        [Frees::RunsThroughRelease { .. }]
+            if documented.premises.contains(&Premise::UnstatedSlots) =>
+        {
+            Err(format!(
+                "names `{UNSTATED_SLOTS}` in both the handshake's statement and a free's"
+            ))
+        }
+        [Frees::RunsThroughRelease { .. }]
+            if !documented.premises.contains(&Premise::BuiltinTeardown)
+                || !documented.premises.contains(&Premise::LoadedTeardown) =>
+        {
+            Err(format!(
+                "runs teardown functions but does not name both `{BUILTIN_TEARDOWN}` and \
+                 `{LOADED_TEARDOWN}`"
+            ))
+        }
+        [Frees::RunsThroughRelease { left, .. }] if left.is_empty() => {
+            Err("its free audit entry names nothing left".to_owned())
+        }
+        [Frees::RunsThroughRelease { .. }] if !teardown.is_empty() => {
+            Err("releases its argument, yet states a teardown slot through it".to_owned())
+        }
+        [Frees::RunsThroughRelease { .. }] => Ok(()),
+        [Frees::Runs { left, .. }] if !left.is_empty() && !named => Err(format!(
+            "may run functions of methods, providers or engines of the objects it frees that no \
+             declaration states ({left:?}) but does not name `{UNSTATED_SLOTS}` in the statement \
+             of a free"
+        )),
+        [Frees::Runs { left, .. }] if left.is_empty() && named => Err(format!(
+            "states every function it runs on the objects it frees, yet names `{UNSTATED_SLOTS}` \
+             in the statement of a free"
         )),
         [Frees::Runs { .. }] if documented.premises.contains(&Premise::UnstatedSlots) => Err(
             format!("names `{UNSTATED_SLOTS}` in both the handshake's statement and a free's"),
         ),
-        [Frees::Runs { .. }] => Ok(()),
+        [Frees::Runs { .. }]
+            if !documented.premises.contains(&Premise::BuiltinTeardown)
+                || !documented.premises.contains(&Premise::LoadedTeardown) =>
+        {
+            Err(format!(
+                "runs teardown functions but does not name both `{BUILTIN_TEARDOWN}` and \
+                 `{LOADED_TEARDOWN}`"
+            ))
+        }
+        [Frees::Runs { slots, .. }] => {
+            if let Some(unknown) = slots.iter().find(|slot| !TEARDOWN_SLOTS.contains(slot)) {
+                return Err(format!(
+                    "its free audit entry lists `{unknown}`, which is no teardown slot"
+                ));
+            }
+            let audited = slots
+                .iter()
+                .copied()
+                .collect::<std::collections::BTreeSet<_>>();
+            if let Some(unstated) = audited.difference(&teardown).next() {
+                return Err(format!(
+                    "may run the teardown slot `{unstated}` but does not state its invocation"
+                ));
+            }
+            if let Some(stray) = teardown.difference(&audited).next() {
+                return Err(format!(
+                    "states the teardown slot `{stray}`, which the free audit does not read it \
+                     as running"
+                ));
+            }
+            Ok(())
+        }
         [Frees::NamedBy { .. }] if named => Err(format!(
             "names `{UNSTATED_SLOTS}` in the statement of a free, but the free audit reads \
              what it runs in turn as named by another premise"
@@ -699,6 +859,11 @@ pub fn free_audited(
             "names `{UNSTATED_SLOTS}` in the statement of a free, but the free audit reads it \
              as freeing nothing whose functions a user can set"
         )),
+        [Frees::Nothing { .. }] if !teardown.is_empty() => Err(
+            "states a teardown slot, but the free audit reads it as freeing nothing whose \
+             functions a user can set"
+                .to_owned(),
+        ),
         [Frees::Nothing { .. }] => Ok(()),
         _ => Err("the free audit lists it more than once".to_owned()),
     }
@@ -775,6 +940,52 @@ pub fn nullable_arguments_cited(slot: &str, snapshots: &Value) -> Result<(), Str
     for nullable in NULLABLE_ARGUMENTS.iter().filter(|entry| entry.slot == slot) {
         nullable_argument_cited(nullable, snapshots)?;
     }
+    // Card OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS: a source-derived
+    // slot's NULL arguments are cited from the source.
+    for nullable in SOURCE_NULLABLE_ARGUMENTS
+        .iter()
+        .filter(|entry| entry.slot == slot)
+    {
+        source_nullable_argument_cited(nullable)?;
+    }
+    Ok(())
+}
+
+/// One [`SourceNullableArgument`]: its slot is source-derived, its citation
+/// names a file and line, and some documented invocation of the slot
+/// receives a value the callee supplies there.
+///
+/// # Errors
+///
+/// Why it is not so, as the diagnostic text.
+pub fn source_nullable_argument_cited(nullable: &SourceNullableArgument) -> Result<(), String> {
+    let SourceNullableArgument {
+        slot,
+        position,
+        citation,
+    } = *nullable;
+    if !SOURCE_SLOTS.iter().any(|known| known.key == slot) {
+        return Err(format!(
+            "nullable argument of `{slot}` cited from the source, which is not a source-derived \
+             slot"
+        ));
+    }
+    if !citation.contains(".c:") {
+        return Err(format!("`{slot}` argument {position} cites no source line"));
+    }
+    let used = DOCUMENTED
+        .iter()
+        .flat_map(|entry| entry.premises)
+        .any(|premise| {
+            matches!(premise, Premise::SlotInvoked { slot: invoked, arguments, .. }
+                if *invoked == slot && arguments.get(position) == Some(&None))
+        });
+    if !used {
+        return Err(format!(
+            "`{slot}` argument {position} is read as nullable, but no documented invocation \
+             of the slot receives a value the callee supplies there"
+        ));
+    }
     Ok(())
 }
 
@@ -842,6 +1053,11 @@ pub fn nullable_argument_cited(
 ///
 /// The first writer that is not so, as the diagnostic text.
 pub fn slot_writers_declared(slot: &str, snapshots: &Value) -> Result<(), String> {
+    // Card OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS: a source-derived slot
+    // has no page NAME to account for.
+    if let Some(source) = SOURCE_SLOTS.iter().find(|known| known.key == slot) {
+        return source_slot_writers_declared(source);
+    }
     let stated = SLOTS
         .iter()
         .find(|known| known.key == slot)
@@ -926,6 +1142,57 @@ pub fn slot_writers_declared(slot: &str, snapshots: &Value) -> Result<(), String
     Ok(())
 }
 
+/// Card **OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS**: a source-derived slot
+/// (one of [`SOURCE_SLOTS`], never also one of [`SLOTS`]) has at least one
+/// writer; each writer is a source-derived entry registering the slot and
+/// declared in a module of this crate; and no other entry registers it.
+///
+/// # Errors
+///
+/// The first writer that is not so, as the diagnostic text.
+pub fn source_slot_writers_declared(slot: &SourceSlot) -> Result<(), String> {
+    let key = slot.key;
+    if SLOTS.iter().any(|known| known.key == key) {
+        return Err(format!(
+            "`{key}` is both a documented and a source-derived slot"
+        ));
+    }
+    if slot.writers.is_empty() {
+        return Err(format!("`{key}` names no writer"));
+    }
+    for writer in slot.writers {
+        let entry = DOCUMENTED
+            .iter()
+            .find(|entry| entry.function == *writer)
+            .ok_or_else(|| format!("`{key}`'s writer {writer} is not documented"))?;
+        if entry.series != SOURCE_SERIES {
+            return Err(format!(
+                "`{key}` is source-derived but its writer {writer} cites a page"
+            ));
+        }
+        if !registered_slots(entry).contains(&key) {
+            return Err(format!(
+                "`{key}`'s writer {writer} is not documented as its registration"
+            ));
+        }
+        let declared = crate::MODULES
+            .iter()
+            .any(|(_, text)| strip_comments(text).contains(&format!("extern fn {writer}(")));
+        if !declared {
+            return Err(format!("`{key}`'s writer {writer} is not declared"));
+        }
+    }
+    for entry in DOCUMENTED {
+        if registered_slots(entry).contains(&key) && !slot.writers.contains(&entry.function) {
+            return Err(format!(
+                "{} registers `{key}` but is not one of its writers",
+                entry.function
+            ));
+        }
+    }
+    Ok(())
+}
+
 /// The exact clause set, sorted, of a declaration stating `documented` over
 /// parameters named `parameters` (in order); `None` when the shape or a
 /// premise names a position the declaration lacks.
@@ -954,6 +1221,15 @@ pub fn expected_clauses(
             Premise::UnstatedFreeSlots => {
                 format!("requires resource_premise({UNSTATED_SLOTS}, {UNSTATED_FREE_STATEMENT})")
             }
+            Premise::UnstatedReleasedFreeSlots => format!(
+                "requires resource_premise({UNSTATED_SLOTS}, {UNSTATED_RELEASED_FREE_STATEMENT})"
+            ),
+            Premise::BuiltinTeardown => format!(
+                "requires resource_premise({BUILTIN_TEARDOWN}, {BUILTIN_TEARDOWN_STATEMENT})"
+            ),
+            Premise::LoadedTeardown => format!(
+                "requires resource_premise({LOADED_TEARDOWN}, {LOADED_TEARDOWN_STATEMENT})"
+            ),
             Premise::BuiltinLookupMethods => format!(
                 "requires resource_premise({BUILTIN_LOOKUP_METHODS}, {BUILTIN_LOOKUP_METHODS_STATEMENT})"
             ),
@@ -1215,6 +1491,9 @@ mod tests {
             (BIO_FREE, BIO_FREE_STATEMENT),
             (UNSTATED_SLOTS, UNSTATED_FREE_STATEMENT),
             (BUILTIN_LOOKUP_METHODS, BUILTIN_LOOKUP_METHODS_STATEMENT),
+            (BUILTIN_TEARDOWN, BUILTIN_TEARDOWN_STATEMENT),
+            (LOADED_TEARDOWN, LOADED_TEARDOWN_STATEMENT),
+            (UNSTATED_SLOTS, UNSTATED_RELEASED_FREE_STATEMENT),
         ] {
             let formula = premise_text(name, statement);
             let prose = format!(
@@ -1241,9 +1520,13 @@ mod tests {
                 refused += 1;
             }
         }
-        // Every one of the 58 premise clauses: SP1's 53 and the five frees'
-        // free statements (card OPENSSL-OBJECT-FREES-SILENT-METHOD-CALLBACKS).
-        assert_eq!(refused, 58);
+        // Every one of the 71 premise clauses: SP1's 53, the five frees'
+        // free statements (card OPENSSL-OBJECT-FREES-SILENT-METHOD-CALLBACKS),
+        // less the three frees that now state every item, and the two
+        // teardown premises on the eight running frees (card
+        // OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS; two of the five free
+        // statements are now the released free's).
+        assert_eq!(refused, 71);
     }
 
     #[test]
@@ -1754,7 +2037,10 @@ mod tests {
         for slot in SLOTS {
             slot_writers_declared(slot.key, &snapshots).unwrap();
         }
-        assert_eq!(SLOTS.len(), 77);
+        // Card OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS: ten documented
+        // teardown slots (and eight source-derived ones in SOURCE_SLOTS).
+        assert_eq!(SLOTS.len(), 87);
+        assert_eq!(SOURCE_SLOTS.len(), 8);
         // Card OPENSSL-UNSTATED-CALLBACK-SLOTS: a ctrl arm stays unstated.
         assert!(slot_writers_declared("ssl_ctx_st.servername_cb", &snapshots).is_err());
         // A page that does not name a writer refuses the slot.
@@ -1769,7 +2055,11 @@ mod tests {
         // Every entry that registers or invokes a slot names a known one.
         for documented in DOCUMENTED {
             for slot in stated_slots(documented) {
-                assert!(SLOTS.iter().any(|known| known.key == slot), "{slot}");
+                assert!(
+                    SLOTS.iter().any(|known| known.key == slot)
+                        || SOURCE_SLOTS.iter().any(|known| known.key == slot),
+                    "{slot}"
+                );
             }
         }
     }
@@ -2462,6 +2752,12 @@ mod tests {
     fn every_documented_page_was_fetched() {
         let snapshots: Value = serde_json::from_str(crate::DOC_SNAPSHOTS).unwrap();
         for documented in DOCUMENTED {
+            // Card OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS: a source-derived
+            // entry cites the pinned source instead.
+            if documented.series == SOURCE_SERIES {
+                assert!(source_cited(documented).unwrap().is_some());
+                continue;
+            }
             assert!(
                 snapshots["pages"].as_array().unwrap().iter().any(|page| {
                     page["page"] == documented.page
@@ -2730,14 +3026,19 @@ mod tests {
     }
 
     /// Card OPENSSL-OBJECT-FREES-SILENT-METHOD-CALLBACKS: every release is in
-    /// the free audit; every free the audit reads as running names the free
-    /// statement in its module, and dropping it or reading it in the
-    /// handshake's statement refuses; the statement is named exactly where
-    /// the audit reads a run.
+    /// the free audit. Card OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS: a free
+    /// the audit reads as leaving items names the free statement, and
+    /// dropping it or reading it in the handshake's statement refuses; a free
+    /// stating every item names none, and adding it refuses; every running
+    /// free names both teardown premises and states exactly its audited
+    /// teardown slots, and dropping either premise or one slot refuses.
     #[test]
     fn every_free_names_what_it_runs_on_the_objects_it_frees() {
         let premise = premise_text(UNSTATED_SLOTS, UNSTATED_FREE_STATEMENT);
-        let mut runs = 0;
+        let builtin = premise_text(BUILTIN_TEARDOWN, BUILTIN_TEARDOWN_STATEMENT);
+        let loaded = premise_text(LOADED_TEARDOWN, LOADED_TEARDOWN_STATEMENT);
+        let released_premise = premise_text(UNSTATED_SLOTS, UNSTATED_RELEASED_FREE_STATEMENT);
+        let (mut runs, mut leaving, mut released) = (0, 0, 0);
         for (function, reading) in FREE_AUDIT {
             let documented = DOCUMENTED
                 .iter()
@@ -2753,34 +3054,79 @@ mod tests {
             let (path, text) = module_of(function);
             let start = text.find(&format!("extern fn {function}(")).unwrap();
             let end = start + text[start..].find("};").unwrap();
-            let named = text[start..end].contains(premise.trim());
+            let body = &text[start..end];
+            let named = body.contains(premise.trim());
+            let replaced = |from: &str, to: &str| {
+                let changed = format!("{}{}", &text[..start], text[start..].replacen(from, to, 1));
+                assert_ne!(changed, *text, "{function}: `{from}`");
+                changed
+            };
+            check_function(path, text, function).unwrap();
             match reading {
-                Frees::Runs { .. } => {
+                Frees::Runs { slots, left, .. } => {
                     runs += 1;
-                    assert!(named, "{function} names the free statement");
-                    let dropped = format!(
-                        "{}{}",
-                        &text[..start],
-                        text[start..].replacen(&premise, "", 1)
-                    );
-                    assert_ne!(dropped, *text, "{function}");
-                    let refused = check_function(path, &dropped, function).unwrap_err();
-                    assert!(refused.contains(UNSTATED_SLOTS), "{function}: {refused}");
-                    // The handshake's statement does not stand in for it.
-                    let handshake = format!(
-                        "{}{}",
-                        &text[..start],
-                        text[start..].replacen(
+                    assert!(body.contains(builtin.trim()), "{function}");
+                    assert!(body.contains(loaded.trim()), "{function}");
+                    for teardown in [&builtin, &loaded] {
+                        let refused =
+                            check_function(path, &replaced(teardown, ""), function).unwrap_err();
+                        assert!(refused.contains("teardown"), "{function}: {refused}");
+                    }
+                    for slot in *slots {
+                        let line = text[start..end]
+                            .lines()
+                            .find(|line| line.contains(&format!(", {slot},")))
+                            .unwrap_or_else(|| panic!("{function} states {slot}"));
+                        let refused =
+                            check_function(path, &replaced(&format!("{line}\n"), ""), function)
+                                .unwrap_err();
+                        assert!(!refused.is_empty(), "{function}: {slot}");
+                    }
+                    if left.is_empty() {
+                        assert!(!named, "{function} states every item");
+                        let anchor = "    requires resource_revision(flexible);\n";
+                        let added = replaced(anchor, &format!("{anchor}{premise}"));
+                        let refused = check_function(path, &added, function).unwrap_err();
+                        assert!(refused.contains(UNSTATED_SLOTS), "{function}: {refused}");
+                    } else {
+                        leaving += 1;
+                        assert!(named, "{function} names the free statement");
+                        let refused =
+                            check_function(path, &replaced(&premise, ""), function).unwrap_err();
+                        assert!(refused.contains(UNSTATED_SLOTS), "{function}: {refused}");
+                        // The handshake's statement does not stand in for it.
+                        let handshake = replaced(
                             &premise,
                             &premise_text(UNSTATED_SLOTS, UNSTATED_SLOTS_STATEMENT),
-                            1
-                        )
-                    );
-                    assert_ne!(handshake, *text, "{function}");
+                        );
+                        assert!(
+                            check_function(path, &handshake, function).is_err(),
+                            "{function}"
+                        );
+                    }
+                }
+                Frees::RunsThroughRelease { .. } => {
+                    runs += 1;
+                    released += 1;
+                    assert!(!named, "{function}");
+                    assert!(body.contains(released_premise.trim()), "{function}");
+                    assert!(body.contains(builtin.trim()), "{function}");
+                    assert!(body.contains(loaded.trim()), "{function}");
+                    // Dropping it, or reading it as the free statement that
+                    // leaves out the settable functions, refuses.
+                    let refused = check_function(path, &replaced(&released_premise, ""), function)
+                        .unwrap_err();
+                    assert!(refused.contains(UNSTATED_SLOTS), "{function}: {refused}");
                     assert!(
-                        check_function(path, &handshake, function).is_err(),
+                        check_function(path, &replaced(&released_premise, &premise), function)
+                            .is_err(),
                         "{function}"
                     );
+                    for teardown in [&builtin, &loaded] {
+                        let refused =
+                            check_function(path, &replaced(teardown, ""), function).unwrap_err();
+                        assert!(refused.contains("teardown"), "{function}: {refused}");
+                    }
                 }
                 Frees::NamedBy { premise: other, .. } => {
                     assert!(!named, "{function}");
@@ -2790,8 +3136,11 @@ mod tests {
             }
         }
         // The eight frees reaching keys, certificates, stores, engines or
-        // contexts: r39's three and this card's five.
-        assert_eq!(runs, 8);
+        // contexts. r39's three leave a CRL's method (SSL_free also the QUIC
+        // TLS release callback); PKCS12_free and EVP_MD_CTX_free release
+        // their argument and can state no slot; X509_free, EVP_PKEY_free and
+        // ENGINE_free state every item.
+        assert_eq!((runs, leaving, released), (8, 3, 2));
         for documented in DOCUMENTED {
             let audited = FREE_AUDIT.iter().any(|(f, _)| *f == documented.function);
             assert_eq!(
@@ -2801,26 +3150,53 @@ mod tests {
                 documented.function
             );
         }
-        // Every module names the free statement only where the audit reads
-        // a run.
-        let named = crate::MODULES
-            .iter()
-            .map(|(_, text)| strip_comments(text).matches(premise.trim()).count())
-            .sum::<usize>();
-        assert_eq!(named, runs);
+        // Every module names the free statement only where the audit leaves
+        // items, and the teardown premises exactly where it reads a run.
+        let count = |needle: &str| {
+            crate::MODULES
+                .iter()
+                .map(|(_, text)| strip_comments(text).matches(needle.trim()).count())
+                .sum::<usize>()
+        };
+        assert_eq!(count(&premise), leaving);
+        assert_eq!(count(&released_premise), released);
+        assert_eq!(count(&builtin), runs);
+        assert_eq!(count(&loaded), runs);
     }
 
-    /// Card OPENSSL-OBJECT-FREES-SILENT-METHOD-CALLBACKS: each way the free
-    /// audit can drift refuses.
+    /// Card OPENSSL-OBJECT-FREES-SILENT-METHOD-CALLBACKS and
+    /// OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS: each way the free audit can
+    /// drift refuses.
     #[test]
     fn a_drifted_free_reading_is_refused() {
-        const RUNS: Frees = Frees::Runs { how: "" };
+        const RUNS: Frees = Frees::Runs {
+            how: "",
+            slots: &[],
+            left: &["a CRL's method"],
+        };
+        const STATED: Frees = Frees::Runs {
+            how: "",
+            slots: &["rsa_meth_st.rsa_meth_finish"],
+            left: &[],
+        };
         const BIO: Frees = Frees::NamedBy {
             premise: Premise::BuiltinBioMethods,
             why: "",
         };
         const NOTHING: Frees = Frees::Nothing { why: "" };
         const FREE: Premise = Premise::UnstatedFreeSlots;
+        const B: Premise = Premise::BuiltinTeardown;
+        const L: Premise = Premise::LoadedTeardown;
+        const FINISH: Premise = Premise::SlotInvoked {
+            object: 0,
+            slot: "rsa_meth_st.rsa_meth_finish",
+            arguments: &[None],
+        };
+        const DESTROY: Premise = Premise::SlotInvoked {
+            object: 0,
+            slot: "engine_st.engine_destroy",
+            arguments: &[None],
+        };
         let free = |premises| DocumentedFunction {
             function: "EVP_PKEY_free",
             page: "EVP_PKEY_new",
@@ -2830,7 +3206,8 @@ mod tests {
             premises,
         };
         // As landed.
-        free_audited(&free(&[FREE]), &[("EVP_PKEY_free", RUNS)]).unwrap();
+        free_audited(&free(&[FREE, B, L]), &[("EVP_PKEY_free", RUNS)]).unwrap();
+        free_audited(&free(&[B, L, FINISH]), &[("EVP_PKEY_free", STATED)]).unwrap();
         free_audited(&free(&[]), &[("EVP_PKEY_free", NOTHING)]).unwrap();
         free_audited(
             &free(&[Premise::BuiltinBioMethods]),
@@ -2870,20 +3247,50 @@ mod tests {
             ..free(&[FREE])
         };
         assert!(free_audited(&premised_plain, &[]).is_err());
-        // The premise dropped, or read in the handshake's statement beside or
-        // instead of the free's.
-        let refused = free_audited(&free(&[]), &[("EVP_PKEY_free", RUNS)]).unwrap_err();
+        // The premise dropped where items are left, or named where none is.
+        let refused = free_audited(&free(&[B, L]), &[("EVP_PKEY_free", RUNS)]).unwrap_err();
         assert!(refused.contains("does not name"), "{refused}");
+        let refused =
+            free_audited(&free(&[FREE, B, L, FINISH]), &[("EVP_PKEY_free", STATED)]).unwrap_err();
+        assert!(refused.contains("states every function"), "{refused}");
+        // Read in the handshake's statement beside or instead of the free's.
         assert!(
             free_audited(
-                &free(&[FREE, Premise::UnstatedSlots]),
+                &free(&[FREE, B, L, Premise::UnstatedSlots]),
                 &[("EVP_PKEY_free", RUNS)]
             )
             .is_err()
         );
         assert!(
-            free_audited(&free(&[Premise::UnstatedSlots]), &[("EVP_PKEY_free", RUNS)]).is_err()
+            free_audited(
+                &free(&[Premise::UnstatedSlots, B, L]),
+                &[("EVP_PKEY_free", RUNS)]
+            )
+            .is_err()
         );
+        // A teardown premise dropped.
+        for premises in [&[FREE, B][..], &[FREE, L][..], &[FREE][..]] {
+            let refused = free_audited(&free(premises), &[("EVP_PKEY_free", RUNS)]).unwrap_err();
+            assert!(refused.contains("teardown"), "{refused}");
+        }
+        // An audited slot not stated, a stated slot not audited, an unknown
+        // slot in the audit, and a teardown slot on a free reading nothing.
+        let refused = free_audited(&free(&[B, L]), &[("EVP_PKEY_free", STATED)]).unwrap_err();
+        assert!(refused.contains("does not state"), "{refused}");
+        let refused = free_audited(
+            &free(&[B, L, FINISH, DESTROY]),
+            &[("EVP_PKEY_free", STATED)],
+        )
+        .unwrap_err();
+        assert!(refused.contains("does not read"), "{refused}");
+        let unknown = Frees::Runs {
+            how: "",
+            slots: &["ssl_ctx_st.info_callback"],
+            left: &[],
+        };
+        let refused = free_audited(&free(&[B, L]), &[("EVP_PKEY_free", unknown)]).unwrap_err();
+        assert!(refused.contains("no teardown slot"), "{refused}");
+        assert!(free_audited(&free(&[DESTROY]), &[("EVP_PKEY_free", NOTHING)]).is_err());
         // The free statement where the audit reads another premise or
         // nothing, and the other premise dropped.
         assert!(
@@ -2895,10 +3302,37 @@ mod tests {
         );
         assert!(free_audited(&free(&[]), &[("EVP_PKEY_free", BIO)]).is_err());
         assert!(free_audited(&free(&[FREE]), &[("EVP_PKEY_free", NOTHING)]).is_err());
+        // A free through a released argument: the released statement alone,
+        // both teardown premises, no teardown slot, something left.
+        const RELEASED: Frees = Frees::RunsThroughRelease {
+            how: "",
+            left: &["the released argument"],
+        };
+        const RFREE: Premise = Premise::UnstatedReleasedFreeSlots;
+        free_audited(&free(&[RFREE, B, L]), &[("EVP_PKEY_free", RELEASED)]).unwrap();
+        for premises in [
+            &[B, L][..],
+            &[FREE, B, L][..],
+            &[RFREE, FREE, B, L][..],
+            &[RFREE, Premise::UnstatedSlots, B, L][..],
+            &[RFREE, B][..],
+            &[RFREE, L][..],
+            &[RFREE, B, L, FINISH][..],
+        ] {
+            assert!(
+                free_audited(&free(premises), &[("EVP_PKEY_free", RELEASED)]).is_err(),
+                "{premises:?}"
+            );
+        }
+        let nothing_left = Frees::RunsThroughRelease { how: "", left: &[] };
+        assert!(free_audited(&free(&[RFREE, B, L]), &[("EVP_PKEY_free", nothing_left)]).is_err());
+        // The released statement where the audit reads stated slots.
+        assert!(free_audited(&free(&[RFREE, B, L]), &[("EVP_PKEY_free", RUNS)]).is_err());
+        assert!(free_audited(&free(&[RFREE, B, L, FINISH]), &[("EVP_PKEY_free", STATED)]).is_err());
         // A second listing.
         assert!(
             free_audited(
-                &free(&[FREE]),
+                &free(&[FREE, B, L]),
                 &[("EVP_PKEY_free", RUNS), ("EVP_PKEY_free", RUNS)]
             )
             .is_err()
@@ -2922,6 +3356,174 @@ mod tests {
         );
         assert_ne!(added, *text);
         assert!(check_function(path, &added, "OPENSSL_sk_free").is_err());
+    }
+
+    /// Card OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS: the teardown setters.
+    /// Every teardown slot has its writers declared (a page's NAME accounted
+    /// for, or the pinned source cited); each writer checks; the
+    /// source-derived entries cite their file, admit only 3.5.5 and say so in
+    /// their check note; and each drift refuses.
+    #[test]
+    fn the_teardown_setters_register_their_slots() {
+        let snapshots: Value = serde_json::from_str(crate::DOC_SNAPSHOTS).unwrap();
+        for slot in TEARDOWN_SLOTS {
+            slot_writers_declared(slot, &snapshots).unwrap();
+            nullable_arguments_cited(slot, &snapshots).unwrap();
+            let writers = SLOTS
+                .iter()
+                .find(|known| known.key == *slot)
+                .map(|known| known.writers)
+                .or_else(|| {
+                    SOURCE_SLOTS
+                        .iter()
+                        .find(|known| known.key == *slot)
+                        .map(|known| known.writers)
+                })
+                .unwrap();
+            for writer in writers {
+                let (path, text) = module_of(writer);
+                assert_eq!(path, "openssl/teardown_slots.qv");
+                let note = check_function(path, text, writer).unwrap();
+                let source = DOCUMENTED
+                    .iter()
+                    .find(|entry| entry.function == *writer)
+                    .unwrap()
+                    .series
+                    == SOURCE_SERIES;
+                assert_eq!(
+                    note.contains("source-derived, not documented"),
+                    source,
+                    "{note}"
+                );
+            }
+            // No key segment is a bare field word.
+            let field = slot.split_once('.').unwrap().1;
+            assert!(
+                !["finish", "destroy", "cleanup", "free", "init"].contains(&field),
+                "{slot}"
+            );
+        }
+        for slot in SOURCE_SLOTS {
+            source_slot_writers_declared(slot).unwrap();
+            assert!(!SLOTS.iter().any(|known| known.key == slot.key));
+        }
+        // Thirteen setters: ten documented, three source-derived.
+        let setters = DOCUMENTED
+            .iter()
+            .filter(|entry| module_of(entry.function).0 == "openssl/teardown_slots.qv")
+            .collect::<Vec<_>>();
+        assert_eq!(setters.len(), 13);
+        assert_eq!(
+            setters.iter().filter(|e| e.series == SOURCE_SERIES).count(),
+            SOURCE_CITATIONS.len()
+        );
+        // A source-derived entry given a page series, a wider range, another
+        // file, or no citation, and a documented entry cited from the source.
+        let source = *DOCUMENTED
+            .iter()
+            .find(|entry| entry.function == "ENGINE_set_pkey_meths")
+            .unwrap();
+        source_cited(&source).unwrap().unwrap();
+        assert!(
+            source_cited(&DocumentedFunction {
+                series: "3.5",
+                ..source
+            })
+            .is_err()
+        );
+        assert!(
+            source_cited(&DocumentedFunction {
+                range: "resource_library_version(openssl, since \"1.0.0\")",
+                ..source
+            })
+            .is_err()
+        );
+        assert!(
+            source_cited(&DocumentedFunction {
+                page: "crypto/engine/eng_lib.c",
+                ..source
+            })
+            .is_err()
+        );
+        assert!(
+            source_cited(&DocumentedFunction {
+                function: "ENGINE_set_finish_function",
+                ..source
+            })
+            .is_err()
+        );
+        let documented = *DOCUMENTED
+            .iter()
+            .find(|entry| entry.function == "ENGINE_set_finish_function")
+            .unwrap();
+        assert_eq!(source_cited(&documented), Ok(None));
+        assert!(
+            source_cited(&DocumentedFunction {
+                function: "ENGINE_set_pkey_meths",
+                ..documented
+            })
+            .is_err()
+        );
+        // The module's text drifted: the range widened, a registration moved,
+        // an EC_KEY_METHOD registration dropped, the wait fd key's retention
+        // dropped.
+        let (path, text) = module_of("ENGINE_set_pkey_meths");
+        for (function, from, to) in [
+            (
+                "ENGINE_set_pkey_meths",
+                "since \"3.5.5\"",
+                "since \"1.0.0\"",
+            ),
+            (
+                "ENGINE_set_finish_function",
+                "engine_st.engine_finish, finish_f",
+                "engine_st.engine_destroy, finish_f",
+            ),
+            (
+                "EC_KEY_METHOD_set_init",
+                "    ensures normal resource_callback_slot_registered(meth, ec_key_method_st.ec_key_meth_copy, copy);\n",
+                "",
+            ),
+            (
+                "ASYNC_WAIT_CTX_set_wait_fd",
+                "    ensures normal resource_retained_by(key, ctx);\n",
+                "",
+            ),
+        ] {
+            let start = text.find(&format!("extern fn {function}(")).unwrap();
+            let drifted = format!("{}{}", &text[..start], text[start..].replacen(from, to, 1));
+            assert_ne!(drifted, *text, "{function}");
+            assert!(
+                check_function(path, &drifted, function).is_err(),
+                "{function}"
+            );
+        }
+        // A source slot's NULL argument with no source line, or that no
+        // invocation reads.
+        assert!(
+            source_nullable_argument_cited(&SourceNullableArgument {
+                slot: "engine_st.engine_pkey_meths",
+                position: 1,
+                citation: "tb_pkmeth.c",
+            })
+            .is_err()
+        );
+        assert!(
+            source_nullable_argument_cited(&SourceNullableArgument {
+                slot: "engine_st.engine_pkey_meths",
+                position: 7,
+                citation: "crypto/engine/tb_pkmeth.c:110",
+            })
+            .is_err()
+        );
+        assert!(
+            source_nullable_argument_cited(&SourceNullableArgument {
+                slot: "rsa_meth_st.rsa_meth_finish",
+                position: 0,
+                citation: "crypto/rsa/rsa_lib.c:150",
+            })
+            .is_err()
+        );
     }
 
     /// Card OPENSSL-REMAINING-HANDSHAKE-SETTERS: the remaining handshake

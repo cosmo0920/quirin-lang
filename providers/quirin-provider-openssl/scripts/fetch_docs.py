@@ -33,6 +33,11 @@ OPERATIONS", NOTES). New fetches record it. `--argument-sentences` adds it to
 pages the record already holds: each is refetched and refused unless its
 SHA-256 is exactly the recorded one, so the sentences are read from the page
 as reviewed and no digest changes.
+
+Card OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS: `--name` likewise adds the
+NAME section (`name`, which the slot checker reads) to a page the record
+holds without one: the page is refetched and refused unless its SHA-256 is
+exactly the recorded one, and a page that already records a NAME is refused.
 """
 import argparse
 import datetime
@@ -127,6 +132,10 @@ def main():
                       help="refetch pages the record holds, refuse any whose SHA-256 differs "
                            "from the recorded one, and record their argument_null_sentences "
                            "(card CALLBACK-SUPPLIED-NULL-ACTUAL)")
+    mode.add_argument("--name", action="store_true",
+                      help="refetch pages the record holds without a NAME, refuse any whose "
+                           "SHA-256 differs from the recorded one, and record their `name` "
+                           "(card OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS)")
     mode.add_argument("--merge", action="store_true",
                       help="keep the record's existing pages and add only the (page, series) "
                            "pairs it lacks, each with its own `fetched_on` (card "
@@ -135,7 +144,7 @@ def main():
     parser.add_argument("pages", nargs="+", help="PAGE@SERIES[,SERIES...]")
     args = parser.parse_args()
     date = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d")
-    if args.argument_sentences:
+    if args.argument_sentences or args.name:
         record = json.loads(args.record.read_text())
         for spec in args.pages:
             page, series = spec.split("@", 1)
@@ -149,7 +158,12 @@ def main():
                 if not entry.get("fetched") or entry["sha256"] != held[0]["sha256"]:
                     raise SystemExit(f"{page}@{one}: the page fetched now is not the one "
                                      f"recorded ({entry.get('sha256')} != {held[0]['sha256']})")
-                held[0]["argument_null_sentences"] = entry["argument_null_sentences"]
+                if args.name:
+                    if held[0].get("name") is not None:
+                        raise SystemExit(f"{page}@{one} already records its NAME")
+                    held[0]["name"] = entry["name"]
+                else:
+                    held[0]["argument_null_sentences"] = entry["argument_null_sentences"]
         args.record.write_text(json.dumps(record, indent=1) + "\n")
         return
     if args.append or args.merge:

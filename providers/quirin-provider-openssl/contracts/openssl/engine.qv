@@ -35,16 +35,30 @@ module contract;
 // callbacks and its destroy function (engine_free_util, eng_lib.c 3.5.5),
 // whose setters no declaration states: they are in #teardown of the freed
 // ENGINE, which the unstated-slots premise of a free names.
+// Card OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS: the destroy function and
+// the method enumerators are stated now, each handed the engine
+// (teardown_slots.qv; the enumerators' NULL method and nids pointers,
+// crypto/engine/tb_pkmeth.c:110,112 and tb_asnmth.c:123,125 at 3.5.5), with
+// a built-in engine's under `openssl_builtin_teardown_functions` and a
+// loaded engine module's under `openssl_loaded_module_functions`. So the free
+// names no free statement.
 extern fn ENGINE_free(e: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
     requires resource_revision(flexible);
     requires resource_library_version(openssl, documented "3.0");
-    requires resource_premise(openssl_unstated_callback_slots,
-        quant all #o in #freed: #teardown(#o) \ (#stated | #settable) |-> #inert);
     requires resource_premise(openssl_ex_data_callbacks,
         quant all #o in #created | #copied | #freed: #ex_data(#class(#o)) |-> #inert);
+    requires resource_premise(openssl_builtin_teardown_functions,
+        quant all #o in #freed: quant all #f in #teardown(#o): #f in #library
+        -> #f |-> #inert);
+    requires resource_premise(openssl_loaded_module_functions,
+        quant all #o in #freed: quant all #f in #teardown(#o): #f in #loaded
+        -> #f |-> #inert);
     ensures normal resource_borrowed(e);
     ensures normal resource_reference_dropped(e, nullable);
+    ensures normal resource_callback_slot_invoked(e, engine_st.engine_destroy, e);
+    ensures normal resource_callback_slot_invoked(e, engine_st.engine_pkey_asn1_meths, e, supplied_nullable, supplied_nullable, _);
+    ensures normal resource_callback_slot_invoked(e, engine_st.engine_pkey_meths, e, supplied_nullable, supplied_nullable, _);
     ensures normal resource_return_none();
 };
