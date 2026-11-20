@@ -243,8 +243,12 @@ fn the_openssl_formulas_are_the_lean_definitions() {
                 ("def unstatedFormula : Raw :=", 5),
                 // Card OPENSSL-OBJECT-FREES-SILENT-METHOD-CALLBACKS: X509_free,
                 // EVP_PKEY_free, PKCS12_free, ENGINE_free and EVP_MD_CTX_free
-                // join the three frees.
-                ("def unstatedFreeFormula : Raw :=", 8),
+                // join the three frees. Card
+                // OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS: the four
+                // SSL_CTX_use_* loaders, the two PEM readers, d2i_PKCS12_bio
+                // and the two verify-path calls (the handshake statement, on
+                // the other five, conjoins the free statement).
+                ("def unstatedFreeFormula : Raw :=", 17),
             ],
         ),
         (
@@ -287,7 +291,7 @@ fn the_openssl_formulas_are_the_lean_definitions() {
             "{name}: a statement matches no Lean definition"
         );
     }
-    assert_eq!(total, 58);
+    assert_eq!(total, 67);
 }
 
 #[test]
