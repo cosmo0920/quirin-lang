@@ -347,11 +347,16 @@ fn a_packer_inside_a_tracked_chunk_keeps_the_refusal() {
 #[test]
 fn a_packer_in_a_formal_record_keeps_the_refusal() {
     expect(
-        "`msgpack_packer_init(&ic->mp_pck, ic, cb)` over a caller's record: rule 12t refuses \
-         the call, so the gate's refusal is restored",
+        "`msgpack_packer_init(&ic->mp_pck, ic, cb)` over a caller's record: route G refuses \
+         the registration in a holder this body does not name; the gate's refusal stays \
+         `Unknown` and, since gateway rule 69 (card CG10-EMBEDDED-LIST-BORROWED-CONTAINER), \
+         names that container custody",
         "void w(struct chunk *ic) { msgpack_packer_init(&ic->mp_pck, ic, pack_write); }",
         "Unknown",
-        &[GATE],
+        &[
+            "unsupported:call to `msgpack_packer_init`: the registry holder `& ic - > mp_pck` \
+             is not one this body names (callback-registry-undecided)",
+        ],
     );
 }
 

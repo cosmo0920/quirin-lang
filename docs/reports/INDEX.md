@@ -175,11 +175,17 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [cg10-common-typed-place](cg10-common-typed-place/README.md) | CG10-COMMON-TYPED-PLACE |
 
+| [cg10-embedded-list-borrowed-container](cg10-embedded-list-borrowed-container/README.md) | CG10-EMBEDDED-LIST-BORROWED-CONTAINER: embedded lists as borrowed container operations (gateway rule 69) |
+
 | [cg10-indirect-access-sole-blockers](cg10-indirect-access-sole-blockers/README.md) | CG10-INDIRECT-ACCESS-SOLE-BLOCKERS: the 513 functions the access refusal blocks alone |
 
 | [cg10-indirect-access-sole-residuals](cg10-indirect-access-sole-residuals/README.md) | CG10-INDIRECT-ACCESS-SOLE-RESIDUALS: the uncontracted callees behind the access refusal |
 
 | [cg10-indirect-access-sole-residuals-r2](cg10-indirect-access-sole-residuals-r2/README.md) | CG10-INDIRECT-ACCESS-SOLE-RESIDUALS round 2: four readings of the access residual |
+
+| [cg10-indirect-access-sole-residuals-r3](cg10-indirect-access-sole-residuals-r3/README.md) | CG10-INDIRECT-ACCESS-SOLE-RESIDUALS round 3: the access refusal, re-measured; rules 67, 68 and a 12h amendment |
+
+| [cg10-member-store-retained-by](cg10-member-store-retained-by/README.md) | CG10-MEMBER-STORE-RETAINED-BY: a formal's pointer stored into a member is `retained_by` (rule 70) |
 
 | [cg11-pointer-valued-stores](cg11-pointer-valued-stores/README.md) | CG11-POINTER-VALUED-STORES |
 
@@ -1874,6 +1880,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [wave9-gen-reason](wave9-gen-reason/README.md) | GEN-REASON — the D02 generator's non-CT sections, and the last three reason-code residuals |
 
 | [windows-c11-threads](windows-c11-threads/README.md) | Windows C11 thread emission |
+
+| [windows-ci-plain-long-fixtures](windows-ci-plain-long-fixtures/README.md) | Windows CI: target-portable fixture spellings |
 
 | [windows-ci-test-portability](windows-ci-test-portability/README.md) | WINDOWS-TEST-PORTABILITY: the first full Windows CI suite |
 

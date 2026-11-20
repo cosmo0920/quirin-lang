@@ -997,6 +997,14 @@ contract {
 
 The Lean model is `QCore.RetentionPath` (`a_path_record_ends_only_by_its_own_removal_or_its_destroy`, `an_unresolved_path_never_decides`, `an_unmatched_removal_poisons_what_it_may_name`, `a_poisoned_record_ends_only_by_its_loop_destroy`, `the_old_sequence_no_longer_decides`, `a_safe_path_never_releases_a_held_identity`); card RETENTION-UNMATCHED-REMOVAL-POISONS corrected the earlier `an_unmatched_removal_keeps_every_record` and `a_path_record_ends_only_by_its_own_removal`, which admitted the sequence above.
 
+#### C04.14.4. Derived retention summaries
+
+Card CG10-MEMBER-STORE-RETAINED-BY (gateway rule 70), on the user's decision recorded here verbatim from the card's brief:
+
+> **USER DECISION 2026-11-20** (round 3's decision class 1, question 2): "Read it as retention, option 1 with creating the relevant proof(s)."
+
+No grammar is added: the C gateway **derives** the C04.14.3 form from a body it analyses. A store `F->m[.n…] = q` of a formal `q` (object-pointer type) into a member of formal `F`'s object, both never rebound in the body, the member in `*F`, is read as `resource_retained_by(q, F.m[.n…])`: the body takes no custody of `q`. Where the body otherwise validates with every formal `resource_borrowed` and no result custody, its derived summary is that path retention (one per such store) with the **overwritten paths** of every admitted pointer store into a member of a formal, installed in the unit exactly as a declared retaining declaration is (withheld from the function map, so every consumer that knows nothing of retention sees an uncontracted callee). A declared contract is never replaced, and a derived summary never crosses a unit. At a call, rule 12t decides each retention with the table above, and every overwritten path must be a path holder of the caller (its own unrebound formal, which it holds no custody of, premise P-HOLDER-PATH-STABLE); otherwise the call is `Unknown` (`retention-undecided`) whatever value was stored, which carries rule 10v's premise P-CG11-CALLER-SLOT up one frame. A function pointer carries no lifetime: its store adds an overwritten path and no retention. A caller still does not forward a retention into its own summary. The Lean model is `QCore.MemberStoreRetention`.
+
 ### C04.15. Slot moves
 
 Card SLOT-MOVE-AND-INTERIOR-BORROW (gateway rules 12x and 13a), on the user's decision recorded in C04.3.4: class 2, the custody counterpart of CG24's `bounds_frame_moves`.

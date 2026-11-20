@@ -68,9 +68,13 @@ fn clang_available() -> bool {
 }
 
 /// The entry's status and its diagnostics' descriptions.
+// Target-portable spellings: plain `long` (and a typedef of it) is unreadable to
+// the declared-ABI reader unless the analysing Clang is LP64 (rule 11q), and
+// the UCRT's headers are unread on Windows, so these synthetic declarations
+// spell sizes `__SIZE_TYPE__`/`__PTRDIFF_TYPE__` and 64-bit `long long`.
 fn row(entry: &str, source: &str) -> (AnalysisStatus, Vec<String>) {
     let text = format!(
-        "#include <stdlib.h>\n#include <string.h>\nextern char *strdup(const char *s);\n{source}\n"
+        "#define NULL ((void *)0)\nvoid *calloc(__SIZE_TYPE__ count, __SIZE_TYPE__ size);\nvoid free(void *ptr);\nextern char *strdup(const char *s);\n{source}\n"
     );
     let outcome = analyze_unrestricted_c11(
         &C11TranslationUnit {

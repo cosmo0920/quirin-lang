@@ -372,9 +372,16 @@ fn a_pointer_member_store_stays_refused() {
     expect(
         "`r->next = s` stores a pointer member",
         "void w(struct x_rec *r, struct x_rec *s) { r->next = s; r->next->count = 1; }",
+        // Card CG10-MEMBER-STORE-RETAINED-BY (rule 70) flips this deliberately: `retained_by(s, r.next)`;
+        // the scalar store through the retained caller's object is a typed
+        // chain store. BEFORE: Unknown, rule 38i's member-store name.
+        "Safe",
+        &[],
+    );
+    expect(
+        "a rebound formal stored into a pointer member keeps rule 38i's name",
+        "void w(struct x_rec *r, struct x_rec *s) { s = r->next; r->next = s; }",
         "Unknown",
-        // Card MEMBER-EFFECT-SUMMARY (rule 38i) re-pins this deliberately: the pointer store into a formal's member
-        // names its premise; still `Unknown`.
         &[
             "unsupported:store of a custody-carrying value into `r->next`, a member of the \
            formal `r` (member-store-through-formal)",

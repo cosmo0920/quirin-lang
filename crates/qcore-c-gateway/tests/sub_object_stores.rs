@@ -249,8 +249,10 @@ fn a_formal_pointer_stored_into_a_member_keeps_its_refusal() {
     expect(
         "`h->name = (char *) s` stores the caller's string",
         "void w(struct x_holder *h, const char *s) { h->name = (char *) s; }",
-        "Unknown",
-        &[GATE],
+        // Card CG10-MEMBER-STORE-RETAINED-BY (rule 70) flips this deliberately: a qualification conversion of an
+        // unrebound formal is `retained_by(s, h.name)`. BEFORE: Unknown, GATE.
+        "Safe",
+        &[],
     );
 }
 
@@ -266,12 +268,16 @@ fn a_none_result_call_stored_into_a_scalar_member_keeps_its_refusal() {
         "Safe",
         &[],
     );
-    // Two calls in the value keep the refusal (C leaves their order open).
+    // Two calls in the value: card CG10-INDIRECT-ACCESS-SOLE-RESIDUALS round
+    // 3 (rule 67) lifts rule 14a's one-call limit deliberately. Each `x_len`
+    // is `None`-result and all-`Borrowed`, so either order C takes decides
+    // every read alike (`QCore.SiblingBorrowedCalls`). BEFORE: Unknown with
+    // the gate's refusal.
     expect(
         "`r->count = x_len(s) + x_len(s)`",
         "void w(struct x_rec *r, const char *s) { r->count = x_len(s) + x_len(s); }",
-        "Unknown",
-        &[GATE],
+        "Safe",
+        &[],
     );
 }
 

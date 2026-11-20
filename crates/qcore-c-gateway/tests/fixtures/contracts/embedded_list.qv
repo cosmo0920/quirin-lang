@@ -1,0 +1,60 @@
+// SPDX-License-Identifier: Apache-2.0
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+module contract;
+
+// Card CG10-EMBEDDED-LIST-BORROWED-CONTAINER (gateway rule 69): synthetic
+// list helpers beside `callbacks.qv`'s `c_list_*` and `retained_by.qv`'s
+// `r_keep`. Trusted test assumptions, not library facts.
+
+// `el_count(head)`: reads the links and returns a count (cfl_list_size's shape).
+extern fn el_count(head: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(head);
+    ensures normal resource_return_none();
+};
+
+// `el_method_add(list, name, func, opaque)`: allocates an element of its own,
+// appends it to `list` and keeps `func` and `opaque` there
+// (rd_kafka_interceptor_method_add's shape).
+extern fn el_method_add(list: ptr<mut, u8>, name: ptr<const, u8>, func: ptr<mut, u8>, opaque: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(list);
+    ensures normal resource_borrowed(name);
+    ensures normal resource_borrowed(func);
+    ensures normal resource_borrowed(opaque);
+    ensures normal resource_retained_by(func, list);
+    ensures normal resource_retained_by(opaque, list);
+    ensures normal resource_return_none();
+};
+
+// `el_take(list, elem)`: the list takes custody of `elem` (a consumed
+// position): the element passes to the container by the contract's word.
+extern fn el_take(list: ptr<mut, u8>, elem: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(list);
+    ensures normal resource_consumed(elem, nonnull);
+    ensures normal resource_return_none();
+};
+
+// `el_free_all(list)`: releases the list itself (a released position).
+extern fn el_free_all(list: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(list, nullable);
+    ensures normal resource_return_none();
+};

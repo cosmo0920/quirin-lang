@@ -20,7 +20,6 @@ import QCore.ResidualAccessReadings
 #print axioms QCore.ResidualAccessReadings.a_read_is_decided_alike_on_either_side_of_the_call
 #print axioms QCore.ResidualAccessReadings.a_releasing_call_does_not_commute
 #print axioms QCore.ResidualAccessReadings.scalar_call_vectors_hold
-#print axioms QCore.ResidualAccessReadings.two_calls_are_never_read
 #print axioms QCore.ResidualAccessReadings.an_admitted_call_takes_no_custody
 #print axioms QCore.ResidualAccessReadings.interior_vectors_hold
 #print axioms QCore.ResidualAccessReadings.a_bound_root_is_never_read

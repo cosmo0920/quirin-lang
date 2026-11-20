@@ -134,8 +134,13 @@ fn example_c_a_store_into_a_formals_object_without_an_owner_premise_is_refused()
         return;
     }
     // Q36's example C. No contract or tracked state gives the owner of `*s`
-    // or bounds `*q`'s lifetime by it: the missing premise.
+    // or bounds `*q`'s lifetime by it: the missing premise. Card
+    // CG10-MEMBER-STORE-RETAINED-BY (rule 70) supplies it for a formal never
+    // rebound (`retained_by(q, s.p)`, `tests/member_store_retention.rs`); a
+    // rebound formal is still refused by this rule.
     let run = gs("void subject(struct S *s, void *q) { s->p = q; }");
+    assert!(run.safe(), "{run:?}");
+    let run = gs("void subject(struct S *s, void *q) { q = s->self; s->p = q; }");
     assert!(run.unknown() && run.refused(IND), "{run:?}");
     // An owned identity stored into the caller's object (OWNED-VALUE).
     let run = gs("void subject(struct S *s) { void *q = q_alloc(); s->p = q; }");
@@ -304,7 +309,10 @@ fn every_decision_vector_is_the_route_outcome() {
             other => panic!("unknown owner {other}"),
         };
         let run = gs(&body);
-        if decision == "admit" {
+        // Card CG10-MEMBER-STORE-RETAINED-BY (rule 70): rule 10v's table
+        // refuses a formal's value (`formal-value`); the route reads an
+        // unrebound one into an untracked owner as a retention.
+        if decision == "admit" || (value == "formal-pointer" && owner == "untracked") {
             assert!(run.safe(), "{spelling} ({value}): {run:?}");
         } else {
             assert!(!run.safe(), "{spelling} ({value}): {run:?}");

@@ -89,6 +89,7 @@ fn value_class(code: &str) -> ValueClass {
         "function-pointer-name" => ValueClass::FunctionPointerName,
         "self-address" => ValueClass::SelfAddress,
         "interior-address" => ValueClass::InteriorAddress,
+        crate::member_store_retention::RETAINED => ValueClass::RetainedFormal,
         _ => ValueClass::Other,
     }
 }
@@ -121,7 +122,12 @@ pub(super) fn transfer(
     });
     // 1. The owner.
     let owner = owner_class(&state, store);
-    let mut decision = decide(value_class(store.value), carries, owner);
+    // Card CG10-MEMBER-STORE-RETAINED-BY (rule 70): a retained formal is
+    // decided by rule 70's table; every other value by rule 10v's.
+    let mut decision = match value_class(store.value) {
+        ValueClass::RetainedFormal => crate::member_store_retention::decide(carries, owner),
+        value => decide(value, carries, owner),
+    };
     // 3. The old value.
     if decision == Decision::Admit
         && state.pointers.iter().any(|(place, pointer)| {

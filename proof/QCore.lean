@@ -68,6 +68,7 @@ import QCore.CallerFrameHoldSwitch
 import QCore.CandidateComposition
 import QCore.CapacityBoundary
 import QCore.CarriedPublication
+import QCore.CastActualPlace
 import QCore.CastRepresentation
 import QCore.CastReturnEscape
 import QCore.CastSemantics
@@ -171,6 +172,7 @@ import QCore.ElementDestroyer
 import QCore.ElementDestroyerSwitch
 import QCore.ElementLinkPremises
 import QCore.ElementReleaseSummary
+import QCore.EmbeddedListContainer
 import QCore.EnumerationAttribution
 import QCore.EpochAccounting
 import QCore.EpochSourceLowering
@@ -275,6 +277,7 @@ import QCore.MemberRelease
 import QCore.MemberReleaseCallee
 import QCore.MemberReleaseTypedMember
 import QCore.MemberReleaseUntypedBase
+import QCore.MemberStoreRetention
 import QCore.MemberSummaryOrder
 import QCore.MemberValueHelper
 import QCore.MemoKey
@@ -351,6 +354,7 @@ import QCore.PluginReadingEnvironment
 import QCore.PluginSourceWitnesses
 import QCore.PointerQualifierReader
 import QCore.PointerStore
+import QCore.PointerTypedefMember
 import QCore.PremiseFlow
 import QCore.PremiseFormula
 import QCore.PremiseMetadataBridge
@@ -444,6 +448,7 @@ import QCore.ScalarTypes
 import QCore.SchedulerLifetime
 import QCore.ScopedTasks
 import QCore.ShortCircuit
+import QCore.SiblingBorrowedCalls
 import QCore.SingleEmissionRoute
 import QCore.SizeofOperand
 import QCore.SlicePermissions

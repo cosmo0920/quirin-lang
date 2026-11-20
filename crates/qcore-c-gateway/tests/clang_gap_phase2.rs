@@ -112,8 +112,10 @@ fn m02_general_pointer_valued_stores_are_refused() {
     if !clang_available() {
         return;
     }
-    // Example C's store `s->p = q`, a slot and an element.
-    assert!(gs("void subject(struct S *s, void *q) { s->p = q; }").refused(IND));
+    // Example C's store `s->p = q`, a slot and an element. Card CG10-MEMBER-STORE-RETAINED-BY (rule 70) flips this deliberately: an unrebound formal is a
+    // retention; a rebound one keeps the refusal.
+    assert!(gs("void subject(struct S *s, void *q) { s->p = q; }").safe());
+    assert!(gs("void subject(struct S *s, void *q) { q = 0; s->p = q; }").refused(IND));
     assert!(
         gs("void subject(void **slot, void *p) { *slot = p; }")
             .refused("store through `*slot` without an out-parameter contract")
