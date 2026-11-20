@@ -811,7 +811,7 @@ pub fn free_audited(
                  `{LOADED_TEARDOWN}`"
             ))
         }
-        [Frees::RunsThroughRelease { left, .. }] if left.is_empty() => {
+        [Frees::RunsThroughRelease { left: [], .. }] => {
             Err("its free audit entry names nothing left".to_owned())
         }
         [Frees::RunsThroughRelease { .. }] if !teardown.is_empty() => {
