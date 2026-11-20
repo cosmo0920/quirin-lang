@@ -1,0 +1,36 @@
+{
+ "totals": {
+  "before": {
+   "Unknown": 3607,
+   "Safe": 1124,
+   "Unsafe": 7,
+   "Pending": 2
+  },
+  "after": {
+   "Unknown": 3607,
+   "Safe": 1124,
+   "Unsafe": 7,
+   "Pending": 2
+  }
+ },
+ "moves": [],
+ "leaves": {
+  "rows_with_changed_leaves": 1,
+  "access_removed": 1,
+  "access_added": 0,
+  "removed": [
+   [
+    "unsupported",
+    "indirect memory access is outside the resource projection",
+    1
+   ]
+  ],
+  "added": [
+   [
+    "unknown_alias",
+    "unresolved resource identity `ti`",
+    1
+   ]
+  ]
+ }
+}
