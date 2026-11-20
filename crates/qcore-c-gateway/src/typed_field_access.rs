@@ -1031,16 +1031,15 @@ impl TypedAccessModel {
                 // CG10-INDIRECT-ACCESS-SOLE-RESIDUALS r3 (rule 68) hook: a
                 // member spelled through a pointer typedef every declaration
                 // of which is `typedef SPEC * A;` is `SPEC * NAME`.
-                if declarator.stars == 0 && !qualified {
-                    if let Some(pointee) = self.pointer_typedef_member_pointee(&specifiers) {
-                        if crate::pointer_typedef_member::single_pointer_member(
-                            true, true, pointee,
-                        ) {
-                            single_pointer_fields.insert(name.clone());
-                            borrowable_fields.insert(name);
-                        }
-                        continue;
+                if declarator.stars == 0
+                    && !qualified
+                    && let Some(pointee) = self.pointer_typedef_member_pointee(&specifiers)
+                {
+                    if crate::pointer_typedef_member::single_pointer_member(true, true, pointee) {
+                        single_pointer_fields.insert(name.clone());
+                        borrowable_fields.insert(name);
                     }
+                    continue;
                 }
                 // A pointer member of any pointee type is readable as a value.
                 // The member's own declaration must not be `volatile`/`_Atomic`.

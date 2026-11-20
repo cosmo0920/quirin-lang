@@ -216,7 +216,9 @@ fn rule_12h_round_3_reads_a_pointer_view_of_a_member_at_an_actual() {
         return;
     }
     assert_safe("int subject(struct S *a) { int n = is_count((const char *)a->name); return n; }");
-    assert_safe("void subject(struct S *a) { int n; n = is_count((const char *)a->name); (void)n; }");
+    assert_safe(
+        "void subject(struct S *a) { int n; n = is_count((const char *)a->name); (void)n; }",
+    );
     assert_safe(
         "int subject(struct S *a, struct S *b) { int n = is_cmp((const char *)a->name, (char *)b->name); return n; }",
     );

@@ -165,19 +165,6 @@ pub(crate) const PLACE_VIEW_VECTORS: &[(bool, bool, bool, bool, bool)] = &[
     (true, true, true, true, false),
 ];
 
-#[cfg(test)]
-mod place_view_tests {
-    #[test]
-    fn the_decision_vectors_are_the_rust_decisions() {
-        for (identity, actual, member, qualified, removed) in super::PLACE_VIEW_VECTORS {
-            assert_eq!(
-                super::place_view_removed(*identity, *actual, *member, *qualified),
-                *removed
-            );
-        }
-    }
-}
-
 /// Whether H-U removes `site`: the table's class at a value position, over a
 /// plain object name (`descriptor` names the function's integer-carried
 /// identities, whose scalar conversion would hide one).
@@ -564,5 +551,18 @@ impl Parser<'_> {
             Statement::Instruction(LegacyInstruction::ForgetScalar { destination }, line)
         }));
         Some(Statement::Block(block))
+    }
+}
+
+#[cfg(test)]
+mod place_view_tests {
+    #[test]
+    fn the_decision_vectors_are_the_rust_decisions() {
+        for (identity, actual, member, qualified, removed) in super::PLACE_VIEW_VECTORS {
+            assert_eq!(
+                super::place_view_removed(*identity, *actual, *member, *qualified),
+                *removed
+            );
+        }
     }
 }

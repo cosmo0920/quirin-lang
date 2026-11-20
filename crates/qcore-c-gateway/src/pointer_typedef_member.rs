@@ -155,7 +155,11 @@ mod tests {
             &["int", "(", "*", "fp", ")", "(", "void", ")"][..],
             &["unsigned", "long", "u"][..],
         ] {
-            assert_eq!(typedef_shape(slice), PointerTypedefShape::Other, "{slice:?}");
+            assert_eq!(
+                typedef_shape(slice),
+                PointerTypedefShape::Other,
+                "{slice:?}"
+            );
         }
     }
 
