@@ -99,11 +99,15 @@ mod tests {
         assert!(declares_function_type(&node(
             r#"{"kind":"ParenType","inner":[{"kind":"FunctionProtoType"}]}"#
         )));
-        assert!(declares_function_type(&node(r#"{"kind":"FunctionNoProtoType"}"#)));
+        assert!(declares_function_type(&node(
+            r#"{"kind":"FunctionNoProtoType"}"#
+        )));
         assert!(!declares_function_type(&node(
             r#"{"kind":"PointerType","inner":[{"kind":"ParenType"}]}"#
         )));
         assert!(!declares_function_type(&node(r#"{"kind":"TypedefType"}"#)));
-        assert!(!declares_function_type(&node(r#"{"kind":"ConstantArrayType"}"#)));
+        assert!(!declares_function_type(&node(
+            r#"{"kind":"ConstantArrayType"}"#
+        )));
     }
 }

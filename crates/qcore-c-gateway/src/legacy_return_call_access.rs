@@ -73,7 +73,7 @@ pub(super) enum Form {
     ScalarCall,
     /// Card CG10-READER-GAPS (rule 71a): `return f((T *)p->m);` read as its
     /// uncast call.
-    UncastWholeCall,
+    Uncast,
 }
 
 impl Form {
@@ -81,7 +81,7 @@ impl Form {
         match self {
             Self::WholeCall => "whole-call",
             Self::ScalarCall => "scalar-call",
-            Self::UncastWholeCall => "uncast-whole-call",
+            Self::Uncast => "uncast-whole-call",
         }
     }
 }
@@ -105,20 +105,19 @@ impl Parser<'_> {
         {
             return None;
         }
-        // Card GAPO-RETURN-CORRECTNESS (rule 15z): W44's re-classification
-        // is not asked rule 12h's H-U0, so a returned call whose actual is an
-        // identity-preserving cast of a place keeps its refusal here.
         let texts = expression
             .iter()
             .map(|token| token.text.as_str())
             .collect::<Vec<_>>();
-        // Card CG10-READER-GAPS (rule 71a): a whole-call return whose views
-        // the guard names is read as its uncast call, every such view removed.
+        // Card GAPO-RETURN-CORRECTNESS (rule 15z): W44's re-classification
+        // is not asked rule 12h's H-U0, so a returned call whose actual is an
+        // identity-preserving cast of a place is never read as spelled. Card
+        // CG10-READER-GAPS (rule 71a): a whole-call return is read as its
+        // uncast call, every such view removed; anything else keeps the
+        // refusal.
         let mut uncast = None;
         if self.returned_call_hides_a_place(expression) {
-            if return_call::whole_expression_call(expression, &texts).is_none() {
-                return None;
-            }
+            return_call::whole_expression_call(expression, &texts)?;
             uncast = Some(self.uncast_returned_views(expression)?);
         }
         if return_call::whole_expression_call(expression, &texts).is_some() {
@@ -148,7 +147,7 @@ impl Parser<'_> {
                 self.lowered_call(&synthetic, accept)
             };
             let form = if uncast.is_some() {
-                Form::UncastWholeCall
+                Form::Uncast
             } else {
                 Form::WholeCall
             };

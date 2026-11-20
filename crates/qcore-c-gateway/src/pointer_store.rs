@@ -605,10 +605,11 @@ pub(crate) fn read_store(reader: &mut Reader<'_>, place: &Value, value: &Value) 
     if reading.class == ValueClass::FormalPointer
         && reading.name.is_some()
         && qual(value).is_some_and(|ty| {
-        crate::function_typedef_pointer::names_function_pointer(ty, &|name| {
-            reader.aggregates().function_typedef(name)
+            crate::function_typedef_pointer::names_function_pointer(ty, &|name| {
+                reader.aggregates().function_typedef(name)
+            })
         })
-    }) {
+    {
         reading.class = ValueClass::FunctionPointerName;
     }
     // Card CG10-MEMBER-STORE-RETAINED-BY (rule 70): a formal's pointer into a

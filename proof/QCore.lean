@@ -202,6 +202,7 @@ import QCore.Flow
 import QCore.FrameHelperTask
 import QCore.Frontend
 import QCore.FunctionPointerDeclarators
+import QCore.FunctionTypedefPointer
 import QCore.GenericSelection
 import QCore.GnuBuiltinReader
 import QCore.GuardCorrelatedCensus
@@ -251,6 +252,7 @@ import QCore.LiteralTailActual
 import QCore.LocalCondition
 import QCore.LocalSourceBindings
 import QCore.LoggerEffects
+import QCore.LogicalAndOperand
 import QCore.LookupRestrictedReuse
 import QCore.LoopBudget
 import QCore.LoopInvariants
@@ -417,6 +419,7 @@ import QCore.RetentionNullConstant
 import QCore.RetentionPath
 import QCore.ReturnCallActuals
 import QCore.ReturnCallCustody
+import QCore.ReturnCastView
 import QCore.ReturnCodeHandOff
 import QCore.ReturnCorrectness
 import QCore.ReturnExpressionEvaluation

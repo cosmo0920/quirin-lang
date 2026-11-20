@@ -126,20 +126,12 @@ fn run(source: &str) -> (AnalysisStatus, Vec<String>) {
 
 fn assert_safe(source: &str) {
     let (status, descriptions) = run(source);
-    assert_eq!(
-        status,
-        AnalysisStatus::Safe,
-        "{source}\n{descriptions:?}"
-    );
+    assert_eq!(status, AnalysisStatus::Safe, "{source}\n{descriptions:?}");
 }
 
 fn assert_not_safe(source: &str) -> Vec<String> {
     let (status, descriptions) = run(source);
-    assert_ne!(
-        status,
-        AnalysisStatus::Safe,
-        "{source}\n{descriptions:?}"
-    );
+    assert_ne!(status, AnalysisStatus::Safe, "{source}\n{descriptions:?}");
     descriptions
 }
 
