@@ -1,0 +1,13 @@
+{
+  "note": "Landing integrate/r45 (base main c81d83532; merges OPENSSL-OBJECT-FREES-SILENT-METHOD-CALLBACKS f0008e5ae, its SP1 rework of the tip first refused at r40 for conflicts with SP1-SYMBOLIC-OPENSSL-PREMISES, in af37f496e, then main a8286ce2b (r44) in dcb231c72 without conflict; third_party/libevent checked out at d82464a27). Provider lock: contract-inventory.lock changes five flexible entries (ENGINE_free, EVP_MD_CTX_free, EVP_PKEY_free, PKCS12_free, X509_free), none added or removed, no other key changed; the reviewed lock diff is in the card's commit. Amendments applied in 1c72eb26e with --profiles-base origin/main: OPENSSL-OBJECT-FREES-SILENT-METHOD-CALLBACKS retired; OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS registered; OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS appended; no profiles. Full landing gate on 1c72eb26e (private/integrate-r45/gate, raw record beside this file as gate-scope.json) via scripts/gate_scope.py --base origin/main --full --landing through private/toolchain/env.sh: Rust 670 units / 715 summaries, 9814 passed, 0 failed, 21 ignored; fmt, Clippy and both reevaluation examples exit 0; Lean 469 audits; provider package build, verify-all, verify, fmt and Clippy exit 0; provider tests 49 summaries, 166 passed, 0 failed, 1 ignored. Python (779 tests) exited 1 on one stale-matrix check of test_build_matrix_sections (regenerated from this record) and the known test_gate_slot_lane status flake; the rerun after regeneration is in private/integrate-r45/python-rerun.log. Provider change: the five frees name openssl_unstated_callback_slots in one shared SP1 free statement (C04.18.9 formula quant all #o in #freed: #teardown(#o) \\ (#stated | #settable) |-> #inert over the call's own #freed), audited by FREE_AUDIT/free_audited; SP1 prose counts 53 -> 58 (as the card reports). Lean QCore.OpensslObjectFreesAudit, 17 theorems. Not re-measured: the free statement is contract metadata; the card's earlier opt-in run was 1139/2/3656/7 on both sides with 0 rows changed. Pinned-route parity (quirin-audit measure --declared) was not run: this host holds no build/cycle19 inputs or baselines. No profile baseline is changed and land.py publish is owed.",
+  "workspace_tests": 9814,
+  "provider_tests": 166,
+  "python_evidence_validator_tests": 779,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "full landing gate: every step exits 0 except the Python suite's stale-matrix check, cleared by regenerating the matrix from this record, and the known slot-lane flake (rerun disclosed in the note); provider steps run",
+  "lean_audits": 469,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

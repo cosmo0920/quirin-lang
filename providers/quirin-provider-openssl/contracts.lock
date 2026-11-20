@@ -112,8 +112,8 @@
     {
       "function": "ENGINE_free",
       "module": "openssl/engine.qv",
-      "contract_sha256": "09b5399a975d8cea3da2ce68212324b157007ff1945d44a3597bba79f8b84eba",
-      "pinned_at": "2026-11-20T11:22:17Z"
+      "contract_sha256": "5f1bfe6a67b4a7d3aae28699546a1f0234118fe41b23fa85eb5170d8628bbe9f",
+      "pinned_at": "2026-11-20T14:15:10Z"
     },
     {
       "function": "ERR_clear_error",
@@ -148,8 +148,8 @@
     {
       "function": "EVP_MD_CTX_free",
       "module": "openssl/evp_digest.qv",
-      "contract_sha256": "d82ebbf53d5466ef0d6e76ad17b9261320672866ef1e0f5e742745bd9adbb9f1",
-      "pinned_at": "2026-11-20T11:22:17Z"
+      "contract_sha256": "5ece855d28d538d4b9a920e6dc2b72f6b15b3d642adb5eb4b50baf1bbcdf3b17",
+      "pinned_at": "2026-11-20T14:15:10Z"
     },
     {
       "function": "EVP_MD_CTX_new",
@@ -160,8 +160,8 @@
     {
       "function": "EVP_PKEY_free",
       "module": "openssl/evp.qv",
-      "contract_sha256": "813b4f97c9c720896b805d8b5a3dd5e114fef0ead55ab7dd3dcc81309282d779",
-      "pinned_at": "2026-11-20T11:22:17Z"
+      "contract_sha256": "c260fd439b581f3b01d3f8dc90a1d650172bd8790c43c4f7d7213ff3fd275ec4",
+      "pinned_at": "2026-11-20T14:15:10Z"
     },
     {
       "function": "EVP_sha256",
@@ -220,8 +220,8 @@
     {
       "function": "PKCS12_free",
       "module": "openssl/pkcs12.qv",
-      "contract_sha256": "8e0abca9583fe95792570ac8b88c79acb2031c9aa24eab87f8e3523ab4063190",
-      "pinned_at": "2026-11-20T11:22:17Z"
+      "contract_sha256": "d4b7e9be30544dc588a7d2ac40915ddcdd98375c4ba07aa6f2e6085ac8608b6b",
+      "pinned_at": "2026-11-20T14:15:10Z"
     },
     {
       "function": "SSL_CTX_add_client_custom_ext",
@@ -850,8 +850,8 @@
     {
       "function": "X509_free",
       "module": "openssl/x509.qv",
-      "contract_sha256": "5d518b9ba47b8bde7991054a1cb567bc2f6c89ee2be9df787d9258d1b10f8bc1",
-      "pinned_at": "2026-11-20T11:22:17Z"
+      "contract_sha256": "c8153b1edf4d84dd6c07f8c6ed722b72736303c5790eead5e08ca1cf8eba7ebe",
+      "pinned_at": "2026-11-20T14:15:10Z"
     },
     {
       "function": "X509_get_issuer_name",
