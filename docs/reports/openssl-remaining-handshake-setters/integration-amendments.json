@@ -1,0 +1,72 @@
+{
+ "schema": "quirin-amendments/1",
+ "card": "OPENSSL-REMAINING-HANDSHAKE-SETTERS",
+ "base": "64114a447",
+ "measured_tip": "f1ad773c0",
+ "increment_paragraph": "**OPENSSL-REMAINING-HANDSHAKE-SETTERS (2026-11-20).** The named follow-up recorded by OPENSSL-UNDECLARED-HANDSHAKE-CALLBACKS. quirin-provider-openssl states 26 more opaque slots (C04.19.3, gateway rule 12n amended in place), each registered by every writer its 3.5 manual page names: 28 setters in two new modules. ssl_handshake_setters.qv covers the session ticket generation and decryption slots (SSL_CTX_set_session_ticket_cb registers both and keeps arg), session id generation, temporary DH, the stateless and DTLS cookies, the session secret (peer_ciphers supplied_nullable by its page), the three SRP slots, async and the QUIC pending connection. x509_store_slots.qv covers the twelve X509_STORE_set_* callbacks of a certificate store; the page's three macro aliases are not-writers. Nine pages were snapshotted with fetch_docs.py --merge (28 entries) and 28 prototypes were pinned (existing entries and header digests byte-identical). SSL_write, SSL_read, SSL_connect and SSL_do_handshake invoke all 26 (67 invocations each); SSL_shutdown adds the async slot (18). SSL_CTX_set_not_resumable_session_callback, SSL_set_not_resumable_session_callback and SSL_set_session_ticket_ext_cb have no manual page and stay under openssl_unstated_callback_slots. The statement of that premise now names what it covers: the ctrl arms, CT, those undocumented setters' slots, the lookup methods of the context's store, and ex_data. It stays on the same seven declarations. contracts.lock: 28 entries added and 7 digests changed (the four handshake and I/O calls and SSL_shutdown; SSL_free and SSL_CTX_free by the statement only); pinned and library_versions are unchanged. No gateway code changed. Lean: new QCore.OpensslRemainingSetters, audited. The store's cleanup slot is keyed x509_store_st.cleanup_fn. Spelled cleanup, its key segment made the member pre-pass read WAMR's wasm_loader.c, whose Clang AST JSON exceeds the reader's recursion limit; the unread unit opened every member, and six unrelated Safe rows went Unknown at 8fffb83ae (deterministic on a rerun). An attribution tree with the new spelling reproduced base exactly (MEMBER-PREPASS-UNREADABLE-TOKEN-UNIT). Opt-in current over Fluent Bit 046accf6, base 64114a447 vs final tip f1ad773c0: 1098 Safe / 2 Pending / 3699 Unknown / 5 Unsafe in both, no row moved and no row changed content; bindings 113 to 141, all Pending, as predicted; pinned routes read no user load path, so no move is predicted, and measure --declared is deferred to the integrator (this host has no pinned inputs).",
+ "status_paragraph": null,
+ "ledger": [
+  {
+   "id": "OPENSSL-REMAINING-HANDSHAKE-SETTERS",
+   "operation": "retire",
+   "why": "OPENSSL-REMAINING-HANDSHAKE-SETTERS (2026-11-20): every documented function pointer setter of the follow-up's list is declared from its 3.5 page with the NAME check: 28 setters for 26 slots (session ticket gen/dec, session id, temporary DH, the four cookie slots, session secret, three SRP slots, async, QUIC pending connection, and the twelve X509_STORE_set_* store callbacks, the cleanup slot keyed x509_store_st.cleanup_fn). The handshake and I/O calls invoke all 26, and SSL_shutdown invokes async. The not-resumable and session ticket extension setters have no manual page and stay under the premise (OPENSSL-UNDOCUMENTED-HANDSHAKE-SETTERS). The store's lookup methods stay too (OPENSSL-LOOKUP-METHOD-HANDSHAKE-INVOCATIONS). Lean QCore.OpensslRemainingSetters.",
+   "source": "docs/reports/openssl-remaining-handshake-setters/README.md"
+  },
+  {
+   "id": "OPENSSL-UNDOCUMENTED-HANDSHAKE-SETTERS",
+   "operation": "register",
+   "title": "Handshake callback setters the pinned header declares and no OpenSSL manual page documents",
+   "text": "Found by OPENSSL-REMAINING-HANDSHAKE-SETTERS. The pinned openssl/ssl.h declares SSL_CTX_set_not_resumable_session_callback, SSL_set_not_resumable_session_callback (cb(ssl, is_forward_secure)) and SSL_set_session_ticket_ext_cb (tls_session_ticket_ext_cb_fn cb, void *arg). https://docs.openssl.org/3.5/man3/<name>/ is not found for any of them, and no 3.5 page's NAME section names them, so no page supports a writer list or an invocation. They are not declared, and their slots stay under openssl_unstated_callback_slots on the handshake and I/O calls, whose statement names them. DISCHARGE: a documented source (an upstream manual page, or a user decision admitting the pinned 3.5.5 source as evidence, as OPENSSL-UNDOCUMENTED-CALLEES needs), then the setters declared, the invocations stated and the premise statement narrowed. Size: small once a source is decided; needs a user decision.",
+   "source": "docs/reports/openssl-remaining-handshake-setters/README.md",
+   "recorded_by": "OPENSSL-REMAINING-HANDSHAKE-SETTERS"
+  },
+  {
+   "id": "OPENSSL-LOOKUP-METHOD-HANDSHAKE-INVOCATIONS",
+   "operation": "register",
+   "title": "The handshake's chain verification runs the store's lookup methods, which no clause states",
+   "text": "Found by OPENSSL-REMAINING-HANDSHAKE-SETTERS. The handshake and I/O calls now state the twelve X509_STORE_set_* callbacks of a certificate store. Verification with the default get_issuer and lookup_certs also reaches the store's X509_LOOKUPs, whose methods (X509_LOOKUP_meth_new 3.5: get_by_subject, get_by_issuer_serial, get_by_fingerprint, get_by_alias, ctrl, init, new_item) are user-settable through X509_LOOKUP_meth_set_*; the built-in methods (X509_LOOKUP_file, X509_LOOKUP_hash_dir, X509_LOOKUP_store) are library values no setter is handed. They stay under openssl_unstated_callback_slots, whose statement names them ('a function of an X509_LOOKUP_METHOD of a lookup the certificate store of the SSL_CTX holds'). OPENSSL-FREE-INDIRECT-CALLBACKS declares the same setters for the frees, so this was not done in parallel. DISCHARGE: after OPENSSL-FREE-INDIRECT-CALLBACKS declares the X509_LOOKUP_meth_set_* setters, state the lookup method slots the verification runs on the four handshake and I/O calls beside a built-in lookup method premise (as openssl_builtin_bio_methods), then drop that kind from the statement (QCore.OpensslRemainingSetters.dropping_a_kind_needs_its_slots_stated). Size: small after that card.",
+   "source": "docs/reports/openssl-remaining-handshake-setters/README.md",
+   "recorded_by": "OPENSSL-REMAINING-HANDSHAKE-SETTERS"
+  },
+  {
+   "id": "OPENSSL-CALLBACKS-OUTSIDE-CALLS",
+   "operation": "register",
+   "title": "OpenSSL callbacks run outside any call the vocabulary can place them on",
+   "text": "Found by OPENSSL-REMAINING-HANDSHAKE-SETTERS. The async callback (SSL_set_async_callback 3.5) is run in an asynchronous SSL call when a retry occurs, which the handshake, I/O and shutdown declarations now state. It is also run by the engine 'At a future point in time (probably via a polling mechanism or via an interrupt)', in no call of the application. QUIC handshake processing 'may occur independently from the thread which accepts the connection' (SSL_CTX_set_new_pending_conn_cb 3.5), so the new pending connection callback and the TLS callbacks of QUIC connections may run in a library thread outside any call. One QUIC object's call may run another connection's callbacks through the shared reactor, and those callbacks receive that connection, not the call's ssl, against the Some(0) actuals the earlier slot cards state. No declaration states an invocation outside its own call, and no premise covers one. DISCHARGE: a reading of callbacks a library runs asynchronously (a run-wide obligation that every candidate of such a slot be the identity, or a premise naming the thread or engine context), and for QUIC either a premise bounding the declarations to non-QUIC objects or the cross-connection actuals read as _, with Lean beside QCore.OpensslRemainingSetters. Size: medium.",
+   "source": "docs/reports/openssl-remaining-handshake-setters/README.md",
+   "recorded_by": "OPENSSL-REMAINING-HANDSHAKE-SETTERS"
+  },
+  {
+   "id": "MEMBER-PREPASS-UNREADABLE-TOKEN-UNIT",
+   "operation": "register",
+   "title": "A slot key segment can make the member pre-pass read a unit it cannot parse, opening every member",
+   "text": "Found by OPENSSL-REMAINING-HANDSHAKE-SETTERS. The member pre-pass (member_prepass.rs, rule 12n) reads every C unit that names a closure-graph token, and a key's path segments are tokens. With the opaque slot key x509_store_st.cleanup, the opt-in current run over Fluent Bit 046accf6 read WAMR's lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c, which names `cleanup`. Its Clang AST JSON exceeds the reader's recursion limit ('unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264'), and an unread C unit opens every member. Six unrelated Safe rows went Unknown (rd_kafka_event_destroy, ut_op_destroy_free and four Monkey scheduler functions), deterministically. The card keyed the slot x509_store_st.cleanup_fn, after the page's X509_STORE_CTX_cleanup_fn, and the run matched base exactly. Fail-closed, but any future key or member segment shared with that unit costs the same rows. DISCHARGE: read deep Clang ASTs without the recursion limit (an iterative or stack-grown parse, or a bounded reader of just the record stores and function addresses), or exclude the unit with recorded evidence in member-facts-scope.json, with a test on a deeply nested AST; measured on the opt-in run. Size: small to medium.",
+   "source": "docs/reports/openssl-remaining-handshake-setters/README.md",
+   "recorded_by": "OPENSSL-REMAINING-HANDSHAKE-SETTERS"
+  },
+  {
+   "id": "CALLBACK-SUPPLIED-OUTPUT-OBLIGATION",
+   "operation": "append",
+   "text": "OPENSSL-REMAINING-HANDSHAKE-SETTERS adds more slots whose pages put an obligation on what a candidate hands back:\n- the SRP client password callback's returned string, which 'will be freed by the library';\n- a store get_issuer's *issuer, which it 'must up-ref';\n- the lookup_certs and lookup_crls stacks it returns;\n- get_crl's *crl;\n- the DH object a tmp_dh callback returns, whose 'Ownership ... is retained by the application';\n- the session secret callback's *cipher;\n- the QUIC pending connection callback's new_ssl, on which 'no references should be held' until SSL_accept_connection.\nEach is read today through the identity composition only.",
+   "source": "docs/reports/openssl-remaining-handshake-setters/README.md"
+  },
+  {
+   "id": "CALLBACK-UNSET-ARGUMENT-NULL",
+   "operation": "append",
+   "text": "OPENSSL-REMAINING-HANDSHAKE-SETTERS leaves `_` on these new arguments, which no page states may be NULL:\n- the arg pointers the session ticket, session secret and QUIC pending connection setters keep;\n- the async and SRP callbacks' arg, set by separate _arg setters;\n- the session ticket dec_cb's ss, which is unusable on a failed decryption, described in words and not as NULL.\nOnly the session secret callback's peer_ciphers is supplied_nullable, from its page.",
+   "source": "docs/reports/openssl-remaining-handshake-setters/README.md"
+  },
+  {
+   "id": "OPENSSL-FREE-INDIRECT-CALLBACKS",
+   "operation": "append",
+   "text": "OPENSSL-REMAINING-HANDSHAKE-SETTERS rewrote the statement of openssl_unstated_callback_slots, which SSL_free and SSL_CTX_free carry, so it names the lookup methods ('a function of an X509_LOOKUP_METHOD of a lookup the certificate store of the SSL_CTX holds'). The frees state nothing new, and their digests changed with the statement only. It did not declare the X509_LOOKUP_meth_set_* setters. The handshake's use of the same methods is OPENSSL-LOOKUP-METHOD-HANDSHAKE-INVOCATIONS.",
+   "source": "docs/reports/openssl-remaining-handshake-setters/README.md"
+  },
+  {
+   "id": "OPENSSL-CT-VALIDATION-LIBRARY-WRITER",
+   "operation": "append",
+   "text": "OPENSSL-REMAINING-HANDSHAKE-SETTERS: the statement of openssl_unstated_callback_slots now names 'the certificate transparency validation callback' explicitly. The discharge drops that phrase from the statement.",
+   "source": "docs/reports/openssl-remaining-handshake-setters/README.md"
+  }
+ ]
+}
