@@ -46,8 +46,12 @@ contract {
     requires resource_revision(flexible);
     requires resource_library_version(openssl, documented "1.1.1");
     requires resource_literal_argument(p12, 0);
-    requires resource_premise(openssl_builtin_bio_methods, "a function of a BIO method the library defines itself (the BIO_METHOD that BIO_s_socket, BIO_s_mem, BIO_f_buffer or another built-in BIO_s_ or BIO_f_ function returns, which no setter is handed), run on a BIO the call reads or writes through or frees (its BIO argument or a BIO the SSL object holds) or one chained to it, takes, releases or retains nothing the caller holds, and so does any callback it runs in turn on an object other than the arguments of the call (the SSL object of a BIO_f_ssl BIO)");
-    requires resource_premise(openssl_ex_data_callbacks, "an ex_data callback the call may run (a new, dup or free callback CRYPTO_get_ex_new_index registers for the class of an object the call creates, copies or frees) takes, releases or retains nothing the caller holds");
+    requires resource_premise(openssl_builtin_bio_methods,
+        quant all #b in #chain(#of(BIO, #args) | #bios(#of(SSL, #args))): #method(#b) in #builtin
+        -> #fns(#b) |-> #inert
+        && quant all #f in #fns(#b): #in_turn(#f, #ssl_of(#b) \ #args) |-> #inert);
+    requires resource_premise(openssl_ex_data_callbacks,
+        quant all #o in #created | #copied | #freed: #ex_data(#class(#o)) |-> #inert);
     ensures normal resource_borrowed(bp);
     ensures normal resource_borrowed(p12);
     ensures normal resource_callback_slot_invoked(bp, bio_st.bio_callback_ex, _, _, supplied_nullable, _, _, _, _, supplied_nullable);
@@ -77,15 +81,17 @@ contract {
 // Card OPENSSL-OBJECT-FREES-SILENT-METHOD-CALLBACKS: freeing the PKCS#7 safes
 // frees their certificates' keys, signer info keys and CRLs (pk7_asn1.c and
 // x_crl.c 3.5.5), and so runs those keys' provider, method and engine
-// functions and a CRL's X509_CRL_METHOD free: the unstated-slots premise names
-// them.
+// functions and a CRL's X509_CRL_METHOD free: the unstated-slots premise of a
+// free names them.
 extern fn PKCS12_free(a: ptr<mut, u8>) -> unit
 contract {
     requires resource_contract_v1;
     requires resource_revision(flexible);
     requires resource_library_version(openssl, documented "1.1.1");
-    requires resource_premise(openssl_unstated_callback_slots, "a callback the call may run that no clause of this declaration states (a function of a provider, method or engine of an object the call frees in turn, whose setter no declaration of this crate states or which no setter is handed, among them, for a key the call frees in turn (the public key of a certificate a PKCS#7 safe holds, or the key of a PKCS#7 signer info), the free function of the key management of the provider of that key and, when that key holds the last reference to that provider, the teardown function of the provider, the free function of the EVP_PKEY_ASN1_METHOD of that key, the finish function of the RSA_METHOD, DSA_METHOD, DH_METHOD or EC_KEY_METHOD of that key, and the finish and destroy functions of an ENGINE of that key, and the free function of the X509_CRL_METHOD of a CRL a PKCS#7 safe holds) takes, releases or retains nothing the caller holds");
-    requires resource_premise(openssl_ex_data_callbacks, "an ex_data callback the call may run (a new, dup or free callback CRYPTO_get_ex_new_index registers for the class of an object the call creates, copies or frees) takes, releases or retains nothing the caller holds");
+    requires resource_premise(openssl_unstated_callback_slots,
+        quant all #o in #freed: #teardown(#o) \ (#stated | #settable) |-> #inert);
+    requires resource_premise(openssl_ex_data_callbacks,
+        quant all #o in #created | #copied | #freed: #ex_data(#class(#o)) |-> #inert);
     ensures normal resource_released(a, nullable);
     ensures normal resource_return_none();
 };

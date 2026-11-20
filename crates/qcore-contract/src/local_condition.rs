@@ -555,19 +555,14 @@ fn cell_protocols(
 /// Structural identity of the supported named premise predicate. This does
 /// not establish the premise; a body/use consumer must bind its guarded entry
 /// context and preserve the corresponding caller obligation.
+///
+/// Card SP1-SYMBOLIC-OPENSSL-PREMISES (C04.18.9): read by the contract
+/// format's one premise reader, so a formula premise is identified by its
+/// name and canonical printing, and a malformed premise is none.
 pub fn named_prerequisite(source: &str) -> Option<(String, String)> {
     let ts = tokens(source).ok()?;
-    match ts.as_slice() {
-        [
-            TokenKind::Word(kind),
-            TokenKind::Symbol(Symbol::LeftParen),
-            TokenKind::Word(name),
-            TokenKind::Symbol(Symbol::Comma),
-            TokenKind::StringLiteral(statement),
-            TokenKind::Symbol(Symbol::RightParen),
-        ] if kind == "resource_premise" => Some((name.clone(), statement.clone())),
-        _ => None,
-    }
+    let (name, statement) = qcore_frontend::premise_formula::premise_clause(&ts).ok()??;
+    Some((name, statement.text().to_owned()))
 }
 fn prerequisite(source: &str) -> Result<String, String> {
     let ts = tokens(source)?;

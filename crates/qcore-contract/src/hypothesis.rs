@@ -27,6 +27,12 @@ fn identifier(s: &str) -> bool {
 fn plain(s: &str) -> bool {
     !s.trim().is_empty() && !s.contains('\\') && !s.chars().any(char::is_control)
 }
+/// Card SP1-SYMBOLIC-OPENSSL-PREMISES: the statement is exactly the canonical
+/// printing of a well-formed premise formula (so it is non-blank, one line,
+/// with no control character).
+fn canonical_formula(s: &str) -> bool {
+    qcore_frontend::premise_formula::read_source(s).is_ok_and(|formula| formula.canonical == s)
+}
 pub fn is_clause(s: &str) -> bool {
     s.split(|c: char| !c.is_alphanumeric() && c != '_')
         .next()
@@ -270,6 +276,15 @@ pub fn validate(graph: &Graph) -> Result<(), String> {
         }
         match &atom.proposition {
             Proposition::Opaque { statement } if plain(statement) => (),
+            // Card SP1-SYMBOLIC-OPENSSL-PREMISES (C04.18.9): a named premise
+            // stated as a formula erases to the canonical printing, whose set
+            // difference is `\`. Only a generated legacy atom (the erasure of
+            // a named premise), and only a statement that is exactly the
+            // canonical printing of a well-formed formula, may hold it; every
+            // other backslash, a `resource_hypothesis` atom's included, stays
+            // refused.
+            Proposition::Opaque { statement }
+                if id.starts_with("legacy_atom_") && canonical_formula(statement) => {}
             Proposition::Formula { definition } | Proposition::EntryCondition { definition } => {
                 if definition.id != *id {
                     return Err("hypothesis: formal atom ID mismatch".into());

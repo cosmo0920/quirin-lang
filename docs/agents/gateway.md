@@ -6416,21 +6416,19 @@ own anchor here.
     [report](../reports/openssl-free-indirect-callbacks/README.md).
     Card OPENSSL-OBJECT-FREES-SILENT-METHOD-CALLBACKS: `X509_free`,
     `EVP_PKEY_free`, `PKCS12_free`, `ENGINE_free` and `EVP_MD_CTX_free`
-    name `openssl_unstated_callback_slots` in a statement of their own
-    object kind (a key's provider, method and engine functions; a
-    certificate's public key's; a PKCS#12 object's keys' and CRLs'; an
-    engine's destroy and method callbacks; a digest context's digest,
-    `EVP_PKEY_CTX` and keys'), each naming only what that free runs. The
-    checker's free audit (`FREE_AUDIT`, `free_audited`) lists every
-    release: a running free names exactly its audited statement, and a
-    release left out refuses. No slot is stated and no gateway code
-    changed. **Do not** give a free another kind's statement, or add a
-    release to the crate without auditing it.
+    name `openssl_unstated_callback_slots` in the statement of a free
+    (C04.18.9, over the call's own `#freed`: a key's provider, method and
+    engine functions; a certificate's public key's; a PKCS#12 object's
+    keys' and CRLs'; an engine's destroy and method callbacks; a digest
+    context's digest, `EVP_PKEY_CTX` and keys'). The checker's free audit
+    (`FREE_AUDIT`, `free_audited`) lists every release: a running free
+    names the free statement and not the handshake's, and a release left
+    out refuses. No slot is stated and no gateway code changed. **Do not**
+    add a release to the crate without auditing it.
     `QCore.OpensslObjectFreesAudit`
     (`an_unaudited_release_refuses`,
-    `a_running_free_names_its_statement`,
-    `another_kinds_statement_refuses`,
-    `a_statement_is_named_only_where_audited`,
+    `a_running_free_names_the_statement`,
+    `the_statement_is_named_only_where_audited`,
     `the_free_premise_moves_no_verdict`);
     [report](../reports/openssl-object-frees-silent-method-callbacks/README.md).
 
@@ -7592,6 +7590,28 @@ an undeclared OpenSSL producer). `QCore.NullableReferenceDrop` (12 audited,
     (`publishing_the_set_changes_no_verdict`,
     `two_sets_publish_the_same_verdict_row`); `QCore.OuterContract`
     (`static_projection_is_identity`, `runtime_never_promotes`).
+    **Amended by card SP1-SYMBOLIC-OPENSSL-PREMISES** (contract
+    specification C04.18.9; USER DECISION 2026-11-20): the statement may be
+    a formula, `requires resource_premise(NAME, FORMULA);`, over the closed,
+    sorted vocabulary C04.18.9 registers (`qcore_frontend::premise_formula`,
+    the one reader the format and the loader share). A malformed formula, an
+    unknown term or constant, an ill-sorted application, an unbound or
+    shadowing variable, and a string that is itself a formula reject the
+    whole module; the premise is never dropped. Its identity, and what
+    every reader of the record prints, is the name plus the canonical
+    printing (set difference is the one-byte lexer token `\`, refused
+    outside a formula; the hypothesis graph admits a backslash only in a
+    generated legacy atom whose statement is exactly such a canonical
+    printing). It is still read by no verdict: a formula that reads makes
+    nothing `Safe`. `quirin-provider-openssl` states all 53 of its premises
+    as formulas and its checker refuses a string statement
+    (`prose_premise`). **Do not** drop or weaken a premise whose formula
+    does not read, read a premise's formula as a discharged fact, or admit
+    a term outside the registered vocabulary without its specification row
+    and Lean model. `QCore.PremiseFormula` (`check_denotes`, `wf_denotes`,
+    `decision_vectors_agree`, `openssl_formulas_wf`,
+    `unstated_entails_ex_data`, `ex_data_does_not_entail_unstated`, …);
+    [report](../reports/sp1-symbolic-openssl-premises/README.md).
 
 <a id="constraint-13i"></a>
 

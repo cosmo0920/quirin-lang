@@ -118,11 +118,14 @@ pub enum Premise {
     /// every slot of the objects it frees whose setters are declared, and the
     /// premise names what remains by name, the functions of methods,
     /// providers and engines of objects it frees in turn that no setter
-    /// declared here writes. Card **OPENSSL-OBJECT-FREES-SILENT-METHOD-CALLBACKS**:
-    /// the statement is chosen by the kind of object the call frees
-    /// ([`FreeStatement`]), each naming only what that free can run, and
-    /// the free audit ([`FREE_AUDIT`]) says which statement each free names.
-    UnstatedFreeSlots(FreeStatement),
+    /// declared here writes. Card
+    /// **OPENSSL-OBJECT-FREES-SILENT-METHOD-CALLBACKS**: named by every free
+    /// the free audit ([`FREE_AUDIT`]) reads as running such functions, the
+    /// frees of keys, certificates, PKCS#12 objects, engines and digest
+    /// contexts among them. The statement (C04.18.9) quantifies over the
+    /// call's own `#freed`, so one statement names exactly what each free
+    /// runs.
+    UnstatedFreeSlots,
     /// Card **OPENSSL-FREE-INDIRECT-CALLBACKS**: `requires
     /// resource_premise(openssl_builtin_lookup_methods, "…")`, the
     /// library-value premise beside the stated lookup method slots: a
@@ -214,14 +217,17 @@ pub const UNSTATED_SLOTS: &str = "openssl_unstated_callback_slots";
 /// not-resumable session and session ticket extension callbacks (whose
 /// setters no manual page documents), the functions of a lookup method the
 /// context's certificate store holds (card OPENSSL-FREE-INDIRECT-CALLBACKS
-/// declares their setters), and ex_data.
-pub const UNSTATED_SLOTS_STATEMENT: &str = "a callback the call may run that no clause of this \
-declaration states (a callback slot of the SSL object or its SSL_CTX whose invocation the \
-declaration does not state, among them the SSL_CTX_callback_ctrl arms such as the servername, \
-status and ticket key callbacks, the certificate transparency validation callback, and the \
-not-resumable session and session ticket extension callbacks, whose setters no manual page \
-documents, a function of an X509_LOOKUP_METHOD of a lookup the certificate store of the SSL_CTX \
-holds, or an ex_data callback) takes, releases or retains nothing the caller holds";
+/// declares their setters), and ex_data. Card
+/// **SP1-SYMBOLIC-OPENSSL-PREMISES** (C04.18.9): a formula, in its canonical
+/// printing. A callback slot of the SSL object or its SSL_CTX (the named
+/// arms and callbacks among them), a function of the method of a lookup the
+/// SSL_CTX's certificate store holds, or an ex_data callback the call may run,
+/// that no clause of the declaration states takes, releases or retains
+/// nothing the caller holds.
+pub const UNSTATED_SLOTS_STATEMENT: &str = "#slots(#of(SSL, #args) | #ctx(#of(SSL, #args)) | \
+#of(SSL_CTX, #args)) \\ #stated |-> #inert && (quant all #l in #lookups(#store(#ctx(#of(SSL, \
+#args)) | #of(SSL_CTX, #args))): #fns(#l) \\ #stated |-> #inert) && quant all #o in #created | \
+#copied | #freed: #ex_data(#class(#o)) \\ #stated |-> #inert";
 
 /// Card **OPENSSL-FREE-INDIRECT-CALLBACKS**: the statement of the
 /// unstated-slots premise on a free (`SSL_free`, `SSL_CTX_free`,
@@ -235,181 +241,23 @@ holds, or an ex_data callback) takes, releases or retains nothing the caller hol
 /// when the key is freed, the client certificate engine, a CRL's
 /// `X509_CRL_METHOD`, the async wait context's cleanup functions, the QUIC
 /// TLS callbacks, and what a QUIC object's free runs (not traced).
-pub const UNSTATED_FREE_STATEMENT: &str = "a callback the call may run that no clause of this \
-declaration states (a function of a method, provider or engine of an object the call frees in \
-turn, whose setter no declaration of this crate states or which no setter is handed, among them \
-the free function of the key management of the provider of a key, the free function of the \
-EVP_PKEY_ASN1_METHOD of a key, the finish function of the RSA_METHOD, DSA_METHOD, DH_METHOD or \
-EC_KEY_METHOD of a key, the finish and destroy functions of the ENGINE of a key or of the client \
-certificate engine of the SSL_CTX, the free function of the X509_CRL_METHOD of a CRL a \
-certificate store holds, a cleanup function of the async wait context of the SSL object, the \
-QUIC TLS callbacks of the SSL object, and any callback the free of a QUIC object runs in turn) \
-takes, releases or retains nothing the caller holds";
-
-/// Card **OPENSSL-OBJECT-FREES-SILENT-METHOD-CALLBACKS**: the functions a
-/// key's last free runs, as each object statement below names them (OpenSSL
-/// 3.5.5: `evp_pkey_free_it` and `evp_pkey_free_legacy` in `p_lib.c` run the
-/// key management's free function through `evp_keymgmt_freedata`, drop the
-/// `EVP_KEYMGMT`, whose last reference drops its provider's and so may run
-/// the provider's teardown (`keymgmt_meth.c`, `provider_core.c`), run the
-/// `EVP_PKEY_ASN1_METHOD`'s `pkey_free`, and finish the key's ENGINEs; a
-/// legacy key's `pkey_free` reaches `RSA_free`, `DSA_free`, `DH_free` or
-/// `EC_KEY_free`, each running its method's finish function and finishing
-/// its ENGINE, `rsa_lib.c`, `dsa_lib.c`, `dh_lib.c`, `ec_key.c`; an ENGINE's
-/// last reference runs its destroy function, `eng_lib.c`).
-macro_rules! key_functions {
-    ($of:literal) => {
-        concat!(
-            "the free function of the key management of the provider of ",
-            $of,
-            " and, when ",
-            $of,
-            " holds the last reference to that provider, the teardown function of the \
-             provider, the free function of the EVP_PKEY_ASN1_METHOD of ",
-            $of,
-            ", the finish function of the RSA_METHOD, DSA_METHOD, DH_METHOD or EC_KEY_METHOD \
-             of ",
-            $of,
-            ", and the finish and destroy functions of an ENGINE of ",
-            $of
-        )
-    };
-}
-
-/// Card **OPENSSL-OBJECT-FREES-SILENT-METHOD-CALLBACKS**: the statement of
-/// the unstated-slots premise on `EVP_PKEY_free`.
-pub const UNSTATED_KEY_FREE_STATEMENT: &str = concat!(
-    "a callback the call may run that no clause of this declaration states (a function of a \
-     provider, method or engine of the key the call frees, whose setter no declaration of this \
-     crate states or which no setter is handed, among them ",
-    key_functions!("the key"),
-    ") takes, releases or retains nothing the caller holds"
-);
-
-/// Card **OPENSSL-OBJECT-FREES-SILENT-METHOD-CALLBACKS**: the statement on
-/// `X509_free`. The last reference frees the certificate's `X509_PUBKEY`,
-/// whose free frees its decoded key (`x509_pubkey_ex_free` calls
-/// `EVP_PKEY_free`, `x_pubkey.c` 3.5.5; the key is decoded with the
-/// certificate, `x509_pubkey_ex_d2i_ex`); nothing else the certificate holds
-/// runs a function a user can set (`x509_cb`, `x_x509.c`).
-pub const UNSTATED_CERTIFICATE_FREE_STATEMENT: &str = concat!(
-    "a callback the call may run that no clause of this declaration states (a function of a \
-     provider, method or engine of the public key of the certificate the call frees, whose \
-     setter no declaration of this crate states or which no setter is handed, among them ",
-    key_functions!("that key"),
-    ") takes, releases or retains nothing the caller holds"
-);
-
-/// Card **OPENSSL-OBJECT-FREES-SILENT-METHOD-CALLBACKS**: the statement on
-/// `PKCS12_free`. Its authenticated safes are PKCS#7 objects; a signed one
-/// holds certificates and CRLs, a signer info may hold a key and a recipient
-/// info a certificate (`pk7_asn1.c` 3.5.5: `si_cb` frees `si->pkey`, `ri_cb`
-/// frees `ri->cert`); a CRL's free runs its `X509_CRL_METHOD`'s `crl_free`
-/// (`crl_cb`, `x_crl.c`), a method `X509_CRL_set_default_method` sets.
-pub const UNSTATED_PKCS12_FREE_STATEMENT: &str = concat!(
-    "a callback the call may run that no clause of this declaration states (a function of a \
-     provider, method or engine of an object the call frees in turn, whose setter no \
-     declaration of this crate states or which no setter is handed, among them, for a key the \
-     call frees in turn (the public key of a certificate a PKCS#7 safe holds, or the key of a \
-     PKCS#7 signer info), ",
-    key_functions!("that key"),
-    ", and the free function of the X509_CRL_METHOD of a CRL a PKCS#7 safe holds) takes, \
-     releases or retains nothing the caller holds"
-);
-
-/// Card **OPENSSL-OBJECT-FREES-SILENT-METHOD-CALLBACKS**: the statement on
-/// `ENGINE_free`. The last structural reference runs, in `engine_free_util`
-/// (`eng_lib.c` 3.5.5), the engine's public key method and ASN.1 method
-/// callbacks to find the dynamic methods to free (`engine_pkey_meths_free`,
-/// `tb_pkmeth.c`; `engine_pkey_asn1_meths_free`, `tb_asnmth.c`; set by
-/// `ENGINE_set_pkey_meths` and `ENGINE_set_pkey_asn1_meths`, which no 3.5
-/// page documents) and then its destroy function
-/// (`ENGINE_set_destroy_function`, `ENGINE_add` 3.5). The free is
-/// structural: no finish function runs.
-pub const UNSTATED_ENGINE_FREE_STATEMENT: &str = "a callback the call may run that no clause of \
-this declaration states (a function of the ENGINE the call frees, whose setter no declaration of \
-this crate states, namely its destroy function and its public key method and ASN.1 method \
-functions, which the free calls to find the methods it frees) takes, releases or retains nothing \
-the caller holds";
-
-/// Card **OPENSSL-OBJECT-FREES-SILENT-METHOD-CALLBACKS**: the statement on
-/// `EVP_MD_CTX_free`. `EVP_MD_CTX_reset` (`digest.c` 3.5.5) frees the
-/// context's `EVP_PKEY_CTX` (`EVP_PKEY_CTX_free`, `pmeth_lib.c`: its
-/// `EVP_PKEY_METHOD`'s cleanup, its provider operation's freectx, its
-/// ENGINE's finish, its keys), then clears the digest
-/// (`evp_md_ctx_clear_digest`: the provider digest's freectx, the legacy
-/// `EVP_MD`'s cleanup, the digest ENGINE's finish, the fetched digest's last
-/// reference, which drops its provider's).
-pub const UNSTATED_DIGEST_CONTEXT_FREE_STATEMENT: &str = concat!(
-    "a callback the call may run that no clause of this declaration states (a function of a \
-     digest, method, provider or engine of the digest context the call frees or of an object it \
-     frees in turn, whose setter no declaration of this crate states or which no setter is \
-     handed, among them the cleanup function of the EVP_MD of the context, the free context \
-     function of the provider of its digest, the cleanup function of the EVP_PKEY_METHOD of its \
-     EVP_PKEY_CTX, the free context function of the provider of the signature, key exchange, KEM \
-     or asymmetric cipher operation of that EVP_PKEY_CTX, the finish and destroy functions of the \
-     ENGINE of its digest or of that EVP_PKEY_CTX, the teardown function of a provider whose last \
-     reference the context holds, and, for a key whose last reference that EVP_PKEY_CTX holds, ",
-    key_functions!("that key"),
-    ") takes, releases or retains nothing the caller holds"
-);
-
-/// Card **OPENSSL-OBJECT-FREES-SILENT-METHOD-CALLBACKS**: which statement of
-/// the unstated-slots premise a free names, by the kind of object it frees.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub enum FreeStatement {
-    /// `SSL_free`, `SSL_CTX_free`, `X509_STORE_free`
-    /// ([`UNSTATED_FREE_STATEMENT`], card OPENSSL-FREE-INDIRECT-CALLBACKS).
-    SslAndStore,
-    /// `EVP_PKEY_free` ([`UNSTATED_KEY_FREE_STATEMENT`]).
-    Key,
-    /// `X509_free` ([`UNSTATED_CERTIFICATE_FREE_STATEMENT`]).
-    Certificate,
-    /// `PKCS12_free` ([`UNSTATED_PKCS12_FREE_STATEMENT`]).
-    Pkcs12,
-    /// `ENGINE_free` ([`UNSTATED_ENGINE_FREE_STATEMENT`]).
-    Engine,
-    /// `EVP_MD_CTX_free` ([`UNSTATED_DIGEST_CONTEXT_FREE_STATEMENT`]).
-    DigestContext,
-}
-
-impl FreeStatement {
-    /// Every statement.
-    pub const ALL: [FreeStatement; 6] = [
-        FreeStatement::SslAndStore,
-        FreeStatement::Key,
-        FreeStatement::Certificate,
-        FreeStatement::Pkcs12,
-        FreeStatement::Engine,
-        FreeStatement::DigestContext,
-    ];
-
-    /// The statement's text.
-    #[must_use]
-    pub const fn text(self) -> &'static str {
-        match self {
-            FreeStatement::SslAndStore => UNSTATED_FREE_STATEMENT,
-            FreeStatement::Key => UNSTATED_KEY_FREE_STATEMENT,
-            FreeStatement::Certificate => UNSTATED_CERTIFICATE_FREE_STATEMENT,
-            FreeStatement::Pkcs12 => UNSTATED_PKCS12_FREE_STATEMENT,
-            FreeStatement::Engine => UNSTATED_ENGINE_FREE_STATEMENT,
-            FreeStatement::DigestContext => UNSTATED_DIGEST_CONTEXT_FREE_STATEMENT,
-        }
-    }
-}
+/// Card **SP1-SYMBOLIC-OPENSSL-PREMISES** (C04.18.9): a formula. Every
+/// callback the free of an object the call frees (directly or in turn) runs
+/// from the object's methods, provider or engine, or holds itself, that no
+/// clause states and whose setter no declaration of this crate states,
+/// takes, releases or retains nothing the caller holds. The prose named its
+/// members "among them"; each is a member of `#teardown` (report section 4).
+pub const UNSTATED_FREE_STATEMENT: &str =
+    "quant all #o in #freed: #teardown(#o) \\ (#stated | #settable) |-> #inert";
 
 /// Card **OPENSSL-OBJECT-FREES-SILENT-METHOD-CALLBACKS**: how a free stands
 /// to the functions of methods, providers and engines of the objects it
 /// frees (the free audit, read like [`EX_DATA_AUDIT`]).
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Frees {
-    /// The free may run such functions that no clause states: the
-    /// declaration names [`Premise::UnstatedFreeSlots`] with exactly this
-    /// statement.
-    Runs {
-        statement: FreeStatement,
-        how: &'static str,
-    },
+    /// The free may run such functions that no clause states (OpenSSL 3.5.5,
+    /// `how`): the declaration names [`Premise::UnstatedFreeSlots`].
+    Runs { how: &'static str },
     /// What the free may run in turn is named by this other premise, which
     /// the declaration names; it names no free statement.
     NamedBy { premise: Premise, why: &'static str },
@@ -420,9 +268,9 @@ pub enum Frees {
 
 /// Card **OPENSSL-OBJECT-FREES-SILENT-METHOD-CALLBACKS**: the free audit.
 /// Every documented function whose shape is a release (a free or a
-/// reference drop) is listed, and every one naming a free statement is
-/// listed as [`Frees::Runs`] with that statement, so a free reaching a key,
-/// certificate, engine or context cannot read their functions silently
+/// reference drop) is listed, and every one naming the free statement is
+/// listed as [`Frees::Runs`], so a free reaching a key, certificate, engine
+/// or context cannot read their functions silently
 /// ([`crate::check::free_audited`]). The readings cite the OpenSSL 3.5.5
 /// sources, as the report's survey table does.
 pub const FREE_AUDIT: &[(&str, Frees)] = &[
@@ -431,14 +279,13 @@ pub const FREE_AUDIT: &[(&str, Frees)] = &[
         Frees::NamedBy {
             premise: Premise::BuiltinBioMethods,
             why: "the callback and destroy slots are stated; what a built-in method's destroy \
-                  function frees in turn (the SSL object of a BIO_f_ssl BIO, a digest or \
-                  cipher context) is named by openssl_builtin_bio_methods",
+                  function frees in turn (the SSL object of a BIO_f_ssl BIO) is named by \
+                  openssl_builtin_bio_methods",
         },
     ),
     (
         "ENGINE_free",
         Frees::Runs {
-            statement: FreeStatement::Engine,
             how: "the last structural reference runs the engine's public key method and ASN.1 \
                   method callbacks and its destroy function (engine_free_util)",
         },
@@ -446,7 +293,6 @@ pub const FREE_AUDIT: &[(&str, Frees)] = &[
     (
         "EVP_MD_CTX_free",
         Frees::Runs {
-            statement: FreeStatement::DigestContext,
             how: "frees the EVP_PKEY_CTX (method cleanup, provider freectx, engine, keys) and \
                   clears the digest (cleanup, provider freectx, engine)",
         },
@@ -454,7 +300,6 @@ pub const FREE_AUDIT: &[(&str, Frees)] = &[
     (
         "EVP_PKEY_free",
         Frees::Runs {
-            statement: FreeStatement::Key,
             how: "the last reference runs the key's key management free, ASN.1 method free, \
                   RSA/DSA/DH/EC_KEY method finish and ENGINE finish",
         },
@@ -468,7 +313,6 @@ pub const FREE_AUDIT: &[(&str, Frees)] = &[
     (
         "PKCS12_free",
         Frees::Runs {
-            statement: FreeStatement::Pkcs12,
             how: "frees the PKCS#7 safes' certificates (and so their keys), signer info keys \
                   and CRLs",
         },
@@ -476,7 +320,6 @@ pub const FREE_AUDIT: &[(&str, Frees)] = &[
     (
         "SSL_CTX_free",
         Frees::Runs {
-            statement: FreeStatement::SslAndStore,
             how: "the last drop frees the context's keys, certificates, stores and client \
                   certificate engine",
         },
@@ -484,7 +327,6 @@ pub const FREE_AUDIT: &[(&str, Frees)] = &[
     (
         "SSL_free",
         Frees::Runs {
-            statement: FreeStatement::SslAndStore,
             how: "the last drop frees the connection's keys, certificates, stores, async wait \
                   context and QUIC objects, and may free its context",
         },
@@ -492,7 +334,6 @@ pub const FREE_AUDIT: &[(&str, Frees)] = &[
     (
         "X509_STORE_free",
         Frees::Runs {
-            statement: FreeStatement::SslAndStore,
             how: "the last reference frees the certificates (and so their keys) and CRLs the \
                   store holds",
         },
@@ -500,7 +341,6 @@ pub const FREE_AUDIT: &[(&str, Frees)] = &[
     (
         "X509_free",
         Frees::Runs {
-            statement: FreeStatement::Certificate,
             how: "the last reference frees the certificate's public key",
         },
     ),
@@ -514,10 +354,12 @@ pub const BUILTIN_LOOKUP_METHODS: &str = "openssl_builtin_lookup_methods";
 /// their own method data (`by_dir.c`'s `free_dir`, `by_store.c`'s
 /// `by_store_free`; `X509_LOOKUP_file` has none) and none has a shutdown
 /// function (OpenSSL 3.5.5).
-pub const BUILTIN_LOOKUP_METHODS_STATEMENT: &str = "a function of an X509_LOOKUP_METHOD the \
-library defines itself (the method that X509_LOOKUP_file, X509_LOOKUP_hash_dir or \
-X509_LOOKUP_store returns, which no setter is handed), run on a lookup of a certificate store the \
-call frees, takes, releases or retains nothing the caller holds";
+/// Card **SP1-SYMBOLIC-OPENSSL-PREMISES**: a formula. For every lookup of a
+/// certificate store the call frees whose method the library defines itself,
+/// each function of the method, as run on that lookup, takes, releases or
+/// retains nothing the caller holds.
+pub const BUILTIN_LOOKUP_METHODS_STATEMENT: &str = "quant all #l in #lookups(#of(X509_STORE, #freed)): #method(#l) in #builtin -> \
+#fns(#l) |-> #inert";
 
 /// Card **OPENSSL-BIO-METHODS-AND-CALLBACKS**: the name of the built-in BIO
 /// methods premise.
@@ -527,13 +369,16 @@ pub const BUILTIN_BIO_METHODS: &str = "openssl_builtin_bio_methods";
 /// the call reads or writes through, its own BIO argument (the PEM and
 /// PKCS#12 readers) or one the SSL object holds (the I/O calls). Card
 /// OPENSSL-FREE-SESSION-REMOVE-INVOCATION: or frees (`BIO_free`, `SSL_free`:
-/// a built-in method's destroy function).
-pub const BUILTIN_BIO_METHODS_STATEMENT: &str = "a function of a BIO method the library defines \
-itself (the BIO_METHOD that BIO_s_socket, BIO_s_mem, BIO_f_buffer or another built-in BIO_s_ or \
-BIO_f_ function returns, which no setter is handed), run on a BIO the call reads or writes \
-through or frees (its BIO argument or a BIO the SSL object holds) or one chained to it, takes, \
-releases or retains nothing the caller holds, and so does any callback it runs in turn on an \
-object other than the arguments of the call (the SSL object of a BIO_f_ssl BIO)";
+/// a built-in method's destroy function). Card
+/// **SP1-SYMBOLIC-OPENSSL-PREMISES**: a formula. For every BIO of that chain
+/// (its BIO argument or a BIO the SSL object holds, and those chained to it)
+/// whose method the library defines itself, each function of the method, as
+/// run on that BIO, takes, releases or retains nothing the caller holds, and
+/// so does every callback it runs in turn on the SSL object of a BIO_f_ssl
+/// BIO when that object is not an argument of the call.
+pub const BUILTIN_BIO_METHODS_STATEMENT: &str = "quant all #b in #chain(#of(BIO, #args) | \
+#bios(#of(SSL, #args))): #method(#b) in #builtin -> #fns(#b) |-> #inert && quant all #f in \
+#fns(#b): #in_turn(#f, #ssl_of(#b) \\ #args) |-> #inert";
 
 /// Card **OPENSSL-BIO-METHODS-AND-CALLBACKS**: the name of the BIO free
 /// premise.
@@ -541,17 +386,22 @@ pub const BIO_FREE: &str = "openssl_bio_free_callbacks";
 
 /// Its statement. Card OPENSSL-FREE-SESSION-REMOVE-INVOCATION: narrowed to
 /// the ex_data free callbacks; the callback and destroy slots are stated.
-pub const BIO_FREE_STATEMENT: &str = "when the call drops the last reference to a BIO (its BIO \
-argument, or a BIO the SSL object holds and the BIOs chained to it), the ex_data free callbacks \
-of the BIO class take, release or retain nothing the caller holds";
+/// Card **SP1-SYMBOLIC-OPENSSL-PREMISES**: a formula. For its BIO argument,
+/// or a BIO the SSL object holds and the BIOs chained to it, whose last
+/// reference the call drops, the ex_data free callbacks of the BIO class
+/// take, release or retain nothing the caller holds.
+pub const BIO_FREE_STATEMENT: &str = "quant all #b in #of(BIO, #args) | \
+#chain(#bios(#of(SSL, #args))): #b in #freed -> #ex_data_free(BIO) |-> #inert";
 
 /// Card **OPENSSL-UNSTATED-CALLBACK-SLOTS**: the name of the ex_data premise.
 pub const EX_DATA: &str = "openssl_ex_data_callbacks";
 
-/// Its statement.
-pub const EX_DATA_STATEMENT: &str = "an ex_data callback the call may run (a new, dup or free \
-callback CRYPTO_get_ex_new_index registers for the class of an object the call creates, copies \
-or frees) takes, releases or retains nothing the caller holds";
+/// Its statement. Card **SP1-SYMBOLIC-OPENSSL-PREMISES**: a formula. Every
+/// new, dup or free callback `CRYPTO_get_ex_new_index` registers for the
+/// class of an object the call creates, copies or frees takes, releases or
+/// retains nothing the caller holds when the call runs it.
+pub const EX_DATA_STATEMENT: &str = "quant all #o in #created | #copied | #freed: \
+#ex_data(#class(#o)) |-> #inert";
 
 /// Card **OPENSSL-EX-DATA-REGISTRY**: the classes whose objects carry
 /// ex_data, as `CRYPTO_get_ex_new_index` (3.5) DESCRIPTION lists them ("The
@@ -2275,7 +2125,7 @@ const BIO_FREED: &[Premise] = &[
     BIO_SLOTS[11],
 ];
 const SSL_FREED: &[Premise] = &[
-    Premise::UnstatedFreeSlots(FreeStatement::SslAndStore),
+    Premise::UnstatedFreeSlots,
     Premise::BioFreeCallbacks,
     Premise::ExDataCallbacks,
     REMOVE_SESSION,
@@ -2288,7 +2138,7 @@ const SSL_FREED: &[Premise] = &[
     LOOKUP_FREED[2],
 ];
 const SSL_CTX_FREED: &[Premise] = &[
-    Premise::UnstatedFreeSlots(FreeStatement::SslAndStore),
+    Premise::UnstatedFreeSlots,
     Premise::ExDataCallbacks,
     REMOVE_SESSION,
     LOOKUP_FREED[0],
@@ -2317,7 +2167,7 @@ const LOOKUP_FREED: [Premise; 3] = [
 /// store's certificates and CRLs run when freed (their keys' methods,
 /// providers and engines, a CRL's method), and ex_data.
 const X509_STORE_FREED: &[Premise] = &[
-    Premise::UnstatedFreeSlots(FreeStatement::SslAndStore),
+    Premise::UnstatedFreeSlots,
     Premise::ExDataCallbacks,
     LOOKUP_FREED[0],
     LOOKUP_FREED[1],
@@ -2400,28 +2250,9 @@ const EX_DATA_ONLY: &[Premise] = &[Premise::ExDataCallbacks];
 
 /// Card **OPENSSL-OBJECT-FREES-SILENT-METHOD-CALLBACKS**: a free of a key, a
 /// certificate, a PKCS#12 object, an engine or a digest context names the
-/// unstated-slots premise in the statement of its object kind ([`FREE_AUDIT`])
-/// beside the ex_data premise it named before.
-const KEY_FREED: &[Premise] = &[
-    Premise::UnstatedFreeSlots(FreeStatement::Key),
-    Premise::ExDataCallbacks,
-];
-const CERTIFICATE_FREED: &[Premise] = &[
-    Premise::UnstatedFreeSlots(FreeStatement::Certificate),
-    Premise::ExDataCallbacks,
-];
-const PKCS12_FREED: &[Premise] = &[
-    Premise::UnstatedFreeSlots(FreeStatement::Pkcs12),
-    Premise::ExDataCallbacks,
-];
-const ENGINE_FREED: &[Premise] = &[
-    Premise::UnstatedFreeSlots(FreeStatement::Engine),
-    Premise::ExDataCallbacks,
-];
-const DIGEST_CONTEXT_FREED: &[Premise] = &[
-    Premise::UnstatedFreeSlots(FreeStatement::DigestContext),
-    Premise::ExDataCallbacks,
-];
+/// unstated-slots premise in the statement of a free ([`FREE_AUDIT`]) beside
+/// the ex_data premise it named before.
+const OBJECT_FREED: &[Premise] = &[Premise::UnstatedFreeSlots, Premise::ExDataCallbacks];
 
 /// `PEM_read_bio_*(bp, x, cb, u)`: a NULL `x` (no object to reuse), and the
 /// password callback `cb` called during the read with `u` as its last
@@ -2568,7 +2399,7 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
             position: 0,
             sentence: "If the argument to ENGINE_free() is NULL, nothing is done.",
         },
-        ENGINE_FREED,
+        OBJECT_FREED,
     ),
     entry(
         "ERR_clear_error",
@@ -2605,7 +2436,7 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
         "3.5",
         SINCE_1_1_0,
         Release(0, Nullable),
-        DIGEST_CONTEXT_FREED,
+        OBJECT_FREED,
     ),
     entry(
         "EVP_MD_CTX_new",
@@ -2623,7 +2454,7 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
             position: 0,
             sentence: "If key is NULL, nothing is done.",
         },
-        KEY_FREED,
+        OBJECT_FREED,
     ),
     entry("EVP_sha256", "EVP_DigestInit", "1.0.2", DOC_1_0_2, Plain),
     entry("EVP_sha512", "EVP_DigestInit", "1.0.2", DOC_1_0_2, Plain),
@@ -2685,7 +2516,7 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
         "1.1.1",
         DOC_1_1_1,
         Release(0, Nullable),
-        PKCS12_FREED,
+        OBJECT_FREED,
     ),
     with(
         "SSL_CTX_add_client_custom_ext",
@@ -3358,7 +3189,7 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
             position: 0,
             sentence: "If a is NULL nothing is done.",
         },
-        CERTIFICATE_FREED,
+        OBJECT_FREED,
     ),
     entry(
         "X509_get_issuer_name",

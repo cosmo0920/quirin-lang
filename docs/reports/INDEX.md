@@ -825,6 +825,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [openssl-ex-data-registry](openssl-ex-data-registry/README.md) | OPENSSL-EX-DATA-REGISTRY: the ex_data premise on every constructor and free |
 
+| [openssl-free-indirect-callbacks](openssl-free-indirect-callbacks/README.md) | OPENSSL-FREE-INDIRECT-CALLBACKS: callbacks the frees run on objects they free in turn |
+
 | [openssl-free-session-remove-invocation](openssl-free-session-remove-invocation/README.md) | OPENSSL-FREE-SESSION-REMOVE-INVOCATION: slot invocations beside a reference drop |
 
 | [openssl-pem-callback-arm](openssl-pem-callback-arm/README.md) | OPENSSL-PEM-CALLBACK-ARM: a literal-argument premise beside a synchronous invocation |
@@ -1278,6 +1280,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [source-annotation-enforcement](source-annotation-enforcement/README.md) | SOURCE-ANNOTATION-ENFORCEMENT |
 
 | [source-scalar-calls-v1](source-scalar-calls-v1/README.md) | SOURCE-SCALAR-CALLS-V1 |
+
+| [sp1-symbolic-openssl-premises](sp1-symbolic-openssl-premises/README.md) | SP1-SYMBOLIC-OPENSSL-PREMISES |
 
 | [stability-reeval-1](stability-reeval-1/README.md) | STABILITY-REEVAL #1 — under what conditions each current claim is unstable |
 

@@ -3744,9 +3744,11 @@ hypothesis_atom = "resource_hypothesis", "(", premise_name, ",", STRING, ")" ;
 hypothesis_all = "resource_premise_all", "(", premise_name, ",", premise_name, {",", premise_name}, ")" ;
 hypothesis_decomposition = "resource_premise_decomposition", "(", premise_name, ",", premise_name, {",", premise_name}, ")" ;
 named_premise =
-    "resource_premise", "(", premise_name, ",", STRING, ")" ;
+    "resource_premise", "(", premise_name, ",", ( STRING | premise_formula ), ")" ;
   (* card VERDICT-CONTRACT-DEPENDENCIES, contract specification C04.18:
-     premise_name is [a-z][a-z0-9_]*, the string one plain non-blank line *)
+     premise_name is [a-z][a-z0-9_]*, the string one plain non-blank line;
+     card SP1-SYMBOLIC-OPENSSL-PREMISES, C04.18.9: or a premise_formula,
+     G05-formula *)
 contract_revision_marker =
     "resource_revision", "(", revision_mode, ")" ;
 clause_revision_marker =
@@ -3938,7 +3940,7 @@ The revision markers (card W45-CONTRACT-REVISION-MODE, contract specification C0
 
 A `library_version_range` (card OPENSSL-PROVIDER-PLUGIN, contract specification C06.2) is admitted only under `requires`, at most once per declaration; a version that is not `MAJOR.MINOR[.PATCH]` in decimal, a removal not above the lower bound, a lower-bound word other than `since` or `documented`, an unquoted version, an argument after the removal and an `ensures` form each reject the whole module. Inheritance does not copy it.
 
-The named premise `requires resource_premise(NAME, "STATEMENT");` (card VERDICT-CONTRACT-DEPENDENCIES, contract specification C04.18) names an assumption the declaration rests on: `NAME` a lowercase identifier, the statement one plain, non-blank string with no escape and no control character, each name at most once per declaration; any other shape, a repeated name and an `ensures` spelling each reject the whole module. It changes no mode, is rederived from the retained texts (`declaration_premises`), is part of the declaration's text and so of its contract digest and pin, and inheritance (G05a) copies it, compared by the agreement check. Since card LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER the shape check belongs to the contract format: `crates/qcore-frontend/src/frontend.rs` (`premise_clause`) refuses, at parse, any other shape, an introducer other than `requires` and a repeated name in one declaration, in every module. A resource-v1, bounds-v1 (G05f, beside a member clause of any kind only) or Quirin model contract is rejected whole. A model contract's premises are read by `contract_loader::module_premises`.
+The named premise `requires resource_premise(NAME, "STATEMENT");` (card VERDICT-CONTRACT-DEPENDENCIES, contract specification C04.18), or `requires resource_premise(NAME, FORMULA);` (card SP1-SYMBOLIC-OPENSSL-PREMISES, G05-formula, C04.18.9), names an assumption the declaration rests on: `NAME` a lowercase identifier, the statement one plain, non-blank string with no escape and no control character, each name at most once per declaration; any other shape, a repeated name and an `ensures` spelling each reject the whole module. It changes no mode, is rederived from the retained texts (`declaration_premises`), is part of the declaration's text and so of its contract digest and pin, and inheritance (G05a) copies it, compared by the agreement check. Since card LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER the shape check belongs to the contract format: `crates/qcore-frontend/src/frontend.rs` (`premise_clause`) refuses, at parse, any other shape, an introducer other than `requires` and a repeated name in one declaration, in every module. A resource-v1, bounds-v1 (G05f, beside a member clause of any kind only) or Quirin model contract is rejected whole. A model contract's premises are read by `contract_loader::module_premises`.
 
 The conjunction-only graph extension (CONTRACT-HYPOTHESIS-GRAPH-V1, C04.18.1) admits `requires resource_hypothesis(ID, STRING);` and `requires resource_premise_all(NAME, ID {, ID});` in resource-v1 declarations. Both heads and IDs remain ordinary `Word` tokens: the reserved-word census adds zero words and zero lexer token variants. Statements use C04.18's plain-string restrictions. IDs are lowercase identifiers, with `legacy_` reserved. Conjunction references are nonempty, unique and strictly increasing; only atom references are admitted. Unused/missing/conflicting atoms and any typed predicate reject the whole module. Equal duplicate atoms coalesce. There is no `any` or `not` grammar and no graph clause under a scoped S3 prerequisite or FFI vocabulary. The bounds-v1 exception is the separately bounded same-name extension below; `resource_premise_all` remains unavailable there. Inheritance preserves graph symbols, independent of formal renaming. All graph records remain evidence-only; C04.18.1 defines exact context, digest, replay and erasure rules.
 
@@ -3957,6 +3959,59 @@ reader additionally requires the exact explicit `detach_list_representation`
 premise and complete bounded list layout/unlink frame; neither its syntax nor
 its premise establishes caller membership.
 
+
+### G05-formula. Symbolic premise statements
+
+Card SP1-SYMBOLIC-OPENSSL-PREMISES (contract specification C04.18.9): the
+statement of `resource_premise(NAME, …)` may be a formula instead of a string.
+The formula is exactly the tokens between the comma after `NAME` and the
+clause's closing parenthesis:
+
+```ebnf
+premise_formula = implication ;
+implication = conjunction, [ "->", implication ] ;          (* right-associative *)
+conjunction = maps_to, { "&&", maps_to } ;                   (* left-associative *)
+maps_to     = relation, [ "|->", relation ] ;                (* no chaining *)
+relation    = set_expr, [ ( "in" | "==" ), set_expr ] ;      (* no chaining *)
+set_expr    = primary, { "|", primary }
+            | primary, "\\", primary ;                       (* never mixed, never chained *)
+primary     = "(", implication, ")"
+            | "quant", "all", "#", name, "in", set_expr, ":", implication
+            | "#", name, [ "(", implication, [ ",", implication ], ")" ]
+            | CONSTANT
+            | "{", "}" ;
+name        = [a-z][a-z0-9_]* ;  CONSTANT = [A-Z][A-Z0-9_]* ;
+```
+
+Every token but one is an existing one: `#` (`Hash`), `|->` (`MapsTo`), `->`
+(`Arrow`), `&&` (`AndAnd`), `==` (`EqualEqual`), `|` (`Pipe`), braces,
+parentheses, `:`, `,` and the ordinary words `quant`, `all` and `in`. Set
+difference is `\` (`Backslash`), the one token this card adds (USER DECISION
+2026-11-20, "Add '\'"): a bare backslash was an `unexpected character` lex
+error, and no tracked `.qcore`, `.qc`, `.qr`, `.qv` or `.qcorelib` file had one
+in code position (781 files), so the promotion accepts nothing new elsewhere;
+inside a string or character literal a backslash is still the literal's
+escape. It is one byte with no two-byte spelling: `\|` is `Backslash` then
+`Pipe`, and `|->`, `||->`, `->|`, `!->` keep their longest-match identities.
+`-` (`Minus`) is refused inside a formula, so difference has one spelling. A quantifier's body extends as far as it can. The
+reader is bounded (1024 tokens, nesting depth 48, 512 nodes); exhaustion
+rejects. The sort judgment then requires every `#name` to be a registered term
+of C04.18.9 applied to arguments of its signature, or a variable bound by an
+enclosing `quant` (no variable shadows a term or another variable), every
+`CONSTANT` a registered class, and the whole formula a proposition.
+Any failure rejects the whole module, in every vocabulary, exactly as a
+malformed string premise does. A string statement that itself reads as a
+formula rejects too (write it unquoted), so the two forms never share a
+statement. The statement every rendering prints is the canonical printing:
+single spaces around binary operators, `: ` after a quantifier's domain, `, `
+between arguments, parentheses only where the precedence needs them.
+
+`|->` is the lexer's one `MapsTo` token everywhere (three bytes, matched before
+`||`, `|>`, `->` and `|`, so `A |-> B` never lexes as a union followed by an
+implication). Its meaning is decided by the delimited context that reads it: a
+contract state clause, a `resource_premise_flow_v1` expression (G05-flow), or
+this formula, where `F |-> E` says every run of callback `F` (or of every
+member of callback set `F`) during the call has effect `E`.
 
 ### G05-flow. Proposed premise expressions
 

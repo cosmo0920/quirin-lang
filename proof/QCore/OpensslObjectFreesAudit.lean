@@ -13,46 +13,49 @@
 -- limitations under the License.
 
 import QCore.OpensslUnstatedSlots
+import QCore.PremiseFormula
 
 /-!
 # The free audit (card OPENSSL-OBJECT-FREES-SILENT-METHOD-CALLBACKS)
 
-Contract specification C04.18 (named premises), gateway rule 12n. A free
-of a key, certificate, PKCS#12 object, engine or digest context may run a
-function of a method, provider or engine of an object it frees (a key's
-key management free function, its `RSA_METHOD` finish function, an
-ENGINE's destroy function) that no clause states. Such a free names the
-unstated-slots premise in the statement of its object kind. Abstract rule
-theorems over the checker `providers/quirin-provider-openssl/src/check.rs`
+Contract specification C04.18 (named premises, the formula of C04.18.9),
+gateway rule 12n. A free of a key, certificate, PKCS#12 object, engine or
+digest context may run a function of a method, provider or engine of an
+object it frees (a key's key management free function, its `RSA_METHOD`
+finish function, an ENGINE's destroy function) that no clause states. Such a
+free names the unstated-slots premise in the statement of a free, the
+formula `unstatedFreeFormula` (`QCore.PremiseFormula`), which quantifies over
+the call's own `#freed` and so names exactly what each free runs. Abstract
+rule theorems over the checker `providers/quirin-provider-openssl/src/check.rs`
 (`free_audited`, `releases`) and its audit table `FREE_AUDIT`, not an
 extraction of them.
 
 * **The audit is total over releases.** An accepted entry whose shape
   releases an object is listed (`a_release_is_audited`); one left out
   refuses (`an_unaudited_release_refuses`).
-* **A running free names exactly its audited statement.** An accepted
-  entry the audit reads as running names that statement and no other
-  (`a_running_free_names_its_statement`), so dropping it
-  (`dropping_the_statement_refuses`), naming another kind's
-  (`another_kinds_statement_refuses`) or adding the handshake's statement
+* **A running free names the free statement.** An accepted entry the audit
+  reads as running names it, and not the handshake's statement
+  (`a_running_free_names_the_statement`), so dropping it
+  (`dropping_the_statement_refuses`) or adding the handshake's statement
   (`the_handshake_statement_beside_it_refuses`) refuses.
-* **A free statement stands only where the audit reads a run**
-  (`a_statement_is_named_only_where_audited`); a free whose run another
+* **The free statement stands only where the audit reads a run**
+  (`the_statement_is_named_only_where_audited`); a free whose run another
   premise names carries that premise (`a_named_by_free_carries_the_premise`).
-* **The ex_data premise alone leaves a key's method uncovered**
+* **The statement is well formed** (`the_free_statement_is_well_formed`,
+  from `QCore.PremiseFormula.openssl_formulas_wf`), and **the ex_data
+  premise alone leaves a key's method uncovered**
   (`key_free_vector_needs_the_premise`, over
-  `QCore.OpensslUnstatedSlots.wellCovered`): this is why the frees cannot
-  keep naming `openssl_ex_data_callbacks` alone.
+  `QCore.OpensslUnstatedSlots.wellCovered`).
 * **The premise moves no verdict** (`the_free_premise_moves_no_verdict`,
-  from `QCore.OpensslUnstatedSlots.the_verdict_ignores_the_premise`): the
-  card changes what a row rests on, never its verdict.
+  from `QCore.OpensslUnstatedSlots.the_verdict_ignores_the_premise`).
 
 ## What this is not
 
 That each free runs what its audit reading says (read from the OpenSSL
-3.5.5 sources), that each statement's text names exactly that, and that
-the Rust checker computes `audited`, are premises, pinned by the crate's
-checker tests (`every_free_names_what_it_runs_on_the_objects_it_frees`,
+3.5.5 sources), that those functions are members of `#teardown` of an object
+in the call's `#freed`, and that the Rust checker computes `audited`, are
+premises, pinned by the crate's checker tests
+(`every_free_names_what_it_runs_on_the_objects_it_frees`,
 `a_drifted_free_reading_is_refused`). Stating these functions as slots is
 follow-up OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS.
 -/
@@ -63,31 +66,20 @@ open QCore.CallbackContracts (Decision)
 open QCore.VerdictSemigroup
 open QCore.OpensslUnstatedSlots (Runnable wellCovered)
 
-/-- The statements of the unstated-slots premise on a free, by object kind
-(`FreeStatement`). -/
-inductive Statement where
-  | sslAndStore
-  | key
-  | certificate
-  | pkcs12
-  | engine
-  | digestContext
-  deriving DecidableEq, Repr
-
 /-- A free audit reading (`Frees`). -/
 inductive Reading where
-  | runs (s : Statement)
+  | runs
   | namedBy (premise : String)
   | nothing
   deriving DecidableEq, Repr
 
 /-- A documented entry, as far as the free audit reads it: whether its shape
-releases an object, the free statements it names, its other named premises,
-and whether it names the handshake's statement. -/
+releases an object, whether it names the free statement, its other named
+premises, and whether it names the handshake's statement. -/
 structure Entry where
   function : String
   releases : Bool
-  named : List Statement
+  named : Bool
   premises : List String
   handshake : Bool
   deriving DecidableEq, Repr
@@ -98,10 +90,10 @@ def listed (f : String) (audit : List (String × Reading)) : List Reading :=
 
 /-- `free_audited` over the readings found. -/
 def decideReadings (e : Entry) : List Reading → Bool
-  | [] => e.named.isEmpty && !e.releases
-  | [.runs s] => e.named == [s] && !e.handshake
-  | [.namedBy p] => e.named.isEmpty && e.premises.contains p
-  | [.nothing] => e.named.isEmpty
+  | [] => !e.named && !e.releases
+  | [.runs] => e.named && !e.handshake
+  | [.namedBy p] => !e.named && e.premises.contains p
+  | [.nothing] => !e.named
   | _ :: _ :: _ => false
 
 /-- The checker's acceptance of one entry against the audit. -/
@@ -154,59 +146,45 @@ theorem an_unaudited_release_refuses {e : Entry} {audit : List (String × Readin
       obtain ⟨r, hr⟩ := a_release_is_audited h hs
       exact absurd hr (hn r)
 
-/-! ## A running free names exactly its audited statement -/
+/-! ## A running free names the free statement -/
 
-theorem a_running_free_names_its_statement {e : Entry} {audit : List (String × Reading)}
-    {s : Statement} (h : audited e audit = true) (hr : (e.function, Reading.runs s) ∈ audit) :
-    e.named = [s] ∧ e.handshake = false := by
+theorem a_running_free_names_the_statement {e : Entry} {audit : List (String × Reading)}
+    (h : audited e audit = true) (hr : (e.function, Reading.runs) ∈ audit) :
+    e.named = true ∧ e.handshake = false := by
   have hl := single_reading h hr
   unfold audited at h
   rw [hl] at h
-  simp only [decideReadings, Bool.and_eq_true, beq_iff_eq, Bool.not_eq_true'] at h
+  simp only [decideReadings, Bool.and_eq_true, Bool.not_eq_true'] at h
   exact h
 
 theorem dropping_the_statement_refuses {e : Entry} {audit : List (String × Reading)}
-    {s : Statement} (hr : (e.function, Reading.runs s) ∈ audit) (hn : e.named = []) :
+    (hr : (e.function, Reading.runs) ∈ audit) (hn : e.named = false) :
     audited e audit = false := by
   cases h : audited e audit with
   | false => rfl
   | true =>
-      have := (a_running_free_names_its_statement h hr).1
+      have := (a_running_free_names_the_statement h hr).1
       rw [hn] at this
       cases this
 
-theorem another_kinds_statement_refuses {e : Entry} {audit : List (String × Reading)}
-    {s t : Statement} (hr : (e.function, Reading.runs s) ∈ audit) (hn : e.named = [t])
-    (ht : t ≠ s) : audited e audit = false := by
-  cases h : audited e audit with
-  | false => rfl
-  | true =>
-      have := (a_running_free_names_its_statement h hr).1
-      rw [hn] at this
-      exact absurd (List.cons.inj this).1 ht
-
 theorem the_handshake_statement_beside_it_refuses {e : Entry}
-    {audit : List (String × Reading)} {s : Statement}
-    (hr : (e.function, Reading.runs s) ∈ audit) (hh : e.handshake = true) :
-    audited e audit = false := by
+    {audit : List (String × Reading)} (hr : (e.function, Reading.runs) ∈ audit)
+    (hh : e.handshake = true) : audited e audit = false := by
   cases h : audited e audit with
   | false => rfl
   | true =>
-      have := (a_running_free_names_its_statement h hr).2
+      have := (a_running_free_names_the_statement h hr).2
       rw [hh] at this
       cases this
 
-/-! ## A free statement stands only where the audit reads a run -/
+/-! ## The free statement stands only where the audit reads a run -/
 
-theorem a_statement_is_named_only_where_audited {e : Entry}
-    {audit : List (String × Reading)} (h : audited e audit = true) (hp : e.named ≠ []) :
-    ∃ s, (e.function, Reading.runs s) ∈ audit ∧ e.named = [s] := by
+theorem the_statement_is_named_only_where_audited {e : Entry}
+    {audit : List (String × Reading)} (h : audited e audit = true) (hp : e.named = true) :
+    (e.function, Reading.runs) ∈ audit := by
   unfold audited at h
   cases hl : listed e.function audit with
-  | nil =>
-      rw [hl] at h
-      simp only [decideReadings, Bool.and_eq_true, List.isEmpty_iff] at h
-      exact absurd h.1 hp
+  | nil => rw [hl] at h; simp [decideReadings, hp] at h
   | cons r rest =>
       rw [hl] at h
       cases rest with
@@ -215,27 +193,25 @@ theorem a_statement_is_named_only_where_audited {e : Entry}
           have hmem : (e.function, r) ∈ audit :=
             listed_mem (by rw [hl]; exact List.mem_singleton_self _)
           cases r with
-          | runs s =>
-              simp only [decideReadings, Bool.and_eq_true, beq_iff_eq] at h
-              exact ⟨s, hmem, h.1⟩
-          | namedBy p =>
-              simp only [decideReadings, Bool.and_eq_true, List.isEmpty_iff] at h
-              exact absurd h.1 hp
-          | nothing =>
-              simp only [decideReadings, List.isEmpty_iff] at h
-              exact absurd h hp
+          | runs => exact hmem
+          | namedBy p => simp [decideReadings, hp] at h
+          | nothing => simp [decideReadings, hp] at h
 
 theorem a_named_by_free_carries_the_premise {e : Entry} {audit : List (String × Reading)}
     {p : String} (h : audited e audit = true) (hr : (e.function, Reading.namedBy p) ∈ audit) :
-    p ∈ e.premises ∧ e.named = [] := by
+    p ∈ e.premises ∧ e.named = false := by
   have hl := single_reading h hr
   unfold audited at h
   rw [hl] at h
-  simp only [decideReadings, Bool.and_eq_true, List.isEmpty_iff,
+  simp only [decideReadings, Bool.and_eq_true, Bool.not_eq_true',
     List.contains_iff_mem] at h
   exact ⟨h.2, h.1⟩
 
-/-! ## The ex_data premise alone leaves a key's method uncovered -/
+/-! ## The statement, and why the ex_data premise alone does not do -/
+
+theorem the_free_statement_is_well_formed :
+    QCore.PremiseFormula.wf QCore.PremiseFormula.unstatedFreeFormula = true :=
+  QCore.PremiseFormula.openssl_formulas_wf.2.2.1
 
 /-- What `EVP_PKEY_free` may run: a legacy RSA key's method finish function
 (no slot stated) and the ex_data free callbacks. -/
@@ -258,44 +234,39 @@ theorem the_free_premise_moves_no_verdict (own : V) (ds : List Decision) :
 
 /-- A slice of `FREE_AUDIT`. -/
 def crateAudit : List (String × Reading) :=
-  [("EVP_PKEY_free", .runs .key), ("X509_free", .runs .certificate),
-    ("PKCS12_free", .runs .pkcs12), ("ENGINE_free", .runs .engine),
-    ("EVP_MD_CTX_free", .runs .digestContext), ("SSL_free", .runs .sslAndStore),
+  [("EVP_PKEY_free", .runs), ("X509_free", .runs), ("PKCS12_free", .runs),
+    ("ENGINE_free", .runs), ("EVP_MD_CTX_free", .runs), ("SSL_free", .runs),
     ("BIO_free", .namedBy "openssl_builtin_bio_methods"), ("OPENSSL_sk_free", .nothing)]
 
 theorem vector_key_free_as_landed :
-    audited ⟨"EVP_PKEY_free", true, [.key], ["openssl_ex_data_callbacks"], false⟩ crateAudit =
+    audited ⟨"EVP_PKEY_free", true, true, ["openssl_ex_data_callbacks"], false⟩ crateAudit =
       true := by
   decide
 
 theorem vector_key_free_as_before_refuses :
-    audited ⟨"EVP_PKEY_free", true, [], ["openssl_ex_data_callbacks"], false⟩ crateAudit =
+    audited ⟨"EVP_PKEY_free", true, false, ["openssl_ex_data_callbacks"], false⟩ crateAudit =
       false := by
   decide
 
-theorem vector_certificate_free_with_the_key_statement_refuses :
-    audited ⟨"X509_free", true, [.key], [], false⟩ crateAudit = false := by
-  decide
-
-theorem vector_engine_free_with_the_ssl_statement_refuses :
-    audited ⟨"ENGINE_free", true, [.sslAndStore], [], false⟩ crateAudit = false := by
+theorem vector_engine_free_with_the_handshake_statement_refuses :
+    audited ⟨"ENGINE_free", true, true, [], true⟩ crateAudit = false := by
   decide
 
 theorem vector_bio_free_as_landed :
-    audited ⟨"BIO_free", true, [], ["openssl_builtin_bio_methods"], false⟩ crateAudit =
+    audited ⟨"BIO_free", true, false, ["openssl_builtin_bio_methods"], false⟩ crateAudit =
       true := by
   decide
 
-theorem vector_stack_free_with_a_statement_refuses :
-    audited ⟨"OPENSSL_sk_free", true, [.key], [], false⟩ crateAudit = false := by
+theorem vector_stack_free_with_the_statement_refuses :
+    audited ⟨"OPENSSL_sk_free", true, true, [], false⟩ crateAudit = false := by
   decide
 
 theorem vector_unaudited_free_refuses :
-    audited ⟨"X509_CRL_free", true, [], [], false⟩ crateAudit = false := by
+    audited ⟨"X509_CRL_free", true, false, [], false⟩ crateAudit = false := by
   decide
 
 theorem vector_unaudited_plain_call :
-    audited ⟨"SSL_get_error", false, [], [], false⟩ crateAudit = true := by
+    audited ⟨"SSL_get_error", false, false, [], false⟩ crateAudit = true := by
   decide
 
 end QCore.OpensslObjectFreesAudit
