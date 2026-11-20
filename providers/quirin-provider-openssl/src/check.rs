@@ -91,10 +91,11 @@ use qcore_schemas::plugin::{
 use serde_json::Value;
 
 pub use crate::documented::{
-    BIO_FREE, BIO_FREE_STATEMENT, BUILTIN_BIO_METHODS, BUILTIN_BIO_METHODS_STATEMENT, DOCUMENTED,
-    Documented, DocumentedFunction, EX_DATA, EX_DATA_AUDIT, EX_DATA_CLASSES, EX_DATA_STATEMENT,
-    ExData, NULLABLE_ARGUMENTS, Null, NullableArgument, Premise, SLOTS, Slot, UNSTATED_SLOTS,
-    UNSTATED_SLOTS_STATEMENT, nullable_argument,
+    BIO_FREE, BIO_FREE_STATEMENT, BUILTIN_BIO_METHODS, BUILTIN_BIO_METHODS_STATEMENT,
+    BUILTIN_LOOKUP_METHODS, BUILTIN_LOOKUP_METHODS_STATEMENT, DOCUMENTED, Documented,
+    DocumentedFunction, EX_DATA, EX_DATA_AUDIT, EX_DATA_CLASSES, EX_DATA_STATEMENT, ExData,
+    NULLABLE_ARGUMENTS, Null, NullableArgument, Premise, SLOTS, Slot, UNSTATED_FREE_STATEMENT,
+    UNSTATED_SLOTS, UNSTATED_SLOTS_STATEMENT, nullable_argument,
 };
 
 /// The crate name a request's translation unit carries.
@@ -232,6 +233,14 @@ pub const FUNCTION_POINTER_TYPEDEFS: &[&str] = &[
     "X509_STORE_CTX_lookup_certs_fn",
     "X509_STORE_CTX_lookup_crls_fn",
     "X509_STORE_CTX_cleanup_fn",
+    // Card OPENSSL-FREE-INDIRECT-CALLBACKS: the lookup method function types
+    // the get_by and ctrl setters take, each `typedef int (*NAME)(X509_LOOKUP
+    // *ctx, …);` in the pinned `openssl/x509_vfy.h`.
+    "X509_LOOKUP_ctrl_fn",
+    "X509_LOOKUP_get_by_subject_fn",
+    "X509_LOOKUP_get_by_issuer_serial_fn",
+    "X509_LOOKUP_get_by_fingerprint_fn",
+    "X509_LOOKUP_get_by_alias_fn",
 ];
 
 /// The contract type a C type from a pinned prototype corresponds to.
@@ -859,6 +868,12 @@ pub fn expected_clauses(
             Premise::UnstatedSlots => {
                 format!("requires resource_premise({UNSTATED_SLOTS}, {UNSTATED_SLOTS_STATEMENT})")
             }
+            Premise::UnstatedFreeSlots => {
+                format!("requires resource_premise({UNSTATED_SLOTS}, {UNSTATED_FREE_STATEMENT})")
+            }
+            Premise::BuiltinLookupMethods => format!(
+                "requires resource_premise({BUILTIN_LOOKUP_METHODS}, {BUILTIN_LOOKUP_METHODS_STATEMENT})"
+            ),
             Premise::ExDataCallbacks => {
                 format!("requires resource_premise({EX_DATA}, {EX_DATA_STATEMENT})")
             }
@@ -1115,6 +1130,8 @@ mod tests {
             (UNSTATED_SLOTS, UNSTATED_SLOTS_STATEMENT),
             (BUILTIN_BIO_METHODS, BUILTIN_BIO_METHODS_STATEMENT),
             (BIO_FREE, BIO_FREE_STATEMENT),
+            (UNSTATED_SLOTS, UNSTATED_FREE_STATEMENT),
+            (BUILTIN_LOOKUP_METHODS, BUILTIN_LOOKUP_METHODS_STATEMENT),
         ] {
             let formula = premise_text(name, statement);
             let prose = format!(
@@ -1141,8 +1158,8 @@ mod tests {
                 refused += 1;
             }
         }
-        // Every one of the 49 premise clauses.
-        assert_eq!(refused, 49);
+        // Every one of the 53 premise clauses.
+        assert_eq!(refused, 53);
     }
 
     #[test]
@@ -1496,12 +1513,152 @@ mod tests {
             1,
         );
         assert!(check_function(path, &unregistered, "SSL_CTX_set_cert_cb").is_err());
-        // The frees keep the NULL-accepting drop and name the premise.
+        // The frees keep the NULL-accepting drop and name the premise (card
+        // OPENSSL-FREE-INDIRECT-CALLBACKS: in the statement of a free).
+        let premise = premise_text(UNSTATED_SLOTS, UNSTATED_FREE_STATEMENT);
         let (path, text) = module_of("SSL_free");
         let start = text.find("extern fn SSL_free(").unwrap();
         let at = start + text[start..].find(&premise).unwrap();
         let unpremised = format!("{}{}", &text[..at], &text[at + premise.len()..]);
         assert!(check_function(path, &unpremised, "SSL_free").is_err());
+    }
+
+    /// Card **OPENSSL-FREE-INDIRECT-CALLBACKS**: the lookup method table
+    /// setters register their slots; `X509_STORE_free`, `SSL_CTX_free` and
+    /// `SSL_free` state the shutdown and free slots with the library's
+    /// `X509_LOOKUP` (`_`), name the built-in lookup premise, and carry the
+    /// unstated-slots premise in the statement of a free; any other reading
+    /// is refused.
+    #[test]
+    fn a_drifted_free_indirect_reading_is_refused() {
+        let snapshots: Value = serde_json::from_str(crate::DOC_SNAPSHOTS).unwrap();
+        let lookup_slots = SLOTS
+            .iter()
+            .filter(|slot| slot.page == "X509_LOOKUP_meth_new")
+            .collect::<Vec<_>>();
+        assert_eq!(lookup_slots.len(), 9);
+        for slot in &lookup_slots {
+            assert!(slot.key.starts_with("x509_lookup_method_st.lookup_meth_"));
+            slot_writers_declared(slot.key, &snapshots).unwrap();
+            let [writer] = slot.writers else {
+                panic!("{}: one writer", slot.key)
+            };
+            let (path, text) = module_of(writer);
+            assert_eq!(path, "openssl/x509_lookup_slots.qv");
+            check_function(path, text, writer).unwrap();
+            // The registration dropped.
+            let start = text.find(&format!("extern fn {writer}(")).unwrap();
+            let registration = format!(", {}, ", slot.key);
+            let at = start + text[start..].find(&registration).unwrap();
+            let moved = format!(
+                "{}{}",
+                &text[..at],
+                text[at..].replacen(&registration, ", x509_store_st.verify_cb, ", 1)
+            );
+            assert!(check_function(path, &moved, writer).is_err(), "{writer}");
+            // The letter release read as 1.1.0.
+            let ranged = format!(
+                "{}{}",
+                &text[..start],
+                text[start..].replacen("documented \"1.1.1\"", "since \"1.1.0\"", 1)
+            );
+            assert!(check_function(path, &ranged, writer).is_err(), "{writer}");
+        }
+        // The page's NAME list loses a not-writer: refused.
+        let mut stripped = snapshots.clone();
+        for page in stripped["pages"].as_array_mut().unwrap() {
+            if page["page"] == "X509_LOOKUP_meth_new" && page["series"] == "3.5" {
+                let name = page["name"]
+                    .as_str()
+                    .unwrap()
+                    .replace(" X509_OBJECT_set1_X509,", "");
+                page["name"] = Value::from(name);
+            }
+        }
+        assert!(
+            slot_writers_declared("x509_lookup_method_st.lookup_meth_free", &stripped).is_err()
+        );
+        let unstated = premise_text(UNSTATED_SLOTS, UNSTATED_FREE_STATEMENT);
+        let builtin = premise_text(BUILTIN_LOOKUP_METHODS, BUILTIN_LOOKUP_METHODS_STATEMENT);
+        for (call, object) in [
+            ("X509_STORE_free", "xs"),
+            ("SSL_CTX_free", "ctx"),
+            ("SSL_free", "ssl"),
+        ] {
+            let (path, text) = module_of(call);
+            check_function(path, text, call).unwrap();
+            let start = text.find(&format!("extern fn {call}(")).unwrap();
+            let edited = |from: &str, to: &str| {
+                let edited = format!("{}{}", &text[..start], text[start..].replacen(from, to, 1));
+                assert_ne!(edited, text, "{call}: {from}");
+                edited
+            };
+            for slot in ["lookup_meth_shutdown", "lookup_meth_free"] {
+                let line = format!(
+                    "    ensures normal resource_callback_slot_invoked({object}, \
+                     x509_lookup_method_st.{slot}, _);\n"
+                );
+                // Each invocation dropped.
+                assert!(
+                    check_function(path, &edited(&line, ""), call).is_err(),
+                    "{call} {slot}"
+                );
+                // The freed object handed to the callback.
+                let handed = edited(
+                    &format!("x509_lookup_method_st.{slot}, _)"),
+                    &format!("x509_lookup_method_st.{slot}, {object})"),
+                );
+                assert!(
+                    check_function(path, &handed, call).is_err(),
+                    "{call} {slot}"
+                );
+            }
+            // Another lookup slot stated beside the drop.
+            let extra = edited(
+                "    ensures normal resource_return_none();\n",
+                &format!(
+                    "    ensures normal resource_callback_slot_invoked({object}, \
+                     x509_lookup_method_st.lookup_meth_init, _);\n    ensures normal \
+                     resource_return_none();\n"
+                ),
+            );
+            assert!(check_function(path, &extra, call).is_err(), "{call}");
+            // The built-in premise dropped.
+            assert!(
+                check_function(path, &edited(&builtin, ""), call).is_err(),
+                "{call}"
+            );
+            // The unstated premise dropped, or read in the handshake's
+            // statement.
+            assert!(
+                check_function(path, &edited(&unstated, ""), call).is_err(),
+                "{call}"
+            );
+            let handshake = edited(UNSTATED_FREE_STATEMENT, UNSTATED_SLOTS_STATEMENT);
+            assert!(check_function(path, &handshake, call).is_err(), "{call}");
+            // A store slot stated at the free (the store's cleanup function
+            // runs at a verification context's cleanup, not here).
+            let cleanup = edited(
+                "    ensures normal resource_return_none();\n",
+                &format!(
+                    "    ensures normal resource_callback_slot_invoked({object}, \
+                     x509_store_st.cleanup_fn, _);\n    ensures normal \
+                     resource_return_none();\n"
+                ),
+            );
+            assert!(check_function(path, &cleanup, call).is_err(), "{call}");
+        }
+        // The handshake's statement still names the lookup methods (card
+        // OPENSSL-LOOKUP-METHOD-HANDSHAKE-INVOCATIONS: its `#lookups`
+        // conjunct); the free's names neither the lookup methods nor ex_data,
+        // and no key segment is a bare common word.
+        assert!(UNSTATED_SLOTS_STATEMENT.contains("#lookups("));
+        assert!(!UNSTATED_FREE_STATEMENT.contains("#lookups("));
+        assert!(!UNSTATED_FREE_STATEMENT.contains("#ex_data"));
+        for slot in &lookup_slots {
+            let field = slot.key.rsplit('.').next().unwrap();
+            assert!(!["free", "init", "shutdown", "ctrl", "new_item"].contains(&field));
+        }
     }
 
     /// Card OPENSSL-SSL-CTX-CALLBACK-SLOTS: every stated slot has every
@@ -1513,7 +1670,7 @@ mod tests {
         for slot in SLOTS {
             slot_writers_declared(slot.key, &snapshots).unwrap();
         }
-        assert_eq!(SLOTS.len(), 68);
+        assert_eq!(SLOTS.len(), 77);
         // Card OPENSSL-UNSTATED-CALLBACK-SLOTS: a ctrl arm stays unstated.
         assert!(slot_writers_declared("ssl_ctx_st.servername_cb", &snapshots).is_err());
         // A page that does not name a writer refuses the slot.
@@ -2150,7 +2307,7 @@ mod tests {
         }
         // The session-remove invocation on both frees: dropped, or handed
         // the freed object, refuses; the frees keep the unstated premise.
-        let unstated = premise_text(UNSTATED_SLOTS, UNSTATED_SLOTS_STATEMENT);
+        let unstated = premise_text(UNSTATED_SLOTS, UNSTATED_FREE_STATEMENT);
         for (call, object) in [("SSL_CTX_free", "ctx"), ("SSL_free", "ssl")] {
             let (path, text) = module_of(call);
             check_function(path, text, call).unwrap();
@@ -2581,7 +2738,9 @@ mod tests {
         let new = format!("\n        && {lookups}");
         let new = new.as_str();
         let old = "";
-        for call in ["SSL_connect", "SSL_shutdown", "SSL_free", "SSL_CTX_free"] {
+        // Card OPENSSL-FREE-INDIRECT-CALLBACKS: the frees carry their own
+        // statement now (`a_drifted_free_indirect_reading_is_refused`).
+        for call in ["SSL_connect", "SSL_shutdown"] {
             let (path, text) = module_of(call);
             let start = text.find(&format!("extern fn {call}(")).unwrap();
             let stale = format!("{}{}", &text[..start], text[start..].replacen(new, old, 1));

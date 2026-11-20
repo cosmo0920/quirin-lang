@@ -112,6 +112,22 @@ pub enum Premise {
     /// `openssl_registered_callbacks`, which covered every slot, stated or
     /// not; card **OPENSSL-UNSTATED-CALLBACK-SLOTS** narrowed it again.
     UnstatedSlots,
+    /// Card **OPENSSL-FREE-INDIRECT-CALLBACKS**: `requires
+    /// resource_premise(openssl_unstated_callback_slots, "…")` with the
+    /// statement of a free ([`UNSTATED_FREE_STATEMENT`]): the free states
+    /// every slot of the objects it frees whose setters are declared, and the
+    /// premise names what remains by name, the functions of methods,
+    /// providers and engines of objects it frees in turn that no setter
+    /// declared here writes.
+    UnstatedFreeSlots,
+    /// Card **OPENSSL-FREE-INDIRECT-CALLBACKS**: `requires
+    /// resource_premise(openssl_builtin_lookup_methods, "…")`, the
+    /// library-value premise beside the stated lookup method slots: a
+    /// function of a lookup method the library defines itself
+    /// (`X509_LOOKUP_file`, `X509_LOOKUP_hash_dir`, `X509_LOOKUP_store`),
+    /// which no setter is handed and so is in no run's slot set, changes no
+    /// custody the caller holds.
+    BuiltinLookupMethods,
     /// Card **OPENSSL-UNSTATED-CALLBACK-SLOTS**: `requires
     /// resource_premise(openssl_ex_data_callbacks, "…")`: every slot the call
     /// may run is stated, and the call may still run the ex_data callbacks
@@ -206,6 +222,42 @@ pub const UNSTATED_SLOTS_STATEMENT: &str = "#slots(#of(SSL, #args) | #ctx(#of(SS
 #of(SSL_CTX, #args)) \\ #stated |-> #inert && (quant all #l in #lookups(#store(#ctx(#of(SSL, \
 #args)) | #of(SSL_CTX, #args))): #fns(#l) \\ #stated |-> #inert) && quant all #o in #created | \
 #copied | #freed: #ex_data(#class(#o)) \\ #stated |-> #inert";
+
+/// Card **OPENSSL-FREE-INDIRECT-CALLBACKS**: the statement of the
+/// unstated-slots premise on a free (`SSL_free`, `SSL_CTX_free`,
+/// `X509_STORE_free`). A free runs none of the handshake's unstated kinds
+/// (the ctrl arms, CT and the undocumented handshake setters run during a
+/// handshake), its ex_data callbacks are `openssl_ex_data_callbacks`, and the
+/// lookup methods' shutdown and free functions are stated slots now. What
+/// remains, by the source survey of OpenSSL 3.5.5 (report section 2), is
+/// named: the functions a key's provider, `EVP_PKEY_ASN1_METHOD`,
+/// `RSA_METHOD`, `DSA_METHOD`, `DH_METHOD` or `EC_KEY_METHOD` and ENGINE run
+/// when the key is freed, the client certificate engine, a CRL's
+/// `X509_CRL_METHOD`, the async wait context's cleanup functions, the QUIC
+/// TLS callbacks, and what a QUIC object's free runs (not traced).
+/// Card **SP1-SYMBOLIC-OPENSSL-PREMISES** (C04.18.9): a formula. Every
+/// callback the free of an object the call frees (directly or in turn) runs
+/// from the object's methods, provider or engine, or holds itself, that no
+/// clause states and whose setter no declaration of this crate states,
+/// takes, releases or retains nothing the caller holds. The prose named its
+/// members "among them"; each is a member of `#teardown` (report section 4).
+pub const UNSTATED_FREE_STATEMENT: &str =
+    "quant all #o in #freed: #teardown(#o) \\ (#stated | #settable) |-> #inert";
+
+/// Card **OPENSSL-FREE-INDIRECT-CALLBACKS**: the name of the built-in lookup
+/// methods premise.
+pub const BUILTIN_LOOKUP_METHODS: &str = "openssl_builtin_lookup_methods";
+
+/// Its statement. The three built-in methods' free functions release only
+/// their own method data (`by_dir.c`'s `free_dir`, `by_store.c`'s
+/// `by_store_free`; `X509_LOOKUP_file` has none) and none has a shutdown
+/// function (OpenSSL 3.5.5).
+/// Card **SP1-SYMBOLIC-OPENSSL-PREMISES**: a formula. For every lookup of a
+/// certificate store the call frees whose method the library defines itself,
+/// each function of the method, as run on that lookup, takes, releases or
+/// retains nothing the caller holds.
+pub const BUILTIN_LOOKUP_METHODS_STATEMENT: &str = "quant all #l in #lookups(#of(X509_STORE, #freed)): #method(#l) in #builtin -> \
+#fns(#l) |-> #inert";
 
 /// Card **OPENSSL-BIO-METHODS-AND-CALLBACKS**: the name of the built-in BIO
 /// methods premise.
@@ -463,8 +515,17 @@ pub const EX_DATA_AUDIT: &[(&str, ExData)] = &[
     (
         "SSL_free",
         ExData::Runs {
-            classes: &["SSL", "SSL_SESSION", "X509", "BIO"],
-            how: "the last drop frees the connection, its session, peer certificate and BIOs",
+            classes: &[
+                "SSL",
+                "SSL_SESSION",
+                "X509",
+                "BIO",
+                "EVP_PKEY",
+                "X509_STORE",
+                "SSL_CTX",
+            ],
+            how: "the last drop frees the connection, its session, peer certificate, BIOs and \
+                  certificate stores, and may drop its context's last reference",
         },
     ),
     (
@@ -1266,6 +1327,89 @@ pub const SLOTS: &[Slot] = &[
         writers: &["BIO_meth_set_recvmmsg"],
         not_writers: &[],
     },
+    // Card OPENSSL-FREE-INDIRECT-CALLBACKS. X509_LOOKUP_meth_new (3.5): one
+    // slot per function of a lookup method table, one setter each; the
+    // table's type, constructor and destructor, the nine getters, the four
+    // function pointer types and the two X509_OBJECT setters are listed once.
+    // The holder is the X509_LOOKUP_METHOD a setter is handed; the library's
+    // own methods are no setter's value (premise
+    // `openssl_builtin_lookup_methods`). Each key is spelled after its setter
+    // (`lookup_meth_free`), never the field (`free`): a key segment is a
+    // member pre-pass token.
+    Slot {
+        key: "x509_lookup_method_st.lookup_meth_new_item",
+        page: "X509_LOOKUP_meth_new",
+        writers: &["X509_LOOKUP_meth_set_new_item"],
+        not_writers: &[
+            "X509_LOOKUP_METHOD",
+            "X509_LOOKUP_meth_new",
+            "X509_LOOKUP_meth_free",
+            "X509_LOOKUP_meth_get_new_item",
+            "X509_LOOKUP_meth_get_free",
+            "X509_LOOKUP_meth_get_init",
+            "X509_LOOKUP_meth_get_shutdown",
+            "X509_LOOKUP_ctrl_fn",
+            "X509_LOOKUP_meth_get_ctrl",
+            "X509_LOOKUP_get_by_subject_fn",
+            "X509_LOOKUP_meth_get_get_by_subject",
+            "X509_LOOKUP_get_by_issuer_serial_fn",
+            "X509_LOOKUP_meth_get_get_by_issuer_serial",
+            "X509_LOOKUP_get_by_fingerprint_fn",
+            "X509_LOOKUP_meth_get_get_by_fingerprint",
+            "X509_LOOKUP_get_by_alias_fn",
+            "X509_LOOKUP_meth_get_get_by_alias",
+            "X509_OBJECT_set1_X509",
+            "X509_OBJECT_set1_X509_CRL",
+        ],
+    },
+    Slot {
+        key: "x509_lookup_method_st.lookup_meth_free",
+        page: "X509_LOOKUP_meth_new",
+        writers: &["X509_LOOKUP_meth_set_free"],
+        not_writers: &[],
+    },
+    Slot {
+        key: "x509_lookup_method_st.lookup_meth_init",
+        page: "X509_LOOKUP_meth_new",
+        writers: &["X509_LOOKUP_meth_set_init"],
+        not_writers: &[],
+    },
+    Slot {
+        key: "x509_lookup_method_st.lookup_meth_shutdown",
+        page: "X509_LOOKUP_meth_new",
+        writers: &["X509_LOOKUP_meth_set_shutdown"],
+        not_writers: &[],
+    },
+    Slot {
+        key: "x509_lookup_method_st.lookup_meth_ctrl",
+        page: "X509_LOOKUP_meth_new",
+        writers: &["X509_LOOKUP_meth_set_ctrl"],
+        not_writers: &[],
+    },
+    Slot {
+        key: "x509_lookup_method_st.lookup_meth_get_by_subject",
+        page: "X509_LOOKUP_meth_new",
+        writers: &["X509_LOOKUP_meth_set_get_by_subject"],
+        not_writers: &[],
+    },
+    Slot {
+        key: "x509_lookup_method_st.lookup_meth_get_by_issuer_serial",
+        page: "X509_LOOKUP_meth_new",
+        writers: &["X509_LOOKUP_meth_set_get_by_issuer_serial"],
+        not_writers: &[],
+    },
+    Slot {
+        key: "x509_lookup_method_st.lookup_meth_get_by_fingerprint",
+        page: "X509_LOOKUP_meth_new",
+        writers: &["X509_LOOKUP_meth_set_get_by_fingerprint"],
+        not_writers: &[],
+    },
+    Slot {
+        key: "x509_lookup_method_st.lookup_meth_get_by_alias",
+        page: "X509_LOOKUP_meth_new",
+        writers: &["X509_LOOKUP_meth_set_get_by_alias"],
+        not_writers: &[],
+    },
 ];
 
 /// Card **CALLBACK-SUPPLIED-NULL-ACTUAL**: an argument a slot's callback may
@@ -1462,6 +1606,21 @@ const fn store(function: &'static str, slot: &'static str) -> DocumentedFunction
         "X509_STORE_set_verify_cb_func",
         "3.5",
         SINCE_1_1_0,
+        registers(1, slot),
+    )
+}
+
+/// Card **OPENSSL-FREE-INDIRECT-CALLBACKS**: a lookup method table setter
+/// (`X509_LOOKUP_meth_new` HISTORY at 1.1.1, 3.0 and 3.5: "added in OpenSSL
+/// 1.1.0i", a letter release the version vocabulary cannot spell, so the
+/// range is the oldest series documenting them, 1.1.1), registering the
+/// function pointer at position 1 into `slot` of the table at position 0.
+const fn lookup(function: &'static str, slot: &'static str) -> DocumentedFunction {
+    entry(
+        function,
+        "X509_LOOKUP_meth_new",
+        "1.1.1",
+        DOC_1_1_1,
         registers(1, slot),
     )
 }
@@ -1860,7 +2019,7 @@ const BIO_FREED: &[Premise] = &[
     BIO_SLOTS[11],
 ];
 const SSL_FREED: &[Premise] = &[
-    Premise::UnstatedSlots,
+    Premise::UnstatedFreeSlots,
     Premise::BioFreeCallbacks,
     Premise::ExDataCallbacks,
     REMOVE_SESSION,
@@ -1868,11 +2027,45 @@ const SSL_FREED: &[Premise] = &[
     BIO_SLOTS[1],
     BIO_SLOTS[2],
     BIO_SLOTS[11],
+    LOOKUP_FREED[0],
+    LOOKUP_FREED[1],
+    LOOKUP_FREED[2],
 ];
 const SSL_CTX_FREED: &[Premise] = &[
-    Premise::UnstatedSlots,
+    Premise::UnstatedFreeSlots,
     Premise::ExDataCallbacks,
     REMOVE_SESSION,
+    LOOKUP_FREED[0],
+    LOOKUP_FREED[1],
+    LOOKUP_FREED[2],
+];
+
+/// Card **OPENSSL-FREE-INDIRECT-CALLBACKS**: the last drop of a certificate
+/// store runs, for each lookup it holds, the method's shutdown function and
+/// then its free function (`X509_STORE_free` calls `X509_LOOKUP_shutdown`
+/// and `X509_LOOKUP_free`, `x509_lu.c` 3.5.5), each handed the library's
+/// `X509_LOOKUP` (`_`); a built-in method's under
+/// [`Premise::BuiltinLookupMethods`]. `SSL_CTX_free` frees the context's
+/// store ("SSL_CTX_set_cert_store() will take ownership of the store") and
+/// its `CERT`'s verify and chain stores; `SSL_free` frees its `CERT`'s
+/// stores and may drop its context's last reference. The twelve
+/// `x509_store_st.*` slots are not run at a store's free: the store's
+/// cleanup function is run by `X509_STORE_CTX_cleanup`, a verification
+/// context's, which the handshake states.
+const LOOKUP_FREED: [Premise; 3] = [
+    Premise::BuiltinLookupMethods,
+    on_ssl("x509_lookup_method_st.lookup_meth_shutdown", &[None; 1]),
+    on_ssl("x509_lookup_method_st.lookup_meth_free", &[None; 1]),
+];
+/// `X509_STORE_free`: the lookups' slots, the unstated premise for what the
+/// store's certificates and CRLs run when freed (their keys' methods,
+/// providers and engines, a CRL's method), and ex_data.
+const X509_STORE_FREED: &[Premise] = &[
+    Premise::UnstatedFreeSlots,
+    Premise::ExDataCallbacks,
+    LOOKUP_FREED[0],
+    LOOKUP_FREED[1],
+    LOOKUP_FREED[2],
 ];
 
 /// The context's password slot, `pem_password_cb(buf, size, rwflag, u)`:
@@ -2773,6 +2966,43 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
         SINCE_1_1_0,
         Plain,
     ),
+    // Card OPENSSL-FREE-INDIRECT-CALLBACKS: the lookup method table setters.
+    lookup(
+        "X509_LOOKUP_meth_set_ctrl",
+        "x509_lookup_method_st.lookup_meth_ctrl",
+    ),
+    lookup(
+        "X509_LOOKUP_meth_set_free",
+        "x509_lookup_method_st.lookup_meth_free",
+    ),
+    lookup(
+        "X509_LOOKUP_meth_set_get_by_alias",
+        "x509_lookup_method_st.lookup_meth_get_by_alias",
+    ),
+    lookup(
+        "X509_LOOKUP_meth_set_get_by_fingerprint",
+        "x509_lookup_method_st.lookup_meth_get_by_fingerprint",
+    ),
+    lookup(
+        "X509_LOOKUP_meth_set_get_by_issuer_serial",
+        "x509_lookup_method_st.lookup_meth_get_by_issuer_serial",
+    ),
+    lookup(
+        "X509_LOOKUP_meth_set_get_by_subject",
+        "x509_lookup_method_st.lookup_meth_get_by_subject",
+    ),
+    lookup(
+        "X509_LOOKUP_meth_set_init",
+        "x509_lookup_method_st.lookup_meth_init",
+    ),
+    lookup(
+        "X509_LOOKUP_meth_set_new_item",
+        "x509_lookup_method_st.lookup_meth_new_item",
+    ),
+    lookup(
+        "X509_LOOKUP_meth_set_shutdown",
+        "x509_lookup_method_st.lookup_meth_shutdown",
+    ),
     entry(
         "X509_STORE_CTX_get_current_cert",
         "X509_STORE_CTX_get_error",
@@ -2807,7 +3037,7 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
         "1.1.1",
         DOC_1_1_1,
         CountedRelease(0),
-        EX_DATA_ONLY,
+        X509_STORE_FREED,
     ),
     entry(
         "X509_STORE_get0_objects",

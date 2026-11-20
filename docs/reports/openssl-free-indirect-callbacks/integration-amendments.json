@@ -1,0 +1,38 @@
+{
+ "schema": "quirin-amendments/1",
+ "card": "OPENSSL-FREE-INDIRECT-CALLBACKS",
+ "base": "ffb41c748",
+ "measured_tip": "c282a01f7",
+ "increment_paragraph": "**OPENSSL-FREE-INDIRECT-CALLBACKS (2026-11-20).** The named follow-up recorded by OPENSSL-FREE-SESSION-REMOVE-INVOCATION. quirin-provider-openssl declares the nine X509_LOOKUP_meth_set_* setters from X509_LOOKUP_meth_new (3.5) with the NAME check, fetch_docs.py snapshots (1.1.1, 3.0, 3.5; none at 1.0.2) and pinned prototypes (x509_lookup_slots.qv, keys x509_lookup_method_st.lookup_meth_*, spelled after the setter so no key segment is a common pre-pass token; range documented 1.1.1 because HISTORY's 1.1.0i is a letter release the version vocabulary cannot spell). X509_STORE_free, SSL_CTX_free and SSL_free state the lookup method's shutdown and free slots beside their drop (actual _) and name the new library-value premise openssl_builtin_lookup_methods. A store's twelve X509_STORE_set_* slots are not run at its free (its cleanup function runs at X509_STORE_CTX_cleanup) and are not stated there. A source survey of OpenSSL 3.5.5 found further callbacks the frees run on objects they free in turn (keys' provider, method and engine functions, the client certificate engine, a CRL's method, the async wait context's cleanup functions, the QUIC TLS callbacks, a QUIC object's free, not traced), so by the fail-closed rule the frees keep openssl_unstated_callback_slots, in a statement of their own naming exactly that remainder (it drops the handshake kinds and ex_data, which openssl_ex_data_callbacks covers); X509_STORE_free, which read it silently, gains the premise. contracts.lock: 9 entries added and 3 digests changed (X509_STORE_free, SSL_CTX_free, SSL_free); pinned and library_versions unchanged. No gateway code changed. Lean: new QCore.OpensslFreeIndirectCallbacks, audited. Opt-in current over Fluent Bit 046accf6, base f916d3007 vs tip c282a01f7: 1139 Safe / 2 Pending / 3656 Unknown / 7 Unsafe in both, no row moved and no row changed content; bindings 141 to 150, all Pending, as predicted; pinned routes read no user load path, so no move is predicted, and measure --declared is deferred to the integrator (this host has no pinned inputs).",
+ "status_paragraph": null,
+ "ledger": [
+  {
+   "id": "OPENSSL-FREE-INDIRECT-CALLBACKS",
+   "operation": "retire",
+   "why": "OPENSSL-FREE-INDIRECT-CALLBACKS (2026-11-20): the nine X509_LOOKUP_meth_set_* setters are declared from X509_LOOKUP_meth_new (3.5) with the NAME check, snapshots (1.1.1, 3.0, 3.5; none at 1.0.2) and pinned prototypes (x509_lookup_slots.qv, keys x509_lookup_method_st.lookup_meth_*, range documented 1.1.1 because HISTORY's 1.1.0i is a letter release). X509_STORE_free, SSL_CTX_free and SSL_free state the lookup shutdown and free slots beside their drop (actual _) and name openssl_builtin_lookup_methods. The twelve X509_STORE_set_* slots are not run at a store's free (the cleanup function runs at X509_STORE_CTX_cleanup) and are not stated there. A source survey of OpenSSL 3.5.5 found further callbacks the frees run on objects they free in turn that no setter declared here writes, so by the fail-closed rule the frees keep openssl_unstated_callback_slots, in a statement of their own naming that remainder (OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS); X509_STORE_free, which read it silently, gains the premise. Lean QCore.OpensslFreeIndirectCallbacks.",
+   "source": "docs/reports/openssl-free-indirect-callbacks/README.md"
+  },
+  {
+   "id": "OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS",
+   "operation": "register",
+   "title": "Callbacks the OpenSSL frees run on objects they free in turn whose setters no declaration states",
+   "text": "Found by OPENSSL-FREE-INDIRECT-CALLBACKS (source survey of OpenSSL 3.5.5). X509_STORE_free, SSL_CTX_free and SSL_free keep openssl_unstated_callback_slots, whose statement on the frees (UNSTATED_FREE_STATEMENT) names: a key's provider key management free function (a dispatch table, no setter); a legacy key's EVP_PKEY_ASN1_METHOD free (EVP_PKEY_asn1_set_free); the finish function of a key's RSA_METHOD, DSA_METHOD, DH_METHOD or EC_KEY_METHOD (RSA_meth_set_finish and siblings); the finish and destroy functions of a key's ENGINE and of the context's client certificate engine (ENGINE_set_finish_function, ENGINE_set_destroy_function; SSL_CTX_set_client_cert_engine has no 3.5 page); a CRL's X509_CRL_METHOD crl_free (X509_CRL_METHOD_new, no 3.5 page); the async wait context's fd cleanup functions (ASYNC_WAIT_CTX_set_wait_fd); the QUIC TLS crypto_release_rcd callback (SSL_set_quic_tls_cbs, a dispatch table, run by RECORD_LAYER_clear); and whatever a QUIC object's free runs, which was not traced past quic_impl.c. DISCHARGE: declare the documented setters as slot registrations (RSA/DSA/DH meth_set_finish, EC_KEY_METHOD_set_init, ENGINE_set_finish_function/destroy_function, EVP_PKEY_asn1_set_free, ASYNC_WAIT_CTX_set_wait_fd) and state their slots at the frees with library-value premises; for dispatch tables (providers, QUIC TLS) and undocumented setters a user decision on a premise or on admitting the pinned source; trace the QUIC free path. Only when every item is stated may the frees drop the premise. Size: large; partly needs a user decision.",
+   "source": "docs/reports/openssl-free-indirect-callbacks/README.md",
+   "recorded_by": "OPENSSL-FREE-INDIRECT-CALLBACKS"
+  },
+  {
+   "id": "OPENSSL-OBJECT-FREES-SILENT-METHOD-CALLBACKS",
+   "operation": "register",
+   "title": "X509_free, EVP_PKEY_free, PKCS12_free and ENGINE_free read their method and engine callbacks silently",
+   "text": "Found by OPENSSL-FREE-INDIRECT-CALLBACKS. These declarations name only openssl_ex_data_callbacks, yet the last free of a key runs its provider key management free function, its EVP_PKEY_ASN1_METHOD free and its RSA/DSA/DH/EC_KEY method finish function and ENGINE finish (EVP_PKEY_free, p_lib.c and rsa_lib.c 3.5.5); X509_free and PKCS12_free free certificates and so their public keys; ENGINE_free runs the engine's destroy function (ENGINE_set_destroy_function). No premise names these callbacks. Metadata only (premises move no verdict), but a declaration resting on an unstated assumption is a provenance gap. DISCHARGE: name openssl_unstated_callback_slots in the statement of a free (UNSTATED_FREE_STATEMENT) on each, with the checker's expectation and the reviewed lock diff, or state the slots as OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS does. Size: small.",
+   "source": "docs/reports/openssl-free-indirect-callbacks/README.md",
+   "recorded_by": "OPENSSL-FREE-INDIRECT-CALLBACKS"
+  },
+  {
+   "id": "OPENSSL-LOOKUP-METHOD-HANDSHAKE-INVOCATIONS",
+   "operation": "append",
+   "text": "OPENSSL-FREE-INDIRECT-CALLBACKS declared the nine X509_LOOKUP_meth_set_* setters (x509_lookup_slots.qv, keys x509_lookup_method_st.lookup_meth_*) and the library-value premise openssl_builtin_lookup_methods, and stated only the shutdown and free slots, at the frees. The handshake's lookups (X509_STORE_CTX_get_by_subject reaches get_by_subject; 3.5.5 has no setter for get_by_subject_ex or ctrl_ex, so a user method runs get_by_subject) remain this card. The built-in premise's statement names a lookup of a store the call frees; the handshake needs it widened to a lookup the call reads through. SSL_CTX_load_verify_locations and SSL_CTX_set_default_verify_paths reach only built-in lookups (X509_STORE_add_lookup reuses a lookup by method identity) and read that silently too.",
+   "source": "docs/reports/openssl-free-indirect-callbacks/README.md"
+  }
+ ]
+}

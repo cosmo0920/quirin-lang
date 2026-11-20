@@ -37,7 +37,7 @@ Theorems:
   vectors (`decision_vectors_agree`; bound to the Rust table
   `DECISION_VECTORS` by `crates/qcore-frontend/tests/premise_formula.rs`,
   which also binds `vocab` and the four formulas below to the Rust reader);
-* the four OpenSSL formulas are well-formed (`openssl_formulas_wf`);
+* the six OpenSSL statements are well-formed (`openssl_formulas_wf`);
 * `#inert` is its definition (`inert_definition`);
 * `openssl_unstated_callback_slots` entails `openssl_ex_data_callbacks` in
   every coherent model (`unstated_entails_ex_data`), in particular for the
@@ -96,6 +96,8 @@ def vocab : List (String × List Srt × Srt) := [
   ("fns", [.obj], .sfn),
   ("store", [.sobj], .sobj),
   ("lookups", [.sobj], .sobj),
+  ("teardown", [.obj], .sfn),
+  ("settable", [], .sfn),
   ("in_turn", [.fn, .sobj], .sfn),
   ("caller_held", [], .sres),
   ("takes", [.sres], .sres),
@@ -206,6 +208,8 @@ structure Model where
   fns : U → U → Prop
   store : (U → Prop) → U → Prop
   lookups : (U → Prop) → U → Prop
+  teardown : U → U → Prop
+  settable : U → Prop
   inTurn : U → (U → Prop) → U → Prop
   callerHeld : Run → U → Prop
   takes : Run → (U → Prop) → U → Prop
@@ -242,6 +246,7 @@ def prim0 (M : Model) (f : String) : Val M :=
   else if f = "freed" then .st M.freed
   else if f = "stated" then .st M.stated
   else if f = "builtin" then .st M.builtin
+  else if f = "settable" then .st M.settable
   else if f = "caller_held" then .rs M.callerHeld
   else if f = "inert" then .ef (inertEff M)
   else .bad
@@ -254,6 +259,7 @@ def prim1 (M : Model) (f : String) : Val M → Val M
       else if f = "ex_data_free" then .st (M.exDataFree o)
       else if f = "method" then .el (M.method o)
       else if f = "fns" then .st (M.fns o)
+      else if f = "teardown" then .st (M.teardown o)
       else .bad
   | .st s =>
       if f = "ctx" then .st (M.ctx s)
@@ -364,7 +370,7 @@ theorem prim0_kind (M : Model) {f : String} {s : Srt} (h : term f = some ([], s)
   rcases hm with ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ |
       ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ |
       ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ |
-      ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ <;>
+      ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ <;>
     simp_all [prim0, Val.kind, Srt.kind]
 
 theorem prim1_kind (M : Model) {f : String} {x s : Srt} {v : Val M}
@@ -375,7 +381,7 @@ theorem prim1_kind (M : Model) {f : String} {x s : Srt} {v : Val M}
   rcases hm with ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ |
       ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ |
       ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ |
-      ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ <;>
+      ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ <;>
     (simp at hs) <;>
     (try obtain ⟨rfl, rfl⟩ := hs) <;>
     (cases v <;> simp_all [prim1, Val.kind, Srt.kind])
@@ -389,7 +395,7 @@ theorem prim2_kind (M : Model) {f : String} {x y s : Srt} {v w : Val M}
   rcases hm with ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ |
       ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ |
       ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ |
-      ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ <;>
+      ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ <;>
     (simp at hs) <;>
     (try obtain ⟨⟨rfl, rfl⟩, rfl⟩ := hs) <;>
     (cases v <;> cases w <;> simp_all [prim2, Val.kind, Srt.kind])
@@ -590,7 +596,8 @@ def decisionVectors : List (Raw × Bool) := [
 theorem decision_vectors_agree :
     decisionVectors.all (fun v => wf v.1 == v.2) = true := by decide
 
-/-! ## The four OpenSSL premises (`quirin-provider-openssl`'s `documented.rs`) -/
+/-! ## The OpenSSL premises (`quirin-provider-openssl`'s `documented.rs`): five names,
+six statements (the unstated-slots premise has a handshake and a free statement) -/
 
 def exDataFormula : Raw := (.quant "o" (.bin .union (.bin .union (.app0 "created") (.app0 "copied")) (.app0 "freed")) (.bin .mapsTo (.app1 "ex_data" (.app1 "class" (.app0 "o"))) (.app0 "inert")))
 
@@ -600,8 +607,13 @@ def builtinFormula : Raw := (.quant "b" (.app1 "chain" (.bin .union (.app2 "of" 
 
 def bioFreeFormula : Raw := (.quant "b" (.bin .union (.app2 "of" (.const "BIO") (.app0 "args")) (.app1 "chain" (.app1 "bios" (.app2 "of" (.const "SSL") (.app0 "args"))))) (.bin .imp (.bin .mem (.app0 "b") (.app0 "freed")) (.bin .mapsTo (.app1 "ex_data_free" (.const "BIO")) (.app0 "inert"))))
 
+def unstatedFreeFormula : Raw := (.quant "o" (.app0 "freed") (.bin .mapsTo (.bin .diff (.app1 "teardown" (.app0 "o")) (.bin .union (.app0 "stated") (.app0 "settable"))) (.app0 "inert")))
+
+def builtinLookupFormula : Raw := (.quant "l" (.app1 "lookups" (.app2 "of" (.const "X509_STORE") (.app0 "freed"))) (.bin .imp (.bin .mem (.app1 "method" (.app0 "l")) (.app0 "builtin")) (.bin .mapsTo (.app1 "fns" (.app0 "l")) (.app0 "inert"))))
+
 theorem openssl_formulas_wf :
-    wf exDataFormula = true ∧ wf unstatedFormula = true ∧ wf builtinFormula = true ∧
+    wf exDataFormula = true ∧ wf unstatedFormula = true ∧ wf unstatedFreeFormula = true ∧
+      wf builtinFormula = true ∧ wf builtinLookupFormula = true ∧
       wf bioFreeFormula = true := by decide
 
 /-! ## The unstated-slots premise entails the ex_data premise -/
@@ -666,6 +678,7 @@ theorem ex_data_does_not_entail_unstated :
     slots := fun _ _ => True, stated := fun _ => False, exData := fun _ _ => False,
     exDataFree := fun _ _ => False, method := id, builtin := fun _ => False,
     fns := fun _ _ => False, store := fun _ _ => False, lookups := fun _ _ => False,
+    teardown := fun _ _ => False, settable := fun _ => False,
     inTurn := fun _ _ _ => False, callerHeld := fun _ _ => True,
     takes := fun _ s => s, releases := fun _ _ _ => False,
     retains := fun _ _ _ => False, runs := fun _ _ => True, const := fun _ => true }

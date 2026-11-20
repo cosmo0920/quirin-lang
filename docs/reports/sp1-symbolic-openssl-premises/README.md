@@ -29,7 +29,7 @@ changes no predicted effect, so the prediction is kept as committed.
   forms never share a statement.
 * **Semantics unchanged.** A formula premise is metadata exactly as a string
   one: no consumer that decides a verdict reads it.
-* **OpenSSL.** All 49 `resource_premise` clauses of
+* **OpenSSL.** All 53 `resource_premise` clauses of
   `quirin-provider-openssl` state formulas (`documented.rs`'s four
   `*_STATEMENT` constants, the 30 declarations in 13 modules). The checker
   refuses a premise whose statement is a string (`check::prose_premise`,
@@ -49,7 +49,7 @@ Every token but `\` is an existing one.
 | `#args` | set(obj) | the objects the call's pointer arguments designate |
 | `#created` | set(obj) | the objects the call allocates, directly or as a temporary inside the call |
 | `#copied` | set(obj) | the objects the call copies (the source of a dup) |
-| `#freed` | set(obj) | the objects whose last reference the call drops, directly or as a replaced or temporary object |
+| `#freed` | set(obj) | the objects whose last reference the call drops: directly, in turn (an object a freed object owns), or as a replaced or temporary object it frees inside the call |
 | `#class(o)` | obj → cls | the object's class |
 | `#of(k, S)` | cls, set(obj) → set(obj) | the members of `S` of class `k` |
 | `#ctx(S)` | set(obj) → set(obj) | the SSL_CTX of each SSL object of `S` |
@@ -60,11 +60,13 @@ Every token but `\` is an existing one.
 | `#stated` | set(fn) | the callbacks a clause of the declaration states the call runs |
 | `#ex_data(k)` | cls → set(fn) | the new, dup and free callbacks `CRYPTO_get_ex_new_index` registers for `k` |
 | `#ex_data_free(k)` | cls → set(fn) | the free callbacks registered for `k` |
-| `#method(b)` | obj → meth | the BIO_METHOD of a BIO |
-| `#builtin` | set(meth) | the BIO_METHODs the library defines itself (a `BIO_s_`/`BIO_f_` function's, handed to no setter) |
+| `#method(b)` | obj → meth | the method table of a BIO (its BIO_METHOD) or of an X509_LOOKUP (its X509_LOOKUP_METHOD) |
+| `#builtin` | set(meth) | the method tables the library defines itself, which no setter is handed: the BIO_METHOD `BIO_s_socket`, `BIO_s_mem`, `BIO_f_buffer` or another built-in `BIO_s_` or `BIO_f_` function returns, and the X509_LOOKUP_METHOD `X509_LOOKUP_file`, `X509_LOOKUP_hash_dir` or `X509_LOOKUP_store` returns |
 | `#fns(b)` | obj → set(fn) | the functions of the object's method table (BIO_METHOD, X509_LOOKUP_METHOD), each as run on it |
 | `#store(S)` | set(obj) → set(obj) | the X509_STORE each SSL_CTX of `S` holds |
 | `#lookups(S)` | set(obj) → set(obj) | the X509_LOOKUPs each X509_STORE of `S` holds |
+| `#teardown(o)` | obj → set(fn) | the callbacks the free of `o` runs from its method tables, its provider and its engine, and the callbacks `o` holds that its free runs |
+| `#settable` | set(fn) | the callbacks a setter some declaration of the declaration's crate states can write |
 | `#in_turn(f, S)` | fn, set(obj) → set(fn) | the callbacks a run of `f` runs in turn on an object of `S` |
 | `#caller_held` | set(res) | the resources the caller holds when the run starts |
 | `#takes(R)`, `#releases(R)`, `#retains(R)` | set(res) → set(res) | the members of `R` the run takes over, releases, keeps |
@@ -115,12 +117,16 @@ this card's first hand-back, which had used the existing `-`).
 
 * `openssl_ex_data_callbacks` (30):
   `quant all #o in #created | #copied | #freed: #ex_data(#class(#o)) |-> #inert`
-* `openssl_unstated_callback_slots` (7):
+* `openssl_unstated_callback_slots`, handshake statement (5):
   `#slots(#of(SSL, #args) | #ctx(#of(SSL, #args)) | #of(SSL_CTX, #args)) \ #stated |-> #inert && (quant all #l in #lookups(#store(#ctx(#of(SSL, #args)) | #of(SSL_CTX, #args))): #fns(#l) \ #stated |-> #inert) && quant all #o in #created | #copied | #freed: #ex_data(#class(#o)) \ #stated |-> #inert`
 * `openssl_builtin_bio_methods` (10):
   `quant all #b in #chain(#of(BIO, #args) | #bios(#of(SSL, #args))): #method(#b) in #builtin -> #fns(#b) |-> #inert && quant all #f in #fns(#b): #in_turn(#f, #ssl_of(#b) \ #args) |-> #inert`
 * `openssl_bio_free_callbacks` (2):
   `quant all #b in #of(BIO, #args) | #chain(#bios(#of(SSL, #args))): #b in #freed -> #ex_data_free(BIO) |-> #inert`
+* `openssl_unstated_callback_slots`, statement of a free (3: `SSL_free`, `SSL_CTX_free`, `X509_STORE_free`):
+  `quant all #o in #freed: #teardown(#o) \ (#stated | #settable) |-> #inert`
+* `openssl_builtin_lookup_methods` (3: the same frees):
+  `quant all #l in #lookups(#of(X509_STORE, #freed)): #method(#l) in #builtin -> #fns(#l) |-> #inert`
 
 The modules lay each out one step per line (a break before every `->` and
 `&&`); the checker and the loader read whitespace-insensitively.
@@ -161,6 +167,25 @@ The modules lay each out one step per line (a break before every `->` and
 | | "or a BIO the SSL object holds and the BIOs chained to it" | `\| #chain(#bios(#of(SSL, #args)))` (R5) |
 | | "the ex_data free callbacks of the BIO class" (r36: the callback and destroy function are stated slots now, not premised) | `#ex_data_free(BIO)` |
 | | "take, release or retain nothing the caller holds" | `\|-> #inert` |
+| unstated (free, r39) | "a callback the call may run" | `\|->` |
+| | "that no clause of this declaration states" | `\ (#stated \| …)` |
+| | "a function of a method, provider or engine of an object" | `#teardown(#o)` (its method tables, provider and engine) |
+| | "the call frees in turn" | `quant all #o in #freed`: `#freed` counts objects freed in turn; it also counts the argument, because the listed QUIC TLS callbacks "of the SSL object" run at `SSL_free` |
+| | "whose setter no declaration of this crate states or which no setter is handed" | `\ (… \| #settable)`: less what a declared setter can write |
+| | "among them" | an open list: each item below is a member, and the formula states the class |
+| | "the free function of the key management of the provider of a key" | in `#teardown(key)` (provider) |
+| | "the free function of the EVP_PKEY_ASN1_METHOD of a key" | in `#teardown(key)` (method table) |
+| | "the finish function of the RSA_METHOD, DSA_METHOD, DH_METHOD or EC_KEY_METHOD of a key" | in `#teardown` of the key, or of its RSA, DSA, DH or EC_KEY object freed in turn (method table) |
+| | "the finish and destroy functions of the ENGINE of a key or of the client certificate engine of the SSL_CTX" | in `#teardown(key)` and `#teardown(ctx)` (engine) |
+| | "the free function of the X509_CRL_METHOD of a CRL a certificate store holds" | in `#teardown(crl)`, the CRL freed in turn (method table) |
+| | "a cleanup function of the async wait context of the SSL object" | in `#teardown` of the wait context freed in turn (a callback it holds) |
+| | "the QUIC TLS callbacks of the SSL object" | in `#teardown(ssl)` (callbacks it holds) |
+| | "and any callback the free of a QUIC object runs in turn" | in `#teardown` of each QUIC object the call frees, and of what it frees in turn |
+| | "takes, releases or retains nothing the caller holds" | `\|-> #inert` |
+| builtin lookup (r39) | "a function of an X509_LOOKUP_METHOD" | `#fns(#l)` |
+| | "the library defines itself (the method that X509_LOOKUP_file, X509_LOOKUP_hash_dir or X509_LOOKUP_store returns, which no setter is handed)" | `#method(#l) in #builtin ->`; `#builtin` now also holds these three methods (a lookup's method is never a BIO_METHOD, so the BIO premise reads `#builtin` as before) |
+| | "run on a lookup of a certificate store the call frees" | `quant all #l in #lookups(#of(X509_STORE, #freed))`, each function as run on `#l` |
+| | "takes, releases or retains nothing the caller holds" | `\|-> #inert` |
 
 **Readings recorded** where a phrase admitted more than one parse:
 
@@ -205,7 +230,7 @@ The modules lay each out one step per line (a break before every `->` and
   where precedence needs them (`the_printing_parenthesizes_exactly_where_needed`);
 * a formula premise changes no contract, and two spellings of one tree are one
   premise (`a_formula_premise_is_admitted_with_its_canonical_statement`);
-* the OpenSSL checker refuses each of the 49 clauses rewritten as prose
+* the OpenSSL checker refuses each of the 53 clauses rewritten as prose
   (`check::tests::a_prose_premise_is_refused`); its drift tests
   (`a_drifted_bio_slot_reading_is_refused`, the unstated-slot and ex_data
   drifts) now drift the formulas.
@@ -226,7 +251,7 @@ and per-run resource effects.
   the vocabulary and classes.
 * `openssl_formulas_wf`: the four formulas are well-formed. The Rust test
   `the_openssl_formulas_are_the_lean_definitions` binds the Lean definitions
-  to every one of the 49 clauses as read from the modules.
+  to every one of the 53 clauses as read from the modules.
 * `inert_definition`: `#inert` denotes its definition.
 * `unstated_entails_ex_data`: in every model where no clause states an
   ex_data callback (`Model.Coherent`), `openssl_unstated_callback_slots`
@@ -286,6 +311,30 @@ changed set equals the set of declarations naming a premise). The other 105 of
 its 135 entries and every top-level key are unchanged, and nothing is added or
 removed. Both load paths and `quirin-plugin.json` are byte-identical to main.
 The crate has 49 premise clauses on those 30 declarations.
+
+**After merging main `b7f86a0de`** (r39, OPENSSL-FREE-INDIRECT-CALLBACKS) the
+lock was regenerated the same way:
+* `regen-checkers-9.log` exit 1, with 30 stale entries;
+* `regen-pin-9.log`, `regen-sync-9.log`, `regen-checkers-10.log` and
+  `regen-views-9.log`, each exit 0.
+
+Against `b7f86a0de`, `contracts.lock` changes exactly the 30 premised
+declarations' `contract_sha256` and `pinned_at`. The other 114 of its 144
+entries and every top-level key are unchanged, and nothing is added or removed.
+Both load paths and `quirin-plugin.json` are byte-identical to main. The crate
+has 53 premise clauses on those 30 declarations.
+
+On the integrator's instruction, the card's own full gate was not rerun after
+this merge. Fast checks only, each exit 0:
+* the OpenSSL provider tests: 21 and 2 passed;
+* `qcore-frontend` lib and `premise_formula`: 61 and 7 passed;
+* `qcore-contract` `contract_premise` and `hypothesis`: 7 and 15 passed;
+* `lake build QCore.PremiseFormula` with `AuditPremiseFormula.lean`: 13 theorems, standard axioms only;
+* `contracts.py check` and `package.py checkers`;
+* `apply_amendments --check`.
+
+The integrator's landing gate and measurement cover the rest, the fixture user
+path included.
 
 ## 8. Measurement
 

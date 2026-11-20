@@ -129,20 +129,33 @@ contract {
 // Card OPENSSL-EX-DATA-REGISTRY: the last drop frees the SSL_CTX, its
 // X509_STORE, its certificates, keys and cached sessions: the free callbacks
 // of those classes run.
+// Card OPENSSL-FREE-INDIRECT-CALLBACKS: the last drop frees the context's
+// certificate store ("SSL_CTX_set_cert_store() will take ownership of the
+// store", SSL_CTX_set_cert_store 3.5) and its CERT's verify and chain stores
+// (ssl_cert_free, ssl_cert.c 3.5.5): the lookup method's shutdown and free
+// slots are stated, as at X509_STORE_free. The unstated-slots premise is kept
+// in the statement of a free, naming what remains (report section 2): the
+// functions of the providers, methods and engines of the keys it frees, the
+// client certificate engine (tls_engine_finish), and a CRL's method. The
+// ctrl arms, CT and the undocumented handshake setters run during a
+// handshake, not here, and ex_data is `openssl_ex_data_callbacks`.
 extern fn SSL_CTX_free(ctx: ptr<mut, u8>) -> unit
 contract {
     requires resource_contract_v1;
     requires resource_revision(flexible);
     requires resource_library_version(openssl, documented "1.1.1");
     requires resource_premise(openssl_unstated_callback_slots,
-        #slots(#of(SSL, #args) | #ctx(#of(SSL, #args)) | #of(SSL_CTX, #args)) \ #stated |-> #inert
-        && (quant all #l in #lookups(#store(#ctx(#of(SSL, #args)) | #of(SSL_CTX, #args))): #fns(#l) \ #stated |-> #inert)
-        && quant all #o in #created | #copied | #freed: #ex_data(#class(#o)) \ #stated |-> #inert);
+        quant all #o in #freed: #teardown(#o) \ (#stated | #settable) |-> #inert);
     requires resource_premise(openssl_ex_data_callbacks,
         quant all #o in #created | #copied | #freed: #ex_data(#class(#o)) |-> #inert);
+    requires resource_premise(openssl_builtin_lookup_methods,
+        quant all #l in #lookups(#of(X509_STORE, #freed)): #method(#l) in #builtin
+        -> #fns(#l) |-> #inert);
     ensures normal resource_borrowed(ctx);
     ensures normal resource_reference_dropped(ctx, nullable);
     ensures normal resource_callback_slot_invoked(ctx, ssl_ctx_st.remove_session_cb, _, _);
+    ensures normal resource_callback_slot_invoked(ctx, x509_lookup_method_st.lookup_meth_shutdown, _);
+    ensures normal resource_callback_slot_invoked(ctx, x509_lookup_method_st.lookup_meth_free, _);
     ensures normal resource_return_none();
 };
 
@@ -172,20 +185,30 @@ contract {
 // prototype: `void SSL_free(SSL *ssl)`.
 // Card OPENSSL-EX-DATA-REGISTRY: the last drop frees the SSL, its session,
 // peer certificate and BIOs: the free callbacks of those classes run.
+// Card OPENSSL-FREE-INDIRECT-CALLBACKS: the last drop frees the connection's
+// CERT and its verify and chain stores, and drops its references to the
+// context and the session context (SSL_CTX_free twice, ssl_lib.c 3.5.5), so
+// it may free a context's store: the lookup method's shutdown and free slots
+// are stated. The unstated-slots premise stays in the statement of a free:
+// besides what SSL_CTX_free leaves, the async wait context's fd cleanup
+// functions (ASYNC_WAIT_CTX_free), the QUIC TLS callbacks
+// (SSL_set_quic_tls_cbs, run when RECORD_LAYER_clear releases a record), and
+// what a QUIC object's free runs, which was not traced.
 extern fn SSL_free(ssl: ptr<mut, u8>) -> unit
 contract {
     requires resource_contract_v1;
     requires resource_revision(flexible);
     requires resource_library_version(openssl, documented "1.1.1");
     requires resource_premise(openssl_unstated_callback_slots,
-        #slots(#of(SSL, #args) | #ctx(#of(SSL, #args)) | #of(SSL_CTX, #args)) \ #stated |-> #inert
-        && (quant all #l in #lookups(#store(#ctx(#of(SSL, #args)) | #of(SSL_CTX, #args))): #fns(#l) \ #stated |-> #inert)
-        && quant all #o in #created | #copied | #freed: #ex_data(#class(#o)) \ #stated |-> #inert);
+        quant all #o in #freed: #teardown(#o) \ (#stated | #settable) |-> #inert);
     requires resource_premise(openssl_bio_free_callbacks,
         quant all #b in #of(BIO, #args) | #chain(#bios(#of(SSL, #args))): #b in #freed
         -> #ex_data_free(BIO) |-> #inert);
     requires resource_premise(openssl_ex_data_callbacks,
         quant all #o in #created | #copied | #freed: #ex_data(#class(#o)) |-> #inert);
+    requires resource_premise(openssl_builtin_lookup_methods,
+        quant all #l in #lookups(#of(X509_STORE, #freed)): #method(#l) in #builtin
+        -> #fns(#l) |-> #inert);
     requires resource_premise(openssl_builtin_bio_methods,
         quant all #b in #chain(#of(BIO, #args) | #bios(#of(SSL, #args))): #method(#b) in #builtin
         -> #fns(#b) |-> #inert
@@ -196,6 +219,8 @@ contract {
     ensures normal resource_callback_slot_invoked(ssl, bio_st.bio_callback_ex, _, _, supplied_nullable, _, _, _, _, supplied_nullable);
     ensures normal resource_callback_slot_invoked(ssl, bio_st.bio_callback, _, _, supplied_nullable, _, _, _);
     ensures normal resource_callback_slot_invoked(ssl, bio_method_st.meth_destroy, _);
+    ensures normal resource_callback_slot_invoked(ssl, x509_lookup_method_st.lookup_meth_shutdown, _);
+    ensures normal resource_callback_slot_invoked(ssl, x509_lookup_method_st.lookup_meth_free, _);
     ensures normal resource_return_none();
 };
 
