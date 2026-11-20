@@ -328,6 +328,26 @@ recorded tip, not a base binary rebuilt at `3c0f8e474`.
     with this card's audit: the expected stale count, which the integrator's
     matrix rebuild carries.
 
+**Gate 3, the gate of record** (after the user's decisions: `\` and the
+narrow R4 reading). `python3 scripts/gate_scope.py --base 3c0f8e474 --out
+private/gate-3` on `a0d9ce838` ([record](gate/gate-3.json), mode full) exited
+1, from the known host failure only:
+
+| Step | Exit | Counts |
+|---|---|---|
+| fmt, clippy | 0, 0 | |
+| rust-suite | 101 | 667 units, 9771 passed, 1 failed (`libcurl_user_crate_versions`, the recorded host failure), 21 ignored |
+| reevaluation probe, follow-up | 0, 0 | |
+| lean | 0 | 459 audits |
+| python | 0 | 779 tests |
+| provider package build, verify (all, libevent) | 0, 0, 0 | |
+| provider test | 0 | 161 passed, 1 ignored |
+| provider fmt, clippy | 0, 0 | |
+
+The user path (§8) ran on the `-` spelling. The switch changes only the text
+of the ten statements holding a difference, and premises are metadata, so it
+was not rerun.
+
 ## 10. Follow-ups
 
 These are registered in [`integration-amendments.json`](integration-amendments.json).
