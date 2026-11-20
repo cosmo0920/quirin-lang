@@ -126,3 +126,43 @@ Corpus (`66910c10`) and twelve-home: the same two rows where the corpus
 analyses chunkio's `cio_stream.c` and ctraces' `ctr_scope.c` (to be confirmed
 by the integrator's `quirin-audit measure --declared`, which cannot run on
 this host: no `build/cycle19` inputs or baselines); system and slice: none.
+
+## Revision 2 (committed after the first measurement, before the third reading)
+
+**First measurement (rules 67 and 68, `private/r3/run-tip1` against
+`private/r3/run-base`, opt-in `current`):** one move, `cio_stream.c::get_stream_path`
+Unknown -> Safe (predicted). `ctr_scope.c::ctr_instrumentation_scope_create`
+did **not** move (predicted): its two `cfl_sds_create` stores are now read
+and the row is re-attributed to `unresolved resource identity ins_scope` (2
+leaves). No Safe -> non-Safe move, no new Unsafe. 33 access leaves removed,
+none added; 54 rows change leaves.
+
+**Third reading (amends rule 14d in place, round 3): an explicit
+pointer-to-pointer cast of a pointer-valued path at a `Borrowed` or
+data-tail actual** (`print_string_ptr((unsigned char *)item->valuestring, p)`,
+`pb_decode_bool(stream, (_Bool *)field->pData)`): C11 6.3.2.3p7 makes the
+converted pointer point at the same object, so the callee is handed the
+address it could be handed uncast; W44's position premise and second
+obligation and the pointer-actual root premise apply unchanged. A cast from
+an integer, to a function pointer, of an array, of an address or of an
+offset stays refused. Census reach (analysed statements holding `(T *)PATH`
+as a whole actual): 52 leaf groups in 37 Unknown rows; sole rows 5
+(`print_string`, `pb_dec_bool`, `pb_enc_fixed_length_bytes`,
+`LZ4F_localSaveDict`, `sort_by_map_elem_val_toppar_list_cnt`).
+
+Predicted for the third reading alone: Unknown -> Safe **1 to 3** among
+`cJSON.c::print_string`, `pb_decode.c::pb_dec_bool`,
+`pb_encode.c::pb_enc_fixed_length_bytes` (each also needs its callee's
+contract or summary; `LZ4F_localSaveDict` casts through an LZ4 union type
+and `sort_by_map_elem_val_toppar_list_cnt` also declares two pointers from
+member reads: both stay); no Safe -> non-Safe move, no new Unsafe.
+
+```measure-prediction
+route corpus
+move get_stream_path Unknown -> Safe
+move print_string Unknown -> Safe
+route system
+none
+route slice
+none
+```
