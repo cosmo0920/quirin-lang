@@ -209,8 +209,47 @@ class 3 (3), the logger premises (3), CG10-CAST-VIEW-RETURN-POSITION (1).
 
 ## 6. Gate
 
-Recorded in [gate/](gate/) when run; see the integration amendments and the
-card's reply for the commands, exits and counts.
+Scoped card gate `python3 scripts/gate_scope.py --base 9b107caf1 --out
+private/r4/gate-2` through `private/toolchain/env.sh` (Clang 21, Lean 4.35)
+on `d00195628` (the code and contracts of the final tip; later commits change
+this report only); mode full (the diff reaches `qcore-c-gateway`), provider
+gate included. Record [gate/gate-2.json](gate/gate-2.json), logs in the
+worktree's `private/r4/gate-2/`.
+
+| step | exit | result |
+|---|---:|---|
+| submodules | 0 | 1 submodule |
+| `cargo fmt --all -- --check` | 0 | |
+| `cargo clippy --all-targets -- -D warnings` | 0 | |
+| `run_test_binaries.py` | 0 | 670 units, 715 summaries; 9,822 passed, 0 failed, 21 ignored, 148 filtered |
+| `reevaluation_probe` / `reevaluation_followup` | 0 / 0 | |
+| `check_lean_audits.py` | 0 | 470 audits |
+| `python3 -m unittest discover -s scripts/tests` | **1** | 779 tests, 1 failure: `test_gate_slot_queue.Status.test_each_waiter_shows_its_queue_position` (`'holder' != 'waiting for a slot'`) |
+| provider package build / verify-all / verify | 0 / 0 / 0 | five packages verified |
+| provider `cargo test` / fmt / clippy | 0 / 0 / 0 | 49 summaries, 166 passed, 0 failed, 1 ignored |
+
+**The Python failure is the shared slot queue, not this card.** The same test
+failed in the first attempt; run alone (`-p test_gate_slot_queue.py`) it
+passes (39 tests OK), and the whole suite rerun standalone with the card base
+the gate passes (`QUIRIN_CARD_GATE_BASE=9b107caf1… python3 -m unittest
+discover -s scripts/tests`, `private/r4/python-rerun2.log`) exits **0, 779
+tests OK**. (A rerun without that variable, `python-rerun.log`, fails only
+the derived-matrix check the gate relaxes for a card: the matrix's Lean audit
+count 469 against 470 with this card's audit, which the integrator's
+regeneration moves.) The test inspects the live gate-slot status while this
+gate's own steps hold slots in a contended queue of other worktrees.
+
+**Earlier attempt, not evidence.** `private/r4/gate-1` (code at
+`b5758c406`, declarations in `memory.qv`): rust suite 9,819 passed, 3 failed:
+`contract_inherit_qcore_provider` (2: the hand-written `memory.qv` parity
+fixture) and `production_symbolic_adoption` (1: `memory.qv`'s bytes are
+registered by QUANT-CONTRACT-HYPOTHESES' frozen migration record). Both are
+pinned identities of `memory.qv`; rather than edit a frozen report's record,
+the declarations moved to `lz4_stream.qv` (section 2) and the tip was
+measured again. The same Python flake; the attempt was stopped before its
+provider steps finished. The gate read census was not re-recorded: no test
+target was added (the controls are in the existing
+`cg10_sole_residual_contracts` target).
 
 ## 7. Follow-ups (in [integration-amendments.json](integration-amendments.json))
 
