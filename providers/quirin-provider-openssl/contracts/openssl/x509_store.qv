@@ -65,14 +65,29 @@ contract {
 // `void X509_STORE_free(X509_STORE *xs)` (openssl/x509_vfy.h).
 // Card OPENSSL-EX-DATA-REGISTRY: the last reference frees the X509_STORE and
 // the certificates it holds: the free callbacks of both classes run.
+// Card OPENSSL-FREE-INDIRECT-CALLBACKS: the last drop shuts down and frees
+// each lookup the store holds (X509_LOOKUP_shutdown, then X509_LOOKUP_free,
+// x509_lu.c 3.5.5), so the lookup method's shutdown and free slots are stated
+// (x509_lookup_slots.qv), every actual the library's X509_LOOKUP, beside the
+// library-value premise `openssl_builtin_lookup_methods`. The store's own
+// twelve slots (x509_store_slots.qv) are not run here: its cleanup function
+// is run by X509_STORE_CTX_cleanup. Freeing the store's certificates and CRLs
+// frees their keys, whose provider, method or engine functions run, and runs
+// a CRL's X509_CRL_METHOD free function; no declaration states their setters,
+// so the free names `openssl_unstated_callback_slots` in the statement of a
+// free, which it read silently before.
 extern fn X509_STORE_free(xs: ptr<mut, u8>) -> unit
 contract {
     requires resource_contract_v1;
     requires resource_revision(flexible);
     requires resource_library_version(openssl, documented "1.1.1");
+    requires resource_premise(openssl_unstated_callback_slots, "a callback the call may run that no clause of this declaration states (a function of a method, provider or engine of an object the call frees in turn, whose setter no declaration of this crate states or which no setter is handed, among them the free function of the key management of the provider of a key, the free function of the EVP_PKEY_ASN1_METHOD of a key, the finish function of the RSA_METHOD, DSA_METHOD, DH_METHOD or EC_KEY_METHOD of a key, the finish and destroy functions of the ENGINE of a key or of the client certificate engine of the SSL_CTX, the free function of the X509_CRL_METHOD of a CRL a certificate store holds, a cleanup function of the async wait context of the SSL object, the QUIC TLS callbacks of the SSL object, and any callback the free of a QUIC object runs in turn) takes, releases or retains nothing the caller holds");
     requires resource_premise(openssl_ex_data_callbacks, "an ex_data callback the call may run (a new, dup or free callback CRYPTO_get_ex_new_index registers for the class of an object the call creates, copies or frees) takes, releases or retains nothing the caller holds");
+    requires resource_premise(openssl_builtin_lookup_methods, "a function of an X509_LOOKUP_METHOD the library defines itself (the method that X509_LOOKUP_file, X509_LOOKUP_hash_dir or X509_LOOKUP_store returns, which no setter is handed), run on a lookup of a certificate store the call frees, takes, releases or retains nothing the caller holds");
     ensures normal resource_borrowed(xs);
     ensures normal resource_reference_dropped(xs);
+    ensures normal resource_callback_slot_invoked(xs, x509_lookup_method_st.lookup_meth_shutdown, _);
+    ensures normal resource_callback_slot_invoked(xs, x509_lookup_method_st.lookup_meth_free, _);
     ensures normal resource_return_none();
 };
 

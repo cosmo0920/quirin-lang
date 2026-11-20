@@ -827,6 +827,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [openssl-ex-data-registry](openssl-ex-data-registry/README.md) | OPENSSL-EX-DATA-REGISTRY: the ex_data premise on every constructor and free |
 
+| [openssl-free-indirect-callbacks](openssl-free-indirect-callbacks/README.md) | OPENSSL-FREE-INDIRECT-CALLBACKS: callbacks the frees run on objects they free in turn |
+
 | [openssl-free-session-remove-invocation](openssl-free-session-remove-invocation/README.md) | OPENSSL-FREE-SESSION-REMOVE-INVOCATION: slot invocations beside a reference drop |
 
 | [openssl-pem-callback-arm](openssl-pem-callback-arm/README.md) | OPENSSL-PEM-CALLBACK-ARM: a literal-argument premise beside a synchronous invocation |
