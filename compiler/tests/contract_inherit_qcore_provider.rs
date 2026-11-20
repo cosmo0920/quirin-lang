@@ -57,6 +57,8 @@ use qcore_frontend::frontend::parse_source_program;
 use qcore_schemas::contract::{DerivedExtent, ResourceReturnMode};
 use qcore_schemas::sha256_hex;
 
+#[path = "../../tests/support/sp2_premise_checkpoint.rs"]
+mod sp2_premise_checkpoint;
 #[path = "../../tests/support/tracked_files.rs"]
 mod tracked_files;
 
@@ -273,6 +275,10 @@ fn converted_wrappers_elaborate_to_the_hand_written_contracts() {
         } else {
             legacy_text
         };
+        // Card SP2-SYMBOLIC-LIBRDKAFKA-PREMISES: the frozen token fixture
+        // predates the premises' formulas; write each back as its prose for
+        // this legacy comparison only (the current text loads below).
+        let legacy_text = sp2_premise_checkpoint::restore(&legacy_text);
         let after = parse_source_program(&legacy_text).unwrap();
         let hand_parsed = parse_source_program(&before).unwrap();
         let names = |parsed: &qcore_frontend::frontend::SourceProgram| {

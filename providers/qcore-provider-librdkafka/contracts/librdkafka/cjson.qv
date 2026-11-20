@@ -1,5 +1,5 @@
 module contract;
-// qcore-premise-binding-manifest-v1 cJSON_DetachItemViaPointer detach_list_representation a511dd5d2efe7e0fae2c29207e6a54ce5730f7870d7d5ed34d0bdc2c4d9b721e
+// qcore-premise-binding-manifest-v1 cJSON_DetachItemViaPointer detach_list_representation ef40a0780d962e506a45092e704ac701a08f33810555d574b12a47c6426fc771
 
 // cJSON entity release — resource-projection vocabulary version 1.
 //
@@ -194,7 +194,7 @@ contract {
 extern fn cJSON_New_Item(hooks: ptr<const, u8>) -> ptr<mut, u8>
 contract {
     requires resource_contract_v1;
-    requires resource_premise(cjson_allocator_hooks, "hooks->allocate returns a fresh allocation or NULL, which cJSON_Delete releases through the matching deallocate hook: malloc and free in global_hooks (cJSON.c:178, :186) unless cJSON_InitHooks installed a user pair, a premise of whoever installed it; nothing is stated about the hooks changing between the allocation and its release");
+    requires resource_premise(cjson_allocator_hooks, (quant all #f in #cjson_allocate | #cjson_deallocate: #f in #libc_hooks | #installed_hooks) && #cjson_allocate |-> #fresh_or_null && quant all #o in #hook_allocated: #o in #deallocate_releases);
     ensures normal resource_borrowed(hooks);
     ensures normal resource_return_owned(nullable);
 };
@@ -281,7 +281,7 @@ contract {
 extern fn add_item_to_array(array: ptr<mut, u8>, item: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
-    requires resource_premise(cjson_list_invariant, "cJSON's list invariant, kept by every cJSON list operation: a non-empty array's child->prev is its last element, never NULL; if a caller broke it, the child->prev == NULL arm returns true without linking item, which this declaration would read as a transfer");
+    requires resource_premise(cjson_list_invariant, quant all #a in #cjson_arrays: quant all #c in #child(#a): (quant all #l in #last(#a): #l in #prev(#c)) && ((quant all #p in #prev(#c): #false) -> #false));
     ensures normal resource_borrowed(array);
     ensures normal resource_on_return(ne, 0, resource_consumed(item, nullable));
     ensures normal resource_on_return(eq, 0, resource_owned(item, nullable));
@@ -382,7 +382,7 @@ contract {
 extern fn print(item: ptr<const, u8>, format: i32, hooks: ptr<const, u8>) -> ptr<mut, u8>
 contract {
     requires resource_contract_v1;
-    requires resource_premise(cjson_allocator_hooks, "hooks->allocate and hooks->reallocate return a fresh allocation or NULL and hooks->deallocate releases one: malloc, realloc and free in global_hooks (cJSON.c:178-186) unless a user set was installed, a premise of whoever installed it; nothing is stated about the hooks changing between the allocation and its release");
+    requires resource_premise(cjson_allocator_hooks, (quant all #f in #cjson_allocate | #cjson_reallocate | #cjson_deallocate: #f in #libc_hooks | #installed_hooks) && #cjson_allocate | #cjson_reallocate |-> #fresh_or_null && quant all #o in #hook_allocated: #o in #deallocate_releases);
     ensures normal resource_borrowed(item);
     ensures normal resource_borrowed(format);
     ensures normal resource_borrowed(hooks);
@@ -414,7 +414,7 @@ contract {
 extern fn cJSON_DetachItemViaPointer(parent: ptr<mut, u8>, item: ptr<mut, u8>) -> ptr<mut, u8>
 contract {
     requires resource_contract_v1;
-    requires resource_premise(detach_list_representation, "For this removed-result declaration, the live parent represents exactly its owned children by a finite acyclic child and next chain; child is NULL precisely when the chain is empty, each nonfirst child's prev is its predecessor, the first child's prev is the last child, chain child identities are pairwise distinct, every non-NULL next or prev target is a live child of that same parent, the last child's next is NULL, the parent is not a child, and no concurrent writer mutates these links during the call");
+    requires resource_premise(detach_list_representation, #parent in #live && (quant all #c in #owned(#parent): #c in #children(#parent)) && (quant all #c in #children(#parent): #c in #owned(#parent) && #c in #live) && (quant all #c in #child(#parent): #c in #first(#parent)) && (quant all #c in #first(#parent): #c in #child(#parent)) && (quant all #b in #children(#parent): quant all #a in #pred(#parent, #b): #b in #next(#a)) && (quant all #c in #children(#parent): #c in #next_reach(#c) -> #false) && ((quant all #c in #child(#parent): #false) -> quant all #c in #children(#parent): #false) && ((quant all #c in #children(#parent): #false) -> quant all #c in #child(#parent): #false) && (quant all #b in #children(#parent): quant all #a in #pred(#parent, #b): #a in #prev(#b)) && (quant all #f in #first(#parent): quant all #l in #last(#parent): #l in #prev(#f)) && #nodup(#parent) && (quant all #c in #children(#parent): quant all #y in #next(#c) | #prev(#c): #y in #children(#parent) && #y in #live) && (quant all #l in #last(#parent): quant all #y in #next(#l): #false) && (#parent in #children(#parent) -> #false) && #concurrent |-> #keeps_links(#parent));
     requires resource_hypothesis(detach_chain, "For this removed-result declaration, the live parent represents exactly its owned children by a finite acyclic child and next chain");
     requires resource_lifecycle_v1(introduce_detach_chain, |^+ hypothesis(detach_chain));
     requires resource_hypothesis(detach_distinct, "For this removed-result declaration, chain child identities are pairwise distinct");

@@ -18,8 +18,9 @@ use std::collections::BTreeMap;
 
 const SOURCE: &str =
     include_str!("../../../providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv");
-const MANIFEST: &[u8] =
-    include_bytes!("../../../docs/reports/premise-evidence-contracts/binding-manifest.json");
+const MANIFEST: &[u8] = include_bytes!(
+    "../../../docs/reports/sp2-symbolic-librdkafka-premises/bindings/ef40a0780d962e506a45092e704ac701a08f33810555d574b12a47c6426fc771.json"
+);
 const MODEL: &[u8] = include_bytes!("../../../proof/QCore/CjsonRepresentationPremises.lean");
 const AUDIT: &[u8] = include_bytes!("../../../proof/AuditPremiseRefinement.lean");
 struct Inputs {
@@ -33,7 +34,7 @@ fn inputs() -> Inputs {
     let sources = BTreeMap::from([("cjson.qv".into(), SOURCE.into())]);
     let graphs = hypothesis::replay(&sources).unwrap();
     let frozen = hypothesis::decode(include_bytes!(
-        "../../../docs/reports/premise-evidence-contracts/expected-graph.json"
+        "../../../docs/reports/sp2-symbolic-librdkafka-premises/bindings/cjson-expected-graph.json"
     ))
     .unwrap();
     assert_eq!(graphs["cJSON_DetachItemViaPointer"], frozen);
