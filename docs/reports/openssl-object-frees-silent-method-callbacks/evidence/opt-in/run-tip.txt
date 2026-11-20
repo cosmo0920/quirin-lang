@@ -1,0 +1,3 @@
+current revision: 180 source file(s), 181 configuration(s): 9 Safe / 0 Pending / 6 provisional Unsafe / 162 Unknown / 4 data-only / 0 gateway failures
+checker plugins: 150 binding(s): 0 Safe / 150 Pending / 0 Unknown / 0 provisional Unsafe
+contract dependencies: 1139 Safe row(s): 432 on no declaration, 124 only on validated declarations, 44 on a partly validated declaration, 523 on a declared assumption, 0 consulting a held or withdrawn declaration, 16 only on a null premise (38 carrying one); 638 declaration(s) consulted (74 validated, 52 partly validated)

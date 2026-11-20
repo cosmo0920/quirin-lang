@@ -1,0 +1,30 @@
+{
+ "schema": "quirin-amendments/1",
+ "card": "OPENSSL-OBJECT-FREES-SILENT-METHOD-CALLBACKS",
+ "base": "ecc03d7a4",
+ "measured_tip": "b80ee7664",
+ "increment_paragraph": "**OPENSSL-OBJECT-FREES-SILENT-METHOD-CALLBACKS (2026-11-20).** The named follow-up recorded by OPENSSL-FREE-INDIRECT-CALLBACKS. In quirin-provider-openssl, X509_free, EVP_PKEY_free, PKCS12_free and ENGINE_free, and (found by the survey of the crate's ten frees) EVP_MD_CTX_free, named only openssl_ex_data_callbacks, yet each may run a function of a method, provider or engine of an object it frees (OpenSSL 3.5.5 sources): a key's provider key management free and, at the provider's last reference, its teardown, its EVP_PKEY_ASN1_METHOD free, its RSA/DSA/DH/EC_KEY method finish and its ENGINEs' finish and destroy; a certificate's public key's; a PKCS#12 object's keys' and its CRLs' X509_CRL_METHOD free; an engine's public key method and ASN.1 method callbacks and destroy function; a digest context's digest cleanup or provider freectx, EVP_PKEY_CTX method cleanup and provider operation freectx, engines and keys. Each now names openssl_unstated_callback_slots in a statement of its own object kind naming only what that free can run (r39's free statement names SSL objects' kinds these never reach); nothing was narrowed. The checker's free audit (FREE_AUDIT, free_audited, read like EX_DATA_AUDIT) lists every release: a running free names exactly its audited statement, BIO_free's run is named by openssl_builtin_bio_methods, OPENSSL_sk_free frees nothing such, and a release left out refuses. contracts.lock: 5 digests changed, none added or removed; pinned and library_versions unchanged. No gateway code changed. Lean: new QCore.OpensslObjectFreesAudit, audited. Opt-in current over Fluent Bit 046accf6, base ecc03d7a4 vs tip b80ee7664: 1139 Safe / 2 Pending / 3656 Unknown / 7 Unsafe in both, no row moved and no row changed content, bindings 150 in both, all Pending, as predicted; pinned routes read no user load path, so no move is predicted, and measure --declared is deferred to the integrator (this host has no pinned inputs).",
+ "status_paragraph": null,
+ "ledger": [
+  {
+   "id": "OPENSSL-OBJECT-FREES-SILENT-METHOD-CALLBACKS",
+   "operation": "retire",
+   "why": "OPENSSL-OBJECT-FREES-SILENT-METHOD-CALLBACKS (2026-11-20): X509_free, EVP_PKEY_free, PKCS12_free, ENGINE_free and, found by the survey of the crate's ten frees, EVP_MD_CTX_free name openssl_unstated_callback_slots in a statement of their own object kind (UNSTATED_KEY_FREE_STATEMENT, UNSTATED_CERTIFICATE_FREE_STATEMENT, UNSTATED_PKCS12_FREE_STATEMENT, UNSTATED_ENGINE_FREE_STATEMENT, UNSTATED_DIGEST_CONTEXT_FREE_STATEMENT), each naming only what that free runs per the OpenSSL 3.5.5 sources; the checker's free audit (FREE_AUDIT, free_audited) refuses a release left out, a running free without its audited statement, or with another kind's. Lean QCore.OpensslObjectFreesAudit.",
+   "source": "docs/reports/openssl-object-frees-silent-method-callbacks/README.md"
+  },
+  {
+   "id": "OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS",
+   "operation": "register",
+   "title": "OpenSSL calls that free keys, certificates or contexts inside, without being frees, read their method callbacks silently",
+   "text": "Found by OPENSSL-OBJECT-FREES-SILENT-METHOD-CALLBACKS. The free audit (FREE_AUDIT) covers releases only. Declarations that free a key, certificate or context inside the call name no free statement, yet run the same provider, method and engine functions a key's free runs (EVP_PKEY_free, p_lib.c 3.5.5): the SSL_CTX_use_* loaders (a replaced or temporary key or certificate), PEM_read_bio_PrivateKey, PEM_read_bio_X509 and d2i_PKCS12_bio on a failed read, SSL_CTX_load_verify_locations and SSL_CTX_set_default_verify_paths (certificates the store already holds), and the handshake and I/O calls (peer and ephemeral keys; their UNSTATED_SLOTS_STATEMENT names none of these functions). Metadata only (premises move no verdict). DISCHARGE: read each from the 3.5.5 sources, name the premise in a statement naming what it runs (or widen the handshake's statement), and extend the audit to calls whose EX_DATA_AUDIT reading frees an EVP_PKEY or X509, with the reviewed lock diff. Size: small to medium.",
+   "source": "docs/reports/openssl-object-frees-silent-method-callbacks/README.md",
+   "recorded_by": "OPENSSL-OBJECT-FREES-SILENT-METHOD-CALLBACKS"
+  },
+  {
+   "id": "OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS",
+   "operation": "append",
+   "text": "OPENSSL-OBJECT-FREES-SILENT-METHOD-CALLBACKS: X509_free, EVP_PKEY_free, PKCS12_free, ENGINE_free and EVP_MD_CTX_free now keep openssl_unstated_callback_slots too, each in a statement of its object kind; stating their kinds adds the setters ENGINE_set_pkey_meths and ENGINE_set_pkey_asn1_meths (no 3.5 page), EVP_MD_meth_set_cleanup, EVP_PKEY_meth_set_cleanup, and the provider dispatch tables of digests and signature, key exchange, KEM and asymmetric cipher operations; a key's last free may also run its provider's teardown (OSSL_FUNC_provider_teardown, at the provider's last reference). X509_STORE_free carries r39's shared statement, which also names the SSL object's and context's kinds its free never reaches: a store statement is the narrower reading. The EX_DATA_AUDIT classes of SSL_free, SSL_CTX_free and X509_STORE_free omit RSA, DSA, DH, EC_KEY and ENGINE (metadata).",
+   "source": "docs/reports/openssl-object-frees-silent-method-callbacks/README.md"
+  }
+ ]
+}
