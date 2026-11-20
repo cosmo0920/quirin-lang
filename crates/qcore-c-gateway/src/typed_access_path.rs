@@ -328,6 +328,11 @@ pub(crate) struct EnumFacts {
     /// Card W47-ACCESS-PATH-POSITION-RESIDUALS (rule 10n): `FieldDecl` ids of
     /// members declared with an inline anonymous `enum { … }` type.
     pub(crate) anonymous_members: BTreeSet<String>,
+    /// Card CG10-INDIRECT-ACCESS-SOLE-RESIDUALS round 4 (rule 66; shared
+    /// item added to these facts): each typedef name with the builtin scalar
+    /// spelling every one of its declarations in the unit resolves to
+    /// (`None` when one does not, or two disagree). Read only by rule 66.
+    pub(crate) scalar_typedefs: BTreeMap<String, Option<String>>,
 }
 
 impl EnumFacts {
@@ -364,6 +369,11 @@ impl EnumFacts {
                         .entry(name.to_owned())
                         .and_modify(|old| *old = *old && enum_typedef)
                         .or_insert(enum_typedef);
+                    crate::typedef_scalar_element::note_scalar_typedef(
+                        &mut facts.scalar_typedefs,
+                        name,
+                        qual(node),
+                    );
                 }
             }
             _ => {}
@@ -1523,6 +1533,12 @@ impl<'a> Reader<'a> {
     /// Card CG10-READER-GAPS (rule 71b): the unit's typedef facts.
     pub(crate) fn aggregates(&self) -> &'a crate::aggregate_value::AggregateFacts {
         self.aggregates
+    }
+
+    /// Card CG10-INDIRECT-ACCESS-SOLE-RESIDUALS round 4 (rule 66): the
+    /// unit's agreeing scalar typedefs.
+    pub(crate) fn scalar_typedefs(&self) -> &'a BTreeMap<String, Option<String>> {
+        &self.enums.scalar_typedefs
     }
 
     /// Card CG11 (rule 10v): the function whose body the reader reads.

@@ -136,15 +136,22 @@ impl crate::typed_access_path::Reader<'_> {
     /// checked exactly as rule 10n(1)'s address reads it, and the array is
     /// not read. A reading this host does not know is refused.
     pub(crate) fn decayed_address(&mut self, cast: &Value) -> Option<()> {
-        match decay_reading(cast, self.decisions())? {
-            TypedReading::ElementAddress(place) => {
-                self.address_target = true;
-                let read = self.path(place, false, false);
-                self.address_target = false;
-                read
+        let place = match decay_reading(cast, self.decisions()) {
+            Some(TypedReading::ElementAddress(place)) => place,
+            Some(_) => return None,
+            // Card CG10-INDIRECT-ACCESS-SOLE-RESIDUALS round 4 (rule 66), asked
+            // only after rule 35 refuses: the element spelled through a
+            // typedef every declaration of which resolves to one builtin
+            // scalar is read as rule 35 reads that scalar.
+            None if crate::gateway_rules::enabled(rule_35_literal_decay::ID) => {
+                crate::typedef_scalar_element::element_place(cast, self.scalar_typedefs())?
             }
-            _ => None,
-        }
+            None => return None,
+        };
+        self.address_target = true;
+        let read = self.path(place, false, false);
+        self.address_target = false;
+        read
     }
 }
 

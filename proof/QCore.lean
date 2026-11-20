@@ -518,6 +518,7 @@ import QCore.TypedSourceControl
 import QCore.TypedSourceOperators
 import QCore.TypedefAggregateBase
 import QCore.TypedefProjection
+import QCore.TypedefScalarElement
 import QCore.UncheckedLinkage
 import QCore.UncontractedAccessAttribution
 import QCore.UnionArmLayout

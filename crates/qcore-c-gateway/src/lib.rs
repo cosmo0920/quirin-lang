@@ -320,6 +320,8 @@ pub mod typed_source_match;
 mod typedef_aggregate_base;
 // Card CG10-INDIRECT-ACCESS-SOLE-RESIDUALS round 3 (rule 68).
 mod pointer_typedef_member;
+// Card CG10-INDIRECT-ACCESS-SOLE-RESIDUALS round 4 (rule 66).
+mod typedef_scalar_element;
 // Card CG01-T-OPERATOR-CLOSURE (rule 10r): route T's operator and literal
 // closure and the per-consumer admission that gates it.
 pub mod typed_source_nodes;
