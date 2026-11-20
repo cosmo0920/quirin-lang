@@ -75,8 +75,10 @@ int rd_hdr_histogram_record(rd_hdr_histogram_t *hdr, int64_t v); \
 uint64_t cmt_atomic_load(uint64_t *storage); \
 void cmt_atomic_store(uint64_t *storage, uint64_t new_value); \
 int cmt_atomic_compare_exchange(uint64_t *storage, uint64_t old_value, uint64_t new_value); \
+int rd_jitter(int low, int high); \
 struct avg { int64_t sum; int64_t cnt; rd_hdr_histogram_t *hdr; }; \
-struct k { rd_atomic32_t n32; rd_atomic64_t n64; cnd_t *cnd; mtx_t *lock; struct avg avg; }; \
+struct k { rd_atomic32_t n32; rd_atomic64_t n64; cnd_t *cnd; mtx_t *lock; struct avg avg; \
+  int backoff_ms; long long ts; }; \
 struct m { uint64_t val; uint64_t count; uint64_t *buckets; };\n";
 
 const UNCONTRACTED: &str = "call to uncontracted function `";
@@ -230,6 +232,87 @@ fn the_reference_count_wrappers_stay_undeclared() {
                 if description == "call to uncontracted function `rd_atomic32_add`")),
         "{run:?}"
     );
+}
+
+/// Round 4 (`docs/reports/cg10-indirect-access-sole-residuals-r4/README.md`):
+/// `rd_jitter`, declared neutral, is read by rule 14a inside a scalar
+/// assignment whose actuals are scalar casts of a formal's member
+/// (`rd_kafka_broker_update_reconnect_backoff`'s shape); without the
+/// declaration the statement keeps a refusal.
+const JITTER: &str = "void subject(struct k *k, long long now) { int backoff; \
+  backoff = rd_jitter((int)((float)k->backoff_ms * 0.75), (int)((float)k->backoff_ms * 1.5)); \
+  k->ts = now + (backoff * 1000); }";
+
+#[test]
+fn round_4_rd_jitter_reads_its_scalar_member_actuals() {
+    if !clang_available() {
+        return;
+    }
+    let with = run(JITTER, &production());
+    assert_eq!(with.status, AnalysisStatus::Safe, "{with:?}");
+    let without = run(JITTER, &without_card());
+    assert_eq!(without.status, AnalysisStatus::Unknown, "{without:?}");
+}
+
+/// Round 4: `XXH32_digest_endian`'s shape, the declared `XXH32_finalize`
+/// handed a decayed array member of a `const` formal record.
+const XXH: &str = "\
+typedef unsigned int U32; \
+typedef enum { XXH_bigEndian=0, XXH_littleEndian=1 } XXH_endianess; \
+typedef enum { XXH_aligned, XXH_unaligned } XXH_alignment; \
+typedef struct { U32 total_len_32; U32 v3; U32 mem32[4]; U32 memsize; } XXH32_state_t; \
+static U32 XXH32_finalize(U32 h32, const void* ptr, size_t len, XXH_endianess endian, XXH_alignment align); \
+U32 subject(const XXH32_state_t* state, XXH_endianess endian) { U32 h32; \
+  h32 = state->v3 + 5; h32 += state->total_len_32; \
+  return XXH32_finalize(h32, state->mem32, state->memsize, endian, XXH_aligned); }";
+
+#[test]
+fn round_4_xxh_finalize_reads_a_decayed_member() {
+    if !clang_available() {
+        return;
+    }
+    let with = run(XXH, &production());
+    assert_eq!(with.status, AnalysisStatus::Safe, "{with:?}");
+}
+
+#[test]
+fn round_4_rule_66_keeps_a_non_scalar_typedef_element_refused() {
+    if !clang_available() {
+        return;
+    }
+    // Rule 66 reads only a typedef resolving to a builtin scalar: an array of
+    // a pointer typedef, of a record typedef or of a volatile scalar typedef
+    // keeps the refusal.
+    let head = "\
+typedef unsigned int U32; \
+typedef enum { XXH_bigEndian=0, XXH_littleEndian=1 } XXH_endianess; \
+typedef enum { XXH_aligned, XXH_unaligned } XXH_alignment; \
+static U32 XXH32_finalize(U32 h32, const void* ptr, size_t len, XXH_endianess endian, XXH_alignment align); ";
+    for body in [
+        "typedef char *cp; struct q { cp m[4]; }; \
+         U32 subject(struct q *s) { return XXH32_finalize(1, s->m, 4, XXH_littleEndian, XXH_aligned); }",
+        "typedef struct { int a; } rec; struct q { rec m[4]; }; \
+         U32 subject(struct q *s) { return XXH32_finalize(1, s->m, 4, XXH_littleEndian, XXH_aligned); }",
+        "typedef volatile int vi; struct q { vi m[4]; }; \
+         U32 subject(struct q *s) { return XXH32_finalize(1, s->m, 4, XXH_littleEndian, XXH_aligned); }",
+    ] {
+        let run = run(&format!("{head}{body}"), &production());
+        assert_eq!(run.status, AnalysisStatus::Unknown, "{body}\n{run:?}");
+    }
+}
+
+#[test]
+fn round_4_rd_jitter_takes_no_custody() {
+    if !clang_available() {
+        return;
+    }
+    // A neutral declaration discharges nothing: a buffer allocated beside
+    // the call and dropped still leaks.
+    let run = run(
+        "int subject(void) { int *p = malloc(4); if (!p) return 0; *p = rd_jitter(1, 2); return *p; }",
+        &production(),
+    );
+    assert_eq!(run.status, AnalysisStatus::Unsafe, "{run:?}");
 }
 
 #[test]

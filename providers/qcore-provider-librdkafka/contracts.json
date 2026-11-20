@@ -9,7 +9,7 @@
     "contracts/librdkafka/log_caller_frame.qv": "aebd032b2788a203265d2052dd2022b467ec2fa991a6a5c2d551db2eafe579d3",
     "contracts/librdkafka/logging.qv": "45d1181af4e2114de77b09fe0051fb64663c14f10f849271da9dc3ed1e2ef269",
     "contracts/librdkafka/lz4_stream.qv": "282ca1e9ad92339888457c3ec30e6ab61b7591339962741a671a22afc35ac5f3",
-    "contracts/librdkafka/memory.qv": "55c1ebf9b2c20b503bd59a8e4599008e42eb36e18d5c298af7a2354cc543b9be",
+    "contracts/librdkafka/memory.qv": "051e04d4bcce0cf331275619d503ea855afc994b67e203625bc8a5f334b2f885",
     "contracts/librdkafka/null_deref.qv": "a5f40b200cd0eefbe43f854a343e7cdb8fc787f048244ac4acfe88eb6f37087c",
     "contracts/librdkafka/outer.qv": "8851663628db59017013b33cfff05f7fed4e8ce5e384bb961c27bfc364eb4cd0",
     "contracts/librdkafka/queue_destructor.qv": "a4983acc1e1ac2315197e289a655153eeb12acb1d8b71a0efd5d48abb92a7fb0",

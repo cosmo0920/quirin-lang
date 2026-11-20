@@ -3884,8 +3884,8 @@
       "sha256": "282ca1e9ad92339888457c3ec30e6ab61b7591339962741a671a22afc35ac5f3"
     },
     "librdkafka/memory.qv": {
-      "clause_count": 74,
-      "declaration_count": 13,
+      "clause_count": 78,
+      "declaration_count": 14,
       "declarations": [
         {
           "clauses": 3,
@@ -4075,6 +4075,18 @@
             "result": "none"
           },
           "resource_table": "functions"
+        },
+        {
+          "clauses": 4,
+          "name": "rd_jitter",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         }
       ],
       "inherits": [
@@ -4119,7 +4131,7 @@
           }
         ]
       },
-      "sha256": "55c1ebf9b2c20b503bd59a8e4599008e42eb36e18d5c298af7a2354cc543b9be"
+      "sha256": "051e04d4bcce0cf331275619d503ea855afc994b67e203625bc8a5f334b2f885"
     },
     "librdkafka/null_deref.qv": {
       "clause_count": 1380,
