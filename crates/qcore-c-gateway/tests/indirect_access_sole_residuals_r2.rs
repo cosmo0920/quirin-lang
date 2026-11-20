@@ -156,10 +156,9 @@ fn rule_14a_keeps_the_refusal_for_every_other_call() {
     if !clang_available() {
         return;
     }
-    // Two calls: C leaves their order unspecified, and neither is read here.
-    assert_keeps_the_gate(
-        "void subject(struct S *a) { a->a = is_count(a->name) + is_count(a->next->name); }",
-    );
+    // Two calls: round 3's rule 67 lifted rule 14a's one-call limit for
+    // sibling calls that each take no custody; the admission and its
+    // near-misses are `tests/indirect_access_sole_residuals_r3.rs`.
     // A custody-taking position: the call changes what the other operand reads.
     assert_not_safe("void subject(struct S *a) { a->a = rr_release_count(a->name) + a->a; }");
     // An owned result: its custody is not a scalar.

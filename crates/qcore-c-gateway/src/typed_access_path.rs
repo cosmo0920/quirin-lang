@@ -1184,7 +1184,7 @@ impl StatementIndex {
             pointer_store_target: false,
             pointer_stores: false,
             aggregate_target: false,
-            opaque_call: None,
+            opaque_calls: Vec::new(),
             unevaluated_queries: false,
             plan: StatementPlan {
                 scalar: TypedScalarPlan::default(),
@@ -1470,10 +1470,11 @@ pub(crate) struct Reader<'a> {
     /// place's type is not required to be a scalar.
     pub(crate) aggregate_target: bool,
     /// Card CG10-INDIRECT-ACCESS-SOLE-RESIDUALS round 2 (rule 14a; shared
-    /// item added to this reader): the one call of the statement whose value
-    /// the caller lowers on its own, read here as an opaque scalar operand.
-    /// `None` everywhere else, which keeps every call refused.
-    pub(crate) opaque_call: Option<&'a Value>,
+    /// item added to this reader): the calls of the statement whose values
+    /// the caller lowers on its own, read here as opaque scalar operands
+    /// (one call under rule 14a, several sibling calls under rule 67, round
+    /// 3). Empty everywhere else, which keeps every call refused.
+    pub(crate) opaque_calls: Vec<&'a Value>,
     /// Card SCALAR-STATEMENT-FORMS (rule 41): `sizeof` of an expression or a
     /// type whose operand Clang does not evaluate
     /// ([`crate::cast_representation::query_operand`] `Unevaluated`) is a
@@ -1704,12 +1705,13 @@ impl<'a> Reader<'a> {
             "UnaryOperator" if node["opcode"].as_str() == Some("*") => {
                 self.path(node, false, false)
             }
-            // Rule 14a: exactly the call the caller lowers itself, whose
-            // value is a scalar; it reads nothing here.
+            // Rules 14a and 67: exactly a call the caller lowers itself,
+            // whose value is a scalar; it reads nothing here.
             "CallExpr"
                 if self
-                    .opaque_call
-                    .is_some_and(|call| std::ptr::eq(call, node))
+                    .opaque_calls
+                    .iter()
+                    .any(|call| std::ptr::eq(*call, node))
                     && self.scalar(node) =>
             {
                 Some(())

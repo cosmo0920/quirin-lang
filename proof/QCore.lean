@@ -350,6 +350,7 @@ import QCore.PluginReadingEnvironment
 import QCore.PluginSourceWitnesses
 import QCore.PointerQualifierReader
 import QCore.PointerStore
+import QCore.PointerTypedefMember
 import QCore.PremiseFlow
 import QCore.PremiseMetadataBridge
 import QCore.PremiseRefinement
@@ -442,6 +443,7 @@ import QCore.ScalarTypes
 import QCore.SchedulerLifetime
 import QCore.ScopedTasks
 import QCore.ShortCircuit
+import QCore.SiblingBorrowedCalls
 import QCore.SingleEmissionRoute
 import QCore.SizeofOperand
 import QCore.SlicePermissions

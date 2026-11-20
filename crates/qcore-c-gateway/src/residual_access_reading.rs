@@ -73,6 +73,19 @@ fn calls<'a>(node: &'a Value, out: &mut Vec<&'a Value>) {
     }
 }
 
+/// Rule 67: no call is inside another's callee or actuals, so each call is
+/// lowered alone as the statement `f(args)` and no call's value is another's
+/// operand (a nested call stays refused).
+fn siblings_only(found: &[&Value]) -> bool {
+    found.iter().all(|call| {
+        let mut inner = Vec::new();
+        for child in children(call) {
+            calls(child, &mut inner);
+        }
+        inner.is_empty()
+    })
+}
+
 /// The callee's name when it is a plain function designator.
 pub(crate) fn direct_callee(call: &Value) -> Option<&str> {
     let mut target = children(call).first()?;
@@ -110,13 +123,13 @@ fn scalar_statement_shape(node: &Value, reader: &Reader<'_>) -> bool {
     }
 }
 
-/// Rule 14a's reading.
+/// Rule 14a's reading (rule 67: one or more sibling calls).
 pub(crate) struct ScalarCallReading<'a> {
-    /// The one call, which the caller lowers through rule W44.
-    pub(crate) call: &'a Value,
-    /// Its callee.
-    pub(crate) callee: String,
-    /// The statement's reads and store, the call read as an opaque scalar.
+    /// The calls, outermost-first in source order, each with its callee; the
+    /// caller lowers each alone through rule W44. Rule 14a's reading holds
+    /// exactly one; rule 67's several, none inside another's actuals.
+    pub(crate) calls: Vec<(&'a Value, String)>,
+    /// The statement's reads and store, each call read as an opaque scalar.
     pub(crate) plan: StatementPlan,
 }
 
@@ -258,21 +271,24 @@ impl StatementIndex {
     ) -> Option<ScalarCallReading<'a>> {
         let mut found = Vec::new();
         calls(node, &mut found);
-        let [call] = found.as_slice() else {
+        if found.is_empty() || !siblings_only(&found) {
             return None;
-        };
-        let callee = direct_callee(call)?.to_owned();
+        }
+        let calls = found
+            .iter()
+            .map(|call| Some((*call, direct_callee(call)?.to_owned())))
+            .collect::<Option<Vec<_>>>()?;
         let mut reader = self.reader(never_bound).recording(decisions);
         if !scalar_statement_shape(node, &reader) {
             return None;
         }
-        reader.opaque_call = Some(call);
+        reader.opaque_calls = found;
         reader.statement(node)?;
         let plan = reader.plan;
         if plan.pointer_store.is_some() || plan.borrowed_destination || plan.readback.is_some() {
             return None;
         }
-        Some(ScalarCallReading { call, callee, plan })
+        Some(ScalarCallReading { calls, plan })
     }
 
     /// Rule 14b: a pointer local given an interior pointer of a path whose
@@ -366,20 +382,25 @@ pub(crate) fn interior_admitted(shape: &str, form: &str, roots_never_bound: bool
     shape == "pointer-local" && matches!(form, "address" | "offset") && roots_never_bound
 }
 
-/// Rule 14a's decision on a call's contract: (calls in the value, result is
-/// `None`, every declared position `Borrowed`, admitted).
+/// Rule 14a's decision on a call's contract, amended by rule 67: (calls in
+/// the value, every call's result is `None`, every declared position of every
+/// call `Borrowed`, admitted). Rule 67 lifts rule 14a's one-call limit: any
+/// positive number of sibling calls, each taking no custody.
 #[cfg(test)]
 pub(crate) const SCALAR_CALL_VECTORS: &[(usize, bool, bool, bool)] = &[
     (1, true, true, true),
     (0, true, true, false),
-    (2, true, true, false),
+    (2, true, true, true),
+    (3, true, true, true),
     (1, false, true, false),
     (1, true, false, false),
+    (2, false, true, false),
+    (2, true, false, false),
 ];
 
-/// Rule 14a's decision on the table's terms.
+/// Rules 14a and 67's decision on the table's terms.
 pub(crate) fn scalar_call_admitted(calls: usize, none_result: bool, all_borrowed: bool) -> bool {
-    calls == 1 && none_result && all_borrowed
+    calls >= 1 && none_result && all_borrowed
 }
 
 #[cfg(test)]
@@ -432,12 +453,24 @@ mod tests {
             let reading = index
                 .scalar_call_statement(node, &never_bound, None)
                 .expect("one scalar call");
-            assert_eq!(reading.callee, "g");
+            assert_eq!(reading.calls.len(), 1);
+            assert_eq!(reading.calls[0].1, "g");
             assert_eq!(reading.plan.scalar.bases, ["s"]);
             assert_eq!(reading.plan.scalar.destination.as_deref(), Some("d"));
         });
+        // Rule 67: two sibling calls are each read opaque.
         let source = format!("{S} void f(struct S *s) {{ s->n = g(&s->n) + g(&s->off); }}");
         with_node(&source, "s->n = g(&s->n) + g(&s->off)", |index, node| {
+            let never_bound = |_: &str| true;
+            let reading = index
+                .scalar_call_statement(node, &never_bound, None)
+                .expect("two sibling calls");
+            assert_eq!(reading.calls.len(), 2);
+            assert_eq!(reading.plan.scalar.bases, ["s"]);
+        });
+        // A nested call stays refused.
+        let source = format!("{S} void f(struct S *s) {{ s->n = g(&s->counts[g(&s->n)]); }}");
+        with_node(&source, "s->n = g(&s->counts[g(&s->n)])", |index, node| {
             let never_bound = |_: &str| true;
             assert!(
                 index

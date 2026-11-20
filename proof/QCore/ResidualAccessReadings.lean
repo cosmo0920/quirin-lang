@@ -107,22 +107,23 @@ differently after the call. -/
 theorem a_releasing_call_does_not_commute :
     readResolves 0 (effect [.released] [.live]) ≠ readResolves 0 [.live] := by decide
 
-/-- Rule 14a's decision: exactly one call, a `None` result, every position
-`Borrowed` (`scalar_call_admitted`). -/
+/-- Rule 14a's decision, amended by rule 67 (round 3): at least one call
+(rule 14a's reading held exactly one; rule 67 admits several sibling calls,
+`QCore.SiblingBorrowedCalls`), every call's result `None`, every position of
+every call `Borrowed` (`scalar_call_admitted`). Round 2's
+`two_calls_are_never_read` stated the lifted limit and is withdrawn with it. -/
 def scalarCallAdmitted (calls : Nat) (noneResult allBorrowedPositions : Bool) : Bool :=
-  calls == 1 && noneResult && allBorrowedPositions
+  decide (1 ≤ calls) && noneResult && allBorrowedPositions
 
 /-- The Rust's `SCALAR_CALL_VECTORS`. -/
 def scalarCallVectors : List (Nat × Bool × Bool × Bool) :=
-  [(1, true, true, true), (0, true, true, false), (2, true, true, false),
-   (1, false, true, false), (1, true, false, false)]
+  [(1, true, true, true), (0, true, true, false), (2, true, true, true),
+   (3, true, true, true), (1, false, true, false), (1, true, false, false),
+   (2, false, true, false), (2, true, false, false)]
 
 theorem scalar_call_vectors_hold :
     scalarCallVectors.all (fun (c, n, b, a) => scalarCallAdmitted c n b == a) = true := by
   decide
-
-theorem two_calls_are_never_read (n b : Bool) : scalarCallAdmitted 2 n b = false := by
-  simp [scalarCallAdmitted]
 
 theorem an_admitted_call_takes_no_custody (calls : Nat) (n : Bool) (ms : List Mode)
     (h : scalarCallAdmitted calls n (allBorrowed ms) = true) (s : State) :
