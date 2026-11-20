@@ -119,6 +119,58 @@ contract {
     ensures normal resource_borrowed(ex);
     ensures normal resource_return_none();
 };
+
+extern fn sec_needs_ctx(s: ptr<const, u8>, ctx: ptr<const, u8>, op: i32, bits: i32, nid: i32, other: ptr<mut, u8>, ex: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(s);
+    ensures normal resource_owned(ctx, nonnull);
+    ensures normal resource_borrowed(op);
+    ensures normal resource_borrowed(bits);
+    ensures normal resource_borrowed(nid);
+    ensures normal resource_borrowed(other);
+    ensures normal resource_borrowed(ex);
+    ensures normal resource_return_none();
+};
+
+extern fn sec_needs_s(s: ptr<const, u8>, ctx: ptr<const, u8>, op: i32, bits: i32, nid: i32, other: ptr<mut, u8>, ex: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_owned(s, nonnull);
+    ensures normal resource_borrowed(ctx);
+    ensures normal resource_borrowed(op);
+    ensures normal resource_borrowed(bits);
+    ensures normal resource_borrowed(nid);
+    ensures normal resource_borrowed(other);
+    ensures normal resource_borrowed(ex);
+    ensures normal resource_return_none();
+};
+
+extern fn sec_needs_other(s: ptr<const, u8>, ctx: ptr<const, u8>, op: i32, bits: i32, nid: i32, other: ptr<mut, u8>, ex: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(s);
+    ensures normal resource_borrowed(ctx);
+    ensures normal resource_borrowed(op);
+    ensures normal resource_borrowed(bits);
+    ensures normal resource_borrowed(nid);
+    ensures normal resource_owned(other, nonnull);
+    ensures normal resource_borrowed(ex);
+    ensures normal resource_return_none();
+};
+
+extern fn sec_null_ok(s: ptr<const, u8>, ctx: ptr<const, u8>, op: i32, bits: i32, nid: i32, other: ptr<mut, u8>, ex: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_owned(s, nullable);
+    ensures normal resource_owned(ctx, nullable);
+    ensures normal resource_borrowed(op);
+    ensures normal resource_borrowed(bits);
+    ensures normal resource_borrowed(nid);
+    ensures normal resource_owned(other, nullable);
+    ensures normal resource_owned(ex, nullable);
+    ensures normal resource_return_none();
+};
 ";
 
 /// The public headers' view: the objects are opaque; the prototypes as the
@@ -144,6 +196,10 @@ void info_ok(const SSL *ssl, int where_, int ret);
 void info_uncontracted(const SSL *ssl, int where_, int ret);
 int sec_ok(const SSL *s, const SSL_CTX *ctx, int op, int bits, int nid, void *other, void *ex);
 int sec_freeing(const SSL *s, const SSL_CTX *ctx, int op, int bits, int nid, void *other, void *ex);
+int sec_needs_ctx(const SSL *s, const SSL_CTX *ctx, int op, int bits, int nid, void *other, void *ex);
+int sec_needs_s(const SSL *s, const SSL_CTX *ctx, int op, int bits, int nid, void *other, void *ex);
+int sec_needs_other(const SSL *s, const SSL_CTX *ctx, int op, int bits, int nid, void *other, void *ex);
+int sec_null_ok(const SSL *s, const SSL_CTX *ctx, int op, int bits, int nid, void *other, void *ex);
 int cert_ok(SSL *s, void *arg);
 ";
 
@@ -444,4 +500,72 @@ fn a_null_argument_to_a_retaining_setter_retains_nothing() {
     let run = run_of("int cert_ok(SSL *s, void *arg) { return 1; }\n", &contracts);
     let (_, leaves) = row_of("configure", run, &contracts);
     assert!(!refused(&leaves, "retention-undecided"), "{leaves:?}");
+}
+
+/// Card CALLBACK-SUPPLIED-NULL-ACTUAL (gateway rule 13u amended; C04.19 item
+/// 2): the security callback's `s` and `ctx` ("One of the two is NULL"),
+/// `other` ("NULL when no object is associated") and `ex` are
+/// `supplied_nullable` where the callee supplies them. A candidate requiring
+/// a live object there refuses the call (`callback-supplied-null`); where the
+/// actual is the caller's parameter, the requirement is the call's as before;
+/// a candidate accepting NULL decides.
+#[test]
+fn a_candidate_requiring_a_live_object_where_the_library_may_pass_null_refuses() {
+    if !clang_available() {
+        return;
+    }
+    let contracts = crate_contracts();
+    let null_refusal = |leaves: &[String], candidate: &str| {
+        leaves.iter().any(|leaf| {
+            leaf.contains(&format!("`{candidate}` (from `ssl_ctx_st.sec_cb`)"))
+                && leaf.contains("callback-supplied-null")
+        })
+    };
+    let registrar = |candidate: &str| {
+        format!("void reg(SSL_CTX *c) {{ SSL_CTX_set_security_callback(c, {candidate}); }}\n")
+    };
+    // `ctx` is NULL at a connection's check (SSL_write); at a context's check
+    // it is the caller's parameter, so the requirement is the call's.
+    let run = run_of(&registrar("sec_needs_ctx"), &contracts);
+    let (status, leaves) = row_of("write_some", run.clone(), &contracts);
+    assert_ne!(status, AnalysisStatus::Safe);
+    assert!(null_refusal(&leaves, "sec_needs_ctx"), "{leaves:?}");
+    for name in ["load_chain", "load_certificate"] {
+        let (_, leaves) = row_of(name, run.clone(), &contracts);
+        assert!(
+            !refused(&leaves, "callback-supplied-null"),
+            "{name}: {leaves:?}"
+        );
+    }
+    // `s` is NULL at a context's check; at a connection's it is the
+    // connection, the caller's parameter.
+    let run = run_of(&registrar("sec_needs_s"), &contracts);
+    for name in ["load_chain", "load_certificate"] {
+        let (status, leaves) = row_of(name, run.clone(), &contracts);
+        assert_ne!(status, AnalysisStatus::Safe, "{name}");
+        assert!(null_refusal(&leaves, "sec_needs_s"), "{name}: {leaves:?}");
+    }
+    let (_, leaves) = row_of("write_some", run, &contracts);
+    assert!(!refused(&leaves, "callback-supplied-null"), "{leaves:?}");
+    // `other` is NULL with no object; SSL_CTX_use_certificate passes the
+    // caller's certificate there.
+    let run = run_of(&registrar("sec_needs_other"), &contracts);
+    for name in ["write_some", "load_chain"] {
+        let (status, leaves) = row_of(name, run.clone(), &contracts);
+        assert_ne!(status, AnalysisStatus::Safe, "{name}");
+        assert!(
+            null_refusal(&leaves, "sec_needs_other"),
+            "{name}: {leaves:?}"
+        );
+    }
+    let (_, leaves) = row_of("load_certificate", run, &contracts);
+    assert!(!refused(&leaves, "callback-supplied-null"), "{leaves:?}");
+    // Accepting NULL everywhere the page says it may be passed: decided.
+    let run = run_of(&registrar("sec_null_ok"), &contracts);
+    for name in ["write_some", "load_chain", "load_certificate"] {
+        let (_, leaves) = row_of(name, run.clone(), &contracts);
+        assert!(!refused(&leaves, "callback-"), "{name}: {leaves:?}");
+    }
+    let (status, leaves) = row_of("write_some", run, &contracts);
+    assert_eq!(status, AnalysisStatus::Safe, "{leaves:?}");
 }

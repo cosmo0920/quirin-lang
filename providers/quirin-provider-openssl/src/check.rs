@@ -93,7 +93,8 @@ use serde_json::Value;
 pub use crate::documented::{
     BIO_FREE, BIO_FREE_STATEMENT, BUILTIN_BIO_METHODS, BUILTIN_BIO_METHODS_STATEMENT, DOCUMENTED,
     Documented, DocumentedFunction, EX_DATA, EX_DATA_AUDIT, EX_DATA_CLASSES, EX_DATA_STATEMENT,
-    ExData, Null, Premise, SLOTS, Slot, UNSTATED_SLOTS, UNSTATED_SLOTS_STATEMENT,
+    ExData, NULLABLE_ARGUMENTS, Null, NullableArgument, Premise, SLOTS, Slot, UNSTATED_SLOTS,
+    UNSTATED_SLOTS_STATEMENT, nullable_argument,
 };
 
 /// The crate name a request's translation unit carries.
@@ -481,6 +482,10 @@ pub fn check_function(module_path: &str, module: &str, function: &str) -> Result
     for slot in stated_slots(documented) {
         slot_writers_declared(slot, &snapshots)
             .map_err(|failure| format!("{function}: {failure}"))?;
+        // Card CALLBACK-SUPPLIED-NULL-ACTUAL: and every nullable argument of
+        // it is cited from its page and used.
+        nullable_arguments_cited(slot, &snapshots)
+            .map_err(|failure| format!("{function}: {failure}"))?;
     }
     Ok(format!(
         "{function}: prototype `{prototype}` ({header}, sha256 {}) matches the contract; `{range}` \
@@ -620,6 +625,75 @@ pub fn registered_slots(documented: &DocumentedFunction) -> Vec<&'static str> {
     slots
 }
 
+/// Card **CALLBACK-SUPPLIED-NULL-ACTUAL**: every [`NULLABLE_ARGUMENTS`] entry
+/// of `slot` cites a sentence its page's snapshot at 3.5 records (in
+/// `null_sentences` or `argument_null_sentences`), and some documented
+/// invocation of the slot receives a value the callee supplies at its
+/// position (an entry no `_` reads would be vacuous).
+///
+/// # Errors
+///
+/// The first entry that is not so, as the diagnostic text.
+pub fn nullable_arguments_cited(slot: &str, snapshots: &Value) -> Result<(), String> {
+    for nullable in NULLABLE_ARGUMENTS.iter().filter(|entry| entry.slot == slot) {
+        nullable_argument_cited(nullable, snapshots)?;
+    }
+    Ok(())
+}
+
+/// One [`NullableArgument`] as [`nullable_arguments_cited`] requires it.
+///
+/// # Errors
+///
+/// Why it is not so, as the diagnostic text.
+pub fn nullable_argument_cited(
+    nullable: &NullableArgument,
+    snapshots: &Value,
+) -> Result<(), String> {
+    let NullableArgument {
+        slot,
+        position,
+        sentence,
+    } = *nullable;
+    let stated = SLOTS
+        .iter()
+        .find(|known| known.key == slot)
+        .ok_or_else(|| format!("nullable argument of `{slot}`, which is not a stated slot"))?;
+    let page = snapshots["pages"]
+        .as_array()
+        .into_iter()
+        .flatten()
+        .find(|page| {
+            page["page"] == stated.page && page["series"] == "3.5" && page["fetched"] == true
+        })
+        .ok_or_else(|| format!("no fetched snapshot of {} at 3.5", stated.page))?;
+    let recorded = ["null_sentences", "argument_null_sentences"]
+        .iter()
+        .flat_map(|key| page[*key].as_array().into_iter().flatten())
+        .any(|recorded| recorded.as_str() == Some(sentence));
+    if !recorded {
+        return Err(format!(
+            "`{slot}` argument {position} is read as nullable, but the snapshot of {} at 3.5 \
+             does not record \"{sentence}\"",
+            stated.page
+        ));
+    }
+    let used = DOCUMENTED
+        .iter()
+        .flat_map(|entry| entry.premises)
+        .any(|premise| {
+            matches!(premise, Premise::SlotInvoked { slot: invoked, arguments, .. }
+                if *invoked == slot && arguments.get(position) == Some(&None))
+        });
+    if !used {
+        return Err(format!(
+            "`{slot}` argument {position} is read as nullable, but no documented invocation \
+             of the slot receives a value the callee supplies there"
+        ));
+    }
+    Ok(())
+}
+
 /// Card OPENSSL-SSL-CTX-CALLBACK-SLOTS: `slot` is one of [`SLOTS`]; its
 /// page, as fetched at the pinned series (3.5), names every one of its
 /// writers; each writer is documented as a [`Documented::RegistersSlot`] of
@@ -755,9 +829,12 @@ pub fn expected_clauses(
                 arguments,
             } => {
                 let mut actuals = vec![name(*object)?, (*slot).to_owned()];
-                for argument in *arguments {
+                for (at, argument) in arguments.iter().enumerate() {
                     actuals.push(match argument {
                         Some(position) => name(*position)?,
+                        // Card CALLBACK-SUPPLIED-NULL-ACTUAL: the page says
+                        // the callback may receive NULL there.
+                        None if nullable_argument(slot, at) => "supplied_nullable".to_owned(),
                         None => "_".to_owned(),
                     });
                 }
@@ -1464,19 +1541,19 @@ mod tests {
         // caller's certificate read as a supplied value, the context's check
         // read as the connection's.
         let (path, text) = module_of("SSL_CTX_use_certificate");
-        let invocation = "    ensures normal resource_callback_slot_invoked(ctx, ssl_ctx_st.sec_cb, _, ctx, _, _, _, x, _);\n";
+        let invocation = "    ensures normal resource_callback_slot_invoked(ctx, ssl_ctx_st.sec_cb, supplied_nullable, ctx, _, _, _, x, supplied_nullable);\n";
         assert!(text.contains(invocation));
         let silent = text.replacen(invocation, "", 1);
         assert!(check_function(path, &silent, "SSL_CTX_use_certificate").is_err());
         let supplied = text.replacen(
-            "ssl_ctx_st.sec_cb, _, ctx, _, _, _, x, _)",
-            "ssl_ctx_st.sec_cb, _, ctx, _, _, _, _, _)",
+            "ssl_ctx_st.sec_cb, supplied_nullable, ctx, _, _, _, x, supplied_nullable)",
+            "ssl_ctx_st.sec_cb, supplied_nullable, ctx, _, _, _, _, supplied_nullable)",
             1,
         );
         assert!(check_function(path, &supplied, "SSL_CTX_use_certificate").is_err());
         let connection = text.replacen(
-            "ssl_ctx_st.sec_cb, _, ctx, _, _, _, x, _)",
-            "ssl_ctx_st.sec_cb, ctx, _, _, _, _, x, _)",
+            "ssl_ctx_st.sec_cb, supplied_nullable, ctx, _, _, _, x, supplied_nullable)",
+            "ssl_ctx_st.sec_cb, ctx, supplied_nullable, _, _, _, x, supplied_nullable)",
             1,
         );
         assert!(check_function(path, &connection, "SSL_CTX_use_certificate").is_err());
@@ -2066,6 +2143,90 @@ mod tests {
                 documented.series
             );
         }
+    }
+
+    /// Card CALLBACK-SUPPLIED-NULL-ACTUAL: every nullable argument is cited
+    /// from its page and used; a dropped or an uncited mark is refused.
+    #[test]
+    fn a_drifted_nullable_argument_is_refused() {
+        let snapshots: Value = serde_json::from_str(crate::DOC_SNAPSHOTS).unwrap();
+        assert_eq!(NULLABLE_ARGUMENTS.len(), 9);
+        for nullable in NULLABLE_ARGUMENTS {
+            nullable_argument_cited(nullable, &snapshots)
+                .unwrap_or_else(|failure| panic!("{nullable:?}: {failure}"));
+        }
+        // A sentence the snapshot does not record.
+        let uncited = NullableArgument {
+            sentence: "The connection may be NULL.",
+            ..NULLABLE_ARGUMENTS[0]
+        };
+        let refused = nullable_argument_cited(&uncited, &snapshots).unwrap_err();
+        assert!(refused.contains("does not record"), "{refused}");
+        // A position every invocation fills with a parameter (`s` of the
+        // PSK client callback is the connection): vacuous.
+        let vacuous = NullableArgument {
+            slot: "ssl_ctx_st.psk_client_callback",
+            position: 0,
+            ..NULLABLE_ARGUMENTS[4]
+        };
+        let refused = nullable_argument_cited(&vacuous, &snapshots).unwrap_err();
+        assert!(refused.contains("no documented invocation"), "{refused}");
+        // A slot the checker does not state.
+        let unknown = NullableArgument {
+            slot: "ssl_ctx_st.no_such_cb",
+            ..NULLABLE_ARGUMENTS[0]
+        };
+        assert!(nullable_argument_cited(&unknown, &snapshots).is_err());
+        // The cited snapshot without its argument sentences.
+        let mut stripped = snapshots.clone();
+        for page in stripped["pages"].as_array_mut().unwrap() {
+            if page["page"] == "SSL_CTX_set_security_level" {
+                page.as_object_mut()
+                    .unwrap()
+                    .remove("argument_null_sentences");
+            }
+        }
+        assert!(nullable_arguments_cited("ssl_ctx_st.sec_cb", &stripped).is_err());
+        // The declarations: a mark dropped (read as `_`, a value the callee
+        // always fills), or a `_` read as nullable where no page says so.
+        let (path, text) = module_of("SSL_read");
+        let start = text.find("extern fn SSL_read(").unwrap();
+        let (head, tail) = text.split_at(start);
+        let in_read = |from: &str, to: &str| format!("{head}{}", tail.replacen(from, to, 1));
+        let marked = "resource_callback_slot_invoked(ssl, ssl_ctx_st.sec_cb, ssl, supplied_nullable, _, _, _, supplied_nullable, supplied_nullable)";
+        assert!(tail.contains(marked));
+        for drifted in [
+            "resource_callback_slot_invoked(ssl, ssl_ctx_st.sec_cb, ssl, _, _, _, _, supplied_nullable, supplied_nullable)",
+            "resource_callback_slot_invoked(ssl, ssl_ctx_st.sec_cb, ssl, supplied_nullable, _, _, _, _, supplied_nullable)",
+            "resource_callback_slot_invoked(ssl, ssl_ctx_st.sec_cb, ssl, supplied_nullable, supplied_nullable, _, _, supplied_nullable, supplied_nullable)",
+        ] {
+            let changed = in_read(marked, drifted);
+            assert!(
+                check_function(path, &changed, "SSL_read").is_err(),
+                "{drifted}"
+            );
+        }
+        let unmarked = in_read(
+            "resource_callback_slot_invoked(ssl, ssl_ctx_st.psk_client_callback, ssl, supplied_nullable,",
+            "resource_callback_slot_invoked(ssl, ssl_ctx_st.psk_client_callback, ssl, _,",
+        );
+        assert_ne!(unmarked, text);
+        assert!(check_function(path, &unmarked, "SSL_read").is_err());
+        let invented = in_read(
+            "resource_callback_slot_invoked(ssl, ssl_ctx_st.info_callback, ssl, _, _)",
+            "resource_callback_slot_invoked(ssl, ssl_ctx_st.info_callback, ssl, supplied_nullable, _)",
+        );
+        assert_ne!(invented, text);
+        assert!(check_function(path, &invented, "SSL_read").is_err());
+        // The readers' BIO callbacks.
+        let (path, text) = module_of("PEM_read_bio_X509");
+        let unmarked = text.replacen(
+            "resource_callback_slot_invoked(out, bio_st.bio_callback, _, _, supplied_nullable, _, _, _)",
+            "resource_callback_slot_invoked(out, bio_st.bio_callback, _, _, _, _, _, _)",
+            1,
+        );
+        assert_ne!(unmarked, text);
+        assert!(check_function(path, &unmarked, "PEM_read_bio_X509").is_err());
     }
 
     /// Card OPENSSL-EX-DATA-REGISTRY: every declaration the audit reads as

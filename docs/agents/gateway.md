@@ -7950,7 +7950,31 @@ an undeclared OpenSSL producer). `QCore.NullableReferenceDrop` (12 audited,
     (`invocations_of_identities_are_identity`,
     `an_identity_decision_is_the_custody_reading`, `decide_refuses_*`,
     `identity_only_borrows_or_requires`, `requirements_are_owned_parameters`);
-    `tests/cg22_callback_registry.rs`.
+    `tests/cg22_callback_registry.rs`. **A supplied actual that may be NULL**
+    (card CALLBACK-SUPPLIED-NULL-ACTUAL, contract specification C04.19 item
+    2, amended in place): the actual word `supplied_nullable`
+    (`CallbackActual::SuppliedNullable`) is a value the callee supplies, as
+    `_`, that its documentation says may be a null pointer. It stands
+    wherever `_` does and is reserved as a parameter name. `classify` admits
+    `resource_borrowed` and `resource_owned(nullable)` there, as at `_`; a
+    candidate requiring `resource_owned(nonnull)` there is
+    `RequiresNonNullSupplied` and refuses the call (`callback-supplied-null`,
+    naming the candidate). It puts no requirement on the call (the value is
+    the callee's). The body check (13y) matches it as `_`, rule 15w
+    forwards it only to itself, and a hand-off candidate reads it as `_`. A
+    plain `_` keeps its reading (the callee meets a `nonnull` requirement).
+    **Do not** read a `nonnull` requirement at a nullable actual as met, or
+    mark an argument nullable without its page's sentence (the OpenSSL
+    crate's `NULLABLE_ARGUMENTS`, checked against the snapshot).
+    `QCore.CallbackSuppliedNull`
+    (`a_nonnull_requirement_at_a_nullable_actual_is_not_admitted`,
+    `decide_refuses_a_nonnull_requirement`,
+    `an_admitted_candidate_accepts_null`, `marking_never_admits_more`,
+    `without_a_nullable_actual_the_reading_is_unchanged`, vectors bound to
+    `NULLABLE_CLASSIFY_VECTORS` and `NULLABLE_DECISION_VECTORS`);
+    `tests/openssl_unstated_callback_slots.rs`
+    (`a_candidate_requiring_a_live_object_where_the_library_may_pass_null_refuses`);
+    [report](../reports/callback-supplied-null-actual/README.md).
 
 <a id="constraint-13v"></a>
 
