@@ -275,6 +275,10 @@
    "declaration": "void SSL_CTX_set_alpn_select_cb(SSL_CTX *ctx, SSL_CTX_alpn_select_cb_func cb, void *arg)",
    "header": "/usr/include/openssl/ssl.h"
   },
+  "SSL_CTX_set_async_callback": {
+   "declaration": "int SSL_CTX_set_async_callback(SSL_CTX *ctx, SSL_async_callback_fn callback)",
+   "header": "/usr/include/openssl/ssl.h"
+  },
   "SSL_CTX_set_cert_cb": {
    "declaration": "void SSL_CTX_set_cert_cb(SSL_CTX *c, int (*cb)(SSL *ssl, void *arg), void *arg)",
    "header": "/usr/include/openssl/ssl.h"
@@ -291,6 +295,14 @@
    "declaration": "void SSL_CTX_set_client_hello_cb(SSL_CTX *c, SSL_client_hello_cb_fn cb, void *arg)",
    "header": "/usr/include/openssl/ssl.h"
   },
+  "SSL_CTX_set_cookie_generate_cb": {
+   "declaration": "void SSL_CTX_set_cookie_generate_cb(SSL_CTX *ctx, int (*app_gen_cookie_cb)(SSL *ssl, unsigned char *cookie, unsigned int *cookie_len))",
+   "header": "/usr/include/openssl/ssl.h"
+  },
+  "SSL_CTX_set_cookie_verify_cb": {
+   "declaration": "void SSL_CTX_set_cookie_verify_cb(SSL_CTX *ctx, int (*app_verify_cookie_cb)(SSL *ssl, const unsigned char *cookie, unsigned int cookie_len))",
+   "header": "/usr/include/openssl/ssl.h"
+  },
   "SSL_CTX_set_default_passwd_cb": {
    "declaration": "void SSL_CTX_set_default_passwd_cb(SSL_CTX *ctx, pem_password_cb *cb)",
    "header": "/usr/include/openssl/ssl.h"
@@ -303,6 +315,10 @@
    "declaration": "int SSL_CTX_set_default_verify_paths(SSL_CTX *ctx)",
    "header": "/usr/include/openssl/ssl.h"
   },
+  "SSL_CTX_set_generate_session_id": {
+   "declaration": "int SSL_CTX_set_generate_session_id(SSL_CTX *ctx, GEN_SESSION_CB cb)",
+   "header": "/usr/include/openssl/ssl.h"
+  },
   "SSL_CTX_set_info_callback": {
    "declaration": "void SSL_CTX_set_info_callback(SSL_CTX *ctx, void (*cb)(const SSL *ssl, int type, int val))",
    "header": "/usr/include/openssl/ssl.h"
@@ -313,6 +329,10 @@
   },
   "SSL_CTX_set_msg_callback": {
    "declaration": "void SSL_CTX_set_msg_callback(SSL_CTX *ctx, void (*cb)(int write_p, int version, int content_type, const void *buf, size_t len, SSL *ssl, void *arg))",
+   "header": "/usr/include/openssl/ssl.h"
+  },
+  "SSL_CTX_set_new_pending_conn_cb": {
+   "declaration": "void SSL_CTX_set_new_pending_conn_cb(SSL_CTX *c, SSL_new_pending_conn_cb_fn cb, void *arg)",
    "header": "/usr/include/openssl/ssl.h"
   },
   "SSL_CTX_set_next_proto_select_cb": {
@@ -349,6 +369,34 @@
   },
   "SSL_CTX_set_security_callback": {
    "declaration": "void SSL_CTX_set_security_callback(SSL_CTX *ctx, int (*cb)(const SSL *s, const SSL_CTX *ctx, int op, int bits, int nid, void *other, void *ex))",
+   "header": "/usr/include/openssl/ssl.h"
+  },
+  "SSL_CTX_set_session_ticket_cb": {
+   "declaration": "int SSL_CTX_set_session_ticket_cb(SSL_CTX *ctx, SSL_CTX_generate_session_ticket_fn gen_cb, SSL_CTX_decrypt_session_ticket_fn dec_cb, void *arg)",
+   "header": "/usr/include/openssl/ssl.h"
+  },
+  "SSL_CTX_set_srp_client_pwd_callback": {
+   "declaration": "int SSL_CTX_set_srp_client_pwd_callback(SSL_CTX *ctx, char *(*cb)(SSL *, void *))",
+   "header": "/usr/include/openssl/ssl.h"
+  },
+  "SSL_CTX_set_srp_username_callback": {
+   "declaration": "int SSL_CTX_set_srp_username_callback(SSL_CTX *ctx, int (*cb)(SSL *, int *, void *))",
+   "header": "/usr/include/openssl/ssl.h"
+  },
+  "SSL_CTX_set_srp_verify_param_callback": {
+   "declaration": "int SSL_CTX_set_srp_verify_param_callback(SSL_CTX *ctx, int (*cb)(SSL *, void *))",
+   "header": "/usr/include/openssl/ssl.h"
+  },
+  "SSL_CTX_set_stateless_cookie_generate_cb": {
+   "declaration": "void SSL_CTX_set_stateless_cookie_generate_cb( SSL_CTX *ctx, int (*gen_stateless_cookie_cb)(SSL *ssl, unsigned char *cookie, size_t *cookie_len))",
+   "header": "/usr/include/openssl/ssl.h"
+  },
+  "SSL_CTX_set_stateless_cookie_verify_cb": {
+   "declaration": "void SSL_CTX_set_stateless_cookie_verify_cb( SSL_CTX *ctx, int (*verify_stateless_cookie_cb)(SSL *ssl, const unsigned char *cookie, size_t cookie_len))",
+   "header": "/usr/include/openssl/ssl.h"
+  },
+  "SSL_CTX_set_tmp_dh_callback": {
+   "declaration": "void SSL_CTX_set_tmp_dh_callback(SSL_CTX *ctx, DH *(*dh)(SSL *ssl, int is_export, int keylength))",
    "header": "/usr/include/openssl/ssl.h"
   },
   "SSL_CTX_set_verify": {
@@ -415,8 +463,16 @@
    "declaration": "void SSL_set_allow_early_data_cb(SSL *s, SSL_allow_early_data_cb_fn cb, void *arg)",
    "header": "/usr/include/openssl/ssl.h"
   },
+  "SSL_set_async_callback": {
+   "declaration": "int SSL_set_async_callback(SSL *s, SSL_async_callback_fn callback)",
+   "header": "/usr/include/openssl/ssl.h"
+  },
   "SSL_set_cert_cb": {
    "declaration": "void SSL_set_cert_cb(SSL *s, int (*cb)(SSL *ssl, void *arg), void *arg)",
+   "header": "/usr/include/openssl/ssl.h"
+  },
+  "SSL_set_generate_session_id": {
+   "declaration": "int SSL_set_generate_session_id(SSL *s, GEN_SESSION_CB cb)",
    "header": "/usr/include/openssl/ssl.h"
   },
   "SSL_set_info_callback": {
@@ -449,6 +505,14 @@
   },
   "SSL_set_security_callback": {
    "declaration": "void SSL_set_security_callback(SSL *s, int (*cb)(const SSL *s, const SSL_CTX *ctx, int op, int bits, int nid, void *other, void *ex))",
+   "header": "/usr/include/openssl/ssl.h"
+  },
+  "SSL_set_session_secret_cb": {
+   "declaration": "int SSL_set_session_secret_cb(SSL *s, tls_session_secret_cb_fn session_secret_cb, void *arg)",
+   "header": "/usr/include/openssl/ssl.h"
+  },
+  "SSL_set_tmp_dh_callback": {
+   "declaration": "void SSL_set_tmp_dh_callback(SSL *ssl, DH *(*dh)(SSL *ssl, int is_export, int keylength))",
    "header": "/usr/include/openssl/ssl.h"
   },
   "SSL_set_verify": {
@@ -491,8 +555,56 @@
    "declaration": "struct stack_st_X509_OBJECT *X509_STORE_get0_objects(const X509_STORE *xs)",
    "header": "/usr/include/openssl/x509_vfy.h"
   },
+  "X509_STORE_set_cert_crl": {
+   "declaration": "void X509_STORE_set_cert_crl(X509_STORE *xs, X509_STORE_CTX_cert_crl_fn cert_crl)",
+   "header": "/usr/include/openssl/x509_vfy.h"
+  },
+  "X509_STORE_set_check_crl": {
+   "declaration": "void X509_STORE_set_check_crl(X509_STORE *xs, X509_STORE_CTX_check_crl_fn check_crl)",
+   "header": "/usr/include/openssl/x509_vfy.h"
+  },
+  "X509_STORE_set_check_issued": {
+   "declaration": "void X509_STORE_set_check_issued(X509_STORE *xs, X509_STORE_CTX_check_issued_fn check_issued)",
+   "header": "/usr/include/openssl/x509_vfy.h"
+  },
+  "X509_STORE_set_check_policy": {
+   "declaration": "void X509_STORE_set_check_policy(X509_STORE *xs, X509_STORE_CTX_check_policy_fn check_policy)",
+   "header": "/usr/include/openssl/x509_vfy.h"
+  },
+  "X509_STORE_set_check_revocation": {
+   "declaration": "void X509_STORE_set_check_revocation(X509_STORE *xs, X509_STORE_CTX_check_revocation_fn check_revocation)",
+   "header": "/usr/include/openssl/x509_vfy.h"
+  },
+  "X509_STORE_set_cleanup": {
+   "declaration": "void X509_STORE_set_cleanup(X509_STORE *xs, X509_STORE_CTX_cleanup_fn cleanup)",
+   "header": "/usr/include/openssl/x509_vfy.h"
+  },
   "X509_STORE_set_flags": {
    "declaration": "int X509_STORE_set_flags(X509_STORE *xs, unsigned long flags)",
+   "header": "/usr/include/openssl/x509_vfy.h"
+  },
+  "X509_STORE_set_get_crl": {
+   "declaration": "void X509_STORE_set_get_crl(X509_STORE *xs, X509_STORE_CTX_get_crl_fn get_crl)",
+   "header": "/usr/include/openssl/x509_vfy.h"
+  },
+  "X509_STORE_set_get_issuer": {
+   "declaration": "void X509_STORE_set_get_issuer(X509_STORE *xs, X509_STORE_CTX_get_issuer_fn get_issuer)",
+   "header": "/usr/include/openssl/x509_vfy.h"
+  },
+  "X509_STORE_set_lookup_certs": {
+   "declaration": "void X509_STORE_set_lookup_certs(X509_STORE *xs, X509_STORE_CTX_lookup_certs_fn lookup_certs)",
+   "header": "/usr/include/openssl/x509_vfy.h"
+  },
+  "X509_STORE_set_lookup_crls": {
+   "declaration": "void X509_STORE_set_lookup_crls(X509_STORE *xs, X509_STORE_CTX_lookup_crls_fn lookup_crls)",
+   "header": "/usr/include/openssl/x509_vfy.h"
+  },
+  "X509_STORE_set_verify": {
+   "declaration": "void X509_STORE_set_verify(X509_STORE *xs, X509_STORE_CTX_verify_fn verify)",
+   "header": "/usr/include/openssl/x509_vfy.h"
+  },
+  "X509_STORE_set_verify_cb": {
+   "declaration": "void X509_STORE_set_verify_cb(X509_STORE *xs, X509_STORE_CTX_verify_cb verify_cb)",
    "header": "/usr/include/openssl/x509_vfy.h"
   },
   "X509_free": {

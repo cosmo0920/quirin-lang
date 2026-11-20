@@ -64,6 +64,15 @@ const SSL_HANDSHAKE: &str =
     include_str!("../../../providers/quirin-provider-openssl/contracts/openssl/ssl_handshake.qv");
 const BIO_SLOTS: &str =
     include_str!("../../../providers/quirin-provider-openssl/contracts/openssl/bio_slots.qv");
+/// Card OPENSSL-REMAINING-HANDSHAKE-SETTERS: the remaining handshake slots'
+/// setters and the certificate store's, which the I/O calls' invocations now
+/// also need registered.
+const SSL_HANDSHAKE_SETTERS: &str = include_str!(
+    "../../../providers/quirin-provider-openssl/contracts/openssl/ssl_handshake_setters.qv"
+);
+const X509_STORE_SLOTS: &str = include_str!(
+    "../../../providers/quirin-provider-openssl/contracts/openssl/x509_store_slots.qv"
+);
 
 /// The application's candidates: identity contracts, and one that releases
 /// what the security callback is handed as `other`.
@@ -228,6 +237,8 @@ fn crate_contracts() -> ResourceContracts {
         ("ssl_io.qv", SSL_IO),
         ("ssl_handshake.qv", SSL_HANDSHAKE),
         ("bio_slots.qv", BIO_SLOTS),
+        ("ssl_handshake_setters.qv", SSL_HANDSHAKE_SETTERS),
+        ("x509_store_slots.qv", X509_STORE_SLOTS),
     ])
 }
 
@@ -345,8 +356,9 @@ fn the_crate_states_every_new_slot() {
     for call in ["SSL_write", "SSL_read", "SSL_connect", "SSL_do_handshake"] {
         let declaration = contracts.retaining_contract(call).expect("withheld");
         // Nine since this card; 27 since OPENSSL-UNDECLARED-HANDSHAKE-CALLBACKS;
-        // 41 since OPENSSL-BIO-METHODS-AND-CALLBACKS.
-        assert_eq!(declaration.callbacks.len(), 41, "{call}");
+        // 41 since OPENSSL-BIO-METHODS-AND-CALLBACKS; 67 since
+        // OPENSSL-REMAINING-HANDSHAKE-SETTERS.
+        assert_eq!(declaration.callbacks.len(), 67, "{call}");
         assert!(
             declaration
                 .callbacks

@@ -62,7 +62,9 @@ Every token but `\` is an existing one.
 | `#ex_data_free(k)` | cls → set(fn) | the free callbacks registered for `k` |
 | `#method(b)` | obj → meth | the BIO_METHOD of a BIO |
 | `#builtin` | set(meth) | the BIO_METHODs the library defines itself (a `BIO_s_`/`BIO_f_` function's, handed to no setter) |
-| `#fns(b)` | obj → set(fn) | the functions of the BIO's method table, each as run on that BIO |
+| `#fns(b)` | obj → set(fn) | the functions of the object's method table (BIO_METHOD, X509_LOOKUP_METHOD), each as run on it |
+| `#store(S)` | set(obj) → set(obj) | the X509_STORE each SSL_CTX of `S` holds |
+| `#lookups(S)` | set(obj) → set(obj) | the X509_LOOKUPs each X509_STORE of `S` holds |
 | `#in_turn(f, S)` | fn, set(obj) → set(fn) | the callbacks a run of `f` runs in turn on an object of `S` |
 | `#caller_held` | set(res) | the resources the caller holds when the run starts |
 | `#takes(R)`, `#releases(R)`, `#retains(R)` | set(res) → set(res) | the members of `R` the run takes over, releases, keeps |
@@ -114,7 +116,7 @@ this card's first hand-back, which had used the existing `-`).
 * `openssl_ex_data_callbacks` (30):
   `quant all #o in #created | #copied | #freed: #ex_data(#class(#o)) |-> #inert`
 * `openssl_unstated_callback_slots` (7):
-  `#slots(#of(SSL, #args) | #ctx(#of(SSL, #args)) | #of(SSL_CTX, #args)) \ #stated |-> #inert && quant all #o in #created | #copied | #freed: #ex_data(#class(#o)) \ #stated |-> #inert`
+  `#slots(#of(SSL, #args) | #ctx(#of(SSL, #args)) | #of(SSL_CTX, #args)) \ #stated |-> #inert && (quant all #l in #lookups(#store(#ctx(#of(SSL, #args)) | #of(SSL_CTX, #args))): #fns(#l) \ #stated |-> #inert) && quant all #o in #created | #copied | #freed: #ex_data(#class(#o)) \ #stated |-> #inert`
 * `openssl_builtin_bio_methods` (10):
   `quant all #b in #chain(#of(BIO, #args) | #bios(#of(SSL, #args))): #method(#b) in #builtin -> #fns(#b) |-> #inert && quant all #f in #fns(#b): #in_turn(#f, #ssl_of(#b) \ #args) |-> #inert`
 * `openssl_bio_free_callbacks` (2):
@@ -140,6 +142,8 @@ The modules lay each out one step per line (a break before every `->` and
 | | "or its SSL_CTX" | `#ctx(#of(SSL, #args))`; on `SSL_CTX_free`, the SSL_CTX argument, `#of(SSL_CTX, #args)` (R3) |
 | | "whose invocation the declaration does not state" | `\ #stated` |
 | | "among them the SSL_CTX_callback_ctrl arms such as the servername, status and ticket key callbacks" | members of `#slots` (its meaning names the arms); "among them" adds no set |
+| | "the certificate transparency validation callback, and the not-resumable session and session ticket extension callbacks, whose setters no manual page documents" (r38) | members of `#slots` too, under the same "among them": `#slots`' meaning names them; no set is added |
+| | "a function of an X509_LOOKUP_METHOD of a lookup the certificate store of the SSL_CTX holds" (r38) | `&& (quant all #l in #lookups(#store(#ctx(#of(SSL, #args)) \| #of(SSL_CTX, #args))): #fns(#l) \ #stated \|-> #inert)`: the SSL_CTX as above (the SSL object's or the SSL_CTX argument), its store, the store's lookups, each lookup method's functions as run on that lookup, less what a clause states |
 | | "or an ex_data callback" | `&& quant all #o in #created \| #copied \| #freed: #ex_data(#class(#o)) \ #stated \|-> #inert` (R2) |
 | | "takes, releases or retains nothing the caller holds" | `\|-> #inert`, each conjunct |
 | builtin | "a function of a BIO method" | `#fns(#b)` |
@@ -272,6 +276,16 @@ Against `7c026b527`, `contracts.lock` changes exactly the 30 premised
 declarations' `contract_sha256` and `pinned_at`. The other 77 entries and every
 top-level key are unchanged, nothing is added or removed, and both load paths
 and `quirin-plugin.json` are byte-identical to main.
+
+**After merging main `ffb41c748`** (r38, OPENSSL-REMAINING-HANDSHAKE-SETTERS)
+the lock was regenerated the same way (`regen-checkers-7.log` exit 1 with 30
+stale entries; `regen-pin-7.log`, `regen-sync-7.log`, `regen-checkers-8.log`,
+`regen-views-7.log` each exit 0). Against `ffb41c748`, `contracts.lock` changes
+exactly the 30 premised declarations' `contract_sha256` and `pinned_at` (the
+changed set equals the set of declarations naming a premise). The other 105 of
+its 135 entries and every top-level key are unchanged, and nothing is added or
+removed. Both load paths and `quirin-plugin.json` are byte-identical to main.
+The crate has 49 premise clauses on those 30 declarations.
 
 ## 8. Measurement
 

@@ -94,6 +94,8 @@ def vocab : List (String × List Srt × Srt) := [
   ("method", [.obj], .meth),
   ("builtin", [], .smeth),
   ("fns", [.obj], .sfn),
+  ("store", [.sobj], .sobj),
+  ("lookups", [.sobj], .sobj),
   ("in_turn", [.fn, .sobj], .sfn),
   ("caller_held", [], .sres),
   ("takes", [.sres], .sres),
@@ -202,6 +204,8 @@ structure Model where
   method : U → U
   builtin : U → Prop
   fns : U → U → Prop
+  store : (U → Prop) → U → Prop
+  lookups : (U → Prop) → U → Prop
   inTurn : U → (U → Prop) → U → Prop
   callerHeld : Run → U → Prop
   takes : Run → (U → Prop) → U → Prop
@@ -256,6 +260,8 @@ def prim1 (M : Model) (f : String) : Val M → Val M
       else if f = "bios" then .st (M.bios s)
       else if f = "chain" then .st (M.chain s)
       else if f = "slots" then .st (M.slots s)
+      else if f = "store" then .st (M.store s)
+      else if f = "lookups" then .st (M.lookups s)
       else .bad
   | .rs s =>
       if f = "takes" then .rs (fun r => M.takes r (s r))
@@ -358,7 +364,7 @@ theorem prim0_kind (M : Model) {f : String} {s : Srt} (h : term f = some ([], s)
   rcases hm with ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ |
       ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ |
       ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ |
-      ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ <;>
+      ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ <;>
     simp_all [prim0, Val.kind, Srt.kind]
 
 theorem prim1_kind (M : Model) {f : String} {x s : Srt} {v : Val M}
@@ -369,7 +375,7 @@ theorem prim1_kind (M : Model) {f : String} {x s : Srt} {v : Val M}
   rcases hm with ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ |
       ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ |
       ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ |
-      ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ <;>
+      ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ <;>
     (simp at hs) <;>
     (try obtain ⟨rfl, rfl⟩ := hs) <;>
     (cases v <;> simp_all [prim1, Val.kind, Srt.kind])
@@ -383,7 +389,7 @@ theorem prim2_kind (M : Model) {f : String} {x y s : Srt} {v w : Val M}
   rcases hm with ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ |
       ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ |
       ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ |
-      ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ <;>
+      ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ <;>
     (simp at hs) <;>
     (try obtain ⟨⟨rfl, rfl⟩, rfl⟩ := hs) <;>
     (cases v <;> cases w <;> simp_all [prim2, Val.kind, Srt.kind])
@@ -588,7 +594,7 @@ theorem decision_vectors_agree :
 
 def exDataFormula : Raw := (.quant "o" (.bin .union (.bin .union (.app0 "created") (.app0 "copied")) (.app0 "freed")) (.bin .mapsTo (.app1 "ex_data" (.app1 "class" (.app0 "o"))) (.app0 "inert")))
 
-def unstatedFormula : Raw := (.bin .conj (.bin .mapsTo (.bin .diff (.app1 "slots" (.bin .union (.bin .union (.app2 "of" (.const "SSL") (.app0 "args")) (.app1 "ctx" (.app2 "of" (.const "SSL") (.app0 "args")))) (.app2 "of" (.const "SSL_CTX") (.app0 "args")))) (.app0 "stated")) (.app0 "inert")) (.quant "o" (.bin .union (.bin .union (.app0 "created") (.app0 "copied")) (.app0 "freed")) (.bin .mapsTo (.bin .diff (.app1 "ex_data" (.app1 "class" (.app0 "o"))) (.app0 "stated")) (.app0 "inert"))))
+def unstatedFormula : Raw := (.bin .conj (.bin .conj (.bin .mapsTo (.bin .diff (.app1 "slots" (.bin .union (.bin .union (.app2 "of" (.const "SSL") (.app0 "args")) (.app1 "ctx" (.app2 "of" (.const "SSL") (.app0 "args")))) (.app2 "of" (.const "SSL_CTX") (.app0 "args")))) (.app0 "stated")) (.app0 "inert")) (.quant "l" (.app1 "lookups" (.app1 "store" (.bin .union (.app1 "ctx" (.app2 "of" (.const "SSL") (.app0 "args"))) (.app2 "of" (.const "SSL_CTX") (.app0 "args"))))) (.bin .mapsTo (.bin .diff (.app1 "fns" (.app0 "l")) (.app0 "stated")) (.app0 "inert")))) (.quant "o" (.bin .union (.bin .union (.app0 "created") (.app0 "copied")) (.app0 "freed")) (.bin .mapsTo (.bin .diff (.app1 "ex_data" (.app1 "class" (.app0 "o"))) (.app0 "stated")) (.app0 "inert"))))
 
 def builtinFormula : Raw := (.quant "b" (.app1 "chain" (.bin .union (.app2 "of" (.const "BIO") (.app0 "args")) (.app1 "bios" (.app2 "of" (.const "SSL") (.app0 "args"))))) (.bin .imp (.bin .mem (.app1 "method" (.app0 "b")) (.app0 "builtin")) (.bin .conj (.bin .mapsTo (.app1 "fns" (.app0 "b")) (.app0 "inert")) (.quant "f" (.app1 "fns" (.app0 "b")) (.bin .mapsTo (.app2 "in_turn" (.app0 "f") (.bin .diff (.app1 "ssl_of" (.app0 "b")) (.app0 "args"))) (.app0 "inert"))))))
 
@@ -611,24 +617,31 @@ theorem eval_exData (M : Model) :
         ∀ f, M.exData (M.cls o) f → ∀ r, M.runs f r → inertEff M r := by
   simp [eval, exDataFormula, lk, prim0, prim1, binVal, Val.holds]
 
-/-- What `openssl_unstated_callback_slots` states. -/
-theorem eval_unstated (M : Model) :
-    (eval M [] unstatedFormula).holds ↔
-      (∀ f, (M.slots (fun u =>
-              ((M.args u ∧ M.cls u = M.const "SSL") ∨
-                M.ctx (fun o => M.args o ∧ M.cls o = M.const "SSL") u) ∨
-              (M.args u ∧ M.cls u = M.const "SSL_CTX")) f ∧ ¬ M.stated f) →
-          ∀ r, M.runs f r → inertEff M r) ∧
-        ∀ o, ((M.created o ∨ M.copied o) ∨ M.freed o) →
-          ∀ f, (M.exData (M.cls o) f ∧ ¬ M.stated f) → ∀ r, M.runs f r → inertEff M r := by
-  simp [eval, unstatedFormula, lk, prim0, prim1, prim2, binVal, Val.holds]
+/-- What `openssl_unstated_callback_slots` states of the ex_data callbacks:
+its last conjunct. -/
+theorem unstated_ex_data_part (M : Model) (h : (eval M [] unstatedFormula).holds) :
+    ∀ o, ((M.created o ∨ M.copied o) ∨ M.freed o) →
+      ∀ f, (M.exData (M.cls o) f ∧ ¬ M.stated f) → ∀ r, M.runs f r → inertEff M r := by
+  simp only [eval, unstatedFormula, lk, prim0, prim1, prim2, binVal, Val.holds] at h
+  simpa using h.2
+
+/-- What it states of the SSL object's and its SSL_CTX's slots: its first
+conjunct. -/
+theorem unstated_slots_part (M : Model) (h : (eval M [] unstatedFormula).holds) :
+    ∀ f, (M.slots (fun u =>
+            ((M.args u ∧ M.cls u = M.const "SSL") ∨
+              M.ctx (fun o => M.args o ∧ M.cls o = M.const "SSL") u) ∨
+            (M.args u ∧ M.cls u = M.const "SSL_CTX")) f ∧ ¬ M.stated f) →
+        ∀ r, M.runs f r → inertEff M r := by
+  simp only [eval, unstatedFormula, lk, prim0, prim1, prim2, binVal, Val.holds] at h
+  simpa using h.1.1
 
 theorem unstated_entails_ex_data (M : Model) (hC : M.Coherent)
     (h : (eval M [] unstatedFormula).holds) : (eval M [] exDataFormula).holds := by
-  rw [eval_unstated] at h
+  have hx := unstated_ex_data_part M h
   rw [eval_exData]
   intro o ho f hf r hr
-  exact h.2 o ho f ⟨hf, hC _ _ hf⟩ r hr
+  exact hx o ho f ⟨hf, hC _ _ hf⟩ r hr
 
 /-- In particular for the SSL object's ex_data class. -/
 theorem unstated_entails_ex_data_for_ssl (M : Model) (hC : M.Coherent)
@@ -652,15 +665,15 @@ theorem ex_data_does_not_entail_unstated :
     bios := fun _ _ => False, chain := fun _ _ => False, sslOf := fun _ _ => False,
     slots := fun _ _ => True, stated := fun _ => False, exData := fun _ _ => False,
     exDataFree := fun _ _ => False, method := id, builtin := fun _ => False,
-    fns := fun _ _ => False,
+    fns := fun _ _ => False, store := fun _ _ => False, lookups := fun _ _ => False,
     inTurn := fun _ _ _ => False, callerHeld := fun _ _ => True,
     takes := fun _ s => s, releases := fun _ _ _ => False,
     retains := fun _ _ _ => False, runs := fun _ _ => True, const := fun _ => true }
   have hC : M.Coherent := fun _ _ h => h.elim
   have hE : (eval M [] exDataFormula).holds := by
     rw [eval_exData]; intro o ho; simp [M] at ho
-  have hU := (eval_unstated M).1 (hall M hC hE)
-  have := hU.1 true ⟨by simp [M], by simp [M]⟩ () trivial
+  have hU := unstated_slots_part M (hall M hC hE)
+  have := hU true ⟨by simp [M], by simp [M]⟩ () trivial
   have h1 := congrFun this.1.1 true
   simp [M, noRes] at h1
 

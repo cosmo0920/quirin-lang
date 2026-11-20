@@ -97,6 +97,10 @@ pub const MODULES: &[(&str, &str)] = &[
         include_str!("../contracts/openssl/ssl_handshake.qv"),
     ),
     (
+        "openssl/ssl_handshake_setters.qv",
+        include_str!("../contracts/openssl/ssl_handshake_setters.qv"),
+    ),
+    (
         "openssl/ssl_io.qv",
         include_str!("../contracts/openssl/ssl_io.qv"),
     ),
@@ -111,6 +115,10 @@ pub const MODULES: &[(&str, &str)] = &[
     (
         "openssl/x509_store.qv",
         include_str!("../contracts/openssl/x509_store.qv"),
+    ),
+    (
+        "openssl/x509_store_slots.qv",
+        include_str!("../contracts/openssl/x509_store_slots.qv"),
     ),
 ];
 

@@ -81,7 +81,10 @@ module contract;
 // ownership), whose lookup methods' free and shutdown functions are
 // user-settable (X509_LOOKUP_meth_set_free, X509_LOOKUP_meth_set_shutdown);
 // SSL_free may drop the context's last reference. Both keep
-// `openssl_ex_data_callbacks` (card OPENSSL-EX-DATA-REGISTRY).
+// `openssl_ex_data_callbacks` (card OPENSSL-EX-DATA-REGISTRY). Card
+// OPENSSL-REMAINING-HANDSHAKE-SETTERS: the premise's statement now names
+// those lookup methods ("a function of an X509_LOOKUP_METHOD of a lookup the
+// certificate store of the SSL_CTX holds"); the frees state nothing new.
 
 // TLS_server_method: https://docs.openssl.org/3.5/man3/SSL_CTX_new/
 // HISTORY (3.5, 1.1.1): TLS_method(), TLS_server_method() and
@@ -133,6 +136,7 @@ contract {
     requires resource_library_version(openssl, documented "1.1.1");
     requires resource_premise(openssl_unstated_callback_slots,
         #slots(#of(SSL, #args) | #ctx(#of(SSL, #args)) | #of(SSL_CTX, #args)) \ #stated |-> #inert
+        && (quant all #l in #lookups(#store(#ctx(#of(SSL, #args)) | #of(SSL_CTX, #args))): #fns(#l) \ #stated |-> #inert)
         && quant all #o in #created | #copied | #freed: #ex_data(#class(#o)) \ #stated |-> #inert);
     requires resource_premise(openssl_ex_data_callbacks,
         quant all #o in #created | #copied | #freed: #ex_data(#class(#o)) |-> #inert);
@@ -175,6 +179,7 @@ contract {
     requires resource_library_version(openssl, documented "1.1.1");
     requires resource_premise(openssl_unstated_callback_slots,
         #slots(#of(SSL, #args) | #ctx(#of(SSL, #args)) | #of(SSL_CTX, #args)) \ #stated |-> #inert
+        && (quant all #l in #lookups(#store(#ctx(#of(SSL, #args)) | #of(SSL_CTX, #args))): #fns(#l) \ #stated |-> #inert)
         && quant all #o in #created | #copied | #freed: #ex_data(#class(#o)) \ #stated |-> #inert);
     requires resource_premise(openssl_bio_free_callbacks,
         quant all #b in #of(BIO, #args) | #chain(#bios(#of(SSL, #args))): #b in #freed
@@ -211,6 +216,14 @@ contract {
 // Card OPENSSL-EX-DATA-REGISTRY: it may process post-handshake messages (a
 // NewSessionTicket creates an SSL_SESSION) while reading for the
 // close_notify.
+// Card OPENSSL-REMAINING-HANDSHAKE-SETTERS: an asynchronous SSL call runs the
+// async callback when "a retry occurs" (SSL_set_async_callback 3.5), and
+// SSL_shutdown is such a call under SSL_MODE_ASYNC: a stated invocation,
+// `ssl_ctx_st.async_cb(ssl, _)`. The premise's statement now names what it
+// covers by name (ssl_io.qv); on SSL_shutdown it still covers the slots this
+// declaration does not state (a post-handshake message's callbacks, and on a
+// QUIC object another connection's handshake callbacks run by the shared
+// reactor).
 extern fn SSL_shutdown(ssl: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
@@ -218,6 +231,7 @@ contract {
     requires resource_library_version(openssl, documented "1.0.2");
     requires resource_premise(openssl_unstated_callback_slots,
         #slots(#of(SSL, #args) | #ctx(#of(SSL, #args)) | #of(SSL_CTX, #args)) \ #stated |-> #inert
+        && (quant all #l in #lookups(#store(#ctx(#of(SSL, #args)) | #of(SSL_CTX, #args))): #fns(#l) \ #stated |-> #inert)
         && quant all #o in #created | #copied | #freed: #ex_data(#class(#o)) \ #stated |-> #inert);
     requires resource_premise(openssl_builtin_bio_methods,
         quant all #b in #chain(#of(BIO, #args) | #bios(#of(SSL, #args))): #method(#b) in #builtin
@@ -229,6 +243,7 @@ contract {
     ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.info_callback, ssl, _, _);
     ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.msg_callback, _, _, _, _, _, ssl, _);
     ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.record_padding_cb, ssl, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.async_cb, ssl, _);
     ensures normal resource_callback_slot_invoked(ssl, bio_st.bio_callback_ex, _, _, supplied_nullable, _, _, _, _, supplied_nullable);
     ensures normal resource_callback_slot_invoked(ssl, bio_st.bio_callback, _, _, supplied_nullable, _, _, _);
     ensures normal resource_callback_slot_invoked(ssl, bio_method_st.meth_write_ex, _, _, _, _);

@@ -41,7 +41,8 @@ The Rust boundary is pinned by `crates/qcore-frontend/tests/premise_formula.rs`
 -- The four OpenSSL formulas.
 #print axioms QCore.PremiseFormula.openssl_formulas_wf
 #print axioms QCore.PremiseFormula.eval_exData
-#print axioms QCore.PremiseFormula.eval_unstated
+#print axioms QCore.PremiseFormula.unstated_ex_data_part
+#print axioms QCore.PremiseFormula.unstated_slots_part
 
 -- The unstated-slots premise entails the ex_data premise.
 #print axioms QCore.PremiseFormula.unstated_entails_ex_data

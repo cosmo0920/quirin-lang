@@ -327,6 +327,7 @@ import QCore.OpensslContractPlugin
 import QCore.OpensslExDataPremise
 import QCore.OpensslFreeInvocations
 import QCore.OpensslHandshakeSlots
+import QCore.OpensslRemainingSetters
 import QCore.OpensslUnstatedSlots
 import QCore.OrderedLifetimeReplay
 import QCore.OsEndpointPostState

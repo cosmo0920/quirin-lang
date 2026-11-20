@@ -305,7 +305,19 @@ pub const VOCABULARY: &[Term] = &[
         name: "fns",
         arguments: &[Sort::Obj],
         result: Sort::SetFn,
-        meaning: "the functions of the BIO's method table, each as run on that BIO",
+        meaning: "the functions of the object's method table (a BIO's BIO_METHOD, an X509_LOOKUP's X509_LOOKUP_METHOD), each as run on that object",
+    },
+    Term {
+        name: "store",
+        arguments: &[Sort::SetObj],
+        result: Sort::SetObj,
+        meaning: "the certificate store (X509_STORE) each SSL_CTX of the set holds",
+    },
+    Term {
+        name: "lookups",
+        arguments: &[Sort::SetObj],
+        result: Sort::SetObj,
+        meaning: "the lookups (X509_LOOKUP) each X509_STORE of the set holds",
     },
     Term {
         name: "in_turn",

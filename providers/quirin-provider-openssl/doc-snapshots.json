@@ -2961,6 +2961,385 @@
    "error": "curl: (22) The requested URL returned error: 404",
    "page": "BIO_meth_new",
    "fetched_on": "2026-11-19"
+  },
+  {
+   "url": "https://docs.openssl.org/1.0.2/man3/SSL_CTX_set_session_ticket_cb/",
+   "series": "1.0.2",
+   "fetched": false,
+   "error": "curl: (22) The requested URL returned error: 503",
+   "page": "SSL_CTX_set_session_ticket_cb",
+   "fetched_on": "2026-11-20"
+  },
+  {
+   "url": "https://docs.openssl.org/1.1.1/man3/SSL_CTX_set_session_ticket_cb/",
+   "series": "1.1.1",
+   "fetched": true,
+   "sha256": "37d0135cb1278a38683573094bb8318c2abaa4fc3d49eaa0fdb724a4cbafd5a2",
+   "bytes": 679238,
+   "name": "SSL_CTX_set_session_ticket_cb, SSL_SESSION_get0_ticket_appdata, SSL_SESSION_set1_ticket_appdata, SSL_CTX_generate_session_ticket_fn, SSL_CTX_decrypt_session_ticket_fn - manage session ticket application data",
+   "history": "The SSL_CTX_set_session_ticket_cb(), SSL_SESSION_set1_ticket_appdata() and SSL_SESSION_get_ticket_appdata() functions were added in OpenSSL 1.1.1.",
+   "null_sentences": [
+    "Either callback function may be set to NULL.",
+    "NULL will be assigned to data and 0 will be assigned to len if there is no session ticket application data."
+   ],
+   "reference_sentences": [],
+   "argument_null_sentences": [],
+   "page": "SSL_CTX_set_session_ticket_cb",
+   "fetched_on": "2026-11-20"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/SSL_CTX_set_session_ticket_cb/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "0c6b0d60ea3d1fd342ec668c6bf77e1a691d6274b3eccc62848b278459cb3aaf",
+   "bytes": 1085878,
+   "name": "SSL_CTX_set_session_ticket_cb, SSL_SESSION_get0_ticket_appdata, SSL_SESSION_set1_ticket_appdata, SSL_CTX_generate_session_ticket_fn, SSL_CTX_decrypt_session_ticket_fn - manage session ticket application data",
+   "history": "The SSL_CTX_set_session_ticket_cb(), SSL_SESSION_set1_ticket_appdata() and SSL_SESSION_get_ticket_appdata() functions were added in OpenSSL 1.1.1.",
+   "null_sentences": [
+    "Either callback function may be set to NULL.",
+    "NULL will be assigned to data and 0 will be assigned to len if there is no session ticket application data."
+   ],
+   "reference_sentences": [],
+   "argument_null_sentences": [],
+   "page": "SSL_CTX_set_session_ticket_cb",
+   "fetched_on": "2026-11-20"
+  },
+  {
+   "url": "https://docs.openssl.org/1.0.2/man3/SSL_CTX_set_generate_session_id/",
+   "series": "1.0.2",
+   "fetched": true,
+   "sha256": "04fc9ddd111c686de7b0f75fa2d0461ddb0a9c49011d4720b003d4f49cbda3a6",
+   "bytes": 290174,
+   "name": "SSL_CTX_set_generate_session_id, SSL_set_generate_session_id, SSL_has_matching_session_id - manipulate generation of SSL session IDs (server only)",
+   "history": "SSL_CTX_set_generate_session_id(), SSL_set_generate_session_id() and SSL_has_matching_session_id() have been introduced in OpenSSL 0.9.7.",
+   "null_sentences": [],
+   "reference_sentences": [],
+   "argument_null_sentences": [],
+   "page": "SSL_CTX_set_generate_session_id",
+   "fetched_on": "2026-11-20"
+  },
+  {
+   "url": "https://docs.openssl.org/1.1.1/man3/SSL_CTX_set_generate_session_id/",
+   "series": "1.1.1",
+   "fetched": true,
+   "sha256": "e1328ed380813669ff51279442f63f47d220f21c102fbdc066fb48bc44f57059",
+   "bytes": 678286,
+   "name": "SSL_CTX_set_generate_session_id, SSL_set_generate_session_id, SSL_has_matching_session_id, GEN_SESSION_CB - manipulate generation of SSL session IDs (server only)",
+   "history": null,
+   "null_sentences": [],
+   "reference_sentences": [],
+   "argument_null_sentences": [],
+   "page": "SSL_CTX_set_generate_session_id",
+   "fetched_on": "2026-11-20"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/SSL_CTX_set_generate_session_id/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "75669143f8e3d5b6906e1166ae09e164eda15042e58a8b8cfa14033158191c10",
+   "bytes": 1085013,
+   "name": "SSL_CTX_set_generate_session_id, SSL_set_generate_session_id, SSL_has_matching_session_id, GEN_SESSION_CB - manipulate generation of SSL session IDs (server only)",
+   "history": null,
+   "null_sentences": [],
+   "reference_sentences": [],
+   "argument_null_sentences": [],
+   "page": "SSL_CTX_set_generate_session_id",
+   "fetched_on": "2026-11-20"
+  },
+  {
+   "url": "https://docs.openssl.org/1.0.2/man3/SSL_CTX_set_tmp_dh_callback/",
+   "series": "1.0.2",
+   "fetched": true,
+   "sha256": "b4ad6f84754bb293704356fc589af7635f345f5ed817ac52e6a1a673d6bb93f1",
+   "bytes": 287641,
+   "name": "SSL_CTX_set_tmp_dh_callback, SSL_CTX_set_tmp_dh, SSL_set_tmp_dh_callback, SSL_set_tmp_dh - handle DH keys for ephemeral key exchange",
+   "history": null,
+   "null_sentences": [],
+   "reference_sentences": [],
+   "argument_null_sentences": [
+    "*/ DH * dh_2048 = NULL ; FILE * paramfile ; paramfile = fopen ( \"dh_param_2048.pem\" , \"r\" ); if ( paramfile ) { dh_2048 = PEM_read_DHparams ( paramfile , NULL , NULL , NULL ); fclose ( paramfile ); } else { /* Error.",
+    "*/ } if ( dh_2048 == NULL ) { /* Error."
+   ],
+   "page": "SSL_CTX_set_tmp_dh_callback",
+   "fetched_on": "2026-11-20"
+  },
+  {
+   "url": "https://docs.openssl.org/1.1.1/man3/SSL_CTX_set_tmp_dh_callback/",
+   "series": "1.1.1",
+   "fetched": true,
+   "sha256": "4dbe44bb1d7a590e5080d5d0184c085ecdde4cdc473012a9eafa9df9d1ceb716",
+   "bytes": 677033,
+   "name": "SSL_CTX_set_tmp_dh_callback, SSL_CTX_set_tmp_dh, SSL_set_tmp_dh_callback, SSL_set_tmp_dh - handle DH keys for ephemeral key exchange",
+   "history": null,
+   "null_sentences": [],
+   "reference_sentences": [],
+   "argument_null_sentences": [
+    "(Error handling partly left out.) Command-line parameter generation: $ openssl dhparam -out dh_param_2048.pem 2048 Code for setting up parameters during server initialization: SSL_CTX ctx = SSL_CTX_new (); DH * dh_2048 = NULL ; FILE * paramfile = fopen ( \"dh_param_2048.pem\" , \"r\" ); if ( paramfile ) { dh_2048 = PEM_read_DHparams ( paramfile , NULL , NULL , NULL ); fclose ( paramfile ); } else { /* Error.",
+    "*/ } if ( dh_2048 == NULL ) /* Error."
+   ],
+   "page": "SSL_CTX_set_tmp_dh_callback",
+   "fetched_on": "2026-11-20"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/SSL_CTX_set_tmp_dh_callback/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "1213ce539515ed2de692a8fafefaa3eca0ff0b327e1dcb8efd87b93f184a5f4a",
+   "bytes": 1082919,
+   "name": "SSL_CTX_set_dh_auto, SSL_set_dh_auto, SSL_CTX_set0_tmp_dh_pkey, SSL_set0_tmp_dh_pkey, SSL_CTX_set_tmp_dh_callback, SSL_CTX_set_tmp_dh, SSL_set_tmp_dh_callback, SSL_set_tmp_dh - handle DH keys for ephemeral key exchange",
+   "history": null,
+   "null_sentences": [],
+   "reference_sentences": [],
+   "argument_null_sentences": [],
+   "page": "SSL_CTX_set_tmp_dh_callback",
+   "fetched_on": "2026-11-20"
+  },
+  {
+   "url": "https://docs.openssl.org/1.0.2/man3/SSL_CTX_set_stateless_cookie_generate_cb/",
+   "series": "1.0.2",
+   "fetched": false,
+   "error": "curl: (22) The requested URL returned error: 404",
+   "page": "SSL_CTX_set_stateless_cookie_generate_cb",
+   "fetched_on": "2026-11-20"
+  },
+  {
+   "url": "https://docs.openssl.org/1.1.1/man3/SSL_CTX_set_stateless_cookie_generate_cb/",
+   "series": "1.1.1",
+   "fetched": true,
+   "sha256": "99b564888f799c02b2077b5c2cfe1ee385f3a7423c53bffb3a19195e70915ecf",
+   "bytes": 674649,
+   "name": "SSL_CTX_set_stateless_cookie_generate_cb, SSL_CTX_set_stateless_cookie_verify_cb, SSL_CTX_set_cookie_generate_cb, SSL_CTX_set_cookie_verify_cb - Callback functions for stateless TLS1.3 cookies",
+   "history": "SSL_CTX_set_stateless_cookie_generate_cb() and SSL_CTX_set_stateless_cookie_verify_cb() were added in OpenSSL 1.1.1.",
+   "null_sentences": [],
+   "reference_sentences": [],
+   "argument_null_sentences": [],
+   "page": "SSL_CTX_set_stateless_cookie_generate_cb",
+   "fetched_on": "2026-11-20"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/SSL_CTX_set_stateless_cookie_generate_cb/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "5d7129acc0ba0424f3a3a653c8afea572f8c23199fe3ccb9e78b340851abb6d6",
+   "bytes": 1081369,
+   "name": "SSL_CTX_set_stateless_cookie_generate_cb, SSL_CTX_set_stateless_cookie_verify_cb, SSL_CTX_set_cookie_generate_cb, SSL_CTX_set_cookie_verify_cb - Callback functions for stateless TLS1.3 cookies",
+   "history": "SSL_CTX_set_stateless_cookie_generate_cb() and SSL_CTX_set_stateless_cookie_verify_cb() were added in OpenSSL 1.1.1.",
+   "null_sentences": [],
+   "reference_sentences": [],
+   "argument_null_sentences": [],
+   "page": "SSL_CTX_set_stateless_cookie_generate_cb",
+   "fetched_on": "2026-11-20"
+  },
+  {
+   "url": "https://docs.openssl.org/1.0.2/man3/SSL_CTX_set_srp_password/",
+   "series": "1.0.2",
+   "fetched": false,
+   "error": "curl: (22) The requested URL returned error: 404",
+   "page": "SSL_CTX_set_srp_password",
+   "fetched_on": "2026-11-20"
+  },
+  {
+   "url": "https://docs.openssl.org/1.1.1/man3/SSL_CTX_set_srp_password/",
+   "series": "1.1.1",
+   "fetched": false,
+   "error": "curl: (22) The requested URL returned error: 404",
+   "page": "SSL_CTX_set_srp_password",
+   "fetched_on": "2026-11-20"
+  },
+  {
+   "url": "https://docs.openssl.org/3.0/man3/SSL_CTX_set_srp_password/",
+   "series": "3.0",
+   "fetched": true,
+   "sha256": "c9e962f2f62a91cc2d3f1cfa38ae15feaa449708a5bd0aad92352458aa19a06a",
+   "bytes": 947681,
+   "name": "SSL_CTX_set_srp_username, SSL_CTX_set_srp_password, SSL_CTX_set_srp_strength, SSL_CTX_set_srp_cb_arg, SSL_CTX_set_srp_username_callback, SSL_CTX_set_srp_client_pwd_callback, SSL_CTX_set_srp_verify_param_callback, SSL_set_srp_server_param, SSL_set_srp_server_param_pw, SSL_get_srp_g, SSL_get_srp_N, SSL_get_srp_username, SSL_get_srp_userinfo - SRP control operations",
+   "history": "These functions were added in OpenSSL 1.0.1 and deprecated in OpenSSL 3.0.",
+   "null_sentences": [
+    "It should return the client password in text form or NULL to abort the connection.",
+    "The SSL_get_srp_g() function returns the SRP group generator for s , or from the underlying SSL_CTX if it is NULL.",
+    "The SSL_get_srp_N() function returns the SRP prime for s , or from the underlying SSL_CTX if it is NULL.",
+    "The SSL_get_srp_username() function returns the SRP username for s , or from the underlying SSL_CTX if it is NULL.",
+    "The SSL_get_srp_userinfo() function returns the SRP user info for s , or from the underlying SSL_CTX if it is NULL."
+   ],
+   "reference_sentences": [],
+   "argument_null_sentences": [],
+   "page": "SSL_CTX_set_srp_password",
+   "fetched_on": "2026-11-20"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/SSL_CTX_set_srp_password/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "35e0db3364f01c2e9a83616952a5fcaf6e315127ed9e9139f88a868c56d76ad9",
+   "bytes": 1095026,
+   "name": "SSL_CTX_set_srp_username, SSL_CTX_set_srp_password, SSL_CTX_set_srp_strength, SSL_CTX_set_srp_cb_arg, SSL_CTX_set_srp_username_callback, SSL_CTX_set_srp_client_pwd_callback, SSL_CTX_set_srp_verify_param_callback, SSL_set_srp_server_param, SSL_set_srp_server_param_pw, SSL_get_srp_g, SSL_get_srp_N, SSL_get_srp_username, SSL_get_srp_userinfo - SRP control operations",
+   "history": "These functions were added in OpenSSL 1.0.1 and deprecated in OpenSSL 3.0.",
+   "null_sentences": [
+    "It should return the client password in text form or NULL to abort the connection.",
+    "The SSL_get_srp_g() function returns the SRP group generator for s , or from the underlying SSL_CTX if it is NULL.",
+    "The SSL_get_srp_N() function returns the SRP prime for s , or from the underlying SSL_CTX if it is NULL.",
+    "The SSL_get_srp_username() function returns the SRP username for s , or from the underlying SSL_CTX if it is NULL.",
+    "The SSL_get_srp_userinfo() function returns the SRP user info for s , or from the underlying SSL_CTX if it is NULL."
+   ],
+   "reference_sentences": [],
+   "argument_null_sentences": [],
+   "page": "SSL_CTX_set_srp_password",
+   "fetched_on": "2026-11-20"
+  },
+  {
+   "url": "https://docs.openssl.org/1.1.1/man3/SSL_set_async_callback/",
+   "series": "1.1.1",
+   "fetched": false,
+   "error": "curl: (22) The requested URL returned error: 404",
+   "page": "SSL_set_async_callback",
+   "fetched_on": "2026-11-20"
+  },
+  {
+   "url": "https://docs.openssl.org/3.0/man3/SSL_set_async_callback/",
+   "series": "3.0",
+   "fetched": true,
+   "sha256": "744a564de9b45f577358e69fb458a9e4df2696728b0fdf201989767bf1fdd2c0",
+   "bytes": 932453,
+   "name": "SSL_CTX_set_async_callback, SSL_CTX_set_async_callback_arg, SSL_set_async_callback, SSL_set_async_callback_arg, SSL_get_async_status, SSL_async_callback_fn - manage asynchronous operations",
+   "history": "SSL_CTX_set_async_callback(), SSL_CTX_set_async_callback_arg(), SSL_set_async_callback(), SSL_set_async_callback_arg() and SSL_get_async_status() were first added to OpenSSL 3.0.",
+   "null_sentences": [],
+   "reference_sentences": [],
+   "argument_null_sentences": [],
+   "page": "SSL_set_async_callback",
+   "fetched_on": "2026-11-20"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/SSL_set_async_callback/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "9164185d2ae128ec4f4f0539d700bd0d5dc7eea4764a369a6a6837c9734945a2",
+   "bytes": 1079810,
+   "name": "SSL_CTX_set_async_callback, SSL_CTX_set_async_callback_arg, SSL_set_async_callback, SSL_set_async_callback_arg, SSL_get_async_status, SSL_async_callback_fn - manage asynchronous operations",
+   "history": "SSL_CTX_set_async_callback(), SSL_CTX_set_async_callback_arg(), SSL_set_async_callback(), SSL_set_async_callback_arg() and SSL_get_async_status() were first added to OpenSSL 3.0.",
+   "null_sentences": [],
+   "reference_sentences": [],
+   "argument_null_sentences": [],
+   "page": "SSL_set_async_callback",
+   "fetched_on": "2026-11-20"
+  },
+  {
+   "url": "https://docs.openssl.org/3.0/man3/SSL_CTX_set_new_pending_conn_cb/",
+   "series": "3.0",
+   "fetched": false,
+   "error": "curl: (22) The requested URL returned error: 503",
+   "page": "SSL_CTX_set_new_pending_conn_cb",
+   "fetched_on": "2026-11-20"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/SSL_CTX_set_new_pending_conn_cb/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "f5b7f1bb1e975c77001ad111ba8b6e65e14bda220995049340b4fce270533703",
+   "bytes": 1077657,
+   "name": "SSL_CTX_set_new_pending_conn_cb, SSL_set_new_pending_conn_cb_fn - callback function to report creation of QUIC connection SSL objects",
+   "history": "SSL_CTX_set_new_pending_conn_cb() was added in OpenSSL 3.5",
+   "null_sentences": [],
+   "reference_sentences": [],
+   "argument_null_sentences": [],
+   "page": "SSL_CTX_set_new_pending_conn_cb",
+   "fetched_on": "2026-11-20"
+  },
+  {
+   "url": "https://docs.openssl.org/3.0/man3/SSL_set_session_secret_cb/",
+   "series": "3.0",
+   "fetched": false,
+   "error": "curl: (22) The requested URL returned error: 503",
+   "page": "SSL_set_session_secret_cb",
+   "fetched_on": "2026-11-20"
+  },
+  {
+   "url": "https://docs.openssl.org/3.1/man3/SSL_set_session_secret_cb/",
+   "series": "3.1",
+   "fetched": false,
+   "error": "curl: (22) The requested URL returned error: 404",
+   "page": "SSL_set_session_secret_cb",
+   "fetched_on": "2026-11-20"
+  },
+  {
+   "url": "https://docs.openssl.org/3.2/man3/SSL_set_session_secret_cb/",
+   "series": "3.2",
+   "fetched": true,
+   "sha256": "06e9090b26c8a9c00d435ab7e04df6d8a6b27b3a594825f597d473ea55f8aa70",
+   "bytes": 971070,
+   "name": "SSL_set_session_secret_cb, tls_session_secret_cb_fn - set the session secret callback",
+   "history": null,
+   "null_sentences": [
+    "On the client side the peer_ciphers stack will always be NULL."
+   ],
+   "reference_sentences": [],
+   "argument_null_sentences": [],
+   "page": "SSL_set_session_secret_cb",
+   "fetched_on": "2026-11-20"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/SSL_set_session_secret_cb/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "96513fcd88067467bb52b50cddea637758e0a412f8e23dc476ca4a2985ef1992",
+   "bytes": 1077554,
+   "name": "SSL_set_session_secret_cb, tls_session_secret_cb_fn - set the session secret callback",
+   "history": null,
+   "null_sentences": [
+    "On the client side the peer_ciphers stack will always be NULL."
+   ],
+   "reference_sentences": [],
+   "argument_null_sentences": [],
+   "page": "SSL_set_session_secret_cb",
+   "fetched_on": "2026-11-20"
+  },
+  {
+   "url": "https://docs.openssl.org/1.0.2/man3/X509_STORE_set_verify_cb_func/",
+   "series": "1.0.2",
+   "fetched": true,
+   "sha256": "38e6bd75d8fe63ed8696824c27710ea82f8fe9d3b84914113d454eeccb74a6cb",
+   "bytes": 280315,
+   "name": "X509_STORE_set_verify_cb_func, X509_STORE_set_verify_cb - set verification callback",
+   "history": "X509_STORE_set_verify_cb_func() is available in all versions of SSLeay and OpenSSL. X509_STORE_set_verify_cb() was added to OpenSSL 1.0.0.",
+   "null_sentences": [],
+   "reference_sentences": [],
+   "argument_null_sentences": [],
+   "page": "X509_STORE_set_verify_cb_func",
+   "fetched_on": "2026-11-20"
+  },
+  {
+   "url": "https://docs.openssl.org/1.1.1/man3/X509_STORE_set_verify_cb_func/",
+   "series": "1.1.1",
+   "fetched": true,
+   "sha256": "15f6d0c77df3f5c0668610cd4914113ad3a985fe458c5e1872faf6570ff2b8ac",
+   "bytes": 689595,
+   "name": "X509_STORE_set_lookup_crls_cb, X509_STORE_set_verify_func, X509_STORE_get_cleanup, X509_STORE_set_cleanup, X509_STORE_get_lookup_crls, X509_STORE_set_lookup_crls, X509_STORE_get_lookup_certs, X509_STORE_set_lookup_certs, X509_STORE_get_check_policy, X509_STORE_set_check_policy, X509_STORE_get_cert_crl, X509_STORE_set_cert_crl, X509_STORE_get_check_crl, X509_STORE_set_check_crl, X509_STORE_get_get_crl, X509_STORE_set_get_crl, X509_STORE_get_check_revocation, X509_STORE_set_check_revocation, X509_STORE_get_check_issued, X509_STORE_set_check_issued, X509_STORE_get_get_issuer, X509_STORE_set_get_issuer, X509_STORE_CTX_get_verify, X509_STORE_set_verify, X509_STORE_get_verify_cb, X509_STORE_set_verify_cb_func, X509_STORE_set_verify_cb, X509_STORE_CTX_cert_crl_fn, X509_STORE_CTX_check_crl_fn, X509_STORE_CTX_check_issued_fn, X509_STORE_CTX_check_policy_fn, X509_STORE_CTX_check_revocation_fn, X509_STORE_CTX_cleanup_fn, X509_STORE_CTX_get_crl_fn, X509_STORE_CTX_get_issuer_fn, X509_STORE_CTX_lookup_certs_fn, X509_STORE_CTX_lookup_crls_fn - set verification callback",
+   "history": "The X509_STORE_set_verify_cb() function was added in OpenSSL 1.0.0. The functions X509_STORE_set_verify_cb(), X509_STORE_get_verify_cb(), X509_STORE_set_verify(), X509_STORE_CTX_get_verify(), X509_STORE_set_get_issuer(), X509_STORE_get_get_issuer(), X509_STORE_set_check_issued(), X509_STORE_get_check_issued(), X509_STORE_set_check_revocation(), X509_STORE_get_check_revocation(), X509_STORE_set_get_crl(), X509_STORE_get_get_crl(), X509_STORE_set_check_crl(), X509_STORE_get_check_crl(), X509_STORE_set_cert_crl(), X509_STORE_get_cert_crl(), X509_STORE_set_check_policy(), X509_STORE_get_check_policy(), X509_STORE_set_lookup_certs(), X509_STORE_get_lookup_certs(), X509_STORE_set_lookup_crls(), X509_STORE_get_lookup_crls(), X509_STORE_set_cleanup() and X509_STORE_get_cleanup() were added in OpenSSL 1.1.0.",
+   "null_sentences": [
+    "These functions return NULL on failure and a pointer to a stack of certificates ( X509 ) or to a stack of CRLs ( X509_CRL ) on success.",
+    "X509_STORE_get_verify_cb(), X509_STORE_CTX_get_verify(), X509_STORE_get_get_issuer(), X509_STORE_get_check_issued(), X509_STORE_get_check_revocation(), X509_STORE_get_get_crl(), X509_STORE_get_check_crl(), X509_STORE_set_verify(), X509_STORE_set_get_issuer(), X509_STORE_get_cert_crl(), X509_STORE_get_check_policy(), X509_STORE_get_lookup_certs(), X509_STORE_get_lookup_crls() and X509_STORE_get_cleanup() all return the function pointer assigned with X509_STORE_set_check_issued(), X509_STORE_set_check_revocation(), X509_STORE_set_get_crl(), X509_STORE_set_check_crl(), X509_STORE_set_cert_crl(), X509_STORE_set_check_policy(), X509_STORE_set_lookup_certs(), X509_STORE_set_lookup_crls() and X509_STORE_set_cleanup(), or NULL if no assignment has been made."
+   ],
+   "reference_sentences": [],
+   "argument_null_sentences": [],
+   "page": "X509_STORE_set_verify_cb_func",
+   "fetched_on": "2026-11-20"
+  },
+  {
+   "url": "https://docs.openssl.org/3.5/man3/X509_STORE_set_verify_cb_func/",
+   "series": "3.5",
+   "fetched": true,
+   "sha256": "6737c80b8af6af3fbac825187eaedb699a94f2c579f522021303501af7b117c0",
+   "bytes": 1098239,
+   "name": "X509_STORE_set_lookup_crls_cb, X509_STORE_set_verify_func, X509_STORE_get_cleanup, X509_STORE_set_cleanup, X509_STORE_get_lookup_crls, X509_STORE_set_lookup_crls, X509_STORE_get_lookup_certs, X509_STORE_set_lookup_certs, X509_STORE_get_check_policy, X509_STORE_set_check_policy, X509_STORE_get_cert_crl, X509_STORE_set_cert_crl, X509_STORE_get_check_crl, X509_STORE_set_check_crl, X509_STORE_get_get_crl, X509_STORE_set_get_crl, X509_STORE_get_check_revocation, X509_STORE_set_check_revocation, X509_STORE_get_check_issued, X509_STORE_set_check_issued, X509_STORE_CTX_get1_issuer, X509_STORE_get_get_issuer, X509_STORE_set_get_issuer, X509_STORE_CTX_get_verify, X509_STORE_set_verify, X509_STORE_get_verify_cb, X509_STORE_set_verify_cb_func, X509_STORE_set_verify_cb, X509_STORE_CTX_cert_crl_fn, X509_STORE_CTX_check_crl_fn, X509_STORE_CTX_check_issued_fn, X509_STORE_CTX_check_policy_fn, X509_STORE_CTX_check_revocation_fn, X509_STORE_CTX_cleanup_fn, X509_STORE_CTX_get_crl_fn, X509_STORE_CTX_get_issuer_fn, X509_STORE_CTX_lookup_certs_fn, X509_STORE_CTX_lookup_crls_fn - set verification callback",
+   "history": "The X509_STORE_set_verify_cb() function was added in OpenSSL 1.0.0. The functions X509_STORE_set_verify_cb(), X509_STORE_get_verify_cb(), X509_STORE_set_verify(), X509_STORE_CTX_get_verify(), X509_STORE_set_get_issuer(), X509_STORE_get_get_issuer(), X509_STORE_set_check_issued(), X509_STORE_get_check_issued(), X509_STORE_set_check_revocation(), X509_STORE_get_check_revocation(), X509_STORE_set_get_crl(), X509_STORE_get_get_crl(), X509_STORE_set_check_crl(), X509_STORE_get_check_crl(), X509_STORE_set_cert_crl(), X509_STORE_get_cert_crl(), X509_STORE_set_check_policy(), X509_STORE_get_check_policy(), X509_STORE_set_lookup_certs(), X509_STORE_get_lookup_certs(), X509_STORE_set_lookup_crls(), X509_STORE_get_lookup_crls(), X509_STORE_set_cleanup() and X509_STORE_get_cleanup() were added in OpenSSL 1.1.0.",
+   "null_sentences": [
+    "If X509_STORE_set_get_issuer() is not used or get_issuer is NULL then X509_STORE_CTX_get1_issuer() is used as the default implementation.",
+    "These functions return NULL on failure and a pointer to a stack of certificates ( X509 ) or to a stack of CRLs ( X509_CRL ) on success.",
+    "X509_STORE_get_verify_cb(), X509_STORE_CTX_get_verify(), X509_STORE_get_get_issuer(), X509_STORE_get_check_issued(), X509_STORE_get_check_revocation(), X509_STORE_get_get_crl(), X509_STORE_get_check_crl(), X509_STORE_set_verify(), X509_STORE_set_get_issuer(), X509_STORE_get_cert_crl(), X509_STORE_get_check_policy(), X509_STORE_get_lookup_certs(), X509_STORE_get_lookup_crls() and X509_STORE_get_cleanup() all return the function pointer assigned with X509_STORE_set_check_issued(), X509_STORE_set_check_revocation(), X509_STORE_set_get_crl(), X509_STORE_set_check_crl(), X509_STORE_set_cert_crl(), X509_STORE_set_check_policy(), X509_STORE_set_lookup_certs(), X509_STORE_set_lookup_crls() and X509_STORE_set_cleanup(), or NULL if no assignment has been made."
+   ],
+   "reference_sentences": [],
+   "argument_null_sentences": [],
+   "page": "X509_STORE_set_verify_cb_func",
+   "fetched_on": "2026-11-20"
   }
  ]
 }
