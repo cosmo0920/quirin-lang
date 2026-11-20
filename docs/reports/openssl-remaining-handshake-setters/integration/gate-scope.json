@@ -1,15 +1,17 @@
 {
  "schema": "quirin-gate-scope/1",
  "source": "git diff",
- "base": "64114a4474ad5324793bf5f993e6b3a670c48865",
- "head": "cd624158ec15625b55fe5aea15a2d02f4a9f9e3d",
+ "base": "7c026b527e2465a900da7208ebdc1333b3c9eca8",
+ "head": "f916d30076083fce82f7fef049638f211930b95c",
  "committed": [
   "crates/qcore-c-gateway/tests/openssl_undeclared_handshake_callbacks.rs",
   "crates/qcore-c-gateway/tests/openssl_unstated_callback_slots.rs",
   "docs/QCORE_CONTRACT_SPEC_r0_3.md",
+  "docs/STATUS.md",
   "docs/agents/gateway.md",
   "docs/agents/rules/12n.md",
   "docs/development/increments/wave-48-part12.md",
+  "docs/reports/INDEX.md",
   "docs/reports/openssl-remaining-handshake-setters/PREDICTION.md",
   "docs/reports/openssl-remaining-handshake-setters/README.md",
   "docs/reports/openssl-remaining-handshake-setters/evidence/opt-in/attribution-variant.sh",
@@ -22,6 +24,9 @@
   "docs/reports/openssl-remaining-handshake-setters/gate/gate-1.json",
   "docs/reports/openssl-remaining-handshake-setters/gate/gate-2.json",
   "docs/reports/openssl-remaining-handshake-setters/integration-amendments.json",
+  "docs/reports/openssl-remaining-handshake-setters/integration/clang-version.txt",
+  "docs/reports/openssl-remaining-handshake-setters/integration/gate-scope.json",
+  "docs/reports/openssl-remaining-handshake-setters/integration/gate.json",
   "docs/reviews/r0_3/acceptance_matrix.json",
   "proof/AuditOpensslRemainingSetters.lean",
   "proof/QCore.lean",
@@ -45,9 +50,11 @@
    "crates/qcore-c-gateway/tests/openssl_undeclared_handshake_callbacks.rs",
    "crates/qcore-c-gateway/tests/openssl_unstated_callback_slots.rs",
    "docs/QCORE_CONTRACT_SPEC_r0_3.md",
+   "docs/STATUS.md",
    "docs/agents/gateway.md",
    "docs/agents/rules/12n.md",
    "docs/development/increments/wave-48-part12.md",
+   "docs/reports/INDEX.md",
    "docs/reports/openssl-remaining-handshake-setters/PREDICTION.md",
    "docs/reports/openssl-remaining-handshake-setters/README.md",
    "docs/reports/openssl-remaining-handshake-setters/evidence/opt-in/attribution-variant.sh",
@@ -60,6 +67,9 @@
    "docs/reports/openssl-remaining-handshake-setters/gate/gate-1.json",
    "docs/reports/openssl-remaining-handshake-setters/gate/gate-2.json",
    "docs/reports/openssl-remaining-handshake-setters/integration-amendments.json",
+   "docs/reports/openssl-remaining-handshake-setters/integration/clang-version.txt",
+   "docs/reports/openssl-remaining-handshake-setters/integration/gate-scope.json",
+   "docs/reports/openssl-remaining-handshake-setters/integration/gate.json",
    "docs/reviews/r0_3/acceptance_matrix.json",
    "proof/AuditOpensslRemainingSetters.lean",
    "proof/QCore.lean",
@@ -105,6 +115,9 @@
    "docs/QCORE_CONTRACT_SPEC_r0_3.md": [
     "class prose"
    ],
+   "docs/STATUS.md": [
+    "class prose"
+   ],
    "docs/agents/gateway.md": [
     "class prose"
    ],
@@ -112,6 +125,9 @@
     "class prose"
    ],
    "docs/development/increments/wave-48-part12.md": [
+    "class prose"
+   ],
+   "docs/reports/INDEX.md": [
     "class prose"
    ],
    "docs/reports/openssl-remaining-handshake-setters/PREDICTION.md": [
@@ -153,6 +169,15 @@
     "class prose"
    ],
    "docs/reports/openssl-remaining-handshake-setters/integration-amendments.json": [
+    "class prose"
+   ],
+   "docs/reports/openssl-remaining-handshake-setters/integration/clang-version.txt": [
+    "class prose"
+   ],
+   "docs/reports/openssl-remaining-handshake-setters/integration/gate-scope.json": [
+    "class prose"
+   ],
+   "docs/reports/openssl-remaining-handshake-setters/integration/gate.json": [
     "class prose"
    ],
    "docs/reviews/r0_3/acceptance_matrix.json": [
@@ -214,7 +239,7 @@
     "read by qcore-c-gateway (expansion, tests/support/contract_locks.rs:144) in qcore-c-gateway::test::neighbours, qcore-c-gateway::test::prod_contracts",
     "read by qcore-compiler (expansion, compiler/tests/contract_inherit_adoption.rs:69) in qcore-compiler::test::contract_inherit_adoption",
     "read by qcore-compiler (expansion, compiler/tests/contract_inherit_qcore_provider.rs:85) in qcore-compiler::test::contract_inherit_qcore_provider",
-    "read by qcore-compiler (expansion, compiler/tests/contract_loader.rs:1980) in qcore-compiler::test::contract_loader",
+    "read by qcore-compiler (expansion, compiler/tests/contract_loader.rs:1986) in qcore-compiler::test::contract_loader",
     "read by qcore-compiler (expansion, tests/support/contract_locks.rs:144) in qcore-compiler::test::contract_loader",
     "read by qcorec (expansion, crates/qcorec/tests/contract_load_path.rs:42) in qcorec::test::contract_load_path",
     "read by quirin-audit-plugin-libcurl (expansion, crates/quirin-audit-plugin-libcurl/src/lib.rs:402)",
@@ -286,7 +311,7 @@
     "read by qcore-c-gateway (expansion, crates/qcore-c-gateway/tests/checked_allocator_constructors.rs:56) in qcore-c-gateway::test::checked_allocator_constructors",
     "read by qcore-c-gateway (expansion, crates/qcore-c-gateway/tests/constructor_residuals.rs:882) in qcore-c-gateway::test::constructor_residuals",
     "read by qcore-c-gateway (expansion, crates/qcore-c-gateway/tests/neighbours.rs:971) in qcore-c-gateway::test::neighbours",
-    "read by qcore-c-gateway (expansion, crates/qcore-c-gateway/tests/prod_contracts.rs:864) in qcore-c-gateway::test::prod_contracts",
+    "read by qcore-c-gateway (expansion, crates/qcore-c-gateway/tests/prod_contracts.rs:870) in qcore-c-gateway::test::prod_contracts",
     "read by qcore-c-gateway (expansion, crates/qcore-c-gateway/tests/rule37_switch.rs:165) in qcore-c-gateway::test::rule37_switch",
     "read by qcore-compiler (expansion, compiler/tests/contract_inherit_adoption.rs:252) in qcore-compiler::test::contract_inherit_adoption",
     "read by qcore-compiler (expansion, compiler/tests/contract_inherit_qcore_provider.rs:369) in qcore-compiler::test::contract_inherit_qcore_provider",
@@ -418,7 +443,7 @@
     "read by qcore-c-gateway (expansion, tests/support/contract_locks.rs:144) in qcore-c-gateway::test::neighbours, qcore-c-gateway::test::prod_contracts",
     "read by qcore-compiler (expansion, compiler/tests/contract_inherit_adoption.rs:69) in qcore-compiler::test::contract_inherit_adoption",
     "read by qcore-compiler (expansion, compiler/tests/contract_inherit_qcore_provider.rs:85) in qcore-compiler::test::contract_inherit_qcore_provider",
-    "read by qcore-compiler (expansion, compiler/tests/contract_loader.rs:1980) in qcore-compiler::test::contract_loader",
+    "read by qcore-compiler (expansion, compiler/tests/contract_loader.rs:1986) in qcore-compiler::test::contract_loader",
     "read by qcore-compiler (expansion, tests/support/contract_locks.rs:144) in qcore-compiler::test::contract_loader",
     "read by qcorec (expansion, crates/qcorec/tests/contract_load_path.rs:42) in qcorec::test::contract_load_path",
     "read by quirin-audit-plugin-libcurl (expansion, crates/quirin-audit-plugin-libcurl/src/lib.rs:402)",
@@ -503,7 +528,7 @@
     "read by qcore-c-gateway (expansion, crates/qcore-c-gateway/tests/checked_allocator_constructors.rs:56) in qcore-c-gateway::test::checked_allocator_constructors",
     "read by qcore-c-gateway (expansion, crates/qcore-c-gateway/tests/constructor_residuals.rs:882) in qcore-c-gateway::test::constructor_residuals",
     "read by qcore-c-gateway (expansion, crates/qcore-c-gateway/tests/neighbours.rs:971) in qcore-c-gateway::test::neighbours",
-    "read by qcore-c-gateway (expansion, crates/qcore-c-gateway/tests/prod_contracts.rs:864) in qcore-c-gateway::test::prod_contracts",
+    "read by qcore-c-gateway (expansion, crates/qcore-c-gateway/tests/prod_contracts.rs:870) in qcore-c-gateway::test::prod_contracts",
     "read by qcore-c-gateway (expansion, crates/qcore-c-gateway/tests/rule37_switch.rs:165) in qcore-c-gateway::test::rule37_switch",
     "read by qcore-compiler (expansion, compiler/tests/contract_inherit_adoption.rs:252) in qcore-compiler::test::contract_inherit_adoption",
     "read by qcore-compiler (expansion, compiler/tests/contract_inherit_qcore_provider.rs:369) in qcore-compiler::test::contract_inherit_qcore_provider",
@@ -635,7 +660,7 @@
     "read by qcore-c-gateway (expansion, tests/support/contract_locks.rs:144) in qcore-c-gateway::test::neighbours, qcore-c-gateway::test::prod_contracts",
     "read by qcore-compiler (expansion, compiler/tests/contract_inherit_adoption.rs:69) in qcore-compiler::test::contract_inherit_adoption",
     "read by qcore-compiler (expansion, compiler/tests/contract_inherit_qcore_provider.rs:85) in qcore-compiler::test::contract_inherit_qcore_provider",
-    "read by qcore-compiler (expansion, compiler/tests/contract_loader.rs:1980) in qcore-compiler::test::contract_loader",
+    "read by qcore-compiler (expansion, compiler/tests/contract_loader.rs:1986) in qcore-compiler::test::contract_loader",
     "read by qcore-compiler (expansion, tests/support/contract_locks.rs:144) in qcore-compiler::test::contract_loader",
     "read by qcorec (expansion, crates/qcorec/tests/contract_load_path.rs:42) in qcorec::test::contract_load_path",
     "read by quirin-audit-plugin-libcurl (expansion, crates/quirin-audit-plugin-libcurl/src/lib.rs:402)",
@@ -720,7 +745,7 @@
     "read by qcore-c-gateway (expansion, crates/qcore-c-gateway/tests/checked_allocator_constructors.rs:56) in qcore-c-gateway::test::checked_allocator_constructors",
     "read by qcore-c-gateway (expansion, crates/qcore-c-gateway/tests/constructor_residuals.rs:882) in qcore-c-gateway::test::constructor_residuals",
     "read by qcore-c-gateway (expansion, crates/qcore-c-gateway/tests/neighbours.rs:971) in qcore-c-gateway::test::neighbours",
-    "read by qcore-c-gateway (expansion, crates/qcore-c-gateway/tests/prod_contracts.rs:864) in qcore-c-gateway::test::prod_contracts",
+    "read by qcore-c-gateway (expansion, crates/qcore-c-gateway/tests/prod_contracts.rs:870) in qcore-c-gateway::test::prod_contracts",
     "read by qcore-c-gateway (expansion, crates/qcore-c-gateway/tests/rule37_switch.rs:165) in qcore-c-gateway::test::rule37_switch",
     "read by qcore-compiler (expansion, compiler/tests/contract_inherit_adoption.rs:252) in qcore-compiler::test::contract_inherit_adoption",
     "read by qcore-compiler (expansion, compiler/tests/contract_inherit_qcore_provider.rs:369) in qcore-compiler::test::contract_inherit_qcore_provider",
@@ -852,7 +877,7 @@
     "read by qcore-c-gateway (expansion, tests/support/contract_locks.rs:144) in qcore-c-gateway::test::neighbours, qcore-c-gateway::test::prod_contracts",
     "read by qcore-compiler (expansion, compiler/tests/contract_inherit_adoption.rs:69) in qcore-compiler::test::contract_inherit_adoption",
     "read by qcore-compiler (expansion, compiler/tests/contract_inherit_qcore_provider.rs:85) in qcore-compiler::test::contract_inherit_qcore_provider",
-    "read by qcore-compiler (expansion, compiler/tests/contract_loader.rs:1980) in qcore-compiler::test::contract_loader",
+    "read by qcore-compiler (expansion, compiler/tests/contract_loader.rs:1986) in qcore-compiler::test::contract_loader",
     "read by qcore-compiler (expansion, tests/support/contract_locks.rs:144) in qcore-compiler::test::contract_loader",
     "read by qcorec (expansion, crates/qcorec/tests/contract_load_path.rs:42) in qcorec::test::contract_load_path",
     "read by quirin-audit-plugin-libcurl (expansion, crates/quirin-audit-plugin-libcurl/src/lib.rs:402)",
@@ -937,7 +962,7 @@
     "read by qcore-c-gateway (expansion, crates/qcore-c-gateway/tests/checked_allocator_constructors.rs:56) in qcore-c-gateway::test::checked_allocator_constructors",
     "read by qcore-c-gateway (expansion, crates/qcore-c-gateway/tests/constructor_residuals.rs:882) in qcore-c-gateway::test::constructor_residuals",
     "read by qcore-c-gateway (expansion, crates/qcore-c-gateway/tests/neighbours.rs:971) in qcore-c-gateway::test::neighbours",
-    "read by qcore-c-gateway (expansion, crates/qcore-c-gateway/tests/prod_contracts.rs:864) in qcore-c-gateway::test::prod_contracts",
+    "read by qcore-c-gateway (expansion, crates/qcore-c-gateway/tests/prod_contracts.rs:870) in qcore-c-gateway::test::prod_contracts",
     "read by qcore-c-gateway (expansion, crates/qcore-c-gateway/tests/rule37_switch.rs:165) in qcore-c-gateway::test::rule37_switch",
     "read by qcore-compiler (expansion, compiler/tests/contract_inherit_adoption.rs:252) in qcore-compiler::test::contract_inherit_adoption",
     "read by qcore-compiler (expansion, compiler/tests/contract_inherit_qcore_provider.rs:369) in qcore-compiler::test::contract_inherit_qcore_provider",
@@ -1069,7 +1094,7 @@
     "read by qcore-c-gateway (expansion, tests/support/contract_locks.rs:144) in qcore-c-gateway::test::neighbours, qcore-c-gateway::test::prod_contracts",
     "read by qcore-compiler (expansion, compiler/tests/contract_inherit_adoption.rs:69) in qcore-compiler::test::contract_inherit_adoption",
     "read by qcore-compiler (expansion, compiler/tests/contract_inherit_qcore_provider.rs:85) in qcore-compiler::test::contract_inherit_qcore_provider",
-    "read by qcore-compiler (expansion, compiler/tests/contract_loader.rs:1980) in qcore-compiler::test::contract_loader",
+    "read by qcore-compiler (expansion, compiler/tests/contract_loader.rs:1986) in qcore-compiler::test::contract_loader",
     "read by qcore-compiler (expansion, tests/support/contract_locks.rs:144) in qcore-compiler::test::contract_loader",
     "read by qcorec (expansion, crates/qcorec/tests/contract_load_path.rs:42) in qcorec::test::contract_load_path",
     "read by quirin-audit-plugin-libcurl (expansion, crates/quirin-audit-plugin-libcurl/src/lib.rs:402)",
@@ -1154,7 +1179,7 @@
     "read by qcore-c-gateway (expansion, crates/qcore-c-gateway/tests/checked_allocator_constructors.rs:56) in qcore-c-gateway::test::checked_allocator_constructors",
     "read by qcore-c-gateway (expansion, crates/qcore-c-gateway/tests/constructor_residuals.rs:882) in qcore-c-gateway::test::constructor_residuals",
     "read by qcore-c-gateway (expansion, crates/qcore-c-gateway/tests/neighbours.rs:971) in qcore-c-gateway::test::neighbours",
-    "read by qcore-c-gateway (expansion, crates/qcore-c-gateway/tests/prod_contracts.rs:864) in qcore-c-gateway::test::prod_contracts",
+    "read by qcore-c-gateway (expansion, crates/qcore-c-gateway/tests/prod_contracts.rs:870) in qcore-c-gateway::test::prod_contracts",
     "read by qcore-c-gateway (expansion, crates/qcore-c-gateway/tests/rule37_switch.rs:165) in qcore-c-gateway::test::rule37_switch",
     "read by qcore-compiler (expansion, compiler/tests/contract_inherit_adoption.rs:252) in qcore-compiler::test::contract_inherit_adoption",
     "read by qcore-compiler (expansion, compiler/tests/contract_inherit_qcore_provider.rs:369) in qcore-compiler::test::contract_inherit_qcore_provider",
@@ -1576,15 +1601,15 @@
     ],
     "qcore-c-gateway::test::prod_contracts": [
      "reads providers/contract-load-path.json, which lists providers/quirin-provider-openssl/contracts.lock: providers/quirin-provider-openssl/contracts.lock (tests/support/contract_locks.rs:144)",
-     "reads cycle19-resource-contracts.json, which lists providers/quirin-provider-openssl/contracts.lock: providers/quirin-provider-openssl/contracts.lock (crates/qcore-c-gateway/tests/prod_contracts.rs:864)",
+     "reads cycle19-resource-contracts.json, which lists providers/quirin-provider-openssl/contracts.lock: providers/quirin-provider-openssl/contracts.lock (crates/qcore-c-gateway/tests/prod_contracts.rs:870)",
      "reads providers/contract-load-path.json, which lists providers/quirin-provider-openssl/contracts/openssl/ssl.qv: providers/quirin-provider-openssl/contracts/openssl/ssl.qv (tests/support/contract_locks.rs:144)",
-     "reads cycle19-resource-contracts.json, which lists providers/quirin-provider-openssl/contracts/openssl/ssl.qv: providers/quirin-provider-openssl/contracts/openssl/ssl.qv (crates/qcore-c-gateway/tests/prod_contracts.rs:864)",
+     "reads cycle19-resource-contracts.json, which lists providers/quirin-provider-openssl/contracts/openssl/ssl.qv: providers/quirin-provider-openssl/contracts/openssl/ssl.qv (crates/qcore-c-gateway/tests/prod_contracts.rs:870)",
      "reads providers/contract-load-path.json, which lists providers/quirin-provider-openssl/contracts/openssl/ssl_handshake_setters.qv: providers/quirin-provider-openssl/contracts/openssl/ssl_handshake_setters.qv (tests/support/contract_locks.rs:144)",
-     "reads cycle19-resource-contracts.json, which lists providers/quirin-provider-openssl/contracts/openssl/ssl_handshake_setters.qv: providers/quirin-provider-openssl/contracts/openssl/ssl_handshake_setters.qv (crates/qcore-c-gateway/tests/prod_contracts.rs:864)",
+     "reads cycle19-resource-contracts.json, which lists providers/quirin-provider-openssl/contracts/openssl/ssl_handshake_setters.qv: providers/quirin-provider-openssl/contracts/openssl/ssl_handshake_setters.qv (crates/qcore-c-gateway/tests/prod_contracts.rs:870)",
      "reads providers/contract-load-path.json, which lists providers/quirin-provider-openssl/contracts/openssl/ssl_io.qv: providers/quirin-provider-openssl/contracts/openssl/ssl_io.qv (tests/support/contract_locks.rs:144)",
-     "reads cycle19-resource-contracts.json, which lists providers/quirin-provider-openssl/contracts/openssl/ssl_io.qv: providers/quirin-provider-openssl/contracts/openssl/ssl_io.qv (crates/qcore-c-gateway/tests/prod_contracts.rs:864)",
+     "reads cycle19-resource-contracts.json, which lists providers/quirin-provider-openssl/contracts/openssl/ssl_io.qv: providers/quirin-provider-openssl/contracts/openssl/ssl_io.qv (crates/qcore-c-gateway/tests/prod_contracts.rs:870)",
      "reads providers/contract-load-path.json, which lists providers/quirin-provider-openssl/contracts/openssl/x509_store_slots.qv: providers/quirin-provider-openssl/contracts/openssl/x509_store_slots.qv (tests/support/contract_locks.rs:144)",
-     "reads cycle19-resource-contracts.json, which lists providers/quirin-provider-openssl/contracts/openssl/x509_store_slots.qv: providers/quirin-provider-openssl/contracts/openssl/x509_store_slots.qv (crates/qcore-c-gateway/tests/prod_contracts.rs:864)"
+     "reads cycle19-resource-contracts.json, which lists providers/quirin-provider-openssl/contracts/openssl/x509_store_slots.qv: providers/quirin-provider-openssl/contracts/openssl/x509_store_slots.qv (crates/qcore-c-gateway/tests/prod_contracts.rs:870)"
     ],
     "qcore-c-gateway::test::rule37_switch": [
      "reads cycle19-resource-contracts.json, which lists providers/quirin-provider-openssl/contracts.lock: providers/quirin-provider-openssl/contracts.lock (crates/qcore-c-gateway/tests/rule37_switch.rs:165)",
@@ -2618,7 +2643,7 @@
  "slots": true,
  "landing": true,
  "card_base": null,
- "started": "20261120T041644Z",
+ "started": "20261120T052217Z",
  "ran": true,
  "steps": [
   {
@@ -2677,7 +2702,7 @@
     "warnings"
    ],
    "exit": 0,
-   "seconds": 34.6,
+   "seconds": 20.8,
    "log": "/home/cosmo/Documents/GitHub/quirin-lang/private/integrate-r38/gate/clippy.log",
    "counts": {},
    "slot_receipt": "/home/cosmo/Documents/GitHub/quirin-lang/private/integrate-r38/gate/slots/clippy.json"
@@ -2697,16 +2722,16 @@
     "/home/cosmo/Documents/GitHub/quirin-lang/private/integrate-r38/gate/rust-suite"
    ],
    "exit": 0,
-   "seconds": 855.4,
+   "seconds": 839.6,
    "log": "/home/cosmo/Documents/GitHub/quirin-lang/private/integrate-r38/gate/rust-suite.log",
    "counts": {
-    "units": 662,
-    "passed": 9721,
+    "units": 666,
+    "passed": 9776,
     "failed": 0,
     "ignored": 21,
     "measured": 0,
     "filtered": 148,
-    "summaries": 707,
+    "summaries": 711,
     "packages": null,
     "targets": null,
     "summary": "/home/cosmo/Documents/GitHub/quirin-lang/private/integrate-r38/gate/rust-suite/summary.json",
@@ -2779,10 +2804,10 @@
     "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/integrate-r38/scripts/check_lean_audits.py"
    ],
    "exit": 0,
-   "seconds": 83.0,
+   "seconds": 11.9,
    "log": "/home/cosmo/Documents/GitHub/quirin-lang/private/integrate-r38/gate/lean.log",
    "counts": {
-    "audits": 457
+    "audits": 461
    },
    "slot_receipt": "/home/cosmo/Documents/GitHub/quirin-lang/private/integrate-r38/gate/slots/lean.json"
   },
@@ -2797,7 +2822,7 @@
     "scripts/tests"
    ],
    "exit": 1,
-   "seconds": 168.9,
+   "seconds": 168.8,
    "log": "/home/cosmo/Documents/GitHub/quirin-lang/private/integrate-r38/gate/python.log",
    "counts": {
     "tests": 779,
@@ -2821,7 +2846,7 @@
     "/home/cosmo/Documents/GitHub/quirin-lang/private/integrate-r38/gate/provider-packages"
    ],
    "exit": 0,
-   "seconds": 165.9,
+   "seconds": 152.7,
    "log": "/home/cosmo/Documents/GitHub/quirin-lang/private/integrate-r38/gate/provider-package-build.log",
    "counts": {},
    "slot_receipt": "/home/cosmo/Documents/GitHub/quirin-lang/private/integrate-r38/gate/slots/provider-package-build.json"
@@ -2835,7 +2860,7 @@
     "/home/cosmo/Documents/GitHub/quirin-lang/private/integrate-r38/gate/provider-packages"
    ],
    "exit": 0,
-   "seconds": 0.9,
+   "seconds": 0.8,
    "log": "/home/cosmo/Documents/GitHub/quirin-lang/private/integrate-r38/gate/provider-package-verify-all.log",
    "counts": {}
   },
@@ -2871,7 +2896,7 @@
     "--offline"
    ],
    "exit": 0,
-   "seconds": 2322.4,
+   "seconds": 2325.4,
    "log": "/home/cosmo/Documents/GitHub/quirin-lang/private/integrate-r38/gate/provider-test.log",
    "counts": {
     "summaries": 49,
@@ -2901,7 +2926,7 @@
     "--check"
    ],
    "exit": 0,
-   "seconds": 4.5,
+   "seconds": 5.3,
    "log": "/home/cosmo/Documents/GitHub/quirin-lang/private/integrate-r38/gate/provider-fmt.log",
    "counts": {},
    "slot_receipt": "/home/cosmo/Documents/GitHub/quirin-lang/private/integrate-r38/gate/slots/provider-fmt.json"
@@ -2928,12 +2953,12 @@
     "warnings"
    ],
    "exit": 0,
-   "seconds": 26.4,
+   "seconds": 25.5,
    "log": "/home/cosmo/Documents/GitHub/quirin-lang/private/integrate-r38/gate/provider-clippy.log",
    "counts": {},
    "slot_receipt": "/home/cosmo/Documents/GitHub/quirin-lang/private/integrate-r38/gate/slots/provider-clippy.json"
   }
  ],
  "ok": false,
- "finished": "20261120T051751Z"
+ "finished": "20261120T062133Z"
 }
