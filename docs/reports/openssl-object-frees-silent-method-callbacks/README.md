@@ -1,13 +1,18 @@
 # OPENSSL-OBJECT-FREES-SILENT-METHOD-CALLBACKS: what the object frees run on what they free
 
 * **Base:** `ecc03d7a4` (integrate/r39: main `ffb41c748` plus
-  OPENSSL-FREE-INDIRECT-CALLBACKS with its amendments). The gate and the
-  amendments check use `ecc03d7a4`.
+  OPENSSL-FREE-INDIRECT-CALLBACKS with its amendments). Main `9a769c6b0`
+  (r39 landed, then SP1-SYMBOLIC-OPENSSL-PREMISES) was merged in and the
+  card reworked onto SP1's formula premises (§9). The second gate and the
+  amendments check use `9a769c6b0`.
 * **Card:** the named follow-up recorded by OPENSSL-FREE-INDIRECT-CALLBACKS.
 * **Commits:**
   * [PREDICTION](PREDICTION.md) `d1382ca88`, committed before any
     implementation;
-  * the implementation, lock and Lean, `b80ee7664`.
+  * the implementation, lock and Lean, `b80ee7664` (prose statements,
+    the measured tip);
+  * the merge of main `9a769c6b0` with the rework onto SP1's formulas,
+    `cc18f4c59`.
 
 ## 1. Sources
 
@@ -27,26 +32,28 @@ declared.
 
 | Free | What it runs on what it frees (3.5.5) | Premise and statement now |
 |---|---|---|
-| `EVP_PKEY_free` | at the last reference, `evp_pkey_free_it` (`crypto/evp/p_lib.c`): the provider key management's free (`evp_keymgmt_freedata`, `OSSL_FUNC_keymgmt_free`, provider-keymgmt(7)), and `EVP_KEYMGMT_free`, whose last reference calls `ossl_provider_free` and so may run the provider's teardown (`keymgmt_meth.c`, `provider_core.c`, provider-base(7)); `evp_pkey_free_legacy`: the `EVP_PKEY_ASN1_METHOD`'s `pkey_free` (EVP_PKEY_ASN1_METHOD(3)), which for a legacy key is `RSA_free`, `DSA_free`, `DH_free` or `EC_KEY_free`, each running its method's finish function (RSA_meth_new(3): finish "will be called in response to the application calling RSA_free()"; `DH_meth_new`, `DSA_meth_new`; `EC_KEY_METHOD`'s finish, no 3.5 page) and `ENGINE_finish` of its engine; then `ENGINE_finish` of the key's `engine` and `pmeth_engine` | **new** `openssl_unstated_callback_slots`, `UNSTATED_KEY_FREE_STATEMENT`; `openssl_ex_data_callbacks` kept |
-| `X509_free` | at the last reference, `x509_cb` `ASN1_OP_FREE_POST` (`crypto/x509/x_x509.c`) frees only library structures and ex_data; the template frees the `X509_PUBKEY`, whose `x509_pubkey_ex_free` (`x_pubkey.c`) calls `EVP_PKEY_free` on the key decoded with the certificate (`x509_pubkey_ex_d2i_ex`), so everything in the row above, for that key | **new**, `UNSTATED_CERTIFICATE_FREE_STATEMENT`; ex_data kept |
-| `PKCS12_free` | the authenticated safes are PKCS#7 objects: a signed one's certificates (and so their keys) and CRLs; a signer info's `pkey` (`si_cb`, `pk7_asn1.c`); a recipient info's `cert` (`ri_cb`). A CRL's free runs its `X509_CRL_METHOD`'s `crl_free` (`crl_cb`, `x_crl.c`), the method `X509_CRL_set_default_method` installs (no 3.5 page) | **new**, `UNSTATED_PKCS12_FREE_STATEMENT`; ex_data kept |
-| `ENGINE_free` | `engine_free_util` (`crypto/engine/eng_lib.c`) at the last structural reference: the engine's public key method and ASN.1 method callbacks, called to find the dynamic methods to free (`engine_pkey_meths_free`, `tb_pkmeth.c`; `engine_pkey_asn1_meths_free`, `tb_asnmth.c`; setters `ENGINE_set_pkey_meths` and `ENGINE_set_pkey_asn1_meths`, no 3.5 page), then its destroy function (`ENGINE_set_destroy_function`, ENGINE_add(3)). The free is structural, so no finish function runs | **new**, `UNSTATED_ENGINE_FREE_STATEMENT`; ex_data kept |
-| `EVP_MD_CTX_free` | `EVP_MD_CTX_reset` (`crypto/evp/digest.c`): `EVP_PKEY_CTX_free` of the context's `pctx` (`pmeth_lib.c`: the `EVP_PKEY_METHOD`'s cleanup, EVP_PKEY_meth_new(3); the provider signature, key exchange, KEM or asymmetric cipher freectx, provider-signature(7); `EVP_KEYMGMT_free`; `EVP_PKEY_free` of its key and peer key; `ENGINE_finish`), then `evp_md_ctx_clear_digest`: the provider digest's freectx (provider-digest(7)), the legacy `EVP_MD`'s cleanup (EVP_MD_meth_new(3)), `ENGINE_finish` of the digest's engine, `EVP_MD_free` of the fetched digest | **new** (the survey's find), `UNSTATED_DIGEST_CONTEXT_FREE_STATEMENT`; ex_data kept |
+| `EVP_PKEY_free` | at the last reference, `evp_pkey_free_it` (`crypto/evp/p_lib.c`): the provider key management's free (`evp_keymgmt_freedata`, `OSSL_FUNC_keymgmt_free`, provider-keymgmt(7)), and `EVP_KEYMGMT_free`, whose last reference calls `ossl_provider_free` and so may run the provider's teardown (`keymgmt_meth.c`, `provider_core.c`, provider-base(7)); `evp_pkey_free_legacy`: the `EVP_PKEY_ASN1_METHOD`'s `pkey_free` (EVP_PKEY_ASN1_METHOD(3)), which for a legacy key is `RSA_free`, `DSA_free`, `DH_free` or `EC_KEY_free`, each running its method's finish function (RSA_meth_new(3): finish "will be called in response to the application calling RSA_free()"; `DH_meth_new`, `DSA_meth_new`; `EC_KEY_METHOD`'s finish, no 3.5 page) and `ENGINE_finish` of its engine; then `ENGINE_finish` of the key's `engine` and `pmeth_engine` | **new** `openssl_unstated_callback_slots`, the free statement `UNSTATED_FREE_STATEMENT`; `openssl_ex_data_callbacks` kept |
+| `X509_free` | at the last reference, `x509_cb` `ASN1_OP_FREE_POST` (`crypto/x509/x_x509.c`) frees only library structures and ex_data; the template frees the `X509_PUBKEY`, whose `x509_pubkey_ex_free` (`x_pubkey.c`) calls `EVP_PKEY_free` on the key decoded with the certificate (`x509_pubkey_ex_d2i_ex`), so everything in the row above, for that key | **new**, the free statement `UNSTATED_FREE_STATEMENT`; ex_data kept |
+| `PKCS12_free` | the authenticated safes are PKCS#7 objects: a signed one's certificates (and so their keys) and CRLs; a signer info's `pkey` (`si_cb`, `pk7_asn1.c`); a recipient info's `cert` (`ri_cb`). A CRL's free runs its `X509_CRL_METHOD`'s `crl_free` (`crl_cb`, `x_crl.c`), the method `X509_CRL_set_default_method` installs (no 3.5 page) | **new**, the free statement `UNSTATED_FREE_STATEMENT`; ex_data kept |
+| `ENGINE_free` | `engine_free_util` (`crypto/engine/eng_lib.c`) at the last structural reference: the engine's public key method and ASN.1 method callbacks, called to find the dynamic methods to free (`engine_pkey_meths_free`, `tb_pkmeth.c`; `engine_pkey_asn1_meths_free`, `tb_asnmth.c`; setters `ENGINE_set_pkey_meths` and `ENGINE_set_pkey_asn1_meths`, no 3.5 page), then its destroy function (`ENGINE_set_destroy_function`, ENGINE_add(3)). The free is structural, so no finish function runs | **new**, the free statement `UNSTATED_FREE_STATEMENT`; ex_data kept |
+| `EVP_MD_CTX_free` | `EVP_MD_CTX_reset` (`crypto/evp/digest.c`): `EVP_PKEY_CTX_free` of the context's `pctx` (`pmeth_lib.c`: the `EVP_PKEY_METHOD`'s cleanup, EVP_PKEY_meth_new(3); the provider signature, key exchange, KEM or asymmetric cipher freectx, provider-signature(7); `EVP_KEYMGMT_free`; `EVP_PKEY_free` of its key and peer key; `ENGINE_finish`), then `evp_md_ctx_clear_digest`: the provider digest's freectx (provider-digest(7)), the legacy `EVP_MD`'s cleanup (EVP_MD_meth_new(3)), `ENGINE_finish` of the digest's engine, `EVP_MD_free` of the fetched digest | **new** (the survey's find), the free statement `UNSTATED_FREE_STATEMENT`; ex_data kept |
 | `SSL_free`, `SSL_CTX_free`, `X509_STORE_free` | r39's survey (keys, certificates, stores, CRLs, the client certificate engine, the async wait context, QUIC) | unchanged: `UNSTATED_FREE_STATEMENT` |
 | `BIO_free` | the BIO callback and method destroy (stated slots); a built-in method's destroy may free more (a `BIO_f_ssl` BIO's SSL object, a `BIO_f_md` or `BIO_f_cipher` context) | unchanged: `openssl_builtin_bio_methods` already names "any callback it runs in turn on an object other than the arguments of the call" |
 | `OPENSSL_sk_free` | frees the stack only, never its elements | none needed |
 
-**Why each kind has its own statement.** r39's `UNSTATED_FREE_STATEMENT`
-names the client certificate engine of an `SSL_CTX`, the async wait context
-and QUIC callbacks of an SSL object, and a store's CRLs, none of which these
-five reach. So each object kind has a statement naming only what its free
-can run. The key functions are spelled once (`key_functions!` in
-`documented.rs`) and composed into the key, certificate, PKCS#12 and
-digest context statements. Each statement keeps r39's general head ("a
-function of a ... of an object the call frees ..., whose setter no
-declaration of this crate states or which no setter is handed, among
-them ..."), so the list is a naming, and nothing the free runs falls
-outside the premise.
+**One statement for every free.** The free statement is SP1's formula
+(C04.18.9) `quant all #o in #freed: #teardown(#o) \ (#stated | #settable)
+|-> #inert`. `#freed` is the call's own set of objects whose last reference
+it drops, directly or in turn, and `#teardown(o)` is what the free of `o`
+runs from its method tables, provider and engine, or holds itself (SP1
+report, vocabulary table). So the one statement names exactly what each
+free runs: for `EVP_PKEY_free` the key and its RSA, DSA, DH or EC_KEY and
+ENGINE objects; for `X509_free` the certificate and its key; and so on per
+the table above. Before SP1 this card wrote five prose statements, one per
+object kind (`b80ee7664`, §9), because r39's prose named SSL-only objects;
+the formula has no such names, so it is reused rather than narrowed. A
+narrower domain (for instance `#of(EVP_PKEY, #freed)`) would be wrong: it
+would drop the RSA, ENGINE and other objects a key's free frees in turn.
 
 **What was narrowed: nothing.** Each of the five previously named only
 `openssl_ex_data_callbacks`, which still stands. The new premise is an
@@ -69,42 +76,37 @@ the three r39 frees is recorded as a follow-up observation (§7).
 * a declaration whose shape releases an object (`releases`) is listed, and
   so is one naming a free statement; otherwise it is refused (`its ...
   frees an object, and the free audit does not list it`);
-* `Frees::Runs { statement }`: the declaration names
-  `openssl_unstated_callback_slots` in exactly that statement, once, and
-  not the handshake's statement as well;
+* `Frees::Runs`: the declaration names `openssl_unstated_callback_slots`
+  in the free statement, and not in the handshake's statement as well;
 * `Frees::NamedBy { premise }` (`BIO_free`): it names that premise and no
   free statement;
 * `Frees::Nothing` (`OPENSSL_sk_free`): it names no free statement;
 * a second listing refuses.
 
-`Premise::UnstatedFreeSlots` now carries its `FreeStatement`, and
-`expected_clauses` derives the premise text from it, so a declaration
-naming another kind's statement fails the clause-set check too.
-
-**Checker tests** (22 in the crate's unit tests, two new):
+**Checker tests** (23 in the crate's unit tests after the merge, two new;
+SP1's `a_prose_premise_is_refused` now counts 58 premise clauses, its 53
+and these five; `qcore-frontend`'s `the_openssl_formulas_are_the_lean_definitions`
+counts 8 clauses of `unstatedFreeFormula` and 58 in all):
 
 * `every_free_names_what_it_runs_on_the_objects_it_frees`: every audited
   free is documented once, audited once and a release; each running free
-  names exactly its statement in its module; dropping it, swapping it for
-  each of the five other statements, or replacing it with the handshake's
-  refuses through `check_function`; the audit covers exactly the releases
-  in `DOCUMENTED`; each statement is named in the modules exactly as often
-  as the audit reads it; and lexically, none of the five new statements
-  names `SSL`, `QUIC`, `async`, ex_data or a lookup method, only the
-  PKCS#12 statement names a CRL method, only the digest context's names an
-  `EVP_PKEY_CTX`, the engine statement names no finish function and no key,
-  and the four key-bearing statements each name the five key functions;
+  names the free statement in its module; dropping it, or replacing it
+  with the handshake's, refuses through `check_function`; the audit covers
+  exactly the releases in `DOCUMENTED`; and the modules name the free
+  statement exactly as often as the audit reads a run (8);
 * `a_drifted_free_reading_is_refused`: each drift of `free_audited`, and
   the crate's own `OPENSSL_sk_free` with a free statement added.
 
 ## 4. Lock, load path and generated files
 
-The regeneration followed r39's order (`private/regen.sh`, logs
-`private/logs/regen-*.log`, exits in `private/logs/regen.exits`, captured
-unpiped):
+The regeneration on the merged tree followed r39's order
+(`private/regen.sh`, logs `private/logs/regen-*.log`, exits in
+`private/logs/regen.exits`, captured unpiped). `quirin-audit` was rebuilt
+in release at the merged tree first, since SP1 changed the premise reader.
 
 | Step | Exit |
 |---|---|
+| build `quirin-audit` (release, merged tree) | 0 |
 | build `quirin-plugin` (`quirin-provider-plugin`) | 0 |
 | `quirin-plugin load-path --extends contract-load-path.json --output user-crates-load-path.json quirin-provider-libcurl quirin-provider-openssl`, from `providers/` | 0 |
 | `providers/package.py checkers` | 1, as expected (stale views) |
@@ -113,19 +115,21 @@ unpiped):
 | `providers/contracts.py sync` | 0 |
 | `providers/package.py checkers` | 0 |
 
-`quirin-audit` is the release binary built at the base; the card changes
-no crate source outside `providers/`. The reviewed `contracts.lock` diff
-against the base (`private/lockdiff.py`):
+The reviewed `contracts.lock` diff against main `9a769c6b0`
+(`private/lockdiff.py`):
 
 * **5 entries changed** (`contract_sha256` and `pinned_at`):
-  * `ENGINE_free` `2044677ce1e49699e71be09a1dab587154962b91bad97f588bc9f559a686b76f`
-  * `EVP_MD_CTX_free` `680d53740317ddb2d5ba704028863ab0e6986ac633450ae2a03aa43fe44136b8`
-  * `EVP_PKEY_free` `7ffb87ddd254af1d2936ddbc8124e08aa7bbfb8631f29245abdfcaf2546297db`
-  * `PKCS12_free` `c3e9f2ff75fa7d3454e6581b9b36d601e0a025c4fe58afb876d33b3d4aa43602`
-  * `X509_free` `fdb8a3e2ffa686c7ede59fd2087036347a0abec0e6f75bbce541a7a6f7d2a9b2`
+  * `ENGINE_free` `5f1bfe6a67b4a7d3aae28699546a1f0234118fe41b23fa85eb5170d8628bbe9f`
+  * `EVP_MD_CTX_free` `5ece855d28d538d4b9a920e6dc2b72f6b15b3d642adb5eb4b50baf1bbcdf3b17`
+  * `EVP_PKEY_free` `c260fd439b581f3b01d3f8dc90a1d650172bd8790c43c4f7d7213ff3fd275ec4`
+  * `PKCS12_free` `d4b7e9be30544dc588a7d2ac40915ddcdd98375c4ba07aa6f2e6085ac8608b6b`
+  * `X509_free` `c8153b1edf4d84dd6c07f8c6ed722b72736303c5790eead5e08ca1cf8eba7ebe`
 * **0 added, 0 removed, 139 unchanged.** `pinned`, `library_versions`,
   `fluent_bit_revision`, `generated_by`, `lock_version`, `normalisation`,
   `note` and `owner` are unchanged; `flexible` holds the entries.
+
+(The prose-era tip `b80ee7664` changed the same five entries against
+`ecc03d7a4`, with other digests; those are superseded.)
 
 `user-crates-load-path.json` and `quirin-plugin.json` are unchanged (no
 binding added). `scripts/gen_rule_docs.py` and `scripts/gen_lean_roots.py`
@@ -138,15 +142,18 @@ amended in place. No new rule id.
 
 The checker gains a rule (the free audit), so there is a new module,
 `QCore.OpensslObjectFreesAudit`, audited by
-`proof/AuditOpensslObjectFreesAudit.lean` (18 theorems; axioms within
-`propext`, `Classical.choice` and `Quot.sound`; `private/logs/lean-1.log`,
-`lean-audit-1.log`):
+`proof/AuditOpensslObjectFreesAudit.lean` (17 theorems; axioms within
+`propext`, `Classical.choice` and `Quot.sound`; `private/logs/lean-2.log`,
+`lean-audit-2.log`). Reworked after SP1: the statement identity is the one
+formula, so the per-kind theorem was dropped and the module now imports
+`QCore.PremiseFormula`.
 
 * the audit is total over releases, and an unaudited release refuses;
-* a running free names exactly its audited statement; dropping it, naming
-  another kind's or adding the handshake's refuses;
-* a free statement stands only where the audit reads a run, and a free
+* a running free names the free statement; dropping it or adding the
+  handshake's refuses;
+* the free statement stands only where the audit reads a run, and a free
   whose run another premise names carries it;
+* the statement is well formed (`QCore.PremiseFormula.openssl_formulas_wf`);
 * the ex_data premise alone leaves a key's method finish uncovered
   (`key_free_vector_needs_the_premise`);
 * the premise moves no verdict;
@@ -191,7 +198,7 @@ OPENSSL-PROVIDER-REMAINING-CALLEES' `evidence/compare.py`).
 `Unsafe`, bindings unchanged at 150 (all `Pending`, so the checker accepts
 its five changed declarations), and `rows_changed` 0.
 
-## 7. Gate
+## 7. Gate (first run, on `b80ee7664`)
 
 **Command:** `sh private/toolchain/env.sh python3 scripts/gate_scope.py
 --base ecc03d7a4 --out private/gate-1` (Clang 21, Lean 4.35.0), log
@@ -256,21 +263,72 @@ It appends to **OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS**:
   `ENGINE_set_pkey_asn1_meths`, `EVP_MD_meth_set_cleanup`,
   `EVP_PKEY_meth_set_cleanup`, plus the provider dispatch tables), and a
   key's provider teardown is one more provider function;
-* `X509_STORE_free` carries r39's shared statement, which also names SSL
-  objects' kinds the store free never reaches, so a store statement is the
-  narrower reading;
 * the `EX_DATA_AUDIT` classes of the three r39 frees omit the legacy key
   classes and `ENGINE`.
 
 **Files likely to conflict** with other OpenSSL cards:
 
-* `providers/quirin-provider-openssl/src/documented.rs` (`Premise`, the
-  new statements, `FreeStatement`, `Frees`, `FREE_AUDIT`, the `*_FREED`
-  premise arrays, `EX_DATA_AUDIT`) and `src/check.rs` (the `pub use`,
-  `expected_clauses`, `free_audited`, tests);
+* `providers/quirin-provider-openssl/src/documented.rs` (`Frees`,
+  `FREE_AUDIT`, `OBJECT_FREED`, `EX_DATA_AUDIT`) and `src/check.rs` (the
+  `pub use`, `free_audited`, tests, the prose-premise count);
+* `crates/qcore-frontend/tests/premise_formula.rs` (the formula counts);
 * `contracts/openssl/engine.qv`, `evp.qv`, `evp_digest.qv`, `pkcs12.qv`,
   `x509.qv`;
 * `contracts.lock` (regenerate in §4's order);
 * `docs/QCORE_CONTRACT_SPEC_r0_3.md` C04.18 and `docs/agents/rules/12n.md`;
 * the generated `docs/agents/gateway.md` and `proof/QCore.lean` (rerun the
   generators).
+
+## 9. Rework on main `9a769c6b0` (SP1's formula premises)
+
+Main moved after the first hand-back: r39 landed (`b7f86a0de`), then
+SP1-SYMBOLIC-OPENSSL-PREMISES (`9a769c6b0`) stated every OpenSSL premise as a
+C04.18.9 formula and made the checker refuse prose (`check::prose_premise`).
+The trial merge conflicted on the five modules, the lock and `check.rs`.
+
+**Resolution.** The provider files were taken from main and the card was
+reapplied in SP1's form (merge `cc18f4c59`):
+
+* the five frees name SP1's free statement `UNSTATED_FREE_STATEMENT`
+  (`quant all #o in #freed: #teardown(#o) \ (#stated | #settable) |->
+  #inert`). SP1 converted r39's prose to this formula over the call's own
+  `#freed`, which is what the five per-kind prose statements spelled out
+  (§2), so they and `FreeStatement` were dropped rather than translated into
+  five formulas. No premise was narrowed: the five frees gained the premise
+  and keep `openssl_ex_data_callbacks`;
+* `FREE_AUDIT` keeps its expectation, now `Runs`, `NamedBy` or `Nothing`
+  without a statement kind (§3);
+* SP1's own counts move with the five clauses: `a_prose_premise_is_refused`
+  58 (was 53) and the frontend's `the_openssl_formulas_are_the_lean_definitions`
+  8 `unstatedFreeFormula` clauses, 58 in all;
+* the Lean module was reworked (§5); the lock regenerated (§4).
+
+**No re-measurement.** Against the measured tip `b80ee7664`, the rework
+changes only the text of the premise on the five declarations, from prose
+to SP1's formula. SP1 states that a formula premise is metadata exactly as
+a string one is, and no verdict-deciding consumer reads it
+(`docs/reports/sp1-symbolic-openssl-premises/README.md`, "Semantics
+unchanged"). No gateway code changed, and the checker accepts all five
+(the regeneration's `package.py checkers` exit 0, and the gate's provider
+tests). So the opt-in result of §6 (no move, `rows_changed` 0) carries over.
+The base side would now be main `9a769c6b0`, which SP1's lane measured.
+
+**Gate on the merged tree.** `sh private/toolchain/env.sh python3
+scripts/gate_scope.py --base 9a769c6b0 --out private/gate-2`, log
+`private/logs/gate-2.log`, record [`gate/gate-2.json`](gate/gate-2.json).
+Tree `cc18f4c59`; the report and amendments were uncommitted (docs only).
+Scoped, Lean all. **Exit 0, 19 steps passed.**
+
+| Step | Exit | Counts |
+|---|---:|---|
+| submodules, `fmt`, `clippy` (scoped runs, `qcore-frontend` included) | 0 | |
+| Rust suite (scoped) | 0 | 274 units, 281 summaries; 3468 passed, 0 failed, 9 ignored, 10 filtered |
+| `reevaluation_probe`, `reevaluation_followup` | 0, 0 | |
+| Lean (`check_lean_audits.py`) | 0 | 464 audits |
+| Python suite | 0 | 779 tests (the base matrix-count failure of §7 is fixed on main) |
+| provider package build, verify-all, verify `qcore.libevent` | 0, 0, 0 | |
+| provider tests | 0 | 49 summaries; 166 passed, 0 failed, 1 ignored |
+| provider fmt, provider clippy | 0, 0 | |
+
+The slot flakes did not fire. The amendments check is `--check
+--profiles-base 9a769c6b0`, exit 0 (the file's `base` is `9a769c6b0`).
