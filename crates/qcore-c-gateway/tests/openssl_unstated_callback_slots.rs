@@ -73,6 +73,10 @@ const SSL_HANDSHAKE_SETTERS: &str = include_str!(
 const X509_STORE_SLOTS: &str = include_str!(
     "../../../providers/quirin-provider-openssl/contracts/openssl/x509_store_slots.qv"
 );
+/// Card OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS: the teardown slots'
+/// setters.
+const TEARDOWN_SLOTS: &str =
+    include_str!("../../../providers/quirin-provider-openssl/contracts/openssl/teardown_slots.qv");
 
 /// The application's candidates: identity contracts, and one that releases
 /// what the security callback is handed as `other`.
@@ -239,6 +243,7 @@ fn crate_contracts() -> ResourceContracts {
         ("bio_slots.qv", BIO_SLOTS),
         ("ssl_handshake_setters.qv", SSL_HANDSHAKE_SETTERS),
         ("x509_store_slots.qv", X509_STORE_SLOTS),
+        ("teardown_slots.qv", TEARDOWN_SLOTS),
     ])
 }
 
@@ -357,8 +362,9 @@ fn the_crate_states_every_new_slot() {
         let declaration = contracts.retaining_contract(call).expect("withheld");
         // Nine since this card; 27 since OPENSSL-UNDECLARED-HANDSHAKE-CALLBACKS;
         // 41 since OPENSSL-BIO-METHODS-AND-CALLBACKS; 67 since
-        // OPENSSL-REMAINING-HANDSHAKE-SETTERS.
-        assert_eq!(declaration.callbacks.len(), 67, "{call}");
+        // OPENSSL-REMAINING-HANDSHAKE-SETTERS; 79 since
+        // OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS (the teardown slots).
+        assert_eq!(declaration.callbacks.len(), 79, "{call}");
         assert!(
             declaration
                 .callbacks
@@ -377,7 +383,9 @@ fn the_crate_states_every_new_slot() {
             .expect("withheld")
             .callbacks
             .len(),
-        1
+        // The security slot, and (card OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS)
+        // the nine teardown slots of a key it frees inside.
+        10
     );
 }
 
