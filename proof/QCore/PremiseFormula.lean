@@ -601,7 +601,7 @@ six statements (the unstated-slots premise has a handshake and a free statement)
 
 def exDataFormula : Raw := (.quant "o" (.bin .union (.bin .union (.app0 "created") (.app0 "copied")) (.app0 "freed")) (.bin .mapsTo (.app1 "ex_data" (.app1 "class" (.app0 "o"))) (.app0 "inert")))
 
-def unstatedFormula : Raw := (.bin .conj (.bin .conj (.bin .mapsTo (.bin .diff (.app1 "slots" (.bin .union (.bin .union (.app2 "of" (.const "SSL") (.app0 "args")) (.app1 "ctx" (.app2 "of" (.const "SSL") (.app0 "args")))) (.app2 "of" (.const "SSL_CTX") (.app0 "args")))) (.app0 "stated")) (.app0 "inert")) (.quant "l" (.app1 "lookups" (.app1 "store" (.bin .union (.app1 "ctx" (.app2 "of" (.const "SSL") (.app0 "args"))) (.app2 "of" (.const "SSL_CTX") (.app0 "args"))))) (.bin .mapsTo (.bin .diff (.app1 "fns" (.app0 "l")) (.app0 "stated")) (.app0 "inert")))) (.quant "o" (.bin .union (.bin .union (.app0 "created") (.app0 "copied")) (.app0 "freed")) (.bin .mapsTo (.bin .diff (.app1 "ex_data" (.app1 "class" (.app0 "o"))) (.app0 "stated")) (.app0 "inert"))))
+def unstatedFormula : Raw := (.bin .conj (.bin .conj (.bin .conj (.bin .mapsTo (.bin .diff (.app1 "slots" (.bin .union (.bin .union (.app2 "of" (.const "SSL") (.app0 "args")) (.app1 "ctx" (.app2 "of" (.const "SSL") (.app0 "args")))) (.app2 "of" (.const "SSL_CTX") (.app0 "args")))) (.app0 "stated")) (.app0 "inert")) (.quant "l" (.app1 "lookups" (.app1 "store" (.bin .union (.app1 "ctx" (.app2 "of" (.const "SSL") (.app0 "args"))) (.app2 "of" (.const "SSL_CTX") (.app0 "args"))))) (.bin .mapsTo (.bin .diff (.app1 "fns" (.app0 "l")) (.app0 "stated")) (.app0 "inert")))) (.quant "o" (.bin .union (.bin .union (.app0 "created") (.app0 "copied")) (.app0 "freed")) (.bin .mapsTo (.bin .diff (.app1 "ex_data" (.app1 "class" (.app0 "o"))) (.app0 "stated")) (.app0 "inert")))) (.quant "o" (.app0 "freed") (.bin .mapsTo (.bin .diff (.app1 "teardown" (.app0 "o")) (.bin .union (.app0 "stated") (.app0 "settable"))) (.app0 "inert"))))
 
 def builtinFormula : Raw := (.quant "b" (.app1 "chain" (.bin .union (.app2 "of" (.const "BIO") (.app0 "args")) (.app1 "bios" (.app2 "of" (.const "SSL") (.app0 "args"))))) (.bin .imp (.bin .mem (.app1 "method" (.app0 "b")) (.app0 "builtin")) (.bin .conj (.bin .mapsTo (.app1 "fns" (.app0 "b")) (.app0 "inert")) (.quant "f" (.app1 "fns" (.app0 "b")) (.bin .mapsTo (.app2 "in_turn" (.app0 "f") (.bin .diff (.app1 "ssl_of" (.app0 "b")) (.app0 "args"))) (.app0 "inert"))))))
 
@@ -630,12 +630,13 @@ theorem eval_exData (M : Model) :
   simp [eval, exDataFormula, lk, prim0, prim1, binVal, Val.holds]
 
 /-- What `openssl_unstated_callback_slots` states of the ex_data callbacks:
-its last conjunct. -/
+its third conjunct (card OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS added a fourth, the
+statement of a free). -/
 theorem unstated_ex_data_part (M : Model) (h : (eval M [] unstatedFormula).holds) :
     ∀ o, ((M.created o ∨ M.copied o) ∨ M.freed o) →
       ∀ f, (M.exData (M.cls o) f ∧ ¬ M.stated f) → ∀ r, M.runs f r → inertEff M r := by
   simp only [eval, unstatedFormula, lk, prim0, prim1, prim2, binVal, Val.holds] at h
-  simpa using h.2
+  simpa using h.1.2
 
 /-- What it states of the SSL object's and its SSL_CTX's slots: its first
 conjunct. -/
@@ -646,7 +647,7 @@ theorem unstated_slots_part (M : Model) (h : (eval M [] unstatedFormula).holds) 
             (M.args u ∧ M.cls u = M.const "SSL_CTX")) f ∧ ¬ M.stated f) →
         ∀ r, M.runs f r → inertEff M r := by
   simp only [eval, unstatedFormula, lk, prim0, prim1, prim2, binVal, Val.holds] at h
-  simpa using h.1.1
+  simpa using h.1.1.1
 
 theorem unstated_entails_ex_data (M : Model) (hC : M.Coherent)
     (h : (eval M [] unstatedFormula).holds) : (eval M [] exDataFormula).holds := by

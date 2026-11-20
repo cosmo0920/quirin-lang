@@ -249,6 +249,10 @@ contract {
 // declaration does not state (a post-handshake message's callbacks, and on a
 // QUIC object another connection's handshake callbacks run by the shared
 // reactor).
+// Card OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS: the handshake statement's
+// last conjunct is the statement of a free: the call frees peer and ephemeral
+// keys, peer certificates, key exchange and signature contexts, transcript
+// digests and record-layer cipher contexts inside (ssl/statem, s3_lib.c 3.5.5).
 extern fn SSL_shutdown(ssl: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
@@ -257,7 +261,8 @@ contract {
     requires resource_premise(openssl_unstated_callback_slots,
         #slots(#of(SSL, #args) | #ctx(#of(SSL, #args)) | #of(SSL_CTX, #args)) \ #stated |-> #inert
         && (quant all #l in #lookups(#store(#ctx(#of(SSL, #args)) | #of(SSL_CTX, #args))): #fns(#l) \ #stated |-> #inert)
-        && quant all #o in #created | #copied | #freed: #ex_data(#class(#o)) \ #stated |-> #inert);
+        && (quant all #o in #created | #copied | #freed: #ex_data(#class(#o)) \ #stated |-> #inert)
+        && quant all #o in #freed: #teardown(#o) \ (#stated | #settable) |-> #inert);
     requires resource_premise(openssl_builtin_bio_methods,
         quant all #b in #chain(#of(BIO, #args) | #bios(#of(SSL, #args))): #method(#b) in #builtin
         -> #fns(#b) |-> #inert
