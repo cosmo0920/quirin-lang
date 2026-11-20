@@ -5,7 +5,7 @@ other kinds of indirect memory access. USER DECISION (2026-11-20, verbatim,
 through the integrator's brief): "Also, we always blocked indirect-memory
 access so we must proceed to jump on it." and "Also, we need to proceed
 other types of indirect memory accesses." Base `f916d3007`, merged with main
-`ffb41c748` (two record-only commits). Gateway [rule 67](../../agents/gateway.md#constraint-67)
+`ffb41c748` (two record-only commits) and then `b7f86a0de` (r39, provider-only). Gateway [rule 67](../../agents/gateway.md#constraint-67)
 (lifts rule 14a's one-call limit), [rule 68](../../agents/gateway.md#constraint-68),
 and [rule 12h](../../agents/gateway.md#constraint-12h) amended in place.
 Lean `QCore.SiblingBorrowedCalls` (7 audited theorems), `QCore.PointerTypedefMember`
@@ -295,7 +295,38 @@ return-position cast view (5, a route-map placement) and **sub-object address**
 
 ## 5. Gate
 
-(filled after the gate)
+Scoped card gate `python3 scripts/gate_scope.py --base b7f86a0de --out
+private/gate-4` through `private/toolchain/env.sh` (Clang 21, Lean 4.35) on
+`37da2d79a` (the card merged with main `b7f86a0de`, r39
+OPENSSL-FREE-INDIRECT-CALLBACKS, provider-only; earlier main `ffb41c748`
+merged as a fast-forward); mode full (the diff reaches `qcore-c-gateway`).
+**Exit 0, `gate_scope: 8 steps passed`** (record [gate/gate-4.json](gate/gate-4.json),
+logs in the worktree's `private/gate-4/`):
+
+| step | exit | result |
+|---|---:|---|
+| submodules | 0 | 1 submodule |
+| `cargo fmt --all -- --check` | 0 | |
+| `cargo clippy --all-targets -- -D warnings` | 0 | |
+| `run_test_binaries.py` | 0 | 667 units, 712 summaries; 9,788 passed, 0 failed, 21 ignored, 148 filtered |
+| `reevaluation_probe` / `reevaluation_followup` | 0 / 0 | |
+| `check_lean_audits.py` | 0 | 465 audits |
+| `python3 -m unittest discover -s scripts/tests` | 0 | 779 tests |
+
+No flaky rerun was needed. Earlier attempts, not evidence: `private/gate-1`
+stopped at clippy (a collapsible `if`, a test module before items; fixed with no semantic change); `private/gate-2` (base
+`ffb41c748`) exit 1 only for two pinned fixtures this card moves deliberately
+(`sub_object_stores`' two-call row now `Safe` under rule 67;
+`borrowed_field_actuals`' cast row now refused at its next leaf under rule
+12h's amendment, still Unknown), updated in `fa14b0565`; every other step
+exit 0 (Lean 464 audits, Python 779); `private/gate-3` stopped when main
+moved. The measured binaries are of `9b4bc52e6` and `1379d031a`; later code
+commits are the lint fix (a let chain, a moved test module) and fixture
+updates, no semantic change. The gate read census
+(`gate_read_census.py record`) was **not** re-recorded for the new test
+target `qcore-c-gateway::test::indirect_access_sole_residuals_r3` (the census
+test passes; recording traces every gateway test executable under `strace`
+and was not run on this contended host): left to the integrator.
 
 ## 6. Follow-ups (in [integration-amendments.json](integration-amendments.json))
 
