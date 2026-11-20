@@ -2575,13 +2575,17 @@ refusal stays.
     place read through no pointer but the root's). Every other value refuses
     by name: a formal's object pointer (Q36's example C; its missing premise
     is an owner identity for `*s` that bounds `*q`'s lifetime, or a derived
-    Stored summary mode), a local's pointer, a pointer read, a call,
+    Stored summary mode; [rule 70](#constraint-70) supplies it for a formal
+    never rebound stored into a member of a formal's object, as a retention
+    its summary states), a local's pointer, a pointer read, a call,
     arithmetic, another object's address, and a cast other than a
     qualification conversion. Every failing premise makes the node exactly
     the gate's refusal, byte for byte. A body with such a store publishes no
     derived summary and establishes no specification (`has_pointer_store` in
     the W4 gate): a caller would read `Borrowed` for the formal whose object
-    the body overwrote, the `cfl_list_add`/`mk_list_init` hazard of rule 5i.
+    the body overwrote, the `cfl_list_add`/`mk_list_init` hazard of rule 5i
+    (rule 70's retention summary, which states every overwritten member
+    path, is the one exception).
     **Do not** admit a value that carries or may carry an identity (the
     STABILITY-REEVAL-5 `MEMBER-RELEASE-BEFORE-SUMMARY-RELEASE` shape needs
     one in a member), a store into a tracked owner or through a tracked
@@ -12198,5 +12202,67 @@ an undeclared OpenSSL producer). `QCore.NullableReferenceDrop` (12 audited,
     `an_unresolved_pointee_is_never_single`, `decision_vectors_hold`,
     `the_decision_is_the_models`), bound to `DECISION_VECTORS`;
     [report](../reports/cg10-indirect-access-sole-residuals-r3/README.md).
+
+<a id="constraint-70"></a>
+
+70. **A formal's pointer stored into a member of a formal's object is a
+    retention the callers inherit.** Card CG10-MEMBER-STORE-RETAINED-BY
+    (`member_store_retention.rs`; hooks in `pointer_store.rs`
+    (`ValueClass::RetainedFormal`, one branch in `read_store`, the formal's
+    name kept by `classify_value`), `legacy_pointer_store.rs` (the decision
+    dispatch), `legacy_summary.rs` (the summary gate and one derivation arm),
+    `legacy_retained_by.rs` (the overwritten paths at a call, and
+    `framed_path_stable_with`); the field `RetainingContract::overwritten_paths`
+    in `qcore-schemas`, never written by the loader). USER DECISION
+    2026-11-20 on round 3's decision class 1, question 2: "Read it as
+    retention, option 1 with creating the relevant proof(s)." It supplies
+    [rule 10v](#constraint-10v)'s missing owner premise (Q36's example C) as
+    the contract specification already spells it for a declared callee
+    (§C04.14.3, `resource_retained_by(P, FORMAL.FIELD)`), not a parallel
+    notion. (1) **The store.** On rule 10v's typed statement route, a
+    refused `F->m[.n…] = q` is admitted when the destination reads no
+    pointer but `F` (first step `->`, then `.` only), `F` and `q` are
+    distinct formals (`ParmVarDecl`) never written, incremented or
+    address-taken in the body, `q` has object-pointer type, and on the flow
+    `F` and the member's object are untracked (rule 10v's owner premise and
+    P-CG11-CALLER-SLOT), no binding of a place rooted at `F` carries a
+    target or is unknown, and `q` is bound to no identity on any reaching
+    path; the store moves no custody and forgets the bindings rooted at `F`
+    as rule 10v's does. Every failing premise is rule 10v's refusal, byte for
+    byte. (2) **The summary.** Rule 10v's summary gate is relaxed only while
+    rule 70 validates a body with at least one such store whose every
+    admitted pointer store is into a member of a formal (or of a frame
+    record); the body's validated W4 contract must give every formal
+    `Borrowed` and a `None` result. It is published as a retaining
+    declaration (`insert_retaining`: one path retention per rule-70 store,
+    one overwritten path per admitted store into a formal's member), so
+    every consumer that knows nothing of retention sees an uncontracted
+    callee; a declared contract is never replaced. A body with only rule
+    10v's stores keeps 10v's gate. (3) **The call.** Rule 12t's route G
+    decides each retention with its table (a static or null actual records
+    nothing; a caller's object or a tracked identity is recorded, refuses a
+    release while held and an exit while held, `retention-undecided`), and
+    every overwritten path must resolve to rule 12t's path holder (premise
+    P-HOLDER-PATH-STABLE, the call's own root actual and another derived
+    call's disjoint ones framed) whose root is untracked and has no binding
+    rooted at it that carries a target or is unknown; otherwise the call
+    refuses (`retention-undecided`) whatever value was stored. **Function
+    pointers** carry no lifetime: a store of a value rule 10v classes as
+    function-pointer typed adds an overwritten path and no retention. **Do
+    not** read a local's pointer (each census local is an owned allocation,
+    a custody move, or a call result), a holder in the body's own tracked
+    result (`retained_by(q, result)`, which needs the tracked-owner field
+    semantics rule 10v keeps refused), a record returned by value, or a
+    deeper or element place; **do not** forward a caller's record into its
+    own summary (the follow-up FB-EVENT-LOOP-CROSS-FUNCTION-LIFETIME's T2).
+    `T *` for a function typedef `T` is read as an object pointer (retained,
+    more obligation), and a formal declared `R (*f)(A)` makes the W4
+    parameter reader publish no summary at all (the call stays
+    uncontracted). Premises stated, not proved: P-CG11-CALLER-SLOT carried up
+    one frame at each overwritten path; faithful Clang extraction (trust
+    boundary 28). `QCore.MemberStoreRetention` (decision vectors bound to
+    `DECISION_VECTORS`; soundness over a concrete memory; caller discharge
+    composes; the counterexample);
+    [report](../reports/cg10-member-store-retained-by/README.md).
 
 <!-- generated:rules:end -->
