@@ -437,6 +437,34 @@ impl Parser<'_> {
         explicit_casts(node).iter().any(hides_an_identity)
     }
 
+    /// Card CG10-READER-GAPS (rule 71a): the returned whole call `call` with
+    /// every view rule 15z's guard names (H-U0's set, [`hides_an_identity`])
+    /// removed, when each removed view's pointee is one rule 71a reads
+    /// ([`crate::return_cast_view::read_uncast`]); `None` otherwise (no
+    /// unique Clang call node, or a view kept).
+    pub(super) fn uncast_returned_views(&self, call: &[Token]) -> Option<Vec<Token>> {
+        let index = self.typed_positions_index().cloned()?;
+        let wanted = texts(call);
+        let node = Self::elaboration_node(&index, call.first()?.line, &wanted, &|node| {
+            kind(node) == "CallExpr"
+        })?;
+        let aggregates = std::sync::Arc::clone(&index.aggregates);
+        let views = explicit_casts(node)
+            .iter()
+            .filter(|site| hides_an_identity(site))
+            .map(|site| {
+                crate::return_cast_view::view_pointee(qual(site.node).unwrap_or(""), &|name| {
+                    aggregates.scalar_typedef(name)
+                })
+            })
+            .collect::<Vec<_>>();
+        if !crate::return_cast_view::read_uncast(true, &views) {
+            return None;
+        }
+        let (uncast, _) = uncast_tokens(&index, node, call, &|site| hides_an_identity(site))?;
+        Some(uncast)
+    }
+
     /// Hook H-U (rule 12h): a statement every older route refused, lowered
     /// as its uncast statement where the table removes a cast at a value
     /// position. `None` keeps the refusal byte for byte.

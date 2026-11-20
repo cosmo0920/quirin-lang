@@ -599,6 +599,18 @@ pub(crate) fn read_store(reader: &mut Reader<'_>, place: &Value, value: &Value) 
         }
     };
     let mut reading = classify_value(value, &destination, reader.fields());
+    // Card CG10-READER-GAPS (rule 71b): `T *` for a function typedef `T` is
+    // a function-pointer name, not an object pointer.
+    // Only a named formal: the flow decides a function-pointer name by it.
+    if reading.class == ValueClass::FormalPointer
+        && reading.name.is_some()
+        && qual(value).is_some_and(|ty| {
+        crate::function_typedef_pointer::names_function_pointer(ty, &|name| {
+            reader.aggregates().function_typedef(name)
+        })
+    }) {
+        reading.class = ValueClass::FunctionPointerName;
+    }
     // Card CG10-MEMBER-STORE-RETAINED-BY (rule 70): a formal's pointer into a
     // member of another formal's object, both never rebound, is a retention.
     if crate::member_store_retention::retained_formal(reader.function(), &destination, &reading) {

@@ -71,6 +71,9 @@ pub(super) enum Form {
     WholeCall,
     /// `return E(f(args));` with `E` scalar (B01).
     ScalarCall,
+    /// Card CG10-READER-GAPS (rule 71a): `return f((T *)p->m);` read as its
+    /// uncast call.
+    UncastWholeCall,
 }
 
 impl Form {
@@ -78,6 +81,7 @@ impl Form {
         match self {
             Self::WholeCall => "whole-call",
             Self::ScalarCall => "scalar-call",
+            Self::UncastWholeCall => "uncast-whole-call",
         }
     }
 }
@@ -104,19 +108,28 @@ impl Parser<'_> {
         // Card GAPO-RETURN-CORRECTNESS (rule 15z): W44's re-classification
         // is not asked rule 12h's H-U0, so a returned call whose actual is an
         // identity-preserving cast of a place keeps its refusal here.
-        if self.returned_call_hides_a_place(expression) {
-            return None;
-        }
         let texts = expression
             .iter()
             .map(|token| token.text.as_str())
             .collect::<Vec<_>>();
+        // Card CG10-READER-GAPS (rule 71a): a whole-call return whose views
+        // the guard names is read as its uncast call, every such view removed.
+        let mut uncast = None;
+        if self.returned_call_hides_a_place(expression) {
+            if return_call::whole_expression_call(expression, &texts).is_none() {
+                return None;
+            }
+            uncast = Some(self.uncast_returned_views(expression)?);
+        }
         if return_call::whole_expression_call(expression, &texts).is_some() {
             let mut synthetic = Vec::with_capacity(expression.len() + 2);
             synthetic.extend(return_call::assignment_prefix(line));
-            synthetic.extend_from_slice(expression);
+            synthetic.extend_from_slice(uncast.as_deref().unwrap_or(expression));
+            let _transparent = uncast
+                .is_some()
+                .then(crate::return_cast_view::Transparent::enter);
             let admit_derived = self.admit_derived_returns;
-            let accepted = self.lowered_call(&synthetic, |instruction| {
+            let accept = |instruction: &LegacyInstruction| {
                 matches!(instruction, LegacyInstruction::ContractCall {
                     destination: Some(destination),
                     contract,
@@ -125,8 +138,21 @@ impl Parser<'_> {
                     && (return_call::escapes_only_fresh_custody(contract.result)
                         || (admit_derived
                             && matches!(contract.result, ResourceReturnMode::Derived { .. }))))
-            });
-            self.record_return_call_access(&texts, line, Form::WholeCall, accepted.is_some());
+            };
+            // Rule 71a: the uncast call is decided as W4's whole-call return
+            // decides an uncast spelling (its own classification), else as
+            // rule 12i (W44's block).
+            let accepted = if uncast.is_some() {
+                self.lowered_uncast_call(&synthetic, accept)
+            } else {
+                self.lowered_call(&synthetic, accept)
+            };
+            let form = if uncast.is_some() {
+                Form::UncastWholeCall
+            } else {
+                Form::WholeCall
+            };
+            self.record_return_call_access(&texts, line, form, accepted.is_some());
             let (reads, call) = accepted?;
             return Some(self.lowered_return(expression, &texts, line, reads, call, true));
         }
@@ -179,6 +205,24 @@ impl Parser<'_> {
             self.restore_probe_state(&saved);
         }
         lowered
+    }
+
+    /// Card CG10-READER-GAPS (rule 71a): the uncast call `tokens` admitted by
+    /// its own classification under `accept` (as W4's whole-call return
+    /// admits an uncast spelling), else by [`Self::lowered_call`]. Every
+    /// counter is restored when neither admits it.
+    fn lowered_uncast_call(
+        &mut self,
+        tokens: &[Token],
+        accept: impl Fn(&LegacyInstruction) -> bool,
+    ) -> Option<(Vec<LegacyInstruction>, LegacyInstruction)> {
+        let saved = self.probe_state();
+        let instruction = self.classify_simple(tokens);
+        if accept(&instruction) {
+            return Some((Vec::new(), instruction));
+        }
+        self.restore_probe_state(&saved);
+        self.lowered_call(tokens, accept)
     }
 
     /// The reads, then the existing return of the call's value.

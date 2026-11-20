@@ -1197,6 +1197,7 @@ impl StatementIndex {
             fields: &self.fields,
             enums: &self.enums,
             records: &self.records,
+            aggregates: &self.aggregates,
             never_bound,
             function: Some(&self.function),
             decisions: None,
@@ -1485,6 +1486,8 @@ pub(crate) struct Reader<'a> {
     enums: &'a EnumFacts,
     /// Card CG13 (rule 10w): union and bit-field record facts.
     records: &'a crate::union_bitfield::RecordFacts,
+    /// Card CG10-READER-GAPS (rule 71b): the unit's typedef facts.
+    aggregates: &'a crate::aggregate_value::AggregateFacts,
     pub(crate) never_bound: &'a dyn Fn(&str) -> bool,
     /// Card CG10-COMMON-TYPED-PLACE (rule 10t): the function whose body the
     /// reader reads, for the tracked-root place's DeclID identity.
@@ -1515,6 +1518,11 @@ impl<'a> Reader<'a> {
     /// Rule 12q: the record this reader writes its parity decisions into.
     pub(crate) fn decisions(&self) -> Option<&'a crate::consultation_decisions::Decisions> {
         self.decisions
+    }
+
+    /// Card CG10-READER-GAPS (rule 71b): the unit's typedef facts.
+    pub(crate) fn aggregates(&self) -> &'a crate::aggregate_value::AggregateFacts {
+        self.aggregates
     }
 
     /// Card CG11 (rule 10v): the function whose body the reader reads.

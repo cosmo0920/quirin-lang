@@ -117,6 +117,9 @@ pub(crate) struct AggregateFacts {
     typedefs: BTreeMap<String, Target>,
     /// A typedef's name → its one declaration (`None` when ambiguous).
     typedef_names: BTreeMap<String, Option<String>>,
+    /// Card CG10-READER-GAPS (rule 71b): a typedef's name → whether every
+    /// declaration of it is directly a function type.
+    function_typedefs: BTreeMap<String, bool>,
 }
 
 #[derive(Clone, Debug)]
@@ -264,6 +267,11 @@ impl AggregateFacts {
             }
         };
         self.typedefs.insert(id.to_owned(), target);
+        let function = crate::function_typedef_pointer::declares_function_type(node);
+        self.function_typedefs
+            .entry(name.to_owned())
+            .and_modify(|every| *every = *every && function)
+            .or_insert(function);
         match self.typedef_names.get(name) {
             None => {
                 self.typedef_names
@@ -344,6 +352,19 @@ impl AggregateFacts {
             };
         }
         TypeClass::Unread
+    }
+
+    /// Card CG10-READER-GAPS (rule 71b): whether every declaration of the
+    /// typedef `name` is directly a function type.
+    pub(crate) fn function_typedef(&self, name: &str) -> bool {
+        self.function_typedefs.get(name).copied().unwrap_or(false)
+    }
+
+    /// Card CG10-READER-GAPS (rule 71a): whether `name` is the one typedef
+    /// of the unit by that name and names a builtin scalar or an enumeration.
+    pub(crate) fn scalar_typedef(&self, name: &str) -> bool {
+        matches!(self.typedef_names.get(name), Some(Some(id))
+            if self.typedef_class(id, 1) == TypeClass::Scalar)
     }
 
     fn typedef_class(&self, id: &str, depth: usize) -> TypeClass {

@@ -242,8 +242,12 @@ fn rule_12h_round_3_keeps_every_other_cast_refused() {
     // A typed member destination is rule 14a's Clang-matched reading, which
     // the uncast spelling (no Clang node) never reaches: kept.
     assert_keeps_the_gate("void subject(struct S *a) { a->a = is_count((const char *)a->name); }");
-    // The return position has no H-U placement (a route-map row): kept.
-    assert_keeps_the_gate("int subject(struct S *a) { return is_count((const char *)a->name); }");
+    // The return position: card CG10-READER-GAPS (rule 71a) placed the
+    // removal at rule 12i's placement (pin flipped deliberately; its own
+    // controls are in `reader_gaps.rs`). A return inside a scalar expression
+    // still keeps a refusal.
+    assert_safe("int subject(struct S *a) { return is_count((const char *)a->name); }");
+    assert_not_safe("int subject(struct S *a) { return 1 + is_count((const char *)a->name); }");
     // A releasing position: the view hands the callee the same identity the
     // uncast place would, which no reading here discharges.
     assert_not_safe("void subject(struct S *a) { q_free((void *)a->name); }");
