@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 10,
-  "named_followups": 1040
+  "named_followups": 1041
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6920,11 +6920,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Landing integrate/r46 (base main 9b107caf1; merges OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS dafe6e4d9 without conflict; third_party/libevent checked out at d82464a27). Provider lock: providers/quirin-provider-openssl/contracts.lock changes 14 flexible entries (PEM_read_bio_PrivateKey, PEM_read_bio_X509, SSL_CTX_load_verify_locations, SSL_CTX_set_default_verify_paths, SSL_CTX_use_PrivateKey, SSL_CTX_use_PrivateKey_file, SSL_CTX_use_certificate, SSL_CTX_use_certificate_chain_file, SSL_connect, SSL_do_handshake, SSL_read, SSL_shutdown, SSL_write, d2i_PKCS12_bio; contract_sha256 and pinned_at only), none added or removed, no other key changed; the reviewed lock diff is in the card's commit 95ade721f. Amendments applied in fbaab80c0 with --profiles-base origin/main: OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS retired; OPENSSL-INNER-FREES-OTHER-CLASSES and OPENSSL-INNER-FREES-BIO-EX-DATA registered; OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS appended; no profiles. Full landing gate on fbaab80c0 (private/integrate-r46/gate, raw record beside this file as gate-scope.json) via scripts/gate_scope.py --base origin/main --full --landing through private/toolchain/env.sh: Rust 670 units / 715 summaries, 9814 passed, 0 failed, 21 ignored; fmt, Clippy and both reevaluation examples exit 0; Lean 470 audits; provider package build, verify-all, verify, fmt and Clippy exit 0; provider tests 49 summaries, 168 passed, 0 failed, 1 ignored. Python (779 tests) exited 1 on the two stale-matrix checks of test_build_matrix_sections (regenerated from this record) and the known test_gate_slot_queue status flake; the rerun after regeneration is in private/integrate-r46/python-rerun.log. Provider change: nine non-free calls that free a key or certificate inside (the four SSL_CTX_use_* loaders, PEM_read_bio_PrivateKey, PEM_read_bio_X509, d2i_PKCS12_bio, SSL_CTX_load_verify_locations, SSL_CTX_set_default_verify_paths) name openssl_unstated_callback_slots with r45's free statement; UNSTATED_SLOTS_STATEMENT (SSL_connect, SSL_do_handshake, SSL_read, SSL_write, SSL_shutdown) gains the free statement as its last conjunct; INNER_FREE_CLASSES (EVP_PKEY, X509) and check::inner_frees_audited refuse any declaration whose EX_DATA_AUDIT reading frees one of those classes outside FREE_AUDIT; FREE_AUDIT gains 15 entries; prose-premise count 67. Lean QCore.OpensslInnerFreesAudit, 19 theorems (QCore.PremiseFormula.unstatedFormula widened). Not re-measured: premise metadata only, no gateway change; the card predicts no verdict move (PREDICTION.md, measure-prediction none). Pinned-route parity (quirin-audit measure --declared) was not run: this host holds no build/cycle19 inputs or baselines. No profile baseline is changed and land.py publish is owed.",
-  "workspace_tests": 9814,
+  "note": "Landing integrate/r47 (base main 70e10930f; merges CG10-READER-GAPS d2aebbd89, based on 9b107caf1, without conflict; the generated docs/agents/gateway.md and proof/QCore.lean auto-merged and the generators reproduce them; third_party/libevent checked out at d82464a27). USER DECISION 2026-11-21: launch the reader-gap card for the indirect-memory-access refusals. Amendments applied in fdd3cdbcd with --profiles-base origin/main: CG10-EMBEDDED-CONTAINER-THREE-HOP-ACTUAL, CG10-CAST-VIEW-RETURN-POSITION and CG10-RETAINED-BY-FUNCTION-POINTER-SPELLINGS retired; CG10-INDIRECT-ACCESS-SOLE-RESIDUALS amended; CG10-W4-FUNCTION-POINTER-DECLARATOR-FORMALS, CG10-UNCAST-RETURN-UNCONTRACTED-ATTRIBUTION, CG10-UNPARENTHESISED-LOGICAL-AND-SEED and CG10-OPT-IN-PREPARED-INPUT-PATHS registered; no profiles. Full landing gate on fdd3cdbcd (private/integrate-r47/gate, raw record beside this file as gate-scope.json) via scripts/gate_scope.py --base origin/main --full --landing through private/toolchain/env.sh: Rust 671 units / 716 summaries, 9827 passed, 0 failed, 21 ignored; fmt, Clippy and both reevaluation examples exit 0; Lean 473 audits. Python (779 tests) exited 1 on the two stale-matrix checks of test_build_matrix_sections only (regenerated from this record); the rerun after regeneration is in private/integrate-r47/python-rerun.log. No provider steps (no provider diff; provider_tests carried from r46, 168). Gateway rules: 71 reads two & tokens after an operand's end as logical AND in rule 10o's parenthesised-writes reader (a macro's `&& (rk)` was read as the address of rk; C11 6.5.10p2 forbids the other spelling), Lean QCore.LogicalAndOperand (4 theorems); 71a places rule 12h's H-U identity-preserving-view removal at a whole-call return (route map return step 2 amended; a union or record-typedef view keeps the refusal), Lean QCore.ReturnCastView (6); 71b reads `T *` for a function typedef T as rule 10v's function-pointer name, Lean QCore.FunctionTypedefPointer (7); `R (*f)(A)` formals and an object-to-function pointer store (cio_set_log_callback) are recorded refusals. One pin moved deliberately (indirect_access_sole_residuals_r3 return row now Safe). The card's opt-in measurement (current --monkey-linked, Fluent Bit 046accf6 with rewritten compile-database paths, base binary 61d72850 vs tip 185c65db): 1150/2/3645/7 -> 1152/2/3643/7; rd_kafka_assignment_pause and rd_kafka_assignment_resume Unknown -> Safe (rule 71; both on declared assumptions, 527 -> 529); 16 rows change leaves, 19 access leaves removed, none added; leak diagnostics 10 -> 10; the ten rd_kafka_interceptor_add_on_* rows re-attributed to rule 12t's retention-undecided; the five cast-view rows stay Unknown with named blockers. No Safe -> non-Safe move, no new Unsafe. Measured on base 9b107caf1 without r46 (provider premise metadata only). Pinned-route parity (quirin-audit measure --declared) was not run: this host holds no build/cycle19 inputs; the card predicts the two corpus moves and none on system and slice. No profile baseline is changed and land.py publish is owed.",
+  "workspace_tests": 9827,
   "provider_tests": 168,
   "python_evidence_validator_tests": 779,
-  "lean_audits": 470,
+  "lean_audits": 473,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
    "AuditAggregateOwnedField.lean",
@@ -7096,6 +7096,7 @@
    "AuditFloatTypes.lean",
    "AuditFrameHelperTask.lean",
    "AuditFunctionPointerDeclarators.lean",
+   "AuditFunctionTypedefPointer.lean",
    "AuditGenericNames.lean",
    "AuditGenericSelection.lean",
    "AuditGnuBuiltinReader.lean",
@@ -7137,6 +7138,7 @@
    "AuditLocalCondition.lean",
    "AuditLocalSourceBindings.lean",
    "AuditLoggerEffects.lean",
+   "AuditLogicalAndOperand.lean",
    "AuditLookupRestrictedReuse.lean",
    "AuditLoopBudget.lean",
    "AuditLoopInvariants.lean",
@@ -7288,6 +7290,7 @@
    "AuditRetentionPath.lean",
    "AuditReturnCallActuals.lean",
    "AuditReturnCallCustody.lean",
+   "AuditReturnCastView.lean",
    "AuditReturnCodeHandOff.lean",
    "AuditReturnCorrectness.lean",
    "AuditReturnExpressionEvaluation.lean",
@@ -7401,9 +7404,9 @@
   "reevaluation_followup_exit": 0,
   "cargo_fmt": "clean",
   "cargo_clippy": "clean",
-  "standing_gate": "full landing gate: every step exits 0 except the Python suite's stale-matrix checks, cleared by regenerating the matrix from this record, and the known slot-queue flake (rerun disclosed in the note); provider steps run",
+  "standing_gate": "full landing gate: every step exits 0 except the Python suite's stale-matrix checks, cleared by regenerating the matrix from this record (rerun disclosed in the note); no provider steps (no provider diff; provider_tests carried from r46)",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/openssl-inner-frees-silent-method-callbacks/integration/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/cg10-reader-gaps/integration/gate.json)"
  },
  "named_followups": [
   {
