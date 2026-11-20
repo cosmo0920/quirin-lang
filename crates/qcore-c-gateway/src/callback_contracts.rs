@@ -80,9 +80,19 @@ pub const WITHDRAWN: &str = "callback-withdrawn";
 /// does not take, on every return, the object the callee supplies it at a
 /// `supplied_owned` position.
 pub const SUPPLIED_KEPT: &str = "callback-supplied-kept";
+/// Card **CALLBACK-SUPPLIED-NULL-ACTUAL** (rule 13u amended): a candidate
+/// that requires a live non-null object (`resource_owned(nonnull)`) at a
+/// `supplied_nullable` position, where the callee may pass NULL.
+pub const SUPPLIED_NULL: &str = "callback-supplied-null";
 /// Card **CG22-OP-CALLBACKS-AND-SERVED-QUEUES** (rule 12n): a member whose
 /// stores do not close into a set of functions.
 pub const MEMBER_OPEN: &str = "callback-member-open";
+/// Card **OPENSSL-FREE-SESSION-REMOVE-INVOCATION** (C04.19 amended, rule
+/// 12n): a slot invocation beside a reference drop whose candidates would
+/// change or read the dropped object (a member-path state, a member
+/// invocation deferred to its constructed state), when the call does not
+/// decide whether its drop is the last.
+pub const BESIDE_DROP: &str = "callback-beside-drop";
 /// Card **CG22-OP-CALLBACKS-AND-SERVED-QUEUES** (rule 12o): a discriminant
 /// value no arm declares.
 pub const ARM_UNDECLARED: &str = "arm-undeclared";
@@ -129,6 +139,11 @@ pub enum CandidateClass {
     /// invocation, with the reason named
     /// ([`crate::candidate_composition::OWN_REFUSED`]).
     OwnInvocationRefused,
+    /// Card **CALLBACK-SUPPLIED-NULL-ACTUAL** (rule 13u amended): otherwise
+    /// admissible, but it requires a live non-null object
+    /// (`resource_owned(nonnull)`) at a `supplied_nullable` position, which
+    /// the callee may fill with NULL ([`SUPPLIED_NULL`]).
+    RequiresNonNullSupplied,
 }
 
 /// Whether a contract states no custody effect besides its modes.
@@ -155,8 +170,15 @@ pub fn classify(
     let mut releases = false;
     let mut takes = false;
     let mut keeps = false;
+    let mut nonnull_at_nullable = false;
     for (mode, actual) in contract.parameters.iter().zip(actuals) {
         match (mode, actual) {
+            // Card CALLBACK-SUPPLIED-NULL-ACTUAL: the callee may pass NULL
+            // here, so a requirement of a live non-null object is not met.
+            (
+                ResourceParameterMode::Owned { nullable: false },
+                CallbackActual::SuppliedNullable,
+            ) => nonnull_at_nullable = true,
             (
                 ResourceParameterMode::Consumed { .. } | ResourceParameterMode::Released { .. },
                 CallbackActual::SuppliedOwned,
@@ -175,6 +197,8 @@ pub fn classify(
     }
     if keeps {
         CandidateClass::KeepsSupplied
+    } else if nonnull_at_nullable {
+        CandidateClass::RequiresNonNullSupplied
     } else if takes {
         CandidateClass::TakesSupplied
     } else if releases {
@@ -290,6 +314,15 @@ pub fn decide(candidates: Result<&[(String, CandidateClass)], ()>, elements: boo
     {
         return Decision::Refused(SUPPLIED_KEPT, Some(name.clone()));
     }
+    // Card CALLBACK-SUPPLIED-NULL-ACTUAL (rule 13u amended): a candidate
+    // requiring a live object where the callee may pass NULL is refused,
+    // never read as met by what the callee supplies.
+    if let Some((name, _)) = candidates
+        .iter()
+        .find(|(_, class)| *class == CandidateClass::RequiresNonNullSupplied)
+    {
+        return Decision::Refused(SUPPLIED_NULL, Some(name.clone()));
+    }
     let releasing = candidates
         .iter()
         .filter(|(_, class)| *class == CandidateClass::ReleasesElement)
@@ -362,6 +395,10 @@ pub fn invocation_detail(reason: &str, candidate: Option<&str>, actual: &str) ->
         (SUPPLIED_KEPT, Some(name)) => format!(
             "callback `{name}` (from `{actual}`) does not take, on every return, the object the \
              callee supplies it"
+        ),
+        (SUPPLIED_NULL, Some(name)) => format!(
+            "callback `{name}` (from `{actual}`) requires a live object where the callee may \
+             pass NULL"
         ),
         (crate::candidate_composition::OWN_REFUSED, Some(name)) => {
             format!("callback `{name}` (from `{actual}`) does not decide its own invocations")
@@ -622,6 +659,8 @@ mod tests {
             // Card HANDOFF-CANDIDATE-OWN-CALLBACKS: modelled by
             // `QCore.CandidateComposition`, in no vector of this module.
             CandidateClass::OwnInvocationRefused => ".ownInvocationRefused",
+            // Card CALLBACK-SUPPLIED-NULL-ACTUAL: `QCore.CallbackSuppliedNull`.
+            CandidateClass::RequiresNonNullSupplied => ".requiresNonNull",
         }
     }
 
@@ -801,6 +840,7 @@ mod tests {
             CallbackActual::Supplied => ".supplied".to_owned(),
             CallbackActual::Element => ".element".to_owned(),
             CallbackActual::SuppliedOwned => ".suppliedOwned".to_owned(),
+            CallbackActual::SuppliedNullable => ".suppliedNullable".to_owned(),
         }
     }
 
@@ -890,6 +930,7 @@ mod tests {
                             CallbackActual::Supplied => ".supplied".to_owned(),
                             CallbackActual::Element => ".element".to_owned(),
                             CallbackActual::SuppliedOwned => ".suppliedOwned".to_owned(),
+                            CallbackActual::SuppliedNullable => ".suppliedNullable".to_owned(),
                         }
                     ))
                     .collect::<Vec<_>>()
@@ -962,5 +1003,174 @@ mod tests {
             classify(Some(&owned_result), &[CallbackActual::Supplied]),
             CandidateClass::Effectful
         );
+    }
+
+    /// Card CALLBACK-SUPPLIED-NULL-ACTUAL: `NULLABLE_CLASSIFY_VECTORS`
+    /// (`QCore.CallbackSuppliedNull.classifyVectors`): modes with their
+    /// nullability (`borrowed`, `ownedNonnull`, `ownedNullable`, `released`
+    /// (`resource_released(nullable)`), `other` (`resource_consumed`)).
+    const NULLABLE_CLASSIFY_VECTORS: &[(&[(&str, CallbackActual)], CandidateClass)] = &[
+        (
+            &[
+                ("borrowed", CallbackActual::Parameter { index: 0 }),
+                ("ownedNonnull", CallbackActual::SuppliedNullable),
+            ],
+            CandidateClass::RequiresNonNullSupplied,
+        ),
+        (
+            &[
+                ("borrowed", CallbackActual::Parameter { index: 0 }),
+                ("ownedNullable", CallbackActual::SuppliedNullable),
+            ],
+            CandidateClass::Identity,
+        ),
+        (
+            &[
+                ("borrowed", CallbackActual::SuppliedNullable),
+                ("borrowed", CallbackActual::Supplied),
+            ],
+            CandidateClass::Identity,
+        ),
+        (
+            &[
+                ("ownedNonnull", CallbackActual::Supplied),
+                ("ownedNonnull", CallbackActual::Parameter { index: 1 }),
+            ],
+            CandidateClass::Identity,
+        ),
+        (
+            &[("released", CallbackActual::SuppliedNullable)],
+            CandidateClass::Effectful,
+        ),
+        (
+            &[("other", CallbackActual::SuppliedNullable)],
+            CandidateClass::Effectful,
+        ),
+        (
+            &[
+                ("ownedNonnull", CallbackActual::SuppliedNullable),
+                ("released", CallbackActual::Supplied),
+            ],
+            CandidateClass::Effectful,
+        ),
+        (
+            &[
+                ("ownedNonnull", CallbackActual::SuppliedNullable),
+                ("released", CallbackActual::Element),
+            ],
+            CandidateClass::RequiresNonNullSupplied,
+        ),
+    ];
+
+    /// `NULLABLE_DECISION_VECTORS` (`QCore.CallbackSuppliedNull.decisionVectors`):
+    /// (open?, classes, elements?, kind).
+    const NULLABLE_DECISION_VECTORS: &[(bool, &[CandidateClass], bool, u8)] = &[
+        (false, &[CandidateClass::RequiresNonNullSupplied], false, 2),
+        (
+            false,
+            &[
+                CandidateClass::Identity,
+                CandidateClass::RequiresNonNullSupplied,
+            ],
+            false,
+            2,
+        ),
+        (
+            false,
+            &[CandidateClass::Identity, CandidateClass::Identity],
+            false,
+            0,
+        ),
+        (false, &[CandidateClass::RequiresNonNullSupplied], true, 2),
+        (true, &[CandidateClass::Identity], false, 2),
+    ];
+
+    const NULL_LEAN: &str = include_str!("../../../proof/QCore/CallbackSuppliedNull.lean");
+
+    fn null_lean_rows(header: &str) -> Vec<String> {
+        let start = NULL_LEAN.find(header).expect("the Lean vector list") + header.len();
+        let body = &NULL_LEAN[start..];
+        let end = body.find("\n]").expect("the list's end");
+        body[..end]
+            .lines()
+            .map(str::trim)
+            .filter(|line| !line.is_empty())
+            .map(|line| line.trim_end_matches(',').to_owned())
+            .collect()
+    }
+
+    fn nullable_mode(spelling: &str) -> ResourceParameterMode {
+        match spelling {
+            "borrowed" => ResourceParameterMode::Borrowed,
+            "ownedNonnull" => ResourceParameterMode::Owned { nullable: false },
+            "ownedNullable" => ResourceParameterMode::Owned { nullable: true },
+            "released" => ResourceParameterMode::Released { nullable: true },
+            _ => ResourceParameterMode::Consumed { nullable: false },
+        }
+    }
+
+    #[test]
+    fn nullable_vectors_hold_and_are_the_lean_vectors() {
+        let rows = null_lean_rows("def classifyVectors : List (List (Mode × Actual) × Class) := [");
+        let mut rendered = Vec::new();
+        for (positions, class) in NULLABLE_CLASSIFY_VECTORS {
+            let contract = ResourceFunctionContract {
+                parameters: positions.iter().map(|(m, _)| nullable_mode(m)).collect(),
+                result: ResourceReturnMode::None,
+                ..ResourceFunctionContract::default()
+            };
+            let actuals = positions.iter().map(|(_, a)| *a).collect::<Vec<_>>();
+            assert_eq!(classify(Some(&contract), &actuals), *class, "{positions:?}");
+            rendered.push(format!(
+                "([{}], {})",
+                positions
+                    .iter()
+                    .map(|(m, a)| format!("(.{m}, {})", render_actual(a)))
+                    .collect::<Vec<_>>()
+                    .join(", "),
+                lean_class(*class)
+            ));
+        }
+        assert_eq!(rows, rendered);
+        let rows =
+            null_lean_rows("def decisionVectors : List (Bool × List Class × Bool × Nat) := [");
+        let mut rendered = Vec::new();
+        for (open, classes, elements, kind) in NULLABLE_DECISION_VECTORS {
+            let candidates = classes
+                .iter()
+                .enumerate()
+                .map(|(at, class)| (format!("f{at}"), *class))
+                .collect::<Vec<_>>();
+            let resolution = if *open {
+                Err(())
+            } else {
+                Ok(candidates.as_slice())
+            };
+            let decision = decide(resolution, *elements);
+            assert_eq!(decision_kind(&decision), *kind, "{classes:?}");
+            if classes.contains(&CandidateClass::RequiresNonNullSupplied) && !*open {
+                assert!(matches!(
+                    decision,
+                    Decision::Refused(SUPPLIED_NULL, Some(_))
+                ));
+            }
+            rendered.push(format!(
+                "({open}, [{}], {elements}, {kind})",
+                classes
+                    .iter()
+                    .map(|class| lean_class(*class))
+                    .collect::<Vec<_>>()
+                    .join(", ")
+            ));
+        }
+        assert_eq!(rows, rendered);
+        // The requirement a nullable position puts on the call: none (it is
+        // the callee's value, never the caller's).
+        let owned = ResourceFunctionContract {
+            parameters: vec![ResourceParameterMode::Owned { nullable: false }],
+            result: ResourceReturnMode::None,
+            ..ResourceFunctionContract::default()
+        };
+        assert!(requirements(Some(&owned), &[CallbackActual::SuppliedNullable]).is_empty());
     }
 }

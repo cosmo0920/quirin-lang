@@ -54,8 +54,8 @@ contract {
         quant all #o in #created | #copied | #freed: #ex_data(#class(#o)) |-> #inert);
     ensures normal resource_borrowed(bp);
     ensures normal resource_borrowed(p12);
-    ensures normal resource_callback_slot_invoked(bp, bio_st.bio_callback_ex, _, _, _, _, _, _, _, _);
-    ensures normal resource_callback_slot_invoked(bp, bio_st.bio_callback, _, _, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(bp, bio_st.bio_callback_ex, _, _, supplied_nullable, _, _, _, _, supplied_nullable);
+    ensures normal resource_callback_slot_invoked(bp, bio_st.bio_callback, _, _, supplied_nullable, _, _, _);
     ensures normal resource_callback_slot_invoked(bp, bio_method_st.meth_write_ex, _, _, _, _);
     ensures normal resource_callback_slot_invoked(bp, bio_method_st.meth_write, _, _, _);
     ensures normal resource_callback_slot_invoked(bp, bio_method_st.meth_read_ex, _, _, _, _);

@@ -29,7 +29,7 @@ changes no predicted effect, so the prediction is kept as committed.
   forms never share a statement.
 * **Semantics unchanged.** A formula premise is metadata exactly as a string
   one: no consumer that decides a verdict reads it.
-* **OpenSSL.** All 47 `resource_premise` clauses of
+* **OpenSSL.** All 49 `resource_premise` clauses of
   `quirin-provider-openssl` state formulas (`documented.rs`'s four
   `*_STATEMENT` constants, the 30 declarations in 13 modules). The checker
   refuses a premise whose statement is a string (`check::prose_premise`,
@@ -63,14 +63,12 @@ Every token but `\` is an existing one.
 | `#method(b)` | obj → meth | the BIO_METHOD of a BIO |
 | `#builtin` | set(meth) | the BIO_METHODs the library defines itself (a `BIO_s_`/`BIO_f_` function's, handed to no setter) |
 | `#fns(b)` | obj → set(fn) | the functions of the BIO's method table, each as run on that BIO |
-| `#destroy(b)` | obj → fn | the destroy function of the BIO's method, as run on that BIO |
-| `#callback(b, c)` | obj, cmd → fn | the callback the BIO holds, as run on it with command `c` |
 | `#in_turn(f, S)` | fn, set(obj) → set(fn) | the callbacks a run of `f` runs in turn on an object of `S` |
 | `#caller_held` | set(res) | the resources the caller holds when the run starts |
 | `#takes(R)`, `#releases(R)`, `#retains(R)` | set(res) → set(res) | the members of `R` the run takes over, releases, keeps |
 | `#inert` | eff | `#takes(#caller_held) == {} && #releases(#caller_held) == {} && #retains(#caller_held) == {}` |
 
-Constants: the fifteen ex_data classes (sort cls) and `BIO_CB_FREE` (cmd).
+Constants: the fifteen ex_data classes (sort cls).
 `F |-> E`: every run of callback `F` (of every member of set `F`) during the
 call has effect `E`.
 
@@ -117,10 +115,10 @@ this card's first hand-back, which had used the existing `-`).
   `quant all #o in #created | #copied | #freed: #ex_data(#class(#o)) |-> #inert`
 * `openssl_unstated_callback_slots` (7):
   `#slots(#of(SSL, #args) | #ctx(#of(SSL, #args)) | #of(SSL_CTX, #args)) \ #stated |-> #inert && quant all #o in #created | #copied | #freed: #ex_data(#class(#o)) \ #stated |-> #inert`
-* `openssl_builtin_bio_methods` (8):
+* `openssl_builtin_bio_methods` (10):
   `quant all #b in #chain(#of(BIO, #args) | #bios(#of(SSL, #args))): #method(#b) in #builtin -> #fns(#b) |-> #inert && quant all #f in #fns(#b): #in_turn(#f, #ssl_of(#b) \ #args) |-> #inert`
 * `openssl_bio_free_callbacks` (2):
-  `quant all #b in #of(BIO, #args) | #chain(#bios(#of(SSL, #args))): #b in #freed -> #callback(#b, BIO_CB_FREE) |-> #inert && #destroy(#b) |-> #inert && #ex_data_free(BIO) |-> #inert`
+  `quant all #b in #of(BIO, #args) | #chain(#bios(#of(SSL, #args))): #b in #freed -> #ex_data_free(BIO) |-> #inert`
 
 The modules lay each out one step per line (a break before every `->` and
 `&&`); the checker and the loader read whitespace-insensitively.
@@ -147,8 +145,9 @@ The modules lay each out one step per line (a break before every `->` and
 | builtin | "a function of a BIO method" | `#fns(#b)` |
 | | "the library defines itself (the BIO_METHOD that BIO_s_socket, BIO_s_mem, BIO_f_buffer or another built-in BIO_s_ or BIO_f_ function returns, which no setter is handed)" | `#method(#b) in #builtin ->`; `#builtin`'s meaning carries the parenthetical |
 | | "run on a BIO" | `#fns(#b)`: each function as run on `#b` |
-| | "the call reads or writes through (its BIO argument or a BIO the SSL object holds)" | `#of(BIO, #args) \| #bios(#of(SSL, #args))` |
+| | "the call reads or writes through or frees (its BIO argument or a BIO the SSL object holds)" | `#of(BIO, #args) \| #bios(#of(SSL, #args))` |
 | | "or one chained to it" | `#chain(…)` |
+| | "or frees" (r36, also on `BIO_free` and `SSL_free`) | no new term: the parenthetical names the same BIOs (its BIO argument, the SSL object's BIOs) whether the call reads, writes or frees through them, so the domain `#chain(#of(BIO, #args) \| #bios(#of(SSL, #args)))` is unchanged; a built-in method's destroy function run at the free is among `#fns(#b)` |
 | | "takes, releases or retains nothing the caller holds" | `#fns(#b) \|-> #inert` |
 | | "and so does any callback it runs in turn" | `&& quant all #f in #fns(#b): #in_turn(#f, …) \|-> #inert` |
 | | "on an object other than the arguments of the call" | `… \ #args` |
@@ -156,10 +155,8 @@ The modules lay each out one step per line (a break before every `->` and
 | BIO free | "when the call drops the last reference to a BIO" | `quant all #b in …: #b in #freed ->` |
 | | "its BIO argument" | `#of(BIO, #args)` |
 | | "or a BIO the SSL object holds and the BIOs chained to it" | `\| #chain(#bios(#of(SSL, #args)))` (R5) |
-| | "the callback the BIO holds, run with BIO_CB_FREE" | `#callback(#b, BIO_CB_FREE)` |
-| | "the destroy function of its method" | `#destroy(#b)` |
-| | "and the ex_data free callbacks of the BIO class" | `#ex_data_free(BIO)` |
-| | "take, release or retain nothing the caller holds" | `\|-> #inert`, each, joined by `&&` |
+| | "the ex_data free callbacks of the BIO class" (r36: the callback and destroy function are stated slots now, not premised) | `#ex_data_free(BIO)` |
+| | "take, release or retain nothing the caller holds" | `\|-> #inert` |
 
 **Readings recorded** where a phrase admitted more than one parse:
 
@@ -204,7 +201,7 @@ The modules lay each out one step per line (a break before every `->` and
   where precedence needs them (`the_printing_parenthesizes_exactly_where_needed`);
 * a formula premise changes no contract, and two spellings of one tree are one
   premise (`a_formula_premise_is_admitted_with_its_canonical_statement`);
-* the OpenSSL checker refuses each of the 47 clauses rewritten as prose
+* the OpenSSL checker refuses each of the 49 clauses rewritten as prose
   (`check::tests::a_prose_premise_is_refused`); its drift tests
   (`a_drifted_bio_slot_reading_is_refused`, the unstated-slot and ex_data
   drifts) now drift the formulas.
@@ -213,7 +210,7 @@ The modules lay each out one step per line (a break before every `->` and
 
 `QCore.PremiseFormula`, audited by `proof/AuditPremiseFormula.lean` (12
 theorems). It has the syntax (`Raw`), sorts (`Srt`), the vocabulary (`vocab`,
-`classes`, `commands`), the judgment (`check`, `wf`), and a denotation
+`classes`), the judgment (`check`, `wf`), and a denotation
 (`eval`) over an abstract `Model` of the call's objects, callback sets, runs
 and per-run resource effects.
 
@@ -222,10 +219,10 @@ and per-run resource effects.
 * `decision_vectors_agree`: the judgment decides the 22 shared vectors as
   the Rust reader does. The Rust test `the_decision_vectors_are_the_lean_table`
   binds each row's tree and decision. `the_vocabulary_is_the_lean_table` binds
-  the vocabulary, classes and commands.
+  the vocabulary and classes.
 * `openssl_formulas_wf`: the four formulas are well-formed. The Rust test
   `the_openssl_formulas_are_the_lean_definitions` binds the Lean definitions
-  to every one of the 47 clauses as read from the modules.
+  to every one of the 49 clauses as read from the modules.
 * `inert_definition`: `#inert` denotes its definition.
 * `unstated_entails_ex_data`: in every model where no clause states an
   ex_data callback (`Model.Coherent`), `openssl_unstated_callback_slots`
@@ -266,6 +263,15 @@ difference change `contract_sha256` and `pinned_at`. Those are the seven
 20 premised declarations print no difference and keep their digests. Against
 base, the lock still changes exactly the 30 premised declarations, adds or
 removes nothing, and leaves every top-level key and both load paths unchanged.
+
+**After merging main `7c026b527`** (r36, OPENSSL-FREE-SESSION-REMOVE-INVOCATION),
+the lock was regenerated, not merged, in the same order (`regen-checkers-5.log`
+exit 1 listing the 30 stale declarations; then `regen-pin-5.log`,
+`regen-sync-5.log`, `regen-checkers-6.log` and `regen-views-5.log`, each exit 0).
+Against `7c026b527`, `contracts.lock` changes exactly the 30 premised
+declarations' `contract_sha256` and `pinned_at`. The other 77 entries and every
+top-level key are unchanged, nothing is added or removed, and both load paths
+and `quirin-plugin.json` are byte-identical to main.
 
 ## 8. Measurement
 

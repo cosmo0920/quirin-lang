@@ -46,6 +46,18 @@ module contract;
 // premise `openssl_bio_free_callbacks` (C04.18) for exactly those three,
 // published with every row that applies it. Follow-up
 // OPENSSL-FREE-SESSION-REMOVE-INVOCATION (the clause beside a drop).
+//
+// Card OPENSSL-FREE-SESSION-REMOVE-INVOCATION: C04.19 now admits a slot
+// invocation beside a reference drop (the transfer applies the callback
+// route before the reference route, and a candidate effect on the dropped
+// object refuses, since the call does not decide whether its drop is the
+// last). So the callback (both kinds) and the destroy function are stated,
+// on `a` with every actual `_` (a slot that is handed `a` and releases,
+// consumes or keeps it refuses). The destroy function of a method the
+// library defines itself, which no setter is handed, is under
+// `openssl_builtin_bio_methods`, whose statement covers a BIO the call
+// frees; `openssl_bio_free_callbacks` is narrowed to the ex_data free
+// callbacks.
 // Card OPENSSL-EX-DATA-REGISTRY: openssl_bio_free_callbacks names the BIO
 // class's free callbacks; the ex_data premise is named too, so every
 // declaration that may run an ex_data callback names it.
@@ -56,12 +68,17 @@ contract {
     requires resource_library_version(openssl, documented "1.1.1");
     requires resource_premise(openssl_bio_free_callbacks,
         quant all #b in #of(BIO, #args) | #chain(#bios(#of(SSL, #args))): #b in #freed
-        -> #callback(#b, BIO_CB_FREE) |-> #inert
-        && #destroy(#b) |-> #inert
-        && #ex_data_free(BIO) |-> #inert);
+        -> #ex_data_free(BIO) |-> #inert);
     requires resource_premise(openssl_ex_data_callbacks,
         quant all #o in #created | #copied | #freed: #ex_data(#class(#o)) |-> #inert);
+    requires resource_premise(openssl_builtin_bio_methods,
+        quant all #b in #chain(#of(BIO, #args) | #bios(#of(SSL, #args))): #method(#b) in #builtin
+        -> #fns(#b) |-> #inert
+        && quant all #f in #fns(#b): #in_turn(#f, #ssl_of(#b) \ #args) |-> #inert);
     ensures normal resource_borrowed(a);
     ensures normal resource_reference_dropped(a, nullable);
+    ensures normal resource_callback_slot_invoked(a, bio_st.bio_callback_ex, _, _, supplied_nullable, _, _, _, _, supplied_nullable);
+    ensures normal resource_callback_slot_invoked(a, bio_st.bio_callback, _, _, supplied_nullable, _, _, _);
+    ensures normal resource_callback_slot_invoked(a, bio_method_st.meth_destroy, _);
     ensures normal resource_return_none();
 };

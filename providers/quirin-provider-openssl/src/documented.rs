@@ -132,8 +132,10 @@ pub enum Premise {
     /// Card **OPENSSL-BIO-METHODS-AND-CALLBACKS**: `requires
     /// resource_premise(openssl_bio_free_callbacks, "…")`: a drop of a BIO's
     /// last reference runs its callback (`BIO_CB_FREE`), its method's destroy
-    /// function and the BIO class's ex_data free callbacks, which no clause
-    /// can state beside the reference drop (C04.19).
+    /// function and the BIO class's ex_data free callbacks. Card
+    /// **OPENSSL-FREE-SESSION-REMOVE-INVOCATION**: the first two are stated
+    /// beside the drop now (C04.19 amended), so the premise covers only the
+    /// ex_data free callbacks, which are no slot.
     BioFreeCallbacks,
     /// Card **OPENSSL-SSL-CTX-CALLBACK-SLOTS**: `ensures normal
     /// resource_callback_slot_invoked(OBJ, slot, A…)` (C04.19.3): during the
@@ -203,7 +205,10 @@ pub const BUILTIN_BIO_METHODS: &str = "openssl_builtin_bio_methods";
 /// Its statement. Card OPENSSL-BIO-READER-INVOCATIONS: the BIO is the one
 /// the call reads or writes through, its own BIO argument (the PEM and
 /// PKCS#12 readers) or one the SSL object holds (the I/O calls). Card
+/// OPENSSL-FREE-SESSION-REMOVE-INVOCATION: or frees (`BIO_free`, `SSL_free`:
+/// a built-in method's destroy function). Card
 /// **SP1-SYMBOLIC-OPENSSL-PREMISES**: a formula. For every BIO of that chain
+/// (its BIO argument or a BIO the SSL object holds, and those chained to it)
 /// whose method the library defines itself, each function of the method, as
 /// run on that BIO, takes, releases or retains nothing the caller holds, and
 /// so does every callback it runs in turn on the SSL object of a BIO_f_ssl
@@ -216,15 +221,14 @@ pub const BUILTIN_BIO_METHODS_STATEMENT: &str = "quant all #b in #chain(#of(BIO,
 /// premise.
 pub const BIO_FREE: &str = "openssl_bio_free_callbacks";
 
-/// Its statement. Card **SP1-SYMBOLIC-OPENSSL-PREMISES**: a formula. For its
-/// BIO argument, or a BIO the SSL object holds and the BIOs chained to it,
-/// whose last reference the call drops, the callback the BIO holds run with
-/// `BIO_CB_FREE`, the destroy function of its method and the ex_data free
-/// callbacks of the BIO class take, release or retain nothing the caller
-/// holds.
+/// Its statement. Card OPENSSL-FREE-SESSION-REMOVE-INVOCATION: narrowed to
+/// the ex_data free callbacks; the callback and destroy slots are stated.
+/// Card **SP1-SYMBOLIC-OPENSSL-PREMISES**: a formula. For its BIO argument,
+/// or a BIO the SSL object holds and the BIOs chained to it, whose last
+/// reference the call drops, the ex_data free callbacks of the BIO class
+/// take, release or retain nothing the caller holds.
 pub const BIO_FREE_STATEMENT: &str = "quant all #b in #of(BIO, #args) | \
-#chain(#bios(#of(SSL, #args))): #b in #freed -> #callback(#b, BIO_CB_FREE) |-> #inert && \
-#destroy(#b) |-> #inert && #ex_data_free(BIO) |-> #inert";
+#chain(#bios(#of(SSL, #args))): #b in #freed -> #ex_data_free(BIO) |-> #inert";
 
 /// Card **OPENSSL-UNSTATED-CALLBACK-SLOTS**: the name of the ex_data premise.
 pub const EX_DATA: &str = "openssl_ex_data_callbacks";
@@ -1001,6 +1005,102 @@ pub const SLOTS: &[Slot] = &[
     },
 ];
 
+/// Card **CALLBACK-SUPPLIED-NULL-ACTUAL**: an argument a slot's callback may
+/// receive as NULL, by its page. At every invocation of `slot` whose actual
+/// at `position` is a value the callee supplies (`_`), the declaration
+/// states `supplied_nullable` instead (C04.19 item 2), so a candidate
+/// requiring a live object there (`resource_owned(nonnull)`) is refused. A
+/// parameter actual there is unchanged: it is the caller's value.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct NullableArgument {
+    /// The slot, one of [`SLOTS`].
+    pub slot: &'static str,
+    /// The callback's argument position.
+    pub position: usize,
+    /// The sentence of the slot's page at 3.5 saying so, exactly as its
+    /// snapshot records it (`null_sentences` or `argument_null_sentences`).
+    pub sentence: &'static str,
+}
+
+/// The arguments the stated slots' pages (3.5) say may be NULL. The survey
+/// of every stated slot is in `docs/reports/callback-supplied-null-actual/`;
+/// an argument no page sentence covers stays `_`.
+pub const NULLABLE_ARGUMENTS: &[NullableArgument] = &[
+    // SSL_CTX_set_security_level (3.5), "APPLICATION-DEFINED SECURITY
+    // CALLBACKS": `cb(s, ctx, op, bits, nid, other, ex)`.
+    NullableArgument {
+        slot: "ssl_ctx_st.sec_cb",
+        position: 0,
+        sentence: "One of the two is NULL: checks originating from a connection pass s (with \
+                   ctx NULL), and checks originating from a context pass ctx (with s NULL).",
+    },
+    NullableArgument {
+        slot: "ssl_ctx_st.sec_cb",
+        position: 1,
+        sentence: "One of the two is NULL: checks originating from a connection pass s (with \
+                   ctx NULL), and checks originating from a context pass ctx (with s NULL).",
+    },
+    NullableArgument {
+        slot: "ssl_ctx_st.sec_cb",
+        position: 5,
+        sentence: "It is NULL when no object is associated with the operation.",
+    },
+    NullableArgument {
+        slot: "ssl_ctx_st.sec_cb",
+        position: 6,
+        sentence: "ex The extra data pointer previously set with \
+                   SSL_CTX_set0_security_ex_data() or SSL_set0_security_ex_data(), or NULL.",
+    },
+    // SSL_CTX_set_psk_client_callback (3.5): `client(ssl, hint, identity,
+    // max_identity_len, psk, max_psk_len)` (NOTES) and `use_session(ssl, md,
+    // id, idlen, sess)` (DESCRIPTION).
+    NullableArgument {
+        slot: "ssl_ctx_st.psk_client_callback",
+        position: 1,
+        sentence: "Note that parameter hint given to the callback may be NULL .",
+    },
+    NullableArgument {
+        slot: "ssl_ctx_st.psk_use_session_cb",
+        position: 1,
+        sentence: "The first time the callback is called for a connection the md parameter is \
+                   NULL.",
+    },
+    // BIO_set_callback (3.5), "CALLBACK OPERATIONS": `callback_ex(b, oper,
+    // argp, len, argi, argl, ret, processed)` and `callback(b, oper, argp,
+    // argi, argl, ret)`; the table of calls passes NULL at `argp` and
+    // `processed`.
+    NullableArgument {
+        slot: "bio_st.bio_callback_ex",
+        position: 2,
+        sentence: "BIO_free(b) callback_ex(b, BIO_CB_FREE, NULL, 0, 0, 0L, 1L, NULL) or \
+                   callback(b, BIO_CB_FREE, NULL, 0L, 0L, 1L) is called before the free \
+                   operation.",
+    },
+    NullableArgument {
+        slot: "bio_st.bio_callback_ex",
+        position: 7,
+        sentence: "BIO_free(b) callback_ex(b, BIO_CB_FREE, NULL, 0, 0, 0L, 1L, NULL) or \
+                   callback(b, BIO_CB_FREE, NULL, 0L, 0L, 1L) is called before the free \
+                   operation.",
+    },
+    NullableArgument {
+        slot: "bio_st.bio_callback",
+        position: 2,
+        sentence: "BIO_free(b) callback_ex(b, BIO_CB_FREE, NULL, 0, 0, 0L, 1L, NULL) or \
+                   callback(b, BIO_CB_FREE, NULL, 0L, 0L, 1L) is called before the free \
+                   operation.",
+    },
+];
+
+/// Whether `slot`'s argument at `position` may be NULL by its page
+/// ([`NULLABLE_ARGUMENTS`]).
+#[must_use]
+pub fn nullable_argument(slot: &str, position: usize) -> bool {
+    NULLABLE_ARGUMENTS
+        .iter()
+        .any(|nullable| nullable.slot == slot && nullable.position == position)
+}
+
 /// What the documentation supports for one function.
 #[derive(Clone, Copy, Debug)]
 pub struct DocumentedFunction {
@@ -1341,12 +1441,42 @@ const SHUTDOWN: &[Premise] = &[
 
 /// Card OPENSSL-BIO-METHODS-AND-CALLBACKS: `BIO_free` drops a BIO reference;
 /// `SSL_free` keeps the unstated-slots premise and frees the SSL's BIOs.
-/// Card OPENSSL-EX-DATA-REGISTRY: both name the ex_data premise too.
-const BIO_FREED: &[Premise] = &[Premise::BioFreeCallbacks, Premise::ExDataCallbacks];
+/// Card **OPENSSL-FREE-SESSION-REMOVE-INVOCATION** (C04.19 amended: a slot
+/// invocation stands beside a reference drop): a BIO's last drop runs its
+/// callback with `BIO_CB_FREE` and its method's destroy function, stated
+/// with every actual `_`, a built-in method's destroy function under
+/// [`Premise::BuiltinBioMethods`], and the narrowed free premise names only
+/// the BIO class's ex_data free callbacks. `SSL_free` and `SSL_CTX_free`
+/// state the session-remove invocation ("called for all sessions in the
+/// internal session cache when SSL_CTX_free(3) is called" and "when a
+/// connection was not shutdown cleanly", `SSL_CTX_sess_set_get_cb` 3.5).
+/// Both keep the unstated-slots premise: freeing the context frees its
+/// certificate store, whose lookup methods' free and shutdown functions are
+/// user-settable (`X509_LOOKUP_meth_set_free`).
+/// Card OPENSSL-EX-DATA-REGISTRY: all three name the ex_data premise too
+/// (each last drop frees an object of an ex_data class).
+const BIO_FREED: &[Premise] = &[
+    Premise::BioFreeCallbacks,
+    Premise::ExDataCallbacks,
+    BIO_SLOTS[0],
+    BIO_SLOTS[1],
+    BIO_SLOTS[2],
+    BIO_SLOTS[11],
+];
 const SSL_FREED: &[Premise] = &[
     Premise::UnstatedSlots,
     Premise::BioFreeCallbacks,
     Premise::ExDataCallbacks,
+    REMOVE_SESSION,
+    BIO_SLOTS[0],
+    BIO_SLOTS[1],
+    BIO_SLOTS[2],
+    BIO_SLOTS[11],
+];
+const SSL_CTX_FREED: &[Premise] = &[
+    Premise::UnstatedSlots,
+    Premise::ExDataCallbacks,
+    REMOVE_SESSION,
 ];
 
 /// The context's password slot, `pem_password_cb(buf, size, rwflag, u)`:
@@ -1408,10 +1538,6 @@ const CUSTOM_EXT: &[Premise] = &[
     },
     Premise::RetainedBy { item: 6, holder: 0 },
 ];
-
-/// The premise alone: a call that may run callbacks of no stated slot.
-/// Card OPENSSL-EX-DATA-REGISTRY: with the ex_data premise (`SSL_CTX_free`).
-const UNSTATED: &[Premise] = &[Premise::UnstatedSlots, Premise::ExDataCallbacks];
 
 /// Card **OPENSSL-EX-DATA-REGISTRY**: the ex_data premise alone, for a
 /// declaration that may run no unstated slot but creates, copies or frees an
@@ -1715,7 +1841,7 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
             position: 0,
             sentence: "If ctx is NULL nothing is done.",
         },
-        UNSTATED,
+        SSL_CTX_FREED,
     ),
     entry(
         "SSL_CTX_get_cert_store",

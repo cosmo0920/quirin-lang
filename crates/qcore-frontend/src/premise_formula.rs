@@ -30,7 +30,7 @@
 //!    `quant all #x in SET: F` (its body extends as far as it can), a term
 //!    `#name`, `#name(A)` or `#name(A, B)`, an upper-case constant, `{}`.
 //! 2. **Sorts** ([`check`]): every term is in the closed [`VOCABULARY`] with
-//!    its signature, every constant in [`CLASSES`] or [`COMMANDS`], every
+//!    its signature, every constant in [`CLASSES`], every
 //!    variable bound by an enclosing `quant` (never shadowing a term or
 //!    another variable), and the whole formula is a proposition.
 //!
@@ -70,8 +70,6 @@ pub enum Sort {
     Fn,
     /// A BIO method table.
     Meth,
-    /// A BIO callback command.
-    Cmd,
     /// A resource the caller holds.
     Res,
     SetObj,
@@ -93,7 +91,6 @@ impl Sort {
             Self::Cls => ".cls",
             Self::Fn => ".fn",
             Self::Meth => ".meth",
-            Self::Cmd => ".cmd",
             Self::Res => ".res",
             Self::SetObj => ".sobj",
             Self::SetFn => ".sfn",
@@ -189,7 +186,7 @@ pub enum Raw {
     App1(String, Box<Raw>),
     /// `#name(A, B)`
     App2(String, Box<Raw>, Box<Raw>),
-    /// An upper-case constant (`SSL`, `BIO_CB_FREE`).
+    /// An upper-case constant (a class: `SSL`, `BIO`).
     Const(String),
     /// `{}`
     Empty,
@@ -311,18 +308,6 @@ pub const VOCABULARY: &[Term] = &[
         meaning: "the functions of the BIO's method table, each as run on that BIO",
     },
     Term {
-        name: "destroy",
-        arguments: &[Sort::Obj],
-        result: Sort::Fn,
-        meaning: "the destroy function of the BIO's method, as run on that BIO",
-    },
-    Term {
-        name: "callback",
-        arguments: &[Sort::Obj, Sort::Cmd],
-        result: Sort::Fn,
-        meaning: "the callback the BIO holds, as run on it with the command",
-    },
-    Term {
         name: "in_turn",
         arguments: &[Sort::Fn, Sort::SetObj],
         result: Sort::SetFn,
@@ -382,9 +367,6 @@ pub const CLASSES: &[&str] = &[
     "X509_STORE",
     "X509_STORE_CTX",
 ];
-
-/// The command constants: the BIO callback command run when a BIO is freed.
-pub const COMMANDS: &[&str] = &["BIO_CB_FREE"];
 
 fn error(message: &str) -> String {
     format!("premise-formula: {message}")
@@ -721,8 +703,6 @@ fn sort_of(context: &[(String, Sort)], raw: &Raw) -> Result<Sort, String> {
         Raw::Const(word) => {
             if CLASSES.contains(&word.as_str()) {
                 Ok(Sort::Cls)
-            } else if COMMANDS.contains(&word.as_str()) {
-                Ok(Sort::Cmd)
             } else {
                 Err(error(&format!("unknown constant `{word}`")))
             }
@@ -967,11 +947,11 @@ pub const DECISION_VECTORS: &[(&str, bool)] = &[
     ),
     ("quant all #f in #stated: #f |-> #inert", true),
     (
-        "quant all #b in #of(BIO, #args): #b in #freed -> #callback(#b, BIO_CB_FREE) |-> #inert",
+        "quant all #b in #of(BIO, #args): #b in #freed -> #ex_data_free(#class(#b)) |-> #inert",
         true,
     ),
     (
-        "quant all #b in #args: #method(#b) in #builtin -> #destroy(#b) |-> #inert",
+        "quant all #b in #args: #method(#b) in #builtin -> #fns(#b) |-> #inert",
         true,
     ),
     (
@@ -1005,11 +985,14 @@ pub const DECISION_VECTORS: &[(&str, bool)] = &[
     ("#freed |-> #inert", false),
     // An unknown constant.
     (
-        "quant all #b in #of(NOT_A_CLASS, #args): #destroy(#b) |-> #inert",
+        "quant all #b in #of(NOT_A_CLASS, #args): #fns(#b) |-> #inert",
         false,
     ),
-    // A command where a class stands.
-    ("#ex_data(BIO_CB_FREE) |-> #inert", false),
+    // Arguments in the wrong order.
+    (
+        "quant all #b in #of(#args, BIO): #fns(#b) |-> #inert",
+        false,
+    ),
     // A term used without its arguments.
     ("#slots |-> #inert", false),
     // A quantifier body that is not a proposition.

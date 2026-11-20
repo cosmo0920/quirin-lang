@@ -6303,11 +6303,51 @@ own anchor here.
     (`a_setter_written_function_is_a_candidate`,
     `a_held_function_outside_the_set_is_builtin`,
     `a_bio_slot_must_be_stated`, `a_builtin_method_needs_its_premise`,
-    `a_bio_drop_needs_the_free_premise`,
-    `an_admitted_drop_states_no_invocation`,
-    `stating_the_bio_slots_never_improves_a_verdict`);
+    `the_free_premise_covers_only_ex_data`, `a_bio_drop_states_its_slots`,
+    `stating_the_bio_slots_never_improves_a_verdict`; the two theorems
+    `a_bio_drop_needs_the_free_premise` and
+    `an_admitted_drop_states_no_invocation` were retired by
+    OPENSSL-FREE-SESSION-REMOVE-INVOCATION);
     `tests/openssl_undeclared_handshake_callbacks.rs`;
     [report](../reports/openssl-bio-methods-and-callbacks/README.md).
+
+    **A slot invocation beside a reference drop** (card
+    OPENSSL-FREE-SESSION-REMOVE-INVOCATION, amended in place; contract
+    specification C04.19 "Beside a reference drop"; user decision
+    2026-11-19). The loader admits opaque slot invocations beside reference
+    clauses when every reference clause is a drop and every callback clause
+    is a slot invocation; a keep, a plain member invocation, a synchronous
+    invocation, a table, a registration and a registry beside a reference
+    clause still reject with the C04.19 text. The transfer applies the
+    callback route before the reference route (`legacy_transfer.rs`), so a
+    candidate reads the dropped object before its drop; before this card no
+    admitted declaration carried both, so the order read nothing else. A
+    candidate's `resource_owned(n)` requirement is folded into the call's own
+    custody mode and so is read before the drop as well. Only the last drop
+    runs the slot, and the call does not decide whether its drop is the
+    last, so at a dropping call a candidate's member-path state (rule 30) or
+    a member invocation deferred to the object's constructed state refuses
+    the call (`callback-beside-drop`, `legacy_retained_by.rs`). Each slot is
+    otherwise decided exactly as above. `BIO_free` states
+    `bio_st.bio_callback_ex`, `bio_st.bio_callback` and
+    `bio_method_st.meth_destroy`; `SSL_free` those three and
+    `ssl_ctx_st.remove_session_cb`; `SSL_CTX_free` the session-remove slot;
+    every actual `_`. `openssl_bio_free_callbacks` names only the BIO class's
+    ex_data free callbacks, the built-in destroy functions are under
+    `openssl_builtin_bio_methods`, and both frees keep the unstated premise
+    (a context's certificate store's lookup methods). **Do not** apply a
+    candidate's effect on the dropped object at a dropping call, read a
+    requirement on it after the drop, or admit a slot invocation beside a
+    keep. `QCore.OpensslFreeInvocations`
+    (`the_admission_only_grows`,
+    `the_admission_grows_only_by_slot_invocations_beside_drops`,
+    `the_new_order_reads_the_object_before_the_drop`,
+    `the_old_order_read_a_freed_object`,
+    `the_reading_does_not_depend_on_the_last_drop`,
+    `a_member_effect_beside_a_drop_refuses`,
+    `applied_only_over_closed_identity_slots`);
+    `tests/openssl_undeclared_handshake_callbacks.rs`;
+    [report](../reports/openssl-free-session-remove-invocation/README.md).
 
 <a id="constraint-12o"></a>
 
@@ -7480,7 +7520,7 @@ an undeclared OpenSSL producer). `QCore.NullableReferenceDrop` (12 audited,
     outside a formula; the hypothesis graph admits a backslash only in a
     generated legacy atom whose statement is exactly such a canonical
     printing). It is still read by no verdict: a formula that reads makes
-    nothing `Safe`. `quirin-provider-openssl` states all 47 of its premises
+    nothing `Safe`. `quirin-provider-openssl` states all 49 of its premises
     as formulas and its checker refuses a string statement
     (`prose_premise`). **Do not** drop or weaken a premise whose formula
     does not read, read a premise's formula as a discharged fact, or admit
@@ -7932,7 +7972,31 @@ an undeclared OpenSSL producer). `QCore.NullableReferenceDrop` (12 audited,
     (`invocations_of_identities_are_identity`,
     `an_identity_decision_is_the_custody_reading`, `decide_refuses_*`,
     `identity_only_borrows_or_requires`, `requirements_are_owned_parameters`);
-    `tests/cg22_callback_registry.rs`.
+    `tests/cg22_callback_registry.rs`. **A supplied actual that may be NULL**
+    (card CALLBACK-SUPPLIED-NULL-ACTUAL, contract specification C04.19 item
+    2, amended in place): the actual word `supplied_nullable`
+    (`CallbackActual::SuppliedNullable`) is a value the callee supplies, as
+    `_`, that its documentation says may be a null pointer. It stands
+    wherever `_` does and is reserved as a parameter name. `classify` admits
+    `resource_borrowed` and `resource_owned(nullable)` there, as at `_`; a
+    candidate requiring `resource_owned(nonnull)` there is
+    `RequiresNonNullSupplied` and refuses the call (`callback-supplied-null`,
+    naming the candidate). It puts no requirement on the call (the value is
+    the callee's). The body check (13y) matches it as `_`, rule 15w
+    forwards it only to itself, and a hand-off candidate reads it as `_`. A
+    plain `_` keeps its reading (the callee meets a `nonnull` requirement).
+    **Do not** read a `nonnull` requirement at a nullable actual as met, or
+    mark an argument nullable without its page's sentence (the OpenSSL
+    crate's `NULLABLE_ARGUMENTS`, checked against the snapshot).
+    `QCore.CallbackSuppliedNull`
+    (`a_nonnull_requirement_at_a_nullable_actual_is_not_admitted`,
+    `decide_refuses_a_nonnull_requirement`,
+    `an_admitted_candidate_accepts_null`, `marking_never_admits_more`,
+    `without_a_nullable_actual_the_reading_is_unchanged`, vectors bound to
+    `NULLABLE_CLASSIFY_VECTORS` and `NULLABLE_DECISION_VECTORS`);
+    `tests/openssl_unstated_callback_slots.rs`
+    (`a_candidate_requiring_a_live_object_where_the_library_may_pass_null_refuses`);
+    [report](../reports/callback-supplied-null-actual/README.md).
 
 <a id="constraint-13v"></a>
 

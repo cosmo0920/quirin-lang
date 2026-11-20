@@ -61,6 +61,7 @@ import QCore.CallbackCoverage
 import QCore.CallbackForward
 import QCore.CallbackLiteralPremise
 import QCore.CallbackSource
+import QCore.CallbackSuppliedNull
 import QCore.CallbackTaskHandoff
 import QCore.CalleeSummaryScope
 import QCore.CallerFrameHoldSwitch
@@ -324,6 +325,7 @@ import QCore.OpensslBioSlots
 import QCore.OpensslCalleeShapes
 import QCore.OpensslContractPlugin
 import QCore.OpensslExDataPremise
+import QCore.OpensslFreeInvocations
 import QCore.OpensslHandshakeSlots
 import QCore.OpensslUnstatedSlots
 import QCore.OrderedLifetimeReplay

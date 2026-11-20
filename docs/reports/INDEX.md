@@ -113,6 +113,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [callback-member-non-c-units](callback-member-non-c-units/README.md) | CALLBACK-MEMBER-NON-C-UNITS |
 
+| [callback-supplied-null-actual](callback-supplied-null-actual/README.md) | CALLBACK-SUPPLIED-NULL-ACTUAL: a callee-supplied callback actual that may be NULL |
+
 | [callee-retention-class1](callee-retention-class1/README.md) | CALLEE-RETENTION-CLASS1: class 1 split by shape |
 
 | [canonical-contract-locations](canonical-contract-locations/README.md) | Canonical contract locations |
@@ -822,6 +824,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [openssl-bio-reader-invocations](openssl-bio-reader-invocations/README.md) | OPENSSL-BIO-READER-INVOCATIONS: the BIO slots beside a literal-argument premise |
 
 | [openssl-ex-data-registry](openssl-ex-data-registry/README.md) | OPENSSL-EX-DATA-REGISTRY: the ex_data premise on every constructor and free |
+
+| [openssl-free-session-remove-invocation](openssl-free-session-remove-invocation/README.md) | OPENSSL-FREE-SESSION-REMOVE-INVOCATION: slot invocations beside a reference drop |
 
 | [openssl-pem-callback-arm](openssl-pem-callback-arm/README.md) | OPENSSL-PEM-CALLBACK-ARM: a literal-argument premise beside a synchronous invocation |
 

@@ -3088,9 +3088,31 @@ fn load_function_in(
             &names,
         )?;
         if !callbacks.is_empty() {
+            // Card OPENSSL-FREE-SESSION-REMOVE-INVOCATION (C04.19 amended in
+            // place): beside reference drops, and only drops, an opaque slot
+            // invocation (`resource_callback_slot_invoked`) stands. The
+            // transfer applies the callback route before the reference route,
+            // so a candidate's requirement reads the object before the drop;
+            // the call does not decide whether its drop is the last (the only
+            // one that runs the slot), so a candidate effect beyond the static
+            // decision and that requirement refuses there (rule 12n). A keep,
+            // a plain member invocation, a synchronous invocation, a
+            // registration, a table and a registry beside a reference clause
+            // still reject.
+            let slot_invocations_beside_drops = !declared.references.is_empty()
+                && declared.references.iter().all(|reference| {
+                    reference.operation
+                        == qcore_schemas::reference_count::ReferenceOperation::Dropped
+                })
+                && callbacks.iter().all(|clause| {
+                    matches!(
+                        clause,
+                        qcore_schemas::callback::CallbackClause::MemberInvoked { slot: true, .. }
+                    )
+                });
             if !declared.slot_moves.is_empty()
                 || !declared.derived_outs.is_empty()
-                || !declared.references.is_empty()
+                || (!declared.references.is_empty() && !slot_invocations_beside_drops)
             {
                 return Err(
                     "a callback clause stands only beside retentions and plain predicates".into(),

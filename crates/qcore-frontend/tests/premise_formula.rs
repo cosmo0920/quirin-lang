@@ -21,8 +21,8 @@ use std::collections::BTreeMap;
 
 use qcore_frontend::lexer::{TokenKind, lex};
 use qcore_frontend::premise_formula::{
-    CLASSES, COMMANDS, DECISION_VECTORS, INERT_DEFINITION, MAX_DEPTH, MAX_TOKENS, PremiseStatement,
-    Raw, Sort, VOCABULARY, canonical, check, lean, parse_tokens, premise_clause, read_source, sort,
+    CLASSES, DECISION_VECTORS, INERT_DEFINITION, MAX_DEPTH, MAX_TOKENS, PremiseStatement, Raw,
+    Sort, VOCABULARY, canonical, check, lean, parse_tokens, premise_clause, read_source, sort,
 };
 
 const LEAN: &str = include_str!("../../../proof/QCore/PremiseFormula.lean");
@@ -188,11 +188,7 @@ fn the_vocabulary_is_the_lean_table() {
             .map(str::to_owned)
             .collect::<Vec<_>>()
     };
-    assert_eq!(
-        quoted("def classes : List String :=", "def commands"),
-        CLASSES
-    );
-    assert_eq!(quoted("def commands : List String :=", "\n\n"), COMMANDS);
+    assert_eq!(quoted("def classes : List String :=", "\n\n"), CLASSES);
     // Every name is distinct, and no constant is a term.
     let mut names = VOCABULARY.iter().map(|t| t.name).collect::<Vec<_>>();
     names.sort_unstable();
@@ -248,7 +244,7 @@ fn the_openssl_formulas_are_the_lean_definitions() {
         (
             "openssl_builtin_bio_methods",
             "def builtinFormula : Raw :=",
-            8,
+            10,
         ),
         (
             "openssl_bio_free_callbacks",

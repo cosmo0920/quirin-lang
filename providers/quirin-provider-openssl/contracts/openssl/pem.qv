@@ -86,8 +86,8 @@ contract {
     ensures normal resource_borrowed(cb);
     ensures normal resource_borrowed(u);
     ensures normal resource_callback_invoked_or_default(cb, _, _, _, u);
-    ensures normal resource_callback_slot_invoked(out, bio_st.bio_callback_ex, _, _, _, _, _, _, _, _);
-    ensures normal resource_callback_slot_invoked(out, bio_st.bio_callback, _, _, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(out, bio_st.bio_callback_ex, _, _, supplied_nullable, _, _, _, _, supplied_nullable);
+    ensures normal resource_callback_slot_invoked(out, bio_st.bio_callback, _, _, supplied_nullable, _, _, _);
     ensures normal resource_callback_slot_invoked(out, bio_method_st.meth_write_ex, _, _, _, _);
     ensures normal resource_callback_slot_invoked(out, bio_method_st.meth_write, _, _, _);
     ensures normal resource_callback_slot_invoked(out, bio_method_st.meth_read_ex, _, _, _, _);
@@ -126,8 +126,8 @@ contract {
     ensures normal resource_borrowed(cb);
     ensures normal resource_borrowed(u);
     ensures normal resource_callback_invoked_or_default(cb, _, _, _, u);
-    ensures normal resource_callback_slot_invoked(out, bio_st.bio_callback_ex, _, _, _, _, _, _, _, _);
-    ensures normal resource_callback_slot_invoked(out, bio_st.bio_callback, _, _, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(out, bio_st.bio_callback_ex, _, _, supplied_nullable, _, _, _, _, supplied_nullable);
+    ensures normal resource_callback_slot_invoked(out, bio_st.bio_callback, _, _, supplied_nullable, _, _, _);
     ensures normal resource_callback_slot_invoked(out, bio_method_st.meth_write_ex, _, _, _, _);
     ensures normal resource_callback_slot_invoked(out, bio_method_st.meth_write, _, _, _);
     ensures normal resource_callback_slot_invoked(out, bio_method_st.meth_read_ex, _, _, _, _);

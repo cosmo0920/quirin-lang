@@ -23,7 +23,7 @@ vocabulary of sorted terms. This module is the formula language's model:
   reads (`parse_tokens`), rendered by its `lean` function.
 * **Sorts and well-formedness** (`check`, `wf`): the judgment the loader
   applies (`check` there): every term registered with its signature
-  (`vocab`), every constant a class or command, every variable bound and
+  (`vocab`), every constant a class, every variable bound and
   never shadowing, the whole a proposition.
 * **Denotation** (`eval`) over an abstract model (`Model`) of the call's
   objects, callback sets and the runs of each callback.
@@ -57,7 +57,7 @@ namespace QCore.PremiseFormula
 /-! ## Syntax -/
 
 inductive Srt where
-  | obj | cls | fn | meth | cmd | res | sobj | sfn | smeth | sres | prop | eff
+  | obj | cls | fn | meth | res | sobj | sfn | smeth | sres | prop | eff
   deriving DecidableEq, Repr
 
 inductive Op where
@@ -74,7 +74,7 @@ inductive Raw where
   | empty
   deriving DecidableEq, Repr
 
-/-! ## The closed vocabulary (the Rust `VOCABULARY`, `CLASSES`, `COMMANDS`) -/
+/-! ## The closed vocabulary (the Rust `VOCABULARY`, `CLASSES`) -/
 
 def vocab : List (String × List Srt × Srt) := [
   ("args", [], .sobj),
@@ -94,8 +94,6 @@ def vocab : List (String × List Srt × Srt) := [
   ("method", [.obj], .meth),
   ("builtin", [], .smeth),
   ("fns", [.obj], .sfn),
-  ("destroy", [.obj], .fn),
-  ("callback", [.obj, .cmd], .fn),
   ("in_turn", [.fn, .sobj], .sfn),
   ("caller_held", [], .sres),
   ("takes", [.sres], .sres),
@@ -107,8 +105,6 @@ def vocab : List (String × List Srt × Srt) := [
 def classes : List String :=
   ["BIO", "DH", "DSA", "EC_KEY", "ENGINE", "EVP_PKEY", "RSA", "SSL", "SSL_CTX",
     "SSL_SESSION", "UI", "UI_METHOD", "X509", "X509_STORE", "X509_STORE_CTX"]
-
-def commands : List String := ["BIO_CB_FREE"]
 
 /-- A context or environment lookup: the most recent binding first. -/
 def lk {α : Type} : List (String × α) → String → Option α
@@ -176,10 +172,7 @@ def check (Γ : List (String × Srt)) : Raw → Option Srt
       match term f, check Γ a, check Γ b with
       | some ([x, y], s), some x', some y' => if x = x' ∧ y = y' then some s else none
       | _, _, _ => none
-  | .const c =>
-      if classes.contains c then some .cls
-      else if commands.contains c then some .cmd
-      else none
+  | .const c => if classes.contains c then some .cls else none
   | .empty => some .sres
 
 /-- The well-formedness judgment: a closed proposition (the Rust `check`). -/
@@ -188,7 +181,7 @@ def wf (t : Raw) : Bool := check [] t == some .prop
 /-! ## Denotation -/
 
 /-- An abstract model of one call: its objects, classes, methods, callbacks
-and commands are elements of `U`; sets are predicates; `runs f` are the runs
+are elements of `U`; sets are predicates; `runs f` are the runs
 of callback `f` during the call; the resource terms are read per run. -/
 structure Model where
   U : Type
@@ -209,8 +202,6 @@ structure Model where
   method : U → U
   builtin : U → Prop
   fns : U → U → Prop
-  destroy : U → U
-  callback : U → U → U
   inTurn : U → (U → Prop) → U → Prop
   callerHeld : Run → U → Prop
   takes : Run → (U → Prop) → U → Prop
@@ -259,7 +250,6 @@ def prim1 (M : Model) (f : String) : Val M → Val M
       else if f = "ex_data_free" then .st (M.exDataFree o)
       else if f = "method" then .el (M.method o)
       else if f = "fns" then .st (M.fns o)
-      else if f = "destroy" then .el (M.destroy o)
       else .bad
   | .st s =>
       if f = "ctx" then .st (M.ctx s)
@@ -279,7 +269,6 @@ def prim2 (M : Model) (f : String) : Val M → Val M → Val M
       if f = "of" then .st (fun o => s o ∧ M.cls o = k)
       else if f = "in_turn" then .st (M.inTurn k s)
       else .bad
-  | .el b, .el c => if f = "callback" then .el (M.callback b c) else .bad
   | _, _ => .bad
 
 /-- `#of(k, S)` is the members of `S` of class `k`; `F |-> E` is every run of
@@ -318,7 +307,7 @@ inductive Kind where
   deriving DecidableEq, Repr
 
 def Srt.kind : Srt → Kind
-  | .obj | .cls | .fn | .meth | .cmd | .res => .el
+  | .obj | .cls | .fn | .meth | .res => .el
   | .sobj | .sfn | .smeth => .st
   | .sres => .rs
   | .prop => .pr
@@ -369,7 +358,7 @@ theorem prim0_kind (M : Model) {f : String} {s : Srt} (h : term f = some ([], s)
   rcases hm with ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ |
       ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ |
       ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ |
-      ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ <;>
+      ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ <;>
     simp_all [prim0, Val.kind, Srt.kind]
 
 theorem prim1_kind (M : Model) {f : String} {x s : Srt} {v : Val M}
@@ -380,7 +369,7 @@ theorem prim1_kind (M : Model) {f : String} {x s : Srt} {v : Val M}
   rcases hm with ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ |
       ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ |
       ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ |
-      ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ <;>
+      ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ <;>
     (simp at hs) <;>
     (try obtain ⟨rfl, rfl⟩ := hs) <;>
     (cases v <;> simp_all [prim1, Val.kind, Srt.kind])
@@ -394,7 +383,7 @@ theorem prim2_kind (M : Model) {f : String} {x y s : Srt} {v w : Val M}
   rcases hm with ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ |
       ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ |
       ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ |
-      ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ <;>
+      ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ <;>
     (simp at hs) <;>
     (try obtain ⟨⟨rfl, rfl⟩, rfl⟩ := hs) <;>
     (cases v <;> cases w <;> simp_all [prim2, Val.kind, Srt.kind])
@@ -510,9 +499,7 @@ theorem check_denotes (M : Model) :
       simp only [check] at h
       split at h
       · simp at h; subst h; rfl
-      · split at h
-        · simp at h; subst h; rfl
-        · simp at h
+      · simp at h
   | empty =>
       intro Γ ρ s _ h
       simp only [check] at h
@@ -573,8 +560,8 @@ def decisionVectors : List (Raw × Bool) := [
   ((.quant "o" (.bin .union (.bin .union (.app0 "created") (.app0 "copied")) (.app0 "freed")) (.bin .mapsTo (.app1 "ex_data" (.app1 "class" (.app0 "o"))) (.app0 "inert"))), true),
   ((.bin .mapsTo (.app0 "stated") (.bin .conj (.bin .conj (.bin .eqv (.app1 "takes" (.app0 "caller_held")) .empty) (.bin .eqv (.app1 "releases" (.app0 "caller_held")) .empty)) (.bin .eqv (.app1 "retains" (.app0 "caller_held")) .empty))), true),
   ((.quant "f" (.app0 "stated") (.bin .mapsTo (.app0 "f") (.app0 "inert"))), true),
-  ((.quant "b" (.app2 "of" (.const "BIO") (.app0 "args")) (.bin .imp (.bin .mem (.app0 "b") (.app0 "freed")) (.bin .mapsTo (.app2 "callback" (.app0 "b") (.const "BIO_CB_FREE")) (.app0 "inert")))), true),
-  ((.quant "b" (.app0 "args") (.bin .imp (.bin .mem (.app1 "method" (.app0 "b")) (.app0 "builtin")) (.bin .mapsTo (.app1 "destroy" (.app0 "b")) (.app0 "inert")))), true),
+  ((.quant "b" (.app2 "of" (.const "BIO") (.app0 "args")) (.bin .imp (.bin .mem (.app0 "b") (.app0 "freed")) (.bin .mapsTo (.app1 "ex_data_free" (.app1 "class" (.app0 "b"))) (.app0 "inert")))), true),
+  ((.quant "b" (.app0 "args") (.bin .imp (.bin .mem (.app1 "method" (.app0 "b")) (.app0 "builtin")) (.bin .mapsTo (.app1 "fns" (.app0 "b")) (.app0 "inert")))), true),
   ((.bin .conj (.bin .mapsTo (.bin .diff (.app1 "slots" (.app0 "args")) (.app0 "stated")) (.app0 "inert")) (.bin .mapsTo (.app1 "slots" (.app1 "ctx" (.app0 "args"))) (.app0 "inert"))), true),
   ((.bin .mapsTo (.app0 "unknown") (.app0 "inert")), false),
   ((.bin .mapsTo (.app1 "ex_data" (.app1 "class" (.app0 "args"))) (.app0 "inert")), false),
@@ -586,8 +573,8 @@ def decisionVectors : List (Raw × Bool) := [
   ((.bin .mapsTo (.bin .union (.app0 "created") (.app0 "stated")) (.app0 "inert")), false),
   ((.bin .mem (.const "SSL") (.app0 "args")), false),
   ((.bin .mapsTo (.app0 "freed") (.app0 "inert")), false),
-  ((.quant "b" (.app2 "of" (.const "NOT_A_CLASS") (.app0 "args")) (.bin .mapsTo (.app1 "destroy" (.app0 "b")) (.app0 "inert"))), false),
-  ((.bin .mapsTo (.app1 "ex_data" (.const "BIO_CB_FREE")) (.app0 "inert")), false),
+  ((.quant "b" (.app2 "of" (.const "NOT_A_CLASS") (.app0 "args")) (.bin .mapsTo (.app1 "fns" (.app0 "b")) (.app0 "inert"))), false),
+  ((.quant "b" (.app2 "of" (.app0 "args") (.const "BIO")) (.bin .mapsTo (.app1 "fns" (.app0 "b")) (.app0 "inert"))), false),
   ((.bin .mapsTo (.app0 "slots") (.app0 "inert")), false),
   ((.quant "o" (.app0 "created") (.app0 "o")), false),
   ((.bin .mapsTo .empty (.app0 "inert")), false),
@@ -605,7 +592,7 @@ def unstatedFormula : Raw := (.bin .conj (.bin .mapsTo (.bin .diff (.app1 "slots
 
 def builtinFormula : Raw := (.quant "b" (.app1 "chain" (.bin .union (.app2 "of" (.const "BIO") (.app0 "args")) (.app1 "bios" (.app2 "of" (.const "SSL") (.app0 "args"))))) (.bin .imp (.bin .mem (.app1 "method" (.app0 "b")) (.app0 "builtin")) (.bin .conj (.bin .mapsTo (.app1 "fns" (.app0 "b")) (.app0 "inert")) (.quant "f" (.app1 "fns" (.app0 "b")) (.bin .mapsTo (.app2 "in_turn" (.app0 "f") (.bin .diff (.app1 "ssl_of" (.app0 "b")) (.app0 "args"))) (.app0 "inert"))))))
 
-def bioFreeFormula : Raw := (.quant "b" (.bin .union (.app2 "of" (.const "BIO") (.app0 "args")) (.app1 "chain" (.app1 "bios" (.app2 "of" (.const "SSL") (.app0 "args"))))) (.bin .imp (.bin .mem (.app0 "b") (.app0 "freed")) (.bin .conj (.bin .conj (.bin .mapsTo (.app2 "callback" (.app0 "b") (.const "BIO_CB_FREE")) (.app0 "inert")) (.bin .mapsTo (.app1 "destroy" (.app0 "b")) (.app0 "inert"))) (.bin .mapsTo (.app1 "ex_data_free" (.const "BIO")) (.app0 "inert")))))
+def bioFreeFormula : Raw := (.quant "b" (.bin .union (.app2 "of" (.const "BIO") (.app0 "args")) (.app1 "chain" (.app1 "bios" (.app2 "of" (.const "SSL") (.app0 "args"))))) (.bin .imp (.bin .mem (.app0 "b") (.app0 "freed")) (.bin .mapsTo (.app1 "ex_data_free" (.const "BIO")) (.app0 "inert"))))
 
 theorem openssl_formulas_wf :
     wf exDataFormula = true ∧ wf unstatedFormula = true ∧ wf builtinFormula = true ∧
@@ -665,7 +652,7 @@ theorem ex_data_does_not_entail_unstated :
     bios := fun _ _ => False, chain := fun _ _ => False, sslOf := fun _ _ => False,
     slots := fun _ _ => True, stated := fun _ => False, exData := fun _ _ => False,
     exDataFree := fun _ _ => False, method := id, builtin := fun _ => False,
-    fns := fun _ _ => False, destroy := id, callback := fun b _ => b,
+    fns := fun _ _ => False,
     inTurn := fun _ _ _ => False, callerHeld := fun _ _ => True,
     takes := fun _ s => s, releases := fun _ _ _ => False,
     retains := fun _ _ _ => False, runs := fun _ _ => True, const := fun _ => true }
