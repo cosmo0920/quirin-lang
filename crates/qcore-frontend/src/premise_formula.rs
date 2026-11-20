@@ -227,7 +227,7 @@ pub const VOCABULARY: &[Term] = &[
         name: "freed",
         arguments: &[],
         result: Sort::SetObj,
-        meaning: "the objects whose last reference the call drops, directly or as a replaced or temporary object it frees inside the call",
+        meaning: "the objects whose last reference the call drops: directly, in turn (an object a freed object owns), or as a replaced or temporary object it frees inside the call",
     },
     Term {
         name: "class",
@@ -293,13 +293,13 @@ pub const VOCABULARY: &[Term] = &[
         name: "method",
         arguments: &[Sort::Obj],
         result: Sort::Meth,
-        meaning: "the BIO_METHOD of a BIO",
+        meaning: "the method table of a BIO (its BIO_METHOD) or of an X509_LOOKUP (its X509_LOOKUP_METHOD)",
     },
     Term {
         name: "builtin",
         arguments: &[],
         result: Sort::SetMeth,
-        meaning: "the BIO_METHODs the library defines itself: the one BIO_s_socket, BIO_s_mem, BIO_f_buffer or another built-in BIO_s_ or BIO_f_ function returns, which no setter is handed",
+        meaning: "the method tables the library defines itself, which no setter is handed: the BIO_METHOD BIO_s_socket, BIO_s_mem, BIO_f_buffer or another built-in BIO_s_ or BIO_f_ function returns, and the X509_LOOKUP_METHOD X509_LOOKUP_file, X509_LOOKUP_hash_dir or X509_LOOKUP_store returns",
     },
     Term {
         name: "fns",
@@ -318,6 +318,18 @@ pub const VOCABULARY: &[Term] = &[
         arguments: &[Sort::SetObj],
         result: Sort::SetObj,
         meaning: "the lookups (X509_LOOKUP) each X509_STORE of the set holds",
+    },
+    Term {
+        name: "teardown",
+        arguments: &[Sort::Obj],
+        result: Sort::SetFn,
+        meaning: "the callbacks the free of the object runs from its method tables, its provider and its engine, and the callbacks the object holds that its free runs",
+    },
+    Term {
+        name: "settable",
+        arguments: &[],
+        result: Sort::SetFn,
+        meaning: "the callbacks a setter some declaration of the declaration's crate states can write",
     },
     Term {
         name: "in_turn",

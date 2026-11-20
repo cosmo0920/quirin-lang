@@ -230,26 +230,31 @@ fn openssl_premises() -> Vec<(&'static str, String, PremiseStatement)> {
 
 #[test]
 fn the_openssl_formulas_are_the_lean_definitions() {
-    let lean_names = [
+    // Each premise name with the Lean definitions its statements may be, and
+    // how many clauses state each.
+    let lean_names: &[(&str, &[(&str, usize)])] = &[
         (
             "openssl_ex_data_callbacks",
-            "def exDataFormula : Raw :=",
-            30,
+            &[("def exDataFormula : Raw :=", 30)],
         ),
         (
             "openssl_unstated_callback_slots",
-            "def unstatedFormula : Raw :=",
-            7,
+            &[
+                ("def unstatedFormula : Raw :=", 5),
+                ("def unstatedFreeFormula : Raw :=", 3),
+            ],
         ),
         (
             "openssl_builtin_bio_methods",
-            "def builtinFormula : Raw :=",
-            10,
+            &[("def builtinFormula : Raw :=", 10)],
+        ),
+        (
+            "openssl_builtin_lookup_methods",
+            &[("def builtinLookupFormula : Raw :=", 3)],
         ),
         (
             "openssl_bio_free_callbacks",
-            "def bioFreeFormula : Raw :=",
-            2,
+            &[("def bioFreeFormula : Raw :=", 2)],
         ),
     ];
     let mut by_name: BTreeMap<String, Vec<String>> = BTreeMap::new();
@@ -261,13 +266,25 @@ fn the_openssl_formulas_are_the_lean_definitions() {
         by_name.entry(name).or_default().push(lean(&formula.raw));
     }
     assert_eq!(by_name.len(), lean_names.len(), "{:?}", by_name.keys());
-    for (name, definition, count) in lean_names {
-        let trees = &by_name[name];
-        assert_eq!(trees.len(), count, "{name}");
-        for tree in trees {
-            assert_eq!(*tree, lean_definition(definition), "{name}");
+    let mut total = 0;
+    for (name, definitions) in lean_names {
+        let trees = &by_name[*name];
+        for (definition, count) in *definitions {
+            let tree = lean_definition(definition);
+            assert_eq!(
+                trees.iter().filter(|t| **t == tree).count(),
+                *count,
+                "{name} {definition}"
+            );
+            total += count;
         }
+        assert_eq!(
+            trees.len(),
+            definitions.iter().map(|(_, count)| count).sum::<usize>(),
+            "{name}: a statement matches no Lean definition"
+        );
     }
+    assert_eq!(total, 53);
 }
 
 #[test]
