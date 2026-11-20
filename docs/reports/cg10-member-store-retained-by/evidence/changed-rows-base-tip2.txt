@@ -1,0 +1,137 @@
+lib/cmetrics/src/cmt_encode_opentelemetry_batch.c batch_add_resource Unknown -> Unknown
+   - 6595 store of a custody-carrying value into `batch->source_resource`, a member of the formal `batch` (member-store-through-formal)
+lib/cmetrics/src/cmt_encode_opentelemetry_batch.c batch_add_scope Unknown -> Unknown
+   - 6638 store of a custody-carrying value into `batch->source_scope`, a member of the formal `batch` (member-store-through-formal)
+lib/cmetrics/src/cmt_map.c metric_index_add Unknown -> Unknown
+   - 5550 store of a custody-carrying value into `metric->map`, a member of the formal `metric` (member-store-through-formal)
+lib/ctraces/src/ctr_encode_opentelemetry.c otel_span_set_name Unknown -> Safe
+   - 9100 store of a custody-carrying value into `otel_span->name`, a member of the formal `otel_span` (member-store-through-formal)
+lib/ctraces/src/ctr_encode_opentelemetry.c otel_span_set_trace_state Unknown -> Safe
+   - 9105 store of a custody-carrying value into `otel_span->trace_state`, a member of the formal `otel_span` (member-store-through-formal)
+lib/ctraces/src/ctr_encode_opentelemetry.c set_span Unknown -> Unknown
+   - 9187 call to uncontracted function `otel_span_set_name`
+   - 9192 call to uncontracted function `otel_span_set_trace_state`
+   + 9187 indirect memory access is outside the resource projection
+   + 9192 indirect memory access is outside the resource projection
+lib/ctraces/src/ctr_link.c ctr_link_set_attributes Unknown -> Unknown
+   - 6838 store of a custody-carrying value into `link->attr`, a member of the formal `link` (member-store-through-formal)
+lib/ctraces/src/ctr_resource.c ctr_resource_set_attributes Unknown -> Unknown
+   - 6800 store of a custody-carrying value into `res->attr`, a member of the formal `res` (member-store-through-formal)
+lib/ctraces/src/ctr_scope.c ctr_scope_span_set_instrumentation_scope Unknown -> Unknown
+   - 6821 store of a custody-carrying value into `scope_span->instrumentation_scope`, a member of the formal `scope_span` (member-store-through-formal)
+lib/ctraces/src/ctr_span.c ctr_span_event_set_attributes Unknown -> Unknown
+   - 7148 store of a custody-carrying value into `event->attr`, a member of the formal `event` (member-store-through-formal)
+lib/ctraces/src/ctr_span.c ctr_span_set_attributes Unknown -> Unknown
+   - 6902 store of a custody-carrying value into `span->attr`, a member of the formal `span` (member-store-through-formal)
+lib/librdkafka-2.15.0/src/cJSON.c add_item_to_array Unknown -> Unknown
+   - 2854 indirect memory access is outside the resource projection
+   - 2862 call to uncontracted function `suffix_object`
+   + 2862 indirect memory access is outside the resource projection
+lib/librdkafka-2.15.0/src/cJSON.c cJSON_CreateDoubleArray Unknown -> Unknown
+   - 3407 call to uncontracted function `suffix_object`
+   + 3407 call to `suffix_object` retains `p` in `n->prev`, whose lifetime this body does not decide against it (retention-undecided)
+lib/librdkafka-2.15.0/src/cJSON.c cJSON_CreateFloatArray Unknown -> Unknown
+   - 3373 call to uncontracted function `suffix_object`
+   + 3373 call to `suffix_object` retains `p` in `n->prev`, whose lifetime this body does not decide against it (retention-undecided)
+lib/librdkafka-2.15.0/src/cJSON.c cJSON_CreateIntArray Unknown -> Unknown
+   - 3339 call to uncontracted function `suffix_object`
+   + 3339 call to `suffix_object` retains `p` in `n->prev`, whose lifetime this body does not decide against it (retention-undecided)
+lib/librdkafka-2.15.0/src/cJSON.c cJSON_CreateStringArray Unknown -> Unknown
+   - 3441 call to uncontracted function `suffix_object`
+   + 3441 call to `suffix_object` retains `p` in `n->prev`, whose lifetime this body does not decide against it (retention-undecided)
+lib/librdkafka-2.15.0/src/cJSON.c cJSON_ReplaceItemViaPointer Unknown -> Unknown
+   - 3129 indirect memory access is outside the resource projection
+lib/librdkafka-2.15.0/src/cJSON.c suffix_object Unknown -> Safe
+   - 2823 indirect memory access is outside the resource projection
+   - 2824 indirect memory access is outside the resource projection
+lib/librdkafka-2.15.0/src/lz4frame.c LZ4F_compressBegin_usingCDict Unknown -> Unknown
+   - 1450 store of a custody-carrying value into `cctxPtr->cdict`, a member of the formal `cctxPtr` (member-store-through-formal)
+lib/librdkafka-2.15.0/src/lz4frame.c LZ4F_updateDict Unknown -> Unknown
+   - 1930 indirect memory access is outside the resource projection
+   - 1938 indirect memory access is outside the resource projection
+lib/librdkafka-2.15.0/src/nanopb/pb_common.c pb_field_iter_begin Unknown -> Safe
+   - 438 store of a custody-carrying value into `iter->descriptor`, a member of the formal `iter` (member-store-through-formal)
+   - 439 indirect memory access is outside the resource projection
+lib/librdkafka-2.15.0/src/nanopb/pb_common.c pb_field_iter_begin_const Unknown -> Unknown
+   - 534 call to uncontracted function `pb_field_iter_begin`
+   + 534 call to `pb_field_iter_begin` retains `pb_const_cast ( message )` in `iter->message`, whose lifetime this body does not decide against it (retention-undecided)
+lib/librdkafka-2.15.0/src/nanopb/pb_common.c pb_field_iter_begin_extension Unknown -> Unknown
+   - 453 call to uncontracted function `pb_field_iter_begin`
+   + 453 indirect memory access is outside the resource projection
+lib/librdkafka-2.15.0/src/rdbuf.c rd_slice_init_seg Unknown -> Unknown
+   - 3742 indirect memory access is outside the resource projection
+   - 3743 indirect memory access is outside the resource projection
+lib/librdkafka-2.15.0/src/rdkafka_broker.c rd_kafka_broker_buf_enq1 Unknown -> Unknown
+   - 21531 indirect memory access is outside the resource projection
+   - 21532 indirect memory access is outside the resource projection
+lib/librdkafka-2.15.0/src/rdkafka_broker.c rd_kafka_broker_monitor_add Unknown -> Unknown
+   - 24157 indirect memory access is outside the resource projection
+   - 24158 indirect memory access is outside the resource projection
+   - 24159 unresolved resource identity `rkbmon`
+lib/librdkafka-2.15.0/src/rdkafka_buf.c rd_kafka_buf_set_maker Unknown -> Safe
+   - 19884 indirect memory access is outside the resource projection
+   - 19885 indirect memory access is outside the resource projection
+lib/librdkafka-2.15.0/src/rdkafka_cgrp.c rd_kafka_cgrp_coord_set_broker Unknown -> Unknown
+   - 20584 store of a custody-carrying value into `rkcg->rkcg_curr_coord`, a member of the formal `rkcg` (member-store-through-formal)
+lib/librdkafka-2.15.0/src/rdkafka_cgrp.c rd_kafka_cgrp_subscription_set Unknown -> Unknown
+   - 23546 indirect memory access is outside the resource projection
+lib/librdkafka-2.15.0/src/rdkafka_cgrp.c rd_kafka_propagate_consumer_topic_errors Unknown -> Unknown
+   - 23447 indirect memory access is outside the resource projection
+lib/librdkafka-2.15.0/src/rdkafka_conf.c rd_kafka_confval_disable Unknown -> Safe
+   - 23991 store of a custody-carrying value into `confval->name`, a member of the formal `confval` (member-store-through-formal)
+lib/librdkafka-2.15.0/src/rdkafka_conf.c rd_kafka_confval_init_int Unknown -> Safe
+   - 23976 store of a custody-carrying value into `confval->name`, a member of the formal `confval` (member-store-through-formal)
+lib/librdkafka-2.15.0/src/rdkafka_conf.c rd_kafka_confval_init_ptr Unknown -> Unknown
+   - 23985 store of a custody-carrying value into `confval->name`, a member of the formal `confval` (member-store-through-formal)
+lib/librdkafka-2.15.0/src/rdkafka_mock.c rd_kafka_mock_cluster_cmd Unknown -> Unknown
+   - 23185 call to uncontracted function `rd_kafka_mock_partition_set_leader0`
+   + 23185 call to `rd_kafka_mock_partition_set_leader0` retains `mrkb` in `mpart->leader`, whose lifetime this body does not decide against it (retention-undecided)
+lib/librdkafka-2.15.0/src/rdkafka_mock.c rd_kafka_mock_partition_assign_replicas Unknown -> Unknown
+   - 21737 call to uncontracted function `rd_kafka_mock_partition_set_leader0`
+   + 21737 call to `rd_kafka_mock_partition_set_leader0` overwrites `mpart->leader`, which is not a member path of an unrebound formal this body holds no custody of (retention-undecided)
+lib/librdkafka-2.15.0/src/rdkafka_mock.c rd_kafka_mock_partition_init Unknown -> Unknown
+   - 21848 indirect memory access is outside the resource projection
+   - 21849 unresolved resource identity `mpart`
+   - 21850 unresolved resource identity `mpart`
+   - 21851 unresolved resource identity `mpart`
+   - 21852 indirect memory access is outside the resource projection
+   - 21853 unresolved resource identity `mpart`
+   - 21854 unresolved resource identity `mpart`
+   - 21855 unresolved resource identity `mpart`
+   - 21856 unresolved resource identity `mpart`
+   - 21857 indirect memory access is outside the resource projection
+   - 21858 indirect memory access is outside the resource projection
+   - 21859 indirect memory access is outside the resource projection
+lib/librdkafka-2.15.0/src/rdkafka_mock.c rd_kafka_mock_partition_set_leader0 Unknown -> Safe
+   - 21689 indirect memory access is outside the resource projection
+lib/librdkafka-2.15.0/src/rdkafka_mock_cgrp.c rd_kafka_mock_cgrp_classic_member_sync_set Unknown -> Unknown
+   - 20848 store of a custody-carrying value into `member->resp`, a member of the formal `member` (member-store-through-formal)
+   - 20849 indirect memory access is outside the resource projection
+lib/librdkafka-2.15.0/src/rdkafka_msg.c rd_kafka_msgq_split Unknown -> Unknown
+   - 20344 indirect memory access is outside the resource projection
+lib/librdkafka-2.15.0/src/rdkafka_msgset_writer.c rd_kafka_msgset_writer_init Unknown -> Unknown
+   - 19851 store of a custody-carrying value into `msetw->msetw_rktp`, a member of the formal `msetw` (member-store-through-formal)
+   - 19852 store of a custody-carrying value into `msetw->msetw_rkb`, a member of the formal `msetw` (member-store-through-formal)
+   - 19853 indirect memory access is outside the resource projection
+   - 19854 unresolved resource identity `msetw`
+   - 19855 unresolved resource identity `msetw`
+lib/librdkafka-2.15.0/src/rdkafka_queue.c rd_kafka_q_init0 Unknown -> Unknown
+   - 19712 store of a custody-carrying value into `rkq->rkq_rk`, a member of the formal `rkq` (member-store-through-formal)
+   - 19720 store of a custody-carrying value into `rkq->rkq_name`, a member of the formal `rkq` (member-store-through-formal)
+lib/librdkafka-2.15.0/src/rdkafka_timer.c rd_kafka_timers_init Unknown -> Unknown
+   - 19776 store of a custody-carrying value into `rkts->rkts_rk`, a member of the formal `rkts` (member-store-through-formal)
+   - 19777 indirect memory access is outside the resource projection
+lib/librdkafka-2.15.0/src/rdkafka_transport.c rd_kafka_transport_connect Unknown -> Unknown
+   - 20692 indirect memory access is outside the resource projection
+lib/librdkafka-2.15.0/src/snappy.c init_snappy_decompressor Unknown -> Safe
+   - 20174 store of a custody-carrying value into `d->reader`, a member of the formal `d` (member-store-through-formal)
+lib/librdkafka-2.15.0/src/snappy.c internal_uncompress Unknown -> Unknown
+   - 20322 call to uncontracted function `init_snappy_decompressor`
+   + 20322 call to `init_snappy_decompressor` retains `r` in `& decompressor->reader`, whose lifetime this body does not decide against it (retention-undecided)
+lib/monkey/mk_core/mk_memory.c mk_ptr_set Unknown -> Safe
+   - 1865 store of a custody-carrying value into `p->data`, a member of the formal `p` (member-store-through-formal)
+lib/monkey/mk_server/mk_http.c mk_http_request_init Unknown -> Unknown
+   - 5607 store of a custody-carrying value into `request->session`, a member of the formal `request` (member-store-through-formal)
+lib/monkey/mk_server/mk_http.c mk_http_session_init Unknown -> Unknown
+   - 6585 store of a custody-carrying value into `cs->server`, a member of the formal `cs` (member-store-through-formal)
+   - 6587 store of a custody-carrying value into `cs->conn`, a member of the formal `cs` (member-store-through-formal)
