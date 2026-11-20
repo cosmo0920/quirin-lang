@@ -1,0 +1,1777 @@
+{
+ "before": "private/opt-in/base-1/resource-diagnostics.json",
+ "after": "private/opt-in/tip-1/resource-diagnostics.json",
+ "function_totals": {
+  "before": {
+   "Pending": 2,
+   "Safe": 1098,
+   "Unknown": 3699,
+   "Unsafe": 5
+  },
+  "after": {
+   "Pending": 2,
+   "Safe": 1092,
+   "Unknown": 3705,
+   "Unsafe": 5
+  }
+ },
+ "unit_totals": {
+  "before": {
+   "Unknown": 163,
+   "Safe": 9,
+   "Unsafe": 5,
+   "data_only": 4
+  },
+  "after": {
+   "Unknown": 163,
+   "Safe": 9,
+   "Unsafe": 5,
+   "data_only": 4
+  }
+ },
+ "unmatched": {
+  "before_only": [],
+  "after_only": []
+ },
+ "rows_changed": 128,
+ "content_changes": [
+  {
+   "row": "chunkio::lib/chunkio/src/chunkio.c::0::check_root_path",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [
+    "call to `cio_log_print`: the callbacks stored in `cio_options.log_cb` are not a closed set of functions (a formal that is not a function pointer) (callback-member-open)"
+   ],
+   "other_new": [
+    "call to `cio_log_print`: the callbacks stored in `cio_options.log_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264); a formal that is not a function pointer) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "chunkio::lib/chunkio/src/chunkio.c::0::cio_set_realloc_size_hint",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [
+    "call to `cio_log_print`: the callbacks stored in `cio_options.log_cb` are not a closed set of functions (a formal that is not a function pointer) (callback-member-open)"
+   ],
+   "other_new": [
+    "call to `cio_log_print`: the callbacks stored in `cio_options.log_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264); a formal that is not a function pointer) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "chunkio::lib/chunkio/src/cio_chunk.c::0::cio_chunk_delete",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [
+    "call to `cio_log_print`: the callbacks stored in `cio_options.log_cb` are not a closed set of functions (a formal that is not a function pointer) (callback-member-open)"
+   ],
+   "other_new": [
+    "call to `cio_log_print`: the callbacks stored in `cio_options.log_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264); a formal that is not a function pointer) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "chunkio::lib/chunkio/src/cio_chunk.c::0::cio_chunk_open",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [
+    "call to `cio_log_print`: the callbacks stored in `cio_options.log_cb` are not a closed set of functions (a formal that is not a function pointer) (callback-member-open)"
+   ],
+   "other_new": [
+    "call to `cio_log_print`: the callbacks stored in `cio_options.log_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264); a formal that is not a function pointer) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "chunkio::lib/chunkio/src/cio_file.c::0::cio_file_delete",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [
+    "call to `cio_log_print`: the callbacks stored in `cio_options.log_cb` are not a closed set of functions (a formal that is not a function pointer) (callback-member-open)"
+   ],
+   "other_new": [
+    "call to `cio_log_print`: the callbacks stored in `cio_options.log_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264); a formal that is not a function pointer) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "chunkio::lib/chunkio/src/cio_file.c::0::cio_file_open",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [
+    "call to `cio_log_print`: the callbacks stored in `cio_options.log_cb` are not a closed set of functions (a formal that is not a function pointer) (callback-member-open)"
+   ],
+   "other_new": [
+    "call to `cio_log_print`: the callbacks stored in `cio_options.log_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264); a formal that is not a function pointer) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "chunkio::lib/chunkio/src/cio_scan.c::0::cio_scan_stream_files",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [
+    "call to `cio_log_print`: the callbacks stored in `cio_options.log_cb` are not a closed set of functions (a formal that is not a function pointer) (callback-member-open)"
+   ],
+   "other_new": [
+    "call to `cio_log_print`: the callbacks stored in `cio_options.log_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264); a formal that is not a function pointer) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "chunkio::lib/chunkio/src/cio_stream.c::0::check_stream_path",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [
+    "call to `cio_log_print`: the callbacks stored in `cio_options.log_cb` are not a closed set of functions (a formal that is not a function pointer) (callback-member-open)"
+   ],
+   "other_new": [
+    "call to `cio_log_print`: the callbacks stored in `cio_options.log_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264); a formal that is not a function pointer) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "chunkio::lib/chunkio/src/cio_stream.c::0::cio_stream_create",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [
+    "call to `cio_log_print`: the callbacks stored in `cio_options.log_cb` are not a closed set of functions (a formal that is not a function pointer) (callback-member-open)"
+   ],
+   "other_new": [
+    "call to `cio_log_print`: the callbacks stored in `cio_options.log_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264); a formal that is not a function pointer) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "chunkio::lib/chunkio/src/cio_stream.c::0::cio_stream_delete",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [
+    "call to `cio_log_print`: the callbacks stored in `cio_options.log_cb` are not a closed set of functions (a formal that is not a function pointer) (callback-member-open)"
+   ],
+   "other_new": [
+    "call to `cio_log_print`: the callbacks stored in `cio_options.log_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264); a formal that is not a function pointer) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "cmetrics::lib/cmetrics/src/cmt_counter.c::0::cmt_counter_create",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [
+    "call to `cmt_log_print`: the callbacks stored in `cmt.log_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/src/simdutf/flb_simdutf_connector.cpp: a unit that is not C (`cpp`), naming `cmt`)) (callback-member-open)"
+   ],
+   "other_new": [
+    "call to `cmt_log_print`: the callbacks stored in `cmt.log_cb` are not a closed set of functions (2 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "cmetrics::lib/cmetrics/src/cmt_exp_histogram.c::0::cmt_exp_histogram_create",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [
+    "call to `cmt_log_print`: the callbacks stored in `cmt.log_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/src/simdutf/flb_simdutf_connector.cpp: a unit that is not C (`cpp`), naming `cmt`)) (callback-member-open)"
+   ],
+   "other_new": [
+    "call to `cmt_log_print`: the callbacks stored in `cmt.log_cb` are not a closed set of functions (2 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "cmetrics::lib/cmetrics/src/cmt_filter.c::0::filter_context_label_key_value",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [
+    "call to `cmt_log_print`: the callbacks stored in `cmt.log_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/src/simdutf/flb_simdutf_connector.cpp: a unit that is not C (`cpp`), naming `cmt`)) (callback-member-open)"
+   ],
+   "other_new": [
+    "call to `cmt_log_print`: the callbacks stored in `cmt.log_cb` are not a closed set of functions (2 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "cmetrics::lib/cmetrics/src/cmt_gauge.c::0::cmt_gauge_create",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [
+    "call to `cmt_log_print`: the callbacks stored in `cmt.log_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/src/simdutf/flb_simdutf_connector.cpp: a unit that is not C (`cpp`), naming `cmt`)) (callback-member-open)"
+   ],
+   "other_new": [
+    "call to `cmt_log_print`: the callbacks stored in `cmt.log_cb` are not a closed set of functions (2 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "cmetrics::lib/cmetrics/src/cmt_histogram.c::0::cmt_histogram_create",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [
+    "call to `cmt_log_print`: the callbacks stored in `cmt.log_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/src/simdutf/flb_simdutf_connector.cpp: a unit that is not C (`cpp`), naming `cmt`)) (callback-member-open)"
+   ],
+   "other_new": [
+    "call to `cmt_log_print`: the callbacks stored in `cmt.log_cb` are not a closed set of functions (2 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "cmetrics::lib/cmetrics/src/cmt_summary.c::0::cmt_summary_create",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [
+    "call to `cmt_log_print`: the callbacks stored in `cmt.log_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/src/simdutf/flb_simdutf_connector.cpp: a unit that is not C (`cpp`), naming `cmt`)) (callback-member-open)"
+   ],
+   "other_new": [
+    "call to `cmt_log_print`: the callbacks stored in `cmt.log_cb` are not a closed set of functions (2 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "cmetrics::lib/cmetrics/src/cmt_untyped.c::0::cmt_untyped_create",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [
+    "call to `cmt_log_print`: the callbacks stored in `cmt.log_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/src/simdutf/flb_simdutf_connector.cpp: a unit that is not C (`cpp`), naming `cmt`)) (callback-member-open)"
+   ],
+   "other_new": [
+    "call to `cmt_log_print`: the callbacks stored in `cmt.log_cb` are not a closed set of functions (2 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka.c::0::rd_kafka_committed",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka.c::0::rd_kafka_consume0",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [
+    "call to `rd_kafka_poll_cb`: callback `rd_kafka_coord_rkb_monitor_cb` (from `rd_kafka_op_s.rko_u.offset_commit.cb`) has no contract in force (callback-uncontracted)"
+   ],
+   "other_new": [
+    "call to `rd_kafka_poll_cb`: the callbacks stored in `rd_kafka_s.rk_conf.rebalance_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka.c::0::rd_kafka_consume_callback0",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [
+    "call to `rd_kafka_q_serve`: callback `rd_kafka_toppar_op_serve` (from `rd_kafka_op_s.rko_serve`) has no contract in force (callback-uncontracted)"
+   ],
+   "other_new": [
+    "call to `rd_kafka_q_serve`: callback `rd_kafka_consume_cb` (from `rd_kafka_consume_cb`) does not decide its own invocations: its own invocation of `consume_ctx.consume_cb` does not decide: the callbacks stored there are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open) (callback-own-invocation-refused)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka.c::0::rd_kafka_consume_cb",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka.c::0::rd_kafka_consumer_close0",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [
+    "call to `rd_kafka_poll_cb`: callback `rd_kafka_coord_rkb_monitor_cb` (from `rd_kafka_op_s.rko_u.offset_commit.cb`) has no contract in force (callback-uncontracted)"
+   ],
+   "other_new": [
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)",
+    "call to `rd_kafka_poll_cb`: the callbacks stored in `rd_kafka_s.rk_conf.rebalance_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka.c::0::rd_kafka_memberid",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka.c::0::rd_kafka_offsets_for_times",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [
+    "call to `rd_kafka_q_serve`: callback `rd_kafka_poll_cb` (from `rd_kafka_poll_cb`) does not decide its own invocations: its own invocation of `rd_kafka_op_s.rko_u.offset_commit.cb` does not decide: callback `rd_kafka_coord_rkb_monitor_cb` (from `rd_kafka_op_s.rko_u.offset_commit.cb`) has no contract in force (callback-uncontracted) (callback-own-invocation-refused)"
+   ],
+   "other_new": [
+    "call to `rd_kafka_q_serve`: callback `rd_kafka_poll_cb` (from `rd_kafka_poll_cb`) does not decide its own invocations: its own invocation of `rd_kafka_s.rk_conf.rebalance_cb` does not decide: the callbacks stored there are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open) (callback-own-invocation-refused)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka.c::0::rd_kafka_poll_cb",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `rd_kafka_consume_cb`: the callbacks stored in `consume_ctx.consume_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)",
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka.c::0::rd_kafka_query_watermark_offsets",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [
+    "call to `rd_kafka_q_serve`: callback `rd_kafka_poll_cb` (from `rd_kafka_poll_cb`) does not decide its own invocations: its own invocation of `rd_kafka_op_s.rko_u.offset_commit.cb` does not decide: callback `rd_kafka_coord_rkb_monitor_cb` (from `rd_kafka_op_s.rko_u.offset_commit.cb`) has no contract in force (callback-uncontracted) (callback-own-invocation-refused)"
+   ],
+   "other_new": [
+    "call to `rd_kafka_q_serve`: callback `rd_kafka_poll_cb` (from `rd_kafka_poll_cb`) does not decide its own invocations: its own invocation of `rd_kafka_s.rk_conf.rebalance_cb` does not decide: the callbacks stored there are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open) (callback-own-invocation-refused)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka.c::0::rd_kafka_seek_partitions",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka.c::0::rd_kafka_share_commit_sync",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_admin.c::0::rd_kafka_AlterConfigsResponse_parse",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_admin.c::0::rd_kafka_AlterUserScramCredentialsResponse_parse",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_admin.c::0::rd_kafka_ConsumerGroupDescribeResponse_parse",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_admin.c::0::rd_kafka_CreateAclsResponse_parse",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_admin.c::0::rd_kafka_CreatePartitionsResponse_parse",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_admin.c::0::rd_kafka_CreateTopicsResponse_parse",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_admin.c::0::rd_kafka_DeleteAclsResponse_parse",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_admin.c::0::rd_kafka_DeleteGroupsResponse_parse",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_admin.c::0::rd_kafka_DeleteTopicsResponse_parse",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_admin.c::0::rd_kafka_DescribeAclsResponse_parse",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_admin.c::0::rd_kafka_DescribeClusterResponse_parse",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_admin.c::0::rd_kafka_DescribeConfigsResponse_parse",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_admin.c::0::rd_kafka_DescribeConsumerGroupsResponse_parse",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_admin.c::0::rd_kafka_DescribeTopicsResponse_parse",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_admin.c::0::rd_kafka_DescribeUserScramCredentialsResponse_parse",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_admin.c::0::rd_kafka_ElectLeadersResponse_parse",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_admin.c::0::rd_kafka_IncrementalAlterConfigsResponse_parse",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_admin.c::0::rd_kafka_admin_common_worker_destroy",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_admin.c::0::rd_kafka_admin_fanout_worker",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_admin.c::0::rd_kafka_admin_handle_response",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_admin.c::0::ut_ListConsumerGroups_response_merge",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_background.c::0::rd_kafka_background_queue_serve",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_cert.c::0::rd_kafka_cert_new",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [
+    "call to `BIO_free` with `bio`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ],
+   "other_new": [
+    "call to `BIO_free`: the callbacks stored in `bio_st.bio_callback_ex` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)",
+    "call to `d2i_PKCS12_bio`: the callbacks stored in `bio_st.bio_callback_ex` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)",
+    "unresolved resource identity `p12`"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_cgrp.c::0::rd_kafka_cgrp_metadata_refresh",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_cgrp.c::0::rd_kafka_cgrp_op_handle_OffsetCommit",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_cgrp.c::0::rd_kafka_cgrp_op_serve",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_cgrp.c::0::rd_kafka_cgrp_terminate0",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_cgrp.c::0::rd_kafka_consumer_group_metadata",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_fetcher.c::0::rd_kafka_share_build_response_rko",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_fetcher.c::0::rd_kafka_share_fetch_reply_handle",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_fetcher.c::0::rd_kafka_share_fetch_reply_handle_partition",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_fetcher.c::0::rd_kafka_share_filter_acquired_records_and_update_ack_type",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_metadata.c::0::rd_kafka_metadata",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_mock.c::0::rd_kafka_mock_cluster_destroy",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_mock.c::0::rd_kafka_mock_topic_set_error",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_msg.c::0::rd_kafka_message_destroy",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_offset.c::0::rd_kafka_commit_queue",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_op.c::0::rd_kafka_op_destroy",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_op.c::0::rd_kafka_op_err_destroy",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_op.c::0::rd_kafka_op_error_destroy",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_op.c::0::rd_kafka_op_error_reply",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_op.c::0::rd_kafka_op_handle",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_op.c::0::rd_kafka_op_reply",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_op.c::0::rd_kafka_op_req",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [
+    "call to `rd_kafka_op_req0`: callback `rd_kafka_toppar_op_serve` (from `rd_kafka_op_s.rko_serve`) has no contract in force (callback-uncontracted)"
+   ],
+   "other_new": [
+    "call to `rd_kafka_op_req0`: the callbacks stored in `rd_kafka_op_s.rko_serve` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_op.c::0::rd_kafka_op_req2",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [
+    "call to `rd_kafka_op_req`: callback `rd_kafka_toppar_op_serve` (from `rd_kafka_op_s.rko_serve`) has no contract in force (callback-uncontracted)"
+   ],
+   "other_new": [
+    "call to `rd_kafka_op_req`: the callbacks stored in `rd_kafka_op_s.rko_serve` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_partition.c::0::rd_kafka_topic_partition_list_query_leaders_async",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_queue.c::0::rd_kafka_op_filter",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_queue.c::0::rd_kafka_purge_outdated_messages",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_queue.c::0::rd_kafka_q_fix_offsets",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_queue.c::0::rd_kafka_q_purge0",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_queue.c::0::rd_kafka_q_purge_toppar_version",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_queue.c::0::rd_kafka_q_serve_rkmessages",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_queue.c::0::rd_kafka_q_serve_share_rkmessages",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_queue.c::0::rd_kafka_q_wait_result",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_request.c::0::rd_kafka_handle_Metadata",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_request.c::0::rd_kafka_op_handle_OffsetFetch",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_ssl.c::0::rd_kafka_ssl_PKEY_from_string",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [
+    "call to `BIO_free` with `bio`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ],
+   "other_new": [
+    "call to `BIO_free`: the callbacks stored in `bio_st.bio_callback_ex` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_ssl.c::0::rd_kafka_ssl_X509_from_string",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [
+    "call to `BIO_free` with `bio`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ],
+   "other_new": [
+    "call to `BIO_free`: the callbacks stored in `bio_st.bio_callback_ex` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_ssl.c::0::rd_kafka_ssl_ctx_init",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [
+    "call to `SSL_CTX_free` with `ctx`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ],
+   "other_new": [
+    "call to `SSL_CTX_free`: the callbacks stored in `ssl_ctx_st.remove_session_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_ssl.c::0::rd_kafka_ssl_ctx_term",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [
+    "call to `SSL_CTX_free` with `rk - > rk_conf . ssl . ctx`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ],
+   "other_new": [
+    "indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_ssl.c::0::rd_kafka_ssl_set_certs",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [
+    "call to `BIO_free` with `bio`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)",
+    "use of `bio` after a possibly-final drop of its reference (reference-dropped)"
+   ],
+   "other_new": [
+    "call to `BIO_free`: the callbacks stored in `bio_st.bio_callback_ex` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)",
+    "call to `SSL_CTX_use_certificate`: the callbacks stored in `ssl_ctx_st.sec_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)",
+    "call to `d2i_PKCS12_bio`: the callbacks stored in `bio_st.bio_callback_ex` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)",
+    "unresolved resource identity `p12`"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_ssl.c::0::rd_kafka_transport_ssl_close",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [
+    "call to `SSL_free` with `rktrans - > rktrans_ssl`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ],
+   "other_new": []
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_subscription.c::0::rd_kafka_assignment",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_subscription.c::0::rd_kafka_rebalance_protocol",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_subscription.c::0::rd_kafka_subscription",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_txnmgr.c::0::rd_kafka_txn_handle_AddOffsetsToTxn",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_txnmgr.c::0::rd_kafka_txn_handle_TxnOffsetCommit",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_txnmgr.c::0::rd_kafka_txn_op_req0",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdunittest_fetcher.c::0::unittest_ack_mapping_cumulative",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdunittest_fetcher.c::0::unittest_ack_mapping_empty",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdunittest_fetcher.c::0::unittest_ack_mapping_gaps",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdunittest_fetcher.c::0::unittest_ack_mapping_multi_entry",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdunittest_fetcher.c::0::unittest_ack_mapping_multi_partition",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdunittest_fetcher.c::0::unittest_ack_mapping_single_partition",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdunittest_fetcher.c::0::unittest_filter_all_acquired",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": []
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdunittest_fetcher.c::0::unittest_filter_disjoint_ranges",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": []
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdunittest_fetcher.c::0::unittest_filter_empty_queue",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": []
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdunittest_fetcher.c::0::unittest_filter_no_ranges",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": []
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdunittest_fetcher.c::0::unittest_filter_partial_range",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": []
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdunittest_fetcher.c::0::unittest_filter_range_beyond_messages",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": []
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdunittest_fetcher.c::0::unittest_filter_sparse_offsets",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": []
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdunittest_msgset_errors.c::0::unittest_msgset_all_errors",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdunittest_msgset_errors.c::0::unittest_msgset_all_success",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdunittest_msgset_errors.c::0::unittest_msgset_crc_error_share_consumer",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdunittest_msgset_errors.c::0::unittest_msgset_mixed_magic_success_crc_success",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdunittest_msgset_errors.c::0::unittest_msgset_mixed_success_crc_success",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdunittest_msgset_errors.c::0::unittest_msgset_unsupported_magic_share_consumer",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "monkey::lib/monkey/mk_server/mk_http_thread.c::0::mk_http_thread_destroy",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [
+    "unresolved resource identity `th`"
+   ],
+   "other_new": [
+    "call to `mk_thread_destroy`: the callbacks stored in `mk_thread.cb_destroy` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "monkey::lib/monkey/mk_server/mk_scheduler.c::0::mk_sched_drop_connection",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [
+    "mk_sched_threads_destroy_conn"
+   ],
+   "other_left": [],
+   "other_new": []
+  },
+  {
+   "row": "monkey::lib/monkey/tls/tls_openssl.c::0::context_unset",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": []
+  },
+  {
+   "row": "monkey::lib/monkey/tls/tls_openssl.c::0::contexts_free",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [
+    "call to `SSL_free` with `cur - > ssl`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ],
+   "other_new": [
+    "indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "row": "monkey::lib/monkey/tls/tls_openssl.c::0::mk_tls_send_file",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [
+    "call to `SSL_write`: callback `rd_kafka_ssl_cert_callback` (from `ssl_ctx_st.cert_cb`) has no contract in force (callback-uncontracted)"
+   ],
+   "other_new": [
+    "call to `SSL_write`: the callbacks stored in `ssl_ctx_st.cert_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "monkey::lib/monkey/tls/tls_openssl.c::0::mk_tls_writev",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [
+    "call to `SSL_write`: callback `rd_kafka_ssl_cert_callback` (from `ssl_ctx_st.cert_cb`) has no contract in force (callback-uncontracted)"
+   ],
+   "other_new": [
+    "call to `SSL_write`: the callbacks stored in `ssl_ctx_st.cert_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  },
+  {
+   "row": "monkey::lib/monkey/tls/tls_openssl.c::0::tls_load_builtin_credentials",
+   "before": "Unknown",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [
+    "call to `BIO_free` with `cert_bio`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)",
+    "call to `BIO_free` with `key_bio`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ],
+   "other_new": [
+    "call to `BIO_free`: the callbacks stored in `bio_st.bio_callback_ex` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)",
+    "call to `EVP_PKEY_free` with `key`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)",
+    "call to `PEM_read_bio_PrivateKey`: the callbacks stored in `bio_st.bio_callback_ex` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)",
+    "call to `PEM_read_bio_X509`: the callbacks stored in `bio_st.bio_callback_ex` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)",
+    "call to `X509_free` with `cert`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)",
+    "unmodeled call, aggregate or indirect access in branch condition"
+   ]
+  }
+ ],
+ "moves": [
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_event.c::0::rd_kafka_event_destroy",
+   "before": "Safe",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)",
+    "unresolved resource identity `rkev`"
+   ]
+  },
+  {
+   "row": "librdkafka::lib/librdkafka-2.15.0/src/rdunittest_fetcher.c::0::ut_op_destroy_free",
+   "before": "Safe",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)",
+    "unresolved resource identity `ptr`"
+   ]
+  },
+  {
+   "row": "monkey::lib/monkey/mk_server/mk_scheduler.c::0::mk_sched_threads_destroy_all",
+   "before": "Safe",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [
+    "sched_thread_cleanup"
+   ],
+   "other_left": [],
+   "other_new": []
+  },
+  {
+   "row": "monkey::lib/monkey/mk_server/mk_scheduler.c::0::mk_sched_threads_destroy_conn",
+   "before": "Safe",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `mk_http_thread_destroy`: the callbacks the helper `mk_thread_destroy` invokes from `mk_thread.cb_destroy` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)",
+    "unresolved resource identity `mth`"
+   ]
+  },
+  {
+   "row": "monkey::lib/monkey/mk_server/mk_scheduler.c::0::mk_sched_threads_purge",
+   "before": "Safe",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [
+    "sched_thread_cleanup"
+   ],
+   "other_left": [],
+   "other_new": []
+  },
+  {
+   "row": "monkey::lib/monkey/mk_server/mk_scheduler.c::0::sched_thread_cleanup",
+   "before": "Safe",
+   "after": "Unknown",
+   "links_gained": [],
+   "links_lost": [],
+   "uncontracted_left": [],
+   "uncontracted_new": [],
+   "other_left": [],
+   "other_new": [
+    "call to `mk_http_thread_destroy`: the callbacks the helper `mk_thread_destroy` invokes from `mk_thread.cb_destroy` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: $W/private/fb-046accf6/fluent-bit-clang-source/lib/wasm-micro-runtime-WAMR-2.4.1/core/iwasm/interpreter/wasm_loader.c: its AST is not read: unsupported Clang AST JSON: recursion limit exceeded at line 962996 column 264)) (callback-member-open)"
+   ]
+  }
+ ],
+ "unit_moves": []
+}

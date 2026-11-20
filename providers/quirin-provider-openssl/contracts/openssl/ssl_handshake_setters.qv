@@ -1,0 +1,325 @@
+// SPDX-License-Identifier: Apache-2.0
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+module contract;
+
+// Card OPENSSL-REMAINING-HANDSHAKE-SETTERS. The setters of the handshake
+// callback slots OPENSSL-UNDECLARED-HANDSHAKE-CALLBACKS left under the premise
+// `openssl_unstated_callback_slots` (see err.qv for what every declaration of
+// this crate shares, ssl_handshake.qv for the reading of a slot, and
+// ssl_io.qv for the invocations): session tickets, session id generation,
+// temporary DH parameters, the stateless and DTLS cookies, the session
+// secret, SRP, async and the QUIC pending connection.
+//
+// Each slot is C04.19.3's opaque slot (rule 12n), decided over the run's
+// closed set of what its declared setters are handed. Every writer the slot's
+// 3.5 manual page names is declared here, and the page's NAME list is exactly
+// the slot's writers and not-writers (the checker's `slot_writers_declared`).
+// Where the page names an SSL setter beside the context's, the two share one
+// key. A setter that passes `arg` back to its callback keeps it for the
+// callback (C04.14, `resource_retained_by(arg, H)`).
+//
+// Not declared, and left under the premise on the handshake and I/O calls:
+// SSL_CTX_set_not_resumable_session_callback,
+// SSL_set_not_resumable_session_callback and SSL_set_session_ticket_ext_cb,
+// which the pinned openssl/ssl.h declares but no OpenSSL manual page
+// documents (https://docs.openssl.org/3.5/man3/<name>/ is not found, and no
+// page's NAME section names them), so no page supports a writer list.
+
+// SSL_CTX_set_session_ticket_cb: https://docs.openssl.org/3.5/man3/SSL_CTX_set_session_ticket_cb/
+// (also 1.1.1; no page at 1.0.2). HISTORY: "The SSL_CTX_set_session_ticket_cb()
+// ... functions were added in OpenSSL 1.1.1." NAME (3.5) names one writer of
+// two slots. DESCRIPTION: it "sets the application callbacks gen_cb and dec_cb
+// that are used by a server", "Either callback function may be set to NULL",
+// and "The value of arg is passed to the callbacks." Registrations into the
+// ticket generation and decryption slots, keeping `arg`. Pinned prototype:
+// `int SSL_CTX_set_session_ticket_cb(SSL_CTX *ctx,
+// SSL_CTX_generate_session_ticket_fn gen_cb, SSL_CTX_decrypt_session_ticket_fn
+// dec_cb, void *arg)`.
+extern fn SSL_CTX_set_session_ticket_cb(ctx: ptr<mut, u8>, gen_cb: fnptr, dec_cb: fnptr, arg: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, since "1.1.1");
+    ensures normal resource_borrowed(ctx);
+    ensures normal resource_borrowed(gen_cb);
+    ensures normal resource_borrowed(dec_cb);
+    ensures normal resource_borrowed(arg);
+    ensures normal resource_callback_slot_registered(ctx, ssl_ctx_st.ticket_gen_cb, gen_cb);
+    ensures normal resource_callback_slot_registered(ctx, ssl_ctx_st.ticket_dec_cb, dec_cb);
+    ensures normal resource_retained_by(arg, ctx);
+    ensures normal resource_return_none();
+};
+
+// SSL_CTX_set_generate_session_id: https://docs.openssl.org/1.0.2/man3/SSL_CTX_set_generate_session_id/
+// (also 3.5, 1.1.1). HISTORY (1.0.2): "SSL_CTX_set_generate_session_id(),
+// SSL_set_generate_session_id() and SSL_has_matching_session_id() have been
+// introduced in OpenSSL 0.9.7." DESCRIPTION (3.5): it "sets the callback
+// function for generating new session ids for SSL/TLS sessions for ctx to be
+// cb". A registration into the session id slot. Pinned prototype: `int
+// SSL_CTX_set_generate_session_id(SSL_CTX *ctx, GEN_SESSION_CB cb)`.
+extern fn SSL_CTX_set_generate_session_id(ctx: ptr<mut, u8>, cb: fnptr) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, since "0.9.7");
+    ensures normal resource_borrowed(ctx);
+    ensures normal resource_borrowed(cb);
+    ensures normal resource_callback_slot_registered(ctx, ssl_ctx_st.generate_session_id, cb);
+    ensures normal resource_return_none();
+};
+
+// SSL_set_generate_session_id: the same page; "sets the callback function for
+// generating new session ids for SSL/TLS sessions for ssl to be cb". The SSL's
+// copy shares the context's key. Pinned prototype: `int
+// SSL_set_generate_session_id(SSL *s, GEN_SESSION_CB cb)` (the 3.5 synopsis
+// spells `GEN_SESSION_CB , cb`; the header is the cross-check).
+extern fn SSL_set_generate_session_id(s: ptr<mut, u8>, cb: fnptr) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, since "0.9.7");
+    ensures normal resource_borrowed(s);
+    ensures normal resource_borrowed(cb);
+    ensures normal resource_callback_slot_registered(s, ssl_ctx_st.generate_session_id, cb);
+    ensures normal resource_return_none();
+};
+
+// SSL_CTX_set_tmp_dh_callback: https://docs.openssl.org/1.0.2/man3/SSL_CTX_set_tmp_dh_callback/
+// (also 3.5, 1.1.1). No HISTORY entry, so the bound is the oldest series that
+// documents it; deprecated since 3.0, not removed. DESCRIPTION (3.5): "An
+// application may instead specify the DH parameters via a callback function
+// using the functions SSL_CTX_set_tmp_dh_callback() or
+// SSL_set_tmp_dh_callback() to set the callback for the SSL_CTX or SSL object
+// respectively." A registration into the DH parameter slot. Pinned prototype:
+// `void SSL_CTX_set_tmp_dh_callback(SSL_CTX *ctx, DH *(*dh)(SSL *ssl, int
+// is_export, int keylength))`.
+extern fn SSL_CTX_set_tmp_dh_callback(ctx: ptr<mut, u8>, dh: fnptr) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, documented "1.0.2");
+    ensures normal resource_borrowed(ctx);
+    ensures normal resource_borrowed(dh);
+    ensures normal resource_callback_slot_registered(ctx, ssl_ctx_st.tmp_dh_callback, dh);
+    ensures normal resource_return_none();
+};
+
+// SSL_set_tmp_dh_callback: the same page, the SSL's copy (one key). Pinned
+// prototype: `void SSL_set_tmp_dh_callback(SSL *ssl, DH *(*dh)(SSL *ssl, int
+// is_export, int keylength))`.
+extern fn SSL_set_tmp_dh_callback(ssl: ptr<mut, u8>, dh: fnptr) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, documented "1.0.2");
+    ensures normal resource_borrowed(ssl);
+    ensures normal resource_borrowed(dh);
+    ensures normal resource_callback_slot_registered(ssl, ssl_ctx_st.tmp_dh_callback, dh);
+    ensures normal resource_return_none();
+};
+
+// SSL_CTX_set_stateless_cookie_generate_cb: https://docs.openssl.org/3.5/man3/SSL_CTX_set_stateless_cookie_generate_cb/
+// (also 1.1.1; no page at 1.0.2). HISTORY: the stateless pair "were added in
+// OpenSSL 1.1.1". DESCRIPTION: it "sets the callback used by SSL_stateless(3)
+// to generate the application-controlled portion of the cookie provided to
+// clients in the HelloRetryRequest"; "a zero return value can be used to
+// abort the handshake". A registration into the stateless cookie generation
+// slot. Pinned prototype: `void SSL_CTX_set_stateless_cookie_generate_cb(SSL_CTX
+// *ctx, int (*gen_stateless_cookie_cb)(SSL *ssl, unsigned char *cookie, size_t
+// *cookie_len))`.
+extern fn SSL_CTX_set_stateless_cookie_generate_cb(ctx: ptr<mut, u8>, gen_stateless_cookie_cb: fnptr) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, since "1.1.1");
+    ensures normal resource_borrowed(ctx);
+    ensures normal resource_borrowed(gen_stateless_cookie_cb);
+    ensures normal resource_callback_slot_registered(ctx, ssl_ctx_st.gen_stateless_cookie_cb, gen_stateless_cookie_cb);
+    ensures normal resource_return_none();
+};
+
+// SSL_CTX_set_stateless_cookie_verify_cb: the same page; it "sets the callback
+// used by SSL_stateless(3) to determine whether the application-controlled
+// portion of a ClientHello cookie is valid". Pinned prototype: `void
+// SSL_CTX_set_stateless_cookie_verify_cb(SSL_CTX *ctx, int
+// (*verify_stateless_cookie_cb)(SSL *ssl, const unsigned char *cookie, size_t
+// cookie_len))`.
+extern fn SSL_CTX_set_stateless_cookie_verify_cb(ctx: ptr<mut, u8>, verify_stateless_cookie_cb: fnptr) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, since "1.1.1");
+    ensures normal resource_borrowed(ctx);
+    ensures normal resource_borrowed(verify_stateless_cookie_cb);
+    ensures normal resource_callback_slot_registered(ctx, ssl_ctx_st.verify_stateless_cookie_cb, verify_stateless_cookie_cb);
+    ensures normal resource_return_none();
+};
+
+// SSL_CTX_set_cookie_generate_cb: the same page, documented from 1.1.1 (NAME
+// at 1.1.1 names it; HISTORY names no version for the DTLS pair). It "sets the
+// callback used by DTLSv1_listen(3) to generate the cookie provided to clients
+// in the HelloVerifyRequest". Pinned prototype: `void
+// SSL_CTX_set_cookie_generate_cb(SSL_CTX *ctx, int (*app_gen_cookie_cb)(SSL
+// *ssl, unsigned char *cookie, unsigned int *cookie_len))`.
+extern fn SSL_CTX_set_cookie_generate_cb(ctx: ptr<mut, u8>, app_gen_cookie_cb: fnptr) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, documented "1.1.1");
+    ensures normal resource_borrowed(ctx);
+    ensures normal resource_borrowed(app_gen_cookie_cb);
+    ensures normal resource_callback_slot_registered(ctx, ssl_ctx_st.app_gen_cookie_cb, app_gen_cookie_cb);
+    ensures normal resource_return_none();
+};
+
+// SSL_CTX_set_cookie_verify_cb: the same page; it "sets the callback used by
+// DTLSv1_listen(3) to determine whether the cookie in a ClientHello is valid".
+// Pinned prototype: `void SSL_CTX_set_cookie_verify_cb(SSL_CTX *ctx, int
+// (*app_verify_cookie_cb)(SSL *ssl, const unsigned char *cookie, unsigned int
+// cookie_len))`.
+extern fn SSL_CTX_set_cookie_verify_cb(ctx: ptr<mut, u8>, app_verify_cookie_cb: fnptr) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, documented "1.1.1");
+    ensures normal resource_borrowed(ctx);
+    ensures normal resource_borrowed(app_verify_cookie_cb);
+    ensures normal resource_callback_slot_registered(ctx, ssl_ctx_st.app_verify_cookie_cb, app_verify_cookie_cb);
+    ensures normal resource_return_none();
+};
+
+// SSL_set_session_secret_cb: https://docs.openssl.org/3.2/man3/SSL_set_session_secret_cb/
+// (also 3.5; no page at 3.0 or 3.1). No HISTORY entry, so the bound is the
+// oldest series that documents it. DESCRIPTION (3.5): it "sets the session
+// secret callback to be used ( session_secret_cb ), and an optional argument (
+// arg ) to be passed to that callback when it is called". The SSL's one
+// writer; a registration keeping `arg`. Pinned prototype: `int
+// SSL_set_session_secret_cb(SSL *s, tls_session_secret_cb_fn session_secret_cb,
+// void *arg)`.
+extern fn SSL_set_session_secret_cb(s: ptr<mut, u8>, session_secret_cb: fnptr, arg: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, documented "3.2");
+    ensures normal resource_borrowed(s);
+    ensures normal resource_borrowed(session_secret_cb);
+    ensures normal resource_borrowed(arg);
+    ensures normal resource_callback_slot_registered(s, ssl_st.session_secret_cb, session_secret_cb);
+    ensures normal resource_retained_by(arg, s);
+    ensures normal resource_return_none();
+};
+
+// SSL_CTX_set_srp_username_callback: https://docs.openssl.org/3.5/man3/SSL_CTX_set_srp_password/
+// (also 3.0; no page at 1.1.1 or 1.0.2). HISTORY: "These functions were added
+// in OpenSSL 1.0.1 and deprecated in OpenSSL 3.0" (not removed). DESCRIPTION:
+// it "sets the server side callback that is invoked when an SRP username is
+// found in a ClientHello". The callback's `arg` is set by
+// SSL_CTX_set_srp_cb_arg, not here. Pinned prototype: `int
+// SSL_CTX_set_srp_username_callback(SSL_CTX *ctx, int (*cb)(SSL *, int *, void
+// *))`.
+extern fn SSL_CTX_set_srp_username_callback(ctx: ptr<mut, u8>, cb: fnptr) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, since "1.0.1");
+    ensures normal resource_borrowed(ctx);
+    ensures normal resource_borrowed(cb);
+    ensures normal resource_callback_slot_registered(ctx, ssl_ctx_st.srp_username_callback, cb);
+    ensures normal resource_return_none();
+};
+
+// SSL_CTX_set_srp_client_pwd_callback: the same page; it "sets the client
+// password callback on the client", which "will be called as part of the
+// generation of the client secrets". Pinned prototype: `int
+// SSL_CTX_set_srp_client_pwd_callback(SSL_CTX *ctx, char *(*cb)(SSL *, void
+// *))`.
+extern fn SSL_CTX_set_srp_client_pwd_callback(ctx: ptr<mut, u8>, cb: fnptr) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, since "1.0.1");
+    ensures normal resource_borrowed(ctx);
+    ensures normal resource_borrowed(cb);
+    ensures normal resource_callback_slot_registered(ctx, ssl_ctx_st.srp_client_pwd_callback, cb);
+    ensures normal resource_return_none();
+};
+
+// SSL_CTX_set_srp_verify_param_callback: the same page; it "sets the SRP gN
+// parameter verification callback on the client". Pinned prototype: `int
+// SSL_CTX_set_srp_verify_param_callback(SSL_CTX *ctx, int (*cb)(SSL *, void
+// *))`.
+extern fn SSL_CTX_set_srp_verify_param_callback(ctx: ptr<mut, u8>, cb: fnptr) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, since "1.0.1");
+    ensures normal resource_borrowed(ctx);
+    ensures normal resource_borrowed(cb);
+    ensures normal resource_callback_slot_registered(ctx, ssl_ctx_st.srp_verify_param_callback, cb);
+    ensures normal resource_return_none();
+};
+
+// SSL_CTX_set_async_callback: https://docs.openssl.org/3.5/man3/SSL_set_async_callback/
+// (also 3.0; no page at 1.1.1). HISTORY: "SSL_CTX_set_async_callback(), ...
+// were first added to OpenSSL 3.0." DESCRIPTION: it "sets an asynchronous
+// callback function. All SSL objects generated based on this SSL_CTX will get
+// this callback." The argument is set by SSL_CTX_set_async_callback_arg, not
+// here. Pinned prototype: `int SSL_CTX_set_async_callback(SSL_CTX *ctx,
+// SSL_async_callback_fn callback)`.
+extern fn SSL_CTX_set_async_callback(ctx: ptr<mut, u8>, callback: fnptr) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, since "3.0.0");
+    ensures normal resource_borrowed(ctx);
+    ensures normal resource_borrowed(callback);
+    ensures normal resource_callback_slot_registered(ctx, ssl_ctx_st.async_cb, callback);
+    ensures normal resource_return_none();
+};
+
+// SSL_set_async_callback: the same page; it "allows an application to set a
+// callback in an asynchronous SSL object". The SSL's copy shares the key.
+// Pinned prototype: `int SSL_set_async_callback(SSL *s, SSL_async_callback_fn
+// callback)`.
+extern fn SSL_set_async_callback(s: ptr<mut, u8>, callback: fnptr) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, since "3.0.0");
+    ensures normal resource_borrowed(s);
+    ensures normal resource_borrowed(callback);
+    ensures normal resource_callback_slot_registered(s, ssl_ctx_st.async_cb, callback);
+    ensures normal resource_return_none();
+};
+
+// SSL_CTX_set_new_pending_conn_cb: https://docs.openssl.org/3.5/man3/SSL_CTX_set_new_pending_conn_cb/
+// (no page at 3.0). HISTORY: "SSL_CTX_set_new_pending_conn_cb() was added in
+// OpenSSL 3.5". DESCRIPTION: it "sets the new_pending_conn callback function
+// and associated application data argument arg". A registration keeping
+// `arg`. Pinned prototype: `void SSL_CTX_set_new_pending_conn_cb(SSL_CTX *c,
+// SSL_new_pending_conn_cb_fn cb, void *arg)` (the 3.5 synopsis spells
+// `SSL_set_new_pending_conn_cb_fn * f`; the header is the cross-check).
+extern fn SSL_CTX_set_new_pending_conn_cb(c: ptr<mut, u8>, cb: fnptr, arg: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, since "3.5.0");
+    ensures normal resource_borrowed(c);
+    ensures normal resource_borrowed(cb);
+    ensures normal resource_borrowed(arg);
+    ensures normal resource_callback_slot_registered(c, ssl_ctx_st.new_pending_conn_cb, cb);
+    ensures normal resource_retained_by(arg, c);
+    ensures normal resource_return_none();
+};

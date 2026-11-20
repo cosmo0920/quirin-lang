@@ -81,7 +81,10 @@ module contract;
 // ownership), whose lookup methods' free and shutdown functions are
 // user-settable (X509_LOOKUP_meth_set_free, X509_LOOKUP_meth_set_shutdown);
 // SSL_free may drop the context's last reference. Both keep
-// `openssl_ex_data_callbacks` (card OPENSSL-EX-DATA-REGISTRY).
+// `openssl_ex_data_callbacks` (card OPENSSL-EX-DATA-REGISTRY). Card
+// OPENSSL-REMAINING-HANDSHAKE-SETTERS: the premise's statement now names
+// those lookup methods ("a function of an X509_LOOKUP_METHOD of a lookup the
+// certificate store of the SSL_CTX holds"); the frees state nothing new.
 
 // TLS_server_method: https://docs.openssl.org/3.5/man3/SSL_CTX_new/
 // HISTORY (3.5, 1.1.1): TLS_method(), TLS_server_method() and
@@ -130,7 +133,7 @@ contract {
     requires resource_contract_v1;
     requires resource_revision(flexible);
     requires resource_library_version(openssl, documented "1.1.1");
-    requires resource_premise(openssl_unstated_callback_slots, "a callback the call may run that no clause of this declaration states (a callback slot of the SSL object or its SSL_CTX whose invocation the declaration does not state, among them the SSL_CTX_callback_ctrl arms such as the servername, status and ticket key callbacks, or an ex_data callback) takes, releases or retains nothing the caller holds");
+    requires resource_premise(openssl_unstated_callback_slots, "a callback the call may run that no clause of this declaration states (a callback slot of the SSL object or its SSL_CTX whose invocation the declaration does not state, among them the SSL_CTX_callback_ctrl arms such as the servername, status and ticket key callbacks, the certificate transparency validation callback, and the not-resumable session and session ticket extension callbacks, whose setters no manual page documents, a function of an X509_LOOKUP_METHOD of a lookup the certificate store of the SSL_CTX holds, or an ex_data callback) takes, releases or retains nothing the caller holds");
     requires resource_premise(openssl_ex_data_callbacks, "an ex_data callback the call may run (a new, dup or free callback CRYPTO_get_ex_new_index registers for the class of an object the call creates, copies or frees) takes, releases or retains nothing the caller holds");
     ensures normal resource_borrowed(ctx);
     ensures normal resource_reference_dropped(ctx, nullable);
@@ -168,7 +171,7 @@ contract {
     requires resource_contract_v1;
     requires resource_revision(flexible);
     requires resource_library_version(openssl, documented "1.1.1");
-    requires resource_premise(openssl_unstated_callback_slots, "a callback the call may run that no clause of this declaration states (a callback slot of the SSL object or its SSL_CTX whose invocation the declaration does not state, among them the SSL_CTX_callback_ctrl arms such as the servername, status and ticket key callbacks, or an ex_data callback) takes, releases or retains nothing the caller holds");
+    requires resource_premise(openssl_unstated_callback_slots, "a callback the call may run that no clause of this declaration states (a callback slot of the SSL object or its SSL_CTX whose invocation the declaration does not state, among them the SSL_CTX_callback_ctrl arms such as the servername, status and ticket key callbacks, the certificate transparency validation callback, and the not-resumable session and session ticket extension callbacks, whose setters no manual page documents, a function of an X509_LOOKUP_METHOD of a lookup the certificate store of the SSL_CTX holds, or an ex_data callback) takes, releases or retains nothing the caller holds");
     requires resource_premise(openssl_bio_free_callbacks, "when the call drops the last reference to a BIO (its BIO argument, or a BIO the SSL object holds and the BIOs chained to it), the ex_data free callbacks of the BIO class take, release or retain nothing the caller holds");
     requires resource_premise(openssl_ex_data_callbacks, "an ex_data callback the call may run (a new, dup or free callback CRYPTO_get_ex_new_index registers for the class of an object the call creates, copies or frees) takes, releases or retains nothing the caller holds");
     requires resource_premise(openssl_builtin_bio_methods, "a function of a BIO method the library defines itself (the BIO_METHOD that BIO_s_socket, BIO_s_mem, BIO_f_buffer or another built-in BIO_s_ or BIO_f_ function returns, which no setter is handed), run on a BIO the call reads or writes through or frees (its BIO argument or a BIO the SSL object holds) or one chained to it, takes, releases or retains nothing the caller holds, and so does any callback it runs in turn on an object other than the arguments of the call (the SSL object of a BIO_f_ssl BIO)");
@@ -198,18 +201,27 @@ contract {
 // Card OPENSSL-EX-DATA-REGISTRY: it may process post-handshake messages (a
 // NewSessionTicket creates an SSL_SESSION) while reading for the
 // close_notify.
+// Card OPENSSL-REMAINING-HANDSHAKE-SETTERS: an asynchronous SSL call runs the
+// async callback when "a retry occurs" (SSL_set_async_callback 3.5), and
+// SSL_shutdown is such a call under SSL_MODE_ASYNC: a stated invocation,
+// `ssl_ctx_st.async_cb(ssl, _)`. The premise's statement now names what it
+// covers by name (ssl_io.qv); on SSL_shutdown it still covers the slots this
+// declaration does not state (a post-handshake message's callbacks, and on a
+// QUIC object another connection's handshake callbacks run by the shared
+// reactor).
 extern fn SSL_shutdown(ssl: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
     requires resource_revision(flexible);
     requires resource_library_version(openssl, documented "1.0.2");
-    requires resource_premise(openssl_unstated_callback_slots, "a callback the call may run that no clause of this declaration states (a callback slot of the SSL object or its SSL_CTX whose invocation the declaration does not state, among them the SSL_CTX_callback_ctrl arms such as the servername, status and ticket key callbacks, or an ex_data callback) takes, releases or retains nothing the caller holds");
+    requires resource_premise(openssl_unstated_callback_slots, "a callback the call may run that no clause of this declaration states (a callback slot of the SSL object or its SSL_CTX whose invocation the declaration does not state, among them the SSL_CTX_callback_ctrl arms such as the servername, status and ticket key callbacks, the certificate transparency validation callback, and the not-resumable session and session ticket extension callbacks, whose setters no manual page documents, a function of an X509_LOOKUP_METHOD of a lookup the certificate store of the SSL_CTX holds, or an ex_data callback) takes, releases or retains nothing the caller holds");
     requires resource_premise(openssl_builtin_bio_methods, "a function of a BIO method the library defines itself (the BIO_METHOD that BIO_s_socket, BIO_s_mem, BIO_f_buffer or another built-in BIO_s_ or BIO_f_ function returns, which no setter is handed), run on a BIO the call reads or writes through or frees (its BIO argument or a BIO the SSL object holds) or one chained to it, takes, releases or retains nothing the caller holds, and so does any callback it runs in turn on an object other than the arguments of the call (the SSL object of a BIO_f_ssl BIO)");
     requires resource_premise(openssl_ex_data_callbacks, "an ex_data callback the call may run (a new, dup or free callback CRYPTO_get_ex_new_index registers for the class of an object the call creates, copies or frees) takes, releases or retains nothing the caller holds");
     ensures normal resource_borrowed(ssl);
     ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.info_callback, ssl, _, _);
     ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.msg_callback, _, _, _, _, _, ssl, _);
     ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.record_padding_cb, ssl, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.async_cb, ssl, _);
     ensures normal resource_callback_slot_invoked(ssl, bio_st.bio_callback_ex, _, _, supplied_nullable, _, _, _, _, supplied_nullable);
     ensures normal resource_callback_slot_invoked(ssl, bio_st.bio_callback, _, _, supplied_nullable, _, _, _);
     ensures normal resource_callback_slot_invoked(ssl, bio_method_st.meth_write_ex, _, _, _, _);
