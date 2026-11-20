@@ -4013,6 +4013,16 @@ contract state clause, a `resource_premise_flow_v1` expression (G05-flow), or
 this formula, where `F |-> E` says every run of callback `F` (or of every
 member of callback set `F`) during the call has effect `E`.
 
+Card SP4-SYMBOLIC-LIBEVENT-PREMISES: the source operator gate (`Q038`,
+`qcore_frontend::pipe::check_source_operators`) admits `&&` and `|` inside a
+`requires resource_premise(NAME, …)` clause, as it admits a quant check's
+connectives (G05c) and a result set's operators (G05j): there they are the
+formula's conjunction and set union, read only by the premise reader, which
+refuses a malformed formula at parse. Everywhere else in a contract module
+both still refuse at `Q038`, and `||` refuses inside a premise too. The
+OpenSSL user crate was never compiled through the corpus test that reaches
+this gate; the libevent crate is.
+
 ### G05-flow. Proposed premise expressions
 
 C04.18.3 adds one contextual clause, also admitted in the explicit bounds and resource-type model views after full vocabulary validation:

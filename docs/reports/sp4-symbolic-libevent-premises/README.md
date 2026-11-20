@@ -32,6 +32,17 @@ re-pinned.
   `prose_premise`: it refuses any `requires resource_premise(NAME, "…")` in
   any owned module and counts the 7 formula premises. It runs in the provider
   test step of every gate.
+* **The source operator gate** (`qcore_frontend::pipe::check_source_operators`,
+  `Q038`) admits `&&` and `|` inside a `requires resource_premise(NAME, …)`
+  clause (`premise_formula_spans`), as it already admits a quant check's
+  connectives and a result set's operators. Gate 1 found this: the corpus
+  test `qcore_contract_corpus::every_qcore_contract_source_parses_round_trips_and_compiles`
+  compiles every load-path module through the compiler, and refused the
+  formulas' `&&` at `Q038`. SP1 never met it because the OpenSSL user crate
+  is not in that corpus. Outside a premise both operators still refuse, `||`
+  refuses inside one too, and a malformed formula is still refused by the
+  premise reader (`compiler/tests/premise_formula_operators.rs`, 3 tests).
+  G05-formula records the admission; the grammar itself is unchanged.
 * **Semantics unchanged.** A formula premise is metadata exactly as a string
   one: no consumer that decides a verdict reads it.
 * **Rule 13h** amended; no new rule id.

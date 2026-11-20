@@ -1012,6 +1012,33 @@ fn result_set_spans(program: &SourceProgram) -> Vec<Span> {
         .collect()
 }
 
+/// Card SP4-SYMBOLIC-LIBEVENT-PREMISES (contract specification C04.18.9,
+/// grammar G05-formula): the expression spans of every `requires
+/// resource_premise(NAME, …);` clause. A formula statement's `&&` and `|` are
+/// its conjunction and set union, read by the one premise reader
+/// ([`crate::premise_formula`], which the contract format applies to every
+/// such clause at parse, so a malformed formula is refused there), not
+/// expressions of this tier: nothing lowers the clause and no verdict reads
+/// it. A string statement holds no operator token.
+fn premise_formula_spans(program: &SourceProgram) -> Vec<Span> {
+    program
+        .declarations
+        .iter()
+        .filter_map(|declaration| declaration.value.function_contract.as_ref())
+        .flat_map(|contract| &contract.clauses)
+        .filter(|clause| {
+            matches!(clause.value.kind, SourceContractClauseKind::Requires)
+                && clause
+                    .value
+                    .expression_source
+                    .trim_start()
+                    .strip_prefix(crate::premise_formula::PREMISE_HEAD)
+                    .is_some_and(|rest| rest.trim_start().starts_with('('))
+        })
+        .map(|clause| clause.value.expression_span)
+        .collect()
+}
+
 /// Raise the operator refusals recorded for one input file.
 ///
 /// Called per input file before name/type checking, beside
@@ -1054,6 +1081,12 @@ pub fn check_source_operators(program: &SourceProgram) -> Result<(), Vec<SourceD
             .iter()
             .any(|extent| extent.start <= span.start && span.end <= extent.end)
     };
+    let premise_formulas = premise_formula_spans(program);
+    let in_premise_formula = |span: Span| {
+        premise_formulas
+            .iter()
+            .any(|extent| extent.start <= span.start && span.end <= extent.end)
+    };
     let quant_checks = quant_check_spans(program);
     let in_quant_check = |span: Span| {
         quant_checks
@@ -1089,6 +1122,12 @@ pub fn check_source_operators(program: &SourceProgram) -> Result<(), Vec<SourceD
                 continue;
             }
             TokenKind::Symbol(Symbol::Pipe | Symbol::PipePipe) if closure_bar(token.span) => {
+                continue;
+            }
+            // Card SP4-SYMBOLIC-LIBEVENT-PREMISES: a premise formula's own
+            // conjunction and set union (G05-formula). Its other operators
+            // (`->`, `|->`, `\`, `==`) are not refused by this gate at all.
+            TokenKind::Symbol(Symbol::AndAnd | Symbol::Pipe) if in_premise_formula(token.span) => {
                 continue;
             }
             // Card CELL-GUARD-RESULT-RANGE-CHECKED: a result set's own
