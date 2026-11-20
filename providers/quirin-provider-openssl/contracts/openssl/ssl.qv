@@ -112,7 +112,8 @@ contract {
     requires resource_contract_v1;
     requires resource_revision(flexible);
     requires resource_library_version(openssl, documented "1.0.2");
-    requires resource_premise(openssl_ex_data_callbacks, "an ex_data callback the call may run (a new, dup or free callback CRYPTO_get_ex_new_index registers for the class of an object the call creates, copies or frees) takes, releases or retains nothing the caller holds");
+    requires resource_premise(openssl_ex_data_callbacks,
+        quant all #o in #created | #copied | #freed: #ex_data(#class(#o)) |-> #inert);
     ensures normal resource_borrowed(meth);
     ensures normal resource_return_owned(nullable);
     ensures normal resource_return_kind(reference);
@@ -133,8 +134,12 @@ contract {
     requires resource_contract_v1;
     requires resource_revision(flexible);
     requires resource_library_version(openssl, documented "1.1.1");
-    requires resource_premise(openssl_unstated_callback_slots, "a callback the call may run that no clause of this declaration states (a callback slot of the SSL object or its SSL_CTX whose invocation the declaration does not state, among them the SSL_CTX_callback_ctrl arms such as the servername, status and ticket key callbacks, the certificate transparency validation callback, and the not-resumable session and session ticket extension callbacks, whose setters no manual page documents, a function of an X509_LOOKUP_METHOD of a lookup the certificate store of the SSL_CTX holds, or an ex_data callback) takes, releases or retains nothing the caller holds");
-    requires resource_premise(openssl_ex_data_callbacks, "an ex_data callback the call may run (a new, dup or free callback CRYPTO_get_ex_new_index registers for the class of an object the call creates, copies or frees) takes, releases or retains nothing the caller holds");
+    requires resource_premise(openssl_unstated_callback_slots,
+        #slots(#of(SSL, #args) | #ctx(#of(SSL, #args)) | #of(SSL_CTX, #args)) \ #stated |-> #inert
+        && (quant all #l in #lookups(#store(#ctx(#of(SSL, #args)) | #of(SSL_CTX, #args))): #fns(#l) \ #stated |-> #inert)
+        && quant all #o in #created | #copied | #freed: #ex_data(#class(#o)) \ #stated |-> #inert);
+    requires resource_premise(openssl_ex_data_callbacks,
+        quant all #o in #created | #copied | #freed: #ex_data(#class(#o)) |-> #inert);
     ensures normal resource_borrowed(ctx);
     ensures normal resource_reference_dropped(ctx, nullable);
     ensures normal resource_callback_slot_invoked(ctx, ssl_ctx_st.remove_session_cb, _, _);
@@ -152,7 +157,8 @@ contract {
     requires resource_contract_v1;
     requires resource_revision(flexible);
     requires resource_library_version(openssl, documented "1.0.2");
-    requires resource_premise(openssl_ex_data_callbacks, "an ex_data callback the call may run (a new, dup or free callback CRYPTO_get_ex_new_index registers for the class of an object the call creates, copies or frees) takes, releases or retains nothing the caller holds");
+    requires resource_premise(openssl_ex_data_callbacks,
+        quant all #o in #created | #copied | #freed: #ex_data(#class(#o)) |-> #inert);
     ensures normal resource_borrowed(ctx);
     ensures normal resource_return_owned(nullable);
     ensures normal resource_return_kind(reference);
@@ -171,10 +177,19 @@ contract {
     requires resource_contract_v1;
     requires resource_revision(flexible);
     requires resource_library_version(openssl, documented "1.1.1");
-    requires resource_premise(openssl_unstated_callback_slots, "a callback the call may run that no clause of this declaration states (a callback slot of the SSL object or its SSL_CTX whose invocation the declaration does not state, among them the SSL_CTX_callback_ctrl arms such as the servername, status and ticket key callbacks, the certificate transparency validation callback, and the not-resumable session and session ticket extension callbacks, whose setters no manual page documents, a function of an X509_LOOKUP_METHOD of a lookup the certificate store of the SSL_CTX holds, or an ex_data callback) takes, releases or retains nothing the caller holds");
-    requires resource_premise(openssl_bio_free_callbacks, "when the call drops the last reference to a BIO (its BIO argument, or a BIO the SSL object holds and the BIOs chained to it), the ex_data free callbacks of the BIO class take, release or retain nothing the caller holds");
-    requires resource_premise(openssl_ex_data_callbacks, "an ex_data callback the call may run (a new, dup or free callback CRYPTO_get_ex_new_index registers for the class of an object the call creates, copies or frees) takes, releases or retains nothing the caller holds");
-    requires resource_premise(openssl_builtin_bio_methods, "a function of a BIO method the library defines itself (the BIO_METHOD that BIO_s_socket, BIO_s_mem, BIO_f_buffer or another built-in BIO_s_ or BIO_f_ function returns, which no setter is handed), run on a BIO the call reads or writes through or frees (its BIO argument or a BIO the SSL object holds) or one chained to it, takes, releases or retains nothing the caller holds, and so does any callback it runs in turn on an object other than the arguments of the call (the SSL object of a BIO_f_ssl BIO)");
+    requires resource_premise(openssl_unstated_callback_slots,
+        #slots(#of(SSL, #args) | #ctx(#of(SSL, #args)) | #of(SSL_CTX, #args)) \ #stated |-> #inert
+        && (quant all #l in #lookups(#store(#ctx(#of(SSL, #args)) | #of(SSL_CTX, #args))): #fns(#l) \ #stated |-> #inert)
+        && quant all #o in #created | #copied | #freed: #ex_data(#class(#o)) \ #stated |-> #inert);
+    requires resource_premise(openssl_bio_free_callbacks,
+        quant all #b in #of(BIO, #args) | #chain(#bios(#of(SSL, #args))): #b in #freed
+        -> #ex_data_free(BIO) |-> #inert);
+    requires resource_premise(openssl_ex_data_callbacks,
+        quant all #o in #created | #copied | #freed: #ex_data(#class(#o)) |-> #inert);
+    requires resource_premise(openssl_builtin_bio_methods,
+        quant all #b in #chain(#of(BIO, #args) | #bios(#of(SSL, #args))): #method(#b) in #builtin
+        -> #fns(#b) |-> #inert
+        && quant all #f in #fns(#b): #in_turn(#f, #ssl_of(#b) \ #args) |-> #inert);
     ensures normal resource_borrowed(ssl);
     ensures normal resource_reference_dropped(ssl, nullable);
     ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.remove_session_cb, _, _);
@@ -214,9 +229,16 @@ contract {
     requires resource_contract_v1;
     requires resource_revision(flexible);
     requires resource_library_version(openssl, documented "1.0.2");
-    requires resource_premise(openssl_unstated_callback_slots, "a callback the call may run that no clause of this declaration states (a callback slot of the SSL object or its SSL_CTX whose invocation the declaration does not state, among them the SSL_CTX_callback_ctrl arms such as the servername, status and ticket key callbacks, the certificate transparency validation callback, and the not-resumable session and session ticket extension callbacks, whose setters no manual page documents, a function of an X509_LOOKUP_METHOD of a lookup the certificate store of the SSL_CTX holds, or an ex_data callback) takes, releases or retains nothing the caller holds");
-    requires resource_premise(openssl_builtin_bio_methods, "a function of a BIO method the library defines itself (the BIO_METHOD that BIO_s_socket, BIO_s_mem, BIO_f_buffer or another built-in BIO_s_ or BIO_f_ function returns, which no setter is handed), run on a BIO the call reads or writes through or frees (its BIO argument or a BIO the SSL object holds) or one chained to it, takes, releases or retains nothing the caller holds, and so does any callback it runs in turn on an object other than the arguments of the call (the SSL object of a BIO_f_ssl BIO)");
-    requires resource_premise(openssl_ex_data_callbacks, "an ex_data callback the call may run (a new, dup or free callback CRYPTO_get_ex_new_index registers for the class of an object the call creates, copies or frees) takes, releases or retains nothing the caller holds");
+    requires resource_premise(openssl_unstated_callback_slots,
+        #slots(#of(SSL, #args) | #ctx(#of(SSL, #args)) | #of(SSL_CTX, #args)) \ #stated |-> #inert
+        && (quant all #l in #lookups(#store(#ctx(#of(SSL, #args)) | #of(SSL_CTX, #args))): #fns(#l) \ #stated |-> #inert)
+        && quant all #o in #created | #copied | #freed: #ex_data(#class(#o)) \ #stated |-> #inert);
+    requires resource_premise(openssl_builtin_bio_methods,
+        quant all #b in #chain(#of(BIO, #args) | #bios(#of(SSL, #args))): #method(#b) in #builtin
+        -> #fns(#b) |-> #inert
+        && quant all #f in #fns(#b): #in_turn(#f, #ssl_of(#b) \ #args) |-> #inert);
+    requires resource_premise(openssl_ex_data_callbacks,
+        quant all #o in #created | #copied | #freed: #ex_data(#class(#o)) |-> #inert);
     ensures normal resource_borrowed(ssl);
     ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.info_callback, ssl, _, _);
     ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.msg_callback, _, _, _, _, _, ssl, _);

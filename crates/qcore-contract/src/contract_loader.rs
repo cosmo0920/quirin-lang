@@ -3975,52 +3975,25 @@ pub struct DeclaredPremise {
     pub origin: PremiseOrigin,
 }
 
-/// `resource_premise(NAME, "STATEMENT")`, exactly. `None` when the expression
-/// is not this clause; one that names it and is malformed rejects the module:
-/// the name is a lowercase identifier (`[a-z][a-z0-9_]*`) and the statement one
-/// plain, non-blank string literal with no escape and no control character.
+/// `resource_premise(NAME, "STATEMENT")` or, card
+/// **SP1-SYMBOLIC-OPENSSL-PREMISES** (C04.18.9), `resource_premise(NAME,
+/// FORMULA)`, exactly. `None` when the expression is not this clause; one
+/// that names it and is malformed rejects the module: the name is a lowercase
+/// identifier (`[a-z][a-z0-9_]*`) and the statement one plain, non-blank
+/// string literal with no escape and no control character that is not itself
+/// a formula, or a well-formed formula over the closed vocabulary
+/// (`qcore_frontend::premise_formula`). A formula premise's statement is its
+/// canonical printing, so its identity is the name plus that text.
 pub(crate) fn premise_clause(source: &str) -> Result<Option<DeclaredPremise>, String> {
     let tokens = token_kinds(source)?;
-    let Some(TokenKind::Word(head)) = tokens.first() else {
-        return Ok(None);
-    };
-    if head != PREMISE_CLAUSE {
-        return Ok(None);
-    }
-    let malformed = || {
-        format!(
-            "malformed premise `{source}`: write `requires {PREMISE_CLAUSE}(NAME, \"STATEMENT\");` \
-             with a lowercase identifier and one plain string"
-        )
-    };
-    let [
-        _,
-        TokenKind::Symbol(Symbol::LeftParen),
-        TokenKind::Word(name),
-        TokenKind::Symbol(Symbol::Comma),
-        TokenKind::StringLiteral(statement),
-        TokenKind::Symbol(Symbol::RightParen),
-    ] = tokens.as_slice()
+    let Some((name, statement)) = qcore_frontend::premise_formula::premise_clause(&tokens)
+        .map_err(|message| format!("`{source}`: {message}"))?
     else {
-        return Err(malformed());
+        return Ok(None);
     };
-    let identifier = name
-        .chars()
-        .next()
-        .is_some_and(|first| first.is_ascii_lowercase())
-        && name
-            .chars()
-            .all(|c| c.is_ascii_lowercase() || c.is_ascii_digit() || c == '_');
-    if !identifier
-        || statement.trim().is_empty()
-        || statement.contains('\\')
-        || statement.chars().any(char::is_control)
-    {
-        return Err(malformed());
-    }
     Ok(Some(DeclaredPremise {
-        name: name.clone(),
-        statement: statement.clone(),
+        name,
+        statement: statement.text().to_owned(),
         origin: PremiseOrigin::Declared,
     }))
 }
