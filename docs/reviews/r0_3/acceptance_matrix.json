@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 10,
-  "named_followups": 1013
+  "named_followups": 1016
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6920,11 +6920,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Landing integrate/r37 (base main 80e4b0a25; merges CALLBACK-SUPPLIED-NULL-ACTUAL 960829eca in 0781a3e3e, no conflicts; the card was based on main 062974679 and merged 3b12177a3 (r34, r35) and 80e4b0a25 (r36) itself, regenerating the OpenSSL lock in the documented order with every step's exit captured (final checkers 0); third_party/libevent checked out at d82464a27). Amendments applied in 094a66014 with --profiles-base 80e4b0a25: CALLBACK-SUPPLIED-NULL-ACTUAL retired; CALLBACK-UNSET-ARGUMENT-NULL registered; OPENSSL-EX-DATA-CLASS-REGISTRY appended (the ex_data free_func/new_func invocations should state supplied_nullable, per CRYPTO_get_ex_new_index 3.5); profiles []. Full landing gate on 094a66014 (private/integrate-r37/gate, raw record beside this file as gate-scope.json) via scripts/gate_scope.py --base main --full --landing through private/toolchain/env.sh: Rust 662 units / 707 summaries, 9715 passed, 0 failed, 21 ignored; fmt, Clippy and both reevaluation examples exit 0; Lean 456 audits (new QCore.CallbackSuppliedNull); provider package build/verify, provider tests (161 passed, 0 failed, 1 ignored), provider fmt and Clippy exit 0. Python (779 tests) exited 1 on one stale-matrix check of test_build_matrix_sections only (the committed matrix predates the amendments; regenerated from this record); the suite rerun after regeneration is recorded in private/integrate-r37/python-rerun.log. Rule 13u, C04.19 and grammar G05 amended in place (rule id 60 unused): the new actual word supplied_nullable (CallbackActual::SuppliedNullable) admits resource_borrowed and resource_owned(nullable) candidates and refuses resource_owned(nonnull) with callback-supplied-null; plain _ is unchanged. Nine page-cited OpenSSL marks (NULLABLE_ARGUMENTS, checked against the 3.5 doc snapshots), carried onto r36's BIO slot invocations on BIO_free and SSL_free. OpenSSL contract-inventory lock: 12 flexible digests changed (BIO_free, SSL_free, SSL_connect, SSL_do_handshake, SSL_read, SSL_shutdown, SSL_write, SSL_CTX_use_certificate, SSL_CTX_use_certificate_chain_file, PEM_read_bio_X509, PEM_read_bio_PrivateKey, d2i_PKCS12_bio); pinned, library_versions and the load path unchanged. The card's opt-in measurement (current --monkey-linked, Fluent Bit 046accf6, main 062974679 vs the card's 509ee5b1e): 1098 Safe / 2 Pending / 3699 Unknown / 5 Unsafe on both sides, 0 status moves, 0 content changes; not repeated after the merges. An uncommitted experiment reading every plain _ as nullable moved librdkafka's rd_kafka_ApiVersion_check Safe to Unknown on a false bsearch refusal; the default (plain _ is non-null) was kept. Pinned-route parity (quirin-audit measure --declared) was not run: this host holds no build/cycle19 inputs or baselines. No profile baseline is changed and land.py publish is owed.",
-  "workspace_tests": 9715,
-  "provider_tests": 161,
+  "note": "Landing integrate/r38 (base main 64114a447; merges OPENSSL-REMAINING-HANDSHAKE-SETTERS 0b6917141 in c7a9d6bfd, no conflicts; the card was based on main 64114a447; third_party/libevent checked out at d82464a27). Amendments applied in cd624158e with --profiles-base 64114a447: OPENSSL-REMAINING-HANDSHAKE-SETTERS retired; OPENSSL-UNDOCUMENTED-HANDSHAKE-SETTERS, OPENSSL-LOOKUP-METHOD-HANDSHAKE-INVOCATIONS, OPENSSL-CALLBACKS-OUTSIDE-CALLS and MEMBER-PREPASS-UNREADABLE-TOKEN-UNIT registered; CALLBACK-SUPPLIED-OUTPUT-OBLIGATION, CALLBACK-UNSET-ARGUMENT-NULL, OPENSSL-FREE-INDIRECT-CALLBACKS and OPENSSL-CT-VALIDATION-LIBRARY-WRITER appended; profiles []. Full landing gate on cd624158e (private/integrate-r38/gate, raw record beside this file as gate-scope.json) via scripts/gate_scope.py --base main --full --landing through private/toolchain/env.sh: Rust 662 units / 707 summaries, 9721 passed, 0 failed, 21 ignored; fmt, Clippy and both reevaluation examples exit 0; Lean 457 audits (new QCore.OpensslRemainingSetters); provider package build/verify, provider tests (162 passed, 0 failed, 1 ignored), provider fmt and Clippy exit 0. Python (779 tests) exited 1 on two stale-matrix checks of test_build_matrix_sections (the committed matrix predates the amendments; regenerated from this record) and two known timing flakes of test_gate_slot_queue (test_a_backing_off_drain_and_a_job_of_an_older_client_are_told_apart, test_each_waiter_shows_its_queue_position); the suite rerun after regeneration is recorded in private/integrate-r38/python-rerun.log. Rule 12n, C04.18 and C04.19.3 amended in place (rule id 62 unused); no gateway code change. 28 OpenSSL 3.5 setters for 26 slots are declared from their pages with the NAME check (ssl_handshake_setters.qv, x509_store_slots.qv): session tickets, generate_session_id, tmp_dh, the four cookie callbacks, session_secret (peer_ciphers supplied_nullable, page-cited), three SRP callbacks, async, QUIC new_pending_conn, and twelve X509_STORE slots; SSL_write, SSL_read, SSL_connect and SSL_do_handshake state them (41 to 67 invocations each) and SSL_shutdown states async_cb. openssl_unstated_callback_slots stays on the same seven declarations, its statement naming what it still covers: ctrl arms, CT, three setters without a manual page, the store's X509_LOOKUP_METHOD functions, and ex_data. OpenSSL contract-inventory lock: 28 flexible entries added; 7 digests changed (SSL_connect, SSL_do_handshake, SSL_read, SSL_write, SSL_shutdown; SSL_free and SSL_CTX_free by the statement text only); none removed; pinned and library_versions unchanged; the user load path and quirin-plugin.json gain the 28 bindings. The card's opt-in measurement (current --monkey-linked, Fluent Bit 046accf6, main 64114a447 vs f1ad773c0): 1098 Safe / 2 Pending / 3699 Unknown / 5 Unsafe on both sides, 0 rows changed. Its first implementation (8fffb83ae) moved six rows Safe to Unknown (rd_kafka_event_destroy, ut_op_destroy_free, four Monkey scheduler functions) because the slot key segment `cleanup` made the member pre-pass read WAMR's wasm_loader.c, whose AST exceeds the reader's recursion limit; the key was renamed x509_store_st.cleanup_fn (no unit defines the struct) and the fragility is MEMBER-PREPASS-UNREADABLE-TOKEN-UNIT. Pinned-route parity (quirin-audit measure --declared) was not run: this host holds no build/cycle19 inputs or baselines. No profile baseline is changed and land.py publish is owed.",
+  "workspace_tests": 9721,
+  "provider_tests": 162,
   "python_evidence_validator_tests": 779,
-  "lean_audits": 456,
+  "lean_audits": 457,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
    "AuditAggregateOwnedField.lean",
@@ -7201,6 +7201,7 @@
    "AuditOpensslExDataPremise.lean",
    "AuditOpensslFreeInvocations.lean",
    "AuditOpensslHandshakeSlots.lean",
+   "AuditOpensslRemainingSetters.lean",
    "AuditOpensslUnstatedSlots.lean",
    "AuditOrderedLifetimeReplay.lean",
    "AuditOsEndpointPostState.lean",
@@ -7387,9 +7388,9 @@
   "reevaluation_followup_exit": 0,
   "cargo_fmt": "clean",
   "cargo_clippy": "clean",
-  "standing_gate": "full landing gate: every step exits 0 except the Python suite's one stale-matrix check, cleared by regenerating the matrix from this record (rerun disclosed in the note)",
+  "standing_gate": "full landing gate: every step exits 0 except the Python suite's two stale-matrix checks, cleared by regenerating the matrix from this record, and two known gate_slot_queue timing flakes (rerun disclosed in the note)",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/callback-supplied-null-actual/integration/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/openssl-remaining-handshake-setters/integration/gate.json)"
  },
  "named_followups": [
   {
