@@ -233,7 +233,43 @@ non-Safe move and no new Unsafe expected on any route.
 
 ## 8. Gate
 
-GATE_SECTION
+Scoped card gate `python3 scripts/gate_scope.py --base 0111ddf38 --out
+private/gate-2` through `private/toolchain/env.sh` (Clang 21, Lean 4.35) on
+`b6f561628` (every later commit is this record and README section only);
+the diff reaches `qcore-c-gateway` and `qcore-schemas`, so the Rust suite is
+the full one and Lean is `all`. **Exit 0, `gate_scope: 8 steps passed`**
+(record [gate/gate-2.json](gate/gate-2.json), logs in the worktree's
+`private/gate-2/`):
+
+| step | exit | result |
+|---|---:|---|
+| submodules | 0 | 1 submodule |
+| `cargo fmt --all -- --check` | 0 | |
+| `cargo clippy --all-targets -- -D warnings` | 0 | |
+| `run_test_binaries.py` | 0 | 668 units, 713 summaries; 9,797 passed, 0 failed, 21 ignored, 148 filtered |
+| `reevaluation_probe` / `reevaluation_followup` | 0 / 0 | |
+| `check_lean_audits.py` | 0 | 466 audits |
+| `python3 -m unittest discover -s scripts/tests` | 0 | 779 tests |
+
+No flaky rerun was needed. Earlier attempt, not evidence: `private/gate-1`
+(on `b44a5777a`) exit 1: `cargo fmt` (formatting only) and six gateway pins
+the rule moves deliberately (section 4; fixed in `e9f68b7bc`), every other
+step exit 0 (clippy, probes, Lean 466 audits, Python 779 tests). The measured
+binary `93b45b67` is of `a07d6e8b5`; later commits change tests and
+documents only.
+
+**Amendments check.** `python3 scripts/apply_amendments.py
+integration-amendments.json --check --profiles-base 0111ddf38` on this tree
+exits **1** by design: CG10-MEMBER-STORE-RETAINED-BY is registered on main
+during r41, not on this base. On a scratch copy of this tree
+(`git archive HEAD`, worktree `private/m/amend-root`) with round 3's
+amendments applied and the r41 entry registered (as the integrator does), the
+same check exits **0** (`amended CG10-MEMBER-STORE-RETAINED-BY`, two
+registrations). **Gate read census** (`gate_read_census.py record`) was not
+re-recorded for the new test target `qcore-c-gateway::test::member_store_retention`:
+it traces every gateway test executable under `strace`, and this host ran
+two measurement runs and other cards' gates in parallel; left to the
+integrator, as round 3's was.
 
 ## 9. What stays refused, and follow-ups
 
