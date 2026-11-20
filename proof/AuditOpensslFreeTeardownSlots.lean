@@ -33,4 +33,6 @@ import QCore.OpensslFreeTeardownSlots
 #print axioms QCore.OpensslFreeTeardownSlots.a_documented_entry_is_cited_nowhere
 #print axioms QCore.OpensslFreeTeardownSlots.vectors_as_landed
 #print axioms QCore.OpensslFreeTeardownSlots.vectors_drifted_refuse
+#print axioms QCore.OpensslFreeTeardownSlots.vectors_inner_frees
+#print axioms QCore.OpensslFreeTeardownSlots.the_handshake_statement_never_beside_the_free_statement
 #print axioms QCore.OpensslFreeTeardownSlots.vector_source_entries

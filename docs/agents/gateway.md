@@ -6450,11 +6450,28 @@ own anchor here.
     `the_statement_is_named_only_where_audited`,
     `the_free_premise_moves_no_verdict`);
     [report](../reports/openssl-object-frees-silent-method-callbacks/README.md).
+    Card OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS: the calls that free a
+    key, certificate or context inside without being frees name it too: the
+    four `SSL_CTX_use_*` loaders, the two PEM readers, `d2i_PKCS12_bio` and
+    the two verify-path calls in the statement of a free, and the handshake
+    and I/O calls and `SSL_shutdown` in the handshake's statement, which now
+    conjoins it (a declaration names each premise once). The free audit
+    also lists every declaration whose `EX_DATA_AUDIT` reading names
+    `EVP_PKEY` or `X509` (`INNER_FREE_CLASSES`, `inner_frees_audited`), and
+    a run is met by either statement but not both. **Do not** add a call
+    whose ex_data reading frees a key or certificate without auditing it.
+    `QCore.OpensslInnerFreesAudit`
+    (`the_handshake_statement_entails_the_free_statement`,
+    `a_run_names_exactly_one_statement`, `an_unlisted_keyed_entry_refuses`,
+    `agrees_with_the_release_audit`);
+    [report](../reports/openssl-inner-frees-silent-method-callbacks/README.md).
     Card OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS (USER DECISIONS
     2026-11-21): the teardown slots' 13 setters are declared
     (`teardown_slots.qv`; three source-derived from the pinned 3.5.5
     source, `SOURCE_SLOTS`, `SOURCE_CITATIONS`), and every free running
-    them states them beside `openssl_builtin_teardown_functions` and
+    them states them, and so does every call that frees inside (the fourteen
+    above, through a borrowed formal), beside
+    `openssl_builtin_teardown_functions` and
     `openssl_loaded_module_functions` (C04.18.9 `#library`, `#loaded`).
     The free audit lists each free's teardown slots and what it leaves; a
     free names the free statement exactly when something is left

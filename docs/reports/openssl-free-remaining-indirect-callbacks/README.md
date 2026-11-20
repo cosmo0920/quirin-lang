@@ -130,10 +130,10 @@ this card, now stated (`MESSAGE`, `INFO`).
   `RSA`, `DSA`, `DH`, `EC_KEY` and `ENGINE` (and `X509_STORE_free` `EVP_PKEY`).
   Metadata.
 
-**Checker tests** (24 unit tests): `the_teardown_setters_register_their_slots`
+**Checker tests** (24 unit tests before the merge of §11, 27 after): `the_teardown_setters_register_their_slots`
 (new), `every_free_names_what_it_runs_on_the_objects_it_frees` and
 `a_drifted_free_reading_is_refused` (rewritten for the new reading),
-`a_prose_premise_is_refused` (71 clauses: SP1's 53, r45's five, less the
+`a_prose_premise_is_refused` (71 clauses before the merge, 108 after (§11): SP1's 53, r45's five, less the
 three frees that now state everything, plus the 16 teardown premises),
 `every_slot_has_every_writer_declared` (87 slots, 8 source slots).
 
@@ -279,7 +279,7 @@ place; no new rule id (64 stays free).
 `unstatedReleasedFreeFormula` and `teardown_formulas_wf`; its three kind
 lemmas grow with the vocabulary. The new module
 `QCore.OpensslFreeTeardownSlots`, audited by
-`proof/AuditOpensslFreeTeardownSlots.lean` (20 theorems; axioms within
+`proof/AuditOpensslFreeTeardownSlots.lean` (22 theorems after the merge; axioms within
 `propext`, `Classical.choice` and `Quot.sound`):
 
 * `teardown_premises_cover_the_free_statement`: when every teardown function
@@ -295,8 +295,9 @@ lemmas grow with the vocabulary. The new module
 * vectors from the crate's audit, as landed and drifted.
 
 The Rust bindings: `qcore-frontend`'s `the_vocabulary_is_the_lean_table`
-(29 terms) and `the_openssl_formulas_are_the_lean_definitions` (71 clauses:
-3 free statements, 2 released, 8 and 8 teardown premises).
+(29 terms) and `the_openssl_formulas_are_the_lean_definitions` (71 clauses
+before the merge: 3 free statements, 2 released, 8 and 8 teardown premises;
+108 after, §11).
 
 ## 8. Measurement
 
@@ -318,11 +319,11 @@ See [`gate/`](gate/) and the reply; filled in after the run.
 
 [`integration-amendments.json`](integration-amendments.json) amends
 OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS to the three vocabulary gaps (§2,
-§4, §5), registers OPENSSL-CLIENT-CERT-ENGINE-SETTER and
-OPENSSL-ALLOCATOR-FREE-HOOK, and appends to
-OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS: the declared setters make their
-functions `#settable`, so an inner free must state the teardown slots it
-runs, and `ENGINE_by_id`'s failed load is one more inner free.
+§4, §5) and registers OPENSSL-CLIENT-CERT-ENGINE-SETTER and
+OPENSSL-ALLOCATOR-FREE-HOOK. `ENGINE_by_id`'s failed load (an engine's
+destroy function and method enumerators run inside a constructor) is already
+tracked by r46's OPENSSL-INNER-FREES-OTHER-CLASSES; when that card states it,
+it must state the engine teardown slots (§11).
 
 **Files likely to conflict** (OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS
 runs in the same crate):
@@ -341,3 +342,66 @@ runs in the same crate):
 * `proof/QCore/PremiseFormula.lean` (vocabulary), C04.18 and C04.18.9,
   `docs/agents/rules/12n.md`; the generated `docs/agents/gateway.md`,
   `docs/agents/README.md`, `proof/QCore.lean`, `proof/AuditAll.lean`.
+
+## 11. Merge with OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS (r46)
+
+The integrator landed OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS first
+(branch tip `dafe6e4d9`, landing as r46) and asked this card to merge it and
+keep its fourteen declarations sound. The first gate attempt (`private/gate-1`,
+on `983429601`) was stopped for the merge: Lean (470 audits) and the scoped
+Rust suite had passed, the Python suite had the known slot flake
+(`test_each_waiter_shows_its_queue_position`), and the provider steps had not
+run. It is discarded as evidence.
+
+**The soundness point.** That card put r45's free statement (`#teardown(#o)
+\ (#stated | #settable)`) on nine calls that free a key inside (the four
+`SSL_CTX_use_*` loaders, the two PEM readers, `d2i_PKCS12_bio`, the two
+verify-path calls) and conjoined it to the handshake statement of the
+handshake and I/O calls and `SSL_shutdown`. The setters this card declares
+make the key's method finish, ASN.1 free and engine functions `#settable`, so
+without more the free statement would no longer cover them on those fourteen
+calls. Each now states them, as the frees do:
+
+* the nine: the key's nine teardown slots through their borrowed formal at
+  position 0 (the context or the BIO; the key is run-wide), every actual `_`;
+* the five handshake calls: those nine and the legacy digest, cipher and
+  public key method cleanups (transcript digests, record-layer cipher
+  contexts, key exchange and signature contexts);
+* all fourteen name `openssl_builtin_teardown_functions` and
+  `openssl_loaded_module_functions`, and keep the free statement (or the
+  handshake's free conjunct) for whatever else that card's survey names
+  (`INNER_FREES_REST`; `CRL_METHOD_FREE` too where CRLs are freed). This card
+  narrows none of it.
+
+**The checker after the merge.** `Frees::Runs` keeps r46's reading that the
+handshake statement stands for the free statement, never beside it; with it,
+`left` is not checked (the conjunct names it). The new
+`every_inner_free_states_its_teardown_slots` test pins all fourteen (each
+states the key's nine, checks, and refuses when a slot line or a teardown
+premise is dropped); r46's `every_inner_free_names_what_it_runs` and
+`a_drifted_inner_free_reading_is_refused` keep passing with the teardown
+premises added (the free statement now stands on twelve declarations: the
+nine and r39's three frees). Counts: 108 premise clauses refused as prose;
+the frontend binds 12 free statements, 2 released, 22 and 22 teardown
+premises. Lean: `decideReading` gains the handshake case, with
+`the_handshake_statement_never_beside_the_free_statement` and
+`vectors_inner_frees`.
+
+**Gateway tests.** The crate and reader fixtures load `teardown_slots.qv`
+(without it, `SSL_write` and `SSL_shutdown` refused with `no declaration
+registers the slot`, the fail-closed arm); the handshake calls state 79 slot
+invocations (67 + 12), `SSL_shutdown` 30 (18 + 12), the readers 24 and 23.
+
+**Lock against `dafe6e4d9`** (`private/logs/lockdiff-merged-vs-inner.txt`):
+13 added (the setters, digests as in §6), 22 changed (the eight frees, digests
+as in §6, and the fourteen inner frees: `PEM_read_bio_PrivateKey`
+`b43fb07d…`, `PEM_read_bio_X509` `5cbefbcd…`, `SSL_CTX_load_verify_locations`
+`601d39f9…`, `SSL_CTX_set_default_verify_paths` `3d843f7a…`,
+`SSL_CTX_use_PrivateKey` `a7509e54…`, `SSL_CTX_use_PrivateKey_file`
+`a7b60f93…`, `SSL_CTX_use_certificate` `19825bae…`,
+`SSL_CTX_use_certificate_chain_file` `4609df44…`, `SSL_connect` `fcfb4694…`,
+`SSL_do_handshake` `30224787…`, `SSL_read` `b5f0899a…`, `SSL_shutdown`
+`6c65576d…`, `SSL_write` `10113fcc…`, `d2i_PKCS12_bio` `5e7d9cd8…`), none
+removed, 122 unchanged; only `flexible` differs. The regeneration repeated
+§6's order (`private/logs/regen-10` to `regen-14`, `checkers` 1 then views,
+pin, sync 0).

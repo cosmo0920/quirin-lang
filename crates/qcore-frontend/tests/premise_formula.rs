@@ -250,11 +250,15 @@ fn the_openssl_formulas_are_the_lean_definitions() {
                 // Card OPENSSL-OBJECT-FREES-SILENT-METHOD-CALLBACKS: X509_free,
                 // EVP_PKEY_free, PKCS12_free, ENGINE_free and EVP_MD_CTX_free
                 // joined the three frees. Card
+                // OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS: the four
+                // SSL_CTX_use_* loaders, the two PEM readers, d2i_PKCS12_bio
+                // and the two verify-path calls (the handshake statement, on
+                // the other five, conjoins the free statement). Card
                 // OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS: X509_free,
                 // EVP_PKEY_free and ENGINE_free state every item and drop
                 // it; PKCS12_free and EVP_MD_CTX_free release their argument
                 // and name the released free's statement.
-                ("def unstatedFreeFormula : Raw :=", 3),
+                ("def unstatedFreeFormula : Raw :=", 12),
                 ("def unstatedReleasedFreeFormula : Raw :=", 2),
             ],
         ),
@@ -271,14 +275,14 @@ fn the_openssl_formulas_are_the_lean_definitions() {
             &[("def bioFreeFormula : Raw :=", 2)],
         ),
         // Card OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS: on the eight frees
-        // that run teardown functions.
+        // that run teardown functions and the fourteen calls that free inside.
         (
             "openssl_builtin_teardown_functions",
-            &[("def builtinTeardownFormula : Raw :=", 8)],
+            &[("def builtinTeardownFormula : Raw :=", 22)],
         ),
         (
             "openssl_loaded_module_functions",
-            &[("def loadedTeardownFormula : Raw :=", 8)],
+            &[("def loadedTeardownFormula : Raw :=", 22)],
         ),
     ];
     let mut by_name: BTreeMap<String, Vec<String>> = BTreeMap::new();
@@ -308,7 +312,7 @@ fn the_openssl_formulas_are_the_lean_definitions() {
             "{name}: a statement matches no Lean definition"
         );
     }
-    assert_eq!(total, 71);
+    assert_eq!(total, 108);
 }
 
 #[test]

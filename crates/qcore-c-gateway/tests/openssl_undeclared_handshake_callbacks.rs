@@ -365,6 +365,8 @@ fn crate_contracts() -> ResourceContracts {
         ("bio_slots.qv", BIO_SLOTS),
         ("ssl_handshake_setters.qv", SSL_HANDSHAKE_SETTERS),
         ("x509_store_slots.qv", X509_STORE_SLOTS),
+        // Card OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS.
+        ("teardown_slots.qv", TEARDOWN_SLOTS),
     ])
 }
 
@@ -570,7 +572,9 @@ fn the_crate_states_every_handshake_slot() {
     }
     for call in ["SSL_write", "SSL_read", "SSL_connect", "SSL_do_handshake"] {
         let declaration = contracts.retaining_contract(call).expect("withheld");
-        assert_eq!(declaration.callbacks.len(), 67, "{call}");
+        // Card OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS: and the twelve
+        // teardown slots of what the handshake frees inside.
+        assert_eq!(declaration.callbacks.len(), 79, "{call}");
         assert!(
             declaration
                 .callbacks
@@ -585,7 +589,9 @@ fn the_crate_states_every_handshake_slot() {
             .expect("withheld")
             .callbacks
             .len(),
-        18
+        // Card OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS: and twelve teardown
+        // slots.
+        30
     );
 }
 
@@ -1021,9 +1027,11 @@ fn reader_row(
 fn the_readers_state_every_bio_slot() {
     let contracts = reader_contracts(true);
     for (reader, invocations) in [
-        ("PEM_read_bio_X509", 15),
-        ("PEM_read_bio_PrivateKey", 15),
-        ("d2i_PKCS12_bio", 14),
+        // Card OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS: and the nine teardown
+        // slots of a key the read frees.
+        ("PEM_read_bio_X509", 24),
+        ("PEM_read_bio_PrivateKey", 24),
+        ("d2i_PKCS12_bio", 23),
     ] {
         assert!(contracts.contract(reader).is_none(), "{reader}");
         let declaration = contracts.retaining_contract(reader).expect("withheld");
@@ -1068,7 +1076,10 @@ fn the_readers_state_every_bio_slot() {
                 )
             })
             .count();
-        assert_eq!(defaults, invocations - 14, "{reader}");
+        // The BIO slots and (card OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS)
+        // the nine teardown slots are slot invocations; the rest is the
+        // password callback's null default.
+        assert_eq!(defaults, invocations - 14 - 9, "{reader}");
     }
 }
 

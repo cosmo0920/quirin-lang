@@ -332,6 +332,7 @@ import QCore.OpensslFreeIndirectCallbacks
 import QCore.OpensslFreeInvocations
 import QCore.OpensslFreeTeardownSlots
 import QCore.OpensslHandshakeSlots
+import QCore.OpensslInnerFreesAudit
 import QCore.OpensslObjectFreesAudit
 import QCore.OpensslRemainingSetters
 import QCore.OpensslUnstatedSlots

@@ -204,7 +204,8 @@ def sameSet (a b : List String) : Bool := a.all b.contains && b.all a.contains
 /-- `free_audited` over one reading. -/
 def decideReading (e : Entry) : Reading → Bool
   | .runs slots left =>
-      !e.releasedStmt && (e.freeStmt == (left != 0)) && !e.handshake && e.builtin && e.loaded &&
+      !e.releasedStmt && !(e.freeStmt && e.handshake) &&
+        (e.handshake || (e.freeStmt == (left != 0))) && e.builtin && e.loaded &&
         slots.all teardownSlots.contains && sameSet slots e.stated
   | .throughRelease left =>
       e.releasedStmt && !e.freeStmt && !e.handshake && e.builtin && e.loaded && left != 0 &&
@@ -217,7 +218,7 @@ def listed (f : String) (audit : List (String × Reading)) : List Reading :=
   (audit.filter fun p => p.1 == f).map Prod.snd
 
 def decideReadings (e : Entry) : List Reading → Bool
-  | [] => !e.freeStmt && !e.releasedStmt && !e.releases
+  | [] => !e.freeStmt && !e.releasedStmt && !e.handshake && !e.releases
   | [r] => decideReading e r
   | _ :: _ :: _ => false
 
@@ -225,18 +226,27 @@ def audited (e : Entry) (audit : List (String × Reading)) : Bool :=
   decideReadings e (listed e.function audit)
 
 theorem a_left_item_keeps_the_premise {e : Entry} {slots : List String} {left : Nat}
-    (h : decideReading e (.runs slots left) = true) (hl : left ≠ 0) : e.freeStmt = true := by
+    (h : decideReading e (.runs slots left) = true) (hl : left ≠ 0)
+    (hh : e.handshake = false) : e.freeStmt = true := by
   cases hf : e.freeStmt <;> simp_all [decideReading]
 
 theorem nothing_left_drops_the_premise {e : Entry} {slots : List String}
-    (h : decideReading e (.runs slots 0) = true) : e.freeStmt = false ∧ e.releasedStmt = false := by
+    (h : decideReading e (.runs slots 0) = true) (hh : e.handshake = false) :
+    e.freeStmt = false ∧ e.releasedStmt = false := by
   cases hf : e.freeStmt <;> cases hr : e.releasedStmt <;> simp_all [decideReading]
+
+/-- Card OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS: the handshake's
+statement, whose last conjunct is the free statement, stands for it, and
+never beside it. -/
+theorem the_handshake_statement_never_beside_the_free_statement {e : Entry}
+    {slots : List String} {left : Nat} (h : decideReading e (.runs slots left) = true)
+    (hh : e.handshake = true) : e.freeStmt = false := by
+  cases hf : e.freeStmt <;> simp_all [decideReading]
 
 theorem a_running_free_names_the_teardown_premises {e : Entry} {slots : List String}
     {left : Nat} (h : decideReading e (.runs slots left) = true) :
-    e.builtin = true ∧ e.loaded = true ∧ e.handshake = false := by
-  cases hb : e.builtin <;> cases hl : e.loaded <;> cases hh : e.handshake <;>
-    simp_all [decideReading]
+    e.builtin = true ∧ e.loaded = true := by
+  cases hb : e.builtin <;> cases hl : e.loaded <;> simp_all [decideReading]
 
 theorem the_stated_slots_are_the_audited {e : Entry} {slots : List String} {left : Nat}
     (h : decideReading e (.runs slots left) = true) :
@@ -302,7 +312,12 @@ def engineSlots : List String :=
   ["engine_st.engine_destroy", "engine_st.engine_pkey_meths",
     "engine_st.engine_pkey_asn1_meths"]
 
-/-- `FREE_AUDIT`, with the number of items each reading leaves. -/
+/-- `HANDSHAKE_TEARDOWN`. -/
+def handshakeSlots : List String :=
+  keySlots ++ ["evp_md_st.md_meth_cleanup", "evp_cipher_st.cipher_meth_cleanup",
+    "evp_pkey_method_st.pkey_meth_cleanup"]
+
+/-- A slice of `FREE_AUDIT`, with the number of items each reading leaves. -/
 def crateAudit : List (String × Reading) :=
   [("BIO_free", .namedBy "openssl_builtin_bio_methods"),
     ("ENGINE_free", .runs engineSlots 0),
@@ -313,7 +328,11 @@ def crateAudit : List (String × Reading) :=
     ("SSL_CTX_free", .runs keySlots 1),
     ("SSL_free", .runs teardownSlots 2),
     ("X509_STORE_free", .runs keySlots 1),
-    ("X509_free", .runs keySlots 0)]
+    ("X509_free", .runs keySlots 0),
+    -- Card OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS's calls that free inside.
+    ("SSL_CTX_use_PrivateKey", .runs keySlots 1),
+    ("SSL_CTX_load_verify_locations", .runs keySlots 2),
+    ("SSL_connect", .runs handshakeSlots 0)]
 
 /-- A free as landed by this card: its premises and stated teardown slots. -/
 def landed (f : String) (free released : Bool) (stated : List String) : Entry :=
@@ -328,6 +347,21 @@ theorem vectors_as_landed :
       audited (landed "SSL_CTX_free" true false keySlots) crateAudit = true ∧
       audited (landed "X509_STORE_free" true false keySlots) crateAudit = true ∧
       audited (landed "SSL_free" true false teardownSlots) crateAudit = true := by
+  decide
+
+/-- A call that frees inside: plain (no release), and its statement. -/
+def innerFree (f : String) (free handshake : Bool) (stated : List String) : Entry :=
+  ⟨f, false, free, false, handshake, true, true, ["openssl_ex_data_callbacks"], stated⟩
+
+theorem vectors_inner_frees :
+    audited (innerFree "SSL_CTX_use_PrivateKey" true false keySlots) crateAudit = true ∧
+      audited (innerFree "SSL_CTX_load_verify_locations" true false keySlots) crateAudit = true ∧
+      audited (innerFree "SSL_connect" false true handshakeSlots) crateAudit = true ∧
+      -- relying on the free statement alone, once the setters are declared
+      audited (innerFree "SSL_CTX_use_PrivateKey" true false []) crateAudit = false ∧
+      audited (innerFree "SSL_connect" false true []) crateAudit = false ∧
+      -- both statements
+      audited (innerFree "SSL_connect" true true handshakeSlots) crateAudit = false := by
   decide
 
 theorem vectors_drifted_refuse :
