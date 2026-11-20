@@ -1,0 +1,49 @@
+{
+ "schema": "quirin-amendments/1",
+ "card": "CG10-EMBEDDED-LIST-BORROWED-CONTAINER",
+ "base": "0111ddf38",
+ "measured_tip": "4aa64055c",
+ "profiles": [],
+ "increment_paragraph": "**CG10-EMBEDDED-LIST-BORROWED-CONTAINER** (USER DECISION 2026-11-20 on round 3's decision class 1, question 1, \"Read embedded lists as borrowed container operations\"; gateway rule 69; Lean `QCore.EmbeddedListContainer`; [report](../../reports/cg10-embedded-list-borrowed-container/README.md)). Census of round 3's 23 rows blocked by the embedded-list class alone on the opt-in `current --monkey-linked` route over Fluent Bit 046accf6: 5 `rd_list_destroy`/`rd_list_clear` (the registration invoked over the elements: releasing), 3 `rd_list_add` (`resource_element_added`), 14 `rd_kafka_interceptor_method_add` (two `resource_retained_by` into the caller's list), 1 `cfl_list_size` nested in another call's actual; every helper contracted, none touching rule 46. Rule W44 already reads such an actual at a `Borrowed` position; the gate's text hid that each container clause on a formal's embedded container is refused by its own rule (13w, 13x, 12t). Rule 69, asked last, re-attributes the gate's refusal of a statement or whole-call return whose first call is handed `& R -> M ...` (`R` a formal) to that container custody refusal when it is what the statement, its actuals read, is refused for; it admits nothing, so a releasing helper is never a no-op and no element passes to a container whose registration the body does not hold (Lean counterexample `the_noop_reading_misses_a_use_after_release`; `the_status_of_a_function_is_unchanged`). Measured (base `cdcbf730` vs tip `878fe032`): 1,140/2/3,655/7 unchanged, no status move; 41 Unknown rows trade 59 access leaves for 43 `callback-registry-undecided` and 16 `retention-undecided`; access rows 2,190 -> 2,160, access-alone 240 -> 223; 12 of the 23 rows re-attributed, 10 `rd_kafka_interceptor_add_on_*` stay (W44's readers do not read `&rk->rk_conf.interceptors.on_X`) and `pack_static_labels` stays (nested call). One pinned fixture moved deliberately (`msgpack_packer_init(&ic->mp_pck, ...)`, still Unknown). Pinned-route parity not run on this host: predicted no move on corpus, system and slice.",
+ "status_paragraph": null,
+ "ledger": [
+  {
+   "id": "CG10-EMBEDDED-LIST-BORROWED-CONTAINER",
+   "operation": "retire",
+   "source": "docs/reports/cg10-embedded-list-borrowed-container/README.md",
+   "why": "DISCHARGED (CG10-EMBEDDED-LIST-BORROWED-CONTAINER; opt-in current --monkey-linked over Fluent Bit 046accf6, base 0111ddf38 binary cdcbf730 1,140/2/3,655/7 -> tip 4aa64055c binary 878fe032 1,140/2/3,655/7): gateway rule 69 reads a list helper handed `& R -> M ...` (R a formal) as a Borrowed operation on the caller's container and, where the statement with its actuals read is refused by a container custody refusal of that call about that actual (rule 13w callback-registry-undecided, 13x callback-element-custody-undecided, 12t retention-undecided), names it in place of the access gate; it admits nothing, so the releasing helpers' element effects (rd_list_destroy, rd_list_clear) are carried and never read as a no-op, and no element passes to a container whose registration the body does not hold. Lean QCore.EmbeddedListContainer (19 audited theorems, the releasing-helper counterexample a_releasing_helper_is_not_a_noop / the_noop_reading_misses_a_use_after_release, the_rule_never_admits, the_status_of_a_function_is_unchanged), PREDICTION.md committed before the implementation, no Safe -> non-Safe move and no new Unsafe. Rule 46 is neither read nor amended. Of the 23 rows, 12 are re-attributed; what stays is tracked by CG10-EMBEDDED-CONTAINER-THREE-HOP-ACTUAL (10 rows), AG1-TWO-BORROWED-CALLS (pack_static_labels), CG22-REGISTRY-OUTSIDE-THE-FRAME and RETENTION-UNDECIDED-PENDING (the container custody itself)."
+  },
+  {
+   "id": "CG10-EMBEDDED-CONTAINER-THREE-HOP-ACTUAL",
+   "operation": "register",
+   "source": "docs/reports/cg10-embedded-list-borrowed-container/README.md",
+   "recorded_by": "CG10-EMBEDDED-LIST-BORROWED-CONTAINER",
+   "title": "A three-hop embedded container address (`&rk->rk_conf.interceptors.on_X`) is read by neither of rule W44's readers (10 sole rows)",
+   "text": "Registered by CG10-EMBEDDED-LIST-BORROWED-CONTAINER (opt-in current over Fluent Bit 046accf6, tip 4aa64055c binary 878fe032). The ten `rd_kafka_interceptor_add_on_*` functions return `rd_kafka_interceptor_method_add(&rk->rk_conf.interceptors.on_X, ic_name, (void *)on_X, ic_opaque)`: a typedef'd embedded record (`rd_kafka_conf_t rk_conf`), an untagged struct member (`interceptors`), then the `rd_list_t`. Rule 69's parity rows answer `an actual neither reader recognises` (W44's lexical member-address reader and the Clang typed-position reader both decline), though `&rk->rk_conf.partition_assignors` and `&conf->interceptors.on_X` are read. With the actual read the row would be re-attributed to rule 12t's retention-undecided (as the four `rd_kafka_conf_interceptor_add_on_*` rows are), not moved. DISCHARGE: the reader reads that address with W44's obligations (each base's typed read), measured, or the rows named as staying."
+  },
+  {
+   "id": "CG22-REGISTRY-OUTSIDE-THE-FRAME",
+   "operation": "amend",
+   "source": "docs/reports/cg10-embedded-list-borrowed-container/README.md",
+   "text": "AMENDED (CG10-EMBEDDED-LIST-BORROWED-CONTAINER, gateway rule 69; opt-in current over Fluent Bit 046accf6, 1,140/2/3,655/7 unchanged): the access-gate refusals at a formal's embedded registry holder (`rd_list_destroy(&conf->interceptors.on_new)`, `rd_list_clear(&mcluster->request_list)`, `rd_list_add(&config->config, entry)`, `rd_list_init(&conf->interceptors.on_conf_destroy, ...)`; in a fixture `msgpack_packer_init(&ic->mp_pck, ...)`) now name this entry's `callback-registry-undecided`: 43 leaves on 26 opt-in rows, 8 of them rows the refusal alone blocks (rd_kafka_interceptors_destroy, rd_kafka_assignors_term, the three rd_kafka_mock request-list clears, rd_kafka_ConfigResource_add_ConfigEntry, rd_kafka_brokers_wait_state_change_async, rd_kafka_metadata_cache_wait_state_change_async). The USER DECISION of 2026-11-20 (embedded lists are borrowed container operations) leaves the elements the container's and decides no registration: the discharge stays a registration carried by the caller's object."
+  },
+  {
+   "id": "RETENTION-UNDECIDED-PENDING",
+   "operation": "amend",
+   "source": "docs/reports/cg10-embedded-list-borrowed-container/README.md",
+   "text": "AMENDED (CG10-EMBEDDED-LIST-BORROWED-CONTAINER, gateway rule 69; opt-in current over Fluent Bit 046accf6): 16 access-gate leaves on 15 rows now name `retention-undecided` for a caller's object retained in a caller's embedded container: the four `rd_kafka_conf_interceptor_add_on_*` (`rd_kafka_interceptor_method_add(&conf->interceptors.on_X, ..., (void *)on_X, ic_opaque)`) and 11 `rd_kafka_AdminOptions_*` rows (`rd_kafka_confval_set_type(&options->broker, ...)`, 12 leaves); all stay Unknown."
+  },
+  {
+   "id": "AG1-TWO-BORROWED-CALLS",
+   "operation": "amend",
+   "source": "docs/reports/cg10-embedded-list-borrowed-container/README.md",
+   "text": "AMENDED (CG10-EMBEDDED-LIST-BORROWED-CONTAINER): `pack_static_labels` (cmetrics `cmt_encode_msgpack.c`, blocked by the access refusal alone) is the nested half: `mpack_start_array(writer, cfl_list_size(&cmt->static_labels->list))`, an all-Borrowed None-result call over an embedded list nested in another call's actual; rule 69 reads only the first call's own actuals and leaves it."
+  },
+  {
+   "id": "CG10-INDIRECT-ACCESS-SOLE-RESIDUALS",
+   "operation": "amend",
+   "source": "docs/reports/cg10-embedded-list-borrowed-container/README.md",
+   "text": "AMENDED (CG10-EMBEDDED-LIST-BORROWED-CONTAINER, gateway rule 69; opt-in current over Fluent Bit 046accf6, tip 4aa64055c binary 878fe032): the embedded-list class (decision class 1, question 1, decided by the user on 2026-11-20) re-attributed where it is a formal's container: 41 rows trade 59 access leaves for container custody refusals; access rows 2,190 -> 2,160, access-alone 240 -> 223; the class alone 23 -> 11 (10 three-hop actuals, CG10-EMBEDDED-CONTAINER-THREE-HOP-ACTUAL; pack_static_labels, AG1-TWO-BORROWED-CALLS); no status move."
+  }
+ ]
+}
