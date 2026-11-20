@@ -234,7 +234,11 @@ pub(crate) fn parenthesised_writes(body: &[&str]) -> BTreeSet<String> {
         // A group right after a name or a `)` is an argument list or a
         // callee's, not an operand: `f (p)` does not address `p`.
         let applied = previous.is_some_and(|text| is_name(text) || text == ")" || text == "]");
-        let address = previous == Some("&") && !applied;
+        // Card CG10-READER-GAPS (rule 71): `X && (p)` is a logical AND, not
+        // the address of `p`.
+        let address = previous == Some("&")
+            && !applied
+            && !crate::logical_and_operand::logical_and_before(body, open - 1);
         let pre = matches!(
             (before, previous),
             (Some("+"), Some("+")) | (Some("-"), Some("-"))

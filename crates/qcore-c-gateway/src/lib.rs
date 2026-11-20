@@ -250,6 +250,15 @@ mod pointer_store;
 // Card CG10-MEMBER-STORE-RETAINED-BY (rule 70): a formal's pointer stored
 // into a member of a formal's object, read as a retention.
 mod member_store_retention;
+// Card CG10-READER-GAPS (rule 71): a logical AND before a parenthesised
+// name is not its address.
+mod logical_and_operand;
+// Card CG10-READER-GAPS (rule 71a): the return position's placement of rule
+// 12h's identity-preserving-view removal.
+mod return_cast_view;
+// Card CG10-READER-GAPS (rule 71b): `T *` for a function typedef `T` is a
+// function pointer.
+mod function_typedef_pointer;
 // Card CG12-VOID-VIEW-READBACK (rule 11j): `void *` views and readbacks; the
 // G hook is `legacy_void_view.rs`.
 mod void_view;

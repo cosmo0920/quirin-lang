@@ -373,6 +373,12 @@ impl StatementIndex {
             // Card CG06 (rule 10z): on a branch edge, a value region at the
             // actual is the arm C evaluates there.
             let actual = crate::value_connective::edge_node(actual).unwrap_or(actual);
+            // Card CG10-READER-GAPS (rule 71a): while an uncast returned
+            // call is read, its actual is the operand of the view Clang read.
+            let actual = crate::return_cast_view::through_view(actual, texts, &|node| {
+                self.node_tokens(node)
+            })
+            .unwrap_or(actual);
             (self.node_line(actual) == Some(line)
                 && self.node_tokens(actual).is_some_and(|found| found == texts))
             .then_some(actual)
