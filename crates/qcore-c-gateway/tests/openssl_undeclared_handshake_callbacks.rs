@@ -1769,7 +1769,7 @@ const REMAINING: [(&str, &[Option<usize>]); 26] = [
     ("x509_store_st.check_policy", &[None]),
     ("x509_store_st.lookup_certs", &[None, None]),
     ("x509_store_st.lookup_crls", &[None, None]),
-    ("x509_store_st.cleanup", &[None]),
+    ("x509_store_st.cleanup_fn", &[None]),
 ];
 
 fn remaining_actuals(key: &str, actuals: &[Option<usize>]) -> Vec<CallbackActual> {
@@ -1868,7 +1868,7 @@ fn the_crate_states_every_remaining_slot() {
             &["x509_store_st.lookup_certs"],
         ),
         ("X509_STORE_set_lookup_crls", &["x509_store_st.lookup_crls"]),
-        ("X509_STORE_set_cleanup", &["x509_store_st.cleanup"]),
+        ("X509_STORE_set_cleanup", &["x509_store_st.cleanup_fn"]),
     ] {
         let declaration = contracts
             .retaining_contract(setter)

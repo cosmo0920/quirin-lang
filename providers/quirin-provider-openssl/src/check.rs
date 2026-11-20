@@ -2455,7 +2455,7 @@ mod tests {
             "x509_store_st.check_policy",
             "x509_store_st.lookup_certs",
             "x509_store_st.lookup_crls",
-            "x509_store_st.cleanup",
+            "x509_store_st.cleanup_fn",
         ];
         for key in new_keys {
             slot_writers_declared(key, &snapshots).unwrap_or_else(|failure| panic!("{failure}"));

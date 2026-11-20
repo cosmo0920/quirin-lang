@@ -1128,8 +1128,11 @@ pub const SLOTS: &[Slot] = &[
         writers: &["X509_STORE_set_lookup_crls"],
         not_writers: &[],
     },
+    // Spelled after the page's `X509_STORE_CTX_cleanup_fn`: a bare `cleanup`
+    // segment is a pre-pass token that makes the run read a unit it cannot
+    // parse (x509_store_slots.qv says why).
     Slot {
-        key: "x509_store_st.cleanup",
+        key: "x509_store_st.cleanup_fn",
         page: "X509_STORE_set_verify_cb_func",
         writers: &["X509_STORE_set_cleanup"],
         not_writers: &[],
@@ -1655,7 +1658,7 @@ const STORE_SLOTS: [Premise; 12] = [
     on_ssl("x509_store_st.check_policy", &[None; 1]),
     on_ssl("x509_store_st.lookup_certs", &[None; 2]),
     on_ssl("x509_store_st.lookup_crls", &[None; 2]),
-    on_ssl("x509_store_st.cleanup", &[None; 1]),
+    on_ssl("x509_store_st.cleanup_fn", &[None; 1]),
 ];
 
 /// Card **OPENSSL-BIO-METHODS-AND-CALLBACKS**: a slot of a BIO the
@@ -2810,7 +2813,7 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
         "X509_STORE_set_check_revocation",
         "x509_store_st.check_revocation",
     ),
-    store("X509_STORE_set_cleanup", "x509_store_st.cleanup"),
+    store("X509_STORE_set_cleanup", "x509_store_st.cleanup_fn"),
     entry(
         "X509_STORE_set_flags",
         "X509_STORE_add_cert",

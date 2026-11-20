@@ -40,6 +40,14 @@ module contract;
 // reach; none is declared, so a candidate calling one has no contract in
 // force.
 //
+// Keys. Each key is the store field the page's setter names, except the
+// cleanup slot, spelled `x509_store_st.cleanup_fn` after the page's
+// X509_STORE_CTX_cleanup_fn. A key is only the slot's name (the run never
+// defines the record), but its segments are tokens of the run's member
+// pre-pass: a unit naming `cleanup` (WAMR's wasm_loader.c, whose Clang AST the
+// reader cannot parse) is then read, stays unread and opens every member,
+// which demoted six unrelated Safe rows of the opt-in run (report, section 4).
+//
 // Each setter: HISTORY (3.5) "The functions X509_STORE_set_verify_cb(), ...,
 // X509_STORE_set_cleanup() and X509_STORE_get_cleanup() were added in OpenSSL
 // 1.1.0" (X509_STORE_set_verify_cb is also said to be "added in OpenSSL
@@ -238,6 +246,6 @@ contract {
     requires resource_library_version(openssl, since "1.1.0");
     ensures normal resource_borrowed(xs);
     ensures normal resource_borrowed(cleanup);
-    ensures normal resource_callback_slot_registered(xs, x509_store_st.cleanup, cleanup);
+    ensures normal resource_callback_slot_registered(xs, x509_store_st.cleanup_fn, cleanup);
     ensures normal resource_return_none();
 };

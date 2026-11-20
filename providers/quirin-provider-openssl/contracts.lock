@@ -514,14 +514,14 @@
     {
       "function": "SSL_connect",
       "module": "openssl/ssl_io.qv",
-      "contract_sha256": "44500da21b20d57a368ef6b2711d295f2bc549a2bebe4624121cdce52719a412",
-      "pinned_at": "2026-11-20T01:27:45Z"
+      "contract_sha256": "3ae010bd77532ce9239588307e39ad511def07803770ea2a43dbb5ee8267fc4a",
+      "pinned_at": "2026-11-20T03:14:10Z"
     },
     {
       "function": "SSL_do_handshake",
       "module": "openssl/ssl_io.qv",
-      "contract_sha256": "24cd35aaec192b2de29aa6b7d8e9fa7403a35b8dade128ccead8c36b16ec979f",
-      "pinned_at": "2026-11-20T01:27:45Z"
+      "contract_sha256": "9ba1528046cf75884523ba16d63a1136e3c09299dd781e18bdbe258061db0300",
+      "pinned_at": "2026-11-20T03:14:10Z"
     },
     {
       "function": "SSL_free",
@@ -562,8 +562,8 @@
     {
       "function": "SSL_read",
       "module": "openssl/ssl_io.qv",
-      "contract_sha256": "e9898d2d4e5729585a1a4160a2fe0b7b0e4b445fa7a304a860e2f4e981ccd9ca",
-      "pinned_at": "2026-11-20T01:27:45Z"
+      "contract_sha256": "81aec32c1e059519c11d9e8d26613f568f0d7cd882b513f7eb17afbe590e565e",
+      "pinned_at": "2026-11-20T03:14:10Z"
     },
     {
       "function": "SSL_set_accept_state",
@@ -670,8 +670,8 @@
     {
       "function": "SSL_write",
       "module": "openssl/ssl_io.qv",
-      "contract_sha256": "3d421fbe3780e94953ffb3e3ab1581d93d21cc40c4a503fd7e43f7df6d78dbd3",
-      "pinned_at": "2026-11-20T01:27:45Z"
+      "contract_sha256": "a692909013f1471d115cf4b4c79d603933e7c4b5f271153956f56cb7fd81752c",
+      "pinned_at": "2026-11-20T03:14:10Z"
     },
     {
       "function": "TLS_server_method",
@@ -748,8 +748,8 @@
     {
       "function": "X509_STORE_set_cleanup",
       "module": "openssl/x509_store_slots.qv",
-      "contract_sha256": "23fb06133a70076014761f32a35daac09b752bd2191603732bb92d8e29f505b9",
-      "pinned_at": "2026-11-20T01:27:45Z"
+      "contract_sha256": "3e4dc962795a474f65bfbdb10d93f40c4496e92964a575b51592ac505c2c374b",
+      "pinned_at": "2026-11-20T03:14:10Z"
     },
     {
       "function": "X509_STORE_set_flags",

@@ -249,7 +249,7 @@ contract {
     ensures normal resource_callback_slot_invoked(ssl, x509_store_st.check_policy, _);
     ensures normal resource_callback_slot_invoked(ssl, x509_store_st.lookup_certs, _, _);
     ensures normal resource_callback_slot_invoked(ssl, x509_store_st.lookup_crls, _, _);
-    ensures normal resource_callback_slot_invoked(ssl, x509_store_st.cleanup, _);
+    ensures normal resource_callback_slot_invoked(ssl, x509_store_st.cleanup_fn, _);
     ensures normal resource_callback_slot_invoked(ssl, bio_st.bio_callback_ex, _, _, supplied_nullable, _, _, _, _, supplied_nullable);
     ensures normal resource_callback_slot_invoked(ssl, bio_st.bio_callback, _, _, supplied_nullable, _, _, _);
     ensures normal resource_callback_slot_invoked(ssl, bio_method_st.meth_write_ex, _, _, _, _);
@@ -337,7 +337,7 @@ contract {
     ensures normal resource_callback_slot_invoked(ssl, x509_store_st.check_policy, _);
     ensures normal resource_callback_slot_invoked(ssl, x509_store_st.lookup_certs, _, _);
     ensures normal resource_callback_slot_invoked(ssl, x509_store_st.lookup_crls, _, _);
-    ensures normal resource_callback_slot_invoked(ssl, x509_store_st.cleanup, _);
+    ensures normal resource_callback_slot_invoked(ssl, x509_store_st.cleanup_fn, _);
     ensures normal resource_callback_slot_invoked(ssl, bio_st.bio_callback_ex, _, _, supplied_nullable, _, _, _, _, supplied_nullable);
     ensures normal resource_callback_slot_invoked(ssl, bio_st.bio_callback, _, _, supplied_nullable, _, _, _);
     ensures normal resource_callback_slot_invoked(ssl, bio_method_st.meth_write_ex, _, _, _, _);
@@ -421,7 +421,7 @@ contract {
     ensures normal resource_callback_slot_invoked(ssl, x509_store_st.check_policy, _);
     ensures normal resource_callback_slot_invoked(ssl, x509_store_st.lookup_certs, _, _);
     ensures normal resource_callback_slot_invoked(ssl, x509_store_st.lookup_crls, _, _);
-    ensures normal resource_callback_slot_invoked(ssl, x509_store_st.cleanup, _);
+    ensures normal resource_callback_slot_invoked(ssl, x509_store_st.cleanup_fn, _);
     ensures normal resource_callback_slot_invoked(ssl, bio_st.bio_callback_ex, _, _, supplied_nullable, _, _, _, _, supplied_nullable);
     ensures normal resource_callback_slot_invoked(ssl, bio_st.bio_callback, _, _, supplied_nullable, _, _, _);
     ensures normal resource_callback_slot_invoked(ssl, bio_method_st.meth_write_ex, _, _, _, _);
@@ -506,7 +506,7 @@ contract {
     ensures normal resource_callback_slot_invoked(s, x509_store_st.check_policy, _);
     ensures normal resource_callback_slot_invoked(s, x509_store_st.lookup_certs, _, _);
     ensures normal resource_callback_slot_invoked(s, x509_store_st.lookup_crls, _, _);
-    ensures normal resource_callback_slot_invoked(s, x509_store_st.cleanup, _);
+    ensures normal resource_callback_slot_invoked(s, x509_store_st.cleanup_fn, _);
     ensures normal resource_callback_slot_invoked(s, bio_st.bio_callback_ex, _, _, supplied_nullable, _, _, _, _, supplied_nullable);
     ensures normal resource_callback_slot_invoked(s, bio_st.bio_callback, _, _, supplied_nullable, _, _, _);
     ensures normal resource_callback_slot_invoked(s, bio_method_st.meth_write_ex, _, _, _, _);
