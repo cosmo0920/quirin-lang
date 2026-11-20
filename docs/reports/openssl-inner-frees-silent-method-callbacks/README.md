@@ -213,7 +213,42 @@ slice) is for the integrator's `quirin-audit measure --declared`.
 
 ## 7. Gate
 
-GATE_SECTION
+**Command:** `sh private/toolchain/env.sh python3 scripts/gate_scope.py
+--base 9b107caf1 --out private/gate-1` (Clang 21, Lean 4.35.0), driven by
+`private/gate.sh`. The log is `private/logs/gate-1.log`, the record is
+[`gate/gate-1.json`](gate/gate-1.json), and the step logs are under
+`private/gate-1/`.
+
+* **Tree.** `15d3879a2`, with every change committed.
+* **Scope.** Scoped: 7 packages plus 45 test targets; Lean all
+  (`proof/QCore.lean` changed); the provider gate included.
+* **Result: exit 1.** The only failure is
+  `test_gate_slot_lane.Status.test_status_shows_lane_holders_and_waiters`
+  (`3 != 2` short-lane holders). That test reads the host-wide gate-slot lane,
+  which other worktrees' gates were holding at the time, and this card
+  touches no `scripts/`. The test rerun alone passed (exit 0,
+  `private/logs/slot-rerun-1.log`). Every other step passed.
+
+| Step | Exit | Counts |
+|---|---:|---|
+| submodules, `fmt`, `clippy` (scoped runs) | 0 | `third_party/libevent` checked out |
+| Rust suite (scoped) | 0 | 275 units, 282 summaries; 3476 passed, 0 failed, 9 ignored, 10 filtered |
+| `reevaluation_probe`, `reevaluation_followup` | 0, 0 | |
+| Lean (`check_lean_audits.py`) | 0 | 470 audits (new `AuditOpensslInnerFreesAudit`) |
+| Python suite | 1 | 779 tests; 1 failure, the slot-lane test above |
+| provider package build, verify-all, verify `qcore.libevent` | 0, 0, 0 | |
+| provider tests | 0 | 49 summaries; 168 passed, 0 failed, 1 ignored |
+| provider fmt, provider clippy | 0, 0 | |
+
+**Outside the gate**, during the work (all logs under `private/logs/`):
+
+* the crate's tests: `ptest-1.log` (exit 101, before the r45 tests were
+  revised) and `ptest-2.log` (exit 0, 25 unit and 2 integration tests);
+* `qcore-frontend --test premise_formula`: `frontend-1.log`, exit 0;
+* the two OpenSSL gateway tests: `gateway-1.log`, exit 0, 29 and 8 passed;
+* `lake build` of the three modules and the audit: `lean-1.log` and
+  `lean-audit-1.log`, exit 0;
+* `apply_amendments.py --check`: exit 0.
 
 ## 8. Follow-ups
 
