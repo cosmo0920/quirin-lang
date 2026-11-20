@@ -1,0 +1,223 @@
+// SPDX-License-Identifier: Apache-2.0
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+module contract;
+
+// Card OPENSSL-FREE-INDIRECT-CALLBACKS. The functions of an X509_LOOKUP
+// method table, X509_LOOKUP_meth_new (3.5): nine slots, one
+// `X509_LOOKUP_meth_set_*` writer each, every one declared here. "One
+// instance of an X509_LOOKUP_METHOD can be associated to many instantiations
+// of an X509_LOOKUP structure" (DESCRIPTION); a certificate store holds its
+// lookups, and the last drop of a store shuts down and frees each one
+// (X509_STORE_free runs X509_LOOKUP_shutdown, then X509_LOOKUP_free, which
+// call the method's shutdown and free functions; x509_lu.c 3.5.5). So the
+// frees of a store, of an SSL_CTX (which owns its store:
+// "SSL_CTX_set_cert_store() will take ownership of the store",
+// SSL_CTX_set_cert_store 3.5) and of an SSL (which frees its CERT's verify
+// and chain stores and may drop its context's last reference) invoke the
+// shutdown and free slots (ssl.qv, x509_store.qv), every actual the
+// library's own X509_LOOKUP.
+//
+// The holder is the X509_LOOKUP_METHOD a setter is handed, a separate object
+// that reaches a store through X509_STORE_add_lookup. The key is run-wide
+// (C04.19.3), so its set is every function any table's setter is handed, as
+// for a BIO method table. The methods the library defines itself
+// (X509_LOOKUP_file, X509_LOOKUP_hash_dir, X509_LOOKUP_store) are no setter's
+// value: the library-value premise `openssl_builtin_lookup_methods` stands
+// on every declaration that runs the slots. X509_LOOKUP_METHOD is opaque,
+// so no unit writes a table except through the setters.
+//
+// Keys. Each key is `x509_lookup_method_st.lookup_meth_FIELD`, after the
+// setter, not the library's field (`free`, `init`, `shutdown`, `ctrl`):
+// a key's segments are tokens of the run's member pre-pass, and a common
+// word makes the run read every unit naming it (card
+// OPENSSL-REMAINING-HANDSHAKE-SETTERS, report section 4).
+//
+// Range. HISTORY (3.5, 3.0, 1.1.1): "The functions described here were added
+// in OpenSSL 1.1.0i." The version vocabulary has no letter releases
+// (MAJOR.MINOR[.PATCH]), and `since "1.1.0"` would admit 1.1.0 to 1.1.0h,
+// where the setters do not exist; there is no page at 1.0.2. So the range is
+// `documented "1.1.1"`, the oldest series checked whose page documents them.
+//
+// The page's other names (X509_LOOKUP_METHOD, X509_LOOKUP_meth_new,
+// X509_LOOKUP_meth_free, the nine getters, the four function pointer types,
+// X509_OBJECT_set1_X509 and X509_OBJECT_set1_X509_CRL) write no slot; the
+// checker lists them as not-writers. "The X509_LOOKUP_meth_set functions
+// return 1 on success or 0 on error": a scalar, stated as no custody.
+
+// X509_LOOKUP_meth_set_new_item:
+// https://docs.openssl.org/1.1.1/man3/X509_LOOKUP_meth_new/ (also 3.0, 3.5).
+// DESCRIPTION (3.5): it, with X509_LOOKUP_meth_get_new_item, "get and set the
+// function that is called when an X509_LOOKUP object is created with
+// X509_LOOKUP_new()". A registration into
+// `x509_lookup_method_st.lookup_meth_new_item`. Pinned prototype: `int
+// X509_LOOKUP_meth_set_new_item(X509_LOOKUP_METHOD *method, int
+// (*new_item)(X509_LOOKUP *ctx))`.
+extern fn X509_LOOKUP_meth_set_new_item(method: ptr<mut, u8>, new_item: fnptr) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, documented "1.1.1");
+    ensures normal resource_borrowed(method);
+    ensures normal resource_borrowed(new_item);
+    ensures normal resource_callback_slot_registered(method, x509_lookup_method_st.lookup_meth_new_item, new_item);
+    ensures normal resource_return_none();
+};
+
+// X509_LOOKUP_meth_set_free:
+// https://docs.openssl.org/1.1.1/man3/X509_LOOKUP_meth_new/ (also 3.0, 3.5).
+// DESCRIPTION (3.5): it, with its getter, "get and set the function that is
+// used to free any method data that was allocated and set from within new_item
+// function". X509_STORE_free runs it for each lookup the store holds
+// (X509_LOOKUP_free, x509_lu.c 3.5.5). A registration into
+// `x509_lookup_method_st.lookup_meth_free`. Pinned prototype: `int
+// X509_LOOKUP_meth_set_free(X509_LOOKUP_METHOD *method, void
+// (*free_fn)(X509_LOOKUP *ctx))`.
+extern fn X509_LOOKUP_meth_set_free(method: ptr<mut, u8>, free_fn: fnptr) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, documented "1.1.1");
+    ensures normal resource_borrowed(method);
+    ensures normal resource_borrowed(free_fn);
+    ensures normal resource_callback_slot_registered(method, x509_lookup_method_st.lookup_meth_free, free_fn);
+    ensures normal resource_return_none();
+};
+
+// X509_LOOKUP_meth_set_init:
+// https://docs.openssl.org/1.1.1/man3/X509_LOOKUP_meth_new/ (also 3.0, 3.5).
+// DESCRIPTION (3.5): it, with its getter, "get and set the function that is
+// used to initialize the method data that was set with
+// X509_LOOKUP_set_method_data(3) as part of the new_item routine". A
+// registration into `x509_lookup_method_st.lookup_meth_init`. Pinned
+// prototype: `int X509_LOOKUP_meth_set_init(X509_LOOKUP_METHOD *method, int
+// (*init)(X509_LOOKUP *ctx))`.
+extern fn X509_LOOKUP_meth_set_init(method: ptr<mut, u8>, init: fnptr) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, documented "1.1.1");
+    ensures normal resource_borrowed(method);
+    ensures normal resource_borrowed(init);
+    ensures normal resource_callback_slot_registered(method, x509_lookup_method_st.lookup_meth_init, init);
+    ensures normal resource_return_none();
+};
+
+// X509_LOOKUP_meth_set_shutdown:
+// https://docs.openssl.org/1.1.1/man3/X509_LOOKUP_meth_new/ (also 3.0, 3.5).
+// DESCRIPTION (3.5): it, with its getter, "get and set the function that is
+// used to shut down the method data whose state was previously initialized in
+// the init function". X509_STORE_free runs it for each lookup the store holds,
+// before the free function (X509_LOOKUP_shutdown, x509_lu.c 3.5.5). A
+// registration into `x509_lookup_method_st.lookup_meth_shutdown`. Pinned
+// prototype: `int X509_LOOKUP_meth_set_shutdown(X509_LOOKUP_METHOD *method,
+// int (*shutdown)(X509_LOOKUP *ctx))`.
+extern fn X509_LOOKUP_meth_set_shutdown(method: ptr<mut, u8>, shutdown: fnptr) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, documented "1.1.1");
+    ensures normal resource_borrowed(method);
+    ensures normal resource_borrowed(shutdown);
+    ensures normal resource_callback_slot_registered(method, x509_lookup_method_st.lookup_meth_shutdown, shutdown);
+    ensures normal resource_return_none();
+};
+
+// X509_LOOKUP_meth_set_ctrl:
+// https://docs.openssl.org/1.1.1/man3/X509_LOOKUP_meth_new/ (also 3.0, 3.5).
+// DESCRIPTION (3.5): it, with its getter, "get and set a function to be used
+// to handle arbitrary control commands issued by X509_LOOKUP_ctrl()". A
+// registration into `x509_lookup_method_st.lookup_meth_ctrl`. Pinned
+// prototype: `int X509_LOOKUP_meth_set_ctrl(X509_LOOKUP_METHOD *method,
+// X509_LOOKUP_ctrl_fn ctrl_fn)`.
+extern fn X509_LOOKUP_meth_set_ctrl(method: ptr<mut, u8>, ctrl_fn: fnptr) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, documented "1.1.1");
+    ensures normal resource_borrowed(method);
+    ensures normal resource_borrowed(ctrl_fn);
+    ensures normal resource_callback_slot_registered(method, x509_lookup_method_st.lookup_meth_ctrl, ctrl_fn);
+    ensures normal resource_return_none();
+};
+
+// X509_LOOKUP_meth_set_get_by_subject:
+// https://docs.openssl.org/1.1.1/man3/X509_LOOKUP_meth_new/ (also 3.0, 3.5).
+// DESCRIPTION (3.5): the get_by setters "set the functions used to retrieve an
+// X509 or X509_CRL object by the object's subject, issuer, fingerprint, and
+// alias respectively". A registration into
+// `x509_lookup_method_st.lookup_meth_get_by_subject`. Pinned prototype: `int
+// X509_LOOKUP_meth_set_get_by_subject(X509_LOOKUP_METHOD *method,
+// X509_LOOKUP_get_by_subject_fn fn)`.
+extern fn X509_LOOKUP_meth_set_get_by_subject(method: ptr<mut, u8>, by_fn: fnptr) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, documented "1.1.1");
+    ensures normal resource_borrowed(method);
+    ensures normal resource_borrowed(by_fn);
+    ensures normal resource_callback_slot_registered(method, x509_lookup_method_st.lookup_meth_get_by_subject, by_fn);
+    ensures normal resource_return_none();
+};
+
+// X509_LOOKUP_meth_set_get_by_issuer_serial:
+// https://docs.openssl.org/1.1.1/man3/X509_LOOKUP_meth_new/ (also 3.0, 3.5).
+// DESCRIPTION (3.5): as for get_by_subject, by the issuer. A registration into
+// `x509_lookup_method_st.lookup_meth_get_by_issuer_serial`. Pinned prototype:
+// `int X509_LOOKUP_meth_set_get_by_issuer_serial(X509_LOOKUP_METHOD *method,
+// X509_LOOKUP_get_by_issuer_serial_fn fn)`.
+extern fn X509_LOOKUP_meth_set_get_by_issuer_serial(method: ptr<mut, u8>, by_fn: fnptr) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, documented "1.1.1");
+    ensures normal resource_borrowed(method);
+    ensures normal resource_borrowed(by_fn);
+    ensures normal resource_callback_slot_registered(method, x509_lookup_method_st.lookup_meth_get_by_issuer_serial, by_fn);
+    ensures normal resource_return_none();
+};
+
+// X509_LOOKUP_meth_set_get_by_fingerprint:
+// https://docs.openssl.org/1.1.1/man3/X509_LOOKUP_meth_new/ (also 3.0, 3.5).
+// DESCRIPTION (3.5): as for get_by_subject, by the fingerprint. A registration
+// into `x509_lookup_method_st.lookup_meth_get_by_fingerprint`. Pinned
+// prototype: `int X509_LOOKUP_meth_set_get_by_fingerprint(X509_LOOKUP_METHOD
+// *method, X509_LOOKUP_get_by_fingerprint_fn fn)`.
+extern fn X509_LOOKUP_meth_set_get_by_fingerprint(method: ptr<mut, u8>, by_fn: fnptr) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, documented "1.1.1");
+    ensures normal resource_borrowed(method);
+    ensures normal resource_borrowed(by_fn);
+    ensures normal resource_callback_slot_registered(method, x509_lookup_method_st.lookup_meth_get_by_fingerprint, by_fn);
+    ensures normal resource_return_none();
+};
+
+// X509_LOOKUP_meth_set_get_by_alias:
+// https://docs.openssl.org/1.1.1/man3/X509_LOOKUP_meth_new/ (also 3.0, 3.5).
+// DESCRIPTION (3.5): as for get_by_subject, by the alias. A registration into
+// `x509_lookup_method_st.lookup_meth_get_by_alias`. Pinned prototype: `int
+// X509_LOOKUP_meth_set_get_by_alias(X509_LOOKUP_METHOD *method,
+// X509_LOOKUP_get_by_alias_fn fn)`.
+extern fn X509_LOOKUP_meth_set_get_by_alias(method: ptr<mut, u8>, by_fn: fnptr) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, documented "1.1.1");
+    ensures normal resource_borrowed(method);
+    ensures normal resource_borrowed(by_fn);
+    ensures normal resource_callback_slot_registered(method, x509_lookup_method_st.lookup_meth_get_by_alias, by_fn);
+    ensures normal resource_return_none();
+};

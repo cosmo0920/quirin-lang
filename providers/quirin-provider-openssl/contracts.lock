@@ -244,8 +244,8 @@
     {
       "function": "SSL_CTX_free",
       "module": "openssl/ssl.qv",
-      "contract_sha256": "60d80c2f66d24cf299e272e8db79849b2b8870b84339f667b279421eb0b0c37a",
-      "pinned_at": "2026-11-20T01:27:45Z"
+      "contract_sha256": "d0c4108280998986b39378c50b4b30ddde143e301db2328222a2fe66e950ce0d",
+      "pinned_at": "2026-11-20T06:22:15Z"
     },
     {
       "function": "SSL_CTX_get_cert_store",
@@ -526,8 +526,8 @@
     {
       "function": "SSL_free",
       "module": "openssl/ssl.qv",
-      "contract_sha256": "71fd76d965c9cff7633461f7e6f110da112021a9ae1216501e9170b9de164dc0",
-      "pinned_at": "2026-11-20T01:27:45Z"
+      "contract_sha256": "4969559e8a65721c5a933d3ede851faae27eebd6f0e66ef20c3216dd073c3517",
+      "pinned_at": "2026-11-20T06:22:15Z"
     },
     {
       "function": "SSL_get1_peer_certificate",
@@ -680,6 +680,60 @@
       "pinned_at": "2026-11-16T02:51:04Z"
     },
     {
+      "function": "X509_LOOKUP_meth_set_ctrl",
+      "module": "openssl/x509_lookup_slots.qv",
+      "contract_sha256": "7cb7849d1de2c39efb2c662fe9bda76f892bd329af1fe43893e24dc74ec4403b",
+      "pinned_at": "2026-11-20T06:22:15Z"
+    },
+    {
+      "function": "X509_LOOKUP_meth_set_free",
+      "module": "openssl/x509_lookup_slots.qv",
+      "contract_sha256": "36fab90d3b8bdc7e8fe0e9fc762f5371a834bc8191a9289e60af47835c4868f5",
+      "pinned_at": "2026-11-20T06:22:15Z"
+    },
+    {
+      "function": "X509_LOOKUP_meth_set_get_by_alias",
+      "module": "openssl/x509_lookup_slots.qv",
+      "contract_sha256": "8a46982f9dec33f09692dbd0b7c23418666c8889bced3f722802d64caca847bd",
+      "pinned_at": "2026-11-20T06:22:15Z"
+    },
+    {
+      "function": "X509_LOOKUP_meth_set_get_by_fingerprint",
+      "module": "openssl/x509_lookup_slots.qv",
+      "contract_sha256": "d100eb76b857593d26a7277e560afeb6c3ada8e044fa2ba51cd029e949ea4982",
+      "pinned_at": "2026-11-20T06:22:15Z"
+    },
+    {
+      "function": "X509_LOOKUP_meth_set_get_by_issuer_serial",
+      "module": "openssl/x509_lookup_slots.qv",
+      "contract_sha256": "bbaf633a29e71a3d9c06076f962cb3bb449fa15c4a1efe79af774ce31e827b93",
+      "pinned_at": "2026-11-20T06:22:15Z"
+    },
+    {
+      "function": "X509_LOOKUP_meth_set_get_by_subject",
+      "module": "openssl/x509_lookup_slots.qv",
+      "contract_sha256": "e077c213426dcb32a0befd982bdb5cf146ffa05a2e9d21c50250d2966aaaaae9",
+      "pinned_at": "2026-11-20T06:22:15Z"
+    },
+    {
+      "function": "X509_LOOKUP_meth_set_init",
+      "module": "openssl/x509_lookup_slots.qv",
+      "contract_sha256": "a4ec0686d459de1e11cf017876f273f4f54fd93aba30f48263d1483bf2bd867f",
+      "pinned_at": "2026-11-20T06:22:15Z"
+    },
+    {
+      "function": "X509_LOOKUP_meth_set_new_item",
+      "module": "openssl/x509_lookup_slots.qv",
+      "contract_sha256": "4054e4f947f91774771c73e6c652cffab39f0193493ebc4d319ec555d0b4b9c3",
+      "pinned_at": "2026-11-20T06:22:15Z"
+    },
+    {
+      "function": "X509_LOOKUP_meth_set_shutdown",
+      "module": "openssl/x509_lookup_slots.qv",
+      "contract_sha256": "de933860d57b6ff9cca59d63deb489dd8e8600cef6f236edbdff90f292889b03",
+      "pinned_at": "2026-11-20T06:22:15Z"
+    },
+    {
       "function": "X509_STORE_CTX_get_current_cert",
       "module": "openssl/x509_store.qv",
       "contract_sha256": "9a4f64d9e3039d242178cd3bd1a4ee8f98f6bb5a5926b7724246ea0f7e48b740",
@@ -706,8 +760,8 @@
     {
       "function": "X509_STORE_free",
       "module": "openssl/x509_store.qv",
-      "contract_sha256": "1ef57f2eb8396baab2ae046fc3e2de3c1e9188c08d13c87548c5d04d1718cb4e",
-      "pinned_at": "2026-11-19T11:02:55Z"
+      "contract_sha256": "8b8cdd4b46fc47fa3db29b90743a2b988aa2fbbf8ba40c2fc57f0aa7a49f1df7",
+      "pinned_at": "2026-11-20T06:22:15Z"
     },
     {
       "function": "X509_STORE_get0_objects",
