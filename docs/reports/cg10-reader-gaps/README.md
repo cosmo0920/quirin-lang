@@ -189,7 +189,36 @@ non-Safe move or new Unsafe on any route.
 
 ## 4. Gate
 
-See section 5 of the amendments' record and [gate/](gate/) (filled below).
+Scoped card gate `sh private/toolchain/env.sh python3 scripts/gate_scope.py
+--base 9b107caf1 --out private/gate-1` on `6d60f52cd` (later commits add
+this report, its evidence and the read-census entry only); mode full (the
+diff reaches `qcore-c-gateway` and `proof/QCore.lean`). **Exit 0,
+`gate_scope: 8 steps passed`** (record [gate/gate-1.json](gate/gate-1.json),
+logs in the worktree's `private/gate-1/`):
+
+| step | exit | result |
+|---|---:|---|
+| submodules | 0 | 1 submodule |
+| `cargo fmt --all -- --check` | 0 | (1,861 s, mostly waiting for a shared build slot) |
+| `cargo clippy --all-targets -- -D warnings` | 0 | |
+| `run_test_binaries.py` | 0 | 671 units, 716 summaries; 9,827 passed, 0 failed, 21 ignored, 148 filtered |
+| `reevaluation_probe` / `reevaluation_followup` | 0 / 0 | |
+| `check_lean_audits.py` | 0 | 472 audits |
+| `python3 -m unittest discover -s scripts/tests` | 0 | 779 tests |
+
+No flaky rerun was needed and no earlier gate attempt exists. Before the
+gate: one clippy run (`private/rg/clippy1.log`, exit 101: an enum variant
+postfix and a `?` operator, fixed in `6d60f52cd`, no semantic change) and
+`cargo fmt` applied. **Gate read census:** `gate_read_census.py record
+--packages qcore-c-gateway` and `reduce` on `d333e464d` (logs
+`private/rg/read-census/`, both exit 0; 262 units traced, 1 not ok under the
+tracer, `detach_lookup_membership`, as rule 69's run found; it passes in the
+gate); the one new unit `qcore-c-gateway::test::reader_gaps` (reads no
+repository file: its contracts are `include_str!`) was added to
+`docs/reports/gate-scope-precise-selection/read-census.json`, no existing
+unit rewritten. `apply_amendments.py
+docs/reports/cg10-reader-gaps/integration-amendments.json --check
+--profiles-base 9b107caf1` exits 0.
 
 ## 5. Follow-ups ([integration-amendments.json](integration-amendments.json))
 

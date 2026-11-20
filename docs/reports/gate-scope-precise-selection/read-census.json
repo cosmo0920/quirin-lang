@@ -5581,6 +5581,16 @@
 "read": [],
 "seconds": 0.6
 },
+"qcore-c-gateway::test::reader_gaps": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.5
+},
 "qcore-c-gateway::test::reading_site_domain": {
 "dirs": [],
 "exit": 0,
