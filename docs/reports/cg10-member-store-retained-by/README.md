@@ -252,7 +252,7 @@ the full one and Lean is `all`. **Exit 0, `gate_scope: 8 steps passed`**
 | `python3 -m unittest discover -s scripts/tests` | 0 | 779 tests |
 
 No flaky rerun was needed. Earlier attempt, not evidence: `private/gate-1`
-(on `b44a5777a`) exit 1: `cargo fmt` (formatting only) and six gateway pins
+(on `1e4174da6`) exit 1: `cargo fmt` (formatting only) and six gateway pins
 the rule moves deliberately (section 4; fixed in `e9f68b7bc`), every other
 step exit 0 (clippy, probes, Lean 466 audits, Python 779 tests). The measured
 binary `93b45b67` is of `a07d6e8b5`; later commits change tests and
