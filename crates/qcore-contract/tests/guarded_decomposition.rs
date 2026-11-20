@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#[path = "../../../tests/support/sp2_premise_checkpoint.rs"]
+mod sp2_premise_checkpoint;
 use qcore_contract::{guarded_decomposition as guarded, hypothesis};
 use qcore_schemas::{
     hypothesis::{Context, Disposition, Graph, Warrant},
@@ -60,6 +62,9 @@ fn application(
                 .unwrap();
         let plan: qcore_contract::guarded_metadata_bridge::Plan =
             serde_json::from_slice(&plan_bytes).unwrap();
+        // Card SP2-SYMBOLIC-LIBRDKAFKA-PREMISES: the module as it stood
+        // before its premises became formulas, recovered exactly.
+        source = sp2_premise_checkpoint::restored_file(&module, &source, qcore_schemas::sha256_hex);
         let addition = qcore_contract::guarded_metadata_bridge::render(&plan.metadata).unwrap();
         let candidate = source.replacen(&addition, "", 1);
         let tip = BTreeMap::from([(module.clone(), source)]);

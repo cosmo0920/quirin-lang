@@ -7646,6 +7646,24 @@ an undeclared OpenSSL producer). `QCore.NullableReferenceDrop` (12 audited,
     `decision_vectors_agree`, `openssl_formulas_wf`,
     `unstated_entails_ex_data`, `ex_data_does_not_entail_unstated`, …);
     [report](../reports/sp1-symbolic-openssl-premises/README.md).
+    **Amended by card SP2-SYMBOLIC-LIBRDKAFKA-PREMISES** (C04.18.9's
+    librdkafka block): `qcore-provider-librdkafka` states all 220 of its
+    premises as formulas (12 names, 16 statements) over 75 appended terms,
+    the falsum `#false` among them (a negation is `P -> #false`); no sort,
+    operator or typing rule is added. The crate's own test refuses a string
+    statement (`every_premise_is_a_formula`; the crate has no checker
+    plugin). A consumer that matches a premise by its exact statement reads
+    the canonical printing (`qcore-c-gateway`'s detach representation
+    check), and a binding manifest that pins a premised declaration's graph
+    is refreshed with the graph digest its only change. The source operator
+    gate reads a formula's `|` and `&&` as the formula's own. **Do not**
+    match a premise by a string the formula replaced, or carry a frozen
+    checkpoint across the conversion except through the card's recorded,
+    hash-checked restoration (`tests/support/sp2_premise_checkpoint.rs`).
+    `QCore.PremiseFormula.Librdkafka` (`librdkafka_formulas_wf`,
+    `asserted_toppar_prerequisites_suffice`, `share_ack_prerequisites_suffice`,
+    `log_no_event_prerequisites_suffice`, `hooks_print_entails_new_item`, …);
+    [report](../reports/sp2-symbolic-librdkafka-premises/README.md).
 
 <a id="constraint-13i"></a>
 

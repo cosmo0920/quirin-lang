@@ -1206,6 +1206,86 @@ Card SP1-SYMBOLIC-OPENSSL-PREMISES. USER DECISION 2026-11-20 (verbatim): "we don
 
 The constants are the fifteen ex_data classes of `CRYPTO_get_ex_new_index` (3.5) (`BIO`, `DH`, `DSA`, `EC_KEY`, `ENGINE`, `EVP_PKEY`, `RSA`, `SSL`, `SSL_CTX`, `SSL_SESSION`, `UI`, `UI_METHOD`, `X509`, `X509_STORE`, `X509_STORE_CTX`), of sort `cls`. A new term, constant or sort is a specification change with its Lean model.
 
+**The librdkafka block** (card SP2-SYMBOLIC-LIBRDKAFKA-PREMISES; USER DECISION 2026-11-20 as above, "Launch SP2–SP4" 2026-11-21). Appended after the entries above, in the same order in the Rust table (`VOCABULARY`, from `#false`), the Lean `vocab` and `Model` (each component with a default, so a model written before the block still elaborates), and the decision vectors. No sort, operator, typing rule or constant is added. `#false` is the falsum, so `P -> #false` is the negation of `P` and `quant all #x in S: #false` says `S` has no member; a pointer member's term is the set of objects it designates, empty when it is NULL, so "NULL or …" is a universal over that set and "never NULL" is `(quant all #p in S: #false) -> #false`. `#call` is the declared function itself, whose one run is the call, so `#call |-> E` says the call has `E`. Each term means exactly this and nothing more:
+
+| Term | Sort | Meaning |
+|---|---|---|
+| `#false` | prop | the proposition that never holds (falsum): `P -> #false` is the negation of `P`, and `quant all #x in S: #false` says `S` has no member |
+| `#rk_conf` | set(obj) | every rk_conf: an rd_kafka_conf_t (struct rd_kafka_conf_s), a client handle's embedded configuration rk->rk_conf included |
+| `#ran(x)` | set(fn) → set(fn) | the members of the set the call runs, directly or in turn through the calls it makes (rd_kafka_log_buf's run of the log callback included) |
+| `#registered` | set(fn) | the run's registrations (C04.19.3): each value a call of a declared setter (resource_callback_member_registered) in a unit of the run stores into its member |
+| `#defaults` | set(fn) | the stated defaults (C04.19.4): each value a constructor's `quant live #result: TAG.FIELD \|-> f` stores into its member |
+| `#candidates` | set(fn) | the callbacks with a declared candidate: each function a declaration in force states as a candidate of the member it is stored in (C04.19.7), with its own contract |
+| `#loaded_registered` | set(fn) | the callbacks code loaded at runtime registers (a library plugin.library.paths names, a Fluent Bit plugin flb_plugin_load or flb_plugin_proxy_create loads, and code it invokes); none in the static scope |
+| `#enveloped` | set(fn) | the registrations the applicable pinned rk_plugin_library and flb_external_plugin outer contracts admit (C04.20): through a public setter, each meeting its member's candidate |
+| `#punned_stores` | set(fn) | the callbacks rd_kafka_anyconf_set_prop0's _RK_C_PTR case (rdkafka_conf.c:2087-2088), a type-punned store through the property table, writes into a callback member (the setter's own store among them); Clang's member facts see none of these stores |
+| `#conf_copies` | set(fn) | the callbacks rd_kafka_anyconf_copy stores into a callback member: the value of the same property of another configuration |
+| `#hidden_string` | set(fn) | the callbacks the string API (rd_kafka_conf_set by property name) stores into an _RK_HIDDEN callback property |
+| `#ut_handle_produce_response` | set(fn) | ut_handle_ProduceResponse, as the value of a callback member |
+| `#call` | fn | the declared function itself, whose one run is the call (so `#call \|-> E` says the call has E) |
+| `#rd_calloc` | fn | rd_calloc (rd.h:139-143), as the call runs it |
+| `#rd_malloc` | fn | rd_malloc (rd.h:145-149), as the call runs it |
+| `#rd_kafka_toppar_new0` | fn | rd_kafka_toppar_new0, as the call runs it |
+| `#returns_result_of(x)` | fn → eff | the run returns, as its result's last source, the value a run of the function returned during it |
+| `#asserts_result` | eff | the run asserts (rd_assert) that its result is not NULL before it returns |
+| `#returns_nonnull` | eff | the run's result is not NULL |
+| `#audited_assertions` | prop | the audited compile commands define no NDEBUG: every assertion of the analysed sources is compiled into the audited build |
+| `#deployed_assertion` | prop | the deployed build preserves the call's analysed assertion |
+| `#deployed_failure_call` | prop | the deployed build preserves the assertion's failure call, which a declaration in force states terminating (it never returns) |
+| `#failure_no_return` | eff | a run whose allocation fails does not return normally |
+| `#op_callbacks` | set(fn) | the op callbacks the call may run through rd_kafka_op_handle, rd_kafka_op_call or rd_kafka_op_destroy |
+| `#served` | set(obj) | the queue the call serves (its rkq argument) |
+| `#held_on(x)` | set(obj) → set(res) | the references the caller holds on an object of the set when the run starts |
+| `#refs(x)` | set(obj) → set(res) | every reference to an object of the set, whoever holds it |
+| `#broker_monitor_cb` | set(fn) | the callback the op's rko_u.broker_monitor.cb holds |
+| `#monitor_add_registered` | set(fn) | the callbacks rd_kafka_broker_monitor_add registers, over every call of it |
+| `#coord_rkb_monitor_cb` | set(fn) | rd_kafka_coord_rkb_monitor_cb (rdkafka_broker.c:5497) |
+| `#txn_coord_monitor_cb` | set(fn) | rd_kafka_txn_coord_monitor_cb (rdkafka_txnmgr.c:3248) |
+| `#broker` | set(obj) | the broker the op's rko_u.broker_monitor.rkb designates |
+| `#handed_only(x)` | set(obj) → eff | every object the run is handed as an argument is a member of the set |
+| `#assign_cb` | set(fn) | the assign callback the group assignor runs (rd_kafka_cgrp_assignor_run) |
+| `#assignor_add_registered` | set(fn) | the assign callbacks rd_kafka_assignor_add registers, over every call of it |
+| `#range_assign` | set(fn) | the range assignor's assign callback |
+| `#roundrobin_assign` | set(fn) | the roundrobin assignor's assign callback |
+| `#cooperative_sticky_assign` | set(fn) | the cooperative-sticky assignor's assign callback |
+| `#metadata` | set(obj) | the metadata the assignor runs over (the op's rko_u.metadata.mdi) |
+| `#members` | set(obj) | the group members the assignor is handed |
+| `#reads_only(x)` | set(obj) → eff | the run writes no object of the set: it only reads them |
+| `#op` | set(obj) | the op the call is handed (its rko argument) |
+| `#ack_batches` | set(obj) | the list the op's rko_u.share_fetch_fanout.ack_batches designates (none when NULL) |
+| `#ack_details` | set(obj) | the lists rd_kafka_share_build_ack_details (rdkafka_share_acknowledgement.c:686-842) returns |
+| `#first_add_lists` | set(obj) | the lists created only at their first rd_list_add, so each holds an element from its creation |
+| `#nonempty` | set(obj) | the lists that hold at least one element |
+| `#logq` | set(obj) | the log queue rk->rk_logq of the client handle the call logs through |
+| `#forwards(x)` | set(obj) → set(obj) | the queues of the set and every queue one of them is forwarded to (rkq_fwdq), transitively, while the call enqueues on it |
+| `#event_cb(x)` | set(obj) → set(fn) | the queue event callbacks registered on a queue of the set while the call enqueues on it (only rd_kafka_q_cb_event_enable registers one, reached only from the public rd_kafka_queue_cb_event_enable) |
+| `#fwd_queue` | set(obj) | the queue rd_kafka_q_enq1 takes a reference to with rd_kafka_q_fwd_get and releases with rd_kafka_q_destroy, the only queue reference the enqueue releases |
+| `#unforwarded` | set(obj) | the queues another thread unforwards during the call |
+| `#last_released` | set(obj) | the queues whose last reference other than the call's own another thread releases during the call |
+| `#cjson_allocate` | set(fn) | hooks->allocate: the allocation function of the hooks the call is handed |
+| `#cjson_reallocate` | set(fn) | hooks->reallocate: the reallocation function of the hooks the call is handed |
+| `#cjson_deallocate` | set(fn) | hooks->deallocate: the deallocation function of the hooks the call is handed |
+| `#libc_hooks` | set(fn) | malloc, realloc and free, which global_hooks holds unless cJSON_InitHooks installed others (cJSON.c:178-186) |
+| `#installed_hooks` | set(fn) | the functions cJSON_InitHooks installed in global_hooks (a user pair or set) |
+| `#fresh_or_null` | eff | the run returns a fresh allocation (one no other reference designates) or NULL |
+| `#hook_allocated` | set(obj) | the allocations a run of hooks->allocate or hooks->reallocate returns during the call |
+| `#deallocate_releases` | set(obj) | the allocations the matching hooks->deallocate releases when it is handed one (cJSON_Delete releases an item through it) |
+| `#cjson_arrays` | set(obj) | the cJSON arrays (items of type cJSON_Array) live during the call |
+| `#children(x)` | obj → set(obj) | the elements of the cJSON item, in order: its finite child sequence (for cJSON_DetachItemViaPointer, the exact owned-child sequence of the entry environment) |
+| `#first(x)` | obj → set(obj) | the first element of the item's child sequence (none when it is empty) |
+| `#last(x)` | obj → set(obj) | the last element of the item's child sequence (none when it is empty) |
+| `#pred(x, y)` | obj, obj → set(obj) | every element immediately before an occurrence of the second item in the first item's child sequence |
+| `#child(x)` | obj → set(obj) | the item the item's child member designates (none when NULL) |
+| `#next(x)` | obj → set(obj) | the item the item's next member designates (none when NULL) |
+| `#prev(x)` | obj → set(obj) | the item the item's prev member designates (none when NULL) |
+| `#next_reach(x)` | obj → set(obj) | the items reached from the item by one or more next links |
+| `#owned(x)` | obj → set(obj) | the children the item owns: its exact custody domain |
+| `#nodup(x)` | obj → prop | the item's child sequence names no identity twice |
+| `#live` | set(obj) | the objects live at the call's entry |
+| `#parent` | obj | the object the call's parent argument designates (the declaration requires it non-null) |
+| `#concurrent` | set(fn) | the steps another thread runs while the call runs, each as the function it runs |
+| `#keeps_links(x)` | obj → eff | the run writes neither the item's child member nor the next or prev member of an element of its child sequence |
+
 **Meaning.** `F |-> E`: every run of callback `F` (of every member of callback set `F`) during the call has effect `E`; a callback the call does not run satisfies it. `#inert`: the run takes over, releases and retains nothing the caller holds. The rest is first-order logic over the model.
 
 **Fail-closed.** An unknown term or constant, an application whose arguments are not of the term's signature, a term without its arguments, an unbound variable, a variable shadowing a term or another variable, a formula that is not a proposition, a malformed or over-long token sequence, and a string statement that is itself a formula each reject the **whole module**; the premise is never dropped.
@@ -1226,6 +1306,22 @@ The constants are the fifteen ex_data classes of `CRYPTO_get_ex_new_index` (3.5)
 * `openssl_builtin_lookup_methods` (3; card OPENSSL-FREE-INDIRECT-CALLBACKS): `quant all #l in #lookups(#of(X509_STORE, #freed)): #method(#l) in #builtin -> #fns(#l) |-> #inert`.
 
 The crate's checker requires exactly these statements and refuses a premise whose statement is a string (`prose_premise`). In `openssl_builtin_bio_methods`, "(the SSL object of a BIO_f_ssl BIO)" defines "an object other than the arguments of the call" (`#ssl_of(#b) \ #args`), not one example of it (USER DECISION 2026-11-20, "Narrow"). Other crates keep string statements until their own conversion. In every model where no clause states an ex_data callback (C04.19 states slots, never the registry), `openssl_unstated_callback_slots` entails `openssl_ex_data_callbacks`, and not conversely. The Lean model is `QCore.PremiseFormula` (syntax, sorts, the judgment, denotation, the loader's decision vectors, the four formulas well-formed, the entailment).
+
+**The librdkafka premises** (card SP2-SYMBOLIC-LIBRDKAFKA-PREMISES). All 220 `resource_premise` clauses of `qcore-provider-librdkafka` (12 names, 9 modules) state formulas; each prose statement and its formula say the same, phrase by phrase ([report](reports/sp2-symbolic-librdkafka-premises/README.md)):
+
+* `rk_plugin_callback_closure` (180, one statement): `(quant all #f in #ran(#slots(#rk_conf)) \ #loaded_registered: #f in #registered | #defaults && #f in #candidates) && quant all #f in #loaded_registered: #f in #enveloped`. "With a declared candidate" qualifies both a registration and a stated default (the stronger reading; C04.19.3 declares each candidate).
+* `conf_property_writer` (18): `(quant all #f in #punned_stores: #f in #registered | #defaults | #conf_copies | #hidden_string) && quant all #f in #hidden_string: #f in #ut_handle_produce_response`.
+* `asserted_allocation` (9, four statements): an `rd_calloc` result (5) `#call |-> #returns_result_of(#rd_calloc) && #rd_calloc |-> #asserts_result && #audited_assertions && #call |-> #returns_nonnull`; the same through `rd_kafka_toppar_new0`'s reference (1) and for `rd_malloc` (1); rule 37's checked wrappers `rd_calloc` and `rd_strdup` (2) `#deployed_assertion && #deployed_failure_call && #call |-> #failure_no_return`.
+* `served_queue` (2): `#op_callbacks |-> #takes(#held_on(#served)) == {}`.
+* `broker_monitor_callback` (1) and `assignor_callback` (1): the callback held and every callback its registrar registers are the named functions, and each run of one is handed only the broker (reads only the metadata and members) and takes over, releases and keeps no reference to the op, its handle or its queue (the op).
+* `share_ack_batches_nonempty` (1): `(quant all #l in #ack_batches: #l in #ack_details) && (quant all #l in #ack_details: #l in #first_add_lists) && quant all #l in #ack_batches: #l in #nonempty`.
+* `rk_log_enqueue_no_event_callback` (2): `(quant all #f in #event_cb(#forwards(#logq)): #false) && quant all #f in #ran(#event_cb(#forwards(#logq))): #false`.
+* `rk_log_enqueue_forward_not_last` (2): `quant all #q in #fwd_queue: (#q in #freed -> #false) && (#q in #unforwarded && #q in #last_released -> #false)`.
+* `cjson_allocator_hooks` (2): on `cJSON_New_Item` the allocation and deallocation hooks, on `print` also the reallocation hook, are libc's or installed ones, every run of an allocating hook returns a fresh allocation or NULL, and the matching deallocation hook releases every allocation they return.
+* `cjson_list_invariant` (1): `quant all #a in #cjson_arrays: quant all #c in #child(#a): (quant all #l in #last(#a): #l in #prev(#c)) && ((quant all #p in #prev(#c): #false) -> #false)`.
+* `detach_list_representation` (1): sixteen conjuncts over `#parent`, `#children`, `#owned`, `#child`, `#first`, `#last`, `#pred`, `#next`, `#prev`, `#next_reach`, `#nodup`, `#live` and `#concurrent |-> #keeps_links(#parent)`, one per conjunct of `QCore.CjsonRepresentationPremises`' nine propositions (`chain` is six of them).
+
+Where the prose says "so" or "because", the formula states the prerequisites and the stated consequence; the consequence follows from the prerequisites in every model where the terms mean what the table says (`QCore.PremiseFormula.Librdkafka`), so the formula is never narrower than the prose. **Exact identity.** `qcore-c-gateway`'s same-item detach check (`legacy_detach::REPRESENTATION_STATEMENT`) admits an in-unit removed-result declaration only beside the representation premise's exact statement, now the canonical formula: it admits exactly the declarations it admitted before. **Bindings.** A legacy atom's statement is part of its declaration's graph, so the 167 content-addressed binding manifests that pin such a graph (C04.18.2) were refreshed, the graph digest each one's only change ([bindings](reports/sp2-symbolic-librdkafka-premises/bindings/index.json)); no atom, refinement, flow, guard or typed proposition changed. **The hypotheses.** The nine `resource_hypothesis(detach_*, "…")` atoms of `cJSON_DetachItemViaPointer` keep their strings: a C04.18.9 formula is a premise statement, not a hypothesis form (`hypothesis::validate` admits a formula only as a generated legacy atom's statement), their text is repeated by the declaration's guarded symbols, and each is already bound to a Lean proposition of `QCore.CjsonRepresentationPremises`; moving them to C04.18.7 typed atoms is follow-up `SP2-DETACH-HYPOTHESES-TYPED-ATOMS`. **The source operator gate** (G01) reads a premise formula's `|` and `&&` as the formula's own operators, as it reads a quant check's connectives and a result set's operators; every other token of the clause is the premise reader's. **The prose ban.** The crate has no checker plugin, so its own test (`every_premise_is_a_formula`) refuses a premise stated as a string; a load-time refusal for shipped crates is follow-up `SP2-SHIPPED-PROVIDER-PROSE-BAN`.
 
 ### C04.18.1. Evidence-only hypothesis graphs (version 1)
 

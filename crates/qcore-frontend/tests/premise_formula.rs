@@ -126,6 +126,9 @@ fn lean_rows(opening: &str) -> Vec<String> {
         .map(str::trim)
         .skip_while(|line| line.is_empty())
         .take_while(|line| *line != "]")
+        // Card SP2-SYMBOLIC-LIBRDKAFKA-PREMISES: a `--` line delimits a
+        // card's block and is not a row.
+        .filter(|line| !line.starts_with("--"))
         .map(|line| line.trim_end_matches(',').to_owned())
         .collect()
 }

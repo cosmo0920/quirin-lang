@@ -524,9 +524,9 @@
   },
   {
    "source": "crates/qcore-contract/tests/production_symbolic_adoption.rs",
-   "literal": "docs/reports/quant-contract-hypotheses/plugin/bindings",
+   "literal": "docs/reports/sp2-symbolic-librdkafka-premises/bindings",
    "reads": [
-    "docs/reports/quant-contract-hypotheses/plugin/bindings/**"
+    "docs/reports/sp2-symbolic-librdkafka-premises/bindings/**"
    ],
    "why": "census: its units list the directory (1 directory opens or ls-files pathspecs), so a new file can change what they see: the whole directory"
   },

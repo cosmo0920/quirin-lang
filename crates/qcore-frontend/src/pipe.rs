@@ -975,6 +975,34 @@ fn quant_check_spans(program: &SourceProgram) -> Vec<Span> {
         .collect()
 }
 
+/// Card SP2-SYMBOLIC-LIBRDKAFKA-PREMISES (contract specification C04.18.9,
+/// grammar G05-formula): the expression spans of every `requires
+/// resource_premise(NAME, FORMULA);` clause. Its `|` (set union) and `&&`
+/// (conjunction) are the formula's own operators, read literally by the
+/// premise reader (`crate::premise_formula`), not expressions of this tier:
+/// nothing lowers the clause and no consumer that decides a verdict reads it.
+/// A string statement holds neither token, so only a formula is affected;
+/// every other token of the clause is the premise reader's to accept or
+/// refuse, and it refuses the whole module on anything outside its grammar.
+fn premise_formula_spans(program: &SourceProgram) -> Vec<Span> {
+    program
+        .declarations
+        .iter()
+        .filter_map(|declaration| declaration.value.function_contract.as_ref())
+        .flat_map(|contract| &contract.clauses)
+        .filter(|clause| {
+            matches!(clause.value.kind, SourceContractClauseKind::Requires)
+                && clause
+                    .value
+                    .expression_source
+                    .trim_start()
+                    .strip_prefix(crate::premise_formula::PREMISE_HEAD)
+                    .is_some_and(|rest| rest.trim_start().starts_with('('))
+        })
+        .map(|clause| clause.value.expression_span)
+        .collect()
+}
+
 /// Card CELL-GUARD-RESULT-RANGE-CHECKED (contract specification C09.4,
 /// grammar G05j): the expression spans of every `ensures normal
 /// result_set(SET);` clause. Its `|`, `&` and `^` are the set operators of
@@ -1060,6 +1088,12 @@ pub fn check_source_operators(program: &SourceProgram) -> Result<(), Vec<SourceD
             .iter()
             .any(|extent| extent.start <= span.start && span.end <= extent.end)
     };
+    let premise_formulas = premise_formula_spans(program);
+    let in_premise_formula = |span: Span| {
+        premise_formulas
+            .iter()
+            .any(|extent| extent.start <= span.start && span.end <= extent.end)
+    };
 
     // Card `W48-QR-CLOSURES`: the two bars of a closure's capture list (the
     // one `||` of an empty list) are the closure's, directly after
@@ -1089,6 +1123,11 @@ pub fn check_source_operators(program: &SourceProgram) -> Result<(), Vec<SourceD
                 continue;
             }
             TokenKind::Symbol(Symbol::Pipe | Symbol::PipePipe) if closure_bar(token.span) => {
+                continue;
+            }
+            // Card SP2-SYMBOLIC-LIBRDKAFKA-PREMISES: a premise formula's own
+            // union and conjunction (G05-formula).
+            TokenKind::Symbol(Symbol::Pipe | Symbol::AndAnd) if in_premise_formula(token.span) => {
                 continue;
             }
             // Card CELL-GUARD-RESULT-RANGE-CHECKED: a result set's own
