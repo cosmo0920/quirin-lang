@@ -388,6 +388,7 @@ fn full_cfg_round_trip_retains_lifetime_and_refused_escape_metadata() {
         callbacks: None,
         removals: vec![],
         cells: None,
+        overwritten: vec![],
     };
     cfg.nodes[0].instruction = LegacyInstruction::ContractCall {
         function: "callee".into(),

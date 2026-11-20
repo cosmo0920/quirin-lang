@@ -111,6 +111,12 @@ pub struct Operands {
     /// serialized) for every call whose declaration states no cell.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub cells: Option<Box<super::descriptor_cells_route::CellOperands>>,
+    /// Card **CG10-MEMBER-STORE-RETAINED-BY** (rule 70): each member path a
+    /// derived retention summary overwrote, resolved to a path holder of
+    /// this function, with its spelling. Empty (and not serialized or
+    /// printed) for every call whose declaration overwrote nothing.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub overwritten: Vec<(HolderSpelling, String)>,
 }
 
 /// The derived form, with `callbacks` printed only when present, so every
@@ -134,6 +140,9 @@ impl std::fmt::Debug for Operands {
         }
         if let Some(cells) = &self.cells {
             out.field("cells", cells);
+        }
+        if !self.overwritten.is_empty() {
+            out.field("overwritten", &self.overwritten);
         }
         out.finish()
     }
@@ -334,6 +343,30 @@ fn framed_path_stable(
     fields: &[String],
     contracts: &ResourceContracts,
 ) -> bool {
+    framed_path_stable_with(
+        tokens,
+        function,
+        body,
+        root,
+        fields,
+        contracts,
+        &BTreeSet::new(),
+    )
+}
+
+/// [`framed_path_stable`] with `extra` mentions (indices of the merged body
+/// texts) framed besides its own: card CG10-MEMBER-STORE-RETAINED-BY (rule
+/// 70) frames a derived retention summary's own root actuals
+/// ([`crate::member_store_retention::framed`]); empty everywhere else.
+fn framed_path_stable_with(
+    tokens: &[Token],
+    function: &str,
+    body: &[&str],
+    root: &str,
+    fields: &[String],
+    contracts: &ResourceContracts,
+    extra: &BTreeSet<usize>,
+) -> bool {
     if !crate::loop_lifetime_source::caller_pointer_formal(function, root) {
         return false;
     }
@@ -341,6 +374,7 @@ fn framed_path_stable(
     let texts = merged.iter().map(String::as_str).collect::<Vec<_>>();
     let (aliases, mut framed) =
         crate::loop_lifetime_source::collector_alias_frame(function, root, &texts, contracts);
+    framed.extend(extra.iter().copied());
     for (at, callee) in texts.iter().enumerate() {
         if !is_identifier(callee) || texts.get(at + 1) != Some(&"(") {
             continue;
@@ -631,6 +665,7 @@ impl Parser<'_> {
             callbacks: None,
             removals: Vec::new(),
             cells: None,
+            overwritten: Vec::new(),
         };
         // Card REFCOUNT-RESOURCE-KIND (rules 13b, 13c): the reference
         // operands, or the refusal of a declaration withdrawn in this unit.
@@ -823,6 +858,10 @@ impl Parser<'_> {
                 operands.forwarded.insert(position, proof);
             }
         }
+        // Card CG10-MEMBER-STORE-RETAINED-BY (rule 70): a derived retention
+        // summary frames its own root actuals at this call.
+        let derived_call = (!declaration.overwritten_paths.is_empty())
+            .then(|| (function, tokens.get(call_index).map_or(0, |token| token.line)));
         // Card FB-EVENT-LOOP-RETENTION-AND-REGISTRATION (rule 12t): a
         // retention whose declared holder is a path below a formal: the
         // actual at that formal followed by the path's members.
@@ -838,8 +877,9 @@ impl Parser<'_> {
                 |a| format!("{}->{}", a.join(" "), retention.fields.join("->")),
             );
             let retained = self.retained_spelling(actual(retention.retained));
-            let held =
-                root.and_then(|root| self.path_holder(root, &retention.fields, body.as_deref()));
+            let held = root.and_then(|root| {
+                self.path_holder_at(root, &retention.fields, body.as_deref(), derived_call)
+            });
             match (retained, held) {
                 (Some(retained), Some((held, _))) => {
                     operands
@@ -850,6 +890,31 @@ impl Parser<'_> {
                     return Some(refuse(
                         self,
                         undecided_description(function, &retained_text, &holder_text),
+                    ));
+                }
+            }
+        }
+        // Card CG10-MEMBER-STORE-RETAINED-BY (rule 70): every member path a
+        // derived retention summary overwrote must be a path holder of this
+        // function (its own unrebound formal, P-HOLDER-PATH-STABLE), whatever
+        // the body stored there; otherwise the call refuses.
+        for path in &declaration.overwritten_paths {
+            let root = actual(path.root);
+            let holder_text = root.map_or_else(
+                || "?".to_owned(),
+                |a| format!("{}->{}", a.join(" "), path.fields.join("->")),
+            );
+            match root.and_then(|root| {
+                self.path_holder_at(root, &path.fields, body.as_deref(), derived_call)
+            }) {
+                Some((held, _)) => operands.overwritten.push((held, holder_text)),
+                None => {
+                    return Some(refuse(
+                        self,
+                        crate::member_store_retention::overwrite_description(
+                            function,
+                            &holder_text,
+                        ),
                     ));
                 }
             }
@@ -1070,6 +1135,21 @@ impl Parser<'_> {
         fields: &[String],
         body: Option<&[&str]>,
     ) -> Option<(HolderSpelling, String)> {
+        self.path_holder_at(root, fields, body, None)
+    }
+
+    /// [`Self::path_holder`] for a call of a derived retention summary
+    /// (card CG10-MEMBER-STORE-RETAINED-BY, rule 70): `own` is the call's
+    /// callee and line, whose root actuals rule 70 frames
+    /// ([`crate::member_store_retention::framed`]); `None` is
+    /// [`Self::path_holder`].
+    fn path_holder_at(
+        &self,
+        root: &[&str],
+        fields: &[String],
+        body: Option<&[&str]>,
+        own: Option<(&str, usize)>,
+    ) -> Option<(HolderSpelling, String)> {
         let (name, chain) = match root {
             [name, rest @ ..] if is_identifier(name) => ((*name).to_owned(), member_chain(rest)?),
             _ => return None,
@@ -1090,16 +1170,27 @@ impl Parser<'_> {
             (name, chain)
         };
         chain.extend(fields.iter().cloned());
+        let extra = own.map_or_else(BTreeSet::new, |own| {
+            crate::member_store_retention::framed(
+                self.tokens,
+                &self.typed_path_function,
+                &name,
+                &chain,
+                self.contracts,
+                own,
+            )
+        });
         if chain.is_empty()
             || !self.caller_formals.contains(name.as_str())
             || !body.is_some_and(|body| {
-                framed_path_stable(
+                framed_path_stable_with(
                     self.tokens,
                     &self.typed_path_function,
                     body,
                     &name,
                     &chain,
                     self.contracts,
+                    &extra,
                 )
             })
         {
@@ -1276,6 +1367,42 @@ pub(super) fn apply(
     // names more, never less.
     for (retained, holder) in &operands.removals {
         apply_removal(state, retained.as_ref(), holder.as_ref(), destination);
+    }
+    // Card CG10-MEMBER-STORE-RETAINED-BY (rule 70): an overwritten path whose
+    // root this body tracks (holds custody of, or bound) is not the caller's
+    // slot P-CG11-CALLER-SLOT speaks of, and a binding of a place rooted at
+    // it that carries a target or is unknown would be dropped by the
+    // overwrite (rule 10v's premise 3): the call refuses. Otherwise every
+    // binding of a place rooted there is forgotten (rule 10v's event 2).
+    for (holder, holder_text) in &operands.overwritten {
+        let root = match holder {
+            HolderSpelling::Path(root, _) => Some(root.as_str()),
+            _ => None,
+        };
+        let carried = root.is_some_and(|root| {
+            state.pointers.iter().any(|(place, pointer)| {
+                super::pointer_store_flow::rooted_at(place, root)
+                    && (!pointer.targets.is_empty() || pointer.unknown)
+            })
+        });
+        if let (Some(root), false) = (root, carried) {
+            state
+                .pointers
+                .retain(|place, _| !super::pointer_store_flow::rooted_at(place, root));
+        }
+        if carried || !matches!(holder_class(state, holder, destination), Holder::Path(..)) {
+            diagnostics.insert(LegacyDiagnostic {
+                function: function.to_owned(),
+                line,
+                kind: LegacyDiagnosticKind::Unsupported {
+                    description: crate::member_store_retention::overwrite_description(
+                        retained_callee(called).unwrap_or(called),
+                        holder_text,
+                    ),
+                },
+            });
+            state.unmodeled = true;
+        }
     }
     for (index, (retained, retained_text, holder, holder_text)) in
         operands.retentions.iter().enumerate()
@@ -1576,6 +1703,7 @@ mod forwarding_tests {
             callbacks: None,
             removals: Vec::new(),
             cells: None,
+            overwritten: Vec::new(),
         };
         let mut diagnostics = BTreeSet::new();
         apply("f", 1, "add", &operands, None, &mut state, &mut diagnostics);

@@ -247,6 +247,9 @@ mod scalar_element_address;
 mod typed_place;
 // Card CG11-POINTER-VALUED-STORES (rule 10v): pointer-valued stores.
 mod pointer_store;
+// Card CG10-MEMBER-STORE-RETAINED-BY (rule 70): a formal's pointer stored
+// into a member of a formal's object, read as a retention.
+mod member_store_retention;
 // Card CG12-VOID-VIEW-READBACK (rule 11j): `void *` views and readbacks; the
 // G hook is `legacy_void_view.rs`.
 mod void_view;
