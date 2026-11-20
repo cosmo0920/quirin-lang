@@ -13,6 +13,7 @@
 -- limitations under the License.
 
 import QCore.PremiseFormula
+import QCore.CjsonRepresentationPremises
 
 /-!
 # The librdkafka premises as formulas (card SP2-SYMBOLIC-LIBRDKAFKA-PREMISES)
@@ -38,6 +39,11 @@ terms they use beyond SP1's are the SP2 block of `vocab` and `Model`
   prose.
 * The print statement of `cjson_allocator_hooks` entails its cJSON_New_Item
   statement (`hooks_print_entails_new_item`).
+* **Faithfulness of `detach_list_representation`** to the existing formal
+  decomposition: in the model a `QCore.CjsonRepresentationPremises`
+  environment induces (`detachModel`), the formula holds exactly when the nine
+  propositions its decomposition's atoms are bound to hold
+  (`detach_formula_is_the_nine_atoms`).
 
 As in `QCore.PremiseFormula`, nothing here establishes that a model describes
 librdkafka or cJSON: a premise stays an undischarged assumption.
@@ -210,5 +216,153 @@ theorem hooks_print_entails_new_item (M : Model) :
   rcases hu with hu | hu
   · exact Or.inl (Or.inl hu)
   · exact Or.inr hu
+
+/-! ## detach_list_representation is the nine Lean atoms -/
+
+open QCore.CjsonRepresentationPremises in
+/-- The model a cJSON entry environment (`QCore.CjsonRepresentationPremises`)
+induces: objects are its `Nat` identities, the runs are its trace's steps, and
+one callback, `0`, stands for every step another actor takes. Each list term is
+read off the environment exactly as its C04.18.9 meaning says (the child
+sequence is `children`, the links `child`, `next`, `prev`). -/
+def detachModel (e : Environment) : Model where
+  U := Nat
+  Run := Step
+  args := fun _ => False
+  created := fun _ => False
+  copied := fun _ => False
+  freed := fun _ => False
+  cls := id
+  ctx := fun _ _ => False
+  bios := fun _ _ => False
+  chain := fun _ _ => False
+  sslOf := fun _ _ => False
+  slots := fun _ _ => False
+  stated := fun _ => False
+  exData := fun _ _ => False
+  exDataFree := fun _ _ => False
+  method := id
+  builtin := fun _ => False
+  fns := fun _ _ => False
+  store := fun _ _ => False
+  lookups := fun _ _ => False
+  teardown := fun _ _ => False
+  settable := fun _ => False
+  inTurn := fun _ _ _ => False
+  callerHeld := fun _ _ => False
+  takes := fun _ _ _ => False
+  releases := fun _ _ _ => False
+  retains := fun _ _ _ => False
+  runs := fun f s => f = 0 ∧ s ∈ e.trace ∧ s.actor ≠ e.callActor
+  const := fun _ => 0
+  parent := e.parent
+  live := e.live
+  owned := fun o x => o = e.parent ∧ e.ownedChild x
+  children := fun o x => o = e.parent ∧ x ∈ e.children
+  child := fun o x => o = e.parent ∧ e.child = some x
+  first := fun o x => o = e.parent ∧ e.children.head? = some x
+  last := fun o x => o = e.parent ∧ e.children.getLast? = some x
+  pred := fun o b a => o = e.parent ∧ ∃ before suffix, e.children = before ++ a :: b :: suffix
+  next := fun o x => e.next o = some x
+  prev := fun o x => e.prev o = some x
+  nextReach := fun o x => NextPath e.next o x
+  nodup := fun o => o = e.parent ∧ e.children.Nodup
+  concurrent := fun f => f = 0
+  keepsLinks := fun _ s => s.writesLinks = false
+
+open QCore.CjsonRepresentationPremises in
+/-- What the detach formula states of an environment's model. -/
+theorem eval_detach (e : Environment) :
+    (eval (detachModel e) [] detachFormula).holds ↔
+      ((((((((((((((e.live e.parent ∧ ∀ (u : Nat), e.ownedChild u → u ∈ e.children) ∧
+          ∀ (u : Nat), u ∈ e.children → e.ownedChild u ∧ e.live u) ∧
+          ∀ (u : Nat), e.child = some u → e.children.head? = some u) ∧
+          ∀ (u : Nat), e.children.head? = some u → e.child = some u) ∧
+          ∀ (u : Nat), u ∈ e.children →
+            ∀ (u_1 : Nat) (x x_1 : List Nat), e.children = x ++ u_1 :: u :: x_1 →
+              e.next u_1 = some u) ∧
+          ∀ (u : Nat), u ∈ e.children → ¬NextPath e.next u u) ∧
+          ((∀ (u : Nat), ¬e.child = some u) → ∀ (u : Nat), ¬u ∈ e.children)) ∧
+          ((∀ (u : Nat), ¬u ∈ e.children) → ∀ (u : Nat), ¬e.child = some u)) ∧
+          ∀ (u : Nat), u ∈ e.children →
+            ∀ (u_1 : Nat) (x x_1 : List Nat), e.children = x ++ u_1 :: u :: x_1 →
+              e.prev u = some u_1) ∧
+          ∀ (u : Nat), e.children.head? = some u →
+            ∀ (u_1 : Nat), e.children.getLast? = some u_1 → e.prev u = some u_1) ∧
+          e.children.Nodup) ∧
+          ∀ (u : Nat), u ∈ e.children → ∀ (u_1 : Nat),
+            e.next u = some u_1 ∨ e.prev u = some u_1 → u_1 ∈ e.children ∧ e.live u_1) ∧
+          ∀ (u : Nat), e.children.getLast? = some u → ∀ (u_1 : Nat), ¬e.next u = some u_1) ∧
+          ¬e.parent ∈ e.children) ∧
+          ∀ (r : Step), r ∈ e.trace → ¬r.actor = e.callActor → r.writesLinks = false := by
+  simp [eval, detachFormula, lk, prim0, prim1, prim2, binVal, Val.holds, detachModel]
+
+/-- Two options agree when each value of one is the other's. -/
+theorem option_eq_of_values {α : Type} {a b : Option α}
+    (h1 : ∀ u, a = some u → b = some u) (h2 : ∀ u, b = some u → a = some u) : a = b := by
+  cases a with
+  | none => cases b with
+    | none => rfl
+    | some v => exact absurd (h2 v rfl) (by simp)
+  | some v => exact (h1 v rfl).symm
+
+open QCore.CjsonRepresentationPremises in
+/-- **Faithfulness of `detach_list_representation`.** In the model an entry
+environment induces, the premise's formula holds exactly when the nine
+propositions of `QCore.CjsonRepresentationPremises` its decomposition's atoms
+are bound to hold (in the decomposition's order): the formula is the prose
+statement's conjunction, conjunct for conjunct, neither narrower nor wider. -/
+theorem detach_formula_is_the_nine_atoms (e : Environment) :
+    (eval (detachModel e) [] detachFormula).holds ↔
+      chain e ∧ distinct e ∧ empty e ∧ firstPrev e ∧ lastNext e ∧ linkTargets e ∧
+        noWriter e ∧ parentOutside e ∧ predecessor e := by
+  rw [eval_detach]
+  constructor
+  · rintro ⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨hlive, hown1⟩, hown2⟩, hc1⟩, hc2⟩, hadj⟩, hacyc⟩, he1⟩, he2⟩,
+      hpred⟩, hfp⟩, hnd⟩, hlt⟩, hln⟩, hpo⟩, hnw⟩
+    refine ⟨⟨hlive, fun x => ⟨hown1 x, fun hx => (hown2 x hx).1⟩, fun x hx => (hown2 x hx).2,
+      option_eq_of_values hc1 hc2, ?_, hacyc⟩, hnd, ?_, fun f l hf hl => hfp f hf l hl, ?_, hlt,
+      hnw, hpo, ?_⟩
+    · intro before a b suffix hs
+      exact hadj b (by rw [hs]; simp) a before suffix hs
+    · constructor
+      · intro hc
+        cases hcs : e.children with
+        | nil => rfl
+        | cons x xs =>
+            exact absurd (hcs ▸ List.mem_cons_self ..) (he1 (fun u h => by simp [hc] at h) x)
+      · intro hcs
+        cases hc : e.child with
+        | none => rfl
+        | some x => exact absurd hc (he2 (fun u h => by simp [hcs] at h) x)
+    · intro l hl
+      cases hn : e.next l with
+      | none => rfl
+      | some y => exact absurd hn (hln l hl y)
+    · intro before a b suffix hs
+      exact hpred b (by rw [hs]; simp) a before suffix hs
+  · rintro ⟨⟨hlive, hown, hlive', hhead, hadj, hacyc⟩, hnd, ⟨he1, he2⟩, hfp, hln, hlt, hnw,
+      hpo, hpred⟩
+    refine ⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨hlive, fun u hu => (hown u).1 hu⟩,
+      fun u hu => ⟨(hown u).2 hu, hlive' u hu⟩⟩, fun u hu => hhead ▸ hu⟩,
+      fun u hu => hhead ▸ hu⟩, fun u _ a x y hs => hadj x a u y hs⟩, hacyc⟩, ?_⟩, ?_⟩,
+      fun u _ a x y hs => hpred x a u y hs⟩, fun u hu l hl => hfp u l hu hl⟩, hnd⟩, hlt⟩, ?_⟩, hpo⟩, hnw⟩
+    · intro hc u hu
+      have : e.child = none := by
+        cases h : e.child with
+        | none => rfl
+        | some v => exact absurd h (hc v)
+      rw [he1 this] at hu
+      exact absurd hu (by simp)
+    · intro hcs u hu
+      have : e.children = [] := by
+        cases h : e.children with
+        | nil => rfl
+        | cons x xs => exact absurd (h ▸ List.mem_cons_self ..) (hcs x)
+      rw [he2 this] at hu
+      exact absurd hu (by simp)
+    · intro u hu y hy
+      rw [hln u hu] at hy
+      exact absurd hy (by simp)
 
 end QCore.PremiseFormula

@@ -7,7 +7,9 @@ under twelve names, over the SP2 block of the closed vocabulary.
 The sixteen statements are well-formed; `#false` is the falsum; where the
 prose says "so" or "because", the stated consequence follows from the stated
 prerequisites in every coherent model; the print statement of
-`cjson_allocator_hooks` entails its cJSON_New_Item statement. The base
+`cjson_allocator_hooks` entails its cJSON_New_Item statement; the
+`detach_list_representation` formula holds exactly when the nine
+`QCore.CjsonRepresentationPremises` propositions of its decomposition do. The base
 judgment's theorems (`check_denotes`, `decision_vectors_agree`) cover the
 extended vocabulary and decision vectors (`AuditPremiseFormula.lean`).
 
@@ -43,3 +45,8 @@ The Rust boundary is pinned by
 
 -- cjson_allocator_hooks: the print statement widens the cJSON_New_Item one.
 #print axioms QCore.PremiseFormula.hooks_print_entails_new_item
+
+-- detach_list_representation: the formula is the nine atoms' Lean propositions.
+#print axioms QCore.PremiseFormula.eval_detach
+#print axioms QCore.PremiseFormula.option_eq_of_values
+#print axioms QCore.PremiseFormula.detach_formula_is_the_nine_atoms

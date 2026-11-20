@@ -4013,6 +4013,14 @@ contract state clause, a `resource_premise_flow_v1` expression (G05-flow), or
 this formula, where `F |-> E` says every run of callback `F` (or of every
 member of callback set `F`) during the call has effect `E`.
 
+Card SP2-SYMBOLIC-LIBRDKAFKA-PREMISES: the grammar is unchanged (its new
+terms are vocabulary, C04.18.9). The source operator gate (G01, `Q038`) reads
+a `|` or `&&` inside a `requires resource_premise(…)` clause as the formula's
+own union or conjunction, as it reads a quant check's connectives and a result
+set's operators, so a contract module stating a formula compiles; a `|` or
+`&&` anywhere else keeps its refusal, and every other token of the clause is
+the premise reader's to accept or refuse.
+
 ### G05-flow. Proposed premise expressions
 
 C04.18.3 adds one contextual clause, also admitted in the explicit bounds and resource-type model views after full vocabulary validation:
