@@ -15,7 +15,10 @@
 //! Card **SP1-SYMBOLIC-OPENSSL-PREMISES** (contract specification C04.18.9):
 //! the symbolic premise statement, its reader's fail-closed arms, and the
 //! binding of its decision vectors, vocabulary and the four OpenSSL formulas
-//! to the Lean model `QCore.PremiseFormula`.
+//! to the Lean model `QCore.PremiseFormula`. Card
+//! **SP4-SYMBOLIC-LIBEVENT-PREMISES**: the SP4 vocabulary block and decision
+//! vectors, and the seven libevent formulas bound to
+//! `QCore.PremiseFormula.Libevent`.
 
 use std::collections::BTreeMap;
 
@@ -26,6 +29,16 @@ use qcore_frontend::premise_formula::{
 };
 
 const LEAN: &str = include_str!("../../../proof/QCore/PremiseFormula.lean");
+
+/// Card SP4-SYMBOLIC-LIBEVENT-PREMISES: the Lean definitions of the libevent
+/// formulas.
+const LEAN_LIBEVENT: &str = include_str!("../../../proof/QCore/PremiseFormula/Libevent.lean");
+
+/// The one module of `qcore-provider-libevent` that states a premise.
+const LIBEVENT_MODULES: &[(&str, &str)] = &[(
+    "monkey/intrusive_list.qv",
+    include_str!("../../../providers/qcore-provider-libevent/contracts/monkey/intrusive_list.qv"),
+)];
 
 /// Every module of the OpenSSL user crate (`user-crates-load-path.json`'s
 /// 17), as shipped.
@@ -126,13 +139,20 @@ fn lean_rows(opening: &str) -> Vec<String> {
         .map(str::trim)
         .skip_while(|line| line.is_empty())
         .take_while(|line| *line != "]")
+        // A card's block heading (`-- Card ...`) is a comment, not a row.
+        .filter(|line| !line.starts_with("--"))
         .map(|line| line.trim_end_matches(',').to_owned())
         .collect()
 }
 
 /// The right-hand side of a one-line Lean definition.
 fn lean_definition(opening: &str) -> String {
-    let line = LEAN
+    lean_definition_in(LEAN, opening)
+}
+
+/// The right-hand side of a one-line Lean definition in `module`.
+fn lean_definition_in(module: &str, opening: &str) -> String {
+    let line = module
         .lines()
         .find(|line| line.starts_with(opening))
         .unwrap_or_else(|| panic!("no `{opening}`"));
@@ -207,8 +227,16 @@ fn inert_is_its_definition() {
 /// Every `resource_premise` clause of the OpenSSL crate's modules, read by
 /// the contract format's premise reader: `(module, name, statement)`.
 fn openssl_premises() -> Vec<(&'static str, String, PremiseStatement)> {
+    premises_of(OPENSSL_MODULES)
+}
+
+/// Every `resource_premise` clause of `modules`, read by the contract
+/// format's premise reader: `(module, name, statement)`.
+fn premises_of(
+    modules: &[(&'static str, &'static str)],
+) -> Vec<(&'static str, String, PremiseStatement)> {
     let mut out = Vec::new();
-    for (module, text) in OPENSSL_MODULES {
+    for (module, text) in modules {
         let stripped = text
             .lines()
             .map(|line| line.split("//").next().unwrap_or_default())
@@ -428,5 +456,58 @@ fn the_printing_parenthesizes_exactly_where_needed() {
         let tree = raw(source);
         assert_eq!(canonical(&tree), printed, "{source}");
         assert_eq!(raw(printed), tree, "{source}");
+    }
+}
+
+/// Card SP4-SYMBOLIC-LIBEVENT-PREMISES: each of the seven premises of
+/// `mk_http_thread_destroy` is stated as a formula, once, and it is exactly
+/// the Lean definition `QCore.PremiseFormula.Libevent` proves well-formed.
+#[test]
+fn the_libevent_formulas_are_the_lean_definitions() {
+    let lean_names = [
+        (
+            "scheduler_exact_parent_embedding",
+            "def parentEmbeddingFormula : Raw :=",
+        ),
+        (
+            "scheduler_tls_params_owned",
+            "def tlsParamsFormula : Raw :=",
+        ),
+        ("scheduler_callee_live", "def calleeLiveFormula : Raw :="),
+        (
+            "scheduler_borrowed_chain_live",
+            "def borrowedChainFormula : Raw :=",
+        ),
+        (
+            "scheduler_valid_membership",
+            "def validMembershipFormula : Raw :=",
+        ),
+        (
+            "scheduler_no_later_alias_use",
+            "def noLaterAliasFormula : Raw :=",
+        ),
+        (
+            "scheduler_valgrind_request_neutral",
+            "def valgrindNeutralFormula : Raw :=",
+        ),
+    ];
+    let premises = premises_of(LIBEVENT_MODULES);
+    assert_eq!(premises.len(), lean_names.len());
+    for (name, definition) in lean_names {
+        let stated = premises
+            .iter()
+            .filter(|(_, premise, _)| premise == name)
+            .collect::<Vec<_>>();
+        assert_eq!(stated.len(), 1, "{name}");
+        let PremiseStatement::Formula(formula) = &stated[0].2 else {
+            panic!("`{name}` is stated in prose");
+        };
+        assert_eq!(raw(&formula.canonical), formula.raw, "{name}");
+        assert_eq!(
+            lean(&formula.raw),
+            lean_definition_in(LEAN_LIBEVENT, definition),
+            "{name}"
+        );
+        assert!(tokens(&formula.canonical).len() <= MAX_TOKENS, "{name}");
     }
 }

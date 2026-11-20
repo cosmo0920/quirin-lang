@@ -310,17 +310,56 @@ contract {
 // bounded footprint), so it is removed: every row resting on this
 // declaration now carries the run's check of `mk_thread.cb_destroy`, under
 // rule 12n's P-CG22-MEMBER-CLOSED-WORLD, instead of the premise.
+//
+// Card SP4-SYMBOLIC-LIBEVENT-PREMISES (contract spec C04.18.9, SP4 block;
+// USER DECISION 2026-11-20: premises are condition symbols, not sentences):
+// each of the seven premises states a formula over the registered
+// vocabulary instead of an English sentence. Names, refinements,
+// attachments and flows are unchanged. `#m` ranges over `#args`, the one
+// object `mth` designates; `quant all #x in #singleton(E): ...` binds `#x`
+// to `E`. The prose each replaces and its phrase-by-phrase reading are in
+// docs/reports/sp4-symbolic-libevent-premises/README.md. Every premise is
+// still an undischarged assumption published with every row resting on this
+// declaration; the crate's contract-tree test refuses a prose premise.
 
 extern fn mk_http_thread_destroy(mth: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
-    requires resource_premise(scheduler_exact_parent_embedding, "mth is the mk_http_thread at MK_THREAD_DATA of the one live mk_thread allocation mth->parent names, which nothing but this call releases, so that freeing it ends the storage of mth (scheduler decomposition exact_parent_embedding and parent_live; established at creation by mk_http_thread_create, not by this body); that the call takes the object mth->parent names and leaves the member designating it is the state parent |-> #stale");
-    requires resource_premise(scheduler_tls_params_owned, "the mk_http_thread_libco_params key of the current thread holds NULL or one live allocation it alone owns, disjoint from every caller-tracked object; pthread_getspecific and pthread_setspecific of that key succeed, so the freed params are no longer reachable from the key (scheduler decomposition tls_params_owned and tls_api_success)");
-    requires resource_premise(scheduler_callee_live, "th->callee (th = mth->parent), which mk_thread_destroy deletes, is a coroutine co_delete accepts, created for this thread, suspended and not co_active, with no concurrent resume or deletion (scheduler decomposition callee_live and suspended_coroutines)");
-    requires resource_premise(scheduler_borrowed_chain_live, "mth->session is live where it is read, and its channel and that channel's event are live borrowed objects this call neither releases nor ends; the call writes one scalar through them, event->type (scheduler decomposition borrowed_chain_live); that the session itself is not taken is the state session |-> #kept");
-    requires resource_premise(scheduler_valid_membership, "mth->_head is linked in exactly one valid circular mk_list, the one its caller reaches it through, with reciprocal links and no concurrent or reentrant writer of that list, the coroutine, the borrowed chain or the key (scheduler decomposition valid_membership and no_concurrent_writer)");
-    requires resource_premise(scheduler_no_later_alias_use, "no alias the source leaves behind, request->thread, channel.thread or the current thread's mk_thread key, is read or resumed after the call (scheduler decomposition no_later_alias_use)");
-    requires resource_premise(scheduler_valgrind_request_neutral, "the Valgrind client request VALGRIND_STACK_DEREGISTER compiled in under MK_HAVE_VALGRIND reads th->valgrind_stack_id and changes no object the projection tracks");
+    requires resource_premise(scheduler_exact_parent_embedding,
+        quant all #m in #args: #mk_parent(#m) in #live
+        && #m in #thread_data(#mk_parent(#m))
+        && #m in #inside(#mk_parent(#m))
+        && #mk_parent(#m) in #released_only_by_call);
+    requires resource_premise(scheduler_tls_params_owned, #libco_params_key in #getspecific_ok
+        && #libco_params_key in #setspecific_ok
+        && quant all #p in #holds(#libco_params_key): #p in #live \ #overlaps(#tracked)
+        && #p in #sole_owned(#libco_params_key)
+        && #p in #freed \ #held_at_return(#libco_params_key));
+    requires resource_premise(scheduler_callee_live,
+        quant all #m in #args: quant all #c in #singleton(#mk_callee(#mk_parent(#m))): #c in #freed
+        && #c in #co_deletable
+        && #c in #created_for(#mk_parent(#m))
+        && #c in #suspended \ #co_active
+        && #concurrent |-> (#no_resumes(#singleton(#c)) && #no_releases(#singleton(#c))));
+    requires resource_premise(scheduler_borrowed_chain_live,
+        quant all #m in #args: quant all #s in #singleton(#mk_session(#m)):
+        quant all #ch in #singleton(#mk_channel(#s)): quant all #ev in #singleton(#mk_event(#ch)): #s in #live
+        && #ch in #live \ (#released | #ended)
+        && #ev in #live \ (#released | #ended)
+        && #mk_type(#ev) in #stores(#singleton(#s) | #singleton(#ch) | #singleton(#ev))
+        && quant all #w in #stores(#singleton(#s) | #singleton(#ch) | #singleton(#ev)): #w in #singleton(#mk_type(#ev)));
+    requires resource_premise(scheduler_valid_membership,
+        quant all #m in #args: quant all #n in #singleton(#mk_link(#m)):
+        quant all #l in #singleton(#caller_list(#n)): #l in #lists(#n)
+        && (quant all #k in #lists(#n): #k in #singleton(#l))
+        && #l in #circular_lists
+        && (quant all #k in #nodes(#l): #k in #reciprocal)
+        && #concurrent |-> #no_writes(#nodes(#l) | #singleton(#mk_callee(#mk_parent(#m))) | #singleton(#mk_session(#m)) | #singleton(#mk_channel(#mk_session(#m))) | #singleton(#mk_event(#mk_channel(#mk_session(#m)))) | #singleton(#libco_params_key)));
+    requires resource_premise(scheduler_no_later_alias_use,
+        quant all #m in #args: quant all #a in #aliases(#mk_parent(#m)): #a in #unread_after
+        && #a in #unresumed_after);
+    requires resource_premise(scheduler_valgrind_request_neutral,
+        quant all #m in #args: #stack_deregister(#mk_parent(#m)) |-> (#no_writes(#tracked) && #no_releases(#tracked)));
     quant proposition #sched_parent_data_identity(#address: function<environment,object,integer>, #data_address: function<environment,object,integer>, #env: environment, #mth: object, #parent: function<environment,object,object>) = (#address(#env,#mth) == #data_address(#env,#parent(#env,#mth)));
     requires resource_lifecycle_v1(introduce_sched_parent_data_identity, |^+ hypothesis(sched_parent_data_identity));
     quant proposition #sched_parent_storage(#contains: predicate<environment,object,object>, #env: environment, #live: predicate<environment,object>, #mth: object, #parent: function<environment,object,object>) = (#live(#env,#parent(#env,#mth)) && #contains(#env,#parent(#env,#mth),#mth));

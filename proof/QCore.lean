@@ -357,6 +357,7 @@ import QCore.PointerStore
 import QCore.PointerTypedefMember
 import QCore.PremiseFlow
 import QCore.PremiseFormula
+import QCore.PremiseFormula.Libevent
 import QCore.PremiseMetadataBridge
 import QCore.PremiseRefinement
 import QCore.PrintRouteSelection

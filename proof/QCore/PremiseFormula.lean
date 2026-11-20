@@ -43,6 +43,14 @@ Theorems:
   every coherent model (`unstated_entails_ex_data`), in particular for the
   SSL object's ex_data class (`unstated_entails_ex_data_for_ssl`).
 
+Card SP4-SYMBOLIC-LIBEVENT-PREMISES appends its terms to `vocab` in an SP4
+block. Each SP4 term but the defined `#singleton` (the singleton set) is read
+by name through `ext0`, `ext1El` and `ext1St`, one model component per term,
+so the model gains six name-indexed fields with defaults rather than one per
+term. The kind lemmas (`prim0_kind`, `prim1_kind`, `prim2_kind`) take one case
+per vocabulary row, whatever the number of rows. The libevent formulas and
+their theorems are `QCore.PremiseFormula.Libevent`.
+
 ## What this is not
 
 A premise is an undischarged assumption (C04.18): nothing here, and no
@@ -103,7 +111,48 @@ def vocab : List (String × List Srt × Srt) := [
   ("takes", [.sres], .sres),
   ("releases", [.sres], .sres),
   ("retains", [.sres], .sres),
-  ("inert", [], .eff)
+  ("inert", [], .eff),
+  -- Card SP4-SYMBOLIC-LIBEVENT-PREMISES (SP4 block)
+  ("singleton", [.obj], .sobj),
+  ("live", [], .sobj),
+  ("inside", [.obj], .sobj),
+  ("released_only_by_call", [], .sobj),
+  ("released", [], .sobj),
+  ("ended", [], .sobj),
+  ("tracked", [], .sobj),
+  ("overlaps", [.sobj], .sobj),
+  ("stores", [.sobj], .sobj),
+  ("concurrent", [], .sfn),
+  ("no_writes", [.sobj], .eff),
+  ("no_releases", [.sobj], .eff),
+  ("no_resumes", [.sobj], .eff),
+  ("unread_after", [], .sobj),
+  ("unresumed_after", [], .sobj),
+  ("mk_parent", [.obj], .obj),
+  ("thread_data", [.obj], .sobj),
+  ("mk_callee", [.obj], .obj),
+  ("co_deletable", [], .sobj),
+  ("created_for", [.obj], .sobj),
+  ("suspended", [], .sobj),
+  ("co_active", [], .sobj),
+  ("mk_session", [.obj], .obj),
+  ("mk_channel", [.obj], .obj),
+  ("mk_event", [.obj], .obj),
+  ("mk_type", [.obj], .obj),
+  ("mk_link", [.obj], .obj),
+  ("lists", [.obj], .sobj),
+  ("caller_list", [.obj], .obj),
+  ("circular_lists", [], .sobj),
+  ("reciprocal", [], .sobj),
+  ("nodes", [.obj], .sobj),
+  ("libco_params_key", [], .obj),
+  ("holds", [.obj], .sobj),
+  ("held_at_return", [.obj], .sobj),
+  ("sole_owned", [.obj], .sobj),
+  ("getspecific_ok", [], .sobj),
+  ("setspecific_ok", [], .sobj),
+  ("aliases", [.obj], .sobj),
+  ("stack_deregister", [.obj], .sfn)
 ]
 
 def classes : List String :=
@@ -217,6 +266,16 @@ structure Model where
   retains : Run → (U → Prop) → U → Prop
   runs : U → Run → Prop
   const : String → U
+  -- Card SP4-SYMBOLIC-LIBEVENT-PREMISES (SP4 block): every term registered
+  -- after SP1 except the defined `#singleton` is interpreted by name, one
+  -- component per term, by its signature (`ext0`, `ext1El`, `ext1St`). The
+  -- defaults keep every model written before the block a model.
+  xEl0 : String → U := const
+  xSt0 : String → U → Prop := fun _ _ => False
+  xEl1 : String → U → U := fun _ u => u
+  xSt1 : String → U → U → Prop := fun _ _ _ => False
+  xStSt : String → (U → Prop) → U → Prop := fun _ _ _ => False
+  xEfSt : String → (U → Prop) → Run → Prop := fun _ _ _ => True
 
 /-- A value: an element, a set, a per-run resource set, a proposition, a
 property of a run, or nothing (an ill-sorted application). -/
@@ -239,6 +298,29 @@ def inertEff (M : Model) : M.Run → Prop := fun r =>
   ((M.takes r (M.callerHeld r) = noRes ∧ M.releases r (M.callerHeld r) = noRes) ∧
     M.retains r (M.callerHeld r) = noRes)
 
+/-- SP4 block: a nullary term registered after SP1, by its signature. -/
+def ext0 (M : Model) (f : String) : Val M :=
+  match term f with
+  | some ([], .obj) => .el (M.xEl0 f)
+  | some ([], .sobj) => .st (M.xSt0 f)
+  | some ([], .sfn) => .st (M.xSt0 f)
+  | _ => .bad
+
+/-- SP4 block: a term of one object registered after SP1, by its signature. -/
+def ext1El (M : Model) (f : String) (o : M.U) : Val M :=
+  match term f with
+  | some ([.obj], .obj) => .el (M.xEl1 f o)
+  | some ([.obj], .sobj) => .st (M.xSt1 f o)
+  | some ([.obj], .sfn) => .st (M.xSt1 f o)
+  | _ => .bad
+
+/-- SP4 block: a term of one set registered after SP1, by its signature. -/
+def ext1St (M : Model) (f : String) (s : M.U → Prop) : Val M :=
+  match term f with
+  | some ([.sobj], .sobj) => .st (M.xStSt f s)
+  | some ([.sobj], .eff) => .ef (M.xEfSt f s)
+  | _ => .bad
+
 def prim0 (M : Model) (f : String) : Val M :=
   if f = "args" then .st M.args
   else if f = "created" then .st M.created
@@ -249,7 +331,7 @@ def prim0 (M : Model) (f : String) : Val M :=
   else if f = "settable" then .st M.settable
   else if f = "caller_held" then .rs M.callerHeld
   else if f = "inert" then .ef (inertEff M)
-  else .bad
+  else ext0 M f
 
 def prim1 (M : Model) (f : String) : Val M → Val M
   | .el o =>
@@ -260,7 +342,8 @@ def prim1 (M : Model) (f : String) : Val M → Val M
       else if f = "method" then .el (M.method o)
       else if f = "fns" then .st (M.fns o)
       else if f = "teardown" then .st (M.teardown o)
-      else .bad
+      else if f = "singleton" then .st (fun u => u = o)
+      else ext1El M f o
   | .st s =>
       if f = "ctx" then .st (M.ctx s)
       else if f = "bios" then .st (M.bios s)
@@ -268,7 +351,7 @@ def prim1 (M : Model) (f : String) : Val M → Val M
       else if f = "slots" then .st (M.slots s)
       else if f = "store" then .st (M.store s)
       else if f = "lookups" then .st (M.lookups s)
-      else .bad
+      else ext1St M f s
   | .rs s =>
       if f = "takes" then .rs (fun r => M.takes r (s r))
       else if f = "releases" then .rs (fun r => M.releases r (s r))
@@ -367,24 +450,24 @@ theorem prim0_kind (M : Model) {f : String} {s : Srt} (h : term f = some ([], s)
     (prim0 M f).kind = some s.kind := by
   have hm := term_mem h
   simp only [vocab, List.mem_cons, Prod.mk.injEq, List.mem_nil_iff, or_false] at hm
-  rcases hm with ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ |
-      ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ |
-      ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ |
-      ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ <;>
-    simp_all [prim0, Val.kind, Srt.kind]
+  -- One case per vocabulary row, however many rows the table has.
+  repeat' rcases hm with ⟨rfl, hs⟩ | hm
+  all_goals try obtain ⟨rfl, hs⟩ := hm
+  all_goals
+    simp_all [prim0, ext0, Val.kind, Srt.kind]
 
 theorem prim1_kind (M : Model) {f : String} {x s : Srt} {v : Val M}
     (h : term f = some ([x], s)) (hv : v.kind = some x.kind) :
     (prim1 M f v).kind = some s.kind := by
   have hm := term_mem h
   simp only [vocab, List.mem_cons, Prod.mk.injEq, List.mem_nil_iff, or_false] at hm
-  rcases hm with ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ |
-      ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ |
-      ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ |
-      ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ <;>
-    (simp at hs) <;>
+  -- One case per vocabulary row, however many rows the table has.
+  repeat' rcases hm with ⟨rfl, hs⟩ | hm
+  all_goals try obtain ⟨rfl, hs⟩ := hm
+  all_goals
+    (try simp at hs) <;>
     (try obtain ⟨rfl, rfl⟩ := hs) <;>
-    (cases v <;> simp_all [prim1, Val.kind, Srt.kind])
+    (cases v <;> simp_all [prim1, ext1El, ext1St, Val.kind, Srt.kind])
 
 theorem prim2_kind (M : Model) {f : String} {x y s : Srt} {v w : Val M}
     (h : term f = some ([x, y], s)) (hv : v.kind = some x.kind)
@@ -392,11 +475,11 @@ theorem prim2_kind (M : Model) {f : String} {x y s : Srt} {v w : Val M}
     (prim2 M f v w).kind = some s.kind := by
   have hm := term_mem h
   simp only [vocab, List.mem_cons, Prod.mk.injEq, List.mem_nil_iff, or_false] at hm
-  rcases hm with ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ |
-      ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ |
-      ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ |
-      ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ <;>
-    (simp at hs) <;>
+  -- One case per vocabulary row, however many rows the table has.
+  repeat' rcases hm with ⟨rfl, hs⟩ | hm
+  all_goals try obtain ⟨rfl, hs⟩ := hm
+  all_goals
+    (try simp at hs) <;>
     (try obtain ⟨⟨rfl, rfl⟩, rfl⟩ := hs) <;>
     (cases v <;> cases w <;> simp_all [prim2, Val.kind, Srt.kind])
 
@@ -590,7 +673,19 @@ def decisionVectors : List (Raw × Bool) := [
   ((.bin .mapsTo (.app0 "slots") (.app0 "inert")), false),
   ((.quant "o" (.app0 "created") (.app0 "o")), false),
   ((.bin .mapsTo .empty (.app0 "inert")), false),
-  ((.bin .conj (.bin .mapsTo (.app0 "stated") (.app0 "inert")) (.app0 "inert")), false)
+  ((.bin .conj (.bin .mapsTo (.app0 "stated") (.app0 "inert")) (.app0 "inert")), false),
+  -- Card SP4-SYMBOLIC-LIBEVENT-PREMISES (SP4 block)
+  ((.quant "m" (.app0 "args") (.bin .mem (.app1 "mk_parent" (.app0 "m")) (.bin .diff (.app0 "live") (.bin .union (.app0 "released") (.app0 "ended"))))), true),
+  ((.bin .mapsTo (.app0 "concurrent") (.bin .conj (.app1 "no_writes" (.app1 "singleton" (.app0 "libco_params_key"))) (.app1 "no_resumes" (.app0 "tracked")))), true),
+  ((.quant "m" (.app0 "args") (.quant "c" (.app1 "holds" (.app1 "mk_parent" (.app0 "m"))) (.bin .mem (.app0 "c") (.app1 "singleton" (.app0 "m"))))), true),
+  ((.quant "f" (.app1 "stack_deregister" (.app0 "libco_params_key")) (.bin .mapsTo (.app0 "f") (.app1 "no_releases" (.app0 "tracked")))), true),
+  ((.bin .conj (.bin .mapsTo (.app0 "concurrent") (.app1 "no_writes" (.app0 "tracked"))) (.app1 "no_resumes" (.app0 "tracked"))), false),
+  ((.bin .mem (.app1 "mk_parent" (.app0 "args")) (.app0 "live")), false),
+  ((.bin .mapsTo (.app0 "concurrent") (.app1 "no_writes" (.app0 "libco_params_key"))), false),
+  ((.bin .mapsTo (.app0 "live") (.app0 "inert")), false),
+  ((.bin .mem (.app0 "libco_params_key") (.app0 "libco_params_key")), false),
+  ((.app1 "no_writes" (.app0 "tracked")), false),
+  ((.bin .mapsTo (.app0 "concurrent") (.bin .eqv (.app1 "singleton" (.app0 "libco_params_key")) .empty)), false)
 ]
 
 theorem decision_vectors_agree :

@@ -1289,6 +1289,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [sp1-symbolic-openssl-premises](sp1-symbolic-openssl-premises/README.md) | SP1-SYMBOLIC-OPENSSL-PREMISES |
 
+| [sp4-symbolic-libevent-premises](sp4-symbolic-libevent-premises/README.md) | SP4-SYMBOLIC-LIBEVENT-PREMISES |
+
 | [stability-reeval-1](stability-reeval-1/README.md) | STABILITY-REEVAL #1 — under what conditions each current claim is unstable |
 
 | [stability-reeval-2](stability-reeval-2/README.md) | STABILITY-REEVAL #2 — the cadence's second firing |

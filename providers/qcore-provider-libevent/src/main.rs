@@ -111,6 +111,59 @@ mod tests {
         }
     }
 
+    /// Card **SP4-SYMBOLIC-LIBEVENT-PREMISES** (contract specification
+    /// C04.18.9): `requires resource_premise(NAME, "STATEMENT")`, a premise
+    /// stated in prose, as OpenSSL's checker reads one (`prose_premise`).
+    fn prose_premise(clause: &str) -> bool {
+        clause
+            .strip_prefix("requires resource_premise(")
+            .and_then(|rest| rest.split_once(','))
+            .is_some_and(|(_, statement)| statement.trim_start().starts_with('"'))
+    }
+
+    /// Card **SP4-SYMBOLIC-LIBEVENT-PREMISES**: a premise of this crate is a
+    /// formula (C04.18.9), never a sentence. This crate has no checker
+    /// plugin, so its contract-tree test is where a prose premise is refused:
+    /// every `resource_premise` clause of every owned module, the seven of
+    /// `mk_http_thread_destroy`, states a formula.
+    #[test]
+    fn every_premise_is_a_formula() {
+        assert!(prose_premise(
+            "requires resource_premise(scheduler_callee_live, \"anything\")"
+        ));
+        assert!(!prose_premise(
+            "requires resource_premise(scheduler_callee_live, quant all #m in #args: #m in #live)"
+        ));
+        assert!(!prose_premise(
+            "requires resource_premise_decomposition(scheduler_callee_live, a, b)"
+        ));
+        let mut premises = Vec::new();
+        for (name, text) in contract_tree() {
+            let code = text
+                .lines()
+                .map(|line| line.split("//").next().unwrap_or_default())
+                .collect::<Vec<_>>()
+                .join(" ");
+            for clause in code.split(';') {
+                let clause = clause.split_whitespace().collect::<Vec<_>>().join(" ");
+                if clause.starts_with("requires resource_premise(") {
+                    assert!(
+                        !prose_premise(&clause),
+                        "{name}: `{clause}` states its premise in prose; a premise of this \
+                         crate is a formula (C04.18.9)"
+                    );
+                    premises.push((name.clone(), clause));
+                }
+            }
+        }
+        assert_eq!(premises.len(), 7, "{premises:?}");
+        assert!(
+            premises
+                .iter()
+                .all(|(name, _)| name == "monkey/intrusive_list.qv")
+        );
+    }
+
     /// Card CONTRACT-INHERIT-QCORE-PROVIDER-NAMING: every `#include` this
     /// crate's contracts write names a module the libc crate publishes (the
     /// load path would refuse anything else with `QI004`/`QI005`), through the
