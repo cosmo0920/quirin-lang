@@ -6390,6 +6390,30 @@ own anchor here.
     `stating_the_remaining_slots_never_improves_a_verdict`);
     `tests/openssl_undeclared_handshake_callbacks.rs`;
     [report](../reports/openssl-remaining-handshake-setters/README.md).
+    Card OPENSSL-FREE-INDIRECT-CALLBACKS: the nine `X509_LOOKUP_meth_set_*`
+    setters register the lookup method table's slots
+    (`x509_lookup_method_st.lookup_meth_*`, `x509_lookup_slots.qv`; the
+    range `documented "1.1.1"`, because HISTORY's 1.1.0i is a letter release
+    the version vocabulary cannot spell). `X509_STORE_free`, `SSL_CTX_free`
+    and `SSL_free` state `.lookup_meth_shutdown` and `.lookup_meth_free` beside
+    their drop (every actual `_`) and name `openssl_builtin_lookup_methods`.
+    A store's own slots are not run at its free and are not stated there.
+    The frees keep `openssl_unstated_callback_slots` in a statement of their
+    own naming the source survey's remainder (the keys' provider, method and
+    engine functions, the client certificate engine, a CRL's method, the
+    async wait context's cleanup functions, the QUIC TLS callbacks, a QUIC
+    object's free); `X509_STORE_free` gains it. No gateway code changed.
+    **Do not** spell a key segment as a common word, state at a free a slot
+    its last drop does not run, or drop the premise from a free while any
+    callback it may run is unstated.
+    `QCore.OpensslFreeIndirectCallbacks`
+    (`a_free_with_a_remainder_keeps_the_premise`,
+    `the_ex_data_premise_alone_leaves_the_remainder_uncovered`,
+    `dropping_a_kind_the_call_never_runs_keeps_it_honest`,
+    `a_slot_the_call_does_not_run_needs_no_statement`,
+    `stating_the_lookup_slots_never_improves`);
+    `tests/openssl_undeclared_handshake_callbacks.rs`;
+    [report](../reports/openssl-free-indirect-callbacks/README.md).
 
 <a id="constraint-12o"></a>
 

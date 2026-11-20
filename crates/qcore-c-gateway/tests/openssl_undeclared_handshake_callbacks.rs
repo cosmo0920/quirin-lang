@@ -38,6 +38,11 @@
 //! 12n; this target too): `BIO_free`, `SSL_free` and `SSL_CTX_free` state
 //! the slots their last drop runs beside the drop, and the loader admits a
 //! slot invocation beside drops only.
+//!
+//! Card OPENSSL-FREE-INDIRECT-CALLBACKS (rule 12n, C04.19.3; this target, so
+//! the read census needs no new unit): a certificate store's lookup method
+//! shutdown and free slots (`x509_lookup_slots.qv`), stated at
+//! `X509_STORE_free`, `SSL_CTX_free` and `SSL_free`, with the same arms.
 
 use std::collections::BTreeMap;
 use std::sync::Arc;
@@ -1199,6 +1204,13 @@ const BIO: &str =
     include_str!("../../../providers/quirin-provider-openssl/contracts/openssl/bio.qv");
 const LOOKUP: &str =
     include_str!("../../../providers/quirin-provider-openssl/contracts/openssl/lookup.qv");
+/// Card OPENSSL-FREE-INDIRECT-CALLBACKS: the lookup method table setters and
+/// the store's free.
+const X509_LOOKUP_SLOTS: &str = include_str!(
+    "../../../providers/quirin-provider-openssl/contracts/openssl/x509_lookup_slots.qv"
+);
+const X509_STORE: &str =
+    include_str!("../../../providers/quirin-provider-openssl/contracts/openssl/x509_store.qv");
 
 const FREE_HEADERS: &str = "\
 typedef struct ssl_method_st SSL_METHOD;
@@ -1213,6 +1225,16 @@ BIO *BIO_new_file(const char *filename, const char *mode);
 int BIO_free(BIO *a);
 void remove_ok(SSL_CTX *ctx, SSL_SESSION *sess);
 void remove_uncontracted(SSL_CTX *ctx, SSL_SESSION *sess);
+typedef struct x509_lookup_method_st X509_LOOKUP_METHOD;
+typedef struct x509_lookup_st X509_LOOKUP;
+X509_STORE *store_new(void);
+void X509_STORE_free(X509_STORE *xs);
+int X509_LOOKUP_meth_set_free(X509_LOOKUP_METHOD *method, void (*free_fn)(X509_LOOKUP *ctx));
+int X509_LOOKUP_meth_set_shutdown(X509_LOOKUP_METHOD *method, int (*shutdown)(X509_LOOKUP *ctx));
+void lookup_free_ok(X509_LOOKUP *ctx);
+void lookup_free_uncontracted(X509_LOOKUP *ctx);
+int lookup_shutdown_ok(X509_LOOKUP *ctx);
+int lookup_shutdown_releasing(X509_LOOKUP *ctx);
 ";
 
 /// Each free acquires its object and drops the one reference it holds.
@@ -1220,6 +1242,7 @@ const FREES: &str = "\
 void free_ctx(void) { const SSL_METHOD *m = TLS_server_method(); SSL_CTX *c = SSL_CTX_new(m); if (!c) return; SSL_CTX_free(c); }
 void free_ssl(SSL_CTX *c) { SSL *s = SSL_new(c); if (!s) return; SSL_free(s); }
 void free_bio(void) { BIO *b = BIO_new_file(\"f\", \"r\"); if (!b) return; BIO_free(b); }
+void free_store(void) { X509_STORE *xs = store_new(); if (!xs) return; X509_STORE_free(xs); }
 ";
 
 const REMOVE_CANDIDATES: &str = "module contract;
@@ -1229,6 +1252,34 @@ contract {
     requires resource_contract_v1;
     ensures normal resource_borrowed(ctx);
     ensures normal resource_borrowed(sess);
+    ensures normal resource_return_none();
+};
+
+extern fn store_new() -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_return_owned(nullable);
+    ensures normal resource_return_kind(reference);
+};
+
+extern fn lookup_free_ok(ctx: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(ctx);
+    ensures normal resource_return_none();
+};
+
+extern fn lookup_shutdown_ok(ctx: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(ctx);
+    ensures normal resource_return_none();
+};
+
+extern fn lookup_shutdown_releasing(ctx: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(ctx, nonnull);
     ensures normal resource_return_none();
 };
 ";
@@ -1250,8 +1301,17 @@ fn free_crate() -> ResourceContracts {
         ("bio.qv", BIO),
         ("lookup.qv", LOOKUP),
         ("bio_slots.qv", BIO_SLOTS),
+        ("x509_store.qv", X509_STORE),
+        ("x509_lookup_slots.qv", X509_LOOKUP_SLOTS),
     ])
 }
+
+/// Card OPENSSL-FREE-INDIRECT-CALLBACKS: the lookup method slots every free
+/// of a store states, after its own slots.
+const LOOKUP_FREED: [&str; 2] = [
+    "x509_lookup_method_st.lookup_meth_shutdown",
+    "x509_lookup_method_st.lookup_meth_free",
+];
 
 /// The row of `name` in `headers` + `body`, under `run`'s member facts.
 fn unit_row(
@@ -1346,11 +1406,18 @@ fn the_frees_state_their_slots_beside_the_drop() {
         "bio_st.bio_callback_ex",
         "bio_st.bio_callback",
         "bio_method_st.meth_destroy",
+        LOOKUP_FREED[0],
+        LOOKUP_FREED[1],
+    ];
+    let ctx = [
+        "ssl_ctx_st.remove_session_cb",
+        LOOKUP_FREED[0],
+        LOOKUP_FREED[1],
     ];
     for (call, keys) in [
         ("BIO_free", &bio[..]),
         ("SSL_free", &ssl[..]),
-        ("SSL_CTX_free", &["ssl_ctx_st.remove_session_cb"][..]),
+        ("SSL_CTX_free", &ctx[..]),
     ] {
         let declaration = contracts
             .retaining_contract(call)
@@ -1458,10 +1525,13 @@ fn identity_candidates_decide_the_frees() {
     for registrar in [
         "void reg(SSL_CTX *c, BIO *b) { SSL_CTX_sess_set_remove_cb(c, remove_ok); \
          BIO_set_callback_ex(b, bio_cb_ok); }\n",
+        // Card OPENSSL-FREE-INDIRECT-CALLBACKS: identity lookup functions.
+        "void reg(X509_LOOKUP_METHOD *m) { X509_LOOKUP_meth_set_free(m, lookup_free_ok); \
+         X509_LOOKUP_meth_set_shutdown(m, lookup_shutdown_ok); }\n",
         "void nothing(void) { }\n",
     ] {
         let run = free_run(registrar, &contracts);
-        for name in ["free_ctx", "free_ssl", "free_bio"] {
+        for name in ["free_ctx", "free_ssl", "free_bio", "free_store"] {
             let (status, leaves) = free_row(name, Some(run.clone()), &contracts);
             assert!(
                 !refused(&leaves, "callback-"),
@@ -1501,6 +1571,23 @@ fn a_candidate_that_is_not_the_identity_refuses_the_frees() {
             &["free_bio", "free_ssl"][..],
             "free_ctx",
         ),
+        // Card OPENSSL-FREE-INDIRECT-CALLBACKS: an uncontracted lookup free
+        // function, and a shutdown function releasing the lookup it is handed,
+        // refuse every free of a store; `BIO_free` frees none.
+        (
+            "void reg(X509_LOOKUP_METHOD *m) { X509_LOOKUP_meth_set_free(m, \
+             lookup_free_uncontracted); }\n",
+            "lookup_free_uncontracted",
+            &["free_store", "free_ctx", "free_ssl"][..],
+            "free_bio",
+        ),
+        (
+            "void reg(X509_LOOKUP_METHOD *m) { X509_LOOKUP_meth_set_shutdown(m, \
+             lookup_shutdown_releasing); }\n",
+            "lookup_shutdown_releasing",
+            &["free_store", "free_ctx", "free_ssl"][..],
+            "free_bio",
+        ),
     ] {
         let run = free_run(registrar, &contracts);
         for name in runs {
@@ -1526,7 +1613,7 @@ fn a_free_slot_without_registrations_or_run_facts_refuses() {
         return;
     }
     let contracts = free_crate();
-    for name in ["free_ctx", "free_ssl", "free_bio"] {
+    for name in ["free_ctx", "free_ssl", "free_bio", "free_store"] {
         let (status, _) = free_row(name, None, &contracts);
         assert_ne!(status, AnalysisStatus::Safe, "{name} without run facts");
     }
@@ -1535,6 +1622,8 @@ fn a_free_slot_without_registrations_or_run_facts_refuses() {
         ("ssl_ctx.qv", SSL_CTX),
         ("bio.qv", BIO),
         ("lookup.qv", LOOKUP),
+        ("x509_store.qv", X509_STORE),
+        ("x509_lookup_slots.qv", X509_LOOKUP_SLOTS),
     ]);
     let run = free_run("void nothing(void) { }\n", &without_bio_slots);
     for name in ["free_bio", "free_ssl"] {
@@ -1550,11 +1639,95 @@ fn a_free_slot_without_registrations_or_run_facts_refuses() {
         ("bio.qv", BIO),
         ("lookup.qv", LOOKUP),
         ("bio_slots.qv", BIO_SLOTS),
+        ("x509_store.qv", X509_STORE),
+        ("x509_lookup_slots.qv", X509_LOOKUP_SLOTS),
     ]);
     let run = free_run("void nothing(void) { }\n", &without_setters);
     let (status, leaves) = free_row("free_ctx", Some(run), &without_setters);
     assert_ne!(status, AnalysisStatus::Safe);
     assert!(refused(&leaves, "no declaration registers"), "{leaves:?}");
+    // Card OPENSSL-FREE-INDIRECT-CALLBACKS: the lookup method setters absent.
+    let without_lookup_setters = free_contracts(&[
+        ("ssl.qv", SSL),
+        ("ssl_ctx.qv", SSL_CTX),
+        ("bio.qv", BIO),
+        ("lookup.qv", LOOKUP),
+        ("bio_slots.qv", BIO_SLOTS),
+        ("x509_store.qv", X509_STORE),
+    ]);
+    let run = free_run("void nothing(void) { }\n", &without_lookup_setters);
+    for name in ["free_store", "free_ctx", "free_ssl"] {
+        let (status, leaves) = free_row(name, Some(run.clone()), &without_lookup_setters);
+        assert_ne!(status, AnalysisStatus::Safe, "{name}");
+        assert!(
+            refused(&leaves, "no declaration registers"),
+            "{name}: {leaves:?}"
+        );
+    }
+    let (status, leaves) = free_row("free_bio", Some(run), &without_lookup_setters);
+    assert_eq!(status, AnalysisStatus::Safe, "free_bio: {leaves:?}");
+}
+
+/// Card OPENSSL-FREE-INDIRECT-CALLBACKS: `X509_STORE_free` keeps its drop
+/// (not NULL-accepting: the 1.1.1 page does not say NULL does nothing) and
+/// states exactly the lookup method's shutdown and free slots, the actual the
+/// library's `X509_LOOKUP` (`_`); no store slot (`x509_store_st.*`) is stated
+/// at any free, and each lookup setter registers its own slot.
+#[test]
+fn the_store_free_states_the_lookup_slots() {
+    use qcore_schemas::reference_count::ReferenceOperation;
+    let contracts = free_crate();
+    let declaration = contracts
+        .retaining_contract("X509_STORE_free")
+        .expect("X509_STORE_free is withheld");
+    assert!(contracts.contract("X509_STORE_free").is_none());
+    assert!(matches!(declaration.references.as_slice(),
+        [reference] if reference.operation == ReferenceOperation::Dropped
+            && reference.parameter == 0 && !reference.nullable));
+    let invoked = declaration
+        .callbacks
+        .iter()
+        .map(|clause| match clause {
+            CallbackClause::MemberInvoked {
+                slot: true,
+                member,
+                actuals,
+                ..
+            } => {
+                assert_eq!(actuals, &[CallbackActual::Supplied]);
+                member.spelling()
+            }
+            other => panic!("{other:?}"),
+        })
+        .collect::<Vec<_>>();
+    assert_eq!(invoked, LOOKUP_FREED);
+    for call in ["X509_STORE_free", "SSL_CTX_free", "SSL_free"] {
+        let declaration = contracts.retaining_contract(call).expect("withheld");
+        assert!(
+            declaration.callbacks.iter().all(|clause| !matches!(clause,
+                CallbackClause::MemberInvoked { member, .. }
+                    if member.spelling().starts_with("x509_store_st."))),
+            "{call}"
+        );
+    }
+    let mut registered = Vec::new();
+    for (name, declaration) in contracts.retaining() {
+        for clause in &declaration.callbacks {
+            if let CallbackClause::MemberRegistered { member, .. } = clause
+                && member.spelling().starts_with("x509_lookup_method_st.")
+            {
+                registered.push((name.clone(), member.spelling()));
+            }
+        }
+    }
+    registered.sort();
+    assert_eq!(registered.len(), 9, "{registered:?}");
+    for (name, key) in &registered {
+        let field = key
+            .strip_prefix("x509_lookup_method_st.lookup_meth_")
+            .unwrap();
+        assert_eq!(name, &format!("X509_LOOKUP_meth_set_{field}"));
+    }
 }
 
 const OBJ: &str = "module contract;

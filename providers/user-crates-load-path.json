@@ -963,6 +963,78 @@
     {
       "crate": "quirin-provider-openssl",
       "functions": [
+        "X509_LOOKUP_meth_set_new_item"
+      ],
+      "module": "openssl/x509_lookup_slots.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
+        "X509_LOOKUP_meth_set_free"
+      ],
+      "module": "openssl/x509_lookup_slots.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
+        "X509_LOOKUP_meth_set_init"
+      ],
+      "module": "openssl/x509_lookup_slots.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
+        "X509_LOOKUP_meth_set_shutdown"
+      ],
+      "module": "openssl/x509_lookup_slots.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
+        "X509_LOOKUP_meth_set_ctrl"
+      ],
+      "module": "openssl/x509_lookup_slots.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
+        "X509_LOOKUP_meth_set_get_by_subject"
+      ],
+      "module": "openssl/x509_lookup_slots.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
+        "X509_LOOKUP_meth_set_get_by_issuer_serial"
+      ],
+      "module": "openssl/x509_lookup_slots.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
+        "X509_LOOKUP_meth_set_get_by_fingerprint"
+      ],
+      "module": "openssl/x509_lookup_slots.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
+        "X509_LOOKUP_meth_set_get_by_alias"
+      ],
+      "module": "openssl/x509_lookup_slots.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
         "X509_STORE_CTX_get_current_cert"
       ],
       "module": "openssl/x509_store.qv",
@@ -1171,6 +1243,7 @@
         "openssl/ssl_io.qv",
         "openssl/stack.qv",
         "openssl/x509.qv",
+        "openssl/x509_lookup_slots.qv",
         "openssl/x509_store.qv",
         "openssl/x509_store_slots.qv"
       ],
@@ -1195,6 +1268,7 @@
         "openssl/ssl_io.qv",
         "openssl/stack.qv",
         "openssl/x509.qv",
+        "openssl/x509_lookup_slots.qv",
         "openssl/x509_store.qv",
         "openssl/x509_store_slots.qv"
       ],
