@@ -215,6 +215,35 @@ impl Parser<'_> {
         line: usize,
         statement: Statement,
     ) -> Statement {
+        // Card CG10-MEMBER-STORE-RETAINED-BY (rule 70): a retention store's
+        // fallback (the node when a flow premise fails) is the gate's refusal,
+        // which this rule names as it named the store before rule 70.
+        let statement = match statement {
+            Statement::Instruction(
+                LegacyInstruction::PointerStore {
+                    store,
+                    access,
+                    mut fallback,
+                },
+                at,
+            ) if store.value == crate::member_store_retention::RETAINED => {
+                if let LegacyInstruction::Unknown { description, .. } = fallback.as_mut()
+                    && description == GATE_REFUSAL
+                    && let Some(premise) = self.member_custody_premise(tokens, line)
+                {
+                    *description = premise.description();
+                }
+                return Statement::Instruction(
+                    LegacyInstruction::PointerStore {
+                        store,
+                        access,
+                        fallback,
+                    },
+                    at,
+                );
+            }
+            other => other,
+        };
         let Statement::Instruction(
             LegacyInstruction::Unknown {
                 description,
