@@ -170,7 +170,10 @@ pub(crate) fn holder_path(destination: &TypedPlace) -> Option<Vec<String>> {
         .iter()
         .map(|step| step.member.clone())
         .collect::<Vec<_>>();
-    fields.iter().all(|member| !member.is_empty()).then_some(fields)
+    fields
+        .iter()
+        .all(|member| !member.is_empty())
+        .then_some(fields)
 }
 
 /// Premise 3: the declaration `id` is never written or address-taken in

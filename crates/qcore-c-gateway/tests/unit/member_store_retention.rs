@@ -71,7 +71,11 @@ fn rule_70_lean_vectors_match_the_rust_table() {
                 .split(',')
                 .map(str::trim)
                 .collect::<Vec<_>>();
-            (fields[0] == "true", lean_code(fields[1]), lean_code(fields[2]))
+            (
+                fields[0] == "true",
+                lean_code(fields[1]),
+                lean_code(fields[2]),
+            )
         })
         .collect::<Vec<_>>();
     assert_eq!(rows.len(), DECISION_VECTORS.len());

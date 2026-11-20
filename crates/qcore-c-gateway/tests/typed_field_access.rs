@@ -312,8 +312,10 @@ fn ambiguous_accesses_keep_their_existing_unknown_and_diagnostic() {
         // drop a tracked identity. This is C02-P's territory, not C02's.
         (
             "pointer field",
+            // Card CG10-MEMBER-STORE-RETAINED-BY (rule 70) flips this deliberately: the formal is
+            // rebound here, since an unrebound one is a retention.
             "void subject(struct doc *d, struct pane *n) { void *p = q_alloc(); \
-             d->pane = n; q_free(p); }",
+             n = d->pane; d->pane = n; q_free(p); }",
         ),
         // A distinct scalar field on a callback record certifies above;
         // pointer-valued stores remain refused by the pointer-field control.

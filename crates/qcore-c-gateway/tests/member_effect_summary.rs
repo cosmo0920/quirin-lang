@@ -207,10 +207,15 @@ fn a_custody_store_into_a_formal_member_is_named_and_stays_unknown() {
     if !clang_available() {
         return;
     }
-    // `confval->name = name`.
-    assert_leaves(
+    // `confval->name = name`. Card CG10-MEMBER-STORE-RETAINED-BY (rule 70) flips this deliberately: the
+    // unrebound formal is `retained_by(name, c.a)`; a rebound one keeps the name.
+    assert_safe(
         "setname",
         "void setname(struct o *c, char *name) {\n  c->a = name;\n}",
+    );
+    assert_leaves(
+        "setname",
+        "void setname(struct o *c, char *name) {\n  name = c->a;\n  c->a = name;\n}",
         &[stored("c", "a")],
     );
     // `map->unit = cfl_sds_create(unit)`: an owned result. The UCRT's

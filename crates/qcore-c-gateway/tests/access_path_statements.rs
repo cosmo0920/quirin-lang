@@ -100,8 +100,10 @@ fn pointer_store_and_union_still_refuse() {
     // Card MEMBER-EFFECT-SUMMARY (rule 38i) re-pins this deliberately: the pointer store into a formal's
     // member names its premise; still `Unknown`.
     for (source, description) in [
+        // Card CG10-MEMBER-STORE-RETAINED-BY (rule 70) flips this deliberately: the unrebound formal's
+        // store is a retention, so the refused row rebinds the formal.
         (
-            "struct S { int *p; }; int subject(struct S *s, int *q) { s->p = q; return 0; }",
+            "struct S { int *p; }; int subject(struct S *s, int *q) { q = s->p; s->p = q; return 0; }",
             "store of a custody-carrying value into `s->p`, a member of the formal `s` \
              (member-store-through-formal)",
         ),

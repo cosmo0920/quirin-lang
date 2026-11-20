@@ -860,8 +860,12 @@ impl Parser<'_> {
         }
         // Card CG10-MEMBER-STORE-RETAINED-BY (rule 70): a derived retention
         // summary frames its own root actuals at this call.
-        let derived_call = (!declaration.overwritten_paths.is_empty())
-            .then(|| (function, tokens.get(call_index).map_or(0, |token| token.line)));
+        let derived_call = (!declaration.overwritten_paths.is_empty()).then(|| {
+            (
+                function,
+                tokens.get(call_index).map_or(0, |token| token.line),
+            )
+        });
         // Card FB-EVENT-LOOP-RETENTION-AND-REGISTRATION (rule 12t): a
         // retention whose declared holder is a path below a formal: the
         // actual at that formal followed by the path's members.
