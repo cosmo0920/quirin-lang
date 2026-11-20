@@ -1,0 +1,2076 @@
+{
+ "summary": {
+  "leaves": 11233,
+  "primary": 2301,
+  "secondary": 8932,
+  "secondary_why": {
+   "earlier-refusal-mentions-name": 8272,
+   "same-line-refusal": 576,
+   "formal-handed-to-uncontracted-callee": 79,
+   "assigned-from-refused-call": 5
+  },
+  "rows": 2280,
+  "alias_only_rows": 69,
+  "rows_all_primary": 408,
+  "rows_any_primary": 1005,
+  "rows_all_secondary": 1275
+ },
+ "table": {
+  "family": [
+   {
+    "subshape": "S1 pointer formal copied into a local",
+    "leaves": 379,
+    "primary": 347,
+    "secondary": 32,
+    "rows": 328,
+    "rows_alone": 27,
+    "rows_alone_list": [
+     "110::librdkafka::lib/librdkafka-2.15.0/src/rdkafka_ssl.c::rd_kafka_transport_ssl_passwd_cb",
+     "117::librdkafka::lib/librdkafka-2.15.0/src/rdkafka_topic.c::rd_kafka_topic_info_topic_cmp",
+     "11::cmetrics::lib/cmetrics/src/cmt_encode_opentelemetry.c::get_context_arena",
+     "4::cmetrics::lib/cmetrics/src/cmt_decode_msgpack.c::unpack_exp_histogram_count",
+     "4::cmetrics::lib/cmetrics/src/cmt_decode_msgpack.c::unpack_exp_histogram_negative_bucket",
+     "4::cmetrics::lib/cmetrics/src/cmt_decode_msgpack.c::unpack_exp_histogram_positive_bucket",
+     "4::cmetrics::lib/cmetrics/src/cmt_decode_msgpack.c::unpack_exp_histogram_sum",
+     "4::cmetrics::lib/cmetrics/src/cmt_decode_msgpack.c::unpack_exp_histogram_sum_set",
+     "4::cmetrics::lib/cmetrics/src/cmt_decode_msgpack.c::unpack_exp_histogram_zero_count",
+     "4::cmetrics::lib/cmetrics/src/cmt_decode_msgpack.c::unpack_histogram_bucket",
+     "4::cmetrics::lib/cmetrics/src/cmt_decode_msgpack.c::unpack_histogram_count",
+     "4::cmetrics::lib/cmetrics/src/cmt_decode_msgpack.c::unpack_metric_hash",
+     "4::cmetrics::lib/cmetrics/src/cmt_decode_msgpack.c::unpack_metric_value_type",
+     "4::cmetrics::lib/cmetrics/src/cmt_decode_msgpack.c::unpack_metric_value_uint64",
+     "4::cmetrics::lib/cmetrics/src/cmt_decode_msgpack.c::unpack_summary_count",
+     "4::cmetrics::lib/cmetrics/src/cmt_decode_msgpack.c::unpack_summary_quantile",
+     "4::cmetrics::lib/cmetrics/src/cmt_decode_msgpack.c::unpack_summary_quantiles_set",
+     "4::cmetrics::lib/cmetrics/src/cmt_decode_msgpack.c::unpack_summary_sum",
+     "68::librdkafka::lib/librdkafka-2.15.0/src/rdkafka_assignor.c::rd_kafka_assignor_cmp_str",
+     "68::librdkafka::lib/librdkafka-2.15.0/src/rdkafka_assignor.c::rd_kafka_group_member_cmp",
+     "71::librdkafka::lib/librdkafka-2.15.0/src/rdkafka_broker.c::rd_kafka_broker_start_reauth_cb",
+     "73::librdkafka::lib/librdkafka-2.15.0/src/rdkafka_cert.c::rd_kafka_conf_ssl_passwd_cb",
+     "81::librdkafka::lib/librdkafka-2.15.0/src/rdkafka_header.c::rd_kafka_header_cmp_str",
+     "87::librdkafka::lib/librdkafka-2.15.0/src/rdkafka_mock.c::rd_kafka_mock_connection_write_out_tmr_cb",
+     "96::librdkafka::lib/librdkafka-2.15.0/src/rdkafka_partition.c::rd_kafka_topic_partition_cmp",
+     "96::librdkafka::lib/librdkafka-2.15.0/src/rdkafka_partition.c::rd_kafka_topic_partition_cmp_topic",
+     "96::librdkafka::lib/librdkafka-2.15.0/src/rdkafka_partition.c::rd_kafka_topic_partition_not_regex"
+    ],
+    "sample": [
+     {
+      "fn": "cat_exp_histogram_values",
+      "name": "metric_dst",
+      "origin": "lib/cmetrics/src/cmt_cat.c:220",
+      "line": "first_lock_target = metric_dst;"
+     },
+     {
+      "fn": "unpack_basic_type_entry",
+      "name": "context",
+      "origin": "lib/cmetrics/src/cmt_decode_msgpack.c:2018",
+      "line": "cmt = (struct cmt *) context;"
+     },
+     {
+      "fn": "unpack_basic_type_meta",
+      "name": "context",
+      "origin": "lib/cmetrics/src/cmt_decode_msgpack.c:1661",
+      "line": "decode_context = (struct cmt_msgpack_decode_context *) context;"
+     },
+     {
+      "fn": "unpack_basic_type_values",
+      "name": "context",
+      "origin": "lib/cmetrics/src/cmt_decode_msgpack.c:1724",
+      "line": "decode_context = context;"
+     },
+     {
+      "fn": "unpack_context_external_metadata",
+      "name": "context",
+      "origin": "lib/cmetrics/src/cmt_decode_msgpack.c:2076",
+      "line": "metrics_context = (struct cmt *) context;"
+     },
+     {
+      "fn": "unpack_context_internal_metadata",
+      "name": "context",
+      "origin": "lib/cmetrics/src/cmt_decode_msgpack.c:2051",
+      "line": "metrics_context = (struct cmt *) context;"
+     }
+    ]
+   },
+   {
+    "subshape": "S5 local pointer read, handed or returned",
+    "leaves": 3710,
+    "primary": 485,
+    "secondary": 3225,
+    "rows": 1154,
+    "rows_alone": 11,
+    "rows_alone_list": [
+     "10::cmetrics::lib/cmetrics/src/cmt_encode_msgpack.c::pack_header",
+     "11::cmetrics::lib/cmetrics/src/cmt_encode_opentelemetry.c::fetch_metadata_kvlist_key",
+     "135::librdkafka::lib/librdkafka-2.15.0/src/snappy.c::append",
+     "135::librdkafka::lib/librdkafka-2.15.0/src/snappy.c::get_hash_table",
+     "138::chunkio::lib/chunkio/src/cio_chunk.c::cio_chunk_close_stream",
+     "156::monkey::lib/monkey/mk_core/mk_rconf.c::mk_rconf_section_entry_add",
+     "162::monkey::lib/monkey/mk_server/mk_fifo.c::mk_fifo_queue_destroy_all",
+     "162::monkey::lib/monkey/mk_server/mk_fifo.c::mk_fifo_queue_id_destroy",
+     "172::monkey::lib/monkey/mk_server/mk_scheduler.c::mk_sched_event_free",
+     "178::monkey::lib/monkey/mk_server/mk_vhost.c::mk_vhost_fdt_chain_lookup",
+     "96::librdkafka::lib/librdkafka-2.15.0/src/rdkafka_partition.c::rd_kafka_topic_partition_new_with_topic_id"
+    ],
+    "sample": [
+     {
+      "fn": "cat_exp_histogram_values",
+      "name": "tmp_buckets",
+      "origin": "lib/cmetrics/src/cmt_cat.c:358",
+      "line": "free(tmp_buckets);"
+     },
+     {
+      "fn": "copy_static_labels",
+      "name": "label",
+      "origin": "lib/cmetrics/src/cmt_cat.c:1191",
+      "line": "existing = find_static_label(dst->static_labels, label->key);"
+     },
+     {
+      "fn": "unpack_histogram_buckets",
+      "name": "decode_context",
+      "origin": "lib/cmetrics/src/cmt_decode_msgpack.c:862",
+      "line": "histogram = (struct cmt_histogram *) decode_context->map->parent;"
+     },
+     {
+      "fn": "unpack_label",
+      "name": "new_label",
+      "origin": "lib/cmetrics/src/cmt_decode_msgpack.c:351",
+      "line": "free(new_label);"
+     },
+     {
+      "fn": "unpack_metric_array_entry",
+      "name": "old_positive_buckets",
+      "origin": "lib/cmetrics/src/cmt_decode_msgpack.c:1373",
+      "line": "free(old_positive_buckets);"
+     },
+     {
+      "fn": "unpack_summary_quantiles",
+      "name": "decode_context",
+      "origin": "lib/cmetrics/src/cmt_decode_msgpack.c:683",
+      "line": "expected_count = decode_context->metric->sum_quantiles_count;"
+     }
+    ]
+   },
+   {
+    "subshape": "S4 local pointer in a condition",
+    "leaves": 1512,
+    "primary": 468,
+    "secondary": 1044,
+    "rows": 705,
+    "rows_alone": 6,
+    "rows_alone_list": [
+     "104::librdkafka::lib/librdkafka-2.15.0/src/rdkafka_sasl_cyrus.c::rd_kafka_sasl_cyrus_ready",
+     "18::cmetrics::lib/cmetrics/src/cmt_filter.c::metrics_check_label_value_existence",
+     "47::librdkafka::lib/librdkafka-2.15.0/src/cJSON.c::cJSON_GetArraySize",
+     "96::librdkafka::lib/librdkafka-2.15.0/src/rdkafka_partition.c::rd_kafka_topic_partition_get_current_leader_epoch",
+     "96::librdkafka::lib/librdkafka-2.15.0/src/rdkafka_partition.c::rd_kafka_topic_partition_get_leader_epoch",
+     "96::librdkafka::lib/librdkafka-2.15.0/src/rdkafka_partition.c::rd_kafka_toppar_get0"
+    ],
+    "sample": [
+     {
+      "fn": "copy_static_labels",
+      "name": "label",
+      "origin": "lib/cmetrics/src/cmt_cat.c:1188",
+      "line": "if (context_has_label_key(src, label->key)) {"
+     },
+     {
+      "fn": "append_unpacked_counter_to_metrics_context",
+      "name": "counter",
+      "origin": "lib/cmetrics/src/cmt_decode_msgpack.c:1838",
+      "line": "if (NULL == counter) {"
+     },
+     {
+      "fn": "append_unpacked_exp_histogram_to_metrics_context",
+      "name": "exp_histogram",
+      "origin": "lib/cmetrics/src/cmt_decode_msgpack.c:1990",
+      "line": "if (NULL == exp_histogram) {"
+     },
+     {
+      "fn": "append_unpacked_gauge_to_metrics_context",
+      "name": "gauge",
+      "origin": "lib/cmetrics/src/cmt_decode_msgpack.c:1869",
+      "line": "if (NULL == gauge) {"
+     },
+     {
+      "fn": "append_unpacked_histogram_to_metrics_context",
+      "name": "histogram",
+      "origin": "lib/cmetrics/src/cmt_decode_msgpack.c:1960",
+      "line": "if (NULL == histogram) {"
+     },
+     {
+      "fn": "append_unpacked_summary_to_metrics_context",
+      "name": "summary",
+      "origin": "lib/cmetrics/src/cmt_decode_msgpack.c:1929",
+      "line": "if (NULL == summary) {"
+     }
+    ]
+   },
+   {
+    "subshape": "S9 other",
+    "leaves": 368,
+    "primary": 59,
+    "secondary": 309,
+    "rows": 163,
+    "rows_alone": 5,
+    "rows_alone_list": [
+     "13::cmetrics::lib/cmetrics/src/cmt_encode_prometheus.c::metric_escape",
+     "153::monkey::lib/monkey/mk_core/mk_file.c::mk_file_get_info",
+     "170::monkey::lib/monkey/mk_server/mk_net.c::net_plain_close",
+     "65::librdkafka::lib/librdkafka-2.15.0/src/rdkafka.c::rd_kafka_Uuid_str",
+     "95::librdkafka::lib/librdkafka-2.15.0/src/rdkafka_op.c::rd_kafka_op_new0"
+    ],
+    "sample": [
+     {
+      "fn": "metric_escape",
+      "name": "description",
+      "origin": "lib/cmetrics/src/cmt_encode_prometheus.c:80",
+      "line": "switch (description[i]) {"
+     },
+     {
+      "fn": "cmt_mpack_unpack_map",
+      "name": "seen",
+      "origin": "lib/cmetrics/src/cmt_mpack_utils.c:230",
+      "line": "if (seen[seen_index] == callback_entry) {"
+     },
+     {
+      "fn": "LZ4F_compressBound_internal",
+      "name": "alreadyBuffered",
+      "origin": "lib/librdkafka-2.15.0/src/lz4frame.c:383",
+      "line": "size_t const bufferedSize = MIN(alreadyBuffered, maxBuffered);"
+     },
+     {
+      "fn": "LZ4HC_InsertAndGetWiderMatch",
+      "name": "currentSegmentLength",
+      "origin": "lib/librdkafka-2.15.0/src/lz4hc.c:395",
+      "line": "size_t const maxML = MIN(currentSegmentLength, srcPatternLength);"
+     },
+     {
+      "fn": "rd_addrinfo_prepare",
+      "name": "snode",
+      "origin": "lib/librdkafka-2.15.0/src/rdaddr.c:113",
+      "line": "*snode = '\\0';"
+     },
+     {
+      "fn": "ut_subbucketmask_overflow",
+      "name": "input",
+      "origin": "lib/librdkafka-2.15.0/src/rdhdrhistogram.c:685",
+      "line": "int r = rd_hdr_histogram_record(hdr, input[i]);"
+     }
+    ]
+   },
+   {
+    "subshape": "S6 pointer formal used directly",
+    "leaves": 4238,
+    "primary": 428,
+    "secondary": 3810,
+    "rows": 1087,
+    "rows_alone": 4,
+    "rows_alone_list": [
+     "100::librdkafka::lib/librdkafka-2.15.0/src/rdkafka_range_assignor.c::rd_kafka_member_assigned_partitions_pair_cmp",
+     "161::monkey::lib/monkey/mk_server/mk_config.c::mk_config_print_error_msg",
+     "50::librdkafka::lib/librdkafka-2.15.0/src/lz4frame.c::LZ4F_headerSize",
+     "60::librdkafka::lib/librdkafka-2.15.0/src/rddl.c::rd_dl_close"
+    ],
+    "sample": [
+     {
+      "fn": "cat_exp_histogram_values",
+      "name": "metric_dst",
+      "origin": "lib/cmetrics/src/cmt_cat.c:254",
+      "line": "if (metric_dst->exp_hist_positive_buckets == NULL &&"
+     },
+     {
+      "fn": "decode_exponential_histogram_data_point_list",
+      "name": "data_point_list",
+      "origin": "lib/cmetrics/src/cmt_decode_opentelemetry.c:1447",
+      "line": "if (data_point_list[index] == NULL) {"
+     },
+     {
+      "fn": "decode_histogram_data_point_list",
+      "name": "data_point_list",
+      "origin": "lib/cmetrics/src/cmt_decode_opentelemetry.c:1152",
+      "line": "if (data_point_list[index] == NULL) {"
+     },
+     {
+      "fn": "decode_numerical_data_point_list",
+      "name": "data_point_list",
+      "origin": "lib/cmetrics/src/cmt_decode_opentelemetry.c:842",
+      "line": "if (data_point_list[index] == NULL) {"
+     },
+     {
+      "fn": "decode_summary_data_point_list",
+      "name": "data_point_list",
+      "origin": "lib/cmetrics/src/cmt_decode_opentelemetry.c:991",
+      "line": "if (data_point_list[index] == NULL) {"
+     },
+     {
+      "fn": "append_sample_to_metric",
+      "name": "map",
+      "origin": "lib/cmetrics/src/cmt_encode_opentelemetry.c:3199",
+      "line": "summary = (struct cmt_summary *) map->parent;"
+     }
+    ]
+   },
+   {
+    "subshape": "S2 enumeration constant copied or tested",
+    "leaves": 252,
+    "primary": 249,
+    "secondary": 3,
+    "rows": 111,
+    "rows_alone": 1,
+    "rows_alone_list": [
+     "50::librdkafka::lib/librdkafka-2.15.0/src/lz4frame.c::LZ4F_getBlockSize"
+    ],
+    "sample": [
+     {
+      "fn": "decode_metrics_entry",
+      "name": "PROMETHEUS__METRIC_METADATA__METRIC_TYPE__HISTOGRAM",
+      "origin": "lib/cmetrics/src/cmt_decode_prometheus_remote_write.c:741",
+      "line": "type = PROMETHEUS__METRIC_METADATA__METRIC_TYPE__HISTOGRAM;"
+     },
+     {
+      "fn": "LZ4F_getBlockSize",
+      "name": "LZ4F_max64KB",
+      "origin": "lib/librdkafka-2.15.0/src/lz4frame.c:329",
+      "line": "if (blockSizeID == 0) blockSizeID = LZ4F_BLOCKSIZEID_DEFAULT;"
+     },
+     {
+      "fn": "LZ4F_optimalBSID",
+      "name": "LZ4F_max64KB",
+      "origin": "lib/librdkafka-2.15.0/src/lz4frame.c:354",
+      "line": "LZ4F_blockSizeID_t proposedBSID = LZ4F_max64KB;"
+     },
+     {
+      "fn": "pb_message_set_to_defaults",
+      "name": "PB_WT_VARINT",
+      "origin": "lib/librdkafka-2.15.0/src/nanopb/pb_decode.c:954",
+      "line": "pb_wire_type_t wire_type = PB_WT_VARINT;"
+     },
+     {
+      "fn": "pb_encode_tag_for_field",
+      "name": "PB_WT_VARINT",
+      "origin": "lib/librdkafka-2.15.0/src/nanopb/pb_encode.c:689",
+      "line": "wiretype = PB_WT_VARINT;"
+     },
+     {
+      "fn": "rd_avl_remove_elm0",
+      "name": "RD_AVL_LEFT",
+      "origin": "lib/librdkafka-2.15.0/src/rdavl.c:158",
+      "line": "dir = RD_AVL_LEFT;"
+     }
+    ]
+   },
+   {
+    "subshape": "S3 literal copied into a local",
+    "leaves": 133,
+    "primary": 133,
+    "secondary": 0,
+    "rows": 47,
+    "rows_alone": 1,
+    "rows_alone_list": [
+     "16::cmetrics::lib/cmetrics/src/cmt_encode_text.c::append_summary_metric_value"
+    ],
+    "sample": [
+     {
+      "fn": "decode_metrics_entry",
+      "name": "__qcore_literal__",
+      "origin": "lib/cmetrics/src/cmt_decode_opentelemetry.c:1508",
+      "line": "metric_namespace = \"\";"
+     },
+     {
+      "fn": "append_summary_metric_value",
+      "name": "__qcore_literal__",
+      "origin": "lib/cmetrics/src/cmt_encode_text.c:354",
+      "line": "quantile_pair_format_string = \"%g=%g, \";"
+     },
+     {
+      "fn": "unittest_rd_crc32c",
+      "name": "__qcore_literal__",
+      "origin": "lib/librdkafka-2.15.0/src/crc32c.c:405",
+      "line": "how = \"hardware (SSE42)\";"
+     },
+     {
+      "fn": "do_unittest_write_read_payload_correctness",
+      "name": "__qcore_literal__",
+      "origin": "lib/librdkafka-2.15.0/src/rdbuf.c:1571",
+      "line": "const char *pass_str = pass == 0 ? \"peek\" : \"read\";"
+     },
+     {
+      "fn": "rd_dl_open",
+      "name": "__qcore_literal__",
+      "origin": "lib/librdkafka-2.15.0/src/rddl.c:106",
+      "line": "const char *solib_ext = SOLIB_EXT;"
+     },
+     {
+      "fn": "rd_dl_open0",
+      "name": "__qcore_literal__",
+      "origin": "lib/librdkafka-2.15.0/src/rddl.c:79",
+      "line": "loadfunc = \"dlopen()\";"
+     }
+    ]
+   },
+   {
+    "subshape": "S7 file-scope object or undeclared name",
+    "leaves": 410,
+    "primary": 123,
+    "secondary": 287,
+    "rows": 183,
+    "rows_alone": 1,
+    "rows_alone_list": [
+     "65::librdkafka::lib/librdkafka-2.15.0/src/rdkafka.c::rd_kafka_global_cnt_get"
+    ],
+    "sample": [
+     {
+      "fn": "cmt_exp_histogram_set_default",
+      "name": "old_positive_buckets",
+      "origin": "lib/cmetrics/src/cmt_exp_histogram.c:192",
+      "line": "if (old_positive_buckets != NULL) {"
+     },
+     {
+      "fn": "cJSON_Delete",
+      "name": "item",
+      "origin": "lib/librdkafka-2.15.0/src/cJSON.c:256",
+      "line": "while (item != NULL)"
+     },
+     {
+      "fn": "cJSON_Minify",
+      "name": "json",
+      "origin": "lib/librdkafka-2.15.0/src/cJSON.c:2911",
+      "line": "char *into = json;"
+     },
+     {
+      "fn": "LZ4_compress_destSize_extState",
+      "name": "byPtr",
+      "origin": "lib/librdkafka-2.15.0/src/lz4.c:1460",
+      "line": "tableType_t const addrMode = ((sizeof(void*)==4) && ((uptrval)src > LZ4_DISTANCE_MAX)) ? byPtr : byU32;"
+     },
+     {
+      "fn": "LZ4_compress_fast_continue",
+      "name": "byU32",
+      "origin": "lib/librdkafka-2.15.0/src/lz4.c:1642",
+      "line": "const tableType_t tableType = byU32;"
+     },
+     {
+      "fn": "LZ4_compress_fast_extState",
+      "name": "byPtr",
+      "origin": "lib/librdkafka-2.15.0/src/lz4.c:1361",
+      "line": "const tableType_t tableType = ((sizeof(void*)==4) && ((uptrval)source > LZ4_DISTANCE_MAX)) ? byPtr : byU32;"
+     }
+    ]
+   },
+   {
+    "subshape": "S8 lowering placeholder __qcore_nested_value_N",
+    "leaves": 8,
+    "primary": 8,
+    "secondary": 0,
+    "rows": 3,
+    "rows_alone": 0,
+    "rows_alone_list": [],
+    "sample": [
+     {
+      "fn": "mk_cache_worker_exit",
+      "name": "__qcore_nested_value_0",
+      "origin": "lib/monkey/mk_server/mk_cache.c:66",
+      "line": "mk_mem_free(MK_TLS_GET(mk_tls_cache_header_lm));"
+     },
+     {
+      "fn": "mk_sched_worker_free",
+      "name": "__qcore_nested_value_0",
+      "origin": "lib/monkey/mk_server/mk_scheduler.c:151",
+      "line": "mk_mem_free(MK_TLS_GET(mk_tls_sched_cs));"
+     },
+     {
+      "fn": "mk_server_worker_loop",
+      "name": "__qcore_nested_value_0",
+      "origin": "lib/monkey/mk_server/mk_server.c:592",
+      "line": "mk_mem_free(MK_TLS_GET(mk_tls_server_timeout));"
+     }
+    ]
+   },
+   {
+    "subshape": "S8 lowering placeholder __ctx",
+    "leaves": 3,
+    "primary": 1,
+    "secondary": 2,
+    "rows": 3,
+    "rows_alone": 0,
+    "rows_alone_list": [],
+    "sample": [
+     {
+      "fn": "mk_start",
+      "name": "__ctx",
+      "origin": "lib/monkey/mk_server/mk_lib.c:201",
+      "line": "mk_event_foreach(event, server->lib_evl_start) {"
+     }
+    ]
+   },
+   {
+    "subshape": "S8 lowering placeholder __qcore_returned_value",
+    "leaves": 55,
+    "primary": 0,
+    "secondary": 55,
+    "rows": 35,
+    "rows_alone": 0,
+    "rows_alone_list": [],
+    "sample": []
+   },
+   {
+    "subshape": "S8 lowering placeholder __tmpstr",
+    "leaves": 115,
+    "primary": 0,
+    "secondary": 115,
+    "rows": 7,
+    "rows_alone": 0,
+    "rows_alone_list": [],
+    "sample": []
+   },
+   {
+    "subshape": "S8 lowering placeholder _vp",
+    "leaves": 50,
+    "primary": 0,
+    "secondary": 50,
+    "rows": 7,
+    "rows_alone": 0,
+    "rows_alone_list": [],
+    "sample": []
+   }
+  ],
+  "detail": [
+   {
+    "subshape": "S1 pointer formal copied into a local",
+    "leaves": 379,
+    "primary": 347,
+    "secondary": 32,
+    "rows": 328,
+    "rows_alone": 27,
+    "rows_alone_list": [
+     "110::librdkafka::lib/librdkafka-2.15.0/src/rdkafka_ssl.c::rd_kafka_transport_ssl_passwd_cb",
+     "117::librdkafka::lib/librdkafka-2.15.0/src/rdkafka_topic.c::rd_kafka_topic_info_topic_cmp",
+     "11::cmetrics::lib/cmetrics/src/cmt_encode_opentelemetry.c::get_context_arena",
+     "4::cmetrics::lib/cmetrics/src/cmt_decode_msgpack.c::unpack_exp_histogram_count",
+     "4::cmetrics::lib/cmetrics/src/cmt_decode_msgpack.c::unpack_exp_histogram_negative_bucket",
+     "4::cmetrics::lib/cmetrics/src/cmt_decode_msgpack.c::unpack_exp_histogram_positive_bucket",
+     "4::cmetrics::lib/cmetrics/src/cmt_decode_msgpack.c::unpack_exp_histogram_sum",
+     "4::cmetrics::lib/cmetrics/src/cmt_decode_msgpack.c::unpack_exp_histogram_sum_set",
+     "4::cmetrics::lib/cmetrics/src/cmt_decode_msgpack.c::unpack_exp_histogram_zero_count",
+     "4::cmetrics::lib/cmetrics/src/cmt_decode_msgpack.c::unpack_histogram_bucket",
+     "4::cmetrics::lib/cmetrics/src/cmt_decode_msgpack.c::unpack_histogram_count",
+     "4::cmetrics::lib/cmetrics/src/cmt_decode_msgpack.c::unpack_metric_hash",
+     "4::cmetrics::lib/cmetrics/src/cmt_decode_msgpack.c::unpack_metric_value_type",
+     "4::cmetrics::lib/cmetrics/src/cmt_decode_msgpack.c::unpack_metric_value_uint64",
+     "4::cmetrics::lib/cmetrics/src/cmt_decode_msgpack.c::unpack_summary_count",
+     "4::cmetrics::lib/cmetrics/src/cmt_decode_msgpack.c::unpack_summary_quantile",
+     "4::cmetrics::lib/cmetrics/src/cmt_decode_msgpack.c::unpack_summary_quantiles_set",
+     "4::cmetrics::lib/cmetrics/src/cmt_decode_msgpack.c::unpack_summary_sum",
+     "68::librdkafka::lib/librdkafka-2.15.0/src/rdkafka_assignor.c::rd_kafka_assignor_cmp_str",
+     "68::librdkafka::lib/librdkafka-2.15.0/src/rdkafka_assignor.c::rd_kafka_group_member_cmp",
+     "71::librdkafka::lib/librdkafka-2.15.0/src/rdkafka_broker.c::rd_kafka_broker_start_reauth_cb",
+     "73::librdkafka::lib/librdkafka-2.15.0/src/rdkafka_cert.c::rd_kafka_conf_ssl_passwd_cb",
+     "81::librdkafka::lib/librdkafka-2.15.0/src/rdkafka_header.c::rd_kafka_header_cmp_str",
+     "87::librdkafka::lib/librdkafka-2.15.0/src/rdkafka_mock.c::rd_kafka_mock_connection_write_out_tmr_cb",
+     "96::librdkafka::lib/librdkafka-2.15.0/src/rdkafka_partition.c::rd_kafka_topic_partition_cmp",
+     "96::librdkafka::lib/librdkafka-2.15.0/src/rdkafka_partition.c::rd_kafka_topic_partition_cmp_topic",
+     "96::librdkafka::lib/librdkafka-2.15.0/src/rdkafka_partition.c::rd_kafka_topic_partition_not_regex"
+    ],
+    "sample": [
+     {
+      "fn": "cat_exp_histogram_values",
+      "name": "metric_dst",
+      "origin": "lib/cmetrics/src/cmt_cat.c:220",
+      "line": "first_lock_target = metric_dst;"
+     },
+     {
+      "fn": "unpack_basic_type_entry",
+      "name": "context",
+      "origin": "lib/cmetrics/src/cmt_decode_msgpack.c:2018",
+      "line": "cmt = (struct cmt *) context;"
+     },
+     {
+      "fn": "unpack_basic_type_meta",
+      "name": "context",
+      "origin": "lib/cmetrics/src/cmt_decode_msgpack.c:1661",
+      "line": "decode_context = (struct cmt_msgpack_decode_context *) context;"
+     },
+     {
+      "fn": "unpack_basic_type_values",
+      "name": "context",
+      "origin": "lib/cmetrics/src/cmt_decode_msgpack.c:1724",
+      "line": "decode_context = context;"
+     },
+     {
+      "fn": "unpack_context_external_metadata",
+      "name": "context",
+      "origin": "lib/cmetrics/src/cmt_decode_msgpack.c:2076",
+      "line": "metrics_context = (struct cmt *) context;"
+     },
+     {
+      "fn": "unpack_context_internal_metadata",
+      "name": "context",
+      "origin": "lib/cmetrics/src/cmt_decode_msgpack.c:2051",
+      "line": "metrics_context = (struct cmt *) context;"
+     }
+    ]
+   },
+   {
+    "subshape": "S4 local pointer in a condition",
+    "leaves": 1512,
+    "primary": 468,
+    "secondary": 1044,
+    "rows": 705,
+    "rows_alone": 6,
+    "rows_alone_list": [
+     "104::librdkafka::lib/librdkafka-2.15.0/src/rdkafka_sasl_cyrus.c::rd_kafka_sasl_cyrus_ready",
+     "18::cmetrics::lib/cmetrics/src/cmt_filter.c::metrics_check_label_value_existence",
+     "47::librdkafka::lib/librdkafka-2.15.0/src/cJSON.c::cJSON_GetArraySize",
+     "96::librdkafka::lib/librdkafka-2.15.0/src/rdkafka_partition.c::rd_kafka_topic_partition_get_current_leader_epoch",
+     "96::librdkafka::lib/librdkafka-2.15.0/src/rdkafka_partition.c::rd_kafka_topic_partition_get_leader_epoch",
+     "96::librdkafka::lib/librdkafka-2.15.0/src/rdkafka_partition.c::rd_kafka_toppar_get0"
+    ],
+    "sample": [
+     {
+      "fn": "copy_static_labels",
+      "name": "label",
+      "origin": "lib/cmetrics/src/cmt_cat.c:1188",
+      "line": "if (context_has_label_key(src, label->key)) {"
+     },
+     {
+      "fn": "append_unpacked_counter_to_metrics_context",
+      "name": "counter",
+      "origin": "lib/cmetrics/src/cmt_decode_msgpack.c:1838",
+      "line": "if (NULL == counter) {"
+     },
+     {
+      "fn": "append_unpacked_exp_histogram_to_metrics_context",
+      "name": "exp_histogram",
+      "origin": "lib/cmetrics/src/cmt_decode_msgpack.c:1990",
+      "line": "if (NULL == exp_histogram) {"
+     },
+     {
+      "fn": "append_unpacked_gauge_to_metrics_context",
+      "name": "gauge",
+      "origin": "lib/cmetrics/src/cmt_decode_msgpack.c:1869",
+      "line": "if (NULL == gauge) {"
+     },
+     {
+      "fn": "append_unpacked_histogram_to_metrics_context",
+      "name": "histogram",
+      "origin": "lib/cmetrics/src/cmt_decode_msgpack.c:1960",
+      "line": "if (NULL == histogram) {"
+     },
+     {
+      "fn": "append_unpacked_summary_to_metrics_context",
+      "name": "summary",
+      "origin": "lib/cmetrics/src/cmt_decode_msgpack.c:1929",
+      "line": "if (NULL == summary) {"
+     }
+    ]
+   },
+   {
+    "subshape": "S5 local pointer read, handed or returned (member-in-call)",
+    "leaves": 559,
+    "primary": 101,
+    "secondary": 458,
+    "rows": 282,
+    "rows_alone": 3,
+    "rows_alone_list": [
+     "135::librdkafka::lib/librdkafka-2.15.0/src/snappy.c::append",
+     "156::monkey::lib/monkey/mk_core/mk_rconf.c::mk_rconf_section_entry_add",
+     "172::monkey::lib/monkey/mk_server/mk_scheduler.c::mk_sched_event_free"
+    ],
+    "sample": [
+     {
+      "fn": "copy_static_labels",
+      "name": "label",
+      "origin": "lib/cmetrics/src/cmt_cat.c:1191",
+      "line": "existing = find_static_label(dst->static_labels, label->key);"
+     },
+     {
+      "fn": "pack_basic_header",
+      "name": "label_k",
+      "origin": "lib/cmetrics/src/cmt_encode_cloudwatch_emf.c:75",
+      "line": "mpack_write_cstr(writer, label_k->name != NULL ? label_k->name : \"\");"
+     },
+     {
+      "fn": "pack_metric",
+      "name": "opts",
+      "origin": "lib/cmetrics/src/cmt_encode_cloudwatch_emf.c:280",
+      "line": "mpack_write_cstr(writer, opts->fqname);"
+     },
+     {
+      "fn": "pack_header",
+      "name": "summary",
+      "origin": "lib/cmetrics/src/cmt_encode_msgpack.c:184",
+      "line": "mpack_write_double(writer, summary->quantiles[index]);"
+     },
+     {
+      "fn": "pack_static_labels",
+      "name": "static_label",
+      "origin": "lib/cmetrics/src/cmt_encode_msgpack.c:450",
+      "line": "mpack_write_cstr(writer, static_label->key);"
+     },
+     {
+      "fn": "request_data_point_count",
+      "name": "scope",
+      "origin": "lib/cmetrics/src/cmt_encode_opentelemetry_batch.c:544",
+      "line": "result = metric_data_point_count(scope->metrics[metric_index], &count);"
+     }
+    ]
+   },
+   {
+    "subshape": "S5 local pointer read, handed or returned (call-actual)",
+    "leaves": 1143,
+    "primary": 83,
+    "secondary": 1060,
+    "rows": 527,
+    "rows_alone": 3,
+    "rows_alone_list": [
+     "138::chunkio::lib/chunkio/src/cio_chunk.c::cio_chunk_close_stream",
+     "162::monkey::lib/monkey/mk_server/mk_fifo.c::mk_fifo_queue_destroy_all",
+     "162::monkey::lib/monkey/mk_server/mk_fifo.c::mk_fifo_queue_id_destroy"
+    ],
+    "sample": [
+     {
+      "fn": "cat_exp_histogram_values",
+      "name": "tmp_buckets",
+      "origin": "lib/cmetrics/src/cmt_cat.c:358",
+      "line": "free(tmp_buckets);"
+     },
+     {
+      "fn": "unpack_label",
+      "name": "new_label",
+      "origin": "lib/cmetrics/src/cmt_decode_msgpack.c:351",
+      "line": "free(new_label);"
+     },
+     {
+      "fn": "unpack_metric_array_entry",
+      "name": "old_positive_buckets",
+      "origin": "lib/cmetrics/src/cmt_decode_msgpack.c:1373",
+      "line": "free(old_positive_buckets);"
+     },
+     {
+      "fn": "decode_exponential_histogram_data_point",
+      "name": "old_positive_buckets",
+      "origin": "lib/cmetrics/src/cmt_decode_opentelemetry.c:1392",
+      "line": "free(old_positive_buckets);"
+     },
+     {
+      "fn": "pack_histogram_metric",
+      "name": "exp_bucket_counts",
+      "origin": "lib/cmetrics/src/cmt_encode_cloudwatch_emf.c:160",
+      "line": "free(exp_bucket_counts);"
+     },
+     {
+      "fn": "append_metric_value",
+      "name": "bucket_values",
+      "origin": "lib/cmetrics/src/cmt_encode_influx.c:202",
+      "line": "free(bucket_values);"
+     }
+    ]
+   },
+   {
+    "subshape": "S5 local pointer read, handed or returned (return)",
+    "leaves": 281,
+    "primary": 22,
+    "secondary": 259,
+    "rows": 261,
+    "rows_alone": 3,
+    "rows_alone_list": [
+     "11::cmetrics::lib/cmetrics/src/cmt_encode_opentelemetry.c::fetch_metadata_kvlist_key",
+     "135::librdkafka::lib/librdkafka-2.15.0/src/snappy.c::get_hash_table",
+     "178::monkey::lib/monkey/mk_server/mk_vhost.c::mk_vhost_fdt_chain_lookup"
+    ],
+    "sample": [
+     {
+      "fn": "fetch_metadata_kvlist_key",
+      "name": "entry_kvlist",
+      "origin": "lib/cmetrics/src/cmt_encode_opentelemetry.c:92",
+      "line": "return entry_kvlist;"
+     },
+     {
+      "fn": "convert_otel_attrs",
+      "name": "attr",
+      "origin": "lib/ctraces/src/ctr_decode_opentelemetry.c:461",
+      "line": "return attr;"
+     },
+     {
+      "fn": "rd_buf_get_segment_at_offset",
+      "name": "seg",
+      "origin": "lib/librdkafka-2.15.0/src/rdbuf.c:230",
+      "line": "return (rd_segment_t *)seg;"
+     },
+     {
+      "fn": "rd_http_req_get_content_type",
+      "name": "content_type",
+      "origin": "lib/librdkafka-2.15.0/src/rdhttp.c:366",
+      "line": "return content_type;"
+     },
+     {
+      "fn": "rd_kafka_consumer_close_q",
+      "name": "error",
+      "origin": "lib/librdkafka-2.15.0/src/rdkafka.c:5184",
+      "line": "return error;"
+     },
+     {
+      "fn": "rd_kafka_memberid",
+      "name": "memberid",
+      "origin": "lib/librdkafka-2.15.0/src/rdkafka.c:6315",
+      "line": "return memberid;"
+     }
+    ]
+   },
+   {
+    "subshape": "S6 pointer formal used directly (call-actual)",
+    "leaves": 1326,
+    "primary": 37,
+    "secondary": 1289,
+    "rows": 473,
+    "rows_alone": 2,
+    "rows_alone_list": [
+     "161::monkey::lib/monkey/mk_server/mk_config.c::mk_config_print_error_msg",
+     "60::librdkafka::lib/librdkafka-2.15.0/src/rddl.c::rd_dl_close"
+    ],
+    "sample": [
+     {
+      "fn": "cmt_labels_destroy",
+      "name": "labels",
+      "origin": "lib/cmetrics/src/cmt_label.c:60",
+      "line": "free(labels);"
+     },
+     {
+      "fn": "decode_opentelemetry_error",
+      "name": "ctr",
+      "origin": "lib/ctraces/src/ctr_decode_opentelemetry.c:617",
+      "line": "ctr_destroy(ctr);"
+     },
+     {
+      "fn": "destroy_events",
+      "name": "events",
+      "origin": "lib/ctraces/src/ctr_encode_opentelemetry.c:1302",
+      "line": "free(events);"
+     },
+     {
+      "fn": "destroy_links",
+      "name": "links",
+      "origin": "lib/ctraces/src/ctr_encode_opentelemetry.c:1337",
+      "line": "free(links);"
+     },
+     {
+      "fn": "destroy_resource_spans",
+      "name": "rs",
+      "origin": "lib/ctraces/src/ctr_encode_opentelemetry.c:1459",
+      "line": "free(rs);"
+     },
+     {
+      "fn": "destroy_scope_spans",
+      "name": "scope_spans",
+      "origin": "lib/ctraces/src/ctr_encode_opentelemetry.c:1437",
+      "line": "free(scope_spans);"
+     }
+    ]
+   },
+   {
+    "subshape": "S9 other (formal-scalar)",
+    "leaves": 42,
+    "primary": 24,
+    "secondary": 18,
+    "rows": 30,
+    "rows_alone": 2,
+    "rows_alone_list": [
+     "13::cmetrics::lib/cmetrics/src/cmt_encode_prometheus.c::metric_escape",
+     "170::monkey::lib/monkey/mk_server/mk_net.c::net_plain_close"
+    ],
+    "sample": [
+     {
+      "fn": "metric_escape",
+      "name": "description",
+      "origin": "lib/cmetrics/src/cmt_encode_prometheus.c:80",
+      "line": "switch (description[i]) {"
+     },
+     {
+      "fn": "LZ4F_compressBound_internal",
+      "name": "alreadyBuffered",
+      "origin": "lib/librdkafka-2.15.0/src/lz4frame.c:383",
+      "line": "size_t const bufferedSize = MIN(alreadyBuffered, maxBuffered);"
+     },
+     {
+      "fn": "rd_kafka_cgrp_handle_ConsumerGroupHeartbeat_leave",
+      "name": "err",
+      "origin": "lib/librdkafka-2.15.0/src/rdkafka_cgrp.c:1048",
+      "line": "ErrorCode = err;"
+     },
+     {
+      "fn": "rd_kafka_cgrp_handle_JoinGroup",
+      "name": "err",
+      "origin": "lib/librdkafka-2.15.0/src/rdkafka_cgrp.c:2301",
+      "line": "ErrorCode = err;"
+     },
+     {
+      "fn": "rd_kafka_cgrp_handle_LeaveGroup",
+      "name": "err",
+      "origin": "lib/librdkafka-2.15.0/src/rdkafka_cgrp.c:974",
+      "line": "ErrorCode = err;"
+     },
+     {
+      "fn": "rd_kafka_cgrp_handle_ShareGroupHeartbeat_leave",
+      "name": "err",
+      "origin": "lib/librdkafka-2.15.0/src/rdkafka_cgrp.c:1096",
+      "line": "ErrorCode = err;"
+     }
+    ]
+   },
+   {
+    "subshape": "S9 other (local-array)",
+    "leaves": 84,
+    "primary": 24,
+    "secondary": 60,
+    "rows": 27,
+    "rows_alone": 2,
+    "rows_alone_list": [
+     "65::librdkafka::lib/librdkafka-2.15.0/src/rdkafka.c::rd_kafka_Uuid_str",
+     "95::librdkafka::lib/librdkafka-2.15.0/src/rdkafka_op.c::rd_kafka_op_new0"
+    ],
+    "sample": [
+     {
+      "fn": "cmt_mpack_unpack_map",
+      "name": "seen",
+      "origin": "lib/cmetrics/src/cmt_mpack_utils.c:230",
+      "line": "if (seen[seen_index] == callback_entry) {"
+     },
+     {
+      "fn": "rd_addrinfo_prepare",
+      "name": "snode",
+      "origin": "lib/librdkafka-2.15.0/src/rdaddr.c:113",
+      "line": "*snode = '\\0';"
+     },
+     {
+      "fn": "ut_subbucketmask_overflow",
+      "name": "input",
+      "origin": "lib/librdkafka-2.15.0/src/rdhdrhistogram.c:685",
+      "line": "int r = rd_hdr_histogram_record(hdr, input[i]);"
+     },
+     {
+      "fn": "rd_kafka_Uuid_base64str",
+      "name": "input_uuid",
+      "origin": "lib/librdkafka-2.15.0/src/rdkafka.c:7252",
+      "line": "input_uuid[0]  = htobe64(uuid->most_significant_bits);"
+     },
+     {
+      "fn": "rd_kafka_Uuid_str",
+      "name": "bytes",
+      "origin": "lib/librdkafka-2.15.0/src/rdkafka.c:7230",
+      "line": "bytes[i]     = (uuid->most_significant_bits >> (8 * j)) & 0xFF;"
+     },
+     {
+      "fn": "rd_kafka_anyconf_set",
+      "name": "estmp",
+      "origin": "lib/librdkafka-2.15.0/src/rdkafka_conf.c:2553",
+      "line": "errstr      = estmp;"
+     }
+    ]
+   },
+   {
+    "subshape": "S2 enumeration constant copied or tested",
+    "leaves": 252,
+    "primary": 249,
+    "secondary": 3,
+    "rows": 111,
+    "rows_alone": 1,
+    "rows_alone_list": [
+     "50::librdkafka::lib/librdkafka-2.15.0/src/lz4frame.c::LZ4F_getBlockSize"
+    ],
+    "sample": [
+     {
+      "fn": "decode_metrics_entry",
+      "name": "PROMETHEUS__METRIC_METADATA__METRIC_TYPE__HISTOGRAM",
+      "origin": "lib/cmetrics/src/cmt_decode_prometheus_remote_write.c:741",
+      "line": "type = PROMETHEUS__METRIC_METADATA__METRIC_TYPE__HISTOGRAM;"
+     },
+     {
+      "fn": "LZ4F_getBlockSize",
+      "name": "LZ4F_max64KB",
+      "origin": "lib/librdkafka-2.15.0/src/lz4frame.c:329",
+      "line": "if (blockSizeID == 0) blockSizeID = LZ4F_BLOCKSIZEID_DEFAULT;"
+     },
+     {
+      "fn": "LZ4F_optimalBSID",
+      "name": "LZ4F_max64KB",
+      "origin": "lib/librdkafka-2.15.0/src/lz4frame.c:354",
+      "line": "LZ4F_blockSizeID_t proposedBSID = LZ4F_max64KB;"
+     },
+     {
+      "fn": "pb_message_set_to_defaults",
+      "name": "PB_WT_VARINT",
+      "origin": "lib/librdkafka-2.15.0/src/nanopb/pb_decode.c:954",
+      "line": "pb_wire_type_t wire_type = PB_WT_VARINT;"
+     },
+     {
+      "fn": "pb_encode_tag_for_field",
+      "name": "PB_WT_VARINT",
+      "origin": "lib/librdkafka-2.15.0/src/nanopb/pb_encode.c:689",
+      "line": "wiretype = PB_WT_VARINT;"
+     },
+     {
+      "fn": "rd_avl_remove_elm0",
+      "name": "RD_AVL_LEFT",
+      "origin": "lib/librdkafka-2.15.0/src/rdavl.c:158",
+      "line": "dir = RD_AVL_LEFT;"
+     }
+    ]
+   },
+   {
+    "subshape": "S5 local pointer read, handed or returned (member-access)",
+    "leaves": 1321,
+    "primary": 169,
+    "secondary": 1152,
+    "rows": 513,
+    "rows_alone": 1,
+    "rows_alone_list": [
+     "96::librdkafka::lib/librdkafka-2.15.0/src/rdkafka_partition.c::rd_kafka_topic_partition_new_with_topic_id"
+    ],
+    "sample": [
+     {
+      "fn": "unpack_histogram_buckets",
+      "name": "decode_context",
+      "origin": "lib/cmetrics/src/cmt_decode_msgpack.c:862",
+      "line": "histogram = (struct cmt_histogram *) decode_context->map->parent;"
+     },
+     {
+      "fn": "unpack_summary_quantiles",
+      "name": "decode_context",
+      "origin": "lib/cmetrics/src/cmt_decode_msgpack.c:683",
+      "line": "expected_count = decode_context->metric->sum_quantiles_count;"
+     },
+     {
+      "fn": "initialize_exemplars_from_metadata",
+      "name": "variant",
+      "origin": "lib/cmetrics/src/cmt_encode_opentelemetry.c:453",
+      "line": "array = variant->data.as_array;"
+     },
+     {
+      "fn": "metrics_batch_view_destroy",
+      "name": "scope",
+      "origin": "lib/cmetrics/src/cmt_encode_opentelemetry_batch.c:102",
+      "line": "metric = scope->metrics[metric_index];"
+     },
+     {
+      "fn": "request_data_point_count",
+      "name": "resource",
+      "origin": "lib/cmetrics/src/cmt_encode_opentelemetry_batch.c:538",
+      "line": "scope = resource->scope_metrics[scope_index];"
+     },
+     {
+      "fn": "pack_complex_metric_sample",
+      "name": "histogram",
+      "origin": "lib/cmetrics/src/cmt_encode_prometheus_remote_write.c:1002",
+      "line": "bucket_count = histogram->buckets->count;"
+     }
+    ]
+   },
+   {
+    "subshape": "S3 literal copied into a local",
+    "leaves": 133,
+    "primary": 133,
+    "secondary": 0,
+    "rows": 47,
+    "rows_alone": 1,
+    "rows_alone_list": [
+     "16::cmetrics::lib/cmetrics/src/cmt_encode_text.c::append_summary_metric_value"
+    ],
+    "sample": [
+     {
+      "fn": "decode_metrics_entry",
+      "name": "__qcore_literal__",
+      "origin": "lib/cmetrics/src/cmt_decode_opentelemetry.c:1508",
+      "line": "metric_namespace = \"\";"
+     },
+     {
+      "fn": "append_summary_metric_value",
+      "name": "__qcore_literal__",
+      "origin": "lib/cmetrics/src/cmt_encode_text.c:354",
+      "line": "quantile_pair_format_string = \"%g=%g, \";"
+     },
+     {
+      "fn": "unittest_rd_crc32c",
+      "name": "__qcore_literal__",
+      "origin": "lib/librdkafka-2.15.0/src/crc32c.c:405",
+      "line": "how = \"hardware (SSE42)\";"
+     },
+     {
+      "fn": "do_unittest_write_read_payload_correctness",
+      "name": "__qcore_literal__",
+      "origin": "lib/librdkafka-2.15.0/src/rdbuf.c:1571",
+      "line": "const char *pass_str = pass == 0 ? \"peek\" : \"read\";"
+     },
+     {
+      "fn": "rd_dl_open",
+      "name": "__qcore_literal__",
+      "origin": "lib/librdkafka-2.15.0/src/rddl.c:106",
+      "line": "const char *solib_ext = SOLIB_EXT;"
+     },
+     {
+      "fn": "rd_dl_open0",
+      "name": "__qcore_literal__",
+      "origin": "lib/librdkafka-2.15.0/src/rddl.c:79",
+      "line": "loadfunc = \"dlopen()\";"
+     }
+    ]
+   },
+   {
+    "subshape": "S6 pointer formal used directly (name-not-on-line)",
+    "leaves": 370,
+    "primary": 56,
+    "secondary": 314,
+    "rows": 216,
+    "rows_alone": 1,
+    "rows_alone_list": [
+     "100::librdkafka::lib/librdkafka-2.15.0/src/rdkafka_range_assignor.c::rd_kafka_member_assigned_partitions_pair_cmp"
+    ],
+    "sample": [
+     {
+      "fn": "destroy_exponential_histogram_data_point_list",
+      "name": "data_point_list",
+      "origin": "lib/cmetrics/src/cmt_encode_opentelemetry.c:2153",
+      "line": "for (element_index = 0 ;"
+     },
+     {
+      "fn": "destroy_histogram_data_point_list",
+      "name": "data_point_list",
+      "origin": "lib/cmetrics/src/cmt_encode_opentelemetry.c:2135",
+      "line": "for (element_index = 0 ;"
+     },
+     {
+      "fn": "destroy_metric_list",
+      "name": "metric_list",
+      "origin": "lib/cmetrics/src/cmt_encode_opentelemetry.c:2864",
+      "line": "for (element_index = 0 ;"
+     },
+     {
+      "fn": "destroy_numerical_data_point_list",
+      "name": "data_point_list",
+      "origin": "lib/cmetrics/src/cmt_encode_opentelemetry.c:2099",
+      "line": "for (element_index = 0 ;"
+     },
+     {
+      "fn": "destroy_resource_metrics_list",
+      "name": "metric_list",
+      "origin": "lib/cmetrics/src/cmt_encode_opentelemetry.c:1728",
+      "line": "for (element_index = 0 ;"
+     },
+     {
+      "fn": "destroy_scope_metric_list",
+      "name": "metric_list",
+      "origin": "lib/cmetrics/src/cmt_encode_opentelemetry.c:1917",
+      "line": "for (element_index = 0 ;"
+     }
+    ]
+   },
+   {
+    "subshape": "S7 file-scope object or undeclared name (copy-source)",
+    "leaves": 43,
+    "primary": 28,
+    "secondary": 15,
+    "rows": 25,
+    "rows_alone": 1,
+    "rows_alone_list": [
+     "65::librdkafka::lib/librdkafka-2.15.0/src/rdkafka.c::rd_kafka_global_cnt_get"
+    ],
+    "sample": [
+     {
+      "fn": "cJSON_Minify",
+      "name": "json",
+      "origin": "lib/librdkafka-2.15.0/src/cJSON.c:2911",
+      "line": "char *into = json;"
+     },
+     {
+      "fn": "LZ4_compress_fast_continue",
+      "name": "byU32",
+      "origin": "lib/librdkafka-2.15.0/src/lz4.c:1642",
+      "line": "const tableType_t tableType = byU32;"
+     },
+     {
+      "fn": "LZ4_compress_fast_extState_fastReset",
+      "name": "byU16",
+      "origin": "lib/librdkafka-2.15.0/src/lz4.c:1391",
+      "line": "const tableType_t tableType = byU16;"
+     },
+     {
+      "fn": "LZ4_loadDict",
+      "name": "byU32",
+      "origin": "lib/librdkafka-2.15.0/src/lz4.c:1549",
+      "line": "const tableType_t tableType = byU32;"
+     },
+     {
+      "fn": "LZ4F_compressFrameBound",
+      "name": "maxFHSize",
+      "origin": "lib/librdkafka-2.15.0/src/lz4frame.c:401",
+      "line": "size_t const headerSize = maxFHSize;      /* max header size, including optional fields */"
+     },
+     {
+      "fn": "LZ4F_compressUpdateImpl",
+      "name": "notDone",
+      "origin": "lib/librdkafka-2.15.0/src/lz4frame.c:941",
+      "line": "LZ4F_lastBlockStatus lastBlockCompressed = notDone;"
+     }
+    ]
+   },
+   {
+    "subshape": "S9 other (local-scalar)",
+    "leaves": 202,
+    "primary": 10,
+    "secondary": 192,
+    "rows": 100,
+    "rows_alone": 1,
+    "rows_alone_list": [
+     "153::monkey::lib/monkey/mk_core/mk_file.c::mk_file_get_info"
+    ],
+    "sample": [
+     {
+      "fn": "LZ4HC_InsertAndGetWiderMatch",
+      "name": "currentSegmentLength",
+      "origin": "lib/librdkafka-2.15.0/src/lz4hc.c:395",
+      "line": "size_t const maxML = MIN(currentSegmentLength, srcPatternLength);"
+     },
+     {
+      "fn": "rd_kafka_metadata_cache_topic_update_merge_partitions",
+      "name": "current_partition_cnt",
+      "origin": "lib/librdkafka-2.15.0/src/rdkafka_metadata_cache.c:515",
+      "line": "partition_cnt = RD_MAX(current_partition_cnt, new_partition_cnt);"
+     },
+     {
+      "fn": "rd_kafka_mock_handle_ShareFetch",
+      "name": "part_err",
+      "origin": "lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c:4540",
+      "line": "if (part_err)"
+     },
+     {
+      "fn": "rd_kafka_msg_partitioner",
+      "name": "err",
+      "origin": "lib/librdkafka-2.15.0/src/rdkafka_msg.c:1188",
+      "line": "return err;"
+     },
+     {
+      "fn": "rd_kafka_q_wait_result",
+      "name": "err",
+      "origin": "lib/librdkafka-2.15.0/src/rdkafka_queue.c:1211",
+      "line": "return err;"
+     },
+     {
+      "fn": "mk_file_get_info",
+      "name": "f",
+      "origin": "lib/monkey/mk_core/mk_file.c:67",
+      "line": "target = f;"
+     }
+    ]
+   },
+   {
+    "subshape": "S6 pointer formal used directly (condition)",
+    "leaves": 1034,
+    "primary": 139,
+    "secondary": 895,
+    "rows": 467,
+    "rows_alone": 0,
+    "rows_alone_list": [],
+    "sample": [
+     {
+      "fn": "cat_exp_histogram_values",
+      "name": "metric_dst",
+      "origin": "lib/cmetrics/src/cmt_cat.c:254",
+      "line": "if (metric_dst->exp_hist_positive_buckets == NULL &&"
+     },
+     {
+      "fn": "decode_exponential_histogram_data_point_list",
+      "name": "data_point_list",
+      "origin": "lib/cmetrics/src/cmt_decode_opentelemetry.c:1447",
+      "line": "if (data_point_list[index] == NULL) {"
+     },
+     {
+      "fn": "decode_histogram_data_point_list",
+      "name": "data_point_list",
+      "origin": "lib/cmetrics/src/cmt_decode_opentelemetry.c:1152",
+      "line": "if (data_point_list[index] == NULL) {"
+     },
+     {
+      "fn": "decode_numerical_data_point_list",
+      "name": "data_point_list",
+      "origin": "lib/cmetrics/src/cmt_decode_opentelemetry.c:842",
+      "line": "if (data_point_list[index] == NULL) {"
+     },
+     {
+      "fn": "decode_summary_data_point_list",
+      "name": "data_point_list",
+      "origin": "lib/cmetrics/src/cmt_decode_opentelemetry.c:991",
+      "line": "if (data_point_list[index] == NULL) {"
+     },
+     {
+      "fn": "add_item_to_object",
+      "name": "item",
+      "origin": "lib/librdkafka-2.15.0/src/cJSON.c:2093",
+      "line": "if (!(item->type & cJSON_StringIsConst) && (item->string != NULL))"
+     }
+    ]
+   },
+   {
+    "subshape": "S6 pointer formal used directly (member-access)",
+    "leaves": 960,
+    "primary": 104,
+    "secondary": 856,
+    "rows": 413,
+    "rows_alone": 0,
+    "rows_alone_list": [],
+    "sample": [
+     {
+      "fn": "append_sample_to_metric",
+      "name": "map",
+      "origin": "lib/cmetrics/src/cmt_encode_opentelemetry.c:3199",
+      "line": "summary = (struct cmt_summary *) map->parent;"
+     },
+     {
+      "fn": "pack_complex_metric_sample",
+      "name": "map",
+      "origin": "lib/cmetrics/src/cmt_encode_prometheus_remote_write.c:876",
+      "line": "original_metric_name = map->opts->fqname;"
+     },
+     {
+      "fn": "map_metric_get_unlocked",
+      "name": "labels_val",
+      "origin": "lib/cmetrics/src/cmt_map.c:422",
+      "line": "ptr = labels_val[i];"
+     },
+     {
+      "fn": "convert_otel_attrs",
+      "name": "otel_attr",
+      "origin": "lib/ctraces/src/ctr_decode_opentelemetry.c:436",
+      "line": "kv = otel_attr[index_kv];"
+     },
+     {
+      "fn": "ctr_span_set_links",
+      "name": "links",
+      "origin": "lib/ctraces/src/ctr_decode_opentelemetry.c:578",
+      "line": "link = links[index_link];"
+     },
+     {
+      "fn": "destroy_events",
+      "name": "events",
+      "origin": "lib/ctraces/src/ctr_encode_opentelemetry.c:1296",
+      "line": "event = events[event_index];"
+     }
+    ]
+   },
+   {
+    "subshape": "S5 local pointer read, handed or returned (name-not-on-line)",
+    "leaves": 268,
+    "primary": 63,
+    "secondary": 205,
+    "rows": 156,
+    "rows_alone": 0,
+    "rows_alone_list": [],
+    "sample": [
+     {
+      "fn": "decode_exponential_histogram_data_point",
+      "name": "positive",
+      "origin": "lib/cmetrics/src/cmt_decode_opentelemetry.c:1370",
+      "line": "sample->exp_hist_positive_count ="
+     },
+     {
+      "fn": "pack_header",
+      "name": "summary",
+      "origin": "lib/cmetrics/src/cmt_encode_msgpack.c:181",
+      "line": "for (index = 0 ;"
+     },
+     {
+      "fn": "format_metric",
+      "name": "label_v",
+      "origin": "lib/cmetrics/src/cmt_encode_prometheus.c:332",
+      "line": "if (label_k->name != NULL &&"
+     },
+     {
+      "fn": "cmt_mpack_unpack_map",
+      "name": "callback_entry",
+      "origin": "lib/cmetrics/src/cmt_mpack_utils.c:224",
+      "line": "while (CMT_MPACK_UNEXPECTED_KEY_ERROR == result &&"
+     },
+     {
+      "fn": "ctr_mpack_unpack_map",
+      "name": "callback_entry",
+      "origin": "lib/ctraces/src/ctr_mpack_utils.c:391",
+      "line": "while (CTR_MPACK_UNEXPECTED_KEY_ERROR == result &&"
+     },
+     {
+      "fn": "rd_sockaddr2str",
+      "name": "a",
+      "origin": "lib/librdkafka-2.15.0/src/rdaddr.c:54",
+      "line": "of += rd_snprintf(&ret[reti][of],"
+     }
+    ]
+   },
+   {
+    "subshape": "S6 pointer formal used directly (assigned)",
+    "leaves": 55,
+    "primary": 46,
+    "secondary": 9,
+    "rows": 39,
+    "rows_alone": 0,
+    "rows_alone_list": [],
+    "sample": [
+     {
+      "fn": "LZ4F_getFrameInfo",
+      "name": "frameInfoPtr",
+      "origin": "lib/librdkafka-2.15.0/src/lz4frame.c:1460",
+      "line": "*frameInfoPtr = dctx->frameInfo;"
+     },
+     {
+      "fn": "pb_decode_tag",
+      "name": "wire_type",
+      "origin": "lib/librdkafka-2.15.0/src/nanopb/pb_decode.c:303",
+      "line": "*wire_type = (pb_wire_type_t)(temp & 7);"
+     },
+     {
+      "fn": "rd_gz_decompress",
+      "name": "decompressed_lenp",
+      "origin": "lib/librdkafka-2.15.0/src/rdgz.c:99",
+      "line": "*decompressed_lenp = strm.total_out;"
+     },
+     {
+      "fn": "rd_http_get",
+      "name": "response_code",
+      "origin": "lib/librdkafka-2.15.0/src/rdhttp.c:420",
+      "line": "*response_code = -1;"
+     },
+     {
+      "fn": "rd_kafka_get_err_descs",
+      "name": "cntp",
+      "origin": "lib/librdkafka-2.15.0/src/rdkafka.c:796",
+      "line": "*cntp     = RD_ARRAYSIZE(rd_kafka_err_descs);"
+     },
+     {
+      "fn": "rd_kafka_get_watermark_offsets",
+      "name": "low",
+      "origin": "lib/librdkafka-2.15.0/src/rdkafka.c:5662",
+      "line": "*low  = rktp->rktp_lo_offset;"
+     }
+    ]
+   },
+   {
+    "subshape": "S7 file-scope object or undeclared name (condition)",
+    "leaves": 147,
+    "primary": 34,
+    "secondary": 113,
+    "rows": 95,
+    "rows_alone": 0,
+    "rows_alone_list": [],
+    "sample": [
+     {
+      "fn": "cmt_exp_histogram_set_default",
+      "name": "old_positive_buckets",
+      "origin": "lib/cmetrics/src/cmt_exp_histogram.c:192",
+      "line": "if (old_positive_buckets != NULL) {"
+     },
+     {
+      "fn": "cJSON_Delete",
+      "name": "item",
+      "origin": "lib/librdkafka-2.15.0/src/cJSON.c:256",
+      "line": "while (item != NULL)"
+     },
+     {
+      "fn": "LZ4F_decompress",
+      "name": "doAnotherStage",
+      "origin": "lib/librdkafka-2.15.0/src/lz4frame.c:1585",
+      "line": "while (doAnotherStage) {"
+     },
+     {
+      "fn": "rd_hdr_histogram_min",
+      "name": "vmin",
+      "origin": "lib/librdkafka-2.15.0/src/rdhdrhistogram.c:357",
+      "line": "if (it.countAtIdx != 0 && vmin == 0) {"
+     },
+     {
+      "fn": "rd_kafka_cert_new",
+      "name": "ca",
+      "origin": "lib/librdkafka-2.15.0/src/rdkafka_cert.c:332",
+      "line": "if (ca) {"
+     },
+     {
+      "fn": "rd_kafka_anyconf_copy",
+      "name": "rd_kafka_properties",
+      "origin": "lib/librdkafka-2.15.0/src/rdkafka_conf.c:2846",
+      "line": "for (prop = rd_kafka_properties; prop->name; prop++) {"
+     }
+    ]
+   },
+   {
+    "subshape": "S5 local pointer read, handed or returned (other)",
+    "leaves": 67,
+    "primary": 30,
+    "secondary": 37,
+    "rows": 17,
+    "rows_alone": 0,
+    "rows_alone_list": [],
+    "sample": [
+     {
+      "fn": "parse_string",
+      "name": "output_pointer",
+      "origin": "lib/librdkafka-2.15.0/src/cJSON.c:871",
+      "line": "*output_pointer++ = *input_pointer++;"
+     },
+     {
+      "fn": "LZ4_decompress_unsafe_generic",
+      "name": "ip",
+      "origin": "lib/librdkafka-2.15.0/src/lz4.c:1820",
+      "line": "unsigned token = *ip++;"
+     },
+     {
+      "fn": "rd_kafka_sw_str_is_safe",
+      "name": "s",
+      "origin": "lib/librdkafka-2.15.0/src/rdkafka_conf.c:3909",
+      "line": "int c = (int)*s;"
+     },
+     {
+      "fn": "mk_esc_filename",
+      "name": "esc",
+      "origin": "lib/librdkafka-2.15.0/src/rdkafka_offset.c:1265",
+      "line": "*(o++) = *(esc++);"
+     },
+     {
+      "fn": "rd_kafka_sasl_safe_string",
+      "name": "s",
+      "origin": "lib/librdkafka-2.15.0/src/rdkafka_sasl_scram.c:226",
+      "line": "len += (*s == ',' || *s == '=') ? 3 : 1;"
+     },
+     {
+      "fn": "varint_encode32",
+      "name": "ptr",
+      "origin": "lib/librdkafka-2.15.0/src/snappy.c:335",
+      "line": "*(ptr++) = v >> 7;"
+     }
+    ]
+   },
+   {
+    "subshape": "S6 pointer formal used directly (member-in-call)",
+    "leaves": 463,
+    "primary": 27,
+    "secondary": 436,
+    "rows": 271,
+    "rows_alone": 0,
+    "rows_alone_list": [],
+    "sample": [
+     {
+      "fn": "LZ4F_compressUpdateImpl",
+      "name": "cctxPtr",
+      "origin": "lib/librdkafka-2.15.0/src/lz4frame.c:942",
+      "line": "compressFunc_t const compress = LZ4F_selectCompression(cctxPtr->prefs.frameInfo.blockMode, cctxPtr->prefs.compressionLevel, blockCompression"
+     },
+     {
+      "fn": "LZ4F_flush",
+      "name": "cctxPtr",
+      "origin": "lib/librdkafka-2.15.0/src/lz4frame.c:1114",
+      "line": "RETURN_ERROR_IF(dstCapacity < (cctxPtr->tmpInSize + BHSize + BFSize), dstMaxSize_tooSmall);"
+     },
+     {
+      "fn": "rd_kafka_log_buf",
+      "name": "rk",
+      "origin": "lib/librdkafka-2.15.0/src/rdkafka.c:300",
+      "line": "rd_kafka_q_enq(rk->rk_logq, rko);"
+     },
+     {
+      "fn": "rd_kafka_poll_cb",
+      "name": "rkq",
+      "origin": "lib/librdkafka-2.15.0/src/rdkafka.c:5838",
+      "line": "rkq->rkq_ts_last_poll_end = rd_clock();"
+     },
+     {
+      "fn": "rd_kafka_broker_bufq_timeout_scan",
+      "name": "rkbq",
+      "origin": "lib/librdkafka-2.15.0/src/rdkafka_broker.c:916",
+      "line": "holb = TAILQ_FIRST(&rkbq->rkbq_bufs);"
+     },
+     {
+      "fn": "rd_kafka_broker_wakeup",
+      "name": "rkb",
+      "origin": "lib/librdkafka-2.15.0/src/rdkafka_broker.c:6043",
+      "line": "rd_kafka_q_enq(rkb->rkb_ops, rko);"
+     }
+    ]
+   },
+   {
+    "subshape": "S7 file-scope object or undeclared name (call-actual)",
+    "leaves": 75,
+    "primary": 20,
+    "secondary": 55,
+    "rows": 34,
+    "rows_alone": 0,
+    "rows_alone_list": [],
+    "sample": [
+     {
+      "fn": "cmt_exp_histogram_set_default",
+      "name": "old_positive_buckets",
+      "origin": "lib/cmetrics/src/cmt_exp_histogram.c:193",
+      "line": "free(old_positive_buckets);"
+     },
+     {
+      "fn": "LZ4_compress_destSize_extState",
+      "name": "byPtr",
+      "origin": "lib/librdkafka-2.15.0/src/lz4.c:1460",
+      "line": "tableType_t const addrMode = ((sizeof(void*)==4) && ((uptrval)src > LZ4_DISTANCE_MAX)) ? byPtr : byU32;"
+     },
+     {
+      "fn": "LZ4_compress_fast_extState",
+      "name": "byPtr",
+      "origin": "lib/librdkafka-2.15.0/src/lz4.c:1361",
+      "line": "const tableType_t tableType = ((sizeof(void*)==4) && ((uptrval)source > LZ4_DISTANCE_MAX)) ? byPtr : byU32;"
+     },
+     {
+      "fn": "LZ4_compress_fast_extState_fastReset",
+      "name": "byPtr",
+      "origin": "lib/librdkafka-2.15.0/src/lz4.c:1399",
+      "line": "const tableType_t tableType = ((sizeof(void*)==4) && ((uptrval)src > LZ4_DISTANCE_MAX)) ? byPtr : byU32;"
+     },
+     {
+      "fn": "LZ4F_compressBegin_usingCDict",
+      "name": "dstPtr",
+      "origin": "lib/librdkafka-2.15.0/src/lz4frame.c:754",
+      "line": "LZ4F_writeLE32(dstPtr, LZ4F_MAGICNUMBER);"
+     },
+     {
+      "fn": "LZ4F_compressBound_internal",
+      "name": "maxBuffered",
+      "origin": "lib/librdkafka-2.15.0/src/lz4frame.c:383",
+      "line": "size_t const bufferedSize = MIN(alreadyBuffered, maxBuffered);"
+     }
+    ]
+   },
+   {
+    "subshape": "S7 file-scope object or undeclared name (return)",
+    "leaves": 37,
+    "primary": 19,
+    "secondary": 18,
+    "rows": 34,
+    "rows_alone": 0,
+    "rows_alone_list": [],
+    "sample": [
+     {
+      "fn": "LZ4F_optimalBSID",
+      "name": "proposedBSID",
+      "origin": "lib/librdkafka-2.15.0/src/lz4frame.c:358",
+      "line": "return proposedBSID;"
+     },
+     {
+      "fn": "rd_kafka_CreateAclsResponse_parse",
+      "name": "err",
+      "origin": "lib/librdkafka-2.15.0/src/rdkafka_admin.c:5487",
+      "line": "return err;"
+     },
+     {
+      "fn": "rd_kafka_DeleteAclsResponse_parse",
+      "name": "err",
+      "origin": "lib/librdkafka-2.15.0/src/rdkafka_admin.c:6752",
+      "line": "return err;"
+     },
+     {
+      "fn": "rd_kafka_DescribeAclsResponse_parse",
+      "name": "err",
+      "origin": "lib/librdkafka-2.15.0/src/rdkafka_admin.c:5681",
+      "line": "return err;"
+     },
+     {
+      "fn": "rd_kafka_get_legacy_ApiVersions",
+      "name": "ret",
+      "origin": "lib/librdkafka-2.15.0/src/rdkafka_feature.c:340",
+      "line": "return ret;"
+     },
+     {
+      "fn": "rd_kafka_mock_sgrp_apply_ack",
+      "name": "err",
+      "origin": "lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c:3876",
+      "line": "return err;"
+     }
+    ]
+   },
+   {
+    "subshape": "S6 pointer formal used directly (other)",
+    "leaves": 23,
+    "primary": 17,
+    "secondary": 6,
+    "rows": 20,
+    "rows_alone": 0,
+    "rows_alone_list": [],
+    "sample": [
+     {
+      "fn": "pack_basic_type",
+      "name": "metric_index",
+      "origin": "lib/cmetrics/src/cmt_encode_opentelemetry.c:3565",
+      "line": "(*metric_index)++;"
+     },
+     {
+      "fn": "LZ4F_compressFrame_usingCDict",
+      "name": "preferencesPtr",
+      "origin": "lib/librdkafka-2.15.0/src/lz4frame.c:433",
+      "line": "prefs = *preferencesPtr;"
+     },
+     {
+      "fn": "LZ4F_headerSize",
+      "name": "src",
+      "origin": "lib/librdkafka-2.15.0/src/lz4frame.c:1406",
+      "line": "{   BYTE const FLG = ((const BYTE*)src)[4];"
+     },
+     {
+      "fn": "pb_decode_fixed32",
+      "name": "dest",
+      "origin": "lib/librdkafka-2.15.0/src/nanopb/pb_decode.c:1381",
+      "line": "*(uint32_t*)dest = u.fixed32;"
+     },
+     {
+      "fn": "pb_decode_fixed64",
+      "name": "dest",
+      "origin": "lib/librdkafka-2.15.0/src/nanopb/pb_decode.c:1404",
+      "line": "*(uint64_t*)dest = u.fixed64;"
+     },
+     {
+      "fn": "read_raw_value",
+      "name": "size",
+      "origin": "lib/librdkafka-2.15.0/src/nanopb/pb_decode.c:331",
+      "line": "(*size)++;"
+     }
+    ]
+   },
+   {
+    "subshape": "S7 file-scope object or undeclared name (name-not-on-line)",
+    "leaves": 43,
+    "primary": 14,
+    "secondary": 29,
+    "rows": 34,
+    "rows_alone": 0,
+    "rows_alone_list": [],
+    "sample": [
+     {
+      "fn": "rd_kafka_consume0",
+      "name": "rd_kafka_yield_thread",
+      "origin": "lib/librdkafka-2.15.0/src/rdkafka.c:5051",
+      "line": "if (unlikely(res == RD_KAFKA_OP_RES_YIELD ||"
+     },
+     {
+      "fn": "rd_kafka_flush",
+      "name": "rd_kafka_yield_thread",
+      "origin": "lib/librdkafka-2.15.0/src/rdkafka.c:6455",
+      "line": "do {"
+     },
+     {
+      "fn": "rd_kafka_anyconf_set_prop",
+      "name": "_RK_CONF_PROP_SET_ADD",
+      "origin": "lib/librdkafka-2.15.0/src/rdkafka_conf.c:2390",
+      "line": "rd_kafka_conf_set_mode_t set_mode ="
+     },
+     {
+      "fn": "rd_kafka_conf_properties_show",
+      "name": "last",
+      "origin": "lib/librdkafka-2.15.0/src/rdkafka_conf.c:3561",
+      "line": "fprintf(fp, \"%s## %s configuration properties\\n\\n\","
+     },
+     {
+      "fn": "ut_cgrp_consumer_member_next_assignment0",
+      "name": "member_target_assignment",
+      "origin": "lib/librdkafka-2.15.0/src/rdkafka_mock.c:3692",
+      "line": "rd_kafka_topic_partition_list_destroy("
+     },
+     {
+      "fn": "rd_kafka_msgset_reader_msg_v2",
+      "name": "_fetchpos",
+      "origin": "lib/librdkafka-2.15.0/src/rdkafka_msgset_reader.c:807",
+      "line": "msetr_pos  = RD_KAFKA_FETCH_POS(hdr.Offset, msetr->msetr_leader_epoch);"
+     }
+    ]
+   },
+   {
+    "subshape": "S5 local pointer read, handed or returned (assigned)",
+    "leaves": 43,
+    "primary": 13,
+    "secondary": 30,
+    "rows": 30,
+    "rows_alone": 0,
+    "rows_alone_list": [],
+    "sample": [
+     {
+      "fn": "rd_kafka_destroy_internal",
+      "name": "thrd",
+      "origin": "lib/librdkafka-2.15.0/src/rdkafka.c:1456",
+      "line": "*thrd = rk->rk_internal_rkb->rkb_thread;"
+     },
+     {
+      "fn": "rd_kafka_assignment_serve_pending",
+      "name": "req_assignment_version",
+      "origin": "lib/librdkafka-2.15.0/src/rdkafka_assignment.c:640",
+      "line": "*req_assignment_version = rk->rk_consumer.assignment.version;"
+     },
+     {
+      "fn": "rd_kafka_assignors_init",
+      "name": "t",
+      "origin": "lib/librdkafka-2.15.0/src/rdkafka_assignor.c:616",
+      "line": "*t = '\\0';"
+     },
+     {
+      "fn": "rd_kafka_broker_decommission",
+      "name": "thrd",
+      "origin": "lib/librdkafka-2.15.0/src/rdkafka_broker.c:6589",
+      "line": "*thrd        = rkb->rkb_thread;"
+     },
+     {
+      "fn": "rd_kafka_broker_name_parse",
+      "name": "t2",
+      "origin": "lib/librdkafka-2.15.0/src/rdkafka_broker.c:5740",
+      "line": "*t2 = toupper(*t2);"
+     },
+     {
+      "fn": "mk_esc_filename",
+      "name": "o",
+      "origin": "lib/librdkafka-2.15.0/src/rdkafka_offset.c:1270",
+      "line": "*o = '\\0';"
+     }
+    ]
+   },
+   {
+    "subshape": "S8 lowering placeholder __qcore_nested_value_N",
+    "leaves": 8,
+    "primary": 8,
+    "secondary": 0,
+    "rows": 3,
+    "rows_alone": 0,
+    "rows_alone_list": [],
+    "sample": [
+     {
+      "fn": "mk_cache_worker_exit",
+      "name": "__qcore_nested_value_0",
+      "origin": "lib/monkey/mk_server/mk_cache.c:66",
+      "line": "mk_mem_free(MK_TLS_GET(mk_tls_cache_header_lm));"
+     },
+     {
+      "fn": "mk_sched_worker_free",
+      "name": "__qcore_nested_value_0",
+      "origin": "lib/monkey/mk_server/mk_scheduler.c:151",
+      "line": "mk_mem_free(MK_TLS_GET(mk_tls_sched_cs));"
+     },
+     {
+      "fn": "mk_server_worker_loop",
+      "name": "__qcore_nested_value_0",
+      "origin": "lib/monkey/mk_server/mk_server.c:592",
+      "line": "mk_mem_free(MK_TLS_GET(mk_tls_server_timeout));"
+     }
+    ]
+   },
+   {
+    "subshape": "S5 local pointer read, handed or returned (copy-source)",
+    "leaves": 28,
+    "primary": 4,
+    "secondary": 24,
+    "rows": 20,
+    "rows_alone": 0,
+    "rows_alone_list": [],
+    "sample": [
+     {
+      "fn": "rd_list_find",
+      "name": "cmp",
+      "origin": "lib/librdkafka-2.15.0/src/rdlist.c:355",
+      "line": "rd_list_cmp_curr = cmp;"
+     },
+     {
+      "fn": "rd_list_sort",
+      "name": "cmp",
+      "origin": "lib/librdkafka-2.15.0/src/rdlist.c:267",
+      "line": "rd_list_cmp_curr = cmp;"
+     },
+     {
+      "fn": "rd_qsort_r",
+      "name": "compar",
+      "origin": "lib/librdkafka-2.15.0/src/rdports.c:56",
+      "line": "rd_qsort_r_cmp = compar;"
+     },
+     {
+      "fn": "mk_vhost_handler",
+      "name": "cb",
+      "origin": "lib/monkey/mk_server/mk_lib.c:556",
+      "line": "_cb = cb;"
+     }
+    ]
+   },
+   {
+    "subshape": "S7 file-scope object or undeclared name (member-access)",
+    "leaves": 46,
+    "primary": 4,
+    "secondary": 42,
+    "rows": 20,
+    "rows_alone": 0,
+    "rows_alone_list": [],
+    "sample": [
+     {
+      "fn": "cJSON_Delete",
+      "name": "item",
+      "origin": "lib/librdkafka-2.15.0/src/cJSON.c:258",
+      "line": "next = item->next;"
+     },
+     {
+      "fn": "LZ4_loadDict",
+      "name": "dict",
+      "origin": "lib/librdkafka-2.15.0/src/lz4.c:1568",
+      "line": "dict->currentOffset += 64 KB;"
+     },
+     {
+      "fn": "rd_kafka_OffsetFetchRequest",
+      "name": "parts",
+      "origin": "lib/librdkafka-2.15.0/src/rdkafka_request.c:1507",
+      "line": "parts_size = parts->cnt * 32;"
+     },
+     {
+      "fn": "rd_kafka_share_build_ack_details",
+      "name": "new_entry",
+      "origin": "lib/librdkafka-2.15.0/src/rdkafka_share_acknowledgement.c:739",
+      "line": "new_entry->types[m] ="
+     }
+    ]
+   },
+   {
+    "subshape": "S7 file-scope object or undeclared name (other)",
+    "leaves": 12,
+    "primary": 3,
+    "secondary": 9,
+    "rows": 6,
+    "rows_alone": 0,
+    "rows_alone_list": [],
+    "sample": [
+     {
+      "fn": "LZ4F_compressBound_internal",
+      "name": "partialBlockSize",
+      "origin": "lib/librdkafka-2.15.0/src/lz4frame.c:387",
+      "line": "size_t const lastBlockSize = flush ? partialBlockSize : 0;"
+     },
+     {
+      "fn": "LZ4HC_compress_generic_internal",
+      "name": "favorCompressionRatio",
+      "origin": "lib/librdkafka-2.15.0/src/lz4hc.c:843",
+      "line": "HCfavor_e const favor = ctx->favorDecSpeed ? favorDecompressionSpeed : favorCompressionRatio;"
+     }
+    ]
+   },
+   {
+    "subshape": "S6 pointer formal used directly (return)",
+    "leaves": 7,
+    "primary": 2,
+    "secondary": 5,
+    "rows": 7,
+    "rows_alone": 0,
+    "rows_alone_list": [],
+    "sample": [
+     {
+      "fn": "rd_kafka_conf_is_modified",
+      "name": "conf",
+      "origin": "lib/librdkafka-2.15.0/src/rdkafka_conf.c:2003",
+      "line": "return rd_kafka_anyconf_is_modified(conf, prop);"
+     },
+     {
+      "fn": "rd_kafka_topic_conf_is_modified",
+      "name": "conf",
+      "origin": "lib/librdkafka-2.15.0/src/rdkafka_conf.c:2021",
+      "line": "return rd_kafka_anyconf_is_modified(conf, prop);"
+     }
+    ]
+   },
+   {
+    "subshape": "S7 file-scope object or undeclared name (member-in-call)",
+    "leaves": 5,
+    "primary": 1,
+    "secondary": 4,
+    "rows": 5,
+    "rows_alone": 0,
+    "rows_alone_list": [],
+    "sample": [
+     {
+      "fn": "ut_populate_internal_topic_metadata",
+      "name": "partition_internal",
+      "origin": "lib/librdkafka-2.15.0/src/rdkafka_assignor.c:879",
+      "line": "partition_internal->racks_cnt = rd_list_cnt(curr_list);"
+     }
+    ]
+   },
+   {
+    "subshape": "S8 lowering placeholder __ctx",
+    "leaves": 3,
+    "primary": 1,
+    "secondary": 2,
+    "rows": 3,
+    "rows_alone": 0,
+    "rows_alone_list": [],
+    "sample": [
+     {
+      "fn": "mk_start",
+      "name": "__ctx",
+      "origin": "lib/monkey/mk_server/mk_lib.c:201",
+      "line": "mk_event_foreach(event, server->lib_evl_start) {"
+     }
+    ]
+   },
+   {
+    "subshape": "S9 other (place)",
+    "leaves": 38,
+    "primary": 1,
+    "secondary": 37,
+    "rows": 14,
+    "rows_alone": 0,
+    "rows_alone_list": [],
+    "sample": [
+     {
+      "fn": "rd_kafka_new",
+      "name": "app_conf/conf",
+      "origin": "lib/librdkafka-2.15.0/src/rdkafka.c:3054",
+      "line": "rd_free(app_conf);"
+     }
+    ]
+   },
+   {
+    "subshape": "S7 file-scope object or undeclared name (assigned)",
+    "leaves": 2,
+    "primary": 0,
+    "secondary": 2,
+    "rows": 1,
+    "rows_alone": 0,
+    "rows_alone_list": [],
+    "sample": []
+   },
+   {
+    "subshape": "S8 lowering placeholder __qcore_returned_value",
+    "leaves": 55,
+    "primary": 0,
+    "secondary": 55,
+    "rows": 35,
+    "rows_alone": 0,
+    "rows_alone_list": [],
+    "sample": []
+   },
+   {
+    "subshape": "S8 lowering placeholder __tmpstr",
+    "leaves": 115,
+    "primary": 0,
+    "secondary": 115,
+    "rows": 7,
+    "rows_alone": 0,
+    "rows_alone_list": [],
+    "sample": []
+   },
+   {
+    "subshape": "S8 lowering placeholder _vp",
+    "leaves": 50,
+    "primary": 0,
+    "secondary": 50,
+    "rows": 7,
+    "rows_alone": 0,
+    "rows_alone_list": [],
+    "sample": []
+   },
+   {
+    "subshape": "S9 other (formal-function-pointer)",
+    "leaves": 2,
+    "primary": 0,
+    "secondary": 2,
+    "rows": 2,
+    "rows_alone": 0,
+    "rows_alone_list": [],
+    "sample": []
+   }
+  ]
+ }
+}

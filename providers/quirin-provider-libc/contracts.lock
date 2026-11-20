@@ -472,8 +472,8 @@
     {
       "function": "pthread_getspecific",
       "module": "libc/threads.qv",
-      "contract_sha256": "0664e3c41dd61593b011c494e9bc7f966656ac516745df251c69c7d6a599bc2b",
-      "pinned_at": "2026-11-04T16:14:29Z"
+      "contract_sha256": "ed34ff577aba6e6306c4a7d7453a90368242010c8deeb5a81bc0ae68e772439b",
+      "pinned_at": "2026-11-17T13:36:25Z"
     },
     {
       "function": "pthread_join",

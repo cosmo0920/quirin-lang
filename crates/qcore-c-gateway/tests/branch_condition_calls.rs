@@ -19,7 +19,7 @@
 //! loops and switches belong to B03, and nested call arguments belong to B04.
 
 use qcore_c_gateway::legacy_c::{
-    AnalysisStatus, C11TranslationUnit, LegacyDiagnosticKind, ResourceContracts,
+    AnalysisStatus, C11TranslationUnit, LegacyDiagnosticKind, LegacyInstruction, ResourceContracts,
     UnrestrictedLegacyResult, analyze_unrestricted_c11,
 };
 use qcore_contract::contract_loader::load_resource_contract_sources;
@@ -199,6 +199,12 @@ fn a_call_inside_sizeof_is_never_applied_because_c_does_not_evaluate_it() {
     )));
 }
 
+/// Re-pinned deliberately by AG3-CONDITION-RETURN-CALLS (gateway rule 63
+/// (1)). BEFORE: the residual `0 + table[flag]` was refused (BRANCH), so the
+/// modeled call could not mask it. AFTER: the residual is still not masked:
+/// it is read by the typed condition read, after the identity call, with
+/// `table`'s dereference obligation (an untracked formal, so it discharges).
+/// The row checks the read node is present, not merely that the row is Safe.
 #[test]
 fn an_indirect_residual_cannot_be_masked_by_the_modeled_call() {
     if !clang_available() {
@@ -217,17 +223,25 @@ fn an_indirect_residual_cannot_be_masked_by_the_modeled_call() {
         &probe_contracts(),
     )
     .unwrap();
-    let partial = match outcome {
-        UnrestrictedLegacyResult::Unknown { partial, .. } => partial.unwrap(),
-        other => panic!("expected Unknown, got {other:?}"),
+    let certificate = match outcome {
+        UnrestrictedLegacyResult::Safe(certificate) => certificate,
+        other => panic!("expected Safe (rule 63 (1)), got {other:?}"),
     };
-    assert!(has_branch_refusal(
-        &partial.functions["subject"]
-            .diagnostics
-            .iter()
-            .map(|diagnostic| diagnostic.kind.clone())
-            .collect::<Vec<_>>()
-    ));
+    let reads_table = certificate.summary.functions["subject"]
+        .cfg
+        .nodes
+        .iter()
+        .any(|node| {
+            matches!(
+                &node.instruction,
+                LegacyInstruction::IndirectScalarAccess { bases, .. }
+                    if bases.iter().any(|base| base == "table")
+            )
+        });
+    assert!(
+        reads_table,
+        "the residual's read of `table` is a node of the plan"
+    );
 }
 
 #[test]
@@ -341,11 +355,17 @@ fn an_uncontracted_call_stays_refused() {
         UnrestrictedLegacyResult::Unknown { partial, .. } => partial.unwrap(),
         other => panic!("expected Unknown, got {other:?}"),
     };
-    assert!(has_branch_refusal(
-        &partial.functions["subject"]
+    // Re-pinned deliberately by AG3-CONDITION-RETURN-CALLS (gateway rule 63
+    // (2)): the refusal now names the uncontracted callee, with the
+    // position's suffix; it is still a refusal (Unknown).
+    assert!(
+        partial.functions["subject"]
             .diagnostics
             .iter()
-            .map(|diagnostic| diagnostic.kind.clone())
-            .collect::<Vec<_>>()
-    ));
+            .any(|diagnostic| matches!(
+                &diagnostic.kind,
+                LegacyDiagnosticKind::Unsupported { description }
+                    if description == "call to uncontracted function `external` in branch condition"
+            ))
+    );
 }

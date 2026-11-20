@@ -13,6 +13,12 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | Card directory | Original report title |
 |---|---|
 
+| [ag1-indirect-member-access](ag1-indirect-member-access/README.md) | AG1-INDIRECT-MEMBER-ACCESS: the access refusal, by sub-shape; rule 61 |
+
+| [ag2-unresolved-alias](ag2-unresolved-alias/README.md) | AG2-UNRESOLVED-ALIAS: copy sources that carry no resource identity |
+
+| [ag3-condition-return-calls](ag3-condition-return-calls/README.md) | AG3-CONDITION-RETURN-CALLS: calls, aggregates and indirect access in conditions and returns |
+
 | [aggregate-owned-field](aggregate-owned-field/README.md) | `AGGREGATE-OWNED-FIELD` (wave 39) — an owned buffer inside a record: the IR first, then the route |
 
 | [aggregates-v1](aggregates-v1/README.md) | AGGREGATES-V1 — the first source-level aggregate type (wave 27) |
@@ -214,6 +220,10 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [cg24-alias-extent-frame-vocabulary](cg24-alias-extent-frame-vocabulary/README.md) | CG24-ALIAS-EXTENT-FRAME-VOCABULARY |
 
 | [cg25-resource-kinds](cg25-resource-kinds/README.md) | CG25-RESOURCE-KINDS: a library-handle kind and an in-place kind |
+
+| [cg25-thread-key-automatic-revisit](cg25-thread-key-automatic-revisit/README.md) | CG25-THREAD-KEY-AUTOMATIC-REVISIT |
+
+| [cg25-void-cast-guard-escape](cg25-void-cast-guard-escape/README.md) | CG25-VOID-CAST-GUARD-ESCAPE |
 
 | [cg26-tail-residual-actuals](cg26-tail-residual-actuals/README.md) | CG26-TAIL-RESIDUAL-ACTUALS |
 

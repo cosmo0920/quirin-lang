@@ -240,7 +240,8 @@ fn a_string_initializer_is_a_declaration_with_no_bound_claimed() {
         let run = gs(source);
         assert!(run.safe(), "{source}: {run:?}");
     }
-    // A pointer to a literal is unchanged: its identity is unresolved.
+    // A pointer to a literal: FLIPPED by AG2-UNRESOLVED-ALIAS (rule 62), the
+    // copy leaves the local unbound (a literal is never an identity).
     let run = gs("int subject(void) { const char *s = \"abc\"; return s[3]; }");
-    assert!(run.unknown() && run.has("__qcore_literal__"), "{run:?}");
+    assert!(run.safe(), "{run:?}");
 }

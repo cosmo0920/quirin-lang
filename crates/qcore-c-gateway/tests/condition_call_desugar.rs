@@ -339,7 +339,11 @@ fn an_uncontracted_call_keeps_the_refusal() {
     let run = analyze(
         "void subject(int flag) { void *p = q_alloc(); if (flag && opaque()) { } q_free(p); }",
     );
-    assert!(run.refused(BRANCH), "{run:?}");
+    // Re-pinned deliberately by AG3-CONDITION-RETURN-CALLS (gateway rule 63) (2): named, still refused.
+    assert!(
+        run.refused("call to uncontracted function `opaque` in branch condition"),
+        "{run:?}"
+    );
     assert_eq!(run.status, AnalysisStatus::Unknown);
 }
 

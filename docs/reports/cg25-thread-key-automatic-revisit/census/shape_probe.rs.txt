@@ -1,0 +1,152 @@
+//! Temporary probe (not committed): prints the reading of each shape.
+
+use std::collections::BTreeMap;
+
+use qcore_c_gateway::legacy_c::{
+    C11TranslationUnit, ResourceContracts, UnrestrictedLegacyResult, analyze_unrestricted_c11,
+};
+use qcore_contract::contract_loader::load_resource_contract_sources;
+
+const THREADS: &str =
+    include_str!("../../../providers/quirin-provider-libc/contracts/libc/threads.qv");
+const REGEX: &str = include_str!("../../../providers/quirin-provider-libc/contracts/libc/regex.qv");
+const STDLIB: &str =
+    include_str!("../../../providers/quirin-provider-libc/contracts/libc/memory.qv");
+
+const DECLARATIONS: &str = "\
+typedef unsigned int pthread_key_t;
+typedef struct { void *buffer; unsigned long re_nsub; } regex_t;
+extern int pthread_key_create (pthread_key_t *__key, void (*__destr_function) (void *));
+extern int pthread_key_delete (pthread_key_t __key);
+extern void *pthread_getspecific (pthread_key_t __key);
+extern int pthread_setspecific (pthread_key_t __key, const void *__pointer);
+typedef int pthread_once_t;
+extern int pthread_once (pthread_once_t *__once_control, void (*__init_routine) (void));
+int regcomp(regex_t *preg, const char *pattern, int cflags);
+int regexec(const regex_t *preg, const char *string, unsigned long nmatch, void *pmatch, int eflags);
+void regfree(regex_t *preg);
+void free(void *p);
+void *malloc(unsigned long n);
+void use_key(pthread_key_t k);
+struct holder { pthread_key_t k; };
+pthread_key_t global_key;
+regex_t global_re;
+";
+
+fn contracts() -> ResourceContracts {
+    load_resource_contract_sources(&BTreeMap::from([
+        ("libc/threads.qv".to_owned(), THREADS.to_owned()),
+        ("libc/regex.qv".to_owned(), REGEX.to_owned()),
+        ("libc/memory.qv".to_owned(), STDLIB.to_owned()),
+    ]))
+    .expect("load")
+}
+
+fn show(label: &str, source: &str) {
+    let text = format!("{DECLARATIONS}\n{source}\n");
+    let outcome = analyze_unrestricted_c11(
+        &C11TranslationUnit {
+            source: &text,
+            ..Default::default()
+        },
+        "subject",
+        &contracts(),
+    );
+    let outcome = match outcome {
+        Ok(outcome) => outcome,
+        Err(error) => {
+            println!("PROBE {label}: CLANG-REJECTED {error:?}");
+            return;
+        }
+    };
+    let summary = match &outcome {
+        UnrestrictedLegacyResult::Safe(certificate) => Some(&certificate.summary),
+        UnrestrictedLegacyResult::Unsafe(summary) => Some(summary),
+        UnrestrictedLegacyResult::Unknown { partial, .. } => partial.as_ref(),
+    };
+    let Some(result) = summary.and_then(|summary| summary.functions.get("subject")) else {
+        println!("PROBE {label}: NOT PROJECTED {outcome:?}");
+        return;
+    };
+    let kinds = result
+        .diagnostics
+        .iter()
+        .map(|d| format!("L{} {:?}", d.line, d.kind))
+        .collect::<Vec<_>>();
+    println!("PROBE {label}: {:?} {kinds:?}", result.status);
+}
+
+const OK: &str = "pthread_key_t k; int r; r = pthread_key_create(&k, 0); if (r) return;";
+
+#[test]
+fn probe() {
+    let cases: Vec<(&str, String)> = vec![
+        ("01 create/delete", format!("void subject(void) {{ {OK} pthread_key_delete(k); }}")),
+        ("02 getter between", format!("void subject(void) {{ {OK} void *v; v = pthread_getspecific(k); (void) v; pthread_key_delete(k); }}")),
+        ("03 getter after delete (assigned)", format!("void subject(void) {{ {OK} void *v; pthread_key_delete(k); v = pthread_getspecific(k); (void) v; }}")),
+        ("04 getter after delete (void cast)", format!("void subject(void) {{ {OK} pthread_key_delete(k); (void) pthread_getspecific(k); }}")),
+        ("05 getter after delete (plain)", format!("void subject(void) {{ {OK} pthread_key_delete(k); pthread_getspecific(k); }}")),
+        ("06 getter between (void cast)", format!("void subject(void) {{ {OK} (void) pthread_getspecific(k); pthread_key_delete(k); }}")),
+        ("07 setter between (literal)", format!("void subject(void) {{ {OK} pthread_setspecific(k, \"x\"); pthread_key_delete(k); }}")),
+        ("08 missing delete", format!("void subject(void) {{ {OK} }}")),
+        ("09 double delete", format!("void subject(void) {{ {OK} pthread_key_delete(k); pthread_key_delete(k); }}")),
+        ("10 early return leak", format!("void subject(int c) {{ {OK} if (c) return; pthread_key_delete(k); }}")),
+        ("11 copy decl", format!("void subject(void) {{ {OK} pthread_key_t k2 = k; pthread_key_delete(k); (void) k2; }}")),
+        ("12 copy assign", format!("void subject(void) {{ {OK} pthread_key_t k2; k2 = k; pthread_key_delete(k); (void) k2; }}")),
+        ("13 uncontracted callee", format!("void subject(void) {{ {OK} use_key(k); pthread_key_delete(k); }}")),
+        ("14 store member", format!("void subject(struct holder *h) {{ {OK} h->k = k; pthread_key_delete(k); }}")),
+        ("15 store global", format!("void subject(void) {{ {OK} global_key = k; pthread_key_delete(k); }}")),
+        ("16 return key", format!("pthread_key_t subject(void) {{ pthread_key_t k; int r; r = pthread_key_create(&k, 0); if (r) return 0; return k; }}")),
+        ("17 address taken", format!("void subject(void) {{ {OK} pthread_key_t *p = &k; (void) p; pthread_key_delete(k); }}")),
+        ("18 loop create, one delete", "void subject(int n) { pthread_key_t k; int r; int i; for (i = 0; i < n; i++) { r = pthread_key_create(&k, 0); if (r) return; } pthread_key_delete(k); }".to_owned()),
+        ("19 loop create+delete", "void subject(int n) { pthread_key_t k; int r; int i; for (i = 0; i < n; i++) { r = pthread_key_create(&k, 0); if (r) return; pthread_key_delete(k); } }".to_owned()),
+        ("20 delete without create", "void subject(void) { pthread_key_t k = 0; pthread_key_delete(k); }".to_owned()),
+        ("21 create on one path", "void subject(int c) { pthread_key_t k; int r; if (c) { r = pthread_key_create(&k, 0); if (r) return; } pthread_key_delete(k); }".to_owned()),
+        ("22 delete before test", "void subject(void) { pthread_key_t k; int r; r = pthread_key_create(&k, 0); pthread_key_delete(k); }".to_owned()),
+        ("23 getter before test", "void subject(void) { pthread_key_t k; int r; void *v; r = pthread_key_create(&k, 0); v = pthread_getspecific(k); (void) v; if (r) return; pthread_key_delete(k); }".to_owned()),
+        ("24 getter on failure path", "void subject(void) { pthread_key_t k; int r; void *v; r = pthread_key_create(&k, 0); if (r) { v = pthread_getspecific(k); (void) v; return; } pthread_key_delete(k); }".to_owned()),
+        ("25 non-null destructor", "void subject(void) { pthread_key_t k; int r; r = pthread_key_create(&k, free); if (r) return; pthread_key_delete(k); }".to_owned()),
+        ("26 status discarded", "void subject(void) { pthread_key_t k; pthread_key_create(&k, 0); pthread_key_delete(k); }".to_owned()),
+        ("27 status in condition", "void subject(void) { pthread_key_t k; if (pthread_key_create(&k, 0) != 0) return; pthread_key_delete(k); }".to_owned()),
+        ("28 shadow then global delete", "void subject(void) { { pthread_key_t global_key; int r; r = pthread_key_create(&global_key, 0); if (r) return; } pthread_key_delete(global_key); }".to_owned()),
+        ("29 shadow, global getter first", "void subject(void) { void *v; v = pthread_getspecific(global_key); (void) v; { pthread_key_t global_key; int r; r = pthread_key_create(&global_key, 0); if (r) return; pthread_key_delete(global_key); } }".to_owned()),
+        ("30 nested getter free", format!("void subject(void) {{ {OK} free(pthread_getspecific(k)); pthread_key_delete(k); }}")),
+        ("31 static key getter", "void subject(void) { void *v; v = pthread_getspecific(global_key); (void) v; }".to_owned()),
+        ("32 static key nested getter", "void subject(void) { free(pthread_getspecific(global_key)); }".to_owned()),
+        ("33 getter in condition after delete", format!("void subject(void) {{ {OK} pthread_key_delete(k); if (pthread_getspecific(k)) return; }}")),
+        ("34 getter in return after delete", format!("void *subject(void) {{ pthread_key_t k; int r; r = pthread_key_create(&k, 0); if (r) return 0; pthread_key_delete(k); return pthread_getspecific(k); }}")),
+        ("35 delete by address", format!("void subject(void) {{ {OK} pthread_key_delete((pthread_key_t) (unsigned long) &k); }}")),
+        ("36 compare key", format!("void subject(void) {{ {OK} if (k == 0) return; pthread_key_delete(k); }}")),
+        ("37 sizeof key", format!("void subject(void) {{ {OK} unsigned long n = sizeof k; (void) n; pthread_key_delete(k); }}")),
+        ("38 two keys", "void subject(void) { pthread_key_t a; pthread_key_t b; int r; int s; r = pthread_key_create(&a, 0); if (r) return; s = pthread_key_create(&b, 0); if (s) { pthread_key_delete(a); return; } pthread_key_delete(b); pthread_key_delete(a); }".to_owned()),
+        ("39 key formal create", "void subject(pthread_key_t k) { int r; r = pthread_key_create(&k, 0); if (r) return; pthread_key_delete(k); }".to_owned()),
+        ("40 recreate after delete", format!("void subject(void) {{ {OK} pthread_key_delete(k); r = pthread_key_create(&k, 0); if (r) return; pthread_key_delete(k); }}")),
+        ("41 create into k twice without delete", format!("void subject(void) {{ {OK} r = pthread_key_create(&k, 0); if (r) return; pthread_key_delete(k); }}")),
+        ("42 getter after delete via pointer value", format!("void subject(void) {{ {OK} void *v = pthread_getspecific(k); pthread_key_delete(k); (void) v; }}")),
+        ("43 if-else delete join", "void subject(int c) { pthread_key_t k; int r; r = pthread_key_create(&k, 0); if (r) return; if (c) pthread_key_delete(k); else pthread_key_delete(k); }".to_owned()),
+        ("44 delete in one arm only", "void subject(int c) { pthread_key_t k; int r; r = pthread_key_create(&k, 0); if (r) return; if (c) pthread_key_delete(k); }".to_owned()),
+        ("45 register key", "void subject(void) { register pthread_key_t k; int r; r = pthread_key_create(&k, 0); if (r) return; pthread_key_delete(k); }".to_owned()),
+        ("46 block static key", "void subject(void) { static pthread_key_t k; int r; r = pthread_key_create(&k, 0); if (r) return; }".to_owned()),
+        ("47 status reused", format!("void subject(void) {{ {OK} r = 5; pthread_key_delete(k); }}")),
+        ("49 getter before create", "void subject(void) { pthread_key_t k; int r; void *v; v = pthread_getspecific(k); (void) v; r = pthread_key_create(&k, 0); if (r) return; pthread_key_delete(k); }".to_owned()),
+        ("50 getter after join of certified paths", "void subject(int c) { pthread_key_t k; int r; void *v; r = pthread_key_create(&k, 0); if (r) return; if (c) v = 0; else v = 0; v = pthread_getspecific(k); (void) v; pthread_key_delete(k); }".to_owned()),
+        ("51 getter in loop", "void subject(int n) { pthread_key_t k; int r; int i; void *v; r = pthread_key_create(&k, 0); if (r) return; for (i = 0; i < n; i++) { v = pthread_getspecific(k); (void) v; } pthread_key_delete(k); }".to_owned()),
+        ("52 getter after maybe delete", "void subject(int c) { pthread_key_t k; int r; void *v; r = pthread_key_create(&k, 0); if (r) return; if (c) { pthread_key_delete(k); return; } v = pthread_getspecific(k); (void) v; pthread_key_delete(k); }".to_owned()),
+        ("53 r == 0 form", "void subject(void) { pthread_key_t k; int r; void *v; r = pthread_key_create(&k, 0); if (r == 0) { v = pthread_getspecific(k); (void) v; pthread_key_delete(k); } }".to_owned()),
+        ("54 static key getter and delete refused", "void subject(void) { void *v; v = pthread_getspecific(global_key); (void) v; pthread_key_delete(global_key); }".to_owned()),
+        ("55 parameter key getter", "void *subject(pthread_key_t k) { return pthread_getspecific(k); }".to_owned()),
+        ("56 loop continue skips delete", "void subject(int n, int c) { pthread_key_t k; int r; int i; for (i = 0; i < n; i++) { r = pthread_key_create(&k, 0); if (r) return; if (c) continue; pthread_key_delete(k); } }".to_owned()),
+        ("57 pthread_once between", "static void init_fn(void) { } void subject(void) { static pthread_once_t once = 0; pthread_key_t k; int r; r = pthread_key_create(&k, 0); if (r) return; pthread_once(&once, init_fn); pthread_key_delete(k); }".to_owned()),
+        ("58 while create break", "void subject(int n) { pthread_key_t k; int r; while (n--) { r = pthread_key_create(&k, 0); if (r) break; pthread_key_delete(k); } }".to_owned()),
+        ("59 getter parenthesised", format!("void subject(void) {{ {OK} void *v; v = pthread_getspecific((k)); (void) v; pthread_key_delete((k)); }}")),
+        ("60 getter arith", format!("void subject(void) {{ {OK} void *v; v = pthread_getspecific(k + 0); (void) v; pthread_key_delete(k); }}")),
+        ("48 goto cleanup","void subject(int c) { pthread_key_t k; int r; r = pthread_key_create(&k, 0); if (r) return; if (c) goto out; out: pthread_key_delete(k); }".to_owned()),
+        ("R1 regex loop compile", "int subject(int n, const char *p) { regex_t re; int r; int i; for (i = 0; i < n; i++) { r = regcomp(&re, p, 0); if (r) return 0; } regfree(&re); return 1; }".to_owned()),
+        ("R2 regex shadow then global free", "int subject(const char *p) { { regex_t global_re; int r; r = regcomp(&global_re, p, 0); if (r) return 0; } regfree(&global_re); return 1; }".to_owned()),
+        ("R3 regex use on failure path", "int subject(const char *p, const char *s) { regex_t re; int r; r = regcomp(&re, p, 0); if (r) { (void) 0; r = regexec(&re, s, 0, 0, 0); return r; } regfree(&re); return 1; }".to_owned()),
+        ("R4 regex use before test", "int subject(const char *p, const char *s) { regex_t re; int r; int t; r = regcomp(&re, p, 0); t = regexec(&re, s, 0, 0, 0); if (r) return t; regfree(&re); return t; }".to_owned()),
+    ];
+    for (label, source) in cases {
+        show(label, &source);
+    }
+}

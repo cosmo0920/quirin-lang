@@ -1555,7 +1555,7 @@
       "sha256": "32e26f8ea85eb34337760ba2b0f5350ce7fdc683c9551425faffd4e3cd81940f"
     },
     "libc/threads.qv": {
-      "clause_count": 113,
+      "clause_count": 114,
       "declaration_count": 24,
       "declarations": [
         {
@@ -1787,9 +1787,12 @@
           "resource_table": "retaining"
         },
         {
-          "clauses": 4,
+          "clauses": 5,
           "name": "pthread_getspecific",
           "resource_mode": {
+            "parameter_kinds": {
+              "0": "thread_key"
+            },
             "parameters": [
               "borrowed"
             ],
@@ -1839,7 +1842,7 @@
       "other_declarations": [],
       "premise_bindings": [],
       "premises": {},
-      "sha256": "4b6334460525e52a9818e76977f38f6e10866908e7d33528d8a59a8a493cd16f"
+      "sha256": "ee99b55de1cf92e8ff397122c179d8d703899ee0cf71eac2eaaa51aeb2d9664d"
     },
     "libc/time.qv": {
       "clause_count": 35,

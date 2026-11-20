@@ -2255,6 +2255,10 @@ fn analyze_cfg_with_entry_collected(
         &context.site_kinds,
         &mut diagnostics,
     );
+    // Card CG25-THREAD-KEY-AUTOMATIC-REVISIT (rule 11v (7)): a by-value use of
+    // a tracked key that its creation status has not certified, from the same
+    // settled states.
+    in_place_custody::report_uncertified_key_uses(&cfg, &incoming, &mut diagnostics);
     // Card W43-LIBC-RESULT-ALIAS: the two derived-pointer violation candidates,
     // read from the same settled states for the same reason — a binding's
     // derivation can still widen to `Mixed` on a later iterate.
@@ -4336,6 +4340,23 @@ pub(super) fn transfer_base(
         {
             state.pointers.remove(destination);
         }
+        // AG2-UNRESOLVED-ALIAS hook (rule 62): begin. A copy whose unbound
+        // source carries no identity (a literal, an enumeration constant, or
+        // an unbound pointer formal whose copies are only read through)
+        // leaves the destination unbound, exactly as the two arms above.
+        LegacyInstruction::Alias {
+            destination,
+            source,
+        } if !state.pointers.contains_key(source)
+            && context
+                .traversal
+                .custody_free
+                .admits(destination, source)
+                .is_some() =>
+        {
+            state.pointers.remove(destination);
+        }
+        // AG2-UNRESOLVED-ALIAS hook (rule 62): end
         LegacyInstruction::Alias {
             destination,
             source,

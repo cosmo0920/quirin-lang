@@ -12,18 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//! Card CURRENT-CONTEXT-NEW-TRIAGE, D3 (gateway rule 11v (5)): the in-place
+//! Cards CURRENT-CONTEXT-NEW-TRIAGE, D3 (gateway rule 11v (5)), and
+//! CG25-THREAD-KEY-AUTOMATIC-REVISIT (rule 11v (7)): the in-place
 //! `thread_key` kind, read through the production libc declarations of
-//! `pthread_key_create` / `pthread_key_delete` (`threads.qv`).
+//! `pthread_key_create` / `pthread_key_delete` / `pthread_getspecific`
+//! (`threads.qv`).
 //!
-//! * `&k`, `k` one automatic object: refused. An automatic key would be a
-//!   tracked by-value object, and the card's gate found a statement route
-//!   that reads one as data, so no key is tracked.
+//! * `&k`, `k` the one automatic key object of the function: tracked as
+//!   CG25's in-place object. Create and delete is `Safe`, and so is a getter
+//!   between them where the creation status certifies the key. A getter
+//!   after the delete is a `use_after_close` candidate. A missing delete is a
+//!   `leak` candidate and a second delete a `double_release` candidate. These
+//!   candidates are provisional, never upstream findings. Every copy or
+//!   escape refuses (rule 11v (6)), and so does every uncertified getter
+//!   (rule 11v (7)).
 //! * `&G`, `G` of static storage duration: the key is held by static storage
 //!   (P-THREAD-KEY-STATIC), so no frame obligation and no witness.
 //! * Refused: a static key's delete, a thread-local key, a key reached
-//!   through a pointer, an untracked delete. A non-NULL destructor leaves the
-//!   call undeclared.
+//!   through a pointer or held by a formal, a local whose name also
+//!   designates a file-scope key the body names, an untracked delete. A
+//!   non-NULL destructor leaves the call undeclared.
 //!
 //! A `Safe` here is `Safe` over the libc assumptions and P-THREAD-KEY-STATIC,
 //! and promotes nothing else. Lean: `QCore.ThreadKeyStatic`.
@@ -44,8 +52,12 @@ typedef unsigned int pthread_key_t;
 extern int pthread_key_create (pthread_key_t *__key, void (*__destr_function) (void *));
 extern int pthread_key_delete (pthread_key_t __key);
 extern void *pthread_getspecific (pthread_key_t __key);
+extern int pthread_setspecific (pthread_key_t __key, const void *__pointer);
 void destroy_value(void *value);
+void use_key(pthread_key_t key);
 struct holder { pthread_key_t *key; };
+struct record { pthread_key_t key; };
+pthread_key_t file_key;
 ";
 
 fn contracts() -> ResourceContracts {
@@ -82,7 +94,20 @@ impl Run {
             matches!(kind, LegacyDiagnosticKind::Unsupported { description } if description.contains(fragment))
         })
     }
+
+    fn has(&self, wanted: fn(&LegacyDiagnosticKind) -> bool) -> bool {
+        self.diagnostics.iter().any(wanted)
+    }
 }
+
+/// `r = pthread_key_create(&key, 0); if (r) return;`, in a `void` body.
+const CREATED: &str = "pthread_key_t key; int r; void *v; \
+     r = pthread_key_create(&key, 0); if (r) return;";
+
+const STRAY: &str = "tracked in-place object `key` named outside its declarator";
+const UNCERTIFIED: &str =
+    "use of thread key `key` not certified by its creation status (rule 11v (7))";
+const STORAGE: &str = "thread key created into an object that is not of static storage duration";
 
 fn run(source: &str) -> Run {
     let text = format!("{DECLARATIONS}\n{source}\n");
@@ -215,50 +240,259 @@ fn a_static_keys_delete_is_refused() {
     assert!(run.refused("thread key held by static storage"), "{run:?}");
 }
 
-/// An automatic key is never tracked: its creation refuses (rule 11v (5)).
-/// A tracked by-value key could reach a statement route that reads it as
-/// data: the card's gate found `(void) pthread_getspecific(key)` admitted
-/// after `pthread_key_delete(key)`. Every form refuses, so no read after a
-/// delete can be certified.
+/// Rule 11v (7): the one automatic key object is tracked. Create and delete,
+/// with the status certifying the key, is `Safe`, and so is a getter between
+/// them (README §1 rows 1, 2, 15, 25, 26).
 #[test]
-fn an_automatic_key_is_refused() {
+fn an_automatic_key_created_and_deleted_is_safe() {
     if !clang_available() {
         return;
     }
     for body in [
-        "pthread_key_t key; int r; r = pthread_key_create(&key, 0); if (r) return; \
-         pthread_key_delete(key);",
-        "pthread_key_t key; int r; r = pthread_key_create(&key, 0); if (r) return;",
-        "pthread_key_t key; pthread_key_create(&key, 0);",
-        "pthread_key_t key; int r; r = pthread_key_create(&key, 0); if (r) return; \
-         pthread_key_delete(key); (void) pthread_getspecific(key);",
-        "pthread_key_t key; int r; r = pthread_key_create(&key, 0); if (r) return; \
-         (void) pthread_getspecific(key); pthread_key_delete(key);",
+        format!("{CREATED} pthread_key_delete(key);"),
+        format!("{CREATED} v = pthread_getspecific(key); (void) v; pthread_key_delete(key);"),
+        format!("{CREATED} v = pthread_getspecific((key)); (void) v; pthread_key_delete((key));"),
+        format!("{CREATED} r = 5; pthread_key_delete(key);"),
+        "pthread_key_t key; int r; void *v; r = pthread_key_create(&key, 0); \
+         if (r == 0) { v = pthread_getspecific(key); (void) v; pthread_key_delete(key); }"
+            .to_owned(),
+        "pthread_key_t key; int r; int i; for (i = 0; i < 4; i++) { \
+         r = pthread_key_create(&key, 0); if (r) return; pthread_key_delete(key); }"
+            .to_owned(),
+        "pthread_key_t a; pthread_key_t b; int r; int s; \
+         r = pthread_key_create(&a, 0); if (r) return; \
+         s = pthread_key_create(&b, 0); if (s) { pthread_key_delete(a); return; } \
+         pthread_key_delete(b); pthread_key_delete(a);"
+            .to_owned(),
+    ] {
+        let run = run(&format!("void subject(void) {{ {body} }}"));
+        assert_eq!(run.status, AnalysisStatus::Safe, "{body}: {run:?}");
+    }
+}
+
+/// A getter after the delete is a `use_after_close` candidate (README §1
+/// row 3), provisional and never an upstream finding. The spellings a
+/// statement route lowers without the key's place refuse (row 4).
+#[test]
+fn a_getter_after_the_delete_is_a_candidate_or_refused() {
+    if !clang_available() {
+        return;
+    }
+    for body in [
+        format!("{CREATED} pthread_key_delete(key); v = pthread_getspecific(key); (void) v;"),
+        format!("{CREATED} pthread_key_delete(key); pthread_getspecific(key);"),
+    ] {
+        let run = run(&format!("void subject(void) {{ {body} }}"));
+        assert_eq!(run.status, AnalysisStatus::Unsafe, "{body}: {run:?}");
+        assert!(
+            run.has(|kind| matches!(
+                kind,
+                LegacyDiagnosticKind::UseAfterClose {
+                    kind: qcore_schemas::contract::ResourceKind::ThreadKey,
+                    ..
+                }
+            )),
+            "{body}: {run:?}"
+        );
+    }
+    for body in [
+        format!("{CREATED} pthread_key_delete(key); (void) pthread_getspecific(key);"),
+        format!("{CREATED} (void) pthread_getspecific(key); pthread_key_delete(key);"),
+        format!("{CREATED} pthread_key_delete(key); if (pthread_getspecific(key)) return;"),
     ] {
         let run = run(&format!("void subject(void) {{ {body} }}"));
         assert_eq!(run.status, AnalysisStatus::Unknown, "{body}: {run:?}");
         assert!(
-            run.refused("thread key created into an object that is not of static storage duration"),
+            run.refused(
+                "in-place actual `key` of `pthread_getspecific` is carried by no call node"
+            ),
             "{body}: {run:?}"
         );
     }
 }
 
-/// A local shadowing a file-scope key is automatic, so it is refused, never
-/// read as the static holder.
+/// Rule 11v (7): a getter the creation status has not certified refuses
+/// (README §1 rows 31-33): before the test, on the failure edge, before any
+/// creation. POSIX leaves such a use undefined.
 #[test]
-fn a_local_shadowing_a_file_scope_key_is_refused() {
+fn an_uncertified_getter_is_refused() {
     if !clang_available() {
         return;
     }
-    let run = run("pthread_key_t key;\n\
-         void subject(void) { pthread_key_t key; int r; \
-         r = pthread_key_create(&key, 0); if (r) return; }");
-    assert_eq!(run.status, AnalysisStatus::Unknown, "{run:?}");
+    for body in [
+        "pthread_key_t key; int r; void *v; r = pthread_key_create(&key, 0); \
+         v = pthread_getspecific(key); (void) v; if (r) return; pthread_key_delete(key);",
+        "pthread_key_t key; int r; void *v; r = pthread_key_create(&key, 0); \
+         if (r) { v = pthread_getspecific(key); (void) v; return; } pthread_key_delete(key);",
+        "pthread_key_t key; int r; void *v; v = pthread_getspecific(key); (void) v; \
+         r = pthread_key_create(&key, 0); if (r) return; pthread_key_delete(key);",
+    ] {
+        let run = run(&format!("void subject(void) {{ {body} }}"));
+        assert_eq!(run.status, AnalysisStatus::Unknown, "{body}: {run:?}");
+        assert!(run.refused(UNCERTIFIED), "{body}: {run:?}");
+    }
+}
+
+/// A certified key left undeleted at an exit is a `leak` candidate (README
+/// §1 rows 14, 16, 17, 22, 23): provisional, never an upstream finding.
+#[test]
+fn a_missing_delete_is_a_leak_candidate() {
+    if !clang_available() {
+        return;
+    }
+    for body in [
+        CREATED.to_owned(),
+        format!("{CREATED} if (c) return; pthread_key_delete(key);"),
+        format!("{CREATED} if (c) pthread_key_delete(key);"),
+        format!(
+            "{CREATED} r = pthread_key_create(&key, 0); if (r) return; pthread_key_delete(key);"
+        ),
+        "pthread_key_t key; int r; int i; for (i = 0; i < c; i++) { \
+         r = pthread_key_create(&key, 0); if (r) return; if (i) continue; \
+         pthread_key_delete(key); }"
+            .to_owned(),
+    ] {
+        let run = run(&format!("void subject(int c) {{ {body} }}"));
+        assert_eq!(run.status, AnalysisStatus::Unsafe, "{body}: {run:?}");
+        assert!(
+            run.has(|kind| matches!(kind, LegacyDiagnosticKind::Leak { .. })),
+            "{body}: {run:?}"
+        );
+    }
+}
+
+/// A second delete is a `double_release` candidate (README §1 row 18).
+#[test]
+fn a_double_delete_is_a_candidate() {
+    if !clang_available() {
+        return;
+    }
+    let run = run(&format!(
+        "void subject(void) {{ {CREATED} pthread_key_delete(key); pthread_key_delete(key); }}"
+    ));
+    assert_eq!(run.status, AnalysisStatus::Unsafe, "{run:?}");
     assert!(
-        run.refused("thread key created into an object that is not of static storage duration"),
+        run.has(|kind| matches!(kind, LegacyDiagnosticKind::DoubleRelease { .. })),
         "{run:?}"
     );
+}
+
+/// Rule 11v (6): every copy or escape of a tracked key refuses (README §1
+/// rows 5-12): a copy, an uncontracted callee, a member or global store, a
+/// return, an address, a comparison, an expression actual, `&key` at the
+/// by-value delete, and the setter (its declaration is withheld from the
+/// function map, so its key is no custody actual).
+#[test]
+fn copy_and_escape_forms_are_refused() {
+    if !clang_available() {
+        return;
+    }
+    for (body, refusal) in [
+        ("pthread_key_t k2 = key; (void) k2;", STRAY),
+        ("pthread_key_t k2; k2 = key; (void) k2;", STRAY),
+        ("use_key(key);", STRAY),
+        ("file_key = key;", STRAY),
+        ("{ struct record rec; rec.key = key; (void) rec; }", STRAY),
+        ("{ pthread_key_t *p = &key; (void) p; }", STRAY),
+        ("if (key == 0) return;", STRAY),
+        ("v = pthread_getspecific(key + 0); (void) v;", STRAY),
+        ("pthread_setspecific(key, \"value\");", STRAY),
+    ] {
+        let source = format!("void subject(void) {{ {CREATED} {body} pthread_key_delete(key); }}");
+        let run = run(&source);
+        assert_eq!(run.status, AnalysisStatus::Unknown, "{body}: {run:?}");
+        assert!(run.refused(refusal), "{body}: {run:?}");
+    }
+    let run = run("pthread_key_t subject(void) { pthread_key_t key; int r; \
+         r = pthread_key_create(&key, 0); if (r) return 0; return key; }");
+    assert_eq!(run.status, AnalysisStatus::Unknown, "{run:?}");
+    assert!(run.refused(STRAY), "{run:?}");
+}
+
+/// The status is the sentinel (rule 11v (3)): a discarded or consumed status,
+/// a delete before the test and a delete after a create on one path only
+/// refuse (README §1 rows 20, 21, 24).
+#[test]
+fn an_unwitnessed_or_undecided_key_is_refused() {
+    if !clang_available() {
+        return;
+    }
+    for body in [
+        "pthread_key_t key; pthread_key_create(&key, 0); pthread_key_delete(key);",
+        "pthread_key_t key; if (pthread_key_create(&key, 0) != 0) return; pthread_key_delete(key);",
+        "pthread_key_t key; int r; r = pthread_key_create(&key, 0); pthread_key_delete(key);",
+    ] {
+        let run = run(&format!("void subject(void) {{ {body} }}"));
+        assert_eq!(run.status, AnalysisStatus::Unknown, "{body}: {run:?}");
+    }
+    let run = run("void subject(int c) { pthread_key_t key; int r; \
+         if (c) { r = pthread_key_create(&key, 0); if (r) return; } pthread_key_delete(key); }");
+    assert_eq!(run.status, AnalysisStatus::Unknown, "{run:?}");
+}
+
+/// Rule 11v (7) tracks only the one automatic key object every reference
+/// names. A formal's address, or a local whose name the body also uses for
+/// the file-scope key it shadows, keeps D3's refusal; a local whose every
+/// reference is its own is tracked, and its missing delete is a leak
+/// candidate (README §1 rows 27-29).
+#[test]
+fn only_the_one_automatic_key_object_is_tracked() {
+    if !clang_available() {
+        return;
+    }
+    for source in [
+        "void subject(pthread_key_t key) { int r; r = pthread_key_create(&key, 0); \
+         if (r) return; pthread_key_delete(key); }",
+        "void subject(void) { { pthread_key_t file_key; int r; \
+         r = pthread_key_create(&file_key, 0); if (r) return; } pthread_key_delete(file_key); }",
+        "void subject(void) { void *v; v = pthread_getspecific(file_key); (void) v; \
+         { pthread_key_t file_key; int r; r = pthread_key_create(&file_key, 0); if (r) return; \
+         pthread_key_delete(file_key); } }",
+    ] {
+        let run = run(source);
+        assert_eq!(run.status, AnalysisStatus::Unknown, "{source}: {run:?}");
+        assert!(run.refused(STORAGE), "{source}: {run:?}");
+    }
+    let run = run("void subject(void) { pthread_key_t file_key; int r; \
+         r = pthread_key_create(&file_key, 0); if (r) return; }");
+    assert_eq!(run.status, AnalysisStatus::Unsafe, "{run:?}");
+    assert!(
+        run.has(|kind| matches!(kind, LegacyDiagnosticKind::Leak { .. })),
+        "{run:?}"
+    );
+}
+
+/// An automatic key's non-NULL destructor leaves the call undeclared: no
+/// destructor is ever registered on a tracked key, so no callback is left
+/// for the run to decide.
+#[test]
+fn an_automatic_key_with_a_destructor_is_undeclared() {
+    if !clang_available() {
+        return;
+    }
+    let run = run("void subject(void) { pthread_key_t key; int r; \
+         r = pthread_key_create(&key, destroy_value); if (r) return; pthread_key_delete(key); }");
+    assert_eq!(run.status, AnalysisStatus::Unknown, "{run:?}");
+    assert!(
+        run.refused("call to `pthread_key_create` outside its declared literal-argument premise"),
+        "{run:?}"
+    );
+}
+
+/// The kinded getter changes nothing for a key no body tracks: a static
+/// key's getter keeps the plain borrowed reading, as does a formal's.
+#[test]
+fn an_untracked_getter_keeps_the_borrowed_reading() {
+    if !clang_available() {
+        return;
+    }
+    for source in [
+        "void subject(void) { void *v; v = pthread_getspecific(file_key); (void) v; }",
+        "void *subject(pthread_key_t key) { return pthread_getspecific(key); }",
+    ] {
+        let run = run(source);
+        assert_eq!(run.status, AnalysisStatus::Safe, "{source}: {run:?}");
+    }
 }
 
 /// Deleting a key this body never created, held by no static name, refuses.

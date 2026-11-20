@@ -1,0 +1,15 @@
+status totals base Counter({'Unknown': 3745, 'Safe': 1079, 'Unsafe': 10}) tip Counter({'Unknown': 3744, 'Safe': 1080, 'Unsafe': 10})
+moves {('Unknown', 'Safe'): 1}
+  move {'file': 'mk_server/mk_http_parser.c', 'function': 'header_cmp', 'base': 'Unknown', 'tip': 'Safe'}
+removed leaves 894 added 895
+removed by family:
+     777 ('unsupported', 'unmodeled call, aggregate or indirect access in branch condition')
+      75 ('unsupported', 'unmodeled call, aggregate or indirect access in for-loop condition')
+      36 ('unsupported', 'unmodeled call, aggregate or indirect access in loop condition')
+       6 ('unsupported', 'unmodeled call, aggregate or indirect access in do-while condition')
+added by family:
+     775 ('unsupported', 'call to uncontracted function X in branch condition')
+      75 ('unsupported', 'call to uncontracted function X in for-loop condition')
+      36 ('unsupported', 'call to uncontracted function X in loop condition')
+       6 ('unsupported', 'call to uncontracted function X in do-while condition')
+       3 ('unknown_alias', 'unresolved resource identity X')

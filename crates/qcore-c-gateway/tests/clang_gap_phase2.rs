@@ -330,9 +330,10 @@ fn m11_string_initializers_are_refused_or_unresolved() {
     // element is, custody-neutral). BEFORE: both refused (DESTINATION).
     assert!(gs("void subject(void) { char buf[] = \"abc\"; }").safe());
     assert!(gs("int subject(void) { char buf[] = \"abc\"; return buf[9]; }").safe());
-    // Unchanged.
+    // FLIPPED by AG2-UNRESOLVED-ALIAS (rule 62): a pointer local copied
+    // from a string literal is unbound, not an unresolved identity.
     let run = gs("int subject(void) { const char *s = \"abc\"; return s[3]; }");
-    assert!(run.unknown() && run.has("__qcore_literal__"), "{run:?}");
+    assert!(run.safe(), "{run:?}");
 }
 
 // ---------------------------------------------------------------------------

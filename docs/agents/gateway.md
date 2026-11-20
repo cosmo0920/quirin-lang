@@ -4693,7 +4693,8 @@ own anchor here.
     storage refuses (`THREAD_KEY_STORAGE_REFUSAL`): an automatic key would be
     tracked by value, and the card's gate found a statement fallback that
     re-lowered `(void) pthread_getspecific(k)` as a plain borrowed call even
-    after `pthread_key_delete(k)`, so no key is tracked. The null destructor is spelled `0` or the C11 null pointer
+    after `pthread_key_delete(k)`, so no key is tracked (narrowed by (7): the
+    one automatic key object is tracked). The null destructor is spelled `0` or the C11 null pointer
     constant `(void *) 0` (glibc's `NULL`), admitted at a pointer premise of
     `0` by §C04.5.1 (user decision 2026-11-16 "Admit (void *) 0
     (Recommended)"; `legacy_literal_premise::void_pointer_null_constant`,
@@ -4704,10 +4705,9 @@ own anchor here.
     destructor, not owed a delete); the call is read with that position
     borrowed (`legacy_classify.rs`). A by-value delete of such a `G` refuses
     (`STATIC_KEY_RELEASE_REFUSAL`), as does a key reached through a pointer,
-    a thread-local key and a delete of an untracked key; the getters are not
-    kinded, and the guard's own refusal is final (`is_guard_refusal`). The
-    same fallback escape for the `regex` kind is a registered follow-up
-    (`CG25-VOID-CAST-GUARD-ESCAPE`). **Do not** read
+    a thread-local key and a delete of an untracked key; the getters were not
+    kinded until (7), and the guard's own refusal is final (`is_guard_refusal`). The
+    same fallback escape for the `regex` kind is closed by (6). **Do not** read
     a thread-local, member or pointer-reached key as static, drop the literal
     destructor premise, or accept a static key's delete without a reading of
     its holder. Measured: see the report (`mk_http_thread_initialize_tls_once`
@@ -4716,6 +4716,90 @@ own anchor here.
     `kindVectors`/`protocolVectors` extended;
     `tests/thread_key_in_place.rs`;
     [report](../reports/current-context-new-triage/README.md).
+    (6) **Every mention, whatever the route** (card
+    CG25-VOID-CAST-GUARD-ESCAPE, priority soundness; user decision
+    2026-11-17 "Yes, launch it."). (4)'s guard reads only a statement's first
+    classification. A first classification that was already a refusal skipped
+    it, and a later route admitted tracked storage as data. The census found
+    25 regex shape runs certified `Safe`, among them `(void) re.used;`,
+    `(void) (re.used = 0);` and `(void) (re.used ? 1 : 0);` (statement
+    fallbacks 10s and 10z), `t = k_regexec(&re, s) + (int) re.used;`,
+    `if`/`while`/`do`/`switch` on `re.used`, and `return (int) re.used;`.
+    So, over the finished CFG (after `verify_cfg` and every later pass), the
+    body's token stream (the one the parser reads) is read once
+    (`InPlaceNames::body_mentions`, `verify_mentions`). Every variable
+    mention of a tracked object must be one of three things: its declarator
+    (the guard's `declares_only` over the enclosing statement, not after a
+    statement keyword); the operand of `sizeof NAME` or `sizeof ( NAME )`
+    (not evaluated, C11 6.5.3.4p2; a tracked object is never an array); or a
+    **custody actual**. A custody actual is a whole `&NAME` actual (or `NAME`
+    at a by-value finaliser or use of a by-value kind) of a direct call to a
+    declared callee with a contract in force, at a position of the object's
+    kind. Every custody actual must also be carried by at least as many call
+    nodes of that callee as the body spells it, each holding the object's
+    place at that position. Otherwise a refusal node is added before the
+    entry, so it lies on every path and replaces no lowering. Names are read
+    off the tokens, not off the nodes, so a by-value scalar actual is seen:
+    D3's CFG-level check missed that case. Widening (4)'s guard to every
+    refusal is also not needed, which is what broke `rd_regex_match`. Every
+    correctly admitted use stays admitted, with its place: kinded calls
+    plain, assigned, compared (10y), cast, in a statement expression (11g),
+    in a condition, a declaration or a return, and `sizeof`. No published
+    Safe rested on an escape: `rd_regex_match`, the only tracked object on
+    any route or baseline, names `re` only in custody actuals. **Do not**
+    admit a mention because some route lowered it, or relax the carried
+    count to "some node". `QCore.InPlaceMentionGuard`
+    (`AuditInPlaceMentionGuard.lean`; every admitted lowering, from any
+    route, passed the guard; `shapeAdmissions` bound to
+    `tests/in_place_mention_guard.rs`);
+    [report](../reports/cg25-void-cast-guard-escape/README.md).
+    (7) **Automatic thread keys, used only when certified** (card
+    CG25-THREAD-KEY-AUTOMATIC-REVISIT; user decision 2026-11-17
+    "CG25-THREAD-KEY-AUTOMATIC-REVISIT -> Let's get started."). With (6) in
+    force, (5)'s refusal of an automatic key no longer has its stated reason.
+    `pthread_key_create(&k, 0)` with `k` **the one automatic key object** of
+    the function is now CG25's in-place initialiser. "The one automatic key
+    object" means exactly one `VarDecl` of the name, automatic, not
+    `register`, `volatile`, a pointer or an array, and every `DeclRefExpr`
+    naming it refers to that declaration (`every_reference_is`).
+    `pthread_key_delete(k)` is its by-value finaliser. libc's
+    `pthread_getspecific` key is kinded `thread_key`, a by-value use; a use
+    whose actual names no tracked key keeps the plain borrowed reading.
+    Several creations keep (5)'s `THREAD_KEY_STORAGE_REFUSAL`, text
+    unchanged: into a member, into a formal, through a pointer, and into a
+    name that also designates a file-scope object (before the local's
+    declarator, or after its block). The soundness analysis read every use
+    of a tracked key against (1)-(6) (report §1). Every one is refused or
+    decided, except a by-value use **before the status test**, **on the
+    failure edge** or **before any creation**. (1)-(6) would admit those
+    `Safe`, yet POSIX leaves a use of a key value not obtained from
+    `pthread_key_create` undefined, and CG25's in-place use checks only the
+    released bit. So a by-value use of a tracked key is admitted only where
+    the **settled state certifies** the key (`report_uncertified_key_uses`,
+    read as `report_kind_violations` reads its candidates): one identity,
+    not unknown, not possibly failed, site live or released. A released key
+    is the `use_after_close` candidate; any other state refuses ("use of
+    thread key `k` not certified by its creation status (rule 11v (7))").
+    `&k` is never custody at a by-value position, in the mention reading or
+    in `in_place_actuals`. A nested by-value use is not refused by the CFG
+    check (`has_in_place_custody_position`): an untracked key's nested getter
+    keeps its pre-(7) reading, and a tracked key's is uncarried, so (6)
+    refuses it. `pthread_setspecific` stays unkinded: its declaration is
+    withheld from the function map (rule 12t), so a setter naming a tracked
+    key is a stray mention under (6), and the function is refused.
+    Candidates on a tracked key are provisional, never upstream findings:
+    `leak` (a missing delete, an early return, a re-creation of a live key),
+    `double_release` and `use_after_close`. **Do not** track a key that a
+    reference outside its one declaration can name, admit an uncertified use,
+    read `&k` as a by-value actual, or drop the literal destructor premise (a
+    destructor is a callback no declaration states). Census: no Fluent Bit or
+    Monkey evidence tree creates an automatic key. A unit differential of
+    the 40 evidence units that name a key call is identical at base and tip
+    (report §2). `QCore.ThreadKeyStatic` (`AuditThreadKeyStatic.lean`:
+    `a_safe_verdict_used_only_certified_keys`, the witness programs);
+    `QCore.InPlaceMentionGuard.the_void_cast_getter_is_refused` restated for
+    the kinded getter; `tests/thread_key_in_place.rs`;
+    [report](../reports/cg25-thread-key-automatic-revisit/README.md).
 
 <a id="constraint-11w"></a>
 
@@ -11803,5 +11887,196 @@ an undeclared OpenSSL producer). `QCore.NullableReferenceDrop` (12 audited,
     and `legacy_literal_premise.rs`'s
     `a_premise_or_a_poisoned_set_withdraws_a_callback_candidate`.
     [Report](../reports/callback-candidate-literal-premise/README.md).
+
+<a id="constraint-61"></a>
+
+61. **A local spelled through a struct alias is the struct pointer for the
+    aggregate store.** Card AG1-INDIRECT-MEMBER-ACCESS (round 33, the
+    user's decision of 2026-11-18 to close the largest analyser gaps of the
+    `current` run). The census of the access refusal on the user's 046accf6
+    `current` run ([report](../reports/ag1-indirect-member-access/README.md))
+    found the constructor shape `T *r = alloc(…); r->F = owned_call(…);
+    return r;` refused at the member store wherever `T` is a typedef that
+    *defines* its struct (`typedef struct TAG { … } T;`) or is declared twice
+    (`rdkafka.h`'s forward `typedef struct TAG T;` beside the defining one):
+    the lexical declaration reader answers `Opaque` for both (card
+    ABI-TYPEDEF-ADDRESS-OF-MEMBER kept that answer byte for byte; a
+    disagreeing pair it cannot compare is `None`), so O04-B08's premise 2
+    ("the base's declared type is exactly `struct TAG *`") never held.
+    C11 6.7.8p3 makes a typedef name a synonym for its type, so the premise
+    is true. (1) **The reading** (`typedef_aggregate_base.rs`; hooks in
+    `typed_field_access.rs`, `struct_alias_heads` and `struct_alias_tag`,
+    and in `aggregate_store.rs`, `AggregateStoreBases::alias_tags` /
+    `base_tag`): where every `typedef` declaration of `A` in the unit is
+    exactly `typedef struct TAG A;` or `typedef struct TAG { … } A;` with one
+    `TAG`, `struct TAG` has exactly one complete, non-union definition, and a
+    statement of the body is exactly `A * NAME ;` or `A * NAME = … ;` (one
+    declarator, one `*`, no qualifier or storage class) declaring a name no
+    other declaration of the body declares, that is not a formal and for which
+    the shared reader committed to nothing (`Opaque`), and whose one binding in
+    the body is a direct call (under at most one pointer cast) whose
+    contract in force returns an **owned** result (a record this body
+    allocated: an accessor's borrowed child, `parpriv =
+    rd_kafka_topic_partition_get_private(rktpar)`, stays with the typed
+    routes, which read its scalar stores), the aggregate store's
+    premise 2 and its member reads (`admitted_field`, the insulation scan's
+    `&NAME->F`, `member_address_actuals` for an admissible base) read `NAME`
+    as `struct TAG *`. Premises 1 and 3–7, the value classes, the
+    flow-sensitive owner check (one live identity this body acquired) and
+    P-B08-SHALLOW are unchanged and still decide; a refused reading leaves
+    the store exactly as before. (2) **`sizeof`**: a typedef name whose
+    declarations the shared table cannot compare (`None`) but which names one
+    struct under (1)'s alias table is never variably modified
+    (`never_variably_modified`), so `sizeof(*NAME)` is an unevaluated operand
+    (C11 6.5.3.4p2) for the readers that ask (W44-COLLECTION-ALLOCATION,
+    rule 37's checked spans). **Do not** read a base bound from a borrowed,
+    derived or uncontracted call or a copy, or a union, anonymous, pointer,
+    disagreeing or incomplete alias, a qualified or multi-declarator
+    declaration, a formal, or a name the shared reader typed otherwise; do
+    not change the shared classifier's answer for any other consumer.
+    Measured re-attribution: a constructor that stores on one arm only
+    (`rd_kafka_Node_new`'s `rack`) now meets rule 11c's partial-link escape
+    refusal, which is honest and unchanged. Premises stated, not proved:
+    faithful token extraction of the declarations (trust boundary 28).
+    `QCore.TypedefAggregateBase`
+    (`an_agreeing_alias_names_its_struct_everywhere`,
+    `a_disagreeing_alias_names_nothing`, `an_other_declaration_names_nothing`,
+    `a_missing_fact_never_admits`, `decision_vectors_hold`,
+    `an_admitted_local_is_the_struct_pointer`,
+    `the_store_decides_alike_over_either_spelling`,
+    `a_refused_alias_keeps_the_refusal`,
+    `a_struct_alias_is_never_variably_modified`), bound to the Rust table by
+    `typedef_aggregate_base::tests` (`decision_vectors`);
+    `tests/ag1_indirect_member_access.rs`.
+
+<a id="constraint-62"></a>
+
+62. **A copy of a source that carries no identity leaves its destination
+    unbound.** Card AG2-UNRESOLVED-ALIAS, on the user's decision of
+    2026-11-18 to close the largest analyser gaps of the Fluent Bit corpus
+    (`custody_free_copy.rs`: `read`, `decide`, `CustodyFreeCopies::admits`;
+    the parser adapter `legacy_custody_free_copy.rs`; the field
+    `TraversalNames::custody_free` in `legacy_c.rs`; one `Alias` arm in
+    `legacy_transfer::transfer_base`, after rule 54's). It completes
+    W43-INDEX-TRAVERSAL's copy exemption and rule 54 for the three sources
+    the user's `current` run still reported as unresolved identities
+    ([report](../reports/ag2-unresolved-alias/README.md)). Read from Clang's
+    AST of the function, asked only where some alias copies a source the
+    traversal names do not cover. (1) **Destinations.** Only an automatic
+    local: exactly one declaration of the spelling in the function, a
+    block-scope `VarDecl` with automatic storage whose type is neither
+    `volatile` nor `_Atomic` at the top level, no parameter of that
+    spelling, and every reference to it designating that declaration (a
+    shadowed spelling is refused: the projection names objects by
+    spelling). (2)
+    **Literals.** The tokenizer's `__qcore_literal__` (a string literal is a
+    static array, C11 6.4.5p6; a character constant an `int`, 6.4.4.4p10),
+    unless some declaration or reference of the function spells that
+    placeholder. (3) **Enumeration constants.** A spelling every reference
+    of which is a `DeclRefExpr` to an `EnumConstantDecl` and that no
+    declaration of the function spells (an enumerator designates no object,
+    6.4.4.3p2). (4) **Formal copies.** A parameter of object-pointer type,
+    declared once and spelled by no local, that rule 10l's pointer-root
+    premise answers for (rule 5b's closure joined with the AST closure and
+    the declaration reader's `may_bind`), never the target of `=`, a
+    compound assignment or a step, never address-taken; its copies are the
+    automatic object-pointer locals receiving its whole value by a plain
+    `=` or an initializer (through parentheses and `NoOp`/`BitCast` casts),
+    closed under copying. Every reference to a copy must be a rebinding, a
+    copy into another copy, a null test, the base of `->`, `[]` or unary
+    `*`, or a call actual, and the never-bound closure must answer for every
+    copy; a `return` of a copy, a store of its value, `&` of it, a write or
+    any other use withholds the reading for the formal and all its copies.
+    (5) **Transfer.** Where admitted and the source has no binding on the
+    incoming state, `D = S` removes `D`'s binding and reports nothing: no
+    obligation is created or discharged, the destination denotes exactly
+    what the unbound source denotes, and every later custody use of it (a
+    release, a transfer, an owned or custody-taking position, a return)
+    finds no binding and refuses or escapes nothing. A bound source, a
+    withheld reading or any other destination keeps the old alias transfer
+    and its unresolved-identity report, which is W4's signal to bind the
+    formal (`legacy_summary::bind_unresolved_formals`): a body that releases
+    or hands out a formal through a copy still derives the summary it did.
+    **Do not** read a file-scope or static object (rule 54's boundary), a
+    formal destination, a member, a value read from a member or a call, a
+    loop cursor's later values, or a formal whose copy is returned or stored
+    under this rule, and do not give any of these sources an identity or an
+    owner. Premises stated, not proved: faithful Clang extraction of
+    declaration kinds, storage, types and parent nodes, the tokenizer's
+    literal placeholder, route G's lowering of a copy as one alias node
+    (trust boundary 28), and the never-bound closures of rules 5b and 10l.
+    `QCore.CustodyFreeCopy` (`decision_vectors_hold`,
+    `a_custody_use_of_a_copy_withholds`, `a_write_to_the_formal_withholds`,
+    `the_copy_denotes_what_the_source_denotes`,
+    `every_binding_decision_agrees`, `withheld_keeps_the_report`,
+    `a_never_written_name_stays_unbound`), bound to `DECISION_VECTORS` by a
+    shared-vector test.
+
+<a id="constraint-63"></a>
+
+63. **A condition leaf's residual read beside identity calls is decided by
+    the typed read; an uncontracted call that refuses a condition names its
+    callee.** Card AG3-CONDITION-RETURN-CALLS (round 33,
+    `legacy_condition_leaf_reads.rs`, reached through one thin hook per
+    position in `legacy_c.rs`'s `parse_statement`, asked after
+    `planned_condition` answered no plan; `legacy_condition_desugar.rs`, a
+    pinned artifact of the libc reading-site evidence, is not edited). Only
+    for a controlling expression the position's routes, rule 5h, the
+    elaborator (rule 10s) and the `va_arg` route (rule 12c) all refused, with
+    no brace, no opaque callee, no tracked descriptor read as data, and
+    direct calls only (none nested in another's actuals, none through a
+    member or a parenthesised expression; `__builtin_expect(E, K)` with `K`
+    one token of decimal digits is read through as rule 5h reads it, any
+    other hint refuses, and (1) is not asked under a hint).
+    (1) **The residual read.** One leaf (no top-level `&&`, `||` or `?:`), no
+    assignment, compound assignment, increment or decrement. Each call is
+    instantiated through the one application point (rule 10u, use
+    `Tested`, as rule 5h instantiates a leaf call). When **every**
+    instruction they lower to is the identity on the abstract state (an
+    identity contract call, `is_identity_call`: every position borrowed, no
+    container effect, a `None` or derived result, no produced site, no
+    aggregate effect; or an actual read with no destination and no frame),
+    and the residual (each call replaced by `0`) is not custody-neutral as
+    written but `condition_access` (the lexical typed condition read of rules
+    5h-5l) reads it as a read with no destination and no frame, the
+    condition is the calls, then that read as its branch. The read keeps
+    every base's flow obligation and refines neither edge, because the
+    residual's `0` is not the call's value. C leaves the order of a leaf's
+    call and its operand reads unspecified; with identity calls every order
+    reaches the same state and checks the read's obligations against it
+    (`QCore.ConditionLeafReads.every_order_reaches_the_same_state`,
+    `the_read_sees_the_same_state_in_either_order`). (2) **The named
+    refusal.** Otherwise, when the condition's direct calls are, in textual
+    order, instantiable calls followed by one the classifier refuses with
+    exactly ``call to uncontracted function `F` `` for its own callee `F`,
+    and `F` names a function (no formal, no declared local, no `( * F )`
+    declarator in the unit: a call through a pointer object is an open set,
+    rule 11p), the position's refusal node is replaced by a one-node plan holding
+    `Unknown` with the description ``call to uncontracted function `F` in
+    branch condition`` (`loop`, `for-loop`, `do-while` for the other
+    positions), the condition's writes and both exits, which the planned
+    compilers wire exactly as the refusal node was wired (loop exit edge,
+    header, `continue` target, cell test). Every probe's state is restored.
+    The position suffix is load-bearing: the refused-operand hand-on rule
+    (`legacy_refused_operands.rs`, `refuses_a_condition`) reads a refusal's
+    position from its text, and without the suffix a refused condition
+    would hand on the statement table of its line and withdraw a leak
+    accusation (measured on a one-line fixture;
+    `the_named_text_keeps_the_condition_class`). The value-connective route
+    (rule 10z) never asks this rule, so a `?:` value or a connective return
+    keeps its older answer. **Do not:** admit a residual read beside a call
+    that is not the identity (a release, consumption, owned or reallocated
+    result, container effect), beside an assignment (`(n = f(x)) > p->len`
+    keeps rule 10x's split or its refusal), below a connective, in a
+    `switch`, or through the Clang node matcher; use the read to refine an
+    edge; re-attribute any other classifier text (an indirect actual's
+    `indirect memory access …` stays the position's text, which is AG1's
+    subject), a held call, a recursive-component or custody refusal, a
+    `switch`, or a condition that reads a tracked descriptor. Premises
+    stated, not proved: faithful token extraction and the classifier's
+    answers (trust boundary 28), and that an identity call's effect on the
+    abstract state is its contract's (constraint 4). Fixtures:
+    `tests/condition_leaf_reads.rs`. `QCore.ConditionLeafReads`;
+    [report](../reports/ag3-condition-return-calls/README.md).
 
 <!-- generated:rules:end -->

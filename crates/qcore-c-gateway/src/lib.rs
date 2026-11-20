@@ -210,6 +210,9 @@ pub mod thread_entry_census;
 // Card THREAD-LOCAL-CUSTODY-FREE-READ (rule 54): a whole read of a
 // thread-local pointer object is a custody-free value.
 pub mod thread_local_read;
+// Card AG2-UNRESOLVED-ALIAS (rule 62): copy sources that carry no resource
+// identity (literals, enumerators, read-only copies of unbound formals).
+pub mod custody_free_copy;
 #[cfg(feature = "indirect-census")]
 pub mod traversal_census;
 mod type_query;
@@ -301,6 +304,8 @@ mod typed_field_access;
 mod typed_root_declarations;
 pub mod typed_source;
 pub mod typed_source_match;
+// Card AG1-INDIRECT-MEMBER-ACCESS (rule 61).
+mod typedef_aggregate_base;
 // Card CG01-T-OPERATOR-CLOSURE (rule 10r): route T's operator and literal
 // closure and the per-consumer admission that gates it.
 pub mod typed_source_nodes;

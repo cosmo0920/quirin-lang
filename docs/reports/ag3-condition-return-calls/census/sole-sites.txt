@@ -1,0 +1,179 @@
+cmetrics   cmt_get_statsd_type                      branch lib/cmetrics/src/cmt_decode_statsd.c:505 | if (*(str + 1) == 's') {
+cmetrics   line_protocol_escape                     branch lib/cmetrics/src/cmt_encode_influx.c:234 | if (quote ? (ch == '"' || ch == '\\') : (isspace(ch) || ch == ',' || ch == '=')) {
+cmetrics   fetch_array_kvlist_entry                 return lib/cmetrics/src/cmt_encode_opentelemetry.c:124 | return entry_variant->data.as_kvlist;
+cmetrics   fetch_metadata_array_key                 return lib/cmetrics/src/cmt_encode_opentelemetry.c:108 | return entry_variant->data.as_array;
+cmetrics   fetch_metadata_kvlist_key                return lib/cmetrics/src/cmt_encode_text.c:65 | return entry_variant->data.as_kvlist;
+librdkafka buffer_skip_whitespace                   loop c lib/librdkafka-2.15.0/src/cJSON.c:1097 | while (can_access_at_index(buffer, 0) && (buffer_at_offset(buffer)[0] <= 32))
+librdkafka cJSON_DetachItemFromObject               return lib/librdkafka-2.15.0/src/cJSON.c:2298 | return cJSON_DetachItemViaPointer(object, to_detach);
+librdkafka cJSON_DetachItemFromObjectCaseSensitive  return lib/librdkafka-2.15.0/src/cJSON.c:2305 | return cJSON_DetachItemViaPointer(object, to_detach);
+librdkafka cJSON_GetErrorPtr                        return lib/librdkafka-2.15.0/src/cJSON.c:96 | return (const char*) (global_error.json + global_error.position);
+librdkafka cJSON_GetStringValue                     return lib/librdkafka-2.15.0/src/cJSON.c:106 | return item->valuestring;
+librdkafka cJSON_malloc                             return lib/librdkafka-2.15.0/src/cJSON.c:3184 | return global_hooks.allocate(size);
+librdkafka skip_utf8_bom                            branch lib/librdkafka-2.15.0/src/cJSON.c:1118 | if (can_access_at_index(buffer, 4) && (strncmp((const char*)buffer_at_offset(buffer), "\xEF\xBB\xBF", 3) == 0))
+librdkafka LZ4_NbCommonBytes                        return lib/librdkafka-2.15.0/src/lz4.c:589 | return (unsigned)__builtin_ctzll((U64)val) >> 3;
+librdkafka LZ4_NbCommonBytes                        return lib/librdkafka-2.15.0/src/lz4.c:603 | return (unsigned)__builtin_ctz((U32)val) >> 3;
+librdkafka LZ4_NbCommonBytes                        return lib/librdkafka-2.15.0/src/lz4.c:614 | return (unsigned)__builtin_clzll((U64)val) >> 3;
+librdkafka LZ4_NbCommonBytes                        return lib/librdkafka-2.15.0/src/lz4.c:650 | return (unsigned)__builtin_clz((U32)val) >> 3;
+librdkafka LZ4_hashPosition                         branch lib/librdkafka-2.15.0/src/lz4.c:783 | if ((sizeof(reg_t)==8) && (tableType != byU16)) return LZ4_hash5(LZ4_read_ARCH(p), tableType);
+librdkafka LZ4_slideInputBuffer                     return lib/librdkafka-2.15.0/src/lz4.c:2724 | return (char *)(uptrval)((LZ4_stream_t*)state)->internal_donotuse.dictionary;
+librdkafka decode_pointer_field                     return lib/librdkafka-2.15.0/src/nanopb/pb_decode.c:628 | PB_RETURN_ERROR(stream, "no malloc support");
+librdkafka pb_dec_string                            branch lib/librdkafka-2.15.0/src/nanopb/pb_decode.c:1542 | if (!pb_decode_varint32(stream, &size))
+librdkafka pb_dec_string                            return lib/librdkafka-2.15.0/src/nanopb/pb_decode.c:1546 | PB_RETURN_ERROR(stream, "size too large");
+librdkafka pb_dec_string                            return lib/librdkafka-2.15.0/src/nanopb/pb_decode.c:1552 | PB_RETURN_ERROR(stream, "size too large");
+librdkafka pb_dec_string                            return lib/librdkafka-2.15.0/src/nanopb/pb_decode.c:1557 | PB_RETURN_ERROR(stream, "no malloc support");
+librdkafka pb_dec_string                            return lib/librdkafka-2.15.0/src/nanopb/pb_decode.c:1570 | PB_RETURN_ERROR(stream, "string overflow");
+librdkafka pb_dec_string                            branch lib/librdkafka-2.15.0/src/nanopb/pb_decode.c:1575 | if (!pb_read(stream, dest, (size_t)size))
+librdkafka pb_decode_svarint                        branch lib/librdkafka-2.15.0/src/nanopb/pb_decode.c:1358 | if (!pb_decode_varint(stream, &value))
+librdkafka pb_decode_varint                         branch lib/librdkafka-2.15.0/src/nanopb/pb_decode.c:250 | if (!pb_readbyte(stream, &byte))
+librdkafka pb_decode_varint                         return lib/librdkafka-2.15.0/src/nanopb/pb_decode.c:254 | PB_RETURN_ERROR(stream, "varint overflow");
+librdkafka pb_decode_varint32_eof                   branch lib/librdkafka-2.15.0/src/nanopb/pb_decode.c:175 | if (!pb_readbyte(stream, &byte))
+librdkafka pb_decode_varint32_eof                   branch lib/librdkafka-2.15.0/src/nanopb/pb_decode.c:201 | if (!pb_readbyte(stream, &byte))
+librdkafka pb_decode_varint32_eof                   return lib/librdkafka-2.15.0/src/nanopb/pb_decode.c:213 | PB_RETURN_ERROR(stream, "varint overflow");
+librdkafka pb_decode_varint32_eof                   return lib/librdkafka-2.15.0/src/nanopb/pb_decode.c:220 | PB_RETURN_ERROR(stream, "varint overflow");
+librdkafka pb_readbyte                              return lib/librdkafka-2.15.0/src/nanopb/pb_decode.c:127 | PB_RETURN_ERROR(stream, "end-of-stream");
+librdkafka pb_readbyte                              branch lib/librdkafka-2.15.0/src/nanopb/pb_decode.c:130 | if (!stream->callback(stream, buf, 1))
+librdkafka pb_readbyte                              return lib/librdkafka-2.15.0/src/nanopb/pb_decode.c:131 | PB_RETURN_ERROR(stream, "io error");
+librdkafka pb_skip_varint                           branch lib/librdkafka-2.15.0/src/nanopb/pb_decode.c:270 | if (!pb_read(stream, &byte, 1))
+librdkafka encode_callback_field                    branch lib/librdkafka-2.15.0/src/nanopb/pb_encode.c:408 | if (field->descriptor->field_callback != NULL)
+librdkafka encode_callback_field                    branch lib/librdkafka-2.15.0/src/nanopb/pb_encode.c:410 | if (!field->descriptor->field_callback(NULL, stream, field))
+librdkafka encode_callback_field                    return lib/librdkafka-2.15.0/src/nanopb/pb_encode.c:411 | PB_RETURN_ERROR(stream, "callback error");
+librdkafka pb_check_proto3_default_value            return lib/librdkafka-2.15.0/src/nanopb/pb_encode.c:268 | return safe_read_bool(field->pSize) == false;
+librdkafka pb_check_proto3_default_value            branch lib/librdkafka-2.15.0/src/nanopb/pb_encode.c:321 | if (pb_field_iter_begin(&iter, field->submsg_desc, field->pData))
+librdkafka pb_check_proto3_default_value            do-whi lib/librdkafka-2.15.0/src/nanopb/pb_encode.c:323 | do
+librdkafka pb_check_proto3_default_value            branch lib/librdkafka-2.15.0/src/nanopb/pb_encode.c:325 | if (!pb_check_proto3_default_value(&iter))
+librdkafka pb_check_proto3_default_value            branch lib/librdkafka-2.15.0/src/nanopb/pb_encode.c:345 | else if (field->descriptor->field_callback == pb_default_field_callback)
+librdkafka pb_encode                                branch lib/librdkafka-2.15.0/src/nanopb/pb_encode.c:514 | if (!pb_field_iter_begin_const(&iter, fields, src_struct))
+librdkafka pb_encode                                do-whi lib/librdkafka-2.15.0/src/nanopb/pb_encode.c:517 | do {
+librdkafka pb_encode                                branch lib/librdkafka-2.15.0/src/nanopb/pb_encode.c:521 | if (!encode_extension_field(stream, &iter))
+librdkafka pb_encode                                branch lib/librdkafka-2.15.0/src/nanopb/pb_encode.c:527 | if (!encode_field(stream, &iter))
+librdkafka pb_get_encoded_size                      branch lib/librdkafka-2.15.0/src/nanopb/pb_encode.c:560 | if (!pb_encode(&stream, fields, src_struct))
+librdkafka pb_write                                 branch lib/librdkafka-2.15.0/src/nanopb/pb_encode.c:85 | if (count > 0 && stream->callback != NULL)
+librdkafka pb_write                                 return lib/librdkafka-2.15.0/src/nanopb/pb_encode.c:90 | PB_RETURN_ERROR(stream, "stream full");
+librdkafka pb_write                                 branch lib/librdkafka-2.15.0/src/nanopb/pb_encode.c:97 | if (!stream->callback(stream, buf, count))
+librdkafka pb_write                                 return lib/librdkafka-2.15.0/src/nanopb/pb_encode.c:98 | PB_RETURN_ERROR(stream, "io error");
+librdkafka rd_hdr_getCountAtIndex                   return lib/librdkafka-2.15.0/src/rdhdrhistogram.c:176 | return hdr->counts[rd_hdr_countsIndex(hdr, bucketIdx, subBucketIdx)];
+librdkafka rd_kafka_dir_is_empty                    loop c lib/librdkafka-2.15.0/src/rdkafka.c:7096 | while ((d = readdir(dir))) {
+librdkafka rd_kafka_dir_is_empty                    branch lib/librdkafka-2.15.0/src/rdkafka.c:7098 | if (!strcmp(d->d_name, ".") || !strcmp(d->d_name, ".."))
+librdkafka rd_kafka_err2name                        branch lib/librdkafka-2.15.0/src/rdkafka.c:819 | if (unlikely(err <= RD_KAFKA_RESP_ERR__BEGIN || err >= RD_KAFKA_RESP_ERR_END_ALL || !rd_kafka_err_descs[idx].desc)) {
+librdkafka rd_kafka_err2name                        return lib/librdkafka-2.15.0/src/rdkafka.c:826 | return rd_kafka_err_descs[idx].name;
+librdkafka rd_kafka_err2str                         branch lib/librdkafka-2.15.0/src/rdkafka.c:804 | if (unlikely(err <= RD_KAFKA_RESP_ERR__BEGIN || err >= RD_KAFKA_RESP_ERR_END_ALL || !rd_kafka_err_descs[idx].desc)) {
+librdkafka rd_kafka_err2str                         return lib/librdkafka-2.15.0/src/rdkafka.c:811 | return rd_kafka_err_descs[idx].desc;
+librdkafka rd_kafka_errno                           return lib/librdkafka-2.15.0/src/rdkafka.c:7137 | return errno;
+librdkafka rd_kafka_init_wait                       loop c lib/librdkafka-2.15.0/src/rdkafka.c:2350 | while (rk->rk_init_wait_cnt > 0 && cnd_timedwait_abs(&rk->rk_init_cnd, &rk->rk_init_lock, abs_timeout) == thrd_success)
+librdkafka rd_kafka_name                            return lib/librdkafka-2.15.0/src/rdkafka.c:6292 | return rk->rk_name;
+librdkafka rd_kafka_path_is_dir                     return lib/librdkafka-2.15.0/src/rdkafka.c:7073 | return rd_file_stat(path, &is_dir) && is_dir;
+librdkafka rd_kafka_purge_flags2str                 return lib/librdkafka-2.15.0/src/rdkafka.c:6576 | return rd_flags2str(ret, sizeof(ret), names, flags);
+librdkafka rd_kafka_test_fatal_error                branch lib/librdkafka-2.15.0/src/rdkafka.c:995 | if (!rd_kafka_set_fatal_error(rk, err, "test_fatal_error: %s", reason))
+librdkafka rd_kafka_wait_destroyed                  loop c lib/librdkafka-2.15.0/src/rdkafka.c:268 | while (rd_kafka_thread_cnt() > 0 || rd_kafka_global_cnt_get() > 0) {
+librdkafka rd_kafka_ConfigEntry_name                return lib/librdkafka-2.15.0/src/rdkafka_admin.c:2823 | return entry->kv->name;
+librdkafka rd_kafka_ConfigResource_configs          return lib/librdkafka-2.15.0/src/rdkafka_admin.c:3076 | return (const rd_kafka_ConfigEntry_t **)config->config.rl_elems;
+librdkafka rd_kafka_DescribeCluster_result_cluster_ return lib/librdkafka-2.15.0/src/rdkafka_admin.c:9418 | return rd_kafka_DescribeCluster_result_description(result)->cluster_id;
+librdkafka rd_kafka_DescribeCluster_result_controll return lib/librdkafka-2.15.0/src/rdkafka_admin.c:9423 | return rd_kafka_DescribeCluster_result_description(result)->controller;
+librdkafka rd_kafka_MemberDescription_assignment    return lib/librdkafka-2.15.0/src/rdkafka_admin.c:7957 | return &member->assignment;
+librdkafka rd_kafka_TopicDescription_topic_id       return lib/librdkafka-2.15.0/src/rdkafka_admin.c:9140 | return &topicdesc->topic_id;
+librdkafka rd_kafka_UserScramCredentialsDescription return lib/librdkafka-2.15.0/src/rdkafka_admin.c:5789 | return &description->credential_infos[idx];
+librdkafka rtrim                                    loop c lib/librdkafka-2.15.0/src/rdkafka_assignor.c:574 | while (e >= s && isspace(*e))
+librdkafka rd_kafka_broker_ApiVersion_at_least      return lib/librdkafka-2.15.0/src/rdkafka_broker.c:327 | return rd_kafka_broker_ApiVersion_supported0( rkb, ApiKey, minver, RD_KAFKAP_RPC_VERSION_MAX, NULL, rd_true /* do_lock */) != -1;
+librdkafka rd_kafka_broker_ApiVersion_at_least_no_l return lib/librdkafka-2.15.0/src/rdkafka_broker.c:335 | return rd_kafka_broker_ApiVersion_supported0( rkb, ApiKey, minver, RD_KAFKAP_RPC_VERSION_MAX, NULL, rd_false /* don't lock rkb */) != -1;
+librdkafka rd_kafka_broker_destroy_error            return lib/librdkafka-2.15.0/src/rdkafka_broker.c:3186 | return rd_kafka_terminating(rk) ? RD_KAFKA_RESP_ERR__DESTROY
+librdkafka rd_kafka_broker_ops_serve                loop c lib/librdkafka-2.15.0/src/rdkafka_broker.c:3868 | while ((rko = rd_kafka_q_pop(rkb->rkb_ops, timeout_us, 0)) && (cnt++, !rd_kafka_broker_op_serve(rkb, rko)))
+librdkafka rd_kafka_conf                            return lib/librdkafka-2.15.0/src/rdkafka_conf.c:4955 | return &rk->rk_conf;
+librdkafka rd_kafka_conf_finalize_oauthbearer_oidc_ branch lib/librdkafka-2.15.0/src/rdkafka_conf.c:4109 | if (rd_kafka_conf_is_modified( conf, "sasl.oauthbearer." "assertion.claim.jti.include"))
+librdkafka rd_kafka_conf_finalize_oauthbearer_oidc_ branch lib/librdkafka-2.15.0/src/rdkafka_conf.c:4118 | if (rd_kafka_conf_is_modified( conf, "sasl.oauthbearer." "assertion.claim.exp.seconds"))
+librdkafka rd_kafka_conf_finalize_oauthbearer_oidc_ branch lib/librdkafka-2.15.0/src/rdkafka_conf.c:4128 | if (rd_kafka_conf_is_modified( conf, "sasl.oauthbearer." "assertion.claim.nbf.seconds"))
+librdkafka rd_kafka_conf_validate_single            return lib/librdkafka-2.15.0/src/rdkafka_conf.c:340 | return !strchr(val, ',') && !strchr(val, ' ');
+librdkafka rd_kafka_confval_get_ptr                 return lib/librdkafka-2.15.0/src/rdkafka_conf.c:3891 | return confval->u.PTR;
+librdkafka rd_kafka_confval_get_str                 return lib/librdkafka-2.15.0/src/rdkafka_conf.c:3886 | return confval->u.STR.v;
+librdkafka rd_kafka_error_name                      return lib/librdkafka-2.15.0/src/rdkafka_error.c:173 | return error ? rd_kafka_err2name(error->code) : "";
+librdkafka rd_kafka_error_string                    return lib/librdkafka-2.15.0/src/rdkafka_error.c:179 | return error->errstr ? error->errstr : rd_kafka_err2str(error->code);
+librdkafka rd_kafka_event_name                      switch lib/librdkafka-2.15.0/src/rdkafka_event.c:39 | switch (rkev ? rkev->rko_evtype : RD_KAFKA_EVENT_NONE) {
+librdkafka rd_kafka_ApiVersion_is_queryable         branch lib/librdkafka-2.15.0/src/rdkafka_feature.c:353 | if (!rd_kafka_get_legacy_ApiVersions(broker_version, &apis, &api_cnt, 0))
+librdkafka can_use_topic_ids                        do-whi lib/librdkafka-2.15.0/src/rdkafka_fetcher.c:2493 | do {
+librdkafka can_use_topic_ids                        branch lib/librdkafka-2.15.0/src/rdkafka_fetcher.c:2494 | if (RD_KAFKA_UUID_IS_ZERO(rktp->rktp_rkt->rkt_topic_id))
+librdkafka rd_kafka_toppar_fetch_decide_next_fetch_ return lib/librdkafka-2.15.0/src/rdkafka_fetcher.c:3651 | return rktp->rktp_next_fetch_start;
+librdkafka rd_kafka_toppar_fetch_decide_next_fetch_ return lib/librdkafka-2.15.0/src/rdkafka_fetcher.c:3653 | return rktp->rktp_offsets.fetch_pos;
+librdkafka rd_kafkap_Fetch_reply_tags_parse         branch lib/librdkafka-2.15.0/src/rdkafka_fetcher.c:404 | if (rd_kafka_buf_read_NodeEndpoints(rkbuf, &tags->NodeEndpoints) == -1)
+librdkafka rd_kafkap_Fetch_reply_tags_partition_par branch lib/librdkafka-2.15.0/src/rdkafka_fetcher.c:385 | if (rd_kafka_buf_read_CurrentLeader( rkbuf, &PartitionTags->CurrentLeader) == -1)
+librdkafka rd_kafka_mock_partition_find             return lib/librdkafka-2.15.0/src/rdkafka_mock.c:943 | return (rd_kafka_mock_partition_t *)&mtopic->partitions[partition];
+librdkafka rd_kafka_mock_partition_next_leader_resp return lib/librdkafka-2.15.0/src/rdkafka_mock.c:788 | return TAILQ_FIRST(&mpart->leader_responses);
+librdkafka validate_subscription                    branch lib/librdkafka-2.15.0/src/rdkafka_mock_cgrp.c:1398 | rd_assert((SubscribedTopicNames == NULL) == RD_KAFKAP_STR_IS_NULL(SubscribedTopicRegex));
+librdkafka validate_subscription                    branch lib/librdkafka-2.15.0/src/rdkafka_mock_cgrp.c:1401 | rd_assert(SubscribedTopicNames == NULL || SubscribedTopicNamesCnt > 0 || RD_KAFKAP_STR_LEN(SubscribedTopicRegex) > 0);
+librdkafka rd_kafka_message_latency                 return lib/librdkafka-2.15.0/src/rdkafka_msg.c:1444 | return rd_clock() - rkm->rkm_ts_enq;
+librdkafka rd_kafka_message_leader_epoch            branch lib/librdkafka-2.15.0/src/rdkafka_msg.c:1601 | if (unlikely(!rkmessage->rkt || rd_kafka_rkt_is_lw(rkmessage->rkt) || !rkmessage->rkt->rkt_rk || rkmessage->rkt->rkt_rk->rk_type != RD_KAFKA_CONSUMER)
+librdkafka rd_kafka_msg_partitioner_fnv1a           return lib/librdkafka-2.15.0/src/rdkafka_msg.c:1114 | return rd_fnv1a(key, keylen) % partition_cnt;
+librdkafka rd_kafka_msg_partitioner_murmur2         return lib/librdkafka-2.15.0/src/rdkafka_msg.c:1092 | return (rd_murmur2(key, keylen) & 0x7fffffff) % partition_cnt;
+librdkafka rd_kafka_topic_partition_list_set_offset branch lib/librdkafka-2.15.0/src/rdkafka_partition.c:3696 | if (!(rktpar = rd_kafka_topic_partition_list_find(rktparlist, topic, partition)))
+librdkafka rd_kafka_pattern_list_new                branch lib/librdkafka-2.15.0/src/rdkafka_pattern.c:210 | if (rd_kafka_pattern_list_init(plist, patternlist, errstr, errstr_size) == -1) {
+librdkafka rd_kafka_racks_match                     branch lib/librdkafka-2.15.0/src/rdkafka_range_assignor.c:330 | if (!consumer_rack || RD_KAFKAP_STR_LEN(consumer_rack) == 0) {
+librdkafka rd_kafka_racks_match                     return lib/librdkafka-2.15.0/src/rdkafka_range_assignor.c:334 | return rd_kafka_topic_assignment_state_rack_search( rktas, partition, consumer_rack->str) != NULL;
+librdkafka rd_kafka_AclBinding_request_size         return lib/librdkafka-2.15.0/src/rdkafka_request.c:5879 | return 1 + 2 + (acl->name ? strlen(acl->name) : 0) + 2 +
+librdkafka rd_kafka_actions2str                     return lib/librdkafka-2.15.0/src/rdkafka_request.c:67 | return rd_flags2str(actstr, sizeof(actstr), rd_kafka_actions_descs, actions);
+librdkafka rd_kafkap_Produce_reply_tags_parse       branch lib/librdkafka-2.15.0/src/rdkafka_request.c:3862 | if (rd_kafka_buf_read_NodeEndpoints(rkbuf, &tags->NodeEndpoints) == -1)
+librdkafka rd_kafkap_Produce_reply_tags_partition_p branch lib/librdkafka-2.15.0/src/rdkafka_request.c:3843 | if (rd_kafka_buf_read_CurrentLeader( rkbuf, &PartitionTags->CurrentLeader) == -1)
+librdkafka rd_kafka_sasl_init                       branch lib/librdkafka-2.15.0/src/rdkafka_sasl.c:331 | if (provider && provider->init)
+librdkafka rd_kafka_sasl_init                       return lib/librdkafka-2.15.0/src/rdkafka_sasl.c:332 | return provider->init(rk, errstr, errstr_size);
+librdkafka rd_kafka_sasl_ready                      branch lib/librdkafka-2.15.0/src/rdkafka_sasl.c:365 | if (provider && provider->ready)
+librdkafka rd_kafka_sasl_ready                      return lib/librdkafka-2.15.0/src/rdkafka_sasl.c:366 | return provider->ready(rk);
+librdkafka rd_kafka_share_find_ack_batch            for-lo lib/librdkafka-2.15.0/src/rdkafka_share_acknowledgement.c:297 | RD_LIST_FOREACH(existing, ack_list, i) {
+librdkafka rd_kafka_share_find_ack_batch            branch lib/librdkafka-2.15.0/src/rdkafka_share_acknowledgement.c:298 | if (rd_kafka_topic_partition_by_id_cmp(existing->rktpar, rktpar) == 0)
+librdkafka rd_kafka_share_find_ack_batch_by_id      for-lo lib/librdkafka-2.15.0/src/rdkafka_share_acknowledgement.c:328 | RD_LIST_FOREACH(existing, ack_list, i) {
+librdkafka rd_kafka_share_find_ack_batch_by_id      branch lib/librdkafka-2.15.0/src/rdkafka_share_acknowledgement.c:329 | if (existing->rktpar->partition == partition && !rd_kafka_Uuid_cmp( rd_kafka_topic_partition_get_topic_id(existing->rktpar), topic_id))
+librdkafka rd_kafka_share_partition_offsets_offsets return lib/librdkafka-2.15.0/src/rdkafka_share_acknowledgement.c:1228 | return partition_offsets->offsets;
+librdkafka partitionCanParticipateInReassignment    branch lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c:572 | if (!(consumers = RD_MAP_GET(partition2AllPotentialConsumers, partition)))
+librdkafka rd_kafka_filter_broker_by_GetTelemetrySu branch lib/librdkafka-2.15.0/src/rdkafka_telemetry.c:55 | if (rd_kafka_broker_ApiVersion_at_least_no_lock( rkb, RD_KAFKAP_GetTelemetrySubscriptions, 0))
+librdkafka count_attributes                         branch lib/librdkafka-2.15.0/src/rdkafka_telemetry_encode.c:699 | if (configs[i].getValue(rk)) {
+librdkafka get_member_id                            return lib/librdkafka-2.15.0/src/rdkafka_telemetry_encode.c:669 | return rk->rk_cgrp && rk->rk_cgrp->rkcg_member_id &&
+librdkafka rd_kafka_topic_info_cmp                  branch lib/librdkafka-2.15.0/src/rdkafka_topic.c:2098 | if ((r = RD_CMP(a->partition_cnt, b->partition_cnt)))
+librdkafka rd_kafka_topic_info_cmp                  branch lib/librdkafka-2.15.0/src/rdkafka_topic.c:2111 | if ((r = RD_CMP(a->partitions_internal[i].racks_cnt, b->partitions_internal[i].racks_cnt)))
+librdkafka rd_kafka_topic_info_cmp                  branch lib/librdkafka-2.15.0/src/rdkafka_topic.c:2116 | if ((r = rd_strcmp(a->partitions_internal[i].racks[k], b->partitions_internal[i].racks[k])))
+librdkafka rd_kafka_topic_name                      branch lib/librdkafka-2.15.0/src/rdkafka_topic.c:734 | if (rd_kafka_rkt_is_lw(app_rkt))
+librdkafka rd_kafka_topic_name                      return lib/librdkafka-2.15.0/src/rdkafka_topic.c:735 | return rd_kafka_rkt_lw_const(app_rkt)->lrkt_topic;
+librdkafka rd_kafka_topic_name                      return lib/librdkafka-2.15.0/src/rdkafka_topic.c:737 | return app_rkt->rkt_topic->str;
+librdkafka rd_list_elem                             return lib/librdkafka-2.15.0/src/rdlist.c:328 | return (void *)rl->rl_elems[idx];
+librdkafka rd_list_find_duplicate                   branch lib/librdkafka-2.15.0/src/rdlist.c:391 | if (!cmp(rl->rl_elems[i - 1], rl->rl_elems[i]))
+librdkafka rd_list_find_duplicate                   return lib/librdkafka-2.15.0/src/rdlist.c:392 | return rl->rl_elems[i];
+librdkafka rd_list_get_int32                        branch lib/librdkafka-2.15.0/src/rdlist.c:586 | rd_assert((rl->rl_flags & RD_LIST_F_FIXED_SIZE) && rl->rl_elemsize == sizeof(int32_t) && idx < rl->rl_cnt);
+librdkafka rd_list_index                            for-lo lib/librdkafka-2.15.0/src/rdlist.c:338 | RD_LIST_FOREACH(elem, rl, i) {
+librdkafka rd_list_index                            branch lib/librdkafka-2.15.0/src/rdlist.c:339 | if (!cmp(match, elem))
+librdkafka rd_list_is_sorted                        branch lib/librdkafka-2.15.0/src/rdlist.c:284 | if (cmp(rl->rl_elems[i], rl->rl_elems[i + 1]) > 0)
+librdkafka rd_list_set_int32                        branch lib/librdkafka-2.15.0/src/rdlist.c:575 | rd_assert((rl->rl_flags & RD_LIST_F_FIXED_SIZE) && rl->rl_elemsize == sizeof(int32_t));
+librdkafka rd_map_elem_cmp                          return lib/librdkafka-2.15.0/src/rdmap.c:42 | return rmap->rmap_cmp(a->key, b->key);
+librdkafka rd_rand_bytes                            branch lib/librdkafka-2.15.0/src/rdrand.c:116 | if (rd_rand_bytes_by_ossl(buf, num))
+librdkafka rd_rand_bytes                            branch lib/librdkafka-2.15.0/src/rdrand.c:120 | if (getentropy(buf, (size_t)num) == 0)
+librdkafka rd_rand_bytes_by_ossl                    loop c lib/librdkafka-2.15.0/src/rdrand.c:81 | while ((res = RAND_priv_bytes(buf, num)) != 1) {
+librdkafka log2_floor                               return lib/librdkafka-2.15.0/src/snappy.c:254 | return n == 0 ? -1 : 31 ^ rd_clz(n);
+librdkafka rd_kafka_snappy_uncompressed_length      branch lib/librdkafka-2.15.0/src/snappy.c:783 | if (varint_parse32_with_limit(start, limit, &v) != NULL) {
+librdkafka thrd_setname                             branch lib/librdkafka-2.15.0/src/tinycthread_extra.c:42 | if (!pthread_setname_np(pthread_self(), name))
+chunkio    cio_meta_cmp                             branch lib/chunkio/src/cio_meta.c:163 | if (cio_file_read_prepare(ch->ctx, ch)) {
+fluent-bit-chunk flb_input_chunk_has_other_routes         branch src/flb_input_chunk.c:954 | if (flb_routes_mask_get_bit(ic->routes_mask, candidate->id, ic->in->config->router) != 0) {
+fluent-bit-chunk flb_input_chunk_prefers_physical_delete  branch src/flb_input_chunk.c:977 | if (flb_input_chunk_has_other_routes(ic, o_ins) == FLB_TRUE) {
+fluent-bit-chunk flb_input_chunk_safe_delete              branch src/flb_input_chunk.c:932 | if (flb_routes_mask_get_bit(old_ic->routes_mask, o_id, ic->in->config->router) == 0) {
+fluent-bit-chunk flb_input_chunk_has_other_routes         branch src/flb_input_chunk.c:954 | if (flb_routes_mask_get_bit(ic->routes_mask, candidate->id, ic->in->config->router) != 0) {
+fluent-bit-chunk flb_input_chunk_prefers_physical_delete  branch src/flb_input_chunk.c:977 | if (flb_input_chunk_has_other_routes(ic, o_ins) == FLB_TRUE) {
+fluent-bit-chunk flb_input_chunk_safe_delete              branch src/flb_input_chunk.c:932 | if (flb_routes_mask_get_bit(old_ic->routes_mask, o_id, ic->in->config->router) == 0) {
+monkey     mk_file_to_buffer                        branch lib/monkey/mk_core/mk_file.c:128 | if (mk_file_get_info(path, &finfo, MK_FILE_READ) != 0) {
+monkey     check_indent                             branch lib/monkey/mk_core/mk_rconf.c:183 | if (isblank(*line)) {
+monkey     check_indent                             branch lib/monkey/mk_core/mk_rconf.c:192 | if (isblank(*line)) {
+monkey     header_cmp                               branch lib/monkey/mk_server/mk_http_parser.c:188 | if (expected[0] != tolower(value[0])) return -1;
+monkey     header_cmp                               branch lib/monkey/mk_server/mk_http_parser.c:189 | if (expected[1] != tolower(value[1])) return -1;
+monkey     header_cmp                               branch lib/monkey/mk_server/mk_http_parser.c:190 | if (expected[2] != tolower(value[2])) return -1;
+monkey     header_cmp                               branch lib/monkey/mk_server/mk_http_parser.c:191 | if (expected[3] != tolower(value[3])) return -1;
+monkey     header_cmp                               branch lib/monkey/mk_server/mk_http_parser.c:192 | if (expected[4] != tolower(value[4])) return -1;
+monkey     header_cmp                               branch lib/monkey/mk_server/mk_http_parser.c:193 | if (expected[5] != tolower(value[5])) return -1;
+monkey     header_cmp                               branch lib/monkey/mk_server/mk_http_parser.c:194 | if (expected[6] != tolower(value[6])) return -1;
+monkey     header_cmp                               branch lib/monkey/mk_server/mk_http_parser.c:195 | if (expected[7] != tolower(value[7])) return -1;
+monkey     header_cmp                               branch lib/monkey/mk_server/mk_http_parser.c:200 | if (expected[i] != tolower(value[i])) {
+monkey     mk_net_transport_event_interest          branch lib/monkey/mk_server/mk_net.c:206 | if (transport != NULL && transport->event_interest != NULL) {
+monkey     mk_net_transport_event_interest          return lib/monkey/mk_server/mk_net.c:207 | return transport->event_interest(transport->plugin, fd, fallback);
+monkey     mk_plugin_time_now_human                 return lib/monkey/mk_server/mk_plugin.c:719 | return &server->clock_context->log_current_time;
+monkey     mk_sched_next_target                     return lib/monkey/mk_server/mk_scheduler.c:105 | return &ctx->workers[t];
+monkey     mk_socket_set_nonblocking                branch lib/monkey/mk_server/mk_socket.c:68 | if (fcntl(sockfd, F_SETFL, fcntl(sockfd, F_GETFL, 0) | O_NONBLOCK) == -1) {
+monkey     mk_user_set_uidgid                       branch lib/monkey/mk_server/mk_user.c:109 | if ((usr = getpwnam(server->user)) == NULL) {
+monkey     mk_user_set_uidgid                       branch lib/monkey/mk_server/mk_user.c:114 | if (initgroups(server->user, usr->pw_gid) != 0) {
+monkey     mk_user_set_uidgid                       branch lib/monkey/mk_server/mk_user.c:119 | if (setegid(usr->pw_gid) == -1) {
+monkey     mk_user_set_uidgid                       branch lib/monkey/mk_server/mk_user.c:123 | if (seteuid(usr->pw_uid) == -1) {
+monkey     mk_user_undo_uidgid                      branch lib/monkey/mk_server/mk_user.c:143 | if (setegid(0) < 0) {
+monkey     mk_user_undo_uidgid                      branch lib/monkey/mk_server/mk_user.c:146 | if (seteuid(0) < 0) {
+monkey     mk_utils_gmt2utime                       branch lib/monkey/mk_server/mk_utils.c:387 | if (!strptime(date, MK_UTILS_GMT_DATEFORMAT, (struct tm*)&t_data)) {
+monkey     mk_utils_hex2int                         loop c lib/monkey/mk_server/mk_utils.c:425 | while ((c = *hex++) && i < len) {
+monkey     tls_configure_dh                         branch lib/monkey/tls/tls_openssl.c:425 | if (SSL_CTX_set_dh_auto(ctx->ctx, 1) != 1) {

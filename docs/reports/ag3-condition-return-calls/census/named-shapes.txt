@@ -1,0 +1,18 @@
+call through member (->f( / .f()         sites    28 rows    26 sole   9
+PB_RETURN_ERROR                          sites    67 rows    32 sole   7
+address-of member return                 sites    15 rows    15 sole   6
+ctype (isspace/isdigit/...)              sites    14 rows     9 sole   3
+rd_assert                                sites    58 rows    50 sole   3
+RD_LIST_FOREACH                          sites   147 rows   115 sole   3
+unlikely/likely                          sites    95 rows    76 sole   3
+strcmp/strncmp/strcasecmp                sites    59 rows    34 sole   2
+RD_KAFKAP_STR_*                          sites    38 rows    31 sole   2
+errno                                    sites     1 rows     1 sole   1
+tolower/toupper                          sites    11 rows     2 sole   1
+TAILQ_/LIST_ macro                       sites    75 rows    56 sole   1
+__builtin_*                              sites     4 rows     1 sole   1
+rd_list_cnt/rd_list_elem                 sites    52 rows    45 sole   0
+mk_list/cfl_list foreach                 sites     0 rows     0 sole   0
+rd_atomic                                sites    37 rows    34 sole   0
+mpack_                                   sites    32 rows    21 sole   0
+msgpack_                                 sites     0 rows     0 sole   0

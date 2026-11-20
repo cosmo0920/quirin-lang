@@ -388,8 +388,11 @@ fn withdrawing_the_gate_restores_the_branch_condition_refusal() {
     let body = format!("void w_g6(const char *tag) {{ {OPENED} {EXPANDED} w_close(h); }}");
     let result = analyze_with(&without, &body, "w_g6");
     let summary = function(program(&result), "w_g6").clone();
+    // Re-pinned deliberately by AG3-CONDITION-RETURN-CALLS (gateway rule 63) (2): the restored refusal names the
+    // withdrawn callee.
     assert!(
-        unsupported(&summary).contains(&CONDITION),
+        unsupported(&summary)
+            .contains(&"call to uncontracted function `w_gate` in branch condition"),
         "{:?}",
         summary.diagnostics
     );
@@ -694,8 +697,11 @@ fn withdrawing_each_production_declaration_restores_its_refusal() {
     );
     let result = analyze_real(&source, &without_gate);
     let summary = function(program(&result), "flb_input_chunk_create").clone();
+    // Re-pinned deliberately by AG3-CONDITION-RETURN-CALLS (gateway rule 63) (2): the restored refusal names the
+    // withdrawn callee.
     assert!(
-        unsupported(&summary).contains(&CONDITION),
+        unsupported(&summary)
+            .contains(&"call to uncontracted function `flb_log_check` in branch condition"),
         "{:?}",
         summary.diagnostics
     );

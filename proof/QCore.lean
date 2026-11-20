@@ -110,6 +110,7 @@ import QCore.Concurrency
 import QCore.ConcurrencyPrelude
 import QCore.ConditionAcquisition
 import QCore.ConditionCallDesugar
+import QCore.ConditionLeafReads
 import QCore.ConditionalGroupDepth
 import QCore.CondvarJoin
 import QCore.Connectives
@@ -139,6 +140,7 @@ import QCore.Ct07LeaseLedger
 import QCore.Ct37CompletionCapsule
 import QCore.Ct50LifetimeIdentity
 import QCore.CtReasons
+import QCore.CustodyFreeCopy
 import QCore.CustodySummary
 import QCore.Cycle18CallbackObligations
 import QCore.Cycle18Composition
@@ -214,6 +216,7 @@ import QCore.Ieee754Ops
 import QCore.Ieee754Round
 import QCore.Ieee754Vectors32
 import QCore.Ieee754Vectors64
+import QCore.InPlaceMentionGuard
 import QCore.Index
 import QCore.IndexExtent
 import QCore.IndexExtentFrames
@@ -501,6 +504,7 @@ import QCore.TypedPlace
 import QCore.TypedRootDeclarations
 import QCore.TypedSourceControl
 import QCore.TypedSourceOperators
+import QCore.TypedefAggregateBase
 import QCore.TypedefProjection
 import QCore.UncheckedLinkage
 import QCore.UncontractedAccessAttribution
