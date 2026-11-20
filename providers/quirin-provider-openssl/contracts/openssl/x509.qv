@@ -29,11 +29,17 @@ module contract;
 // DECLARE_ASN1_FUNCTIONS in openssl/x509.h.
 // Card OPENSSL-EX-DATA-REGISTRY: the last reference frees the X509: the X509
 // class's free callbacks run.
+// Card OPENSSL-OBJECT-FREES-SILENT-METHOD-CALLBACKS: the last reference frees
+// the certificate's public key (x509_pubkey_ex_free, x_pubkey.c 3.5.5), and so
+// runs that key's provider, method and engine functions: the unstated-slots
+// premise of a free names them.
 extern fn X509_free(a: ptr<mut, u8>) -> unit
 contract {
     requires resource_contract_v1;
     requires resource_revision(flexible);
     requires resource_library_version(openssl, documented "1.1.1");
+    requires resource_premise(openssl_unstated_callback_slots,
+        quant all #o in #freed: #teardown(#o) \ (#stated | #settable) |-> #inert);
     requires resource_premise(openssl_ex_data_callbacks,
         quant all #o in #created | #copied | #freed: #ex_data(#class(#o)) |-> #inert);
     ensures normal resource_borrowed(a);

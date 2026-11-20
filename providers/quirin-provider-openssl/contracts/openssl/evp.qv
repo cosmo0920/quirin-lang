@@ -29,11 +29,18 @@ module contract;
 // EVP_PKEY_free(EVP_PKEY *pkey)`.
 // Card OPENSSL-EX-DATA-REGISTRY: the last reference frees the EVP_PKEY: the
 // EVP_PKEY class's free callbacks run.
+// Card OPENSSL-OBJECT-FREES-SILENT-METHOD-CALLBACKS: the last reference also
+// runs the key's provider key management free, its EVP_PKEY_ASN1_METHOD free,
+// its RSA/DSA/DH/EC_KEY method finish and its ENGINE finish (p_lib.c and
+// rsa_lib.c 3.5.5), whose setters no declaration states: the unstated-slots
+// premise of a free names them.
 extern fn EVP_PKEY_free(pkey: ptr<mut, u8>) -> unit
 contract {
     requires resource_contract_v1;
     requires resource_revision(flexible);
     requires resource_library_version(openssl, documented "1.1.1");
+    requires resource_premise(openssl_unstated_callback_slots,
+        quant all #o in #freed: #teardown(#o) \ (#stated | #settable) |-> #inert);
     requires resource_premise(openssl_ex_data_callbacks,
         quant all #o in #created | #copied | #freed: #ex_data(#class(#o)) |-> #inert);
     ensures normal resource_borrowed(pkey);

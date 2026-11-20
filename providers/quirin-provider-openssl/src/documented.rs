@@ -118,7 +118,13 @@ pub enum Premise {
     /// every slot of the objects it frees whose setters are declared, and the
     /// premise names what remains by name, the functions of methods,
     /// providers and engines of objects it frees in turn that no setter
-    /// declared here writes.
+    /// declared here writes. Card
+    /// **OPENSSL-OBJECT-FREES-SILENT-METHOD-CALLBACKS**: named by every free
+    /// the free audit ([`FREE_AUDIT`]) reads as running such functions, the
+    /// frees of keys, certificates, PKCS#12 objects, engines and digest
+    /// contexts among them. The statement (C04.18.9) quantifies over the
+    /// call's own `#freed`, so one statement names exactly what each free
+    /// runs.
     UnstatedFreeSlots,
     /// Card **OPENSSL-FREE-INDIRECT-CALLBACKS**: `requires
     /// resource_premise(openssl_builtin_lookup_methods, "…")`, the
@@ -243,6 +249,102 @@ pub const UNSTATED_SLOTS_STATEMENT: &str = "#slots(#of(SSL, #args) | #ctx(#of(SS
 /// members "among them"; each is a member of `#teardown` (report section 4).
 pub const UNSTATED_FREE_STATEMENT: &str =
     "quant all #o in #freed: #teardown(#o) \\ (#stated | #settable) |-> #inert";
+
+/// Card **OPENSSL-OBJECT-FREES-SILENT-METHOD-CALLBACKS**: how a free stands
+/// to the functions of methods, providers and engines of the objects it
+/// frees (the free audit, read like [`EX_DATA_AUDIT`]).
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum Frees {
+    /// The free may run such functions that no clause states (OpenSSL 3.5.5,
+    /// `how`): the declaration names [`Premise::UnstatedFreeSlots`].
+    Runs { how: &'static str },
+    /// What the free may run in turn is named by this other premise, which
+    /// the declaration names; it names no free statement.
+    NamedBy { premise: Premise, why: &'static str },
+    /// The free frees nothing whose functions a user can set: it names no
+    /// free statement.
+    Nothing { why: &'static str },
+}
+
+/// Card **OPENSSL-OBJECT-FREES-SILENT-METHOD-CALLBACKS**: the free audit.
+/// Every documented function whose shape is a release (a free or a
+/// reference drop) is listed, and every one naming the free statement is
+/// listed as [`Frees::Runs`], so a free reaching a key, certificate, engine
+/// or context cannot read their functions silently
+/// ([`crate::check::free_audited`]). The readings cite the OpenSSL 3.5.5
+/// sources, as the report's survey table does.
+pub const FREE_AUDIT: &[(&str, Frees)] = &[
+    (
+        "BIO_free",
+        Frees::NamedBy {
+            premise: Premise::BuiltinBioMethods,
+            why: "the callback and destroy slots are stated; what a built-in method's destroy \
+                  function frees in turn (the SSL object of a BIO_f_ssl BIO) is named by \
+                  openssl_builtin_bio_methods",
+        },
+    ),
+    (
+        "ENGINE_free",
+        Frees::Runs {
+            how: "the last structural reference runs the engine's public key method and ASN.1 \
+                  method callbacks and its destroy function (engine_free_util)",
+        },
+    ),
+    (
+        "EVP_MD_CTX_free",
+        Frees::Runs {
+            how: "frees the EVP_PKEY_CTX (method cleanup, provider freectx, engine, keys) and \
+                  clears the digest (cleanup, provider freectx, engine)",
+        },
+    ),
+    (
+        "EVP_PKEY_free",
+        Frees::Runs {
+            how: "the last reference runs the key's key management free, ASN.1 method free, \
+                  RSA/DSA/DH/EC_KEY method finish and ENGINE finish",
+        },
+    ),
+    (
+        "OPENSSL_sk_free",
+        Frees::Nothing {
+            why: "frees the stack only, never its elements",
+        },
+    ),
+    (
+        "PKCS12_free",
+        Frees::Runs {
+            how: "frees the PKCS#7 safes' certificates (and so their keys), signer info keys \
+                  and CRLs",
+        },
+    ),
+    (
+        "SSL_CTX_free",
+        Frees::Runs {
+            how: "the last drop frees the context's keys, certificates, stores and client \
+                  certificate engine",
+        },
+    ),
+    (
+        "SSL_free",
+        Frees::Runs {
+            how: "the last drop frees the connection's keys, certificates, stores, async wait \
+                  context and QUIC objects, and may free its context",
+        },
+    ),
+    (
+        "X509_STORE_free",
+        Frees::Runs {
+            how: "the last reference frees the certificates (and so their keys) and CRLs the \
+                  store holds",
+        },
+    ),
+    (
+        "X509_free",
+        Frees::Runs {
+            how: "the last reference frees the certificate's public key",
+        },
+    ),
+];
 
 /// Card **OPENSSL-FREE-INDIRECT-CALLBACKS**: the name of the built-in lookup
 /// methods premise.
@@ -384,7 +486,10 @@ pub const EX_DATA_AUDIT: &[(&str, ExData)] = &[
     (
         "EVP_MD_CTX_free",
         ExData::Runs {
-            classes: &["EVP_PKEY"],
+            // Card OPENSSL-OBJECT-FREES-SILENT-METHOD-CALLBACKS: a legacy key's
+            // free frees its RSA, DSA, DH or EC_KEY, and an ENGINE's last
+            // reference may drop with a key's or the digest's.
+            classes: &["EVP_PKEY", "RSA", "DSA", "DH", "EC_KEY", "ENGINE"],
             how: "a signing context's EVP_PKEY_CTX may hold the last reference to its key",
         },
     ),
@@ -397,8 +502,9 @@ pub const EX_DATA_AUDIT: &[(&str, ExData)] = &[
     (
         "EVP_PKEY_free",
         ExData::Runs {
-            classes: &["EVP_PKEY"],
-            how: "the last reference frees the EVP_PKEY",
+            classes: &["EVP_PKEY", "RSA", "DSA", "DH", "EC_KEY", "ENGINE"],
+            how: "the last reference frees the EVP_PKEY, a legacy key's RSA, DSA, DH or \
+                  EC_KEY, and may drop an ENGINE's last reference",
         },
     ),
     (
@@ -437,8 +543,8 @@ pub const EX_DATA_AUDIT: &[(&str, ExData)] = &[
     (
         "PKCS12_free",
         ExData::Runs {
-            classes: &["X509"],
-            how: "frees the certificates a signed PKCS#7 safe holds",
+            classes: &["X509", "EVP_PKEY", "RSA", "DSA", "DH", "EC_KEY", "ENGINE"],
+            how: "frees the certificates a signed PKCS#7 safe holds, and their keys",
         },
     ),
     (
@@ -580,8 +686,8 @@ pub const EX_DATA_AUDIT: &[(&str, ExData)] = &[
     (
         "X509_free",
         ExData::Runs {
-            classes: &["X509"],
-            how: "the last reference frees the certificate",
+            classes: &["X509", "EVP_PKEY", "RSA", "DSA", "DH", "EC_KEY", "ENGINE"],
+            how: "the last reference frees the certificate and its public key",
         },
     ),
     (
@@ -2142,6 +2248,12 @@ const SESSION_TICKET_CB: &[Premise] = &[Premise::SlotRegistered {
 /// object of an ex_data class ([`EX_DATA_AUDIT`]).
 const EX_DATA_ONLY: &[Premise] = &[Premise::ExDataCallbacks];
 
+/// Card **OPENSSL-OBJECT-FREES-SILENT-METHOD-CALLBACKS**: a free of a key, a
+/// certificate, a PKCS#12 object, an engine or a digest context names the
+/// unstated-slots premise in the statement of a free ([`FREE_AUDIT`]) beside
+/// the ex_data premise it named before.
+const OBJECT_FREED: &[Premise] = &[Premise::UnstatedFreeSlots, Premise::ExDataCallbacks];
+
 /// `PEM_read_bio_*(bp, x, cb, u)`: a NULL `x` (no object to reuse), and the
 /// password callback `cb` called during the read with `u` as its last
 /// argument, a NULL `cb` meaning OpenSSL's own default routine (card
@@ -2287,7 +2399,7 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
             position: 0,
             sentence: "If the argument to ENGINE_free() is NULL, nothing is done.",
         },
-        EX_DATA_ONLY,
+        OBJECT_FREED,
     ),
     entry(
         "ERR_clear_error",
@@ -2324,7 +2436,7 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
         "3.5",
         SINCE_1_1_0,
         Release(0, Nullable),
-        EX_DATA_ONLY,
+        OBJECT_FREED,
     ),
     entry(
         "EVP_MD_CTX_new",
@@ -2342,7 +2454,7 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
             position: 0,
             sentence: "If key is NULL, nothing is done.",
         },
-        EX_DATA_ONLY,
+        OBJECT_FREED,
     ),
     entry("EVP_sha256", "EVP_DigestInit", "1.0.2", DOC_1_0_2, Plain),
     entry("EVP_sha512", "EVP_DigestInit", "1.0.2", DOC_1_0_2, Plain),
@@ -2404,7 +2516,7 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
         "1.1.1",
         DOC_1_1_1,
         Release(0, Nullable),
-        EX_DATA_ONLY,
+        OBJECT_FREED,
     ),
     with(
         "SSL_CTX_add_client_custom_ext",
@@ -3077,7 +3189,7 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
             position: 0,
             sentence: "If a is NULL nothing is done.",
         },
-        EX_DATA_ONLY,
+        OBJECT_FREED,
     ),
     entry(
         "X509_get_issuer_name",
