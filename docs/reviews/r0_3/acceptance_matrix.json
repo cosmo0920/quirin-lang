@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 10,
-  "named_followups": 1034
+  "named_followups": 1037
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6920,11 +6920,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Landing integrate/r39 (base main ffb41c748; merges OPENSSL-FREE-INDIRECT-CALLBACKS 8a8299b85 in 85468240d, no conflicts; the card had merged main ffb41c748 in 03c338011; third_party/libevent checked out at d82464a27). Amendments applied in ecc03d7a4 with --profiles-base ffb41c748: OPENSSL-FREE-INDIRECT-CALLBACKS retired; OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS and OPENSSL-OBJECT-FREES-SILENT-METHOD-CALLBACKS registered; OPENSSL-LOOKUP-METHOD-HANDSHAKE-INVOCATIONS appended; profiles []. Full landing gate on ecc03d7a4 (private/integrate-r39/gate, raw record beside this file as gate-scope.json) via scripts/gate_scope.py --base origin/main --full --landing through private/toolchain/env.sh: Rust 666 units / 711 summaries, 9777 passed, 0 failed, 21 ignored; fmt, Clippy and both reevaluation examples exit 0; Lean 462 audits; provider package build/verify, provider tests (163 passed, 0 failed, 1 ignored), provider fmt and Clippy exit 0. Python (779 tests) exited 1 on two stale-matrix checks of test_build_matrix_sections (regenerated from this record) and the known gate_slot_queue flake test_a_live_owner_without_a_lock_is_not_reclaimed; the suite rerun after regeneration is recorded in private/integrate-r39/python-rerun.log. Rule 12n, C04.18 and C04.19.3 amended in place (no rule id used; 66 unused); no gateway code change. X509_STORE_free, SSL_CTX_free and SSL_free state the X509_LOOKUP_METHOD shutdown and free invocations under the new premise openssl_builtin_lookup_methods, with nine X509_LOOKUP_meth_set_* setters declared (ctrl, free, get_by_alias, get_by_fingerprint, get_by_issuer_serial, get_by_subject, init, new_item, shutdown); the frees keep openssl_unstated_callback_slots with a statement naming the remaining unstated invocations (key provider, method and engine frees, the client-certificate engine, the CRL method, async wait-context cleanup and QUIC TLS callbacks), X509_STORE_free gaining it where it was previously silent; SSL_free's ex_data audit classes gained EVP_PKEY, X509_STORE and SSL_CTX. Lean QCore.OpensslFreeIndirectCallbacks (11 theorems). OpenSSL contract-inventory lock: 9 flexible entries added; 3 digests changed (X509_STORE_free, SSL_CTX_free, SSL_free); none removed; pinned and library_versions unchanged. The card's opt-in measurement (current --monkey-linked, Fluent Bit 046accf6, main ffb41c748 vs the card): 1139 Safe / 2 Pending / 3656 Unknown / 7 Unsafe on both sides, 0 rows changed; bindings 141 to 150. Pinned-route parity (quirin-audit measure --declared) was not run: this host holds no build/cycle19 inputs or baselines. No profile baseline is changed and land.py publish is owed.",
-  "workspace_tests": 9777,
+  "note": "Landing integrate/r41 (base main 9a769c6b0; merges CG10-INDIRECT-ACCESS-SOLE-RESIDUALS round 3 0111ddf38 in its merge commit, no conflicts; the card had merged main b7f86a0de in 37da2d79a; main 9a769c6b0 adds SP1-SYMBOLIC-OPENSSL-PREMISES from the other lane, provider and frontend only; third_party/libevent checked out at d82464a27). Amendments applied in 00ccad948 with --profiles-base 9a769c6b0: CG10-INDIRECT-ACCESS-SOLE-RESIDUALS, AG1-TWO-BORROWED-CALLS and AG1-POINTER-TYPEDEF-MEMBER amended; CG10-CAST-VIEW-RETURN-POSITION registered; at integration the integrator added the user's 2026-11-20 decisions on round 3's decision class 1 questions 1 and 2 (\"Read embedded lists as borrowed container operations\"; \"Read it as retention, option 1 with creating the relevant proof(s).\") as registrations CG10-EMBEDDED-LIST-BORROWED-CONTAINER and CG10-MEMBER-STORE-RETAINED-BY, and a sentence in the increment paragraph; profiles []. Full landing gate on 00ccad948 (private/integrate-r41/gate, raw record beside this file as gate-scope.json) via scripts/gate_scope.py --base origin/main --full --landing through private/toolchain/env.sh: Rust 668 units / 713 summaries, 9798 passed, 0 failed, 21 ignored; fmt, Clippy and both reevaluation examples exit 0; Lean 466 audits. Python (779 tests) exited 1 on two stale-matrix checks of test_build_matrix_sections only (regenerated from this record); the suite rerun after regeneration is recorded in private/integrate-r41/python-rerun.log. No provider steps (no provider diff); provider_tests carried from r39 (163). Gateway rules 67 (sibling None-result all-Borrowed calls, QCore.SiblingBorrowedCalls) and 68 (pointer-typedef members, QCore.PointerTypedefMember) added; rule 12h's hook H-U amended (QCore.CastActualPlace); rule 14a points to rule 67. The card's opt-in measurement (current --monkey-linked, Fluent Bit 046accf6, base f916d3007 vs tip 1379d031a): 1139/2/3656/7 -> 1140/2/3655/7, get_stream_path Unknown -> Safe, no Safe -> non-Safe move, no new Unsafe; access rows 2198 -> 2190, leaves 9186 -> 9149, access-alone rows 242 -> 240. Two pinned fixtures moved deliberately (sub_object_stores, borrowed_field_actuals; fa14b0565). The gate read census was not re-recorded for the new target indirect_access_sole_residuals_r3 (the census test passes without it); it is added with the rule-69/70 targets at their landings. Pinned-route parity (quirin-audit measure --declared) was not run: this host holds no build/cycle19 inputs or baselines; the card predicts get_stream_path Unknown -> Safe on corpus and twelve-home and the revision-2 print_string line as missing. No profile baseline is changed and land.py publish is owed.",
+  "workspace_tests": 9798,
   "provider_tests": 163,
   "python_evidence_validator_tests": 779,
-  "lean_audits": 463,
+  "lean_audits": 466,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
    "AuditAggregateOwnedField.lean",
@@ -6973,6 +6973,7 @@
    "AuditCandidateComposition.lean",
    "AuditCapacityBoundary.lean",
    "AuditCarriedPublication.lean",
+   "AuditCastActualPlace.lean",
    "AuditCastRepresentation.lean",
    "AuditCastReturnEscape.lean",
    "AuditCastSemantics.lean",
@@ -7225,6 +7226,7 @@
    "AuditPluginSourceWitnesses.lean",
    "AuditPointerQualifierReader.lean",
    "AuditPointerStore.lean",
+   "AuditPointerTypedefMember.lean",
    "AuditPremiseFlow.lean",
    "AuditPremiseFormula.lean",
    "AuditPremiseMetadataBridge.lean",
@@ -7312,6 +7314,7 @@
    "AuditScalarTypedErrors.lean",
    "AuditScalarTypes.lean",
    "AuditSchedulerLifetime.lean",
+   "AuditSiblingBorrowedCalls.lean",
    "AuditSingleEmissionRoute.lean",
    "AuditSizeofOperand.lean",
    "AuditSlicePermissions.lean",
@@ -7394,9 +7397,9 @@
   "reevaluation_followup_exit": 0,
   "cargo_fmt": "clean",
   "cargo_clippy": "clean",
-  "standing_gate": "full landing gate: every step exits 0 except the Python suite's two stale-matrix checks, cleared by regenerating the matrix from this record, and one known gate_slot_queue flake (rerun disclosed in the note)",
+  "standing_gate": "full landing gate: every step exits 0 except the Python suite's two stale-matrix checks, cleared by regenerating the matrix from this record (rerun disclosed in the note); no provider steps (no provider diff; provider_tests carried from r39)",
   "full_language_conformance": false,
-  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
+  "measurement_provenance": "integrator_supplied (docs/reports/cg10-indirect-access-sole-residuals-r3/integration/gate.json)"
  },
  "named_followups": [
   {
