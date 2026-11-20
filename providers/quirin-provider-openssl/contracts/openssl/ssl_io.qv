@@ -114,16 +114,63 @@ module contract;
 // setter is handed and which the library-value premise
 // `openssl_builtin_bio_methods` (C04.18) covers.
 //
+// Card OPENSSL-REMAINING-HANDSHAKE-SETTERS: and the remaining slots whose
+// setters ssl_handshake_setters.qv and x509_store_slots.qv now declare:
+//
+// * the session ticket callbacks, gen_cb "invoked when a session ticket is
+//   about to be created" and dec_cb "invoked after session ticket decryption
+//   has been attempted" (SSL_CTX_set_session_ticket_cb),
+//   `ssl_ctx_st.ticket_gen_cb`, `.ticket_dec_cb`;
+// * the session id generator, called "When a new session is established"
+//   on the server (SSL_CTX_set_generate_session_id),
+//   `.generate_session_id`;
+// * the DH parameter callback, "invoked during a connection when DH
+//   parameters are required" with "The SSL object for the current
+//   connection" (SSL_CTX_set_tmp_dh_callback), `.tmp_dh_callback`;
+// * the stateless TLS 1.3 and the DTLS cookie callbacks, whose zero return
+//   "can be used to abort the handshake"
+//   (SSL_CTX_set_stateless_cookie_generate_cb), `.gen_stateless_cookie_cb`,
+//   `.verify_stateless_cookie_cb`, `.app_gen_cookie_cb`,
+//   `.app_verify_cookie_cb`. The page names SSL_stateless and DTLSv1_listen
+//   as their users, neither declared; stating them on the handshake also
+//   covers a DTLS server handshake with cookie exchange (stating more never
+//   improves a verdict);
+// * the session secret callback, whose `peer_ciphers` "On the client side
+//   ... will always be NULL" (SSL_set_session_secret_cb),
+//   `ssl_st.session_secret_cb`;
+// * the SRP callbacks, each given "the SSL connection s"
+//   (SSL_CTX_set_srp_password), `.srp_username_callback`,
+//   `.srp_client_pwd_callback`, `.srp_verify_param_callback`;
+// * the async callback, called when, during "an asynchronous SSL call", "a
+//   retry occurs" (SSL_set_async_callback), `.async_cb`;
+// * the QUIC pending connection callback, run as "TLS handshake processing
+//   may occur independently from the thread which accepts the connection"
+//   (SSL_CTX_set_new_pending_conn_cb), `.new_pending_conn_cb`, every actual
+//   the library's (the listener's context and a preallocated connection);
+// * the twelve callbacks of a certificate store, which "are inherited by the
+//   corresponding X509_STORE_CTX structure when it is initialized"
+//   (X509_STORE_set_verify_cb_func), run by the verification of the peer's
+//   chain, `x509_store_st.verify_cb` and its eleven siblings, every actual
+//   the library's.
+//
+// Two invocations the vocabulary cannot place on a call are not stated by
+// any declaration: the async callback run later by the engine "via a
+// polling mechanism or via an interrupt", and the QUIC callbacks run by a
+// QUIC thread outside any call. The report records them.
+//
 // What each callback hands back (a session reference a new-session callback
 // keeps by returning 1, the certificate and key a client certificate
-// callback sets) is outside C04.19's identity composition, so a run that
-// registers such a callback refuses these calls; one that registers none, or
-// only identity candidates, decides them. What these calls may still run
-// unstated (an SSL_CTX_callback_ctrl arm: the servername, status or ticket
-// key callback; the certificate transparency validation callback, which
-// SSL_CTX_enable_ct writes with the library's own; another slot whose
-// setters this crate does not declare, such as the session ticket or session
-// id generation callback; an ex_data callback)
+// callback sets, the password an SRP client callback returns, which the
+// library frees, the issuer a store's get_issuer must up-ref) is outside
+// C04.19's identity composition, so a run that registers such a callback
+// refuses these calls; one that registers none, or only identity candidates,
+// decides them. What these calls may still run unstated (an
+// SSL_CTX_callback_ctrl arm: the servername, status or ticket key callback;
+// the certificate transparency validation callback, which SSL_CTX_enable_ct
+// writes with the library's own; the not-resumable session and session
+// ticket extension callbacks, whose setters no manual page documents; a
+// function of the lookup methods the context's store holds; an ex_data
+// callback)
 // stays under the narrowed premise
 // `openssl_unstated_callback_slots` (C04.18), published with every row that
 // applies these declarations. The callbacks themselves are the application's
@@ -144,7 +191,7 @@ contract {
     requires resource_contract_v1;
     requires resource_revision(flexible);
     requires resource_library_version(openssl, documented "1.0.2");
-    requires resource_premise(openssl_unstated_callback_slots, "a callback the call may run that no clause of this declaration states (a callback slot of the SSL object or its SSL_CTX whose invocation the declaration does not state, among them the SSL_CTX_callback_ctrl arms such as the servername, status and ticket key callbacks, or an ex_data callback) takes, releases or retains nothing the caller holds");
+    requires resource_premise(openssl_unstated_callback_slots, "a callback the call may run that no clause of this declaration states (a callback slot of the SSL object or its SSL_CTX whose invocation the declaration does not state, among them the SSL_CTX_callback_ctrl arms such as the servername, status and ticket key callbacks, the certificate transparency validation callback, and the not-resumable session and session ticket extension callbacks, whose setters no manual page documents, a function of an X509_LOOKUP_METHOD of a lookup the certificate store of the SSL_CTX holds, or an ex_data callback) takes, releases or retains nothing the caller holds");
     requires resource_premise(openssl_builtin_bio_methods, "a function of a BIO method the library defines itself (the BIO_METHOD that BIO_s_socket, BIO_s_mem, BIO_f_buffer or another built-in BIO_s_ or BIO_f_ function returns, which no setter is handed), run on a BIO the call reads or writes through or frees (its BIO argument or a BIO the SSL object holds) or one chained to it, takes, releases or retains nothing the caller holds, and so does any callback it runs in turn on an object other than the arguments of the call (the SSL object of a BIO_f_ssl BIO)");
     requires resource_premise(openssl_ex_data_callbacks, "an ex_data callback the call may run (a new, dup or free callback CRYPTO_get_ex_new_index registers for the class of an object the call creates, copies or frees) takes, releases or retains nothing the caller holds");
     ensures normal resource_borrowed(ssl);
@@ -177,6 +224,32 @@ contract {
     ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.custom_ext_add_cb, ssl, _, _, _, _, _);
     ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.custom_ext_free_cb, ssl, _, _, _);
     ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.custom_ext_parse_cb, ssl, _, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.ticket_gen_cb, ssl, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.ticket_dec_cb, ssl, _, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.generate_session_id, ssl, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.tmp_dh_callback, ssl, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.gen_stateless_cookie_cb, ssl, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.verify_stateless_cookie_cb, ssl, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.app_gen_cookie_cb, ssl, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.app_verify_cookie_cb, ssl, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_st.session_secret_cb, ssl, _, _, supplied_nullable, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.srp_username_callback, ssl, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.srp_client_pwd_callback, ssl, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.srp_verify_param_callback, ssl, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.async_cb, ssl, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.new_pending_conn_cb, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, x509_store_st.verify_cb, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, x509_store_st.verify, _);
+    ensures normal resource_callback_slot_invoked(ssl, x509_store_st.get_issuer, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, x509_store_st.check_issued, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, x509_store_st.check_revocation, _);
+    ensures normal resource_callback_slot_invoked(ssl, x509_store_st.get_crl, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, x509_store_st.check_crl, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, x509_store_st.cert_crl, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, x509_store_st.check_policy, _);
+    ensures normal resource_callback_slot_invoked(ssl, x509_store_st.lookup_certs, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, x509_store_st.lookup_crls, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, x509_store_st.cleanup, _);
     ensures normal resource_callback_slot_invoked(ssl, bio_st.bio_callback_ex, _, _, supplied_nullable, _, _, _, _, supplied_nullable);
     ensures normal resource_callback_slot_invoked(ssl, bio_st.bio_callback, _, _, supplied_nullable, _, _, _);
     ensures normal resource_callback_slot_invoked(ssl, bio_method_st.meth_write_ex, _, _, _, _);
@@ -206,7 +279,7 @@ contract {
     requires resource_contract_v1;
     requires resource_revision(flexible);
     requires resource_library_version(openssl, documented "1.0.2");
-    requires resource_premise(openssl_unstated_callback_slots, "a callback the call may run that no clause of this declaration states (a callback slot of the SSL object or its SSL_CTX whose invocation the declaration does not state, among them the SSL_CTX_callback_ctrl arms such as the servername, status and ticket key callbacks, or an ex_data callback) takes, releases or retains nothing the caller holds");
+    requires resource_premise(openssl_unstated_callback_slots, "a callback the call may run that no clause of this declaration states (a callback slot of the SSL object or its SSL_CTX whose invocation the declaration does not state, among them the SSL_CTX_callback_ctrl arms such as the servername, status and ticket key callbacks, the certificate transparency validation callback, and the not-resumable session and session ticket extension callbacks, whose setters no manual page documents, a function of an X509_LOOKUP_METHOD of a lookup the certificate store of the SSL_CTX holds, or an ex_data callback) takes, releases or retains nothing the caller holds");
     requires resource_premise(openssl_builtin_bio_methods, "a function of a BIO method the library defines itself (the BIO_METHOD that BIO_s_socket, BIO_s_mem, BIO_f_buffer or another built-in BIO_s_ or BIO_f_ function returns, which no setter is handed), run on a BIO the call reads or writes through or frees (its BIO argument or a BIO the SSL object holds) or one chained to it, takes, releases or retains nothing the caller holds, and so does any callback it runs in turn on an object other than the arguments of the call (the SSL object of a BIO_f_ssl BIO)");
     requires resource_premise(openssl_ex_data_callbacks, "an ex_data callback the call may run (a new, dup or free callback CRYPTO_get_ex_new_index registers for the class of an object the call creates, copies or frees) takes, releases or retains nothing the caller holds");
     ensures normal resource_borrowed(ssl);
@@ -239,6 +312,32 @@ contract {
     ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.custom_ext_add_cb, ssl, _, _, _, _, _);
     ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.custom_ext_free_cb, ssl, _, _, _);
     ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.custom_ext_parse_cb, ssl, _, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.ticket_gen_cb, ssl, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.ticket_dec_cb, ssl, _, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.generate_session_id, ssl, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.tmp_dh_callback, ssl, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.gen_stateless_cookie_cb, ssl, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.verify_stateless_cookie_cb, ssl, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.app_gen_cookie_cb, ssl, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.app_verify_cookie_cb, ssl, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_st.session_secret_cb, ssl, _, _, supplied_nullable, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.srp_username_callback, ssl, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.srp_client_pwd_callback, ssl, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.srp_verify_param_callback, ssl, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.async_cb, ssl, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.new_pending_conn_cb, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, x509_store_st.verify_cb, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, x509_store_st.verify, _);
+    ensures normal resource_callback_slot_invoked(ssl, x509_store_st.get_issuer, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, x509_store_st.check_issued, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, x509_store_st.check_revocation, _);
+    ensures normal resource_callback_slot_invoked(ssl, x509_store_st.get_crl, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, x509_store_st.check_crl, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, x509_store_st.cert_crl, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, x509_store_st.check_policy, _);
+    ensures normal resource_callback_slot_invoked(ssl, x509_store_st.lookup_certs, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, x509_store_st.lookup_crls, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, x509_store_st.cleanup, _);
     ensures normal resource_callback_slot_invoked(ssl, bio_st.bio_callback_ex, _, _, supplied_nullable, _, _, _, _, supplied_nullable);
     ensures normal resource_callback_slot_invoked(ssl, bio_st.bio_callback, _, _, supplied_nullable, _, _, _);
     ensures normal resource_callback_slot_invoked(ssl, bio_method_st.meth_write_ex, _, _, _, _);
@@ -266,7 +365,7 @@ contract {
     requires resource_contract_v1;
     requires resource_revision(flexible);
     requires resource_library_version(openssl, documented "1.0.2");
-    requires resource_premise(openssl_unstated_callback_slots, "a callback the call may run that no clause of this declaration states (a callback slot of the SSL object or its SSL_CTX whose invocation the declaration does not state, among them the SSL_CTX_callback_ctrl arms such as the servername, status and ticket key callbacks, or an ex_data callback) takes, releases or retains nothing the caller holds");
+    requires resource_premise(openssl_unstated_callback_slots, "a callback the call may run that no clause of this declaration states (a callback slot of the SSL object or its SSL_CTX whose invocation the declaration does not state, among them the SSL_CTX_callback_ctrl arms such as the servername, status and ticket key callbacks, the certificate transparency validation callback, and the not-resumable session and session ticket extension callbacks, whose setters no manual page documents, a function of an X509_LOOKUP_METHOD of a lookup the certificate store of the SSL_CTX holds, or an ex_data callback) takes, releases or retains nothing the caller holds");
     requires resource_premise(openssl_builtin_bio_methods, "a function of a BIO method the library defines itself (the BIO_METHOD that BIO_s_socket, BIO_s_mem, BIO_f_buffer or another built-in BIO_s_ or BIO_f_ function returns, which no setter is handed), run on a BIO the call reads or writes through or frees (its BIO argument or a BIO the SSL object holds) or one chained to it, takes, releases or retains nothing the caller holds, and so does any callback it runs in turn on an object other than the arguments of the call (the SSL object of a BIO_f_ssl BIO)");
     requires resource_premise(openssl_ex_data_callbacks, "an ex_data callback the call may run (a new, dup or free callback CRYPTO_get_ex_new_index registers for the class of an object the call creates, copies or frees) takes, releases or retains nothing the caller holds");
     ensures normal resource_borrowed(ssl);
@@ -297,6 +396,32 @@ contract {
     ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.custom_ext_add_cb, ssl, _, _, _, _, _);
     ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.custom_ext_free_cb, ssl, _, _, _);
     ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.custom_ext_parse_cb, ssl, _, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.ticket_gen_cb, ssl, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.ticket_dec_cb, ssl, _, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.generate_session_id, ssl, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.tmp_dh_callback, ssl, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.gen_stateless_cookie_cb, ssl, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.verify_stateless_cookie_cb, ssl, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.app_gen_cookie_cb, ssl, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.app_verify_cookie_cb, ssl, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_st.session_secret_cb, ssl, _, _, supplied_nullable, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.srp_username_callback, ssl, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.srp_client_pwd_callback, ssl, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.srp_verify_param_callback, ssl, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.async_cb, ssl, _);
+    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.new_pending_conn_cb, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, x509_store_st.verify_cb, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, x509_store_st.verify, _);
+    ensures normal resource_callback_slot_invoked(ssl, x509_store_st.get_issuer, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, x509_store_st.check_issued, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, x509_store_st.check_revocation, _);
+    ensures normal resource_callback_slot_invoked(ssl, x509_store_st.get_crl, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, x509_store_st.check_crl, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, x509_store_st.cert_crl, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, x509_store_st.check_policy, _);
+    ensures normal resource_callback_slot_invoked(ssl, x509_store_st.lookup_certs, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, x509_store_st.lookup_crls, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, x509_store_st.cleanup, _);
     ensures normal resource_callback_slot_invoked(ssl, bio_st.bio_callback_ex, _, _, supplied_nullable, _, _, _, _, supplied_nullable);
     ensures normal resource_callback_slot_invoked(ssl, bio_st.bio_callback, _, _, supplied_nullable, _, _, _);
     ensures normal resource_callback_slot_invoked(ssl, bio_method_st.meth_write_ex, _, _, _, _);
@@ -325,7 +450,7 @@ contract {
     requires resource_contract_v1;
     requires resource_revision(flexible);
     requires resource_library_version(openssl, documented "1.0.2");
-    requires resource_premise(openssl_unstated_callback_slots, "a callback the call may run that no clause of this declaration states (a callback slot of the SSL object or its SSL_CTX whose invocation the declaration does not state, among them the SSL_CTX_callback_ctrl arms such as the servername, status and ticket key callbacks, or an ex_data callback) takes, releases or retains nothing the caller holds");
+    requires resource_premise(openssl_unstated_callback_slots, "a callback the call may run that no clause of this declaration states (a callback slot of the SSL object or its SSL_CTX whose invocation the declaration does not state, among them the SSL_CTX_callback_ctrl arms such as the servername, status and ticket key callbacks, the certificate transparency validation callback, and the not-resumable session and session ticket extension callbacks, whose setters no manual page documents, a function of an X509_LOOKUP_METHOD of a lookup the certificate store of the SSL_CTX holds, or an ex_data callback) takes, releases or retains nothing the caller holds");
     requires resource_premise(openssl_builtin_bio_methods, "a function of a BIO method the library defines itself (the BIO_METHOD that BIO_s_socket, BIO_s_mem, BIO_f_buffer or another built-in BIO_s_ or BIO_f_ function returns, which no setter is handed), run on a BIO the call reads or writes through or frees (its BIO argument or a BIO the SSL object holds) or one chained to it, takes, releases or retains nothing the caller holds, and so does any callback it runs in turn on an object other than the arguments of the call (the SSL object of a BIO_f_ssl BIO)");
     requires resource_premise(openssl_ex_data_callbacks, "an ex_data callback the call may run (a new, dup or free callback CRYPTO_get_ex_new_index registers for the class of an object the call creates, copies or frees) takes, releases or retains nothing the caller holds");
     ensures normal resource_borrowed(s);
@@ -356,6 +481,32 @@ contract {
     ensures normal resource_callback_slot_invoked(s, ssl_ctx_st.custom_ext_add_cb, s, _, _, _, _, _);
     ensures normal resource_callback_slot_invoked(s, ssl_ctx_st.custom_ext_free_cb, s, _, _, _);
     ensures normal resource_callback_slot_invoked(s, ssl_ctx_st.custom_ext_parse_cb, s, _, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(s, ssl_ctx_st.ticket_gen_cb, s, _);
+    ensures normal resource_callback_slot_invoked(s, ssl_ctx_st.ticket_dec_cb, s, _, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(s, ssl_ctx_st.generate_session_id, s, _, _);
+    ensures normal resource_callback_slot_invoked(s, ssl_ctx_st.tmp_dh_callback, s, _, _);
+    ensures normal resource_callback_slot_invoked(s, ssl_ctx_st.gen_stateless_cookie_cb, s, _, _);
+    ensures normal resource_callback_slot_invoked(s, ssl_ctx_st.verify_stateless_cookie_cb, s, _, _);
+    ensures normal resource_callback_slot_invoked(s, ssl_ctx_st.app_gen_cookie_cb, s, _, _);
+    ensures normal resource_callback_slot_invoked(s, ssl_ctx_st.app_verify_cookie_cb, s, _, _);
+    ensures normal resource_callback_slot_invoked(s, ssl_st.session_secret_cb, s, _, _, supplied_nullable, _, _);
+    ensures normal resource_callback_slot_invoked(s, ssl_ctx_st.srp_username_callback, s, _, _);
+    ensures normal resource_callback_slot_invoked(s, ssl_ctx_st.srp_client_pwd_callback, s, _);
+    ensures normal resource_callback_slot_invoked(s, ssl_ctx_st.srp_verify_param_callback, s, _);
+    ensures normal resource_callback_slot_invoked(s, ssl_ctx_st.async_cb, s, _);
+    ensures normal resource_callback_slot_invoked(s, ssl_ctx_st.new_pending_conn_cb, _, _, _);
+    ensures normal resource_callback_slot_invoked(s, x509_store_st.verify_cb, _, _);
+    ensures normal resource_callback_slot_invoked(s, x509_store_st.verify, _);
+    ensures normal resource_callback_slot_invoked(s, x509_store_st.get_issuer, _, _, _);
+    ensures normal resource_callback_slot_invoked(s, x509_store_st.check_issued, _, _, _);
+    ensures normal resource_callback_slot_invoked(s, x509_store_st.check_revocation, _);
+    ensures normal resource_callback_slot_invoked(s, x509_store_st.get_crl, _, _, _);
+    ensures normal resource_callback_slot_invoked(s, x509_store_st.check_crl, _, _);
+    ensures normal resource_callback_slot_invoked(s, x509_store_st.cert_crl, _, _, _);
+    ensures normal resource_callback_slot_invoked(s, x509_store_st.check_policy, _);
+    ensures normal resource_callback_slot_invoked(s, x509_store_st.lookup_certs, _, _);
+    ensures normal resource_callback_slot_invoked(s, x509_store_st.lookup_crls, _, _);
+    ensures normal resource_callback_slot_invoked(s, x509_store_st.cleanup, _);
     ensures normal resource_callback_slot_invoked(s, bio_st.bio_callback_ex, _, _, supplied_nullable, _, _, _, _, supplied_nullable);
     ensures normal resource_callback_slot_invoked(s, bio_st.bio_callback, _, _, supplied_nullable, _, _, _);
     ensures normal resource_callback_slot_invoked(s, bio_method_st.meth_write_ex, _, _, _, _);

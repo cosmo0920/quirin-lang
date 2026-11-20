@@ -1,0 +1,243 @@
+// SPDX-License-Identifier: Apache-2.0
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+module contract;
+
+// Card OPENSSL-REMAINING-HANDSHAKE-SETTERS. The callbacks of a certificate
+// store, X509_STORE_set_verify_cb_func (3.5): twelve slots, one
+// `X509_STORE_set_*` writer each, every one declared here. "All the callbacks
+// from a X509_STORE are inherited by the corresponding X509_STORE_CTX
+// structure when it is initialized" (NOTES); the handshake verifies the peer's
+// chain through such a context over the store of the SSL_CTX, so the
+// handshake and I/O calls invoke each slot (ssl_io.qv), every actual the
+// library's.
+//
+// The holder is the store, an object that reaches a connection only through
+// other calls (SSL_CTX_new makes the context's store, SSL_CTX_set_cert_store
+// replaces it). The key is run-wide (C04.19.3), so its set is every function
+// any store's setter is handed, as for a BIO method table. A slot left NULL
+// makes the library use "the internal default function", which is the call's
+// own behaviour, not a value of the slot.
+//
+// The page's aliases X509_STORE_set_verify_cb_func, X509_STORE_set_verify_func
+// and X509_STORE_set_lookup_crls_cb are "available as macros" expanding to
+// X509_STORE_set_verify_cb, X509_STORE_set_verify and
+// X509_STORE_set_lookup_crls, so a call through one is a call to a writer
+// declared here; the checker lists them as not-writers. The X509_STORE_CTX
+// setters (X509_STORE_CTX_set_verify_cb, X509_STORE_CTX_set_verify) write the
+// verification context's copy, which during a handshake only a callback can
+// reach; none is declared, so a candidate calling one has no contract in
+// force.
+//
+// Each setter: HISTORY (3.5) "The functions X509_STORE_set_verify_cb(), ...,
+// X509_STORE_set_cleanup() and X509_STORE_get_cleanup() were added in OpenSSL
+// 1.1.0" (X509_STORE_set_verify_cb is also said to be "added in OpenSSL
+// 1.0.0"; the later bound is taken), so `since "1.1.0"`.
+
+// X509_STORE_set_verify_cb: https://docs.openssl.org/3.5/man3/X509_STORE_set_verify_cb_func/
+// (also 1.1.1). DESCRIPTION: it "sets the verification callback of xs to
+// verify_cb overwriting the previous callback". A registration into the store's
+// verify_cb slot. Pinned prototype: `void X509_STORE_set_verify_cb(X509_STORE
+// *xs, X509_STORE_CTX_verify_cb verify_cb)`.
+extern fn X509_STORE_set_verify_cb(xs: ptr<mut, u8>, verify_cb: fnptr) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, since "1.1.0");
+    ensures normal resource_borrowed(xs);
+    ensures normal resource_borrowed(verify_cb);
+    ensures normal resource_callback_slot_registered(xs, x509_store_st.verify_cb, verify_cb);
+    ensures normal resource_return_none();
+};
+
+// X509_STORE_set_verify: https://docs.openssl.org/3.5/man3/X509_STORE_set_verify_cb_func/
+// (also 1.1.1). DESCRIPTION: it "sets the final chain verification function for
+// xs to verify". A registration into the store's verify slot. Pinned prototype:
+// `void X509_STORE_set_verify(X509_STORE *xs, X509_STORE_CTX_verify_fn
+// verify)`.
+extern fn X509_STORE_set_verify(xs: ptr<mut, u8>, verify: fnptr) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, since "1.1.0");
+    ensures normal resource_borrowed(xs);
+    ensures normal resource_borrowed(verify);
+    ensures normal resource_callback_slot_registered(xs, x509_store_st.verify, verify);
+    ensures normal resource_return_none();
+};
+
+// X509_STORE_set_get_issuer: https://docs.openssl.org/3.5/man3/X509_STORE_set_verify_cb_func/
+// (also 1.1.1). DESCRIPTION: it "sets the function get_issuer that is used to
+// get the "best" candidate issuer certificate". A registration into the store's
+// get_issuer slot. Pinned prototype: `void X509_STORE_set_get_issuer(X509_STORE
+// *xs, X509_STORE_CTX_get_issuer_fn get_issuer)`.
+extern fn X509_STORE_set_get_issuer(xs: ptr<mut, u8>, get_issuer: fnptr) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, since "1.1.0");
+    ensures normal resource_borrowed(xs);
+    ensures normal resource_borrowed(get_issuer);
+    ensures normal resource_callback_slot_registered(xs, x509_store_st.get_issuer, get_issuer);
+    ensures normal resource_return_none();
+};
+
+// X509_STORE_set_check_issued: https://docs.openssl.org/3.5/man3/X509_STORE_set_verify_cb_func/
+// (also 1.1.1). DESCRIPTION: it "sets the function to check that a given
+// certificate x is issued by the issuer certificate". A registration into the
+// store's check_issued slot. Pinned prototype: `void
+// X509_STORE_set_check_issued(X509_STORE *xs, X509_STORE_CTX_check_issued_fn
+// check_issued)`.
+extern fn X509_STORE_set_check_issued(xs: ptr<mut, u8>, check_issued: fnptr) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, since "1.1.0");
+    ensures normal resource_borrowed(xs);
+    ensures normal resource_borrowed(check_issued);
+    ensures normal resource_callback_slot_registered(xs, x509_store_st.check_issued, check_issued);
+    ensures normal resource_return_none();
+};
+
+// X509_STORE_set_check_revocation: https://docs.openssl.org/3.5/man3/X509_STORE_set_verify_cb_func/
+// (also 1.1.1). DESCRIPTION: it "sets the revocation checking function". A
+// registration into the store's check_revocation slot. Pinned prototype: `void
+// X509_STORE_set_check_revocation(X509_STORE *xs,
+// X509_STORE_CTX_check_revocation_fn check_revocation)`.
+extern fn X509_STORE_set_check_revocation(xs: ptr<mut, u8>, check_revocation: fnptr) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, since "1.1.0");
+    ensures normal resource_borrowed(xs);
+    ensures normal resource_borrowed(check_revocation);
+    ensures normal resource_callback_slot_registered(xs, x509_store_st.check_revocation, check_revocation);
+    ensures normal resource_return_none();
+};
+
+// X509_STORE_set_get_crl: https://docs.openssl.org/3.5/man3/X509_STORE_set_verify_cb_func/
+// (also 1.1.1). DESCRIPTION: it "sets the function to get the crl for a given
+// certificate x". A registration into the store's get_crl slot. Pinned
+// prototype: `void X509_STORE_set_get_crl(X509_STORE *xs,
+// X509_STORE_CTX_get_crl_fn get_crl)`.
+extern fn X509_STORE_set_get_crl(xs: ptr<mut, u8>, get_crl: fnptr) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, since "1.1.0");
+    ensures normal resource_borrowed(xs);
+    ensures normal resource_borrowed(get_crl);
+    ensures normal resource_callback_slot_registered(xs, x509_store_st.get_crl, get_crl);
+    ensures normal resource_return_none();
+};
+
+// X509_STORE_set_check_crl: https://docs.openssl.org/3.5/man3/X509_STORE_set_verify_cb_func/
+// (also 1.1.1). DESCRIPTION: it "sets the function to check the validity of the
+// given crl". A registration into the store's check_crl slot. Pinned prototype:
+// `void X509_STORE_set_check_crl(X509_STORE *xs, X509_STORE_CTX_check_crl_fn
+// check_crl)`.
+extern fn X509_STORE_set_check_crl(xs: ptr<mut, u8>, check_crl: fnptr) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, since "1.1.0");
+    ensures normal resource_borrowed(xs);
+    ensures normal resource_borrowed(check_crl);
+    ensures normal resource_callback_slot_registered(xs, x509_store_st.check_crl, check_crl);
+    ensures normal resource_return_none();
+};
+
+// X509_STORE_set_cert_crl: https://docs.openssl.org/3.5/man3/X509_STORE_set_verify_cb_func/
+// (also 1.1.1). DESCRIPTION: it "sets the function to check the revocation
+// status of the given certificate x against the given crl". A registration into
+// the store's cert_crl slot. Pinned prototype: `void
+// X509_STORE_set_cert_crl(X509_STORE *xs, X509_STORE_CTX_cert_crl_fn
+// cert_crl)`.
+extern fn X509_STORE_set_cert_crl(xs: ptr<mut, u8>, cert_crl: fnptr) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, since "1.1.0");
+    ensures normal resource_borrowed(xs);
+    ensures normal resource_borrowed(cert_crl);
+    ensures normal resource_callback_slot_registered(xs, x509_store_st.cert_crl, cert_crl);
+    ensures normal resource_return_none();
+};
+
+// X509_STORE_set_check_policy: https://docs.openssl.org/3.5/man3/X509_STORE_set_verify_cb_func/
+// (also 1.1.1). DESCRIPTION: it "sets the function to check the policies of all
+// the certificates in the final chain". A registration into the store's
+// check_policy slot. Pinned prototype: `void
+// X509_STORE_set_check_policy(X509_STORE *xs, X509_STORE_CTX_check_policy_fn
+// check_policy)`.
+extern fn X509_STORE_set_check_policy(xs: ptr<mut, u8>, check_policy: fnptr) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, since "1.1.0");
+    ensures normal resource_borrowed(xs);
+    ensures normal resource_borrowed(check_policy);
+    ensures normal resource_callback_slot_registered(xs, x509_store_st.check_policy, check_policy);
+    ensures normal resource_return_none();
+};
+
+// X509_STORE_set_lookup_certs: https://docs.openssl.org/3.5/man3/X509_STORE_set_verify_cb_func/
+// (also 1.1.1). DESCRIPTION: it "set the functions to look up all the certs or
+// all the CRLs that match the given name nm". A registration into the store's
+// lookup_certs slot. Pinned prototype: `void
+// X509_STORE_set_lookup_certs(X509_STORE *xs, X509_STORE_CTX_lookup_certs_fn
+// lookup_certs)`.
+extern fn X509_STORE_set_lookup_certs(xs: ptr<mut, u8>, lookup_certs: fnptr) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, since "1.1.0");
+    ensures normal resource_borrowed(xs);
+    ensures normal resource_borrowed(lookup_certs);
+    ensures normal resource_callback_slot_registered(xs, x509_store_st.lookup_certs, lookup_certs);
+    ensures normal resource_return_none();
+};
+
+// X509_STORE_set_lookup_crls: https://docs.openssl.org/3.5/man3/X509_STORE_set_verify_cb_func/
+// (also 1.1.1). DESCRIPTION: it "set the functions to look up all the certs or
+// all the CRLs that match the given name nm". A registration into the store's
+// lookup_crls slot. Pinned prototype: `void
+// X509_STORE_set_lookup_crls(X509_STORE *xs, X509_STORE_CTX_lookup_crls_fn
+// lookup_crls)`.
+extern fn X509_STORE_set_lookup_crls(xs: ptr<mut, u8>, lookup_crls: fnptr) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, since "1.1.0");
+    ensures normal resource_borrowed(xs);
+    ensures normal resource_borrowed(lookup_crls);
+    ensures normal resource_callback_slot_registered(xs, x509_store_st.lookup_crls, lookup_crls);
+    ensures normal resource_return_none();
+};
+
+// X509_STORE_set_cleanup: https://docs.openssl.org/3.5/man3/X509_STORE_set_verify_cb_func/
+// (also 1.1.1). DESCRIPTION: it "sets the final cleanup function, which is
+// called when the context ( X509_STORE_CTX ) is being torn down". A
+// registration into the store's cleanup slot. Pinned prototype: `void
+// X509_STORE_set_cleanup(X509_STORE *xs, X509_STORE_CTX_cleanup_fn cleanup)`.
+extern fn X509_STORE_set_cleanup(xs: ptr<mut, u8>, cleanup: fnptr) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, since "1.1.0");
+    ensures normal resource_borrowed(xs);
+    ensures normal resource_borrowed(cleanup);
+    ensures normal resource_callback_slot_registered(xs, x509_store_st.cleanup, cleanup);
+    ensures normal resource_return_none();
+};

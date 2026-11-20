@@ -188,11 +188,21 @@ pub const UNSTATED_SLOTS: &str = "openssl_unstated_callback_slots";
 /// setters of is stated where a declaration may run it, so what remains is
 /// named by kind. Card OPENSSL-BIO-METHODS-AND-CALLBACKS: a BIO's methods and
 /// callback are stated slots now, so the statement no longer names them.
+/// Card OPENSSL-REMAINING-HANDSHAKE-SETTERS: every documented function
+/// pointer setter of a handshake slot is declared and its slot stated, so the
+/// statement names what is left by name: the ctrl arms, the CT validation
+/// callback (written by the library's own `SSL_CTX_enable_ct`), the
+/// not-resumable session and session ticket extension callbacks (whose
+/// setters no manual page documents), the functions of a lookup method the
+/// context's certificate store holds (card OPENSSL-FREE-INDIRECT-CALLBACKS
+/// declares their setters), and ex_data.
 pub const UNSTATED_SLOTS_STATEMENT: &str = "a callback the call may run that no clause of this \
 declaration states (a callback slot of the SSL object or its SSL_CTX whose invocation the \
 declaration does not state, among them the SSL_CTX_callback_ctrl arms such as the servername, \
-status and ticket key callbacks, or an ex_data callback) takes, releases or retains nothing the \
-caller holds";
+status and ticket key callbacks, the certificate transparency validation callback, and the \
+not-resumable session and session ticket extension callbacks, whose setters no manual page \
+documents, a function of an X509_LOOKUP_METHOD of a lookup the certificate store of the SSL_CTX \
+holds, or an ex_data callback) takes, releases or retains nothing the caller holds";
 
 /// Card **OPENSSL-BIO-METHODS-AND-CALLBACKS**: the name of the built-in BIO
 /// methods premise.
@@ -873,6 +883,257 @@ pub const SLOTS: &[Slot] = &[
         ],
         not_writers: &[],
     },
+    // Card OPENSSL-REMAINING-HANDSHAKE-SETTERS. SSL_CTX_set_session_ticket_cb
+    // (3.5): one setter, two slots (gen_cb "invoked when a session ticket is
+    // about to be created", dec_cb "invoked after session ticket decryption
+    // has been attempted"); the ticket application data accessors and the
+    // two callback types are listed once.
+    Slot {
+        key: "ssl_ctx_st.ticket_gen_cb",
+        page: "SSL_CTX_set_session_ticket_cb",
+        writers: &["SSL_CTX_set_session_ticket_cb"],
+        not_writers: &[
+            "SSL_SESSION_get0_ticket_appdata",
+            "SSL_SESSION_set1_ticket_appdata",
+            "SSL_CTX_generate_session_ticket_fn",
+            "SSL_CTX_decrypt_session_ticket_fn",
+        ],
+    },
+    Slot {
+        key: "ssl_ctx_st.ticket_dec_cb",
+        page: "SSL_CTX_set_session_ticket_cb",
+        writers: &["SSL_CTX_set_session_ticket_cb"],
+        not_writers: &[],
+    },
+    // SSL_CTX_set_generate_session_id (3.5): the context's and the SSL's
+    // session id generator, one key (the set is every value either holds);
+    // the cache query and the callback type are not writers.
+    Slot {
+        key: "ssl_ctx_st.generate_session_id",
+        page: "SSL_CTX_set_generate_session_id",
+        writers: &[
+            "SSL_CTX_set_generate_session_id",
+            "SSL_set_generate_session_id",
+        ],
+        not_writers: &["SSL_has_matching_session_id", "GEN_SESSION_CB"],
+    },
+    // SSL_CTX_set_tmp_dh_callback (3.5): "the functions
+    // SSL_CTX_set_tmp_dh_callback() or SSL_set_tmp_dh_callback() to set the
+    // callback for the SSL_CTX or SSL object respectively": one key. The
+    // automatic and explicit parameter setters keep parameters, not a
+    // callback.
+    Slot {
+        key: "ssl_ctx_st.tmp_dh_callback",
+        page: "SSL_CTX_set_tmp_dh_callback",
+        writers: &["SSL_CTX_set_tmp_dh_callback", "SSL_set_tmp_dh_callback"],
+        not_writers: &[
+            "SSL_CTX_set_dh_auto",
+            "SSL_set_dh_auto",
+            "SSL_CTX_set0_tmp_dh_pkey",
+            "SSL_set0_tmp_dh_pkey",
+            "SSL_CTX_set_tmp_dh",
+            "SSL_set_tmp_dh",
+        ],
+    },
+    // SSL_CTX_set_stateless_cookie_generate_cb (3.5): four slots of the
+    // context, one writer each (the stateless TLS 1.3 pair and the DTLS
+    // pair).
+    Slot {
+        key: "ssl_ctx_st.gen_stateless_cookie_cb",
+        page: "SSL_CTX_set_stateless_cookie_generate_cb",
+        writers: &["SSL_CTX_set_stateless_cookie_generate_cb"],
+        not_writers: &[],
+    },
+    Slot {
+        key: "ssl_ctx_st.verify_stateless_cookie_cb",
+        page: "SSL_CTX_set_stateless_cookie_generate_cb",
+        writers: &["SSL_CTX_set_stateless_cookie_verify_cb"],
+        not_writers: &[],
+    },
+    Slot {
+        key: "ssl_ctx_st.app_gen_cookie_cb",
+        page: "SSL_CTX_set_stateless_cookie_generate_cb",
+        writers: &["SSL_CTX_set_cookie_generate_cb"],
+        not_writers: &[],
+    },
+    Slot {
+        key: "ssl_ctx_st.app_verify_cookie_cb",
+        page: "SSL_CTX_set_stateless_cookie_generate_cb",
+        writers: &["SSL_CTX_set_cookie_verify_cb"],
+        not_writers: &[],
+    },
+    // SSL_set_session_secret_cb (3.5): the SSL's one writer; no context
+    // setter exists. The key names the SSL's slot.
+    Slot {
+        key: "ssl_st.session_secret_cb",
+        page: "SSL_set_session_secret_cb",
+        writers: &["SSL_set_session_secret_cb"],
+        not_writers: &["tls_session_secret_cb_fn"],
+    },
+    // SSL_CTX_set_srp_password (3.5): three slots of the context, one writer
+    // each; the parameter setters, the callback argument setter and the
+    // getters are listed once.
+    Slot {
+        key: "ssl_ctx_st.srp_username_callback",
+        page: "SSL_CTX_set_srp_password",
+        writers: &["SSL_CTX_set_srp_username_callback"],
+        not_writers: &[
+            "SSL_CTX_set_srp_username",
+            "SSL_CTX_set_srp_password",
+            "SSL_CTX_set_srp_strength",
+            "SSL_CTX_set_srp_cb_arg",
+            "SSL_set_srp_server_param",
+            "SSL_set_srp_server_param_pw",
+            "SSL_get_srp_g",
+            "SSL_get_srp_N",
+            "SSL_get_srp_username",
+            "SSL_get_srp_userinfo",
+        ],
+    },
+    Slot {
+        key: "ssl_ctx_st.srp_client_pwd_callback",
+        page: "SSL_CTX_set_srp_password",
+        writers: &["SSL_CTX_set_srp_client_pwd_callback"],
+        not_writers: &[],
+    },
+    Slot {
+        key: "ssl_ctx_st.srp_verify_param_callback",
+        page: "SSL_CTX_set_srp_password",
+        writers: &["SSL_CTX_set_srp_verify_param_callback"],
+        not_writers: &[],
+    },
+    // SSL_set_async_callback (3.5): "All SSL objects generated based on this
+    // SSL_CTX will get this callback": one key for the context's and the
+    // SSL's. The `_arg` setters keep the argument, not the callback.
+    Slot {
+        key: "ssl_ctx_st.async_cb",
+        page: "SSL_set_async_callback",
+        writers: &["SSL_CTX_set_async_callback", "SSL_set_async_callback"],
+        not_writers: &[
+            "SSL_CTX_set_async_callback_arg",
+            "SSL_set_async_callback_arg",
+            "SSL_get_async_status",
+            "SSL_async_callback_fn",
+        ],
+    },
+    // SSL_CTX_set_new_pending_conn_cb (3.5): the context's one writer; the
+    // page's callback type name (`SSL_set_new_pending_conn_cb_fn`, which the
+    // pinned header spells `SSL_new_pending_conn_cb_fn`) is not a writer.
+    Slot {
+        key: "ssl_ctx_st.new_pending_conn_cb",
+        page: "SSL_CTX_set_new_pending_conn_cb",
+        writers: &["SSL_CTX_set_new_pending_conn_cb"],
+        not_writers: &["SSL_set_new_pending_conn_cb_fn"],
+    },
+    // X509_STORE_set_verify_cb_func (3.5): twelve slots of a certificate
+    // store, one `X509_STORE_set_*` writer each. "All the callbacks from a
+    // X509_STORE are inherited by the corresponding X509_STORE_CTX structure
+    // when it is initialized" (NOTES), and the handshake verifies the peer
+    // through such a context over the SSL_CTX's store. The holder reaches the
+    // connection only through other calls (SSL_CTX_new's own store,
+    // SSL_CTX_set_cert_store); the key is run-wide, as for a BIO method. The
+    // three aliases "available as macros" expand to their writers, so a call
+    // through one is a call to a declared writer; the getters, the default
+    // issuer lookup and the callback types are not writers.
+    Slot {
+        key: "x509_store_st.verify_cb",
+        page: "X509_STORE_set_verify_cb_func",
+        writers: &["X509_STORE_set_verify_cb"],
+        not_writers: &[
+            "X509_STORE_set_verify_cb_func",
+            "X509_STORE_set_verify_func",
+            "X509_STORE_set_lookup_crls_cb",
+            "X509_STORE_get_verify_cb",
+            "X509_STORE_CTX_get_verify",
+            "X509_STORE_get_get_issuer",
+            "X509_STORE_get_check_issued",
+            "X509_STORE_get_check_revocation",
+            "X509_STORE_get_get_crl",
+            "X509_STORE_get_check_crl",
+            "X509_STORE_get_cert_crl",
+            "X509_STORE_get_check_policy",
+            "X509_STORE_get_lookup_certs",
+            "X509_STORE_get_lookup_crls",
+            "X509_STORE_get_cleanup",
+            "X509_STORE_CTX_get1_issuer",
+            "X509_STORE_CTX_cert_crl_fn",
+            "X509_STORE_CTX_check_crl_fn",
+            "X509_STORE_CTX_check_issued_fn",
+            "X509_STORE_CTX_check_policy_fn",
+            "X509_STORE_CTX_check_revocation_fn",
+            "X509_STORE_CTX_cleanup_fn",
+            "X509_STORE_CTX_get_crl_fn",
+            "X509_STORE_CTX_get_issuer_fn",
+            "X509_STORE_CTX_lookup_certs_fn",
+            "X509_STORE_CTX_lookup_crls_fn",
+        ],
+    },
+    Slot {
+        key: "x509_store_st.verify",
+        page: "X509_STORE_set_verify_cb_func",
+        writers: &["X509_STORE_set_verify"],
+        not_writers: &[],
+    },
+    Slot {
+        key: "x509_store_st.get_issuer",
+        page: "X509_STORE_set_verify_cb_func",
+        writers: &["X509_STORE_set_get_issuer"],
+        not_writers: &[],
+    },
+    Slot {
+        key: "x509_store_st.check_issued",
+        page: "X509_STORE_set_verify_cb_func",
+        writers: &["X509_STORE_set_check_issued"],
+        not_writers: &[],
+    },
+    Slot {
+        key: "x509_store_st.check_revocation",
+        page: "X509_STORE_set_verify_cb_func",
+        writers: &["X509_STORE_set_check_revocation"],
+        not_writers: &[],
+    },
+    Slot {
+        key: "x509_store_st.get_crl",
+        page: "X509_STORE_set_verify_cb_func",
+        writers: &["X509_STORE_set_get_crl"],
+        not_writers: &[],
+    },
+    Slot {
+        key: "x509_store_st.check_crl",
+        page: "X509_STORE_set_verify_cb_func",
+        writers: &["X509_STORE_set_check_crl"],
+        not_writers: &[],
+    },
+    Slot {
+        key: "x509_store_st.cert_crl",
+        page: "X509_STORE_set_verify_cb_func",
+        writers: &["X509_STORE_set_cert_crl"],
+        not_writers: &[],
+    },
+    Slot {
+        key: "x509_store_st.check_policy",
+        page: "X509_STORE_set_verify_cb_func",
+        writers: &["X509_STORE_set_check_policy"],
+        not_writers: &[],
+    },
+    Slot {
+        key: "x509_store_st.lookup_certs",
+        page: "X509_STORE_set_verify_cb_func",
+        writers: &["X509_STORE_set_lookup_certs"],
+        not_writers: &[],
+    },
+    Slot {
+        key: "x509_store_st.lookup_crls",
+        page: "X509_STORE_set_verify_cb_func",
+        writers: &["X509_STORE_set_lookup_crls"],
+        not_writers: &[],
+    },
+    Slot {
+        key: "x509_store_st.cleanup",
+        page: "X509_STORE_set_verify_cb_func",
+        writers: &["X509_STORE_set_cleanup"],
+        not_writers: &[],
+    },
     // Card OPENSSL-BIO-METHODS-AND-CALLBACKS. BIO_set_callback (3.5): a BIO's
     // callback in two formats, one writer each; the getters, the callback
     // argument macros, the debugging callbacks (values a setter may be
@@ -1078,6 +1339,17 @@ pub const NULLABLE_ARGUMENTS: &[NullableArgument] = &[
                    callback(b, BIO_CB_FREE, NULL, 0L, 0L, 1L) is called before the free \
                    operation.",
     },
+    // Card OPENSSL-REMAINING-HANDSHAKE-SETTERS. SSL_set_session_secret_cb
+    // (3.5): `session_secret_cb(s, secret, secret_len, peer_ciphers, cipher,
+    // arg)`. No other new page states a callback argument NULL (the session
+    // ticket page's "Either callback function may be set to NULL" is about
+    // the setter's arguments, and its dec_cb `ss` is described as unusable,
+    // not NULL).
+    NullableArgument {
+        slot: "ssl_st.session_secret_cb",
+        position: 3,
+        sentence: "On the client side the peer_ciphers stack will always be NULL.",
+    },
 ];
 
 /// Whether `slot`'s argument at `position` may be NULL by its page
@@ -1145,6 +1417,10 @@ const SINCE_3_0_0: &str = "resource_library_version(openssl, since \"3.0.0\")";
 const SINCE_0_9_7: &str = "resource_library_version(openssl, since \"0.9.7\")";
 const SINCE_1_1_1: &str = "resource_library_version(openssl, since \"1.1.1\")";
 const SINCE_3_2_0: &str = "resource_library_version(openssl, since \"3.2.0\")";
+// Card OPENSSL-REMAINING-HANDSHAKE-SETTERS.
+const SINCE_1_0_1: &str = "resource_library_version(openssl, since \"1.0.1\")";
+const SINCE_3_5_0: &str = "resource_library_version(openssl, since \"3.5.0\")";
+const DOC_3_2: &str = "resource_library_version(openssl, documented \"3.2\")";
 
 /// Card **OPENSSL-BIO-METHODS-AND-CALLBACKS**: a method table setter added in
 /// 1.1.0 (`BIO_meth_new` 1.1.1 HISTORY: "The functions described here were
@@ -1155,6 +1431,22 @@ const fn meth(function: &'static str, slot: &'static str) -> DocumentedFunction 
         function,
         "BIO_meth_new",
         "1.1.1",
+        SINCE_1_1_0,
+        registers(1, slot),
+    )
+}
+
+/// Card **OPENSSL-REMAINING-HANDSHAKE-SETTERS**: a certificate store setter
+/// (`X509_STORE_set_verify_cb_func` 3.5 HISTORY: the `X509_STORE_set_*`
+/// setters "were added in OpenSSL 1.1.0"; `X509_STORE_set_verify_cb` is named
+/// both there and as "added in OpenSSL 1.0.0", and the later bound is taken),
+/// registering the function pointer at position 1 into `slot` of the store
+/// at position 0.
+const fn store(function: &'static str, slot: &'static str) -> DocumentedFunction {
+    entry(
+        function,
+        "X509_STORE_set_verify_cb_func",
+        "3.5",
         SINCE_1_1_0,
         registers(1, slot),
     )
@@ -1299,6 +1591,73 @@ const CUSTOM_PARSE: Premise = on_ssl(
     &[Some(0), None, None, None, None, None],
 );
 
+/// Card OPENSSL-REMAINING-HANDSHAKE-SETTERS: the session ticket callbacks,
+/// `gen_cb(s, arg)` and `dec_cb(s, ss, keyname, keyname_len, status, arg)`
+/// ("the SSL_SESSION ss has not yet been assigned to the SSL s").
+const TICKET_GEN: Premise = on_ssl("ssl_ctx_st.ticket_gen_cb", &[Some(0), None]);
+const TICKET_DEC: Premise = on_ssl(
+    "ssl_ctx_st.ticket_dec_cb",
+    &[Some(0), None, None, None, None, None],
+);
+/// The session id generator, `GEN_SESSION_CB(ssl, id, id_len)`.
+const GENERATE_SESSION_ID: Premise =
+    on_ssl("ssl_ctx_st.generate_session_id", &[Some(0), None, None]);
+/// The DH parameter callback, `tmp_dh_callback(ssl, is_export, keylength)`:
+/// "The SSL object for the current connection is supplied as an argument."
+const TMP_DH: Premise = on_ssl("ssl_ctx_st.tmp_dh_callback", &[Some(0), None, None]);
+/// The cookie callbacks, each `(ssl, cookie, cookie_len)`.
+const GEN_STATELESS_COOKIE: Premise =
+    on_ssl("ssl_ctx_st.gen_stateless_cookie_cb", &[Some(0), None, None]);
+const VERIFY_STATELESS_COOKIE: Premise = on_ssl(
+    "ssl_ctx_st.verify_stateless_cookie_cb",
+    &[Some(0), None, None],
+);
+const APP_GEN_COOKIE: Premise = on_ssl("ssl_ctx_st.app_gen_cookie_cb", &[Some(0), None, None]);
+const APP_VERIFY_COOKIE: Premise =
+    on_ssl("ssl_ctx_st.app_verify_cookie_cb", &[Some(0), None, None]);
+/// The session secret callback, `session_secret_cb(s, secret, secret_len,
+/// peer_ciphers, cipher, arg)` (`peer_ciphers` NULL on a client:
+/// [`NULLABLE_ARGUMENTS`]).
+const SESSION_SECRET: Premise = on_ssl(
+    "ssl_st.session_secret_cb",
+    &[Some(0), None, None, None, None, None],
+);
+/// The SRP callbacks: "The callback parameters are the SSL connection s, a
+/// writable error flag ad and the extra argument arg" (username), and "the
+/// SSL connection s and the extra argument arg" (client password, verify
+/// param).
+const SRP_USERNAME: Premise = on_ssl("ssl_ctx_st.srp_username_callback", &[Some(0), None, None]);
+const SRP_CLIENT_PWD: Premise = on_ssl("ssl_ctx_st.srp_client_pwd_callback", &[Some(0), None]);
+const SRP_VERIFY_PARAM: Premise = on_ssl("ssl_ctx_st.srp_verify_param_callback", &[Some(0), None]);
+/// The async callback, `SSL_async_callback_fn(s, arg)`: run during an
+/// asynchronous SSL call when a retry occurs (the page's step 4).
+const ASYNC: Premise = on_ssl("ssl_ctx_st.async_cb", &[Some(0), None]);
+/// The QUIC pending connection callback, `(c, new_ssl, arg)`: the listener's
+/// context and a connection the QUIC stack preallocated, neither the call's
+/// connection.
+const NEW_PENDING_CONN: Premise = on_ssl("ssl_ctx_st.new_pending_conn_cb", &[None, None, None]);
+/// The certificate store's callbacks, run by the verification of the peer's
+/// chain through an `X509_STORE_CTX` the library makes: every actual is the
+/// library's (`verify_cb(ok, ctx)`, `verify(ctx)`, `get_issuer(issuer, ctx,
+/// x)`, `check_issued(ctx, x, issuer)`, `check_revocation(ctx)`,
+/// `get_crl(ctx, crl, x)`, `check_crl(ctx, crl)`, `cert_crl(ctx, crl, x)`,
+/// `check_policy(ctx)`, `lookup_certs(ctx, nm)`, `lookup_crls(ctx, nm)`,
+/// `cleanup(ctx)`).
+const STORE_SLOTS: [Premise; 12] = [
+    on_ssl("x509_store_st.verify_cb", &[None; 2]),
+    on_ssl("x509_store_st.verify", &[None; 1]),
+    on_ssl("x509_store_st.get_issuer", &[None; 3]),
+    on_ssl("x509_store_st.check_issued", &[None; 3]),
+    on_ssl("x509_store_st.check_revocation", &[None; 1]),
+    on_ssl("x509_store_st.get_crl", &[None; 3]),
+    on_ssl("x509_store_st.check_crl", &[None; 2]),
+    on_ssl("x509_store_st.cert_crl", &[None; 3]),
+    on_ssl("x509_store_st.check_policy", &[None; 1]),
+    on_ssl("x509_store_st.lookup_certs", &[None; 2]),
+    on_ssl("x509_store_st.lookup_crls", &[None; 2]),
+    on_ssl("x509_store_st.cleanup", &[None; 1]),
+];
+
 /// Card **OPENSSL-BIO-METHODS-AND-CALLBACKS**: a slot of a BIO the
 /// connection at position 0 holds, every actual the callee's own (the BIO,
 /// never the connection).
@@ -1344,7 +1703,10 @@ const BIO_SLOTS: [Premise; 15] = [
 /// the setters of, each run during a handshake (which the I/O calls run when
 /// needed). Card OPENSSL-UNDECLARED-HANDSHAKE-CALLBACKS: and the keylog,
 /// ALPN/NPN, certificate verification, PSK, ClientHello, record padding,
-/// early data and custom extension slots.
+/// early data and custom extension slots. Card
+/// OPENSSL-REMAINING-HANDSHAKE-SETTERS: and the session ticket, session id,
+/// DH parameter, cookie, session secret, SRP, async and QUIC pending
+/// connection slots, and the twelve slots of a certificate store.
 const HANDSHAKE: &[Premise] = &[
     Premise::UnstatedSlots,
     // Card OPENSSL-EX-DATA-REGISTRY.
@@ -1376,6 +1738,33 @@ const HANDSHAKE: &[Premise] = &[
     CUSTOM_ADD,
     CUSTOM_FREE,
     CUSTOM_PARSE,
+    // Card OPENSSL-REMAINING-HANDSHAKE-SETTERS.
+    TICKET_GEN,
+    TICKET_DEC,
+    GENERATE_SESSION_ID,
+    TMP_DH,
+    GEN_STATELESS_COOKIE,
+    VERIFY_STATELESS_COOKIE,
+    APP_GEN_COOKIE,
+    APP_VERIFY_COOKIE,
+    SESSION_SECRET,
+    SRP_USERNAME,
+    SRP_CLIENT_PWD,
+    SRP_VERIFY_PARAM,
+    ASYNC,
+    NEW_PENDING_CONN,
+    STORE_SLOTS[0],
+    STORE_SLOTS[1],
+    STORE_SLOTS[2],
+    STORE_SLOTS[3],
+    STORE_SLOTS[4],
+    STORE_SLOTS[5],
+    STORE_SLOTS[6],
+    STORE_SLOTS[7],
+    STORE_SLOTS[8],
+    STORE_SLOTS[9],
+    STORE_SLOTS[10],
+    STORE_SLOTS[11],
     // Card OPENSSL-BIO-METHODS-AND-CALLBACKS.
     BIO_SLOTS[0],
     BIO_SLOTS[1],
@@ -1403,6 +1792,10 @@ const HANDSHAKE: &[Premise] = &[
 /// `SSL3_RT_ALERT` (SSL_CTX_set_record_padding_callback, 3.5).
 /// Card OPENSSL-BIO-METHODS-AND-CALLBACKS: and the BIO slots, through which
 /// the alert is written and read.
+/// Card OPENSSL-REMAINING-HANDSHAKE-SETTERS: and the async callback, which
+/// an asynchronous SSL call may run ("Application sets SSL_MODE_ASYNC and
+/// makes an asynchronous SSL call", SSL_set_async_callback 3.5; SSL_shutdown
+/// is one).
 const SHUTDOWN: &[Premise] = &[
     Premise::UnstatedSlots,
     // Card OPENSSL-EX-DATA-REGISTRY.
@@ -1410,6 +1803,7 @@ const SHUTDOWN: &[Premise] = &[
     INFO,
     MESSAGE,
     RECORD_PADDING,
+    ASYNC,
     BIO_SLOTS[0],
     BIO_SLOTS[1],
     BIO_SLOTS[2],
@@ -1526,6 +1920,15 @@ const CUSTOM_EXT: &[Premise] = &[
     },
     Premise::RetainedBy { item: 6, holder: 0 },
 ];
+
+/// Card OPENSSL-REMAINING-HANDSHAKE-SETTERS: `SSL_CTX_set_session_ticket_cb`'s
+/// second registration (`dec_cb` at 2), beside the shape's `gen_cb` (1) and
+/// `arg` (3), which "is passed to the callbacks".
+const SESSION_TICKET_CB: &[Premise] = &[Premise::SlotRegistered {
+    holder: 0,
+    callback: 2,
+    slot: "ssl_ctx_st.ticket_dec_cb",
+}];
 
 /// Card **OPENSSL-EX-DATA-REGISTRY**: the ex_data premise alone, for a
 /// declaration that may run no unstated slot but creates, copies or frees an
@@ -1890,6 +2293,13 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
         registers_with_arg(1, "ssl_ctx_st.alpn_select_cb", 2),
     ),
     entry(
+        "SSL_CTX_set_async_callback",
+        "SSL_set_async_callback",
+        "3.5",
+        SINCE_3_0_0,
+        registers(1, "ssl_ctx_st.async_cb"),
+    ),
+    entry(
         "SSL_CTX_set_cert_cb",
         "SSL_CTX_set_cert_cb",
         "1.0.2",
@@ -1923,6 +2333,20 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
         registers_with_arg(1, "ssl_ctx_st.client_hello_cb", 2),
     ),
     entry(
+        "SSL_CTX_set_cookie_generate_cb",
+        "SSL_CTX_set_stateless_cookie_generate_cb",
+        "1.1.1",
+        DOC_1_1_1,
+        registers(1, "ssl_ctx_st.app_gen_cookie_cb"),
+    ),
+    entry(
+        "SSL_CTX_set_cookie_verify_cb",
+        "SSL_CTX_set_stateless_cookie_generate_cb",
+        "1.1.1",
+        DOC_1_1_1,
+        registers(1, "ssl_ctx_st.app_verify_cookie_cb"),
+    ),
+    entry(
         "SSL_CTX_set_default_passwd_cb",
         "SSL_CTX_set_default_passwd_cb",
         "1.0.2",
@@ -1950,6 +2374,13 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
         EX_DATA_ONLY,
     ),
     entry(
+        "SSL_CTX_set_generate_session_id",
+        "SSL_CTX_set_generate_session_id",
+        "1.0.2",
+        SINCE_0_9_7,
+        registers(1, "ssl_ctx_st.generate_session_id"),
+    ),
+    entry(
         "SSL_CTX_set_info_callback",
         "SSL_CTX_set_info_callback",
         "1.0.2",
@@ -1969,6 +2400,13 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
         "1.0.2",
         SINCE_0_9_7,
         registers(1, "ssl_ctx_st.msg_callback"),
+    ),
+    entry(
+        "SSL_CTX_set_new_pending_conn_cb",
+        "SSL_CTX_set_new_pending_conn_cb",
+        "3.5",
+        SINCE_3_5_0,
+        registers_with_arg(1, "ssl_ctx_st.new_pending_conn_cb", 2),
     ),
     entry(
         "SSL_CTX_set_next_proto_select_cb",
@@ -2032,6 +2470,56 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
         "3.5",
         SINCE_1_1_0,
         registers(1, "ssl_ctx_st.sec_cb"),
+    ),
+    with(
+        "SSL_CTX_set_session_ticket_cb",
+        "SSL_CTX_set_session_ticket_cb",
+        "3.5",
+        SINCE_1_1_1,
+        registers_with_arg(1, "ssl_ctx_st.ticket_gen_cb", 3),
+        SESSION_TICKET_CB,
+    ),
+    entry(
+        "SSL_CTX_set_srp_client_pwd_callback",
+        "SSL_CTX_set_srp_password",
+        "3.5",
+        SINCE_1_0_1,
+        registers(1, "ssl_ctx_st.srp_client_pwd_callback"),
+    ),
+    entry(
+        "SSL_CTX_set_srp_username_callback",
+        "SSL_CTX_set_srp_password",
+        "3.5",
+        SINCE_1_0_1,
+        registers(1, "ssl_ctx_st.srp_username_callback"),
+    ),
+    entry(
+        "SSL_CTX_set_srp_verify_param_callback",
+        "SSL_CTX_set_srp_password",
+        "3.5",
+        SINCE_1_0_1,
+        registers(1, "ssl_ctx_st.srp_verify_param_callback"),
+    ),
+    entry(
+        "SSL_CTX_set_stateless_cookie_generate_cb",
+        "SSL_CTX_set_stateless_cookie_generate_cb",
+        "3.5",
+        SINCE_1_1_1,
+        registers(1, "ssl_ctx_st.gen_stateless_cookie_cb"),
+    ),
+    entry(
+        "SSL_CTX_set_stateless_cookie_verify_cb",
+        "SSL_CTX_set_stateless_cookie_generate_cb",
+        "3.5",
+        SINCE_1_1_1,
+        registers(1, "ssl_ctx_st.verify_stateless_cookie_cb"),
+    ),
+    entry(
+        "SSL_CTX_set_tmp_dh_callback",
+        "SSL_CTX_set_tmp_dh_callback",
+        "1.0.2",
+        DOC_1_0_2,
+        registers(1, "ssl_ctx_st.tmp_dh_callback"),
     ),
     entry(
         "SSL_CTX_set_verify",
@@ -2146,6 +2634,13 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
         registers_with_arg(1, "ssl_ctx_st.allow_early_data_cb", 2),
     ),
     entry(
+        "SSL_set_async_callback",
+        "SSL_set_async_callback",
+        "3.5",
+        SINCE_3_0_0,
+        registers(1, "ssl_ctx_st.async_cb"),
+    ),
+    entry(
         "SSL_set_cert_cb",
         "SSL_CTX_set_cert_cb",
         "1.0.2",
@@ -2156,6 +2651,13 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
             slot: "ssl_ctx_st.cert_cb",
             retains: Some(2),
         },
+    ),
+    entry(
+        "SSL_set_generate_session_id",
+        "SSL_CTX_set_generate_session_id",
+        "1.0.2",
+        SINCE_0_9_7,
+        registers(1, "ssl_ctx_st.generate_session_id"),
     ),
     entry(
         "SSL_set_info_callback",
@@ -2212,6 +2714,20 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
         "3.5",
         SINCE_1_1_0,
         registers(1, "ssl_ctx_st.sec_cb"),
+    ),
+    entry(
+        "SSL_set_session_secret_cb",
+        "SSL_set_session_secret_cb",
+        "3.2",
+        DOC_3_2,
+        registers_with_arg(1, "ssl_st.session_secret_cb", 2),
+    ),
+    entry(
+        "SSL_set_tmp_dh_callback",
+        "SSL_CTX_set_tmp_dh_callback",
+        "1.0.2",
+        DOC_1_0_2,
+        registers(1, "ssl_ctx_st.tmp_dh_callback"),
     ),
     entry(
         "SSL_set_verify",
@@ -2286,6 +2802,15 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
         SINCE_1_1_0,
         BorrowedResult(0, Nullable),
     ),
+    store("X509_STORE_set_cert_crl", "x509_store_st.cert_crl"),
+    store("X509_STORE_set_check_crl", "x509_store_st.check_crl"),
+    store("X509_STORE_set_check_issued", "x509_store_st.check_issued"),
+    store("X509_STORE_set_check_policy", "x509_store_st.check_policy"),
+    store(
+        "X509_STORE_set_check_revocation",
+        "x509_store_st.check_revocation",
+    ),
+    store("X509_STORE_set_cleanup", "x509_store_st.cleanup"),
     entry(
         "X509_STORE_set_flags",
         "X509_STORE_add_cert",
@@ -2293,6 +2818,12 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
         DOC_1_1_1,
         Plain,
     ),
+    store("X509_STORE_set_get_crl", "x509_store_st.get_crl"),
+    store("X509_STORE_set_get_issuer", "x509_store_st.get_issuer"),
+    store("X509_STORE_set_lookup_certs", "x509_store_st.lookup_certs"),
+    store("X509_STORE_set_lookup_crls", "x509_store_st.lookup_crls"),
+    store("X509_STORE_set_verify", "x509_store_st.verify"),
+    store("X509_STORE_set_verify_cb", "x509_store_st.verify_cb"),
     with(
         "X509_free",
         "X509_new",

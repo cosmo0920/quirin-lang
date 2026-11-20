@@ -76,6 +76,14 @@ const SSL_HANDSHAKE: &str =
     include_str!("../../../providers/quirin-provider-openssl/contracts/openssl/ssl_handshake.qv");
 const BIO_SLOTS: &str =
     include_str!("../../../providers/quirin-provider-openssl/contracts/openssl/bio_slots.qv");
+/// Card OPENSSL-REMAINING-HANDSHAKE-SETTERS: the remaining handshake slots'
+/// setters and the certificate store's.
+const SSL_HANDSHAKE_SETTERS: &str = include_str!(
+    "../../../providers/quirin-provider-openssl/contracts/openssl/ssl_handshake_setters.qv"
+);
+const X509_STORE_SLOTS: &str = include_str!(
+    "../../../providers/quirin-provider-openssl/contracts/openssl/x509_store_slots.qv"
+);
 
 /// The application's candidates: identity contracts, and an older-style
 /// custom extension free callback that releases the `add_arg` the library
@@ -185,6 +193,78 @@ contract {
     ensures normal resource_released(b, nonnull);
     ensures normal resource_return_none();
 };
+
+extern fn verify_store_ok(ok: i32, ctx: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(ok);
+    ensures normal resource_borrowed(ctx);
+    ensures normal resource_return_none();
+};
+
+extern fn async_ok(s: ptr<mut, u8>, arg: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(s);
+    ensures normal resource_borrowed(arg);
+    ensures normal resource_return_none();
+};
+
+extern fn ticket_gen_ok(s: ptr<mut, u8>, arg: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(s);
+    ensures normal resource_borrowed(arg);
+    ensures normal resource_return_none();
+};
+
+extern fn ticket_dec_ok(s: ptr<mut, u8>, ss: ptr<mut, u8>, keyname: ptr<const, u8>, keyname_length: usize, status: i32, arg: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(s);
+    ensures normal resource_borrowed(ss);
+    ensures normal resource_borrowed(keyname);
+    ensures normal resource_borrowed(keyname_length);
+    ensures normal resource_borrowed(status);
+    ensures normal resource_borrowed(arg);
+    ensures normal resource_return_none();
+};
+
+extern fn ticket_dec_releasing(s: ptr<mut, u8>, ss: ptr<mut, u8>, keyname: ptr<const, u8>, keyname_length: usize, status: i32, arg: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(s);
+    ensures normal resource_released(ss, nonnull);
+    ensures normal resource_borrowed(keyname);
+    ensures normal resource_borrowed(keyname_length);
+    ensures normal resource_borrowed(status);
+    ensures normal resource_borrowed(arg);
+    ensures normal resource_return_none();
+};
+
+extern fn secret_ok(s: ptr<mut, u8>, secret: ptr<mut, u8>, secret_len: ptr<mut, u8>, peer_ciphers: ptr<mut, u8>, cipher: ptr<mut, ptr<const, u8>>, arg: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(s);
+    ensures normal resource_borrowed(secret);
+    ensures normal resource_borrowed(secret_len);
+    ensures normal resource_borrowed(peer_ciphers);
+    ensures normal resource_borrowed(cipher);
+    ensures normal resource_borrowed(arg);
+    ensures normal resource_return_none();
+};
+
+extern fn secret_needs_ciphers(s: ptr<mut, u8>, secret: ptr<mut, u8>, secret_len: ptr<mut, u8>, peer_ciphers: ptr<mut, u8>, cipher: ptr<mut, ptr<const, u8>>, arg: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(s);
+    ensures normal resource_borrowed(secret);
+    ensures normal resource_borrowed(secret_len);
+    ensures normal resource_owned(peer_ciphers, nonnull);
+    ensures normal resource_borrowed(cipher);
+    ensures normal resource_borrowed(arg);
+    ensures normal resource_return_none();
+};
 ";
 
 /// The public headers' view: the objects are opaque; the prototypes as the
@@ -224,6 +304,28 @@ long bio_cb_uncontracted(BIO *b, int oper, const char *argp, __SIZE_TYPE__ len, 
 int bio_write_ok(BIO *b, const char *data, int len);
 int bio_write_uncontracted(BIO *b, const char *data, int len);
 int bio_destroy_releasing(BIO *b);
+typedef struct x509_store_st X509_STORE;
+typedef struct x509_store_ctx_st X509_STORE_CTX;
+typedef int (*X509_STORE_CTX_verify_cb)(int, X509_STORE_CTX *);
+void X509_STORE_set_verify_cb(X509_STORE *xs, X509_STORE_CTX_verify_cb verify_cb);
+int verify_store_ok(int ok, X509_STORE_CTX *ctx);
+int verify_store_uncontracted(int ok, X509_STORE_CTX *ctx);
+typedef int (*SSL_async_callback_fn)(SSL *s, void *arg);
+int SSL_CTX_set_async_callback(SSL_CTX *ctx, SSL_async_callback_fn callback);
+int async_ok(SSL *s, void *arg);
+int async_uncontracted(SSL *s, void *arg);
+struct ssl_session_st;
+struct stack_st_SSL_CIPHER;
+typedef int (*SSL_CTX_generate_session_ticket_fn)(SSL *s, void *arg);
+typedef int (*SSL_CTX_decrypt_session_ticket_fn)(SSL *s, struct ssl_session_st *ss, const unsigned char *keyname, __SIZE_TYPE__ keyname_length, int status, void *arg);
+int SSL_CTX_set_session_ticket_cb(SSL_CTX *ctx, SSL_CTX_generate_session_ticket_fn gen_cb, SSL_CTX_decrypt_session_ticket_fn dec_cb, void *arg);
+int ticket_gen_ok(SSL *s, void *arg);
+int ticket_dec_ok(SSL *s, struct ssl_session_st *ss, const unsigned char *keyname, __SIZE_TYPE__ keyname_length, int status, void *arg);
+int ticket_dec_releasing(SSL *s, struct ssl_session_st *ss, const unsigned char *keyname, __SIZE_TYPE__ keyname_length, int status, void *arg);
+typedef int (*tls_session_secret_cb_fn)(SSL *s, void *secret, int *secret_len, struct stack_st_SSL_CIPHER *peer_ciphers, const void **cipher, void *arg);
+int SSL_set_session_secret_cb(SSL *s, tls_session_secret_cb_fn session_secret_cb, void *arg);
+int secret_ok(SSL *s, void *secret, int *secret_len, struct stack_st_SSL_CIPHER *peer_ciphers, const void **cipher, void *arg);
+int secret_needs_ciphers(SSL *s, void *secret, int *secret_len, struct stack_st_SSL_CIPHER *peer_ciphers, const void **cipher, void *arg);
 ";
 
 const CALLER: &str = "\
@@ -248,6 +350,8 @@ fn crate_contracts() -> ResourceContracts {
         ("ssl_io.qv", SSL_IO),
         ("ssl_handshake.qv", SSL_HANDSHAKE),
         ("bio_slots.qv", BIO_SLOTS),
+        ("ssl_handshake_setters.qv", SSL_HANDSHAKE_SETTERS),
+        ("x509_store_slots.qv", X509_STORE_SLOTS),
     ])
 }
 
@@ -335,7 +439,8 @@ fn refused(leaves: &[String], word: &str) -> bool {
 /// The new declarations load as slot clauses: each setter its registrations
 /// (three for a custom extension setter), each handshake and I/O call 41
 /// slot invocations, `SSL_shutdown` 17 (since OPENSSL-BIO-METHODS-AND-CALLBACKS,
-/// which adds the 14 BIO slots to each).
+/// which adds the 14 BIO slots to each). Since
+/// OPENSSL-REMAINING-HANDSHAKE-SETTERS 67 and 18.
 #[test]
 fn the_crate_states_every_handshake_slot() {
     let contracts = crate_contracts();
@@ -452,7 +557,7 @@ fn the_crate_states_every_handshake_slot() {
     }
     for call in ["SSL_write", "SSL_read", "SSL_connect", "SSL_do_handshake"] {
         let declaration = contracts.retaining_contract(call).expect("withheld");
-        assert_eq!(declaration.callbacks.len(), 41, "{call}");
+        assert_eq!(declaration.callbacks.len(), 67, "{call}");
         assert!(
             declaration
                 .callbacks
@@ -467,7 +572,7 @@ fn the_crate_states_every_handshake_slot() {
             .expect("withheld")
             .callbacks
             .len(),
-        17
+        18
     );
 }
 
@@ -1614,6 +1719,354 @@ fn a_candidate_effect_on_the_dropped_object_refuses() {
             leaves
                 .iter()
                 .any(|leaf| leaf.contains("on_free_releasing") && leaf.contains("callback-")),
+            "{name}: {leaves:?}"
+        );
+    }
+}
+
+// Card OPENSSL-REMAINING-HANDSHAKE-SETTERS (gateway rule 12n; contract
+// specification C04.19.3, C04.18; this target, so the read census needs no
+// new unit): the session ticket, session id, DH parameter, cookie, session
+// secret, SRP, async and QUIC pending connection slots
+// (`ssl_handshake_setters.qv`) and the twelve slots of a certificate store
+// (`x509_store_slots.qv`).
+
+/// The 26 keys every handshake and I/O call invokes since this card, each
+/// with its actuals on `ssl` (position 0): `Some(0)` the connection, `None`
+/// `_`, and the session secret's `peer_ciphers` `supplied_nullable`.
+const REMAINING: [(&str, &[Option<usize>]); 26] = [
+    ("ssl_ctx_st.ticket_gen_cb", &[Some(0), None]),
+    (
+        "ssl_ctx_st.ticket_dec_cb",
+        &[Some(0), None, None, None, None, None],
+    ),
+    ("ssl_ctx_st.generate_session_id", &[Some(0), None, None]),
+    ("ssl_ctx_st.tmp_dh_callback", &[Some(0), None, None]),
+    ("ssl_ctx_st.gen_stateless_cookie_cb", &[Some(0), None, None]),
+    (
+        "ssl_ctx_st.verify_stateless_cookie_cb",
+        &[Some(0), None, None],
+    ),
+    ("ssl_ctx_st.app_gen_cookie_cb", &[Some(0), None, None]),
+    ("ssl_ctx_st.app_verify_cookie_cb", &[Some(0), None, None]),
+    (
+        "ssl_st.session_secret_cb",
+        &[Some(0), None, None, None, None, None],
+    ),
+    ("ssl_ctx_st.srp_username_callback", &[Some(0), None, None]),
+    ("ssl_ctx_st.srp_client_pwd_callback", &[Some(0), None]),
+    ("ssl_ctx_st.srp_verify_param_callback", &[Some(0), None]),
+    ("ssl_ctx_st.async_cb", &[Some(0), None]),
+    ("ssl_ctx_st.new_pending_conn_cb", &[None, None, None]),
+    ("x509_store_st.verify_cb", &[None, None]),
+    ("x509_store_st.verify", &[None]),
+    ("x509_store_st.get_issuer", &[None, None, None]),
+    ("x509_store_st.check_issued", &[None, None, None]),
+    ("x509_store_st.check_revocation", &[None]),
+    ("x509_store_st.get_crl", &[None, None, None]),
+    ("x509_store_st.check_crl", &[None, None]),
+    ("x509_store_st.cert_crl", &[None, None, None]),
+    ("x509_store_st.check_policy", &[None]),
+    ("x509_store_st.lookup_certs", &[None, None]),
+    ("x509_store_st.lookup_crls", &[None, None]),
+    ("x509_store_st.cleanup", &[None]),
+];
+
+fn remaining_actuals(key: &str, actuals: &[Option<usize>]) -> Vec<CallbackActual> {
+    actuals
+        .iter()
+        .enumerate()
+        .map(|(at, actual)| match actual {
+            Some(index) => CallbackActual::Parameter { index: *index },
+            None if key == "ssl_st.session_secret_cb" && at == 3 => {
+                CallbackActual::SuppliedNullable
+            }
+            None => CallbackActual::Supplied,
+        })
+        .collect()
+}
+
+/// The 28 setters load as their registrations (two for the session ticket
+/// setter); every handshake and I/O call invokes the 26 keys with the
+/// actuals above, and `SSL_shutdown` the async slot.
+#[test]
+fn the_crate_states_every_remaining_slot() {
+    let contracts = crate_contracts();
+    for (setter, keys) in [
+        (
+            "SSL_CTX_set_session_ticket_cb",
+            &["ssl_ctx_st.ticket_gen_cb", "ssl_ctx_st.ticket_dec_cb"][..],
+        ),
+        (
+            "SSL_CTX_set_generate_session_id",
+            &["ssl_ctx_st.generate_session_id"],
+        ),
+        (
+            "SSL_set_generate_session_id",
+            &["ssl_ctx_st.generate_session_id"],
+        ),
+        (
+            "SSL_CTX_set_tmp_dh_callback",
+            &["ssl_ctx_st.tmp_dh_callback"],
+        ),
+        ("SSL_set_tmp_dh_callback", &["ssl_ctx_st.tmp_dh_callback"]),
+        (
+            "SSL_CTX_set_stateless_cookie_generate_cb",
+            &["ssl_ctx_st.gen_stateless_cookie_cb"],
+        ),
+        (
+            "SSL_CTX_set_stateless_cookie_verify_cb",
+            &["ssl_ctx_st.verify_stateless_cookie_cb"],
+        ),
+        (
+            "SSL_CTX_set_cookie_generate_cb",
+            &["ssl_ctx_st.app_gen_cookie_cb"],
+        ),
+        (
+            "SSL_CTX_set_cookie_verify_cb",
+            &["ssl_ctx_st.app_verify_cookie_cb"],
+        ),
+        ("SSL_set_session_secret_cb", &["ssl_st.session_secret_cb"]),
+        (
+            "SSL_CTX_set_srp_username_callback",
+            &["ssl_ctx_st.srp_username_callback"],
+        ),
+        (
+            "SSL_CTX_set_srp_client_pwd_callback",
+            &["ssl_ctx_st.srp_client_pwd_callback"],
+        ),
+        (
+            "SSL_CTX_set_srp_verify_param_callback",
+            &["ssl_ctx_st.srp_verify_param_callback"],
+        ),
+        ("SSL_CTX_set_async_callback", &["ssl_ctx_st.async_cb"]),
+        ("SSL_set_async_callback", &["ssl_ctx_st.async_cb"]),
+        (
+            "SSL_CTX_set_new_pending_conn_cb",
+            &["ssl_ctx_st.new_pending_conn_cb"],
+        ),
+        ("X509_STORE_set_verify_cb", &["x509_store_st.verify_cb"]),
+        ("X509_STORE_set_verify", &["x509_store_st.verify"]),
+        ("X509_STORE_set_get_issuer", &["x509_store_st.get_issuer"]),
+        (
+            "X509_STORE_set_check_issued",
+            &["x509_store_st.check_issued"],
+        ),
+        (
+            "X509_STORE_set_check_revocation",
+            &["x509_store_st.check_revocation"],
+        ),
+        ("X509_STORE_set_get_crl", &["x509_store_st.get_crl"]),
+        ("X509_STORE_set_check_crl", &["x509_store_st.check_crl"]),
+        ("X509_STORE_set_cert_crl", &["x509_store_st.cert_crl"]),
+        (
+            "X509_STORE_set_check_policy",
+            &["x509_store_st.check_policy"],
+        ),
+        (
+            "X509_STORE_set_lookup_certs",
+            &["x509_store_st.lookup_certs"],
+        ),
+        ("X509_STORE_set_lookup_crls", &["x509_store_st.lookup_crls"]),
+        ("X509_STORE_set_cleanup", &["x509_store_st.cleanup"]),
+    ] {
+        let declaration = contracts
+            .retaining_contract(setter)
+            .unwrap_or_else(|| panic!("{setter} is withheld"));
+        let registered = declaration
+            .callbacks
+            .iter()
+            .map(|clause| match clause {
+                CallbackClause::MemberRegistered {
+                    slot: true, member, ..
+                } => member.spelling(),
+                other => panic!("{setter}: {other:?}"),
+            })
+            .collect::<Vec<_>>();
+        assert_eq!(registered, keys, "{setter}");
+        assert!(contracts.contract(setter).is_none(), "{setter}");
+    }
+    let invoked = |call: &str| {
+        contracts
+            .retaining_contract(call)
+            .expect("withheld")
+            .callbacks
+            .iter()
+            .filter_map(|clause| match clause {
+                CallbackClause::MemberInvoked {
+                    slot: true,
+                    member,
+                    actuals,
+                    ..
+                } => Some((member.spelling(), actuals.clone())),
+                _ => None,
+            })
+            .collect::<Vec<_>>()
+    };
+    for call in ["SSL_write", "SSL_read", "SSL_connect", "SSL_do_handshake"] {
+        let stated = invoked(call);
+        for (key, actuals) in REMAINING {
+            let found = stated
+                .iter()
+                .filter(|(member, _)| member == key)
+                .collect::<Vec<_>>();
+            assert_eq!(found.len(), 1, "{call} {key}");
+            assert_eq!(found[0].1, remaining_actuals(key, actuals), "{call} {key}");
+        }
+    }
+    let shutdown = invoked("SSL_shutdown");
+    assert!(
+        shutdown.contains(&(
+            "ssl_ctx_st.async_cb".to_owned(),
+            remaining_actuals("ssl_ctx_st.async_cb", &[Some(0), None]),
+        )),
+        "{shutdown:?}"
+    );
+    assert!(
+        !shutdown
+            .iter()
+            .any(|(member, _)| member.starts_with("x509_store_st.")),
+        "SSL_shutdown verifies no chain"
+    );
+}
+
+/// Identity candidates (and a NULL `arg`) in the store, async, session
+/// ticket and session secret slots: the I/O call and `SSL_shutdown` decide.
+#[test]
+fn identity_remaining_candidates_decide_the_io_call() {
+    if !clang_available() {
+        return;
+    }
+    let contracts = crate_contracts();
+    let registrar = "\
+void reg(SSL_CTX *c, SSL *s, X509_STORE *xs) {
+    X509_STORE_set_verify_cb(xs, verify_store_ok);
+    SSL_CTX_set_async_callback(c, async_ok);
+    SSL_CTX_set_session_ticket_cb(c, ticket_gen_ok, ticket_dec_ok, 0);
+    SSL_set_session_secret_cb(s, secret_ok, 0);
+}
+";
+    let run = run_of(registrar, &contracts);
+    for name in ["write_some", "shut"] {
+        let (status, leaves) = row_of(name, run.clone(), &contracts);
+        assert!(
+            !refused(&leaves, "callback-"),
+            "{name}: no callback refusal: {leaves:?}"
+        );
+        assert_eq!(status, AnalysisStatus::Safe, "{name}: {leaves:?}");
+    }
+}
+
+/// A candidate with no contract in force refuses: the store's verify
+/// callback the I/O call, the async callback `SSL_shutdown` too.
+#[test]
+fn a_remaining_slot_with_an_uncontracted_candidate_refuses() {
+    if !clang_available() {
+        return;
+    }
+    let contracts = crate_contracts();
+    let store =
+        "void reg(X509_STORE *xs) { X509_STORE_set_verify_cb(xs, verify_store_uncontracted); }\n";
+    for (registrar, candidate, rows) in [
+        (
+            store,
+            "`verify_store_uncontracted` (from `x509_store_st.verify_cb`)",
+            &["write_some"][..],
+        ),
+        (
+            "void reg(SSL_CTX *c) { SSL_CTX_set_async_callback(c, async_uncontracted); }\n",
+            "`async_uncontracted` (from `ssl_ctx_st.async_cb`)",
+            &["write_some", "shut"],
+        ),
+    ] {
+        let run = run_of(registrar, &contracts);
+        for name in rows {
+            let (status, leaves) = row_of(name, run.clone(), &contracts);
+            assert_ne!(status, AnalysisStatus::Safe, "{name}: {registrar}");
+            assert!(
+                leaves
+                    .iter()
+                    .any(|leaf| leaf.contains(candidate) && leaf.contains("callback-uncontracted")),
+                "{name}: {leaves:?}"
+            );
+        }
+    }
+    // SSL_shutdown verifies no chain: an uncontracted store callback leaves
+    // it decided.
+    let run = run_of(store, &contracts);
+    let (status, leaves) = row_of("shut", run, &contracts);
+    assert_eq!(status, AnalysisStatus::Safe, "{leaves:?}");
+}
+
+/// The session ticket setter registers both its callbacks: a decryption
+/// callback releasing the session the library hands it refuses the I/O call
+/// as effectful, beside an identity generation callback.
+#[test]
+fn both_registrations_of_the_session_ticket_setter_are_read() {
+    if !clang_available() {
+        return;
+    }
+    let contracts = crate_contracts();
+    let run = run_of(
+        "void reg(SSL_CTX *c) { SSL_CTX_set_session_ticket_cb(c, ticket_gen_ok, ticket_dec_releasing, 0); }\n",
+        &contracts,
+    );
+    let (status, leaves) = row_of("write_some", run, &contracts);
+    assert_ne!(status, AnalysisStatus::Safe);
+    assert!(
+        leaves.iter().any(
+            |leaf| leaf.contains("ticket_dec_releasing") && leaf.contains("callback-effectful")
+        ),
+        "{leaves:?}"
+    );
+}
+
+/// The session secret callback's `peer_ciphers` is NULL on a client
+/// (`supplied_nullable`): a candidate requiring a live stack there refuses.
+#[test]
+fn a_session_secret_candidate_requiring_the_peer_ciphers_refuses() {
+    if !clang_available() {
+        return;
+    }
+    let contracts = crate_contracts();
+    let run = run_of(
+        "void reg(SSL *s) { SSL_set_session_secret_cb(s, secret_needs_ciphers, 0); }\n",
+        &contracts,
+    );
+    let (status, leaves) = row_of("write_some", run, &contracts);
+    assert_ne!(status, AnalysisStatus::Safe);
+    assert!(
+        leaves.iter().any(|leaf| {
+            leaf.contains("`secret_needs_ciphers` (from `ssl_st.session_secret_cb`)")
+                && leaf.contains("callback-supplied-null")
+        }),
+        "{leaves:?}"
+    );
+}
+
+/// Without this card's modules no loaded declaration registers the new keys:
+/// they are never decided, even with nothing registered.
+#[test]
+fn a_remaining_slot_no_declaration_registers_refuses() {
+    if !clang_available() {
+        return;
+    }
+    let contracts = contracts(&[
+        ("ssl.qv", SSL),
+        ("ssl_ctx.qv", SSL_CTX),
+        ("ssl_io.qv", SSL_IO),
+        ("ssl_handshake.qv", SSL_HANDSHAKE),
+        ("bio_slots.qv", BIO_SLOTS),
+    ]);
+    let run = run_of("void nothing(void) { }\n", &contracts);
+    for (key, _) in REMAINING {
+        assert!(run.decides(key, true).is_err(), "{key}");
+    }
+    for name in ["write_some", "shut"] {
+        let (status, leaves) = row_of(name, run.clone(), &contracts);
+        assert_ne!(status, AnalysisStatus::Safe, "{name}");
+        assert!(
+            refused(&leaves, "no declaration registers"),
             "{name}: {leaves:?}"
         );
     }

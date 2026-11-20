@@ -200,6 +200,28 @@ pub const FUNCTION_POINTER_TYPEDEFS: &[&str] = &[
     // `typedef long (*NAME)(BIO *b, …);` in the pinned `openssl/bio.h`.
     "BIO_callback_fn_ex",
     "BIO_callback_fn",
+    // Card OPENSSL-REMAINING-HANDSHAKE-SETTERS: the remaining handshake
+    // callback types (pinned `openssl/ssl.h`) and the certificate store's
+    // callback types (pinned `openssl/x509_vfy.h`), each `typedef R
+    // (*NAME)(P…);`.
+    "SSL_CTX_generate_session_ticket_fn",
+    "SSL_CTX_decrypt_session_ticket_fn",
+    "GEN_SESSION_CB",
+    "tls_session_secret_cb_fn",
+    "SSL_async_callback_fn",
+    "SSL_new_pending_conn_cb_fn",
+    "X509_STORE_CTX_verify_cb",
+    "X509_STORE_CTX_verify_fn",
+    "X509_STORE_CTX_get_issuer_fn",
+    "X509_STORE_CTX_check_issued_fn",
+    "X509_STORE_CTX_check_revocation_fn",
+    "X509_STORE_CTX_get_crl_fn",
+    "X509_STORE_CTX_check_crl_fn",
+    "X509_STORE_CTX_cert_crl_fn",
+    "X509_STORE_CTX_check_policy_fn",
+    "X509_STORE_CTX_lookup_certs_fn",
+    "X509_STORE_CTX_lookup_crls_fn",
+    "X509_STORE_CTX_cleanup_fn",
 ];
 
 /// The contract type a C type from a pinned prototype corresponds to.
@@ -1414,7 +1436,7 @@ mod tests {
         for slot in SLOTS {
             slot_writers_declared(slot.key, &snapshots).unwrap();
         }
-        assert_eq!(SLOTS.len(), 42);
+        assert_eq!(SLOTS.len(), 68);
         // Card OPENSSL-UNSTATED-CALLBACK-SLOTS: a ctrl arm stays unstated.
         assert!(slot_writers_declared("ssl_ctx_st.servername_cb", &snapshots).is_err());
         // A page that does not name a writer refuses the slot.
@@ -1911,8 +1933,8 @@ mod tests {
                 "{}{}",
                 &text[..start],
                 text[start..].replacen(
-                    "ticket key callbacks, or an ex_data callback)",
-                    "ticket key callbacks, a method or callback of a BIO the SSL object holds, \
+                    "of the SSL_CTX holds, or an ex_data callback)",
+                    "of the SSL_CTX holds, a method or callback of a BIO the SSL object holds, \
                      or an ex_data callback)",
                     1,
                 )
@@ -2150,7 +2172,7 @@ mod tests {
     #[test]
     fn a_drifted_nullable_argument_is_refused() {
         let snapshots: Value = serde_json::from_str(crate::DOC_SNAPSHOTS).unwrap();
-        assert_eq!(NULLABLE_ARGUMENTS.len(), 9);
+        assert_eq!(NULLABLE_ARGUMENTS.len(), 10);
         for nullable in NULLABLE_ARGUMENTS {
             nullable_argument_cited(nullable, &snapshots)
                 .unwrap_or_else(|failure| panic!("{nullable:?}: {failure}"));
@@ -2397,6 +2419,172 @@ mod tests {
                 check_function(path, &dropped, function).is_err(),
                 "{function}"
             );
+        }
+    }
+
+    /// Card OPENSSL-REMAINING-HANDSHAKE-SETTERS: the remaining handshake
+    /// slots and the certificate store's slots, drift-refused; the setters
+    /// no page documents and the page's macro aliases are never writers.
+    #[test]
+    fn a_drifted_remaining_setter_reading_is_refused() {
+        let snapshots: Value = serde_json::from_str(crate::DOC_SNAPSHOTS).unwrap();
+        let pinned: Value = serde_json::from_str(crate::PINNED_PROTOTYPES).unwrap();
+        let new_keys = [
+            "ssl_ctx_st.ticket_gen_cb",
+            "ssl_ctx_st.ticket_dec_cb",
+            "ssl_ctx_st.generate_session_id",
+            "ssl_ctx_st.tmp_dh_callback",
+            "ssl_ctx_st.gen_stateless_cookie_cb",
+            "ssl_ctx_st.verify_stateless_cookie_cb",
+            "ssl_ctx_st.app_gen_cookie_cb",
+            "ssl_ctx_st.app_verify_cookie_cb",
+            "ssl_st.session_secret_cb",
+            "ssl_ctx_st.srp_username_callback",
+            "ssl_ctx_st.srp_client_pwd_callback",
+            "ssl_ctx_st.srp_verify_param_callback",
+            "ssl_ctx_st.async_cb",
+            "ssl_ctx_st.new_pending_conn_cb",
+            "x509_store_st.verify_cb",
+            "x509_store_st.verify",
+            "x509_store_st.get_issuer",
+            "x509_store_st.check_issued",
+            "x509_store_st.check_revocation",
+            "x509_store_st.get_crl",
+            "x509_store_st.check_crl",
+            "x509_store_st.cert_crl",
+            "x509_store_st.check_policy",
+            "x509_store_st.lookup_certs",
+            "x509_store_st.lookup_crls",
+            "x509_store_st.cleanup",
+        ];
+        for key in new_keys {
+            slot_writers_declared(key, &snapshots).unwrap_or_else(|failure| panic!("{failure}"));
+        }
+        // Each new invocation dropped from every handshake and I/O call.
+        for call in ["SSL_write", "SSL_read", "SSL_connect", "SSL_do_handshake"] {
+            let (path, text) = module_of(call);
+            let start = text.find(&format!("extern fn {call}(")).unwrap();
+            let end = start + text[start..].find("};").unwrap();
+            let body = &text[start..end];
+            for key in new_keys {
+                let line = body
+                    .lines()
+                    .find(|line| line.contains(&format!(", {key}, ")))
+                    .unwrap_or_else(|| panic!("{call} states {key}"));
+                let dropped = format!(
+                    "{}{}",
+                    &text[..start],
+                    text[start..].replacen(&format!("{line}\n"), "", 1)
+                );
+                assert!(
+                    check_function(path, &dropped, call).is_err(),
+                    "{call} {key}"
+                );
+            }
+        }
+        let (path, text) = module_of("SSL_connect");
+        let start = text.find("extern fn SSL_connect(").unwrap();
+        let drifted = |from: &str, to: &str| {
+            let changed = format!("{}{}", &text[..start], text[start..].replacen(from, to, 1));
+            assert_ne!(changed, text, "{from}");
+            check_function(path, &changed, "SSL_connect").is_err()
+        };
+        // The client's NULL peer_ciphers read as a live value.
+        assert!(drifted(
+            "ssl_st.session_secret_cb, ssl, _, _, supplied_nullable, _, _)",
+            "ssl_st.session_secret_cb, ssl, _, _, _, _, _)",
+        ));
+        // The QUIC callback's preallocated connection read as the call's.
+        assert!(drifted(
+            "ssl_ctx_st.new_pending_conn_cb, _, _, _)",
+            "ssl_ctx_st.new_pending_conn_cb, ssl, _, _)",
+        ));
+        // A store callback handed the connection.
+        assert!(drifted(
+            "x509_store_st.verify_cb, _, _)",
+            "x509_store_st.verify_cb, ssl, _)",
+        ));
+        // The statement before this card, which did not name the CT callback,
+        // the undocumented setters' slots or the lookup methods.
+        let old = "ticket key callbacks, or an ex_data callback)";
+        let new = "ticket key callbacks, the certificate transparency validation callback, and \
+                   the not-resumable session and session ticket extension callbacks, whose \
+                   setters no manual page documents, a function of an X509_LOOKUP_METHOD of a \
+                   lookup the certificate store of the SSL_CTX holds, or an ex_data callback)";
+        assert!(UNSTATED_SLOTS_STATEMENT.contains(new));
+        for call in ["SSL_connect", "SSL_shutdown", "SSL_free", "SSL_CTX_free"] {
+            let (path, text) = module_of(call);
+            let start = text.find(&format!("extern fn {call}(")).unwrap();
+            let stale = format!("{}{}", &text[..start], text[start..].replacen(new, old, 1));
+            assert_ne!(stale, text, "{call}");
+            assert!(check_function(path, &stale, call).is_err(), "{call}");
+        }
+        // SSL_shutdown's async invocation dropped.
+        let (path, text) = module_of("SSL_shutdown");
+        let start = text.find("extern fn SSL_shutdown(").unwrap();
+        let line = "    ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.async_cb, ssl, _);\n";
+        assert!(text[start..].contains(line));
+        let silent = format!("{}{}", &text[..start], text[start..].replacen(line, "", 1));
+        assert!(check_function(path, &silent, "SSL_shutdown").is_err());
+        // The session ticket setter's second registration and its retention.
+        let (path, text) = module_of("SSL_CTX_set_session_ticket_cb");
+        for line in [
+            "    ensures normal resource_callback_slot_registered(ctx, ssl_ctx_st.ticket_dec_cb, dec_cb);\n",
+            "    ensures normal resource_retained_by(arg, ctx);\n",
+        ] {
+            let start = text
+                .find("extern fn SSL_CTX_set_session_ticket_cb(")
+                .unwrap();
+            assert!(text[start..].contains(line), "{line}");
+            let dropped = format!("{}{}", &text[..start], text[start..].replacen(line, "", 1));
+            assert!(
+                check_function(path, &dropped, "SSL_CTX_set_session_ticket_cb").is_err(),
+                "{line}"
+            );
+        }
+        // The page's macro aliases have no pinned prototype, no documented
+        // entry and no declaration: a call through one is its writer's call.
+        for alias in [
+            "X509_STORE_set_verify_cb_func",
+            "X509_STORE_set_verify_func",
+            "X509_STORE_set_lookup_crls_cb",
+        ] {
+            assert!(pinned["prototypes"][alias].is_null(), "{alias}");
+            assert!(
+                DOCUMENTED.iter().all(|entry| entry.function != alias),
+                "{alias}"
+            );
+            assert!(
+                SLOTS.iter().any(|slot| slot.not_writers.contains(&alias)),
+                "{alias}"
+            );
+        }
+        // The setters no manual page documents are not declared, and their
+        // slots are not ones this checker documents.
+        for undocumented in [
+            "SSL_CTX_set_not_resumable_session_callback",
+            "SSL_set_not_resumable_session_callback",
+            "SSL_set_session_ticket_ext_cb",
+        ] {
+            assert!(
+                DOCUMENTED
+                    .iter()
+                    .all(|entry| entry.function != undocumented)
+            );
+            assert!(
+                snapshots["pages"]
+                    .as_array()
+                    .unwrap()
+                    .iter()
+                    .all(|page| page["page"] != undocumented || page["fetched"] == false),
+                "{undocumented}"
+            );
+        }
+        for key in [
+            "ssl_ctx_st.not_resumable_session_cb",
+            "ssl_st.session_ticket_ext_cb",
+        ] {
+            assert!(slot_writers_declared(key, &snapshots).is_err(), "{key}");
         }
     }
 }
