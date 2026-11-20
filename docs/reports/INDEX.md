@@ -835,6 +835,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [openssl-free-session-remove-invocation](openssl-free-session-remove-invocation/README.md) | OPENSSL-FREE-SESSION-REMOVE-INVOCATION: slot invocations beside a reference drop |
 
+| [openssl-inner-frees-silent-method-callbacks](openssl-inner-frees-silent-method-callbacks/README.md) | OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS: what the calls that free inside run |
+
 | [openssl-object-frees-silent-method-callbacks](openssl-object-frees-silent-method-callbacks/README.md) | OPENSSL-OBJECT-FREES-SILENT-METHOD-CALLBACKS: what the object frees run on what they free |
 
 | [openssl-pem-callback-arm](openssl-pem-callback-arm/README.md) | OPENSSL-PEM-CALLBACK-ARM: a literal-argument premise beside a synchronous invocation |
