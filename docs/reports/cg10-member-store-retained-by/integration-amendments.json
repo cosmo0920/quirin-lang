@@ -1,0 +1,33 @@
+{
+ "schema": "quirin-amendments/1",
+ "card": "CG10-MEMBER-STORE-RETAINED-BY",
+ "base": "0111ddf38",
+ "measured_tip": "a07d6e8b5",
+ "profiles": [],
+ "increment_paragraph": "**CG10-MEMBER-STORE-RETAINED-BY** (USER DECISION 2026-11-20 on round 3's decision class 1, question 2, \"Read it as retention, option 1 with creating the relevant proof(s).\"; gateway rule 70; contract specification §C04.14.4; Lean `QCore.MemberStoreRetention`, 21 audited theorems; [report](../../reports/cg10-member-store-retained-by/README.md)). A store `F->m[.n…] = q` of a formal `q` (object pointer) into a member of formal `F`'s object, both never rebound, the member in `*F`, `F` untracked and `q` carrying no identity, is read as §C04.14.3's `resource_retained_by(q, F.m…)`: the body takes no custody, and its summary (the validated W4 contract, every formal `Borrowed`, a `None` result, with one path retention per such store and every overwritten member path, new schema field `RetainingContract::overwritten_paths`) is installed as a retaining declaration and decided at each call by rule 12t (release while held and exit while held refuse; every overwritten path must be a path holder of the caller's own unrebound, untracked formal). It supplies rule 10v's missing owner premise (Q36's example C) as a derived summary mode; function pointers add no retention. Lean: the flow decision bound to the Rust vectors, the summary as an obligation, soundness over a concrete memory (no read through a holder of a released object, no double release, also by the holder), caller discharge composes, the counterexample (a release while the holder keeps the pointer is refused and faults on the holder's read). Census on round 3's tip: 19 sole rows hold such a store (13 alone); 4 are this shape. Measured on the opt-in `current --monkey-linked` route over Fluent Bit 046accf6 (base `99ed0224` vs tip `93b45b67`): 1,140/2/3,655/7 -> 1,150/2/3,645/7, ten Unknown -> Safe moves, each the callee holding the store (`suffix_object`, `rd_kafka_buf_set_maker`, `rd_kafka_mock_partition_set_leader0`, and seven rows rule 38i had named `member-store-through-formal`); no Safe -> non-Safe move, no new Unsafe, no caller moved (eight route-G refusals are the callers' obligations); access rows 2,190 -> 2,184, alone 240 -> 239, leaves 9,149 -> 9,125. `cio_set_log_callback` did not move (an object pointer stored into a function-pointer member). Six gateway pins flipped deliberately, each with a rebound-formal control. Pinned-route parity not run on this host (no inputs): corpus predicted the ten moves where analysed, system and slice none.",
+ "status_paragraph": null,
+ "ledger": [
+  {
+   "id": "CG10-MEMBER-STORE-RETAINED-BY",
+   "operation": "amend",
+   "source": "docs/reports/cg10-member-store-retained-by/README.md",
+   "text": "AMENDED (CG10-MEMBER-STORE-RETAINED-BY; gateway rule 70, QCore.MemberStoreRetention; opt-in `current --monkey-linked` over Fluent Bit 046accf6, base 0111ddf38 99ed0224 1,140/2/3,655/7 -> tip a07d6e8b5 93b45b67 1,150/2/3,645/7): DISCHARGED for a formal's object pointer stored into a member of another formal's object (`F->m[.n] = q`, both never rebound, the member in `*F`): read as `resource_retained_by(q, F.m...)`, the body takes no custody, the derived retention summary (path retentions plus overwritten paths) is decided at each call by rule 12t, a caller that cannot discharge stays Unknown; rule 10v's missing owner premise (Q36) is supplied as a derived summary mode; function pointers add no retention; Lean definitions and theorems for the obligation, its soundness, caller discharge composition and the releasing-caller counterexample. Ten Unknown -> Safe (suffix_object, rd_kafka_buf_set_maker, rd_kafka_mock_partition_set_leader0 and seven rows rule 38i named member-store-through-formal), no Safe -> non-Safe, no new Unsafe, no caller moved. OPEN, not this shape: a formal into a member of the body's own tracked result (PartitionMemberInfo_new, rd_kafka_op_new_cb; CG10-RESULT-HOLDER-RETAINED-BY), function-pointer spellings (cio_set_log_callback; CG10-RETAINED-BY-FUNCTION-POINTER-SPELLINGS), a local holding the body's own allocation (the six cmetrics constructors: a custody move, MEMBER-EFFECT-STORES), a record returned by value (2), and three rows with other blockers; a caller forwarding a retention into its own summary stays FB-EVENT-LOOP-CROSS-FUNCTION-LIFETIME's T2."
+  },
+  {
+   "id": "CG10-RESULT-HOLDER-RETAINED-BY",
+   "operation": "register",
+   "recorded_by": "CG10-MEMBER-STORE-RETAINED-BY",
+   "source": "docs/reports/cg10-member-store-retained-by/README.md",
+   "title": "A formal stored into a member of the body's own tracked result is not derived as `resource_retained_by(p, result)`",
+   "text": "Rule 70 (CG10-MEMBER-STORE-RETAINED-BY) reads a formal stored into a member of another formal's object. A formal stored into a member of an object the body allocated and returns (`pmi->member = member` in PartitionMemberInfo_new; `rko->rko_rk = rk`, `rko->rko_op_cb = cb` in rd_kafka_op_new_cb; mixed in rd_kafka_interceptor_method_new and rd_kafka_member_assigned_partitions_pair_new) is §C04.14.2's `resource_retained_by(p, result)`; deriving it needs tracked-owner member semantics rule 10v keeps refused (O04-B08's field link must not read a retained pointer as owned, and a release of the result on an error path must end the record). 2 sole rows alone at round 3's tip, 4 mentioning. DISCHARGE: a reading with Lean parity and a prediction, or a recorded refusal."
+  },
+  {
+   "id": "CG10-RETAINED-BY-FUNCTION-POINTER-SPELLINGS",
+   "operation": "register",
+   "recorded_by": "CG10-MEMBER-STORE-RETAINED-BY",
+   "source": "docs/reports/cg10-member-store-retained-by/README.md",
+   "title": "Function-pointer spellings rule 70 and the W4 parameter reader do not read",
+   "text": "Rule 70 (CG10-MEMBER-STORE-RETAINED-BY) reads a function-pointer value as carrying no lifetime only where rule 10v classes it so (`R (*)(A)` after desugaring). Open: `T *` for a function typedef `T` (rd_kafka_buf_set_maker's `make_cb`) is read as an object pointer and retained (more obligation); a formal declared `R (*f)(A)` makes the W4 lexical parameter reader publish no summary (the call stays uncontracted); an object pointer stored into a function-pointer member (cio_set_log_callback: formal `void (*log_cb)`, a `void *`, into `int (*log_cb)(...)`, a `BitCast`) is no rule-70 value and keeps the access refusal (1 sole row). DISCHARGE: each spelling read with Lean parity, or a recorded refusal."
+  }
+ ]
+}

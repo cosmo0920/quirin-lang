@@ -2126,9 +2126,11 @@ mod tests {
         // Card CG13 flip (rule 10w): the union row of this table
         // (`int x = p->value` through `union U *p`) is now a custody-neutral
         // scalar read; see `union_member_reads_are_decided_by_rule_10w`.
+        // Card CG10-MEMBER-STORE-RETAINED-BY (rule 70): an unrebound formal's
+        // value is read as a retention, so the refused row rebinds it.
         let cases = [
             (
-                "struct S { int *next; }; int f(struct S *p, int *q) { p->next = q; return 0; }",
+                "struct S { int *next; }; int f(struct S *p, int *q) { q = 0; p->next = q; return 0; }",
                 "p->next = q",
             ),
             // Card CAST-FORMALIZATION (rule 12h), a deliberate flip: `*(int *)p`
@@ -2396,7 +2398,9 @@ mod tests {
         assert!(plan(aggregate, "s->v = t->v").is_none());
         let union = "typedef union { int a; float b; } un_t; struct S { un_t v; }; int f(struct S *s, struct S *t) { s->v = t->v; return 0; }";
         assert!(plan(union, "s->v = t->v").is_none());
-        let pointer = "typedef enum { A } e_t; typedef e_t *ep_t; struct S { ep_t p; }; int f(struct S *s, ep_t q) { s->p = q; return 0; }";
+        // Card CG10-MEMBER-STORE-RETAINED-BY (rule 70): an unrebound formal's
+        // pointer is a retention, so the formal is rebound here.
+        let pointer = "typedef enum { A } e_t; typedef e_t *ep_t; struct S { ep_t p; }; int f(struct S *s, ep_t q) { q = 0; s->p = q; return 0; }";
         assert!(plan(pointer, "s->p = q").is_none());
     }
 }

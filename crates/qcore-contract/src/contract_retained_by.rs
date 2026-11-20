@@ -537,6 +537,7 @@ pub(super) fn declaration(
         member_paths_withdrawn: false,
         path_retentions: Vec::new(),
         removals: Vec::new(),
+        overwritten_paths: Vec::new(),
         descriptor_cells: Default::default(),
         lifetime: None,
     })

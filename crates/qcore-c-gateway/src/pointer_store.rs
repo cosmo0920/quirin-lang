@@ -108,6 +108,11 @@ pub(crate) enum ValueClass {
     OtherAddress,
     /// Anything else (a cast, a conditional, a compound literal, …).
     Other,
+    /// Card CG10-MEMBER-STORE-RETAINED-BY (rule 70): a formal's object
+    /// pointer stored into a member of another formal's object, read as a
+    /// retention ([`crate::member_store_retention`]). Never neutral: the flow
+    /// decides it with rule 70's own table.
+    RetainedFormal,
 }
 
 impl ValueClass {
@@ -126,6 +131,7 @@ impl ValueClass {
             Self::Arithmetic => "arithmetic",
             Self::OtherAddress => "other-address",
             Self::Other => "other",
+            Self::RetainedFormal => crate::member_store_retention::RETAINED,
         }
     }
 
@@ -324,6 +330,7 @@ impl<'de> serde::Deserialize<'de> for PointerStore {
             ValueClass::Arithmetic,
             ValueClass::OtherAddress,
             ValueClass::Other,
+            ValueClass::RetainedFormal,
         ];
         let value = classes
             .into_iter()
@@ -460,7 +467,13 @@ pub(crate) fn classify_value<'a>(
                     {
                         ValueReading::of(ValueClass::SelfAddress)
                     } else if decl["kind"].as_str() == Some("ParmVarDecl") {
-                        ValueReading::of(ValueClass::FormalPointer)
+                        // Card CG10-MEMBER-STORE-RETAINED-BY (rule 70): the
+                        // formal's name, which rule 70 reads.
+                        ValueReading {
+                            class: ValueClass::FormalPointer,
+                            name,
+                            address: None,
+                        }
                     } else {
                         ValueReading::of(ValueClass::LocalPointer)
                     }
@@ -585,8 +598,13 @@ pub(crate) fn read_store(reader: &mut Reader<'_>, place: &Value, value: &Value) 
             return None;
         }
     };
-    let reading = classify_value(value, &destination, reader.fields());
-    let admitted = reading.class.neutral()
+    let mut reading = classify_value(value, &destination, reader.fields());
+    // Card CG10-MEMBER-STORE-RETAINED-BY (rule 70): a formal's pointer into a
+    // member of another formal's object, both never rebound, is a retention.
+    if crate::member_store_retention::retained_formal(reader.function(), &destination, &reading) {
+        reading.class = ValueClass::RetainedFormal;
+    }
+    let admitted = (reading.class.neutral() || reading.class == ValueClass::RetainedFormal)
         && reading
             .name
             .as_ref()

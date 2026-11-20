@@ -1,0 +1,332 @@
+{
+ "totals": {
+  "before": {
+   "Unknown": 3607,
+   "Safe": 1124,
+   "Unsafe": 7,
+   "Pending": 2
+  },
+  "after": {
+   "Unknown": 3597,
+   "Safe": 1134,
+   "Unsafe": 7,
+   "Pending": 2
+  }
+ },
+ "moves": [
+  {
+   "row": [
+    "lib/ctraces/src/ctr_encode_opentelemetry.c",
+    "otel_span_set_name",
+    1
+   ],
+   "before": "Unknown",
+   "after": "Safe",
+   "after_leaves": []
+  },
+  {
+   "row": [
+    "lib/ctraces/src/ctr_encode_opentelemetry.c",
+    "otel_span_set_trace_state",
+    1
+   ],
+   "before": "Unknown",
+   "after": "Safe",
+   "after_leaves": []
+  },
+  {
+   "row": [
+    "lib/librdkafka-2.15.0/src/cJSON.c",
+    "suffix_object",
+    1
+   ],
+   "before": "Unknown",
+   "after": "Safe",
+   "after_leaves": []
+  },
+  {
+   "row": [
+    "lib/librdkafka-2.15.0/src/nanopb/pb_common.c",
+    "pb_field_iter_begin",
+    1
+   ],
+   "before": "Unknown",
+   "after": "Safe",
+   "after_leaves": []
+  },
+  {
+   "row": [
+    "lib/librdkafka-2.15.0/src/rdkafka_buf.c",
+    "rd_kafka_buf_set_maker",
+    1
+   ],
+   "before": "Unknown",
+   "after": "Safe",
+   "after_leaves": []
+  },
+  {
+   "row": [
+    "lib/librdkafka-2.15.0/src/rdkafka_conf.c",
+    "rd_kafka_confval_disable",
+    1
+   ],
+   "before": "Unknown",
+   "after": "Safe",
+   "after_leaves": []
+  },
+  {
+   "row": [
+    "lib/librdkafka-2.15.0/src/rdkafka_conf.c",
+    "rd_kafka_confval_init_int",
+    1
+   ],
+   "before": "Unknown",
+   "after": "Safe",
+   "after_leaves": []
+  },
+  {
+   "row": [
+    "lib/librdkafka-2.15.0/src/rdkafka_mock.c",
+    "rd_kafka_mock_partition_set_leader0",
+    1
+   ],
+   "before": "Unknown",
+   "after": "Safe",
+   "after_leaves": []
+  },
+  {
+   "row": [
+    "lib/librdkafka-2.15.0/src/snappy.c",
+    "init_snappy_decompressor",
+    1
+   ],
+   "before": "Unknown",
+   "after": "Safe",
+   "after_leaves": []
+  },
+  {
+   "row": [
+    "lib/monkey/mk_core/mk_memory.c",
+    "mk_ptr_set",
+    1
+   ],
+   "before": "Unknown",
+   "after": "Safe",
+   "after_leaves": []
+  }
+ ],
+ "leaves": {
+  "rows_with_changed_leaves": 48,
+  "access_removed": 28,
+  "access_added": 4,
+  "removed": [
+   [
+    "unsupported",
+    "indirect memory access is outside the resource projection",
+    28
+   ],
+   [
+    "unknown_alias",
+    "unresolved resource identity `mpart`",
+    7
+   ],
+   [
+    "unsupported",
+    "call to uncontracted function `suffix_object`",
+    5
+   ],
+   [
+    "unsupported",
+    "store of a custody-carrying value into `confval->name`, a member of the formal `confval` (member-store-through-formal)",
+    3
+   ],
+   [
+    "unsupported",
+    "call to uncontracted function `pb_field_iter_begin`",
+    2
+   ],
+   [
+    "unsupported",
+    "call to uncontracted function `rd_kafka_mock_partition_set_leader0`",
+    2
+   ],
+   [
+    "unknown_alias",
+    "unresolved resource identity `msetw`",
+    2
+   ],
+   [
+    "unsupported",
+    "store of a custody-carrying value into `batch->source_resource`, a member of the formal `batch` (member-store-through-formal)",
+    1
+   ],
+   [
+    "unsupported",
+    "store of a custody-carrying value into `batch->source_scope`, a member of the formal `batch` (member-store-through-formal)",
+    1
+   ],
+   [
+    "unsupported",
+    "store of a custody-carrying value into `metric->map`, a member of the formal `metric` (member-store-through-formal)",
+    1
+   ],
+   [
+    "unsupported",
+    "store of a custody-carrying value into `otel_span->name`, a member of the formal `otel_span` (member-store-through-formal)",
+    1
+   ],
+   [
+    "unsupported",
+    "store of a custody-carrying value into `otel_span->trace_state`, a member of the formal `otel_span` (member-store-through-formal)",
+    1
+   ],
+   [
+    "unsupported",
+    "call to uncontracted function `otel_span_set_name`",
+    1
+   ],
+   [
+    "unsupported",
+    "call to uncontracted function `otel_span_set_trace_state`",
+    1
+   ],
+   [
+    "unsupported",
+    "store of a custody-carrying value into `link->attr`, a member of the formal `link` (member-store-through-formal)",
+    1
+   ],
+   [
+    "unsupported",
+    "store of a custody-carrying value into `res->attr`, a member of the formal `res` (member-store-through-formal)",
+    1
+   ],
+   [
+    "unsupported",
+    "store of a custody-carrying value into `scope_span->instrumentation_scope`, a member of the formal `scope_span` (member-store-through-formal)",
+    1
+   ],
+   [
+    "unsupported",
+    "store of a custody-carrying value into `event->attr`, a member of the formal `event` (member-store-through-formal)",
+    1
+   ],
+   [
+    "unsupported",
+    "store of a custody-carrying value into `span->attr`, a member of the formal `span` (member-store-through-formal)",
+    1
+   ],
+   [
+    "unsupported",
+    "store of a custody-carrying value into `cctxPtr->cdict`, a member of the formal `cctxPtr` (member-store-through-formal)",
+    1
+   ],
+   [
+    "unsupported",
+    "store of a custody-carrying value into `iter->descriptor`, a member of the formal `iter` (member-store-through-formal)",
+    1
+   ],
+   [
+    "unknown_alias",
+    "unresolved resource identity `rkbmon`",
+    1
+   ],
+   [
+    "unsupported",
+    "store of a custody-carrying value into `rkcg->rkcg_curr_coord`, a member of the formal `rkcg` (member-store-through-formal)",
+    1
+   ],
+   [
+    "unsupported",
+    "store of a custody-carrying value into `member->resp`, a member of the formal `member` (member-store-through-formal)",
+    1
+   ],
+   [
+    "unsupported",
+    "store of a custody-carrying value into `msetw->msetw_rktp`, a member of the formal `msetw` (member-store-through-formal)",
+    1
+   ],
+   [
+    "unsupported",
+    "store of a custody-carrying value into `msetw->msetw_rkb`, a member of the formal `msetw` (member-store-through-formal)",
+    1
+   ],
+   [
+    "unsupported",
+    "store of a custody-carrying value into `rkq->rkq_rk`, a member of the formal `rkq` (member-store-through-formal)",
+    1
+   ],
+   [
+    "unsupported",
+    "store of a custody-carrying value into `rkq->rkq_name`, a member of the formal `rkq` (member-store-through-formal)",
+    1
+   ],
+   [
+    "unsupported",
+    "store of a custody-carrying value into `rkts->rkts_rk`, a member of the formal `rkts` (member-store-through-formal)",
+    1
+   ],
+   [
+    "unsupported",
+    "store of a custody-carrying value into `d->reader`, a member of the formal `d` (member-store-through-formal)",
+    1
+   ],
+   [
+    "unsupported",
+    "call to uncontracted function `init_snappy_decompressor`",
+    1
+   ],
+   [
+    "unsupported",
+    "store of a custody-carrying value into `p->data`, a member of the formal `p` (member-store-through-formal)",
+    1
+   ],
+   [
+    "unsupported",
+    "store of a custody-carrying value into `request->session`, a member of the formal `request` (member-store-through-formal)",
+    1
+   ],
+   [
+    "unsupported",
+    "store of a custody-carrying value into `cs->server`, a member of the formal `cs` (member-store-through-formal)",
+    1
+   ],
+   [
+    "unsupported",
+    "store of a custody-carrying value into `cs->conn`, a member of the formal `cs` (member-store-through-formal)",
+    1
+   ]
+  ],
+  "added": [
+   [
+    "unsupported",
+    "indirect memory access is outside the resource projection",
+    4
+   ],
+   [
+    "unsupported",
+    "call to `suffix_object` retains `p` in `n->prev`, whose lifetime this body does not decide against it (retention-undecided)",
+    4
+   ],
+   [
+    "unsupported",
+    "call to `pb_field_iter_begin` retains `pb_const_cast ( message )` in `iter->message`, whose lifetime this body does not decide against it (retention-undecided)",
+    1
+   ],
+   [
+    "unsupported",
+    "call to `rd_kafka_mock_partition_set_leader0` retains `mrkb` in `mpart->leader`, whose lifetime this body does not decide against it (retention-undecided)",
+    1
+   ],
+   [
+    "unsupported",
+    "call to `rd_kafka_mock_partition_set_leader0` overwrites `mpart->leader`, which is not a member path of an unrebound formal this body holds no custody of (retention-undecided)",
+    1
+   ],
+   [
+    "unsupported",
+    "call to `init_snappy_decompressor` retains `r` in `& decompressor->reader`, whose lifetime this body does not decide against it (retention-undecided)",
+    1
+   ]
+  ]
+ }
+}

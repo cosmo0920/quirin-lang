@@ -199,6 +199,20 @@ pub struct PathRetention {
 /// rule 12t; USER DECISION 2026-10-16, "R3: quant state"): `quant live
 /// #H: #holds(P) |-> #absent;`. After the call the holder `H` no longer holds
 /// the registration of `P`; every other registration it holds is unchanged.
+/// Card **CG10-MEMBER-STORE-RETAINED-BY** (gateway rule 70): a member path
+/// below the formal `root` that the callee's body overwrote, derived from the
+/// body and never written by the loader. A call decides it only where the
+/// actual at `root` followed by `fields` is a path holder of the calling
+/// function (rule 12t's premise P-HOLDER-PATH-STABLE); otherwise the call
+/// refuses, whatever value the body stored there.
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
+pub struct OverwrittenPath {
+    /// The formal the path starts at.
+    pub root: usize,
+    /// The member names after the formal, outermost first (never empty).
+    pub fields: Vec<String>,
+}
+
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
 pub struct Removal {
     pub retained: usize,
@@ -309,6 +323,12 @@ pub struct RetainingContract {
     /// removals of one registration, in clause order. Omitted when empty.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub removals: Vec<Removal>,
+    /// Card **CG10-MEMBER-STORE-RETAINED-BY** (rule 70): the member paths
+    /// below a formal the body overwrote, set only by the gateway's derived
+    /// retention summary, never by the loader. Omitted when empty, so every
+    /// declaration before the card serializes as it did.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub overwritten_paths: Vec<OverwrittenPath>,
     /// Card **MK-EVENT-DESCRIPTOR-QUANT** (§C04.6.2, rule 38): the
     /// declaration's descriptor cells, canonical. Omitted when empty, so every
     /// retaining declaration before the card serializes as it did.
@@ -354,6 +374,7 @@ impl RetainingContract {
             member_paths_withdrawn: false,
             path_retentions: Vec::new(),
             removals: Vec::new(),
+            overwritten_paths: Vec::new(),
             descriptor_cells: crate::descriptor_cell::DescriptorCells::default(),
             lifetime: None,
         }
@@ -367,5 +388,6 @@ impl RetainingContract {
             || !self.resets.is_empty()
             || !self.path_retentions.is_empty()
             || !self.removals.is_empty()
+            || !self.overwritten_paths.is_empty()
     }
 }

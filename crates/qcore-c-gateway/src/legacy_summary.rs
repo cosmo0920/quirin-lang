@@ -479,6 +479,21 @@ pub(crate) fn derive_custody_summaries(
                         }
                         derivation.inferred.insert(name, contract);
                     }
+                    // Card CG10-MEMBER-STORE-RETAINED-BY (rule 70): a body
+                    // whose pointer stores retain formals in members of
+                    // formals publishes its retention summary, withheld from
+                    // the function map like a declared retention.
+                    None if contracts.contract(&name).is_none()
+                        && let Some(retaining) = crate::member_store_retention::infer(
+                            tokens,
+                            &name,
+                            &derivation.environment,
+                            infer_validated_summary,
+                        ) =>
+                    {
+                        derivation.environment.insert_retaining(name, retaining);
+                        installed = true;
+                    }
                     None if let Some(lifetime) =
                         infer_lifetime_summary(tokens, &name, &derivation.environment) =>
                     {
@@ -1802,7 +1817,10 @@ pub(crate) fn observations_match_class(
     }
     // Card CG11-POINTER-VALUED-STORES (rule 10v): a body that overwrote a slot
     // of an untracked object tells no caller its formal was borrowed.
-    if crate::pointer_store::has_pointer_store(&summary.cfg)
+    // Card CG10-MEMBER-STORE-RETAINED-BY (rule 70): except while rule 70
+    // validates a body whose stores its retention summary states.
+    if (crate::pointer_store::has_pointer_store(&summary.cfg)
+        && !crate::member_store_retention::summary_admits(&summary.cfg, &entry.parameter_names))
         || crate::legacy_c::self_link_init::has_call(&summary.cfg)
         || crate::legacy_c::tracked_self_init::has_call(&summary.cfg)
     {

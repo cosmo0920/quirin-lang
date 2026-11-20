@@ -276,6 +276,7 @@ import QCore.MemberRelease
 import QCore.MemberReleaseCallee
 import QCore.MemberReleaseTypedMember
 import QCore.MemberReleaseUntypedBase
+import QCore.MemberStoreRetention
 import QCore.MemberSummaryOrder
 import QCore.MemberValueHelper
 import QCore.MemoKey

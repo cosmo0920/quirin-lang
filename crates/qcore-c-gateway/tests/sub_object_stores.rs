@@ -249,8 +249,10 @@ fn a_formal_pointer_stored_into_a_member_keeps_its_refusal() {
     expect(
         "`h->name = (char *) s` stores the caller's string",
         "void w(struct x_holder *h, const char *s) { h->name = (char *) s; }",
-        "Unknown",
-        &[GATE],
+        // Card CG10-MEMBER-STORE-RETAINED-BY (rule 70) flips this deliberately: a qualification conversion of an
+        // unrebound formal is `retained_by(s, h.name)`. BEFORE: Unknown, GATE.
+        "Safe",
+        &[],
     );
 }
 
