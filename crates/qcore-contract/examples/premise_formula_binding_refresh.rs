@@ -292,14 +292,14 @@ fn main() -> Result<(), String> {
         patches.push((after_root.join(file), patched));
         // A frozen expected graph some consumer holds independently (the
         // cJSON detach declaration's), in the graph's canonical encoding.
-        if let Ok(declaration) = env::var("QCORE_DUMP_GRAPH") {
-            if let Some(graph) = new_graphs.get(&declaration) {
-                let bytes = serde_json::to_vec(graph).map_err(|e| e.to_string())?;
-                if hypothesis::decode(&bytes)? != *graph {
-                    return Err("noncanonical graph encoding".into());
-                }
-                dumped.push((format!("{declaration}.graph.json"), bytes));
+        if let Ok(declaration) = env::var("QCORE_DUMP_GRAPH")
+            && let Some(graph) = new_graphs.get(&declaration)
+        {
+            let bytes = serde_json::to_vec(graph).map_err(|e| e.to_string())?;
+            if hypothesis::decode(&bytes)? != *graph {
+                return Err("noncanonical graph encoding".into());
             }
+            dumped.push((format!("{declaration}.graph.json"), bytes));
         }
     }
     fs::create_dir_all(output).map_err(|e| e.to_string())?;
