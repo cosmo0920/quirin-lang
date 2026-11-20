@@ -444,7 +444,49 @@ contract `rd_kafka_q_destroy_final` (`queue_destructor.qv`, unpinned).
 
 ## 10. Gate
 
-See §12 (filled at the gate of record).
+`python3 scripts/gate_scope.py --base 1cd7da6b8 --out private/gate-1` on
+`d602bb6a2` (the card merged with origin/main `9b107caf1`, r45, a clean merge)
+([record](gate/gate-1.json); mode full: the diff reaches `qcore-frontend`,
+`qcore-contract`, `qcore-c-gateway` and a proof root). Exit 1:
+
+| Step | Exit | Counts |
+|---|---|---|
+| fmt | 0 | |
+| clippy | 101 | `collapsible_if` in the new refresh tool (fixed, below) |
+| rust-suite | 101 | 672 units, 9817 passed, **1 failed**, 21 ignored |
+| reevaluation probe, follow-up | 0, 0 | |
+| lean (`check_lean_audits.py`) | 0 | 470 audits |
+| python | 1 | 779 tests, **1 failed** (fixed, below) |
+| provider package build, verify (all, libevent) | 0, 0, 0 | |
+| provider test | 0 | 167 passed, 1 ignored |
+| provider fmt, clippy | 0, 0 | |
+
+* **Rust.** The one failure is the brief's known host failure,
+  `qcore-audit::test::libcurl_user_crate_versions::the_libcurl_ranges_follow_the_audited_curlver_header`
+  (the system `curlver.h`); not fixed here.
+* **Clippy.** `premise_formula_binding_refresh.rs` nested two `if let`s;
+  collapsed in `a023b4739`. `cargo clippy --all-targets -- -D warnings` on
+  that tree: exit 0 (`private/logs/clippy-2.log`).
+* **Python.** `test_gate_scope_census`'s observed-read check: the recorded read
+  census still had `production_symbolic_adoption` reading the old manifest
+  paths. Re-traced with `gate_read_census.py record --packages qcore-contract`
+  and `reduce` (56 units; `private/census-1`), and only that unit replaced in
+  `docs/reports/gate-scope-precise-selection/read-census.json` (`1c4ba08fe`;
+  every other qcore-contract unit read the same files). Rule 13h's amendment
+  also needed `gen_rule_docs.py` (`docs/agents/gateway.md`, `d99b5a1cf`), which
+  the gate's run did not catch only because its python step started after it.
+  Rerun at `1c4ba08fe` with `QUIRIN_CARD_GATE_BASE=1cd7da6b8`: 779 tests,
+  exit 0 (`private/gate-2/python.log`).
+
+Targeted runs before the gate, each exit 0 unless noted: `qcore-contract`,
+`qcore-c-gateway`, `quirin-source-analysis`, `qcore-compiler`, `qcore-frontend`
+whole (`private/logs/probe-2.log`); `qcore-audit`'s
+`contract_dependencies_report`, `plugin_null_hypotheses`, `outer_projection`
+(`probe-4.log`, `probe-5.log`); `qcore-compiler --test premise_formula_operators`
+(`probe-8.log`); `quirin-audit-plugin-measure` (`probe-6.log`: every target
+passed but `slot_wait`, which waits on a gate slot and failed only because the
+run itself held one; it passed in the gate's suite); the librdkafka provider
+crate (`provider-test-1.log`, 3 passed); `contracts.py check` (exit 0).
 
 ## 11. Follow-ups
 
