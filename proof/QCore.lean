@@ -352,6 +352,7 @@ import QCore.PluginSourceWitnesses
 import QCore.PointerQualifierReader
 import QCore.PointerStore
 import QCore.PremiseFlow
+import QCore.PremiseFormula
 import QCore.PremiseMetadataBridge
 import QCore.PremiseRefinement
 import QCore.PrintRouteSelection

@@ -1,0 +1,34 @@
+{
+ "schema": "quirin-amendments/1",
+ "card": "SP1-SYMBOLIC-OPENSSL-PREMISES",
+ "base": "b7f86a0de",
+ "measured_tip": "67c48041a",
+ "increment_paragraph": "**SP1-SYMBOLIC-OPENSSL-PREMISES (2026-11-20).** User decision 2026-11-20: premise clauses are written as condition symbols, not sentences, first for OpenSSL. A named premise may state requires resource_premise(NAME, FORMULA); (contract specification C04.18.9, grammar G05-formula): a bounded formula over existing tokens (quant all #x in SET: F, |->, &&, ->, in, ==, set union | and difference \\ (a new one-byte Backslash token; - is refused in a formula), {}, # terms) and a closed, sorted vocabulary of 27 terms and 15 class constants, read by one reader (qcore_frontend::premise_formula) the contract format, the loader and the S3 prerequisite reader share. An unknown term or constant, an ill-sorted application, an unbound or shadowing variable, a non-proposition, a malformed or over-long token sequence and a quoted formula reject the whole module; the statement is the canonical printing, so identity is NAME plus that text. Premises stay undischarged metadata. All 53 resource_premise clauses on 30 declarations of quirin-provider-openssl (openssl_ex_data_callbacks 30, openssl_builtin_bio_methods 10, openssl_unstated_callback_slots 8 in a handshake (5) and a free (3) statement, openssl_builtin_lookup_methods 3, openssl_bio_free_callbacks 2; merged over OPENSSL-FREE-SESSION-REMOVE-INVOCATION, whose narrowed free premise is #b in #freed -> #ex_data_free(BIO) |-> #inert, so #callback, #destroy and BIO_CB_FREE left the vocabulary; and over OPENSSL-REMAINING-HANDSHAKE-SETTERS, whose widened unstated statement adds the X509_LOOKUP_METHOD functions of the SSL_CTX's store, a conjunct over the new terms #store and #lookups; and over OPENSSL-FREE-INDIRECT-CALLBACKS, whose free statement is quant all #o in #freed: #teardown(#o) \\ (#stated | #settable) |-> #inert, the open \"among them\" list read as its general class, and whose openssl_builtin_lookup_methods is quant all #l in #lookups(#of(X509_STORE, #freed)): #method(#l) in #builtin -> #fns(#l) |-> #inert) state formulas, with a prose-to-formula table in the report; the checker refuses a prose premise (prose_premise). User decisions 2026-11-20 on the hand-back: set difference is \\ (lexer token added; census zero code-position backslashes in 781 tracked sources; hypothesis::validate admits a backslash only in a generated legacy atom whose statement is exactly a canonical well-formed formula), and the BIO_f_ssl parenthetical is read narrowly. Rule 13h amended. Lean: new QCore.PremiseFormula (syntax, sorts, the judgment, denotation; well-formed formulas denote; 22 decision vectors, the vocabulary and the four formulas bound to Rust; the unstated-slots premise entails the ex_data premise, not conversely), audited. contracts.lock changes exactly the 30 premised declarations' digests; both load paths unchanged. No pinned route loads the OpenSSL crate: no move predicted, measure --declared deferred to the integrator. Prose premises remain in librdkafka (220), libevent (7) and fluent-bit (3), registered as SP2-SP4.",
+ "status_paragraph": null,
+ "ledger": [
+  {
+   "id": "SP2-SYMBOLIC-LIBRDKAFKA-PREMISES",
+   "operation": "register",
+   "title": "State qcore-provider-librdkafka's premises as formulas",
+   "text": "Recorded by SP1-SYMBOLIC-OPENSSL-PREMISES (user decision 2026-11-20: premises are written as condition symbols, not sentences; other providers become follow-ups). qcore-provider-librdkafka states 220 resource_premise clauses in prose under 12 names in 9 files (client.qv 119, null_deref.qv 71, header_inlines.qv 12, log_caller_frame.qv 6, cjson.qv 4, logging.qv 3, memory.qv 3, kafka_mem.qv 1, queue_destructor.qv 1; comments excluded), and cjson.qv 9 prose resource_hypothesis atoms. DISCHARGE: each statement as a C04.18.9 formula with a prose-to-formula table, new terms registered in the specification, the Rust vocabulary and the Lean vocab with their meanings, the crate's locks regenerated with the reviewed diff, and the provider refusing a prose premise; hypothesis atoms and premise_decomposition/flow attachments keep their exact graph identities or are migrated with a stated graph-version change. Size: large.",
+   "source": "docs/reports/sp1-symbolic-openssl-premises/README.md",
+   "recorded_by": "SP1-SYMBOLIC-OPENSSL-PREMISES"
+  },
+  {
+   "id": "SP3-SYMBOLIC-FLUENT-BIT-PREMISES",
+   "operation": "register",
+   "title": "State quirin-provider-fluent-bit's premises as formulas",
+   "text": "Recorded by SP1-SYMBOLIC-OPENSSL-PREMISES (user decision 2026-11-20). quirin-provider-fluent-bit states 3 resource_premise clauses in prose (untracked_handback in input_chunk_name.qv, ingestion_active in loop_owner.qv, synchronous_output_reachability in output_singleplex.qv). DISCHARGE: each as a C04.18.9 formula with a prose-to-formula table and any new term registered (specification, Rust, Lean), the crate's inventory locks synced with the reviewed diff, and prose refused for the crate. Size: small.",
+   "source": "docs/reports/sp1-symbolic-openssl-premises/README.md",
+   "recorded_by": "SP1-SYMBOLIC-OPENSSL-PREMISES"
+  },
+  {
+   "id": "SP4-SYMBOLIC-LIBEVENT-PREMISES",
+   "operation": "register",
+   "title": "State qcore-provider-libevent's scheduler premises as formulas",
+   "text": "Recorded by SP1-SYMBOLIC-OPENSSL-PREMISES (user decision 2026-11-20). qcore-provider-libevent states 7 resource_premise clauses in prose in monkey/intrusive_list.qv (mk_http_thread_destroy's scheduler decomposition: scheduler_borrowed_chain_live, scheduler_callee_live, scheduler_exact_parent_embedding, scheduler_no_later_alias_use, scheduler_tls_params_owned, scheduler_valgrind_request_neutral, scheduler_valid_membership), which rule 34 lists on every row resting on the declaration. DISCHARGE: each as a C04.18.9 formula with a prose-to-formula table and any new term registered (specification, Rust, Lean), locks synced with the reviewed diff, and prose refused for the crate. Size: medium.",
+   "source": "docs/reports/sp1-symbolic-openssl-premises/README.md",
+   "recorded_by": "SP1-SYMBOLIC-OPENSSL-PREMISES"
+  }
+ ]
+}
