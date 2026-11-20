@@ -5452,6 +5452,21 @@ own anchor here.
     and nine more), bound to `CONVERSION_TABLE`, `classify` and rule 5j's
     reader by shared vectors;
     [report](../reports/cast-formalization/README.md).
+    **AMENDED (round 3 of CG10-INDIRECT-ACCESS-SOLE-RESIDUALS):** hook
+    H-U also removes an identity-preserving view of a **member-chain place
+    over a plain name** (`int n = f((const char *)a->name);`), at a **call
+    actual only** and with no `volatile`/`_Atomic` result, exactly the place
+    hook H-U0 already reads such a cast as; the uncast statement is lowered
+    by the older routes and kept only where they admit it
+    (`legacy_cast_semantics.rs::place_view_removed`). An element, a
+    subscript, an offset, an integer, a decayed array, any other position
+    and the return position (no H-U placement) keep the older answer; the
+    uncast spelling matches no Clang node, so a Clang-matched reading of the
+    statement (rule 14a's typed member destination) is not reached.
+    `QCore.CastActualPlace` (`place_view_vectors_hold`,
+    `only_a_call_actual_is_uncast`, `a_qualified_view_is_kept`,
+    `a_removed_view_is_the_place`), bound to `PLACE_VIEW_VECTORS`;
+    [report](../reports/cg10-indirect-access-sole-residuals-r3/README.md).
 
 <a id="constraint-12i"></a>
 
@@ -8230,7 +8245,9 @@ an undeclared OpenSSL producer). `QCore.NullableReferenceDrop` (12 audited,
     other operands unspecified (C11 6.5p2, 6.5.2.2p10): a call that takes and
     releases no custody changes no binding a read is decided on, so either
     order decides alike. Every other answer keeps the gate's refusal byte for
-    byte with its counters restored. **Do not** admit two calls, a
+    byte with its counters restored. **Do not** admit two calls
+    (AMENDED by [rule 67](gateway.md#constraint-67), round 3: several
+    sibling calls each taking no custody are read, a nested call is not), a
     custody-taking or releasing position, an owned or derived result, an
     uncontracted or held callee, a pointer-valued destination or a
     conditionally evaluated call under this rule. Parity runs record every
@@ -8243,7 +8260,8 @@ an undeclared OpenSSL producer). `QCore.NullableReferenceDrop` (12 audited,
     `rd_kafka_cgrp_update_session_timeout`, `rd_kafka_msgbatch_set_first_msg`).
     `QCore.ResidualAccessReadings` (`a_borrowed_call_changes_no_custody`,
     `a_read_is_decided_alike_on_either_side_of_the_call`,
-    `a_releasing_call_does_not_commute`, `an_admitted_call_takes_no_custody`,
+    `a_releasing_call_does_not_commute`, `an_admitted_call_takes_no_custody`
+    (round 3 withdrew `two_calls_are_never_read` with the lifted limit),
     `scalar_call_vectors_hold`), bound to `SCALAR_CALL_VECTORS`;
     [report](../reports/cg10-indirect-access-sole-residuals-r2/README.md).
 
@@ -12124,5 +12142,83 @@ an undeclared OpenSSL producer). `QCore.NullableReferenceDrop` (12 audited,
     abstract state is its contract's (constraint 4). Fixtures:
     `tests/condition_leaf_reads.rs`. `QCore.ConditionLeafReads`;
     [report](../reports/ag3-condition-return-calls/README.md).
+
+<a id="constraint-67"></a>
+
+67. **Several sibling calls that each take no custody are read as rule 14a
+    reads one.** Card CG10-INDIRECT-ACCESS-SOLE-RESIDUALS round 3 (the
+    user's decision of 2026-11-20 to proceed on the indirect-access refusal;
+    follow-up AG1-TWO-BORROWED-CALLS; `residual_access_reading.rs`,
+    `legacy_residual_access.rs`; the shared reader field
+    `Reader::opaque_calls` in `typed_access_path.rs` replaces rule 14a's
+    `opaque_call` and is read only by rules 14a and 67). **This lifts rule
+    14a's recorded limit "do not admit two calls"** for sibling calls: for
+    exactly rule 14a's statement shapes and hook, a value holding one or more
+    `CallExpr`s none of which lies inside another's callee or actuals, each
+    with a plain callee, is read by the typed path reader with every call an
+    opaque scalar operand, and each call is lowered alone, in source order,
+    as the statement `f(args)` (W44's reads when the gate refuses its
+    actuals). The statement is admitted only when **every** callee's contract
+    in force (no review, pin, refutation, caller-frame or conflict hold) has a
+    `None` result and every declared position `Borrowed` and lowers to
+    exactly that contracted call with no destination; one call that does not
+    restores every counter the earlier calls advanced and keeps the gate's
+    refusal byte for byte. C leaves the order of the calls and of the other
+    operands unspecified (C11 6.5p2, 6.5.2.2p10); each such call is the
+    identity on the custody state, so any sequence of them, in any order and
+    with the statement's reads anywhere between them, leaves every read
+    decided alike (`QCore.SiblingBorrowedCalls`). **Do not** admit a nested
+    call (one call's value an operand of another's actuals), a releasing,
+    consuming or custody-taking position, an owned or derived result, an
+    uncontracted or held callee, a pointer destination or a conditionally
+    evaluated call under this rule. Parity rows: `position:
+    "residual-access"`, `rule: "67"`, `form: "scalar-calls"`, the callees
+    comma-joined (one call keeps rule 14a's row). Premises stated, not proved:
+    faithful Clang extraction and node matching (trust boundary 28).
+    `QCore.SiblingBorrowedCalls` (`a_borrowed_sequence_changes_no_custody`,
+    `every_order_leaves_the_same_state`,
+    `a_read_between_the_calls_is_decided_alike`,
+    `a_releasing_sibling_does_not_commute`,
+    `a_releasing_sibling_is_never_admitted`, `several_calls_are_read`,
+    `no_call_is_never_read`), with `QCore.ResidualAccessReadings.scalarCallAdmitted`
+    amended and bound to `SCALAR_CALL_VECTORS`;
+    [report](../reports/cg10-indirect-access-sole-residuals-r3/README.md).
+
+<a id="constraint-68"></a>
+
+68. **A member spelled through a pointer typedef is its pointer spelling.**
+    Card CG10-INDIRECT-ACCESS-SOLE-RESIDUALS round 3 (follow-up
+    AG1-POINTER-TYPEDEF-MEMBER; `pointer_typedef_member.rs`, hooks in
+    `typed_field_access.rs`: the field `TypedAccessModel::pointer_typedefs`,
+    one call in `read_typedefs`, one branch in `read_record_body` and the
+    accessor `pointer_typedef_member_pointee`). The lexical declaration
+    reader records a pointer typedef (`typedef char *flb_sds_t;`,
+    `typedef char *cfl_sds_t;`) as unresolved, so a member `cfl_sds_t name;`
+    joined none of the record's member classes and an owned result stored
+    into it on a record the body allocated (O04-B08's field link, which
+    reads the single-pointer class) met the gate's refusal where the
+    `char *name;` spelling is admitted. C11 6.7.8p3 makes a typedef name a
+    synonym for its type: where **every** `typedef` declaration of `A` in the
+    unit is exactly `typedef SPEC * A;` with one `SPEC` (no other `*`, no
+    qualifier after the `*`, no `volatile`/`_Atomic`, no function, array or
+    aggregate declarator), a member declared exactly `A NAME;` (no `*`, no
+    array, no rejecting qualifier) of a record with one complete, non-union
+    definition has type `SPEC *`, and joins the single-pointer members when
+    `SPEC` resolves to a scalar or a struct, and the borrowable members, as
+    `SPEC * NAME;` does. Every consumer of those classes (the aggregate store,
+    the sub-object store, the neutral position, the chain walker's last hop)
+    therefore decides the member as it decides the pointer spelling; the
+    shared classifier's unresolved answer for `A` itself (locals, formals,
+    the scalar no-op rule, the record-pointer continuation) is unchanged.
+    **Do not** read a `void`, union or unresolved pointee (the `void *`
+    member class reads the literal spelling only), a disagreeing pair of
+    declarations, a pointer to the alias (`A *NAME`, a pointer to a pointer)
+    or a qualified member under this rule. `QCore.PointerTypedefMember`
+    (`an_agreeing_alias_member_is_its_pointer_spelling`,
+    `a_disagreeing_alias_reads_nothing`,
+    `a_pointer_to_the_alias_is_never_single`,
+    `an_unresolved_pointee_is_never_single`, `decision_vectors_hold`,
+    `the_decision_is_the_models`), bound to `DECISION_VECTORS`;
+    [report](../reports/cg10-indirect-access-sole-residuals-r3/README.md).
 
 <!-- generated:rules:end -->

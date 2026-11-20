@@ -285,6 +285,14 @@ pub(crate) struct TypedAccessModel {
     /// [`crate::typedef_aggregate_base`]; the shared classifier is unchanged.
     struct_alias_heads: BTreeMap<String, Option<String>>,
     // --- AG1-INDIRECT-MEMBER-ACCESS (rule 61) hook: end ---
+    // --- CG10-INDIRECT-ACCESS-SOLE-RESIDUALS r3 (rule 68) hook: begin ---
+    /// The specifiers every `typedef` declaration of a name puts before its
+    /// one `*` (`typedef char *flb_sds_t;`), `None` once a declaration says
+    /// anything else. Read only by [`Self::read_record_body`]'s member
+    /// classes ([`crate::pointer_typedef_member`]); the shared classifier
+    /// still answers the name unresolved.
+    pointer_typedefs: BTreeMap<String, Option<Vec<String>>>,
+    // --- CG10-INDIRECT-ACCESS-SOLE-RESIDUALS r3 (rule 68) hook: end ---
     /// Card **BASE-TYPE-READER-CENSUS**: names this unit declares at **file
     /// scope**, read by the same declaration reader the function bodies use.
     ///
@@ -864,6 +872,12 @@ impl TypedAccessModel {
                     specifiers.iter().map(|text| (*text).to_owned()).collect(),
                 ))
             };
+            // CG10-INDIRECT-ACCESS-SOLE-RESIDUALS r3 (rule 68) hook.
+            crate::pointer_typedef_member::note_pointer_typedef(
+                &mut self.pointer_typedefs,
+                last,
+                crate::pointer_typedef_member::typedef_shape(slice),
+            );
             // AG1-INDIRECT-MEMBER-ACCESS (rule 61) hook.
             crate::typedef_aggregate_base::note_struct_alias_head(
                 &mut self.struct_alias_heads,
@@ -1014,6 +1028,19 @@ impl TypedAccessModel {
                     borrowable_fields.insert(name);
                     continue;
                 }
+                // CG10-INDIRECT-ACCESS-SOLE-RESIDUALS r3 (rule 68) hook: a
+                // member spelled through a pointer typedef every declaration
+                // of which is `typedef SPEC * A;` is `SPEC * NAME`.
+                if declarator.stars == 0
+                    && !qualified
+                    && let Some(pointee) = self.pointer_typedef_member_pointee(&specifiers)
+                {
+                    if crate::pointer_typedef_member::single_pointer_member(true, true, pointee) {
+                        single_pointer_fields.insert(name.clone());
+                        borrowable_fields.insert(name);
+                    }
+                    continue;
+                }
                 // A pointer member of any pointee type is readable as a value.
                 // The member's own declaration must not be `volatile`/`_Atomic`.
                 if declarator.stars >= 1 && !qualified {
@@ -1095,6 +1122,34 @@ impl TypedAccessModel {
             }
         }
     }
+
+    // --- CG10-INDIRECT-ACCESS-SOLE-RESIDUALS r3 (rule 68) hook: begin ---
+    /// Rule 68: the pointee class of a member's specifier list that is exactly
+    /// one name every typedef declaration of which is `typedef SPEC * A;`
+    /// with one `SPEC`; `None` when the list is anything else (the member is
+    /// then classified exactly as before).
+    fn pointer_typedef_member_pointee(
+        &self,
+        specifiers: &[&str],
+    ) -> Option<crate::pointer_typedef_member::Pointee> {
+        let core = specifiers
+            .iter()
+            .copied()
+            .filter(|text| !IGNORED_SPECIFIERS.contains(text))
+            .collect::<Vec<_>>();
+        let [alias] = core.as_slice() else {
+            return None;
+        };
+        let target = self.pointer_typedefs.get(*alias)?.as_ref()?;
+        let target = target.iter().map(String::as_str).collect::<Vec<_>>();
+        Some(match self.classify_specifiers(&target, 1) {
+            DeclaredType::Record(_) | DeclaredType::Scalar => {
+                crate::pointer_typedef_member::Pointee::Resolved
+            }
+            _ => crate::pointer_typedef_member::Pointee::Other,
+        })
+    }
+    // --- CG10-INDIRECT-ACCESS-SOLE-RESIDUALS r3 (rule 68) hook: end ---
 
     fn classify_specifiers(&self, specifiers: &[&str], depth: usize) -> DeclaredType {
         self.classify_specifiers_noting(specifiers, depth, &mut OpaqueNote::default())
@@ -3552,6 +3607,25 @@ mod tests {
         );
         assert!(model.scalar_field("r", "a"));
         assert!(!model.scalar_field("r", "h"));
+    }
+
+    #[test]
+    fn rule_68_reads_a_member_through_an_agreeing_pointer_typedef() {
+        let model = model(
+            "typedef char * sds ; typedef char * sds ; typedef struct q * qp ; struct q { int a ; } ; \
+             typedef void * handle ; typedef char * const fixed ; typedef char * twice ; \
+             typedef int * twice ; typedef char * * deep ; \
+             struct r { sds s ; qp q ; handle h ; fixed f ; twice t ; deep d ; sds * ps ; volatile sds v ; sds arr [ 2 ] ; } ;",
+        );
+        assert!(model.single_pointer_field("r", "s"));
+        assert!(model.borrowable_field("r", "s"));
+        assert!(model.single_pointer_field("r", "q"));
+        assert!(model.record_pointer_field("r", "q").is_none());
+        for field in ["h", "f", "t", "d", "ps", "v", "arr"] {
+            assert!(!model.single_pointer_field("r", field), "{field}");
+            assert!(!model.scalar_field("r", field), "{field}");
+        }
+        assert!(!model.borrowable_field("r", "h"));
     }
 
     #[test]

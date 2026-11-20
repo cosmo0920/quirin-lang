@@ -47,10 +47,11 @@ use super::{
 use crate::residual_access_reading::InteriorForm;
 use crate::typed_access_path::StatementPlan;
 
-/// What rule 14a or 14b answered, for the parity row.
+/// What rule 14a, 14b or 67 answered, for the parity row.
 enum Answer {
     Interior(InteriorForm),
-    ScalarCall(String),
+    /// The callees, in source order: one under rule 14a, several under 67.
+    ScalarCall(Vec<String>),
 }
 
 impl Parser<'_> {
@@ -85,11 +86,16 @@ impl Parser<'_> {
             "residual-access",
             reading.is_some(),
         );
-        let (plan, answer, call) = reading?;
+        let (plan, answer, calls) = reading?;
         let mut block = Vec::new();
-        if let Some((callee, call_tokens)) = call {
-            let Some(lowered) = self.lowered_scalar_call(tokens, &call_tokens, &callee) else {
-                self.record_residual_access(&texts, line, &Answer::ScalarCall(callee), false);
+        // Rule 67: each sibling call is lowered alone, in source order; one
+        // that does not lower restores every counter the earlier ones advanced.
+        let saved = self.probe_state();
+        for (callee, call_tokens) in &calls {
+            let Some(lowered) = self.lowered_scalar_call(tokens, call_tokens, callee, calls.len())
+            else {
+                self.restore_probe_state(&saved);
+                self.record_residual_access(&texts, line, &answer, false);
                 return None;
             };
             block.extend(lowered);
@@ -104,8 +110,8 @@ impl Parser<'_> {
         ))
     }
 
-    /// The Clang reading: rule 14b's plan, or rule 14a's plan with the call's
-    /// callee and token text.
+    /// The Clang reading: rule 14b's plan, or rule 14a's (rule 67's) plan
+    /// with each call's callee and token text.
     #[allow(clippy::type_complexity)]
     fn residual_reading(
         &self,
@@ -113,7 +119,7 @@ impl Parser<'_> {
         texts: &[&str],
         line: usize,
         decisions: &crate::consultation_decisions::Decisions,
-    ) -> Option<(StatementPlan, Answer, Option<(String, Vec<String>)>)> {
+    ) -> Option<(StatementPlan, Answer, Vec<(String, Vec<String>)>)> {
         let index = self.typed_positions_index()?;
         let occurrence =
             || crate::typed_place::occurrence(self.tokens, self.typed_place_origin.get(), tokens);
@@ -122,16 +128,16 @@ impl Parser<'_> {
         if let Some((plan, form)) =
             index.interior_pointer_statement(node, &never_bound, Some(decisions))
         {
-            return Some((plan, Answer::Interior(form), None));
+            return Some((plan, Answer::Interior(form), Vec::new()));
         }
         let reading = index.scalar_call_statement(node, &never_bound, Some(decisions))?;
-        let call_tokens = index.node_tokens(reading.call)?;
-        let callee = reading.callee.clone();
-        Some((
-            reading.plan,
-            Answer::ScalarCall(callee.clone()),
-            Some((callee, call_tokens)),
-        ))
+        let calls = reading
+            .calls
+            .iter()
+            .map(|(call, callee)| Some((callee.clone(), index.node_tokens(call)?)))
+            .collect::<Option<Vec<_>>>()?;
+        let callees = calls.iter().map(|(callee, _)| callee.clone()).collect();
+        Some((reading.plan, Answer::ScalarCall(callees), calls))
     }
 
     /// Rule 14a's call: the contracted call with no destination, after rule
@@ -142,11 +148,12 @@ impl Parser<'_> {
         tokens: &[Token],
         call_texts: &[String],
         callee: &str,
+        calls: usize,
     ) -> Option<Vec<LegacyInstruction>> {
         let contract = self.contracts.contract(callee)?;
-        // The reading found exactly one call.
+        // The reading found `calls` sibling calls (one under rule 14a).
         if !crate::residual_access_reading::scalar_call_admitted(
-            1,
+            calls,
             contract.result == ResourceReturnMode::None,
             contract
                 .parameters
@@ -224,7 +231,10 @@ impl Parser<'_> {
         }
         let (rule, form, callee) = match answer {
             Answer::Interior(form) => ("14b", form.code(), None),
-            Answer::ScalarCall(callee) => ("14a", "scalar-call", Some(callee.as_str())),
+            Answer::ScalarCall(callees) if callees.len() == 1 => {
+                ("14a", "scalar-call", Some(callees[0].clone()))
+            }
+            Answer::ScalarCall(callees) => ("67", "scalar-calls", Some(callees.join(","))),
         };
         crate::typed_access_path::record_row(serde_json::json!({
             "function": self.typed_path_function,

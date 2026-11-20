@@ -181,6 +181,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [cg10-indirect-access-sole-residuals-r2](cg10-indirect-access-sole-residuals-r2/README.md) | CG10-INDIRECT-ACCESS-SOLE-RESIDUALS round 2: four readings of the access residual |
 
+| [cg10-indirect-access-sole-residuals-r3](cg10-indirect-access-sole-residuals-r3/README.md) | CG10-INDIRECT-ACCESS-SOLE-RESIDUALS round 3: the access refusal, re-measured; rules 67, 68 and a 12h amendment |
+
 | [cg11-pointer-valued-stores](cg11-pointer-valued-stores/README.md) | CG11-POINTER-VALUED-STORES |
 
 | [cg12-void-view-readback](cg12-void-view-readback/README.md) | CG12-VOID-VIEW-READBACK: `void *` views and readbacks |

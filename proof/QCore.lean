@@ -68,6 +68,7 @@ import QCore.CallerFrameHoldSwitch
 import QCore.CandidateComposition
 import QCore.CapacityBoundary
 import QCore.CarriedPublication
+import QCore.CastActualPlace
 import QCore.CastRepresentation
 import QCore.CastReturnEscape
 import QCore.CastSemantics
@@ -351,6 +352,7 @@ import QCore.PluginReadingEnvironment
 import QCore.PluginSourceWitnesses
 import QCore.PointerQualifierReader
 import QCore.PointerStore
+import QCore.PointerTypedefMember
 import QCore.PremiseFlow
 import QCore.PremiseFormula
 import QCore.PremiseMetadataBridge
@@ -444,6 +446,7 @@ import QCore.ScalarTypes
 import QCore.SchedulerLifetime
 import QCore.ScopedTasks
 import QCore.ShortCircuit
+import QCore.SiblingBorrowedCalls
 import QCore.SingleEmissionRoute
 import QCore.SizeofOperand
 import QCore.SlicePermissions

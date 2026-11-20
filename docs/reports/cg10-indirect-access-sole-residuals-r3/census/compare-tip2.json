@@ -1,0 +1,237 @@
+{
+ "totals": {
+  "before": {
+   "Unknown": 3608,
+   "Safe": 1123,
+   "Unsafe": 7,
+   "Pending": 2
+  },
+  "after": {
+   "Unknown": 3607,
+   "Safe": 1124,
+   "Unsafe": 7,
+   "Pending": 2
+  }
+ },
+ "moves": [
+  {
+   "row": [
+    "lib/chunkio/src/cio_stream.c",
+    "get_stream_path",
+    1
+   ],
+   "before": "Unknown",
+   "after": "Safe",
+   "after_leaves": []
+  }
+ ],
+ "leaves": {
+  "rows_with_changed_leaves": 55,
+  "access_removed": 34,
+  "access_added": 0,
+  "removed": [
+   [
+    "unsupported",
+    "indirect memory access is outside the resource projection",
+    34
+   ],
+   [
+    "unknown_alias",
+    "unresolved resource identity `opts`",
+    13
+   ],
+   [
+    "unknown_alias",
+    "unresolved resource identity `label`",
+    12
+   ],
+   [
+    "unknown_alias",
+    "unresolved resource identity `label_k`",
+    8
+   ],
+   [
+    "unknown_alias",
+    "unresolved resource identity `label_v`",
+    7
+   ],
+   [
+    "unknown_alias",
+    "unresolved resource identity `l`",
+    6
+   ],
+   [
+    "unknown_alias",
+    "unresolved resource identity `span`",
+    6
+   ],
+   [
+    "unknown_alias",
+    "unresolved resource identity `label_value`",
+    5
+   ],
+   [
+    "unknown_alias",
+    "unresolved resource identity `destination_label`",
+    4
+   ],
+   [
+    "unknown_alias",
+    "unresolved resource identity `current_label`",
+    3
+   ],
+   [
+    "unknown_alias",
+    "unresolved resource identity `slabel`",
+    3
+   ],
+   [
+    "unknown_alias",
+    "unresolved resource identity `resource_span`",
+    3
+   ],
+   [
+    "unknown_alias",
+    "unresolved resource identity `scope_span`",
+    3
+   ],
+   [
+    "unknown_alias",
+    "unresolved resource identity `ctx`",
+    2
+   ],
+   [
+    "unknown_alias",
+    "unresolved resource identity `path`",
+    2
+   ],
+   [
+    "unknown_alias",
+    "unresolved resource identity `static_label`",
+    2
+   ],
+   [
+    "unknown_alias",
+    "unresolved resource identity `source_label`",
+    2
+   ],
+   [
+    "unknown_alias",
+    "unresolved resource identity `link`",
+    2
+   ],
+   [
+    "unknown_alias",
+    "unresolved resource identity `ev`",
+    2
+   ],
+   [
+    "unsupported",
+    "call to uncontracted function `get_stream_path`",
+    1
+   ],
+   [
+    "unknown_alias",
+    "unresolved resource identity `existing`",
+    1
+   ],
+   [
+    "unknown_alias",
+    "unresolved resource identity `left_label`",
+    1
+   ],
+   [
+    "unknown_alias",
+    "unresolved resource identity `right_label`",
+    1
+   ],
+   [
+    "unknown_alias",
+    "unresolved resource identity `label_name`",
+    1
+   ],
+   [
+    "unknown_alias",
+    "unresolved resource identity `map`",
+    1
+   ],
+   [
+    "unknown_alias",
+    "unresolved resource identity `event`",
+    1
+   ],
+   [
+    "unknown_alias",
+    "unresolved resource identity `p`",
+    1
+   ],
+   [
+    "unknown_alias",
+    "unresolved resource identity `status`",
+    1
+   ],
+   [
+    "unknown_alias",
+    "unresolved resource identity `cr`",
+    1
+   ]
+  ],
+  "added": [
+   [
+    "unsupported",
+    "loop re-acquisition: an earlier generation that may be live is still held",
+    4
+   ],
+   [
+    "unknown_alias",
+    "unresolved resource identity `new_static_label`",
+    2
+   ],
+   [
+    "unknown_alias",
+    "unresolved resource identity `ins_scope`",
+    2
+   ],
+   [
+    "unknown_alias",
+    "unresolved resource identity `new_label`",
+    1
+   ],
+   [
+    "unsupported",
+    "call to uncontracted function `compare`",
+    1
+   ],
+   [
+    "unsupported",
+    "field-link escape: a linked child may still be live on a path the escape does not carry it",
+    1
+   ],
+   [
+    "unknown_alias",
+    "unresolved resource identity `ev`",
+    1
+   ],
+   [
+    "unknown_alias",
+    "unresolved resource identity `opt`",
+    1
+   ],
+   [
+    "unknown_alias",
+    "unresolved resource identity `ti`",
+    1
+   ],
+   [
+    "unsupported",
+    "call to uncontracted function `flb_input_log_append_processed`",
+    1
+   ],
+   [
+    "unsupported",
+    "call to uncontracted function `input_chunk_append_raw`",
+    1
+   ]
+  ]
+ }
+}
