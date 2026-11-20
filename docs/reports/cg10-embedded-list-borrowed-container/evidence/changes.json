@@ -1,0 +1,938 @@
+{
+ "moves": [],
+ "changed_rows": [
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_AdminOptions_copy_to",
+   "occurrence": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    "indirect memory access is outside the resource projection @ lib/librdkafka-2.15.0/src/rdkafka_admin.c:1813",
+    "indirect memory access is outside the resource projection @ lib/librdkafka-2.15.0/src/rdkafka_admin.c:1823"
+   ],
+   "added": [
+    "call to `rd_kafka_confval_set_type` retains `states_list_copy` in `& dst - > match_consumer_group_states`, whose lifetime this body does not decide against it (retention-undecided) @ lib/librdkafka-2.15.0/src/rdkafka_admin.c:1813",
+    "call to `rd_kafka_confval_set_type` retains `types_list_copy` in `& dst - > match_consumer_group_types`, whose lifetime this body does not decide against it (retention-undecided) @ lib/librdkafka-2.15.0/src/rdkafka_admin.c:1823"
+   ],
+   "sole_embedded_list_row": false,
+   "access_left_after": 1
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_AdminOptions_set_broker",
+   "occurrence": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    "indirect memory access is outside the resource projection @ lib/librdkafka-2.15.0/src/rdkafka_admin.c:1574"
+   ],
+   "added": [
+    "call to `rd_kafka_confval_set_type` retains `& ibroker_id` in `& options - > broker`, whose lifetime this body does not decide against it (retention-undecided) @ lib/librdkafka-2.15.0/src/rdkafka_admin.c:1574"
+   ],
+   "sole_embedded_list_row": false,
+   "access_left_after": 0
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_AdminOptions_set_include_authorized_operations",
+   "occurrence": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    "indirect memory access is outside the resource projection @ lib/librdkafka-2.15.0/src/rdkafka_admin.c:1602"
+   ],
+   "added": [
+    "call to `rd_kafka_confval_set_type` retains `& true_or_false` in `& options - > include_authorized_operations`, whose lifetime this body does not decide against it (retention-undecided) @ lib/librdkafka-2.15.0/src/rdkafka_admin.c:1602"
+   ],
+   "sole_embedded_list_row": false,
+   "access_left_after": 0
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_AdminOptions_set_isolation_level",
+   "occurrence": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    "indirect memory access is outside the resource projection @ lib/librdkafka-2.15.0/src/rdkafka_admin.c:1582"
+   ],
+   "added": [
+    "call to `rd_kafka_confval_set_type` retains `& value` in `& options - > isolation_level`, whose lifetime this body does not decide against it (retention-undecided) @ lib/librdkafka-2.15.0/src/rdkafka_admin.c:1582"
+   ],
+   "sole_embedded_list_row": false,
+   "access_left_after": 0
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_AdminOptions_set_match_consumer_group_states",
+   "occurrence": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    "indirect memory access is outside the resource projection @ lib/librdkafka-2.15.0/src/rdkafka_admin.c:1646"
+   ],
+   "added": [
+    "call to `rd_kafka_confval_set_type` retains `states_list` in `& options - > match_consumer_group_states`, whose lifetime this body does not decide against it (retention-undecided) @ lib/librdkafka-2.15.0/src/rdkafka_admin.c:1646"
+   ],
+   "sole_embedded_list_row": false,
+   "access_left_after": 0
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_AdminOptions_set_match_consumer_group_types",
+   "occurrence": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    "indirect memory access is outside the resource projection @ lib/librdkafka-2.15.0/src/rdkafka_admin.c:1700"
+   ],
+   "added": [
+    "call to `rd_kafka_confval_set_type` retains `types_list` in `& options - > match_consumer_group_types`, whose lifetime this body does not decide against it (retention-undecided) @ lib/librdkafka-2.15.0/src/rdkafka_admin.c:1700"
+   ],
+   "sole_embedded_list_row": false,
+   "access_left_after": 0
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_AdminOptions_set_opaque",
+   "occurrence": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    "indirect memory access is outside the resource projection @ lib/librdkafka-2.15.0/src/rdkafka_admin.c:1711"
+   ],
+   "added": [
+    "call to `rd_kafka_confval_set_type` retains `opaque` in `& options - > opaque`, whose lifetime this body does not decide against it (retention-undecided) @ lib/librdkafka-2.15.0/src/rdkafka_admin.c:1711"
+   ],
+   "sole_embedded_list_row": false,
+   "access_left_after": 0
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_AdminOptions_set_operation_timeout",
+   "occurrence": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    "indirect memory access is outside the resource projection @ lib/librdkafka-2.15.0/src/rdkafka_admin.c:1551"
+   ],
+   "added": [
+    "call to `rd_kafka_confval_set_type` retains `& timeout_ms` in `& options - > operation_timeout`, whose lifetime this body does not decide against it (retention-undecided) @ lib/librdkafka-2.15.0/src/rdkafka_admin.c:1551"
+   ],
+   "sole_embedded_list_row": false,
+   "access_left_after": 0
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_AdminOptions_set_request_timeout",
+   "occurrence": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    "indirect memory access is outside the resource projection @ lib/librdkafka-2.15.0/src/rdkafka_admin.c:1540"
+   ],
+   "added": [
+    "call to `rd_kafka_confval_set_type` retains `& timeout_ms` in `& options - > request_timeout`, whose lifetime this body does not decide against it (retention-undecided) @ lib/librdkafka-2.15.0/src/rdkafka_admin.c:1540"
+   ],
+   "sole_embedded_list_row": false,
+   "access_left_after": 0
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_AdminOptions_set_require_stable_offsets",
+   "occurrence": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    "indirect memory access is outside the resource projection @ lib/librdkafka-2.15.0/src/rdkafka_admin.c:1592"
+   ],
+   "added": [
+    "call to `rd_kafka_confval_set_type` retains `& true_or_false` in `& options - > require_stable_offsets`, whose lifetime this body does not decide against it (retention-undecided) @ lib/librdkafka-2.15.0/src/rdkafka_admin.c:1592"
+   ],
+   "sole_embedded_list_row": false,
+   "access_left_after": 0
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_AdminOptions_set_validate_only",
+   "occurrence": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    "indirect memory access is outside the resource projection @ lib/librdkafka-2.15.0/src/rdkafka_admin.c:1562"
+   ],
+   "added": [
+    "call to `rd_kafka_confval_set_type` retains `& true_or_false` in `& options - > validate_only`, whose lifetime this body does not decide against it (retention-undecided) @ lib/librdkafka-2.15.0/src/rdkafka_admin.c:1562"
+   ],
+   "sole_embedded_list_row": false,
+   "access_left_after": 0
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_ConfigResource_add_ConfigEntry",
+   "occurrence": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    "indirect memory access is outside the resource projection @ lib/librdkafka-2.15.0/src/rdkafka_admin.c:3028"
+   ],
+   "added": [
+    "call to `rd_list_add`: the registry holder `& config - > config` is not one this body names (callback-registry-undecided) @ lib/librdkafka-2.15.0/src/rdkafka_admin.c:3028"
+   ],
+   "sole_embedded_list_row": true,
+   "access_left_after": 0
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_ConfigResource_destroy",
+   "occurrence": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    "indirect memory access is outside the resource projection @ lib/librdkafka-2.15.0/src/rdkafka_admin.c:2977"
+   ],
+   "added": [
+    "call to `rd_list_destroy`: the registry holder `& config - > config` is not one this body names (callback-registry-undecided) @ lib/librdkafka-2.15.0/src/rdkafka_admin.c:2977"
+   ],
+   "sole_embedded_list_row": false,
+   "access_left_after": 0
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_ConsumerGroupDescription_destroy",
+   "occurrence": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    "indirect memory access is outside the resource projection @ lib/librdkafka-2.15.0/src/rdkafka_admin.c:8076"
+   ],
+   "added": [
+    "call to `rd_list_destroy`: the registry holder `& grpdesc - > members` is not one this body names (callback-registry-undecided) @ lib/librdkafka-2.15.0/src/rdkafka_admin.c:8076"
+   ],
+   "sole_embedded_list_row": false,
+   "access_left_after": 0
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_DeleteAcls_result_response_destroy",
+   "occurrence": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    "indirect memory access is outside the resource projection @ lib/librdkafka-2.15.0/src/rdkafka_admin.c:6546"
+   ],
+   "added": [
+    "call to `rd_list_destroy`: the registry holder `& resp - > matching_acls` is not one this body names (callback-registry-undecided) @ lib/librdkafka-2.15.0/src/rdkafka_admin.c:6546"
+   ],
+   "sole_embedded_list_row": false,
+   "access_left_after": 0
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_ListConsumerGroupsResult_destroy",
+   "occurrence": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    "indirect memory access is outside the resource projection @ lib/librdkafka-2.15.0/src/rdkafka_admin.c:7359",
+    "indirect memory access is outside the resource projection @ lib/librdkafka-2.15.0/src/rdkafka_admin.c:7360"
+   ],
+   "added": [
+    "call to `rd_list_destroy`: the registry holder `& res - > errors` is not one this body names (callback-registry-undecided) @ lib/librdkafka-2.15.0/src/rdkafka_admin.c:7360",
+    "call to `rd_list_destroy`: the registry holder `& res - > valid` is not one this body names (callback-registry-undecided) @ lib/librdkafka-2.15.0/src/rdkafka_admin.c:7359"
+   ],
+   "sole_embedded_list_row": false,
+   "access_left_after": 0
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_NewPartitions_destroy",
+   "occurrence": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    "indirect memory access is outside the resource projection @ lib/librdkafka-2.15.0/src/rdkafka_admin.c:2517"
+   ],
+   "added": [
+    "call to `rd_list_destroy`: the registry holder `& newps - > replicas` is not one this body names (callback-registry-undecided) @ lib/librdkafka-2.15.0/src/rdkafka_admin.c:2517"
+   ],
+   "sole_embedded_list_row": false,
+   "access_left_after": 0
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_NewPartitions_set_replica_assignment",
+   "occurrence": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    "indirect memory access is outside the resource projection @ lib/librdkafka-2.15.0/src/rdkafka_admin.c:2568"
+   ],
+   "added": [
+    "call to `rd_list_add`: the registry holder `& newp - > replicas` is not one this body names (callback-registry-undecided) @ lib/librdkafka-2.15.0/src/rdkafka_admin.c:2568"
+   ],
+   "sole_embedded_list_row": false,
+   "access_left_after": 1
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_NewTopic_destroy",
+   "occurrence": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    "indirect memory access is outside the resource projection @ lib/librdkafka-2.15.0/src/rdkafka_admin.c:1951",
+    "indirect memory access is outside the resource projection @ lib/librdkafka-2.15.0/src/rdkafka_admin.c:1952"
+   ],
+   "added": [
+    "call to `rd_list_destroy`: the registry holder `& new_topic - > config` is not one this body names (callback-registry-undecided) @ lib/librdkafka-2.15.0/src/rdkafka_admin.c:1952",
+    "call to `rd_list_destroy`: the registry holder `& new_topic - > replicas` is not one this body names (callback-registry-undecided) @ lib/librdkafka-2.15.0/src/rdkafka_admin.c:1951"
+   ],
+   "sole_embedded_list_row": false,
+   "access_left_after": 0
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_NewTopic_set_replica_assignment",
+   "occurrence": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    "indirect memory access is outside the resource projection @ lib/librdkafka-2.15.0/src/rdkafka_admin.c:2015"
+   ],
+   "added": [
+    "call to `rd_list_add`: the registry holder `& new_topic - > replicas` is not one this body names (callback-registry-undecided) @ lib/librdkafka-2.15.0/src/rdkafka_admin.c:2015"
+   ],
+   "sole_embedded_list_row": false,
+   "access_left_after": 1
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_assignor.c",
+   "function": "rd_kafka_assignors_term",
+   "occurrence": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    "indirect memory access is outside the resource projection @ lib/librdkafka-2.15.0/src/rdkafka_assignor.c:673"
+   ],
+   "added": [
+    "call to `rd_list_destroy`: the registry holder `& rk - > rk_conf . partition_assignors` is not one this body names (callback-registry-undecided) @ lib/librdkafka-2.15.0/src/rdkafka_assignor.c:673"
+   ],
+   "sole_embedded_list_row": true,
+   "access_left_after": 0
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_assignor.c",
+   "function": "rd_kafka_member_subscription_match",
+   "occurrence": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    "indirect memory access is outside the resource projection @ lib/librdkafka-2.15.0/src/rdkafka_assignor.c:228"
+   ],
+   "added": [
+    "call to `rd_list_add`: the registry holder `& eligible_topic - > members` is not one this body names (callback-registry-undecided) @ lib/librdkafka-2.15.0/src/rdkafka_assignor.c:228"
+   ],
+   "sole_embedded_list_row": false,
+   "access_left_after": 2
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+   "function": "rd_kafka_brokers_wait_state_change_async",
+   "occurrence": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    "indirect memory access is outside the resource projection @ lib/librdkafka-2.15.0/src/rdkafka_broker.c:1398"
+   ],
+   "added": [
+    "call to `rd_list_add`: the registry holder `& rk - > rk_broker_state_change_waiters` is not one this body names (callback-registry-undecided) @ lib/librdkafka-2.15.0/src/rdkafka_broker.c:1398"
+   ],
+   "sole_embedded_list_row": true,
+   "access_left_after": 0
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_partition_add",
+   "occurrence": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    "indirect memory access is outside the resource projection @ lib/librdkafka-2.15.0/src/rdkafka_cgrp.c:4142"
+   ],
+   "added": [
+    "call to `rd_list_add`: the registry holder `& rkcg - > rkcg_toppars` is not one this body names (callback-registry-undecided) @ lib/librdkafka-2.15.0/src/rdkafka_cgrp.c:4142"
+   ],
+   "sole_embedded_list_row": false,
+   "access_left_after": 4
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c",
+   "function": "rd_kafka_share_fetch_reply_handle_partition",
+   "occurrence": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    "indirect memory access is outside the resource projection @ lib/librdkafka-2.15.0/src/rdkafka_fetcher.c:1551"
+   ],
+   "added": [
+    "call to `rd_list_add`: the registry holder `& batches_out - > entries` is not one this body names (callback-registry-undecided) @ lib/librdkafka-2.15.0/src/rdkafka_fetcher.c:1551"
+   ],
+   "sole_embedded_list_row": false,
+   "access_left_after": 35
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_header.c",
+   "function": "rd_kafka_header_add",
+   "occurrence": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    "indirect memory access is outside the resource projection @ lib/librdkafka-2.15.0/src/rdkafka_header.c:108"
+   ],
+   "added": [
+    "call to `rd_list_add`: the registry holder `& hdrs - > rkhdrs_list` is not one this body names (callback-registry-undecided) @ lib/librdkafka-2.15.0/src/rdkafka_header.c:108"
+   ],
+   "sole_embedded_list_row": false,
+   "access_left_after": 4
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_header.c",
+   "function": "rd_kafka_headers_destroy",
+   "occurrence": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    "indirect memory access is outside the resource projection @ lib/librdkafka-2.15.0/src/rdkafka_header.c:37"
+   ],
+   "added": [
+    "call to `rd_list_destroy`: the registry holder `& hdrs - > rkhdrs_list` is not one this body names (callback-registry-undecided) @ lib/librdkafka-2.15.0/src/rdkafka_header.c:37"
+   ],
+   "sole_embedded_list_row": false,
+   "access_left_after": 0
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_interceptor.c",
+   "function": "rd_kafka_conf_interceptor_add_on_conf_destroy",
+   "occurrence": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    "indirect memory access is outside the resource projection @ lib/librdkafka-2.15.0/src/rdkafka_interceptor.c:687"
+   ],
+   "added": [
+    "call to `rd_kafka_interceptor_method_add` retains `( void * ) on_conf_destroy` in `& conf - > interceptors . on_conf_destroy`, whose lifetime this body does not decide against it (retention-undecided) @ lib/librdkafka-2.15.0/src/rdkafka_interceptor.c:687"
+   ],
+   "sole_embedded_list_row": true,
+   "access_left_after": 0
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_interceptor.c",
+   "function": "rd_kafka_conf_interceptor_add_on_conf_dup",
+   "occurrence": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    "indirect memory access is outside the resource projection @ lib/librdkafka-2.15.0/src/rdkafka_interceptor.c:677"
+   ],
+   "added": [
+    "call to `rd_kafka_interceptor_method_add` retains `( void * ) on_conf_dup` in `& conf - > interceptors . on_conf_dup`, whose lifetime this body does not decide against it (retention-undecided) @ lib/librdkafka-2.15.0/src/rdkafka_interceptor.c:677"
+   ],
+   "sole_embedded_list_row": true,
+   "access_left_after": 0
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_interceptor.c",
+   "function": "rd_kafka_conf_interceptor_add_on_conf_set",
+   "occurrence": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    "indirect memory access is outside the resource projection @ lib/librdkafka-2.15.0/src/rdkafka_interceptor.c:667"
+   ],
+   "added": [
+    "call to `rd_kafka_interceptor_method_add` retains `( void * ) on_conf_set` in `& conf - > interceptors . on_conf_set`, whose lifetime this body does not decide against it (retention-undecided) @ lib/librdkafka-2.15.0/src/rdkafka_interceptor.c:667"
+   ],
+   "sole_embedded_list_row": true,
+   "access_left_after": 0
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_interceptor.c",
+   "function": "rd_kafka_conf_interceptor_add_on_new",
+   "occurrence": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    "indirect memory access is outside the resource projection @ lib/librdkafka-2.15.0/src/rdkafka_interceptor.c:699"
+   ],
+   "added": [
+    "call to `rd_kafka_interceptor_method_add` retains `( void * ) on_new` in `& conf - > interceptors . on_new`, whose lifetime this body does not decide against it (retention-undecided) @ lib/librdkafka-2.15.0/src/rdkafka_interceptor.c:699"
+   ],
+   "sole_embedded_list_row": true,
+   "access_left_after": 0
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_interceptor.c",
+   "function": "rd_kafka_interceptors_destroy",
+   "occurrence": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    "indirect memory access is outside the resource projection @ lib/librdkafka-2.15.0/src/rdkafka_interceptor.c:166",
+    "indirect memory access is outside the resource projection @ lib/librdkafka-2.15.0/src/rdkafka_interceptor.c:167",
+    "indirect memory access is outside the resource projection @ lib/librdkafka-2.15.0/src/rdkafka_interceptor.c:168",
+    "indirect memory access is outside the resource projection @ lib/librdkafka-2.15.0/src/rdkafka_interceptor.c:169",
+    "indirect memory access is outside the resource projection @ lib/librdkafka-2.15.0/src/rdkafka_interceptor.c:170",
+    "indirect memory access is outside the resource projection @ lib/librdkafka-2.15.0/src/rdkafka_interceptor.c:171",
+    "indirect memory access is outside the resource projection @ lib/librdkafka-2.15.0/src/rdkafka_interceptor.c:172",
+    "indirect memory access is outside the resource projection @ lib/librdkafka-2.15.0/src/rdkafka_interceptor.c:173",
+    "indirect memory access is outside the resource projection @ lib/librdkafka-2.15.0/src/rdkafka_interceptor.c:174",
+    "indirect memory access is outside the resource projection @ lib/librdkafka-2.15.0/src/rdkafka_interceptor.c:175",
+    "indirect memory access is outside the resource projection @ lib/librdkafka-2.15.0/src/rdkafka_interceptor.c:176",
+    "indirect memory access is outside the resource projection @ lib/librdkafka-2.15.0/src/rdkafka_interceptor.c:177",
+    "indirect memory access is outside the resource projection @ lib/librdkafka-2.15.0/src/rdkafka_interceptor.c:178",
+    "indirect memory access is outside the resource projection @ lib/librdkafka-2.15.0/src/rdkafka_interceptor.c:179",
+    "indirect memory access is outside the resource projection @ lib/librdkafka-2.15.0/src/rdkafka_interceptor.c:182"
+   ],
+   "added": [
+    "call to `rd_list_destroy`: the registry holder `& conf - > interceptors . config` is not one this body names (callback-registry-undecided) @ lib/librdkafka-2.15.0/src/rdkafka_interceptor.c:182",
+    "call to `rd_list_destroy`: the registry holder `& conf - > interceptors . on_acknowledgement` is not one this body names (callback-registry-undecided) @ lib/librdkafka-2.15.0/src/rdkafka_interceptor.c:172",
+    "call to `rd_list_destroy`: the registry holder `& conf - > interceptors . on_broker_state_change` is not one this body names (callback-registry-undecided) @ lib/librdkafka-2.15.0/src/rdkafka_interceptor.c:179",
+    "call to `rd_list_destroy`: the registry holder `& conf - > interceptors . on_commit` is not one this body names (callback-registry-undecided) @ lib/librdkafka-2.15.0/src/rdkafka_interceptor.c:174",
+    "call to `rd_list_destroy`: the registry holder `& conf - > interceptors . on_conf_destroy` is not one this body names (callback-registry-undecided) @ lib/librdkafka-2.15.0/src/rdkafka_interceptor.c:168",
+    "call to `rd_list_destroy`: the registry holder `& conf - > interceptors . on_conf_dup` is not one this body names (callback-registry-undecided) @ lib/librdkafka-2.15.0/src/rdkafka_interceptor.c:167",
+    "call to `rd_list_destroy`: the registry holder `& conf - > interceptors . on_conf_set` is not one this body names (callback-registry-undecided) @ lib/librdkafka-2.15.0/src/rdkafka_interceptor.c:166",
+    "call to `rd_list_destroy`: the registry holder `& conf - > interceptors . on_consume` is not one this body names (callback-registry-undecided) @ lib/librdkafka-2.15.0/src/rdkafka_interceptor.c:173",
+    "call to `rd_list_destroy`: the registry holder `& conf - > interceptors . on_destroy` is not one this body names (callback-registry-undecided) @ lib/librdkafka-2.15.0/src/rdkafka_interceptor.c:170",
+    "call to `rd_list_destroy`: the registry holder `& conf - > interceptors . on_new` is not one this body names (callback-registry-undecided) @ lib/librdkafka-2.15.0/src/rdkafka_interceptor.c:169",
+    "call to `rd_list_destroy`: the registry holder `& conf - > interceptors . on_request_sent` is not one this body names (callback-registry-undecided) @ lib/librdkafka-2.15.0/src/rdkafka_interceptor.c:175",
+    "call to `rd_list_destroy`: the registry holder `& conf - > interceptors . on_response_received` is not one this body names (callback-registry-undecided) @ lib/librdkafka-2.15.0/src/rdkafka_interceptor.c:176",
+    "call to `rd_list_destroy`: the registry holder `& conf - > interceptors . on_send` is not one this body names (callback-registry-undecided) @ lib/librdkafka-2.15.0/src/rdkafka_interceptor.c:171",
+    "call to `rd_list_destroy`: the registry holder `& conf - > interceptors . on_thread_exit` is not one this body names (callback-registry-undecided) @ lib/librdkafka-2.15.0/src/rdkafka_interceptor.c:178",
+    "call to `rd_list_destroy`: the registry holder `& conf - > interceptors . on_thread_start` is not one this body names (callback-registry-undecided) @ lib/librdkafka-2.15.0/src/rdkafka_interceptor.c:177"
+   ],
+   "sole_embedded_list_row": true,
+   "access_left_after": 0
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_interceptor.c",
+   "function": "rd_kafka_interceptors_init",
+   "occurrence": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    "indirect memory access is outside the resource projection @ lib/librdkafka-2.15.0/src/rdkafka_interceptor.c:198"
+   ],
+   "added": [
+    "call to `rd_list_init`: the registry holder `& conf - > interceptors . on_conf_destroy` is not one this body names (callback-registry-undecided) @ lib/librdkafka-2.15.0/src/rdkafka_interceptor.c:198"
+   ],
+   "sole_embedded_list_row": false,
+   "access_left_after": 1
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_metadata_cache.c",
+   "function": "rd_kafka_metadata_cache_init",
+   "occurrence": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    "indirect memory access is outside the resource projection @ lib/librdkafka-2.15.0/src/rdkafka_metadata_cache.c:907"
+   ],
+   "added": [
+    "call to `rd_list_init`: the registry holder `& rk - > rk_metadata_cache . rkmc_observers` is not one this body names (callback-registry-undecided) @ lib/librdkafka-2.15.0/src/rdkafka_metadata_cache.c:907"
+   ],
+   "sole_embedded_list_row": false,
+   "access_left_after": 0
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_metadata_cache.c",
+   "function": "rd_kafka_metadata_cache_wait_state_change_async",
+   "occurrence": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    "indirect memory access is outside the resource projection @ lib/librdkafka-2.15.0/src/rdkafka_metadata_cache.c:939"
+   ],
+   "added": [
+    "call to `rd_list_add`: the registry holder `& rk - > rk_metadata_cache . rkmc_observers` is not one this body names (callback-registry-undecided) @ lib/librdkafka-2.15.0/src/rdkafka_metadata_cache.c:939"
+   ],
+   "sole_embedded_list_row": true,
+   "access_left_after": 0
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_mock.c",
+   "function": "rd_kafka_mock_clear_requests",
+   "occurrence": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    "indirect memory access is outside the resource projection @ lib/librdkafka-2.15.0/src/rdkafka_mock.c:3503"
+   ],
+   "added": [
+    "call to `rd_list_clear`: the registry holder `& mcluster - > request_list` is not one this body names (callback-registry-undecided) @ lib/librdkafka-2.15.0/src/rdkafka_mock.c:3503"
+   ],
+   "sole_embedded_list_row": true,
+   "access_left_after": 0
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_mock.c",
+   "function": "rd_kafka_mock_partition_pidstate_get",
+   "occurrence": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    "indirect memory access is outside the resource projection @ lib/librdkafka-2.15.0/src/rdkafka_mock.c:461"
+   ],
+   "added": [
+    "call to `rd_list_add`: the registry holder `& mpart - > pidstates` is not one this body names (callback-registry-undecided) @ lib/librdkafka-2.15.0/src/rdkafka_mock.c:461"
+   ],
+   "sole_embedded_list_row": false,
+   "access_left_after": 3
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_mock.c",
+   "function": "rd_kafka_mock_start_request_tracking",
+   "occurrence": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    "indirect memory access is outside the resource projection @ lib/librdkafka-2.15.0/src/rdkafka_mock.c:3470"
+   ],
+   "added": [
+    "call to `rd_list_clear`: the registry holder `& mcluster - > request_list` is not one this body names (callback-registry-undecided) @ lib/librdkafka-2.15.0/src/rdkafka_mock.c:3470"
+   ],
+   "sole_embedded_list_row": true,
+   "access_left_after": 0
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_mock.c",
+   "function": "rd_kafka_mock_stop_request_tracking",
+   "occurrence": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    "indirect memory access is outside the resource projection @ lib/librdkafka-2.15.0/src/rdkafka_mock.c:3477"
+   ],
+   "added": [
+    "call to `rd_list_clear`: the registry holder `& mcluster - > request_list` is not one this body names (callback-registry-undecided) @ lib/librdkafka-2.15.0/src/rdkafka_mock.c:3477"
+   ],
+   "sole_embedded_list_row": true,
+   "access_left_after": 0
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_pid_new",
+   "occurrence": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    "indirect memory access is outside the resource projection @ lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c:1968"
+   ],
+   "added": [
+    "call to `rd_list_add`: the registry holder `& mcluster - > pids` is not one this body names (callback-registry-undecided) @ lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c:1968"
+   ],
+   "sole_embedded_list_row": false,
+   "access_left_after": 2
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_ssl.c",
+   "function": "rd_kafka_ssl_ctx_load_providers",
+   "occurrence": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "removed": [
+    "indirect memory access is outside the resource projection @ lib/librdkafka-2.15.0/src/rdkafka_ssl.c:1842",
+    "indirect memory access is outside the resource projection @ lib/librdkafka-2.15.0/src/rdkafka_ssl.c:1869"
+   ],
+   "added": [
+    "call to `rd_list_add`: the registry holder `& rk - > rk_conf . ssl . loaded_providers` is not one this body names (callback-registry-undecided) @ lib/librdkafka-2.15.0/src/rdkafka_ssl.c:1869",
+    "call to `rd_list_init`: the registry holder `& rk - > rk_conf . ssl . loaded_providers` is not one this body names (callback-registry-undecided) @ lib/librdkafka-2.15.0/src/rdkafka_ssl.c:1842"
+   ],
+   "sole_embedded_list_row": false,
+   "access_left_after": 1
+  }
+ ],
+ "sole_rows_after": [
+  {
+   "file": "lib/cmetrics/src/cmt_encode_msgpack.c",
+   "function": "pack_static_labels",
+   "status": "Unknown",
+   "leaves": [
+    "indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_ConfigResource_add_ConfigEntry",
+   "status": "Unknown",
+   "leaves": [
+    "call to `rd_list_add`: the registry holder `& config - > config` is not one this body names (callback-registry-undecided)"
+   ]
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_assignor.c",
+   "function": "rd_kafka_assignors_term",
+   "status": "Unknown",
+   "leaves": [
+    "call to `rd_list_destroy`: the registry holder `& rk - > rk_conf . partition_assignors` is not one this body names (callback-registry-undecided)"
+   ]
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+   "function": "rd_kafka_brokers_wait_state_change_async",
+   "status": "Unknown",
+   "leaves": [
+    "call to `rd_list_add`: the registry holder `& rk - > rk_broker_state_change_waiters` is not one this body names (callback-registry-undecided)"
+   ]
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_interceptor.c",
+   "function": "rd_kafka_conf_interceptor_add_on_conf_destroy",
+   "status": "Unknown",
+   "leaves": [
+    "call to `rd_kafka_interceptor_method_add` retains `( void * ) on_conf_destroy` in `& conf - > interceptors . on_conf_destroy`, whose lifetime this body does not decide against it (retention-undecided)"
+   ]
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_interceptor.c",
+   "function": "rd_kafka_conf_interceptor_add_on_conf_dup",
+   "status": "Unknown",
+   "leaves": [
+    "call to `rd_kafka_interceptor_method_add` retains `( void * ) on_conf_dup` in `& conf - > interceptors . on_conf_dup`, whose lifetime this body does not decide against it (retention-undecided)"
+   ]
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_interceptor.c",
+   "function": "rd_kafka_conf_interceptor_add_on_conf_set",
+   "status": "Unknown",
+   "leaves": [
+    "call to `rd_kafka_interceptor_method_add` retains `( void * ) on_conf_set` in `& conf - > interceptors . on_conf_set`, whose lifetime this body does not decide against it (retention-undecided)"
+   ]
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_interceptor.c",
+   "function": "rd_kafka_conf_interceptor_add_on_new",
+   "status": "Unknown",
+   "leaves": [
+    "call to `rd_kafka_interceptor_method_add` retains `( void * ) on_new` in `& conf - > interceptors . on_new`, whose lifetime this body does not decide against it (retention-undecided)"
+   ]
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_interceptor.c",
+   "function": "rd_kafka_interceptor_add_on_acknowledgement",
+   "status": "Unknown",
+   "leaves": [
+    "indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_interceptor.c",
+   "function": "rd_kafka_interceptor_add_on_broker_state_change",
+   "status": "Unknown",
+   "leaves": [
+    "indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_interceptor.c",
+   "function": "rd_kafka_interceptor_add_on_commit",
+   "status": "Unknown",
+   "leaves": [
+    "indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_interceptor.c",
+   "function": "rd_kafka_interceptor_add_on_consume",
+   "status": "Unknown",
+   "leaves": [
+    "indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_interceptor.c",
+   "function": "rd_kafka_interceptor_add_on_destroy",
+   "status": "Unknown",
+   "leaves": [
+    "indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_interceptor.c",
+   "function": "rd_kafka_interceptor_add_on_request_sent",
+   "status": "Unknown",
+   "leaves": [
+    "indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_interceptor.c",
+   "function": "rd_kafka_interceptor_add_on_response_received",
+   "status": "Unknown",
+   "leaves": [
+    "indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_interceptor.c",
+   "function": "rd_kafka_interceptor_add_on_send",
+   "status": "Unknown",
+   "leaves": [
+    "indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_interceptor.c",
+   "function": "rd_kafka_interceptor_add_on_thread_exit",
+   "status": "Unknown",
+   "leaves": [
+    "indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_interceptor.c",
+   "function": "rd_kafka_interceptor_add_on_thread_start",
+   "status": "Unknown",
+   "leaves": [
+    "indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_interceptor.c",
+   "function": "rd_kafka_interceptors_destroy",
+   "status": "Unknown",
+   "leaves": [
+    "call to `rd_list_destroy`: the registry holder `& conf - > interceptors . config` is not one this body names (callback-registry-undecided)",
+    "call to `rd_list_destroy`: the registry holder `& conf - > interceptors . on_acknowledgement` is not one this body names (callback-registry-undecided)",
+    "call to `rd_list_destroy`: the registry holder `& conf - > interceptors . on_broker_state_change` is not one this body names (callback-registry-undecided)",
+    "call to `rd_list_destroy`: the registry holder `& conf - > interceptors . on_commit` is not one this body names (callback-registry-undecided)",
+    "call to `rd_list_destroy`: the registry holder `& conf - > interceptors . on_conf_destroy` is not one this body names (callback-registry-undecided)",
+    "call to `rd_list_destroy`: the registry holder `& conf - > interceptors . on_conf_dup` is not one this body names (callback-registry-undecided)",
+    "call to `rd_list_destroy`: the registry holder `& conf - > interceptors . on_conf_set` is not one this body names (callback-registry-undecided)",
+    "call to `rd_list_destroy`: the registry holder `& conf - > interceptors . on_consume` is not one this body names (callback-registry-undecided)",
+    "call to `rd_list_destroy`: the registry holder `& conf - > interceptors . on_destroy` is not one this body names (callback-registry-undecided)",
+    "call to `rd_list_destroy`: the registry holder `& conf - > interceptors . on_new` is not one this body names (callback-registry-undecided)",
+    "call to `rd_list_destroy`: the registry holder `& conf - > interceptors . on_request_sent` is not one this body names (callback-registry-undecided)",
+    "call to `rd_list_destroy`: the registry holder `& conf - > interceptors . on_response_received` is not one this body names (callback-registry-undecided)",
+    "call to `rd_list_destroy`: the registry holder `& conf - > interceptors . on_send` is not one this body names (callback-registry-undecided)",
+    "call to `rd_list_destroy`: the registry holder `& conf - > interceptors . on_thread_exit` is not one this body names (callback-registry-undecided)",
+    "call to `rd_list_destroy`: the registry holder `& conf - > interceptors . on_thread_start` is not one this body names (callback-registry-undecided)"
+   ]
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_metadata_cache.c",
+   "function": "rd_kafka_metadata_cache_wait_state_change_async",
+   "status": "Unknown",
+   "leaves": [
+    "call to `rd_list_add`: the registry holder `& rk - > rk_metadata_cache . rkmc_observers` is not one this body names (callback-registry-undecided)"
+   ]
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_mock.c",
+   "function": "rd_kafka_mock_clear_requests",
+   "status": "Unknown",
+   "leaves": [
+    "call to `rd_list_clear`: the registry holder `& mcluster - > request_list` is not one this body names (callback-registry-undecided)"
+   ]
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_mock.c",
+   "function": "rd_kafka_mock_start_request_tracking",
+   "status": "Unknown",
+   "leaves": [
+    "call to `rd_list_clear`: the registry holder `& mcluster - > request_list` is not one this body names (callback-registry-undecided)"
+   ]
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_mock.c",
+   "function": "rd_kafka_mock_stop_request_tracking",
+   "status": "Unknown",
+   "leaves": [
+    "call to `rd_list_clear`: the registry holder `& mcluster - > request_list` is not one this body names (callback-registry-undecided)"
+   ]
+  }
+ ]
+}

@@ -172,6 +172,7 @@ import QCore.ElementDestroyer
 import QCore.ElementDestroyerSwitch
 import QCore.ElementLinkPremises
 import QCore.ElementReleaseSummary
+import QCore.EmbeddedListContainer
 import QCore.EnumerationAttribution
 import QCore.EpochAccounting
 import QCore.EpochSourceLowering

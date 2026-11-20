@@ -12225,6 +12225,66 @@ an undeclared OpenSSL producer). `QCore.NullableReferenceDrop` (12 audited,
     `the_decision_is_the_models`), bound to `DECISION_VECTORS`;
     [report](../reports/cg10-indirect-access-sole-residuals-r3/README.md).
 
+<a id="constraint-69"></a>
+
+69. **A list helper handed a formal's embedded list is a borrowed container
+    operation, and the leaf names the container custody that decides it.**
+    Card CG10-EMBEDDED-LIST-BORROWED-CONTAINER, on the USER DECISION of
+    2026-11-20 on round 3's decision class 1, question 1: "Read embedded lists
+    as borrowed container operations" (`legacy_embedded_container.rs`; two
+    hooks in `legacy_c.rs`, after rule 38i in `expression_statement` and after
+    rule 12k at the whole-call `return`). A list helper handed the address of
+    a list embedded in a record the body does not own (`rd_list_add(&c->config,
+    e)`, `rd_list_destroy(&conf->interceptors.on_new)`) is a `Borrowed`
+    operation on the caller's container: the body takes no custody of the
+    record or the list, and the list's elements stay the container's. A
+    helper with every position `Borrowed` and no container clause
+    (`cfl_list_size(&cmt->static_labels->list)` as its own statement) is
+    already read so by rule W44 and is unchanged. The container is recognised
+    by its custody refusal, not by the helper's name: any registry or
+    retaining holder embedded in a formal's record (`msgpack_packer_init(&ic->mp_pck,
+    ic, cb)`'s packer as well as an `rd_list_t`) is read alike. Asked last, only for exactly
+    the gate's refusal of a statement with no braces that reads no tracked
+    descriptor, whose first call `F` has an actual `& R -> M` or `& R . M`
+    continued by `. N` / `-> N` hops, `R` a formal: the statement is
+    classified again with every memory-reading actual read as rule W44 reads
+    it (`reclassified_with_borrowed_actuals`, shared with rule 12k); when that
+    reading is refused by a container custody refusal of `F` quoting that
+    actual (rule 13w's `callback-registry-undecided`, rule 13x's
+    `callback-element-custody-undecided`, rule 12t's `retention-undecided`),
+    the node keeps the gate's writes and takes that description. Anything
+    else keeps the gate's refusal byte for byte. The reading is never a
+    lowering (counters restored, instruction discarded), so **no verdict
+    moves**. **What the decision does not decide, and this rule keeps:** a
+    helper that releases the elements (`rd_list_destroy`, `rd_list_clear`:
+    the registration invoked over the elements, which are dropped) is never
+    read as a no-op, because a registration made in another frame is not in
+    force here (rule 13w) and an unknown callback is an unstated effect; an
+    element added (`rd_list_add`, `resource_element_added`) passes to the
+    container only under a releasing registration the body holds (rule 13x),
+    never into a container reached through a formal; a caller's object
+    retained by the caller's container (`rd_kafka_interceptor_method_add`'s
+    `resource_retained_by`) stays rule 12t's undecided retention. **Rule 46
+    is neither read nor amended**: it governs an element destroyer's unlink
+    of an intrusive link member, and this rule admits no element entry and
+    takes no element. **Do not** admit a container call under this rule,
+    read a releasing or element-adding helper on a borrowed container as a
+    borrow, extend it to a local, file-scope or call-rooted record, to a bare
+    `&R` (a frame holder, rule 13w), to a subscripted or cast actual, or to a
+    container actual of a nested call. Parity rows: `position:
+    "embedded-container"`, `rule: "69"`, the form, the callee and the answer.
+    Premises stated, not proved: faithful token extraction (trust boundary
+    28). `QCore.EmbeddedListContainer` (`a_borrowed_only_helper_changes_no_custody`,
+    `a_releasing_helper_is_not_a_noop`,
+    `the_noop_reading_misses_a_use_after_release`,
+    `an_unknown_registration_decides_no_destroy`,
+    `an_unknown_registration_decides_no_add`,
+    `an_element_added_to_an_undecided_container_has_no_one_outcome`,
+    `container_vectors_hold`, `the_rule_never_admits`,
+    `the_status_of_a_function_is_unchanged`, …), bound to
+    `CONTAINER_VECTORS`;
+    [report](../reports/cg10-embedded-list-borrowed-container/README.md).
+
 <a id="constraint-70"></a>
 
 70. **A formal's pointer stored into a member of a formal's object is a
