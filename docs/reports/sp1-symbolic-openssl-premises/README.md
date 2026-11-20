@@ -472,3 +472,12 @@ Each will need terms beyond this vocabulary. Adding one is a specification row
 * the generated `proof/QCore.lean`, `docs/agents/gateway.md` and
   `docs/agents/README.md` (rerun their generators);
 * `scripts/gate_scope_walkers.json` (one appended entry).
+
+## Integrator measurement (2026-11-21)
+
+Landing `2c07390b6` on main `b7f86a0de` (after r38 and r39), measured with
+`--declared PREDICTION.md`: corpus, twelve-home, system and slice all
+complete with 0 moves and 0 status deltas; the declared comparison matches on
+every route. Comparison: `integration/native-comparison.json.gz` (uncompressed
+sha256 `c7032cd0b6345c84a529b0ff6aa913726b87aba5da9213d0adfa175d5e9408d6`). Landing gate: `integration/gate.json` (only the known host
+libcurl failure; Lean 463 audits).
