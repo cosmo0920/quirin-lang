@@ -90,10 +90,16 @@ pub(crate) fn typedef_element(array_type: &str) -> Option<&str> {
         match word {
             "const" => {}
             _ if name.is_none()
-                && word.chars().next().is_some_and(|c| c.is_ascii_alphabetic() || c == '_')
+                && word
+                    .chars()
+                    .next()
+                    .is_some_and(|c| c.is_ascii_alphabetic() || c == '_')
                 && word.chars().all(|c| c.is_ascii_alphanumeric() || c == '_')
                 && scalar_spelling(word).is_none()
-                && !matches!(word, "struct" | "union" | "enum" | "volatile" | "_Atomic" | "restrict") =>
+                && !matches!(
+                    word,
+                    "struct" | "union" | "enum" | "volatile" | "_Atomic" | "restrict"
+                ) =>
             {
                 name = Some(word);
             }
@@ -150,7 +156,8 @@ pub(crate) fn element_place<'n>(
     cast: &'n Value,
     typedefs: &BTreeMap<String, Option<String>>,
 ) -> Option<&'n Value> {
-    if kind(cast) != "ImplicitCastExpr" || cast["castKind"].as_str() != Some("ArrayToPointerDecay") {
+    if kind(cast) != "ImplicitCastExpr" || cast["castKind"].as_str() != Some("ArrayToPointerDecay")
+    {
         return None;
     }
     let mut operand = children(cast).first()?;
@@ -211,7 +218,14 @@ mod tests {
         assert_eq!(table["u"], None);
         note_scalar_typedef(&mut table, "u", Some("unsigned int"));
         assert_eq!(table["u"], None);
-        for text in ["char *", "struct s", "volatile int", "int[4]", "void", "_Atomic int"] {
+        for text in [
+            "char *",
+            "struct s",
+            "volatile int",
+            "int[4]",
+            "void",
+            "_Atomic int",
+        ] {
             let mut table = BTreeMap::new();
             note_scalar_typedef(&mut table, "t", Some(text));
             assert_eq!(table["t"], None, "{text}");
