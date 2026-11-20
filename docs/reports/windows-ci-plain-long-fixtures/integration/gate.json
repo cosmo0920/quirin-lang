@@ -1,0 +1,13 @@
+{
+  "note": "Landing integrate/r42 (base main 80d0e2944; merges fix/windows-plain-long-fixtures 8231af235, based on main 9a769c6b0, no conflicts; third_party/libevent checked out at d82464a27). Integrator fix for Windows CI (user request 2026-11-20, \"We needed to fix the failures on Windows CI.\"): 14 gateway tests in four targets failed on x86_64-pc-windows-msvc because their synthetic fixtures spelled plain `long` (unreadable to the declared-ABI reader under an LLP64 Clang, rule 11q) or took calloc from the unread UCRT headers; the fixtures now spell __SIZE_TYPE__/__PTRDIFF_TYPE__/long long and ag1 declares calloc/free/NULL itself; assertions unchanged; no gateway, contract, rule or Lean change; no amendments. Full landing gate on the merge (private/integrate-r42/gate, raw record beside this file as gate-scope.json) via scripts/gate_scope.py --base origin/main --full --landing through private/toolchain/env.sh: Rust 668 units / 713 summaries, 9798 passed, 0 failed, 21 ignored; fmt, Clippy and both reevaluation examples exit 0; Python 779 tests OK. No Lean step (no proof diff; lean_audits carried from r41, 466) and no provider steps (provider_tests carried from r39, 163). Windows evidence is a simulation, not CI: Clang 21 with --target=x86_64-pc-windows-msvc through QCORE_CLANG reproduces the CI failures on the original fixtures (5, 3 and 3 in the three header-free targets, exactly as CI; ag1 6 of 6 for want of UCRT headers) and passes all four with the fix; the same simulation passes indirect_access_sole_residuals_r3 and the pending rule-69/70 cards' new and moved targets except member_effect_summary (compile-time cfg!(windows), not simulable). The next Windows CI run on main is the confirmation. land.py publish is owed.",
+  "workspace_tests": 9798,
+  "provider_tests": 163,
+  "python_evidence_validator_tests": 779,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "full landing gate: every step exits 0; no Lean step (no proof diff; lean_audits carried from r41) and no provider steps (provider_tests carried from r39)",
+  "lean_audits": 466,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

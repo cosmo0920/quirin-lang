@@ -1877,6 +1877,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [windows-c11-threads](windows-c11-threads/README.md) | Windows C11 thread emission |
 
+| [windows-ci-plain-long-fixtures](windows-ci-plain-long-fixtures/README.md) | Windows CI: target-portable fixture spellings |
+
 | [windows-ci-test-portability](windows-ci-test-portability/README.md) | WINDOWS-TEST-PORTABILITY: the first full Windows CI suite |
 
 | [windows-clang-fixtures](windows-clang-fixtures/README.md) | Windows Clang fixture type and line-ending repairs |
