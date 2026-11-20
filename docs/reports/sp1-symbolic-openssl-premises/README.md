@@ -354,6 +354,29 @@ The user path (§8) ran on the `-` spelling. The switch changes only the text
 of the ten statements holding a difference, and premises are metadata, so it
 was not rerun.
 
+**Gate 4, the gate of record after merging main `7c026b527`.**
+`python3 scripts/gate_scope.py --base 7c026b527 --out private/gate-4` on
+`31ef7f1df` ([record](gate/gate-4.json), mode full). It exited 1, and the only
+failure is the known host failure:
+
+| Step | Exit | Counts |
+|---|---|---|
+| fmt, clippy | 0, 0 | |
+| rust-suite | 101 | 667 units, 9779 passed, 1 failed (`libcurl_user_crate_versions`, the recorded host failure), 21 ignored |
+| reevaluation probe, follow-up | 0, 0 | |
+| lean | 0 | 461 audits |
+| python | 0 | 779 tests |
+| provider package build, verify (all, libevent) | 0, 0, 0 | |
+| provider test | 0 | 162 passed, 1 ignored |
+| provider fmt, clippy | 0, 0 | |
+
+**The user path after the merge** (`private/logs/userpath-tip-3.log`, exit 0):
+
+* All 12 fixture functions have the status that r36 recorded for its tip
+  ([comparison](evidence/user-path/fixture-r36-tip.txt)), so none moved.
+* All 113 bindings are `Pending`.
+* The canonical formulas are printed and no English premise text remains.
+
 ## 10. Follow-ups
 
 These are registered in [`integration-amendments.json`](integration-amendments.json).
