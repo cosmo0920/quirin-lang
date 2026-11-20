@@ -2900,6 +2900,26 @@
 "read": [],
 "seconds": 0.5
 },
+"qcore-c-gateway::test::ag1_indirect_member_access": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.7
+},
+"qcore-c-gateway::test::ag2_unresolved_alias": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.7
+},
 "qcore-c-gateway::test::alias_aggregate": {
 "dirs": [],
 "exit": 0,
@@ -3752,6 +3772,16 @@
 "read": [],
 "seconds": 0.6
 },
+"qcore-c-gateway::test::condition_leaf_reads": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.8
+},
 "qcore-c-gateway::test::constant_do_while": {
 "dirs": [],
 "exit": 0,
@@ -4247,6 +4277,16 @@
 "read": [],
 "seconds": 1.5
 },
+"qcore-c-gateway::test::embedded_list_borrowed_container": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.4
+},
 "qcore-c-gateway::test::event_holder_frame": {
 "dirs": [],
 "exit": 0,
@@ -4407,6 +4447,16 @@
 "read": [],
 "seconds": 1.3
 },
+"qcore-c-gateway::test::in_place_mention_guard": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 2.4
+},
 "qcore-c-gateway::test::index_traversal": {
 "dirs": [],
 "exit": 0,
@@ -4456,6 +4506,16 @@
 "probed_count": 1,
 "read": [],
 "seconds": 0.4
+},
+"qcore-c-gateway::test::indirect_access_sole_residuals_r3": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.6
 },
 "qcore-c-gateway::test::indirect_chain_access": {
 "dirs": [],
@@ -4754,6 +4814,16 @@
 "probed_count": 1,
 "read": [],
 "seconds": 1.4
+},
+"qcore-c-gateway::test::member_store_retention": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.9
 },
 "qcore-c-gateway::test::member_value_helper": {
 "dirs": [],
