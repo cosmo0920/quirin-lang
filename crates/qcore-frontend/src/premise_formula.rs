@@ -37,7 +37,10 @@
 //! The canonical printing ([`canonical`]) is the premise's statement: its
 //! identity is NAME plus that text, and every rendering of the premise prints
 //! it. A premise stays an undischarged assumption: no consumer that decides a
-//! verdict reads it. The Lean model is `QCore.PremiseFormula`; its decision
+//! verdict reads it. The Lean model is `QCore.PremiseFormula` (card
+//! SP3-SYMBOLIC-FLUENT-BIT-LIBC-PREMISES adds the Fluent Bit block and
+//! `QCore.PremiseFormula.FluentBit`, whose three formulas are bound the same
+//! way); its decision
 //! vectors, vocabulary and the four OpenSSL formulas are bound to this module
 //! by `crates/qcore-frontend/tests/premise_formula.rs`.
 //!
@@ -367,6 +370,130 @@ pub const VOCABULARY: &[Term] = &[
         result: Sort::Eff,
         meaning: INERT_DEFINITION,
     },
+    // ---- Card SP3-SYMBOLIC-FLUENT-BIT-LIBC-PREMISES: the Fluent Bit terms
+    // (`quirin-provider-fluent-bit`'s three premises). Appended as one block;
+    // the entries above are unchanged.
+    Term {
+        name: "result",
+        arguments: &[],
+        result: Sort::SetObj,
+        meaning: "the object the call's result designates (no object for a null or scalar result)",
+    },
+    Term {
+        name: "interior",
+        arguments: &[Sort::SetObj],
+        result: Sort::SetObj,
+        meaning: "the objects the objects of the set own, directly or in turn: what an owned pointer member designates, and what that object owns",
+    },
+    Term {
+        name: "chunk_name",
+        arguments: &[Sort::SetObj],
+        result: Sort::SetObj,
+        meaning: "the name (ch->name, an sds ChunkIO allocates and frees) of the ChunkIO chunk (ic->chunk) each input chunk of the set holds",
+    },
+    Term {
+        name: "tracked",
+        arguments: &[],
+        result: Sort::SetObj,
+        meaning: "the objects the resource projection holds a custody state for",
+    },
+    Term {
+        name: "claimed",
+        arguments: &[],
+        result: Sort::SetObj,
+        meaning: "the objects whose custody or lifetime a clause of the declaration states: a parameter mode's object, or a result handed over with custody (a resource_return_none result is not one)",
+    },
+    Term {
+        name: "bound",
+        arguments: &[],
+        result: Sort::SetObj,
+        meaning: "the objects the caller binds to a name at the call's site: the result assigned to a variable, a member or an element",
+    },
+    Term {
+        name: "stored",
+        arguments: &[],
+        result: Sort::SetObj,
+        meaning: "the objects the caller stores at the call's site where they outlive the statement: through a pointer or into a container",
+    },
+    Term {
+        name: "faithful",
+        arguments: &[],
+        result: Sort::Prop,
+        meaning: "the declaration's result clause states exactly the custody the caller acquires from the call at its site",
+    },
+    Term {
+        name: "admitted",
+        arguments: &[],
+        result: Sort::Prop,
+        meaning: "the gateway admits the call at its site under its rule for a call whose result mode is None and whose parameters are all Borrowed (card O04-TRACE premises N6 and N8)",
+    },
+    Term {
+        name: "config_of",
+        arguments: &[Sort::SetObj],
+        result: Sort::SetObj,
+        meaning: "the Fluent Bit context (struct flb_config, its config member) each input instance of the set belongs to",
+    },
+    Term {
+        name: "ingesting",
+        arguments: &[],
+        result: Sort::SetObj,
+        meaning: "the contexts whose is_ingestion_active member is true when the call reads it",
+    },
+    Term {
+        name: "collector",
+        arguments: &[],
+        result: Sort::SetObj,
+        meaning: "the collector the call finds by the id it is given in its input instance's collector list (get_collector); no object when none has that id",
+    },
+    Term {
+        name: "event_registered",
+        arguments: &[],
+        result: Sort::SetObj,
+        meaning: "the collectors whose own event the call registers with the collector's event loop (mk_event_add, or mk_event_timeout_create for a timer collector)",
+    },
+    Term {
+        name: "set_running",
+        arguments: &[],
+        result: Sort::SetObj,
+        meaning: "the collectors whose running member the call sets true",
+    },
+    Term {
+        name: "returns_zero",
+        arguments: &[],
+        result: Sort::Prop,
+        meaning: "the call returns 0",
+    },
+    Term {
+        name: "in_tree",
+        arguments: &[],
+        result: Sort::SetObj,
+        meaning: "the output plugins Fluent Bit's own source tree defines (the struct flb_output_plugin of each plugins/out_* plugin)",
+    },
+    Term {
+        name: "synchronous",
+        arguments: &[],
+        result: Sort::SetObj,
+        meaning: "the output plugins whose flags carry FLB_OUTPUT_SYNCHRONOUS",
+    },
+    Term {
+        name: "proxy",
+        arguments: &[],
+        result: Sort::SetObj,
+        meaning: "the output plugins a proxy registers: plugins defined outside Fluent Bit's tree and loaded at run time through flb_plugin_proxy",
+    },
+    Term {
+        name: "production",
+        arguments: &[],
+        result: Sort::Prop,
+        meaning: "the call is made by a running Fluent Bit engine from its output dispatch, not directly by a test or another embedding",
+    },
+    Term {
+        name: "out_plugin",
+        arguments: &[Sort::SetObj],
+        result: Sort::SetObj,
+        meaning: "the output plugin (its p member) of each output instance of the set",
+    },
+    // ---- End of SP3-SYMBOLIC-FLUENT-BIT-LIBC-PREMISES.
 ];
 
 /// The one defined term: `#inert` abbreviates this effect (C04.18.9).
@@ -1025,4 +1152,39 @@ pub const DECISION_VECTORS: &[(&str, bool)] = &[
     ("{} |-> #inert", false),
     // An effect where a proposition stands.
     ("#stated |-> #inert && #inert", false),
+    // ---- Card SP3-SYMBOLIC-FLUENT-BIT-LIBC-PREMISES: every Fluent Bit term,
+    // in an accepted and a refused position.
+    (
+        "quant all #r in #result: #r in #interior(#args) && #r in #chunk_name(#args)",
+        true,
+    ),
+    (
+        "quant all #r in #result: #r in #result \\ (#tracked | #claimed | #bound | #stored)",
+        true,
+    ),
+    ("#admitted -> #faithful", true),
+    (
+        "quant all #g in #config_of(#args): #g in #ingesting -> #returns_zero",
+        true,
+    ),
+    (
+        "quant all #c in #collector: #c in #event_registered && #c in #set_running",
+        true,
+    ),
+    (
+        "#production -> (quant all #p in #out_plugin(#args): #p in #synchronous \\ #in_tree && #p in #proxy)",
+        true,
+    ),
+    // A proposition is not a callback.
+    ("#faithful |-> #inert", false),
+    // A set of objects is not a proposition.
+    ("#result", false),
+    // A proposition is not a set of objects.
+    ("#interior(#admitted) == {}", false),
+    // A term without its argument.
+    ("quant all #r in #result: #r in #chunk_name", false),
+    // A proposition is not an element.
+    ("#returns_zero in #collector", false),
+    // An object set where a callback set stands.
+    ("#out_plugin(#args) |-> #inert", false),
 ];

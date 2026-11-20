@@ -43,6 +43,10 @@ Theorems:
   every coherent model (`unstated_entails_ex_data`), in particular for the
   SSL object's ex_data class (`unstated_entails_ex_data_for_ssl`).
 
+Card SP3-SYMBOLIC-FLUENT-BIT-LIBC-PREMISES appends one block of Fluent Bit
+terms (`vocab`, `FluentBitTerms`, `prim0`, `prim1`, `decisionVectors`); its
+formulas and theorems are in `QCore.PremiseFormula.FluentBit`.
+
 ## What this is not
 
 A premise is an undischarged assumption (C04.18): nothing here, and no
@@ -103,7 +107,28 @@ def vocab : List (String × List Srt × Srt) := [
   ("takes", [.sres], .sres),
   ("releases", [.sres], .sres),
   ("retains", [.sres], .sres),
-  ("inert", [], .eff)
+  ("inert", [], .eff),
+  -- Card SP3-SYMBOLIC-FLUENT-BIT-LIBC-PREMISES: the Fluent Bit terms.
+  ("result", [], .sobj),
+  ("interior", [.sobj], .sobj),
+  ("chunk_name", [.sobj], .sobj),
+  ("tracked", [], .sobj),
+  ("claimed", [], .sobj),
+  ("bound", [], .sobj),
+  ("stored", [], .sobj),
+  ("faithful", [], .prop),
+  ("admitted", [], .prop),
+  ("config_of", [.sobj], .sobj),
+  ("ingesting", [], .sobj),
+  ("collector", [], .sobj),
+  ("event_registered", [], .sobj),
+  ("set_running", [], .sobj),
+  ("returns_zero", [], .prop),
+  ("in_tree", [], .sobj),
+  ("synchronous", [], .sobj),
+  ("proxy", [], .sobj),
+  ("production", [], .prop),
+  ("out_plugin", [.sobj], .sobj)
 ]
 
 def classes : List String :=
@@ -184,6 +209,56 @@ def wf (t : Raw) : Bool := check [] t == some .prop
 
 /-! ## Denotation -/
 
+/-- Card SP3-SYMBOLIC-FLUENT-BIT-LIBC-PREMISES: one component per Fluent Bit
+term, each its own interpretation (C04.18.9's Fluent Bit block), so a model
+says what these terms mean of the call and nothing more. Sets of objects are
+predicates on the model's elements; the three propositions are `Prop`s. -/
+structure FluentBitTerms (U : Type) where
+  result : U → Prop
+  interior : (U → Prop) → U → Prop
+  chunkName : (U → Prop) → U → Prop
+  tracked : U → Prop
+  claimed : U → Prop
+  bound : U → Prop
+  stored : U → Prop
+  faithful : Prop
+  admitted : Prop
+  configOf : (U → Prop) → U → Prop
+  ingesting : U → Prop
+  collector : U → Prop
+  eventRegistered : U → Prop
+  setRunning : U → Prop
+  returnsZero : Prop
+  inTree : U → Prop
+  synchronous : U → Prop
+  proxy : U → Prop
+  production : Prop
+  outPlugin : (U → Prop) → U → Prop
+
+/-- The Fluent Bit components that hold nothing: every set empty, every
+proposition false. -/
+def FluentBitTerms.none (U : Type) : FluentBitTerms U where
+  result := fun _ => False
+  interior := fun _ _ => False
+  chunkName := fun _ _ => False
+  tracked := fun _ => False
+  claimed := fun _ => False
+  bound := fun _ => False
+  stored := fun _ => False
+  faithful := False
+  admitted := False
+  configOf := fun _ _ => False
+  ingesting := fun _ => False
+  collector := fun _ => False
+  eventRegistered := fun _ => False
+  setRunning := fun _ => False
+  returnsZero := False
+  inTree := fun _ => False
+  synchronous := fun _ => False
+  proxy := fun _ => False
+  production := False
+  outPlugin := fun _ _ => False
+
 /-- An abstract model of one call: its objects, classes, methods, callbacks
 are elements of `U`; sets are predicates; `runs f` are the runs
 of callback `f` during the call; the resource terms are read per run. -/
@@ -217,6 +292,8 @@ structure Model where
   retains : Run → (U → Prop) → U → Prop
   runs : U → Run → Prop
   const : String → U
+  /-- Card SP3-SYMBOLIC-FLUENT-BIT-LIBC-PREMISES: the Fluent Bit terms. -/
+  fb : FluentBitTerms U
 
 /-- A value: an element, a set, a per-run resource set, a proposition, a
 property of a run, or nothing (an ill-sorted application). -/
@@ -249,6 +326,23 @@ def prim0 (M : Model) (f : String) : Val M :=
   else if f = "settable" then .st M.settable
   else if f = "caller_held" then .rs M.callerHeld
   else if f = "inert" then .ef (inertEff M)
+  -- Card SP3-SYMBOLIC-FLUENT-BIT-LIBC-PREMISES.
+  else if f = "result" then .st M.fb.result
+  else if f = "tracked" then .st M.fb.tracked
+  else if f = "claimed" then .st M.fb.claimed
+  else if f = "bound" then .st M.fb.bound
+  else if f = "stored" then .st M.fb.stored
+  else if f = "faithful" then .pr M.fb.faithful
+  else if f = "admitted" then .pr M.fb.admitted
+  else if f = "ingesting" then .st M.fb.ingesting
+  else if f = "collector" then .st M.fb.collector
+  else if f = "event_registered" then .st M.fb.eventRegistered
+  else if f = "set_running" then .st M.fb.setRunning
+  else if f = "returns_zero" then .pr M.fb.returnsZero
+  else if f = "in_tree" then .st M.fb.inTree
+  else if f = "synchronous" then .st M.fb.synchronous
+  else if f = "proxy" then .st M.fb.proxy
+  else if f = "production" then .pr M.fb.production
   else .bad
 
 def prim1 (M : Model) (f : String) : Val M → Val M
@@ -268,6 +362,11 @@ def prim1 (M : Model) (f : String) : Val M → Val M
       else if f = "slots" then .st (M.slots s)
       else if f = "store" then .st (M.store s)
       else if f = "lookups" then .st (M.lookups s)
+      -- Card SP3-SYMBOLIC-FLUENT-BIT-LIBC-PREMISES.
+      else if f = "interior" then .st (M.fb.interior s)
+      else if f = "chunk_name" then .st (M.fb.chunkName s)
+      else if f = "config_of" then .st (M.fb.configOf s)
+      else if f = "out_plugin" then .st (M.fb.outPlugin s)
       else .bad
   | .rs s =>
       if f = "takes" then .rs (fun r => M.takes r (s r))
@@ -366,22 +465,19 @@ theorem term_mem {f : String} {sig : List Srt × Srt} (h : term f = some sig) :
 theorem prim0_kind (M : Model) {f : String} {s : Srt} (h : term f = some ([], s)) :
     (prim0 M f).kind = some s.kind := by
   have hm := term_mem h
-  simp only [vocab, List.mem_cons, Prod.mk.injEq, List.mem_nil_iff, or_false] at hm
-  rcases hm with ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ |
-      ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ |
-      ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ |
-      ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ <;>
-    simp_all [prim0, Val.kind, Srt.kind]
+  simp only [vocab, List.mem_cons, Prod.mk.injEq, List.mem_nil_iff] at hm
+  -- One goal per vocabulary entry, whatever the vocabulary's length (card
+  -- SP3-SYMBOLIC-FLUENT-BIT-LIBC-PREMISES: appending terms changes no proof).
+  repeat' (obtain ⟨rfl, hs⟩ | hm := hm)
+  all_goals simp_all [prim0, Val.kind, Srt.kind]
 
 theorem prim1_kind (M : Model) {f : String} {x s : Srt} {v : Val M}
     (h : term f = some ([x], s)) (hv : v.kind = some x.kind) :
     (prim1 M f v).kind = some s.kind := by
   have hm := term_mem h
-  simp only [vocab, List.mem_cons, Prod.mk.injEq, List.mem_nil_iff, or_false] at hm
-  rcases hm with ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ |
-      ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ |
-      ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ |
-      ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ <;>
+  simp only [vocab, List.mem_cons, Prod.mk.injEq, List.mem_nil_iff] at hm
+  repeat' (obtain ⟨rfl, hs⟩ | hm := hm)
+  all_goals
     (simp at hs) <;>
     (try obtain ⟨rfl, rfl⟩ := hs) <;>
     (cases v <;> simp_all [prim1, Val.kind, Srt.kind])
@@ -391,11 +487,9 @@ theorem prim2_kind (M : Model) {f : String} {x y s : Srt} {v w : Val M}
     (hw : w.kind = some y.kind) :
     (prim2 M f v w).kind = some s.kind := by
   have hm := term_mem h
-  simp only [vocab, List.mem_cons, Prod.mk.injEq, List.mem_nil_iff, or_false] at hm
-  rcases hm with ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ |
-      ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ |
-      ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ |
-      ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ <;>
+  simp only [vocab, List.mem_cons, Prod.mk.injEq, List.mem_nil_iff] at hm
+  repeat' (obtain ⟨rfl, hs⟩ | hm := hm)
+  all_goals
     (simp at hs) <;>
     (try obtain ⟨⟨rfl, rfl⟩, rfl⟩ := hs) <;>
     (cases v <;> cases w <;> simp_all [prim2, Val.kind, Srt.kind])
@@ -590,7 +684,20 @@ def decisionVectors : List (Raw × Bool) := [
   ((.bin .mapsTo (.app0 "slots") (.app0 "inert")), false),
   ((.quant "o" (.app0 "created") (.app0 "o")), false),
   ((.bin .mapsTo .empty (.app0 "inert")), false),
-  ((.bin .conj (.bin .mapsTo (.app0 "stated") (.app0 "inert")) (.app0 "inert")), false)
+  ((.bin .conj (.bin .mapsTo (.app0 "stated") (.app0 "inert")) (.app0 "inert")), false),
+  -- Card SP3-SYMBOLIC-FLUENT-BIT-LIBC-PREMISES: every Fluent Bit term.
+  ((.quant "r" (.app0 "result") (.bin .conj (.bin .mem (.app0 "r") (.app1 "interior" (.app0 "args"))) (.bin .mem (.app0 "r") (.app1 "chunk_name" (.app0 "args"))))), true),
+  ((.quant "r" (.app0 "result") (.bin .mem (.app0 "r") (.bin .diff (.app0 "result") (.bin .union (.bin .union (.bin .union (.app0 "tracked") (.app0 "claimed")) (.app0 "bound")) (.app0 "stored"))))), true),
+  ((.bin .imp (.app0 "admitted") (.app0 "faithful")), true),
+  ((.quant "g" (.app1 "config_of" (.app0 "args")) (.bin .imp (.bin .mem (.app0 "g") (.app0 "ingesting")) (.app0 "returns_zero"))), true),
+  ((.quant "c" (.app0 "collector") (.bin .conj (.bin .mem (.app0 "c") (.app0 "event_registered")) (.bin .mem (.app0 "c") (.app0 "set_running")))), true),
+  ((.bin .imp (.app0 "production") (.quant "p" (.app1 "out_plugin" (.app0 "args")) (.bin .conj (.bin .mem (.app0 "p") (.bin .diff (.app0 "synchronous") (.app0 "in_tree"))) (.bin .mem (.app0 "p") (.app0 "proxy"))))), true),
+  ((.bin .mapsTo (.app0 "faithful") (.app0 "inert")), false),
+  ((.app0 "result"), false),
+  ((.bin .eqv (.app1 "interior" (.app0 "admitted")) .empty), false),
+  ((.quant "r" (.app0 "result") (.bin .mem (.app0 "r") (.app0 "chunk_name"))), false),
+  ((.bin .mem (.app0 "returns_zero") (.app0 "collector")), false),
+  ((.bin .mapsTo (.app1 "out_plugin" (.app0 "args")) (.app0 "inert")), false)
 ]
 
 theorem decision_vectors_agree :
@@ -681,7 +788,8 @@ theorem ex_data_does_not_entail_unstated :
     teardown := fun _ _ => False, settable := fun _ => False,
     inTurn := fun _ _ _ => False, callerHeld := fun _ _ => True,
     takes := fun _ s => s, releases := fun _ _ _ => False,
-    retains := fun _ _ _ => False, runs := fun _ _ => True, const := fun _ => true }
+    retains := fun _ _ _ => False, runs := fun _ _ => True, const := fun _ => true,
+    fb := FluentBitTerms.none Bool }
   have hC : M.Coherent := fun _ _ h => h.elim
   have hE : (eval M [] exDataFormula).holds := by
     rw [eval_exData]; intro o ho; simp [M] at ho
