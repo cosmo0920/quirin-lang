@@ -402,7 +402,7 @@ fn production_contracts_preserve_the_previous_resource_modes() {
         ("rd_atomic64_add", 2),
         ("rd_atomic64_get", 1),
         // Card CG10-INDIRECT-ACCESS-SOLE-RESIDUALS round 4: three more
-        // neutral-element declarations (`librdkafka/memory.qv`).
+        // neutral-element declarations (`librdkafka/lz4_stream.qv`).
         ("rd_jitter", 2),
         ("XXH32_finalize", 5),
         ("XXH64_finalize", 5),

@@ -295,9 +295,9 @@
     },
     {
       "function": "XXH32_finalize",
-      "module": "librdkafka/memory.qv",
+      "module": "librdkafka/lz4_stream.qv",
       "contract_sha256": "20abd483ff6097fec598a0cb0b54c0fd9af052c9215dc9b65283b43b5c22f1c0",
-      "pinned_at": "2026-11-20T19:14:00Z",
+      "pinned_at": "2026-11-20T20:28:42Z",
       "identities": [
         {
           "reviewed_at": [
@@ -335,9 +335,9 @@
     },
     {
       "function": "XXH64_finalize",
-      "module": "librdkafka/memory.qv",
+      "module": "librdkafka/lz4_stream.qv",
       "contract_sha256": "ed894a099a30d642e579996e7e99dbc223aec0b77c36168b517b20b97b6918d1",
-      "pinned_at": "2026-11-20T19:14:00Z",
+      "pinned_at": "2026-11-20T20:28:42Z",
       "identities": [
         {
           "reviewed_at": [
@@ -1217,9 +1217,9 @@
     },
     {
       "function": "rd_jitter",
-      "module": "librdkafka/memory.qv",
+      "module": "librdkafka/lz4_stream.qv",
       "contract_sha256": "c32e72ec2ce4b649aab0aa695d50a39b09c794246a072a438c87ddeed227b37e",
-      "pinned_at": "2026-11-20T18:24:49Z",
+      "pinned_at": "2026-11-20T20:28:42Z",
       "identities": [
         {
           "reviewed_at": [

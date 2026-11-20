@@ -52,6 +52,12 @@ const RDKAFKA_MEMORY: &str =
     include_str!("../../../providers/qcore-provider-librdkafka/contracts/librdkafka/memory.qv");
 const RDKAFKA_SECTION: &str =
     "// ## Card CG10-INDIRECT-ACCESS-SOLE-RESIDUALS: custody-neutral scalar helpers";
+// Round 4's three neutral helpers (`rd_jitter`, `XXH32_finalize`,
+// `XXH64_finalize`), from their section marker to the end of the module.
+const RDKAFKA_LZ4: &str =
+    include_str!("../../../providers/qcore-provider-librdkafka/contracts/librdkafka/lz4_stream.qv");
+const RDKAFKA_R4_SECTION: &str =
+    "// ## Card CG10-INDIRECT-ACCESS-SOLE-RESIDUALS round 4: three neutral helpers";
 const CMETRICS_VALUES: &str =
     include_str!("../../../providers/qcore-provider-cmetrics/contracts/cmetrics/metric_values.qv");
 const CMETRICS_SECTION: &str =
@@ -97,6 +103,10 @@ fn production() -> ResourceContracts {
         (
             "librdkafka/cg10_scalar_helpers.qcore".to_owned(),
             section(RDKAFKA_MEMORY, RDKAFKA_SECTION),
+        ),
+        (
+            "librdkafka/cg10_r4_helpers.qcore".to_owned(),
+            section(RDKAFKA_LZ4, RDKAFKA_R4_SECTION),
         ),
         (
             "cmetrics/cg10_atomic.qcore".to_owned(),
