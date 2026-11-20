@@ -30,11 +30,16 @@ module contract;
 // prototype: `int ENGINE_free(ENGINE *e)` (openssl/engine.h).
 // Card OPENSSL-EX-DATA-REGISTRY: the last structural reference frees the
 // ENGINE: the ENGINE class's free callbacks run.
+// Card OPENSSL-OBJECT-FREES-SILENT-METHOD-CALLBACKS: the last structural
+// reference also runs the engine's public key method and ASN.1 method
+// callbacks and its destroy function (engine_free_util, eng_lib.c 3.5.5),
+// whose setters no declaration states: the unstated-slots premise names them.
 extern fn ENGINE_free(e: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
     requires resource_revision(flexible);
     requires resource_library_version(openssl, documented "3.0");
+    requires resource_premise(openssl_unstated_callback_slots, "a callback the call may run that no clause of this declaration states (a function of the ENGINE the call frees, whose setter no declaration of this crate states, namely its destroy function and its public key method and ASN.1 method functions, which the free calls to find the methods it frees) takes, releases or retains nothing the caller holds");
     requires resource_premise(openssl_ex_data_callbacks, "an ex_data callback the call may run (a new, dup or free callback CRYPTO_get_ex_new_index registers for the class of an object the call creates, copies or frees) takes, releases or retains nothing the caller holds");
     ensures normal resource_borrowed(e);
     ensures normal resource_reference_dropped(e, nullable);

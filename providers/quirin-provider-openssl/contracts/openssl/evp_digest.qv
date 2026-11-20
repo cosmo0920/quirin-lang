@@ -69,11 +69,17 @@ contract {
 // Card OPENSSL-EX-DATA-REGISTRY: a context used for signing holds an
 // EVP_PKEY_CTX whose key reference may be the last one, so the free may free
 // an EVP_PKEY.
+// Card OPENSSL-OBJECT-FREES-SILENT-METHOD-CALLBACKS: the free runs the
+// digest's cleanup or provider freectx and its ENGINE finish, and frees the
+// EVP_PKEY_CTX (its method cleanup, provider operation freectx, ENGINE finish
+// and keys; digest.c and pmeth_lib.c 3.5.5), whose setters no declaration
+// states: the unstated-slots premise names them.
 extern fn EVP_MD_CTX_free(ctx: ptr<mut, u8>) -> unit
 contract {
     requires resource_contract_v1;
     requires resource_revision(flexible);
     requires resource_library_version(openssl, since "1.1.0");
+    requires resource_premise(openssl_unstated_callback_slots, "a callback the call may run that no clause of this declaration states (a function of a digest, method, provider or engine of the digest context the call frees or of an object it frees in turn, whose setter no declaration of this crate states or which no setter is handed, among them the cleanup function of the EVP_MD of the context, the free context function of the provider of its digest, the cleanup function of the EVP_PKEY_METHOD of its EVP_PKEY_CTX, the free context function of the provider of the signature, key exchange, KEM or asymmetric cipher operation of that EVP_PKEY_CTX, the finish and destroy functions of the ENGINE of its digest or of that EVP_PKEY_CTX, the teardown function of a provider whose last reference the context holds, and, for a key whose last reference that EVP_PKEY_CTX holds, the free function of the key management of the provider of that key and, when that key holds the last reference to that provider, the teardown function of the provider, the free function of the EVP_PKEY_ASN1_METHOD of that key, the finish function of the RSA_METHOD, DSA_METHOD, DH_METHOD or EC_KEY_METHOD of that key, and the finish and destroy functions of an ENGINE of that key) takes, releases or retains nothing the caller holds");
     requires resource_premise(openssl_ex_data_callbacks, "an ex_data callback the call may run (a new, dup or free callback CRYPTO_get_ex_new_index registers for the class of an object the call creates, copies or frees) takes, releases or retains nothing the caller holds");
     ensures normal resource_released(ctx, nullable);
     ensures normal resource_return_none();
