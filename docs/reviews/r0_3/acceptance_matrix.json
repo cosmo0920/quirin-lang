@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 10,
-  "named_followups": 1031
+  "named_followups": 1034
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6924,7 +6924,7 @@
   "workspace_tests": 9777,
   "provider_tests": 163,
   "python_evidence_validator_tests": 779,
-  "lean_audits": 462,
+  "lean_audits": 463,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
    "AuditAggregateOwnedField.lean",
@@ -7226,6 +7226,7 @@
    "AuditPointerQualifierReader.lean",
    "AuditPointerStore.lean",
    "AuditPremiseFlow.lean",
+   "AuditPremiseFormula.lean",
    "AuditPremiseMetadataBridge.lean",
    "AuditPremiseRefinement.lean",
    "AuditPrintRouteSelection.lean",
@@ -7395,7 +7396,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "full landing gate: every step exits 0 except the Python suite's two stale-matrix checks, cleared by regenerating the matrix from this record, and one known gate_slot_queue flake (rerun disclosed in the note)",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/openssl-free-indirect-callbacks/integration/gate.json)"
+  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
  },
  "named_followups": [
   {
@@ -14545,6 +14546,27 @@
    "why": "Found by OPENSSL-FREE-INDIRECT-CALLBACKS. These declarations name only openssl_ex_data_callbacks, yet the last free of a key runs its provider key management free function, its EVP_PKEY_ASN1_METHOD free and its RSA/DSA/DH/EC_KEY method finish function and ENGINE finish (EVP_PKEY_free, p_lib.c and rsa_lib.c 3.5.5); X509_free and PKCS12_free free certificates and so their public keys; ENGINE_free runs the engine's destroy function (ENGINE_set_destroy_function). No premise names these callbacks. Metadata only (premises move no verdict), but a declaration resting on an unstated assumption is a provenance gap. DISCHARGE: name openssl_unstated_callback_slots in the statement of a free (UNSTATED_FREE_STATEMENT) on each, with the checker's expectation and the reviewed lock diff, or state the slots as OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS does. Size: small.",
    "source": "docs/reports/openssl-free-indirect-callbacks/README.md",
    "recorded_by": "OPENSSL-FREE-INDIRECT-CALLBACKS"
+  },
+  {
+   "id": "SP2-SYMBOLIC-LIBRDKAFKA-PREMISES",
+   "title": "State qcore-provider-librdkafka's premises as formulas",
+   "why": "Recorded by SP1-SYMBOLIC-OPENSSL-PREMISES (user decision 2026-11-20: premises are written as condition symbols, not sentences; other providers become follow-ups). qcore-provider-librdkafka states 220 resource_premise clauses in prose under 12 names in 9 files (client.qv 119, null_deref.qv 71, header_inlines.qv 12, log_caller_frame.qv 6, cjson.qv 4, logging.qv 3, memory.qv 3, kafka_mem.qv 1, queue_destructor.qv 1; comments excluded), and cjson.qv 9 prose resource_hypothesis atoms. DISCHARGE: each statement as a C04.18.9 formula with a prose-to-formula table, new terms registered in the specification, the Rust vocabulary and the Lean vocab with their meanings, the crate's locks regenerated with the reviewed diff, and the provider refusing a prose premise; hypothesis atoms and premise_decomposition/flow attachments keep their exact graph identities or are migrated with a stated graph-version change. Size: large.",
+   "source": "docs/reports/sp1-symbolic-openssl-premises/README.md",
+   "recorded_by": "SP1-SYMBOLIC-OPENSSL-PREMISES"
+  },
+  {
+   "id": "SP3-SYMBOLIC-FLUENT-BIT-PREMISES",
+   "title": "State quirin-provider-fluent-bit's premises as formulas",
+   "why": "Recorded by SP1-SYMBOLIC-OPENSSL-PREMISES (user decision 2026-11-20). quirin-provider-fluent-bit states 3 resource_premise clauses in prose (untracked_handback in input_chunk_name.qv, ingestion_active in loop_owner.qv, synchronous_output_reachability in output_singleplex.qv). DISCHARGE: each as a C04.18.9 formula with a prose-to-formula table and any new term registered (specification, Rust, Lean), the crate's inventory locks synced with the reviewed diff, and prose refused for the crate. Size: small.",
+   "source": "docs/reports/sp1-symbolic-openssl-premises/README.md",
+   "recorded_by": "SP1-SYMBOLIC-OPENSSL-PREMISES"
+  },
+  {
+   "id": "SP4-SYMBOLIC-LIBEVENT-PREMISES",
+   "title": "State qcore-provider-libevent's scheduler premises as formulas",
+   "why": "Recorded by SP1-SYMBOLIC-OPENSSL-PREMISES (user decision 2026-11-20). qcore-provider-libevent states 7 resource_premise clauses in prose in monkey/intrusive_list.qv (mk_http_thread_destroy's scheduler decomposition: scheduler_borrowed_chain_live, scheduler_callee_live, scheduler_exact_parent_embedding, scheduler_no_later_alias_use, scheduler_tls_params_owned, scheduler_valgrind_request_neutral, scheduler_valid_membership), which rule 34 lists on every row resting on the declaration. DISCHARGE: each as a C04.18.9 formula with a prose-to-formula table and any new term registered (specification, Rust, Lean), locks synced with the reviewed diff, and prose refused for the crate. Size: medium.",
+   "source": "docs/reports/sp1-symbolic-openssl-premises/README.md",
+   "recorded_by": "SP1-SYMBOLIC-OPENSSL-PREMISES"
   }
  ],
  "updated": "Completed plugin premise integration; exact hand-maintained union retains810followups, borrowed measured-source8419Rust/354Lean/freshcard133provider, exact source equivalence checked; authoritative root committed-matrix Python confirmation in integration receipt. CMetrics map/opts API model specifications added at the explicit user request. Eight declared-model API contracts remain outside interpreted views, with CMT-MAP-OPTS-CONTRACT-ADOPTION and CMT-LABELED-HASH-ZERO-STATIC-STORAGE Open. No trusted API coverage is claimed; the source gate is recorded by this card alongside its separate initializer native checkpoint. W48-CMT-TRACKED-INTERIOR-SELF-INIT implements rule 36b's checked initializer effect transport for an exact live owned root or embedded record, retaining actual self writes, invalidating aliased member facts and preserving resource obligations; nondefault custody frames refuse and no ordinary summary is exported. The canonical CFL intrusive_list.qv declares matching audit preconditions/effects; two CMetrics .qv modules add six map and two opts lifecycle models, including transitive ownership, partial failure, borrowed results and uncleared cleanup fields. All remain outside interpreted views; checked API adoption and labeled zero-hash storage accounting have named Open follow-ups. Fresh BASE/planner precedes prediction f18d96065 and implementation; the later contract amendment 08da23123 precedes .qv edits. Native corpus BASE/TIP Safe/Unknown/Pending/provisional-Unsafe: 1009 / 3816 / 0 / 9 to 1011 / 3814 / 0 / 9; full system/slice, 5781 NULL dictionaries and runtime projections are compared, 241 semantic leaves accounted, zero unexplained leaves and no prior Safe loss. Gate 8654 Rust / 370 Lean / 374 Python, provider 133 Rust / 25 Python and all five package verifies pass. The actual deep source reader uses 328 KiB below 1 MiB. Full getter closure remains Open; W48-CMT-SELF-INIT-DISJOINT-FRAMES tracks the next bounded frame extension, and W48-EXACT-RETURN-WITNESS-PRECISION is unchanged. Native evidence is isolated to measured e92d8aef35a8bd14550e90219d19a56eb3b196e7; later source gate 2d0d85299b830aa24d7f200d63a308653582363f validates the added declared API models separately; see docs/reports/w48-cmt-tracked-interior-self-init/README.md."
