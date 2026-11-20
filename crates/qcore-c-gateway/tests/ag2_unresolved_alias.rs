@@ -51,8 +51,12 @@ extern fn x_cmp(a: ptr<const, u8>, b: ptr<const, u8>) -> i32\n\
 contract { requires resource_contract_v1; ensures normal resource_borrowed(a);\n\
            ensures normal resource_borrowed(b); ensures normal resource_return_none(); };";
 
+// Target-portable spellings: plain `long` (and a typedef of it) is unreadable to
+// the declared-ABI reader unless the analysing Clang is LP64 (rule 11q), and
+// the UCRT's headers are unread on Windows, so these synthetic declarations
+// spell sizes `__SIZE_TYPE__`/`__PTRDIFF_TYPE__` and 64-bit `long long`.
 const DECLARATIONS: &str = "\
-typedef unsigned long x_size; typedef int x_i32; typedef unsigned int x_u32; \
+typedef __SIZE_TYPE__ x_size; typedef int x_i32; typedef unsigned int x_u32; \
 char *x_fresh(x_size n); void x_free(void *p); \
 x_size x_len(const char *s); int x_cmp(const char *a, const char *b); \
 void x_unknown(void *p); \

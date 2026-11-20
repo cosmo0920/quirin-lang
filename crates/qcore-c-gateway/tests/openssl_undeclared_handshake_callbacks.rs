@@ -274,6 +274,10 @@ contract {
 
 /// The public headers' view: the objects are opaque; the prototypes as the
 /// pinned headers give them.
+// Target-portable spellings: plain `long` (and a typedef of it) is unreadable to
+// the declared-ABI reader unless the analysing Clang is LP64 (rule 11q), and
+// the UCRT's headers are unread on Windows, so these synthetic declarations
+// spell sizes `__SIZE_TYPE__`/`__PTRDIFF_TYPE__` and 64-bit `long long`.
 const HEADERS: &str = "\
 typedef struct ssl_ctx_st SSL_CTX;
 typedef struct ssl_st SSL;
@@ -300,12 +304,12 @@ void ext_free_releasing(SSL *s, unsigned int ext_type, const unsigned char *out,
 int ext_parse_ok(SSL *s, unsigned int ext_type, const unsigned char *in, __SIZE_TYPE__ inlen, int *al, void *parse_arg);
 typedef struct bio_st BIO;
 typedef struct bio_method_st BIO_METHOD;
-typedef long (*BIO_callback_fn_ex)(BIO *b, int oper, const char *argp, __SIZE_TYPE__ len, int argi, long argl, int ret, __SIZE_TYPE__ *processed);
+typedef long long (*BIO_callback_fn_ex)(BIO *b, int oper, const char *argp, __SIZE_TYPE__ len, int argi, long long argl, int ret, __SIZE_TYPE__ *processed);
 void BIO_set_callback_ex(BIO *b, BIO_callback_fn_ex callback);
 int BIO_meth_set_write(BIO_METHOD *biom, int (*write)(BIO *, const char *, int));
 int BIO_meth_set_destroy(BIO_METHOD *biom, int (*destroy)(BIO *));
-long bio_cb_ok(BIO *b, int oper, const char *argp, __SIZE_TYPE__ len, int argi, long argl, int ret, __SIZE_TYPE__ *processed);
-long bio_cb_uncontracted(BIO *b, int oper, const char *argp, __SIZE_TYPE__ len, int argi, long argl, int ret, __SIZE_TYPE__ *processed);
+long long bio_cb_ok(BIO *b, int oper, const char *argp, __SIZE_TYPE__ len, int argi, long long argl, int ret, __SIZE_TYPE__ *processed);
+long long bio_cb_uncontracted(BIO *b, int oper, const char *argp, __SIZE_TYPE__ len, int argi, long long argl, int ret, __SIZE_TYPE__ *processed);
 int bio_write_ok(BIO *b, const char *data, int len);
 int bio_write_uncontracted(BIO *b, const char *data, int len);
 int bio_destroy_releasing(BIO *b);

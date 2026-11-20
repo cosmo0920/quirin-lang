@@ -508,20 +508,24 @@ contract {
 };
 ";
 
+// Target-portable spellings: plain `long` (and a typedef of it) is unreadable to
+// the declared-ABI reader unless the analysing Clang is LP64 (rule 11q), and
+// the UCRT's headers are unread on Windows, so these synthetic declarations
+// spell sizes `__SIZE_TYPE__`/`__PTRDIFF_TYPE__` and 64-bit `long long`.
 const CANDIDATE_PRELUDE: &str = "\
 #include <stddef.h>
-typedef int q_cb(void *t, void *v, long size);
+typedef int q_cb(void *t, void *v, __PTRDIFF_TYPE__ size);
 typedef void q_hook(void *t);
 typedef void q_free_cb(void *p);
 struct q_obj;
 struct q_op { q_cb *op_cb; };
 void *q_alloc(__SIZE_TYPE__ n);
 void q_each(void *t, q_cb *cb);
-int q_put(void *t, void *v, long size);
-int q_put_any(void *t, void *v, long size);
+int q_put(void *t, void *v, __PTRDIFF_TYPE__ size);
+int q_put_any(void *t, void *v, __PTRDIFF_TYPE__ size);
 void q_set_hook(struct q_obj *o, q_hook *cb);
-int q_put_slot(void *t, void *v, long size);
-int q_put_slot_any(void *t, void *v, long size);
+int q_put_slot(void *t, void *v, __PTRDIFF_TYPE__ size);
+int q_put_slot_any(void *t, void *v, __PTRDIFF_TYPE__ size);
 void q_drop(void *p);
 void q_drop_any(void *p);
 void *q_list_new(q_free_cb *free_cb);
