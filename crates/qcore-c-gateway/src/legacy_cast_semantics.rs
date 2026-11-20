@@ -119,12 +119,76 @@ fn hides_an_identity(site: &CastSite<'_>) -> bool {
         })
 }
 
+/// Round 3's amendment of H-U (rule 12h): an identity-preserving pointer
+/// conversion (`byte-view`, `typed-view`, `punned-view`, `qualifier`) of a
+/// member-chain place over a plain name, at a call actual only, with no
+/// `volatile`/`_Atomic` result. Every other cast of a non-name operand keeps
+/// the older answer (not removed).
+fn place_view_at_actual(site: &CastSite<'_>) -> bool {
+    let identity_preserving = matches!(
+        site.class,
+        ConversionClass::ByteView
+            | ConversionClass::TypedView
+            | ConversionClass::PunnedView
+            | ConversionClass::Qualifier
+    );
+    let qualified = crate::typed_access_path::qual(site.node).is_some_and(|text| {
+        let (_, qualifiers) = crate::cast_semantics::type_class(text);
+        qualifiers.volatile || qualifiers.atomic
+    });
+    place_view_removed(
+        identity_preserving,
+        site.position == Position::CallActual,
+        place_operand(site.node).is_some_and(|operand| kind(operand) == "MemberExpr"),
+        qualified,
+    )
+}
+
+/// The amendment's decision on the table's terms (`PLACE_VIEW_VECTORS`,
+/// `QCore.CastActualPlace`): (identity-preserving class, at a call actual,
+/// the operand a member-chain place, a `volatile`/`_Atomic` result).
+pub(crate) fn place_view_removed(
+    identity_preserving: bool,
+    call_actual: bool,
+    member_place: bool,
+    qualified: bool,
+) -> bool {
+    identity_preserving && call_actual && member_place && !qualified
+}
+
+#[cfg(test)]
+pub(crate) const PLACE_VIEW_VECTORS: &[(bool, bool, bool, bool, bool)] = &[
+    (true, true, true, false, true),
+    (false, true, true, false, false),
+    (true, false, true, false, false),
+    (true, true, false, false, false),
+    (true, true, true, true, false),
+];
+
+#[cfg(test)]
+mod place_view_tests {
+    #[test]
+    fn the_decision_vectors_are_the_rust_decisions() {
+        for (identity, actual, member, qualified, removed) in super::PLACE_VIEW_VECTORS {
+            assert_eq!(
+                super::place_view_removed(*identity, *actual, *member, *qualified),
+                *removed
+            );
+        }
+    }
+}
+
 /// Whether H-U removes `site`: the table's class at a value position, over a
 /// plain object name (`descriptor` names the function's integer-carried
 /// identities, whose scalar conversion would hide one).
 pub(crate) fn removable(site: &CastSite<'_>, descriptor: &dyn Fn(&str) -> bool) -> bool {
     let Some(operand) = named_operand(site.node) else {
-        return false;
+        // Card CG10-INDIRECT-ACCESS-SOLE-RESIDUALS round 3 (rule 12h,
+        // amended): an identity-preserving view of a member-chain place
+        // (`(const char *)a->name`) at a call actual is that place, exactly
+        // as hook H-U0 already reads it; the uncast statement is lowered by
+        // the older routes (W44 reads the place at its position).
+        return place_view_at_actual(site);
     };
     let value_position = matches!(
         site.position,

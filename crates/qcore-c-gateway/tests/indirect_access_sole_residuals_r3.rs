@@ -22,6 +22,9 @@
 //! * 68: a record member declared through a pointer typedef every
 //!   declaration of which is `typedef SPEC * A;` is the single pointer member
 //!   `SPEC * NAME` (AG1-POINTER-TYPEDEF-MEMBER).
+//! * 12h (amended, round 3): an identity-preserving pointer view of a
+//!   member-chain place at a call actual is removed by hook H-U like a
+//!   view of a plain name, and the uncast statement is lowered as before.
 //!
 //! Every admission has a control that keeps the gate's refusal (or another
 //! refusal) and never `Safe`. The fixture contracts are the CG00 harness's
@@ -205,4 +208,41 @@ fn rule_68_keeps_the_refusal_for_other_typedef_members() {
     assert_keeps_the_gate(
         "struct P *subject(const char *s) { struct P *p = q_alloc(); if (p == 0) return 0; p->n = 0; p->handle = is_dup(s); return p; }",
     );
+}
+
+#[test]
+fn rule_12h_round_3_reads_a_pointer_view_of_a_member_at_an_actual() {
+    if !clang_available() {
+        return;
+    }
+    assert_safe("int subject(struct S *a) { int n = is_count((const char *)a->name); return n; }");
+    assert_safe("void subject(struct S *a) { int n; n = is_count((const char *)a->name); (void)n; }");
+    assert_safe(
+        "int subject(struct S *a, struct S *b) { int n = is_cmp((const char *)a->name, (char *)b->name); return n; }",
+    );
+}
+
+#[test]
+fn rule_12h_round_3_keeps_every_other_cast_refused() {
+    if !clang_available() {
+        return;
+    }
+    // A cast from an integer: no place's identity.
+    assert_keeps_the_gate(
+        "int subject(struct S *a) { int n = is_count((const char *)(long)a->a); return n; }",
+    );
+    // A cast of a decayed array member is not a member-chain place view.
+    assert_keeps_the_gate(
+        "typedef unsigned int u32_t; struct H { u32_t tab[8]; int n; }; __INT64_TYPE__ subject(struct H *h) { __INT64_TYPE__ v = rr_load((__INT64_TYPE__ *)h->tab); return v; }",
+    );
+    // A cast of an offset stays rule 14d's refusal.
+    assert_keeps_the_gate("int subject(struct S *a) { return is_count((char *)a->next + a->a); }");
+    // A typed member destination is rule 14a's Clang-matched reading, which
+    // the uncast spelling (no Clang node) never reaches: kept.
+    assert_keeps_the_gate("void subject(struct S *a) { a->a = is_count((const char *)a->name); }");
+    // The return position has no H-U placement (a route-map row): kept.
+    assert_keeps_the_gate("int subject(struct S *a) { return is_count((const char *)a->name); }");
+    // A releasing position: the view hands the callee the same identity the
+    // uncast place would, which no reading here discharges.
+    assert_not_safe("void subject(struct S *a) { q_free((void *)a->name); }");
 }

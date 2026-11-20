@@ -68,6 +68,7 @@ import QCore.CallerFrameHoldSwitch
 import QCore.CandidateComposition
 import QCore.CapacityBoundary
 import QCore.CarriedPublication
+import QCore.CastActualPlace
 import QCore.CastRepresentation
 import QCore.CastReturnEscape
 import QCore.CastSemantics
