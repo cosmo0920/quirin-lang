@@ -118,7 +118,13 @@ pub enum Premise {
     /// every slot of the objects it frees whose setters are declared, and the
     /// premise names what remains by name, the functions of methods,
     /// providers and engines of objects it frees in turn that no setter
-    /// declared here writes.
+    /// declared here writes. Card
+    /// **OPENSSL-OBJECT-FREES-SILENT-METHOD-CALLBACKS**: named by every free
+    /// the free audit ([`FREE_AUDIT`]) reads as running such functions, the
+    /// frees of keys, certificates, PKCS#12 objects, engines and digest
+    /// contexts among them. The statement (C04.18.9) quantifies over the
+    /// call's own `#freed`, so one statement names exactly what each free
+    /// runs.
     UnstatedFreeSlots,
     /// Card **OPENSSL-FREE-INDIRECT-CALLBACKS**: `requires
     /// resource_premise(openssl_builtin_lookup_methods, "…")`, the
@@ -218,10 +224,19 @@ pub const UNSTATED_SLOTS: &str = "openssl_unstated_callback_slots";
 /// SSL_CTX's certificate store holds, or an ex_data callback the call may run,
 /// that no clause of the declaration states takes, releases or retains
 /// nothing the caller holds.
+/// Card **OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS**: widened by the free
+/// statement ([`UNSTATED_FREE_STATEMENT`], verbatim) as its last conjunct.
+/// The handshake and I/O calls and `SSL_shutdown` free peer and ephemeral
+/// keys, peer certificates, key exchange and signature contexts, transcript
+/// digests and record-layer cipher contexts inside the call (OpenSSL 3.5.5,
+/// `ssl/statem/`, `ssl/s3_lib.c`, the record layer), and a declaration names
+/// each premise once (C04.18), so the handshake's own statement names what
+/// those frees run.
 pub const UNSTATED_SLOTS_STATEMENT: &str = "#slots(#of(SSL, #args) | #ctx(#of(SSL, #args)) | \
 #of(SSL_CTX, #args)) \\ #stated |-> #inert && (quant all #l in #lookups(#store(#ctx(#of(SSL, \
-#args)) | #of(SSL_CTX, #args))): #fns(#l) \\ #stated |-> #inert) && quant all #o in #created | \
-#copied | #freed: #ex_data(#class(#o)) \\ #stated |-> #inert";
+#args)) | #of(SSL_CTX, #args))): #fns(#l) \\ #stated |-> #inert) && (quant all #o in #created | \
+#copied | #freed: #ex_data(#class(#o)) \\ #stated |-> #inert) && quant all #o in #freed: \
+#teardown(#o) \\ (#stated | #settable) |-> #inert";
 
 /// Card **OPENSSL-FREE-INDIRECT-CALLBACKS**: the statement of the
 /// unstated-slots premise on a free (`SSL_free`, `SSL_CTX_free`,
@@ -243,6 +258,242 @@ pub const UNSTATED_SLOTS_STATEMENT: &str = "#slots(#of(SSL, #args) | #ctx(#of(SS
 /// members "among them"; each is a member of `#teardown` (report section 4).
 pub const UNSTATED_FREE_STATEMENT: &str =
     "quant all #o in #freed: #teardown(#o) \\ (#stated | #settable) |-> #inert";
+
+/// Card **OPENSSL-OBJECT-FREES-SILENT-METHOD-CALLBACKS**: how a free stands
+/// to the functions of methods, providers and engines of the objects it
+/// frees (the free audit, read like [`EX_DATA_AUDIT`]).
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum Frees {
+    /// The free may run such functions that no clause states (OpenSSL 3.5.5,
+    /// `how`): the declaration names [`Premise::UnstatedFreeSlots`].
+    Runs { how: &'static str },
+    /// What the free may run in turn is named by this other premise, which
+    /// the declaration names; it names no free statement.
+    NamedBy { premise: Premise, why: &'static str },
+    /// The free frees nothing whose functions a user can set: it names no
+    /// free statement.
+    Nothing { why: &'static str },
+}
+
+/// Card **OPENSSL-OBJECT-FREES-SILENT-METHOD-CALLBACKS**: the free audit.
+/// Every documented function whose shape is a release (a free or a
+/// reference drop) is listed, and every one naming the free statement is
+/// listed as [`Frees::Runs`], so a free reaching a key, certificate, engine
+/// or context cannot read their functions silently
+/// ([`crate::check::free_audited`]). The readings cite the OpenSSL 3.5.5
+/// sources, as the report's survey table does.
+/// Card **OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS**: and every
+/// declaration whose [`EX_DATA_AUDIT`] reading names a class of
+/// [`INNER_FREE_CLASSES`] is listed too ([`crate::check::inner_frees_audited`]),
+/// so a call that frees a key or certificate inside, without being a free,
+/// cannot read their functions silently either. A [`Frees::Runs`] reading is
+/// then met by the free statement or by the handshake's statement, which
+/// conjoins it.
+pub const FREE_AUDIT: &[(&str, Frees)] = &[
+    (
+        "BIO_free",
+        Frees::NamedBy {
+            premise: Premise::BuiltinBioMethods,
+            why: "the callback and destroy slots are stated; what a built-in method's destroy \
+                  function frees in turn (the SSL object of a BIO_f_ssl BIO) is named by \
+                  openssl_builtin_bio_methods",
+        },
+    ),
+    (
+        "ENGINE_free",
+        Frees::Runs {
+            how: "the last structural reference runs the engine's public key method and ASN.1 \
+                  method callbacks and its destroy function (engine_free_util)",
+        },
+    ),
+    (
+        "EVP_MD_CTX_free",
+        Frees::Runs {
+            how: "frees the EVP_PKEY_CTX (method cleanup, provider freectx, engine, keys) and \
+                  clears the digest (cleanup, provider freectx, engine)",
+        },
+    ),
+    (
+        "EVP_PKEY_free",
+        Frees::Runs {
+            how: "the last reference runs the key's key management free, ASN.1 method free, \
+                  RSA/DSA/DH/EC_KEY method finish and ENGINE finish",
+        },
+    ),
+    (
+        "OPENSSL_sk_free",
+        Frees::Nothing {
+            why: "frees the stack only, never its elements",
+        },
+    ),
+    (
+        "PEM_read_bio_PrivateKey",
+        // Card OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS.
+        Frees::Runs {
+            how: "frees a decoded key lacking the selected components, a key a failed \
+                  legacy decode built, and the decoder context (pem_pkey.c)",
+        },
+    ),
+    (
+        "PEM_read_bio_X509",
+        // Card OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS.
+        Frees::Runs {
+            how: "a failed decode frees the partial certificate and the public key it \
+                  decoded (tasn_dec.c, x509_pubkey_ex_free), and the key's decoder context",
+        },
+    ),
+    (
+        "PKCS12_free",
+        Frees::Runs {
+            how: "frees the PKCS#7 safes' certificates (and so their keys), signer info keys \
+                  and CRLs",
+        },
+    ),
+    (
+        "SSL_CTX_free",
+        Frees::Runs {
+            how: "the last drop frees the context's keys, certificates, stores and client \
+                  certificate engine",
+        },
+    ),
+    (
+        "SSL_CTX_load_verify_locations",
+        // Card OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS.
+        Frees::Runs {
+            how: "the file lookup frees what it read from CAfile: certificates and CRLs \
+                  the store did not keep, and every private key (by_file.c, X509_INFO_free)",
+        },
+    ),
+    (
+        "SSL_CTX_set_default_verify_paths",
+        // Card OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS.
+        Frees::Runs {
+            how: "the file lookup frees what it read from the default file: certificates \
+                  and CRLs the store did not keep, and every private key (by_file.c)",
+        },
+    ),
+    (
+        "SSL_CTX_use_PrivateKey",
+        // Card OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS.
+        Frees::Runs {
+            how: "frees the key it replaces (ssl_set_pkey); earlier series also free a \
+                  certificate the key does not match",
+        },
+    ),
+    (
+        "SSL_CTX_use_PrivateKey_file",
+        // Card OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS.
+        Frees::Runs {
+            how: "frees the key it read after use, the key it replaces, and what the PEM \
+                  or DER read frees on failure",
+        },
+    ),
+    (
+        "SSL_CTX_use_certificate",
+        // Card OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS.
+        Frees::Runs {
+            how: "frees the certificate it replaces and a private key the new certificate \
+                  does not match (ssl_set_cert)",
+        },
+    ),
+    (
+        "SSL_CTX_use_certificate_chain_file",
+        // Card OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS.
+        Frees::Runs {
+            how: "frees the certificates it read, the chain it clears, and the certificate \
+                  and key SSL_CTX_use_certificate replaces",
+        },
+    ),
+    (
+        "SSL_connect",
+        // Card OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS.
+        Frees::Runs {
+            how: "the handshake frees peer and ephemeral keys, peer certificates and chains, \
+                  key exchange and signature contexts and transcript digests (ssl/statem, \
+                  s3_lib.c), and the record layer's cipher contexts at a key change",
+        },
+    ),
+    (
+        "SSL_do_handshake",
+        // Card OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS.
+        Frees::Runs {
+            how: "the handshake frees peer and ephemeral keys, peer certificates and chains, \
+                  key exchange and signature contexts and transcript digests (ssl/statem, \
+                  s3_lib.c), and the record layer's cipher contexts at a key change",
+        },
+    ),
+    (
+        "SSL_free",
+        Frees::Runs {
+            how: "the last drop frees the connection's keys, certificates, stores, async wait \
+                  context and QUIC objects, and may free its context",
+        },
+    ),
+    (
+        "SSL_read",
+        // Card OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS.
+        Frees::Runs {
+            how: "the handshake frees peer and ephemeral keys, peer certificates and chains, \
+                  key exchange and signature contexts and transcript digests (ssl/statem, \
+                  s3_lib.c), and the record layer's cipher contexts at a key change",
+        },
+    ),
+    (
+        "SSL_shutdown",
+        // Card OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS.
+        Frees::Runs {
+            how: "a post-handshake message read before the close_notify (a \
+                  NewSessionTicket, a KeyUpdate) replaces the session or the record layer's \
+                  cipher contexts",
+        },
+    ),
+    (
+        "SSL_write",
+        // Card OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS.
+        Frees::Runs {
+            how: "the handshake frees peer and ephemeral keys, peer certificates and chains, \
+                  key exchange and signature contexts and transcript digests (ssl/statem, \
+                  s3_lib.c), and the record layer's cipher contexts at a key change",
+        },
+    ),
+    (
+        "X509_STORE_free",
+        Frees::Runs {
+            how: "the last reference frees the certificates (and so their keys) and CRLs the \
+                  store holds",
+        },
+    ),
+    (
+        "X509_free",
+        Frees::Runs {
+            how: "the last reference frees the certificate's public key",
+        },
+    ),
+    (
+        "X509_new",
+        // Card OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS.
+        Frees::Nothing {
+            why: "a failed allocation frees only the partial certificate, which holds no \
+                  decoded key",
+        },
+    ),
+    (
+        "d2i_PKCS12_bio",
+        // Card OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS.
+        Frees::Runs {
+            how: "a failed parse frees the partial object: a signed PKCS#7 safe's \
+                  certificates, their public keys and its CRLs (tasn_dec.c)",
+        },
+    ),
+];
+
+/// Card **OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS**: the ex_data classes
+/// whose objects' free runs functions of methods, providers and engines (a
+/// key's, and a certificate's through its public key: `evp_pkey_free_it`,
+/// `x509_pubkey_ex_free`, OpenSSL 3.5.5). A declaration whose
+/// [`EX_DATA_AUDIT`] reading names one is in [`FREE_AUDIT`], whatever its
+/// shape.
+pub const INNER_FREE_CLASSES: &[&str] = &["EVP_PKEY", "X509"];
 
 /// Card **OPENSSL-FREE-INDIRECT-CALLBACKS**: the name of the built-in lookup
 /// methods premise.
@@ -384,7 +635,10 @@ pub const EX_DATA_AUDIT: &[(&str, ExData)] = &[
     (
         "EVP_MD_CTX_free",
         ExData::Runs {
-            classes: &["EVP_PKEY"],
+            // Card OPENSSL-OBJECT-FREES-SILENT-METHOD-CALLBACKS: a legacy key's
+            // free frees its RSA, DSA, DH or EC_KEY, and an ENGINE's last
+            // reference may drop with a key's or the digest's.
+            classes: &["EVP_PKEY", "RSA", "DSA", "DH", "EC_KEY", "ENGINE"],
             how: "a signing context's EVP_PKEY_CTX may hold the last reference to its key",
         },
     ),
@@ -397,8 +651,9 @@ pub const EX_DATA_AUDIT: &[(&str, ExData)] = &[
     (
         "EVP_PKEY_free",
         ExData::Runs {
-            classes: &["EVP_PKEY"],
-            how: "the last reference frees the EVP_PKEY",
+            classes: &["EVP_PKEY", "RSA", "DSA", "DH", "EC_KEY", "ENGINE"],
+            how: "the last reference frees the EVP_PKEY, a legacy key's RSA, DSA, DH or \
+                  EC_KEY, and may drop an ENGINE's last reference",
         },
     ),
     (
@@ -423,22 +678,26 @@ pub const EX_DATA_AUDIT: &[(&str, ExData)] = &[
     (
         "PEM_read_bio_PrivateKey",
         ExData::Runs {
-            classes: &["EVP_PKEY"],
+            // Card OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS: a key it frees may
+            // be a legacy key (its RSA, DSA, DH or EC_KEY) holding an ENGINE.
+            classes: &["EVP_PKEY", "RSA", "DSA", "DH", "EC_KEY", "ENGINE"],
             how: "allocates the key it returns, freed on a failed read",
         },
     ),
     (
         "PEM_read_bio_X509",
         ExData::Runs {
-            classes: &["X509"],
+            // Card OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS: a key it frees may
+            // be a legacy key (its RSA, DSA, DH or EC_KEY) holding an ENGINE.
+            classes: &["X509", "EVP_PKEY", "RSA", "DSA", "DH", "EC_KEY", "ENGINE"],
             how: "allocates the certificate it returns, freed on a failed read",
         },
     ),
     (
         "PKCS12_free",
         ExData::Runs {
-            classes: &["X509"],
-            how: "frees the certificates a signed PKCS#7 safe holds",
+            classes: &["X509", "EVP_PKEY", "RSA", "DSA", "DH", "EC_KEY", "ENGINE"],
+            how: "frees the certificates a signed PKCS#7 safe holds, and their keys",
         },
     ),
     (
@@ -452,7 +711,9 @@ pub const EX_DATA_AUDIT: &[(&str, ExData)] = &[
     (
         "SSL_CTX_load_verify_locations",
         ExData::Runs {
-            classes: &["X509"],
+            // Card OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS: a key it frees may
+            // be a legacy key (its RSA, DSA, DH or EC_KEY) holding an ENGINE.
+            classes: &["X509", "EVP_PKEY", "RSA", "DSA", "DH", "EC_KEY", "ENGINE"],
             how: "reads CAfile's certificates, freeing each the store already holds",
         },
     ),
@@ -466,49 +727,81 @@ pub const EX_DATA_AUDIT: &[(&str, ExData)] = &[
     (
         "SSL_CTX_set_default_verify_paths",
         ExData::Runs {
-            classes: &["X509"],
+            // Card OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS: a key it frees may
+            // be a legacy key (its RSA, DSA, DH or EC_KEY) holding an ENGINE.
+            classes: &["X509", "EVP_PKEY", "RSA", "DSA", "DH", "EC_KEY", "ENGINE"],
             how: "the default file lookup reads certificates, freeing each the store already holds",
         },
     ),
     (
         "SSL_CTX_use_PrivateKey",
         ExData::Runs {
-            classes: &["EVP_PKEY", "X509"],
+            // Card OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS: a key it frees may
+            // be a legacy key (its RSA, DSA, DH or EC_KEY) holding an ENGINE.
+            classes: &["X509", "EVP_PKEY", "RSA", "DSA", "DH", "EC_KEY", "ENGINE"],
             how: "frees the key it replaces, and a certificate the new key does not match",
         },
     ),
     (
         "SSL_CTX_use_PrivateKey_file",
         ExData::Runs {
-            classes: &["EVP_PKEY", "X509"],
+            // Card OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS: a key it frees may
+            // be a legacy key (its RSA, DSA, DH or EC_KEY) holding an ENGINE.
+            classes: &["X509", "EVP_PKEY", "RSA", "DSA", "DH", "EC_KEY", "ENGINE"],
             how: "reads a temporary key, freed after use, and replaces the context's key",
         },
     ),
     (
         "SSL_CTX_use_certificate",
         ExData::Runs {
-            classes: &["X509", "EVP_PKEY"],
+            // Card OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS: a key it frees may
+            // be a legacy key (its RSA, DSA, DH or EC_KEY) holding an ENGINE.
+            classes: &["X509", "EVP_PKEY", "RSA", "DSA", "DH", "EC_KEY", "ENGINE"],
             how: "frees the certificate it replaces, and a key the new certificate does not match",
         },
     ),
     (
         "SSL_CTX_use_certificate_chain_file",
         ExData::Runs {
-            classes: &["X509"],
+            // Card OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS: a key it frees may
+            // be a legacy key (its RSA, DSA, DH or EC_KEY) holding an ENGINE.
+            classes: &["X509", "EVP_PKEY", "RSA", "DSA", "DH", "EC_KEY", "ENGINE"],
             how: "reads certificates and frees the chain and certificate it replaces",
         },
     ),
     (
         "SSL_connect",
         ExData::Runs {
-            classes: &["SSL_SESSION", "X509", "EVP_PKEY"],
+            // Card OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS: a key it frees may
+            // be a legacy key (its RSA, DSA, DH or EC_KEY) holding an ENGINE.
+            classes: &[
+                "SSL_SESSION",
+                "X509",
+                "EVP_PKEY",
+                "RSA",
+                "DSA",
+                "DH",
+                "EC_KEY",
+                "ENGINE",
+            ],
             how: "the handshake creates and frees sessions, peer certificates and keys",
         },
     ),
     (
         "SSL_do_handshake",
         ExData::Runs {
-            classes: &["SSL_SESSION", "X509", "EVP_PKEY"],
+            // Card OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS: a key it frees may
+            // be a legacy key (its RSA, DSA, DH or EC_KEY) holding an ENGINE.
+            classes: &[
+                "SSL_SESSION",
+                "X509",
+                "EVP_PKEY",
+                "RSA",
+                "DSA",
+                "DH",
+                "EC_KEY",
+                "ENGINE",
+            ],
             how: "the handshake creates and frees sessions, peer certificates and keys",
         },
     ),
@@ -544,7 +837,18 @@ pub const EX_DATA_AUDIT: &[(&str, ExData)] = &[
     (
         "SSL_read",
         ExData::Runs {
-            classes: &["SSL_SESSION", "X509", "EVP_PKEY"],
+            // Card OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS: a key it frees may
+            // be a legacy key (its RSA, DSA, DH or EC_KEY) holding an ENGINE.
+            classes: &[
+                "SSL_SESSION",
+                "X509",
+                "EVP_PKEY",
+                "RSA",
+                "DSA",
+                "DH",
+                "EC_KEY",
+                "ENGINE",
+            ],
             how: "a handshake it runs creates and frees sessions, peer certificates and keys",
         },
     ),
@@ -566,7 +870,18 @@ pub const EX_DATA_AUDIT: &[(&str, ExData)] = &[
     (
         "SSL_write",
         ExData::Runs {
-            classes: &["SSL_SESSION", "X509", "EVP_PKEY"],
+            // Card OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS: a key it frees may
+            // be a legacy key (its RSA, DSA, DH or EC_KEY) holding an ENGINE.
+            classes: &[
+                "SSL_SESSION",
+                "X509",
+                "EVP_PKEY",
+                "RSA",
+                "DSA",
+                "DH",
+                "EC_KEY",
+                "ENGINE",
+            ],
             how: "a handshake it runs creates and frees sessions, peer certificates and keys",
         },
     ),
@@ -580,8 +895,8 @@ pub const EX_DATA_AUDIT: &[(&str, ExData)] = &[
     (
         "X509_free",
         ExData::Runs {
-            classes: &["X509"],
-            how: "the last reference frees the certificate",
+            classes: &["X509", "EVP_PKEY", "RSA", "DSA", "DH", "EC_KEY", "ENGINE"],
+            how: "the last reference frees the certificate and its public key",
         },
     ),
     (
@@ -594,7 +909,9 @@ pub const EX_DATA_AUDIT: &[(&str, ExData)] = &[
     (
         "d2i_PKCS12_bio",
         ExData::Runs {
-            classes: &["X509"],
+            // Card OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS: a key it frees may
+            // be a legacy key (its RSA, DSA, DH or EC_KEY) holding an ENGINE.
+            classes: &["X509", "EVP_PKEY", "RSA", "DSA", "DH", "EC_KEY", "ENGINE"],
             how: "a signed PKCS#7 safe's certificates are decoded, freed on a failed parse",
         },
     ),
@@ -2142,6 +2459,19 @@ const SESSION_TICKET_CB: &[Premise] = &[Premise::SlotRegistered {
 /// object of an ex_data class ([`EX_DATA_AUDIT`]).
 const EX_DATA_ONLY: &[Premise] = &[Premise::ExDataCallbacks];
 
+/// Card **OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS**: a call that is not a
+/// free but frees a key or certificate inside (a replaced one, or one it read
+/// and does not keep) names the unstated-slots premise in the statement of a
+/// free ([`FREE_AUDIT`]: its `#freed` counts objects freed inside the call)
+/// beside the ex_data premise.
+const INNER_FREED: &[Premise] = &[Premise::UnstatedFreeSlots, Premise::ExDataCallbacks];
+
+/// Card **OPENSSL-OBJECT-FREES-SILENT-METHOD-CALLBACKS**: a free of a key, a
+/// certificate, a PKCS#12 object, an engine or a digest context names the
+/// unstated-slots premise in the statement of a free ([`FREE_AUDIT`]) beside
+/// the ex_data premise it named before.
+const OBJECT_FREED: &[Premise] = &[Premise::UnstatedFreeSlots, Premise::ExDataCallbacks];
+
 /// `PEM_read_bio_*(bp, x, cb, u)`: a NULL `x` (no object to reuse), and the
 /// password callback `cb` called during the read with `u` as its last
 /// argument, a NULL `cb` meaning OpenSSL's own default routine (card
@@ -2152,6 +2482,10 @@ const PEM_READ: &[Premise] = &[
     Premise::NullArgument(1),
     // Card OPENSSL-EX-DATA-REGISTRY: the read allocates the X509 or EVP_PKEY.
     Premise::ExDataCallbacks,
+    // Card OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS: a failed read frees
+    // the key or certificate it built (and a certificate's public key), and
+    // the decoder context, in the free statement.
+    Premise::UnstatedFreeSlots,
     Premise::CallbackInvokedOrDefault {
         callback: 2,
         arguments: &[None, None, None, Some(3)],
@@ -2183,6 +2517,9 @@ const PKCS12_READ: &[Premise] = &[
     Premise::NullArgument(1),
     // Card OPENSSL-EX-DATA-REGISTRY: a signed safe's certificates are decoded.
     Premise::ExDataCallbacks,
+    // Card OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS: and freed, with their
+    // keys and the safe's CRLs, on a failed parse.
+    Premise::UnstatedFreeSlots,
     BIO_SLOTS[0],
     BIO_SLOTS[1],
     BIO_SLOTS[2],
@@ -2287,7 +2624,7 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
             position: 0,
             sentence: "If the argument to ENGINE_free() is NULL, nothing is done.",
         },
-        EX_DATA_ONLY,
+        OBJECT_FREED,
     ),
     entry(
         "ERR_clear_error",
@@ -2324,7 +2661,7 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
         "3.5",
         SINCE_1_1_0,
         Release(0, Nullable),
-        EX_DATA_ONLY,
+        OBJECT_FREED,
     ),
     entry(
         "EVP_MD_CTX_new",
@@ -2342,7 +2679,7 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
             position: 0,
             sentence: "If key is NULL, nothing is done.",
         },
-        EX_DATA_ONLY,
+        OBJECT_FREED,
     ),
     entry("EVP_sha256", "EVP_DigestInit", "1.0.2", DOC_1_0_2, Plain),
     entry("EVP_sha512", "EVP_DigestInit", "1.0.2", DOC_1_0_2, Plain),
@@ -2404,7 +2741,7 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
         "1.1.1",
         DOC_1_1_1,
         Release(0, Nullable),
-        EX_DATA_ONLY,
+        OBJECT_FREED,
     ),
     with(
         "SSL_CTX_add_client_custom_ext",
@@ -2454,7 +2791,7 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
         "1.0.2",
         DOC_1_0_2,
         Plain,
-        EX_DATA_ONLY,
+        INNER_FREED,
     ),
     with(
         "SSL_CTX_new",
@@ -2578,7 +2915,7 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
         "1.1.1",
         DOC_1_1_1,
         Plain,
-        EX_DATA_ONLY,
+        INNER_FREED,
     ),
     entry(
         "SSL_CTX_set_generate_session_id",
@@ -2741,7 +3078,7 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
         "1.0.2",
         DOC_1_0_2,
         Plain,
-        EX_DATA_ONLY,
+        INNER_FREED,
     ),
     with(
         "SSL_CTX_use_PrivateKey_file",
@@ -2749,7 +3086,11 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
         "1.0.2",
         DOC_1_0_2,
         Plain,
-        &[Premise::ExDataCallbacks, PASSWORD],
+        &[
+            Premise::UnstatedFreeSlots,
+            Premise::ExDataCallbacks,
+            PASSWORD,
+        ],
     ),
     with(
         "SSL_CTX_use_certificate",
@@ -2757,7 +3098,11 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
         "1.0.2",
         DOC_1_0_2,
         Plain,
-        &[Premise::ExDataCallbacks, SECURITY_CTX_CERTIFICATE],
+        &[
+            Premise::UnstatedFreeSlots,
+            Premise::ExDataCallbacks,
+            SECURITY_CTX_CERTIFICATE,
+        ],
     ),
     with(
         "SSL_CTX_use_certificate_chain_file",
@@ -2765,7 +3110,12 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
         "1.0.2",
         DOC_1_0_2,
         Plain,
-        &[Premise::ExDataCallbacks, PASSWORD, SECURITY_CTX_LOADED],
+        &[
+            Premise::UnstatedFreeSlots,
+            Premise::ExDataCallbacks,
+            PASSWORD,
+            SECURITY_CTX_LOADED,
+        ],
     ),
     with(
         "SSL_connect",
@@ -3077,7 +3427,7 @@ pub const DOCUMENTED: &[DocumentedFunction] = &[
             position: 0,
             sentence: "If a is NULL nothing is done.",
         },
-        EX_DATA_ONLY,
+        OBJECT_FREED,
     ),
     entry(
         "X509_get_issuer_name",

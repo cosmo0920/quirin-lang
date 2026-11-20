@@ -75,6 +75,17 @@
 //!    `resource_reference_dropped(p, nullable)`, and the cited snapshot must
 //!    record that exact sentence; the range's series is then the oldest one
 //!    whose page states it.
+//!    Card **OPENSSL-OBJECT-FREES-SILENT-METHOD-CALLBACKS**: every release is
+//!    in the free audit [`FREE_AUDIT`] ([`free_audited`]): a free that may
+//!    run a function of a method, provider or engine of an object it frees
+//!    names `openssl_unstated_callback_slots` in the statement of a free, one
+//!    whose run is named by another premise names that premise, and one
+//!    freeing nothing such names no free statement.
+//!    Card **OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS**: so is every
+//!    declaration whose ex_data reading names a key or certificate
+//!    ([`INNER_FREE_CLASSES`], [`inner_frees_audited`]): a call freeing one
+//!    inside names the free statement, or the handshake's statement, which
+//!    now conjoins it.
 //!
 //! Every function passing all four is answered with a `Safe` **claim** and no
 //! certificate, one diagnostic per function naming what was checked; the
@@ -94,8 +105,9 @@ pub use crate::documented::{
     BIO_FREE, BIO_FREE_STATEMENT, BUILTIN_BIO_METHODS, BUILTIN_BIO_METHODS_STATEMENT,
     BUILTIN_LOOKUP_METHODS, BUILTIN_LOOKUP_METHODS_STATEMENT, DOCUMENTED, Documented,
     DocumentedFunction, EX_DATA, EX_DATA_AUDIT, EX_DATA_CLASSES, EX_DATA_STATEMENT, ExData,
-    NULLABLE_ARGUMENTS, Null, NullableArgument, Premise, SLOTS, Slot, UNSTATED_FREE_STATEMENT,
-    UNSTATED_SLOTS, UNSTATED_SLOTS_STATEMENT, nullable_argument,
+    FREE_AUDIT, Frees, INNER_FREE_CLASSES, NULLABLE_ARGUMENTS, Null, NullableArgument, Premise,
+    SLOTS, Slot, UNSTATED_FREE_STATEMENT, UNSTATED_SLOTS, UNSTATED_SLOTS_STATEMENT,
+    nullable_argument,
 };
 
 /// The crate name a request's translation unit carries.
@@ -531,6 +543,13 @@ pub fn check_function(module_path: &str, module: &str, function: &str) -> Result
     // accounts for it.
     ex_data_audited(documented, EX_DATA_AUDIT)
         .map_err(|failure| format!("{function}: {failure}"))?;
+    // Card OPENSSL-OBJECT-FREES-SILENT-METHOD-CALLBACKS: a free names what it
+    // runs on the objects it frees, exactly as the free audit reads it.
+    free_audited(documented, FREE_AUDIT).map_err(|failure| format!("{function}: {failure}"))?;
+    // Card OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS: and so does a call that
+    // frees a key or certificate inside without being a free.
+    inner_frees_audited(documented, EX_DATA_AUDIT, FREE_AUDIT)
+        .map_err(|failure| format!("{function}: {failure}"))?;
     // Card OPENSSL-SSL-CTX-CALLBACK-SLOTS: every slot the declaration states
     // has every writer its page names declared as its setter.
     for slot in stated_slots(documented) {
@@ -618,6 +637,122 @@ pub fn ex_data_audited(
             "names `{EX_DATA}` but the ex_data audit reads it as touching no ex_data class"
         )),
         _ => Err("the ex_data audit lists it more than once".to_owned()),
+    }
+}
+
+/// Card **OPENSSL-OBJECT-FREES-SILENT-METHOD-CALLBACKS**: whether a shape
+/// releases an object (a free or a reference drop).
+#[must_use]
+pub const fn releases(shape: Documented) -> bool {
+    matches!(
+        shape,
+        Documented::Release(..)
+            | Documented::CountedRelease(_)
+            | Documented::NullAcceptingRelease { .. }
+    )
+}
+
+/// Card **OPENSSL-OBJECT-FREES-SILENT-METHOD-CALLBACKS**: the entry's reading
+/// in the free audit `audit` holds.
+///
+/// * An entry whose shape releases an object ([`releases`]) is listed, and
+///   so is every entry naming the free statement
+///   ([`Premise::UnstatedFreeSlots`]): no free reads the functions of the
+///   objects it frees silently.
+/// * [`Frees::Runs`]: the entry names the free statement, and not the
+///   handshake's statement as well. Card
+///   **OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS**: or the handshake's
+///   statement alone, which conjoins the free statement; an entry naming the
+///   handshake's statement is listed, as one naming the free statement is.
+/// * [`Frees::NamedBy`]: the entry names that premise and no free statement.
+/// * [`Frees::Nothing`]: the entry names no free statement.
+/// * `audit` lists the entry at most once.
+///
+/// # Errors
+///
+/// The first of these that fails, as the diagnostic text.
+pub fn free_audited(
+    documented: &DocumentedFunction,
+    audit: &[(&str, Frees)],
+) -> Result<(), String> {
+    let listed = audit
+        .iter()
+        .filter(|(function, _)| *function == documented.function)
+        .map(|(_, reading)| *reading)
+        .collect::<Vec<_>>();
+    let free = documented.premises.contains(&Premise::UnstatedFreeSlots);
+    let handshake = documented.premises.contains(&Premise::UnstatedSlots);
+    let named = free || handshake;
+    match listed.as_slice() {
+        [] if free => Err(format!(
+            "names `{UNSTATED_SLOTS}` in the statement of a free but the free audit does not \
+             list it"
+        )),
+        [] if handshake => Err(format!(
+            "names `{UNSTATED_SLOTS}` in the handshake's statement, which conjoins the \
+             statement of a free, but the free audit does not list it"
+        )),
+        [] if releases(documented.shape) => Err(format!(
+            "its {} frees an object, and the free audit does not list it",
+            describe(documented.shape)
+        )),
+        [] => Ok(()),
+        [Frees::Runs { .. }] if !named => Err(format!(
+            "may run functions of methods, providers or engines of the objects it frees but \
+             does not name `{UNSTATED_SLOTS}` in the statement of a free"
+        )),
+        [Frees::Runs { .. }] if free && handshake => Err(format!(
+            "names `{UNSTATED_SLOTS}` in both the handshake's statement and a free's"
+        )),
+        [Frees::Runs { .. }] => Ok(()),
+        [Frees::NamedBy { .. }] if named => Err(format!(
+            "names `{UNSTATED_SLOTS}` in the statement of a free, but the free audit reads \
+             what it runs in turn as named by another premise"
+        )),
+        [Frees::NamedBy { premise, .. }] if !documented.premises.contains(premise) => Err(format!(
+            "the free audit reads what it runs in turn as named by {premise:?}, which it \
+                 does not name"
+        )),
+        [Frees::NamedBy { .. }] => Ok(()),
+        [Frees::Nothing { .. }] if named => Err(format!(
+            "names `{UNSTATED_SLOTS}` in the statement of a free, but the free audit reads it \
+             as freeing nothing whose functions a user can set"
+        )),
+        [Frees::Nothing { .. }] => Ok(()),
+        _ => Err("the free audit lists it more than once".to_owned()),
+    }
+}
+
+/// Card **OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS**: a declaration whose
+/// ex_data reading in `ex_data` names a class of [`INNER_FREE_CLASSES`] (it
+/// creates, copies or frees a key or certificate, directly or inside the
+/// call) is listed in the free audit `frees`, whatever its shape, so a call
+/// that frees one inside cannot read its functions silently. What the
+/// listing then requires is [`free_audited`]'s.
+///
+/// # Errors
+///
+/// The entry is not listed, as the diagnostic text.
+pub fn inner_frees_audited(
+    documented: &DocumentedFunction,
+    ex_data: &[(&str, ExData)],
+    frees: &[(&str, Frees)],
+) -> Result<(), String> {
+    let keyed = ex_data
+        .iter()
+        .filter(|(function, _)| *function == documented.function)
+        .find_map(|(_, reading)| match reading {
+            ExData::Runs { classes, .. } => classes
+                .iter()
+                .find(|class| INNER_FREE_CLASSES.contains(class)),
+            ExData::NoClass { .. } => None,
+        });
+    match keyed {
+        Some(class) if !frees.iter().any(|(f, _)| *f == documented.function) => Err(format!(
+            "its ex_data audit entry reads an object of {class}, whose free runs functions of \
+             methods, providers and engines, and the free audit does not list it"
+        )),
+        _ => Ok(()),
     }
 }
 
@@ -1158,8 +1293,11 @@ mod tests {
                 refused += 1;
             }
         }
-        // Every one of the 53 premise clauses.
-        assert_eq!(refused, 53);
+        // Every one of the 58 premise clauses: SP1's 53 and the five frees'
+        // free statements (card OPENSSL-OBJECT-FREES-SILENT-METHOD-CALLBACKS),
+        // and the nine inner frees' (card
+        // OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS).
+        assert_eq!(refused, 67);
     }
 
     #[test]
@@ -2643,6 +2781,380 @@ mod tests {
                 "{function}"
             );
         }
+    }
+
+    /// Card OPENSSL-OBJECT-FREES-SILENT-METHOD-CALLBACKS: every release is in
+    /// the free audit; every free the audit reads as running names the free
+    /// statement in its module, and dropping it or reading it in the
+    /// handshake's statement refuses; the statement is named exactly where
+    /// the audit reads a run.
+    #[test]
+    fn every_free_names_what_it_runs_on_the_objects_it_frees() {
+        let premise = premise_text(UNSTATED_SLOTS, UNSTATED_FREE_STATEMENT);
+        let mut runs = 0;
+        for (function, reading) in FREE_AUDIT {
+            let documented = DOCUMENTED
+                .iter()
+                .filter(|entry| entry.function == *function)
+                .collect::<Vec<_>>();
+            assert_eq!(documented.len(), 1, "{function} is documented once");
+            // Card OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS: the calls that
+            // free inside have their own test.
+            if !releases(documented[0].shape) {
+                continue;
+            }
+            assert_eq!(
+                FREE_AUDIT.iter().filter(|(f, _)| f == function).count(),
+                1,
+                "{function} is audited once"
+            );
+            assert!(releases(documented[0].shape), "{function} is a release");
+            let (path, text) = module_of(function);
+            let start = text.find(&format!("extern fn {function}(")).unwrap();
+            let end = start + text[start..].find("};").unwrap();
+            let named = text[start..end].contains(premise.trim());
+            match reading {
+                Frees::Runs { .. } => {
+                    runs += 1;
+                    assert!(named, "{function} names the free statement");
+                    let dropped = format!(
+                        "{}{}",
+                        &text[..start],
+                        text[start..].replacen(&premise, "", 1)
+                    );
+                    assert_ne!(dropped, *text, "{function}");
+                    let refused = check_function(path, &dropped, function).unwrap_err();
+                    assert!(refused.contains(UNSTATED_SLOTS), "{function}: {refused}");
+                    // The handshake's statement does not stand in for it.
+                    let handshake = format!(
+                        "{}{}",
+                        &text[..start],
+                        text[start..].replacen(
+                            &premise,
+                            &premise_text(UNSTATED_SLOTS, UNSTATED_SLOTS_STATEMENT),
+                            1
+                        )
+                    );
+                    assert_ne!(handshake, *text, "{function}");
+                    assert!(
+                        check_function(path, &handshake, function).is_err(),
+                        "{function}"
+                    );
+                }
+                Frees::NamedBy { premise: other, .. } => {
+                    assert!(!named, "{function}");
+                    assert!(documented[0].premises.contains(other), "{function}");
+                }
+                Frees::Nothing { .. } => assert!(!named, "{function}"),
+            }
+        }
+        // The eight frees reaching keys, certificates, stores, engines or
+        // contexts: r39's three and this card's five.
+        assert_eq!(runs, 8);
+        for documented in DOCUMENTED {
+            let audited = FREE_AUDIT.iter().any(|(f, _)| *f == documented.function);
+            if releases(documented.shape) {
+                assert!(audited, "{}", documented.function);
+            }
+        }
+        // Card OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS: the count of the
+        // modules' free statements, over every reading, is that card's test's.
+    }
+
+    /// Card **OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS**: every call the
+    /// free audit lists that is not a release frees a key or certificate
+    /// inside (its ex_data reading names one) or names the handshake's
+    /// statement; a running one names the free statement in its module, or
+    /// the handshake's statement conjoining it, and dropping either refuses;
+    /// every call whose ex_data reading names a key or certificate is listed;
+    /// and the modules name the free statement exactly where the audit reads
+    /// a run through it.
+    #[test]
+    fn every_inner_free_names_what_it_runs() {
+        assert!(UNSTATED_SLOTS_STATEMENT.ends_with(&format!(" && {UNSTATED_FREE_STATEMENT}")));
+        let free = premise_text(UNSTATED_SLOTS, UNSTATED_FREE_STATEMENT);
+        let handshake = premise_text(UNSTATED_SLOTS, UNSTATED_SLOTS_STATEMENT);
+        // The handshake's statement before this card: its free conjunct cut.
+        let narrowed = UNSTATED_SLOTS_STATEMENT
+            .strip_suffix(&format!(" && {UNSTATED_FREE_STATEMENT}"))
+            .unwrap()
+            .replace(
+                "&& (quant all #o in #created | #copied | #freed: #ex_data(#class(#o)) \\ \
+                 #stated |-> #inert)",
+                "&& quant all #o in #created | #copied | #freed: #ex_data(#class(#o)) \\ \
+                 #stated |-> #inert",
+            );
+        let narrowed = premise_text(UNSTATED_SLOTS, &narrowed);
+        let keyed = |function: &str| {
+            EX_DATA_AUDIT.iter().any(|(f, reading)| {
+                *f == function
+                    && matches!(reading, ExData::Runs { classes, .. }
+                        if classes.iter().any(|c| INNER_FREE_CLASSES.contains(c)))
+            })
+        };
+        let (mut through_free, mut through_handshake, mut nothing) = (0, 0, 0);
+        let mut free_runs = 0;
+        for (function, reading) in FREE_AUDIT {
+            let documented = DOCUMENTED
+                .iter()
+                .find(|entry| entry.function == *function)
+                .unwrap();
+            if matches!(reading, Frees::Runs { .. })
+                && documented.premises.contains(&Premise::UnstatedFreeSlots)
+            {
+                free_runs += 1;
+            }
+            if releases(documented.shape) {
+                continue;
+            }
+            let names_handshake = documented.premises.contains(&Premise::UnstatedSlots);
+            assert!(keyed(function) || names_handshake, "{function}");
+            let (path, text) = module_of(function);
+            let start = text.find(&format!("extern fn {function}(")).unwrap();
+            let end = start + text[start..].find("};").unwrap();
+            let declaration = &text[start..end];
+            let edit = |from: &str, to: &str| {
+                let edited = format!("{}{}", &text[..start], text[start..].replacen(from, to, 1));
+                assert_ne!(edited, *text, "{function}");
+                check_function(path, &edited, function)
+            };
+            match reading {
+                Frees::Runs { .. } if names_handshake => {
+                    through_handshake += 1;
+                    assert!(declaration.contains(handshake.trim()), "{function}");
+                    assert!(!declaration.contains(free.trim()), "{function}");
+                    // The statement before this card, without its free
+                    // conjunct, refuses.
+                    let refused = edit(&handshake, &narrowed).unwrap_err();
+                    assert!(refused.contains("does not state exactly"), "{refused}");
+                }
+                Frees::Runs { .. } => {
+                    through_free += 1;
+                    assert!(declaration.contains(free.trim()), "{function}");
+                    let refused = edit(&free, "").unwrap_err();
+                    assert!(refused.contains(UNSTATED_SLOTS), "{function}: {refused}");
+                    // The handshake's statement does not stand in for it.
+                    assert!(edit(&free, &handshake).is_err(), "{function}");
+                }
+                Frees::Nothing { .. } => {
+                    nothing += 1;
+                    assert!(!declaration.contains(free.trim()), "{function}");
+                    assert!(!names_handshake, "{function}");
+                }
+                Frees::NamedBy { .. } => panic!("{function}: no inner free is read so"),
+            }
+        }
+        // The loaders, the readers and the verify-path calls; the handshake
+        // and I/O calls and SSL_shutdown; X509_new.
+        assert_eq!((through_free, through_handshake, nothing), (9, 5, 1));
+        for documented in DOCUMENTED {
+            if keyed(documented.function) {
+                assert!(
+                    FREE_AUDIT.iter().any(|(f, _)| *f == documented.function),
+                    "{} frees a key or certificate inside",
+                    documented.function
+                );
+            }
+        }
+        // Every module names the free statement only where the audit reads a
+        // run through it: r45's eight frees and these nine.
+        assert_eq!(free_runs, 17);
+        let named = crate::MODULES
+            .iter()
+            .map(|(_, text)| strip_comments(text).matches(free.trim()).count())
+            .sum::<usize>();
+        assert_eq!(named, free_runs);
+    }
+
+    /// Card **OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS**: each way the
+    /// extension can drift refuses.
+    #[test]
+    fn a_drifted_inner_free_reading_is_refused() {
+        const RUNS: Frees = Frees::Runs { how: "" };
+        const NOTHING: Frees = Frees::Nothing { why: "" };
+        const FREE: Premise = Premise::UnstatedFreeSlots;
+        const HANDSHAKE: Premise = Premise::UnstatedSlots;
+        let reads = |classes: &'static [&'static str]| {
+            [("SSL_CTX_use_PrivateKey", ExData::Runs { classes, how: "" })]
+        };
+        let plain = |premises| DocumentedFunction {
+            function: "SSL_CTX_use_PrivateKey",
+            page: "SSL_CTX_use_certificate",
+            series: "1.0.2",
+            range: "",
+            shape: Documented::Plain,
+            premises,
+        };
+        let listed = [("SSL_CTX_use_PrivateKey", RUNS)];
+        // As landed: a call freeing a key inside, listed and named.
+        inner_frees_audited(&plain(&[FREE]), &reads(&["EVP_PKEY"]), &listed).unwrap();
+        free_audited(&plain(&[FREE]), &listed).unwrap();
+        // Left out of the free audit, for either class, refuses.
+        for class in INNER_FREE_CLASSES {
+            let classes: &'static [&'static str] = std::slice::from_ref(class);
+            let refused = inner_frees_audited(&plain(&[FREE]), &reads(classes), &[]).unwrap_err();
+            assert!(refused.contains("does not list it"), "{refused}");
+            assert!(refused.contains(class), "{refused}");
+            assert!(inner_frees_audited(&plain(&[]), &reads(classes), &[]).is_err());
+        }
+        // A class whose free runs no such function, a NoClass reading, or no
+        // reading at all does not require a listing.
+        inner_frees_audited(&plain(&[]), &reads(&["SSL_SESSION"]), &[]).unwrap();
+        inner_frees_audited(
+            &plain(&[]),
+            &[("SSL_CTX_use_PrivateKey", ExData::NoClass { why: "" })],
+            &[],
+        )
+        .unwrap();
+        inner_frees_audited(&plain(&[]), &[], &[]).unwrap();
+        // Listed, the premise dropped refuses.
+        assert!(free_audited(&plain(&[]), &listed).is_err());
+        // The handshake's statement conjoins the free statement: it meets a
+        // run alone, must be listed, and is refused beside the free statement
+        // or where the audit reads nothing.
+        free_audited(&plain(&[HANDSHAKE]), &listed).unwrap();
+        let refused = free_audited(&plain(&[HANDSHAKE]), &[]).unwrap_err();
+        assert!(refused.contains("handshake"), "{refused}");
+        assert!(free_audited(&plain(&[FREE, HANDSHAKE]), &listed).is_err());
+        assert!(
+            free_audited(&plain(&[HANDSHAKE]), &[("SSL_CTX_use_PrivateKey", NOTHING)]).is_err()
+        );
+        // The crate's own reading: each keyed call of the audit tables passes,
+        // and is refused once its listing is removed.
+        for documented in DOCUMENTED {
+            let without = FREE_AUDIT
+                .iter()
+                .filter(|(f, _)| *f != documented.function)
+                .copied()
+                .collect::<Vec<_>>();
+            inner_frees_audited(documented, EX_DATA_AUDIT, FREE_AUDIT).unwrap();
+            let keyed = EX_DATA_AUDIT.iter().any(|(f, reading)| {
+                *f == documented.function
+                    && matches!(reading, ExData::Runs { classes, .. }
+                        if classes.iter().any(|c| INNER_FREE_CLASSES.contains(c)))
+            });
+            assert_eq!(
+                inner_frees_audited(documented, EX_DATA_AUDIT, &without).is_err(),
+                keyed,
+                "{}",
+                documented.function
+            );
+        }
+    }
+
+    /// Card OPENSSL-OBJECT-FREES-SILENT-METHOD-CALLBACKS: each way the free
+    /// audit can drift refuses.
+    #[test]
+    fn a_drifted_free_reading_is_refused() {
+        const RUNS: Frees = Frees::Runs { how: "" };
+        const BIO: Frees = Frees::NamedBy {
+            premise: Premise::BuiltinBioMethods,
+            why: "",
+        };
+        const NOTHING: Frees = Frees::Nothing { why: "" };
+        const FREE: Premise = Premise::UnstatedFreeSlots;
+        let free = |premises| DocumentedFunction {
+            function: "EVP_PKEY_free",
+            page: "EVP_PKEY_new",
+            series: "1.1.1",
+            range: "",
+            shape: Documented::Release(0, Null::Nullable),
+            premises,
+        };
+        // As landed.
+        free_audited(&free(&[FREE]), &[("EVP_PKEY_free", RUNS)]).unwrap();
+        free_audited(&free(&[]), &[("EVP_PKEY_free", NOTHING)]).unwrap();
+        free_audited(
+            &free(&[Premise::BuiltinBioMethods]),
+            &[("EVP_PKEY_free", BIO)],
+        )
+        .unwrap();
+        // A plain call left out of the audit names no free statement.
+        let plain = DocumentedFunction {
+            shape: Documented::Plain,
+            ..free(&[])
+        };
+        free_audited(&plain, &[]).unwrap();
+        // Every release shape left out of the audit refuses.
+        for shape in [
+            Documented::Release(0, Null::Nullable),
+            Documented::CountedRelease(0),
+            Documented::NullAcceptingRelease {
+                position: 0,
+                sentence: "",
+            },
+        ] {
+            for premises in [&[FREE][..], &[][..]] {
+                let refused = free_audited(
+                    &DocumentedFunction {
+                        shape,
+                        ..free(premises)
+                    },
+                    &[],
+                )
+                .unwrap_err();
+                assert!(refused.contains("does not list it"), "{refused}");
+            }
+        }
+        // The free statement on a plain call the audit does not list.
+        let premised_plain = DocumentedFunction {
+            shape: Documented::Plain,
+            ..free(&[FREE])
+        };
+        assert!(free_audited(&premised_plain, &[]).is_err());
+        // The premise dropped, or read in the handshake's statement beside or
+        // instead of the free's.
+        let refused = free_audited(&free(&[]), &[("EVP_PKEY_free", RUNS)]).unwrap_err();
+        assert!(refused.contains("does not name"), "{refused}");
+        assert!(
+            free_audited(
+                &free(&[FREE, Premise::UnstatedSlots]),
+                &[("EVP_PKEY_free", RUNS)]
+            )
+            .is_err()
+        );
+        // Card OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS: the handshake's
+        // statement alone conjoins the free statement, so it meets the audit
+        // (the declaration's documented clauses still refuse it on a free).
+        free_audited(&free(&[Premise::UnstatedSlots]), &[("EVP_PKEY_free", RUNS)]).unwrap();
+        // The free statement where the audit reads another premise or
+        // nothing, and the other premise dropped.
+        assert!(
+            free_audited(
+                &free(&[FREE, Premise::BuiltinBioMethods]),
+                &[("EVP_PKEY_free", BIO)]
+            )
+            .is_err()
+        );
+        assert!(free_audited(&free(&[]), &[("EVP_PKEY_free", BIO)]).is_err());
+        assert!(free_audited(&free(&[FREE]), &[("EVP_PKEY_free", NOTHING)]).is_err());
+        // A second listing.
+        assert!(
+            free_audited(
+                &free(&[FREE]),
+                &[("EVP_PKEY_free", RUNS), ("EVP_PKEY_free", RUNS)]
+            )
+            .is_err()
+        );
+        // The checker refuses the crate's stack free with the free statement
+        // added.
+        let (path, text) = module_of("OPENSSL_sk_free");
+        let start = text.find("extern fn OPENSSL_sk_free(").unwrap();
+        let anchor = "    requires resource_revision(flexible);\n";
+        let added = format!(
+            "{}{}",
+            &text[..start],
+            text[start..].replacen(
+                anchor,
+                &format!(
+                    "{anchor}{}",
+                    premise_text(UNSTATED_SLOTS, UNSTATED_FREE_STATEMENT)
+                ),
+                1
+            )
+        );
+        assert_ne!(added, *text);
+        assert!(check_function(path, &added, "OPENSSL_sk_free").is_err());
     }
 
     /// Card OPENSSL-REMAINING-HANDSHAKE-SETTERS: the remaining handshake

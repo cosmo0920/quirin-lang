@@ -69,6 +69,9 @@ module contract;
 // X509 **x, pem_password_cb *cb, void *u)` (openssl/pem.h).
 // Card OPENSSL-EX-DATA-REGISTRY: it allocates the X509 it returns (and frees
 // it on a failed read).
+// Card OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS: a failed decode frees the partial certificate and the public
+// key it decoded (tasn_dec.c, x509_pubkey_ex_free, 3.5.5): the
+// unstated-slots premise in the statement of a free names what those frees run.
 extern fn PEM_read_bio_X509(out: ptr<mut, u8>, x: ptr<mut, ptr<mut, u8>>, cb: fnptr, u: ptr<mut, u8>) -> ptr<mut, u8>
 contract {
     requires resource_contract_v1;
@@ -79,6 +82,8 @@ contract {
         quant all #b in #chain(#of(BIO, #args) | #bios(#of(SSL, #args))): #method(#b) in #builtin
         -> #fns(#b) |-> #inert
         && quant all #f in #fns(#b): #in_turn(#f, #ssl_of(#b) \ #args) |-> #inert);
+    requires resource_premise(openssl_unstated_callback_slots,
+        quant all #o in #freed: #teardown(#o) \ (#stated | #settable) |-> #inert);
     requires resource_premise(openssl_ex_data_callbacks,
         quant all #o in #created | #copied | #freed: #ex_data(#class(#o)) |-> #inert);
     ensures normal resource_borrowed(out);
@@ -109,6 +114,10 @@ contract {
 // *u)`.
 // Card OPENSSL-EX-DATA-REGISTRY: it allocates the EVP_PKEY it returns (and
 // frees it on a failed read).
+// Card OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS: a failed read frees the key it built (a decoded key lacking
+// the selected components, a failed legacy decode) and the decoder context
+// (crypto/pem/pem_pkey.c 3.5.5): the
+// unstated-slots premise in the statement of a free names what those frees run.
 extern fn PEM_read_bio_PrivateKey(out: ptr<mut, u8>, x: ptr<mut, ptr<mut, u8>>, cb: fnptr, u: ptr<mut, u8>) -> ptr<mut, u8>
 contract {
     requires resource_contract_v1;
@@ -119,6 +128,8 @@ contract {
         quant all #b in #chain(#of(BIO, #args) | #bios(#of(SSL, #args))): #method(#b) in #builtin
         -> #fns(#b) |-> #inert
         && quant all #f in #fns(#b): #in_turn(#f, #ssl_of(#b) \ #args) |-> #inert);
+    requires resource_premise(openssl_unstated_callback_slots,
+        quant all #o in #freed: #teardown(#o) \ (#stated | #settable) |-> #inert);
     requires resource_premise(openssl_ex_data_callbacks,
         quant all #o in #created | #copied | #freed: #ex_data(#class(#o)) |-> #inert);
     ensures normal resource_borrowed(out);

@@ -40,6 +40,9 @@ module contract;
 // Card OPENSSL-EX-DATA-REGISTRY: a safe in public-key integrity mode is a
 // signed PKCS#7 whose certificates are decoded as X509 objects (freed again
 // on a failed parse).
+// Card OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS: a failed parse frees the partial object: a signed PKCS#7 safe's
+// certificates, their public keys and its CRLs (tasn_dec.c, 3.5.5): the
+// unstated-slots premise in the statement of a free names what those frees run.
 extern fn d2i_PKCS12_bio(bp: ptr<mut, u8>, p12: ptr<mut, ptr<mut, u8>>) -> ptr<mut, u8>
 contract {
     requires resource_contract_v1;
@@ -50,6 +53,8 @@ contract {
         quant all #b in #chain(#of(BIO, #args) | #bios(#of(SSL, #args))): #method(#b) in #builtin
         -> #fns(#b) |-> #inert
         && quant all #f in #fns(#b): #in_turn(#f, #ssl_of(#b) \ #args) |-> #inert);
+    requires resource_premise(openssl_unstated_callback_slots,
+        quant all #o in #freed: #teardown(#o) \ (#stated | #settable) |-> #inert);
     requires resource_premise(openssl_ex_data_callbacks,
         quant all #o in #created | #copied | #freed: #ex_data(#class(#o)) |-> #inert);
     ensures normal resource_borrowed(bp);
@@ -78,11 +83,18 @@ contract {
 // PKCS12_free(PKCS12 *a)` (through DECLARE_ASN1_FUNCTIONS).
 // Card OPENSSL-EX-DATA-REGISTRY: it frees the certificates a signed PKCS#7
 // safe holds.
+// Card OPENSSL-OBJECT-FREES-SILENT-METHOD-CALLBACKS: freeing the PKCS#7 safes
+// frees their certificates' keys, signer info keys and CRLs (pk7_asn1.c and
+// x_crl.c 3.5.5), and so runs those keys' provider, method and engine
+// functions and a CRL's X509_CRL_METHOD free: the unstated-slots premise of a
+// free names them.
 extern fn PKCS12_free(a: ptr<mut, u8>) -> unit
 contract {
     requires resource_contract_v1;
     requires resource_revision(flexible);
     requires resource_library_version(openssl, documented "1.1.1");
+    requires resource_premise(openssl_unstated_callback_slots,
+        quant all #o in #freed: #teardown(#o) \ (#stated | #settable) |-> #inert);
     requires resource_premise(openssl_ex_data_callbacks,
         quant all #o in #created | #copied | #freed: #ex_data(#class(#o)) |-> #inert);
     ensures normal resource_released(a, nullable);
