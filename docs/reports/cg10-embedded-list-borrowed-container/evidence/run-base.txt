@@ -1,0 +1,24 @@
+exit 0
+started 2026-11-20T07:45:29Z
+finished 2026-11-20T08:22:52Z
+cdcbf730adfb0bc29b9d86f02b9150fac2c09943e58034cfc412f676247dace3  private/r3/bin/quirin-audit-tip2
+fluent-bit 046accf6aded7906f66a1baf0202da349e521736 (current checkout)
+Historical source/native/provider evidence: Unknown; use quirin-audit pinned for historical replay
+monkey: Monkey as linked into fluent-bit (29 unit(s) of the compile database); 28 standalone unit(s) replaced, 1 not linked
+member facts pre-pass: 1412 unit(s), 1066 read, 2 unread
+cmetrics: 31 selected compilation configuration(s)
+ctraces: 17 selected compilation configuration(s)
+librdkafka: 88 selected compilation configuration(s)
+chunkio: 13 selected compilation configuration(s)
+fluent-bit-chunk: 2 selected compilation configuration(s)
+monkey: 29 selected compilation configuration(s)
+monkey-libevent: 1 selected compilation configuration(s)
+callback members: 0 demoted
+current revision: 180 source file(s), 181 configuration(s): 9 Safe / 0 Pending / 6 provisional Unsafe / 162 Unknown / 4 data-only / 0 gateway failures
+preparation: 180 unit(s), 540 Clang invocation(s); -E -P 6957218 us / syntax 10870076 us / line markers 7086651 us
+pending human review: 11 declaration(s), 14 marker(s); 0 function(s) and 0 call site(s) held Pending (awaiting-human-review); 5 marker(s) must be rewritten before acceptance
+checker plugins: 141 binding(s): 0 Safe / 141 Pending / 0 Unknown / 0 provisional Unsafe
+contract revision: 473 pinned (470 in force, 3 not in force), 0 flexible checked, 37 flexible trusted, 146 libc under the standing assumption; 0 function(s) and 0 call site(s) held Pending (contract-pin-mismatch); 1 tracking the tip of an unreleased branch (0 in force, 1 not in force)
+contract revision notice [warning]: the contract for `mk_vhost_set` targets a future, unreleased release (a release candidate), not a released version: it tracks the tip of `refs/heads/cosmo0920-missing-va_end-on-null` in repository `monkey` (https://github.com/cosmo0920/monkey) (release: Monkey release after the va_end fix (release candidate)), unresolved; NOT in force for the audited source: the tip cannot be resolved (repository-missing): repository `monkey` is not a Git repository at /home/cosmo/Documents/GitHub/monkey (located by the lock)
+contract dependencies: 1140 Safe row(s): 432 on no declaration, 124 only on validated declarations, 44 on a partly validated declaration, 524 on a declared assumption, 0 consulting a held or withdrawn declaration, 16 only on a null premise (38 carrying one); 638 declaration(s) consulted (74 validated, 52 partly validated)
+refuted contracts: 0 declaration(s) refuted by their own bodies, 1 phase(s); 0 function(s) and 0 call site(s) held Unknown (contract-refuted-by-body)

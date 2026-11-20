@@ -175,6 +175,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [cg10-common-typed-place](cg10-common-typed-place/README.md) | CG10-COMMON-TYPED-PLACE |
 
+| [cg10-embedded-list-borrowed-container](cg10-embedded-list-borrowed-container/README.md) | CG10-EMBEDDED-LIST-BORROWED-CONTAINER: embedded lists as borrowed container operations (gateway rule 69) |
+
 | [cg10-indirect-access-sole-blockers](cg10-indirect-access-sole-blockers/README.md) | CG10-INDIRECT-ACCESS-SOLE-BLOCKERS: the 513 functions the access refusal blocks alone |
 
 | [cg10-indirect-access-sole-residuals](cg10-indirect-access-sole-residuals/README.md) | CG10-INDIRECT-ACCESS-SOLE-RESIDUALS: the uncontracted callees behind the access refusal |

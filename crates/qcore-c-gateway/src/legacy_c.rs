@@ -163,6 +163,11 @@ mod return_call_access;
 // last, a re-attribution that never admits.
 #[path = "legacy_uncontracted_access.rs"]
 mod uncontracted_access;
+// Card CG10-EMBEDDED-LIST-BORROWED-CONTAINER (rule 69): the gate's refusal of
+// a list helper handed a formal's embedded list names the container custody
+// that decides it; asked last, a re-attribution that never admits.
+#[path = "legacy_embedded_container.rs"]
+mod embedded_container;
 // Card MEMBER-EFFECT-SUMMARY step 1 (rule 38i): the gate's refusal of member
 // custody through a formal parent names its premise; asked last, a
 // re-attribution that never admits.
@@ -5911,6 +5916,13 @@ impl Parser<'_> {
                 // uncontracted callee where it decides; never an admission.
                 let returned_evaluation =
                     self.uncontracted_return_attribution(&expression, line, returned_evaluation);
+                // Card CG10-EMBEDDED-LIST-BORROWED-CONTAINER (rule 69), after
+                // rule 12k: a re-attribution to the container custody.
+                let returned_evaluation = self.embedded_container_return_attribution(
+                    &expression,
+                    line,
+                    returned_evaluation,
+                );
                 Statement::Return {
                     line,
                     writes: self.expression_writes(&expression),
@@ -5959,6 +5971,10 @@ impl Parser<'_> {
         // 38d: the gate's refusal of member custody through a formal parent
         // names its premise; the node and its writes are unchanged.
         let statement = self.member_custody_attribution(tokens, line, statement);
+        // Card CG10-EMBEDDED-LIST-BORROWED-CONTAINER (rule 69), after rule
+        // 38i: the gate's refusal of a list helper handed a formal's embedded
+        // list names the container custody; the node and writes are unchanged.
+        let statement = self.embedded_container_attribution(tokens, line, statement);
         match step {
             Some(step) => Statement::Block(vec![
                 statement,
