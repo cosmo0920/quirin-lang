@@ -3884,8 +3884,8 @@
       "sha256": "282ca1e9ad92339888457c3ec30e6ab61b7591339962741a671a22afc35ac5f3"
     },
     "librdkafka/memory.qv": {
-      "clause_count": 78,
-      "declaration_count": 14,
+      "clause_count": 92,
+      "declaration_count": 16,
       "declarations": [
         {
           "clauses": 3,
@@ -4087,6 +4087,36 @@
             "result": "none"
           },
           "resource_table": "functions"
+        },
+        {
+          "clauses": 7,
+          "name": "XXH32_finalize",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 7,
+          "name": "XXH64_finalize",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         }
       ],
       "inherits": [
@@ -4131,7 +4161,7 @@
           }
         ]
       },
-      "sha256": "051e04d4bcce0cf331275619d503ea855afc994b67e203625bc8a5f334b2f885"
+      "sha256": "7b08b61d3a3790355ca4ca635d200d6e0d64150db5ff85a05ce8ad2676d865f0"
     },
     "librdkafka/null_deref.qv": {
       "clause_count": 1380,
