@@ -7614,6 +7614,20 @@ an undeclared OpenSSL producer). `QCore.NullableReferenceDrop` (12 audited,
     `decision_vectors_agree`, `openssl_formulas_wf`,
     `unstated_entails_ex_data`, `ex_data_does_not_entail_unstated`, …);
     [report](../reports/sp1-symbolic-openssl-premises/README.md).
+    **Amended by card SP3-SYMBOLIC-FLUENT-BIT-LIBC-PREMISES** (C04.18.9's
+    Fluent Bit block): `quirin-provider-fluent-bit` states its three
+    premises (`untracked_handback`, `ingestion_active`,
+    `synchronous_output_reachability`) as formulas over 20 appended terms,
+    four of sort `prop`, with no grammar change and no new sort; negation
+    is membership in a difference (`#x in S \ T`). The crate's own test
+    refuses a string statement (`every_premise_is_a_formula`), and
+    `quirin-provider-libc`'s refuses a string premise or hypothesis atom
+    (`no_premise_is_prose`; it states none). The three declarations are
+    re-pinned at the revisions and sites they were pinned at, so none
+    leaves force. `QCore.PremiseFormula.FluentBit`
+    (`fluent_bit_formulas_wf`, `untracked_admitted_faithful`,
+    `ingestion_core_entails_premise`, `synchronous_output_not_in_tree`);
+    [report](../reports/sp3-symbolic-fluent-bit-libc-premises/README.md).
 
 <a id="constraint-13i"></a>
 
