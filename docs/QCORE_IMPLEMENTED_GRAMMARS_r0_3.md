@@ -4006,6 +4006,15 @@ statement. The statement every rendering prints is the canonical printing:
 single spaces around binary operators, `: ` after a quantifier's domain, `, `
 between arguments, parentheses only where the precedence needs them.
 
+The frontend's operator gate (`Q038`) admits `&&` and `|` inside a `requires
+resource_premise(NAME, FORMULA);` clause whose statement the premise reader
+accepts as a formula, and nowhere else it did not already
+(`crates/qcore-frontend/src/pipe.rs`, `premise_formula_spans`; card
+SP3-SYMBOLIC-FLUENT-BIT-LIBC-PREMISES, whose Fluent Bit modules are the first
+formula premises the compiler regression sweep of the contract corpus
+compiles). A string statement or a formula the reader refuses gets no such
+span, so its operators still refuse.
+
 `|->` is the lexer's one `MapsTo` token everywhere (three bytes, matched before
 `||`, `|>`, `->` and `|`, so `A |-> B` never lexes as a union followed by an
 implication). Its meaning is decided by the delimited context that reads it: a

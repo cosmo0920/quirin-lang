@@ -58,6 +58,17 @@ gains the prose ban.
   `resource_hypothesis` and asserts the two `nested_call_admission`
   conjunctions. The loader still admits the string form elsewhere (tests and
   fixtures); the global ban is SP5 (§9).
+* **The compiler's operator gate.** The Fluent Bit modules are in the
+  contract corpus, which `compiler/tests/qcore_contract_corpus.rs` compiles
+  module by module; the OpenSSL modules are not, so SP1's formulas never met
+  the frontend's operator gate. Gate 1 found it: `Q038` refused every `&&`
+  and `|` of the `untracked_handback` formula. The gate now admits those two
+  operators inside a `requires resource_premise(NAME, FORMULA);` clause whose
+  statement the premise reader accepts as a formula, and nowhere else
+  (`pipe.rs`, `premise_formula_spans`, after the `quant checks` and
+  `result_set` precedents; grammar G05-formula records it). A string
+  statement or a refused formula gets no span. Test
+  `compiler/tests/premise_formula_operators.rs` (both directions).
 * **Semantics unchanged.** Premises stay undischarged metadata: no consumer
   that decides a verdict reads them, and the three declarations are re-pinned
   at the revisions and sites they were pinned at (§6).
