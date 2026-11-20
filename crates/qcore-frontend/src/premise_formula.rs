@@ -24,8 +24,9 @@
 //!    language's existing tokens into a [`Raw`] tree. Loosest to tightest:
 //!    `->` (implication, right-associative), `&&` (conjunction), `|->`
 //!    (maps-to, non-associative), `in` and `==` (non-associative), `|` and
-//!    `-` (set union and difference: a union chain or one difference, never
-//!    mixed without parentheses), then a primary: `( F )`,
+//!    `\` (set union and difference: a union chain or one difference, never
+//!    mixed without parentheses; `-` is refused, so difference has one
+//!    spelling), then a primary: `( F )`,
 //!    `quant all #x in SET: F` (its body extends as far as it can), a term
 //!    `#name`, `#name(A)` or `#name(A, B)`, an upper-case constant, `{}`.
 //! 2. **Sorts** ([`check`]): every term is in the closed [`VOCABULARY`] with
@@ -129,7 +130,7 @@ pub enum Op {
     Eqv,
     /// `|`
     Union,
-    /// `-`
+    /// `\`
     Diff,
 }
 
@@ -142,7 +143,7 @@ impl Op {
             Self::Mem => "in",
             Self::Eqv => "==",
             Self::Union => "|",
-            Self::Diff => "-",
+            Self::Diff => "\\",
         }
     }
 
@@ -539,15 +540,18 @@ impl Reader<'_> {
                 let right = self.primary()?;
                 left = self.bin(Op::Union, left, right)?;
             }
-            if self.symbol(Symbol::Minus) {
-                return Err(error("`|` and `-` do not mix: parenthesize"));
+            if self.symbol(Symbol::Backslash) {
+                return Err(error("`|` and `\\` do not mix: parenthesize"));
             }
-        } else if self.take(Symbol::Minus) {
+        } else if self.take(Symbol::Backslash) {
             let right = self.primary()?;
             left = self.bin(Op::Diff, left, right)?;
-            if self.symbol(Symbol::Pipe) || self.symbol(Symbol::Minus) {
-                return Err(error("`-` does not chain or mix with `|`: parenthesize"));
+            if self.symbol(Symbol::Pipe) || self.symbol(Symbol::Backslash) {
+                return Err(error("`\\` does not chain or mix with `|`: parenthesize"));
             }
+        }
+        if self.symbol(Symbol::Minus) {
+            return Err(error("set difference is spelled `\\`, not `-`"));
         }
         Ok(left)
     }
@@ -971,7 +975,7 @@ pub const DECISION_VECTORS: &[(&str, bool)] = &[
         true,
     ),
     (
-        "#slots(#args) - #stated |-> #inert && #slots(#ctx(#args)) |-> #inert",
+        "#slots(#args) \\ #stated |-> #inert && #slots(#ctx(#args)) |-> #inert",
         true,
     ),
     // An unknown term.

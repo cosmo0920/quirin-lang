@@ -1899,8 +1899,8 @@ mod tests {
                 "{}{}",
                 &text[..start],
                 text[start..].replacen(
-                    "#of(SSL_CTX, #args)) - #stated |-> #inert",
-                    "#of(SSL_CTX, #args) | #bios(#of(SSL, #args))) - #stated |-> #inert",
+                    "#of(SSL_CTX, #args)) \\ #stated |-> #inert",
+                    "#of(SSL_CTX, #args) | #bios(#of(SSL, #args))) \\ #stated |-> #inert",
                     1,
                 )
             );

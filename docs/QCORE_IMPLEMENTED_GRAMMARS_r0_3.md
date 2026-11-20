@@ -3973,7 +3973,7 @@ conjunction = maps_to, { "&&", maps_to } ;                   (* left-associative
 maps_to     = relation, [ "|->", relation ] ;                (* no chaining *)
 relation    = set_expr, [ ( "in" | "==" ), set_expr ] ;      (* no chaining *)
 set_expr    = primary, { "|", primary }
-            | primary, "-", primary ;                        (* never mixed, never chained *)
+            | primary, "\\", primary ;                       (* never mixed, never chained *)
 primary     = "(", implication, ")"
             | "quant", "all", "#", name, "in", set_expr, ":", implication
             | "#", name, [ "(", implication, [ ",", implication ], ")" ]
@@ -3982,10 +3982,17 @@ primary     = "(", implication, ")"
 name        = [a-z][a-z0-9_]* ;  CONSTANT = [A-Z][A-Z0-9_]* ;
 ```
 
-Every token is an existing one: `#` (`Hash`), `|->` (`MapsTo`), `->`
-(`Arrow`), `&&` (`AndAnd`), `==` (`EqualEqual`), `|` (`Pipe`), `-` (`Minus`),
-braces, parentheses, `:`, `,` and the ordinary words `quant`, `all` and `in`;
-no lexer token is added. A quantifier's body extends as far as it can. The
+Every token but one is an existing one: `#` (`Hash`), `|->` (`MapsTo`), `->`
+(`Arrow`), `&&` (`AndAnd`), `==` (`EqualEqual`), `|` (`Pipe`), braces,
+parentheses, `:`, `,` and the ordinary words `quant`, `all` and `in`. Set
+difference is `\` (`Backslash`), the one token this card adds (USER DECISION
+2026-11-20, "Add '\'"): a bare backslash was an `unexpected character` lex
+error, and no tracked `.qcore`, `.qc`, `.qr`, `.qv` or `.qcorelib` file had one
+in code position (781 files), so the promotion accepts nothing new elsewhere;
+inside a string or character literal a backslash is still the literal's
+escape. It is one byte with no two-byte spelling: `\|` is `Backslash` then
+`Pipe`, and `|->`, `||->`, `->|`, `!->` keep their longest-match identities.
+`-` (`Minus`) is refused inside a formula, so difference has one spelling. A quantifier's body extends as far as it can. The
 reader is bounded (1024 tokens, nesting depth 48, 512 nodes); exhaustion
 rejects. The sort judgment then requires every `#name` to be a registered term
 of C04.18.9 applied to arguments of its signature, or a variable bound by an

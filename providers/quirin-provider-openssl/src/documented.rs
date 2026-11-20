@@ -193,8 +193,8 @@ pub const UNSTATED_SLOTS: &str = "openssl_unstated_callback_slots";
 /// of the declaration states takes, releases or retains nothing the caller
 /// holds.
 pub const UNSTATED_SLOTS_STATEMENT: &str = "#slots(#of(SSL, #args) | #ctx(#of(SSL, #args)) | \
-#of(SSL_CTX, #args)) - #stated |-> #inert && quant all #o in #created | #copied | #freed: \
-#ex_data(#class(#o)) - #stated |-> #inert";
+#of(SSL_CTX, #args)) \\ #stated |-> #inert && quant all #o in #created | #copied | #freed: \
+#ex_data(#class(#o)) \\ #stated |-> #inert";
 
 /// Card **OPENSSL-BIO-METHODS-AND-CALLBACKS**: the name of the built-in BIO
 /// methods premise.
@@ -210,7 +210,7 @@ pub const BUILTIN_BIO_METHODS: &str = "openssl_builtin_bio_methods";
 /// BIO when that object is not an argument of the call.
 pub const BUILTIN_BIO_METHODS_STATEMENT: &str = "quant all #b in #chain(#of(BIO, #args) | \
 #bios(#of(SSL, #args))): #method(#b) in #builtin -> #fns(#b) |-> #inert && quant all #f in \
-#fns(#b): #in_turn(#f, #ssl_of(#b) - #args) |-> #inert";
+#fns(#b): #in_turn(#f, #ssl_of(#b) \\ #args) |-> #inert";
 
 /// Card **OPENSSL-BIO-METHODS-AND-CALLBACKS**: the name of the BIO free
 /// premise.

@@ -101,6 +101,20 @@ pub enum Symbol {
     /// declaration; every other reader refuses it as an unexpected symbol.
     /// `@` is not an identifier character: the word rule is unchanged.
     At,
+    /// `\`, **set difference** of a symbolic premise formula (card
+    /// `SP1-SYMBOLIC-OPENSSL-PREMISES`, USER DECISION 2026-11-20: "Add '\'").
+    /// A bare backslash was a lexer error (`unexpected character '\\'`)
+    /// before the card; the census found **zero** backslashes in code
+    /// position across the 781 tracked `.qcore`/`.qc`/`.qr`/`.qv`/`.qcorelib`
+    /// files (a backslash inside a string or character literal is that
+    /// literal's escape and never reaches this rule), so the promotion moves
+    /// the layer of a refusal and accepts nothing new. One byte, no two-byte
+    /// spelling, so no row of the longest-match table moves: `\|` is this
+    /// token then `Pipe`, and `|->` stays one `MapsTo`. It is read only inside
+    /// a `resource_premise(NAME, FORMULA)` formula
+    /// (`crate::premise_formula`); every other reader refuses it as an
+    /// unexpected symbol.
+    Backslash,
     Question,
     Less,
     Greater,
@@ -438,6 +452,9 @@ impl Lexer<'_> {
             // Card `SUPPLIED-OWNED-RETURN-CODE-HANDOFF`: the C-name marker.
             // One byte, no two-byte spelling: no row above moves.
             '@' => Ok(Symbol::At),
+            // Card `SP1-SYMBOLIC-OPENSSL-PREMISES`: set difference in a
+            // premise formula. One byte, no two-byte spelling.
+            '\\' => Ok(Symbol::Backslash),
             '?' => Ok(Symbol::Question),
             '<' => Ok(Symbol::Less),
             '>' => Ok(Symbol::Greater),

@@ -159,6 +159,17 @@ fn a_formula_premise_is_admitted_with_its_canonical_statement() {
         declaration_premises(&sources(&respelled)).unwrap()["q_wait"],
         declared_premises(&with).unwrap()["q_wait"]
     );
+    // A set difference prints `\`: the premise's erasure (its legacy
+    // hypothesis atom) holds the canonical formula, backslash included.
+    let difference = MODULE.replace(
+        prose,
+        "    requires resource_premise(served_queue, #slots(#args) \\ #stated |-> #inert);\n",
+    );
+    let loaded = load_resource_contract_sources(&sources(&difference)).unwrap();
+    assert_eq!(
+        declared_premises(&loaded).unwrap()["q_wait"][0].statement,
+        "#slots(#args) \\ #stated |-> #inert"
+    );
 }
 
 /// Fail-closed: a malformed formula, an unknown term, an ill-sorted
@@ -174,7 +185,8 @@ fn every_malformed_formula_rejects_the_module() {
         "requires resource_premise(served_queue, quant all #o in #created: #ex_data(#class(#x)) |-> #inert);",
         "requires resource_premise(served_queue, #stated);",
         "requires resource_premise(served_queue, #stated |-> #inert &&);",
-        "requires resource_premise(served_queue, #args | #created - #freed);",
+        "requires resource_premise(served_queue, #args | #created \\ #freed);",
+        "requires resource_premise(served_queue, #slots(#args) - #stated |-> #inert);",
         "requires resource_premise(served_queue, #ex_data(NOT_A_CLASS) |-> #inert);",
         "requires resource_premise(served_queue, \"#stated |-> #inert\");",
         "requires resource_premise(served_queue, #stated |-> #inert); requires resource_premise(served_queue, #stated |-> #inert);",

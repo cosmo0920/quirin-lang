@@ -49,7 +49,7 @@ contract {
     requires resource_premise(openssl_builtin_bio_methods,
         quant all #b in #chain(#of(BIO, #args) | #bios(#of(SSL, #args))): #method(#b) in #builtin
         -> #fns(#b) |-> #inert
-        && quant all #f in #fns(#b): #in_turn(#f, #ssl_of(#b) - #args) |-> #inert);
+        && quant all #f in #fns(#b): #in_turn(#f, #ssl_of(#b) \ #args) |-> #inert);
     requires resource_premise(openssl_ex_data_callbacks,
         quant all #o in #created | #copied | #freed: #ex_data(#class(#o)) |-> #inert);
     ensures normal resource_borrowed(bp);

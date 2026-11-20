@@ -11,6 +11,8 @@ providers' prose premises become registered follow-ups.
 
 [Prediction](PREDICTION.md) (committed first, `431131947`): no status move on
 any route, content changes only where a premise is rendered, 30 lock digests.
+Its plan sentence spells difference `-`. The user later chose `\`, which
+changes no predicted effect, so the prediction is kept as committed.
 
 ## 1. What changed
 
@@ -37,10 +39,10 @@ any route, content changes only where a premise is rendered, 30 lock digests.
 ## 2. Grammar and vocabulary
 
 Loosest to tightest: `->` (right-associative), `&&`, `|->` (no chaining),
-`in` and `==` (no chaining), `|` and `-` (a union chain or one difference,
-never mixed), then `( F )`, `quant all #x in SET: F` (the body extends as far
+`in` and `==` (no chaining), `|` and `\` (a union chain or one difference,
+never mixed; `-` refused), then `( F )`, `quant all #x in SET: F` (the body extends as far
 as it can), `#name`, `#name(A)`, `#name(A, B)`, an upper-case constant, `{}`.
-Every token is an existing one; no lexer token was added.
+Every token but `\` is an existing one.
 
 | Term | Sort | Meaning |
 |---|---|---|
@@ -81,24 +83,42 @@ formula, which is exactly the tokens between the comma after `NAME` and the
 clause's closing parenthesis. The two other meanings are unchanged (their
 readers and tests are untouched).
 
-**Set difference is `-`, not `\`.** The brief listed `\` among "the
-language's existing ASCII tokens", but `\` is not a token: the lexer refuses it
-(`unexpected character`). Admitting it would add a lexer token, against the
-user's choice of existing tokens, and the hypothesis graph's opaque legacy
-atoms refuse a statement containing a backslash (`hypothesis::plain`), so every
-premise statement printing `\` would also need that check changed. `-` is the
-existing `Minus`, as union is the existing `Pipe`. If the user prefers `\`,
-the change is the lexer token with its census, `hypothesis::plain`, and the
-four constants.
+**Set difference is `\`** (USER DECISION 2026-11-20, "Add '\'", answering
+this card's first hand-back, which had used the existing `-`).
+* **The token.** `Symbol::Backslash`, one byte, no two-byte spelling. A bare
+  backslash was an `unexpected character` lex error. The census
+  (`private/logs`, script in the scratchpad, reproduced by the lexer's own
+  refusal) found zero backslashes in code position across the 781 tracked
+  `.qcore`/`.qc`/`.qr`/`.qv`/`.qcorelib` files at base, so the promotion
+  accepts nothing new outside a formula: every other reader refuses the token
+  as an unexpected symbol. Inside a string or character literal a backslash is
+  still the literal's escape (`quoted` never reaches the symbol rule).
+  Against the existing spellings: `\|` is `Backslash` then `Pipe`; `\|->` is
+  `Backslash` then one `MapsTo`; `|->`, `||->`, `->|`, `!->`, `|>`, `||` keep
+  their longest-match identities (`lexes_the_set_difference_apart_from_every_bar_spelling`).
+* **One spelling.** Inside a formula `-` is refused ("set difference is spelled
+  `\`, not `-`"), with tests in the reader and the loader.
+* **The hypothesis graph.** A formula premise erases to a legacy hypothesis
+  atom whose statement is the canonical printing, now possibly holding `\`.
+  `hypothesis::validate` admitted an opaque statement only when `plain` (no
+  backslash). It now also admits one when the atom ID starts `legacy_atom_`
+  (generated from a named premise) **and** the statement is exactly the
+  canonical printing of a well-formed formula (`canonical_formula`: the
+  premise reader accepts it and re-prints it byte for byte). Every other
+  opaque statement keeps `plain`: a `resource_hypothesis` atom, a string
+  premise's legacy atom, a non-canonical or ill-formed formula, or any other
+  text with a backslash is refused as before. It stays fail-closed because the
+  added case is a strict, decidable check of the same reader that admitted the
+  premise; the wire reader goes through the same `validate`.
 
 ## 3. The four formulas
 
 * `openssl_ex_data_callbacks` (30):
   `quant all #o in #created | #copied | #freed: #ex_data(#class(#o)) |-> #inert`
 * `openssl_unstated_callback_slots` (7):
-  `#slots(#of(SSL, #args) | #ctx(#of(SSL, #args)) | #of(SSL_CTX, #args)) - #stated |-> #inert && quant all #o in #created | #copied | #freed: #ex_data(#class(#o)) - #stated |-> #inert`
+  `#slots(#of(SSL, #args) | #ctx(#of(SSL, #args)) | #of(SSL_CTX, #args)) \ #stated |-> #inert && quant all #o in #created | #copied | #freed: #ex_data(#class(#o)) \ #stated |-> #inert`
 * `openssl_builtin_bio_methods` (8):
-  `quant all #b in #chain(#of(BIO, #args) | #bios(#of(SSL, #args))): #method(#b) in #builtin -> #fns(#b) |-> #inert && quant all #f in #fns(#b): #in_turn(#f, #ssl_of(#b) - #args) |-> #inert`
+  `quant all #b in #chain(#of(BIO, #args) | #bios(#of(SSL, #args))): #method(#b) in #builtin -> #fns(#b) |-> #inert && quant all #f in #fns(#b): #in_turn(#f, #ssl_of(#b) \ #args) |-> #inert`
 * `openssl_bio_free_callbacks` (2):
   `quant all #b in #of(BIO, #args) | #chain(#bios(#of(SSL, #args))): #b in #freed -> #callback(#b, BIO_CB_FREE) |-> #inert && #destroy(#b) |-> #inert && #ex_data_free(BIO) |-> #inert`
 
@@ -116,13 +136,13 @@ The modules lay each out one step per line (a break before every `->` and
 | | "the call creates, copies or frees" | `quant all #o in #created \| #copied \| #freed` |
 | | "takes, releases or retains nothing the caller holds" | `#inert` |
 | unstated | "a callback the call may run" | `\|->` |
-| | "that no clause of this declaration states" | `- #stated`, on both conjuncts |
+| | "that no clause of this declaration states" | `\ #stated`, on both conjuncts |
 | | "a callback slot of" | `#slots(…)` |
 | | "the SSL object" | `#of(SSL, #args)` |
 | | "or its SSL_CTX" | `#ctx(#of(SSL, #args))`; on `SSL_CTX_free`, the SSL_CTX argument, `#of(SSL_CTX, #args)` (R3) |
-| | "whose invocation the declaration does not state" | `- #stated` |
+| | "whose invocation the declaration does not state" | `\ #stated` |
 | | "among them the SSL_CTX_callback_ctrl arms such as the servername, status and ticket key callbacks" | members of `#slots` (its meaning names the arms); "among them" adds no set |
-| | "or an ex_data callback" | `&& quant all #o in #created \| #copied \| #freed: #ex_data(#class(#o)) - #stated \|-> #inert` (R2) |
+| | "or an ex_data callback" | `&& quant all #o in #created \| #copied \| #freed: #ex_data(#class(#o)) \ #stated \|-> #inert` (R2) |
 | | "takes, releases or retains nothing the caller holds" | `\|-> #inert`, each conjunct |
 | builtin | "a function of a BIO method" | `#fns(#b)` |
 | | "the library defines itself (the BIO_METHOD that BIO_s_socket, BIO_s_mem, BIO_f_buffer or another built-in BIO_s_ or BIO_f_ function returns, which no setter is handed)" | `#method(#b) in #builtin ->`; `#builtin`'s meaning carries the parenthetical |
@@ -131,7 +151,7 @@ The modules lay each out one step per line (a break before every `->` and
 | | "or one chained to it" | `#chain(…)` |
 | | "takes, releases or retains nothing the caller holds" | `#fns(#b) \|-> #inert` |
 | | "and so does any callback it runs in turn" | `&& quant all #f in #fns(#b): #in_turn(#f, …) \|-> #inert` |
-| | "on an object other than the arguments of the call" | `… - #args` |
+| | "on an object other than the arguments of the call" | `… \ #args` |
 | | "(the SSL object of a BIO_f_ssl BIO)" | `#ssl_of(#b)` (R4) |
 | BIO free | "when the call drops the last reference to a BIO" | `quant all #b in …: #b in #freed ->` |
 | | "its BIO argument" | `#of(BIO, #args)` |
@@ -161,8 +181,8 @@ The modules lay each out one step per line (a break before every `->` and
   statements defines. Examples are marked "such as", "among them" and "or
   another". The wider reading, any callback on any object that is not an
   argument, would also assume something of, for example, a chained
-  `BIO_s_connect` BIO's info callback. That alternative is
-  `#in_turn(#f, #all - #args)`, a new term; see the hand-back.
+  `BIO_s_connect` BIO's info callback (it would need a new term).
+  **User decision 2026-11-20: "Narrow (Recommended)"**, the reading above.
 * **R5** (BIO free). "and the BIOs chained to it" attaches to the SSL
   object's BIOs only: `BIO_free` frees one BIO (`BIO_free_all` frees a chain).
   The `#b in #freed` guard makes the other grouping assume nothing more of a
@@ -233,6 +253,19 @@ and `quirin-plugin.json` are byte-identical to base. The prediction expected
 changed module digests in `user-crates-load-path.json`, but that file lists
 modules and bindings, not digests, so that line of the prediction missed. The
 lock count matched.
+
+**Re-pin after the switch to `\`**, in the same order (`regen-checkers-3.log`
+exit 1 listing exactly the stale declarations; `regen-pin-3.log`,
+`regen-sync-3.log`, `regen-checkers-4.log`, `regen-views-3.log`, each exit 0):
+against the previous tip, exactly the 10 declarations whose formulas hold a set
+difference change `contract_sha256` and `pinned_at`. Those are the seven
+`openssl_unstated_callback_slots` declarations (`SSL_connect`,
+`SSL_do_handshake`, `SSL_read`, `SSL_write`, `SSL_shutdown`, `SSL_free`,
+`SSL_CTX_free`) and three more naming `openssl_builtin_bio_methods`
+(`PEM_read_bio_X509`, `PEM_read_bio_PrivateKey`, `d2i_PKCS12_bio`). The other
+20 premised declarations print no difference and keep their digests. Against
+base, the lock still changes exactly the 30 premised declarations, adds or
+removes nothing, and leaves every top-level key and both load paths unchanged.
 
 ## 8. Measurement
 

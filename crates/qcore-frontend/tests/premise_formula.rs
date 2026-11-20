@@ -321,9 +321,13 @@ fn malformed_syntax_is_refused() {
         "",
         "#args()",
         "#of(SSL, #args, #freed) |-> #inert",
+        "#args | #created \\ #freed",
+        "#args \\ #created \\ #freed",
+        "#args \\ #created | #freed",
+        // Set difference has one spelling, `\\`: `-` is refused.
+        "#slots(#args) - #stated |-> #inert",
+        "#args - #created",
         "#args | #created - #freed",
-        "#args - #created - #freed",
-        "#args - #created | #freed",
         "#stated |-> #inert |-> #inert",
         "#a in #b in #c",
         "#a == #b == #c",
@@ -399,8 +403,14 @@ fn the_printing_parenthesizes_exactly_where_needed() {
         ),
         ("((#args | #freed) | #created)", "#args | #freed | #created"),
         ("#args | (#freed | #created)", "#args | (#freed | #created)"),
-        ("(#args | #freed) - #created", "(#args | #freed) - #created"),
-        ("#args - (#freed - #created)", "#args - (#freed - #created)"),
+        (
+            "(#args | #freed) \\ #created",
+            "(#args | #freed) \\ #created",
+        ),
+        (
+            "#args \\ (#freed \\ #created)",
+            "#args \\ (#freed \\ #created)",
+        ),
     ] {
         let tree = raw(source);
         assert_eq!(canonical(&tree), printed, "{source}");

@@ -392,6 +392,54 @@ fn lexes_maps_to_apart_from_the_pipe_the_or_and_the_arrow() {
     );
 }
 
+/// Card `SP1-SYMBOLIC-OPENSSL-PREMISES` (USER DECISION 2026-11-20): `\` was an
+/// `unexpected character` lex error and is now the premise formula's set
+/// difference, one byte with no two-byte spelling: next to `|` it stays two
+/// tokens, `|->` stays one `MapsTo`, and inside a string or character literal
+/// it is still that literal's escape.
+#[test]
+fn lexes_the_set_difference_apart_from_every_bar_spelling() {
+    let kinds = |source: &str| {
+        lex(source)
+            .unwrap()
+            .into_iter()
+            .map(|token| token.kind)
+            .collect::<Vec<_>>()
+    };
+    assert_eq!(
+        kinds("#a \\ #b |-> #c"),
+        vec![
+            TokenKind::Symbol(Symbol::Hash),
+            TokenKind::Word("a".into()),
+            TokenKind::Symbol(Symbol::Backslash),
+            TokenKind::Symbol(Symbol::Hash),
+            TokenKind::Word("b".into()),
+            TokenKind::Symbol(Symbol::MapsTo),
+            TokenKind::Symbol(Symbol::Hash),
+            TokenKind::Word("c".into()),
+            TokenKind::Eof,
+        ]
+    );
+    assert_eq!(
+        kinds("\\|\\|->"),
+        vec![
+            TokenKind::Symbol(Symbol::Backslash),
+            TokenKind::Symbol(Symbol::Pipe),
+            TokenKind::Symbol(Symbol::Backslash),
+            TokenKind::Symbol(Symbol::MapsTo),
+            TokenKind::Eof,
+        ]
+    );
+    assert_eq!(
+        kinds("\"a\\nb\" '\\n'"),
+        vec![
+            TokenKind::StringLiteral("a\\nb".into()),
+            TokenKind::CharLiteral("\\n".into()),
+            TokenKind::Eof,
+        ]
+    );
+}
+
 /// Card `SUPPLIED-OWNED-RETURN-CODE-HANDOFF` (USER DECISION 2026-10-15): `@`
 /// was an `unexpected character` lex error and is now the C-name marker, one
 /// byte apart from the name it marks; `#` stays the binder and keyword marker.
