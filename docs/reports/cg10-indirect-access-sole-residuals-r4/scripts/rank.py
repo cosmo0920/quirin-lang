@@ -67,10 +67,19 @@ CALLEES = {
     "rd_clock": "declared elsewhere; nested in an actual",
     "rd_kafka_HeartbeatRequest": "builds and enqueues a request with a reply queue (custody into the broker)",
     "rd_kafka_replyq_make": "takes a queue reference (decision class 3), nested in an actual",
-    "XXH32_finalize": "static, FORCE_INLINE, in the caller's unit (the W4 summary route)",
-    "XXH64_finalize": "static, FORCE_INLINE, in the caller's unit (the W4 summary route)",
+    "XXH32_finalize": "neutral",
+    "XXH64_finalize": "neutral",
     "pb_encode_string": "writes through the stream's callback member (callback invocation), and the actual is a return-position cast view (CG10-CAST-VIEW-RETURN-POSITION)",
     "mk_list_init": "self-initialises an embedded list head (container custody, W48-CMT-TRACKED-INTERIOR-SELF-INIT's question for Monkey)",
+}
+
+
+# Actuals neither reader read with the callee declared, found by a held-out
+# fixture of the statement (the report's section 2): the function needs a
+# reading as well as the contract.
+READINGS = {
+    "XXH32_digest_endian": "rule 66: `state->mem32`, a decayed `uint32_t mem32[4]` member (typedef element)",
+    "XXH64_digest_endian": "rule 66: `state->mem64`, a decayed `uint64_t mem64[4]` member (typedef element)",
 }
 
 
@@ -124,7 +133,7 @@ def main() -> int:
         actual_left = [f for f in feats if f in ("nested call", "errno", "?:", "member destination")]
         if blocking:
             frees = "blocked"
-        elif actual_left:
+        elif actual_left or key[1] in READINGS:
             frees = "both"
         else:
             frees = "contract"
@@ -134,6 +143,7 @@ def main() -> int:
             "statements": sorted({text for _, text in statements}),
             "origins": sorted({leaf["origin"] for leaf in leaves}),
             "frees": frees,
+            "reading": READINGS.get(key[1]),
         })
     by_callee = collections.Counter()
     for item in functions:
