@@ -13,9 +13,9 @@
 # limitations under the License.
 
 """Card AMENDMENTS-SCHEMA: `scripts/apply_amendments.py` validates
-`quirin-amendments/1` fail-closed, applies it as the integrator did by hand,
-reads every committed pre-schema file through its normaliser, and replays
-c3d8ad3d4 byte for byte. Committed inputs are found from tracked files only
+`quirin-amendments/2` (card STATUS-REGROWTH-BY-PREPEND; `/1` before it)
+fail-closed, applies it as the integrator did by hand, reads every committed
+pre-schema file through its normaliser, and replays c3d8ad3d4 byte for byte. Committed inputs are found from tracked files only
 (constraint 29); the replay reads git objects, never the working tree."""
 import contextlib
 import copy
@@ -36,18 +36,24 @@ from test_evaluation_profiles import Fixture as ProfileFixture, commit  # noqa: 
 
 NOTICE = "> Counts and observations describe their recorded checkpoints."
 RECORD = "# Wave 99, first record\n\n[History index](README.md)\n\n" + NOTICE + "\n\n**OLD.** Older paragraph.\n"
-STATUS = "# Current status and evidence boundaries\n\nOld status paragraph.\n"
+STATUS = ("# Current status and evidence boundaries\n\nOld status paragraph.\n\n"
+          "## Headline measurements\n\n| Figure | Value |\n|---|---|\n| Lean | 474 |\n\n"
+          "### Unpublished landings\n\n"
+          "<!-- unpublished-landings: generated; never edit by hand. -->\n"
+          "Unpublished landings: r1 (A).\n<!-- unpublished-landings:end -->\n\n"
+          "## Latest validated gate\n\nThe r1 gate: Lean 474.\n")
+STATUS_EDIT = {"section": "## Latest validated gate", "old": "Lean 474", "new": "Lean 477"}
 MATRIX = {"schema_version": 1, "named_followups": [
     {"id": "KEEP-ME", "title": "Kept", "why": "Original why.", "source": "docs/reports/a/README.md"},
     {"id": "GONE", "title": "Gone", "why": "To retire.", "source": "docs/reports/b/README.md"},
 ], "updated": "x"}
 DOCUMENT = {
-    "schema": "quirin-amendments/1",
+    "schema": "quirin-amendments/2",
     "card": "TEST-CARD",
     "base": "710021bd7",
     "measured_tip": "0123456789abcdef0123456789abcdef01234567",
     "increment_paragraph": "**TEST-CARD.** New paragraph.",
-    "status_paragraph": "New status fact.",
+    "status_edits": [STATUS_EDIT],
     "ledger": [
         {"id": "NEW-ONE", "operation": "register", "title": "New", "text": "Why new.",
          "source": "docs/reports/test-card/README.md"},
@@ -112,8 +118,7 @@ class ApplyTests(unittest.TestCase):
         record = (self.root / "docs/development/increments/wave-99.md").read_text()
         self.assertIn(NOTICE + "\n\n**TEST-CARD.** New paragraph.\n\n**OLD.**", record)
         status = (self.root / "docs/STATUS.md").read_text()
-        self.assertEqual(status, "# Current status and evidence boundaries\n\nNew status fact.\n\n"
-                                 "Old status paragraph.\n")
+        self.assertEqual(status, STATUS.replace("The r1 gate: Lean 474.", "The r1 gate: Lean 477."))
         matrix = json.loads((self.root / "docs/reviews/r0_3/acceptance_matrix.json").read_text())
         followups = matrix["named_followups"]
         self.assertEqual([entry["id"] for entry in followups], ["KEEP-ME", "NEW-ONE"])
@@ -127,7 +132,7 @@ class ApplyTests(unittest.TestCase):
         self.assertIn("build_docs_index.py", out)
 
     def test_null_status_leaves_status_untouched(self):
-        document = dict(DOCUMENT, status_paragraph=None, ledger=[])
+        document = dict(DOCUMENT, status_edits=[], ledger=[])
         before = snapshot(self.root)
         self.assertEqual(run(self.root, document)[0], 0)
         after = snapshot(self.root)
@@ -185,7 +190,7 @@ class ApplyTests(unittest.TestCase):
             self.assertEqual(current, expected)
 
     def test_a_null_contribution_applies_nothing_more(self):
-        document = dict(DOCUMENT, ledger=[], status_paragraph=None, profiles=[],
+        document = dict(DOCUMENT, ledger=[], status_edits=[], profiles=[],
                         contribution=None)
         code, out, err = run(self.root, document)
         self.assertEqual(code, 0, err)
@@ -194,7 +199,7 @@ class ApplyTests(unittest.TestCase):
 
     def test_a_contribution_naming_an_absent_ledger_is_refused(self):
         before = snapshot(self.root)
-        document = dict(DOCUMENT, ledger=[], status_paragraph=None,
+        document = dict(DOCUMENT, ledger=[], status_edits=[],
                         contribution={"ledgers": ["contract/contributions/33/eight-home.json"]})
         code, _, err = run(self.root, document)
         self.assertEqual(code, 1)
@@ -207,7 +212,7 @@ class ApplyTests(unittest.TestCase):
 
     def test_profiles_in_a_tree_without_evaluation_profiles_are_refused(self):
         before = snapshot(self.root)
-        document = dict(DOCUMENT, ledger=[], status_paragraph=None, profiles=["eight-home"])
+        document = dict(DOCUMENT, ledger=[], status_edits=[], profiles=["eight-home"])
         code, _, err = run(self.root, document, "--check")
         self.assertEqual(code, 1)
         self.assertIn("contract/evaluations does not exist", err)
@@ -232,6 +237,77 @@ class ApplyTests(unittest.TestCase):
         self.assertIn("nothing was written", err)
         self.assertEqual(snapshot(self.root), before)
 
+    def test_status_edits_apply_in_order_within_their_sections(self):
+        """Card STATUS-REGROWTH-BY-PREPEND: edits replace text in place, each
+        on the result of the one before; a row is replaced like any text."""
+        edits = [{"section": "## Headline measurements", "old": "| Lean | 474 |",
+                  "new": "| Lean | 477 |"},
+                 STATUS_EDIT,
+                 {"section": "## Latest validated gate", "old": "Lean 477", "new": "Lean 480"}]
+        code, _, err = run(self.root, dict(DOCUMENT, status_edits=edits, ledger=[]))
+        self.assertEqual(code, 0, err)
+        status = (self.root / "docs/STATUS.md").read_text()
+        self.assertIn("| Lean | 477 |", status)
+        self.assertIn("The r1 gate: Lean 480.", status)
+        self.assertEqual(len(status), len(STATUS), "nothing was prepended")
+        self.assertTrue(status.startswith("# Current status and evidence boundaries\n\n"
+                                          "Old status paragraph.\n"))
+
+    def test_a_status_edit_may_remove_a_row(self):
+        edit = {"section": "## Headline measurements", "old": "| Lean | 474 |\n", "new": ""}
+        self.assertEqual(run(self.root, dict(DOCUMENT, status_edits=[edit], ledger=[]))[0], 0)
+        self.assertNotIn("| Lean |", (self.root / "docs/STATUS.md").read_text())
+
+    def test_a_heading_inside_a_code_fence_is_not_a_section(self):
+        status = STATUS + "\n```sh\n## Latest validated gate\n```\n"
+        (self.root / "docs/STATUS.md").write_text(status)
+        self.assertEqual(run(self.root, dict(DOCUMENT, ledger=[]))[0], 0)
+
+    def test_status_edits_that_grow_the_page_past_the_bound_are_refused(self):
+        bound = tool._land().STATUS_BYTE_LIMIT
+        edit = dict(STATUS_EDIT, new="Lean 477 " + "x" * bound)
+        before = snapshot(self.root)
+        code, _, err = run(self.root, dict(DOCUMENT, status_edits=[edit], ledger=[]))
+        self.assertEqual(code, 1)
+        self.assertIn(f"over the {bound}-byte bound", err)
+        self.assertIn("maintenance-cadence", err)
+        current = snapshot(self.root)
+        current.pop(self.root / "amendments.json", None)
+        before.pop(self.root / "amendments.json", None)
+        self.assertEqual(current, before)
+        # A page already over the bound may still shrink.
+        (self.root / "docs/STATUS.md").write_text(STATUS + "Trailer. " + "y" * bound)
+        shrink = {"section": "## Latest validated gate", "old": "Trailer. ", "new": ""}
+        self.assertEqual(run(self.root, dict(DOCUMENT, status_edits=[shrink], ledger=[]))[0], 0)
+
+    def test_a_schema_1_document_with_a_null_status_paragraph_still_applies(self):
+        """Cards finished before schema 2 keep applying unchanged."""
+        document = dict(DOCUMENT, schema=tool.SCHEMA_V1, status_paragraph=None)
+        document.pop("status_edits")
+        before = snapshot(self.root)
+        code, _, err = run(self.root, document)
+        self.assertEqual(code, 0, err)
+        after = snapshot(self.root)
+        self.assertEqual(after[self.root / "docs/STATUS.md"], before[self.root / "docs/STATUS.md"])
+        record = (self.root / "docs/development/increments/wave-99.md").read_text()
+        self.assertIn("**TEST-CARD.** New paragraph.", record)
+
+    def test_a_non_null_status_paragraph_is_refused_naming_its_replacement(self):
+        document = dict(DOCUMENT, schema=tool.SCHEMA_V1, status_paragraph="New status fact.")
+        document.pop("status_edits")
+        code, _, err = run(self.root, document, "--check")
+        self.assertEqual(code, 1)
+        self.assertIn("status_edits", err)
+        self.assertIn("quirin-amendments/2", err)
+        self.assertIn("--legacy", err)
+        # --legacy replays a committed historical file as it was: prepended.
+        code, out, err = run(self.root, document, "--legacy")
+        self.assertEqual(code, 0, err)
+        self.assertIn("historical replay", out)
+        status = (self.root / "docs/STATUS.md").read_text()
+        self.assertTrue(status.startswith("# Current status and evidence boundaries\n\n"
+                                          "New status fact.\n\nOld status paragraph.\n"))
+
 
 def mutated(change):
     document = copy.deepcopy(DOCUMENT)
@@ -242,10 +318,43 @@ def mutated(change):
 REFUSALS = {
     "unknown top-level key": (mutated(lambda d: d.update(rule="35")), "unknown top-level key"),
     "missing key": (mutated(lambda d: d.pop("ledger")), "missing top-level key"),
-    "wrong schema": (mutated(lambda d: d.update(schema="quirin-amendments/2")), "schema is"),
+    "wrong schema": (mutated(lambda d: d.update(schema="quirin-amendments/3")), "schema is"),
     "bad revision": (mutated(lambda d: d.update(base="main")), "git revision"),
     "two paragraphs": (mutated(lambda d: d.update(increment_paragraph="a\n\nb")), "one paragraph"),
-    "empty status": (mutated(lambda d: d.update(status_paragraph="")), "status_paragraph"),
+    "status paragraph in schema 2": (mutated(lambda d: d.update(status_paragraph="New fact.")),
+                                     "status_paragraph is retired"),
+    "non-null schema 1 status paragraph": (
+        mutated(lambda d: (d.pop("status_edits"),
+                           d.update(schema="quirin-amendments/1", status_paragraph="New fact."))),
+        "status_paragraph is retired"),
+    "missing status edits": (mutated(lambda d: d.pop("status_edits")), "missing top-level key"),
+    "status edits not a list": (mutated(lambda d: d.update(status_edits={})), "must be a list"),
+    "status edit shape": (mutated(lambda d: d["status_edits"][0].pop("new")),
+                          "exactly {section, old, new}"),
+    "status edit section not a heading": (
+        mutated(lambda d: d["status_edits"][0].update(section="Latest validated gate")),
+        "one heading line"),
+    "status edit empty old": (mutated(lambda d: d["status_edits"][0].update(old="")),
+                              "old must be a non-empty string"),
+    "status edit changes nothing": (mutated(lambda d: d["status_edits"][0].update(new="Lean 474")),
+                                    "changes nothing"),
+    "status edit absent heading": (
+        mutated(lambda d: d["status_edits"][0].update(section="## Coverage by area")),
+        "0 such heading lines"),
+    "status edit absent text": (mutated(lambda d: d["status_edits"][0].update(old="Lean 999")),
+                                "occurs 0 times in the section"),
+    "status edit text outside its section": (
+        mutated(lambda d: d["status_edits"][0].update(section="### Unpublished landings",
+                                                      old="| Lean | 474 |")),
+        "occurs 0 times in the section"),
+    "status edit repeated text": (
+        mutated(lambda d: d["status_edits"][0].update(section="# Current status and evidence "
+                                                      "boundaries", old="474")),
+        "occurs 2 times in the section"),
+    "status edit of the generated sentence": (
+        mutated(lambda d: d["status_edits"][0].update(section="### Unpublished landings",
+                                                      old="r1 (A).", new="r1 (A), r2 (B).")),
+        "generated unpublished-landings block"),
     "unknown operation": (mutated(lambda d: d["ledger"][0].update(operation="add")), "operation 'add'"),
     "missing field": (mutated(lambda d: d["ledger"][0].pop("title")), "lacks ['title']"),
     "extra field": (mutated(lambda d: d["ledger"][1].update(title="x")), "unexpected ['title']"),
@@ -351,7 +460,13 @@ class CommittedFileTests(unittest.TestCase):
         for path in self.committed():
             raw = json.loads(path.read_text(encoding="utf-8"))
             if "schema" in raw:
-                tool.validate(raw)
+                if raw["schema"] == tool.SCHEMA_V1 and raw["status_paragraph"] is not None:
+                    # Historical: refused as new input, replayed with --legacy.
+                    with self.assertRaisesRegex(tool.AmendmentError, "status_edits"):
+                        tool.validate(raw)
+                    tool.validate(raw, legacy=True)
+                else:
+                    tool.validate(raw)
                 current.append(path.parent.name)
                 continue
             try:
@@ -367,6 +482,10 @@ class CommittedFileTests(unittest.TestCase):
     def test_own_amendments_are_in_the_new_schema(self):
         raw = json.loads((ROOT / "docs/reports/amendments-schema/integration-amendments.json")
                          .read_text(encoding="utf-8"))
+        self.assertEqual(raw["schema"], tool.SCHEMA_V1)
+        tool.validate(raw)
+        raw = json.loads((ROOT / "docs/reports/status-regrowth-by-prepend/"
+                                 "integration-amendments.json").read_text(encoding="utf-8"))
         self.assertEqual(raw["schema"], tool.SCHEMA)
         tool.validate(raw)
 
@@ -402,7 +521,7 @@ class ProfilesCheck(unittest.TestCase):
         self.directory.cleanup()
 
     def document(self, profiles=None, base=None):
-        document = dict(DOCUMENT, base=base or self.base, ledger=[], status_paragraph=None)
+        document = dict(DOCUMENT, base=base or self.base, ledger=[], status_edits=[])
         if profiles is not None:
             document["profiles"] = profiles
         return document
@@ -492,8 +611,13 @@ class ParityTests(unittest.TestCase):
             (root / record).write_bytes(git_show(parent, record))
             raw = json.loads(git_show(PARITY_COMMIT, PARITY_AMENDMENTS))
             if not legacy:
-                raw = dict(raw, schema=tool.SCHEMA)
-            code, _, err = run(root, raw, *(["--legacy"] if legacy else []))
+                # The schema-1 form of the same file: its non-null status
+                # paragraph is refused as new input and replayed with --legacy.
+                raw = dict(raw, schema=tool.SCHEMA_V1)
+                code, _, err = run(root, raw)
+                self.assertEqual(code, 1)
+                self.assertIn("status_edits", err)
+            code, _, err = run(root, raw, "--legacy")
             self.assertEqual(code, 0, err)
             for path in (record, tool.STATUS, tool.MATRIX):
                 self.assertEqual((root / path).read_bytes(), git_show(PARITY_COMMIT, path), str(path))
