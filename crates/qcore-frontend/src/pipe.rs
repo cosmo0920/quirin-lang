@@ -975,34 +975,6 @@ fn quant_check_spans(program: &SourceProgram) -> Vec<Span> {
         .collect()
 }
 
-/// Card SP2-SYMBOLIC-LIBRDKAFKA-PREMISES (contract specification C04.18.9,
-/// grammar G05-formula): the expression spans of every `requires
-/// resource_premise(NAME, FORMULA);` clause. Its `|` (set union) and `&&`
-/// (conjunction) are the formula's own operators, read literally by the
-/// premise reader (`crate::premise_formula`), not expressions of this tier:
-/// nothing lowers the clause and no consumer that decides a verdict reads it.
-/// A string statement holds neither token, so only a formula is affected;
-/// every other token of the clause is the premise reader's to accept or
-/// refuse, and it refuses the whole module on anything outside its grammar.
-fn premise_formula_spans(program: &SourceProgram) -> Vec<Span> {
-    program
-        .declarations
-        .iter()
-        .filter_map(|declaration| declaration.value.function_contract.as_ref())
-        .flat_map(|contract| &contract.clauses)
-        .filter(|clause| {
-            matches!(clause.value.kind, SourceContractClauseKind::Requires)
-                && clause
-                    .value
-                    .expression_source
-                    .trim_start()
-                    .strip_prefix(crate::premise_formula::PREMISE_HEAD)
-                    .is_some_and(|rest| rest.trim_start().starts_with('('))
-        })
-        .map(|clause| clause.value.expression_span)
-        .collect()
-}
-
 /// Card CELL-GUARD-RESULT-RANGE-CHECKED (contract specification C09.4,
 /// grammar G05j): the expression spans of every `ensures normal
 /// result_set(SET);` clause. Its `|`, `&` and `^` are the set operators of
@@ -1035,6 +1007,43 @@ fn result_set_spans(program: &SourceProgram) -> Vec<Span> {
             ) && (headed("result_set") || headed("written_set")))
                 || (matches!(clause.value.kind, SourceContractClauseKind::QuantCell)
                     && (source.contains("live_set") || source.contains("absent_set")))
+        })
+        .map(|clause| clause.value.expression_span)
+        .collect()
+}
+
+/// Cards SP2-SYMBOLIC-LIBRDKAFKA-PREMISES and SP3-SYMBOLIC-FLUENT-BIT-LIBC-PREMISES
+/// (contract specification C04.18.9, grammar G05-formula; one exemption for
+/// both, SP3's tighter test kept at the merge): the expression spans of every `requires
+/// resource_premise(NAME, FORMULA);` clause whose statement the premise
+/// reader ([`crate::premise_formula::premise_clause`]) accepts as a formula.
+/// Its `&&` and `|` are the formula's conjunction and set union, read
+/// literally by that reader, not expressions of this tier: a premise is
+/// metadata, nothing lowers it and no verdict reads it. A clause the reader
+/// does not accept as a formula (a string statement, a malformed formula)
+/// gets no span, so its operators keep refusing here.
+fn premise_formula_spans(program: &SourceProgram) -> Vec<Span> {
+    program
+        .declarations
+        .iter()
+        .filter_map(|declaration| declaration.value.function_contract.as_ref())
+        .flat_map(|contract| &contract.clauses)
+        .filter(|clause| {
+            clause.value.kind == SourceContractClauseKind::Requires
+                && crate::lexer::lex(&clause.value.expression_source).is_ok_and(|tokens| {
+                    let kinds = tokens
+                        .into_iter()
+                        .map(|token| token.kind)
+                        .filter(|kind| *kind != TokenKind::Eof)
+                        .collect::<Vec<_>>();
+                    matches!(
+                        crate::premise_formula::premise_clause(&kinds),
+                        Ok(Some((
+                            _,
+                            crate::premise_formula::PremiseStatement::Formula(_)
+                        )))
+                    )
+                })
         })
         .map(|clause| clause.value.expression_span)
         .collect()
@@ -1122,12 +1131,12 @@ pub fn check_source_operators(program: &SourceProgram) -> Result<(), Vec<SourceD
             TokenKind::Symbol(Symbol::PipePipe | Symbol::AndAnd) if in_quant_check(token.span) => {
                 continue;
             }
-            TokenKind::Symbol(Symbol::Pipe | Symbol::PipePipe) if closure_bar(token.span) => {
+            // Cards SP2/SP3 symbolic premises: a premise formula's conjunction
+            // and set union (G05-formula).
+            TokenKind::Symbol(Symbol::AndAnd | Symbol::Pipe) if in_premise_formula(token.span) => {
                 continue;
             }
-            // Card SP2-SYMBOLIC-LIBRDKAFKA-PREMISES: a premise formula's own
-            // union and conjunction (G05-formula).
-            TokenKind::Symbol(Symbol::Pipe | Symbol::AndAnd) if in_premise_formula(token.span) => {
+            TokenKind::Symbol(Symbol::Pipe | Symbol::PipePipe) if closure_bar(token.span) => {
                 continue;
             }
             // Card CELL-GUARD-RESULT-RANGE-CHECKED: a result set's own

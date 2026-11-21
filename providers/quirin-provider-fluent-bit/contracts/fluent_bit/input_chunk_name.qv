@@ -79,7 +79,13 @@ module contract;
 // Card VERDICT-CONTRACT-PREMISE-ANNOTATIONS: stated on
 // `flb_input_chunk_get_name` as `requires resource_premise(untracked_handback,
 // "...")` (contract spec C04.18), so every verdict that rests on the
-// declaration names it.
+// declaration names it. Card SP3-SYMBOLIC-FLUENT-BIT-LIBC-PREMISES states it
+// as a formula (C04.18.9): the result's object `#r` is interior to `ic` and is
+// its chunk's name, neither tracked nor claimed; `resource_return_none` is
+// faithful exactly where `#r` is neither bound nor stored; and the gateway's
+// None-result, all-Borrowed admission (O04-TRACE N6/N8) implies that. The
+// citations the prose carried (O04-TRACE N6/N8, O00 B03/R13,
+// O04-TRACE-HANDBACK) are the ones above.
 //
 // This declaration also says nothing about `ic` being non-null — the body
 // dereferences it unconditionally, but `resource_borrowed` imposes NO non-null
@@ -96,7 +102,13 @@ module contract;
 extern fn flb_input_chunk_get_name(ic: ptr<mut, u8>) -> ptr<mut, u8>
 contract {
     requires resource_contract_v1;
-    requires resource_premise(untracked_handback, "the result aliases into ic (it is ic->chunk->name) and this projection does not track it; resource_return_none is faithful only where the result is never bound or stored, which the gateway's admission of a call with a None result and only Borrowed parameters checks per site (card O04-TRACE premises N6 and N8); the alias itself is outside every claim here (O00 B03/R13, O04-TRACE-HANDBACK)");
+    requires resource_premise(untracked_handback,
+        quant all #r in #result: #r in #interior(#args)
+        && #r in #chunk_name(#args)
+        && #r in #result \ (#tracked | #claimed)
+        && (#faithful -> #r in #result \ (#bound | #stored))
+        && (#r in #result \ (#bound | #stored) -> #faithful)
+        && (#admitted -> #r in #result \ (#bound | #stored)));
     ensures normal resource_borrowed(ic);
     ensures normal resource_return_none();
 };

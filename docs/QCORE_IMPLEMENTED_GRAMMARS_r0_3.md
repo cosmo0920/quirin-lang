@@ -4006,6 +4006,16 @@ statement. The statement every rendering prints is the canonical printing:
 single spaces around binary operators, `: ` after a quantifier's domain, `, `
 between arguments, parentheses only where the precedence needs them.
 
+The frontend's operator gate (`Q038`) admits `&&` and `|` inside a `requires
+resource_premise(NAME, FORMULA);` clause whose statement the premise reader
+accepts as a formula, and nowhere else it did not already
+(`crates/qcore-frontend/src/pipe.rs`, `premise_formula_spans`; cards
+SP2-SYMBOLIC-LIBRDKAFKA-PREMISES and SP3-SYMBOLIC-FLUENT-BIT-LIBC-PREMISES,
+whose librdkafka and Fluent Bit modules are the first formula premises the
+compiler regression sweep of the contract corpus compiles; one exemption for
+both, SP3's reader-accepted test kept at the merge). A string statement or a
+formula the reader refuses gets no such span, so its operators still refuse.
+
 `|->` is the lexer's one `MapsTo` token everywhere (three bytes, matched before
 `||`, `|>`, `->` and `|`, so `A |-> B` never lexes as a union followed by an
 implication). Its meaning is decided by the delimited context that reads it: a
@@ -4015,8 +4025,8 @@ member of callback set `F`) during the call has effect `E`.
 
 Card SP2-SYMBOLIC-LIBRDKAFKA-PREMISES: the grammar is unchanged (its new
 terms are vocabulary, C04.18.9). The source operator gate (G01, `Q038`) reads
-a `|` or `&&` inside a `requires resource_premise(…)` clause as the formula's
-own union or conjunction, as it reads a quant check's connectives and a result
+a `|` or `&&` inside a `requires resource_premise(…)` clause the premise reader
+accepts as a formula (above) as the formula's own union or conjunction, as it reads a quant check's connectives and a result
 set's operators, so a contract module stating a formula compiles; a `|` or
 `&&` anywhere else keeps its refusal, and every other token of the clause is
 the premise reader's to accept or refuse.

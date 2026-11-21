@@ -116,7 +116,8 @@ fn raw(source: &str) -> Raw {
 }
 
 /// The rows of a Lean list definition, one per line, between its opening
-/// line and the closing `]`.
+/// line and the closing `]`. A `--` comment line (a card's block header,
+/// card SP3-SYMBOLIC-FLUENT-BIT-LIBC-PREMISES) is not a row.
 fn lean_rows(opening: &str) -> Vec<String> {
     let start = LEAN
         .find(opening)
@@ -135,7 +136,12 @@ fn lean_rows(opening: &str) -> Vec<String> {
 
 /// The right-hand side of a one-line Lean definition.
 fn lean_definition(opening: &str) -> String {
-    let line = LEAN
+    lean_definition_in(LEAN, opening)
+}
+
+/// The right-hand side of a one-line Lean definition in `text`.
+fn lean_definition_in(text: &str, opening: &str) -> String {
+    let line = text
         .lines()
         .find(|line| line.starts_with(opening))
         .unwrap_or_else(|| panic!("no `{opening}`"));
@@ -210,8 +216,16 @@ fn inert_is_its_definition() {
 /// Every `resource_premise` clause of the OpenSSL crate's modules, read by
 /// the contract format's premise reader: `(module, name, statement)`.
 fn openssl_premises() -> Vec<(&'static str, String, PremiseStatement)> {
+    premises_of(OPENSSL_MODULES)
+}
+
+/// Every `resource_premise` clause of `modules`, read by the contract
+/// format's premise reader: `(module, name, statement)`.
+fn premises_of(
+    modules: &[(&'static str, &'static str)],
+) -> Vec<(&'static str, String, PremiseStatement)> {
     let mut out = Vec::new();
-    for (module, text) in OPENSSL_MODULES {
+    for (module, text) in modules {
         let stripped = text
             .lines()
             .map(|line| line.split("//").next().unwrap_or_default())
@@ -295,6 +309,69 @@ fn the_openssl_formulas_are_the_lean_definitions() {
         );
     }
     assert_eq!(total, 67);
+}
+
+/// Card SP3-SYMBOLIC-FLUENT-BIT-LIBC-PREMISES: the three modules of
+/// `quirin-provider-fluent-bit` that state a premise (the crate's own test
+/// refuses a prose premise in every one of its modules).
+const FLUENT_BIT_MODULES: &[(&str, &str)] = &[
+    (
+        "input_chunk_name.qv",
+        include_str!(
+            "../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_name.qv"
+        ),
+    ),
+    (
+        "loop_owner.qv",
+        include_str!(
+            "../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/loop_owner.qv"
+        ),
+    ),
+    (
+        "output_singleplex.qv",
+        include_str!(
+            "../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/output_singleplex.qv"
+        ),
+    ),
+];
+
+const LEAN_FLUENT_BIT: &str = include_str!("../../../proof/QCore/PremiseFormula/FluentBit.lean");
+
+#[test]
+fn the_fluent_bit_formulas_are_the_lean_definitions() {
+    let expected = [
+        (
+            "input_chunk_name.qv",
+            "untracked_handback",
+            "def untrackedHandbackFormula : Raw :=",
+        ),
+        (
+            "loop_owner.qv",
+            "ingestion_active",
+            "def ingestionActiveFormula : Raw :=",
+        ),
+        (
+            "output_singleplex.qv",
+            "synchronous_output_reachability",
+            "def synchronousOutputFormula : Raw :=",
+        ),
+    ];
+    let premises = premises_of(FLUENT_BIT_MODULES);
+    assert_eq!(premises.len(), expected.len());
+    for ((module, name, statement), (want_module, want_name, definition)) in
+        premises.into_iter().zip(expected)
+    {
+        assert_eq!((module, name.as_str()), (want_module, want_name));
+        let PremiseStatement::Formula(formula) = statement else {
+            panic!("{module}: `{name}` is stated in prose");
+        };
+        assert_eq!(raw(&formula.canonical), formula.raw, "{name}");
+        assert_eq!(
+            lean(&formula.raw),
+            lean_definition_in(LEAN_FLUENT_BIT, definition),
+            "{name}"
+        );
+    }
 }
 
 #[test]

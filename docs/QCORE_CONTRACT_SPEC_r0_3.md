@@ -1166,6 +1166,8 @@ The premise `rk_plugin_callback_closure` is named by `rd_kafka_crash` (`memory.q
 
 **Stated as formulas** (card SP1-SYMBOLIC-OPENSSL-PREMISES; user decision 2026-11-20). The four premises of `quirin-provider-openssl` keep their names and declarations (53 clauses on 30 declarations under five names; the unstated-slots premise has a handshake and a free statement); each statement is now the formula C04.18.9 gives, and the crate's checker refuses a premise stated as a string.
 
+**Stated as formulas: Fluent Bit** (card SP3-SYMBOLIC-FLUENT-BIT-LIBC-PREMISES; user decision 2026-11-20). The three premises of `quirin-provider-fluent-bit` (`untracked_handback` on `flb_input_chunk_get_name`, `ingestion_active` on `flb_input_collector_resume`, `synchronous_output_reachability` on `flb_output_task_singleplex_enqueue`, one clause each) keep their names and declarations and state the formulas C04.18.9 gives; the crate has no checker binary, so its own test refuses a premise stated as a string. `quirin-provider-libc` states no `resource_premise` clause: its two `nested_call_admission` premises are `resource_premise_all` conjunctions of typed `quant proposition` atoms (C04.18.7), and its own test refuses a string premise or hypothesis atom.
+
 ### C04.18.9. Symbolic premise statements (formula version 1)
 
 Card SP1-SYMBOLIC-OPENSSL-PREMISES. USER DECISION 2026-11-20 (verbatim): "we don't want to write down the sentences on premise clauses. We really dislike this kind of results so we must write down as condition symbols like |-> or other types of logical symbols to represent the prerequisites which compose for premise conditions. This must be applied for OpenSSL's premises." Same day: ASCII tokens reusing the language's existing tokens; every OpenSSL premise converted, and the OpenSSL provider then refuses a prose statement. Same day, answering the card's hand-back: set difference is "Add '\'" (a `\` token, one spelling), and the narrow reading of the BIO_f_ssl parenthetical (below) is the user's.
@@ -1286,6 +1288,33 @@ The constants are the fifteen ex_data classes of `CRYPTO_get_ex_new_index` (3.5)
 | `#concurrent` | set(fn) | the steps another thread runs while the call runs, each as the function it runs |
 | `#keeps_links(x)` | obj → eff | the run writes neither the item's child member nor the next or prev member of an element of its child sequence |
 
+**The Fluent Bit block** (card SP3-SYMBOLIC-FLUENT-BIT-LIBC-PREMISES; appended after the librdkafka block):
+
+| Term | Sort | Meaning |
+|---|---|---|
+| `#result` | set(obj) | the object the call's result designates (no object for a null or scalar result) |
+| `#interior(S)` | set(obj) → set(obj) | the objects the objects of `S` own, directly or in turn: what an owned pointer member designates, and what that object owns |
+| `#chunk_name(S)` | set(obj) → set(obj) | the name (`ch->name`, an sds ChunkIO allocates and frees) of the ChunkIO chunk (`ic->chunk`) each input chunk of `S` holds |
+| `#tracked` | set(obj) | the objects the resource projection holds a custody state for |
+| `#claimed` | set(obj) | the objects whose custody or lifetime a clause of the declaration states: a parameter mode's object, or a result handed over with custody (a `resource_return_none` result is not one) |
+| `#bound` | set(obj) | the objects the caller binds to a name at the call's site: the result assigned to a variable, a member or an element |
+| `#stored` | set(obj) | the objects the caller stores at the call's site where they outlive the statement: through a pointer or into a container |
+| `#faithful` | prop | the declaration's result clause states exactly the custody the caller acquires from the call at its site |
+| `#admitted` | prop | the gateway admits the call at its site under its rule for a call whose result mode is None and whose parameters are all Borrowed (card O04-TRACE premises N6 and N8) |
+| `#config_of(S)` | set(obj) → set(obj) | the Fluent Bit context (`struct flb_config`, its `config` member) each input instance of `S` belongs to |
+| `#ingesting` | set(obj) | the contexts whose `is_ingestion_active` member is true when the call reads it |
+| `#collector` | set(obj) | the collector the call finds by the id it is given in its input instance's collector list (`get_collector`); no object when none has that id |
+| `#event_registered` | set(obj) | the collectors whose own event the call registers with the collector's event loop (`mk_event_add`, or `mk_event_timeout_create` for a timer collector) |
+| `#set_running` | set(obj) | the collectors whose `running` member the call sets true |
+| `#returns_zero` | prop | the call returns 0 |
+| `#in_tree` | set(obj) | the output plugins Fluent Bit's own source tree defines (the `struct flb_output_plugin` of each `plugins/out_*` plugin) |
+| `#synchronous` | set(obj) | the output plugins whose flags carry `FLB_OUTPUT_SYNCHRONOUS` |
+| `#proxy` | set(obj) | the output plugins a proxy registers: plugins defined outside Fluent Bit's tree and loaded at run time through `flb_plugin_proxy` |
+| `#production` | prop | the call is made by a running Fluent Bit engine from its output dispatch, not directly by a test or another embedding |
+| `#out_plugin(S)` | set(obj) → set(obj) | the output plugin (its `p` member) of each output instance of `S` |
+
+A nullary term of sort `prop` (the Fluent Bit block's `#faithful`, `#admitted`, `#returns_zero`, `#production`) is itself a proposition. Its formulas say an element is outside a set as membership in a difference, `#x in S \ T` with `#x` drawn from `S` (true exactly when `#x` is in `S` and not in `T`), the other spelling of a negation beside the librdkafka block's `P -> #false`.
+
 **Meaning.** `F |-> E`: every run of callback `F` (of every member of callback set `F`) during the call has effect `E`; a callback the call does not run satisfies it. `#inert`: the run takes over, releases and retains nothing the caller holds. The rest is first-order logic over the model.
 
 **Fail-closed.** An unknown term or constant, an application whose arguments are not of the term's signature, a term without its arguments, an unbound variable, a variable shadowing a term or another variable, a formula that is not a proposition, a malformed or over-long token sequence, and a string statement that is itself a formula each reject the **whole module**; the premise is never dropped.
@@ -1322,6 +1351,13 @@ The crate's checker requires exactly these statements and refuses a premise whos
 * `detach_list_representation` (1): sixteen conjuncts over `#parent`, `#children`, `#owned`, `#child`, `#first`, `#last`, `#pred`, `#next`, `#prev`, `#next_reach`, `#nodup`, `#live` and `#concurrent |-> #keeps_links(#parent)`, one per conjunct of `QCore.CjsonRepresentationPremises`' nine propositions (`chain` is six of them).
 
 Where the prose says "so" or "because", the formula states the prerequisites and the stated consequence; the consequence follows from the prerequisites in every model where the terms mean what the table says (`QCore.PremiseFormula.Librdkafka`), so the formula is never narrower than the prose. **Exact identity.** `qcore-c-gateway`'s same-item detach check (`legacy_detach::REPRESENTATION_STATEMENT`) admits an in-unit removed-result declaration only beside the representation premise's exact statement, now the canonical formula: it admits exactly the declarations it admitted before. **Bindings.** A legacy atom's statement is part of its declaration's graph, so the 167 content-addressed binding manifests that pin such a graph (C04.18.2) were refreshed, the graph digest each one's only change ([bindings](reports/sp2-symbolic-librdkafka-premises/bindings/index.json)); no atom, refinement, flow, guard or typed proposition changed. **The hypotheses.** The nine `resource_hypothesis(detach_*, "…")` atoms of `cJSON_DetachItemViaPointer` keep their strings: a C04.18.9 formula is a premise statement, not a hypothesis form (`hypothesis::validate` admits a formula only as a generated legacy atom's statement), their text is repeated by the declaration's guarded symbols, and each is already bound to a Lean proposition of `QCore.CjsonRepresentationPremises`; moving them to C04.18.7 typed atoms is follow-up `SP2-DETACH-HYPOTHESES-TYPED-ATOMS`. **The source operator gate** (G01) reads a premise formula's `|` and `&&` as the formula's own operators, as it reads a quant check's connectives and a result set's operators; every other token of the clause is the premise reader's. **The prose ban.** The crate has no checker plugin, so its own test (`every_premise_is_a_formula`) refuses a premise stated as a string; a load-time refusal for shipped crates is follow-up `SP2-SHIPPED-PROVIDER-PROSE-BAN`.
+**The Fluent Bit premises** (card SP3-SYMBOLIC-FLUENT-BIT-LIBC-PREMISES). Each prose statement and its formula say the same, phrase by phrase ([report](reports/sp3-symbolic-fluent-bit-libc-premises/README.md)); the prose's source citations (O04-TRACE N6 and N8, O00 B03/R13, O04-TRACE-HANDBACK, the `src/flb_input.c` lines, "C3") are provenance, kept in the modules' comments and in `#admitted`'s meaning:
+
+* `untracked_handback` (1): `quant all #r in #result: #r in #interior(#args) && #r in #chunk_name(#args) && #r in #result \ (#tracked | #claimed) && (#faithful -> #r in #result \ (#bound | #stored)) && (#r in #result \ (#bound | #stored) -> #faithful) && (#admitted -> #r in #result \ (#bound | #stored))`. "faithful only where the result is never bound or stored" is read as "exactly where" (both directions), because the gateway's per-site admission is what callers' verdicts rest on; the literal "only where" is the first direction.
+* `ingestion_active` (1): `quant all #g in #config_of(#args): (#g in #config_of(#args) \ #ingesting -> #returns_zero && quant all #c in #collector: #c in #collector \ (#event_registered | #set_running)) && (#g in #ingesting -> quant all #c in #collector: #c in #event_registered && #c in #set_running) && (#returns_zero -> quant all #c in #collector: #c in #set_running -> #g in #ingesting)`. "the collector runs" is the call setting it running; the last conjunct ("a return of 0 means ...") is entailed by the first.
+* `synchronous_output_reachability` (1): `(quant all #p in #in_tree: #p in #in_tree \ #synchronous) && (#production -> quant all #p in #out_plugin(#args): #p in #synchronous && #p in #proxy)`. "(a proxy plugin)" is a conjunct, so the formula assumes it whether it is read as an identification or a gloss; "any verdict on it holds under that premise" is the standing of every named premise (C04.18), not a conjunct.
+
+The crate's own test refuses a premise stated as a string (`every_premise_is_a_formula`). The Lean model is `QCore.PremiseFormula.FluentBit`: the three formulas are well-formed, the gateway's admission yields faithfulness (`untracked_admitted_faithful`), the ingestion premise's first conjunct entails its last (`ingestion_core_entails_premise`), and in production the call's output plugin is not an in-tree one (`synchronous_output_not_in_tree`), the prose's "so".
 
 ### C04.18.1. Evidence-only hypothesis graphs (version 1)
 

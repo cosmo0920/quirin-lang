@@ -1,0 +1,38 @@
+{
+ "schema": "quirin-amendments/1",
+ "card": "SP3-SYMBOLIC-FLUENT-BIT-LIBC-PREMISES",
+ "base": "17b0e77b2",
+ "measured_tip": "670f0e6e3",
+ "increment_paragraph": "**SP3-SYMBOLIC-FLUENT-BIT-LIBC-PREMISES (2026-11-21).** User decision 2026-11-20 (premises are condition symbols, not sentences), second step after SP1: the three resource_premise clauses of quirin-provider-fluent-bit state C04.18.9 formulas, one clause each. untracked_handback (flb_input_chunk_get_name): quant all #r in #result: #r in #interior(#args) && #r in #chunk_name(#args) && #r in #result \\ (#tracked | #claimed) && (#faithful -> #r in #result \\ (#bound | #stored)) && (#r in #result \\ (#bound | #stored) -> #faithful) && (#admitted -> #r in #result \\ (#bound | #stored)); ingestion_active (flb_input_collector_resume): per context #g of the input instance, not ingesting -> returns 0 and the collector neither registered nor set running, ingesting -> both, and a return of 0 with the collector set running -> #g ingesting; synchronous_output_reachability (flb_output_task_singleplex_enqueue): no in-tree output plugin is synchronous, and in production the call's output plugin is synchronous and a proxy plugin. The vocabulary gains one block of 20 terms (16 object sets, 4 propositions: #faithful, #admitted, #returns_zero, #production), appended after the SP2 librdkafka block in the Rust table, the specification and the Lean vocab; no grammar change and no new sort (its formulas write a negation as #x in S \\ T, beside SP2's P -> #false). Readings recorded in the report: faithful only where is read as exactly where; the collector runs is the call setting it running; (a proxy plugin) is a conjunct. Both data crates refuse a prose premise in their own tests (every_premise_is_a_formula; libc no_premise_is_prose, which also refuses a string hypothesis atom). Census correction: the brief's 5 Fluent Bit and 2 libc prose clauses are 3 and 0, as SP1 counted; libc's two nested_call_admission premises are resource_premise_all conjunctions of typed quant propositions. Lean: QCore.PremiseFormula's Fluent Bit block with length-independent vocabulary proofs, and QCore.PremiseFormula.FluentBit (formulas well-formed; the gateway's admission yields faithfulness; the ingestion premise's first conjunct entails its last; in production the call's output plugin is not in-tree), audited. Locks: the inventory sha256 of the three modules; contracts.lock re-pinned at 046accf6, 66910c10 and (resume) 34155955 with identities byte-identical to base, only contract_sha256 and pinned_at changing. The frontend operator gate (Q038) admits && and | inside a resource_premise clause only when the premise reader accepts its statement as a formula (pipe.rs premise_formula_spans, grammar G05-formula); SP2 added the same exemption by clause head, and the merge keeps this tighter one for both cards (gate 1 found the refusal on the Fluent Bit modules). Rule 13h amended. No status move predicted on any route; rows resting on the three declarations print the formula instead of the sentence.",
+ "status_paragraph": null,
+ "ledger": [
+  {
+   "id": "SP3-SYMBOLIC-FLUENT-BIT-PREMISES",
+   "operation": "retire",
+   "why": "DISCHARGED by SP3-SYMBOLIC-FLUENT-BIT-LIBC-PREMISES: the three quirin-provider-fluent-bit premises (untracked_handback, ingestion_active, synchronous_output_reachability, one clause each) state C04.18.9 formulas over an appended block of 20 terms registered in the specification, the Rust vocabulary and the Lean vocab, with a prose-to-formula table in the report; the inventory lock and contracts.lock re-pinned with the reviewed diff (identities unchanged); the crate's own test refuses a prose premise.",
+   "source": "docs/reports/sp3-symbolic-fluent-bit-libc-premises/README.md"
+  },
+  {
+   "id": "SP3-LIBC-NESTED-CALL-ADMISSION-PREMISES",
+   "operation": "register",
+   "title": "quirin-provider-libc's nested_call_admission premises as formulas",
+   "text": "Registered by SP3-SYMBOLIC-FLUENT-BIT-LIBC-PREMISES from its brief, which counted 2 prose nested_call_admission clauses in libc/errno.qv that SP1's census had missed. DISCHARGE: each converted to a C04.18.9 formula, or shown not to be prose, and the crate refusing a prose premise.",
+   "source": "docs/reports/sp3-symbolic-fluent-bit-libc-premises/README.md",
+   "recorded_by": "SP3-SYMBOLIC-FLUENT-BIT-LIBC-PREMISES"
+  },
+  {
+   "id": "SP3-LIBC-NESTED-CALL-ADMISSION-PREMISES",
+   "operation": "retire",
+   "why": "DISCHARGED by SP3-SYMBOLIC-FLUENT-BIT-LIBC-PREMISES with a census correction: libc/errno.qv states no prose premise. The nested_call_admission premises on __errno_location and strerror are resource_premise_all conjunctions of typed quant proposition atoms (card QUANT-CONTRACT-HYPOTHESES, C04.18.7), erased as all(...) over atom identifiers, and the module holds no string literal outside comments, so SP1's count of 0 stands and nothing is converted. The crate's own test no_premise_is_prose now refuses a string resource_premise or resource_hypothesis in every libc module and asserts the two conjunctions.",
+   "source": "docs/reports/sp3-symbolic-fluent-bit-libc-premises/README.md"
+  },
+  {
+   "id": "SP5-GLOBAL-PROSE-PREMISE-BAN",
+   "operation": "register",
+   "title": "The loader refuses a premise stated as a string everywhere",
+   "text": "Recorded by SP3-SYMBOLIC-FLUENT-BIT-LIBC-PREMISES. Once SP2-SP4 land, every provider states its premises as C04.18.9 formulas and each crate refuses prose in its own checker or test; the loader (qcore_frontend::premise_formula::premise_clause) still admits resource_premise(NAME, \"STATEMENT\") for tests and fixtures (tests/fixtures, crate tests, historical reports keep their text). DISCHARGE: the string form refused by the contract format in every vocabulary, with the fixtures and tests that state prose migrated to formulas or to an explicit legacy reader, Lean parity for the judgment, and a measurement showing no status move. Size: medium.",
+   "source": "docs/reports/sp3-symbolic-fluent-bit-libc-premises/README.md",
+   "recorded_by": "SP3-SYMBOLIC-FLUENT-BIT-LIBC-PREMISES"
+  }
+ ]
+}
