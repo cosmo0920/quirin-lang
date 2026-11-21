@@ -1,0 +1,13 @@
+{
+  "note": "Landing integrate/r49 (base main 2aefebbc1; merges CG10-SMALL-BUNDLE 7e03049a3, card base 8e7e8d509, measured tip 47c3b38fd, in ed55fe6cd without conflict; third_party/libevent checked out at d82464a27). USER DECISION 2026-11-21: launch the small CG10 bundle; 'go ahead' with r48 onward. Amendments applied in 2e0ae38d1 with --profiles-base origin/main: CG10-UNCAST-RETURN-UNCONTRACTED-ATTRIBUTION, CG10-RESULT-HOLDER-RETAINED-BY (discharged by recorded refusal, rule 74a) and CG10-W4-FUNCTION-POINTER-DECLARATOR-FORMALS retired; CG10-INDIRECT-ACCESS-SOLE-RESIDUALS amended; CG10-UNCAST-VIEW-CONST-TYPEDEF-BASE, CG10-RESULT-HOLDER-DESTRUCTOR-MEMBER-EFFECT and CG10-CALLED-FUNCTION-POINTER-FORMALS registered; no profiles. Full landing gate on 2e0ae38d1 (private/integrate-r49/gate, raw record beside this file as gate-scope.json) via scripts/gate_scope.py --base origin/main --full --landing through private/toolchain/env.sh: Rust 672 units / 717 summaries, 9849 passed, 0 failed, 21 ignored; fmt, Clippy and both reevaluation examples exit 0; Lean 477 audits. Python (779 tests) exited 1 on test_build_matrix_sections' stale-matrix check only (regenerated from this record); the rerun after regeneration is in private/integrate-r49/python-rerun.log. No provider steps (no provider diff; provider_tests carried from r48, 168). Gateway rules 74, 74a and 74b (see the card report); no function status moves on the card's measurement. Pinned-route parity (quirin-audit measure --declared) was not run: this host holds no build/cycle19 inputs. No profile baseline is changed and land.py publish is owed.",
+  "workspace_tests": 9849,
+  "provider_tests": 168,
+  "python_evidence_validator_tests": 779,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "full landing gate: every step exits 0 except the Python suite's stale-matrix check, cleared by regenerating the matrix from this record (rerun disclosed in the note); no provider steps (no provider diff; provider_tests carried from r48)",
+  "lean_audits": 477,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
