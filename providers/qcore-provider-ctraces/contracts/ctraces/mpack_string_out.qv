@@ -1,0 +1,76 @@
+// SPDX-License-Identifier: Apache-2.0
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+module contract;
+
+// ## Card CG10-OWNED-OUT-PARAMETER-MEMBER-SLOT: the string-or-nil tag reader
+//
+// ONE TRUSTED ASSUMPTION, pinned (contract spec C06.2) after reading the body
+// and its one string helper at both audited revisions
+// (`lib/ctraces/src/ctr_mpack_utils.c`; both bodies are byte-identical at
+// `66910c10` and `046accf6`). A return-code disposition (C04.13) with an out
+// slot: gateway rule 72 reads the slot when the caller hands it a member of
+// an object the caller supplied.
+//
+// ## The body, read from `ctr_mpack_utils.c:25-42` at `046accf6`
+//
+//     int ctr_mpack_consume_string_or_nil_tag(mpack_reader_t *reader, cfl_sds_t *output_buffer)
+//     {
+//         int result;
+//         if (ctr_mpack_peek_type(reader) == mpack_type_str) {
+//             result = ctr_mpack_consume_string_tag(reader, output_buffer);
+//         }
+//         else if (ctr_mpack_peek_type(reader) == mpack_type_nil) {
+//             result = ctr_mpack_consume_nil_tag(reader);
+//             *output_buffer = NULL;
+//         }
+//         else {
+//             result = CTR_MPACK_UNEXPECTED_DATA_TYPE_ERROR;
+//         }
+//         return result;
+//     }
+//
+// and `ctr_mpack_consume_string_tag` (`:223-286`): both formals NULL-tested
+// (an error return, the slot unwritten), a string tag read and checked
+// (errors with the slot unwritten), then `*output_buffer =
+// cfl_sds_create_size(string_length + 1)`, NULL returning
+// `CTR_MPACK_ALLOCATION_ERROR`; the bytes read into it, and on either later
+// reader error `cfl_sds_destroy(*output_buffer); *output_buffer = NULL;` and
+// `CTR_MPACK_ENGINE_ERROR`; `CTR_MPACK_SUCCESS` (`0`) otherwise.
+//
+//   * `reader` is read through only: `resource_borrowed`.
+//   * `output_buffer` is the slot. On a `0` return it holds a fresh sds (a
+//     string tag) or NULL (a nil tag): `resource_out(output_buffer,
+//     nullable)` in class `eq 0`. On a nonzero return the slot is unwritten
+//     or written NULL (an allocation failure, a destroyed partial string, a
+//     nil-tag error), never left holding custody: `resource_borrowed(
+//     output_buffer)` in class `ne 0` (no custody passes through it, C04.13).
+//   * The result is the `int` status, `resource_return_none()`.
+//
+// ABI (`ctr_mpack_utils.h:45`, agreeing with the definition):
+// `mpack_reader_t *` is `ptr<mut, u8>`, `cfl_sds_t *` (`char **`)
+// `ptr<mut, ptr<mut, u8>>`, `int` `i32`.
+//
+// NOT CLAIMED: the string's contents; that the slot keeps its old value on a
+// nonzero return (it may be NULL: C04.13's reading treats the slot as
+// untracked after a nonzero return, so a caller's tracked old value in the
+// slot is lost by the reading as by the body).
+extern fn ctr_mpack_consume_string_or_nil_tag(reader: ptr<mut, u8>, output_buffer: ptr<mut, ptr<mut, u8>>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(reader);
+    ensures normal resource_on_return(eq, 0, resource_out(output_buffer, nullable));
+    ensures normal resource_on_return(ne, 0, resource_borrowed(output_buffer));
+    ensures normal resource_return_none();
+};

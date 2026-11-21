@@ -218,12 +218,30 @@
       "premise_bindings": [],
       "premises": {},
       "sha256": "445a80e5afec23f80401a60f2ae6f3114e30f4f73806097c0400d917a1dcbe2a"
+    },
+    "ctraces/mpack_string_out.qv": {
+      "clause_count": 5,
+      "declaration_count": 1,
+      "declarations": [
+        {
+          "clauses": 5,
+          "name": "ctr_mpack_consume_string_or_nil_tag",
+          "resource_mode": null,
+          "resource_table": "relational"
+        }
+      ],
+      "inherits": [],
+      "other_declarations": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "cc83ed7eb0911364a697edf9f79e585ad6db8e423fc245adfe57c84984b38140"
     }
   },
   "outer_view": [],
   "regenerate": "python3 providers/contracts.py sync",
   "resource_view": [
-    "ctraces/context_lifetime.qv"
+    "ctraces/context_lifetime.qv",
+    "ctraces/mpack_string_out.qv"
   ],
   "schema_version": 2
 }

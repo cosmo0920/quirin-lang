@@ -112,6 +112,34 @@ impl ChainView for Premised<'_> {
 }
 
 /// The chain obligation with decision 1's reading of a premised root.
+/// Card CG10-OWNED-OUT-PARAMETER-MEMBER-SLOT (rule 72): the owner of a
+/// rule-72 slot's final member, read as [`chain_resolves_premised`] reads the
+/// slot's own chain obligation: where the plain walk refuses and the root is
+/// a premised target-free, possibly-null alias, the walk under the same named
+/// premise (recorded), so the owner question and the read agree.
+pub(super) fn chain_owner_premised(
+    function: &str,
+    line: usize,
+    state: &super::AbstractState,
+    chain: &AccessChain,
+) -> Result<crate::indirect_chain_access::Owner, String> {
+    let refusal = match crate::indirect_chain_access::chain_owner(state, chain) {
+        Ok(owner) => return Ok(owner),
+        Err(refusal) => refusal,
+    };
+    if chain.dereferenced_root && premised(state, &chain.root) {
+        let premised_view = Premised {
+            state,
+            root: &chain.root,
+        };
+        if let Ok(owner) = crate::indirect_chain_access::chain_owner(&premised_view, chain) {
+            crate::null_premise::note(function, line, &chain.root);
+            return Ok(owner);
+        }
+    }
+    Err(refusal)
+}
+
 pub(super) fn chain_resolves_premised(
     function: &str,
     line: usize,
