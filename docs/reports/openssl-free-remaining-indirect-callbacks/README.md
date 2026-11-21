@@ -490,3 +490,17 @@ USER DECISIONS 2026-11-21, applied on this branch:
 OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS is amended to the
 released-parameter gap (`PKCS12_free`, `EVP_MD_CTX_free`) and points at the
 two new entries.
+
+**Gate after §12.** `sh private/toolchain/env.sh python3 scripts/gate_scope.py
+--base 70e10930f --out private/gate-5`, log `private/logs/gate-5.log`, record
+[`gate/gate-5.json`](gate/gate-5.json). Tree `3791890bb`; the report and gate
+record were uncommitted (docs only). **Exit 0, 14 steps passed:** Rust suite
+624 units, 8336 passed, 0 failed, 20 ignored; Lean 471 audits; Python 779;
+probes 0, 0; provider package build, verify-all, verify 0, 0, 0; provider
+tests 49 summaries, 170 passed, 1 ignored; fmt, clippy, provider fmt and
+provider clippy 0. The lock diff of §12 against `6210a7d66` is
+`private/logs/lockdiff-round2.txt` (22 changed, the declarations naming the
+loaded premise; 0 added or removed; only `flexible` differs). Outside the
+gate: the crate's unit tests (27), the frontend's `premise_formula` (7), the
+gateway's two OpenSSL targets (29 and 8, `gtest-9.log`), and `lake build
+QCore.OpensslFreeTeardownSlots` (`lean-7.log`).
