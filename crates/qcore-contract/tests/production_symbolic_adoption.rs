@@ -13,6 +13,8 @@
 // limitations under the License.
 
 //! Exhaustive production-data adoption; no source truth or semantic consumer.
+#[path = "../../../tests/support/sp2_premise_checkpoint.rs"]
+mod sp2_premise_checkpoint;
 #[path = "../../../tests/support/tracked_files.rs"]
 mod tracked_files;
 use qcore_contract::{
@@ -120,14 +122,13 @@ fn artifacts_and_models(
     let mut artifacts = BTreeMap::new();
     let mut models = BTreeMap::new();
     for r in requirements {
-        let relative = if r.declaration == "cJSON_DetachItemViaPointer" {
-            "docs/reports/premise-evidence-contracts/binding-manifest.json".into()
-        } else {
-            format!(
-                "docs/reports/quant-contract-hypotheses/plugin/bindings/{}.json",
-                r.manifest_sha256
-            )
-        };
+        // Card SP2-SYMBOLIC-LIBRDKAFKA-PREMISES refreshed every librdkafka
+        // binding (the cJSON detach one included) when its premises became
+        // formulas: the graph digest is each manifest's only change.
+        let relative = format!(
+            "docs/reports/sp2-symbolic-librdkafka-premises/bindings/{}.json",
+            r.manifest_sha256
+        );
         let bytes = fs::read(root().join(relative)).unwrap();
         assert_eq!(qcore_schemas::sha256_hex(&bytes), r.manifest_sha256);
         let m: BindingManifest = serde_json::from_slice(&bytes).unwrap();
@@ -303,9 +304,16 @@ fn historical_typed_checkpoint(path: &str, current: &str) -> String {
     else {
         return current.into();
     };
-    let actual = fs::read(root().join(physical)).unwrap();
+    // Card SP2-SYMBOLIC-LIBRDKAFKA-PREMISES stated this module's premises as
+    // formulas after the typed migration: its exact restoration is the
+    // module the migration recorded.
+    let actual = sp2_premise_checkpoint::restored_file(
+        physical,
+        &fs::read_to_string(root().join(physical)).unwrap(),
+        qcore_schemas::sha256_hex,
+    );
     assert_eq!(
-        qcore_schemas::sha256_hex(&actual),
+        qcore_schemas::sha256_hex(actual.as_bytes()),
         record["after_sha256"].as_str().unwrap(),
         "unregistered source change {physical}"
     );
@@ -431,7 +439,13 @@ fn every_actual_hypothesis_is_introduced_and_every_original_group_is_an_open_con
         let path = file["path"].as_str().unwrap();
         let before =
             fs::read_to_string(root().join(file["before_asset"].as_str().unwrap())).unwrap();
-        let after = current_checkpoint_text(path);
+        let current = current_checkpoint_text(path);
+        // Card SP2-SYMBOLIC-LIBRDKAFKA-PREMISES: the byte, graph, erasure and
+        // interpreted parity with the frozen inventory is checked on the
+        // module before its premises became formulas (`after`); the bindings,
+        // lifecycle symbols and flows below read the current module, whose
+        // markers name the refreshed manifests.
+        let after = sp2_premise_checkpoint::restore(&current);
         assert_eq!(
             qcore_schemas::sha256_hex(before.as_bytes()),
             file["sha256"].as_str().unwrap()
@@ -519,6 +533,13 @@ fn every_actual_hypothesis_is_introduced_and_every_original_group_is_an_open_con
             domain(hypothesis_bindings::requirements(&old, &original).unwrap()),
             domain(hypothesis_bindings::requirements(&new, &replayed).unwrap())
         );
+        let new = sources(path, &current);
+        let replayed = graphs(view, &new);
+        assert_eq!(
+            domain(hypothesis_bindings::requirements(&old, &original).unwrap()),
+            domain(hypothesis_bindings::requirements(&new, &replayed).unwrap())
+        );
+        let after = current;
         let symbols = lifecycle::replay(view, &new).unwrap();
         assert!(lifecycle::replay(view, &old).unwrap().is_empty());
         let (models, artifacts) = artifacts_and_models(&new, &replayed);

@@ -72,9 +72,9 @@ module contract;
 extern fn rd_kafka_log_buf(conf: ptr<const, u8>, rk: ptr<const, u8>, level: i32, ctx: i32, fac: ptr<const, u8>, buf: ptr<const, u8>) -> unit
 contract {
     requires resource_contract_v1;
-    requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
-    requires resource_premise(rk_log_enqueue_no_event_callback, "P-RK-LOG-ENQUEUE-NO-EVENT-CALLBACK: no queue event callback is registered on rk->rk_logq or on any queue it is forwarded to while rd_kafka_log_buf enqueues on it, so rd_kafka_q_io_event runs no callback (rd_kafka_q_cb_event_enable is reached only from the public rd_kafka_queue_cb_event_enable, which no analysed unit calls; loaded code may) (W48-RK-LOG-CALLER-FRAME, rule 32)");
-    requires resource_premise(rk_log_enqueue_forward_not_last, "P-RK-LOG-ENQUEUE-FORWARD-NOT-LAST: the forward-queue reference rd_kafka_q_enq1 takes with rd_kafka_q_fwd_get is not the last when it releases it with rd_kafka_q_destroy, so the enqueue destroys no queue: no other thread unforwards that queue and releases its last other reference during the call (in sequential execution it never is) (W48-RK-LOG-CALLER-FRAME, rule 32)");
+    requires resource_premise(rk_plugin_callback_closure, (quant all #f in #ran(#slots(#rk_conf)) \ #loaded_registered: #f in #registered | #defaults && #f in #candidates) && quant all #f in #loaded_registered: #f in #enveloped);
+    requires resource_premise(rk_log_enqueue_no_event_callback, (quant all #f in #event_cb(#forwards(#logq)): #false) && quant all #f in #ran(#event_cb(#forwards(#logq))): #false);
+    requires resource_premise(rk_log_enqueue_forward_not_last, quant all #q in #fwd_queue: (#q in #freed -> #false) && (#q in #unforwarded && #q in #last_released -> #false));
     ensures normal resource_borrowed(conf);
     ensures normal resource_borrowed(rk);
     ensures normal resource_borrowed(level);
@@ -87,9 +87,9 @@ contract {
 extern fn rd_kafka_log0(conf: ptr<const, u8>, rk: ptr<const, u8>, extra: ptr<const, u8>, level: i32, ctx: i32, fac: ptr<const, u8>, fmt: ptr<const, u8>) -> unit
 contract {
     requires resource_contract_v1;
-    requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
-    requires resource_premise(rk_log_enqueue_no_event_callback, "P-RK-LOG-ENQUEUE-NO-EVENT-CALLBACK: no queue event callback is registered on rk->rk_logq or on any queue it is forwarded to while rd_kafka_log_buf enqueues on it, so rd_kafka_q_io_event runs no callback (rd_kafka_q_cb_event_enable is reached only from the public rd_kafka_queue_cb_event_enable, which no analysed unit calls; loaded code may) (W48-RK-LOG-CALLER-FRAME, rule 32)");
-    requires resource_premise(rk_log_enqueue_forward_not_last, "P-RK-LOG-ENQUEUE-FORWARD-NOT-LAST: the forward-queue reference rd_kafka_q_enq1 takes with rd_kafka_q_fwd_get is not the last when it releases it with rd_kafka_q_destroy, so the enqueue destroys no queue: no other thread unforwards that queue and releases its last other reference during the call (in sequential execution it never is) (W48-RK-LOG-CALLER-FRAME, rule 32)");
+    requires resource_premise(rk_plugin_callback_closure, (quant all #f in #ran(#slots(#rk_conf)) \ #loaded_registered: #f in #registered | #defaults && #f in #candidates) && quant all #f in #loaded_registered: #f in #enveloped);
+    requires resource_premise(rk_log_enqueue_no_event_callback, (quant all #f in #event_cb(#forwards(#logq)): #false) && quant all #f in #ran(#event_cb(#forwards(#logq))): #false);
+    requires resource_premise(rk_log_enqueue_forward_not_last, quant all #q in #fwd_queue: (#q in #freed -> #false) && (#q in #unforwarded && #q in #last_released -> #false));
     ensures normal resource_borrowed(conf);
     ensures normal resource_borrowed(rk);
     ensures normal resource_borrowed(extra);

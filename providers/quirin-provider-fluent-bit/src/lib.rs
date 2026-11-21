@@ -165,6 +165,68 @@ mod tracked_files;
 mod tests {
     use super::*;
 
+    /// Every `requires resource_premise(NAME, STATEMENT)` clause of a module,
+    /// comments removed, as `(NAME, STATEMENT)` with the statement trimmed.
+    /// `resource_premise_all(` and the other `resource_premise_*` heads are
+    /// different clauses and are not read.
+    fn premise_clauses(module: &str) -> Vec<(String, String)> {
+        let text = module
+            .lines()
+            .map(|line| line.split("//").next().unwrap_or_default())
+            .collect::<Vec<_>>()
+            .join("\n");
+        let mut out = Vec::new();
+        let mut rest = text.as_str();
+        while let Some(at) = rest.find("requires resource_premise(") {
+            let clause = &rest[at + "requires resource_premise(".len()..];
+            let end = clause.find(';').expect("a premise clause ends with `;`");
+            let (name, statement) = clause[..end]
+                .trim_end()
+                .strip_suffix(')')
+                .and_then(|arguments| arguments.split_once(','))
+                .expect("a premise clause has a name and a statement");
+            out.push((name.trim().to_owned(), statement.trim().to_owned()));
+            rest = &clause[end..];
+        }
+        out
+    }
+
+    /// Card SP3-SYMBOLIC-FLUENT-BIT-LIBC-PREMISES (contract specification
+    /// C04.18.9; user decision 2026-11-20): a premise of this crate is a
+    /// formula, never a sentence. The crate has no checker binary, so its own
+    /// test refuses a statement written as a string literal, in every module.
+    /// It states exactly three premises, each once.
+    #[test]
+    fn every_premise_is_a_formula() {
+        let mut names = Vec::new();
+        for (path, text) in CONTRACTS {
+            for (name, statement) in premise_clauses(text) {
+                assert!(
+                    !statement.starts_with('"'),
+                    "{path}: `{name}` states its premise in prose; a premise of this crate is \
+                     a formula (C04.18.9)"
+                );
+                names.push(name);
+            }
+        }
+        names.sort();
+        assert_eq!(
+            names,
+            [
+                "ingestion_active",
+                "synchronous_output_reachability",
+                "untracked_handback"
+            ]
+        );
+        // The reader of this test refuses the prose form.
+        let prose = "contract {\n    requires resource_premise(p, \"a sentence\");\n};";
+        assert_eq!(
+            premise_clauses(prose),
+            [("p".to_owned(), "\"a sentence\"".to_owned())]
+        );
+        assert!(premise_clauses("requires resource_premise_all(p, a, b);").is_empty());
+    }
+
     /// Card CONTRACT-INHERIT-ADOPTION: the recorded namespace is the one the
     /// load path derives from the package name, and every published module
     /// is an owned one, listed once, in order.

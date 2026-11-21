@@ -20,7 +20,7 @@ use qcore_c_gateway::legacy_c::{
 use qcore_contract::contract_loader::load_resource_contract_sources;
 use std::collections::BTreeMap;
 
-const REPRESENTATION: &str = "For this removed-result declaration, the live parent represents exactly its owned children by a finite acyclic child and next chain; child is NULL precisely when the chain is empty, each nonfirst child's prev is its predecessor, the first child's prev is the last child, chain child identities are pairwise distinct, every non-NULL next or prev target is a live child of that same parent, the last child's next is NULL, the parent is not a child, and no concurrent writer mutates these links during the call";
+const REPRESENTATION: &str = "#parent in #live && (quant all #c in #owned(#parent): #c in #children(#parent)) && (quant all #c in #children(#parent): #c in #owned(#parent) && #c in #live) && (quant all #c in #child(#parent): #c in #first(#parent)) && (quant all #c in #first(#parent): #c in #child(#parent)) && (quant all #b in #children(#parent): quant all #a in #pred(#parent, #b): #b in #next(#a)) && (quant all #c in #children(#parent): #c in #next_reach(#c) -> #false) && ((quant all #c in #child(#parent): #false) -> quant all #c in #children(#parent): #false) && ((quant all #c in #children(#parent): #false) -> quant all #c in #child(#parent): #false) && (quant all #b in #children(#parent): quant all #a in #pred(#parent, #b): #a in #prev(#b)) && (quant all #f in #first(#parent): quant all #l in #last(#parent): #l in #prev(#f)) && #nodup(#parent) && (quant all #c in #children(#parent): quant all #y in #next(#c) | #prev(#c): #y in #children(#parent) && #y in #live) && (quant all #l in #last(#parent): quant all #y in #next(#l): #false) && (#parent in #children(#parent) -> #false) && #concurrent |-> #keeps_links(#parent)";
 fn environment() -> ResourceContracts {
     let text = format!(
         r#"module contract;
@@ -44,7 +44,7 @@ extern fn dt_child(parent: ptr<mut, u8>) -> ptr<mut, u8> contract {{
 }};
 extern fn dt_detach(parent: ptr<mut, u8>, item: ptr<mut, u8>) -> ptr<mut, u8> contract {{
  requires resource_contract_v1;
- requires resource_premise(detach_list_representation, "{REPRESENTATION}");
+ requires resource_premise(detach_list_representation, {REPRESENTATION});
  ensures normal resource_owned(parent, nonnull); ensures normal resource_removed(item, parent, nullable);
  ensures normal resource_return_removed(item, nullable);
 }};

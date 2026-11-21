@@ -7238,6 +7238,8 @@
    "AuditPointerTypedefMember.lean",
    "AuditPremiseFlow.lean",
    "AuditPremiseFormula.lean",
+   "AuditPremiseFormulaFluentBit.lean",
+   "AuditPremiseFormulaLibrdkafka.lean",
    "AuditPremiseMetadataBridge.lean",
    "AuditPremiseRefinement.lean",
    "AuditPrintRouteSelection.lean",
@@ -14557,20 +14559,6 @@
    "recorded_by": "OPENSSL-FREE-INDIRECT-CALLBACKS"
   },
   {
-   "id": "SP2-SYMBOLIC-LIBRDKAFKA-PREMISES",
-   "title": "State qcore-provider-librdkafka's premises as formulas",
-   "why": "Recorded by SP1-SYMBOLIC-OPENSSL-PREMISES (user decision 2026-11-20: premises are written as condition symbols, not sentences; other providers become follow-ups). qcore-provider-librdkafka states 220 resource_premise clauses in prose under 12 names in 9 files (client.qv 119, null_deref.qv 71, header_inlines.qv 12, log_caller_frame.qv 6, cjson.qv 4, logging.qv 3, memory.qv 3, kafka_mem.qv 1, queue_destructor.qv 1; comments excluded), and cjson.qv 9 prose resource_hypothesis atoms. DISCHARGE: each statement as a C04.18.9 formula with a prose-to-formula table, new terms registered in the specification, the Rust vocabulary and the Lean vocab with their meanings, the crate's locks regenerated with the reviewed diff, and the provider refusing a prose premise; hypothesis atoms and premise_decomposition/flow attachments keep their exact graph identities or are migrated with a stated graph-version change. Size: large.",
-   "source": "docs/reports/sp1-symbolic-openssl-premises/README.md",
-   "recorded_by": "SP1-SYMBOLIC-OPENSSL-PREMISES"
-  },
-  {
-   "id": "SP3-SYMBOLIC-FLUENT-BIT-PREMISES",
-   "title": "State quirin-provider-fluent-bit's premises as formulas",
-   "why": "Recorded by SP1-SYMBOLIC-OPENSSL-PREMISES (user decision 2026-11-20). quirin-provider-fluent-bit states 3 resource_premise clauses in prose (untracked_handback in input_chunk_name.qv, ingestion_active in loop_owner.qv, synchronous_output_reachability in output_singleplex.qv). DISCHARGE: each as a C04.18.9 formula with a prose-to-formula table and any new term registered (specification, Rust, Lean), the crate's inventory locks synced with the reviewed diff, and prose refused for the crate. Size: small.",
-   "source": "docs/reports/sp1-symbolic-openssl-premises/README.md",
-   "recorded_by": "SP1-SYMBOLIC-OPENSSL-PREMISES"
-  },
-  {
    "id": "SP4-SYMBOLIC-LIBEVENT-PREMISES",
    "title": "State qcore-provider-libevent's scheduler premises as formulas",
    "why": "Recorded by SP1-SYMBOLIC-OPENSSL-PREMISES (user decision 2026-11-20). qcore-provider-libevent states 7 resource_premise clauses in prose in monkey/intrusive_list.qv (mk_http_thread_destroy's scheduler decomposition: scheduler_borrowed_chain_live, scheduler_callee_live, scheduler_exact_parent_embedding, scheduler_no_later_alias_use, scheduler_tls_params_owned, scheduler_valgrind_request_neutral, scheduler_valid_membership), which rule 34 lists on every row resting on the declaration. DISCHARGE: each as a C04.18.9 formula with a prose-to-formula table and any new term registered (specification, Rust, Lean), locks synced with the reviewed diff, and prose refused for the crate. Size: medium.",
@@ -14730,6 +14718,27 @@
    "why": "USER DECISION 2026-11-21 on OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS: \"Yes, new card later\". X509_CRL_METHOD_new (no 3.5 page; crypto/x509/x_crl.c:486 at 3.5.5) stores crl_init, crl_free, crl_lookup and crl_verify into the method it returns, the only writer of a CRL method's crl_free; a slot registration's holder must be a parameter (C04.19.3), so no declaration can state it. X509_STORE_free, SSL_CTX_free, SSL_free and PKCS12_free, and the inner frees SSL_CTX_load_verify_locations, SSL_CTX_set_default_verify_paths and d2i_PKCS12_bio, keep openssl_unstated_callback_slots for a CRL's crl_free until then. DISCHARGE: a vocabulary change (C04.19.3, gateway rule 12n, with Lean parity) admitting resource_callback_slot_registered(result, TAG.FIELD, F) on a constructor, then declare X509_CRL_METHOD_new (source-derived) with its four registrations, state x509_crl_method_st.crl_meth_free at the frees that free CRLs, and drop that item (the frees with nothing else left drop the premise). Size: small to medium.",
    "source": "docs/reports/openssl-free-remaining-indirect-callbacks/README.md",
    "recorded_by": "OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS"
+  },
+  {
+   "id": "SP2-DETACH-HYPOTHESES-TYPED-ATOMS",
+   "title": "State cJSON_DetachItemViaPointer's nine detach_* hypotheses as typed atoms",
+   "why": "Recorded by SP2-SYMBOLIC-LIBRDKAFKA-PREMISES. The nine resource_hypothesis(detach_*, \"...\") atoms of cJSON_DetachItemViaPointer (providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv) keep their strings: a C04.18.9 formula is a premise statement, admitted by hypothesis::validate only as a generated legacy atom's statement, and the consistent hypothesis form is C04.18.7's typed atom (quant proposition #ID(...) = FORMULA;, as the plugin_* atoms already are). DISCHARGE: each atom as a typed proposition matching its QCore.CjsonRepresentationPremises definition (the premise's formula is already proved equivalent to their conjunction, detach_formula_is_the_nine_atoms), with the cJSON binding manifest's atom digests, the nine resource_guarded_symbol_v1 clauses that repeat each atom's text, the guarded adoption plan and quirin-source-analysis::cjson_local_binding's expected graph migrated together (quant_binding_migration's typed-atom path), no verdict moved. Size: medium.",
+   "source": "docs/reports/sp2-symbolic-librdkafka-premises/README.md",
+   "recorded_by": "SP2-SYMBOLIC-LIBRDKAFKA-PREMISES"
+  },
+  {
+   "id": "SP2-SHIPPED-PROVIDER-PROSE-BAN",
+   "title": "Refuse a prose premise at load for a shipped provider crate",
+   "why": "Recorded by SP2-SYMBOLIC-LIBRDKAFKA-PREMISES. quirin-provider-openssl refuses a string premise statement at load through its checker plugin (check::prose_premise); a shipped qcore-provider-* crate has no checker plugin, so qcore-provider-librdkafka's ban is its own test (every_premise_is_a_formula), run by the provider test step, not at load. DISCHARGE: a load-time refusal for crates that opt in (for example a load-path record flag the contract loader reads, refusing a resource_premise whose statement is a string in that crate's modules, total-or-reject), applied to librdkafka and to each SP3/SP4 crate once converted, with a test per crate and no change to any crate that does not opt in. Size: small.",
+   "source": "docs/reports/sp2-symbolic-librdkafka-premises/README.md",
+   "recorded_by": "SP2-SYMBOLIC-LIBRDKAFKA-PREMISES"
+  },
+  {
+   "id": "SP5-GLOBAL-PROSE-PREMISE-BAN",
+   "title": "The loader refuses a premise stated as a string everywhere",
+   "why": "Recorded by SP3-SYMBOLIC-FLUENT-BIT-LIBC-PREMISES. Once SP2-SP4 land, every provider states its premises as C04.18.9 formulas and each crate refuses prose in its own checker or test; the loader (qcore_frontend::premise_formula::premise_clause) still admits resource_premise(NAME, \"STATEMENT\") for tests and fixtures (tests/fixtures, crate tests, historical reports keep their text). DISCHARGE: the string form refused by the contract format in every vocabulary, with the fixtures and tests that state prose migrated to formulas or to an explicit legacy reader, Lean parity for the judgment, and a measurement showing no status move. Size: medium.",
+   "source": "docs/reports/sp3-symbolic-fluent-bit-libc-premises/README.md",
+   "recorded_by": "SP3-SYMBOLIC-FLUENT-BIT-LIBC-PREMISES"
   }
  ],
  "updated": "Completed plugin premise integration; exact hand-maintained union retains810followups, borrowed measured-source8419Rust/354Lean/freshcard133provider, exact source equivalence checked; authoritative root committed-matrix Python confirmation in integration receipt. CMetrics map/opts API model specifications added at the explicit user request. Eight declared-model API contracts remain outside interpreted views, with CMT-MAP-OPTS-CONTRACT-ADOPTION and CMT-LABELED-HASH-ZERO-STATIC-STORAGE Open. No trusted API coverage is claimed; the source gate is recorded by this card alongside its separate initializer native checkpoint. W48-CMT-TRACKED-INTERIOR-SELF-INIT implements rule 36b's checked initializer effect transport for an exact live owned root or embedded record, retaining actual self writes, invalidating aliased member facts and preserving resource obligations; nondefault custody frames refuse and no ordinary summary is exported. The canonical CFL intrusive_list.qv declares matching audit preconditions/effects; two CMetrics .qv modules add six map and two opts lifecycle models, including transitive ownership, partial failure, borrowed results and uncleared cleanup fields. All remain outside interpreted views; checked API adoption and labeled zero-hash storage accounting have named Open follow-ups. Fresh BASE/planner precedes prediction f18d96065 and implementation; the later contract amendment 08da23123 precedes .qv edits. Native corpus BASE/TIP Safe/Unknown/Pending/provisional-Unsafe: 1009 / 3816 / 0 / 9 to 1011 / 3814 / 0 / 9; full system/slice, 5781 NULL dictionaries and runtime projections are compared, 241 semantic leaves accounted, zero unexplained leaves and no prior Safe loss. Gate 8654 Rust / 370 Lean / 374 Python, provider 133 Rust / 25 Python and all five package verifies pass. The actual deep source reader uses 328 KiB below 1 MiB. Full getter closure remains Open; W48-CMT-SELF-INIT-DISJOINT-FRAMES tracks the next bounded frame extension, and W48-EXACT-RETURN-WITNESS-PRECISION is unchanged. Native evidence is isolated to measured e92d8aef35a8bd14550e90219d19a56eb3b196e7; later source gate 2d0d85299b830aa24d7f200d63a308653582363f validates the added declared API models separately; see docs/reports/w48-cmt-tracked-interior-self-init/README.md."

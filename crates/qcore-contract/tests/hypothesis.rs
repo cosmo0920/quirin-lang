@@ -504,7 +504,7 @@ fn production_attachment_replays_exact_frozen_graph_and_preserves_legacy_singlet
     let sources = BTreeMap::from([("cjson.qv".into(), production.into())]);
     let graphs = replay(&sources).unwrap();
     let expected = decode(include_bytes!(
-        "../../../docs/reports/premise-evidence-contracts/expected-graph.json"
+        "../../../docs/reports/sp2-symbolic-librdkafka-premises/bindings/cjson-expected-graph.json"
     ))
     .unwrap();
     assert_eq!(graphs[DETACH], expected);

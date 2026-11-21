@@ -37,7 +37,10 @@
 //! The canonical printing ([`canonical`]) is the premise's statement: its
 //! identity is NAME plus that text, and every rendering of the premise prints
 //! it. A premise stays an undischarged assumption: no consumer that decides a
-//! verdict reads it. The Lean model is `QCore.PremiseFormula`; its decision
+//! verdict reads it. The Lean model is `QCore.PremiseFormula` (card
+//! SP3-SYMBOLIC-FLUENT-BIT-LIBC-PREMISES adds the Fluent Bit block and
+//! `QCore.PremiseFormula.FluentBit`, whose three formulas are bound the same
+//! way); its decision
 //! vectors, vocabulary and the four OpenSSL formulas are bound to this module
 //! by `crates/qcore-frontend/tests/premise_formula.rs`.
 //!
@@ -380,6 +383,583 @@ pub const VOCABULARY: &[Term] = &[
         result: Sort::Eff,
         meaning: INERT_DEFINITION,
     },
+    // ---- Card SP2-SYMBOLIC-LIBRDKAFKA-PREMISES: the qcore-provider-librdkafka
+    // block (C04.18.9), appended after the existing entries. ----
+    Term {
+        name: "false",
+        arguments: &[],
+        result: Sort::Prop,
+        meaning: "the proposition that never holds (falsum): `P -> #false` is the negation of `P`, and `quant all #x in S: #false` says `S` has no member",
+    },
+    Term {
+        name: "rk_conf",
+        arguments: &[],
+        result: Sort::SetObj,
+        meaning: "every rk_conf: an rd_kafka_conf_t (struct rd_kafka_conf_s), a client handle's embedded configuration rk->rk_conf included",
+    },
+    Term {
+        name: "ran",
+        arguments: &[Sort::SetFn],
+        result: Sort::SetFn,
+        meaning: "the members of the set the call runs, directly or in turn through the calls it makes (rd_kafka_log_buf's run of the log callback included)",
+    },
+    Term {
+        name: "registered",
+        arguments: &[],
+        result: Sort::SetFn,
+        meaning: "the run's registrations (C04.19.3): each value a call of a declared setter (resource_callback_member_registered) in a unit of the run stores into its member",
+    },
+    Term {
+        name: "defaults",
+        arguments: &[],
+        result: Sort::SetFn,
+        meaning: "the stated defaults (C04.19.4): each value a constructor's `quant live #result: TAG.FIELD |-> f` stores into its member",
+    },
+    Term {
+        name: "candidates",
+        arguments: &[],
+        result: Sort::SetFn,
+        meaning: "the callbacks with a declared candidate: each function a declaration in force states as a candidate of the member it is stored in (C04.19.7), with its own contract",
+    },
+    Term {
+        name: "loaded_registered",
+        arguments: &[],
+        result: Sort::SetFn,
+        meaning: "the callbacks code loaded at runtime registers (a library plugin.library.paths names, a Fluent Bit plugin flb_plugin_load or flb_plugin_proxy_create loads, and code it invokes); none in the static scope",
+    },
+    Term {
+        name: "enveloped",
+        arguments: &[],
+        result: Sort::SetFn,
+        meaning: "the registrations the applicable pinned rk_plugin_library and flb_external_plugin outer contracts admit (C04.20): through a public setter, each meeting its member's candidate",
+    },
+    Term {
+        name: "punned_stores",
+        arguments: &[],
+        result: Sort::SetFn,
+        meaning: "the callbacks rd_kafka_anyconf_set_prop0's _RK_C_PTR case (rdkafka_conf.c:2087-2088), a type-punned store through the property table, writes into a callback member (the setter's own store among them); Clang's member facts see none of these stores",
+    },
+    Term {
+        name: "conf_copies",
+        arguments: &[],
+        result: Sort::SetFn,
+        meaning: "the callbacks rd_kafka_anyconf_copy stores into a callback member: the value of the same property of another configuration",
+    },
+    Term {
+        name: "hidden_string",
+        arguments: &[],
+        result: Sort::SetFn,
+        meaning: "the callbacks the string API (rd_kafka_conf_set by property name) stores into an _RK_HIDDEN callback property",
+    },
+    Term {
+        name: "ut_handle_produce_response",
+        arguments: &[],
+        result: Sort::SetFn,
+        meaning: "ut_handle_ProduceResponse, as the value of a callback member",
+    },
+    Term {
+        name: "call",
+        arguments: &[],
+        result: Sort::Fn,
+        meaning: "the declared function itself, whose one run is the call (so `#call |-> E` says the call has E)",
+    },
+    Term {
+        name: "rd_calloc",
+        arguments: &[],
+        result: Sort::Fn,
+        meaning: "rd_calloc (rd.h:139-143), as the call runs it",
+    },
+    Term {
+        name: "rd_malloc",
+        arguments: &[],
+        result: Sort::Fn,
+        meaning: "rd_malloc (rd.h:145-149), as the call runs it",
+    },
+    Term {
+        name: "rd_kafka_toppar_new0",
+        arguments: &[],
+        result: Sort::Fn,
+        meaning: "rd_kafka_toppar_new0, as the call runs it",
+    },
+    Term {
+        name: "returns_result_of",
+        arguments: &[Sort::Fn],
+        result: Sort::Eff,
+        meaning: "the run returns, as its result's last source, the value a run of the function returned during it",
+    },
+    Term {
+        name: "asserts_result",
+        arguments: &[],
+        result: Sort::Eff,
+        meaning: "the run asserts (rd_assert) that its result is not NULL before it returns",
+    },
+    Term {
+        name: "returns_nonnull",
+        arguments: &[],
+        result: Sort::Eff,
+        meaning: "the run's result is not NULL",
+    },
+    Term {
+        name: "audited_assertions",
+        arguments: &[],
+        result: Sort::Prop,
+        meaning: "the audited compile commands define no NDEBUG: every assertion of the analysed sources is compiled into the audited build",
+    },
+    Term {
+        name: "deployed_assertion",
+        arguments: &[],
+        result: Sort::Prop,
+        meaning: "the deployed build preserves the call's analysed assertion",
+    },
+    Term {
+        name: "deployed_failure_call",
+        arguments: &[],
+        result: Sort::Prop,
+        meaning: "the deployed build preserves the assertion's failure call, which a declaration in force states terminating (it never returns)",
+    },
+    Term {
+        name: "failure_no_return",
+        arguments: &[],
+        result: Sort::Eff,
+        meaning: "a run whose allocation fails does not return normally",
+    },
+    Term {
+        name: "op_callbacks",
+        arguments: &[],
+        result: Sort::SetFn,
+        meaning: "the op callbacks the call may run through rd_kafka_op_handle, rd_kafka_op_call or rd_kafka_op_destroy",
+    },
+    Term {
+        name: "served",
+        arguments: &[],
+        result: Sort::SetObj,
+        meaning: "the queue the call serves (its rkq argument)",
+    },
+    Term {
+        name: "held_on",
+        arguments: &[Sort::SetObj],
+        result: Sort::SetRes,
+        meaning: "the references the caller holds on an object of the set when the run starts",
+    },
+    Term {
+        name: "refs",
+        arguments: &[Sort::SetObj],
+        result: Sort::SetRes,
+        meaning: "every reference to an object of the set, whoever holds it",
+    },
+    Term {
+        name: "broker_monitor_cb",
+        arguments: &[],
+        result: Sort::SetFn,
+        meaning: "the callback the op's rko_u.broker_monitor.cb holds",
+    },
+    Term {
+        name: "monitor_add_registered",
+        arguments: &[],
+        result: Sort::SetFn,
+        meaning: "the callbacks rd_kafka_broker_monitor_add registers, over every call of it",
+    },
+    Term {
+        name: "coord_rkb_monitor_cb",
+        arguments: &[],
+        result: Sort::SetFn,
+        meaning: "rd_kafka_coord_rkb_monitor_cb (rdkafka_broker.c:5497)",
+    },
+    Term {
+        name: "txn_coord_monitor_cb",
+        arguments: &[],
+        result: Sort::SetFn,
+        meaning: "rd_kafka_txn_coord_monitor_cb (rdkafka_txnmgr.c:3248)",
+    },
+    Term {
+        name: "broker",
+        arguments: &[],
+        result: Sort::SetObj,
+        meaning: "the broker the op's rko_u.broker_monitor.rkb designates",
+    },
+    Term {
+        name: "handed_only",
+        arguments: &[Sort::SetObj],
+        result: Sort::Eff,
+        meaning: "every object the run is handed as an argument is a member of the set",
+    },
+    Term {
+        name: "assign_cb",
+        arguments: &[],
+        result: Sort::SetFn,
+        meaning: "the assign callback the group assignor runs (rd_kafka_cgrp_assignor_run)",
+    },
+    Term {
+        name: "assignor_add_registered",
+        arguments: &[],
+        result: Sort::SetFn,
+        meaning: "the assign callbacks rd_kafka_assignor_add registers, over every call of it",
+    },
+    Term {
+        name: "range_assign",
+        arguments: &[],
+        result: Sort::SetFn,
+        meaning: "the range assignor's assign callback",
+    },
+    Term {
+        name: "roundrobin_assign",
+        arguments: &[],
+        result: Sort::SetFn,
+        meaning: "the roundrobin assignor's assign callback",
+    },
+    Term {
+        name: "cooperative_sticky_assign",
+        arguments: &[],
+        result: Sort::SetFn,
+        meaning: "the cooperative-sticky assignor's assign callback",
+    },
+    Term {
+        name: "metadata",
+        arguments: &[],
+        result: Sort::SetObj,
+        meaning: "the metadata the assignor runs over (the op's rko_u.metadata.mdi)",
+    },
+    Term {
+        name: "members",
+        arguments: &[],
+        result: Sort::SetObj,
+        meaning: "the group members the assignor is handed",
+    },
+    Term {
+        name: "reads_only",
+        arguments: &[Sort::SetObj],
+        result: Sort::Eff,
+        meaning: "the run writes no object of the set: it only reads them",
+    },
+    Term {
+        name: "op",
+        arguments: &[],
+        result: Sort::SetObj,
+        meaning: "the op the call is handed (its rko argument)",
+    },
+    Term {
+        name: "ack_batches",
+        arguments: &[],
+        result: Sort::SetObj,
+        meaning: "the list the op's rko_u.share_fetch_fanout.ack_batches designates (none when NULL)",
+    },
+    Term {
+        name: "ack_details",
+        arguments: &[],
+        result: Sort::SetObj,
+        meaning: "the lists rd_kafka_share_build_ack_details (rdkafka_share_acknowledgement.c:686-842) returns",
+    },
+    Term {
+        name: "first_add_lists",
+        arguments: &[],
+        result: Sort::SetObj,
+        meaning: "the lists created only at their first rd_list_add, so each holds an element from its creation",
+    },
+    Term {
+        name: "nonempty",
+        arguments: &[],
+        result: Sort::SetObj,
+        meaning: "the lists that hold at least one element",
+    },
+    Term {
+        name: "logq",
+        arguments: &[],
+        result: Sort::SetObj,
+        meaning: "the log queue rk->rk_logq of the client handle the call logs through",
+    },
+    Term {
+        name: "forwards",
+        arguments: &[Sort::SetObj],
+        result: Sort::SetObj,
+        meaning: "the queues of the set and every queue one of them is forwarded to (rkq_fwdq), transitively, while the call enqueues on it",
+    },
+    Term {
+        name: "event_cb",
+        arguments: &[Sort::SetObj],
+        result: Sort::SetFn,
+        meaning: "the queue event callbacks registered on a queue of the set while the call enqueues on it (only rd_kafka_q_cb_event_enable registers one, reached only from the public rd_kafka_queue_cb_event_enable)",
+    },
+    Term {
+        name: "fwd_queue",
+        arguments: &[],
+        result: Sort::SetObj,
+        meaning: "the queue rd_kafka_q_enq1 takes a reference to with rd_kafka_q_fwd_get and releases with rd_kafka_q_destroy, the only queue reference the enqueue releases",
+    },
+    Term {
+        name: "unforwarded",
+        arguments: &[],
+        result: Sort::SetObj,
+        meaning: "the queues another thread unforwards during the call",
+    },
+    Term {
+        name: "last_released",
+        arguments: &[],
+        result: Sort::SetObj,
+        meaning: "the queues whose last reference other than the call's own another thread releases during the call",
+    },
+    Term {
+        name: "cjson_allocate",
+        arguments: &[],
+        result: Sort::SetFn,
+        meaning: "hooks->allocate: the allocation function of the hooks the call is handed",
+    },
+    Term {
+        name: "cjson_reallocate",
+        arguments: &[],
+        result: Sort::SetFn,
+        meaning: "hooks->reallocate: the reallocation function of the hooks the call is handed",
+    },
+    Term {
+        name: "cjson_deallocate",
+        arguments: &[],
+        result: Sort::SetFn,
+        meaning: "hooks->deallocate: the deallocation function of the hooks the call is handed",
+    },
+    Term {
+        name: "libc_hooks",
+        arguments: &[],
+        result: Sort::SetFn,
+        meaning: "malloc, realloc and free, which global_hooks holds unless cJSON_InitHooks installed others (cJSON.c:178-186)",
+    },
+    Term {
+        name: "installed_hooks",
+        arguments: &[],
+        result: Sort::SetFn,
+        meaning: "the functions cJSON_InitHooks installed in global_hooks (a user pair or set)",
+    },
+    Term {
+        name: "fresh_or_null",
+        arguments: &[],
+        result: Sort::Eff,
+        meaning: "the run returns a fresh allocation (one no other reference designates) or NULL",
+    },
+    Term {
+        name: "hook_allocated",
+        arguments: &[],
+        result: Sort::SetObj,
+        meaning: "the allocations a run of hooks->allocate or hooks->reallocate returns during the call",
+    },
+    Term {
+        name: "deallocate_releases",
+        arguments: &[],
+        result: Sort::SetObj,
+        meaning: "the allocations the matching hooks->deallocate releases when it is handed one (cJSON_Delete releases an item through it)",
+    },
+    Term {
+        name: "cjson_arrays",
+        arguments: &[],
+        result: Sort::SetObj,
+        meaning: "the cJSON arrays (items of type cJSON_Array) live during the call",
+    },
+    Term {
+        name: "children",
+        arguments: &[Sort::Obj],
+        result: Sort::SetObj,
+        meaning: "the elements of the cJSON item, in order: its finite child sequence (for cJSON_DetachItemViaPointer, the exact owned-child sequence of the entry environment)",
+    },
+    Term {
+        name: "first",
+        arguments: &[Sort::Obj],
+        result: Sort::SetObj,
+        meaning: "the first element of the item's child sequence (none when it is empty)",
+    },
+    Term {
+        name: "last",
+        arguments: &[Sort::Obj],
+        result: Sort::SetObj,
+        meaning: "the last element of the item's child sequence (none when it is empty)",
+    },
+    Term {
+        name: "pred",
+        arguments: &[Sort::Obj, Sort::Obj],
+        result: Sort::SetObj,
+        meaning: "every element immediately before an occurrence of the second item in the first item's child sequence",
+    },
+    Term {
+        name: "child",
+        arguments: &[Sort::Obj],
+        result: Sort::SetObj,
+        meaning: "the item the item's child member designates (none when NULL)",
+    },
+    Term {
+        name: "next",
+        arguments: &[Sort::Obj],
+        result: Sort::SetObj,
+        meaning: "the item the item's next member designates (none when NULL)",
+    },
+    Term {
+        name: "prev",
+        arguments: &[Sort::Obj],
+        result: Sort::SetObj,
+        meaning: "the item the item's prev member designates (none when NULL)",
+    },
+    Term {
+        name: "next_reach",
+        arguments: &[Sort::Obj],
+        result: Sort::SetObj,
+        meaning: "the items reached from the item by one or more next links",
+    },
+    Term {
+        name: "owned",
+        arguments: &[Sort::Obj],
+        result: Sort::SetObj,
+        meaning: "the children the item owns: its exact custody domain",
+    },
+    Term {
+        name: "nodup",
+        arguments: &[Sort::Obj],
+        result: Sort::Prop,
+        meaning: "the item's child sequence names no identity twice",
+    },
+    Term {
+        name: "live",
+        arguments: &[],
+        result: Sort::SetObj,
+        meaning: "the objects live at the call's entry",
+    },
+    Term {
+        name: "parent",
+        arguments: &[],
+        result: Sort::Obj,
+        meaning: "the object the call's parent argument designates (the declaration requires it non-null)",
+    },
+    Term {
+        name: "concurrent",
+        arguments: &[],
+        result: Sort::SetFn,
+        meaning: "the steps another thread runs while the call runs, each as the function it runs",
+    },
+    Term {
+        name: "keeps_links",
+        arguments: &[Sort::Obj],
+        result: Sort::Eff,
+        meaning: "the run writes neither the item's child member nor the next or prev member of an element of its child sequence",
+    },
+    // ---- End of the SP2 block. ----
+    // ---- Card SP3-SYMBOLIC-FLUENT-BIT-LIBC-PREMISES: the Fluent Bit terms
+    // (`quirin-provider-fluent-bit`'s three premises). Appended as one block;
+    // the entries above are unchanged.
+    Term {
+        name: "result",
+        arguments: &[],
+        result: Sort::SetObj,
+        meaning: "the object the call's result designates (no object for a null or scalar result)",
+    },
+    Term {
+        name: "interior",
+        arguments: &[Sort::SetObj],
+        result: Sort::SetObj,
+        meaning: "the objects the objects of the set own, directly or in turn: what an owned pointer member designates, and what that object owns",
+    },
+    Term {
+        name: "chunk_name",
+        arguments: &[Sort::SetObj],
+        result: Sort::SetObj,
+        meaning: "the name (ch->name, an sds ChunkIO allocates and frees) of the ChunkIO chunk (ic->chunk) each input chunk of the set holds",
+    },
+    Term {
+        name: "tracked",
+        arguments: &[],
+        result: Sort::SetObj,
+        meaning: "the objects the resource projection holds a custody state for",
+    },
+    Term {
+        name: "claimed",
+        arguments: &[],
+        result: Sort::SetObj,
+        meaning: "the objects whose custody or lifetime a clause of the declaration states: a parameter mode's object, or a result handed over with custody (a resource_return_none result is not one)",
+    },
+    Term {
+        name: "bound",
+        arguments: &[],
+        result: Sort::SetObj,
+        meaning: "the objects the caller binds to a name at the call's site: the result assigned to a variable, a member or an element",
+    },
+    Term {
+        name: "stored",
+        arguments: &[],
+        result: Sort::SetObj,
+        meaning: "the objects the caller stores at the call's site where they outlive the statement: through a pointer or into a container",
+    },
+    Term {
+        name: "faithful",
+        arguments: &[],
+        result: Sort::Prop,
+        meaning: "the declaration's result clause states exactly the custody the caller acquires from the call at its site",
+    },
+    Term {
+        name: "admitted",
+        arguments: &[],
+        result: Sort::Prop,
+        meaning: "the gateway admits the call at its site under its rule for a call whose result mode is None and whose parameters are all Borrowed (card O04-TRACE premises N6 and N8)",
+    },
+    Term {
+        name: "config_of",
+        arguments: &[Sort::SetObj],
+        result: Sort::SetObj,
+        meaning: "the Fluent Bit context (struct flb_config, its config member) each input instance of the set belongs to",
+    },
+    Term {
+        name: "ingesting",
+        arguments: &[],
+        result: Sort::SetObj,
+        meaning: "the contexts whose is_ingestion_active member is true when the call reads it",
+    },
+    Term {
+        name: "collector",
+        arguments: &[],
+        result: Sort::SetObj,
+        meaning: "the collector the call finds by the id it is given in its input instance's collector list (get_collector); no object when none has that id",
+    },
+    Term {
+        name: "event_registered",
+        arguments: &[],
+        result: Sort::SetObj,
+        meaning: "the collectors whose own event the call registers with the collector's event loop (mk_event_add, or mk_event_timeout_create for a timer collector)",
+    },
+    Term {
+        name: "set_running",
+        arguments: &[],
+        result: Sort::SetObj,
+        meaning: "the collectors whose running member the call sets true",
+    },
+    Term {
+        name: "returns_zero",
+        arguments: &[],
+        result: Sort::Prop,
+        meaning: "the call returns 0",
+    },
+    Term {
+        name: "in_tree",
+        arguments: &[],
+        result: Sort::SetObj,
+        meaning: "the output plugins Fluent Bit's own source tree defines (the struct flb_output_plugin of each plugins/out_* plugin)",
+    },
+    Term {
+        name: "synchronous",
+        arguments: &[],
+        result: Sort::SetObj,
+        meaning: "the output plugins whose flags carry FLB_OUTPUT_SYNCHRONOUS",
+    },
+    Term {
+        name: "proxy",
+        arguments: &[],
+        result: Sort::SetObj,
+        meaning: "the output plugins a proxy registers: plugins defined outside Fluent Bit's tree and loaded at run time through flb_plugin_proxy",
+    },
+    Term {
+        name: "production",
+        arguments: &[],
+        result: Sort::Prop,
+        meaning: "the call is made by a running Fluent Bit engine from its output dispatch, not directly by a test or another embedding",
+    },
+    Term {
+        name: "out_plugin",
+        arguments: &[Sort::SetObj],
+        result: Sort::SetObj,
+        meaning: "the output plugin (its p member) of each output instance of the set",
+    },
+    // ---- End of SP3-SYMBOLIC-FLUENT-BIT-LIBC-PREMISES.
 ];
 
 /// The one defined term: `#inert` abbreviates this effect (C04.18.9).
@@ -1038,4 +1618,89 @@ pub const DECISION_VECTORS: &[(&str, bool)] = &[
     ("{} |-> #inert", false),
     // An effect where a proposition stands.
     ("#stated |-> #inert && #inert", false),
+    // ---- Card SP2-SYMBOLIC-LIBRDKAFKA-PREMISES: the qcore-provider-librdkafka
+    // block, one or more rows per new signature shape. ----
+    // The falsum is a proposition, so a premise may state it.
+    ("#false", true),
+    ("#concurrent |-> #keeps_links(#parent)", true),
+    (
+        "quant all #c in #children(#parent): #c in #next_reach(#c) -> #false",
+        true,
+    ),
+    (
+        "quant all #b in #children(#parent): quant all #a in #pred(#parent, #b): #a in #prev(#b)",
+        true,
+    ),
+    ("#op_callbacks |-> #takes(#held_on(#served)) == {}", true),
+    (
+        "#call |-> #returns_result_of(#rd_calloc) && #audited_assertions",
+        true,
+    ),
+    (
+        "quant all #f in #ran(#event_cb(#forwards(#logq))): #false",
+        true,
+    ),
+    ("#nodup(#parent)", true),
+    (
+        "#coord_rkb_monitor_cb |-> (#handed_only(#broker) && #reads_only(#op))",
+        true,
+    ),
+    // `|->` binds tighter than `&&`, so an unparenthesized second effect
+    // stands where a proposition must.
+    (
+        "#coord_rkb_monitor_cb |-> #handed_only(#broker) && #reads_only(#op)",
+        false,
+    ),
+    ("#call in #registered", true),
+    // A proposition is not a callback.
+    ("#false |-> #inert", false),
+    // A set of objects where an object stands.
+    ("#nodup(#children(#parent))", false),
+    // A two-argument term with one argument.
+    ("#pred(#parent) in #live", false),
+    // An object is not a callback.
+    ("#parent |-> #inert", false),
+    ("#parent in #registered", false),
+    ("#call |-> #returns_result_of(#parent)", false),
+    // An effect, alone or as an equation, is not a premise.
+    ("#held_on(#served) == #refs(#op)", false),
+    ("#keeps_links(#parent)", false),
+    // An object is not a quantifier domain.
+    ("quant all #x in #parent: #false", false),
+    // ---- End of the SP2 block. ----
+    // ---- Card SP3-SYMBOLIC-FLUENT-BIT-LIBC-PREMISES: every Fluent Bit term,
+    // in an accepted and a refused position.
+    (
+        "quant all #r in #result: #r in #interior(#args) && #r in #chunk_name(#args)",
+        true,
+    ),
+    (
+        "quant all #r in #result: #r in #result \\ (#tracked | #claimed | #bound | #stored)",
+        true,
+    ),
+    ("#admitted -> #faithful", true),
+    (
+        "quant all #g in #config_of(#args): #g in #ingesting -> #returns_zero",
+        true,
+    ),
+    (
+        "quant all #c in #collector: #c in #event_registered && #c in #set_running",
+        true,
+    ),
+    (
+        "#production -> (quant all #p in #out_plugin(#args): #p in #synchronous \\ #in_tree && #p in #proxy)",
+        true,
+    ),
+    // A proposition is not a callback.
+    ("#faithful |-> #inert", false),
+    // A set of objects is not a proposition.
+    ("#result", false),
+    // A proposition is not a set of objects.
+    ("#interior(#admitted) == {}", false),
+    // A term without its argument.
+    ("quant all #r in #result: #r in #chunk_name", false),
+    // A proposition is not an element.
+    ("#returns_zero in #collector", false),
+    // An object set where a callback set stands.
+    ("#out_plugin(#args) |-> #inert", false),
 ];

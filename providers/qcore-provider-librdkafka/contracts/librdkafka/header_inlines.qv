@@ -255,7 +255,7 @@ contract {
 extern fn rd_kafka_buf_finalize_arraycnt(rkbuf: ptr<mut, u8>, of: usize, cnt: usize) -> unit
 contract {
     requires resource_contract_v1;
-    requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_premise(rk_plugin_callback_closure, (quant all #f in #ran(#slots(#rk_conf)) \ #loaded_registered: #f in #registered | #defaults && #f in #candidates) && quant all #f in #loaded_registered: #f in #enveloped);
     ensures normal resource_borrowed(rkbuf);
     ensures normal resource_borrowed(of);
     ensures normal resource_borrowed(cnt);
@@ -346,7 +346,7 @@ contract {
 extern fn rd_kafka_q_enq(rkq: ptr<mut, u8>, rko: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
-    requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_premise(rk_plugin_callback_closure, (quant all #f in #ran(#slots(#rk_conf)) \ #loaded_registered: #f in #registered | #defaults && #f in #candidates) && quant all #f in #loaded_registered: #f in #enveloped);
     ensures normal resource_borrowed(rkq);
     ensures normal resource_consumed(rko, nonnull);
     ensures normal resource_return_none();
@@ -355,7 +355,7 @@ contract {
 extern fn rd_kafka_q_reenq(rkq: ptr<mut, u8>, rko: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
-    requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_premise(rk_plugin_callback_closure, (quant all #f in #ran(#slots(#rk_conf)) \ #loaded_registered: #f in #registered | #defaults && #f in #candidates) && quant all #f in #loaded_registered: #f in #enveloped);
     ensures normal resource_borrowed(rkq);
     ensures normal resource_consumed(rko, nonnull);
     ensures normal resource_return_none();
@@ -377,7 +377,7 @@ contract {
 extern fn rd_kafka_q_len(rkq: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
-    requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_premise(rk_plugin_callback_closure, (quant all #f in #ran(#slots(#rk_conf)) \ #loaded_registered: #f in #registered | #defaults && #f in #candidates) && quant all #f in #loaded_registered: #f in #enveloped);
     ensures normal resource_borrowed(rkq);
     ensures normal resource_return_none();
 };
@@ -385,7 +385,7 @@ contract {
 extern fn rd_kafka_q_yield(rkq: ptr<mut, u8>) -> unit
 contract {
     requires resource_contract_v1;
-    requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_premise(rk_plugin_callback_closure, (quant all #f in #ran(#slots(#rk_conf)) \ #loaded_registered: #f in #registered | #defaults && #f in #candidates) && quant all #f in #loaded_registered: #f in #enveloped);
     ensures normal resource_borrowed(rkq);
     ensures normal resource_return_none();
 };
@@ -400,7 +400,7 @@ contract {
 extern fn rd_kafka_q_concat0(rkq: ptr<mut, u8>, srcq: ptr<mut, u8>, do_lock: i32) -> i32
 contract {
     requires resource_contract_v1;
-    requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_premise(rk_plugin_callback_closure, (quant all #f in #ran(#slots(#rk_conf)) \ #loaded_registered: #f in #registered | #defaults && #f in #candidates) && quant all #f in #loaded_registered: #f in #enveloped);
     ensures normal resource_borrowed(rkq);
     ensures normal resource_borrowed(srcq);
     ensures normal resource_borrowed(do_lock);
@@ -410,7 +410,7 @@ contract {
 extern fn rd_kafka_q_prepend0(rkq: ptr<mut, u8>, srcq: ptr<mut, u8>, do_lock: i32) -> unit
 contract {
     requires resource_contract_v1;
-    requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_premise(rk_plugin_callback_closure, (quant all #f in #ran(#slots(#rk_conf)) \ #loaded_registered: #f in #registered | #defaults && #f in #candidates) && quant all #f in #loaded_registered: #f in #enveloped);
     ensures normal resource_borrowed(rkq);
     ensures normal resource_borrowed(srcq);
     ensures normal resource_borrowed(do_lock);
@@ -479,7 +479,7 @@ contract {
 extern fn rd_kafka_msgq_purge(rk: ptr<mut, u8>, rkmq: ptr<mut, u8>) -> unit
 contract {
     requires resource_contract_v1;
-    requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_premise(rk_plugin_callback_closure, (quant all #f in #ran(#slots(#rk_conf)) \ #loaded_registered: #f in #registered | #defaults && #f in #candidates) && quant all #f in #loaded_registered: #f in #enveloped);
     ensures normal resource_borrowed(rk);
     ensures normal resource_borrowed(rkmq);
     ensures normal resource_return_none();
@@ -563,7 +563,7 @@ contract {
 extern fn rd_kafka_app_polled(rk: ptr<mut, u8>, rkq: ptr<mut, u8>) -> unit
 contract {
     requires resource_contract_v1;
-    requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_premise(rk_plugin_callback_closure, (quant all #f in #ran(#slots(#rk_conf)) \ #loaded_registered: #f in #registered | #defaults && #f in #candidates) && quant all #f in #loaded_registered: #f in #enveloped);
     ensures normal resource_borrowed(rk);
     ensures normal resource_borrowed(rkq);
     ensures normal resource_return_none();
@@ -592,7 +592,7 @@ contract {
 extern fn rd_kafka_txn_add_partition(rktp: ptr<mut, u8>) -> unit
 contract {
     requires resource_contract_v1;
-    requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_premise(rk_plugin_callback_closure, (quant all #f in #ran(#slots(#rk_conf)) \ #loaded_registered: #f in #registered | #defaults && #f in #candidates) && quant all #f in #loaded_registered: #f in #enveloped);
     ensures normal resource_borrowed(rktp);
     ensures normal resource_return_none();
 };
@@ -678,7 +678,7 @@ contract {
 extern fn rd_avl_remove_elm(ravl: ptr<mut, u8>, elm: ptr<const, u8>) -> unit
 contract {
     requires resource_contract_v1;
-    requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_premise(rk_plugin_callback_closure, (quant all #f in #ran(#slots(#rk_conf)) \ #loaded_registered: #f in #registered | #defaults && #f in #candidates) && quant all #f in #loaded_registered: #f in #enveloped);
     ensures normal resource_borrowed(ravl);
     ensures normal resource_borrowed(elm);
     ensures normal resource_return_none();
@@ -715,7 +715,7 @@ contract {
 extern fn rd_kafka_partition_leader_destroy(leader: ptr<mut, u8>) -> unit
 contract {
     requires resource_contract_v1;
-    requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
+    requires resource_premise(rk_plugin_callback_closure, (quant all #f in #ran(#slots(#rk_conf)) \ #loaded_registered: #f in #registered | #defaults && #f in #candidates) && quant all #f in #loaded_registered: #f in #enveloped);
     ensures normal resource_released(leader, nonnull);
     ensures normal resource_return_none();
 };

@@ -43,6 +43,10 @@ Theorems:
   every coherent model (`unstated_entails_ex_data`), in particular for the
   SSL object's ex_data class (`unstated_entails_ex_data_for_ssl`).
 
+Card SP3-SYMBOLIC-FLUENT-BIT-LIBC-PREMISES appends one block of Fluent Bit
+terms (`vocab`, `FluentBitTerms`, `prim0`, `prim1`, `decisionVectors`); its
+formulas and theorems are in `QCore.PremiseFormula.FluentBit`.
+
 ## What this is not
 
 A premise is an undischarged assumption (C04.18): nothing here, and no
@@ -105,7 +109,105 @@ def vocab : List (String × List Srt × Srt) := [
   ("takes", [.sres], .sres),
   ("releases", [.sres], .sres),
   ("retains", [.sres], .sres),
-  ("inert", [], .eff)
+  ("inert", [], .eff),
+  -- Card SP2-SYMBOLIC-LIBRDKAFKA-PREMISES: the qcore-provider-librdkafka block.
+  ("false", [], .prop),
+  ("rk_conf", [], .sobj),
+  ("ran", [.sfn], .sfn),
+  ("registered", [], .sfn),
+  ("defaults", [], .sfn),
+  ("candidates", [], .sfn),
+  ("loaded_registered", [], .sfn),
+  ("enveloped", [], .sfn),
+  ("punned_stores", [], .sfn),
+  ("conf_copies", [], .sfn),
+  ("hidden_string", [], .sfn),
+  ("ut_handle_produce_response", [], .sfn),
+  ("call", [], .fn),
+  ("rd_calloc", [], .fn),
+  ("rd_malloc", [], .fn),
+  ("rd_kafka_toppar_new0", [], .fn),
+  ("returns_result_of", [.fn], .eff),
+  ("asserts_result", [], .eff),
+  ("returns_nonnull", [], .eff),
+  ("audited_assertions", [], .prop),
+  ("deployed_assertion", [], .prop),
+  ("deployed_failure_call", [], .prop),
+  ("failure_no_return", [], .eff),
+  ("op_callbacks", [], .sfn),
+  ("served", [], .sobj),
+  ("held_on", [.sobj], .sres),
+  ("refs", [.sobj], .sres),
+  ("broker_monitor_cb", [], .sfn),
+  ("monitor_add_registered", [], .sfn),
+  ("coord_rkb_monitor_cb", [], .sfn),
+  ("txn_coord_monitor_cb", [], .sfn),
+  ("broker", [], .sobj),
+  ("handed_only", [.sobj], .eff),
+  ("assign_cb", [], .sfn),
+  ("assignor_add_registered", [], .sfn),
+  ("range_assign", [], .sfn),
+  ("roundrobin_assign", [], .sfn),
+  ("cooperative_sticky_assign", [], .sfn),
+  ("metadata", [], .sobj),
+  ("members", [], .sobj),
+  ("reads_only", [.sobj], .eff),
+  ("op", [], .sobj),
+  ("ack_batches", [], .sobj),
+  ("ack_details", [], .sobj),
+  ("first_add_lists", [], .sobj),
+  ("nonempty", [], .sobj),
+  ("logq", [], .sobj),
+  ("forwards", [.sobj], .sobj),
+  ("event_cb", [.sobj], .sfn),
+  ("fwd_queue", [], .sobj),
+  ("unforwarded", [], .sobj),
+  ("last_released", [], .sobj),
+  ("cjson_allocate", [], .sfn),
+  ("cjson_reallocate", [], .sfn),
+  ("cjson_deallocate", [], .sfn),
+  ("libc_hooks", [], .sfn),
+  ("installed_hooks", [], .sfn),
+  ("fresh_or_null", [], .eff),
+  ("hook_allocated", [], .sobj),
+  ("deallocate_releases", [], .sobj),
+  ("cjson_arrays", [], .sobj),
+  ("children", [.obj], .sobj),
+  ("first", [.obj], .sobj),
+  ("last", [.obj], .sobj),
+  ("pred", [.obj, .obj], .sobj),
+  ("child", [.obj], .sobj),
+  ("next", [.obj], .sobj),
+  ("prev", [.obj], .sobj),
+  ("next_reach", [.obj], .sobj),
+  ("owned", [.obj], .sobj),
+  ("nodup", [.obj], .prop),
+  ("live", [], .sobj),
+  ("parent", [], .obj),
+  ("concurrent", [], .sfn),
+  ("keeps_links", [.obj], .eff),
+  -- End of the SP2 block.
+  -- Card SP3-SYMBOLIC-FLUENT-BIT-LIBC-PREMISES: the Fluent Bit terms.
+  ("result", [], .sobj),
+  ("interior", [.sobj], .sobj),
+  ("chunk_name", [.sobj], .sobj),
+  ("tracked", [], .sobj),
+  ("claimed", [], .sobj),
+  ("bound", [], .sobj),
+  ("stored", [], .sobj),
+  ("faithful", [], .prop),
+  ("admitted", [], .prop),
+  ("config_of", [.sobj], .sobj),
+  ("ingesting", [], .sobj),
+  ("collector", [], .sobj),
+  ("event_registered", [], .sobj),
+  ("set_running", [], .sobj),
+  ("returns_zero", [], .prop),
+  ("in_tree", [], .sobj),
+  ("synchronous", [], .sobj),
+  ("proxy", [], .sobj),
+  ("production", [], .prop),
+  ("out_plugin", [.sobj], .sobj)
 ]
 
 def classes : List String :=
@@ -186,6 +288,56 @@ def wf (t : Raw) : Bool := check [] t == some .prop
 
 /-! ## Denotation -/
 
+/-- Card SP3-SYMBOLIC-FLUENT-BIT-LIBC-PREMISES: one component per Fluent Bit
+term, each its own interpretation (C04.18.9's Fluent Bit block), so a model
+says what these terms mean of the call and nothing more. Sets of objects are
+predicates on the model's elements; the three propositions are `Prop`s. -/
+structure FluentBitTerms (U : Type) where
+  result : U → Prop
+  interior : (U → Prop) → U → Prop
+  chunkName : (U → Prop) → U → Prop
+  tracked : U → Prop
+  claimed : U → Prop
+  bound : U → Prop
+  stored : U → Prop
+  faithful : Prop
+  admitted : Prop
+  configOf : (U → Prop) → U → Prop
+  ingesting : U → Prop
+  collector : U → Prop
+  eventRegistered : U → Prop
+  setRunning : U → Prop
+  returnsZero : Prop
+  inTree : U → Prop
+  synchronous : U → Prop
+  proxy : U → Prop
+  production : Prop
+  outPlugin : (U → Prop) → U → Prop
+
+/-- The Fluent Bit components that hold nothing: every set empty, every
+proposition false. -/
+def FluentBitTerms.none (U : Type) : FluentBitTerms U where
+  result := fun _ => False
+  interior := fun _ _ => False
+  chunkName := fun _ _ => False
+  tracked := fun _ => False
+  claimed := fun _ => False
+  bound := fun _ => False
+  stored := fun _ => False
+  faithful := False
+  admitted := False
+  configOf := fun _ _ => False
+  ingesting := fun _ => False
+  collector := fun _ => False
+  eventRegistered := fun _ => False
+  setRunning := fun _ => False
+  returnsZero := False
+  inTree := fun _ => False
+  synchronous := fun _ => False
+  proxy := fun _ => False
+  production := False
+  outPlugin := fun _ _ => False
+
 /-- An abstract model of one call: its objects, classes, methods, callbacks
 are elements of `U`; sets are predicates; `runs f` are the runs
 of callback `f` during the call; the resource terms are read per run. -/
@@ -221,6 +373,86 @@ structure Model where
   retains : Run → (U → Prop) → U → Prop
   runs : U → Run → Prop
   const : String → U
+  -- Card SP2-SYMBOLIC-LIBRDKAFKA-PREMISES: the librdkafka block, each with a
+  -- default so a model written before it still elaborates. `#false` needs no
+  -- component (it denotes `False`); the named functions and the parent are
+  -- elements, by default the constant of their name.
+  rkConf : U → Prop := fun _ => False
+  ran : (U → Prop) → U → Prop := fun _ _ => False
+  registered : U → Prop := fun _ => False
+  defaults : U → Prop := fun _ => False
+  candidates : U → Prop := fun _ => False
+  loadedRegistered : U → Prop := fun _ => False
+  enveloped : U → Prop := fun _ => False
+  punnedStores : U → Prop := fun _ => False
+  confCopies : U → Prop := fun _ => False
+  hiddenString : U → Prop := fun _ => False
+  utHandleProduceResponse : U → Prop := fun _ => False
+  call : U := const "call"
+  rdCalloc : U := const "rd_calloc"
+  rdMalloc : U := const "rd_malloc"
+  rdKafkaTopparNew0 : U := const "rd_kafka_toppar_new0"
+  returnsResultOf : U → Run → Prop := fun _ _ => False
+  assertsResult : Run → Prop := fun _ => False
+  returnsNonnull : Run → Prop := fun _ => False
+  auditedAssertions : Prop := False
+  deployedAssertion : Prop := False
+  deployedFailureCall : Prop := False
+  failureNoReturn : Run → Prop := fun _ => False
+  opCallbacks : U → Prop := fun _ => False
+  served : U → Prop := fun _ => False
+  heldOn : Run → (U → Prop) → U → Prop := fun _ _ _ => False
+  refs : (U → Prop) → U → Prop := fun _ _ => False
+  brokerMonitorCb : U → Prop := fun _ => False
+  monitorAddRegistered : U → Prop := fun _ => False
+  coordRkbMonitorCb : U → Prop := fun _ => False
+  txnCoordMonitorCb : U → Prop := fun _ => False
+  broker : U → Prop := fun _ => False
+  handedOnly : (U → Prop) → Run → Prop := fun _ _ => False
+  assignCb : U → Prop := fun _ => False
+  assignorAddRegistered : U → Prop := fun _ => False
+  rangeAssign : U → Prop := fun _ => False
+  roundrobinAssign : U → Prop := fun _ => False
+  cooperativeStickyAssign : U → Prop := fun _ => False
+  metadata : U → Prop := fun _ => False
+  members : U → Prop := fun _ => False
+  readsOnly : (U → Prop) → Run → Prop := fun _ _ => False
+  op : U → Prop := fun _ => False
+  ackBatches : U → Prop := fun _ => False
+  ackDetails : U → Prop := fun _ => False
+  firstAddLists : U → Prop := fun _ => False
+  nonempty : U → Prop := fun _ => False
+  logq : U → Prop := fun _ => False
+  forwards : (U → Prop) → U → Prop := fun _ _ => False
+  eventCb : (U → Prop) → U → Prop := fun _ _ => False
+  fwdQueue : U → Prop := fun _ => False
+  unforwarded : U → Prop := fun _ => False
+  lastReleased : U → Prop := fun _ => False
+  cjsonAllocate : U → Prop := fun _ => False
+  cjsonReallocate : U → Prop := fun _ => False
+  cjsonDeallocate : U → Prop := fun _ => False
+  libcHooks : U → Prop := fun _ => False
+  installedHooks : U → Prop := fun _ => False
+  freshOrNull : Run → Prop := fun _ => False
+  hookAllocated : U → Prop := fun _ => False
+  deallocateReleases : U → Prop := fun _ => False
+  cjsonArrays : U → Prop := fun _ => False
+  children : U → U → Prop := fun _ _ => False
+  first : U → U → Prop := fun _ _ => False
+  last : U → U → Prop := fun _ _ => False
+  pred : U → U → U → Prop := fun _ _ _ => False
+  child : U → U → Prop := fun _ _ => False
+  next : U → U → Prop := fun _ _ => False
+  prev : U → U → Prop := fun _ _ => False
+  nextReach : U → U → Prop := fun _ _ => False
+  owned : U → U → Prop := fun _ _ => False
+  nodup : U → Prop := fun _ => False
+  live : U → Prop := fun _ => False
+  parent : U := const "parent"
+  concurrent : U → Prop := fun _ => False
+  keepsLinks : U → Run → Prop := fun _ _ => False
+  /-- Card SP3-SYMBOLIC-FLUENT-BIT-LIBC-PREMISES: the Fluent Bit terms. -/
+  fb : FluentBitTerms U := FluentBitTerms.none U
 
 /-- A value: an element, a set, a per-run resource set, a proposition, a
 property of a run, or nothing (an ill-sorted application). -/
@@ -255,6 +487,80 @@ def prim0 (M : Model) (f : String) : Val M :=
   else if f = "loaded" then .st M.loaded
   else if f = "caller_held" then .rs M.callerHeld
   else if f = "inert" then .ef (inertEff M)
+  -- Card SP2-SYMBOLIC-LIBRDKAFKA-PREMISES.
+  else if f = "false" then .pr False
+  else if f = "rk_conf" then .st M.rkConf
+  else if f = "registered" then .st M.registered
+  else if f = "defaults" then .st M.defaults
+  else if f = "candidates" then .st M.candidates
+  else if f = "loaded_registered" then .st M.loadedRegistered
+  else if f = "enveloped" then .st M.enveloped
+  else if f = "punned_stores" then .st M.punnedStores
+  else if f = "conf_copies" then .st M.confCopies
+  else if f = "hidden_string" then .st M.hiddenString
+  else if f = "ut_handle_produce_response" then .st M.utHandleProduceResponse
+  else if f = "call" then .el M.call
+  else if f = "rd_calloc" then .el M.rdCalloc
+  else if f = "rd_malloc" then .el M.rdMalloc
+  else if f = "rd_kafka_toppar_new0" then .el M.rdKafkaTopparNew0
+  else if f = "asserts_result" then .ef M.assertsResult
+  else if f = "returns_nonnull" then .ef M.returnsNonnull
+  else if f = "audited_assertions" then .pr M.auditedAssertions
+  else if f = "deployed_assertion" then .pr M.deployedAssertion
+  else if f = "deployed_failure_call" then .pr M.deployedFailureCall
+  else if f = "failure_no_return" then .ef M.failureNoReturn
+  else if f = "op_callbacks" then .st M.opCallbacks
+  else if f = "served" then .st M.served
+  else if f = "broker_monitor_cb" then .st M.brokerMonitorCb
+  else if f = "monitor_add_registered" then .st M.monitorAddRegistered
+  else if f = "coord_rkb_monitor_cb" then .st M.coordRkbMonitorCb
+  else if f = "txn_coord_monitor_cb" then .st M.txnCoordMonitorCb
+  else if f = "broker" then .st M.broker
+  else if f = "assign_cb" then .st M.assignCb
+  else if f = "assignor_add_registered" then .st M.assignorAddRegistered
+  else if f = "range_assign" then .st M.rangeAssign
+  else if f = "roundrobin_assign" then .st M.roundrobinAssign
+  else if f = "cooperative_sticky_assign" then .st M.cooperativeStickyAssign
+  else if f = "metadata" then .st M.metadata
+  else if f = "members" then .st M.members
+  else if f = "op" then .st M.op
+  else if f = "ack_batches" then .st M.ackBatches
+  else if f = "ack_details" then .st M.ackDetails
+  else if f = "first_add_lists" then .st M.firstAddLists
+  else if f = "nonempty" then .st M.nonempty
+  else if f = "logq" then .st M.logq
+  else if f = "fwd_queue" then .st M.fwdQueue
+  else if f = "unforwarded" then .st M.unforwarded
+  else if f = "last_released" then .st M.lastReleased
+  else if f = "cjson_allocate" then .st M.cjsonAllocate
+  else if f = "cjson_reallocate" then .st M.cjsonReallocate
+  else if f = "cjson_deallocate" then .st M.cjsonDeallocate
+  else if f = "libc_hooks" then .st M.libcHooks
+  else if f = "installed_hooks" then .st M.installedHooks
+  else if f = "fresh_or_null" then .ef M.freshOrNull
+  else if f = "hook_allocated" then .st M.hookAllocated
+  else if f = "deallocate_releases" then .st M.deallocateReleases
+  else if f = "cjson_arrays" then .st M.cjsonArrays
+  else if f = "live" then .st M.live
+  else if f = "parent" then .el M.parent
+  else if f = "concurrent" then .st M.concurrent
+  -- Card SP3-SYMBOLIC-FLUENT-BIT-LIBC-PREMISES.
+  else if f = "result" then .st M.fb.result
+  else if f = "tracked" then .st M.fb.tracked
+  else if f = "claimed" then .st M.fb.claimed
+  else if f = "bound" then .st M.fb.bound
+  else if f = "stored" then .st M.fb.stored
+  else if f = "faithful" then .pr M.fb.faithful
+  else if f = "admitted" then .pr M.fb.admitted
+  else if f = "ingesting" then .st M.fb.ingesting
+  else if f = "collector" then .st M.fb.collector
+  else if f = "event_registered" then .st M.fb.eventRegistered
+  else if f = "set_running" then .st M.fb.setRunning
+  else if f = "returns_zero" then .pr M.fb.returnsZero
+  else if f = "in_tree" then .st M.fb.inTree
+  else if f = "synchronous" then .st M.fb.synchronous
+  else if f = "proxy" then .st M.fb.proxy
+  else if f = "production" then .pr M.fb.production
   else .bad
 
 def prim1 (M : Model) (f : String) : Val M → Val M
@@ -266,6 +572,18 @@ def prim1 (M : Model) (f : String) : Val M → Val M
       else if f = "method" then .el (M.method o)
       else if f = "fns" then .st (M.fns o)
       else if f = "teardown" then .st (M.teardown o)
+      -- Card SP2-SYMBOLIC-LIBRDKAFKA-PREMISES.
+      else if f = "returns_result_of" then .ef (M.returnsResultOf o)
+      else if f = "children" then .st (M.children o)
+      else if f = "first" then .st (M.first o)
+      else if f = "last" then .st (M.last o)
+      else if f = "child" then .st (M.child o)
+      else if f = "next" then .st (M.next o)
+      else if f = "prev" then .st (M.prev o)
+      else if f = "next_reach" then .st (M.nextReach o)
+      else if f = "owned" then .st (M.owned o)
+      else if f = "nodup" then .pr (M.nodup o)
+      else if f = "keeps_links" then .ef (M.keepsLinks o)
       else .bad
   | .st s =>
       if f = "ctx" then .st (M.ctx s)
@@ -274,6 +592,19 @@ def prim1 (M : Model) (f : String) : Val M → Val M
       else if f = "slots" then .st (M.slots s)
       else if f = "store" then .st (M.store s)
       else if f = "lookups" then .st (M.lookups s)
+      -- Card SP2-SYMBOLIC-LIBRDKAFKA-PREMISES.
+      else if f = "ran" then .st (M.ran s)
+      else if f = "held_on" then .rs (fun r => M.heldOn r s)
+      else if f = "refs" then .rs (fun _ => M.refs s)
+      else if f = "handed_only" then .ef (M.handedOnly s)
+      else if f = "reads_only" then .ef (M.readsOnly s)
+      else if f = "forwards" then .st (M.forwards s)
+      else if f = "event_cb" then .st (M.eventCb s)
+      -- Card SP3-SYMBOLIC-FLUENT-BIT-LIBC-PREMISES.
+      else if f = "interior" then .st (M.fb.interior s)
+      else if f = "chunk_name" then .st (M.fb.chunkName s)
+      else if f = "config_of" then .st (M.fb.configOf s)
+      else if f = "out_plugin" then .st (M.fb.outPlugin s)
       else .bad
   | .rs s =>
       if f = "takes" then .rs (fun r => M.takes r (s r))
@@ -287,6 +618,8 @@ def prim2 (M : Model) (f : String) : Val M → Val M → Val M
       if f = "of" then .st (fun o => s o ∧ M.cls o = k)
       else if f = "in_turn" then .st (M.inTurn k s)
       else .bad
+  -- Card SP2-SYMBOLIC-LIBRDKAFKA-PREMISES.
+  | .el a, .el b => if f = "pred" then .st (M.pred a b) else .bad
   | _, _ => .bad
 
 /-- `#of(k, S)` is the members of `S` of class `k`; `F |-> E` is every run of
@@ -373,11 +706,8 @@ theorem prim0_kind (M : Model) {f : String} {s : Srt} (h : term f = some ([], s)
     (prim0 M f).kind = some s.kind := by
   have hm := term_mem h
   simp only [vocab, List.mem_cons, Prod.mk.injEq, List.mem_nil_iff, or_false] at hm
-  rcases hm with ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ |
-      ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ |
-      ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ |
-      ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ |
-      ⟨rfl, hs⟩ | ⟨rfl, hs⟩ <;>
+  repeat' (rcases hm with ⟨rfl, hs⟩ | hm)
+  all_goals
     simp_all [prim0, Val.kind, Srt.kind]
 
 theorem prim1_kind (M : Model) {f : String} {x s : Srt} {v : Val M}
@@ -385,12 +715,9 @@ theorem prim1_kind (M : Model) {f : String} {x s : Srt} {v : Val M}
     (prim1 M f v).kind = some s.kind := by
   have hm := term_mem h
   simp only [vocab, List.mem_cons, Prod.mk.injEq, List.mem_nil_iff, or_false] at hm
-  rcases hm with ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ |
-      ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ |
-      ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ |
-      ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ |
-      ⟨rfl, hs⟩ | ⟨rfl, hs⟩ <;>
-    (simp at hs) <;>
+  repeat' (rcases hm with ⟨rfl, hs⟩ | hm)
+  all_goals
+    (try simp at hs) <;>
     (try obtain ⟨rfl, rfl⟩ := hs) <;>
     (cases v <;> simp_all [prim1, Val.kind, Srt.kind])
 
@@ -400,12 +727,9 @@ theorem prim2_kind (M : Model) {f : String} {x y s : Srt} {v w : Val M}
     (prim2 M f v w).kind = some s.kind := by
   have hm := term_mem h
   simp only [vocab, List.mem_cons, Prod.mk.injEq, List.mem_nil_iff, or_false] at hm
-  rcases hm with ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ |
-      ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ |
-      ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ |
-      ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ |
-      ⟨rfl, hs⟩ | ⟨rfl, hs⟩ <;>
-    (simp at hs) <;>
+  repeat' (rcases hm with ⟨rfl, hs⟩ | hm)
+  all_goals
+    (try simp at hs) <;>
     (try obtain ⟨⟨rfl, rfl⟩, rfl⟩ := hs) <;>
     (cases v <;> cases w <;> simp_all [prim2, Val.kind, Srt.kind])
 
@@ -599,9 +923,47 @@ def decisionVectors : List (Raw × Bool) := [
   ((.bin .mapsTo (.app0 "slots") (.app0 "inert")), false),
   ((.quant "o" (.app0 "created") (.app0 "o")), false),
   ((.bin .mapsTo .empty (.app0 "inert")), false),
-  ((.bin .conj (.bin .mapsTo (.app0 "stated") (.app0 "inert")) (.app0 "inert")), false)
+  ((.bin .conj (.bin .mapsTo (.app0 "stated") (.app0 "inert")) (.app0 "inert")), false),
+  -- Card SP2-SYMBOLIC-LIBRDKAFKA-PREMISES: the qcore-provider-librdkafka block.
+  ((.app0 "false"), true),
+  ((.bin .mapsTo (.app0 "concurrent") (.app1 "keeps_links" (.app0 "parent"))), true),
+  ((.quant "c" (.app1 "children" (.app0 "parent")) (.bin .imp (.bin .mem (.app0 "c") (.app1 "next_reach" (.app0 "c"))) (.app0 "false"))), true),
+  ((.quant "b" (.app1 "children" (.app0 "parent")) (.quant "a" (.app2 "pred" (.app0 "parent") (.app0 "b")) (.bin .mem (.app0 "a") (.app1 "prev" (.app0 "b"))))), true),
+  ((.bin .mapsTo (.app0 "op_callbacks") (.bin .eqv (.app1 "takes" (.app1 "held_on" (.app0 "served"))) .empty)), true),
+  ((.bin .conj (.bin .mapsTo (.app0 "call") (.app1 "returns_result_of" (.app0 "rd_calloc"))) (.app0 "audited_assertions")), true),
+  ((.quant "f" (.app1 "ran" (.app1 "event_cb" (.app1 "forwards" (.app0 "logq")))) (.app0 "false")), true),
+  ((.app1 "nodup" (.app0 "parent")), true),
+  ((.bin .mapsTo (.app0 "coord_rkb_monitor_cb") (.bin .conj (.app1 "handed_only" (.app0 "broker")) (.app1 "reads_only" (.app0 "op")))), true),
+  ((.bin .conj (.bin .mapsTo (.app0 "coord_rkb_monitor_cb") (.app1 "handed_only" (.app0 "broker"))) (.app1 "reads_only" (.app0 "op"))), false),
+  ((.bin .mem (.app0 "call") (.app0 "registered")), true),
+  ((.bin .mapsTo (.app0 "false") (.app0 "inert")), false),
+  ((.app1 "nodup" (.app1 "children" (.app0 "parent"))), false),
+  ((.bin .mem (.app1 "pred" (.app0 "parent")) (.app0 "live")), false),
+  ((.bin .mapsTo (.app0 "parent") (.app0 "inert")), false),
+  ((.bin .mem (.app0 "parent") (.app0 "registered")), false),
+  ((.bin .mapsTo (.app0 "call") (.app1 "returns_result_of" (.app0 "parent"))), false),
+  ((.bin .eqv (.app1 "held_on" (.app0 "served")) (.app1 "refs" (.app0 "op"))), false),
+  ((.app1 "keeps_links" (.app0 "parent")), false),
+  ((.quant "x" (.app0 "parent") (.app0 "false")), false),
+  -- End of the SP2 block.
+  -- Card SP3-SYMBOLIC-FLUENT-BIT-LIBC-PREMISES: every Fluent Bit term.
+  ((.quant "r" (.app0 "result") (.bin .conj (.bin .mem (.app0 "r") (.app1 "interior" (.app0 "args"))) (.bin .mem (.app0 "r") (.app1 "chunk_name" (.app0 "args"))))), true),
+  ((.quant "r" (.app0 "result") (.bin .mem (.app0 "r") (.bin .diff (.app0 "result") (.bin .union (.bin .union (.bin .union (.app0 "tracked") (.app0 "claimed")) (.app0 "bound")) (.app0 "stored"))))), true),
+  ((.bin .imp (.app0 "admitted") (.app0 "faithful")), true),
+  ((.quant "g" (.app1 "config_of" (.app0 "args")) (.bin .imp (.bin .mem (.app0 "g") (.app0 "ingesting")) (.app0 "returns_zero"))), true),
+  ((.quant "c" (.app0 "collector") (.bin .conj (.bin .mem (.app0 "c") (.app0 "event_registered")) (.bin .mem (.app0 "c") (.app0 "set_running")))), true),
+  ((.bin .imp (.app0 "production") (.quant "p" (.app1 "out_plugin" (.app0 "args")) (.bin .conj (.bin .mem (.app0 "p") (.bin .diff (.app0 "synchronous") (.app0 "in_tree"))) (.bin .mem (.app0 "p") (.app0 "proxy"))))), true),
+  ((.bin .mapsTo (.app0 "faithful") (.app0 "inert")), false),
+  ((.app0 "result"), false),
+  ((.bin .eqv (.app1 "interior" (.app0 "admitted")) .empty), false),
+  ((.quant "r" (.app0 "result") (.bin .mem (.app0 "r") (.app0 "chunk_name"))), false),
+  ((.bin .mem (.app0 "returns_zero") (.app0 "collector")), false),
+  ((.bin .mapsTo (.app1 "out_plugin" (.app0 "args")) (.app0 "inert")), false)
 ]
 
+-- The merged SP2 and SP3 tables exceed the default recursion depth of the
+-- kernel's `decide` evaluation; the proof is unchanged.
+set_option maxRecDepth 8192 in
 theorem decision_vectors_agree :
     decisionVectors.all (fun v => wf v.1 == v.2) = true := by decide
 
@@ -705,7 +1067,8 @@ theorem ex_data_does_not_entail_unstated :
     library := fun _ => False, loaded := fun _ => False,
     inTurn := fun _ _ _ => False, callerHeld := fun _ _ => True,
     takes := fun _ s => s, releases := fun _ _ _ => False,
-    retains := fun _ _ _ => False, runs := fun _ _ => True, const := fun _ => true }
+    retains := fun _ _ _ => False, runs := fun _ _ => True, const := fun _ => true,
+    fb := FluentBitTerms.none Bool }
   have hC : M.Coherent := fun _ _ h => h.elim
   have hE : (eval M [] exDataFormula).holds := by
     rw [eval_exData]; intro o ho; simp [M] at ho

@@ -1012,6 +1012,43 @@ fn result_set_spans(program: &SourceProgram) -> Vec<Span> {
         .collect()
 }
 
+/// Cards SP2-SYMBOLIC-LIBRDKAFKA-PREMISES and SP3-SYMBOLIC-FLUENT-BIT-LIBC-PREMISES
+/// (contract specification C04.18.9, grammar G05-formula; one exemption for
+/// both, SP3's tighter test kept at the merge): the expression spans of every `requires
+/// resource_premise(NAME, FORMULA);` clause whose statement the premise
+/// reader ([`crate::premise_formula::premise_clause`]) accepts as a formula.
+/// Its `&&` and `|` are the formula's conjunction and set union, read
+/// literally by that reader, not expressions of this tier: a premise is
+/// metadata, nothing lowers it and no verdict reads it. A clause the reader
+/// does not accept as a formula (a string statement, a malformed formula)
+/// gets no span, so its operators keep refusing here.
+fn premise_formula_spans(program: &SourceProgram) -> Vec<Span> {
+    program
+        .declarations
+        .iter()
+        .filter_map(|declaration| declaration.value.function_contract.as_ref())
+        .flat_map(|contract| &contract.clauses)
+        .filter(|clause| {
+            clause.value.kind == SourceContractClauseKind::Requires
+                && crate::lexer::lex(&clause.value.expression_source).is_ok_and(|tokens| {
+                    let kinds = tokens
+                        .into_iter()
+                        .map(|token| token.kind)
+                        .filter(|kind| *kind != TokenKind::Eof)
+                        .collect::<Vec<_>>();
+                    matches!(
+                        crate::premise_formula::premise_clause(&kinds),
+                        Ok(Some((
+                            _,
+                            crate::premise_formula::PremiseStatement::Formula(_)
+                        )))
+                    )
+                })
+        })
+        .map(|clause| clause.value.expression_span)
+        .collect()
+}
+
 /// Raise the operator refusals recorded for one input file.
 ///
 /// Called per input file before name/type checking, beside
@@ -1060,6 +1097,12 @@ pub fn check_source_operators(program: &SourceProgram) -> Result<(), Vec<SourceD
             .iter()
             .any(|extent| extent.start <= span.start && span.end <= extent.end)
     };
+    let premise_formulas = premise_formula_spans(program);
+    let in_premise_formula = |span: Span| {
+        premise_formulas
+            .iter()
+            .any(|extent| extent.start <= span.start && span.end <= extent.end)
+    };
 
     // Card `W48-QR-CLOSURES`: the two bars of a closure's capture list (the
     // one `||` of an empty list) are the closure's, directly after
@@ -1086,6 +1129,11 @@ pub fn check_source_operators(program: &SourceProgram) -> Result<(), Vec<SourceD
             // Card CHUNKIO-META-LEN-BOUNDS-CONTRACTS: a quant check's own
             // connectives (G05c).
             TokenKind::Symbol(Symbol::PipePipe | Symbol::AndAnd) if in_quant_check(token.span) => {
+                continue;
+            }
+            // Cards SP2/SP3 symbolic premises: a premise formula's conjunction
+            // and set union (G05-formula).
+            TokenKind::Symbol(Symbol::AndAnd | Symbol::Pipe) if in_premise_formula(token.span) => {
                 continue;
             }
             TokenKind::Symbol(Symbol::Pipe | Symbol::PipePipe) if closure_bar(token.span) => {

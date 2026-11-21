@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#[path = "../../../tests/support/sp2_premise_checkpoint.rs"]
+mod sp2_premise_checkpoint;
 use qcore_contract::{guarded_decomposition as g, guarded_metadata_bridge as bridge, hypothesis};
 use qcore_schemas::{
     hypothesis::{Context, Disposition, Warrant},
@@ -34,7 +36,14 @@ fn fixture() -> (
     let bytes =
         fs::read(root().join("docs/reports/guarded-contract-adoption/adoption-plan.json")).unwrap();
     let plan: bridge::Plan = serde_json::from_slice(&bytes).unwrap();
-    let source = fs::read_to_string(root().join(&plan.module)).unwrap();
+    // Card SP2-SYMBOLIC-LIBRDKAFKA-PREMISES stated the module's premises as
+    // formulas after this plan froze its whole source: the plan is checked
+    // against the module as it stood before (an exact, hash-checked recovery).
+    let source = sp2_premise_checkpoint::restored_file(
+        &plan.module,
+        &fs::read_to_string(root().join(&plan.module)).unwrap(),
+        qcore_schemas::sha256_hex,
+    );
     let addition = bridge::render(&plan.metadata).unwrap();
     assert_eq!(source.matches(&addition).count(), 1);
     let before = BTreeMap::from([(plan.module.clone(), source.replacen(&addition, "", 1))]);

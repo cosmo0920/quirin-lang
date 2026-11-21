@@ -124,6 +124,80 @@ mod tracked_files;
 mod tests {
     use super::*;
 
+    /// Every clause headed `requires HEAD(` in a module, comments removed, as
+    /// `(first argument, rest of the arguments)`, both trimmed.
+    fn clauses(module: &str, head: &str) -> Vec<(String, String)> {
+        let text = module
+            .lines()
+            .map(|line| line.split("//").next().unwrap_or_default())
+            .collect::<Vec<_>>()
+            .join("\n");
+        let opening = format!("requires {head}(");
+        let mut out = Vec::new();
+        let mut rest = text.as_str();
+        while let Some(at) = rest.find(&opening) {
+            let clause = &rest[at + opening.len()..];
+            let end = clause.find(';').expect("a clause ends with `;`");
+            let (first, others) = clause[..end]
+                .trim_end()
+                .strip_suffix(')')
+                .and_then(|arguments| arguments.split_once(','))
+                .expect("the clause has two arguments or more");
+            out.push((first.trim().to_owned(), others.trim().to_owned()));
+            rest = &clause[end..];
+        }
+        out
+    }
+
+    /// Card SP3-SYMBOLIC-FLUENT-BIT-LIBC-PREMISES (contract specification
+    /// C04.18.9; user decision 2026-11-20): a premise of this crate is never
+    /// a sentence. The crate has no checker binary, so its own test refuses a
+    /// premise statement or a hypothesis atom written as a string literal, in
+    /// every module. At this card's base the crate states no
+    /// `resource_premise` clause; its two `nested_call_admission` premises
+    /// (`__errno_location`, `strerror`) are conjunctions of typed `quant
+    /// proposition` atoms (card QUANT-CONTRACT-HYPOTHESES).
+    #[test]
+    fn no_premise_is_prose() {
+        let mut conjunctions = Vec::new();
+        for (path, text) in CONTRACTS {
+            for head in ["resource_premise", "resource_hypothesis"] {
+                for (name, statement) in clauses(text, head) {
+                    assert!(
+                        !statement.starts_with('"'),
+                        "{path}: `{head}({name}, ...)` is stated in prose; a premise of this \
+                         crate is a formula (C04.18.9) or a typed proposition"
+                    );
+                }
+            }
+            for (name, children) in clauses(text, "resource_premise_all") {
+                assert!(!children.contains('"'), "{path}: `{name}`");
+                conjunctions.push((*path, name));
+            }
+        }
+        assert_eq!(
+            conjunctions,
+            [
+                ("libc/errno.qv", "nested_call_admission".to_owned()),
+                ("libc/errno.qv", "nested_call_admission".to_owned())
+            ]
+        );
+        assert!(
+            clauses(
+                "requires resource_premise_all(p, a, b);",
+                "resource_premise"
+            )
+            .is_empty()
+        );
+        assert_eq!(
+            clauses(
+                "requires resource_premise(p, \"a sentence\");",
+                "resource_premise"
+            ),
+            [("p".to_owned(), "\"a sentence\"".to_owned())]
+        );
+    }
+
     /// Card CONTRACT-INHERIT-ADOPTION: the recorded namespace is the one the
     /// load path derives from the package name, and every published module
     /// is an owned one, listed once, in order.

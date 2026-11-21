@@ -21,6 +21,9 @@
 
 use std::collections::BTreeMap;
 
+#[path = "../../../tests/support/sp2_premise_checkpoint.rs"]
+mod sp2_premise_checkpoint;
+
 use qcore_audit::contract_dependencies::{
     CLAUSES_KEY, Facts, PREMISES_KEY, ROW_KEY, SECTION_KEY, UNIT_KEY, body_standing_of,
     clause_standing_of, premises, render,
@@ -475,8 +478,9 @@ extern fn impact_free(p: ptr<mut,u8>) -> unit contract { requires resource_contr
     let actual_graphs = qcore_contract::hypothesis::replay(actual.source_assumptions()).unwrap();
     // Resolve the exact production graph's formal references before the
     // context-scoped synthetic refutation/impact control.
-    let manifest_bytes =
-        include_bytes!("../../../docs/reports/premise-evidence-contracts/binding-manifest.json");
+    let manifest_bytes = include_bytes!(
+        "../../../docs/reports/sp2-symbolic-librdkafka-premises/bindings/ef40a0780d962e506a45092e704ac701a08f33810555d574b12a47c6426fc771.json"
+    );
     let manifest_sha = qcore_schemas::sha256_hex(manifest_bytes);
     let expected_manifests = BTreeMap::from([(
         manifest_sha.clone(),
@@ -649,9 +653,18 @@ fn concrete_attachment_preserves_closed_world_facts_and_publishes_checked_open_b
     };
     let before = load(old);
     let after = load(current.into());
+    // Card SP2-SYMBOLIC-LIBRDKAFKA-PREMISES: the frozen proposal predates the
+    // premises' formulas, so the premise parity is checked on the module as it
+    // stood before them (an exact, hash-checked restoration); every binding
+    // check below reads the current module.
+    let restored = load(sp2_premise_checkpoint::restored_file(
+        "providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv",
+        current,
+        qcore_schemas::sha256_hex,
+    ));
     assert_eq!(
         qcore_contract::contract_loader::declared_premises(&before).unwrap(),
-        qcore_contract::contract_loader::declared_premises(&after).unwrap()
+        qcore_contract::contract_loader::declared_premises(&restored).unwrap()
     );
     let old_meta = premises(&before).unwrap();
     let mut metadata = premises(&after).unwrap();
@@ -668,8 +681,9 @@ fn concrete_attachment_preserves_closed_world_facts_and_publishes_checked_open_b
         1
     );
     let expected_graphs = qcore_contract::hypothesis::replay(after.source_assumptions()).unwrap();
-    let bytes =
-        include_bytes!("../../../docs/reports/premise-evidence-contracts/binding-manifest.json");
+    let bytes = include_bytes!(
+        "../../../docs/reports/sp2-symbolic-librdkafka-premises/bindings/ef40a0780d962e506a45092e704ac701a08f33810555d574b12a47c6426fc771.json"
+    );
     let sha = qcore_schemas::sha256_hex(bytes);
     let expected = BTreeMap::from([(sha.clone(), serde_json::from_slice(bytes).unwrap())]);
     let presented = BTreeMap::from([(sha, bytes.to_vec())]);
@@ -730,7 +744,10 @@ fn concrete_attachment_preserves_closed_world_facts_and_publishes_checked_open_b
             .is_none()
     );
     let mut a = old_meta;
-    let mut b = metadata;
+    // SP2: the erased record equals the frozen one on the module before its
+    // premises became formulas (the current record differs exactly in the
+    // statements, which the restoration's digests pin).
+    let mut b = premises(&restored).unwrap();
     qcore_audit::contract_dependencies::erase_hypotheses(&mut a);
     qcore_audit::contract_dependencies::erase_hypotheses(&mut b);
     assert_eq!(a, b);
