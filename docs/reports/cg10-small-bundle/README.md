@@ -237,6 +237,12 @@ Records in [gate/](gate/); logs in the worktree's `private/gate-*`.
   is integrate/r48's matrix drift. This card does not touch the matrix. It is
   left to the integrator, whose amendment application regenerates the
   dimensions.
+* **gate-2** (`c15ed4982`, the final code, fixtures and report; same command, `--out
+  private/gate-2`) exit 1 with the same single Python failure: submodules 0,
+  fmt 0, clippy 0, `run_test_binaries.py` 0 (672 units, 9,849 passed, 0
+  failed, 21 ignored, 148 filtered), probes 0 / 0, Lean 0 (477 audits),
+  Python 1 (779 tests, only the base's matrix-dimension failure). No rerun
+  was needed for any other step. Later commits change this report only.
 * **Gate read census.** `gate_read_census.py record --packages
   qcore-c-gateway` and `reduce` both exited 0. 263 units were traced and 1
   was not ok under the tracer (`detach_lookup_membership`, as in earlier
