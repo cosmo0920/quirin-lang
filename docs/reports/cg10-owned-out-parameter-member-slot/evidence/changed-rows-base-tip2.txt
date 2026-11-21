@@ -1,0 +1,63 @@
+lib/cmetrics/src/cmt_decode_msgpack.c unpack_opts_desc Unknown -> Safe
+   - 7189 indirect memory access is outside the resource projection
+lib/cmetrics/src/cmt_decode_msgpack.c unpack_opts_name Unknown -> Safe
+   - 7181 indirect memory access is outside the resource projection
+lib/cmetrics/src/cmt_decode_msgpack.c unpack_opts_ns Unknown -> Safe
+   - 7165 indirect memory access is outside the resource projection
+lib/cmetrics/src/cmt_decode_msgpack.c unpack_opts_ss Unknown -> Safe
+   - 7173 indirect memory access is outside the resource projection
+lib/cmetrics/src/cmt_decode_msgpack.c unpack_opts_unit Unknown -> Unknown
+   - 7198 call to uncontracted function `cmt_mpack_consume_string_tag`
+   - 7202 unresolved resource identity `value`
+   - 7206 unresolved resource identity `value`
+   - 7207 unresolved resource identity `value`
+lib/cmetrics/src/cmt_decode_msgpack.c unpack_static_label_component Unknown -> Safe
+   - 7319 indirect memory access is outside the resource projection
+   - 7322 indirect memory access is outside the resource projection
+lib/cmetrics/src/cmt_mpack_utils.c cmt_mpack_unpack_map Unknown -> Unknown
+   - 6366 call to uncontracted function `cmt_mpack_consume_string_tag`
+   - 6367 unresolved resource identity `result`
+   - 6389 unresolved resource identity `result`
+   + 6366 loop re-acquisition: an earlier generation that may be live is still held
+lib/ctraces/src/ctr_decode_msgpack.c unpack_event_name Unknown -> Unknown
+   - 7432 indirect memory access is outside the resource projection
+lib/ctraces/src/ctr_decode_msgpack.c unpack_instrumentation_scope_name Unknown -> Safe
+   - 7350 indirect memory access is outside the resource projection
+lib/ctraces/src/ctr_decode_msgpack.c unpack_instrumentation_scope_version Unknown -> Safe
+   - 7357 indirect memory access is outside the resource projection
+lib/ctraces/src/ctr_decode_msgpack.c unpack_link_span_id Unknown -> Unknown
+   - 7497 call to uncontracted function `ctr_mpack_consume_string_or_nil_tag`
+   + 7497 call to `ctr_mpack_consume_string_or_nil_tag` whose return-code disposition needs its returned value tested against a constant where it stands (relational-untested)
+lib/ctraces/src/ctr_decode_msgpack.c unpack_link_trace_id Unknown -> Unknown
+   - 7482 call to uncontracted function `ctr_mpack_consume_string_or_nil_tag`
+   + 7482 call to `ctr_mpack_consume_string_or_nil_tag` whose return-code disposition needs its returned value tested against a constant where it stands (relational-untested)
+lib/ctraces/src/ctr_decode_msgpack.c unpack_link_trace_state Unknown -> Safe
+   - 7510 indirect memory access is outside the resource projection
+lib/ctraces/src/ctr_decode_msgpack.c unpack_resource_span_schema_url Unknown -> Unknown
+   - 7842 indirect memory access is outside the resource projection
+lib/ctraces/src/ctr_decode_msgpack.c unpack_scope_span_schema_url Unknown -> Unknown
+   - 7808 indirect memory access is outside the resource projection
+lib/ctraces/src/ctr_decode_msgpack.c unpack_span_name Unknown -> Unknown
+   - 7666 indirect memory access is outside the resource projection
+lib/ctraces/src/ctr_decode_msgpack.c unpack_span_parent_span_id Unknown -> Unknown
+   - 7622 call to uncontracted function `ctr_mpack_consume_string_or_nil_tag`
+   + 7622 call to `ctr_mpack_consume_string_or_nil_tag` whose return-code disposition needs its returned value tested against a constant where it stands (relational-untested)
+lib/ctraces/src/ctr_decode_msgpack.c unpack_span_schema_url Unknown -> Safe
+   - 7760 indirect memory access is outside the resource projection
+lib/ctraces/src/ctr_decode_msgpack.c unpack_span_span_id Unknown -> Unknown
+   - 7599 call to uncontracted function `ctr_mpack_consume_string_or_nil_tag`
+   + 7599 call to `ctr_mpack_consume_string_or_nil_tag` whose return-code disposition needs its returned value tested against a constant where it stands (relational-untested)
+lib/ctraces/src/ctr_decode_msgpack.c unpack_span_status_message Unknown -> Safe
+   - 7746 indirect memory access is outside the resource projection
+lib/ctraces/src/ctr_decode_msgpack.c unpack_span_trace_id Unknown -> Unknown
+   - 7576 call to uncontracted function `ctr_mpack_consume_string_or_nil_tag`
+   + 7576 call to `ctr_mpack_consume_string_or_nil_tag` whose return-code disposition needs its returned value tested against a constant where it stands (relational-untested)
+lib/ctraces/src/ctr_decode_msgpack.c unpack_span_trace_state Unknown -> Unknown
+   - 7646 indirect memory access is outside the resource projection
+lib/librdkafka-2.15.0/src/rdkafka_telemetry.c rd_kafka_push_telemetry_payload_compress Unknown -> Unknown
+   - 20823 call to uncontracted function `rd_kafka_gzip_compress`
+   - 20829 call to uncontracted function `rd_kafka_lz4_compress`
+   - 20835 call to uncontracted function `rd_kafka_snappy_compress_slice`
+   + 20823 call to `rd_kafka_gzip_compress` whose return-code disposition needs its returned value tested against a constant where it stands (relational-untested)
+   + 20829 call to `rd_kafka_lz4_compress` whose return-code disposition needs its returned value tested against a constant where it stands (relational-untested)
+   + 20835 call to `rd_kafka_snappy_compress_slice` whose return-code disposition needs its returned value tested against a constant where it stands (relational-untested)

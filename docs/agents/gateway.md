@@ -5463,8 +5463,9 @@ own anchor here.
     hook H-U0 already reads such a cast as; the uncast statement is lowered
     by the older routes and kept only where they admit it
     (`legacy_cast_semantics.rs::place_view_removed`). An element, a
-    subscript, an offset, an integer, a decayed array, any other position
-    and the return position (no H-U placement) keep the older answer; the
+    subscript, an offset, an integer, a decayed array and any other position
+    keep the older answer (the whole-call return is
+    [rule 71a](#constraint-71a)'s placement); the
     uncast spelling matches no Clang node, so a Clang-matched reading of the
     statement (rule 14a's typed member destination) is not reached.
     `QCore.CastActualPlace` (`place_view_vectors_hold`,
@@ -5585,7 +5586,9 @@ own anchor here.
     description changes. The reading's counters are restored and its
     instruction discarded. **Do not** let the reading lower anything, re-attribute
     a held call (its refusal is `Pending`, a verdict move), an actual neither
-    reader recognises (`(*__errno_location())`, a nested call, a cast), an
+    reader recognises (`(*__errno_location())`, a nested call, a cast; a view
+    [rule 71a](#constraint-71a) removes is read through its uncast call since
+    [rule 74](#constraint-74)), an
     access outside the actuals (a member destination) or a descriptor read, or
     ask the rule before any older route (hard invariant 3). The node stays
     `Unknown` with the same writes, so no verdict moves; the diagnostics are a
@@ -12215,6 +12218,41 @@ an undeclared OpenSSL producer). `QCore.NullableReferenceDrop` (12 audited,
     `tests/condition_leaf_reads.rs`. `QCore.ConditionLeafReads`;
     [report](../reports/ag3-condition-return-calls/README.md).
 
+<a id="constraint-66"></a>
+
+66. **A decayed array member whose element is a scalar typedef is read as
+    its scalar spelling.** Card CG10-INDIRECT-ACCESS-SOLE-RESIDUALS round 4
+    (`typedef_scalar_element.rs`; one hook in
+    `rule_hosts.rs::Reader::decayed_address`, asked only after
+    [rule 35](#constraint-35)'s second arm refuses and only while that arm is
+    enabled; shared items added: `EnumFacts::scalar_typedefs`, filled where
+    `EnumFacts::collect` already reads each `TypedefDecl`, and
+    `Reader::scalar_typedefs` in `typed_access_path.rs`). Rule 35 reads
+    `memcpy(d, s->buf, n)`'s `s->buf` as `&s->buf[0]` (rule 14c) only when
+    the array type's element is written in builtin scalar words; Clang states
+    no desugared spelling for an array of a typedef (`U32 mem32[4]` is
+    `U32[4]`: the sugar is on the element, not on the array type), so a
+    `U32`, `uint8_t` or `rd_ts_t` element was refused as `Element::Other`.
+    For a `MemberExpr` operand whose written type is `[const] T[N]` (one
+    identifier, one dimension, no desugared spelling), where every
+    `TypedefDecl` of `T` in the unit has a desugared type of builtin scalar
+    words (`const` admitted) and all of them agree, the element is that
+    scalar (C11 6.7.8p3) and rule 35's admission applies unchanged: every hop
+    is checked as rule 10n(1)'s address, the array is not read, and W44's
+    position premise and second obligation stand. **Do not** read a pointer,
+    record, unknown, `volatile` or `_Atomic` resolution, two
+    declarations that disagree, a multi-word or qualified element other than
+    `const`, a second dimension, a non-member operand, or a spelling Clang
+    desugared (rule 35's own). Premises stated, not proved: faithful Clang
+    extraction of the written array type and of each `TypedefDecl`'s
+    desugared type (trust boundary 28). `QCore.TypedefScalarElement`
+    (`an_agreeing_scalar_typedef_is_its_spelling`,
+    `a_disagreeing_typedef_reads_nothing`,
+    `a_non_scalar_resolution_reads_nothing`, `a_non_member_is_never_read`,
+    `decision_vectors_hold`, `the_decision_is_the_models`), bound to
+    `DECISION_VECTORS`;
+    [report](../reports/cg10-indirect-access-sole-residuals-r4/README.md).
+
 <a id="constraint-67"></a>
 
 67. **Several sibling calls that each take no custody are read as rule 14a
@@ -12406,14 +12444,316 @@ an undeclared OpenSSL producer). `QCore.NullableReferenceDrop` (12 audited,
     semantics rule 10v keeps refused), a record returned by value, or a
     deeper or element place; **do not** forward a caller's record into its
     own summary (the follow-up FB-EVENT-LOOP-CROSS-FUNCTION-LIFETIME's T2).
-    `T *` for a function typedef `T` is read as an object pointer (retained,
-    more obligation), and a formal declared `R (*f)(A)` makes the W4
-    parameter reader publish no summary at all (the call stays
-    uncontracted). Premises stated, not proved: P-CG11-CALLER-SLOT carried up
+    `T *` for a function typedef `T` is a function pointer since
+    [rule 71b](#constraint-71b); a formal declared `R (*f)(A)` is read by the W4
+    parameter reader since [rule 74b](#constraint-74b) unless the body calls
+    through it; a holder in the body's own result stays refused
+    ([rule 74a](#constraint-74a)). Premises stated, not proved: P-CG11-CALLER-SLOT carried up
     one frame at each overwritten path; faithful Clang extraction (trust
     boundary 28). `QCore.MemberStoreRetention` (decision vectors bound to
     `DECISION_VECTORS`; soundness over a concrete memory; caller discharge
     composes; the counterexample);
     [report](../reports/cg10-member-store-retained-by/README.md).
+
+<a id="constraint-71"></a>
+
+71. **A logical AND before a parenthesised name is not that name's
+    address.** Card CG10-READER-GAPS (`logical_and_operand.rs`; one hook in
+    `lexical_nested_assignment::parenthesised_writes`), discharging
+    CG10-EMBEDDED-CONTAINER-THREE-HOP-ACTUAL. The analyzer splits every
+    punctuator into single characters, so `&&` is `&` `&`, and rule 10o's
+    reader of parenthesised writes read `X == K && (p)->f` (the expansion of
+    librdkafka's `RD_KAFKA_IS_SHARE_CONSUMER(rk)`) as `& (p)`, the address of
+    `p`: the lexical closure bound `p`, and every address actual over it
+    (rule 10n's never-bound premise) kept the gate's refusal. That, and not
+    the three-hop `&rk->rk_conf.interceptors.on_X`, which W44's typed actual
+    reader already reads, is what refused the ten
+    `rd_kafka_interceptor_add_on_*` rows. A `&` before the group is now the
+    second character of a logical AND exactly when two `&` tokens stand
+    there and the token before them ends an operand (a name, a number, `)`
+    or `]`). In a unit Clang accepted the source spelled `&&`: the only other
+    spelling, `X & &(p)`, is a bitwise AND with a pointer operand, which C11
+    6.5.10p2 forbids, and GNU's `&&label` takes no parenthesised group. A
+    logical AND neither writes nor addresses its operand (6.5.13), so no seed
+    a real event needs is dropped; every other reader, seed and closure round
+    is unchanged. **Do not** read a single `&`, a run of three (`a && &(p)`,
+    whose last `&` is unary) or a `&` after anything but an operand end as a
+    logical AND. Premises stated, not proved: the importer's character
+    tokens and the operand-end reading of a binary `&` (trust boundary 28).
+    `QCore.LogicalAndOperand` (`a_unary_address_is_read`,
+    `a_logical_and_is_one`, `only_a_logical_and_is_dropped`,
+    `decision_vectors_hold`), bound to `DECISION_VECTORS`;
+    [report](../reports/cg10-reader-gaps/README.md).
+
+<a id="constraint-71a"></a>
+
+71a. **The return position's placement of rule 12h's view removal.** Card
+    CG10-READER-GAPS (`return_cast_view.rs`; hooks in
+    `legacy_return_call_access.rs` (rule 12i's guard),
+    `legacy_cast_semantics.rs::uncast_returned_views` and
+    `typed_access_positions.rs::argument_node`; shared item added:
+    `AggregateFacts::scalar_typedef`), discharging
+    CG10-CAST-VIEW-RETURN-POSITION. It amends the route map's return step 2
+    (rule 12i's row) and rule 15z's guard; rule 12h's statement H-U is
+    unchanged. Rule 12i declined a returned call that hides a place behind an
+    identity-preserving view (`returned_call_hides_a_place`), because W44's
+    re-classification is not asked H-U0. Where that guard declines a
+    **whole-call** return, every view it names (H-U0's set: a byte, typed,
+    punned or qualifier view of a plain name or a member chain over one at a
+    call actual or variadic tail, no `volatile`/`_Atomic` result) is removed,
+    and the uncast call `PLACE = f(args)` is admitted by its own
+    classification under rule 12i's acceptance (as W4's whole-call return
+    admits an uncast spelling) or by rule 12i's W44 block; while it is read,
+    W44's typed actual reader matches an uncast actual to the operand of the
+    view Clang read there. No view is left hidden and every actual hands the
+    callee the identity it handed cast (`view_preserves_identity`), so the
+    reason the guard declined is gone. Read only when every removed view
+    points at `void`, a character type, a builtin scalar or enumeration, a
+    typedef of the unit naming one, or a `struct` spelled with its tag.
+    **Do not** remove a view to a union (rule 10w's overlapping storage) or
+    to a record typedef (indistinguishable from a union's by spelling), read
+    a return inside an expression or a call with no unique Clang node, or ask
+    the reading before the routes of the position (hard invariant 3).
+    Parity: rule 12i's `return-call-access` row with form
+    `uncast-whole-call`. One round-3 pin flipped deliberately
+    (`indirect_access_sole_residuals_r3`'s return row, now `Safe`, with a
+    scalar-expression control). Premises stated, not proved: the token/AST
+    match and C11 6.3.2.3p7 for a pointer conversion (trust boundary 28).
+    `QCore.ReturnCastView` (`return_view_vectors_hold`,
+    `only_a_whole_call_is_read`, `a_kept_view_keeps_the_refusal`,
+    `nothing_is_left_hidden`, `the_same_identities_are_handed`,
+    `a_removed_view_is_its_place`), bound to `RETURN_VIEW_VECTORS`;
+    [report](../reports/cg10-reader-gaps/README.md).
+
+<a id="constraint-71b"></a>
+
+71b. **`T *` for a function typedef `T` is a function pointer.** Card
+    CG10-READER-GAPS (`function_typedef_pointer.rs`; a hook in
+    `pointer_store::read_store`; shared items added:
+    `AggregateFacts::function_typedef`, the typed reader's `aggregates`),
+    discharging CG10-RETAINED-BY-FUNCTION-POINTER-SPELLINGS. It amends rule
+    70's value reading (rule 10v's classes are unchanged). Clang desugars
+    only a type's top level, so `T *f` with `typedef R (T)(A);` is spelled
+    `T *` and rule 70 retained it (`rd_kafka_buf_set_maker`'s `make_cb`). A
+    named formal whose type spelling is exactly `NAME *`, with every
+    `TypedefDecl` of `NAME` in the unit directly a function type (its type
+    node, through `ParenType` and `ElaboratedType` only, a
+    `FunctionProtoType` or `FunctionNoProtoType`), is rule 10v's
+    function-pointer name: the flow decides it as any `R (*)(A)` name, and
+    rule 70 adds an overwritten path and no retention. A pointer to a
+    function type designates no object (C11 6.2.5p20, 6.3.2.3p8), so no
+    lifetime obligation is dropped. **Do not** follow a typedef of a
+    typedef, read a pointer, array-of-function-pointers or record typedef, a
+    name with a disagreeing declaration, a qualified or deeper spelling, or
+    a local (the flow needs the name). **Refusals recorded, not read:** a
+    formal declared `R (*f)(A)` made the W4 lexical parameter reader
+    (`function_parameters`) publish no summary ([rule 74b](#constraint-74b)
+    reads it since CG10-SMALL-BUNDLE, unless the body calls through it); the reader is shared by the
+    W4 derivation and validation, selection frames, recursion, neutral
+    callees, self-link frames, member release and every body's formal set,
+    so reading that declarator is its own census (follow-up
+    CG10-W4-FUNCTION-POINTER-DECLARATOR-FORMALS). An object pointer stored
+    into a function-pointer member (`cio_set_log_callback`'s `void
+    (*log_cb)`, an implicit `BitCast`) is no conversion ISO C defines
+    (6.3.2.3; J.5.7 is an extension; rule 12h's `function-object` class) and
+    keeps its refusal. `QCore.FunctionTypedefPointer`
+    (`decision_vectors_hold`,
+    `a_disagreeing_declaration_keeps_the_object_reading`,
+    `a_pointer_array_typedef_is_an_object`,
+    `a_pointer_typedef_is_not_a_function_typedef`,
+    `an_alias_is_not_followed`, `read_only_for_a_function_typedef`,
+    `a_function_pointer_adds_no_obligation`), bound to `DECISION_VECTORS`;
+    [report](../reports/cg10-reader-gaps/README.md).
+
+<a id="constraint-72"></a>
+
+72. **An owned value a callee delivers through an out slot handed a member
+    path of a caller-supplied object is that object's.** Card
+    CG10-OWNED-OUT-PARAMETER-MEMBER-SLOT (`owned_out_member.rs`, the parser's
+    half in `legacy_owned_out_member.rs`; hooks: the minted environment in
+    `legacy_c.rs` after rule 38j's, the statement form before rule 12k in
+    `expression_statement_lowered`, the whole-call return after rule 12i and
+    before rule 12k, `ValueClass::OwnedOut` in `pointer_store.rs`, its owner
+    and decision in `legacy_pointer_store.rs`, `chain_owner_premised` in
+    `legacy_null_premise.rs`, rule 70's summary refusing such a body in
+    `member_store_retention.rs`, the minted prefix in
+    `legacy_reserved_spelling.rs` and `contract_dependencies.rs`; contract
+    specification §C04.13.1). USER DECISION 2026-11-21 (through the
+    integrator's brief): launch the card. CG10-INDIRECT-ACCESS-SOLE-RESIDUALS
+    round 4 counted 13 functions the access refusal alone blocked whose
+    callee stores a fresh allocation through an out slot handed `&opts->ns`,
+    `&context->span->status.message` or `&ciov->iov_base`; §C04.13 reads an
+    out slot only at `&NAME`, and rule W44 reads no address of a pointer
+    member. (1) **The callee.** Its contract in force is a plain contract
+    with exactly one `Out` position, or a return-code disposition (not
+    withdrawn) whose classes are `Out` or `Borrowed` (unwritten) at exactly
+    one position, `Out` in one, and agree elsewhere; with that position read
+    `Borrowed` it is the neutral contract (every other formal `Borrowed`, a
+    `None` result, no kind or effect clause), installed under the minted name
+    `qcore_owned_out_member__F`. Every class then delivers fresh custody or
+    nothing through the slot, so the classes need no decision where the slot
+    is the caller's. (2) **The statement.** Asked only for exactly the gate's
+    refusal, after every other route of the statement or return declined,
+    for `CALL`, `NAME = CALL` or `return CALL` with no braces reading no
+    tracked descriptor, whose first call ends the statement; the slot actual
+    is exactly `& R -> F ( -> G )* ( . H )*` (fused), its first selection an
+    arrow and no `.` before a later arrow; `R` is a **caller-supplied root**
+    (premise P-72-CALLER-OBJECT: an unrebound formal, never written,
+    incremented or address-taken, or, to a fixpoint, a name every write of
+    which is `R = V ;` with `V` a root, `( T… * ) root` with no `union`, or
+    `root -> F…`, and which is never address-taken or compound-assigned). The
+    statement is classified with the callee renamed to its minted name and
+    the slot actual replaced by the null constant (data at a `Borrowed`
+    position), its other actuals read as rule W44 reads them; the call must
+    come back the minted contract, producing no site and no container or
+    retention operand, and is renamed back. (3) **The lowering.** The slot's
+    chain read (`IndirectScalarAccess` with the chain `R`, links, member: the
+    root's never-bound premise, else rule 11d's eligibility where the AST
+    reader declares `R` once), the call's own block, then a rule-10v
+    `PointerStore` of value class `owned-out` whose access is the call and
+    whose fallback is the gate's refusal with the statement's writes; a
+    return then returns its scalar escaping nothing. (4) **The flow.** The
+    owner is rule 10v's (`chain_owner`, root and final object), read under
+    rule 14n's named premise exactly where the slot's own chain read is:
+    untracked admits, tracked or unresolved refuses; then rule 10v's
+    old-value premise (no binding rooted at `R` carries a target or is
+    unknown, P-CG11-CALLER-SLOT) and its forget of every binding rooted at
+    `R`. Admitted, the delivered custody is the caller's object's: no site
+    is created, nothing is owed by this frame and nothing it owed is
+    dropped, exactly as a field-linked child escapes with an escaping owner
+    (O04-B08). A record this frame allocated (a tracked owner) keeps the
+    refusal: only O04-B08's field link rewrites its member
+    (CG10-OWNED-OUT-MEMBER-TRACKED-OWNER). (5) **The summary.** A body with
+    such a store publishes no derived summary (rule 10v's
+    `has_pointer_store`), and rule 70's retention summary refuses one, so no
+    caller reads the delivery as `Borrowed`. **Do not** admit a slot of this
+    frame's own object (`&v.F`, a pointer to a local), a rebound or
+    address-taken root, a root written from a call or arithmetic, an indexed
+    or cast slot, a call inside a larger expression, a contract with a
+    second custody position or an owned result, or a held or withdrawn
+    declaration; **do not** read the delivery into a tracked owner without
+    the field link. Premises stated, not proved: P-72-CALLER-OBJECT,
+    P-CG11-CALLER-SLOT, the callee's declaration (C06) and faithful token and
+    Clang extraction (trust boundary 28). `QCore.OwnedOutMemberSlot`
+    (`decision_vectors_hold`, `slot_vectors_hold`,
+    `another_write_is_never_a_root`,
+    `an_admitted_delivery_keeps_the_frames_obligations`,
+    `the_delivered_identity_is_held`, `a_tracked_owner_is_refused`,
+    `a_delivery_withholds_the_summary` and six more), bound to
+    `DECISION_VECTORS` and `ROOT_VECTORS`; `tests/owned_out_member_slot.rs`;
+    [report](../reports/cg10-owned-out-parameter-member-slot/README.md).
+
+<a id="constraint-74"></a>
+
+74. **Rule 12k asked of rule 71a's uncast call.** Card CG10-SMALL-BUNDLE
+    (`legacy_uncontracted_access.rs::uncast_uncontracted_reading`, one call
+    in `uncontracted_return_attribution`), discharging
+    CG10-UNCAST-RETURN-UNCONTRACTED-ATTRIBUTION. It amends
+    [rule 12k](#constraint-12k)'s "an actual neither reader recognises (a
+    cast)" for exactly the views [rule 71a](#constraint-71a) removes. Rule 12k
+    reads a whole-call return through its synthetic `PLACE = f(args)`; a cast
+    actual is recognised by neither reader, so `return f((T *)p->m, …)` with
+    `f` uncontracted kept `indirect memory access is outside the resource
+    projection`. Where that spelled reading declines (and only then), and the
+    return hides a place behind views (`returned_call_hides_a_place`) every
+    one of which rule 71a removes (`uncast_returned_views`), rule 12k's
+    reading is asked of the uncast synthetic call with rule 71a's
+    `Transparent` guard, so W44's typed actual reader matches an uncast
+    actual to the view's operand node. The callee is the same call's and the
+    removal hands it the same identities (`view_preserves_identity`), so the
+    callee that decides the uncast call decides the cast one. Every premise
+    of rule 12k holds unchanged (exactly the gate's refusal, no contract in
+    force, no review or pin hold, no descriptor read, the reading's state
+    restored), and the node keeps its writes and its verdict. **Do not** ask
+    it where rule 12k's spelled reading attributed, for a view rule 71a keeps
+    (a union, a record typedef), a return inside an expression, or before
+    any older route of the position (hard invariant 3). Parity: rule 12k's
+    `uncontracted-access` row with form `uncast-return`. Premises stated, not
+    proved: the token/AST match (trust boundary 28).
+    `QCore.UncastReturnAttribution` (`the_verdict_of_every_node_is_unchanged`,
+    `the_status_of_a_function_is_unchanged`,
+    `the_result_is_the_gate_refusal_or_the_callees`,
+    `a_kept_view_keeps_the_spelled_answer`, `only_a_whole_call_is_read`,
+    `a_contracted_callee_keeps_the_gate_refusal`,
+    `a_held_callee_keeps_the_gate_refusal`, `an_attributed_spelling_is_kept`,
+    `the_uncast_call_hands_the_same_identities`);
+    [report](../reports/cg10-small-bundle/README.md).
+
+<a id="constraint-74a"></a>
+
+74a. **A result-holder retention is not derived (recorded refusal).** Card
+    CG10-SMALL-BUNDLE, discharging CG10-RESULT-HOLDER-RETAINED-BY by a
+    refusal; no code changes. `pmi->member = member; return pmi;`
+    (`PartitionMemberInfo_new`, `rd_kafka_op_new_cb`) is §C04.14.2's shape,
+    but deriving it needs two things. In the body: a per-identity retention
+    record on the tracked result, joined over paths, stated at a returning
+    exit and ended by a release of the result, where [rule 10v](#constraint-10v)
+    admits a store into a tracked owner only through O04-B08's field link,
+    which reads the stored pointer as owned. At every caller: rule 13e ends
+    the record **when the holder is released**. For a declared contract that
+    the destructor does not release `q` is a reviewed, pinned assumption
+    (constraint 4); a derived summary carries no review, and the result's
+    destructor is any body, whose release of the member keeping `q` the
+    member release model reads as an owned field's. Ending the record there
+    lets the caller release `q` again unseen (a double release), so no
+    reading is sound without a premise on each destructor's member effect,
+    and none is stated. **Do not** derive `resource_retained_by(q, result)`
+    from a body, link a retained pointer into its holder's fields, or end a
+    derived result-holder record at a release whose member effect is
+    unknown. A future reading needs the destructor premise (follow-up
+    CG10-RESULT-HOLDER-DESTRUCTOR-MEMBER-EFFECT). `tests/small_bundle.rs`
+    pins the body's refusal and the uncontracted callee at its callers.
+    `QCore.ResultHolderRefusal` (`the_end_of_record_reading_accepts_the_caller`,
+    `a_member_releasing_destructor_faults`,
+    `the_destructor_read_as_it_is_refuses_the_caller`,
+    `a_destructor_without_member_effect_does_not_fault`,
+    `the_end_of_record_needs_a_destructor_premise`, over
+    `QCore.MemberStoreRetention`'s concrete memory);
+    [report](../reports/cg10-small-bundle/README.md).
+
+<a id="constraint-74b"></a>
+
+74b. **A formal declared `R (*f)(A)` is a function-pointer formal.** Card
+    CG10-SMALL-BUNDLE (`function_pointer_formal.rs`, a child of `legacy_c`;
+    one fallback in `legacy_tokens.rs::function_parameters`), discharging
+    CG10-W4-FUNCTION-POINTER-DECLARATOR-FORMALS. It amends
+    [rule 71b](#constraint-71b)'s recorded refusal. `function_parameters`
+    refused every declarator list holding `(`, so a function with a
+    function-pointer formal published no summary and its body readings saw
+    no formal set. Where the old reader refuses such a list, it is split at
+    its top-level commas and read when every group holding `(` is exactly one
+    or more specifier or `*` tokens, then `( * NAME )`, then one balanced
+    parameter list with no brace; `NAME` (not a keyword) is the formal at
+    that group's position, a function pointer (C11 6.7.6.3; it designates no
+    object, 6.3.2.3p8, so it carries no lifetime: rule 10v's class), and
+    every other group is the old reader's, alone. A list with no such group
+    reads exactly as before, and the recursion route's own type reader
+    (`parse_parameter_declarators`) is unchanged. **Do not** read a list
+    whose body spells a call through a read formal (`NAME (` or
+    `( * NAME ) (`): an invocation of a caller-chosen function can release
+    what it is handed (§C04.19), and every consumer resolves a call by its
+    callee's spelling, so a formal named like a contracted function would be
+    read as that function. **Do not** read `int (cmp)(…)`, `void (*f)` (an
+    object pointer), `void (* const f)(…)`, a nested declarator, a macro
+    group (`STACK_OF(X509) *`), a variadic list, `void` beside a formal or a
+    repeated name. Consumer census (the W4 derivation and validation,
+    selection and lookup frames, recursion, neutral callees, self-link
+    frames, member effect and member release, counted users, detach, the
+    derived-result and relational routes, cross-unit replay and every
+    body's formal set): each reads a formal by its position and none gives
+    a function pointer custody, so the formal is `Borrowed` (a function
+    designator, null or function-pointer actual carries no identity at the
+    call) and rule 70 adds an overwritten path and no retention for its
+    store (report section 3). One `reader_gaps` pin flipped deliberately
+    (the summary is published, the caller's static actuals discharge it),
+    with a called-formal control. Parity: `function-pointer-formal` rows.
+    Premises stated, not proved: the token match (trust boundary 28).
+    `QCore.FunctionPointerFormal` (`decision_vectors_hold`, bound to
+    `DECISION_VECTORS` by `rule_74b_lean_vectors_match_the_rust_table`;
+    `positions_are_kept`, `each_position_is_its_group`,
+    `a_called_formal_refuses`, `another_declarator_refuses`,
+    `a_read_formal_is_never_called`, `a_plain_list_reads_as_before`,
+    `a_function_pointer_adds_no_obligation`);
+    [report](../reports/cg10-small-bundle/README.md).
 
 <!-- generated:rules:end -->

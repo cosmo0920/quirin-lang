@@ -113,7 +113,10 @@ impl Parser<'_> {
         let mut synthetic = Vec::with_capacity(expression.len() + 2);
         synthetic.extend(return_call::assignment_prefix(line));
         synthetic.extend_from_slice(expression);
-        match self.uncontracted_reading(&synthetic, line, "return", &instruction) {
+        let reading = self
+            .uncontracted_reading(&synthetic, line, "return", &instruction)
+            .or_else(|| self.uncast_uncontracted_reading(expression, line, &instruction));
+        match reading {
             Some(description) => {
                 let LegacyInstruction::Unknown { writes, .. } = instruction else {
                     unreachable!("the reading is asked only for the gate's refusal");
@@ -128,6 +131,30 @@ impl Parser<'_> {
             }
             None => Some((instruction, escapes)),
         }
+    }
+
+    /// Card CG10-SMALL-BUNDLE (rule 74): where the spelled whole call hides
+    /// a place behind a view rule 71a removes, the same reading asked of rule
+    /// 71a's uncast call `PLACE = f(args)`, with W44's typed actual reader
+    /// matching each uncast actual to the view's operand (as rule 71a reads
+    /// it). The removal hands the callee the same identities, so the callee
+    /// that decides the uncast call decides the cast one. A view rule 71a
+    /// keeps (a union, a record typedef) keeps the gate's text.
+    fn uncast_uncontracted_reading(
+        &mut self,
+        expression: &[Token],
+        line: usize,
+        instruction: &LegacyInstruction,
+    ) -> Option<String> {
+        if !self.returned_call_hides_a_place(expression) {
+            return None;
+        }
+        let uncast = self.uncast_returned_views(expression)?;
+        let mut synthetic = Vec::with_capacity(uncast.len() + 2);
+        synthetic.extend(return_call::assignment_prefix(line));
+        synthetic.extend(uncast);
+        let _transparent = crate::return_cast_view::Transparent::enter();
+        self.uncontracted_reading(&synthetic, line, "uncast-return", instruction)
     }
 
     /// The uncontracted callee's refusal when the callee is what decides

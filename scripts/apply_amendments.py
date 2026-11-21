@@ -16,20 +16,35 @@
 """Validate and apply a card's `integration-amendments.json` (pluggable-cards
 seam D, card AMENDMENTS-SCHEMA).
 
-This script is the single authority for the amendments schema
-`quirin-amendments/1`; `docs/agents/operations.md` routes to it. A document is
-one JSON object with exactly these top-level keys:
+This script is the single authority for the amendments schema, currently
+`quirin-amendments/2` (card STATUS-REGROWTH-BY-PREPEND); `docs/agents/operations.md`
+routes to it. A document is one JSON object with exactly these top-level keys:
 
-- `schema` (required): the string `quirin-amendments/1`.
+- `schema` (required): the string `quirin-amendments/2`.
 - `card` (required): the card id, upper case (`[A-Z0-9][A-Z0-9-]*`).
 - `base`, `measured_tip` (required): git revisions, 7 to 40 hex digits.
 - `increment_paragraph` (required): one paragraph (non-empty, no blank line,
   no surrounding whitespace). It is prepended, newest first, to the current
   increment record named by `docs/development/increments/README.md`, directly
   below the record's checkpoint notice (the `> ` block).
-- `status_paragraph` (required, may be `null`): one paragraph, or `null` when
-  no current-status fact changes. When present it is prepended below the
-  title of `docs/STATUS.md`.
+- `status_edits` (required, may be empty): in-place edits of the current page
+  `docs/STATUS.md`, applied in order, each to the result of the one before.
+  Each entry is exactly `{"section": heading, "old": text, "new": text}`:
+    - `section` is a heading line of the page exactly as written (`## Latest
+      validated gate`, `### Unpublished landings`), present exactly once. The
+      section runs from that line to the next heading of the same or a higher
+      level (or the end of the page).
+    - `old` (non-empty) must occur exactly once inside that section, and must
+      not touch the generated unpublished-landings block (the text between
+      `<!-- unpublished-landings:` and `<!-- unpublished-landings:end -->`,
+      which `python3 scripts/land.py unpublished --write` owns).
+    - `new` replaces it; it may be empty (a removed row) but must differ from
+      `old`. Replacing a table row, a figure or a sentence is one edit.
+  An edit that does not apply (absent or repeated heading, `old` absent or
+  repeated in its section, an edit of the generated block) is refused, and so
+  is an edit set that leaves the page over the 32 KiB bound `scripts/land.py
+  check` enforces while making it longer. Nothing is ever prepended: a card
+  states a changed fact where the page already states it.
 - `ledger` (required, may be empty): edits of the acceptance matrix's
   `named_followups` (`docs/reviews/r0_3/acceptance_matrix.json`), applied in
   order. Each entry has `id`, `operation` and exactly the fields its operation
@@ -88,6 +103,16 @@ one JSON object with exactly these top-level keys:
   this card the field was reserved as any object; no committed document used
   it, so no existing valid document changes meaning.)
 
+Schema `quirin-amendments/1` (the earlier version) is still read, so cards
+finished before /2 keep applying: it has the same keys except that
+`status_paragraph` (required) stands where `status_edits` does. A /1 document
+whose `status_paragraph` is `null` applies exactly as before (no STATUS edit).
+A non-null `status_paragraph` prepended a paragraph below the page title on
+every landing, which regrew the page from 24 KB to 291 KB in eight weeks; it is
+refused, naming `status_edits` as its replacement. Only `--legacy`, which
+replays committed historical files, still applies a non-null one (prepended,
+as it was then).
+
 Every refusal is fail-closed: an unknown top-level key, a missing or mistyped
 field, an unknown operation, a field an operation does not take, registering
 an existing id, or amending, appending to or retiring an absent id stops the
@@ -104,7 +129,8 @@ Usage:
 nothing; `--dry-run` also prints the diffs it would write. `--legacy` reads a
 pre-schema file (rules 32-35 and earlier cards shipped several shapes) through
 `normalise_legacy`, prints what it derived, then validates and applies the
-normalised document; historical files are never rewritten (each report owns its
+normalised document, and reads a historical `quirin-amendments/1` file as it
+was (a non-null `status_paragraph` included); historical files are never rewritten (each report owns its
 evidence). The script never regenerates the matrix: after a write it prints the
 post-gate landing sequence, whose authority is `scripts/land.py`.
 """
@@ -118,7 +144,9 @@ import re
 import sys
 from pathlib import Path
 
-SCHEMA = "quirin-amendments/1"
+SCHEMA = "quirin-amendments/2"
+SCHEMA_V1 = "quirin-amendments/1"
+SCHEMAS = (SCHEMA, SCHEMA_V1)
 ROOT = Path(__file__).resolve().parents[1]
 MATRIX = Path("docs/reviews/r0_3/acceptance_matrix.json")
 STATUS = Path("docs/STATUS.md")
@@ -126,7 +154,18 @@ INCREMENTS = Path("docs/development/increments")
 INCREMENT_INDEX = INCREMENTS / "README.md"
 
 TOP_LEVEL_REQUIRED = ("schema", "card", "base", "measured_tip",
-                      "increment_paragraph", "status_paragraph", "ledger")
+                      "increment_paragraph", "status_edits", "ledger")
+# Schema 1 carries `status_paragraph` where schema 2 carries `status_edits`.
+TOP_LEVEL_REQUIRED_V1 = ("schema", "card", "base", "measured_tip",
+                         "increment_paragraph", "status_paragraph", "ledger")
+STATUS_EDIT_FIELDS = ("section", "old", "new")
+UNPUBLISHED_START = "<!-- unpublished-landings:"
+UNPUBLISHED_END = "<!-- unpublished-landings:end -->"
+RETIRED_STATUS_PARAGRAPH = (
+    "a non-null status_paragraph is retired (card STATUS-REGROWTH-BY-PREPEND): it "
+    f"prepended a paragraph to {Path('docs/STATUS.md')} on every landing and regrew the page; "
+    f"write schema {SCHEMA!r} with status_edits ({{section, old, new}} edits of the section "
+    "that states the fact) instead. --legacy replays a committed historical file")
 TOP_LEVEL_OPTIONAL = ("profiles", "contribution")
 OPTIONAL_FIELDS = {"register": ("recorded_by",)}
 OPERATION_FIELDS = {
@@ -171,28 +210,55 @@ def _text(value, where):
         raise AmendmentError(f"{where} has leading or trailing whitespace")
 
 
-def validate(document, *, legacy=False):
-    """Check `document` against `quirin-amendments/1`; raise on any defect.
+def _status_edits(edits):
+    if not isinstance(edits, list):
+        raise AmendmentError("status_edits must be a list (empty when no current-status fact changes)")
+    for index, edit in enumerate(edits):
+        where = f"status_edits[{index}]"
+        if not isinstance(edit, dict) or set(edit) != set(STATUS_EDIT_FIELDS):
+            raise AmendmentError(f"{where} must be exactly {{section, old, new}}")
+        section = edit["section"]
+        if (not isinstance(section, str) or "\n" in section
+                or not re.fullmatch(r"#{1,6} \S.*", section) or section != section.strip()):
+            raise AmendmentError(f"{where}.section must be one heading line, such as '## Coverage by area'")
+        if not isinstance(edit["old"], str) or not edit["old"]:
+            raise AmendmentError(f"{where}.old must be a non-empty string")
+        if not isinstance(edit["new"], str):
+            raise AmendmentError(f"{where}.new must be a string (empty removes the old text)")
+        if edit["old"] == edit["new"]:
+            raise AmendmentError(f"{where}: new equals old, so the edit changes nothing")
+        if "\r" in edit["old"] or "\r" in edit["new"]:
+            raise AmendmentError(f"{where} contains a carriage return")
 
-    `legacy=True` is used only for documents produced by `normalise_legacy`:
-    it accepts `null` for `base` and `measured_tip` (several pre-schema files
-    never recorded them) and for an amend/append `source` (the integrator then
-    left the entry's `source` untouched, as it did by hand). Every other check
-    is the same.
+
+def validate(document, *, legacy=False):
+    """Check `document` against `quirin-amendments/2`, or the earlier
+    `quirin-amendments/1`; raise on any defect.
+
+    `legacy=True` is used only for documents produced by `normalise_legacy`
+    and for committed historical /1 files replayed with `--legacy`: it accepts
+    `null` for `base` and `measured_tip` (several pre-schema files never
+    recorded them), for an amend/append `source` (the integrator then left the
+    entry's `source` untouched, as it did by hand), and a non-null /1
+    `status_paragraph`. Every other check is the same.
     """
     if not isinstance(document, dict):
         raise AmendmentError("the document must be a JSON object")
-    unknown = sorted(set(document) - set(TOP_LEVEL_REQUIRED) - set(TOP_LEVEL_OPTIONAL))
+    schema = document.get("schema")
+    if schema not in SCHEMAS:
+        raise AmendmentError(f"schema is {schema!r}; this tool reads {list(SCHEMAS)!r} "
+                             "(a pre-schema file is read with --legacy)")
+    required = TOP_LEVEL_REQUIRED if schema == SCHEMA else TOP_LEVEL_REQUIRED_V1
+    unknown = sorted(set(document) - set(required) - set(TOP_LEVEL_OPTIONAL))
     if unknown:
+        retired = (f"; {RETIRED_STATUS_PARAGRAPH}" if schema == SCHEMA
+                   and "status_paragraph" in unknown else "")
         raise AmendmentError(
-            f"unknown top-level key(s) {unknown}; {SCHEMA} takes "
-            f"{list(TOP_LEVEL_REQUIRED) + list(TOP_LEVEL_OPTIONAL)} "
-            "(a pre-schema file is read with --legacy)")
-    missing = [key for key in TOP_LEVEL_REQUIRED if key not in document]
+            f"unknown top-level key(s) {unknown}; {schema} takes "
+            f"{list(required) + list(TOP_LEVEL_OPTIONAL)}{retired}")
+    missing = [key for key in required if key not in document]
     if missing:
         raise AmendmentError(f"missing top-level key(s) {missing}")
-    if document["schema"] != SCHEMA:
-        raise AmendmentError(f"schema is {document['schema']!r}; this tool reads {SCHEMA!r}")
     card = document["card"]
     if not isinstance(card, str) or not CARD_RE.fullmatch(card):
         raise AmendmentError(f"card {card!r} must match {CARD_RE.pattern}")
@@ -203,8 +269,12 @@ def validate(document, *, legacy=False):
         if not isinstance(value, str) or not REVISION_RE.fullmatch(value):
             raise AmendmentError(f"{key} {value!r} must be a git revision of 7-40 hex digits")
     _paragraph(document["increment_paragraph"], "increment_paragraph")
-    if document["status_paragraph"] is not None:
+    if schema == SCHEMA_V1 and document["status_paragraph"] is not None:
+        if not legacy:
+            raise AmendmentError(RETIRED_STATUS_PARAGRAPH)
         _paragraph(document["status_paragraph"], "status_paragraph")
+    if schema == SCHEMA:
+        _status_edits(document["status_edits"])
     ledger = document["ledger"]
     if not isinstance(ledger, list):
         raise AmendmentError("ledger must be a list")
@@ -309,6 +379,52 @@ def prepend_status(text, paragraph):
     if not first.startswith("# ") or not sep:
         raise AmendmentError(f"{STATUS} must begin with its '# ' title line")
     return f"{first}\n\n{paragraph}\n\n{rest.lstrip(chr(10))}"
+
+
+def _heading_level(line):
+    match = re.match(r"(#{1,6}) \S", line)
+    return len(match.group(1)) if match else None
+
+
+def apply_status_edits(text, edits, path=STATUS):
+    """Apply `status_edits` in order to `text` (module doc); refuse any edit
+    that does not apply exactly once inside its section."""
+    for index, edit in enumerate(edits):
+        where = f"status_edits[{index}] ({edit['section']!r})"
+        lines = text.split("\n")
+        fenced, headings = False, []
+        offset = 0
+        for line in lines:
+            if line.startswith("```"):
+                fenced = not fenced
+            elif not fenced and _heading_level(line) is not None:
+                headings.append((offset, _heading_level(line), line))
+            offset += len(line) + 1
+        found = [entry for entry in headings if entry[2] == edit["section"]]
+        if len(found) != 1:
+            raise AmendmentError(f"{where}: {path} has {len(found)} such heading lines; "
+                                 "exactly one is required")
+        heading_at, level, heading = found[0]
+        start = heading_at + len(heading) + 1  # the section's body, below its heading
+        end = next((other for other, other_level, _ in headings
+                    if other > heading_at and other_level <= level), len(text))
+        start = min(start, end)
+        section = text[start:end]
+        count = section.count(edit["old"])
+        if count != 1:
+            raise AmendmentError(f"{where}: the old text occurs {count} times in the section; "
+                                 "exactly one occurrence is required")
+        at = start + section.index(edit["old"])
+        block_start = text.find(UNPUBLISHED_START)
+        block_end = text.find(UNPUBLISHED_END)
+        if block_start != -1 and block_end != -1:
+            block_end += len(UNPUBLISHED_END)
+            if at < block_end and at + len(edit["old"]) > block_start:
+                raise AmendmentError(
+                    f"{where}: the old text touches the generated unpublished-landings block, "
+                    "which `python3 scripts/land.py unpublished --write` owns")
+        text = text[:at] + edit["new"] + text[at + len(edit["old"]):]
+    return text
 
 
 def apply_ledger(followups, ledger):
@@ -418,9 +534,19 @@ def plan(document, root, profiles_base=None):
     record = current_increment_record(root)
     old = (root / record).read_text(encoding="utf-8")
     edits[record] = (old, prepend_increment(old, document["increment_paragraph"], record))
-    if document["status_paragraph"] is not None:
+    if document.get("status_paragraph") is not None:  # schema 1, --legacy replay only
         old = (root / STATUS).read_text(encoding="utf-8")
         edits[STATUS] = (old, prepend_status(old, document["status_paragraph"]))
+    if document.get("status_edits"):
+        old = (root / STATUS).read_text(encoding="utf-8")
+        new = apply_status_edits(old, document["status_edits"])
+        limit = _land().STATUS_BYTE_LIMIT
+        size = len(new.encode("utf-8"))
+        if size > limit and size > len(old.encode("utf-8")):
+            raise AmendmentError(
+                f"status_edits leave {STATUS} at {size} bytes, over the {limit}-byte bound "
+                f"`scripts/land.py check` enforces; {_land().STATUS_COMPACTION}")
+        edits[STATUS] = (old, new)
     log = [] if profiles is None else [f"profiles: {profiles} checked against "
                                         f"{profiles_base or document['base']}"]
     if document["ledger"]:
@@ -594,7 +720,7 @@ def normalise_legacy(raw, path):
         notes.append("empty status paragraph read as null")
     ledger = [_legacy_entry(entry, where, default_source, notes) for where, entry in ledger_raw]
     document = {
-        "schema": SCHEMA,
+        "schema": SCHEMA_V1,
         "card": card,
         "base": base,
         "measured_tip": measured,
@@ -618,6 +744,9 @@ def load(path, *, legacy):
     except (OSError, json.JSONDecodeError) as error:
         raise AmendmentError(f"{path}: cannot read JSON ({error})") from error
     if legacy:
+        if isinstance(raw, dict) and raw.get("schema") == SCHEMA_V1:
+            validate(raw, legacy=True)  # a committed historical /1 file, replayed as it was
+            return raw, [f"{SCHEMA_V1} file read as it was (historical replay)"]
         document, notes = normalise_legacy(raw, path)
         validate(document, legacy=True)
         return document, notes

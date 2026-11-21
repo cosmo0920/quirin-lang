@@ -85,6 +85,7 @@
         "cmetrics/map_lifetime.qv",
         "cmetrics/metric_setters.qv",
         "cmetrics/metric_values.qv",
+        "cmetrics/mpack_string_out.qv",
         "cmetrics/mpack_utils.qv",
         "cmetrics/null_deref.qv",
         "cmetrics/opts_lifetime.qv",
@@ -95,6 +96,7 @@
         "cmetrics/context_lifetime.qv",
         "cmetrics/logging.qv",
         "cmetrics/metric_values.qv",
+        "cmetrics/mpack_string_out.qv",
         "cmetrics/mpack_utils.qv"
       ],
       "bounds_view": [
@@ -111,11 +113,13 @@
         "quirin-provider-shared"
       ],
       "modules": [
-        "ctraces/context_lifetime.qv"
+        "ctraces/context_lifetime.qv",
+        "ctraces/mpack_string_out.qv"
       ],
       "published": {},
       "resource_view": [
-        "ctraces/context_lifetime.qv"
+        "ctraces/context_lifetime.qv",
+        "ctraces/mpack_string_out.qv"
       ],
       "bounds_view": [],
       "outer_view": []
@@ -178,6 +182,7 @@
       "modules": [
         "librdkafka/cjson.qv",
         "librdkafka/client.qv",
+        "librdkafka/compress_out.qv",
         "librdkafka/header_inlines.qv",
         "librdkafka/kafka_mem.qv",
         "librdkafka/log_caller_frame.qv",
@@ -195,6 +200,7 @@
       "resource_view": [
         "librdkafka/cjson.qv",
         "librdkafka/client.qv",
+        "librdkafka/compress_out.qv",
         "librdkafka/header_inlines.qv",
         "librdkafka/kafka_mem.qv",
         "librdkafka/log_caller_frame.qv",

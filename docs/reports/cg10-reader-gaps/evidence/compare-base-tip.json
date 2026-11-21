@@ -1,0 +1,122 @@
+{
+ "totals": {
+  "before": {
+   "Unknown": 3597,
+   "Safe": 1134,
+   "Unsafe": 7,
+   "Pending": 2
+  },
+  "after": {
+   "Unknown": 3595,
+   "Safe": 1136,
+   "Unsafe": 7,
+   "Pending": 2
+  }
+ },
+ "moves": [
+  {
+   "row": [
+    "lib/librdkafka-2.15.0/src/rdkafka_assignment.c",
+    "rd_kafka_assignment_pause",
+    1
+   ],
+   "before": "Unknown",
+   "after": "Safe",
+   "after_leaves": []
+  },
+  {
+   "row": [
+    "lib/librdkafka-2.15.0/src/rdkafka_assignment.c",
+    "rd_kafka_assignment_resume",
+    1
+   ],
+   "before": "Unknown",
+   "after": "Safe",
+   "after_leaves": []
+  }
+ ],
+ "leaves": {
+  "rows_with_changed_leaves": 16,
+  "access_removed": 19,
+  "access_added": 0,
+  "removed": [
+   [
+    "unsupported",
+    "indirect memory access is outside the resource projection",
+    19
+   ],
+   [
+    "unknown_alias",
+    "unresolved resource identity `rk`",
+    5
+   ],
+   [
+    "unsupported",
+    "unmodeled call, aggregate or indirect access in branch condition",
+    2
+   ]
+  ],
+  "added": [
+   [
+    "unsupported",
+    "store of a custody-carrying value into `rkgm->rkgm_userdata`, a member of the formal `rkgm` (member-store-through-formal)",
+    1
+   ],
+   [
+    "unsupported",
+    "call to `rd_kafka_interceptor_method_add` retains `( void * ) on_acknowledgement` in `& rk - > rk_conf . interceptors . on_acknowledgement`, whose lifetime this body does not decide against it (retention-undecided)",
+    1
+   ],
+   [
+    "unsupported",
+    "call to `rd_kafka_interceptor_method_add` retains `( void * ) on_broker_state_change` in `& rk - > rk_conf . interceptors . on_broker_state_change`, whose lifetime this body does not decide against it (retention-undecided)",
+    1
+   ],
+   [
+    "unsupported",
+    "call to `rd_kafka_interceptor_method_add` retains `( void * ) on_commit` in `& rk - > rk_conf . interceptors . on_commit`, whose lifetime this body does not decide against it (retention-undecided)",
+    1
+   ],
+   [
+    "unsupported",
+    "call to `rd_kafka_interceptor_method_add` retains `( void * ) on_consume` in `& rk - > rk_conf . interceptors . on_consume`, whose lifetime this body does not decide against it (retention-undecided)",
+    1
+   ],
+   [
+    "unsupported",
+    "call to `rd_kafka_interceptor_method_add` retains `( void * ) on_destroy` in `& rk - > rk_conf . interceptors . on_destroy`, whose lifetime this body does not decide against it (retention-undecided)",
+    1
+   ],
+   [
+    "unsupported",
+    "call to `rd_kafka_interceptor_method_add` retains `( void * ) on_request_sent` in `& rk - > rk_conf . interceptors . on_request_sent`, whose lifetime this body does not decide against it (retention-undecided)",
+    1
+   ],
+   [
+    "unsupported",
+    "call to `rd_kafka_interceptor_method_add` retains `( void * ) on_response_received` in `& rk - > rk_conf . interceptors . on_response_received`, whose lifetime this body does not decide against it (retention-undecided)",
+    1
+   ],
+   [
+    "unsupported",
+    "call to `rd_kafka_interceptor_method_add` retains `( void * ) on_send` in `& rk - > rk_conf . interceptors . on_send`, whose lifetime this body does not decide against it (retention-undecided)",
+    1
+   ],
+   [
+    "unsupported",
+    "call to `rd_kafka_interceptor_method_add` retains `( void * ) on_thread_exit` in `& rk - > rk_conf . interceptors . on_thread_exit`, whose lifetime this body does not decide against it (retention-undecided)",
+    1
+   ],
+   [
+    "unsupported",
+    "call to `rd_kafka_interceptor_method_add` retains `( void * ) on_thread_start` in `& rk - > rk_conf . interceptors . on_thread_start`, whose lifetime this body does not decide against it (retention-undecided)",
+    1
+   ],
+   [
+    "unsupported",
+    "store of a custody-carrying value into `member->assignment`, a member of the formal `member` (member-store-through-formal)",
+    1
+   ]
+  ]
+ }
+}

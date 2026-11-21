@@ -202,6 +202,8 @@ import QCore.Flow
 import QCore.FrameHelperTask
 import QCore.Frontend
 import QCore.FunctionPointerDeclarators
+import QCore.FunctionPointerFormal
+import QCore.FunctionTypedefPointer
 import QCore.GenericSelection
 import QCore.GnuBuiltinReader
 import QCore.GuardCorrelatedCensus
@@ -251,6 +253,7 @@ import QCore.LiteralTailActual
 import QCore.LocalCondition
 import QCore.LocalSourceBindings
 import QCore.LoggerEffects
+import QCore.LogicalAndOperand
 import QCore.LookupRestrictedReuse
 import QCore.LoopBudget
 import QCore.LoopInvariants
@@ -343,6 +346,7 @@ import QCore.OutSlotCallWrite
 import QCore.OuterContract
 import QCore.OuterListCandidates
 import QCore.OwnedFieldCopyReach
+import QCore.OwnedOutMemberSlot
 import QCore.OwnedTaskExecution
 import QCore.Ownership
 import QCore.PackageIdentity
@@ -412,6 +416,7 @@ import QCore.ResourceCalls
 import QCore.ResourceKinds
 import QCore.ResultConstructorSwitch
 import QCore.ResultConstructors
+import QCore.ResultHolderRefusal
 import QCore.ResultSet
 import QCore.RetainedBy
 import QCore.RetainingCallMintedName
@@ -420,6 +425,7 @@ import QCore.RetentionNullConstant
 import QCore.RetentionPath
 import QCore.ReturnCallActuals
 import QCore.ReturnCallCustody
+import QCore.ReturnCastView
 import QCore.ReturnCodeHandOff
 import QCore.ReturnCorrectness
 import QCore.ReturnExpressionEvaluation
@@ -517,6 +523,8 @@ import QCore.TypedSourceControl
 import QCore.TypedSourceOperators
 import QCore.TypedefAggregateBase
 import QCore.TypedefProjection
+import QCore.TypedefScalarElement
+import QCore.UncastReturnAttribution
 import QCore.UncheckedLinkage
 import QCore.UncontractedAccessAttribution
 import QCore.UnionArmLayout

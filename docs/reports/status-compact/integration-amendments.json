@@ -1,0 +1,41 @@
+{
+ "schema": "quirin-amendments/1",
+ "card": "STATUS-COMPACT",
+ "base": "2aefebbc1",
+ "measured_tip": "2aefebbc1",
+ "profiles": [],
+ "increment_paragraph": "**STATUS-COMPACT** (user request 2026-11-21, \"docs/STATUS.md -> We need to tidy up the doc described statuses\"; documentation only; [report](../../reports/status-compact/README.md)). `docs/STATUS.md` had regrown from 23,931 bytes after DOCS-COMPACT-9 to 290,911 (570 lines): 68 prepended per-card status blocks, an 84-row coverage table of per-card chains, and a latest-gate section naming the event-collector gate. It is rewritten as a current-state page of 23,308 bytes: evidence boundaries; the four live profiles' published baselines; the unpublished-landings sentence, kept as one delimited line whose `and r48 (...) completed steps 1–7` tail later landings extend as before; the newest integrator route measurement (SP1 at `2c07390b6`: corpus and twelve-home 1,119 / 0 / 3,703 / 12, system 112 / 0 / 332 / 4, slice 63 / 4 / 336 / 1; r41–r49 did not measure the pinned routes); conformance, proof and corpus figures; coverage by area with each row's boundary; open trust boundaries; and the r49 landing gate (9,849 Rust, 477 Lean, 779 Python; provider 168 carried from r48). Every figure is re-derived from its primary source (`scripts/rederive.py`, `scripts/landings.py`), correcting seven stale ones (latest gate, projected functions, system and tail-pause rows, units, Lean audits, contract modules 137/140 -> 150, follow-ups 794 -> 1,044). The whole old page is preserved verbatim in eleven checkpoint pages, `wave-48-compaction-status-part1.md` to `part11.md`, which `checkpoint.py check f77e97ae6` (the merged main) asserts reproduce it byte for byte; `inventory.py` finds no name, report pointer, revision or figure lost and all 55 listed invariant statements on the new page. Nine frozen reconciliation claims on STATUS now fail (six held text that is only in the checkpoint, three the vacuous `281` claims). This is not the tenth documentation compaction, which remains due for AGENTS.md, CLAUDE.md, README.md, the rule pages and the large increment records. Registered STATUS-REGROWTH-BY-PREPEND (a user decision on how `apply_amendments.py` and the landing step stop regrowing the page), STATUS-COMPACT-RECONCILIATION-CLAIMS and LIVE-ROUTE-MOVES-BETWEEN-MEASURED-LANDINGS; amended STATUS-LATEST-GATE-STALE.",
+ "status_paragraph": null,
+ "ledger": [
+  {
+   "id": "STATUS-REGROWTH-BY-PREPEND",
+   "operation": "register",
+   "title": "docs/STATUS.md regrows by one prepended paragraph per landing and a lengthening unpublished-landings list",
+   "recorded_by": "STATUS-COMPACT",
+   "source": "docs/reports/status-compact/README.md",
+   "text": "MEASURED by card STATUS-COMPACT (2026-11-21, base 2aefebbc1): docs/STATUS.md went from 23,931 bytes after DOCS-COMPACT-9 (2026-09-27) to 290,911 bytes, because scripts/apply_amendments.py (prepend_status) inserts each card's status_paragraph below the title and the integrator's landing step appends each landing to the 'Unpublished landings' sentence; no chronicle was folded back. STATUS-COMPACT rewrote the page (23,308 bytes) with status_paragraph null and did not change the tooling (a user decision). PROPOSAL: (1) retire status_paragraph from quirin-amendments/1, or replace it with a status_edits list naming the section and the fact a card replaces; (2) scripts/land.py check fails when docs/STATUS.md exceeds 32 KiB; (3) the unpublished-landings sentence is generated from the landing gate records. DISCHARGE: a user decision on the proposal, then the tooling change it selects, with a test that a landing cannot grow STATUS past the bound."
+  },
+  {
+   "id": "STATUS-COMPACT-RECONCILIATION-CLAIMS",
+   "operation": "register",
+   "title": "Nine frozen reconciliation claims on docs/STATUS.md fail after STATUS-COMPACT moved their text to the status checkpoint",
+   "recorded_by": "STATUS-COMPACT",
+   "source": "docs/reports/status-compact/README.md",
+   "text": "MEASURED by card STATUS-COMPACT (docs/reports/status-compact/scripts/claims.py, the sweep's normalisation): of 27 reconciliation verify claims on docs/STATUS.md, 16 failed at 2aefebbc1 and f77e97ae6 and 25 fail after the rewrite. The nine flips: three contract-cycle4-integration sentences (logger effect, scheduler lifetime, guarded production source embedding), symbolic-decomposition-cycle3's W48-BOTTOM-UP-BATCH5 sentence, w46-contract-access-expansion's card name (twice), and the three '281' claims of canonical-contract-locations and cycle18-priority1-integration already registered as vacuous (W45-RECONCILIATION-SUBSTRING-CLAIMS). Each text is verbatim in docs/development/increments/wave-48-compaction-status-part*.md. Frozen records are not rewritten; no gate or CI step runs these claims. DISCHARGE: reconciliation_sweep.py resolves a docs/STATUS.md claim against the indexed status checkpoints (or the claims are marked historical in a way the check honours), so the six non-vacuous claims pass again."
+  },
+  {
+   "id": "LIVE-ROUTE-MOVES-BETWEEN-MEASURED-LANDINGS",
+   "operation": "register",
+   "title": "The corpus route's Safe count changed between measured landings with no committed comparison",
+   "recorded_by": "STATUS-COMPACT",
+   "source": "docs/reports/status-compact/README.md",
+   "text": "MEASURED by card STATUS-COMPACT from the committed integrator records (docs/reports/status-compact/artifacts/landing-comparisons.txt): CURRENT-CONTEXT-NEW-TRIAGE D3's comparison ends at 8e190aa83 with corpus 1,082 / 0 / 3,742 / 10; the CG25 comparisons start at 36b2cf931 and 5c824e443 with 1,078 / 0 / 3,746 / 10; the AG comparisons start at a9c6dcf44 with 1,079 / 0 / 3,745 / 10. No committed native comparison covers 8e190aa83 -> 36b2cf931 (four Safe rows to Unknown) or 5c824e443 -> a9c6dcf44 (one back); system and slice at the CG25 bases equal THREAD-LOCAL-CUSTODY-FREE-READ's measured tip (107 / 0 / 337 / 4 and 63 / 4 / 336 / 1), so only the corpus is unaccounted. DISCHARGE: a quirin-audit measure comparison over each gap, committed with the rows and the landing each is attributed to."
+  },
+  {
+   "id": "STATUS-LATEST-GATE-STALE",
+   "operation": "amend",
+   "source": "docs/reports/status-compact/README.md",
+   "text": "AMENDED (STATUS-COMPACT, 2026-11-21): the section had drifted again to the event-collector gate (8,927 Rust, 396 Lean, 568 Python); it now names the integrate/r49 landing gate (docs/reports/cg10-small-bundle/integration/gate.json: 9,849 / 0 / 21, 477 Lean, 779 Python; provider 168 carried from r48). Still open: no check ties STATUS's figures to a gate file (STATUS-REGROWTH-BY-PREPEND records the regrowth half)."
+  }
+ ]
+}

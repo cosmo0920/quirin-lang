@@ -185,6 +185,8 @@ pub(in crate::legacy_c) fn bare<'a>(
         caller_formals: Default::default(),
         cell_protocols: Default::default(),
         element_origins: Default::default(),
+        owned_out_body_start: 0,
+        owned_out_roots: std::cell::OnceCell::new(),
     }
 }
 

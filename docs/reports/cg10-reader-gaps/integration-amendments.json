@@ -1,0 +1,67 @@
+{
+  "schema": "quirin-amendments/1",
+  "card": "CG10-READER-GAPS",
+  "base": "9b107caf1",
+  "measured_tip": "0e03da4b3",
+  "profiles": [],
+  "increment_paragraph": "**CG10-READER-GAPS** (USER DECISION 2026-11-21, \"launch the reader-gap card for the indirect-memory-access refusals\"; gateway rules 71, 71a and 71b, rules 12h and 70 pointing at them; Lean `QCore.LogicalAndOperand`, `QCore.ReturnCastView`, `QCore.FunctionTypedefPointer`; [report](../../reports/cg10-reader-gaps/README.md)). The three-hop embedded container `&rk->rk_conf.interceptors.on_X` was already read by W44's typed actual reader: the ten `rd_kafka_interceptor_add_on_*` rows were refused because rule 10o's parenthesised-writes reader read the logical AND of `RD_KAFKA_IS_SHARE_CONSUMER(rk)` (`... && (rk)->...`, tokenised `& &`) as the address of `rk`, so the never-bound premise of an address actual failed. Rule 71 reads two `&` tokens after an operand end as a logical AND (the other spelling, a bitwise AND with a pointer operand, is forbidden by C11 6.5.10p2). Rule 71a places rule 12h's identity-preserving-view removal at rule 12i's return placement: a whole-call return whose views rule 15z's guard names is read as its uncast call when every view points at void, a character, a scalar (typedef) or a tagged struct; a union or record typedef view keeps the refusal (rule 10w). Rule 71b reads a formal spelled `T *` with every declaration of `T` a function type as rule 10v's function-pointer name, which rule 70 does not retain; a formal declared `R (*f)(A)` (the shared W4 lexical parameter reader) and an object pointer stored into a function-pointer member (`cio_set_log_callback`) are recorded refusals. Measured on the opt-in `current --monkey-linked` route over Fluent Bit 046accf6 (base `61d72850` vs tip `185c65db`, one side tree): 1,150/2/3,645/7 -> 1,152/2/3,643/7, `rd_kafka_assignment_pause` and `rd_kafka_assignment_resume` Unknown -> Safe (rule 71, on declared assumptions), no Safe -> non-Safe move, no new Unsafe, no leak added; 16 rows change leaves, access leaves 9,066 -> 9,047, access rows 2,154 -> 2,141, access-alone 222 -> 213; the ten interceptor rows re-attributed to rule 12t's `retention-undecided`; `print_string`, `pb_dec_bool` and `pb_enc_fixed_length_bytes` stay (their uncast callees are unsummarised), `LZ4F_localSaveDict` stays (union view), `sort_by_map_elem_val_toppar_list_cnt` loses its return leaf. Pinned-route parity not run on this host (no inputs): corpus predicted the two assignment rows Unknown -> Safe, system and slice none.",
+  "status_paragraph": null,
+  "ledger": [
+    {
+      "id": "CG10-EMBEDDED-CONTAINER-THREE-HOP-ACTUAL",
+      "operation": "retire",
+      "source": "docs/reports/cg10-reader-gaps/README.md",
+      "why": "DISCHARGED (CG10-READER-GAPS, gateway rule 71, QCore.LogicalAndOperand; opt-in current --monkey-linked over Fluent Bit 046accf6, base 9b107caf1 binary 61d72850 1,150/2/3,645/7 -> tip 0e03da4b3 binary 185c65db 1,152/2/3,643/7): the three-hop address was already read by W44's typed actual reader; the refusal came from rule 10o's parenthesised-writes reader reading the logical AND of RD_KAFKA_IS_SHARE_CONSUMER(rk) as the address of rk. Rule 71 reads `X && (p)` as a logical AND; all ten rd_kafka_interceptor_add_on_* rows re-attributed to rule 12t's retention-undecided (through rule 69), as the four rd_kafka_conf_interceptor_add_on_* rows; rd_kafka_assignment_pause and _resume Unknown -> Safe; no Safe -> non-Safe move."
+    },
+    {
+      "id": "CG10-CAST-VIEW-RETURN-POSITION",
+      "operation": "retire",
+      "source": "docs/reports/cg10-reader-gaps/README.md",
+      "why": "DISCHARGED (CG10-READER-GAPS, gateway rule 71a, QCore.ReturnCastView; opt-in current --monkey-linked over Fluent Bit 046accf6, base 9b107caf1 binary 61d72850 1,150/2/3,645/7 -> tip 0e03da4b3 binary 185c65db 1,152/2/3,643/7): a return-position placement of H-U's removal at rule 12i's placement (the route map's return step 2 amended), Lean parity, measured. Per row: print_string, pb_dec_bool, pb_enc_fixed_length_bytes stay Unknown (the uncast callees print_string_ptr, pb_decode_bool, pb_encode_string are unsummarised; CG10-UNCAST-RETURN-UNCONTRACTED-ATTRIBUTION); LZ4F_localSaveDict stays (a view to the union typedef LZ4_stream_t is kept, rule 10w; its callees unsummarised); sort_by_map_elem_val_toppar_list_cnt loses its return leaf and keeps its two pointer declarations from member reads."
+    },
+    {
+      "id": "CG10-RETAINED-BY-FUNCTION-POINTER-SPELLINGS",
+      "operation": "retire",
+      "source": "docs/reports/cg10-reader-gaps/README.md",
+      "why": "DISCHARGED (CG10-READER-GAPS, gateway rule 71b, QCore.FunctionTypedefPointer; opt-in current --monkey-linked over Fluent Bit 046accf6, base 9b107caf1 binary 61d72850 1,150/2/3,645/7 -> tip 0e03da4b3 binary 185c65db 1,152/2/3,643/7): `T *` for a function typedef `T` (every TypedefDecl of `T` directly a function type) is read as rule 10v's function-pointer name, no rule-70 retention (fixture: a caller handing its own cb_t * formal is Safe). Recorded refusals: a formal declared `R (*f)(A)` (the shared W4 lexical parameter reader; CG10-W4-FUNCTION-POINTER-DECLARATOR-FORMALS) and an object pointer converted to a function pointer (cio_set_log_callback, 1 sole row, stays). No status move."
+    },
+    {
+      "id": "CG10-INDIRECT-ACCESS-SOLE-RESIDUALS",
+      "operation": "amend",
+      "source": "docs/reports/cg10-reader-gaps/README.md",
+      "text": "AMENDED (CG10-READER-GAPS, gateway rules 71, 71a, 71b; opt-in current --monkey-linked over Fluent Bit 046accf6, base 9b107caf1 binary 61d72850 1,150/2/3,645/7 -> tip 0e03da4b3 binary 185c65db 1,152/2/3,643/7): access rows 2,154 -> 2,141, access-alone 222 -> 213, access leaves 9,066 -> 9,047; the ten three-hop interceptor rows re-attributed to rule 12t's retention-undecided; the five return-position cast views read where every view's pointee is void, character, scalar or a tagged struct (three stay on unsummarised callees, LZ4F_localSaveDict on a union view, sort_by_map_elem_val_toppar_list_cnt on its pointer declarations); +2 Unknown -> Safe (rd_kafka_assignment_pause, _resume)."
+    },
+    {
+      "id": "CG10-W4-FUNCTION-POINTER-DECLARATOR-FORMALS",
+      "operation": "register",
+      "source": "docs/reports/cg10-reader-gaps/README.md",
+      "recorded_by": "CG10-READER-GAPS",
+      "title": "A formal declared `R (*f)(A)` leaves its function unsummarised: the shared W4 lexical parameter reader refuses every parenthesised declarator",
+      "text": "`legacy_tokens::function_parameters` refuses a declarator list holding `(` or `)`, so a function with a function-pointer formal (`rd_kafka_buf_set_maker`'s `void (*free_make_opaque_cb)(void *)`) publishes no W4 or rule-70 summary and every caller sees an uncontracted callee. The reader is shared by the W4 derivation and validation, selection frames, recursion, neutral callees, self-link frames, member release and every body's formal set, so reading `SPEC ( * NAME ) ( ... )` changes every function with such a formal. DISCHARGE: a census of the functions whose parameter list holds such a declarator, a reading of exactly `SPEC+ ( * NAME ) ( BALANCED )` with Lean parity, and a measurement with no Safe to non-Safe move."
+    },
+    {
+      "id": "CG10-UNCAST-RETURN-UNCONTRACTED-ATTRIBUTION",
+      "operation": "register",
+      "source": "docs/reports/cg10-reader-gaps/README.md",
+      "recorded_by": "CG10-READER-GAPS",
+      "title": "A returned call whose uncast spelling meets an uncontracted callee keeps the gate's text (3 rows)",
+      "text": "Rule 71a reads `return f((T *)p->m, ...)` as its uncast call, but where `f` has no contract or summary (print_string_ptr, pb_decode_bool, pb_encode_string: print_string, pb_dec_bool, pb_enc_fixed_length_bytes on the opt-in route) the uncast call is refused and rule 12k, which re-attributes the gate's refusal to the uncontracted callee, reads only the spelled actuals (a cast is an actual neither reader recognises), so the rows keep `indirect memory access is outside the resource projection`. DISCHARGE: rule 12k asked on rule 71a's uncast call (a re-attribution, no verdict move), or the callees' summaries."
+    },
+    {
+      "id": "CG10-UNPARENTHESISED-LOGICAL-AND-SEED",
+      "operation": "register",
+      "source": "docs/reports/cg10-reader-gaps/README.md",
+      "recorded_by": "CG10-READER-GAPS",
+      "title": "The lexical closure's own seed still reads `x && p` as the address of `p`",
+      "text": "Rule 71 corrected rule 10o's parenthesised-writes reader. `borrowed_actual::seed_addresses_and_writes` seeds a name right after a `&` token that is not continued by `->`, `.`, `[` or `(`, so the second `&` of `x && p` (a logical AND) binds `p` too: conservative (fewer admissions), unmeasured. DISCHARGE: a census of such seeds and rule 71's operand-end test applied to the seed with Lean parity, or the rows named as unaffected."
+    },
+    {
+      "id": "CG10-OPT-IN-PREPARED-INPUT-PATHS",
+      "operation": "register",
+      "source": "docs/reports/cg10-reader-gaps/README.md",
+      "recorded_by": "CG10-READER-GAPS",
+      "title": "The prepared Fluent Bit 046accf6 inputs' compile databases name the worktree that prepared them",
+      "text": "`private/fb-046accf6` was moved from `.claude/worktrees/agent-a113e29a3936dd31a/private/` to the main checkout's `private/`, but its `fluent-bit-clang-production` and `monkey/monkey-build` compile databases still name the old paths, so the opt-in `current` run refuses (`compile database contains no selected cmetrics sources`). CG10-READER-GAPS measured through rewritten copies of the two databases (`docs/reports/cg10-reader-gaps/scripts/opt-in-current.sh`). DISCHARGE: re-prepare the inputs in place, or rewrite their databases and record the rewrite in `prepare.json`."
+    }
+  ]
+}

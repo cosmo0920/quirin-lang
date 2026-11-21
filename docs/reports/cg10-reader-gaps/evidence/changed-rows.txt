@@ -1,0 +1,54 @@
+lib/librdkafka-2.15.0/src/rdkafka_assignment.c rd_kafka_assignment_pause Unknown -> Safe
+   - 20744 unmodeled call, aggregate or indirect access in branch condition
+   - 20746 unresolved resource identity `rk`
+   - 20746 indirect memory access is outside the resource projection
+   - 20747 unresolved resource identity `rk`
+lib/librdkafka-2.15.0/src/rdkafka_assignment.c rd_kafka_assignment_resume Unknown -> Safe
+   - 20755 unmodeled call, aggregate or indirect access in branch condition
+   - 20757 unresolved resource identity `rk`
+   - 20757 indirect memory access is outside the resource projection
+   - 20758 unresolved resource identity `rk`
+lib/librdkafka-2.15.0/src/rdkafka_cgrp.c rd_kafka_group_MemberMetadata_consumer_read Unknown -> Unknown
+   - 21467 indirect memory access is outside the resource projection
+   + 21467 store of a custody-carrying value into `rkgm->rkgm_userdata`, a member of the formal `rkgm` (member-store-through-formal)
+lib/librdkafka-2.15.0/src/rdkafka_interceptor.c rd_kafka_interceptor_add_on_acknowledgement Unknown -> Unknown
+   - 20071 indirect memory access is outside the resource projection
+   + 20071 call to `rd_kafka_interceptor_method_add` retains `( void * ) on_acknowledgement` in `& rk - > rk_conf . interceptors . on_acknowledgement`, whose lifetime this body does not decide against it (retention-undecided)
+lib/librdkafka-2.15.0/src/rdkafka_interceptor.c rd_kafka_interceptor_add_on_broker_state_change Unknown -> Unknown
+   - 20148 indirect memory access is outside the resource projection
+   + 20148 call to `rd_kafka_interceptor_method_add` retains `( void * ) on_broker_state_change` in `& rk - > rk_conf . interceptors . on_broker_state_change`, whose lifetime this body does not decide against it (retention-undecided)
+lib/librdkafka-2.15.0/src/rdkafka_interceptor.c rd_kafka_interceptor_add_on_commit Unknown -> Unknown
+   - 20093 indirect memory access is outside the resource projection
+   + 20093 call to `rd_kafka_interceptor_method_add` retains `( void * ) on_commit` in `& rk - > rk_conf . interceptors . on_commit`, whose lifetime this body does not decide against it (retention-undecided)
+lib/librdkafka-2.15.0/src/rdkafka_interceptor.c rd_kafka_interceptor_add_on_consume Unknown -> Unknown
+   - 20082 indirect memory access is outside the resource projection
+   + 20082 call to `rd_kafka_interceptor_method_add` retains `( void * ) on_consume` in `& rk - > rk_conf . interceptors . on_consume`, whose lifetime this body does not decide against it (retention-undecided)
+lib/librdkafka-2.15.0/src/rdkafka_interceptor.c rd_kafka_interceptor_add_on_destroy Unknown -> Unknown
+   - 20049 indirect memory access is outside the resource projection
+   + 20049 call to `rd_kafka_interceptor_method_add` retains `( void * ) on_destroy` in `& rk - > rk_conf . interceptors . on_destroy`, whose lifetime this body does not decide against it (retention-undecided)
+lib/librdkafka-2.15.0/src/rdkafka_interceptor.c rd_kafka_interceptor_add_on_request_sent Unknown -> Unknown
+   - 20104 indirect memory access is outside the resource projection
+   + 20104 call to `rd_kafka_interceptor_method_add` retains `( void * ) on_request_sent` in `& rk - > rk_conf . interceptors . on_request_sent`, whose lifetime this body does not decide against it (retention-undecided)
+lib/librdkafka-2.15.0/src/rdkafka_interceptor.c rd_kafka_interceptor_add_on_response_received Unknown -> Unknown
+   - 20115 indirect memory access is outside the resource projection
+   + 20115 call to `rd_kafka_interceptor_method_add` retains `( void * ) on_response_received` in `& rk - > rk_conf . interceptors . on_response_received`, whose lifetime this body does not decide against it (retention-undecided)
+lib/librdkafka-2.15.0/src/rdkafka_interceptor.c rd_kafka_interceptor_add_on_send Unknown -> Unknown
+   - 20060 indirect memory access is outside the resource projection
+   + 20060 call to `rd_kafka_interceptor_method_add` retains `( void * ) on_send` in `& rk - > rk_conf . interceptors . on_send`, whose lifetime this body does not decide against it (retention-undecided)
+lib/librdkafka-2.15.0/src/rdkafka_interceptor.c rd_kafka_interceptor_add_on_thread_exit Unknown -> Unknown
+   - 20137 indirect memory access is outside the resource projection
+   + 20137 call to `rd_kafka_interceptor_method_add` retains `( void * ) on_thread_exit` in `& rk - > rk_conf . interceptors . on_thread_exit`, whose lifetime this body does not decide against it (retention-undecided)
+lib/librdkafka-2.15.0/src/rdkafka_interceptor.c rd_kafka_interceptor_add_on_thread_start Unknown -> Unknown
+   - 20126 indirect memory access is outside the resource projection
+   + 20126 call to `rd_kafka_interceptor_method_add` retains `( void * ) on_thread_start` in `& rk - > rk_conf . interceptors . on_thread_start`, whose lifetime this body does not decide against it (retention-undecided)
+lib/librdkafka-2.15.0/src/rdkafka_mock_cgrp.c rd_kafka_mock_cgrp_classic_member_assignment_set Unknown -> Unknown
+   - 20802 indirect memory access is outside the resource projection
+   + 20802 store of a custody-carrying value into `member->assignment`, a member of the formal `member` (member-store-through-formal)
+lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c sort_by_map_elem_val_toppar_list_cnt Unknown -> Unknown
+   - 21487 indirect memory access is outside the resource projection
+lib/librdkafka-2.15.0/src/rdkafka_telemetry_encode.c reset_historical_metrics Unknown -> Unknown
+   - 20603 unresolved resource identity `rk`
+   - 20604 indirect memory access is outside the resource projection
+   - 20606 indirect memory access is outside the resource projection
+   - 20609 indirect memory access is outside the resource projection
+   - 20612 indirect memory access is outside the resource projection

@@ -45,6 +45,32 @@ use std::collections::BTreeSet;
 use crate::indirect_chain_access::{AccessChain, Owner, chain_owner};
 use crate::pointer_store::{Decision, OwnerClass, PointerStore, ValueClass, decide};
 
+/// Card CG10-OWNED-OUT-PARAMETER-MEMBER-SLOT (rule 72): the owner class of a
+/// rule-72 slot, its root and final object read under rule 14n's named
+/// premise exactly where the slot's own chain obligation is.
+fn owned_out_owner_class(
+    function: &str,
+    line: usize,
+    state: &super::AbstractState,
+    store: &PointerStore,
+) -> OwnerClass {
+    let Some(chain) = &store.owner else {
+        return OwnerClass::Unresolved;
+    };
+    let root = AccessChain {
+        links: Vec::new(),
+        ..chain.clone()
+    };
+    let read = |chain: &AccessChain| {
+        super::null_premise_route::chain_owner_premised(function, line, state, chain)
+    };
+    match (read(&root), read(chain)) {
+        (Ok(Owner::Untracked), Ok(Owner::Untracked)) => OwnerClass::Untracked,
+        (Ok(_), Ok(_)) => OwnerClass::Tracked,
+        _ => OwnerClass::Unresolved,
+    }
+}
+
 /// The owner class of the destination (`QCore.PointerStore.ownerClass`).
 fn owner_class(state: &super::AbstractState, store: &PointerStore) -> OwnerClass {
     let Some(chain) = &store.owner else {
@@ -90,6 +116,7 @@ fn value_class(code: &str) -> ValueClass {
         "self-address" => ValueClass::SelfAddress,
         "interior-address" => ValueClass::InteriorAddress,
         crate::member_store_retention::RETAINED => ValueClass::RetainedFormal,
+        crate::owned_out_member::OWNED_OUT => ValueClass::OwnedOut,
         _ => ValueClass::Other,
     }
 }
@@ -121,11 +148,18 @@ pub(super) fn transfer(
             .is_some_and(|pointer| !pointer.targets.is_empty() || pointer.unknown)
     });
     // 1. The owner.
-    let owner = owner_class(&state, store);
+    let owner = if store.value == crate::owned_out_member::OWNED_OUT {
+        owned_out_owner_class(function, node.line, &state, store)
+    } else {
+        owner_class(&state, store)
+    };
     // Card CG10-MEMBER-STORE-RETAINED-BY (rule 70): a retained formal is
     // decided by rule 70's table; every other value by rule 10v's.
     let mut decision = match value_class(store.value) {
         ValueClass::RetainedFormal => crate::member_store_retention::decide(carries, owner),
+        // Card CG10-OWNED-OUT-PARAMETER-MEMBER-SLOT (rule 72): the delivered
+        // custody carries no name; the owner alone decides.
+        ValueClass::OwnedOut => crate::owned_out_member::decide(owner),
         value => decide(value, carries, owner),
     };
     // 3. The old value.
