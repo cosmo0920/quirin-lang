@@ -1,0 +1,294 @@
+// SPDX-License-Identifier: Apache-2.0
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+module contract;
+
+// Card OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS. The setters of the
+// teardown slots: the functions a free runs on the objects it frees in turn
+// (a key's ASN.1 method free and RSA, DSA, DH or EC_KEY method finish, an
+// engine's finish, destroy and public key method enumerators, a legacy
+// digest's, cipher's or public key method's cleanup, and an async wait
+// context's fd cleanup). The frees state these slots beside the drop
+// (ssl.qv, x509.qv, x509_store.qv, evp.qv, evp_digest.qv, engine.qv,
+// pkcs12.qv), each actual the library's object (`_`) unless the callback is
+// handed the free's own argument.
+//
+// The holder is the method table, engine or wait context a setter is handed;
+// each key is run-wide (C04.19.3), so its set is every function any such
+// object's setter is handed. The tables and engines the library defines
+// itself are no setter's value: the library-value premise
+// `openssl_builtin_teardown_functions` stands on every free that runs the
+// slots, and `openssl_loaded_module_functions` (user decision 2026-11-21,
+// "Named premise + built-in source") for the providers and engine modules
+// the library loads from outside the run.
+//
+// Keys. Each key is spelled after its setter (`rsa_meth_finish`,
+// `engine_destroy`), never the library's field (`finish`, `destroy`,
+// `cleanup`): a key's segments are tokens of the run's member pre-pass.
+//
+// Documented and source-derived. Ten setters are documented by a 3.5 page,
+// cited as the other modules cite theirs. EC_KEY_METHOD_set_init,
+// ENGINE_set_pkey_meths and ENGINE_set_pkey_asn1_meths have no 3.5 page; by
+// the user decision of 2026-11-21 ("Admit pinned source") each is
+// SOURCE-DERIVED, NOT DOCUMENTED: specified by the pinned OpenSSL 3.5.5
+// release source (openssl-3.5.5.tar.gz, sha256
+// b28c91532a8b65a1f983b4c28b7488174e4a01008e29ce8e69bd789f28bc2a89) at the
+// file and line cited, with the range `since "3.5.5"`, the only release read.
+//
+// Every setter returns a scalar (1 on success, 0 on error) or nothing: no
+// custody.
+
+// RSA_meth_set_finish: https://docs.openssl.org/3.5/man3/RSA_meth_new/
+// HISTORY (3.5): "All of these functions were deprecated in OpenSSL 3.0.
+// ... Other functions described here were added in OpenSSL 1.1.0." A
+// deprecation is not a removal. DESCRIPTION: the finish function "will be
+// called in response to the application calling RSA_free()". Pinned
+// prototype: `int RSA_meth_set_finish(RSA_METHOD *rsa, int (*finish)(RSA
+// *rsa))` (openssl/rsa.h).
+extern fn RSA_meth_set_finish(rsa: ptr<mut, u8>, finish: fnptr) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, since "1.1.0");
+    ensures normal resource_borrowed(rsa);
+    ensures normal resource_borrowed(finish);
+    ensures normal resource_callback_slot_registered(rsa, rsa_meth_st.rsa_meth_finish, finish);
+    ensures normal resource_return_none();
+};
+
+// DSA_meth_set_finish: https://docs.openssl.org/3.5/man3/DSA_meth_new/
+// HISTORY (3.5): "The functions described here were added in OpenSSL
+// 1.1.0." DESCRIPTION: the finish function is "called in response to the
+// application calling DSA_free()". Pinned prototype: `int
+// DSA_meth_set_finish(DSA_METHOD *dsam, int (*finish)(DSA *))`.
+extern fn DSA_meth_set_finish(dsam: ptr<mut, u8>, finish: fnptr) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, since "1.1.0");
+    ensures normal resource_borrowed(dsam);
+    ensures normal resource_borrowed(finish);
+    ensures normal resource_callback_slot_registered(dsam, dsa_method.dsa_meth_finish, finish);
+    ensures normal resource_return_none();
+};
+
+// DH_meth_set_finish: https://docs.openssl.org/3.5/man3/DH_meth_new/
+// HISTORY (3.5): "The functions described here were added in OpenSSL
+// 1.1.0." DH_free runs it (`r->meth->finish(r)`, crypto/dh/dh_lib.c:149-150
+// at 3.5.5). Pinned prototype: `int DH_meth_set_finish(DH_METHOD *dhm, int
+// (*finish)(DH *))`.
+extern fn DH_meth_set_finish(dhm: ptr<mut, u8>, finish: fnptr) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, since "1.1.0");
+    ensures normal resource_borrowed(dhm);
+    ensures normal resource_borrowed(finish);
+    ensures normal resource_callback_slot_registered(dhm, dh_method.dh_meth_finish, finish);
+    ensures normal resource_return_none();
+};
+
+// EC_KEY_METHOD_set_init: SOURCE-DERIVED, NOT DOCUMENTED (no 3.5 page).
+// crypto/ec/ec_kmeth.c:194 at 3.5.5 stores all six functions into the
+// method (lines 204-209); EC_KEY_free runs the finish function
+// (crypto/ec/ec_key.c:84-85). The other five are registered too, so the
+// declaration states what the call stores; no declaration invokes them.
+// Pinned prototype (openssl/ec.h): `void EC_KEY_METHOD_set_init(EC_KEY_METHOD
+// *meth, int (*init)(EC_KEY *key), void (*finish)(EC_KEY *key), int
+// (*copy)(EC_KEY *dest, const EC_KEY *src), int (*set_group)(EC_KEY *key,
+// const EC_GROUP *grp), int (*set_private)(EC_KEY *key, const BIGNUM
+// *priv_key), int (*set_public)(EC_KEY *key, const EC_POINT *pub_key))`.
+extern fn EC_KEY_METHOD_set_init(meth: ptr<mut, u8>, init: fnptr, finish: fnptr, copy: fnptr, set_group: fnptr, set_private: fnptr, set_public: fnptr) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, since "3.5.5");
+    ensures normal resource_borrowed(meth);
+    ensures normal resource_borrowed(init);
+    ensures normal resource_borrowed(finish);
+    ensures normal resource_borrowed(copy);
+    ensures normal resource_borrowed(set_group);
+    ensures normal resource_borrowed(set_private);
+    ensures normal resource_borrowed(set_public);
+    ensures normal resource_callback_slot_registered(meth, ec_key_method_st.ec_key_meth_finish, finish);
+    ensures normal resource_callback_slot_registered(meth, ec_key_method_st.ec_key_meth_init, init);
+    ensures normal resource_callback_slot_registered(meth, ec_key_method_st.ec_key_meth_copy, copy);
+    ensures normal resource_callback_slot_registered(meth, ec_key_method_st.ec_key_meth_set_group, set_group);
+    ensures normal resource_callback_slot_registered(meth, ec_key_method_st.ec_key_meth_set_private, set_private);
+    ensures normal resource_callback_slot_registered(meth, ec_key_method_st.ec_key_meth_set_public, set_public);
+    ensures normal resource_return_none();
+};
+
+// ENGINE_set_finish_function: https://docs.openssl.org/1.1.1/man3/ENGINE_add/
+// (also 3.0, 3.5; no page at 1.0.2). No HISTORY entry names its
+// introduction, so the range is `documented "1.1.1"` (as ENGINE_by_id); the
+// ENGINE functions "were deprecated in OpenSSL 3.0", no removal. The finish
+// function runs when an engine's last functional reference is released
+// (crypto/engine/eng_init.c:66-69 at 3.5.5). Pinned prototype: `int
+// ENGINE_set_finish_function(ENGINE *e, ENGINE_GEN_INT_FUNC_PTR finish_f)`.
+extern fn ENGINE_set_finish_function(e: ptr<mut, u8>, finish_f: fnptr) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, documented "1.1.1");
+    ensures normal resource_borrowed(e);
+    ensures normal resource_borrowed(finish_f);
+    ensures normal resource_callback_slot_registered(e, engine_st.engine_finish, finish_f);
+    ensures normal resource_return_none();
+};
+
+// ENGINE_set_destroy_function: the same page. The destroy function runs at
+// the engine's last structural reference (engine_free_util,
+// crypto/engine/eng_lib.c:95-96 at 3.5.5). Pinned prototype: `int
+// ENGINE_set_destroy_function(ENGINE *e, ENGINE_GEN_INT_FUNC_PTR destroy_f)`.
+extern fn ENGINE_set_destroy_function(e: ptr<mut, u8>, destroy_f: fnptr) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, documented "1.1.1");
+    ensures normal resource_borrowed(e);
+    ensures normal resource_borrowed(destroy_f);
+    ensures normal resource_callback_slot_registered(e, engine_st.engine_destroy, destroy_f);
+    ensures normal resource_return_none();
+};
+
+// ENGINE_set_pkey_meths: SOURCE-DERIVED, NOT DOCUMENTED (no 3.5 page).
+// crypto/engine/tb_pkmeth.c:92 at 3.5.5 stores the function into the engine
+// (line 94) and returns 1; the engine's last structural reference calls it
+// to enumerate the public key methods to free (engine_pkey_meths_free,
+// lines 110 and 112, first with a NULL method pointer, then with NULL nids).
+// Pinned prototype: `int ENGINE_set_pkey_meths(ENGINE *e,
+// ENGINE_PKEY_METHS_PTR f)`.
+extern fn ENGINE_set_pkey_meths(e: ptr<mut, u8>, f: fnptr) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, since "3.5.5");
+    ensures normal resource_borrowed(e);
+    ensures normal resource_borrowed(f);
+    ensures normal resource_callback_slot_registered(e, engine_st.engine_pkey_meths, f);
+    ensures normal resource_return_none();
+};
+
+// ENGINE_set_pkey_asn1_meths: SOURCE-DERIVED, NOT DOCUMENTED (no 3.5 page).
+// crypto/engine/tb_asnmth.c:105 at 3.5.5 stores the function (line 107) and
+// returns 1; engine_pkey_asn1_meths_free calls it (lines 123 and 125).
+// Pinned prototype: `int ENGINE_set_pkey_asn1_meths(ENGINE *e,
+// ENGINE_PKEY_ASN1_METHS_PTR f)`.
+extern fn ENGINE_set_pkey_asn1_meths(e: ptr<mut, u8>, f: fnptr) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, since "3.5.5");
+    ensures normal resource_borrowed(e);
+    ensures normal resource_borrowed(f);
+    ensures normal resource_callback_slot_registered(e, engine_st.engine_pkey_asn1_meths, f);
+    ensures normal resource_return_none();
+};
+
+// EVP_PKEY_asn1_set_free: https://docs.openssl.org/1.1.1/man3/EVP_PKEY_ASN1_METHOD/
+// (also 3.0, 3.5; no page at 1.0.2, HTTP 404 on 2026-11-20). No HISTORY
+// entry names its introduction, so the range is `documented "1.1.1"`.
+// DESCRIPTION (3.5): "The pkey_free() method helps freeing the internals of
+// pkey"; a legacy key's free runs it (evp_pkey_free_legacy,
+// crypto/evp/p_lib.c at 3.5.5). Pinned prototype: `void
+// EVP_PKEY_asn1_set_free(EVP_PKEY_ASN1_METHOD *ameth, void (*pkey_free)(EVP_PKEY
+// *pkey))`.
+extern fn EVP_PKEY_asn1_set_free(ameth: ptr<mut, u8>, pkey_free: fnptr) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, documented "1.1.1");
+    ensures normal resource_borrowed(ameth);
+    ensures normal resource_borrowed(pkey_free);
+    ensures normal resource_callback_slot_registered(ameth, evp_pkey_asn1_method_st.asn1_meth_pkey_free, pkey_free);
+    ensures normal resource_return_none();
+};
+
+// ASYNC_WAIT_CTX_set_wait_fd: https://docs.openssl.org/3.5/man3/ASYNC_WAIT_CTX_new/
+// HISTORY (3.5): "ASYNC_WAIT_CTX_new(), ASYNC_WAIT_CTX_free(),
+// ASYNC_WAIT_CTX_set_wait_fd(), ... were added in OpenSSL 1.1.0."
+// DESCRIPTION: the cleanup routine "will automatically get called when the
+// ASYNC_WAIT_CTX is freed"; custom_data "will be returned in a subsequent
+// call to ASYNC_WAIT_CTX_get_fd()". The context keeps key and custom_data
+// beside the cleanup (crypto/async/async_wait.c:54-57 at 3.5.5). Pinned
+// prototype: `int ASYNC_WAIT_CTX_set_wait_fd(ASYNC_WAIT_CTX *ctx, const void
+// *key, int fd, void *custom_data, void (*cleanup)(ASYNC_WAIT_CTX *, const
+// void *, int, void *))`.
+extern fn ASYNC_WAIT_CTX_set_wait_fd(ctx: ptr<mut, u8>, key: ptr<const, u8>, fd: i32, custom_data: ptr<mut, u8>, cleanup: fnptr) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, since "1.1.0");
+    ensures normal resource_borrowed(ctx);
+    ensures normal resource_borrowed(key);
+    ensures normal resource_borrowed(fd);
+    ensures normal resource_borrowed(custom_data);
+    ensures normal resource_borrowed(cleanup);
+    ensures normal resource_callback_slot_registered(ctx, async_wait_ctx_st.wait_fd_cleanup, cleanup);
+    ensures normal resource_retained_by(custom_data, ctx);
+    ensures normal resource_retained_by(key, ctx);
+    ensures normal resource_return_none();
+};
+
+// EVP_MD_meth_set_cleanup: https://docs.openssl.org/3.5/man3/EVP_MD_meth_new/
+// HISTORY (3.5): "The functions described here were added in OpenSSL 1.1."
+// DESCRIPTION: "This cleanup function is called by EVP_MD_CTX_reset() and
+// EVP_MD_CTX_free()". Pinned prototype: `int EVP_MD_meth_set_cleanup(EVP_MD
+// *md, int (*cleanup)(EVP_MD_CTX *ctx))`.
+extern fn EVP_MD_meth_set_cleanup(md: ptr<mut, u8>, cleanup: fnptr) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, since "1.1.0");
+    ensures normal resource_borrowed(md);
+    ensures normal resource_borrowed(cleanup);
+    ensures normal resource_callback_slot_registered(md, evp_md_st.md_meth_cleanup, cleanup);
+    ensures normal resource_return_none();
+};
+
+// EVP_CIPHER_meth_set_cleanup: https://docs.openssl.org/3.5/man3/EVP_CIPHER_meth_new/
+// HISTORY (3.5): "The functions described here were added in OpenSSL
+// 1.1.0." DESCRIPTION: it "sets the function for cipher to do extra cleanup
+// before the method's private data structure is cleaned out", run by
+// EVP_CIPHER_CTX_reset and so EVP_CIPHER_CTX_free (crypto/evp/evp_enc.c:57
+// at 3.5.5). Pinned prototype: `int EVP_CIPHER_meth_set_cleanup(EVP_CIPHER
+// *cipher, int (*cleanup)(EVP_CIPHER_CTX *))`.
+extern fn EVP_CIPHER_meth_set_cleanup(cipher: ptr<mut, u8>, cleanup: fnptr) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, since "1.1.0");
+    ensures normal resource_borrowed(cipher);
+    ensures normal resource_borrowed(cleanup);
+    ensures normal resource_callback_slot_registered(cipher, evp_cipher_st.cipher_meth_cleanup, cleanup);
+    ensures normal resource_return_none();
+};
+
+// EVP_PKEY_meth_set_cleanup: https://docs.openssl.org/1.0.2/man3/EVP_PKEY_meth_new/
+// (also 1.1.1, 3.0, 3.5). No HISTORY entry names its introduction, so the
+// range is `documented "1.0.2"`, the oldest series checked. EVP_PKEY_CTX_free
+// runs it (`ctx->pmeth->cleanup(ctx)`, crypto/evp/pmeth_lib.c:394-395 at
+// 3.5.5). Pinned prototype: `void EVP_PKEY_meth_set_cleanup(EVP_PKEY_METHOD
+// *pmeth, void (*cleanup)(EVP_PKEY_CTX *ctx))`.
+extern fn EVP_PKEY_meth_set_cleanup(pmeth: ptr<mut, u8>, cleanup: fnptr) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    requires resource_library_version(openssl, documented "1.0.2");
+    ensures normal resource_borrowed(pmeth);
+    ensures normal resource_borrowed(cleanup);
+    ensures normal resource_callback_slot_registered(pmeth, evp_pkey_method_st.pkey_meth_cleanup, cleanup);
+    ensures normal resource_return_none();
+};

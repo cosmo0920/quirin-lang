@@ -1,0 +1,111 @@
+// SPDX-License-Identifier: Apache-2.0
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+module contract;
+
+// ## Card CG10-OWNED-OUT-PARAMETER-MEMBER-SLOT: the three message-set compressors
+//
+// THREE TRUSTED ASSUMPTIONS, pinned (contract spec C06.2) after reading each
+// body at both audited revisions (`src/rdkafka_msgset_writer.c` and
+// `src/rdkafka_lz4.c` are byte-identical at `66910c10` and `046accf6`).
+// Each is a return-code disposition (C04.13) with an out slot: gateway rule
+// 72 reads the slot when the caller hands it a member of an object the caller
+// supplied (`&ciov->iov_base` in `rd_kafka_msgset_writer_compress_*`).
+// `RD_KAFKA_RESP_ERR_NO_ERROR` is `0`; every error code is nonzero.
+// `rd_malloc` (`rd.h:145-149`) is `malloc` with `rd_assert(p)`: never NULL.
+//
+// ### `rd_kafka_gzip_compress` (`rdkafka_msgset_writer.c:955-1034`)
+//
+// `memset(&strm, 0, …)`; `deflateInit2` failing returns
+// `RD_KAFKA_RESP_ERR__BAD_COMPRESSION` with the slot unwritten; then
+// `*outlenp = deflateBound(…); *outbuf = rd_malloc(*outlenp);`, the slice's
+// segments deflated into it; a `deflate` failure in the loop or at
+// `Z_FINISH` runs `deflateEnd(&strm); rd_free(*outbuf); *outbuf = NULL;` and
+// returns `RD_KAFKA_RESP_ERR__BAD_COMPRESSION`; otherwise `*outlenp =
+// strm.total_out; deflateEnd(&strm);` and `RD_KAFKA_RESP_ERR_NO_ERROR`.
+// `rkb` is read for logging (`rd_rkb_log`, `rkb->rkb_rk` in an assertion)
+// and `slice` read through (`rd_slice_remains`, `rd_slice_reader`):
+// borrowed; `comp_level` is an `int`; `outlenp` receives a scalar.
+//
+// ### `rd_kafka_snappy_compress_slice` (`rdkafka_msgset_writer.c:1056-1100`)
+//
+// A local `struct iovec ciov` with `ciov.iov_base = rd_malloc(…)`; on a
+// `rd_kafka_snappy_compress_iov` failure `rd_free(ciov.iov_base)` and
+// `RD_KAFKA_RESP_ERR__BAD_COMPRESSION` with the slot unwritten; otherwise
+// `rd_kafka_snappy_free_env(&senv); *outbuf = ciov.iov_base; *outlenp =
+// ciov.iov_len;` and `RD_KAFKA_RESP_ERR_NO_ERROR`. `rkb` (logging) and
+// `slice` borrowed.
+//
+// ### `rd_kafka_lz4_compress` (`rdkafka_lz4.c:336-450`)
+//
+// `*outbuf = NULL;` first; a bound error returns `RD_KAFKA_RESP_ERR__BAD_MSG`;
+// `out = rd_malloc(out_sz)` (a NULL test returns
+// `RD_KAFKA_RESP_ERR__CRIT_SYS_RESOURCE`); a context creation failure frees
+// `out` and returns that code; every later failure `goto done`, where the
+// context is freed and, `err` being set, `rd_free(out)`; the success path
+// runs `*outbuf = out; *outlenp = out_of;` before `done` and returns `err`,
+// `0` there. `rkb` (logging) and `slice` borrowed; `proper_hc` and
+// `comp_level` are `int`s.
+//
+// So each: on a `0` return the slot holds a fresh, non-NULL `rd_malloc`
+// buffer, `resource_out(outbuf, nonnull)` in class `eq 0`; on a nonzero
+// return the slot is unwritten or written NULL, never left holding custody,
+// `resource_borrowed(outbuf)` in class `ne 0` (C04.13); every other formal
+// `resource_borrowed`; the `rd_kafka_resp_err_t` result
+// `resource_return_none()`.
+//
+// ABI (`rdkafka_msgset.h:89-101`, `rdkafka_lz4.h:42-47`, agreeing with the
+// definitions): `rd_kafka_broker_t *`, `rd_slice_t *` and `size_t *` are
+// `ptr<mut, u8>`, `void **` `ptr<mut, ptr<mut, u8>>`, `int` `i32`;
+// `rd_kafka_resp_err_t` is an enumeration with negative enumerators, which
+// Clang states as `int`: `i32` (gateway rule 12u).
+//
+// NOT CLAIMED: the compressed bytes, `*outlenp`, or that the slot keeps its old
+// value on a nonzero return (gzip and lz4 may leave it NULL: C04.13's reading
+// treats the slot as untracked after a nonzero return).
+extern fn rd_kafka_gzip_compress(rkb: ptr<mut, u8>, comp_level: i32, slice: ptr<mut, u8>, outbuf: ptr<mut, ptr<mut, u8>>, outlenp: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rkb);
+    ensures normal resource_borrowed(comp_level);
+    ensures normal resource_borrowed(slice);
+    ensures normal resource_on_return(eq, 0, resource_out(outbuf, nonnull));
+    ensures normal resource_on_return(ne, 0, resource_borrowed(outbuf));
+    ensures normal resource_borrowed(outlenp);
+    ensures normal resource_return_none();
+};
+
+extern fn rd_kafka_snappy_compress_slice(rkb: ptr<mut, u8>, slice: ptr<mut, u8>, outbuf: ptr<mut, ptr<mut, u8>>, outlenp: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rkb);
+    ensures normal resource_borrowed(slice);
+    ensures normal resource_on_return(eq, 0, resource_out(outbuf, nonnull));
+    ensures normal resource_on_return(ne, 0, resource_borrowed(outbuf));
+    ensures normal resource_borrowed(outlenp);
+    ensures normal resource_return_none();
+};
+
+extern fn rd_kafka_lz4_compress(rkb: ptr<mut, u8>, proper_hc: i32, comp_level: i32, slice: ptr<mut, u8>, outbuf: ptr<mut, ptr<mut, u8>>, outlenp: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rkb);
+    ensures normal resource_borrowed(proper_hc);
+    ensures normal resource_borrowed(comp_level);
+    ensures normal resource_borrowed(slice);
+    ensures normal resource_on_return(eq, 0, resource_out(outbuf, nonnull));
+    ensures normal resource_on_return(ne, 0, resource_borrowed(outbuf));
+    ensures normal resource_borrowed(outlenp);
+    ensures normal resource_return_none();
+};

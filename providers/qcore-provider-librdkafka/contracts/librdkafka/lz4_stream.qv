@@ -353,3 +353,102 @@ contract {
     ensures normal resource_retained_by(source, state);
     ensures normal resource_return_none();
 };
+
+// ## Card CG10-INDIRECT-ACCESS-SOLE-RESIDUALS round 4: three neutral helpers
+//
+// Placed here, beside the neutral LZ4 codec declarations, rather than beside
+// round 2's helpers in `memory.qv`: `memory.qv`'s bytes are registered by
+// QUANT-CONTRACT-HYPOTHESES' migration record (its frozen `after_sha256`), and
+// the xxHash finalizers are the codec family's checksum helpers
+// (`lz4frame.c` hashes frames with them).
+
+// ### `rd_jitter`
+//
+// ONE TRUSTED ASSUMPTION, pinned (contract spec C06.2) after reading the body
+// at both audited revisions (`src/rdrand.c` and `src/rdrand.h` are
+// byte-identical at `66910c10` and `046accf6`; the only definition of the
+// name in either tree):
+//
+//     int rd_jitter(int low, int high) {             rdrand.c:130-133
+//             int rand_num = rd_rand();
+//             return (low + (rand_num % ((high - low) + 1)));
+//     }
+//
+// `rd_rand` (`rdrand.c:63-75`, static) returns `rand_r` over a thread-local
+// seed (first set by `rd_seed`, which fills a local through `rd_rand_bytes`
+// (`RAND_bytes` or `getentropy`) or hashes `gettimeofday` and the thread id),
+// or `rand()`. Both formals are `int` values; the body reads no caller
+// memory and allocates, frees, stores and returns no resource. The neutral
+// element: both formals `resource_borrowed`, the scalar result
+// `resource_return_none()` (gateway rule 4's `N(m)`).
+//
+// Why: round 4's census of the functions the indirect-access refusal blocks
+// alone (`rd_kafka_broker_update_reconnect_backoff`'s
+// `backoff = rd_jitter((int)((float)rkb->rkb_reconnect_backoff_ms * 0.75), …)`).
+//
+// ABI: `int rd_jitter(int, int)`; `i32`, `i32`, `-> i32`.
+//
+// NOT CLAIMED: the range or distribution of the result, or the value of
+// `(high - low) + 1` (a zero divisor is the caller's).
+extern fn rd_jitter(low: i32, high: i32) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(low);
+    ensures normal resource_borrowed(high);
+    ensures normal resource_return_none();
+};
+
+// ### The xxHash tail mixers `XXH32_finalize`, `XXH64_finalize`
+//
+// TWO TRUSTED ASSUMPTIONS, pinned (C06.2) after reading the bodies at both
+// audited revisions (`src/rdxxhash.c` is byte-identical at `66910c10` and
+// `046accf6`; the only definitions of the names in either tree, both
+// `static` in that unit):
+//
+//     static U32 XXH32_finalize(U32 h32, const void* ptr, size_t len,
+//                     XXH_endianess endian, XXH_alignment align)     :290-348
+//     static U64 XXH64_finalize(U64 h64, const void* ptr, size_t len,
+//                    XXH_endianess endian, XXH_alignment align)      :701-808
+//
+// Each walks a local `const BYTE *p = ptr` over the `len & 15` (`len & 31`)
+// tail bytes, READING them (`*p++`, `XXH_readLE32_align` /
+// `XXH_readLE64_align`: `XXH_read32`/`XXH_read64`, a load, a packed-union
+// load or a `memcpy` into a local), mixes them into the scalar `h32`/`h64`
+// and returns `XXH32_avalanche`/`XXH64_avalanche` of it; the unreachable tail
+// is `assert(0)` and a scalar return. `ptr` is read through and nothing else: it is
+// not freed, stored or returned. The neutral element: every formal
+// `resource_borrowed`, the scalar result `resource_return_none()`. Their
+// own rows are `Unknown` in `rdxxhash.c` (the walk's pointer increments are
+// unmodelled), so no W4 summary reaches their callers
+// `XXH32_digest_endian`/`XXH64_digest_endian`, which hand them
+// `state->mem32`/`state->mem64` (a decayed array member) and scalars.
+//
+// ABI: `U32` is `unsigned int` (`uint32_t`), `U64` `unsigned long long`
+// (`uint64_t`), `size_t` `usize`, `const void *` `ptr<const, u8>`; the two
+// enumerations (`typedef enum { XXH_bigEndian=0, XXH_littleEndian=1 }`,
+// `typedef enum { XXH_aligned, XXH_unaligned }`) are read through Clang's
+// stated integer type (rule 12u).
+//
+// NOT CLAIMED: the hash value, the bound `len & 15` keeps the reads within
+// `ptr`'s object (the caller's buffer of at least `len` bytes), or alignment.
+extern fn XXH32_finalize(h32: u32, ptr: ptr<const, u8>, len: usize, endian: u32, align: u32) -> u32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(h32);
+    ensures normal resource_borrowed(ptr);
+    ensures normal resource_borrowed(len);
+    ensures normal resource_borrowed(endian);
+    ensures normal resource_borrowed(align);
+    ensures normal resource_return_none();
+};
+
+extern fn XXH64_finalize(h64: u64, ptr: ptr<const, u8>, len: usize, endian: u32, align: u32) -> u64
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(h64);
+    ensures normal resource_borrowed(ptr);
+    ensures normal resource_borrowed(len);
+    ensures normal resource_borrowed(endian);
+    ensures normal resource_borrowed(align);
+    ensures normal resource_return_none();
+};

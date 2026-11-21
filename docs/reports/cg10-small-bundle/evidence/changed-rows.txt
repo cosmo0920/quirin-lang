@@ -1,0 +1,21 @@
+lib/librdkafka-2.15.0/src/nanopb/pb_decode.c pb_dec_bool Unknown -> Unknown
+   - 1073 indirect memory access is outside the resource projection
+   + 1073 call to uncontracted function `pb_decode_bool`
+lib/librdkafka-2.15.0/src/nanopb/pb_decode.c pb_dec_fixed_length_bytes Unknown -> Unknown
+   - 1230 indirect memory access is outside the resource projection
+   + 1230 call to uncontracted function `pb_read`
+lib/librdkafka-2.15.0/src/nanopb/pb_encode.c pb_enc_fixed_length_bytes Unknown -> Unknown
+   - 982 indirect memory access is outside the resource projection
+   + 982 call to uncontracted function `pb_encode_string`
+lib/librdkafka-2.15.0/src/rdkafka_queue.c rd_kafka_q_cb_event_enable Unknown -> Unknown
+   - 20406 indirect memory access is outside the resource projection
+   - 20410 indirect memory access is outside the resource projection
+   + 20406 release of `rkq->rkq_qio`, a member of the formal `rkq` (member-release-through-formal)
+   + 20410 store of a custody-carrying value into `rkq->rkq_qio`, a member of the formal `rkq` (member-store-through-formal)
+lib/librdkafka-2.15.0/src/rdlist.c rd_list_sort Unknown -> Unknown
+   + 3107 unresolved resource identity `rl`
+lib/librdkafka-2.15.0/src/rdmap.c rd_map_init Unknown -> Unknown
+   + 3082 indirect memory access is outside the resource projection
+   + 3083 indirect memory access is outside the resource projection
+   + 3084 indirect memory access is outside the resource projection
+   + 3085 indirect memory access is outside the resource projection

@@ -14,7 +14,9 @@
 
 """Card RECORDS-TOOLING: `scripts/land.py` prints the post-gate landing
 sequence and refuses a stale matrix count or report index before the Python
-suite reruns."""
+suite reruns. Card STATUS-REGROWTH-BY-PREPEND: it also refuses a STATUS page
+over 32 KiB and a stale unpublished-landings sentence, which `land.py
+unpublished --write` regenerates, and `publish` records each publication."""
 import contextlib
 import io
 import json
@@ -101,6 +103,11 @@ class Land(unittest.TestCase):
         self.matrix = {"dimensions": {"requirements": 1, "named_followups": 2},
                        "requirements": [{}], "named_followups": [{"id": "A"}, {"id": "B"}]}
         self.write_matrix()
+        subprocess.run(["git", "init", "-q", str(self.root)], check=True)
+        (self.root / land.STATUS).write_text(
+            "# Status\n\n<!-- unpublished-landings: x -->\nold\n"
+            "<!-- unpublished-landings:end -->\n")
+        self.assertEqual(run("unpublished", "--write", "--root", str(self.root))[0], 0)
 
     def tearDown(self):
         self.directory.cleanup()
@@ -120,6 +127,8 @@ class Land(unittest.TestCase):
         self.assertLess(position[land.MATRIX_COMMAND], python)
         self.assertLess(position[land.INDEX_COMMAND], python)
         self.assertLess(position[land.CONTRIBUTIONS_COMMAND], position["python3 scripts/land.py check"])
+        self.assertLess(position[land.UNPUBLISHED_COMMAND], position["python3 scripts/land.py check"])
+        self.assertIn(land.UNPUBLISHED_COMMAND, land.SEQUENCE[-1])
         self.assertLess(position["python3 scripts/land.py check"], python)
         self.assertLess(python, position[land.SEQUENCE[-1]])
 
@@ -189,6 +198,10 @@ else:
         self.assertIn(f"tip=rev:{second}", calls[0])
         self.assertIn(f"prev=baseline:{second}", calls[2])
         self.assertIn(f"tip=rev:{third}", calls[2])
+        ledger = json.loads((self.root / "docs/development/landing-publications.json").read_text())
+        self.assertEqual(ledger["schema"], "quirin-landing-publications/1")
+        self.assertEqual([(entry["revision"], entry["previous"])
+                          for entry in ledger["publications"]], [(second, first), (third, second)])
 
     def stub_landing(self, record):
         """A two-commit repository whose stub host writes `record`; returns the inputs."""
@@ -324,6 +337,59 @@ else:
                         "--root", str(self.root), "render"], check=True, capture_output=True)
         code, _, err = run("check", "--root", str(self.root))
         self.assertEqual(code, 0, err)
+
+    def test_a_status_page_over_the_bound_is_refused_with_the_compaction_pointer(self):
+        path = self.root / land.STATUS
+        text = path.read_text()
+        path.write_text(text + "x" * (land.STATUS_BYTE_LIMIT - len(text.encode())))
+        self.assertEqual(run("check", "--root", str(self.root))[0], 0, "exactly 32 KiB passes")
+        path.write_text(path.read_text() + "x")
+        code, _, err = run("check", "--root", str(self.root))
+        self.assertEqual(code, 1)
+        self.assertIn("docs/STATUS.md is 32,769 bytes, over the 32,768-byte bound", err)
+        self.assertIn("docs/agents/operations.md#maintenance-cadence", err)
+
+    def test_a_hand_edited_unpublished_sentence_is_refused_and_regenerated(self):
+        path = self.root / land.STATUS
+        generated = path.read_text()
+        path.write_text(generated.replace("Unpublished landings: none", "Unpublished landings: r9"))
+        code, _, err = run("check", "--root", str(self.root))
+        self.assertEqual(code, 1)
+        self.assertIn("unpublished-landings sentence differs", err)
+        self.assertIn(land.UNPUBLISHED_COMMAND, err)
+        code, out, _ = run("unpublished", "--write", "--root", str(self.root))
+        self.assertEqual(code, 0)
+        self.assertIn("rewrote", out)
+        self.assertEqual(path.read_text(), generated)
+        self.assertEqual(run("check", "--root", str(self.root))[0], 0)
+
+    def test_a_new_landing_gate_record_makes_the_sentence_stale(self):
+        gate = self.root / "docs/reports/card/integration/gate.json"
+        gate.parent.mkdir(parents=True)
+        gate.write_text(json.dumps({"note": "Landing integrate/r1 (merges CARD 1234567)."}))
+        code, _, err = run("check", "--root", str(self.root))
+        self.assertEqual(code, 1)
+        self.assertIn(land.UNPUBLISHED_COMMAND, err)
+        code, out, _ = run("unpublished", "--write", "--root", str(self.root))
+        self.assertEqual(code, 0)
+        self.assertIn("integrate/r1: unpublished: CARD", out)
+        self.assertIn("integrate/r1 (CARD)", (self.root / land.STATUS).read_text())
+        self.assertEqual(run("check", "--root", str(self.root))[0], 0)
+
+    def test_missing_markers_are_refused(self):
+        (self.root / land.STATUS).write_text("# Status\n")
+        code, _, err = run("check", "--root", str(self.root))
+        self.assertEqual(code, 1)
+        self.assertIn("cannot be generated", err)
+        self.assertEqual(run("unpublished", "--write", "--root", str(self.root))[0], 1)
+
+    def test_a_publication_is_recorded_once(self):
+        land.record_publication(self.root, "a" * 40, "b" * 40, "stamp")
+        with self.assertRaisesRegex(ValueError, "already records"):
+            land.record_publication(self.root, "a" * 40, "b" * 40, "stamp")
+        (self.root / "docs/development/landing-publications.json").write_text("[]")
+        with self.assertRaisesRegex(ValueError, "is not a quirin-landing-publications/1"):
+            land.record_publication(self.root, "c" * 40, "b" * 40, "stamp")
 
     def test_an_unreadable_matrix_is_refused(self):
         (self.root / land.MATRIX).write_text("{")

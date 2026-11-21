@@ -1,0 +1,79 @@
+// SPDX-License-Identifier: Apache-2.0
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+module contract;
+
+// ## Card CG10-OWNED-OUT-PARAMETER-MEMBER-SLOT: the string tag reader
+//
+// ONE TRUSTED ASSUMPTION, pinned (contract spec C06.2) after reading the body
+// at both audited revisions (`lib/cmetrics/src/cmt_mpack_utils.c`; the body is
+// byte-identical at `66910c10` and `046accf6`). A return-code disposition
+// (C04.13) with an out slot: gateway rule 72 reads the slot when the caller
+// hands it a member of an object the caller supplied.
+//
+// ## The body, read from `cmt_mpack_utils.c:115-175` at `046accf6`
+//
+//     int cmt_mpack_consume_string_tag(mpack_reader_t *reader, cfl_sds_t *output_buffer)
+//     {
+//         ...
+//         if (NULL == output_buffer) { return CMT_MPACK_INVALID_ARGUMENT_ERROR; }
+//         if (NULL == reader) { return CMT_MPACK_INVALID_ARGUMENT_ERROR; }
+//         tag = mpack_read_tag(reader);
+//         if (mpack_ok != mpack_reader_error(reader)) { return CMT_MPACK_ENGINE_ERROR; }
+//         if (mpack_type_str != mpack_tag_type(&tag)) { return CMT_MPACK_UNEXPECTED_DATA_TYPE_ERROR; }
+//         string_length = mpack_tag_str_length(&tag);
+//         string_data = mpack_read_bytes_inplace(reader, (size_t) string_length);
+//         if (mpack_ok != mpack_reader_error(reader)) { return CMT_MPACK_ENGINE_ERROR; }
+//         mpack_done_str(reader);
+//         if (mpack_ok != mpack_reader_error(reader)) { return CMT_MPACK_ENGINE_ERROR; }
+//         if (NULL != memchr(string_data, '\0', (size_t) string_length)) {
+//             return CMT_MPACK_CORRUPT_INPUT_DATA_ERROR;
+//         }
+//         *output_buffer = cfl_sds_create_size((size_t) string_length);
+//         if (NULL == *output_buffer) { return CMT_MPACK_ALLOCATION_ERROR; }
+//         if (string_length > 0) { memcpy(*output_buffer, string_data, (size_t) string_length); }
+//         cfl_sds_set_len(*output_buffer, (size_t) string_length);
+//         return CMT_MPACK_SUCCESS;
+//     }
+//
+// `CMT_MPACK_SUCCESS` is `0` and every error code is nonzero
+// (`cmt_mpack_utils_defs.h`).
+//
+//   * `reader` is read through (`mpack_read_tag`, `mpack_reader_error`,
+//     `mpack_read_bytes_inplace`, `mpack_done_str`) and nothing else:
+//     `resource_borrowed`. The in-place bytes are copied, never retained.
+//   * `output_buffer` is the slot. On the one `0` return it holds the fresh
+//     sds `cfl_sds_create_size` returned, tested non-NULL: `resource_out(
+//     output_buffer, nonnull)` in class `eq 0`. On every nonzero return the
+//     slot is unwritten, except on `CMT_MPACK_ALLOCATION_ERROR`, where it was
+//     written NULL: `resource_borrowed(output_buffer)` in class `ne 0` (the
+//     class passes no custody through it, C04.13).
+//   * The result is the `int` status, `resource_return_none()`.
+//
+// ABI (`cmt_mpack_utils.h:38`, agreeing with the definition):
+// `mpack_reader_t *` is `ptr<mut, u8>`, `cfl_sds_t *` (`char **`)
+// `ptr<mut, ptr<mut, u8>>`, `int` `i32`.
+//
+// NOT CLAIMED: the string's contents or length; that the slot keeps its old
+// value on `CMT_MPACK_ALLOCATION_ERROR` (it is NULL there: C04.13's reading
+// treats the slot as untracked after a nonzero return, so a caller's tracked
+// old value in the slot is lost by the reading as by the body).
+extern fn cmt_mpack_consume_string_tag(reader: ptr<mut, u8>, output_buffer: ptr<mut, ptr<mut, u8>>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(reader);
+    ensures normal resource_on_return(eq, 0, resource_out(output_buffer, nonnull));
+    ensures normal resource_on_return(ne, 0, resource_borrowed(output_buffer));
+    ensures normal resource_return_none();
+};

@@ -5313,6 +5313,16 @@
 "read": [],
 "seconds": 0.1
 },
+"qcore-c-gateway::test::owned_out_member_slot": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 4.2
+},
 "qcore-c-gateway::test::parenthesised_callee": {
 "dirs": [],
 "exit": 0,
@@ -5580,6 +5590,16 @@
 "probed_count": 1,
 "read": [],
 "seconds": 0.6
+},
+"qcore-c-gateway::test::reader_gaps": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.5
 },
 "qcore-c-gateway::test::reading_site_domain": {
 "dirs": [],
@@ -6155,6 +6175,16 @@
 "probed_count": 1,
 "read": [],
 "seconds": 0.4
+},
+"qcore-c-gateway::test::small_bundle": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 1.0
 },
 "qcore-c-gateway::test::sr5_soundness": {
 "dirs": [],

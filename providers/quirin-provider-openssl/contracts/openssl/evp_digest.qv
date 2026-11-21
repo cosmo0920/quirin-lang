@@ -74,15 +74,29 @@ contract {
 // EVP_PKEY_CTX (its method cleanup, provider operation freectx, ENGINE finish
 // and keys; digest.c and pmeth_lib.c 3.5.5), whose setters no declaration
 // states: the unstated-slots premise of a free names them.
+// Card OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS: the free releases its
+// argument (`resource_released`), and a slot invocation reads a borrowed
+// parameter (C04.19.3), so it can state none of the teardown slots it runs
+// (the legacy digest's, cipher's and public key method's cleanup, a key's
+// method and engine functions). It names the free statement through a
+// released argument, which does not subtract the settable functions, beside
+// the two teardown premises.
 extern fn EVP_MD_CTX_free(ctx: ptr<mut, u8>) -> unit
 contract {
     requires resource_contract_v1;
     requires resource_revision(flexible);
     requires resource_library_version(openssl, since "1.1.0");
-    requires resource_premise(openssl_unstated_callback_slots,
-        quant all #o in #freed: #teardown(#o) \ (#stated | #settable) |-> #inert);
     requires resource_premise(openssl_ex_data_callbacks,
         quant all #o in #created | #copied | #freed: #ex_data(#class(#o)) |-> #inert);
+    requires resource_premise(openssl_builtin_teardown_functions,
+        quant all #o in #freed: quant all #f in #teardown(#o): #f in #library
+        -> #f |-> #inert);
+    requires resource_premise(openssl_loaded_module_functions,
+        quant all #o in #freed: quant all #f in #teardown(#o): #f in #loaded
+        -> #f |-> #inert
+        && quant all #g in #in_turn(#f, #freed | #args | #created): #g in #library | #loaded);
+    requires resource_premise(openssl_unstated_callback_slots,
+        quant all #o in #freed: #teardown(#o) \ #stated |-> #inert);
     ensures normal resource_released(ctx, nullable);
     ensures normal resource_return_none();
 };

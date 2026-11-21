@@ -505,3 +505,16 @@ dependency record's premise list, a reading-site environment text, a
 hypothesis graph's legacy atom). The `measure-prediction` block is in
 [PREDICTION.md](PREDICTION.md), for the integrator's `quirin-audit measure
 --declared`.
+
+## Integrator measurement (2026-11-21)
+
+Landing `17b0e77b2` on base `70e10930f`, measured with `--declared PREDICTION.md`:
+corpus, twelve-home, system and slice all match the declared prediction with
+0 moves. Comparison: `integration/native-comparison.json.gz` (uncompressed
+sha256 `9aca98a1406876290b94e37462f549b04072f6322ff3d1aadb0c021455fed54f`). Landing gate: `integration/gate.json` (Rust 9817
+passed, 1 failed: the known host libcurl failure; Lean 471 audits; Python
+779).
+
+Landing race: main moved to `2aefebbc1` (r47, r48) during the gate; merged in
+`36439854b` (records-only conflicts) and checked with the targeted suite named
+in `integration/gate.json`, all exit 0.

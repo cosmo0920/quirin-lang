@@ -251,6 +251,8 @@ def detachModel (e : Environment) : Model where
   lookups := fun _ _ => False
   teardown := fun _ _ => False
   settable := fun _ => False
+  library := fun _ => False
+  loaded := fun _ => False
   inTurn := fun _ _ _ => False
   callerHeld := fun _ _ => False
   takes := fun _ _ _ => False

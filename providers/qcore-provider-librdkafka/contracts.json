@@ -4,11 +4,12 @@
   "contracts": {
     "contracts/librdkafka/cjson.qv": "7f98e702b501f2ab0cea4fc7d9a74a1a465a6860c82b664782a52134c6d642fc",
     "contracts/librdkafka/client.qv": "8981842a17e16fd6c69e008b67b65f3f2c6f7cf15ec6bdc3f4199db2141fc75d",
+    "contracts/librdkafka/compress_out.qv": "ac4fadc5ffdf844d29450e291185165701b049115b41dc2b23089aec09833627",
     "contracts/librdkafka/header_inlines.qv": "d60dd572f68f8c6342bdb744ef2d0cf604bfe81ce4e970418707b0ddbaf0e22b",
     "contracts/librdkafka/kafka_mem.qv": "74b5ccd9c291019f01161a7502a389cc3285fe7ca8e48894bba51a0769f0b99f",
     "contracts/librdkafka/log_caller_frame.qv": "cf161721988d8d8af2d27893cc6ff1ad0f2386523535bfc2fad0b76375634ca1",
     "contracts/librdkafka/logging.qv": "7ad85b305776700afc9a826439a259c167957bd30e84b009a1e3288313cfe484",
-    "contracts/librdkafka/lz4_stream.qv": "282ca1e9ad92339888457c3ec30e6ab61b7591339962741a671a22afc35ac5f3",
+    "contracts/librdkafka/lz4_stream.qv": "151e1f1ed18c2d0a25c9caacd6ae1e626f2bde79d7d8b0d0281d72186374a085",
     "contracts/librdkafka/memory.qv": "48f213851e643e772cc240ea4ab2340b4ce2679b00aa21b0a7159895f3067c5c",
     "contracts/librdkafka/null_deref.qv": "0fe6103811fd1401f446f2a64f7320a5769fc27df72d5824727dfdb0e2756c1c",
     "contracts/librdkafka/outer.qv": "8851663628db59017013b33cfff05f7fed4e8ce5e384bb961c27bfc364eb4cd0",

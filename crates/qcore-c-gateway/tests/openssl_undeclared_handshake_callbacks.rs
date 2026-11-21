@@ -89,6 +89,10 @@ const SSL_HANDSHAKE_SETTERS: &str = include_str!(
 const X509_STORE_SLOTS: &str = include_str!(
     "../../../providers/quirin-provider-openssl/contracts/openssl/x509_store_slots.qv"
 );
+/// Card OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS: the teardown slots'
+/// setters, which every free running them needs registered.
+const TEARDOWN_SLOTS: &str =
+    include_str!("../../../providers/quirin-provider-openssl/contracts/openssl/teardown_slots.qv");
 
 /// The application's candidates: identity contracts, and an older-style
 /// custom extension free callback that releases the `add_arg` the library
@@ -361,6 +365,8 @@ fn crate_contracts() -> ResourceContracts {
         ("bio_slots.qv", BIO_SLOTS),
         ("ssl_handshake_setters.qv", SSL_HANDSHAKE_SETTERS),
         ("x509_store_slots.qv", X509_STORE_SLOTS),
+        // Card OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS.
+        ("teardown_slots.qv", TEARDOWN_SLOTS),
     ])
 }
 
@@ -566,7 +572,9 @@ fn the_crate_states_every_handshake_slot() {
     }
     for call in ["SSL_write", "SSL_read", "SSL_connect", "SSL_do_handshake"] {
         let declaration = contracts.retaining_contract(call).expect("withheld");
-        assert_eq!(declaration.callbacks.len(), 67, "{call}");
+        // Card OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS: and the twelve
+        // teardown slots of what the handshake frees inside.
+        assert_eq!(declaration.callbacks.len(), 79, "{call}");
         assert!(
             declaration
                 .callbacks
@@ -581,7 +589,9 @@ fn the_crate_states_every_handshake_slot() {
             .expect("withheld")
             .callbacks
             .len(),
-        18
+        // Card OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS: and twelve teardown
+        // slots.
+        30
     );
 }
 
@@ -959,6 +969,7 @@ fn reader_contracts(with_slots: bool) -> ResourceContracts {
         ("pkcs12.qv", PKCS12),
         ("x509.qv", X509),
         ("evp.qv", EVP),
+        ("teardown_slots.qv", TEARDOWN_SLOTS),
     ];
     if with_slots {
         modules.push(("bio_slots.qv", BIO_SLOTS));
@@ -1016,9 +1027,11 @@ fn reader_row(
 fn the_readers_state_every_bio_slot() {
     let contracts = reader_contracts(true);
     for (reader, invocations) in [
-        ("PEM_read_bio_X509", 15),
-        ("PEM_read_bio_PrivateKey", 15),
-        ("d2i_PKCS12_bio", 14),
+        // Card OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS: and the nine teardown
+        // slots of a key the read frees.
+        ("PEM_read_bio_X509", 24),
+        ("PEM_read_bio_PrivateKey", 24),
+        ("d2i_PKCS12_bio", 23),
     ] {
         assert!(contracts.contract(reader).is_none(), "{reader}");
         let declaration = contracts.retaining_contract(reader).expect("withheld");
@@ -1063,7 +1076,10 @@ fn the_readers_state_every_bio_slot() {
                 )
             })
             .count();
-        assert_eq!(defaults, invocations - 14, "{reader}");
+        // The BIO slots and (card OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS)
+        // the nine teardown slots are slot invocations; the rest is the
+        // password callback's null default.
+        assert_eq!(defaults, invocations - 14 - 9, "{reader}");
     }
 }
 
@@ -1239,6 +1255,13 @@ void lookup_free_ok(X509_LOOKUP *ctx);
 void lookup_free_uncontracted(X509_LOOKUP *ctx);
 int lookup_shutdown_ok(X509_LOOKUP *ctx);
 int lookup_shutdown_releasing(X509_LOOKUP *ctx);
+typedef struct rsa_meth_st RSA_METHOD;
+typedef struct rsa_st RSA;
+typedef struct engine_st ENGINE;
+int RSA_meth_set_finish(RSA_METHOD *rsa, int (*finish)(RSA *rsa));
+int ENGINE_set_destroy_function(ENGINE *e, int (*destroy_f)(ENGINE *));
+int rsa_finish_uncontracted(RSA *rsa);
+int engine_destroy_uncontracted(ENGINE *e);
 ";
 
 /// Each free acquires its object and drops the one reference it holds.
@@ -1307,7 +1330,53 @@ fn free_crate() -> ResourceContracts {
         ("bio_slots.qv", BIO_SLOTS),
         ("x509_store.qv", X509_STORE),
         ("x509_lookup_slots.qv", X509_LOOKUP_SLOTS),
+        ("teardown_slots.qv", TEARDOWN_SLOTS),
+        ("ssl_io.qv", SSL_IO),
     ])
+}
+
+/// Card OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS: the teardown slots every
+/// free of a key holder states (in the module's order), every actual the
+/// library's.
+const KEY_FREED: [&str; 9] = [
+    "dh_method.dh_meth_finish",
+    "dsa_method.dsa_meth_finish",
+    "ec_key_method_st.ec_key_meth_finish",
+    "engine_st.engine_destroy",
+    "engine_st.engine_finish",
+    "engine_st.engine_pkey_asn1_meths",
+    "engine_st.engine_pkey_meths",
+    "evp_pkey_asn1_method_st.asn1_meth_pkey_free",
+    "rsa_meth_st.rsa_meth_finish",
+];
+
+/// The actuals of a slot a free states: the BIO pages' NULLs, the engine
+/// enumerators' NULL method and nids pointers (crypto/engine/tb_pkmeth.c:110,
+/// 112 at 3.5.5), and the SSL object handed to the message and info
+/// callbacks.
+fn free_actuals(key: &str, arity: usize) -> Vec<CallbackActual> {
+    let parameter: &[usize] = match key {
+        "ssl_ctx_st.msg_callback" => &[5],
+        "ssl_ctx_st.info_callback" => &[0],
+        _ => &[],
+    };
+    let nullable: &[usize] = match key {
+        "engine_st.engine_pkey_meths" | "engine_st.engine_pkey_asn1_meths" => &[1, 2],
+        _ => &[],
+    };
+    bio_actuals(key, arity)
+        .into_iter()
+        .enumerate()
+        .map(|(at, actual)| {
+            if parameter.contains(&at) {
+                CallbackActual::Parameter { index: 0 }
+            } else if nullable.contains(&at) {
+                CallbackActual::SuppliedNullable
+            } else {
+                actual
+            }
+        })
+        .collect()
 }
 
 /// Card OPENSSL-FREE-INDIRECT-CALLBACKS: the lookup method slots every free
@@ -1405,19 +1474,31 @@ fn the_frees_state_their_slots_beside_the_drop() {
         "bio_st.bio_callback",
         "bio_method_st.meth_destroy",
     ];
-    let ssl = [
+    // Card OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS: and the teardown
+    // slots; SSL_free also the message and info callbacks (the record
+    // layer's clear on its error path) and the digest, cipher, public key
+    // method and async wait context cleanups.
+    let mut ssl = vec![
         "ssl_ctx_st.remove_session_cb",
+        "ssl_ctx_st.msg_callback",
+        "ssl_ctx_st.info_callback",
         "bio_st.bio_callback_ex",
         "bio_st.bio_callback",
         "bio_method_st.meth_destroy",
         LOOKUP_FREED[0],
         LOOKUP_FREED[1],
+        "evp_md_st.md_meth_cleanup",
+        "evp_cipher_st.cipher_meth_cleanup",
+        "evp_pkey_method_st.pkey_meth_cleanup",
+        "async_wait_ctx_st.wait_fd_cleanup",
     ];
-    let ctx = [
+    ssl.extend(KEY_FREED);
+    let mut ctx = vec![
         "ssl_ctx_st.remove_session_cb",
         LOOKUP_FREED[0],
         LOOKUP_FREED[1],
     ];
+    ctx.extend(KEY_FREED);
     for (call, keys) in [
         ("BIO_free", &bio[..]),
         ("SSL_free", &ssl[..]),
@@ -1449,7 +1530,7 @@ fn the_frees_state_their_slots_beside_the_drop() {
                     // BIO_CB_FREE, NULL, …, NULL)").
                     assert_eq!(
                         actuals,
-                        &bio_actuals(&member.spelling(), actuals.len()),
+                        &free_actuals(&member.spelling(), actuals.len()),
                         "{call}: {actuals:?}"
                     );
                     member.spelling()
@@ -1457,6 +1538,9 @@ fn the_frees_state_their_slots_beside_the_drop() {
                 other => panic!("{call}: {other:?}"),
             })
             .collect::<Vec<_>>();
+        let (mut invoked, mut keys) = (invoked, keys.to_vec());
+        invoked.sort();
+        keys.sort();
         assert_eq!(invoked, keys, "{call}");
     }
 }
@@ -1592,6 +1676,22 @@ fn a_candidate_that_is_not_the_identity_refuses_the_frees() {
             &["free_store", "free_ctx", "free_ssl"][..],
             "free_bio",
         ),
+        // Card OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS: an uncontracted RSA
+        // method finish function or engine destroy function refuses every
+        // free that frees keys in turn; `BIO_free` frees none.
+        (
+            "void reg(RSA_METHOD *m) { RSA_meth_set_finish(m, rsa_finish_uncontracted); }\n",
+            "rsa_finish_uncontracted",
+            &["free_store", "free_ctx", "free_ssl"][..],
+            "free_bio",
+        ),
+        (
+            "void reg(ENGINE *e) { ENGINE_set_destroy_function(e, \
+             engine_destroy_uncontracted); }\n",
+            "engine_destroy_uncontracted",
+            &["free_store", "free_ctx", "free_ssl"][..],
+            "free_bio",
+        ),
     ] {
         let run = free_run(registrar, &contracts);
         for name in runs {
@@ -1698,13 +1798,16 @@ fn the_store_free_states_the_lookup_slots() {
                 actuals,
                 ..
             } => {
-                assert_eq!(actuals, &[CallbackActual::Supplied]);
+                assert_eq!(actuals, &free_actuals(&member.spelling(), actuals.len()));
                 member.spelling()
             }
             other => panic!("{other:?}"),
         })
         .collect::<Vec<_>>();
-    assert_eq!(invoked, LOOKUP_FREED);
+    // Card OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS: and the teardown slots.
+    let mut expected = LOOKUP_FREED.to_vec();
+    expected.extend(KEY_FREED);
+    assert_eq!(invoked, expected);
     for call in ["X509_STORE_free", "SSL_CTX_free", "SSL_free"] {
         let declaration = contracts.retaining_contract(call).expect("withheld");
         assert!(

@@ -132,6 +132,9 @@ pub(super) const PARSER_FIELDS: &[(&str, FieldClass)] = &[
     // Admitted and pending bindings are probe state; `over_formal` is a
     // monotone fact ([`OriginsLowering`]).
     ("element_origins", FieldClass::ProbeState),
+    // Card CG10-OWNED-OUT-PARAMETER-MEMBER-SLOT (rule 72).
+    ("owned_out_body_start", FieldClass::FunctionFact),
+    ("owned_out_roots", FieldClass::LazyCache),
 ];
 
 /// The fields [`ParserProbeState`] carries, in its declaration order.
@@ -237,6 +240,10 @@ impl Parser<'_> {
             caller_formals: _,
             cell_protocols: _,
             element_origins,
+            // Card CG10-OWNED-OUT-PARAMETER-MEMBER-SLOT (rule 72): an
+            // immutable reading of the body.
+            owned_out_body_start: _,
+            owned_out_roots: _,
         } = self;
         ParserProbeState {
             cursor: *cursor,

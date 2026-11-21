@@ -476,6 +476,23 @@
       "premises": {},
       "sha256": "fcdabbff6844f640c09d1a4cbb823e8de8edae976ac83afa25335bcae38f3822"
     },
+    "cmetrics/mpack_string_out.qv": {
+      "clause_count": 5,
+      "declaration_count": 1,
+      "declarations": [
+        {
+          "clauses": 5,
+          "name": "cmt_mpack_consume_string_tag",
+          "resource_mode": null,
+          "resource_table": "relational"
+        }
+      ],
+      "inherits": [],
+      "other_declarations": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "0a17b8bff8c132407993d508d0ede0ef7d85fac4e719ec63815e704c5bb33922"
+    },
     "cmetrics/mpack_utils.qv": {
       "clause_count": 16,
       "declaration_count": 3,
@@ -607,6 +624,7 @@
     "cmetrics/context_lifetime.qv",
     "cmetrics/logging.qv",
     "cmetrics/metric_values.qv",
+    "cmetrics/mpack_string_out.qv",
     "cmetrics/mpack_utils.qv"
   ],
   "schema_version": 2

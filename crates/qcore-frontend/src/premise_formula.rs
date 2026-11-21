@@ -339,6 +339,19 @@ pub const VOCABULARY: &[Term] = &[
         result: Sort::SetFn,
         meaning: "the callbacks a setter some declaration of the declaration's crate states can write",
     },
+    // Card OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS (C04.18.9 amended).
+    Term {
+        name: "library",
+        arguments: &[],
+        result: Sort::SetFn,
+        meaning: "the functions the library defines itself and installs without a setter call of the run: those of the method tables it defines (its default RSA, DSA, DH and EC_KEY methods, its EVP_PKEY_ASN1_METHOD, EVP_PKEY_METHOD, EVP_MD and EVP_CIPHER tables, the EC_METHOD of a group), of the engines it builds in, and the dispatch functions of the default, base, legacy and null providers",
+    },
+    Term {
+        name: "loaded",
+        arguments: &[],
+        result: Sort::SetFn,
+        meaning: "the functions of a module the library loads from outside the run: a provider other than the default, base, legacy and null providers (the FIPS provider and any provider a configuration or OSSL_PROVIDER_load loads among them), and an engine the dynamic engine loads from a shared object",
+    },
     Term {
         name: "in_turn",
         arguments: &[Sort::Fn, Sort::SetObj],
