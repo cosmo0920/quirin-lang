@@ -207,7 +207,29 @@ reverted.
 
 ## 6. Gate
 
-Recorded after the final merge; see below.
+The scoped card gate ran on `7af005921`, the merged tree:
+
+```sh
+sh private/toolchain/env.sh python3 scripts/gate_scope.py --base 590f7d9f1 --out private/srp/gate
+```
+
+It exited 0 ([`gate.json`](gate.json); logs in `private/srp/gate/`). The base
+is the main revision folded in, so the scope is this card plus STATUS-COMPACT.
+r50's code is covered by its own landing gate. The first attempt was stopped
+before its Rust step to fix a duplicated docstring line, and it was rerun from
+scratch. Its partial output is kept in `private/srp/gate-aborted/`.
+
+| Step | Exit | Result |
+|---|---|---|
+| submodule status | 0 | 1 submodule, none moved |
+| `cargo fmt --all -- --check` | 0 | |
+| `cargo clippy -p quirin-audit-plugin-measure` (5 test targets that walk `scripts/`) | 0 | |
+| Rust suite, those 5 targets | 0 | 5 units, 23 passed, 0 failed, 0 ignored |
+| `python3 -m unittest discover -s scripts/tests` | 0 | **801 tests**, 0 skipped |
+| `python3 scripts/land.py check` (after the gate) | 0 | fresh; STATUS 23,704 bytes, within the bound |
+| `apply_amendments.py …/status-regrowth-by-prepend/integration-amendments.json --check` | 1 on this tree, 0 after STATUS-COMPACT's amendments are applied first (§5) | |
+
+No Lean or provider step was scoped. This card is tooling only.
 
 ## 7. Ledger (`integration-amendments.json`, schema `/2`)
 
