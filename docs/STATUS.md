@@ -155,9 +155,9 @@ figure is measured.
 | CT independent artifacts | **48** distinct source-fixture programs behind the 50 mapped cases; **9** reviewed byte-identical fixture groups | Same manifest, `artifact_identity`; [disclosure](reports/ct-shared-fixture-disclosure/README.md) |
 | CT case-bound proof | **5/50**: CT01, CT03, CT07, CT37, CT50 | Same manifest, per-case `proof` stage |
 | CT gated sanitized-native | **10/50, Linux/macOS only** | Same manifest, `native_sanitized` stage and host gates |
-| Lean | toolchain **`leanprover/lean4:v4.35.0`**; **479** audits | `proof/lean-toolchain`; `proof/Audit*.lean`, r53 gate |
+| Lean | toolchain **`leanprover/lean4:v4.35.0`**; **481** audits | `proof/lean-toolchain`; `proof/Audit*.lean`, r53 gate |
 | Contract corpus | **153** modules (997 declarations, 8,783 clauses) in the eleven inventory locks `qcore_contract_corpus.rs` pins: five `qcore-provider-*` crates 94, six `quirin-provider-*` crates 59; user crates outside the locks: OpenSSL 21, libcurl 4, plugin 1 | `providers/*/contract-inventory.lock`, [load path](../providers/contract-load-path.json), [ownership](../providers/README.md#contract-ownership) |
-| Registered follow-ups | **1,055** | [Matrix](reviews/r0_3/acceptance_matrix.json) `named_followups` |
+| Registered follow-ups | **1,056** | [Matrix](reviews/r0_3/acceptance_matrix.json) `named_followups` |
 
 Re-derived by [`rederive.py`](reports/status-compact/scripts/rederive.py); the
 [report](reports/status-compact/README.md) records its output.
@@ -246,13 +246,13 @@ Unsafe proposals downgrade to Unknown (`QP010`).
 ## Latest validated gate
 
 The [integrate/r53 landing gate](reports/openssl-free-remaining-indirect-callbacks/integration/gate.json)
-(OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS) ran the full landing gate on `15e65bf8d` through
+(OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS, merged with SP2 and SP3) ran the full landing gate on `3e4c95cfa` through
 `scripts/gate_scope.py --base origin/main --full --landing`.
-Root Rust: **9,862 passed / 0 failed / 21 ignored**, 673 units / 718 summaries;
-**479 Lean audits**; fmt, Clippy and both reevaluation examples exit 0.
+Root Rust: **9,867 passed / 0 failed / 21 ignored**, 675 units / 720 summaries;
+**481 Lean audits**; fmt, Clippy and both reevaluation examples exit 0.
 Python: **801 tests**, which exited 1 on `test_build_matrix_sections`'
-stale-matrix checks only and were rerun after the matrix was regenerated from
-the record. Provider steps all exit 0: **170 passed / 1 ignored** over 49 summaries.
+stale-matrix checks and the known slot-lane timing flake only, and were rerun after the matrix was regenerated from
+the record. Provider steps all exit 0: **173 passed / 1 ignored** over 49 summaries.
 Clang: Ubuntu clang 21.1.8. Pinned-route parity was not run (no `build/cycle19`
 inputs on the host), and no profile baseline changed.
 
