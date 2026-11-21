@@ -241,5 +241,7 @@ fn k03_complex_places_at_custody_formals_stay_refused_by_design() {
     // object delivers its custody to the caller that supplied the object.
     // A slot of a record this body allocated (a tracked owner) still refuses.
     assert!(gs("void subject(struct S *s) { q_make(&s->p); }").safe());
-    assert!(!gs("void subject(void) { struct S *s = q_alloc(); q_make(&s->p); q_free(s); }").safe());
+    assert!(
+        !gs("void subject(void) { struct S *s = q_alloc(); q_make(&s->p); q_free(s); }").safe()
+    );
 }

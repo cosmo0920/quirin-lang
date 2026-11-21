@@ -64,7 +64,8 @@ struct span { struct status status; cfl_sds_t schema_url; }; \
 struct scope_span { struct scope *instrumentation_scope; }; \
 struct decode_context { struct span *span; struct scope_span *scope_span; }; \
 struct iovec { void *iov_base; size_t iov_len; }; \
-struct msetw { rd_kafka_broker_t *msetw_rkb; int msetw_MsgVersion; int level; };\n";
+struct msetw { rd_kafka_broker_t *msetw_rkb; int msetw_MsgVersion; int level; }; \
+typedef struct msetw_s { rd_kafka_broker_t *msetw_rkb; int level; } msetw_t;\n";
 
 fn production() -> ResourceContracts {
     load_resource_contract_sources(&BTreeMap::from([
@@ -338,4 +339,37 @@ fn the_refusal_text_is_the_gates() {
     }
     let run = run(REFUSED[1].1, &production());
     assert!(run.descriptions.iter().any(|text| text == GATE), "{run:?}");
+}
+
+#[test]
+fn a_writer_base_spelled_through_a_defining_typedef_keeps_w44s_refusal() {
+    if !clang_available() {
+        return;
+    }
+    // The measured residual (report section 4): librdkafka's writer is
+    // `typedef struct rd_kafka_msgset_writer_s { ... } rd_kafka_msgset_writer_t;`,
+    // so rule W44 does not read `msetw->msetw_rkb` at its borrowed position and
+    // the statement keeps the gate's refusal although rule 72 reads the slot
+    // (CG10-W44-TYPEDEF-DEFINING-BASE-ACTUAL). With the base read elsewhere the
+    // same call is `Safe`.
+    let refused = run(
+        "int subject(msetw_t *msetw, rd_slice_t *slice, struct iovec *ciov) { \
+           rd_kafka_resp_err_t err; \
+           err = rd_kafka_gzip_compress(msetw->msetw_rkb, 1, slice, &ciov->iov_base, &ciov->iov_len); \
+           return (err ? -1 : 0); }",
+        &production(),
+    );
+    assert_eq!(refused.status, AnalysisStatus::Unknown, "{refused:?}");
+    assert!(
+        refused.descriptions.iter().all(|text| text == GATE),
+        "{refused:?}"
+    );
+    let read = run(
+        "int subject(struct msetw *msetw, rd_slice_t *slice, struct iovec *ciov) { \
+           rd_kafka_broker_t *b = msetw->msetw_rkb; rd_kafka_resp_err_t err; \
+           err = rd_kafka_gzip_compress(b, 1, slice, &ciov->iov_base, &ciov->iov_len); \
+           return (err ? -1 : 0); }",
+        &production(),
+    );
+    assert_eq!(read.status, AnalysisStatus::Safe, "{read:?}");
 }
