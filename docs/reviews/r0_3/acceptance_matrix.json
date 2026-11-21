@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 10,
-  "named_followups": 1041
+  "named_followups": 1040
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6924,7 +6924,7 @@
   "workspace_tests": 9814,
   "provider_tests": 168,
   "python_evidence_validator_tests": 779,
-  "lean_audits": 472,
+  "lean_audits": 473,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
    "AuditAggregateOwnedField.lean",
@@ -7234,6 +7234,7 @@
    "AuditPremiseFlow.lean",
    "AuditPremiseFormula.lean",
    "AuditPremiseFormulaFluentBit.lean",
+   "AuditPremiseFormulaLibevent.lean",
    "AuditPremiseFormulaLibrdkafka.lean",
    "AuditPremiseMetadataBridge.lean",
    "AuditPremiseRefinement.lean",
@@ -14548,13 +14549,6 @@
    "why": "Found by OPENSSL-FREE-INDIRECT-CALLBACKS (source survey of OpenSSL 3.5.5). X509_STORE_free, SSL_CTX_free and SSL_free keep openssl_unstated_callback_slots, whose statement on the frees (UNSTATED_FREE_STATEMENT) names: a key's provider key management free function (a dispatch table, no setter); a legacy key's EVP_PKEY_ASN1_METHOD free (EVP_PKEY_asn1_set_free); the finish function of a key's RSA_METHOD, DSA_METHOD, DH_METHOD or EC_KEY_METHOD (RSA_meth_set_finish and siblings); the finish and destroy functions of a key's ENGINE and of the context's client certificate engine (ENGINE_set_finish_function, ENGINE_set_destroy_function; SSL_CTX_set_client_cert_engine has no 3.5 page); a CRL's X509_CRL_METHOD crl_free (X509_CRL_METHOD_new, no 3.5 page); the async wait context's fd cleanup functions (ASYNC_WAIT_CTX_set_wait_fd); the QUIC TLS crypto_release_rcd callback (SSL_set_quic_tls_cbs, a dispatch table, run by RECORD_LAYER_clear); and whatever a QUIC object's free runs, which was not traced past quic_impl.c. DISCHARGE: declare the documented setters as slot registrations (RSA/DSA/DH meth_set_finish, EC_KEY_METHOD_set_init, ENGINE_set_finish_function/destroy_function, EVP_PKEY_asn1_set_free, ASYNC_WAIT_CTX_set_wait_fd) and state their slots at the frees with library-value premises; for dispatch tables (providers, QUIC TLS) and undocumented setters a user decision on a premise or on admitting the pinned source; trace the QUIC free path. Only when every item is stated may the frees drop the premise. Size: large; partly needs a user decision. OPENSSL-OBJECT-FREES-SILENT-METHOD-CALLBACKS: X509_free, EVP_PKEY_free, PKCS12_free, ENGINE_free and EVP_MD_CTX_free now keep openssl_unstated_callback_slots too, in SP1's free statement; stating their kinds adds the setters ENGINE_set_pkey_meths and ENGINE_set_pkey_asn1_meths (no 3.5 page), EVP_MD_meth_set_cleanup, EVP_PKEY_meth_set_cleanup, and the provider dispatch tables of digests and signature, key exchange, KEM and asymmetric cipher operations; a key's last free may also run its provider's teardown (OSSL_FUNC_provider_teardown, at the provider's last reference). The EX_DATA_AUDIT classes of SSL_free, SSL_CTX_free and X509_STORE_free omit RSA, DSA, DH, EC_KEY and ENGINE (metadata). OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS: the free statement (quant all #o in #freed: #teardown(#o) \\ (#stated | #settable) |-> #inert) now also stands on nine calls that free inside (the SSL_CTX_use_* loaders, the PEM and PKCS#12 readers, the verify-path calls), and the handshake statement conjoins it on the handshake and I/O calls and SSL_shutdown. A setter declared for a key's or engine's method function (RSA_meth_set_finish, ENGINE_set_finish_function and the like) makes its slot #settable, so it falls out of the premise on all of these: each must then state the slot's invocation (or keep a recorded reason), not only the *_free declarations.",
    "source": "docs/reports/openssl-free-indirect-callbacks/README.md, docs/reports/openssl-object-frees-silent-method-callbacks/README.md, docs/reports/openssl-inner-frees-silent-method-callbacks/README.md",
    "recorded_by": "OPENSSL-FREE-INDIRECT-CALLBACKS"
-  },
-  {
-   "id": "SP4-SYMBOLIC-LIBEVENT-PREMISES",
-   "title": "State qcore-provider-libevent's scheduler premises as formulas",
-   "why": "Recorded by SP1-SYMBOLIC-OPENSSL-PREMISES (user decision 2026-11-20). qcore-provider-libevent states 7 resource_premise clauses in prose in monkey/intrusive_list.qv (mk_http_thread_destroy's scheduler decomposition: scheduler_borrowed_chain_live, scheduler_callee_live, scheduler_exact_parent_embedding, scheduler_no_later_alias_use, scheduler_tls_params_owned, scheduler_valgrind_request_neutral, scheduler_valid_membership), which rule 34 lists on every row resting on the declaration. DISCHARGE: each as a C04.18.9 formula with a prose-to-formula table and any new term registered (specification, Rust, Lean), locks synced with the reviewed diff, and prose refused for the crate. Size: medium.",
-   "source": "docs/reports/sp1-symbolic-openssl-premises/README.md",
-   "recorded_by": "SP1-SYMBOLIC-OPENSSL-PREMISES"
   },
   {
    "id": "CG10-CAST-VIEW-RETURN-POSITION",
