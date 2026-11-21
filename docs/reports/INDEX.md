@@ -189,6 +189,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [cg10-reader-gaps](cg10-reader-gaps/README.md) | CG10-READER-GAPS: three reader gaps behind the indirect-access refusal (rules 71, 71a, 71b) |
 
+| [cg10-small-bundle](cg10-small-bundle/README.md) | CG10-SMALL-BUNDLE: three follow-ups of the CG10 reader cards (rules 74, 74a, 74b) |
+
 | [cg11-pointer-valued-stores](cg11-pointer-valued-stores/README.md) | CG11-POINTER-VALUED-STORES |
 
 | [cg12-void-view-readback](cg12-void-view-readback/README.md) | CG12-VOID-VIEW-READBACK: `void *` views and readbacks |

@@ -173,6 +173,51 @@ fn rule_74_keeps_the_gate_where_rule_71a_keeps_the_view() {
 }
 
 #[test]
+fn rule_74_inherits_rule_71a_s_residual_on_a_const_typedef_base() {
+    if !clang_available() {
+        return;
+    }
+    // print_string's exact shape: a non-const byte view of a member read
+    // through a `const` pointer to a record typedef. Rule 71a declines it
+    // even for a contracted callee, so rule 74 has no uncast call to read
+    // (follow-up CG10-UNCAST-VIEW-CONST-TYPEDEF-BASE).
+    const CJSON: &str = "typedef struct cj { struct cj *next; char *valuestring; } cJSON;";
+    assert_unknown_with(
+        &format!(
+            "{CJSON} int subject(const cJSON *item) \
+             {{ return rg_peek((unsigned char *)item->valuestring); }}"
+        ),
+        INDIRECT,
+    );
+    assert_unknown_with(
+        &format!(
+            "{CJSON} int subject(const cJSON *item, void *p) \
+             {{ return un_peek((unsigned char *)item->valuestring, p); }}"
+        ),
+        INDIRECT,
+    );
+    // Each ingredient alone is read: a tagged `const struct`, a non-const
+    // typedef'd base, a `const` view.
+    assert_safe(
+        "int subject(const struct S *item) { return rg_peek((unsigned char *)item->name); }",
+    );
+    assert_unknown_with(
+        &format!(
+            "{CJSON} int subject(struct cj *item, void *p) \
+             {{ return un_peek((unsigned char *)item->valuestring, p); }}"
+        ),
+        "call to uncontracted function `un_peek`",
+    );
+    assert_unknown_with(
+        &format!(
+            "{CJSON} int subject(const cJSON *item, void *p) \
+             {{ return un_peek((const unsigned char *)item->valuestring, p); }}"
+        ),
+        "call to uncontracted function `un_peek`",
+    );
+}
+
+#[test]
 fn rule_74_is_never_a_verdict_move() {
     if !clang_available() {
         return;
