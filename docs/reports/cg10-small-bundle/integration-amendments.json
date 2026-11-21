@@ -1,0 +1,59 @@
+{
+ "schema": "quirin-amendments/1",
+ "card": "CG10-SMALL-BUNDLE",
+ "base": "8e7e8d509",
+ "measured_tip": "47c3b38fd",
+ "profiles": [],
+ "increment_paragraph": "**CG10-SMALL-BUNDLE** (USER DECISION 2026-11-21, launch this bundle; gateway rules 74, 74a and 74b, rules 12k, 70 and 71b pointing at them; Lean `QCore.UncastReturnAttribution`, `QCore.ResultHolderRefusal`, `QCore.FunctionPointerFormal`; [report](../../reports/cg10-small-bundle/README.md)). Rule 74 asks rule 12k of rule 71a's uncast whole-call return where the spelled reading declines, so a returned call whose uncast callee is uncontracted names that callee (a re-attribution, no verdict move). Rule 74a records the refusal to derive `resource_retained_by(q, result)` for a formal stored into the body's own tracked result: rule 13e ends such a record at the result's release, and for a derived summary the destructor's member effect is unreviewed, so a destructor releasing the kept member would release the caller's object unseen (a Lean counterexample over `QCore.MemberStoreRetention`'s memory). Rule 74b reads a parameter group spelled exactly `SPEC+ ( * NAME ) ( BALANCED )` in the shared W4 lexical parameter reader as a function-pointer formal at its position unless the body calls through it; a census of the reader's consumers found each reads formals by position and none gives a function pointer custody; census over the base units: 102 definitions with a parenthesised group, 64 read, 30 with a called formal, 8 other declarators. Measured on the opt-in current --monkey-linked over Fluent Bit 046accf6, base 8e7e8d509 binary 91f0c2d6 1,159/2/3,636/7 -> tip 47c3b38fd binary f0e04c84 1,159/2/3,636/7: no status move, no Safe -> non-Safe move, no new Unsafe, no leak added; six rows change leaves (pb_dec_bool, pb_enc_fixed_length_bytes and pb_dec_fixed_length_bytes re-attributed to their uncontracted callees; rd_kafka_q_cb_event_enable, rd_list_sort and rd_map_init change leaves through the known formal set, still Unknown); access rows 2,135 -> 2,132, access-alone 209 -> 207, access leaves 9,027 -> 9,026. print_string stays: rule 71a itself declines a non-const view through a const pointer to a record typedef. One reader_gaps pin flipped deliberately. Pinned-route parity not run on this host (no inputs): corpus, system and slice predicted none.",
+ "status_paragraph": null,
+ "ledger": [
+  {
+   "id": "CG10-UNCAST-RETURN-UNCONTRACTED-ATTRIBUTION",
+   "operation": "retire",
+   "source": "docs/reports/cg10-small-bundle/README.md",
+   "why": "DISCHARGED (CG10-SMALL-BUNDLE, gateway rule 74, QCore.UncastReturnAttribution; opt-in current --monkey-linked over Fluent Bit 046accf6, base 8e7e8d509 binary 91f0c2d6 1,159/2/3,636/7 -> tip 47c3b38fd binary f0e04c84 1,159/2/3,636/7): rule 12k is asked of rule 71a's uncast call where the spelled reading declines. pb_dec_bool and pb_enc_fixed_length_bytes re-attributed to pb_decode_bool and pb_encode_string (and pb_dec_fixed_length_bytes to pb_read), each still Unknown; no verdict move. print_string stays: rule 71a declines its view (a non-const byte view of a member read through `const cJSON *`) even for a contracted callee, re-registered as CG10-UNCAST-VIEW-CONST-TYPEDEF-BASE."
+  },
+  {
+   "id": "CG10-RESULT-HOLDER-RETAINED-BY",
+   "operation": "retire",
+   "source": "docs/reports/cg10-small-bundle/README.md",
+   "why": "DISCHARGED BY A RECORDED REFUSAL (CG10-SMALL-BUNDLE, gateway rule 74a, QCore.ResultHolderRefusal; opt-in current --monkey-linked over Fluent Bit 046accf6, base 8e7e8d509 binary 91f0c2d6 1,159/2/3,636/7 -> tip 47c3b38fd binary f0e04c84 1,159/2/3,636/7): `resource_retained_by(q, result)` is not derived. Rule 13e ends the record at the result's release, which for a declared contract rests on a reviewed assumption that the destructor does not release q; a derived summary's destructor is any body, and one releasing the kept member ends the record and releases the caller's object unseen (the Lean counterexample: accepted by the end-of-record reading, a double release in the concrete run). The two sole rows (PartitionMemberInfo_new, rd_kafka_op_new_cb) and two mentioning rows stay Unknown; fixtures pin the refusal. The premise a reading would need is CG10-RESULT-HOLDER-DESTRUCTOR-MEMBER-EFFECT."
+  },
+  {
+   "id": "CG10-W4-FUNCTION-POINTER-DECLARATOR-FORMALS",
+   "operation": "retire",
+   "source": "docs/reports/cg10-small-bundle/README.md",
+   "why": "DISCHARGED (CG10-SMALL-BUNDLE, gateway rule 74b, QCore.FunctionPointerFormal; opt-in current --monkey-linked over Fluent Bit 046accf6, base 8e7e8d509 binary 91f0c2d6 1,159/2/3,636/7 -> tip 47c3b38fd binary f0e04c84 1,159/2/3,636/7): census of 102 definitions with a parenthesised parameter group on the base units (64 read, 30 with a called formal, 8 other declarators) and of the reader's consumers (each reads formals by position, none gives a function pointer custody); the reader reads exactly `SPEC+ ( * NAME ) ( BALANCED )` the body never calls. No status move, no Safe -> non-Safe move; three census rows change leaves, still Unknown; rd_kafka_buf_set_maker's summary is now published. Called formals are CG10-CALLED-FUNCTION-POINTER-FORMALS."
+  },
+  {
+   "id": "CG10-INDIRECT-ACCESS-SOLE-RESIDUALS",
+   "operation": "amend",
+   "source": "docs/reports/cg10-small-bundle/README.md",
+   "text": "AMENDED (CG10-SMALL-BUNDLE, gateway rules 74, 74a, 74b; opt-in current --monkey-linked over Fluent Bit 046accf6, base 8e7e8d509 binary 91f0c2d6 1,159/2/3,636/7 -> tip 47c3b38fd binary f0e04c84 1,159/2/3,636/7): access rows 2,135 -> 2,132, access-alone 209 -> 207, access leaves 9,027 -> 9,026; three uncast returns re-attributed to their uncontracted callees (rule 74); the result-holder retention recorded as a refusal (rule 74a); function-pointer formals read by the W4 parameter reader (rule 74b), no status move."
+  },
+  {
+   "id": "CG10-UNCAST-VIEW-CONST-TYPEDEF-BASE",
+   "operation": "register",
+   "source": "docs/reports/cg10-small-bundle/README.md",
+   "recorded_by": "CG10-SMALL-BUNDLE",
+   "title": "Rule 71a declines a non-const view of a member read through a `const` pointer to a record typedef (print_string)",
+   "text": "`return f((unsigned char *)item->valuestring, p)` with `item` a `const cJSON *` (a `const` pointer to a record typedef) keeps the access refusal even for a contracted callee, while a tagged `const struct S *`, a non-const typedef'd base and a `const` view are each read (tests/small_bundle.rs pins all four). print_string on the opt-in route stays on the gate's text, so rule 74 has no uncast call to ask. DISCHARGE: the cause diagnosed (the view classification or the uncast token match) and read with Lean parity, or recorded."
+  },
+  {
+   "id": "CG10-RESULT-HOLDER-DESTRUCTOR-MEMBER-EFFECT",
+   "operation": "register",
+   "source": "docs/reports/cg10-small-bundle/README.md",
+   "recorded_by": "CG10-SMALL-BUNDLE",
+   "title": "A derived result-holder retention needs a premise on each destructor's member effect",
+   "text": "Rule 74a refuses `resource_retained_by(q, result)` derived from a body because rule 13e ends the record at the result's release, and a derived summary's destructor may release the member that keeps q (QCore.ResultHolderRefusal). A reading needs, at each caller, the release of the result by a function whose member effect is known not to release that member (a plain heap release, or a summarised destructor with an empty member effect), a per-identity retention record in the body that a release of the result ends and a returning exit states, and the field link kept from reading q as owned. DISCHARGE: that reading with Lean parity and a measurement, or the refusal kept with a census of the rows' destructors."
+  },
+  {
+   "id": "CG10-CALLED-FUNCTION-POINTER-FORMALS",
+   "operation": "register",
+   "source": "docs/reports/cg10-small-bundle/README.md",
+   "recorded_by": "CG10-SMALL-BUNDLE",
+   "title": "A function whose body calls through its `R (*f)(A)` formal stays unsummarised (30 census functions)",
+   "text": "Rule 74b keeps the W4 parameter reader's refusal where the body spells `f(...)` or `(*f)(...)`: the call is an invocation of a caller-chosen function (the callback shape, contract spec C04.19), and consumers resolve a call by its spelling. 30 functions on the opt-in route (comparator drivers, queue servers) stay unsummarised. DISCHARGE: such calls lowered as a callback invocation of the formal (no contract inferred for the caller-chosen function) with Lean parity, or recorded per row."
+  }
+ ]
+}

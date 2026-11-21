@@ -1,0 +1,66 @@
+{
+ "totals": {
+  "before": {
+   "Unknown": 3588,
+   "Safe": 1143,
+   "Unsafe": 7,
+   "Pending": 2
+  },
+  "after": {
+   "Unknown": 3588,
+   "Safe": 1143,
+   "Unsafe": 7,
+   "Pending": 2
+  }
+ },
+ "moves": [],
+ "leaves": {
+  "rows_with_changed_leaves": 6,
+  "access_removed": 5,
+  "access_added": 4,
+  "removed": [
+   [
+    "unsupported",
+    "indirect memory access is outside the resource projection",
+    5
+   ]
+  ],
+  "added": [
+   [
+    "unsupported",
+    "indirect memory access is outside the resource projection",
+    4
+   ],
+   [
+    "unsupported",
+    "call to uncontracted function `pb_decode_bool`",
+    1
+   ],
+   [
+    "unsupported",
+    "call to uncontracted function `pb_read`",
+    1
+   ],
+   [
+    "unsupported",
+    "call to uncontracted function `pb_encode_string`",
+    1
+   ],
+   [
+    "unsupported",
+    "release of `rkq->rkq_qio`, a member of the formal `rkq` (member-release-through-formal)",
+    1
+   ],
+   [
+    "unsupported",
+    "store of a custody-carrying value into `rkq->rkq_qio`, a member of the formal `rkq` (member-store-through-formal)",
+    1
+   ],
+   [
+    "unknown_alias",
+    "unresolved resource identity `rl`",
+    1
+   ]
+  ]
+ }
+}
