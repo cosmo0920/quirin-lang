@@ -83,11 +83,34 @@ theorem eval_builtin (M : Model) :
       ∀ o, M.freed o → ∀ f, M.teardown o f → M.library f → ∀ r, M.runs f r → inertEff M r := by
   simp [eval, builtinTeardownFormula, lk, prim0, prim1, binVal, Val.holds]
 
-/-- What `openssl_loaded_module_functions` states. -/
+/-- The call's objects a loaded function's in-turn callbacks are read on. -/
+def callObjects (M : Model) : M.U → Prop := fun u => (M.freed u ∨ M.args u) ∨ M.created u
+
+/-- What `openssl_loaded_module_functions` states (USER DECISION 2026-11-21,
+"Both conjuncts"): a loaded module's teardown function is inert, and every
+callback it runs in turn on an object of the call is the library's own or a
+loaded module's, never an application callback. -/
 theorem eval_loaded (M : Model) :
     (eval M [] loadedTeardownFormula).holds ↔
-      ∀ o, M.freed o → ∀ f, M.teardown o f → M.loaded f → ∀ r, M.runs f r → inertEff M r := by
-  simp [eval, loadedTeardownFormula, lk, prim0, prim1, binVal, Val.holds]
+      ∀ o, M.freed o → ∀ f, M.teardown o f → M.loaded f →
+        (∀ r, M.runs f r → inertEff M r) ∧
+          ∀ g, M.inTurn f (callObjects M) g → M.library g ∨ M.loaded g := by
+  unfold callObjects
+  simp [eval, loadedTeardownFormula, lk, prim0, prim1, prim2, binVal, Val.holds]
+
+/-- The first conjunct: a loaded teardown function is inert. -/
+theorem loaded_functions_are_inert (M : Model) (h : (eval M [] loadedTeardownFormula).holds)
+    {o f : M.U} (ho : M.freed o) (ht : M.teardown o f) (hl : M.loaded f) :
+    ∀ r, M.runs f r → inertEff M r :=
+  ((eval_loaded M).1 h o ho f ht hl).1
+
+/-- The second conjunct: a loaded teardown function runs no application
+callback in turn on an object of the call. -/
+theorem loaded_functions_run_no_application_callback (M : Model)
+    (h : (eval M [] loadedTeardownFormula).holds) {o f g : M.U} (ho : M.freed o)
+    (ht : M.teardown o f) (hl : M.loaded f) (hg : M.inTurn f (callObjects M) g) :
+    M.library g ∨ M.loaded g :=
+  ((eval_loaded M).1 h o ho f ht hl).2 g hg
 
 /-- What the free statement states. -/
 theorem eval_free (M : Model) :
@@ -114,7 +137,7 @@ theorem teardown_premises_cover_the_free_statement (M : Model) (hA : AllStated M
   rcases hA o f ho ht with hs | hlib | hld
   · exact absurd (Or.inl hs) hn
   · exact hb o ho f ht hlib r hr
-  · exact hl o ho f ht hld r hr
+  · exact (hl o ho f ht hld).1 r hr
 
 /-- A stated function needs no premise at all; only an unstated one that is
 neither the library's nor a loaded module's needs the unstated-slots premise.

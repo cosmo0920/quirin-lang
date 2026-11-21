@@ -92,7 +92,8 @@ contract {
         -> #f |-> #inert);
     requires resource_premise(openssl_loaded_module_functions,
         quant all #o in #freed: quant all #f in #teardown(#o): #f in #loaded
-        -> #f |-> #inert);
+        -> #f |-> #inert
+        && quant all #g in #in_turn(#f, #freed | #args | #created): #g in #library | #loaded);
     ensures normal resource_borrowed(ctx);
     ensures normal resource_callback_slot_invoked(ctx, dh_method.dh_meth_finish, _);
     ensures normal resource_callback_slot_invoked(ctx, dsa_method.dsa_meth_finish, _);
@@ -138,7 +139,8 @@ contract {
         -> #f |-> #inert);
     requires resource_premise(openssl_loaded_module_functions,
         quant all #o in #freed: quant all #f in #teardown(#o): #f in #loaded
-        -> #f |-> #inert);
+        -> #f |-> #inert
+        && quant all #g in #in_turn(#f, #freed | #args | #created): #g in #library | #loaded);
     ensures normal resource_borrowed(ctx);
     ensures normal resource_borrowed(CAfile);
     ensures normal resource_borrowed(CApath);
@@ -194,7 +196,8 @@ contract {
         -> #f |-> #inert);
     requires resource_premise(openssl_loaded_module_functions,
         quant all #o in #freed: quant all #f in #teardown(#o): #f in #loaded
-        -> #f |-> #inert);
+        -> #f |-> #inert
+        && quant all #g in #in_turn(#f, #freed | #args | #created): #g in #library | #loaded);
     ensures normal resource_borrowed(ctx);
     ensures normal resource_borrowed(x);
     ensures normal resource_callback_slot_invoked(ctx, ssl_ctx_st.sec_cb, supplied_nullable, ctx, _, _, _, x, supplied_nullable);
@@ -237,7 +240,8 @@ contract {
         -> #f |-> #inert);
     requires resource_premise(openssl_loaded_module_functions,
         quant all #o in #freed: quant all #f in #teardown(#o): #f in #loaded
-        -> #f |-> #inert);
+        -> #f |-> #inert
+        && quant all #g in #in_turn(#f, #freed | #args | #created): #g in #library | #loaded);
     ensures normal resource_borrowed(ctx);
     ensures normal resource_borrowed(pkey);
     ensures normal resource_callback_slot_invoked(ctx, dh_method.dh_meth_finish, _);
@@ -288,7 +292,8 @@ contract {
         -> #f |-> #inert);
     requires resource_premise(openssl_loaded_module_functions,
         quant all #o in #freed: quant all #f in #teardown(#o): #f in #loaded
-        -> #f |-> #inert);
+        -> #f |-> #inert
+        && quant all #g in #in_turn(#f, #freed | #args | #created): #g in #library | #loaded);
     ensures normal resource_borrowed(ctx);
     ensures normal resource_borrowed(file);
     ensures normal resource_borrowed(filetype);
@@ -351,7 +356,8 @@ contract {
         -> #f |-> #inert);
     requires resource_premise(openssl_loaded_module_functions,
         quant all #o in #freed: quant all #f in #teardown(#o): #f in #loaded
-        -> #f |-> #inert);
+        -> #f |-> #inert
+        && quant all #g in #in_turn(#f, #freed | #args | #created): #g in #library | #loaded);
     ensures normal resource_borrowed(ctx);
     ensures normal resource_borrowed(file);
     ensures normal resource_callback_slot_invoked(ctx, ssl_ctx_st.default_passwd_cb, _, _, _, _);

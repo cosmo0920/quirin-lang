@@ -16,6 +16,8 @@ import QCore.OpensslFreeTeardownSlots
 
 #print axioms QCore.OpensslFreeTeardownSlots.eval_builtin
 #print axioms QCore.OpensslFreeTeardownSlots.eval_loaded
+#print axioms QCore.OpensslFreeTeardownSlots.loaded_functions_are_inert
+#print axioms QCore.OpensslFreeTeardownSlots.loaded_functions_run_no_application_callback
 #print axioms QCore.OpensslFreeTeardownSlots.eval_free
 #print axioms QCore.OpensslFreeTeardownSlots.eval_released
 #print axioms QCore.OpensslFreeTeardownSlots.teardown_premises_cover_the_free_statement

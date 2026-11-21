@@ -67,7 +67,8 @@ contract {
         -> #f |-> #inert);
     requires resource_premise(openssl_loaded_module_functions,
         quant all #o in #freed: quant all #f in #teardown(#o): #f in #loaded
-        -> #f |-> #inert);
+        -> #f |-> #inert
+        && quant all #g in #in_turn(#f, #freed | #args | #created): #g in #library | #loaded);
     ensures normal resource_borrowed(bp);
     ensures normal resource_borrowed(p12);
     ensures normal resource_callback_slot_invoked(bp, bio_st.bio_callback_ex, _, _, supplied_nullable, _, _, _, _, supplied_nullable);
@@ -125,7 +126,8 @@ contract {
         -> #f |-> #inert);
     requires resource_premise(openssl_loaded_module_functions,
         quant all #o in #freed: quant all #f in #teardown(#o): #f in #loaded
-        -> #f |-> #inert);
+        -> #f |-> #inert
+        && quant all #g in #in_turn(#f, #freed | #args | #created): #g in #library | #loaded);
     requires resource_premise(openssl_unstated_callback_slots,
         quant all #o in #freed: #teardown(#o) \ #stated |-> #inert);
     ensures normal resource_released(a, nullable);

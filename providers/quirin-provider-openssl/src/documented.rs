@@ -305,9 +305,12 @@ pub const LOADED_TEARDOWN: &str = "openssl_loaded_module_functions";
 /// teardown that a module the library loads defines (`#loaded`: a provider
 /// other than the built-in default, base, legacy and null providers, or an
 /// engine the dynamic engine loads) takes, releases or retains nothing the
-/// caller holds.
-pub const LOADED_TEARDOWN_STATEMENT: &str =
-    "quant all #o in #freed: quant all #f in #teardown(#o): #f in #loaded -> #f |-> #inert";
+/// caller holds, and runs no application callback: every callback it runs in
+/// turn on an object of the call is the library's own or a loaded module's.
+/// USER DECISION 2026-11-21, "Both conjuncts".
+pub const LOADED_TEARDOWN_STATEMENT: &str = "quant all #o in #freed: quant all #f in \
+#teardown(#o): #f in #loaded -> #f |-> #inert && quant all #g in #in_turn(#f, #freed | #args | \
+#created): #g in #library | #loaded";
 
 /// Card **OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS**: every teardown slot
 /// (a [`SLOTS`] or [`SOURCE_SLOTS`] key run when an object is freed in

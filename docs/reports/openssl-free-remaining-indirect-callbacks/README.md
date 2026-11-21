@@ -10,6 +10,10 @@
   1. provider dispatch tables: **"Named premise + built-in source"**;
   2. QUIC: **"Stated slot from source"**;
   3. setters with no 3.5 man page: **"Admit pinned source"**.
+* **User decisions on the first report (2026-11-21):** premise wording
+  **"Both conjuncts"**; R6 and R8 **confirmed**; dispatch-table
+  registration **"Yes, new card later"**; registration into a result **"Yes,
+  new card later"** (§12).
 * **Commits:** [PREDICTION](PREDICTION.md) `3bb152086`, committed before any
   implementation; the implementation with its lock and Lean `983429601`; the
   merge of r46's tip with the fourteen inner frees' teardown slots
@@ -168,18 +172,14 @@ Census (read-only, file:line in the subagent's report, checked where used):
 * So the built-in functions are `#library`, under
   `openssl_builtin_teardown_functions`; what they run in turn is stated (a
   callback run in turn on an object freed in turn is that object's teardown,
-  read on its own: reading **R6**).
+  read on its own: reading **R6**, user-confirmed 2026-11-21).
 * **Any other provider** is `#loaded`, under the one named premise the user
-  decided, `openssl_loaded_module_functions`. **Reading R7:** the premise
-  states that such a function is inert (it takes, releases or retains nothing
-  the caller holds), the effect the free statement asks of every teardown
-  function, rather than the decision's wording "runs no application
-  callback"; an application callback it ran in turn would be a member of a
-  freed object's teardown, stated or under these premises. **Reading R8:** an
+  decided, `openssl_loaded_module_functions`. Its statement has both
+  conjuncts (§12, "Both conjuncts"): the function is inert, and it runs no
+  application callback. **Reading R8 (user-confirmed 2026-11-21):** an
   engine the dynamic engine loads from a shared object registers its
   functions in code outside the run, so the run's slot set cannot see them;
-  `#loaded` includes such engines, the same kind of out-of-run module. Both
-  readings are flagged for the integrator to confirm with the user.
+  `#loaded` includes such engines, the same kind of out-of-run module.
 * Not covered by either: the allocator's free hook
   (`CRYPTO_set_mem_functions`), which every free runs. It is not a teardown
   function and no premise ever named it: registered as
@@ -283,7 +283,7 @@ place; no new rule id (64 stays free).
 `unstatedReleasedFreeFormula` and `teardown_formulas_wf`; its three kind
 lemmas grow with the vocabulary. The new module
 `QCore.OpensslFreeTeardownSlots`, audited by
-`proof/AuditOpensslFreeTeardownSlots.lean` (22 theorems after the merge; axioms within
+`proof/AuditOpensslFreeTeardownSlots.lean` (24 theorems after §11 and §12; axioms within
 `propext`, `Classical.choice` and `Quot.sound`):
 
 * `teardown_premises_cover_the_free_statement`: when every teardown function
@@ -445,3 +445,48 @@ as in §6, and the fourteen inner frees: `PEM_read_bio_PrivateKey`
 removed, 122 unchanged; only `flexible` differs. The regeneration repeated
 §6's order (`private/logs/regen-10` to `regen-14`, `checkers` 1 then views,
 pin, sync 0).
+
+## 12. Round 2: the user's decisions on the first report
+
+USER DECISIONS 2026-11-21, applied on this branch:
+
+1. **Premise wording, "Both conjuncts".** `openssl_loaded_module_functions`
+   now states that a loaded module's teardown function is inert **and** runs
+   no application callback:
+   `quant all #o in #freed: quant all #f in #teardown(#o): #f in #loaded ->
+   #f |-> #inert && quant all #g in #in_turn(#f, #freed | #args | #created):
+   #g in #library | #loaded`.
+   "No application callback" is read as: every callback the function runs
+   in turn, on an object of the call (one it frees, an argument, one it
+   creates), is the library's own or a loaded module's. The vocabulary has
+   no term for every object, so the call's objects are the domain; a wider
+   one would need a new term.
+   **The built-in premise keeps the inert conjunct alone.** The census (§3)
+   shows the built-in providers' functions run in turn, beyond the stated
+   slots, the application's ex_data free callbacks (`RSA_free` and siblings
+   call `CRYPTO_free_ex_data`) and the allocator hook
+   (`CRYPTO_set_mem_functions`, OPENSSL-ALLOCATOR-FREE-HOOK), so "runs no
+   application callback beyond the stated slots" would be false of them.
+   **The drop set is unchanged:** `EVP_PKEY_free`, `X509_free` and
+   `ENGINE_free`. The premise is stronger, so every free that dropped the
+   unstated premise still has every item stated or premised, and the
+   others keep it for the same items.
+   **Lean:** `loadedTeardownFormula` gains the conjunct; `eval_loaded`
+   states both parts; the new `loaded_functions_are_inert` and
+   `loaded_functions_run_no_application_callback` extract each;
+   `teardown_premises_cover_the_free_statement` uses the first. The audit
+   has 24 theorems.
+   **Lock:** the 22 declarations naming the premise change digest again
+   (§12's regeneration, `private/logs/regen-16` to `regen-20`).
+2. **R6 and R8 confirmed** (§3).
+3. **Dispatch-table registration, "Yes, new card later":** registered as
+   OPENSSL-DISPATCH-TABLE-SLOT-REGISTRATION. `SSL_free` keeps the premise
+   for `crypto_release_rcd` until then.
+4. **Registration into a result, "Yes, new card later":** registered as
+   OPENSSL-SLOT-REGISTRATION-INTO-RESULT. The four CRL-freeing frees (and
+   the three inner frees that free CRLs) keep the premise for `crl_free`
+   until then.
+
+OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS is amended to the
+released-parameter gap (`PKCS12_free`, `EVP_MD_CTX_free`) and points at the
+two new entries.

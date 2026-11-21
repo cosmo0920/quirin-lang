@@ -627,7 +627,7 @@ def builtinTeardownFormula : Raw := (.quant "o" (.app0 "freed") (.quant "f" (.ap
 
 def unstatedReleasedFreeFormula : Raw := (.quant "o" (.app0 "freed") (.bin .mapsTo (.bin .diff (.app1 "teardown" (.app0 "o")) (.app0 "stated")) (.app0 "inert")))
 
-def loadedTeardownFormula : Raw := (.quant "o" (.app0 "freed") (.quant "f" (.app1 "teardown" (.app0 "o")) (.bin .imp (.bin .mem (.app0 "f") (.app0 "loaded")) (.bin .mapsTo (.app0 "f") (.app0 "inert")))))
+def loadedTeardownFormula : Raw := (.quant "o" (.app0 "freed") (.quant "f" (.app1 "teardown" (.app0 "o")) (.bin .imp (.bin .mem (.app0 "f") (.app0 "loaded")) (.bin .conj (.bin .mapsTo (.app0 "f") (.app0 "inert")) (.quant "g" (.app2 "in_turn" (.app0 "f") (.bin .union (.bin .union (.app0 "freed") (.app0 "args")) (.app0 "created"))) (.bin .mem (.app0 "g") (.bin .union (.app0 "library") (.app0 "loaded"))))))))
 
 theorem teardown_formulas_wf :
     wf builtinTeardownFormula = true ∧ wf loadedTeardownFormula = true ∧

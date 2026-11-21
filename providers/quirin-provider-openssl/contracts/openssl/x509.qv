@@ -48,7 +48,8 @@ contract {
         -> #f |-> #inert);
     requires resource_premise(openssl_loaded_module_functions,
         quant all #o in #freed: quant all #f in #teardown(#o): #f in #loaded
-        -> #f |-> #inert);
+        -> #f |-> #inert
+        && quant all #g in #in_turn(#f, #freed | #args | #created): #g in #library | #loaded);
     ensures normal resource_borrowed(a);
     ensures normal resource_reference_dropped(a, nullable);
     ensures normal resource_callback_slot_invoked(a, dh_method.dh_meth_finish, _);

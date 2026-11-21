@@ -162,7 +162,8 @@ contract {
         -> #f |-> #inert);
     requires resource_premise(openssl_loaded_module_functions,
         quant all #o in #freed: quant all #f in #teardown(#o): #f in #loaded
-        -> #f |-> #inert);
+        -> #f |-> #inert
+        && quant all #g in #in_turn(#f, #freed | #args | #created): #g in #library | #loaded);
     ensures normal resource_borrowed(ctx);
     ensures normal resource_reference_dropped(ctx, nullable);
     ensures normal resource_callback_slot_invoked(ctx, ssl_ctx_st.remove_session_cb, _, _);
@@ -250,7 +251,8 @@ contract {
         -> #f |-> #inert);
     requires resource_premise(openssl_loaded_module_functions,
         quant all #o in #freed: quant all #f in #teardown(#o): #f in #loaded
-        -> #f |-> #inert);
+        -> #f |-> #inert
+        && quant all #g in #in_turn(#f, #freed | #args | #created): #g in #library | #loaded);
     ensures normal resource_borrowed(ssl);
     ensures normal resource_reference_dropped(ssl, nullable);
     ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.remove_session_cb, _, _);
@@ -333,7 +335,8 @@ contract {
         -> #f |-> #inert);
     requires resource_premise(openssl_loaded_module_functions,
         quant all #o in #freed: quant all #f in #teardown(#o): #f in #loaded
-        -> #f |-> #inert);
+        -> #f |-> #inert
+        && quant all #g in #in_turn(#f, #freed | #args | #created): #g in #library | #loaded);
     ensures normal resource_borrowed(ssl);
     ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.info_callback, ssl, _, _);
     ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.msg_callback, _, _, _, _, _, ssl, _);
