@@ -25,7 +25,8 @@
 //! * 71b: `T *` for a function typedef `T` is a function pointer, which rule
 //!   70 does not retain (CG10-RETAINED-BY-FUNCTION-POINTER-SPELLINGS).
 //! * Refusals kept: a formal declared `R (*f)(A)` leaves its function
-//!   unsummarised; an object pointer stored into a function-pointer member
+//!   unsummarised (since CG10-SMALL-BUNDLE's rule 74b only when the body
+//!   calls through it); an object pointer stored into a function-pointer member
 //!   (`cio_set_log_callback`) keeps the gate.
 //!
 //! The fixture contracts are trusted test assumptions, not library facts.
@@ -274,10 +275,18 @@ fn a_function_pointer_declarator_formal_leaves_its_function_unsummarised() {
     if !clang_available() {
         return;
     }
-    // Recorded refusal: the W4 lexical parameter reader reads no `R (*f)(A)`.
-    let descriptions = assert_not_safe(&format!(
+    // Pin flipped deliberately by card CG10-SMALL-BUNDLE (rule 74b): the W4
+    // lexical parameter reader reads `R (*f)(A)` the body never calls, so the
+    // summary is published and the caller's static actuals discharge it.
+    assert_safe(&format!(
         "{HOLDER} void set(struct h *h, void *o, void (*free_cb)(void *)) \
          {{ h->o = o; h->free_cb = free_cb; }} void subject(struct h *h) {{ set(h, 0, 0); }}"
+    ));
+    // Control: a body that calls through the formal keeps the refusal.
+    let descriptions = assert_not_safe(&format!(
+        "{HOLDER} void set(struct h *h, void *o, void (*free_cb)(void *)) \
+         {{ h->o = o; h->free_cb = free_cb; free_cb(o); }} \
+         void subject(struct h *h) {{ set(h, 0, 0); }}"
     ));
     assert!(
         descriptions
