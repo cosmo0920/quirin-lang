@@ -1,0 +1,13 @@
+{
+  "note": "Landing integrate/r48 (base main 0057bac00; merges CG10-INDIRECT-ACCESS-SOLE-RESIDUALS round 4 2f2d24f78, card base 9b107caf1, measured tip 1bcd0ebe4, in c3c61672d; one conflict in crates/qcore-c-gateway/src/typed_access_path.rs resolved by keeping both accessors, r47's aggregates() and this card's scalar_typedefs(); generated docs and Lean roots regenerated; third_party/libevent checked out at d82464a27). USER DECISION 2026-11-21: launch the round-4 callee-contract card; 'go ahead' with r48 onward. Amendments applied in 8e7e8d509 with --profiles-base origin/main: CG10-INDIRECT-ACCESS-SOLE-RESIDUALS amended; CG10-R4-NEUTRAL-DECLARATIONS-UNVALIDATED, CG10-OWNED-OUT-PARAMETER-MEMBER-SLOT and RK-TOPIC-PARTITION-LIST-CONSTRUCTORS registered; no profiles. Lock review: the librdkafka provider's pinned list gains XXH32_finalize, XXH64_finalize and rd_jitter only; no flexible entry changes. Full landing gate on 8e7e8d509 (private/integrate-r48/gate, raw record beside this file as gate-scope.json) via scripts/gate_scope.py --base origin/main --full --landing through private/toolchain/env.sh: Rust 671 units / 716 summaries, 9835 passed, 0 failed, 21 ignored; fmt, Clippy and both reevaluation examples exit 0; Lean 474 audits; provider package build, verify-all, verify, fmt and Clippy exit 0, provider tests 49 summaries, 168 passed, 1 ignored. Python (779 tests) exited 1 on the two stale-matrix checks of test_build_matrix_sections only (regenerated from this record); the rerun after regeneration is in private/integrate-r48/python-rerun.log. Gateway rule 66 reads a typedef'd scalar element (agreeing scalar typedefs) for indirect access. The card's opt-in measurement (current --monkey-linked, Fluent Bit 046accf6): 1150/2/3645/7 -> 1157/2/3638/7; the 7 Unknown -> Safe rows rest on neutral callee declarations that are not yet validated against source, tracked as CG10-R4-NEUTRAL-DECLARATIONS-UNVALIDATED. No Safe -> non-Safe move, no new Unsafe. Measured on base 9b107caf1 without r45-r47. Pinned-route parity (quirin-audit measure --declared) was not run: this host holds no build/cycle19 inputs. No profile baseline is changed and land.py publish is owed.",
+  "workspace_tests": 9835,
+  "provider_tests": 168,
+  "python_evidence_validator_tests": 779,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "full landing gate: every step exits 0 except the Python suite's stale-matrix checks, cleared by regenerating the matrix from this record (rerun disclosed in the note); provider steps all exit 0",
+  "lean_audits": 474,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
