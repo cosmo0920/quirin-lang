@@ -5586,7 +5586,9 @@ own anchor here.
     description changes. The reading's counters are restored and its
     instruction discarded. **Do not** let the reading lower anything, re-attribute
     a held call (its refusal is `Pending`, a verdict move), an actual neither
-    reader recognises (`(*__errno_location())`, a nested call, a cast), an
+    reader recognises (`(*__errno_location())`, a nested call, a cast; a view
+    [rule 71a](#constraint-71a) removes is read through its uncast call since
+    [rule 74](#constraint-74)), an
     access outside the actuals (a member destination) or a descriptor read, or
     ask the rule before any older route (hard invariant 3). The node stays
     `Unknown` with the same writes, so no verdict moves; the diagnostics are a
@@ -12407,9 +12409,10 @@ an undeclared OpenSSL producer). `QCore.NullableReferenceDrop` (12 audited,
     deeper or element place; **do not** forward a caller's record into its
     own summary (the follow-up FB-EVENT-LOOP-CROSS-FUNCTION-LIFETIME's T2).
     `T *` for a function typedef `T` is a function pointer since
-    [rule 71b](#constraint-71b); a formal declared `R (*f)(A)` still makes
-    the W4 parameter reader publish no summary at all (the call stays
-    uncontracted; rule 71b's recorded refusal). Premises stated, not proved: P-CG11-CALLER-SLOT carried up
+    [rule 71b](#constraint-71b); a formal declared `R (*f)(A)` is read by the W4
+    parameter reader since [rule 74b](#constraint-74b) unless the body calls
+    through it; a holder in the body's own result stays refused
+    ([rule 74a](#constraint-74a)). Premises stated, not proved: P-CG11-CALLER-SLOT carried up
     one frame at each overwritten path; faithful Clang extraction (trust
     boundary 28). `QCore.MemberStoreRetention` (decision vectors bound to
     `DECISION_VECTORS`; soundness over a concrete memory; caller discharge
@@ -12507,8 +12510,9 @@ an undeclared OpenSSL producer). `QCore.NullableReferenceDrop` (12 audited,
     typedef, read a pointer, array-of-function-pointers or record typedef, a
     name with a disagreeing declaration, a qualified or deeper spelling, or
     a local (the flow needs the name). **Refusals recorded, not read:** a
-    formal declared `R (*f)(A)` makes the W4 lexical parameter reader
-    (`function_parameters`) publish no summary; the reader is shared by the
+    formal declared `R (*f)(A)` made the W4 lexical parameter reader
+    (`function_parameters`) publish no summary ([rule 74b](#constraint-74b)
+    reads it since CG10-SMALL-BUNDLE, unless the body calls through it); the reader is shared by the
     W4 derivation and validation, selection frames, recursion, neutral
     callees, self-link frames, member release and every body's formal set,
     so reading that declarator is its own census (follow-up
@@ -12524,5 +12528,118 @@ an undeclared OpenSSL producer). `QCore.NullableReferenceDrop` (12 audited,
     `an_alias_is_not_followed`, `read_only_for_a_function_typedef`,
     `a_function_pointer_adds_no_obligation`), bound to `DECISION_VECTORS`;
     [report](../reports/cg10-reader-gaps/README.md).
+
+<a id="constraint-74"></a>
+
+74. **Rule 12k asked of rule 71a's uncast call.** Card CG10-SMALL-BUNDLE
+    (`legacy_uncontracted_access.rs::uncast_uncontracted_reading`, one call
+    in `uncontracted_return_attribution`), discharging
+    CG10-UNCAST-RETURN-UNCONTRACTED-ATTRIBUTION. It amends
+    [rule 12k](#constraint-12k)'s "an actual neither reader recognises (a
+    cast)" for exactly the views [rule 71a](#constraint-71a) removes. Rule 12k
+    reads a whole-call return through its synthetic `PLACE = f(args)`; a cast
+    actual is recognised by neither reader, so `return f((T *)p->m, …)` with
+    `f` uncontracted kept `indirect memory access is outside the resource
+    projection`. Where that spelled reading declines (and only then), and the
+    return hides a place behind views (`returned_call_hides_a_place`) every
+    one of which rule 71a removes (`uncast_returned_views`), rule 12k's
+    reading is asked of the uncast synthetic call with rule 71a's
+    `Transparent` guard, so W44's typed actual reader matches an uncast
+    actual to the view's operand node. The callee is the same call's and the
+    removal hands it the same identities (`view_preserves_identity`), so the
+    callee that decides the uncast call decides the cast one. Every premise
+    of rule 12k holds unchanged (exactly the gate's refusal, no contract in
+    force, no review or pin hold, no descriptor read, the reading's state
+    restored), and the node keeps its writes and its verdict. **Do not** ask
+    it where rule 12k's spelled reading attributed, for a view rule 71a keeps
+    (a union, a record typedef), a return inside an expression, or before
+    any older route of the position (hard invariant 3). Parity: rule 12k's
+    `uncontracted-access` row with form `uncast-return`. Premises stated, not
+    proved: the token/AST match (trust boundary 28).
+    `QCore.UncastReturnAttribution` (`the_verdict_of_every_node_is_unchanged`,
+    `the_status_of_a_function_is_unchanged`,
+    `the_result_is_the_gate_refusal_or_the_callees`,
+    `a_kept_view_keeps_the_spelled_answer`, `only_a_whole_call_is_read`,
+    `a_contracted_callee_keeps_the_gate_refusal`,
+    `a_held_callee_keeps_the_gate_refusal`, `an_attributed_spelling_is_kept`,
+    `the_uncast_call_hands_the_same_identities`);
+    [report](../reports/cg10-small-bundle/README.md).
+
+<a id="constraint-74a"></a>
+
+74a. **A result-holder retention is not derived (recorded refusal).** Card
+    CG10-SMALL-BUNDLE, discharging CG10-RESULT-HOLDER-RETAINED-BY by a
+    refusal; no code changes. `pmi->member = member; return pmi;`
+    (`PartitionMemberInfo_new`, `rd_kafka_op_new_cb`) is §C04.14.2's shape,
+    but deriving it needs two things. In the body: a per-identity retention
+    record on the tracked result, joined over paths, stated at a returning
+    exit and ended by a release of the result, where [rule 10v](#constraint-10v)
+    admits a store into a tracked owner only through O04-B08's field link,
+    which reads the stored pointer as owned. At every caller: rule 13e ends
+    the record **when the holder is released**. For a declared contract that
+    the destructor does not release `q` is a reviewed, pinned assumption
+    (constraint 4); a derived summary carries no review, and the result's
+    destructor is any body, whose release of the member keeping `q` the
+    member release model reads as an owned field's. Ending the record there
+    lets the caller release `q` again unseen (a double release), so no
+    reading is sound without a premise on each destructor's member effect,
+    and none is stated. **Do not** derive `resource_retained_by(q, result)`
+    from a body, link a retained pointer into its holder's fields, or end a
+    derived result-holder record at a release whose member effect is
+    unknown. A future reading needs the destructor premise (follow-up
+    CG10-RESULT-HOLDER-DESTRUCTOR-MEMBER-EFFECT). `tests/small_bundle.rs`
+    pins the body's refusal and the uncontracted callee at its callers.
+    `QCore.ResultHolderRefusal` (`the_end_of_record_reading_accepts_the_caller`,
+    `a_member_releasing_destructor_faults`,
+    `the_destructor_read_as_it_is_refuses_the_caller`,
+    `a_destructor_without_member_effect_does_not_fault`,
+    `the_end_of_record_needs_a_destructor_premise`, over
+    `QCore.MemberStoreRetention`'s concrete memory);
+    [report](../reports/cg10-small-bundle/README.md).
+
+<a id="constraint-74b"></a>
+
+74b. **A formal declared `R (*f)(A)` is a function-pointer formal.** Card
+    CG10-SMALL-BUNDLE (`function_pointer_formal.rs`, a child of `legacy_c`;
+    one fallback in `legacy_tokens.rs::function_parameters`), discharging
+    CG10-W4-FUNCTION-POINTER-DECLARATOR-FORMALS. It amends
+    [rule 71b](#constraint-71b)'s recorded refusal. `function_parameters`
+    refused every declarator list holding `(`, so a function with a
+    function-pointer formal published no summary and its body readings saw
+    no formal set. Where the old reader refuses such a list, it is split at
+    its top-level commas and read when every group holding `(` is exactly one
+    or more specifier or `*` tokens, then `( * NAME )`, then one balanced
+    parameter list with no brace; `NAME` (not a keyword) is the formal at
+    that group's position, a function pointer (C11 6.7.6.3; it designates no
+    object, 6.3.2.3p8, so it carries no lifetime: rule 10v's class), and
+    every other group is the old reader's, alone. A list with no such group
+    reads exactly as before, and the recursion route's own type reader
+    (`parse_parameter_declarators`) is unchanged. **Do not** read a list
+    whose body spells a call through a read formal (`NAME (` or
+    `( * NAME ) (`): an invocation of a caller-chosen function can release
+    what it is handed (§C04.19), and every consumer resolves a call by its
+    callee's spelling, so a formal named like a contracted function would be
+    read as that function. **Do not** read `int (cmp)(…)`, `void (*f)` (an
+    object pointer), `void (* const f)(…)`, a nested declarator, a macro
+    group (`STACK_OF(X509) *`), a variadic list, `void` beside a formal or a
+    repeated name. Consumer census (the W4 derivation and validation,
+    selection and lookup frames, recursion, neutral callees, self-link
+    frames, member effect and member release, counted users, detach, the
+    derived-result and relational routes, cross-unit replay and every
+    body's formal set): each reads a formal by its position and none gives
+    a function pointer custody, so the formal is `Borrowed` (a function
+    designator, null or function-pointer actual carries no identity at the
+    call) and rule 70 adds an overwritten path and no retention for its
+    store (report section 3). One `reader_gaps` pin flipped deliberately
+    (the summary is published, the caller's static actuals discharge it),
+    with a called-formal control. Parity: `function-pointer-formal` rows.
+    Premises stated, not proved: the token match (trust boundary 28).
+    `QCore.FunctionPointerFormal` (`decision_vectors_hold`, bound to
+    `DECISION_VECTORS` by `rule_74b_lean_vectors_match_the_rust_table`;
+    `positions_are_kept`, `each_position_is_its_group`,
+    `a_called_formal_refuses`, `another_declarator_refuses`,
+    `a_read_formal_is_never_called`, `a_plain_list_reads_as_before`,
+    `a_function_pointer_adds_no_obligation`);
+    [report](../reports/cg10-small-bundle/README.md).
 
 <!-- generated:rules:end -->

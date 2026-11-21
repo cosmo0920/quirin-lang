@@ -1,8 +1,8 @@
-OK   checkpoint reproduces the page: OK: 11 parts reproduce 2aefebbc1:docs/STATUS.md, 290,886 bytes
-OK   names: 636 before, 21 kept, 615 moved to the checkpoint only
+OK   checkpoint reproduces the page: OK: 11 parts reproduce f77e97ae6:docs/STATUS.md, 290,911 bytes
+OK   names: 637 before, 22 kept, 615 moved to the checkpoint only
      names new on the page: 5
 OK   report pointers: 223 before, 30 kept, 193 moved to the checkpoint only
-     report pointers new on the page: 9
+     report pointers new on the page: 10
 OK   revisions: 127 before, 8 kept, 119 moved to the checkpoint only
      revisions new on the page: 6
 OK   bold figures: 386 before, 14 kept, 372 moved to the checkpoint only
@@ -74,8 +74,8 @@ OK   figure '`777fba16e`'
 OK   figure '4,704: **1,083 / 0 / 3,615 / 6**'
 OK   figure '4,796: 2,476 / 2,303 / 17'
 OK   figure '`974434463`'
-OK   figure '**9,835 passed'
-OK   figure '**474 Lean audits**'
+OK   figure '**9,849 passed'
+OK   figure '**477 Lean audits**'
 OK   figure '**168 passed'
 OK   figure '**779 tests**'
 OK   figure '**1,044**'
@@ -85,10 +85,10 @@ OK   figure '**10/50, Linux/macOS only**'
 OK   figure '**48** distinct'
 OK   figure '**9** reviewed'
 OK   figure '**`leanprover/lean4:v4.35.0`**'
-OK   figure '**474** audits'
+OK   figure '**477** audits'
 OK   figure '**150** modules (992 declarations, 8,749 clauses)'
 INFO headings before ['# Current status and evidence boundaries', '## Coverage', '## Milestones and trust', '## Latest validated gate', '## Where to go next']
 INFO headings after  ['# Current status and evidence boundaries', '## Evidence boundaries', '## Headline measurements', '### Published live-profile baselines', '### Unpublished landings', '### Measured since the baselines', '### Conformance, proof and corpus', '## Coverage by area', '## Milestones and open trust boundaries', '## Latest validated gate', '## Where to go next']
-INFO inbound fragment links into STATUS.md at 2aefebbc1: 0
-OK   local links on the new page resolve (69 links): []
-INFO bytes before 290,886, after 23,218; lines 570 -> 263
+INFO inbound fragment links into STATUS.md at f77e97ae6: 0
+OK   local links on the new page resolve (70 links): []
+INFO bytes before 290,911, after 23,308; lines 570 -> 265

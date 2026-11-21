@@ -1,21 +1,21 @@
 # `STATUS-COMPACT` — `docs/STATUS.md` rewritten as a current-state page
 
-**Base:** `origin/main` `2aefebbc1` (integrate/r48 landing record); `origin/main`
-had not moved when this card finished, so `2aefebbc1` is also the main revision
-folded in (§6). **Scope:** `docs/STATUS.md`, its verbatim checkpoint, the
+**Base:** `origin/main` `2aefebbc1` (integrate/r48 landing record), merged with
+`origin/main` `f77e97ae6` (integrate/r49, CG10-SMALL-BUNDLE) before finishing;
+the checkpoint and every figure are of that merged main (§6). **Scope:** `docs/STATUS.md`, its verbatim checkpoint, the
 increment index row that lists it, one note in the
 [maintenance cadence](../../agents/operations.md#maintenance-cadence), this report
 and its amendments. Documentation only: no crate, proof, contract, matrix or
 frozen report changed. The user asked to tidy the statuses STATUS describes;
 operations requires the page to be "current, not a history".
 
-**Headline.** `docs/STATUS.md` **290,886 → 23,218 bytes** (570 → 263 lines),
+**Headline.** `docs/STATUS.md` **290,911 → 23,308 bytes** (570 → 265 lines),
 under the 32 KiB target. The whole page it replaced is preserved verbatim in
 eleven checkpoint pages,
 [`wave-48-compaction-status-part1.md`](../../development/increments/wave-48-compaction-status-part1.md)
 to `part11.md`, listed in the [increment index](../../development/increments/README.md)'s
-wave-48 row. [`checkpoint.py check 2aefebbc1`](scripts/checkpoint.py) asserts
-that their fenced bodies, concatenated, equal `git show 2aefebbc1:docs/STATUS.md`
+wave-48 row. [`checkpoint.py check f77e97ae6`](scripts/checkpoint.py) asserts
+that their fenced bodies, concatenated, equal `git show f77e97ae6:docs/STATUS.md`
 byte for byte ([output](artifacts/checkpoint-check.txt)). Nothing was deleted
 without a verbatim copy, and every figure on the new page was re-derived from a
 primary source (§3), not copied from an old paragraph.
@@ -44,26 +44,26 @@ area**, **Milestones and open trust boundaries**, **Latest validated gate**,
 
 ## 2. Inventory before and after
 
-[`inventory.py 2aefebbc1`](scripts/inventory.py) ([output](artifacts/inventory.txt))
+[`inventory.py f77e97ae6 <r49 gate>`](scripts/inventory.py) ([output](artifacts/inventory.txt))
 exits 0:
 
 | Check | Before | After |
 |---|---|---|
-| Checkpoint reproduces the old page | — | yes, 11 parts, 290,886 bytes |
-| `UPPER-KEBAB` names | 636 | 21 kept on the page; the other 615 are in the checkpoint; **0 lost** |
-| Report pointers (`reports/<dir>`) | 223 | 30 kept; 193 checkpoint only; **0 lost**; 9 new on the page |
+| Checkpoint reproduces the old page | — | yes, 11 parts, 290,911 bytes |
+| `UPPER-KEBAB` names | 637 | 22 kept on the page; the other 615 are in the checkpoint; **0 lost** |
+| Report pointers (`reports/<dir>`) | 223 | 30 kept; 193 checkpoint only; **0 lost**; 10 new on the page |
 | Backticked revisions | 127 | 8 kept; 119 checkpoint only; **0 lost** |
 | Bold figures | 386 | 14 kept; 372 checkpoint only (dated chains); **0 lost** |
 | Invariant statements (the list in `inventory.py`, 55 entries: the verdict order and Pending definition, provisional Unsafe, unknowns in the denominator, projection ≠ safety, raw units unpromoted, lifecycle ≠ function safety, separate properties, link-map assumption, plugin Pending-only, independence of evidence classes, trust boundary 28, the CT mapping paragraph, frozen archives, native-observation qualifiers, the Cycle 18 follow-ups, Cycle 20's refusal, the halted adoption, the failed OOM run, the contributions link, the unpublished-landings shape) | — | all 55 present verbatim |
 | Re-derived headline figures (§3) | — | all on the page |
 | Headings | 5 | 11; `## Coverage` and `## Milestones and trust` renamed |
 | Inbound `STATUS.md#…` links, whole tree | 0 | 0, so no anchor dependency |
-| Local links on the page | — | 69, all resolve |
+| Local links on the page | — | 70, all resolve |
 
 **Corrections, each measured.** The old page had drifted from its own sources:
 
 1. *Latest validated gate* named the event-collector gate (8,927 Rust, 396 Lean,
-   568 Python); the newest landing gate is r48's (§3). `STATUS-LATEST-GATE-STALE`
+   568 Python); the newest landing gate is r49's (§3). `STATUS-LATEST-GATE-STALE`
    is amended (§5).
 2. *Projected functions* read 952 / 9 / 3,873 (W48-POINTER-RETURN-THROUGH-CALL-ACTUAL-ROOT);
    the published `eight-home` baseline is 1,079 / 10 / 3,745 and the newest
@@ -73,7 +73,7 @@ exits 0:
    58 / 1 / 341 / 4 Pending over 448 and 404 rows.
 4. *Cycle 19 units* read 6 Safe / 8 / 167 / 4; the baseline is 9 Safe / 8 / 164 / 4,
    and the "unit Safe count is 6" sentence is replaced by the boundary alone.
-5. *Lean toolchain* read 334 audits; the tree and the r48 gate have 474.
+5. *Lean toolchain* read 334 audits; the tree and the r49 gate have 477.
 6. *Contract corpus* read 137 modules (table) and 140 (gate paragraph, with 86
    provider-owned / 54 shared); the eleven inventory locks hold **150** (91 in
    the five `qcore-provider-*` crates, 59 in the six `quirin-provider-*`
@@ -93,10 +93,10 @@ From primary sources only: [`rederive.py`](scripts/rederive.py)
 | `fluent-bit-tail-pause` baseline | 404 rows 58 / 4 / 341 / 1; null 190 / 216 | its `baseline.json` (`777fba16e`) |
 | `twelve-home` baseline | 4,704 rows 1,083 / 0 / 3,615 / 6 (the card's own preparation) | its `baseline.json` (`974434463`) |
 | Newest integrator route measurement | `2c07390b6`: corpus and twelve-home 1,119 / 0 / 3,703 / 12, system 112 / 0 / 332 / 4, slice 63 / 4 / 336 / 1 | `docs/reports/sp1-symbolic-openssl-premises/integration/native-comparison.json.gz` |
-| Pinned routes after it | not measured (r41–r48 gate records: "Pinned-route parity … was not run") | each landing's `integration/gate.json` |
-| Latest gate | r48 on `8e7e8d509`: Rust 9,835 / 0 / 21 (671 units, 716 summaries); Lean 474; Python 779 (two stale-matrix checks, rerun after regeneration); provider 168 / 1 ignored (49 summaries); Clang 21.1.8 | `docs/reports/cg10-indirect-access-sole-residuals-r4/integration/gate.json` |
+| Pinned routes after it | not measured (r41–r49 gate records: "Pinned-route parity … was not run") | each landing's `integration/gate.json` |
+| Latest gate | r49 on `2e0ae38d1`: Rust 9,849 / 0 / 21 (672 units, 717 summaries); Lean 477; Python 779 (one stale-matrix check, rerun after regeneration); provider 168 / 1 ignored (49 summaries) carried from r48, no provider diff; Clang 21.1.8 | `docs/reports/cg10-small-bundle/integration/gate.json` |
 | CT | 50/50 mapped; 48 distinct fixtures, 9 shared groups; proof 5 (CT01, CT03, CT07, CT37, CT50); sanitized-native 10 | `docs/reevaluation/ct_manifest.json` |
-| Lean | `leanprover/lean4:v4.35.0`, 474 `proof/Audit*.lean` | `proof/lean-toolchain` |
+| Lean | `leanprover/lean4:v4.35.0`, 477 `proof/Audit*.lean` | `proof/lean-toolchain` |
 | Contract corpus | 150 locked modules, 992 declarations, 8,749 clauses; 175 tracked `.qv` | `providers/*/contract-inventory.lock`, `git ls-files` |
 | Follow-ups | 1,044 | `acceptance_matrix.json` `named_followups` |
 | Full conformance | false | `acceptance.json`, matrix header |
@@ -115,12 +115,12 @@ The integrator's landing step extends this sentence with `sed`. It is kept as
 after, under `### Unpublished landings`. It begins `Unpublished landings (user
 decision 2026-11-16):` as before, and the extendable tail is unchanged:
 
-> … and r48 (CG10-INDIRECT-ACCESS-SOLE-RESIDUALS round 4) completed steps 1–7 of `scripts/land.py` …
+> …, r48 (CG10-INDIRECT-ACCESS-SOLE-RESIDUALS round 4) and r49 (CG10-SMALL-BUNDLE) completed steps 1–7 of `scripts/land.py` …
 
 A later landing makes the same edit as before: replace
-`and r48 (CG10-INDIRECT-ACCESS-SOLE-RESIDUALS round 4) completed steps 1–7` with
-`r48 (CG10-INDIRECT-ACCESS-SOLE-RESIDUALS round 4) and r49 (CARD) completed steps 1–7`
-(adding the comma). The 37 earlier landings, r10 to r47, are no longer spelled
+`and r49 (CG10-SMALL-BUNDLE) completed steps 1–7` with
+`, r49 (CG10-SMALL-BUNDLE) and r50 (CARD) completed steps 1–7` (r49 was folded
+in this way at the merge). The 37 earlier landings, r10 to r47, are no longer spelled
 out. The sentence names them as "the 37 landings from integrate/r10
 (`458bd804d`) to r47 (CG10-READER-GAPS)", listed with their cards in checkpoint
 part 1 (the old line 51 verbatim). A publication (`land.py publish`) replaces
@@ -136,16 +136,22 @@ again. The increment paragraph is the one record of this card.
 | `STATUS-REGROWTH-BY-PREPEND` | register | `apply_amendments.py` prepends a status paragraph per landing and the landing step lengthens the unpublished list; the page went 23,931 → 290,886 bytes in eight weeks. Proposal for the user: drop `status_paragraph` from schema `quirin-amendments/1` (or make it a `status_edits` list naming the section a fact replaces), have `land.py check` fail when `docs/STATUS.md` exceeds 32 KiB, and generate the unpublished-landings sentence from the landing gate records | a user decision, then the tooling change |
 | `STATUS-COMPACT-RECONCILIATION-CLAIMS` | register | 9 frozen reconciliation `contains` claims on STATUS flip to failing ([before](artifacts/reconciliation-claims-before.txt), [after](artifacts/reconciliation-claims-after.txt); 16 → 25 failing of 27). Six held real text now only in the checkpoint (three `contract-cycle4-integration` sentences, `symbolic-decomposition-cycle3`'s batch-5 sentence, `w46-contract-access-expansion`'s card name twice). Three are the `281` claims, vacuous matches already registered as `W45-RECONCILIATION-SUBSTRING-CLAIMS`. No gate or CI step runs these claims. | the sweep resolves a STATUS claim against the indexed status checkpoint, or the claims are marked historical in a way the check honours |
 | `LIVE-ROUTE-MOVES-BETWEEN-MEASURED-LANDINGS` | register | the corpus moves of §3 with no committed comparison | a comparison of `8e190aa83` against `36b2cf931` attributing the four rows and the one back |
-| `STATUS-LATEST-GATE-STALE` | amend | the section now names the r48 landing gate | still open: no check ties STATUS's figures to a gate file |
+| `STATUS-LATEST-GATE-STALE` | amend | the section now names the r49 landing gate | still open: no check ties STATUS's figures to a gate file |
 
 ## 6. Main revision folded in
 
-`git fetch origin` before finishing found `origin/main` still at `2aefebbc1`, so
-there was nothing to merge and the checkpoint is of `2aefebbc1:docs/STATUS.md`. If r49–r51 land
-first, their STATUS edits conflict with this rewrite in `docs/STATUS.md`. The
-resolution: rerun `checkpoint.py write <new main>` (it regenerates every part
-from that revision), fold each new status paragraph's current facts into the
-sections, and extend the unpublished sentence as §4 says.
+The last fetch before finishing found `origin/main` at `f77e97ae6`: integrate/r49
+(CG10-SMALL-BUNDLE), whose only STATUS edit added `r49 (CG10-SMALL-BUNDLE)` to the
+unpublished sentence. The merge conflicted in `docs/STATUS.md` alone. It was
+resolved by keeping the rewritten page and folding r49 in: r49 appended to the
+sentence (§4), the latest gate moved to r49's record, Lean 474 → 477, and
+"r41–r48" → "r41–r49" for the unmeasured pinned routes. `checkpoint.py write
+f77e97ae6` then regenerated the checkpoint from the merged main's page (still
+eleven parts), and `rederive.py`, `inventory.py` and `claims.py` were rerun there.
+The follow-up count stays 1,044 (r49 retired three and registered three). If
+r50 or r51 lands before this card, repeat the same steps: rerun `checkpoint.py
+write <new main>`, fold each new status paragraph's current facts into the
+sections, and extend the sentence as §4 says.
 
 ## 7. Gate
 
@@ -162,9 +168,10 @@ scope found no affected crate, so no Rust suite, Lean or provider step ran:
 | `python3 -m unittest discover -s scripts/tests` | 0 | **779 tests**, 0 skipped |
 | `python3 scripts/land.py check` | 0 | matrix dimensions, report index and contributions page fresh |
 | `apply_amendments.py … --check` | 0 | 3 registrations, 1 amendment |
-| `inventory.py 2aefebbc1`, `checkpoint.py check 2aefebbc1` | 0, 0 | §2 |
+| `inventory.py f77e97ae6 …`, `checkpoint.py check f77e97ae6` (after the merge) | 0, 0 | §2 |
 
-After the gate, only this report's own files changed: the page-size figure,
-the gate record and the artifacts. `land.py check` and the amendments check
+After the gate, two things changed: this report's own files, and the merge of
+`f77e97ae6` (§6), whose STATUS resolution is documentation only. r49's code is
+covered by its own landing gate. `land.py check` and the amendments check
 were rerun on the final tree and exit 0. This is a documentation card with no
 semantic change, so it needs no Rust or Lean parity work.

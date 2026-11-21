@@ -74,17 +74,17 @@
   "cargo_clippy": "clean",
   "cargo_fmt": "clean",
   "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)",
-  "lean_audits": 474,
-  "path": "docs/reports/cg10-indirect-access-sole-residuals-r4/integration/gate.json",
+  "lean_audits": 477,
+  "path": "docs/reports/cg10-small-bundle/integration/gate.json",
   "provider_tests": 168,
   "python_evidence_validator_tests": 779,
   "reevaluation_followup_exit": 0,
   "reevaluation_probe_exit": 0,
-  "standing_gate": "full landing gate: every step exits 0 except the Python suite's stale-matrix checks, cleared by regenerating the matrix from this record (rerun disclosed in the note); provider steps all exit 0",
-  "workspace_tests": 9835
+  "standing_gate": "full landing gate: every step exits 0 except the Python suite's stale-matrix check, cleared by regenerating the matrix from this record (rerun disclosed in the note); no provider steps (no provider diff; provider_tests carried from r48)",
+  "workspace_tests": 9849
  },
  "lean": {
-  "audit_modules": 474,
+  "audit_modules": 477,
   "toolchain": "leanprover/lean4:v4.35.0"
  },
  "live_profiles": {
@@ -187,6 +187,6 @@
  "matrix": {
   "full_conformance": false,
   "named_followups": 1044,
-  "validation_note_head": "Landing integrate/r48 (base main 0057bac00; merges CG10-INDIRECT-ACCESS-SOLE-RESIDUALS round 4 2f2d24f78, card base 9b10"
+  "validation_note_head": "Landing integrate/r49 (base main 2aefebbc1; merges CG10-SMALL-BUNDLE 7e03049a3, card base 8e7e8d509, measured tip 47c3b3"
  }
 }

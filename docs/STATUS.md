@@ -1,7 +1,7 @@
 # Current status and evidence boundaries
 
 This page states the current state, not a history. `STATUS-COMPACT` rewrote it
-on 2026-11-21 from main `2aefebbc1`; the whole page it replaced is preserved
+on 2026-11-21 from main `f77e97ae6`; the whole page it replaced is preserved
 verbatim in the [status checkpoint](development/increments/wave-48-compaction-status-part1.md)
 (eleven parts, history only). Each card's report owns its evidence, its
 increment paragraph is in the [increment records](development/increments/README.md),
@@ -100,7 +100,7 @@ live profile's real-run total are in [contributions](development/contributions.m
 ### Unpublished landings
 
 <!-- unpublished-landings: one sentence; a landing appends "rN (CARD)" before " completed steps 1–7". -->
-Unpublished landings (user decision 2026-11-16): the newest committed landing baseline record is `556460e31` (eight-home and fluent-bit-system, 497bdeb90); no later landing has one, so the 37 landings from integrate/r10 (`458bd804d`) to r47 (CG10-READER-GAPS) listed with their cards in [checkpoint part 1](development/increments/wave-48-compaction-status-part1.md) and r48 (CG10-INDIRECT-ACCESS-SOLE-RESIDUALS round 4) completed steps 1–7 of `scripts/land.py` (records, full landing gate, merge) but not step 8. The landing host holds no prepared live-route inputs (`--inputs-base` absent, no `build/cycle19`) and no `private/baselines/`, and a fresh preparation here would not reproduce the committed baselines, so `land.py publish` is deferred rather than forced. Their figures are landing-gate counts, not published baselines; publish from the host that holds the prepared inputs (`land.py publish --previous 556460e31`).
+Unpublished landings (user decision 2026-11-16): the newest committed landing baseline record is `556460e31` (eight-home and fluent-bit-system, 497bdeb90); no later landing has one, so the 37 landings from integrate/r10 (`458bd804d`) to r47 (CG10-READER-GAPS) listed with their cards in [checkpoint part 1](development/increments/wave-48-compaction-status-part1.md), r48 (CG10-INDIRECT-ACCESS-SOLE-RESIDUALS round 4) and r49 (CG10-SMALL-BUNDLE) completed steps 1–7 of `scripts/land.py` (records, full landing gate, merge) but not step 8. The landing host holds no prepared live-route inputs (`--inputs-base` absent, no `build/cycle19`) and no `private/baselines/`, and a fresh preparation here would not reproduce the committed baselines, so `land.py publish` is deferred rather than forced. Their figures are landing-gate counts, not published baselines; publish from the host that holds the prepared inputs (`land.py publish --previous 556460e31`).
 <!-- unpublished-landings:end -->
 
 ### Measured since the baselines
@@ -127,7 +127,7 @@ provisional Unsafe, system +5 Safe), read by
 stood at 1,082 Safe at D3's tip, 1,078 at the CG25 bases and 1,079 at the AG
 bases, changes no committed comparison records
 (`LIVE-ROUTE-MOVES-BETWEEN-MEASURED-LANDINGS`). The landings after
-it (r41–r48) did not measure the pinned routes: their gate records say
+it (r41–r49) did not measure the pinned routes: their gate records say
 pinned-route parity was not run, the host holding no `build/cycle19` inputs.
 Their cards predicted corpus moves (CG10-INDIRECT-ACCESS-SOLE-RESIDUALS round 3,
 CG10-MEMBER-STORE-RETAINED-BY, CG10-READER-GAPS) that are not yet measured
@@ -151,7 +151,7 @@ declarations not yet validated against source
 | CT independent artifacts | **48** distinct source-fixture programs behind the 50 mapped cases; **9** reviewed byte-identical fixture groups | Same manifest, `artifact_identity`; [disclosure](reports/ct-shared-fixture-disclosure/README.md) |
 | CT case-bound proof | **5/50**: CT01, CT03, CT07, CT37, CT50 | Same manifest, per-case `proof` stage |
 | CT gated sanitized-native | **10/50, Linux/macOS only** | Same manifest, `native_sanitized` stage and host gates |
-| Lean | toolchain **`leanprover/lean4:v4.35.0`**; **474** audits | `proof/lean-toolchain`; `proof/Audit*.lean`, r48 gate |
+| Lean | toolchain **`leanprover/lean4:v4.35.0`**; **477** audits | `proof/lean-toolchain`; `proof/Audit*.lean`, r49 gate |
 | Contract corpus | **150** modules (992 declarations, 8,749 clauses) in the eleven inventory locks `qcore_contract_corpus.rs` pins: five `qcore-provider-*` crates 91, six `quirin-provider-*` crates 59; user crates outside the locks: OpenSSL 20, libcurl 4, plugin 1 | `providers/*/contract-inventory.lock`, [load path](../providers/contract-load-path.json), [ownership](../providers/README.md#contract-ownership) |
 | Registered follow-ups | **1,044** | [Matrix](reviews/r0_3/acceptance_matrix.json) `named_followups` |
 
@@ -241,16 +241,18 @@ Unsafe proposals downgrade to Unknown (`QP010`).
 
 ## Latest validated gate
 
-The [integrate/r48 landing gate](reports/cg10-indirect-access-sole-residuals-r4/integration/gate.json)
-(CG10-INDIRECT-ACCESS-SOLE-RESIDUALS round 4) ran the full landing gate on
-`8e7e8d509` through `scripts/gate_scope.py --base origin/main --full --landing`.
-Root Rust: **9,835 passed / 0 failed / 21 ignored**, 671 units / 716 summaries;
-**474 Lean audits**; fmt, Clippy and both reevaluation examples exit 0.
-Provider: **168 passed / 1 ignored** over 49 summaries, package build, verify
-and lint exit 0. Python: **779 tests**, which exited 1 on the two stale-matrix
-checks of `test_build_matrix_sections` only and were rerun after the matrix was
-regenerated from the record. Clang: Ubuntu clang 21.1.8. Pinned-route parity was
-not run (no `build/cycle19` inputs on the host), and no profile baseline changed.
+The [integrate/r49 landing gate](reports/cg10-small-bundle/integration/gate.json)
+(CG10-SMALL-BUNDLE) ran the full landing gate on `2e0ae38d1` through
+`scripts/gate_scope.py --base origin/main --full --landing`.
+Root Rust: **9,849 passed / 0 failed / 21 ignored**, 672 units / 717 summaries;
+**477 Lean audits**; fmt, Clippy and both reevaluation examples exit 0.
+Python: **779 tests**, which exited 1 on `test_build_matrix_sections`'
+stale-matrix check only and were rerun after the matrix was regenerated from
+the record. No provider step ran (no provider diff); the provider figure,
+**168 passed / 1 ignored** over 49 summaries, is carried from the
+[r48 landing gate](reports/cg10-indirect-access-sole-residuals-r4/integration/gate.json).
+Clang: Ubuntu clang 21.1.8. Pinned-route parity was not run (no `build/cycle19`
+inputs on the host), and no profile baseline changed.
 
 ## Where to go next
 

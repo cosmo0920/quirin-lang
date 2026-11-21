@@ -3,9 +3,9 @@
 [Development table of contents](../../../DEVELOPMENT.md) · [History index](README.md) · [Current status](../../STATUS.md) · [Part 4](wave-48-compaction-status-part4.md) · [Part 6](wave-48-compaction-status-part6.md)
 
 > **Preserved checkpoint text, not a current authority.** The fenced block is
-> `docs/STATUS.md` lines 356–360 at `2aefebbc1`, verbatim (18,664 bytes), part 5 of the
+> `docs/STATUS.md` lines 356–360 at `f77e97ae6`, verbatim (18,664 bytes), part 5 of the
 > whole page that `STATUS-COMPACT` replaced with a current-state page.
-> `git show 2aefebbc1:docs/STATUS.md` reproduces it byte for byte, and
+> `git show f77e97ae6:docs/STATUS.md` reproduces it byte for byte, and
 > [`checkpoint.py check`](../../reports/status-compact/scripts/checkpoint.py) asserts
 > that the parts concatenated equal that page. Where this text and the current
 > page disagree, **the current page wins**; figures here describe their recorded

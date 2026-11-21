@@ -6184,6 +6184,10 @@ impl Parser<'_> {
 #[path = "legacy_tokens.rs"]
 mod tokens;
 pub use self::tokens::*;
+// Card CG10-SMALL-BUNDLE (rule 74b): a function-pointer formal in the W4
+// lexical parameter reader.
+#[path = "function_pointer_formal.rs"]
+mod function_pointer_formal;
 
 #[path = "legacy_conditional_embedded_storage.rs"]
 mod legacy_conditional_embedded_storage;
