@@ -52,7 +52,12 @@ module contract;
 //   false, otherwise re-registers the collector's own event and sets
 //   `running` (C3's ingestion premise, stated on the declaration as
 //   `requires resource_premise(ingestion_active, "...")`, contract spec
-//   C04.18, card VERDICT-CONTRACT-PREMISE-ANNOTATIONS);
+//   C04.18, card VERDICT-CONTRACT-PREMISE-ANNOTATIONS; the flag is read at
+//   src/flb_input.c:3221 at 66910c10, :3241 at 046accf6 and 34155955). Card
+//   SP3-SYMBOLIC-FLUENT-BIT-LIBC-PREMISES states it as a formula (C04.18.9)
+//   over `in`'s context `#g`: not ingesting, the call returns 0 and neither
+//   registers nor sets running the collector; ingesting, it does both; and a
+//   return of 0 with the collector set running means `#g` was ingesting;
 // * delete pauses, unlinks the collector from `in->collectors` under
 //   `config->collectors_mutex` and frees it.
 //
@@ -92,7 +97,16 @@ contract {
 extern fn flb_input_collector_resume(coll_id: i32, in: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
-    requires resource_premise(ingestion_active, "C3: the call returns 0 without resuming the collector while config->is_ingestion_active is false (src/flb_input.c:3221 at 66910c10, :3241 at 046accf6 and 34155955), otherwise it re-registers the collector's own event and sets running; a return of 0 means the collector runs only while ingestion is active");
+    requires resource_premise(ingestion_active,
+        quant all #g in #config_of(#args): (#g in #config_of(#args) \ #ingesting
+            -> #returns_zero
+            && quant all #c in #collector: #c in #collector \ (#event_registered | #set_running))
+        && (#g in #ingesting
+            -> quant all #c in #collector: #c in #event_registered
+            && #c in #set_running)
+        && (#returns_zero
+            -> quant all #c in #collector: #c in #set_running
+            -> #g in #ingesting));
     requires resource_loop_owner(in, mutate);
     ensures normal resource_borrowed(coll_id);
     ensures normal resource_borrowed(in);

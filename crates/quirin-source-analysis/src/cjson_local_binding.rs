@@ -23,8 +23,9 @@ use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, BTreeSet};
 
 const MODEL: &str = include_str!("../../../proof/QCore/CjsonRepresentationPremises.lean");
-const EXPECTED_GRAPH: &str =
-    include_str!("../../../docs/reports/premise-evidence-contracts/expected-graph.json");
+const EXPECTED_GRAPH: &str = include_str!(
+    "../../../docs/reports/sp2-symbolic-librdkafka-premises/bindings/cjson-expected-graph.json"
+);
 pub const ENVIRONMENT: &str = "cjson-native-single-thread-allocated-ledger.v1";
 pub const PROPERTY: &str = "cjson.native-local-representation.v1";
 pub const SCOPE: &str = "lengths0..4;all-valid-detach-indices;11cases";

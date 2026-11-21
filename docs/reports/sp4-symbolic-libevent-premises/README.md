@@ -20,7 +20,7 @@ re-pinned.
   refinements (`quant proposition #sched_*`), the
   `resource_premise_decomposition` attachments and the
   `resource_premise_flow_v1` chains are unchanged.
-* **Vocabulary.** 40 terms in an SP4 block appended after SP1's entries, in
+* **Vocabulary.** 39 terms in an SP4 block appended after SP1's entries, in
   the Rust table (`qcore_frontend::premise_formula::VOCABULARY`), the
   specification table (C04.18.9) and the Lean table
   (`QCore.PremiseFormula.vocab`). No token, operator, sort, constant or
@@ -32,7 +32,8 @@ re-pinned.
   `prose_premise`: it refuses any `requires resource_premise(NAME, "…")` in
   any owned module and counts the 7 formula premises. It runs in the provider
   test step of every gate.
-* **The source operator gate** (`qcore_frontend::pipe::check_source_operators`,
+* **The source operator gate** (superseded at the SP2/SP3 merge, §12: their
+  one exemption is kept and this card's dropped) (`qcore_frontend::pipe::check_source_operators`,
   `Q038`) admits `&&` and `|` inside a `requires resource_premise(NAME, …)`
   clause (`premise_formula_spans`), as it already admits a quant check's
   connectives and a result set's operators. Gate 1 found this: the corpus
@@ -67,15 +68,15 @@ is a slot holding a pointer.
 | Term | Sort | Meaning |
 |---|---|---|
 | `#singleton(o)` | obj → set(obj) | defined: `{o}`; `quant all #x in #singleton(E): F` binds `#x` to `E` |
-| `#live` | set(obj) | storage allocated, not yet released, at every point of the call that reads, writes or releases the object |
+| `#live_at_use` | set(obj) | storage allocated, not yet released, at every point of the call that reads, writes or releases the object |
 | `#inside(o)` | obj → set(obj) | storage within `o`'s allocation, so releasing `o` ends it |
 | `#released_only_by_call` | set(obj) | nothing but the call releases the object |
 | `#released` | set(obj) | the call releases it, directly or through a function it runs |
 | `#ended` | set(obj) | the call ends its lifetime, by releasing it or an object whose storage holds it |
-| `#tracked` | set(obj) | the caller's projection tracks it |
+| `#tracked` | set(obj) | reused from the Fluent Bit block (SP3): the objects the resource projection holds a custody state for |
 | `#overlaps(S)` | set(obj) → set(obj) | storage overlapping an object of `S` |
 | `#stores(S)` | set(obj) → set(obj) | the member cells of `S`'s objects the call writes |
-| `#concurrent` | set(fn) | functions running concurrently with or reentrantly into the call; `\|->` reads each run overlapping the call |
+| `#interleaved` | set(fn) | functions running concurrently with or reentrantly into the call; `\|->` reads each run overlapping the call |
 | `#no_writes(S)`, `#no_releases(S)`, `#no_resumes(S)` | set(obj) → eff | the run writes / releases (frees, deletes) / resumes no object of `S` |
 | `#unread_after`, `#unresumed_after` | set(obj) | cells nothing reads / through which nothing resumes a thread or coroutine, after the call returns |
 | `#mk_parent(o)`, `#mk_callee(t)`, `#mk_session(o)`, `#mk_channel(s)`, `#mk_event(c)` | obj → obj | the object Monkey's member `parent`, `callee`, `session`, `channel`, `event` designates |
@@ -102,15 +103,15 @@ cannot collide with another provider's member names.
 Laid out in the module one step per line; the canonical printings:
 
 * `scheduler_exact_parent_embedding`:
-  `quant all #m in #args: #mk_parent(#m) in #live && #m in #thread_data(#mk_parent(#m)) && #m in #inside(#mk_parent(#m)) && #mk_parent(#m) in #released_only_by_call`
+  `quant all #m in #args: #mk_parent(#m) in #live_at_use && #m in #thread_data(#mk_parent(#m)) && #m in #inside(#mk_parent(#m)) && #mk_parent(#m) in #released_only_by_call`
 * `scheduler_tls_params_owned`:
-  `#libco_params_key in #getspecific_ok && #libco_params_key in #setspecific_ok && quant all #p in #holds(#libco_params_key): #p in #live \ #overlaps(#tracked) && #p in #sole_owned(#libco_params_key) && #p in #freed \ #held_at_return(#libco_params_key)`
+  `#libco_params_key in #getspecific_ok && #libco_params_key in #setspecific_ok && quant all #p in #holds(#libco_params_key): #p in #live_at_use \ #overlaps(#tracked) && #p in #sole_owned(#libco_params_key) && #p in #freed \ #held_at_return(#libco_params_key)`
 * `scheduler_callee_live`:
-  `quant all #m in #args: quant all #c in #singleton(#mk_callee(#mk_parent(#m))): #c in #freed && #c in #co_deletable && #c in #created_for(#mk_parent(#m)) && #c in #suspended \ #co_active && #concurrent |-> (#no_resumes(#singleton(#c)) && #no_releases(#singleton(#c)))`
+  `quant all #m in #args: quant all #c in #singleton(#mk_callee(#mk_parent(#m))): #c in #freed && #c in #co_deletable && #c in #created_for(#mk_parent(#m)) && #c in #suspended \ #co_active && #interleaved |-> (#no_resumes(#singleton(#c)) && #no_releases(#singleton(#c)))`
 * `scheduler_borrowed_chain_live`:
-  `quant all #m in #args: quant all #s in #singleton(#mk_session(#m)): quant all #ch in #singleton(#mk_channel(#s)): quant all #ev in #singleton(#mk_event(#ch)): #s in #live && #ch in #live \ (#released | #ended) && #ev in #live \ (#released | #ended) && #mk_type(#ev) in #stores(#singleton(#s) | #singleton(#ch) | #singleton(#ev)) && quant all #w in #stores(#singleton(#s) | #singleton(#ch) | #singleton(#ev)): #w in #singleton(#mk_type(#ev))`
+  `quant all #m in #args: quant all #s in #singleton(#mk_session(#m)): quant all #ch in #singleton(#mk_channel(#s)): quant all #ev in #singleton(#mk_event(#ch)): #s in #live_at_use && #ch in #live_at_use \ (#released | #ended) && #ev in #live_at_use \ (#released | #ended) && #mk_type(#ev) in #stores(#singleton(#s) | #singleton(#ch) | #singleton(#ev)) && quant all #w in #stores(#singleton(#s) | #singleton(#ch) | #singleton(#ev)): #w in #singleton(#mk_type(#ev))`
 * `scheduler_valid_membership`:
-  `quant all #m in #args: quant all #n in #singleton(#mk_link(#m)): quant all #l in #singleton(#caller_list(#n)): #l in #lists(#n) && (quant all #k in #lists(#n): #k in #singleton(#l)) && #l in #circular_lists && (quant all #k in #nodes(#l): #k in #reciprocal) && #concurrent |-> #no_writes(#nodes(#l) | #singleton(#mk_callee(#mk_parent(#m))) | #singleton(#mk_session(#m)) | #singleton(#mk_channel(#mk_session(#m))) | #singleton(#mk_event(#mk_channel(#mk_session(#m)))) | #singleton(#libco_params_key))`
+  `quant all #m in #args: quant all #n in #singleton(#mk_link(#m)): quant all #l in #singleton(#caller_list(#n)): #l in #lists(#n) && (quant all #k in #lists(#n): #k in #singleton(#l)) && #l in #circular_lists && (quant all #k in #nodes(#l): #k in #reciprocal) && #interleaved |-> #no_writes(#nodes(#l) | #singleton(#mk_callee(#mk_parent(#m))) | #singleton(#mk_session(#m)) | #singleton(#mk_channel(#mk_session(#m))) | #singleton(#mk_event(#mk_channel(#mk_session(#m)))) | #singleton(#libco_params_key))`
 * `scheduler_no_later_alias_use`:
   `quant all #m in #args: quant all #a in #aliases(#mk_parent(#m)): #a in #unread_after && #a in #unresumed_after`
 * `scheduler_valgrind_request_neutral`:
@@ -130,10 +131,10 @@ Every phrase of each base statement, in order.
 | "mth" | `quant all #m in #args` |
 | "is the mk_http_thread at MK_THREAD_DATA of" | `#m in #thread_data(…)` |
 | "the one … mk_thread allocation mth->parent names" | `#mk_parent(#m)`: a function, so one object, the mk_thread the member names |
-| "live" | `#mk_parent(#m) in #live` |
+| "live" | `#mk_parent(#m) in #live_at_use` |
 | "which nothing but this call releases" | `#mk_parent(#m) in #released_only_by_call` |
 | "so that freeing it ends the storage of mth" | `#m in #inside(#mk_parent(#m))`, stated as its own conjunct rather than left as a consequence |
-| "(scheduler decomposition exact_parent_embedding and parent_live" | the hypothesis names; no assumption of its own. The conjuncts carry the attached atoms' content: `sched_parent_data_identity` (`#thread_data`), `sched_parent_storage` (`#live`, `#inside`), `sched_parent_sole_releaser` (`#released_only_by_call`) |
+| "(scheduler decomposition exact_parent_embedding and parent_live" | the hypothesis names; no assumption of its own. The conjuncts carry the attached atoms' content: `sched_parent_data_identity` (`#thread_data`), `sched_parent_storage` (`#live_at_use`, `#inside`), `sched_parent_sole_releaser` (`#released_only_by_call`) |
 | "; established at creation by mk_http_thread_create, not by this body)" | provenance: says where the assumption comes from, adds none |
 | "that the call takes the object mth->parent names and leaves the member designating it is the state parent \|-> #stale" | not a premise: the declaration's clause `quant live #mth: mk_http_thread.parent \|-> #stale` states it, unchanged |
 
@@ -142,9 +143,9 @@ Every phrase of each base statement, in order.
 | Prose | Formula |
 |---|---|
 | "the mk_http_thread_libco_params key of the current thread" | `#libco_params_key` |
-| "holds NULL or one live allocation" | `quant all #p in #holds(#libco_params_key): #p in #live …`: NULL is the empty `#holds`, where the body holds trivially; a pointer designates at most one object |
+| "holds NULL or one live allocation" | `quant all #p in #holds(#libco_params_key): #p in #live_at_use …`: NULL is the empty `#holds`, where the body holds trivially; a pointer designates at most one object |
 | "it alone owns" | `#p in #sole_owned(#libco_params_key)` |
-| "disjoint from every caller-tracked object" | `#p in #live \ #overlaps(#tracked)` |
+| "disjoint from every caller-tracked object" | `#p in #live_at_use \ #overlaps(#tracked)` |
 | "pthread_getspecific … of that key succeed" | `#libco_params_key in #getspecific_ok` |
 | "and pthread_setspecific of that key succeed" | `#libco_params_key in #setspecific_ok` |
 | "so the freed params" | `#p in #freed …` |
@@ -161,7 +162,7 @@ Every phrase of each base statement, in order.
 | "created for this thread" | `#c in #created_for(#mk_parent(#m))` |
 | "suspended" | `#c in #suspended \ …` |
 | "and not co_active" | `… \ #co_active` |
-| "with no concurrent resume" | `#concurrent \|-> (#no_resumes(#singleton(#c)) && …)` |
+| "with no concurrent resume" | `#interleaved \|-> (#no_resumes(#singleton(#c)) && …)` |
 | "or deletion" | `… && #no_releases(#singleton(#c)))`: deleting a coroutine releases it |
 | "(scheduler decomposition callee_live and suspended_coroutines)" | the hypothesis names |
 
@@ -170,10 +171,10 @@ Every phrase of each base statement, in order.
 | Prose | Formula |
 |---|---|
 | "mth->session" | `quant all #s in #singleton(#mk_session(#m))` |
-| "is live where it is read" | `#s in #live` (`#live` is liveness at every point the call reads, writes or releases the object) |
+| "is live where it is read" | `#s in #live_at_use` (`#live_at_use` is liveness at every point the call reads, writes or releases the object) |
 | "and its channel" | `quant all #ch in #singleton(#mk_channel(#s))` |
 | "and that channel's event" | `quant all #ev in #singleton(#mk_event(#ch))` |
-| "are live" | `#ch in #live …`, `#ev in #live …` |
+| "are live" | `#ch in #live_at_use …`, `#ev in #live_at_use …` |
 | "borrowed objects this call neither releases" | `\ (#released \| …)` on each (R5) |
 | "nor ends" | `\ (… \| #ended)` on each |
 | "the call writes one scalar through them, event->type" | `#mk_type(#ev) in #stores(…)` (it writes `event->type`) `&& quant all #w in #stores(…): #w in #singleton(#mk_type(#ev))` (and no other cell of the session, channel or event); `#mk_type` is one scalar cell (R3) |
@@ -189,7 +190,7 @@ Every phrase of each base statement, in order.
 | "exactly one" | `(quant all #k in #lists(#n): #k in #singleton(#l))`: no other list |
 | "valid circular" | `#l in #circular_lists` |
 | "with reciprocal links" | `(quant all #k in #nodes(#l): #k in #reciprocal)`, every node of the list, `mth->_head` included |
-| "and no concurrent or reentrant writer" | `#concurrent \|-> #no_writes(…)` (`#concurrent` holds the reentrant runs too) |
+| "and no concurrent or reentrant writer" | `#interleaved \|-> #no_writes(…)` (`#interleaved` holds the reentrant runs too) |
 | "of that list" | `#nodes(#l)` |
 | "the coroutine" | `#singleton(#mk_callee(#mk_parent(#m)))` |
 | "the borrowed chain" | `#singleton(#mk_session(#m)) \| #singleton(#mk_channel(…)) \| #singleton(#mk_event(…))` (R6) |
@@ -244,13 +245,13 @@ of two readings (assuming more, never less).
   channel's event: the chain of the borrowed-chain premise and of its
   decomposition atom ("Session, channel and event"). Leaving the session out
   would assume less.
-* **R7** ("live where it is read"). `#live` is liveness at every point of the
+* **R7** ("live where it is read"). `#live_at_use` is liveness at every point of the
   call that reads, writes or releases the object, so the session is live
   where it is read, and `th` up to and including the call's release of it.
 
 **`|->` and concurrent runs.** C04.18.9 reads `F |-> E` over the runs of `F`
-during the call. `#concurrent`'s meaning makes its runs those that overlap the
-call, whoever runs them, so `#concurrent |-> E` is not satisfied merely
+during the call. `#interleaved`'s meaning makes its runs those that overlap the
+call, whoever runs them, so `#interleaved |-> E` is not satisfied merely
 because the call itself runs none of them.
 
 ## 6. Fail-closed arms
@@ -397,7 +398,7 @@ no stale count is carried.
   preprocessor directive, so a formula line must not start with a `#` term
   (this card's layout keeps every line starting with a word or `&&`).
 * **Vocabulary merge.** SP2 and SP3 may add generic terms of their own
-  (`#live`, `#tracked`, `#concurrent`, `#singleton` are the likely
+  (`#live_at_use`, `#tracked`, `#interleaved`, `#singleton` are the likely
   candidates). If one lands first with the same meaning, this card's row is
   dropped in favour of it; with a different meaning, one is renamed. The
   Lean kind lemmas no longer enumerate rows, and every SP4 term but
@@ -413,3 +414,55 @@ no stale count is carried.
 `crates/qcore-frontend/src/pipe.rs`, C04.18.9 of the contract specification,
 G05-formula, rule 13h; generated: `proof/QCore.lean`, `docs/agents/gateway.md`,
 `docs/reports/INDEX.md` (rerun their generators).
+
+## 12. Merge with the SP2 and SP3 landing (`8952bdb8d`)
+
+On the coordinator's instruction the branch merged `8952bdb8d`
+(integrate/sp3-premises: SP2's librdkafka landing `17b0e77b2` with SP3's
+Fluent Bit landing on top). Conflicts and their resolution:
+
+* **`crates/qcore-frontend/src/pipe.rs`**: SP2/SP3's `premise_formula_spans`
+  kept as the one exemption (it admits `&&` and `|` only in a clause the
+  premise reader accepts as a formula); this card's admission (`06edced3e`)
+  dropped.
+* **`compiler/tests/premise_formula_operators.rs`** (both added the file):
+  theirs kept; this card's three tests folded in as two tests over a
+  `libevent_module` shape (`a_libevent_premise_formula_keeps_its_operators`,
+  `a_libevent_shaped_contract_still_refuses_elsewhere`). Every expectation
+  passes against the stricter exemption unchanged; only the term names were
+  updated for the renames below.
+* **Vocabulary** (Rust `VOCABULARY`, C04.18.9, Lean `vocab`): blocks ordered
+  SP1, SP2, SP3, SP4; no existing row moved. Of the names checked, three
+  collided:
+  * `#tracked`: SP3's row has the same sort and meaning (the objects the
+    resource projection holds a custody state for); this card's row is
+    deleted and SP3's is reused. The Lean reading moved from `xSt0 "tracked"`
+    to `M.fb.tracked`.
+  * `#live`: SP2's means "live at the call's entry"; this card's means live at
+    every point of the call that reads, writes or releases the object
+    (R7), so it is renamed `#live_at_use`.
+  * `#concurrent`: SP2's is another thread's steps only; this card's includes
+    reentrant runs and signal handlers (the prose's "concurrent or
+    reentrant"), so it is renamed `#interleaved`.
+  * `#singleton`, `#released`, `#ended`, `#holds`, `#aliases`, `#nodes`,
+    `#lists`: not in SP2 or SP3; kept.
+  The SP4 block now has 39 terms. The seven formulas, the decision vectors,
+  the Lean definitions and the report were updated for the two renames.
+* **`proof/QCore/PremiseFormula.lean`**: 8952bdb8d's kind proofs and
+  `maxRecDepth` taken as the base. This card's additions were reapplied on
+  top: the six `x*` fields after `fb`, `ext0`/`ext1El`/`ext1St`, `#singleton`'s
+  interpretation, the final `else` arms, the vocab rows and decision vectors.
+  The kind proofs gained `ext0`, `ext1El` and `ext1St` in their simp sets and
+  one `try obtain` for the last row. `openssl_formulas_wf` and
+  `libevent_formulas_wf` needed `set_option maxRecDepth 8192 in`, as SP3's
+  `decision_vectors_agree` did.
+* **Docs**: G05-formula takes SP2's exemption paragraph, plus one sentence
+  that SP4 adds none; rule 13h takes SP2's and SP3's amendments followed by
+  this card's (39 terms, `#tracked` reused). `gateway.md`, `proof/QCore.lean`
+  and `docs/reports/INDEX.md` were regenerated. The C04.18.9 SP4 table was
+  moved after the Fluent Bit block.
+* **Amendments**: SP3 already registers SP5-GLOBAL-PROSE-PREMISE-BAN, so this
+  card's `register` entry is dropped; base is `8952bdb8d`.
+* **Locks**: `contracts.py sync` reran after the formula renames. Only this
+  card's libevent digests differ from `8952bdb8d`, and `mk_http_thread_destroy`
+  was re-pinned at both revisions.

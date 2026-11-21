@@ -326,13 +326,13 @@ extern fn mk_http_thread_destroy(mth: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
     requires resource_premise(scheduler_exact_parent_embedding,
-        quant all #m in #args: #mk_parent(#m) in #live
+        quant all #m in #args: #mk_parent(#m) in #live_at_use
         && #m in #thread_data(#mk_parent(#m))
         && #m in #inside(#mk_parent(#m))
         && #mk_parent(#m) in #released_only_by_call);
     requires resource_premise(scheduler_tls_params_owned, #libco_params_key in #getspecific_ok
         && #libco_params_key in #setspecific_ok
-        && quant all #p in #holds(#libco_params_key): #p in #live \ #overlaps(#tracked)
+        && quant all #p in #holds(#libco_params_key): #p in #live_at_use \ #overlaps(#tracked)
         && #p in #sole_owned(#libco_params_key)
         && #p in #freed \ #held_at_return(#libco_params_key));
     requires resource_premise(scheduler_callee_live,
@@ -340,12 +340,12 @@ contract {
         && #c in #co_deletable
         && #c in #created_for(#mk_parent(#m))
         && #c in #suspended \ #co_active
-        && #concurrent |-> (#no_resumes(#singleton(#c)) && #no_releases(#singleton(#c))));
+        && #interleaved |-> (#no_resumes(#singleton(#c)) && #no_releases(#singleton(#c))));
     requires resource_premise(scheduler_borrowed_chain_live,
         quant all #m in #args: quant all #s in #singleton(#mk_session(#m)):
-        quant all #ch in #singleton(#mk_channel(#s)): quant all #ev in #singleton(#mk_event(#ch)): #s in #live
-        && #ch in #live \ (#released | #ended)
-        && #ev in #live \ (#released | #ended)
+        quant all #ch in #singleton(#mk_channel(#s)): quant all #ev in #singleton(#mk_event(#ch)): #s in #live_at_use
+        && #ch in #live_at_use \ (#released | #ended)
+        && #ev in #live_at_use \ (#released | #ended)
         && #mk_type(#ev) in #stores(#singleton(#s) | #singleton(#ch) | #singleton(#ev))
         && quant all #w in #stores(#singleton(#s) | #singleton(#ch) | #singleton(#ev)): #w in #singleton(#mk_type(#ev)));
     requires resource_premise(scheduler_valid_membership,
@@ -354,7 +354,7 @@ contract {
         && (quant all #k in #lists(#n): #k in #singleton(#l))
         && #l in #circular_lists
         && (quant all #k in #nodes(#l): #k in #reciprocal)
-        && #concurrent |-> #no_writes(#nodes(#l) | #singleton(#mk_callee(#mk_parent(#m))) | #singleton(#mk_session(#m)) | #singleton(#mk_channel(#mk_session(#m))) | #singleton(#mk_event(#mk_channel(#mk_session(#m)))) | #singleton(#libco_params_key)));
+        && #interleaved |-> #no_writes(#nodes(#l) | #singleton(#mk_callee(#mk_parent(#m))) | #singleton(#mk_session(#m)) | #singleton(#mk_channel(#mk_session(#m))) | #singleton(#mk_event(#mk_channel(#mk_session(#m)))) | #singleton(#libco_params_key)));
     requires resource_premise(scheduler_no_later_alias_use,
         quant all #m in #args: quant all #a in #aliases(#mk_parent(#m)): #a in #unread_after
         && #a in #unresumed_after);

@@ -1293,6 +1293,10 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [sp1-symbolic-openssl-premises](sp1-symbolic-openssl-premises/README.md) | SP1-SYMBOLIC-OPENSSL-PREMISES |
 
+| [sp2-symbolic-librdkafka-premises](sp2-symbolic-librdkafka-premises/README.md) | SP2-SYMBOLIC-LIBRDKAFKA-PREMISES |
+
+| [sp3-symbolic-fluent-bit-libc-premises](sp3-symbolic-fluent-bit-libc-premises/README.md) | SP3-SYMBOLIC-FLUENT-BIT-LIBC-PREMISES |
+
 | [sp4-symbolic-libevent-premises](sp4-symbolic-libevent-premises/README.md) | SP4-SYMBOLIC-LIBEVENT-PREMISES |
 
 | [stability-reeval-1](stability-reeval-1/README.md) | STABILITY-REEVAL #1 — under what conditions each current claim is unstable |

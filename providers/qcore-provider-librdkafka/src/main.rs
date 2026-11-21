@@ -125,4 +125,38 @@ mod tests {
         }
         assert!(includes > 0, "no contract includes a libc module");
     }
+
+    /// Card SP2-SYMBOLIC-LIBRDKAFKA-PREMISES (contract specification
+    /// C04.18.9): every premise of this crate states a formula, never a
+    /// sentence. The crate has no checker plugin (checkers are a user-crate
+    /// load hook), so its own test refuses a premise whose statement is a
+    /// string, the test `quirin-provider-openssl`'s checker applies at load
+    /// (`check::prose_premise`). Line comments are dropped first, so a clause
+    /// quoted in a comment is not a clause. The census is the card's: 220.
+    #[test]
+    fn every_premise_is_a_formula() {
+        let mut premises = 0;
+        for (name, text) in contract_tree() {
+            let stripped = text
+                .lines()
+                .map(|line| line.split("//").next().unwrap_or_default())
+                .collect::<Vec<_>>()
+                .join("\n");
+            let mut rest = stripped.as_str();
+            while let Some(at) = rest.find("resource_premise(") {
+                let clause = &rest[at + "resource_premise(".len()..];
+                let (premise, statement) = clause
+                    .split_once(',')
+                    .unwrap_or_else(|| panic!("{name}: malformed premise"));
+                assert!(
+                    !statement.trim_start().starts_with('"'),
+                    "{name}: premise `{premise}` is stated in prose; a premise of this crate \
+                     is a formula (C04.18.9)"
+                );
+                premises += 1;
+                rest = clause;
+            }
+        }
+        assert_eq!(premises, 220);
+    }
 }

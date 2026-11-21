@@ -630,8 +630,8 @@
     {
       "function": "mk_http_thread_destroy",
       "module": "monkey/intrusive_list.qv",
-      "contract_sha256": "a1e545a27d368f0e34b555db5548201065dabeccf5bfe969d1a19389a4a99f56",
-      "pinned_at": "2026-11-20T19:00:07Z",
+      "contract_sha256": "8690b21f7eadd0456e779e464c5915cfacce9633c0fbecb7fd1afcb067b75cb0",
+      "pinned_at": "2026-11-21T06:18:36Z",
       "identities": [
         {
           "reviewed_at": [

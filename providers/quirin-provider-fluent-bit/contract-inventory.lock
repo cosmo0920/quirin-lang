@@ -262,7 +262,7 @@
           }
         ]
       },
-      "sha256": "2c2e463eb30645ad7202d6b1802390b2e2d75092d67fe902ba104cdd851b24b3"
+      "sha256": "4caf173f16cd812b6df6052b23edee27c01c53258e204bc414b6b5e248ed7298"
     },
     "fluent_bit/input_chunk_sizes.qv": {
       "clause_count": 6,
@@ -561,7 +561,7 @@
           }
         ]
       },
-      "sha256": "a2ad01a7ecfa00e8db17f07e25cf5177d04f58f7b0b206e33df4075073718a76"
+      "sha256": "0adff0b11d56fc6f0421ad80ed0da48bd1abd84b29d67b25ad8087959be645c8"
     },
     "fluent_bit/memory.qv": {
       "clause_count": 39,
@@ -853,7 +853,7 @@
           }
         ]
       },
-      "sha256": "13a5b4b07de451f6ce4f6e668917ae0c79073c43bc21542b26847d8c471aedf8"
+      "sha256": "32997015f48567363e704538a3ccbaf65b37adcda3e71def1b9c58cfbe3b8b67"
     },
     "fluent_bit/resource_memory.qv": {
       "clause_count": 17,

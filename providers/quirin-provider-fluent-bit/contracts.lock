@@ -583,8 +583,8 @@
     {
       "function": "flb_input_chunk_get_name",
       "module": "fluent_bit/input_chunk_name.qv",
-      "contract_sha256": "557d299c4f04809eb68f142519eefc6bc7913edd0e6bf751f852bdd533761a9a",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "54eb48cf3ea55f73e0044643855eae4e90fa8ad2cc4055a002687cdbfddded89",
+      "pinned_at": "2026-11-20T18:55:31Z",
       "identities": [
         {
           "reviewed_at": [
@@ -952,8 +952,8 @@
     {
       "function": "flb_input_collector_resume",
       "module": "fluent_bit/loop_owner.qv",
-      "contract_sha256": "6ba11f4a24307590884ea12b68c191e43c09448b843e10d4d50749803ff7d763",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "62ed66880c9ba2ce6ec42603631c4d1bd4899b010e6be7273637598644b6868b",
+      "pinned_at": "2026-11-20T18:55:36Z",
       "identities": [
         {
           "reviewed_at": [
@@ -1555,8 +1555,8 @@
     {
       "function": "flb_output_task_singleplex_enqueue",
       "module": "fluent_bit/output_singleplex.qv",
-      "contract_sha256": "21c5a1d7c7581d12b4a315b8638fb792ddd5e38b8ae1aa4295fa5c89cf2a85de",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "c57ba87cbe32a3dcd8da59f47fdcf1419cae9823d441e23dd57f622a925b1653",
+      "pinned_at": "2026-11-20T18:55:31Z",
       "identities": [
         {
           "reviewed_at": [
