@@ -249,7 +249,46 @@ prediction). The measurement is the integrator's `quirin-audit measure
 
 ## 8. Gate
 
-Recorded in [gate/](gate/) after the run.
+**Gate 1** (`python3 scripts/gate_scope.py --base 1cd7da6b8 --out
+private/gate-1` on `19cf85020`, mode full; [record](gate/gate-1.json), log
+`private/logs/gate-1.log`) exited 1. Rust: 624 units, 8335 passed, 2 failed:
+the recorded host failure `qcore-audit::test::libcurl_user_crate_versions`
+(system `curlver.h`, not fixed here) and
+`qcore-compiler::test::qcore_contract_corpus`, this card's: the operator gate
+refused the formula's `&&` and `|` (§2). Lean 469 audits, Python 779 tests,
+provider build, verify, tests (166 passed, 1 ignored) and clippy exit 0.
+`provider-fmt` exited 1 on `compiler/tests/premise_formula_operators.rs`,
+the fix's test, which I wrote into the tree while the gate's later steps ran;
+gate 1 is kept as the attempt that found the defect, not as evidence for the
+tip.
+
+**Gate 2, the gate of record** (`python3 scripts/gate_scope.py --base
+1cd7da6b8 --out private/gate-2` on `670f0e6e3`, mode full, clean tree;
+[record](gate/gate-2.json), log `private/logs/gate-2.log`) exited 1, from the
+known host failure only:
+
+| Step | Exit | Counts |
+|---|---|---|
+| submodules, fmt, clippy | 0, 0, 0 | |
+| rust-suite | 101 | 625 units, 8338 passed, 1 failed (`libcurl_user_crate_versions`, the recorded host failure), 20 ignored |
+| reevaluation probe, follow-up | 0, 0 | |
+| lean (`check_lean_audits.py`) | 0 | 469 audits |
+| python | 0 | 779 tests |
+| provider package build, verify (all, libevent) | 0, 0, 0 | |
+| provider test | 0 | 166 passed, 1 ignored |
+| provider fmt, clippy | 0, 0 | |
+
+The matrix's Lean-audit count is not touched here; the integrator's matrix
+rebuild carries the new audit.
+
+Targeted runs before the gates (logs under `private/logs/`): the
+`premise_formula` test (8 passed), `qcore-frontend` (305 passed), the
+`qcore-contract` premise and hypothesis tests (37 passed), both provider
+crates' tests (7 passed), the compiler's `premise_formula_operators`,
+`qcore_contract_corpus`, `pipe_operator` and `result_set_operators` (52
+passed), `lake build QCore.PremiseFormula.FluentBit` and the new audit
+(standard axioms only), `contracts.py check` and `apply_amendments --check`,
+each exit 0.
 
 ## 9. Ledger and follow-ups
 
@@ -274,7 +313,11 @@ block): `crates/qcore-frontend/src/premise_formula.rs` (the `VOCABULARY` and
 `Model`'s last field, the last arms of `prim0`/`prim1`, the counterexample
 model in `ex_data_does_not_entail_unstated`, and the three `prim*_kind`
 proofs this card made length-independent), `docs/QCORE_CONTRACT_SPEC_r0_3.md`
-(C04.18 and the C04.18.9 table), `docs/agents/rules/13h.md` with the
+(C04.18 and the C04.18.9 table), `crates/qcore-frontend/src/pipe.rs`
+(`premise_formula_spans`: SP2's librdkafka modules are in the contract corpus
+too and would meet the same `Q038` refusal, so keep one exemption, not two)
+and G05-formula's note in `docs/QCORE_IMPLEMENTED_GRAMMARS_r0_3.md`,
+`docs/agents/rules/13h.md` with the
 generated `docs/agents/gateway.md`, and the generated `proof/QCore.lean`
 (rerun `scripts/gen_lean_roots.py`). A card whose block adds a field to
 `Model` must also add it to the counterexample model.
