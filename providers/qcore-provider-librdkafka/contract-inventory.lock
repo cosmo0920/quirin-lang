@@ -5570,6 +5570,100 @@
       "premises": {},
       "sha256": "1866a71138743ef768ef56429aab55f1da131508fdd9bd5304d72d603d2c8183"
     },
+    "librdkafka/topic_partition_constructors.qv": {
+      "clause_count": 17,
+      "declaration_count": 5,
+      "declarations": [
+        {
+          "clauses": 3,
+          "name": "rd_kafka_topic_partition_list_new",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": {
+              "owned": {
+                "nullable": false
+              }
+            }
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 3,
+          "name": "rd_kafka_topic_partition_list_copy",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": {
+              "owned": {
+                "nullable": false
+              }
+            }
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 3,
+          "name": "rd_kafka_topic_partition_copy",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": {
+              "owned": {
+                "nullable": false
+              }
+            }
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 4,
+          "name": "rd_kafka_topic_partition_new",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": {
+              "owned": {
+                "nullable": false
+              }
+            }
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 4,
+          "name": "rd_kafka_topic_partition_destroy",
+          "resource_mode": {
+            "parameters": [
+              {
+                "released": {
+                  "nullable": false
+                }
+              }
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        }
+      ],
+      "inherits": [],
+      "other_declarations": [],
+      "premise_bindings": [],
+      "premises": {
+        "rd_kafka_topic_partition_destroy": [
+          {
+            "name": "rk_plugin_callback_closure",
+            "origin": "declared"
+          }
+        ]
+      },
+      "sha256": "f87aeda0c210f359b75bdcaa35eb165f2e0b347c1817006fed12eb4bbc5495f2"
+    },
     "librdkafka/typed_queue.qv": {
       "clause_count": 10,
       "declaration_count": 2,
@@ -5611,7 +5705,8 @@
     "librdkafka/logging.qv",
     "librdkafka/lz4_stream.qv",
     "librdkafka/memory.qv",
-    "librdkafka/topic_partition.qv"
+    "librdkafka/topic_partition.qv",
+    "librdkafka/topic_partition_constructors.qv"
   ],
   "schema_version": 2
 }
