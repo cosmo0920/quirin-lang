@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 10,
-  "named_followups": 1051
+  "named_followups": 1052
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6920,10 +6920,10 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Landing integrate/r51 (base main 590f7d9f1; merges STATUS-COMPACT bdad6a04e, card base 2aefebbc1 with main f77e97ae6 folded in, in 099f2aed5; docs/STATUS.md conflicted with r50's unpublished-landings edit and was resolved by keeping the compacted page, rewriting the verbatim checkpoint parts from main 590f7d9f1 with docs/reports/status-compact/scripts/checkpoint.py write 590f7d9f1 (checkpoint.py check 590f7d9f1 exits 0: 11 parts reproduce the 290,955-byte page), and folding r50 into the page (unpublished-landings sentence, latest gate, Lean count, opt-in figures); the report's own references to f77e97ae6 describe the card's measured fold and are left as written; third_party/libevent checked out at d82464a27). USER DECISION 2026-11-21: tidy up docs/STATUS.md. Amendments applied in 688519e8b with --profiles-base origin/main: STATUS-REGROWTH-BY-PREPEND, STATUS-COMPACT-RECONCILIATION-CLAIMS and LIVE-ROUTE-MOVES-BETWEEN-MEASURED-LANDINGS registered; STATUS-LATEST-GATE-STALE amended; status_paragraph null; no profiles. Full landing gate on 688519e8b (private/integrate-r51/gate, raw record beside this file as gate-scope.json) via scripts/gate_scope.py --base origin/main --full --landing through private/toolchain/env.sh: Rust 673 units / 718 summaries, 9862 passed, 0 failed, 21 ignored; fmt, Clippy and both reevaluation examples exit 0; no Lean step (no proof diff; lean_audits carried from r50, 478); no provider steps (no provider diff; provider_tests carried from r50, 168). Python (779 tests) exited 1 on test_build_matrix_sections' stale-matrix check only (regenerated from this record); the rerun after regeneration (private/integrate-r51/python-rerun.log) passed every matrix check and failed only test_gate_slot_lane's test_status_shows_lane_holders_and_waiters, the known slot-lane timing flake; this landing changes nothing under scripts/, and four reruns of test_gate_slot_lane alone (python-lane-rerun*.log) passed twice and failed once each on a different lane test (test_a_lane_job_waits_until_its_declared_memory_is_available, then test_status_shows_lane_holders_and_waiters). Documentation only: docs/STATUS.md 290,955 -> about 23 KB; the frozen reconciliation claims against STATUS that now fail (9 more) are tracked as STATUS-COMPACT-RECONCILIATION-CLAIMS and are run by no gate or CI step. STATUS's latest-gate section stays on the r50 record, whose figures this gate equals. No verdict, profile baseline or pin changes; land.py publish is owed.",
+  "note": "Landing integrate/r52 (base main d77e1957a; merges STATUS-REGROWTH-BY-PREPEND 9ab759afa, card base bdad6a04e with main 590f7d9f1 folded in, in 63726daeb; docs/STATUS.md conflicted in the unpublished-landings block and was resolved by keeping main's page (r50 and r51 folds), taking the card's generator marker and regenerating the sentence with python3 scripts/land.py unpublished --write; third_party/libevent checked out at d82464a27). USER DECISION 2026-11-21: launch the regrowth fix card. Amendments applied in 74d95a8b4 with --profiles-base origin/main: STATUS-REGROWTH-BY-PREPEND retired; LANDING-GATE-RECORD-UNSTRUCTURED and UNPUBLISHED-LANDINGS-HAND-LIST-OMISSIONS registered; no profiles. Full landing gate on 74d95a8b4 (private/integrate-r52/gate, raw record beside this file as gate-scope.json) via scripts/gate_scope.py --base origin/main --full --landing through private/toolchain/env.sh: Rust 673 units / 718 summaries, 9862 passed, 0 failed, 21 ignored; fmt, Clippy and both reevaluation examples exit 0; no Lean step (no proof diff; lean_audits carried from r50, 478); no provider steps (no provider diff; provider_tests carried from r50, 168). Python (801 tests) exited 1 on test_build_matrix_sections' stale-matrix check (regenerated from this record) and test_gate_slot_queue's test_each_waiter_shows_its_queue_position (the known slot-queue timing flake); the rerun after regeneration is in private/integrate-r52/python-rerun.log. Tooling only: amendment schema quirin-amendments/2 with section-targeted status_edits replacing the status_paragraph prepend (a /1 file with a null paragraph applies unchanged; a non-null one is refused outside --legacy); land.py check bounds docs/STATUS.md at 32 KiB; the unpublished-landings sentence is generated by land.py unpublished --write from the landing gate records and docs/development/landing-publications.json, and from this landing on replaces the integrator's sed step. No verdict, profile baseline or pin changes; land.py publish is owed.",
   "workspace_tests": 9862,
   "provider_tests": 168,
-  "python_evidence_validator_tests": 779,
+  "python_evidence_validator_tests": 801,
   "lean_audits": 479,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
@@ -7410,7 +7410,7 @@
   "reevaluation_followup_exit": 0,
   "cargo_fmt": "clean",
   "cargo_clippy": "clean",
-  "standing_gate": "full landing gate: every step exits 0 except the Python suite's stale-matrix check, cleared by regenerating the matrix from this record (rerun disclosed in the note); no Lean or provider steps (no proof or provider diff; counts carried from r50)",
+  "standing_gate": "full landing gate: every step exits 0 except the Python suite's stale-matrix check, cleared by regenerating the matrix from this record, and the slot-queue timing flake (both disclosed in the note); no Lean or provider steps (no proof or provider diff; counts carried from r50)",
   "full_language_conformance": false,
   "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
  },
@@ -14669,13 +14669,6 @@
    "recorded_by": "CG10-OWNED-OUT-PARAMETER-MEMBER-SLOT"
   },
   {
-   "id": "STATUS-REGROWTH-BY-PREPEND",
-   "title": "docs/STATUS.md regrows by one prepended paragraph per landing and a lengthening unpublished-landings list",
-   "why": "MEASURED by card STATUS-COMPACT (2026-11-21, base 2aefebbc1): docs/STATUS.md went from 23,931 bytes after DOCS-COMPACT-9 (2026-09-27) to 290,911 bytes, because scripts/apply_amendments.py (prepend_status) inserts each card's status_paragraph below the title and the integrator's landing step appends each landing to the 'Unpublished landings' sentence; no chronicle was folded back. STATUS-COMPACT rewrote the page (23,308 bytes) with status_paragraph null and did not change the tooling (a user decision). PROPOSAL: (1) retire status_paragraph from quirin-amendments/1, or replace it with a status_edits list naming the section and the fact a card replaces; (2) scripts/land.py check fails when docs/STATUS.md exceeds 32 KiB; (3) the unpublished-landings sentence is generated from the landing gate records. DISCHARGE: a user decision on the proposal, then the tooling change it selects, with a test that a landing cannot grow STATUS past the bound.",
-   "source": "docs/reports/status-compact/README.md",
-   "recorded_by": "STATUS-COMPACT"
-  },
-  {
    "id": "STATUS-COMPACT-RECONCILIATION-CLAIMS",
    "title": "Nine frozen reconciliation claims on docs/STATUS.md fail after STATUS-COMPACT moved their text to the status checkpoint",
    "why": "MEASURED by card STATUS-COMPACT (docs/reports/status-compact/scripts/claims.py, the sweep's normalisation): of 27 reconciliation verify claims on docs/STATUS.md, 16 failed at 2aefebbc1 and f77e97ae6 and 25 fail after the rewrite. The nine flips: three contract-cycle4-integration sentences (logger effect, scheduler lifetime, guarded production source embedding), symbolic-decomposition-cycle3's W48-BOTTOM-UP-BATCH5 sentence, w46-contract-access-expansion's card name (twice), and the three '281' claims of canonical-contract-locations and cycle18-priority1-integration already registered as vacuous (W45-RECONCILIATION-SUBSTRING-CLAIMS). Each text is verbatim in docs/development/increments/wave-48-compaction-status-part*.md. Frozen records are not rewritten; no gate or CI step runs these claims. DISCHARGE: reconciliation_sweep.py resolves a docs/STATUS.md claim against the indexed status checkpoints (or the claims are marked historical in a way the check honours), so the six non-vacuous claims pass again.",
@@ -14688,6 +14681,20 @@
    "why": "MEASURED by card STATUS-COMPACT from the committed integrator records (docs/reports/status-compact/artifacts/landing-comparisons.txt): CURRENT-CONTEXT-NEW-TRIAGE D3's comparison ends at 8e190aa83 with corpus 1,082 / 0 / 3,742 / 10; the CG25 comparisons start at 36b2cf931 and 5c824e443 with 1,078 / 0 / 3,746 / 10; the AG comparisons start at a9c6dcf44 with 1,079 / 0 / 3,745 / 10. No committed native comparison covers 8e190aa83 -> 36b2cf931 (four Safe rows to Unknown) or 5c824e443 -> a9c6dcf44 (one back); system and slice at the CG25 bases equal THREAD-LOCAL-CUSTODY-FREE-READ's measured tip (107 / 0 / 337 / 4 and 63 / 4 / 336 / 1), so only the corpus is unaccounted. DISCHARGE: a quirin-audit measure comparison over each gap, committed with the rows and the landing each is attributed to.",
    "source": "docs/reports/status-compact/README.md",
    "recorded_by": "STATUS-COMPACT"
+  },
+  {
+   "id": "LANDING-GATE-RECORD-UNSTRUCTURED",
+   "title": "Landing gate records carry their landing identity only in free text",
+   "why": "MEASURED by card STATUS-REGROWTH-BY-PREPEND (base bdad6a04e): the generated unpublished-landings sentence reads each landing from the free-text note of docs/reports/*/integration/gate.json: the label from a leading 'Landing integrate/<label>' and the cards from the 'merges CARD <revision>' clause. On the tree merged with main 590f7d9f1, 46 records name 44 landings; r17 (the merge of both lanes), r21 (a branch move/busy-state-fluent-bit) and r42 (branch fix/windows-plain-long-fixtures) have no parsable card and are named by their report directories; integrate/ag-gaps and integrate/cg25-thread-key have no rN; r18 and r40 have no record at all; two lanes both produced an r15. 'python3 scripts/land.py unpublished' lists these as problems. DISCHARGE: the landing step writes a structured landing object (label, cards, merge revision) into the gate record, the generator reads it, and the free-text parser remains only for the committed historical records.",
+   "source": "docs/reports/status-regrowth-by-prepend/README.md",
+   "recorded_by": "STATUS-REGROWTH-BY-PREPEND"
+  },
+  {
+   "id": "UNPUBLISHED-LANDINGS-HAND-LIST-OMISSIONS",
+   "title": "The hand-written unpublished list omitted r8, r9 and two side-lane landings",
+   "why": "MEASURED by card STATUS-REGROWTH-BY-PREPEND (base bdad6a04e): since d7a497822 the hand-written sentence began at integrate/r10, although the gate records of r8 (52e3142d5, three cards) and r9 (LIST-ENTRY-RELEASE-IDENTITY), both after the newest committed landing baseline record 556460e31 (integrate/r7), are absent from 556460e31's tree; it also never listed integrate/ag-gaps or integrate/cg25-thread-key. No committed record shows any of the four published, so the generated sentence counts them as unpublished (44 landings at main 590f7d9f1, against the hand-written 40). A publication that moved no baseline left no committed trace before this card's docs/development/landing-publications.json. DISCHARGE: the integrator or user confirms whether any of the four was published on the host with the prepared inputs; a confirmed publication is appended to docs/development/landing-publications.json and the sentence regenerated, otherwise the generated sentence stands.",
+   "source": "docs/reports/status-regrowth-by-prepend/README.md",
+   "recorded_by": "STATUS-REGROWTH-BY-PREPEND"
   },
   {
    "id": "SP2-DETACH-HYPOTHESES-TYPED-ATOMS",
