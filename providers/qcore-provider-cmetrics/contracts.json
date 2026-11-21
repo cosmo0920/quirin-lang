@@ -8,6 +8,7 @@
     "contracts/cmetrics/map_lifetime.qv": "15ebd943190b19cf144c52929756af16d60fc2652feab1e1342a991e0cff29ba",
     "contracts/cmetrics/metric_setters.qv": "6957f78598b3db2bc78b42f5867c850d9aff7b8979900b4cd2e757f0f3d6e57e",
     "contracts/cmetrics/metric_values.qv": "fcdabbff6844f640c09d1a4cbb823e8de8edae976ac83afa25335bcae38f3822",
+    "contracts/cmetrics/mpack_string_out.qv": "0a17b8bff8c132407993d508d0ede0ef7d85fac4e719ec63815e704c5bb33922",
     "contracts/cmetrics/mpack_utils.qv": "e7fba7cab009e3d096cd9acb3fcde1205d774cb5ad06bbcbe339e9bbed6d050f",
     "contracts/cmetrics/null_deref.qv": "03c45beb4fb82ee9e63aad675f4780a3d98721225611e91b2ce32739c7f8625a",
     "contracts/cmetrics/opts_lifetime.qv": "e8fc397d1ac7c0af2656075e0a0f217b242f8e4865b3f55ba0d95c42e44a219a",

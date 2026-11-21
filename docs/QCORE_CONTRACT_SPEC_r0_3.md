@@ -876,6 +876,30 @@ contract {
 
 **Forwarding (card CALLEE-RETENTION-CLASS1, gateway rule 12s).** A body whose every `return` is a plain integer literal or `return f(ARGS);` of one callee with a disposition in force, whose result type is spelled exactly as that callee's (so C converts nothing between the two values), takes the callee's classes: each class is validated by the ordinary route on the body restricted to the exits returning a value in it, the forwarded call read through the decided test of that class. A function whose own disposition is in force (declared and not withdrawn, or inferred) has its own row decided per class: `Safe` only when every restricted body validates its class's contract and the joint body reports nothing. A declared disposition, like every declaration, is compared with the analysed unit's C declaration (C04.1) and evaluated against its pin (C06.2); a unit's withdrawals of other names never drop it. The Lean model is `QCore.RelationalForwarding`.
 
+#### C04.13.1. An out slot handed a member of a caller-supplied object
+
+Card CG10-OWNED-OUT-PARAMETER-MEMBER-SLOT (gateway rule 72). No new grammar: the callee states its out slot with C04.2's `resource_out` (plainly, or under a return-code disposition whose other class leaves the slot unwritten), and this section states what a consumer MAY do with an actual that is not `&NAME`:
+
+```qcore
+extern fn cmt_mpack_consume_string_tag(reader: ptr<mut, u8>, output_buffer: ptr<mut, ptr<mut, u8>>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(reader);
+    ensures normal resource_on_return(eq, 0, resource_out(output_buffer, nonnull));
+    ensures normal resource_on_return(ne, 0, resource_borrowed(output_buffer));
+    ensures normal resource_return_none();
+};
+```
+
+`return cmt_mpack_consume_string_tag(reader, &opts->ns);`, with `opts` read out of the object a formal designates, hands the callee a member of an object the caller supplied, and the call stores fresh custody into it. A consumer MAY admit such a call only where all of the following hold, and MUST otherwise keep the refusal it had:
+
+1. **The callee.** Its declaration has exactly one out slot (a plain `Out`, or a disposition whose classes are `Out` or unwritten there and agree everywhere else), and with that slot read `Borrowed` the contract is the neutral element (every other formal `resource_borrowed`, `resource_return_none()`, no kind or effect clause). Every class then delivers fresh custody or nothing through the slot; where the slot's object is the caller's, the frame owes nothing for the slot in either, so the class needs no decision.
+2. **The slot.** The actual is the address of a member path `&R->F…` whose first selection dereferences `R`, and `R` is caller-supplied: an unrebound formal, or a name each of whose writes stores such a root, an object-pointer cast of one, or a member read through one (premise P-72-CALLER-OBJECT: a pointer read out of a caller's object designates an object a caller holds, never this frame's storage). A member of this frame's own object, an indexed or cast slot and a root written from anything else refuse.
+3. **The owner.** On the flow, the object the member lives in is untracked (no reaching path bound it), its root reads as rule 10v's owner premise reads it, and no binding rooted at `R` carries a target (the slot's old value is not this frame's obligation, P-CG11-CALLER-SLOT). A tracked owner, a record this frame allocated, refuses: its member may own its old value, and only O04-B08's field link rewrites one.
+4. **The delivery.** The admitted call is read with the slot as data; the delivered custody is the caller's object's, owed by no exit of this frame, and nothing this frame owed is dropped. A body with such a call publishes no derived summary: a caller would read `Borrowed` for a formal whose member now owns custody.
+
+The declaration's own `&NAME` reading (C04.13) is unchanged. The Lean model is `QCore.OwnedOutMemberSlot`.
+
 ### C04.14. Retained pointers
 
 Card CALLEE-RETENTION-CLASS1 (gateway rule 12t), on the user's decision recorded here verbatim from the card's brief:

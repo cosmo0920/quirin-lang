@@ -869,6 +869,7 @@ fn read(spelling: &str, environment: &ResourceContracts) -> Spelling {
         crate::relational_post::CLASS_PREFIX,
         crate::retained_by::RETAINED_PREFIX,
         crate::legacy_c::member_effect::MINTED_PREFIX,
+        crate::owned_out_member::MINTED_PREFIX,
     ];
     for prefix in held {
         if let Some(rest) = spelling.strip_prefix(prefix) {

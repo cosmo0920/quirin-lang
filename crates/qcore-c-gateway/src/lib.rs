@@ -247,6 +247,8 @@ mod scalar_element_address;
 mod typed_place;
 // Card CG11-POINTER-VALUED-STORES (rule 10v): pointer-valued stores.
 mod pointer_store;
+// Card CG10-OWNED-OUT-PARAMETER-MEMBER-SLOT (rule 72).
+mod owned_out_member;
 // Card CG10-MEMBER-STORE-RETAINED-BY (rule 70): a formal's pointer stored
 // into a member of a formal's object, read as a retention.
 mod member_store_retention;

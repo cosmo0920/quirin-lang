@@ -113,6 +113,12 @@ pub(crate) enum ValueClass {
     /// retention ([`crate::member_store_retention`]). Never neutral: the flow
     /// decides it with rule 70's own table.
     RetainedFormal,
+    /// Card CG10-OWNED-OUT-PARAMETER-MEMBER-SLOT (rule 72): the fresh custody
+    /// a callee delivers through an out slot handed this member path
+    /// ([`crate::owned_out_member`]). Never neutral and never classified from
+    /// an assignment: only rule 72's lowering builds it, and the flow decides
+    /// it with rule 72's own table.
+    OwnedOut,
 }
 
 impl ValueClass {
@@ -132,6 +138,7 @@ impl ValueClass {
             Self::OtherAddress => "other-address",
             Self::Other => "other",
             Self::RetainedFormal => crate::member_store_retention::RETAINED,
+            Self::OwnedOut => crate::owned_out_member::OWNED_OUT,
         }
     }
 
@@ -331,6 +338,7 @@ impl<'de> serde::Deserialize<'de> for PointerStore {
             ValueClass::OtherAddress,
             ValueClass::Other,
             ValueClass::RetainedFormal,
+            ValueClass::OwnedOut,
         ];
         let value = classes
             .into_iter()

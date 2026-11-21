@@ -345,6 +345,7 @@ import QCore.OutSlotCallWrite
 import QCore.OuterContract
 import QCore.OuterListCandidates
 import QCore.OwnedFieldCopyReach
+import QCore.OwnedOutMemberSlot
 import QCore.OwnedTaskExecution
 import QCore.Ownership
 import QCore.PackageIdentity
