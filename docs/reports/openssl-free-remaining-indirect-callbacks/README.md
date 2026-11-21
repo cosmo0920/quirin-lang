@@ -1,6 +1,8 @@
 # OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS: the teardown slots of the frees
 
-* **Base:** main `9b107caf1` (integrate/r45 with the SP1 landing record).
+* **Base:** main `9b107caf1` (integrate/r45 with the SP1 landing record);
+  main `70e10930f` (r46, OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS) was
+  merged in (§11). The gate and the amendments check use `70e10930f`.
 * **Card:** the named follow-up recorded by OPENSSL-FREE-INDIRECT-CALLBACKS
   and appended by OPENSSL-OBJECT-FREES-SILENT-METHOD-CALLBACKS.
 * **User decisions (2026-11-21)**, which replaced the brief's "do not
@@ -9,8 +11,10 @@
   2. QUIC: **"Stated slot from source"**;
   3. setters with no 3.5 man page: **"Admit pinned source"**.
 * **Commits:** [PREDICTION](PREDICTION.md) `3bb152086`, committed before any
-  implementation; the implementation with its lock, Lean and records in the
-  commit after it (the tip the reply names).
+  implementation; the implementation with its lock and Lean `983429601`; the
+  merge of r46's tip with the fourteen inner frees' teardown slots
+  `de8e68ca7`; gateway fixture `1c1b597c0`; clippy fix; merge of main
+  `70e10930f`; the gated tree `6210a7d66`.
 
 ## 1. Sources
 
@@ -313,7 +317,43 @@ measure --declared`.
 
 ## 9. Gate
 
-See [`gate/`](gate/) and the reply; filled in after the run.
+**Record:** [`gate/gate-4.json`](gate/gate-4.json). **Command:** `sh
+private/toolchain/env.sh python3 scripts/gate_scope.py --base 70e10930f --out
+private/gate-4` (Clang 21, Lean 4.35.0), log `private/logs/gate-4.log`. Tree
+`6210a7d66`: this card merged with main `70e10930f` (r46 landed); the report
+and gate record were uncommitted (docs only). Scoped, Lean all, the provider
+gate included. **Exit 0, 14 steps passed.**
+
+| Step | Exit | Counts |
+|---|---:|---|
+| submodules, `fmt`, `clippy` | 0, 0, 0 | `third_party/libevent` checked out |
+| Rust suite (scoped, 12 packages) | 0 | 624 units, 656 summaries; 8336 passed, 0 failed, 20 ignored, 148 filtered |
+| `reevaluation_probe`, `reevaluation_followup` | 0, 0 | |
+| Lean (`check_lean_audits.py`) | 0 | 471 audits (new `AuditOpensslFreeTeardownSlots`) |
+| Python suite | 0 | 779 tests |
+| provider package build, verify-all, verify `qcore.libevent` | 0, 0, 0 | |
+| provider tests | 0 | 49 summaries; 170 passed, 0 failed, 1 ignored |
+| provider fmt, provider clippy | 0, 0 | |
+
+**Earlier attempts**, retained and discarded as evidence:
+
+* `private/gate-1` (tree `983429601`, base `9b107caf1`): stopped for the
+  r46 merge (§11) after Lean (470) and the Rust suite passed; the Python
+  suite had the known slot flake; provider steps not run.
+* `private/gate-2` (tree `de8e68ca7`): the Rust suite failed one target,
+  `openssl_unstated_callback_slots` (4 of 8: its fixture did not load
+  `teardown_slots.qv`, so the handshake calls refused with `no declaration
+  registers the slot`, and two slot counts were stale). Fixed in
+  `1c1b597c0`; stopped before the provider steps.
+* `private/gate-3` (tree `1c1b597c0`): every step passed (Rust 8336, Lean
+  471, Python 779, provider tests 170) except provider clippy, exit 101
+  (`redundant_guards` in `free_audited`). Fixed in the next commit.
+
+**Outside the gate** (`private/logs/`): the crate's unit tests (27 passed),
+`openssl_undeclared_handshake_callbacks` (29 passed, `gtest-7.log`),
+`openssl_unstated_callback_slots` (8 passed, `gtest-8.log`), the frontend's
+`premise_formula` (7 passed), `lake build QCore.OpensslFreeTeardownSlots` and
+its audit (`lean-5.log`, `lean-audit-1.log`).
 
 ## 10. Follow-ups and conflicts
 
