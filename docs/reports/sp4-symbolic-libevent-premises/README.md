@@ -339,3 +339,77 @@ routes load this crate and have rows resting on `mk_http_thread_destroy`
 row): their dependency records print the seven canonical formulas in place of
 the English statements. The card did not run the routes; the measurement is
 the integrator's.
+
+## 10. Gate
+
+**Gate 1** (`python3 scripts/gate_scope.py --base 1cd7da6b8 --out
+private/gate-1` on `63a6e1b42`, scoped; [record](gate/gate-1.json)) exited 1:
+
+| Step | Exit | Counts |
+|---|---|---|
+| fmt, clippy | 0, 0 | |
+| rust-suite | 101 | 624 units, 8335 passed, **2 failed**, 20 ignored |
+| reevaluation probe, follow-up | 0, 0 | |
+| lean (`check_lean_audits.py`) | 0 | 469 audits |
+| python | 0 | 779 tests |
+| provider package build, verify (all, libevent) | 0, 0, 0 | |
+| provider test | 0 | 165 passed, 1 ignored |
+| provider fmt, clippy | 0, 0 | |
+
+The failures: the recorded host failure
+`qcore-audit::test::libcurl_user_crate_versions::the_libcurl_ranges_follow_the_audited_curlver_header`
+(system `curlver.h`, not fixed here), and this card's
+`qcore-compiler::test::qcore_contract_corpus::every_qcore_contract_source_parses_round_trips_and_compiles`
+(`Q038` on the formulas' `&&`), fixed in `06edced3e` (§1, the operator gate).
+
+**Gate 2, the gate of record**, after merging main `70e10930f`
+(OPENSSL-OBJECT-FREES-SILENT-METHOD-CALLBACKS and
+OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS; no conflict, no vocabulary
+change on main): `python3 scripts/gate_scope.py --base 70e10930f --out
+private/gate-2` on `4643b8b5d`, scoped ([record](gate/gate-2.json)). It
+exited 1, from the known host failure only:
+
+| Step | Exit | Counts |
+|---|---|---|
+| fmt, clippy | 0, 0 | |
+| rust-suite | 101 | 625 units, 8339 passed, 1 failed (`libcurl_user_crate_versions`, the recorded host failure), 20 ignored |
+| reevaluation probe, follow-up | 0, 0 | |
+| lean | 0 | 471 audits |
+| python | 0 | 779 tests |
+| provider package build, verify (all, libevent) | 0, 0, 0 | |
+| provider test | 0 | 169 passed, 1 ignored |
+| provider fmt, clippy | 0, 0 | |
+
+After the merge `contracts.py check` exits 0 (`private/logs/check-2.log`).
+The Python suite passed whole, including the matrix's Lean-audit count, so
+no stale count is carried.
+
+## 11. Follow-ups and merge notes
+
+* **SP5-GLOBAL-PROSE-PREMISE-BAN**, registered here (it was not on main):
+  the loader refuses string statements once SP2-SP4 land. If SP2 or SP3
+  registers the same id first, drop this card's `register` entry at merge.
+* **For SP2 and SP3** (both convert crates whose modules the corpus compile
+  test reaches): the operator-gate admission of §1 is what lets a formula's
+  `&&` and `|` compile; they need it too, and should reuse it rather than add
+  a second exemption. The librdkafka and fluent-bit crates' include tests,
+  like libevent's, read any contract line starting with `#` as a
+  preprocessor directive, so a formula line must not start with a `#` term
+  (this card's layout keeps every line starting with a word or `&&`).
+* **Vocabulary merge.** SP2 and SP3 may add generic terms of their own
+  (`#live`, `#tracked`, `#concurrent`, `#singleton` are the likely
+  candidates). If one lands first with the same meaning, this card's row is
+  dropped in favour of it; with a different meaning, one is renamed. The
+  Lean kind lemmas no longer enumerate rows, and every SP4 term but
+  `#singleton` is read through the name-indexed fallback, so another card's
+  appended rows need only their `vocab` lines if their signatures are among
+  the fallback's (nullary obj/set; obj → obj/set(obj)/set(fn); set(obj) →
+  set(obj)/eff).
+
+**Files likely to conflict**: `crates/qcore-frontend/src/premise_formula.rs`
+(the VOCABULARY and DECISION_VECTORS tails), `proof/QCore/PremiseFormula.lean`
+(the `vocab` and `decisionVectors` tails, the Model's last fields, the final
+`else` arms of `prim0`/`prim1`, the kind lemmas), `crates/qcore-frontend/tests/premise_formula.rs`,
+`crates/qcore-frontend/src/pipe.rs`, C04.18.9 of the contract specification,
+G05-formula, rule 13h; generated: `proof/QCore.lean`, `docs/agents/gateway.md`,
+`docs/reports/INDEX.md` (rerun their generators).
