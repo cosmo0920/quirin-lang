@@ -185,7 +185,11 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [cg10-indirect-access-sole-residuals-r3](cg10-indirect-access-sole-residuals-r3/README.md) | CG10-INDIRECT-ACCESS-SOLE-RESIDUALS round 3: the access refusal, re-measured; rules 67, 68 and a 12h amendment |
 
+| [cg10-indirect-access-sole-residuals-r4](cg10-indirect-access-sole-residuals-r4/README.md) | CG10-INDIRECT-ACCESS-SOLE-RESIDUALS round 4: callee contracts and rule 66 |
+
 | [cg10-member-store-retained-by](cg10-member-store-retained-by/README.md) | CG10-MEMBER-STORE-RETAINED-BY: a formal's pointer stored into a member is `retained_by` (rule 70) |
+
+| [cg10-reader-gaps](cg10-reader-gaps/README.md) | CG10-READER-GAPS: three reader gaps behind the indirect-access refusal (rules 71, 71a, 71b) |
 
 | [cg11-pointer-valued-stores](cg11-pointer-valued-stores/README.md) | CG11-POINTER-VALUED-STORES |
 

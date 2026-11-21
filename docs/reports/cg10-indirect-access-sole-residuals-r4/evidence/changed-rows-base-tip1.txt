@@ -1,0 +1,84 @@
+lib/librdkafka-2.15.0/src/lz4.c LZ4_compress_generic_validated Unknown -> Unknown
+   - 675 indirect memory access is outside the resource projection
+   - 692 indirect memory access is outside the resource projection
+   - 694 indirect memory access is outside the resource projection
+   - 823 indirect memory access is outside the resource projection
+   - 848 indirect memory access is outside the resource projection
+   - 850 indirect memory access is outside the resource projection
+   - 851 indirect memory access is outside the resource projection
+   + 675 call to uncontracted function `LZ4_putPosition`
+   + 692 call to uncontracted function `LZ4_getPositionOnHash`
+   + 694 call to uncontracted function `LZ4_putPositionOnHash`
+   + 823 call to uncontracted function `LZ4_clearHash`
+   + 848 call to uncontracted function `LZ4_putPosition`
+   + 850 call to uncontracted function `LZ4_getPosition`
+   + 851 call to uncontracted function `LZ4_putPosition`
+lib/librdkafka-2.15.0/src/lz4.c LZ4_prepareTable Unknown -> Safe
+   - 605 indirect memory access is outside the resource projection
+lib/librdkafka-2.15.0/src/lz4frame.c LZ4F_decodeHeader Unknown -> Unknown
+   - 1850 indirect memory access is outside the resource projection
+lib/librdkafka-2.15.0/src/lz4hc.c LZ4HC_clearTables Unknown -> Safe
+   - 566 indirect memory access is outside the resource projection
+   - 567 indirect memory access is outside the resource projection
+lib/librdkafka-2.15.0/src/lz4hc.c LZ4HC_init_internal Unknown -> Unknown
+   - 572 unresolved resource identity `hc4`
+   - 575 call to uncontracted function `LZ4HC_clearTables`
+   - 579 unresolved resource identity `hc4`
+   - 580 store of a custody-carrying value into `hc4->prefixStart`, a member of the formal `hc4` (member-store-through-formal)
+   - 581 store of a custody-carrying value into `hc4->end`, a member of the formal `hc4` (member-store-through-formal)
+   - 582 store of a custody-carrying value into `hc4->dictStart`, a member of the formal `hc4` (member-store-through-formal)
+   - 583 unresolved resource identity `hc4`
+   - 584 unresolved resource identity `hc4`
+lib/librdkafka-2.15.0/src/rdkafka_broker.c rd_kafka_broker_buf_retry Unknown -> Unknown
+   - 22430 indirect memory access is outside the resource projection
+lib/librdkafka-2.15.0/src/rdkafka_broker.c rd_kafka_broker_idle_check Unknown -> Unknown
+   - 23243 call to uncontracted function `rd_jitter`
+lib/librdkafka-2.15.0/src/rdkafka_broker.c rd_kafka_broker_random0 Unknown -> Unknown
+   - 21643 call to uncontracted function `rd_jitter` in branch condition
+lib/librdkafka-2.15.0/src/rdkafka_broker.c rd_kafka_broker_update_reconnect_backoff Unknown -> Safe
+   - 22046 indirect memory access is outside the resource projection
+lib/librdkafka-2.15.0/src/rdkafka_broker.c rd_kafka_broker_weighted Unknown -> Unknown
+   - 21681 call to uncontracted function `rd_jitter` in branch condition
+lib/librdkafka-2.15.0/src/rdkafka_broker.c rd_ut_reconnect_backoff Unknown -> Unknown
+   - 24247 call to uncontracted function `rd_kafka_broker_update_reconnect_backoff`
+   - 24250 call to uncontracted function `rd_kafka_broker_update_reconnect_backoff`
+   - 24253 call to uncontracted function `rd_kafka_broker_update_reconnect_backoff`
+   - 24256 call to uncontracted function `rd_kafka_broker_update_reconnect_backoff`
+   - 24259 call to uncontracted function `rd_kafka_broker_update_reconnect_backoff`
+   - 24262 call to uncontracted function `rd_kafka_broker_update_reconnect_backoff`
+lib/librdkafka-2.15.0/src/rdkafka_cgrp.c rd_kafka_cgrp_consumer_expedite_next_heartbeat Unknown -> Unknown
+   - 24223 indirect memory access is outside the resource projection
+lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c rd_kafka_mock_pid_new Unknown -> Unknown
+   - 23334 indirect memory access is outside the resource projection
+   + 23334 unresolved resource identity `mpid`
+lib/librdkafka-2.15.0/src/rdkafka_msg.c rd_kafka_msg_partitioner_random Unknown -> Unknown
+   - 20394 call to uncontracted function `rd_jitter`
+   - 20396 call to uncontracted function `rd_jitter`
+lib/librdkafka-2.15.0/src/rdkafka_partition.c rd_kafka_retry_msgq Unknown -> Unknown
+   - 20701 call to uncontracted function `rd_jitter`
+lib/librdkafka-2.15.0/src/rdkafka_telemetry.c rd_kafka_handle_get_telemetry_subscriptions Unknown -> Unknown
+   - 20944 call to uncontracted function `rd_jitter`
+   - 20951 unresolved resource identity `rk`
+lib/librdkafka-2.15.0/src/rdkafka_timer.c rd_kafka_timer_exp_backoff Unknown -> Unknown
+   - 19659 indirect memory access is outside the resource projection
+   + 19659 unresolved resource identity `rtmr`
+lib/librdkafka-2.15.0/src/rdrand.c rd_array_shuffle Unknown -> Unknown
+   - 6114 call to uncontracted function `rd_jitter`
+lib/librdkafka-2.15.0/src/rdxxhash.c XXH32_digest Unknown -> Safe
+   - 999 call to uncontracted function `XXH32_digest_endian`
+   - 1001 call to uncontracted function `XXH32_digest_endian`
+lib/librdkafka-2.15.0/src/rdxxhash.c XXH32_digest_endian Unknown -> Safe
+   - 993 indirect memory access is outside the resource projection
+lib/librdkafka-2.15.0/src/rdxxhash.c XXH32_endian_align Unknown -> Unknown
+   - 882 call to uncontracted function `XXH32_finalize`
+lib/librdkafka-2.15.0/src/rdxxhash.c XXH32_update_endian Unknown -> Unknown
+   - 966 indirect memory access is outside the resource projection
+lib/librdkafka-2.15.0/src/rdxxhash.c XXH64_digest Unknown -> Safe
+   - 1278 call to uncontracted function `XXH64_digest_endian`
+   - 1280 call to uncontracted function `XXH64_digest_endian`
+lib/librdkafka-2.15.0/src/rdxxhash.c XXH64_digest_endian Unknown -> Safe
+   - 1272 indirect memory access is outside the resource projection
+lib/librdkafka-2.15.0/src/rdxxhash.c XXH64_endian_align Unknown -> Unknown
+   - 1160 call to uncontracted function `XXH64_finalize`
+lib/librdkafka-2.15.0/src/rdxxhash.c XXH64_update_endian Unknown -> Unknown
+   - 1241 indirect memory access is outside the resource projection

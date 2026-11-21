@@ -1,0 +1,899 @@
+{
+ "summary": {
+  "class": "uncontracted-callee-unread-actual",
+  "functions": 37,
+  "frees": {
+   "blocked": 37
+  },
+  "blocking_callees": {
+   "cmt_mpack_consume_string_tag": 5,
+   "ctr_mpack_consume_string_or_nil_tag": 5,
+   "rd_kafka_timer_start0": 4,
+   "rd_kafka_err2str": 3,
+   "rd_kafka_log0": 3,
+   "rd_kafka_topic_partition_list_copy": 2,
+   "mk_list_init": 2,
+   "pb_encode_string": 1,
+   "rd_atomic32_add": 1,
+   "rd_list_elem": 1,
+   "rd_kafka_topic_partition_copy": 1,
+   "rd_kafka_MemberDescription_new": 1,
+   "rd_kafka_topic_partition_list_new": 1,
+   "rd_list_find": 1,
+   "rd_kafka_error_copy": 1,
+   "rd_kafka_group_result_new": 1,
+   "rd_kafka_HeartbeatRequest": 1,
+   "rd_kafka_replyq_make": 1,
+   "rd_kafka_topic_name": 1,
+   "rd_kafka_topic_name_str_safe": 1,
+   "rd_list_copy": 1,
+   "rd_kafka_msgq_enq_sorted0": 1,
+   "rd_kafka_gzip_compress": 1,
+   "rd_kafka_lz4_compress": 1,
+   "rd_kafka_snappy_compress_slice": 1,
+   "rd_kafka_offset2str": 1,
+   "rd_kafka_q_fwd_set0": 1,
+   "rd_clock": 1,
+   "rd_kafka_timer_schedule_next": 1
+  }
+ },
+ "functions": [
+  {
+   "file": "lib/cmetrics/src/cmt_decode_msgpack.c",
+   "function": "unpack_opts_desc",
+   "leaves": 1,
+   "callees": [
+    "cmt_mpack_consume_string_tag"
+   ],
+   "callee_questions": {
+    "cmt_mpack_consume_string_tag": "out-parameter: allocates a cfl_sds into *output_buffer (an owned value into the caller's member: MEMBER-EFFECT-STORES)"
+   },
+   "features": [
+    "whole-call return"
+   ],
+   "statements": [
+    "return cmt_mpack_consume_string_tag(reader, &opts->description);"
+   ],
+   "origins": [
+    "lib/cmetrics/src/cmt_decode_msgpack.c:224"
+   ],
+   "frees": "blocked",
+   "reading": null
+  },
+  {
+   "file": "lib/cmetrics/src/cmt_decode_msgpack.c",
+   "function": "unpack_opts_name",
+   "leaves": 1,
+   "callees": [
+    "cmt_mpack_consume_string_tag"
+   ],
+   "callee_questions": {
+    "cmt_mpack_consume_string_tag": "out-parameter: allocates a cfl_sds into *output_buffer (an owned value into the caller's member: MEMBER-EFFECT-STORES)"
+   },
+   "features": [
+    "whole-call return"
+   ],
+   "statements": [
+    "return cmt_mpack_consume_string_tag(reader, &opts->name);"
+   ],
+   "origins": [
+    "lib/cmetrics/src/cmt_decode_msgpack.c:213"
+   ],
+   "frees": "blocked",
+   "reading": null
+  },
+  {
+   "file": "lib/cmetrics/src/cmt_decode_msgpack.c",
+   "function": "unpack_opts_ns",
+   "leaves": 1,
+   "callees": [
+    "cmt_mpack_consume_string_tag"
+   ],
+   "callee_questions": {
+    "cmt_mpack_consume_string_tag": "out-parameter: allocates a cfl_sds into *output_buffer (an owned value into the caller's member: MEMBER-EFFECT-STORES)"
+   },
+   "features": [
+    "whole-call return"
+   ],
+   "statements": [
+    "return cmt_mpack_consume_string_tag(reader, &opts->ns);"
+   ],
+   "origins": [
+    "lib/cmetrics/src/cmt_decode_msgpack.c:191"
+   ],
+   "frees": "blocked",
+   "reading": null
+  },
+  {
+   "file": "lib/cmetrics/src/cmt_decode_msgpack.c",
+   "function": "unpack_opts_ss",
+   "leaves": 1,
+   "callees": [
+    "cmt_mpack_consume_string_tag"
+   ],
+   "callee_questions": {
+    "cmt_mpack_consume_string_tag": "out-parameter: allocates a cfl_sds into *output_buffer (an owned value into the caller's member: MEMBER-EFFECT-STORES)"
+   },
+   "features": [
+    "whole-call return"
+   ],
+   "statements": [
+    "return cmt_mpack_consume_string_tag(reader, &opts->subsystem);"
+   ],
+   "origins": [
+    "lib/cmetrics/src/cmt_decode_msgpack.c:202"
+   ],
+   "frees": "blocked",
+   "reading": null
+  },
+  {
+   "file": "lib/cmetrics/src/cmt_decode_msgpack.c",
+   "function": "unpack_static_label_component",
+   "leaves": 2,
+   "callees": [
+    "cmt_mpack_consume_string_tag"
+   ],
+   "callee_questions": {
+    "cmt_mpack_consume_string_tag": "out-parameter: allocates a cfl_sds into *output_buffer (an owned value into the caller's member: MEMBER-EFFECT-STORES)"
+   },
+   "features": [
+    "whole-call return"
+   ],
+   "statements": [
+    "return cmt_mpack_consume_string_tag(reader, &label->key);",
+    "return cmt_mpack_consume_string_tag(reader, &label->val);"
+   ],
+   "origins": [
+    "lib/cmetrics/src/cmt_decode_msgpack.c:396",
+    "lib/cmetrics/src/cmt_decode_msgpack.c:399"
+   ],
+   "frees": "blocked",
+   "reading": null
+  },
+  {
+   "file": "lib/ctraces/src/ctr_decode_msgpack.c",
+   "function": "unpack_instrumentation_scope_name",
+   "leaves": 1,
+   "callees": [
+    "ctr_mpack_consume_string_or_nil_tag"
+   ],
+   "callee_questions": {
+    "ctr_mpack_consume_string_or_nil_tag": "out-parameter: allocates a cfl_sds into *output_buffer (an owned value into the caller's member: MEMBER-EFFECT-STORES)"
+   },
+   "features": [
+    "whole-call return"
+   ],
+   "statements": [
+    "return ctr_mpack_consume_string_or_nil_tag( reader, &context->scope_span->instrumentation_scope->name);"
+   ],
+   "origins": [
+    "lib/ctraces/src/ctr_decode_msgpack.c:78"
+   ],
+   "frees": "blocked",
+   "reading": null
+  },
+  {
+   "file": "lib/ctraces/src/ctr_decode_msgpack.c",
+   "function": "unpack_instrumentation_scope_version",
+   "leaves": 1,
+   "callees": [
+    "ctr_mpack_consume_string_or_nil_tag"
+   ],
+   "callee_questions": {
+    "ctr_mpack_consume_string_or_nil_tag": "out-parameter: allocates a cfl_sds into *output_buffer (an owned value into the caller's member: MEMBER-EFFECT-STORES)"
+   },
+   "features": [
+    "whole-call return"
+   ],
+   "statements": [
+    "return ctr_mpack_consume_string_or_nil_tag( reader, &context->scope_span->instrumentation_scope->version);"
+   ],
+   "origins": [
+    "lib/ctraces/src/ctr_decode_msgpack.c:87"
+   ],
+   "frees": "blocked",
+   "reading": null
+  },
+  {
+   "file": "lib/ctraces/src/ctr_decode_msgpack.c",
+   "function": "unpack_link_trace_state",
+   "leaves": 1,
+   "callees": [
+    "ctr_mpack_consume_string_or_nil_tag"
+   ],
+   "callee_questions": {
+    "ctr_mpack_consume_string_or_nil_tag": "out-parameter: allocates a cfl_sds into *output_buffer (an owned value into the caller's member: MEMBER-EFFECT-STORES)"
+   },
+   "features": [
+    "whole-call return"
+   ],
+   "statements": [
+    "return ctr_mpack_consume_string_or_nil_tag(reader, &context->link->trace_state);"
+   ],
+   "origins": [
+    "lib/ctraces/src/ctr_decode_msgpack.c:299"
+   ],
+   "frees": "blocked",
+   "reading": null
+  },
+  {
+   "file": "lib/ctraces/src/ctr_decode_msgpack.c",
+   "function": "unpack_span_schema_url",
+   "leaves": 1,
+   "callees": [
+    "ctr_mpack_consume_string_or_nil_tag"
+   ],
+   "callee_questions": {
+    "ctr_mpack_consume_string_or_nil_tag": "out-parameter: allocates a cfl_sds into *output_buffer (an owned value into the caller's member: MEMBER-EFFECT-STORES)"
+   },
+   "features": [
+    "whole-call return"
+   ],
+   "statements": [
+    "return ctr_mpack_consume_string_or_nil_tag(reader, &context->span->schema_url);"
+   ],
+   "origins": [
+    "lib/ctraces/src/ctr_decode_msgpack.c:632"
+   ],
+   "frees": "blocked",
+   "reading": null
+  },
+  {
+   "file": "lib/ctraces/src/ctr_decode_msgpack.c",
+   "function": "unpack_span_status_message",
+   "leaves": 1,
+   "callees": [
+    "ctr_mpack_consume_string_or_nil_tag"
+   ],
+   "callee_questions": {
+    "ctr_mpack_consume_string_or_nil_tag": "out-parameter: allocates a cfl_sds into *output_buffer (an owned value into the caller's member: MEMBER-EFFECT-STORES)"
+   },
+   "features": [
+    "whole-call return"
+   ],
+   "statements": [
+    "return ctr_mpack_consume_string_or_nil_tag(reader, &context->span->status.message);"
+   ],
+   "origins": [
+    "lib/ctraces/src/ctr_decode_msgpack.c:613"
+   ],
+   "frees": "blocked",
+   "reading": null
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/nanopb/pb_encode.c",
+   "function": "pb_enc_fixed_length_bytes",
+   "leaves": 1,
+   "callees": [
+    "pb_encode_string"
+   ],
+   "callee_questions": {
+    "pb_encode_string": "writes through the stream's callback member (callback invocation), and the actual is a return-position cast view (CG10-CAST-VIEW-RETURN-POSITION)"
+   },
+   "features": [
+    "cast",
+    "whole-call return"
+   ],
+   "statements": [
+    "return pb_encode_string(stream, (const pb_byte_t*)field->pData, (size_t)field->data_size);"
+   ],
+   "origins": [
+    "lib/librdkafka-2.15.0/src/nanopb/pb_encode.c:950"
+   ],
+   "frees": "blocked",
+   "reading": null
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka.c",
+   "function": "rd_kafka_simple_consumer_add",
+   "leaves": 1,
+   "callees": [
+    "rd_atomic32_add"
+   ],
+   "callee_questions": {
+    "rd_atomic32_add": "reference counts (decision class 3; memory.qv keeps it undeclared)"
+   },
+   "features": [
+    "cast",
+    "whole-call return"
+   ],
+   "statements": [
+    "return (int)rd_atomic32_add(&rk->rk_simple_cnt, 1);"
+   ],
+   "origins": [
+    "lib/librdkafka-2.15.0/src/rdkafka.c:4573"
+   ],
+   "frees": "blocked",
+   "reading": null
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_ConsumerGroupDescription_member",
+   "leaves": 1,
+   "callees": [
+    "rd_list_elem"
+   ],
+   "callee_questions": {
+    "rd_list_elem": "container element custody (decision class 1, rule 46): the element is the list's"
+   },
+   "features": [
+    "cast",
+    "whole-call return"
+   ],
+   "statements": [
+    "return (rd_kafka_MemberDescription_t *)rd_list_elem(&grpdesc->members, idx);"
+   ],
+   "origins": [
+    "lib/librdkafka-2.15.0/src/rdkafka_admin.c:8145"
+   ],
+   "frees": "blocked",
+   "reading": null
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_DeleteRecords_new",
+   "leaves": 1,
+   "callees": [
+    "rd_kafka_topic_partition_list_copy"
+   ],
+   "callee_questions": {
+    "rd_kafka_topic_partition_list_copy": "owned constructor result stored into a member (MEMBER-EFFECT-STORES / field link)"
+   },
+   "features": [
+    "member destination"
+   ],
+   "statements": [
+    "del_records->offsets = rd_kafka_topic_partition_list_copy(before_offsets);"
+   ],
+   "origins": [
+    "lib/librdkafka-2.15.0/src/rdkafka_admin.c:3956"
+   ],
+   "frees": "blocked",
+   "reading": null
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_ElectLeaders_new",
+   "leaves": 1,
+   "callees": [
+    "rd_kafka_topic_partition_list_copy"
+   ],
+   "callee_questions": {
+    "rd_kafka_topic_partition_list_copy": "owned constructor result stored into a member (MEMBER-EFFECT-STORES / field link)"
+   },
+   "features": [
+    "cast"
+   ],
+   "statements": [
+    "if (partitions) elect_leaders->partitions = rd_kafka_topic_partition_list_copy(partitions);"
+   ],
+   "origins": [
+    "lib/librdkafka-2.15.0/src/rdkafka_admin.c:9593"
+   ],
+   "frees": "blocked",
+   "reading": null
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_ListOffsetsResultInfo_new",
+   "leaves": 1,
+   "callees": [
+    "rd_kafka_topic_partition_copy"
+   ],
+   "callee_questions": {
+    "rd_kafka_topic_partition_copy": "owned constructor result stored into a member (MEMBER-EFFECT-STORES / field link)"
+   },
+   "features": [
+    "member destination"
+   ],
+   "statements": [
+    "result_info->topic_partition = rd_kafka_topic_partition_copy(rktpar);"
+   ],
+   "origins": [
+    "lib/librdkafka-2.15.0/src/rdkafka_admin.c:4103"
+   ],
+   "frees": "blocked",
+   "reading": null
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_MemberDescription_copy",
+   "leaves": 1,
+   "callees": [
+    "rd_kafka_MemberDescription_new"
+   ],
+   "callee_questions": {
+    "rd_kafka_MemberDescription_new": "static constructor in the caller's unit (owned result; W4 summary route)"
+   },
+   "features": [
+    "?:",
+    "cast",
+    "whole-call return"
+   ],
+   "statements": [
+    "return rd_kafka_MemberDescription_new( src->client_id, src->consumer_id, src->group_instance_id, src->host, src->assignment.partitions, src->target_assignment ? src->target_assignment->partitions : ((void*)0));"
+   ],
+   "origins": [
+    "lib/librdkafka-2.15.0/src/rdkafka_admin.c:7898"
+   ],
+   "frees": "blocked",
+   "reading": null
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_assignment.c",
+   "function": "rd_kafka_assignment_init",
+   "leaves": 4,
+   "callees": [
+    "rd_kafka_topic_partition_list_new"
+   ],
+   "callee_questions": {
+    "rd_kafka_topic_partition_list_new": "owned constructor result stored into a member (MEMBER-EFFECT-STORES / field link)"
+   },
+   "features": [
+    "member destination"
+   ],
+   "statements": [
+    "rk->rk_consumer.assignment.all = rd_kafka_topic_partition_list_new(100);",
+    "rk->rk_consumer.assignment.pending = rd_kafka_topic_partition_list_new(100);",
+    "rk->rk_consumer.assignment.queried = rd_kafka_topic_partition_list_new(100);",
+    "rk->rk_consumer.assignment.removed = rd_kafka_topic_partition_list_new(100);"
+   ],
+   "origins": [
+    "lib/librdkafka-2.15.0/src/rdkafka_assignment.c:1275",
+    "lib/librdkafka-2.15.0/src/rdkafka_assignment.c:1276",
+    "lib/librdkafka-2.15.0/src/rdkafka_assignment.c:1278",
+    "lib/librdkafka-2.15.0/src/rdkafka_assignment.c:1280"
+   ],
+   "frees": "blocked",
+   "reading": null
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_assignor.c",
+   "function": "rd_kafka_assignor_find",
+   "leaves": 1,
+   "callees": [
+    "rd_list_find"
+   ],
+   "callee_questions": {
+    "rd_list_find": "container element custody and a comparator callback (decision class 1)"
+   },
+   "features": [
+    "cast",
+    "whole-call return"
+   ],
+   "statements": [
+    "return (rd_kafka_assignor_t *)rd_list_find( &rk->rk_conf.partition_assignors, protocol, rd_kafka_assignor_cmp_str);"
+   ],
+   "origins": [
+    "lib/librdkafka-2.15.0/src/rdkafka_assignor.c:452"
+   ],
+   "frees": "blocked",
+   "reading": null
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_aux.c",
+   "function": "rd_kafka_group_result_copy",
+   "leaves": 1,
+   "callees": [
+    "rd_kafka_error_copy",
+    "rd_kafka_group_result_new"
+   ],
+   "callee_questions": {
+    "rd_kafka_error_copy": "owned copy (nested in an actual)",
+    "rd_kafka_group_result_new": "owned constructor (copies; its error actual is a nested owned call)"
+   },
+   "features": [
+    "?:",
+    "cast",
+    "nested call",
+    "whole-call return"
+   ],
+   "statements": [
+    "return rd_kafka_group_result_new( groupres->group, -1, groupres->partitions, groupres->error ? rd_kafka_error_copy(groupres->error) : ((void*)0));"
+   ],
+   "origins": [
+    "lib/librdkafka-2.15.0/src/rdkafka_aux.c:120"
+   ],
+   "frees": "blocked",
+   "reading": null
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_heartbeat",
+   "leaves": 1,
+   "callees": [
+    "rd_kafka_HeartbeatRequest",
+    "rd_kafka_replyq_make"
+   ],
+   "callee_questions": {
+    "rd_kafka_HeartbeatRequest": "builds and enqueues a request with a reply queue (custody into the broker)",
+    "rd_kafka_replyq_make": "takes a queue reference (decision class 3), nested in an actual"
+   },
+   "features": [
+    "cast",
+    "nested call"
+   ],
+   "statements": [
+    "rd_kafka_HeartbeatRequest( rkcg->rkcg_coord, rkcg->rkcg_group_id, rkcg->rkcg_generation_id, rkcg->rkcg_member_id, rkcg->rkcg_group_instance_id, rd_kafka_replyq_make(rkcg->rkcg_ops, 0, __FUNCTION__), rd_kafka_cgrp_handle_Heartbeat, ((void*)0));"
+   ],
+   "origins": [
+    "lib/librdkafka-2.15.0/src/rdkafka_cgrp.c:3954"
+   ],
+   "frees": "blocked",
+   "reading": null
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_start_max_poll_interval_timer",
+   "leaves": 1,
+   "callees": [
+    "rd_kafka_timer_start0"
+   ],
+   "callee_questions": {
+    "rd_kafka_timer_start0": "registers a timer callback with its argument (decision class 1, callbacks)"
+   },
+   "features": [],
+   "statements": [
+    "rd_kafka_timer_start0(&rkcg->rkcg_rk->rk_timers, &rkcg->rkcg_max_poll_interval_tmr, 500 * 1000ll, 0, 1, rd_kafka_cgrp_max_poll_interval_check_tmr_cb, rkcg);"
+   ],
+   "origins": [
+    "lib/librdkafka-2.15.0/src/rdkafka_cgrp.c:4819"
+   ],
+   "frees": "blocked",
+   "reading": null
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_interceptor.c",
+   "function": "rd_kafka_interceptor_failed",
+   "leaves": 2,
+   "callees": [
+    "rd_kafka_err2str",
+    "rd_kafka_log0",
+    "rd_kafka_topic_name"
+   ],
+   "callee_questions": {
+    "rd_kafka_err2str": "returns static or thread-local storage, nested in a logger actual",
+    "rd_kafka_log0": "declared with three named premises (log_caller_frame.qv): never Safe outright",
+    "rd_kafka_topic_name": "returns a borrowed interior string, nested in a logger actual"
+   },
+   "features": [
+    "?:",
+    "cast",
+    "nested call"
+   ],
+   "statements": [
+    "else rd_kafka_log0(&rk->rk_conf, rk, ((void*)0), 4, 0x0, \"ICFAIL\", \"Interceptor %s failed %s: %s%s%s\", method->ic_name, method_name, rd_kafka_err2str(err), errstr ? \": \" : \"\", errstr ? errstr : \"\");",
+    "if (rkmessage) rd_kafka_log0(&rk->rk_conf, rk, ((void*)0), 4, 0x0, \"ICFAIL\", \"Interceptor %s failed %s for \" \"message on %s [%\" \"d\" \"] @ %\" \"l\" \"d\" \": %s%s%s\", method->ic_name, method_name, rd_kafka_topic_name(rkmessage->rkt), rkmessage->partition, rkmessage->offset, rd_kafka_err2str(err), errstr ? \": \" : \"\", errstr ? errstr : \"\");"
+   ],
+   "origins": [
+    "lib/librdkafka-2.15.0/src/rdkafka_interceptor.c:85",
+    "lib/librdkafka-2.15.0/src/rdkafka_interceptor.c:94"
+   ],
+   "frees": "blocked",
+   "reading": null
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_metadata.c",
+   "function": "rd_kafka_metadata_log",
+   "leaves": 1,
+   "callees": [
+    "rd_kafka_err2str",
+    "rd_kafka_log0",
+    "rd_kafka_topic_name_str_safe"
+   ],
+   "callee_questions": {
+    "rd_kafka_err2str": "returns static or thread-local storage, nested in a logger actual",
+    "rd_kafka_log0": "declared with three named premises (log_caller_frame.qv): never Safe outright",
+    "rd_kafka_topic_name_str_safe": "returns a borrowed interior string, nested in a logger actual"
+   },
+   "features": [
+    "?:",
+    "cast",
+    "nested call"
+   ],
+   "statements": [
+    "do { if ((__builtin_expect(((rk->rk_conf).debug &(0x8)), 0))) rd_kafka_log0(&rk->rk_conf, rk, ((void*)0), 7, (0x8), fac, \"  Topic #%i/%i: %s with %i partitions%s%s\", i, md->topic_cnt, rd_kafka_topic_name_str_safe(md->topics[i].topic), md->topics[i].partition_cnt, md->topics[i].err ? \": \" : \"\", md->topics[i].err ? rd_kafka_err2str(md->topics[i].err) : \"\"); } while (0);"
+   ],
+   "origins": [
+    "lib/librdkafka-2.15.0/src/rdkafka_metadata.c:1430"
+   ],
+   "frees": "blocked",
+   "reading": null
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_mock_cgrp.c",
+   "function": "rd_kafka_mock_cgrp_classic_rebalance_timer_restart",
+   "leaves": 1,
+   "callees": [
+    "rd_kafka_timer_start0"
+   ],
+   "callee_questions": {
+    "rd_kafka_timer_start0": "registers a timer callback with its argument (decision class 1, callbacks)"
+   },
+   "features": [],
+   "statements": [
+    "rd_kafka_timer_start0(&mcgrp->cluster->timers, &mcgrp->rebalance_tmr, timeout_ms * 1000, 1, 1, rd_kafka_mcgrp_rebalance_timer_cb, mcgrp);"
+   ],
+   "origins": [
+    "lib/librdkafka-2.15.0/src/rdkafka_mock_cgrp.c:504"
+   ],
+   "frees": "blocked",
+   "reading": null
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_mock_cgrp.c",
+   "function": "rd_kafka_mock_cgrp_consumer_target_assignment_new0",
+   "leaves": 2,
+   "callees": [
+    "rd_list_copy"
+   ],
+   "callee_questions": {
+    "rd_list_copy": "owned copy of a container (container custody, decision class 1)"
+   },
+   "features": [
+    "cast",
+    "member destination"
+   ],
+   "statements": [
+    "target_assignment->assignment = rd_list_copy( assignment, rd_kafka_topic_partition_list_copy_opaque, ((void*)0));",
+    "target_assignment->member_ids = rd_list_copy(member_ids, rd_list_string_copy, ((void*)0));"
+   ],
+   "origins": [
+    "lib/librdkafka-2.15.0/src/rdkafka_mock_cgrp.c:744",
+    "lib/librdkafka-2.15.0/src/rdkafka_mock_cgrp.c:746"
+   ],
+   "frees": "blocked",
+   "reading": null
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_msg.c",
+   "function": "rd_kafka_msgq_enq_sorted",
+   "leaves": 1,
+   "callees": [
+    "rd_kafka_msgq_enq_sorted0"
+   ],
+   "callee_questions": {
+    "rd_kafka_msgq_enq_sorted0": "enqueues the message (custody into the queue)"
+   },
+   "features": [
+    "whole-call return"
+   ],
+   "statements": [
+    "return rd_kafka_msgq_enq_sorted0(rkmq, rkm, rkt->rkt_conf.msg_order_cmp);"
+   ],
+   "origins": [
+    "lib/librdkafka-2.15.0/src/rdkafka_msg.c:898"
+   ],
+   "frees": "blocked",
+   "reading": null
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_msgset_writer.c",
+   "function": "rd_kafka_msgset_writer_compress_gzip",
+   "leaves": 1,
+   "callees": [
+    "rd_kafka_gzip_compress"
+   ],
+   "callee_questions": {
+    "rd_kafka_gzip_compress": "out-parameter: allocates the compressed buffer"
+   },
+   "features": [
+    "scalar destination"
+   ],
+   "statements": [
+    "err = rd_kafka_gzip_compress(msetw->msetw_rkb, comp_level, slice, &ciov->iov_base, &ciov->iov_len);"
+   ],
+   "origins": [
+    "lib/librdkafka-2.15.0/src/rdkafka_msgset_writer.c:1045"
+   ],
+   "frees": "blocked",
+   "reading": null
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_msgset_writer.c",
+   "function": "rd_kafka_msgset_writer_compress_lz4",
+   "leaves": 1,
+   "callees": [
+    "rd_kafka_lz4_compress"
+   ],
+   "callee_questions": {
+    "rd_kafka_lz4_compress": "out-parameter: allocates the compressed buffer"
+   },
+   "features": [
+    "?:",
+    "scalar destination"
+   ],
+   "statements": [
+    "err = rd_kafka_lz4_compress(msetw->msetw_rkb, msetw->msetw_MsgVersion >= 1 ? 1 : 0, comp_level, slice, &ciov->iov_base, &ciov->iov_len);"
+   ],
+   "origins": [
+    "lib/librdkafka-2.15.0/src/rdkafka_msgset_writer.c:1125"
+   ],
+   "frees": "blocked",
+   "reading": null
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_msgset_writer.c",
+   "function": "rd_kafka_msgset_writer_compress_snappy",
+   "leaves": 1,
+   "callees": [
+    "rd_kafka_snappy_compress_slice"
+   ],
+   "callee_questions": {
+    "rd_kafka_snappy_compress_slice": "out-parameter: allocates the compressed buffer"
+   },
+   "features": [
+    "scalar destination"
+   ],
+   "statements": [
+    "err = rd_kafka_snappy_compress_slice(msetw->msetw_rkb, slice, &ciov->iov_base, &ciov->iov_len);"
+   ],
+   "origins": [
+    "lib/librdkafka-2.15.0/src/rdkafka_msgset_writer.c:1110"
+   ],
+   "frees": "blocked",
+   "reading": null
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+   "function": "rd_kafka_topic_partition_list_log",
+   "leaves": 1,
+   "callees": [
+    "rd_kafka_err2str",
+    "rd_kafka_log0",
+    "rd_kafka_offset2str"
+   ],
+   "callee_questions": {
+    "rd_kafka_err2str": "returns static or thread-local storage, nested in a logger actual",
+    "rd_kafka_log0": "declared with three named premises (log_caller_frame.qv): never Safe outright",
+    "rd_kafka_offset2str": "returns thread-local storage, nested in a logger actual"
+   },
+   "features": [
+    "?:",
+    "cast",
+    "nested call"
+   ],
+   "statements": [
+    "do { if ((__builtin_expect(((rk->rk_conf).debug &(0x0 | dbg)), 0))) rd_kafka_log0(&rk->rk_conf, rk, ((void*)0), 7, (0x0 | dbg), fac, \" %s [%\" \"d\" \"] offset %s%s%s\", rktpar->topic, rktpar->partition, rd_kafka_offset2str(rktpar->offset), rktpar->err ? \": error: \" : \"\", rktpar->err ? rd_kafka_err2str(rktpar->err) : \"\"); } while (0);"
+   ],
+   "origins": [
+    "lib/librdkafka-2.15.0/src/rdkafka_partition.c:4427"
+   ],
+   "frees": "blocked",
+   "reading": null
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_queue.c",
+   "function": "rd_kafka_queue_forward",
+   "leaves": 1,
+   "callees": [
+    "rd_kafka_q_fwd_set0"
+   ],
+   "callee_questions": {
+    "rd_kafka_q_fwd_set0": "queue forwarding: takes and drops queue references (decision class 3)"
+   },
+   "features": [
+    "?:",
+    "cast"
+   ],
+   "statements": [
+    "rd_kafka_q_fwd_set0(src->rkqu_q, dst ? dst->rkqu_q : ((void*)0), 1, 1 );"
+   ],
+   "origins": [
+    "lib/librdkafka-2.15.0/src/rdkafka_queue.c:1101"
+   ],
+   "frees": "blocked",
+   "reading": null
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_timer.c",
+   "function": "rd_kafka_timer_schedule",
+   "leaves": 1,
+   "callees": [
+    "rd_clock",
+    "rd_kafka_timer_schedule_next"
+   ],
+   "callee_questions": {
+    "rd_clock": "declared elsewhere; nested in an actual",
+    "rd_kafka_timer_schedule_next": "static timer list insertion in the caller's unit (container custody)"
+   },
+   "features": [
+    "nested call"
+   ],
+   "statements": [
+    "rd_kafka_timer_schedule_next( rkts, rtmr, rd_clock() + rtmr->rtmr_interval + extra_us);"
+   ],
+   "origins": [
+    "lib/librdkafka-2.15.0/src/rdkafka_timer.c:113"
+   ],
+   "frees": "blocked",
+   "reading": null
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_txnmgr.c",
+   "function": "rd_kafka_txn_coord_timer_start",
+   "leaves": 1,
+   "callees": [
+    "rd_kafka_timer_start0"
+   ],
+   "callee_questions": {
+    "rd_kafka_timer_start0": "registers a timer callback with its argument (decision class 1, callbacks)"
+   },
+   "features": [],
+   "statements": [
+    "rd_kafka_timer_start0(&rk->rk_timers, &rk->rk_eos.txn_coord_tmr, 1000 * timeout_ms, 1, 0, rd_kafka_txn_coord_timer_cb, rk);"
+   ],
+   "origins": [
+    "lib/librdkafka-2.15.0/src/rdkafka_txnmgr.c:2895"
+   ],
+   "frees": "blocked",
+   "reading": null
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_txnmgr.c",
+   "function": "rd_kafka_txn_schedule_register_partitions",
+   "leaves": 1,
+   "callees": [
+    "rd_kafka_timer_start0"
+   ],
+   "callee_questions": {
+    "rd_kafka_timer_start0": "registers a timer callback with its argument (decision class 1, callbacks)"
+   },
+   "features": [
+    "?:"
+   ],
+   "statements": [
+    "rd_kafka_timer_start0(&rk->rk_timers, &rk->rk_eos.txn_register_parts_tmr, backoff_ms ? backoff_ms * 1000 : 1, 1, 0, rd_kafka_txn_register_partitions_tmr_cb, rk);"
+   ],
+   "origins": [
+    "lib/librdkafka-2.15.0/src/rdkafka_txnmgr.c:1199"
+   ],
+   "frees": "blocked",
+   "reading": null
+  },
+  {
+   "file": "lib/monkey/mk_server/mk_config.c",
+   "function": "mk_config_set_init_values",
+   "leaves": 3,
+   "callees": [
+    "mk_list_init"
+   ],
+   "callee_questions": {
+    "mk_list_init": "self-initialises an embedded list head (container custody, W48-CMT-TRACKED-INTERIOR-SELF-INIT's question for Monkey)"
+   },
+   "features": [],
+   "statements": [
+    "mk_list_init(&server->hosts);",
+    "mk_list_init(&server->listeners);",
+    "mk_list_init(&server->plugins);"
+   ],
+   "origins": [
+    "lib/monkey/mk_server/mk_config.c:613",
+    "lib/monkey/mk_server/mk_config.c:645",
+    "lib/monkey/mk_server/mk_config.c:648"
+   ],
+   "frees": "blocked",
+   "reading": null
+  },
+  {
+   "file": "lib/monkey/mk_server/mk_plugin.c",
+   "function": "mk_plugin_load_static",
+   "leaves": 1,
+   "callees": [
+    "mk_list_init"
+   ],
+   "callee_questions": {
+    "mk_list_init": "self-initialises an embedded list head (container custody, W48-CMT-TRACKED-INTERIOR-SELF-INIT's question for Monkey)"
+   },
+   "features": [],
+   "statements": [
+    "mk_list_init(&server->plugins);"
+   ],
+   "origins": [
+    "lib/monkey/mk_server/mk_plugin.c:410"
+   ],
+   "frees": "blocked",
+   "reading": null
+  }
+ ]
+}

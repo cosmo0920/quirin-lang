@@ -3774,8 +3774,8 @@
       "sha256": "7ad85b305776700afc9a826439a259c167957bd30e84b009a1e3288313cfe484"
     },
     "librdkafka/lz4_stream.qv": {
-      "clause_count": 71,
-      "declaration_count": 9,
+      "clause_count": 89,
+      "declaration_count": 12,
       "declarations": [
         {
           "clauses": 3,
@@ -3875,13 +3875,55 @@
           "name": "LZ4_compress_fast_extState",
           "resource_mode": null,
           "resource_table": "retaining"
+        },
+        {
+          "clauses": 4,
+          "name": "rd_jitter",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 7,
+          "name": "XXH32_finalize",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 7,
+          "name": "XXH64_finalize",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
         }
       ],
       "inherits": [],
       "other_declarations": [],
       "premise_bindings": [],
       "premises": {},
-      "sha256": "282ca1e9ad92339888457c3ec30e6ab61b7591339962741a671a22afc35ac5f3"
+      "sha256": "151e1f1ed18c2d0a25c9caacd6ae1e626f2bde79d7d8b0d0281d72186374a085"
     },
     "librdkafka/memory.qv": {
       "clause_count": 74,

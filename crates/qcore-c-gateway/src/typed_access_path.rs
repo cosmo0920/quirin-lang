@@ -328,6 +328,11 @@ pub(crate) struct EnumFacts {
     /// Card W47-ACCESS-PATH-POSITION-RESIDUALS (rule 10n): `FieldDecl` ids of
     /// members declared with an inline anonymous `enum { … }` type.
     pub(crate) anonymous_members: BTreeSet<String>,
+    /// Card CG10-INDIRECT-ACCESS-SOLE-RESIDUALS round 4 (rule 66; shared
+    /// item added to these facts): each typedef name with the builtin scalar
+    /// spelling every one of its declarations in the unit resolves to
+    /// (`None` when one does not, or two disagree). Read only by rule 66.
+    pub(crate) scalar_typedefs: BTreeMap<String, Option<String>>,
 }
 
 impl EnumFacts {
@@ -364,6 +369,11 @@ impl EnumFacts {
                         .entry(name.to_owned())
                         .and_modify(|old| *old = *old && enum_typedef)
                         .or_insert(enum_typedef);
+                    crate::typedef_scalar_element::note_scalar_typedef(
+                        &mut facts.scalar_typedefs,
+                        name,
+                        qual(node),
+                    );
                 }
             }
             _ => {}
@@ -1197,6 +1207,7 @@ impl StatementIndex {
             fields: &self.fields,
             enums: &self.enums,
             records: &self.records,
+            aggregates: &self.aggregates,
             never_bound,
             function: Some(&self.function),
             decisions: None,
@@ -1485,6 +1496,8 @@ pub(crate) struct Reader<'a> {
     enums: &'a EnumFacts,
     /// Card CG13 (rule 10w): union and bit-field record facts.
     records: &'a crate::union_bitfield::RecordFacts,
+    /// Card CG10-READER-GAPS (rule 71b): the unit's typedef facts.
+    aggregates: &'a crate::aggregate_value::AggregateFacts,
     pub(crate) never_bound: &'a dyn Fn(&str) -> bool,
     /// Card CG10-COMMON-TYPED-PLACE (rule 10t): the function whose body the
     /// reader reads, for the tracked-root place's DeclID identity.
@@ -1515,6 +1528,17 @@ impl<'a> Reader<'a> {
     /// Rule 12q: the record this reader writes its parity decisions into.
     pub(crate) fn decisions(&self) -> Option<&'a crate::consultation_decisions::Decisions> {
         self.decisions
+    }
+
+    /// Card CG10-READER-GAPS (rule 71b): the unit's typedef facts.
+    pub(crate) fn aggregates(&self) -> &'a crate::aggregate_value::AggregateFacts {
+        self.aggregates
+    }
+
+    /// Card CG10-INDIRECT-ACCESS-SOLE-RESIDUALS round 4 (rule 66): the
+    /// unit's agreeing scalar typedefs.
+    pub(crate) fn scalar_typedefs(&self) -> &'a BTreeMap<String, Option<String>> {
+        &self.enums.scalar_typedefs
     }
 
     /// Card CG11 (rule 10v): the function whose body the reader reads.
