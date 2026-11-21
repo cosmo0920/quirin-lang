@@ -331,6 +331,8 @@ import QCore.OpensslExDataPremise
 import QCore.OpensslFreeIndirectCallbacks
 import QCore.OpensslFreeInvocations
 import QCore.OpensslHandshakeSlots
+import QCore.OpensslInnerFreesAudit
+import QCore.OpensslObjectFreesAudit
 import QCore.OpensslRemainingSetters
 import QCore.OpensslUnstatedSlots
 import QCore.OrderedLifetimeReplay
@@ -358,6 +360,7 @@ import QCore.PointerTypedefMember
 import QCore.PremiseFlow
 import QCore.PremiseFormula
 import QCore.PremiseFormula.FluentBit
+import QCore.PremiseFormula.Librdkafka
 import QCore.PremiseMetadataBridge
 import QCore.PremiseRefinement
 import QCore.PrintRouteSelection

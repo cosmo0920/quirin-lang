@@ -835,6 +835,10 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [openssl-free-session-remove-invocation](openssl-free-session-remove-invocation/README.md) | OPENSSL-FREE-SESSION-REMOVE-INVOCATION: slot invocations beside a reference drop |
 
+| [openssl-inner-frees-silent-method-callbacks](openssl-inner-frees-silent-method-callbacks/README.md) | OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS: what the calls that free inside run |
+
+| [openssl-object-frees-silent-method-callbacks](openssl-object-frees-silent-method-callbacks/README.md) | OPENSSL-OBJECT-FREES-SILENT-METHOD-CALLBACKS: what the object frees run on what they free |
+
 | [openssl-pem-callback-arm](openssl-pem-callback-arm/README.md) | OPENSSL-PEM-CALLBACK-ARM: a literal-argument premise beside a synchronous invocation |
 
 | [openssl-provider-plugin](openssl-provider-plugin/README.md) | OPENSSL-PROVIDER-PLUGIN: OpenSSL contracts on the user-contract SDK, with version-ranged declarations |
@@ -1288,6 +1292,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [source-scalar-calls-v1](source-scalar-calls-v1/README.md) | SOURCE-SCALAR-CALLS-V1 |
 
 | [sp1-symbolic-openssl-premises](sp1-symbolic-openssl-premises/README.md) | SP1-SYMBOLIC-OPENSSL-PREMISES |
+
+| [sp2-symbolic-librdkafka-premises](sp2-symbolic-librdkafka-premises/README.md) | SP2-SYMBOLIC-LIBRDKAFKA-PREMISES |
 
 | [stability-reeval-1](stability-reeval-1/README.md) | STABILITY-REEVAL #1 — under what conditions each current claim is unstable |
 

@@ -69,11 +69,17 @@ contract {
 // SSL_CTX_set_default_verify_paths(SSL_CTX *ctx)`.
 // Card OPENSSL-EX-DATA-REGISTRY: the default file lookup reads certificates
 // (new X509 objects) and frees each one the store already holds.
+// Card OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS: the default file lookup frees what it read: the
+// certificates and CRLs the store did not keep and every private key
+// (X509_STORE_set_default_paths_ex, X509_load_cert_crl_file_ex, 3.5.5): the
+// unstated-slots premise in the statement of a free names what those frees run.
 extern fn SSL_CTX_set_default_verify_paths(ctx: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
     requires resource_revision(flexible);
     requires resource_library_version(openssl, documented "1.1.1");
+    requires resource_premise(openssl_unstated_callback_slots,
+        quant all #o in #freed: #teardown(#o) \ (#stated | #settable) |-> #inert);
     requires resource_premise(openssl_ex_data_callbacks,
         quant all #o in #created | #copied | #freed: #ex_data(#class(#o)) |-> #inert);
     ensures normal resource_borrowed(ctx);
@@ -89,11 +95,17 @@ contract {
 // char *CAfile, const char *CApath)`.
 // Card OPENSSL-EX-DATA-REGISTRY: CAfile is read on execution: new X509
 // objects, each freed when the store already holds it.
+// Card OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS: the file lookup frees what it read from CAfile: the
+// certificates and CRLs the store did not keep and every private key
+// (X509_load_cert_crl_file_ex, X509_INFO_free, 3.5.5): the
+// unstated-slots premise in the statement of a free names what those frees run.
 extern fn SSL_CTX_load_verify_locations(ctx: ptr<mut, u8>, CAfile: ptr<const, u8>, CApath: ptr<const, u8>) -> i32
 contract {
     requires resource_contract_v1;
     requires resource_revision(flexible);
     requires resource_library_version(openssl, documented "1.0.2");
+    requires resource_premise(openssl_unstated_callback_slots,
+        quant all #o in #freed: #teardown(#o) \ (#stated | #settable) |-> #inert);
     requires resource_premise(openssl_ex_data_callbacks,
         quant all #o in #created | #copied | #freed: #ex_data(#class(#o)) |-> #inert);
     ensures normal resource_borrowed(ctx);
@@ -120,11 +132,16 @@ contract {
 // Card OPENSSL-EX-DATA-REGISTRY: the certificate it replaces is freed (its
 // last reference may be the context's), and a private key that does not match
 // the new certificate is freed.
+// Card OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS: it frees the certificate it replaces and a key the new
+// certificate does not match (ssl_set_cert, ssl/ssl_rsa.c 3.5.5): the
+// unstated-slots premise in the statement of a free names what those frees run.
 extern fn SSL_CTX_use_certificate(ctx: ptr<mut, u8>, x: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
     requires resource_revision(flexible);
     requires resource_library_version(openssl, documented "1.0.2");
+    requires resource_premise(openssl_unstated_callback_slots,
+        quant all #o in #freed: #teardown(#o) \ (#stated | #settable) |-> #inert);
     requires resource_premise(openssl_ex_data_callbacks,
         quant all #o in #created | #copied | #freed: #ex_data(#class(#o)) |-> #inert);
     ensures normal resource_borrowed(ctx);
@@ -139,11 +156,15 @@ contract {
 // `int SSL_CTX_use_PrivateKey(SSL_CTX *ctx, EVP_PKEY *pkey)`.
 // Card OPENSSL-EX-DATA-REGISTRY: the key it replaces is freed, and a
 // certificate that does not match the new key is freed.
+// Card OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS: it frees the key it replaces (ssl_set_pkey, ssl/ssl_rsa.c 3.5.5): the
+// unstated-slots premise in the statement of a free names what those frees run.
 extern fn SSL_CTX_use_PrivateKey(ctx: ptr<mut, u8>, pkey: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
     requires resource_revision(flexible);
     requires resource_library_version(openssl, documented "1.0.2");
+    requires resource_premise(openssl_unstated_callback_slots,
+        quant all #o in #freed: #teardown(#o) \ (#stated | #settable) |-> #inert);
     requires resource_premise(openssl_ex_data_callbacks,
         quant all #o in #created | #copied | #freed: #ex_data(#class(#o)) |-> #inert);
     ensures normal resource_borrowed(ctx);
@@ -165,11 +186,16 @@ contract {
 // SSL_CTX_use_PrivateKey_file(SSL_CTX *ctx, const char *file, int type)`.
 // Card OPENSSL-EX-DATA-REGISTRY: it reads a key into a new EVP_PKEY, frees it
 // after use, and replaces the context's key.
+// Card OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS: it frees the key it read after use and the key it replaces
+// (ssl/ssl_rsa.c 3.5.5), and what the read frees on failure: the
+// unstated-slots premise in the statement of a free names what those frees run.
 extern fn SSL_CTX_use_PrivateKey_file(ctx: ptr<mut, u8>, file: ptr<const, u8>, filetype: i32) -> i32
 contract {
     requires resource_contract_v1;
     requires resource_revision(flexible);
     requires resource_library_version(openssl, documented "1.0.2");
+    requires resource_premise(openssl_unstated_callback_slots,
+        quant all #o in #freed: #teardown(#o) \ (#stated | #settable) |-> #inert);
     requires resource_premise(openssl_ex_data_callbacks,
         quant all #o in #created | #copied | #freed: #ex_data(#class(#o)) |-> #inert);
     ensures normal resource_borrowed(ctx);
@@ -203,11 +229,16 @@ contract {
 // the context: named by the narrower premise `openssl_ex_data_callbacks`
 // (C04.18). Pinned prototype: `int SSL_CTX_use_certificate_chain_file(SSL_CTX
 // *ctx, const char *file)`.
+// Card OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS: it frees the certificates it read, the chain it
+// clears and what SSL_CTX_use_certificate replaces (ssl/ssl_rsa.c 3.5.5): the
+// unstated-slots premise in the statement of a free names what those frees run.
 extern fn SSL_CTX_use_certificate_chain_file(ctx: ptr<mut, u8>, file: ptr<const, u8>) -> i32
 contract {
     requires resource_contract_v1;
     requires resource_revision(flexible);
     requires resource_library_version(openssl, documented "1.0.2");
+    requires resource_premise(openssl_unstated_callback_slots,
+        quant all #o in #freed: #teardown(#o) \ (#stated | #settable) |-> #inert);
     requires resource_premise(openssl_ex_data_callbacks,
         quant all #o in #created | #copied | #freed: #ex_data(#class(#o)) |-> #inert);
     ensures normal resource_borrowed(ctx);

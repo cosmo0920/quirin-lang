@@ -1,0 +1,38 @@
+{
+ "schema": "quirin-amendments/1",
+ "card": "OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS",
+ "base": "9b107caf1",
+ "measured_tip": "95ade721f",
+ "increment_paragraph": "**OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS (2026-11-21).** The named follow-up recorded by OPENSSL-OBJECT-FREES-SILENT-METHOD-CALLBACKS. In quirin-provider-openssl, calls that are not frees but free keys, certificates or contexts inside the call named no free statement (OpenSSL 3.5.5 sources): the four SSL_CTX_use_* loaders (the key or certificate they replace, a mismatched key, a temporary key, a cleared chain), PEM_read_bio_PrivateKey, PEM_read_bio_X509 and d2i_PKCS12_bio on a failed read (the partial object, a decoded public key, the safes' certificates and CRLs, the decoder context), SSL_CTX_load_verify_locations and SSL_CTX_set_default_verify_paths (what the file lookup read and the store did not keep, and every private key in the file), and the handshake and I/O calls and SSL_shutdown (peer and ephemeral keys, peer certificates, key exchange and signature contexts, transcript digests, record-layer cipher contexts). The first nine now name openssl_unstated_callback_slots in r45's free statement, unchanged (C04.18.9's #freed counts objects freed inside the call); since a declaration names each premise once, the handshake statement gains the free statement as its last conjunct. The free audit (FREE_AUDIT) lists every declaration whose EX_DATA_AUDIT reading names EVP_PKEY or X509 (INNER_FREE_CLASSES, inner_frees_audited), whatever its shape, and a run is met by either statement but not both; X509_new is read as freeing nothing such. The EX_DATA_AUDIT readings of these thirteen calls also list the legacy key classes and ENGINE (metadata). contracts.lock against 9b107caf1: 14 digests changed, none added or removed; pinned and library_versions unchanged. No gateway code changed. Lean: new QCore.OpensslInnerFreesAudit, audited; QCore.PremiseFormula's handshake formula widened. Premises are metadata and move no verdict; not re-measured (no pinned route loads the crate; the checker's acceptance is covered by the provider tests).",
+ "status_paragraph": null,
+ "ledger": [
+  {
+   "id": "OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS",
+   "operation": "retire",
+   "why": "OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS (2026-11-21): each listed call read from the OpenSSL 3.5.5 sources; the loaders, readers and verify-path calls name openssl_unstated_callback_slots in the free statement, and the handshake statement (the handshake and I/O calls and SSL_shutdown) conjoins it; the free audit lists every declaration whose EX_DATA_AUDIT reading names EVP_PKEY or X509 (inner_frees_audited), with tests that a missing statement or listing refuses; reviewed contracts.lock diff of 14 entries; Lean QCore.OpensslInnerFreesAudit.",
+   "source": "docs/reports/openssl-inner-frees-silent-method-callbacks/README.md"
+  },
+  {
+   "id": "OPENSSL-INNER-FREES-OTHER-CLASSES",
+   "operation": "register",
+   "title": "OpenSSL calls that free an engine, context or store inside are outside the inner-free audit's classes",
+   "text": "Found by OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS. The audit extension keys on EX_DATA_AUDIT readings naming EVP_PKEY or X509 (INNER_FREE_CLASSES). Other calls free objects with method, provider or engine functions inside: ENGINE_by_id (a dynamic engine that fails to load: its destroy function), OPENSSL_init_ssl (the configuration may create and free engines), SSL_CTX_new and SSL_new on failure (SSL_CTX_free or SSL_free of the partial object), and SSL_set_accept_state (record-layer reset). None names a free statement. DISCHARGE: read each from the 3.5.5 sources, widen INNER_FREE_CLASSES (ENGINE, SSL_CTX, SSL, X509_STORE) or record why not, and name the premise where it runs. Metadata only. Size: small.",
+   "source": "docs/reports/openssl-inner-frees-silent-method-callbacks/README.md",
+   "recorded_by": "OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS"
+  },
+  {
+   "id": "OPENSSL-INNER-FREES-BIO-EX-DATA",
+   "operation": "register",
+   "title": "OpenSSL calls that create and free a temporary BIO omit the BIO class from their ex_data reading",
+   "text": "Found by OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS. SSL_CTX_use_PrivateKey_file and SSL_CTX_use_certificate_chain_file (BIO_new(BIO_s_file()), ssl_rsa.c 3.5.5), PEM_read_bio_PrivateKey (a BIO_f_readbuffer BIO when the caller's BIO cannot tell, pem_pkey.c), and SSL_CTX_load_verify_locations and SSL_CTX_set_default_verify_paths (BIO_new_file in X509_load_cert_crl_file_ex, by_file.c) allocate and free a BIO, so they run the BIO class's ex_data callbacks, yet their EX_DATA_AUDIT classes do not list BIO. SSL_shutdown's reading lists SSL_SESSION only, though the post-handshake messages it may read run the state machine. The premise openssl_ex_data_callbacks already stands on each, so this is audit metadata. DISCHARGE: add the classes or record why not. Size: small.",
+   "source": "docs/reports/openssl-inner-frees-silent-method-callbacks/README.md",
+   "recorded_by": "OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS"
+  },
+  {
+   "id": "OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS",
+   "operation": "append",
+   "text": "OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS: the free statement (quant all #o in #freed: #teardown(#o) \\ (#stated | #settable) |-> #inert) now also stands on nine calls that free inside (the SSL_CTX_use_* loaders, the PEM and PKCS#12 readers, the verify-path calls), and the handshake statement conjoins it on the handshake and I/O calls and SSL_shutdown. A setter declared for a key's or engine's method function (RSA_meth_set_finish, ENGINE_set_finish_function and the like) makes its slot #settable, so it falls out of the premise on all of these: each must then state the slot's invocation (or keep a recorded reason), not only the *_free declarations.",
+   "source": "docs/reports/openssl-inner-frees-silent-method-callbacks/README.md"
+  }
+ ]
+}

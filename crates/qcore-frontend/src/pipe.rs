@@ -1012,8 +1012,9 @@ fn result_set_spans(program: &SourceProgram) -> Vec<Span> {
         .collect()
 }
 
-/// Card SP3-SYMBOLIC-FLUENT-BIT-LIBC-PREMISES (contract specification
-/// C04.18.9, grammar G05-formula): the expression spans of every `requires
+/// Cards SP2-SYMBOLIC-LIBRDKAFKA-PREMISES and SP3-SYMBOLIC-FLUENT-BIT-LIBC-PREMISES
+/// (contract specification C04.18.9, grammar G05-formula; one exemption for
+/// both, SP3's tighter test kept at the merge): the expression spans of every `requires
 /// resource_premise(NAME, FORMULA);` clause whose statement the premise
 /// reader ([`crate::premise_formula::premise_clause`]) accepts as a formula.
 /// Its `&&` and `|` are the formula's conjunction and set union, read
@@ -1130,8 +1131,8 @@ pub fn check_source_operators(program: &SourceProgram) -> Result<(), Vec<SourceD
             TokenKind::Symbol(Symbol::PipePipe | Symbol::AndAnd) if in_quant_check(token.span) => {
                 continue;
             }
-            // Card SP3-SYMBOLIC-FLUENT-BIT-LIBC-PREMISES: a premise formula's
-            // conjunction and set union (G05-formula).
+            // Cards SP2/SP3 symbolic premises: a premise formula's conjunction
+            // and set union (G05-formula).
             TokenKind::Symbol(Symbol::AndAnd | Symbol::Pipe) if in_premise_formula(token.span) => {
                 continue;
             }

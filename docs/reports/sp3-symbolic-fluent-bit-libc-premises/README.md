@@ -290,6 +290,41 @@ passed), `lake build QCore.PremiseFormula.FluentBit` and the new audit
 (standard axioms only), `contracts.py check` and `apply_amendments --check`,
 each exit 0.
 
+## 8a. Merge of the SP2 landing (`17b0e77b2`)
+
+On the integrator's instruction the card merged `17b0e77b2` (origin/main
+`70e10930f` plus SP2-SYMBOLIC-LIBRDKAFKA-PREMISES) and ran fast checks only,
+no full gate. Resolution:
+
+* **Vocabulary, decision vectors, spec table, Lean `vocab`:** SP2's block
+  first, this card's appended after it, both whole (no name collides). The
+  spec's Fluent Bit rows are their own table after SP2's.
+* **`pipe.rs`:** both cards added `premise_formula_spans`; one is kept, this
+  card's, because it is strictly tighter (SP2's exempted every clause headed
+  `resource_premise(`; this one only a clause the premise reader accepts as a
+  formula). The two compiler tests are one file covering both cards' cases.
+* **Lean:** SP2's length-independent `prim*_kind` proofs are kept; `Model`
+  has SP2's defaulted components and this card's `fb`, now defaulted to
+  `FluentBitTerms.none U` the same way. The merged decision-vector table
+  exceeds the default recursion depth of `decide`, so
+  `decision_vectors_agree` runs under `set_option maxRecDepth 8192` (same
+  proof, standard axioms).
+* **Rule 13h, spec prose, G05-formula:** SP2's amendment then this card's;
+  the negation sentence now names both spellings (`#x in S \ T` here, SP2's
+  `P -> #false`).
+
+Fast checks on the merged tree, each exit 0 (logs `private/logs/merge-*`):
+`cargo test -p qcore-frontend --lib --test premise_formula --test
+premise_formula_librdkafka` (61, 8, 2 passed); `cargo test -p qcore-compiler
+--test premise_formula_operators --test qcore_contract_corpus` (2, 6); the
+Fluent Bit and libc provider tests (4, 3); `lake build QCore.PremiseFormula
+QCore.PremiseFormula.FluentBit QCore.PremiseFormula.Librdkafka` (after the
+`maxRecDepth` line; the first attempt failed on it); the base, librdkafka and
+Fluent Bit audits (40 declarations, standard axioms only);
+`contracts.py check`; `cargo fmt --check` for both workspaces; clippy on
+`qcore-frontend` and `qcore-compiler`; `apply_amendments --check` with base
+`17b0e77b2`.
+
 ## 9. Ledger and follow-ups
 
 [`integration-amendments.json`](integration-amendments.json):

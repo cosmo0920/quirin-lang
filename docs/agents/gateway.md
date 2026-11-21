@@ -6433,6 +6433,38 @@ own anchor here.
     `stating_the_lookup_slots_never_improves`);
     `tests/openssl_undeclared_handshake_callbacks.rs`;
     [report](../reports/openssl-free-indirect-callbacks/README.md).
+    Card OPENSSL-OBJECT-FREES-SILENT-METHOD-CALLBACKS: `X509_free`,
+    `EVP_PKEY_free`, `PKCS12_free`, `ENGINE_free` and `EVP_MD_CTX_free`
+    name `openssl_unstated_callback_slots` in the statement of a free
+    (C04.18.9, over the call's own `#freed`: a key's provider, method and
+    engine functions; a certificate's public key's; a PKCS#12 object's
+    keys' and CRLs'; an engine's destroy and method callbacks; a digest
+    context's digest, `EVP_PKEY_CTX` and keys'). The checker's free audit
+    (`FREE_AUDIT`, `free_audited`) lists every release: a running free
+    names the free statement and not the handshake's, and a release left
+    out refuses. No slot is stated and no gateway code changed. **Do not**
+    add a release to the crate without auditing it.
+    `QCore.OpensslObjectFreesAudit`
+    (`an_unaudited_release_refuses`,
+    `a_running_free_names_the_statement`,
+    `the_statement_is_named_only_where_audited`,
+    `the_free_premise_moves_no_verdict`);
+    [report](../reports/openssl-object-frees-silent-method-callbacks/README.md).
+    Card OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS: the calls that free a
+    key, certificate or context inside without being frees name it too: the
+    four `SSL_CTX_use_*` loaders, the two PEM readers, `d2i_PKCS12_bio` and
+    the two verify-path calls in the statement of a free, and the handshake
+    and I/O calls and `SSL_shutdown` in the handshake's statement, which now
+    conjoins it (a declaration names each premise once). The free audit
+    also lists every declaration whose `EX_DATA_AUDIT` reading names
+    `EVP_PKEY` or `X509` (`INNER_FREE_CLASSES`, `inner_frees_audited`), and
+    a run is met by either statement but not both. **Do not** add a call
+    whose ex_data reading frees a key or certificate without auditing it.
+    `QCore.OpensslInnerFreesAudit`
+    (`the_handshake_statement_entails_the_free_statement`,
+    `a_run_names_exactly_one_statement`, `an_unlisted_keyed_entry_refuses`,
+    `agrees_with_the_release_audit`);
+    [report](../reports/openssl-inner-frees-silent-method-callbacks/README.md).
 
 <a id="constraint-12o"></a>
 
@@ -7614,12 +7646,34 @@ an undeclared OpenSSL producer). `QCore.NullableReferenceDrop` (12 audited,
     `decision_vectors_agree`, `openssl_formulas_wf`,
     `unstated_entails_ex_data`, `ex_data_does_not_entail_unstated`, …);
     [report](../reports/sp1-symbolic-openssl-premises/README.md).
+    **Amended by card SP2-SYMBOLIC-LIBRDKAFKA-PREMISES** (C04.18.9's
+    librdkafka block): `qcore-provider-librdkafka` states all 220 of its
+    premises as formulas (12 names, 16 statements) over 75 appended terms,
+    the falsum `#false` among them (a negation is `P -> #false`); no sort,
+    operator or typing rule is added. The crate's own test refuses a string
+    statement (`every_premise_is_a_formula`; the crate has no checker
+    plugin). A consumer that matches a premise by its exact statement reads
+    the canonical printing (`qcore-c-gateway`'s detach representation
+    check), and a binding manifest that pins a premised declaration's graph
+    is refreshed with the graph digest its only change. The source operator
+    gate reads a formula's `|` and `&&` as the formula's own. **Do not**
+    match a premise by a string the formula replaced, or carry a frozen
+    checkpoint across the conversion except through the card's recorded,
+    hash-checked restoration (`tests/support/sp2_premise_checkpoint.rs`).
+    `QCore.PremiseFormula.Librdkafka` (`librdkafka_formulas_wf`,
+    `asserted_toppar_prerequisites_suffice`, `share_ack_prerequisites_suffice`,
+    `log_no_event_prerequisites_suffice`, `hooks_print_entails_new_item`, …);
+    [report](../reports/sp2-symbolic-librdkafka-premises/README.md).
     **Amended by card SP3-SYMBOLIC-FLUENT-BIT-LIBC-PREMISES** (C04.18.9's
     Fluent Bit block): `quirin-provider-fluent-bit` states its three
     premises (`untracked_handback`, `ingestion_active`,
     `synchronous_output_reachability`) as formulas over 20 appended terms,
-    four of sort `prop`, with no grammar change and no new sort; negation
-    is membership in a difference (`#x in S \ T`). The crate's own test
+    four of sort `prop`, appended after the librdkafka block, with no
+    grammar change and no new sort; its formulas write a negation as
+    membership in a difference (`#x in S \ T`), the other spelling beside
+    `P -> #false`. The operator gate's exemption is one for both cards, and
+    admits `|` and `&&` only in a clause the premise reader accepts as a
+    formula. The crate's own test
     refuses a string statement (`every_premise_is_a_formula`), and
     `quirin-provider-libc`'s refuses a string premise or hypothesis atom
     (`no_premise_is_prose`; it states none). The three declarations are

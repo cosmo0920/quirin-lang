@@ -127,6 +127,8 @@ fn lean_rows(opening: &str) -> Vec<String> {
         .map(str::trim)
         .skip_while(|line| line.is_empty())
         .take_while(|line| *line != "]")
+        // Card SP2-SYMBOLIC-LIBRDKAFKA-PREMISES: a `--` line delimits a
+        // card's block and is not a row.
         .filter(|line| !line.starts_with("--"))
         .map(|line| line.trim_end_matches(',').to_owned())
         .collect()
@@ -256,7 +258,14 @@ fn the_openssl_formulas_are_the_lean_definitions() {
             "openssl_unstated_callback_slots",
             &[
                 ("def unstatedFormula : Raw :=", 5),
-                ("def unstatedFreeFormula : Raw :=", 3),
+                // Card OPENSSL-OBJECT-FREES-SILENT-METHOD-CALLBACKS: X509_free,
+                // EVP_PKEY_free, PKCS12_free, ENGINE_free and EVP_MD_CTX_free
+                // join the three frees. Card
+                // OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS: the four
+                // SSL_CTX_use_* loaders, the two PEM readers, d2i_PKCS12_bio
+                // and the two verify-path calls (the handshake statement, on
+                // the other five, conjoins the free statement).
+                ("def unstatedFreeFormula : Raw :=", 17),
             ],
         ),
         (
@@ -299,7 +308,7 @@ fn the_openssl_formulas_are_the_lean_definitions() {
             "{name}: a statement matches no Lean definition"
         );
     }
-    assert_eq!(total, 53);
+    assert_eq!(total, 67);
 }
 
 /// Card SP3-SYMBOLIC-FLUENT-BIT-LIBC-PREMISES: the three modules of

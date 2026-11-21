@@ -4009,11 +4009,12 @@ between arguments, parentheses only where the precedence needs them.
 The frontend's operator gate (`Q038`) admits `&&` and `|` inside a `requires
 resource_premise(NAME, FORMULA);` clause whose statement the premise reader
 accepts as a formula, and nowhere else it did not already
-(`crates/qcore-frontend/src/pipe.rs`, `premise_formula_spans`; card
-SP3-SYMBOLIC-FLUENT-BIT-LIBC-PREMISES, whose Fluent Bit modules are the first
-formula premises the compiler regression sweep of the contract corpus
-compiles). A string statement or a formula the reader refuses gets no such
-span, so its operators still refuse.
+(`crates/qcore-frontend/src/pipe.rs`, `premise_formula_spans`; cards
+SP2-SYMBOLIC-LIBRDKAFKA-PREMISES and SP3-SYMBOLIC-FLUENT-BIT-LIBC-PREMISES,
+whose librdkafka and Fluent Bit modules are the first formula premises the
+compiler regression sweep of the contract corpus compiles; one exemption for
+both, SP3's reader-accepted test kept at the merge). A string statement or a
+formula the reader refuses gets no such span, so its operators still refuse.
 
 `|->` is the lexer's one `MapsTo` token everywhere (three bytes, matched before
 `||`, `|>`, `->` and `|`, so `A |-> B` never lexes as a union followed by an
@@ -4021,6 +4022,14 @@ implication). Its meaning is decided by the delimited context that reads it: a
 contract state clause, a `resource_premise_flow_v1` expression (G05-flow), or
 this formula, where `F |-> E` says every run of callback `F` (or of every
 member of callback set `F`) during the call has effect `E`.
+
+Card SP2-SYMBOLIC-LIBRDKAFKA-PREMISES: the grammar is unchanged (its new
+terms are vocabulary, C04.18.9). The source operator gate (G01, `Q038`) reads
+a `|` or `&&` inside a `requires resource_premise(…)` clause the premise reader
+accepts as a formula (above) as the formula's own union or conjunction, as it reads a quant check's connectives and a result
+set's operators, so a contract module stating a formula compiles; a `|` or
+`&&` anywhere else keeps its refusal, and every other token of the clause is
+the premise reader's to accept or refuse.
 
 ### G05-flow. Proposed premise expressions
 
