@@ -9,7 +9,7 @@ and its amendments. Documentation only: no crate, proof, contract, matrix or
 frozen report changed. The user asked to tidy the statuses STATUS describes;
 operations requires the page to be "current, not a history".
 
-**Headline.** `docs/STATUS.md` **290,886 → 23,182 bytes** (570 → 262 lines),
+**Headline.** `docs/STATUS.md` **290,886 → 23,218 bytes** (570 → 263 lines),
 under the 32 KiB target. The whole page it replaced is preserved verbatim in
 eleven checkpoint pages,
 [`wave-48-compaction-status-part1.md`](../../development/increments/wave-48-compaction-status-part1.md)
@@ -149,6 +149,22 @@ sections, and extend the unpublished sentence as §4 says.
 
 ## 7. Gate
 
-Scoped card gate (`scripts/gate_scope.py --base 2aefebbc1`) through
-`private/toolchain/env.sh`; exits and counts in [`gate.json`](gate.json), logs
-under `private/status-compact/`. Docs only, so no Rust or Lean parity work.
+Scoped card gate on `d1676cbdd`: `sh private/toolchain/env.sh python3
+scripts/gate_scope.py --base 2aefebbc1 --out private/status-compact/gate`,
+exit 0 ([`gate.json`](gate.json); logs `private/status-compact/gate/`). The
+scope found no affected crate, so no Rust suite, Lean or provider step ran:
+
+| Step | Exit | Result |
+|---|---|---|
+| `git submodule update --init third_party/libevent` | 0 | `d82464a27` |
+| submodule status | 0 | 1 submodule, none moved |
+| `cargo fmt --all -- --check` | 0 | |
+| `python3 -m unittest discover -s scripts/tests` | 0 | **779 tests**, 0 skipped |
+| `python3 scripts/land.py check` | 0 | matrix dimensions, report index and contributions page fresh |
+| `apply_amendments.py … --check` | 0 | 3 registrations, 1 amendment |
+| `inventory.py 2aefebbc1`, `checkpoint.py check 2aefebbc1` | 0, 0 | §2 |
+
+After the gate, only this report's own files changed: the page-size figure,
+the gate record and the artifacts. `land.py check` and the amendments check
+were rerun on the final tree and exit 0. This is a documentation card with no
+semantic change, so it needs no Rust or Lean parity work.
