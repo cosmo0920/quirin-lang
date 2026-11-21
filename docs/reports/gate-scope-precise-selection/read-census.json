@@ -6166,6 +6166,16 @@
 "read": [],
 "seconds": 0.4
 },
+"qcore-c-gateway::test::small_bundle": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 1.0
+},
 "qcore-c-gateway::test::sr5_soundness": {
 "dirs": [],
 "exit": 0,
