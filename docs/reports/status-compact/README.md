@@ -172,6 +172,8 @@ scope found no affected crate, so no Rust suite, Lean or provider step ran:
 
 After the gate, two things changed: this report's own files, and the merge of
 `f77e97ae6` (§6), whose STATUS resolution is documentation only. r49's code is
-covered by its own landing gate. `land.py check` and the amendments check
-were rerun on the final tree and exit 0. This is a documentation card with no
+covered by its own landing gate. On the merged tree (`7bc93a845`), `land.py
+check`, the amendments check, `inventory.py` and `checkpoint.py check` exit 0,
+and the Python suite, run again through `private/toolchain/env.sh`, ran 779
+tests and passed them all (exit 0). This is a documentation card with no
 semantic change, so it needs no Rust or Lean parity work.
