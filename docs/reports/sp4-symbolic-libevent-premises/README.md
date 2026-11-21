@@ -475,3 +475,7 @@ corpus, twelve-home, system and slice all match the declared prediction with
 sha256 `1a4f73ea36a2b236795466c8c7946edfe77d424297607ed48a05e6f32cc60eaa`). Landing gate: `integration/gate.json` (Rust 9821
 passed, 1 failed: the known host libcurl failure; Lean 473 audits; Python
 779).
+
+Landing race: merged main `6820ddc31` (SP2, SP3, r53) in `02ff22744`, plus
+`a2e545192` for r53's two new Model fields; the targeted check named in
+`integration/gate.json` passed (Lean 482 audits). No provider premise is prose.
