@@ -5313,6 +5313,16 @@
 "read": [],
 "seconds": 0.1
 },
+"qcore-c-gateway::test::owned_out_member_slot": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 4.2
+},
 "qcore-c-gateway::test::parenthesised_callee": {
 "dirs": [],
 "exit": 0,
