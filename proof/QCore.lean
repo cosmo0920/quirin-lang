@@ -202,6 +202,7 @@ import QCore.Flow
 import QCore.FrameHelperTask
 import QCore.Frontend
 import QCore.FunctionPointerDeclarators
+import QCore.FunctionPointerFormal
 import QCore.FunctionTypedefPointer
 import QCore.GenericSelection
 import QCore.GnuBuiltinReader
@@ -412,6 +413,7 @@ import QCore.ResourceCalls
 import QCore.ResourceKinds
 import QCore.ResultConstructorSwitch
 import QCore.ResultConstructors
+import QCore.ResultHolderRefusal
 import QCore.ResultSet
 import QCore.RetainedBy
 import QCore.RetainingCallMintedName
@@ -519,6 +521,7 @@ import QCore.TypedSourceOperators
 import QCore.TypedefAggregateBase
 import QCore.TypedefProjection
 import QCore.TypedefScalarElement
+import QCore.UncastReturnAttribution
 import QCore.UncheckedLinkage
 import QCore.UncontractedAccessAttribution
 import QCore.UnionArmLayout

@@ -1,0 +1,13 @@
+SOLE lib/librdkafka-2.15.0/src/rdkafka.c rd_kafka_consume_callback_queue ['rd_kafka_consume_callback0']
+SOLE lib/librdkafka-2.15.0/src/rdkafka.c rd_kafka_rebootstrap_tmr_start_maybe ['rd_kafka_timer_start0']
+SOLE lib/librdkafka-2.15.0/src/rdkafka_buf.c rd_kafka_buf_push0 ['rd_buf_push0']
+SOLE lib/librdkafka-2.15.0/src/rdkafka_queue.c rd_kafka_queue_cb_event_enable ['rd_kafka_q_cb_event_enable']
+SOLE lib/librdkafka-2.15.0/src/rdkafka_range_assignor.c rd_kafka_range_assignor_init ['rd_kafka_assignor_add']
+SOLE lib/librdkafka-2.15.0/src/rdkafka_roundrobin_assignor.c rd_kafka_roundrobin_assignor_init ['rd_kafka_assignor_add']
+SOLE lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c PartitionMovements_init ['rd_map_init']
+SOLE lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c rd_kafka_sticky_assignor_init ['rd_kafka_assignor_add']
+SOLE lib/chunkio/src/chunkio.c cio_qsort ['qsort_stream']
+SOLE lib/monkey/mk_server/mk_http_parser.c mk_http_parser_chunked_decode_buf ['mk_http_parser_read_chunked_content']
+SOLE lib/monkey/mk_server/mk_lib.c mk_mq_create ['mk_fifo_queue_create']
+SOLE lib/monkey/mk_server/mk_lib.c mk_worker_callback ['mk_sched_worker_cb_add']
+{"mentioning_callees": {"filter_context_fqname": 1, "filter_context_label_key": 1, "mk_fifo_queue_create": 1, "mk_http_parser_read_chunked_content": 1, "mk_http_send": 1, "mk_sched_worker_cb_add": 2, "mk_utils_worker_spawn": 2, "mk_vhost_handler_match": 1, "qsort_stream": 1, "rd_buf_push0": 4, "rd_kafka_OffsetFetchRequest": 1, "rd_kafka_admin_request_op_result_cb_set": 1, "rd_kafka_admin_request_op_target_all_new": 1, "rd_kafka_assignor_add": 3, "rd_kafka_broker_any_up": 1, "rd_kafka_buf_new_shadow": 7, "rd_kafka_buf_push0": 1, "rd_kafka_buf_set_maker": 1, "rd_kafka_commit0": 2, "rd_kafka_consume_callback0": 2, "rd_kafka_msgq_enq_sorted0": 1, "rd_kafka_msgset_writer_write_msg": 2, "rd_kafka_q_cb_event_enable": 1, "rd_kafka_retry_msgq": 1, "rd_kafka_timer_start0": 4, "rd_list_sort": 18, "rd_map_init": 2, "unittest_msgq_order": 1}, "sole_rows": 12}

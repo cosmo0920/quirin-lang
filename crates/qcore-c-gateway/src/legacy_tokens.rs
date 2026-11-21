@@ -647,7 +647,8 @@ pub(super) const DECLARATION_SPECIFIERS: &[&str] = &[
 /// `Some(vec![Some(name), None, ..])` names each formal the body can refer to;
 /// an inner `None` is an unnamed formal. The whole result is `None` whenever
 /// the declarator list cannot be read *unambiguously* — variadic lists,
-/// function-pointer parameters, K&R-style single-identifier declarators,
+/// function-pointer parameters other than rule 74b's `R (*f)(A)` formal the
+/// body never calls, K&R-style single-identifier declarators,
 /// unnamed tagged types, and duplicate names all reject the function outright.
 /// Misreading which declarator carries a name would attach custody to the wrong
 /// argument, so this parser refuses everything it cannot pin down.
@@ -660,9 +661,21 @@ pub(crate) fn function_parameters(tokens: &[Token], function: &str) -> Option<Ve
         if tokens.get(close + 1).map(|t| t.text.as_str()) != Some("{") {
             continue;
         }
-        return parse_parameter_declarators(&tokens[index + 2..close]);
+        // Card CG10-SMALL-BUNDLE (rule 74b): where the old reader refuses a
+        // list holding `(`, a function-pointer formal the body never calls.
+        return parse_parameter_declarators(&tokens[index + 2..close]).or_else(|| {
+            let end = matching(tokens, close + 1, "{", "}")?;
+            super::function_pointer_formal::read(
+                &token_texts(&tokens[index + 2..close]),
+                &token_texts(&tokens[close + 2..end]),
+            )
+        });
     }
     None
+}
+
+fn token_texts(tokens: &[Token]) -> Vec<&str> {
+    tokens.iter().map(|token| token.text.as_str()).collect()
 }
 
 pub(super) fn parse_parameter_declarators(tokens: &[Token]) -> Option<Vec<Option<String>>> {
