@@ -73,6 +73,11 @@ contract {
 // certificates and CRLs the store did not keep and every private key
 // (X509_STORE_set_default_paths_ex, X509_load_cert_crl_file_ex, 3.5.5): the
 // unstated-slots premise in the statement of a free names what those frees run.
+// Card OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS: the key it frees inside
+// runs the teardown slots whose setters are declared now (teardown_slots.qv),
+// which the free statement no longer covers, so they are stated through the
+// borrowed formal at position 0 (the key is run-wide), beside
+// `openssl_builtin_teardown_functions` and `openssl_loaded_module_functions`.
 extern fn SSL_CTX_set_default_verify_paths(ctx: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
@@ -82,7 +87,23 @@ contract {
         quant all #o in #freed: #teardown(#o) \ (#stated | #settable) |-> #inert);
     requires resource_premise(openssl_ex_data_callbacks,
         quant all #o in #created | #copied | #freed: #ex_data(#class(#o)) |-> #inert);
+    requires resource_premise(openssl_builtin_teardown_functions,
+        quant all #o in #freed: quant all #f in #teardown(#o): #f in #library
+        -> #f |-> #inert);
+    requires resource_premise(openssl_loaded_module_functions,
+        quant all #o in #freed: quant all #f in #teardown(#o): #f in #loaded
+        -> #f |-> #inert
+        && quant all #g in #in_turn(#f, #freed | #args | #created): #g in #library | #loaded);
     ensures normal resource_borrowed(ctx);
+    ensures normal resource_callback_slot_invoked(ctx, dh_method.dh_meth_finish, _);
+    ensures normal resource_callback_slot_invoked(ctx, dsa_method.dsa_meth_finish, _);
+    ensures normal resource_callback_slot_invoked(ctx, ec_key_method_st.ec_key_meth_finish, _);
+    ensures normal resource_callback_slot_invoked(ctx, engine_st.engine_destroy, _);
+    ensures normal resource_callback_slot_invoked(ctx, engine_st.engine_finish, _);
+    ensures normal resource_callback_slot_invoked(ctx, engine_st.engine_pkey_asn1_meths, _, supplied_nullable, supplied_nullable, _);
+    ensures normal resource_callback_slot_invoked(ctx, engine_st.engine_pkey_meths, _, supplied_nullable, supplied_nullable, _);
+    ensures normal resource_callback_slot_invoked(ctx, evp_pkey_asn1_method_st.asn1_meth_pkey_free, _);
+    ensures normal resource_callback_slot_invoked(ctx, rsa_meth_st.rsa_meth_finish, _);
     ensures normal resource_return_none();
 };
 
@@ -99,6 +120,11 @@ contract {
 // certificates and CRLs the store did not keep and every private key
 // (X509_load_cert_crl_file_ex, X509_INFO_free, 3.5.5): the
 // unstated-slots premise in the statement of a free names what those frees run.
+// Card OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS: the key it frees inside
+// runs the teardown slots whose setters are declared now (teardown_slots.qv),
+// which the free statement no longer covers, so they are stated through the
+// borrowed formal at position 0 (the key is run-wide), beside
+// `openssl_builtin_teardown_functions` and `openssl_loaded_module_functions`.
 extern fn SSL_CTX_load_verify_locations(ctx: ptr<mut, u8>, CAfile: ptr<const, u8>, CApath: ptr<const, u8>) -> i32
 contract {
     requires resource_contract_v1;
@@ -108,9 +134,25 @@ contract {
         quant all #o in #freed: #teardown(#o) \ (#stated | #settable) |-> #inert);
     requires resource_premise(openssl_ex_data_callbacks,
         quant all #o in #created | #copied | #freed: #ex_data(#class(#o)) |-> #inert);
+    requires resource_premise(openssl_builtin_teardown_functions,
+        quant all #o in #freed: quant all #f in #teardown(#o): #f in #library
+        -> #f |-> #inert);
+    requires resource_premise(openssl_loaded_module_functions,
+        quant all #o in #freed: quant all #f in #teardown(#o): #f in #loaded
+        -> #f |-> #inert
+        && quant all #g in #in_turn(#f, #freed | #args | #created): #g in #library | #loaded);
     ensures normal resource_borrowed(ctx);
     ensures normal resource_borrowed(CAfile);
     ensures normal resource_borrowed(CApath);
+    ensures normal resource_callback_slot_invoked(ctx, dh_method.dh_meth_finish, _);
+    ensures normal resource_callback_slot_invoked(ctx, dsa_method.dsa_meth_finish, _);
+    ensures normal resource_callback_slot_invoked(ctx, ec_key_method_st.ec_key_meth_finish, _);
+    ensures normal resource_callback_slot_invoked(ctx, engine_st.engine_destroy, _);
+    ensures normal resource_callback_slot_invoked(ctx, engine_st.engine_finish, _);
+    ensures normal resource_callback_slot_invoked(ctx, engine_st.engine_pkey_asn1_meths, _, supplied_nullable, supplied_nullable, _);
+    ensures normal resource_callback_slot_invoked(ctx, engine_st.engine_pkey_meths, _, supplied_nullable, supplied_nullable, _);
+    ensures normal resource_callback_slot_invoked(ctx, evp_pkey_asn1_method_st.asn1_meth_pkey_free, _);
+    ensures normal resource_callback_slot_invoked(ctx, rsa_meth_st.rsa_meth_finish, _);
     ensures normal resource_return_none();
 };
 
@@ -135,6 +177,11 @@ contract {
 // Card OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS: it frees the certificate it replaces and a key the new
 // certificate does not match (ssl_set_cert, ssl/ssl_rsa.c 3.5.5): the
 // unstated-slots premise in the statement of a free names what those frees run.
+// Card OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS: the key it frees inside
+// runs the teardown slots whose setters are declared now (teardown_slots.qv),
+// which the free statement no longer covers, so they are stated through the
+// borrowed formal at position 0 (the key is run-wide), beside
+// `openssl_builtin_teardown_functions` and `openssl_loaded_module_functions`.
 extern fn SSL_CTX_use_certificate(ctx: ptr<mut, u8>, x: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
@@ -144,9 +191,25 @@ contract {
         quant all #o in #freed: #teardown(#o) \ (#stated | #settable) |-> #inert);
     requires resource_premise(openssl_ex_data_callbacks,
         quant all #o in #created | #copied | #freed: #ex_data(#class(#o)) |-> #inert);
+    requires resource_premise(openssl_builtin_teardown_functions,
+        quant all #o in #freed: quant all #f in #teardown(#o): #f in #library
+        -> #f |-> #inert);
+    requires resource_premise(openssl_loaded_module_functions,
+        quant all #o in #freed: quant all #f in #teardown(#o): #f in #loaded
+        -> #f |-> #inert
+        && quant all #g in #in_turn(#f, #freed | #args | #created): #g in #library | #loaded);
     ensures normal resource_borrowed(ctx);
     ensures normal resource_borrowed(x);
     ensures normal resource_callback_slot_invoked(ctx, ssl_ctx_st.sec_cb, supplied_nullable, ctx, _, _, _, x, supplied_nullable);
+    ensures normal resource_callback_slot_invoked(ctx, dh_method.dh_meth_finish, _);
+    ensures normal resource_callback_slot_invoked(ctx, dsa_method.dsa_meth_finish, _);
+    ensures normal resource_callback_slot_invoked(ctx, ec_key_method_st.ec_key_meth_finish, _);
+    ensures normal resource_callback_slot_invoked(ctx, engine_st.engine_destroy, _);
+    ensures normal resource_callback_slot_invoked(ctx, engine_st.engine_finish, _);
+    ensures normal resource_callback_slot_invoked(ctx, engine_st.engine_pkey_asn1_meths, _, supplied_nullable, supplied_nullable, _);
+    ensures normal resource_callback_slot_invoked(ctx, engine_st.engine_pkey_meths, _, supplied_nullable, supplied_nullable, _);
+    ensures normal resource_callback_slot_invoked(ctx, evp_pkey_asn1_method_st.asn1_meth_pkey_free, _);
+    ensures normal resource_callback_slot_invoked(ctx, rsa_meth_st.rsa_meth_finish, _);
     ensures normal resource_return_none();
 };
 
@@ -158,6 +221,11 @@ contract {
 // certificate that does not match the new key is freed.
 // Card OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS: it frees the key it replaces (ssl_set_pkey, ssl/ssl_rsa.c 3.5.5): the
 // unstated-slots premise in the statement of a free names what those frees run.
+// Card OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS: the key it frees inside
+// runs the teardown slots whose setters are declared now (teardown_slots.qv),
+// which the free statement no longer covers, so they are stated through the
+// borrowed formal at position 0 (the key is run-wide), beside
+// `openssl_builtin_teardown_functions` and `openssl_loaded_module_functions`.
 extern fn SSL_CTX_use_PrivateKey(ctx: ptr<mut, u8>, pkey: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
@@ -167,8 +235,24 @@ contract {
         quant all #o in #freed: #teardown(#o) \ (#stated | #settable) |-> #inert);
     requires resource_premise(openssl_ex_data_callbacks,
         quant all #o in #created | #copied | #freed: #ex_data(#class(#o)) |-> #inert);
+    requires resource_premise(openssl_builtin_teardown_functions,
+        quant all #o in #freed: quant all #f in #teardown(#o): #f in #library
+        -> #f |-> #inert);
+    requires resource_premise(openssl_loaded_module_functions,
+        quant all #o in #freed: quant all #f in #teardown(#o): #f in #loaded
+        -> #f |-> #inert
+        && quant all #g in #in_turn(#f, #freed | #args | #created): #g in #library | #loaded);
     ensures normal resource_borrowed(ctx);
     ensures normal resource_borrowed(pkey);
+    ensures normal resource_callback_slot_invoked(ctx, dh_method.dh_meth_finish, _);
+    ensures normal resource_callback_slot_invoked(ctx, dsa_method.dsa_meth_finish, _);
+    ensures normal resource_callback_slot_invoked(ctx, ec_key_method_st.ec_key_meth_finish, _);
+    ensures normal resource_callback_slot_invoked(ctx, engine_st.engine_destroy, _);
+    ensures normal resource_callback_slot_invoked(ctx, engine_st.engine_finish, _);
+    ensures normal resource_callback_slot_invoked(ctx, engine_st.engine_pkey_asn1_meths, _, supplied_nullable, supplied_nullable, _);
+    ensures normal resource_callback_slot_invoked(ctx, engine_st.engine_pkey_meths, _, supplied_nullable, supplied_nullable, _);
+    ensures normal resource_callback_slot_invoked(ctx, evp_pkey_asn1_method_st.asn1_meth_pkey_free, _);
+    ensures normal resource_callback_slot_invoked(ctx, rsa_meth_st.rsa_meth_finish, _);
     ensures normal resource_return_none();
 };
 
@@ -189,6 +273,11 @@ contract {
 // Card OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS: it frees the key it read after use and the key it replaces
 // (ssl/ssl_rsa.c 3.5.5), and what the read frees on failure: the
 // unstated-slots premise in the statement of a free names what those frees run.
+// Card OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS: the key it frees inside
+// runs the teardown slots whose setters are declared now (teardown_slots.qv),
+// which the free statement no longer covers, so they are stated through the
+// borrowed formal at position 0 (the key is run-wide), beside
+// `openssl_builtin_teardown_functions` and `openssl_loaded_module_functions`.
 extern fn SSL_CTX_use_PrivateKey_file(ctx: ptr<mut, u8>, file: ptr<const, u8>, filetype: i32) -> i32
 contract {
     requires resource_contract_v1;
@@ -198,10 +287,26 @@ contract {
         quant all #o in #freed: #teardown(#o) \ (#stated | #settable) |-> #inert);
     requires resource_premise(openssl_ex_data_callbacks,
         quant all #o in #created | #copied | #freed: #ex_data(#class(#o)) |-> #inert);
+    requires resource_premise(openssl_builtin_teardown_functions,
+        quant all #o in #freed: quant all #f in #teardown(#o): #f in #library
+        -> #f |-> #inert);
+    requires resource_premise(openssl_loaded_module_functions,
+        quant all #o in #freed: quant all #f in #teardown(#o): #f in #loaded
+        -> #f |-> #inert
+        && quant all #g in #in_turn(#f, #freed | #args | #created): #g in #library | #loaded);
     ensures normal resource_borrowed(ctx);
     ensures normal resource_borrowed(file);
     ensures normal resource_borrowed(filetype);
     ensures normal resource_callback_slot_invoked(ctx, ssl_ctx_st.default_passwd_cb, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(ctx, dh_method.dh_meth_finish, _);
+    ensures normal resource_callback_slot_invoked(ctx, dsa_method.dsa_meth_finish, _);
+    ensures normal resource_callback_slot_invoked(ctx, ec_key_method_st.ec_key_meth_finish, _);
+    ensures normal resource_callback_slot_invoked(ctx, engine_st.engine_destroy, _);
+    ensures normal resource_callback_slot_invoked(ctx, engine_st.engine_finish, _);
+    ensures normal resource_callback_slot_invoked(ctx, engine_st.engine_pkey_asn1_meths, _, supplied_nullable, supplied_nullable, _);
+    ensures normal resource_callback_slot_invoked(ctx, engine_st.engine_pkey_meths, _, supplied_nullable, supplied_nullable, _);
+    ensures normal resource_callback_slot_invoked(ctx, evp_pkey_asn1_method_st.asn1_meth_pkey_free, _);
+    ensures normal resource_callback_slot_invoked(ctx, rsa_meth_st.rsa_meth_finish, _);
     ensures normal resource_return_none();
 };
 
@@ -232,6 +337,11 @@ contract {
 // Card OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS: it frees the certificates it read, the chain it
 // clears and what SSL_CTX_use_certificate replaces (ssl/ssl_rsa.c 3.5.5): the
 // unstated-slots premise in the statement of a free names what those frees run.
+// Card OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS: the key it frees inside
+// runs the teardown slots whose setters are declared now (teardown_slots.qv),
+// which the free statement no longer covers, so they are stated through the
+// borrowed formal at position 0 (the key is run-wide), beside
+// `openssl_builtin_teardown_functions` and `openssl_loaded_module_functions`.
 extern fn SSL_CTX_use_certificate_chain_file(ctx: ptr<mut, u8>, file: ptr<const, u8>) -> i32
 contract {
     requires resource_contract_v1;
@@ -241,10 +351,26 @@ contract {
         quant all #o in #freed: #teardown(#o) \ (#stated | #settable) |-> #inert);
     requires resource_premise(openssl_ex_data_callbacks,
         quant all #o in #created | #copied | #freed: #ex_data(#class(#o)) |-> #inert);
+    requires resource_premise(openssl_builtin_teardown_functions,
+        quant all #o in #freed: quant all #f in #teardown(#o): #f in #library
+        -> #f |-> #inert);
+    requires resource_premise(openssl_loaded_module_functions,
+        quant all #o in #freed: quant all #f in #teardown(#o): #f in #loaded
+        -> #f |-> #inert
+        && quant all #g in #in_turn(#f, #freed | #args | #created): #g in #library | #loaded);
     ensures normal resource_borrowed(ctx);
     ensures normal resource_borrowed(file);
     ensures normal resource_callback_slot_invoked(ctx, ssl_ctx_st.default_passwd_cb, _, _, _, _);
     ensures normal resource_callback_slot_invoked(ctx, ssl_ctx_st.sec_cb, supplied_nullable, ctx, _, _, _, supplied_nullable, supplied_nullable);
+    ensures normal resource_callback_slot_invoked(ctx, dh_method.dh_meth_finish, _);
+    ensures normal resource_callback_slot_invoked(ctx, dsa_method.dsa_meth_finish, _);
+    ensures normal resource_callback_slot_invoked(ctx, ec_key_method_st.ec_key_meth_finish, _);
+    ensures normal resource_callback_slot_invoked(ctx, engine_st.engine_destroy, _);
+    ensures normal resource_callback_slot_invoked(ctx, engine_st.engine_finish, _);
+    ensures normal resource_callback_slot_invoked(ctx, engine_st.engine_pkey_asn1_meths, _, supplied_nullable, supplied_nullable, _);
+    ensures normal resource_callback_slot_invoked(ctx, engine_st.engine_pkey_meths, _, supplied_nullable, supplied_nullable, _);
+    ensures normal resource_callback_slot_invoked(ctx, evp_pkey_asn1_method_st.asn1_meth_pkey_free, _);
+    ensures normal resource_callback_slot_invoked(ctx, rsa_meth_st.rsa_meth_finish, _);
     ensures normal resource_return_none();
 };
 

@@ -33,16 +33,33 @@ module contract;
 // the certificate's public key (x509_pubkey_ex_free, x_pubkey.c 3.5.5), and so
 // runs that key's provider, method and engine functions: the unstated-slots
 // premise of a free names them.
+// Card OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS: every function freeing the
+// certificate's key runs is stated now (teardown_slots.qv), beside the two
+// teardown premises, so the free names no free statement.
 extern fn X509_free(a: ptr<mut, u8>) -> unit
 contract {
     requires resource_contract_v1;
     requires resource_revision(flexible);
     requires resource_library_version(openssl, documented "1.1.1");
-    requires resource_premise(openssl_unstated_callback_slots,
-        quant all #o in #freed: #teardown(#o) \ (#stated | #settable) |-> #inert);
     requires resource_premise(openssl_ex_data_callbacks,
         quant all #o in #created | #copied | #freed: #ex_data(#class(#o)) |-> #inert);
+    requires resource_premise(openssl_builtin_teardown_functions,
+        quant all #o in #freed: quant all #f in #teardown(#o): #f in #library
+        -> #f |-> #inert);
+    requires resource_premise(openssl_loaded_module_functions,
+        quant all #o in #freed: quant all #f in #teardown(#o): #f in #loaded
+        -> #f |-> #inert
+        && quant all #g in #in_turn(#f, #freed | #args | #created): #g in #library | #loaded);
     ensures normal resource_borrowed(a);
     ensures normal resource_reference_dropped(a, nullable);
+    ensures normal resource_callback_slot_invoked(a, dh_method.dh_meth_finish, _);
+    ensures normal resource_callback_slot_invoked(a, dsa_method.dsa_meth_finish, _);
+    ensures normal resource_callback_slot_invoked(a, ec_key_method_st.ec_key_meth_finish, _);
+    ensures normal resource_callback_slot_invoked(a, engine_st.engine_destroy, _);
+    ensures normal resource_callback_slot_invoked(a, engine_st.engine_finish, _);
+    ensures normal resource_callback_slot_invoked(a, engine_st.engine_pkey_asn1_meths, _, supplied_nullable, supplied_nullable, _);
+    ensures normal resource_callback_slot_invoked(a, engine_st.engine_pkey_meths, _, supplied_nullable, supplied_nullable, _);
+    ensures normal resource_callback_slot_invoked(a, evp_pkey_asn1_method_st.asn1_meth_pkey_free, _);
+    ensures normal resource_callback_slot_invoked(a, rsa_meth_st.rsa_meth_finish, _);
     ensures normal resource_return_none();
 };

@@ -25,7 +25,11 @@ from pathlib import Path
 HEADERS = ["openssl/opensslv.h", "openssl/err.h", "openssl/ssl.h", "openssl/x509.h",
            "openssl/evp.h", "openssl/bio.h", "openssl/engine.h", "openssl/crypto.h",
            "openssl/stack.h", "openssl/pkcs12.h", "openssl/provider.h", "openssl/x509_vfy.h",
-           "openssl/pem.h"]
+           "openssl/pem.h",
+           # Card OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS: the key method,
+           # EC_KEY method and async wait context setters' headers.
+           "openssl/rsa.h", "openssl/dsa.h", "openssl/dh.h", "openssl/ec.h",
+           "openssl/async.h"]
 
 
 def main():

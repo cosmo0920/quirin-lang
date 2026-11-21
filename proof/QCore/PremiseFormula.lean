@@ -98,6 +98,8 @@ def vocab : List (String × List Srt × Srt) := [
   ("lookups", [.sobj], .sobj),
   ("teardown", [.obj], .sfn),
   ("settable", [], .sfn),
+  ("library", [], .sfn),
+  ("loaded", [], .sfn),
   ("in_turn", [.fn, .sobj], .sfn),
   ("caller_held", [], .sres),
   ("takes", [.sres], .sres),
@@ -210,6 +212,8 @@ structure Model where
   lookups : (U → Prop) → U → Prop
   teardown : U → U → Prop
   settable : U → Prop
+  library : U → Prop
+  loaded : U → Prop
   inTurn : U → (U → Prop) → U → Prop
   callerHeld : Run → U → Prop
   takes : Run → (U → Prop) → U → Prop
@@ -247,6 +251,8 @@ def prim0 (M : Model) (f : String) : Val M :=
   else if f = "stated" then .st M.stated
   else if f = "builtin" then .st M.builtin
   else if f = "settable" then .st M.settable
+  else if f = "library" then .st M.library
+  else if f = "loaded" then .st M.loaded
   else if f = "caller_held" then .rs M.callerHeld
   else if f = "inert" then .ef (inertEff M)
   else .bad
@@ -370,7 +376,8 @@ theorem prim0_kind (M : Model) {f : String} {s : Srt} (h : term f = some ([], s)
   rcases hm with ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ |
       ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ |
       ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ |
-      ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ <;>
+      ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ |
+      ⟨rfl, hs⟩ | ⟨rfl, hs⟩ <;>
     simp_all [prim0, Val.kind, Srt.kind]
 
 theorem prim1_kind (M : Model) {f : String} {x s : Srt} {v : Val M}
@@ -381,7 +388,8 @@ theorem prim1_kind (M : Model) {f : String} {x s : Srt} {v : Val M}
   rcases hm with ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ |
       ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ |
       ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ |
-      ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ <;>
+      ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ |
+      ⟨rfl, hs⟩ | ⟨rfl, hs⟩ <;>
     (simp at hs) <;>
     (try obtain ⟨rfl, rfl⟩ := hs) <;>
     (cases v <;> simp_all [prim1, Val.kind, Srt.kind])
@@ -395,7 +403,8 @@ theorem prim2_kind (M : Model) {f : String} {x y s : Srt} {v w : Val M}
   rcases hm with ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ |
       ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ |
       ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ |
-      ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ <;>
+      ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ | ⟨rfl, hs⟩ |
+      ⟨rfl, hs⟩ | ⟨rfl, hs⟩ <;>
     (simp at hs) <;>
     (try obtain ⟨⟨rfl, rfl⟩, rfl⟩ := hs) <;>
     (cases v <;> cases w <;> simp_all [prim2, Val.kind, Srt.kind])
@@ -596,8 +605,8 @@ def decisionVectors : List (Raw × Bool) := [
 theorem decision_vectors_agree :
     decisionVectors.all (fun v => wf v.1 == v.2) = true := by decide
 
-/-! ## The OpenSSL premises (`quirin-provider-openssl`'s `documented.rs`): five names,
-six statements (the unstated-slots premise has a handshake and a free statement) -/
+/-! ## The OpenSSL premises (`quirin-provider-openssl`'s `documented.rs`): seven names,
+nine statements (the unstated-slots premise has a handshake and a free statement) -/
 
 def exDataFormula : Raw := (.quant "o" (.bin .union (.bin .union (.app0 "created") (.app0 "copied")) (.app0 "freed")) (.bin .mapsTo (.app1 "ex_data" (.app1 "class" (.app0 "o"))) (.app0 "inert")))
 
@@ -610,6 +619,19 @@ def bioFreeFormula : Raw := (.quant "b" (.bin .union (.app2 "of" (.const "BIO") 
 def unstatedFreeFormula : Raw := (.quant "o" (.app0 "freed") (.bin .mapsTo (.bin .diff (.app1 "teardown" (.app0 "o")) (.bin .union (.app0 "stated") (.app0 "settable"))) (.app0 "inert")))
 
 def builtinLookupFormula : Raw := (.quant "l" (.app1 "lookups" (.app2 "of" (.const "X509_STORE") (.app0 "freed"))) (.bin .imp (.bin .mem (.app1 "method" (.app0 "l")) (.app0 "builtin")) (.bin .mapsTo (.app1 "fns" (.app0 "l")) (.app0 "inert"))))
+
+/-- Card OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS: the library-value premise
+of the frees, the one premise for the modules the library loads, and the
+unstated-slots statement of a free through a released argument. -/
+def builtinTeardownFormula : Raw := (.quant "o" (.app0 "freed") (.quant "f" (.app1 "teardown" (.app0 "o")) (.bin .imp (.bin .mem (.app0 "f") (.app0 "library")) (.bin .mapsTo (.app0 "f") (.app0 "inert")))))
+
+def unstatedReleasedFreeFormula : Raw := (.quant "o" (.app0 "freed") (.bin .mapsTo (.bin .diff (.app1 "teardown" (.app0 "o")) (.app0 "stated")) (.app0 "inert")))
+
+def loadedTeardownFormula : Raw := (.quant "o" (.app0 "freed") (.quant "f" (.app1 "teardown" (.app0 "o")) (.bin .imp (.bin .mem (.app0 "f") (.app0 "loaded")) (.bin .conj (.bin .mapsTo (.app0 "f") (.app0 "inert")) (.quant "g" (.app2 "in_turn" (.app0 "f") (.bin .union (.bin .union (.app0 "freed") (.app0 "args")) (.app0 "created"))) (.bin .mem (.app0 "g") (.bin .union (.app0 "library") (.app0 "loaded"))))))))
+
+theorem teardown_formulas_wf :
+    wf builtinTeardownFormula = true ∧ wf loadedTeardownFormula = true ∧
+      wf unstatedReleasedFreeFormula = true := by decide
 
 theorem openssl_formulas_wf :
     wf exDataFormula = true ∧ wf unstatedFormula = true ∧ wf unstatedFreeFormula = true ∧
@@ -680,6 +702,7 @@ theorem ex_data_does_not_entail_unstated :
     exDataFree := fun _ _ => False, method := id, builtin := fun _ => False,
     fns := fun _ _ => False, store := fun _ _ => False, lookups := fun _ _ => False,
     teardown := fun _ _ => False, settable := fun _ => False,
+    library := fun _ => False, loaded := fun _ => False,
     inTurn := fun _ _ _ => False, callerHeld := fun _ _ => True,
     takes := fun _ s => s, releases := fun _ _ _ => False,
     retains := fun _ _ _ => False, runs := fun _ _ => True, const := fun _ => true }

@@ -333,6 +333,7 @@ import QCore.OpensslContractPlugin
 import QCore.OpensslExDataPremise
 import QCore.OpensslFreeIndirectCallbacks
 import QCore.OpensslFreeInvocations
+import QCore.OpensslFreeTeardownSlots
 import QCore.OpensslHandshakeSlots
 import QCore.OpensslInnerFreesAudit
 import QCore.OpensslObjectFreesAudit

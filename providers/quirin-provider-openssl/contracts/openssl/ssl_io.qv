@@ -190,6 +190,12 @@ module contract;
 // last conjunct is the statement of a free: the call frees peer and ephemeral
 // keys, peer certificates, key exchange and signature contexts, transcript
 // digests and record-layer cipher contexts inside (ssl/statem, s3_lib.c 3.5.5).
+// Card OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS: the keys and the digest,
+// cipher and public key contexts the call frees inside run the teardown
+// slots whose setters are declared now (teardown_slots.qv), which the
+// handshake statement's free conjunct no longer covers, so they are stated,
+// beside `openssl_builtin_teardown_functions` and
+// `openssl_loaded_module_functions`.
 extern fn SSL_write(ssl: ptr<mut, u8>, buf: ptr<const, u8>, num: i32) -> i32
 contract {
     requires resource_contract_v1;
@@ -206,6 +212,13 @@ contract {
         && quant all #f in #fns(#b): #in_turn(#f, #ssl_of(#b) \ #args) |-> #inert);
     requires resource_premise(openssl_ex_data_callbacks,
         quant all #o in #created | #copied | #freed: #ex_data(#class(#o)) |-> #inert);
+    requires resource_premise(openssl_builtin_teardown_functions,
+        quant all #o in #freed: quant all #f in #teardown(#o): #f in #library
+        -> #f |-> #inert);
+    requires resource_premise(openssl_loaded_module_functions,
+        quant all #o in #freed: quant all #f in #teardown(#o): #f in #loaded
+        -> #f |-> #inert
+        && quant all #g in #in_turn(#f, #freed | #args | #created): #g in #library | #loaded);
     ensures normal resource_borrowed(ssl);
     ensures normal resource_borrowed(buf);
     ensures normal resource_borrowed(num);
@@ -276,6 +289,18 @@ contract {
     ensures normal resource_callback_slot_invoked(ssl, bio_method_st.meth_callback_ctrl, _, _, _);
     ensures normal resource_callback_slot_invoked(ssl, bio_method_st.meth_sendmmsg, _, _, _, _, _, _);
     ensures normal resource_callback_slot_invoked(ssl, bio_method_st.meth_recvmmsg, _, _, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, dh_method.dh_meth_finish, _);
+    ensures normal resource_callback_slot_invoked(ssl, dsa_method.dsa_meth_finish, _);
+    ensures normal resource_callback_slot_invoked(ssl, ec_key_method_st.ec_key_meth_finish, _);
+    ensures normal resource_callback_slot_invoked(ssl, engine_st.engine_destroy, _);
+    ensures normal resource_callback_slot_invoked(ssl, engine_st.engine_finish, _);
+    ensures normal resource_callback_slot_invoked(ssl, engine_st.engine_pkey_asn1_meths, _, supplied_nullable, supplied_nullable, _);
+    ensures normal resource_callback_slot_invoked(ssl, engine_st.engine_pkey_meths, _, supplied_nullable, supplied_nullable, _);
+    ensures normal resource_callback_slot_invoked(ssl, evp_cipher_st.cipher_meth_cleanup, _);
+    ensures normal resource_callback_slot_invoked(ssl, evp_md_st.md_meth_cleanup, _);
+    ensures normal resource_callback_slot_invoked(ssl, evp_pkey_asn1_method_st.asn1_meth_pkey_free, _);
+    ensures normal resource_callback_slot_invoked(ssl, evp_pkey_method_st.pkey_meth_cleanup, _);
+    ensures normal resource_callback_slot_invoked(ssl, rsa_meth_st.rsa_meth_finish, _);
     ensures normal resource_return_none();
 };
 
@@ -290,6 +315,12 @@ contract {
 // last conjunct is the statement of a free: the call frees peer and ephemeral
 // keys, peer certificates, key exchange and signature contexts, transcript
 // digests and record-layer cipher contexts inside (ssl/statem, s3_lib.c 3.5.5).
+// Card OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS: the keys and the digest,
+// cipher and public key contexts the call frees inside run the teardown
+// slots whose setters are declared now (teardown_slots.qv), which the
+// handshake statement's free conjunct no longer covers, so they are stated,
+// beside `openssl_builtin_teardown_functions` and
+// `openssl_loaded_module_functions`.
 extern fn SSL_read(ssl: ptr<mut, u8>, buf: ptr<mut, u8>, num: i32) -> i32
 contract {
     requires resource_contract_v1;
@@ -306,6 +337,13 @@ contract {
         && quant all #f in #fns(#b): #in_turn(#f, #ssl_of(#b) \ #args) |-> #inert);
     requires resource_premise(openssl_ex_data_callbacks,
         quant all #o in #created | #copied | #freed: #ex_data(#class(#o)) |-> #inert);
+    requires resource_premise(openssl_builtin_teardown_functions,
+        quant all #o in #freed: quant all #f in #teardown(#o): #f in #library
+        -> #f |-> #inert);
+    requires resource_premise(openssl_loaded_module_functions,
+        quant all #o in #freed: quant all #f in #teardown(#o): #f in #loaded
+        -> #f |-> #inert
+        && quant all #g in #in_turn(#f, #freed | #args | #created): #g in #library | #loaded);
     ensures normal resource_borrowed(ssl);
     ensures normal resource_borrowed(buf);
     ensures normal resource_borrowed(num);
@@ -376,6 +414,18 @@ contract {
     ensures normal resource_callback_slot_invoked(ssl, bio_method_st.meth_callback_ctrl, _, _, _);
     ensures normal resource_callback_slot_invoked(ssl, bio_method_st.meth_sendmmsg, _, _, _, _, _, _);
     ensures normal resource_callback_slot_invoked(ssl, bio_method_st.meth_recvmmsg, _, _, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, dh_method.dh_meth_finish, _);
+    ensures normal resource_callback_slot_invoked(ssl, dsa_method.dsa_meth_finish, _);
+    ensures normal resource_callback_slot_invoked(ssl, ec_key_method_st.ec_key_meth_finish, _);
+    ensures normal resource_callback_slot_invoked(ssl, engine_st.engine_destroy, _);
+    ensures normal resource_callback_slot_invoked(ssl, engine_st.engine_finish, _);
+    ensures normal resource_callback_slot_invoked(ssl, engine_st.engine_pkey_asn1_meths, _, supplied_nullable, supplied_nullable, _);
+    ensures normal resource_callback_slot_invoked(ssl, engine_st.engine_pkey_meths, _, supplied_nullable, supplied_nullable, _);
+    ensures normal resource_callback_slot_invoked(ssl, evp_cipher_st.cipher_meth_cleanup, _);
+    ensures normal resource_callback_slot_invoked(ssl, evp_md_st.md_meth_cleanup, _);
+    ensures normal resource_callback_slot_invoked(ssl, evp_pkey_asn1_method_st.asn1_meth_pkey_free, _);
+    ensures normal resource_callback_slot_invoked(ssl, evp_pkey_method_st.pkey_meth_cleanup, _);
+    ensures normal resource_callback_slot_invoked(ssl, rsa_meth_st.rsa_meth_finish, _);
     ensures normal resource_return_none();
 };
 
@@ -388,6 +438,12 @@ contract {
 // last conjunct is the statement of a free: the call frees peer and ephemeral
 // keys, peer certificates, key exchange and signature contexts, transcript
 // digests and record-layer cipher contexts inside (ssl/statem, s3_lib.c 3.5.5).
+// Card OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS: the keys and the digest,
+// cipher and public key contexts the call frees inside run the teardown
+// slots whose setters are declared now (teardown_slots.qv), which the
+// handshake statement's free conjunct no longer covers, so they are stated,
+// beside `openssl_builtin_teardown_functions` and
+// `openssl_loaded_module_functions`.
 extern fn SSL_connect(ssl: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
@@ -404,6 +460,13 @@ contract {
         && quant all #f in #fns(#b): #in_turn(#f, #ssl_of(#b) \ #args) |-> #inert);
     requires resource_premise(openssl_ex_data_callbacks,
         quant all #o in #created | #copied | #freed: #ex_data(#class(#o)) |-> #inert);
+    requires resource_premise(openssl_builtin_teardown_functions,
+        quant all #o in #freed: quant all #f in #teardown(#o): #f in #library
+        -> #f |-> #inert);
+    requires resource_premise(openssl_loaded_module_functions,
+        quant all #o in #freed: quant all #f in #teardown(#o): #f in #loaded
+        -> #f |-> #inert
+        && quant all #g in #in_turn(#f, #freed | #args | #created): #g in #library | #loaded);
     ensures normal resource_borrowed(ssl);
     ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.cert_cb, ssl, _);
     ensures normal resource_callback_slot_invoked(ssl, ssl_ctx_st.verify_callback, _, _);
@@ -472,6 +535,18 @@ contract {
     ensures normal resource_callback_slot_invoked(ssl, bio_method_st.meth_callback_ctrl, _, _, _);
     ensures normal resource_callback_slot_invoked(ssl, bio_method_st.meth_sendmmsg, _, _, _, _, _, _);
     ensures normal resource_callback_slot_invoked(ssl, bio_method_st.meth_recvmmsg, _, _, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(ssl, dh_method.dh_meth_finish, _);
+    ensures normal resource_callback_slot_invoked(ssl, dsa_method.dsa_meth_finish, _);
+    ensures normal resource_callback_slot_invoked(ssl, ec_key_method_st.ec_key_meth_finish, _);
+    ensures normal resource_callback_slot_invoked(ssl, engine_st.engine_destroy, _);
+    ensures normal resource_callback_slot_invoked(ssl, engine_st.engine_finish, _);
+    ensures normal resource_callback_slot_invoked(ssl, engine_st.engine_pkey_asn1_meths, _, supplied_nullable, supplied_nullable, _);
+    ensures normal resource_callback_slot_invoked(ssl, engine_st.engine_pkey_meths, _, supplied_nullable, supplied_nullable, _);
+    ensures normal resource_callback_slot_invoked(ssl, evp_cipher_st.cipher_meth_cleanup, _);
+    ensures normal resource_callback_slot_invoked(ssl, evp_md_st.md_meth_cleanup, _);
+    ensures normal resource_callback_slot_invoked(ssl, evp_pkey_asn1_method_st.asn1_meth_pkey_free, _);
+    ensures normal resource_callback_slot_invoked(ssl, evp_pkey_method_st.pkey_meth_cleanup, _);
+    ensures normal resource_callback_slot_invoked(ssl, rsa_meth_st.rsa_meth_finish, _);
     ensures normal resource_return_none();
 };
 
@@ -485,6 +560,12 @@ contract {
 // last conjunct is the statement of a free: the call frees peer and ephemeral
 // keys, peer certificates, key exchange and signature contexts, transcript
 // digests and record-layer cipher contexts inside (ssl/statem, s3_lib.c 3.5.5).
+// Card OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS: the keys and the digest,
+// cipher and public key contexts the call frees inside run the teardown
+// slots whose setters are declared now (teardown_slots.qv), which the
+// handshake statement's free conjunct no longer covers, so they are stated,
+// beside `openssl_builtin_teardown_functions` and
+// `openssl_loaded_module_functions`.
 extern fn SSL_do_handshake(s: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
@@ -501,6 +582,13 @@ contract {
         && quant all #f in #fns(#b): #in_turn(#f, #ssl_of(#b) \ #args) |-> #inert);
     requires resource_premise(openssl_ex_data_callbacks,
         quant all #o in #created | #copied | #freed: #ex_data(#class(#o)) |-> #inert);
+    requires resource_premise(openssl_builtin_teardown_functions,
+        quant all #o in #freed: quant all #f in #teardown(#o): #f in #library
+        -> #f |-> #inert);
+    requires resource_premise(openssl_loaded_module_functions,
+        quant all #o in #freed: quant all #f in #teardown(#o): #f in #loaded
+        -> #f |-> #inert
+        && quant all #g in #in_turn(#f, #freed | #args | #created): #g in #library | #loaded);
     ensures normal resource_borrowed(s);
     ensures normal resource_callback_slot_invoked(s, ssl_ctx_st.cert_cb, s, _);
     ensures normal resource_callback_slot_invoked(s, ssl_ctx_st.verify_callback, _, _);
@@ -569,6 +657,18 @@ contract {
     ensures normal resource_callback_slot_invoked(s, bio_method_st.meth_callback_ctrl, _, _, _);
     ensures normal resource_callback_slot_invoked(s, bio_method_st.meth_sendmmsg, _, _, _, _, _, _);
     ensures normal resource_callback_slot_invoked(s, bio_method_st.meth_recvmmsg, _, _, _, _, _, _);
+    ensures normal resource_callback_slot_invoked(s, dh_method.dh_meth_finish, _);
+    ensures normal resource_callback_slot_invoked(s, dsa_method.dsa_meth_finish, _);
+    ensures normal resource_callback_slot_invoked(s, ec_key_method_st.ec_key_meth_finish, _);
+    ensures normal resource_callback_slot_invoked(s, engine_st.engine_destroy, _);
+    ensures normal resource_callback_slot_invoked(s, engine_st.engine_finish, _);
+    ensures normal resource_callback_slot_invoked(s, engine_st.engine_pkey_asn1_meths, _, supplied_nullable, supplied_nullable, _);
+    ensures normal resource_callback_slot_invoked(s, engine_st.engine_pkey_meths, _, supplied_nullable, supplied_nullable, _);
+    ensures normal resource_callback_slot_invoked(s, evp_cipher_st.cipher_meth_cleanup, _);
+    ensures normal resource_callback_slot_invoked(s, evp_md_st.md_meth_cleanup, _);
+    ensures normal resource_callback_slot_invoked(s, evp_pkey_asn1_method_st.asn1_meth_pkey_free, _);
+    ensures normal resource_callback_slot_invoked(s, evp_pkey_method_st.pkey_meth_cleanup, _);
+    ensures normal resource_callback_slot_invoked(s, rsa_meth_st.rsa_meth_finish, _);
     ensures normal resource_return_none();
 };
 

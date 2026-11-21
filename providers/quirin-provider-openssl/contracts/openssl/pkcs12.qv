@@ -43,6 +43,11 @@ module contract;
 // Card OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS: a failed parse frees the partial object: a signed PKCS#7 safe's
 // certificates, their public keys and its CRLs (tasn_dec.c, 3.5.5): the
 // unstated-slots premise in the statement of a free names what those frees run.
+// Card OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS: the key it frees inside
+// runs the teardown slots whose setters are declared now (teardown_slots.qv),
+// which the free statement no longer covers, so they are stated through the
+// borrowed formal at position 0 (the key is run-wide), beside
+// `openssl_builtin_teardown_functions` and `openssl_loaded_module_functions`.
 extern fn d2i_PKCS12_bio(bp: ptr<mut, u8>, p12: ptr<mut, ptr<mut, u8>>) -> ptr<mut, u8>
 contract {
     requires resource_contract_v1;
@@ -57,6 +62,13 @@ contract {
         quant all #o in #freed: #teardown(#o) \ (#stated | #settable) |-> #inert);
     requires resource_premise(openssl_ex_data_callbacks,
         quant all #o in #created | #copied | #freed: #ex_data(#class(#o)) |-> #inert);
+    requires resource_premise(openssl_builtin_teardown_functions,
+        quant all #o in #freed: quant all #f in #teardown(#o): #f in #library
+        -> #f |-> #inert);
+    requires resource_premise(openssl_loaded_module_functions,
+        quant all #o in #freed: quant all #f in #teardown(#o): #f in #loaded
+        -> #f |-> #inert
+        && quant all #g in #in_turn(#f, #freed | #args | #created): #g in #library | #loaded);
     ensures normal resource_borrowed(bp);
     ensures normal resource_borrowed(p12);
     ensures normal resource_callback_slot_invoked(bp, bio_st.bio_callback_ex, _, _, supplied_nullable, _, _, _, _, supplied_nullable);
@@ -74,6 +86,15 @@ contract {
     ensures normal resource_callback_slot_invoked(bp, bio_method_st.meth_sendmmsg, _, _, _, _, _, _);
     ensures normal resource_callback_slot_invoked(bp, bio_method_st.meth_recvmmsg, _, _, _, _, _, _);
     ensures normal resource_return_owned(nullable);
+    ensures normal resource_callback_slot_invoked(bp, dh_method.dh_meth_finish, _);
+    ensures normal resource_callback_slot_invoked(bp, dsa_method.dsa_meth_finish, _);
+    ensures normal resource_callback_slot_invoked(bp, ec_key_method_st.ec_key_meth_finish, _);
+    ensures normal resource_callback_slot_invoked(bp, engine_st.engine_destroy, _);
+    ensures normal resource_callback_slot_invoked(bp, engine_st.engine_finish, _);
+    ensures normal resource_callback_slot_invoked(bp, engine_st.engine_pkey_asn1_meths, _, supplied_nullable, supplied_nullable, _);
+    ensures normal resource_callback_slot_invoked(bp, engine_st.engine_pkey_meths, _, supplied_nullable, supplied_nullable, _);
+    ensures normal resource_callback_slot_invoked(bp, evp_pkey_asn1_method_st.asn1_meth_pkey_free, _);
+    ensures normal resource_callback_slot_invoked(bp, rsa_meth_st.rsa_meth_finish, _);
 };
 
 // PKCS12_free: https://docs.openssl.org/1.1.1/man3/X509_dup/ (also 3.5; no
@@ -88,15 +109,27 @@ contract {
 // x_crl.c 3.5.5), and so runs those keys' provider, method and engine
 // functions and a CRL's X509_CRL_METHOD free: the unstated-slots premise of a
 // free names them.
+// Card OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS: the free releases its
+// argument, so it can state none of the teardown slots of the keys it frees
+// in turn (C04.19.3 reads a slot through a borrowed parameter); it names the
+// free statement through a released argument, beside the two teardown
+// premises. A CRL's X509_CRL_METHOD free function is left too.
 extern fn PKCS12_free(a: ptr<mut, u8>) -> unit
 contract {
     requires resource_contract_v1;
     requires resource_revision(flexible);
     requires resource_library_version(openssl, documented "1.1.1");
-    requires resource_premise(openssl_unstated_callback_slots,
-        quant all #o in #freed: #teardown(#o) \ (#stated | #settable) |-> #inert);
     requires resource_premise(openssl_ex_data_callbacks,
         quant all #o in #created | #copied | #freed: #ex_data(#class(#o)) |-> #inert);
+    requires resource_premise(openssl_builtin_teardown_functions,
+        quant all #o in #freed: quant all #f in #teardown(#o): #f in #library
+        -> #f |-> #inert);
+    requires resource_premise(openssl_loaded_module_functions,
+        quant all #o in #freed: quant all #f in #teardown(#o): #f in #loaded
+        -> #f |-> #inert
+        && quant all #g in #in_turn(#f, #freed | #args | #created): #g in #library | #loaded);
+    requires resource_premise(openssl_unstated_callback_slots,
+        quant all #o in #freed: #teardown(#o) \ #stated |-> #inert);
     ensures normal resource_released(a, nullable);
     ensures normal resource_return_none();
 };

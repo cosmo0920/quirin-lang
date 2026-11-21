@@ -28,7 +28,7 @@ use qcore_frontend::premise_formula::{
 const LEAN: &str = include_str!("../../../proof/QCore/PremiseFormula.lean");
 
 /// Every module of the OpenSSL user crate (`user-crates-load-path.json`'s
-/// 17), as shipped.
+/// 18 since OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS), as shipped.
 const OPENSSL_MODULES: &[(&str, &str)] = &[
     (
         "bio.qv",
@@ -91,6 +91,12 @@ const OPENSSL_MODULES: &[(&str, &str)] = &[
     (
         "stack.qv",
         include_str!("../../../providers/quirin-provider-openssl/contracts/openssl/stack.qv"),
+    ),
+    (
+        "teardown_slots.qv",
+        include_str!(
+            "../../../providers/quirin-provider-openssl/contracts/openssl/teardown_slots.qv"
+        ),
     ),
     (
         "x509.qv",
@@ -243,12 +249,17 @@ fn the_openssl_formulas_are_the_lean_definitions() {
                 ("def unstatedFormula : Raw :=", 5),
                 // Card OPENSSL-OBJECT-FREES-SILENT-METHOD-CALLBACKS: X509_free,
                 // EVP_PKEY_free, PKCS12_free, ENGINE_free and EVP_MD_CTX_free
-                // join the three frees. Card
+                // joined the three frees. Card
                 // OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS: the four
                 // SSL_CTX_use_* loaders, the two PEM readers, d2i_PKCS12_bio
                 // and the two verify-path calls (the handshake statement, on
-                // the other five, conjoins the free statement).
-                ("def unstatedFreeFormula : Raw :=", 17),
+                // the other five, conjoins the free statement). Card
+                // OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS: X509_free,
+                // EVP_PKEY_free and ENGINE_free state every item and drop
+                // it; PKCS12_free and EVP_MD_CTX_free release their argument
+                // and name the released free's statement.
+                ("def unstatedFreeFormula : Raw :=", 12),
+                ("def unstatedReleasedFreeFormula : Raw :=", 2),
             ],
         ),
         (
@@ -262,6 +273,16 @@ fn the_openssl_formulas_are_the_lean_definitions() {
         (
             "openssl_bio_free_callbacks",
             &[("def bioFreeFormula : Raw :=", 2)],
+        ),
+        // Card OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS: on the eight frees
+        // that run teardown functions and the fourteen calls that free inside.
+        (
+            "openssl_builtin_teardown_functions",
+            &[("def builtinTeardownFormula : Raw :=", 22)],
+        ),
+        (
+            "openssl_loaded_module_functions",
+            &[("def loadedTeardownFormula : Raw :=", 22)],
         ),
     ];
     let mut by_name: BTreeMap<String, Vec<String>> = BTreeMap::new();
@@ -291,7 +312,7 @@ fn the_openssl_formulas_are_the_lean_definitions() {
             "{name}: a statement matches no Lean definition"
         );
     }
-    assert_eq!(total, 67);
+    assert_eq!(total, 108);
 }
 
 #[test]

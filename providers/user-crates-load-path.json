@@ -955,6 +955,110 @@
     {
       "crate": "quirin-provider-openssl",
       "functions": [
+        "RSA_meth_set_finish"
+      ],
+      "module": "openssl/teardown_slots.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
+        "DSA_meth_set_finish"
+      ],
+      "module": "openssl/teardown_slots.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
+        "DH_meth_set_finish"
+      ],
+      "module": "openssl/teardown_slots.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
+        "EC_KEY_METHOD_set_init"
+      ],
+      "module": "openssl/teardown_slots.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
+        "ENGINE_set_finish_function"
+      ],
+      "module": "openssl/teardown_slots.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
+        "ENGINE_set_destroy_function"
+      ],
+      "module": "openssl/teardown_slots.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
+        "ENGINE_set_pkey_meths"
+      ],
+      "module": "openssl/teardown_slots.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
+        "ENGINE_set_pkey_asn1_meths"
+      ],
+      "module": "openssl/teardown_slots.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
+        "EVP_PKEY_asn1_set_free"
+      ],
+      "module": "openssl/teardown_slots.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
+        "ASYNC_WAIT_CTX_set_wait_fd"
+      ],
+      "module": "openssl/teardown_slots.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
+        "EVP_MD_meth_set_cleanup"
+      ],
+      "module": "openssl/teardown_slots.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
+        "EVP_CIPHER_meth_set_cleanup"
+      ],
+      "module": "openssl/teardown_slots.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
+        "EVP_PKEY_meth_set_cleanup"
+      ],
+      "module": "openssl/teardown_slots.qv",
+      "package": "quirin-provider-openssl/checkers/openssl-check"
+    },
+    {
+      "crate": "quirin-provider-openssl",
+      "functions": [
         "X509_free"
       ],
       "module": "openssl/x509.qv",
@@ -1242,6 +1346,7 @@
         "openssl/ssl_handshake_setters.qv",
         "openssl/ssl_io.qv",
         "openssl/stack.qv",
+        "openssl/teardown_slots.qv",
         "openssl/x509.qv",
         "openssl/x509_lookup_slots.qv",
         "openssl/x509_store.qv",
@@ -1267,6 +1372,7 @@
         "openssl/ssl_handshake_setters.qv",
         "openssl/ssl_io.qv",
         "openssl/stack.qv",
+        "openssl/teardown_slots.qv",
         "openssl/x509.qv",
         "openssl/x509_lookup_slots.qv",
         "openssl/x509_store.qv",
