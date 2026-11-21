@@ -195,7 +195,35 @@ slice: none.
 
 ## 4. Gate
 
-GATE-PLACEHOLDER
+Scoped card gate `python3 scripts/gate_scope.py --base 8e7e8d509 --out
+private/rk/gate-1` through `private/toolchain/env.sh` (Clang 21, Lean 4.35),
+head `e03c4835f` (the declarations; later commits change this report only);
+scoped mode (no crate source changes; the contract and load-path files
+select 42 test targets), provider gate included, Lean not selected (no Lean
+or rule change). Record [gate/gate-1.json](gate/gate-1.json), logs in the
+worktree's `private/rk/gate-1/`.
+
+| step | exit | result |
+|---|---:|---|
+| submodules | 0 | 1 submodule |
+| `cargo fmt --all -- --check` | 0 | |
+| `cargo clippy` (workspace and the four scoped crates) | 0 | |
+| `run_test_binaries.py` (scoped) | 0 | 272 units, 279 summaries; 3,432 passed, 0 failed, 9 ignored, 10 filtered |
+| `reevaluation_probe` / `reevaluation_followup` | 0 / 0 | |
+| `python3 -m unittest discover -s scripts/tests` | **1** | 779 tests, 1 failure: `test_build_matrix_sections.CommittedMatrixIsSelfConsistent.test_each_derived_dimension_matches_the_section_it_counts` (`dimensions.named_followups is 1041 against a named_followups of 1044`) |
+| provider package build / verify-all / verify | 0 / 0 / 0 | |
+| provider `cargo test` / fmt / clippy | 0 / 0 / 0 | 49 summaries, 168 passed, 0 failed, 1 ignored |
+
+**The Python failure is the base's, not this card's.** This card does not
+touch `docs/reviews/r0_3/acceptance_matrix.json`; the same assertion fails
+on `git archive 8e7e8d509` with the card base set
+(`QUIRIN_CARD_GATE_BASE=8e7e8d509… python3 -m unittest
+scripts.tests.test_build_matrix_sections`, `private/rk/python-base-matrix.log`:
+33 tests, 1 failure, the same `1041 != 1044`). Round 4's amendments
+registered three entries on integrate/r48 without regenerating the matrix's
+derived dimensions (`docs/reports/remaining-d02/build_matrix.py`), which
+the integrator's regeneration moves. No Lean audit was added, so the
+derived audit count is unchanged by this card.
 
 ## 5. Follow-ups (in [integration-amendments.json](integration-amendments.json))
 
