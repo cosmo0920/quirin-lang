@@ -466,3 +466,12 @@ Fluent Bit landing on top). Conflicts and their resolution:
 * **Locks**: `contracts.py sync` reran after the formula renames. Only this
   card's libevent digests differ from `8952bdb8d`, and `mk_http_thread_destroy`
   was re-pinned at both revisions.
+
+## Integrator measurement (2026-11-21)
+
+Landing `1deb8fd9b` on base `8952bdb8d`, measured with `--declared PREDICTION.md`:
+corpus, twelve-home, system and slice all match the declared prediction with
+0 moves. Comparison: `integration/native-comparison.json.gz` (uncompressed
+sha256 `1a4f73ea36a2b236795466c8c7946edfe77d424297607ed48a05e6f32cc60eaa`). Landing gate: `integration/gate.json` (Rust 9821
+passed, 1 failed: the known host libcurl failure; Lean 473 audits; Python
+779).
