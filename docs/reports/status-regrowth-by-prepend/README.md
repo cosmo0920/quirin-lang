@@ -158,8 +158,8 @@ grows.
 | `busy-state-fluent-bit-provider/integration/gate.json` (r21) | merges branch `move/busy-state-fluent-bit` | BUSY-STATE-FLUENT-BIT-PROVIDER (directory) |
 | `windows-ci-plain-long-fixtures/integration/gate.json` (r42) | merges branch `fix/windows-plain-long-fixtures` | WINDOWS-CI-PLAIN-LONG-FIXTURES (directory) |
 
-r18 and r40 have no landing gate record. Of the 179 `integration/gate.json`
-files, 134 are card-integration gates that are not `Landing integrate/…`
+r18 and r40 have no landing gate record. Of the 176 `integration/gate.json`
+files on the merged tree, 46 are landing records (44 landings) and 130 are card-integration gates that are not `Landing integrate/…`
 records, and they are not landings. These are registered as
 `LANDING-GATE-RECORD-UNSTRUCTURED`.
 
@@ -185,8 +185,25 @@ When the integrator merges this card, it should resolve a conflict in
 
 ## 5. Main revision folded in
 
-See the last section of the reply and the commit log. The merge, its conflicts
-and the regenerated sentence are recorded in §6.
+`git fetch origin` found `origin/main` at `590f7d9f1`, the integrate/r50 landing
+record (CG10-OWNED-OUT-PARAMETER-MEMBER-SLOT). It was merged in `0369504c0`.
+The only conflict was in `docs/STATUS.md`. r50's only STATUS edit was the `sed`
+extension `r49 (…) and r50 (CG10-OWNED-OUT-PARAMETER-MEMBER-SLOT)`, made on the
+old long page. The conflict was resolved by keeping this branch's page and
+rerunning `python3 scripts/land.py unpublished --write`, which picked r50 up
+from its gate record: 44 landings, ending `r50
+(CG10-OWNED-OUT-PARAMETER-MEMBER-SLOT)`. `docs/reports/INDEX.md` auto-merged
+and was regenerated.
+
+Two items are left to STATUS-COMPACT's landing (r51), per that report's §6.
+STATUS's *Latest validated gate* section still names the r49 gate, and its
+checkpoint is of `f77e97ae6`. Folding those in is that landing's job, and
+compaction is out of scope here. STATUS-REGROWTH-BY-PREPEND is registered by
+STATUS-COMPACT's amendments, so this card's retirement applies only after r51.
+`apply_amendments.py … --check` on this tree refuses it ("no registered
+follow-up has this id"). With STATUS-COMPACT's amendments applied first in the
+working tree, the check exits 0 (retire 1, register 2). The simulation was then
+reverted.
 
 ## 6. Gate
 
