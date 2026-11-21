@@ -841,6 +841,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [openssl-free-indirect-callbacks](openssl-free-indirect-callbacks/README.md) | OPENSSL-FREE-INDIRECT-CALLBACKS: callbacks the frees run on objects they free in turn |
 
+| [openssl-free-remaining-indirect-callbacks](openssl-free-remaining-indirect-callbacks/README.md) | OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS: the teardown slots of the frees |
+
 | [openssl-free-session-remove-invocation](openssl-free-session-remove-invocation/README.md) | OPENSSL-FREE-SESSION-REMOVE-INVOCATION: slot invocations beside a reference drop |
 
 | [openssl-inner-frees-silent-method-callbacks](openssl-inner-frees-silent-method-callbacks/README.md) | OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS: what the calls that free inside run |
