@@ -125,7 +125,8 @@ AG2, AG3 and their combined run: corpus 1,079 → 1,119 Safe and 10 → 12
 provisional Unsafe, system +5 Safe), read by
 [`landings.py`](reports/status-compact/scripts/landings.py). The corpus also
 stood at 1,082 Safe at D3's tip, 1,078 at the CG25 bases and 1,079 at the AG
-bases, changes no committed comparison of its own records. The landings after
+bases, changes no committed comparison records
+(`LIVE-ROUTE-MOVES-BETWEEN-MEASURED-LANDINGS`). The landings after
 it (r41–r48) did not measure the pinned routes: their gate records say
 pinned-route parity was not run, the host holding no `build/cycle19` inputs.
 Their cards predicted corpus moves (CG10-INDIRECT-ACCESS-SOLE-RESIDUALS round 3,

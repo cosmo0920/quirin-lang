@@ -195,7 +195,10 @@ Read this section for documentation compaction, stability review and wave close.
   observation as proof or infer stability from green tests.
 - Last firings and next due: the ninth compaction ran at the wave-45 close
   (`DOCS-COMPACT-9`, [report](../reports/docs-compact-9/README.md)), postponed
-  from waves 42–43; the tenth is due around wave 47–48. Stability review firing
+  from waves 42–43; the tenth is due around wave 47–48. `docs/STATUS.md` alone
+  was compacted separately on 2026-11-21 (`STATUS-COMPACT`,
+  [report](../reports/status-compact/README.md)); that is not the tenth
+  compaction, which remains due for the other pages. Stability review firing
   five ran at the wave-45 close over `6dc484ad..8c1f15eb`
   ([report](../reports/stability-reeval-5/README.md)); firing six is due after
   wave 47. A wave close records each firing or its postponement; neither is
