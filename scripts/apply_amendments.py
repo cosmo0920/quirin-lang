@@ -45,7 +45,7 @@ routes to it. A document is one JSON object with exactly these top-level keys:
   is an edit set that leaves the page over the 32 KiB bound `scripts/land.py
   check` enforces while making it longer. Nothing is ever prepended: a card
   states a changed fact where the page already states it.
-- `ledger` (required, may be empty)- `ledger` (required, may be empty): edits of the acceptance matrix's
+- `ledger` (required, may be empty): edits of the acceptance matrix's
   `named_followups` (`docs/reviews/r0_3/acceptance_matrix.json`), applied in
   order. Each entry has `id`, `operation` and exactly the fields its operation
   takes:
