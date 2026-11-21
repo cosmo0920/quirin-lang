@@ -44,6 +44,11 @@
 //! vectors, vocabulary and the four OpenSSL formulas are bound to this module
 //! by `crates/qcore-frontend/tests/premise_formula.rs`.
 //!
+//! Card **SP4-SYMBOLIC-LIBEVENT-PREMISES** appends, in its own block, the
+//! terms `qcore-provider-libevent`'s scheduler premises need (C04.18.9's SP4
+//! table): no token, operator, sort or production is added. Its formulas are
+//! `QCore.PremiseFormula.Libevent`'s, bound by the same test file.
+//!
 //! **`|->` in this context.** The lexer's [`Symbol::MapsTo`] is one token
 //! everywhere (three bytes, matched before every shorter spelling, so `|->`
 //! never lexes as a union followed by an implication). Its meaning is decided
@@ -947,6 +952,243 @@ pub const VOCABULARY: &[Term] = &[
         meaning: "the output plugin (its p member) of each output instance of the set",
     },
     // ---- End of SP3-SYMBOLIC-FLUENT-BIT-LIBC-PREMISES.
+    // ---- Card SP4-SYMBOLIC-LIBEVENT-PREMISES (C04.18.9, SP4 block): the
+    // terms `qcore-provider-libevent`'s scheduler premises need, appended
+    // after the SP1, SP2 and SP3 blocks; `#tracked` is SP3's. ----
+    Term {
+        name: "singleton",
+        arguments: &[Sort::Obj],
+        result: Sort::SetObj,
+        meaning: "the set whose one member is the object",
+    },
+    Term {
+        name: "live_at_use",
+        arguments: &[],
+        result: Sort::SetObj,
+        meaning: "the objects whose storage is allocated, and not yet released, at every point of the call that reads, writes or releases one of them",
+    },
+    Term {
+        name: "inside",
+        arguments: &[Sort::Obj],
+        result: Sort::SetObj,
+        meaning: "the objects whose storage lies within the allocation of the object, so that releasing it ends their storage",
+    },
+    Term {
+        name: "released_only_by_call",
+        arguments: &[],
+        result: Sort::SetObj,
+        meaning: "the objects nothing but the call releases: no other call, thread or code, before or after it, releases one",
+    },
+    Term {
+        name: "released",
+        arguments: &[],
+        result: Sort::SetObj,
+        meaning: "the objects the call releases, directly or through a function it runs",
+    },
+    Term {
+        name: "ended",
+        arguments: &[],
+        result: Sort::SetObj,
+        meaning: "the objects whose lifetime the call ends, by releasing them or an object whose storage holds theirs",
+    },
+    Term {
+        name: "overlaps",
+        arguments: &[Sort::SetObj],
+        result: Sort::SetObj,
+        meaning: "the objects whose storage overlaps the storage of an object of the set",
+    },
+    Term {
+        name: "stores",
+        arguments: &[Sort::SetObj],
+        result: Sort::SetObj,
+        meaning: "the member cells of the objects of the set that the call writes (a member is a cell)",
+    },
+    Term {
+        name: "interleaved",
+        arguments: &[],
+        result: Sort::SetFn,
+        meaning: "the functions that run concurrently with or reentrantly into the call (another thread's, a signal handler, a reentrant call); `|->` reads each of their runs that overlaps the call",
+    },
+    Term {
+        name: "no_writes",
+        arguments: &[Sort::SetObj],
+        result: Sort::Eff,
+        meaning: "the run writes no object of the set",
+    },
+    Term {
+        name: "no_releases",
+        arguments: &[Sort::SetObj],
+        result: Sort::Eff,
+        meaning: "the run releases (frees, deletes) no object of the set",
+    },
+    Term {
+        name: "no_resumes",
+        arguments: &[Sort::SetObj],
+        result: Sort::Eff,
+        meaning: "the run resumes (switches to) no coroutine of the set",
+    },
+    Term {
+        name: "unread_after",
+        arguments: &[],
+        result: Sort::SetObj,
+        meaning: "the cells nothing reads after the call returns",
+    },
+    Term {
+        name: "unresumed_after",
+        arguments: &[],
+        result: Sort::SetObj,
+        meaning: "the cells through which nothing resumes a thread or a coroutine after the call returns",
+    },
+    Term {
+        name: "mk_parent",
+        arguments: &[Sort::Obj],
+        result: Sort::Obj,
+        meaning: "the mk_thread the member parent of the mk_http_thread designates",
+    },
+    Term {
+        name: "thread_data",
+        arguments: &[Sort::Obj],
+        result: Sort::SetObj,
+        meaning: "the object at MK_THREAD_DATA of the mk_thread, (char *) t + sizeof(struct mk_thread) for the mk_thread t: the mk_http_thread its allocation carries",
+    },
+    Term {
+        name: "mk_callee",
+        arguments: &[Sort::Obj],
+        result: Sort::Obj,
+        meaning: "the coroutine the member callee of the mk_thread designates",
+    },
+    Term {
+        name: "co_deletable",
+        arguments: &[],
+        result: Sort::SetObj,
+        meaning: "the coroutines co_delete accepts: made by co_create and not yet deleted",
+    },
+    Term {
+        name: "created_for",
+        arguments: &[Sort::Obj],
+        result: Sort::SetObj,
+        meaning: "the coroutines created for the mk_thread",
+    },
+    Term {
+        name: "suspended",
+        arguments: &[],
+        result: Sort::SetObj,
+        meaning: "the coroutines suspended (switched away from, not running) while the call runs",
+    },
+    Term {
+        name: "co_active",
+        arguments: &[],
+        result: Sort::SetObj,
+        meaning: "the coroutine co_active() returns while the call runs (the running one)",
+    },
+    Term {
+        name: "mk_session",
+        arguments: &[Sort::Obj],
+        result: Sort::Obj,
+        meaning: "the mk_http_session the member session of the mk_http_thread designates",
+    },
+    Term {
+        name: "mk_channel",
+        arguments: &[Sort::Obj],
+        result: Sort::Obj,
+        meaning: "the mk_channel the member channel of the mk_http_session designates",
+    },
+    Term {
+        name: "mk_event",
+        arguments: &[Sort::Obj],
+        result: Sort::Obj,
+        meaning: "the mk_event the member event of the mk_channel designates",
+    },
+    Term {
+        name: "mk_type",
+        arguments: &[Sort::Obj],
+        result: Sort::Obj,
+        meaning: "the member type of the mk_event, one scalar cell",
+    },
+    Term {
+        name: "mk_link",
+        arguments: &[Sort::Obj],
+        result: Sort::Obj,
+        meaning: "the link member _head of the mk_http_thread, a struct mk_list cell",
+    },
+    Term {
+        name: "lists",
+        arguments: &[Sort::Obj],
+        result: Sort::SetObj,
+        meaning: "the heads of the mk_lists whose cycle the node is linked in",
+    },
+    Term {
+        name: "caller_list",
+        arguments: &[Sort::Obj],
+        result: Sort::Obj,
+        meaning: "the head of the list through which the call's caller reaches the node",
+    },
+    Term {
+        name: "circular_lists",
+        arguments: &[],
+        result: Sort::SetObj,
+        meaning: "the heads of valid circular mk_lists: following next from the head, through live nodes, returns to the head",
+    },
+    Term {
+        name: "reciprocal",
+        arguments: &[],
+        result: Sort::SetObj,
+        meaning: "the mk_list nodes n with n->next->prev = n and n->prev->next = n",
+    },
+    Term {
+        name: "nodes",
+        arguments: &[Sort::Obj],
+        result: Sort::SetObj,
+        meaning: "the nodes of the mk_list the head heads, the head included",
+    },
+    Term {
+        name: "libco_params_key",
+        arguments: &[],
+        result: Sort::Obj,
+        meaning: "the slot of the thread-specific key mk_http_thread_libco_params of the current thread, a pointer cell",
+    },
+    Term {
+        name: "holds",
+        arguments: &[Sort::Obj],
+        result: Sort::SetObj,
+        meaning: "the object the pointer cell designates when the call reads it; none when it holds NULL",
+    },
+    Term {
+        name: "held_at_return",
+        arguments: &[Sort::Obj],
+        result: Sort::SetObj,
+        meaning: "the object the pointer cell designates when the call returns; none when it holds NULL",
+    },
+    Term {
+        name: "sole_owned",
+        arguments: &[Sort::Obj],
+        result: Sort::SetObj,
+        meaning: "the allocations the cell alone owns: it is their one owning reference",
+    },
+    Term {
+        name: "getspecific_ok",
+        arguments: &[],
+        result: Sort::SetObj,
+        meaning: "the thread-specific key slots every pthread_getspecific of which during the call succeeds (returns the value the slot holds)",
+    },
+    Term {
+        name: "setspecific_ok",
+        arguments: &[],
+        result: Sort::SetObj,
+        meaning: "the thread-specific key slots every pthread_setspecific of which during the call succeeds (returns 0, and the slot then holds the value stored)",
+    },
+    Term {
+        name: "aliases",
+        arguments: &[Sort::Obj],
+        result: Sort::SetObj,
+        meaning: "the cells the source leaves designating the mk_thread, or an object its storage holds, when the call returns: request->thread, channel.thread and the current thread's mk_thread key among them",
+    },
+    Term {
+        name: "stack_deregister",
+        arguments: &[Sort::Obj],
+        result: Sort::SetFn,
+        meaning: "the Valgrind client request VALGRIND_STACK_DEREGISTER(t->valgrind_stack_id) for the mk_thread t, which reads t->valgrind_stack_id, as mk_thread_destroy(t) runs it where MK_HAVE_VALGRIND compiles it in; none where it does not",
+    },
 ];
 
 /// The one defined term: `#inert` abbreviates this effect (C04.18.9).
@@ -1690,4 +1932,41 @@ pub const DECISION_VECTORS: &[(&str, bool)] = &[
     ("#returns_zero in #collector", false),
     // An object set where a callback set stands.
     ("#out_plugin(#args) |-> #inert", false),
+    // ---- Card SP4-SYMBOLIC-LIBEVENT-PREMISES (SP4 block). ----
+    (
+        "quant all #m in #args: #mk_parent(#m) in #live_at_use \\ (#released | #ended)",
+        true,
+    ),
+    (
+        "#interleaved |-> (#no_writes(#singleton(#libco_params_key)) && #no_resumes(#tracked))",
+        true,
+    ),
+    (
+        "quant all #m in #args: quant all #c in #holds(#mk_parent(#m)): #c in #singleton(#m)",
+        true,
+    ),
+    (
+        "quant all #f in #stack_deregister(#libco_params_key): #f |-> #no_releases(#tracked)",
+        true,
+    ),
+    // `|->` binds tighter than `&&`: an effect conjoined to a proposition.
+    (
+        "#interleaved |-> #no_writes(#tracked) && #no_resumes(#tracked)",
+        false,
+    ),
+    // An accessor takes an object, not a set.
+    ("#mk_parent(#args) in #live_at_use", false),
+    // An effect takes a set, not an object.
+    ("#interleaved |-> #no_writes(#libco_params_key)", false),
+    // Objects are not callbacks.
+    ("#live_at_use |-> #inert", false),
+    // Membership of an object in an object.
+    ("#libco_params_key in #libco_params_key", false),
+    // An effect is not a proposition.
+    ("#no_writes(#tracked)", false),
+    // A singleton set of objects is not a resource set.
+    (
+        "#interleaved |-> #singleton(#libco_params_key) == {}",
+        false,
+    ),
 ];

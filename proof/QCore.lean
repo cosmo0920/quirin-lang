@@ -360,6 +360,7 @@ import QCore.PointerTypedefMember
 import QCore.PremiseFlow
 import QCore.PremiseFormula
 import QCore.PremiseFormula.FluentBit
+import QCore.PremiseFormula.Libevent
 import QCore.PremiseFormula.Librdkafka
 import QCore.PremiseMetadataBridge
 import QCore.PremiseRefinement

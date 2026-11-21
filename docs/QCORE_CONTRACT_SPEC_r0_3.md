@@ -1315,6 +1315,52 @@ The constants are the fifteen ex_data classes of `CRYPTO_get_ex_new_index` (3.5)
 
 A nullary term of sort `prop` (the Fluent Bit block's `#faithful`, `#admitted`, `#returns_zero`, `#production`) is itself a proposition. Its formulas say an element is outside a set as membership in a difference, `#x in S \ T` with `#x` drawn from `S` (true exactly when `#x` is in `S` and not in `T`), the other spelling of a negation beside the librdkafka block's `P -> #false`.
 
+**SP4 block** (card SP4-SYMBOLIC-LIBEVENT-PREMISES; the terms `qcore-provider-libevent`'s scheduler premises need, appended after the Fluent Bit block; it reuses that block's `#tracked`; no token, operator, sort or production is added). A member of a record is an object here, a *cell* (C04.19.6's member paths; a slot holding a pointer is one too):
+
+| Term | Sort | Meaning |
+|---|---|---|
+| `#singleton(o)` | obj → set(obj) | defined: the set whose one member is `o` (`quant all #x in #singleton(E): F` binds `#x` to `E` in `F`) |
+| `#live_at_use` | set(obj) | the objects whose storage is allocated, and not yet released, at every point of the call that reads, writes or releases one of them |
+| `#inside(o)` | obj → set(obj) | the objects whose storage lies within the allocation of `o`, so that releasing `o` ends their storage |
+| `#released_only_by_call` | set(obj) | the objects nothing but the call releases: no other call, thread or code, before or after it, releases one |
+| `#released` | set(obj) | the objects the call releases, directly or through a function it runs |
+| `#ended` | set(obj) | the objects whose lifetime the call ends, by releasing them or an object whose storage holds theirs |
+| `#overlaps(S)` | set(obj) → set(obj) | the objects whose storage overlaps the storage of an object of `S` |
+| `#stores(S)` | set(obj) → set(obj) | the member cells of the objects of `S` that the call writes |
+| `#interleaved` | set(fn) | the functions that run concurrently with or reentrantly into the call (another thread's, a signal handler, a reentrant call); `F \|-> E` reads each of their runs that overlaps the call, so the call need not run them itself |
+| `#no_writes(S)` | set(obj) → eff | the run writes no object of `S` |
+| `#no_releases(S)` | set(obj) → eff | the run releases (frees, deletes) no object of `S` |
+| `#no_resumes(S)` | set(obj) → eff | the run resumes (switches to) no coroutine of `S` |
+| `#unread_after` | set(obj) | the cells nothing reads after the call returns |
+| `#unresumed_after` | set(obj) | the cells through which nothing resumes a thread or a coroutine after the call returns |
+| `#mk_parent(o)` | obj → obj | the mk_thread the member `parent` of the mk_http_thread `o` designates |
+| `#thread_data(t)` | obj → set(obj) | the object at `MK_THREAD_DATA(t)`, `(char *) t + sizeof(struct mk_thread)`: the mk_http_thread the mk_thread `t`'s allocation carries |
+| `#mk_callee(t)` | obj → obj | the coroutine the member `callee` of the mk_thread `t` designates |
+| `#co_deletable` | set(obj) | the coroutines `co_delete` accepts: made by `co_create` and not yet deleted |
+| `#created_for(t)` | obj → set(obj) | the coroutines created for the mk_thread `t` |
+| `#suspended` | set(obj) | the coroutines suspended (switched away from, not running) while the call runs |
+| `#co_active` | set(obj) | the coroutine `co_active()` returns while the call runs (the running one) |
+| `#mk_session(o)` | obj → obj | the mk_http_session the member `session` of the mk_http_thread `o` designates |
+| `#mk_channel(s)` | obj → obj | the mk_channel the member `channel` of the mk_http_session `s` designates |
+| `#mk_event(c)` | obj → obj | the mk_event the member `event` of the mk_channel `c` designates |
+| `#mk_type(e)` | obj → obj | the member `type` of the mk_event `e`, one scalar cell |
+| `#mk_link(o)` | obj → obj | the link member `_head` of the mk_http_thread `o`, a `struct mk_list` cell |
+| `#lists(n)` | obj → set(obj) | the heads of the mk_lists whose cycle the node `n` is linked in |
+| `#caller_list(n)` | obj → obj | the head of the list through which the call's caller reaches the node `n` |
+| `#circular_lists` | set(obj) | the heads of valid circular mk_lists: following `next` from the head, through live nodes, returns to the head |
+| `#reciprocal` | set(obj) | the mk_list nodes `n` with `n->next->prev = n` and `n->prev->next = n` |
+| `#nodes(l)` | obj → set(obj) | the nodes of the mk_list headed `l`, the head included |
+| `#libco_params_key` | obj | the slot of the thread-specific key `mk_http_thread_libco_params` of the current thread, a pointer cell |
+| `#holds(c)` | obj → set(obj) | the object the pointer cell `c` designates when the call reads it; none when it holds NULL |
+| `#held_at_return(c)` | obj → set(obj) | the object the pointer cell `c` designates when the call returns; none when it holds NULL |
+| `#sole_owned(c)` | obj → set(obj) | the allocations the cell `c` alone owns: it is their one owning reference |
+| `#getspecific_ok` | set(obj) | the thread-specific key slots every `pthread_getspecific` of which during the call succeeds (returns the value the slot holds) |
+| `#setspecific_ok` | set(obj) | the thread-specific key slots every `pthread_setspecific` of which during the call succeeds (returns 0, and the slot then holds the value stored) |
+| `#aliases(t)` | obj → set(obj) | the cells the source leaves designating the mk_thread `t`, or an object its storage holds, when the call returns: `request->thread`, `channel.thread` and the current thread's mk_thread key among them |
+| `#stack_deregister(t)` | obj → set(fn) | the Valgrind client request `VALGRIND_STACK_DEREGISTER(t->valgrind_stack_id)`, which reads `t->valgrind_stack_id`, as `mk_thread_destroy(t)` runs it where `MK_HAVE_VALGRIND` compiles it in; none where it does not |
+
+The Lean model reads `#singleton(o)` as the singleton set and every other SP4 term by name, one model component per term (`QCore.PremiseFormula.ext0`, `ext1El`, `ext1St`).
+
 **Meaning.** `F |-> E`: every run of callback `F` (of every member of callback set `F`) during the call has effect `E`; a callback the call does not run satisfies it. `#inert`: the run takes over, releases and retains nothing the caller holds. The rest is first-order logic over the model.
 
 **Fail-closed.** An unknown term or constant, an application whose arguments are not of the term's signature, a term without its arguments, an unbound variable, a variable shadowing a term or another variable, a formula that is not a proposition, a malformed or over-long token sequence, and a string statement that is itself a formula each reject the **whole module**; the premise is never dropped.
@@ -1334,7 +1380,19 @@ A nullary term of sort `prop` (the Fluent Bit block's `#faithful`, `#admitted`, 
 * `openssl_unstated_callback_slots` on the frees `SSL_free`, `SSL_CTX_free` and `X509_STORE_free` (3; card OPENSSL-FREE-INDIRECT-CALLBACKS gave them their own statement): `quant all #o in #freed: #teardown(#o) \ (#stated | #settable) |-> #inert`. The prose names a general class, a function of a method, provider or engine of an object the call frees in turn whose setter no declaration of the crate states or which no setter is handed, and lists its members "among them"; the formula states the class. Because the listed members include callbacks an object holds (a cleanup function of the async wait context, the QUIC TLS callbacks of the SSL object) and the SSL object itself, `#teardown` includes held callbacks and the domain is every freed object, so the formula is never narrower than the prose. The other five declarations keep the handshake statement above. Card OPENSSL-OBJECT-FREES-SILENT-METHOD-CALLBACKS added five frees and card OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS nine calls that free inside, so the statement stands on 17 declarations.
 * `openssl_builtin_lookup_methods` (3; card OPENSSL-FREE-INDIRECT-CALLBACKS): `quant all #l in #lookups(#of(X509_STORE, #freed)): #method(#l) in #builtin -> #fns(#l) |-> #inert`.
 
-The crate's checker requires exactly these statements and refuses a premise whose statement is a string (`prose_premise`). In `openssl_builtin_bio_methods`, "(the SSL object of a BIO_f_ssl BIO)" defines "an object other than the arguments of the call" (`#ssl_of(#b) \ #args`), not one example of it (USER DECISION 2026-11-20, "Narrow"). Other crates keep string statements until their own conversion. In every model where no clause states an ex_data callback (C04.19 states slots, never the registry), `openssl_unstated_callback_slots` entails `openssl_ex_data_callbacks`, and not conversely. The Lean model is `QCore.PremiseFormula` (syntax, sorts, the judgment, denotation, the loader's decision vectors, the four formulas well-formed, the entailment).
+The crate's checker requires exactly these statements and refuses a premise whose statement is a string (`prose_premise`). In `openssl_builtin_bio_methods`, "(the SSL object of a BIO_f_ssl BIO)" defines "an object other than the arguments of the call" (`#ssl_of(#b) \ #args`), not one example of it (USER DECISION 2026-11-20, "Narrow"). Other crates keep string statements until their own conversion (`qcore-provider-libevent` converted by card SP4-SYMBOLIC-LIBEVENT-PREMISES, below). In every model where no clause states an ex_data callback (C04.19 states slots, never the registry), `openssl_unstated_callback_slots` entails `openssl_ex_data_callbacks`, and not conversely. The Lean model is `QCore.PremiseFormula` (syntax, sorts, the judgment, denotation, the loader's decision vectors, the four formulas well-formed, the entailment).
+
+**The libevent premises** (card SP4-SYMBOLIC-LIBEVENT-PREMISES; user launch 2026-11-21). The seven premises of `mk_http_thread_destroy` (`qcore-provider-libevent`, `contracts/monkey/intrusive_list.qv`) keep their names, typed refinements, attachments and flows; each statement is now this formula, and each prose phrase maps to a formula part ([report](reports/sp4-symbolic-libevent-premises/README.md)). `#m` ranges over `#args`, the one object `mth` designates:
+
+* `scheduler_exact_parent_embedding`: `quant all #m in #args: #mk_parent(#m) in #live_at_use && #m in #thread_data(#mk_parent(#m)) && #m in #inside(#mk_parent(#m)) && #mk_parent(#m) in #released_only_by_call`.
+* `scheduler_tls_params_owned`: `#libco_params_key in #getspecific_ok && #libco_params_key in #setspecific_ok && quant all #p in #holds(#libco_params_key): #p in #live_at_use \ #overlaps(#tracked) && #p in #sole_owned(#libco_params_key) && #p in #freed \ #held_at_return(#libco_params_key)`.
+* `scheduler_callee_live`: `quant all #m in #args: quant all #c in #singleton(#mk_callee(#mk_parent(#m))): #c in #freed && #c in #co_deletable && #c in #created_for(#mk_parent(#m)) && #c in #suspended \ #co_active && #interleaved |-> (#no_resumes(#singleton(#c)) && #no_releases(#singleton(#c)))`.
+* `scheduler_borrowed_chain_live`: `quant all #m in #args: quant all #s in #singleton(#mk_session(#m)): quant all #ch in #singleton(#mk_channel(#s)): quant all #ev in #singleton(#mk_event(#ch)): #s in #live_at_use && #ch in #live_at_use \ (#released | #ended) && #ev in #live_at_use \ (#released | #ended) && #mk_type(#ev) in #stores(#singleton(#s) | #singleton(#ch) | #singleton(#ev)) && quant all #w in #stores(#singleton(#s) | #singleton(#ch) | #singleton(#ev)): #w in #singleton(#mk_type(#ev))`.
+* `scheduler_valid_membership`: `quant all #m in #args: quant all #n in #singleton(#mk_link(#m)): quant all #l in #singleton(#caller_list(#n)): #l in #lists(#n) && (quant all #k in #lists(#n): #k in #singleton(#l)) && #l in #circular_lists && (quant all #k in #nodes(#l): #k in #reciprocal) && #interleaved |-> #no_writes(#nodes(#l) | #singleton(#mk_callee(#mk_parent(#m))) | #singleton(#mk_session(#m)) | #singleton(#mk_channel(#mk_session(#m))) | #singleton(#mk_event(#mk_channel(#mk_session(#m)))) | #singleton(#libco_params_key))`.
+* `scheduler_no_later_alias_use`: `quant all #m in #args: quant all #a in #aliases(#mk_parent(#m)): #a in #unread_after && #a in #unresumed_after`.
+* `scheduler_valgrind_request_neutral`: `quant all #m in #args: #stack_deregister(#mk_parent(#m)) |-> (#no_writes(#tracked) && #no_releases(#tracked))`.
+
+The state clauses the prose named as stated, not assumed (`parent |-> #stale`, `session |-> #kept`), stay clauses. "The key" of the membership premise is the `mk_http_thread_libco_params` slot, the one key the body reads and writes (the declaration claims nothing of the mk_thread key, which is an alias of the alias premise). The appositive list of the alias premise is read as its general class with those three members (`#aliases`), never narrower. The crate has no checker plugin; its contract-tree test refuses a premise stated as a string. The Lean model is `QCore.PremiseFormula.Libevent` (the seven formulas well-formed, what each states, the callee and membership premises composing, joint satisfiability, and one model falsifying each).
 
 **The librdkafka premises** (card SP2-SYMBOLIC-LIBRDKAFKA-PREMISES). All 220 `resource_premise` clauses of `qcore-provider-librdkafka` (12 names, 9 modules) state formulas; each prose statement and its formula say the same, phrase by phrase ([report](reports/sp2-symbolic-librdkafka-premises/README.md)):
 

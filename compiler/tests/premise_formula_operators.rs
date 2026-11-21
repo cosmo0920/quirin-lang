@@ -131,3 +131,58 @@ fn a_union_or_conjunction_anywhere_else_in_a_contract_still_refuses() {
         .is_empty()
     );
 }
+
+/// Card SP4-SYMBOLIC-LIBEVENT-PREMISES: the libevent declaration shape.
+fn libevent_module(clause: &str) -> String {
+    format!(
+        "module contract;
+extern fn destroy(mth: ptr<mut, u8>) -> i32
+contract {{
+    requires resource_contract_v1;
+{clause}
+    ensures normal resource_borrowed(mth);
+    ensures normal resource_return_none();
+}};
+"
+    )
+}
+
+/// Card SP4-SYMBOLIC-LIBEVENT-PREMISES: the libevent formulas' shapes keep
+/// their `&&` and `|`.
+#[test]
+fn a_libevent_premise_formula_keeps_its_operators() {
+    for clause in [
+        "    requires resource_premise(chain,\n        quant all #m in #args: #mk_session(#m) in #live_at_use\n        && #mk_parent(#m) in #live_at_use \\ (#released | #ended));",
+        "    requires resource_premise(writers, #interleaved |-> #no_writes(#singleton(#libco_params_key) | #tracked));",
+        "    requires resource_premise(slots, #stated |-> #inert && #slots(#args) \\ #stated |-> #inert);",
+    ] {
+        assert_eq!(
+            codes(&libevent_module(clause)),
+            Vec::<String>::new(),
+            "{clause}"
+        );
+    }
+}
+
+/// Card SP4-SYMBOLIC-LIBEVENT-PREMISES: outside a premise the operators keep
+/// their refusal, and a malformed libevent-shaped formula is refused.
+#[test]
+fn a_libevent_shaped_contract_still_refuses_elsewhere() {
+    for clause in [
+        "    requires resource_borrowed(mth && mth);",
+        "    requires resource_premise_all(a | b);",
+    ] {
+        assert!(
+            codes(&libevent_module(clause)).contains(&"Q038".to_owned()),
+            "{clause}"
+        );
+    }
+    for clause in [
+        "    requires resource_premise(p, #stated |-> #inert || #stated |-> #inert);",
+        "    requires resource_premise(p, #unknown |-> #inert && #stated |-> #inert);",
+        "    requires resource_premise(p, #args | #stated |-> #inert);",
+        "    requires resource_premise(p, #interleaved |-> #no_writes(#tracked) && #no_resumes(#tracked));",
+    ] {
+        assert!(!codes(&libevent_module(clause)).is_empty(), "{clause}");
+    }
+}

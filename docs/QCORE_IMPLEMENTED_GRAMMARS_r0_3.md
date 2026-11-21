@@ -4030,6 +4030,7 @@ accepts as a formula (above) as the formula's own union or conjunction, as it re
 set's operators, so a contract module stating a formula compiles; a `|` or
 `&&` anywhere else keeps its refusal, and every other token of the clause is
 the premise reader's to accept or refuse.
+Card SP4-SYMBOLIC-LIBEVENT-PREMISES's libevent formulas compile through the same one exemption; the card adds none.
 
 ### G05-flow. Proposed premise expressions
 

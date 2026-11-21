@@ -59,6 +59,9 @@ def synchronousOutputFormula : Raw := (.bin .conj (.quant "p" (.app0 "in_tree") 
 the collector runs only while ingestion is active"). -/
 def ingestionCoreFormula : Raw := (.quant "g" (.app1 "config_of" (.app0 "args")) (.bin .conj (.bin .imp (.bin .mem (.app0 "g") (.bin .diff (.app1 "config_of" (.app0 "args")) (.app0 "ingesting"))) (.bin .conj (.app0 "returns_zero") (.quant "c" (.app0 "collector") (.bin .mem (.app0 "c") (.bin .diff (.app0 "collector") (.bin .union (.app0 "event_registered") (.app0 "set_running"))))))) (.bin .imp (.bin .mem (.app0 "g") (.app0 "ingesting")) (.quant "c" (.app0 "collector") (.bin .conj (.bin .mem (.app0 "c") (.app0 "event_registered")) (.bin .mem (.app0 "c") (.app0 "set_running")))))))
 
+-- Card SP4-SYMBOLIC-LIBEVENT-PREMISES: the SP4 rows lengthen the table
+-- `decide` looks terms up in; the proof is unchanged.
+set_option maxRecDepth 8192 in
 theorem fluent_bit_formulas_wf :
     wf untrackedHandbackFormula = true ∧ wf ingestionActiveFormula = true ∧
       wf synchronousOutputFormula = true ∧ wf ingestionCoreFormula = true := by decide
