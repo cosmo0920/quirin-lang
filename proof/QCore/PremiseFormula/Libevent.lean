@@ -242,6 +242,7 @@ def satisfyingModel : Model := {
   exDataFree := fun _ _ => False, method := id, builtin := fun _ => False,
   fns := fun _ _ => False, store := fun _ _ => False, lookups := fun _ _ => False,
   teardown := fun _ _ => False, settable := fun _ => False,
+  library := fun _ => False, loaded := fun _ => False,
   inTurn := fun _ _ _ => False, callerHeld := fun _ _ => False,
   takes := fun _ _ _ => False, releases := fun _ _ _ => False,
   retains := fun _ _ _ => False, runs := fun _ _ => True, const := fun _ => (),
