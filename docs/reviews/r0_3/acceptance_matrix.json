@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 10,
-  "named_followups": 1044
+  "named_followups": 1047
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6626,7 +6626,7 @@
   ]
  },
  "corpus": {
-  "contract_modules": 150,
+  "contract_modules": 153,
   "contract_modules_pinned_by": "compiler/tests/qcore_contract_corpus.rs",
   "contract_clause_pin": {
    "const": "EXPECTED_CONTRACTS",
@@ -6920,11 +6920,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Landing integrate/r49 (base main 2aefebbc1; merges CG10-SMALL-BUNDLE 7e03049a3, card base 8e7e8d509, measured tip 47c3b38fd, in ed55fe6cd without conflict; third_party/libevent checked out at d82464a27). USER DECISION 2026-11-21: launch the small CG10 bundle; 'go ahead' with r48 onward. Amendments applied in 2e0ae38d1 with --profiles-base origin/main: CG10-UNCAST-RETURN-UNCONTRACTED-ATTRIBUTION, CG10-RESULT-HOLDER-RETAINED-BY (discharged by recorded refusal, rule 74a) and CG10-W4-FUNCTION-POINTER-DECLARATOR-FORMALS retired; CG10-INDIRECT-ACCESS-SOLE-RESIDUALS amended; CG10-UNCAST-VIEW-CONST-TYPEDEF-BASE, CG10-RESULT-HOLDER-DESTRUCTOR-MEMBER-EFFECT and CG10-CALLED-FUNCTION-POINTER-FORMALS registered; no profiles. Full landing gate on 2e0ae38d1 (private/integrate-r49/gate, raw record beside this file as gate-scope.json) via scripts/gate_scope.py --base origin/main --full --landing through private/toolchain/env.sh: Rust 672 units / 717 summaries, 9849 passed, 0 failed, 21 ignored; fmt, Clippy and both reevaluation examples exit 0; Lean 477 audits. Python (779 tests) exited 1 on test_build_matrix_sections' stale-matrix check only (regenerated from this record); the rerun after regeneration is in private/integrate-r49/python-rerun.log. No provider steps (no provider diff; provider_tests carried from r48, 168). Gateway rules 74, 74a and 74b (see the card report); no function status moves on the card's measurement. Pinned-route parity (quirin-audit measure --declared) was not run: this host holds no build/cycle19 inputs. No profile baseline is changed and land.py publish is owed.",
-  "workspace_tests": 9849,
+  "note": "Landing integrate/r50 (base main f77e97ae6; merges CG10-OWNED-OUT-PARAMETER-MEMBER-SLOT edef42ad1, card base 8e7e8d509, measured tip af8c51fc0, in 7cdf791cc on top of integrate/r49; the generated docs/agents/README.md and gateway.md conflicted and were resolved by rerunning gen_rule_docs.py; the provider locks auto-merged and providers/contracts.py check exits 0 on the merge; main f77e97ae6 merged in 2789822b3 without conflict; third_party/libevent checked out at d82464a27). USER DECISION 2026-11-21: launch the owned out-param member slot card; 'go ahead' with r48 onward. Amendments applied in a175942b4 with --profiles-base origin/main: CG10-W44-TYPEDEF-DEFINING-BASE-ACTUAL, CG10-OWNED-OUT-MEMBER-TRACKED-OWNER and CG10-OOM-DECLARATIONS-UNVALIDATED registered (see the amendment file for the full ledger); no profiles. Lock review: the pinned lists gain only cmt_mpack_consume_string_tag (cmetrics), ctr_mpack_consume_string_or_nil_tag (ctraces), rd_kafka_gzip_compress, rd_kafka_snappy_compress_slice and rd_kafka_lz4_compress (librdkafka); no flexible entry and no existing pinned entry changes. Full landing gate on a175942b4 (private/integrate-r50/gate, raw record beside this file as gate-scope.json) via scripts/gate_scope.py --base origin/main --full --landing through private/toolchain/env.sh: Rust 673 units / 718 summaries, 9862 passed, 0 failed, 21 ignored; fmt, Clippy and both reevaluation examples exit 0; Lean 478 audits; provider package build, verify-all, verify, fmt and Clippy exit 0, provider tests 49 summaries, 168 passed, 1 ignored. Python (779 tests) exited 1 on the two stale-matrix checks of test_build_matrix_sections only (regenerated from this record); the rerun after regeneration is in private/integrate-r50/python-rerun.log. Gateway rule 72 (owned out-parameter member slot), Lean QCore.OwnedOutMemberSlot. The card's opt-in measurement (current --monkey-linked, Fluent Bit 046accf6): 1159/2/3636/7 -> 1169/2/3626/7, ten cmetrics/ctraces unpack_* rows Unknown -> Safe; these rest on the five pinned declarations above, which are not yet validated against source (CG10-OOM-DECLARATIONS-UNVALIDATED). No Safe -> non-Safe move, no new Unsafe. Measured on base 8e7e8d509 without r49. Pinned-route parity (quirin-audit measure --declared) was not run: this host holds no build/cycle19 inputs. No profile baseline is changed and land.py publish is owed.",
+  "workspace_tests": 9862,
   "provider_tests": 168,
   "python_evidence_validator_tests": 779,
-  "lean_audits": 477,
+  "lean_audits": 478,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
    "AuditAggregateOwnedField.lean",
@@ -7223,6 +7223,7 @@
    "AuditOuterContract.lean",
    "AuditOuterListCandidates.lean",
    "AuditOwnedFieldCopyReach.lean",
+   "AuditOwnedOutMemberSlot.lean",
    "AuditPackageIdentity.lean",
    "AuditPackageTemplateBinding.lean",
    "AuditParenthesisedCallee.lean",
@@ -7408,9 +7409,9 @@
   "reevaluation_followup_exit": 0,
   "cargo_fmt": "clean",
   "cargo_clippy": "clean",
-  "standing_gate": "full landing gate: every step exits 0 except the Python suite's stale-matrix check, cleared by regenerating the matrix from this record (rerun disclosed in the note); no provider steps (no provider diff; provider_tests carried from r48)",
+  "standing_gate": "full landing gate: every step exits 0 except the Python suite's stale-matrix checks, cleared by regenerating the matrix from this record (rerun disclosed in the note); provider steps all exit 0",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/cg10-small-bundle/integration/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/cg10-owned-out-parameter-member-slot/integration/gate.json)"
  },
  "named_followups": [
   {
