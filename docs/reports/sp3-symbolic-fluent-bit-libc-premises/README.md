@@ -365,3 +365,6 @@ corpus, twelve-home, system and slice all match the declared prediction with
 sha256 `ca683f4b6cc97494b5c9f69e6b6063529807a67612a2a4b09253481026043e2a`). Landing gate: `integration/gate.json` (Rust 9818
 passed, 1 failed: the known host libcurl failure; Lean 472 audits; Python
 779; python exit 1 on the timing-sensitive test_gate_slot_starvation Resident.test_it_is_reported_while_the_job_runs only (rerun alone 5 times: 4 passed, 1 failed; gate-slot timing, untouched by this card)).
+
+Landing race: merged main `afd8f202d` (SP2 and r47-r52) in `f4b0dee35`; the
+targeted check named in `integration/gate.json` passed.
