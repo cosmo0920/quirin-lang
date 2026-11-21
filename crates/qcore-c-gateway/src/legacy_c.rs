@@ -369,6 +369,10 @@ pub(crate) mod sub_object_store;
 // Card CG11-POINTER-VALUED-STORES (rule 10v): the flow of a pointer store.
 #[path = "legacy_pointer_store.rs"]
 mod pointer_store_flow;
+// Card CG10-OWNED-OUT-PARAMETER-MEMBER-SLOT (rule 72): an out slot handed a
+// member path of a caller-supplied object.
+#[path = "legacy_owned_out_member.rs"]
+mod owned_out_member_route;
 // Card CG10-BOUND-UNTRACKED-ROOTS (rule 11d): the per-path bound-untracked
 // root premise, read off one state, and its census.
 #[path = "legacy_bound_untracked.rs"]
@@ -3972,6 +3976,11 @@ fn build_function_cfg_unscoped(
     // stream names, under its minted name, read only by the direct-call route.
     let member_effect_environment = member_effect::minted_environment(tokens, contracts);
     let contracts = member_effect_environment.as_ref().unwrap_or(contracts);
+    // Card CG10-OWNED-OUT-PARAMETER-MEMBER-SLOT (rule 72): every out-slot
+    // contract the stream names, under its minted name with the slot read as
+    // data, read only by rule 72's lowering.
+    let owned_out_environment = crate::owned_out_member::minted_environment(tokens, contracts);
+    let contracts = owned_out_environment.as_ref().unwrap_or(contracts);
     let normalized = out_alias::normalize(tokens, function, contracts);
     census_stage("out-alias", tokens, normalized.as_ref());
     let tokens = normalized.as_deref().unwrap_or(tokens);
@@ -4203,6 +4212,8 @@ fn build_function_cfg_unscoped(
         caller_formals,
         cell_protocols: descriptor_cells_route::protocol_specs(contracts),
         element_origins: container_publication::ForeignOrigins::default(),
+        owned_out_body_start: body_start,
+        owned_out_roots: std::cell::OnceCell::new(),
         typed_path_index: std::cell::OnceCell::new(),
         typed_path_function: function.to_owned(),
         typed_position_uses: std::cell::Cell::new(0),
@@ -5149,6 +5160,10 @@ struct Parser<'a> {
     /// Card **W45-CONTAINER-ROOT-REACH**: the element bindings rule 5l
     /// admitted, for the foreign unlink ([`container_publication::ForeignOrigins`]).
     element_origins: container_publication::ForeignOrigins,
+    /// Card **CG10-OWNED-OUT-PARAMETER-MEMBER-SLOT** (rule 72): the body's
+    /// opening brace, and its caller-supplied roots, read on first use.
+    owned_out_body_start: usize,
+    owned_out_roots: std::cell::OnceCell<BTreeSet<String>>,
 }
 
 impl Parser<'_> {
@@ -5907,6 +5922,17 @@ impl Parser<'_> {
                 {
                     return lowered;
                 }
+                // Card CG10-OWNED-OUT-PARAMETER-MEMBER-SLOT (rule 72), after
+                // rule 12i and before rule 12k.
+                if !strict
+                    && !untracked_pointer
+                    && returned_evaluation.as_ref().is_none_or(|(instruction, _)| {
+                        return_call_access::is_gate_refusal(instruction)
+                    })
+                    && let Some(lowered) = self.owned_out_member_return(&expression, line)
+                {
+                    return lowered;
+                }
                 #[cfg(feature = "indirect-census")]
                 if !strict && !untracked_pointer && returned_evaluation.is_none() {
                     self.census_return(line, &texts);
@@ -6087,6 +6113,12 @@ impl Parser<'_> {
         // Card SCALAR-STATEMENT-FORMS (rule 41), asked after every statement
         // fallback and rules 14a/14b, only for one of its five refusals.
         if let Some(statement) = self.scalar_statement_form(tokens, line, &instruction) {
+            return statement;
+        }
+        // Card CG10-OWNED-OUT-PARAMETER-MEMBER-SLOT (rule 72), before rule
+        // 12k, only for the gate's refusal: an out slot handed a member path
+        // of a caller-supplied object.
+        if let Some(statement) = self.owned_out_member_statement(tokens, line, &instruction) {
             return statement;
         }
         // Card CG10-INDIRECT-ACCESS-SOLE-RESIDUALS (rule 12k). Asked last,

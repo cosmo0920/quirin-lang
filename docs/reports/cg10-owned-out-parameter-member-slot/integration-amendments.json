@@ -1,0 +1,47 @@
+{
+  "schema": "quirin-amendments/1",
+  "card": "CG10-OWNED-OUT-PARAMETER-MEMBER-SLOT",
+  "base": "8e7e8d509",
+  "measured_tip": "af8c51fc0",
+  "profiles": [],
+  "increment_paragraph": "**CG10-OWNED-OUT-PARAMETER-MEMBER-SLOT** (USER DECISION 2026-11-21: launch the card; gateway rule 72; contract specification C04.13.1, no new grammar; Lean `QCore.OwnedOutMemberSlot`, 13 audited theorems; [report](../../reports/cg10-owned-out-parameter-member-slot/README.md)). An owned value a callee delivers through an out slot handed `&R->F...` with `R` a caller-supplied root (an unrebound formal, or a name every write of which is a root, a cast of one or a member read through one) is read as the call with the slot as data (the callee's contract under a minted name, slot `Borrowed`), the slot's chain obligation, and a rule-10v pointer store of class `owned-out` decided by the owner alone: an untracked owner takes the custody (it escapes to the caller that supplied the object; nothing owed or dropped), a tracked, unresolved or rooted-binding owner keeps the gate's refusal; a body with one publishes no summary. Five C04.13 dispositions with an out slot, pinned at 66910c10 and 046accf6 in their own modules (cmetrics/ctraces `mpack_string_out.qv`, librdkafka `compress_out.qv`; `cmt_mpack_consume_string_tag`, `ctr_mpack_consume_string_or_nil_tag`, `rd_kafka_gzip_compress`, `rd_kafka_snappy_compress_slice`, `rd_kafka_lz4_compress`; trusted assumptions, no body yields a summary) and selected in `cycle19-resource-contracts.json`. Two K03 pins asserting the refusal of `q_make(&s->p)` flipped deliberately to `Safe` (with a tracked-owner control). Measured on the opt-in `current --monkey-linked` route over Fluent Bit 046accf6 (base `512d7a69` on tree `8e7e8d509` vs tip `6070c09a` on tree `af8c51fc0`): 1,159/2/3,636/7 -> 1,169/2/3,626/7, ten Unknown -> Safe moves (the cmetrics `unpack_opts_{ns,ss,name,desc}`, `unpack_static_label_component`, the ctraces `unpack_instrumentation_scope_{name,version}`, `unpack_link_trace_state`, `unpack_span_schema_url`, `unpack_span_status_message`), each on a declared assumption (four also on rule 14n's null premise); 13 rows re-attributed and still Unknown; no Safe -> non-Safe move, no new Unsafe, no Pending moved; access rows 2,135 -> 2,125, alone 209 -> 200, leaves 9,027 -> 9,011. The three librdkafka compressor callers stay Unknown: rule W44 reads no member through their writer base, spelled with a defining typedef. Pinned-route parity not run on this host (no inputs): corpus predicted three librdkafka moves before the measurement, which the measured W44 refusal makes unexpected; system and slice none.",
+  "status_paragraph": null,
+  "ledger": [
+    {
+      "id": "CG10-OWNED-OUT-PARAMETER-MEMBER-SLOT",
+      "operation": "amend",
+      "source": "docs/reports/cg10-owned-out-parameter-member-slot/README.md",
+      "text": "AMENDED (CG10-OWNED-OUT-PARAMETER-MEMBER-SLOT; opt-in current over Fluent Bit 046accf6, base 8e7e8d509 1,159/2/3,636/7, tip af8c51fc0 1,169/2/3,626/7): the contract form is C04.13's out slot, no new grammar, and the consumer reading is C04.13.1 and gateway rule 72 (an untracked owner reached from a caller-supplied root takes the delivered custody; a tracked owner refuses; a body with one publishes no summary). Five dispositions declared and pinned. Ten of the 13 moved Unknown -> Safe. The three librdkafka rows (rd_kafka_msgset_writer_compress_{gzip,lz4,snappy}) stay Unknown on rule W44, which reads no msetw->msetw_rkb through a base spelled with a defining typedef (CG10-W44-TYPEDEF-DEFINING-BASE-ACTUAL); rule 72 reads their slot. DISCHARGE: that entry's card re-measures the three rows."
+    },
+    {
+      "id": "CG10-INDIRECT-ACCESS-SOLE-RESIDUALS",
+      "operation": "amend",
+      "source": "docs/reports/cg10-owned-out-parameter-member-slot/README.md",
+      "text": "AMENDED (CG10-OWNED-OUT-PARAMETER-MEMBER-SLOT; opt-in current over Fluent Bit 046accf6, base 8e7e8d509 1,159/2/3,636/7 with 209 Unknown functions blocked by the access refusal alone, 9,027 access leaves; tip af8c51fc0 1,169/2/3,626/7): gateway rule 72 and five out-slot dispositions free ten of round 4's 13 allocating-out-parameter rows (the cmetrics and ctraces unpack callbacks); access alone 209 -> 200 (ten left, unpack_opts_unit joined: its remaining leaf is map->unit = value, MEMBER-EFFECT-STORES), access leaves 9,027 -> 9,011, no Safe -> non-Safe move. The three librdkafka compressor callers stay, now behind CG10-W44-TYPEDEF-DEFINING-BASE-ACTUAL."
+    },
+    {
+      "id": "CG10-W44-TYPEDEF-DEFINING-BASE-ACTUAL",
+      "operation": "register",
+      "source": "docs/reports/cg10-owned-out-parameter-member-slot/README.md",
+      "recorded_by": "CG10-OWNED-OUT-PARAMETER-MEMBER-SLOT",
+      "title": "Rule W44 reads no member actual through a base spelled with a defining typedef (msetw->msetw_rkb, rd_kafka_msgset_writer_t)",
+      "text": "CG10-OWNED-OUT-PARAMETER-MEMBER-SLOT measured (opt-in current over Fluent Bit 046accf6, tip af8c51fc0): rd_kafka_msgset_writer_compress_gzip, _lz4 and _snappy keep the gate's refusal at err = rd_kafka_*_compress(msetw->msetw_rkb, ..., &ciov->iov_base, &ciov->iov_len) although rule 72 reads the slot: the writer is typedef struct rd_kafka_msgset_writer_s { ... } rd_kafka_msgset_writer_t; (rdkafka_msgset_writer.c:52-94), the lexical declaration reader answers Opaque for the base, and W44's typed fallback does not read the actual. Pinned by tests/owned_out_member_slot.rs (a_writer_base_spelled_through_a_defining_typedef_keeps_w44s_refusal: the same call is Safe with the base read elsewhere). Rule 61 reads such an alias for O04-B08's store only. DISCHARGE: a W44 reading of a member actual through a defining-typedef base, with Lean parity and a measured arbiter; the three rows are its first measure."
+    },
+    {
+      "id": "CG10-OWNED-OUT-MEMBER-TRACKED-OWNER",
+      "operation": "register",
+      "source": "docs/reports/cg10-owned-out-parameter-member-slot/README.md",
+      "recorded_by": "CG10-OWNED-OUT-PARAMETER-MEMBER-SLOT",
+      "title": "Rule 72's tracked-owner case: an out slot handed a member of a record this frame allocated keeps the refusal",
+      "text": "Gateway rule 72 admits a delivery only into an untracked owner (a caller-supplied object). A slot of a record this frame allocated (R = alloc(); f(&R->m)) is the field-link model's assignment case: the delivered custody would be linked under the owner (O04-B08), its release ending the record and an unreleased one a leak. It keeps the gate's refusal: every declared out-slot callee rule 72 reads is a C04.13 disposition, whose unwritten class cannot be one field store without a decided class, and no production declaration has a plain heap out slot, so the case has no consumer or measure. Pinned: tests/owned_out_member_slot.rs and the K03 controls. DISCHARGE: a consumer (a plain heap out slot, or a decided class at the call) with the field link created at the call, Lean parity and a measured arbiter."
+    },
+    {
+      "id": "CG10-OOM-DECLARATIONS-UNVALIDATED",
+      "operation": "register",
+      "source": "docs/reports/cg10-owned-out-parameter-member-slot/README.md",
+      "recorded_by": "CG10-OWNED-OUT-PARAMETER-MEMBER-SLOT",
+      "title": "The five out-slot dispositions of CG10-OWNED-OUT-PARAMETER-MEMBER-SLOT are trusted assumptions: their bodies yield no summary",
+      "text": "cmt_mpack_consume_string_tag (cmt_mpack_utils.c:115-175), ctr_mpack_consume_string_or_nil_tag (ctr_mpack_utils.c:25-42), rd_kafka_gzip_compress (rdkafka_msgset_writer.c:955-1034), rd_kafka_snappy_compress_slice (:1056-1100) and rd_kafka_lz4_compress (rdkafka_lz4.c:336-450) are declared resource_on_return(eq, 0, resource_out(slot, ...)) / resource_on_return(ne, 0, resource_borrowed(slot)), pinned at 66910c10 and 046accf6. On the tip each callee row is Unknown (uncontracted mpack, zlib, snappy and LZ4F calls; stores through the slot), so no exit-specific summary decides them (C04.13: a declared assumption). The nonzero class may write NULL into the slot, which C04.13 states as untracked. DISCHARGE: the bodies' summaries decide the dispositions (their callees declared), or a census shows no caller depends on the unwritten class."
+    }
+  ]
+}

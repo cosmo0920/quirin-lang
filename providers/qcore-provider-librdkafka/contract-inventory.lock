@@ -2619,6 +2619,35 @@
       },
       "sha256": "cb0a8525793d5e7a74c78c1b359ce0a19fff69c1825031eb68441f4126bec07f"
     },
+    "librdkafka/compress_out.qv": {
+      "clause_count": 24,
+      "declaration_count": 3,
+      "declarations": [
+        {
+          "clauses": 8,
+          "name": "rd_kafka_gzip_compress",
+          "resource_mode": null,
+          "resource_table": "relational"
+        },
+        {
+          "clauses": 7,
+          "name": "rd_kafka_snappy_compress_slice",
+          "resource_mode": null,
+          "resource_table": "relational"
+        },
+        {
+          "clauses": 9,
+          "name": "rd_kafka_lz4_compress",
+          "resource_mode": null,
+          "resource_table": "relational"
+        }
+      ],
+      "inherits": [],
+      "other_declarations": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "ac4fadc5ffdf844d29450e291185165701b049115b41dc2b23089aec09833627"
+    },
     "librdkafka/header_inlines.qv": {
       "clause_count": 253,
       "declaration_count": 59,
@@ -5605,6 +5634,7 @@
   "resource_view": [
     "librdkafka/cjson.qv",
     "librdkafka/client.qv",
+    "librdkafka/compress_out.qv",
     "librdkafka/header_inlines.qv",
     "librdkafka/kafka_mem.qv",
     "librdkafka/log_caller_frame.qv",

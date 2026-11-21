@@ -386,13 +386,20 @@ fn k03_complex_actual_places_are_not_substituted() {
     for body in [
         "void subject(struct S *s) { q_free(s->in.p); }",
         "void subject(struct S *s, int i) { q_free(s->slots[i]); }",
-        "void subject(struct S *s) { q_make(&s->p); }",
     ] {
         let run = gs(body);
         assert!(run.refused(IND), "{body}: {run:?}");
     }
     // Control: address-of a local slot is the admitted Out destination.
     assert!(gs("void subject(void) { void *p; q_make(&p); q_free(p); }").safe());
+    // Card CG10-OWNED-OUT-PARAMETER-MEMBER-SLOT (rule 72) flipped this pin
+    // deliberately: an out slot handed a member of an unrebound formal's
+    // object delivers its custody to the caller that supplied the object.
+    // A slot of a record this body allocated (a tracked owner) still refuses.
+    assert!(gs("void subject(struct S *s) { q_make(&s->p); }").safe());
+    assert!(
+        !gs("void subject(void) { struct S *s = q_alloc(); q_make(&s->p); q_free(s); }").safe()
+    );
 }
 
 // ---------------------------------------------------------------------------

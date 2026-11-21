@@ -885,6 +885,39 @@
       ]
     },
     {
+      "function": "cmt_mpack_consume_string_tag",
+      "module": "cmetrics/mpack_string_out.qv",
+      "contract_sha256": "167ef9697fdfb24e0dff2351e3e1c6ac04e44270faba514aa504ce90797f3d05",
+      "pinned_at": "2026-11-21T01:19:21Z",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/cmetrics/include/cmetrics/cmt_mpack_utils.h",
+              "kind": "declaration",
+              "declaration_sha256": "7034b101bf1fda959654ceec16ea624c726d9dbd856b68fcf284976ba68d9543"
+            },
+            {
+              "path": "lib/cmetrics/src/cmt_mpack_utils.c",
+              "kind": "definition",
+              "declaration_sha256": "7034b101bf1fda959654ceec16ea624c726d9dbd856b68fcf284976ba68d9543",
+              "body_sha256": "cc060de6a1e414a6c5c60bb2377383492f1dd313fc97f73394adc960515be0f5"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "function": "cmt_mpack_consume_uint_tag",
       "module": "cmetrics/mpack_utils.qv",
       "contract_sha256": "c8e103f43550166d1d15955cf35847a7c97db1c937990c4aca234e59a18ebbed",
