@@ -257,6 +257,11 @@ fn statement(cfg: &crate::legacy_c::LegacyCfg, parameters: &[Option<String>]) ->
         else {
             continue;
         };
+        // Card CG10-OWNED-OUT-PARAMETER-MEMBER-SLOT (rule 72): a delivered
+        // custody is no retention and no overwrite a retention states.
+        if store.value == crate::owned_out_member::OWNED_OUT {
+            return None;
+        }
         let Some(root) = index(&store.root) else {
             // A member of this frame's own record object: no caller sees it.
             if store.owner.is_none() && store.value != RETAINED {

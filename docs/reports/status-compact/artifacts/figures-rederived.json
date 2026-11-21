@@ -1,0 +1,192 @@
+{
+ "acceptance_full_conformance": false,
+ "contracts": {
+  "inventory_locks": 11,
+  "locked_clauses": 8749,
+  "locked_declarations": 992,
+  "locked_modules": 150,
+  "modules_per_lock": {
+   "qcore-provider-chunkio": 46,
+   "qcore-provider-cmetrics": 10,
+   "qcore-provider-ctraces": 1,
+   "qcore-provider-libevent": 20,
+   "qcore-provider-librdkafka": 14,
+   "quirin-provider-cfl": 7,
+   "quirin-provider-fluent-bit": 28,
+   "quirin-provider-libc": 18,
+   "quirin-provider-mpack": 1,
+   "quirin-provider-msgpack": 1,
+   "quirin-provider-shared": 4
+  },
+  "tracked_qv_modules": 175,
+  "user_crate_modules": {
+   "quirin-provider-libcurl": 4,
+   "quirin-provider-openssl": 20,
+   "quirin-provider-plugin": 1
+  }
+ },
+ "ct": {
+  "cases": 50,
+  "distinct_source_fixture_digests": 48,
+  "mapped": 50,
+  "native_sanitized": [
+   "CT03",
+   "CT07",
+   "CT09",
+   "CT17",
+   "CT22",
+   "CT25",
+   "CT26",
+   "CT34",
+   "CT46",
+   "CT49"
+  ],
+  "proof": [
+   "CT01",
+   "CT03",
+   "CT07",
+   "CT37",
+   "CT50"
+  ],
+  "shared_fixture_groups": 9,
+  "stage_status_counts": {
+   "native_sanitized": {
+    "executed": 10,
+    "not_applicable": 9,
+    "recorded_not_gated": 5,
+    "unassessed": 26
+   },
+   "proof": {
+    "executed": 5,
+    "unassessed": 45
+   }
+  }
+ },
+ "frozen_profiles": [
+  "chunkio-core-configured",
+  "cmetrics-counter-configured",
+  "cycle-17-cfl",
+  "cycle-18-libevent",
+  "cycle-19-fluent-bit",
+  "cycle-19-monkey-callbacks"
+ ],
+ "gate": {
+  "cargo_clippy": "clean",
+  "cargo_fmt": "clean",
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)",
+  "lean_audits": 477,
+  "path": "docs/reports/cg10-small-bundle/integration/gate.json",
+  "provider_tests": 168,
+  "python_evidence_validator_tests": 779,
+  "reevaluation_followup_exit": 0,
+  "reevaluation_probe_exit": 0,
+  "standing_gate": "full landing gate: every step exits 0 except the Python suite's stale-matrix check, cleared by regenerating the matrix from this record (rerun disclosed in the note); no provider steps (no provider diff; provider_tests carried from r48)",
+  "workspace_tests": 9849
+ },
+ "lean": {
+  "audit_modules": 477,
+  "toolchain": "leanprover/lean4:v4.35.0"
+ },
+ "live_profiles": {
+  "eight-home": {
+   "baseline_history_entries": 4,
+   "baseline_source": "docs/reports/landing-556460e31/README.md",
+   "measured_revision": "556460e31f4b0fe00cfa477855771ed50f209236",
+   "null_rows": 4921,
+   "null_verdicts": {
+    "Safe": 2549,
+    "Unknown": 2355,
+    "Unsafe": 17
+   },
+   "row_statuses": {
+    "Safe": 1079,
+    "Unknown": 3745,
+    "Unsafe": 10
+   },
+   "rows": 4834,
+   "source_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+   "unit_statuses": {
+    "Safe": 9,
+    "Unknown": 164,
+    "Unsafe": 8,
+    "data_only": 4
+   },
+   "units": 185
+  },
+  "fluent-bit-system": {
+   "baseline_history_entries": 2,
+   "baseline_source": "docs/reports/landing-556460e31/README.md",
+   "measured_revision": "556460e31f4b0fe00cfa477855771ed50f209236",
+   "null_rows": 454,
+   "null_verdicts": {
+    "Safe": 211,
+    "Unknown": 243
+   },
+   "row_statuses": {
+    "Safe": 103,
+    "Unknown": 341,
+    "Unsafe": 4
+   },
+   "rows": 448,
+   "source_revision": "046accf6aded7906f66a1baf0202da349e521736",
+   "unit_statuses": {
+    "Unknown": 13,
+    "Unsafe": 2
+   },
+   "units": 15
+  },
+  "fluent-bit-tail-pause": {
+   "baseline_history_entries": 2,
+   "baseline_source": "docs/reports/landing-777fba16e/README.md",
+   "measured_revision": "777fba16efa49c67634fd9eec0b3db12051b0edd",
+   "null_rows": 406,
+   "null_verdicts": {
+    "Safe": 190,
+    "Unknown": 216
+   },
+   "row_statuses": {
+    "Pending": 4,
+    "Safe": 58,
+    "Unknown": 341,
+    "Unsafe": 1
+   },
+   "rows": 404,
+   "source_revision": "34155955e4962a56d94eb23c03a002880899a0d1",
+   "unit_statuses": {
+    "Unknown": 15,
+    "Unsafe": 1
+   },
+   "units": 16
+  },
+  "twelve-home": {
+   "baseline_history_entries": 1,
+   "baseline_source": "docs/reports/cg22-callback-candidate-link-premise/README.md",
+   "measured_revision": "9744344634a7c6e7141d8cd11c87ce0ad8dd9114",
+   "null_rows": 4796,
+   "null_verdicts": {
+    "Safe": 2476,
+    "Unknown": 2303,
+    "Unsafe": 17
+   },
+   "row_statuses": {
+    "Safe": 1083,
+    "Unknown": 3615,
+    "Unsafe": 6
+   },
+   "rows": 4704,
+   "source_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+   "unit_statuses": {
+    "Safe": 9,
+    "Unknown": 160,
+    "Unsafe": 6,
+    "data_only": 4
+   },
+   "units": 179
+  }
+ },
+ "matrix": {
+  "full_conformance": false,
+  "named_followups": 1044,
+  "validation_note_head": "Landing integrate/r49 (base main 2aefebbc1; merges CG10-SMALL-BUNDLE 7e03049a3, card base 8e7e8d509, measured tip 47c3b3"
+ }
+}

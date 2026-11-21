@@ -1,0 +1,65 @@
+== docs/reports/openssl-provider-plugin/integration/native-comparison.json.gz
+   sides {'base': 'rev:0f6e17118', 'tip': 'rev:24240a300'}; declared True
+   base->tip corpus: 4834 rows: 1081 Safe / 0 Pending / 3743 Unknown / 10 Unsafe -> 4834 rows: 1081 Safe / 0 Pending / 3743 Unknown / 10 Unsafe; moves 0
+   base->tip slice: 404 rows: 59 Safe / 4 Pending / 340 Unknown / 1 Unsafe -> 404 rows: 59 Safe / 4 Pending / 340 Unknown / 1 Unsafe; moves 0
+   base->tip system: 448 rows: 103 Safe / 0 Pending / 341 Unknown / 4 Unsafe -> 448 rows: 103 Safe / 0 Pending / 341 Unknown / 4 Unsafe; moves 0
+== docs/reports/link-standing-import-limiters/integration/native-comparison.json.gz
+   sides {'base': 'rev:0f6e17118', 'tip': 'rev:0ae403bc0'}; declared True
+   base->tip corpus: 4834 rows: 1081 Safe / 0 Pending / 3743 Unknown / 10 Unsafe -> 4834 rows: 1081 Safe / 0 Pending / 3743 Unknown / 10 Unsafe; moves 0
+   base->tip slice: 404 rows: 59 Safe / 4 Pending / 340 Unknown / 1 Unsafe -> 404 rows: 59 Safe / 4 Pending / 340 Unknown / 1 Unsafe; moves 0
+   base->tip system: 448 rows: 103 Safe / 0 Pending / 341 Unknown / 4 Unsafe -> 448 rows: 103 Safe / 0 Pending / 341 Unknown / 4 Unsafe; moves 0
+== docs/reports/current-context-new-triage/integration/native-comparison.json.gz
+   sides {'base': 'rev:0f6e17118', 'tip': 'rev:1e691eecc'}; declared True
+   base->tip corpus: 4834 rows: 1081 Safe / 0 Pending / 3743 Unknown / 10 Unsafe -> 4834 rows: 1081 Safe / 0 Pending / 3743 Unknown / 10 Unsafe; moves 0
+   base->tip slice: 404 rows: 59 Safe / 4 Pending / 340 Unknown / 1 Unsafe -> 404 rows: 59 Safe / 4 Pending / 340 Unknown / 1 Unsafe; moves 0
+   base->tip system: 448 rows: 103 Safe / 0 Pending / 341 Unknown / 4 Unsafe -> 448 rows: 103 Safe / 0 Pending / 341 Unknown / 4 Unsafe; moves 0
+== docs/reports/thread-local-custody-free-read/integration/native-comparison.json.gz
+   sides {'base': 'rev:0f6e17118', 'tip': 'rev:1ac1fabbd'}; declared True
+   base->tip corpus: 4834 rows: 1081 Safe / 0 Pending / 3743 Unknown / 10 Unsafe -> 4834 rows: 1081 Safe / 0 Pending / 3743 Unknown / 10 Unsafe; moves 0
+   base->tip slice: 404 rows: 59 Safe / 4 Pending / 340 Unknown / 1 Unsafe -> 404 rows: 63 Safe / 4 Pending / 336 Unknown / 1 Unsafe; moves 4
+   base->tip system: 448 rows: 103 Safe / 0 Pending / 341 Unknown / 4 Unsafe -> 448 rows: 107 Safe / 0 Pending / 337 Unknown / 4 Unsafe; moves 4
+== docs/reports/current-context-new-triage/integration-d3/native-comparison.json.gz
+   sides {'base': 'rev:0f6e17118', 'tip': 'rev:8e190aa83'}; declared True
+   base->tip corpus: 4834 rows: 1081 Safe / 0 Pending / 3743 Unknown / 10 Unsafe -> 4834 rows: 1082 Safe / 0 Pending / 3742 Unknown / 10 Unsafe; moves 1
+   base->tip slice: 404 rows: 59 Safe / 4 Pending / 340 Unknown / 1 Unsafe -> 404 rows: 59 Safe / 4 Pending / 340 Unknown / 1 Unsafe; moves 0
+   base->tip system: 448 rows: 103 Safe / 0 Pending / 341 Unknown / 4 Unsafe -> 448 rows: 103 Safe / 0 Pending / 341 Unknown / 4 Unsafe; moves 0
+== docs/reports/cg25-void-cast-guard-escape/integration/native-comparison.json.gz
+   sides {'base': 'rev:36b2cf931', 'tip': 'rev:67fdd5c28'}; declared True
+   base->tip corpus: 4834 rows: 1078 Safe / 0 Pending / 3746 Unknown / 10 Unsafe -> 4834 rows: 1078 Safe / 0 Pending / 3746 Unknown / 10 Unsafe; moves 0
+   base->tip slice: 404 rows: 63 Safe / 4 Pending / 336 Unknown / 1 Unsafe -> 404 rows: 63 Safe / 4 Pending / 336 Unknown / 1 Unsafe; moves 0
+   base->tip system: 448 rows: 107 Safe / 0 Pending / 337 Unknown / 4 Unsafe -> 448 rows: 107 Safe / 0 Pending / 337 Unknown / 4 Unsafe; moves 0
+== docs/reports/cg25-thread-key-automatic-revisit/integration/native-comparison.json.gz
+   sides {'base': 'rev:5c824e443', 'tip': 'rev:08ce3ade6'}; declared True
+   base->tip corpus: 4834 rows: 1078 Safe / 0 Pending / 3746 Unknown / 10 Unsafe -> 4834 rows: 1078 Safe / 0 Pending / 3746 Unknown / 10 Unsafe; moves 0
+   base->tip slice: 404 rows: 63 Safe / 4 Pending / 336 Unknown / 1 Unsafe -> 404 rows: 63 Safe / 4 Pending / 336 Unknown / 1 Unsafe; moves 0
+   base->tip system: 448 rows: 107 Safe / 0 Pending / 337 Unknown / 4 Unsafe -> 448 rows: 107 Safe / 0 Pending / 337 Unknown / 4 Unsafe; moves 0
+== docs/reports/ag1-indirect-member-access/integration/native-comparison.json.gz
+   sides {'base': 'rev:a9c6dcf44', 'tip': 'rev:e94468466'}; declared True
+   base->tip corpus: 4834 rows: 1079 Safe / 0 Pending / 3745 Unknown / 10 Unsafe -> 4834 rows: 1085 Safe / 0 Pending / 3737 Unknown / 12 Unsafe; moves 8
+   base->tip slice: 404 rows: 63 Safe / 4 Pending / 336 Unknown / 1 Unsafe -> 404 rows: 63 Safe / 4 Pending / 336 Unknown / 1 Unsafe; moves 0
+   base->tip system: 448 rows: 107 Safe / 0 Pending / 337 Unknown / 4 Unsafe -> 448 rows: 107 Safe / 0 Pending / 337 Unknown / 4 Unsafe; moves 0
+   base->tip twelve-home: 4834 rows: 1079 Safe / 0 Pending / 3745 Unknown / 10 Unsafe -> 4834 rows: 1085 Safe / 0 Pending / 3737 Unknown / 12 Unsafe; moves 8
+== docs/reports/ag1-indirect-member-access/integration/combined-native-comparison.json.gz
+   sides {'base': 'rev:2bf47a710', 'tip': 'rev:8a85e233f'}; declared False
+   base->tip corpus: 4834 rows: 1079 Safe / 0 Pending / 3745 Unknown / 10 Unsafe -> 4834 rows: 1119 Safe / 0 Pending / 3703 Unknown / 12 Unsafe; moves 42
+   base->tip slice: 404 rows: 63 Safe / 4 Pending / 336 Unknown / 1 Unsafe -> 404 rows: 63 Safe / 4 Pending / 336 Unknown / 1 Unsafe; moves 0
+   base->tip system: 448 rows: 107 Safe / 0 Pending / 337 Unknown / 4 Unsafe -> 448 rows: 112 Safe / 0 Pending / 332 Unknown / 4 Unsafe; moves 5
+   base->tip twelve-home: 4834 rows: 1079 Safe / 0 Pending / 3745 Unknown / 10 Unsafe -> 4834 rows: 1119 Safe / 0 Pending / 3703 Unknown / 12 Unsafe; moves 42
+== docs/reports/ag2-unresolved-alias/integration/native-comparison.json.gz
+   sides {'base': 'rev:a9c6dcf44', 'tip': 'rev:fb0648571'}; declared True
+   base->tip corpus: 4834 rows: 1079 Safe / 0 Pending / 3745 Unknown / 10 Unsafe -> 4834 rows: 1112 Safe / 0 Pending / 3712 Unknown / 10 Unsafe; moves 33
+   base->tip slice: 404 rows: 63 Safe / 4 Pending / 336 Unknown / 1 Unsafe -> 404 rows: 63 Safe / 4 Pending / 336 Unknown / 1 Unsafe; moves 0
+   base->tip system: 448 rows: 107 Safe / 0 Pending / 337 Unknown / 4 Unsafe -> 448 rows: 112 Safe / 0 Pending / 332 Unknown / 4 Unsafe; moves 5
+   base->tip twelve-home: 4834 rows: 1079 Safe / 0 Pending / 3745 Unknown / 10 Unsafe -> 4834 rows: 1112 Safe / 0 Pending / 3712 Unknown / 10 Unsafe; moves 33
+== docs/reports/ag3-condition-return-calls/integration/native-comparison.json.gz
+   sides {'base': 'rev:a9c6dcf44', 'tip': 'rev:752c30c20'}; declared True
+   base->tip corpus: 4834 rows: 1079 Safe / 0 Pending / 3745 Unknown / 10 Unsafe -> 4834 rows: 1080 Safe / 0 Pending / 3744 Unknown / 10 Unsafe; moves 1
+   base->tip slice: 404 rows: 63 Safe / 4 Pending / 336 Unknown / 1 Unsafe -> 404 rows: 63 Safe / 4 Pending / 336 Unknown / 1 Unsafe; moves 0
+   base->tip system: 448 rows: 107 Safe / 0 Pending / 337 Unknown / 4 Unsafe -> 448 rows: 107 Safe / 0 Pending / 337 Unknown / 4 Unsafe; moves 0
+   base->tip twelve-home: 4834 rows: 1079 Safe / 0 Pending / 3745 Unknown / 10 Unsafe -> 4834 rows: 1080 Safe / 0 Pending / 3744 Unknown / 10 Unsafe; moves 1
+== docs/reports/sp1-symbolic-openssl-premises/integration/native-comparison.json.gz
+   sides {'base': 'rev:b7f86a0de', 'tip': 'rev:2c07390b6'}; declared True
+   base->tip corpus: 4834 rows: 1119 Safe / 0 Pending / 3703 Unknown / 12 Unsafe -> 4834 rows: 1119 Safe / 0 Pending / 3703 Unknown / 12 Unsafe; moves 0
+   base->tip slice: 404 rows: 63 Safe / 4 Pending / 336 Unknown / 1 Unsafe -> 404 rows: 63 Safe / 4 Pending / 336 Unknown / 1 Unsafe; moves 0
+   base->tip system: 448 rows: 112 Safe / 0 Pending / 332 Unknown / 4 Unsafe -> 448 rows: 112 Safe / 0 Pending / 332 Unknown / 4 Unsafe; moves 0
+   base->tip twelve-home: 4834 rows: 1119 Safe / 0 Pending / 3703 Unknown / 12 Unsafe -> 4834 rows: 1119 Safe / 0 Pending / 3703 Unknown / 12 Unsafe; moves 0

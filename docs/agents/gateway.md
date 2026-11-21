@@ -12547,6 +12547,84 @@ an undeclared OpenSSL producer). `QCore.NullableReferenceDrop` (12 audited,
     `a_function_pointer_adds_no_obligation`), bound to `DECISION_VECTORS`;
     [report](../reports/cg10-reader-gaps/README.md).
 
+<a id="constraint-72"></a>
+
+72. **An owned value a callee delivers through an out slot handed a member
+    path of a caller-supplied object is that object's.** Card
+    CG10-OWNED-OUT-PARAMETER-MEMBER-SLOT (`owned_out_member.rs`, the parser's
+    half in `legacy_owned_out_member.rs`; hooks: the minted environment in
+    `legacy_c.rs` after rule 38j's, the statement form before rule 12k in
+    `expression_statement_lowered`, the whole-call return after rule 12i and
+    before rule 12k, `ValueClass::OwnedOut` in `pointer_store.rs`, its owner
+    and decision in `legacy_pointer_store.rs`, `chain_owner_premised` in
+    `legacy_null_premise.rs`, rule 70's summary refusing such a body in
+    `member_store_retention.rs`, the minted prefix in
+    `legacy_reserved_spelling.rs` and `contract_dependencies.rs`; contract
+    specification §C04.13.1). USER DECISION 2026-11-21 (through the
+    integrator's brief): launch the card. CG10-INDIRECT-ACCESS-SOLE-RESIDUALS
+    round 4 counted 13 functions the access refusal alone blocked whose
+    callee stores a fresh allocation through an out slot handed `&opts->ns`,
+    `&context->span->status.message` or `&ciov->iov_base`; §C04.13 reads an
+    out slot only at `&NAME`, and rule W44 reads no address of a pointer
+    member. (1) **The callee.** Its contract in force is a plain contract
+    with exactly one `Out` position, or a return-code disposition (not
+    withdrawn) whose classes are `Out` or `Borrowed` (unwritten) at exactly
+    one position, `Out` in one, and agree elsewhere; with that position read
+    `Borrowed` it is the neutral contract (every other formal `Borrowed`, a
+    `None` result, no kind or effect clause), installed under the minted name
+    `qcore_owned_out_member__F`. Every class then delivers fresh custody or
+    nothing through the slot, so the classes need no decision where the slot
+    is the caller's. (2) **The statement.** Asked only for exactly the gate's
+    refusal, after every other route of the statement or return declined,
+    for `CALL`, `NAME = CALL` or `return CALL` with no braces reading no
+    tracked descriptor, whose first call ends the statement; the slot actual
+    is exactly `& R -> F ( -> G )* ( . H )*` (fused), its first selection an
+    arrow and no `.` before a later arrow; `R` is a **caller-supplied root**
+    (premise P-72-CALLER-OBJECT: an unrebound formal, never written,
+    incremented or address-taken, or, to a fixpoint, a name every write of
+    which is `R = V ;` with `V` a root, `( T… * ) root` with no `union`, or
+    `root -> F…`, and which is never address-taken or compound-assigned). The
+    statement is classified with the callee renamed to its minted name and
+    the slot actual replaced by the null constant (data at a `Borrowed`
+    position), its other actuals read as rule W44 reads them; the call must
+    come back the minted contract, producing no site and no container or
+    retention operand, and is renamed back. (3) **The lowering.** The slot's
+    chain read (`IndirectScalarAccess` with the chain `R`, links, member: the
+    root's never-bound premise, else rule 11d's eligibility where the AST
+    reader declares `R` once), the call's own block, then a rule-10v
+    `PointerStore` of value class `owned-out` whose access is the call and
+    whose fallback is the gate's refusal with the statement's writes; a
+    return then returns its scalar escaping nothing. (4) **The flow.** The
+    owner is rule 10v's (`chain_owner`, root and final object), read under
+    rule 14n's named premise exactly where the slot's own chain read is:
+    untracked admits, tracked or unresolved refuses; then rule 10v's
+    old-value premise (no binding rooted at `R` carries a target or is
+    unknown, P-CG11-CALLER-SLOT) and its forget of every binding rooted at
+    `R`. Admitted, the delivered custody is the caller's object's: no site
+    is created, nothing is owed by this frame and nothing it owed is
+    dropped, exactly as a field-linked child escapes with an escaping owner
+    (O04-B08). A record this frame allocated (a tracked owner) keeps the
+    refusal: only O04-B08's field link rewrites its member
+    (CG10-OWNED-OUT-MEMBER-TRACKED-OWNER). (5) **The summary.** A body with
+    such a store publishes no derived summary (rule 10v's
+    `has_pointer_store`), and rule 70's retention summary refuses one, so no
+    caller reads the delivery as `Borrowed`. **Do not** admit a slot of this
+    frame's own object (`&v.F`, a pointer to a local), a rebound or
+    address-taken root, a root written from a call or arithmetic, an indexed
+    or cast slot, a call inside a larger expression, a contract with a
+    second custody position or an owned result, or a held or withdrawn
+    declaration; **do not** read the delivery into a tracked owner without
+    the field link. Premises stated, not proved: P-72-CALLER-OBJECT,
+    P-CG11-CALLER-SLOT, the callee's declaration (C06) and faithful token and
+    Clang extraction (trust boundary 28). `QCore.OwnedOutMemberSlot`
+    (`decision_vectors_hold`, `slot_vectors_hold`,
+    `another_write_is_never_a_root`,
+    `an_admitted_delivery_keeps_the_frames_obligations`,
+    `the_delivered_identity_is_held`, `a_tracked_owner_is_refused`,
+    `a_delivery_withholds_the_summary` and six more), bound to
+    `DECISION_VECTORS` and `ROOT_VECTORS`; `tests/owned_out_member_slot.rs`;
+    [report](../reports/cg10-owned-out-parameter-member-slot/README.md).
+
 <a id="constraint-74"></a>
 
 74. **Rule 12k asked of rule 71a's uncast call.** Card CG10-SMALL-BUNDLE

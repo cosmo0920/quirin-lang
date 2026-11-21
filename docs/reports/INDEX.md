@@ -189,6 +189,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [cg10-member-store-retained-by](cg10-member-store-retained-by/README.md) | CG10-MEMBER-STORE-RETAINED-BY: a formal's pointer stored into a member is `retained_by` (rule 70) |
 
+| [cg10-owned-out-parameter-member-slot](cg10-owned-out-parameter-member-slot/README.md) | CG10-OWNED-OUT-PARAMETER-MEMBER-SLOT: an owned value delivered into a member slot of a caller-supplied object |
+
 | [cg10-reader-gaps](cg10-reader-gaps/README.md) | CG10-READER-GAPS: three reader gaps behind the indirect-access refusal (rules 71, 71a, 71b) |
 
 | [cg10-small-bundle](cg10-small-bundle/README.md) | CG10-SMALL-BUNDLE: three follow-ups of the CG10 reader cards (rules 74, 74a, 74b) |
@@ -1310,6 +1312,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [stability-reeval-4](stability-reeval-4/README.md) | STABILITY-REEVAL #4 — the cadence's fourth firing |
 
 | [stability-reeval-5](stability-reeval-5/README.md) | STABILITY-REEVAL #5 — the cadence's fifth firing (wave 45 close) |
+
+| [status-compact](status-compact/README.md) | `STATUS-COMPACT` — `docs/STATUS.md` rewritten as a current-state page |
 
 | [string-concat](string-concat/README.md) | STRING-CONCAT — computed text, and the dependency that dissolved (wave 25) |
 

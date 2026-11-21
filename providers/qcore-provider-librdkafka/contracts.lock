@@ -3636,6 +3636,39 @@
       ]
     },
     {
+      "function": "rd_kafka_gzip_compress",
+      "module": "librdkafka/compress_out.qv",
+      "contract_sha256": "0fc4d03a4aafbb333fe0108a271a3ba17e7e825ff3188eb3c8bce7adb8608d73",
+      "pinned_at": "2026-11-21T01:19:27Z",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/librdkafka-2.15.0/src/rdkafka_msgset.h",
+              "kind": "declaration",
+              "declaration_sha256": "573580be36c84e92c46f4061ee457911f69a69a22d398eb908e0ea8637bc8d20"
+            },
+            {
+              "path": "lib/librdkafka-2.15.0/src/rdkafka_msgset_writer.c",
+              "kind": "definition",
+              "declaration_sha256": "573580be36c84e92c46f4061ee457911f69a69a22d398eb908e0ea8637bc8d20",
+              "body_sha256": "9a56230d39dd5f02d0c4c81c4d7ee27c1886c58259144a808d36445c983cfb4a"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "function": "rd_kafka_interceptor_method_add",
       "module": "librdkafka/client.qv",
       "contract_sha256": "88aae4fbfe8c49050ae9695473858a200d28ebcdf217e5f156cc55f1e4f9bb15",
@@ -3744,6 +3777,39 @@
               "path": "lib/librdkafka-2.15.0/src/rdkafka.h",
               "kind": "declaration",
               "declaration_sha256": "866f5cb6d393a7889e034d15cffc1078656d01f234328f05b2d7c4d780a90196"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "rd_kafka_lz4_compress",
+      "module": "librdkafka/compress_out.qv",
+      "contract_sha256": "9398e707e1a087038f0743e2056b2d06d8e721984cc3c091ef47e19461235fad",
+      "pinned_at": "2026-11-21T01:19:27Z",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/librdkafka-2.15.0/src/rdkafka_lz4.c",
+              "kind": "definition",
+              "declaration_sha256": "2da6fcffda27972569ee679d97d5597c8e629ec5f5667939eec2870b9402e109",
+              "body_sha256": "98f30aa9ca1a53cce5a57ba0f41d1609ee4f238160f060a3e27a292cbcf0e980"
+            },
+            {
+              "path": "lib/librdkafka-2.15.0/src/rdkafka_lz4.h",
+              "kind": "declaration",
+              "declaration_sha256": "2da6fcffda27972569ee679d97d5597c8e629ec5f5667939eec2870b9402e109"
             }
           ]
         }
@@ -5503,6 +5569,39 @@
               "kind": "definition",
               "declaration_sha256": "fdcbbf50a9a26eac60ccc58c52b403f19ed86861585af52ad65b670bf67896d1",
               "body_sha256": "0cfff80b4b3d28e2d930bc83fd87d6475cde1e1f2a6f85be7a118d2c9869b47a"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "rd_kafka_snappy_compress_slice",
+      "module": "librdkafka/compress_out.qv",
+      "contract_sha256": "5cb3d3d5b2943fb877e39036c4d73cca0ef52a75eb86ec90644761aad916627b",
+      "pinned_at": "2026-11-21T01:19:27Z",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/librdkafka-2.15.0/src/rdkafka_msgset.h",
+              "kind": "declaration",
+              "declaration_sha256": "f5761660369436a93b3a7f4d634ebcdcbc5ecd6967c52c25da9d3c6c5544688c"
+            },
+            {
+              "path": "lib/librdkafka-2.15.0/src/rdkafka_msgset_writer.c",
+              "kind": "definition",
+              "declaration_sha256": "f5761660369436a93b3a7f4d634ebcdcbc5ecd6967c52c25da9d3c6c5544688c",
+              "body_sha256": "10ea40f2facb1e9cc3b9e67bff75b27ac711c4cdae4264e3ac1cb82b0529798e"
             }
           ]
         }
