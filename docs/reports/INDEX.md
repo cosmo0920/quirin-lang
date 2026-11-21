@@ -1311,6 +1311,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [status-compact](status-compact/README.md) | `STATUS-COMPACT` — `docs/STATUS.md` rewritten as a current-state page |
 
+| [status-regrowth-by-prepend](status-regrowth-by-prepend/README.md) | `STATUS-REGROWTH-BY-PREPEND`: STATUS can no longer regrow by prepending |
+
 | [string-concat](string-concat/README.md) | STRING-CONCAT — computed text, and the dependency that dissolved (wave 25) |
 
 | [string-slice](string-slice/README.md) | Card `STRING-SLICE` — `source.string.v1`, immutable UTF-8 string views |

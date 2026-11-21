@@ -30,13 +30,20 @@ gate has run, the integrator:
    `python3 scripts/contribution_ledgers.py render` (card CONTRIBUTION-LEDGERS;
    the page names each live profile's baseline, so a landing that moves a
    baseline or adds a ledger changes it);
-5. runs `python3 scripts/land.py check`, which must exit 0;
-6. commits the records;
-7. reruns the Python suite;
-8. measures the committed landing revision on all live routes and publishes
-   its immutable baseline with `python3 scripts/land.py publish`.
+5. regenerates the unpublished-landings sentence of `docs/STATUS.md`:
+   `python3 scripts/land.py unpublished --write` (card
+   STATUS-REGROWTH-BY-PREPEND; `scripts/unpublished_landings.py` generates it
+   from the landing gate records and the publication records, so the step-1
+   gate record adds the landing; nobody edits the sentence by hand);
+6. runs `python3 scripts/land.py check`, which must exit 0;
+7. commits the records;
+8. reruns the Python suite;
+9. measures the committed landing revision on all live routes and publishes
+   its immutable baseline with `python3 scripts/land.py publish`, which
+   appends the publication to `docs/development/landing-publications.json`;
+   then reruns `python3 scripts/land.py unpublished --write` and commits both.
 
-Step 8 applies the evaluation-profile policy before it publishes (card
+Step 9 applies the evaluation-profile policy before it publishes (card
 LANDING-PUBLISH-COMPLETION; `scripts/evaluation_profiles.py` owns the policy,
 this applies it): every live profile must have been measured, and the landed
 revision's figures must reproduce the baseline committed in that revision
@@ -54,16 +61,23 @@ step 2: a ledger edit changes `len(named_followups)` while
 `dimensions.named_followups` still holds the old count, so
 `test_build_matrix_sections` fails. `check` predicts that (and a stale
 `dimensions.requirements` or report index) without running the suite, and
-names the step to run first; likewise a stale contributions page.
+names the step to run first; likewise a stale contributions page and a stale
+unpublished-landings sentence. It also fails while `docs/STATUS.md` exceeds
+32 KiB (32,768 bytes): the page is current state, not a history, and the
+bound is restored by the compaction procedure, not by raising it.
 
 Usage:
 
     python3 scripts/land.py            # print the sequence
     python3 scripts/land.py check [--root DIR]
+    python3 scripts/land.py unpublished [--write] [--root DIR]
     python3 scripts/land.py publish [--root DIR] [--previous SHA] [--inputs-base DIR] [--bootstrap]
 
 `check` exits 0 when the records are fresh, 1 naming each stale record and the
-command that regenerates it.
+command that regenerates it. `unpublished` prints every landing, published or
+not, and the records it could not fully parse; `--write` rewrites the sentence
+between the `<!-- unpublished-landings: ... -->` and
+`<!-- unpublished-landings:end -->` lines of `docs/STATUS.md`.
 """
 from __future__ import annotations
 
@@ -77,10 +91,18 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import evaluation_profiles  # noqa: E402  (the profile policy's single authority)
+import unpublished_landings  # noqa: E402  (the unpublished-landings sentence)
 MATRIX = Path("docs/reviews/r0_3/acceptance_matrix.json")
 MATRIX_COMMAND = "python3 docs/reports/remaining-d02/build_matrix.py . --gate <gate.json>"
 INDEX_COMMAND = "python3 scripts/build_docs_index.py"
 CONTRIBUTIONS_COMMAND = "python3 scripts/contribution_ledgers.py render"
+UNPUBLISHED_COMMAND = unpublished_landings.WRITE_COMMAND
+STATUS = unpublished_landings.STATUS
+STATUS_BYTE_LIMIT = 32 * 1024
+STATUS_COMPACTION = (
+    "compact it as docs/agents/operations.md#maintenance-cadence says (re-derive the figures "
+    "from primary sources and move unique history verbatim into an indexed checkpoint; "
+    "docs/reports/status-compact/README.md is the worked example), never by raising the bound")
 # The dimensions whose name is a section they count (test_build_matrix_sections).
 COUNTED_SECTIONS = ("requirements", "named_followups")
 SEQUENCE = (
@@ -89,10 +111,12 @@ SEQUENCE = (
     MATRIX_COMMAND,
     INDEX_COMMAND,
     CONTRIBUTIONS_COMMAND,
+    UNPUBLISHED_COMMAND,
     "python3 scripts/land.py check",
     "git commit the records",
     "python3 -m unittest discover -s scripts/tests",
-    "python3 scripts/land.py publish (live routes; after the full gate and records commit)",
+    "python3 scripts/land.py publish (live routes; after the full gate and records commit), "
+    f"then {UNPUBLISHED_COMMAND} and git commit {unpublished_landings.PUBLICATIONS} with STATUS",
 )
 
 
@@ -198,6 +222,7 @@ def publish(root, previous=None, inputs_base=Path("/media/Data/GitHub/quirin-lan
     baseline = root / "private/baselines" / sha
     if baseline.exists():
         raise ValueError(f"landing baseline already exists: {baseline}")
+    publication_ledger(root, sha)
     if not inputs_base.is_dir():
         raise ValueError(f"prepared inputs root is absent: {inputs_base}")
     prior_baseline = root / "private/baselines" / prior
@@ -224,7 +249,39 @@ def publish(root, previous=None, inputs_base=Path("/media/Data/GitHub/quirin-lan
     subprocess.run([str(executable), "--plugin-path", str(executable.parent),
                     "--output", str(baseline), "measure", "publish", "--from", str(side)],
                    cwd=root, check=True)
+    record_publication(root, sha, prior, stamp)
     return baseline
+
+
+def publication_ledger(root, sha):
+    """The committed publication record, checked before anything is measured
+    or published; refused when malformed or when it already records `sha`."""
+    path = root / unpublished_landings.PUBLICATIONS
+    if path.is_file():
+        document = json.loads(path.read_text(encoding="utf-8"))
+    else:
+        document = {"schema": unpublished_landings.PUBLICATIONS_SCHEMA, "publications": []}
+    if (not isinstance(document, dict)
+            or document.get("schema") != unpublished_landings.PUBLICATIONS_SCHEMA
+            or not isinstance(document.get("publications"), list)):
+        raise ValueError(f"{unpublished_landings.PUBLICATIONS} is not a "
+                         f"{unpublished_landings.PUBLICATIONS_SCHEMA} record")
+    if any(isinstance(entry, dict) and entry.get("revision") == sha
+           for entry in document["publications"]):
+        raise ValueError(f"{unpublished_landings.PUBLICATIONS} already records {sha}")
+    return document
+
+
+def record_publication(root, sha, prior, stamp):
+    """Append a publication to the committed publication record, which the
+    unpublished-landings sentence reads (a publication that moves no baseline
+    leaves no other committed trace)."""
+    path = root / unpublished_landings.PUBLICATIONS
+    document = publication_ledger(root, sha)
+    document["publications"].append({"revision": sha, "previous": prior, "published_at": stamp,
+                                     "baseline": f"private/baselines/{sha}"})
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(document, indent=1) + "\n", encoding="utf-8")
 
 
 def stale_records(root):
@@ -251,12 +308,51 @@ def stale_records(root):
                                "--check"], capture_output=True, text=True)
         if page.returncode != 0:
             stale.append(((page.stderr or page.stdout).strip(), CONTRIBUTIONS_COMMAND))
+    stale += status_problems(root)
     return stale
+
+
+def status_problems(root):
+    """The STATUS size bound and the generated sentence, as `(what, command)`."""
+    found = []
+    path = root / STATUS
+    try:
+        size = path.stat().st_size
+    except OSError as error:
+        return [(f"{STATUS} cannot be read ({error})", UNPUBLISHED_COMMAND)]
+    if size > STATUS_BYTE_LIMIT:
+        found.append((f"{STATUS} is {size:,} bytes, over the {STATUS_BYTE_LIMIT:,}-byte bound",
+                      STATUS_COMPACTION))
+    try:
+        old, new, _ = unpublished_landings.generated_status(root)
+    except unpublished_landings.LandingError as error:
+        return found + [(f"the unpublished-landings sentence cannot be generated: {error}",
+                         UNPUBLISHED_COMMAND)]
+    if old != new:
+        found.append((f"{STATUS}'s unpublished-landings sentence differs from the landing gate "
+                      "and publication records", UNPUBLISHED_COMMAND))
+    return found
+
+
+def unpublished(root, write=False):
+    """`land.py unpublished [--write]` (module doc)."""
+    for line in unpublished_landings.listing(root):
+        print(line)
+    if write:
+        old, new, _ = unpublished_landings.generated_status(root)
+        if old != new:
+            (root / STATUS).write_text(new, encoding="utf-8")
+            print(f"land: rewrote the unpublished-landings sentence of {STATUS}")
+        else:
+            print(f"land: the unpublished-landings sentence of {STATUS} is current")
 
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
-    parser.add_argument("command", nargs="?", choices=("sequence", "check", "publish"), default="sequence")
+    parser.add_argument("command", nargs="?", choices=("sequence", "check", "publish", "unpublished"),
+                        default="sequence")
+    parser.add_argument("--write", action="store_true",
+                        help="unpublished: rewrite the sentence in docs/STATUS.md")
     parser.add_argument("--root", type=Path, default=ROOT)
     parser.add_argument("--previous", help="previous landing revision (default: nearest published first-parent ancestor; HEAD^1 for bootstrap)")
     parser.add_argument("--inputs-base", type=Path,
@@ -278,6 +374,13 @@ def main(argv=None):
             return 1
         print(f"land: published {baseline}")
         return 0
+    if args.command == "unpublished":
+        try:
+            unpublished(args.root.resolve(), args.write)
+        except (OSError, unpublished_landings.LandingError) as error:
+            print(f"land: unpublished: {error}", file=sys.stderr)
+            return 1
+        return 0
     stale = stale_records(args.root.resolve())
     for what, command in stale:
         print(f"land: stale: {what}; run first: {command}", file=sys.stderr)
@@ -285,7 +388,8 @@ def main(argv=None):
         print("land: regenerate, then rerun `python3 scripts/land.py check` before the Python "
               "suite", file=sys.stderr)
         return 1
-    print("land: matrix dimensions, report index and contributions page are fresh")
+    print("land: matrix dimensions, report index, contributions page and the "
+          "unpublished-landings sentence are fresh; STATUS is within its size bound")
     return 0
 
 
