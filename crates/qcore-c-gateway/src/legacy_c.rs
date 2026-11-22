@@ -318,6 +318,12 @@ mod loop_reacquisition_leak_route;
 #[path = "legacy_settled_leak.rs"]
 mod settled_leak_route;
 
+// Card NULLABLE-LAZY-CONSTRUCTOR-IN-LOOP (rule 74d): a resolved, possibly-null
+// resource returned under a non-null result mode is refused as that. The hook
+// below naming the card is thin.
+#[path = "legacy_nullable_return.rs"]
+mod nullable_return_route;
+
 // Card B08-FIELD-LINK-JOIN-SILENT-UNRESOLVED (rule 11c): a field link that
 // holds on some paths only never leaves an obligation unresolved without a
 // diagnostic. The hooks below naming the card are thin.
