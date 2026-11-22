@@ -895,6 +895,10 @@ admission and scalar forgetting; [report](../reports/w48-bottom-up-batch5/README
    `remaining-hygiene-14`.
 <!-- preserved:constraint-6:end -->
 
+Rule 6 is amended by [rule 74c](#constraint-74c): a current-generation leak
+report made on an iterate is published only if the settled exit does not mark
+its identity unresolved beside an `Unknown` leaf.
+
 <a id="constraint-7"></a>
 
 7. Leak diagnostics are **34** across the pinned 185-unit corpus
@@ -1066,6 +1070,10 @@ admission and scalar forgetting; [report](../reports/w48-bottom-up-batch5/README
     mutation left behind (`AOM-POISON-NOOP-INCREMENT`, constraint 5a's already
     recorded hazard). `aom-binding-poison`, `c-gateway-wave`.
 <!-- preserved:constraint-10a:end -->
+
+Rule 10a is amended by [rule 74c](#constraint-74c): the frame reads a member
+address `&NAME->F` (`&(NAME)->F`) as a use of `*NAME`, not of `NAME`'s slot,
+as rule 12e's tie names do.
 
 <a id="constraint-10b"></a>
 
@@ -12793,5 +12801,54 @@ an undeclared OpenSSL producer). `QCore.NullableReferenceDrop` (12 audited,
     `a_read_formal_is_never_called`, `a_plain_list_reads_as_before`,
     `a_function_pointer_adds_no_obligation`);
     [report](../reports/cg10-small-bundle/README.md).
+
+<a id="constraint-74c"></a>
+
+74c. **A refused release is no leak; a member address does not take a
+    name's slot.** Card NULLABLE-GUARDED-RELEASE
+    (`crates/qcore-c-gateway/src/legacy_settled_leak.rs`, new; one hook in
+    `report_leaks` and one after rule 42's settlement in the custody work
+    list; one line in the frame computation of `legacy_c.rs`). It amends
+    [rule 6](#constraint-6) and [rule 10a](#constraint-10a). (A) **Settled
+    claims.** `report_leaks` runs on every iterate (rule 6), so an exit could
+    claim a site before a refused effect's unresolved marker joined in; the
+    claim was never withdrawn although the settled exit no longer made it
+    (`rd_kafka_mock_handle_Metadata`: census `settled: false`, site
+    `unresolved: true`). A current-generation report is now held, as rule 42
+    holds an earlier generation's, and decided after the work list settles:
+    withdrawn exactly when the exit node's settled incoming state marks the
+    identity unresolved **and** the function carries an `Unknown` leaf;
+    published otherwise, and a key is published when any identity reporting
+    it is not withdrawn. Only `Unsafe -> Unknown` moves follow. The refusal
+    kinds that leave such a marker at a release are every refusing branch of
+    `apply_resource_action` and its peers: a nullable resource at a `nonnull`
+    position, an unresolved or multi-target identity, an ambiguous cascade, a
+    published, retained, holder or taken object, a derived pointer, and a
+    failed live requirement of an attach or detach. (B) **The frame.** Rule
+    10a's frame dropped every name a `&` is followed by; `&NAME->F` and
+    `&(NAME)->F` take the address of a member of `*NAME` (C11 6.5.2.3,
+    6.5.3.2), never of `NAME`'s slot, so the frame now reads the body through
+    rule 12e's `member_addresses_read`, exactly the reading the tie names
+    already have. A binding that survives a refused statement then reaches
+    the guard, and the existing refinement (rules 14l, 10b) decides it: its
+    non-null edge accepts the `nonnull` release, its null edge removes the
+    site. For an array `NAME` the plain name's value (its address) cannot
+    change either; its element places are not plain names and stay poisoned.
+    **Do not** spare a name whose slot address is taken (`&NAME`, `&(NAME)`,
+    `&NAME[i]`), a name written by the refused text, or a name the old
+    exclusions drop; **do not** withdraw a report whose identity the settled
+    exit does not mark, or beside no `Unknown` leaf; **do not** read the
+    guard on an unknown binding (rule 10b stands). A refusal stays a
+    refusal, so no function becomes `Safe` through (B); a spared binding can
+    expose a violation (rule 10a's recorded effect). Not covered, and
+    recorded: a nullable binding made by a lazy constructor in a loop or by a
+    poisoned binding joined at a loop head (seven of the eleven nullable-leaf
+    rows of the held constructors card). `QCore.NullableGuardedRelease`
+    (`a_refused_release_claims_nothing`, `the_marker_survives_the_join`,
+    `the_iterate_claim_was_unsupported`, `withdraw_vectors_hold`,
+    `a_withdrawal_is_never_below_unknown`, `a_spared_name_keeps_its_value`,
+    `the_frame_only_widens`, `a_slot_address_still_poisons`,
+    `the_non_null_edge_denotes_the_site`, `the_null_edge_owes_nothing`,
+    `a_reassignment_breaks_it`); [report](../reports/nullable-guarded-release/README.md).
 
 <!-- generated:rules:end -->
