@@ -32,7 +32,12 @@ fn graph(clauses: &str) -> Graph {
     load_resource_contract_sources(&sources).unwrap();
     replay(&sources).unwrap().remove("f").unwrap()
 }
-const STRUCTURED: &str = "requires resource_hypothesis(a, \"A and B hold jointly\"); requires resource_hypothesis(b, \"C\"); requires resource_premise_all(p, a, b);";
+/// Card SP6-SYMBOLIC-HYPOTHESIS-ATOMS: atoms are typed propositions (C04.18.7);
+/// the string atom is refused (`QF002`).
+const ATOM_A: &str = "quant proposition #a(#live: predicate<obj>, #parent: obj) = #live(#parent);";
+const ATOM_B: &str =
+    "quant proposition #b(#nodup: predicate<obj>, #parent: obj) = #nodup(#parent);";
+const STRUCTURED: &str = "quant proposition #a(#live: predicate<obj>, #parent: obj) = #live(#parent); quant proposition #b(#nodup: predicate<obj>, #parent: obj) = #nodup(#parent); requires resource_premise_all(p, a, b);";
 #[test]
 fn legacy_erases_and_replays_without_changing_retained_bytes_or_digest() {
     let s = sources("requires resource_premise(p, #concurrent |-> #inert);");
@@ -62,30 +67,42 @@ fn legacy_erases_and_replays_without_changing_retained_bytes_or_digest() {
 #[test]
 fn graph_loading_is_total_or_reject() {
     assert_eq!(graph(STRUCTURED).atoms.len(), 2);
-    assert_eq!(
-        graph(&format!(
-            "{STRUCTURED} requires resource_hypothesis(a, \"A and B hold jointly\");"
-        ))
-        .atoms
-        .len(),
-        2
-    );
     for bad in [
-        "requires resource_hypothesis(a, \"A\"); requires resource_hypothesis(a, \"B\"); requires resource_premise_all(p, a);",
-        "requires resource_premise_all(p, missing);",
-        "requires resource_premise_all(p, p);",
-        "requires resource_premise_all(p, q); requires resource_premise_all(q, p);",
-        "requires resource_hypothesis(a, \"A\"); requires resource_hypothesis(b, \"B\"); requires resource_premise_all(p, b, a);",
-        "requires resource_hypothesis(a, \"A\"); requires resource_premise_all(p, a, a);",
-        "requires resource_premise_all(p);",
-        "requires resource_hypothesis(a, typed(unknown)); requires resource_premise_all(p, a);",
-        "requires resource_hypothesis(a, \"A\");",
-        "ensures normal resource_hypothesis(a, \"A\"); requires resource_premise_all(p, a);",
+        // A typed atom is defined once: a repeat refuses, identical or not
+        // (G01p; the retired string atom coalesced identical repeats).
+        format!("{STRUCTURED} {ATOM_A}"),
+        format!(
+            "{ATOM_A} quant proposition #a(#nodup: predicate<obj>, #parent: obj) = #nodup(#parent); requires resource_premise_all(p, a);"
+        ),
+        "requires resource_premise_all(p, missing);".into(),
+        "requires resource_premise_all(p, p);".into(),
+        "requires resource_premise_all(p, q); requires resource_premise_all(q, p);".into(),
+        format!("{ATOM_A} {ATOM_B} requires resource_premise_all(p, b, a);"),
+        format!("{ATOM_A} requires resource_premise_all(p, a, a);"),
+        "requires resource_premise_all(p);".into(),
+        // An ungrouped typed atom is a direct entry obligation the strict
+        // loader refuses (C04.18.7).
+        ATOM_A.into(),
+        // The retired string atom, under any introducer or statement (QF002).
+        "requires resource_hypothesis(a, typed(unknown)); requires resource_premise_all(p, a);"
+            .into(),
+        "requires resource_hypothesis(a, \"A\");".into(),
+        "requires resource_hypothesis(a, \"A\"); requires resource_premise_all(p, a);".into(),
+        "ensures normal resource_hypothesis(a, \"A\"); requires resource_premise_all(p, a);".into(),
     ] {
         assert!(
-            load_resource_contract_sources(&sources(bad)).is_err(),
+            load_resource_contract_sources(&sources(&bad)).is_err(),
             "{bad}"
         );
+    }
+    for string in [
+        "requires resource_hypothesis(a, \"A\"); requires resource_premise_all(p, a);",
+        "ensures normal resource_hypothesis(a, \"A\"); requires resource_premise_all(p, a);",
+    ] {
+        let error = load_resource_contract_sources(&sources(string))
+            .unwrap_err()
+            .to_string();
+        assert!(error.contains("QF002"), "{string}: {error}");
     }
     let mut g = graph(STRUCTURED);
     g.atoms.get_mut("a").unwrap().proposition = Proposition::Typed {
@@ -215,14 +232,17 @@ fn canonical_wire_and_stale_graph_controls() {
     assert!(decode(&serde_json::to_vec(&j).unwrap()).is_err());
     let old = digest(&g).unwrap();
     let mut changed = g.clone();
-    changed.atoms.get_mut("a").unwrap().proposition = Proposition::Opaque {
-        statement: "changed".into(),
+    let Proposition::Formula { definition } = &g.atoms["b"].proposition else {
+        panic!("typed atom");
     };
+    let mut other = definition.clone();
+    other.id = "a".into();
+    changed.atoms.get_mut("a").unwrap().proposition = Proposition::Formula { definition: other };
     assert_ne!(digest(&changed).unwrap(), old);
     assert_ne!(
         qcore_contract::contract_revision::declaration_digests(&sources(STRUCTURED)).unwrap(),
         qcore_contract::contract_revision::declaration_digests(&sources(
-            &STRUCTURED.replace("jointly", "together")
+            &STRUCTURED.replace("= #live(#parent);", "= !#live(#parent);")
         ))
         .unwrap()
     );
@@ -414,20 +434,26 @@ fn report_owned_cjson_refuted_prerequisite_is_reported_only_in_its_exact_context
     assert!(compose(&claim, &foreign, &expected, DETACH_PREMISE).is_err());
 }
 
-const REFINED: &str = "requires resource_premise(p, #concurrent |-> #inert); requires resource_hypothesis(a, \"proposed A\"); requires resource_hypothesis(b, \"proposed B\"); requires resource_premise_decomposition(p, a, b);";
+const REFINED: &str = "requires resource_premise(p, #concurrent |-> #inert); quant proposition #a(#live: predicate<obj>, #parent: obj) = #live(#parent); quant proposition #b(#nodup: predicate<obj>, #parent: obj) = #nodup(#parent); requires resource_premise_decomposition(p, a, b);";
 #[test]
 fn v1_canonical_bytes_and_digests_remain_exact_with_v2_available() {
-    let old = graph(STRUCTURED);
-    let wire = br#"{"version":1,"atoms":{"a":{"id":"a","proposition":{"kind":"opaque","statement":"A and B hold jointly"}},"b":{"id":"b","proposition":{"kind":"opaque","statement":"C"}}},"premises":{"p":{"id":"p","children":["a","b"],"erasure":{"name":"p","statement":"all(a,b)","origin":"declared"}}}}"#;
+    // A v1 graph of legacy atoms keeps its exact canonical bytes.
+    let old = graph("requires resource_premise(p, #concurrent |-> #inert);");
+    let wire = br##"{"version":1,"atoms":{"legacy_atom_00000000":{"id":"legacy_atom_00000000","proposition":{"kind":"opaque","statement":"#concurrent |-> #inert"}}},"premises":{"legacy_premise_00000000":{"id":"legacy_premise_00000000","children":["legacy_atom_00000000"],"erasure":{"name":"p","statement":"#concurrent |-> #inert","origin":"declared"}}}}"##;
     assert_eq!(serde_json::to_vec(&old).unwrap(), wire);
     assert_eq!(decode(wire).unwrap(), old);
     assert_eq!(digest(&old).unwrap(), qcore_schemas::sha256_hex(wire));
+    // Card SP6-SYMBOLIC-HYPOTHESIS-ATOMS: a v1 wire graph whose declared atoms
+    // are opaque strings (the retired form) is refused by name.
+    let retired = br#"{"version":1,"atoms":{"a":{"id":"a","proposition":{"kind":"opaque","statement":"A and B hold jointly"}},"b":{"id":"b","proposition":{"kind":"opaque","statement":"C"}}},"premises":{"p":{"id":"p","children":["a","b"],"erasure":{"name":"p","statement":"all(a,b)","origin":"declared"}}}}"#;
+    assert!(decode(retired).unwrap_err().contains("QF002"));
 }
 #[test]
 fn same_name_attachment_preserves_exact_legacy_view_and_refuses_bad_structure() {
     let before = graph("requires resource_premise(p, #concurrent |-> #inert);");
     let after = graph(REFINED);
-    assert_eq!(after.version, 2);
+    // Typed atoms: graph version 3 (C04.18.7).
+    assert_eq!(after.version, 3);
     assert_eq!(after.premises, before.premises);
     assert_eq!(
         after.atoms["legacy_atom_00000000"],
@@ -456,7 +482,7 @@ fn same_name_attachment_preserves_exact_legacy_view_and_refuses_bad_structure() 
             "{text}"
         );
     }
-    for version in [0, 1, 3, u32::MAX] {
+    for version in [0, 1, 2, 4, u32::MAX] {
         let mut changed = after.clone();
         changed.version = version;
         assert!(validate(&changed).is_err());
@@ -518,7 +544,7 @@ fn production_attachment_replays_exact_frozen_graph_and_preserves_legacy_singlet
     let sources = BTreeMap::from([("cjson.qv".into(), production.into())]);
     let graphs = replay(&sources).unwrap();
     let expected = decode(include_bytes!(
-        "../../../docs/reports/sp2-symbolic-librdkafka-premises/bindings/cjson-expected-graph.json"
+        "../../../docs/reports/sp6-symbolic-hypothesis-atoms/bindings/cjson-expected-graph.json"
     ))
     .unwrap();
     assert_eq!(graphs[DETACH], expected);

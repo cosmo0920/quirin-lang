@@ -127,7 +127,7 @@
         {
           "declaration": "cJSON_DetachItemViaPointer",
           "premise": "detach_list_representation",
-          "sha256": "ef40a0780d962e506a45092e704ac701a08f33810555d574b12a47c6426fc771"
+          "sha256": "27c0736584d81d659e44dd29eae891ccdc37cfeaf019a57a620fadaa73d910a1"
         }
       ],
       "premises": {
@@ -156,7 +156,7 @@
           }
         ]
       },
-      "sha256": "2bb7c25374bb19e9f28331e9415b8632d9bbabfb91e805ca0d246729fbe44edd"
+      "sha256": "0fcd98337c3ce2cd4ae8f91b141c76b49ecaa2327f4d16224f5ac566820aae49"
     },
     "librdkafka/client.qv": {
       "clause_count": 2474,

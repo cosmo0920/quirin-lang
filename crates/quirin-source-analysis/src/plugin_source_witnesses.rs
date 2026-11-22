@@ -692,10 +692,10 @@ fn flow_inputs() -> Result<FlowInputs, String> {
 extern fn plugin_fixture_duplicate() -> unit
 contract {{
  requires resource_contract_v1;
- requires resource_hypothesis({BOUNDED_ATOM}, "The selected rk_duplicate fixture invocation under plugin-loader-fixture-v1 has exactly begin duplicate_test return:0 end; no loader operation occurs inside this invocation");
- requires resource_hypothesis({COMPLETION_ATOM}, "The selected rk_duplicate fixture invocation under plugin-loader-fixture-v1 returns zero and reaches its matching end marker");
- requires resource_hypothesis({GO_COMPLETE_ATOM}, "The selected go_create_ignores_register_failure fixture invocation has a nonnull creator return and matching end marker");
- requires resource_hypothesis({GO_IMPLIES_ATOM}, "Within this exact selected Go creator fixture invocation, a nonnull creator return implies that the required registration callback succeeded");
+ quant proposition #{BOUNDED_ATOM}(#at: function<integer,marker>, #begin: marker, #duplicate_test: marker, #end: marker, #length: function<integer>, #return_zero: marker) = (((((#length() == 4) && (#at(0) == #begin)) && (#at(1) == #duplicate_test)) && (#at(2) == #return_zero)) && (#at(3) == #end));
+ quant proposition #{COMPLETION_ATOM}(#at: function<integer,marker>, #end: marker, #length: function<integer>, #return_zero: marker) = (exists (#i: integer) {{ (((0 <= #i) && (#i < #length())) && (#at(#i) == #return_zero)) }} && ((0 < #length()) && (#at((#length() - 1)) == #end)));
+ quant proposition #{GO_COMPLETE_ATOM}(#at: function<integer,marker>, #end: marker, #length: function<integer>, #return_nonnull: marker) = (exists (#i: integer) {{ (((0 <= #i) && (#i < #length())) && (#at(#i) == #return_nonnull)) }} && ((0 < #length()) && (#at((#length() - 1)) == #end)));
+ quant proposition #{GO_IMPLIES_ATOM}(#at: function<integer,marker>, #length: function<integer>, #register_success: marker, #return_nonnull: marker) = (exists (#i: integer) {{ (((0 <= #i) && (#i < #length())) && (#at(#i) == #return_nonnull)) }} => exists (#j: integer) {{ (((0 <= #j) && (#j < #length())) && (#at(#j) == #register_success)) }});
  requires resource_premise_all(fixture_invocation_observations, {GO_COMPLETE_ATOM}, {GO_IMPLIES_ATOM}, {COMPLETION_ATOM}, {BOUNDED_ATOM});
  requires resource_premise_flow_v1(native_duplicate, {BOUNDED_ATOM});
  requires resource_premise_flow_v1(observed_counterexample, {GO_IMPLIES_ATOM});
@@ -995,6 +995,44 @@ mod tests {
         missing.values_mut().next().unwrap().atoms.clear();
         assert!(
             qcore_contract::premise_flow::compile(&sources, &graphs, &missing, &artifacts).is_err()
+        );
+    }
+}
+
+/// Card SP6-SYMBOLIC-HYPOTHESIS-ATOMS: the four fixture-trace hypotheses are
+/// typed atoms (C04.18.7), each the Lean definition `QCore.LocalTypedAtoms`
+/// proves equivalent to its `QCore.PluginSourceWitnesses` proposition.
+#[cfg(test)]
+mod typed_atoms {
+    use super::{BOUNDED_ATOM, COMPLETION_ATOM, GO_COMPLETE_ATOM, GO_IMPLIES_ATOM};
+    use qcore_schemas::hypothesis::Proposition;
+
+    const LEAN: &str = include_str!("../../../proof/QCore/LocalTypedAtoms.lean");
+
+    #[test]
+    fn the_trace_atoms_are_the_lean_definitions() {
+        let inputs = super::flow_inputs().unwrap();
+        let graph = &inputs.graphs["plugin_fixture_duplicate"];
+        for (id, name) in [
+            (BOUNDED_ATOM, "duplicateNoLoaderCallsAtom"),
+            (COMPLETION_ATOM, "duplicateCompletedAtom"),
+            (GO_COMPLETE_ATOM, "goCreatorCompletedAtom"),
+            (GO_IMPLIES_ATOM, "goCreatorImpliesRegistrationAtom"),
+        ] {
+            let Proposition::Formula { definition } = &graph.atoms[id].proposition else {
+                panic!("{id} is not a typed atom");
+            };
+            let line = format!(
+                "def {name} : Expr := {}",
+                qcore_frontend::quant_proposition::lean(&definition.formula)
+            );
+            assert!(LEAN.lines().any(|l| l == line), "{id}: no `{line}`");
+        }
+        assert!(
+            inputs
+                .sources
+                .values()
+                .all(|source| !source.contains("resource_hypothesis("))
         );
     }
 }

@@ -35,10 +35,57 @@
 //! checks that every file naming it is test code. No production entry point
 //! admits a string statement, and nothing here changes what one admits.
 
+//!
+//! Card **SP6-SYMBOLIC-HYPOTHESIS-ATOMS** extends it to the retired string
+//! hypothesis atom `resource_hypothesis(ID, "STATEMENT")` (contract
+//! specification C04.18.7, `QF002`): [`lift`] also writes each recorded
+//! string atom as the typed clause `quant proposition #ID(...) = FORMULA`
+//! that replaced it, [`lift_graph`] each recorded opaque atom as its typed
+//! graph atom, and [`lift_bindings`] each guarded prerequisite symbol that
+//! repeated a recorded atom's sentence as its formula
+//! (`docs/reports/sp6-symbolic-hypothesis-atoms/migration.json`,
+//! `hypotheses`). The same rule holds: an unrecorded string atom stays a
+//! string, and the parser refuses it.
+
 #![allow(dead_code)]
 
 const RECORD: &str =
     include_str!("../../docs/reports/sp2-symbolic-librdkafka-premises/migration.json");
+
+const SP6_RECORD: &str =
+    include_str!("../../docs/reports/sp6-symbolic-hypothesis-atoms/migration.json");
+
+/// One recorded string hypothesis atom: its ID, its retired sentence, the
+/// typed clause that replaced it (`quant proposition #ID(...) = FORMULA`),
+/// that clause's formula, and its graph atom (JSON).
+pub struct Hypothesis {
+    pub id: String,
+    pub prose: String,
+    pub typed: String,
+    pub formula: String,
+    pub atom: serde_json::Value,
+}
+
+/// The recorded hypothesis atoms (card SP6-SYMBOLIC-HYPOTHESIS-ATOMS).
+pub fn hypotheses() -> Vec<Hypothesis> {
+    let record: serde_json::Value =
+        serde_json::from_str(SP6_RECORD).expect("the SP6 migration record is JSON");
+    record["hypotheses"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|h| {
+            let field = |key: &str| h[key].as_str().unwrap().to_owned();
+            Hypothesis {
+                id: field("id"),
+                prose: field("prose"),
+                typed: field("typed"),
+                formula: field("formula"),
+                atom: h["atom"].clone(),
+            }
+        })
+        .collect()
+}
 
 /// The recorded `(name, prose, formula)` statements.
 pub fn statements() -> Vec<(String, String, String)> {
@@ -53,7 +100,9 @@ pub fn statements() -> Vec<(String, String, String)> {
 }
 
 /// `text` with every recorded `resource_premise(NAME, "PROSE")` written as
-/// `resource_premise(NAME, FORMULA)`. Every other byte is unchanged.
+/// `resource_premise(NAME, FORMULA)`, and every recorded `requires
+/// resource_hypothesis(ID, "PROSE")` as its typed clause. Every other byte
+/// is unchanged.
 pub fn lift(text: &str) -> String {
     let mut out = text.to_owned();
     for (name, prose, formula) in statements() {
@@ -62,7 +111,74 @@ pub fn lift(text: &str) -> String {
             &format!("resource_premise({name}, {formula})"),
         );
     }
+    for h in hypotheses() {
+        out = out.replace(
+            &format!("requires resource_hypothesis({}, \"{}\")", h.id, h.prose),
+            &h.typed,
+        );
+        // A guarded prerequisite symbol that repeated the atom's sentence
+        // repeats its formula.
+        out = out.replace(
+            &format!(
+                "resource_guarded_symbol_v1({}, prerequisite, \"{}\", {})",
+                h.id, h.prose, h.id
+            ),
+            &format!(
+                "resource_guarded_symbol_v1({}, prerequisite, \"{}\", {})",
+                h.id, h.formula, h.id
+            ),
+        );
+    }
     out
+}
+
+/// A frozen hypothesis graph's recorded opaque atoms written as their typed
+/// atoms (the graph version raised to the typed one, 3, when it was lower).
+/// Returns how many atoms were lifted.
+pub fn lift_graph_hypotheses(graph: &mut serde_json::Value) -> usize {
+    let mut lifted = 0;
+    let recorded = hypotheses();
+    if let Some(atoms) = graph["atoms"].as_object_mut() {
+        for (id, atom) in atoms.iter_mut() {
+            if id.starts_with("legacy_atom_") || atom["proposition"]["kind"] != "opaque" {
+                continue;
+            }
+            let statement = atom["proposition"]["statement"].as_str().unwrap();
+            if let Some(h) = recorded
+                .iter()
+                .find(|h| h.id == *id && h.prose == statement)
+            {
+                *atom = h.atom.clone();
+                lifted += 1;
+            }
+        }
+    }
+    if lifted > 0 && graph["version"].as_u64().is_some_and(|v| v < 3) {
+        graph["version"] = serde_json::Value::from(3);
+    }
+    lifted
+}
+
+/// Guarded metadata bindings (`{ID: {role, proposition, dependencies}}`)
+/// with each symbol whose proposition repeated a recorded atom's sentence
+/// (the atom of the same ID) written as that atom's formula. Returns how
+/// many were lifted.
+pub fn lift_bindings(bindings: &mut serde_json::Value) -> usize {
+    let mut lifted = 0;
+    let recorded = hypotheses();
+    if let Some(bindings) = bindings.as_object_mut() {
+        for (id, binding) in bindings.iter_mut() {
+            let proposition = binding["proposition"].as_str().unwrap_or_default();
+            if let Some(h) = recorded
+                .iter()
+                .find(|h| h.id == *id && h.prose == proposition)
+            {
+                binding["proposition"] = serde_json::Value::String(h.formula.clone());
+                lifted += 1;
+            }
+        }
+    }
+    lifted
 }
 
 /// The formula recorded for the string statement `prose` of the premise
@@ -102,7 +218,8 @@ pub fn lift_graph(graph: &mut serde_json::Value) -> usize {
         assert_eq!(statement.as_str(), Some(prose.as_str()), "{atom}");
         *statement = serde_json::Value::String(formula.clone());
     }
-    lifted.len()
+    // Card SP6-SYMBOLIC-HYPOTHESIS-ATOMS: and its recorded string atoms.
+    lifted.len() + lift_graph_hypotheses(graph)
 }
 
 /// Card SP5-GLOBAL-PROSE-PREMISE-BAN: the frozen guarded adoption plan
@@ -113,7 +230,11 @@ pub fn lift_graph(graph: &mut serde_json::Value) -> usize {
 /// two digests, before and after the rendered `addition`. The returned plan
 /// is the frozen one with its graph lifted ([`lift_graph`]) and its two
 /// digests those of `current`, whose only differences from `restored` are
-/// SP2's recorded conversions; nothing else in the plan changes.
+/// SP2's recorded conversions; nothing else in the plan changes. Card
+/// SP6-SYMBOLIC-HYPOTHESIS-ATOMS: the graph's nine string atoms are lifted
+/// too, and the nine prerequisite symbols of the metadata repeat their
+/// formulas (`lift_bindings`); `current`'s digests are taken around the
+/// lifted `addition`.
 pub fn lifted_adoption_plan(
     frozen: &[u8],
     restored: &str,
@@ -136,6 +257,17 @@ pub fn lifted_adoption_plan(
         lift_graph(&mut plan["graph"]) > 0,
         "the plan's graph states no recorded prose"
     );
+    // Card SP6-SYMBOLIC-HYPOTHESIS-ATOMS: the nine guarded prerequisite
+    // symbols repeat their atoms' formulas.
+    assert_eq!(lift_bindings(&mut plan["metadata"]["bindings"]), 9);
+    let addition = &lift(addition);
+    let digests = |text: &str| {
+        assert_eq!(text.matches(addition.as_str()).count(), 1);
+        (
+            sha256(text.replacen(addition.as_str(), "", 1).as_bytes()),
+            sha256(text.as_bytes()),
+        )
+    };
     let (before, after) = digests(current);
     plan["before_sha256"] = serde_json::Value::String(before);
     plan["after_sha256"] = serde_json::Value::String(after);

@@ -38,7 +38,6 @@ fn erase_plugin_metadata(text: &str) -> String {
         .filter(|line| {
             let line = line.trim();
             !(line.starts_with("quant proposition #plugin_")
-                || line.starts_with("requires resource_hypothesis(plugin_")
                 || line.starts_with(
                     "requires resource_premise_decomposition(rk_plugin_callback_closure,",
                 )
@@ -128,8 +127,8 @@ extern fn make() -> ptr<mut, u8> contract {
  requires bounds_contract_v1;
  requires nonnull_member(S, next);
  requires resource_premise(rk_plugin_callback_closure, #concurrent |-> #inert);
- requires resource_hypothesis(plugin_a, "selected build and symbol bindings remain open");
- requires resource_hypothesis(plugin_b, "registered callback lifetime remains open");
+ quant proposition #plugin_a(#live: predicate<obj>, #parent: obj) = #live(#parent);
+ quant proposition #plugin_b(#nodup: predicate<obj>, #parent: obj) = #nodup(#parent);
  requires resource_premise_decomposition(rk_plugin_callback_closure, plugin_a, plugin_b);
 };"#;
 #[test]
@@ -139,7 +138,9 @@ fn malformed_bounds_metadata_refuses_instead_of_becoming_a_fact_or_new_premise()
         FIXTURE.replace(" requires resource_premise(rk_plugin_callback_closure, #concurrent |-> #inert);", ""),
         FIXTURE.replace("plugin_a, plugin_b);","plugin_b, plugin_a);"),
         FIXTURE.replace("resource_premise_decomposition(rk_plugin_callback_closure,", "resource_premise_decomposition(missing,"),
-        FIXTURE.replace("requires resource_hypothesis(plugin_a", "ensures normal resource_hypothesis(plugin_a"),
+        // Card SP6-SYMBOLIC-HYPOTHESIS-ATOMS: the retired string atom (QF002).
+        FIXTURE.replace("quant proposition #plugin_a(#live: predicate<obj>, #parent: obj) = #live(#parent);", "requires resource_hypothesis(plugin_a, \"selected build and symbol bindings remain open\");"),
+        FIXTURE.replace("quant proposition #plugin_a(#live: predicate<obj>, #parent: obj) = #live(#parent);", "ensures normal resource_premise_all(plugin_a, plugin_b);"),
         FIXTURE.replace("requires resource_premise_decomposition", "requires resource_premise_all"),
         FIXTURE.replace("plugin_a, plugin_b);", "plugin_a, absent);"),
         FIXTURE.replace("};", " requires resource_premise_decomposition(rk_plugin_callback_closure, plugin_a, plugin_b);\n};"),

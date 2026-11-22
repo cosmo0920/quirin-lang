@@ -15,7 +15,7 @@
 module contract;
 extern fn observed(p: ptr<mut, u8>) -> i32 contract {
     requires resource_contract_v1;
-    requires resource_hypothesis(h, "assigned hypothesis");
+    quant proposition #h(#live: predicate<obj>, #parent: obj) = #live(#parent);
     requires resource_premise_all(assigned, h);
     requires resource_lifecycle_v1(make_node, |^+ resource(node));
     requires resource_lifecycle_v1(drop_node, |^- resource(node));

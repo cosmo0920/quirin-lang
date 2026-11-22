@@ -633,7 +633,6 @@ fn resource_only_symbolic_metadata_cannot_bypass_matching_an_absent_null_map() {
         .filter(|line| {
             let line = line.trim_start();
             !(line.starts_with("quant proposition #plugin_")
-                || line.starts_with("requires resource_hypothesis(")
                 || line.starts_with("requires resource_premise_decomposition(")
                 || line.starts_with("requires resource_lifecycle_v1(")
                 || line.starts_with("requires resource_premise_flow_v1("))
@@ -641,7 +640,7 @@ fn resource_only_symbolic_metadata_cannot_bypass_matching_an_absent_null_map() {
         .collect();
     let standalone = BTreeMap::from([("null.qv".into(), source.clone())]);
     qcore_contract::bounds_hypotheses::replay(&standalone).unwrap();
-    assert!(!source.contains("resource_hypothesis("));
+    assert!(!source.contains("quant proposition #plugin_"));
     let error =
         qcore_contract::contract_views::check_relation(overlap_relation(name), &pair).unwrap_err();
     assert!(
@@ -680,7 +679,7 @@ fn original_pure_null_pairs_keep_resource_metadata_independent_and_validate_it()
         );
         // Neither null graph nor metadata introductions can enter the independent case.
         for clause in [
-            "requires resource_hypothesis(injected, \"An independently unbound proposition\");",
+            "quant proposition #injected(#live: predicate<obj>, #parent: obj) = #live(#parent);",
             "requires resource_lifecycle_v1(injected, |^+ resource(x));",
             "requires resource_premise_flow_v1(injected, missing);",
         ] {

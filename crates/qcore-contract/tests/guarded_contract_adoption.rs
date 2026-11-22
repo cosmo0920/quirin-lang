@@ -57,6 +57,9 @@ fn fixture() -> (
         qcore_schemas::sha256_hex,
     );
     let plan: bridge::Plan = serde_json::from_slice(&bytes).unwrap();
+    // Card SP6-SYMBOLIC-HYPOTHESIS-ATOMS: the lifted plan's nine prerequisite
+    // symbols repeat their atoms' formulas, as the current module does.
+    let addition = bridge::render(&plan.metadata).unwrap();
     let source = current;
     assert_eq!(source.matches(&addition).count(), 1);
     let before = BTreeMap::from([(plan.module.clone(), source.replacen(&addition, "", 1))]);
@@ -86,13 +89,19 @@ fn actual_production_source_has_complete_independently_expected_map_and_no_truth
         hypothesis::replay(&before).unwrap(),
         hypothesis::replay(&after).unwrap()
     );
-    let sidecar: serde_json::Value = serde_json::from_slice(
+    let mut sidecar: serde_json::Value = serde_json::from_slice(
         &fs::read(
             root().join("docs/reports/premise-guarded-decomposition/applications/cjson.json"),
         )
         .unwrap(),
     )
     .unwrap();
+    // Card SP6-SYMBOLIC-HYPOTHESIS-ATOMS: the frozen sidecar's nine
+    // prerequisite symbols repeat sentences; read through the legacy reader.
+    assert_eq!(
+        legacy_prose_premise::lift_bindings(&mut sidecar["bindings"]),
+        9
+    );
     assert_eq!(
         serde_json::to_value(&p.metadata.bindings).unwrap(),
         sidecar["bindings"]

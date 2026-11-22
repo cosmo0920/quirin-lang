@@ -252,6 +252,7 @@ import QCore.LiteralDecayReadings
 import QCore.LiteralTailActual
 import QCore.LocalCondition
 import QCore.LocalSourceBindings
+import QCore.LocalTypedAtoms
 import QCore.LoggerEffects
 import QCore.LogicalAndOperand
 import QCore.LookupRestrictedReuse
@@ -365,6 +366,7 @@ import QCore.PointerStore
 import QCore.PointerTypedefMember
 import QCore.PremiseFlow
 import QCore.PremiseFormula
+import QCore.PremiseFormula.CjsonTypedAtoms
 import QCore.PremiseFormula.FluentBit
 import QCore.PremiseFormula.Libevent
 import QCore.PremiseFormula.Librdkafka

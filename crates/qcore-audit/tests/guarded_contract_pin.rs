@@ -13,6 +13,8 @@
 // limitations under the License.
 
 //! Actual guarded production metadata remains covered by normal text/site pins.
+#[path = "../../../tests/support/legacy_prose_premise.rs"]
+mod legacy_prose_premise;
 use qcore_audit::{
     contract_revision::{ContractLock, PinStanding, pin_standing},
     contract_tip::TipResolver,
@@ -31,8 +33,13 @@ fn actual_guarded_source_requires_current_contract_and_all_original_reviewed_sit
     let source = BTreeMap::from([(plan.module.clone(), actual.clone())]);
     let old = BTreeMap::from([(
         plan.module.clone(),
+        // Card SP6-SYMBOLIC-HYPOTHESIS-ATOMS: the frozen plan's nine
+        // prerequisite symbols repeat sentences the module now states as
+        // formulas; the rendered addition is read through the legacy reader.
         actual.replacen(
-            &qcore_contract::guarded_metadata_bridge::render(&plan.metadata).unwrap(),
+            &legacy_prose_premise::lift(
+                &qcore_contract::guarded_metadata_bridge::render(&plan.metadata).unwrap(),
+            ),
             "",
             1,
         ),

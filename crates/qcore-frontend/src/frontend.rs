@@ -1454,6 +1454,18 @@ impl<'a> SourceParser<'a> {
             if self.word(expression_start, PREMISE_CLAUSE_WORD) {
                 self.premise_clause(&kind, expression_start, semicolon, &mut premise_names)?;
             }
+            // Card SP6-SYMBOLIC-HYPOTHESIS-ATOMS (contract specification
+            // C04.18.7): the string hypothesis atom is retired and refused
+            // by name (`QF002`) under any introducer; an atom is a typed
+            // `quant proposition`.
+            if self.word(expression_start, crate::premise_formula::HYPOTHESIS_HEAD) {
+                let kinds = self.tokens[expression_start..semicolon]
+                    .iter()
+                    .map(|token| token.kind.clone())
+                    .collect::<Vec<_>>();
+                crate::premise_formula::hypothesis_clause(&kinds)
+                    .map_err(|message| self.error(expression_start, message))?;
+            }
             let expression_span = self.range_span(expression_start, semicolon);
             let expression_source = self.source[expression_span.start..expression_span.end]
                 .trim()

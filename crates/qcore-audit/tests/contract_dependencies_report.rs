@@ -487,7 +487,7 @@ extern fn impact_free(p: ptr<mut,u8>) -> unit contract { requires resource_contr
     // Resolve the exact production graph's formal references before the
     // context-scoped synthetic refutation/impact control.
     let manifest_bytes = include_bytes!(
-        "../../../docs/reports/sp2-symbolic-librdkafka-premises/bindings/ef40a0780d962e506a45092e704ac701a08f33810555d574b12a47c6426fc771.json"
+        "../../../docs/reports/sp6-symbolic-hypothesis-atoms/bindings/27c0736584d81d659e44dd29eae891ccdc37cfeaf019a57a620fadaa73d910a1.json"
     );
     let manifest_sha = qcore_schemas::sha256_hex(manifest_bytes);
     let expected_manifests = BTreeMap::from([(
@@ -697,7 +697,7 @@ fn concrete_attachment_preserves_closed_world_facts_and_publishes_checked_open_b
     );
     let expected_graphs = qcore_contract::hypothesis::replay(after.source_assumptions()).unwrap();
     let bytes = include_bytes!(
-        "../../../docs/reports/sp2-symbolic-librdkafka-premises/bindings/ef40a0780d962e506a45092e704ac701a08f33810555d574b12a47c6426fc771.json"
+        "../../../docs/reports/sp6-symbolic-hypothesis-atoms/bindings/27c0736584d81d659e44dd29eae891ccdc37cfeaf019a57a620fadaa73d910a1.json"
     );
     let sha = qcore_schemas::sha256_hex(bytes);
     let expected = BTreeMap::from([(sha.clone(), serde_json::from_slice(bytes).unwrap())]);

@@ -16,14 +16,14 @@ use qcore_contract::premise_metadata_bridge;
 use qcore_schemas::premise_flow::View;
 use serde_json::json;
 use std::collections::BTreeMap;
-const OLD: &str = "module contract;\nextern fn f(p: ptr<mut,u8>) -> unit\ncontract {\n    requires resource_contract_v1;\n    requires resource_hypothesis(a, \"first original opaque statement\");\n    requires resource_hypothesis(b, \"second original opaque statement\");\n    requires resource_premise_all(pair, a, b);\n    ensures normal resource_borrowed(p);\n    ensures normal resource_return_none();\n};\n";
+const OLD: &str = "module contract;\nextern fn f(p: ptr<mut,u8>) -> unit\ncontract {\n    requires resource_contract_v1;\n    quant proposition #a(#live: predicate<obj>, #parent: obj) = #live(#parent);\n    quant proposition #b(#nodup: predicate<obj>, #parent: obj) = #nodup(#parent);\n    requires resource_premise_all(pair, a, b);\n    ensures normal resource_borrowed(p);\n    ensures normal resource_return_none();\n};\n";
 fn new() -> String {
-    OLD.replace("    requires resource_hypothesis(a, \"first original opaque statement\");\n", "    requires resource_hypothesis(a, \"first original opaque statement\");\n    requires resource_lifecycle_v1(introduce_a, |^+ hypothesis(a));\n")
-        .replace("    requires resource_hypothesis(b, \"second original opaque statement\");\n", "    requires resource_hypothesis(b, \"second original opaque statement\");\n    requires resource_lifecycle_v1(introduce_b, |^+ hypothesis(b));\n")
+    OLD.replace("    quant proposition #a(#live: predicate<obj>, #parent: obj) = #live(#parent);\n", "    quant proposition #a(#live: predicate<obj>, #parent: obj) = #live(#parent);\n    requires resource_lifecycle_v1(introduce_a, |^+ hypothesis(a));\n")
+        .replace("    quant proposition #b(#nodup: predicate<obj>, #parent: obj) = #nodup(#parent);\n", "    quant proposition #b(#nodup: predicate<obj>, #parent: obj) = #nodup(#parent);\n    requires resource_lifecycle_v1(introduce_b, |^+ hypothesis(b));\n")
         .replace("    requires resource_premise_all(pair, a, b);\n", "    requires resource_premise_all(pair, a, b);\n    requires resource_premise_flow_v1(decompose_pair, (a |-> b));\n")
 }
 fn plan() -> Vec<u8> {
-    serde_json::to_vec(&json!({"version":1,"base":"dba4e11f12d83f53a4e4cc8966e69926dd9a02d3","counts":{"files":1,"declarations":1,"atoms":2,"groups":1},"files":[{"path":"f.qv","sha256":qcore_schemas::sha256_hex(OLD.as_bytes()),"bytes":OLD.len(),"declarations":[{"declaration":"f","view":"resource","atoms":[{"id":"a","statement_literal":"\"first original opaque statement\""},{"id":"b","statement_literal":"\"second original opaque statement\""}],"groups":[{"kind":"all","name":"pair","children":["a","b"]}]}],"binding_manifest_lines":[]}],"inheritance":[]})).unwrap()
+    serde_json::to_vec(&json!({"version":1,"base":"dba4e11f12d83f53a4e4cc8966e69926dd9a02d3","counts":{"files":1,"declarations":1,"atoms":2,"groups":1},"files":[{"path":"f.qv","sha256":qcore_schemas::sha256_hex(OLD.as_bytes()),"bytes":OLD.len(),"declarations":[{"declaration":"f","view":"resource","atoms":[{"id":"a","statement_literal":"#a(#live: predicate<obj>, #parent: obj) = #live(#parent)"},{"id":"b","statement_literal":"#b(#nodup: predicate<obj>, #parent: obj) = #nodup(#parent)"}],"groups":[{"kind":"all","name":"pair","children":["a","b"]}]}],"binding_manifest_lines":[]}],"inheritance":[]})).unwrap()
 }
 fn check(new: &str) -> Result<premise_metadata_bridge::CheckedBridge, String> {
     let plan = plan();
@@ -99,13 +99,13 @@ fn every_non_metadata_or_wrong_symbol_order_target_and_inventory_edit_refuses() 
         good.replace("(a |-> b)","(b |-> a)"),
         good.replace("(a |-> b)","(a ||-> b)"),
         good.replace("decompose_pair,","other_pair,"),
-        good.replace("first original opaque statement","changed original statement"),
+        good.replace("= #live(#parent);","= !#live(#parent);"),
         good.replace("resource_borrowed(p)","resource_released(p, nonnull)"),
         good.replace("module contract;","module contract;\n// unrelated new comment"),
         good.replace("    requires resource_lifecycle_v1(introduce_a, |^+ hypothesis(a));\n", ""),
         good.replace("    requires resource_lifecycle_v1(introduce_a, |^+ hypothesis(a));\n", "    requires resource_lifecycle_v1(introduce_a, |^+ hypothesis(a));\n    requires resource_lifecycle_v1(extra, |^+ hypothesis(a));\n"),
         good.replace("\n", "\r\n"),
-        good.replace("    requires resource_hypothesis(b,", "  requires resource_hypothesis(b,"),
+        good.replace("    quant proposition #b(", "  quant proposition #b("),
     ];
     for (i, bad) in edits.into_iter().enumerate() {
         assert_ne!(bad, good);

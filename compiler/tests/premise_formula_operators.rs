@@ -121,6 +121,37 @@ fn a_string_premise_is_refused_by_name_at_parse() {
     }
 }
 
+/// Card SP6-SYMBOLIC-HYPOTHESIS-ATOMS (C04.18.7): the retired string
+/// hypothesis atom is refused by the contract format on the compiler route
+/// too: a parse refusal (`Q000`) naming `QF002`, under any introducer.
+#[test]
+fn a_string_hypothesis_is_refused_by_name_at_parse() {
+    for clause in [
+        "    requires resource_hypothesis(prose, \"an op callback takes over no reference\");",
+        "    requires resource_hypothesis(prose, \"#op_callbacks | #defaults |-> #inert\");",
+        "    ensures normal resource_hypothesis(prose, \"anything\");",
+    ] {
+        let Err(diagnostics) = compile_files(
+            &[SourceFile::new("hypothesis.qv", kafka_module(clause))],
+            &CompileOptions::default(),
+        ) else {
+            panic!("{clause}: a string hypothesis compiles");
+        };
+        assert_eq!(
+            diagnostics
+                .iter()
+                .map(|d| d.code.as_str())
+                .collect::<Vec<_>>(),
+            ["Q000"],
+            "{clause}"
+        );
+        assert!(
+            diagnostics.iter().any(|d| d.message.contains("QF002")),
+            "{clause}: {diagnostics:?}"
+        );
+    }
+}
+
 #[test]
 fn a_union_or_conjunction_anywhere_else_in_a_contract_still_refuses() {
     for clause in [
