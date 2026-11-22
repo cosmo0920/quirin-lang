@@ -312,6 +312,12 @@ mod loop_generations_route;
 #[path = "legacy_loop_reacquisition_leak.rs"]
 mod loop_reacquisition_leak_route;
 
+// Card NULLABLE-GUARDED-RELEASE (rule 74c): a leak claim must hold at the
+// settled exit; a refused effect is evidence of neither a discharge nor a
+// leak. The hooks below naming the card are thin.
+#[path = "legacy_settled_leak.rs"]
+mod settled_leak_route;
+
 // Card B08-FIELD-LINK-JOIN-SILENT-UNRESOLVED (rule 11c): a field link that
 // holds on some paths only never leaves an obligation unresolved without a
 // diagnostic. The hooks below naming the card are thin.
@@ -4494,8 +4500,14 @@ fn typed_access_facts(
     // Card AOM-BINDING-POISON, read from the same token stream for the same
     // reason as every set above: W4 derivation, W4 validation and certificate
     // rederivation each hold exactly this stream and so reproduce it.
-    let frame_protected =
-        frame_protected_locals(&texts, &texts[body_start + 1..body_end], &formals);
+    // Card NULLABLE-GUARDED-RELEASE (rule 74c, part B): a member address
+    // `&NAME->F` takes the address of a member of `*NAME`, never of `NAME`'s
+    // slot, so the frame reads it as rule 12e's tie names do.
+    let frame_protected = frame_protected_locals(
+        &texts,
+        &refused_test::member_addresses_read(&texts[body_start + 1..body_end]).0,
+        &formals,
+    );
     (model, types, bases, stores, publications, frame_protected)
 }
 
