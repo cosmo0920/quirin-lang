@@ -1,0 +1,67 @@
+## rd_kafka_cgrp_owned_but_not_exist_partitions: Unknown -> Unknown; leaves 6 -> 6; nullable `result` 1 -> 0
+   base 24493 nullable resource `result` used by a non-null contract
+   base 24493 unresolved resource identity `result`
+   tip 24493 possibly-null resource `result` returned under a non-null result mode
+   tip 24493 unresolved resource identity `result`
+## rd_kafka_cgrp_calculate_subscribe_revoking_partitions: Unknown -> Unknown; leaves 11 -> 10; nullable `revoking` 1 -> 0
+   base 23532 unresolved resource identity `revoking`
+   base 23536 nullable resource `revoking` used by a non-null contract
+   base 23536 unresolved resource identity `revoking`
+   tip 23532 unresolved resource identity `revoking`
+   tip 23536 possibly-null resource `revoking` returned under a non-null result mode
+## rd_kafka_cgrp_consumer_assignment_with_metadata: Unknown -> Unknown; leaves 21 -> 21; nullable `assignment_with_metadata` 1 -> 1
+   base 21948 nullable resource `assignment_with_metadata` used by a non-null contract
+   base 21948 unresolved resource identity `assignment_with_metadata`
+   tip 21948 nullable resource `assignment_with_metadata` used by a non-null contract
+   tip 21948 unresolved resource identity `assignment_with_metadata`
+## rd_kafka_cgrp_handle_SyncGroup_memberstate: Unknown -> Unknown; leaves 43 -> 43; nullable `assignment` 1 -> 1
+   base 21306 nullable resource `assignment` used by a non-null contract
+   base 21306 unresolved resource identity `assignment`
+   base 21315 unresolved resource identity `assignment`
+   base 21316 unresolved resource identity `assignment`
+   tip 21306 nullable resource `assignment` used by a non-null contract
+   tip 21306 unresolved resource identity `assignment`
+   tip 21315 unresolved resource identity `assignment`
+   tip 21316 unresolved resource identity `assignment`
+## rd_kafka_mock_cgrp_consumer_member_needs_revocation: Unknown -> Unknown; leaves 6 -> 6; nullable `intersection` 2 -> 2
+   base 21429 unresolved resource identity `intersection`
+   base 21432 nullable resource `intersection` used by a non-null contract
+   base 21432 unresolved resource identity `intersection`
+   base 21434 nullable resource `intersection` used by a non-null contract
+   base 21434 unresolved resource identity `intersection`
+   tip 21429 unresolved resource identity `intersection`
+   tip 21432 nullable resource `intersection` used by a non-null contract
+   tip 21432 unresolved resource identity `intersection`
+   tip 21434 nullable resource `intersection` used by a non-null contract
+   tip 21434 unresolved resource identity `intersection`
+## rd_kafka_mock_handle_ConsumerGroupHeartbeat: Unknown -> Unknown; leaves 99 -> 99; nullable `existing_assignment` 1 -> 1
+   base 24072 nullable resource `existing_assignment` used by a non-null contract
+   base 24072 unresolved resource identity `existing_assignment`
+   base 24078 unresolved resource identity `existing_assignment`
+   tip 24072 nullable resource `existing_assignment` used by a non-null contract
+   tip 24072 unresolved resource identity `existing_assignment`
+   tip 24078 unresolved resource identity `existing_assignment`
+## balance: Unknown -> Unknown; leaves 46 -> 46; nullable `leftoverUnassignedPartitions` 1 -> 1
+   base 21898 nullable resource `leftoverUnassignedPartitions` used by a non-null contract
+   base 21898 unresolved resource identity `leftoverUnassignedPartitions`
+   tip 21898 nullable resource `leftoverUnassignedPartitions` used by a non-null contract
+   tip 21898 unresolved resource identity `leftoverUnassignedPartitions`
+## rd_kafka_mock_handle_ShareFetch: Unknown -> Unknown; leaves 277 -> 277; nullable `forgotten_partitions` 3 -> 3
+   base 24874 unresolved resource identity `forgotten_partitions`
+   base 24891 unresolved resource identity `forgotten_partitions`
+   base 24894 unresolved resource identity `forgotten_partitions`
+   base 25169 nullable resource `forgotten_partitions` used by a non-null contract
+   base 25169 unresolved resource identity `forgotten_partitions`
+   base 25182 nullable resource `forgotten_partitions` used by a non-null contract
+   base 25182 unresolved resource identity `forgotten_partitions`
+   base 25187 nullable resource `forgotten_partitions` used by a non-null contract
+   base 25187 unresolved resource identity `forgotten_partitions`
+   tip 24874 unresolved resource identity `forgotten_partitions`
+   tip 24891 unresolved resource identity `forgotten_partitions`
+   tip 24894 unresolved resource identity `forgotten_partitions`
+   tip 25169 nullable resource `forgotten_partitions` used by a non-null contract
+   tip 25169 unresolved resource identity `forgotten_partitions`
+   tip 25182 nullable resource `forgotten_partitions` used by a non-null contract
+   tip 25182 unresolved resource identity `forgotten_partitions`
+   tip 25187 nullable resource `forgotten_partitions` used by a non-null contract
+   tip 25187 unresolved resource identity `forgotten_partitions`

@@ -1,0 +1,57 @@
+{
+ "schema": "quirin-amendments/2",
+ "card": "NULLABLE-LAZY-CONSTRUCTOR-IN-LOOP",
+ "base": "1b7028430",
+ "measured_tip": "9c479777c",
+ "profiles": [],
+ "increment_paragraph": "**NULLABLE-LAZY-CONSTRUCTOR-IN-LOOP** (USER DECISION 2026-11-23: launch after RK-TOPIC-PARTITION-LIST-CONSTRUCTORS landed; gateway rule 74d, amending rules 14l and 10a; `QCore.NullableLazyConstructor`; [report](../../reports/nullable-lazy-constructor-in-loop/README.md)). The eight rows carrying 11 `nullable resource ... used by a non-null contract` leaves were traced on their real preprocessed units. The lazy guard `if (!p) p = ctor();` was already decided by rules 14l/10b in a loop and outside one (now pinned): the lazy-loop row (`rd_kafka_cgrp_owned_but_not_exist_partitions`) and `rd_kafka_cgrp_calculate_subscribe_revoking_partitions` carried the leaf on `return`, a genuinely possibly-NULL owned value under the contract-free run's non-null result mode (the nullable summary is blocked by their other refusals). (B) `legacy_nullable_return.rs`: a resolved (one site, identity, not unknown), possibly-null binding returned under a non-null result mode by a non-formal name is refused by one leaf, `possibly-null resource ... returned under a non-null result mode`, in place of the identity and nullable pair, with the same marking (state, schedule and leak claims unchanged). (C) rule 10a's frame read the second `&` of the lexer's `& &` (`&&`) as an address, so `session && forgotten_partitions` let every refused statement poison the name in `rd_kafka_mock_handle_ShareFetch`; by maximal munch and C11 6.5.10p2 only an odd run of `&` ends in the address operator (`unary_address_runs`). Opt-in `current --monkey-linked` over Fluent Bit 046accf6, each run on its own tree and binary: base 1b7028430 1,171/2/3,623/8; tip-1 d671a4447 (B) and tip-2 9c479777c (B, C) 1,171/2/3,623/8, no status moves; 110 rows change leaves (new return leaf +121, nullable -120, identity -118, refused conditions now named +4). Of the 11 leaves, 5 go (`result` and `revoking` renamed; ShareFetch's three decided) and 6 stay with their obstacles registered: a later declarator read as a store (ConsumerGroupHeartbeat), a registry-undecided contract call poisoning every binding (`rd_kafka_cgrp_consumer_assignment_with_metadata`), joins with uncontracted results (`rd_kafka_mock_cgrp_consumer_member_needs_revocation`, `rd_kafka_cgrp_handle_SyncGroup_memberstate`), a flag-correlated release (`balance`). One pin updated deliberately (`resource_kinds` `k_dlopen` return: the pair becomes the new leaf, still Unknown). Scoped gate at e9576d2f6: all 8 steps 0 (9,904 passed, 484 Lean audits, 807 Python tests). Pinned routes not runnable on the host; predicted no status moves.",
+ "status_edits": [],
+ "ledger": [
+  {
+   "id": "NULLABLE-LAZY-CONSTRUCTOR-IN-LOOP",
+   "operation": "retire",
+   "why": "Discharged by NULLABLE-LAZY-CONSTRUCTOR-IN-LOOP (rule 74d): each of the eight rows was read and traced. The lazy guard needed no refinement (rules 14l/10b decide it in and out of a loop; pinned in crates/qcore-c-gateway/tests/nullable_lazy_constructor.rs). owned_but_not_exist and revoking carried the leaf on a possibly-NULL return under the contract-free run's non-null result mode; the leaf now names that obstacle (B). ShareFetch's three leaves came from rule 10a's frame reading `&&` as an address; decided by (C). The other five rows' obstacles are not nullability and are registered: LATER-DECLARATOR-INITIALISER-UNREAD, REGISTRY-UNDECIDED-CALL-POISONS-EVERY-BINDING, UNCONTRACTED-ARM-JOIN-NULLABLE-LEAF, FLAG-CORRELATED-RELEASE. Re-measured on the opt-in route: no status moves, 5 of 11 leaves gone, 6 named.",
+   "source": "docs/reports/nullable-lazy-constructor-in-loop/README.md"
+  },
+  {
+   "id": "LATER-DECLARATOR-INITIALISER-UNREAD",
+   "operation": "register",
+   "source": "docs/reports/nullable-lazy-constructor-in-loop/README.md",
+   "recorded_by": "NULLABLE-LAZY-CONSTRUCTOR-IN-LOOP",
+   "title": "A later declarator's initialiser (`T *a = X, *b = Y;`) is read as a store through `*b`",
+   "text": "NULLABLE-LAZY-CONSTRUCTOR-IN-LOOP traced rd_kafka_mock_handle_ConsumerGroupHeartbeat (rdkafka_mock_handlers.c:2894-2896, `rd_kafka_topic_partition_list_t *sent_assignment = NULL, *existing_assignment = NULL, *next_assignment = NULL;`): the statement reader takes the later declarators `*existing_assignment = NULL` as stores through a pointer (`indirect memory access is outside the resource projection` at the declaration), so `existing_assignment` has no binding on the path that skips its construction, the join makes it unknown, the `RD_IF_FREE` guard is refused (rule 10b) and the release keeps `nullable resource ... used by a non-null contract`. Pinned: crates/qcore-c-gateway/tests/nullable_lazy_constructor.rs `the_other_shapes_stay_refused_without_a_leak` (`void *a = 0, *r = 0;` Unknown; one declarator per statement Safe). DISCHARGE: read each init-declarator of a declaration as that name's initialisation (the lexical-closure reader of rule 10o already finds later declarators), measure the corpus (every multi-declarator pointer declaration with initialisers can move), re-measure the Heartbeat row."
+  },
+  {
+   "id": "REGISTRY-UNDECIDED-CALL-POISONS-EVERY-BINDING",
+   "operation": "register",
+   "source": "docs/reports/nullable-lazy-constructor-in-loop/README.md",
+   "recorded_by": "NULLABLE-LAZY-CONSTRUCTOR-IN-LOOP",
+   "title": "A contract call refused for an undecided registry holder poisons every binding, not rule 10a's frame",
+   "text": "NULLABLE-LAZY-CONSTRUCTOR-IN-LOOP traced rd_kafka_cgrp_consumer_assignment_with_metadata (rdkafka_cgrp.c:3036-3037, `*missing_topic_ids = rd_list_new(1, rd_list_Uuid_destroy);` inside the loop): the contract call's transfer, refused as `callback-registry-undecided` (rule 13w; the result is delivered through a formal's out slot), sets `unknown` and `may_be_null` on `assignment_with_metadata`, a local it cannot write (no address taken, not in the call's text), so the loop head joins the poisoned binding and `return assignment_with_metadata;` keeps the identity and nullable leaves. Related: OWNED-CONSTRUCTOR-OUT-PARAMETER-DELIVERY (the out-slot delivery), CG22-REGISTRY-OUTSIDE-THE-FRAME. DISCHARGE: give this refusal rule 10a's sparing frame (the call's text writes `*missing_topic_ids` only), keeping its own refusal; re-measure the row."
+  },
+  {
+   "id": "UNCONTRACTED-ARM-JOIN-NULLABLE-LEAF",
+   "operation": "register",
+   "source": "docs/reports/nullable-lazy-constructor-in-loop/README.md",
+   "recorded_by": "NULLABLE-LAZY-CONSTRUCTOR-IN-LOOP",
+   "title": "A name joined from a declared constructor and an uncontracted pointer result carries the nullable leaf at its release",
+   "text": "NULLABLE-LAZY-CONSTRUCTOR-IN-LOOP: rd_kafka_mock_cgrp_consumer_member_needs_revocation (rdkafka_mock_cgrp.c:1170-1185, the other arm assigns rd_kafka_topic_partition_list_intersection_by_id, which binds nothing) and rd_kafka_cgrp_handle_SyncGroup_memberstate (rdkafka_cgrp.c:1924-1954, the other arm assigns rd_kafka_buf_read_topic_partitions inside a refused branch condition) join a declared non-null constructor's site with an unknown binding; the release and the return keep `unresolved resource identity` and `nullable resource ... used by a non-null contract`. The obstacle is the uncontracted callee (its own leaf is present); the nullable leaf is a by-product of the unknown alternative. DISCHARGE: declare the two callees (owned results) in the librdkafka provider, or record why not; re-measure the two rows."
+  },
+  {
+   "id": "FLAG-CORRELATED-RELEASE",
+   "operation": "register",
+   "source": "docs/reports/nullable-lazy-constructor-in-loop/README.md",
+   "recorded_by": "NULLABLE-LAZY-CONSTRUCTOR-IN-LOOP",
+   "title": "A release guarded by a flag recording which value a name holds is not correlated",
+   "text": "NULLABLE-LAZY-CONSTRUCTOR-IN-LOOP: balance (rdkafka_sticky_assignor.c:1188-1211) sets `leftoverUnassignedPartitions = unassignedPartitions` (a borrowed formal) and, under a condition that also sets `leftoverUnassignedPartitions_allocated = rd_true`, replaces it with `rd_kafka_topic_partition_list_copy(...)`; the release is under `if (leftoverUnassignedPartitions_allocated)`. The join of the formal alias and the copy is unknown, so the release keeps the identity and nullable leaves. Pinned: nullable_lazy_constructor.rs `the_other_shapes_stay_refused_without_a_leak` (the `made` flag). DISCHARGE: a path-correlation of a boolean local with the binding it was set beside (both written only on the same arm, neither written after), or name the refusal; re-measure the row."
+  },
+  {
+   "id": "AMPERSAND-RUN-PARITY-OTHER-READERS",
+   "operation": "register",
+   "source": "docs/reports/nullable-lazy-constructor-in-loop/README.md",
+   "recorded_by": "NULLABLE-LAZY-CONSTRUCTOR-IN-LOOP",
+   "title": "Other token readers decide address-taking from one `&` and misread `&&`",
+   "text": "NULLABLE-LAZY-CONSTRUCTOR-IN-LOOP (rule 74d (C)) fixed rule 10a's frame, which read the second `&` of `p && q` as `&q` (the lexer emits one token per `&`); the conditional names derive from the frame and follow. Other readers decide by the neighbouring token: crates/qcore-c-gateway/src/loop_owner_instance.rs `address_taken` treats `&name` as taken only when the token before the `&` is not `&`, which misses `p && &q` (an odd run of three, an address), the unsound direction; about 45 `== \"&\"` comparisons in the gateway sources are unaudited. DISCHARGE: route address-taking through the run-parity reading (`unary_address_runs`), audit each site, pin `p && &q`."
+  }
+ ]
+}

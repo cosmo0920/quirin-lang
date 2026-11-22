@@ -824,6 +824,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [nullable-guarded-release](nullable-guarded-release/README.md) | NULLABLE-GUARDED-RELEASE: a refused release is no leak; a member address takes no slot |
 
+| [nullable-lazy-constructor-in-loop](nullable-lazy-constructor-in-loop/README.md) | NULLABLE-LAZY-CONSTRUCTOR-IN-LOOP: the lazy guard was already decided; three readers named or fixed |
+
 ## O
 
 | Card directory | Original report title |
@@ -1249,6 +1251,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [rk-plugin-interceptor-candidates](rk-plugin-interceptor-candidates/README.md) | RK-PLUGIN-INTERCEPTOR-CANDIDATES |
 
 | [rk-plugin-library-outer-envelope](rk-plugin-library-outer-envelope/README.md) | RK-PLUGIN-LIBRARY-OUTER-ENVELOPE |
+
+| [rk-topic-partition-list-constructors](rk-topic-partition-list-constructors/README.md) | RK-TOPIC-PARTITION-LIST-CONSTRUCTORS: the topic-partition constructors |
 
 | [rko-op-cb-union-closure](rko-op-cb-union-closure/README.md) | RKO-OP-CB-RUN-SET-OPEN-THROUGH-UNION: rko_u's places by layout |
 

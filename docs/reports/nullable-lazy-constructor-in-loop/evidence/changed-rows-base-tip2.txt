@@ -1,0 +1,473 @@
+lib/cmetrics/src/cmt_decode_opentelemetry.c create_label Unknown -> Unknown
+   - 7923 unresolved resource identity `instance`
+   - 7923 nullable resource `instance` used by a non-null contract
+   + 7923 possibly-null resource `instance` returned under a non-null result mode
+lib/cmetrics/src/cmt_decode_opentelemetry.c decode_exponential_histogram_data_point_list Unknown -> Unknown
+   - 8860 unresolved resource identity `data_point_list`
+   + 8860 unmodeled call, aggregate or indirect access in branch condition
+lib/cmetrics/src/cmt_decode_opentelemetry.c decode_histogram_data_point_list Unknown -> Unknown
+   - 8620 unresolved resource identity `data_point_list`
+   + 8620 unmodeled call, aggregate or indirect access in branch condition
+lib/cmetrics/src/cmt_decode_opentelemetry.c decode_numerical_data_point_list Unknown -> Unknown
+   - 8378 unresolved resource identity `data_point_list`
+   + 8378 unmodeled call, aggregate or indirect access in branch condition
+lib/cmetrics/src/cmt_decode_opentelemetry.c decode_summary_data_point_list Unknown -> Unknown
+   - 8493 unresolved resource identity `data_point_list`
+   + 8493 unmodeled call, aggregate or indirect access in branch condition
+lib/cmetrics/src/cmt_decode_prometheus_remote_write.c create_map_label Unknown -> Unknown
+   - 6494 unresolved resource identity `map_label`
+   - 6494 nullable resource `map_label` used by a non-null contract
+   + 6494 possibly-null resource `map_label` returned under a non-null result mode
+lib/cmetrics/src/cmt_decode_statsd.c create_map_label Unknown -> Unknown
+   - 5573 unresolved resource identity `map_label`
+   - 5573 nullable resource `map_label` used by a non-null contract
+   + 5573 possibly-null resource `map_label` returned under a non-null result mode
+lib/cmetrics/src/cmt_encode_msgpack.c create_label Unknown -> Unknown
+   - 7030 nullable resource `new_label` used by a non-null contract
+   + 7030 possibly-null resource `new_label` returned under a non-null result mode
+lib/cmetrics/src/cmt_encode_opentelemetry.c cfl_kvlist_to_otlp_kvpair_list Unknown -> Unknown
+   - 7744 nullable resource `result` used by a non-null contract
+   + 7744 possibly-null resource `result` returned under a non-null result mode
+lib/cmetrics/src/cmt_encode_opentelemetry.c fetch_metadata_string_key Unknown -> Unknown
+   - 7898 unresolved resource identity `__qcore_returned_value`
+   - 7898 nullable resource `__qcore_returned_value` used by a non-null contract
+   + 7898 possibly-null resource `__qcore_returned_value` returned under a non-null result mode
+lib/cmetrics/src/cmt_encode_opentelemetry.c initialize_instrumentation_scope Unknown -> Unknown
+   - 8148 unresolved resource identity `scope`
+   - 8148 nullable resource `scope` used by a non-null contract
+   + 8148 possibly-null resource `scope` returned under a non-null result mode
+lib/cmetrics/src/cmt_encode_opentelemetry.c initialize_resource Unknown -> Unknown
+   - 9006 unresolved resource identity `resource`
+   - 9006 nullable resource `resource` used by a non-null contract
+   + 9006 possibly-null resource `resource` returned under a non-null result mode
+lib/cmetrics/src/cmt_encode_opentelemetry.c initialize_scope_metrics Unknown -> Unknown
+   - 8177 unresolved resource identity `scope_metrics`
+   - 8177 nullable resource `scope_metrics` used by a non-null contract
+   + 8177 possibly-null resource `scope_metrics` returned under a non-null result mode
+lib/cmetrics/src/cmt_encode_opentelemetry.c otlp_any_value_initialize Unknown -> Unknown
+   - 7689 unresolved resource identity `value`
+   - 7689 nullable resource `value` used by a non-null contract
+   + 7689 possibly-null resource `value` returned under a non-null result mode
+lib/cmetrics/src/cmt_encode_opentelemetry.c otlp_array_value_initialize Unknown -> Unknown
+   - 7612 nullable resource `value` used by a non-null contract
+   + 7612 possibly-null resource `value` returned under a non-null result mode
+lib/cmetrics/src/cmt_encode_opentelemetry.c otlp_kvlist_value_initialize Unknown -> Unknown
+   - 7641 nullable resource `value` used by a non-null contract
+   + 7641 possibly-null resource `value` returned under a non-null result mode
+lib/cmetrics/src/cmt_encode_opentelemetry.c otlp_kvpair_value_initialize Unknown -> Unknown
+   - 7621 unresolved resource identity `value`
+   - 7621 nullable resource `value` used by a non-null contract
+   + 7621 possibly-null resource `value` returned under a non-null result mode
+lib/cmetrics/src/cmt_encode_opentelemetry.c render_opentelemetry_context_to_sds Unknown -> Unknown
+   - 9511 nullable resource `result_buffer` used by a non-null contract
+   + 9511 possibly-null resource `result_buffer` returned under a non-null result mode
+lib/cmetrics/src/cmt_encode_opentelemetry_batch.c cmt_encode_opentelemetry_create_batches Unknown -> Unknown
+   - 7116 unresolved resource identity `__qcore_returned_value`
+   - 7116 nullable resource `__qcore_returned_value` used by a non-null contract
+   + 7116 possibly-null resource `__qcore_returned_value` returned under a non-null result mode
+lib/cmetrics/src/cmt_encode_prometheus_remote_write.c create_label Unknown -> Unknown
+   - 6551 unresolved resource identity `instance`
+   - 6551 nullable resource `instance` used by a non-null contract
+   + 6551 possibly-null resource `instance` returned under a non-null result mode
+lib/cmetrics/src/cmt_encode_prometheus_remote_write.c render_remote_write_context_to_sds Unknown -> Unknown
+   - 6595 nullable resource `result_buffer` used by a non-null contract
+   + 6595 possibly-null resource `result_buffer` returned under a non-null result mode
+lib/cmetrics/src/cmt_encode_splunk_hec.c initialize_splunk_hec_context Unknown -> Unknown
+   - 6094 nullable resource `context` used by a non-null contract
+   + 6094 possibly-null resource `context` returned under a non-null result mode
+lib/ctraces/src/ctr_encode_opentelemetry.c ctr_kvlist_to_otlp_kvpair_list Unknown -> Unknown
+   - 8758 nullable resource `result` used by a non-null contract
+   + 8758 possibly-null resource `result` returned under a non-null result mode
+lib/ctraces/src/ctr_encode_opentelemetry.c otlp_any_value_initialize Unknown -> Unknown
+   - 8699 unresolved resource identity `value`
+   - 8699 nullable resource `value` used by a non-null contract
+   + 8699 possibly-null resource `value` returned under a non-null result mode
+lib/ctraces/src/ctr_encode_opentelemetry.c otlp_array_value_initialize Unknown -> Unknown
+   - 8622 nullable resource `value` used by a non-null contract
+   + 8622 possibly-null resource `value` returned under a non-null result mode
+lib/ctraces/src/ctr_encode_opentelemetry.c otlp_kvlist_value_initialize Unknown -> Unknown
+   - 8651 nullable resource `value` used by a non-null contract
+   + 8651 possibly-null resource `value` returned under a non-null result mode
+lib/ctraces/src/ctr_encode_opentelemetry.c otlp_kvpair_value_initialize Unknown -> Unknown
+   - 8631 unresolved resource identity `value`
+   - 8631 nullable resource `value` used by a non-null contract
+   + 8631 possibly-null resource `value` returned under a non-null result mode
+lib/librdkafka-2.15.0/src/cJSON.c cJSON_AddArrayToObject Unknown -> Unknown
+   - 3018 unresolved resource identity `array`
+   - 3018 nullable resource `array` used by a non-null contract
+   + 3018 possibly-null resource `array` returned under a non-null result mode
+lib/librdkafka-2.15.0/src/cJSON.c cJSON_AddBoolToObject Unknown -> Unknown
+   - 2968 unresolved resource identity `bool_item`
+   - 2968 nullable resource `bool_item` used by a non-null contract
+   + 2968 possibly-null resource `bool_item` returned under a non-null result mode
+lib/librdkafka-2.15.0/src/cJSON.c cJSON_AddFalseToObject Unknown -> Unknown
+   - 2958 unresolved resource identity `false_item`
+   - 2958 nullable resource `false_item` used by a non-null contract
+   + 2958 possibly-null resource `false_item` returned under a non-null result mode
+lib/librdkafka-2.15.0/src/cJSON.c cJSON_AddNullToObject Unknown -> Unknown
+   - 2938 unresolved resource identity `null`
+   - 2938 nullable resource `null` used by a non-null contract
+   + 2938 possibly-null resource `null` returned under a non-null result mode
+lib/librdkafka-2.15.0/src/cJSON.c cJSON_AddNumberToObject Unknown -> Unknown
+   - 2978 unresolved resource identity `number_item`
+   - 2978 nullable resource `number_item` used by a non-null contract
+   + 2978 possibly-null resource `number_item` returned under a non-null result mode
+lib/librdkafka-2.15.0/src/cJSON.c cJSON_AddObjectToObject Unknown -> Unknown
+   - 3008 unresolved resource identity `object_item`
+   - 3008 nullable resource `object_item` used by a non-null contract
+   + 3008 possibly-null resource `object_item` returned under a non-null result mode
+lib/librdkafka-2.15.0/src/cJSON.c cJSON_AddTrueToObject Unknown -> Unknown
+   - 2948 unresolved resource identity `true_item`
+   - 2948 nullable resource `true_item` used by a non-null contract
+   + 2948 possibly-null resource `true_item` returned under a non-null result mode
+lib/librdkafka-2.15.0/src/cJSON.c cJSON_CreateDoubleArray Unknown -> Unknown
+   - 3414 unresolved resource identity `a`
+   - 3414 nullable resource `a` used by a non-null contract
+   + 3414 possibly-null resource `a` returned under a non-null result mode
+lib/librdkafka-2.15.0/src/cJSON.c cJSON_CreateFloatArray Unknown -> Unknown
+   - 3380 unresolved resource identity `a`
+   - 3380 nullable resource `a` used by a non-null contract
+   + 3380 possibly-null resource `a` returned under a non-null result mode
+lib/librdkafka-2.15.0/src/cJSON.c cJSON_CreateIntArray Unknown -> Unknown
+   - 3346 unresolved resource identity `a`
+   - 3346 nullable resource `a` used by a non-null contract
+   + 3346 possibly-null resource `a` returned under a non-null result mode
+lib/librdkafka-2.15.0/src/cJSON.c cJSON_CreateRaw Unknown -> Unknown
+   - 3294 nullable resource `item` used by a non-null contract
+   + 3294 possibly-null resource `item` returned under a non-null result mode
+lib/librdkafka-2.15.0/src/cJSON.c cJSON_CreateString Unknown -> Unknown
+   - 3252 nullable resource `item` used by a non-null contract
+   + 3252 possibly-null resource `item` returned under a non-null result mode
+lib/librdkafka-2.15.0/src/cJSON.c cJSON_CreateStringArray Unknown -> Unknown
+   - 3435 unresolved resource identity `i`
+   - 3448 unresolved resource identity `a`
+   - 3448 nullable resource `a` used by a non-null contract
+   + 3448 possibly-null resource `a` returned under a non-null result mode
+lib/librdkafka-2.15.0/src/lz4frame.c LZ4F_calloc Unknown -> Unknown
+   - 1055 unresolved resource identity `__qcore_returned_value`
+   - 1055 nullable resource `__qcore_returned_value` used by a non-null contract
+   + 1055 possibly-null resource `__qcore_returned_value` returned under a non-null result mode
+lib/librdkafka-2.15.0/src/lz4frame.c LZ4F_malloc Unknown -> Unknown
+   - 1066 unresolved resource identity `__qcore_returned_value`
+   - 1066 nullable resource `__qcore_returned_value` used by a non-null contract
+   + 1066 possibly-null resource `__qcore_returned_value` returned under a non-null result mode
+lib/librdkafka-2.15.0/src/rdbuf.c rd_buf_new Unknown -> Unknown
+   - 3544 unresolved resource identity `rbuf`
+   - 3544 nullable resource `rbuf` used by a non-null contract
+   + 3544 possibly-null resource `rbuf` returned under a non-null result mode
+lib/librdkafka-2.15.0/src/rddl.c rd_dl_open0 Unknown -> Unknown
+   - 2970 unresolved resource identity `handle`
+   - 2970 nullable resource `handle` used by a non-null contract
+   + 2970 possibly-null resource `handle` returned under a non-null result mode
+lib/librdkafka-2.15.0/src/rdgz.c rd_gz_decompress Unknown -> Unknown
+   - 3127 nullable resource `decompressed` used by a non-null contract
+   + 3127 possibly-null resource `decompressed` returned under a non-null result mode
+lib/librdkafka-2.15.0/src/rdhdrhistogram.c rd_hdr_histogram_min Unknown -> Unknown
+   - 4225 unresolved resource identity `vmin`
+lib/librdkafka-2.15.0/src/rdkafka.c rd_kafka_consumer_close_q Unknown -> Unknown
+   - 23715 unresolved resource identity `__qcore_returned_value`
+   - 23715 nullable resource `__qcore_returned_value` used by a non-null contract
+   - 23719 unresolved resource identity `__qcore_returned_value`
+   - 23719 nullable resource `__qcore_returned_value` used by a non-null contract
+   + 23715 possibly-null resource `__qcore_returned_value` returned under a non-null result mode
+   + 23719 possibly-null resource `__qcore_returned_value` returned under a non-null result mode
+lib/librdkafka-2.15.0/src/rdkafka.c rd_kafka_consumer_close_queue Unknown -> Unknown
+   - 23736 unresolved resource identity `__qcore_returned_value`
+   - 23736 nullable resource `__qcore_returned_value` used by a non-null contract
+   + 23736 possibly-null resource `__qcore_returned_value` returned under a non-null result mode
+lib/librdkafka-2.15.0/src/rdkafka.c rd_kafka_seek_partitions Unknown -> Unknown
+   - 23466 unresolved resource identity `__qcore_returned_value`
+   - 23466 nullable resource `__qcore_returned_value` used by a non-null contract
+   - 23470 unresolved resource identity `__qcore_returned_value`
+   - 23470 nullable resource `__qcore_returned_value` used by a non-null contract
+   - 23503 unresolved resource identity `__qcore_returned_value`
+   - 23503 nullable resource `__qcore_returned_value` used by a non-null contract
+   - 23512 unresolved resource identity `__qcore_returned_value`
+   - 23512 nullable resource `__qcore_returned_value` used by a non-null contract
+   + 23466 possibly-null resource `__qcore_returned_value` returned under a non-null result mode
+   + 23470 possibly-null resource `__qcore_returned_value` returned under a non-null result mode
+   + 23503 possibly-null resource `__qcore_returned_value` returned under a non-null result mode
+   + 23512 possibly-null resource `__qcore_returned_value` returned under a non-null result mode
+lib/librdkafka-2.15.0/src/rdkafka.c rd_kafka_share_acquire Unknown -> Unknown
+   - 22630 unresolved resource identity `__qcore_returned_value`
+   - 22630 nullable resource `__qcore_returned_value` used by a non-null contract
+   - 22640 unresolved resource identity `__qcore_returned_value`
+   - 22640 nullable resource `__qcore_returned_value` used by a non-null contract
+   - 22648 unresolved resource identity `__qcore_returned_value`
+   - 22648 nullable resource `__qcore_returned_value` used by a non-null contract
+   + 22630 possibly-null resource `__qcore_returned_value` returned under a non-null result mode
+   + 22640 possibly-null resource `__qcore_returned_value` returned under a non-null result mode
+   + 22648 possibly-null resource `__qcore_returned_value` returned under a non-null result mode
+lib/librdkafka-2.15.0/src/rdkafka.c rd_kafka_share_commit_async Unknown -> Unknown
+   - 23248 unresolved resource identity `error`
+   - 23248 nullable resource `error` used by a non-null contract
+   + 23248 possibly-null resource `error` returned under a non-null result mode
+lib/librdkafka-2.15.0/src/rdkafka.c rd_kafka_share_commit_sync Unknown -> Unknown
+   - 23302 unresolved resource identity `error`
+   - 23302 nullable resource `error` used by a non-null contract
+   + 23302 possibly-null resource `error` returned under a non-null result mode
+lib/librdkafka-2.15.0/src/rdkafka.c rd_kafka_share_consumer_close_queue Unknown -> Unknown
+   + 23755 possibly-null resource `error` returned under a non-null result mode
+lib/librdkafka-2.15.0/src/rdkafka.c rd_kafka_share_poll Unknown -> Unknown
+   + 23060 possibly-null resource `error` returned under a non-null result mode
+lib/librdkafka-2.15.0/src/rdkafka.c rd_kafka_share_set_acknowledgement_commit_cb Unknown -> Unknown
+   - 22708 unresolved resource identity `error`
+   - 22708 nullable resource `error` used by a non-null contract
+   + 22708 possibly-null resource `error` returned under a non-null result mode
+lib/librdkafka-2.15.0/src/rdkafka_admin.c rd_kafka_AdminOptions_set_match_consumer_group_states Unknown -> Unknown
+   - 20981 unresolved resource identity `__qcore_returned_value`
+   - 20981 nullable resource `__qcore_returned_value` used by a non-null contract
+   - 20988 unresolved resource identity `__qcore_returned_value`
+   - 20988 nullable resource `__qcore_returned_value` used by a non-null contract
+   + 20981 possibly-null resource `__qcore_returned_value` returned under a non-null result mode
+   + 20988 possibly-null resource `__qcore_returned_value` returned under a non-null result mode
+lib/librdkafka-2.15.0/src/rdkafka_admin.c rd_kafka_AdminOptions_set_match_consumer_group_types Unknown -> Unknown
+   - 21023 unresolved resource identity `__qcore_returned_value`
+   - 21023 nullable resource `__qcore_returned_value` used by a non-null contract
+   - 21028 unresolved resource identity `__qcore_returned_value`
+   - 21028 nullable resource `__qcore_returned_value` used by a non-null contract
+   - 21035 unresolved resource identity `__qcore_returned_value`
+   - 21035 nullable resource `__qcore_returned_value` used by a non-null contract
+   + 21023 possibly-null resource `__qcore_returned_value` returned under a non-null result mode
+   + 21028 possibly-null resource `__qcore_returned_value` returned under a non-null result mode
+   + 21035 possibly-null resource `__qcore_returned_value` returned under a non-null result mode
+lib/librdkafka-2.15.0/src/rdkafka_admin.c rd_kafka_AuthorizedOperations_parse Unknown -> Unknown
+   - 25148 unresolved resource identity `__qcore_returned_value`
+   - 25148 nullable resource `__qcore_returned_value` used by a non-null contract
+   - 25158 unresolved resource identity `operations`
+   - 25158 nullable resource `operations` used by a non-null contract
+   + 25148 possibly-null resource `__qcore_returned_value` returned under a non-null result mode
+   + 25158 possibly-null resource `operations` returned under a non-null result mode
+lib/librdkafka-2.15.0/src/rdkafka_admin.c rd_kafka_ConfigResource_add_incremental_config Unknown -> Unknown
+   - 21880 unresolved resource identity `__qcore_returned_value`
+   - 21880 nullable resource `__qcore_returned_value` used by a non-null contract
+   - 21891 unresolved resource identity `__qcore_returned_value`
+   - 21891 nullable resource `__qcore_returned_value` used by a non-null contract
+   + 21880 possibly-null resource `__qcore_returned_value` returned under a non-null result mode
+   + 21891 possibly-null resource `__qcore_returned_value` returned under a non-null result mode
+lib/librdkafka-2.15.0/src/rdkafka_admin.c rd_kafka_admin_incremental_add_config0 Unknown -> Unknown
+   - 21278 unresolved resource identity `__qcore_returned_value`
+   - 21278 nullable resource `__qcore_returned_value` used by a non-null contract
+   + 21278 possibly-null resource `__qcore_returned_value` returned under a non-null result mode
+lib/librdkafka-2.15.0/src/rdkafka_assignment.c rd_kafka_assignment_subtract Unknown -> Unknown
+   - 20683 unresolved resource identity `__qcore_returned_value`
+   - 20683 nullable resource `__qcore_returned_value` used by a non-null contract
+   + 20683 possibly-null resource `__qcore_returned_value` returned under a non-null result mode
+lib/librdkafka-2.15.0/src/rdkafka_assignment.c rd_kafka_share_assignment_add Unknown -> Unknown
+   - 20543 unresolved resource identity `__qcore_returned_value`
+   - 20543 nullable resource `__qcore_returned_value` used by a non-null contract
+   - 20550 unresolved resource identity `__qcore_returned_value`
+   - 20550 nullable resource `__qcore_returned_value` used by a non-null contract
+   + 20543 possibly-null resource `__qcore_returned_value` returned under a non-null result mode
+   + 20550 possibly-null resource `__qcore_returned_value` returned under a non-null result mode
+lib/librdkafka-2.15.0/src/rdkafka_assignment.c rd_kafka_share_assignment_subtract Unknown -> Unknown
+   - 20638 unresolved resource identity `__qcore_returned_value`
+   - 20638 nullable resource `__qcore_returned_value` used by a non-null contract
+   + 20638 possibly-null resource `__qcore_returned_value` returned under a non-null result mode
+lib/librdkafka-2.15.0/src/rdkafka_assignor.c rd_kafka_consumer_protocol_member_metadata_new Unknown -> Unknown
+   - 20279 unresolved resource identity `kbytes`
+   - 20279 nullable resource `kbytes` used by a non-null contract
+   + 20279 possibly-null resource `kbytes` returned under a non-null result mode
+lib/librdkafka-2.15.0/src/rdkafka_broker.c rd_kafka_socket_cb_linux Unknown -> Unknown
+   - 22020 unresolved resource identity `__qcore_returned_value`
+   - 22020 nullable resource `__qcore_returned_value` used by a non-null contract
+   + 22020 possibly-null resource `__qcore_returned_value` returned under a non-null result mode
+lib/librdkafka-2.15.0/src/rdkafka_cgrp.c rd_kafka_cgrp_calculate_subscribe_revoking_partitions Unknown -> Unknown
+   - 23536 unresolved resource identity `revoking`
+   - 23536 nullable resource `revoking` used by a non-null contract
+   + 23536 possibly-null resource `revoking` returned under a non-null result mode
+lib/librdkafka-2.15.0/src/rdkafka_cgrp.c rd_kafka_cgrp_owned_but_not_exist_partitions Unknown -> Unknown
+   - 24493 nullable resource `result` used by a non-null contract
+   + 24493 possibly-null resource `result` returned under a non-null result mode
+lib/librdkafka-2.15.0/src/rdkafka_cgrp.c rd_kafka_consumer_group_metadata_read Unknown -> Unknown
+   - 24685 unresolved resource identity `__qcore_returned_value`
+   - 24685 nullable resource `__qcore_returned_value` used by a non-null contract
+   - 24688 unresolved resource identity `__qcore_returned_value`
+   - 24688 nullable resource `__qcore_returned_value` used by a non-null contract
+   - 24695 unresolved resource identity `__qcore_returned_value`
+   - 24695 nullable resource `__qcore_returned_value` used by a non-null contract
+   - 24700 unresolved resource identity `__qcore_returned_value`
+   - 24700 nullable resource `__qcore_returned_value` used by a non-null contract
+   - 24708 unresolved resource identity `__qcore_returned_value`
+   - 24708 nullable resource `__qcore_returned_value` used by a non-null contract
+   - 24713 unresolved resource identity `__qcore_returned_value`
+   - 24713 nullable resource `__qcore_returned_value` used by a non-null contract
+   + 24685 possibly-null resource `__qcore_returned_value` returned under a non-null result mode
+   + 24688 possibly-null resource `__qcore_returned_value` returned under a non-null result mode
+   + 24695 possibly-null resource `__qcore_returned_value` returned under a non-null result mode
+   + 24700 possibly-null resource `__qcore_returned_value` returned under a non-null result mode
+   + 24708 possibly-null resource `__qcore_returned_value` returned under a non-null result mode
+   + 24713 possibly-null resource `__qcore_returned_value` returned under a non-null result mode
+lib/librdkafka-2.15.0/src/rdkafka_conf.c rd_kafka_conf_kv_get Unknown -> Unknown
+   - 24164 nullable resource `ret` used by a non-null contract
+   + 24164 possibly-null resource `ret` returned under a non-null result mode
+lib/librdkafka-2.15.0/src/rdkafka_header.c rd_kafka_headers_copy Unknown -> Unknown
+   - 19585 unresolved resource identity `dst`
+   - 19585 nullable resource `dst` used by a non-null contract
+   + 19585 possibly-null resource `dst` returned under a non-null result mode
+lib/librdkafka-2.15.0/src/rdkafka_header.c rd_kafka_headers_new Unknown -> Unknown
+   - 19568 unresolved resource identity `hdrs`
+   - 19568 nullable resource `hdrs` used by a non-null contract
+   + 19568 possibly-null resource `hdrs` returned under a non-null result mode
+lib/librdkafka-2.15.0/src/rdkafka_mock.c rd_kafka_mock_get_requests Unknown -> Unknown
+   - 23532 nullable resource `ret` used by a non-null contract
+   + 23532 possibly-null resource `ret` returned under a non-null result mode
+lib/librdkafka-2.15.0/src/rdkafka_mock.c rd_kafka_mock_partition_pidstate_get Unknown -> Unknown
+   - 21573 unresolved resource identity `pidstate`
+   - 21573 nullable resource `pidstate` used by a non-null contract
+   + 21573 possibly-null resource `pidstate` returned under a non-null result mode
+lib/librdkafka-2.15.0/src/rdkafka_mock.c rd_kafka_mock_request_copy Unknown -> Unknown
+   - 23490 unresolved resource identity `request`
+   - 23490 nullable resource `request` used by a non-null contract
+   + 23490 possibly-null resource `request` returned under a non-null result mode
+lib/librdkafka-2.15.0/src/rdkafka_mock.c rd_kafka_mock_request_new Unknown -> Unknown
+   - 23481 unresolved resource identity `request`
+   - 23481 nullable resource `request` used by a non-null contract
+   + 23481 possibly-null resource `request` returned under a non-null result mode
+lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c rd_kafka_mock_handle_Fetch Unknown -> Unknown
+   - 22497 unresolved resource identity `changed_leaders_cnt`
+lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c rd_kafka_mock_handle_ShareFetch Unknown -> Unknown
+   - 25013 unresolved resource identity `i`
+   - 25169 unresolved resource identity `forgotten_partitions`
+   - 25169 nullable resource `forgotten_partitions` used by a non-null contract
+   - 25182 unresolved resource identity `forgotten_partitions`
+   - 25182 nullable resource `forgotten_partitions` used by a non-null contract
+   - 25187 unresolved resource identity `forgotten_partitions`
+   - 25187 nullable resource `forgotten_partitions` used by a non-null contract
+lib/librdkafka-2.15.0/src/rdkafka_msg.c rd_kafka_msg_new00 Unknown -> Unknown
+   - 19842 unresolved resource identity `rkm`
+   - 19842 nullable resource `rkm` used by a non-null contract
+   + 19842 possibly-null resource `rkm` returned under a non-null result mode
+lib/librdkafka-2.15.0/src/rdkafka_offset.c rd_kafka_offset_store_message Unknown -> Unknown
+   - 20547 unresolved resource identity `__qcore_returned_value`
+   - 20547 nullable resource `__qcore_returned_value` used by a non-null contract
+   - 20551 unresolved resource identity `__qcore_returned_value`
+   - 20551 nullable resource `__qcore_returned_value` used by a non-null contract
+   - 20558 unresolved resource identity `__qcore_returned_value`
+   - 20558 nullable resource `__qcore_returned_value` used by a non-null contract
+   + 20547 possibly-null resource `__qcore_returned_value` returned under a non-null result mode
+   + 20551 possibly-null resource `__qcore_returned_value` returned under a non-null result mode
+   + 20558 possibly-null resource `__qcore_returned_value` returned under a non-null result mode
+lib/librdkafka-2.15.0/src/rdkafka_offset.c rd_kafka_offsets_store Unknown -> Unknown
+   - 20537 unresolved resource identity `ok_cnt`
+lib/librdkafka-2.15.0/src/rdkafka_offset.c rd_kafka_open_cb_linux Unknown -> Unknown
+   - 20214 unresolved resource identity `__qcore_returned_value`
+   - 20214 nullable resource `__qcore_returned_value` used by a non-null contract
+   + 20214 possibly-null resource `__qcore_returned_value` returned under a non-null result mode
+lib/librdkafka-2.15.0/src/rdkafka_op.c rd_kafka_op_error_destroy Unknown -> Unknown
+   - 20238 unresolved resource identity `__qcore_returned_value`
+   - 20238 nullable resource `__qcore_returned_value` used by a non-null contract
+   + 20238 possibly-null resource `__qcore_returned_value` returned under a non-null result mode
+lib/librdkafka-2.15.0/src/rdkafka_partition.c rd_kafka_topic_partition_list_combine_regexes Unknown -> Unknown
+   - 22733 unresolved resource identity `__qcore_returned_value`
+   - 22733 nullable resource `__qcore_returned_value` used by a non-null contract
+   - 22761 unresolved resource identity `combined_regex_kstr`
+   - 22761 nullable resource `combined_regex_kstr` used by a non-null contract
+   + 22733 possibly-null resource `__qcore_returned_value` returned under a non-null result mode
+   + 22761 possibly-null resource `combined_regex_kstr` returned under a non-null result mode
+lib/librdkafka-2.15.0/src/rdkafka_queue.c rd_kafka_q_new0 Unknown -> Unknown
+   - 19733 unresolved resource identity `rkq`
+   - 19733 nullable resource `rkq` used by a non-null contract
+   + 19733 possibly-null resource `rkq` returned under a non-null result mode
+lib/librdkafka-2.15.0/src/rdkafka_queue.c rd_kafka_share_set_log_queue Unknown -> Unknown
+   - 20343 unresolved resource identity `__qcore_returned_value`
+   - 20343 nullable resource `__qcore_returned_value` used by a non-null contract
+   + 20343 possibly-null resource `__qcore_returned_value` returned under a non-null result mode
+lib/librdkafka-2.15.0/src/rdkafka_request.c rd_kafka_ConsumerGroupDescribeRequest Unknown -> Unknown
+   - 23928 unresolved resource identity `__qcore_returned_value`
+   - 23928 nullable resource `__qcore_returned_value` used by a non-null contract
+   + 23928 possibly-null resource `__qcore_returned_value` returned under a non-null result mode
+lib/librdkafka-2.15.0/src/rdkafka_request.c rd_kafka_DescribeGroupsRequest Unknown -> Unknown
+   - 21978 unresolved resource identity `__qcore_returned_value`
+   - 21978 nullable resource `__qcore_returned_value` used by a non-null contract
+   + 21978 possibly-null resource `__qcore_returned_value` returned under a non-null result mode
+lib/librdkafka-2.15.0/src/rdkafka_request.c rd_kafka_ListGroupsRequest Unknown -> Unknown
+   - 21938 unresolved resource identity `__qcore_returned_value`
+   - 21938 nullable resource `__qcore_returned_value` used by a non-null contract
+   + 21938 possibly-null resource `__qcore_returned_value` returned under a non-null result mode
+lib/librdkafka-2.15.0/src/rdkafka_request.c rd_kafka_handle_OffsetCommit Unknown -> Unknown
+   - 21432 unresolved resource identity `actions`
+lib/librdkafka-2.15.0/src/rdkafka_sasl.c rd_kafka_sasl_background_callbacks_enable Unknown -> Unknown
+   - 20919 unresolved resource identity `__qcore_returned_value`
+   - 20919 nullable resource `__qcore_returned_value` used by a non-null contract
+   - 20924 unresolved resource identity `__qcore_returned_value`
+   - 20924 nullable resource `__qcore_returned_value` used by a non-null contract
+   + 20919 possibly-null resource `__qcore_returned_value` returned under a non-null result mode
+   + 20924 possibly-null resource `__qcore_returned_value` returned under a non-null result mode
+lib/librdkafka-2.15.0/src/rdkafka_sasl.c rd_kafka_sasl_set_credentials Unknown -> Unknown
+   - 20986 unresolved resource identity `__qcore_returned_value`
+   - 20986 nullable resource `__qcore_returned_value` used by a non-null contract
+   + 20986 possibly-null resource `__qcore_returned_value` returned under a non-null result mode
+lib/librdkafka-2.15.0/src/rdkafka_share_acknowledgement.c rd_kafka_share_build_ack_details Unknown -> Unknown
+   - 20019 nullable resource `ack_details` used by a non-null contract
+   + 20019 possibly-null resource `ack_details` returned under a non-null result mode
+lib/librdkafka-2.15.0/src/rdkafka_ssl.c rd_kafka_ssl_PKEY_from_string Unknown -> Unknown
+   - 20597 unresolved resource identity `pkey`
+   - 20597 nullable resource `pkey` used by a non-null contract
+   + 20597 possibly-null resource `pkey` returned under a non-null result mode
+lib/librdkafka-2.15.0/src/rdkafka_subscription.c rd_kafka_assign0 Unknown -> Unknown
+   - 19675 unresolved resource identity `__qcore_returned_value`
+   - 19675 nullable resource `__qcore_returned_value` used by a non-null contract
+   + 19675 possibly-null resource `__qcore_returned_value` returned under a non-null result mode
+lib/librdkafka-2.15.0/src/rdkafka_subscription.c rd_kafka_incremental_assign Unknown -> Unknown
+   - 19704 unresolved resource identity `__qcore_returned_value`
+   - 19704 nullable resource `__qcore_returned_value` used by a non-null contract
+   + 19704 possibly-null resource `__qcore_returned_value` returned under a non-null result mode
+lib/librdkafka-2.15.0/src/rdkafka_subscription.c rd_kafka_incremental_unassign Unknown -> Unknown
+   - 19713 unresolved resource identity `__qcore_returned_value`
+   - 19713 nullable resource `__qcore_returned_value` used by a non-null contract
+   + 19713 possibly-null resource `__qcore_returned_value` returned under a non-null result mode
+lib/librdkafka-2.15.0/src/rdkafka_topic.c rd_kafka_topic_metadata_update Unknown -> Unknown
+   - 20426 unresolved resource identity `partition_exists_with_no_leader_epoch`
+lib/librdkafka-2.15.0/src/rdkafka_txnmgr.c rd_kafka_send_offsets_to_transaction Unknown -> Unknown
+   - 21291 unresolved resource identity `__qcore_returned_value`
+   - 21291 nullable resource `__qcore_returned_value` used by a non-null contract
+   + 21291 possibly-null resource `__qcore_returned_value` returned under a non-null result mode
+lib/librdkafka-2.15.0/src/rdlist.c rd_list_new Unknown -> Unknown
+   - 2987 unresolved resource identity `rl`
+   - 2987 nullable resource `rl` used by a non-null contract
+   + 2987 possibly-null resource `rl` returned under a non-null result mode
+lib/librdkafka-2.15.0/src/rdstring.c rd_string_render Unknown -> Unknown
+   + 3022 possibly-null resource `buf` returned under a non-null result mode
+lib/librdkafka-2.15.0/src/snappy.c rd_kafka_snappy_java_uncompress Unsafe -> Unsafe
+   - 20509 nullable resource `outbuf` used by a non-null contract
+   + 20509 possibly-null resource `outbuf` returned under a non-null result mode
+lib/monkey/mk_core/mk_rconf.c mk_rconf_read Unknown -> Unknown
+   - 1972 unresolved resource identity `buf`
+   - 1996 unresolved resource identity `buf`
+   - 2008 unresolved resource identity `buf`
+   - 2027 unresolved resource identity `buf`
+   - 2038 unresolved resource identity `buf`
+   - 2092 unresolved resource identity `buf`
+lib/monkey/mk_core/mk_rconf.c mk_rconf_section_get_key Unknown -> Unknown
+   - 2257 unresolved resource identity `__qcore_returned_value`
+   - 2257 nullable resource `__qcore_returned_value` used by a non-null contract
+   + 2257 possibly-null resource `__qcore_returned_value` returned under a non-null result mode
+lib/monkey/mk_core/mk_string.c mk_string_html_escape Unknown -> Unknown
+   - 2286 unresolved resource identity `__qcore_returned_value`
+   - 2286 nullable resource `__qcore_returned_value` used by a non-null contract
+   + 2286 possibly-null resource `__qcore_returned_value` returned under a non-null result mode
+lib/monkey/mk_core/mk_string.c mk_string_tolower Unknown -> Unknown
+   - 2468 nullable resource `out` used by a non-null contract
+   + 2468 possibly-null resource `out` returned under a non-null result mode
+lib/monkey/mk_server/mk_plugin.c mk_plugin_load_dynamic Unknown -> Unknown
+   - 5562 unresolved resource identity `handle`
+   - 5562 nullable resource `handle` used by a non-null contract
+   + 5562 possibly-null resource `handle` returned under a non-null result mode
+lib/monkey/mk_server/mk_server.c mk_server_listen_init Unknown -> Unknown
+   + 5865 possibly-null resource `listeners` returned under a non-null result mode
+lib/monkey/mk_server/mk_utils.c mk_utils_url_decode Unknown -> Unknown
+   - 5560 unresolved resource identity `buf`
+   - 5560 nullable resource `buf` used by a non-null contract
+   + 5560 possibly-null resource `buf` returned under a non-null result mode
+lib/monkey/mk_server/mk_vhost.c mk_vhost_fdt_open Unknown -> Unknown
+   - 5564 unresolved resource identity `__qcore_returned_value`
+   - 5564 nullable resource `__qcore_returned_value` used by a non-null contract
+   - 5568 unresolved resource identity `__qcore_returned_value`
+   - 5568 nullable resource `__qcore_returned_value` used by a non-null contract
+   + 5564 possibly-null resource `__qcore_returned_value` returned under a non-null result mode
+   + 5568 possibly-null resource `__qcore_returned_value` returned under a non-null result mode
+lib/monkey/tls/tls_openssl.c tls_create_server_context Unknown -> Unknown
+   - 12619 unresolved resource identity `__qcore_returned_value`
+   - 12619 nullable resource `__qcore_returned_value` used by a non-null contract
+   + 12619 possibly-null resource `__qcore_returned_value` returned under a non-null result mode

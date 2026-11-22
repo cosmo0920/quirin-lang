@@ -194,6 +194,7 @@
         "librdkafka/queue_destructor.qv",
         "librdkafka/refcount.qv",
         "librdkafka/topic_partition.qv",
+        "librdkafka/topic_partition_constructors.qv",
         "librdkafka/typed_queue.qv"
       ],
       "published": {},
@@ -207,7 +208,8 @@
         "librdkafka/logging.qv",
         "librdkafka/lz4_stream.qv",
         "librdkafka/memory.qv",
-        "librdkafka/topic_partition.qv"
+        "librdkafka/topic_partition.qv",
+        "librdkafka/topic_partition_constructors.qv"
       ],
       "bounds_view": [
         "librdkafka/null_deref.qv"

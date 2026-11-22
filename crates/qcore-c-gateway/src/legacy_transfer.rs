@@ -1859,6 +1859,11 @@ pub(super) struct TransferContext<'a> {
     pub(super) sanctioned: BTreeSet<&'a str>,
     /// Whether the contract's result mode obliges callers to null-check.
     pub(super) result_nullable: bool,
+    /// Card **NULLABLE-LAZY-CONSTRUCTOR-IN-LOOP** (rule 74d): the formals the
+    /// entry's contract names ([`EntryCustody::parameter_names`]); empty for
+    /// the contract-free run. A returned formal keeps the identity refusal the
+    /// summary search reads (`bind_unresolved_formals`).
+    pub(super) formal_names: BTreeSet<String>,
     /// Sites the *caller* holds at entry. An aggregate store never targets one
     /// of these: a transfer into a caller-owned aggregate is invisible at the
     /// call site and is refused rather than modeled (O00 blocker B08).
@@ -1987,6 +1992,12 @@ fn analyze_cfg_with_entry_collected(
             .unwrap_or_default(),
         sanctioned: entry_custody.sanctioned_places(),
         result_nullable: entry_custody.result_nullable,
+        formal_names: entry_custody
+            .parameter_names
+            .iter()
+            .flatten()
+            .cloned()
+            .collect(),
         // A derived base's name-only site is caller-held too: no aggregate
         // store may target it (it also fails every live-identity check).
         caller_sites: entry_custody
@@ -4487,7 +4498,21 @@ pub(super) fn transfer_base(
                     .pointers
                     .get(source)
                     .is_some_and(|pointer| pointer.targets.is_empty());
-            if state.pointers.contains_key(source) && !scalar_fact {
+            // Card NULLABLE-LAZY-CONSTRUCTOR-IN-LOOP (rule 74d): a resolved
+            // binding whose only obstacle is that it may be null is refused
+            // as that, with the same marking.
+            let nullable_return = state.pointers.contains_key(source)
+                && !scalar_fact
+                && !context.result_nullable
+                && !context.formal_names.contains(source)
+                && super::nullable_return_route::refuse(
+                    function,
+                    node.line,
+                    source,
+                    &mut state,
+                    diagnostics,
+                );
+            if state.pointers.contains_key(source) && !scalar_fact && !nullable_return {
                 apply_resource_action(
                     function,
                     node.line,

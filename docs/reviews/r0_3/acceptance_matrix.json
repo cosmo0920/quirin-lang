@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 10,
-  "named_followups": 1057
+  "named_followups": 1063
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6626,7 +6626,7 @@
   ]
  },
  "corpus": {
-  "contract_modules": 153,
+  "contract_modules": 154,
   "contract_modules_pinned_by": "compiler/tests/qcore_contract_corpus.rs",
   "contract_clause_pin": {
    "const": "EXPECTED_CONTRACTS",
@@ -6920,11 +6920,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Landing integrate/r56 (base main 5977e52a4, which carries SP5-GLOBAL-PROSE-PREMISE-BAN landed from another session after the card's base 96d41921c; merges NULLABLE-GUARDED-RELEASE ef5107c85 in ea18de5d9, auto-merged docs/agents/README.md and docs/agents/gateway.md, no conflicts; third_party/libevent checked out at d82464a27). Amendments applied in a9bbd39ae with --profiles-base 5977e52a4: NULLABLE-LAZY-CONSTRUCTOR-IN-LOOP and SETTLED-LEAK-JOINED-GENUINE-WITHDRAWN registered; profiles []; status_edits empty. NULLABLE-GUARDED-RELEASE-REPORTED-AS-LEAK is registered only on the held RK-TOPIC-PARTITION-LIST-CONSTRUCTORS branch and is not on main; it is reconciled when that card lands. Full landing gate on a9bbd39ae (private/integrate-r56/gate, raw record beside this file as gate-scope.json) via scripts/gate_scope.py --base origin/main --full --landing through private/toolchain/env.sh: Rust 676 units / 721 summaries, 9889 passed, 0 failed, 21 ignored; fmt, Clippy and both reevaluation examples exit 0; Lean (all) exit 0, 483 audits (new QCore.NullableGuardedRelease, 19 theorems). No providers/ path changed, so the provider gate was not selected; provider_tests 174 is carried from SP5's landing gate (provider-test 174 passed, 0 failed, 1 ignored). Python (807 tests) exited 1 only on the two stale-matrix checks of test_build_matrix_sections, cleared by regenerating the matrix from this record. Change: rule 74c (new) and amendments to rules 6 and 10a. Leak reports are held until the work list settles and withdrawn (Unsafe to Unknown only) when the settled exit marks the identity through a refused release and the function has an Unknown leaf; &NAME->F is read as an address inside *NAME rather than NAME's slot. Pinned test moves, each commented in place: indirect_scalar_access Unknown to Safe (obligations discharged; the old comment misread &r->count as taking r's address); condition_call_desugar Unsafe to Unknown (a genuine leak joined with a refused close, registered as SETTLED-LEAK-JOINED-GENUINE-WITHDRAWN); leaf-only changes elsewhere. Card measurement (opt-in current --monkey-linked, Fluent Bit 046accf6): base 96d41921c and tip both 1169 Safe / 2 Pending / 3626 Unknown / 7 Unsafe, 0 status moves, 119 rows change leaves only. With the held constructors branch 4174d25e5 merged in a private tree: 1171/2/3622/9 to 1171/2/3623/8, rd_kafka_mock_handle_Metadata Unsafe to Unknown. Pinned-route parity (quirin-audit measure --declared) was not run: this host holds no build/cycle19 inputs or baselines. No profile baseline is changed and land.py publish is owed.",
-  "workspace_tests": 9889,
+  "note": "Landing integrate/r58 (base main 1b7028430; merges NULLABLE-LAZY-CONSTRUCTOR-IN-LOOP 05cd98117 in 673e04110, no conflicts; third_party/libevent checked out at d82464a27). USER DECISION 2026-11-23: \"NULLABLE-LAZY-CONSTRUCTOR-IN-LOOP -> We need to launch this card after the dependent card is landed.\" Amendments applied in 8530e8744 with --profiles-base 1b7028430: NULLABLE-LAZY-CONSTRUCTOR-IN-LOOP retired; LATER-DECLARATOR-INITIALISER-UNREAD, REGISTRY-UNDECIDED-CALL-POISONS-EVERY-BINDING, UNCONTRACTED-ARM-JOIN-NULLABLE-LEAF, FLAG-CORRELATED-RELEASE and AMPERSAND-RUN-PARITY-OTHER-READERS registered; profiles []. Full landing gate on 8530e8744 (private/integrate-r58/gate, raw record beside this file as gate-scope.json) via scripts/gate_scope.py --base origin/main --full --landing through private/toolchain/env.sh: Rust 677 units / 722 summaries, 9904 passed, 0 failed, 21 ignored; fmt, Clippy and both reevaluation examples exit 0; Lean (all) exit 0, 484 audits (new QCore.NullableLazyConstructor). No providers/ path changed, so the provider gate was not selected; provider_tests 174 is carried from r57. Python (807 tests) exited 1 only on the two stale-matrix checks of test_build_matrix_sections, cleared by regenerating the matrix from this record. Change: rule 74d (new; notes on 14l and 10a): a possibly-null value returned under a non-null result mode with a resolved identity gets one leaf naming that, replacing the unresolved-identity plus nullable pair; rule 10a's frame now counts only an odd run of & as address-of, so `a && b` no longer poisons b. One pin moved (resource_kinds.rs k_dlopen return, still Unknown). Card measurement (opt-in current --monkey-linked, Fluent Bit 046accf6): base 1b7028430 and tip both 1171 Safe / 2 Pending / 3623 Unknown / 8 Unsafe, 0 status moves, 110 rows change leaves only; of the eight ledger rows, ShareFetch's 3 nullable leaves clear, owned_but_not_exist and revoking become the return leaf, five keep theirs on obstacles now registered. Pinned-route parity (quirin-audit measure --declared) was not run: this host holds no build/cycle19 inputs or baselines. No profile baseline is changed and land.py publish is owed.",
+  "workspace_tests": 9904,
   "provider_tests": 174,
   "python_evidence_validator_tests": 807,
-  "lean_audits": 483,
+  "lean_audits": 486,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
    "AuditAggregateOwnedField.lean",
@@ -7138,6 +7138,7 @@
    "AuditLiteralTailActual.lean",
    "AuditLocalCondition.lean",
    "AuditLocalSourceBindings.lean",
+   "AuditLocalTypedAtoms.lean",
    "AuditLoggerEffects.lean",
    "AuditLogicalAndOperand.lean",
    "AuditLookupRestrictedReuse.lean",
@@ -7198,6 +7199,7 @@
    "AuditNullTriage.lean",
    "AuditNullTriagePaths.lean",
    "AuditNullableGuardedRelease.lean",
+   "AuditNullableLazyConstructor.lean",
    "AuditNullableReferenceDrop.lean",
    "AuditO05.lean",
    "AuditObsReordering.lean",
@@ -7239,6 +7241,7 @@
    "AuditPointerTypedefMember.lean",
    "AuditPremiseFlow.lean",
    "AuditPremiseFormula.lean",
+   "AuditPremiseFormulaCjsonTypedAtoms.lean",
    "AuditPremiseFormulaFluentBit.lean",
    "AuditPremiseFormulaLibevent.lean",
    "AuditPremiseFormulaLibrdkafka.lean",
@@ -7414,9 +7417,9 @@
   "reevaluation_followup_exit": 0,
   "cargo_fmt": "clean",
   "cargo_clippy": "clean",
-  "standing_gate": "full landing gate: every step exits 0 except the Python suite's two stale-matrix checks, cleared by regenerating the matrix from this record; provider gate not selected (no providers/ change), provider count carried from SP5",
+  "standing_gate": "full landing gate: every step exits 0 except the Python suite's two stale-matrix checks, cleared by regenerating the matrix from this record; provider gate not selected (no providers/ change), provider count carried from r57",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/nullable-guarded-release/integration/gate.json)"
+  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
  },
  "named_followups": [
   {
@@ -14610,13 +14613,6 @@
    "recorded_by": "CG10-INDIRECT-ACCESS-SOLE-RESIDUALS"
   },
   {
-   "id": "RK-TOPIC-PARTITION-LIST-CONSTRUCTORS",
-   "title": "rd_kafka_topic_partition_list_new, rd_kafka_topic_partition_list_copy and rd_kafka_topic_partition_copy have no declaration",
-   "why": "CG10-INDIRECT-ACCESS-SOLE-RESIDUALS round 4 census: four Unknown functions blocked by the indirect-access refusal alone store or return an owned result of an undeclared librdkafka constructor (rd_kafka_DeleteRecords_new and rd_kafka_ElectLeaders_new: rd_kafka_topic_partition_list_copy into the body's own allocation; rd_kafka_ListOffsetsResultInfo_new: rd_kafka_topic_partition_copy; rd_kafka_assignment_init: rd_kafka_topic_partition_list_new into `rk->rk_consumer.assignment.*`, a formal's members). rd_kafka_topic_partition_list_new (rdkafka_partition.c:2843-2852) returns an rd_calloc'd list (its own row Unknown on the uncontracted rd_kafka_topic_partition_list_grow); _list_copy (:3283-3292) and rd_kafka_topic_partition_copy (:2933-2940) copy elements through rd_kafka_topic_partition_update, which takes partition references. Declaring them `resource_return_owned` is honest for the list itself but changes the verdict of every caller (many corpus functions), and the reference half is decision class 3. DISCHARGE: a measured card declaring the constructors (owned result, nonnull where rd_calloc asserts), with the reference-count half decided, reporting every caller's move including any provisional Unsafe.",
-   "source": "docs/reports/cg10-indirect-access-sole-residuals-r4/README.md",
-   "recorded_by": "CG10-INDIRECT-ACCESS-SOLE-RESIDUALS"
-  },
-  {
    "id": "CG10-UNCAST-VIEW-CONST-TYPEDEF-BASE",
    "title": "Rule 71a declines a non-const view of a member read through a `const` pointer to a record typedef (print_string)",
    "why": "`return f((unsigned char *)item->valuestring, p)` with `item` a `const cJSON *` (a `const` pointer to a record typedef) keeps the access refusal even for a contracted callee, while a tagged `const struct S *`, a non-const typedef'd base and a `const` view are each read (tests/small_bundle.rs pins all four). print_string on the opt-in route stays on the gate's text, so rule 74 has no uncast call to ask. DISCHARGE: the cause diagnosed (the view classification or the uncast token match) and read with Lean parity, or recorded.",
@@ -14708,6 +14704,13 @@
    "recorded_by": "OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS"
   },
   {
+   "id": "SP2-DETACH-HYPOTHESES-TYPED-ATOMS",
+   "title": "State cJSON_DetachItemViaPointer's nine detach_* hypotheses as typed atoms",
+   "why": "Recorded by SP2-SYMBOLIC-LIBRDKAFKA-PREMISES. The nine resource_hypothesis(detach_*, \"...\") atoms of cJSON_DetachItemViaPointer (providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv) keep their strings: a C04.18.9 formula is a premise statement, admitted by hypothesis::validate only as a generated legacy atom's statement, and the consistent hypothesis form is C04.18.7's typed atom (quant proposition #ID(...) = FORMULA;, as the plugin_* atoms already are). DISCHARGE: each atom as a typed proposition matching its QCore.CjsonRepresentationPremises definition (the premise's formula is already proved equivalent to their conjunction, detach_formula_is_the_nine_atoms), with the cJSON binding manifest's atom digests, the nine resource_guarded_symbol_v1 clauses that repeat each atom's text, the guarded adoption plan and quirin-source-analysis::cjson_local_binding's expected graph migrated together (quant_binding_migration's typed-atom path), no verdict moved. Size: medium.",
+   "source": "docs/reports/sp2-symbolic-librdkafka-premises/README.md",
+   "recorded_by": "SP2-SYMBOLIC-LIBRDKAFKA-PREMISES"
+  },
+  {
    "id": "SP2-SHIPPED-PROVIDER-PROSE-BAN",
    "title": "Refuse a prose premise at load for a shipped provider crate",
    "why": "Recorded by SP2-SYMBOLIC-LIBRDKAFKA-PREMISES. quirin-provider-openssl refuses a string premise statement at load through its checker plugin (check::prose_premise); a shipped qcore-provider-* crate has no checker plugin, so qcore-provider-librdkafka's ban is its own test (every_premise_is_a_formula), run by the provider test step, not at load. DISCHARGE: a load-time refusal for crates that opt in (for example a load-path record flag the contract loader reads, refusing a resource_premise whose statement is a string in that crate's modules, total-or-reject), applied to librdkafka and to each SP3/SP4 crate once converted, with a test per crate and no change to any crate that does not opt in. Size: small.",
@@ -14729,13 +14732,6 @@
    "recorded_by": "GATE-SLOT-TEST-FLAKES"
   },
   {
-   "id": "NULLABLE-LAZY-CONSTRUCTOR-IN-LOOP",
-   "title": "A resource made non-null by a lazy constructor in a loop, or a non-null result poisoned and joined at a loop head, is a nullable resource at a nonnull use",
-   "why": "NULLABLE-GUARDED-RELEASE (rule 74c) cleared the guarded-release shape (4 of the 11 nullable-leaf rows RK-TOPIC-PARTITION-LIST-CONSTRUCTORS exposed, 12 of 20 leaves) but, on the opt-in route with that card merged, seven rows keep 8 `nullable resource ... used by a non-null contract` leaves and rd_kafka_mock_handle_ShareFetch keeps 3 (forgotten_partitions): rd_kafka_cgrp_owned_but_not_exist_partitions (`if (!result) result = rd_kafka_topic_partition_list_new(...); rd_kafka_topic_partition_list_add_copy(result, curr);` inside a loop: the loop-head join keeps the earlier-null alternative), rd_kafka_cgrp_calculate_subscribe_revoking_partitions (`revoking` built non-null, poisoned by an unbounded refusal, joined may-be-null), rd_kafka_cgrp_consumer_assignment_with_metadata, rd_kafka_cgrp_handle_SyncGroup_memberstate, rd_kafka_mock_cgrp_consumer_member_needs_revocation, rd_kafka_mock_handle_ConsumerGroupHeartbeat and balance. All stay Unknown with no leak. DISCHARGE: read each shape (a lazy-initialisation guard whose two arms both leave the name non-null at the join; the refusal that poisons a constructor result) and refine it or name the refusal; re-measure the eight rows.",
-   "source": "docs/reports/nullable-guarded-release/README.md",
-   "recorded_by": "NULLABLE-GUARDED-RELEASE"
-  },
-  {
    "id": "SETTLED-LEAK-JOINED-GENUINE-WITHDRAWN",
    "title": "Rule 74c (A) withdraws a genuine leak on a path that joins a refused release's path before the exit",
    "why": "NULLABLE-GUARDED-RELEASE (rule 74c (A)) withdraws a held leak report when the settled exit marks the identity by a refused release beside an Unknown leaf; the union join cannot tell a path through the refused release from another path to the same exit, so a genuine leak on the other path is withdrawn with it (Unsafe -> Unknown, fail-closed). Pinned instance: crates/qcore-c-gateway/tests/condition_call_desugar.rs, `int fd = k_open(path); if (flag && k_close(fd) == 0) {}` (the close of a possibly-invalid descriptor is refused; the flag-false path leaves a valid descriptor open). No opt-in row moved by (A) alone at 686ddf8f4. DISCHARGE: keep the refused release's mark path-separated (per-edge provenance at the join, or a witness search like the leak-witness census's untested and handed paths) so a leak with a path avoiding every refused release is published; census on the corpus how many provisional Unsafe rows rest on an intermediate-iterate claim (the census `settled: false` population).",
@@ -14743,11 +14739,60 @@
    "recorded_by": "NULLABLE-GUARDED-RELEASE"
   },
   {
-   "id": "SP6-GUARDED-SYMBOL-PROSE",
-   "title": "State cJSON_DetachItemViaPointer's remaining guarded symbols as formulas",
-   "why": "Recorded by SP6-SYMBOLIC-HYPOTHESIS-ATOMS. The nine guarded prerequisite symbols that repeated the detach_* atoms' sentences now repeat their formulas, but the declaration's other eight resource_guarded_symbol_v1 texts (detach, environment, failure_case, invalid_membership, membership, original_list_unchanged, remaining_list_valid, success_case) and the resource_guarded_decomposition_v1 document's readable string are still English; membership is a prerequisite symbol and invalid_membership a condition. Under the user decision of 2026-11-20 they may want typed atoms or formulas too. DISCHARGE: each stated symbolically over registered terms (with a vocabulary block and Lean model for what is missing), the guarded adoption plan and the premise-guarded-decomposition applications read through the legacy reader, no verdict moved. Size: medium.",
-   "source": "docs/reports/sp6-symbolic-hypothesis-atoms/README.md",
-   "recorded_by": "SP6-SYMBOLIC-HYPOTHESIS-ATOMS"
+   "id": "RK-TOPIC-PARTITION-CONSTRUCTORS-UNVALIDATED",
+   "title": "rd_kafka_topic_partition_list_new, _list_copy and rd_kafka_topic_partition_copy are declared owned but their bodies do not validate",
+   "why": "RK-TOPIC-PARTITION-LIST-CONSTRUCTORS declared them resource_return_owned(nonnull) in librdkafka/topic_partition_constructors.qv (pinned at 66910c10 and 046accf6); rd_kafka_topic_partition_new and rd_kafka_topic_partition_destroy validate (W4, entry), these three do not in rdkafka_partition.c on the opt-in run: _list_new's row is Unknown on the uncontracted static rd_kafka_topic_partition_list_grow (rd_realloc of the list's own elems member), _list_copy's on an access leaf (_add_copy into dst's elements), rd_kafka_topic_partition_copy's on the uncontracted static rd_kafka_topic_partition_update (metadata copy and a toppar reference into dst's _private). Two Safe rows (rd_kafka_topic_partition_copy_void, rd_kafka_topic_partition_list_copy_opaque) rest on them. DISCHARGE: validate each body (a realloc into a fresh object's member, the element copy, the reference taken into the result) or record the refusal that keeps them declared.",
+   "source": "docs/reports/rk-topic-partition-list-constructors/README.md",
+   "recorded_by": "RK-TOPIC-PARTITION-LIST-CONSTRUCTORS"
+  },
+  {
+   "id": "RK-TOPIC-PARTITION-LIST-ADD-ELEMENT-POINTER",
+   "title": "rd_kafka_topic_partition_list_add returns a pointer into an array its next call may reallocate; no contract form states that borrow",
+   "why": "RK-TOPIC-PARTITION-LIST-CONSTRUCTORS left rd_kafka_topic_partition_list_add (rdkafka_partition.c:3190-3196, through _add0 :3149-3188) undeclared: it returns &rktparlist->elems[cnt++], and _grow rd_reallocs elems on a later add, so resource_return_borrowed_from(rktparlist, ...) (valid until the list's release) would admit a use after the next add. It co-blocks 22 of the 68 opt-in rows that named the card's constructors uncontracted (alone with them: ut_topic_partitions, ut_create_topic_partition_lists). DISCHARGE: a contract form for a result borrowed from a container until its next mutation (or a reading that refuses an element pointer held across a mutating call), then the declaration, measured.",
+   "source": "docs/reports/rk-topic-partition-list-constructors/README.md",
+   "recorded_by": "RK-TOPIC-PARTITION-LIST-CONSTRUCTORS"
+  },
+  {
+   "id": "OWNED-CONSTRUCTOR-OUT-PARAMETER-DELIVERY",
+   "title": "An owned constructor result stored through an out-parameter (`*out = ctor()`) is read as a discarded owned result",
+   "why": "RK-TOPIC-PARTITION-LIST-CONSTRUCTORS: with rd_kafka_topic_partition_list_new declared owned, `*partitions = rd_kafka_topic_partition_list_new(0)` (rdkafka_subscription.c:337, rd_kafka_assignment; :365, rd_kafka_subscription) and two more rows (rd_kafka_handle_OffsetFetch, ut_create_topic_partition_lists) carry `discarded owned result of resource API` (unsupported, Unknown): the delivery to the caller through the out-parameter is not read. Related to CG10-OWNED-OUT-PARAMETER-MEMBER-SLOT (an allocating callee writing into a member slot). DISCHARGE: read an owned result stored through a formal pointer as a delivery to the caller (an out-parameter summary), or name the refusal; re-measure the four rows.",
+   "source": "docs/reports/rk-topic-partition-list-constructors/README.md",
+   "recorded_by": "RK-TOPIC-PARTITION-LIST-CONSTRUCTORS"
+  },
+  {
+   "id": "LATER-DECLARATOR-INITIALISER-UNREAD",
+   "title": "A later declarator's initialiser (`T *a = X, *b = Y;`) is read as a store through `*b`",
+   "why": "NULLABLE-LAZY-CONSTRUCTOR-IN-LOOP traced rd_kafka_mock_handle_ConsumerGroupHeartbeat (rdkafka_mock_handlers.c:2894-2896, `rd_kafka_topic_partition_list_t *sent_assignment = NULL, *existing_assignment = NULL, *next_assignment = NULL;`): the statement reader takes the later declarators `*existing_assignment = NULL` as stores through a pointer (`indirect memory access is outside the resource projection` at the declaration), so `existing_assignment` has no binding on the path that skips its construction, the join makes it unknown, the `RD_IF_FREE` guard is refused (rule 10b) and the release keeps `nullable resource ... used by a non-null contract`. Pinned: crates/qcore-c-gateway/tests/nullable_lazy_constructor.rs `the_other_shapes_stay_refused_without_a_leak` (`void *a = 0, *r = 0;` Unknown; one declarator per statement Safe). DISCHARGE: read each init-declarator of a declaration as that name's initialisation (the lexical-closure reader of rule 10o already finds later declarators), measure the corpus (every multi-declarator pointer declaration with initialisers can move), re-measure the Heartbeat row.",
+   "source": "docs/reports/nullable-lazy-constructor-in-loop/README.md",
+   "recorded_by": "NULLABLE-LAZY-CONSTRUCTOR-IN-LOOP"
+  },
+  {
+   "id": "REGISTRY-UNDECIDED-CALL-POISONS-EVERY-BINDING",
+   "title": "A contract call refused for an undecided registry holder poisons every binding, not rule 10a's frame",
+   "why": "NULLABLE-LAZY-CONSTRUCTOR-IN-LOOP traced rd_kafka_cgrp_consumer_assignment_with_metadata (rdkafka_cgrp.c:3036-3037, `*missing_topic_ids = rd_list_new(1, rd_list_Uuid_destroy);` inside the loop): the contract call's transfer, refused as `callback-registry-undecided` (rule 13w; the result is delivered through a formal's out slot), sets `unknown` and `may_be_null` on `assignment_with_metadata`, a local it cannot write (no address taken, not in the call's text), so the loop head joins the poisoned binding and `return assignment_with_metadata;` keeps the identity and nullable leaves. Related: OWNED-CONSTRUCTOR-OUT-PARAMETER-DELIVERY (the out-slot delivery), CG22-REGISTRY-OUTSIDE-THE-FRAME. DISCHARGE: give this refusal rule 10a's sparing frame (the call's text writes `*missing_topic_ids` only), keeping its own refusal; re-measure the row.",
+   "source": "docs/reports/nullable-lazy-constructor-in-loop/README.md",
+   "recorded_by": "NULLABLE-LAZY-CONSTRUCTOR-IN-LOOP"
+  },
+  {
+   "id": "UNCONTRACTED-ARM-JOIN-NULLABLE-LEAF",
+   "title": "A name joined from a declared constructor and an uncontracted pointer result carries the nullable leaf at its release",
+   "why": "NULLABLE-LAZY-CONSTRUCTOR-IN-LOOP: rd_kafka_mock_cgrp_consumer_member_needs_revocation (rdkafka_mock_cgrp.c:1170-1185, the other arm assigns rd_kafka_topic_partition_list_intersection_by_id, which binds nothing) and rd_kafka_cgrp_handle_SyncGroup_memberstate (rdkafka_cgrp.c:1924-1954, the other arm assigns rd_kafka_buf_read_topic_partitions inside a refused branch condition) join a declared non-null constructor's site with an unknown binding; the release and the return keep `unresolved resource identity` and `nullable resource ... used by a non-null contract`. The obstacle is the uncontracted callee (its own leaf is present); the nullable leaf is a by-product of the unknown alternative. DISCHARGE: declare the two callees (owned results) in the librdkafka provider, or record why not; re-measure the two rows.",
+   "source": "docs/reports/nullable-lazy-constructor-in-loop/README.md",
+   "recorded_by": "NULLABLE-LAZY-CONSTRUCTOR-IN-LOOP"
+  },
+  {
+   "id": "FLAG-CORRELATED-RELEASE",
+   "title": "A release guarded by a flag recording which value a name holds is not correlated",
+   "why": "NULLABLE-LAZY-CONSTRUCTOR-IN-LOOP: balance (rdkafka_sticky_assignor.c:1188-1211) sets `leftoverUnassignedPartitions = unassignedPartitions` (a borrowed formal) and, under a condition that also sets `leftoverUnassignedPartitions_allocated = rd_true`, replaces it with `rd_kafka_topic_partition_list_copy(...)`; the release is under `if (leftoverUnassignedPartitions_allocated)`. The join of the formal alias and the copy is unknown, so the release keeps the identity and nullable leaves. Pinned: nullable_lazy_constructor.rs `the_other_shapes_stay_refused_without_a_leak` (the `made` flag). DISCHARGE: a path-correlation of a boolean local with the binding it was set beside (both written only on the same arm, neither written after), or name the refusal; re-measure the row.",
+   "source": "docs/reports/nullable-lazy-constructor-in-loop/README.md",
+   "recorded_by": "NULLABLE-LAZY-CONSTRUCTOR-IN-LOOP"
+  },
+  {
+   "id": "AMPERSAND-RUN-PARITY-OTHER-READERS",
+   "title": "Other token readers decide address-taking from one `&` and misread `&&`",
+   "why": "NULLABLE-LAZY-CONSTRUCTOR-IN-LOOP (rule 74d (C)) fixed rule 10a's frame, which read the second `&` of `p && q` as `&q` (the lexer emits one token per `&`); the conditional names derive from the frame and follow. Other readers decide by the neighbouring token: crates/qcore-c-gateway/src/loop_owner_instance.rs `address_taken` treats `&name` as taken only when the token before the `&` is not `&`, which misses `p && &q` (an odd run of three, an address), the unsound direction; about 45 `== \"&\"` comparisons in the gateway sources are unaudited. DISCHARGE: route address-taking through the run-parity reading (`unary_address_runs`), audit each site, pin `p && &q`.",
+   "source": "docs/reports/nullable-lazy-constructor-in-loop/README.md",
+   "recorded_by": "NULLABLE-LAZY-CONSTRUCTOR-IN-LOOP"
   }
  ],
  "updated": "Completed plugin premise integration; exact hand-maintained union retains810followups, borrowed measured-source8419Rust/354Lean/freshcard133provider, exact source equivalence checked; authoritative root committed-matrix Python confirmation in integration receipt. CMetrics map/opts API model specifications added at the explicit user request. Eight declared-model API contracts remain outside interpreted views, with CMT-MAP-OPTS-CONTRACT-ADOPTION and CMT-LABELED-HASH-ZERO-STATIC-STORAGE Open. No trusted API coverage is claimed; the source gate is recorded by this card alongside its separate initializer native checkpoint. W48-CMT-TRACKED-INTERIOR-SELF-INIT implements rule 36b's checked initializer effect transport for an exact live owned root or embedded record, retaining actual self writes, invalidating aliased member facts and preserving resource obligations; nondefault custody frames refuse and no ordinary summary is exported. The canonical CFL intrusive_list.qv declares matching audit preconditions/effects; two CMetrics .qv modules add six map and two opts lifecycle models, including transitive ownership, partial failure, borrowed results and uncleared cleanup fields. All remain outside interpreted views; checked API adoption and labeled zero-hash storage accounting have named Open follow-ups. Fresh BASE/planner precedes prediction f18d96065 and implementation; the later contract amendment 08da23123 precedes .qv edits. Native corpus BASE/TIP Safe/Unknown/Pending/provisional-Unsafe: 1009 / 3816 / 0 / 9 to 1011 / 3814 / 0 / 9; full system/slice, 5781 NULL dictionaries and runtime projections are compared, 241 semantic leaves accounted, zero unexplained leaves and no prior Safe loss. Gate 8654 Rust / 370 Lean / 374 Python, provider 133 Rust / 25 Python and all five package verifies pass. The actual deep source reader uses 328 KiB below 1 MiB. Full getter closure remains Open; W48-CMT-SELF-INIT-DISJOINT-FRAMES tracks the next bounded frame extension, and W48-EXACT-RETURN-WITNESS-PRECISION is unchanged. Native evidence is isolated to measured e92d8aef35a8bd14550e90219d19a56eb3b196e7; later source gate 2d0d85299b830aa24d7f200d63a308653582363f validates the added declared API models separately; see docs/reports/w48-cmt-tracked-interior-self-init/README.md."
