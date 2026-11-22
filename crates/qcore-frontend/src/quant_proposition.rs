@@ -582,3 +582,147 @@ pub fn lean(formula: &F) -> String {
         ),
     }
 }
+
+/// Card SP6-GUARDED-SYMBOL-PROSE: a G01p formula on its own (no `#ID(...) =`
+/// head), read from its tokens (an end-of-file token is ignored). Its free
+/// names are not checked here: the caller supplies their sorts and then
+/// [`validate`]s the definition it builds. The same work and node bounds as
+/// [`parse`] apply.
+pub fn parse_formula_tokens(tokens: &[T]) -> Result<F, String> {
+    let tokens: Vec<T> = tokens.iter().filter(|t| **t != T::Eof).cloned().collect();
+    let mut r = Reader {
+        tokens,
+        at: 0,
+        nodes: 0,
+        steps: 0,
+    };
+    let formula = r.formula(0)?;
+    if r.at != r.tokens.len() {
+        return Err(error());
+    }
+    Ok(formula)
+}
+
+fn print_term(term: &Term, out: &mut String) {
+    match term {
+        Term::Variable { name } => {
+            out.push('#');
+            out.push_str(name);
+        }
+        Term::Integer { decimal } => out.push_str(decimal),
+        Term::Apply {
+            function,
+            arguments,
+        } => {
+            out.push('#');
+            out.push_str(function);
+            print_arguments(arguments, out);
+        }
+        Term::Add { left, right } | Term::Sub { left, right } | Term::Mul { left, right } => {
+            let op = match term {
+                Term::Add { .. } => " + ",
+                Term::Sub { .. } => " - ",
+                _ => " * ",
+            };
+            out.push('(');
+            print_term(left, out);
+            out.push_str(op);
+            print_term(right, out);
+            out.push(')');
+        }
+        Term::Neg { term } => {
+            out.push('-');
+            print_term(term, out);
+        }
+    }
+}
+
+fn print_arguments(arguments: &[Term], out: &mut String) {
+    out.push('(');
+    for (i, argument) in arguments.iter().enumerate() {
+        if i > 0 {
+            out.push(',');
+        }
+        print_term(argument, out);
+    }
+    out.push(')');
+}
+
+fn print_formula(formula: &F, out: &mut String) {
+    match formula {
+        F::Predicate { name, arguments } => {
+            out.push('#');
+            out.push_str(name);
+            print_arguments(arguments, out);
+        }
+        F::Equal { left, right } => {
+            print_term(left, out);
+            out.push_str(" == ");
+            print_term(right, out);
+        }
+        F::Compare {
+            operator,
+            left,
+            right,
+        } => {
+            print_term(left, out);
+            out.push_str(match operator {
+                Comparison::Less => " < ",
+                Comparison::LessEqual => " <= ",
+                Comparison::Greater => " > ",
+                Comparison::GreaterEqual => " >= ",
+            });
+            print_term(right, out);
+        }
+        F::Not { body } => {
+            out.push('!');
+            print_formula(body, out);
+        }
+        F::And { left, right } | F::Or { left, right } | F::Implies { left, right } => {
+            let op = match formula {
+                F::And { .. } => " && ",
+                F::Or { .. } => " || ",
+                _ => " => ",
+            };
+            out.push('(');
+            print_formula(left, out);
+            out.push_str(op);
+            print_formula(right, out);
+            out.push(')');
+        }
+        F::Forall {
+            variable,
+            sort,
+            body,
+        }
+        | F::Exists {
+            variable,
+            sort,
+            body,
+        } => {
+            out.push_str(if matches!(formula, F::Forall { .. }) {
+                "forall (#"
+            } else {
+                "exists (#"
+            });
+            out.push_str(variable);
+            out.push_str(": ");
+            out.push_str(sort);
+            out.push_str(") { ");
+            print_formula(body, out);
+            out.push_str(" }");
+        }
+    }
+}
+
+/// Card SP6-GUARDED-SYMBOL-PROSE: a formula's canonical G01p printing, the
+/// spelling the typed atoms of `cjson.qv` are written in: every binary
+/// formula and arithmetic term fully parenthesized, arguments separated by
+/// `,` alone, `forall (#x: sort) { BODY }`. [`parse_formula_tokens`] reads
+/// it back as the same tree.
+#[must_use]
+pub fn print(formula: &F) -> String {
+    let mut out = String::new();
+    print_formula(formula, &mut out);
+    out
+}

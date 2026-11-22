@@ -52,14 +52,11 @@ pub struct Checked {
 fn sha(s: &str) -> String {
     qcore_schemas::sha256_hex(s.as_bytes())
 }
-fn literal(s: &str) -> Result<String, String> {
-    if s.contains(['"', '\\', '\r']) {
-        return Err("guarded bridge: unescaped LF source literal required".into());
-    }
-    Ok(format!("\"{s}\""))
-}
 /// Deterministic source form. Proposition bytes and dependency order are held
 /// independently in the plan, not recovered by deleting arbitrary clauses.
+/// Card SP6-GUARDED-SYMBOL-PROSE (C04.18.6): each proposition is written as
+/// its unquoted formula (it must be a canonical guarded formula, `QF003`
+/// otherwise) and the document as its unquoted clauses.
 pub fn render(metadata: &Inline) -> Result<String, String> {
     let mut out = String::new();
     for (id, binding) in &metadata.bindings {
@@ -76,15 +73,20 @@ pub fn render(metadata: &Inline) -> Result<String, String> {
             .iter()
             .map(|d| format!(", {d}"))
             .collect::<String>();
+        qcore_frontend::premise_formula::guarded_proposition(id, &binding.proposition)?;
         out.push_str(&format!(
             "    requires resource_guarded_symbol_v1({id}, {role}, {}{deps});\n",
-            literal(&binding.proposition)?
+            binding.proposition
         ));
+    }
+    let clauses = qcore_frontend::guarded_decomposition::parse(&metadata.readable)?;
+    if qcore_frontend::guarded_decomposition::readable(&clauses) != metadata.readable {
+        return Err("guarded bridge: noncanonical readable document".into());
     }
     out.push_str(&format!(
         "    requires resource_guarded_decomposition_v1({}, {});\n",
         metadata.entry,
-        literal(&metadata.readable)?
+        qcore_frontend::guarded_decomposition::source_clauses(&clauses)
     ));
     Ok(out)
 }

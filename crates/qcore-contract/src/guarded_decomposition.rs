@@ -167,6 +167,10 @@ fn lower(
         {
             return Err("guarded-decomposition: malformed binding or graph dependency".into());
         }
+        // Card SP6-GUARDED-SYMBOL-PROSE (C04.18.6): every proposition, of a
+        // standalone or an inline binding, is the canonical printing of a
+        // C04.18.9 typed-rendering formula; English is refused (`QF003`).
+        qcore_frontend::premise_formula::guarded_proposition(id, &binding.proposition)?;
     }
     let mut used = BTreeSet::new();
     let mut require = |id: &str, role| -> Result<(), String> {

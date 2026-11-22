@@ -369,7 +369,10 @@ fn historical_symbolic_checkpoint(path: &str, current: &str) -> String {
     assert_eq!(qcore_schemas::sha256_hex(bytes), PLAN_SHA);
     let plan: bridge::Plan = serde_json::from_slice(bytes).unwrap();
     assert_eq!(plan.module, path);
-    let addition = bridge::render(&plan.metadata).unwrap();
+    // Card SP6-GUARDED-SYMBOL-PROSE: the frozen metadata renders only in the
+    // retired string form.
+    let addition =
+        legacy_prose_premise::render_string_form(&serde_json::to_value(&plan.metadata).unwrap());
     assert_eq!(current.matches(&addition).count(), 1);
     // Card SP5-GLOBAL-PROSE-PREMISE-BAN: `current` is the module before card
     // SP2-SYMBOLIC-LIBRDKAFKA-PREMISES, whose string premises load nowhere.
