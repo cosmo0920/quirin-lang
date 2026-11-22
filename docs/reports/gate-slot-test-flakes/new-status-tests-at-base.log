@@ -1,0 +1,87 @@
+test_a_build_inside_its_admission_poll_does_not_close_the_builds (test_gate_slot_lane.Status.test_a_build_inside_its_admission_poll_does_not_close_the_builds) ... FAIL
+test_a_lane_waiter_inside_its_poll_is_a_waiter_not_a_third_holder (test_gate_slot_lane.Status.test_a_lane_waiter_inside_its_poll_is_a_waiter_not_a_third_holder) ... FAIL
+test_a_probe_of_a_free_slot_is_not_a_hold (test_gate_slot_lane.Status.test_a_probe_of_a_free_slot_is_not_a_hold)
+A queued lane waiter probing the free slot, and an audit waiter ... FAIL
+test_an_older_clients_audit_waiter_inside_its_poll_is_not_queued_not_a_holder (test_gate_slot_lane.Status.test_an_older_clients_audit_waiter_inside_its_poll_is_not_queued_not_a_holder) ... FAIL
+test_status_shows_a_suite_waiting_for_the_lane (test_gate_slot_lane.Status.test_status_shows_a_suite_waiting_for_the_lane) ... ok
+test_status_shows_lane_holders_and_waiters (test_gate_slot_lane.Status.test_status_shows_lane_holders_and_waiters) ... ok
+test_which_locks_are_a_poll (test_gate_slot_lane.Status.test_which_locks_are_a_poll) ... ERROR
+
+======================================================================
+ERROR: test_which_locks_are_a_poll (test_gate_slot_lane.Status.test_which_locks_are_a_poll)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a80557782598c2525/private/base-check/scripts/tests/test_gate_slot_lane.py", line 767, in test_which_locks_are_a_poll
+    poll = slot_mod.slot_hold_is_poll
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'gate_slot' has no attribute 'slot_hold_is_poll'
+
+======================================================================
+FAIL: test_a_build_inside_its_admission_poll_does_not_close_the_builds (test_gate_slot_lane.Status.test_a_build_inside_its_admission_poll_does_not_close_the_builds)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a80557782598c2525/private/base-check/scripts/tests/test_gate_slot_lane.py", line 761, in test_a_build_inside_its_admission_poll_does_not_close_the_builds
+    self.assertEqual(status["builds"]["closed_by"], [])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: [3480470] != []
+
+First list contains 1 additional elements.
+First extra element 0:
+3480470
+
+- [3480470]
++ []
+
+======================================================================
+FAIL: test_a_lane_waiter_inside_its_poll_is_a_waiter_not_a_third_holder (test_gate_slot_lane.Status.test_a_lane_waiter_inside_its_poll_is_a_waiter_not_a_third_holder)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a80557782598c2525/private/base-check/scripts/tests/test_gate_slot_lane.py", line 723, in test_a_lane_waiter_inside_its_poll_is_a_waiter_not_a_third_holder
+    self.assertEqual(sorted(status["short_lane"]["holders"]), sorted(p.pid for p in holders))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: [3480472, 3480475, 3480479] != [3480472, 3480475]
+
+First list contains 1 additional elements.
+First extra element 2:
+3480479
+
+- [3480472, 3480475, 3480479]
+?                  ---------
+
++ [3480472, 3480475]
+
+======================================================================
+FAIL: test_a_probe_of_a_free_slot_is_not_a_hold (test_gate_slot_lane.Status.test_a_probe_of_a_free_slot_is_not_a_hold)
+A queued lane waiter probing the free slot, and an audit waiter
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a80557782598c2525/private/base-check/scripts/tests/test_gate_slot_lane.py", line 737, in test_a_probe_of_a_free_slot_is_not_a_hold
+    self.assertEqual(status["short_lane"]["holders"], [holder.pid])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: [3480485, 3480491] != [3480485]
+
+First list contains 1 additional elements.
+First extra element 1:
+3480491
+
+- [3480485, 3480491]
++ [3480485]
+
+======================================================================
+FAIL: test_an_older_clients_audit_waiter_inside_its_poll_is_not_queued_not_a_holder (test_gate_slot_lane.Status.test_an_older_clients_audit_waiter_inside_its_poll_is_not_queued_not_a_holder)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a80557782598c2525/private/base-check/scripts/tests/test_gate_slot_lane.py", line 755, in test_an_older_clients_audit_waiter_inside_its_poll_is_not_queued_not_a_holder
+    self.assertEqual(job["role"], "waiting for a slot (not queued: a gate_slot.py without "
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                  "arrival order)")
+                                  ^^^^^^^^^^^^^^^^^
+AssertionError: 'holder' != 'waiting for a slot (not queued: a gate_slot.py without arrival order)'
+- holder
++ waiting for a slot (not queued: a gate_slot.py without arrival order)
+
+
+----------------------------------------------------------------------
+Ran 7 tests in 1.879s
+
+FAILED (failures=4, errors=1)
