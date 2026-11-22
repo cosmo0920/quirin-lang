@@ -6924,7 +6924,7 @@
   "workspace_tests": 9889,
   "provider_tests": 174,
   "python_evidence_validator_tests": 807,
-  "lean_audits": 483,
+  "lean_audits": 485,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
    "AuditAggregateOwnedField.lean",
@@ -7138,6 +7138,7 @@
    "AuditLiteralTailActual.lean",
    "AuditLocalCondition.lean",
    "AuditLocalSourceBindings.lean",
+   "AuditLocalTypedAtoms.lean",
    "AuditLoggerEffects.lean",
    "AuditLogicalAndOperand.lean",
    "AuditLookupRestrictedReuse.lean",
@@ -7239,6 +7240,7 @@
    "AuditPointerTypedefMember.lean",
    "AuditPremiseFlow.lean",
    "AuditPremiseFormula.lean",
+   "AuditPremiseFormulaCjsonTypedAtoms.lean",
    "AuditPremiseFormulaFluentBit.lean",
    "AuditPremiseFormulaLibevent.lean",
    "AuditPremiseFormulaLibrdkafka.lean",
@@ -7416,7 +7418,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "full landing gate: every step exits 0 except the Python suite's two stale-matrix checks, cleared by regenerating the matrix from this record; provider gate not selected (no providers/ change), provider count carried from SP5",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/nullable-guarded-release/integration/gate.json)"
+  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
  },
  "named_followups": [
   {
