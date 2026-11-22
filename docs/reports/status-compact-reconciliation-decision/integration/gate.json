@@ -1,0 +1,13 @@
+{
+  "note": "Landing integrate/r54 (base main 1d69b7b81, which already carries SP4-SYMBOLIC-LIBEVENT-PREMISES landed from another session; merges STATUS-COMPACT-RECONCILIATION-DECISION b8c1178c6, the integrator's own ledger commit, so no card branch; third_party/libevent checked out at d82464a27). USER DECISION 2026-11-22: \"ok, accept the reconciliation failures\". Amendments applied in b8c1178c6 with --profiles-base origin/main: STATUS-COMPACT-RECONCILIATION-CLAIMS retired (accepted as failing; every claimed text verbatim in the status checkpoint); W45-RECONCILIATION-SUBSTRING-CLAIMS stays registered; status_edits empty; no profiles. The amendment file first named base 6820ddc31 by mistake; corrected to 1d69b7b81, the main it was applied on. Full landing gate on b8c1178c6 twice (private/integrate-r54/gate and gate2, the second after a no-op merge of an unchanged main; raw record of the second beside this file as gate-scope.json) via scripts/gate_scope.py --base origin/main --full --landing through private/toolchain/env.sh: Rust 675 units / 720 summaries, 9870 passed, 0 failed, 21 ignored; fmt, Clippy and both reevaluation examples exit 0; no Lean or provider step scoped (no proof or provider diff against main). Lean checked separately on the same tree: lake build through private/toolchain/env.sh, 541 jobs, exit 0, no sorry, warning or axiom lines (private/integrate-r54/lean.log), 482 proof/Audit*.lean. provider_tests carried from r53 (173, measured before SP4's libevent provider change; SP4's own landing gate ran its provider steps, all exit 0). Python (801 tests) exited 1 on test_build_matrix_sections' stale-matrix check (both runs) and test_gate_slot_lane's test_a_lane_job_waits_until_its_declared_memory_is_available (first run only, the known slot-lane timing flake); the rerun after regeneration is in private/integrate-r54/python-rerun.log. Ledger and documentation only; no verdict, pin or baseline changes; land.py publish is owed.",
+  "workspace_tests": 9870,
+  "provider_tests": 173,
+  "python_evidence_validator_tests": 801,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "full landing gate: every step exits 0 except the Python suite's stale-matrix check, cleared by regenerating the matrix from this record, and one slot-lane timing flake (disclosed in the note); Lean built separately (482 audits); provider count carried from r53",
+  "lean_audits": 482,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
