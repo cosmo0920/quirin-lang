@@ -320,6 +320,7 @@ import QCore.NullMemberScope
 import QCore.NullPointerConstantPremise
 import QCore.NullTriage
 import QCore.NullTriagePaths
+import QCore.NullableGuardedRelease
 import QCore.NullableReferenceDrop
 import QCore.NullableRemoval
 import QCore.ObsReordering

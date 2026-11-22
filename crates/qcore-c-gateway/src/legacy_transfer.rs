@@ -247,6 +247,13 @@ pub(super) struct AbstractState {
     /// Custody retained after a rejected effect; its residual is not a proven
     /// leak because the unmodeled action may have discharged it.
     pub(super) unresolved_effect_sites: BTreeSet<usize>,
+    /// Card **NULLABLE-GUARDED-RELEASE** (rule 74c): the identities a refused
+    /// release (a resource release whose contract effect was withheld) marked
+    /// unresolved on some path reaching here. A subset of the markers' own
+    /// provenance, joined by union like them; empty in every function with no
+    /// refused release, which keeps the join, and with it the work-list
+    /// schedule, as it was there (constraint 6).
+    pub(super) refused_release_sites: BTreeSet<usize>,
     pub(super) widened: bool,
     /// Whether some instruction on *this* path was refused or reported an
     /// unresolved effect (O04). It is the per-path counterpart of the
@@ -460,6 +467,8 @@ impl AbstractState {
             .extend(incoming.nullable_sites.iter().copied());
         self.unresolved_effect_sites
             .extend(incoming.unresolved_effect_sites.iter().copied());
+        self.refused_release_sites
+            .extend(incoming.refused_release_sites.iter().copied());
         for pointer in self.pointers.values() {
             // Card W43-LIBC-RESULT-ALIAS: a derived pointer's nullness is its
             // own (`strchr` returns NULL for a live base), never its base's.
@@ -2024,6 +2033,9 @@ fn analyze_cfg_with_entry_collected(
     // Card LOOP-REACQUISITION-LEAK-ACCUSATION (rule 42): earlier generations'
     // leak reports wait for the settled states.
     let mut deferred_leaks = loop_reacquisition_leak_route::Deferred::default();
+    // Card NULLABLE-GUARDED-RELEASE (rule 74c): current-generation leak
+    // reports wait for the settled exit.
+    let mut held_leaks = settled_leak_route::Held::default();
     let mut steps = 0usize;
     let acquisition_lines = cfg
         .nodes
@@ -2074,13 +2086,13 @@ fn analyze_cfg_with_entry_collected(
         if node.is_exit {
             let exempt = entry_custody.exempt_sites(&output);
             report_leaks(
-                &cfg.function,
                 node.line,
                 &output,
                 &acquisition_lines,
                 &exempt,
-                &mut diagnostics,
                 &mut deferred_leaks,
+                &mut held_leaks,
+                node_id,
             );
             // Card CALLEE-RETENTION-CLASS1 (rule 12t).
             retained_by_route::report_exit(&cfg.function, node.line, &output, &mut diagnostics);
@@ -2215,6 +2227,9 @@ fn analyze_cfg_with_entry_collected(
     // Card LOOP-REACQUISITION-LEAK-ACCUSATION (rule 42): publish every
     // deferred earlier-generation leak the settled refusal does not withdraw.
     deferred_leaks.settle(&cfg, &incoming, &mut diagnostics);
+    // Card NULLABLE-GUARDED-RELEASE (rule 74c): publish every held leak the
+    // settled exit does not withdraw.
+    held_leaks.settle(&cfg, &incoming, &mut diagnostics);
 
     if incoming.iter().flatten().any(|state| state.widened) {
         diagnostics.insert(LegacyDiagnostic {
@@ -5170,6 +5185,54 @@ pub(super) fn apply_resource_action(
     escape: bool,
     nullable: bool,
 ) {
+    if escape {
+        return resource_action(
+            function,
+            line,
+            source,
+            state,
+            acquisition_lines,
+            diagnostics,
+            escape,
+            nullable,
+        );
+    }
+    // Card NULLABLE-GUARDED-RELEASE (rule 74c): what a refused release marks.
+    let marked = state.unresolved_effect_sites.clone();
+    let reported = diagnostics.clone();
+    let targets = state
+        .pointers
+        .get(source)
+        .map(|pointer| pointer.targets.clone());
+    resource_action(
+        function,
+        line,
+        source,
+        state,
+        acquisition_lines,
+        diagnostics,
+        escape,
+        nullable,
+    );
+    settled_leak_route::record_refused_release(
+        state,
+        &marked,
+        targets.as_ref(),
+        diagnostics.difference(&reported),
+    );
+}
+
+#[allow(clippy::too_many_arguments)]
+fn resource_action(
+    function: &str,
+    line: usize,
+    source: &str,
+    state: &mut AbstractState,
+    acquisition_lines: &BTreeMap<usize, usize>,
+    diagnostics: &mut BTreeSet<LegacyDiagnostic>,
+    escape: bool,
+    nullable: bool,
+) {
     let pointer = state
         .pointers
         .get(source)
@@ -6643,15 +6706,15 @@ pub(super) fn acquisition_line(acquisition_lines: &BTreeMap<usize, usize>, site:
 }
 
 pub(super) fn report_leaks(
-    function: &str,
     line: usize,
     state: &AbstractState,
     acquisition_lines: &BTreeMap<usize, usize>,
     // Caller-owned parameter resources are discharged by the caller; a live
     // formal at exit is the interface, not a leak.
     exempt: &BTreeSet<usize>,
-    diagnostics: &mut BTreeSet<LegacyDiagnostic>,
     deferred: &mut loop_reacquisition_leak_route::Deferred,
+    held: &mut settled_leak_route::Held,
+    node: usize,
 ) {
     for (&site, &status) in &state.resources {
         // Card REFCOUNT-RESOURCE-KIND (rule 13b): a reference family's
@@ -6667,13 +6730,9 @@ pub(super) fn report_leaks(
                 deferred.defer(line, acquisition_line(acquisition_lines, site), site);
                 continue;
             }
-            diagnostics.insert(LegacyDiagnostic {
-                function: function.to_owned(),
-                line,
-                kind: LegacyDiagnosticKind::Leak {
-                    acquisition_line: acquisition_line(acquisition_lines, site),
-                },
-            });
+            // Card NULLABLE-GUARDED-RELEASE (rule 74c): held until the
+            // settled exit decides it.
+            held.hold(line, acquisition_line(acquisition_lines, site), site, node);
         }
     }
 }

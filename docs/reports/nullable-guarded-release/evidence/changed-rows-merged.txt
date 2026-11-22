@@ -1,0 +1,505 @@
+lib/chunkio/src/chunkio.c cio_create Unknown -> Unknown
+   - 2321 unresolved resource identity `ctx`
+lib/chunkio/src/cio_chunk.c cio_chunk_open Unknown -> Unknown
+   - 2052 unresolved resource identity `ch`
+   - 2054 unresolved resource identity `ch`
+lib/chunkio/src/cio_stream.c cio_stream_create Unknown -> Unknown
+   - 2205 unresolved resource identity `st`
+   - 2207 unresolved resource identity `st`
+   - 2216 unresolved resource identity `st`
+   - 2216 nullable resource `st` used by a non-null contract
+lib/cmetrics/src/cmetrics.c cmt_create Unknown -> Unknown
+   - 5594 unresolved resource identity `cmt`
+   - 5595 unresolved resource identity `cmt`
+   - 5598 unresolved resource identity `cmt`
+   - 5599 unresolved resource identity `cmt`
+   - 5601 unresolved resource identity `cmt`
+   - 5604 unresolved resource identity `cmt`
+   - 5605 unresolved resource identity `cmt`
+   - 5608 unresolved resource identity `cmt`
+lib/cmetrics/src/cmt_decode_msgpack.c unpack_label Unknown -> Unknown
+   - 7286 unresolved resource identity `new_label`
+   - 7292 unresolved resource identity `new_label`
+   - 7295 unresolved resource identity `new_label`
+   - 7302 unresolved resource identity `new_label`
+lib/cmetrics/src/cmt_decode_msgpack.c unpack_metric Unknown -> Unknown
+   - 7976 unresolved resource identity `metric`
+   - 7978 unresolved resource identity `metric`
+   - 7985 unresolved resource identity `metric`
+   - 7987 unresolved resource identity `metric`
+   - 7990 unresolved resource identity `metric`
+lib/cmetrics/src/cmt_decode_opentelemetry.c decode_exponential_histogram_data_point Unknown -> Unknown
+   - 8761 unresolved resource identity `sample`
+lib/cmetrics/src/cmt_decode_opentelemetry.c decode_histogram_data_point Unknown -> Unknown
+   - 8549 unresolved resource identity `sample`
+lib/cmetrics/src/cmt_decode_opentelemetry.c decode_numerical_data_point Unknown -> Unknown
+   - 8311 unresolved resource identity `sample`
+lib/cmetrics/src/cmt_decode_opentelemetry.c decode_summary_data_point Unknown -> Unknown
+   - 8434 unresolved resource identity `sample`
+lib/cmetrics/src/cmt_decode_prometheus_remote_write.c decode_histogram_points Unknown -> Unknown
+   - 6822 unresolved resource identity `metric`
+lib/cmetrics/src/cmt_decode_prometheus_remote_write.c decode_numerical_samples Unknown -> Unknown
+   - 6633 unresolved resource identity `metric`
+lib/cmetrics/src/cmt_decode_statsd.c decode_numerical_message Unknown -> Unknown
+   - 5756 unresolved resource identity `metric`
+lib/cmetrics/src/cmt_encode_opentelemetry.c create_exemplar_from_kvlist Unknown -> Unknown
+   + 6985 use of `variant` after its object moved or its parent changed (interior-borrow-ended)
+   + 6995 use of `variant` after its object moved or its parent changed (interior-borrow-ended)
+   + 6998 use of `variant` after its object moved or its parent changed (interior-borrow-ended)
+   + 7025 use of `variant` after its object moved or its parent changed (interior-borrow-ended)
+   + 7027 use of `variant` after its object moved or its parent changed (interior-borrow-ended)
+   + 7030 use of `variant` after its object moved or its parent changed (interior-borrow-ended)
+   + 7033 use of `variant` after its object moved or its parent changed (interior-borrow-ended)
+   + 7041 use of `variant` after its object moved or its parent changed (interior-borrow-ended)
+   + 7043 use of `variant` after its object moved or its parent changed (interior-borrow-ended)
+   + 7046 use of `variant` after its object moved or its parent changed (interior-borrow-ended)
+lib/cmetrics/src/cmt_encode_opentelemetry.c initialize_opentelemetry_context Unknown -> Unknown
+   - 9044 unresolved resource identity `encoder`
+   - 9045 unresolved resource identity `encoder`
+lib/cmetrics/src/cmt_encode_prometheus_remote_write.c set_up_time_series_for_label_set Unknown -> Unknown
+   - 6800 unresolved resource identity `time_series_entry`
+   - 6806 unresolved resource identity `time_series_entry`
+   - 6825 unresolved resource identity `time_series_entry`
+   - 6887 unresolved resource identity `time_series_entry`
+lib/cmetrics/src/cmt_map.c cmt_map_create Unknown -> Unknown
+   - 5571 unresolved resource identity `map`
+   - 5594 unresolved resource identity `label`
+   - 5599 unresolved resource identity `map`
+   - 5599 nullable resource `map` used by a non-null contract
+lib/cmetrics/src/cmt_map.c map_metric_create Unknown -> Unknown
+   - 5726 unresolved resource identity `label`
+   - 5732 unresolved resource identity `metric`
+   - 5732 nullable resource `metric` used by a non-null contract
+   - 5735 unresolved resource identity `metric`
+lib/cmetrics/src/cmt_summary.c cmt_summary_create Unknown -> Unknown
+   - 5514 unresolved resource identity `s`
+   - 5514 nullable resource `s` used by a non-null contract
+lib/ctraces/src/ctr_encode_opentelemetry.c set_event Unknown -> Unknown
+   - 9052 unresolved resource identity `event`
+   - 9052 nullable resource `event` used by a non-null contract
+lib/ctraces/src/ctr_link.c ctr_link_create Unknown -> Unknown
+   - 6779 unresolved resource identity `link`
+   - 6780 unresolved resource identity `link`
+   - 6786 unresolved resource identity `link`
+   - 6788 unresolved resource identity `link`
+   - 6793 unresolved resource identity `link`
+   - 6793 nullable resource `link` used by a non-null contract
+lib/ctraces/src/ctr_resource.c ctr_resource_span_create Unknown -> Unknown
+   - 6829 unresolved resource identity `resource_span`
+   - 6830 unresolved resource identity `resource_span`
+   - 6834 unresolved resource identity `resource_span`
+lib/ctraces/src/ctr_span.c ctr_span_create Unknown -> Unknown
+   - 6784 unresolved resource identity `span`
+   - 6786 unresolved resource identity `span`
+   - 6799 unresolved resource identity `span`
+   - 6799 nullable resource `span` used by a non-null contract
+lib/ctraces/src/ctr_span.c ctr_span_event_add_ts Unknown -> Unknown
+   - 7092 unresolved resource identity `ev`
+   - 7097 unresolved resource identity `ev`
+   - 7099 unresolved resource identity `ev`
+   - 7102 unresolved resource identity `ev`
+   - 7105 unresolved resource identity `ev`
+   - 7105 nullable resource `ev` used by a non-null contract
+lib/librdkafka-2.15.0/src/cJSON.c cJSON_CreateDoubleArray Unknown -> Unknown
+   - 3398 unresolved resource identity `a`
+   - 3411 unresolved resource identity `a`
+lib/librdkafka-2.15.0/src/cJSON.c cJSON_CreateFloatArray Unknown -> Unknown
+   - 3364 unresolved resource identity `a`
+   - 3377 unresolved resource identity `a`
+lib/librdkafka-2.15.0/src/cJSON.c cJSON_CreateIntArray Unknown -> Unknown
+   - 3330 unresolved resource identity `a`
+   - 3343 unresolved resource identity `a`
+lib/librdkafka-2.15.0/src/cJSON.c cJSON_CreateStringArray Unknown -> Unknown
+   - 3432 unresolved resource identity `a`
+   - 3445 unresolved resource identity `a`
+lib/librdkafka-2.15.0/src/cJSON.c cJSON_Duplicate_rec Unknown -> Unknown
+   - 3476 unresolved resource identity `newitem`
+   - 3484 unresolved resource identity `newitem`
+   - 3491 unresolved resource identity `newitem`
+   - 3491 nullable resource `newitem` used by a non-null contract
+   - 3517 unresolved resource identity `newitem`
+   - 3521 unresolved resource identity `newitem`
+   - 3521 nullable resource `newitem` used by a non-null contract
+   - 3523 unresolved resource identity `newitem`
+   - 3525 unresolved resource identity `newitem`
+lib/librdkafka-2.15.0/src/cJSON.c cJSON_InsertItemInArray Unknown -> Unknown
+   + 3095 use of `after_inserted` after its object moved or its parent changed (interior-borrow-ended)
+   + 3096 use of `after_inserted` after its object moved or its parent changed (interior-borrow-ended)
+   + 3099 use of `after_inserted` after its object moved or its parent changed (interior-borrow-ended)
+   + 3103 use of `after_inserted` after its object moved or its parent changed (interior-borrow-ended)
+lib/librdkafka-2.15.0/src/lz4hc.c LZ4_createHC Unknown -> Unknown
+   - 1452 unresolved resource identity `hc4`
+lib/librdkafka-2.15.0/src/rdaddr.c rd_getaddrinfo Unknown -> Unknown
+   - 4099 unresolved resource identity `rsal`
+   - 4099 nullable resource `rsal` used by a non-null contract
+lib/librdkafka-2.15.0/src/rdkafka.c rd_kafka_new Unknown -> Unknown
+   - 22576 unresolved resource identity `rk`
+   - 22576 nullable resource `rk` used by a non-null contract
+lib/librdkafka-2.15.0/src/rdkafka.c rd_kafka_share_consumer_new Unknown -> Unknown
+   - 22613 unresolved resource identity `rkshare`
+   - 22614 unresolved resource identity `rkshare`
+   - 22624 unresolved resource identity `rkshare`
+lib/librdkafka-2.15.0/src/rdkafka_admin.c rd_kafka_ClusterDescription_new Unknown -> Unknown
+   - 26337 unresolved resource identity `clusterdesc`
+   - 26337 nullable resource `clusterdesc` used by a non-null contract
+lib/librdkafka-2.15.0/src/rdkafka_admin.c rd_kafka_ConfigEntry_new0 Unknown -> Unknown
+   - 21706 unresolved resource identity `entry`
+lib/librdkafka-2.15.0/src/rdkafka_admin.c rd_kafka_DeleteAcls_result_response_new Unknown -> Unknown
+   - 24266 unresolved resource identity `result_response`
+   - 24266 nullable resource `result_response` used by a non-null contract
+lib/librdkafka-2.15.0/src/rdkafka_admin.c rd_kafka_DescribeClusterResponse_parse Unknown -> Unknown
+   - 26402 unresolved resource identity `rko_result`
+lib/librdkafka-2.15.0/src/rdkafka_admin.c rd_kafka_ElectLeadersResponse_parse Unknown -> Unknown
+   - 26574 unresolved resource identity `rko_result`
+   - 26575 unresolved resource identity `rko_result`
+lib/librdkafka-2.15.0/src/rdkafka_admin.c rd_kafka_ElectLeadersResult_new Unknown -> Unknown
+   - 26450 unresolved resource identity `result`
+lib/librdkafka-2.15.0/src/rdkafka_admin.c rd_kafka_ListConsumerGroupsResult_new Unknown -> Unknown
+   - 24820 unresolved resource identity `res`
+lib/librdkafka-2.15.0/src/rdkafka_admin.c rd_kafka_NewTopic_new Unknown -> Unknown
+   - 21195 unresolved resource identity `new_topic`
+lib/librdkafka-2.15.0/src/rdkafka_admin.c rd_kafka_admin_fanout_op_new Unknown -> Unknown
+   - 20775 unresolved resource identity `rko`
+   - 20791 unresolved resource identity `rko`
+   - 20791 nullable resource `rko` used by a non-null contract
+lib/librdkafka-2.15.0/src/rdkafka_admin.c rd_kafka_admin_request_op_new Unknown -> Unknown
+   - 20460 unresolved resource identity `rko`
+   - 20460 nullable resource `rko` used by a non-null contract
+lib/librdkafka-2.15.0/src/rdkafka_admin.c ut_make_ListConsumerGroups_fanout Unknown -> Unknown
+   - 26656 unresolved resource identity `rko_fanout`
+lib/librdkafka-2.15.0/src/rdkafka_admin.c ut_make_ListConsumerGroups_partial Unknown -> Unknown
+   - 26639 unresolved resource identity `rko_partial`
+   - 26639 nullable resource `rko_partial` used by a non-null contract
+lib/librdkafka-2.15.0/src/rdkafka_admin.c ut_make_ListConsumerGroups_partial_error Unknown -> Unknown
+   - 26648 unresolved resource identity `rko_partial`
+lib/librdkafka-2.15.0/src/rdkafka_assignor.c rd_kafka_member_subscriptions_map Unknown -> Unknown
+   - 20354 unresolved resource identity `eligible_topic`
+   - 20355 loop re-acquisition: an earlier generation that may be live is still held
+   - 20371 unresolved resource identity `eligible_topic`
+   - 20372 unresolved resource identity `eligible_topic`
+lib/librdkafka-2.15.0/src/rdkafka_broker.c rd_kafka_broker_add Unknown -> Unknown
+   - 23534 unresolved resource identity `rkb`
+   - 23536 unresolved resource identity `rkb`
+   - 23537 unresolved resource identity `rkb`
+   - 23538 unresolved resource identity `rkb`
+   - 23539 unresolved resource identity `rkb`
+   - 23541 unresolved resource identity `rkb`
+   - 23542 unresolved resource identity `rkb`
+   - 23662 unresolved resource identity `rkb`
+   - 23688 unresolved resource identity `rkb`
+   - 23688 nullable resource `rkb` used by a non-null contract
+lib/librdkafka-2.15.0/src/rdkafka_broker.c rd_kafka_dr_msgq0 Unknown -> Unknown
+   - 22485 unresolved resource identity `rko`
+   - 22485 nullable resource `rko` used by a non-null contract
+lib/librdkafka-2.15.0/src/rdkafka_buf.c rd_kafka_buf_new0 Unknown -> Unknown
+   - 19672 unresolved resource identity `rkbuf`
+lib/librdkafka-2.15.0/src/rdkafka_buf.c rd_kafka_buf_new_shadow Unknown -> Unknown
+   - 19716 unresolved resource identity `rkbuf`
+lib/librdkafka-2.15.0/src/rdkafka_cert.c rd_kafka_cert_new Unknown -> Unknown
+   - 20416 unresolved resource identity `cert`
+   - 20416 nullable resource `cert` used by a non-null contract
+   - 20424 unresolved resource identity `cert`
+lib/librdkafka-2.15.0/src/rdkafka_cgrp.c rd_kafka_cgrp_new Unknown -> Unknown
+   - 20529 unresolved resource identity `rkcg`
+   - 20532 unresolved resource identity `rkcg`
+   - 20533 unresolved resource identity `rkcg`
+   - 20534 unresolved resource identity `rkcg`
+   - 20578 unresolved resource identity `rkcg`
+   - 20578 nullable resource `rkcg` used by a non-null contract
+lib/librdkafka-2.15.0/src/rdkafka_cgrp.c rd_kafka_collect_partitions Unknown -> Unknown
+   - 21147 unresolved resource identity `collected`
+   - 21147 nullable resource `collected` used by a non-null contract
+lib/librdkafka-2.15.0/src/rdkafka_cgrp.c rd_kafka_member_partitions_intersect Unknown -> Unknown
+   - 21158 unresolved resource identity `intersection`
+   - 21169 unresolved resource identity `intersection`
+   - 21169 nullable resource `intersection` used by a non-null contract
+lib/librdkafka-2.15.0/src/rdkafka_cgrp.c rd_kafka_member_partitions_subtract Unknown -> Unknown
+   - 21180 unresolved resource identity `difference`
+   - 21187 unresolved resource identity `difference`
+   - 21187 nullable resource `difference` used by a non-null contract
+lib/librdkafka-2.15.0/src/rdkafka_cgrp.c rd_kafka_toppar_list_to_toppar_member_info_map Unknown -> Unknown
+   - 23119 unresolved resource identity `map`
+   - 23122 unresolved resource identity `map`
+   - 23122 nullable resource `map` used by a non-null contract
+lib/librdkafka-2.15.0/src/rdkafka_cgrp.c rd_kafka_toppar_list_to_toppar_member_info_map_by_id Unknown -> Unknown
+   - 23131 unresolved resource identity `map`
+   - 23134 unresolved resource identity `map`
+   - 23134 nullable resource `map` used by a non-null contract
+lib/librdkafka-2.15.0/src/rdkafka_coord.c rd_kafka_coord_cache_add Unknown -> Unknown
+   - 20195 unresolved resource identity `cce`
+lib/librdkafka-2.15.0/src/rdkafka_coord.c rd_kafka_coord_req Unknown -> Unknown
+   - 20244 unresolved resource identity `creq`
+   - 20250 unresolved resource identity `creq`
+   - 20251 unresolved resource identity `creq`
+lib/librdkafka-2.15.0/src/rdkafka_fetcher.c rd_kafka_fetch_reply_handle_partition Unknown -> Unknown
+   - 20614 unresolved resource identity `rktp`
+   - 20680 a reference taken at line 20611 may still be owed at this exit (reference-unbalanced)
+   - 20691 a reference taken at line 20611 may still be owed at this exit (reference-unbalanced)
+   + 20677 use of `_RKTP` after a possibly-final drop of its reference (reference-dropped)
+   + 20677 use of `rktp` after a possibly-final drop of its reference (reference-dropped)
+   + 20678 use of `rktp` after a possibly-final drop of its reference (reference-dropped)
+   + 20679 use of `rktp` after a possibly-final drop of its reference (reference-dropped)
+   + 20690 use of `_RKTP` after a possibly-final drop of its reference (reference-dropped)
+   + 20690 use of `rktp` after a possibly-final drop of its reference (reference-dropped)
+lib/librdkafka-2.15.0/src/rdkafka_metadata.c rd_kafka_metadata_topic_match Unknown -> Unknown
+   - 20903 unresolved resource identity `unmatched`
+   - 20903 nullable resource `unmatched` used by a non-null contract
+lib/librdkafka-2.15.0/src/rdkafka_mock.c rd_kafka_mock_broker_new Unknown -> Unknown
+   - 22557 unresolved resource identity `mrkb`
+   - 22558 unresolved resource identity `mrkb`
+   - 22559 unresolved resource identity `mrkb`
+   - 22560 unresolved resource identity `mrkb`
+   - 22573 unresolved resource identity `mrkb`
+lib/librdkafka-2.15.0/src/rdkafka_mock.c rd_kafka_mock_cluster_new Unknown -> Unknown
+   - 23456 unresolved resource identity `mcluster`
+   - 23456 nullable resource `mcluster` used by a non-null contract
+lib/librdkafka-2.15.0/src/rdkafka_mock.c rd_kafka_mock_connection_new Unknown -> Unknown
+   - 22342 unresolved resource identity `mconn`
+   - 22349 unresolved resource identity `mconn`
+   - 22349 nullable resource `mconn` used by a non-null contract
+lib/librdkafka-2.15.0/src/rdkafka_mock.c rd_kafka_mock_coord_set Unknown -> Unknown
+   - 22634 unresolved resource identity `mcoord`
+   - 22636 unresolved resource identity `mcoord`
+lib/librdkafka-2.15.0/src/rdkafka_mock.c rd_kafka_mock_error_stack_get Unknown -> Unknown
+   - 22677 unresolved resource identity `errstack`
+lib/librdkafka-2.15.0/src/rdkafka_mock.c rd_kafka_mock_msgset_new Unknown -> Unknown
+   - 21421 unresolved resource identity `mset`
+   - 21421 nullable resource `mset` used by a non-null contract
+lib/librdkafka-2.15.0/src/rdkafka_mock.c rd_kafka_mock_topic_new Unknown -> Unknown
+   - 21893 unresolved resource identity `mtopic`
+   - 21902 unresolved resource identity `mtopic`
+   - 21902 nullable resource `mtopic` used by a non-null contract
+lib/librdkafka-2.15.0/src/rdkafka_mock.c rd_kafka_mock_txn_get Unknown -> Unknown
+   - 21452 unresolved resource identity `mtxn`
+   - 21456 unresolved resource identity `mtxn`
+lib/librdkafka-2.15.0/src/rdkafka_mock.c rd_kafka_mock_txn_partition_add Unknown -> Unknown
+   - 21479 unresolved resource identity `mtxnp`
+   - 21480 unresolved resource identity `mtxnp`
+lib/librdkafka-2.15.0/src/rdkafka_mock_cgrp.c rd_kafka_mock_cgrp_classic_get Unknown -> Unknown
+   - 21128 unresolved resource identity `mcgrp`
+   - 21132 unresolved resource identity `mcgrp`
+lib/librdkafka-2.15.0/src/rdkafka_mock_cgrp.c rd_kafka_mock_cgrp_consumer_get Unknown -> Unknown
+   - 21743 unresolved resource identity `mcgrp`
+   - 21747 unresolved resource identity `mcgrp`
+lib/librdkafka-2.15.0/src/rdkafka_mock_cgrp.c rd_kafka_mock_cgrp_consumer_member_add Unknown -> Unknown
+   - 21663 nullable resource `member` used by a non-null contract
+lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c rd_kafka_mock_handle_Metadata Unsafe -> Unknown
+   - 22948 unresolved resource identity `requested_topics`
+   - 23011 unresolved resource identity `requested_topics`
+   - 23012 unresolved resource identity `requested_topics`
+   - 23012 nullable resource `requested_topics` used by a non-null contract
+   - 23014 live obligation acquired at lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c:1362
+   - 23016 unresolved resource identity `requested_topics`
+   - 23017 unresolved resource identity `requested_topics`
+   - 23017 nullable resource `requested_topics` used by a non-null contract
+lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c rd_kafka_mock_handle_ShareAcknowledge Unknown -> Unknown
+   - 25475 unresolved resource identity `ack_partitions`
+   - 25475 nullable resource `ack_partitions` used by a non-null contract
+   - 25486 unresolved resource identity `ack_partitions`
+   - 25486 nullable resource `ack_partitions` used by a non-null contract
+   - 25490 unresolved resource identity `ack_partitions`
+   - 25490 nullable resource `ack_partitions` used by a non-null contract
+lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c rd_kafka_mock_handle_ShareFetch Unknown -> Unknown
+   - 24779 unresolved resource identity `requested_partitions`
+   - 25168 unresolved resource identity `requested_partitions`
+   - 25168 nullable resource `requested_partitions` used by a non-null contract
+   - 25181 unresolved resource identity `requested_partitions`
+   - 25181 nullable resource `requested_partitions` used by a non-null contract
+   - 25186 unresolved resource identity `requested_partitions`
+   - 25186 nullable resource `requested_partitions` used by a non-null contract
+lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c rd_kafka_mock_sgrp_partmeta_get Unknown -> Unknown
+   - 24305 unresolved resource identity `pmeta`
+lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c rd_kafka_mock_sgrp_record_state_get Unknown -> Unknown
+   - 24329 unresolved resource identity `state`
+lib/librdkafka-2.15.0/src/rdkafka_mock_sharegrp.c rd_kafka_mock_sharegroup_get Unknown -> Unknown
+   - 21867 unresolved resource identity `mshgrp`
+   - 21868 unresolved resource identity `mshgrp`
+   - 21870 unresolved resource identity `mshgrp`
+   - 21893 unresolved resource identity `mshgrp`
+lib/librdkafka-2.15.0/src/rdkafka_mock_sharegrp.c rd_kafka_mock_sharegroup_member_get Unknown -> Unknown
+   - 21992 unresolved resource identity `member`
+   - 21993 unresolved resource identity `member`
+   - 21999 unresolved resource identity `member`
+lib/librdkafka-2.15.0/src/rdkafka_mock_sharegrp.c rd_kafka_mock_sharegroup_target_assignment_new Unknown -> Unknown
+   - 22191 unresolved resource identity `target_assignment`
+lib/librdkafka-2.15.0/src/rdkafka_msg.c rd_kafka_produce_batch Unknown -> Unknown
+   - 20272 a reference taken at line 20204 may still be owed at this exit (reference-unbalanced)
+   + 20212 use of `_RKTP` after a possibly-final drop of its reference (reference-dropped)
+   + 20215 use of `_RKTP` after a possibly-final drop of its reference (reference-dropped)
+   + 20231 use of `_RKTP` after a possibly-final drop of its reference (reference-dropped)
+   + 20234 use of `_RKTP` after a possibly-final drop of its reference (reference-dropped)
+   + 20243 use of `_RKTP` after a possibly-final drop of its reference (reference-dropped)
+   + 20247 use of `_RKTP` after a possibly-final drop of its reference (reference-dropped)
+   + 20249 use of `_RKTP` after a possibly-final drop of its reference (reference-dropped)
+   + 20253 use of `_RKTP` after a possibly-final drop of its reference (reference-dropped)
+   + 20255 use of `_RKTP` after a possibly-final drop of its reference (reference-dropped)
+   + 20259 use of `_RKTP` after a possibly-final drop of its reference (reference-dropped)
+   + 20261 use of `_RKTP` after a possibly-final drop of its reference (reference-dropped)
+   + 20264 use of `_RKTP` after a possibly-final drop of its reference (reference-dropped)
+   + 20265 use of `_RKTP` after a possibly-final drop of its reference (reference-dropped)
+   + 20268 use of `_RKTP` after a possibly-final drop of its reference (reference-dropped)
+lib/librdkafka-2.15.0/src/rdkafka_op.c rd_kafka_op_new_fetch_msg Unknown -> Unknown
+   - 20276 unresolved resource identity `rko`
+lib/librdkafka-2.15.0/src/rdkafka_partition.c rd_kafka_purge_ua_toppar_queues Unknown -> Unknown
+   - 0 a reference taken at line 22822 may still be owed at this exit (reference-unbalanced)
+   - 22824 unresolved resource identity `rktp`
+lib/librdkafka-2.15.0/src/rdkafka_partition.c rd_kafka_topic_partition_list_query_leaders_async Unknown -> Unknown
+   - 22447 unresolved resource identity `rko`
+   - 22456 unresolved resource identity `rko`
+lib/librdkafka-2.15.0/src/rdkafka_partition.c rd_kafka_toppar_new0 Unknown -> Unknown
+   - 20323 unresolved resource identity `rktp`
+   - 20324 unresolved resource identity `rktp`
+   - 20325 unresolved resource identity `rktp`
+lib/librdkafka-2.15.0/src/rdkafka_partition.c rd_kafka_toppar_offset_request Unknown -> Unknown
+   - 21061 unresolved resource identity `rktp`
+lib/librdkafka-2.15.0/src/rdkafka_share_acknowledgement.c rd_kafka_share_ack_batch_resolve_leader_or_fail_acks Unknown -> Unknown
+   + 19791 use of `rktp` after its object moved or its parent changed (interior-borrow-ended)
+   + 19792 use of `rktp` after its object moved or its parent changed (interior-borrow-ended)
+   + 19795 use of `rktp` after its object moved or its parent changed (interior-borrow-ended)
+   + 19802 use of `rktp` after its object moved or its parent changed (interior-borrow-ended)
+   + 19803 use of `rktp` after its object moved or its parent changed (interior-borrow-ended)
+   + 19805 use of `rktp` after its object moved or its parent changed (interior-borrow-ended)
+   + 19807 use of `rktp` after its object moved or its parent changed (interior-borrow-ended)
+   + 19808 use of `rktp` after its object moved or its parent changed (interior-borrow-ended)
+   + 19812 use of `rktp` after its object moved or its parent changed (interior-borrow-ended)
+   + 19813 use of `rktp` after its object moved or its parent changed (interior-borrow-ended)
+   + 19815 use of `rktp` after its object moved or its parent changed (interior-borrow-ended)
+   + 19818 use of `rktp` after its object moved or its parent changed (interior-borrow-ended)
+   + 19819 use of `rktp` after its object moved or its parent changed (interior-borrow-ended)
+   + 19820 use of `rktp` after its object moved or its parent changed (interior-borrow-ended)
+   + 19822 use of `rktp` after its object moved or its parent changed (interior-borrow-ended)
+   + 19823 use of `rktp` after its object moved or its parent changed (interior-borrow-ended)
+   + 19826 use of `rktp` after its object moved or its parent changed (interior-borrow-ended)
+lib/librdkafka-2.15.0/src/rdkafka_share_acknowledgement.c rd_kafka_share_ack_batches_new Unknown -> Unknown
+   - 19642 unresolved resource identity `batches`
+   - 19643 unresolved resource identity `batches`
+   - 19647 unresolved resource identity `batches`
+lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c map_cpair_toppar_list_t_new Unknown -> Unknown
+   - 21318 unresolved resource identity `map`
+lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c rd_kafka_rack_info_new Unknown -> Unknown
+   - 21338 unresolved resource identity `rkri`
+   - 21354 unresolved resource identity `rkri`
+   - 21354 nullable resource `rkri` used by a non-null contract
+lib/librdkafka-2.15.0/src/rdkafka_telemetry_decode.c unit_test_telemetry Unknown -> Unknown
+   - 21951 unresolved resource identity `rkb`
+   - 21955 unresolved resource identity `rk`
+lib/librdkafka-2.15.0/src/rdkafka_topic.c rd_kafka_topic_new0 Unknown -> Unknown
+   - 19805 unresolved resource identity `rkt`
+   - 19806 unresolved resource identity `rkt`
+   - 19911 unresolved resource identity `rkt`
+   - 19911 nullable resource `rkt` used by a non-null contract
+lib/librdkafka-2.15.0/src/rdkafka_topic.c rd_kafka_topic_new_with_id Unknown -> Unknown
+   - 19939 unresolved resource identity `rkt`
+   - 19941 unresolved resource identity `rkt`
+   - 19942 unresolved resource identity `rkt`
+   - 19970 unresolved resource identity `rkt`
+   - 19970 nullable resource `rkt` used by a non-null contract
+lib/librdkafka-2.15.0/src/rdmap.c rd_map_insert Unknown -> Unknown
+   - 2999 unresolved resource identity `elem`
+   - 2999 nullable resource `elem` used by a non-null contract
+lib/librdkafka-2.15.0/src/rdregex.c rd_regex_comp Unknown -> Unknown
+   - 3031 unresolved resource identity `re`
+   - 3034 unresolved resource identity `re`
+lib/librdkafka-2.15.0/src/rdunittest_acknowledge.c ut_ack_add_partition Unknown -> Unknown
+   - 19610 unresolved resource identity `batches`
+   - 19612 indirect memory access is outside the resource projection
+lib/librdkafka-2.15.0/src/rdunittest_acknowledge.c ut_ack_add_partition_multiple_entries Unknown -> Unknown
+   - 19832 unresolved resource identity `batches`
+   - 19833 unresolved resource identity `batches`
+lib/librdkafka-2.15.0/src/rdunittest_acknowledge.c ut_case_bsearch_empty_entries Unknown -> Unknown
+   - 19970 unresolved resource identity `batches`
+   - 19971 unresolved resource identity `batches`
+lib/monkey/mk_core/mk_rconf.c mk_rconf_create Unknown -> Unknown
+   - 1843 unresolved resource identity `conf`
+lib/monkey/mk_core/mk_rconf.c mk_rconf_free Unknown -> Unknown
+   - 2197 loop re-acquisition: an earlier generation that may be live is still held
+   - 2199 unresolved resource identity `file`
+   - 2203 loop re-acquisition: an earlier generation that may be live is still held
+   - 2206 unresolved resource identity `entry`
+   - 2210 loop re-acquisition: an earlier generation that may be live is still held
+   - 2213 unresolved resource identity `section`
+lib/monkey/mk_core/mk_rconf.c mk_rconf_free_entries Unknown -> Unknown
+   - 2227 loop re-acquisition: an earlier generation that may be live is still held
+   - 2230 unresolved resource identity `entry`
+lib/monkey/mk_core/mk_rconf.c mk_rconf_open Unknown -> Unknown
+   - 2177 unresolved resource identity `conf`
+   - 2187 unresolved resource identity `conf`
+lib/monkey/mk_core/mk_string.c mk_string_split_free Unknown -> Unknown
+   - 2236 loop re-acquisition: an earlier generation that may be live is still held
+   - 2238 unresolved resource identity `entry`
+lib/monkey/mk_server/mk_config.c mk_config_listener_add Unknown -> Unknown
+   - 5858 unresolved resource identity `listen`
+   - 5861 unresolved resource identity `listen`
+   - 5863 unresolved resource identity `listen`
+   - 5866 unresolved resource identity `listen`
+   - 5870 unresolved resource identity `listen`
+   - 5870 publication by `mk_list_add` of `listen`, which this function does not hold as one live object
+   - 5871 unresolved resource identity `listen`
+   - 5871 nullable resource `listen` used by a non-null contract
+   + 5871 transfer of `listen`, which a container holds after its publication
+lib/monkey/mk_server/mk_config.c mk_config_listeners_free Unknown -> Unknown
+   - 5476 loop re-acquisition: an earlier generation that may be live is still held
+   - 5479 unresolved resource identity `l`
+lib/monkey/mk_server/mk_fifo.c mk_fifo_create Unknown -> Unknown
+   - 4683 unresolved resource identity `ctx`
+   - 4683 nullable resource `ctx` used by a non-null contract
+lib/monkey/mk_server/mk_fifo.c mk_fifo_queue_create Unknown -> Unknown
+   - 4723 unresolved resource identity `q`
+   - 4724 unresolved resource identity `q`
+   - 4724 publication by `mk_list_add` of `q`, which this function does not hold as one live object
+lib/monkey/mk_server/mk_fifo.c mk_fifo_worker_create Unknown -> Unknown
+   - 4634 unresolved resource identity `fw`
+   - 4635 unresolved resource identity `fw`
+   - 4636 unresolved resource identity `fw`
+   - 4638 unresolved resource identity `fw`
+   - 4641 unresolved resource identity `fw`
+   - 4642 unresolved resource identity `fw`
+   - 4650 unresolved resource identity `fw`
+   - 4651 unresolved resource identity `fw`
+   + 4651 transfer of `fw`, which a container holds after its publication
+lib/monkey/mk_server/mk_fifo.c mk_fifo_worker_destroy_all Unknown -> Unknown
+   - 4779 loop re-acquisition: an earlier generation that may be live is still held
+   - 4781 unresolved resource identity `fw`
+lib/monkey/mk_server/mk_http.c mk_http_request_free_list Unknown -> Unknown
+   - 6629 unresolved resource identity `request`
+lib/monkey/mk_server/mk_lib.c mk_vhost_create Unknown -> Unknown
+   - 6256 unresolved resource identity `h`
+lib/monkey/mk_server/mk_mimetype.c mk_mimetype_add Unknown -> Unknown
+   - 5334 unresolved resource identity `new_mime`
+   - 5336 unresolved resource identity `new_mime`
+   - 5339 unresolved resource identity `new_mime`
+   - 5341 unresolved resource identity `new_mime`
+   - 5344 unresolved resource identity `new_mime`
+lib/monkey/mk_server/mk_net.c mk_net_conn_create Unsafe -> Unsafe
+   - 5487 unresolved resource identity `conn`
+   - 5491 unresolved resource identity `conn`
+   - 5496 unresolved resource identity `conn`
+   - 5499 unresolved resource identity `conn`
+   - 5505 unresolved resource identity `conn`
+lib/monkey/mk_server/mk_plugin.c mk_plugin_exit_all Unknown -> Unknown
+   - 5910 unresolved resource identity `plugin`
+lib/monkey/mk_server/mk_scheduler.c mk_sched_worker_cb_add Unknown -> Unknown
+   - 6474 unresolved resource identity `wcb`
+lib/monkey/mk_server/mk_vhost.c mk_vhost_destroy Unknown -> Unknown
+   - 6025 loop re-acquisition: an earlier generation that may be live is still held
+   - 6029 unresolved resource identity `ep`
+   - 6032 unresolved resource identity `ep`
+lib/monkey/mk_server/mk_vhost.c mk_vhost_handler_free Unknown -> Unknown
+   - 5990 loop re-acquisition: an earlier generation that may be live is still held
+   - 5992 unresolved resource identity `param`
+lib/monkey/mk_server/mk_vhost.c mk_vhost_handler_match Unknown -> Unknown
+   - 5664 unresolved resource identity `h`
+   - 5665 unresolved resource identity `h`
+   - 5666 unresolved resource identity `h`
+   - 5672 unresolved resource identity `h`
+   - 5675 unresolved resource identity `h`
+lib/monkey/mk_server/monkey.c mk_server_create Unknown -> Unknown
+   - 5547 unresolved resource identity `server`
+   - 5548 unresolved resource identity `server`
+   - 5549 unresolved resource identity `server`
+   - 5550 unresolved resource identity `server`
+   - 5553 unresolved resource identity `server`
+src/flb_input_chunk.c flb_input_chunk_map Unknown -> Unknown
+   - 18786 unresolved resource identity `ic`
+   - 18791 unresolved resource identity `ic`
+   + 18786 unresolved resource identity `in`

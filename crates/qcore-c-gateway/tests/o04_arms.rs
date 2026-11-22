@@ -829,13 +829,23 @@ fn the_routes_mask_arm_records_its_named_residual() {
         "expected the routes-mask arm and the success exit; exits were {:?}",
         exit_shape(caller)
     );
+    // Deliberate pin update, card NULLABLE-GUARDED-RELEASE (rule 74c): both
+    // carried both identities `Mixed`. With `ic` and `in` spared by rule 10a's
+    // frame (their member addresses take no slot address), the routes-mask
+    // arm carries its two identities `Released` and the success exit three
+    // identities `Mixed`; neither exit is discharged or a `Residual`.
     assert!(
-        carrying.iter().all(|exit| exit.sites.len() == 2
+        carrying.iter().any(|exit| exit.sites.len() == 3
             && exit
                 .sites
                 .iter()
-                .all(|site| site.disposition == SiteDisposition::Mixed)),
-        "both carry both identities, each unresolved: {:?}",
+                .all(|site| site.disposition == SiteDisposition::Mixed))
+            && carrying.iter().any(|exit| exit.sites.len() == 2
+                && exit
+                    .sites
+                    .iter()
+                    .all(|site| site.disposition == SiteDisposition::Released)),
+        "the success exit carries three unresolved identities, the routes-mask arm two released ones: {:?}",
         exit_shape(caller)
     );
     assert!(

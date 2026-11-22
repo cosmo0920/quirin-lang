@@ -519,7 +519,10 @@ fn a_member_address_out_actual_is_refused_before_the_call() {
         "void w(int n) { struct y_box *b; b = y_make(n); if (!b) { return; } \
          y_fill(&b->item); y_release(b->item); y_drop(b); }",
         AnalysisStatus::Unknown,
-        &["unknown_alias:b", "unsupported"],
+        // Deliberate pin update, card NULLABLE-GUARDED-RELEASE (rule 74c): `&b->item` takes
+        // the address of a member of `*b`, not of `b`'s slot, so the refused
+        // call no longer poisons `b`; the gate's refusal stays.
+        &["unsupported"],
     );
 }
 

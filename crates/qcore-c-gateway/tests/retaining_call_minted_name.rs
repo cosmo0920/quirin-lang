@@ -301,7 +301,9 @@ fn an_actual_the_probe_refuses_keeps_the_refusal() {
         "int w(struct mk_event_loop *loop) { struct chan *s = ev_alloc(sizeof(struct chan)); \
          if (!s) { return -1; } mk_event_add(loop, s->fd, 0, 1, &s->p); ev_free(s); return 0; }",
         "Unknown",
-        &["unknown_alias:s", GATE],
+        // Deliberate pin update, card NULLABLE-GUARDED-RELEASE (rule 74c): `&s->p` no longer
+        // poisons `s`; the gate's refusal stays.
+        &[GATE],
     );
 }
 
@@ -340,7 +342,9 @@ fn a_packer_inside_a_tracked_chunk_keeps_the_refusal() {
         "struct chunk *w(void *in) { struct chunk *ic = ev_alloc(sizeof(struct chunk)); \
          if (!ic) { return 0; } msgpack_packer_init(&ic->mp_pck, ic, pack_write); return ic; }",
         "Unknown",
-        &["unknown_alias:ic", GATE],
+        // Deliberate pin update, card NULLABLE-GUARDED-RELEASE (rule 74c):
+        // `&ic->mp_pck` no longer poisons `ic`; the gate's refusal stays.
+        &[GATE],
     );
 }
 

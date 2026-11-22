@@ -272,8 +272,28 @@ fn the_aggregate_and_logging_arms_stay_unknown() {
         "no residual is alleged on this path: {:?}",
         exit_shape(caller)
     );
-    // Two of them — the success exit and the routes-mask arm — still carry
-    // both identities, each unresolved rather than alleged either way.
+    // Two of them — the success exit and the routes-mask arm — carry
+    // identities, none alleged either way.
+    //
+    // Deliberate pin update, card NULLABLE-GUARDED-RELEASE (rule 74c): both
+    // carried both identities `Mixed`. The body's member addresses (`&ic->...`,
+    // `&in->...`) no longer drop `ic` and `in` from rule 10a's frame, so their
+    // bindings survive the refused statements: the routes-mask arm now
+    // carries its two identities `Released` (its exit stays `Unknown` on its
+    // refusals), and the success exit carries three identities, each `Mixed`.
+    assert_eq!(
+        unknown
+            .iter()
+            .filter(|exit| exit.sites.len() == 3
+                && exit
+                    .sites
+                    .iter()
+                    .all(|site| site.disposition == SiteDisposition::Mixed))
+            .count(),
+        1,
+        "exits were {:?}",
+        exit_shape(caller)
+    );
     assert_eq!(
         unknown
             .iter()
@@ -281,9 +301,9 @@ fn the_aggregate_and_logging_arms_stay_unknown() {
                 && exit
                     .sites
                     .iter()
-                    .all(|site| site.disposition == SiteDisposition::Mixed))
+                    .all(|site| site.disposition == SiteDisposition::Released))
             .count(),
-        2,
+        1,
         "exits were {:?}",
         exit_shape(caller)
     );

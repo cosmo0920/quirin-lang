@@ -320,7 +320,9 @@ fn a_custody_taking_position_keeps_the_refusal() {
          if (!c) { return -1; } ev_hand(loop, &c->ch[0], &c->ch[1], &c->event); \
          ev_free(c); return 0; }",
         "Unknown",
-        &["unknown_alias:c", GATE],
+        // Deliberate pin update, card NULLABLE-GUARDED-RELEASE (rule 74c): the member addresses
+        // `&c->ch[i]` no longer poison `c`, so `ev_free(c)` is not refused.
+        &[GATE],
     );
 }
 
@@ -331,7 +333,9 @@ fn a_function_map_callee_keeps_the_refusal() {
         "int w(void) { struct chan *c = ev_alloc(sizeof(struct chan)); if (!c) { return -1; } \
          ev_note(&c->ch[0]); ev_free(c); return 0; }",
         "Unknown",
-        &["unknown_alias:c", GATE],
+        // Deliberate pin update, card NULLABLE-GUARDED-RELEASE (rule 74c): the member addresses
+        // `&c->ch[i]` no longer poison `c`, so `ev_free(c)` is not refused.
+        &[GATE],
     );
 }
 

@@ -436,15 +436,31 @@ fn a_released_pointer_read_in_a_subscript_index_is_a_violation_candidate() {
 
 #[test]
 fn a_byte_store_through_a_pointer_poisons_bindings_outside_its_frame() {
-    // `&r->count` takes an address inside `r`'s name, so `r` is outside the
-    // frame: a byte store through the unbound `c` could rewrite `r`'s slot,
-    // and the release that follows cannot be credited.
+    // `&r` takes the address of `r`'s slot, so `r` is outside the frame: a
+    // byte store through the unbound `c` could rewrite `r`'s slot, and the
+    // release that follows cannot be credited.
+    //
+    // Deliberate pin update, card NULLABLE-GUARDED-RELEASE (rule 74c): this fixture spelled
+    // `&r->count`, which takes the address of a member of `*r`, never of
+    // `r`'s slot (C11 6.5.2.3, 6.5.3.2); the frame now reads it so, and that
+    // spelling is `Safe` (the release is credited, nothing else is owed). The
+    // slot address keeps the old answer.
     expect(
         "a character store keeps the refusal's frame on bindings",
-        "void w(char *c) { struct x_rec *r; r = x_record(); x_note(&r->count); *c = 0; \
+        "void w(char *c) { struct x_rec *r; r = x_record(); x_note(&r); *c = 0; \
          x_record_free(r); }",
         "Unknown",
-        &["unknown_alias:r"],
+        &[
+            "unknown_alias:r",
+            "unsupported:call has an unmodeled formal address or borrowed expression",
+        ],
+    );
+    expect(
+        "a member address leaves the name inside the frame",
+        "void w(char *c) { struct x_rec *r; r = x_record(); x_note(&r->count); *c = 0; \
+         x_record_free(r); }",
+        "Safe",
+        &[],
     );
 }
 
