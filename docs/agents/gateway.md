@@ -1075,6 +1075,10 @@ Rule 10a is amended by [rule 74c](#constraint-74c): the frame reads a member
 address `&NAME->F` (`&(NAME)->F`) as a use of `*NAME`, not of `NAME`'s slot,
 as rule 12e's tie names do.
 
+Rule 10a is amended by [rule 74d](#constraint-74d): the frame reads an even
+run of `&` tokens (the lexer's `&&`) as taking no address; only an odd run
+ends in the address operator.
+
 <a id="constraint-10b"></a>
 
 <!-- preserved:constraint-10b:start -->
@@ -8767,6 +8771,10 @@ an undeclared OpenSSL producer). `QCore.NullableReferenceDrop` (12 audited,
     contract or in-unit body states. `QCore.NullDeref` (`guard_sound`,
     `walk_sound`, `join_sound_left`).
 
+Rule 14l is amended by [rule 74d](#constraint-74d): the lazy constructor guard
+`if (!p) p = ctor();` leaves `p` non-null on both arms, and a loop head keeps
+that only when every arriving edge has it.
+
 <a id="constraint-14m"></a>
 
 14m. **Decision 1's dominating dereference moves the NULL question; a
@@ -12909,5 +12917,75 @@ an undeclared OpenSSL producer). `QCore.NullableReferenceDrop` (12 audited,
     `the_frame_only_widens`, `a_slot_address_still_poisons`,
     `the_non_null_edge_denotes_the_site`, `the_null_edge_owes_nothing`,
     `a_reassignment_breaks_it`); [report](../reports/nullable-guarded-release/README.md).
+
+<a id="constraint-74d"></a>
+
+74d. **A lazy constructor decides its name; a possibly-null return is refused
+    as that.** Card NULLABLE-LAZY-CONSTRUCTOR-IN-LOOP
+    (`crates/qcore-c-gateway/src/legacy_nullable_return.rs`, new; one hook in
+    the `EscapeIfOwned` arm of `legacy_transfer.rs`, one context field;
+    `unary_address_runs` in `legacy_c.rs`). It amends [rule 14l](#constraint-14l)
+    and [rule 10a](#constraint-10a) and records a reading of
+    [rule 10b](#constraint-10b). (A) **The lazy guard needs nothing new.**
+    `if (!p) p = ctor();` and `if (p == NULL) p = ctor();` with a non-null
+    owned constructor: the guard's non-null edge keeps the earlier value and
+    its obligation (rule 14l's refinement, `finalize_replacement_success`),
+    its null edge holds no site and constructs, so both arms leave `p`
+    non-null at the join; a loop head keeps the fact only when every arriving
+    edge has it (the join is a conjunction of non-nullness; the NULL
+    initialiser on the entry edge makes `p` null on the zero-iteration exit,
+    which is C, so a release after the loop outside any guard stays refused).
+    Any write of `p` by name, a slot address (`&p`) or a refused statement
+    whose frame does not spare `p` kills the fact (rules 10a, 74c). Pinned:
+    a loop with a borrowed use and a guarded release is `Safe`; a reassignment,
+    an escaped slot and an unguarded release after the loop are refused with
+    no leak; a genuine leak in a lazy loop stays `Unsafe`. (B) **The leaf.**
+    The ledger's lazy-loop row (`rd_kafka_cgrp_owned_but_not_exist_partitions`)
+    and `rd_kafka_cgrp_calculate_subscribe_revoking_partitions` carried their
+    nullable leaf on `return result;`: each returns NULL on a real path, a
+    body may return a possibly-null resource only under a result mode that
+    obliges the caller to null-check it (the validated in-unit summary's
+    `Owned { nullable: true }`), and their other refusals block the summary,
+    so the contract-free run (result mode non-null) decides the row. A
+    returned binding that is resolved (identity derivation, exactly one
+    target, no unknown alternative) and may be null (null on some path, or its
+    site nullable), under a non-null result mode, is now refused by one leaf,
+    `possibly-null resource `NAME` returned under a non-null result mode`,
+    in place of `unresolved resource identity` and `nullable resource …
+    used by a non-null contract`, with exactly the marking
+    `resource_action`'s refusing branch applies; the state, the schedule and
+    every leak claim are unchanged and the row stays `Unknown`. **Do not**
+    accept the return in the contract-free run (a nullable result needs the
+    validated summary), **do not** rename the leaf of an unknown, multi-target
+    or targetless binding, and **do not** rename it for a formal the entry's
+    contract names: the W4 summary search binds a formal it sees reported as
+    an unresolved identity. A NULL-only binding reaching the return on an
+    earlier iterate keeps rule 6's per-iterate identity leaf. (C) **An even
+    run of `&` takes no address.** The importer's lexer emits one token per
+    `&`, so `p && q` reached rule 10a's frame as `p & & q`, and the frame
+    dropped `q` as address-taken: every refused statement then poisoned it
+    (`rd_kafka_mock_handle_ShareFetch`'s `session && forgotten_partitions`,
+    whose three guarded releases were refused). C lexes a run of `&` by
+    maximal munch (C11 6.4p4), and a whitespace-separated `a & &b` is not a
+    conforming expression (binary `&` takes integer operands, C11 6.5.10p2),
+    so the last `&` of a run is unary exactly when the run is odd: the frame
+    now drops a name only after an odd run (`&q`, `p && &q`), never after an
+    even one (`p && q`, GNU `&&label`). The conditional names (rule 10b), the
+    unique locals intersected with the frame, widen with it. **Do not** spare
+    a name after an odd run. Not covered, and recorded: a later declarator's
+    initialiser (`T *a = 0, *b = 0;` reads `*b = 0` as a store through `*b`),
+    a binding poisoned by a refused contract call whose refusal carries no
+    frame (`*out = rd_list_new(…)` with an undecided registry holder), a join
+    with an uncontracted pointer result, and a release correlated with a flag
+    (the other rows of the ledger entry).
+    `QCore.NullableLazyConstructor` (`lazy_is_non_null`,
+    `the_constructing_arm_owes_the_fresh_site`,
+    `the_other_arm_keeps_the_prior_value`, `the_join_is_sound`,
+    `a_loop_head_needs_every_edge`, `the_zero_iteration_path_is_null`,
+    `a_reassignment_kills_it`, `a_refused_write_kills_it`,
+    `a_refused_return_claims_nothing`, `the_refusal_is_never_below_unknown`,
+    `the_renaming_keeps_the_verdict`, `the_run_ends_in_an_address_iff_odd`,
+    `a_logical_and_takes_no_address`, `the_frame_only_widens_again`);
+    [report](../reports/nullable-lazy-constructor-in-loop/README.md).
 
 <!-- generated:rules:end -->

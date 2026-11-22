@@ -472,14 +472,16 @@ fn a_possibly_null_handle_returned_without_a_contract_refuses() {
         "void *w(void) { void *h = k_dlopen(\"x\"); if (!h) k_wipe(0, 0); return h; }",
         "void *w(void) { void *h = k_dlopen(\"x\"); return h; }",
     ] {
+        // Card NULLABLE-LAZY-CONSTRUCTOR-IN-LOOP (rule 74d): deliberate pin
+        // update. The returned binding's identity is resolved (one site), so
+        // the refusal is named as the obstacle it is, one leaf in place of
+        // `unknown_alias:h` and `nullable resource `h` used by a non-null
+        // contract`; still `Unknown`, with the same marking and no leak.
         expect(
             "a nullable library handle returned",
             body,
             "Unknown",
-            &[
-                "unknown_alias:h",
-                "unsupported:nullable resource `h` used by a non-null contract",
-            ],
+            &["unsupported:possibly-null resource `h` returned under a non-null result mode"],
         );
     }
     expect(
