@@ -130,15 +130,19 @@ fn application(
     }
     let mut graph: serde_json::Value =
         serde_json::from_slice(&fs::read(dir.join(format!("{name}-graph.json"))).unwrap()).unwrap();
+    let mut bindings = metadata["bindings"].clone();
     if lifted {
         legacy_prose_premise::lift_graph(&mut graph);
+        // Card SP6-SYMBOLIC-HYPOTHESIS-ATOMS: prerequisite symbols that
+        // repeated an atom's sentence repeat its formula.
+        legacy_prose_premise::lift_bindings(&mut bindings);
     }
     (
         BTreeMap::from([(module.clone(), source)]),
         module,
         declaration,
         serde_json::from_value(graph).unwrap(),
-        serde_json::from_value(metadata["bindings"].clone()).unwrap(),
+        serde_json::from_value(bindings).unwrap(),
         fs::read_to_string(dir.join(format!("{name}.qgd"))).unwrap(),
     )
 }
@@ -210,12 +214,19 @@ fn actual_cjson_and_plugin_hypotheses_lower_without_truth_or_source_changes() {
             .collect();
         assert_eq!(prerequisites.len(), atoms);
         for b in prerequisites {
-            let atom = &graph.atoms[&b.dependencies[0]];
-            let qcore_schemas::hypothesis::Proposition::Opaque { statement } = &atom.proposition
-            else {
-                panic!()
-            };
-            assert_eq!(&b.proposition, statement);
+            // Card SP6-SYMBOLIC-HYPOTHESIS-ATOMS: the atom is typed and the
+            // symbol repeats its formula (the recorded one).
+            let id = &b.dependencies[0];
+            let atom = &graph.atoms[id];
+            assert!(matches!(
+                atom.proposition,
+                qcore_schemas::hypothesis::Proposition::Formula { .. }
+            ));
+            let recorded = legacy_prose_premise::hypotheses()
+                .into_iter()
+                .find(|h| h.id == *id)
+                .unwrap();
+            assert_eq!(b.proposition, recorded.formula);
         }
         let e = evaluate(&d, &[]);
         assert_eq!(e.guards, vec![guarded::Status::Open; 2]);

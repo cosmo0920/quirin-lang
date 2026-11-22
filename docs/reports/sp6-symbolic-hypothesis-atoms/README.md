@@ -265,7 +265,29 @@ interpreted contract, premises, erasure and flows are unchanged
 of the plan's before and after texts). Predicted: 0 status moves on corpus,
 twelve-home, system and slice ([PREDICTION.md](PREDICTION.md)).
 
-LOCKS-PLACEHOLDER
+## 9. Locks, reviewed
+
+Order: `providers/contracts.py sync` (`private/logs/sync-1.log`, exit 0
+with the expected refusal "stale lock: `cJSON_DetachItemViaPointer`'s
+contract text changed since it was pinned"); `quirin-audit pin
+--source-root <Fluent Bit at REV> --crate qcore-provider-librdkafka
+--function cJSON_DetachItemViaPointer` at `046accf6` and then `66910c10` (a
+`--shared --no-checkout` clone of the local Fluent Bit repository under the
+worktree's ignored `private/`, `HEAD` set to each revision;
+`private/pin-1/pin-*.log`, both exit 0); `contracts.py sync` again
+(`sync-2.log`, exit 0). Diff:
+
+* `contracts.lock`: the `cJSON_DetachItemViaPointer` entry's
+  `contract_sha256` (`9038573d…` → `7b1a99ac…`) and `pinned_at`; its
+  identity keeps the same two sites and the same two revisions. Nothing
+  else changes.
+* `contract-inventory.lock` and `contracts.json`: `librdkafka/cjson.qv`'s
+  digest (`2bb7c253…` → `0fcd9833…`) and the binding manifest reference
+  (`ef40a078…` → `27c07365…`); declaration and clause counts unchanged (nine
+  `requires resource_hypothesis` clauses became nine `quant proposition`
+  clauses).
+* `bounds-contracts.lock`, `outer-contracts.lock`,
+  `providers/contract-load-path.json`: unchanged.
 
 GATE-PLACEHOLDER
 
