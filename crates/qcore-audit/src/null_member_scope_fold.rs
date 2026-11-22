@@ -335,7 +335,7 @@ mod tests {
     fn a_premised_member_fact_is_listed_on_the_record_and_on_a_travelled_row() {
         let premised = load_bounds_contract_sources(&BTreeMap::from([(
             "m.qv".to_owned(),
-            "module contract;\nextern fn make(k: i32) -> ptr<mut, u8>\ncontract {\n    requires bounds_contract_v1;\n    requires nonnull_member(S, next) where quant #scope [[stable]];\n    requires resource_premise(no_plugin, \"no code outside the run stores S.next\");\n};\n".to_owned(),
+            "module contract;\nextern fn make(k: i32) -> ptr<mut, u8>\ncontract {\n    requires bounds_contract_v1;\n    requires nonnull_member(S, next) where quant #scope [[stable]];\n    requires resource_premise(no_plugin, #interleaved |-> #no_writes(#args));\n};\n".to_owned(),
         )]))
         .expect("loads");
         let caller = json!({"library": "l", "file": "a.c", "member_stores": [], "stable_stores": [],
@@ -393,7 +393,7 @@ mod tests {
             .expect("loads")
         };
         let premised = declaration(
-            "requires resource_premise(no_plugin, \"no code outside the run stores T.owner\");",
+            "requires resource_premise(no_plugin, #interleaved |-> #no_writes(#args));",
         );
         let unpremised = declaration("");
         let caller = json!({"library": "l", "file": "a.c", "member_stores": [], "stable_stores": [],

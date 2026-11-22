@@ -61,7 +61,7 @@ pub struct SpecificationQuery<'q> {
     /// The specified function.
     pub function: &'q str,
     /// The named premises its declaration states
-    /// (`requires resource_premise(NAME, "STATEMENT");`), in clause order.
+    /// (`requires resource_premise(NAME, FORMULA);`), in clause order.
     pub premises: &'q [&'q str],
 }
 

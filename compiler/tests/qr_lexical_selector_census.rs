@@ -449,6 +449,8 @@ fn declaration_name_census() {
     }
 }
 
+#[path = "../../tests/support/legacy_prose_premise.rs"]
+mod legacy_prose_premise;
 #[path = "../../tests/support/tracked_files.rs"]
 mod tracked_files;
 
@@ -576,7 +578,12 @@ pub fn tracked_occurrences() -> std::collections::BTreeMap<(String, String), Vec
         .to_path_buf();
     let mut table: std::collections::BTreeMap<(String, String), Vec<String>> = Default::default();
     for path in tracked_sources(&root) {
-        let source = std::fs::read_to_string(&path).expect("a tracked source is readable");
+        // Card SP5-GLOBAL-PROSE-PREMISE-BAN: a frozen source that states a
+        // retired string premise is read through the test-side legacy
+        // reader, so it stays in the census.
+        let source = legacy_prose_premise::lift(
+            &std::fs::read_to_string(&path).expect("a tracked source is readable"),
+        );
         let Ok(parsed) = parse_source_program(&source) else {
             continue;
         };

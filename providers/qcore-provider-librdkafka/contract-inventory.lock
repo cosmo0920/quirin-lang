@@ -156,7 +156,7 @@
           }
         ]
       },
-      "sha256": "7f98e702b501f2ab0cea4fc7d9a74a1a465a6860c82b664782a52134c6d642fc"
+      "sha256": "2bb7c25374bb19e9f28331e9415b8632d9bbabfb91e805ca0d246729fbe44edd"
     },
     "librdkafka/client.qv": {
       "clause_count": 2474,
@@ -2617,7 +2617,7 @@
           }
         ]
       },
-      "sha256": "8981842a17e16fd6c69e008b67b65f3f2c6f7cf15ec6bdc3f4199db2141fc75d"
+      "sha256": "a454826866c9c26d29023e69fc8dfe67e864e9334f87f88e3a90070d8f27932a"
     },
     "librdkafka/compress_out.qv": {
       "clause_count": 24,

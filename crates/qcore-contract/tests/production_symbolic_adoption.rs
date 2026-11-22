@@ -13,6 +13,8 @@
 // limitations under the License.
 
 //! Exhaustive production-data adoption; no source truth or semantic consumer.
+#[path = "../../../tests/support/legacy_prose_premise.rs"]
+mod legacy_prose_premise;
 #[path = "../../../tests/support/sp2_premise_checkpoint.rs"]
 mod sp2_premise_checkpoint;
 #[path = "../../../tests/support/tracked_files.rs"]
@@ -363,11 +365,33 @@ fn historical_symbolic_checkpoint(path: &str, current: &str) -> String {
     assert_eq!(plan.module, path);
     let addition = bridge::render(&plan.metadata).unwrap();
     assert_eq!(current.matches(&addition).count(), 1);
+    // Card SP5-GLOBAL-PROSE-PREMISE-BAN: `current` is the module before card
+    // SP2-SYMBOLIC-LIBRDKAFKA-PREMISES, whose string premises load nowhere.
+    // The frozen plan's digests are checked against it (the recovery below
+    // is its bytes), and the bridge replays the plan, lifted by the
+    // test-side legacy reader, on the module as it stands.
+    let live = fs::read_to_string(root().join(path)).unwrap();
+    let lifted = legacy_prose_premise::lifted_adoption_plan(
+        bytes,
+        current,
+        &live,
+        &addition,
+        qcore_schemas::sha256_hex,
+    );
+    let plan: bridge::Plan = serde_json::from_slice(&lifted).unwrap();
+    let recovered = current.replacen(&addition, "", 1);
+    let current = live.as_str();
     // Candidate recovery is untrusted until the complete held-source bridge
     // compares both source hashes, canonical additions and interpreted output.
     let candidate = BTreeMap::from([(path.into(), current.replacen(&addition, "", 1))]);
     let actual = BTreeMap::from([(path.into(), current.into())]);
-    let checked = bridge::check(bytes, PLAN_SHA, &candidate, &actual).unwrap();
+    let checked = bridge::check(
+        &lifted,
+        &qcore_schemas::sha256_hex(&lifted),
+        &candidate,
+        &actual,
+    )
+    .unwrap();
     let document = guarded::replay_inline(
         View::Resource,
         &actual,
@@ -389,11 +413,15 @@ fn historical_symbolic_checkpoint(path: &str, current: &str) -> String {
     let mut wrong = actual.clone();
     wrong.get_mut(path).unwrap().push('\n');
     assert!(checked.recover_before(&wrong).is_err());
-    checked
-        .recover_before(&actual)
-        .unwrap()
-        .remove(path)
-        .unwrap()
+    assert_eq!(
+        checked
+            .recover_before(&actual)
+            .unwrap()
+            .remove(path)
+            .unwrap(),
+        current.replacen(&addition, "", 1)
+    );
+    recovered
 }
 #[test]
 fn every_actual_hypothesis_is_introduced_and_every_original_group_is_an_open_conjunction() {
@@ -469,8 +497,10 @@ fn every_actual_hypothesis_is_introduced_and_every_original_group_is_an_open_con
             _ => View::Model,
         };
         let semantic_before = current_semantic_checkpoint(path, &before);
-        let old = sources(path, &semantic_before);
-        let new = sources(path, &after);
+        // Card SP5-GLOBAL-PROSE-PREMISE-BAN: both checkpoints state string
+        // premises; the loaders read them through the legacy reader.
+        let old = sources(path, &legacy_prose_premise::lift(&semantic_before));
+        let new = sources(path, &legacy_prose_premise::lift(&after));
         let original = graphs(view, &old);
         let replayed = graphs(view, &new);
         // Typed formulas deliberately change graph bytes and atom digests.
@@ -519,8 +549,8 @@ fn every_actual_hypothesis_is_introduced_and_every_original_group_is_an_open_con
                 }
             }
             View::Model => assert_eq!(
-                contract_loader::module_premises(&before).unwrap(),
-                contract_loader::module_premises(&after).unwrap()
+                contract_loader::module_premises(&legacy_prose_premise::lift(&before)).unwrap(),
+                contract_loader::module_premises(&legacy_prose_premise::lift(&after)).unwrap()
             ),
         }
         let domain = |requirements: Vec<BindingRequirement>| {

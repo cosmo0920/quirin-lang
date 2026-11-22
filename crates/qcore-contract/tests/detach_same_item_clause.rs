@@ -74,7 +74,7 @@ fn removed_result_cannot_erase_conditional_or_registered_lifetime_effects() {
     for text in [
         CONTRACT.replace(
             " requires resource_contract_v1;",
-            " requires resource_contract_v1; quant #threaded = (#parent.threaded != 0); quant #threaded in { requires resource_premise(detach_guard, \"The detach guard holds\"); }: [[local]];",
+            " requires resource_contract_v1; quant #threaded = (#parent.threaded != 0); quant #threaded in { requires resource_premise(detach_guard, #concurrent |-> #inert); }: [[local]];",
         ),
         CONTRACT.replace(
             " requires resource_contract_v1;",

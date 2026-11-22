@@ -24,7 +24,15 @@ use qcore_schemas::loop_lifetime::{
 use std::collections::{BTreeMap, BTreeSet};
 
 pub const SNAPSHOT_PREMISE_NAME: &str = "s3_condition_snapshot_stable";
-pub const SNAPSHOT_PREMISE_STATEMENT: &str = "Every member read by this function's condition bindings preserves its entry value until each guarded use.";
+/// The reserved entry-snapshot premise's statement (contract specification
+/// C04.21), the canonical printing of its C04.18.9 formula: every member cell
+/// the declaration's condition bindings read holds its entry value at each
+/// guarded use. Card SP5-GLOBAL-PROSE-PREMISE-BAN wrote it as this formula
+/// (`#condition_reads`, `#entry_stable`, C04.18.9's SP5 block) when the string
+/// statement it had (the English sentence of the same meaning) was retired;
+/// the recognizer still matches the name and the statement exactly.
+pub const SNAPSHOT_PREMISE_STATEMENT: &str =
+    "quant all #m in #condition_reads: #m in #entry_stable";
 
 fn tokens(source: &str) -> Result<Vec<TokenKind>, String> {
     if source.len() > 65_536 {
@@ -562,7 +570,7 @@ fn cell_protocols(
 pub fn named_prerequisite(source: &str) -> Option<(String, String)> {
     let ts = tokens(source).ok()?;
     let (name, statement) = qcore_frontend::premise_formula::premise_clause(&ts).ok()??;
-    Some((name, statement.text().to_owned()))
+    Some((name, statement.canonical))
 }
 fn prerequisite(source: &str) -> Result<String, String> {
     let ts = tokens(source)?;

@@ -127,7 +127,7 @@ const FIXTURE: &str = r#"module contract;
 extern fn make() -> ptr<mut, u8> contract {
  requires bounds_contract_v1;
  requires nonnull_member(S, next);
- requires resource_premise(rk_plugin_callback_closure, "original callback boundary");
+ requires resource_premise(rk_plugin_callback_closure, #concurrent |-> #inert);
  requires resource_hypothesis(plugin_a, "selected build and symbol bindings remain open");
  requires resource_hypothesis(plugin_b, "registered callback lifetime remains open");
  requires resource_premise_decomposition(rk_plugin_callback_closure, plugin_a, plugin_b);
@@ -136,7 +136,7 @@ extern fn make() -> ptr<mut, u8> contract {
 fn malformed_bounds_metadata_refuses_instead_of_becoming_a_fact_or_new_premise() {
     assert!(bounds_hypotheses::replay(&inputs(FIXTURE)).is_ok());
     for bad in [
-        FIXTURE.replace(" requires resource_premise(rk_plugin_callback_closure, \"original callback boundary\");", ""),
+        FIXTURE.replace(" requires resource_premise(rk_plugin_callback_closure, #concurrent |-> #inert);", ""),
         FIXTURE.replace("plugin_a, plugin_b);","plugin_b, plugin_a);"),
         FIXTURE.replace("resource_premise_decomposition(rk_plugin_callback_closure,", "resource_premise_decomposition(missing,"),
         FIXTURE.replace("requires resource_hypothesis(plugin_a", "ensures normal resource_hypothesis(plugin_a"),

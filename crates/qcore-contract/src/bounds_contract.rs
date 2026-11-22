@@ -373,7 +373,7 @@ pub enum BoundsClause {
     },
     /// Card LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER (contract specification
     /// C09.3, USER DECISION 2026-10-15, "Only nonnull_member* need it"):
-    /// `requires resource_premise(NAME, "STATEMENT");` beside a
+    /// `requires resource_premise(NAME, FORMULA);` beside a
     /// `nonnull_member` clause of any kind (card NONNULL-MEMBER-UNIFIED-QUALIFIER,
     /// USER DECISION 2026-10-16 "Yes, all kinds"; before it, beside the stable
     /// and scope kinds only) of the same declaration -- the member facts that
@@ -1781,7 +1781,7 @@ fn load_function(path: &str, decl: &SourceDeclaration) -> Result<BoundsFunctionC
         })
     {
         return Err(
-            "premise-beside-member: a bounds declaration admits `requires resource_premise(NAME, \"STATEMENT\");` only beside a `nonnull_member` clause (plain, `[[stable]]` or `[[scope]]`)"
+            "premise-beside-member: a bounds declaration admits `requires resource_premise(NAME, FORMULA);` only beside a `nonnull_member` clause (plain, `[[stable]]` or `[[scope]]`)"
                 .into(),
         );
     }

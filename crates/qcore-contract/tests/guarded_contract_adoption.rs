@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#[path = "../../../tests/support/legacy_prose_premise.rs"]
+mod legacy_prose_premise;
 #[path = "../../../tests/support/sp2_premise_checkpoint.rs"]
 mod sp2_premise_checkpoint;
 use qcore_contract::{guarded_decomposition as g, guarded_metadata_bridge as bridge, hypothesis};
@@ -33,18 +35,29 @@ fn fixture() -> (
     BTreeMap<String, String>,
     BTreeMap<String, String>,
 ) {
-    let bytes =
+    let frozen =
         fs::read(root().join("docs/reports/guarded-contract-adoption/adoption-plan.json")).unwrap();
-    let plan: bridge::Plan = serde_json::from_slice(&bytes).unwrap();
+    let plan: bridge::Plan = serde_json::from_slice(&frozen).unwrap();
     // Card SP2-SYMBOLIC-LIBRDKAFKA-PREMISES stated the module's premises as
-    // formulas after this plan froze its whole source: the plan is checked
-    // against the module as it stood before (an exact, hash-checked recovery).
-    let source = sp2_premise_checkpoint::restored_file(
-        &plan.module,
-        &fs::read_to_string(root().join(&plan.module)).unwrap(),
+    // formulas after this plan froze its whole source: the frozen plan names
+    // the module as it stood before (an exact, hash-checked recovery). Card
+    // SP5-GLOBAL-PROSE-PREMISE-BAN: that module states string premises, which
+    // no loader admits, so the plan is replayed on the current module through
+    // the test-side legacy reader (its graph lifted, its digests the current
+    // module's), after the frozen digests are checked against the recovery.
+    let current = fs::read_to_string(root().join(&plan.module)).unwrap();
+    let restored =
+        sp2_premise_checkpoint::restored_file(&plan.module, &current, qcore_schemas::sha256_hex);
+    let addition = bridge::render(&plan.metadata).unwrap();
+    let bytes = legacy_prose_premise::lifted_adoption_plan(
+        &frozen,
+        &restored,
+        &current,
+        &addition,
         qcore_schemas::sha256_hex,
     );
-    let addition = bridge::render(&plan.metadata).unwrap();
+    let plan: bridge::Plan = serde_json::from_slice(&bytes).unwrap();
+    let source = current;
     assert_eq!(source.matches(&addition).count(), 1);
     let before = BTreeMap::from([(plan.module.clone(), source.replacen(&addition, "", 1))]);
     let after = BTreeMap::from([(plan.module.clone(), source)]);

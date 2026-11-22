@@ -120,7 +120,7 @@ fn a_missing_or_extra_premise_refuses() {
     assert!(check_declarations(&checked, &missing).is_err());
     let extra = DECLARATIONS.replace(
         "    requires resource_contract_v1;\n",
-        "    requires resource_contract_v1;\n    requires resource_premise(rk_spare, \"spare\");\n",
+        "    requires resource_contract_v1;\n    requires resource_premise(rk_spare, #concurrent |-> #inert);\n",
     );
     assert!(check_declarations(&checked, &extra).is_err());
 }

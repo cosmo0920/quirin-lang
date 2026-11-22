@@ -46,7 +46,7 @@ module contract;
 //
 // Card VERDICT-CONTRACT-PREMISE-ANNOTATIONS: stated on
 // `flb_output_task_singleplex_enqueue` as `requires
-// resource_premise(synchronous_output_reachability, "...")` (contract spec
+// resource_premise(synchronous_output_reachability, FORMULA)` (contract spec
 // C04.18), so every verdict that rests on the declaration names it. Card
 // SP3-SYMBOLIC-FLUENT-BIT-LIBC-PREMISES states it as a formula (C04.18.9): no
 // in-tree output plugin is synchronous, and in production the plugin of the

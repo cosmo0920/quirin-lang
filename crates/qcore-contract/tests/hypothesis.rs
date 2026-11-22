@@ -12,6 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#[path = "../../../tests/support/legacy_prose_premise.rs"]
+mod legacy_prose_premise;
+
 use qcore_contract::{contract_loader::*, hypothesis::*};
 use qcore_schemas::hypothesis::*;
 use std::collections::BTreeMap;
@@ -32,7 +35,7 @@ fn graph(clauses: &str) -> Graph {
 const STRUCTURED: &str = "requires resource_hypothesis(a, \"A and B hold jointly\"); requires resource_hypothesis(b, \"C\"); requires resource_premise_all(p, a, b);";
 #[test]
 fn legacy_erases_and_replays_without_changing_retained_bytes_or_digest() {
-    let s = sources("requires resource_premise(p, \"statement\");");
+    let s = sources("requires resource_premise(p, #concurrent |-> #inert);");
     let before = qcore_contract::contract_revision::declaration_digests(&s).unwrap();
     let contracts = load_resource_contract_sources(&s).unwrap();
     let gs = replay(contracts.source_assumptions()).unwrap();
@@ -48,7 +51,7 @@ fn legacy_erases_and_replays_without_changing_retained_bytes_or_digest() {
         erasure(g).unwrap(),
         vec![ErasedPremise {
             name: "p".into(),
-            statement: "statement".into(),
+            statement: "#concurrent |-> #inert".into(),
             origin: "declared".into()
         }]
     );
@@ -262,8 +265,13 @@ fn a_self_consistent_replacement_graph_cannot_shed_an_atom() {
     assert!(compose(&i, &context(), &expected, "p").is_err());
 }
 
-const CJSON: &str =
-    include_str!("../../../docs/reports/premise-decomposition-cycle1/proposed-cjson.qv");
+/// The frozen cJSON proposal. Card SP5-GLOBAL-PROSE-PREMISE-BAN: it states
+/// string premises, so it is read through the test-side legacy reader.
+fn cjson() -> String {
+    legacy_prose_premise::lift(include_str!(
+        "../../../docs/reports/premise-decomposition-cycle1/proposed-cjson.qv"
+    ))
+}
 const DETACH: &str = "cJSON_DetachItemViaPointer";
 const DETACH_PREMISE: &str = "detach_representation_atoms";
 
@@ -278,7 +286,7 @@ fn report_owned_cjson_decomposition_replays_and_keeps_the_exact_legacy_premise()
     assert_eq!(actual[DETACH].premises.len(), 1);
     assert_eq!(actual[DETACH].refinements.len(), 1);
 
-    let sources = BTreeMap::from([("cjson.qv".into(), CJSON.into())]);
+    let sources = BTreeMap::from([("cjson.qv".into(), cjson())]);
     let contracts = load_resource_contract_sources(&sources).unwrap();
     let expected = replay(contracts.source_assumptions()).unwrap();
     check_replay(&sources, &expected).unwrap();
@@ -298,7 +306,16 @@ fn report_owned_cjson_decomposition_replays_and_keeps_the_exact_legacy_premise()
         .iter()
         .find(|p| p.name == "detach_list_representation")
         .unwrap();
-    assert_eq!(retained.statement, legacy["statement"].as_str().unwrap());
+    // Card SP5-GLOBAL-PROSE-PREMISE-BAN: the frozen census records the
+    // premise's string statement; the proposal is read through the legacy
+    // reader, so the retained statement is that statement's recorded formula.
+    assert_eq!(
+        Some(retained.statement.clone()),
+        legacy_prose_premise::formula_of(
+            "detach_list_representation",
+            legacy["statement"].as_str().unwrap()
+        )
+    );
     for atom in &graph.premises[DETACH_PREMISE].children {
         let mut changed = expected.clone();
         changed
@@ -329,7 +346,7 @@ fn report_owned_cjson_decomposition_survives_inclusion_and_formal_renaming() {
         namespace: "librdkafka".into(),
         version: "0.1.0".into(),
         dependencies: Default::default(),
-        modules: BTreeMap::from([("librdkafka/cjson.qv".into(), CJSON.into()), ("child.qv".into(), "module contract;\n#include \"qcore-provider-librdkafka:librdkafka/cjson.qv\"; extern fn renamed(owner: ptr<mut, u8>, child: ptr<mut, u8>) -> ptr<mut, u8> contract inherit librdkafka::cJSON_DetachItemViaPointer;".into())]),
+        modules: BTreeMap::from([("librdkafka/cjson.qv".into(), cjson()), ("child.qv".into(), "module contract;\n#include \"qcore-provider-librdkafka:librdkafka/cjson.qv\"; extern fn renamed(owner: ptr<mut, u8>, child: ptr<mut, u8>) -> ptr<mut, u8> contract inherit librdkafka::cJSON_DetachItemViaPointer;".into())]),
         published: std::collections::BTreeSet::from(["librdkafka/cjson.qv".into()]),
     };
     let path = ContractLoadPath::new(vec![krate]).unwrap();
@@ -342,14 +359,14 @@ fn report_owned_cjson_decomposition_survives_inclusion_and_formal_renaming() {
     )
     .unwrap();
     let graphs = replay(contracts.source_assumptions()).unwrap();
-    let original = replay(&BTreeMap::from([("cjson.qv".into(), CJSON.into())])).unwrap();
+    let original = replay(&BTreeMap::from([("cjson.qv".into(), cjson())])).unwrap();
     assert_eq!(graphs["renamed"], original[DETACH]);
     check_replay(contracts.source_assumptions(), &graphs).unwrap();
 }
 
 #[test]
 fn report_owned_cjson_refuted_prerequisite_is_reported_only_in_its_exact_context() {
-    let sources = BTreeMap::from([("cjson.qv".into(), CJSON.into())]);
+    let sources = BTreeMap::from([("cjson.qv".into(), cjson())]);
     let expected = replay(&sources).unwrap().remove(DETACH).unwrap();
     let mut claim = Instance {
         graph_sha256: digest(&expected).unwrap(),
@@ -397,7 +414,7 @@ fn report_owned_cjson_refuted_prerequisite_is_reported_only_in_its_exact_context
     assert!(compose(&claim, &foreign, &expected, DETACH_PREMISE).is_err());
 }
 
-const REFINED: &str = "requires resource_premise(p, \"original proposition\"); requires resource_hypothesis(a, \"proposed A\"); requires resource_hypothesis(b, \"proposed B\"); requires resource_premise_decomposition(p, a, b);";
+const REFINED: &str = "requires resource_premise(p, #concurrent |-> #inert); requires resource_hypothesis(a, \"proposed A\"); requires resource_hypothesis(b, \"proposed B\"); requires resource_premise_decomposition(p, a, b);";
 #[test]
 fn v1_canonical_bytes_and_digests_remain_exact_with_v2_available() {
     let old = graph(STRUCTURED);
@@ -408,7 +425,7 @@ fn v1_canonical_bytes_and_digests_remain_exact_with_v2_available() {
 }
 #[test]
 fn same_name_attachment_preserves_exact_legacy_view_and_refuses_bad_structure() {
-    let before = graph("requires resource_premise(p, \"original proposition\");");
+    let before = graph("requires resource_premise(p, #concurrent |-> #inert);");
     let after = graph(REFINED);
     assert_eq!(after.version, 2);
     assert_eq!(after.premises, before.premises);
@@ -428,10 +445,7 @@ fn same_name_attachment_preserves_exact_legacy_view_and_refuses_bad_structure() 
             "decomposition(p, a, b)",
             "decomposition(p, legacy_atom_00000000)",
         ),
-        REFINED.replace(
-            "requires resource_premise(p, \"original proposition\");",
-            "",
-        ),
+        REFINED.replace("requires resource_premise(p, #concurrent |-> #inert);", ""),
         REFINED.replace(
             "requires resource_premise_decomposition",
             "ensures normal resource_premise_decomposition",
@@ -544,7 +558,7 @@ fn same_name_attachment_inherits_without_rewriting_original_erasure() {
     let graphs = replay(c.source_assumptions()).unwrap();
     assert_eq!(graphs["f"], graphs["child"]);
     let old = module_premises(
-        &sources("requires resource_premise(p, \"original proposition\");")["graph.qv"],
+        &sources("requires resource_premise(p, #concurrent |-> #inert);")["graph.qv"],
     )
     .unwrap();
     let new = module_premises(&sources(REFINED)["graph.qv"]).unwrap();

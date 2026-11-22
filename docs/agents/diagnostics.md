@@ -253,3 +253,16 @@ differs; `QI017` crate neither `quirin-provider-*` nor (card
 derived, or shared (one remainder under both prefixes included); `QI018` unqualified parent only an included module declares;
 `QI019` namespace names no directly included crate; `QI020` child named like
 its qualified parent.
+
+<a id="premise-formula-namespace-qf"></a>
+
+### Premise formula namespace (`QF`)
+
+Card `SP5-GLOBAL-PROSE-PREMISE-BAN` opens `QF***`, owned by the contract
+format's premise reader (`qcore_frontend::premise_formula`), on the `QI***`
+precedent: no `Q` route code is allocated and `Q-NAMESPACE-DECISION` is not
+settled. `QF001`: a `resource_premise(NAME, …)` statement that is, or holds,
+a string literal (the retired string form, contract specification C04.18). It
+rejects the whole module on every route, because every route reads a premise
+through `premise_clause`; on the compiler route it reaches the user as the
+`Q000` parse refusal whose message starts with `QF001`.

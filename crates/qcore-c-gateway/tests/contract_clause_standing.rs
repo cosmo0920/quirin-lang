@@ -230,7 +230,7 @@ fn a_named_premise_is_an_uncovered_clause() {
 extern fn q_wait(q: ptr<mut, u8>) -> unit
 contract {
     requires resource_contract_v1;
-    requires resource_premise(served_queue, \"no callback takes the caller's reference\");
+    requires resource_premise(served_queue, #op_callbacks |-> #takes(#held_on(#served)) == {});
     ensures normal resource_borrowed(q);
     ensures normal resource_return_none();
 };

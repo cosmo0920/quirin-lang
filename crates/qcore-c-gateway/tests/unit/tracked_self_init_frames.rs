@@ -430,10 +430,10 @@ fn a_complete_parent_escape_has_no_ordinary_or_cross_unit_summary() {
 fn a_guarded_interface_cannot_supply_the_ordinary_call_closure() {
     let text = r#"module contract; extern fn touch(p: ptr<mut, u8>) -> unit contract {
       requires resource_contract_v1;
-      requires resource_premise(s3_condition_snapshot_stable, "Every member read by this function's condition bindings preserves its entry value until each guarded use.");
+      requires resource_premise(s3_condition_snapshot_stable, quant all #m in #condition_reads: #m in #entry_stable);
       ensures normal resource_borrowed(p); ensures normal resource_return_none();
       quant #active = (#p.flag != 0);
-      quant #active in { requires resource_premise(entry_protocol, "The entry protocol holds"); }: [[local]];
+      quant #active in { requires resource_premise(entry_protocol, #concurrent |-> #inert); }: [[local]];
     };"#;
     let mut c = crate::contract_loader::load_resource_contract_sources(&BTreeMap::from([(
         "guarded.qv".into(),

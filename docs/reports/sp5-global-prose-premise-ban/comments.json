@@ -1,0 +1,85 @@
+{
+  "card": "SP5-GLOBAL-PROSE-PREMISE-BAN",
+  "base": "1d69b7b81",
+  "note": "Comment-only edits: each provider comment that described the retired string form resource_premise(NAME, \"...\") now names the formula form. Each file at base is its current bytes with every edit's after text written back as its before text; nothing else changed, and no declaration text (so no pin) changed.",
+  "files": [
+    {
+      "file": "providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv",
+      "before_sha256": "7f98e702b501f2ab0cea4fc7d9a74a1a465a6860c82b664782a52134c6d642fc",
+      "after_sha256": "2bb7c25374bb19e9f28331e9415b8632d9bbabfb91e805ca0d246729fbe44edd",
+      "edits": [
+        {
+          "after": "// `requires resource_premise(cjson_allocator_hooks, FORMULA);` (contract spec\n// C04.18, the C04.18.9 formula below), so every verdict that rests on the\n// declaration names it.\n",
+          "before": "// `requires resource_premise(cjson_allocator_hooks, \"...\")` (contract spec\n// C04.18), so every verdict that rests on the declaration names it.\n"
+        },
+        {
+          "after": "//     resource_premise(cjson_list_invariant, FORMULA)` (contract spec C04.18,\n",
+          "before": "//     resource_premise(cjson_list_invariant, \"...\")` (contract spec C04.18,\n"
+        }
+      ]
+    },
+    {
+      "file": "providers/qcore-provider-librdkafka/contracts/librdkafka/client.qv",
+      "before_sha256": "8981842a17e16fd6c69e008b67b65f3f2c6f7cf15ec6bdc3f4199db2141fc75d",
+      "after_sha256": "a454826866c9c26d29023e69fc8dfe67e864e9334f87f88e3a90070d8f27932a",
+      "edits": [
+        {
+          "after": "// resource_premise(asserted_allocation, FORMULA)` (contract spec C04.18), so\n",
+          "before": "// resource_premise(asserted_allocation, \"...\")` (contract spec C04.18), so\n"
+        },
+        {
+          "after": "// `requires resource_premise(served_queue, FORMULA)` (contract spec C04.18), so\n",
+          "before": "// `requires resource_premise(served_queue, \"...\")` (contract spec C04.18), so\n"
+        }
+      ]
+    },
+    {
+      "file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_name.qv",
+      "before_sha256": "4caf173f16cd812b6df6052b23edee27c01c53258e204bc414b6b5e248ed7298",
+      "after_sha256": "d9d54bbd42f983280d746bd5307524d1e5368d084447cfdb48446fade4d4eb1b",
+      "edits": [
+        {
+          "after": "// FORMULA)` (contract spec C04.18), so every verdict that rests on the\n",
+          "before": "// \"...\")` (contract spec C04.18), so every verdict that rests on the\n"
+        }
+      ]
+    },
+    {
+      "file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/loop_owner.qv",
+      "before_sha256": "0adff0b11d56fc6f0421ad80ed0da48bd1abd84b29d67b25ad8087959be645c8",
+      "after_sha256": "29fcd1749de3ad08b63eba04c7531a235ec66df27ecd9f517bd190a1a6c871b9",
+      "edits": [
+        {
+          "after": "//   `requires resource_premise(ingestion_active, FORMULA)`, contract spec\n",
+          "before": "//   `requires resource_premise(ingestion_active, \"...\")`, contract spec\n"
+        }
+      ]
+    },
+    {
+      "file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/output_singleplex.qv",
+      "before_sha256": "32997015f48567363e704538a3ccbaf65b37adcda3e71def1b9c58cfbe3b8b67",
+      "after_sha256": "486820d59ff4a03c18f01dc50d2756bb20533b8e898da085aa4c6d2a28cd0d35",
+      "edits": [
+        {
+          "after": "// resource_premise(synchronous_output_reachability, FORMULA)` (contract spec\n",
+          "before": "// resource_premise(synchronous_output_reachability, \"...\")` (contract spec\n"
+        }
+      ]
+    },
+    {
+      "file": "providers/quirin-provider-libc/contracts/libc/errno.qv",
+      "before_sha256": "6ff8c805b9e701d07a198c0d79478cba56555c548d9a4942d53b88e07e97c84f",
+      "after_sha256": "6801ac67d5a179bcd5fd9cfbddea30110b5d62dcd3d24be8b4cdb28c4f11f1ff",
+      "edits": [
+        {
+          "after": "// the named premise `nested_call_admission` (contract spec C04.18), so every\n// verdict that rests on the declaration names it; it is the\n// `resource_premise_all` conjunction of typed atoms below (C04.18.7), never a\n// string (card SP5-GLOBAL-PROSE-PREMISE-BAN retired that form).\n",
+          "before": "// `requires resource_premise(nested_call_admission, \"...\")` (contract spec\n// C04.18), so every verdict that rests on the declaration names it.\n"
+        },
+        {
+          "after": "// Card VERDICT-CONTRACT-PREMISE-ANNOTATIONS: stated on `strerror` as the named\n// premise `nested_call_admission` (contract spec C04.18), so every verdict\n// that rests on the declaration names it; it is the `resource_premise_all`\n// conjunction of typed atoms below (C04.18.7), never a string.\n",
+          "before": "// Card VERDICT-CONTRACT-PREMISE-ANNOTATIONS: stated on `strerror` as `requires\n// resource_premise(nested_call_admission, \"...\")` (contract spec C04.18), so\n// every verdict that rests on the declaration names it.\n"
+        }
+      ]
+    }
+  ]
+}

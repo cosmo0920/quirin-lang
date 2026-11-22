@@ -51,7 +51,7 @@ module contract;
 // * resume returns 0 without resuming while `config->is_ingestion_active` is
 //   false, otherwise re-registers the collector's own event and sets
 //   `running` (C3's ingestion premise, stated on the declaration as
-//   `requires resource_premise(ingestion_active, "...")`, contract spec
+//   `requires resource_premise(ingestion_active, FORMULA)`, contract spec
 //   C04.18, card VERDICT-CONTRACT-PREMISE-ANNOTATIONS; the flag is read at
 //   src/flb_input.c:3221 at 66910c10, :3241 at 046accf6 and 34155955). Card
 //   SP3-SYMBOLIC-FLUENT-BIT-LIBC-PREMISES states it as a formula (C04.18.9)

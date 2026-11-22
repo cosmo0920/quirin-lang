@@ -21,7 +21,7 @@
 use std::collections::{BTreeMap, BTreeSet};
 
 use qcore_frontend::lexer::{TokenKind, lex};
-use qcore_frontend::premise_formula::{PremiseStatement, Raw, VOCABULARY, lean, premise_clause};
+use qcore_frontend::premise_formula::{PremiseFormula, Raw, VOCABULARY, lean, premise_clause};
 
 const LEAN: &str = include_str!("../../../proof/QCore/PremiseFormula/Librdkafka.lean");
 
@@ -182,7 +182,7 @@ fn lean_definition(opening: &str) -> String {
 /// Every `resource_premise` clause of the crate, read by the contract
 /// format's premise reader: `(module, name, statement)`. Line comments are
 /// dropped first, so a clause quoted in a comment is not a clause.
-fn premises() -> Vec<(&'static str, String, PremiseStatement)> {
+fn premises() -> Vec<(&'static str, String, PremiseFormula)> {
     let mut out = Vec::new();
     for (module, text) in MODULES {
         let stripped = text
@@ -207,10 +207,7 @@ fn premises() -> Vec<(&'static str, String, PremiseStatement)> {
 #[test]
 fn the_librdkafka_formulas_are_the_lean_definitions() {
     let mut by_name: BTreeMap<String, Vec<String>> = BTreeMap::new();
-    for (module, name, statement) in premises() {
-        let PremiseStatement::Formula(formula) = statement else {
-            panic!("{module}: `{name}` is stated in prose");
-        };
+    for (_, name, formula) in premises() {
         by_name.entry(name).or_default().push(lean(&formula.raw));
     }
     assert_eq!(by_name.len(), LEAN_NAMES.len(), "{:?}", by_name.keys());
@@ -270,10 +267,8 @@ fn every_sp2_term_is_used_by_a_librdkafka_formula() {
         .position(|term| term.name == "false")
         .expect("the SP2 block starts at `#false`");
     let mut used = BTreeSet::new();
-    for (_, _, statement) in premises() {
-        if let PremiseStatement::Formula(formula) = statement {
-            terms_of(&formula.raw, &mut used);
-        }
+    for (_, _, formula) in premises() {
+        terms_of(&formula.raw, &mut used);
     }
     let block = VOCABULARY[first..first + 75]
         .iter()

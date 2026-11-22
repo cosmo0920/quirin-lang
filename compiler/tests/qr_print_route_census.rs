@@ -44,6 +44,8 @@ use qcore_compiler::{
 use std::io::Write;
 use std::path::{Path, PathBuf};
 
+#[path = "../../tests/support/legacy_prose_premise.rs"]
+mod legacy_prose_premise;
 #[path = "../../tests/support/tracked_files.rs"]
 mod tracked_files;
 
@@ -131,7 +133,11 @@ fn route_census_of_every_tracked_source() {
             .expect("a tracked path lies under the root")
             .display()
             .to_string();
-        let source = std::fs::read_to_string(&path).unwrap_or_default();
+        // Card SP5-GLOBAL-PROSE-PREMISE-BAN: a frozen source that states a
+        // retired string premise is read through the test-side legacy
+        // reader, so it stays in the census.
+        let source =
+            legacy_prose_premise::lift(&std::fs::read_to_string(&path).unwrap_or_default());
         let lexical_print_pair = parse_source_program(&source).ok().map(|parsed| {
             parsed.lexical_tokens().windows(2).any(|pair| {
                 matches!(&pair[0].kind, qcore_compiler::lexer::TokenKind::Word(word) if word == "print")
@@ -179,7 +185,12 @@ fn every_tracked_print_pair_is_classified_as_pinned() {
     let mut declaration_only = Vec::new();
     let mut ambiguous = Vec::new();
     for path in tracked_sources(&root) {
-        let source = std::fs::read_to_string(&path).expect("a tracked source is readable");
+        // Card SP5-GLOBAL-PROSE-PREMISE-BAN: a frozen source that states a
+        // retired string premise is read through the test-side legacy
+        // reader, so it stays in the census.
+        let source = legacy_prose_premise::lift(
+            &std::fs::read_to_string(&path).expect("a tracked source is readable"),
+        );
         let Ok(parsed) = parse_source_program(&source) else {
             continue;
         };

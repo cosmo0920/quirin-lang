@@ -57,8 +57,8 @@ use qcore_frontend::frontend::parse_source_program;
 use qcore_schemas::contract::{DerivedExtent, ResourceReturnMode};
 use qcore_schemas::sha256_hex;
 
-#[path = "../../tests/support/sp2_premise_checkpoint.rs"]
-mod sp2_premise_checkpoint;
+#[path = "../../tests/support/legacy_prose_premise.rs"]
+mod legacy_prose_premise;
 #[path = "../../tests/support/tracked_files.rs"]
 mod tracked_files;
 
@@ -73,14 +73,20 @@ fn repository() -> PathBuf {
         .to_owned()
 }
 
+/// A frozen hand-written fixture. Card SP5-GLOBAL-PROSE-PREMISE-BAN: the
+/// fixtures predate the premises' formulas and state string premises, which
+/// no loader admits; they are read through the test-side legacy reader,
+/// which writes each recorded string statement as its formula.
 fn fixture(name: &str) -> String {
-    fs::read_to_string(
-        Path::new(env!("CARGO_MANIFEST_DIR"))
-            .join("tests/fixtures/contract_inherit_qcore_provider")
-            .join(name),
+    legacy_prose_premise::lift(
+        &fs::read_to_string(
+            Path::new(env!("CARGO_MANIFEST_DIR"))
+                .join("tests/fixtures/contract_inherit_qcore_provider")
+                .join(name),
+        )
+        .unwrap()
+        .replace("\r\n", "\n"),
     )
-    .unwrap()
-    .replace("\r\n", "\n")
 }
 
 fn real_load_path() -> qcore_contract::load_path_manifest::LoadPathManifest {
@@ -207,7 +213,7 @@ fn constructor_specification_tokens(name: &str) -> Vec<qcore_frontend::lexer::To
         _ => panic!("not a rule-37 checked wrapper"),
     };
     let source = format!(
-        r#"module contract; extern fn {name}({parameters}) -> ptr<mut, u8> contract {{ requires resource_contract_v1; requires resource_body_checked; requires resource_premise(asserted_allocation, "the deployed build preserves the analyzed assertion and its declared terminating failure call; allocation failure has no normal return"); {borrowed} ensures normal resource_return_owned(nonnull); }};"#
+        r#"module contract; extern fn {name}({parameters}) -> ptr<mut, u8> contract {{ requires resource_contract_v1; requires resource_body_checked; requires resource_premise(asserted_allocation, #deployed_assertion && #deployed_failure_call && #call |-> #failure_no_return); {borrowed} ensures normal resource_return_owned(nonnull); }};"#
     );
     parse_source_program(&source)
         .unwrap()
@@ -276,9 +282,9 @@ fn converted_wrappers_elaborate_to_the_hand_written_contracts() {
             legacy_text
         };
         // Card SP2-SYMBOLIC-LIBRDKAFKA-PREMISES: the frozen token fixture
-        // predates the premises' formulas; write each back as its prose for
-        // this legacy comparison only (the current text loads below).
-        let legacy_text = sp2_premise_checkpoint::restore(&legacy_text);
+        // predates the premises' formulas. Card SP5-GLOBAL-PROSE-PREMISE-BAN:
+        // the fixture is read through the legacy reader (`fixture`), so its
+        // statements are the formulas the current text states.
         let after = parse_source_program(&legacy_text).unwrap();
         let hand_parsed = parse_source_program(&before).unwrap();
         let names = |parsed: &qcore_frontend::frontend::SourceProgram| {
@@ -752,5 +758,89 @@ fn a_child_parameter_spelled_like_the_second_argument_is_captured() {
         );
         let error = refused(&module, "QI012");
         assert!(error.contains(word), "{error}");
+    }
+}
+
+/// Card SP5-GLOBAL-PROSE-PREMISE-BAN (discharging
+/// SP2-SHIPPED-PROVIDER-PROSE-BAN): the load-time ban for every crate on the
+/// real load path, shipped `qcore-provider-*` crates included, none opting
+/// in. In each crate whose modules state a named premise, the first premise
+/// clause of the first such module, its statement rewritten as a string, is
+/// refused by name (`QF001`) whether the module is elaborated through the
+/// load path or parsed directly; the unmodified module parses.
+#[test]
+fn a_string_premise_in_any_crate_on_the_load_path_is_refused_at_load() {
+    let manifest = real_load_path();
+    let mut refused = BTreeSet::new();
+    for krate in manifest.load_path.crates() {
+        let clause_start = |text: &str| {
+            let mut offset = 0;
+            for line in text.split_inclusive('\n') {
+                if line.trim_start().starts_with("requires resource_premise(") {
+                    return Some(offset + line.find("requires").unwrap());
+                }
+                offset += line.len();
+            }
+            None
+        };
+        let Some((module, text, start)) = krate
+            .modules
+            .iter()
+            .find_map(|(module, text)| clause_start(text).map(|start| (module, text, start)))
+        else {
+            continue;
+        };
+        let comma = start + text[start..].find(',').unwrap();
+        let end = start + text[start..].find(';').unwrap();
+        let close = start + text[start..end].rfind(')').unwrap();
+        let prose = format!(
+            "{} \"a premise stated as a sentence\"{}",
+            &text[..=comma],
+            &text[close..]
+        );
+        let crates = manifest
+            .load_path
+            .crates()
+            .cloned()
+            .map(|mut owner| {
+                if owner.name == krate.name {
+                    owner.modules.insert(module.clone(), prose.clone());
+                }
+                owner
+            })
+            .collect::<Vec<_>>();
+        let path = ContractLoadPath::new(crates).unwrap();
+        let refusal = match elaborate_contract_module(&path, &krate.name, module) {
+            Err(error) => error.to_string(),
+            Ok(elaborated) => parse_source_program(&elaborated.text)
+                .expect_err("an elaborated string premise parses")
+                .to_string(),
+        };
+        assert!(
+            refusal.contains("QF001"),
+            "{}:{module}: {refusal}",
+            krate.name
+        );
+        if !qcore_frontend::contract_inclusion::contains_contract_inclusion_syntax(&prose) {
+            let error = parse_source_program(&prose).expect_err("a string premise parses");
+            assert!(
+                error.to_string().contains("QF001"),
+                "{}:{module}",
+                krate.name
+            );
+            assert!(
+                parse_source_program(text).is_ok(),
+                "{}:{module}",
+                krate.name
+            );
+        }
+        refused.insert(krate.name.clone());
+    }
+    for shipped in [
+        "qcore-provider-libevent",
+        "qcore-provider-librdkafka",
+        "quirin-provider-fluent-bit",
+    ] {
+        assert!(refused.contains(shipped), "{shipped}: {refused:?}");
     }
 }

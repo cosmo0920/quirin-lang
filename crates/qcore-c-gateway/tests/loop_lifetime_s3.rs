@@ -198,7 +198,7 @@ fn all_registration_and_release_sites_are_retained_and_source_roots_are_stable()
 
 fn guarded_premise_source(field: &str, negated: bool, statement: &str) -> String {
     let source = format!(
-        "module contract; extern fn f(ins: ptr<mut, u8>) -> i32 contract {{ requires resource_contract_v1; requires resource_premise(s3_condition_snapshot_stable, \"Every member read by this function's condition bindings preserves its entry value until each guarded use.\"); ensures normal resource_borrowed(ins); ensures normal resource_return_none(); quant #condition = (#ins.{field} != 0); quant {}#condition in {{ requires resource_premise(entry_protocol, \"{statement}\"); }}: [[local]]; }};",
+        "module contract; extern fn f(ins: ptr<mut, u8>) -> i32 contract {{ requires resource_contract_v1; requires resource_premise(s3_condition_snapshot_stable, quant all #m in #condition_reads: #m in #entry_stable); ensures normal resource_borrowed(ins); ensures normal resource_return_none(); quant #condition = (#ins.{field} != 0); quant {}#condition in {{ requires resource_premise(entry_protocol, {statement}); }}: [[local]]; }};",
         if negated { "not " } else { "" }
     );
     source
@@ -220,7 +220,7 @@ fn guarded_premise(
 #[test]
 fn an_active_guarded_requirement_uses_only_a_matching_stable_entry_precondition() {
     use loop_lifetime_source::{EntryContext, call_ready};
-    let callee = guarded_premise("is_threaded", true, "the declared entry protocol holds");
+    let callee = guarded_premise("is_threaded", true, "#concurrent |-> #inert");
     let own = callee.clone();
     let mut unstable = own.clone();
     unstable.entry_snapshot_stable = false;
@@ -246,9 +246,9 @@ fn an_active_guarded_requirement_uses_only_a_matching_stable_entry_precondition(
     );
     assert!(call_ready(&callee, call("plain"), &[facts()], &run, Some(&entry)).is_ok());
     for (field, negated, statement) in [
-        ("other", true, "the declared entry protocol holds"),
-        ("is_threaded", false, "the declared entry protocol holds"),
-        ("is_threaded", true, "another protocol holds"),
+        ("other", true, "#concurrent |-> #inert"),
+        ("is_threaded", false, "#concurrent |-> #inert"),
+        ("is_threaded", true, "#interleaved |-> #inert"),
     ] {
         let wrong = guarded_premise(field, negated, statement);
         let entry = EntryContext {
@@ -283,10 +283,10 @@ fn local_guarded_body_use_and_certificate_replay_need_no_ambient_run_facts() {
     let source = "struct instance { int is_threaded; }; void target(struct instance *); void caller(struct instance *ins) { if (!ins->is_threaded) target(ins); }";
     let declaration = |name: &str, premise: bool| {
         format!(
-            "module contract; extern fn {name}(ins: ptr<mut, u8>) -> unit contract {{ requires resource_contract_v1; {} ensures normal resource_borrowed(ins); ensures normal resource_return_none(); quant #threaded = (#ins.is_threaded != 0); quant not #threaded in {{ requires resource_premise(entry_protocol, \"The entry protocol holds\"); }}: [[local]]; }};",
+            "module contract; extern fn {name}(ins: ptr<mut, u8>) -> unit contract {{ requires resource_contract_v1; {} ensures normal resource_borrowed(ins); ensures normal resource_return_none(); quant #threaded = (#ins.is_threaded != 0); quant not #threaded in {{ requires resource_premise(entry_protocol, #concurrent |-> #inert); }}: [[local]]; }};",
             if premise {
                 format!(
-                    "requires resource_premise({}, \"{}\");",
+                    "requires resource_premise({}, {});",
                     qcore_contract::local_condition::SNAPSHOT_PREMISE_NAME,
                     qcore_contract::local_condition::SNAPSHOT_PREMISE_STATEMENT
                 )
@@ -693,7 +693,7 @@ fn guarded_callback_and_reference_effects_cannot_bypass_through_raw_prepasses() 
             )
         };
         let text = format!(
-            "module contract; extern fn gate({signature}) -> unit contract {{ requires resource_contract_v1; {modes} {effect} ensures normal resource_return_none(); quant #threaded = (#ins.is_threaded != 0); quant #threaded in {{ requires resource_premise(worker, \"The worker protocol holds\"); }}: [[local]]; }};"
+            "module contract; extern fn gate({signature}) -> unit contract {{ requires resource_contract_v1; {modes} {effect} ensures normal resource_return_none(); quant #threaded = (#ins.is_threaded != 0); quant #threaded in {{ requires resource_premise(worker, #concurrent |-> #inert); }}: [[local]]; }};"
         );
         let env = load_resource_contract_sources(&[("guarded.qv".into(), text)].into()).unwrap();
         assert!(env.retaining().is_empty());
@@ -734,7 +734,7 @@ fn ready_guards_do_not_bypass_declared_c_abi_validation() {
         ),
     ] {
         let text = format!(
-            "module contract; extern fn gate({signature}) -> unit contract {{ requires resource_contract_v1; {modes} ensures normal resource_return_none(); quant #threaded = (#ins.is_threaded != 0); quant #threaded in {{ requires resource_premise(worker, \"The worker protocol holds\"); }}: [[local]]; }};"
+            "module contract; extern fn gate({signature}) -> unit contract {{ requires resource_contract_v1; {modes} ensures normal resource_return_none(); quant #threaded = (#ins.is_threaded != 0); quant #threaded in {{ requires resource_premise(worker, #concurrent |-> #inert); }}: [[local]]; }};"
         );
         let env = load_resource_contract_sources(&[("guarded.qv".into(), text)].into()).unwrap();
         let result = analyze_unrestricted_c11(
@@ -764,7 +764,7 @@ fn three_function_calls_preserve_conditional_entry_obligations_instead_of_infere
         .map(|name| {
             (
                 format!("{name}.qv"),
-                guarded_premise_source("is_threaded", true, "the declared entry protocol holds")
+                guarded_premise_source("is_threaded", true, "#concurrent |-> #inert")
                     .replace("extern fn f(", &format!("extern fn {name}("))
                     .replace("-> i32", "-> unit"),
             )
@@ -805,7 +805,7 @@ fn a_pin_held_guarded_neutral_body_cannot_publish_a_bare_summary() {
     use qcore_c_gateway::legacy_c::{UnrestrictedLegacyResult, analyze_unrestricted_c11};
     use qcore_schemas::contract_revision::PinMismatchReason;
     let source = "struct instance { int is_threaded; }; void A(struct instance *p) {} void caller(struct instance *p) { A(p); }";
-    let text = guarded_premise_source("is_threaded", true, "the declared entry protocol holds")
+    let text = guarded_premise_source("is_threaded", true, "#concurrent |-> #inert")
         .replace("extern fn f(", "extern fn A(")
         .replace("-> i32", "-> unit");
     let mut env = load_resource_contract_sources(&[("guarded.qv".into(), text)].into()).unwrap();

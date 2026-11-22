@@ -57,8 +57,10 @@ module contract;
 // disagreeing declaration refuses the reading rather than assuming its type.
 //
 // Card VERDICT-CONTRACT-PREMISE-ANNOTATIONS: stated on `__errno_location` as
-// `requires resource_premise(nested_call_admission, "...")` (contract spec
-// C04.18), so every verdict that rests on the declaration names it.
+// the named premise `nested_call_admission` (contract spec C04.18), so every
+// verdict that rests on the declaration names it; it is the
+// `resource_premise_all` conjunction of typed atoms below (C04.18.7), never a
+// string (card SP5-GLOBAL-PROSE-PREMISE-BAN retired that form).
 //
 // W48-BOTTOM-UP-BATCH3 deliberately adds one reading position, under the
 // same declared custody result: an external zero-argument call's scalar
@@ -132,9 +134,10 @@ contract {
 // Nothing about the message's lifetime past the next call, its text, locale or
 // `errno` is stated.
 //
-// Card VERDICT-CONTRACT-PREMISE-ANNOTATIONS: stated on `strerror` as `requires
-// resource_premise(nested_call_admission, "...")` (contract spec C04.18), so
-// every verdict that rests on the declaration names it.
+// Card VERDICT-CONTRACT-PREMISE-ANNOTATIONS: stated on `strerror` as the named
+// premise `nested_call_admission` (contract spec C04.18), so every verdict
+// that rests on the declaration names it; it is the `resource_premise_all`
+// conjunction of typed atoms below (C04.18.7), never a string.
 
 extern fn strerror(errnum: i32) -> ptr<mut, u8>
 contract {

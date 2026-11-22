@@ -21,6 +21,8 @@
 
 use std::collections::BTreeMap;
 
+#[path = "../../../tests/support/legacy_prose_premise.rs"]
+mod legacy_prose_premise;
 #[path = "../../../tests/support/sp2_premise_checkpoint.rs"]
 mod sp2_premise_checkpoint;
 
@@ -321,7 +323,7 @@ fn the_premises_of_an_environment_name_declared_and_rule_premises() {
 extern fn q_wait(q: ptr<mut, u8>, timeout: i32) -> i32
 contract {
     requires resource_contract_v1;
-    requires resource_premise(served_queue, \"no callback takes the caller's reference\");
+    requires resource_premise(served_queue, #op_callbacks |-> #takes(#held_on(#served)) == {});
     ensures normal resource_borrowed(q);
     ensures normal resource_borrowed(timeout);
     ensures normal resource_return_none();
@@ -334,7 +336,7 @@ contract {
     let premises = premises(&contracts).unwrap();
     assert_eq!(
         premises["q_wait"],
-        json!([{"name": "served_queue", "statement": "no callback takes the caller's reference",
+        json!([{"name": "served_queue", "statement": "#op_callbacks |-> #takes(#held_on(#served)) == {}",
                  "origin": "declared"}])
     );
 }
@@ -343,7 +345,7 @@ contract {
 fn graph_section_erases_to_the_previous_premise_and_dependency_view() {
     use qcore_audit::contract_dependencies::erase_hypotheses;
     use qcore_contract::contract_loader::load_resource_contract_sources;
-    let text = "module contract; extern fn f() -> unit contract { requires resource_contract_v1; requires resource_premise(p, \"assumption\"); ensures normal resource_return_none(); };";
+    let text = "module contract; extern fn f() -> unit contract { requires resource_contract_v1; requires resource_premise(p, #concurrent |-> #inert); ensures normal resource_return_none(); };";
     let c =
         load_resource_contract_sources(&BTreeMap::from([("g.qv".into(), text.into())])).unwrap();
     let mut metadata = premises(&c).unwrap();
@@ -376,7 +378,7 @@ fn graph_section_erases_to_the_previous_premise_and_dependency_view() {
     erase_hypotheses(&mut metadata);
     assert_eq!(
         metadata,
-        json!({"f":[{"name":"p","statement":"assumption","origin":"declared"}]})
+        json!({"f":[{"name":"p","statement":"#concurrent |-> #inert","origin":"declared"}]})
     );
     let mut old_units = json!(units);
     erase_hypotheses(&mut old_units);
@@ -401,9 +403,13 @@ fn erasure_preserves_legacy_declarations_named_like_graph_fields() {
 fn report_owned_cjson_atoms_follow_declaration_dependencies_without_affecting_unrelated_rows() {
     use qcore_c_gateway::contract_dependencies::{RowDependencies, hypothesis_closure};
     use std::collections::BTreeSet;
-    let text = include_str!("../../../docs/reports/premise-decomposition-cycle1/proposed-cjson.qv");
+    // Card SP5-GLOBAL-PROSE-PREMISE-BAN: the frozen proposal states string
+    // premises; it is read through the test-side legacy reader.
+    let text = legacy_prose_premise::lift(include_str!(
+        "../../../docs/reports/premise-decomposition-cycle1/proposed-cjson.qv"
+    ));
     let contracts = qcore_contract::contract_loader::load_resource_contract_sources(
-        &BTreeMap::from([("cjson.qv".into(), text.into())]),
+        &BTreeMap::from([("cjson.qv".into(), text)]),
     )
     .unwrap();
     let graphs = qcore_contract::hypothesis::replay(contracts.source_assumptions()).unwrap();
@@ -450,15 +456,17 @@ fn report_owned_cjson_atoms_follow_declaration_dependencies_without_affecting_un
 fn proposed_cjson_detach_consultation_propagates_atoms_through_a_summary() {
     use qcore_c_gateway::contract_dependencies::{Recording, hypothesis_closure, row_dependencies};
     use qcore_c_gateway::legacy_c::analyze_legacy_c_translation_unit;
-    let production =
-        include_str!("../../../docs/reports/premise-decomposition-cycle1/proposed-cjson.qv");
+    // Card SP5-GLOBAL-PROSE-PREMISE-BAN: read through the legacy reader.
+    let production = legacy_prose_premise::lift(include_str!(
+        "../../../docs/reports/premise-decomposition-cycle1/proposed-cjson.qv"
+    ));
     let fixture = "module contract;
 extern fn impact_alloc() -> ptr<mut,u8> contract { requires resource_contract_v1; ensures normal resource_return_owned(nonnull); };
 extern fn impact_store(p: ptr<mut,u8>, i: ptr<mut,u8>) -> unit contract { requires resource_contract_v1; ensures normal resource_owned(p,nonnull); ensures normal resource_stored(i,p,nonnull); ensures normal resource_return_none(); };
 extern fn impact_free(p: ptr<mut,u8>) -> unit contract { requires resource_contract_v1; ensures normal resource_released(p,nullable); ensures normal resource_return_none(); };";
     let contracts =
         qcore_contract::contract_loader::load_resource_contract_sources(&BTreeMap::from([
-            ("cjson.qv".into(), production.into()),
+            ("cjson.qv".into(), production),
             ("impact.qv".into(), fixture.into()),
         ]))
         .unwrap();
@@ -606,8 +614,10 @@ fn a_companion_premise_changes_closed_world_classification_so_stays_report_owned
     use std::collections::BTreeSet;
     let original =
         include_str!("../../../providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv");
-    let proposal =
-        include_str!("../../../docs/reports/premise-decomposition-cycle1/proposed-cjson.qv");
+    // Card SP5-GLOBAL-PROSE-PREMISE-BAN: read through the legacy reader.
+    let proposal = legacy_prose_premise::lift(include_str!(
+        "../../../docs/reports/premise-decomposition-cycle1/proposed-cjson.qv"
+    ));
     let load = |text: &str| {
         qcore_contract::contract_loader::load_resource_contract_sources(&BTreeMap::from([(
             "cjson.qv".into(),
@@ -616,7 +626,7 @@ fn a_companion_premise_changes_closed_world_classification_so_stays_report_owned
         .unwrap()
     };
     let before = premises(&load(original)).unwrap();
-    let after = premises(&load(proposal)).unwrap();
+    let after = premises(&load(&proposal)).unwrap();
     let dependencies = json!({"declarations":["cJSON_DetachItemViaPointer"]});
     let old = custody_facts(&dependencies, &before);
     let new = custody_facts(&dependencies, &after);
@@ -651,16 +661,21 @@ fn concrete_attachment_preserves_closed_world_facts_and_publishes_checked_open_b
         )]))
         .unwrap()
     };
-    let before = load(old);
+    // Card SP5-GLOBAL-PROSE-PREMISE-BAN: the frozen proposal and the
+    // restoration below state string premises; both are read through the
+    // test-side legacy reader.
+    let before = load(legacy_prose_premise::lift(&old));
     let after = load(current.into());
     // Card SP2-SYMBOLIC-LIBRDKAFKA-PREMISES: the frozen proposal predates the
     // premises' formulas, so the premise parity is checked on the module as it
     // stood before them (an exact, hash-checked restoration); every binding
     // check below reads the current module.
-    let restored = load(sp2_premise_checkpoint::restored_file(
-        "providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv",
-        current,
-        qcore_schemas::sha256_hex,
+    let restored = load(legacy_prose_premise::lift(
+        &sp2_premise_checkpoint::restored_file(
+            "providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv",
+            current,
+            qcore_schemas::sha256_hex,
+        ),
     ));
     assert_eq!(
         qcore_contract::contract_loader::declared_premises(&before).unwrap(),

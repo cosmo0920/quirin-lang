@@ -49,6 +49,13 @@
 //! table): no token, operator, sort or production is added. Its formulas are
 //! `QCore.PremiseFormula.Libevent`'s, bound by the same test file.
 //!
+//! Card **SP5-GLOBAL-PROSE-PREMISE-BAN** retires the string statement: a
+//! premise clause states a formula or is refused by name ([`PROSE_PREMISE`],
+//! `QF001`), on every route, since every route reads a premise through
+//! [`premise_clause`]. Its SP5 block appends the two terms of C04.21's
+//! reserved entry-snapshot premise; the clause decision vectors
+//! ([`CLAUSE_DECISION_VECTORS`]) are `QCore.PremiseFormula`'s `clauseVectors`.
+//!
 //! **`|->` in this context.** The lexer's [`Symbol::MapsTo`] is one token
 //! everywhere (three bytes, matched before every shorter spelling, so `|->`
 //! never lexes as a union followed by an implication). Its meaning is decided
@@ -1202,6 +1209,21 @@ pub const VOCABULARY: &[Term] = &[
         result: Sort::SetFn,
         meaning: "the Valgrind client request VALGRIND_STACK_DEREGISTER(t->valgrind_stack_id) for the mk_thread t, which reads t->valgrind_stack_id, as mk_thread_destroy(t) runs it where MK_HAVE_VALGRIND compiles it in; none where it does not",
     },
+    // ---- Card SP5-GLOBAL-PROSE-PREMISE-BAN (C04.18.9's SP5 block): the
+    // reserved entry-snapshot premise of C04.21, whose string statement the
+    // card retired. ----
+    Term {
+        name: "condition_reads",
+        arguments: &[],
+        result: Sort::SetObj,
+        meaning: "the member cells the declaration's condition bindings read at the call's entry: for each `quant #NAME = (...)` binding (C04.21), the cell its member path names on the bound formal",
+    },
+    Term {
+        name: "entry_stable",
+        arguments: &[],
+        result: Sort::SetObj,
+        meaning: "the cells that hold, at each guarded use during the call (each use of a prerequisite of a `[[local]]` block, C04.21), the value they held at the call's entry",
+    },
 ];
 
 /// The one defined term: `#inert` abbreviates this effect (C04.18.9).
@@ -1718,43 +1740,31 @@ pub fn lean(raw: &Raw) -> String {
     }
 }
 
-/// What a named premise states.
-#[derive(Clone, Debug, PartialEq, Eq)]
-pub enum PremiseStatement {
-    /// `resource_premise(NAME, "STATEMENT")`.
-    Prose(String),
-    /// `resource_premise(NAME, FORMULA)`.
-    Formula(PremiseFormula),
-}
-
-impl PremiseStatement {
-    /// The statement as every rendering prints it: the prose, or the
-    /// formula's canonical printing.
-    #[must_use]
-    pub fn text(&self) -> &str {
-        match self {
-            Self::Prose(text) => text,
-            Self::Formula(formula) => &formula.canonical,
-        }
-    }
-}
-
 /// The introducer of a named premise.
 pub const PREMISE_HEAD: &str = "resource_premise";
+
+/// Card **SP5-GLOBAL-PROSE-PREMISE-BAN** (contract specification C04.18,
+/// diagnostics namespace `QF***`): the code of the refusal of a premise whose
+/// statement is a string. The string form `resource_premise(NAME,
+/// "STATEMENT")` is retired: a premise states a C04.18.9 formula, and a
+/// module stating a string is rejected whole, on every route that reads the
+/// contract format (all of them read it through [`premise_clause`]).
+pub const PROSE_PREMISE: &str = "QF001";
 
 /// A named premise clause, read from its expression's tokens (no `requires`,
 /// no `;`, no end-of-file token). `Ok(None)` when the clause is not headed
 /// `resource_premise(`; a clause so headed is `resource_premise(NAME,
-/// "STATEMENT")` with a plain, non-blank string that is not itself a formula,
-/// or `resource_premise(NAME, FORMULA)`, `NAME` a lower-case identifier, and
-/// anything else rejects.
-pub fn premise_clause(tokens: &[TokenKind]) -> Result<Option<(String, PremiseStatement)>, String> {
+/// FORMULA)`, `NAME` a lower-case identifier and `FORMULA` a well-formed
+/// formula ([`read`]), and anything else rejects. A string statement is
+/// refused by name ([`PROSE_PREMISE`]), never read and never dropped: there
+/// is no string statement in this reader's result.
+pub fn premise_clause(tokens: &[TokenKind]) -> Result<Option<(String, PremiseFormula)>, String> {
     if !matches!(tokens.first(), Some(TokenKind::Word(head)) if head == PREMISE_HEAD) {
         return Ok(None);
     }
     let malformed = || {
-        "malformed premise: write `requires resource_premise(NAME, \"STATEMENT\");` or \
-         `requires resource_premise(NAME, FORMULA);` with a lowercase identifier"
+        "malformed premise: write `requires resource_premise(NAME, FORMULA);` with a \
+         lowercase identifier and a C04.18.9 formula"
             .to_owned()
     };
     let [
@@ -1775,21 +1785,61 @@ pub fn premise_clause(tokens: &[TokenKind]) -> Result<Option<(String, PremiseSta
     if !identifier {
         return Err(malformed());
     }
-    if let [TokenKind::StringLiteral(text)] = statement {
-        if text.trim().is_empty() || text.contains('\\') || text.chars().any(char::is_control) {
-            return Err(malformed());
-        }
-        // A quoted formula would collide with the formula form's identity.
-        if read_source(text).is_ok() {
-            return Err(format!(
-                "premise `{name}`: its statement is a formula, so write it unquoted"
-            ));
-        }
-        return Ok(Some((name.clone(), PremiseStatement::Prose(text.clone()))));
+    if statement
+        .iter()
+        .any(|token| matches!(token, TokenKind::StringLiteral(_)))
+    {
+        return Err(prose_premise(name));
     }
     let formula = read(statement).map_err(|e| format!("premise `{name}`: {e}"))?;
-    Ok(Some((name.clone(), PremiseStatement::Formula(formula))))
+    Ok(Some((name.clone(), formula)))
 }
+
+/// The refusal of a premise named `name` whose statement is (or contains) a
+/// string literal.
+#[must_use]
+pub fn prose_premise(name: &str) -> String {
+    format!(
+        "{PROSE_PREMISE}: premise `{name}` states a string; the string form \
+         `resource_premise(NAME, \"STATEMENT\")` is retired (contract specification \
+         C04.18): write `requires resource_premise({name}, FORMULA);` with a C04.18.9 formula"
+    )
+}
+
+/// Card **SP5-GLOBAL-PROSE-PREMISE-BAN**: the clause decision vectors shared
+/// with `proof/QCore/PremiseFormula.lean` (`clauseVectors`): a premise
+/// clause's expression and whether [`premise_clause`] accepts it as a
+/// premise. Each statement either holds a string literal (the Lean `.str`,
+/// refused with [`PROSE_PREMISE`]) or parses as a formula (the Lean
+/// `.formula`, accepted exactly when well-formed); the test binds each row to
+/// the Lean table and its decision to this reader.
+pub const CLAUSE_DECISION_VECTORS: &[(&str, bool)] = &[
+    (
+        "resource_premise(slots, quant all #f in #stated: #f |-> #inert)",
+        true,
+    ),
+    (
+        "resource_premise(served_queue, #op_callbacks |-> #takes(#held_on(#served)) == {})",
+        true,
+    ),
+    ("resource_premise(never, #false)", true),
+    // The retired string form, whatever the string says.
+    (
+        "resource_premise(served_queue, \"a callback takes nothing\")",
+        false,
+    ),
+    // A quoted well-formed formula is a string.
+    ("resource_premise(slots, \"#stated |-> #inert\")", false),
+    ("resource_premise(blank, \"\")", false),
+    // A string beside a formula.
+    (
+        "resource_premise(mixed, #stated |-> #inert && \"and more\")",
+        false,
+    ),
+    // A formula the judgment refuses.
+    ("resource_premise(unknown, #unknown |-> #inert)", false),
+    ("resource_premise(unsorted, #freed |-> #inert)", false),
+];
 
 /// The decision vectors shared with `proof/QCore/PremiseFormula.lean`
 /// (`decisionVectors`): a formula [`parse_tokens`] reads, and whether the
@@ -1982,4 +2032,15 @@ pub const DECISION_VECTORS: &[(&str, bool)] = &[
         "#interleaved |-> #singleton(#libco_params_key) == {}",
         false,
     ),
+    // ---- Card SP5-GLOBAL-PROSE-PREMISE-BAN (SP5 block). ----
+    (
+        "quant all #m in #condition_reads: #m in #entry_stable",
+        true,
+    ),
+    // Cells are not callbacks.
+    ("#condition_reads |-> #inert", false),
+    // A set of cells is not a proposition.
+    ("#entry_stable", false),
+    // A set of cells is not an element.
+    ("#condition_reads in #entry_stable", false),
 ];
