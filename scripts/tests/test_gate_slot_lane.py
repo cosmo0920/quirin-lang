@@ -661,6 +661,121 @@ class Status(Lane):
             os.kill(process.pid, signal.SIGTERM)
         waiter.communicate(timeout=60)
 
+    # A waiter's poll, frozen (card GATE-SLOT-TEST-FLAKES).  Every poll of an
+    # audit or lane waiter takes its class's admission lock shared, and a
+    # queued waiter or a lane-reserve reading probes free numbered slots
+    # exclusive, each for a few system calls.  A status snapshot taken in that
+    # moment once counted the waiter as a holder: three holders of a two-slot
+    # lane, a queued audit waiter or an older client's waiter reported as
+    # "holder".  Here a process holds exactly those locks until it is stopped,
+    # so the snapshot always falls inside the poll.
+
+    POLLER = (
+        "import fcntl, json, os, sys, time\n"
+        "sys.path.insert(0, os.environ['POLL_SCRIPTS'])\n"
+        "import gate_slot\n"
+        "spec = json.loads(os.environ['POLL_SPEC'])\n"
+        "if spec['ticket']:\n"
+        "    stat = gate_slot.proc_stat(os.getpid())\n"
+        "    ticket = gate_slot.take_ticket(\n"
+        "        gate_slot.queue_directory(gate_slot.Path(spec['gate']), spec['ticket']),\n"
+        "        {'cls': spec['ticket'], 'family': gate_slot.QUEUE_FAMILY[spec['ticket']],\n"
+        "         'admission_mib': 1024, 'argv': ['poller'], 'starttime': stat['starttime'],\n"
+        "         'requested_at': gate_slot.utc_now(), 'state': 'waiting'})\n"
+        "fds = []\n"
+        "for path, mode in spec['locks']:\n"
+        "    os.makedirs(os.path.dirname(path), exist_ok=True)\n"
+        "    fd = os.open(path, os.O_RDWR | os.O_CREAT, 0o666)\n"
+        "    fcntl.flock(fd, (fcntl.LOCK_EX if mode == 'ex' else fcntl.LOCK_SH) | fcntl.LOCK_NB)\n"
+        "    fds.append(fd)\n"
+        "open(spec['ready'], 'w').close()\n"
+        "time.sleep(600)\n")
+
+    def frozen_poll(self, cls, locks, ticket=True):
+        """A process that looks like ``gate_slot.py <cls>`` (its argv) holding
+        ``locks`` ([(label, 'sh'|'ex')]; ``legacy`` is the legacy lock) and,
+        with ``ticket``, a ticket in the class's queue, until stopped."""
+        ready = self.root / f"poller-{len(self.started)}"
+        spec = {"gate": str(self.gate_dir), "ready": str(ready),
+                "ticket": cls if ticket else None,
+                "locks": [(str(self.legacy if label == "legacy" else self.gate_dir / label), mode)
+                          for label, mode in locks]}
+        process = subprocess.Popen(
+            [sys.executable, "-c", self.POLLER, "gate_slot.py", cls],
+            env=self.env(POLL_SCRIPTS=str(Path(slot_mod.__file__).parent),
+                         POLL_SPEC=json.dumps(spec)),
+            stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, text=True)
+        self.started.append(process)
+        self.assertTrue(wait_for(ready.exists), process.poll())
+        return process
+
+    def held_lane_slot(self, name):
+        ready = self.root / f"ready-{name}"
+        process = self.lane_slot(name=name, command=(
+            sys.executable, "-c", f"open({str(ready)!r}, 'w').close()\nimport time; time.sleep(600)"))
+        self.assertTrue(wait_for(ready.exists), process.poll())
+        return process
+
+    def test_a_lane_waiter_inside_its_poll_is_a_waiter_not_a_third_holder(self):
+        holders = [self.held_lane_slot("h1"), self.held_lane_slot("h2")]
+        poller = self.frozen_poll("short", [("legacy", "sh"), ("short/admission", "sh")])
+        status = slot_mod.gate_status(self.gate_dir, self.legacy, self.meminfo, interval=0)
+        self.assertEqual(sorted(status["short_lane"]["holders"]), sorted(p.pid for p in holders))
+        self.assertEqual(status["short_lane"]["waiters"], [poller.pid])
+        [job] = [j for j in status["jobs"] if j["pid"] == poller.pid]
+        self.assertEqual(job["role"], "waiting for a slot")
+        self.assertEqual((job["slots"], job["polling"]), ([], ["short/admission"]))
+        self.assertIn("short lane: 2 of 2 slots held", slot_mod.render_status(status))
+
+    def test_a_probe_of_a_free_slot_is_not_a_hold(self):
+        """A queued lane waiter probing the free slot, and an audit waiter
+        reading the lane reserve (it probes the lane slots), each mid-poll."""
+        holder = self.held_lane_slot("h1")
+        lane = self.frozen_poll("short", [("legacy", "sh"), ("short/admission", "sh"),
+                                          ("short/1", "ex")])
+        status = slot_mod.gate_status(self.gate_dir, self.legacy, self.meminfo, interval=0)
+        self.assertEqual(status["short_lane"]["holders"], [holder.pid])
+        [job] = [j for j in status["jobs"] if j["pid"] == lane.pid]
+        self.assertEqual(job["role"], "waiting for a slot")
+        self.assertEqual(sorted(job["polling"]), ["short/1", "short/admission"])
+        os.kill(lane.pid, signal.SIGKILL)
+        lane.communicate(timeout=10)
+        audit = self.frozen_poll("audit", [("legacy", "sh"), ("audit/admission", "sh"),
+                                           ("short/1", "ex")])
+        status = slot_mod.gate_status(self.gate_dir, self.legacy, self.meminfo, interval=0)
+        self.assertEqual(status["short_lane"]["holders"], [holder.pid])
+        [job] = [j for j in status["jobs"] if j["pid"] == audit.pid]
+        self.assertEqual((job["class"], job["role"]), ("audit", "waiting for a slot"))
+
+    def test_an_older_clients_audit_waiter_inside_its_poll_is_not_queued_not_a_holder(self):
+        poller = self.frozen_poll("audit", [("legacy", "sh"), ("audit/admission", "sh")],
+                                  ticket=False)
+        status = slot_mod.gate_status(self.gate_dir, self.legacy, self.meminfo, interval=0)
+        [job] = [j for j in status["jobs"] if j["pid"] == poller.pid]
+        self.assertEqual(job["role"], "waiting for a slot (not queued: a gate_slot.py without "
+                                      "arrival order)")
+
+    def test_a_build_inside_its_admission_poll_does_not_close_the_builds(self):
+        poller = self.frozen_poll("build", [("build/admission", "sh")], ticket=False)
+        status = slot_mod.gate_status(self.gate_dir, self.legacy, self.meminfo, interval=0)
+        self.assertEqual(status["builds"]["closed_by"], [])
+        [job] = [j for j in status["jobs"] if j["pid"] == poller.pid]
+        self.assertNotIn("draining", job["role"])
+        self.assertNotIn("EXCLUSIVE", job["role"])
+
+    def test_which_locks_are_a_poll(self):
+        poll = slot_mod.slot_hold_is_poll
+        self.assertTrue(poll("short/admission", "shared", False, True, "short"))
+        self.assertTrue(poll("audit/admission", "shared", False, False, "audit"))
+        self.assertFalse(poll("audit/admission", "exclusive", True, True, "rust-suite"))
+        self.assertFalse(poll("build/running", "shared", False, False, "build"))
+        self.assertFalse(poll("short/0", "exclusive", True, False, "short"), "noted: held")
+        self.assertTrue(poll("short/1", "exclusive", False, True, "short"), "queued probe")
+        self.assertTrue(poll("short/1", "exclusive", False, False, "audit"),
+                        "an unqueued audit reading the lane reserve")
+        self.assertFalse(poll("audit/0", "exclusive", False, False, "audit"),
+                         "an older client between its lock and its note: held")
+
     def test_status_shows_a_suite_waiting_for_the_lane(self):
         self.set_memory(8, total_gib=8)
         ready = self.root / "ready"

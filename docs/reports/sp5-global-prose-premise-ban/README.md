@@ -262,3 +262,12 @@ same host failure. Logs: `private/gate-1/`, `private/logs/gate-1.log`.
 * `crates/qcore-contract/examples/premise_formula_binding_refresh.rs` (SP2's
   one-off tool) can no longer read prose BEFORE roots; a rerun would need the
   legacy reader. Recorded only.
+
+## Integrator measurement (2026-11-21)
+
+Landing `38cf960fa` on base `b069dbda8`, measured with `--declared PREDICTION.md`:
+corpus, twelve-home, system and slice all match the declared prediction with
+0 moves. Comparison: `integration/native-comparison.json.gz` (uncompressed
+sha256 `3acbea6bcab581e9d0e781fd68fe7ce7b9952c23e959aca1f9e994fa0b65e314`). Landing gate: `integration/gate.json` (Rust 9875
+passed, 1 failed: the known host libcurl failure; Lean 7 audits; Python
+801Rust 9875 passed / 1 failed (known host libcurl curlver.h) / 21 ignored; Lean 7 audits; Python 801; provider test 174/1 ignored. First gate attempt did not start (missing private/ log dir) and was rerun.).

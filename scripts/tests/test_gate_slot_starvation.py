@@ -41,10 +41,15 @@ LINUX_PROC = Path("/proc/self/io").exists() and Path("/proc/locks").exists()
 
 
 def meminfo(directory, available_gib, total_gib=60):
+    """A fake meminfo, replaced whole (written aside, then renamed): a job
+    polling it while a test changes the reading never sees it half written,
+    which ``read_meminfo`` refuses (card GATE-SLOT-TEST-FLAKES)."""
     path = Path(directory) / "meminfo"
-    path.write_text(f"MemTotal:       {total_gib * GIB_KIB} kB\n"
-                    f"MemFree:        1 kB\n"
-                    f"MemAvailable:   {available_gib * GIB_KIB} kB\n")
+    aside = path.with_name("meminfo.new")
+    aside.write_text(f"MemTotal:       {total_gib * GIB_KIB} kB\n"
+                     f"MemFree:        1 kB\n"
+                     f"MemAvailable:   {available_gib * GIB_KIB} kB\n")
+    os.replace(aside, path)
     return path
 
 
@@ -161,6 +166,12 @@ class Scratch(unittest.TestCase):
         self.gates: list[slot_mod.Gate] = []
 
     def tearDown(self):
+        self.stop_started()
+        self.scratch.cleanup()
+
+    def stop_started(self):
+        """Release the in-process gates and stop the processes this test
+        started, by their captured pids."""
         for gate in self.gates:
             gate.release()
         for process in self.started:
@@ -171,7 +182,6 @@ class Scratch(unittest.TestCase):
             except subprocess.TimeoutExpired:
                 process.kill()
                 process.communicate(timeout=10)
-        self.scratch.cleanup()
 
     def env(self, **extra):
         env = dict(os.environ, QUIRIN_GATE_DIR=str(self.gate_dir),

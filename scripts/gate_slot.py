@@ -111,7 +111,11 @@ docs/plans/gate-time-reduction/README.md):
   hold times, the CPU and I/O of each job's tree over the interval, and its
   resident set against its admission budget.  A slot job waiting for an
   ``audit`` slot holds only the legacy lock, shared, so it shows as a waiter;
-  a job waiting for the legacy lock shows in the kernel's queue.  Each queued
+  a job waiting for the legacy lock shows in the kernel's queue.  The locks a
+  waiter takes for one poll and lets go (its class's admission lock shared, a
+  probe of a free slot, which carries no holder note naming it) are listed
+  under ``polling``, not as slots, so they never make it a holder (card
+  GATE-SLOT-TEST-FLAKES).  Each queued
   waiter shows its queue position (below).
 
 Arrival order (card GATE-SLOT-FIFO-ORDER):
@@ -667,7 +671,10 @@ def read_note(path: Path) -> Optional[dict]:
         if not text.strip():
             return None
         try:
-            value = json.loads(text)
+            # The first line: a note is one JSON line, rewritten by ``pwrite``
+            # and then cut to length, so a reader between the two sees the
+            # new line followed by the old tail.
+            value = json.loads(text.split("\n", 1)[0])
             return value if isinstance(value, dict) else None
         except ValueError:
             time.sleep(0.01)
@@ -1145,10 +1152,13 @@ class Gate:
         self.ticket: Optional[Ticket] = None
         self.position: Optional[int] = None
         self._wake = threading.Event()
+        self._cancelled = threading.Event()
 
     def _wait(self, attempt: Callable[[], bool], what: str, deadline: Optional[float]) -> None:
         announced = False
         while True:
+            if self._cancelled.is_set():
+                raise WaitTimeout(f"cancelled while waiting for {what}")
             if self.ticket is not None:
                 self.ticket.heartbeat()
             if attempt():
@@ -1162,6 +1172,13 @@ class Gate:
 
     def wake(self) -> None:
         """End a drain's back-off now (the next attempt starts at once)."""
+        self._wake.set()
+
+    def cancel(self) -> None:
+        """Make a wait in another thread give up at its next poll (WaitTimeout;
+        ``acquire`` then releases everything it took).  For in-process callers
+        that must stop a waiter they started; the command line never cancels."""
+        self._cancelled.set()
         self._wake.set()
 
     def _note(self, lock: Lock, holder: dict) -> None:
@@ -1442,6 +1459,8 @@ class Gate:
                           f"retrying in {format_duration(pause)}")
                 self._wake.wait(pause)
                 self._wake.clear()
+                if self._cancelled.is_set():
+                    raise WaitTimeout("cancelled while a drain backed off", attempts)
                 continue
             attempt.update(outcome="drained",
                            waited_seconds=round(time.monotonic() - closed, 3))
@@ -2444,6 +2463,29 @@ def compress(labels: list[str]) -> str:
     return " ".join(parts)
 
 
+def slot_hold_is_poll(label: str, mode: str, noted: bool, queued: bool,
+                      cls: Optional[str]) -> bool:
+    """Whether a kernel lock on a gate file is one a waiter takes for a single
+    poll and lets go, not a slot it holds (card GATE-SLOT-TEST-FLAKES).  Every
+    poll of an ``audit``, ``short`` or ``build`` waiter takes its class's
+    admission lock shared, and a queued waiter or a lane-reserve reading
+    (``lane_reserved_kib``) probes free numbered slots exclusive; a snapshot
+    of ``/proc/locks`` taken in that moment shows those locks.  A shared
+    admission lock is a poll (a ``rust-suite`` job closes admission
+    exclusive).  A numbered slot counts as held when its holder note names the
+    pid (a job notes every slot it takes, at once), or when the pid has no
+    ticket and the slot is of its own class (an older client, or a job between
+    taking the lock and writing its note); otherwise it is a probe."""
+    family, _, name = label.partition("/")
+    if name == "admission":
+        return mode != "exclusive"
+    if not name.isdigit():
+        return False  # build/running, build/waiting: held for the job's whole wait or run
+    if noted:
+        return False
+    return queued or cls != family
+
+
 def gate_status(gate_dir: Path, legacy: Path, meminfo: Path, interval: float = 5.0,
                 locks_path: Path = PROC_LOCKS) -> dict:
     """Live holders and waiters of the gate's slots (``/proc/locks`` entries
@@ -2475,25 +2517,33 @@ def gate_status(gate_dir: Path, legacy: Path, meminfo: Path, interval: float = 5
     table = process_table()
     boot = boot_time()
     now = time.time()
-    holders_of: dict[str, list[int]] = {}
+    # First pass: what each job holds as a slot, apart from the locks a waiter
+    # takes only for one poll (``slot_hold_is_poll``).
     for pid, job in jobs.items():
-        for held in job["holds"]:
-            holders_of.setdefault(held["lock"], []).append(pid)
-    for pid, job in jobs.items():
-        slots = [held["lock"] for held in job["holds"] if held["lock"] != "legacy"]
-        legacy_mode = next((held["mode"] for held in job["holds"] if held["lock"] == "legacy"),
-                           None)
+        labels = [held for held in job["holds"] if held["lock"] != "legacy"]
         argv = read_cmdline(pid)
-        note = None
-        for label in slots:
-            candidate = read_note(gate_dir / label)
+        noted: dict[str, dict] = {}
+        for held in labels:
+            candidate = read_note(gate_dir / held["lock"])
             if candidate is not None and candidate.get("pid") == pid:
-                note = candidate
-                break
+                noted[held["lock"]] = candidate
+        note = next(iter(noted.values()), None)
         ticket = queues["by_pid"].get(pid)
-        job["slots"] = slots
         job["class"] = (note or {}).get("cls") or (ticket or {}).get("class") \
             or slot_class_of(argv)
+        job["slots"] = [held["lock"] for held in labels if not slot_hold_is_poll(
+            held["lock"], held["mode"], held["lock"] in noted, ticket is not None, job["class"])]
+        job["polling"] = [held["lock"] for held in labels if held["lock"] not in job["slots"]]
+        job["_note"], job["_ticket"], job["_argv"] = note, ticket, argv
+    holders_of: dict[str, list[int]] = {}
+    for pid, job in jobs.items():
+        for label in job["slots"]:
+            holders_of.setdefault(label, []).append(pid)
+    for pid, job in jobs.items():
+        slots = job["slots"]
+        legacy_mode = next((held["mode"] for held in job["holds"] if held["lock"] == "legacy"),
+                           None)
+        note, ticket, argv = job.pop("_note"), job.pop("_ticket"), job.pop("_argv")
         job["argv"] = (note or {}).get("argv") or (ticket or {}).get("argv") or argv
         job["cwd"] = (note or {}).get("cwd")
         job["queue"] = ticket

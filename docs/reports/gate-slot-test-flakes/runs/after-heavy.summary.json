@@ -1,0 +1,500 @@
+{
+  "tests_dir": "private/fix-snapshot/scripts/tests",
+  "iterations": 30,
+  "load_spinners": 0,
+  "cpus": 32,
+  "wall_seconds": 507.7,
+  "per_module": {
+    "test_gate_slot_lane": {
+      "runs": 30,
+      "failed_runs": 0
+    },
+    "test_gate_slot_queue": {
+      "runs": 30,
+      "failed_runs": 0
+    }
+  },
+  "per_test": {},
+  "runs": [
+    {
+      "module": "test_gate_slot_lane",
+      "iteration": 0,
+      "exit": 0,
+      "seconds": 16.6,
+      "log": "test_gate_slot_lane-000.log",
+      "failures": []
+    },
+    {
+      "module": "test_gate_slot_queue",
+      "iteration": 0,
+      "exit": 0,
+      "seconds": 13.5,
+      "log": "test_gate_slot_queue-000.log",
+      "failures": []
+    },
+    {
+      "module": "test_gate_slot_lane",
+      "iteration": 1,
+      "exit": 0,
+      "seconds": 16.5,
+      "log": "test_gate_slot_lane-001.log",
+      "failures": []
+    },
+    {
+      "module": "test_gate_slot_queue",
+      "iteration": 1,
+      "exit": 0,
+      "seconds": 13.4,
+      "log": "test_gate_slot_queue-001.log",
+      "failures": []
+    },
+    {
+      "module": "test_gate_slot_lane",
+      "iteration": 2,
+      "exit": 0,
+      "seconds": 16.7,
+      "log": "test_gate_slot_lane-002.log",
+      "failures": []
+    },
+    {
+      "module": "test_gate_slot_queue",
+      "iteration": 2,
+      "exit": 0,
+      "seconds": 13.4,
+      "log": "test_gate_slot_queue-002.log",
+      "failures": []
+    },
+    {
+      "module": "test_gate_slot_lane",
+      "iteration": 3,
+      "exit": 0,
+      "seconds": 16.7,
+      "log": "test_gate_slot_lane-003.log",
+      "failures": []
+    },
+    {
+      "module": "test_gate_slot_queue",
+      "iteration": 3,
+      "exit": 0,
+      "seconds": 13.5,
+      "log": "test_gate_slot_queue-003.log",
+      "failures": []
+    },
+    {
+      "module": "test_gate_slot_lane",
+      "iteration": 4,
+      "exit": 0,
+      "seconds": 16.8,
+      "log": "test_gate_slot_lane-004.log",
+      "failures": []
+    },
+    {
+      "module": "test_gate_slot_queue",
+      "iteration": 4,
+      "exit": 0,
+      "seconds": 13.6,
+      "log": "test_gate_slot_queue-004.log",
+      "failures": []
+    },
+    {
+      "module": "test_gate_slot_lane",
+      "iteration": 5,
+      "exit": 0,
+      "seconds": 16.9,
+      "log": "test_gate_slot_lane-005.log",
+      "failures": []
+    },
+    {
+      "module": "test_gate_slot_queue",
+      "iteration": 5,
+      "exit": 0,
+      "seconds": 13.4,
+      "log": "test_gate_slot_queue-005.log",
+      "failures": []
+    },
+    {
+      "module": "test_gate_slot_lane",
+      "iteration": 6,
+      "exit": 0,
+      "seconds": 17.1,
+      "log": "test_gate_slot_lane-006.log",
+      "failures": []
+    },
+    {
+      "module": "test_gate_slot_queue",
+      "iteration": 6,
+      "exit": 0,
+      "seconds": 13.4,
+      "log": "test_gate_slot_queue-006.log",
+      "failures": []
+    },
+    {
+      "module": "test_gate_slot_lane",
+      "iteration": 7,
+      "exit": 0,
+      "seconds": 16.8,
+      "log": "test_gate_slot_lane-007.log",
+      "failures": []
+    },
+    {
+      "module": "test_gate_slot_queue",
+      "iteration": 7,
+      "exit": 0,
+      "seconds": 13.5,
+      "log": "test_gate_slot_queue-007.log",
+      "failures": []
+    },
+    {
+      "module": "test_gate_slot_lane",
+      "iteration": 8,
+      "exit": 0,
+      "seconds": 17.2,
+      "log": "test_gate_slot_lane-008.log",
+      "failures": []
+    },
+    {
+      "module": "test_gate_slot_queue",
+      "iteration": 8,
+      "exit": 0,
+      "seconds": 13.5,
+      "log": "test_gate_slot_queue-008.log",
+      "failures": []
+    },
+    {
+      "module": "test_gate_slot_lane",
+      "iteration": 9,
+      "exit": 0,
+      "seconds": 16.8,
+      "log": "test_gate_slot_lane-009.log",
+      "failures": []
+    },
+    {
+      "module": "test_gate_slot_queue",
+      "iteration": 9,
+      "exit": 0,
+      "seconds": 13.5,
+      "log": "test_gate_slot_queue-009.log",
+      "failures": []
+    },
+    {
+      "module": "test_gate_slot_lane",
+      "iteration": 10,
+      "exit": 0,
+      "seconds": 17.0,
+      "log": "test_gate_slot_lane-010.log",
+      "failures": []
+    },
+    {
+      "module": "test_gate_slot_queue",
+      "iteration": 10,
+      "exit": 0,
+      "seconds": 13.7,
+      "log": "test_gate_slot_queue-010.log",
+      "failures": []
+    },
+    {
+      "module": "test_gate_slot_lane",
+      "iteration": 11,
+      "exit": 0,
+      "seconds": 16.9,
+      "log": "test_gate_slot_lane-011.log",
+      "failures": []
+    },
+    {
+      "module": "test_gate_slot_queue",
+      "iteration": 11,
+      "exit": 0,
+      "seconds": 13.6,
+      "log": "test_gate_slot_queue-011.log",
+      "failures": []
+    },
+    {
+      "module": "test_gate_slot_lane",
+      "iteration": 12,
+      "exit": 0,
+      "seconds": 16.7,
+      "log": "test_gate_slot_lane-012.log",
+      "failures": []
+    },
+    {
+      "module": "test_gate_slot_queue",
+      "iteration": 12,
+      "exit": 0,
+      "seconds": 13.3,
+      "log": "test_gate_slot_queue-012.log",
+      "failures": []
+    },
+    {
+      "module": "test_gate_slot_lane",
+      "iteration": 13,
+      "exit": 0,
+      "seconds": 17.0,
+      "log": "test_gate_slot_lane-013.log",
+      "failures": []
+    },
+    {
+      "module": "test_gate_slot_queue",
+      "iteration": 13,
+      "exit": 0,
+      "seconds": 13.7,
+      "log": "test_gate_slot_queue-013.log",
+      "failures": []
+    },
+    {
+      "module": "test_gate_slot_lane",
+      "iteration": 14,
+      "exit": 0,
+      "seconds": 16.8,
+      "log": "test_gate_slot_lane-014.log",
+      "failures": []
+    },
+    {
+      "module": "test_gate_slot_queue",
+      "iteration": 14,
+      "exit": 0,
+      "seconds": 13.8,
+      "log": "test_gate_slot_queue-014.log",
+      "failures": []
+    },
+    {
+      "module": "test_gate_slot_lane",
+      "iteration": 15,
+      "exit": 0,
+      "seconds": 17.2,
+      "log": "test_gate_slot_lane-015.log",
+      "failures": []
+    },
+    {
+      "module": "test_gate_slot_queue",
+      "iteration": 15,
+      "exit": 0,
+      "seconds": 13.7,
+      "log": "test_gate_slot_queue-015.log",
+      "failures": []
+    },
+    {
+      "module": "test_gate_slot_lane",
+      "iteration": 16,
+      "exit": 0,
+      "seconds": 16.8,
+      "log": "test_gate_slot_lane-016.log",
+      "failures": []
+    },
+    {
+      "module": "test_gate_slot_queue",
+      "iteration": 16,
+      "exit": 0,
+      "seconds": 13.7,
+      "log": "test_gate_slot_queue-016.log",
+      "failures": []
+    },
+    {
+      "module": "test_gate_slot_lane",
+      "iteration": 17,
+      "exit": 0,
+      "seconds": 17.3,
+      "log": "test_gate_slot_lane-017.log",
+      "failures": []
+    },
+    {
+      "module": "test_gate_slot_queue",
+      "iteration": 17,
+      "exit": 0,
+      "seconds": 13.6,
+      "log": "test_gate_slot_queue-017.log",
+      "failures": []
+    },
+    {
+      "module": "test_gate_slot_lane",
+      "iteration": 18,
+      "exit": 0,
+      "seconds": 16.8,
+      "log": "test_gate_slot_lane-018.log",
+      "failures": []
+    },
+    {
+      "module": "test_gate_slot_queue",
+      "iteration": 18,
+      "exit": 0,
+      "seconds": 13.9,
+      "log": "test_gate_slot_queue-018.log",
+      "failures": []
+    },
+    {
+      "module": "test_gate_slot_lane",
+      "iteration": 19,
+      "exit": 0,
+      "seconds": 17.0,
+      "log": "test_gate_slot_lane-019.log",
+      "failures": []
+    },
+    {
+      "module": "test_gate_slot_queue",
+      "iteration": 19,
+      "exit": 0,
+      "seconds": 13.6,
+      "log": "test_gate_slot_queue-019.log",
+      "failures": []
+    },
+    {
+      "module": "test_gate_slot_lane",
+      "iteration": 20,
+      "exit": 0,
+      "seconds": 17.0,
+      "log": "test_gate_slot_lane-020.log",
+      "failures": []
+    },
+    {
+      "module": "test_gate_slot_queue",
+      "iteration": 20,
+      "exit": 0,
+      "seconds": 13.8,
+      "log": "test_gate_slot_queue-020.log",
+      "failures": []
+    },
+    {
+      "module": "test_gate_slot_lane",
+      "iteration": 21,
+      "exit": 0,
+      "seconds": 17.0,
+      "log": "test_gate_slot_lane-021.log",
+      "failures": []
+    },
+    {
+      "module": "test_gate_slot_queue",
+      "iteration": 21,
+      "exit": 0,
+      "seconds": 13.9,
+      "log": "test_gate_slot_queue-021.log",
+      "failures": []
+    },
+    {
+      "module": "test_gate_slot_lane",
+      "iteration": 22,
+      "exit": 0,
+      "seconds": 16.8,
+      "log": "test_gate_slot_lane-022.log",
+      "failures": []
+    },
+    {
+      "module": "test_gate_slot_queue",
+      "iteration": 22,
+      "exit": 0,
+      "seconds": 13.6,
+      "log": "test_gate_slot_queue-022.log",
+      "failures": []
+    },
+    {
+      "module": "test_gate_slot_lane",
+      "iteration": 23,
+      "exit": 0,
+      "seconds": 16.8,
+      "log": "test_gate_slot_lane-023.log",
+      "failures": []
+    },
+    {
+      "module": "test_gate_slot_queue",
+      "iteration": 23,
+      "exit": 0,
+      "seconds": 13.7,
+      "log": "test_gate_slot_queue-023.log",
+      "failures": []
+    },
+    {
+      "module": "test_gate_slot_lane",
+      "iteration": 24,
+      "exit": 0,
+      "seconds": 16.7,
+      "log": "test_gate_slot_lane-024.log",
+      "failures": []
+    },
+    {
+      "module": "test_gate_slot_queue",
+      "iteration": 24,
+      "exit": 0,
+      "seconds": 13.6,
+      "log": "test_gate_slot_queue-024.log",
+      "failures": []
+    },
+    {
+      "module": "test_gate_slot_lane",
+      "iteration": 25,
+      "exit": 0,
+      "seconds": 17.0,
+      "log": "test_gate_slot_lane-025.log",
+      "failures": []
+    },
+    {
+      "module": "test_gate_slot_queue",
+      "iteration": 25,
+      "exit": 0,
+      "seconds": 13.5,
+      "log": "test_gate_slot_queue-025.log",
+      "failures": []
+    },
+    {
+      "module": "test_gate_slot_lane",
+      "iteration": 26,
+      "exit": 0,
+      "seconds": 17.3,
+      "log": "test_gate_slot_lane-026.log",
+      "failures": []
+    },
+    {
+      "module": "test_gate_slot_queue",
+      "iteration": 26,
+      "exit": 0,
+      "seconds": 13.4,
+      "log": "test_gate_slot_queue-026.log",
+      "failures": []
+    },
+    {
+      "module": "test_gate_slot_lane",
+      "iteration": 27,
+      "exit": 0,
+      "seconds": 17.1,
+      "log": "test_gate_slot_lane-027.log",
+      "failures": []
+    },
+    {
+      "module": "test_gate_slot_queue",
+      "iteration": 27,
+      "exit": 0,
+      "seconds": 13.5,
+      "log": "test_gate_slot_queue-027.log",
+      "failures": []
+    },
+    {
+      "module": "test_gate_slot_lane",
+      "iteration": 28,
+      "exit": 0,
+      "seconds": 17.1,
+      "log": "test_gate_slot_lane-028.log",
+      "failures": []
+    },
+    {
+      "module": "test_gate_slot_queue",
+      "iteration": 28,
+      "exit": 0,
+      "seconds": 13.6,
+      "log": "test_gate_slot_queue-028.log",
+      "failures": []
+    },
+    {
+      "module": "test_gate_slot_lane",
+      "iteration": 29,
+      "exit": 0,
+      "seconds": 16.9,
+      "log": "test_gate_slot_lane-029.log",
+      "failures": []
+    },
+    {
+      "module": "test_gate_slot_queue",
+      "iteration": 29,
+      "exit": 0,
+      "seconds": 13.6,
+      "log": "test_gate_slot_queue-029.log",
+      "failures": []
+    }
+  ]
+}
