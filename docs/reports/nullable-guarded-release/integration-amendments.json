@@ -1,0 +1,27 @@
+{
+ "schema": "quirin-amendments/2",
+ "card": "NULLABLE-GUARDED-RELEASE",
+ "base": "96d41921c",
+ "measured_tip": "686ddf8f4",
+ "profiles": [],
+ "increment_paragraph": "**NULLABLE-GUARDED-RELEASE** (USER DECISION 2026-11-22: launch the guarded-release fix card; gateway rule 74c, amending rules 6 and 10a; `QCore.NullableGuardedRelease`; [report](../../reports/nullable-guarded-release/README.md)). The held constructors card's provisional Unsafe `rd_kafka_mock_handle_Metadata` was not a missing guard refinement (rules 14l/10b already decide `if (p)`): `&requested_topics->elems[i]` dropped the name from rule 10a's sparing frame, refused statements poisoned it, the guard and the nonnull release were refused, and the leak was an intermediate-iterate claim (census `settled: false`, site unresolved at the settled exit). (A) `legacy_settled_leak.rs`: every release `apply_resource_action` refuses records the identities it marked (`AbstractState::refused_release_sites`, union join); a current-generation leak report is held and withdrawn only when the settled exit marks the identity by a refused release beside an `Unknown` leaf (only Unsafe -> Unknown; markers from other refusals are not read). (B) the frame reads `&NAME->F` as C does, as rule 12e's tie names already did, so a surviving binding reaches the existing guard refinement. Opt-in `current --monkey-linked` over Fluent Bit 046accf6, each run on its own tree and binary: base 96d41921c 1,169/2/3,626/7, tip 686ddf8f4 1,169/2/3,626/7, no status moves; 119 rows change leaves (unresolved identity -251, nullable -37, newly exposed interior-borrow-ended +31 and reference-dropped +20 refusals). With the held branch merged in a private tree only: 1,171/2/3,622/9 -> 1,171/2/3,623/8, the one move Metadata Unsafe -> Unknown; Metadata, metadata_topic_match and ShareAcknowledge lose their nullable leaves, ShareFetch keeps 3 of 6, seven rows keep theirs (other shapes), `ut_testSameSubscriptions` stays provisional Unsafe (real assertion-failure returns). Pins updated deliberately: frame-only `unknown_alias` removals in seven gateway test files, one admitted-frame fixture Unknown -> Safe (`x_note(&r->count); *c = 0;`, obligations discharged), one descriptor shape Unsafe -> Unknown ((A)'s precision cost). Scoped gate at 69becff59: all 8 steps 0 (9,883 passed, 483 Lean audits, 807 Python tests). Pinned routes not runnable on the host; predicted no status moves.",
+ "status_edits": [],
+ "ledger": [
+  {
+   "id": "NULLABLE-LAZY-CONSTRUCTOR-IN-LOOP",
+   "operation": "register",
+   "source": "docs/reports/nullable-guarded-release/README.md",
+   "recorded_by": "NULLABLE-GUARDED-RELEASE",
+   "title": "A resource made non-null by a lazy constructor in a loop, or a non-null result poisoned and joined at a loop head, is a nullable resource at a nonnull use",
+   "text": "NULLABLE-GUARDED-RELEASE (rule 74c) cleared the guarded-release shape (4 of the 11 nullable-leaf rows RK-TOPIC-PARTITION-LIST-CONSTRUCTORS exposed, 12 of 20 leaves) but, on the opt-in route with that card merged, seven rows keep 8 `nullable resource ... used by a non-null contract` leaves and rd_kafka_mock_handle_ShareFetch keeps 3 (forgotten_partitions): rd_kafka_cgrp_owned_but_not_exist_partitions (`if (!result) result = rd_kafka_topic_partition_list_new(...); rd_kafka_topic_partition_list_add_copy(result, curr);` inside a loop: the loop-head join keeps the earlier-null alternative), rd_kafka_cgrp_calculate_subscribe_revoking_partitions (`revoking` built non-null, poisoned by an unbounded refusal, joined may-be-null), rd_kafka_cgrp_consumer_assignment_with_metadata, rd_kafka_cgrp_handle_SyncGroup_memberstate, rd_kafka_mock_cgrp_consumer_member_needs_revocation, rd_kafka_mock_handle_ConsumerGroupHeartbeat and balance. All stay Unknown with no leak. DISCHARGE: read each shape (a lazy-initialisation guard whose two arms both leave the name non-null at the join; the refusal that poisons a constructor result) and refine it or name the refusal; re-measure the eight rows."
+  },
+  {
+   "id": "SETTLED-LEAK-JOINED-GENUINE-WITHDRAWN",
+   "operation": "register",
+   "source": "docs/reports/nullable-guarded-release/README.md",
+   "recorded_by": "NULLABLE-GUARDED-RELEASE",
+   "title": "Rule 74c (A) withdraws a genuine leak on a path that joins a refused release's path before the exit",
+   "text": "NULLABLE-GUARDED-RELEASE (rule 74c (A)) withdraws a held leak report when the settled exit marks the identity by a refused release beside an Unknown leaf; the union join cannot tell a path through the refused release from another path to the same exit, so a genuine leak on the other path is withdrawn with it (Unsafe -> Unknown, fail-closed). Pinned instance: crates/qcore-c-gateway/tests/condition_call_desugar.rs, `int fd = k_open(path); if (flag && k_close(fd) == 0) {}` (the close of a possibly-invalid descriptor is refused; the flag-false path leaves a valid descriptor open). No opt-in row moved by (A) alone at 686ddf8f4. DISCHARGE: keep the refused release's mark path-separated (per-edge provenance at the join, or a witness search like the leak-witness census's untested and handed paths) so a leak with a path avoiding every refused release is published; census on the corpus how many provisional Unsafe rows rest on an intermediate-iterate claim (the census `settled: false` population)."
+  }
+ ]
+}
