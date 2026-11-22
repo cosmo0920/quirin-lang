@@ -1,0 +1,175 @@
+// SPDX-License-Identifier: Apache-2.0
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+module contract;
+
+// librdkafka topic-partition constructors and the partition destructor —
+// resource-projection vocabulary version 1.
+//
+// Card RK-TOPIC-PARTITION-LIST-CONSTRUCTORS (USER DECISION 2026-11-21: launch
+// the card the ledger entry of that name specifies). TRUSTED ASSUMPTIONS about
+// upstream functions: this module verifies nothing, and each declaration is a
+// premise pinned to the body read. Every body below was read at both audited
+// Fluent Bit revisions, 66910c10a4d7eafa810b84229cf2dcf7b0f26f97 and
+// 046accf6; `rdkafka_partition.c`, `rdkafka_partition.h`, `rdkafka.h` and
+// `rd.h` are byte-identical at both.
+//
+// ## The custody unit, and the reference half (decision class 3)
+//
+// A topic-partition list is one resource: `rd_kafka_topic_partition_list_destroy`
+// (declared released in `client.qv`) destroys each element in place, which
+// frees its topic and metadata and drops the toppar reference its `_private`
+// holds, then frees the element array and the list. The copies below take
+// toppar references (`rd_kafka_topic_partition_update`, `rdkafka_partition.c:2912-2913`:
+// `dstpriv->rktp = rd_kafka_toppar_keep(srcpriv->rktp)`) and store them in the
+// returned object's own elements, never in the caller's: the references are
+// held by the result and dropped by the result's destructor. So the caller's
+// one obligation is the result's release, which is what
+// `resource_return_owned` states; no reference is returned to the caller, and
+// none the caller holds is taken or dropped. `src` is read: the reference
+// counts of the toppars it names rise, which constrains no lifetime of `src`
+// (a counted reference keeps the toppar, not the list), so `src` is borrowed.
+// This is the reading the existing list destructor already makes (its release
+// covers the element references) and the one `topic_partition.qv` records for
+// the sort (the custody unit is the list, not an element).
+//
+// ## Allocation failure
+//
+// `rd_calloc`, `rd_malloc`, `rd_realloc` and `rd_strdup` (`rd.h:139-170`)
+// assert their result (`rd_assert(p)`), so no constructor below returns NULL:
+// `nonnull`.
+
+// `rd_kafka_topic_partition_list_new(int size)` (`rdkafka_partition.c:2843-2852`):
+//
+//     rktparlist = rd_calloc(1, sizeof(*rktparlist));
+//     if (size > 0)
+//             rd_kafka_topic_partition_list_grow(rktparlist, size);
+//     return rktparlist;
+//
+// `_grow` (`:2816-2824`, `static`) reallocates the list's own element array
+// (`rd_realloc`, asserted). The caller owns the list and releases it with
+// `rd_kafka_topic_partition_list_destroy`. `size` is a scalar.
+// ABI: `rdkafka.h:1039-1040`, `RD_EXPORT rd_kafka_topic_partition_list_t
+// *rd_kafka_topic_partition_list_new(int size);` (`int` is `i32`).
+extern fn rd_kafka_topic_partition_list_new(size: i32) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(size);
+    ensures normal resource_return_owned(nonnull);
+};
+
+// `rd_kafka_topic_partition_list_copy(src)` (`:3282-3292`):
+//
+//     dst = rd_kafka_topic_partition_list_new(src->size);
+//     for (i = 0; i < src->cnt; i++)
+//             rd_kafka_topic_partition_list_add_copy(dst, &src->elems[i]);
+//     return dst;
+//
+// `_add_copy` (`:3265-3275`) appends to `dst` through
+// `rd_kafka_topic_partition_list_add0` (strdup of the topic, and a toppar
+// reference from `src`'s `_private` into the new element's own `_private`)
+// and `rd_kafka_topic_partition_update` (metadata copied with `rd_malloc`,
+// the reference taken only when the new element holds none). Every
+// allocation and reference lands in `dst`; `src` is read. ABI:
+// `rdkafka.h:1121-1122`, `RD_EXPORT rd_kafka_topic_partition_list_t *
+// rd_kafka_topic_partition_list_copy(const rd_kafka_topic_partition_list_t *src);`.
+extern fn rd_kafka_topic_partition_list_copy(src: ptr<const, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(src);
+    ensures normal resource_return_owned(nonnull);
+};
+
+// `rd_kafka_topic_partition_copy(src)` (`:2933-2940`):
+//
+//     rd_kafka_topic_partition_t *dst =
+//         rd_kafka_topic_partition_new(src->topic, src->partition);
+//     rd_kafka_topic_partition_update(dst, src);
+//     return dst;
+//
+// `rd_kafka_topic_partition_new` (`:2866-2873`) is `rd_calloc` and
+// `rd_strdup(topic)`; `_update` copies the metadata into `dst` and takes the
+// toppar reference into `dst`'s `_private`. The caller owns one partition and
+// releases it with `rd_kafka_topic_partition_destroy` (below). ABI:
+// `rdkafka_partition.h:716-717`, `rd_kafka_topic_partition_t *
+// rd_kafka_topic_partition_copy(const rd_kafka_topic_partition_t *src);`
+// (external linkage, one definition).
+extern fn rd_kafka_topic_partition_copy(src: ptr<const, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(src);
+    ensures normal resource_return_owned(nonnull);
+};
+
+// `rd_kafka_topic_partition_new(topic, partition)` (`:2866-2873`), the
+// single-partition constructor `rd_kafka_topic_partition_copy` builds on:
+//
+//     rd_kafka_topic_partition_t *rktpar = rd_calloc(1, sizeof(*rktpar));
+//     rktpar->topic     = rd_strdup(topic);
+//     rktpar->partition = partition;
+//     return rktpar;
+//
+// The topic is copied (`rd_strdup`, asserted), so `topic` is read; the
+// caller owns one partition, released with `rd_kafka_topic_partition_destroy`.
+// Declared beside the copy because the callers that release a partition with
+// `rd_kafka_topic_partition_destroy` build it with this constructor (the
+// census in the card's report). ABI: `rdkafka_partition.h:709-710`,
+// `rd_kafka_topic_partition_t *rd_kafka_topic_partition_new(const char *topic,
+// int32_t partition);` (external linkage, one definition; `int32_t` is `i32`).
+extern fn rd_kafka_topic_partition_new(topic: ptr<const, u8>, partition: i32) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(topic);
+    ensures normal resource_borrowed(partition);
+    ensures normal resource_return_owned(nonnull);
+};
+
+// `rd_kafka_topic_partition_destroy(rktpar)` (`:3108-3110`) is
+// `rd_kafka_topic_partition_destroy0(rktpar, 1)`: the call `client.qv`
+// declares released under its literal premise `do_free == 1` (topic,
+// metadata and `_private` freed, the toppar reference dropped, the partition
+// freed). It dereferences `rktpar` unconditionally: `nonnull`. The release
+// reaches `rd_kafka_toppar_destroy` (`rd_kafka_topic_partition_private_destroy`,
+// `:2962-2967`), whose final drop may log through `rd_kafka_log0` and so run
+// an rk_conf callback: it names `rk_plugin_callback_closure`, as
+// `rd_kafka_topic_partition_destroy0` does. ABI: `rdkafka.h:987`,
+// `RD_EXPORT void rd_kafka_topic_partition_destroy(rd_kafka_topic_partition_t *rktpar);`.
+extern fn rd_kafka_topic_partition_destroy(rktpar: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_premise(rk_plugin_callback_closure, (quant all #f in #ran(#slots(#rk_conf)) \ #loaded_registered: #f in #registered | #defaults && #f in #candidates) && quant all #f in #loaded_registered: #f in #enveloped);
+    ensures normal resource_released(rktpar, nonnull);
+    ensures normal resource_return_none();
+};
+
+// ## NOT CLAIMED
+//
+//   * Nothing about the list's contents, its element order, its `size`
+//     versus `cnt`, or the topic names' validity.
+//   * Nothing about toppar reference-count balance beyond the encapsulation
+//     above: whether `rd_kafka_toppar_keep` and the destructor's drop pair up
+//     is the toppar's own accounting (decision class 3), not a caller
+//     obligation these declarations state.
+//   * Nothing about `src`'s non-nullness (each body dereferences it; that is
+//     the null-dereference property's bounds view, not this resource view).
+//
+// ## Read and DELIBERATELY LEFT UNDECLARED
+//
+//   * `rd_kafka_topic_partition_list_add` (`:3190-3196`, through `_add0`,
+//     `:3149-3188`) returns `&rktparlist->elems[cnt++]`, a pointer into the
+//     list's element array that the next add may move (`_grow` reallocates
+//     `elems`). `resource_return_borrowed_from(rktparlist, …)` would keep that
+//     pointer valid until the list's release, which is false after a later
+//     add: the declaration would admit in the unsafe direction, so it is left
+//     undeclared (registered as a follow-up in the card's report).

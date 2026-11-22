@@ -132,7 +132,10 @@ mod tests {
     /// load hook), so its own test refuses a premise whose statement is a
     /// string, the test `quirin-provider-openssl`'s checker applies at load
     /// (`check::prose_premise`). Line comments are dropped first, so a clause
-    /// quoted in a comment is not a clause. The census is the card's: 220.
+    /// quoted in a comment is not a clause. The census was the card's 220;
+    /// RK-TOPIC-PARTITION-LIST-CONSTRUCTORS (integrate/r57) adds one, the
+    /// `rk_plugin_callback_closure` premise of
+    /// `rd_kafka_topic_partition_destroy`: 221.
     #[test]
     fn every_premise_is_a_formula() {
         let mut premises = 0;
@@ -157,6 +160,6 @@ mod tests {
                 rest = clause;
             }
         }
-        assert_eq!(premises, 220);
+        assert_eq!(premises, 221);
     }
 }
