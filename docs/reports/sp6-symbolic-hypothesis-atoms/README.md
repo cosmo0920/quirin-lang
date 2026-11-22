@@ -39,6 +39,7 @@ test reads, and readers of frozen texts.
 | `compiler/tests/contract_inherit_qcore_provider.rs` | wrote the frozen string atoms back into the current text before parsing | restore | 0 | no restoration: the fixture is lifted instead |
 | `tests/support/legacy_prose_premise.rs` | legacy reader | — | 1 (`format!`) | lifts recorded string atoms, graph atoms and guarded symbols (§4) |
 | `tests/support/sp2_premise_checkpoint.rs` | byte restoration | — | — | first writes this card's recorded `cjson.qv` edits back (two digests) |
+| frozen `.qv` texts a test replays: `quant-contract-hypotheses/plugin/before/**` (7 `plugin_*` atoms × 166 declarations, 8 libc reading atoms) and `premise-decomposition-cycle1/proposed-cjson.qv` (9) | string atoms | read as is | lifted | read through `lift` |
 | frozen graph JSON a test reads: `guarded-contract-adoption/adoption-plan.json`, `premise-guarded-decomposition/applications/{cjson,plugin}-graph.json` and `cjson.json`'s bindings | opaque declared atoms (9 detach, 7 plugin) | read as is | lifted | read through `lift_graph`/`lift_bindings` |
 | `docs/reports/sp2-symbolic-librdkafka-premises/bindings/cjson-expected-graph.json` | the expected cJSON graph (opaque atoms) | read by 4 consumers | historical | consumers read this card's `bindings/cjson-expected-graph.json` |
 
@@ -199,9 +200,10 @@ renamed; `hypothesis.rs` and `premise_flow.rs` inheritance tests caught it).
 **The legacy reader.** `tests/support/legacy_prose_premise.rs` (same file,
 same confinement test `the_legacy_prose_reader_is_confined_to_test_code`)
 now also lifts each recorded string atom (`migration.json`, `hypotheses`: the
-nine `detach_*` typed here and the seven `plugin_*` typed by
-QUANT-CONTRACT-HYPOTHESES, each with its retired sentence, typed clause,
-formula and graph atom): `lift` (source clauses, and guarded prerequisite
+nine `detach_*` typed here, and the seven `plugin_*` and eight libc reading
+atoms of `errno.qv` typed by QUANT-CONTRACT-HYPOTHESES, whose frozen
+`before` texts tests still replay; each with its retired sentence, typed
+clause, formula and graph atom): `lift` (source clauses, and guarded prerequisite
 symbols that repeated a sentence), `lift_graph` (opaque graph atoms, graph
 version raised to 3) and `lift_bindings` (guarded metadata bindings). An
 unrecorded string atom stays a string and is refused.

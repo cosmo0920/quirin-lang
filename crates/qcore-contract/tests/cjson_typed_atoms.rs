@@ -334,7 +334,7 @@ fn a_string_hypothesis_is_refused_by_name_on_every_route() {
 #[test]
 fn the_recorded_hypotheses_are_their_typed_clauses() {
     let recorded = legacy_prose_premise::hypotheses();
-    assert_eq!(recorded.len(), 16);
+    assert_eq!(recorded.len(), 24);
     let graph = graph();
     for h in &recorded {
         let source = h.typed.strip_prefix("quant proposition ").unwrap();
@@ -345,7 +345,7 @@ fn the_recorded_hypotheses_are_their_typed_clauses() {
             proposition: Proposition::Formula { definition: d },
         };
         assert_eq!(serde_json::to_value(&atom).unwrap(), h.atom, "{}", h.id);
-        assert_eq!(source.split_once(") = ").unwrap().1, h.formula);
+        assert_eq!(source.split_once(") =").unwrap().1.trim(), h.formula);
         if let Some(current) = graph.atoms.get(&h.id) {
             assert_eq!(current, &atom, "{}", h.id);
         }

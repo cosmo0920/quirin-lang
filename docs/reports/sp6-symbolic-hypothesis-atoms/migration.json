@@ -1,7 +1,7 @@
 {
   "card": "SP6-SYMBOLIC-HYPOTHESIS-ATOMS",
   "base": "38cf960fa",
-  "note": "hypotheses: each retired string hypothesis atom resource_hypothesis(ID, \"PROSE\") a frozen text states, with the typed clause (quant proposition #ID(...) = FORMULA) that replaced it and its graph atom; the nine detach_* atoms were typed by this card, the seven plugin_* atoms by QUANT-CONTRACT-HYPOTHESES. files: the module this card changed, at base its current bytes with every edit's after text written back as its before text (both digests checked). markers: the binding marker refreshed by quant_binding_migration.",
+  "note": "hypotheses: each retired string hypothesis atom resource_hypothesis(ID, \"PROSE\") a frozen text states, with the typed clause (quant proposition #ID(...) = FORMULA) that replaced it and its graph atom; the nine detach_* atoms were typed by this card, the seven plugin_* and eight libc reading atoms by QUANT-CONTRACT-HYPOTHESES. files: the module this card changed, at base its current bytes with every edit's after text written back as its before text (both digests checked). markers: the binding marker refreshed by quant_binding_migration.",
   "hypotheses": [
     {
       "id": "detach_chain",
@@ -4438,6 +4438,562 @@
         }
       },
       "formula": "(forall (#p: plugin) { (#loaded(#env,#p,#rk) => #rk_proposed(#env,#p)) } && forall (#p: plugin) { ((#loaded(#env,#p,#fluent_c) || #loaded(#env,#p,#fluent_go)) => #fluent_proposed(#env,#p)) })"
+    },
+    {
+      "id": "checked_nested_site",
+      "prose": "a call of this function nested whole in another call's argument is read only where card O04-TRACE's nested-call admission holds at the call site",
+      "typed": "quant proposition #checked_nested_site(#env: nested_environment, #observed: predicate<nested_environment, site>, #checked_site: predicate<nested_environment, site>) =\n        forall (#s: site) { (#observed(#env, #s) => #checked_site(#env, #s)) }",
+      "atom": {
+        "id": "checked_nested_site",
+        "proposition": {
+          "definition": {
+            "formula": {
+              "body": {
+                "kind": "implies",
+                "left": {
+                  "arguments": [
+                    {
+                      "kind": "variable",
+                      "name": "env"
+                    },
+                    {
+                      "kind": "variable",
+                      "name": "s"
+                    }
+                  ],
+                  "kind": "predicate",
+                  "name": "observed"
+                },
+                "right": {
+                  "arguments": [
+                    {
+                      "kind": "variable",
+                      "name": "env"
+                    },
+                    {
+                      "kind": "variable",
+                      "name": "s"
+                    }
+                  ],
+                  "kind": "predicate",
+                  "name": "checked_site"
+                }
+              },
+              "kind": "forall",
+              "sort": "site",
+              "variable": "s"
+            },
+            "id": "checked_nested_site",
+            "parameters": [
+              {
+                "name": "env",
+                "sort": {
+                  "kind": "value",
+                  "name": "nested_environment"
+                }
+              },
+              {
+                "name": "observed",
+                "sort": {
+                  "arguments": [
+                    "nested_environment",
+                    "site"
+                  ],
+                  "kind": "predicate"
+                }
+              },
+              {
+                "name": "checked_site",
+                "sort": {
+                  "arguments": [
+                    "nested_environment",
+                    "site"
+                  ],
+                  "kind": "predicate"
+                }
+              }
+            ]
+          },
+          "kind": "formula"
+        }
+      },
+      "formula": "forall (#s: site) { (#observed(#env, #s) => #checked_site(#env, #s)) }"
+    },
+    {
+      "id": "checked_reading_route",
+      "prose": "a dereference of this call's result is read only under the checked reading rules: either the nested-call admission of O04-TRACE and CONSTRUCTOR-RESIDUALS (N1-N10, including a whole Borrowed or data-tail actual modulo the dereference wrapper and exact written arity), or W48-BOTTOM-UP-BATCH3 scalar condition admission (an external zero-argument call with this no-custody result, no container effect, exactly one dereference compared by equality or inequality with a decimal literal, the ordinary call checks retained and both outcomes explored)",
+      "typed": "quant proposition #checked_reading_route(#env: reading_environment, #observed: predicate<reading_environment, site>, #nested_route: predicate<reading_environment, site>, #scalar_route: predicate<reading_environment, site>) =\n        forall (#s: site) { (#observed(#env, #s) => (#nested_route(#env, #s) || #scalar_route(#env, #s))) }",
+      "atom": {
+        "id": "checked_reading_route",
+        "proposition": {
+          "definition": {
+            "formula": {
+              "body": {
+                "kind": "implies",
+                "left": {
+                  "arguments": [
+                    {
+                      "kind": "variable",
+                      "name": "env"
+                    },
+                    {
+                      "kind": "variable",
+                      "name": "s"
+                    }
+                  ],
+                  "kind": "predicate",
+                  "name": "observed"
+                },
+                "right": {
+                  "kind": "or",
+                  "left": {
+                    "arguments": [
+                      {
+                        "kind": "variable",
+                        "name": "env"
+                      },
+                      {
+                        "kind": "variable",
+                        "name": "s"
+                      }
+                    ],
+                    "kind": "predicate",
+                    "name": "nested_route"
+                  },
+                  "right": {
+                    "arguments": [
+                      {
+                        "kind": "variable",
+                        "name": "env"
+                      },
+                      {
+                        "kind": "variable",
+                        "name": "s"
+                      }
+                    ],
+                    "kind": "predicate",
+                    "name": "scalar_route"
+                  }
+                }
+              },
+              "kind": "forall",
+              "sort": "site",
+              "variable": "s"
+            },
+            "id": "checked_reading_route",
+            "parameters": [
+              {
+                "name": "env",
+                "sort": {
+                  "kind": "value",
+                  "name": "reading_environment"
+                }
+              },
+              {
+                "name": "observed",
+                "sort": {
+                  "arguments": [
+                    "reading_environment",
+                    "site"
+                  ],
+                  "kind": "predicate"
+                }
+              },
+              {
+                "name": "nested_route",
+                "sort": {
+                  "arguments": [
+                    "reading_environment",
+                    "site"
+                  ],
+                  "kind": "predicate"
+                }
+              },
+              {
+                "name": "scalar_route",
+                "sort": {
+                  "arguments": [
+                    "reading_environment",
+                    "site"
+                  ],
+                  "kind": "predicate"
+                }
+              }
+            ]
+          },
+          "kind": "formula"
+        }
+      },
+      "formula": "forall (#s: site) { (#observed(#env, #s) => (#nested_route(#env, #s) || #scalar_route(#env, #s))) }"
+    },
+    {
+      "id": "contract_in_force",
+      "prose": "this declaration meets nested-call admission premise N3: a contract in force",
+      "typed": "quant proposition #contract_in_force(#env: nested_environment, #in_force: predicate<nested_environment>) =\n        #in_force(#env)",
+      "atom": {
+        "id": "contract_in_force",
+        "proposition": {
+          "definition": {
+            "formula": {
+              "arguments": [
+                {
+                  "kind": "variable",
+                  "name": "env"
+                }
+              ],
+              "kind": "predicate",
+              "name": "in_force"
+            },
+            "id": "contract_in_force",
+            "parameters": [
+              {
+                "name": "env",
+                "sort": {
+                  "kind": "value",
+                  "name": "nested_environment"
+                }
+              },
+              {
+                "name": "in_force",
+                "sort": {
+                  "arguments": [
+                    "nested_environment"
+                  ],
+                  "kind": "predicate"
+                }
+              }
+            ]
+          },
+          "kind": "formula"
+        }
+      },
+      "formula": "#in_force(#env)"
+    },
+    {
+      "id": "no_custody_result",
+      "prose": "this declaration meets nested-call admission premise N6: result mode None",
+      "typed": "quant proposition #no_custody_result(#env: nested_environment, #no_custody: predicate<nested_environment>) =\n        #no_custody(#env)",
+      "atom": {
+        "id": "no_custody_result",
+        "proposition": {
+          "definition": {
+            "formula": {
+              "arguments": [
+                {
+                  "kind": "variable",
+                  "name": "env"
+                }
+              ],
+              "kind": "predicate",
+              "name": "no_custody"
+            },
+            "id": "no_custody_result",
+            "parameters": [
+              {
+                "name": "env",
+                "sort": {
+                  "kind": "value",
+                  "name": "nested_environment"
+                }
+              },
+              {
+                "name": "no_custody",
+                "sort": {
+                  "arguments": [
+                    "nested_environment"
+                  ],
+                  "kind": "predicate"
+                }
+              }
+            ]
+          },
+          "kind": "formula"
+        }
+      },
+      "formula": "#no_custody(#env)"
+    },
+    {
+      "id": "parameters_borrowed",
+      "prose": "this declaration meets nested-call admission premise N7: every parameter Borrowed",
+      "typed": "quant proposition #parameters_borrowed(#env: nested_environment, #borrowed: predicate<nested_environment>) =\n        #borrowed(#env)",
+      "atom": {
+        "id": "parameters_borrowed",
+        "proposition": {
+          "definition": {
+            "formula": {
+              "arguments": [
+                {
+                  "kind": "variable",
+                  "name": "env"
+                }
+              ],
+              "kind": "predicate",
+              "name": "borrowed"
+            },
+            "id": "parameters_borrowed",
+            "parameters": [
+              {
+                "name": "env",
+                "sort": {
+                  "kind": "value",
+                  "name": "nested_environment"
+                }
+              },
+              {
+                "name": "borrowed",
+                "sort": {
+                  "arguments": [
+                    "nested_environment"
+                  ],
+                  "kind": "predicate"
+                }
+              }
+            ]
+          },
+          "kind": "formula"
+        }
+      },
+      "formula": "#borrowed(#env)"
+    },
+    {
+      "id": "remaining_site_checks",
+      "prose": "the nested-call admission checks the rest of its premises per site",
+      "typed": "quant proposition #remaining_site_checks(#env: nested_environment, #observed: predicate<nested_environment, site>, #remaining: predicate<nested_environment, site>) =\n        forall (#s: site) { (#observed(#env, #s) => #remaining(#env, #s)) }",
+      "atom": {
+        "id": "remaining_site_checks",
+        "proposition": {
+          "definition": {
+            "formula": {
+              "body": {
+                "kind": "implies",
+                "left": {
+                  "arguments": [
+                    {
+                      "kind": "variable",
+                      "name": "env"
+                    },
+                    {
+                      "kind": "variable",
+                      "name": "s"
+                    }
+                  ],
+                  "kind": "predicate",
+                  "name": "observed"
+                },
+                "right": {
+                  "arguments": [
+                    {
+                      "kind": "variable",
+                      "name": "env"
+                    },
+                    {
+                      "kind": "variable",
+                      "name": "s"
+                    }
+                  ],
+                  "kind": "predicate",
+                  "name": "remaining"
+                }
+              },
+              "kind": "forall",
+              "sort": "site",
+              "variable": "s"
+            },
+            "id": "remaining_site_checks",
+            "parameters": [
+              {
+                "name": "env",
+                "sort": {
+                  "kind": "value",
+                  "name": "nested_environment"
+                }
+              },
+              {
+                "name": "observed",
+                "sort": {
+                  "arguments": [
+                    "nested_environment",
+                    "site"
+                  ],
+                  "kind": "predicate"
+                }
+              },
+              {
+                "name": "remaining",
+                "sort": {
+                  "arguments": [
+                    "nested_environment",
+                    "site"
+                  ],
+                  "kind": "predicate"
+                }
+              }
+            ]
+          },
+          "kind": "formula"
+        }
+      },
+      "formula": "forall (#s: site) { (#observed(#env, #s) => #remaining(#env, #s)) }"
+    },
+    {
+      "id": "scalar_declaration",
+      "prose": "both checked reading routes require this unit's unambiguous declaration to return exactly one pointer level over a scalar type",
+      "typed": "quant proposition #scalar_declaration(#env: reading_environment, #observed: predicate<reading_environment, site>, #scalar_declaration: predicate<reading_environment, site>) =\n        forall (#s: site) { (#observed(#env, #s) => #scalar_declaration(#env, #s)) }",
+      "atom": {
+        "id": "scalar_declaration",
+        "proposition": {
+          "definition": {
+            "formula": {
+              "body": {
+                "kind": "implies",
+                "left": {
+                  "arguments": [
+                    {
+                      "kind": "variable",
+                      "name": "env"
+                    },
+                    {
+                      "kind": "variable",
+                      "name": "s"
+                    }
+                  ],
+                  "kind": "predicate",
+                  "name": "observed"
+                },
+                "right": {
+                  "arguments": [
+                    {
+                      "kind": "variable",
+                      "name": "env"
+                    },
+                    {
+                      "kind": "variable",
+                      "name": "s"
+                    }
+                  ],
+                  "kind": "predicate",
+                  "name": "scalar_declaration"
+                }
+              },
+              "kind": "forall",
+              "sort": "site",
+              "variable": "s"
+            },
+            "id": "scalar_declaration",
+            "parameters": [
+              {
+                "name": "env",
+                "sort": {
+                  "kind": "value",
+                  "name": "reading_environment"
+                }
+              },
+              {
+                "name": "observed",
+                "sort": {
+                  "arguments": [
+                    "reading_environment",
+                    "site"
+                  ],
+                  "kind": "predicate"
+                }
+              },
+              {
+                "name": "scalar_declaration",
+                "sort": {
+                  "arguments": [
+                    "reading_environment",
+                    "site"
+                  ],
+                  "kind": "predicate"
+                }
+              }
+            ]
+          },
+          "kind": "formula"
+        }
+      },
+      "formula": "forall (#s: site) { (#observed(#env, #s) => #scalar_declaration(#env, #s)) }"
+    },
+    {
+      "id": "untracked_effects",
+      "prose": "both checked reading routes bind, release, escape and address nothing the projection tracks",
+      "typed": "quant proposition #untracked_effects(#env: reading_environment, #observed: predicate<reading_environment, site>, #untracked_effects: predicate<reading_environment, site>) =\n        forall (#s: site) { (#observed(#env, #s) => #untracked_effects(#env, #s)) }",
+      "atom": {
+        "id": "untracked_effects",
+        "proposition": {
+          "definition": {
+            "formula": {
+              "body": {
+                "kind": "implies",
+                "left": {
+                  "arguments": [
+                    {
+                      "kind": "variable",
+                      "name": "env"
+                    },
+                    {
+                      "kind": "variable",
+                      "name": "s"
+                    }
+                  ],
+                  "kind": "predicate",
+                  "name": "observed"
+                },
+                "right": {
+                  "arguments": [
+                    {
+                      "kind": "variable",
+                      "name": "env"
+                    },
+                    {
+                      "kind": "variable",
+                      "name": "s"
+                    }
+                  ],
+                  "kind": "predicate",
+                  "name": "untracked_effects"
+                }
+              },
+              "kind": "forall",
+              "sort": "site",
+              "variable": "s"
+            },
+            "id": "untracked_effects",
+            "parameters": [
+              {
+                "name": "env",
+                "sort": {
+                  "kind": "value",
+                  "name": "reading_environment"
+                }
+              },
+              {
+                "name": "observed",
+                "sort": {
+                  "arguments": [
+                    "reading_environment",
+                    "site"
+                  ],
+                  "kind": "predicate"
+                }
+              },
+              {
+                "name": "untracked_effects",
+                "sort": {
+                  "arguments": [
+                    "reading_environment",
+                    "site"
+                  ],
+                  "kind": "predicate"
+                }
+              }
+            ]
+          },
+          "kind": "formula"
+        }
+      },
+      "formula": "forall (#s: site) { (#observed(#env, #s) => #untracked_effects(#env, #s)) }"
     }
   ],
   "files": [
