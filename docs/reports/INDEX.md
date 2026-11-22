@@ -824,6 +824,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [nullable-guarded-release](nullable-guarded-release/README.md) | NULLABLE-GUARDED-RELEASE: a refused release is no leak; a member address takes no slot |
 
+| [nullable-lazy-constructor-in-loop](nullable-lazy-constructor-in-loop/README.md) | NULLABLE-LAZY-CONSTRUCTOR-IN-LOOP: the lazy guard was already decided; three readers named or fixed |
+
 ## O
 
 | Card directory | Original report title |
