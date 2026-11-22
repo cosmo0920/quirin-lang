@@ -30,16 +30,25 @@
 //! extern fn flb_plugin_load(path: ptr<mut, u8>, ctx: ptr<mut, u8>, config: ptr<mut, u8>) -> i32
 //! contract {
 //!     requires outer_contract_v1;
-//!     quant #outer [[contract]] flb_external_plugin, "STATEMENT";   // defines NAME
+//!     quant #outer [[contract]] flb_external_plugin, FORMULA;       // defines NAME
 //!     quant #outer where #config in #loaded [[runtime]] when #result == 0;
 //!     quant #outer #loaded: flb_input_instance.p |-> #kept;         // envelope
 //!     quant #outer #loaded: #premise NAME;                         // envelope
 //! };
 //! ```
 //!
-//! * `quant #outer [[contract]] NAME, "STATEMENT";` **defines** the contract
+//! * `quant #outer [[contract]] NAME, FORMULA;` **defines** the contract
 //!   (once in a selection); `quant #outer [[contract]] NAME;` on another
-//!   loader **cites** it.
+//!   loader **cites** it. Card **SP8-OUTER-CONTRACT-SYMBOLIC-STATEMENTS**
+//!   (USER DECISION 2026-11-20, "we must write down as condition symbols like
+//!   |-> or other types of logical symbols"): `FORMULA` is a C04.18.9 formula
+//!   over the closed vocabulary (its SP8 block holds the outer terms: the
+//!   subject `#outer_code`, the registrations, the effects), read by
+//!   `qcore_frontend::premise_formula::outer_header`; the statement is its
+//!   canonical printing. The string statement `NAME, "STATEMENT"` is retired
+//!   and refused by name (`QF004`) at parse, on every route, and here. A
+//!   candidate inventory (C04.20.1) is cited by its typed constant
+//!   `CANDIDATES_<SHA-256>` ([`candidate_inventories`]).
 //! * `quant #outer where #P in #loaded [[runtime]] [when #result OP N];` is
 //!   the runtime condition: after a call (meeting the guard), the object the
 //!   pointer formal `P` names, and what is reachable from it, is held by
@@ -74,6 +83,10 @@ use qcore_frontend::frontend::{
     parse_source_program,
 };
 use qcore_frontend::lexer::{Symbol, TokenKind, lex};
+use qcore_frontend::premise_formula;
+/// The registered candidate inventory constants and their digest reader
+/// (C04.18.9's SP8 block), for the readers of a statement's citation.
+pub use qcore_frontend::premise_formula::{CANDIDATE_INVENTORIES, candidate_digest};
 use qcore_schemas::digest::sha256_hex;
 
 /// The selector.
@@ -170,7 +183,9 @@ pub struct OuterLoader {
     pub module: String,
     /// The contract it hosts.
     pub contract: String,
-    /// The statement, on the defining declaration only.
+    /// The statement, on the defining declaration only: the canonical
+    /// printing of its C04.18.9 formula (card
+    /// SP8-OUTER-CONTRACT-SYMBOLIC-STATEMENTS).
     pub statement: Option<String>,
     pub runtime: Vec<RuntimeCondition>,
     /// Envelope lines, on the defining declaration only, in written order.
@@ -185,6 +200,7 @@ pub struct OuterLoader {
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct OuterContract {
     pub name: String,
+    /// The canonical printing of the statement's C04.18.9 formula.
     pub statement: String,
     /// The loader whose declaration defines it.
     pub defined_by: String,
@@ -284,6 +300,21 @@ impl OuterContracts {
     }
 }
 
+/// The candidate inventory digests (lower-case SHA-256, C04.20.1) a
+/// statement cites: every registered `CANDIDATES_…` constant of its formula
+/// (card SP8-OUTER-CONTRACT-SYMBOLIC-STATEMENTS). A statement is the
+/// canonical printing of a formula the loader accepted, which reads back as
+/// the same tree.
+///
+/// # Errors
+///
+/// A statement that is not a well-formed formula.
+pub fn candidate_inventories(statement: &str) -> Result<BTreeSet<String>, String> {
+    Ok(premise_formula::candidate_digests(
+        &premise_formula::read_source(statement)?.raw,
+    ))
+}
+
 fn tokens_of(source: &str) -> Result<Vec<TokenKind>, String> {
     Ok(lex(source)
         .map_err(|e| e.to_string())?
@@ -341,12 +372,6 @@ fn c_identifier(name: &str) -> bool {
         && name.chars().all(|c| c.is_ascii_alphanumeric() || c == '_')
 }
 
-fn plain_statement(statement: &str) -> bool {
-    !statement.trim().is_empty()
-        && !statement.contains('\\')
-        && !statement.chars().any(char::is_control)
-}
-
 const INTEGER_TYPES: [&str; 10] = [
     "i8", "i16", "i32", "i64", "isize", "u8", "u16", "u32", "u64", "usize",
 ];
@@ -397,33 +422,21 @@ fn read_clause(tokens: &[TokenKind], signature: &Signature<'_>) -> Result<Clause
         return Err("outer-binder: an outer clause begins `quant #outer`".into());
     }
     let rest = &tokens[2..];
-    // `[[contract]] NAME[, "STATEMENT"]`
+    // `[[contract]] NAME[, FORMULA]` (card SP8-OUTER-CONTRACT-SYMBOLIC-STATEMENTS:
+    // the statement is a C04.18.9 formula, a string is refused, `QF004`).
     if qualifier(rest, 0, "contract") {
-        return match &rest[5..] {
-            [TokenKind::Word(name)] if lowercase_identifier(name) => Ok(Clause::Header {
-                name: name.clone(),
-                statement: None,
+        let shape = || {
+            "outer-contract-shape: write `quant #outer [[contract]] NAME, FORMULA;` (a definition, FORMULA a C04.18.9 formula) or `quant #outer [[contract]] NAME;` (a citation), NAME a lowercase identifier"
+                .to_owned()
+        };
+        return match premise_formula::outer_header(tokens) {
+            Ok(Some((name, statement))) if lowercase_identifier(&name) => Ok(Clause::Header {
+                name,
+                statement: statement.map(|formula| formula.canonical),
             }),
-            [
-                TokenKind::Word(name),
-                TokenKind::Symbol(Symbol::Comma),
-                TokenKind::StringLiteral(statement),
-            ] if lowercase_identifier(name) => {
-                if !plain_statement(statement) {
-                    return Err(
-                        "outer-statement: the statement is one plain, non-blank string with no escape and no control character"
-                            .into(),
-                    );
-                }
-                Ok(Clause::Header {
-                    name: name.clone(),
-                    statement: Some(statement.clone()),
-                })
-            }
-            _ => Err(
-                "outer-contract-shape: write `quant #outer [[contract]] NAME, \"STATEMENT\";` (a definition) or `quant #outer [[contract]] NAME;` (a citation), NAME a lowercase identifier"
-                    .into(),
-            ),
+            Ok(_) => Err(shape()),
+            Err(refusal) if refusal.starts_with(premise_formula::PROSE_OUTER) => Err(refusal),
+            Err(refusal) => Err(format!("outer-statement: {refusal}")),
         };
     }
     // `where #P in #loaded [[runtime]] [when #result OP N]`
@@ -632,6 +645,13 @@ fn load_loader(path: &str, decl: &SourceDeclaration) -> Result<OuterLoader, Stri
                 normalised.push(format!("quant {}", render(&tokens)));
                 match read_clause(&tokens, &signature)? {
                     Clause::Header { name, statement } => {
+                        // A definition's statement is normalised as its
+                        // canonical printing (C04.18.9), its identity.
+                        if let Some(statement) = &statement {
+                            normalised.pop();
+                            normalised
+                                .push(format!("quant #outer [[contract]] {name}, {statement}"));
+                        }
                         if header.is_some() {
                             return Err(
                                 "outer-contract-repeated: a loader hosts exactly one `quant #outer [[contract]]`"

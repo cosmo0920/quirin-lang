@@ -181,7 +181,9 @@ pub enum SourceContractClauseKind {
     /// Card `OUTER-CONTRACT` (USER DECISIONS 2026-10-17, D1 "B: loader
     /// envelope", D2 "Yes, as proposed"): `quant #outer …;`, a clause of an
     /// outer contract v1 declaration (`requires outer_contract_v1;`): the
-    /// contract header `quant #outer [[contract]] NAME, "STATEMENT";`, the
+    /// contract header `quant #outer [[contract]] NAME, FORMULA;` (a C04.18.9
+    /// formula; the string statement is refused at parse, `QF004`, card
+    /// SP8-OUTER-CONTRACT-SYMBOLIC-STATEMENTS), the
     /// runtime condition `quant #outer where #P in #loaded [[runtime]];` or an
     /// envelope line `quant #outer #loaded: TAG.FIELD |-> #kept;`. The
     /// expression starts at `#outer`. Only the outer contract v1 loader
@@ -1464,6 +1466,19 @@ impl<'a> SourceParser<'a> {
                     .map(|token| token.kind.clone())
                     .collect::<Vec<_>>();
                 crate::premise_formula::hypothesis_clause(&kinds)
+                    .map_err(|message| self.error(expression_start, message))?;
+            }
+            // Card SP8-OUTER-CONTRACT-SYMBOLIC-STATEMENTS (contract
+            // specification C04.20): an outer contract definition states a
+            // C04.18.9 formula; the string statement is retired and refused
+            // by name (`QF004`) on every route, and a formula the judgment
+            // refuses rejects here too.
+            if kind == SourceContractClauseKind::QuantOuter {
+                let kinds = self.tokens[expression_start..semicolon]
+                    .iter()
+                    .map(|token| token.kind.clone())
+                    .collect::<Vec<_>>();
+                crate::premise_formula::outer_header(&kinds)
                     .map_err(|message| self.error(expression_start, message))?;
             }
             let expression_span = self.range_span(expression_start, semicolon);

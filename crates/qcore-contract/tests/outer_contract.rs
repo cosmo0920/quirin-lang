@@ -15,6 +15,11 @@
 //! Card OUTER-CONTRACT (contract specification C04.20, grammar G05g, gateway
 //! rule 31): the outer contract v1 loader is total-or-reject, and the other
 //! vocabularies refuse its modules.
+//!
+//! Card SP8-OUTER-CONTRACT-SYMBOLIC-STATEMENTS: a definition's statement is a
+//! C04.18.9 formula; the string statement is refused by name (`QF004`) on
+//! every route; the two shipped statements are the recorded formulas, and
+//! the Fluent Bit statement's right conjunct is the librdkafka statement.
 
 use std::collections::BTreeMap;
 
@@ -36,7 +41,7 @@ const DEFINITION: &str = r#"module contract;
 extern fn load_plugin(path: ptr<mut, u8>, config: ptr<mut, u8>) -> i32
 contract {
     requires outer_contract_v1;
-    quant #outer [[contract]] app_plugin, "a loaded plugin stores into no member the core owns";
+    quant #outer [[contract]] app_plugin, #outer_code |-> #stores_none(#flb_core_owned);
     quant #outer where #config in #loaded [[runtime]] when #result == 0;
     quant #outer #loaded: app_instance.p |-> #kept;
     quant #outer #loaded: app_collector.cb |-> #registered;
@@ -224,7 +229,7 @@ contract {
 
 #[test]
 fn malformed_forms_reject_the_module_with_a_named_diagnostic() {
-    let cases: [(&str, &str, &str); 16] = [
+    let cases: [(&str, &str, &str); 17] = [
         ("requires outer_contract_v1;\n", "", "exactly one"),
         (
             "    quant #outer where #config in #loaded [[runtime]] when #result == 0;\n",
@@ -246,14 +251,22 @@ fn malformed_forms_reject_the_module_with_a_named_diagnostic() {
             "outer-envelope-member",
         ),
         (
-            "app_plugin, \"a loaded",
-            "App_Plugin, \"a loaded",
+            "app_plugin, #outer_code",
+            "App_Plugin, #outer_code",
             "outer-contract-shape",
         ),
+        // Card SP8-OUTER-CONTRACT-SYMBOLIC-STATEMENTS: a formula the
+        // judgment refuses rejects the module (at parse, every route).
         (
+            "#stores_none(#flb_core_owned)",
+            "#stores_none(#outer_code)",
+            "premise-formula: ill-sorted",
+        ),
+        // The retired string statement, refused by name.
+        (
+            "#outer_code |-> #stores_none(#flb_core_owned)",
             "\"a loaded plugin stores into no member the core owns\"",
-            "\"   \"",
-            "outer-statement",
+            "QF004",
         ),
         (
             "    quant #outer #loaded: #premise app_closed;\n",
@@ -271,7 +284,7 @@ fn malformed_forms_reject_the_module_with_a_named_diagnostic() {
             "outer-clause-foreign",
         ),
         (
-            "    quant #outer [[contract]] app_plugin, \"a loaded plugin stores into no member the core owns\";\n",
+            "    quant #outer [[contract]] app_plugin, #outer_code |-> #stores_none(#flb_core_owned);\n",
             "",
             "outer-contract-missing",
         ),
@@ -305,4 +318,137 @@ fn the_resource_and_bounds_loaders_refuse_an_outer_module() {
     let sources = BTreeMap::from([("fluent_bit:outer.qv".to_owned(), FLUENT_BIT.to_owned())]);
     assert!(qcore_contract::bounds_contract::load_bounds_contract_sources(&sources).is_err());
     assert!(qcore_contract::contract_loader::load_resource_contract_sources(&sources).is_err());
+}
+
+const LIBRDKAFKA: &str =
+    include_str!("../../../providers/qcore-provider-librdkafka/contracts/librdkafka/outer.qv");
+const MIGRATION: &str =
+    include_str!("../../../docs/reports/sp8-outer-contract-symbolic-statements/migration.json");
+
+fn recorded() -> Vec<(String, String, String)> {
+    let record: serde_json::Value = serde_json::from_str(MIGRATION).unwrap();
+    record["outer_statements"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|s| {
+            let field = |k: &str| s[k].as_str().unwrap().to_owned();
+            (field("name"), field("prose"), field("formula"))
+        })
+        .collect()
+}
+
+/// Card SP8-OUTER-CONTRACT-SYMBOLIC-STATEMENTS: each shipped definition
+/// states exactly its recorded formula, printed canonically; the Fluent Bit
+/// statement is its own conjunct `&&` the librdkafka statement (the relation
+/// `QCore.PremiseFormula.Outer.fb_entails_rk` proves), and both cite the
+/// registered candidate inventory.
+#[test]
+fn the_shipped_statements_are_the_recorded_formulas() {
+    use qcore_frontend::premise_formula::{Op, Raw, read_source};
+    let librdkafka = load_outer_contract_sources(&BTreeMap::from([(
+        "librdkafka:outer.qv".to_owned(),
+        LIBRDKAFKA.to_owned(),
+    )]))
+    .unwrap();
+    let fluent_bit = load(FLUENT_BIT).unwrap();
+    let statements = BTreeMap::from([
+        (
+            "rk_plugin_library".to_owned(),
+            librdkafka.contracts["rk_plugin_library"].statement.clone(),
+        ),
+        (
+            "flb_external_plugin".to_owned(),
+            fluent_bit.contracts["flb_external_plugin"]
+                .statement
+                .clone(),
+        ),
+    ]);
+    let recorded = recorded();
+    assert_eq!(recorded.len(), 2);
+    for (name, _, formula) in &recorded {
+        assert_eq!(&statements[name], formula, "{name}");
+        assert_eq!(&read_source(formula).unwrap().canonical, formula, "{name}");
+        assert_eq!(
+            qcore_contract::outer_contract::candidate_inventories(formula)
+                .unwrap()
+                .into_iter()
+                .collect::<Vec<_>>(),
+            vec![
+                qcore_contract::outer_contract::candidate_digest(
+                    qcore_contract::outer_contract::CANDIDATE_INVENTORIES[0]
+                )
+                .unwrap()
+            ],
+            "{name}"
+        );
+    }
+    let rk = read_source(&statements["rk_plugin_library"]).unwrap().raw;
+    let fb = read_source(&statements["flb_external_plugin"]).unwrap().raw;
+    let Raw::Bin(Op::Conj, _, right) = fb else {
+        panic!("the Fluent Bit statement is a conjunction");
+    };
+    assert_eq!(*right, rk);
+}
+
+/// Card SP8-OUTER-CONTRACT-SYMBOLIC-STATEMENTS: the retired string statement
+/// is refused by name (`QF004`) on the structural parser every route reads,
+/// by the outer loader, and by the resource and bounds loaders; each
+/// recorded sentence is refused as it stood.
+#[test]
+fn a_string_statement_is_refused_on_every_route() {
+    for (name, prose, formula) in recorded() {
+        let module = if name == "rk_plugin_library" {
+            LIBRDKAFKA
+        } else {
+            FLUENT_BIT
+        };
+        let retired = module.replace(&formula, &format!("\"{prose}\""));
+        assert_ne!(retired, module, "{name}");
+        let parse = qcore_frontend::frontend::parse_source_program(&retired).unwrap_err();
+        assert!(parse.to_string().contains("QF004"), "{name}: {parse}");
+        let sources = BTreeMap::from([("p:outer.qv".to_owned(), retired)]);
+        let outer = load_outer_contract_sources(&sources).unwrap_err();
+        assert!(outer.contains("QF004"), "{name}: {outer}");
+        let resource =
+            qcore_contract::contract_loader::load_resource_contract_sources(&sources).unwrap_err();
+        assert!(resource.to_string().contains("QF004"), "{name}: {resource}");
+        let bounds =
+            qcore_contract::bounds_contract::load_bounds_contract_sources(&sources).unwrap_err();
+        assert!(bounds.to_string().contains("QF004"), "{name}: {bounds}");
+    }
+    for statement in ["\"   \"", "#outer_code |-> #balanced && \"and more\""] {
+        let text = DEFINITION.replace("#outer_code |-> #stores_none(#flb_core_owned)", statement);
+        let error = load(&text).unwrap_err();
+        assert!(error.contains("QF004"), "{statement}: {error}");
+    }
+}
+
+#[path = "../../../tests/support/legacy_prose_premise.rs"]
+mod legacy_prose_premise;
+
+/// Card SP8-OUTER-CONTRACT-SYMBOLIC-STATEMENTS: a frozen text stating a
+/// retired outer statement is read only through the test-side legacy reader,
+/// which writes each recorded sentence as its formula and nothing else: the
+/// lifted text is the current module, byte for byte, and an unrecorded
+/// sentence stays a string the loader refuses.
+#[test]
+fn the_legacy_reader_lifts_exactly_the_recorded_statements() {
+    assert_eq!(legacy_prose_premise::outer_statements(), recorded());
+    for (name, prose, formula) in recorded() {
+        let module = if name == "rk_plugin_library" {
+            LIBRDKAFKA
+        } else {
+            FLUENT_BIT
+        };
+        let retired = module.replace(&formula, &format!("\"{prose}\""));
+        assert_eq!(legacy_prose_premise::lift(&retired), module, "{name}");
+    }
+    let unrecorded = DEFINITION.replace(
+        "#outer_code |-> #stores_none(#flb_core_owned)",
+        "\"a loaded plugin stores into no member the core owns\"",
+    );
+    let lifted = legacy_prose_premise::lift(&unrecorded);
+    assert_eq!(lifted, unrecorded);
+    assert!(load(&lifted).unwrap_err().contains("QF004"));
 }

@@ -277,3 +277,15 @@ own reader (`qcore_contract::hypothesis`) and its wire validator refuse a
 declared atom with an opaque statement with the same code. An atom is a typed
 `quant proposition #NAME(PARAMETERS) = FORMULA;` (G01p); only a generated
 `legacy_atom_*` (the erasure of a named premise) keeps an opaque statement.
+
+Card `SP8-OUTER-CONTRACT-SYMBOLIC-STATEMENTS` adds `QF004` (`QF003` is card
+SP6-GUARDED-SYMBOL-PROSE's): an outer contract definition whose statement is,
+or holds, a string literal (the retired form `quant #outer [[contract]] NAME,
+"STATEMENT";`, contract specification C04.20), whatever the name's spelling.
+The structural parser (`frontend.rs`, through
+`qcore_frontend::premise_formula::outer_header`) rejects the whole module, so
+every route refuses it (the outer, resource and bounds loaders, and the
+compiler route as the `Q000` parse refusal whose message starts with
+`QF004`); the outer loader (`qcore_contract::outer_contract`) refuses it with
+the same code. A definition states a C04.18.9 formula, `quant #outer
+[[contract]] NAME, FORMULA;`.

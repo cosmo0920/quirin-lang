@@ -161,6 +161,9 @@ theorem eval_parent_embedding (M : Model) :
   simp [eval, parentEmbeddingFormula, lk, prim0, prim1, ext0, ext1El, term, vocab, binVal,
     Val.holds, and_assoc, ParentEmbedding, parent]
 
+-- Card SP8-OUTER-CONTRACT-SYMBOLIC-STATEMENTS: the SP8 block lengthens the
+-- vocabulary `term` looks names up in.
+set_option maxRecDepth 8192 in
 theorem eval_tls_params (M : Model) :
     (eval M [] tlsParamsFormula).holds ↔ TlsParams M := by
   simp [eval, tlsParamsFormula, lk, prim0, prim1, ext0, ext1El, ext1St, term, vocab, binVal,

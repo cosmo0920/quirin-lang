@@ -4631,21 +4631,34 @@ outer_declaration = "extern", "fn", IDENT, "(", parameters, ")", "->", type,
     "contract", "{", outer_clause, { outer_clause }, "}", ";" ;
 outer_clause      = "requires", "outer_contract_v1", ";"
                   | "quant", "#", "outer", outer_form, ";" ;
-outer_form        = "[[", "contract", "]]", NAME, [ ",", STRING ]
+outer_form        = "[[", "contract", "]]", NAME, [ ",", premise_formula ]
                   | "where", "#", IDENT, "in", "#", "loaded", "[[", "runtime", "]]",
                     [ "when", "#", "result", ( "==" | "!=" ), [ "-" ], INTEGER ]
                   | "#", "loaded", ":", envelope ;
 envelope          = IDENT, ".", IDENT, { ".", IDENT }, MAPS_TO, "#", ( "kept" | "registered" )
                   | "#", "premise", IDENT ;
 NAME              = lowercase identifier, [a-z][a-z0-9_]* ;
-STRING            = one plain string: not blank, no escape, no control character ;
+(* premise_formula is G05-formula's: card SP8-OUTER-CONTRACT-SYMBOLIC-STATEMENTS
+   retires the string statement, diagnostic QF004 *)
 ```
+
+Card SP8-OUTER-CONTRACT-SYMBOLIC-STATEMENTS (contract specification C04.20
+and C04.18.9's SP8 block): a definition's statement is a G05-formula formula,
+exactly the tokens after the comma that follows `NAME`, read by
+`qcore_frontend::premise_formula::outer_header` at parse (so on every route)
+and by the outer loader; its canonical printing is the statement and is what
+the declaration's digest covers. A statement that is or holds a `STRING`
+rejects the whole module with `QF004`, whatever the name's spelling; a
+formula the sort judgment refuses rejects at parse too. The operator gate
+(`Q038`) admits the `&&` and `|` of a statement the reader accepts, as it
+does a premise formula's.
 
 Static conditions, each rejecting the whole selection with the named
 diagnostic: exactly one `requires outer_contract_v1;` (and no other
 `requires` or `ensures`, `outer-clause-foreign`); exactly one header
 (`outer-contract-missing`, `outer-contract-repeated`, `outer-contract-shape`,
-`outer-statement`); at least one runtime condition (`outer-runtime-missing`),
+`outer-statement` (a formula the outer loader's reader refuses), `QF004` (a
+string statement)); at least one runtime condition (`outer-runtime-missing`),
 each binding a distinct pointer formal (`outer-binder-parameter`,
 `outer-binder-pointer`, `outer-runtime-repeated`, `outer-runtime-shape`), a
 guard only on an integer result (`outer-guard-result`); `#loaded`,

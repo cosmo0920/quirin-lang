@@ -276,7 +276,7 @@ const OUTER: &str = r#"module contract;
 extern fn load_plugin(path: ptr<mut, u8>, config: ptr<mut, u8>) -> i32
 contract {
     requires outer_contract_v1;
-    quant #outer [[contract]] app_plugin, "a loaded plugin stores into no instance's p";
+    quant #outer [[contract]] app_plugin, #outer_code |-> #stores_none(#flb_core_owned);
     quant #outer where #config in #loaded [[runtime]] when #result == 0;
     quant #outer #loaded: instance.p |-> #kept;
 };

@@ -18,7 +18,10 @@
 //! to the Lean model `QCore.PremiseFormula`. Card
 //! **SP4-SYMBOLIC-LIBEVENT-PREMISES**: the SP4 vocabulary block and decision
 //! vectors, and the seven libevent formulas bound to
-//! `QCore.PremiseFormula.Libevent`.
+//! `QCore.PremiseFormula.Libevent`. Card
+//! **SP8-OUTER-CONTRACT-SYMBOLIC-STATEMENTS**: the SP8 block, the candidate
+//! inventory constants, the outer header vectors (`QF004`) and the two outer
+//! contract statements bound to `QCore.PremiseFormula.Outer`.
 
 use std::collections::BTreeMap;
 
@@ -643,5 +646,145 @@ fn the_libevent_formulas_are_the_lean_definitions() {
             "{name}"
         );
         assert!(tokens(&formula.canonical).len() <= MAX_TOKENS, "{name}");
+    }
+}
+
+// ---- Card SP8-OUTER-CONTRACT-SYMBOLIC-STATEMENTS. ----
+
+const LEAN_OUTER: &str = include_str!("../../../proof/QCore/PremiseFormula/Outer.lean");
+const FLUENT_BIT_OUTER: &str =
+    include_str!("../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/outer.qv");
+const LIBRDKAFKA_OUTER: &str =
+    include_str!("../../../providers/qcore-provider-librdkafka/contracts/librdkafka/outer.qv");
+
+/// The rows of a Lean list definition in `text` (as [`lean_rows`]).
+fn lean_rows_in(text: &str, opening: &str) -> Vec<String> {
+    let start = text
+        .find(opening)
+        .unwrap_or_else(|| panic!("no `{opening}`"));
+    text[start + opening.len()..]
+        .lines()
+        .map(str::trim)
+        .skip_while(|line| line.is_empty())
+        .take_while(|line| *line != "]")
+        .filter(|line| !line.starts_with("--"))
+        .map(|line| line.trim_end_matches(',').to_owned())
+        .collect()
+}
+
+/// The outer header vectors are the Lean `outerVectors`, and each decision is
+/// the reader's: a statement holding a string literal renders as `.str` and
+/// is refused by name (`QF004`); any other renders as `.formula` of its tree,
+/// accepted exactly when the judgment accepts it.
+#[test]
+fn the_outer_vectors_are_the_lean_table() {
+    use qcore_frontend::premise_formula::{OUTER_DECISION_VECTORS, PROSE_OUTER, outer_header};
+    let rust = OUTER_DECISION_VECTORS
+        .iter()
+        .map(|(source, decision)| {
+            let kinds = tokens(source);
+            let result = outer_header(&kinds);
+            assert_eq!(
+                matches!(result, Ok(Some((_, Some(_))))),
+                *decision,
+                "{source}"
+            );
+            // `# outer [ [ contract ] ] NAME ,` is nine tokens.
+            let statement = &kinds[9..];
+            let rendered = if let Some(text) = statement.iter().find_map(|token| match token {
+                TokenKind::StringLiteral(text) => Some(text),
+                _ => None,
+            }) {
+                assert!(
+                    result
+                        .as_ref()
+                        .is_err_and(|refusal| refusal.starts_with(PROSE_OUTER)),
+                    "{source}"
+                );
+                format!("(.str \"{text}\")")
+            } else {
+                let tree = parse_tokens(statement).unwrap_or_else(|e| panic!("{source}: {e}"));
+                assert_eq!(check(&tree).is_ok(), *decision, "{source}");
+                format!("(.formula {})", lean(&tree))
+            };
+            format!("({rendered}, {decision})")
+        })
+        .collect::<Vec<_>>();
+    assert_eq!(
+        lean_rows_in(LEAN_OUTER, "def outerVectors : List (Stmt × Bool) := ["),
+        rust
+    );
+    assert_eq!(PROSE_OUTER, "QF004");
+}
+
+/// The registered candidate inventory constants are the Lean `inventories`,
+/// each a well-shaped constant of sort `obj`, and a well-shaped constant that
+/// is not registered is refused.
+#[test]
+fn the_inventory_constants_are_the_lean_table() {
+    use qcore_frontend::premise_formula::{CANDIDATE_INVENTORIES, candidate_shaped};
+    let start = LEAN.find("def inventories : List String :=").unwrap();
+    let end = start + LEAN[start..].find("]").unwrap();
+    let lean_constants = LEAN[start..end]
+        .split('"')
+        .skip(1)
+        .step_by(2)
+        .collect::<Vec<_>>();
+    assert_eq!(lean_constants, CANDIDATE_INVENTORIES);
+    for constant in CANDIDATE_INVENTORIES {
+        assert!(candidate_shaped(constant), "{constant}");
+        assert_eq!(sort(&raw(constant)), Ok(Sort::Obj));
+    }
+    let unregistered = format!("CANDIDATES_{}", "0".repeat(64));
+    assert!(sort(&raw(&unregistered)).is_err());
+    // A lower-case digest, a short one, or a constant over the 64-byte bound
+    // with another prefix is no constant at all.
+    assert!(parse_tokens(&tokens(&format!("CANDIDATES_{}", "a".repeat(64)))).is_err());
+    assert!(parse_tokens(&tokens(&format!("CANDIDATES_{}", "0".repeat(63)))).is_err());
+    assert!(parse_tokens(&tokens(&format!("INVENTORY_{}", "0".repeat(64)))).is_err());
+}
+
+/// The defining header's statement of an outer module.
+fn outer_statement(text: &str) -> PremiseFormula {
+    use qcore_frontend::frontend::{SourceContractClauseKind, parse_source_program};
+    use qcore_frontend::premise_formula::outer_header;
+    let program = parse_source_program(text).unwrap();
+    let mut found = Vec::new();
+    for declaration in &program.declarations {
+        let Some(contract) = &declaration.value.function_contract else {
+            continue;
+        };
+        for clause in &contract.clauses {
+            if clause.value.kind == SourceContractClauseKind::QuantOuter
+                && let Ok(Some((_, Some(formula)))) =
+                    outer_header(&tokens(&clause.value.expression_source))
+            {
+                found.push(formula);
+            }
+        }
+    }
+    assert_eq!(found.len(), 1);
+    found.pop().unwrap()
+}
+
+/// The two outer contract statements are the Lean definitions
+/// `QCore.PremiseFormula.Outer` proves well-formed and related: the
+/// librdkafka statement is `rkFormula`, and the Fluent Bit statement is
+/// `fbOwnFormula && rkFormula` (`fbFormula`, so `fb_entails_rk`).
+#[test]
+fn the_outer_statements_are_the_lean_definitions() {
+    let rk = outer_statement(LIBRDKAFKA_OUTER);
+    let fb = outer_statement(FLUENT_BIT_OUTER);
+    let rk_lean = lean_definition_in(LEAN_OUTER, "def rkFormula : Raw :=");
+    let own_lean = lean_definition_in(LEAN_OUTER, "def fbOwnFormula : Raw :=");
+    assert_eq!(lean(&rk.raw), rk_lean);
+    assert_eq!(lean(&fb.raw), format!("(.bin .conj {own_lean} {rk_lean})"));
+    assert_eq!(
+        lean_definition_in(LEAN_OUTER, "def fbFormula : Raw :="),
+        ".bin .conj fbOwnFormula rkFormula"
+    );
+    for formula in [&rk, &fb] {
+        assert_eq!(raw(&formula.canonical), formula.raw);
+        assert!(tokens(&formula.canonical).len() <= MAX_TOKENS);
     }
 }

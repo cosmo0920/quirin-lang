@@ -56,6 +56,13 @@ acceptance `accept` (section "Clause statements") refuses a string statement
 two terms of C04.21's reserved entry-snapshot premise to `vocab`, read by
 name through `ext0`.
 
+Card SP8-OUTER-CONTRACT-SYMBOLIC-STATEMENTS appends the outer contract terms
+(C04.20) to `vocab` in an SP8 block, read by name through `ext0`, `ext1El` and
+`ext1St` (two name-indexed components, `xPr0` and `xEf0`, added with
+defaults), and registers the candidate inventory constants (`inventories`,
+of sort `obj`); its formulas, its header acceptance and the relation of its
+two statements are `QCore.PremiseFormula.Outer`.
+
 Card SP4-SYMBOLIC-LIBEVENT-PREMISES appends its terms to `vocab` in an SP4
 block. Each SP4 term but the defined `#singleton` (the singleton set) is read
 by name through `ext0`, `ext1El` and `ext1St`, one model component per term,
@@ -266,12 +273,54 @@ def vocab : List (String × List Srt × Srt) := [
   ("stack_deregister", [.obj], .sfn),
   -- Card SP5-GLOBAL-PROSE-PREMISE-BAN (SP5 block).
   ("condition_reads", [], .sobj),
-  ("entry_stable", [], .sobj)
+  ("entry_stable", [], .sobj),
+  -- Card SP8-OUTER-CONTRACT-SYMBOLIC-STATEMENTS (SP8 block).
+  ("outer_code", [], .sfn),
+  ("conf_registrations", [], .sfn),
+  ("public_setter_values", [], .sfn),
+  ("meets_candidate", [], .sfn),
+  ("interceptors", [], .sfn),
+  ("zero_appends", [.obj], .sfn),
+  ("conf_lifecycle", [.obj], .sfn),
+  ("client_lifecycle", [.obj], .sfn),
+  ("on_live_conf", [], .sfn),
+  ("from_on_new", [], .sfn),
+  ("before_init", [], .sfn),
+  ("on_share_consumer", [], .sfn),
+  ("copies", [.sfn], .sfn),
+  ("valid_through_last", [], .sfn),
+  ("borrows_args", [], .eff),
+  ("borrows_handles", [], .eff),
+  ("no_global_custody", [], .eff),
+  ("balanced", [], .eff),
+  ("stores_none", [.sobj], .eff),
+  ("calls_none", [.sfn], .eff),
+  ("rk_internal", [], .sobj),
+  ("rk_public", [], .sfn),
+  ("rk_nonpublic", [], .sfn),
+  ("meets_published", [.sfn], .eff),
+  ("cjson_init_hooks", [], .sfn),
+  ("cjson_global_hooks", [], .sobj),
+  ("cjson_link_cells", [], .sobj),
+  ("cjson_handed", [], .sobj),
+  ("allocator_hooks_premise", [], .prop),
+  ("flb_core_owned", [], .sobj),
+  ("handed", [], .sobj),
+  ("exported", [], .sfn),
+  ("accesses_only", [.sobj], .eff),
+  ("calls_only", [.sfn], .eff),
+  ("provenance", [.sobj], .eff),
+  ("typed_access", [], .eff)
 ]
 
 def classes : List String :=
   ["BIO", "DH", "DSA", "EC_KEY", "ENGINE", "EVP_PKEY", "RSA", "SSL", "SSL_CTX",
     "SSL_SESSION", "UI", "UI_METHOD", "X509", "X509_STORE", "X509_STORE_CTX"]
+
+/-- Card SP8-OUTER-CONTRACT-SYMBOLIC-STATEMENTS: the registered candidate
+inventory constants (the Rust `CANDIDATE_INVENTORIES`), of sort `obj`. -/
+def inventories : List String :=
+  ["CANDIDATES_5C3F8C4723832C0E9E6EBB784BE6A57EBC0264D519421D5B95A18A8F68C18147"]
 
 /-- A context or environment lookup: the most recent binding first. -/
 def lk {α : Type} : List (String × α) → String → Option α
@@ -339,7 +388,10 @@ def check (Γ : List (String × Srt)) : Raw → Option Srt
       match term f, check Γ a, check Γ b with
       | some ([x, y], s), some x', some y' => if x = x' ∧ y = y' then some s else none
       | _, _, _ => none
-  | .const c => if classes.contains c then some .cls else none
+  | .const c =>
+      if classes.contains c then some .cls
+      else if inventories.contains c then some .obj
+      else none
   | .empty => some .sres
 
 /-- The well-formedness judgment: a closed proposition (the Rust `check`). -/
@@ -522,6 +574,11 @@ structure Model where
   xSt1 : String → U → U → Prop := fun _ _ _ => False
   xStSt : String → (U → Prop) → U → Prop := fun _ _ _ => False
   xEfSt : String → (U → Prop) → Run → Prop := fun _ _ _ => True
+  -- Card SP8-OUTER-CONTRACT-SYMBOLIC-STATEMENTS (SP8 block): its nullary
+  -- propositions and effects, by name; its other terms use the SP4
+  -- components above.
+  xPr0 : String → Prop := fun _ => False
+  xEf0 : String → Run → Prop := fun _ _ => True
 
 /-- A value: an element, a set, a per-run resource set, a proposition, a
 property of a run, or nothing (an ill-sorted application). -/
@@ -550,6 +607,9 @@ def ext0 (M : Model) (f : String) : Val M :=
   | some ([], .obj) => .el (M.xEl0 f)
   | some ([], .sobj) => .st (M.xSt0 f)
   | some ([], .sfn) => .st (M.xSt0 f)
+  -- Card SP8-OUTER-CONTRACT-SYMBOLIC-STATEMENTS.
+  | some ([], .prop) => .pr (M.xPr0 f)
+  | some ([], .eff) => .ef (M.xEf0 f)
   | _ => .bad
 
 /-- SP4 block: a term of one object of the SP4 block, by its signature. -/
@@ -565,6 +625,9 @@ def ext1St (M : Model) (f : String) (s : M.U → Prop) : Val M :=
   match term f with
   | some ([.sobj], .sobj) => .st (M.xStSt f s)
   | some ([.sobj], .eff) => .ef (M.xEfSt f s)
+  -- Card SP8-OUTER-CONTRACT-SYMBOLIC-STATEMENTS.
+  | some ([.sfn], .sfn) => .st (M.xStSt f s)
+  | some ([.sfn], .eff) => .ef (M.xEfSt f s)
   | _ => .bad
 
 def prim0 (M : Model) (f : String) : Val M :=
@@ -798,6 +861,9 @@ theorem term_mem {f : String} {sig : List Srt × Srt} (h : term f = some sig) :
       · subst hk; simp [lk] at h; subst h; exact List.mem_cons_self ..
       · simp only [lk, hk, ↓reduceIte] at h; exact List.mem_cons_of_mem _ (ih h)
 
+-- Card SP8-OUTER-CONTRACT-SYMBOLIC-STATEMENTS: the SP8 block lengthens the
+-- vocabulary the membership case split unfolds.
+set_option maxRecDepth 8192 in
 theorem prim0_kind (M : Model) {f : String} {s : Srt} (h : term f = some ([], s)) :
     (prim0 M f).kind = some s.kind := by
   have hm := term_mem h
@@ -807,6 +873,9 @@ theorem prim0_kind (M : Model) {f : String} {s : Srt} (h : term f = some ([], s)
   all_goals
     simp_all [prim0, ext0, Val.kind, Srt.kind]
 
+-- Card SP8-OUTER-CONTRACT-SYMBOLIC-STATEMENTS: the SP8 block lengthens the
+-- vocabulary the membership case split unfolds.
+set_option maxRecDepth 8192 in
 theorem prim1_kind (M : Model) {f : String} {x s : Srt} {v : Val M}
     (h : term f = some ([x], s)) (hv : v.kind = some x.kind) :
     (prim1 M f v).kind = some s.kind := by
@@ -819,6 +888,9 @@ theorem prim1_kind (M : Model) {f : String} {x s : Srt} {v : Val M}
     (try obtain ⟨rfl, rfl⟩ := hs) <;>
     (cases v <;> simp_all [prim1, ext1El, ext1St, Val.kind, Srt.kind])
 
+-- Card SP8-OUTER-CONTRACT-SYMBOLIC-STATEMENTS: the SP8 block lengthens the
+-- vocabulary the membership case split unfolds.
+set_option maxRecDepth 8192 in
 theorem prim2_kind (M : Model) {f : String} {x y s : Srt} {v w : Val M}
     (h : term f = some ([x, y], s)) (hv : v.kind = some x.kind)
     (hw : w.kind = some y.kind) :
@@ -943,7 +1015,9 @@ theorem check_denotes (M : Model) :
       simp only [check] at h
       split at h
       · simp at h; subst h; rfl
-      · simp at h
+      · split at h
+        · simp at h; subst h; rfl
+        · simp at h
   | empty =>
       intro Γ ρ s _ h
       simp only [check] at h
@@ -1074,7 +1148,18 @@ def decisionVectors : List (Raw × Bool) := [
   ((.quant "m" (.app0 "condition_reads") (.bin .mem (.app0 "m") (.app0 "entry_stable"))), true),
   ((.bin .mapsTo (.app0 "condition_reads") (.app0 "inert")), false),
   ((.app0 "entry_stable"), false),
-  ((.bin .mem (.app0 "condition_reads") (.app0 "entry_stable")), false)
+  ((.bin .mem (.app0 "condition_reads") (.app0 "entry_stable")), false),
+  -- Card SP8-OUTER-CONTRACT-SYMBOLIC-STATEMENTS (SP8 block).
+  ((.bin .mapsTo (.app0 "outer_code") (.bin .conj (.bin .conj (.app1 "calls_none" (.app0 "cjson_init_hooks")) (.app1 "stores_none" (.app0 "rk_internal"))) (.app1 "meets_published" (.app0 "rk_public")))), true),
+  ((.quant "f" (.app1 "copies" (.bin .union (.app0 "conf_registrations") (.app0 "interceptors"))) (.bin .mem (.app0 "f") (.app0 "valid_through_last"))), true),
+  ((.quant "f" (.app0 "interceptors") (.bin .mapsTo (.app0 "f") (.bin .conj (.bin .conj (.bin .conj (.bin .conj (.app0 "inert") (.app0 "borrows_args")) (.app0 "borrows_handles")) (.app0 "no_global_custody")) (.app0 "balanced")))), true),
+  ((.quant "f" (.app0 "interceptors") (.bin .mem (.app0 "f") (.bin .diff (.app1 "client_lifecycle" (.const "CANDIDATES_5C3F8C4723832C0E9E6EBB784BE6A57EBC0264D519421D5B95A18A8F68C18147")) (.app0 "on_share_consumer")))), true),
+  ((.bin .mapsTo (.app0 "outer_code") (.bin .conj (.bin .conj (.bin .conj (.app1 "accesses_only" (.app0 "handed")) (.app1 "calls_only" (.app0 "exported"))) (.app1 "provenance" (.app0 "handed"))) (.app0 "typed_access"))), true),
+  ((.quant "o" (.app2 "of" (.const "CANDIDATES_5C3F8C4723832C0E9E6EBB784BE6A57EBC0264D519421D5B95A18A8F68C18147") (.app0 "args")) (.app0 "false")), false),
+  ((.bin .mapsTo (.app0 "outer_code") (.app1 "calls_none" (.app0 "cjson_link_cells"))), false),
+  ((.bin .mapsTo (.app0 "outer_code") (.app1 "stores_none" (.app0 "outer_code"))), false),
+  ((.app0 "typed_access"), false),
+  ((.quant "f" (.app1 "zero_appends" (.const "SSL")) (.app0 "false")), false)
 ]
 
 -- The merged SP2 and SP3 tables exceed the default recursion depth of the

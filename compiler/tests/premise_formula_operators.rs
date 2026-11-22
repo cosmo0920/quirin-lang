@@ -247,3 +247,67 @@ fn a_libevent_shaped_contract_still_refuses_elsewhere() {
         assert!(!codes(&libevent_module(clause)).is_empty(), "{clause}");
     }
 }
+
+const FLUENT_BIT_OUTER: &str =
+    include_str!("../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/outer.qv");
+const LIBRDKAFKA_OUTER: &str =
+    include_str!("../../providers/qcore-provider-librdkafka/contracts/librdkafka/outer.qv");
+
+/// Card SP8-OUTER-CONTRACT-SYMBOLIC-STATEMENTS (C04.20): an outer contract
+/// definition's statement is a C04.18.9 formula, so the operator gate admits
+/// its `&&` and `|` exactly as a premise formula's: the two shipped outer
+/// modules raise no operator refusal on the compiler route.
+#[test]
+fn an_outer_statement_keeps_its_union_and_conjunction() {
+    for (name, text) in [
+        ("fluent_bit/outer.qv", FLUENT_BIT_OUTER),
+        ("librdkafka/outer.qv", LIBRDKAFKA_OUTER),
+    ] {
+        assert!(text.contains(" && ") && text.contains(" | "), "{name}");
+        let codes = codes(text);
+        assert!(
+            !codes.iter().any(|code| code == "Q038"),
+            "{name}: {codes:?}"
+        );
+    }
+}
+
+/// Card SP8-OUTER-CONTRACT-SYMBOLIC-STATEMENTS: the retired string statement
+/// of an outer contract definition is a parse refusal (`Q000`) naming
+/// `QF004` on the compiler route too.
+#[test]
+fn a_string_outer_statement_is_refused_by_name_at_parse() {
+    for statement in [
+        "\"every loaded plugin stores into no core-owned member\"",
+        "\"#outer_code | #interceptors |-> #balanced\"",
+    ] {
+        let text = format!(
+            "module contract;
+extern fn load(config: ptr<mut, u8>) -> i32
+contract {{
+    requires outer_contract_v1;
+    quant #outer [[contract]] plugin, {statement};
+    quant #outer where #config in #loaded [[runtime]] when #result == 0;
+}};
+"
+        );
+        let Err(diagnostics) = compile_files(
+            &[SourceFile::new("outer.qv", text)],
+            &CompileOptions::default(),
+        ) else {
+            panic!("{statement}: a string outer statement compiles");
+        };
+        assert_eq!(
+            diagnostics
+                .iter()
+                .map(|d| d.code.as_str())
+                .collect::<Vec<_>>(),
+            ["Q000"],
+            "{statement}"
+        );
+        assert!(
+            diagnostics.iter().any(|d| d.message.contains("QF004")),
+            "{statement}: {diagnostics:?}"
+        );
+    }
+}

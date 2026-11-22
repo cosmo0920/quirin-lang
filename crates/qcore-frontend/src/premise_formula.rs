@@ -56,6 +56,17 @@
 //! reserved entry-snapshot premise; the clause decision vectors
 //! ([`CLAUSE_DECISION_VECTORS`]) are `QCore.PremiseFormula`'s `clauseVectors`.
 //!
+//! Card **SP8-OUTER-CONTRACT-SYMBOLIC-STATEMENTS** (contract specification
+//! C04.20, C04.18.9's SP8 block; USER DECISIONS 2026-11-23, D1 A, D2 B, D3
+//! B): the statement of an outer contract definition, `quant #outer
+//! [[contract]] NAME, FORMULA;`, is a formula of this language over the SP8
+//! terms (subject `#outer_code`), read by [`outer_header`]; a string
+//! statement is refused by name ([`PROSE_OUTER`], `QF004`). A candidate
+//! inventory is cited by a registered constant of sort `obj`
+//! ([`CANDIDATE_INVENTORIES`]), read back by [`candidate_digests`]. The
+//! header vectors ([`OUTER_DECISION_VECTORS`]) and the two statements are
+//! `QCore.PremiseFormula.Outer`'s.
+//!
 //! **`|->` in this context.** The lexer's [`Symbol::MapsTo`] is one token
 //! everywhere (three bytes, matched before every shorter spelling, so `|->`
 //! never lexes as a union followed by an implication). Its meaning is decided
@@ -1224,7 +1235,288 @@ pub const VOCABULARY: &[Term] = &[
         result: Sort::SetObj,
         meaning: "the cells that hold, at each guarded use during the call (each use of a prerequisite of a `[[local]]` block, C04.21), the value they held at the call's entry",
     },
+    // ---- Card SP8-OUTER-CONTRACT-SYMBOLIC-STATEMENTS (C04.18.9's SP8 block):
+    // the terms of an outer contract statement (C04.20). An outer statement's
+    // subject is the code the contract's loaders load, not a call: each term
+    // is read relative to the contract, as `#call` is relative to its
+    // declaration. An effect's "own instructions" exclude what a call of a
+    // function of the audited program does. ----
+    Term {
+        name: "outer_code",
+        arguments: &[],
+        result: Sort::SetFn,
+        meaning: "the functions of the code the contract's loaders load (what each loader hosting the contract opens: rd_kafka_plugin_new a library plugin.library.paths names, flb_plugin_load a C shared object, flb_plugin_proxy_create a Go plugin), and every function outside the audited program a run of one of them runs, directly or in turn (its dependencies and the C library included); no function of the audited program is a member",
+    },
+    Term {
+        name: "conf_registrations",
+        arguments: &[],
+        result: Sort::SetFn,
+        meaning: "the callbacks code of #outer_code stores, directly or through a call it makes, into an rk_conf callback member (a function pointer member of rd_kafka_conf_s, rk->rk_conf's included)",
+    },
+    Term {
+        name: "public_setter_values",
+        arguments: &[],
+        result: Sort::SetFn,
+        meaning: "each value a call of a public librdkafka setter (a function librdkafka's public headers declare that stores a callback member; the rd_kafka_conf_set_*_cb functions among them) stores into its member",
+    },
+    Term {
+        name: "meets_candidate",
+        arguments: &[],
+        result: Sort::SetFn,
+        meaning: "the callbacks that meet the candidate contract (C04.19.3, C04.19.7) declared for the member each is stored in",
+    },
+    Term {
+        name: "interceptors",
+        arguments: &[],
+        result: Sort::SetFn,
+        meaning: "the interceptor methods code of #outer_code registers, each as the element of the rd_kafka_conf_s.interceptors list (or its rk->rk_conf alias) it is appended to",
+    },
+    Term {
+        name: "zero_appends",
+        arguments: &[Sort::Obj],
+        result: Sort::SetFn,
+        meaning: "for each candidate of the inventory (list member, aliases, element record, union arm, public setter): the elements a call of that candidate's setter appends to exactly that list under exactly that union arm, in a call that returns 0",
+    },
+    Term {
+        name: "conf_lifecycle",
+        arguments: &[Sort::Obj],
+        result: Sort::SetFn,
+        meaning: "the elements appended under a candidate of the inventory whose lifecycle is configuration",
+    },
+    Term {
+        name: "client_lifecycle",
+        arguments: &[Sort::Obj],
+        result: Sort::SetFn,
+        meaning: "the elements appended under a candidate of the inventory whose lifecycle is pre-initialization, non-share",
+    },
+    Term {
+        name: "on_live_conf",
+        arguments: &[],
+        result: Sort::SetFn,
+        meaning: "the interceptors installed by a call handed a live configuration (allocated and not yet destroyed)",
+    },
+    Term {
+        name: "from_on_new",
+        arguments: &[],
+        result: Sort::SetFn,
+        meaning: "the interceptors installed by a call made during a run of an on_new interceptor",
+    },
+    Term {
+        name: "before_init",
+        arguments: &[],
+        result: Sort::SetFn,
+        meaning: "the interceptors installed before the initialization of the client the installing call is handed completes",
+    },
+    Term {
+        name: "on_share_consumer",
+        arguments: &[],
+        result: Sort::SetFn,
+        meaning: "the interceptors installed on a share consumer client",
+    },
+    Term {
+        name: "copies",
+        arguments: &[Sort::SetFn],
+        result: Sort::SetFn,
+        meaning: "the members of the set and every registration the library copies from one of them into another configuration or client (rd_kafka_conf_dup, the copied on_new registrations)",
+    },
+    Term {
+        name: "valid_through_last",
+        arguments: &[],
+        result: Sort::SetFn,
+        meaning: "the registrations whose code stays loaded and whose opaque context stays valid from registration until the last point the library can invoke them: the end of the destruction of every configuration or client holding them, destruction callbacks included (USER DECISION 2026-11-23, D3 B)",
+    },
+    Term {
+        name: "borrows_args",
+        arguments: &[],
+        result: Sort::Eff,
+        meaning: "every pointer argument of the run, and each object reachable from it, is borrowed: the run, with every call it makes, takes over, releases, retains and transfers none of them (documented borrowed output-buffer writes allowed)",
+    },
+    Term {
+        name: "borrows_handles",
+        arguments: &[],
+        result: Sort::Eff,
+        meaning: "every scalar resource handle argument of the run (a descriptor such as sockfd among them) is borrowed: the run, with every call it makes, closes, releases, duplicates and transfers none of them",
+    },
+    Term {
+        name: "no_global_custody",
+        arguments: &[],
+        result: Sort::Eff,
+        meaning: "the run, with every call it makes, changes the custody of no object through global state",
+    },
+    Term {
+        name: "balanced",
+        arguments: &[],
+        result: Sort::Eff,
+        meaning: "every resource the run, with every call it makes, acquires is released before the run returns",
+    },
+    Term {
+        name: "stores_none",
+        arguments: &[Sort::SetObj],
+        result: Sort::Eff,
+        meaning: "the run stores, by its own instructions, into no cell of the set",
+    },
+    Term {
+        name: "calls_none",
+        arguments: &[Sort::SetFn],
+        result: Sort::Eff,
+        meaning: "the run calls, by its own instructions, no member of the set",
+    },
+    Term {
+        name: "rk_internal",
+        arguments: &[],
+        result: Sort::SetObj,
+        meaning: "the member cells of librdkafka's internal records (those its public headers rdkafka.h and rdkafka_mock.h do not define): callback members, rd_kafka_op_s members, broker links, the rule-14t members, queues (rd_kafka_q_s) and list links (rd_list_t, TAILQ links) among them",
+    },
+    Term {
+        name: "rk_public",
+        arguments: &[],
+        result: Sort::SetFn,
+        meaning: "the functions librdkafka's public headers (rdkafka.h, rdkafka_mock.h) declare",
+    },
+    Term {
+        name: "rk_nonpublic",
+        arguments: &[],
+        result: Sort::SetFn,
+        meaning: "librdkafka's functions its public headers do not declare",
+    },
+    Term {
+        name: "meets_published",
+        arguments: &[Sort::SetFn],
+        result: Sort::Eff,
+        meaning: "every call the run makes to a member of the set meets the conditions that function's published documentation states (USER DECISION 2026-11-23, D1 A)",
+    },
+    Term {
+        name: "cjson_init_hooks",
+        arguments: &[],
+        result: Sort::SetFn,
+        meaning: "cJSON_InitHooks",
+    },
+    Term {
+        name: "cjson_global_hooks",
+        arguments: &[],
+        result: Sort::SetObj,
+        meaning: "the cells of cJSON's global_hooks (its allocate, deallocate and reallocate members)",
+    },
+    Term {
+        name: "cjson_link_cells",
+        arguments: &[],
+        result: Sort::SetObj,
+        meaning: "the child, prev and next member cells of every cJSON item",
+    },
+    Term {
+        name: "cjson_handed",
+        arguments: &[],
+        result: Sort::SetObj,
+        meaning: "the cJSON items code of #outer_code passes to a cJSON API call, and every item reachable from one through child and next",
+    },
+    Term {
+        name: "allocator_hooks_premise",
+        arguments: &[],
+        result: Sort::Prop,
+        meaning: "every statement of the named premise cjson_allocator_hooks (C04.18.9; on cJSON_New_Item and on print) holds of the allocator hooks installed before the loaded code loads (malloc, realloc and free when none were)",
+    },
+    Term {
+        name: "flb_core_owned",
+        arguments: &[],
+        result: Sort::SetObj,
+        meaning: "the member cells Fluent Bit's core owns of every struct flb_*_instance (input, output, filter, processor, custom among them) and struct flb_config",
+    },
+    Term {
+        name: "handed",
+        arguments: &[],
+        result: Sort::SetObj,
+        meaning: "the objects the contract's loaders hand to loaded code and every object reachable from one (C04.20's reach), the objects an exported API returns to it or a callback it registered is handed, and the objects it allocates or defines itself",
+    },
+    Term {
+        name: "exported",
+        arguments: &[],
+        result: Sort::SetFn,
+        meaning: "the functions the Fluent Bit binary exports (it is linked with ENABLE_EXPORTS ON)",
+    },
+    Term {
+        name: "accesses_only",
+        arguments: &[Sort::SetObj],
+        result: Sort::Eff,
+        meaning: "every object of the audited program the run reads or writes by its own instructions is a member of the set",
+    },
+    Term {
+        name: "calls_only",
+        arguments: &[Sort::SetFn],
+        result: Sort::Eff,
+        meaning: "every function of the audited program the run calls by its own instructions is a member of the set",
+    },
+    Term {
+        name: "provenance",
+        arguments: &[Sort::SetObj],
+        result: Sort::Eff,
+        meaning: "every pointer the run dereferences, stores or passes is derived (copied, offset within its object, converted to void * and back) from a pointer to an object of the set (USER DECISION 2026-11-23, D2 B with #typed_access)",
+    },
+    Term {
+        name: "typed_access",
+        arguments: &[],
+        result: Sort::Eff,
+        meaning: "the run reads and writes each object only at its own type or a type C permits for it (a character type, the record embedding it): no conversion between unrelated record pointers (USER DECISION 2026-11-23, D2 B)",
+    },
 ];
+
+/// Card **SP8-OUTER-CONTRACT-SYMBOLIC-STATEMENTS** (C04.18.9's SP8 block):
+/// the registered candidate inventory constants, of sort `obj`. Each is
+/// `CANDIDATES_` followed by the upper-case hexadecimal SHA-256 of a
+/// provider's `outer-candidates.json` (C04.20.1), so an outer statement
+/// cites the inventory by a checked identity: `qcore_audit::outer_candidates`
+/// refuses selection when the digest names no inventory, and a test binds
+/// each constant to the file's digest. A constant of this shape that is not
+/// registered is refused like any unknown constant.
+pub const CANDIDATE_INVENTORIES: &[&str] =
+    &["CANDIDATES_5C3F8C4723832C0E9E6EBB784BE6A57EBC0264D519421D5B95A18A8F68C18147"];
+
+/// The prefix of a candidate inventory constant.
+pub const CANDIDATE_PREFIX: &str = "CANDIDATES_";
+
+/// Whether `word` has the shape of a candidate inventory constant:
+/// [`CANDIDATE_PREFIX`] and 64 upper-case hexadecimal digits.
+#[must_use]
+pub fn candidate_shaped(word: &str) -> bool {
+    word.strip_prefix(CANDIDATE_PREFIX).is_some_and(|digest| {
+        digest.len() == 64
+            && digest
+                .bytes()
+                .all(|b| b.is_ascii_digit() || (b'A'..=b'F').contains(&b))
+    })
+}
+
+/// The lower-case SHA-256 a candidate inventory constant names.
+#[must_use]
+pub fn candidate_digest(word: &str) -> Option<String> {
+    candidate_shaped(word).then(|| word[CANDIDATE_PREFIX.len()..].to_ascii_lowercase())
+}
+
+/// Every candidate inventory constant `raw` names, as the lower-case digest.
+#[must_use]
+pub fn candidate_digests(raw: &Raw) -> std::collections::BTreeSet<String> {
+    fn walk(raw: &Raw, out: &mut std::collections::BTreeSet<String>) {
+        match raw {
+            Raw::Quant { domain, body, .. } => {
+                walk(domain, out);
+                walk(body, out);
+            }
+            Raw::Bin(_, left, right) | Raw::App2(_, left, right) => {
+                walk(left, out);
+                walk(right, out);
+            }
+            Raw::App1(_, argument) => walk(argument, out),
+            Raw::Const(word) => {
+                if let Some(digest) = candidate_digest(word) {
+                    out.insert(digest);
+                }
+            }
+            Raw::App0(_) | Raw::Empty => {}
+        }
+    }
+    let mut out = std::collections::BTreeSet::new();
+    walk(raw, &mut out);
+    out
+}
 
 /// The one defined term: `#inert` abbreviates this effect (C04.18.9).
 pub const INERT_DEFINITION: &str = "#takes(#caller_held) == {} && #releases(#caller_held) == {} \
@@ -1262,7 +1554,9 @@ fn lowercase_identifier(word: &str) -> bool {
 }
 
 fn constant_word(word: &str) -> bool {
-    word.len() <= 64
+    // Card SP8-OUTER-CONTRACT-SYMBOLIC-STATEMENTS: a candidate inventory
+    // constant is 75 bytes; every other constant keeps the 64-byte bound.
+    (word.len() <= 64 || candidate_shaped(word))
         && word.bytes().next().is_some_and(|b| b.is_ascii_uppercase())
         && word
             .bytes()
@@ -1584,6 +1878,9 @@ fn sort_of(context: &[(String, Sort)], raw: &Raw) -> Result<Sort, String> {
         Raw::Const(word) => {
             if CLASSES.contains(&word.as_str()) {
                 Ok(Sort::Cls)
+            } else if CANDIDATE_INVENTORIES.contains(&word.as_str()) {
+                // Card SP8-OUTER-CONTRACT-SYMBOLIC-STATEMENTS.
+                Ok(Sort::Obj)
             } else {
                 Err(error(&format!("unknown constant `{word}`")))
             }
@@ -1850,6 +2147,132 @@ pub fn prose_hypothesis(name: &str) -> String {
     )
 }
 
+/// Card **SP8-OUTER-CONTRACT-SYMBOLIC-STATEMENTS** (contract specification
+/// C04.20, grammar G05g, diagnostics namespace `QF***`): the code of the
+/// refusal of an outer contract definition whose statement is a string. The
+/// form `quant #outer [[contract]] NAME, "STATEMENT";` is retired: a
+/// definition states a C04.18.9 formula, `quant #outer [[contract]] NAME,
+/// FORMULA;`. A module stating a string is rejected whole by the structural
+/// parser every route reads the contract format through ([`outer_header`]),
+/// and by the outer contract loader; the statement is never read and never
+/// dropped.
+pub const PROSE_OUTER: &str = "QF004";
+
+/// An outer contract header, read from its clause's tokens starting at
+/// `#outer` (no `quant`, no `;`). `Ok(None)` when the clause is not a header
+/// (`#outer [[contract]] …`) or its shape is none of the two forms (the outer
+/// loader names the shape error). `Ok(Some((NAME, None)))` is a citation,
+/// `Ok(Some((NAME, Some(formula))))` a definition whose statement is a
+/// well-formed formula ([`read`]). A statement holding a string literal is
+/// refused by name ([`PROSE_OUTER`]), whatever the name's spelling; a
+/// formula the judgment refuses rejects too.
+pub fn outer_header(
+    tokens: &[TokenKind],
+) -> Result<Option<(String, Option<PremiseFormula>)>, String> {
+    let [
+        TokenKind::Symbol(Symbol::Hash),
+        TokenKind::Word(outer),
+        TokenKind::Symbol(Symbol::LeftBracket),
+        TokenKind::Symbol(Symbol::LeftBracket),
+        TokenKind::Word(contract),
+        TokenKind::Symbol(Symbol::RightBracket),
+        TokenKind::Symbol(Symbol::RightBracket),
+        rest @ ..,
+    ] = tokens
+    else {
+        return Ok(None);
+    };
+    if outer != "outer" || contract != "contract" {
+        return Ok(None);
+    }
+    match rest {
+        [TokenKind::Word(name)] => Ok(Some((name.clone(), None))),
+        [
+            TokenKind::Word(name),
+            TokenKind::Symbol(Symbol::Comma),
+            statement @ ..,
+        ] if !statement.is_empty() => {
+            if statement
+                .iter()
+                .any(|token| matches!(token, TokenKind::StringLiteral(_)))
+            {
+                return Err(prose_outer(name));
+            }
+            let formula = read(statement).map_err(|e| format!("outer contract `{name}`: {e}"))?;
+            Ok(Some((name.clone(), Some(formula))))
+        }
+        [first, ..] if tokens_hold_string(rest) => {
+            let name = match first {
+                TokenKind::Word(name) => name.as_str(),
+                _ => "NAME",
+            };
+            Err(prose_outer(name))
+        }
+        _ => Ok(None),
+    }
+}
+
+fn tokens_hold_string(tokens: &[TokenKind]) -> bool {
+    tokens
+        .iter()
+        .any(|token| matches!(token, TokenKind::StringLiteral(_)))
+}
+
+/// The refusal of an outer contract `name` whose statement is (or contains)
+/// a string literal.
+#[must_use]
+pub fn prose_outer(name: &str) -> String {
+    format!(
+        "{PROSE_OUTER}: outer contract `{name}` states a string; the string form \
+         `quant #outer [[contract]] NAME, \"STATEMENT\";` is retired (contract specification \
+         C04.20): write `quant #outer [[contract]] {name}, FORMULA;` with a C04.18.9 formula"
+    )
+}
+
+/// Card **SP8-OUTER-CONTRACT-SYMBOLIC-STATEMENTS**: the outer header decision
+/// vectors shared with `proof/QCore/PremiseFormula/Outer.lean`
+/// (`outerVectors`): a definition header's tokens from `#outer`, and whether
+/// [`outer_header`] accepts it as a definition. A statement holding a string
+/// literal renders as the Lean `.str` (refused with [`PROSE_OUTER`]); any
+/// other renders as `.formula` of its tree, accepted exactly when
+/// well-formed.
+pub const OUTER_DECISION_VECTORS: &[(&str, bool)] = &[
+    (
+        "#outer [[contract]] plugin, #outer_code |-> #stores_none(#flb_core_owned)",
+        true,
+    ),
+    (
+        "#outer [[contract]] plugin, quant all #f in #interceptors: #f in #zero_appends(CANDIDATES_5C3F8C4723832C0E9E6EBB784BE6A57EBC0264D519421D5B95A18A8F68C18147)",
+        true,
+    ),
+    ("#outer [[contract]] plugin, #allocator_hooks_premise", true),
+    // The retired string form, whatever the string says.
+    (
+        "#outer [[contract]] plugin, \"a loaded plugin stores into no member the core owns\"",
+        false,
+    ),
+    // A quoted well-formed formula is a string.
+    (
+        "#outer [[contract]] plugin, \"#outer_code |-> #balanced\"",
+        false,
+    ),
+    // A string beside a formula.
+    (
+        "#outer [[contract]] plugin, #outer_code |-> #balanced && \"and more\"",
+        false,
+    ),
+    // A formula the judgment refuses: code is not a set of cells.
+    (
+        "#outer [[contract]] plugin, #outer_code |-> #stores_none(#outer_code)",
+        false,
+    ),
+    // An inventory constant no provider registers.
+    (
+        "#outer [[contract]] plugin, quant all #f in #interceptors: #f in #zero_appends(CANDIDATES_0000000000000000000000000000000000000000000000000000000000000000)",
+        false,
+    ),
+];
+
 /// Card **SP5-GLOBAL-PROSE-PREMISE-BAN**: the clause decision vectors shared
 /// with `proof/QCore/PremiseFormula.lean` (`clauseVectors`): a premise
 /// clause's expression and whether [`premise_clause`] accepts it as a
@@ -2087,6 +2510,40 @@ pub const DECISION_VECTORS: &[(&str, bool)] = &[
     ("#entry_stable", false),
     // A set of cells is not an element.
     ("#condition_reads in #entry_stable", false),
+    // ---- Card SP8-OUTER-CONTRACT-SYMBOLIC-STATEMENTS (SP8 block). ----
+    (
+        "#outer_code |-> (#calls_none(#cjson_init_hooks) && #stores_none(#rk_internal) && #meets_published(#rk_public))",
+        true,
+    ),
+    (
+        "quant all #f in #copies(#conf_registrations | #interceptors): #f in #valid_through_last",
+        true,
+    ),
+    (
+        "quant all #f in #interceptors: #f |-> (#inert && #borrows_args && #borrows_handles && #no_global_custody && #balanced)",
+        true,
+    ),
+    (
+        "quant all #f in #interceptors: #f in #client_lifecycle(CANDIDATES_5C3F8C4723832C0E9E6EBB784BE6A57EBC0264D519421D5B95A18A8F68C18147) \\ #on_share_consumer",
+        true,
+    ),
+    (
+        "#outer_code |-> (#accesses_only(#handed) && #calls_only(#exported) && #provenance(#handed) && #typed_access)",
+        true,
+    ),
+    // An inventory is an object, not a class.
+    (
+        "quant all #o in #of(CANDIDATES_5C3F8C4723832C0E9E6EBB784BE6A57EBC0264D519421D5B95A18A8F68C18147, #args): #false",
+        false,
+    ),
+    // Cells are not callbacks.
+    ("#outer_code |-> #calls_none(#cjson_link_cells)", false),
+    // Code is not a set of cells.
+    ("#outer_code |-> #stores_none(#outer_code)", false),
+    // An effect is not a proposition.
+    ("#typed_access", false),
+    // A class is not an inventory.
+    ("quant all #f in #zero_appends(SSL): #false", false),
 ];
 
 // ---- Card SP6-SYMBOLIC-HYPOTHESIS-ATOMS: the typed rendering (C04.18.9's

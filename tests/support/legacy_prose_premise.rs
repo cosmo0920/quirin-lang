@@ -46,6 +46,14 @@
 //! (`docs/reports/sp6-symbolic-hypothesis-atoms/migration.json`,
 //! `hypotheses`). The same rule holds: an unrecorded string atom stays a
 //! string, and the parser refuses it.
+//!
+//! Card **SP8-OUTER-CONTRACT-SYMBOLIC-STATEMENTS** extends it to the retired
+//! string statement of an outer contract definition, `quant #outer
+//! [[contract]] NAME, "STATEMENT";` (contract specification C04.20, `QF004`):
+//! [`lift`] writes each recorded statement as the formula that replaced it
+//! (`docs/reports/sp8-outer-contract-symbolic-statements/migration.json`,
+//! `outer_statements`). An unrecorded string statement stays a string, and
+//! the parser refuses it.
 
 #![allow(dead_code)]
 
@@ -54,6 +62,25 @@ const RECORD: &str =
 
 const SP6_RECORD: &str =
     include_str!("../../docs/reports/sp6-symbolic-hypothesis-atoms/migration.json");
+
+const SP8_RECORD: &str =
+    include_str!("../../docs/reports/sp8-outer-contract-symbolic-statements/migration.json");
+
+/// The recorded `(name, prose, formula)` outer contract statements (card
+/// SP8-OUTER-CONTRACT-SYMBOLIC-STATEMENTS).
+pub fn outer_statements() -> Vec<(String, String, String)> {
+    let record: serde_json::Value =
+        serde_json::from_str(SP8_RECORD).expect("the SP8 migration record is JSON");
+    record["outer_statements"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|s| {
+            let field = |key: &str| s[key].as_str().unwrap().to_owned();
+            (field("name"), field("prose"), field("formula"))
+        })
+        .collect()
+}
 
 /// One recorded string hypothesis atom: its ID, its retired sentence, the
 /// typed clause that replaced it (`quant proposition #ID(...) = FORMULA`),
@@ -100,15 +127,22 @@ pub fn statements() -> Vec<(String, String, String)> {
 }
 
 /// `text` with every recorded `resource_premise(NAME, "PROSE")` written as
-/// `resource_premise(NAME, FORMULA)`, and every recorded `requires
-/// resource_hypothesis(ID, "PROSE")` as its typed clause. Every other byte
-/// is unchanged.
+/// `resource_premise(NAME, FORMULA)`, every recorded `requires
+/// resource_hypothesis(ID, "PROSE")` as its typed clause, and every recorded
+/// `quant #outer [[contract]] NAME, "PROSE"` as `quant #outer [[contract]]
+/// NAME, FORMULA`. Every other byte is unchanged.
 pub fn lift(text: &str) -> String {
     let mut out = text.to_owned();
     for (name, prose, formula) in statements() {
         out = out.replace(
             &format!("resource_premise({name}, \"{prose}\")"),
             &format!("resource_premise({name}, {formula})"),
+        );
+    }
+    for (name, prose, formula) in outer_statements() {
+        out = out.replace(
+            &format!("quant #outer [[contract]] {name}, \"{prose}\""),
+            &format!("quant #outer [[contract]] {name}, {formula}"),
         );
     }
     for h in hypotheses() {

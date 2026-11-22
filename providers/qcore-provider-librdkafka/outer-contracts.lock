@@ -9,8 +9,8 @@
     {
       "function": "rd_kafka_plugin_new",
       "module": "librdkafka/outer.qv",
-      "contract_sha256": "f51206e1b667951cdd276298a9ad59fe734439c20002f1245c233790817713d9",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "82dd2dd280825ef9feca5979a72382868b25bca5b6b61453d7976d93a41ef0fe",
+      "pinned_at": "2026-11-22T19:06:37Z",
       "identities": [
         {
           "reviewed_at": [
