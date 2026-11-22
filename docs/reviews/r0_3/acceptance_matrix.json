@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 10,
-  "named_followups": 1054
+  "named_followups": 1055
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6920,10 +6920,10 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Landing integrate/r54 (base main 1d69b7b81, which already carries SP4-SYMBOLIC-LIBEVENT-PREMISES landed from another session; merges STATUS-COMPACT-RECONCILIATION-DECISION b8c1178c6, the integrator's own ledger commit, so no card branch; third_party/libevent checked out at d82464a27). USER DECISION 2026-11-22: \"ok, accept the reconciliation failures\". Amendments applied in b8c1178c6 with --profiles-base origin/main: STATUS-COMPACT-RECONCILIATION-CLAIMS retired (accepted as failing; every claimed text verbatim in the status checkpoint); W45-RECONCILIATION-SUBSTRING-CLAIMS stays registered; status_edits empty; no profiles. The amendment file first named base 6820ddc31 by mistake; corrected to 1d69b7b81, the main it was applied on. Full landing gate on b8c1178c6 twice (private/integrate-r54/gate and gate2, the second after a no-op merge of an unchanged main; raw record of the second beside this file as gate-scope.json) via scripts/gate_scope.py --base origin/main --full --landing through private/toolchain/env.sh: Rust 675 units / 720 summaries, 9870 passed, 0 failed, 21 ignored; fmt, Clippy and both reevaluation examples exit 0; no Lean or provider step scoped (no proof or provider diff against main). Lean checked separately on the same tree: lake build through private/toolchain/env.sh, 541 jobs, exit 0, no sorry, warning or axiom lines (private/integrate-r54/lean.log), 482 proof/Audit*.lean. provider_tests carried from r53 (173, measured before SP4's libevent provider change; SP4's own landing gate ran its provider steps, all exit 0). Python (801 tests) exited 1 on test_build_matrix_sections' stale-matrix check (both runs) and test_gate_slot_lane's test_a_lane_job_waits_until_its_declared_memory_is_available (first run only, the known slot-lane timing flake); the rerun after regeneration is in private/integrate-r54/python-rerun.log. Ledger and documentation only; no verdict, pin or baseline changes; land.py publish is owed.",
+  "note": "Landing integrate/r55 (base main b069dbda8; merges GATE-SLOT-TEST-FLAKES 0357b9d60 in ba0731afd, no conflicts; third_party/libevent checked out at d82464a27). Amendments applied in d169d3a12 with --profiles-base b069dbda8: PYTHON-EVIDENCE-SUITE-INTERMITTENT-ROW amended (gate-slot rows named and fixed; its wave-34 row and test_check_lean_audits stay open); GATE-SLOT-DRAIN-BLOCKERS-POLL-LOCKS registered; profiles []; status_edits empty. Full landing gate on d169d3a12 (private/integrate-r55/gate, raw record beside this file as gate-scope.json) via scripts/gate_scope.py --base origin/main --full --landing through private/toolchain/env.sh: Rust 675 units / 720 summaries, 9870 passed, 0 failed, 21 ignored; fmt, Clippy and both reevaluation examples exit 0. The diff touches no proof/ or providers/ path, so the gate scoped Lean and the provider gate out: lean_audits 482 is the on-disk proof/Audit*.lean count, unchanged since r54's separate Lean build, and provider_tests 173 is carried from r53. Python (807 tests) exited 1 only on the stale-matrix check test_each_derived_dimension_matches_the_section_it_counts, cleared by regenerating the matrix from this record; no gate-slot test failed. Change: scripts/gate_slot.py gate_status no longer counts a waiter's shared admission lock or a free-slot probe as a held slot (new slot_hold_is_poll, per-job polling field); no over-admission occurred. Test harness: atomic fake-meminfo writes and Gate.cancel() for teardown of unadmitted waiters. Card stress (docs/reports/gate-slot-test-flakes/runs): gate-slot failures 3 before / 0 after (5 modules x30, 32 spinners) and 4 / 0 (lane+queue x30, 48 spinners). Python gate tooling only: no verdict, provider, corpus or Lean change. No profile baseline is changed and land.py publish is owed.",
   "workspace_tests": 9870,
   "provider_tests": 173,
-  "python_evidence_validator_tests": 801,
+  "python_evidence_validator_tests": 807,
   "lean_audits": 482,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
@@ -7413,9 +7413,9 @@
   "reevaluation_followup_exit": 0,
   "cargo_fmt": "clean",
   "cargo_clippy": "clean",
-  "standing_gate": "full landing gate: every step exits 0 except the Python suite's stale-matrix check, cleared by regenerating the matrix from this record, and one slot-lane timing flake (disclosed in the note); Lean built separately (482 audits); provider count carried from r53",
+  "standing_gate": "full landing gate: every step exits 0 except the Python suite's stale-matrix check, cleared by regenerating the matrix from this record; Lean and provider steps scoped out (no proof/ or providers/ change), lean_audits from disk (482), provider count carried from r53",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/status-compact-reconciliation-decision/integration/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/gate-slot-test-flakes/integration/gate.json)"
  },
  "named_followups": [
   {
