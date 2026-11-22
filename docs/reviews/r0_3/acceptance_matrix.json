@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 10,
-  "named_followups": 1057
+  "named_followups": 1059
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6626,7 +6626,7 @@
   ]
  },
  "corpus": {
-  "contract_modules": 153,
+  "contract_modules": 154,
   "contract_modules_pinned_by": "compiler/tests/qcore_contract_corpus.rs",
   "contract_clause_pin": {
    "const": "EXPECTED_CONTRACTS",
@@ -6920,7 +6920,7 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Landing integrate/r56 (base main 5977e52a4, which carries SP5-GLOBAL-PROSE-PREMISE-BAN landed from another session after the card's base 96d41921c; merges NULLABLE-GUARDED-RELEASE ef5107c85 in ea18de5d9, auto-merged docs/agents/README.md and docs/agents/gateway.md, no conflicts; third_party/libevent checked out at d82464a27). Amendments applied in a9bbd39ae with --profiles-base 5977e52a4: NULLABLE-LAZY-CONSTRUCTOR-IN-LOOP and SETTLED-LEAK-JOINED-GENUINE-WITHDRAWN registered; profiles []; status_edits empty. NULLABLE-GUARDED-RELEASE-REPORTED-AS-LEAK is registered only on the held RK-TOPIC-PARTITION-LIST-CONSTRUCTORS branch and is not on main; it is reconciled when that card lands. Full landing gate on a9bbd39ae (private/integrate-r56/gate, raw record beside this file as gate-scope.json) via scripts/gate_scope.py --base origin/main --full --landing through private/toolchain/env.sh: Rust 676 units / 721 summaries, 9889 passed, 0 failed, 21 ignored; fmt, Clippy and both reevaluation examples exit 0; Lean (all) exit 0, 483 audits (new QCore.NullableGuardedRelease, 19 theorems). No providers/ path changed, so the provider gate was not selected; provider_tests 174 is carried from SP5's landing gate (provider-test 174 passed, 0 failed, 1 ignored). Python (807 tests) exited 1 only on the two stale-matrix checks of test_build_matrix_sections, cleared by regenerating the matrix from this record. Change: rule 74c (new) and amendments to rules 6 and 10a. Leak reports are held until the work list settles and withdrawn (Unsafe to Unknown only) when the settled exit marks the identity through a refused release and the function has an Unknown leaf; &NAME->F is read as an address inside *NAME rather than NAME's slot. Pinned test moves, each commented in place: indirect_scalar_access Unknown to Safe (obligations discharged; the old comment misread &r->count as taking r's address); condition_call_desugar Unsafe to Unknown (a genuine leak joined with a refused close, registered as SETTLED-LEAK-JOINED-GENUINE-WITHDRAWN); leaf-only changes elsewhere. Card measurement (opt-in current --monkey-linked, Fluent Bit 046accf6): base 96d41921c and tip both 1169 Safe / 2 Pending / 3626 Unknown / 7 Unsafe, 0 status moves, 119 rows change leaves only. With the held constructors branch 4174d25e5 merged in a private tree: 1171/2/3622/9 to 1171/2/3623/8, rd_kafka_mock_handle_Metadata Unsafe to Unknown. Pinned-route parity (quirin-audit measure --declared) was not run: this host holds no build/cycle19 inputs or baselines. No profile baseline is changed and land.py publish is owed.",
+  "note": "Landing integrate/r57 (base main 1f2007667, after NULLABLE-GUARDED-RELEASE r56 and SP5-GLOBAL-PROSE-PREMISE-BAN; merges RK-TOPIC-PARTITION-LIST-CONSTRUCTORS 4174d25e5, base 8e7e8d509, in 5ddc120eb, no conflicts; third_party/libevent checked out at d82464a27). USER DECISION 2026-11-23: \"yes, land the constructors card as r57\". Integrator fixes, b8ce004c3: rd_kafka_topic_partition_destroy's string resource_premise, which SP5 made a parse refusal (QF001), rewritten into the formula every other librdkafka declaration carries and re-pinned with quirin-audit pin at 66910c10 and 046accf6 (contract_sha256 only; identities unchanged; pin --check 0 at 66910c10 and 1 at 046accf6 only for rd_kafka_log0/rd_kafka_log_buf, in force through 66910c10, the pre-existing state; pin --verify-contracts 0; logs private/integrate-r57); contracts.py sync and check exit 0. NULLABLE-GUARDED-RELEASE-REPORTED-AS-LEAK dropped from the card's ledger (r56 discharged its Metadata instance and hold-Unknown half; remaining rows tracked by NULLABLE-LAZY-CONSTRUCTOR-IN-LOOP). Amendments applied in 755ca8745 with --profiles-base 1f2007667: RK-TOPIC-PARTITION-LIST-CONSTRUCTORS retired; RK-TOPIC-PARTITION-CONSTRUCTORS-UNVALIDATED, RK-TOPIC-PARTITION-LIST-ADD-ELEMENT-POINTER and OWNED-CONSTRUCTOR-OUT-PARAMETER-DELIVERY registered; profiles []. First full landing gate on 755ca8745 (private/integrate-r57/gate, kept as gate-scope-attempt-1.json) failed provider-test only: qcore-provider-librdkafka's every_premise_is_a_formula pins the crate's premise census at 220 and the new declaration makes 221; pin updated deliberately in 57798da42. Second full landing gate on 57798da42 (private/integrate-r57/gate2, raw record gate-scope.json) via scripts/gate_scope.py --base origin/main --full --landing through private/toolchain/env.sh: Rust 676 units / 721 summaries, 9889 passed, 0 failed, 21 ignored; fmt, Clippy and both reevaluation examples exit 0; provider package build/verify-all/verify, provider tests (49 summaries, 174 passed, 0 failed, 1 ignored), provider fmt and Clippy exit 0. No proof/ path changed, so Lean was scoped out; lean_audits 483 is the on-disk count from r56's Lean build. Python (807 tests) exited 1 only on the stale-matrix check, cleared by regenerating the matrix from this record. OpenSSL lock untouched; librdkafka contract-inventory.lock gains librdkafka/topic_partition_constructors.qv (5 declarations, 17 clauses); corpus 153/997/8,783 -> 154/1,002/8,800 (qcore 94 -> 95). Card measurement (opt-in current --monkey-linked, Fluent Bit 046accf6, base 8e7e8d509): 1159/2/3636/7 -> 1161/2/3632/9; with r56's fix (NULLABLE-GUARDED-RELEASE's private merged measurement) 1171/2/3622/9 -> 1171/2/3623/8, so on main +2 Safe (both on unvalidated declarations) and one provisional Unsafe, ut_testSameSubscriptions (a unit test's assertion-failure returns). Pinned-route parity (quirin-audit measure --declared) was not run: this host holds no build/cycle19 inputs or baselines. No profile baseline is changed and land.py publish is owed.",
   "workspace_tests": 9889,
   "provider_tests": 174,
   "python_evidence_validator_tests": 807,
@@ -7414,9 +7414,9 @@
   "reevaluation_followup_exit": 0,
   "cargo_fmt": "clean",
   "cargo_clippy": "clean",
-  "standing_gate": "full landing gate: every step exits 0 except the Python suite's two stale-matrix checks, cleared by regenerating the matrix from this record; provider gate not selected (no providers/ change), provider count carried from SP5",
+  "standing_gate": "full landing gate (second attempt; the first failed one pinned provider census, updated deliberately): every step exits 0 except the Python suite's stale-matrix check, cleared by regenerating the matrix from this record; Lean scoped out (no proof/ change), lean_audits from disk (483)",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/nullable-guarded-release/integration/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/rk-topic-partition-list-constructors/integration/gate.json)"
  },
  "named_followups": [
   {
