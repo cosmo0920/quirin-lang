@@ -160,7 +160,16 @@ This card changes Python gate tooling, its tests and the gate-slot rule text
 only: no checker semantics, verdicts, providers or corpus figures. So no Lean
 module, provider gate or corpus prediction applies.
 
-GATE_RESULT_PLACEHOLDER
+Scoped card gate: `sh private/toolchain/env.sh python3 scripts/gate_scope.py
+--base b069dbda8`, run on the report commit (code as at `56a5e577d`), exit 0.
+Scope: `quirin-audit-plugin-measure`, because it names `scripts/gate_slot.py`
+in a string. Steps: submodules 0; fmt 0; Clippy 0; Rust suite 0, with 57
+passed and 0 failed over 8 units; Python 0, with 807 tests and 0 skipped. A
+first attempt failed only at its submodules step, because `third_party/libevent`
+was not yet initialised; every other step exited 0 (Python 807). That attempt
+is retained and not counted. Logs are private to the worktree:
+`private/gate-scoped-2.log` and `private/gate-scope/20261122T041334Z-3539088/`;
+the first attempt is in `private/gate-scoped.log`.
 
 ## Follow-ons
 
