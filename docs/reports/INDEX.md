@@ -1315,6 +1315,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [sp5-global-prose-premise-ban](sp5-global-prose-premise-ban/README.md) | SP5-GLOBAL-PROSE-PREMISE-BAN |
 
+| [sp6-symbolic-hypothesis-atoms](sp6-symbolic-hypothesis-atoms/README.md) | SP6-SYMBOLIC-HYPOTHESIS-ATOMS |
+
 | [stability-reeval-1](stability-reeval-1/README.md) | STABILITY-REEVAL #1 — under what conditions each current claim is unstable |
 
 | [stability-reeval-2](stability-reeval-2/README.md) | STABILITY-REEVAL #2 — the cadence's second firing |
