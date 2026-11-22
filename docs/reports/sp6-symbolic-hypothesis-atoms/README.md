@@ -346,3 +346,12 @@ tip=rev:<last code commit> --declared docs/reports/sp6-symbolic-hypothesis-atoms
   `FormalBinding` records built in code (`cjson_local_binding`,
   `plugin_source_witnesses`) still describe their environments in English;
   they are not conditions a declaration states. Recorded, not registered.
+
+## Integrator measurement (2026-11-21)
+
+Landing `95f36b628` on base `1f2007667`, measured with `--declared PREDICTION.md`:
+corpus, twelve-home, system and slice all match the declared prediction with
+0 moves. Comparison: `integration/native-comparison.json.gz` (uncompressed
+sha256 `6604c5a32afe2b823bdc29ab3f4601f0a867d53d31418f1bdb18097f2c7c535c`). Landing gate: `integration/gate.json` (Rust 9899
+passed, 1 failed: the known host libcurl failure; Lean 485 audits; Python
+807Rust 9899 passed / 1 failed (known host libcurl curlver.h) / 21 ignored; Lean 485 audits; provider test 174/1 ignored. Python 807 with 1 failure (test_build_matrix_sections: matrix Lean audit count 483 stale vs 485, a records regeneration ordering slip) fixed in 523a94c04 by regenerating the matrix; full Python suite then exit 0, 807 tests. Concerns recorded: contract inheritance now copies quant proposition clauses unchanged (card scanned all 11 provider inheritance sites, none affected; full gate green); most card commits lack the Co-Authored-By trailer (history not rewritten; landing commits carry it).).
