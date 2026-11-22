@@ -1,0 +1,24 @@
+{
+ "schema": "quirin-amendments/2",
+ "card": "GATE-SLOT-TEST-FLAKES",
+ "base": "b069dbda8",
+ "measured_tip": "56a5e577d",
+ "increment_paragraph": "**GATE-SLOT-TEST-FLAKES** (Python gate tooling and tests only; [report](../../reports/gate-slot-test-flakes/README.md)). The intermittent gate-slot test failures behind reruns at most landings (12 integrator logs for the lane status test, 7 for the queue-position test, 3 for the lane memory test, 1 each for two others) have three root causes, none an over-admission. `gate_slot.py status` counted the locks a waiter takes for one poll as slots: its class's admission lock shared, and the free slots a queued waiter or a lane-reserve reading probes exclusive. A snapshot in that window showed three holders of a two-slot lane, or a waiter as `holder`. Now `slot_hold_is_poll` lists those locks under the job's new `polling` field: a numbered slot is held when its note names the pid, or the pid has no ticket and the slot is of its own class. `read_note` reads a note's first line, so it no longer misses a note rewritten in place. A shared `build/admission` is no longer read as a suite closing the builds. In the harness, the fake meminfo is replaced whole rather than rewritten in place, and `Gate.cancel()` lets `Queue.tearDown` stop a waiting job before it removes the scratch gate. That ends the rmtree race, and the 20 s join each such test spent. Six new tests drive the defects; the status ones fail at the base with the integrators' messages. Stress, 30 iterations per module beside 32 CPU spinners: before, (a), (b) and (e) failed once each; after, 0 failures in 150 runs. A 48-spinner lane and queue rerun failed (a) 3 times and (b) once before, and 0 times after. (c) and (d) did not reproduce under stress and are shown in isolation by harnesses in the report. Python suite 807 tests, exit 0.",
+ "status_edits": [],
+ "ledger": [
+  {
+   "id": "PYTHON-EVIDENCE-SUITE-INTERMITTENT-ROW",
+   "operation": "amend",
+   "text": "AMENDED (GATE-SLOT-TEST-FLAKES, base b069dbda8): the most frequent intermittent Python rows on the integrator record were gate-slot tests (test_gate_slot_lane and test_gate_slot_queue Status, the lane memory test, a queue tearDown ERROR). They are now named, root-caused and fixed: a status misreading of a waiter's poll locks, a non-atomic fake meminfo, and a tearDown that removed the scratch gate under a polling thread. A stress run of 30 iterations per module beside 32 CPU spinners went from 3 failures to 0, with harness and logs in the report. This entry's own rows are not gate-slot tests and stay open: the wave-34 unnamed row and the wave-39 test_check_lean_audits row.",
+   "source": "docs/reports/gate-slot-test-flakes/README.md"
+  },
+  {
+   "id": "GATE-SLOT-DRAIN-BLOCKERS-POLL-LOCKS",
+   "operation": "register",
+   "title": "A drain's give-up report can name a lane waiter's probe as a short-slot blocker",
+   "text": "Registered by GATE-SLOT-TEST-FLAKES. gate_status now tells a waiter's poll locks from slots (slot_hold_is_poll), but Gate.audit_holders, which names the blockers in a rust-suite drain's give-up report, still reads every /proc/locks entry on a slot file. While a drain waits for the audits, the short lane is open, so a lane waiter probing a free short slot at the moment of a give-up can be named as a blocker of that slot. Diagnostic only: the drain waits on the flocks, and nothing is admitted or stopped on the report. DISCHARGE: audit_holders applies the same rule (holder note naming the pid, or no ticket and own class), with a test that freezes a probe during a give-up.",
+   "source": "docs/reports/gate-slot-test-flakes/README.md",
+   "recorded_by": "GATE-SLOT-TEST-FLAKES"
+  }
+ ]
+}
