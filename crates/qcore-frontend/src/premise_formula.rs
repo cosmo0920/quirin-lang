@@ -2199,12 +2199,13 @@ pub fn check_rendering(
     for parameter in &definition.parameters {
         let expected = if let Some(t) = term(&parameter.name) {
             rendered_sort(t)
-        } else if let Some(t) = RENDERED_TERMS.iter().find(|t| t.name == parameter.name) {
-            Some(G::Predicate {
-                arguments: t.predicate.iter().map(|s| (*s).to_owned()).collect(),
-            })
         } else {
-            None
+            RENDERED_TERMS
+                .iter()
+                .find(|t| t.name == parameter.name)
+                .map(|t| G::Predicate {
+                    arguments: t.predicate.iter().map(|s| (*s).to_owned()).collect(),
+                })
         };
         if expected.as_ref() != Some(&parameter.sort) {
             return Err(format!(

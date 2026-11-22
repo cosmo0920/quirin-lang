@@ -291,7 +291,44 @@ worktree's ignored `private/`, `HEAD` set to each revision;
 * `bounds-contracts.lock`, `outer-contracts.lock`,
   `providers/contract-load-path.json`: unchanged.
 
-GATE-PLACEHOLDER
+## 10. Gate
+
+**Gate 1** (`python3 scripts/gate_scope.py --base 38cf960fa --out
+private/gate-1` on `fad05f4a6`, the card merged with origin/main
+`5977e52a4` at `40d25649c`; full mode, `proof/QCore.lean` changed;
+[record](gate/gate-1.json)) exited 1:
+
+| Step | Exit | Counts |
+|---|---|---|
+| submodules, fmt | 0, 0 | |
+| clippy | 101 | one `manual_map` in `premise_formula::check_rendering` |
+| rust-suite | 101 | 676 units, 9886 passed, **1 failed**, 21 ignored |
+| reevaluation probe, follow-up | 0, 0 | |
+| lean (`check_lean_audits.py`) | 0 | 484 audits (both new audits included) |
+| python | 0 | 807 tests |
+| provider package build, verify (all, libevent) | 0, 0, 0 | |
+| provider test | 0 | 174 passed, 1 ignored |
+| provider fmt, clippy | 0, 0 | |
+
+The one failure is the recorded host failure
+`qcore-audit::libcurl_user_crate_versions::the_libcurl_ranges_follow_the_audited_curlver_header`
+(system `curlver.h`), not fixed. The clippy refusal was fixed in the next
+commit (`Option::map`, no behaviour change); after it: `cargo fmt --all --
+--check` exit 0, `cargo clippy --all-targets -- -D warnings` exit 0
+(`private/logs/clippy-2.log`), and `qcore-frontend` (lib) with
+`qcore-contract`'s lib and `cjson_typed_atoms` exit 0, 133 passed
+(`private/logs/t-after-clippy.log`). Earlier scoped runs: `qcore-contract`
+whole exit 0 (`private/logs/t-contract-6.log`); `qcore-contract`,
+`qcore-frontend`, `quirin-source-analysis`, `qcore-audit`, `qcore-compiler`
+(`private/logs/t-multi-5.log`) only the host failure and one
+`production_symbolic_adoption` replay of libc's frozen string atoms, fixed by
+recording them (§4). Logs: `private/gate-1/`; console outside the worktree.
+
+**Measurement** (the integrator's): `target/release/quirin-audit
+--plugin-path target/release --output <dir> --timeout-ms 36000000 measure
+--inputs crates/quirin-audit-plugin-measure/inputs/live.json --inputs-base
+/media/Data/GitHub/quirin-lang --side base=baseline:<main baseline> --side
+tip=rev:<last code commit> --declared docs/reports/sp6-symbolic-hypothesis-atoms/PREDICTION.md`.
 
 ## 11. Follow-ups
 
