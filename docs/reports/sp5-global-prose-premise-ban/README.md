@@ -50,7 +50,7 @@ exists to show the string form is refused.
 | `providers/quirin-provider-openssl/src/check.rs` (`prose_premise`), `qcore-provider-libevent/src/main.rs`, `qcore-provider-librdkafka/src/main.rs`, `quirin-provider-fluent-bit/src/lib.rs`, `quirin-provider-libc/src/lib.rs` | per-crate bans | 1, 1, 0 (textual), 1, 1 | same | kept as belt-and-braces (textual scans; the provider workspace does not link the core reader) |
 | `crates/qcore-contract/examples/premise_formula_binding_refresh.rs` | SP2's one-off refresh tool; reads its BEFORE roots | reads prose | refuses prose | a historical tool; its BEFORE roots no longer load (recorded, not changed) |
 
-Total by the pattern: 88 matches in 31 files at base; after, 35 in 12 files,
+Total by the pattern: 88 matches in 31 files at base; after, 24 in 11 files,
 every one a refusal case, the frozen fixture, the reader's own refusal text
 and vectors, or a per-crate ban. No shipped `.qv` states one (0 before and
 after).
@@ -226,7 +226,32 @@ integrator's (`quirin-audit measure --declared PREDICTION.md`).
 
 ## 8. Gate
 
-GATE
+**Gate 1** (`python3 scripts/gate_scope.py --base 1d69b7b81 --out
+private/gate-1` on `394daef24`, the card merged with origin/main `b069dbda8`,
+docs-only; scoped; [record](gate/gate-1.json)) exited 1:
+
+| Step | Exit | Counts |
+|---|---|---|
+| submodules, fmt | 0, 0 | |
+| clippy | 101 | one unused variable in `crates/qcore-frontend/tests/premise_formula.rs` |
+| rust-suite | 101 | 675 units, 9875 passed, **1 failed**, 21 ignored |
+| reevaluation probe, follow-up | 0, 0 | |
+| lean (`gate_lean.py`, 7 modules) | 0 | 7 audits |
+| python | 0 | 801 tests |
+| provider package build, verify (all, libevent) | 0, 0, 0 | |
+| provider test | 0 | 174 passed, 1 ignored |
+| provider fmt, clippy | 0, 0 | |
+
+The one failure is the recorded host failure
+`qcore-audit::libcurl_user_crate_versions::the_libcurl_ranges_follow_the_audited_curlver_header`
+(system `curlver.h`), not fixed. The clippy refusal was fixed in the next
+commit (a renamed loop binding, no behaviour); after it, the targeted
+reruns: `cargo fmt --all -- --check` exit 0, `cargo clippy --all-targets --
+-D warnings` exit 0 (`private/logs/clippy-2.log`), and
+`python3 scripts/run_test_binaries.py --no-doc --packages qcore-frontend`
+exit 0, 21 units, 309 passed (`private/tests-4`). Earlier scoped runs during
+the work (`private/tests-3`, the five affected crates): 537 units, only the
+same host failure. Logs: `private/gate-1/`, `private/logs/gate-1.log`.
 
 ## 9. Follow-ups
 

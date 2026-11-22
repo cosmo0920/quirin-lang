@@ -356,8 +356,7 @@ fn the_openssl_formulas_are_the_lean_definitions() {
         ),
     ];
     let mut by_name: BTreeMap<String, Vec<String>> = BTreeMap::new();
-    for (module, name, statement) in openssl_premises() {
-        let formula = statement;
+    for (_, name, formula) in openssl_premises() {
         assert_eq!(lean(&formula.raw), lean(&raw(&formula.canonical)));
         by_name.entry(name).or_default().push(lean(&formula.raw));
     }
