@@ -416,7 +416,11 @@ fn the_other_shapes_stay_refused_without_a_leak() {
         "int subject(int n)",
         "void *r;\nif (n) r = u_get(); else r = q_alloc();\nq_free(r);\nreturn 0;",
     );
-    assert_eq!(uncontracted.status, AnalysisStatus::Unknown, "{uncontracted:?}");
+    assert_eq!(
+        uncontracted.status,
+        AnalysisStatus::Unknown,
+        "{uncontracted:?}"
+    );
     assert!(uncontracted.unresolved("r"), "{uncontracted:?}");
     assert_eq!(uncontracted.leaks(), 0, "{uncontracted:?}");
     let flag = analyze(
@@ -426,4 +430,52 @@ fn the_other_shapes_stay_refused_without_a_leak() {
     );
     assert_eq!(flag.status, AnalysisStatus::Unknown, "{flag:?}");
     assert_eq!(flag.leaks(), 0, "{flag:?}");
+}
+
+/// The `rd_kafka_mock_handle_ShareFetch` shape (rule 74d (C)): the lexer
+/// spells `flag && p` as `flag & & p`, and rule 10a's frame read the second
+/// `&` as taking `p`'s address, so every refused statement poisoned `p`, the
+/// guard was refused and the guarded `nonnull` release left the nullable leaf.
+/// An even run of `&` takes no address: `p` survives, the guard decides, and
+/// the row is `Unknown` on the refused statements alone, with no leak.
+#[test]
+fn a_logical_and_takes_no_address() {
+    if !clang_available() {
+        return;
+    }
+    let run = analyze(
+        "int subject(int flag, int n)",
+        "void *p = 0;\nif (n > 0) p = q_alloc();\nu_read();\nif (flag && p) l_use(p);\n\
+         u_read();\nif (p) q_free(p);\nreturn 0;",
+    );
+    assert_eq!(run.status, AnalysisStatus::Unknown, "{run:?}");
+    assert!(
+        !run.refused("nullable resource `p` used by a non-null contract"),
+        "{run:?}"
+    );
+    assert!(!run.unresolved("p"), "{run:?}");
+    assert_eq!(run.leaks(), 0, "{run:?}");
+    let run = analyze(
+        "int subject(int flag, int n)",
+        "void *p = 0;\nif (n > 0) p = q_alloc();\nif (flag && p) l_use(p);\nif (p) q_free(p);\nreturn 0;",
+    );
+    assert_eq!(run.status, AnalysisStatus::Safe, "{run:?}");
+}
+
+/// An odd run still ends in the address operator: `flag && &p` takes `p`'s
+/// address, so a refused statement may write `p` through it, and the guarded
+/// release is refused (no leak).
+#[test]
+fn an_odd_run_still_takes_the_address() {
+    if !clang_available() {
+        return;
+    }
+    let run = analyze(
+        "int subject(int flag, int n)",
+        "void *p = 0; int t;\nif (n > 0) p = q_alloc();\nt = flag && &p;\nu_read();\n\
+         if (p) q_free(p);\nreturn t;",
+    );
+    assert_eq!(run.status, AnalysisStatus::Unknown, "{run:?}");
+    assert!(run.unresolved("p"), "{run:?}");
+    assert_eq!(run.leaks(), 0, "{run:?}");
 }

@@ -1215,11 +1215,11 @@ fn frame_protected_locals(
                 && !file_scope.contains(name)
         })
         .collect::<BTreeSet<_>>();
-    for (index, text) in body.iter().enumerate() {
-        if *text != "&" {
-            continue;
-        }
-        let mut cursor = index + 1;
+    // Card NULLABLE-LAZY-CONSTRUCTOR-IN-LOOP (rule 74d): the lexer spells `&&`
+    // as `&` `&`, so a name is address-taken only when the run of `&` tokens
+    // before it has odd length ([`unary_address_runs`]).
+    for cursor in unary_address_runs(body) {
+        let mut cursor = cursor;
         while body.get(cursor) == Some(&"(") {
             cursor += 1;
         }
@@ -1228,6 +1228,38 @@ fn frame_protected_locals(
         }
     }
     protected
+}
+
+/// Card **NULLABLE-LAZY-CONSTRUCTOR-IN-LOOP** (rule 74d): the index after each
+/// maximal run of `&` tokens whose last `&` is the unary address operator.
+///
+/// The importer's lexer emits one token per punctuation character, so `a &&
+/// b` reaches here as `a & & b`. C lexes by maximal munch (C11 6.4p4): a run
+/// of `k` adjacent `&` characters is `k / 2` `&&` operators followed, when `k`
+/// is odd, by one `&`. A run separated by whitespace (`a & &b`) would make the
+/// second `&` unary after a binary `&`, whose operands must have integer type
+/// (C11 6.5.10p2), so `&b`, a pointer, cannot be one: no conforming body
+/// spells it. The last `&` of a run is therefore unary exactly when the run
+/// has odd length (`&b`, `p && &b`), and never when it is even (`p && b`, or
+/// GNU's `&&label`, which names no object). Under the same conforming-program
+/// premise rule 10a's frame already rests on, an even run takes no address.
+fn unary_address_runs(body: &[&str]) -> Vec<usize> {
+    let mut after = Vec::new();
+    let mut index = 0;
+    while index < body.len() {
+        if body[index] != "&" {
+            index += 1;
+            continue;
+        }
+        let start = index;
+        while body.get(index) == Some(&"&") {
+            index += 1;
+        }
+        if (index - start) % 2 == 1 {
+            after.push(index);
+        }
+    }
+    after
 }
 
 /// One modeled read's C02-P-ALIAS obligation (card C02-P-ALIAS).
