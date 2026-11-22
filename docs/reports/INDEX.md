@@ -822,6 +822,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [null-witness-guard-correlation](null-witness-guard-correlation/README.md) | NULL-WITNESS-GUARD-CORRELATION |
 
+| [nullable-guarded-release](nullable-guarded-release/README.md) | NULLABLE-GUARDED-RELEASE: a refused release is no leak; a member address takes no slot |
+
 ## O
 
 | Card directory | Original report title |
