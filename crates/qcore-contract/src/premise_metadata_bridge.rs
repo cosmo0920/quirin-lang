@@ -126,20 +126,14 @@ fn head(source: &str) -> Result<Option<String>, String> {
         }
     }))
 }
+/// Card SP6-SYMBOLIC-HYPOTHESIS-ATOMS (C04.18.7): an original atom is a typed
+/// `quant proposition`; its `statement_literal` is the exact definition
+/// source (`#ID(PARAMETERS) = FORMULA`). The retired string atom never parses.
 fn atom(source: &str) -> Result<Atom, String> {
-    let t = words(source)?;
-    if t.len() != 6 {
-        return Err("bridge: malformed original atom".into());
-    }
-    let TokenKind::Word(id) = &t[2].kind else {
-        return Err("bridge: original atom ID absent".into());
-    };
-    let TokenKind::StringLiteral(_) = &t[4].kind else {
-        return Err("bridge: original atom statement absent".into());
-    };
+    let definition = qcore_frontend::quant_proposition::parse(source)?;
     Ok(Atom {
-        id: id.clone(),
-        statement_literal: source[t[4].span.start..t[4].span.end].into(),
+        id: definition.id,
+        statement_literal: source.into(),
     })
 }
 fn group(source: &str, kind: &str) -> Result<Group, String> {
@@ -266,14 +260,11 @@ fn validate_module(
             if !expanded
                 && decl.function_contract.as_ref().is_some_and(|c| {
                     c.clauses.iter().any(|c| {
-                        matches!(
-                            head(&c.value.expression_source).ok().flatten().as_deref(),
-                            Some(
-                                "resource_hypothesis"
-                                    | "resource_premise_all"
-                                    | "resource_premise_decomposition"
+                        c.value.kind == SourceContractClauseKind::QuantProposition
+                            || matches!(
+                                head(&c.value.expression_source).ok().flatten().as_deref(),
+                                Some("resource_premise_all" | "resource_premise_decomposition")
                             )
-                        )
                     })
                 })
             {
@@ -295,8 +286,9 @@ fn validate_module(
             ) {
                 return Err("bridge: original inventory already contains proposed symbols".into());
             }
+            let typed = clause.value.kind == SourceContractClauseKind::QuantProposition;
             let addition = match h.as_deref() {
-                Some("resource_hypothesis") => {
+                _ if typed => {
                     let a = atom(source)?;
                     let text = format!(
                         "requires resource_lifecycle_v1(introduce_{}, |^+ hypothesis({}));",
@@ -317,7 +309,7 @@ fn validate_module(
                 }
                 _ => continue,
             };
-            if clause.value.kind != SourceContractClauseKind::Requires {
+            if !typed && clause.value.kind != SourceContractClauseKind::Requires {
                 return Err("bridge: original anchor is not requires".into());
             }
             let start = before[..clause.span.start].rfind('\n').map_or(0, |i| i + 1);

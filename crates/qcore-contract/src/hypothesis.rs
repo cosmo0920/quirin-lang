@@ -135,27 +135,11 @@ pub fn declaration(decl: &SourceDeclaration, legacy: &[DeclaredPremise]) -> Resu
         if !identifier(id) || id.starts_with("legacy_") {
             return Err(malformed());
         }
-        if head == "resource_hypothesis" {
-            let [
-                TokenKind::StringLiteral(statement),
-                TokenKind::Symbol(Symbol::RightParen),
-            ] = rest
-            else {
-                return Err(malformed());
-            };
-            if !plain(statement) {
-                return Err(malformed());
-            }
-            let atom = Atom {
-                id: id.clone(),
-                proposition: Proposition::Opaque {
-                    statement: statement.clone(),
-                },
-            };
-            if graph.atoms.get(id).is_some_and(|old| *old != atom) {
-                return Err("hypothesis: conflicting atom ID".into());
-            }
-            graph.atoms.insert(id.clone(), atom);
+        if head == qcore_frontend::premise_formula::HYPOTHESIS_HEAD {
+            // Card SP6-SYMBOLIC-HYPOTHESIS-ATOMS (C04.18.7): the string atom
+            // is retired (`QF002`); the structural parser refuses it first,
+            // and this reader never admits one either.
+            return Err(qcore_frontend::premise_formula::prose_hypothesis(id));
         } else {
             if head == "resource_premise_all"
                 && (graph.premises.contains_key(id) || legacy.iter().any(|p| p.name == *id))
@@ -275,16 +259,23 @@ pub fn validate(graph: &Graph) -> Result<(), String> {
             return Err("hypothesis: invalid atom ID".into());
         }
         match &atom.proposition {
+            // Card SP6-SYMBOLIC-HYPOTHESIS-ATOMS (C04.18.7): an opaque
+            // statement belongs only to a generated legacy atom, the erasure
+            // of a named premise (a C04.18.9 formula's canonical printing, or
+            // a literal-argument or rule-owned record's statement). A
+            // declared atom is typed: an opaque declared atom is refused, on
+            // the wire as in source.
+            Proposition::Opaque { .. } if !id.starts_with("legacy_atom_") => {
+                return Err(qcore_frontend::premise_formula::prose_hypothesis(id));
+            }
             Proposition::Opaque { statement } if plain(statement) => (),
             // Card SP1-SYMBOLIC-OPENSSL-PREMISES (C04.18.9): a named premise
             // stated as a formula erases to the canonical printing, whose set
             // difference is `\`. Only a generated legacy atom (the erasure of
             // a named premise), and only a statement that is exactly the
             // canonical printing of a well-formed formula, may hold it; every
-            // other backslash, a `resource_hypothesis` atom's included, stays
-            // refused.
-            Proposition::Opaque { statement }
-                if id.starts_with("legacy_atom_") && canonical_formula(statement) => {}
+            // other backslash stays refused.
+            Proposition::Opaque { statement } if canonical_formula(statement) => {}
             Proposition::Formula { definition } | Proposition::EntryCondition { definition } => {
                 if definition.id != *id {
                     return Err("hypothesis: formal atom ID mismatch".into());
@@ -371,6 +362,36 @@ pub fn validate(graph: &Graph) -> Result<(), String> {
     }
     Ok(())
 }
+/// Card **SP6-SYMBOLIC-HYPOTHESIS-ATOMS**: the atom decision vectors shared
+/// with `proof/QCore/PremiseFormula/CjsonTypedAtoms.lean`
+/// (`hypothesisVectors`): whether the atom is a generated legacy atom, its
+/// statement (a string literal, an opaque statement; otherwise a typed
+/// definition `#ID(PARAMETERS) = FORMULA`), and whether [`validate`] admits
+/// it. A declared atom is admitted only typed; a generated legacy atom (the
+/// erasure of a named premise) only opaque.
+pub const ATOM_DECISION_VECTORS: &[(bool, &str, bool)] = &[
+    (
+        false,
+        "\"For this removed-result declaration, chain child identities are pairwise distinct\"",
+        false,
+    ),
+    (
+        false,
+        "#detach_distinct(#nodup: predicate<obj>, #parent: obj) = #nodup(#parent)",
+        true,
+    ),
+    // A quoted formula is a string.
+    (false, "\"#nodup(#parent)\"", false),
+    (false, "\"A\"", false),
+    (true, "\"#concurrent |-> #inert\"", true),
+    (true, "\"p = 0\"", true),
+    (
+        true,
+        "#legacy_atom_00000000(#nodup: predicate<obj>, #parent: obj) = #nodup(#parent)",
+        false,
+    ),
+];
+
 pub fn digest(graph: &Graph) -> Result<String, String> {
     validate(graph)?;
     Ok(qcore_schemas::sha256_hex(

@@ -1806,6 +1806,45 @@ pub fn prose_premise(name: &str) -> String {
     )
 }
 
+/// The retired introducer of an opaque hypothesis atom.
+pub const HYPOTHESIS_HEAD: &str = "resource_hypothesis";
+
+/// Card **SP6-SYMBOLIC-HYPOTHESIS-ATOMS** (contract specification C04.18.7,
+/// diagnostics namespace `QF***`): the code of the refusal of a hypothesis
+/// atom stated as a string. The form `resource_hypothesis(NAME,
+/// "STATEMENT")` (C04.18.1's only atom form) is retired: an atom is a typed
+/// proposition, `quant proposition #NAME(PARAMETERS) = FORMULA;` (G01p). A
+/// module stating one is rejected whole by the structural parser every
+/// route reads the contract format through ([`hypothesis_clause`]), whatever
+/// the clause's introducer; the atom is never read and never dropped.
+pub const PROSE_HYPOTHESIS: &str = "QF002";
+
+/// Card **SP6-SYMBOLIC-HYPOTHESIS-ATOMS**: the refusal of a clause headed
+/// `resource_hypothesis`, read from its expression's tokens (no introducer,
+/// no `;`). `Ok(())` when the clause is not so headed. Every such clause is
+/// refused ([`PROSE_HYPOTHESIS`]): the string statement was the form's only
+/// statement, so there is nothing left to admit.
+pub fn hypothesis_clause(tokens: &[TokenKind]) -> Result<(), String> {
+    if !matches!(tokens.first(), Some(TokenKind::Word(head)) if head == HYPOTHESIS_HEAD) {
+        return Ok(());
+    }
+    let name = match tokens {
+        [_, TokenKind::Symbol(Symbol::LeftParen), TokenKind::Word(name), ..] => name.as_str(),
+        _ => "NAME",
+    };
+    Err(prose_hypothesis(name))
+}
+
+/// The refusal of a `resource_hypothesis` atom named `name`.
+#[must_use]
+pub fn prose_hypothesis(name: &str) -> String {
+    format!(
+        "{PROSE_HYPOTHESIS}: hypothesis atom `{name}` uses the retired string form \
+         `resource_hypothesis(NAME, \"STATEMENT\")` (contract specification C04.18.7): write \
+         `quant proposition #{name}(PARAMETERS) = FORMULA;` with a typed G01p formula"
+    )
+}
+
 /// Card **SP5-GLOBAL-PROSE-PREMISE-BAN**: the clause decision vectors shared
 /// with `proof/QCore/PremiseFormula.lean` (`clauseVectors`): a premise
 /// clause's expression and whether [`premise_clause`] accepts it as a
