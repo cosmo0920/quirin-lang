@@ -24,8 +24,9 @@ use std::collections::BTreeMap;
 
 use qcore_frontend::lexer::{TokenKind, lex};
 use qcore_frontend::premise_formula::{
-    CLASSES, DECISION_VECTORS, INERT_DEFINITION, MAX_DEPTH, MAX_TOKENS, PremiseStatement, Raw,
-    Sort, VOCABULARY, canonical, check, lean, parse_tokens, premise_clause, read_source, sort,
+    CLASSES, CLAUSE_DECISION_VECTORS, DECISION_VECTORS, INERT_DEFINITION, MAX_DEPTH, MAX_TOKENS,
+    PROSE_PREMISE, PremiseFormula, Raw, Sort, VOCABULARY, canonical, check, lean, parse_tokens,
+    premise_clause, read_source, sort,
 };
 
 const LEAN: &str = include_str!("../../../proof/QCore/PremiseFormula.lean");
@@ -185,6 +186,45 @@ fn the_decision_vectors_are_the_lean_table() {
     );
 }
 
+/// Card SP5-GLOBAL-PROSE-PREMISE-BAN: the clause decision vectors are the
+/// Lean `clauseVectors`, and each decision is the reader's: a statement
+/// holding a string literal renders as `.str` (its first literal) and is
+/// refused by name; any other statement renders as `.formula` of its tree and
+/// is accepted exactly when the judgment accepts the tree.
+#[test]
+fn the_clause_vectors_are_the_lean_table() {
+    let rust = CLAUSE_DECISION_VECTORS
+        .iter()
+        .map(|(source, decision)| {
+            let kinds = tokens(source);
+            let result = premise_clause(&kinds);
+            assert_eq!(matches!(result, Ok(Some(_))), *decision, "{source}");
+            let statement = &kinds[4..kinds.len() - 1];
+            let rendered = if let Some(text) = statement.iter().find_map(|token| match token {
+                TokenKind::StringLiteral(text) => Some(text),
+                _ => None,
+            }) {
+                assert!(
+                    result
+                        .as_ref()
+                        .is_err_and(|refusal| refusal.starts_with(PROSE_PREMISE)),
+                    "{source}"
+                );
+                format!("(.str \"{text}\")")
+            } else {
+                let tree = parse_tokens(statement).unwrap_or_else(|e| panic!("{source}: {e}"));
+                assert_eq!(check(&tree).is_ok(), *decision, "{source}");
+                format!("(.formula {})", lean(&tree))
+            };
+            format!("({rendered}, {decision})")
+        })
+        .collect::<Vec<_>>();
+    assert_eq!(
+        lean_rows("def clauseVectors : List (Stmt × Bool) := ["),
+        rust
+    );
+}
+
 #[test]
 fn the_vocabulary_is_the_lean_table() {
     let rust = VOCABULARY
@@ -234,7 +274,7 @@ fn inert_is_its_definition() {
 
 /// Every `resource_premise` clause of the OpenSSL crate's modules, read by
 /// the contract format's premise reader: `(module, name, statement)`.
-fn openssl_premises() -> Vec<(&'static str, String, PremiseStatement)> {
+fn openssl_premises() -> Vec<(&'static str, String, PremiseFormula)> {
     premises_of(OPENSSL_MODULES)
 }
 
@@ -242,7 +282,7 @@ fn openssl_premises() -> Vec<(&'static str, String, PremiseStatement)> {
 /// format's premise reader: `(module, name, statement)`.
 fn premises_of(
     modules: &[(&'static str, &'static str)],
-) -> Vec<(&'static str, String, PremiseStatement)> {
+) -> Vec<(&'static str, String, PremiseFormula)> {
     let mut out = Vec::new();
     for (module, text) in modules {
         let stripped = text
@@ -317,9 +357,7 @@ fn the_openssl_formulas_are_the_lean_definitions() {
     ];
     let mut by_name: BTreeMap<String, Vec<String>> = BTreeMap::new();
     for (module, name, statement) in openssl_premises() {
-        let PremiseStatement::Formula(formula) = statement else {
-            panic!("{module}: `{name}` is stated in prose");
-        };
+        let formula = statement;
         assert_eq!(lean(&formula.raw), lean(&raw(&formula.canonical)));
         by_name.entry(name).or_default().push(lean(&formula.raw));
     }
@@ -396,9 +434,7 @@ fn the_fluent_bit_formulas_are_the_lean_definitions() {
         premises.into_iter().zip(expected)
     {
         assert_eq!((module, name.as_str()), (want_module, want_name));
-        let PremiseStatement::Formula(formula) = statement else {
-            panic!("{module}: `{name}` is stated in prose");
-        };
+        let formula = statement;
         assert_eq!(raw(&formula.canonical), formula.raw, "{name}");
         assert_eq!(
             lean(&formula.raw),
@@ -408,21 +444,15 @@ fn the_fluent_bit_formulas_are_the_lean_definitions() {
     }
 }
 
+/// Card SP5-GLOBAL-PROSE-PREMISE-BAN (C04.18): a premise clause is a
+/// formula; a string statement, quoted formula included, is refused by name
+/// (`QF001`), never read as a premise.
 #[test]
-fn a_premise_clause_is_prose_or_a_formula() {
+fn a_premise_clause_is_a_formula_and_a_string_is_refused() {
     let read = |source: &str| premise_clause(&tokens(source));
     assert_eq!(read("resource_borrowed(p)"), Ok(None));
     assert_eq!(read("resource_premise_all(a, b)"), Ok(None));
-    let Ok(Some((name, PremiseStatement::Prose(text)))) =
-        read("resource_premise(served, \"a callback takes nothing\")")
-    else {
-        panic!("prose premise");
-    };
-    assert_eq!(
-        (name.as_str(), text.as_str()),
-        ("served", "a callback takes nothing")
-    );
-    let Ok(Some((name, PremiseStatement::Formula(formula)))) =
+    let Ok(Some((name, formula))) =
         read("resource_premise(slots, quant  all #f in #stated :\n #f |-> #inert)")
     else {
         panic!("formula premise");
@@ -430,22 +460,36 @@ fn a_premise_clause_is_prose_or_a_formula() {
     assert_eq!(name, "slots");
     // The statement is the canonical printing, whatever the spacing.
     assert_eq!(formula.canonical, "quant all #f in #stated: #f |-> #inert");
+    for prose in [
+        "resource_premise(served, \"a callback takes nothing\")",
+        "resource_premise(name, \"\")",
+        "resource_premise(name, \"a\", \"b\")",
+        // A quoted formula is a string too.
+        "resource_premise(name, \"#stated |-> #inert\")",
+        // A string anywhere in the statement.
+        "resource_premise(name, #stated |-> #inert && \"and more\")",
+    ] {
+        let refusal = read(prose).expect_err(prose);
+        assert!(refusal.starts_with(PROSE_PREMISE), "{prose}: {refusal}");
+        assert_eq!(PROSE_PREMISE, "QF001");
+    }
     for malformed in [
         "resource_premise",
         "resource_premise()",
         "resource_premise(Name, #stated |-> #inert)",
+        "resource_premise(Name, \"a sentence\")",
         "resource_premise(name)",
         "resource_premise(name, )",
-        "resource_premise(name, \"\")",
-        "resource_premise(name, \"a\", \"b\")",
-        // A quoted formula: its identity would collide with the formula's.
-        "resource_premise(name, \"#stated |-> #inert\")",
         // Fail-closed: an unknown term, an ill-sorted or unbound formula.
         "resource_premise(name, #unknown |-> #inert)",
         "resource_premise(name, #freed |-> #inert)",
         "resource_premise(name, #x |-> #inert)",
     ] {
-        assert!(read(malformed).is_err(), "{malformed}");
+        let refusal = read(malformed).expect_err(malformed);
+        assert!(
+            !refusal.starts_with(PROSE_PREMISE),
+            "{malformed}: {refusal}"
+        );
     }
 }
 
@@ -592,9 +636,7 @@ fn the_libevent_formulas_are_the_lean_definitions() {
             .filter(|(_, premise, _)| premise == name)
             .collect::<Vec<_>>();
         assert_eq!(stated.len(), 1, "{name}");
-        let PremiseStatement::Formula(formula) = &stated[0].2 else {
-            panic!("`{name}` is stated in prose");
-        };
+        let formula = &stated[0].2;
         assert_eq!(raw(&formula.canonical), formula.raw, "{name}");
         assert_eq!(
             lean(&formula.raw),

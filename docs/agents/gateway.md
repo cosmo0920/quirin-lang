@@ -7723,6 +7723,28 @@ an undeclared OpenSSL producer). `QCore.NullableReferenceDrop` (12 audited,
     `concurrent_runs_leave_the_callee`, `libevent_formulas_consistent`,
     `libevent_formulas_assume_something`);
     [report](../reports/sp4-symbolic-libevent-premises/README.md).
+    **Amended by card SP5-GLOBAL-PROSE-PREMISE-BAN** (contract
+    specification C04.18; USER DECISION 2026-11-20): the string statement
+    `resource_premise(NAME, "STATEMENT")` is retired. A statement that is or
+    holds a string literal rejects the whole module with `QF001` (namespace
+    `QF***`, [diagnostics](diagnostics.md#premise-formula-namespace-qf)), in
+    every vocabulary and on every route, since the parser and every loader
+    read a premise through `qcore_frontend::premise_formula::premise_clause`,
+    whose result holds no string statement; nothing drops the premise. This
+    is the load-time ban for every provider crate, shipped or user, beside
+    the per-crate checks SP1-SP4 added (kept). C04.21's reserved
+    entry-snapshot premise states the formula
+    `quant all #m in #condition_reads: #m in #entry_stable` (C04.18.9's SP5
+    block) in place of its sentence, matched exactly as before. A frozen
+    text that states a string premise is read only by the test-side legacy
+    reader `tests/support/legacy_prose_premise.rs`, which writes each
+    statement card SP2-SYMBOLIC-LIBRDKAFKA-PREMISES recorded as its formula
+    and is confined to test code. **Do not** add a flag, feature or entry
+    point that admits a string statement, or read a frozen string premise
+    except through that reader. `QCore.PremiseFormula`
+    (`string_is_not_a_premise`, `formula_premise_iff_wf`, `accepted_is_wf`,
+    `accepted_is_a_formula`, `accepted_denotes`, `clause_vectors_agree`);
+    [report](../reports/sp5-global-prose-premise-ban/README.md).
 
 <a id="constraint-13i"></a>
 
@@ -9025,7 +9047,7 @@ an undeclared OpenSSL producer). `QCore.NullableReferenceDrop` (12 audited,
     only. A declaration stating a member clause of any kind (this rule's,
     rule 14z's, and since card NONNULL-MEMBER-UNIFIED-QUALIFIER, USER
     DECISION 2026-10-16 "Yes, all kinds", rule 14t's plain kind) may
-    therefore name `requires resource_premise(NAME, "STATEMENT");`; in
+    therefore name `requires resource_premise(NAME, FORMULA);` (C04.18.9); in
     bounds v1 nowhere else (`premise-beside-member`). The facts are then in
     force only under it. Every null row whose dependency set names
     `stable:TAG.FIELD`, `member:TAG.FIELD` (or a premised scope function),

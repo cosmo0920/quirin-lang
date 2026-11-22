@@ -679,7 +679,7 @@ struct LoadedDeclaration {
     no_return: bool,
     literal_arguments: Vec<DeclaredLiteralArgument>,
     /// Card VERDICT-CONTRACT-DEPENDENCIES: every named premise the
-    /// declaration states (`requires resource_premise(NAME, "STATEMENT");`),
+    /// declaration states (`requires resource_premise(NAME, FORMULA);`),
     /// in clause order, followed by its literal-argument premises rendered as
     /// premises. This metadata list decides no verdict; C04.21's scoped
     /// atoms/recognized snapshot clause are separately parsed structured data.
@@ -3936,7 +3936,7 @@ fn loop_owner_clause(source: &str) -> Result<Option<(String, LoopOwnerOperation)
 }
 
 /// Card **VERDICT-CONTRACT-DEPENDENCIES**: the clause introducer of a named
-/// premise, `requires resource_premise(NAME, "STATEMENT");` (contract spec
+/// premise, `requires resource_premise(NAME, FORMULA);` (contract spec
 /// §C04.18).
 pub const PREMISE_CLAUSE: &str = "resource_premise";
 
@@ -3946,7 +3946,7 @@ pub const LITERAL_PREMISE_NAME: &str = "literal_argument";
 /// Where a declaration's premise comes from.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub enum PremiseOrigin {
-    /// `requires resource_premise(NAME, "STATEMENT");`.
+    /// `requires resource_premise(NAME, FORMULA);`.
     Declared,
     /// `requires resource_literal_argument(p, LITERAL);`, read as the premise
     /// `p = LITERAL`.
@@ -3975,15 +3975,14 @@ pub struct DeclaredPremise {
     pub origin: PremiseOrigin,
 }
 
-/// `resource_premise(NAME, "STATEMENT")` or, card
-/// **SP1-SYMBOLIC-OPENSSL-PREMISES** (C04.18.9), `resource_premise(NAME,
-/// FORMULA)`, exactly. `None` when the expression is not this clause; one
+/// `resource_premise(NAME, FORMULA)` (card **SP1-SYMBOLIC-OPENSSL-PREMISES**,
+/// C04.18.9), exactly. `None` when the expression is not this clause; one
 /// that names it and is malformed rejects the module: the name is a lowercase
-/// identifier (`[a-z][a-z0-9_]*`) and the statement one plain, non-blank
-/// string literal with no escape and no control character that is not itself
-/// a formula, or a well-formed formula over the closed vocabulary
-/// (`qcore_frontend::premise_formula`). A formula premise's statement is its
-/// canonical printing, so its identity is the name plus that text.
+/// identifier (`[a-z][a-z0-9_]*`) and the statement a well-formed formula over
+/// the closed vocabulary (`qcore_frontend::premise_formula`). Card
+/// **SP5-GLOBAL-PROSE-PREMISE-BAN**: a string statement is refused by name
+/// (`QF001`). The statement is the formula's canonical printing, so its
+/// identity is the name plus that text.
 pub(crate) fn premise_clause(source: &str) -> Result<Option<DeclaredPremise>, String> {
     let tokens = token_kinds(source)?;
     let Some((name, statement)) = qcore_frontend::premise_formula::premise_clause(&tokens)
@@ -3993,7 +3992,7 @@ pub(crate) fn premise_clause(source: &str) -> Result<Option<DeclaredPremise>, St
     };
     Ok(Some(DeclaredPremise {
         name,
-        statement: statement.text().to_owned(),
+        statement: statement.canonical,
         origin: PremiseOrigin::Declared,
     }))
 }
@@ -4023,7 +4022,7 @@ pub fn declaration_premises(
 /// Card **LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER** (USER DECISION 2026-10-15,
 /// "Add premise support"): the named premises a contract module states, by
 /// function, in any vocabulary, read from the contract format alone
-/// (`requires resource_premise(NAME, "STATEMENT");`). This is how a Quirin
+/// (`requires resource_premise(NAME, FORMULA);`). This is how a Quirin
 /// model contract outside every resource view (a `resource type` module such
 /// as librdkafka's `queue_destructor.qv`) states and publishes a premise.
 /// Total-or-reject: a module that does not parse in contract mode, or a

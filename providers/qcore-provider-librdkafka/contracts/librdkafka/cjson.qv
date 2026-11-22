@@ -187,8 +187,9 @@ contract {
 // the hooks between an allocation and its release.
 //
 // Card VERDICT-CONTRACT-PREMISE-ANNOTATIONS: stated on `cJSON_New_Item` as
-// `requires resource_premise(cjson_allocator_hooks, "...")` (contract spec
-// C04.18), so every verdict that rests on the declaration names it.
+// `requires resource_premise(cjson_allocator_hooks, FORMULA);` (contract spec
+// C04.18, the C04.18.9 formula below), so every verdict that rests on the
+// declaration names it.
 
 // --- the cJSON node constructor --------------------------------------------
 extern fn cJSON_New_Item(hooks: ptr<const, u8>) -> ptr<mut, u8>
@@ -245,7 +246,7 @@ contract {
 //     caller broke it, the `child->prev == NULL` arm returns true without
 //     linking `item`, which this declaration would read as a transfer.
 //     Stated on the declaration as `requires
-//     resource_premise(cjson_list_invariant, "...")` (contract spec C04.18,
+//     resource_premise(cjson_list_invariant, FORMULA)` (contract spec C04.18,
 //     card VERDICT-CONTRACT-PREMISE-ANNOTATIONS).
 //
 // ## `replace_item_in_object`, read from `cJSON.c:2412-2433` (with

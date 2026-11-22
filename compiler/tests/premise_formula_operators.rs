@@ -70,7 +70,6 @@ fn a_premise_formula_keeps_its_union_and_conjunction() {
     for clause in [
         "    requires resource_premise(served_queue, #op_callbacks |-> #takes(#held_on(#served)) == {});",
         "    requires resource_premise(closure, (quant all #f in #ran(#slots(#rk_conf)) \\ #loaded_registered: #f in #registered | #defaults && #f in #candidates) && quant all #f in #loaded_registered: #f in #enveloped);",
-        "    requires resource_premise(prose, \"an op callback takes over no reference\");",
     ] {
         assert_eq!(
             codes(&kafka_module(clause)),
@@ -87,6 +86,37 @@ fn a_premise_formula_keeps_its_union_and_conjunction() {
             codes(&fluent_bit_module(clause)),
             Vec::<String>::new(),
             "{clause}"
+        );
+    }
+}
+
+/// Card SP5-GLOBAL-PROSE-PREMISE-BAN (C04.18): the retired string statement
+/// is refused by the contract format before the operator gate reads the
+/// module: a parse refusal (`Q000`) naming `QF001`, whether or not the string
+/// holds an operator.
+#[test]
+fn a_string_premise_is_refused_by_name_at_parse() {
+    for clause in [
+        "    requires resource_premise(prose, \"an op callback takes over no reference\");",
+        "    requires resource_premise(prose, \"#op_callbacks | #defaults |-> #inert\");",
+    ] {
+        let Err(diagnostics) = compile_files(
+            &[SourceFile::new("premise.qv", kafka_module(clause))],
+            &CompileOptions::default(),
+        ) else {
+            panic!("{clause}: a string premise compiles");
+        };
+        assert_eq!(
+            diagnostics
+                .iter()
+                .map(|d| d.code.as_str())
+                .collect::<Vec<_>>(),
+            ["Q000"],
+            "{clause}"
+        );
+        assert!(
+            diagnostics.iter().any(|d| d.message.contains("QF001")),
+            "{clause}: {diagnostics:?}"
         );
     }
 }

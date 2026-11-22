@@ -24,7 +24,7 @@ fn read(body: &str) -> Result<qcore_schemas::loop_lifetime::LoopLifetimeContract
 }
 #[test]
 fn complementary_prerequisites_keep_their_own_polarities() {
-    let p=read("quant #threaded = (#ins.is_threaded != 0); quant #threaded in { requires resource_loop_owner(ins, mutate); }: [[local]]; quant not #threaded in { requires resource_premise(instance_config, \"The setter uses this instance's config\"); }: [[local]];").unwrap();
+    let p=read("quant #threaded = (#ins.is_threaded != 0); quant #threaded in { requires resource_loop_owner(ins, mutate); }: [[local]]; quant not #threaded in { requires resource_premise(instance_config, #concurrent |-> #inert); }: [[local]];").unwrap();
     assert_eq!(p.bindings[0].parameter, 0);
     assert_eq!(p.bindings[0].members, ["is_threaded"]);
     assert!(!p.blocks[0].guard.negated);
@@ -101,9 +101,9 @@ fn malformed_inner_existing_obligation_is_not_accepted_as_text() {
 #[test]
 fn scoped_premises_keep_whole_declaration_name_uniqueness() {
     for body in [
-        "quant #c = (#ins.is_threaded != 0); quant #c in { requires resource_premise(same, \"A\"); requires resource_premise(same, \"B\"); }: [[local]];",
-        "quant #c = (#ins.is_threaded != 0); quant #c in { requires resource_premise(same, \"A\"); }: [[local]]; quant not #c in { requires resource_premise(same, \"B\"); }: [[local]];",
-        "requires resource_premise(same, \"A\"); quant #c = (#ins.is_threaded != 0); quant #c in { requires resource_premise(same, \"B\"); }: [[local]];",
+        "quant #c = (#ins.is_threaded != 0); quant #c in { requires resource_premise(same, #concurrent |-> #inert); requires resource_premise(same, #interleaved |-> #inert); }: [[local]];",
+        "quant #c = (#ins.is_threaded != 0); quant #c in { requires resource_premise(same, #concurrent |-> #inert); }: [[local]]; quant not #c in { requires resource_premise(same, #interleaved |-> #inert); }: [[local]];",
+        "requires resource_premise(same, #concurrent |-> #inert); quant #c = (#ins.is_threaded != 0); quant #c in { requires resource_premise(same, #interleaved |-> #inert); }: [[local]];",
     ] {
         let error = read(body).unwrap_err();
         assert!(
@@ -114,7 +114,7 @@ fn scoped_premises_keep_whole_declaration_name_uniqueness() {
 }
 
 fn guarded_environment() -> qcore_schemas::contract::ResourceContracts {
-    qcore_contract::contract_loader::load_resource_contract_sources(&[("local.qv".into(), "module contract; extern fn f(ins: ptr<mut, u8>) -> i32 contract { requires resource_contract_v1; ensures normal resource_borrowed(ins); ensures normal resource_return_none(); quant #threaded = (#ins.is_threaded != 0); quant #threaded in { requires resource_premise(worker, \"The worker protocol holds\"); }: [[local]]; };".into())].into()).unwrap()
+    qcore_contract::contract_loader::load_resource_contract_sources(&[("local.qv".into(), "module contract; extern fn f(ins: ptr<mut, u8>) -> i32 contract { requires resource_contract_v1; ensures normal resource_borrowed(ins); ensures normal resource_return_none(); quant #threaded = (#ins.is_threaded != 0); quant #threaded in { requires resource_premise(worker, #concurrent |-> #inert); }: [[local]]; };".into())].into()).unwrap()
 }
 
 #[test]

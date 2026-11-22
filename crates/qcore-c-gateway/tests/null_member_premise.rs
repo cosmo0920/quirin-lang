@@ -37,8 +37,7 @@ struct R { struct S *link; };
 void nd_use(void *p); struct S *nd_make(int k);
 ";
 
-const PREMISE: &str =
-    "requires resource_premise(no_plugin, \"no code outside the run stores into S.next\");";
+const PREMISE: &str = "requires resource_premise(no_plugin, #interleaved |-> #no_writes(#args));";
 
 /// The stable member, a scope entry and a plain member, each premised (or
 /// not).
@@ -157,10 +156,7 @@ fn every_row_resting_on_a_premised_member_fact_lists_the_premise() {
         assert_eq!(row.premises.len(), 1, "{name}: {row:#?}");
         let premise = &row.premises[0];
         assert_eq!(premise.name, "no_plugin");
-        assert_eq!(
-            premise.statement,
-            "no code outside the run stores into S.next"
-        );
+        assert_eq!(premise.statement, "#interleaved |-> #no_writes(#args)");
         assert!(
             premise.through.iter().any(|d| d == through),
             "{name}: {premise:?}"
@@ -214,7 +210,7 @@ fn the_premise_stands_only_beside_a_member_clause_of_any_kind() {
     .expect("beside a stable member");
     assert_eq!(
         ok.functions["f"].premises(),
-        vec![("no_plugin", "no code outside the run stores into S.next")]
+        vec![("no_plugin", "#interleaved |-> #no_writes(#args)")]
     );
     // The bounds consumer never reads it, nor the member clause.
     assert!(ok.for_bounds().functions.is_empty());
@@ -238,13 +234,15 @@ fn the_premise_stands_only_beside_a_member_clause_of_any_kind() {
     }
     // Malformed, repeated or a postcondition: the module is rejected.
     for bad in [
-        "requires resource_premise(No_plugin, \"x\");",
+        "requires resource_premise(No_plugin, #false);",
         "requires resource_premise(no_plugin, x);",
+        // Card SP5-GLOBAL-PROSE-PREMISE-BAN: the retired string statement.
+        "requires resource_premise(no_plugin, \"no code outside the run stores into S.next\");",
         "requires resource_premise(no_plugin, \"\");",
-        "requires resource_premise(no_plugin, \"x\", \"y\");",
-        "ensures normal resource_premise(no_plugin, \"x\");",
-        "requires resource_premise(no_plugin, \"x\");\n    requires resource_premise(no_plugin, \"y\");",
-        "requires bounds_review_pending(resource_premise(no_plugin, \"x\"), \"why\");",
+        "requires resource_premise(no_plugin, #false, #false);",
+        "ensures normal resource_premise(no_plugin, #false);",
+        "requires resource_premise(no_plugin, #false);\n    requires resource_premise(no_plugin, #false);",
+        "requires bounds_review_pending(resource_premise(no_plugin, #false), \"why\");",
     ] {
         assert!(
             load(&format!(

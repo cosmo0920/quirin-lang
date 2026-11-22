@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#[path = "../../../tests/support/legacy_prose_premise.rs"]
+mod legacy_prose_premise;
 #[path = "../../../tests/support/sp2_premise_checkpoint.rs"]
 mod sp2_premise_checkpoint;
 use qcore_contract::{guarded_decomposition as guarded, hypothesis};
@@ -44,15 +46,24 @@ fn application(
     let module = metadata["module"].as_str().unwrap().to_string();
     let declaration = metadata["declaration"].as_str().unwrap().to_string();
     let mut source = fs::read_to_string(root().join(&module)).unwrap();
+    // Card SP5-GLOBAL-PROSE-PREMISE-BAN: whether the frozen source states
+    // string premises, read through the test-side legacy reader.
+    let mut lifted = false;
     if name == "plugin" {
         // This application owns its opaque checkpoint. The typed migration
         // preserves its exact source as an independent, hash-checked asset.
-        source = fs::read_to_string(
+        let frozen = fs::read_to_string(
             root()
                 .join("docs/reports/quant-contract-hypotheses/plugin/before")
                 .join(&module),
         )
         .unwrap();
+        assert_eq!(
+            qcore_schemas::sha256_hex(frozen.as_bytes()),
+            metadata["source_sha256"]
+        );
+        source = legacy_prose_premise::lift(&frozen);
+        lifted = true;
     }
     if name == "cjson" {
         // The frozen sidecar checkpoint retains its original source identity.
@@ -63,9 +74,25 @@ fn application(
         let plan: qcore_contract::guarded_metadata_bridge::Plan =
             serde_json::from_slice(&plan_bytes).unwrap();
         // Card SP2-SYMBOLIC-LIBRDKAFKA-PREMISES: the module as it stood
-        // before its premises became formulas, recovered exactly.
-        source = sp2_premise_checkpoint::restored_file(&module, &source, qcore_schemas::sha256_hex);
+        // before its premises became formulas, recovered exactly. Card
+        // SP5-GLOBAL-PROSE-PREMISE-BAN: its string premises load nowhere, so
+        // its bytes are checked against the frozen digests (the plan's and
+        // this sidecar's) and the replay reads the current module, the plan
+        // and graph lifted by the test-side legacy reader.
+        let restored =
+            sp2_premise_checkpoint::restored_file(&module, &source, qcore_schemas::sha256_hex);
         let addition = qcore_contract::guarded_metadata_bridge::render(&plan.metadata).unwrap();
+        assert_eq!(
+            qcore_schemas::sha256_hex(restored.replacen(&addition, "", 1).as_bytes()),
+            metadata["source_sha256"]
+        );
+        let plan_bytes = legacy_prose_premise::lifted_adoption_plan(
+            &plan_bytes,
+            &restored,
+            &source,
+            &addition,
+            qcore_schemas::sha256_hex,
+        );
         let candidate = source.replacen(&addition, "", 1);
         let tip = BTreeMap::from([(module.clone(), source)]);
         let old = BTreeMap::from([(module.clone(), candidate)]);
@@ -81,11 +108,14 @@ fn application(
             .unwrap()
             .remove(&module)
             .unwrap();
+        lifted = true;
     }
-    assert_eq!(
-        qcore_schemas::sha256_hex(source.as_bytes()),
-        metadata["source_sha256"]
-    );
+    if !lifted {
+        assert_eq!(
+            qcore_schemas::sha256_hex(source.as_bytes()),
+            metadata["source_sha256"]
+        );
+    }
     assert_eq!(metadata["source_binding"], "open");
     for reference in metadata["provenance"].as_array().unwrap() {
         assert_eq!(
@@ -95,11 +125,16 @@ fn application(
             reference["sha256"]
         );
     }
+    let mut graph: serde_json::Value =
+        serde_json::from_slice(&fs::read(dir.join(format!("{name}-graph.json"))).unwrap()).unwrap();
+    if lifted {
+        legacy_prose_premise::lift_graph(&mut graph);
+    }
     (
         BTreeMap::from([(module.clone(), source)]),
         module,
         declaration,
-        serde_json::from_slice(&fs::read(dir.join(format!("{name}-graph.json"))).unwrap()).unwrap(),
+        serde_json::from_value(graph).unwrap(),
         serde_json::from_value(metadata["bindings"].clone()).unwrap(),
         fs::read_to_string(dir.join(format!("{name}.qgd"))).unwrap(),
     )

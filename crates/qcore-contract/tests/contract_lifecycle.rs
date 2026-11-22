@@ -126,10 +126,10 @@ fn malformed_versions_targets_placements_and_unrelated_bad_clauses_fail_closed()
 #[test]
 fn bounds_and_declared_model_views_preserve_original_graphs_and_bounds_facts() {
     let bounded = format!(
-        "module contract; extern fn observed(p: ptr<mut,u8>) -> unit contract {{ requires bounds_contract_v1; requires resource_premise(assigned, \"original proposition\"); requires resource_hypothesis(h, \"assigned hypothesis\"); requires resource_premise_decomposition(assigned,h); {SYMBOLS} requires nonnull_member(Node,next); quant null-deref #p; }};"
+        "module contract; extern fn observed(p: ptr<mut,u8>) -> unit contract {{ requires bounds_contract_v1; requires resource_premise(assigned, #concurrent |-> #inert); requires resource_hypothesis(h, \"assigned hypothesis\"); requires resource_premise_decomposition(assigned,h); {SYMBOLS} requires nonnull_member(Node,next); quant null-deref #p; }};"
     );
     let model = format!(
-        "module contract; resource type Owner {{ repr: ptr<mut,u8>; footprint: {{ owners = 1 }}; destructor: observed noexcept; copy: forbidden; move: allowed; }} extern fn observed(p: own<Owner> use one) -> unit contract {{ requires resource_premise(assigned, \"original proposition\"); requires resource_hypothesis(h, \"assigned hypothesis\"); requires resource_premise_decomposition(assigned,h); {SYMBOLS} requires owner_is_live; ensures normal owner_is_discharged; }};"
+        "module contract; resource type Owner {{ repr: ptr<mut,u8>; footprint: {{ owners = 1 }}; destructor: observed noexcept; copy: forbidden; move: allowed; }} extern fn observed(p: own<Owner> use one) -> unit contract {{ requires resource_premise(assigned, #concurrent |-> #inert); requires resource_hypothesis(h, \"assigned hypothesis\"); requires resource_premise_decomposition(assigned,h); {SYMBOLS} requires owner_is_live; ensures normal owner_is_discharged; }};"
     );
     for (source, view) in [(bounded.clone(), View::Bounds), (model, View::Model)] {
         let new = sources(source.clone());

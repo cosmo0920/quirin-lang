@@ -47,6 +47,15 @@ Card SP3-SYMBOLIC-FLUENT-BIT-LIBC-PREMISES appends one block of Fluent Bit
 terms (`vocab`, `FluentBitTerms`, `prim0`, `prim1`, `decisionVectors`); its
 formulas and theorems are in `QCore.PremiseFormula.FluentBit`.
 
+Card SP5-GLOBAL-PROSE-PREMISE-BAN retires the string statement: the clause
+acceptance `accept` (section "Clause statements") refuses a string statement
+(`string_is_not_a_premise`) and accepts exactly the well-formed formulas
+(`formula_premise_iff_wf`, `accepted_is_wf`, `accepted_is_a_formula`,
+`accepted_denotes`); `clauseVectors` is bound to the Rust
+`CLAUSE_DECISION_VECTORS` (`clause_vectors_agree`). Its SP5 block appends the
+two terms of C04.21's reserved entry-snapshot premise to `vocab`, read by
+name through `ext0`.
+
 Card SP4-SYMBOLIC-LIBEVENT-PREMISES appends its terms to `vocab` in an SP4
 block. Each SP4 term but the defined `#singleton` (the singleton set) is read
 by name through `ext0`, `ext1El` and `ext1St`, one model component per term,
@@ -254,7 +263,10 @@ def vocab : List (String × List Srt × Srt) := [
   ("getspecific_ok", [], .sobj),
   ("setspecific_ok", [], .sobj),
   ("aliases", [.obj], .sobj),
-  ("stack_deregister", [.obj], .sfn)
+  ("stack_deregister", [.obj], .sfn),
+  -- Card SP5-GLOBAL-PROSE-PREMISE-BAN (SP5 block).
+  ("condition_reads", [], .sobj),
+  ("entry_stable", [], .sobj)
 ]
 
 def classes : List String :=
@@ -1057,7 +1069,12 @@ def decisionVectors : List (Raw × Bool) := [
   ((.bin .mapsTo (.app0 "live_at_use") (.app0 "inert")), false),
   ((.bin .mem (.app0 "libco_params_key") (.app0 "libco_params_key")), false),
   ((.app1 "no_writes" (.app0 "tracked")), false),
-  ((.bin .mapsTo (.app0 "interleaved") (.bin .eqv (.app1 "singleton" (.app0 "libco_params_key")) .empty)), false)
+  ((.bin .mapsTo (.app0 "interleaved") (.bin .eqv (.app1 "singleton" (.app0 "libco_params_key")) .empty)), false),
+  -- Card SP5-GLOBAL-PROSE-PREMISE-BAN (SP5 block).
+  ((.quant "m" (.app0 "condition_reads") (.bin .mem (.app0 "m") (.app0 "entry_stable"))), true),
+  ((.bin .mapsTo (.app0 "condition_reads") (.app0 "inert")), false),
+  ((.app0 "entry_stable"), false),
+  ((.bin .mem (.app0 "condition_reads") (.app0 "entry_stable")), false)
 ]
 
 -- The merged SP2 and SP3 tables exceed the default recursion depth of the
@@ -1179,5 +1196,83 @@ theorem ex_data_does_not_entail_unstated :
   have := hU true ⟨by simp [M], by simp [M]⟩ () trivial
   have h1 := congrFun this.1.1 true
   simp [M, noRes] at h1
+
+/-! ## Clause statements (card SP5-GLOBAL-PROSE-PREMISE-BAN)
+
+Contract specification C04.18: the string form `resource_premise(NAME,
+"STATEMENT")` is retired. The reader (`premise_clause`) sees a clause's
+statement either as holding a string literal or as a formula's tree; it
+refuses the first by name (`QF001`) and accepts the second exactly when the
+judgment does. So a string statement is not a premise, and every accepted
+premise states a well-formed formula, which denotes a proposition
+(`wf_denotes`). The table `clauseVectors` is bound to the Rust
+`CLAUSE_DECISION_VECTORS` by `crates/qcore-frontend/tests/premise_formula.rs`
+(`the_clause_vectors_are_the_lean_table`). -/
+
+/-- A premise clause's statement as the reader sees it: a string literal (the
+first one it holds), or the tree of a formula. -/
+inductive Stmt where
+  | str (s : String)
+  | formula (t : Raw)
+
+/-- The clause acceptance: the premise a statement states, if any. -/
+def accept : Stmt → Option Raw
+  | .str _ => none
+  | .formula t => if wf t then some t else none
+
+/-- A string statement is not a premise, whatever the string. -/
+theorem string_is_not_a_premise (s : String) : accept (.str s) = none := rfl
+
+theorem accept_formula (t : Raw) :
+    accept (.formula t) = if wf t then some t else none := rfl
+
+/-- A formula statement is a premise exactly when it is well-formed. -/
+theorem formula_premise_iff_wf (t : Raw) :
+    (accept (.formula t)).isSome = wf t := by
+  rw [accept_formula]; cases h : wf t <;> simp
+
+/-- Every accepted premise is a well-formed formula. -/
+theorem accepted_is_wf {st : Stmt} {t : Raw} (h : accept st = some t) :
+    wf t = true := by
+  cases st with
+  | str s => exact absurd h (by simp [accept])
+  | formula u =>
+    rw [accept_formula] at h
+    cases hw : wf u
+    · simp [hw] at h
+    · simp [hw] at h; subst h; exact hw
+
+/-- Every accepted premise denotes a proposition in every model. -/
+theorem accepted_denotes (M : Model) {st : Stmt} {t : Raw} (h : accept st = some t) :
+    ∃ p, eval M [] t = .pr p :=
+  wf_denotes M (accepted_is_wf h)
+
+/-- An accepted premise came from a formula statement, never a string. -/
+theorem accepted_is_a_formula {st : Stmt} {t : Raw} (h : accept st = some t) :
+    st = .formula t := by
+  cases st with
+  | str s => exact absurd h (by simp [accept])
+  | formula u =>
+    rw [accept_formula] at h
+    cases hw : wf u
+    · simp [hw] at h
+    · simp [hw] at h; subst h; rfl
+
+/-- The clause decision vectors (the Rust `CLAUSE_DECISION_VECTORS`). -/
+def clauseVectors : List (Stmt × Bool) := [
+  ((.formula (.quant "f" (.app0 "stated") (.bin .mapsTo (.app0 "f") (.app0 "inert")))), true),
+  ((.formula (.bin .mapsTo (.app0 "op_callbacks") (.bin .eqv (.app1 "takes" (.app1 "held_on" (.app0 "served"))) .empty))), true),
+  ((.formula (.app0 "false")), true),
+  ((.str "a callback takes nothing"), false),
+  ((.str "#stated |-> #inert"), false),
+  ((.str ""), false),
+  ((.str "and more"), false),
+  ((.formula (.bin .mapsTo (.app0 "unknown") (.app0 "inert"))), false),
+  ((.formula (.bin .mapsTo (.app0 "freed") (.app0 "inert"))), false)
+]
+
+set_option maxRecDepth 8192 in
+theorem clause_vectors_agree :
+    clauseVectors.all (fun v => (accept v.1).isSome == v.2) = true := by decide
 
 end QCore.PremiseFormula

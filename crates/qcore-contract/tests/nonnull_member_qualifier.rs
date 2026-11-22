@@ -26,8 +26,7 @@ use qcore_contract::bounds_contract::{
     BoundsClause, BoundsContracts, load_bounds_contract_sources,
 };
 
-const PREMISE: &str =
-    "requires resource_premise(no_plugin, \"no code outside the run stores into S.next\");";
+const PREMISE: &str = "requires resource_premise(no_plugin, #interleaved |-> #no_writes(#args));";
 
 fn text(body: &str) -> String {
     format!(
@@ -242,7 +241,7 @@ fn a_premise_stands_beside_every_kind() {
             .unwrap_or_else(|error| panic!("{kind}: {error}"));
         assert_eq!(
             loaded.functions["f"].premises(),
-            vec![("no_plugin", "no code outside the run stores into S.next")],
+            vec![("no_plugin", "#interleaved |-> #no_writes(#args)")],
             "{kind}"
         );
     }

@@ -93,7 +93,7 @@ fn loader_replays_formal_graph_and_keeps_legacy_obligation_open() {
     let source = r#"module contract;
 extern fn f() -> unit contract {
  requires resource_contract_v1;
- requires resource_premise(source_law, "historical source assumption");
+ requires resource_premise(source_law, #concurrent |-> #inert);
  quant proposition #p(#r: predicate<>) = #r();
  requires resource_premise_decomposition(source_law, p);
  ensures normal resource_return_none();
@@ -105,7 +105,7 @@ extern fn f() -> unit contract {
     assert_eq!(graph.version, 3);
     assert_eq!(
         hypothesis::erasure(graph).unwrap()[0].statement,
-        "historical source assumption"
+        "#concurrent |-> #inert"
     );
     let bytes = serde_json::to_vec(graph).unwrap();
     assert_eq!(hypothesis::decode(&bytes).unwrap(), *graph);

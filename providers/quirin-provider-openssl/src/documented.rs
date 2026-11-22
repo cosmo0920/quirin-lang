@@ -101,7 +101,7 @@ pub enum Premise {
     /// only at calls passing a null pointer constant at this position
     /// (C04.5).
     NullArgument(usize),
-    /// `requires resource_premise(openssl_unstated_callback_slots, "…")`: the
+    /// `requires resource_premise(openssl_unstated_callback_slots, FORMULA)`: the
     /// call may run callbacks no clause of the declaration states (a slot
     /// whose setters are not declared, a slot whose invocation the
     /// vocabulary cannot state beside the declaration's other clauses, a
@@ -113,7 +113,7 @@ pub enum Premise {
     /// not; card **OPENSSL-UNSTATED-CALLBACK-SLOTS** narrowed it again.
     UnstatedSlots,
     /// Card **OPENSSL-FREE-INDIRECT-CALLBACKS**: `requires
-    /// resource_premise(openssl_unstated_callback_slots, "…")` with the
+    /// resource_premise(openssl_unstated_callback_slots, FORMULA)` with the
     /// statement of a free ([`UNSTATED_FREE_STATEMENT`]): the free states
     /// every slot of the objects it frees whose setters are declared, and the
     /// premise names what remains by name, the functions of methods,
@@ -151,7 +151,7 @@ pub enum Premise {
     /// custody the caller holds.
     LoadedTeardown,
     /// Card **OPENSSL-FREE-INDIRECT-CALLBACKS**: `requires
-    /// resource_premise(openssl_builtin_lookup_methods, "…")`, the
+    /// resource_premise(openssl_builtin_lookup_methods, FORMULA)`, the
     /// library-value premise beside the stated lookup method slots: a
     /// function of a lookup method the library defines itself
     /// (`X509_LOOKUP_file`, `X509_LOOKUP_hash_dir`, `X509_LOOKUP_store`),
@@ -159,7 +159,7 @@ pub enum Premise {
     /// custody the caller holds.
     BuiltinLookupMethods,
     /// Card **OPENSSL-UNSTATED-CALLBACK-SLOTS**: `requires
-    /// resource_premise(openssl_ex_data_callbacks, "…")`: every slot the call
+    /// resource_premise(openssl_ex_data_callbacks, FORMULA)`: every slot the call
     /// may run is stated, and the call may still run the ex_data callbacks
     /// `CRYPTO_get_ex_new_index` registers per object class (a global
     /// registry, not a slot of an object), which the declaration reads as
@@ -169,14 +169,14 @@ pub enum Premise {
     /// premise whose statement also mentions ex_data.
     ExDataCallbacks,
     /// Card **OPENSSL-BIO-METHODS-AND-CALLBACKS**: `requires
-    /// resource_premise(openssl_builtin_bio_methods, "…")`, the library-value
+    /// resource_premise(openssl_builtin_bio_methods, FORMULA)`, the library-value
     /// premise beside the stated method slots: a function of a method the
     /// library defines itself (`BIO_s_socket`, `BIO_s_mem`, …), which no
     /// setter is handed and so is in no run's slot set, changes no custody
     /// the caller holds.
     BuiltinBioMethods,
     /// Card **OPENSSL-BIO-METHODS-AND-CALLBACKS**: `requires
-    /// resource_premise(openssl_bio_free_callbacks, "…")`: a drop of a BIO's
+    /// resource_premise(openssl_bio_free_callbacks, FORMULA)`: a drop of a BIO's
     /// last reference runs its callback (`BIO_CB_FREE`), its method's destroy
     /// function and the BIO class's ex_data free callbacks. Card
     /// **OPENSSL-FREE-SESSION-REMOVE-INVOCATION**: the first two are stated

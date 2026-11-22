@@ -48,3 +48,16 @@ The Rust boundary is pinned by `crates/qcore-frontend/tests/premise_formula.rs`
 #print axioms QCore.PremiseFormula.unstated_entails_ex_data
 #print axioms QCore.PremiseFormula.unstated_entails_ex_data_for_ssl
 #print axioms QCore.PremiseFormula.ex_data_does_not_entail_unstated
+
+-- Card SP5-GLOBAL-PROSE-PREMISE-BAN (C04.18): a string statement is not a
+-- premise; every accepted premise is a well-formed formula and denotes. The
+-- clause vectors are bound to the Rust `CLAUSE_DECISION_VECTORS` by
+-- `crates/qcore-frontend/tests/premise_formula.rs`
+-- (`the_clause_vectors_are_the_lean_table`).
+#print axioms QCore.PremiseFormula.string_is_not_a_premise
+#print axioms QCore.PremiseFormula.accept_formula
+#print axioms QCore.PremiseFormula.formula_premise_iff_wf
+#print axioms QCore.PremiseFormula.accepted_is_wf
+#print axioms QCore.PremiseFormula.accepted_is_a_formula
+#print axioms QCore.PremiseFormula.accepted_denotes
+#print axioms QCore.PremiseFormula.clause_vectors_agree

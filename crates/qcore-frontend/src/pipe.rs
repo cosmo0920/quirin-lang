@@ -1020,7 +1020,8 @@ fn result_set_spans(program: &SourceProgram) -> Vec<Span> {
 /// Its `&&` and `|` are the formula's conjunction and set union, read
 /// literally by that reader, not expressions of this tier: a premise is
 /// metadata, nothing lowers it and no verdict reads it. A clause the reader
-/// does not accept as a formula (a string statement, a malformed formula)
+/// does not accept (a malformed formula; a string statement is refused at
+/// parse since card SP5-GLOBAL-PROSE-PREMISE-BAN, so never reaches here)
 /// gets no span, so its operators keep refusing here.
 fn premise_formula_spans(program: &SourceProgram) -> Vec<Span> {
     program
@@ -1036,13 +1037,7 @@ fn premise_formula_spans(program: &SourceProgram) -> Vec<Span> {
                         .map(|token| token.kind)
                         .filter(|kind| *kind != TokenKind::Eof)
                         .collect::<Vec<_>>();
-                    matches!(
-                        crate::premise_formula::premise_clause(&kinds),
-                        Ok(Some((
-                            _,
-                            crate::premise_formula::PremiseStatement::Formula(_)
-                        )))
-                    )
+                    matches!(crate::premise_formula::premise_clause(&kinds), Ok(Some(_)))
                 })
         })
         .map(|clause| clause.value.expression_span)

@@ -78,7 +78,7 @@ module contract;
 //
 // Card VERDICT-CONTRACT-PREMISE-ANNOTATIONS: stated on
 // `flb_input_chunk_get_name` as `requires resource_premise(untracked_handback,
-// "...")` (contract spec C04.18), so every verdict that rests on the
+// FORMULA)` (contract spec C04.18), so every verdict that rests on the
 // declaration names it. Card SP3-SYMBOLIC-FLUENT-BIT-LIBC-PREMISES states it
 // as a formula (C04.18.9): the result's object `#r` is interior to `ic` and is
 // its chunk's name, neither tracked nor claimed; `resource_return_none` is

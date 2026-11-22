@@ -1497,12 +1497,13 @@ impl<'a> SourceParser<'a> {
     /// premise is part of the contract format every module parses through,
     /// a resource view's, a bounds view's and a Quirin model contract's
     /// alike. A clause headed `resource_premise` is exactly `requires
-    /// resource_premise(NAME, "STATEMENT")`: `NAME` a lowercase identifier
-    /// (`[a-z][a-z0-9_]*`), the statement one plain, non-blank string with
-    /// no escape and no control character, each name at most once per
-    /// declaration. Card SP1-SYMBOLIC-OPENSSL-PREMISES: or `requires
-    /// resource_premise(NAME, FORMULA)`, a well-formed formula of
-    /// [`crate::premise_formula`] (C04.18.9). Anything else rejects the
+    /// resource_premise(NAME, FORMULA)` (card SP1-SYMBOLIC-OPENSSL-PREMISES):
+    /// `NAME` a lowercase identifier (`[a-z][a-z0-9_]*`), each name at most
+    /// once per declaration, and a well-formed formula of
+    /// [`crate::premise_formula`] (C04.18.9). Card
+    /// SP5-GLOBAL-PROSE-PREMISE-BAN: the string statement of C04.18's first
+    /// form is retired and refused by name (`QF001`,
+    /// [`crate::premise_formula::PROSE_PREMISE`]). Anything else rejects the
     /// module. Where a vocabulary
     /// admits the clause is its loader's (resource v1 anywhere; bounds v1
     /// only beside a `nonnull_member` clause, of any kind since card
@@ -1517,12 +1518,13 @@ impl<'a> SourceParser<'a> {
         if *kind != SourceContractClauseKind::Requires {
             return Err(self.error(
                 start,
-                "a named premise is a `requires` clause: `requires resource_premise(NAME, \"STATEMENT\");` or `requires resource_premise(NAME, FORMULA);`",
+                "a named premise is a `requires` clause: `requires resource_premise(NAME, FORMULA);`",
             ));
         }
         // Card SP1-SYMBOLIC-OPENSSL-PREMISES (C04.18.9): the statement is a
-        // plain string or a symbolic formula over the closed vocabulary,
-        // read by the one reader the contract loader also uses.
+        // symbolic formula over the closed vocabulary, read by the one
+        // reader the contract loader also uses (a string is refused there,
+        // card SP5-GLOBAL-PROSE-PREMISE-BAN).
         let kinds = self.tokens[start..semicolon]
             .iter()
             .map(|token| token.kind.clone())
@@ -1532,7 +1534,7 @@ impl<'a> SourceParser<'a> {
             Ok(None) => {
                 return Err(self.error(
                     start,
-                    "malformed premise: write `requires resource_premise(NAME, \"STATEMENT\");` or `requires resource_premise(NAME, FORMULA);` with a lowercase identifier",
+                    "malformed premise: write `requires resource_premise(NAME, FORMULA);` with a lowercase identifier and a C04.18.9 formula",
                 ));
             }
             Err(message) => return Err(self.error(start, message)),

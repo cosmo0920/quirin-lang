@@ -1001,7 +1001,7 @@ contract {
 // Card VERDICT-CONTRACT-PREMISE-ANNOTATIONS: stated on the four non-null
 // results below (`rd_kafka_toppar_new0`, `rd_kafka_toppar_desired_add`,
 // `rd_kafka_q_new0`, `ut_create_mock_queue`) as `requires
-// resource_premise(asserted_allocation, "...")` (contract spec C04.18), so
+// resource_premise(asserted_allocation, FORMULA)` (contract spec C04.18), so
 // every verdict that rests on one of them names it.
 
 // ## Lookups (each returns a kept reference, or NULL)
@@ -1335,7 +1335,7 @@ contract {
 // undeclared.
 //
 // Card VERDICT-CONTRACT-DEPENDENCIES: both declarations state the premise as
-// `requires resource_premise(served_queue, "...")` (contract spec C04.18), so
+// `requires resource_premise(served_queue, FORMULA)` (contract spec C04.18), so
 // every verdict that rests on either names it; the review evidence is
 // `docs/reports/refcount-family-blocking-callees/README.md` section 9.
 
