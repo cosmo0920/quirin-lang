@@ -33,7 +33,7 @@ test reads, and readers of frozen texts.
 | `crates/qcore-contract/tests/contract_lifecycle.rs`, `premise_flow.rs`, `contract_views.rs`, `premise_metadata_bridge.rs` | fixtures | 2, 2, 1, 4 | 0 | typed atoms (the bridge's original atom is now a typed clause, its `statement_literal` the definition source) |
 | `crates/qcore-contract/tests/hypothesis.rs` | graph tests | 8 | 5 | typed atoms; the 5 are refusal cases (`QF002`); the v1 wire test keeps a legacy-only v1 graph's exact bytes and shows a v1 graph of opaque declared atoms refused |
 | `crates/qcore-contract/tests/plugin_premise_decomposition.rs` | bounds fixture | 2 | 1 | typed atoms; 1 refusal case |
-| `crates/qcore-contract/tests/cjson_typed_atoms.rs` (new) | the card's tests | — | 8 | refusal cases on every route, and the recorded sentences shown refused |
+| `crates/qcore-contract/tests/cjson_typed_atoms.rs` (new) | the card's tests | — | 4 (+1 `format!`) | refusal cases on every route, and each recorded sentence shown refused |
 | `compiler/tests/premise_formula_operators.rs` | compiler route | 0 | 3 | refusal test (`Q000` naming `QF002`) |
 | `compiler/tests/fixtures/contract_inherit_qcore_provider/librdkafka_memory_hand_written.qv` | frozen token fixture | 7 | 7 | unchanged bytes, read only through the legacy reader (its seven `plugin_*` atoms lifted to their typed clauses) |
 | `compiler/tests/contract_inherit_qcore_provider.rs` | wrote the frozen string atoms back into the current text before parsing | restore | 0 | no restoration: the fixture is lifted instead |
@@ -44,8 +44,11 @@ test reads, and readers of frozen texts.
 | `docs/reports/sp2-symbolic-librdkafka-premises/bindings/cjson-expected-graph.json` | the expected cJSON graph (opaque atoms) | read by 4 consumers | historical | consumers read this card's `bindings/cjson-expected-graph.json` |
 
 Total by the pattern: 35 matches in 11 files at base (plus 4 `format!`-built
-in 1); after, 16 in 4 files tracked before this card plus the new test file,
-every one a refusal case or the frozen fixture. No shipped `.qv` states one
+in 1); after, 20 in 5 files (plus 2 `format!`-built in 2): the frozen
+compiler fixture (7), refusal cases (`hypothesis.rs` 5,
+`premise_formula_operators.rs` 3, `cjson_typed_atoms.rs` 4,
+`plugin_premise_decomposition.rs` 1) and the legacy reader's pattern.
+No shipped `.qv` states one
 (9 at base, 0 after). `crates/qcore-contract/src/caller_frame.rs`'s list of
 admitted metadata heads, `providers/quirin-provider-libc/src/lib.rs`'s
 belt-and-braces scan and `qcore-audit`'s two line filters name the head
