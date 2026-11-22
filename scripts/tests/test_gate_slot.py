@@ -31,10 +31,15 @@ GIB_KIB = 1024 * 1024
 
 
 def meminfo(directory, available_gib, total_gib=60):
+    """A fake meminfo, replaced whole (written aside, then renamed): a job
+    polling it while a test changes the reading never sees it half written,
+    which ``read_meminfo`` refuses (card GATE-SLOT-TEST-FLAKES)."""
     path = Path(directory) / "meminfo"
-    path.write_text(f"MemTotal:       {total_gib * GIB_KIB} kB\n"
-                    f"MemFree:        1 kB\n"
-                    f"MemAvailable:   {available_gib * GIB_KIB} kB\n")
+    aside = path.with_name("meminfo.new")
+    aside.write_text(f"MemTotal:       {total_gib * GIB_KIB} kB\n"
+                     f"MemFree:        1 kB\n"
+                     f"MemAvailable:   {available_gib * GIB_KIB} kB\n")
+    os.replace(aside, path)
     return path
 
 
