@@ -1,0 +1,1586 @@
+{
+ "summary": {
+  "rows": 68,
+  "by_status": {
+   "Unknown": 68
+  },
+  "sole": 2,
+  "by_card_callee": {
+   "rd_kafka_topic_partition_list_new": 43,
+   "rd_kafka_topic_partition_list_copy": 12,
+   "rd_kafka_topic_partition_destroy": 13,
+   "rd_kafka_topic_partition_copy": 1
+  },
+  "co_uncontracted_top": [
+   [
+    "rd_kafka_topic_partition_list_add",
+    22
+   ],
+   [
+    "rd_list_elem",
+    7
+   ],
+   [
+    "__builtin_alloca",
+    7
+   ],
+   [
+    "rd_kafka_topic_partition_new",
+    7
+   ],
+   [
+    "rd_kafka_topic_partition_list_add_copy",
+    5
+   ],
+   [
+    "rd_kafka_buf_destroy_final",
+    5
+   ],
+   [
+    "rd_kafka_topic_partition_get_topic_id",
+    5
+   ],
+   [
+    "rd_kafka_topic_partition_list_has_duplicates",
+    4
+   ],
+   [
+    "rd_list_sort",
+    4
+   ],
+   [
+    "rd_kafka_mock_buf_new_response",
+    4
+   ],
+   [
+    "rd_kafka_mock_connection_send_response0",
+    4
+   ],
+   [
+    "rd_kafka_mock_next_request_error",
+    4
+   ],
+   [
+    "rd_kafka_mock_topic_find_by_id",
+    4
+   ],
+   [
+    "rd_kafka_topic_partition_set_topic_id",
+    4
+   ],
+   [
+    "rd_kafka_topic_partition_set_leader_epoch",
+    4
+   ],
+   [
+    "rd_kafka_assignor_run",
+    4
+   ],
+   [
+    "ut_destroy_metadata",
+    4
+   ],
+   [
+    "verifyValidityAndBalance0",
+    4
+   ],
+   [
+    "rd_kafka_handle_ListOffsets",
+    3
+   ],
+   [
+    "rd_kafka_admin_common_worker_destroy",
+    3
+   ],
+   [
+    "rd_kafka_admin_result_fail",
+    3
+   ],
+   [
+    "rd_kafka_cgrp_rejoin",
+    3
+   ],
+   [
+    "rd_kafka_topic_partition_list_del",
+    3
+   ],
+   [
+    "rd_kafka_topic_partition_list_del_by_idx",
+    3
+   ],
+   [
+    "rd_kafka_metadata_new_topic_mock",
+    3
+   ]
+  ],
+  "co_uncontracted_with_card_alone": [
+   [
+    "rd_kafka_topic_partition_list_add",
+    2
+   ]
+  ]
+ },
+ "rows": [
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka.c",
+   "function": "rd_kafka_query_watermark_offsets",
+   "status": "Unknown",
+   "card_callees": [
+    "rd_kafka_topic_partition_list_new"
+   ],
+   "sole": false,
+   "other_leaves": {
+    "call to uncontracted function `_`": 5,
+    "indirect memory access is outside the resource projection": 9,
+    "call to `_`: the registry holder `_` is not one this body names (callback-registry-undecid": 2,
+    "unresolved resource identity `_`": 2,
+    "call to `_`: callback `_` (from `_`) does not decide its own invocations: its own invocati": 1,
+    "call to `_` with `_`: a drop of a reference this function does not hold, or whose count is": 1,
+    "a holder retaining `_` may outlive this function's frame (retention-undecided)": 3,
+    "unmodeled call, aggregate or indirect access in branch condition": 1
+   },
+   "other_uncontracted": [
+    "rd_kafka_ListOffsetsRequest",
+    "rd_kafka_topic_partition_list_add",
+    "rd_kafka_topic_partition_list_query_leaders",
+    "rd_list_elem"
+   ]
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka.c",
+   "function": "rd_kafka_query_wmark_offsets_resp_cb",
+   "status": "Unknown",
+   "card_callees": [
+    "rd_kafka_topic_partition_list_new"
+   ],
+   "sole": false,
+   "other_leaves": {
+    "call to uncontracted function `_`": 3,
+    "indirect memory access is outside the resource projection": 3,
+    "unresolved resource identity `_`": 9,
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "call to uncontracted function `_` in branch condition": 1
+   },
+   "other_uncontracted": [
+    "rd_kafka_buf_retry",
+    "rd_kafka_handle_ListOffsets",
+    "rd_kafka_metadata_cache_delete_by_name",
+    "rd_kafka_topic_partition_list_find"
+   ]
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka.c",
+   "function": "rd_kafka_share_commit_sync",
+   "status": "Unknown",
+   "card_callees": [
+    "rd_kafka_topic_partition_list_new"
+   ],
+   "sole": false,
+   "other_leaves": {
+    "store through `_` without an out-parameter contract": 1,
+    "call to uncontracted function `_` in branch condition": 1,
+    "unresolved resource identity `_`": 6,
+    "indirect memory access is outside the resource projection": 9,
+    "call to uncontracted function `_`": 6,
+    "call to `_` retains `_` in `_`, whose lifetime this body does not decide against it (reten": 2,
+    "call to `_` with `_`: a drop of a reference this function does not hold, or whose count is": 1,
+    "nullable resource `_` used by a non-null contract": 1
+   },
+   "other_uncontracted": [
+    "rd_kafka_q_pop",
+    "rd_kafka_share_acknowledge_all_if_implicit",
+    "rd_kafka_share_acquire",
+    "rd_kafka_share_build_ack_details",
+    "rd_kafka_share_release",
+    "rd_kafka_topic_partition_list_add_copy",
+    "rd_list_elem"
+   ]
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_AlterConsumerGroupOffsetsResponse_parse",
+   "status": "Unknown",
+   "card_callees": [
+    "rd_kafka_topic_partition_list_copy"
+   ],
+   "sole": false,
+   "other_leaves": {
+    "indirect memory access is outside the resource projection": 4,
+    "unresolved resource identity `_`": 4,
+    "call to uncontracted function `_`": 2,
+    "store through `_` without an out-parameter contract": 1
+   },
+   "other_uncontracted": [
+    "rd_kafka_admin_result_new",
+    "rd_kafka_handle_OffsetCommit"
+   ]
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_DeleteRecords",
+   "status": "Unknown",
+   "card_callees": [
+    "rd_kafka_topic_partition_list_copy"
+   ],
+   "sole": false,
+   "other_leaves": {
+    "call to uncontracted function `_`": 8,
+    "unresolved resource identity `_`": 2,
+    "call to uncontracted function `_` in branch condition": 1,
+    "indirect memory access is outside the resource projection": 3
+   },
+   "other_uncontracted": [
+    "rd_kafka_admin_common_worker_destroy",
+    "rd_kafka_admin_fanout_op_new",
+    "rd_kafka_admin_result_fail",
+    "rd_kafka_topic_partition_list_has_duplicates",
+    "rd_kafka_topic_partition_list_set_err"
+   ]
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_ElectLeaders",
+   "status": "Unknown",
+   "card_callees": [
+    "rd_kafka_topic_partition_list_copy"
+   ],
+   "sole": false,
+   "other_leaves": {
+    "call to uncontracted function `_`": 3,
+    "call to uncontracted function `_` in branch condition": 1,
+    "unresolved resource identity `_`": 5,
+    "indirect memory access is outside the resource projection": 2
+   },
+   "other_uncontracted": [
+    "rd_kafka_admin_common_worker_destroy",
+    "rd_kafka_admin_request_op_new",
+    "rd_kafka_admin_result_fail",
+    "rd_kafka_topic_partition_list_has_duplicates"
+   ]
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_ListOffsets",
+   "status": "Unknown",
+   "card_callees": [
+    "rd_kafka_topic_partition_list_copy"
+   ],
+   "sole": false,
+   "other_leaves": {
+    "call to uncontracted function `_`": 11,
+    "unresolved resource identity `_`": 9,
+    "indirect memory access is outside the resource projection": 5,
+    "call to uncontracted function `_` in branch condition": 1,
+    "call to `_`: the registry holder `_` is not one this body tracks (callback-registry-undeci": 2
+   },
+   "other_uncontracted": [
+    "rd_kafka_admin_common_worker_destroy",
+    "rd_kafka_admin_fanout_op_new",
+    "rd_kafka_admin_request_op_result_cb_set",
+    "rd_kafka_admin_result_enq",
+    "rd_kafka_admin_result_fail",
+    "rd_kafka_admin_result_new",
+    "rd_list_find_duplicate",
+    "rd_list_sort"
+   ]
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_ListOffsetsResultInfo_destroy",
+   "status": "Unknown",
+   "card_callees": [
+    "rd_kafka_topic_partition_destroy"
+   ],
+   "sole": false,
+   "other_leaves": {
+    "unresolved resource identity `_`": 1
+   },
+   "other_uncontracted": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_ListOffsets_response_merge",
+   "status": "Unknown",
+   "card_callees": [
+    "rd_kafka_topic_partition_destroy"
+   ],
+   "sole": false,
+   "other_leaves": {
+    "call to uncontracted function `_`": 2,
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "indirect memory access is outside the resource projection": 1
+   },
+   "other_uncontracted": [
+    "rd_list_elem"
+   ]
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_aux.c",
+   "function": "rd_kafka_topic_partition_result_destroy",
+   "status": "Unknown",
+   "card_callees": [
+    "rd_kafka_topic_partition_destroy"
+   ],
+   "sole": false,
+   "other_leaves": {
+    "call to uncontracted function `_`": 1,
+    "unresolved resource identity `_`": 1
+   },
+   "other_uncontracted": [
+    "rd_kafka_error_destroy"
+   ]
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_calculate_subscribe_revoking_partitions",
+   "status": "Unknown",
+   "card_callees": [
+    "rd_kafka_topic_partition_list_new"
+   ],
+   "sole": false,
+   "other_leaves": {
+    "unresolved resource identity `_`": 6,
+    "indirect memory access is outside the resource projection": 2,
+    "unmodeled increment or decrement expression": 2,
+    "call to uncontracted function `_`": 1
+   },
+   "other_uncontracted": [
+    "rd_kafka_topic_partition_list_add"
+   ]
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_consumer_assignment_with_metadata",
+   "status": "Unknown",
+   "card_callees": [
+    "rd_kafka_topic_partition_list_new"
+   ],
+   "sole": false,
+   "other_leaves": {
+    "indirect memory access is outside the resource projection": 4,
+    "call to uncontracted function `_`": 4,
+    "unresolved resource identity `_`": 6,
+    "loop re-acquisition: an earlier generation that may be live is still held": 2,
+    "call to `_`: the registry holder `_` is not one this body tracks (callback-registry-undeci": 1,
+    "discarded owned result of resource API `_`": 1,
+    "local declaration may shadow a formal resource identity": 1
+   },
+   "other_uncontracted": [
+    "rd_kafka_metadata_cache_find_by_id",
+    "rd_kafka_topic_partition_list_add_with_topic_name_and_id",
+    "rd_kafka_topic_partition_list_find_topic_by_id",
+    "rd_list_deduplicate"
+   ]
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_consumer_next_target_assignment_request_metadata",
+   "status": "Unknown",
+   "card_callees": [
+    "rd_kafka_topic_partition_list_new"
+   ],
+   "sole": false,
+   "other_leaves": {
+    "indirect memory access is outside the resource projection": 2,
+    "call to uncontracted function `_`": 5,
+    "unresolved resource identity `_`": 4,
+    "call to `_`: the registry holder `_` is not one this body tracks (callback-registry-undeci": 1
+   },
+   "other_uncontracted": [
+    "rd_kafka_MetadataRequest",
+    "rd_kafka_cgrp_consumer_assignment_with_metadata",
+    "rd_kafka_cgrp_consumer_handle_next_assignment",
+    "rd_kafka_op_set_replyq"
+   ]
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_get_unsubscribing_topics",
+   "status": "Unknown",
+   "card_callees": [
+    "rd_kafka_topic_partition_list_new"
+   ],
+   "sole": false,
+   "other_leaves": {
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "call to uncontracted function `_`": 1,
+    "unresolved resource identity `_`": 2
+   },
+   "other_uncontracted": [
+    "rd_kafka_topic_partition_list_add"
+   ]
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_handle_SyncGroup_memberstate",
+   "status": "Unknown",
+   "card_callees": [
+    "rd_kafka_topic_partition_list_new"
+   ],
+   "sole": false,
+   "other_leaves": {
+    "unresolved resource identity `_`": 14,
+    "unmodeled call, aggregate or indirect access in branch condition": 6,
+    "indirect memory access is outside the resource projection": 9,
+    "unsupported assignment expression": 2,
+    "call to uncontracted function `_` in branch condition": 1,
+    "call to uncontracted function `_`": 10
+   },
+   "other_uncontracted": [
+    "__builtin_alloca",
+    "rd_kafka_buf_destroy_final",
+    "rd_kafka_buf_read_topic_partitions",
+    "rd_kafka_cgrp_handle_assignment",
+    "rd_kafka_cgrp_rejoin",
+    "rd_kafka_cgrp_revoke_all_rejoin",
+    "rd_kafka_cgrp_set_member_id",
+    "rd_kafka_consumer_group_metadata_new_with_genid",
+    "rd_kafka_set_fatal_error0",
+    "rd_kafka_topic_partition_list_log"
+   ]
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_metadata_update_check",
+   "status": "Unknown",
+   "card_callees": [
+    "rd_kafka_topic_partition_list_new"
+   ],
+   "sole": false,
+   "other_leaves": {
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "unresolved resource identity `_`": 7,
+    "call to uncontracted function `_`": 8,
+    "indirect memory access is outside the resource projection": 1,
+    "unmodeled expression may mutate a formal resource identity": 1
+   },
+   "other_uncontracted": [
+    "rd_kafka_cgrp_assignment_set_lost",
+    "rd_kafka_cgrp_owned_but_not_exist_partitions",
+    "rd_kafka_cgrp_rejoin",
+    "rd_kafka_cgrp_revoke_rejoin",
+    "rd_kafka_cgrp_update_subscribed_topics",
+    "rd_kafka_metadata_topic_filter",
+    "rd_kafka_metadata_topic_match",
+    "rd_kafka_propagate_consumer_topic_errors"
+   ]
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_modify_subscription",
+   "status": "Unknown",
+   "card_callees": [
+    "rd_kafka_topic_partition_list_new"
+   ],
+   "sole": false,
+   "other_leaves": {
+    "call to uncontracted function `_`": 9,
+    "call to uncontracted function `_` in branch condition": 2,
+    "unresolved resource identity `_`": 10,
+    "indirect memory access is outside the resource projection": 1,
+    "unmodeled expression may mutate a formal resource identity": 2
+   },
+   "other_uncontracted": [
+    "rd_kafka_cgrp_calculate_subscribe_revoking_partitions",
+    "rd_kafka_cgrp_get_unsubscribing_topics",
+    "rd_kafka_cgrp_metadata_refresh",
+    "rd_kafka_cgrp_rejoin",
+    "rd_kafka_cgrp_set_join_state",
+    "rd_kafka_cgrp_subscription_set",
+    "rd_kafka_cgrp_update_subscribed_topics",
+    "rd_kafka_metadata_topic_filter",
+    "rd_kafka_metadata_topic_match",
+    "rd_kafka_propagate_consumer_topic_errors",
+    "rd_kafka_rebalance_op_incr"
+   ]
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_owned_but_not_exist_partitions",
+   "status": "Unknown",
+   "card_callees": [
+    "rd_kafka_topic_partition_list_new"
+   ],
+   "sole": false,
+   "other_leaves": {
+    "indirect memory access is outside the resource projection": 1,
+    "unmodeled increment or decrement expression": 1,
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "unresolved resource identity `_`": 2,
+    "call to uncontracted function `_`": 1
+   },
+   "other_uncontracted": [
+    "rd_kafka_topic_partition_list_add_copy"
+   ]
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_cgrp.c",
+   "function": "unittest_list_to_map",
+   "status": "Unknown",
+   "card_callees": [
+    "rd_kafka_topic_partition_destroy",
+    "rd_kafka_topic_partition_list_new"
+   ],
+   "sole": false,
+   "other_leaves": {
+    "call to uncontracted function `_`": 5,
+    "indirect memory access is outside the resource projection": 2,
+    "unmodeled call, aggregate or indirect access in branch condition": 3,
+    "unresolved resource identity `_`": 2
+   },
+   "other_uncontracted": [
+    "rd_kafka_topic_partition_list_add",
+    "rd_kafka_topic_partition_new",
+    "rd_kafka_toppar_list_to_toppar_member_info_map"
+   ]
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_cgrp.c",
+   "function": "unittest_member_metadata_serdes",
+   "status": "Unknown",
+   "card_callees": [
+    "rd_kafka_topic_partition_list_new"
+   ],
+   "sole": false,
+   "other_leaves": {
+    "nested call `_` inside a modeled call is outside the resource projection": 1,
+    "call to uncontracted function `_`": 3,
+    "unmodeled expression may mutate a formal resource identity": 1,
+    "unmodeled call, aggregate or indirect access in branch condition": 6,
+    "unresolved resource identity `_`": 3,
+    "call to `_`: the registry holder `_` is not one this body tracks (callback-registry-undeci": 1,
+    "nullable resource `_` used by a non-null contract": 1
+   },
+   "other_uncontracted": [
+    "rd_kafka_group_MemberMetadata_consumer_read",
+    "rd_kafka_group_member_clear",
+    "rd_kafka_topic_partition_list_add"
+   ]
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_cgrp.c",
+   "function": "unittest_set_intersect",
+   "status": "Unknown",
+   "card_callees": [
+    "rd_kafka_topic_partition_destroy"
+   ],
+   "sole": false,
+   "other_leaves": {
+    "braced initializer, expression, or declaration is not modeled": 2,
+    "indirect memory access is outside the resource projection": 10,
+    "unmodeled expression may mutate a formal resource identity": 5,
+    "call to uncontracted function `_`": 2,
+    "unmodeled call, aggregate or indirect access in branch condition": 5,
+    "unresolved resource identity `_`": 1
+   },
+   "other_uncontracted": [
+    "rd_kafka_member_partitions_intersect",
+    "rd_kafka_topic_partition_new"
+   ]
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_cgrp.c",
+   "function": "unittest_set_subtract",
+   "status": "Unknown",
+   "card_callees": [
+    "rd_kafka_topic_partition_destroy"
+   ],
+   "sole": false,
+   "other_leaves": {
+    "braced initializer, expression, or declaration is not modeled": 2,
+    "indirect memory access is outside the resource projection": 11,
+    "call to uncontracted function `_`": 2,
+    "unmodeled call, aggregate or indirect access in branch condition": 4,
+    "unresolved resource identity `_`": 1
+   },
+   "other_uncontracted": [
+    "rd_kafka_member_partitions_subtract",
+    "rd_kafka_topic_partition_new"
+   ]
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_metadata.c",
+   "function": "rd_kafka_metadata_topic_match",
+   "status": "Unknown",
+   "card_callees": [
+    "rd_kafka_topic_partition_list_copy"
+   ],
+   "sole": false,
+   "other_leaves": {
+    "indirect memory access is outside the resource projection": 11,
+    "braced initializer, expression, or declaration is not modeled": 1,
+    "unresolved resource identity `_`": 5,
+    "unmodeled call, aggregate or indirect access in branch condition": 3,
+    "call to uncontracted function `_`": 1
+   },
+   "other_uncontracted": [
+    "rd_kafka_topic_partition_list_del"
+   ]
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_mock.c",
+   "function": "ut_topic_partitions",
+   "status": "Unknown",
+   "card_callees": [
+    "rd_kafka_topic_partition_list_new"
+   ],
+   "sole": false,
+   "other_leaves": {
+    "call to uncontracted function `_`": 1
+   },
+   "other_uncontracted": [
+    "rd_kafka_topic_partition_list_add"
+   ]
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_mock_cgrp.c",
+   "function": "rd_kafka_mock_cgrp_consumer_member_needs_revocation",
+   "status": "Unknown",
+   "card_callees": [
+    "rd_kafka_topic_partition_list_new"
+   ],
+   "sole": false,
+   "other_leaves": {
+    "call to uncontracted function `_`": 1,
+    "unresolved resource identity `_`": 2
+   },
+   "other_uncontracted": [
+    "rd_kafka_topic_partition_list_intersection_by_id"
+   ]
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_mock_cgrp.c",
+   "function": "rd_kafka_mock_cgrp_consumer_member_next_assignment_can_bump_epoch",
+   "status": "Unknown",
+   "card_callees": [
+    "rd_kafka_topic_partition_list_new"
+   ],
+   "sole": false,
+   "other_leaves": {
+    "indirect memory access is outside the resource projection": 1,
+    "unresolved resource identity `_`": 7,
+    "call to uncontracted function `_`": 3
+   },
+   "other_uncontracted": [
+    "rd_kafka_topic_partition_list_add_list",
+    "rd_kafka_topic_partition_list_intersection_by_id"
+   ]
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_mock_cgrp.c",
+   "function": "rd_kafka_mock_cgrp_consumer_member_target_assignment_assignable",
+   "status": "Unknown",
+   "card_callees": [
+    "rd_kafka_topic_partition_list_new"
+   ],
+   "sole": false,
+   "other_leaves": {
+    "unresolved resource identity `_`": 1,
+    "indirect memory access is outside the resource projection": 1,
+    "unmodeled increment or decrement expression": 1,
+    "call to uncontracted function `_`": 2,
+    "unmodeled call, aggregate or indirect access in branch condition": 1
+   },
+   "other_uncontracted": [
+    "rd_kafka_topic_partition_get_topic_id",
+    "rd_kafka_topic_partition_list_add_copy"
+   ]
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_ConsumerGroupHeartbeat",
+   "status": "Unknown",
+   "card_callees": [
+    "rd_kafka_topic_partition_list_new"
+   ],
+   "sole": false,
+   "other_leaves": {
+    "call to uncontracted function `_`": 17,
+    "indirect memory access is outside the resource projection": 19,
+    "unresolved resource identity `_`": 32,
+    "unmodeled call, aggregate or indirect access in branch condition": 14,
+    "unsupported assignment expression": 10,
+    "unrecognized assignment destination": 1,
+    "unmodeled expression may mutate a formal resource identity": 1,
+    "braced initializer, expression, or declaration is not modeled": 1,
+    "unmodeled increment or decrement expression": 1,
+    "nested call `_` inside a modeled call is outside the resource projection": 1
+   },
+   "other_uncontracted": [
+    "rd_kafka_buf_destroy_final",
+    "rd_kafka_buf_read_topic_partitions_nullable",
+    "rd_kafka_mock_buf_new_response",
+    "rd_kafka_mock_cgrp_consumer_find",
+    "rd_kafka_mock_cgrp_consumer_get",
+    "rd_kafka_mock_cgrp_consumer_member_add",
+    "rd_kafka_mock_cgrp_consumer_member_fenced",
+    "rd_kafka_mock_cgrp_consumer_member_find",
+    "rd_kafka_mock_cgrp_consumer_member_next_assignment",
+    "rd_kafka_mock_cluster_get_coord",
+    "rd_kafka_mock_connection_send_response0",
+    "rd_kafka_mock_handle_ConsumerGroupHeartbeat_write_TopicPartitions",
+    "rd_kafka_mock_next_request_error",
+    "rd_kafka_mock_topic_find_by_id",
+    "rd_kafka_topic_partition_get_topic_id",
+    "rd_kafka_topic_partition_list_add",
+    "rd_kafka_topic_partition_set_topic_id"
+   ]
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_Metadata",
+   "status": "Unknown",
+   "card_callees": [
+    "rd_kafka_topic_partition_list_new"
+   ],
+   "sole": false,
+   "other_leaves": {
+    "call to uncontracted function `_`": 11,
+    "unresolved resource identity `_`": 41,
+    "indirect memory access is outside the resource projection": 16,
+    "unmodeled call, aggregate or indirect access in branch condition": 9,
+    "unrecognized assignment destination": 1,
+    "unsupported assignment expression": 7,
+    "braced initializer, expression, or declaration is not modeled": 4,
+    "C operator `_` requires type/operand analysis": 1
+   },
+   "other_uncontracted": [
+    "__builtin_alloca",
+    "rd_kafka_buf_destroy_final",
+    "rd_kafka_mock_buf_new_response",
+    "rd_kafka_mock_connection_send_response0",
+    "rd_kafka_mock_next_request_error",
+    "rd_kafka_mock_topic_auto_create",
+    "rd_kafka_mock_topic_find",
+    "rd_kafka_mock_topic_find_by_id",
+    "rd_kafka_topic_partition_get_topic_id",
+    "rd_kafka_topic_partition_list_add",
+    "rd_kafka_topic_partition_set_topic_id"
+   ]
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_ShareAcknowledge",
+   "status": "Unknown",
+   "card_callees": [
+    "rd_kafka_topic_partition_list_new"
+   ],
+   "sole": false,
+   "other_leaves": {
+    "call to uncontracted function `_`": 20,
+    "call to `_`: the registry holder `_` is not one this body names (callback-registry-undecid": 5,
+    "unresolved resource identity `_`": 56,
+    "indirect memory access is outside the resource projection": 32,
+    "unmodeled call, aggregate or indirect access in branch condition": 18,
+    "unsupported assignment expression": 14,
+    "unrecognized assignment destination": 4,
+    "braced initializer, expression, or declaration is not modeled": 2,
+    "C operator `_` requires type/operand analysis": 1,
+    "nested call `_` inside a modeled call is outside the resource projection": 3,
+    "unmodeled increment or decrement expression": 1
+   },
+   "other_uncontracted": [
+    "__builtin_alloca",
+    "rd_kafka_buf_destroy_final",
+    "rd_kafka_mock_buf_new_response",
+    "rd_kafka_mock_connection_send_response0",
+    "rd_kafka_mock_next_request_error",
+    "rd_kafka_mock_partition_find",
+    "rd_kafka_mock_sgrp_ack_error_for_partition",
+    "rd_kafka_mock_sgrp_fetch_session_destroy",
+    "rd_kafka_mock_sgrp_release_session_locks",
+    "rd_kafka_mock_sgrp_session_validate",
+    "rd_kafka_mock_sharegroup_get",
+    "rd_kafka_mock_topic_find_by_id",
+    "rd_kafka_topic_partition_get_topic_id",
+    "rd_kafka_topic_partition_list_add",
+    "rd_kafka_topic_partition_list_sort_by_topic_id",
+    "rd_kafka_topic_partition_set_topic_id",
+    "rd_list_elem"
+   ]
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_ShareFetch",
+   "status": "Unknown",
+   "card_callees": [
+    "rd_kafka_topic_partition_list_new"
+   ],
+   "sole": false,
+   "other_leaves": {
+    "call to uncontracted function `_`": 35,
+    "call to `_`: the registry holder `_` is not one this body names (callback-registry-undecid": 5,
+    "unresolved resource identity `_`": 103,
+    "indirect memory access is outside the resource projection": 62,
+    "unmodeled call, aggregate or indirect access in branch condition": 30,
+    "unsupported assignment expression": 23,
+    "unrecognized assignment destination": 7,
+    "braced initializer, expression, or declaration is not modeled": 3,
+    "C operator `_` requires type/operand analysis": 2,
+    "unmodeled increment or decrement expression": 3,
+    "unmodeled call, aggregate or indirect access in for-loop condition": 1,
+    "nested call `_` inside a modeled call is outside the resource projection": 4
+   },
+   "other_uncontracted": [
+    "__builtin_alloca",
+    "rd_kafka_buf_destroy_final",
+    "rd_kafka_mock_buf_new_response",
+    "rd_kafka_mock_connection_send_response0",
+    "rd_kafka_mock_next_request_error",
+    "rd_kafka_mock_partition_find",
+    "rd_kafka_mock_sgrp_ack_error_for_partition",
+    "rd_kafka_mock_sgrp_fetch_session_destroy",
+    "rd_kafka_mock_sgrp_partmeta_find",
+    "rd_kafka_mock_sgrp_partmeta_get",
+    "rd_kafka_mock_sgrp_partmeta_prune_archived",
+    "rd_kafka_mock_sgrp_record_release",
+    "rd_kafka_mock_sgrp_release_session_locks",
+    "rd_kafka_mock_sgrp_session_validate",
+    "rd_kafka_mock_sgrp_write_acquired_records",
+    "rd_kafka_mock_sgrp_write_acquired_records_meta",
+    "rd_kafka_mock_sharegroup_get",
+    "rd_kafka_mock_topic_find_by_id",
+    "rd_kafka_topic_partition_get_topic_id",
+    "rd_kafka_topic_partition_list_add",
+    "rd_kafka_topic_partition_list_del_by_idx",
+    "rd_kafka_topic_partition_list_find_idx_by_id",
+    "rd_kafka_topic_partition_set_topic_id",
+    "rd_list_elem"
+   ]
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_offset.c",
+   "function": "rd_kafka_commit_message",
+   "status": "Unknown",
+   "card_callees": [
+    "rd_kafka_topic_partition_list_new"
+   ],
+   "sole": false,
+   "other_leaves": {
+    "indirect memory access is outside the resource projection": 1,
+    "unresolved resource identity `_`": 2,
+    "call to uncontracted function `_`": 1
+   },
+   "other_uncontracted": [
+    "rd_kafka_commit"
+   ]
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_offset.c",
+   "function": "rd_kafka_offset_broker_commit",
+   "status": "Unknown",
+   "card_callees": [
+    "rd_kafka_topic_partition_list_new"
+   ],
+   "sole": false,
+   "other_leaves": {
+    "call to uncontracted function `_`": 2,
+    "indirect memory access is outside the resource projection": 3,
+    "unresolved resource identity `_`": 2
+   },
+   "other_uncontracted": [
+    "rd_kafka_topic_partition_list_add",
+    "rd_kafka_topic_partition_set_metadata_from_rktp_stored"
+   ]
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_offset.c",
+   "function": "rd_kafka_offset_validate",
+   "status": "Unknown",
+   "card_callees": [
+    "rd_kafka_topic_partition_list_new"
+   ],
+   "sole": false,
+   "other_leaves": {
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "indirect memory access is outside the resource projection": 9,
+    "unresolved resource identity `_`": 13,
+    "call to uncontracted function `_`": 5
+   },
+   "other_uncontracted": [
+    "rd_kafka_topic_partition_list_add",
+    "rd_kafka_topic_partition_set_current_leader_epoch",
+    "rd_kafka_topic_partition_set_leader_epoch",
+    "rd_kafka_toppar_set_fetch_state"
+   ]
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+   "function": "rd_kafka_topic_partition_copy_void",
+   "status": "Unknown",
+   "card_callees": [
+    "rd_kafka_topic_partition_copy"
+   ],
+   "sole": true,
+   "other_leaves": {},
+   "other_uncontracted": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+   "function": "rd_kafka_topic_partition_list_copy",
+   "status": "Unknown",
+   "card_callees": [
+    "rd_kafka_topic_partition_list_new"
+   ],
+   "sole": false,
+   "other_leaves": {
+    "indirect memory access is outside the resource projection": 1
+   },
+   "other_uncontracted": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+   "function": "rd_kafka_topic_partition_list_copy_opaque",
+   "status": "Unknown",
+   "card_callees": [
+    "rd_kafka_topic_partition_list_copy"
+   ],
+   "sole": true,
+   "other_leaves": {},
+   "other_uncontracted": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+   "function": "rd_kafka_topic_partition_list_difference0",
+   "status": "Unknown",
+   "card_callees": [
+    "rd_kafka_topic_partition_list_new"
+   ],
+   "sole": false,
+   "other_leaves": {
+    "braced initializer, expression, or declaration is not modeled": 1,
+    "unresolved resource identity `_`": 2,
+    "indirect memory access is outside the resource projection": 4,
+    "unmodeled increment or decrement expression": 2,
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "call to uncontracted function `_`": 1
+   },
+   "other_uncontracted": [
+    "rd_kafka_topic_partition_list_add_copy"
+   ]
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+   "function": "rd_kafka_topic_partition_list_match",
+   "status": "Unknown",
+   "card_callees": [
+    "rd_kafka_topic_partition_list_new"
+   ],
+   "sole": false,
+   "other_leaves": {
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "call to uncontracted function `_`": 1
+   },
+   "other_uncontracted": [
+    "rd_kafka_topic_partition_list_add_copy"
+   ]
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+   "function": "rd_kafka_topic_partition_list_union0",
+   "status": "Unknown",
+   "card_callees": [
+    "rd_kafka_topic_partition_list_new"
+   ],
+   "sole": false,
+   "other_leaves": {
+    "call to uncontracted function `_`": 3,
+    "unresolved resource identity `_`": 1
+   },
+   "other_uncontracted": [
+    "rd_kafka_topic_partition_list_add_list",
+    "rd_kafka_topic_partition_list_difference0"
+   ]
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+   "function": "rd_kafka_toppar_consumer_lag_req",
+   "status": "Unknown",
+   "card_callees": [
+    "rd_kafka_topic_partition_list_new"
+   ],
+   "sole": false,
+   "other_leaves": {
+    "indirect memory access is outside the resource projection": 5,
+    "unresolved resource identity `_`": 4,
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "call to uncontracted function `_`": 1
+   },
+   "other_uncontracted": [
+    "rd_kafka_topic_partition_list_add"
+   ]
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+   "function": "rd_kafka_toppar_handle_Offset",
+   "status": "Unknown",
+   "card_callees": [
+    "rd_kafka_topic_partition_list_new"
+   ],
+   "sole": false,
+   "other_leaves": {
+    "unresolved resource identity `_`": 12,
+    "indirect memory access is outside the resource projection": 13,
+    "call to uncontracted function `_`": 3,
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "call to `_` with `_`: a drop of a reference this function does not hold, or whose count is": 3,
+    "unmodeled increment or decrement expression": 1,
+    "braced initializer, expression, or declaration is not modeled": 1
+   },
+   "other_uncontracted": [
+    "rd_kafka_handle_ListOffsets",
+    "rd_kafka_toppar_offset_retry"
+   ]
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+   "function": "rd_kafka_toppar_lag_handle_Offset",
+   "status": "Unknown",
+   "card_callees": [
+    "rd_kafka_topic_partition_list_new"
+   ],
+   "sole": false,
+   "other_leaves": {
+    "unresolved resource identity `_`": 9,
+    "call to uncontracted function `_`": 1,
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "indirect memory access is outside the resource projection": 2,
+    "call to `_` with `_`: a drop of a reference this function does not hold, or whose count is": 1
+   },
+   "other_uncontracted": [
+    "rd_kafka_handle_ListOffsets"
+   ]
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+   "function": "rd_kafka_toppar_offset_fetch",
+   "status": "Unknown",
+   "card_callees": [
+    "rd_kafka_topic_partition_list_new"
+   ],
+   "sole": false,
+   "other_leaves": {
+    "indirect memory access is outside the resource projection": 4,
+    "call to uncontracted function `_`": 1,
+    "unresolved resource identity `_`": 2
+   },
+   "other_uncontracted": [
+    "rd_kafka_topic_partition_list_add0"
+   ]
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+   "function": "rd_kafka_toppar_offset_request",
+   "status": "Unknown",
+   "card_callees": [
+    "rd_kafka_topic_partition_list_new"
+   ],
+   "sole": false,
+   "other_leaves": {
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "unresolved resource identity `_`": 6,
+    "call to uncontracted function `_`": 3,
+    "indirect memory access is outside the resource projection": 4
+   },
+   "other_uncontracted": [
+    "rd_kafka_topic_partition_list_add",
+    "rd_kafka_toppar_offset_retry",
+    "rd_kafka_toppar_set_fetch_state"
+   ]
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+   "function": "rd_kafka_ListOffsetsRequest",
+   "status": "Unknown",
+   "card_callees": [
+    "rd_kafka_topic_partition_list_copy"
+   ],
+   "sole": false,
+   "other_leaves": {
+    "call to uncontracted function `_`": 5
+   },
+   "other_uncontracted": [
+    "rd_kafka_ListOffsetRequest_buf_new",
+    "rd_kafka_ListOffsetRequest_parameters_new",
+    "rd_kafka_broker_buf_enq_replyq",
+    "rd_kafka_buf_set_maker",
+    "rd_kafka_topic_partition_list_sort_by_topic"
+   ]
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+   "function": "rd_kafka_buf_read_topic_partitions_nullable",
+   "status": "Unknown",
+   "card_callees": [
+    "rd_kafka_topic_partition_list_new"
+   ],
+   "sole": false,
+   "other_leaves": {
+    "unresolved resource identity `_`": 15,
+    "indirect memory access is outside the resource projection": 13,
+    "unmodeled call, aggregate or indirect access in branch condition": 11,
+    "unrecognized assignment destination": 2,
+    "unsupported assignment expression": 10,
+    "C operator `_` requires type/operand analysis": 1,
+    "call to uncontracted function `_`": 5
+   },
+   "other_uncontracted": [
+    "__builtin_alloca",
+    "rd_kafka_topic_partition_list_add",
+    "rd_kafka_topic_partition_list_add_with_topic_id",
+    "rd_kafka_topic_partition_set_current_leader_epoch",
+    "rd_kafka_topic_partition_set_leader_epoch"
+   ]
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+   "function": "rd_kafka_handle_OffsetFetch",
+   "status": "Unknown",
+   "card_callees": [
+    "rd_kafka_topic_partition_list_new"
+   ],
+   "sole": false,
+   "other_leaves": {
+    "unresolved resource identity `_`": 27,
+    "call to uncontracted function `_`": 7,
+    "indirect memory access is outside the resource projection": 26,
+    "unmodeled call, aggregate or indirect access in branch condition": 15,
+    "unsupported assignment expression": 14,
+    "unrecognized assignment destination": 3,
+    "loop re-acquisition: an earlier generation that may be live is still held": 1,
+    "call to `_` with `_`: a drop of a reference this function does not hold, or whose count is": 1,
+    "braced initializer, expression, or declaration is not modeled": 1,
+    "call to uncontracted function `_` in branch condition": 1
+   },
+   "other_uncontracted": [
+    "__builtin_alloca",
+    "rd_kafka_buf_retry",
+    "rd_kafka_op_throttle_time",
+    "rd_kafka_topic_partition_get_toppar",
+    "rd_kafka_topic_partition_list_add",
+    "rd_kafka_topic_partition_list_find",
+    "rd_kafka_topic_partition_list_set_offsets",
+    "rd_kafka_topic_partition_set_leader_epoch"
+   ]
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+   "function": "rd_kafka_op_handle_OffsetFetch",
+   "status": "Unknown",
+   "card_callees": [
+    "rd_kafka_topic_partition_list_copy"
+   ],
+   "sole": false,
+   "other_leaves": {
+    "unresolved resource identity `_`": 6,
+    "indirect memory access is outside the resource projection": 4
+   },
+   "other_uncontracted": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+   "function": "rd_kafka_parse_ListOffsets",
+   "status": "Unknown",
+   "card_callees": [
+    "rd_kafka_topic_partition_destroy"
+   ],
+   "sole": false,
+   "other_leaves": {
+    "unsupported assignment expression": 14,
+    "unresolved resource identity `_`": 18,
+    "call to uncontracted function `_`": 7,
+    "indirect memory access is outside the resource projection": 14,
+    "unmodeled call, aggregate or indirect access in branch condition": 13,
+    "unrecognized assignment destination": 2,
+    "call to `_`: the registry holder `_` is not one this body tracks (callback-registry-undeci": 1
+   },
+   "other_uncontracted": [
+    "__builtin_alloca",
+    "rd_kafka_ListOffsetsResultInfo_new",
+    "rd_kafka_op_throttle_time",
+    "rd_kafka_topic_partition_list_add",
+    "rd_kafka_topic_partition_new",
+    "rd_kafka_topic_partition_set_leader_epoch"
+   ]
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_share_acknowledgement.c",
+   "function": "rd_kafka_share_ack_batches_destroy",
+   "status": "Unknown",
+   "card_callees": [
+    "rd_kafka_topic_partition_destroy"
+   ],
+   "sole": false,
+   "other_leaves": {
+    "indirect memory access is outside the resource projection": 1,
+    "unresolved resource identity `_`": 2
+   },
+   "other_uncontracted": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_share_acknowledgement.c",
+   "function": "rd_kafka_share_build_ack_details",
+   "status": "Unknown",
+   "card_callees": [
+    "rd_kafka_topic_partition_destroy"
+   ],
+   "sole": false,
+   "other_leaves": {
+    "call to `_`: the registry holder `_` is not one this body names (callback-registry-undecid": 5,
+    "indirect memory access is outside the resource projection": 8,
+    "unmodeled call, aggregate or indirect access in for-loop condition": 2,
+    "unresolved resource identity `_`": 11,
+    "call to uncontracted function `_`": 2,
+    "call to uncontracted function `_` in branch condition": 1,
+    "unmodeled call, aggregate or indirect access in branch condition": 2,
+    "call to `_`: the registry at `_` would take `_`, which this body cannot hand it (callback-": 1,
+    "call to `_`: the registry holder `_` is not one this body tracks (callback-registry-undeci": 1,
+    "call to uncontracted function `_` in for-loop condition": 1,
+    "nullable resource `_` used by a non-null contract": 1
+   },
+   "other_uncontracted": [
+    "rd_kafka_share_ack_batch_entry_new",
+    "rd_list_elem",
+    "rd_list_is_sorted",
+    "rd_map_clear"
+   ]
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_share_acknowledgement.c",
+   "function": "rd_kafka_share_find_ack_entry",
+   "status": "Unknown",
+   "card_callees": [
+    "rd_kafka_topic_partition_destroy"
+   ],
+   "sole": false,
+   "other_leaves": {
+    "call to uncontracted function `_`": 1,
+    "indirect memory access is outside the resource projection": 2,
+    "store through `_` without an out-parameter contract": 1,
+    "unresolved resource identity `_`": 2
+   },
+   "other_uncontracted": [
+    "rd_kafka_topic_partition_new"
+   ]
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_share_acknowledgement.c",
+   "function": "rd_kafka_share_partition_offsets_destroy",
+   "status": "Unknown",
+   "card_callees": [
+    "rd_kafka_topic_partition_destroy"
+   ],
+   "sole": false,
+   "other_leaves": {
+    "unresolved resource identity `_`": 1
+   },
+   "other_uncontracted": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c",
+   "function": "balance",
+   "status": "Unknown",
+   "card_callees": [
+    "rd_kafka_topic_partition_list_copy"
+   ],
+   "sole": false,
+   "other_leaves": {
+    "indirect memory access is outside the resource projection": 18,
+    "braced initializer, expression, or declaration is not modeled": 3,
+    "unresolved resource identity `_`": 7,
+    "unmodeled call, aggregate or indirect access in branch condition": 2,
+    "call to uncontracted function `_`": 8,
+    "unmodeled call, aggregate or indirect access in for-loop condition": 1,
+    "call to uncontracted function `_` in branch condition": 3,
+    "call to uncontracted function `_` in for-loop condition": 1,
+    "for-loop clause with a call or grouping is not classified from its stripped spelling": 1,
+    "call to `_`: the registry holder `_` is not one this body tracks (callback-registry-undeci": 1
+   },
+   "other_uncontracted": [
+    "consumerCanParticipateInReassignment",
+    "getBalanceScore",
+    "maybeAssign",
+    "partitionCanParticipateInReassignment",
+    "performReassignments",
+    "rd_kafka_topic_partition_list_del",
+    "rd_list_elem",
+    "rd_list_remove_elem",
+    "rd_list_sort"
+   ]
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c",
+   "function": "rd_kafka_sticky_assignor_assign_cb",
+   "status": "Unknown",
+   "card_callees": [
+    "rd_kafka_topic_partition_list_copy"
+   ],
+   "sole": false,
+   "other_leaves": {
+    "unresolved resource identity `_`": 7,
+    "call to uncontracted function `_`": 11,
+    "braced initializer, expression, or declaration is not modeled": 6,
+    "indirect memory access is outside the resource projection": 18,
+    "unmodeled call, aggregate or indirect access in for-loop condition": 1,
+    "unmodeled call, aggregate or indirect access in branch condition": 3,
+    "for-loop clause with a call or grouping is not classified from its stripped spelling": 1,
+    "call to `_`: the registry holder `_` is not one this body names (callback-registry-undecid": 2
+   },
+   "other_uncontracted": [
+    "PartitionMovements_destroy",
+    "PartitionMovements_init",
+    "assignToMembers",
+    "balance",
+    "populatePotentialMaps",
+    "prepopulateCurrentAssignments",
+    "rd_kafka_rack_info_destroy",
+    "rd_kafka_rack_info_new",
+    "rd_kafka_topic_partition_list_del_by_idx",
+    "rd_list_sort",
+    "sortPartitions"
+   ]
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c",
+   "function": "sortPartitions",
+   "status": "Unknown",
+   "card_callees": [
+    "rd_kafka_topic_partition_list_new"
+   ],
+   "sole": false,
+   "other_leaves": {
+    "braced initializer, expression, or declaration is not modeled": 1,
+    "indirect memory access is outside the resource projection": 15,
+    "call to uncontracted function `_` in branch condition": 1,
+    "unmodeled call, aggregate or indirect access in for-loop condition": 3,
+    "call to `_`: callback `_` (from `_`) has no contract in force (callback-uncontracted)": 1,
+    "call to `_`: the callback `_` is not a closed set of functions (null pointer constant) (ca": 2,
+    "unresolved resource identity `_`": 9,
+    "unmodeled call, aggregate or indirect access in branch condition": 2,
+    "call to uncontracted function `_`": 12,
+    "unmodeled expression may mutate a formal resource identity": 1,
+    "call to `_`: the registry holder `_` is not one this body names (callback-registry-undecid": 2
+   },
+   "other_uncontracted": [
+    "areSubscriptionsIdentical",
+    "rd_kafka_topic_partition_list_add",
+    "rd_kafka_topic_partition_list_del",
+    "rd_kafka_topic_partition_list_del_by_idx",
+    "rd_kafka_topic_partition_list_upsert",
+    "rd_list_last",
+    "rd_list_remove_elem",
+    "rd_list_sort"
+   ]
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c",
+   "function": "ut_create_topic_partition_lists",
+   "status": "Unknown",
+   "card_callees": [
+    "rd_kafka_topic_partition_list_new"
+   ],
+   "sole": false,
+   "other_leaves": {
+    "call to uncontracted function `_`": 1
+   },
+   "other_uncontracted": [
+    "rd_kafka_topic_partition_list_add"
+   ]
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c",
+   "function": "ut_testLargeAssignmentWithMultipleConsumersLeaving",
+   "status": "Unknown",
+   "card_callees": [
+    "rd_kafka_topic_partition_list_new"
+   ],
+   "sole": false,
+   "other_leaves": {
+    "braced initializer, expression, or declaration is not modeled": 1,
+    "call to uncontracted function `_`": 4,
+    "indirect memory access is outside the resource projection": 8,
+    "call to uncontracted function `_` in branch condition": 2
+   },
+   "other_uncontracted": [
+    "rd_kafka_assignor_run",
+    "rd_kafka_metadata_new_topic_mock",
+    "ut_destroy_metadata",
+    "verifyValidityAndBalance0"
+   ]
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c",
+   "function": "ut_testReassignmentAfterOneConsumerAdded",
+   "status": "Unknown",
+   "card_callees": [
+    "rd_kafka_topic_partition_list_new"
+   ],
+   "sole": false,
+   "other_leaves": {
+    "call to uncontracted function `_`": 6,
+    "indirect memory access is outside the resource projection": 5,
+    "call to uncontracted function `_` in branch condition": 2
+   },
+   "other_uncontracted": [
+    "rd_kafka_assignor_run",
+    "rd_kafka_metadata_new_topic_mockv",
+    "rd_kafka_metadata_new_topic_with_partition_replicas_mockv",
+    "rd_kafka_topic_partition_list_add",
+    "ut_destroy_metadata",
+    "verifyValidityAndBalance0"
+   ]
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c",
+   "function": "ut_testReassignmentAfterOneConsumerLeaves",
+   "status": "Unknown",
+   "card_callees": [
+    "rd_kafka_topic_partition_list_new"
+   ],
+   "sole": false,
+   "other_leaves": {
+    "braced initializer, expression, or declaration is not modeled": 1,
+    "call to uncontracted function `_`": 5,
+    "indirect memory access is outside the resource projection": 7,
+    "call to uncontracted function `_` in branch condition": 2
+   },
+   "other_uncontracted": [
+    "rd_kafka_assignor_run",
+    "rd_kafka_metadata_new_topic_mock",
+    "rd_kafka_topic_partition_list_add",
+    "ut_destroy_metadata",
+    "verifyValidityAndBalance0"
+   ]
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c",
+   "function": "ut_testSameSubscriptions",
+   "status": "Unknown",
+   "card_callees": [
+    "rd_kafka_topic_partition_list_new"
+   ],
+   "sole": false,
+   "other_leaves": {
+    "braced initializer, expression, or declaration is not modeled": 1,
+    "call to uncontracted function `_`": 5,
+    "indirect memory access is outside the resource projection": 7,
+    "call to uncontracted function `_` in branch condition": 2,
+    "unresolved resource identity `_`": 1
+   },
+   "other_uncontracted": [
+    "rd_kafka_assignor_run",
+    "rd_kafka_metadata_new_topic_mock",
+    "rd_kafka_topic_partition_list_add",
+    "ut_destroy_metadata",
+    "verifyValidityAndBalance0"
+   ]
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_subscription.c",
+   "function": "rd_kafka_assignment",
+   "status": "Unknown",
+   "card_callees": [
+    "rd_kafka_topic_partition_list_new"
+   ],
+   "sole": false,
+   "other_leaves": {
+    "unresolved resource identity `_`": 4,
+    "indirect memory access is outside the resource projection": 3
+   },
+   "other_uncontracted": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_subscription.c",
+   "function": "rd_kafka_share_subscribe",
+   "status": "Unknown",
+   "card_callees": [
+    "rd_kafka_topic_partition_list_copy"
+   ],
+   "sole": false,
+   "other_leaves": {
+    "call to uncontracted function `_` in branch condition": 4,
+    "call to uncontracted function `_`": 4,
+    "unresolved resource identity `_`": 5,
+    "indirect memory access is outside the resource projection": 2
+   },
+   "other_uncontracted": [
+    "rd_kafka_error_code",
+    "rd_kafka_error_destroy",
+    "rd_kafka_share_acquire",
+    "rd_kafka_share_consumer_closed_err",
+    "rd_kafka_share_release",
+    "rd_kafka_share_unsubscribe",
+    "rd_kafka_topic_partition_list_has_duplicates",
+    "rd_kafka_topic_partition_list_sum"
+   ]
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_subscription.c",
+   "function": "rd_kafka_subscribe",
+   "status": "Unknown",
+   "card_callees": [
+    "rd_kafka_topic_partition_list_copy"
+   ],
+   "sole": false,
+   "other_leaves": {
+    "unresolved resource identity `_`": 2,
+    "call to uncontracted function `_` in branch condition": 2,
+    "indirect memory access is outside the resource projection": 2
+   },
+   "other_uncontracted": [
+    "rd_kafka_topic_partition_list_has_duplicates",
+    "rd_kafka_topic_partition_list_sum"
+   ]
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdkafka_subscription.c",
+   "function": "rd_kafka_subscription",
+   "status": "Unknown",
+   "card_callees": [
+    "rd_kafka_topic_partition_list_new"
+   ],
+   "sole": false,
+   "other_leaves": {
+    "unresolved resource identity `_`": 4,
+    "indirect memory access is outside the resource projection": 3
+   },
+   "other_uncontracted": []
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdunittest_acknowledge.c",
+   "function": "ut_ack_get_type",
+   "status": "Unknown",
+   "card_callees": [
+    "rd_kafka_topic_partition_destroy"
+   ],
+   "sole": false,
+   "other_leaves": {
+    "call to uncontracted function `_`": 1,
+    "indirect memory access is outside the resource projection": 1,
+    "unmodeled call, aggregate or indirect access in for-loop condition": 1,
+    "unresolved resource identity `_`": 3
+   },
+   "other_uncontracted": [
+    "rd_kafka_topic_partition_new"
+   ]
+  },
+  {
+   "unit": "lib/librdkafka-2.15.0/src/rdunittest_acknowledge.c",
+   "function": "ut_ack_set_gap",
+   "status": "Unknown",
+   "card_callees": [
+    "rd_kafka_topic_partition_destroy"
+   ],
+   "sole": false,
+   "other_leaves": {
+    "call to uncontracted function `_`": 1,
+    "indirect memory access is outside the resource projection": 1,
+    "unmodeled call, aggregate or indirect access in for-loop condition": 1,
+    "unresolved resource identity `_`": 3
+   },
+   "other_uncontracted": [
+    "rd_kafka_topic_partition_new"
+   ]
+  }
+ ]
+}
