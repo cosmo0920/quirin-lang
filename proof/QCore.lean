@@ -252,6 +252,7 @@ import QCore.LiteralDecayReadings
 import QCore.LiteralTailActual
 import QCore.LocalCondition
 import QCore.LocalSourceBindings
+import QCore.LocalTypedAtoms
 import QCore.LoggerEffects
 import QCore.LogicalAndOperand
 import QCore.LookupRestrictedReuse

@@ -250,37 +250,15 @@ fn converted_wrappers_elaborate_to_the_hand_written_contracts() {
             .collect::<Vec<_>>()
             .join("\n");
         assert_eq!(omitted, if krate == LIBRDKAFKA { 8 } else { 0 }, "{module}");
-        let legacy_text = if krate == LIBRDKAFKA {
-            // Restore only the seven independently archived opaque atoms for
-            // this frozen token comparison. Current typed loading is checked
-            // separately below; the checkpoint never supplies live truth.
-            let checkpoint = include_str!(
-                "../../docs/reports/quant-contract-hypotheses/plugin/before/providers/qcore-provider-librdkafka/contracts/librdkafka/memory.qv"
-            );
-            let mut restored = 0;
-            let text = legacy_text
-                .lines()
-                .map(|line| {
-                    if let Some(formal) = line.trim().strip_prefix("quant proposition #plugin_") {
-                        let id = format!("plugin_{}", formal.split('(').next().unwrap());
-                        let prefix = format!("requires resource_hypothesis({id},");
-                        let old = checkpoint
-                            .lines()
-                            .find(|l| l.trim().starts_with(&prefix))
-                            .expect("typed atom has no independent historical counterpart");
-                        restored += 1;
-                        old
-                    } else {
-                        line
-                    }
-                })
-                .collect::<Vec<_>>()
-                .join("\n");
-            assert_eq!(restored, 7);
-            text
-        } else {
-            legacy_text
-        };
+        // Card SP6-SYMBOLIC-HYPOTHESIS-ATOMS: the frozen fixture's seven
+        // string plugin atoms are retired (QF002) and read only through the
+        // test-side legacy reader (`fixture`), which writes each as the typed
+        // atom card QUANT-CONTRACT-HYPOTHESES gave it; the current text is
+        // compared as it stands, nothing written back into it.
+        if krate == LIBRDKAFKA {
+            assert_eq!(before.matches("quant proposition #plugin_").count(), 7);
+            assert!(!before.contains("resource_hypothesis("));
+        }
         // Card SP2-SYMBOLIC-LIBRDKAFKA-PREMISES: the frozen token fixture
         // predates the premises' formulas. Card SP5-GLOBAL-PROSE-PREMISE-BAN:
         // the fixture is read through the legacy reader (`fixture`), so its

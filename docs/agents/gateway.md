@@ -7745,6 +7745,30 @@ an undeclared OpenSSL producer). `QCore.NullableReferenceDrop` (12 audited,
     (`string_is_not_a_premise`, `formula_premise_iff_wf`, `accepted_is_wf`,
     `accepted_is_a_formula`, `accepted_denotes`, `clause_vectors_agree`);
     [report](../reports/sp5-global-prose-premise-ban/README.md).
+    **Amended by card SP6-SYMBOLIC-HYPOTHESIS-ATOMS** (contract
+    specification C04.18.1, C04.18.7, C04.18.9's SP6 block; USER DECISION
+    2026-11-20; user 2026-11-22: "We need to convert to be symbolized atoms
+    of hypothesis."): the string hypothesis atom `resource_hypothesis(NAME,
+    "STATEMENT")` is retired too. A clause headed `resource_hypothesis`,
+    under any introducer, rejects the whole module with `QF002` at parse
+    (`qcore_frontend::premise_formula::hypothesis_clause`), so on every
+    route, and the hypothesis graph refuses a declared atom with an opaque
+    statement (source and wire); only a generated `legacy_atom_*`, the
+    erasure of a named premise, keeps one. An atom is a typed `quant
+    proposition`. The nine `detach_*` atoms of `cJSON_DetachItemViaPointer`
+    are typed renderings of their parts of the `detach_list_representation`
+    formula over registered terms (`check_rendering`; the SP6 term `#runs`
+    is `|->`'s own semantics), and its nine guarded prerequisite symbols
+    repeat their formulas; the binding manifest, the expected graph and the
+    guarded adoption plan were migrated with them. Hypothesis atoms are
+    still read by no verdict. The legacy reader lifts each recorded string
+    atom to its typed clause, under the same confinement. **Do not** admit
+    a string or opaque declared atom, or render a parameter in a sort other
+    than its registered term's. `QCore.CjsonTypedAtoms`
+    (`typed_atoms_are_the_definitions`,
+    `detach_formula_is_the_nine_typed_atoms`, `string_is_not_a_hypothesis`,
+    `hypothesis_vectors_agree`);
+    [report](../reports/sp6-symbolic-hypothesis-atoms/README.md).
 
 <a id="constraint-13i"></a>
 

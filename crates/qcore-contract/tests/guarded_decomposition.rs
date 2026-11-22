@@ -93,6 +93,9 @@ fn application(
             &addition,
             qcore_schemas::sha256_hex,
         );
+        // Card SP6-SYMBOLIC-HYPOTHESIS-ATOMS: the current module's
+        // prerequisite symbols repeat their atoms' formulas.
+        let addition = legacy_prose_premise::lift(&addition);
         let candidate = source.replacen(&addition, "", 1);
         let tip = BTreeMap::from([(module.clone(), source)]);
         let old = BTreeMap::from([(module.clone(), candidate)]);

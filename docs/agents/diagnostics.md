@@ -266,3 +266,14 @@ a string literal (the retired string form, contract specification C04.18). It
 rejects the whole module on every route, because every route reads a premise
 through `premise_clause`; on the compiler route it reaches the user as the
 `Q000` parse refusal whose message starts with `QF001`.
+
+Card `SP6-SYMBOLIC-HYPOTHESIS-ATOMS` adds `QF002`: a clause headed
+`resource_hypothesis` (the retired string hypothesis atom
+`resource_hypothesis(NAME, "STATEMENT")`, contract specification C04.18.7),
+under any introducer and whatever its statement. The structural parser
+(`frontend.rs`, through `qcore_frontend::premise_formula::hypothesis_clause`)
+rejects the whole module, so every route refuses it; the hypothesis graph's
+own reader (`qcore_contract::hypothesis`) and its wire validator refuse a
+declared atom with an opaque statement with the same code. An atom is a typed
+`quant proposition #NAME(PARAMETERS) = FORMULA;` (G01p); only a generated
+`legacy_atom_*` (the erasure of a named premise) keeps an opaque statement.

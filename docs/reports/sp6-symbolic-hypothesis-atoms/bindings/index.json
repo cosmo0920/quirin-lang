@@ -1,0 +1,14 @@
+{
+  "occurrences": [
+    {
+      "declaration": "cJSON_DetachItemViaPointer",
+      "file": "providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv",
+      "graph_sha256": "4393a3d04a079414c5f9cb261db23eb5bc4036af46920c0a14b9684dd8778403",
+      "manifest_sha256": "27c0736584d81d659e44dd29eae891ccdc37cfeaf019a57a620fadaa73d910a1",
+      "premise": "detach_list_representation",
+      "previous_manifest_sha256": "ef40a0780d962e506a45092e704ac701a08f33810555d574b12a47c6426fc771",
+      "source_binding": "open"
+    }
+  ],
+  "source_binding": "open"
+}

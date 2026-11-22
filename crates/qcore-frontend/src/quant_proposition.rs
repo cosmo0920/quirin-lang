@@ -497,3 +497,88 @@ pub fn validate(definition: &Definition) -> Result<(), String> {
     }
     check(&definition.formula, &mut scope, 0, &mut 0)
 }
+
+fn lean_quoted(s: &str) -> String {
+    format!("\"{s}\"")
+}
+
+fn lean_term(term: &Term) -> String {
+    let list = |arguments: &[Term]| {
+        arguments
+            .iter()
+            .map(lean_term)
+            .collect::<Vec<_>>()
+            .join(", ")
+    };
+    match term {
+        Term::Variable { name } => format!("(.var {})", lean_quoted(name)),
+        Term::Integer { decimal } => format!("(.integer {decimal})"),
+        Term::Apply {
+            function,
+            arguments,
+        } => format!("(.apply {} [{}])", lean_quoted(function), list(arguments)),
+        Term::Add { left, right } => format!("(.add {} {})", lean_term(left), lean_term(right)),
+        Term::Sub { left, right } => format!("(.sub {} {})", lean_term(left), lean_term(right)),
+        Term::Mul { left, right } => format!("(.mul {} {})", lean_term(left), lean_term(right)),
+        Term::Neg { term } => format!("(.neg {})", lean_term(term)),
+    }
+}
+
+/// Card SP6-SYMBOLIC-HYPOTHESIS-ATOMS: a formula's `QCore.QuantProposition.Expr`
+/// rendering, the form the Lean modules state typed atoms in
+/// (`QCore.CjsonTypedAtoms`, `QCore.LocalTypedAtoms`); tests bind each atom
+/// to its Lean definition by this text.
+#[must_use]
+pub fn lean(formula: &F) -> String {
+    match formula {
+        F::Predicate { name, arguments } => format!(
+            "(.predicate {} [{}])",
+            lean_quoted(name),
+            arguments
+                .iter()
+                .map(lean_term)
+                .collect::<Vec<_>>()
+                .join(", ")
+        ),
+        F::Equal { left, right } => format!("(.equal {} {})", lean_term(left), lean_term(right)),
+        F::Compare {
+            operator,
+            left,
+            right,
+        } => format!(
+            "(.compare {} {} {})",
+            match operator {
+                Comparison::Less => ".less",
+                Comparison::LessEqual => ".lessEqual",
+                Comparison::Greater => ".greater",
+                Comparison::GreaterEqual => ".greaterEqual",
+            },
+            lean_term(left),
+            lean_term(right)
+        ),
+        F::Not { body } => format!("(.not {})", lean(body)),
+        F::And { left, right } => format!("(.and {} {})", lean(left), lean(right)),
+        F::Or { left, right } => format!("(.or {} {})", lean(left), lean(right)),
+        F::Implies { left, right } => format!("(.implies {} {})", lean(left), lean(right)),
+        F::Forall {
+            variable,
+            sort,
+            body,
+        } => format!(
+            "(.forall_ {} {} {})",
+            lean_quoted(variable),
+            lean_quoted(sort),
+            lean(body)
+        ),
+        F::Exists {
+            variable,
+            sort,
+            body,
+        } => format!(
+            "(.exists_ {} {} {})",
+            lean_quoted(variable),
+            lean_quoted(sort),
+            lean(body)
+        ),
+    }
+}

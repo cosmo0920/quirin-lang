@@ -19,7 +19,7 @@ use std::collections::BTreeMap;
 const SOURCE: &str =
     include_str!("../../../providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv");
 const MANIFEST: &[u8] = include_bytes!(
-    "../../../docs/reports/sp2-symbolic-librdkafka-premises/bindings/ef40a0780d962e506a45092e704ac701a08f33810555d574b12a47c6426fc771.json"
+    "../../../docs/reports/sp6-symbolic-hypothesis-atoms/bindings/27c0736584d81d659e44dd29eae891ccdc37cfeaf019a57a620fadaa73d910a1.json"
 );
 const MODEL: &[u8] = include_bytes!("../../../proof/QCore/CjsonRepresentationPremises.lean");
 const AUDIT: &[u8] = include_bytes!("../../../proof/AuditPremiseRefinement.lean");
@@ -34,7 +34,7 @@ fn inputs() -> Inputs {
     let sources = BTreeMap::from([("cjson.qv".into(), SOURCE.into())]);
     let graphs = hypothesis::replay(&sources).unwrap();
     let frozen = hypothesis::decode(include_bytes!(
-        "../../../docs/reports/sp2-symbolic-librdkafka-premises/bindings/cjson-expected-graph.json"
+        "../../../docs/reports/sp6-symbolic-hypothesis-atoms/bindings/cjson-expected-graph.json"
     ))
     .unwrap();
     assert_eq!(graphs["cJSON_DetachItemViaPointer"], frozen);

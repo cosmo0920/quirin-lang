@@ -127,10 +127,16 @@ fn artifacts_and_models(
         // Card SP2-SYMBOLIC-LIBRDKAFKA-PREMISES refreshed every librdkafka
         // binding (the cJSON detach one included) when its premises became
         // formulas: the graph digest is each manifest's only change.
-        let relative = format!(
-            "docs/reports/sp2-symbolic-librdkafka-premises/bindings/{}.json",
-            r.manifest_sha256
-        );
+        // Card SP6-SYMBOLIC-HYPOTHESIS-ATOMS refreshed the cJSON detach one
+        // again when its nine atoms became typed (`quant_binding_migration`).
+        let relative = [
+            "docs/reports/sp6-symbolic-hypothesis-atoms/bindings",
+            "docs/reports/sp2-symbolic-librdkafka-premises/bindings",
+        ]
+        .iter()
+        .map(|directory| format!("{directory}/{}.json", r.manifest_sha256))
+        .find(|path| root().join(path).exists())
+        .unwrap();
         let bytes = fs::read(root().join(relative)).unwrap();
         assert_eq!(qcore_schemas::sha256_hex(&bytes), r.manifest_sha256);
         let m: BindingManifest = serde_json::from_slice(&bytes).unwrap();
@@ -381,6 +387,9 @@ fn historical_symbolic_checkpoint(path: &str, current: &str) -> String {
     let plan: bridge::Plan = serde_json::from_slice(&lifted).unwrap();
     let recovered = current.replacen(&addition, "", 1);
     let current = live.as_str();
+    // Card SP6-SYMBOLIC-HYPOTHESIS-ATOMS: on the live module the nine
+    // prerequisite symbols repeat their atoms' formulas (the lifted plan's).
+    let addition = bridge::render(&plan.metadata).unwrap();
     // Candidate recovery is untrusted until the complete held-source bridge
     // compares both source hashes, canonical additions and interpreted output.
     let candidate = BTreeMap::from([(path.into(), current.replacen(&addition, "", 1))]);

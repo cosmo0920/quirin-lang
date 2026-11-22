@@ -49,7 +49,7 @@ fn main() -> Result<(), String> {
     let build = binding::native_build_configuration(&out)?;
     let context = binding::native_context(&unit, &build)?;
     let graph: Graph = serde_json::from_str(include_str!(
-        "../../../docs/reports/sp2-symbolic-librdkafka-premises/bindings/cjson-expected-graph.json"
+        "../../../docs/reports/sp6-symbolic-hypothesis-atoms/bindings/cjson-expected-graph.json"
     ))
     .map_err(|e| e.to_string())?;
     let checked_source = binding::check_source(

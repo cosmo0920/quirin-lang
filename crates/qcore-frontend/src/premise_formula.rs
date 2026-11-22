@@ -1829,7 +1829,12 @@ pub fn hypothesis_clause(tokens: &[TokenKind]) -> Result<(), String> {
         return Ok(());
     }
     let name = match tokens {
-        [_, TokenKind::Symbol(Symbol::LeftParen), TokenKind::Word(name), ..] => name.as_str(),
+        [
+            _,
+            TokenKind::Symbol(Symbol::LeftParen),
+            TokenKind::Word(name),
+            ..,
+        ] => name.as_str(),
         _ => "NAME",
     };
     Err(prose_hypothesis(name))
@@ -2083,3 +2088,146 @@ pub const DECISION_VECTORS: &[(&str, bool)] = &[
     // A set of cells is not an element.
     ("#condition_reads in #entry_stable", false),
 ];
+
+// ---- Card SP6-SYMBOLIC-HYPOTHESIS-ATOMS: the typed rendering (C04.18.9's
+// SP6 block). A typed hypothesis atom (C04.18.7, G01p) whose parameters are
+// registered terms states, in first-order form, what a premise formula over
+// those terms states. ----
+
+/// The G01p value sorts of the typed rendering: C04.18.9's element sorts,
+/// spelled as they are there, and `run` (the SP6 block).
+pub const RENDERED_VALUE_SORTS: &[(&str, &str)] = &[
+    ("obj", "an object (C04.18.9 `obj`)"),
+    ("cls", "an object class (C04.18.9 `cls`)"),
+    (
+        "fn",
+        "a callback: a function at a position the library calls it from (C04.18.9 `fn`)",
+    ),
+    ("meth", "a BIO method table (C04.18.9 `meth`)"),
+    ("res", "a resource the caller holds (C04.18.9 `res`)"),
+    (
+        "run",
+        "one run of a callback: what an `eff` term is a property of (card SP6)",
+    ),
+];
+
+/// A term of the typed rendering that no premise formula names: the SP6
+/// block (C04.18.9), a G01p predicate over `predicate`'s value sorts.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct RenderedTerm {
+    pub name: &'static str,
+    pub predicate: &'static [&'static str],
+    pub meaning: &'static str,
+}
+
+/// The SP6 block. `#runs` is the maps-to operator's own semantics: `F |-> E`
+/// holds when every run of every member of `F` has `E` (`QCore.PremiseFormula`'s
+/// `Model.runs`), so its rendering is `forall (#f: fn) { (F(#f) => forall
+/// (#r: run) { (#runs(#f,#r) => E(#r)) }) }`.
+pub const RENDERED_TERMS: &[RenderedTerm] = &[RenderedTerm {
+    name: "runs",
+    predicate: &["fn", "run"],
+    meaning: "the runs of a callback: `#runs(#f,#r)` says `#r` is a run of `#f` (the semantics of `|->`)",
+}];
+
+impl Sort {
+    /// The G01p value sort of an element sort.
+    fn rendered_element(self) -> Option<&'static str> {
+        match self {
+            Self::Obj => Some("obj"),
+            Self::Cls => Some("cls"),
+            Self::Fn => Some("fn"),
+            Self::Meth => Some("meth"),
+            Self::Res => Some("res"),
+            _ => None,
+        }
+    }
+}
+
+/// The G01p parameter sort of a registered term, or `None` when the term has
+/// no first-order rendering (it takes a set as an argument). An element-sorted
+/// term is a value (nullary) or a function; a term of sort `set(S)` is a
+/// predicate over its arguments and one `S` (`#t(x…, y)` is `y in #t(x…)`); a
+/// `prop` term is a predicate over its arguments; an `eff` term is a predicate
+/// over its arguments and one `run`.
+#[must_use]
+pub fn rendered_sort(term: &Term) -> Option<qcore_schemas::quant_proposition::Sort> {
+    use qcore_schemas::quant_proposition::Sort as G;
+    let mut arguments = term
+        .arguments
+        .iter()
+        .map(|s| s.rendered_element().map(str::to_owned))
+        .collect::<Option<Vec<_>>>()?;
+    let element = |s: Sort| match s {
+        Sort::SetObj => Some("obj"),
+        Sort::SetFn => Some("fn"),
+        Sort::SetMeth => Some("meth"),
+        Sort::SetRes => Some("res"),
+        _ => None,
+    };
+    Some(match term.result {
+        Sort::Prop => G::Predicate { arguments },
+        Sort::Eff => {
+            arguments.push("run".into());
+            G::Predicate { arguments }
+        }
+        result => {
+            if let Some(member) = element(result) {
+                arguments.push(member.into());
+                G::Predicate { arguments }
+            } else {
+                let result = result.rendered_element()?.to_owned();
+                if arguments.is_empty() {
+                    G::Value { name: result }
+                } else {
+                    G::Function { arguments, result }
+                }
+            }
+        }
+    })
+}
+
+/// Card SP6-SYMBOLIC-HYPOTHESIS-ATOMS: whether a typed atom is a typed
+/// rendering over registered terms: every parameter is a registered term
+/// (C04.18.9's vocabulary) with its rendered sort, or an SP6 term with its
+/// sort, and every quantifier ranges over a rendered value sort. The atom's
+/// meaning is then the terms' meanings, nothing more.
+pub fn check_rendering(
+    definition: &qcore_schemas::quant_proposition::Definition,
+) -> Result<(), String> {
+    use qcore_schemas::quant_proposition::{Formula as F, Sort as G};
+    for parameter in &definition.parameters {
+        let expected = if let Some(t) = term(&parameter.name) {
+            rendered_sort(t)
+        } else if let Some(t) = RENDERED_TERMS.iter().find(|t| t.name == parameter.name) {
+            Some(G::Predicate {
+                arguments: t.predicate.iter().map(|s| (*s).to_owned()).collect(),
+            })
+        } else {
+            None
+        };
+        if expected.as_ref() != Some(&parameter.sort) {
+            return Err(format!(
+                "typed atom `{}`: parameter `#{}` is not a registered term in its rendered sort",
+                definition.id, parameter.name
+            ));
+        }
+    }
+    fn walk(f: &F) -> Result<(), String> {
+        match f {
+            F::Forall { sort, body, .. } | F::Exists { sort, body, .. } => {
+                if !RENDERED_VALUE_SORTS.iter().any(|(s, _)| s == sort) {
+                    return Err(format!("quantifier over `{sort}`, not a rendered sort"));
+                }
+                walk(body)
+            }
+            F::Not { body } => walk(body),
+            F::And { left, right } | F::Or { left, right } | F::Implies { left, right } => {
+                walk(left)?;
+                walk(right)
+            }
+            F::Predicate { .. } | F::Equal { .. } | F::Compare { .. } => Ok(()),
+        }
+    }
+    walk(&definition.formula)
+}

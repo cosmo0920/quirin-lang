@@ -24,7 +24,7 @@ use std::collections::{BTreeMap, BTreeSet};
 
 const MODEL: &str = include_str!("../../../proof/QCore/CjsonRepresentationPremises.lean");
 const EXPECTED_GRAPH: &str = include_str!(
-    "../../../docs/reports/sp2-symbolic-librdkafka-premises/bindings/cjson-expected-graph.json"
+    "../../../docs/reports/sp6-symbolic-hypothesis-atoms/bindings/cjson-expected-graph.json"
 );
 pub const ENVIRONMENT: &str = "cjson-native-single-thread-allocated-ledger.v1";
 pub const PROPERTY: &str = "cjson.native-local-representation.v1";
@@ -608,9 +608,9 @@ const FINITE_FLOW_SOURCE: &str = r#"
 module contract;
 extern fn qcore_cjson_native_domain() -> unit contract {
  requires resource_contract_v1;
- requires resource_hypothesis(finite_detach_post, "All post-field comparisons in the exact native case domain hold");
- requires resource_hypothesis(finite_entry_equations, "Eight finite representation equations hold on the recorded native entry snapshots");
- requires resource_hypothesis(incomplete_fixed_case_domain, "The exact recorded native case-key multiset differs from the fixed required eleven-case multiset");
+ quant proposition #finite_detach_post(#holds: predicate<comparison>, #post_comparison: predicate<comparison>) = forall (#c: comparison) { (#post_comparison(#c) => #holds(#c)) };
+ quant proposition #finite_entry_equations(#detach_chain: predicate<snapshot>, #detach_distinct: predicate<snapshot>, #detach_empty: predicate<snapshot>, #detach_first_prev: predicate<snapshot>, #detach_last_next: predicate<snapshot>, #detach_link_targets: predicate<snapshot>, #detach_parent_outside: predicate<snapshot>, #detach_predecessor: predicate<snapshot>, #recorded: predicate<snapshot>) = forall (#e: snapshot) { (#recorded(#e) => (((((((#detach_chain(#e) && #detach_distinct(#e)) && #detach_empty(#e)) && #detach_first_prev(#e)) && #detach_last_next(#e)) && #detach_link_targets(#e)) && #detach_parent_outside(#e)) && #detach_predecessor(#e))) };
+ quant proposition #incomplete_fixed_case_domain(#recorded_count: function<case_key,integer>, #required_count: function<case_key,integer>) = exists (#k: case_key) { (#recorded_count(#k) != #required_count(#k)) };
  requires resource_premise_all(native_case_claims, finite_detach_post, finite_entry_equations, incomplete_fixed_case_domain);
  requires resource_premise_flow_v1(entry_and_post, (finite_entry_equations |-> finite_detach_post));
  requires resource_premise_flow_v1(entry_or_post, (finite_entry_equations ||-> finite_detach_post));
@@ -1017,4 +1017,43 @@ pub fn execute_native_domain(
     .into_iter()
     .collect();
     check_native_domain(source, &observed, &observed, &guards)
+}
+
+/// Card SP6-SYMBOLIC-HYPOTHESIS-ATOMS: the three finite-domain hypotheses are
+/// typed atoms (C04.18.7), each the Lean definition `QCore.LocalTypedAtoms`
+/// proves equivalent to its `QCore.LocalSourceBindings` proposition.
+#[cfg(test)]
+mod typed_atoms {
+    use qcore_schemas::hypothesis::Proposition;
+    use std::collections::BTreeMap;
+
+    const LEAN: &str = include_str!("../../../proof/QCore/LocalTypedAtoms.lean");
+
+    #[test]
+    fn the_finite_atoms_are_the_lean_definitions() {
+        let sources = BTreeMap::from([(
+            "native-domain.qv".to_owned(),
+            super::FINITE_FLOW_SOURCE.to_owned(),
+        )]);
+        let graphs = qcore_contract::hypothesis::replay(&sources).unwrap();
+        let graph = &graphs["qcore_cjson_native_domain"];
+        for (id, name) in [
+            ("finite_detach_post", "finiteDetachPostAtom"),
+            ("finite_entry_equations", "finiteEntryEquationsAtom"),
+            (
+                "incomplete_fixed_case_domain",
+                "incompleteFixedCaseDomainAtom",
+            ),
+        ] {
+            let Proposition::Formula { definition } = &graph.atoms[id].proposition else {
+                panic!("{id} is not a typed atom");
+            };
+            let line = format!(
+                "def {name} : Expr := {}",
+                qcore_frontend::quant_proposition::lean(&definition.formula)
+            );
+            assert!(LEAN.lines().any(|l| l == line), "{id}: no `{line}`");
+        }
+        assert!(!super::FINITE_FLOW_SOURCE.contains("resource_hypothesis("));
+    }
 }

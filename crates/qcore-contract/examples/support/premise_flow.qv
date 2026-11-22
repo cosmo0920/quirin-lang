@@ -15,9 +15,9 @@
 module contract;
 extern fn observed(p: ptr<mut, u8>) -> i32 contract {
     requires resource_contract_v1;
-    requires resource_hypothesis(a, "assigned bounded proposition A");
-    requires resource_hypothesis(b, "assigned bounded proposition B");
-    requires resource_hypothesis(c, "assigned bounded proposition C");
+    quant proposition #a(#live: predicate<obj>, #parent: obj) = #live(#parent);
+    quant proposition #b(#nodup: predicate<obj>, #parent: obj) = #nodup(#parent);
+    quant proposition #c(#children: predicate<obj,obj>, #parent: obj) = !#children(#parent,#parent);
     requires resource_premise_all(assigned, a, b, c);
     requires resource_premise_flow_v1(and_flow, (a |-> b));
     requires resource_premise_flow_v1(or_flow, (a ||-> c));

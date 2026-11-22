@@ -863,7 +863,13 @@ fn rename_clauses(
         // Graph IDs and named-premise labels are declaration-local symbols,
         // not formal references. Opaque statements also stay literal. Future
         // typed subjects need a separate capture-aware substitution rule.
-        if crate::hypothesis::is_clause(expression)
+        // Card SP6-SYMBOLIC-HYPOTHESIS-ATOMS: a typed hypothesis atom (G01p)
+        // is closed (every name a bound parameter of its own definition), so
+        // it is a graph symbol too and stays literal; renaming would only
+        // rename its own parameters (C04.18.1, graph symbols copied
+        // unchanged).
+        if introducer == "quant proposition"
+            || crate::hypothesis::is_clause(expression)
             || crate::premise_flow::is_clause(expression)
             || crate::contract_lifecycle::is_clause(expression)
             || crate::contract_loader::premise_clause(expression)?.is_some()
