@@ -375,3 +375,55 @@ fn an_unknown_binding_returned_keeps_its_identity_refusal() {
     assert!(!run.refused(NULL_RETURN), "{run:?}");
     assert_eq!(run.leaks(), 0, "{run:?}");
 }
+
+/// The other rows' shapes stay refused with no leak; each names its obstacle
+/// in another leaf, and is recorded as a follow-up, not refined here.
+///
+/// * A later declarator's NULL initialiser (`T *a = 0, *b = 0;`, the
+///   `rd_kafka_mock_handle_ConsumerGroupHeartbeat` declaration) is read as a
+///   store through `*b` (`indirect memory access`), so `b` has no binding on
+///   the path that skips its construction, the join makes it unknown, and the
+///   guarded release is refused. The same body with one declarator per
+///   statement is `Safe`.
+/// * A join with an uncontracted pointer result
+///   (`rd_kafka_mock_cgrp_consumer_member_needs_revocation`,
+///   `rd_kafka_cgrp_handle_SyncGroup_memberstate`): the uncontracted arm
+///   leaves the name unknown.
+/// * A release correlated with a flag recording which value the name holds
+///   (`balance`'s copy-on-write `leftoverUnassignedPartitions`).
+#[test]
+fn the_other_shapes_stay_refused_without_a_leak() {
+    if !clang_available() {
+        return;
+    }
+    let declarator = analyze(
+        "int subject(int n)",
+        "void *a = 0, *r = 0;\nif (n) r = q_alloc();\nif (r) q_free(r);\nreturn 0;",
+    );
+    assert_eq!(declarator.status, AnalysisStatus::Unknown, "{declarator:?}");
+    assert!(
+        declarator.refused("indirect memory access is outside the resource projection"),
+        "{declarator:?}"
+    );
+    assert!(declarator.refused(NULLABLE), "{declarator:?}");
+    assert_eq!(declarator.leaks(), 0, "{declarator:?}");
+    let split = analyze(
+        "int subject(int n)",
+        "void *a = 0; void *r = 0;\nif (n) r = q_alloc();\nif (r) q_free(r);\nreturn 0;",
+    );
+    assert_eq!(split.status, AnalysisStatus::Safe, "{split:?}");
+    let uncontracted = analyze(
+        "int subject(int n)",
+        "void *r;\nif (n) r = u_get(); else r = q_alloc();\nq_free(r);\nreturn 0;",
+    );
+    assert_eq!(uncontracted.status, AnalysisStatus::Unknown, "{uncontracted:?}");
+    assert!(uncontracted.unresolved("r"), "{uncontracted:?}");
+    assert_eq!(uncontracted.leaks(), 0, "{uncontracted:?}");
+    let flag = analyze(
+        "int subject(void *s, int n)",
+        "void *r = s; int made = 0;\nif (n) { made = 1; r = q_alloc(); }\nl_use(r);\n\
+         if (made) q_free(r);\nreturn 0;",
+    );
+    assert_eq!(flag.status, AnalysisStatus::Unknown, "{flag:?}");
+    assert_eq!(flag.leaks(), 0, "{flag:?}");
+}
