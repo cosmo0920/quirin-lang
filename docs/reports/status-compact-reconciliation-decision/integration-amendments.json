@@ -1,8 +1,8 @@
 {
  "schema": "quirin-amendments/2",
  "card": "STATUS-COMPACT-RECONCILIATION-DECISION",
- "base": "6820ddc31",
- "measured_tip": "6820ddc31",
+ "base": "1d69b7b81",
+ "measured_tip": "1d69b7b81",
  "increment_paragraph": "**STATUS-COMPACT-RECONCILIATION-DECISION (2026-11-22).** User decision (\"ok, accept the reconciliation failures\"): the nine frozen reconciliation claims on docs/STATUS.md that STATUS-COMPACT turned from passing to failing (25 of 27 now fail) are accepted as they stand. The frozen records are not rewritten, no gate or CI step runs the claims, and every claimed text is verbatim in the status checkpoint. STATUS-COMPACT-RECONCILIATION-CLAIMS is retired; W45-RECONCILIATION-SUBSTRING-CLAIMS, the sweep's substring defect, stays registered. Ledger only ([report](../../reports/status-compact-reconciliation-decision/README.md)).",
  "status_edits": [],
  "ledger": [
