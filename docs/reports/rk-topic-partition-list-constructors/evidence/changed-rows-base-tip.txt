@@ -1,0 +1,288 @@
+lib/librdkafka-2.15.0/src/rdkafka.c rd_kafka_query_watermark_offsets Unknown -> Unknown
+   - 23983 call to uncontracted function `rd_kafka_topic_partition_list_new`
+   - 23992 unresolved resource identity `partitions`
+   - 24013 unresolved resource identity `partitions`
+lib/librdkafka-2.15.0/src/rdkafka.c rd_kafka_query_wmark_offsets_resp_cb Unknown -> Unknown
+   - 23930 call to uncontracted function `rd_kafka_topic_partition_list_new`
+   - 23939 unresolved resource identity `offsets`
+   - 23949 unresolved resource identity `offsets`
+   - 23966 unresolved resource identity `offsets`
+lib/librdkafka-2.15.0/src/rdkafka.c rd_kafka_share_commit_sync Unknown -> Unknown
+   - 23278 call to uncontracted function `rd_kafka_topic_partition_list_new`
+lib/librdkafka-2.15.0/src/rdkafka_admin.c rd_kafka_AlterConsumerGroupOffsetsResponse_parse Unknown -> Unknown
+   - 24510 call to uncontracted function `rd_kafka_topic_partition_list_copy`
+   - 24522 unresolved resource identity `partitions`
+lib/librdkafka-2.15.0/src/rdkafka_admin.c rd_kafka_DeleteRecords Unknown -> Unknown
+   - 22827 call to uncontracted function `rd_kafka_topic_partition_list_copy`
+   - 22830 unresolved resource identity `copied_offsets`
+lib/librdkafka-2.15.0/src/rdkafka_admin.c rd_kafka_ElectLeaders Unknown -> Unknown
+   - 26594 call to uncontracted function `rd_kafka_topic_partition_list_copy`
+   - 26603 unresolved resource identity `copied_partitions`
+   - 26613 unresolved resource identity `copied_partitions`
+   - 26614 unresolved resource identity `copied_partitions`
+lib/librdkafka-2.15.0/src/rdkafka_admin.c rd_kafka_ListOffsets Unknown -> Unknown
+   - 22865 unresolved resource identity `topic_partitions`
+   - 22866 unresolved resource identity `topic_partitions`
+   - 22867 unresolved resource identity `topic_partitions`
+   - 22875 unresolved resource identity `topic_partitions`
+   - 22883 unresolved resource identity `topic_partitions`
+   - 22886 unresolved resource identity `topic_partitions`
+   - 22900 unresolved resource identity `topic_partitions`
+   - 22901 indirect memory access is outside the resource projection
+   - 22911 call to uncontracted function `rd_kafka_topic_partition_list_copy`
+   - 22917 unresolved resource identity `topic_partitions`
+lib/librdkafka-2.15.0/src/rdkafka_admin.c rd_kafka_ListOffsetsResultInfo_destroy Unknown -> Unknown
+   - 22543 call to uncontracted function `rd_kafka_topic_partition_destroy`
+   + 22543 release of `element->topic_partition`, a member of the formal `element` (member-release-through-formal)
+lib/librdkafka-2.15.0/src/rdkafka_admin.c rd_kafka_ListOffsets_response_merge Unknown -> Unknown
+   - 22572 call to uncontracted function `rd_kafka_topic_partition_destroy`
+   + 22572 indirect memory access is outside the resource projection
+lib/librdkafka-2.15.0/src/rdkafka_assignor.c ut_init_member_internal Unknown -> Unknown
+   - 20744 indirect memory access is outside the resource projection
+   + 20744 store of a custody-carrying value into `rkgm->rkgm_subscription`, a member of the formal `rkgm` (member-store-through-formal)
+lib/librdkafka-2.15.0/src/rdkafka_assignor.c ut_init_member_with_rack Unknown -> Unknown
+   - 20778 indirect memory access is outside the resource projection
+   + 20778 store of a custody-carrying value into `rkgm->rkgm_subscription`, a member of the formal `rkgm` (member-store-through-formal)
+lib/librdkafka-2.15.0/src/rdkafka_aux.c rd_kafka_topic_partition_result_destroy Unknown -> Unknown
+   - 19814 call to uncontracted function `rd_kafka_topic_partition_destroy`
+   + 19814 release of `partition_result->topic_partition`, a member of the formal `partition_result` (member-release-through-formal)
+lib/librdkafka-2.15.0/src/rdkafka_cgrp.c rd_kafka_cgrp_calculate_subscribe_revoking_partitions Unknown -> Unknown
+   - 23519 call to uncontracted function `rd_kafka_topic_partition_list_new`
+   - 23533 unresolved resource identity `revoking`
+   + 23536 nullable resource `revoking` used by a non-null contract
+lib/librdkafka-2.15.0/src/rdkafka_cgrp.c rd_kafka_cgrp_consumer_assignment_with_metadata Unknown -> Unknown
+   - 21908 call to uncontracted function `rd_kafka_topic_partition_list_new`
+   + 21948 unresolved resource identity `assignment_with_metadata`
+   + 21948 nullable resource `assignment_with_metadata` used by a non-null contract
+lib/librdkafka-2.15.0/src/rdkafka_cgrp.c rd_kafka_cgrp_consumer_handle_next_assignment Unknown -> Unknown
+   - 21881 indirect memory access is outside the resource projection
+   + 21881 store of a custody-carrying value into `rkcg->rkcg_target_assignment`, a member of the formal `rkcg` (member-store-through-formal)
+lib/librdkafka-2.15.0/src/rdkafka_cgrp.c rd_kafka_cgrp_consumer_next_target_assignment_request_metadata Unknown -> Unknown
+   - 21991 call to uncontracted function `rd_kafka_topic_partition_list_new`
+   - 21995 unresolved resource identity `new_target_assignment`
+lib/librdkafka-2.15.0/src/rdkafka_cgrp.c rd_kafka_cgrp_consumer_reset Unknown -> Unknown
+   - 20815 indirect memory access is outside the resource projection
+   + 20815 store of a custody-carrying value into `rkcg->rkcg_current_assignment`, a member of the formal `rkcg` (member-store-through-formal)
+lib/librdkafka-2.15.0/src/rdkafka_cgrp.c rd_kafka_cgrp_get_unsubscribing_topics Unknown -> Unknown
+   - 23483 call to uncontracted function `rd_kafka_topic_partition_list_new`
+   - 23503 unresolved resource identity `result`
+lib/librdkafka-2.15.0/src/rdkafka_cgrp.c rd_kafka_cgrp_group_assignment_set Unknown -> Unknown
+   - 23205 indirect memory access is outside the resource projection
+   + 23205 store of a custody-carrying value into `rkcg->rkcg_group_assignment`, a member of the formal `rkcg` (member-store-through-formal)
+lib/librdkafka-2.15.0/src/rdkafka_cgrp.c rd_kafka_cgrp_handle_SyncGroup_memberstate Unknown -> Unknown
+   - 21268 call to uncontracted function `rd_kafka_topic_partition_list_new`
+   + 21306 nullable resource `assignment` used by a non-null contract
+lib/librdkafka-2.15.0/src/rdkafka_cgrp.c rd_kafka_cgrp_metadata_update_check Unknown -> Unknown
+   - 24505 call to uncontracted function `rd_kafka_topic_partition_list_new`
+lib/librdkafka-2.15.0/src/rdkafka_cgrp.c rd_kafka_cgrp_modify_subscription Unknown -> Unknown
+   - 23623 call to uncontracted function `rd_kafka_topic_partition_list_new`
+lib/librdkafka-2.15.0/src/rdkafka_cgrp.c rd_kafka_cgrp_owned_but_not_exist_partitions Unknown -> Unknown
+   - 24488 unresolved resource identity `result`
+   - 24489 call to uncontracted function `rd_kafka_topic_partition_list_new`
+   + 24493 nullable resource `result` used by a non-null contract
+lib/librdkafka-2.15.0/src/rdkafka_cgrp.c rd_kafka_group_MemberMetadata_consumer_read Unknown -> Unknown
+   - 21456 indirect memory access is outside the resource projection
+   + 21456 store of a custody-carrying value into `rkgm->rkgm_subscription`, a member of the formal `rkgm` (member-store-through-formal)
+lib/librdkafka-2.15.0/src/rdkafka_cgrp.c rd_kafka_share_topic_err_propagate Unknown -> Unknown
+   - 23476 indirect memory access is outside the resource projection
+   + 23476 store of a custody-carrying value into `rkcg->rkcg_errored_topics`, a member of the formal `rkcg` (member-store-through-formal)
+lib/librdkafka-2.15.0/src/rdkafka_cgrp.c unittest_list_to_map Unknown -> Unknown
+   - 24863 call to uncontracted function `rd_kafka_topic_partition_list_new`
+   - 24869 call to uncontracted function `rd_kafka_topic_partition_new`
+   - 24871 call to uncontracted function `rd_kafka_topic_partition_destroy`
+   - 24872 call to uncontracted function `rd_kafka_topic_partition_new`
+   - 24874 call to uncontracted function `rd_kafka_topic_partition_destroy`
+   - 24877 unresolved resource identity `list`
+lib/librdkafka-2.15.0/src/rdkafka_cgrp.c unittest_member_metadata_serdes Unknown -> Unknown
+   - 24882 call to uncontracted function `rd_kafka_topic_partition_list_new`
+   - 24917 unresolved resource identity `owned_partitions`
+lib/librdkafka-2.15.0/src/rdkafka_cgrp.c unittest_set_intersect Unknown -> Unknown
+   - 24812 call to uncontracted function `rd_kafka_topic_partition_new`
+   - 24815 call to uncontracted function `rd_kafka_topic_partition_destroy`
+lib/librdkafka-2.15.0/src/rdkafka_cgrp.c unittest_set_subtract Unknown -> Unknown
+   - 24839 call to uncontracted function `rd_kafka_topic_partition_new`
+   - 24841 call to uncontracted function `rd_kafka_topic_partition_destroy`
+lib/librdkafka-2.15.0/src/rdkafka_fetcher.c rd_kafka_share_fetch_reply_handle_partition Unknown -> Unknown
+   - 21087 indirect memory access is outside the resource projection
+   + 21087 store of a custody-carrying value into `batches_out->rktpar`, a member of the formal `batches_out` (member-store-through-formal)
+lib/librdkafka-2.15.0/src/rdkafka_metadata.c rd_kafka_metadata_topic_match Unknown -> Unknown
+   - 20858 call to uncontracted function `rd_kafka_topic_partition_list_copy`
+   - 20873 unresolved resource identity `match`
+   + 20903 nullable resource `unmatched` used by a non-null contract
+lib/librdkafka-2.15.0/src/rdkafka_mock.c ut_topic_partitions Unknown -> Unknown
+   - 23552 call to uncontracted function `rd_kafka_topic_partition_list_new`
+lib/librdkafka-2.15.0/src/rdkafka_mock_cgrp.c rd_kafka_mock_cgrp_consumer_member_needs_revocation Unknown -> Unknown
+   - 21428 call to uncontracted function `rd_kafka_topic_partition_list_new`
+   + 21432 unresolved resource identity `intersection`
+   + 21432 nullable resource `intersection` used by a non-null contract
+   + 21434 nullable resource `intersection` used by a non-null contract
+lib/librdkafka-2.15.0/src/rdkafka_mock_cgrp.c rd_kafka_mock_cgrp_consumer_member_next_assignment_can_bump_epoch Unknown -> Unknown
+   - 21384 call to uncontracted function `rd_kafka_topic_partition_list_new`
+   - 21415 unresolved resource identity `assigned_partitions`
+lib/librdkafka-2.15.0/src/rdkafka_mock_cgrp.c rd_kafka_mock_cgrp_consumer_member_target_assignment_assignable Unknown -> Unknown
+   - 21370 call to uncontracted function `rd_kafka_topic_partition_list_new`
+lib/librdkafka-2.15.0/src/rdkafka_mock_cgrp.c rd_kafka_mock_cgrp_consumer_member_target_assignment_set Unknown -> Unknown
+   - 21206 indirect memory access is outside the resource projection
+   + 21206 store of a custody-carrying value into `member->target_assignment`, a member of the formal `member` (member-store-through-formal)
+lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c rd_kafka_mock_handle_ConsumerGroupHeartbeat Unknown -> Unknown
+   - 23962 call to uncontracted function `rd_kafka_topic_partition_list_new`
+   + 23962 unresolved resource identity `sent_assignment`
+   + 24072 nullable resource `existing_assignment` used by a non-null contract
+lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c rd_kafka_mock_handle_Metadata Unknown -> Unsafe
+   - 22912 call to uncontracted function `rd_kafka_topic_partition_list_new`
+   + 23012 nullable resource `requested_topics` used by a non-null contract
+   + 23014 live obligation acquired at lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c:1362
+   + 23017 nullable resource `requested_topics` used by a non-null contract
+lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c rd_kafka_mock_handle_ShareAcknowledge Unknown -> Unknown
+   - 25214 call to uncontracted function `rd_kafka_topic_partition_list_new`
+   + 25475 nullable resource `ack_partitions` used by a non-null contract
+   + 25486 nullable resource `ack_partitions` used by a non-null contract
+   + 25490 nullable resource `ack_partitions` used by a non-null contract
+lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c rd_kafka_mock_handle_ShareFetch Unknown -> Unknown
+   - 24697 call to uncontracted function `rd_kafka_topic_partition_list_new`
+   - 24765 call to uncontracted function `rd_kafka_topic_partition_list_new`
+   + 25168 nullable resource `requested_partitions` used by a non-null contract
+   + 25169 nullable resource `forgotten_partitions` used by a non-null contract
+   + 25181 nullable resource `requested_partitions` used by a non-null contract
+   + 25182 nullable resource `forgotten_partitions` used by a non-null contract
+   + 25186 nullable resource `requested_partitions` used by a non-null contract
+   + 25187 nullable resource `forgotten_partitions` used by a non-null contract
+lib/librdkafka-2.15.0/src/rdkafka_offset.c rd_kafka_commit_message Unknown -> Unknown
+   - 20366 call to uncontracted function `rd_kafka_topic_partition_list_new`
+   - 20371 unresolved resource identity `offsets`
+lib/librdkafka-2.15.0/src/rdkafka_offset.c rd_kafka_offset_broker_commit Unknown -> Unknown
+   - 20448 call to uncontracted function `rd_kafka_topic_partition_list_new`
+   - 20458 unresolved resource identity `offsets`
+lib/librdkafka-2.15.0/src/rdkafka_offset.c rd_kafka_offset_validate Unknown -> Unknown
+   - 20824 call to uncontracted function `rd_kafka_topic_partition_list_new`
+   - 20836 unresolved resource identity `parts`
+lib/librdkafka-2.15.0/src/rdkafka_partition.c rd_kafka_topic_partition_copy_void Unknown -> Safe
+   - 21675 call to uncontracted function `rd_kafka_topic_partition_copy`
+lib/librdkafka-2.15.0/src/rdkafka_partition.c rd_kafka_topic_partition_list_copy Unknown -> Unknown
+   - 21892 call to uncontracted function `rd_kafka_topic_partition_list_new`
+lib/librdkafka-2.15.0/src/rdkafka_partition.c rd_kafka_topic_partition_list_copy_opaque Unknown -> Safe
+   - 21898 call to uncontracted function `rd_kafka_topic_partition_list_copy`
+lib/librdkafka-2.15.0/src/rdkafka_partition.c rd_kafka_topic_partition_list_difference0 Unknown -> Unknown
+   - 22881 call to uncontracted function `rd_kafka_topic_partition_list_new`
+lib/librdkafka-2.15.0/src/rdkafka_partition.c rd_kafka_topic_partition_list_intersection0 Unknown -> Unknown
+   - 22858 indirect memory access is outside the resource projection
+   + 22872 unresolved resource identity `ret`
+lib/librdkafka-2.15.0/src/rdkafka_partition.c rd_kafka_topic_partition_list_match Unknown -> Unknown
+   - 22554 call to uncontracted function `rd_kafka_topic_partition_list_new`
+lib/librdkafka-2.15.0/src/rdkafka_partition.c rd_kafka_topic_partition_list_union0 Unknown -> Unknown
+   - 22903 call to uncontracted function `rd_kafka_topic_partition_list_new`
+   + 22903 unresolved resource identity `a`
+   + 22903 unresolved resource identity `b_minus_a`
+lib/librdkafka-2.15.0/src/rdkafka_partition.c rd_kafka_toppar_consumer_lag_req Unknown -> Unknown
+   - 20285 call to uncontracted function `rd_kafka_topic_partition_list_new`
+   - 20297 unresolved resource identity `partitions`
+lib/librdkafka-2.15.0/src/rdkafka_partition.c rd_kafka_toppar_handle_Offset Unknown -> Unknown
+   - 20945 call to uncontracted function `rd_kafka_topic_partition_list_new`
+   - 20963 unresolved resource identity `offsets`
+   - 21007 unresolved resource identity `offsets`
+lib/librdkafka-2.15.0/src/rdkafka_partition.c rd_kafka_toppar_lag_handle_Offset Unknown -> Unknown
+   - 20249 call to uncontracted function `rd_kafka_topic_partition_list_new`
+   - 20253 unresolved resource identity `offsets`
+   - 20265 unresolved resource identity `offsets`
+lib/librdkafka-2.15.0/src/rdkafka_partition.c rd_kafka_toppar_offset_fetch Unknown -> Unknown
+   - 20918 call to uncontracted function `rd_kafka_topic_partition_list_new`
+lib/librdkafka-2.15.0/src/rdkafka_partition.c rd_kafka_toppar_offset_request Unknown -> Unknown
+   - 21056 call to uncontracted function `rd_kafka_topic_partition_list_new`
+   - 21069 unresolved resource identity `offsets`
+lib/librdkafka-2.15.0/src/rdkafka_request.c rd_kafka_ListOffsetsRequest Unknown -> Unknown
+   - 20931 call to uncontracted function `rd_kafka_topic_partition_list_copy`
+lib/librdkafka-2.15.0/src/rdkafka_request.c rd_kafka_buf_read_topic_partitions_nullable Unknown -> Unknown
+   - 20488 call to uncontracted function `rd_kafka_topic_partition_list_new`
+   - 20566 unresolved resource identity `parts`
+   - 20568 unresolved resource identity `parts`
+   - 20569 unresolved resource identity `parts`
+lib/librdkafka-2.15.0/src/rdkafka_request.c rd_kafka_handle_OffsetFetch Unknown -> Unknown
+   - 21117 call to uncontracted function `rd_kafka_topic_partition_list_new`
+   + 21117 discarded owned result of resource API `rd_kafka_topic_partition_list_new`
+lib/librdkafka-2.15.0/src/rdkafka_request.c rd_kafka_op_handle_OffsetFetch Unknown -> Unknown
+   - 21243 call to uncontracted function `rd_kafka_topic_partition_list_copy`
+   + 21243 unresolved resource identity `rko`
+   + 21251 unresolved resource identity `offsets`
+lib/librdkafka-2.15.0/src/rdkafka_request.c rd_kafka_parse_ListOffsets Unknown -> Unknown
+   - 20832 call to uncontracted function `rd_kafka_topic_partition_new`
+   - 20834 unresolved resource identity `rktpar`
+   - 20842 call to uncontracted function `rd_kafka_topic_partition_destroy`
+   + 20828 indirect memory access is outside the resource projection
+lib/librdkafka-2.15.0/src/rdkafka_share_acknowledgement.c rd_kafka_share_ack_batches_destroy Unknown -> Unknown
+   - 19652 call to uncontracted function `rd_kafka_topic_partition_destroy`
+   + 19652 release of `batches->rktpar`, a member of the formal `batches` (member-release-through-formal)
+lib/librdkafka-2.15.0/src/rdkafka_share_acknowledgement.c rd_kafka_share_build_ack_details Unknown -> Unknown
+   - 20013 indirect memory access is outside the resource projection
+   - 20014 call to uncontracted function `rd_kafka_topic_partition_destroy`
+   + 20013 unmodeled expression may mutate a formal resource identity
+   + 20014 unresolved resource identity `del_key`
+lib/librdkafka-2.15.0/src/rdkafka_share_acknowledgement.c rd_kafka_share_find_ack_entry Unknown -> Unknown
+   - 20062 call to uncontracted function `rd_kafka_topic_partition_new`
+   - 20063 indirect memory access is outside the resource projection
+   - 20064 call to uncontracted function `rd_kafka_topic_partition_destroy`
+   + 20063 unmodeled expression may mutate a formal resource identity
+lib/librdkafka-2.15.0/src/rdkafka_share_acknowledgement.c rd_kafka_share_partition_offsets_destroy Unknown -> Unknown
+   - 20169 call to uncontracted function `rd_kafka_topic_partition_destroy`
+   + 20169 release of `elem->partition`, a member of the formal `elem` (member-release-through-formal)
+lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c balance Unknown -> Unknown
+   - 21885 call to uncontracted function `rd_kafka_topic_partition_list_copy`
+   + 21898 nullable resource `leftoverUnassignedPartitions` used by a non-null contract
+lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c rd_kafka_sticky_assignor_assign_cb Unknown -> Unknown
+   - 22266 call to uncontracted function `rd_kafka_topic_partition_list_copy`
+   - 22323 unresolved resource identity `unassignedPartitions`
+lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c setupRackAwareAssignment0 Unknown -> Unknown
+   - 23644 unresolved resource identity `owned_tp_list`
+lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c sortPartitions Unknown -> Unknown
+   - 22129 call to uncontracted function `rd_kafka_topic_partition_list_new`
+   - 22142 unresolved resource identity `partitions2`
+   + 22129 unresolved resource identity `partitions`
+   + 22129 loop re-acquisition: an earlier generation that may be live is still held
+lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c ut_create_topic_partition_lists Unknown -> Unknown
+   - 22439 call to uncontracted function `rd_kafka_topic_partition_list_new`
+   + 22439 discarded owned result of resource API `rd_kafka_topic_partition_list_new`
+lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c ut_testLargeAssignmentWithMultipleConsumersLeaving Unknown -> Unknown
+   - 22935 call to uncontracted function `rd_kafka_topic_partition_list_new`
+   + 22935 loop re-acquisition: an earlier generation that may be live is still held
+lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c ut_testReassignmentAfterOneConsumerAdded Unknown -> Unknown
+   - 22838 call to uncontracted function `rd_kafka_topic_partition_list_new`
+   + 22838 loop re-acquisition: an earlier generation that may be live is still held
+lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c ut_testReassignmentAfterOneConsumerLeaves Unknown -> Unknown
+   - 22793 call to uncontracted function `rd_kafka_topic_partition_list_new`
+   + 22793 loop re-acquisition: an earlier generation that may be live is still held
+lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c ut_testSameSubscriptions Unknown -> Unsafe
+   - 22874 call to uncontracted function `rd_kafka_topic_partition_list_new`
+   - 22909 unresolved resource identity `subscription`
+   + 22897 live obligation acquired at lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c:2967
+   + 22898 live obligation acquired at lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c:2967
+   + 22904 live obligation acquired at lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c:2967
+   + 22905 live obligation acquired at lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c:2967
+lib/librdkafka-2.15.0/src/rdkafka_subscription.c rd_kafka_assignment Unknown -> Unknown
+   - 19758 call to uncontracted function `rd_kafka_topic_partition_list_new`
+   + 19758 discarded owned result of resource API `rd_kafka_topic_partition_list_new`
+lib/librdkafka-2.15.0/src/rdkafka_subscription.c rd_kafka_share_subscribe Unknown -> Unknown
+   - 19651 call to uncontracted function `rd_kafka_topic_partition_list_copy`
+   - 19654 unresolved resource identity `topics_cpy`
+lib/librdkafka-2.15.0/src/rdkafka_subscription.c rd_kafka_subscribe Unknown -> Unknown
+   - 19612 call to uncontracted function `rd_kafka_topic_partition_list_copy`
+   - 19615 unresolved resource identity `topics_cpy`
+lib/librdkafka-2.15.0/src/rdkafka_subscription.c rd_kafka_subscription Unknown -> Unknown
+   - 19778 call to uncontracted function `rd_kafka_topic_partition_list_new`
+   + 19778 discarded owned result of resource API `rd_kafka_topic_partition_list_new`
+lib/librdkafka-2.15.0/src/rdunittest_acknowledge.c ut_ack_add_partition Unknown -> Unknown
+   - 19625 call to uncontracted function `rd_kafka_topic_partition_new`
+lib/librdkafka-2.15.0/src/rdunittest_acknowledge.c ut_ack_add_partition_multiple_entries Unknown -> Unknown
+   - 19876 call to uncontracted function `rd_kafka_topic_partition_new`
+lib/librdkafka-2.15.0/src/rdunittest_acknowledge.c ut_ack_get_type Unknown -> Unknown
+   - 19657 call to uncontracted function `rd_kafka_topic_partition_new`
+   - 19659 indirect memory access is outside the resource projection
+   - 19661 call to uncontracted function `rd_kafka_topic_partition_destroy`
+   + 19659 unmodeled expression may mutate a formal resource identity
+lib/librdkafka-2.15.0/src/rdunittest_acknowledge.c ut_ack_set_gap Unknown -> Unknown
+   - 19634 call to uncontracted function `rd_kafka_topic_partition_new`
+   - 19636 indirect memory access is outside the resource projection
+   - 19638 call to uncontracted function `rd_kafka_topic_partition_destroy`
+   + 19636 unmodeled expression may mutate a formal resource identity
+lib/librdkafka-2.15.0/src/rdunittest_acknowledge.c ut_case_bsearch_empty_entries Unknown -> Unknown
+   - 19974 call to uncontracted function `rd_kafka_topic_partition_new`
+lib/librdkafka-2.15.0/src/rdunittest_fetcher.c ut_add_batches_to_map Unknown -> Unknown
+   - 19616 call to uncontracted function `rd_kafka_topic_partition_new`

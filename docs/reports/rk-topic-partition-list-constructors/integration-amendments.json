@@ -1,0 +1,49 @@
+{
+ "schema": "quirin-amendments/1",
+ "card": "RK-TOPIC-PARTITION-LIST-CONSTRUCTORS",
+ "base": "8e7e8d509",
+ "measured_tip": "e03c4835f",
+ "profiles": [],
+ "increment_paragraph": "**RK-TOPIC-PARTITION-LIST-CONSTRUCTORS** (USER DECISION 2026-11-21: launch the card the ledger entry specifies; no Rust, rule or Lean change; [report](../../reports/rk-topic-partition-list-constructors/README.md)). A new module `librdkafka/topic_partition_constructors.qv`, pinned at 66910c10 and 046accf6 (bodies byte-identical), declares `rd_kafka_topic_partition_list_new`, `_list_copy`, `rd_kafka_topic_partition_copy` and `rd_kafka_topic_partition_new` owned and nonnull (`rd_calloc` asserts), every formal borrowed, and `rd_kafka_topic_partition_destroy` released (nonnull, naming `rk_plugin_callback_closure`). The reference half is decided as encapsulation: the toppar references the copies take live in the result's own elements and its destructor drops them, so the caller owes only the result's release. `rd_kafka_topic_partition_new` and `_destroy` validate against their bodies; the other three are trusted assumptions. `rd_kafka_topic_partition_list_add` stays undeclared (its element pointer is invalidated by the next add's realloc). Opt-in `current --monkey-linked` over Fluent Bit 046accf6, one binary `ff817b5c` on trees 8e7e8d509 and e03c4835f: 1,159/2/3,636/7 -> 1,161/2/3,632/9. +2 Unknown -> Safe (`rd_kafka_topic_partition_copy_void`, `rd_kafka_topic_partition_list_copy_opaque`, the two predicted), 0 Safe -> non-Safe, +2 provisional Unsafe: `ut_testSameSubscriptions` (a unit test's assertion-failure returns leave `subscription` unreleased) and `rd_kafka_mock_handle_Metadata` (spurious on reading: a NULL-initialised, conditionally built list released under `if (p)` is a nullable resource at the nonnull release, which is refused, leaving a leak verdict). The 83 uncontracted leaves of the five functions in 68 rows become custody leaves (guarded nullable releases 20, member stores 9, member releases 4, out-parameter deliveries 4, ...). Round 4's four constructor-into-member rows stay Unknown on the access gate.",
+ "status_paragraph": null,
+ "ledger": [
+  {
+   "id": "RK-TOPIC-PARTITION-LIST-CONSTRUCTORS",
+   "operation": "retire",
+   "source": "docs/reports/rk-topic-partition-list-constructors/README.md",
+   "why": "Declared and measured by RK-TOPIC-PARTITION-LIST-CONSTRUCTORS: rd_kafka_topic_partition_list_new, _list_copy, rd_kafka_topic_partition_copy (and rd_kafka_topic_partition_new) owned nonnull, rd_kafka_topic_partition_destroy released, pinned at 66910c10 and 046accf6; the reference-count half decided as encapsulation (the copies' toppar references are held by the result and dropped by its destructor); every caller's move reported on the opt-in route (1,159/2/3,636/7 -> 1,161/2/3,632/9: +2 Safe, 0 Safe lost, +2 provisional Unsafe, each explained). Residuals registered: RK-TOPIC-PARTITION-CONSTRUCTORS-UNVALIDATED, RK-TOPIC-PARTITION-LIST-ADD-ELEMENT-POINTER, NULLABLE-GUARDED-RELEASE-REPORTED-AS-LEAK, OWNED-CONSTRUCTOR-OUT-PARAMETER-DELIVERY."
+  },
+  {
+   "id": "RK-TOPIC-PARTITION-CONSTRUCTORS-UNVALIDATED",
+   "operation": "register",
+   "source": "docs/reports/rk-topic-partition-list-constructors/README.md",
+   "recorded_by": "RK-TOPIC-PARTITION-LIST-CONSTRUCTORS",
+   "title": "rd_kafka_topic_partition_list_new, _list_copy and rd_kafka_topic_partition_copy are declared owned but their bodies do not validate",
+   "text": "RK-TOPIC-PARTITION-LIST-CONSTRUCTORS declared them resource_return_owned(nonnull) in librdkafka/topic_partition_constructors.qv (pinned at 66910c10 and 046accf6); rd_kafka_topic_partition_new and rd_kafka_topic_partition_destroy validate (W4, entry), these three do not in rdkafka_partition.c on the opt-in run: _list_new's row is Unknown on the uncontracted static rd_kafka_topic_partition_list_grow (rd_realloc of the list's own elems member), _list_copy's on an access leaf (_add_copy into dst's elements), rd_kafka_topic_partition_copy's on the uncontracted static rd_kafka_topic_partition_update (metadata copy and a toppar reference into dst's _private). Two Safe rows (rd_kafka_topic_partition_copy_void, rd_kafka_topic_partition_list_copy_opaque) rest on them. DISCHARGE: validate each body (a realloc into a fresh object's member, the element copy, the reference taken into the result) or record the refusal that keeps them declared."
+  },
+  {
+   "id": "RK-TOPIC-PARTITION-LIST-ADD-ELEMENT-POINTER",
+   "operation": "register",
+   "source": "docs/reports/rk-topic-partition-list-constructors/README.md",
+   "recorded_by": "RK-TOPIC-PARTITION-LIST-CONSTRUCTORS",
+   "title": "rd_kafka_topic_partition_list_add returns a pointer into an array its next call may reallocate; no contract form states that borrow",
+   "text": "RK-TOPIC-PARTITION-LIST-CONSTRUCTORS left rd_kafka_topic_partition_list_add (rdkafka_partition.c:3190-3196, through _add0 :3149-3188) undeclared: it returns &rktparlist->elems[cnt++], and _grow rd_reallocs elems on a later add, so resource_return_borrowed_from(rktparlist, ...) (valid until the list's release) would admit a use after the next add. It co-blocks 22 of the 68 opt-in rows that named the card's constructors uncontracted (alone with them: ut_topic_partitions, ut_create_topic_partition_lists). DISCHARGE: a contract form for a result borrowed from a container until its next mutation (or a reading that refuses an element pointer held across a mutating call), then the declaration, measured."
+  },
+  {
+   "id": "NULLABLE-GUARDED-RELEASE-REPORTED-AS-LEAK",
+   "operation": "register",
+   "source": "docs/reports/rk-topic-partition-list-constructors/README.md",
+   "recorded_by": "RK-TOPIC-PARTITION-LIST-CONSTRUCTORS",
+   "title": "A NULL-initialised, conditionally constructed resource released under `if (p)` is refused at a nonnull release and the obligation is reported as a leak",
+   "text": "RK-TOPIC-PARTITION-LIST-CONSTRUCTORS (opt-in current over Fluent Bit 046accf6): rd_kafka_mock_handle_Metadata (rdkafka_mock_handlers.c) sets requested_topics = NULL, assigns rd_kafka_topic_partition_list_new(TopicsCnt) only when TopicsCnt > 0, and releases it under `if (requested_topics)` on both exits (:1485-1486, :1493-1494); the analysis reads both releases as `nullable resource requested_topics used by a non-null contract` (rd_kafka_topic_partition_list_destroy is declared nonnull), refuses them, and reports `live obligation acquired at :1362` at `return 0` (:1490): a provisional Unsafe that is spurious on reading. The same leaf holds 10 more rows Unknown (20 leaves in 11 rows, e.g. rd_kafka_mock_handle_ShareAcknowledge, rd_kafka_cgrp_owned_but_not_exist_partitions). DISCHARGE: correlate the null test with the obligation (a release under `if (p)` of a possibly-NULL owned value discharges it on the non-NULL arm), or hold the row Unknown when a release is refused instead of reporting the obligation live; re-measure the 11 rows."
+  },
+  {
+   "id": "OWNED-CONSTRUCTOR-OUT-PARAMETER-DELIVERY",
+   "operation": "register",
+   "source": "docs/reports/rk-topic-partition-list-constructors/README.md",
+   "recorded_by": "RK-TOPIC-PARTITION-LIST-CONSTRUCTORS",
+   "title": "An owned constructor result stored through an out-parameter (`*out = ctor()`) is read as a discarded owned result",
+   "text": "RK-TOPIC-PARTITION-LIST-CONSTRUCTORS: with rd_kafka_topic_partition_list_new declared owned, `*partitions = rd_kafka_topic_partition_list_new(0)` (rdkafka_subscription.c:337, rd_kafka_assignment; :365, rd_kafka_subscription) and two more rows (rd_kafka_handle_OffsetFetch, ut_create_topic_partition_lists) carry `discarded owned result of resource API` (unsupported, Unknown): the delivery to the caller through the out-parameter is not read. Related to CG10-OWNED-OUT-PARAMETER-MEMBER-SLOT (an allocating callee writing into a member slot). DISCHARGE: read an owned result stored through a formal pointer as a delivery to the caller (an out-parameter summary), or name the refusal; re-measure the four rows."
+  }
+ ]
+}

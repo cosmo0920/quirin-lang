@@ -47,6 +47,7 @@
     "providers/qcore-provider-librdkafka/contracts/librdkafka/lz4_stream.qv",
     "providers/qcore-provider-librdkafka/contracts/librdkafka/compress_out.qv",
     "providers/qcore-provider-librdkafka/contracts/librdkafka/topic_partition.qv",
+    "providers/qcore-provider-librdkafka/contracts/librdkafka/topic_partition_constructors.qv",
     "providers/quirin-provider-fluent-bit/contracts/fluent_bit/hash_table_publication.qv",
     "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy.qv",
     "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy_direct_routes.qv",
