@@ -53,6 +53,14 @@ why that is sound in and out of a loop, and why the leaf the card renames
   (`the_renaming_keeps_the_verdict`). A nullable result mode accepts the
   return (`a_nullable_result_mode_accepts_it`): that is the validated summary's
   route, which the card does not change.
+* **An even run of `&` takes no address.** By maximal munch a run of `k`
+  adjacent `&` ends in a single `&` exactly when `k` is odd
+  (`the_run_ends_in_an_address_iff_odd`), so `p && q` takes no address of `q`
+  (`a_logical_and_takes_no_address`) while `p && &q` and `&q` do; the frame
+  drops a subset of the names the old one dropped
+  (`the_frame_only_widens_again`). The premise that `a & &b` does not occur
+  is C11 6.5.10p2 (binary `&` takes integer operands), part of the same
+  conforming-program reading rule 10a's frame rests on.
 
 ## What this is not
 
@@ -201,5 +209,72 @@ theorem the_renaming_keeps_the_verdict (xs : List V) :
     fold (.unknown :: .unknown :: xs) = fold (.unknown :: xs) := by
   simp only [fold]
   rw [← QCore.VerdictSemigroup.join_assoc, QCore.VerdictSemigroup.join_idem]
+
+/-! ## Part C: an even run of `&` takes no address
+
+The importer's lexer emits one token per `&`, so `a && b` reaches the frame as
+`a & & b`. C lexes a run of adjacent `&` characters by maximal munch
+(C11 6.4p4). -/
+
+/-- The C tokens of a run of `k` adjacent `&` characters. -/
+inductive Amp where
+  | andAnd
+  | amp
+  deriving DecidableEq, Repr
+
+def munch : Nat → List Amp
+  | 0 => []
+  | 1 => [.amp]
+  | k + 2 => .andAnd :: munch k
+
+/-- The run ends in a single `&` (the unary address operator when it precedes
+a name) exactly when its length is odd. -/
+theorem the_run_ends_in_an_address_iff_odd (k : Nat) :
+    (munch k).getLast? = some .amp ↔ k % 2 = 1 := by
+  induction k using Nat.strongRecOn with
+  | ind k ih =>
+    match k with
+    | 0 => simp [munch]
+    | 1 => simp [munch]
+    | k + 2 =>
+      have := ih k (by omega)
+      cases h : munch k with
+      | nil =>
+        have hk : k = 0 := by
+          cases k with
+          | zero => rfl
+          | succ k' => cases k' <;> simp [munch] at h
+        subst hk
+        simp [munch]
+      | cons x xs =>
+        rw [h] at this
+        simp only [munch, h, List.getLast?_cons_cons]
+        rw [this]
+        omega
+
+/-- The frame's reading: a name after a run of `k` `&` tokens is address-taken
+exactly when the run is odd. -/
+def addressTaken (k : Nat) : Bool := k % 2 == 1
+
+/-- The old frame dropped a name after any run. -/
+def oldAddressTaken (k : Nat) : Bool := k ≥ 1
+
+theorem a_logical_and_takes_no_address : addressTaken 2 = false := rfl
+
+theorem an_and_then_address_takes_it : addressTaken 3 = true := rfl
+
+theorem a_single_ampersand_takes_it : addressTaken 1 = true := rfl
+
+/-- The new frame drops a subset of what the old one dropped, so it only
+spares more names (the old frame's soundness premise is unchanged). -/
+theorem the_frame_only_widens_again (k : Nat) (h : addressTaken k = true) :
+    oldAddressTaken k = true := by
+  simp [addressTaken, oldAddressTaken] at *
+  omega
+
+theorem address_taken_agrees_with_munch (k : Nat) :
+    addressTaken k = true ↔ (munch k).getLast? = some .amp := by
+  rw [the_run_ends_in_an_address_iff_odd]
+  simp [addressTaken]
 
 end QCore.NullableLazyConstructor
