@@ -187,6 +187,11 @@ fn rename(state: &mut AbstractState, from: usize, into: usize) {
     if state.unresolved_effect_sites.remove(&from) {
         state.unresolved_effect_sites.insert(into);
     }
+    // Card NULLABLE-GUARDED-RELEASE (rule 74c): the refused-release
+    // provenance follows its identity.
+    if state.refused_release_sites.remove(&from) {
+        state.refused_release_sites.insert(into);
+    }
     replace_in(&mut state.published, from, into);
     match state.collections.remove(&from) {
         // A summary's element ranges would describe several arrays at once:

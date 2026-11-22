@@ -51,6 +51,7 @@ correspondence with it, are trust boundary 28's, pinned by
 #print axioms QCore.NullableGuardedRelease.withdraw_vectors_hold
 #print axioms QCore.NullableGuardedRelease.a_withdrawn_report_is_not_claimed
 #print axioms QCore.NullableGuardedRelease.an_unmarked_report_is_published
+#print axioms QCore.NullableGuardedRelease.another_refusal_withdraws_nothing
 
 -- Only Unsafe -> Unknown.
 #print axioms QCore.NullableGuardedRelease.a_withdrawal_is_never_below_unknown

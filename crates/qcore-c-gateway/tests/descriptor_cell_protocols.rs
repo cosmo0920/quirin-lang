@@ -323,7 +323,14 @@ fn a_tracked_record_creator_keeps_the_member_store_refusal() {
          int ret = mk_event_channel_create(loop, &c->ch[0], &c->ch[1], &c->event); \
          if (ret != 0) { ev_free(c); return 0; } return c; }",
         "Unknown",
-        &["unknown_alias:c"],
+        // Deliberate pin update, card NULLABLE-GUARDED-RELEASE (rule 74c): the member
+        // addresses `&c->ch[i]`, `&c->event` no longer drop `c` from the
+        // frame, so `c` stays bound and the refusals that remain name the
+        // record's own hazards (rules 38, 12t) instead of an unresolved `c`.
+        &[
+            "unsupported:`c` is released while a cell of it may name a live descriptor (descriptor-cell-owner-released)",
+            "unsupported:call to `mk_event_channel_create` retains `& c - > event` in `loop`, whose lifetime this body does not decide against it (retention-undecided)",
+        ],
     );
 }
 

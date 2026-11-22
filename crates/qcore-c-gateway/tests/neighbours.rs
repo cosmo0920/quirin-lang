@@ -737,9 +737,15 @@ fn the_constructor_keeps_exactly_one_refusal_under_production_declarations() {
         "the premise on `storage` is listed: {:?}",
         before.null_premises
     );
+    // **Deliberate pin update, card NULLABLE-GUARDED-RELEASE** (rule 74c):
+    // 19 -> 9. The body spells member addresses through `ic` and `in`
+    // (`&ic->...`, `&in->...`), which take addresses in `*ic` and `*in`, not
+    // their slots; rule 10a's frame now spares both names from the refused
+    // statements, so the ten `UnknownAlias` leaves their poisoned bindings
+    // produced are gone. Every withdrawn callee keeps its own refusal.
     assert_eq!(
         before.diagnostics.len(),
-        19,
+        9,
         "the before-state diagnostic count moved: {:?}",
         before.diagnostics
     );
@@ -748,9 +754,13 @@ fn the_constructor_keeps_exactly_one_refusal_under_production_declarations() {
         "flb_input_chunk_create",
     )
     .clone();
+    // **Deliberate pin update, card NULLABLE-GUARDED-RELEASE** (rule 74c):
+    // 20 -> 14, the same frame reading; under the data tail the refused tail
+    // statement still poisons `ic` and `in` after it, so five `UnknownAlias`
+    // leaves and the nullable `ic` leaf remain here.
     assert_eq!(
         before_data_tail.diagnostics.len(),
-        20,
+        14,
         "the data-tail before-state diagnostic count moved: {:?}",
         before_data_tail.diagnostics
     );

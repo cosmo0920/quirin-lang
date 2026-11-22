@@ -12,41 +12,48 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//! Card **NULLABLE-GUARDED-RELEASE** (gateway rule 74c, part A): a leak claim
-//! must hold at the settled exit; a refused effect is evidence of neither a
-//! discharge nor a leak.
+//! Card **NULLABLE-GUARDED-RELEASE** (gateway rule 74c, part A): a refused
+//! release is evidence of neither a discharge nor a leak, so a leak claim
+//! resting on the obligation it left must hold at the settled exit.
 //!
-//! `report_leaks` runs on every iterate of the custody work list (rule 6,
-//! C02-P-ALIAS-LEAK-ORDER), so an exit can be reached, and a live site
-//! claimed, before the state carrying a refused effect's unresolved marker
-//! has joined in. A refused release (a nullable resource at a `nonnull`
-//! position, an unresolved identity, an ambiguous cascade, a retained,
-//! published or taken object, a derived pointer) marks the identity
-//! unresolved on its own path; the union join carries the marker to every
-//! exit that path reaches, so the **settled** state no longer claims the site,
-//! but the claim made on the earlier iterate was never withdrawn.
+//! A refused release (a nullable resource at a `nonnull` position, an
+//! unresolved or multi-target identity, an ambiguous cascade, a retained,
+//! holder, registry or taken object, a derived pointer: every refusing branch
+//! of `apply_resource_action`'s release) marks the identities it could not
+//! discharge unresolved on its own path, and the union join carries the marker
+//! to every exit that path reaches. But `report_leaks` runs on every iterate
+//! of the custody work list (rule 6, C02-P-ALIAS-LEAK-ORDER), so an exit could
+//! be reached, and the site claimed, before the marked state joined in; the
+//! claim was never withdrawn although the settled exit no longer made it.
 //! `rd_kafka_mock_handle_Metadata` (Fluent Bit librdkafka
 //! `rdkafka_mock_handlers.c:1490`) was a provisional `Unsafe` for that reason
 //! only: the leak-witness census recorded its leak `settled: false` with the
 //! site `unresolved: true` at the settled exit.
 //!
+//! * [`record_refused_release`] runs after every release `apply_resource_action`
+//!   applies: the identities the call newly marked, and, when it reported a
+//!   refusal, the released binding's targets already marked, are recorded in
+//!   `AbstractState::refused_release_sites` (joined by union).
 //! * [`Held::hold`] is called by `report_leaks` for every current-generation
 //!   identity it would claim, on every iterate, instead of inserting the
 //!   `Leak` at once (rule 42's [`super::loop_reacquisition_leak_route`] holds
 //!   the earlier generations the same way).
 //! * [`Held::settle`] runs once, after the work list is stable: a report is
 //!   withdrawn exactly when the exit node's settled incoming state marks the
-//!   identity unresolved **and** the function already carries an `Unknown`
-//!   leaf; every other report is inserted. A leak key (exit line, acquisition
-//!   line) is published whenever any identity that reported it on any iterate
-//!   is not withdrawn, so the decision reads only settled facts and the
-//!   work-list order does not matter.
+//!   identity unresolved, a refused release is among the marks' provenance,
+//!   **and** the function carries an `Unknown` leaf; every other report is
+//!   inserted. A leak key (exit line, acquisition line) is published whenever
+//!   any identity that reported it on any iterate is not withdrawn, so the
+//!   decision reads only settled facts and the work-list order does not
+//!   matter.
 //!
-//! Only `Unsafe -> Unknown` moves are possible: a withdrawn report removes a
-//! `Leak` from a function that keeps an `Unknown` leaf, and nothing is
-//! admitted. The settled incoming state of the exit, not its output, is read:
-//! the exit's own transfer only adds markers or discharges, so this withdraws
-//! no more than the settled output would.
+//! A marker from any other refusal (a refused test, a refused statement's
+//! hand-on, a refused re-acquisition) withdraws nothing here: those routes
+//! keep their own rules (12e, W44, 42). Only `Unsafe -> Unknown` moves are
+//! possible: a withdrawn report removes a `Leak` from a function that keeps an
+//! `Unknown` leaf, and nothing is admitted. The settled incoming state of the
+//! exit, not its output, is read: the exit's own transfer only adds markers or
+//! discharges, so this withdraws no more than the settled output would.
 //!
 //! The Lean model is `QCore.NullableGuardedRelease`
 //! (`proof/QCore/NullableGuardedRelease.lean`); [`WITHDRAW_VECTORS`] is shared
@@ -64,21 +71,56 @@ pub(super) struct Held {
     reports: BTreeSet<(usize, usize, usize, usize)>,
 }
 
-/// The decision: withdraw exactly when the settled exit marks the identity
-/// unresolved and the function carries an `Unknown` leaf.
-pub(super) const fn withdraws(settled_unresolved: bool, unknown_leaf: bool) -> bool {
-    settled_unresolved && unknown_leaf
+/// The decision (`QCore.NullableGuardedRelease.withdraws`): withdraw exactly
+/// when the settled exit marks the identity, a refused release is among the
+/// marks, and the function carries an `Unknown` leaf.
+pub(super) const fn withdraws(marked: bool, by_refused_release: bool, unknown_leaf: bool) -> bool {
+    marked && by_refused_release && unknown_leaf
 }
 
-/// `(settled unresolved, unknown leaf, withdrawn)`, shared with
+/// `(marked, by a refused release, unknown leaf, withdrawn)`, shared with
 /// `QCore.NullableGuardedRelease.withdrawVectors` row by row.
 #[cfg(test)]
-pub(super) const WITHDRAW_VECTORS: [(bool, bool, bool); 4] = [
-    (false, false, false),
-    (false, true, false),
-    (true, false, false),
-    (true, true, true),
+pub(super) const WITHDRAW_VECTORS: [(bool, bool, bool, bool); 8] = [
+    (false, false, false, false),
+    (false, false, true, false),
+    (false, true, false, false),
+    (false, true, true, false),
+    (true, false, false, false),
+    (true, false, true, false),
+    (true, true, false, false),
+    (true, true, true, true),
 ];
+
+/// Record what one release `apply_resource_action` applied marked as a
+/// refused release's: the identities newly marked unresolved (`marked` is the
+/// set before the call), and, when the call reported a refusal, every target
+/// of the released binding that is now marked.
+pub(super) fn record_refused_release<'a>(
+    state: &mut AbstractState,
+    marked: &BTreeSet<usize>,
+    targets: Option<&BTreeSet<usize>>,
+    reported: impl Iterator<Item = &'a LegacyDiagnostic>,
+) {
+    let fresh = state
+        .unresolved_effect_sites
+        .difference(marked)
+        .copied()
+        .collect::<Vec<_>>();
+    state.refused_release_sites.extend(fresh);
+    let refused = reported
+        .into_iter()
+        .any(|diagnostic| super::verdict::diagnostic_verdict(&diagnostic.kind) == UNKNOWN);
+    if refused {
+        for site in targets.into_iter().flatten() {
+            if state.unresolved_effect_sites.contains(site) {
+                state.refused_release_sites.insert(*site);
+            }
+        }
+    }
+}
+
+const UNKNOWN: qcore_schemas::verdict::Verdict = qcore_schemas::verdict::Verdict::Unknown;
 
 impl Held {
     pub(super) fn hold(
@@ -102,16 +144,16 @@ impl Held {
         if self.reports.is_empty() {
             return;
         }
-        let unknown_leaf = diagnostics.iter().any(|diagnostic| {
-            super::verdict::diagnostic_verdict(&diagnostic.kind)
-                == qcore_schemas::verdict::Verdict::Unknown
-        });
+        let unknown_leaf = diagnostics
+            .iter()
+            .any(|diagnostic| super::verdict::diagnostic_verdict(&diagnostic.kind) == UNKNOWN);
         for (line, acquisition_line, identity, node) in self.reports {
-            let settled_unresolved = incoming
-                .get(node)
-                .and_then(Option::as_ref)
-                .is_some_and(|state| state.unresolved_effect_sites.contains(&identity));
-            if withdraws(settled_unresolved, unknown_leaf) {
+            let settled = incoming.get(node).and_then(Option::as_ref);
+            let marked =
+                settled.is_some_and(|state| state.unresolved_effect_sites.contains(&identity));
+            let by_refused_release =
+                settled.is_some_and(|state| state.refused_release_sites.contains(&identity));
+            if withdraws(marked, by_refused_release, unknown_leaf) {
                 continue;
             }
             diagnostics.insert(LegacyDiagnostic {

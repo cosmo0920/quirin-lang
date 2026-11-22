@@ -39,8 +39,10 @@ after a work-list iterate had already claimed the list there.
 * **The claim follows the settled state.** An iterate reached before the
   marker claimed the site; the settled exit, which joins the marked path, does
   not (`the_iterate_claim_was_unsupported`). The Rust withdraws a held report
-  exactly when the settled exit marks the identity and the function carries an
-  `Unknown` leaf (`withdraws`); its table is `withdrawVectors`
+  exactly when the settled exit marks the identity, a refused release is among
+  the marks, and the function carries an `Unknown` leaf (`withdraws`); a mark
+  from any other refusal withdraws nothing
+  (`another_refusal_withdraws_nothing`). Its table is `withdrawVectors`
   (`withdraw_vectors_hold`).
 * **Only `Unsafe -> Unknown`.** A withdrawal happens beside an `Unknown` leaf,
   so the function folds to `Unknown` or stays `Unsafe` on another leak, never
@@ -120,32 +122,42 @@ theorem the_iterate_claim_was_unsupported :
   decide
 
 /-- The Rust decision (`settled_leak_route::withdraws`): withdraw a held report
-exactly when the settled exit marks the identity and the function carries an
-`Unknown` leaf. -/
-def withdraws (settledUnresolved unknownLeaf : Bool) : Bool := settledUnresolved && unknownLeaf
+exactly when the settled exit marks the identity, a refused release is among
+the marks' provenance, and the function carries an `Unknown` leaf. -/
+def withdraws (marked byRefusedRelease unknownLeaf : Bool) : Bool :=
+  marked && byRefusedRelease && unknownLeaf
 
-/-- `(settled unresolved, unknown leaf, withdrawn)`, the Rust
+/-- `(marked, by a refused release, unknown leaf, withdrawn)`, the Rust
 `WITHDRAW_VECTORS` row by row. -/
-def withdrawVectors : List (Bool × Bool × Bool) := [
-  (false, false, false),
-  (false, true, false),
-  (true, false, false),
-  (true, true, true)
+def withdrawVectors : List (Bool × Bool × Bool × Bool) := [
+  (false, false, false, false),
+  (false, false, true, false),
+  (false, true, false, false),
+  (false, true, true, false),
+  (true, false, false, false),
+  (true, false, true, false),
+  (true, true, false, false),
+  (true, true, true, true)
 ]
 
 theorem withdraw_vectors_hold :
-    withdrawVectors.all (fun v => withdraws v.1 v.2.1 == v.2.2) = true := by
+    withdrawVectors.all (fun v => withdraws v.1 v.2.1 v.2.2.1 == v.2.2.2) = true := by
   decide
 
 /-- A withdrawn report is one the settled exit does not claim. -/
-theorem a_withdrawn_report_is_not_claimed (s : Site) (leaf : Bool)
-    (w : withdraws s.unresolved leaf = true) : claimed s = false := by
+theorem a_withdrawn_report_is_not_claimed (s : Site) (byRelease leaf : Bool)
+    (w : withdraws s.unresolved byRelease leaf = true) : claimed s = false := by
   simp [withdraws, claimed] at *
   simp [w.1]
 
-/-- A published report keeps exactly the old claim when the settled exit does
-not mark the identity: the rule withdraws nothing else. -/
-theorem an_unmarked_report_is_published (leaf : Bool) : withdraws false leaf = false := by
+/-- A report the settled exit does not mark, or marks by another refusal
+only, is published: the rule withdraws nothing else. -/
+theorem an_unmarked_report_is_published (byRelease leaf : Bool) :
+    withdraws false byRelease leaf = false := by
+  simp [withdraws]
+
+theorem another_refusal_withdraws_nothing (marked leaf : Bool) :
+    withdraws marked false leaf = false := by
   simp [withdraws]
 
 /-- A withdrawal happens beside an `Unknown` leaf, so the function's verdict
