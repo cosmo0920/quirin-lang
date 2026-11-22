@@ -328,7 +328,10 @@ One job cannot starve the host (requirement R11 of
   it, waiting for a slot, queued in the kernel, legacy holder), argv, wait and
   hold times, CPU and I/O over the interval, and resident set against the
   admission budget. A job waiting for an `audit` slot holds only the legacy
-  lock shared, which is how it shows; it reads `QUIRIN_GATE_DIR` like the jobs. Each queued
+  lock shared, which is how it shows; it reads `QUIRIN_GATE_DIR` like the jobs.
+  The locks a waiter takes for one poll (its class's admission lock shared; a
+  probe of a free slot, whose holder note does not name it) are listed under
+  `polling` and never make it a holder (card `GATE-SLOT-TEST-FLAKES`). Each queued
   waiter shows its position (`queue position 2 of 5 (audit)`, who is ahead,
   its state), and `--json` lists every queue under `queues`.
 

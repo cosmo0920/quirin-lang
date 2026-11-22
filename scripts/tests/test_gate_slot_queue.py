@@ -62,13 +62,24 @@ class Queue(Scratch):
         self.order_lock = threading.Lock()
 
     def tearDown(self):
+        # A job still waiting would poll on (its own timeout is 120 s) and
+        # recreate gate files while the scratch directory is removed: cancel
+        # its wait, and remove nothing until every job thread has ended.
         for job in self.jobs:
             job.finish.set()
-            job.gate.wake()
+            job.gate.cancel()
+        running = []
         for job in self.jobs:
-            job.thread.join(timeout=20)
+            if job.thread.ident is not None:  # started
+                job.thread.join(timeout=20)
+            if job.thread.is_alive():
+                running.append(job.name)
         for ticket in self.tickets:
             ticket.drop()
+        if running:
+            self.stop_started()
+            self.fail(f"job threads still running after cancel: {running}; "
+                      f"the scratch gate {self.root} is left in place")
         super().tearDown()
 
     def old_script(self):
@@ -310,6 +321,30 @@ class Order(Queue):
         with self.assertRaises(slot_mod.WaitTimeout):
             gate.acquire("audit", 7168, timeout=0.3)
         self.assertEqual(self.names("audit"), [])
+
+    def test_a_cancelled_waiter_ends_at_its_next_poll_and_leaves_nothing(self):
+        """What every test's tearDown relies on (card GATE-SLOT-TEST-FLAKES): a
+        waiter it started stops polling before the scratch gate is removed,
+        and no later than its next poll, not at its own 120 s timeout."""
+        self.set_memory(7)
+        holder = self.arrive(self.job("holder"))
+        self.admitted(holder)
+        suite = self.arrive(self.job("suite", "rust-suite", None, drain_timeout=0.05,
+                                     drain_backoff=600))
+        self.assertTrue(wait_for(lambda: any(e["state"] == "backoff"
+                                             for e in self.live("audit"))))
+        waiter = self.arrive(self.job("waiter"))
+        for job in (waiter, suite):
+            job.gate.cancel()
+        for job in (waiter, suite):
+            job.thread.join(5)
+            self.assertFalse(job.thread.is_alive(), f"{job.name} still waits")
+            self.assertIsInstance(job.error, slot_mod.WaitTimeout)
+            self.assertIn("cancelled", str(job.error))
+        self.assertEqual(self.names("audit"), [], "both tickets dropped")
+        self.assertEqual([j["pid"] for j in slot_mod.gate_status(
+            self.gate_dir, self.legacy, self.meminfo, interval=0)["jobs"]], [os.getpid()],
+            "only the holder (this process) holds a gate lock")
 
     def test_a_nested_job_takes_no_ticket(self):
         completed = self.run_slot("rust-suite", "--receipt", str(self.root / "outer.json"), "--",
