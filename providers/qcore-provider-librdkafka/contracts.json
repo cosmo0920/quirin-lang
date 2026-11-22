@@ -16,7 +16,7 @@
     "contracts/librdkafka/queue_destructor.qv": "40af80979b98972380f7bb952487c5f48d9c87bb5836b9e1d7dcaa3b32ad0e86",
     "contracts/librdkafka/refcount.qv": "a2d6ec77603e5bad6075ec38998384d536b15c944d40e37ca4d2e29a118a1105",
     "contracts/librdkafka/topic_partition.qv": "1866a71138743ef768ef56429aab55f1da131508fdd9bd5304d72d603d2c8183",
-    "contracts/librdkafka/topic_partition_constructors.qv": "f87aeda0c210f359b75bdcaa35eb165f2e0b347c1817006fed12eb4bbc5495f2",
+    "contracts/librdkafka/topic_partition_constructors.qv": "6a59cb828ce4794f56d0cd85ba52f93a0f2ddc1aea0b00c48495577b746bce98",
     "contracts/librdkafka/typed_queue.qv": "2a1fd15a56841dbffffad271a90188aca77e25e59e4bfd767bc62ed555c344ea"
   },
   "includes": {

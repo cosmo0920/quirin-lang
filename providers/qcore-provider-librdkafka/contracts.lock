@@ -5727,8 +5727,8 @@
     {
       "function": "rd_kafka_topic_partition_destroy",
       "module": "librdkafka/topic_partition_constructors.qv",
-      "contract_sha256": "d9cda4d222eb196c87478a6aae3e20dff094ed06f54ee0a744dba8d8453884e3",
-      "pinned_at": "2026-11-21T00:51:48Z",
+      "contract_sha256": "a0b0821f4ad343e51402157cf92dd7230d2b79c0a1cd516aeb684d68899f7c18",
+      "pinned_at": "2026-11-22T17:07:08Z",
       "identities": [
         {
           "reviewed_at": [
