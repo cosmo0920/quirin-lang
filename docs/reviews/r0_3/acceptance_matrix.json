@@ -14658,13 +14658,6 @@
    "recorded_by": "CG10-OWNED-OUT-PARAMETER-MEMBER-SLOT"
   },
   {
-   "id": "STATUS-COMPACT-RECONCILIATION-CLAIMS",
-   "title": "Nine frozen reconciliation claims on docs/STATUS.md fail after STATUS-COMPACT moved their text to the status checkpoint",
-   "why": "MEASURED by card STATUS-COMPACT (docs/reports/status-compact/scripts/claims.py, the sweep's normalisation): of 27 reconciliation verify claims on docs/STATUS.md, 16 failed at 2aefebbc1 and f77e97ae6 and 25 fail after the rewrite. The nine flips: three contract-cycle4-integration sentences (logger effect, scheduler lifetime, guarded production source embedding), symbolic-decomposition-cycle3's W48-BOTTOM-UP-BATCH5 sentence, w46-contract-access-expansion's card name (twice), and the three '281' claims of canonical-contract-locations and cycle18-priority1-integration already registered as vacuous (W45-RECONCILIATION-SUBSTRING-CLAIMS). Each text is verbatim in docs/development/increments/wave-48-compaction-status-part*.md. Frozen records are not rewritten; no gate or CI step runs these claims. DISCHARGE: reconciliation_sweep.py resolves a docs/STATUS.md claim against the indexed status checkpoints (or the claims are marked historical in a way the check honours), so the six non-vacuous claims pass again.",
-   "source": "docs/reports/status-compact/README.md",
-   "recorded_by": "STATUS-COMPACT"
-  },
-  {
    "id": "LIVE-ROUTE-MOVES-BETWEEN-MEASURED-LANDINGS",
    "title": "The corpus route's Safe count changed between measured landings with no committed comparison",
    "why": "MEASURED by card STATUS-COMPACT from the committed integrator records (docs/reports/status-compact/artifacts/landing-comparisons.txt): CURRENT-CONTEXT-NEW-TRIAGE D3's comparison ends at 8e190aa83 with corpus 1,082 / 0 / 3,742 / 10; the CG25 comparisons start at 36b2cf931 and 5c824e443 with 1,078 / 0 / 3,746 / 10; the AG comparisons start at a9c6dcf44 with 1,079 / 0 / 3,745 / 10. No committed native comparison covers 8e190aa83 -> 36b2cf931 (four Safe rows to Unknown) or 5c824e443 -> a9c6dcf44 (one back); system and slice at the CG25 bases equal THREAD-LOCAL-CUSTODY-FREE-READ's measured tip (107 / 0 / 337 / 4 and 63 / 4 / 336 / 1), so only the corpus is unaccounted. DISCHARGE: a quirin-audit measure comparison over each gap, committed with the rows and the landing each is attributed to.",
