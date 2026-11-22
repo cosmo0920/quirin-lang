@@ -13,15 +13,18 @@ Logs and reports are in this worktree's `private/nlc/run-*` (not committed).
 |---|---|---|---|---:|---|---:|---:|---:|
 | base | `1b7028430` | `87af1bf443239df8197fa69ea36af984141bcef6fd8e6bdcd8486f649c75428f` | 19:19:06 / 19:58:33 | 0 | 1,171 / 2 / 3,623 / 8 | 2,118 | 215 | 8,992 |
 | tip-1 (part B only) | `d671a4447` | `fc06f0be7e6f7eb6d9bfee5e8c5a01d3119fd36b6b2c4db22070e022b2aeee92` | 20:05:31 / 20:51:36 | 0 | 1,171 / 2 / 3,623 / 8 | 2,118 | 215 | 8,992 |
-TIP2-ROW
+| **tip-2 (parts B and C)** | `9c479777c` | `a9d733a5cc7dc605dec9022eca44526cdd2f46e05283a4f4502f74bb5ed34430` | 21:00:20 / 21:36:52 | 0 | **1,171 / 2 / 3,623 / 8** | 2,118 | 215 | 8,992 |
 
-Console dependency lines: base and tip-1 `1171 Safe row(s): 439 on no
+Console dependency lines: base, tip-1 and tip-2 `1171 Safe row(s): 439 on no
 declaration, 124 only on validated declarations, 44 on a partly validated
 declaration, 548 on a declared assumption`.
 
-Files: [totals-base.json](totals-base.json), [totals-tip1.json](totals-tip1.json)
-(`scripts/totals.py`), [changed-rows-base-tip1.txt](changed-rows-base-tip1.txt)
-(`scripts/changed_rows.py`), [rows-base-tip1.txt](rows-base-tip1.txt)
+Files: [totals-base.json](totals-base.json), [totals-tip1.json](totals-tip1.json),
+[totals-tip2.json](totals-tip2.json) (`scripts/totals.py`),
+[moved-rows-base-tip2.jsonl](moved-rows-base-tip2.jsonl) (`scripts/moved.py`),
+[changed-rows-base-tip1.txt](changed-rows-base-tip1.txt),
+[changed-rows-base-tip2.txt](changed-rows-base-tip2.txt) (`scripts/changed_rows.py`),
+[rows-base-tip1.txt](rows-base-tip1.txt), [rows-base-tip2.txt](rows-base-tip2.txt)
 (`scripts/rows_compare.py`: the eight rows' named leaves).
 
 **Diagnosis runs (not evidence for any figure).** A temporary trace build
