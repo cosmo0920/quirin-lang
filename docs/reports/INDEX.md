@@ -125,6 +125,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [cast-before-ampersand](cast-before-ampersand/README.md) | CAST-BEFORE-AMPERSAND-READ-AS-BINARY: a cast close makes the next `&` unary |
 
+| [cast-before-star](cast-before-star/README.md) | CAST-BEFORE-STAR-READ-AS-BINARY: a cast close lets the next `*` be a dereference |
+
 | [cast-formalization](cast-formalization/README.md) | CAST-FORMALIZATION: one formal cast semantics for route G |
 
 | [cell-guard-result-range](cell-guard-result-range/README.md) | CELL-GUARD-RESULT-RANGE |

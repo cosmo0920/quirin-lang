@@ -1,0 +1,13 @@
+{
+  "note": "Landing integrate/r62 (base main 2c60986b0, after r61 and the other session's SP6/SP7/SP8 landing; merges CAST-BEFORE-STAR-READ-AS-BINARY fd60e6eb0, base 7450d69af, in 156f8a339; generated docs/agents/README.md, docs/agents/gateway.md and proof/QCore.lean auto-merged and regenerated, no conflicts; third_party/libevent checked out). USER DECISION 2026-11-23: \"launch the cast-before-star card\"; \"yes, land the cast-before-star card as r62\". Amendments applied in 5cfca8170 with --profiles-base origin/main: CAST-BEFORE-STAR-READ-AS-BINARY retired; RETURN-FAMILY-STAR-AFTER-UNRESOLVED-CAST registered; profiles []; status_edits empty. Full landing gate on 5cfca8170 (private/integrate-r62/gate, raw record beside this file as gate-scope.json) via scripts/gate_scope.py --base origin/main --full --landing through private/toolchain/env.sh: Rust 680 units / 725 summaries, 9981 passed, 0 failed, 22 ignored; fmt, Clippy and both reevaluation examples exit 0; Lean (all) exit 0, 492 audits (new QCore.CastBeforeStar; SP7/SP8 added two). No providers/ path changed by the card, so the provider gate was not selected; provider_tests 174 (1 ignored) is carried from the SP7/SP8 combined landing gate on 35b5f48a2, which ran it. Python (807 tests) exited 1 only on the stale-matrix check test_the_derived_facts_are_recomputed_rather_than_carried, cleared by regenerating the matrix from this record. Change: rule 74g (new): legacy_refused_operands' dereference and aggregate_store premise 4 read a `*` after a `)` through ampersand_runs::may_close_a_cast; the refused hand-on hands on both `*p` and `p` when the group may close a cast (neither reading contains the other), and premise 4 counts such a `*` as a dereference (refusing the base). No pin moved. Card measurement (opt-in current --monkey-linked, Fluent Bit 046accf6): base 7450d69af and tip 404136f21 both 1172/2/3622/8, no row or leaf changed, matching the committed prediction (none). Pinned-route parity (quirin-audit measure --declared) was not run: this host holds no build/cycle19 inputs or baselines. No profile baseline is changed and land.py publish is owed.",
+  "workspace_tests": 9981,
+  "provider_tests": 174,
+  "python_evidence_validator_tests": 807,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "full landing gate: every step exits 0 except the Python suite's stale-matrix check, cleared by regenerating the matrix from this record; provider gate not selected (no providers/ change), provider count carried from the SP7/SP8 combined landing",
+  "lean_audits": 492,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

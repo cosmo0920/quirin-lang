@@ -13211,4 +13211,47 @@ through `ampersand_runs`.
     `a_call_is_binary`, `the_address_hands_on_a_superset`,
     `cast_vectors_hold`); [report](../reports/cast-before-ampersand/README.md).
 
+<a id="constraint-74g"></a>
+
+74g. **A `)` that may close a cast lets the next single `*` be a
+    dereference.** Card CAST-BEFORE-STAR-READ-AS-BINARY, extending
+    [rule 74f](#constraint-74f) with its one shared detector,
+    `ampersand_runs::may_close_a_cast`. The census of the base (report §1)
+    found two readers that decided a single `*` before a name by the token
+    before it, counted `)` as an operand end, and so read `(T) *p` as a
+    multiplication. The refused hand-on (`legacy_refused_operands`) handed on
+    `p` for `(char *) *p`, not the slot `*p`; since the reader only withdraws
+    accusations, that miss is the unsound direction. Premise 4 of
+    `aggregate_store::store_bases` excluded a `*` after `)` from
+    `dereferenced`, so `(void) *b` left `b` an admissible store base, the
+    admitting direction. Both now ask the detector about the `)`. **The
+    refused hand-on** hands on **both** `*p` and `p` after a `)` that may
+    close a cast. The unary reading's place (`*p`) and the binary reading's
+    (`p`) do not contain each other, unlike rule 74f's `&`, whose unary
+    reading is a superset. The union is therefore the fail-closed reading of
+    every group the detector cannot rule out, an undecided `(a) * p`
+    included. Its objects are rule 74f's (`publication::value_names`). A
+    group of a single declared object is binary, so `(a) * b` hands on `a`
+    and `b`, and so are an argument list and a value group: `f(x) * n` hands
+    on `n` and `x`. **Premise 4** reads a `*` after a `)` that may close a
+    cast as a dereference and refuses the base. It asks the detector with no
+    declared objects, because a candidate base is a record pointer and C11
+    6.5.5p2 forbids a pointer operand of a binary `*`. An argument list
+    (`sizeof (T) * b`, `__typeof__ (x) * b`) stays binary, as at the base.
+    Every other reader in the census either refuses at any `) *` (the
+    lexical access gate, `loop_owner_holder_opaque`'s copy check) or decides
+    only declarators or statement-initial stores. The exception is
+    `legacy_return_family`'s `unary_position`, which has its own
+    declaration-resolved cast reading and reads a group it cannot resolve as
+    binary; it is registered as `RETURN-FAMILY-STAR-AFTER-UNRESOLVED-CAST`.
+    **Do not** write a second cast detector, and **do not** narrow the
+    hand-on union to the unary reading alone. Premises stated, not proved:
+    rule 74f's (trust boundary 28). A `*p` hand-on reaches a verdict only
+    where `*p` is a bound place at a refused node, and the gateway binds
+    such a place only as a sanctioned out slot. `QCore.CastBeforeStar`
+    (`old_reading_misses_the_slot`, `the_fix_only_adds_places`,
+    `an_undecided_group_hands_on_both`, `a_call_is_binary`,
+    `premise_four_only_refuses_more`, `star_vectors_hold`);
+    [report](../reports/cast-before-star/README.md).
+
 <!-- generated:rules:end -->

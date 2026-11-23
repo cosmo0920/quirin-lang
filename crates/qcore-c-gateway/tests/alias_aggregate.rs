@@ -631,3 +631,61 @@ fn the_same_store_is_admitted_against_both_declarations() {
         check_legacy_safety_certificate(certificate).expect("certificate rechecks");
     }
 }
+
+// --------------------------------------------------------------------------
+// Card CAST-BEFORE-STAR-READ-AS-BINARY (rule 74g)
+// --------------------------------------------------------------------------
+
+/// The lines of `entry`'s `Unsupported` diagnostics for `V_CREATE` with
+/// `statement` placed before its `return`, one statement per line.
+fn refused_lines(statement: &str) -> (AnalysisStatus, Vec<usize>, usize) {
+    let body = V_CREATE
+        .replace("return b; }", &format!("{statement} return b; }}"))
+        .replace("; ", ";\n");
+    let store = 1 + body
+        .lines()
+        .position(|line| line.contains("b->any = it;"))
+        .expect("the opaque store");
+    let measured = summary_of(&body, "v_create");
+    let lines = measured
+        .diagnostics
+        .iter()
+        .filter(|diagnostic| {
+            matches!(&diagnostic.kind, LegacyDiagnosticKind::Unsupported { description }
+                if description == INDIRECT)
+        })
+        .map(|diagnostic| diagnostic.line)
+        .collect();
+    (measured.status, lines, store)
+}
+
+/// Premise 4 refuses a base dereferenced under a cast: `(void) *b` makes `b`
+/// no admissible base, so the stores through it refuse too. FAILS at the
+/// base, which read `) *` as a multiplication, admitted `b` and refused only
+/// the `(void) *b` statement itself.
+#[test]
+fn a_cast_before_a_dereferenced_base_refuses_its_stores() {
+    if !clang_available() {
+        return;
+    }
+    let (status, lines, store) = refused_lines("(void) *b;");
+    assert_eq!(status, AnalysisStatus::Unknown);
+    assert!(
+        lines.contains(&store),
+        "the store `b->any = it` refuses: {lines:?}"
+    );
+}
+
+/// The control: `sizeof (int) * n` multiplies, so `b` stays admissible and
+/// only that statement refuses (the lexical gate reads every `) *` as an
+/// access), at the base and here.
+#[test]
+fn an_argument_list_before_a_star_keeps_the_base() {
+    if !clang_available() {
+        return;
+    }
+    let (status, lines, store) = refused_lines("n = sizeof (int) * n;");
+    assert_eq!(status, AnalysisStatus::Unknown);
+    assert_eq!(lines.len(), 1, "{lines:?}");
+    assert!(!lines.contains(&store), "{lines:?}");
+}
