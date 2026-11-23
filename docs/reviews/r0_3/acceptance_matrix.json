@@ -6920,11 +6920,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Landing integrate/r59 (base main 9193b196a, which carries SP6-SYMBOLIC-HYPOTHESIS-ATOMS landed from another session after r58; merges AMPERSAND-RUN-PARITY-OTHER-READERS 7157fbee3 in 8feb2f92d, no conflicts; third_party/libevent checked out at d82464a27). USER DECISION 2026-11-23: \"launch the ampersand parity card\". Amendments applied in acf8efc9e with --profiles-base 9193b196a: AMPERSAND-RUN-PARITY-OTHER-READERS retired; CAST-BEFORE-AMPERSAND-READ-AS-BINARY registered; profiles []; status_edits empty. Full landing gate on acf8efc9e (private/integrate-r59/gate, raw record beside this file as gate-scope.json) via scripts/gate_scope.py --base origin/main --full --landing through private/toolchain/env.sh: Rust 679 units / 724 summaries, 9938 passed, 0 failed, 21 ignored; fmt, Clippy and both reevaluation examples exit 0; Lean (all) exit 0, 487 audits (new QCore.AmpersandRunParity; SP6 added two). No providers/ path changed, so the provider gate was not selected; provider_tests 174 is carried from SP6's landing gate (174 passed, 0 failed, 1 ignored). Python (807 tests) exited 1 only on the stale-matrix check test_the_derived_facts_are_recomputed_rather_than_carried, cleared by regenerating the matrix from this record. Change: rule 74e (new; a line on 74d): every reader deciding address-taking from the unfused & token stream uses one run-parity helper (crates/qcore-c-gateway/src/ampersand_runs.rs); census of 376 lines in 133 files: 8 unsound sites fixed (each with a fixture failing at the base), 2 admitting, 18 fail-closed, 2 imprecise unchanged, the rest correct. One pin moved: docs/reports/libc-reading-site-evidence/bindings.json typed_field_access.rs digest. Card measurement (opt-in current --monkey-linked, Fluent Bit 046accf6): base 9193b196a 1171/2/3623/8 -> tip 1172/2/3622/8; one Unknown -> Safe, rdkafka_telemetry_encode.c get_member_id (its only leaf was rule 5j reading && as an address; on no declaration; unpredicted by the measure-prediction block), 0 Safe lost, three rows change leaves only. Pinned-route parity (quirin-audit measure --declared) was not run: this host holds no build/cycle19 inputs or baselines. No profile baseline is changed and land.py publish is owed.",
-  "workspace_tests": 9938,
+  "note": "Landing integrate/r60 (base main d7540d746, after r59; merges OPENSSL-RELEASED-PARAMETER-SLOTS 8953c9fc2, base 9193b196a, in c027e4e5e; auto-merged crates/qcore-c-gateway/src/legacy_retained_by.rs and the generated docs/agents/README.md, docs/agents/gateway.md and proof/QCore.lean (regenerated), no conflicts; third_party/libevent checked out at d82464a27). USER DECISION 2026-11-23 on the released-parameter vocabulary: \"Released-parameter wording (OpenSSL): if yes, EVP_MD_CTX_free drops its premise, and PKCS12_free keeps it only for the CRL item. -> launch them, too.\" Lock review: providers/quirin-provider-openssl/contracts.lock flexible: 0 added, 0 removed, 2 changed (EVP_MD_CTX_free, PKCS12_free: contract_sha256 and pinned_at only); pinned unchanged; merged lock identical to the card's reviewed one; providers/contracts.py check exit 0. Amendments applied in 9aa2c74f1 with --profiles-base d7540d746: OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS retired; OPENSSL-SLOT-REGISTRATION-INTO-RESULT appended; CALLBACK-MEMBER-RELEASED-REQUIREMENT-FOLD registered; profiles []; status_edits empty. Full landing gate on 9aa2c74f1 (private/integrate-r60/gate, raw record beside this file as gate-scope.json) via scripts/gate_scope.py --base origin/main --full --landing through private/toolchain/env.sh: Rust 679 units / 724 summaries, 9943 passed, 0 failed, 21 ignored; fmt, Clippy and both reevaluation examples exit 0; Lean (all) exit 0, 488 audits (new QCore.OpensslReleasedSlots); provider package build/verify-all/verify, provider tests (49 summaries, 174 passed, 0 failed, 1 ignored), provider fmt and Clippy exit 0. Python (807 tests) exited 1 only on the stale-matrix check test_the_derived_facts_are_recomputed_rather_than_carried, cleared by regenerating the matrix from this record. Change: C04.19.3 and rule 12n admit resource_callback_slot_invoked through a kindless resource_released parameter, read before the release, standing alone beside the custody contract; a candidate effect on the released object refuses the call (callback-beside-release). EVP_MD_CTX_free states 12 teardown slots and drops openssl_unstated_callback_slots; PKCS12_free states the key's nine and keeps the premise only for a CRL's crl_free. Card measurement (opt-in current --monkey-linked, Fluent Bit 046accf6): base 9193b196a and tip both 1171/2/3623/8, 0 status or content moves. Pinned-route parity (quirin-audit measure --declared) was not run: this host holds no build/cycle19 inputs or baselines. No profile baseline is changed and land.py publish is owed.",
+  "workspace_tests": 9943,
   "provider_tests": 174,
   "python_evidence_validator_tests": 807,
-  "lean_audits": 487,
+  "lean_audits": 488,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
    "AuditAggregateOwnedField.lean",
@@ -7218,6 +7218,7 @@
    "AuditOpensslHandshakeSlots.lean",
    "AuditOpensslInnerFreesAudit.lean",
    "AuditOpensslObjectFreesAudit.lean",
+   "AuditOpensslReleasedSlots.lean",
    "AuditOpensslRemainingSetters.lean",
    "AuditOpensslUnstatedSlots.lean",
    "AuditOrderedLifetimeReplay.lean",
@@ -7418,9 +7419,9 @@
   "reevaluation_followup_exit": 0,
   "cargo_fmt": "clean",
   "cargo_clippy": "clean",
-  "standing_gate": "full landing gate: every step exits 0 except the Python suite's stale-matrix check, cleared by regenerating the matrix from this record; provider gate not selected (no providers/ change), provider count carried from SP6",
+  "standing_gate": "full landing gate: every step exits 0 except the Python suite's stale-matrix check, cleared by regenerating the matrix from this record; provider gate run",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/ampersand-run-parity/integration/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/openssl-released-parameter-slots/integration/gate.json)"
  },
  "named_followups": [
   {

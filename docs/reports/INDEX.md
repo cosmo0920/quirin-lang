@@ -863,6 +863,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [openssl-provider-remaining-callees](openssl-provider-remaining-callees/README.md) | OPENSSL-PROVIDER-REMAINING-CALLEES: the census's remaining OpenSSL callees, and the measured opt-in arbiter |
 
+| [openssl-released-parameter-slots](openssl-released-parameter-slots/README.md) | OPENSSL-RELEASED-PARAMETER-SLOTS: slot invocations through a released parameter |
+
 | [openssl-remaining-handshake-setters](openssl-remaining-handshake-setters/README.md) | OPENSSL-REMAINING-HANDSHAKE-SETTERS: the handshake setters still undeclared |
 
 | [openssl-ssl-ctx-callback-slots](openssl-ssl-ctx-callback-slots/README.md) | OPENSSL-SSL-CTX-CALLBACK-SLOTS: opaque callback slots replace the OpenSSL registered-callbacks premise |
