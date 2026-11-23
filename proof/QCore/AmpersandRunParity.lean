@@ -161,6 +161,7 @@ inductive Reader where
   | legacySlotMoveBorrow
   | legacyRefusedOperands
   | legacyInPlaceCustody
+  | legacyCallInstantiation
   deriving DecidableEq, Repr
 
 /-- Each reader's reading at the base. -/

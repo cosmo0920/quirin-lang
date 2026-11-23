@@ -12996,7 +12996,7 @@ through `ampersand_runs`.
 
 74e. **Every address decision reads a run of `&` by its parity.** Card
     AMPERSAND-RUN-PARITY-OTHER-READERS (`crates/qcore-c-gateway/src/ampersand_runs.rs`,
-    new; 27 call sites in 18 files, counted by a test against `READERS`). It
+    new; 28 call sites in 19 files, counted by a test against `READERS`). It
     extends [rule 74d](#constraint-74d)'s reading (C) from rule 10a's frame to
     every reader of the unfused token stream. The importer emits one token per
     `&`; C lexes a run of `k` adjacent `&` by maximal munch (C11 6.4p4), and a
@@ -13020,8 +13020,10 @@ through `ampersand_runs`.
     **Admitting** (an address read where none is, and the reading admits):
     `only_holder_mentions` and `only_registry_mentions` admitted `p && name)`
     as a whole `&name` actual of a holder callee. **Fail-closed** (an address
-    read where none is, and the reading refuses): seventeen readers took any
-    `&` before a name as its address, so `p && q` refused `q`. All three
+    read where none is, and the reading refuses): eighteen readers took any
+    `&` before a name as its address, so `p && q` refused `q` (one of them,
+    rule 5j's `residual_takes_an_address`, read every `&` after a `&` as
+    unary). All three
     classes now read the parity; the fail-closed ones stop refusing after an even run.
     Correct readers are unchanged and listed in the report: the fused streams
     (`condvar_census`, `stop_paths`, `container_publication::fuse`,

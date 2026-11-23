@@ -104,6 +104,7 @@ pub(crate) const READERS: &[(&str, usize, &str)] = &[
     ("legacy_slot_move_borrow.rs", 1, "fail-closed"),
     ("legacy_refused_operands.rs", 1, "fail-closed"),
     ("legacy_in_place_custody.rs", 1, "fail-closed"),
+    ("legacy_call_instantiation.rs", 1, "fail-closed"),
 ];
 
 /// `(tokens, index of the operand, run ends in an & operator?, run ends in
