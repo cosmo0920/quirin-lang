@@ -55,7 +55,9 @@ fn an_every_exit_delivery_is_the_callers_custody() {
     ));
     assert!(kept.safe(), "{kept:?}");
     // A caller that ignores the delivered object leaks in the caller.
-    let ignored = g(&format!("{FILL} void subject(void) {{ void *p; fill(&p); }}"));
+    let ignored = g(&format!(
+        "{FILL} void subject(void) {{ void *p; fill(&p); }}"
+    ));
     assert!(ignored.unsafe_() && ignored.has("Leak"), "{ignored:?}");
 }
 
@@ -146,7 +148,10 @@ fn a_store_followed_by_a_release_or_a_second_store_stays_refused() {
     ] {
         let run = g_function(body, "fill");
         assert!(run.unknown(), "{body}: {run:?}");
-        assert!(run.refused(&slot_refusal("q_alloc", "*out")), "{body}: {run:?}");
+        assert!(
+            run.refused(&slot_refusal("q_alloc", "*out")),
+            "{body}: {run:?}"
+        );
         let caller = g(&format!(
             "{body} void subject(void) {{ void *p; fill(&p); }}"
         ));
@@ -186,7 +191,8 @@ fn a_slot_the_caller_cannot_see_stays_refused() {
     if !clang_available() {
         return;
     }
-    let run = g("void subject(void) { void *slot; void **p = &slot; *p = q_alloc(); q_free(slot); }");
+    let run =
+        g("void subject(void) { void *slot; void **p = &slot; *p = q_alloc(); q_free(slot); }");
     assert!(run.unknown(), "{run:?}");
     assert!(run.refused(&slot_refusal("q_alloc", "*p")), "{run:?}");
 }

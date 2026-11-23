@@ -109,7 +109,8 @@ fn summaries(source: &str) -> BTreeMap<String, ResourceParameterMode> {
         .collect()
 }
 
-const DECLARATIONS: &str = "void *q_alloc(void); void q_free(void *p); void *q_maybe_alloc(void);\n";
+const DECLARATIONS: &str =
+    "void *q_alloc(void); void q_free(void *p); void *q_maybe_alloc(void);\n";
 
 /// The sound shape publishes `Out`; every refused shape publishes nothing, so
 /// a caller keeps `call to uncontracted function`.
@@ -152,9 +153,8 @@ fn unsupported(summary: &LegacyProgramSummary, function: &str) -> BTreeSet<Strin
 
 #[test]
 fn an_unsanctioned_slot_store_is_refused_by_name_not_as_a_discard() {
-    let source = format!(
-        "{DECLARATIONS}void subject(void **out, int c) {{ if (c) *out = q_alloc(); }}"
-    );
+    let source =
+        format!("{DECLARATIONS}void subject(void **out, int c) {{ if (c) *out = q_alloc(); }}");
     let summary = analyze_legacy_c_translation_unit(&source, "subject", &contracts()).unwrap();
     assert_eq!(summary.functions["subject"].status, AnalysisStatus::Unknown);
     let refused = unsupported(&summary, "subject");
@@ -165,7 +165,9 @@ fn an_unsanctioned_slot_store_is_refused_by_name_not_as_a_discard() {
         "{refused:?}"
     );
     assert!(
-        refused.iter().all(|text| !text.starts_with("discarded owned result")),
+        refused
+            .iter()
+            .all(|text| !text.starts_with("discarded owned result")),
         "{refused:?}"
     );
 }
@@ -175,8 +177,10 @@ fn a_real_discard_keeps_its_text() {
     let source = format!("{DECLARATIONS}void subject(void) {{ q_alloc(); }}");
     let summary = analyze_legacy_c_translation_unit(&source, "subject", &contracts()).unwrap();
     assert_eq!(summary.functions["subject"].status, AnalysisStatus::Unknown);
-    assert!(unsupported(&summary, "subject")
-        .contains("discarded owned result of resource API `q_alloc`"));
+    assert!(
+        unsupported(&summary, "subject")
+            .contains("discarded owned result of resource API `q_alloc`")
+    );
 }
 
 #[test]
