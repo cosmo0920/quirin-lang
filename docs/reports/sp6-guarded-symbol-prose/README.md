@@ -387,3 +387,12 @@ target/release/quirin-audit --plugin-path target/release --output <dir> --timeou
   `plugin_source_witnesses`) still describe their environments in English.
   They are not conditions a declaration states, and converting them is not
   small (the manifests are digest-held), so this card did not.
+
+## Integrator measurement (2026-11-21)
+
+Landing `35b5f48a2` on base `9193b196a`, measured with `--declared PREDICTION.md`:
+corpus, twelve-home, system and slice all match the declared prediction with
+0 moves. Comparison: `integration/native-comparison.json.gz` (uncompressed
+sha256 `8fe42108dd43d0cff143a5d28d7e89ce7764fa14fc76098f0426640474f318de`). Landing gate: `integration/gate.json` (Rust 9932
+passed, 1 failed: the known host libcurl failure; Lean 488 audits; Python
+807Combined landing with the other card (one gate, one measurement of the combined tip 35b5f48a2 against SP6-GUARDED-SYMBOL-PROSE's PREDICTION.md, declared result match; SP8's PREDICTION.md also predicts 0 status moves on corpus, twelve-home, system and slice, which the same measurement shows). Base 9193b196a includes the restoration of SP6's two ledger edits lost in the r57 race merge.).
