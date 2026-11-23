@@ -273,8 +273,64 @@ are 0 on corpus, twelve-home, system and slice, with no digest delta
 
 ## 8. Gate
 
-See [gate](gate/) and the hand-back. The card gate is
-`python3 scripts/gate_scope.py --base 2c60986b0 --out <worktree>/private/gate-1`.
+**Gate 1.** `python3 scripts/gate_scope.py --base 2c60986b0 --out
+<worktree>/private/gate-1` ran on `f5bc0bea3` ([record](gate/gate-1.json)).
+The scope was:
+
+* Rust packages `qcore-audit`, `qcore-c-gateway`, `qcore-compiler`,
+  `qcore-contract`, `qcore-frontend`, `qcore-verification`,
+  `qcore-verifier-host`, `qcorec`, `quirin-audit-plugin-libcurl`,
+  `quirin-audit-plugin-openssl` and `quirin-source-analysis`, plus five
+  `quirin-audit-plugin-measure` test targets;
+* Lean all, because `proof/QCore.lean` changed;
+* Python always;
+* no provider gate.
+
+The gate exited 1:
+
+| Step | Exit | Counts |
+|---|---|---|
+| submodules, fmt, clippy, clippy (measure tests) | 0, 0, 0, 0 | |
+| rust-suite | 101 | 633 units, 8462 passed, **1 failed**, 23 ignored, 148 filtered |
+| reevaluation probe, follow-up | 0, 0 | |
+| lean (`check_lean_audits.py`) | 0 | 492 audits (this card's included) |
+| python | 1 | 807 tests, **1 failed** |
+
+Neither failure is this card's:
+
+* **Rust.**
+  `qcore-audit::libcurl_user_crate_versions::the_libcurl_ranges_follow_the_audited_curlver_header`
+  is the recorded host failure (the system `curlver.h`). It was not fixed.
+* **Python.**
+  `test_gate_slot_starvation.Resident.test_it_is_reported_while_the_job_runs`
+  failed on a resident-memory threshold under the gate's load
+  (52372 KiB, expected at least 65536). Rerun alone, as the rule for
+  gate-slot timing tests requires: `python3 -m unittest -v
+  scripts.tests.test_gate_slot_starvation` exited 0 with 26 tests
+  (`private/logs/py-starvation-alone.log`). Both results are recorded.
+
+**After the merge of origin/main `e6d86d596`** (r62
+CAST-BEFORE-STAR-READ-AS-BINARY; disjoint files: c-gateway, its own Lean
+module, `proof/QCore.lean` and the matrix; merged tip `1975babc7`, no
+conflict):
+
+* `gen_lean_roots.py` and `gen_rule_docs.py` changed nothing.
+* `cargo test -p qcore-contract --test plugin_guarded_symbols --test
+  guarded_decomposition --test cjson_guarded_symbols --test
+  guarded_contract_adoption --test cjson_typed_atoms` exited 0: 35 passed,
+  3 ignored (`private/logs/t5-merge.log`).
+* `lake build QCore.PremiseFormula.PluginGuardedSymbols QCore.CastBeforeStar`
+  exited 0.
+
+**Amendments.** `python3 scripts/apply_amendments.py
+integration-amendments.json --check` exited 0 at the merged tip. It retires
+`SP7-PLUGIN-GUARDED-APPLICATION-FORMULAS`.
+
+**Measurement** is the integrator's step:
+
+```text
+target/release/quirin-audit --plugin-path target/release --output <dir> --timeout-ms 36000000 measure --inputs crates/quirin-audit-plugin-measure/inputs/live.json --inputs-base /media/Data/GitHub/quirin-lang --side base=baseline:<main baseline> --side tip=rev:<landed tip> --declared docs/reports/sp9-plugin-guarded-application-formulas/PREDICTION.md
+```
 
 ## 9. Follow-ups
 
