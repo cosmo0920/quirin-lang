@@ -239,6 +239,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [cg24-alias-extent-frame-vocabulary](cg24-alias-extent-frame-vocabulary/README.md) | CG24-ALIAS-EXTENT-FRAME-VOCABULARY |
 
+| [cg25-in-place-regex](cg25-in-place-regex/README.md) | CG25-IN-PLACE-REGEX |
+
 | [cg25-resource-kinds](cg25-resource-kinds/README.md) | CG25-RESOURCE-KINDS: a library-handle kind and an in-place kind |
 
 | [cg25-thread-key-automatic-revisit](cg25-thread-key-automatic-revisit/README.md) | CG25-THREAD-KEY-AUTOMATIC-REVISIT |
