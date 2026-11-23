@@ -186,4 +186,12 @@ Run at the records commit:
 
 * `python3 scripts/apply_amendments.py docs/reports/cg25-in-place-regex/integration-amendments.json --check`: 0.
 * `python3 scripts/gen_rule_docs.py --check`: 0.
-* `python3 -m unittest discover -s scripts/tests`: RECHECK_PLACEHOLDER.
+* `QUIRIN_CARD_GATE_BASE=2c60986b0 python3 -m unittest discover -s
+  scripts/tests` (the environment variable `gate_scope.py` sets): 0, with
+  807 tests and 1 skipped (`private/card-logs/python-recheck-2.log`).
+  Without the variable the run exits 1 on one test,
+  `test_the_derived_facts_are_recomputed_rather_than_carried`. That test
+  compares the committed matrix's 491 Lean audits with the tree's 492, the
+  new `AuditInPlaceCertifiedUse.lean` making the difference. It is the
+  landing check, and the integrator regenerates the matrix at landing
+  (`private/card-logs/python-recheck.log`).
