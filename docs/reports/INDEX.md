@@ -1246,6 +1246,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [retention-unmatched-removal-poisons](retention-unmatched-removal-poisons/README.md) | RETENTION-UNMATCHED-REMOVAL-POISONS |
 
+| [return-family-star-cast](return-family-star-cast/README.md) | RETURN-FAMILY-STAR-AFTER-UNRESOLVED-CAST: family S keeps both readings of an undecided cast |
+
 | [review-audit-runner](review-audit-runner/README.md) | Review audit-runner cancellation and failure observation |
 
 | [review-certificate-scope](review-certificate-scope/README.md) | E01-TAIL-CERT-SCOPE — independent Safe-certificate denominator |
