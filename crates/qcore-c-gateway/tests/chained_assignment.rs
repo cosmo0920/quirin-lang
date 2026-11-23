@@ -102,8 +102,17 @@ fn leaks(run: &G) -> bool {
 /// `:214`). Before the card the chain bound only `d`: `return safe;` escaped
 /// nothing, so the run reported a leak at the chain and `loop re-acquisition`
 /// there, exactly as the current run does at `:243`. Now both names hold the
-/// allocation, so the leak is withdrawn; the body's other refusals keep it
-/// `Unknown`, never `Safe` from this rule alone.
+/// allocation, so that leak is withdrawn; never `Safe` from this rule alone.
+///
+/// Deliberate pin update, card LATER-DECLARATOR-INITIALISER-UNREAD (rule
+/// 74k): the declaration is no longer refused; it reads exactly as
+/// `char *safe = 0; char *d = 0;`, and the body then has that spelling's
+/// verdict: `Unsafe` on a provisional leak at the chain (the loop does not
+/// correlate `pass == 0` with the allocation, so a second allocation over a
+/// held `safe` is a path it keeps), with the possibly-null return refused.
+/// Before, the refused declaration hid this; it is the analyser's verdict on
+/// the one-per-statement spelling at the base too, and is not a leak in C
+/// (follow-up PASS-CORRELATED-LOOP-ALLOCATION).
 const SCRAM: &str = "char *subject(const char *str) {
     char *safe = 0, *d = 0;
     int pass;
@@ -130,9 +139,10 @@ fn the_scram_shape_withdraws_the_leak_and_does_not_become_safe() {
         return;
     }
     let run = gs(SCRAM);
-    assert!(!leaks(&run), "{run:?}");
-    assert!(run.unknown(), "{run:?}");
-    assert!(run.refused(IND), "{run:?}");
+    let one_each = gs(&SCRAM.replace("char *safe = 0, *d = 0;", "char *safe = 0; char *d = 0;"));
+    assert_eq!(format!("{run:?}"), format!("{one_each:?}"));
+    assert!(!run.safe(), "{run:?}");
+    assert!(!run.refused(IND), "{run:?}");
     let instructions = lowered(SCRAM);
     assert!(binds(&instructions, "safe"), "{instructions:?}");
     assert!(aliases(&instructions, "d", "safe"), "{instructions:?}");

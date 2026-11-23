@@ -256,13 +256,22 @@ fn an_alias_that_does_not_name_one_struct_keeps_the_refusal() {
         "pointer_alias",
         "struct p_s { int id; char *host; };\ntypedef struct p_s *p_t;\np_t pointer_alias(const char *host) {\n  p_t ret = calloc(1, sizeof(struct p_s));\n  if (ret == NULL) return NULL;\n  ret->host = strdup(host);\n  return ret;\n}",
     );
-    // Two declarators in one declaration.
-    assert_gate_refusal(
-        "two_declarators",
-        &format!(
-            "{DEFINING}node_t *two_declarators(const char *host) {{\n  node_t *ret = calloc(1, sizeof(*ret)), *spare = NULL;\n  if (ret == NULL) return spare;\n  ret->host = strdup(host);\n  return ret;\n}}"
-        ),
-    );
+    // Two declarators in one declaration. Deliberate pin update, card
+    // LATER-DECLARATOR-INITIALISER-UNREAD (rule 74k): the declaration was
+    // refused by the access gate (its `* spare` read as a dereference); it is
+    // now read as its two declarations, and the body is decided exactly as
+    // when they are written one per statement: Safe.
+    for declaration in [
+        "node_t *ret = calloc(1, sizeof(*ret)), *spare = NULL;",
+        "node_t *ret = calloc(1, sizeof(*ret)); node_t *spare = NULL;",
+    ] {
+        assert_safe(
+            "two_declarators",
+            &format!(
+                "{DEFINING}node_t *two_declarators(const char *host) {{\n  {declaration}\n  if (ret == NULL) return spare;\n  ret->host = strdup(host);\n  return ret;\n}}"
+            ),
+        );
+    }
 }
 
 #[test]

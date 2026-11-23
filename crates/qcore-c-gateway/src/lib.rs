@@ -190,6 +190,8 @@ mod nested_call_effects; // CG05-NESTED-CALL-EFFECTS (rule 10y); G hook in legac
 #[cfg(test)]
 #[path = "../tests/unit/elaborator_call_footprints.rs"]
 mod elaborator_call_footprints_tests;
+// Card LATER-DECLARATOR-INITIALISER-UNREAD (rule 74k).
+mod later_declarator;
 // Card W47-LEXICAL-CLOSURE-NESTED-ASSIGNMENT (rule 10o).
 mod legacy_summary;
 mod lexical_nested_assignment;
