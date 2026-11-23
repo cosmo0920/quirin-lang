@@ -1445,6 +1445,108 @@ The guarded symbols of `cJSON_DetachItemViaPointer` ([report](reports/sp6-guarde
 
 `#source_corresponds` is likewise never derived (`source_corresponds_is_never_derived`). Admission's environment conjunct genuinely requires it, and no theorem, source check or assignment rule turns it Supported.
 
+**SP9 block: the plugin guarded symbols' terms** (card SP9-PLUGIN-GUARDED-APPLICATION-FORMULAS; USER DECISION 2026-11-20 as above; USER DECISIONS 2026-11-23 on the card's stop: D1 **A′**, D2 **b**, D3 **I2**). These are typed-rendering terms and value sorts, appended after the SP7 block in the Rust tables `RENDERED_VALUE_SORTS` and `RENDERED_TERMS` (`block: "SP9"`). The block also adds a function sort to the rendering: a rendered term may be a G01p function from rendered value sorts to a rendered value sort or `integer`. No premise formula names these terms, so the premise `VOCABULARY`, grammar, decision vectors and Lean `vocab` are unchanged.
+
+Each term is read in one selected `QCore.PluginPremiseDecomposition.Environment`, which stays implicit (D1 A′, as SP7's entry terms read the entry environment). Every name is prefixed `plg_`, so no generic name (`#time`, `#action`, `#member`, or a sort such as `event`) is reserved. `#plg_X` is the parameter `#X` of `rd_kafka_dump0`'s seven `plugin_*` typed atoms (C04.18.7), with its environment argument dropped. A function left with no argument is a value, and a parameter sort `S` is `plg_S`. Integer-valued components are integers: a trace position is a natural number, and a Boolean flag is `1` or `0`. The Lean model is `QCore.PluginGuardedSymbols.render`.
+
+| Name | G01p sort | Meaning |
+|---|---|---|
+| `plg_event` | value sort | an event of the selected plugin trace (`PluginPremiseDecomposition.Event`): a registration, interception, invocation, acquisition, release, close, copy or other action of loaded code |
+| `plg_plugin` | value sort | a loaded artifact of the selected environment: a librdkafka plugin library or a Fluent Bit C or Go plugin |
+| `plg_family` | value sort | the family of a loaded artifact: librdkafka (`#plg_rk`), Fluent Bit C (`#plg_fluent_c`) or Fluent Bit Go (`#plg_fluent_go`) |
+| `plg_action` | value sort | the kind of a plugin trace event (`PluginPremiseDecomposition.Action`) |
+| `plg_callback` | value sort | a callback function of the plugin trace (an event's function) |
+| `plg_member` | value sort | an rk_conf callback member a registration or invocation is at |
+| `plg_context` | value sort | an opaque context an invocation receives |
+| `plg_handle` | value sort | a loader handle of a loaded artifact |
+| `plg_activation` | value sort | one activation of an interceptor |
+| `plg_resource` | value sort | a resource an interceptor activation acquires or releases |
+| `plg_symbol` | value sort | a symbol a loaded artifact requires |
+| `plg_digest` | value sort | an artifact, build or inventory identity |
+| `plg_abi` | value sort | an ABI identity of a resolved or expected address |
+| `#plg_in_trace` | predicate<plg_event> | `#plg_in_trace(e)`: the event `e` is in the selected trace (every loaded artifact's callback events) |
+| `#plg_action` | function<plg_event,plg_action> | the event's action |
+| `#plg_plugin` | function<plg_event,plg_plugin> | the loaded artifact the event belongs to |
+| `#plg_function` | function<plg_event,plg_callback> | the callback the event registers, invokes or destroys |
+| `#plg_member` | function<plg_event,plg_member> | the rk_conf callback member the event is at |
+| `#plg_opaque` | function<plg_event,plg_context> | the opaque context the event passes |
+| `#plg_handle` | function<plg_event,plg_handle> | the loader handle the event closes |
+| `#plg_resource` | function<plg_event,plg_resource> | the resource the event acquires or releases |
+| `#plg_activation` | function<plg_event,plg_activation> | the interceptor activation the event happens in |
+| `#plg_time` | function<plg_event,integer> | the event's position in the trace |
+| `#plg_result` | function<plg_event,integer> | the event's integer result (0 for a successful registration or interception) |
+| `#plg_public_setter` | function<plg_event,integer> | 1 when the event goes through a public setter, else 0 |
+| `#plg_exact_candidate` | function<plg_event,integer> | 1 when an interception names the exact pinned list or union-arm candidate, else 0 |
+| `#plg_pointer_borrowed` | function<plg_event,integer> | 1 when every pointer the event passes into an interceptor is borrowed, else 0 |
+| `#plg_scalar_borrowed` | function<plg_event,integer> | 1 when every scalar resource the event passes into an interceptor is borrowed, else 0 |
+| `#plg_local_resource` | function<plg_event,integer> | 1 when the event's resource was acquired locally in its activation, else 0 |
+| `#plg_conf_live` | function<plg_event,integer> | 1 when the configuration an interception registers on is live, else 0 |
+| `#plg_from_on_new` | function<plg_event,integer> | 1 when an interception is made during a run of an on_new interceptor, else 0 |
+| `#plg_initialized` | function<plg_event,integer> | 1 when the client an interception registers on is already initialized, else 0 |
+| `#plg_share_consumer` | function<plg_event,integer> | 1 when the client an interception registers on is a share consumer, else 0 |
+| `#plg_config_registration` | function<plg_event,integer> | 1 when an interception is registered on a configuration (rather than a client), else 0 |
+| `#plg_in_interceptor` | function<plg_event,integer> | 1 when the event happens inside an interceptor activation, else 0 |
+| `#plg_invoke` | plg_action | the action of a callback invocation |
+| `#plg_register` | plg_action | the action of a callback registration |
+| `#plg_intercept` | plg_action | the action of an interceptor registration |
+| `#plg_acquire` | plg_action | the action of a local acquisition |
+| `#plg_release` | plg_action | the action of a release |
+| `#plg_retain` | plg_action | the action of a retention |
+| `#plg_transfer` | plg_action | the action of a custody transfer |
+| `#plg_return_local` | plg_action | the action dropping a local acquisition before its activation returns |
+| `#plg_global_custody` | plg_action | the action taking global custody |
+| `#plg_close` | plg_action | the action of a loader close |
+| `#plg_destroy_callback` | plg_action | the action of a destruction callback invocation |
+| `#plg_copy_reference` | plg_action | the action copying a registration with its loader reference |
+| `#plg_rk` | plg_family | the librdkafka plugin family |
+| `#plg_fluent_c` | plg_family | the Fluent Bit C plugin family |
+| `#plg_fluent_go` | plg_family | the Fluent Bit Go plugin family |
+| `#plg_loaded` | predicate<plg_plugin,plg_family> | `#plg_loaded(p,f)`: the artifact `p` is loaded as a member of family `f` |
+| `#plg_loader_enabled` | function<plg_family,integer> | 1 when the selected build enables the family's loader, else 0 |
+| `#plg_actual_build` | function<plg_plugin,plg_digest> | the artifact's actual build identity |
+| `#plg_expected_build` | function<plg_plugin,plg_digest> | the artifact's selected build identity |
+| `#plg_actual_inventory` | plg_digest | the actual loaded-artifact inventory identity |
+| `#plg_expected_inventory` | plg_digest | the selected loaded-artifact inventory identity |
+| `#plg_actual_artifact` | function<plg_plugin,plg_digest> | the artifact's actual identity |
+| `#plg_expected_artifact` | function<plg_plugin,plg_digest> | the artifact's selected identity |
+| `#plg_required_symbol` | predicate<plg_plugin,plg_symbol> | `#plg_required_symbol(p,s)`: the artifact `p` requires the symbol `s` |
+| `#plg_resolved_address` | function<plg_plugin,plg_symbol,integer> | the address the symbol resolves to in the artifact (0 when unresolved) |
+| `#plg_expected_address` | function<plg_plugin,plg_symbol,integer> | the selected address of the symbol in the artifact |
+| `#plg_actual_abi` | function<integer,plg_abi> | the actual ABI at an address |
+| `#plg_expected_abi` | function<integer,plg_abi> | the selected ABI at an address |
+| `#plg_member_candidate` | predicate<plg_member,plg_callback> | `#plg_member_candidate(m,f)`: `f` is a declared candidate of the member `m` |
+| `#plg_static_default` | predicate<plg_member,plg_callback> | `#plg_static_default(m,f)`: `f` is the member `m`'s stated static default in the selected build |
+| `#plg_code_live` | predicate<plg_callback,integer> | `#plg_code_live(f,t)`: the callback's code is live at trace position `t` |
+| `#plg_context_live` | predicate<plg_context,integer> | `#plg_context_live(x,t)`: the opaque context is live at trace position `t` |
+| `#plg_handle_for` | function<plg_plugin,plg_handle> | the loader handle of the artifact |
+| `#plg_ref_count` | function<plg_handle,integer,integer> | the handle's loader reference count at a trace position |
+| `#plg_return_boundary` | function<plg_activation,integer> | the trace position at which the activation returns |
+| `#plg_rk_proposed` | predicate<plg_plugin> | `#plg_rk_proposed(p)`: the artifact meets the proposed rk_plugin_library outer envelope (`PluginPremiseDecomposition.RkProposed`) |
+| `#plg_fluent_proposed` | predicate<plg_plugin> | `#plg_fluent_proposed(p)`: the artifact meets the proposed flb_external_plugin outer envelope (`PluginPremiseDecomposition.FluentProposed`) |
+| `#plg_ev` | plg_event | the reached rk_conf callback invocation of rd_kafka_dump0 the decomposition's cases and postconditions are read at; the decomposition is read at every reached invocation (user decision 2026-11-23) |
+| `#plg_admits_callback_closure` | predicate<> | the gateway admits every reached rk_conf callback invocation of rd_kafka_dump0 under its rk_plugin_callback_closure premise; never inferred from a sampled callback |
+| `#plg_trace_corresponds` | predicate<> | the selected environment is the run's: every loaded librdkafka and Fluent Bit C/Go artifact, every callback event, the build, ABI and inventory and the full context are what the terms denote. It is an independent assumption: no model or source check establishes it, and its disposition stays Open (user decision 2026-11-23) |
+| `#plg_refutes_registration` | predicate<plg_event> | `#plg_refutes_registration(e)`: positive evidence that the invocation `e` has neither its required successful public registration nor a stated static default. It entails both absences and is never derived from a failed registration proof (user decision 2026-11-23, D3) |
+
+The guarded symbols of the frozen plugin sidecar `premise-guarded-decomposition/applications/plugin.json` ([report](reports/sp9-plugin-guarded-application-formulas/README.md)). Each holds exactly when its Lean definition does (`QCore.PluginGuardedSymbols.plugin_guarded_symbols_are_the_definitions`):
+
+* The seven `plugin_*` prerequisites are their typed atoms' formulas bound to the SP9 terms. They are `loadedArtifacts`, `callbackCandidates`, `loadedLifetime`, `loadedCustody`, `loadedRegistration`, `loadedUnload` and `outerBridge` (`QCore.PluginPremiseDecomposition`); together they are `CallbackRefinement`.
+* `environment`: `#plg_trace_corresponds()`.
+* `invoke` (operation): `#plg_admits_callback_closure()`.
+* `registered_case`: `(#plg_member_candidate(#plg_member(#plg_ev),#plg_function(#plg_ev)) && exists (#reg: plg_event) { … })`, a prior successful public registration of the same member and callback (`registeredCase`).
+* `default_case`: `(#plg_member_candidate(…) && #plg_static_default(#plg_member(#plg_ev),#plg_function(#plg_ev)))` (`defaultCase`). It does not assert that the invocation is unregistered, so both cases can hold (`default_case_is_independent_of_registration`).
+* `registered_lifetime_valid`: the invocation's code and context are live at its position, and the unload order of its plugin holds (`lifetimePostcondition`).
+* `default_lifetime_valid` (D2 **b**): `(#plg_code_live(#plg_function(#plg_ev),#plg_time(#plg_ev)) && #plg_context_live(#plg_opaque(#plg_ev),#plg_time(#plg_ev)))` (`defaultLifetime`, new). It is implied by `lifetimePostcondition` (`lifetime_entails_default_lifetime`) and is strictly weaker (`default_lifetime_does_not_give_the_unload_order`). It states no unload order: that is loaded-envelope truth, which the retired text withheld.
+* `unregistered` (condition, D3 **I2**): `#plg_refutes_registration(#plg_ev)`.
+
+**A second warrant term inside a proposition, by user decision (D3 I2, 2026-11-23).** `#plg_refutes_registration` follows `#caller_refutes_membership` (SP7 block). It stays fail-closed for the same three reasons:
+
+* It entails the existing `unregistered` (`unregistered_symbol_entails_unregistered`). A registered or defaulted invocation is never refuted (`a_case_excludes_refutation`).
+* A failed registration proof does not give it (`absence_of_registration_is_not_refutation`), and every environment and invocation has a model without it (`registration_refutation_is_never_derived`).
+* The `condition` role's own rule (C04.18.5) still requires Supported invalidity and positively Refuted admission.
+
+`#plg_trace_corresponds` and `#plg_admits_callback_closure` are likewise never derived (`trace_corresponds_is_never_derived`, `admission_is_never_derived`).
+
 **SP8 block: outer contract statements** (card SP8-OUTER-CONTRACT-SYMBOLIC-STATEMENTS; USER DECISION 2026-11-20 as above; user 2026-11-23, verbatim: "Launch the outer contract prose card too"; USER DECISIONS 2026-11-23 on the card's hand-back: D1 **A**, D2 **B**, D3 **B**, below). Appended after the SP5 block (card SP6-GUARDED-SYMBOL-PROSE's SP7 block, built concurrently, merges before it), in the same order in the Rust table, the Lean `vocab` and the decision vectors. The statement of an outer contract definition (C04.20) is a formula of this language; its subject is the code the contract's loaders load, not a call, so every term below is read relative to the contract, as `#call` is relative to its declaration. An effect's "own instructions" exclude what a call of a function of the audited program does. No token, operator or production is added. One family of **constants** is: a candidate inventory constant `CANDIDATES_` followed by the 64 upper-case hexadecimal digits of the SHA-256 of a provider's `outer-candidates.json` (C04.20.1), of sort `obj` (the inventory), each registered (`CANDIDATE_INVENTORIES`; today the one inventory of `qcore-provider-librdkafka`); an unregistered constant of that shape is refused like any unknown constant, and only this family may exceed the 64-byte constant bound. The Lean model reads the nullary propositions and effects through two name-indexed components (`xPr0`, `xEf0`) and the other SP8 terms through the SP4 components (`ext0`, `ext1El`, `ext1St`):
 
 | Term | Sort | Meaning |
@@ -1755,8 +1857,8 @@ structural parser of every module refuses it
 introducer), so every route does.
 
 * A symbol's `FORMULA` is an unquoted C04.18.9 typed-rendering formula (G01p
-  syntax, the SP6 and SP7 blocks). Its free names are registered terms, or
-  SP6/SP7 terms, each in its rendered sort. Every quantifier ranges over a
+  syntax, the SP6, SP7 and SP9 blocks). Its free names are registered terms, or
+  SP6/SP7/SP9 terms, each in its rendered sort. Every quantifier ranges over a
   rendered value sort. The binding's proposition is the formula's canonical
   printing (`qcore_frontend::quant_proposition::print`).
 * The document is written as its G05-guarded clauses, unquoted, separated by
@@ -1777,7 +1879,14 @@ recorded string text to the formula that replaced it, and a string document
 to its unquoted clauses. It is confined to test code. The 17 symbols of
 `cJSON_DetachItemViaPointer` state formulas: the nine `detach_*`
 prerequisites repeat their typed atoms' formulas, and the eight that were
-English are given in C04.18.9's SP7 block.
+English are given in C04.18.9's SP7 block. The frozen plugin sidecar
+(`premise-guarded-decomposition/applications/plugin.json`, card
+SP9-PLUGIN-GUARDED-APPLICATION-FORMULAS) bound 14 English symbols, its seven
+`plugin_*` prerequisites among them. Those prerequisites cannot repeat their
+typed atoms' formulas, whose parameters are not rendered terms. The legacy
+reader lifts all 14 to formulas over C04.18.9's SP9 block. Each prerequisite
+there is its atom's formula bound to the prefixed SP9 terms. An unrecorded
+English text is still refused (`QF003`).
 Existing source lexing applies outside these explicit heads.
 
 Every resource, bounds and declared-model loader validates the whole symbol map
