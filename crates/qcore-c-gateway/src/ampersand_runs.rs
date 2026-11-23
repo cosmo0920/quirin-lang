@@ -89,7 +89,9 @@ fn is_name(text: &str) -> bool {
     text.chars()
         .next()
         .is_some_and(|first| first == '_' || first.is_ascii_alphabetic())
-        && text.chars().all(|ch| ch == '_' || ch.is_ascii_alphanumeric())
+        && text
+            .chars()
+            .all(|ch| ch == '_' || ch.is_ascii_alphanumeric())
 }
 
 /// Card **CAST-BEFORE-AMPERSAND-READ-AS-BINARY** (rule 74f): whether the `)`

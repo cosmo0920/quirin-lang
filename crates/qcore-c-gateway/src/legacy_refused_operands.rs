@@ -205,7 +205,13 @@ pub(crate) fn line_reads(body: &[&str], lines: &[usize], objects: &BTreeSet<Stri
                     objects,
                 );
             } else {
-                record(&mut reads, segment, segment_lines, Table::Statement, objects);
+                record(
+                    &mut reads,
+                    segment,
+                    segment_lines,
+                    Table::Statement,
+                    objects,
+                );
             }
         }
         start = index + 1;

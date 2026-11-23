@@ -13042,4 +13042,44 @@ through `ampersand_runs`.
     `every_reader_reads_the_parity`, `decision_vectors_hold`);
     [report](../reports/ampersand-run-parity/README.md).
 
+<a id="constraint-74f"></a>
+
+74f. **A `)` that may close a cast makes the next single `&` unary.** Card
+    CAST-BEFORE-AMPERSAND-READ-AS-BINARY (`ampersand_runs::may_close_a_cast`,
+    shared). [Rule 74e](#constraint-74e) left each reader's reading of a
+    single `&` as it was. The census of the base (report §1) found two
+    readers that decide it by the token before it: rule 5j's
+    `residual_takes_an_address`, which already checked a cast close with its
+    own detector, and the refused hand-on (`legacy_refused_operands`, W44),
+    which did not. Its `ends_operand` counted `)` as an operand end, so `(T *)
+    &x->f` read as a binary AND and handed on the value `x->f` instead of `x`
+    and every prefix of the chain. Since the reader only withdraws
+    accusations, missing those places is the unsound direction. Both readers
+    now call the one detector, and `legacy_call_instantiation`'s
+    `is_cast_close` is gone. A group is **not a cast** (binary) when it is an
+    argument list (its `(` follows a name other than a control keyword, or a
+    `)` or `]`, as in `f(x) & mask`), when it holds a token that no scalar
+    cast's type name has at its top level (C11 6.5.4p2: an operator other
+    than `*`, a literal, `[`, `.` or `,`, unless a nested declarator group
+    came first, as in `(char (*)[4])`), or when it is a single name the
+    reader knows as a declared object. Every other group **may be a cast**
+    (unary), including an unmatched `)`. The refused hand-on gets its objects
+    from the publication facts: the formals, the body's declarations and the
+    unit's file-scope objects, less every identifier any `typedef` declaration
+    spells. Rule 5j's reader has no such knowledge, so `(a) & b` is unary
+    there. The other 26 rule 74e call sites read any odd run as an address
+    whatever comes before it, and rule 71's `logical_and_before` decides only
+    a run of two `&` before a group, which no cast can precede. **Do not**
+    write a second cast detector, and **do not** read an undecided group as a
+    value. The same `ends_operand` reading of a `*` after `)` (a dereference
+    under a cast) is not changed here; it is registered as
+    `CAST-BEFORE-STAR-READ-AS-BINARY`. Premises stated, not proved: the
+    importer's character tokens, that a conforming body spells a cast's type
+    name within C11 6.5.4p2, and that the declaration readers find every
+    object name a function can mention (trust boundary 28).
+    `QCore.CastBeforeAmpersand` (`old_reading_misses_a_cast`,
+    `the_fix_only_adds_addresses`, `an_undecided_group_is_a_cast`,
+    `a_call_is_binary`, `the_address_hands_on_a_superset`,
+    `cast_vectors_hold`); [report](../reports/cast-before-ampersand/README.md).
+
 <!-- generated:rules:end -->

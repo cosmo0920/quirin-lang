@@ -948,7 +948,9 @@ mod ampersand_run_parity_tests {
         assert!(residual_takes_an_address(&tokens(
             "( void ( * ) ( int ) ) & f"
         )));
-        assert!(residual_takes_an_address(&tokens("( char ( * ) [ 4 ] ) & b")));
+        assert!(residual_takes_an_address(&tokens(
+            "( char ( * ) [ 4 ] ) & b"
+        )));
         // Undecided `(a)`: this reader knows no objects, so it is a cast.
         assert!(residual_takes_an_address(&tokens("( a ) & b")));
         assert!(!residual_takes_an_address(&tokens("( a + 1 ) & b")));
