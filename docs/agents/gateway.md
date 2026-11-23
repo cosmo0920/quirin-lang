@@ -12988,4 +12988,56 @@ that only when every arriving edge has it.
     `a_logical_and_takes_no_address`, `the_frame_only_widens_again`);
     [report](../reports/nullable-lazy-constructor-in-loop/README.md).
 
+Rule 74d (C) is extended by [rule 74e](#constraint-74e): every reader that
+decides address-taking from the unfused token stream reads the same parity
+through `ampersand_runs`.
+
+<a id="constraint-74e"></a>
+
+74e. **Every address decision reads a run of `&` by its parity.** Card
+    AMPERSAND-RUN-PARITY-OTHER-READERS (`crates/qcore-c-gateway/src/ampersand_runs.rs`,
+    new; 27 call sites in 18 files, counted by a test against `READERS`). It
+    extends [rule 74d](#constraint-74d)'s reading (C) from rule 10a's frame to
+    every reader of the unfused token stream. The importer emits one token per
+    `&`; C lexes a run of `k` adjacent `&` by maximal munch (C11 6.4p4), and a
+    whitespace-separated `a & &b` is not conforming (C11 6.5.10p2), so the
+    last `&` of a run before an operand is an `&` operator exactly when `k`
+    is odd (`ends_in_address`), and the operand of a logical AND when `k` is
+    even (`ends_in_logical_and`). Each reader keeps deciding a single `&`
+    after an operand end (binary AND) as it did; the parity replaces only its
+    reading of `&&`. The census of the base (report §1) found three readings.
+    **Unsound** (an address missed): a run of exactly one `&` taken as the
+    address (`texts[k-1] == "&" && texts[k-2] != "&"`), so `p && &x` hid
+    `&x`: `loop_owner_instance::address_taken` (19 callers among the
+    loop-owner premise derivations) and its copy-member check,
+    `loop_owner_holder_opaque`'s carrier check, and three checks of
+    `thread_entry_census` (the instance, the copy's holder, the copy);
+    `loop_owner_holder_opaque::flow_of` read any `& &` before a value as a
+    logical AND, so `p && &v` was a test; and the coroutine call index dropped
+    every callee after a `&`, so `x && f(i)` hid a caller whose argument the
+    instance premise never checked (`& f (` is never an address: a call's
+    result is not an lvalue, C11 6.5.3.2p1, so it is now always a call).
+    **Admitting** (an address read where none is, and the reading admits):
+    `only_holder_mentions` and `only_registry_mentions` admitted `p && name)`
+    as a whole `&name` actual of a holder callee. **Fail-closed** (an address
+    read where none is, and the reading refuses): seventeen readers took any
+    `&` before a name as its address, so `p && q` refused `q`. All three
+    classes now read the parity; the fail-closed ones stop refusing after an even run.
+    Correct readers are unchanged and listed in the report: the fused streams
+    (`condvar_census`, `stop_paths`, `container_publication::fuse`,
+    `owned_out_member`, `thread_entry_census`'s condition lexer, whose
+    longest match is already maximal munch), argument-initial shapes
+    (`["&", name]`), connective detectors (any run of two or more contains a
+    `&&`), readers that refuse any `&`, rule 71's `logical_and_before`, and
+    every typed AST `opcode` reader. **Do not** read a run of one `&` after an
+    operand end as an address where the reader did not, and **do not** take
+    an address after an even run. Premises stated, not proved: the importer's
+    character tokens, the conforming-program premise rule 74d rests on, and
+    that each reader's call site is the one the census lists (trust boundary
+    28). `QCore.AmpersandRunParity` (`parity_is_munch`,
+    `exactly_one_misses_an_odd_run`, `the_parity_keeps_every_single_address`,
+    `the_parity_drops_only_even_runs`, `logical_and_is_the_even_complement`,
+    `every_reader_reads_the_parity`, `decision_vectors_hold`);
+    [report](../reports/ampersand-run-parity/README.md).
+
 <!-- generated:rules:end -->
