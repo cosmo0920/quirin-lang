@@ -7781,6 +7781,39 @@ an undeclared OpenSSL producer). `QCore.NullableReferenceDrop` (12 audited,
     `detach_formula_is_the_nine_typed_atoms`, `string_is_not_a_hypothesis`,
     `hypothesis_vectors_agree`);
     [report](../reports/sp6-symbolic-hypothesis-atoms/README.md).
+    **Amended by card SP6-GUARDED-SYMBOL-PROSE** (contract specification
+    C04.18.5, C04.18.6, C04.18.9's SP7 block; same user decision; the
+    user's decisions of 2026-11-23):
+
+    * The string forms of the guarded source heads are retired. A string in
+      `resource_guarded_symbol_v1` or `resource_guarded_decomposition_v1`,
+      under any introducer, rejects the whole module with `QF003` at parse
+      (`qcore_frontend::guarded_decomposition::parse_source_clause`), so on
+      every route.
+    * A guarded binding's proposition must be the canonical printing of a
+      C04.18.9 typed-rendering formula. The lowering (standalone `replay`
+      included) and the bridge `render` refuse anything else with `QF003`.
+    * A symbol states an unquoted formula. A document states its unquoted
+      clauses (`&&` for `∧`), and the readable document is rendered from
+      them unchanged.
+    * The eight English symbols of `cJSON_DetachItemViaPointer` are
+      formulas over registered and SP7 terms, among them
+      `#source_corresponds()` (environment) and
+      `#caller_refutes_membership(#parent,#item)` (invalid_membership: a
+      warrant term inside a proposition, by user decision). Both are
+      assumptions that no model, source check or assignment rule derives.
+      The refutation entails non-ownership, and the `condition` role still
+      requires Supported invalidity and positively Refuted admission.
+    * Guarded symbols are still read by no verdict.
+
+    **Do not** admit a string or non-formula guarded proposition, derive
+    `#source_corresponds` or `#caller_refutes_membership` from any fact, or
+    read the frozen string forms except through the legacy reader.
+    `QCore.CjsonGuardedSymbols` (`guarded_symbols_are_the_definitions`,
+    `invalid_symbol_entails_invalid_membership`,
+    `absence_of_membership_is_not_refutation`,
+    `source_corresponds_is_never_derived`, `guarded_vectors_agree`);
+    [report](../reports/sp6-guarded-symbol-prose/README.md).
 
 <a id="constraint-13i"></a>
 

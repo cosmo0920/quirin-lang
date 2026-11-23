@@ -1044,6 +1044,35 @@ fn premise_formula_spans(program: &SourceProgram) -> Vec<Span> {
         .collect()
 }
 
+/// Card SP6-GUARDED-SYMBOL-PROSE (contract specification C04.18.6, grammar
+/// G05-guarded-source): the expression spans of every `requires
+/// resource_guarded_symbol_v1(...)` / `resource_guarded_decomposition_v1(...)`
+/// clause the guarded reader
+/// ([`crate::guarded_decomposition::parse_source_clause`]) accepts. A symbol's
+/// `&&` and `||` are its G01p formula's connectives and a document's `&&` its
+/// clauses' conjunction, read literally by that reader, not expressions of
+/// this tier: guarded metadata is proposed, nothing lowers it and no verdict
+/// reads it. A clause the reader refuses gets no span (and is refused at
+/// parse anyway).
+fn guarded_clause_spans(program: &SourceProgram) -> Vec<Span> {
+    program
+        .declarations
+        .iter()
+        .filter_map(|declaration| declaration.value.function_contract.as_ref())
+        .flat_map(|contract| &contract.clauses)
+        .filter(|clause| {
+            clause.value.kind == SourceContractClauseKind::Requires
+                && matches!(
+                    crate::guarded_decomposition::parse_source_clause(
+                        &clause.value.expression_source
+                    ),
+                    Ok(Some(_))
+                )
+        })
+        .map(|clause| clause.value.expression_span)
+        .collect()
+}
+
 /// Raise the operator refusals recorded for one input file.
 ///
 /// Called per input file before name/type checking, beside
@@ -1092,6 +1121,12 @@ pub fn check_source_operators(program: &SourceProgram) -> Result<(), Vec<SourceD
             .iter()
             .any(|extent| extent.start <= span.start && span.end <= extent.end)
     };
+    let guarded_clauses = guarded_clause_spans(program);
+    let in_guarded_clause = |span: Span| {
+        guarded_clauses
+            .iter()
+            .any(|extent| extent.start <= span.start && span.end <= extent.end)
+    };
     let premise_formulas = premise_formula_spans(program);
     let in_premise_formula = |span: Span| {
         premise_formulas
@@ -1129,6 +1164,13 @@ pub fn check_source_operators(program: &SourceProgram) -> Result<(), Vec<SourceD
             // Cards SP2/SP3 symbolic premises: a premise formula's conjunction
             // and set union (G05-formula).
             TokenKind::Symbol(Symbol::AndAnd | Symbol::Pipe) if in_premise_formula(token.span) => {
+                continue;
+            }
+            // Card SP6-GUARDED-SYMBOL-PROSE: a guarded symbol's formula
+            // connectives and a guarded document's conjunction (G05-guarded-source).
+            TokenKind::Symbol(Symbol::AndAnd | Symbol::PipePipe)
+                if in_guarded_clause(token.span) =>
+            {
                 continue;
             }
             TokenKind::Symbol(Symbol::Pipe | Symbol::PipePipe) if closure_bar(token.span) => {

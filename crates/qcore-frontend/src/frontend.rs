@@ -1470,6 +1470,15 @@ impl<'a> SourceParser<'a> {
             let expression_source = self.source[expression_span.start..expression_span.end]
                 .trim()
                 .to_owned();
+            // Card SP6-GUARDED-SYMBOL-PROSE (contract specification C04.18.6):
+            // a guarded symbol states a formula and a guarded document its
+            // clauses, unquoted; the string forms are refused by name
+            // (`QF003`) under any introducer, and every other malformed
+            // guarded clause rejects here too, on every route.
+            if crate::guarded_decomposition::is_source_clause(&expression_source) {
+                crate::guarded_decomposition::parse_source_clause(&expression_source)
+                    .map_err(|message| self.error(expression_start, message))?;
+            }
             // Formal formulas own their operators only after their bounded,
             // typed grammar accepts the complete clause. No C fact is inferred.
             let formal = match &kind {

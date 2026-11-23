@@ -1409,6 +1409,42 @@ The Lean model reads both by name (`QCore.PremiseFormula.ext0`).
 
 `qcore_frontend::premise_formula::check_rendering` decides whether a typed atom is a rendering (every parameter a registered term in its rendered sort or an SP6 term, every quantifier over a rendered sort); `RENDERED_VALUE_SORTS` and `RENDERED_TERMS` are the Rust tables. `QCore.CjsonTypedAtoms.render M` interprets each parameter as the model component its term denotes, so a rendered atom means what the premise formula's part means and nothing more. The nine `detach_*` atoms of `cJSON_DetachItemViaPointer` are renderings of their parts of the `detach_list_representation` formula; each holds, in the model an entry environment induces, exactly when its `QCore.CjsonRepresentationPremises` definition does (`typed_atoms_are_the_definitions`), and the premise formula holds exactly when the nine do (`detach_formula_is_the_nine_typed_atoms`) ([report](reports/sp6-symbolic-hypothesis-atoms/README.md)).
 
+**SP7 block: the guarded symbols' terms** (card SP6-GUARDED-SYMBOL-PROSE; USER DECISION 2026-11-20 as above; user decisions of 2026-11-23 on environment, success_case and invalid_membership). These are typed-rendering terms, appended to SP6's in the Rust table `RENDERED_TERMS` (`block: "SP7"`). No premise formula names them, so the premise `VOCABULARY`, grammar, decision vectors and Lean `vocab` are unchanged. Each term is read in one selected call of `cJSON_DetachItemViaPointer`: its entry and exit environments (`QCore.CjsonRepresentationPremises.Environment`), item and NULL flags (`QCore.GuardedContractApplications.Cjson.Call`), and the result. The registered terms keep their entry meaning. The Lean model is `QCore.CjsonGuardedSymbols.render`.
+
+| Term | G01p sort | Meaning |
+|---|---|---|
+| `#item` | obj | the object the call's item argument designates (meaningful when `#item_null()` does not hold) |
+| `#item_null` | predicate<> | the call's item argument is NULL |
+| `#parent_null` | predicate<> | the call's parent argument is NULL |
+| `#exit_parent` | obj | `#parent` at the call's exit |
+| `#exit_live`, `#exit_nodup` | predicate<obj> | `#live`, `#nodup` at the call's exit |
+| `#exit_owned`, `#exit_children`, `#exit_child`, `#exit_first`, `#exit_last`, `#exit_next`, `#exit_prev`, `#exit_next_reach` | predicate<obj,obj> | the registered term of the same name without `exit_`, at the call's exit |
+| `#exit_pred` | predicate<obj,obj,obj> | `#pred` at the call's exit |
+| `#exit_runs` | predicate<fn,run> | `#runs` over the exit environment's interference trace (`#concurrent` and `#keeps_links` do not depend on the environment) |
+| `#exit_erases` | predicate<obj> | `#exit_erases(i)`: the exit child sequence is the entry child sequence with its first occurrence of `i` erased |
+| `#admits_removed` | predicate<> | the gateway admits the call at its site under the declaration's Removed contract (`resource_owned`, `resource_removed`, `resource_return_removed`) |
+| `#source_corresponds` | predicate<> | the call's actual entry heap, complete interference trace, caller identity and nine-coordinate context are what the terms denote. It is an independent assumption: no model or source check establishes it, and its disposition stays Open |
+| `#caller_refutes_membership` | predicate<obj,obj> | `#caller_refutes_membership(p,i)`: the caller holds positive evidence that `i` is not an owned child of `p`. It entails `!#owned(p,i)` and is never derived from the absence of a membership proof |
+
+The guarded symbols of `cJSON_DetachItemViaPointer` ([report](reports/sp6-guarded-symbol-prose/README.md)). Each holds exactly when its Lean definition does (`QCore.CjsonGuardedSymbols.guarded_symbols_are_the_definitions`):
+
+* `detach` (operation): `#admits_removed()`.
+* `environment`: `#source_corresponds()`.
+* `failure_case`: `(#parent_null() || (#item_null() || (!#child(#parent,#item) && forall (#y: obj) { !#prev(#item,#y) })))` (`rawFailure`).
+* `invalid_membership` (condition): `((!#parent_null() && !#item_null()) && #caller_refutes_membership(#parent,#item))`.
+* `membership` (prerequisite): `((!#parent_null() && !#item_null()) && (#live(#parent) && #owned(#parent,#item)))`.
+* `original_list_unchanged`: the child, next and prev links are equal at entry and exit (`originalListUnchanged`).
+* `remaining_list_valid`: the nine `detach_*` atom formulas over the exit terms, `#exit_erases(#item)`, and the item's exit next and prev empty (`remainingListValid`).
+* `success_case`: the nine `detach_*` atom formulas, the membership formula, and `#result(#item)` (`prerequisites ∧ result = item`).
+
+**A warrant term inside a proposition, by user decision.** Elsewhere a proposition's disposition and warrant stay separate from its content (C04.18.1). `#caller_refutes_membership` is the exception: the user chose on 2026-11-23 to state the evidence inside the formula, over a plain `!#owned(#parent,#item)`. It stays fail-closed, for three reasons:
+
+* The term entails non-ownership (`invalid_symbol_entails_invalid_membership`), so the condition is never weaker than `invalidMembership`.
+* Non-ownership alone does not give it (`absence_of_membership_is_not_refutation`), and every call has a model without it (`caller_refutation_is_never_derived`).
+* The `condition` role's own rule (C04.18.5) still requires Supported invalidity and positively Refuted admission. Absence, an Open assignment or a failed proof supplies neither, so the positivity is held twice.
+
+`#source_corresponds` is likewise never derived (`source_corresponds_is_never_derived`). Admission's environment conjunct genuinely requires it, and no theorem, source check or assignment rule turns it Supported.
+
 **Meaning.** `F |-> E`: every run of callback `F` (of every member of callback set `F`) during the call has effect `E`; a callback the call does not run satisfies it. `#inert`: the run takes over, releases and retains nothing the caller holds. The rest is first-order logic over the model.
 
 **Fail-closed.** An unknown term or constant, an application whose arguments are not of the term's signature, a term without its arguments, an unbound variable, a variable shadowing a term or another variable, a formula that is not a proposition, a malformed or over-long token sequence, and a string statement that is itself a formula each reject the **whole module**; the premise is never dropped.
@@ -1580,6 +1616,9 @@ These are records only. Creation proves no existence/freshness/liveness or hypot
 
 The standalone `guarded_decomposition_v1;` document is an explicit proposed
 contract layer, inspected by `qcore_contract::guarded_decomposition::replay`.
+Since card SP6-GUARDED-SYMBOL-PROSE each symbol's proposition is the
+canonical printing of a C04.18.9 typed-rendering formula. English or any
+other non-formula proposition is refused (`QF003`, C04.18.6).
 It is not an ordinary expression, a flow-v1 expression or an extension of
 lifecycle-v1. C04.18.6 separately admits an explicit source embedding inside
 `.qv` contracts. Existing operator meanings
@@ -1655,13 +1694,46 @@ semantics and concrete cJSON/plugin propositions, not imported-C correspondence.
 ### C04.18.6. Guarded production source embedding (source version 1; bridge version 2)
 
 A declaration may explicitly embed one guarded document using
-`requires resource_guarded_decomposition_v1(ENTRY, "DOCUMENT");` and its complete
-symbol table using `requires resource_guarded_symbol_v1(ID, ROLE, "PROPOSITION",
+`requires resource_guarded_decomposition_v1(ENTRY, CLAUSE, ...);` and its complete
+symbol table using `requires resource_guarded_symbol_v1(ID, ROLE, FORMULA,
 DEPENDENCY, ...);`. Zero dependencies are allowed. The roles are exactly
 `environment`, `prerequisite`, `operation`, `condition`, `case`, `postcondition`.
-The unescaped string literal may contain LF and Unicode, preserving the readable
-operator layer verbatim. Backslash escapes are refused; literal quotes cannot
-occur inside it. Existing source lexing applies outside these explicit heads.
+
+**The string forms are retired** (card SP6-GUARDED-SYMBOL-PROSE; USER DECISION
+2026-11-20 as in C04.18; user 2026-11-23: "Launch SP6-GUARDED-SYMBOL-PROSE").
+Earlier versions wrote a symbol's proposition and the document as
+string literals. That form is refused: a string token anywhere in either
+clause rejects the whole module with `QF003`
+([diagnostics](agents/diagnostics.md#premise-formula-namespace-qf)). The
+structural parser of every module refuses it
+(`qcore_frontend::guarded_decomposition::parse_source_clause`, under any
+introducer), so every route does.
+
+* A symbol's `FORMULA` is an unquoted C04.18.9 typed-rendering formula (G01p
+  syntax, the SP6 and SP7 blocks). Its free names are registered terms, or
+  SP6/SP7 terms, each in its rendered sort. Every quantifier ranges over a
+  rendered value sort. The binding's proposition is the formula's canonical
+  printing (`qcore_frontend::quant_proposition::print`).
+* The document is written as its G05-guarded clauses, unquoted, separated by
+  `,`, with the conjunction spelled `&&` (the shared lexer has no `∧` token).
+  The readable G05-guarded document is **rendered** from those clauses
+  (`guarded_decomposition::readable`: the version header, then one clause per
+  line, each ending in `;`, with `∧`). Its SHA is the readable document's, as
+  before.
+* A standalone or inline binding whose proposition is not the canonical
+  printing of such a formula is refused with `QF003` by the lowering
+  (C04.18.5's `replay` included). The bridge's deterministic source form
+  (`guarded_metadata_bridge::render`) writes the unquoted forms and refuses
+  such a binding too.
+
+A frozen text in a string form is read only through the test-side legacy
+reader `tests/support/legacy_prose_premise.rs`. That reader lifts each
+recorded string text to the formula that replaced it, and a string document
+to its unquoted clauses. It is confined to test code. The 17 symbols of
+`cJSON_DetachItemViaPointer` state formulas: the nine `detach_*`
+prerequisites repeat their typed atoms' formulas, and the eight that were
+English are given in C04.18.9's SP7 block.
+Existing source lexing applies outside these explicit heads.
 
 Every resource, bounds and declared-model loader validates the whole symbol map
 and document against its original hypothesis graph before admitting this metadata.

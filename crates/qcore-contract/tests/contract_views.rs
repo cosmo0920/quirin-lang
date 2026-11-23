@@ -727,19 +727,14 @@ fn guarded_source_metadata_compares_complete_bounds_resource_maps_without_truth_
     let original = symbolic_overlap_pair(name);
     let mut pair = original.clone();
     let metadata =
-        "\nrequires resource_guarded_symbol_v1(env, environment, \"Proposed environment\");
-requires resource_guarded_symbol_v1(pre, prerequisite, \"Proposed prerequisite\");
-requires resource_guarded_symbol_v1(op, operation, \"Proposed admission\");
-requires resource_guarded_symbol_v1(ok_case, case, \"Proposed success case\");
-requires resource_guarded_symbol_v1(err_case, case, \"Proposed failure case\");
-requires resource_guarded_symbol_v1(ok_post, postcondition, \"Proposed success postcondition\");
-requires resource_guarded_symbol_v1(err_post, postcondition, \"Proposed failure postcondition\");
-requires resource_guarded_decomposition_v1(guarded, \"guarded_decomposition_v1;
-(env ∧ pre) |-> op;
-op ||-> ok_case / err_case;
-ok_case ->| ok_post;
-err_case ->| err_post;
-\");\n";
+        "\nrequires resource_guarded_symbol_v1(env, environment, #source_corresponds());
+requires resource_guarded_symbol_v1(pre, prerequisite, !#parent_null());
+requires resource_guarded_symbol_v1(op, operation, #admits_removed());
+requires resource_guarded_symbol_v1(ok_case, case, #result(#item));
+requires resource_guarded_symbol_v1(err_case, case, #item_null());
+requires resource_guarded_symbol_v1(ok_post, postcondition, forall (#y: obj) { !#exit_next(#item,#y) });
+requires resource_guarded_symbol_v1(err_post, postcondition, forall (#y: obj) { !#exit_prev(#item,#y) });
+requires resource_guarded_decomposition_v1(guarded, (env && pre) |-> op, op ||-> ok_case / err_case, ok_case ->| ok_post, err_case ->| err_post);\n";
     for source in pair.values_mut() {
         *source = source.replace("\n};", &format!("{metadata}\n}};"));
     }
@@ -754,16 +749,15 @@ err_case ->| err_post;
     for module in ["librdkafka/null_deref.qv", "librdkafka/client.qv"] {
         for (from, to) in [
             (metadata, ""),
-            (
-                "Proposed failure postcondition",
-                "Changed failure postcondition",
-            ),
+            ("!#exit_prev(#item,#y)", "!#prev(#item,#y)"),
             ("err_post, postcondition", "err_post, operation"),
             (
                 "resource_guarded_decomposition_v1",
                 "resource_guarded_decomposition_v2",
             ),
-            ("err_case ->| err_post;", "err_case ->| missing;"),
+            ("err_case ->| err_post)", "err_case ->| missing)"),
+            // Card SP6-GUARDED-SYMBOL-PROSE: the retired string form (QF003).
+            ("#item_null()", "\"Proposed failure case\""),
         ] {
             let mut changed = pair.clone();
             let s = changed.get_mut(module).unwrap();

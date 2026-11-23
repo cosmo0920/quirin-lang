@@ -277,3 +277,20 @@ own reader (`qcore_contract::hypothesis`) and its wire validator refuse a
 declared atom with an opaque statement with the same code. An atom is a typed
 `quant proposition #NAME(PARAMETERS) = FORMULA;` (G01p); only a generated
 `legacy_atom_*` (the erasure of a named premise) keeps an opaque statement.
+
+Card `SP6-GUARDED-SYMBOL-PROSE` adds `QF003`. It fires on a string in a
+guarded source clause, under any introducer: the retired
+`resource_guarded_symbol_v1(ID, ROLE, "TEXT", ...)` and
+`resource_guarded_decomposition_v1(ENTRY, "DOCUMENT")` (contract
+specification C04.18.6). It also fires on a guarded binding whose proposition
+is not the canonical printing of a C04.18.9 typed-rendering formula.
+
+* The structural parser (`frontend.rs`, through
+  `qcore_frontend::guarded_decomposition::parse_source_clause`) rejects the
+  whole module, so every route refuses it. On the compiler route the code is
+  `Q000`, and its message names `QF003`.
+* The lowering (`qcore_contract::guarded_decomposition`, standalone
+  `replay` included) and the bridge's `render` refuse such a binding.
+
+A symbol states an unquoted formula, and a document states its unquoted
+clauses (`&&` for `∧`).

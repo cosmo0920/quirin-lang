@@ -81,7 +81,11 @@ fn application(
         // and graph lifted by the test-side legacy reader.
         let restored =
             sp2_premise_checkpoint::restored_file(&module, &source, qcore_schemas::sha256_hex);
-        let addition = qcore_contract::guarded_metadata_bridge::render(&plan.metadata).unwrap();
+        // Card SP6-GUARDED-SYMBOL-PROSE: the frozen metadata renders only in
+        // the retired string form.
+        let addition = legacy_prose_premise::render_string_form(
+            &serde_json::to_value(&plan.metadata).unwrap(),
+        );
         assert_eq!(
             qcore_schemas::sha256_hex(restored.replacen(&addition, "", 1).as_bytes()),
             metadata["source_sha256"]
@@ -190,7 +194,25 @@ fn evaluate(d: &guarded::Lowered, values: &[(&str, Disposition)]) -> guarded::Pr
 
 #[test]
 fn actual_cjson_and_plugin_hypotheses_lower_without_truth_or_source_changes() {
-    for (name, atoms) in [("cjson", 9), ("plugin", 7)] {
+    // Card SP6-GUARDED-SYMBOL-PROSE: a guarded proposition is a formula
+    // (`QF003`). The frozen plugin sidecar's seven non-prerequisite symbols
+    // are English that no card has stated as formulas, so it no longer
+    // lowers: it is refused by name, never read.
+    {
+        let (sources, module, decl, graph, bindings, readable) = application("plugin");
+        let error = guarded::replay(
+            View::Resource,
+            &sources,
+            &module,
+            &decl,
+            &graph,
+            &bindings,
+            &readable,
+        )
+        .unwrap_err();
+        assert!(error.starts_with("QF003"), "{error}");
+    }
+    for (name, atoms) in [("cjson", 9)] {
         let (sources, module, decl, graph, bindings, readable) = application(name);
         let graphs_before = hypothesis::replay(&sources).unwrap();
         let loaded_before =
@@ -526,11 +548,8 @@ fn exact_source_and_model_bytes_bind_even_semantically_equal_documents() {
     .unwrap();
     assert!(guarded::evaluate_proposed(&changed, &context(), &context(), &evidence).is_err());
     let mut different = bindings;
-    different
-        .get_mut("failure_case")
-        .unwrap()
-        .proposition
-        .push_str(" Changed.");
+    different.get_mut("failure_case").unwrap().proposition =
+        "(#parent_null() || #item_null())".into();
     let changed = guarded::replay(
         View::Resource,
         &sources,

@@ -2111,24 +2111,204 @@ pub const RENDERED_VALUE_SORTS: &[(&str, &str)] = &[
     ),
 ];
 
-/// A term of the typed rendering that no premise formula names: the SP6
-/// block (C04.18.9), a G01p predicate over `predicate`'s value sorts.
+/// The G01p sort of a rendered term: a value of a rendered value sort, or a
+/// predicate over rendered value sorts.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum RenderedSort {
+    Value(&'static str),
+    Predicate(&'static [&'static str]),
+}
+
+impl RenderedSort {
+    /// The G01p parameter sort.
+    #[must_use]
+    pub fn sort(self) -> qcore_schemas::quant_proposition::Sort {
+        use qcore_schemas::quant_proposition::Sort as G;
+        match self {
+            Self::Value(name) => G::Value { name: name.into() },
+            Self::Predicate(arguments) => G::Predicate {
+                arguments: arguments.iter().map(|s| (*s).to_owned()).collect(),
+            },
+        }
+    }
+}
+
+/// A term of the typed rendering that no premise formula names (C04.18.9's
+/// SP6 and SP7 blocks).
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct RenderedTerm {
     pub name: &'static str,
-    pub predicate: &'static [&'static str],
+    pub sort: RenderedSort,
     pub meaning: &'static str,
+    /// The card whose block introduced the term (`SP6`, `SP7`).
+    pub block: &'static str,
 }
 
-/// The SP6 block. `#runs` is the maps-to operator's own semantics: `F |-> E`
-/// holds when every run of every member of `F` has `E` (`QCore.PremiseFormula`'s
+const OBJ: RenderedSort = RenderedSort::Value("obj");
+const NULLARY: RenderedSort = RenderedSort::Predicate(&[]);
+const OBJ1: RenderedSort = RenderedSort::Predicate(&["obj"]);
+const OBJ2: RenderedSort = RenderedSort::Predicate(&["obj", "obj"]);
+const OBJ3: RenderedSort = RenderedSort::Predicate(&["obj", "obj", "obj"]);
+
+/// The SP6 block, then the SP7 block.
+///
+/// SP6: `#runs` is the maps-to operator's own semantics: `F |-> E` holds
+/// when every run of every member of `F` has `E` (`QCore.PremiseFormula`'s
 /// `Model.runs`), so its rendering is `forall (#f: fn) { (F(#f) => forall
 /// (#r: run) { (#runs(#f,#r) => E(#r)) }) }`.
-pub const RENDERED_TERMS: &[RenderedTerm] = &[RenderedTerm {
-    name: "runs",
-    predicate: &["fn", "run"],
-    meaning: "the runs of a callback: `#runs(#f,#r)` says `#r` is a run of `#f` (the semantics of `|->`)",
-}];
+///
+/// SP7 (card SP6-GUARDED-SYMBOL-PROSE): the terms the guarded symbols of
+/// `cJSON_DetachItemViaPointer` need beyond the registered ones: the call's
+/// item and NULL arguments, the exit environment (each `#exit_X` is the
+/// registered `#X` read at the call's exit; `#concurrent` and `#keeps_links`
+/// do not depend on the environment), the erasure relating the two child
+/// sequences, the admission, and two assumptions no model derives:
+/// `#source_corresponds` (user decision 2026-11-23, environment E2) and
+/// `#caller_refutes_membership` (user decision 2026-11-23,
+/// invalid_membership I2: a warrant term inside a proposition). The Lean
+/// model is `QCore.CjsonGuardedSymbols.render`.
+pub const RENDERED_TERMS: &[RenderedTerm] = &[
+    RenderedTerm {
+        name: "runs",
+        sort: RenderedSort::Predicate(&["fn", "run"]),
+        meaning: "the runs of a callback: `#runs(#f,#r)` says `#r` is a run of `#f` (the semantics of `|->`)",
+        block: "SP6",
+    },
+    RenderedTerm {
+        name: "item",
+        sort: OBJ,
+        meaning: "the object the call's item argument designates (meaningful when `#item_null()` does not hold)",
+        block: "SP7",
+    },
+    RenderedTerm {
+        name: "item_null",
+        sort: NULLARY,
+        meaning: "the call's item argument is NULL",
+        block: "SP7",
+    },
+    RenderedTerm {
+        name: "parent_null",
+        sort: NULLARY,
+        meaning: "the call's parent argument is NULL",
+        block: "SP7",
+    },
+    RenderedTerm {
+        name: "exit_parent",
+        sort: OBJ,
+        meaning: "`#parent` at the call's exit: the parent object of the exit environment",
+        block: "SP7",
+    },
+    RenderedTerm {
+        name: "exit_live",
+        sort: OBJ1,
+        meaning: "`#live` at the call's exit: the objects live when the call returns",
+        block: "SP7",
+    },
+    RenderedTerm {
+        name: "exit_owned",
+        sort: OBJ2,
+        meaning: "`#owned` at the call's exit: `#exit_owned(p,c)` says the exit parent `p` owns `c`",
+        block: "SP7",
+    },
+    RenderedTerm {
+        name: "exit_children",
+        sort: OBJ2,
+        meaning: "`#children` at the call's exit: `#exit_children(p,c)` says `c` is in the exit parent `p`'s child sequence",
+        block: "SP7",
+    },
+    RenderedTerm {
+        name: "exit_child",
+        sort: OBJ2,
+        meaning: "`#child` at the call's exit: the item the exit parent's child member designates (none when NULL)",
+        block: "SP7",
+    },
+    RenderedTerm {
+        name: "exit_first",
+        sort: OBJ2,
+        meaning: "`#first` at the call's exit: the first element of the exit child sequence",
+        block: "SP7",
+    },
+    RenderedTerm {
+        name: "exit_last",
+        sort: OBJ2,
+        meaning: "`#last` at the call's exit: the last element of the exit child sequence",
+        block: "SP7",
+    },
+    RenderedTerm {
+        name: "exit_pred",
+        sort: OBJ3,
+        meaning: "`#pred` at the call's exit: `#exit_pred(p,b,a)` says `a` is immediately before `b` in the exit child sequence",
+        block: "SP7",
+    },
+    RenderedTerm {
+        name: "exit_next",
+        sort: OBJ2,
+        meaning: "`#next` at the call's exit: the item an item's next member designates when the call returns (none when NULL)",
+        block: "SP7",
+    },
+    RenderedTerm {
+        name: "exit_prev",
+        sort: OBJ2,
+        meaning: "`#prev` at the call's exit: the item an item's prev member designates when the call returns (none when NULL)",
+        block: "SP7",
+    },
+    RenderedTerm {
+        name: "exit_next_reach",
+        sort: OBJ2,
+        meaning: "`#next_reach` at the call's exit: the items reached by one or more exit next links",
+        block: "SP7",
+    },
+    RenderedTerm {
+        name: "exit_nodup",
+        sort: OBJ1,
+        meaning: "`#nodup` at the call's exit: the exit child sequence names no identity twice",
+        block: "SP7",
+    },
+    RenderedTerm {
+        name: "exit_runs",
+        sort: RenderedSort::Predicate(&["fn", "run"]),
+        meaning: "`#runs` over the exit environment's interference trace",
+        block: "SP7",
+    },
+    RenderedTerm {
+        name: "exit_erases",
+        sort: OBJ1,
+        meaning: "`#exit_erases(i)`: the exit child sequence is the entry child sequence with its first occurrence of `i` erased",
+        block: "SP7",
+    },
+    RenderedTerm {
+        name: "admits_removed",
+        sort: NULLARY,
+        meaning: "the gateway admits the call at its site under the declaration's Removed contract (its resource_owned, resource_removed and resource_return_removed clauses)",
+        block: "SP7",
+    },
+    RenderedTerm {
+        name: "source_corresponds",
+        sort: NULLARY,
+        meaning: "the call's actual entry heap, complete interference trace, caller identity and nine-coordinate context are what the terms denote: an independent assumption no model or source check establishes, whose disposition stays Open (user decision 2026-11-23)",
+        block: "SP7",
+    },
+    RenderedTerm {
+        name: "caller_refutes_membership",
+        sort: OBJ2,
+        meaning: "`#caller_refutes_membership(p,i)`: the caller holds positive evidence that `i` is not an owned child of `p`; it entails `!#owned(p,i)` and is never derived from the absence of a membership proof (user decision 2026-11-23)",
+        block: "SP7",
+    },
+];
+
+/// The G01p parameter sort of a name of the typed rendering: a registered
+/// C04.18.9 term in its rendered sort, or an SP6/SP7 term; `None` otherwise.
+#[must_use]
+pub fn rendered_parameter_sort(name: &str) -> Option<qcore_schemas::quant_proposition::Sort> {
+    if let Some(t) = term(name) {
+        rendered_sort(t)
+    } else {
+        RENDERED_TERMS
+            .iter()
+            .find(|t| t.name == name)
+            .map(|t| t.sort.sort())
+    }
+}
 
 impl Sort {
     /// The G01p value sort of an element sort.
@@ -2195,18 +2375,9 @@ pub fn rendered_sort(term: &Term) -> Option<qcore_schemas::quant_proposition::So
 pub fn check_rendering(
     definition: &qcore_schemas::quant_proposition::Definition,
 ) -> Result<(), String> {
-    use qcore_schemas::quant_proposition::{Formula as F, Sort as G};
+    use qcore_schemas::quant_proposition::Formula as F;
     for parameter in &definition.parameters {
-        let expected = if let Some(t) = term(&parameter.name) {
-            rendered_sort(t)
-        } else {
-            RENDERED_TERMS
-                .iter()
-                .find(|t| t.name == parameter.name)
-                .map(|t| G::Predicate {
-                    arguments: t.predicate.iter().map(|s| (*s).to_owned()).collect(),
-                })
-        };
+        let expected = rendered_parameter_sort(&parameter.name);
         if expected.as_ref() != Some(&parameter.sort) {
             return Err(format!(
                 "typed atom `{}`: parameter `#{}` is not a registered term in its rendered sort",
@@ -2232,3 +2403,221 @@ pub fn check_rendering(
     }
     walk(&definition.formula)
 }
+
+// ---- Card SP6-GUARDED-SYMBOL-PROSE: guarded symbols state formulas
+// (contract specification C04.18.6, C04.18.9's SP7 block). ----
+
+/// The reserved prefix of the guarded source heads (C04.18.6).
+pub const GUARDED_PREFIX: &str = "resource_guarded_";
+
+/// Card **SP6-GUARDED-SYMBOL-PROSE** (contract specification C04.18.6,
+/// diagnostics namespace `QF***`): the code of the refusal of a guarded
+/// symbol or guarded decomposition document stated as a string, and of a
+/// guarded proposition that is not a canonical C04.18.9 typed-rendering
+/// formula. `resource_guarded_symbol_v1(ID, ROLE, "TEXT", ...)` and
+/// `resource_guarded_decomposition_v1(ENTRY, "DOCUMENT")` are retired: a
+/// symbol states an unquoted formula over registered terms, a document its
+/// unquoted clauses. A module stating either string is rejected whole by the
+/// structural parser every route reads the contract format through.
+pub const PROSE_GUARDED: &str = "QF003";
+
+/// The refusal of the guarded clause headed `head` with ID `id` that states
+/// a string.
+#[must_use]
+pub fn prose_guarded(head: &str, id: &str) -> String {
+    if head.starts_with("resource_guarded_decomposition") {
+        format!(
+            "{PROSE_GUARDED}: guarded document `{id}` is a string; the string form \
+             `resource_guarded_decomposition_v1(ENTRY, \"DOCUMENT\")` is retired (contract \
+             specification C04.18.6): write its clauses unquoted, separated by `,`"
+        )
+    } else {
+        format!(
+            "{PROSE_GUARDED}: guarded symbol `{id}` states a string; the string form \
+             `resource_guarded_symbol_v1(ID, ROLE, \"TEXT\", ...)` is retired (contract \
+             specification C04.18.6): write its proposition as a C04.18.9 typed-rendering \
+             formula over registered terms"
+        )
+    }
+}
+
+/// The definition a guarded formula `formula` of symbol `id` reads as: its
+/// free names, each with its rendered sort, as parameters (sorted by name).
+fn guarded_definition(
+    id: &str,
+    formula: qcore_schemas::quant_proposition::Formula,
+) -> Result<qcore_schemas::quant_proposition::Definition, String> {
+    use qcore_schemas::quant_proposition::{Definition, Formula as F, Parameter, Term};
+    use std::collections::BTreeSet;
+    fn term_names(t: &Term, bound: &BTreeSet<String>, free: &mut BTreeSet<String>) {
+        match t {
+            Term::Variable { name } => {
+                if !bound.contains(name) {
+                    free.insert(name.clone());
+                }
+            }
+            Term::Integer { .. } => {}
+            Term::Apply {
+                function,
+                arguments,
+            } => {
+                free.insert(function.clone());
+                for a in arguments {
+                    term_names(a, bound, free);
+                }
+            }
+            Term::Add { left, right } | Term::Sub { left, right } | Term::Mul { left, right } => {
+                term_names(left, bound, free);
+                term_names(right, bound, free);
+            }
+            Term::Neg { term } => term_names(term, bound, free),
+        }
+    }
+    fn names(f: &F, bound: &mut BTreeSet<String>, free: &mut BTreeSet<String>) {
+        match f {
+            F::Predicate { name, arguments } => {
+                free.insert(name.clone());
+                for a in arguments {
+                    term_names(a, bound, free);
+                }
+            }
+            F::Equal { left, right } | F::Compare { left, right, .. } => {
+                term_names(left, bound, free);
+                term_names(right, bound, free);
+            }
+            F::Not { body } => names(body, bound, free),
+            F::And { left, right } | F::Or { left, right } | F::Implies { left, right } => {
+                names(left, bound, free);
+                names(right, bound, free);
+            }
+            F::Forall { variable, body, .. } | F::Exists { variable, body, .. } => {
+                let fresh = bound.insert(variable.clone());
+                names(body, bound, free);
+                if fresh {
+                    bound.remove(variable);
+                }
+            }
+        }
+    }
+    let mut free = BTreeSet::new();
+    names(&formula, &mut BTreeSet::new(), &mut free);
+    let mut parameters = Vec::new();
+    for name in free {
+        let Some(sort) = rendered_parameter_sort(&name) else {
+            return Err(format!(
+                "guarded symbol `{id}`: `#{name}` is not a registered term of the typed rendering"
+            ));
+        };
+        parameters.push(Parameter { name, sort });
+    }
+    let definition = Definition {
+        id: id.to_owned(),
+        parameters,
+        formula,
+    };
+    crate::quant_proposition::validate(&definition)
+        .map_err(|e| format!("guarded symbol `{id}`: {e}"))?;
+    check_rendering(&definition).map_err(|e| format!("guarded symbol `{id}`: {e}"))?;
+    Ok(definition)
+}
+
+/// Card SP6-GUARDED-SYMBOL-PROSE: the proposition of guarded symbol `id`,
+/// read from its formula's tokens: a C04.18.9 typed-rendering formula (G01p)
+/// whose free names are registered terms (or SP6/SP7 terms), typed in their
+/// rendered sorts. Returns the canonical printing (the binding's
+/// proposition) and the definition it reads as. A string token is refused
+/// by name ([`PROSE_GUARDED`]); anything else that is not such a formula
+/// rejects.
+pub fn guarded_formula(
+    id: &str,
+    tokens: &[TokenKind],
+) -> Result<(String, qcore_schemas::quant_proposition::Definition), String> {
+    if tokens
+        .iter()
+        .any(|t| matches!(t, TokenKind::StringLiteral(_)))
+    {
+        return Err(prose_guarded("resource_guarded_symbol_v1", id));
+    }
+    let formula = crate::quant_proposition::parse_formula_tokens(tokens)
+        .map_err(|e| format!("guarded symbol `{id}`: {e}"))?;
+    let canonical = crate::quant_proposition::print(&formula);
+    if canonical.len() > 4096 {
+        return Err(format!("guarded symbol `{id}`: proposition byte limit"));
+    }
+    let definition = guarded_definition(id, formula)?;
+    Ok((canonical, definition))
+}
+
+/// Card SP6-GUARDED-SYMBOL-PROSE: a guarded binding's proposition text (a
+/// standalone binding, C04.18.5, or one an inline declaration produced) must
+/// be the canonical printing of a guarded formula ([`guarded_formula`]);
+/// English, a string or a noncanonical spelling is refused with
+/// [`PROSE_GUARDED`].
+pub fn guarded_proposition(
+    id: &str,
+    text: &str,
+) -> Result<qcore_schemas::quant_proposition::Definition, String> {
+    let refuse = || {
+        format!(
+            "{PROSE_GUARDED}: guarded symbol `{id}`'s proposition is not the canonical printing \
+             of a C04.18.9 typed-rendering formula (contract specification C04.18.6)"
+        )
+    };
+    if text.len() > 4096 {
+        return Err(refuse());
+    }
+    let tokens = crate::lexer::lex(text).map_err(|_| refuse())?;
+    let kinds = tokens.into_iter().map(|t| t.kind).collect::<Vec<_>>();
+    let (canonical, definition) = guarded_formula(id, &kinds).map_err(|e| {
+        if e.starts_with(PROSE_GUARDED) {
+            e
+        } else {
+            format!("{}: {e}", refuse())
+        }
+    })?;
+    if canonical != text {
+        return Err(refuse());
+    }
+    Ok(definition)
+}
+
+/// Card SP6-GUARDED-SYMBOL-PROSE: the guarded clause decision vectors shared
+/// with `proof/QCore/PremiseFormula/CjsonGuardedSymbols.lean`
+/// (`guardedVectors`): a guarded source clause and whether
+/// `guarded_decomposition::parse_source_clause` admits it. A clause holding
+/// a string is the Lean `.str` (refused, [`PROSE_GUARDED`]); a formula is the
+/// Lean `.formula` (admitted exactly when it is a typed rendering).
+pub const GUARDED_DECISION_VECTORS: &[(&str, bool)] = &[
+    (
+        "resource_guarded_symbol_v1(environment, environment, #source_corresponds())",
+        true,
+    ),
+    (
+        "resource_guarded_symbol_v1(membership, prerequisite, ((!#parent_null() && !#item_null()) && (#live(#parent) && #owned(#parent,#item))), detach_chain)",
+        true,
+    ),
+    // The retired string forms, whatever the string says.
+    (
+        "resource_guarded_symbol_v1(detach, operation, \"Admission of the selected call\", detach_chain)",
+        false,
+    ),
+    // A quoted formula is a string.
+    (
+        "resource_guarded_symbol_v1(environment, environment, \"#source_corresponds()\")",
+        false,
+    ),
+    (
+        "resource_guarded_decomposition_v1(g, \"guarded_decomposition_v1;\")",
+        false,
+    ),
+    // A name that is not a registered term.
+    (
+        "resource_guarded_symbol_v1(environment, environment, #environment_holds())",
+        false,
+    ),
+    // A registered term in the wrong sort.
+    (
+        "resource_guarded_symbol_v1(environment, environment, #item_null(#item))",
+        false,
+    ),
+];

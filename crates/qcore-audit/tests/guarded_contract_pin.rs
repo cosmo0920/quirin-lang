@@ -37,9 +37,11 @@ fn actual_guarded_source_requires_current_contract_and_all_original_reviewed_sit
         // prerequisite symbols repeat sentences the module now states as
         // formulas; the rendered addition is read through the legacy reader.
         actual.replacen(
-            &legacy_prose_premise::lift(
-                &qcore_contract::guarded_metadata_bridge::render(&plan.metadata).unwrap(),
-            ),
+            // Card SP6-GUARDED-SYMBOL-PROSE: rendered in the retired string
+            // form, then lifted as the module now states it.
+            &legacy_prose_premise::lift(&legacy_prose_premise::render_string_form(
+                &serde_json::to_value(&plan.metadata).unwrap(),
+            )),
             "",
             1,
         ),

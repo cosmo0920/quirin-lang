@@ -367,6 +367,7 @@ import QCore.PointerStore
 import QCore.PointerTypedefMember
 import QCore.PremiseFlow
 import QCore.PremiseFormula
+import QCore.PremiseFormula.CjsonGuardedSymbols
 import QCore.PremiseFormula.CjsonTypedAtoms
 import QCore.PremiseFormula.FluentBit
 import QCore.PremiseFormula.Libevent

@@ -48,7 +48,10 @@ fn fixture() -> (
     let current = fs::read_to_string(root().join(&plan.module)).unwrap();
     let restored =
         sp2_premise_checkpoint::restored_file(&plan.module, &current, qcore_schemas::sha256_hex);
-    let addition = bridge::render(&plan.metadata).unwrap();
+    // Card SP6-GUARDED-SYMBOL-PROSE: the frozen metadata's English symbols
+    // and string document render only in the retired string form.
+    let addition =
+        legacy_prose_premise::render_string_form(&serde_json::to_value(&plan.metadata).unwrap());
     let bytes = legacy_prose_premise::lifted_adoption_plan(
         &frozen,
         &restored,
@@ -98,9 +101,11 @@ fn actual_production_source_has_complete_independently_expected_map_and_no_truth
     .unwrap();
     // Card SP6-SYMBOLIC-HYPOTHESIS-ATOMS: the frozen sidecar's nine
     // prerequisite symbols repeat sentences; read through the legacy reader.
+    // Card SP6-GUARDED-SYMBOL-PROSE: its other eight are English, lifted to
+    // their recorded formulas too.
     assert_eq!(
         legacy_prose_premise::lift_bindings(&mut sidecar["bindings"]),
-        9
+        17
     );
     assert_eq!(
         serde_json::to_value(&p.metadata.bindings).unwrap(),
@@ -230,8 +235,8 @@ fn loaders_reject_every_malformed_inline_boundary_including_unchosen_case() {
     let (_, p, _, after) = fixture();
     for edited in [
         after[&p.module].replace(
-            "failure_case ->| original_list_unchanged;",
-            "failure_case ->| absent;",
+            "failure_case ->| original_list_unchanged)",
+            "failure_case ->| absent)",
         ),
         after[&p.module].replace("failure_case, case,", "failure_case, operation,"),
         after[&p.module].replace("detach, operation,", "detach, mystery,"),
@@ -241,14 +246,22 @@ fn loaders_reject_every_malformed_inline_boundary_including_unchosen_case() {
             "resource_guarded_decomposition_v0",
         ),
         after[&p.module].replace(
-            "invalid_membership !-> detach;",
-            "invalid_membership ! -> detach;",
+            "invalid_membership !-> detach,",
+            "invalid_membership ! -> detach,",
         ),
         after[&p.module].replace(
             "success_case / failure_case",
             "success_case / failure_case / failure_case",
         ),
-        after[&p.module].replace("environment ∧ detach_chain", "environment ∧ missing_atom"),
+        after[&p.module].replace("environment && detach_chain", "environment && missing_atom"),
+        // Card SP6-GUARDED-SYMBOL-PROSE: a proposition naming an
+        // unregistered term, and the retired string forms (`QF003`).
+        after[&p.module].replace("#admits_removed()", "#admits_detach()"),
+        after[&p.module].replace("#admits_removed()", "\"#admits_removed()\""),
+        after[&p.module].replace(
+            "detach_guarded, (environment",
+            "detach_guarded, \"guarded_decomposition_v1;\n(environment",
+        ),
     ] {
         let bad = BTreeMap::from([(p.module.clone(), edited)]);
         assert!(qcore_contract::contract_loader::load_resource_contract_sources(&bad).is_err());
@@ -351,14 +364,18 @@ fn source_envelope_duplicate_missing_unused_and_budget_boundaries_refuse() {
         })
         .unwrap();
     let doc = format!(
-        "    requires resource_guarded_decomposition_v1({}, \"{}\");\n",
-        p.metadata.entry, p.metadata.readable
+        "    requires resource_guarded_decomposition_v1({}, {});\n",
+        p.metadata.entry,
+        qcore_frontend::guarded_decomposition::source_clauses(
+            &qcore_frontend::guarded_decomposition::parse(&p.metadata.readable).unwrap()
+        )
     );
+    assert_eq!(source.matches(&doc).count(), 1);
     let changes = [
         source.replace(atom_line, &format!("{atom_line}\n{atom_line}")),
         source.replace(&doc, ""),
         source.replace(&doc, &format!("{doc}{doc}")),
-        source.replace(atom_line, &format!("{atom_line}\n    requires resource_guarded_symbol_v1(unused, condition, \"An unused proposed statement\");")),
+        source.replace(atom_line, &format!("{atom_line}\n    requires resource_guarded_symbol_v1(unused, condition, #admits_removed());")),
         source.replace("detach_chain, detach_distinct", "detach_distinct, detach_chain"),
     ];
     for (i, bad) in changes.into_iter().enumerate() {
@@ -375,7 +392,15 @@ fn source_envelope_duplicate_missing_unused_and_budget_boundaries_refuse() {
     use qcore_frontend::guarded_decomposition::parse_source_clause as parse;
     for text in [
         "resource_guarded_unknown_v1(x, y)",
-        "resource_guarded_symbol_v2(x, y, \"s\")",
+        "resource_guarded_symbol_v2(x, y, #source_corresponds())",
+        "resource_guarded_symbol_v1(x, environment, \"s\")",
+        "resource_guarded_symbol_v1(x, environment, #source_corresponds(),)",
+        "resource_guarded_symbol_v1(x, environment, #source_corresponds()) trailing",
+        "resource_guarded_symbol_v1(x, environment, #source_corresponds(), #unregistered())",
+        "resource_guarded_symbol_v1(x, environment, (#source_corresponds() && #nonterm()))",
+        "resource_guarded_decomposition_v1(x, a !-> b,)",
+        "resource_guarded_decomposition_v1(x, (a) |-> b)",
+        "resource_guarded_decomposition_v1(x, (a ∧ c) |-> b)",
         "resource_guarded_symbol_v1(x, environment, \"escaped\\ntext\")",
         "resource_guarded_symbol_v1(x, environment, \"s\",)",
         "resource_guarded_symbol_v1(x, environment, \"s\") trailing",
@@ -386,8 +411,20 @@ fn source_envelope_duplicate_missing_unused_and_budget_boundaries_refuse() {
     assert!(parse(&"resource_guarded_".repeat(10000)).is_err());
     let mut map = p.metadata.clone();
     map.bindings.get_mut("detach").unwrap().proposition = "p".repeat(4097);
-    let addition = bridge::render(&map).unwrap();
-    let altered = source.replace(&bridge::render(&p.metadata).unwrap(), &addition);
+    // Card SP6-GUARDED-SYMBOL-PROSE: no source form exists for a proposition
+    // that is not a canonical formula (`QF003`), and an over-long formula is
+    // refused by the loader.
+    assert!(bridge::render(&map).unwrap_err().starts_with("QF003"));
+    let mut long = "#admits_removed()".to_owned();
+    for _ in 0..300 {
+        long = format!("({long} && #admits_removed())");
+    }
+    let altered = source.replacen(
+        "detach, operation, #admits_removed(),",
+        &format!("detach, operation, {long},"),
+        1,
+    );
+    assert_ne!(altered, *source);
     assert!(
         qcore_contract::contract_loader::load_resource_contract_sources(&BTreeMap::from([(
             p.module.clone(),

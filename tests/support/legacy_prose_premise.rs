@@ -47,7 +47,121 @@
 //! `hypotheses`). The same rule holds: an unrecorded string atom stays a
 //! string, and the parser refuses it.
 
+//!
+//! Card **SP6-GUARDED-SYMBOL-PROSE** extends it to the retired string forms
+//! of the guarded source heads (contract specification C04.18.6, `QF003`):
+//! [`lift`] also writes each recorded string text of a
+//! `resource_guarded_symbol_v1` clause as the formula that replaced it
+//! (`docs/reports/sp6-guarded-symbol-prose/migration.json`, `symbols`), and
+//! each string `resource_guarded_decomposition_v1` document as its unquoted
+//! clauses (a respelling of the same symbolic clauses, `;` to `,` and `∧` to
+//! `&&`, never a new formula); [`lift_bindings`] lifts the recorded texts of
+//! guarded metadata bindings; [`render_string_form`] reproduces the retired
+//! source form of frozen metadata, so a frozen digest can still be checked.
+//! An unrecorded string text stays a string, and the parser refuses it.
+
 #![allow(dead_code)]
+
+const SP7_RECORD: &str = include_str!("../../docs/reports/sp6-guarded-symbol-prose/migration.json");
+
+/// One recorded guarded symbol text: ID, role, the retired string text and
+/// the formula that replaced it (card SP6-GUARDED-SYMBOL-PROSE).
+pub struct GuardedSymbol {
+    pub id: String,
+    pub role: String,
+    pub prose: String,
+    pub formula: String,
+}
+
+/// The recorded guarded symbol texts (card SP6-GUARDED-SYMBOL-PROSE).
+pub fn guarded_symbols() -> Vec<GuardedSymbol> {
+    let record: serde_json::Value =
+        serde_json::from_str(SP7_RECORD).expect("the SP7 migration record is JSON");
+    record["symbols"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|s| {
+            let field = |key: &str| s[key].as_str().unwrap().to_owned();
+            GuardedSymbol {
+                id: field("id"),
+                role: field("role"),
+                prose: field("prose"),
+                formula: field("formula"),
+            }
+        })
+        .collect()
+}
+
+/// A string guarded document's clauses in their unquoted source spelling:
+/// the version header dropped, one clause per `;`-terminated line, joined by
+/// `, `, `∧` respelled `&&`. `None` when `readable` is not such a document.
+pub fn document_source(readable: &str) -> Option<String> {
+    let mut lines = readable.lines().map(str::trim).filter(|l| !l.is_empty());
+    if lines.next()? != "guarded_decomposition_v1;" {
+        return None;
+    }
+    let clauses = lines
+        .map(|l| l.strip_suffix(';').map(|c| c.replace(" ∧ ", " && ")))
+        .collect::<Option<Vec<_>>>()?;
+    Some(clauses.join(", "))
+}
+
+/// Card SP6-GUARDED-SYMBOL-PROSE: `text` with every string
+/// `resource_guarded_decomposition_v1(ENTRY, "DOCUMENT")` written with its
+/// clauses unquoted ([`document_source`]).
+fn lift_documents(text: &str) -> String {
+    const HEAD: &str = "resource_guarded_decomposition_v1(";
+    let mut out = String::new();
+    let mut rest = text;
+    while let Some(at) = rest.find(HEAD) {
+        let (before, tail) = rest.split_at(at + HEAD.len());
+        out.push_str(before);
+        rest = tail;
+        let Some((entry, after_entry)) = rest.split_once(", \"") else {
+            continue;
+        };
+        let Some((readable, after)) = after_entry.split_once("\")") else {
+            continue;
+        };
+        if entry.contains(['(', ')', '"', '\n']) {
+            continue;
+        }
+        if let Some(source) = document_source(readable) {
+            out.push_str(&format!("{entry}, {source})"));
+            rest = after;
+        }
+    }
+    out.push_str(rest);
+    out
+}
+
+/// The retired source form of guarded metadata (`{entry, bindings,
+/// readable}` as JSON): the rendering `guarded_metadata_bridge::render` gave
+/// before card SP6-GUARDED-SYMBOL-PROSE, each proposition and the document a
+/// string literal. Frozen digests were taken over this form.
+pub fn render_string_form(metadata: &serde_json::Value) -> String {
+    let mut out = String::new();
+    for (id, binding) in metadata["bindings"].as_object().unwrap() {
+        let deps = binding["dependencies"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|d| format!(", {}", d.as_str().unwrap()))
+            .collect::<String>();
+        out.push_str(&format!(
+            "    requires resource_guarded_symbol_v1({id}, {}, \"{}\"{deps});\n",
+            binding["role"].as_str().unwrap(),
+            binding["proposition"].as_str().unwrap()
+        ));
+    }
+    out.push_str(&format!(
+        "    requires resource_guarded_decomposition_v1({}, \"{}\");\n",
+        metadata["entry"].as_str().unwrap(),
+        metadata["readable"].as_str().unwrap()
+    ));
+    out
+}
 
 const RECORD: &str =
     include_str!("../../docs/reports/sp2-symbolic-librdkafka-premises/migration.json");
@@ -129,7 +243,21 @@ pub fn lift(text: &str) -> String {
             ),
         );
     }
-    out
+    // Card SP6-GUARDED-SYMBOL-PROSE: each recorded string symbol text as its
+    // formula, and each string document as its unquoted clauses.
+    for s in guarded_symbols() {
+        out = out.replace(
+            &format!(
+                "resource_guarded_symbol_v1({}, {}, \"{}\"",
+                s.id, s.role, s.prose
+            ),
+            &format!(
+                "resource_guarded_symbol_v1({}, {}, {}",
+                s.id, s.role, s.formula
+            ),
+        );
+    }
+    lift_documents(&out)
 }
 
 /// A frozen hypothesis graph's recorded opaque atoms written as their typed
@@ -161,11 +289,14 @@ pub fn lift_graph_hypotheses(graph: &mut serde_json::Value) -> usize {
 
 /// Guarded metadata bindings (`{ID: {role, proposition, dependencies}}`)
 /// with each symbol whose proposition repeated a recorded atom's sentence
-/// (the atom of the same ID) written as that atom's formula. Returns how
-/// many were lifted.
+/// (the atom of the same ID) written as that atom's formula, and (card
+/// SP6-GUARDED-SYMBOL-PROSE) each symbol whose proposition is a recorded
+/// English text written as its recorded formula. Returns how many were
+/// lifted.
 pub fn lift_bindings(bindings: &mut serde_json::Value) -> usize {
     let mut lifted = 0;
     let recorded = hypotheses();
+    let guarded = guarded_symbols();
     if let Some(bindings) = bindings.as_object_mut() {
         for (id, binding) in bindings.iter_mut() {
             let proposition = binding["proposition"].as_str().unwrap_or_default();
@@ -174,6 +305,14 @@ pub fn lift_bindings(bindings: &mut serde_json::Value) -> usize {
                 .find(|h| h.id == *id && h.prose == proposition)
             {
                 binding["proposition"] = serde_json::Value::String(h.formula.clone());
+                lifted += 1;
+            } else if let Some(s) = guarded.iter().find(|s| {
+                s.id == *id
+                    && s.prose == proposition
+                    && s.prose != s.formula
+                    && binding["role"].as_str() == Some(s.role.as_str())
+            }) {
+                binding["proposition"] = serde_json::Value::String(s.formula.clone());
                 lifted += 1;
             }
         }
@@ -258,8 +397,11 @@ pub fn lifted_adoption_plan(
         "the plan's graph states no recorded prose"
     );
     // Card SP6-SYMBOLIC-HYPOTHESIS-ATOMS: the nine guarded prerequisite
-    // symbols repeat their atoms' formulas.
-    assert_eq!(lift_bindings(&mut plan["metadata"]["bindings"]), 9);
+    // symbols repeat their atoms' formulas. Card SP6-GUARDED-SYMBOL-PROSE:
+    // the other eight state their recorded formulas, and `addition` (the
+    // frozen metadata's string form, `render_string_form`) is lifted to the
+    // unquoted form.
+    assert_eq!(lift_bindings(&mut plan["metadata"]["bindings"]), 17);
     let addition = &lift(addition);
     let digests = |text: &str| {
         assert_eq!(text.matches(addition.as_str()).count(), 1);

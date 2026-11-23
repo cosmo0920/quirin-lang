@@ -4098,26 +4098,40 @@ G05-lifecycle and maps-to meanings are unchanged.
 ### G05-guarded-source. Explicit guarded source embedding
 
 C04.18.6 extends the contract metadata vocabulary explicitly. Existing contextual
-flow-v1/lifecycle-v1 expressions retain their meanings. The ordinary lexer
-retains the raw content of a quoted multiline literal; this extension refuses
-backslash escapes rather than applying JSON/C escape decoding.
+flow-v1/lifecycle-v1 expressions retain their meanings. Card
+SP6-GUARDED-SYMBOL-PROSE retires the string forms. A symbol states an unquoted
+formula, and a document states its unquoted clauses. A string token anywhere in
+either clause rejects the module with `QF003`, at parse, under any introducer.
 
 ```ebnf
 guarded_symbol = "requires", "resource_guarded_symbol_v1", "(", ID, ",", role,
-                 ",", RAW_STRING, { ",", graph_atom_id }, ")", ";" ;
+                 ",", guarded_formula, { ",", graph_atom_id }, ")", ";" ;
 guarded_source = "requires", "resource_guarded_decomposition_v1", "(", entry_id,
-                 ",", RAW_GUARDED_DOCUMENT_STRING, ")", ";" ;
+                 ",", source_clause, { ",", source_clause }, ")", ";" ;
 role = "environment" | "prerequisite" | "operation" | "condition" | "case" | "postcondition" ;
+(* A G01p formula (no `#ID(...) =` head) whose free names are registered
+   C04.18.9 terms or SP6/SP7 rendered terms, typed in their rendered sorts. *)
+guarded_formula = formula ;  (* G01p's formula production *)
+(* G05-guarded's clauses with `&&` for `∧`. *)
+source_clause = "(", environment_id, "&&", prerequisite_id,
+                  { "&&", prerequisite_id }, ")", "|->", operation_id
+              | condition_id, "!->", operation_id
+              | operation_id, "||->", case_id, "/", case_id, { "/", case_id }
+              | case_id, "->|", postcondition_id ;
 ```
 
-`RAW_GUARDED_DOCUMENT_STRING` contains the complete G05-guarded versioned document,
-including its final semicolon. One document and its complete role/proposition map
-are required per participating declaration. The source clause limit is131,072
-bytes; embedded document/statement/identifier/symbol/dependency bounds remain
-C04.18.5's. Every `resource_guarded_` head is reserved to this total-or-reject
-reader, including unsupported versions. No executable lifecycle or source truth
-is introduced. The sealed bridge version2 is separately bounded to one resource
-module/declaration; it is not a general source eraser.
+The readable G05-guarded document is rendered from the source clauses: the line
+`guarded_decomposition_v1;`, then one clause per line, each ending in `;`, with
+`∧` for `&&`. That rendered document is checked by G05-guarded and its SHA is
+the readable SHA. The binding's proposition is the formula's canonical G01p
+printing. One document and its complete role/proposition map are required per
+participating declaration. The source clause limit is 131,072 bytes. The
+embedded document, statement, identifier, symbol and dependency bounds remain
+C04.18.5's, and a proposition's printing is at most 4,096 bytes. Every
+`resource_guarded_` head is reserved to this total-or-reject reader, including
+unsupported versions. No executable lifecycle or source truth is introduced.
+The sealed bridge version 2 is separately bounded to one resource module and
+declaration; it is not a general source eraser.
 
 ## G05a. Contract inclusion and inheritance
 

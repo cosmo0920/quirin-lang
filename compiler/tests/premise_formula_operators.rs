@@ -152,6 +152,38 @@ fn a_string_hypothesis_is_refused_by_name_at_parse() {
     }
 }
 
+/// Card SP6-GUARDED-SYMBOL-PROSE (C04.18.6): the retired string forms of the
+/// guarded source heads are refused on the compiler route too: a parse
+/// refusal (`Q000`) naming `QF003`, under any introducer.
+#[test]
+fn a_string_guarded_symbol_or_document_is_refused_by_name_at_parse() {
+    for clause in [
+        "    requires resource_guarded_symbol_v1(environment, environment, \"Exact environment\");",
+        "    requires resource_guarded_symbol_v1(environment, environment, \"#source_corresponds()\");",
+        "    ensures normal resource_guarded_symbol_v1(detach, operation, \"Admission\");",
+        "    requires resource_guarded_decomposition_v1(g, \"guarded_decomposition_v1;\");",
+    ] {
+        let Err(diagnostics) = compile_files(
+            &[SourceFile::new("guarded.qv", kafka_module(clause))],
+            &CompileOptions::default(),
+        ) else {
+            panic!("{clause}: a string guarded clause compiles");
+        };
+        assert_eq!(
+            diagnostics
+                .iter()
+                .map(|d| d.code.as_str())
+                .collect::<Vec<_>>(),
+            ["Q000"],
+            "{clause}"
+        );
+        assert!(
+            diagnostics.iter().any(|d| d.message.contains("QF003")),
+            "{clause}: {diagnostics:?}"
+        );
+    }
+}
+
 #[test]
 fn a_union_or_conjunction_anywhere_else_in_a_contract_still_refuses() {
     for clause in [
