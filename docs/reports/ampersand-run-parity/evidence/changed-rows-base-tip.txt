@@ -1,0 +1,8 @@
+lib/cmetrics/src/cmt_cat.c summary_label_keys_match Unknown -> Unknown
+   - 6123 unresolved resource identity `right_head`
+lib/ctraces/src/ctr_decode_opentelemetry.c convert_otel_attrs Unknown -> Unknown
+   - 9424 unresolved resource identity `otel_attr`
+lib/ctraces/src/ctr_decode_opentelemetry.c ctr_span_set_links Unknown -> Unknown
+   - 9534 unresolved resource identity `links`
+lib/librdkafka-2.15.0/src/rdkafka_telemetry_encode.c get_member_id Unknown -> Safe
+   - 20722 unmodeled call, aggregate or indirect access in return expression
