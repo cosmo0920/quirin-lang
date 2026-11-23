@@ -123,6 +123,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [card-scope-guard](card-scope-guard/README.md) | `CARD-SCOPE-GUARD` — a mechanism that makes a delegated card unable to advance `main` |
 
+| [cast-before-ampersand](cast-before-ampersand/README.md) | CAST-BEFORE-AMPERSAND-READ-AS-BINARY: a cast close makes the next `&` unary |
+
 | [cast-formalization](cast-formalization/README.md) | CAST-FORMALIZATION: one formal cast semantics for route G |
 
 | [cell-guard-result-range](cell-guard-result-range/README.md) | CELL-GUARD-RESULT-RANGE |
