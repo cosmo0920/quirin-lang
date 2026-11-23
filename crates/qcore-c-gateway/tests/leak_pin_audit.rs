@@ -431,3 +431,48 @@ fn a_call_result_before_an_ampersand_keeps_the_accusation() {
     assert_eq!(status, "Unsafe", "{keys:?}");
     assert!(keys.iter().any(|key| key == "leak"), "{keys:?}");
 }
+
+/// Card CAST-BEFORE-STAR-READ-AS-BINARY (rule 74g): a `*` after a `)` that
+/// may close a cast hands on both readings' places, `*b` and `b`, so the
+/// refused statement `*q = k_mask(1) * (long) *b;` withdraws the accusation
+/// of `b` as the base's binary reading did. A reading of the `*` as a
+/// dereference alone would hand on `*b` only and keep the leak, as the
+/// control below shows for a `*` after an operator.
+#[test]
+fn a_cast_before_a_dereference_keeps_the_root_hand_on() {
+    if !clang_available() {
+        return;
+    }
+    let (status, keys) = outcome(
+        "long k_mask(long n); void w(long *q) { long *b = k_alloc(8); if (!b) return; \
+         *q = k_mask(1) * (long) *b; }",
+    );
+    assert_eq!(status, "Unknown", "{keys:?}");
+    assert!(!keys.iter().any(|key| key == "leak"), "{keys:?}");
+}
+
+/// The controls: a unary `*` after an operator (`+ *b`, `* *b`) hands on the
+/// slot `*b`, never `b`, and a call's result before a binary `*`
+/// (`k_mask(b[0]) * n`) is a value; each refused statement keeps the
+/// accusation of `b`, at the base and here.
+#[test]
+fn a_dereference_after_an_operator_keeps_the_accusation() {
+    if !clang_available() {
+        return;
+    }
+    for statement in [
+        "*q = k_mask(1) + *b;",
+        "*q = k_mask(1) * *b;",
+        "*q = k_mask(b[0]) * n;",
+    ] {
+        let (status, keys) = outcome(&format!(
+            "long k_mask(long n); void w(long *q) {{ long *b = k_alloc(8); long n = 1; \
+             if (!b) return; {statement} }}"
+        ));
+        assert_eq!(status, "Unsafe", "{keys:?}: {statement}");
+        assert!(
+            keys.iter().any(|key| key == "leak"),
+            "{keys:?}: {statement}"
+        );
+    }
+}

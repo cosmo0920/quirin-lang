@@ -6920,11 +6920,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Landing integrate/r61 (base main baa294d61, after r60; merges CAST-BEFORE-AMPERSAND-READ-AS-BINARY d4bbd802a, base d7540d746, in 31afcd73f; generated docs/agents/README.md, docs/agents/gateway.md and proof/QCore.lean auto-merged and regenerated, no conflicts; third_party/libevent checked out at d82464a27). USER DECISION 2026-11-23: \"launch the cast-before-ampersand card\". Amendments applied in 3204e06a3 with --profiles-base baa294d61: CAST-BEFORE-AMPERSAND-READ-AS-BINARY retired; CAST-BEFORE-STAR-READ-AS-BINARY registered; profiles []; status_edits empty. Full landing gate on 3204e06a3 (private/integrate-r61/gate, raw record beside this file as gate-scope.json) via scripts/gate_scope.py --base origin/main --full --landing through private/toolchain/env.sh: Rust 679 units / 724 summaries, 9953 passed, 0 failed, 21 ignored; fmt, Clippy and both reevaluation examples exit 0; Lean (all) exit 0, 489 audits (new QCore.CastBeforeAmpersand). No providers/ path changed, so the provider gate was not selected; provider_tests 174 is carried from r60. Python (807 tests) exited 1 only on the stale-matrix check test_the_derived_facts_are_recomputed_rather_than_carried, cleared by regenerating the matrix from this record. Change: rule 74f (new): a shared cast detector (ampersand_runs::may_close_a_cast) makes legacy_refused_operands read `(T *) &x->f` as an address (every prefix handed on; the one unsound site) and replaces rule 5j's is_cast_close, which missed function-pointer and pointer-to-array casts; an undecided `(a) & b` reads unary unless a is a declared object no typedef spells. No pin moved. Card measurement (opt-in current --monkey-linked, Fluent Bit 046accf6): base d7540d746 and tip both 1172/2/3622/8, no row or leaf changed. Pinned-route parity (quirin-audit measure --declared) was not run: this host holds no build/cycle19 inputs or baselines. No profile baseline is changed and land.py publish is owed.",
-  "workspace_tests": 9953,
+  "note": "Landing integrate/r62 (base main 2c60986b0, after r61 and the other session's SP6/SP7/SP8 landing; merges CAST-BEFORE-STAR-READ-AS-BINARY fd60e6eb0, base 7450d69af, in 156f8a339; generated docs/agents/README.md, docs/agents/gateway.md and proof/QCore.lean auto-merged and regenerated, no conflicts; third_party/libevent checked out). USER DECISION 2026-11-23: \"launch the cast-before-star card\"; \"yes, land the cast-before-star card as r62\". Amendments applied in 5cfca8170 with --profiles-base origin/main: CAST-BEFORE-STAR-READ-AS-BINARY retired; RETURN-FAMILY-STAR-AFTER-UNRESOLVED-CAST registered; profiles []; status_edits empty. Full landing gate on 5cfca8170 (private/integrate-r62/gate, raw record beside this file as gate-scope.json) via scripts/gate_scope.py --base origin/main --full --landing through private/toolchain/env.sh: Rust 680 units / 725 summaries, 9981 passed, 0 failed, 22 ignored; fmt, Clippy and both reevaluation examples exit 0; Lean (all) exit 0, 492 audits (new QCore.CastBeforeStar; SP7/SP8 added two). No providers/ path changed by the card, so the provider gate was not selected; provider_tests 174 (1 ignored) is carried from the SP7/SP8 combined landing gate on 35b5f48a2, which ran it. Python (807 tests) exited 1 only on the stale-matrix check test_the_derived_facts_are_recomputed_rather_than_carried, cleared by regenerating the matrix from this record. Change: rule 74g (new): legacy_refused_operands' dereference and aggregate_store premise 4 read a `*` after a `)` through ampersand_runs::may_close_a_cast; the refused hand-on hands on both `*p` and `p` when the group may close a cast (neither reading contains the other), and premise 4 counts such a `*` as a dereference (refusing the base). No pin moved. Card measurement (opt-in current --monkey-linked, Fluent Bit 046accf6): base 7450d69af and tip 404136f21 both 1172/2/3622/8, no row or leaf changed, matching the committed prediction (none). Pinned-route parity (quirin-audit measure --declared) was not run: this host holds no build/cycle19 inputs or baselines. No profile baseline is changed and land.py publish is owed.",
+  "workspace_tests": 9981,
   "provider_tests": 174,
   "python_evidence_validator_tests": 807,
-  "lean_audits": 491,
+  "lean_audits": 492,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
    "AuditAggregateOwnedField.lean",
@@ -6976,6 +6976,7 @@
    "AuditCarriedPublication.lean",
    "AuditCastActualPlace.lean",
    "AuditCastBeforeAmpersand.lean",
+   "AuditCastBeforeStar.lean",
    "AuditCastRepresentation.lean",
    "AuditCastReturnEscape.lean",
    "AuditCastSemantics.lean",
@@ -7422,9 +7423,9 @@
   "reevaluation_followup_exit": 0,
   "cargo_fmt": "clean",
   "cargo_clippy": "clean",
-  "standing_gate": "full landing gate: every step exits 0 except the Python suite's stale-matrix check, cleared by regenerating the matrix from this record; provider gate not selected (no providers/ change), provider count carried from r60",
+  "standing_gate": "full landing gate: every step exits 0 except the Python suite's stale-matrix check, cleared by regenerating the matrix from this record; provider gate not selected (no providers/ change), provider count carried from the SP7/SP8 combined landing",
   "full_language_conformance": false,
-  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
+  "measurement_provenance": "integrator_supplied (docs/reports/cast-before-star/integration/gate.json)"
  },
  "named_followups": [
   {
@@ -14786,13 +14787,6 @@
    "recorded_by": "OPENSSL-RELEASED-PARAMETER-SLOTS"
   },
   {
-   "id": "CAST-BEFORE-STAR-READ-AS-BINARY",
-   "title": "`legacy_refused_operands` and `aggregate_store` read a `*` after a cast's `)` as binary",
-   "why": "CAST-BEFORE-AMPERSAND-READ-AS-BINARY fixed the `&` half of `ends_operand`. The same test decides a `*` before a name: crates/qcore-c-gateway/src/legacy_refused_operands.rs `dereference` reads `(char *) *p` as a multiplication and hands on `p` instead of `*p` (the identity stored in `*p` is missed, the unsound direction for the refused hand-on), and crates/qcore-c-gateway/src/aggregate_store.rs premise 4 (`dereferenced`, which excludes a `*` after `)`) reads `(T) *b` as no dereference (direction not assessed). DISCHARGE: read `) *` through `ampersand_runs::may_close_a_cast`, pin `(char *) *p` and `f(x) * n`, measure the corpus.",
-   "source": "docs/reports/cast-before-ampersand/README.md",
-   "recorded_by": "CAST-BEFORE-AMPERSAND-READ-AS-BINARY"
-  },
-  {
    "id": "SP7-PLUGIN-GUARDED-APPLICATION-FORMULAS",
    "title": "State the frozen plugin guarded sidecar's English symbols as formulas",
    "why": "Recorded by SP6-GUARDED-SYMBOL-PROSE. Guarded propositions must be canonical C04.18.9 typed-rendering formulas (QF003), so the frozen standalone sidecar docs/reports/premise-guarded-decomposition/applications/plugin.json, whose seven non-prerequisite symbols are English (environment, invoke, registered_case, default_case, registered_lifetime_valid, default_lifetime_valid, unregistered), no longer lowers: crates/qcore-contract/tests/guarded_decomposition.rs now shows it refused. DISCHARGE: each stated over registered terms (with a rendered-term block and Lean model over QCore.PluginPremiseDecomposition / GuardedContractApplications.Plugin for what is missing), recorded for the legacy reader, and the plugin replay restored as a positive test. No production module states these symbols. Size: medium.",
@@ -14805,6 +14799,13 @@
    "why": "Recorded by SP6-SYMBOLIC-HYPOTHESIS-ATOMS and SP6-GUARDED-SYMBOL-PROSE. Binding manifests' environment.variables descriptions and the FormalBinding records built in code (cjson_local_binding, plugin_source_witnesses) still describe their environments in English. They are not conditions a declaration states, and the manifests are digest-held, so converting them means a manifest migration. DISCHARGE: each description a reference to a registered term or typed definition, the manifests migrated with their digests, no verdict moved. Size: medium.",
    "source": "docs/reports/sp6-guarded-symbol-prose/README.md",
    "recorded_by": "SP6-GUARDED-SYMBOL-PROSE"
+  },
+  {
+   "id": "RETURN-FAMILY-STAR-AFTER-UNRESOLVED-CAST",
+   "title": "`legacy_return_family::unary_position` reads a `*` or `&` after a group it cannot resolve as binary",
+   "why": "CAST-BEFORE-STAR-READ-AS-BINARY's census (report §1) found one more reader that decides a single `*` and `&` by the token before it: crates/qcore-c-gateway/src/legacy_return_family.rs `unary_position` (family S of W45-RETURN-EXPRESSION-FAMILIES, with `stars_before` and the `starred` base test). It has its own declaration-resolved cast reading, `is_cast_group`, which reads `(T)` as a cast only when the unit's declaration reader resolves `T` as a never-variably-modified type, and otherwise reads it as binary. For `return (T) *p;` with `T` an unresolved type name and `p` untracked, `p` is then not a base of the read node, so the flow check's possible `unknown_alias` refusal is missed (the admitting direction; a may-bind `p` still refuses through `stars_before`). Routing the `)` arm through `ampersand_runs::may_close_a_cast` is not a same-shape fix: for a may-bind root, the unary reading turns `stars_before`'s refusal into an admitted dereference base. That is an Unknown-to-admission move, and it needs its own direction assessment. DISCHARGE: decide `unary_position`'s `)` arm with the shared detector, or show that an unresolved type name cannot reach family S. Assess both directions (the `starred` base and `stars_before`), pin `return (T) *p;` with `T` unresolved, and measure the system and slice routes.",
+   "source": "docs/reports/cast-before-star/README.md",
+   "recorded_by": "CAST-BEFORE-STAR-READ-AS-BINARY"
   }
  ],
  "updated": "Completed plugin premise integration; exact hand-maintained union retains810followups, borrowed measured-source8419Rust/354Lean/freshcard133provider, exact source equivalence checked; authoritative root committed-matrix Python confirmation in integration receipt. CMetrics map/opts API model specifications added at the explicit user request. Eight declared-model API contracts remain outside interpreted views, with CMT-MAP-OPTS-CONTRACT-ADOPTION and CMT-LABELED-HASH-ZERO-STATIC-STORAGE Open. No trusted API coverage is claimed; the source gate is recorded by this card alongside its separate initializer native checkpoint. W48-CMT-TRACKED-INTERIOR-SELF-INIT implements rule 36b's checked initializer effect transport for an exact live owned root or embedded record, retaining actual self writes, invalidating aliased member facts and preserving resource obligations; nondefault custody frames refuse and no ordinary summary is exported. The canonical CFL intrusive_list.qv declares matching audit preconditions/effects; two CMetrics .qv modules add six map and two opts lifecycle models, including transitive ownership, partial failure, borrowed results and uncleared cleanup fields. All remain outside interpreted views; checked API adoption and labeled zero-hash storage accounting have named Open follow-ups. Fresh BASE/planner precedes prediction f18d96065 and implementation; the later contract amendment 08da23123 precedes .qv edits. Native corpus BASE/TIP Safe/Unknown/Pending/provisional-Unsafe: 1009 / 3816 / 0 / 9 to 1011 / 3814 / 0 / 9; full system/slice, 5781 NULL dictionaries and runtime projections are compared, 241 semantic leaves accounted, zero unexplained leaves and no prior Safe loss. Gate 8654 Rust / 370 Lean / 374 Python, provider 133 Rust / 25 Python and all five package verifies pass. The actual deep source reader uses 328 KiB below 1 MiB. Full getter closure remains Open; W48-CMT-SELF-INIT-DISJOINT-FRAMES tracks the next bounded frame extension, and W48-EXACT-RETURN-WITNESS-PRECISION is unchanged. Native evidence is isolated to measured e92d8aef35a8bd14550e90219d19a56eb3b196e7; later source gate 2d0d85299b830aa24d7f200d63a308653582363f validates the added declared API models separately; see docs/reports/w48-cmt-tracked-interior-self-init/README.md."

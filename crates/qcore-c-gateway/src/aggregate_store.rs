@@ -69,8 +69,9 @@
 //!    `a_store_through_the_field_between_the_read_and_the_call_is_never_admitted`
 //!    refusing with its own existing diagnostic.
 //! 4. **No escape of the pointer itself.** `BASE` is never address-taken whole,
-//!    never incremented or compound-assigned, never dereferenced (`* BASE`),
-//!    never subscripted (`BASE [`) and never selected with `.`.
+//!    never incremented or compound-assigned, never dereferenced (`* BASE`,
+//!    also after a cast's `)`: `( T ) * BASE`, rule 74g), never subscripted
+//!    (`BASE [`) and never selected with `.`.
 //! 5. **No aliasing of the destination.** `BASE` is never the entire
 //!    right-hand side of an assignment, so no other declared name denotes the
 //!    same aggregate; and it never appears as a whole argument at an `Out`,
@@ -312,13 +313,17 @@ pub(crate) fn store_bases(
         // Premise 4. A `*` immediately before the name is a dereference only
         // when what precedes *it* cannot end a type specifier or an operand:
         // `struct box * b ;` and `n * b` are not dereferences, `= * b`,
-        // `( * b` and `; * b` are.
+        // `( * b` and `; * b` are. Rule 74g: so is `( T ) * b`, after a `)`
+        // that may close a cast (`ampersand_runs::may_close_a_cast`, with no
+        // declared objects: a candidate is a pointer, which C11 6.5.5p2 bars
+        // from a binary `*`); `f ( x ) * b` and `__typeof__ ( x ) * b` are not.
         let dereferenced = previous == Some("*")
-            && !before.is_some_and(|text| {
+            && (!before.is_some_and(|text| {
                 is_name(text)
                     || text.as_bytes().first().is_some_and(u8::is_ascii_digit)
                     || matches!(text, ")" | "]")
-            });
+            }) || (before == Some(")")
+                && crate::ampersand_runs::may_close_a_cast(body, index - 2, &BTreeSet::new())));
         // Rule 74e: an odd run of `&` (`p && b` takes no address).
         if (crate::ampersand_runs::ends_in_address(body, index) && !selects)
             || dereferenced
@@ -1205,6 +1210,40 @@ mod tests {
         assert!(!star.bases.contains("b"));
         let index = facts("", "struct box * b ; b = make ( ) ; g ( b [ 0 ] ) ;", &[]);
         assert!(!index.bases.contains("b"));
+    }
+
+    /// Card CAST-BEFORE-STAR-READ-AS-BINARY (rule 74g): a `*` after a `)`
+    /// that may close a cast dereferences the base, which premise 4 refuses:
+    /// `(void) *b`, `(struct box) *b`, a typedef-name cast `(my_t) *b` and
+    /// the nested type names. FAILS at the base, which read every `) *` as
+    /// a multiplication and admitted `b`.
+    #[test]
+    fn a_cast_before_a_dereferenced_base_is_refused() {
+        for statement in [
+            "( void ) * b ;",
+            "g ( ( struct box ) * b ) ;",
+            "g ( ( my_t ) * b ) ;",
+            "g ( ( a ) * b ) ;",
+            "g ( ( void ( * ) ( int , . . . ) ) * b ) ;",
+            "g ( ( char ( * ) [ 4 ] ) * b ) ;",
+        ] {
+            let body = format!("struct box * b ; int a ; b = make ( ) ; {statement}");
+            let facts = facts("", &body, &[]);
+            assert!(!facts.bases.contains("b"), "{statement}");
+        }
+    }
+
+    /// An argument list before `*` is not a cast: `sizeof (T) * b` and
+    /// `f (x) * b` read as multiplications (C admits no pointer `b` there,
+    /// so no conforming body spells them), which leaves `b` admissible, as
+    /// at the base. The same reading keeps `__typeof__ (x) * c` a declarator.
+    #[test]
+    fn an_argument_list_before_a_star_is_no_dereference() {
+        for statement in ["n = sizeof ( int ) * b ;", "n = f ( x ) * b ;"] {
+            let body = format!("struct box * b ; b = make ( ) ; {statement}");
+            let facts = facts("", &body, &[]);
+            assert!(facts.bases.contains("b"), "{statement}");
+        }
     }
 
     /// **Deliberate pin update, card ALIAS-AGGREGATE.** `void * any` moves from
