@@ -1,0 +1,4 @@
+
+## Race merge with integrate/r59–r61
+
+origin/main moved to 7450d69af (r59 AMPERSAND-RUN-PARITY-OTHER-READERS, r60 OPENSSL-RELEASED-PARAMETER-SLOTS, r61 CAST-BEFORE-AMPERSAND-READ-AS-BINARY) during the landing gate. Merge be970584b: conflicts only in the increment page and the acceptance matrix, resolved by taking main's side and re-applying both cards' amendments; records regenerated, land.py check and providers/contracts.py check exit 0. Three-way named_followups id check over the merge, both parents and the merge base: none missing, none extra. Targeted check: cargo clippy --all-targets exit 0; run_test_binaries --packages qcore-frontend,qcore-compiler,qcore-contract,qcore-audit,qcore-c-gateway,quirin-source-analysis: 556 units, 7787 passed, 1 failed (the known libcurl_user_crate_versions host failure), 16 ignored; check_lean_audits 491 audits exit 0; Python 807 tests exit 0. Logs: private/race-*.log, private/race-tests/.
