@@ -48,7 +48,7 @@ impl Fixture {
                 "valuation".into(),
                 qcore_contract::formal_binding::reference_to(
                     &[
-                        "binding_source_corresponds",
+                        "bnd_source_corresponds",
                         "children",
                         "live",
                         "nodup",

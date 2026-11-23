@@ -17,6 +17,8 @@ The Rust boundary is pinned by
 `the_recorded_references_are_the_lean_table`,
 `the_environment_decision_vectors_are_the_lean_table`). -/
 
+#print axioms QCore.FormalBindingEnvironments.sp10_names_are_prefixed
+#print axioms QCore.FormalBindingEnvironments.sp10_is_disjoint_from_sp9
 #print axioms QCore.FormalBindingEnvironments.sp10_terms_denote
 #print axioms QCore.FormalBindingEnvironments.unregistered_term_denotes_nothing
 #print axioms QCore.FormalBindingEnvironments.proper_list_flag

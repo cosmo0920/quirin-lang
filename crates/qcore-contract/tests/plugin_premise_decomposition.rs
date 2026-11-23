@@ -229,7 +229,7 @@ fn explicit_bounds_bindings_require_actual_source_model_audit_and_complete_domai
         variables: BTreeMap::from([(
             "context".into(),
             qcore_contract::formal_binding::reference_to(
-                &["binding_source_corresponds", "held_context"],
+                &["bnd_source_corresponds", "bnd_held_context"],
                 &[],
             )
             .unwrap(),

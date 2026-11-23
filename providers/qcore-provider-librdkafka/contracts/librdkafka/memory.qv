@@ -1,5 +1,5 @@
 module contract;
-// qcore-premise-binding-manifest-v1 rd_kafka_crash rk_plugin_callback_closure 96cfb173d4cccddb059ce2498dbfcf8e71d9d5e861f33cb65d46c80c82ea3984
+// qcore-premise-binding-manifest-v1 rd_kafka_crash rk_plugin_callback_closure 30017c640e208d69e4ba5892ade997a3b328e0ebc1e9ca9675bc1427d2ece4c7
 #include "quirin-provider-libc:libc/memory.qv";
 #include "quirin-provider-libc:libc/string.qv";
 

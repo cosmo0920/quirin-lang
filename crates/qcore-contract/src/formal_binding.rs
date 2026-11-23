@@ -295,7 +295,7 @@ pub const ENVIRONMENT_DECISION_VECTORS: &[(&str, bool)] = &[
     ),
     // A registered SP10 term.
     (
-        r#"[{"name":"binding_source_corresponds","sort":{"kind":"predicate","arguments":[]}}]"#,
+        r#"[{"name":"bnd_source_corresponds","sort":{"kind":"predicate","arguments":[]}}]"#,
         true,
     ),
     // A content digest.

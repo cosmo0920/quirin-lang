@@ -15,6 +15,7 @@
 import QCore.HypothesisGraph
 import QCore.PluginPremiseDecomposition
 import QCore.PremiseFormula.CjsonGuardedSymbols
+import QCore.PremiseFormula.PluginGuardedSymbols
 
 /-!
 # Typed environment references (card SP10-FORMAL-BINDING-DESCRIPTIONS)
@@ -33,7 +34,7 @@ by typed terms, never by English descriptions:
 `QCore.PluginPremiseDecomposition` and `HypothesisGraph.Context`
 (`sp10_terms_denote`). `references` are the 22 recorded descriptions' typed
 references, bound to the Rust record; `every_reference_resolves` shows each
-term resolves. `#binding_source_corresponds` is E2's form for every other
+term resolves. `#bnd_source_corresponds` is E2's form for every other
 environment: a free proposition no theorem derives
 (`binding_source_correspondence_is_never_derived`).
 
@@ -49,8 +50,30 @@ namespace QCore.FormalBindingEnvironments
 
 open QCore.PluginPremiseDecomposition
 
-/-- The SP10 block, in the order of the Rust table `RENDERED_TERMS`. -/
-def sp10Terms : List String := ["binding_source_corresponds", "held_context", "resource_view", "null_view", "model_view", "hook_install", "hook_replace", "cjson_link_write", "cjson_call", "proper_list", "preexisting_hooks_valid", "core_write", "internal_write", "api_call", "is_rk_call", "public_rk_symbol", "api_precondition", "access", "handed_object", "exported_api", "forge", "forged"]
+/-- The SP10 block, in the order of the Rust table `RENDERED_TERMS`. Since the
+user decision of 2026-11-24 (A′, "Prefix, then land") every name is prefixed:
+`plg_` for a plugin-model component (environment implicit, SP9's sorts), `bnd_`
+for a term of the binding itself. -/
+def sp10Terms : List String := ["bnd_source_corresponds", "bnd_held_context", "bnd_resource_view", "bnd_null_view", "bnd_model_view", "plg_hook_install", "plg_hook_replace", "plg_cjson_link_write", "plg_cjson_call", "plg_proper_list", "plg_preexisting_hooks_valid", "plg_core_write", "plg_internal_write", "plg_api_call", "plg_is_rk_call", "plg_public_rk_symbol", "plg_api_precondition", "plg_access", "plg_handed_object", "plg_exported_api", "plg_forge", "plg_forged"]
+
+/-- The SP10 value sorts, in the order of the Rust table `RENDERED_VALUE_SORTS`. -/
+def sp10Sorts : List String := ["bnd_verdict_context", "bnd_property_view"]
+
+/-- The A′ scheme (user decision 2026-11-24): every SP10 name is prefixed, so
+the block reserves no generic name. -/
+def prefixed (p t : String) : Bool := t.toList.take p.length == p.toList
+
+theorem sp10_names_are_prefixed :
+    (sp10Terms.all (fun t => prefixed "plg_" t || prefixed "bnd_" t)) = true ∧
+      (sp10Sorts.all (prefixed "bnd_")) = true := by
+  decide
+
+/-- No SP10 term or sort is one of SP9's: the plugin components SP9 already
+registers are reused, never registered twice. -/
+theorem sp10_is_disjoint_from_sp9 :
+    sp10Terms.all (fun t => !QCore.PluginGuardedSymbols.sp9Terms.contains t) = true ∧
+      sp10Sorts.all (fun t => !QCore.PluginGuardedSymbols.sp9Sorts.contains t) = true := by
+  decide
 
 /-! ## What each SP10 term denotes -/
 
@@ -61,51 +84,51 @@ inductive PropertyView where
 
 /-- The meaning of an SP10 term. -/
 inductive Denotation where
-  /-- `#binding_source_corresponds`: the free source correspondence. -/
+  /-- `#bnd_source_corresponds`: the free source correspondence. -/
   | sourceCorrespondence
-  /-- `#held_context`: a nine-coordinate `HypothesisGraph.Context`. -/
+  /-- `#bnd_held_context`: a nine-coordinate `HypothesisGraph.Context`. -/
   | heldContext
-  /-- `#resource_view`, `#null_view`, `#model_view`. -/
+  /-- `#bnd_resource_view`, `#bnd_null_view`, `#bnd_model_view`. -/
   | view (v : PropertyView)
   /-- An event action of the plugin model. -/
   | action (a : Action)
   /-- An integer-valued event flag of the plugin model (`flagValue`). -/
   | flag (f : Event → Bool)
-  /-- `#preexisting_hooks_valid`: `Environment.preexistingHooksValid`. -/
+  /-- `#plg_preexisting_hooks_valid`: `Environment.preexistingHooksValid`. -/
   | hooksValid
 
 /-- Each SP10 term's meaning. -/
 def denote : String → Option Denotation
-  | "binding_source_corresponds" => some .sourceCorrespondence
-  | "held_context" => some .heldContext
-  | "resource_view" => some (.view .resource)
-  | "null_view" => some (.view .null)
-  | "model_view" => some (.view .model)
-  | "hook_install" => some (.action .hookInstall)
-  | "hook_replace" => some (.action .hookReplace)
-  | "cjson_link_write" => some (.action .cjsonLinkWrite)
-  | "cjson_call" => some (.action .cjsonCall)
-  | "proper_list" => some (.flag Event.properList)
-  | "preexisting_hooks_valid" => some .hooksValid
-  | "core_write" => some (.action .coreWrite)
-  | "internal_write" => some (.action .internalWrite)
-  | "api_call" => some (.action .apiCall)
-  | "is_rk_call" => some (.flag Event.isRkCall)
-  | "public_rk_symbol" => some (.flag Event.publicRkSymbol)
-  | "api_precondition" => some (.flag Event.apiPrecondition)
-  | "access" => some (.action .access)
-  | "handed_object" => some (.flag Event.handedObject)
-  | "exported_api" => some (.flag Event.exportedApi)
-  | "forge" => some (.action .forge)
-  | "forged" => some (.flag Event.forged)
+  | "bnd_source_corresponds" => some .sourceCorrespondence
+  | "bnd_held_context" => some .heldContext
+  | "bnd_resource_view" => some (.view .resource)
+  | "bnd_null_view" => some (.view .null)
+  | "bnd_model_view" => some (.view .model)
+  | "plg_hook_install" => some (.action .hookInstall)
+  | "plg_hook_replace" => some (.action .hookReplace)
+  | "plg_cjson_link_write" => some (.action .cjsonLinkWrite)
+  | "plg_cjson_call" => some (.action .cjsonCall)
+  | "plg_proper_list" => some (.flag Event.properList)
+  | "plg_preexisting_hooks_valid" => some .hooksValid
+  | "plg_core_write" => some (.action .coreWrite)
+  | "plg_internal_write" => some (.action .internalWrite)
+  | "plg_api_call" => some (.action .apiCall)
+  | "plg_is_rk_call" => some (.flag Event.isRkCall)
+  | "plg_public_rk_symbol" => some (.flag Event.publicRkSymbol)
+  | "plg_api_precondition" => some (.flag Event.apiPrecondition)
+  | "plg_access" => some (.action .access)
+  | "plg_handed_object" => some (.flag Event.handedObject)
+  | "plg_exported_api" => some (.flag Event.exportedApi)
+  | "plg_forge" => some (.action .forge)
+  | "plg_forged" => some (.flag Event.forged)
   | _ => none
 
 /-- An event flag read as the integer function the term's sort states
-(`function<environment,event,integer>`). -/
+(`function<plg_event,integer>`). -/
 def flagValue (f : Event → Bool) (_ : Environment) (ev : Event) : Int :=
   if f ev then 1 else 0
 
-/-- The meaning of `#preexisting_hooks_valid` (`predicate<environment,plugin>`). -/
+/-- The meaning of `#plg_preexisting_hooks_valid` (`predicate<plg_plugin>`). -/
 def hooksValid (e : Environment) (p : Nat) : Prop := e.preexistingHooksValid p
 
 /-- Every SP10 term has a Lean meaning. -/
@@ -129,10 +152,10 @@ theorem forged_flag (e : Environment) (ev : Event) :
 /-- The frame and pointer components name the model's `handedAccess` and
 `internalFrameApi` actions and flags (no bound plugin atom quantifies them). -/
 theorem frame_terms_are_model_actions :
-    denote "core_write" = some (.action .coreWrite) ∧
-      denote "internal_write" = some (.action .internalWrite) ∧
-      denote "forge" = some (.action .forge) ∧
-      denote "access" = some (.action .access) :=
+    denote "plg_core_write" = some (.action .coreWrite) ∧
+      denote "plg_internal_write" = some (.action .internalWrite) ∧
+      denote "plg_forge" = some (.action .forge) ∧
+      denote "plg_access" = some (.action .access) :=
   ⟨rfl, rfl, rfl, rfl⟩
 
 /-! ## The never-derived source correspondence (E2's form) -/
@@ -152,10 +175,10 @@ theorem binding_source_correspondence_is_never_derived (_ : Environment) :
 
 def pluginParameters : List String := ["acquire", "action", "activation", "actual_abi", "actual_artifact", "actual_build", "actual_inventory", "close", "code_live", "conf_live", "config_registration", "context_live", "copy_reference", "destroy_callback", "env", "exact_candidate", "expected_abi", "expected_address", "expected_artifact", "expected_build", "expected_inventory", "fluent_c", "fluent_go", "fluent_proposed", "from_on_new", "function", "global_custody", "handle", "handle_for", "in_interceptor", "in_trace", "initialized", "intercept", "invoke", "loaded", "loader_enabled", "local_resource", "member", "member_candidate", "opaque", "plugin", "pointer_borrowed", "public_setter", "ref_count", "register", "release", "required_symbol", "resolved_address", "resource", "result", "retain", "return_boundary", "return_local", "rk", "rk_proposed", "scalar_borrowed", "share_consumer", "static_default", "time", "transfer"]
 def detachParameters : List String := ["child", "children", "concurrent", "first", "keeps_links", "last", "live", "next", "next_reach", "nodup", "owned", "parent", "pred", "prev", "runs"]
-def references : List (String × String × List String) := [("plugin_selected_loader_trace_v1", "artifact_build_symbols_abi", ["actual_abi", "actual_artifact", "actual_build", "actual_inventory", "expected_abi", "expected_address", "expected_artifact", "expected_build", "expected_inventory", "loader_enabled", "required_symbol", "resolved_address"]), ("plugin_selected_loader_trace_v1", "cjson", ["cjson_call", "cjson_link_write", "hook_install", "hook_replace", "preexisting_hooks_valid", "proper_list"]), ("plugin_selected_loader_trace_v1", "context", ["held_context"]), ("plugin_selected_loader_trace_v1", "custody", ["acquire", "activation", "global_custody", "in_interceptor", "local_resource", "pointer_borrowed", "release", "resource", "retain", "return_boundary", "return_local", "scalar_borrowed", "transfer"]), ("plugin_selected_loader_trace_v1", "frames", ["access", "api_call", "api_precondition", "core_write", "exported_api", "forge", "forged", "handed_object", "internal_write", "is_rk_call", "public_rk_symbol"]), ("plugin_selected_loader_trace_v1", "lifetime", ["close", "code_live", "context_live", "copy_reference", "destroy_callback", "handle", "handle_for", "invoke", "opaque", "ref_count"]), ("plugin_selected_loader_trace_v1", "plugins", ["fluent_c", "fluent_go", "fluent_proposed", "loaded", "plugin", "rk", "rk_proposed"]), ("plugin_selected_loader_trace_v1", "registration", ["conf_live", "config_registration", "exact_candidate", "from_on_new", "function", "initialized", "intercept", "member", "member_candidate", "public_setter", "register", "result", "share_consumer", "static_default"]), ("plugin_selected_loader_trace_v1", "source_binding", ["binding_source_corresponds"]), ("plugin_selected_loader_trace_v1", "trace", ["action", "activation", "env", "handle", "in_trace", "member", "opaque", "plugin", "resource", "time"]), ("plugin_selected_loader_trace_v1", "property_view", ["resource_view"]), ("plugin_selected_loader_trace_v1", "property_view", ["null_view"]), ("plugin_selected_loader_trace_v1", "property_view", ["model_view"]), ("cjson_detach_entry_and_interference_v1", "callActor", ["concurrent", "runs"]), ("cjson_detach_entry_and_interference_v1", "child_next_prev", ["child", "next", "next_reach", "prev"]), ("cjson_detach_entry_and_interference_v1", "children", ["children", "first", "last", "nodup", "pred"]), ("cjson_detach_entry_and_interference_v1", "context", ["held_context"]), ("cjson_detach_entry_and_interference_v1", "live", ["live"]), ("cjson_detach_entry_and_interference_v1", "ownedChild", ["owned"]), ("cjson_detach_entry_and_interference_v1", "parent", ["live", "parent"]), ("cjson_detach_entry_and_interference_v1", "source_mapping", ["source_corresponds"]), ("cjson_detach_entry_and_interference_v1", "trace", ["concurrent", "keeps_links", "runs"])]
+def references : List (String × String × List String) := [("plugin_selected_loader_trace_v1", "artifact_build_symbols_abi", ["actual_abi", "actual_artifact", "actual_build", "actual_inventory", "expected_abi", "expected_address", "expected_artifact", "expected_build", "expected_inventory", "loader_enabled", "required_symbol", "resolved_address"]), ("plugin_selected_loader_trace_v1", "cjson", ["plg_cjson_call", "plg_cjson_link_write", "plg_hook_install", "plg_hook_replace", "plg_preexisting_hooks_valid", "plg_proper_list"]), ("plugin_selected_loader_trace_v1", "context", ["bnd_held_context"]), ("plugin_selected_loader_trace_v1", "custody", ["acquire", "activation", "global_custody", "in_interceptor", "local_resource", "pointer_borrowed", "release", "resource", "retain", "return_boundary", "return_local", "scalar_borrowed", "transfer"]), ("plugin_selected_loader_trace_v1", "frames", ["plg_access", "plg_api_call", "plg_api_precondition", "plg_core_write", "plg_exported_api", "plg_forge", "plg_forged", "plg_handed_object", "plg_internal_write", "plg_is_rk_call", "plg_public_rk_symbol"]), ("plugin_selected_loader_trace_v1", "lifetime", ["close", "code_live", "context_live", "copy_reference", "destroy_callback", "handle", "handle_for", "invoke", "opaque", "ref_count"]), ("plugin_selected_loader_trace_v1", "plugins", ["fluent_c", "fluent_go", "fluent_proposed", "loaded", "plugin", "rk", "rk_proposed"]), ("plugin_selected_loader_trace_v1", "registration", ["conf_live", "config_registration", "exact_candidate", "from_on_new", "function", "initialized", "intercept", "member", "member_candidate", "public_setter", "register", "result", "share_consumer", "static_default"]), ("plugin_selected_loader_trace_v1", "source_binding", ["bnd_source_corresponds"]), ("plugin_selected_loader_trace_v1", "trace", ["action", "activation", "env", "handle", "in_trace", "member", "opaque", "plugin", "resource", "time"]), ("plugin_selected_loader_trace_v1", "property_view", ["bnd_resource_view"]), ("plugin_selected_loader_trace_v1", "property_view", ["bnd_null_view"]), ("plugin_selected_loader_trace_v1", "property_view", ["bnd_model_view"]), ("cjson_detach_entry_and_interference_v1", "callActor", ["concurrent", "runs"]), ("cjson_detach_entry_and_interference_v1", "child_next_prev", ["child", "next", "next_reach", "prev"]), ("cjson_detach_entry_and_interference_v1", "children", ["children", "first", "last", "nodup", "pred"]), ("cjson_detach_entry_and_interference_v1", "context", ["bnd_held_context"]), ("cjson_detach_entry_and_interference_v1", "live", ["live"]), ("cjson_detach_entry_and_interference_v1", "ownedChild", ["owned"]), ("cjson_detach_entry_and_interference_v1", "parent", ["live", "parent"]), ("cjson_detach_entry_and_interference_v1", "source_mapping", ["source_corresponds"]), ("cjson_detach_entry_and_interference_v1", "trace", ["concurrent", "keeps_links", "runs"])]
 
-/-- A term resolves in an environment: a bound atom's parameter, an SP10
-term, or an SP7 term. -/
+/-- A term resolves in an environment: a bound atom's parameter (its own
+declared, unprefixed name), an SP10 term, or an SP7 term. -/
 def resolves (environment term : String) : Bool :=
   (if environment = "cjson_detach_entry_and_interference_v1" then
       detachParameters.contains term

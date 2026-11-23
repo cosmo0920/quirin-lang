@@ -182,7 +182,7 @@ fn artifacts_and_models(
         for name in ["__errno_location", "strerror"] {
             // Card SP10-FORMAL-BINDING-DESCRIPTIONS: the reading site is the
             // atoms' environment and observed-site terms, and "source binding
-            // Open" the never-derived `#binding_source_corresponds`; each
+            // Open" the never-derived `#bnd_source_corresponds`; each
             // binding's quantifiers and conclusion are its typed atom's.
             let ids = mapping["declarations"][name]["proposition_ids"]
                 .as_object()
@@ -192,7 +192,7 @@ fn artifacts_and_models(
                 .filter_map(|id| qcore_contract::formal_binding::definition(&g[name].atoms[id]))
                 .collect::<Vec<_>>();
             let site = qcore_contract::formal_binding::reference_to(
-                &["binding_source_corresponds", "env", "observed"],
+                &["bnd_source_corresponds", "env", "observed"],
                 &definitions,
             )
             .unwrap();

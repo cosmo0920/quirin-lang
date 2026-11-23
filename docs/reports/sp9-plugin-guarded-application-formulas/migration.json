@@ -1,0 +1,98 @@
+{
+ "card": "SP9-PLUGIN-GUARDED-APPLICATION-FORMULAS",
+ "base": "2c60986b0",
+ "note": "The 14 guarded symbols of the frozen plugin sidecar (docs/reports/premise-guarded-decomposition/applications/plugin.json) as C04.18.9 typed-rendering formulas over the SP9 block (user decisions 2026-11-23: D1 A' prefixed terms with the environment implicit, D2 b, D3 I2). `symbols`: each recorded English text and the formula that replaced it (its canonical printing, quant_proposition::print); the legacy reader lifts exactly these. A prerequisite also records its typed atom's formula (`atom`); its formula is that atom bound to the SP9 terms (every free name #X read as #plg_X with the environment argument dropped, quantifier sorts S as plg_S).",
+ "symbols": [
+  {
+   "id": "default_case",
+   "role": "case",
+   "prose": "The actual exact member candidate is a stated static default in the selected build; this case is independent of the loaded registration case.",
+   "formula": "(#plg_member_candidate(#plg_member(#plg_ev),#plg_function(#plg_ev)) && #plg_static_default(#plg_member(#plg_ev),#plg_function(#plg_ev)))"
+  },
+  {
+   "id": "default_lifetime_valid",
+   "role": "postcondition",
+   "prose": "Every invocation in the static-default case has live code and opaque context through the last invocation; no loaded-envelope truth follows.",
+   "formula": "(#plg_code_live(#plg_function(#plg_ev),#plg_time(#plg_ev)) && #plg_context_live(#plg_opaque(#plg_ev),#plg_time(#plg_ev)))"
+  },
+  {
+   "id": "environment",
+   "role": "environment",
+   "prose": "Exact selected PluginPremiseDecomposition.Environment including every loaded RK and Fluent Bit C/Go artifact, every callback event, build/ABI/inventory and full context; source trace completeness remains Open.",
+   "formula": "#plg_trace_corresponds()"
+  },
+  {
+   "id": "invoke",
+   "role": "operation",
+   "prose": "Admission of every reached rk_conf callback invocation under the selected rd_kafka_dump0 callback-closure premise; not permission inferred from a sampled callback.",
+   "formula": "#plg_admits_callback_closure()"
+  },
+  {
+   "id": "plugin_artifact_symbol_abi",
+   "role": "prerequisite",
+   "prose": "For every reached loaded artifact, exact selected build/inventory, artifact identity and required symbol/address/ABI prerequisites hold.",
+   "atom": "forall (#p: plugin) { (exists (#family: family) { #loaded(#env,#p,#family) } => (((((#actual_build(#env,#p) == #expected_build(#env,#p)) && (#actual_inventory(#env) == #expected_inventory(#env))) && forall (#family: family) { (#loaded(#env,#p,#family) => (#loader_enabled(#env,#family) == 1)) }) && (#actual_artifact(#env,#p) == #expected_artifact(#env,#p))) && forall (#symbol: symbol) { (#required_symbol(#env,#p,#symbol) => (((#resolved_address(#env,#p,#symbol) == #expected_address(#env,#p,#symbol)) && (#resolved_address(#env,#p,#symbol) != 0)) && (#actual_abi(#env,#resolved_address(#env,#p,#symbol)) == #expected_abi(#env,#expected_address(#env,#p,#symbol))))) })) }",
+   "formula": "forall (#p: plg_plugin) { (exists (#family: plg_family) { #plg_loaded(#p,#family) } => ((((#plg_actual_build(#p) == #plg_expected_build(#p) && #plg_actual_inventory == #plg_expected_inventory) && forall (#family: plg_family) { (#plg_loaded(#p,#family) => #plg_loader_enabled(#family) == 1) }) && #plg_actual_artifact(#p) == #plg_expected_artifact(#p)) && forall (#symbol: plg_symbol) { (#plg_required_symbol(#p,#symbol) => ((#plg_resolved_address(#p,#symbol) == #plg_expected_address(#p,#symbol) && !#plg_resolved_address(#p,#symbol) == 0) && #plg_actual_abi(#plg_resolved_address(#p,#symbol)) == #plg_expected_abi(#plg_expected_address(#p,#symbol)))) })) }"
+  },
+  {
+   "id": "plugin_callback_candidates",
+   "role": "prerequisite",
+   "prose": "Every actual rk_conf invocation has its exact declared member candidate and a prior successful public registration or stated static default.",
+   "atom": "forall (#ev: event) { ((#in_trace(#env,#ev) && (#action(#env,#ev) == #invoke)) => (#member_candidate(#env,#member(#env,#ev),#function(#env,#ev)) && (#static_default(#env,#member(#env,#ev),#function(#env,#ev)) || exists (#reg: event) { ((((((#in_trace(#env,#reg) && (#action(#env,#reg) == #register)) && (#function(#env,#reg) == #function(#env,#ev))) && (#member(#env,#reg) == #member(#env,#ev))) && (#time(#env,#reg) < #time(#env,#ev))) && (#result(#env,#reg) == 0)) && (#public_setter(#env,#reg) == 1)) }))) }",
+   "formula": "forall (#ev: plg_event) { ((#plg_in_trace(#ev) && #plg_action(#ev) == #plg_invoke) => (#plg_member_candidate(#plg_member(#ev),#plg_function(#ev)) && (#plg_static_default(#plg_member(#ev),#plg_function(#ev)) || exists (#reg: plg_event) { ((((((#plg_in_trace(#reg) && #plg_action(#reg) == #plg_register) && #plg_function(#reg) == #plg_function(#ev)) && #plg_member(#reg) == #plg_member(#ev)) && #plg_time(#reg) < #plg_time(#ev)) && #plg_result(#reg) == 0) && #plg_public_setter(#reg) == 1) }))) }"
+  },
+  {
+   "id": "plugin_code_context_lifetime",
+   "role": "prerequisite",
+   "prose": "Every loaded callback invocation, including destruction and copied on_new paths, has live code and opaque context.",
+   "atom": "forall (#p: plugin) { (exists (#family: family) { #loaded(#env,#p,#family) } => forall (#ev: event) { ((#in_trace(#env,#ev) && (#plugin(#env,#ev) == #p)) => (((#action(#env,#ev) == #invoke) || (#action(#env,#ev) == #destroy_callback)) => (#code_live(#env,#function(#env,#ev),#time(#env,#ev)) && #context_live(#env,#opaque(#env,#ev),#time(#env,#ev))))) }) }",
+   "formula": "forall (#p: plg_plugin) { (exists (#family: plg_family) { #plg_loaded(#p,#family) } => forall (#ev: plg_event) { ((#plg_in_trace(#ev) && #plg_plugin(#ev) == #p) => ((#plg_action(#ev) == #plg_invoke || #plg_action(#ev) == #plg_destroy_callback) => (#plg_code_live(#plg_function(#ev),#plg_time(#ev)) && #plg_context_live(#plg_opaque(#ev),#plg_time(#ev))))) }) }"
+  },
+  {
+   "id": "plugin_interceptor_custody",
+   "role": "prerequisite",
+   "prose": "Every interceptor-descendant pointer and scalar resource is borrowed, with no retain/transfer/global custody and each local acquisition dropped before its activation returns.",
+   "atom": "forall (#p: plugin) { (exists (#family: family) { #loaded(#env,#p,#family) } => forall (#ev: event) { ((#in_trace(#env,#ev) && (#plugin(#env,#ev) == #p)) => ((#in_interceptor(#env,#ev) == 1) => (((((((#pointer_borrowed(#env,#ev) == 1) && (#scalar_borrowed(#env,#ev) == 1)) && ((#action(#env,#ev) == #release) => (#local_resource(#env,#ev) == 1))) && (#action(#env,#ev) != #retain)) && (#action(#env,#ev) != #transfer)) && (#action(#env,#ev) != #global_custody)) && ((#action(#env,#ev) == #acquire) => exists (#drop: event) { ((((((#in_trace(#env,#drop) && (#plugin(#env,#drop) == #p)) && (#resource(#env,#drop) == #resource(#env,#ev))) && (#activation(#env,#drop) == #activation(#env,#ev))) && (#action(#env,#drop) == #return_local)) && (#time(#env,#ev) < #time(#env,#drop))) && (#time(#env,#drop) < #return_boundary(#env,#activation(#env,#ev)))) })))) }) }",
+   "formula": "forall (#p: plg_plugin) { (exists (#family: plg_family) { #plg_loaded(#p,#family) } => forall (#ev: plg_event) { ((#plg_in_trace(#ev) && #plg_plugin(#ev) == #p) => (#plg_in_interceptor(#ev) == 1 => ((((((#plg_pointer_borrowed(#ev) == 1 && #plg_scalar_borrowed(#ev) == 1) && (#plg_action(#ev) == #plg_release => #plg_local_resource(#ev) == 1)) && !#plg_action(#ev) == #plg_retain) && !#plg_action(#ev) == #plg_transfer) && !#plg_action(#ev) == #plg_global_custody) && (#plg_action(#ev) == #plg_acquire => exists (#drop: plg_event) { ((((((#plg_in_trace(#drop) && #plg_plugin(#drop) == #p) && #plg_resource(#drop) == #plg_resource(#ev)) && #plg_activation(#drop) == #plg_activation(#ev)) && #plg_action(#drop) == #plg_return_local) && #plg_time(#ev) < #plg_time(#drop)) && #plg_time(#drop) < #plg_return_boundary(#plg_activation(#ev))) })))) }) }"
+  },
+  {
+   "id": "plugin_interceptor_registration",
+   "role": "prerequisite",
+   "prose": "Every loaded interceptor uses a successful public setter with the exact pinned list/union-arm candidate and permitted configuration/client lifecycle.",
+   "atom": "forall (#p: plugin) { (exists (#family: family) { #loaded(#env,#p,#family) } => forall (#reg: event) { ((#in_trace(#env,#reg) && (#plugin(#env,#reg) == #p)) => ((#action(#env,#reg) == #intercept) => ((((#public_setter(#env,#reg) == 1) && (#result(#env,#reg) == 0)) && (#exact_candidate(#env,#reg) == 1)) && (((#config_registration(#env,#reg) == 1) && (#conf_live(#env,#reg) == 1)) || ((((#config_registration(#env,#reg) == 0) && (#from_on_new(#env,#reg) == 1)) && (#initialized(#env,#reg) == 0)) && (#share_consumer(#env,#reg) == 0)))))) }) }",
+   "formula": "forall (#p: plg_plugin) { (exists (#family: plg_family) { #plg_loaded(#p,#family) } => forall (#reg: plg_event) { ((#plg_in_trace(#reg) && #plg_plugin(#reg) == #p) => (#plg_action(#reg) == #plg_intercept => (((#plg_public_setter(#reg) == 1 && #plg_result(#reg) == 0) && #plg_exact_candidate(#reg) == 1) && ((#plg_config_registration(#reg) == 1 && #plg_conf_live(#reg) == 1) || (((#plg_config_registration(#reg) == 0 && #plg_from_on_new(#reg) == 1) && #plg_initialized(#reg) == 0) && #plg_share_consumer(#reg) == 0))))) }) }"
+  },
+  {
+   "id": "plugin_lifecycle_unload",
+   "role": "prerequisite",
+   "prose": "Every callback invocation precedes matching final unload and copied registrations retain actual loader references.",
+   "atom": "forall (#p: plugin) { (exists (#family: family) { #loaded(#env,#p,#family) } => (forall (#stop: event) { ((#in_trace(#env,#stop) && (#plugin(#env,#stop) == #p)) => ((((#action(#env,#stop) == #close) && (#handle(#env,#stop) == #handle_for(#env,#p))) && (#ref_count(#env,#handle(#env,#stop),#time(#env,#stop)) == 0)) => forall (#call: event) { ((#in_trace(#env,#call) && (#plugin(#env,#call) == #p)) => (((#action(#env,#call) == #invoke) || (#action(#env,#call) == #destroy_callback)) => (#time(#env,#call) < #time(#env,#stop)))) })) } && forall (#copy: event) { ((#in_trace(#env,#copy) && (#plugin(#env,#copy) == #p)) => ((#action(#env,#copy) == #copy_reference) => (0 < #ref_count(#env,#handle_for(#env,#p),#time(#env,#copy))))) })) }",
+   "formula": "forall (#p: plg_plugin) { (exists (#family: plg_family) { #plg_loaded(#p,#family) } => (forall (#stop: plg_event) { ((#plg_in_trace(#stop) && #plg_plugin(#stop) == #p) => (((#plg_action(#stop) == #plg_close && #plg_handle(#stop) == #plg_handle_for(#p)) && #plg_ref_count(#plg_handle(#stop),#plg_time(#stop)) == 0) => forall (#call: plg_event) { ((#plg_in_trace(#call) && #plg_plugin(#call) == #p) => ((#plg_action(#call) == #plg_invoke || #plg_action(#call) == #plg_destroy_callback) => #plg_time(#call) < #plg_time(#stop))) })) } && forall (#copy: plg_event) { ((#plg_in_trace(#copy) && #plg_plugin(#copy) == #p) => (#plg_action(#copy) == #plg_copy_reference => 0 < #plg_ref_count(#plg_handle_for(#p),#plg_time(#copy)))) })) }"
+  },
+  {
+   "id": "plugin_outer_bridge",
+   "role": "prerequisite",
+   "prose": "Actually loaded RK and Fluent Bit C/Go code independently meet their respectively bound proposed outer envelopes; one envelope covers no missing obligation of another.",
+   "atom": "(forall (#p: plugin) { (#loaded(#env,#p,#rk) => #rk_proposed(#env,#p)) } && forall (#p: plugin) { ((#loaded(#env,#p,#fluent_c) || #loaded(#env,#p,#fluent_go)) => #fluent_proposed(#env,#p)) })",
+   "formula": "(forall (#p: plg_plugin) { (#plg_loaded(#p,#plg_rk) => #plg_rk_proposed(#p)) } && forall (#p: plg_plugin) { ((#plg_loaded(#p,#plg_fluent_c) || #plg_loaded(#p,#plg_fluent_go)) => #plg_fluent_proposed(#p)) })"
+  },
+  {
+   "id": "registered_case",
+   "role": "case",
+   "prose": "The actual exact member candidate was registered by a prior successful public registration in this selected trace.",
+   "formula": "(#plg_member_candidate(#plg_member(#plg_ev),#plg_function(#plg_ev)) && exists (#reg: plg_event) { ((((((#plg_in_trace(#reg) && #plg_action(#reg) == #plg_register) && #plg_function(#reg) == #plg_function(#plg_ev)) && #plg_member(#reg) == #plg_member(#plg_ev)) && #plg_time(#reg) < #plg_time(#plg_ev)) && #plg_result(#reg) == 0) && #plg_public_setter(#reg) == 1) })"
+  },
+  {
+   "id": "registered_lifetime_valid",
+   "role": "postcondition",
+   "prose": "Every invocation in the registered case has live code and opaque context and precedes matching final unload, including destruction and copied registrations.",
+   "formula": "((#plg_code_live(#plg_function(#plg_ev),#plg_time(#plg_ev)) && #plg_context_live(#plg_opaque(#plg_ev),#plg_time(#plg_ev))) && (forall (#stop: plg_event) { ((#plg_in_trace(#stop) && #plg_plugin(#stop) == #plg_plugin(#plg_ev)) => (((#plg_action(#stop) == #plg_close && #plg_handle(#stop) == #plg_handle_for(#plg_plugin(#plg_ev))) && #plg_ref_count(#plg_handle(#stop),#plg_time(#stop)) == 0) => forall (#call: plg_event) { ((#plg_in_trace(#call) && #plg_plugin(#call) == #plg_plugin(#plg_ev)) => ((#plg_action(#call) == #plg_invoke || #plg_action(#call) == #plg_destroy_callback) => #plg_time(#call) < #plg_time(#stop))) })) } && forall (#copy: plg_event) { ((#plg_in_trace(#copy) && #plg_plugin(#copy) == #plg_plugin(#plg_ev)) => (#plg_action(#copy) == #plg_copy_reference => 0 < #plg_ref_count(#plg_handle_for(#plg_plugin(#plg_ev)),#plg_time(#copy)))) }))"
+  },
+  {
+   "id": "unregistered",
+   "role": "condition",
+   "prose": "Positive evidence that a reached callback has neither its required successful public registration nor a stated static default; failed registration proof alone does not establish this.",
+   "formula": "#plg_refutes_registration(#plg_ev)"
+  }
+ ]
+}

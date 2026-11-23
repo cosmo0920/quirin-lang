@@ -91,7 +91,7 @@ Why this and not a typed proposition id:
 * **"Open" is SP7's E2.** Every retired description that said a
   correspondence is Open now names a never-derived assumption term: SP7's
   `#source_corresponds` for the cJSON detach environment it was defined for
-  (the same environment), and the new `#binding_source_corresponds` for the
+  (the same environment), and the new `#bnd_source_corresponds` for the
   others. This is the user's environment E2 decision of 2026-11-23 applied
   to the same kind of statement.
 * **Digests for identities.** The code-built environments also bound exact
@@ -126,16 +126,16 @@ SP6 registered terms over `QCore.CjsonRepresentationPremises`, read through
 | Variable | Prose | Reference | Kept by |
 |---|---|---|---|
 | `artifact_build_symbols_abi` | Exact expected and actual artifact bytes, selected build/configuration, symbol addresses, descriptor/function ABI records | `#actual_abi`, `#actual_artifact`, `#actual_build`, `#actual_inventory`, `#expected_abi`, `#expected_address`, `#expected_artifact`, `#expected_build`, `#expected_inventory`, `#loader_enabled`, `#required_symbol`, `#resolved_address` | artifact bytes: `actual/expected_artifact`; build/configuration: `actual/expected_build`, `actual/expected_inventory`, `loader_enabled`; symbol addresses: `required_symbol`, `resolved_address`, `expected_address`; ABI records: `actual/expected_abi` |
-| `cjson` | InitHooks/global hook/link write events, well-formed lists at APIs, preexisting allocator hook validity | **`#cjson_call`**, **`#cjson_link_write`**, **`#hook_install`**, **`#hook_replace`**, **`#preexisting_hooks_valid`**, **`#proper_list`** | InitHooks/global hook events: `hook_install`, `hook_replace`; link writes: `cjson_link_write`; well-formed lists at APIs: `cjson_call` with `proper_list`; hook validity: `preexisting_hooks_valid`. No bound atom quantifies these (they enter through `rk_proposed`/`fluent_proposed`), so they are SP10 terms over the same Lean model |
-| `context` | Independently held nine-coordinate property-specific Context; no custody/null context transport | **`#held_context`** | the term's meaning (`HypothesisGraph.Context`, held independently); no transport: exact Context equality in every evaluation and `foreign_property_is_not_selected` |
+| `cjson` | InitHooks/global hook/link write events, well-formed lists at APIs, preexisting allocator hook validity | **`#plg_cjson_call`**, **`#plg_cjson_link_write`**, **`#plg_hook_install`**, **`#plg_hook_replace`**, **`#plg_preexisting_hooks_valid`**, **`#plg_proper_list`** | InitHooks/global hook events: `hook_install`, `hook_replace`; link writes: `cjson_link_write`; well-formed lists at APIs: `cjson_call` with `proper_list`; hook validity: `preexisting_hooks_valid`. No bound atom quantifies these (they enter through `rk_proposed`/`fluent_proposed`), so they are SP10 terms over the same Lean model |
+| `context` | Independently held nine-coordinate property-specific Context; no custody/null context transport | **`#bnd_held_context`** | the term's meaning (`HypothesisGraph.Context`, held independently); no transport: exact Context equality in every evaluation and `foreign_property_is_not_selected` |
 | `custody` | Interceptor-descendant flag, pointer/scalar borrowing, local acquisitions and matched drops before activation return, no retain/transfer/global custody | `#acquire`, `#activation`, `#global_custody`, `#in_interceptor`, `#local_resource`, `#pointer_borrowed`, `#release`, `#resource`, `#retain`, `#return_boundary`, `#return_local`, `#scalar_borrowed`, `#transfer` | flag: `in_interceptor`; borrowing: `pointer/scalar_borrowed`; acquisitions and matched drops: `acquire`, `release`, `return_local`, `resource`, `local_resource`; before activation return: `activation`, `return_boundary`; "no retain/transfer/global custody": the custody atom's formula over `retain`, `transfer`, `global_custody` (the component names them; the condition stays the atom's) |
-| `frames` | Loaded-code core/internal writes, public API preconditions, handed-object access and pointer-forgery events | **`#access`**, **`#api_call`**, **`#api_precondition`**, **`#core_write`**, **`#exported_api`**, **`#forge`**, **`#forged`**, **`#handed_object`**, **`#internal_write`**, **`#is_rk_call`**, **`#public_rk_symbol`** | core/internal writes: `core_write`, `internal_write`; public API preconditions: `api_call`, `is_rk_call`, `public_rk_symbol`, `api_precondition`; handed-object access: `access`, `handed_object`, `exported_api`; pointer forgery: `forge`, `forged`. SP10 terms, as for `cjson` |
+| `frames` | Loaded-code core/internal writes, public API preconditions, handed-object access and pointer-forgery events | **`#plg_access`**, **`#plg_api_call`**, **`#plg_api_precondition`**, **`#plg_core_write`**, **`#plg_exported_api`**, **`#plg_forge`**, **`#plg_forged`**, **`#plg_handed_object`**, **`#plg_internal_write`**, **`#plg_is_rk_call`**, **`#plg_public_rk_symbol`** | core/internal writes: `core_write`, `internal_write`; public API preconditions: `api_call`, `is_rk_call`, `public_rk_symbol`, `api_precondition`; handed-object access: `access`, `handed_object`, `exported_api`; pointer forgery: `forge`, `forged`. SP10 terms, as for `cjson` |
 | `lifetime` | Code and opaque-context liveness at each callback including destruction; loader handle references/copies and final close order | `#close`, `#code_live`, `#context_live`, `#copy_reference`, `#destroy_callback`, `#handle`, `#handle_for`, `#invoke`, `#opaque`, `#ref_count` | liveness: `code_live`, `context_live`, `opaque`; each callback including destruction: `invoke`, `destroy_callback`; handle references/copies: `handle`, `handle_for`, `ref_count`, `copy_reference`; final close order: `close` (the order is the unload atom's formula) |
-| `plugins` | Actual loaded artifact identities and RK/FluentC/FluentGo loader families, including transitive loaded calls | `#fluent_c`, `#fluent_go`, `#fluent_proposed`, `#loaded`, `#plugin`, `#rk`, `#rk_proposed` | loaded artifacts and families: `loaded`, `rk`, `fluent_c`, `fluent_go`; transitive loaded calls: `plugin` (an event's attribution, transitive calls included); the families' obligations: `rk_proposed`, `fluent_proposed`; "actual": `#binding_source_corresponds` |
-| `property_view` (3) | Exact independently held {resource, null, model} source view; no cross-property Context transport | **`#resource_view`** / **`#null_view`** / **`#model_view`** | the term's meaning; no transport: as `context` |
+| `plugins` | Actual loaded artifact identities and RK/FluentC/FluentGo loader families, including transitive loaded calls | `#fluent_c`, `#fluent_go`, `#fluent_proposed`, `#loaded`, `#plugin`, `#rk`, `#rk_proposed` | loaded artifacts and families: `loaded`, `rk`, `fluent_c`, `fluent_go`; transitive loaded calls: `plugin` (an event's attribution, transitive calls included); the families' obligations: `rk_proposed`, `fluent_proposed`; "actual": `#bnd_source_corresponds` |
+| `property_view` (3) | Exact independently held {resource, null, model} source view; no cross-property Context transport | **`#bnd_resource_view`** / **`#bnd_null_view`** / **`#bnd_model_view`** | the term's meaning; no transport: as `context` |
 | `registration` | Successful public setters, exact member candidates, list/union-arm/signature candidate inventory and phase/share state | `#conf_live`, `#config_registration`, `#exact_candidate`, `#from_on_new`, `#function`, `#initialized`, `#intercept`, `#member`, `#member_candidate`, `#public_setter`, `#register`, `#result`, `#share_consumer`, `#static_default` | successful public setters: `register`, `intercept`, `public_setter`, `result`; exact member candidates: `exact_candidate`, `member`, `function`, `member_candidate`, `static_default` (the candidate inventory); phase/share state: `config_registration`, `conf_live`, `from_on_new`, `initialized`, `share_consumer` |
-| `source_binding` | C/model and English/formal correspondence remain Open; hashes bind references only | **`#binding_source_corresponds`** | Open: the term is never derived (`binding_source_correspondence_is_never_derived`); hashes bind references only: the resolver's reference-integrity semantics (C04.18.2) and `source_binding: "open"` |
-| `trace` | Ordered bounded complete interleaved events, with plugin actor/activation/member/opaque/handle/resource identities; completeness Open | `#action`, `#activation`, `#env`, `#handle`, `#in_trace`, `#member`, `#opaque`, `#plugin`, `#resource`, `#time` | events: `in_trace`, `action`, `env`; ordered: `time`; identities: `plugin`, `activation`, `member`, `opaque`, `handle`, `resource`; "bounded complete interleaved" is what `in_trace` denotes, and that the denotation is the actual trace ("completeness Open") is `#binding_source_corresponds` in `source_binding` |
+| `source_binding` | C/model and English/formal correspondence remain Open; hashes bind references only | **`#bnd_source_corresponds`** | Open: the term is never derived (`binding_source_correspondence_is_never_derived`); hashes bind references only: the resolver's reference-integrity semantics (C04.18.2) and `source_binding: "open"` |
+| `trace` | Ordered bounded complete interleaved events, with plugin actor/activation/member/opaque/handle/resource identities; completeness Open | `#action`, `#activation`, `#env`, `#handle`, `#in_trace`, `#member`, `#opaque`, `#plugin`, `#resource`, `#time` | events: `in_trace`, `action`, `env`; ordered: `time`; identities: `plugin`, `activation`, `member`, `opaque`, `handle`, `resource`; "bounded complete interleaved" is what `in_trace` denotes, and that the denotation is the actual trace ("completeness Open") is `#bnd_source_corresponds` in `source_binding` |
 
 **The detach environment** (`cjson_detach_entry_and_interference_v1`, 1 manifest):
 
@@ -144,7 +144,7 @@ SP6 registered terms over `QCore.CjsonRepresentationPremises`, read through
 | `callActor` | Exact detach invocation actor, source-to-Nat interpretation Open | `#concurrent`, `#runs` | `detachModel`: `runs f s` reads the trace steps whose actor differs from `callActor`, `concurrent` the other actors; interpretation Open: `#source_corresponds` |
 | `child_next_prev` | Entry heap maps, all relational equations explicitly assumed | `#child`, `#next`, `#next_reach`, `#prev` | the maps: `child`, `next`, `prev`, `next_reach`; the equations: the separately bound `detach_*` atoms (each an open entry obligation), not restated |
 | `children` | Finite exact owned-child sequence at call entry, distinctness assumed separately | `#children`, `#first`, `#last`, `#nodup`, `#pred` | the sequence and its projections; distinctness: the separate `detach_distinct` atom over `nodup` |
-| `context` | All nine independently held … coordinates | **`#held_context`** | as the plugin `context` |
+| `context` | All nine independently held … coordinates | **`#bnd_held_context`** | as the plugin `context` |
 | `live` | Entry liveness predicate, source interpretation Open | `#live` | `live`; Open: `#source_corresponds` |
 | `ownedChild` | Exact custody predicate at entry, source interpretation Open | `#owned` | `owned` (`detachModel`: `ownedChild`); Open: `#source_corresponds` |
 | `parent` | Call actual parent identity and entry liveness, source interpretation Open | `#live`, `#parent` | identity: `parent`; entry liveness: `live`; Open: `#source_corresponds` |
@@ -161,34 +161,34 @@ belongs to some component (`plugin_parameters_are_covered`,
 |---|---|---|---|
 | `cjson_local_binding` | `entry_heap` | Complete live native allocation identities and exact child/next/prev snapshots; finite sequence membership defines local domain only | the bound atoms' `#recorded`, `#post_comparison`, `#holds` and the eight `#detach_*` snapshot predicates |
 | | `case_domain` | Empty plus lengths1..4 all valid detach indices;11case keys | `#recorded_count`, `#required_count` (the exact 11-key domain is the observed domain the receipt checks, unchanged) |
-| | `external_boundaries` | Native execution/compiler/allocator correspondence is observed or assumed; arbitrary custody/writers and universal atoms remain Open | **`#binding_source_corresponds`** |
+| | `external_boundaries` | Native execution/compiler/allocator correspondence is observed or assumed; arbitrary custody/writers and universal atoms remain Open | **`#bnd_source_corresponds`** |
 | | `prerequisites`, `context` | joined prerequisite names; the held Context JSON | `prerequisites_sha256`, `context_sha256`: digests of the same bytes |
 | | quantifier | Every entry/post snapshot in exactly the independently observed11case finite domain | the atom's parameters |
 | `plugin_source_witnesses` | `scope`, `assumptions` | the bounds and assumptions coordinate slugs | `scope_sha256`, `assumptions_sha256` |
 | | quantifiers (2), conclusions (4) | `trace : List String; selected = …`, `DuplicateNoLoaderCalls trace for this selected invocation only; …` | the atoms' parameters and formulas; "this selected invocation only" stays the evaluation's held Context and selection |
-| libc flow models (test) | `site` | arbitrary reading site in the original conditional ReadingEnvironment/NestedEnvironment; source binding Open | `#env`, `#observed`, **`#binding_source_corresponds`** |
-| plugin fixture (test) | `context` | All nine exact property-specific caller-held coordinates; source binding Open | **`#held_context`**, **`#binding_source_corresponds`** |
-| flow fixture | `valuation` | three assigned propositions; no C/source truth | `#children`, `#live`, `#nodup`, `#parent`, **`#binding_source_corresponds`** |
+| libc flow models (test) | `site` | arbitrary reading site in the original conditional ReadingEnvironment/NestedEnvironment; source binding Open | `#env`, `#observed`, **`#bnd_source_corresponds`** |
+| plugin fixture (test) | `context` | All nine exact property-specific caller-held coordinates; source binding Open | **`#bnd_held_context`**, **`#bnd_source_corresponds`** |
+| flow fixture | `valuation` | three assigned propositions; no C/source truth | `#children`, `#live`, `#nodup`, `#parent`, **`#bnd_source_corresponds`** |
 
 ## 4. The SP10 block
 
-22 typed-rendering terms, appended after SP7's in `RENDERED_TERMS`
+22 typed-rendering terms, appended after SP9's in `RENDERED_TERMS`
 (`block: "SP10"`), the specification table (C04.18.9) and the Lean
 `sp10Terms`, bound by `the_sp10_block_is_new_typed_and_bound_to_lean`. None
 is a registered term and none is in another block. No premise formula names
 one, so `VOCABULARY`, the premise grammar, the decision vectors and Lean
-`vocab` are unchanged. `RenderedSort` gains `Function`, for the event flags.
+`vocab` are unchanged. `RenderedSort`'s `Function` variant (added by SP9 too; one copy kept at the merge) carries the event flags.
 
 | Term | Sort | Lean meaning (`denote`) |
 |---|---|---|
-| `#binding_source_corresponds` | predicate<> | a free proposition, never derived (E2's form) |
-| `#held_context` | verdict_context | `HypothesisGraph.Context` |
-| `#resource_view`, `#null_view`, `#model_view` | property_view | `PropertyView.resource`, `.null`, `.model` |
-| `#hook_install`, `#hook_replace`, `#cjson_link_write`, `#cjson_call` | action | `Action.hookInstall`, `.hookReplace`, `.cjsonLinkWrite`, `.cjsonCall` |
-| `#proper_list` | function<environment,event,integer> | `Event.properList` as 1/0 (`flagValue`) |
-| `#preexisting_hooks_valid` | predicate<environment,plugin> | `Environment.preexistingHooksValid` |
-| `#core_write`, `#internal_write`, `#api_call`, `#access`, `#forge` | action | `Action.coreWrite`, `.internalWrite`, `.apiCall`, `.access`, `.forge` |
-| `#is_rk_call`, `#public_rk_symbol`, `#api_precondition`, `#handed_object`, `#exported_api`, `#forged` | function<environment,event,integer> | the `Event` flags of the same names as 1/0 |
+| `#bnd_source_corresponds` | predicate<> | a free proposition, never derived (E2's form) |
+| `#bnd_held_context` | bnd_verdict_context | `HypothesisGraph.Context` |
+| `#bnd_resource_view`, `#bnd_null_view`, `#bnd_model_view` | bnd_property_view | `PropertyView.resource`, `.null`, `.model` |
+| `#plg_hook_install`, `#plg_hook_replace`, `#plg_cjson_link_write`, `#plg_cjson_call` | plg_action | `Action.hookInstall`, `.hookReplace`, `.cjsonLinkWrite`, `.cjsonCall` |
+| `#plg_proper_list` | function<plg_event,integer> | `Event.properList` as 1/0 (`flagValue`) |
+| `#plg_preexisting_hooks_valid` | predicate<plg_plugin> | `Environment.preexistingHooksValid` |
+| `#plg_core_write`, `#plg_internal_write`, `#plg_api_call`, `#plg_access`, `#plg_forge` | plg_action | `Action.coreWrite`, `.internalWrite`, `.apiCall`, `.access`, `.forge` |
+| `#plg_is_rk_call`, `#plg_public_rk_symbol`, `#plg_api_precondition`, `#plg_handed_object`, `#plg_exported_api`, `#plg_forged` | function<plg_event,integer> | the `Event` flags of the same names as 1/0 |
 
 The meanings are in `PluginPremiseDecomposition`'s own model, the one the
 plugin bindings reference.
@@ -255,7 +255,7 @@ atom digests, bindings, environment ids and variable names are unchanged.
 * The new manifests and [index.json](bindings/index.json) (previous and new
   manifest digest per occurrence) are in [bindings/](bindings/). The old
   ones stay in their reports.
-* The detach manifest `27c07365…` became `2c620459…`. Its consumers were
+* The detach manifest `27c07365…` became `a1fa87c8…`. Its consumers were
   repointed: `crates/qcore-contract/tests/hypothesis_bindings.rs`,
   `crates/qcore-audit/tests/contract_dependencies_report.rs` (two sites),
   `production_symbolic_adoption.rs` (directory list, this report first) and
@@ -401,3 +401,61 @@ matrix's derived Lean-audit list is left to the landing
 ```text
 target/release/quirin-audit --plugin-path target/release --output <dir> --timeout-ms 36000000 measure --inputs crates/quirin-audit-plugin-measure/inputs/live.json --inputs-base /media/Data/GitHub/quirin-lang --side base=baseline:<main baseline> --side tip=rev:<tip> --declared docs/reports/sp10-formal-binding-descriptions/PREDICTION.md
 ```
+
+## 12. Rework: the A′ prefix scheme (user decision 2026-11-24)
+
+Card SP9-PLUGIN-GUARDED-APPLICATION-FORMULAS landed first (origin/main
+`a53d769ce`) with the user's D1 A′ decision for the plugin rendering: every
+SP9 term and value sort is prefixed `plg_` and the environment stays
+implicit, so no generic name is reserved globally. The first SP10 block
+registered generic, unprefixed terms (`#access`, `#forge`, `#api_call`, …)
+over generic sorts (`action`, `environment`, `event`, `plugin`,
+`property_view`, `verdict_context`). The coordinator put this to the user,
+who chose (verbatim) **"Prefix, then land"**.
+
+The rework merged origin/main `a53d769ce` (conflicts in `premise_formula.rs`,
+the contract specification and rule 13h, resolved with SP9's block first and
+one copy of SP9's identical `RenderedSort::Function` variant), then renamed:
+
+| Old (round 1) | New | Sort, new |
+|---|---|---|
+| `#binding_source_corresponds` | `#bnd_source_corresponds` | predicate<> |
+| `#held_context` | `#bnd_held_context` | bnd_verdict_context (was verdict_context) |
+| `#resource_view`, `#null_view`, `#model_view` | `#bnd_resource_view`, `#bnd_null_view`, `#bnd_model_view` | bnd_property_view (was property_view) |
+| `#hook_install`, `#hook_replace`, `#cjson_link_write`, `#cjson_call` | `#plg_hook_install`, `#plg_hook_replace`, `#plg_cjson_link_write`, `#plg_cjson_call` | plg_action (SP9's; was action) |
+| `#core_write`, `#internal_write`, `#api_call`, `#access`, `#forge` | `#plg_core_write`, `#plg_internal_write`, `#plg_api_call`, `#plg_access`, `#plg_forge` | plg_action |
+| `#proper_list`, `#is_rk_call`, `#public_rk_symbol`, `#api_precondition`, `#handed_object`, `#exported_api`, `#forged` | `#plg_proper_list`, `#plg_is_rk_call`, `#plg_public_rk_symbol`, `#plg_api_precondition`, `#plg_handed_object`, `#plg_exported_api`, `#plg_forged` | function<plg_event,integer> (was function<environment,event,integer>) |
+| `#preexisting_hooks_valid` | `#plg_preexisting_hooks_valid` | predicate<plg_plugin> (was predicate<environment,plugin>) |
+
+* **Reused from SP9**: the sorts `plg_event`, `plg_action`, `plg_plugin`. SP9
+  registers none of the 17 plugin components above (it registers the
+  components its guarded symbols name), so each is new; none is registered
+  twice (`sp10_is_disjoint_from_sp9`, and the Rust duplicate-name check).
+* **New sorts**: `bnd_verdict_context`, `bnd_property_view`, appended to
+  `RENDERED_VALUE_SORTS` after SP9's (Lean `sp10Sorts`).
+* **What stays unprefixed, and why.** A typed environment reference may name
+  a bound typed atom's own declared parameter (rule (a) of §2). Those names
+  and sorts are the atom's, not registered rendered terms, so they reserve
+  nothing: the 60 plugin atom parameters with their declared sorts
+  (`#env: environment`, `#in_trace: predicate<environment,event>`,
+  `#time: function<environment,event,integer>`, …, sorts `environment`,
+  `event`, `plugin`, `action`, `family`, `callback`, `member`, `context`,
+  `handle`, `activation`, `resource`, `symbol`, `digest`, `abi`), the 15
+  detach atom parameters (`#parent`, `#live`, `#children`, …, which are
+  also the C04.18.9 registered vocabulary, unchanged since SP6), the
+  native-flow atoms' parameters of `cjson_local_binding` (`#recorded`,
+  `#detach_chain`, …, `#recorded_count`, `#required_count`), the libc atoms'
+  `#env` and `#observed`, and the flow fixture's `#children`, `#live`,
+  `#nodup`, `#parent`. SP7's `#source_corresponds` keeps its name (an SP7
+  term). The plugin references were not moved to SP9's `#plg_*` atom-parameter
+  terms: they bind to the manifests' own atoms, whose parameters are the
+  unprefixed ones.
+* **Manifests**: the reference encoding changed, so the 167 manifests were
+  refreshed again from the original manifests
+  (`private/logs/refresh-2.log`, exit 0, "167 … refreshed; 1835 …
+  rewritten"; the round-1 markers were first written back with both module
+  digests checked). The detach manifest is now `a1fa87c8…`;
+  [migration.json](migration.json) `round1_superseded` lists every round-1
+  digest and its replacement (round 1 was never on main).
+* **Lean**: `sp10Terms` renamed, `sp10Sorts` added, and two theorems:
+  `sp10_names_are_prefixed` and `sp10_is_disjoint_from_sp9`.

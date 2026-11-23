@@ -716,7 +716,7 @@ impl CheckedNativeDomain {
                 ),
                 (
                     "external_boundaries".into(),
-                    reference(&["binding_source_corresponds"])?,
+                    reference(&["bnd_source_corresponds"])?,
                 ),
             ]),
         };

@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 10,
-  "named_followups": 1064
+  "named_followups": 1063
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6924,7 +6924,7 @@
   "workspace_tests": 9981,
   "provider_tests": 174,
   "python_evidence_validator_tests": 807,
-  "lean_audits": 492,
+  "lean_audits": 493,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
    "AuditAggregateOwnedField.lean",
@@ -7251,6 +7251,7 @@
    "AuditPremiseFormulaLibevent.lean",
    "AuditPremiseFormulaLibrdkafka.lean",
    "AuditPremiseFormulaOuter.lean",
+   "AuditPremiseFormulaPluginGuardedSymbols.lean",
    "AuditPremiseMetadataBridge.lean",
    "AuditPremiseRefinement.lean",
    "AuditPrintRouteSelection.lean",
@@ -7425,7 +7426,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "full landing gate: every step exits 0 except the Python suite's stale-matrix check, cleared by regenerating the matrix from this record; provider gate not selected (no providers/ change), provider count carried from the SP7/SP8 combined landing",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/cast-before-star/integration/gate.json)"
+  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
  },
  "named_followups": [
   {
@@ -14785,13 +14786,6 @@
    "why": "Found by OPENSSL-RELEASED-PARAMETER-SLOTS. At a call, legacy_retained_by.rs folds a candidate's resource_owned(n) requirement into the call's custody mode only at a borrowed position; the card added the fold at a released position for slot invocations only (a nullable release becomes non-null). The plain member form (resource_callback_member_invoked) also admits a resource_released object, and there a candidate's resource_owned(nonnull) at a resource_released(OBJ, nullable) position would be dropped, so a possibly null object could be handed to a candidate requiring a live one. Not reachable today: every shipped member invocation through a released object releases it nonnull (rd_kafka_op_destroy, mk_thread_destroy). DISCHARGE: fold the requirement at a released (and owned-nullable) position for every callback clause, or refuse the call; a gateway fixture and Lean parity. Size: small.",
    "source": "docs/reports/openssl-released-parameter-slots/README.md",
    "recorded_by": "OPENSSL-RELEASED-PARAMETER-SLOTS"
-  },
-  {
-   "id": "SP7-PLUGIN-GUARDED-APPLICATION-FORMULAS",
-   "title": "State the frozen plugin guarded sidecar's English symbols as formulas",
-   "why": "Recorded by SP6-GUARDED-SYMBOL-PROSE. Guarded propositions must be canonical C04.18.9 typed-rendering formulas (QF003), so the frozen standalone sidecar docs/reports/premise-guarded-decomposition/applications/plugin.json, whose seven non-prerequisite symbols are English (environment, invoke, registered_case, default_case, registered_lifetime_valid, default_lifetime_valid, unregistered), no longer lowers: crates/qcore-contract/tests/guarded_decomposition.rs now shows it refused. DISCHARGE: each stated over registered terms (with a rendered-term block and Lean model over QCore.PluginPremiseDecomposition / GuardedContractApplications.Plugin for what is missing), recorded for the legacy reader, and the plugin replay restored as a positive test. No production module states these symbols. Size: medium.",
-   "source": "docs/reports/sp6-guarded-symbol-prose/README.md",
-   "recorded_by": "SP6-GUARDED-SYMBOL-PROSE"
   },
   {
    "id": "SP7-FORMAL-BINDING-DESCRIPTIONS",

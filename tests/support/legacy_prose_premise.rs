@@ -76,9 +76,58 @@
 //! `descriptions`). An unrecorded description stays English, and the
 //! resolver refuses it.
 
+//!
+//! Card **SP9-PLUGIN-GUARDED-APPLICATION-FORMULAS** extends [`lift_bindings`]
+//! to the frozen plugin guarded sidecar
+//! (`docs/reports/premise-guarded-decomposition/applications/plugin.json`):
+//! each of its 14 recorded English texts, the seven prerequisites included,
+//! is written as the C04.18.9 SP9-block formula that replaced it
+//! (`docs/reports/sp9-plugin-guarded-application-formulas/migration.json`,
+//! `symbols`). A prerequisite's formula is its typed atom's formula bound to
+//! the SP9 terms, not the atom's own formula (whose parameters are not
+//! rendered terms), so this record is read before SP6's. An unrecorded
+//! English text stays English, and the lowering refuses it (`QF003`).
+
 #![allow(dead_code)]
 
 const SP7_RECORD: &str = include_str!("../../docs/reports/sp6-guarded-symbol-prose/migration.json");
+
+const SP9_RECORD: &str =
+    include_str!("../../docs/reports/sp9-plugin-guarded-application-formulas/migration.json");
+
+/// One recorded plugin guarded symbol (card
+/// SP9-PLUGIN-GUARDED-APPLICATION-FORMULAS): ID, role, the retired English
+/// text, the formula that replaced it, and for a prerequisite its typed
+/// atom's formula.
+pub struct PluginGuardedSymbol {
+    pub id: String,
+    pub role: String,
+    pub prose: String,
+    pub formula: String,
+    pub atom: Option<String>,
+}
+
+/// The recorded plugin guarded symbols (card
+/// SP9-PLUGIN-GUARDED-APPLICATION-FORMULAS).
+pub fn plugin_guarded_symbols() -> Vec<PluginGuardedSymbol> {
+    let record: serde_json::Value =
+        serde_json::from_str(SP9_RECORD).expect("the SP9 migration record is JSON");
+    record["symbols"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|s| {
+            let field = |key: &str| s[key].as_str().unwrap().to_owned();
+            PluginGuardedSymbol {
+                id: field("id"),
+                role: field("role"),
+                prose: field("prose"),
+                formula: field("formula"),
+                atom: s["atom"].as_str().map(str::to_owned),
+            }
+        })
+        .collect()
+}
 
 /// One recorded guarded symbol text: ID, role, the retired string text and
 /// the formula that replaced it (card SP6-GUARDED-SYMBOL-PROSE).
@@ -333,16 +382,26 @@ pub fn lift_graph_hypotheses(graph: &mut serde_json::Value) -> usize {
 /// with each symbol whose proposition repeated a recorded atom's sentence
 /// (the atom of the same ID) written as that atom's formula, and (card
 /// SP6-GUARDED-SYMBOL-PROSE) each symbol whose proposition is a recorded
-/// English text written as its recorded formula. Returns how many were
-/// lifted.
+/// English text written as its recorded formula. Card
+/// SP9-PLUGIN-GUARDED-APPLICATION-FORMULAS: a symbol whose ID, role and
+/// English text are a recorded plugin guarded symbol's is written as that
+/// record's formula first. Returns how many were lifted.
 pub fn lift_bindings(bindings: &mut serde_json::Value) -> usize {
     let mut lifted = 0;
     let recorded = hypotheses();
     let guarded = guarded_symbols();
+    let plugin = plugin_guarded_symbols();
     if let Some(bindings) = bindings.as_object_mut() {
         for (id, binding) in bindings.iter_mut() {
             let proposition = binding["proposition"].as_str().unwrap_or_default();
-            if let Some(h) = recorded
+            if let Some(s) = plugin.iter().find(|s| {
+                s.id == *id
+                    && s.prose == proposition
+                    && binding["role"].as_str() == Some(s.role.as_str())
+            }) {
+                binding["proposition"] = serde_json::Value::String(s.formula.clone());
+                lifted += 1;
+            } else if let Some(h) = recorded
                 .iter()
                 .find(|h| h.id == *id && h.prose == proposition)
             {

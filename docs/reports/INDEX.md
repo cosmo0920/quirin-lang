@@ -1333,6 +1333,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [sp8-outer-contract-symbolic-statements](sp8-outer-contract-symbolic-statements/README.md) | SP8-OUTER-CONTRACT-SYMBOLIC-STATEMENTS |
 
+| [sp9-plugin-guarded-application-formulas](sp9-plugin-guarded-application-formulas/README.md) | SP9-PLUGIN-GUARDED-APPLICATION-FORMULAS |
+
 | [stability-reeval-1](stability-reeval-1/README.md) | STABILITY-REEVAL #1 — under what conditions each current claim is unstable |
 
 | [stability-reeval-2](stability-reeval-2/README.md) | STABILITY-REEVAL #2 — the cadence's second firing |

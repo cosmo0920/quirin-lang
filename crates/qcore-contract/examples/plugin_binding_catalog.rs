@@ -72,7 +72,7 @@ fn main() {
     // when the catalog is checked.
     environment.variables.insert(
         "property_view".into(),
-        qcore_contract::formal_binding::reference_to(&[&format!("{mode}_view")], &[]).unwrap(),
+        qcore_contract::formal_binding::reference_to(&[&format!("bnd_{mode}_view")], &[]).unwrap(),
     );
     let model_path = "proof/QCore/PluginPremiseDecomposition.lean";
     let audit_path = "proof/AuditPluginPremiseDecomposition.lean";

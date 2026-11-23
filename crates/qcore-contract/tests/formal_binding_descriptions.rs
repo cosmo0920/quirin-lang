@@ -39,7 +39,7 @@ const INDEX: &str =
 const CJSON: &str =
     include_str!("../../../providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv");
 const DETACH_MANIFEST: &[u8] = include_bytes!(
-    "../../../docs/reports/sp10-formal-binding-descriptions/bindings/2c620459ab8fd2b08dc3b8a82903efeb3836abb97a7a9bd824ab9140bed4fabe.json"
+    "../../../docs/reports/sp10-formal-binding-descriptions/bindings/a1fa87c8c5bc126404bd955397ff7b1cff0b4f4feb28a436d32003c4ca01bf55.json"
 );
 const DETACH_ENVIRONMENT: &str = "cjson_detach_entry_and_interference_v1";
 
@@ -320,6 +320,59 @@ fn the_sp10_block_is_new_typed_and_bound_to_lean() {
         .join(", ");
     let line = format!("def sp10Terms : List String := [{names}]");
     assert!(LEAN.lines().any(|l| l == line), "no `{line}`");
+    // User decision 2026-11-24 (A′, "Prefix, then land"): every SP10 name is
+    // prefixed, `plg_` for a plugin-model component over SP9's sorts, `bnd_`
+    // for the binding's own terms and sorts, so no generic name is reserved.
+    for t in &sp10 {
+        assert!(
+            t.name.starts_with("plg_") || t.name.starts_with("bnd_"),
+            "#{}",
+            t.name
+        );
+    }
+    let sorts: Vec<_> = qcore_frontend::premise_formula::RENDERED_VALUE_SORTS
+        .iter()
+        .filter(|(s, _)| s.starts_with("bnd_"))
+        .map(|(s, _)| format!("\"{s}\""))
+        .collect();
+    assert_eq!(sorts.len(), 2);
+    let line = format!("def sp10Sorts : List String := [{}]", sorts.join(", "));
+    assert!(LEAN.lines().any(|l| l == line), "no `{line}`");
+    // Every sort an SP10 term names is a registered value sort (SP9's
+    // `plg_*` or SP10's `bnd_*`) or `integer`.
+    use qcore_frontend::premise_formula::RenderedSort;
+    let registered = |s: &str| {
+        s == "integer"
+            || qcore_frontend::premise_formula::RENDERED_VALUE_SORTS
+                .iter()
+                .any(|(v, _)| *v == s)
+    };
+    for t in &sp10 {
+        let names: Vec<&str> = match t.sort {
+            RenderedSort::Value(v) => vec![v],
+            RenderedSort::Predicate(a) => a.to_vec(),
+            RenderedSort::Function(a, r) => a.iter().copied().chain([r]).collect(),
+        };
+        assert!(names.iter().all(|s| registered(s)), "#{}", t.name);
+    }
+    for generic in [
+        "access",
+        "forge",
+        "forged",
+        "api_call",
+        "core_write",
+        "hook_install",
+        "held_context",
+        "binding_source_corresponds",
+        "resource_view",
+        "environment",
+        "event",
+    ] {
+        assert!(
+            qcore_frontend::premise_formula::rendered_parameter_sort(generic).is_none(),
+            "#{generic} is registered"
+        );
+    }
 }
 
 fn lean_list(names: impl IntoIterator<Item = String>) -> String {

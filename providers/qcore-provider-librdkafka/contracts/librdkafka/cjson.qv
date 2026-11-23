@@ -1,5 +1,5 @@
 module contract;
-// qcore-premise-binding-manifest-v1 cJSON_DetachItemViaPointer detach_list_representation 2c620459ab8fd2b08dc3b8a82903efeb3836abb97a7a9bd824ab9140bed4fabe
+// qcore-premise-binding-manifest-v1 cJSON_DetachItemViaPointer detach_list_representation a1fa87c8c5bc126404bd955397ff7b1cff0b4f4feb28a436d32003c4ca01bf55
 
 // cJSON entity release — resource-projection vocabulary version 1.
 //

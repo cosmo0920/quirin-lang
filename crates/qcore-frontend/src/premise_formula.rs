@@ -2565,13 +2565,61 @@ pub const RENDERED_VALUE_SORTS: &[(&str, &str)] = &[
     (
         "run",
         "one run of a callback: what an `eff` term is a property of (card SP6)",
+    ), // Card SP9-PLUGIN-GUARDED-APPLICATION-FORMULAS (C04.18.9's SP9 block):
+    // the plugin model's sorts, prefixed so no generic name is reserved.
+    (
+        "plg_event",
+        "an event of the selected plugin trace (`PluginPremiseDecomposition.Event`): a registration, interception, invocation, acquisition, release, close, copy or other action of loaded code",
+    ),
+    (
+        "plg_plugin",
+        "a loaded artifact of the selected environment: a librdkafka plugin library or a Fluent Bit C or Go plugin",
+    ),
+    (
+        "plg_family",
+        "the family of a loaded artifact: librdkafka (`#plg_rk`), Fluent Bit C (`#plg_fluent_c`) or Fluent Bit Go (`#plg_fluent_go`)",
+    ),
+    (
+        "plg_action",
+        "the kind of a plugin trace event (`PluginPremiseDecomposition.Action`)",
+    ),
+    (
+        "plg_callback",
+        "a callback function of the plugin trace (an event's function)",
+    ),
+    (
+        "plg_member",
+        "an rk_conf callback member a registration or invocation is at",
+    ),
+    ("plg_context", "an opaque context an invocation receives"),
+    ("plg_handle", "a loader handle of a loaded artifact"),
+    ("plg_activation", "one activation of an interceptor"),
+    (
+        "plg_resource",
+        "a resource an interceptor activation acquires or releases",
+    ),
+    ("plg_symbol", "a symbol a loaded artifact requires"),
+    ("plg_digest", "an artifact, build or inventory identity"),
+    (
+        "plg_abi",
+        "an ABI identity of a resolved or expected address",
+    ),
+    // Card SP10-FORMAL-BINDING-DESCRIPTIONS (C04.18.9's SP10 block): the
+    // sorts of a binding's own terms, prefixed `bnd_`.
+    (
+        "bnd_verdict_context",
+        "a nine-coordinate verdict Context (`HypothesisGraph.Context`)",
+    ),
+    (
+        "bnd_property_view",
+        "the property view a bound graph is replayed from (resource, bounds/null or declared model)",
     ),
 ];
 
-/// The G01p sort of a rendered term: a value of a rendered value sort, or a
-/// predicate over rendered value sorts. Card SP10-FORMAL-BINDING-DESCRIPTIONS
-/// adds functions: an SP10 term that names an integer-valued component of a
-/// typed atom's model (an event flag), as the atoms' own parameters do.
+/// The G01p sort of a rendered term: a value of a rendered value sort, a
+/// predicate over rendered value sorts, or (card
+/// SP9-PLUGIN-GUARDED-APPLICATION-FORMULAS) a function from rendered value
+/// sorts to a rendered value sort or `integer`.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum RenderedSort {
     Value(&'static str),
@@ -2591,20 +2639,20 @@ impl RenderedSort {
             },
             Self::Function(arguments, result) => G::Function {
                 arguments: arguments.iter().map(|s| (*s).to_owned()).collect(),
-                result: (*result).to_owned(),
+                result: result.to_owned(),
             },
         }
     }
 }
 
 /// A term of the typed rendering that no premise formula names (C04.18.9's
-/// SP6, SP7 and SP10 blocks).
+/// SP6, SP7, SP9 and SP10 blocks).
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct RenderedTerm {
     pub name: &'static str,
     pub sort: RenderedSort,
     pub meaning: &'static str,
-    /// The card whose block introduced the term (`SP6`, `SP7`, `SP10`).
+    /// The card whose block introduced the term (`SP6`, `SP7`, `SP9`, `SP10`).
     pub block: &'static str,
 }
 
@@ -2613,10 +2661,10 @@ const NULLARY: RenderedSort = RenderedSort::Predicate(&[]);
 const OBJ1: RenderedSort = RenderedSort::Predicate(&["obj"]);
 const OBJ2: RenderedSort = RenderedSort::Predicate(&["obj", "obj"]);
 const OBJ3: RenderedSort = RenderedSort::Predicate(&["obj", "obj", "obj"]);
-/// An integer-valued event component of the plugin model (SP10).
-const EVENT_FLAG: RenderedSort = RenderedSort::Function(&["environment", "event"], "integer");
+/// An integer-valued event component of the plugin model (SP10, SP9's scheme).
+const PLG_EVENT_FLAG: RenderedSort = RenderedSort::Function(&["plg_event"], "integer");
 
-/// The SP6 block, then the SP7 block.
+/// The SP6 block, then the SP7 block, then the SP9 block, then the SP10 block.
 ///
 /// SP6: `#runs` is the maps-to operator's own semantics: `F |-> E` holds
 /// when every run of every member of `F` has `E` (`QCore.PremiseFormula`'s
@@ -2634,15 +2682,29 @@ const EVENT_FLAG: RenderedSort = RenderedSort::Function(&["environment", "event"
 /// invalid_membership I2: a warrant term inside a proposition). The Lean
 /// model is `QCore.CjsonGuardedSymbols.render`.
 ///
-/// SP10 (card SP10-FORMAL-BINDING-DESCRIPTIONS): the terms a binding
+/// SP9 (card SP9-PLUGIN-GUARDED-APPLICATION-FORMULAS; user decisions of
+/// 2026-11-23 on the card's stop: D1 A′, D2 b, D3 I2): the terms the 14
+/// guarded symbols of the frozen plugin sidecar need, each read in one
+/// selected `QCore.PluginPremiseDecomposition.Environment`, which stays
+/// implicit (as SP7's entry terms read the entry environment). Every name is
+/// prefixed `plg_`, so no generic name (`#time`, `#action`, `#member`) is
+/// reserved; `#plg_X` is the typed atoms' parameter `#X` with its
+/// environment argument dropped. `#plg_ev` is the reached invocation the
+/// cases are read at, `#plg_admits_callback_closure` the admission, and two
+/// assumptions no model derives: `#plg_trace_corresponds` (environment, as
+/// E2) and `#plg_refutes_registration` (unregistered, a warrant term as I2).
+/// The Lean model is `QCore.PluginGuardedSymbols.render`.
+///
+/// SP10 (card SP10-FORMAL-BINDING-DESCRIPTIONS; user decision 2026-11-24 on
+/// the A′ prefix scheme: "Prefix, then land"): the terms a binding
 /// manifest's or flow model's typed environment reference (C04.18.2,
-/// C04.18.3) needs beyond a bound atom's own parameters: the never-derived
-/// source correspondence of every other environment (E2's form), the held
-/// Context, the three property views, and the components of
-/// `QCore.PluginPremiseDecomposition`'s environment that no bound plugin atom
-/// quantifies (the cJSON hook and list components, the frame, API and
-/// pointer-forgery components). The Lean list is
-/// `QCore.FormalBindingEnvironments.sp10Terms`.
+/// C04.18.3) needs beyond a bound atom's own parameters. The plugin-model
+/// components no bound atom quantifies (the cJSON hook and list components,
+/// the frame, API and pointer-forgery components) follow SP9's scheme:
+/// prefixed `plg_`, environment implicit, over SP9's sorts. The terms of the
+/// binding itself (the never-derived source correspondence, E2's form; the
+/// held Context; the three property views) are prefixed `bnd_` over two
+/// `bnd_` sorts. The Lean list is `QCore.FormalBindingEnvironments.sp10Terms`.
 pub const RENDERED_TERMS: &[RenderedTerm] = &[
     RenderedTerm {
         name: "runs",
@@ -2771,141 +2833,520 @@ pub const RENDERED_TERMS: &[RenderedTerm] = &[
         block: "SP7",
     },
     RenderedTerm {
-        name: "binding_source_corresponds",
+        name: "plg_in_trace",
+        sort: RenderedSort::Predicate(&["plg_event"]),
+        meaning: "`#plg_in_trace(e)`: the event `e` is in the selected trace (every loaded artifact's callback events)",
+        block: "SP9",
+    },
+    RenderedTerm {
+        name: "plg_action",
+        sort: RenderedSort::Function(&["plg_event"], "plg_action"),
+        meaning: "the event's action",
+        block: "SP9",
+    },
+    RenderedTerm {
+        name: "plg_plugin",
+        sort: RenderedSort::Function(&["plg_event"], "plg_plugin"),
+        meaning: "the loaded artifact the event belongs to",
+        block: "SP9",
+    },
+    RenderedTerm {
+        name: "plg_function",
+        sort: RenderedSort::Function(&["plg_event"], "plg_callback"),
+        meaning: "the callback the event registers, invokes or destroys",
+        block: "SP9",
+    },
+    RenderedTerm {
+        name: "plg_member",
+        sort: RenderedSort::Function(&["plg_event"], "plg_member"),
+        meaning: "the rk_conf callback member the event is at",
+        block: "SP9",
+    },
+    RenderedTerm {
+        name: "plg_opaque",
+        sort: RenderedSort::Function(&["plg_event"], "plg_context"),
+        meaning: "the opaque context the event passes",
+        block: "SP9",
+    },
+    RenderedTerm {
+        name: "plg_handle",
+        sort: RenderedSort::Function(&["plg_event"], "plg_handle"),
+        meaning: "the loader handle the event closes",
+        block: "SP9",
+    },
+    RenderedTerm {
+        name: "plg_resource",
+        sort: RenderedSort::Function(&["plg_event"], "plg_resource"),
+        meaning: "the resource the event acquires or releases",
+        block: "SP9",
+    },
+    RenderedTerm {
+        name: "plg_activation",
+        sort: RenderedSort::Function(&["plg_event"], "plg_activation"),
+        meaning: "the interceptor activation the event happens in",
+        block: "SP9",
+    },
+    RenderedTerm {
+        name: "plg_time",
+        sort: RenderedSort::Function(&["plg_event"], "integer"),
+        meaning: "the event's position in the trace",
+        block: "SP9",
+    },
+    RenderedTerm {
+        name: "plg_result",
+        sort: RenderedSort::Function(&["plg_event"], "integer"),
+        meaning: "the event's integer result (0 for a successful registration or interception)",
+        block: "SP9",
+    },
+    RenderedTerm {
+        name: "plg_public_setter",
+        sort: RenderedSort::Function(&["plg_event"], "integer"),
+        meaning: "1 when the event goes through a public setter, else 0",
+        block: "SP9",
+    },
+    RenderedTerm {
+        name: "plg_exact_candidate",
+        sort: RenderedSort::Function(&["plg_event"], "integer"),
+        meaning: "1 when an interception names the exact pinned list or union-arm candidate, else 0",
+        block: "SP9",
+    },
+    RenderedTerm {
+        name: "plg_pointer_borrowed",
+        sort: RenderedSort::Function(&["plg_event"], "integer"),
+        meaning: "1 when every pointer the event passes into an interceptor is borrowed, else 0",
+        block: "SP9",
+    },
+    RenderedTerm {
+        name: "plg_scalar_borrowed",
+        sort: RenderedSort::Function(&["plg_event"], "integer"),
+        meaning: "1 when every scalar resource the event passes into an interceptor is borrowed, else 0",
+        block: "SP9",
+    },
+    RenderedTerm {
+        name: "plg_local_resource",
+        sort: RenderedSort::Function(&["plg_event"], "integer"),
+        meaning: "1 when the event's resource was acquired locally in its activation, else 0",
+        block: "SP9",
+    },
+    RenderedTerm {
+        name: "plg_conf_live",
+        sort: RenderedSort::Function(&["plg_event"], "integer"),
+        meaning: "1 when the configuration an interception registers on is live, else 0",
+        block: "SP9",
+    },
+    RenderedTerm {
+        name: "plg_from_on_new",
+        sort: RenderedSort::Function(&["plg_event"], "integer"),
+        meaning: "1 when an interception is made during a run of an on_new interceptor, else 0",
+        block: "SP9",
+    },
+    RenderedTerm {
+        name: "plg_initialized",
+        sort: RenderedSort::Function(&["plg_event"], "integer"),
+        meaning: "1 when the client an interception registers on is already initialized, else 0",
+        block: "SP9",
+    },
+    RenderedTerm {
+        name: "plg_share_consumer",
+        sort: RenderedSort::Function(&["plg_event"], "integer"),
+        meaning: "1 when the client an interception registers on is a share consumer, else 0",
+        block: "SP9",
+    },
+    RenderedTerm {
+        name: "plg_config_registration",
+        sort: RenderedSort::Function(&["plg_event"], "integer"),
+        meaning: "1 when an interception is registered on a configuration (rather than a client), else 0",
+        block: "SP9",
+    },
+    RenderedTerm {
+        name: "plg_in_interceptor",
+        sort: RenderedSort::Function(&["plg_event"], "integer"),
+        meaning: "1 when the event happens inside an interceptor activation, else 0",
+        block: "SP9",
+    },
+    RenderedTerm {
+        name: "plg_invoke",
+        sort: RenderedSort::Value("plg_action"),
+        meaning: "the action of a callback invocation",
+        block: "SP9",
+    },
+    RenderedTerm {
+        name: "plg_register",
+        sort: RenderedSort::Value("plg_action"),
+        meaning: "the action of a callback registration",
+        block: "SP9",
+    },
+    RenderedTerm {
+        name: "plg_intercept",
+        sort: RenderedSort::Value("plg_action"),
+        meaning: "the action of an interceptor registration",
+        block: "SP9",
+    },
+    RenderedTerm {
+        name: "plg_acquire",
+        sort: RenderedSort::Value("plg_action"),
+        meaning: "the action of a local acquisition",
+        block: "SP9",
+    },
+    RenderedTerm {
+        name: "plg_release",
+        sort: RenderedSort::Value("plg_action"),
+        meaning: "the action of a release",
+        block: "SP9",
+    },
+    RenderedTerm {
+        name: "plg_retain",
+        sort: RenderedSort::Value("plg_action"),
+        meaning: "the action of a retention",
+        block: "SP9",
+    },
+    RenderedTerm {
+        name: "plg_transfer",
+        sort: RenderedSort::Value("plg_action"),
+        meaning: "the action of a custody transfer",
+        block: "SP9",
+    },
+    RenderedTerm {
+        name: "plg_return_local",
+        sort: RenderedSort::Value("plg_action"),
+        meaning: "the action dropping a local acquisition before its activation returns",
+        block: "SP9",
+    },
+    RenderedTerm {
+        name: "plg_global_custody",
+        sort: RenderedSort::Value("plg_action"),
+        meaning: "the action taking global custody",
+        block: "SP9",
+    },
+    RenderedTerm {
+        name: "plg_close",
+        sort: RenderedSort::Value("plg_action"),
+        meaning: "the action of a loader close",
+        block: "SP9",
+    },
+    RenderedTerm {
+        name: "plg_destroy_callback",
+        sort: RenderedSort::Value("plg_action"),
+        meaning: "the action of a destruction callback invocation",
+        block: "SP9",
+    },
+    RenderedTerm {
+        name: "plg_copy_reference",
+        sort: RenderedSort::Value("plg_action"),
+        meaning: "the action copying a registration with its loader reference",
+        block: "SP9",
+    },
+    RenderedTerm {
+        name: "plg_rk",
+        sort: RenderedSort::Value("plg_family"),
+        meaning: "the librdkafka plugin family",
+        block: "SP9",
+    },
+    RenderedTerm {
+        name: "plg_fluent_c",
+        sort: RenderedSort::Value("plg_family"),
+        meaning: "the Fluent Bit C plugin family",
+        block: "SP9",
+    },
+    RenderedTerm {
+        name: "plg_fluent_go",
+        sort: RenderedSort::Value("plg_family"),
+        meaning: "the Fluent Bit Go plugin family",
+        block: "SP9",
+    },
+    RenderedTerm {
+        name: "plg_loaded",
+        sort: RenderedSort::Predicate(&["plg_plugin", "plg_family"]),
+        meaning: "`#plg_loaded(p,f)`: the artifact `p` is loaded as a member of family `f`",
+        block: "SP9",
+    },
+    RenderedTerm {
+        name: "plg_loader_enabled",
+        sort: RenderedSort::Function(&["plg_family"], "integer"),
+        meaning: "1 when the selected build enables the family's loader, else 0",
+        block: "SP9",
+    },
+    RenderedTerm {
+        name: "plg_actual_build",
+        sort: RenderedSort::Function(&["plg_plugin"], "plg_digest"),
+        meaning: "the artifact's actual build identity",
+        block: "SP9",
+    },
+    RenderedTerm {
+        name: "plg_expected_build",
+        sort: RenderedSort::Function(&["plg_plugin"], "plg_digest"),
+        meaning: "the artifact's selected build identity",
+        block: "SP9",
+    },
+    RenderedTerm {
+        name: "plg_actual_inventory",
+        sort: RenderedSort::Value("plg_digest"),
+        meaning: "the actual loaded-artifact inventory identity",
+        block: "SP9",
+    },
+    RenderedTerm {
+        name: "plg_expected_inventory",
+        sort: RenderedSort::Value("plg_digest"),
+        meaning: "the selected loaded-artifact inventory identity",
+        block: "SP9",
+    },
+    RenderedTerm {
+        name: "plg_actual_artifact",
+        sort: RenderedSort::Function(&["plg_plugin"], "plg_digest"),
+        meaning: "the artifact's actual identity",
+        block: "SP9",
+    },
+    RenderedTerm {
+        name: "plg_expected_artifact",
+        sort: RenderedSort::Function(&["plg_plugin"], "plg_digest"),
+        meaning: "the artifact's selected identity",
+        block: "SP9",
+    },
+    RenderedTerm {
+        name: "plg_required_symbol",
+        sort: RenderedSort::Predicate(&["plg_plugin", "plg_symbol"]),
+        meaning: "`#plg_required_symbol(p,s)`: the artifact `p` requires the symbol `s`",
+        block: "SP9",
+    },
+    RenderedTerm {
+        name: "plg_resolved_address",
+        sort: RenderedSort::Function(&["plg_plugin", "plg_symbol"], "integer"),
+        meaning: "the address the symbol resolves to in the artifact (0 when unresolved)",
+        block: "SP9",
+    },
+    RenderedTerm {
+        name: "plg_expected_address",
+        sort: RenderedSort::Function(&["plg_plugin", "plg_symbol"], "integer"),
+        meaning: "the selected address of the symbol in the artifact",
+        block: "SP9",
+    },
+    RenderedTerm {
+        name: "plg_actual_abi",
+        sort: RenderedSort::Function(&["integer"], "plg_abi"),
+        meaning: "the actual ABI at an address",
+        block: "SP9",
+    },
+    RenderedTerm {
+        name: "plg_expected_abi",
+        sort: RenderedSort::Function(&["integer"], "plg_abi"),
+        meaning: "the selected ABI at an address",
+        block: "SP9",
+    },
+    RenderedTerm {
+        name: "plg_member_candidate",
+        sort: RenderedSort::Predicate(&["plg_member", "plg_callback"]),
+        meaning: "`#plg_member_candidate(m,f)`: `f` is a declared candidate of the member `m`",
+        block: "SP9",
+    },
+    RenderedTerm {
+        name: "plg_static_default",
+        sort: RenderedSort::Predicate(&["plg_member", "plg_callback"]),
+        meaning: "`#plg_static_default(m,f)`: `f` is the member `m`'s stated static default in the selected build",
+        block: "SP9",
+    },
+    RenderedTerm {
+        name: "plg_code_live",
+        sort: RenderedSort::Predicate(&["plg_callback", "integer"]),
+        meaning: "`#plg_code_live(f,t)`: the callback's code is live at trace position `t`",
+        block: "SP9",
+    },
+    RenderedTerm {
+        name: "plg_context_live",
+        sort: RenderedSort::Predicate(&["plg_context", "integer"]),
+        meaning: "`#plg_context_live(x,t)`: the opaque context is live at trace position `t`",
+        block: "SP9",
+    },
+    RenderedTerm {
+        name: "plg_handle_for",
+        sort: RenderedSort::Function(&["plg_plugin"], "plg_handle"),
+        meaning: "the loader handle of the artifact",
+        block: "SP9",
+    },
+    RenderedTerm {
+        name: "plg_ref_count",
+        sort: RenderedSort::Function(&["plg_handle", "integer"], "integer"),
+        meaning: "the handle's loader reference count at a trace position",
+        block: "SP9",
+    },
+    RenderedTerm {
+        name: "plg_return_boundary",
+        sort: RenderedSort::Function(&["plg_activation"], "integer"),
+        meaning: "the trace position at which the activation returns",
+        block: "SP9",
+    },
+    RenderedTerm {
+        name: "plg_rk_proposed",
+        sort: RenderedSort::Predicate(&["plg_plugin"]),
+        meaning: "`#plg_rk_proposed(p)`: the artifact meets the proposed rk_plugin_library outer envelope (`PluginPremiseDecomposition.RkProposed`)",
+        block: "SP9",
+    },
+    RenderedTerm {
+        name: "plg_fluent_proposed",
+        sort: RenderedSort::Predicate(&["plg_plugin"]),
+        meaning: "`#plg_fluent_proposed(p)`: the artifact meets the proposed flb_external_plugin outer envelope (`PluginPremiseDecomposition.FluentProposed`)",
+        block: "SP9",
+    },
+    RenderedTerm {
+        name: "plg_ev",
+        sort: RenderedSort::Value("plg_event"),
+        meaning: "the reached rk_conf callback invocation of rd_kafka_dump0 the decomposition's cases and postconditions are read at; the decomposition is read at every reached invocation (user decision 2026-11-23)",
+        block: "SP9",
+    },
+    RenderedTerm {
+        name: "plg_admits_callback_closure",
+        sort: RenderedSort::Predicate(&[]),
+        meaning: "the gateway admits every reached rk_conf callback invocation of rd_kafka_dump0 under its rk_plugin_callback_closure premise; never inferred from a sampled callback",
+        block: "SP9",
+    },
+    RenderedTerm {
+        name: "plg_trace_corresponds",
+        sort: RenderedSort::Predicate(&[]),
+        meaning: "the selected environment is the run's: every loaded librdkafka and Fluent Bit C/Go artifact, every callback event, the build, ABI and inventory and the full context are what the terms denote. It is an independent assumption: no model or source check establishes it, and its disposition stays Open (user decision 2026-11-23)",
+        block: "SP9",
+    },
+    RenderedTerm {
+        name: "plg_refutes_registration",
+        sort: RenderedSort::Predicate(&["plg_event"]),
+        meaning: "`#plg_refutes_registration(e)`: positive evidence that the invocation `e` has neither its required successful public registration nor a stated static default. It entails both absences and is never derived from a failed registration proof (user decision 2026-11-23, D3)",
+        block: "SP9",
+    },
+    RenderedTerm {
+        name: "bnd_source_corresponds",
         sort: NULLARY,
         meaning: "the terms of a binding's environment denote what the selected source, C code and native execution actually do, and the bound Lean propositions correspond to that source: an independent assumption no model, check or content hash establishes, whose disposition stays Open (the form of environment E2, user decision 2026-11-23; Lean `FormalBindingEnvironments.Interpretation.sourceCorresponds`)",
         block: "SP10",
     },
     RenderedTerm {
-        name: "held_context",
-        sort: RenderedSort::Value("verdict_context"),
+        name: "bnd_held_context",
+        sort: RenderedSort::Value("bnd_verdict_context"),
         meaning: "the nine independently held Context coordinates (artifact, property, semantic profile, scope, bounds, assumptions, source identity, build identity, evidence version) the binding is read under, compared by exact equality and never transported to another property or Context (Lean `HypothesisGraph.Context`)",
         block: "SP10",
     },
     RenderedTerm {
-        name: "resource_view",
-        sort: RenderedSort::Value("property_view"),
+        name: "bnd_resource_view",
+        sort: RenderedSort::Value("bnd_property_view"),
         meaning: "the exact independently held resource-v1 source view the bound graph is replayed from (Lean `FormalBindingEnvironments.PropertyView.resource`)",
         block: "SP10",
     },
     RenderedTerm {
-        name: "null_view",
-        sort: RenderedSort::Value("property_view"),
+        name: "bnd_null_view",
+        sort: RenderedSort::Value("bnd_property_view"),
         meaning: "the exact independently held bounds-v1 null source view the bound graph is replayed from (Lean `FormalBindingEnvironments.PropertyView.null`)",
         block: "SP10",
     },
     RenderedTerm {
-        name: "model_view",
-        sort: RenderedSort::Value("property_view"),
+        name: "bnd_model_view",
+        sort: RenderedSort::Value("bnd_property_view"),
         meaning: "the exact independently held declared resource-type model view the bound graph is replayed from (Lean `FormalBindingEnvironments.PropertyView.model`)",
         block: "SP10",
     },
     RenderedTerm {
-        name: "hook_install",
-        sort: RenderedSort::Value("action"),
-        meaning: "a cJSON global allocator hook installation event (`cJSON_InitHooks`; Lean `QCore.PluginPremiseDecomposition.Action.hookInstall`)",
+        name: "plg_hook_install",
+        sort: RenderedSort::Value("plg_action"),
+        meaning: "the action of a cJSON global allocator hook installation (`cJSON_InitHooks`; Lean `QCore.PluginPremiseDecomposition.Action.hookInstall`)",
         block: "SP10",
     },
     RenderedTerm {
-        name: "hook_replace",
-        sort: RenderedSort::Value("action"),
-        meaning: "a replacement of the cJSON global allocator hooks (Lean `QCore.PluginPremiseDecomposition.Action.hookReplace`)",
+        name: "plg_hook_replace",
+        sort: RenderedSort::Value("plg_action"),
+        meaning: "the action replacing the cJSON global allocator hooks (Lean `QCore.PluginPremiseDecomposition.Action.hookReplace`)",
         block: "SP10",
     },
     RenderedTerm {
-        name: "cjson_link_write",
-        sort: RenderedSort::Value("action"),
-        meaning: "a write of a cJSON item link (child, next, prev) by loaded code (Lean `QCore.PluginPremiseDecomposition.Action.cjsonLinkWrite`)",
+        name: "plg_cjson_link_write",
+        sort: RenderedSort::Value("plg_action"),
+        meaning: "the action writing a cJSON item link (child, next, prev) by loaded code (Lean `QCore.PluginPremiseDecomposition.Action.cjsonLinkWrite`)",
         block: "SP10",
     },
     RenderedTerm {
-        name: "cjson_call",
-        sort: RenderedSort::Value("action"),
-        meaning: "a cJSON API call by loaded code (Lean `QCore.PluginPremiseDecomposition.Action.cjsonCall`)",
+        name: "plg_cjson_call",
+        sort: RenderedSort::Value("plg_action"),
+        meaning: "the action of a cJSON API call by loaded code (Lean `QCore.PluginPremiseDecomposition.Action.cjsonCall`)",
         block: "SP10",
     },
     RenderedTerm {
-        name: "proper_list",
-        sort: EVENT_FLAG,
-        meaning: "`#proper_list(e,ev) == 1`: the list a cJSON API call `ev` is handed is well formed (Lean `QCore.PluginPremiseDecomposition.Event.properList`)",
+        name: "plg_proper_list",
+        sort: PLG_EVENT_FLAG,
+        meaning: "1 when the list a cJSON API call is handed is well formed, else 0 (Lean `QCore.PluginPremiseDecomposition.Event.properList`)",
         block: "SP10",
     },
     RenderedTerm {
-        name: "preexisting_hooks_valid",
-        sort: RenderedSort::Predicate(&["environment", "plugin"]),
-        meaning: "the allocator hooks installed before plugin `p` is loaded are valid (Lean `QCore.PluginPremiseDecomposition.Environment.preexistingHooksValid`)",
+        name: "plg_preexisting_hooks_valid",
+        sort: RenderedSort::Predicate(&["plg_plugin"]),
+        meaning: "`#plg_preexisting_hooks_valid(p)`: the allocator hooks installed before the artifact `p` is loaded are valid (Lean `QCore.PluginPremiseDecomposition.Environment.preexistingHooksValid`)",
         block: "SP10",
     },
     RenderedTerm {
-        name: "core_write",
-        sort: RenderedSort::Value("action"),
-        meaning: "a store by loaded code into Fluent Bit core state (Lean `QCore.PluginPremiseDecomposition.Action.coreWrite`)",
+        name: "plg_core_write",
+        sort: RenderedSort::Value("plg_action"),
+        meaning: "the action of a store by loaded code into Fluent Bit core state (Lean `QCore.PluginPremiseDecomposition.Action.coreWrite`)",
         block: "SP10",
     },
     RenderedTerm {
-        name: "internal_write",
-        sort: RenderedSort::Value("action"),
-        meaning: "a store by loaded code into librdkafka internal state (Lean `QCore.PluginPremiseDecomposition.Action.internalWrite`)",
+        name: "plg_internal_write",
+        sort: RenderedSort::Value("plg_action"),
+        meaning: "the action of a store by loaded code into librdkafka internal state (Lean `QCore.PluginPremiseDecomposition.Action.internalWrite`)",
         block: "SP10",
     },
     RenderedTerm {
-        name: "api_call",
-        sort: RenderedSort::Value("action"),
-        meaning: "a library API call by loaded code (Lean `QCore.PluginPremiseDecomposition.Action.apiCall`)",
+        name: "plg_api_call",
+        sort: RenderedSort::Value("plg_action"),
+        meaning: "the action of a library API call by loaded code (Lean `QCore.PluginPremiseDecomposition.Action.apiCall`)",
         block: "SP10",
     },
     RenderedTerm {
-        name: "is_rk_call",
-        sort: EVENT_FLAG,
-        meaning: "`#is_rk_call(e,ev) == 1`: the API call `ev` is a librdkafka call (Lean `QCore.PluginPremiseDecomposition.Event.isRkCall`)",
+        name: "plg_is_rk_call",
+        sort: PLG_EVENT_FLAG,
+        meaning: "1 when an API call is a librdkafka call, else 0 (Lean `QCore.PluginPremiseDecomposition.Event.isRkCall`)",
         block: "SP10",
     },
     RenderedTerm {
-        name: "public_rk_symbol",
-        sort: EVENT_FLAG,
-        meaning: "`#public_rk_symbol(e,ev) == 1`: the called librdkafka symbol is public (Lean `QCore.PluginPremiseDecomposition.Event.publicRkSymbol`)",
+        name: "plg_public_rk_symbol",
+        sort: PLG_EVENT_FLAG,
+        meaning: "1 when the called librdkafka symbol is public, else 0 (Lean `QCore.PluginPremiseDecomposition.Event.publicRkSymbol`)",
         block: "SP10",
     },
     RenderedTerm {
-        name: "api_precondition",
-        sort: EVENT_FLAG,
-        meaning: "`#api_precondition(e,ev) == 1`: the called API's public precondition holds at `ev` (Lean `QCore.PluginPremiseDecomposition.Event.apiPrecondition`)",
+        name: "plg_api_precondition",
+        sort: PLG_EVENT_FLAG,
+        meaning: "1 when the called API's public precondition holds at the event, else 0 (Lean `QCore.PluginPremiseDecomposition.Event.apiPrecondition`)",
         block: "SP10",
     },
     RenderedTerm {
-        name: "access",
-        sort: RenderedSort::Value("action"),
-        meaning: "a pointer access by loaded code (Lean `QCore.PluginPremiseDecomposition.Action.access`)",
+        name: "plg_access",
+        sort: RenderedSort::Value("plg_action"),
+        meaning: "the action of a pointer access by loaded code (Lean `QCore.PluginPremiseDecomposition.Action.access`)",
         block: "SP10",
     },
     RenderedTerm {
-        name: "handed_object",
-        sort: EVENT_FLAG,
-        meaning: "`#handed_object(e,ev) == 1`: the accessed object was handed to the loaded code (Lean `QCore.PluginPremiseDecomposition.Event.handedObject`)",
+        name: "plg_handed_object",
+        sort: PLG_EVENT_FLAG,
+        meaning: "1 when the accessed object was handed to the loaded code, else 0 (Lean `QCore.PluginPremiseDecomposition.Event.handedObject`)",
         block: "SP10",
     },
     RenderedTerm {
-        name: "exported_api",
-        sort: EVENT_FLAG,
-        meaning: "`#exported_api(e,ev) == 1`: the access goes through an exported API (Lean `QCore.PluginPremiseDecomposition.Event.exportedApi`)",
+        name: "plg_exported_api",
+        sort: PLG_EVENT_FLAG,
+        meaning: "1 when the access goes through an exported API, else 0 (Lean `QCore.PluginPremiseDecomposition.Event.exportedApi`)",
         block: "SP10",
     },
     RenderedTerm {
-        name: "forge",
-        sort: RenderedSort::Value("action"),
-        meaning: "a pointer creation by loaded code from a non-pointer value (Lean `QCore.PluginPremiseDecomposition.Action.forge`)",
+        name: "plg_forge",
+        sort: RenderedSort::Value("plg_action"),
+        meaning: "the action making a pointer from a non-pointer value (Lean `QCore.PluginPremiseDecomposition.Action.forge`)",
         block: "SP10",
     },
     RenderedTerm {
-        name: "forged",
-        sort: EVENT_FLAG,
-        meaning: "`#forged(e,ev) == 1`: the pointer used at `ev` is forged (Lean `QCore.PluginPremiseDecomposition.Event.forged`)",
+        name: "plg_forged",
+        sort: PLG_EVENT_FLAG,
+        meaning: "1 when the pointer used at the event is forged, else 0 (Lean `QCore.PluginPremiseDecomposition.Event.forged`)",
         block: "SP10",
     },
 ];
 
 /// The G01p parameter sort of a name of the typed rendering: a registered
-/// C04.18.9 term in its rendered sort, or an SP6/SP7/SP10 term; `None` otherwise.
+/// C04.18.9 term in its rendered sort, or an SP6/SP7/SP9/SP10 term; `None`
+/// otherwise.
 #[must_use]
 pub fn rendered_parameter_sort(name: &str) -> Option<qcore_schemas::quant_proposition::Sort> {
     if let Some(t) = term(name) {
@@ -2977,7 +3418,7 @@ pub fn rendered_sort(term: &Term) -> Option<qcore_schemas::quant_proposition::So
 
 /// Card SP6-SYMBOLIC-HYPOTHESIS-ATOMS: whether a typed atom is a typed
 /// rendering over registered terms: every parameter is a registered term
-/// (C04.18.9's vocabulary) with its rendered sort, or an SP6 term with its
+/// (C04.18.9's vocabulary) with its rendered sort, or an SP6, SP7 or SP9 term with its
 /// sort, and every quantifier ranges over a rendered value sort. The atom's
 /// meaning is then the terms' meanings, nothing more.
 pub fn check_rendering(
@@ -3131,7 +3572,7 @@ fn guarded_definition(
 
 /// Card SP6-GUARDED-SYMBOL-PROSE: the proposition of guarded symbol `id`,
 /// read from its formula's tokens: a C04.18.9 typed-rendering formula (G01p)
-/// whose free names are registered terms (or SP6/SP7 terms), typed in their
+/// whose free names are registered terms (or SP6/SP7/SP9 terms), typed in their
 /// rendered sorts. Returns the canonical printing (the binding's
 /// proposition) and the definition it reads as. A string token is refused
 /// by name ([`PROSE_GUARDED`]); anything else that is not such a formula

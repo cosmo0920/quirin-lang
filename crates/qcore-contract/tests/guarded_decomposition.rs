@@ -139,7 +139,12 @@ fn application(
         legacy_prose_premise::lift_graph(&mut graph);
         // Card SP6-SYMBOLIC-HYPOTHESIS-ATOMS: prerequisite symbols that
         // repeated an atom's sentence repeat its formula.
-        legacy_prose_premise::lift_bindings(&mut bindings);
+        let lifted = legacy_prose_premise::lift_bindings(&mut bindings);
+        // Card SP9-PLUGIN-GUARDED-APPLICATION-FORMULAS: every plugin symbol
+        // is a recorded English text.
+        if name == "plugin" {
+            assert_eq!(lifted, 14);
+        }
     }
     (
         BTreeMap::from([(module.clone(), source)]),
@@ -195,11 +200,14 @@ fn evaluate(d: &guarded::Lowered, values: &[(&str, Disposition)]) -> guarded::Pr
 #[test]
 fn actual_cjson_and_plugin_hypotheses_lower_without_truth_or_source_changes() {
     // Card SP6-GUARDED-SYMBOL-PROSE: a guarded proposition is a formula
-    // (`QF003`). The frozen plugin sidecar's seven non-prerequisite symbols
-    // are English that no card has stated as formulas, so it no longer
-    // lowers: it is refused by name, never read.
+    // (`QF003`). Card SP9-PLUGIN-GUARDED-APPLICATION-FORMULAS: the frozen
+    // plugin sidecar's 14 English symbols are recorded with their SP9-block
+    // formulas, so it lowers again through the legacy reader; an English text
+    // the record does not hold is still refused by name, never read.
     {
-        let (sources, module, decl, graph, bindings, readable) = application("plugin");
+        let (sources, module, decl, graph, mut bindings, readable) = application("plugin");
+        bindings.get_mut("invoke").unwrap().proposition =
+            "Admission of every reached rk_conf callback invocation.".into();
         let error = guarded::replay(
             View::Resource,
             &sources,
@@ -212,7 +220,7 @@ fn actual_cjson_and_plugin_hypotheses_lower_without_truth_or_source_changes() {
         .unwrap_err();
         assert!(error.starts_with("QF003"), "{error}");
     }
-    for (name, atoms) in [("cjson", 9)] {
+    for (name, atoms) in [("cjson", 9), ("plugin", 7)] {
         let (sources, module, decl, graph, bindings, readable) = application(name);
         let graphs_before = hypothesis::replay(&sources).unwrap();
         let loaded_before =
@@ -248,7 +256,18 @@ fn actual_cjson_and_plugin_hypotheses_lower_without_truth_or_source_changes() {
                 .into_iter()
                 .find(|h| h.id == *id)
                 .unwrap();
-            assert_eq!(b.proposition, recorded.formula);
+            if name == "plugin" {
+                // Card SP9-PLUGIN-GUARDED-APPLICATION-FORMULAS: the symbol is
+                // the atom's formula bound to the SP9 terms.
+                let sp9 = legacy_prose_premise::plugin_guarded_symbols()
+                    .into_iter()
+                    .find(|s| s.id == *id)
+                    .unwrap();
+                assert_eq!(sp9.atom.as_deref(), Some(recorded.formula.as_str()));
+                assert_eq!(b.proposition, sp9.formula);
+            } else {
+                assert_eq!(b.proposition, recorded.formula);
+            }
         }
         let e = evaluate(&d, &[]);
         assert_eq!(e.guards, vec![guarded::Status::Open; 2]);
