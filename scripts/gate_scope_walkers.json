@@ -531,6 +531,30 @@
    "why": "census: its units list the directory (1 directory opens or ls-files pathspecs), so a new file can change what they see: the whole directory"
   },
   {
+   "source": "crates/qcore-contract/tests/formal_binding_descriptions.rs",
+   "literal": "docs/reports/sp10-formal-binding-descriptions/bindings",
+   "reads": [
+    "docs/reports/sp10-formal-binding-descriptions/bindings/**"
+   ],
+   "why": "census: its units open files under it and its source spells no filter covering them: the whole directory"
+  },
+  {
+   "source": "crates/qcore-contract/tests/formal_binding_descriptions.rs",
+   "literal": "docs/reports/sp2-symbolic-librdkafka-premises/bindings",
+   "reads": [
+    "docs/reports/sp2-symbolic-librdkafka-premises/bindings/**"
+   ],
+   "why": "census: its units open files under it and its source spells no filter covering them: the whole directory"
+  },
+  {
+   "source": "crates/qcore-contract/tests/formal_binding_descriptions.rs",
+   "literal": "docs/reports/sp6-symbolic-hypothesis-atoms/bindings",
+   "reads": [
+    "docs/reports/sp6-symbolic-hypothesis-atoms/bindings/**"
+   ],
+   "why": "census: its units open files under it and its source spells no filter covering them: the whole directory"
+  },
+  {
    "source": "crates/qcore-contract/tests/production_symbolic_adoption.rs",
    "literal": "docs/reports/sp10-formal-binding-descriptions/bindings",
    "reads": [

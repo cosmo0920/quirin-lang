@@ -29,7 +29,7 @@ use qcore_frontend::premise_formula::RENDERED_TERMS;
 use qcore_schemas::hypothesis::{BindingManifest, Graph};
 use qcore_schemas::quant_proposition::Definition;
 use std::collections::BTreeMap;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 const LEAN: &str = include_str!("../../../proof/QCore/FormalBindingEnvironments.lean");
 const RECORD: &str =
@@ -43,8 +43,8 @@ const DETACH_MANIFEST: &[u8] = include_bytes!(
 );
 const DETACH_ENVIRONMENT: &str = "cjson_detach_entry_and_interference_v1";
 
-fn root() -> &'static Path {
-    Path::new(concat!(env!("CARGO_MANIFEST_DIR"), "/../.."))
+fn root() -> PathBuf {
+    Path::new(env!("CARGO_MANIFEST_DIR")).join("../..")
 }
 
 fn record() -> serde_json::Value {
