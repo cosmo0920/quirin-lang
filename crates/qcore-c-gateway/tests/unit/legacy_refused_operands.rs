@@ -152,7 +152,7 @@ fn line_reads_key_every_line_a_statement_spans() {
         "x", "=", "f", "(", "a", ",", "b", ")", "+", "c", ";", "y", "=", "d", ";",
     ];
     let lines = [10, 10, 10, 10, 10, 10, 11, 11, 11, 11, 11, 12, 12, 12, 12];
-    let reads = line_reads(&texts, &lines);
+    let reads = line_reads(&texts, &lines, &BTreeSet::new());
     assert_eq!(reads[&10].statement.get("c"), Some(&HandOn::Escape));
     assert_eq!(reads[&11].statement.get("a"), Some(&HandOn::Call));
     assert!(!reads[&12].statement.contains_key("a"));
@@ -169,7 +169,7 @@ fn a_condition_and_the_statements_of_one_macro_line_are_kept_apart() {
         "stderr", ",", "\"…\"", ")", ";", "return", "1", ";", "}",
     ];
     let lines = [7; 24];
-    let reads = line_reads(&texts, &lines);
+    let reads = line_reads(&texts, &lines, &BTreeSet::new());
     assert_eq!(reads[&7].condition.get("part"), Some(&HandOn::Call));
     assert!(!reads[&7].statement.contains_key("part"));
     assert_eq!(reads[&7].statement.get("stderr"), Some(&HandOn::Call));
@@ -178,7 +178,7 @@ fn a_condition_and_the_statements_of_one_macro_line_are_kept_apart() {
 #[test]
 fn a_braceless_body_is_a_statement_not_its_condition() {
     let texts = ["if", "(", "x", ")", "destroy", "(", "p", ")", ";"];
-    let reads = line_reads(&texts, &[3; 9]);
+    let reads = line_reads(&texts, &[3; 9], &BTreeSet::new());
     assert_eq!(reads[&3].statement.get("p"), Some(&HandOn::Call));
     assert!(!reads[&3].condition.contains_key("p"));
     assert_eq!(reads[&3].condition.get("x"), Some(&HandOn::Operand));
@@ -189,7 +189,108 @@ fn a_for_header_goes_to_both_tables() {
     let texts = [
         "for", "(", "i", "=", "0", ";", "i", "<", "n", ";", "i", "++", ")", "{", "}",
     ];
-    let reads = line_reads(&texts, &[4; 15]);
+    let reads = line_reads(&texts, &[4; 15], &BTreeSet::new());
     assert!(reads[&4].condition.contains_key("n"));
     assert!(reads[&4].statement.contains_key("n"));
+}
+
+// -- Card CAST-BEFORE-AMPERSAND-READ-AS-BINARY (rule 74f) --------------------
+
+fn among(statement: &str, objects: &[&str]) -> Vec<String> {
+    let tokens = statement.split_whitespace().collect::<Vec<_>>();
+    let objects = objects.iter().map(|name| (*name).to_owned()).collect();
+    handed_on_among(&tokens, &objects).into_keys().collect()
+}
+
+/// The ledger shape: `(T *) &x->f` hands on the address chain, `x` and every
+/// prefix, not the value of `x->f` alone. FAILS at the base, which read the
+/// `&` after the `)` as a binary AND and handed on `x->f` only.
+#[test]
+fn a_cast_before_an_address_hands_on_the_chain() {
+    for statement in [
+        "k_link ( ( T * ) & x - > f )",
+        "y = ( T * ) & x - > f",
+        "return ( T * ) & x - > f",
+    ] {
+        let handed = among(statement, &[]);
+        for place in ["x", "x->f"] {
+            assert!(
+                handed.contains(&place.to_owned()),
+                "{place} in {handed:?}: {statement}"
+            );
+        }
+    }
+}
+
+/// `(struct s *) &v.f`, `(void) &x->f`, `(const char **) &x->f` and the
+/// nested type names: every scalar or `void` cast is read as a cast. FAILS
+/// at the base.
+#[test]
+fn every_cast_spelling_hands_on_the_chain() {
+    for (statement, root) in [
+        ("y = ( struct s * ) & v . f", "v"),
+        ("( void ) & x - > f", "x"),
+        ("y = ( const char * * ) & x - > f", "x"),
+        ("y = ( void ( * ) ( int , . . . ) ) & x - > f", "x"),
+        ("y = ( char ( * ) [ 4 ] ) & x - > f", "x"),
+    ] {
+        assert!(
+            among(statement, &[]).contains(&root.to_owned()),
+            "{statement}"
+        );
+    }
+    // A plain `&v` hands on `v` under either reading.
+    assert!(among("y = ( struct s * ) & v", &[]).contains(&"v".to_owned()));
+}
+
+/// A typedef-name cast `(my_t *) &x->f` and `(my_t) &x->f`: a name the
+/// function does not declare as an object may be a type, so the group is a
+/// cast. FAILS at the base for both.
+#[test]
+fn a_typedef_name_cast_hands_on_the_chain() {
+    for statement in ["y = ( my_t * ) & x - > f", "y = ( my_t ) & x - > f"] {
+        assert!(
+            among(statement, &["x"]).contains(&"x".to_owned()),
+            "{statement}"
+        );
+    }
+}
+
+/// `(a) & b` with `a` a declared object is a parenthesised value and a binary
+/// AND: it hands on `a` and the value of `b`'s chain, not `b`. Undecided
+/// (`a` not known as an object), it is read as a cast.
+#[test]
+fn a_parenthesised_object_before_an_ampersand_is_binary() {
+    assert_eq!(among("y = ( a ) & b", &["a", "b"]), ["a", "b"]);
+    assert_eq!(among("y = ( a ) & b - > f", &["a", "b"]), ["a", "b->f"]);
+    assert_eq!(among("y = ( a ) & b - > f", &["b"]), ["a", "b", "b->f"]);
+}
+
+/// A call's result before `&` is a value: `f(x) & mask` is binary, and so is
+/// a call through an expression or a group holding an operator.
+#[test]
+fn a_call_result_or_an_expression_before_an_ampersand_is_binary() {
+    assert_eq!(among("y = f ( x ) & mask", &[]), ["mask", "x"]);
+    assert_eq!(among("y = f ( x ) & m - > g", &[]), ["m->g", "x"]);
+    assert_eq!(
+        among("y = ( * fp ) ( x ) & m - > g", &[]),
+        ["*fp", "m->g", "x"]
+    );
+    assert_eq!(among("y = ( a + 1 ) & m - > g", &[]), ["a", "m->g"]);
+    assert_eq!(among("y = ( s . n ) & m - > g", &[]), ["m->g", "s.n"]);
+}
+
+/// The objects the publication facts pass: formals, locals and file-scope
+/// objects, less every name a typedef spells.
+#[test]
+fn the_value_names_exclude_every_typedef_spelling() {
+    let unit = "typedef struct s my_t ; typedef int a ; int g ; int a ;"
+        .split(' ')
+        .collect::<Vec<_>>();
+    let declared = BTreeSet::from(["n".to_owned()]);
+    let file = crate::publication::file_scope_objects(&unit);
+    let formals = BTreeSet::from(["p".to_owned()]);
+    let names = crate::publication::value_names(&unit, &declared, &file, &formals);
+    // `a` is both an object and typedef-spelled, so it stays undecided.
+    assert_eq!(names.into_iter().collect::<Vec<_>>(), ["g", "n", "p"]);
 }

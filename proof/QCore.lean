@@ -70,6 +70,7 @@ import QCore.CandidateComposition
 import QCore.CapacityBoundary
 import QCore.CarriedPublication
 import QCore.CastActualPlace
+import QCore.CastBeforeAmpersand
 import QCore.CastRepresentation
 import QCore.CastReturnEscape
 import QCore.CastSemantics

@@ -389,3 +389,45 @@ fn a_refused_return_of_the_identity_withdraws_it() {
     assert_eq!(status, "Unsafe", "{keys:?}");
     assert!(keys.iter().any(|key| key == "leak"), "{keys:?}");
 }
+
+// -- Card CAST-BEFORE-AMPERSAND-READ-AS-BINARY (rule 74f) --------------------
+
+/// An interior address handed on under a cast counts as the identity, as the
+/// uncast `k_link(&b->item)` does above: `(void *) &b->item` is a cast, not a
+/// binary AND of a group and `b->item`. FAILS at the base (`Unsafe`, the leak
+/// of `b` claimed: the `&` after the `)` was read as binary, so only the
+/// value `b->item` was handed on). A typedef-name cast is read the same way.
+#[test]
+fn a_cast_interior_address_hand_on_withdraws_the_accusation() {
+    if !clang_available() {
+        return;
+    }
+    for body in [
+        "void k_link(void *p); void w(void) { struct k_box *b = k_alloc(1); if (!b) return; \
+         k_link((void *) &b->item); }",
+        "void k_link(void *p); void w(void) { struct k_box *b = k_alloc(1); if (!b) return; \
+         k_link((struct k_box *) &b->item); }",
+        "typedef void *k_any; void k_link(void *p); void w(void) { struct k_box *b = k_alloc(1); \
+         if (!b) return; k_link((k_any) &b->item); }",
+    ] {
+        let (status, keys) = outcome(body);
+        assert_eq!(status, "Unknown", "{keys:?}\n{body}");
+        assert!(!keys.iter().any(|key| key == "leak"), "{keys:?}\n{body}");
+    }
+}
+
+/// The control: a call's result before `&` is a value, so `k_mask(q->n) &
+/// b->n` hands on the value `b->n` only, and the refused statement keeps the
+/// accusation exactly as a member value read does.
+#[test]
+fn a_call_result_before_an_ampersand_keeps_the_accusation() {
+    if !clang_available() {
+        return;
+    }
+    let (status, keys) = outcome(
+        "long k_mask(long n); void w(struct k_box *q) { struct k_box *b = k_alloc(1); \
+         if (!b) return; q->n = k_mask(q->n) & b->n; }",
+    );
+    assert_eq!(status, "Unsafe", "{keys:?}");
+    assert!(keys.iter().any(|key| key == "leak"), "{keys:?}");
+}

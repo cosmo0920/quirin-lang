@@ -79,6 +79,117 @@ pub(crate) fn unary_address_runs<S: AsRef<str>>(body: &[S]) -> Vec<usize> {
     after
 }
 
+/// The keywords whose `(` opens a controlling expression or an operand, not
+/// an argument list: a group after them is read as any other group.
+const NON_CALLEE_HEADS: &[&str] = &[
+    "return", "case", "if", "while", "switch", "for", "else", "do",
+];
+
+fn is_name(text: &str) -> bool {
+    text.chars()
+        .next()
+        .is_some_and(|first| first == '_' || first.is_ascii_alphabetic())
+        && text
+            .chars()
+            .all(|ch| ch == '_' || ch.is_ascii_alphanumeric())
+}
+
+/// Card **CAST-BEFORE-AMPERSAND-READ-AS-BINARY** (rule 74f): whether the `)`
+/// at `close` may end a cast `( type-name )`, so that a single `&` after it is
+/// the unary address operator, not a binary AND.
+///
+/// The one cast detector of the unfused token stream, shared by every reader
+/// that decides a single `&` by the token before it
+/// (`legacy_refused_operands::handed_on`, `legacy_call_instantiation`'s
+/// `residual_takes_an_address`). A token reading cannot always tell a cast
+/// from a parenthesised expression (`(a) & b` is either, by whether `a` names
+/// a type), so the answer leans to the cast, which reads more addresses:
+///
+/// * **not a cast** (binary): the group is an argument list (its `(` follows
+///   a name that is no control keyword, a `)` or a `]`: `f(x) & mask`,
+///   `(*fp)(x) & m`); or it holds a token no scalar cast's type name holds at
+///   its top level (an operator other than `*`, a literal, `[`, `.`, `,`: `(a
+///   + b) & m`, `(s.f) & m`, `(p[0]) & m`), or, nested, any token besides
+///   names, `*`, brackets, numbers, `,` and `...`; or it is a single name in
+///   `objects` (the function's declared objects, minus every name any
+///   typedef spells: `(a) & b` with `a` a variable);
+/// * **may be a cast** (unary): everything else, an unmatched `)` and an
+///   undecided `(a)` included.
+///
+/// C11 6.5.4p2 confines a cast's type name to a scalar type or `void`, so
+/// brackets, numbers and `,` appear only inside a nested declarator group
+/// (`(char (*)[4])`, `(void (*)(int, ...))`).
+pub(crate) fn may_close_a_cast<S: AsRef<str>>(
+    texts: &[S],
+    close: usize,
+    objects: &std::collections::BTreeSet<String>,
+) -> bool {
+    if texts.get(close).map(AsRef::as_ref) != Some(")") {
+        return false;
+    }
+    let mut depth = 0usize;
+    let mut open = None;
+    for at in (0..close).rev() {
+        match texts[at].as_ref() {
+            ")" => depth += 1,
+            "(" if depth == 0 => {
+                open = Some(at);
+                break;
+            }
+            "(" => depth -= 1,
+            _ => {}
+        }
+    }
+    let Some(open) = open else {
+        return true;
+    };
+    if let Some(head) = open.checked_sub(1).map(|at| texts[at].as_ref())
+        && ((is_name(head) && !NON_CALLEE_HEADS.contains(&head)) || matches!(head, ")" | "]"))
+    {
+        return false;
+    }
+    let inner = &texts[open + 1..close];
+    if let [name] = inner
+        && objects.contains(name.as_ref())
+    {
+        return false;
+    }
+    let mut depth = 0usize;
+    // A nested declarator group closed at the top level: `(char (*)[4])`
+    // continues with its array declarator there.
+    let mut declarator = false;
+    for (at, text) in inner.iter().enumerate() {
+        let text = text.as_ref();
+        let dot = |other: Option<&S>| other.is_some_and(|other| other.as_ref() == ".");
+        let ellipsis = text == "..."
+            || (text == "." && (dot(inner.get(at + 1)) || at > 0 && dot(inner.get(at - 1))));
+        let number = text.as_bytes().first().is_some_and(u8::is_ascii_digit);
+        let allowed = match text {
+            "(" => {
+                depth += 1;
+                true
+            }
+            ")" => {
+                depth = depth.saturating_sub(1);
+                declarator |= depth == 0;
+                true
+            }
+            "*" => true,
+            _ if is_name(text) => true,
+            "[" | "]" if declarator => true,
+            _ if number && declarator => true,
+            _ if depth == 0 => false,
+            "[" | "]" | "," => true,
+            _ if number => true,
+            _ => ellipsis,
+        };
+        if !allowed {
+            return false;
+        }
+    }
+    true
+}
+
 /// The files whose readers decide address-taking from the unfused token
 /// stream through this module, with the number of call sites in each and the
 /// class of the reading each replaced (`QCore.AmpersandRunParity.readers`
@@ -102,9 +213,9 @@ pub(crate) const READERS: &[(&str, usize, &str)] = &[
     ("legacy_retention_guard.rs", 1, "fail-closed"),
     ("legacy_reference_count.rs", 1, "fail-closed"),
     ("legacy_slot_move_borrow.rs", 1, "fail-closed"),
-    ("legacy_refused_operands.rs", 1, "fail-closed"),
+    ("legacy_refused_operands.rs", 2, "fail-closed+cast"),
     ("legacy_in_place_custody.rs", 1, "fail-closed"),
-    ("legacy_call_instantiation.rs", 1, "fail-closed"),
+    ("legacy_call_instantiation.rs", 2, "fail-closed+cast"),
 ];
 
 /// `(tokens, index of the operand, run ends in an & operator?, run ends in
@@ -123,9 +234,41 @@ pub(crate) const DECISION_VECTORS: &[(&str, usize, bool, bool)] = &[
     ("p & & & & q", 5, false, true),
 ];
 
+/// `(tokens, index of the `)`, declared objects, may close a cast?)`: the
+/// vectors `QCore.CastBeforeAmpersand.castVectors` restates by class.
+#[cfg(test)]
+pub(crate) const CAST_VECTORS: &[(&str, usize, &[&str], bool)] = &[
+    ("( T * ) & x", 3, &[], true),
+    ("( struct s * ) & v", 4, &[], true),
+    ("( void ) & x", 2, &[], true),
+    ("( my_t ) & x", 2, &["x"], true),
+    ("( a ) & b", 2, &[], true),
+    ("( a ) & b", 2, &["a"], false),
+    ("f ( x ) & mask", 3, &[], false),
+    ("( * fp ) ( x ) & m", 6, &[], false),
+    ("( a + 1 ) & m", 4, &[], false),
+    ("( p [ 0 ] ) & m", 5, &[], false),
+    ("( s . n ) & m", 4, &[], false),
+    ("( void ( * ) ( int , . . . ) ) & f", 12, &[], true),
+    ("( char ( * ) [ 4 ] ) & b", 8, &[], true),
+    ("return ( T * ) & x", 4, &[], true),
+    ("sizeof ( T ) & x", 3, &[], false),
+    ("T * ) & x", 2, &[], true),
+];
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn rule_74f_cast_vectors_hold() {
+        for (source, close, objects, cast) in CAST_VECTORS {
+            let body = source.split(' ').collect::<Vec<_>>();
+            assert_eq!(body[*close], ")", "{source}");
+            let objects = objects.iter().map(|name| (*name).to_owned()).collect();
+            assert_eq!(may_close_a_cast(&body, *close, &objects), *cast, "{source}");
+        }
+    }
 
     #[test]
     fn rule_74e_decision_vectors_hold() {

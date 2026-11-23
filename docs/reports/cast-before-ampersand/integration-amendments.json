@@ -1,0 +1,25 @@
+{
+ "schema": "quirin-amendments/2",
+ "card": "CAST-BEFORE-AMPERSAND-READ-AS-BINARY",
+ "base": "d7540d746",
+ "measured_tip": "5f0d4b7b7",
+ "profiles": [],
+ "increment_paragraph": "**CAST-BEFORE-AMPERSAND-READ-AS-BINARY** (USER DECISION 2026-11-23: \"launch the cast-before-ampersand card\"; gateway rule 74f, extending rule 74e; `QCore.CastBeforeAmpersand`; [report](../../reports/cast-before-ampersand/README.md)). Re-census of the r59 readers: two decide a single `&` by the token before it. The refused hand-on (`legacy_refused_operands`) counted `)` as an operand end, so `(T *) &x->f` handed on `x->f` alone instead of the address chain (unsound, fixed); rule 5j's `residual_takes_an_address` was cast-aware but its `is_cast_close` missed function-pointer and pointer-to-array casts. Both now call one detector, `ampersand_runs::may_close_a_cast`: an argument list, a group holding an expression-only token, or a single declared object is binary; every other group, the undecided `(a)` included, is a cast. The refused hand-on reads the function's declared objects less every typedef-spelled name (`publication::value_names`). The other 26 rule 74e call sites read any odd run as an address, and rule 71's two-`&` reading cannot follow a cast, so both are correct. Fixtures pin `(T *) &x->f`, `(struct s *) &v`, `(void) &x`, a typedef-name cast, `(a) & b` as variable and undecided, and `f(x) & mask`; the cast fixtures and an end-to-end leak withdrawal fail at the base. No pin moved. Opt-in `current --monkey-linked` over Fluent Bit 046accf6, each run on its own tree and binary: base d7540d746 and tip 5f0d4b7b7 both 1,172/2/3,622/8, no status or leaf change. Scoped gate at 5f0d4b7b7: all 8 steps 0 (9,948 passed, 488 Lean audits, 807 Python tests). Pinned routes not runnable on the host; no move predicted.",
+ "status_edits": [],
+ "ledger": [
+  {
+   "id": "CAST-BEFORE-AMPERSAND-READ-AS-BINARY",
+   "operation": "retire",
+   "why": "Discharged by CAST-BEFORE-AMPERSAND-READ-AS-BINARY (rule 74f): both readers that decide a single `&` by the preceding `)` (legacy_refused_operands::handed_on, legacy_call_instantiation::residual_takes_an_address) call the one detector crates/qcore-c-gateway/src/ampersand_runs.rs `may_close_a_cast`, with an undecided group read as a cast; every r59 reader is classified (report §1); `(T *) &x->f`, `(a) & b` and the other required spellings are pinned in unit tests and crates/qcore-c-gateway/tests/leak_pin_audit.rs, the cast fixtures failing at the base; the opt-in corpus measurement shows no move.",
+   "source": "docs/reports/cast-before-ampersand/README.md"
+  },
+  {
+   "id": "CAST-BEFORE-STAR-READ-AS-BINARY",
+   "operation": "register",
+   "source": "docs/reports/cast-before-ampersand/README.md",
+   "recorded_by": "CAST-BEFORE-AMPERSAND-READ-AS-BINARY",
+   "title": "`legacy_refused_operands` and `aggregate_store` read a `*` after a cast's `)` as binary",
+   "text": "CAST-BEFORE-AMPERSAND-READ-AS-BINARY fixed the `&` half of `ends_operand`. The same test decides a `*` before a name: crates/qcore-c-gateway/src/legacy_refused_operands.rs `dereference` reads `(char *) *p` as a multiplication and hands on `p` instead of `*p` (the identity stored in `*p` is missed, the unsound direction for the refused hand-on), and crates/qcore-c-gateway/src/aggregate_store.rs premise 4 (`dereferenced`, which excludes a `*` after `)`) reads `(T) *b` as no dereference (direction not assessed). DISCHARGE: read `) *` through `ampersand_runs::may_close_a_cast`, pin `(char *) *p` and `f(x) * n`, measure the corpus."
+  }
+ ]
+}
