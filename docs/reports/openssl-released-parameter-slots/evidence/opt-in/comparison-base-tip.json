@@ -1,0 +1,40 @@
+{
+ "before": "private/opt-in/base-1/resource-diagnostics.json",
+ "after": "private/opt-in/tip-1/resource-diagnostics.json",
+ "function_totals": {
+  "before": {
+   "Pending": 2,
+   "Safe": 1171,
+   "Unknown": 3623,
+   "Unsafe": 8
+  },
+  "after": {
+   "Pending": 2,
+   "Safe": 1171,
+   "Unknown": 3623,
+   "Unsafe": 8
+  }
+ },
+ "unit_totals": {
+  "before": {
+   "Unknown": 161,
+   "Safe": 9,
+   "Unsafe": 7,
+   "data_only": 4
+  },
+  "after": {
+   "Unknown": 161,
+   "Safe": 9,
+   "Unsafe": 7,
+   "data_only": 4
+  }
+ },
+ "unmatched": {
+  "before_only": [],
+  "after_only": []
+ },
+ "rows_changed": 0,
+ "content_changes": [],
+ "moves": [],
+ "unit_moves": []
+}

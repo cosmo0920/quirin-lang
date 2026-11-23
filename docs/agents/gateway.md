@@ -6211,7 +6211,9 @@ own anchor here.
     TAG.FIELD, F)` and `resource_callback_slot_invoked(OBJ, TAG.FIELD, A…)`
     are the member forms marked `slot` (`CallbackClause::MemberInvoked` /
     `MemberRegistered` with `slot: true`; one field below the tag, a
-    borrowed parameter object, no `supplied_owned`, no id). A slot is decided
+    borrowed parameter object (or, since card
+    OPENSSL-RELEASED-PARAMETER-SLOTS, a released one for an invocation,
+    below), no `supplied_owned`, no id). A slot is decided
     only over the run's facts (`Parser::member_candidates` refuses one
     without them), only while no unit of the run defines `struct TAG` and
     only when a declaration registers it
@@ -6492,9 +6494,10 @@ own anchor here.
     USER DECISION 2026-11-21 "Both conjuncts").
     The free audit lists each free's teardown slots and what it leaves; a
     free names the free statement exactly when something is left
-    (`EVP_PKEY_free`, `X509_free`, `ENGINE_free` drop it), and a free
-    releasing its argument (`PKCS12_free`, `EVP_MD_CTX_free`) states no
-    slot and names the released free's statement. No gateway code
+    (`EVP_PKEY_free`, `X509_free`, `ENGINE_free` drop it); a free
+    releasing its argument (`PKCS12_free`, `EVP_MD_CTX_free`) stated no
+    slot and named the released free's statement until card
+    OPENSSL-RELEASED-PARAMETER-SLOTS (below). No gateway code
     changed; the slots decide over the run's registrations like every
     opaque slot. **Do not** declare a teardown setter without stating its
     slot at every free that runs it: a declared setter makes its functions
@@ -6505,6 +6508,48 @@ own anchor here.
     `a_left_item_keeps_the_premise`, `nothing_left_drops_the_premise`,
     `the_stated_slots_are_the_audited`);
     [report](../reports/openssl-free-remaining-indirect-callbacks/README.md).
+
+    **A slot invocation through a released parameter** (card
+    OPENSSL-RELEASED-PARAMETER-SLOTS, amended in place; contract
+    specification C04.19.3 "Through a released parameter"; USER DECISION
+    2026-11-23). `resource_callback_slot_invoked(OBJ, TAG.FIELD, A…)` may
+    name a parameter the declaration releases (`resource_released`, no
+    kind; `contract_callback.rs`), read before the release as the member
+    form reads one. Such a declaration states nothing beside its custody
+    contract and premises but slot invocations (`contract_loader.rs`: a
+    retention, reset, slot move, reference clause, arm, constructed state,
+    hand-off, member-path state or helper, cell, container effect,
+    literal-argument premise, return-code classes or any other callback
+    clause beside it rejects); a consumed, owned or other object still
+    rejects. The transfer applies the custody contract, the release
+    included, before the callback route, so at a call
+    (`legacy_retained_by.rs`) a candidate effect the route would apply on the
+    released object (a member-path state, a member invocation deferred to
+    its constructed state, a registry use) refuses
+    (`callback-beside-release`), and a candidate's
+    `resource_owned(nonnull)` requirement at the released position makes a
+    nullable release non-null; each slot is otherwise decided exactly as
+    above, and a use after the release refuses as before. `EVP_MD_CTX_free`
+    states the key's nine teardown slots and the digest (handed `ctx`),
+    cipher and public key method cleanups through `ctx` and drops
+    `openssl_unstated_callback_slots`; `PKCS12_free` states the key's nine
+    through `a` and names the free statement for a CRL's method alone; no
+    declaration names the released free's statement. **Do not** admit a
+    released slot object beside any other clause, apply a candidate's effect
+    on the released object after the release, or read a requirement on it
+    after the release. `QCore.OpensslReleasedSlots`
+    (`the_admission_only_grows`,
+    `the_admission_grows_only_by_released_slot_invocations_alone`,
+    `another_object_mode_still_rejects`,
+    `a_released_slot_beside_another_clause_rejects`,
+    `the_reading_is_the_object_before_the_release`,
+    `a_member_effect_beside_a_release_refuses`,
+    `a_use_after_the_release_refuses`,
+    `a_non_null_requirement_strengthens_the_release`,
+    `nothing_reads_the_object_after_the_release`,
+    `the_premises_cover_exactly_what_remains`);
+    `tests/openssl_undeclared_handshake_callbacks.rs`;
+    [report](../reports/openssl-released-parameter-slots/README.md).
 
 <a id="constraint-12o"></a>
 
