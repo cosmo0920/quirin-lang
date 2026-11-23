@@ -135,9 +135,10 @@ fn check(
         {
             return Err("catalog: outer definition/host/digest mismatch".into());
         }
-        if !held
-            .statement
-            .contains(&format!("outer-candidates:{candidate_hash}"))
+        // Card SP8-OUTER-CONTRACT-SYMBOLIC-STATEMENTS: the statement is a
+        // formula citing the inventory by its typed constant.
+        if !qcore_contract::outer_contract::candidate_inventories(&held.statement)?
+            .contains(candidate_hash)
         {
             return Err("catalog: candidate not bound by actual statement".into());
         }

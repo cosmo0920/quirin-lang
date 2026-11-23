@@ -12,7 +12,7 @@
     "contracts/librdkafka/lz4_stream.qv": "151e1f1ed18c2d0a25c9caacd6ae1e626f2bde79d7d8b0d0281d72186374a085",
     "contracts/librdkafka/memory.qv": "48f213851e643e772cc240ea4ab2340b4ce2679b00aa21b0a7159895f3067c5c",
     "contracts/librdkafka/null_deref.qv": "0fe6103811fd1401f446f2a64f7320a5769fc27df72d5824727dfdb0e2756c1c",
-    "contracts/librdkafka/outer.qv": "8851663628db59017013b33cfff05f7fed4e8ce5e384bb961c27bfc364eb4cd0",
+    "contracts/librdkafka/outer.qv": "f3ae5ffafc75fb9504227457cbc8652e6d7ec2c67aefcb062cf8ca0b49435c19",
     "contracts/librdkafka/queue_destructor.qv": "40af80979b98972380f7bb952487c5f48d9c87bb5836b9e1d7dcaa3b32ad0e86",
     "contracts/librdkafka/refcount.qv": "a2d6ec77603e5bad6075ec38998384d536b15c944d40e37ca4d2e29a118a1105",
     "contracts/librdkafka/topic_partition.qv": "1866a71138743ef768ef56429aab55f1da131508fdd9bd5304d72d603d2c8183",

@@ -15,7 +15,10 @@
 //! Runtime-only list callback candidate contracts (RK-PLUGIN-INTERCEPTOR-CANDIDATES).
 //!
 //! An inventory is a trusted, reviewable restriction, bound into the loader's
-//! outer statement by its exact digest and to reviewed source bytes. It never
+//! outer statement by its exact digest (since card
+//! SP8-OUTER-CONTRACT-SYMBOLIC-STATEMENTS the typed constant
+//! `CANDIDATES_<SHA-256>` of the statement's C04.18.9 formula) and to reviewed
+//! source bytes. It never
 //! enters the static callback registry. In particular a list is not a function
 //! pointer, and union arms are kept distinct by their list identity here.
 use std::collections::{BTreeMap, BTreeSet};
@@ -24,14 +27,15 @@ use std::path::{Component, Path};
 use std::process::Command;
 
 use qcore_contract::load_path_manifest::LoadPathManifest;
-use qcore_contract::outer_contract::{EnvelopeLine, MemberEnvelope, OuterContracts};
+use qcore_contract::outer_contract::{
+    EnvelopeLine, MemberEnvelope, OuterContracts, candidate_inventories,
+};
 use qcore_schemas::sha256_hex;
 use serde::Deserialize;
 use serde_json::{Value, json};
 
 /// Optional inventory beside a provider's outer lock.
 pub const FILE: &str = "outer-candidates.json";
-const MARKER: &str = "outer-candidates:";
 const CUSTODY: &str = "all-pointer-arguments-borrowed-no-retention-or-global-custody-effects";
 
 #[derive(Debug, Deserialize)]
@@ -255,18 +259,13 @@ fn validate_envelopes(
         let Some(statement) = &loader.statement else {
             continue;
         };
-        let references = statement
-            .split(MARKER)
-            .skip(1)
-            .map(|tail| {
-                let end = tail
-                    .find(|c: char| !c.is_ascii_hexdigit())
-                    .unwrap_or(tail.len());
-                &tail[..end]
-            })
-            .collect::<BTreeSet<_>>();
+        // Card SP8-OUTER-CONTRACT-SYMBOLIC-STATEMENTS: the statement is a
+        // C04.18.9 formula; it cites an inventory by the typed constant
+        // `CANDIDATES_<SHA-256>` (C04.20.1), read from its tree.
+        let references = candidate_inventories(statement)
+            .map_err(|e| format!("outer `{name}`: unreadable statement: {e}"))?;
         for hash in &references {
-            let Some(in_force) = inventories.get(*hash) else {
+            let Some(in_force) = inventories.get(hash) else {
                 return Err(format!(
                     "outer `{name}` cites missing candidate inventory `{hash}`"
                 ));
@@ -336,13 +335,16 @@ mod tests {
     #[test]
     fn missing_unbound_or_stale_candidate_never_covers_a_runtime_fact() {
         use qcore_contract::outer_contract::load_outer_contract_sources;
-        let hash = "a".repeat(64);
+        // Card SP8-OUTER-CONTRACT-SYMBOLIC-STATEMENTS: the statement cites the
+        // inventory by its registered typed constant.
+        let constant = qcore_contract::outer_contract::CANDIDATE_INVENTORIES[0];
+        let hash = qcore_contract::outer_contract::candidate_digest(constant).unwrap();
         let text = format!(
             r#"module contract;
 extern fn load(config: ptr<mut, u8>) -> unit
 contract {{
     requires outer_contract_v1;
-    quant #outer [[contract]] plugin, "neutral callbacks outer-candidates:{hash}";
+    quant #outer [[contract]] plugin, quant all #f in #interceptors: #f in #zero_appends({constant});
     quant #outer where #config in #loaded [[runtime]];
     quant #outer #loaded: conf.list |-> #registered;
 }};
@@ -372,12 +374,25 @@ contract {{
                 .is_empty()
         );
         let mut unbound = contracts;
-        unbound.loaders.get_mut("load").unwrap().statement = Some("neutral callbacks".into());
+        unbound.loaders.get_mut("load").unwrap().statement =
+            Some("#outer_code |-> #balanced".into());
         assert!(
             validate_envelopes(&unbound, &owners, &BTreeMap::from([(hash, true)]))
                 .unwrap_err()
                 .contains("unbound")
         );
+    }
+    /// Card SP8-OUTER-CONTRACT-SYMBOLIC-STATEMENTS: each registered candidate
+    /// inventory constant (C04.18.9's SP8 block) is the digest of a provider's
+    /// shipped inventory, and the shipped inventory's digest is registered.
+    #[test]
+    fn the_registered_inventory_constants_are_the_shipped_digests() {
+        let digest = repository_text_digest(INVENTORY.as_bytes());
+        let registered = qcore_contract::outer_contract::CANDIDATE_INVENTORIES
+            .iter()
+            .map(|c| qcore_contract::outer_contract::candidate_digest(c).unwrap())
+            .collect::<Vec<_>>();
+        assert_eq!(registered, vec![digest]);
     }
     #[test]
     fn source_pins_use_exact_reviewed_bytes_and_reject_path_traversal() {

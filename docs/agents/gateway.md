@@ -9727,6 +9727,23 @@ that only when every arriving edge has it.
     `QCore.OuterListCandidates`; `outer_candidates`' Rust tests;
     [report](../reports/rk-plugin-interceptor-candidates/README.md).
 
+    Card SP8-OUTER-CONTRACT-SYMBOLIC-STATEMENTS (USER DECISION 2026-11-20,
+    conditions as symbols, not sentences; USER DECISIONS 2026-11-23, D1 A,
+    D2 B, D3 B): a definition's statement is a C04.18.9 formula over the
+    SP8 terms, `quant #outer [[contract]] NAME, FORMULA;`, read by
+    `qcore_frontend::premise_formula::outer_header`; its identity is the
+    canonical printing, and a string statement is refused by name
+    (`QF004`) on every route. The inventory is cited by the typed constant
+    `CANDIDATES_<SHA-256>` (sort `obj`, registered in
+    `CANDIDATE_INVENTORIES` and bound to the shipped file's digest), read
+    by `outer_contract::candidate_inventories`. `flb_external_plugin`'s
+    statement is its own conjunct `&&` exactly `rk_plugin_library`'s, so
+    it entails it (`QCore.PremiseFormula.Outer.fb_entails_rk`). **Do
+    not** let any verdict, coverage or runtime contribution read a
+    statement's terms: the statement is reviewable metadata, its digest is
+    the contract identity, and only the inventory constant is checked.
+    [Report](../reports/sp8-outer-contract-symbolic-statements/README.md).
+
 <a id="constraint-32"></a>
 
 32. **A caller-frame declaration states exactly the premises its body's

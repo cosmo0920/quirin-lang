@@ -372,6 +372,7 @@ import QCore.PremiseFormula.CjsonTypedAtoms
 import QCore.PremiseFormula.FluentBit
 import QCore.PremiseFormula.Libevent
 import QCore.PremiseFormula.Librdkafka
+import QCore.PremiseFormula.Outer
 import QCore.PremiseMetadataBridge
 import QCore.PremiseRefinement
 import QCore.PrintRouteSelection

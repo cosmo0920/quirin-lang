@@ -23,11 +23,27 @@ module contract;
 // outer-candidates.json inventory; static list invocation stays unsupported.
 // Public cJSON allocator hooks are covered only by the explicit condition
 // that loaded code does not call cJSON_InitHooks or replace the global hooks.
+//
+// Card SP8-OUTER-CONTRACT-SYMBOLIC-STATEMENTS (contract specification C04.20,
+// C04.18.9's SP8 block; USER DECISION 2026-11-20, conditions as symbols, not
+// sentences; USER DECISIONS 2026-11-23, D1 A, D2 B, D3 B): the statement is a
+// formula over registered terms, conjunct by conjunct the sentence it
+// replaced (docs/reports/sp8-outer-contract-symbolic-statements/): public
+// setters and member candidates for rk_conf callbacks; interceptors appended
+// only by a candidate's setter returning 0 under the inventory constant
+// CANDIDATES_<SHA-256 of outer-candidates.json>; the neutral custody
+// restriction on every interceptor run; validity through the last possible
+// invocation of every registration and copy; the configuration and on_new
+// lifecycle; no cJSON_InitHooks call, global hook store or cJSON link store;
+// no store into librdkafka internals, no non-public symbol, public functions
+// only under their published conditions; malformed lists are the negation of
+// the list shape of the representation premise; earlier hooks satisfy
+// cjson_allocator_hooks (#allocator_hooks_premise cites it).
 
 extern fn rd_kafka_plugin_new(conf: ptr<mut, u8>, path: ptr<const, u8>, errstr: ptr<mut, u8>, errstr_size: u64) -> i32
 contract {
     requires outer_contract_v1;
-    quant #outer [[contract]] rk_plugin_library, "every library named by plugin.library.paths, including code it invokes, registers rk_conf callbacks only through public setters and only when each callback meets that member's candidate contract; it registers interceptors only through the public setters, with success result zero and each exact list/union-arm candidate in outer-candidates:5c3f8c4723832c0e9e6ebb784be6a57ebc0264d519421d5b95a18a8f68c18147; every registered interceptor and all code it invokes meets that inventory's neutral custody restriction (all pointer arguments borrowed, no release, retention, ownership transfer or global custody effects, scalar resource handles borrowed too, and every local acquisition balanced before return); registered callback code and opaque contexts remain valid through the last possible invocation, including destruction and copied on_new registrations; configuration interceptors are installed on a live configuration and client interceptors only from on_new before initialization completes, never on share consumers; it calls cJSON_InitHooks nowhere and does not replace cJSON's global allocator hooks; it neither mutates cJSON child, prev or next links directly nor passes malformed cJSON lists to an API call; it never directly stores into librdkafka internal members (including callback fields, op fields, broker and rule-14t links, queues and list links); it invokes no non-public librdkafka symbol and calls public APIs only under their published conditions; any allocator hooks installed before this library loads satisfy cjson_allocator_hooks";
+    quant #outer [[contract]] rk_plugin_library, (quant all #f in #conf_registrations: #f in #public_setter_values && #f in #meets_candidate) && (quant all #f in #interceptors: #f in #zero_appends(CANDIDATES_5C3F8C4723832C0E9E6EBB784BE6A57EBC0264D519421D5B95A18A8F68C18147)) && (quant all #f in #interceptors: #f |-> (#inert && #borrows_args && #borrows_handles && #no_global_custody && #balanced)) && (quant all #f in #copies(#conf_registrations | #interceptors): #f in #valid_through_last) && (quant all #f in #interceptors: (#f in #conf_lifecycle(CANDIDATES_5C3F8C4723832C0E9E6EBB784BE6A57EBC0264D519421D5B95A18A8F68C18147) -> #f in #on_live_conf) && (#f in #client_lifecycle(CANDIDATES_5C3F8C4723832C0E9E6EBB784BE6A57EBC0264D519421D5B95A18A8F68C18147) -> #f in #from_on_new && #f in #before_init && #f in #client_lifecycle(CANDIDATES_5C3F8C4723832C0E9E6EBB784BE6A57EBC0264D519421D5B95A18A8F68C18147) \ #on_share_consumer)) && #outer_code |-> (#calls_none(#cjson_init_hooks) && #stores_none(#cjson_global_hooks) && #stores_none(#cjson_link_cells) && #stores_none(#rk_internal) && #calls_none(#rk_nonpublic) && #meets_published(#rk_public)) && (quant all #a in #cjson_handed: (quant all #c in #child(#a): #c in #first(#a)) && (quant all #c in #first(#a): #c in #child(#a)) && (quant all #b in #children(#a): quant all #p in #pred(#a, #b): #b in #next(#p)) && (quant all #c in #children(#a): #c in #next_reach(#c) -> #false) && ((quant all #c in #child(#a): #false) -> quant all #c in #children(#a): #false) && ((quant all #c in #children(#a): #false) -> quant all #c in #child(#a): #false) && (quant all #b in #children(#a): quant all #p in #pred(#a, #b): #p in #prev(#b)) && (quant all #f in #first(#a): quant all #l in #last(#a): #l in #prev(#f)) && #nodup(#a) && (quant all #c in #children(#a): quant all #y in #next(#c) | #prev(#c): #y in #children(#a)) && (quant all #l in #last(#a): quant all #y in #next(#l): #false) && (#a in #children(#a) -> #false)) && #allocator_hooks_premise;
     quant #outer where #conf in #loaded [[runtime]] when #result == 0;
     quant #outer #loaded: rd_kafka_conf_s.interceptors.on_conf_set |-> #registered;
     quant #outer #loaded: rd_kafka_s.rk_conf.interceptors.on_conf_set |-> #registered;

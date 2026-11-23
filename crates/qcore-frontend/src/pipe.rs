@@ -1022,7 +1022,10 @@ fn result_set_spans(program: &SourceProgram) -> Vec<Span> {
 /// metadata, nothing lowers it and no verdict reads it. A clause the reader
 /// does not accept (a malformed formula; a string statement is refused at
 /// parse since card SP5-GLOBAL-PROSE-PREMISE-BAN, so never reaches here)
-/// gets no span, so its operators keep refusing here.
+/// gets no span, so its operators keep refusing here. Card
+/// SP8-OUTER-CONTRACT-SYMBOLIC-STATEMENTS adds the expression span of every
+/// `quant #outer [[contract]] NAME, FORMULA;` definition whose statement
+/// [`crate::premise_formula::outer_header`] accepts (C04.20).
 fn premise_formula_spans(program: &SourceProgram) -> Vec<Span> {
     program
         .declarations
@@ -1030,15 +1033,30 @@ fn premise_formula_spans(program: &SourceProgram) -> Vec<Span> {
         .filter_map(|declaration| declaration.value.function_contract.as_ref())
         .flat_map(|contract| &contract.clauses)
         .filter(|clause| {
-            clause.value.kind == SourceContractClauseKind::Requires
-                && crate::lexer::lex(&clause.value.expression_source).is_ok_and(|tokens| {
-                    let kinds = tokens
+            let kinds = || {
+                crate::lexer::lex(&clause.value.expression_source).map(|tokens| {
+                    tokens
                         .into_iter()
                         .map(|token| token.kind)
                         .filter(|kind| *kind != TokenKind::Eof)
-                        .collect::<Vec<_>>();
-                    matches!(crate::premise_formula::premise_clause(&kinds), Ok(Some(_)))
+                        .collect::<Vec<_>>()
                 })
+            };
+            match clause.value.kind {
+                SourceContractClauseKind::Requires => kinds().is_ok_and(|kinds| {
+                    matches!(crate::premise_formula::premise_clause(&kinds), Ok(Some(_)))
+                }),
+                // Card SP8-OUTER-CONTRACT-SYMBOLIC-STATEMENTS: an outer
+                // contract definition's statement is a formula the same
+                // reader accepts (C04.20).
+                SourceContractClauseKind::QuantOuter => kinds().is_ok_and(|kinds| {
+                    matches!(
+                        crate::premise_formula::outer_header(&kinds),
+                        Ok(Some((_, Some(_))))
+                    )
+                }),
+                _ => false,
+            }
         })
         .map(|clause| clause.value.expression_span)
         .collect()
