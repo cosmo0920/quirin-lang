@@ -1,5 +1,5 @@
 module contract;
-// qcore-premise-binding-manifest-v1 rd_kafka_q_destroy_final rk_plugin_callback_closure 1fedf81c13c21a4a99aee3a53555c02d525eefe5f7a8e3a224388afad192580c
+// qcore-premise-binding-manifest-v1 rd_kafka_q_destroy_final rk_plugin_callback_closure d88c069b32f0c9ee47a655e7a372144f7b4abed8c13d4fd21bc8a58fdbcb9464
 
 // Upstream source: src/rdkafka_queue.c (librdkafka 2.15.0)
 // Audited mechanism: cascading queue destruction.

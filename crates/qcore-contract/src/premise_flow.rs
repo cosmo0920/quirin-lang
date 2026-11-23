@@ -200,6 +200,8 @@ fn check_model(
     {
         return Err("flow: incomplete/excess independently held model/environment domain".into());
     }
+    // Card SP10-FORMAL-BINDING-DESCRIPTIONS: typed references only (`QF005`).
+    crate::formal_binding::check_model(env, &model.atoms, &graph.atoms)?;
     for (id, binding) in &model.atoms {
         if binding.atom_sha256 != digest(&graph.atoms[id])?
             || binding.environment != env.id

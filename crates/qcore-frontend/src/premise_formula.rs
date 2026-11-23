@@ -2569,11 +2569,14 @@ pub const RENDERED_VALUE_SORTS: &[(&str, &str)] = &[
 ];
 
 /// The G01p sort of a rendered term: a value of a rendered value sort, or a
-/// predicate over rendered value sorts.
+/// predicate over rendered value sorts. Card SP10-FORMAL-BINDING-DESCRIPTIONS
+/// adds functions: an SP10 term that names an integer-valued component of a
+/// typed atom's model (an event flag), as the atoms' own parameters do.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum RenderedSort {
     Value(&'static str),
     Predicate(&'static [&'static str]),
+    Function(&'static [&'static str], &'static str),
 }
 
 impl RenderedSort {
@@ -2586,18 +2589,22 @@ impl RenderedSort {
             Self::Predicate(arguments) => G::Predicate {
                 arguments: arguments.iter().map(|s| (*s).to_owned()).collect(),
             },
+            Self::Function(arguments, result) => G::Function {
+                arguments: arguments.iter().map(|s| (*s).to_owned()).collect(),
+                result: (*result).to_owned(),
+            },
         }
     }
 }
 
 /// A term of the typed rendering that no premise formula names (C04.18.9's
-/// SP6 and SP7 blocks).
+/// SP6, SP7 and SP10 blocks).
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct RenderedTerm {
     pub name: &'static str,
     pub sort: RenderedSort,
     pub meaning: &'static str,
-    /// The card whose block introduced the term (`SP6`, `SP7`).
+    /// The card whose block introduced the term (`SP6`, `SP7`, `SP10`).
     pub block: &'static str,
 }
 
@@ -2606,6 +2613,8 @@ const NULLARY: RenderedSort = RenderedSort::Predicate(&[]);
 const OBJ1: RenderedSort = RenderedSort::Predicate(&["obj"]);
 const OBJ2: RenderedSort = RenderedSort::Predicate(&["obj", "obj"]);
 const OBJ3: RenderedSort = RenderedSort::Predicate(&["obj", "obj", "obj"]);
+/// An integer-valued event component of the plugin model (SP10).
+const EVENT_FLAG: RenderedSort = RenderedSort::Function(&["environment", "event"], "integer");
 
 /// The SP6 block, then the SP7 block.
 ///
@@ -2624,6 +2633,16 @@ const OBJ3: RenderedSort = RenderedSort::Predicate(&["obj", "obj", "obj"]);
 /// `#caller_refutes_membership` (user decision 2026-11-23,
 /// invalid_membership I2: a warrant term inside a proposition). The Lean
 /// model is `QCore.CjsonGuardedSymbols.render`.
+///
+/// SP10 (card SP10-FORMAL-BINDING-DESCRIPTIONS): the terms a binding
+/// manifest's or flow model's typed environment reference (C04.18.2,
+/// C04.18.3) needs beyond a bound atom's own parameters: the never-derived
+/// source correspondence of every other environment (E2's form), the held
+/// Context, the three property views, and the components of
+/// `QCore.PluginPremiseDecomposition`'s environment that no bound plugin atom
+/// quantifies (the cJSON hook and list components, the frame, API and
+/// pointer-forgery components). The Lean list is
+/// `QCore.FormalBindingEnvironments.sp10Terms`.
 pub const RENDERED_TERMS: &[RenderedTerm] = &[
     RenderedTerm {
         name: "runs",
@@ -2751,10 +2770,142 @@ pub const RENDERED_TERMS: &[RenderedTerm] = &[
         meaning: "`#caller_refutes_membership(p,i)`: the caller holds positive evidence that `i` is not an owned child of `p`; it entails `!#owned(p,i)` and is never derived from the absence of a membership proof (user decision 2026-11-23)",
         block: "SP7",
     },
+    RenderedTerm {
+        name: "binding_source_corresponds",
+        sort: NULLARY,
+        meaning: "the terms of a binding's environment denote what the selected source, C code and native execution actually do, and the bound Lean propositions correspond to that source: an independent assumption no model, check or content hash establishes, whose disposition stays Open (the form of environment E2, user decision 2026-11-23; Lean `FormalBindingEnvironments.Interpretation.sourceCorresponds`)",
+        block: "SP10",
+    },
+    RenderedTerm {
+        name: "held_context",
+        sort: RenderedSort::Value("verdict_context"),
+        meaning: "the nine independently held Context coordinates (artifact, property, semantic profile, scope, bounds, assumptions, source identity, build identity, evidence version) the binding is read under, compared by exact equality and never transported to another property or Context (Lean `HypothesisGraph.Context`)",
+        block: "SP10",
+    },
+    RenderedTerm {
+        name: "resource_view",
+        sort: RenderedSort::Value("property_view"),
+        meaning: "the exact independently held resource-v1 source view the bound graph is replayed from (Lean `FormalBindingEnvironments.PropertyView.resource`)",
+        block: "SP10",
+    },
+    RenderedTerm {
+        name: "null_view",
+        sort: RenderedSort::Value("property_view"),
+        meaning: "the exact independently held bounds-v1 null source view the bound graph is replayed from (Lean `FormalBindingEnvironments.PropertyView.null`)",
+        block: "SP10",
+    },
+    RenderedTerm {
+        name: "model_view",
+        sort: RenderedSort::Value("property_view"),
+        meaning: "the exact independently held declared resource-type model view the bound graph is replayed from (Lean `FormalBindingEnvironments.PropertyView.model`)",
+        block: "SP10",
+    },
+    RenderedTerm {
+        name: "hook_install",
+        sort: RenderedSort::Value("action"),
+        meaning: "a cJSON global allocator hook installation event (`cJSON_InitHooks`; Lean `QCore.PluginPremiseDecomposition.Action.hookInstall`)",
+        block: "SP10",
+    },
+    RenderedTerm {
+        name: "hook_replace",
+        sort: RenderedSort::Value("action"),
+        meaning: "a replacement of the cJSON global allocator hooks (Lean `QCore.PluginPremiseDecomposition.Action.hookReplace`)",
+        block: "SP10",
+    },
+    RenderedTerm {
+        name: "cjson_link_write",
+        sort: RenderedSort::Value("action"),
+        meaning: "a write of a cJSON item link (child, next, prev) by loaded code (Lean `QCore.PluginPremiseDecomposition.Action.cjsonLinkWrite`)",
+        block: "SP10",
+    },
+    RenderedTerm {
+        name: "cjson_call",
+        sort: RenderedSort::Value("action"),
+        meaning: "a cJSON API call by loaded code (Lean `QCore.PluginPremiseDecomposition.Action.cjsonCall`)",
+        block: "SP10",
+    },
+    RenderedTerm {
+        name: "proper_list",
+        sort: EVENT_FLAG,
+        meaning: "`#proper_list(e,ev) == 1`: the list a cJSON API call `ev` is handed is well formed (Lean `QCore.PluginPremiseDecomposition.Event.properList`)",
+        block: "SP10",
+    },
+    RenderedTerm {
+        name: "preexisting_hooks_valid",
+        sort: RenderedSort::Predicate(&["environment", "plugin"]),
+        meaning: "the allocator hooks installed before plugin `p` is loaded are valid (Lean `QCore.PluginPremiseDecomposition.Environment.preexistingHooksValid`)",
+        block: "SP10",
+    },
+    RenderedTerm {
+        name: "core_write",
+        sort: RenderedSort::Value("action"),
+        meaning: "a store by loaded code into Fluent Bit core state (Lean `QCore.PluginPremiseDecomposition.Action.coreWrite`)",
+        block: "SP10",
+    },
+    RenderedTerm {
+        name: "internal_write",
+        sort: RenderedSort::Value("action"),
+        meaning: "a store by loaded code into librdkafka internal state (Lean `QCore.PluginPremiseDecomposition.Action.internalWrite`)",
+        block: "SP10",
+    },
+    RenderedTerm {
+        name: "api_call",
+        sort: RenderedSort::Value("action"),
+        meaning: "a library API call by loaded code (Lean `QCore.PluginPremiseDecomposition.Action.apiCall`)",
+        block: "SP10",
+    },
+    RenderedTerm {
+        name: "is_rk_call",
+        sort: EVENT_FLAG,
+        meaning: "`#is_rk_call(e,ev) == 1`: the API call `ev` is a librdkafka call (Lean `QCore.PluginPremiseDecomposition.Event.isRkCall`)",
+        block: "SP10",
+    },
+    RenderedTerm {
+        name: "public_rk_symbol",
+        sort: EVENT_FLAG,
+        meaning: "`#public_rk_symbol(e,ev) == 1`: the called librdkafka symbol is public (Lean `QCore.PluginPremiseDecomposition.Event.publicRkSymbol`)",
+        block: "SP10",
+    },
+    RenderedTerm {
+        name: "api_precondition",
+        sort: EVENT_FLAG,
+        meaning: "`#api_precondition(e,ev) == 1`: the called API's public precondition holds at `ev` (Lean `QCore.PluginPremiseDecomposition.Event.apiPrecondition`)",
+        block: "SP10",
+    },
+    RenderedTerm {
+        name: "access",
+        sort: RenderedSort::Value("action"),
+        meaning: "a pointer access by loaded code (Lean `QCore.PluginPremiseDecomposition.Action.access`)",
+        block: "SP10",
+    },
+    RenderedTerm {
+        name: "handed_object",
+        sort: EVENT_FLAG,
+        meaning: "`#handed_object(e,ev) == 1`: the accessed object was handed to the loaded code (Lean `QCore.PluginPremiseDecomposition.Event.handedObject`)",
+        block: "SP10",
+    },
+    RenderedTerm {
+        name: "exported_api",
+        sort: EVENT_FLAG,
+        meaning: "`#exported_api(e,ev) == 1`: the access goes through an exported API (Lean `QCore.PluginPremiseDecomposition.Event.exportedApi`)",
+        block: "SP10",
+    },
+    RenderedTerm {
+        name: "forge",
+        sort: RenderedSort::Value("action"),
+        meaning: "a pointer creation by loaded code from a non-pointer value (Lean `QCore.PluginPremiseDecomposition.Action.forge`)",
+        block: "SP10",
+    },
+    RenderedTerm {
+        name: "forged",
+        sort: EVENT_FLAG,
+        meaning: "`#forged(e,ev) == 1`: the pointer used at `ev` is forged (Lean `QCore.PluginPremiseDecomposition.Event.forged`)",
+        block: "SP10",
+    },
 ];
 
 /// The G01p parameter sort of a name of the typed rendering: a registered
-/// C04.18.9 term in its rendered sort, or an SP6/SP7 term; `None` otherwise.
+/// C04.18.9 term in its rendered sort, or an SP6/SP7/SP10 term; `None` otherwise.
 #[must_use]
 pub fn rendered_parameter_sort(name: &str) -> Option<qcore_schemas::quant_proposition::Sort> {
     if let Some(t) = term(name) {

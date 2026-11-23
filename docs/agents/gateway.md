@@ -7859,6 +7859,28 @@ an undeclared OpenSSL producer). `QCore.NullableReferenceDrop` (12 audited,
     `absence_of_membership_is_not_refutation`,
     `source_corresponds_is_never_derived`, `guarded_vectors_agree`);
     [report](../reports/sp6-guarded-symbol-prose/README.md).
+    **Amended by card SP10-FORMAL-BINDING-DESCRIPTIONS** (contract
+    specification C04.18.2, C04.18.3, C04.18.9's SP10 block; same user
+    decision; user 2026-11-23: "Launch both"): a binding manifest's or flow
+    model's environment component is a typed environment reference (the
+    canonical JSON list of G01p parameters, each a bound typed atom's
+    parameter or a registered term in its rendered sort) or a content
+    digest, and a formal binding's quantifiers and conclusion are its typed
+    atom's parameters and formula. An English description or field is
+    refused with `QF005` on every load route (`hypothesis_bindings::resolve*`,
+    `premise_flow::compile*`, through `qcore_contract::formal_binding`). The
+    167 live manifests were migrated with their digests and markers. A
+    reference asserts no condition: "Open" qualifiers are the never-derived
+    `#source_corresponds` (the detach environment) or
+    `#binding_source_corresponds`. Binding manifests are still read by no
+    verdict. **Do not** admit an English environment description or binding
+    field, derive `#binding_source_corresponds` from any fact, or read a
+    frozen description except through the legacy reader
+    (`lift_environment`). `QCore.FormalBindingEnvironments`
+    (`sp10_terms_denote`, `every_reference_resolves`,
+    `binding_source_correspondence_is_never_derived`,
+    `environment_vectors_agree`);
+    [report](../reports/sp10-formal-binding-descriptions/README.md).
 
 <a id="constraint-13i"></a>
 

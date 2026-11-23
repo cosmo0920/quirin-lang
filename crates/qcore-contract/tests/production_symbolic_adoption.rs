@@ -129,7 +129,11 @@ fn artifacts_and_models(
         // formulas: the graph digest is each manifest's only change.
         // Card SP6-SYMBOLIC-HYPOTHESIS-ATOMS refreshed the cJSON detach one
         // again when its nine atoms became typed (`quant_binding_migration`).
+        // Card SP10-FORMAL-BINDING-DESCRIPTIONS refreshed all 167 when their
+        // environment descriptions became typed references: the description
+        // values are each manifest's only change.
         let relative = [
+            "docs/reports/sp10-formal-binding-descriptions/bindings",
             "docs/reports/sp6-symbolic-hypothesis-atoms/bindings",
             "docs/reports/sp2-symbolic-librdkafka-premises/bindings",
         ]
@@ -176,12 +180,31 @@ fn artifacts_and_models(
             artifacts.insert(path.into(), fs::read(root().join(path)).unwrap());
         }
         for name in ["__errno_location", "strerror"] {
-            let environment=EnvironmentDefinition{id:format!("assigned_{name}_reading_obligations_v1"),variables:BTreeMap::from([("site".into(),"arbitrary reading site in the original conditional ReadingEnvironment/NestedEnvironment; source binding Open".into())])};
-            let atoms = mapping["declarations"][name]["proposition_ids"]
+            // Card SP10-FORMAL-BINDING-DESCRIPTIONS: the reading site is the
+            // atoms' environment and observed-site terms, and "source binding
+            // Open" the never-derived `#binding_source_corresponds`; each
+            // binding's quantifiers and conclusion are its typed atom's.
+            let ids = mapping["declarations"][name]["proposition_ids"]
                 .as_object()
-                .unwrap()
+                .unwrap();
+            let definitions = ids
+                .keys()
+                .filter_map(|id| qcore_contract::formal_binding::definition(&g[name].atoms[id]))
+                .collect::<Vec<_>>();
+            let site = qcore_contract::formal_binding::reference_to(
+                &["binding_source_corresponds", "env", "observed"],
+                &definitions,
+            )
+            .unwrap();
+            let environment = EnvironmentDefinition {
+                id: format!("assigned_{name}_reading_obligations_v1"),
+                variables: BTreeMap::from([("site".into(), site)]),
+            };
+            let atoms = ids
                 .iter()
                 .map(|(id, prop)| {
+                    let (quantifiers, conclusion) =
+                        qcore_contract::formal_binding::derived(&g[name].atoms[id]).unwrap();
                     let binding = FormalBinding {
                         atom_sha256: qcore_schemas::sha256_hex(
                             &serde_json::to_vec(&g[name].atoms[id]).unwrap(),
@@ -196,17 +219,9 @@ fn artifacts_and_models(
                             sha256: qcore_schemas::sha256_hex(&artifacts[audit]),
                         },
                         environment: environment.id.clone(),
-                        quantifiers: vec![
-                            mapping["declarations"][name]["scope"]
-                                .as_str()
-                                .unwrap_or("each relevant original nested reading site")
-                                .into(),
-                        ],
+                        quantifiers,
                         prerequisites: vec![environment.id.clone()],
-                        conclusion: mapping["declarations"][name]["atoms"][id]
-                            .as_str()
-                            .unwrap()
-                            .into(),
+                        conclusion,
                     };
                     (id.clone(), binding)
                 })

@@ -19,7 +19,7 @@ use std::collections::BTreeMap;
 const SOURCE: &str =
     include_str!("../../../providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv");
 const MANIFEST: &[u8] = include_bytes!(
-    "../../../docs/reports/sp6-symbolic-hypothesis-atoms/bindings/27c0736584d81d659e44dd29eae891ccdc37cfeaf019a57a620fadaa73d910a1.json"
+    "../../../docs/reports/sp10-formal-binding-descriptions/bindings/2c620459ab8fd2b08dc3b8a82903efeb3836abb97a7a9bd824ab9140bed4fabe.json"
 );
 const MODEL: &[u8] = include_bytes!("../../../proof/QCore/CjsonRepresentationPremises.lean");
 const AUDIT: &[u8] = include_bytes!("../../../proof/AuditPremiseRefinement.lean");

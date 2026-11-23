@@ -201,6 +201,7 @@ import QCore.FixedScalarQuery
 import QCore.FloatPayloads
 import QCore.FloatTypes
 import QCore.Flow
+import QCore.FormalBindingEnvironments
 import QCore.FrameHelperTask
 import QCore.Frontend
 import QCore.FunctionPointerDeclarators

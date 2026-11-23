@@ -1,0 +1,1912 @@
+{
+ "card": "SP10-FORMAL-BINDING-DESCRIPTIONS",
+ "base": "2c60986b0",
+ "note": "Each recorded English environment description of the live binding manifests and the typed terms that replace it (C04.18.2, SP10): the value written is formal_binding::reference(terms), the canonical JSON list. files: the seven librdkafka modules whose binding markers premise_formula_binding_refresh --environment-descriptions patched, with both module digests. Read by that tool, by tests/support/sp2_premise_checkpoint.rs (files) and by the legacy reader tests/support/legacy_prose_premise.rs (descriptions).",
+ "descriptions": [
+  {
+   "environment": "plugin_selected_loader_trace_v1",
+   "variable": "artifact_build_symbols_abi",
+   "before": "Exact expected and actual artifact bytes, selected build/configuration, symbol addresses, descriptor/function ABI records",
+   "terms": [
+    {
+     "name": "actual_abi",
+     "sort": {
+      "kind": "function",
+      "arguments": [
+       "environment",
+       "integer"
+      ],
+      "result": "abi"
+     }
+    },
+    {
+     "name": "actual_artifact",
+     "sort": {
+      "kind": "function",
+      "arguments": [
+       "environment",
+       "plugin"
+      ],
+      "result": "digest"
+     }
+    },
+    {
+     "name": "actual_build",
+     "sort": {
+      "kind": "function",
+      "arguments": [
+       "environment",
+       "plugin"
+      ],
+      "result": "digest"
+     }
+    },
+    {
+     "name": "actual_inventory",
+     "sort": {
+      "kind": "function",
+      "arguments": [
+       "environment"
+      ],
+      "result": "digest"
+     }
+    },
+    {
+     "name": "expected_abi",
+     "sort": {
+      "kind": "function",
+      "arguments": [
+       "environment",
+       "integer"
+      ],
+      "result": "abi"
+     }
+    },
+    {
+     "name": "expected_address",
+     "sort": {
+      "kind": "function",
+      "arguments": [
+       "environment",
+       "plugin",
+       "symbol"
+      ],
+      "result": "integer"
+     }
+    },
+    {
+     "name": "expected_artifact",
+     "sort": {
+      "kind": "function",
+      "arguments": [
+       "environment",
+       "plugin"
+      ],
+      "result": "digest"
+     }
+    },
+    {
+     "name": "expected_build",
+     "sort": {
+      "kind": "function",
+      "arguments": [
+       "environment",
+       "plugin"
+      ],
+      "result": "digest"
+     }
+    },
+    {
+     "name": "expected_inventory",
+     "sort": {
+      "kind": "function",
+      "arguments": [
+       "environment"
+      ],
+      "result": "digest"
+     }
+    },
+    {
+     "name": "loader_enabled",
+     "sort": {
+      "kind": "function",
+      "arguments": [
+       "environment",
+       "family"
+      ],
+      "result": "integer"
+     }
+    },
+    {
+     "name": "required_symbol",
+     "sort": {
+      "kind": "predicate",
+      "arguments": [
+       "environment",
+       "plugin",
+       "symbol"
+      ]
+     }
+    },
+    {
+     "name": "resolved_address",
+     "sort": {
+      "kind": "function",
+      "arguments": [
+       "environment",
+       "plugin",
+       "symbol"
+      ],
+      "result": "integer"
+     }
+    }
+   ]
+  },
+  {
+   "environment": "plugin_selected_loader_trace_v1",
+   "variable": "cjson",
+   "before": "InitHooks/global hook/link write events, well-formed lists at APIs, preexisting allocator hook validity",
+   "terms": [
+    {
+     "name": "cjson_call",
+     "sort": {
+      "kind": "value",
+      "name": "action"
+     }
+    },
+    {
+     "name": "cjson_link_write",
+     "sort": {
+      "kind": "value",
+      "name": "action"
+     }
+    },
+    {
+     "name": "hook_install",
+     "sort": {
+      "kind": "value",
+      "name": "action"
+     }
+    },
+    {
+     "name": "hook_replace",
+     "sort": {
+      "kind": "value",
+      "name": "action"
+     }
+    },
+    {
+     "name": "preexisting_hooks_valid",
+     "sort": {
+      "kind": "predicate",
+      "arguments": [
+       "environment",
+       "plugin"
+      ]
+     }
+    },
+    {
+     "name": "proper_list",
+     "sort": {
+      "kind": "function",
+      "arguments": [
+       "environment",
+       "event"
+      ],
+      "result": "integer"
+     }
+    }
+   ]
+  },
+  {
+   "environment": "plugin_selected_loader_trace_v1",
+   "variable": "context",
+   "before": "Independently held nine-coordinate property-specific Context; no custody/null context transport",
+   "terms": [
+    {
+     "name": "held_context",
+     "sort": {
+      "kind": "value",
+      "name": "verdict_context"
+     }
+    }
+   ]
+  },
+  {
+   "environment": "plugin_selected_loader_trace_v1",
+   "variable": "custody",
+   "before": "Interceptor-descendant flag, pointer/scalar borrowing, local acquisitions and matched drops before activation return, no retain/transfer/global custody",
+   "terms": [
+    {
+     "name": "acquire",
+     "sort": {
+      "kind": "value",
+      "name": "action"
+     }
+    },
+    {
+     "name": "activation",
+     "sort": {
+      "kind": "function",
+      "arguments": [
+       "environment",
+       "event"
+      ],
+      "result": "activation"
+     }
+    },
+    {
+     "name": "global_custody",
+     "sort": {
+      "kind": "value",
+      "name": "action"
+     }
+    },
+    {
+     "name": "in_interceptor",
+     "sort": {
+      "kind": "function",
+      "arguments": [
+       "environment",
+       "event"
+      ],
+      "result": "integer"
+     }
+    },
+    {
+     "name": "local_resource",
+     "sort": {
+      "kind": "function",
+      "arguments": [
+       "environment",
+       "event"
+      ],
+      "result": "integer"
+     }
+    },
+    {
+     "name": "pointer_borrowed",
+     "sort": {
+      "kind": "function",
+      "arguments": [
+       "environment",
+       "event"
+      ],
+      "result": "integer"
+     }
+    },
+    {
+     "name": "release",
+     "sort": {
+      "kind": "value",
+      "name": "action"
+     }
+    },
+    {
+     "name": "resource",
+     "sort": {
+      "kind": "function",
+      "arguments": [
+       "environment",
+       "event"
+      ],
+      "result": "resource"
+     }
+    },
+    {
+     "name": "retain",
+     "sort": {
+      "kind": "value",
+      "name": "action"
+     }
+    },
+    {
+     "name": "return_boundary",
+     "sort": {
+      "kind": "function",
+      "arguments": [
+       "environment",
+       "activation"
+      ],
+      "result": "integer"
+     }
+    },
+    {
+     "name": "return_local",
+     "sort": {
+      "kind": "value",
+      "name": "action"
+     }
+    },
+    {
+     "name": "scalar_borrowed",
+     "sort": {
+      "kind": "function",
+      "arguments": [
+       "environment",
+       "event"
+      ],
+      "result": "integer"
+     }
+    },
+    {
+     "name": "transfer",
+     "sort": {
+      "kind": "value",
+      "name": "action"
+     }
+    }
+   ]
+  },
+  {
+   "environment": "plugin_selected_loader_trace_v1",
+   "variable": "frames",
+   "before": "Loaded-code core/internal writes, public API preconditions, handed-object access and pointer-forgery events",
+   "terms": [
+    {
+     "name": "access",
+     "sort": {
+      "kind": "value",
+      "name": "action"
+     }
+    },
+    {
+     "name": "api_call",
+     "sort": {
+      "kind": "value",
+      "name": "action"
+     }
+    },
+    {
+     "name": "api_precondition",
+     "sort": {
+      "kind": "function",
+      "arguments": [
+       "environment",
+       "event"
+      ],
+      "result": "integer"
+     }
+    },
+    {
+     "name": "core_write",
+     "sort": {
+      "kind": "value",
+      "name": "action"
+     }
+    },
+    {
+     "name": "exported_api",
+     "sort": {
+      "kind": "function",
+      "arguments": [
+       "environment",
+       "event"
+      ],
+      "result": "integer"
+     }
+    },
+    {
+     "name": "forge",
+     "sort": {
+      "kind": "value",
+      "name": "action"
+     }
+    },
+    {
+     "name": "forged",
+     "sort": {
+      "kind": "function",
+      "arguments": [
+       "environment",
+       "event"
+      ],
+      "result": "integer"
+     }
+    },
+    {
+     "name": "handed_object",
+     "sort": {
+      "kind": "function",
+      "arguments": [
+       "environment",
+       "event"
+      ],
+      "result": "integer"
+     }
+    },
+    {
+     "name": "internal_write",
+     "sort": {
+      "kind": "value",
+      "name": "action"
+     }
+    },
+    {
+     "name": "is_rk_call",
+     "sort": {
+      "kind": "function",
+      "arguments": [
+       "environment",
+       "event"
+      ],
+      "result": "integer"
+     }
+    },
+    {
+     "name": "public_rk_symbol",
+     "sort": {
+      "kind": "function",
+      "arguments": [
+       "environment",
+       "event"
+      ],
+      "result": "integer"
+     }
+    }
+   ]
+  },
+  {
+   "environment": "plugin_selected_loader_trace_v1",
+   "variable": "lifetime",
+   "before": "Code and opaque-context liveness at each callback including destruction; loader handle references/copies and final close order",
+   "terms": [
+    {
+     "name": "close",
+     "sort": {
+      "kind": "value",
+      "name": "action"
+     }
+    },
+    {
+     "name": "code_live",
+     "sort": {
+      "kind": "predicate",
+      "arguments": [
+       "environment",
+       "callback",
+       "integer"
+      ]
+     }
+    },
+    {
+     "name": "context_live",
+     "sort": {
+      "kind": "predicate",
+      "arguments": [
+       "environment",
+       "context",
+       "integer"
+      ]
+     }
+    },
+    {
+     "name": "copy_reference",
+     "sort": {
+      "kind": "value",
+      "name": "action"
+     }
+    },
+    {
+     "name": "destroy_callback",
+     "sort": {
+      "kind": "value",
+      "name": "action"
+     }
+    },
+    {
+     "name": "handle",
+     "sort": {
+      "kind": "function",
+      "arguments": [
+       "environment",
+       "event"
+      ],
+      "result": "handle"
+     }
+    },
+    {
+     "name": "handle_for",
+     "sort": {
+      "kind": "function",
+      "arguments": [
+       "environment",
+       "plugin"
+      ],
+      "result": "handle"
+     }
+    },
+    {
+     "name": "invoke",
+     "sort": {
+      "kind": "value",
+      "name": "action"
+     }
+    },
+    {
+     "name": "opaque",
+     "sort": {
+      "kind": "function",
+      "arguments": [
+       "environment",
+       "event"
+      ],
+      "result": "context"
+     }
+    },
+    {
+     "name": "ref_count",
+     "sort": {
+      "kind": "function",
+      "arguments": [
+       "environment",
+       "handle",
+       "integer"
+      ],
+      "result": "integer"
+     }
+    }
+   ]
+  },
+  {
+   "environment": "plugin_selected_loader_trace_v1",
+   "variable": "plugins",
+   "before": "Actual loaded artifact identities and RK/FluentC/FluentGo loader families, including transitive loaded calls",
+   "terms": [
+    {
+     "name": "fluent_c",
+     "sort": {
+      "kind": "value",
+      "name": "family"
+     }
+    },
+    {
+     "name": "fluent_go",
+     "sort": {
+      "kind": "value",
+      "name": "family"
+     }
+    },
+    {
+     "name": "fluent_proposed",
+     "sort": {
+      "kind": "predicate",
+      "arguments": [
+       "environment",
+       "plugin"
+      ]
+     }
+    },
+    {
+     "name": "loaded",
+     "sort": {
+      "kind": "predicate",
+      "arguments": [
+       "environment",
+       "plugin",
+       "family"
+      ]
+     }
+    },
+    {
+     "name": "plugin",
+     "sort": {
+      "kind": "function",
+      "arguments": [
+       "environment",
+       "event"
+      ],
+      "result": "plugin"
+     }
+    },
+    {
+     "name": "rk",
+     "sort": {
+      "kind": "value",
+      "name": "family"
+     }
+    },
+    {
+     "name": "rk_proposed",
+     "sort": {
+      "kind": "predicate",
+      "arguments": [
+       "environment",
+       "plugin"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "environment": "plugin_selected_loader_trace_v1",
+   "variable": "registration",
+   "before": "Successful public setters, exact member candidates, list/union-arm/signature candidate inventory and phase/share state",
+   "terms": [
+    {
+     "name": "conf_live",
+     "sort": {
+      "kind": "function",
+      "arguments": [
+       "environment",
+       "event"
+      ],
+      "result": "integer"
+     }
+    },
+    {
+     "name": "config_registration",
+     "sort": {
+      "kind": "function",
+      "arguments": [
+       "environment",
+       "event"
+      ],
+      "result": "integer"
+     }
+    },
+    {
+     "name": "exact_candidate",
+     "sort": {
+      "kind": "function",
+      "arguments": [
+       "environment",
+       "event"
+      ],
+      "result": "integer"
+     }
+    },
+    {
+     "name": "from_on_new",
+     "sort": {
+      "kind": "function",
+      "arguments": [
+       "environment",
+       "event"
+      ],
+      "result": "integer"
+     }
+    },
+    {
+     "name": "function",
+     "sort": {
+      "kind": "function",
+      "arguments": [
+       "environment",
+       "event"
+      ],
+      "result": "callback"
+     }
+    },
+    {
+     "name": "initialized",
+     "sort": {
+      "kind": "function",
+      "arguments": [
+       "environment",
+       "event"
+      ],
+      "result": "integer"
+     }
+    },
+    {
+     "name": "intercept",
+     "sort": {
+      "kind": "value",
+      "name": "action"
+     }
+    },
+    {
+     "name": "member",
+     "sort": {
+      "kind": "function",
+      "arguments": [
+       "environment",
+       "event"
+      ],
+      "result": "member"
+     }
+    },
+    {
+     "name": "member_candidate",
+     "sort": {
+      "kind": "predicate",
+      "arguments": [
+       "environment",
+       "member",
+       "callback"
+      ]
+     }
+    },
+    {
+     "name": "public_setter",
+     "sort": {
+      "kind": "function",
+      "arguments": [
+       "environment",
+       "event"
+      ],
+      "result": "integer"
+     }
+    },
+    {
+     "name": "register",
+     "sort": {
+      "kind": "value",
+      "name": "action"
+     }
+    },
+    {
+     "name": "result",
+     "sort": {
+      "kind": "function",
+      "arguments": [
+       "environment",
+       "event"
+      ],
+      "result": "integer"
+     }
+    },
+    {
+     "name": "share_consumer",
+     "sort": {
+      "kind": "function",
+      "arguments": [
+       "environment",
+       "event"
+      ],
+      "result": "integer"
+     }
+    },
+    {
+     "name": "static_default",
+     "sort": {
+      "kind": "predicate",
+      "arguments": [
+       "environment",
+       "member",
+       "callback"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "environment": "plugin_selected_loader_trace_v1",
+   "variable": "source_binding",
+   "before": "C/model and English/formal correspondence remain Open; hashes bind references only",
+   "terms": [
+    {
+     "name": "binding_source_corresponds",
+     "sort": {
+      "kind": "predicate",
+      "arguments": []
+     }
+    }
+   ]
+  },
+  {
+   "environment": "plugin_selected_loader_trace_v1",
+   "variable": "trace",
+   "before": "Ordered bounded complete interleaved events, with plugin actor/activation/member/opaque/handle/resource identities; completeness Open",
+   "terms": [
+    {
+     "name": "action",
+     "sort": {
+      "kind": "function",
+      "arguments": [
+       "environment",
+       "event"
+      ],
+      "result": "action"
+     }
+    },
+    {
+     "name": "activation",
+     "sort": {
+      "kind": "function",
+      "arguments": [
+       "environment",
+       "event"
+      ],
+      "result": "activation"
+     }
+    },
+    {
+     "name": "env",
+     "sort": {
+      "kind": "value",
+      "name": "environment"
+     }
+    },
+    {
+     "name": "handle",
+     "sort": {
+      "kind": "function",
+      "arguments": [
+       "environment",
+       "event"
+      ],
+      "result": "handle"
+     }
+    },
+    {
+     "name": "in_trace",
+     "sort": {
+      "kind": "predicate",
+      "arguments": [
+       "environment",
+       "event"
+      ]
+     }
+    },
+    {
+     "name": "member",
+     "sort": {
+      "kind": "function",
+      "arguments": [
+       "environment",
+       "event"
+      ],
+      "result": "member"
+     }
+    },
+    {
+     "name": "opaque",
+     "sort": {
+      "kind": "function",
+      "arguments": [
+       "environment",
+       "event"
+      ],
+      "result": "context"
+     }
+    },
+    {
+     "name": "plugin",
+     "sort": {
+      "kind": "function",
+      "arguments": [
+       "environment",
+       "event"
+      ],
+      "result": "plugin"
+     }
+    },
+    {
+     "name": "resource",
+     "sort": {
+      "kind": "function",
+      "arguments": [
+       "environment",
+       "event"
+      ],
+      "result": "resource"
+     }
+    },
+    {
+     "name": "time",
+     "sort": {
+      "kind": "function",
+      "arguments": [
+       "environment",
+       "event"
+      ],
+      "result": "integer"
+     }
+    }
+   ]
+  },
+  {
+   "environment": "plugin_selected_loader_trace_v1",
+   "variable": "property_view",
+   "before": "Exact independently held resource source view; no cross-property Context transport",
+   "terms": [
+    {
+     "name": "resource_view",
+     "sort": {
+      "kind": "value",
+      "name": "property_view"
+     }
+    }
+   ]
+  },
+  {
+   "environment": "plugin_selected_loader_trace_v1",
+   "variable": "property_view",
+   "before": "Exact independently held null source view; no cross-property Context transport",
+   "terms": [
+    {
+     "name": "null_view",
+     "sort": {
+      "kind": "value",
+      "name": "property_view"
+     }
+    }
+   ]
+  },
+  {
+   "environment": "plugin_selected_loader_trace_v1",
+   "variable": "property_view",
+   "before": "Exact independently held model source view; no cross-property Context transport",
+   "terms": [
+    {
+     "name": "model_view",
+     "sort": {
+      "kind": "value",
+      "name": "property_view"
+     }
+    }
+   ]
+  },
+  {
+   "environment": "cjson_detach_entry_and_interference_v1",
+   "variable": "callActor",
+   "before": "Exact detach invocation actor, source-to-Nat interpretation Open",
+   "terms": [
+    {
+     "name": "concurrent",
+     "sort": {
+      "kind": "predicate",
+      "arguments": [
+       "fn"
+      ]
+     }
+    },
+    {
+     "name": "runs",
+     "sort": {
+      "kind": "predicate",
+      "arguments": [
+       "fn",
+       "run"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "environment": "cjson_detach_entry_and_interference_v1",
+   "variable": "child_next_prev",
+   "before": "Entry heap maps, all relational equations explicitly assumed",
+   "terms": [
+    {
+     "name": "child",
+     "sort": {
+      "kind": "predicate",
+      "arguments": [
+       "obj",
+       "obj"
+      ]
+     }
+    },
+    {
+     "name": "next",
+     "sort": {
+      "kind": "predicate",
+      "arguments": [
+       "obj",
+       "obj"
+      ]
+     }
+    },
+    {
+     "name": "next_reach",
+     "sort": {
+      "kind": "predicate",
+      "arguments": [
+       "obj",
+       "obj"
+      ]
+     }
+    },
+    {
+     "name": "prev",
+     "sort": {
+      "kind": "predicate",
+      "arguments": [
+       "obj",
+       "obj"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "environment": "cjson_detach_entry_and_interference_v1",
+   "variable": "children",
+   "before": "Finite exact owned-child sequence at call entry, distinctness assumed separately",
+   "terms": [
+    {
+     "name": "children",
+     "sort": {
+      "kind": "predicate",
+      "arguments": [
+       "obj",
+       "obj"
+      ]
+     }
+    },
+    {
+     "name": "first",
+     "sort": {
+      "kind": "predicate",
+      "arguments": [
+       "obj",
+       "obj"
+      ]
+     }
+    },
+    {
+     "name": "last",
+     "sort": {
+      "kind": "predicate",
+      "arguments": [
+       "obj",
+       "obj"
+      ]
+     }
+    },
+    {
+     "name": "nodup",
+     "sort": {
+      "kind": "predicate",
+      "arguments": [
+       "obj"
+      ]
+     }
+    },
+    {
+     "name": "pred",
+     "sort": {
+      "kind": "predicate",
+      "arguments": [
+       "obj",
+       "obj",
+       "obj"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "environment": "cjson_detach_entry_and_interference_v1",
+   "variable": "context",
+   "before": "All nine independently held artifact/property/profile/scope/bounds/assumptions/source/build/evidence coordinates",
+   "terms": [
+    {
+     "name": "held_context",
+     "sort": {
+      "kind": "value",
+      "name": "verdict_context"
+     }
+    }
+   ]
+  },
+  {
+   "environment": "cjson_detach_entry_and_interference_v1",
+   "variable": "live",
+   "before": "Entry liveness predicate, source interpretation Open",
+   "terms": [
+    {
+     "name": "live",
+     "sort": {
+      "kind": "predicate",
+      "arguments": [
+       "obj"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "environment": "cjson_detach_entry_and_interference_v1",
+   "variable": "ownedChild",
+   "before": "Exact custody predicate at entry, source interpretation Open",
+   "terms": [
+    {
+     "name": "owned",
+     "sort": {
+      "kind": "predicate",
+      "arguments": [
+       "obj",
+       "obj"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "environment": "cjson_detach_entry_and_interference_v1",
+   "variable": "parent",
+   "before": "Call actual parent identity and entry liveness, source interpretation Open",
+   "terms": [
+    {
+     "name": "live",
+     "sort": {
+      "kind": "predicate",
+      "arguments": [
+       "obj"
+      ]
+     }
+    },
+    {
+     "name": "parent",
+     "sort": {
+      "kind": "value",
+      "name": "obj"
+     }
+    }
+   ]
+  },
+  {
+   "environment": "cjson_detach_entry_and_interference_v1",
+   "variable": "source_mapping",
+   "before": "Source/model and prose/formal equivalence Open; hashes prove reference identity only",
+   "terms": [
+    {
+     "name": "source_corresponds",
+     "sort": {
+      "kind": "predicate",
+      "arguments": []
+     }
+    }
+   ]
+  },
+  {
+   "environment": "cjson_detach_entry_and_interference_v1",
+   "variable": "trace",
+   "before": "Every interleaved step during call within exact bounds, with actor and link-write fields; source completeness Open",
+   "terms": [
+    {
+     "name": "concurrent",
+     "sort": {
+      "kind": "predicate",
+      "arguments": [
+       "fn"
+      ]
+     }
+    },
+    {
+     "name": "keeps_links",
+     "sort": {
+      "kind": "predicate",
+      "arguments": [
+       "obj",
+       "run"
+      ]
+     }
+    },
+    {
+     "name": "runs",
+     "sort": {
+      "kind": "predicate",
+      "arguments": [
+       "fn",
+       "run"
+      ]
+     }
+    }
+   ]
+  }
+ ],
+ "files": [
+  {
+   "after_sha256": "6e469183f2d28bb4704c4cc513ca83d1ca939749eb5d78c291731c36af3089b4",
+   "before_sha256": "a454826866c9c26d29023e69fc8dfe67e864e9334f87f88e3a90070d8f27932a",
+   "edits": [
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_AlterConsumerGroupOffsets_destroy rk_plugin_callback_closure 14226ce1e3fec700ec21c39ecc0b7578b2dda069df110b58d2bab0acdbd74fa3",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_AlterConsumerGroupOffsets_destroy rk_plugin_callback_closure ccd848ec0cf49b680529f5a7d5a17c03a2fbb89197b58d9b6e004f5abb02fe66"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_DeleteConsumerGroupOffsets_destroy rk_plugin_callback_closure 2a5e07852078216026578c673c15ae1ab22059bb3b999309f9929e6a56512bac",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_DeleteConsumerGroupOffsets_destroy rk_plugin_callback_closure 13b81d2db4ef48eb21f747b1db41f9045bf6ebe21adbc4d52e5c252e01be609b"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_DeleteRecords_leaders_queried_cb rk_plugin_callback_closure 690f4e562da252cf059ab84c61f6ebdb8df34863daf161e03325e13c6d75f173",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_DeleteRecords_leaders_queried_cb rk_plugin_callback_closure bca7ce889729fb27dc671bb5a3a0beae9a506186cdd332d98d8eec955c8b06ff"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_ListConsumerGroupOffsets_destroy rk_plugin_callback_closure 5ec3c01e1e449f1992519029ddc4e328b5514638a80db1c2a07abd42d87f6e9c",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_ListConsumerGroupOffsets_destroy rk_plugin_callback_closure 40da7a2ee847aaee0d9b9a1a496ced15bda80ddd4ca2496a0002b87effc3da53"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_ListOffsets_leaders_queried_cb rk_plugin_callback_closure b4653a2e6ac9c54999efc3a41aebfcd69b625b46f9889e60cbf20ddbdbde7219",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_ListOffsets_leaders_queried_cb rk_plugin_callback_closure 2a06a2f088df800f0967340034340616aebc3bb3c2a075e35b1d7e4b83a45ec5"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_admin_fanout_worker rk_plugin_callback_closure 383294da160f0a19447c9eeb470b4a95255265490dc4875b41be7d160b39a688",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_admin_fanout_worker rk_plugin_callback_closure 21efd8be58565b733963066d463da94519d80c75778f97868ebf59b502dba75f"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_admin_worker rk_plugin_callback_closure 95c28ea598aecab448efa633f613b124c784fb94975fed32e4e307fb15e10ca9",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_admin_worker rk_plugin_callback_closure d36bb6590f145df655e143c83668ab93a1236d5dca5a3ac3b7cc4c90d8a21665"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_background_queue_serve rk_plugin_callback_closure 7c5c8146d75b0d7785d1478822a4dc23ea95955cc91dbfd19e0dabf2c129a78f",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_background_queue_serve rk_plugin_callback_closure 43d5086f4af8c3c44b4a4c7855bcffefb860520a0aafb31f7562eaeefcaa9afa"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_monitor_op_cb rk_plugin_callback_closure 7284583b8397e01a2d1d1e96c0bfe9a54d709075c97ba0e411e948bdb81ce1ad",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_monitor_op_cb rk_plugin_callback_closure 9c5ee8505a5714fe39c66b55aa995f53edf3999e99336312e7f4ea6660b083d7"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_cgrp_assignor_handle_Metadata_op rk_plugin_callback_closure bde95b95713a8083192700daae4196bc42748bb22d619aab23502bd57ef2861a",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_cgrp_assignor_handle_Metadata_op rk_plugin_callback_closure 85e6bfeb00186c39b0163cde3426b9e4b0e5bcb56d36742d056f5b8219534575"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_cgrp_consumer_handle_Metadata_op rk_plugin_callback_closure e7394da43a3639fec12a87b2bd816693c9d747ea0cf5255e63cfb3cb0f75e496",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_cgrp_consumer_handle_Metadata_op rk_plugin_callback_closure 3d2b77c0b43fc631822df755b5800f323eb2f0dd875330fa26b390db172a7a78"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_cgrp_handle_Metadata_op rk_plugin_callback_closure 076b6fb03ed0c8da4d37dc7a5b5913d69a408f5cd93b7044e31e408d2c8c85dc",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_cgrp_handle_Metadata_op rk_plugin_callback_closure 5ba95b6a8a0735ad43559699051bd5d812fe40925575da6e0ca6144b8eb51999"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_cgrp_op_serve rk_plugin_callback_closure 5d7412c3efaeb241846990befaf9d8bd1f445acebd2fec85574de25b0ef790ce",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_cgrp_op_serve rk_plugin_callback_closure b5c587982b2333ade2f307734db87303b7856e902833707fec66c1977aaa5c37"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_conf_new rk_plugin_callback_closure b7eddb03488c2552dd3d558133d5f4726ae326e4fb19db9e518caab579b5ed5b",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_conf_new rk_plugin_callback_closure df8e3de6cdf16847bb22ac335e144210bdbd2a7a735d801612d2b1be57c6678d"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_conf_set_background_event_cb rk_plugin_callback_closure 07601dd980025fd90344d3d569bfd26ce09c79645d9f62f6c30888d44f1db2f8",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_conf_set_background_event_cb rk_plugin_callback_closure 58b0e32b042ee3052c58e1827817f8dfb50cd42a5da0ec5377f636e87a815bc1"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_conf_set_closesocket_cb rk_plugin_callback_closure 917d26820e85c13f7fe5bf56363d78e2e21303f6c1706bb4bf15bb19aa10aaa6",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_conf_set_closesocket_cb rk_plugin_callback_closure bfb7cb29d188253c0d2d2ff0e2cda47ecdfd53d7a328fc3935851ec4a5fa5572"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_conf_set_connect_cb rk_plugin_callback_closure c5f54e3041dabdde9cf28f6906908a673ab0c2462cded1fa70f21bf5a1dcc28f",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_conf_set_connect_cb rk_plugin_callback_closure 6e490496c8f58eaac5b15ce43ab6e70e34dc5eb87a7262e4ccbde2225c0596f2"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_conf_set_consume_cb rk_plugin_callback_closure 5f442166130847fac116416189a161622f8be54f60944ebc3f522a09de40f109",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_conf_set_consume_cb rk_plugin_callback_closure 52e8d0e6dd70dd4289eb58fc0c191dcc25e136dc74f87a13d1ccccecf86a370c"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_conf_set_dr_cb rk_plugin_callback_closure 0074b43a04b7821eaf731478a5fdc6f87ae5b70fe161665182e0f4cb7f92fb87",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_conf_set_dr_cb rk_plugin_callback_closure 64fa60d4d7d4b4baeb7a0afb789b1530d55807de79944e869200b33b4a2a2bf1"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_conf_set_dr_msg_cb rk_plugin_callback_closure af3217e38d455f9b686f79f0556cd8101b84ddddbc29887226a3996d45f4b613",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_conf_set_dr_msg_cb rk_plugin_callback_closure 487ae36d478a17d0a5eff01a833afb91b6a95ccf774b2eabc46b76e5023871b4"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_conf_set_error_cb rk_plugin_callback_closure 48a819c483888054a8e868bce573028c7d04c40b15e452ebfd7462669df9ae41",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_conf_set_error_cb rk_plugin_callback_closure 5d14d4873931fa4fb99da972d58431a77951df218bc6ec78588a2d2bb846dcab"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_conf_set_log_cb rk_plugin_callback_closure 249cea1e0bb9d229ecc43a18fb03fc34f1fe74cff08bc0114ba2c63d9fa67c99",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_conf_set_log_cb rk_plugin_callback_closure 91883f306666cabc22d80fc48327f57b3509c18e2612b4fc6ac812a3037c0e72"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_conf_set_oauthbearer_token_refresh_cb rk_plugin_callback_closure 8be9ecbfa4a4dad73418fc7eaf554abc30e20cb4d85affe6a704647bedb33c6d",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_conf_set_oauthbearer_token_refresh_cb rk_plugin_callback_closure 7bc92c6bdb82e456b2de147aec6c6e1c0c3d333813ff63d23bb352f2dc70afc3"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_conf_set_offset_commit_cb rk_plugin_callback_closure 0f0069cd9035556bef045399f66ab9d4f4c15dfa340d5f49f2ec7b8b0cec800a",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_conf_set_offset_commit_cb rk_plugin_callback_closure b6374e875530c9f4a144c8d559cb87033278ee3fbaf309bc7b20eb02d2a42902"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_conf_set_open_cb rk_plugin_callback_closure 0cf286ca001e7b7122a5eff3d432c861175a3412903fc6c0ff9c1ca5ec83b349",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_conf_set_open_cb rk_plugin_callback_closure b8a0eb01202209fe19c9dcf282d23f3fbecbea22e97ad63ef8b092b7653612ea"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_conf_set_rebalance_cb rk_plugin_callback_closure 640c1dfba2f7d71e2b78af3488d4230e365045da35f9689756dd9472c38b5b83",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_conf_set_rebalance_cb rk_plugin_callback_closure 0a1a79a86693b79397c16fb9893edafd881cbcee8c87fe48b5edaa9323763fae"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_conf_set_resolve_cb rk_plugin_callback_closure 46673af0cbc4df54eb13dcefd5188b4a2f2dd58fd9285d28ac459963eabf03a2",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_conf_set_resolve_cb rk_plugin_callback_closure fbff3ab92927713e2785e597339617fbc848592d18d9d44fd95600a3c90d761b"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_conf_set_socket_cb rk_plugin_callback_closure d7b857baf15751f4012a9b090574f115b431a134061d757d810d5902b8d0dd0b",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_conf_set_socket_cb rk_plugin_callback_closure 7a795c5109f4166d4c14f9171a83dbcc24d96114ea5be836a4af452fdf8bc8fc"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_conf_set_ssl_cert_verify_cb rk_plugin_callback_closure b3f3e33036d45c33ab8fba46f8a706e9f48440beaac656792435cae20c331200",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_conf_set_ssl_cert_verify_cb rk_plugin_callback_closure 4a4146b88be2198ee225b359e759513241ddc9724ba0ff3b579d0d8a59400751"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_conf_set_stats_cb rk_plugin_callback_closure a2ed118ee621edefd080c87a641a242f7ff1221bd4eec42d28c94026028c5431",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_conf_set_stats_cb rk_plugin_callback_closure 7bbbf4c721dbb5151d61ba573be8cf2a9f205c06298d35abd0035a854ecffc7f"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_conf_set_throttle_cb rk_plugin_callback_closure 8c2f439ccb54d806f09c6f77363ae3f89cbd0fff9dde063e057c011e1a008b5d",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_conf_set_throttle_cb rk_plugin_callback_closure bf7fc2e9f21c79fb796e81a89ec5671baf4e27ba42208eb4861f036c89ac36f4"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_consume_cb rk_plugin_callback_closure a5be82c8ae579a487eccf0fc539709cd649aa21139dd0b73ff8b29ecea23af75",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_consume_cb rk_plugin_callback_closure 3c7a3cc7575ae0f884cb80fc73558f6df98a724efa56ff921ee132bb51becb88"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_enq_once_trigger rk_plugin_callback_closure e377757e0916af9a59ea5606527b7b41b2632633482522b1782196be243e7557",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_enq_once_trigger rk_plugin_callback_closure bdb1623ca197292e627d93bb91312a7a3fa033a41dda90779a0aa7c583d7b613"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_err_action rk_plugin_callback_closure 099c9eefe8068efbafc87610742fd690a3baca9064886e6c30be77d7cf188fa4",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_err_action rk_plugin_callback_closure 32700905271d1da92bd137618f3be3d92e80b0012c312a349ae9b23da80ca2aa"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_mock_cluster_op_serve rk_plugin_callback_closure 11d51867b0f3f11aa447320613e76ec2c19e723d18673ce40211fbf517a35e43",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_mock_cluster_op_serve rk_plugin_callback_closure 46e651c0ab9b3a8e5c7ae80d6a53f09be3dcf00c2f2d9d9526c0cbf753389ed5"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_oauthbearer_refresh_op rk_plugin_callback_closure bd0773e2069c42307e959db76c1603d1168adeb19e738ad841829207ce98e2b9",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_oauthbearer_refresh_op rk_plugin_callback_closure a7517176aac198b965f3a27a5a4897b0d5a81b334f3eabb825bea40f432cf76c"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_oauthbearer_set_token_failure rk_plugin_callback_closure 7717f004835d169201665dc2be7958d7dee15c81850e081d85451f76cb7cfa72",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_oauthbearer_set_token_failure rk_plugin_callback_closure 520ac7e7d9713ffd7a9e7369123939695b1e8a2e0e68bf0122b344add7113cb1"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_oauthbearer_unsecured_token rk_plugin_callback_closure aca067588def2b747c74ebb696bc6cd9453471ae2b35d00245e7247c846e8dab",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_oauthbearer_unsecured_token rk_plugin_callback_closure 6f2c2a456c3a0f888bd1cefc2c68f1594c2fc73b2189af503b1c9769993dd048"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_offset_reset_op_cb rk_plugin_callback_closure 63dfe9c4810f021007cdcd8d7bda5cd3969f9f93ac9173bf0abb06a77218e6e4",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_offset_reset_op_cb rk_plugin_callback_closure 11296d8c7e0678dd058bb2209ff01798b8a3d09b0fe0f4f8f09f896b31b1e3e7"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_offset_validate_op_cb rk_plugin_callback_closure 2082e9833d6e4cb4f4e5c4ab78abd51ec7f3f17effba9a945d44d626be48172c",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_offset_validate_op_cb rk_plugin_callback_closure 55056dfc2a7a6ffd11a2e69d58b63c5010226d175b3e51a877d5d58d5a06f8c7"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_oidc_token_client_credentials_refresh_cb rk_plugin_callback_closure 48f6eb296c3db06a1a5f4c5a29f87e86c1adf8c91903ac02da5e8b3d6569e15d",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_oidc_token_client_credentials_refresh_cb rk_plugin_callback_closure d1958e7a3b72702a055a35c6247d0b72a7793d30825e38c148f92a993ee0dbd3"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_oidc_token_jwt_bearer_refresh_cb rk_plugin_callback_closure 98a35dd6d609794a3ea0f2164a1391dd67e1746e8233b24b47ba32eba06770fe",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_oidc_token_jwt_bearer_refresh_cb rk_plugin_callback_closure ad73d4df2e39729e4f40de620b7f255d176ba5f0d361500ebda0a84797a89f8b"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_oidc_token_metadata_aws_iam_refresh_cb rk_plugin_callback_closure feb61b2957d360fac1ec71920494d198b4501d962a3eede8a5d9490d4b0c55dc",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_oidc_token_metadata_aws_iam_refresh_cb rk_plugin_callback_closure 3f1b9d4aabc9653db80adf8eb87eccdeb10f20838cf6c667c319af175d88e693"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_oidc_token_metadata_azure_imds_refresh_cb rk_plugin_callback_closure 8b3ea5ee0e25e382838017400be3fc1bc1d4b9b0578cd6f76a3c839107a9495e",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_oidc_token_metadata_azure_imds_refresh_cb rk_plugin_callback_closure b139b22630c152a3d37f32b7d9c5c35a0be96e940cf99614a1bce3472d0e9312"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_op_destroy rk_plugin_callback_closure 8e4be6deff91fedb345262a929c497ab0aed3e5812e83f10fe97106e9f71f8da",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_op_destroy rk_plugin_callback_closure 6d828d134d816646f7c2364afbea9d6fe4c3cf1ae361023c4ff58b7088465faf"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_op_req rk_plugin_callback_closure c0db395ed47c28629b25a17d3a5811e1f8d3202f199293c8f8ca91d78925e038",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_op_req rk_plugin_callback_closure b33e7df80bf048e3e441fa2af12d2e247c8eb1e0ce0b24499c5c6b1b8afb2fec"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_op_req0 rk_plugin_callback_closure f6a821004ee3e04155c314b3b1aa53c62dbe5afa6d1999313a57038ba7faf577",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_op_req0 rk_plugin_callback_closure 95a179e25f8a53dcc3c32e1417ea1ae044f2ec015e7f0e8939d972bed02deeb5"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_op_req2 rk_plugin_callback_closure 618b86d9cd596c91089a173aa5c4306fe8638b00366b507024baf028fdbe9aa9",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_op_req2 rk_plugin_callback_closure e4b67b4c5ea894722e1dd779a938c7b64df9da3f2a2bf2225b5e8cbb4302474e"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_poll_cb rk_plugin_callback_closure 4a0a31d26b11f67ebfff3ce042d6f23339c2380f30876c404ce8769c9b8b30b4",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_poll_cb rk_plugin_callback_closure 217b2748ed184d105da18ab27a9abfa645154bb44c884829bd9b197c919b08ef"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_q_destroy0 rk_plugin_callback_closure 8e712353af676a39f79764a540ad6ec0ed187e6c34c0c35e4b476980d3434f01",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_q_destroy0 rk_plugin_callback_closure 1b922dc7820d38f71ebc9f5e6b75fd80620b30f473f4ec14d07cc495136a07a4"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_q_destroy_owner rk_plugin_callback_closure 8ee6bf713850336c13cf162ed058d50d83fecf7615f1c2fe068167d3c7ad3633",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_q_destroy_owner rk_plugin_callback_closure cd5d85bbabcc56bcfd066ed2bf95b40f470c7f2a8190953decb34a09ad51ee92"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_q_pop_serve rk_plugin_callback_closure 0b466b293661051e44b6cbcf3b873aab64dee9357791d9ef9b4dadd51846a4aa",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_q_pop_serve rk_plugin_callback_closure 1c6825a90ad864028572c8c6144b9691f7bf80c52cc282b49cb3417abb892dac"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_q_pop_serve0 rk_plugin_callback_closure 5528479e05c2d78999cac7c71046b9a9552364e5beb5ccb4020c3915e7fd7f06",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_q_pop_serve0 rk_plugin_callback_closure 4b1a63953ebe1a0a08e237a91256dbd80df87d97dee73e1293ae03f070da990e"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_q_pop_serve_maybe_consume rk_plugin_callback_closure dd843617cc52c90f20a38278fb2791abd36d22afd06485816c2228755c7cb140",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_q_pop_serve_maybe_consume rk_plugin_callback_closure 78e020470353b6e90ec90e54b63ddbc1976201331e604817da799905181ab0e1"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_q_purge0 rk_plugin_callback_closure fa487a421b8cca2e6b0ae58f79fc622f6316da862046448ee1293e1ff6b1ab25",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_q_purge0 rk_plugin_callback_closure 3880a9f71c9ae47c3e4cae058b5cbf85bb5829bd24c10dff216b922a473542b4"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_q_serve rk_plugin_callback_closure d7f2950c8186f04041db27de6b8a92b757fb03b955f91d5955e98492e404b3e5",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_q_serve rk_plugin_callback_closure 4d897309bcd4f2f9416662b483d71587d04e65b488dc203a0fcddbf049685efb"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_q_serve0 rk_plugin_callback_closure 397a14188b105b7de24ada05166396b2c56f6fa770ed96da9612161b02ed8eb4",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_q_serve0 rk_plugin_callback_closure 2f7ebe46ccadbab9fe5bd93d67e4d2f2dd9b4fe1bd64030ee215b14d1b5346d2"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_q_serve_maybe_consume rk_plugin_callback_closure 59f0d93ba9b1a4b28fd352b1d18e2e59caa9ab2a3f54b1e09db9d264f55962ac",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_q_serve_maybe_consume rk_plugin_callback_closure e514dbbec87c4e24cb6df069d0f205aae3cd90cb6d0a45557ca6b3c4e45512ea"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_q_wait_result rk_plugin_callback_closure 3e02dca449577ea40ce92d31c225ee9b4dc4aea4791f2060e64f5e9a6b818e21",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_q_wait_result rk_plugin_callback_closure 18674973b292ee18f55d7fd43efd6c0bda0ac7dc35fa71f3385c89e06f1f3bef"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_share_ack_commit_cb_register_op rk_plugin_callback_closure d41991929d56b4adf079bf9dea9f3210cce36292989f23a799055c7a37139f48",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_share_ack_commit_cb_register_op rk_plugin_callback_closure 81a1fe3376afa8dae58ef4630f6d95efe9b0f14e894d23155a4fa36a0c71a245"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_share_commit_async_fanout_op rk_plugin_callback_closure acf55d03277ab089163a7b4632b44906969ce68fe175d51e14f6b4785e2bd731",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_share_commit_async_fanout_op rk_plugin_callback_closure df69dddaababc7a2a0c86517379dc50a7cb83305133c18e24829e3d6069e52cf"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_share_commit_sync_fanout_op rk_plugin_callback_closure 12e865cdab08ce72e3b27c4339b5205f13e7006749f15c38d32b2a016810665d",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_share_commit_sync_fanout_op rk_plugin_callback_closure d3d869a9d0b87130c8f005702e75634c2220f41326256565fb27311bba3f98fc"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_share_fetch_fanout_op rk_plugin_callback_closure 5154059be65328117b1d0212cf30767ff92df98f02af221e3ac22aa5bb5bd58a",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_share_fetch_fanout_op rk_plugin_callback_closure 012a05e52b9ec25c20123218ba1e42a63d3ded955a5ce083926085c3e41eae38"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_share_fetch_reply_op_cb rk_plugin_callback_closure bf40de7a0a8a9d924d2df04c619583d8cc793fd5d8e108ca6916a7657999f9e7",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_share_fetch_reply_op_cb rk_plugin_callback_closure 1d5bf9d3dd80546abeee10212118b60e1fe2c2f62276d0036d0e0ab4e6367452"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_topic_destroy0 rk_plugin_callback_closure a7f6e0c5df69a43ecf696b23acc201c00f3d041b2a2d3f040273c560682fd5e9",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_topic_destroy0 rk_plugin_callback_closure 3d791a8df6863997ac7540b930b9a7dbcd209516e93c5a8ceb9bbaaac55070cd"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_topic_partition_destroy0 rk_plugin_callback_closure 5e3bc6aad3045ad2c847af6bdc373b4a2ae4df32b4432999ded60c4b72f5314f",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_topic_partition_destroy0 rk_plugin_callback_closure 6cf47b6f1fc1c62d3715925dbbf7a8bd626138af0446a0383a22e5713ed897b9"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_topic_partition_list_destroy rk_plugin_callback_closure 3808d313d1cdca1430dd58f43065a29f6b9b29a8e1e16fe6fb712fe1f254395f",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_topic_partition_list_destroy rk_plugin_callback_closure cd3b3233e1905bb24b536afb72d9e8e1725fbd4f73ab4c21a5d83c654f848f47"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_topic_partition_list_query_leaders_async_worker_op_cb rk_plugin_callback_closure bd5c52a4136c4d59a0059c4ee8d551a46b5eac762f5a9f201e7bd8e834abe349",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_topic_partition_list_query_leaders_async_worker_op_cb rk_plugin_callback_closure 96c76a312a1d0a01ee8ff1162353895ff8c2a5e3a14e294f90231a0eaa14b28a"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_topic_partition_result_destroy rk_plugin_callback_closure 2e8323fe923e401184a097a3ff4cf5460529550f83bf6ec6a35941f516c9b0d6",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_topic_partition_result_destroy rk_plugin_callback_closure e7b14d8c5b4c735210626951d430a8af0c3fd4a8975c45213c75c4e6330fb465"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_toppar_desired_add rk_plugin_callback_closure 325d66f29c0980951c9385a08c2558428d78564fc5d4000e75601b302de53dce",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_toppar_desired_add rk_plugin_callback_closure cf5dfb4fc7c277e6a85d9309c3bb709ffef9ed8a9757368511559051f5acbc52"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_toppar_destroy0 rk_plugin_callback_closure 82739d8d342541a708713c38956ac2965f409a809d4ef27d6d7f6699ffdfe908",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_toppar_destroy0 rk_plugin_callback_closure 2b404c4cd8e0318c3f3a1647634448e5465c47f95086583539480b9b22072e41"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_toppar_fetch_backoff rk_plugin_callback_closure dc08e42bb035cd2340f57cb24517f31d603f6b44589e07fab4d5efcb1658b547",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_toppar_fetch_backoff rk_plugin_callback_closure 2500a4b005a4d7c4d7cfeb962e65e646a3e9a4d34dc4a043f94abba083d6bca0"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_toppar_get2 rk_plugin_callback_closure 4aa741b6c8307bc8bc47bd9402c6d4893a8ed5bf1f0a375a2f4848dc387bb668",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_toppar_get2 rk_plugin_callback_closure 4ad757c82dfb48fe572e28cb12dc69925ef48fce7eb37b0947d5dac3f8b68028"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_toppar_get_avail rk_plugin_callback_closure 2b3a8c66bcb810d18aaff576b6db023b75ced4fcbf6187acb23ceec218fb0b7b",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_toppar_get_avail rk_plugin_callback_closure e08a46d6a79f73a03e0df5a873642fe3758e802c765da0853356ac0e80825373"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_toppar_new0 rk_plugin_callback_closure 36cbc345c01c0274873a4b930cf8485789d82f563a3c6ca1e1bc2bee6ce3dfbf",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_toppar_new0 rk_plugin_callback_closure 38da5a33bef0f66bef7ad7ab4cc86834a4393575aa9fe27e3e9817241492e46a"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_toppars_pause_resume rk_plugin_callback_closure c19b56e86a703cf29eb2eec02daf52549de4ddd5501211bba573c3aac22a836a",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_toppars_pause_resume rk_plugin_callback_closure c39f07b66f1ce09706c2de374638a6b5d3a295364c3a39b74e3d20d33c120015"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_txn_op_abort_transaction rk_plugin_callback_closure ab2352392b8f7a6165f8e6dca36a1b669e634a299168739edc4401fcc1e150fd",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_txn_op_abort_transaction rk_plugin_callback_closure 3950469d173222a130d1902fd9748ec35540777f474422b4c3dbd0cda35931b4"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_txn_op_abort_transaction_ack rk_plugin_callback_closure 045bfc4d886066d554c0f8d881990d2c729147541d1ee1f29ea6cfd112242c5d",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_txn_op_abort_transaction_ack rk_plugin_callback_closure 739022efa8fca70abbb60f0829baf69534f6c525157424a128ef585d9dfb440b"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_txn_op_ack_init_transactions rk_plugin_callback_closure f585b4df6328aca4e90976e82aa114af2c6261ec793cf6ad2f8255670f4fdcfd",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_txn_op_ack_init_transactions rk_plugin_callback_closure 5d4264165c2f28ba941ffae8764f37052650a75b24434edbf0621e82ea71ecce"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_txn_op_begin_abort rk_plugin_callback_closure 6a67521cfbd46531169e51198e6b8b390ac49ba8e630ee98a60cb6a76fddda9f",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_txn_op_begin_abort rk_plugin_callback_closure 9d4e9615bffe340c230af61c13d1431ee895a7e06a9f4467ade0c9f943c24f90"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_txn_op_begin_commit rk_plugin_callback_closure d4f15aa55f56b6b252fe2c2ccdaa99b8e389e11b7c8b428a54639a8897125be6",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_txn_op_begin_commit rk_plugin_callback_closure d510ee633a8190662254f347e814caa55ab3845df7eb9628aaa724d8185a6e7f"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_txn_op_begin_transaction rk_plugin_callback_closure 70994e3c7bca53fc33c7674bb4a905d4617c92a7a567046ca1418be13303b4e3",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_txn_op_begin_transaction rk_plugin_callback_closure 5bcc3fe8218f13f045222193f9424b87b9003f38d08c5c69a56ccaf153a6bba4"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_txn_op_commit_transaction rk_plugin_callback_closure d778d497a2a1669cbefcf435320fd94be558ac859ef6d45225e7d57b7d7cb5d1",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_txn_op_commit_transaction rk_plugin_callback_closure fa67c86f80efb11fa3af3d111db9063b21c3ff2b2fbf40bda9be693716693cbb"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_txn_op_commit_transaction_ack rk_plugin_callback_closure 66f2c5458daa261186c2d3fc0e079883640224f5602a120dbf358331ad0dbaf3",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_txn_op_commit_transaction_ack rk_plugin_callback_closure 4f271142eaf9436acedda3d0777b00b7ff4bba73a2057144c70b714f57bf8677"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_txn_op_init_transactions rk_plugin_callback_closure b72c2b11e09022a67994ac7472fb0b2ce6bfd1c20dea6defb6e90a8d75465da9",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_txn_op_init_transactions rk_plugin_callback_closure 55b14b23cbd8b0c9ba3551ef4e4bccf71229b9cec4800efcfa50dbfd4de4b5bf"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_txn_op_send_offsets_to_transaction rk_plugin_callback_closure 1abf1d267616412bac126f23c0abe5141964f570898e76d0432c5c02e28d56a7",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_txn_op_send_offsets_to_transaction rk_plugin_callback_closure cebeae4ba602f428537ba0ca916dcb4f502b429710ce05f6c4e5a22f6300bb99"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 unit_test_telemetry rk_plugin_callback_closure b6fe592ce70c38bb5def71c56250cb3752267ed0789a2ebe7eb83292fd8a0c36",
+     "before": "// qcore-premise-binding-manifest-v1 unit_test_telemetry rk_plugin_callback_closure 2fe1e41e01aa5f53a6882e052c56194b001c43313869b32664d40898bb410d5e"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 ut_create_mock_toppar rk_plugin_callback_closure f7a91485c190354edf7298dd85a721ccefc61a8be41b85a33902d6d05159db8e",
+     "before": "// qcore-premise-binding-manifest-v1 ut_create_mock_toppar rk_plugin_callback_closure c47920c1927b054a1f640bf94d733aad104ab8c122c03f2c5aefbd775e7f5b99"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 ut_destroy_mock_queue rk_plugin_callback_closure 3e7ef4226f8c9cec283e37a465dc0d70393703df4d70faa11d29762660e7b376",
+     "before": "// qcore-premise-binding-manifest-v1 ut_destroy_mock_queue rk_plugin_callback_closure f8b2835b6847c8a0736aa7fe2e60df3b819b97a7d4d01cbb6a653914075ca81c"
+    }
+   ],
+   "file": "providers/qcore-provider-librdkafka/contracts/librdkafka/client.qv"
+  },
+  {
+   "after_sha256": "cb5b5829f9cab6134d291af446c4b7b06f2624b75db152b6897641761cf9ce6b",
+   "before_sha256": "0fe6103811fd1401f446f2a64f7320a5769fc27df72d5824727dfdb0e2756c1c",
+   "edits": [
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_ShareAcknowledgeRequest rk_plugin_callback_closure 3d0875c01401cf1537442aec902b560908b8620eb969773c81df9df18096747a",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_ShareAcknowledgeRequest rk_plugin_callback_closure 656fe9936a0d1faee1b26230b59d6aea8cba52912eca65f75555ebc52771faad"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_active_toppar_add rk_plugin_callback_closure 2b319c0bc649da8c309351a81be9e49569be82705064536bd75e26275535463d",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_active_toppar_add rk_plugin_callback_closure eaf773afa3dd75623d58301c635b6df0dfa4315abc5d7a8902e483548c9ce027"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_active_toppar_del rk_plugin_callback_closure d2a562a10db7d774f7519eb625e51ac1feb4c01a307bb52228d2e31ed890ea83",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_active_toppar_del rk_plugin_callback_closure 790afd1cc1bb9f928c6124ddd539e4977dc122b883a4c861c1a7bbc41927730f"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_add rk_plugin_callback_closure e60aaa17db032a4d5e6fbfb20fb112ba46146f4efb96bb719e32a58dffcb4d69",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_add rk_plugin_callback_closure 333c22d2b6c68e99ea39bec8c83066855d856ad0ea9fb7f6e9e00d7dcc3ab529"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_buf_enq0 rk_plugin_callback_closure 6e1f98603ce4015b67fe814e40c9ea95bf78a33e5e1592fab6c6bf0a8f86bca1",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_buf_enq0 rk_plugin_callback_closure 7ca0ba878b31ff4249b537441ad20a95cf2a9d63c2626c8c11e0d54f503c4dd9"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_buf_retry rk_plugin_callback_closure 28b58867584155d0ffc1429fd4afddf4be024add33d9f9951bfa2e8651efea8f",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_buf_retry rk_plugin_callback_closure 200e4aec417e93ad02f7904fcbd03b1d0d6fbc172b1bbffd5c9a62112ff3cd0d"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_bufq_timeout_scan rk_plugin_callback_closure 5379e0e6e9588e4cb13e201ee34b71ffd5316319f81af592e37009bf6a278b3d",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_bufq_timeout_scan rk_plugin_callback_closure f875de224e53b002ef3522938e01823aebed8b4d5e034adfc107619c9294ba65"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_conn_closed rk_plugin_callback_closure c14b1d7708833ab4d20f2ec190dfd95ac753c7f6df464f5866686d92f4a73ab0",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_conn_closed rk_plugin_callback_closure 076e660e68cda3335aeda8d9f81dc2723d2cd37f39c92f5cfe117e1177cb5ed0"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_connect rk_plugin_callback_closure 2558e9d17624ccdeeb32fa1508a0657dab1edd6de6e788d3d0de4421527b78c2",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_connect rk_plugin_callback_closure 1966dae838cbe559a053ffc175c5d7dfd00a5c85771466dbab3327c0dfff0aee"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_connect_auth rk_plugin_callback_closure fa6a8e2657b83d16abfadc3a3240503a859bbdf2ae37a899327ab91e07534f45",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_connect_auth rk_plugin_callback_closure 8a0f589272659dc4b86bf06a694157f9bce050b7f3c7b509bffdf88f149ed401"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_connect_done rk_plugin_callback_closure 30b62a843e54a14239b5787122f6fccf2662629e8f25d1dcfa2c3761a33360d4",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_connect_done rk_plugin_callback_closure 0ed120a63cf1a35c73d80789cf1817ff2c40c2dac28f61f04a4d9cf93960e37b"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_connect_up rk_plugin_callback_closure 5dd0c4549ccd8841a1dfa39ab39693fec3a034824680aa1542fa2a29f1621eca",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_connect_up rk_plugin_callback_closure 57316c7d4eed5dc15ace676a8a0b7d17b8113d81cb2723014d12dd29d398a7aa"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_consumer_serve rk_plugin_callback_closure 3259676c3af7cc027b9fcfa23c705340b4dca172686fc51a2a8c7dd2147c36f3",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_consumer_serve rk_plugin_callback_closure 040f469a22886c174509f9d8999aca81b41825a45bdfcbf00a6a7e47977667ae"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_destroy_final rk_plugin_callback_closure 40a417837b6c0598bac242888a1af8e3e6862ad0e336b53bcde2ead29008ec5f",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_destroy_final rk_plugin_callback_closure 6948a498a05fbad260b256aab00bdbc1b80de9edbd9865522f80a7023bebf119"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_feature_disable rk_plugin_callback_closure 6713d4f6a9c159e1449d4ded0f970abd20dc1c94d989d7f67b48afeb8ea57c40",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_feature_disable rk_plugin_callback_closure a38f0e293423097e024bb0eba26c46282851a0caecca15802f5b5a61a019e2f0"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_feature_enable rk_plugin_callback_closure 399621b5afe6c695a9a5306f0b5c91006afbe53d4de3f701e3f15a8c510a4009",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_feature_enable rk_plugin_callback_closure 4754e6dc213717597e1e8e119bdb09af088380fdaa6259a7895f6f566dbca3b4"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_features_set rk_plugin_callback_closure db44b011ac7e835d890fbda29652acbf8989d67e2555f9cb39a7805d188f27d9",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_features_set rk_plugin_callback_closure 18141c670d0b70825e1e25f2e09fd2f1709aebdfd05c758892f8df1cada36900"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_fetch_backoff rk_plugin_callback_closure 819d0a3eadec907bb4afc386a6cabaacc367b114f15ca940156d3f0f52174493",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_fetch_backoff rk_plugin_callback_closure 9d00d20754916f54109f1ad4803668dcfeec5b0f6c57e2976772403f3d04c81b"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_fetch_toppars rk_plugin_callback_closure a1041cc3011a5df0cf6dcdc47d85cc05ddd7701da7277bb592c910d6fde875f7",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_fetch_toppars rk_plugin_callback_closure 9601a1b81676263e43d16b406f0191306a014b4a73b5968e79e53434fc446dd4"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_handle_purge_queues rk_plugin_callback_closure 5367dd765dea25f5f36fcf804ab83edd9582d0faeb2ee2020a4e00ee34ffe148",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_handle_purge_queues rk_plugin_callback_closure 41fdfb926be07b1a1944bd98d2d09ba8e6e200473ee6c0cda0cb858e29926963"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_idle_check rk_plugin_callback_closure 072ab73c7670ba1b7ba104f019305960e2f466c53bb825e713dea0ffa1999bdd",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_idle_check rk_plugin_callback_closure 9183ca49f2d708f67eb3839e10297acd1f1cd0405c2ccd2da1028cc80729b9e0"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_internal_serve rk_plugin_callback_closure 0a1abcea651da6a1fadd99a75c820951ec1d7e95226d16073990476c70e89eef",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_internal_serve rk_plugin_callback_closure 910d153dbf564c15e644ffa9bbd6b9531a7959326ca2d97b92fe831a4809825b"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_needs_connection rk_plugin_callback_closure 31a8b6957499253f8706eb08954b8190653c6555578f4f8d966ce5dcf19589e4",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_needs_connection rk_plugin_callback_closure 46bad2b82eb4d83dc02aafcd2afb7377a5cc1a8b7280c9ff9eef474c0fa307f0"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_produce_toppars rk_plugin_callback_closure 970a2903815596d5a8451b3c2d860adb32c7186291b533cc5b9ca1d0294a5148",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_produce_toppars rk_plugin_callback_closure 5364b36d6457dc68315ac6f8c5006689576a4aa8488da3af45884f4703a26c5c"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_resolve rk_plugin_callback_closure d4cc93b014fe59f7e213b90e55e472e65e600a974439e75b3e41b442bf80e65b",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_resolve rk_plugin_callback_closure ab1845147398d342031d295ca847f672a153bada39ccb8fe27cc9b598f0318d8"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_retry_bufs_move rk_plugin_callback_closure 4ced503e122a1792079d58b082ee9eeb0918e69d46c48a67ce83891df4d758d6",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_retry_bufs_move rk_plugin_callback_closure da0895a74e356cffd3498220b3cdea1a49d59b3ce78d77cc3b4f18ea68b3015e"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_serve rk_plugin_callback_closure 270b8a50dd5ff90b4d44b8f3e6450ce36dbe071652ca14d0989675611f23a3fe",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_serve rk_plugin_callback_closure 573a7d06d34dee36bf18e90ca64a0e0f8b34e7cdfe55616768a81dafada2c0a9"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_session_add_partition_to_toppars_in_session rk_plugin_callback_closure edfbac88d7cdd1b3651a96e37ce956cec84ef20db54f768200fcc54fc553e789",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_session_add_partition_to_toppars_in_session rk_plugin_callback_closure 41ea1c2ff76b211500c768ac14339acde7ceaada20f336142cafb283e69cb0b2"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_session_remove_partition_from_toppars_in_session rk_plugin_callback_closure be64480dc3029e7c0bf9dcd9d281ff3e031252902e0714a9ac5203c88dd48030",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_session_remove_partition_from_toppars_in_session rk_plugin_callback_closure 56075410e7a352f027364ba966ed1b216820f396275af2b065c76a67fb762934"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_session_reset rk_plugin_callback_closure a1c3ac5959878684612cdfc3572e7d6fb2c6986f23aca7f667e104d2e0ea30d0",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_session_reset rk_plugin_callback_closure 494e0dfe2622b020281c341e40de193e7342f6eaf8109526d7ecd110ee1ef9cc"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_session_update_epoch rk_plugin_callback_closure b683ee82da83d10dc20efdb582f21be1d7267997e335f8e3d595435a3e666ba5",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_session_update_epoch rk_plugin_callback_closure b2d0e8955b7478d2be1ddb1ca80f14ff9ff1d8629197e12954f6309e4c3fb821"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_session_update_partitions rk_plugin_callback_closure 52050473d30d08da1790b9ccfb99157046c92dbcdec700751959bfca029a4b12",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_session_update_partitions rk_plugin_callback_closure 2db9642d099ff0efb778d89b2971d4127702dc9237bb54f0fc0036e94d38b712"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_set_api_versions rk_plugin_callback_closure ceb996bd4e43de996191f56ae579b4221a48cffb47fb881eb377b596eb991bcc",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_set_api_versions rk_plugin_callback_closure a3f3bd4b39cb2dbd0decd8d691fd495b260cabeaf6d3c358a9b8b181211aa77a"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_set_nodename rk_plugin_callback_closure f29f7cf557611cc48038c8d0df278caa9e027750b3e9f51c3657c8a545ac75cb",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_set_nodename rk_plugin_callback_closure 4e88e6c1b55a19813e587badfd09226f9de8cf59c977320827e7518dcd5814af"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_set_state rk_plugin_callback_closure 3439103b2ecdfc40ab9c6d725d963efc47b99ec0222166f27004f8f11409f10f",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_set_state rk_plugin_callback_closure 24a04021dee48c6b86eaefa629ec3ff1fa2a6a581b043a95264e3dc1a30add0e"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_share_fetch_session_clear rk_plugin_callback_closure 104c437f409ad7b33c101fe6efa1e86b681cbac07c1ab5678f9d1221f920499f",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_share_fetch_session_clear rk_plugin_callback_closure 8d18d6b0839b45c890ceb1b6af71f5c3afe965d7a9ae006cca219c2fcb53b604"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_share_fetch_session_leave rk_plugin_callback_closure e1aa15658d8cd0af416b6335ddb79094d4baddd755f967f68d95d655fdd5690e",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_share_fetch_session_leave rk_plugin_callback_closure a3359437b5af39d95b01efe48992b97b23e7419c0f08344413992ebc2fb017cb"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_share_rpc rk_plugin_callback_closure f1413a882740709095420dc4a64380dbbb67f7bde40746b3b39deec87d37a9fc",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_share_rpc rk_plugin_callback_closure 603f47e420422b8eaeb5b3909f410feff92d509e4645444dc7d9380cb7a2611d"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_share_session_toppar_add rk_plugin_callback_closure 77aeb2f9a86181213464f318caef1fb78265e06458f8f9dde4c91255e4db669d",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_share_session_toppar_add rk_plugin_callback_closure e71b71c824ff91e53bccabc95c9048f4aa81b05ec90ecb57368ad7201aa6f702"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_timeout_scan rk_plugin_callback_closure d4411cb80e194cecb4e97f626f9e61394d64d8ca97a1c0544641861ba65f6660",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_timeout_scan rk_plugin_callback_closure ef8e634b381993f9544a7d5cbe22f8376fae61179e0ed121c2a829ae8b95f058"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_toppar_msgq_scan rk_plugin_callback_closure 81aa5d66152a4a08662ed1824f40b591341d034116806c439bf369c4b08fd7ea",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_toppar_msgq_scan rk_plugin_callback_closure ccc92a074a83aa3bd764b79cd24fc8f06774104aa0be421c74a452d475ab6348"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_wakeup rk_plugin_callback_closure 3826566a7139247d372abc4610712b4bd28b83a2a0db061da2cb9010afb379eb",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_broker_wakeup rk_plugin_callback_closure 3f31e1b30a5090565574918d59e45666be56c7f6445a0a5407283f70bc8d818e"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_buf_new_request0 rk_plugin_callback_closure 89995fd2229efd01461ccb9e131d9bb4ee4212a261d646d0b101cf0e3cd0227e",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_buf_new_request0 rk_plugin_callback_closure 6239daa7599774bd5d508e25b32f3d82db773e4661f8929fb524265dd8acdf94"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_buf_retry rk_plugin_callback_closure 9138404d073f78459d123219cc8948dd72d1a3bda3bbded785116dc05a0b1075",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_buf_retry rk_plugin_callback_closure be33b4761be713127d5a4d82e597f3a3b3b0803513c3ba4b0694151650a170e8"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_bufq_connection_reset rk_plugin_callback_closure 96324c77a31c6e400b960770b733115558686419ac3e4470fd973127c84fa3bd",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_bufq_connection_reset rk_plugin_callback_closure b15ade2ce6356a6f9514b581dafe3c3d2321691af766dac044b5008715fa167c"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_bufq_dump rk_plugin_callback_closure 4ede49b05f733c064351dc056d67e1afe544371289b7ff924741feada5beaa57",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_bufq_dump rk_plugin_callback_closure ce40e43f570f10f8b9c33f17b69a01de2e322daaa428d84c879a96ef04979925"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_bufq_purge rk_plugin_callback_closure 28622e6dabfca5d20a1d2c14de3467956e5cb15738c2a4e8a946da9eceee815b",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_bufq_purge rk_plugin_callback_closure 57d10665275b27265881fbf60f1b2ebf01cc0138f40acec33df4f34c6c972a80"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_cgrp_new rk_plugin_callback_closure c1138edccfd33fb98dfdd101610d137d9c6c2ac9ff7625d4bdb7c355d46ee9db",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_cgrp_new rk_plugin_callback_closure 7fa3985b5e61dcfbd767e54aba6818f9af0f2950f09a52f24919271f8420afa0"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_dr_implicit_ack rk_plugin_callback_closure 7235b6b32859f5a2ab04887cb0f2ec881987dadac3d7af21a6b10484e1ac77c8",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_dr_implicit_ack rk_plugin_callback_closure c5b0c28787c6bbb2d7822714d700988275629fd2961e595b8dda2fe62fcfba24"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_features_check rk_plugin_callback_closure 14bcd85163b42263366fc8459d5bfda7662fb5f9fda89196b71a74f4020e4972",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_features_check rk_plugin_callback_closure bca913003ec584e92a4a5a293b42ce301d5cb071e88d994683c79b97b7c00c38"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_fetch_reply_handle_partition_error rk_plugin_callback_closure 6fb7ae4dfc99ead7d217934878912c6192b781ae41e4c8730082ecaa05ec41c4",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_fetch_reply_handle_partition_error rk_plugin_callback_closure d753df72dbde38c1ec882f88fbfa7cf88e21d39526de814c1bf165d5dee08b51"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_group_MemberMetadata_consumer_read rk_plugin_callback_closure 60b77e59de5c1e4371ebb7f49a69e31d61bb064f322cd9426474751ff500863e",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_group_MemberMetadata_consumer_read rk_plugin_callback_closure 588f8dcdbb1da835fa491b6a82248a95f094f64928782cebcbe284362e8e04eb"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_handle_Produce_metadata_update rk_plugin_callback_closure b2247226740a38593d2a423f469cfaa0501b89aa9f09b97ca88b9d4161fc8867",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_handle_Produce_metadata_update rk_plugin_callback_closure e27c82cb1f63fc4af230f285a11444a976b41da5a9c144f829ce8b61fc74b6d9"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_idemp_request_pid_failed rk_plugin_callback_closure 01fca8c4cdc361bbe4febdf23814905652cc32578a164f2e248f2bd08897ebf4",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_idemp_request_pid_failed rk_plugin_callback_closure d1380e22291fb70cff9cec4ec9b4212a411a719b96fa9964a84a041b538c78d1"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_msgbatch_handle_Produce_result rk_plugin_callback_closure e0efdaff737e7810faa8a4f135b5657ba2b9fcd2bb6b562015e480fa6a2a034f",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_msgbatch_handle_Produce_result rk_plugin_callback_closure 44e3ee1563d3353b6b8aa10208bbbfb8221bb7f5f0b5a2af6d871d4d6b758b4b"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_op_throttle_time rk_plugin_callback_closure 01c03f7d73a3d448fed306f0ee77676bcd0bbb54dae88edb6536696daabc5841",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_op_throttle_time rk_plugin_callback_closure 5f2e85cb4a0807e6b4558c1aa59ef63a33e8e9e64b2c2995c24c81777f4bd1f9"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_parse_Metadata_update_topic rk_plugin_callback_closure b798d57a6e5115db6a3fc8dc74c67b177c6730cc8869b160c4afda7ac4219dfc",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_parse_Metadata_update_topic rk_plugin_callback_closure f12fb9a1d7cd4ef69cdd1cb17ccdd7146bbc85ed4f1d534e4a0bf612352fe7df"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_recv rk_plugin_callback_closure 832bef61498a099b87af6107b8b3b3b197152aa4a12c958f888015aab15bd4d0",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_recv rk_plugin_callback_closure 96ddbcc75321ae49290ff91ad0331f7c57815395ca8c396f244ca35dc81074d5"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_req_response rk_plugin_callback_closure e6c6b3edd020aac4092cb4a783819267b95445284852a682b8eefa3d60175177",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_req_response rk_plugin_callback_closure ac5d99f0b076a55360517a20faaacd7b03d61074d8e954b92a9a34514b84cccd"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_sasl_broker_init rk_plugin_callback_closure 6375e3de65cd6375cd125c962021292b8504af2bc4a480c5397ac883c83466a6",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_sasl_broker_init rk_plugin_callback_closure 4d43208e74c9ae708b970f69ee42f92fb335682cf7b04976601b95b633f45ca7"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_sasl_broker_term rk_plugin_callback_closure d63564a4dd64a9fa01d671c6de4eaaf4015fa4a4918dda5b2918657585468310",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_sasl_broker_term rk_plugin_callback_closure 93e5a3f1f735ff5f63364eaa6467647d56b5629dae89d15d0638a95e30983f49"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_send rk_plugin_callback_closure 1cb2224e292347a5fb7afcf1e8c1966d9c3604b1e45e559347a504528aa52893",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_send rk_plugin_callback_closure ade7f52f79b8d436a86052ab0b7daca57b1b4d8281ef4a3061938244cb66bfa9"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_ssl_hmac rk_plugin_callback_closure 3136947b88c2a0656f413ba18add41ac4e4661b4c4288313f166458c344a90ee",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_ssl_hmac rk_plugin_callback_closure 65bce2550dd68f74c3c8702b41dd0cf185c7a2841fd842771cc016341b316bcb"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_topic_new0 rk_plugin_callback_closure d4443b86c8e53fb2c9645d95214b045678ac688eb4f8c909dc0663e861f474e3",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_topic_new0 rk_plugin_callback_closure 31b9c95707b8bb85a83c1e17f8276c0dd2bb5ffe1c8a256a0d432aecae68f527"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_toppar_fetch_backoff rk_plugin_callback_closure 3ce1302044849fd3fddba44b3d307d8d7a6c91b243f140321c30563cd5d37214",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_toppar_fetch_backoff rk_plugin_callback_closure 05648dd89f2736aefccde96f26fe344a0cdb9152700dd3645dcc8fe96c1cd22b"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_toppar_new0 rk_plugin_callback_closure 9c44aad45ece4ebd5f718a76624ca116dcb2c6ee8f4a335912dcb8bcef5b9965",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_toppar_new0 rk_plugin_callback_closure f8718e2ed8c06dc8dda42c829bb220745ff2eb9b9e416ada7530c5d1fc75cd55"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_transport_connect rk_plugin_callback_closure f28c980172b053f9489335a35849d66cc2451334c9649713e1ec330958ff05b8",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_transport_connect rk_plugin_callback_closure 5533a9486fd6ba4465d1e0e81b4226d4222d81ca62da1f903b791c83d67fb2f0"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_transport_new rk_plugin_callback_closure a8310e1d7a5545ce23eafc2115b08380007a89f4af593429d3740baef8281444",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_transport_new rk_plugin_callback_closure 4b29e9d41626dce41125f7ffee535baa60744b45d6939ab79915c06ceb8bc755"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_transport_ssl_connect rk_plugin_callback_closure 15ccbe2462587165db980acd28edbbb8554789084f6e0613b57e1fec2445ee18",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_transport_ssl_connect rk_plugin_callback_closure d4445ce424588832510cb2b70df87feaa30b946220096de61fbc80405a96ee15"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_waitresp_find rk_plugin_callback_closure 2826f633ca135bffbdb64fd9d720a09529df16176896428c2f7e1119b16faef7",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_waitresp_find rk_plugin_callback_closure ee9e73e32152a45654a308f2902baa71df2a59892c545a70d15c712656fdaab6"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafkap_share_leader_changes_apply rk_plugin_callback_closure afba8ebe870fe7e249c960c81f29d92c7bc4aac0d7b91067f8b9418a1191f537",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafkap_share_leader_changes_apply rk_plugin_callback_closure bc54568caf4a4877a04723786b79f81aba6e0594cb3349d0e54290f1dc1a5027"
+    }
+   ],
+   "file": "providers/qcore-provider-librdkafka/contracts/librdkafka/null_deref.qv"
+  },
+  {
+   "after_sha256": "d0e0e684e8b833894735094f46ba57d9c831b2bfb5537b0fcdf44a46cec4aba8",
+   "before_sha256": "7ad85b305776700afc9a826439a259c167957bd30e84b009a1e3288313cfe484",
+   "edits": [
+    {
+     "after": "// qcore-premise-binding-manifest-v1 cb_kafka_logger rk_plugin_callback_closure 6c388f61ffde57d202794df270bc05a7b08316dc4c9328d04672ecfd30cddc65",
+     "before": "// qcore-premise-binding-manifest-v1 cb_kafka_logger rk_plugin_callback_closure 5d8df0a7aa98e83fb8e94813b1e881c1318b908ca4b2b2ae7aed56a2188bcfa1"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 cb_kafka_msg rk_plugin_callback_closure 2fb1716c3b98a02b2ce4a4f01e46d6173fffeca908521ce34c716ffdce83e575",
+     "before": "// qcore-premise-binding-manifest-v1 cb_kafka_msg rk_plugin_callback_closure 6e1d8aec31fcfd3a87c8a684f65a7dbe3613513d80cfa29b9e44d895346954a3"
+    },
+    {
+     "after": "// qcore-premise-binding-manifest-v1 oauthbearer_token_refresh_cb rk_plugin_callback_closure 806dc0e26b02b85e99730b02e8e9ec416668bc962f246dd8b93607c6a4d5e711",
+     "before": "// qcore-premise-binding-manifest-v1 oauthbearer_token_refresh_cb rk_plugin_callback_closure 69d4cf49d136e4ad86d3a4a7cb4b14560c46d5712f07ce12e662c2e955d0cd6f"
+    }
+   ],
+   "file": "providers/qcore-provider-librdkafka/contracts/librdkafka/logging.qv"
+  },
+  {
+   "after_sha256": "d8a13e228f49a78b9ade1bddf46d317b371c6e6aa1647cab1337147d2f344954",
+   "before_sha256": "74b5ccd9c291019f01161a7502a389cc3285fe7ca8e48894bba51a0769f0b99f",
+   "edits": [
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_dump0 rk_plugin_callback_closure ddeb338de46f2bc70e8b8dd2676bd308282b9740d61faae611095508e23ebc4a",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_dump0 rk_plugin_callback_closure 79d20866deb38ae5345d73970c40ae2a88f47abb85bdffe78483e70dfd049d93"
+    }
+   ],
+   "file": "providers/qcore-provider-librdkafka/contracts/librdkafka/kafka_mem.qv"
+  },
+  {
+   "after_sha256": "15ce0321c19af6abe2d7da4e81ea513708fafaedaca4f16b7cfb32b12e596524",
+   "before_sha256": "48f213851e643e772cc240ea4ab2340b4ce2679b00aa21b0a7159895f3067c5c",
+   "edits": [
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_crash rk_plugin_callback_closure 96cfb173d4cccddb059ce2498dbfcf8e71d9d5e861f33cb65d46c80c82ea3984",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_crash rk_plugin_callback_closure a2f811dfa8049dd4ddf4e96054e55983bb88c4c2181efb0c2add93c023523c07"
+    }
+   ],
+   "file": "providers/qcore-provider-librdkafka/contracts/librdkafka/memory.qv"
+  },
+  {
+   "after_sha256": "d87c3fd73bb6b8ed6fa393e2f58a2ac7ee70a78631acd8cb6f07c1995f21c883",
+   "before_sha256": "24ced04910c1dda896b12a3a5c94cc3b9ed3b2e1dee7cfecb05b9fd1232262c4",
+   "edits": [
+    {
+     "after": "// qcore-premise-binding-manifest-v1 cJSON_DetachItemViaPointer detach_list_representation 2c620459ab8fd2b08dc3b8a82903efeb3836abb97a7a9bd824ab9140bed4fabe",
+     "before": "// qcore-premise-binding-manifest-v1 cJSON_DetachItemViaPointer detach_list_representation 27c0736584d81d659e44dd29eae891ccdc37cfeaf019a57a620fadaa73d910a1"
+    }
+   ],
+   "file": "providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv"
+  },
+  {
+   "after_sha256": "d5d7e01f6f7ed3bb331cd221c393f9bd6777b3ca2bc0146bf3a0b709b3fe2d98",
+   "before_sha256": "40af80979b98972380f7bb952487c5f48d9c87bb5836b9e1d7dcaa3b32ad0e86",
+   "edits": [
+    {
+     "after": "// qcore-premise-binding-manifest-v1 rd_kafka_q_destroy_final rk_plugin_callback_closure d88c069b32f0c9ee47a655e7a372144f7b4abed8c13d4fd21bc8a58fdbcb9464",
+     "before": "// qcore-premise-binding-manifest-v1 rd_kafka_q_destroy_final rk_plugin_callback_closure 1fedf81c13c21a4a99aee3a53555c02d525eefe5f7a8e3a224388afad192580c"
+    }
+   ],
+   "file": "providers/qcore-provider-librdkafka/contracts/librdkafka/queue_destructor.qv"
+  }
+ ]
+}

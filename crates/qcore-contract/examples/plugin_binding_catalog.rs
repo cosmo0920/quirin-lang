@@ -14,6 +14,9 @@
 
 //! Card-local explicit producer/replayer. Reads only paths enumerated by INPUT.
 //! Catalog hashes bind formal references; they grant no source correspondence.
+//! Card SP10-FORMAL-BINDING-DESCRIPTIONS: a binding's quantifiers and
+//! conclusion are its typed atom's parameters and formula (`QF005`); an atom
+//! with no typed definition gets none, and the check mode refuses it.
 use qcore_schemas::hypothesis::{
     ArtifactReference, BindingManifest, EnvironmentDefinition, FormalBinding, Graph,
 };
@@ -63,9 +66,13 @@ fn main() {
     let mut environment: EnvironmentDefinition =
         serde_json::from_value(design["environment"].clone()).unwrap();
     environment.id = format!("{}_{}_v1", environment.id, mode);
+    // Card SP10-FORMAL-BINDING-DESCRIPTIONS: the property view is a typed
+    // reference to its SP10 term. The design's other components are read as
+    // the frozen report states them; an English one is refused (`QF005`)
+    // when the catalog is checked.
     environment.variables.insert(
         "property_view".into(),
-        format!("Exact independently held {mode} source view; no cross-property Context transport"),
+        qcore_contract::formal_binding::reference_to(&[&format!("{mode}_view")], &[]).unwrap(),
     );
     let model_path = "proof/QCore/PluginPremiseDecomposition.lean";
     let audit_path = "proof/AuditPluginPremiseDecomposition.lean";
@@ -94,7 +101,25 @@ fn main() {
                 .iter()
                 .find(|spec| spec["id"].as_str() == Some(id.as_str()))
                 .unwrap();
-            atoms.insert(id.clone(),FormalBinding{atom_sha256:qcore_schemas::sha256_hex(&serde_json::to_vec(&graph.atoms[id]).unwrap()),proposition:spec["proposition"].as_str().unwrap().into(),model:model_ref.clone(),audit:audit_ref.clone(),environment:environment.id.clone(),quantifiers:vec!["For every event of the exact selected bounded complete loader trace e, with artifact, configuration, registration, ownership and lifecycle identities; C/model binding remains Open".into()],prerequisites:vec![environment.id.clone()],conclusion:spec["conclusion"].as_str().unwrap().into()});
+            atoms.insert(
+                id.clone(),
+                FormalBinding {
+                    atom_sha256: qcore_schemas::sha256_hex(
+                        &serde_json::to_vec(&graph.atoms[id]).unwrap(),
+                    ),
+                    proposition: spec["proposition"].as_str().unwrap().into(),
+                    model: model_ref.clone(),
+                    audit: audit_ref.clone(),
+                    environment: environment.id.clone(),
+                    quantifiers: qcore_contract::formal_binding::derived(&graph.atoms[id])
+                        .map(|d| d.0)
+                        .unwrap_or_default(),
+                    prerequisites: vec![environment.id.clone()],
+                    conclusion: qcore_contract::formal_binding::derived(&graph.atoms[id])
+                        .map(|d| d.1)
+                        .unwrap_or_else(|_| spec["proposition"].as_str().unwrap().into()),
+                },
+            );
         }
         let manifest = BindingManifest {
             version: 1,
