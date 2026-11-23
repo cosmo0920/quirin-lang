@@ -352,15 +352,20 @@ fn the_released_frees_name_the_unstated_premise_only_where_stated() {
         env!("CARGO_MANIFEST_DIR"),
         "/../../providers/quirin-provider-openssl/contracts/openssl/"
     );
-    let sources = ["evp_digest.qv", "pkcs12.qv", "bio_slots.qv", "teardown_slots.qv"]
-        .into_iter()
-        .map(|module| {
-            (
-                module.to_owned(),
-                std::fs::read_to_string(format!("{root}{module}")).unwrap(),
-            )
-        })
-        .collect::<BTreeMap<_, _>>();
+    let sources = [
+        "evp_digest.qv",
+        "pkcs12.qv",
+        "bio_slots.qv",
+        "teardown_slots.qv",
+    ]
+    .into_iter()
+    .map(|module| {
+        (
+            module.to_owned(),
+            std::fs::read_to_string(format!("{root}{module}")).unwrap(),
+        )
+    })
+    .collect::<BTreeMap<_, _>>();
     let contracts =
         qcore_contract::contract_loader::load_resource_contract_sources(&sources).unwrap();
     let premises = premises(&contracts).unwrap();

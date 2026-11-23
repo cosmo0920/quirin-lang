@@ -2519,7 +2519,10 @@ contract {{
         );
     }
     // Any other object mode still rejects as before.
-    for object in ["resource_consumed(o, nullable)", "resource_owned(o, nonnull)"] {
+    for object in [
+        "resource_consumed(o, nullable)",
+        "resource_owned(o, nonnull)",
+    ] {
         let refused = load(module(object, invoked)).unwrap_err().to_string();
         assert!(
             refused.contains("a slot invocation's object names a `resource_borrowed` parameter"),
@@ -2601,13 +2604,7 @@ fn a_released_slot_is_read_before_the_release() {
             "{name}: {leaves:?}"
         );
     }
-    let (status, leaves) = unit_row(
-        RELEASED_HEADERS,
-        RELEASED_BODY,
-        "checked",
-        None,
-        &contracts,
-    );
+    let (status, leaves) = unit_row(RELEASED_HEADERS, RELEASED_BODY, "checked", None, &contracts);
     assert_ne!(status, AnalysisStatus::Safe);
     assert!(refused(&leaves, "callback-member-open"), "{leaves:?}");
 }
@@ -2765,7 +2762,11 @@ fn the_released_frees_decide_over_the_run() {
                 partial.as_ref().expect("a partial summary")
             }
         };
-        assert_eq!(summary.functions[name].status, AnalysisStatus::Safe, "{name}");
+        assert_eq!(
+            summary.functions[name].status,
+            AnalysisStatus::Safe,
+            "{name}"
+        );
         let dependencies = row_dependencies(&record, summary, &contracts);
         assert!(
             dependencies[name].declarations.contains(free),
@@ -2780,7 +2781,9 @@ fn the_released_frees_decide_over_the_run() {
     let (status, leaves) = row("digest_once", Some(unknown.clone()), &contracts);
     assert_ne!(status, AnalysisStatus::Safe);
     assert!(
-        leaves.iter().any(|leaf| leaf.contains("md_cleanup_unknown")),
+        leaves
+            .iter()
+            .any(|leaf| leaf.contains("md_cleanup_unknown")),
         "{leaves:?}"
     );
     let (status, leaves) = row("pkcs12_once", Some(unknown), &contracts);
