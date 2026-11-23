@@ -637,7 +637,8 @@ pub(crate) fn function_facts(body: &[&str], bases: &UntrackedBases) -> FunctionF
             } else {
                 other.insert(text.to_owned());
             }
-        } else if index > 0 && body[index - 1] == "&" {
+        } else if index > 0 && crate::ampersand_runs::ends_in_address(body, index) {
+            // Rule 74e: an odd run of `&` (`p && x` takes no address).
             let continues = matches!(next, Some("-") if after == Some(">"))
                 || matches!(next, Some(".") | Some("["));
             if !continues {
@@ -742,7 +743,8 @@ fn written_at(body: &[&str], index: usize) -> bool {
     );
     let continues =
         matches!(next, Some("-") if after == Some(">")) || matches!(next, Some(".") | Some("["));
-    let addressed = previous == Some("&") && !continues;
+    // Rule 74e: an odd run of `&` (`p && x` takes no address).
+    let addressed = crate::ampersand_runs::ends_in_address(body, index) && !continues;
     assigned || compound || stepped || addressed
 }
 

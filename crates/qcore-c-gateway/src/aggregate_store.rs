@@ -319,7 +319,8 @@ pub(crate) fn store_bases(
                     || text.as_bytes().first().is_some_and(u8::is_ascii_digit)
                     || matches!(text, ")" | "]")
             });
-        if (previous == Some("&") && !selects)
+        // Rule 74e: an odd run of `&` (`p && b` takes no address).
+        if (crate::ampersand_runs::ends_in_address(body, index) && !selects)
             || dereferenced
             || matches!(next, Some(".") | Some("["))
             || matches!(

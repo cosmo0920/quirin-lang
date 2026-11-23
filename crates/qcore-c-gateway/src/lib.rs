@@ -27,6 +27,9 @@
 #[cfg(feature = "indirect-census")]
 pub mod access_path_census;
 mod aggregate_store;
+// Card AMPERSAND-RUN-PARITY-OTHER-READERS (rule 74e): the run-parity reading
+// of `&` tokens every address decision of the unfused token stream uses.
+mod ampersand_runs;
 pub mod atomic_publication_source;
 pub mod audit_ir;
 pub mod audit_ir_capture;

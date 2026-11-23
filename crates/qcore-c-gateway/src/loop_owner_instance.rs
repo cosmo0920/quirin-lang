@@ -545,12 +545,13 @@ pub(super) fn assignments(texts: &[&str], range: (usize, usize), name: &str) -> 
         .collect()
 }
 
-/// Whether `&name` (not `&&`) occurs in `range`.
+/// Whether `&name` occurs in `range`. Rule 74e: after an odd run of `&`
+/// tokens (`&name`, `p && &name`), never after an even one (`p && name`); the
+/// old reading took only a run of exactly one and missed `p && &name`.
 pub(super) fn address_taken(texts: &[&str], range: (usize, usize), name: &str) -> bool {
     (range.0..=range.1).any(|k| {
         texts[k] == name
-            && texts[k - 1] == "&"
-            && texts[k - 2] != "&"
+            && crate::ampersand_runs::ends_in_address(texts, k)
             && !matches!(texts.get(k + 1), Some(&"." | &"-"))
     })
 }
@@ -1817,9 +1818,8 @@ impl StepB<'_> {
                 begin -= 1;
             }
             begin = begin.saturating_sub(1);
-            let addressed = begin > 0
-                && texts[begin - 1] == "&"
-                && texts.get(begin.wrapping_sub(2)) != Some(&"&");
+            // Rule 74e: an odd run of `&` (`&x->m`, `p && &x->m`).
+            let addressed = begin > 0 && crate::ampersand_runs::ends_in_address(&texts, begin);
             let incremented = matches!(
                 (
                     texts.get(begin.wrapping_sub(1)),
@@ -2050,5 +2050,25 @@ impl StepB<'_> {
                 .to_owned(),
         );
         Ok(())
+    }
+}
+
+#[cfg(test)]
+mod ampersand_run_parity_tests {
+    use super::address_taken;
+
+    /// Card AMPERSAND-RUN-PARITY-OTHER-READERS (rule 74e): `p && &x` takes
+    /// `x`'s address (the old reading, a run of exactly one `&`, missed it);
+    /// `p && x` and `&x->f` do not take `x`'s.
+    #[test]
+    fn an_odd_run_of_ampersands_takes_the_address() {
+        let texts = "{ if ( p & & & x ) { } }".split(' ').collect::<Vec<_>>();
+        assert!(address_taken(&texts, (1, texts.len() - 1), "x"));
+        let texts = "{ g ( & x ) ; }".split(' ').collect::<Vec<_>>();
+        assert!(address_taken(&texts, (1, texts.len() - 1), "x"));
+        let texts = "{ if ( p & & x ) { } }".split(' ').collect::<Vec<_>>();
+        assert!(!address_taken(&texts, (1, texts.len() - 1), "x"));
+        let texts = "{ g ( & x - > f ) ; }".split(' ').collect::<Vec<_>>();
+        assert!(!address_taken(&texts, (1, texts.len() - 1), "x"));
     }
 }

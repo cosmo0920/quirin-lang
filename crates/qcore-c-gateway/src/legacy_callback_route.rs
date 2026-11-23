@@ -447,7 +447,9 @@ fn only_registry_mentions(body: &[&str], name: &str, contracts: &ResourceContrac
         if matches!(previous, Some("." | "->")) {
             continue;
         }
-        if previous == Some("&") && matches!(next, Some("," | ")")) {
+        // Rule 74e: a whole `&name` actual after an odd run of `&`; `p &&
+        // name` is a value, not a registry mention.
+        if crate::ampersand_runs::ends_in_address(body, index) && matches!(next, Some("," | ")")) {
             let mut depth = 0usize;
             let mut callee = None;
             for at in (0..index.saturating_sub(1)).rev() {
@@ -2372,7 +2374,9 @@ pub(super) fn rebound(body: &[&str], name: &str) -> bool {
         }
         let previous = at.checked_sub(1).map(|b| body[b]);
         let next = body.get(at + 1).copied();
-        matches!(previous, Some("&" | "++" | "--"))
+        // Rule 74e: an address after an odd run of `&` only.
+        matches!(previous, Some("++" | "--"))
+            || crate::ampersand_runs::ends_in_address(body, at)
             || matches!(
                 next,
                 Some(

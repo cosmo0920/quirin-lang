@@ -279,7 +279,8 @@ fn local_validates(
         if matches!(previous, Some("." | "->")) {
             continue;
         }
-        if previous == Some("&") {
+        // Rule 74e: an odd run of `&` (`p && name` takes no address).
+        if crate::ampersand_runs::ends_in_address(body, at) {
             return false;
         }
         if assignment_at(body, at + 1) {

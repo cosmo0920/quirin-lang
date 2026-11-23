@@ -616,7 +616,6 @@ pub(crate) fn validated(
             continue;
         }
         let next = (words.get(at + 1).copied(), words.get(at + 2).copied());
-        let previous = at.checked_sub(1).map(|index| words[index]);
         let assigned = match next {
             (Some("="), second) => second != Some("="),
             (Some("+" | "-"), Some(second)) if second == words[at + 1] => true,
@@ -626,7 +625,8 @@ pub(crate) fn validated(
         };
         let incremented =
             at >= 2 && matches!((words[at - 2], words[at - 1]), ("+", "+") | ("-", "-"));
-        if assigned || incremented || previous == Some("&") {
+        // Rule 74e: an odd run of `&` (`p && x` takes no address).
+        if assigned || incremented || crate::ampersand_runs::ends_in_address(&words, at) {
             return false;
         }
     }

@@ -392,8 +392,10 @@ pub(crate) fn handed_on(statement: &[&str]) -> BTreeMap<String, HandOn> {
         while before > 0 && statement[before - 1] == "(" {
             before -= 1;
         }
-        let address =
-            before > 0 && statement[before - 1] == "&" && !ends_operand(statement, before - 1);
+        // Rule 74e: an odd run of `&`; a single `&` after an operand end is
+        // a binary AND, as before; an even run (`p && q->f`) is a logical AND.
+        let run = crate::ampersand_runs::run_before(statement, before);
+        let address = run % 2 == 1 && (run > 1 || !ends_operand(statement, before - 1));
         let dereference =
             index > 0 && statement[index - 1] == "*" && !ends_operand(statement, index - 1);
         let next = statement.get(cursor + 1).copied();

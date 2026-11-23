@@ -2595,7 +2595,8 @@ impl StepB<'_> {
             if texts[k] != instance || matches!(texts[k - 1], "." | ">") {
                 continue;
             }
-            if texts[k - 1] == "&" && texts[k - 2] != "&" {
+            // Rule 74e: an odd run of `&` (`p && &instance`).
+            if crate::ampersand_runs::ends_in_address(&texts, k) {
                 return Err(format!("the address of the instance `{instance}` is taken"));
             }
             if texts[k + 1] == "=" && texts[k + 2] != "=" {
@@ -2704,7 +2705,8 @@ impl StepB<'_> {
                     escapes.insert(texts[k - 6].to_owned());
                     continue;
                 }
-                if texts[k - 1] == "&" && texts[k - 2] != "&" && texts[k + 1] != "." {
+                // Rule 74e: an odd run of `&` (`p && &root`).
+                if crate::ampersand_runs::ends_in_address(&texts, k) && texts[k + 1] != "." {
                     blockers.push(format!(
                         "the object `{root}` holding the copy escapes (its address is taken)"
                     ));
@@ -2721,7 +2723,8 @@ impl StepB<'_> {
                 continue;
             }
             let after = k + 2 * base.len() - 1;
-            if texts[k - 1] == "&" && texts[k - 2] != "&" {
+            // Rule 74e: an odd run of `&` (`p && &copy`).
+            if crate::ampersand_runs::ends_in_address(&texts, k) {
                 // `X->p = &copy;` installs it; `memcpy(&copy, &D, …)` copies D.
                 if k >= 6
                     && texts[k - 2] == "="
