@@ -1,7 +1,7 @@
 {
  "card": "SP9-PLUGIN-GUARDED-APPLICATION-FORMULAS",
  "base": "2c60986b0",
- "note": "The 14 guarded symbols of the frozen plugin sidecar (docs/reports/premise-guarded-decomposition/applications/plugin.json) as C04.18.9 typed-rendering formulas over the SP9 block (user decisions 2026-11-23: D1 A' prefixed terms with the environment implicit, D2 b, D3 I2). `symbols`: each recorded English text and the formula that replaced it; the legacy reader lifts exactly these. A prerequisite also records its typed atom's formula (`atom`); its formula is that atom bound to the SP9 terms (every free name #X read as #plg_X with the environment argument dropped, quantifier sorts S as plg_S).",
+ "note": "The 14 guarded symbols of the frozen plugin sidecar (docs/reports/premise-guarded-decomposition/applications/plugin.json) as C04.18.9 typed-rendering formulas over the SP9 block (user decisions 2026-11-23: D1 A' prefixed terms with the environment implicit, D2 b, D3 I2). `symbols`: each recorded English text and the formula that replaced it (its canonical printing, quant_proposition::print); the legacy reader lifts exactly these. A prerequisite also records its typed atom's formula (`atom`); its formula is that atom bound to the SP9 terms (every free name #X read as #plg_X with the environment argument dropped, quantifier sorts S as plg_S).",
  "symbols": [
   {
    "id": "default_case",

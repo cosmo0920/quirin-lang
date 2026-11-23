@@ -1,0 +1,16 @@
+{
+ "schema": "quirin-amendments/2",
+ "card": "SP9-PLUGIN-GUARDED-APPLICATION-FORMULAS",
+ "base": "2c60986b0",
+ "measured_tip": "1cc70dd00",
+ "increment_paragraph": "**SP9-PLUGIN-GUARDED-APPLICATION-FORMULAS (2026-11-23).** User decision 2026-11-20 (conditions are symbols, not sentences); user 2026-11-23: \"Launch both\", then, on the card's stop (all 14 symbols of the frozen plugin guarded sidecar were refused, not 7: the seven plugin_* prerequisites, lifted to their typed atoms' formulas, are not typed renderings), D1 A' (prefixed SP9 terms, environment implicit), D2 b (default_lifetime_valid states liveness only) and D3 I2 (a warrant term for refuted registration). C04.18.9 gains an SP9 block appended after SP7's: a function sort in the rendering, 13 value sorts and 63 terms, every name prefixed plg_ so no generic name is reserved (Rust RENDERED_VALUE_SORTS and RENDERED_TERMS, the specification table, Lean sp9Sorts and sp9Terms). The 14 symbols of docs/reports/premise-guarded-decomposition/applications/plugin.json are formulas over it. The seven prerequisites are their production typed atoms' formulas bound to the SP9 terms (#X read as #plg_X with #env dropped, checked on the parsed trees). environment is #plg_trace_corresponds(), invoke #plg_admits_callback_closure(), the cases and postconditions are read at the reached invocation #plg_ev, and unregistered is #plg_refutes_registration(#plg_ev). The test-side legacy reader lifts all 14 recorded texts, so the plugin replay is a positive test again; an unrecorded English symbol is still refused (QF003). Lean QCore.PluginGuardedSymbols (audited) proves each symbol equal to its existing definition (plugin_guarded_symbols_are_the_definitions: loadedArtifacts, callbackCandidates, loadedLifetime, loadedCustody, loadedRegistration, loadedUnload, outerBridge, together CallbackRefinement; registeredCase, defaultCase, lifetimePostcondition; the new defaultLifetime, strictly weaker than lifetimePostcondition). The refutation entails unregistered, while a failed registration proof does not give it, and the admission, trace correspondence and refutation are never derived. Spec C04.18.6 and C04.18.9 (SP9 block, second warrant-term note) and rule 13h were updated. No provider file, lock, manifest or graph changed. Guarded symbols stay proposed metadata: no move is predicted on any route.",
+ "status_edits": [],
+ "ledger": [
+  {
+   "id": "SP7-PLUGIN-GUARDED-APPLICATION-FORMULAS",
+   "operation": "retire",
+   "why": "DISCHARGED by SP9-PLUGIN-GUARDED-APPLICATION-FORMULAS: all 14 guarded symbols of the frozen plugin sidecar (the seven English non-prerequisites and the seven plugin_* prerequisites, which were not typed renderings either) are C04.18.9 typed-rendering formulas over a new prefixed SP9 block (user decisions 2026-11-23: D1 A', D2 b, D3 I2). Each is recorded for the legacy reader and proved in Lean equal to its existing definition (QCore.PluginGuardedSymbols.plugin_guarded_symbols_are_the_definitions). The plugin replay is a positive test again, and an unrecorded English symbol is still refused (QF003). No production file changed. No verdict moved (predicted).",
+   "source": "docs/reports/sp9-plugin-guarded-application-formulas/README.md"
+  }
+ ]
+}
