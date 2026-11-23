@@ -158,7 +158,11 @@ const CONDITION_HEADS: &[&str] = &["if", "while", "switch"];
 /// by `if`, `while` or `switch` splits at its condition's closing parenthesis
 /// (a brace-less body follows it on the same statement); a `for` header's
 /// clauses go to both tables.
-pub(crate) fn line_reads(body: &[&str], lines: &[usize]) -> LineReads {
+///
+/// `objects` are the names the function declares as objects (formals, locals,
+/// file-scope objects) and no typedef spells; a single one in parentheses
+/// before `&` is a value, not a cast (rule 74f).
+pub(crate) fn line_reads(body: &[&str], lines: &[usize], objects: &BTreeSet<String>) -> LineReads {
     let mut reads = LineReads::new();
     let mut start = 0usize;
     let mut for_clauses = 0usize;
@@ -176,10 +180,10 @@ pub(crate) fn line_reads(body: &[&str], lines: &[usize]) -> LineReads {
             }
             if segment.get(head) == Some(&"for") {
                 for_clauses = 2;
-                record(&mut reads, segment, segment_lines, Table::Both);
+                record(&mut reads, segment, segment_lines, Table::Both, objects);
             } else if for_clauses > 0 {
                 for_clauses -= 1;
-                record(&mut reads, segment, segment_lines, Table::Both);
+                record(&mut reads, segment, segment_lines, Table::Both, objects);
             } else if segment
                 .get(head)
                 .is_some_and(|word| CONDITION_HEADS.contains(word))
@@ -191,15 +195,17 @@ pub(crate) fn line_reads(body: &[&str], lines: &[usize]) -> LineReads {
                     &segment[..=close],
                     &segment_lines[..=close],
                     Table::Condition,
+                    objects,
                 );
                 record(
                     &mut reads,
                     &segment[close + 1..],
                     &segment_lines[close + 1..],
                     Table::Statement,
+                    objects,
                 );
             } else {
-                record(&mut reads, segment, segment_lines, Table::Statement);
+                record(&mut reads, segment, segment_lines, Table::Statement, objects);
             }
         }
         start = index + 1;
@@ -214,11 +220,17 @@ enum Table {
     Both,
 }
 
-fn record(reads: &mut LineReads, segment: &[&str], lines: &[usize], table: Table) {
+fn record(
+    reads: &mut LineReads,
+    segment: &[&str],
+    lines: &[usize],
+    table: Table,
+    objects: &BTreeSet<String>,
+) {
     if segment.is_empty() {
         return;
     }
-    let places = handed_on(segment);
+    let places = handed_on_among(segment, objects);
     if places.is_empty() {
         return;
     }
@@ -284,8 +296,20 @@ enum Paren {
     Unevaluated,
 }
 
-/// The places one statement hands on, and how (see the module header).
+/// The places one statement hands on, and how (see the module header), with
+/// no declared objects known: every `( name )` before a single `&` may be a
+/// cast.
+#[cfg(test)]
 pub(crate) fn handed_on(statement: &[&str]) -> BTreeMap<String, HandOn> {
+    handed_on_among(statement, &BTreeSet::new())
+}
+
+/// The places one statement hands on, and how (see the module header).
+/// `objects` as for [`line_reads`].
+pub(crate) fn handed_on_among(
+    statement: &[&str],
+    objects: &BTreeSet<String>,
+) -> BTreeMap<String, HandOn> {
     let mut places = BTreeMap::new();
     let returns = statement.first() == Some(&"return");
     // The index of the top-level simple assignment, if any.
@@ -392,10 +416,19 @@ pub(crate) fn handed_on(statement: &[&str]) -> BTreeMap<String, HandOn> {
         while before > 0 && statement[before - 1] == "(" {
             before -= 1;
         }
-        // Rule 74e: an odd run of `&`; a single `&` after an operand end is
-        // a binary AND, as before; an even run (`p && q->f`) is a logical AND.
+        // Rule 74e: an odd run of `&`; an even run (`p && q->f`) is a logical
+        // AND. Rule 74f: a single `&` after an operand end is a binary AND,
+        // except after a `)` that may close a cast (`(T *) &x->f` hands on
+        // the address chain; an undecided `(a) &` is a cast too).
         let run = crate::ampersand_runs::run_before(statement, before);
-        let address = run % 2 == 1 && (run > 1 || !ends_operand(statement, before - 1));
+        let unary_single = || {
+            let amp = before - 1;
+            !ends_operand(statement, amp)
+                || (amp >= 1
+                    && statement[amp - 1] == ")"
+                    && crate::ampersand_runs::may_close_a_cast(statement, amp - 1, objects))
+        };
+        let address = run % 2 == 1 && (run > 1 || unary_single());
         let dereference =
             index > 0 && statement[index - 1] == "*" && !ends_operand(statement, index - 1);
         let next = statement.get(cursor + 1).copied();

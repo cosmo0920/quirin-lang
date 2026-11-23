@@ -523,14 +523,22 @@ impl PublicationFacts {
 ///
 /// `unit` is the whole translation unit's token texts and `body` the tokens
 /// between the definition's braces; `formals` are its parameter names.
+#[cfg(test)]
 pub(crate) fn destinations(
     unit: &[&str],
     body: &[&str],
     formals: &BTreeSet<String>,
 ) -> BTreeSet<String> {
-    let (declared, static_duration) = body_declarations(body);
+    destinations_of(body_declarations(body), file_scope_objects(unit), formals)
+}
+
+fn destinations_of(
+    (declared, static_duration): (BTreeSet<String>, BTreeSet<String>),
+    file_objects: BTreeSet<String>,
+    formals: &BTreeSet<String>,
+) -> BTreeSet<String> {
     let mut destinations = static_duration;
-    for name in file_scope_objects(unit) {
+    for name in file_objects {
         if formals.contains(&name) || declared.contains(&name) {
             continue;
         }
@@ -547,7 +555,12 @@ pub(crate) fn facts(
     formals: &BTreeSet<String>,
     types: &crate::typed_field_access::FunctionTypes,
 ) -> PublicationFacts {
-    let destinations = destinations(unit, body, formals);
+    let declarations = body_declarations(body);
+    let file_objects = file_scope_objects(unit);
+    // Card CAST-BEFORE-AMPERSAND-READ-AS-BINARY (rule 74f): the names the
+    // refused hand-on may read as values in `( name ) &`.
+    let objects = value_names(unit, &declarations.0, &file_objects, formals);
+    let destinations = destinations_of(declarations, file_objects, formals);
     let indirect = indirect_publications(body, lines, &destinations);
     // Every identifier this body mentions, plus its formals — whose only
     // occurrence may be in the parameter list `body` excludes.
@@ -561,8 +574,57 @@ pub(crate) fn facts(
         destinations,
         indirect,
         scalar_sources,
-        line_reads: crate::legacy_c::refused_operands::line_reads(body, lines),
+        line_reads: crate::legacy_c::refused_operands::line_reads(body, lines, &objects),
     }
+}
+
+/// Rule 74f: the function's declared objects (its formals, the body's
+/// declarations and the unit's file-scope objects) less every identifier any
+/// `typedef` declaration of the unit spells, so a name that may be a type in
+/// some scope is never read as a value. Over-removing only reads more
+/// `( name ) &` as casts, the direction that hands more places on.
+pub(crate) fn value_names(
+    unit: &[&str],
+    declared: &BTreeSet<String>,
+    file_objects: &BTreeSet<String>,
+    formals: &BTreeSet<String>,
+) -> BTreeSet<String> {
+    let typedef_spelled = typedef_spelled_names(unit);
+    formals
+        .iter()
+        .chain(declared)
+        .chain(file_objects)
+        .filter(|name| !typedef_spelled.contains(*name))
+        .cloned()
+        .collect()
+}
+
+/// Every identifier inside a `typedef` declaration of `unit`, from the
+/// keyword to its `;` at the same brace depth.
+fn typedef_spelled_names(unit: &[&str]) -> BTreeSet<String> {
+    let mut names = BTreeSet::new();
+    let mut index = 0;
+    while index < unit.len() {
+        if unit[index] != "typedef" {
+            index += 1;
+            continue;
+        }
+        let mut depth = 0usize;
+        index += 1;
+        while index < unit.len() {
+            match unit[index] {
+                "{" => depth += 1,
+                "}" => depth = depth.saturating_sub(1),
+                ";" if depth == 0 => break,
+                text if is_name(text) => {
+                    names.insert(text.to_owned());
+                }
+                _ => {}
+            }
+            index += 1;
+        }
+    }
+    names
 }
 
 #[cfg(test)]
