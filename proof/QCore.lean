@@ -61,6 +61,7 @@ import QCore.CallbackContracts
 import QCore.CallbackCoverage
 import QCore.CallbackForward
 import QCore.CallbackLiteralPremise
+import QCore.CallbackRequirementFold
 import QCore.CallbackSource
 import QCore.CallbackSuppliedNull
 import QCore.CallbackTaskHandoff

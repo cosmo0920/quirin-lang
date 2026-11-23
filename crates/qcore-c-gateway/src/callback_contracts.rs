@@ -99,6 +99,51 @@ pub const BESIDE_DROP: &str = "callback-beside-drop";
 /// state, a member invocation deferred to its constructed state, a registry
 /// use), which the transfer would apply after the release.
 pub const BESIDE_RELEASE: &str = "callback-beside-release";
+/// Card **CALLBACK-MEMBER-RELEASED-REQUIREMENT-FOLD** (rule 74j): a
+/// candidate's `resource_owned(n)` requirement on a parameter actual whose
+/// custody mode states no held object to fold it into (an out or removed
+/// parameter).
+pub const REQUIREMENT_UNFOLDED: &str = "callback-requirement-unfolded";
+
+/// Card **CALLBACK-MEMBER-RELEASED-REQUIREMENT-FOLD** (rule 74j, C04.19): the
+/// call's custody mode at a parameter position once a candidate's
+/// `resource_owned(nullable)` requirement on that actual is folded in, for
+/// every invocation clause form; `None` refuses the call
+/// ([`REQUIREMENT_UNFOLDED`]).
+///
+/// A borrowed position reads as the requirement itself (rule 13u). An owned,
+/// consumed, released or stored position already requires the object held,
+/// or null where nullable, before the call's effects: the requirement keeps
+/// the mode and is non-null when either is. An out position names a
+/// destination, not a held object, and a removed one an element its owner
+/// holds: no mode states the requirement there, so the call refuses.
+#[must_use]
+pub fn fold_requirement(
+    mode: ResourceParameterMode,
+    nullable: bool,
+) -> Option<ResourceParameterMode> {
+    use ResourceParameterMode as M;
+    match mode {
+        M::Borrowed => Some(M::Owned { nullable }),
+        M::Owned { nullable: own } => Some(M::Owned {
+            nullable: own && nullable,
+        }),
+        M::Consumed { nullable: own } => Some(M::Consumed {
+            nullable: own && nullable,
+        }),
+        M::Released { nullable: own } => Some(M::Released {
+            nullable: own && nullable,
+        }),
+        M::Stored {
+            owner_parameter,
+            nullable: own,
+        } => Some(M::Stored {
+            owner_parameter,
+            nullable: own && nullable,
+        }),
+        M::Out { .. } | M::Removed { .. } => None,
+    }
+}
 /// Card **CG22-OP-CALLBACKS-AND-SERVED-QUEUES** (rule 12o): a discriminant
 /// value no arm declares.
 pub const ARM_UNDECLARED: &str = "arm-undeclared";
@@ -618,6 +663,78 @@ pub fn names(candidates: &[(String, CandidateClass)]) -> BTreeSet<&str> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    /// Card CALLBACK-MEMBER-RELEASED-REQUIREMENT-FOLD: the fold over every
+    /// mode, as `QCore.CallbackRequirementFold.fold` states it: a non-null
+    /// requirement never leaves a nullable position; a nullable one changes
+    /// only a borrowed position; out and removed refuse.
+    #[test]
+    fn the_requirement_fold_covers_every_mode() {
+        use ResourceParameterMode as M;
+        for nullable in [false, true] {
+            let modes = [
+                M::Borrowed,
+                M::Owned { nullable },
+                M::Consumed { nullable },
+                M::Released { nullable },
+                M::Stored {
+                    owner_parameter: 1,
+                    nullable,
+                },
+                M::Out { nullable },
+                M::Removed {
+                    owner_parameter: 1,
+                    nullable,
+                },
+            ];
+            for mode in modes {
+                let held = !matches!(mode, M::Out { .. } | M::Removed { .. });
+                assert_eq!(fold_requirement(mode, true).is_some(), held, "{mode:?}");
+                assert_eq!(fold_requirement(mode, false).is_some(), held, "{mode:?}");
+                if mode != M::Borrowed && held {
+                    assert_eq!(fold_requirement(mode, true), Some(mode), "{mode:?}");
+                }
+            }
+            assert_eq!(
+                fold_requirement(M::Borrowed, nullable),
+                Some(M::Owned { nullable })
+            );
+        }
+        assert_eq!(
+            fold_requirement(M::Released { nullable: true }, false),
+            Some(M::Released { nullable: false })
+        );
+        assert_eq!(
+            fold_requirement(M::Owned { nullable: true }, false),
+            Some(M::Owned { nullable: false })
+        );
+        assert_eq!(
+            fold_requirement(M::Consumed { nullable: true }, false),
+            Some(M::Consumed { nullable: false })
+        );
+        assert_eq!(
+            fold_requirement(
+                M::Stored {
+                    owner_parameter: 2,
+                    nullable: true
+                },
+                false
+            ),
+            Some(M::Stored {
+                owner_parameter: 2,
+                nullable: false
+            })
+        );
+        // The shipped non-null positions are fixed points.
+        for mode in [
+            M::Released { nullable: false },
+            M::Consumed { nullable: false },
+            M::Owned { nullable: false },
+        ] {
+            assert_eq!(fold_requirement(mode, false), Some(mode));
+            assert_eq!(fold_requirement(mode, true), Some(mode));
+        }
+    }
 
     #[test]
     fn decision_vectors_hold() {

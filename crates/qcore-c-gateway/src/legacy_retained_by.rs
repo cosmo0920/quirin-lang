@@ -767,6 +767,35 @@ impl Parser<'_> {
                 ),
             ));
         }
+        // Card CALLBACK-MEMBER-RELEASED-REQUIREMENT-FOLD (rule 74j): a
+        // candidate's `resource_owned(n)` requirement on an actual whose
+        // custody mode states no held object (an out or removed parameter)
+        // has no mode to be folded into: the call refuses rather than drop
+        // it. Every other position folds below, for every clause form.
+        if let Some(callbacks) = &operands.callbacks
+            && let Some(&index) = callbacks.owned.iter().find_map(|(index, &nullable)| {
+                declaration
+                    .contract
+                    .parameters
+                    .get(*index)
+                    .and_then(|&mode| crate::callback_contracts::fold_requirement(mode, nullable))
+                    .is_none()
+                    .then_some(index)
+            })
+        {
+            return Some(refuse(
+                self,
+                crate::callback_contracts::refusal(
+                    function,
+                    &format!(
+                        "a callback it invokes requires its actual `{}` live, at a position \
+                         whose custody mode holds no object to require",
+                        actual(index).map_or_else(|| "?".to_owned(), |words| words.join(" "))
+                    ),
+                    crate::callback_contracts::REQUIREMENT_UNFOLDED,
+                ),
+            ));
+        }
         for retention in &declaration.retentions {
             // Card W43-ABI-ENUM-AND-CONST-PP (rule 12w): a guarded clause a
             // decided actual fails is not in force at this call; a decided
@@ -1092,28 +1121,21 @@ impl Parser<'_> {
                 // Card CG22-CALLBACK-REGISTRY-CONTRACT (rule 13u): a callback
                 // that requires a caller's actual live puts the requirement
                 // on the call's own position.
+                // Card OPENSSL-RELEASED-PARAMETER-SLOTS: a release already
+                // requires the object held (or null where nullable); a
+                // candidate requiring it non-null strengthens the release,
+                // read before it. Card CALLBACK-MEMBER-RELEASED-REQUIREMENT-FOLD
+                // (rule 74j): the same at every position holding an object
+                // (owned, consumed, released, stored) and for every clause
+                // form, not only a slot object; an out or removed position
+                // refused above.
                 if let Some(callbacks) = &operands.callbacks {
-                    let released = released_slot_objects(&declaration);
                     for (&index, &nullable) in &callbacks.owned {
-                        match contract.parameters.get_mut(index) {
-                            Some(
-                                mode @ qcore_schemas::contract::ResourceParameterMode::Borrowed,
-                            ) => {
-                                *mode = qcore_schemas::contract::ResourceParameterMode::Owned {
-                                    nullable,
-                                };
-                            }
-                            // Card OPENSSL-RELEASED-PARAMETER-SLOTS: a release
-                            // already requires the object held (or null where
-                            // nullable); a candidate requiring it non-null at
-                            // a released slot object strengthens the release,
-                            // read before it.
-                            Some(qcore_schemas::contract::ResourceParameterMode::Released {
-                                nullable: released_nullable,
-                            }) if released.contains(&index) => {
-                                *released_nullable = *released_nullable && nullable;
-                            }
-                            _ => {}
+                        if let Some(mode) = contract.parameters.get_mut(index)
+                            && let Some(folded) =
+                                crate::callback_contracts::fold_requirement(*mode, nullable)
+                        {
+                            *mode = folded;
                         }
                     }
                 }
