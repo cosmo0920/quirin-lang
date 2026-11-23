@@ -1,0 +1,24 @@
+{
+ "schema": "quirin-amendments/2",
+ "card": "SP8-OUTER-CONTRACT-SYMBOLIC-STATEMENTS",
+ "base": "95f36b628",
+ "measured_tip": "e1d9f78d6",
+ "increment_paragraph": "**SP8-OUTER-CONTRACT-SYMBOLIC-STATEMENTS (2026-11-23).** User decision 2026-11-20 (conditions are symbols, not sentences); user 2026-11-23: \"Launch the outer contract prose card too\"; user decisions 2026-11-23 on the card's design hand-back: D1 A (published documentation, librdkafka's public functions only), D2 B (provenance and typed access), D3 B (validity as an interval ending with the destruction of every holder and copy). The statement of an outer contract definition (C04.20) is a C04.18.9 formula over a new SP8 vocabulary block (36 terms, subject #outer_code read relative to the contract; Rust VOCABULARY, specification table, Lean vocab appended after SP5, SP7 merging before it) and a registered candidate inventory constant of sort obj, CANDIDATES_<upper-case SHA-256 of outer-candidates.json> (CANDIDATE_INVENTORIES, bound to the shipped inventory by a test), which qcore_audit::outer_candidates reads from the formula's tree and checks exactly as it checked outer-candidates:DIGEST. rk_plugin_library (librdkafka/outer.qv) and flb_external_plugin (fluent_bit/outer.qv) state their sentences conjunct by conjunct (faithfulness tables in the report, every clause, parenthetical and open list covered, the settled readings recorded with their reasons); the Fluent Bit statement is its own conjunct && exactly the librdkafka statement. The string statement is refused by name with the new diagnostic QF004 at parse (qcore_frontend::premise_formula::outer_header, so on every route: outer, resource and bounds loaders, Q000 naming QF004 on the compiler route) and by the outer loader; the operator gate admits an accepted statement's && and |. Lean: QCore.PremiseFormula.Outer (outer_formulas_wf, fb_entails_rk proved from the formulas, fb_states_own, string_is_not_an_outer_statement, outer_vectors_agree bound to the Rust OUTER_DECISION_VECTORS), audited by AuditPremiseFormulaOuter; the core model gains the SP8 block, inventories (sort obj) and two name-indexed components, decision vectors re-proved. The two defining loaders were re-pinned at the same sites and both revisions (contract_sha256 only, contract identities move by digest); contracts.py sync. The test-side legacy reader lifts the two recorded sentences (migration.json). Spec C04.18.9 (SP8 block), C04.20, C04.20.1, grammar G05g, rule 31 and the diagnostics page updated. Outer statements are reviewable metadata: no move predicted on any route.",
+ "status_edits": [],
+ "ledger": [
+  {
+   "id": "SP8-OUTER-CONTRACT-SYMBOLIC-STATEMENTS",
+   "operation": "register",
+   "title": "State the outer contract statements as formulas",
+   "text": "Recorded by SP5-GLOBAL-PROSE-PREMISE-BAN's report (follow-up 1, never registered): outer contract definitions quant #outer [[contract]] NAME, \"STATEMENT\"; (C04.20) still stated English after the premise ban. Under the user decision of 2026-11-20 they want the symbolic form. DISCHARGE: each statement a C04.18.9 formula over registered terms with a faithfulness table, the candidate inventory citation a checked identity, the string form refused on every route, Lean parity, no verdict moved.",
+   "source": "docs/reports/sp8-outer-contract-symbolic-statements/README.md",
+   "recorded_by": "SP5-GLOBAL-PROSE-PREMISE-BAN"
+  },
+  {
+   "id": "SP8-OUTER-CONTRACT-SYMBOLIC-STATEMENTS",
+   "operation": "retire",
+   "why": "DISCHARGED by SP8-OUTER-CONTRACT-SYMBOLIC-STATEMENTS: rk_plugin_library and flb_external_plugin state C04.18.9 formulas over the SP8 block (user decisions 2026-11-23 D1 A, D2 B, D3 B), each conjunct of each sentence mapped in the report's faithfulness tables; the inventory is cited by the registered typed constant CANDIDATES_<SHA-256>, read by outer_candidates; QF004 refuses the string statement at parse on every route; QCore.PremiseFormula.Outer proves both well-formed and FB -> RK; loaders re-pinned (contract_sha256 only); no verdict moved (predicted).",
+   "source": "docs/reports/sp8-outer-contract-symbolic-statements/README.md"
+  }
+ ]
+}
