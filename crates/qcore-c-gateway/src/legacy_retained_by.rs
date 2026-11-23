@@ -231,7 +231,9 @@ fn only_holder_mentions(body: &[&str], name: &str, contracts: &ResourceContracts
         if matches!(previous, Some("." | "->")) {
             continue;
         }
-        if previous == Some("&") && matches!(next, Some("," | ")")) {
+        // Rule 74e: a whole `&name` actual after an odd run of `&`; `p &&
+        // name` is a value, not a holder mention.
+        if crate::ampersand_runs::ends_in_address(body, index) && matches!(next, Some("," | ")")) {
             // The enclosing call's callee: the identifier before the nearest
             // unmatched `(` to the left.
             let mut depth = 0usize;
@@ -327,7 +329,8 @@ fn path_stable_with(
             body.get(at),
             Some(&"=" | &"+=" | &"-=" | &"++" | &"--" | &"|=" | &"&=" | &"^=")
         ) || matches!(previous, Some("++" | "--"));
-        let address = previous == Some("&");
+        // Rule 74e: an odd run of `&` (`p && root->f` takes no address).
+        let address = crate::ampersand_runs::ends_in_address(&body, index);
         if prefix && (written || address) {
             return false;
         }

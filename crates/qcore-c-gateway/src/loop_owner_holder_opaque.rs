@@ -134,7 +134,10 @@ fn flow_of(texts: &[&str], start: usize, end: usize) -> Flow {
     let compare_after = (after(1) == "=" || after(1) == "!") && after(2) == "=";
     let compare_before = before(1) == "=" && matches!(before(2), "=" | "!");
     let logical_after = matches!(after(1), "&" | "|") && after(2) == after(1);
-    let logical_before = matches!(before(1), "&" | "|") && before(2) == before(1);
+    // Rule 74e: an even run of `&` is a logical AND; an odd one (`p && &v`)
+    // ends in an address of the value, which is not a test.
+    let logical_before = (before(1) == "|" && before(2) == "|")
+        || crate::ampersand_runs::ends_in_logical_and(texts, s);
     let tested = before(1) == "(" && matches!(before(2), "if" | "while") && after(1) == ")";
     let negated = before(1) == "!" && !matches!(after(1), "=" | "-" | "." | "[");
     if compare_after
@@ -602,7 +605,8 @@ impl StepB<'_> {
                     }
                 }
                 let written = is_assignment(&texts, j)
-                    || (texts[k - 1] == "&" && texts[k - 2] != "&")
+                    // Rule 74e: an odd run of `&` (`p && &c->m`).
+                    || crate::ampersand_runs::ends_in_address(&texts, k)
                     || (matches!(texts[k - 1], "+" | "-") && texts[k - 2] == texts[k - 1]);
                 if written {
                     let member = first.unwrap_or("");
@@ -832,5 +836,24 @@ impl StepB<'_> {
         );
         self.notes.borrow_mut().insert(summary.clone());
         Ok(summary)
+    }
+}
+
+#[cfg(test)]
+mod ampersand_run_parity_tests {
+    use super::{Flow, flow_of};
+
+    /// Card AMPERSAND-RUN-PARITY-OTHER-READERS (rule 74e): a value after an
+    /// even run of `&` is a logical AND's operand (tested); after an odd run
+    /// (`p && &v`) it is the operand of an address, which the old reading
+    /// (any `& &` is a logical AND) read as tested.
+    #[test]
+    fn only_an_even_run_tests_the_value() {
+        let texts = "if ( p & & v ) {".split(' ').collect::<Vec<_>>();
+        assert!(matches!(flow_of(&texts, 5, 5), Flow::Compared));
+        let texts = "if ( p & & & v ) {".split(' ').collect::<Vec<_>>();
+        assert!(matches!(flow_of(&texts, 6, 6), Flow::Refused(_)));
+        let texts = "if ( p | | v ) {".split(' ').collect::<Vec<_>>();
+        assert!(matches!(flow_of(&texts, 5, 5), Flow::Compared));
     }
 }

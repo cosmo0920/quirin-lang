@@ -144,10 +144,13 @@ impl InPlaceNames {
         if !any_in_place {
             return Self::default();
         }
-        let address_taken = body
-            .windows(2)
-            .filter(|pair| pair[0] == "&" && is_identifier(pair[1]))
-            .map(|pair| pair[1].to_owned())
+        // Rule 74e: a name after an odd run of `&` (`p && name` takes no
+        // address).
+        let address_taken = (1..body.len())
+            .filter(|&at| {
+                is_identifier(body[at]) && crate::ampersand_runs::ends_in_address(body, at)
+            })
+            .map(|at| body[at].to_owned())
             .collect();
         for (index, pair) in body.windows(2).enumerate() {
             if pair[1] != "(" || !is_identifier(pair[0]) {

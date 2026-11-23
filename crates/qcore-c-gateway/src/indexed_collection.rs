@@ -902,7 +902,8 @@ pub fn body_keeps_exit_equation(body: &[&str], index: &str, bound: Option<&str>)
                     (next, after),
                     (Some("<"), Some("<")) | (Some(">"), Some(">"))
                 ) && body.get(at + 3) == Some(&"="))
-                || previous == Some("&")
+                // Rule 74e: an odd run of `&` (`p && i` takes no address).
+                || crate::ampersand_runs::ends_in_address(body, at)
                 || matches!(
                     (before, previous),
                     (Some("+"), Some("+")) | (Some("-"), Some("-"))

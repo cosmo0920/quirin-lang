@@ -771,7 +771,8 @@ pub(super) fn validated(
         if previous == Some("return") {
             continue;
         }
-        if previous == Some("&") || assignment_at(body, at + 1) {
+        // Rule 74e: an odd run of `&` (`p && name` takes no address).
+        if crate::ampersand_runs::ends_in_address(body, at) || assignment_at(body, at + 1) {
             return false;
         }
         if previous.is_some_and(|_| assignment_at(body, at - 1)) {
