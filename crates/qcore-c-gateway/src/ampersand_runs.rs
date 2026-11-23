@@ -104,8 +104,11 @@ fn is_name(text: &str) -> bool {
 /// `residual_takes_an_address`) and, card **CAST-BEFORE-STAR-READ-AS-BINARY**
 /// (rule 74g), every reader that decides a single `*` by it the same way
 /// (`legacy_refused_operands`' dereference, `aggregate_store`'s premise 4):
-/// after a `)` that may close a cast, `*` may be a dereference. A token reading cannot always tell a cast
-/// from a parenthesised expression (`(a) & b` is either, by whether `a` names
+/// after a `)` that may close a cast, `*` may be a dereference. Card
+/// **RETURN-FAMILY-STAR-AFTER-UNRESOLVED-CAST** (rule 74h): family S of
+/// `legacy_return_family` asks it about every `)` its declaration reader does
+/// not resolve as a type, and keeps both readings of an undecided one.
+/// A token reading cannot always tell a cast from a parenthesised expression (`(a) & b` is either, by whether `a` names
 /// a type), so the answer leans to the cast, which reads more addresses:
 ///
 /// * **not a cast** (binary): the group is an argument list (its `(` follows
@@ -219,6 +222,7 @@ pub(crate) const READERS: &[(&str, usize, &str)] = &[
     ("legacy_refused_operands.rs", 3, "fail-closed+cast"),
     ("legacy_in_place_custody.rs", 1, "fail-closed"),
     ("legacy_call_instantiation.rs", 2, "fail-closed+cast"),
+    ("legacy_return_family.rs", 1, "fail-closed+cast"),
 ];
 
 /// `(tokens, index of the operand, run ends in an & operator?, run ends in

@@ -64,6 +64,16 @@
 //!   other use of such a name — as a value, under a second dereference,
 //!   inside a parenthesised operand — refuses.
 //!
+//! Card **RETURN-FAMILY-STAR-AFTER-UNRESOLVED-CAST** (gateway rule 74h): a
+//! single `*` or `&` after a `)` is read by the group it closes. A group the
+//! declaration reader resolves as a type ([`is_cast_group`]) is a cast; a
+//! group rule 74f's one shared detector rules out (an argument list, a value
+//! group, a declared object) is an operand; every other group is
+//! **undecided** ([`Operator::Undecided`]), and family S keeps every refusal
+//! and every base **either** reading raises: the `&` refusal, the starred
+//! untracked base, and a may-bind root's one dereference counted under both
+//! readings (`QCore.ReturnFamilyStarCast`).
+//!
 //! The read node is `IndirectScalarAccess` with no destination, no frame and
 //! no chain: it changes no binding, status, marker or link, and adds only the
 //! bases' obligations and the C02-P-ALIAS obligations of every `->` root. It
@@ -108,6 +118,9 @@
 //!
 //! The Lean model is `QCore.ReturnExpressionFamilies`; as for every gateway
 //! module, the correspondence is maintained by review (constraint 28).
+
+use std::cell::OnceCell;
+use std::collections::BTreeSet;
 
 use qcore_schemas::contract::ResourceReturnMode;
 
@@ -239,6 +252,10 @@ pub(crate) trait NameFacts {
     /// `words` (identifiers, no `*`) name a type the reader resolves and that
     /// is never variably modified.
     fn type_name(&self, words: &[&str]) -> bool;
+    /// Rule 74f's declared objects (`publication::value_names`): the formals,
+    /// the body's declarations and the unit's file-scope objects, less every
+    /// name a `typedef` spells. A `( name )` of one of them is an operand.
+    fn objects(&self) -> &BTreeSet<String>;
 }
 
 /// Family S's read: the may-bind bases it dereferences and the `->` roots
@@ -288,18 +305,62 @@ fn cast_target(group: &[&str], names: &impl NameFacts) -> Option<bool> {
     .then_some(stars > 0)
 }
 
-/// Whether the operator at `index` (`&` or `*`) is unary: nothing, an
-/// operator or an opening group precedes it, or a cast does.
-fn unary_position(texts: &[&str], index: usize, names: &impl NameFacts) -> bool {
+/// Card RETURN-FAMILY-STAR-AFTER-UNRESOLVED-CAST (rule 74h): how a single
+/// `&` or `*` reads by the token before it.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum Operator {
+    /// Nothing, an operator or an opening group precedes it, or a cast the
+    /// declaration reader resolves.
+    Unary,
+    /// An operand ends before it: a name, a number, `]`, or a `)` the shared
+    /// detector rules out as a cast.
+    Binary,
+    /// A `)` neither reader decides: `(T)` with `T` unresolved, `(a)` with
+    /// `a` no declared object. Either reading may be C's.
+    Undecided,
+}
+
+/// Which reading an undecided `)` takes in one count.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum Reading {
+    /// The group is an operand: the operator is binary.
+    Operand,
+    /// The group is a cast: the operator is unary.
+    Cast,
+}
+
+impl Operator {
+    fn unary_under(self, reading: Reading) -> bool {
+        match self {
+            Self::Unary => true,
+            Self::Binary => false,
+            Self::Undecided => reading == Reading::Cast,
+        }
+    }
+
+    /// Unary under at least one reading: what every refusal and every base
+    /// keys on, so that neither reading's is lost.
+    fn may_be_unary(self) -> bool {
+        self.unary_under(Reading::Cast)
+    }
+}
+
+/// How the operator at `index` (`&` or `*`) reads. A `)` is a resolved cast
+/// when [`is_cast_group`] resolves its group, an operand when rule 74f's
+/// shared detector rules the group out, and undecided otherwise.
+fn operator_at(texts: &[&str], index: usize, names: &impl NameFacts) -> Operator {
     let Some(previous) = index.checked_sub(1).map(|at| texts[at]) else {
-        return true;
+        return Operator::Unary;
     };
     match previous {
-        ")" => is_cast_group(texts, index - 1, names),
-        "]" => false,
-        text if super::is_identifier(text) => false,
-        text if text.as_bytes().first().is_some_and(u8::is_ascii_digit) => false,
-        _ => true,
+        ")" if is_cast_group(texts, index - 1, names) => Operator::Unary,
+        ")" if crate::ampersand_runs::may_close_a_cast(texts, index - 1, names.objects()) => {
+            Operator::Undecided
+        }
+        ")" | "]" => Operator::Binary,
+        text if super::is_identifier(text) => Operator::Binary,
+        text if text.as_bytes().first().is_some_and(u8::is_ascii_digit) => Operator::Binary,
+        _ => Operator::Unary,
     }
 }
 
@@ -363,8 +424,16 @@ fn ends_one_dereference(texts: &[&str], mut after: usize) -> bool {
 /// read back through opening parentheses (`*q`, `(*q)`, `**q`, `*(q->f)`).
 /// A `*` behind more opening parentheses than `closing` does not apply to the
 /// name alone (`*(T *)p` applies to the cast, never to the type name `T`);
-/// `usize::MAX` counts every one, which only refuses.
-fn stars_before(texts: &[&str], index: usize, names: &impl NameFacts, closing: usize) -> usize {
+/// `usize::MAX` counts every one, which only refuses. Rule 74h: a `*` after
+/// an undecided `)` counts under `reading`'s choice. The count is monotone in
+/// that choice, so the operand and cast readings bound every mixed one.
+fn stars_before(
+    texts: &[&str],
+    index: usize,
+    names: &impl NameFacts,
+    closing: usize,
+    reading: Reading,
+) -> usize {
     let mut at = index;
     let mut stars = 0;
     let mut opened = 0usize;
@@ -374,7 +443,7 @@ fn stars_before(texts: &[&str], index: usize, names: &impl NameFacts, closing: u
                 opened += 1;
                 at = previous;
             }
-            "*" if unary_position(texts, previous, names) => {
+            "*" if operator_at(texts, previous, names).unary_under(reading) => {
                 if opened > closing {
                     break;
                 }
@@ -419,7 +488,8 @@ pub(crate) fn scalar_read(texts: &[&str], names: &impl NameFacts) -> Option<Scal
                 index += 2;
                 continue;
             }
-            "&" if unary_position(texts, index, names) => return None,
+            // Rule 74h: refused when either reading takes an address.
+            "&" if operator_at(texts, index, names).may_be_unary() => return None,
             "." | "-" if text == "." || next == Some(">") => {
                 // A member name is not a value name; a member called is a
                 // call.
@@ -476,8 +546,11 @@ pub(crate) fn scalar_read(texts: &[&str], names: &impl NameFacts) -> Option<Scal
             if arrow_at(texts, index + 1) {
                 push_once(&mut read.arrow_roots, text);
             }
-            let starred =
-                index >= 1 && texts[index - 1] == "*" && unary_position(texts, index - 1, names);
+            // Rule 74h: a base when either reading dereferences it, the
+            // union of both readings' bases.
+            let starred = index >= 1
+                && texts[index - 1] == "*"
+                && operator_at(texts, index - 1, names).may_be_unary();
             if arrow_at(texts, index + 1) || next == Some("[") || starred {
                 push_once(&mut read.bases, text);
             }
@@ -493,14 +566,17 @@ pub(crate) fn scalar_read(texts: &[&str], names: &impl NameFacts) -> Option<Scal
         // one dereference must end after them too. Before a member or
         // subscript root every `*` counts (it only refuses); a starred root
         // counts the `*`s whose parentheses close right after the name.
+        // Rule 74h: a member or subscript root counts an undecided `*` (the
+        // cast reading, the larger count); a starred root needs exactly one
+        // under both readings, so neither reading's refusal is lost.
         let root = if arrow_at(texts, index + 1) {
-            stars_before(texts, index, names, usize::MAX) == 0
+            stars_before(texts, index, names, usize::MAX, Reading::Cast) == 0
                 && texts
                     .get(index + 3)
                     .is_some_and(|text| super::is_identifier(text))
                 && ends_one_dereference(texts, index + 4)
         } else if next == Some("[") {
-            stars_before(texts, index, names, usize::MAX) == 0
+            stars_before(texts, index, names, usize::MAX, Reading::Cast) == 0
                 && close_of(texts, index + 1)
                     .is_some_and(|close| ends_one_dereference(texts, close + 1))
         } else {
@@ -508,7 +584,9 @@ pub(crate) fn scalar_read(texts: &[&str], names: &impl NameFacts) -> Option<Scal
                 .iter()
                 .take_while(|text| **text == ")")
                 .count();
-            stars_before(texts, index, names, closing) == 1
+            [Reading::Operand, Reading::Cast]
+                .into_iter()
+                .all(|reading| stars_before(texts, index, names, closing, reading) == 1)
                 && next != Some(".")
                 && ends_one_dereference(texts, index + 1)
         };
@@ -577,6 +655,17 @@ pub(crate) fn cast_call(texts: &[&str], names: &impl NameFacts) -> Option<CastCa
 /// The parser's facts, as family S and K read them.
 struct ParserNames<'p, 'a> {
     parser: &'p Parser<'a>,
+    /// Rule 74h: read only when a `)` before a `*` or `&` is no resolved cast.
+    objects: OnceCell<BTreeSet<String>>,
+}
+
+impl<'p, 'a> ParserNames<'p, 'a> {
+    fn new(parser: &'p Parser<'a>) -> Self {
+        Self {
+            parser,
+            objects: OnceCell::new(),
+        }
+    }
 }
 
 impl NameFacts for ParserNames<'_, '_> {
@@ -590,6 +679,31 @@ impl NameFacts for ParserNames<'_, '_> {
 
     fn type_name(&self, words: &[&str]) -> bool {
         self.parser.typed_model.never_variably_modified(words)
+    }
+
+    /// Rule 74f's set, read from the unit's token stream as the publication
+    /// facts read it. With no body located it is empty, so every `( name )`
+    /// is undecided, which keeps both readings' refusals.
+    fn objects(&self) -> &BTreeSet<String> {
+        self.objects.get_or_init(|| {
+            let parser = self.parser;
+            let start = parser.owned_out_body_start;
+            let Some(end) = super::matching(parser.tokens, start, "{", "}") else {
+                return BTreeSet::new();
+            };
+            let unit = parser
+                .tokens
+                .iter()
+                .map(|token| token.text.as_str())
+                .collect::<Vec<_>>();
+            let (declared, _) = crate::publication::body_declarations(&unit[start + 1..end]);
+            crate::publication::value_names(
+                &unit,
+                &declared,
+                &crate::publication::file_scope_objects(&unit),
+                &parser.formal_parameters,
+            )
+        })
     }
 }
 
@@ -619,7 +733,7 @@ impl Parser<'_> {
         texts: &[&str],
         line: usize,
     ) -> Option<(LegacyInstruction, bool)> {
-        let shape = cast_call(texts, &ParserNames { parser: self });
+        let shape = cast_call(texts, &ParserNames::new(self));
         if let Some(shape) = shape {
             return self.cast_call_instruction(expression, texts, line, &shape);
         }
@@ -628,7 +742,7 @@ impl Parser<'_> {
         {
             return None;
         }
-        let read = scalar_read(texts, &ParserNames { parser: self })?;
+        let read = scalar_read(texts, &ParserNames::new(self))?;
         Some((
             LegacyInstruction::IndirectScalarAccess {
                 typed_alternative: None,
@@ -807,3 +921,7 @@ pub(crate) mod census {
 #[cfg(test)]
 #[path = "../tests/unit/legacy_return_family.rs"]
 mod tests;
+
+#[cfg(test)]
+#[path = "../tests/unit/legacy_return_family_star_cast.rs"]
+mod star_cast_tests;
