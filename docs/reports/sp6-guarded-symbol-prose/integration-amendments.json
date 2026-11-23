@@ -1,0 +1,32 @@
+{
+ "schema": "quirin-amendments/2",
+ "card": "SP6-GUARDED-SYMBOL-PROSE",
+ "base": "95f36b628",
+ "measured_tip": "de880bfc0",
+ "increment_paragraph": "**SP6-GUARDED-SYMBOL-PROSE (2026-11-23).** User decision 2026-11-20 (conditions are symbols, not sentences); user 2026-11-23: \"Launch SP6-GUARDED-SYMBOL-PROSE\", then, on the card's stop for a formalisation choice, environment E2, success_case R1 and invalid_membership I2 (an evidence term inside the formula, over the card's I1 recommendation), with a document spelled with && and rendered with ∧. The 17 resource_guarded_symbol_v1 texts of cJSON_DetachItemViaPointer (librdkafka/cjson.qv) are unquoted C04.18.9 typed-rendering formulas. The nine detach_* prerequisites are unchanged in bytes and digest. The eight that were English (detach, environment, failure_case, invalid_membership, membership, original_list_unchanged, remaining_list_valid, success_case) are formulas over registered terms and a new SP7 block of 20 rendered terms: the call's item and NULL flags, the exit environment #exit_*, #exit_erases, #admits_removed, #source_corresponds and #caller_refutes_membership; Rust RENDERED_TERMS, the specification table and Lean sp7Terms. The resource_guarded_decomposition_v1 document is its unquoted clauses, and the readable G05-guarded document is rendered from them byte-identical (readable SHA unchanged). A string in either head is refused at parse under any introducer with the new diagnostic QF003, on every route (Q000 naming QF003 on the compiler route). The guarded lowering (standalone replay included) and the bridge render refuse a proposition that is not a canonical formula. Lean QCore.CjsonGuardedSymbols (audited) proves each symbol equal to its definition (guarded_symbols_are_the_definitions: rawFailure, originalListUnchanged, remainingListValid, prerequisites with result = item, the nine CjsonRepresentationPremises propositions at entry and at exit). It shows #source_corresponds and the caller's refutation are never derived, and that the refutation entails invalidMembership while non-ownership alone does not give it. guarded_vectors_agree is bound to the Rust GUARDED_DECISION_VECTORS. The legacy reader lifts the 17 recorded texts and string documents and reproduces the retired form for frozen digests, and sp2_premise_checkpoint writes this card's cjson.qv edits back first. The frozen plugin guarded sidecar's seven English symbols are now refused (registered follow-up). Spec C04.18.5, C04.18.6, C04.18.9 (SP7 block, with the warrant-term note), grammar G05-guarded-source, rule 13h and the diagnostics page were updated. The declaration was re-pinned at the same sites and both revisions (contract_sha256 and pinned_at only), and the file digest was updated in contract-inventory.lock and contracts.json. Guarded symbols stay proposed metadata: no move is predicted on any route.",
+ "status_edits": [],
+ "ledger": [
+  {
+   "id": "SP6-GUARDED-SYMBOL-PROSE",
+   "operation": "retire",
+   "why": "DISCHARGED by SP6-GUARDED-SYMBOL-PROSE: all 17 guarded symbols of cJSON_DetachItemViaPointer state unquoted C04.18.9 typed-rendering formulas over registered terms and a new SP7 block (Rust RENDERED_TERMS, spec, Lean sp7Terms). Each is proved in Lean equal to its definition (QCore.CjsonGuardedSymbols.guarded_symbols_are_the_definitions); environment and invalid_membership are the user's E2 and I2 assumptions, which are never derived. The guarded document is its unquoted clauses with the readable document rendered unchanged. The string forms are refused on every route (QF003). The guarded adoption plan and the cjson application are replayed through the legacy reader; the plugin application is now refused (follow-up SP7-PLUGIN-GUARDED-APPLICATION-FORMULAS). The declaration was re-pinned at the same sites and revisions. No verdict moved (predicted).",
+   "source": "docs/reports/sp6-guarded-symbol-prose/README.md"
+  },
+  {
+   "id": "SP7-PLUGIN-GUARDED-APPLICATION-FORMULAS",
+   "operation": "register",
+   "title": "State the frozen plugin guarded sidecar's English symbols as formulas",
+   "text": "Recorded by SP6-GUARDED-SYMBOL-PROSE. Guarded propositions must be canonical C04.18.9 typed-rendering formulas (QF003), so the frozen standalone sidecar docs/reports/premise-guarded-decomposition/applications/plugin.json, whose seven non-prerequisite symbols are English (environment, invoke, registered_case, default_case, registered_lifetime_valid, default_lifetime_valid, unregistered), no longer lowers: crates/qcore-contract/tests/guarded_decomposition.rs now shows it refused. DISCHARGE: each stated over registered terms (with a rendered-term block and Lean model over QCore.PluginPremiseDecomposition / GuardedContractApplications.Plugin for what is missing), recorded for the legacy reader, and the plugin replay restored as a positive test. No production module states these symbols. Size: medium.",
+   "source": "docs/reports/sp6-guarded-symbol-prose/README.md",
+   "recorded_by": "SP6-GUARDED-SYMBOL-PROSE"
+  },
+  {
+   "id": "SP7-FORMAL-BINDING-DESCRIPTIONS",
+   "operation": "register",
+   "title": "Replace the English environment descriptions of formal bindings",
+   "text": "Recorded by SP6-SYMBOLIC-HYPOTHESIS-ATOMS and SP6-GUARDED-SYMBOL-PROSE. Binding manifests' environment.variables descriptions and the FormalBinding records built in code (cjson_local_binding, plugin_source_witnesses) still describe their environments in English. They are not conditions a declaration states, and the manifests are digest-held, so converting them means a manifest migration. DISCHARGE: each description a reference to a registered term or typed definition, the manifests migrated with their digests, no verdict moved. Size: medium.",
+   "source": "docs/reports/sp6-guarded-symbol-prose/README.md",
+   "recorded_by": "SP6-GUARDED-SYMBOL-PROSE"
+  }
+ ]
+}
