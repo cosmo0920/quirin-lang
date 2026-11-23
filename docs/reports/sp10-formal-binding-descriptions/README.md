@@ -332,8 +332,72 @@ none was taken). The diff, reviewed:
 
 ## 10. Gate
 
-TBD
+**Gate 1**: `python3 scripts/gate_scope.py --base 2c60986b0 --out
+private/gate-1` on `938c85fbc` (the full suite: `proof/QCore.lean` and
+`qcore-frontend` changed). Console `private/logs/gate-1.console`, step logs
+and receipts under `private/gate-1/`.
+
+| Step | Exit | Counts |
+|---|---|---|
+| submodules, fmt, clippy | 0, 0, 0 | |
+| rust-suite | 101 | 681 units, 726 summaries, 9979 passed, **1 failed**, 22 ignored |
+| reevaluation probe, follow-up | 0, 0 | |
+| lean (`check_lean_audits.py`) | 0 | 492 audits (this card's included) |
+| python | 1 | 807 tests, **2 failures** |
+| provider package build, verify (all, librdkafka) | 0, 0, 0 | |
+| provider test | not run at hand-back | queued in the host's shared audit queue (ticket 338, first in line, waiting for slots `audit/0` and `audit/1`) behind a long-running measurement; the queued step was left to complete |
+
+The failures:
+
+* `qcore-audit::libcurl_user_crate_versions::the_libcurl_ranges_follow_the_audited_curlver_header`:
+  the recorded host failure (system `curlver.h`). Not fixed.
+* `test_gate_scope_census.CensusAgreesWithTheModel.test_every_directory_literal_is_declared`:
+  a real omission. The new test reads three binding directories that
+  `scripts/gate_scope_walkers.json` did not declare. Fixed in `437b369a6`
+  (three walker entries; the test's root helper in the census-readable
+  form); `python3 -m unittest test_gate_scope_census` then ran 5 tests, OK.
+* `test_gate_slot_lane.Rule.test_the_lane_has_a_fixed_number_of_slots_and_its_own_arrival_order`:
+  a gate-slot timing test (arrival order `p2, p1` under load). Rerun alone:
+  `python3 -m unittest test_gate_slot_lane`, 37 tests, OK. Both results are
+  recorded here.
+
+Earlier scoped runs: `private/logs/t1.log` (11 qcore-contract test files;
+every one passed except `production_symbolic_adoption`, whose libc flow
+models named proposition ids such as
+`libc.__errno_location.nested_call_admission.checked_reading_route.v1` that
+the first proposition check refused as not Lean names; the check now admits
+any dot-qualified name without whitespace, committed before gate 1, and the
+gate's rust-suite passed the file); `private/logs/t2.log` (the card test
+after the walker fix, 9 passed).
+
+**After merging origin/main `e6d86d596`** (r62, CAST-BEFORE-STAR: gateway
+code, rule 74g, a Lean module, records; disjoint from this card's files
+except generated docs, merged cleanly, tip `209195bd6`):
+`gen_lean_roots.py --check` 0 (549 modules), `gen_rule_docs.py --check` 0,
+`apply_amendments.py … --check` 0, and `cargo test -p qcore-contract --test
+formal_binding_descriptions --test hypothesis_bindings --test premise_flow
+--test contract_premise` 0 (`private/logs/t3.log`, 31 passed).
+
+**Amendments.** `python3 scripts/apply_amendments.py
+integration-amendments.json --check` exits 0: it retires
+`SP7-FORMAL-BINDING-DESCRIPTIONS` and registers two follow-ups. The acceptance
+matrix's derived Lean-audit list is left to the landing
+(`CARD-GATE-NEW-AUDIT-MATRIX-COUNT`).
 
 ## 11. Follow-ups
 
-TBD
+* `SP10-NATIVE-RECEIPT-INTERPRETATION-PROSE` (registered): the cJSON
+  native-domain receipt's English `*_interpretation` strings (not a binding
+  environment, so outside `QF005`).
+* `SP10-RETIRE-HISTORICAL-BINDING-PRODUCERS` (registered):
+  `plugin_binding_catalog` and `quant_binding_migration` now refuse their
+  English historical inputs; remove or re-target them.
+* Merge with card SP9 (concurrent): its rendered-term block goes before
+  SP10's in `RENDERED_TERMS`; a term both blocks need must be stated once
+  (the SP10 test refuses a name in two blocks).
+
+**Measurement** is the integrator's step:
+
+```text
+target/release/quirin-audit --plugin-path target/release --output <dir> --timeout-ms 36000000 measure --inputs crates/quirin-audit-plugin-measure/inputs/live.json --inputs-base /media/Data/GitHub/quirin-lang --side base=baseline:<main baseline> --side tip=rev:<tip> --declared docs/reports/sp10-formal-binding-descriptions/PREDICTION.md
+```
