@@ -13209,7 +13209,8 @@ through `ampersand_runs`.
     only declarators or statement-initial stores. The exception is
     `legacy_return_family`'s `unary_position`, which has its own
     declaration-resolved cast reading and reads a group it cannot resolve as
-    binary; it is registered as `RETURN-FAMILY-STAR-AFTER-UNRESOLVED-CAST`.
+    binary; it was registered as `RETURN-FAMILY-STAR-AFTER-UNRESOLVED-CAST`
+    and is now [rule 74h](#constraint-74h)'s.
     **Do not** write a second cast detector, and **do not** narrow the
     hand-on union to the unary reading alone. Premises stated, not proved:
     rule 74f's (trust boundary 28). A `*p` hand-on reaches a verdict only
