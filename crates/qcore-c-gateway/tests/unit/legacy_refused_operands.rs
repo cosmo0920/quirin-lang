@@ -294,3 +294,50 @@ fn the_value_names_exclude_every_typedef_spelling() {
     // `a` is both an object and typedef-spelled, so it stays undecided.
     assert_eq!(names.into_iter().collect::<Vec<_>>(), ["g", "n", "p"]);
 }
+
+// -- Card CAST-BEFORE-STAR-READ-AS-BINARY (rule 74g) -------------------------
+
+/// The ledger shape: `(char *) *p` dereferences `p`, so the identity stored
+/// in `*p` is handed on, beside `p` (the group may be a value). FAILS at the
+/// base, which read the `*` after the `)` as a multiplication and handed on
+/// `p` alone.
+#[test]
+fn a_cast_before_a_dereference_hands_on_the_slot() {
+    for statement in [
+        "k_link ( ( char * ) * p )",
+        "y = ( char * ) * p",
+        "return ( char * ) * p",
+        "y = ( struct s * ) * p",
+        "y = ( void ( * ) ( int , . . . ) ) * p",
+        "y = ( char ( * ) [ 4 ] ) * p",
+    ] {
+        let handed = among(statement, &["p"]);
+        for place in ["*p", "p"] {
+            assert!(
+                handed.contains(&place.to_owned()),
+                "{place} in {handed:?}: {statement}"
+            );
+        }
+    }
+}
+
+/// `(a) * b`: with `a` a declared object it is a multiplication, which hands
+/// on `a` and `b`; undecided (`a` possibly a typedef name), it may be a cast,
+/// so `*b` is handed on too. FAILS at the base for the undecided half.
+#[test]
+fn a_parenthesised_object_before_a_star_is_binary() {
+    assert_eq!(among("y = ( a ) * b", &["a", "b"]), ["a", "b"]);
+    assert_eq!(among("y = ( a ) * b", &["b"]), ["*b", "a", "b"]);
+    assert_eq!(among("y = ( my_t ) * b", &["b"]), ["*b", "b", "my_t"]);
+}
+
+/// A call's result or a value group before `*` is a multiplication:
+/// `f(x) * n` hands on `n` and `x`, never `*n`. Unchanged from the base.
+#[test]
+fn a_call_result_or_an_expression_before_a_star_is_binary() {
+    assert_eq!(among("y = f ( x ) * n", &[]), ["n", "x"]);
+    assert_eq!(among("y = ( a + 1 ) * n", &[]), ["a", "n"]);
+    assert_eq!(among("y = ( * fp ) ( x ) * n", &[]), ["*fp", "n", "x"]);
+    assert_eq!(among("y = m ( sizeof ( T * ) * n )", &[]), ["n"]);
+    assert_eq!(among("y = ( s . n ) * k", &[]), ["k", "s.n"]);
+}

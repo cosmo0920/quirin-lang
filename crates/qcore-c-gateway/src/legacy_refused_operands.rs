@@ -68,7 +68,9 @@
 //! * **`Operand`**, anywhere else it is evaluated: `if (!p || g(q))`, `p + n`.
 //!
 //! `&p->head` and `&p[0]` take an address inside `*p`, so they hand on `p` and
-//! every prefix of the chain. What is **not** a hand-on: a member value read
+//! every prefix of the chain. A unary `*` before a lone name hands on `*p`; a
+//! `*` after a `)` that may close a cast (`(char *) *p`, rule 74g) hands on
+//! both `*p` and `p`, since the group may be a value. What is **not** a hand-on: a member value read
 //! through a base (`p->len`, `p->buf[i]`, `p->fn(…)` name the member, and
 //! `p->buf` hands on the place `p->buf`, not `p`); the destination of a simple
 //! assignment (`p = …`, `p->next = …`, `*out = …`), which is written; and the
@@ -435,8 +437,15 @@ pub(crate) fn handed_on_among(
                     && crate::ampersand_runs::may_close_a_cast(statement, amp - 1, objects))
         };
         let address = run % 2 == 1 && (run > 1 || unary_single());
-        let dereference =
-            index > 0 && statement[index - 1] == "*" && !ends_operand(statement, index - 1);
+        // Rule 74g: a `*` after a `)` that may close a cast (`(char *) *p`)
+        // may be a dereference too. Neither reading's places contain the
+        // other's (`*p` against `p`), so such a `*` hands on both.
+        let star = index > 0 && statement[index - 1] == "*";
+        let cast_star = star
+            && index >= 2
+            && statement[index - 2] == ")"
+            && crate::ampersand_runs::may_close_a_cast(statement, index - 2, objects);
+        let dereference = star && !ends_operand(statement, index - 1);
         let next = statement.get(cursor + 1).copied();
         let written = next == Some("=") && statement.get(cursor + 2) != Some(&"=");
         if let Some(how) = how {
@@ -449,6 +458,8 @@ pub(crate) fn handed_on_among(
                 Vec::new()
             } else if dereference && chain.len() == 1 {
                 vec![format!("*{full}")]
+            } else if cast_star && chain.len() == 1 {
+                vec![format!("*{full}"), full]
             } else {
                 vec![full]
             };

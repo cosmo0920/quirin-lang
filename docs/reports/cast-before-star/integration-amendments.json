@@ -1,0 +1,25 @@
+{
+ "schema": "quirin-amendments/2",
+ "card": "CAST-BEFORE-STAR-READ-AS-BINARY",
+ "base": "7450d69af",
+ "measured_tip": "404136f21",
+ "profiles": [],
+ "increment_paragraph": "**CAST-BEFORE-STAR-READ-AS-BINARY** (USER DECISION 2026-11-23: \"launch the cast-before-star card\"; gateway rule 74g, extending rule 74f; `QCore.CastBeforeStar`; [report](../../reports/cast-before-star/README.md)). A census of every gateway reader that decides a single `*` by the token before it found two that counted `)` as an operand end. The refused hand-on (`legacy_refused_operands`) handed on `p` for `(char *) *p` and missed the slot `*p` (unsound). Premise 4 of `aggregate_store` read `(void) *b` as no dereference and left `b` an admissible store base (admitting). Both now ask rule 74f's one detector, `ampersand_runs::may_close_a_cast`. After a `)` that may close a cast, the refused hand-on hands on both `*p` and `p`: the unary and binary places do not contain each other, so the union is the fail-closed reading, an undecided `(a) * p` included. Premise 4 reads a dereference there and refuses the base. The lexical access gate and `loop_owner_holder_opaque` already refuse at any `) *`, and the other readers decide declarators or statement-initial stores. `legacy_return_family`'s own cast reading is registered as RETURN-FAMILY-STAR-AFTER-UNRESOLVED-CAST. Fixtures pin `(char *) *p`, `f(x) * n`, `(a) * b` as object and undecided, the function-pointer and pointer-to-array casts and `(void) *b`, at unit level and end to end. The change fixtures fail at the base, and no pin moved. Opt-in `current --monkey-linked` over Fluent Bit 046accf6, each run on its own tree and binary: base 7450d69af and tip 404136f21 are both 1,172/2/3,622/8, with no status or leaf change, as predicted. Scoped gate at 404136f21: all 8 steps exit 0 (9,963 Rust tests passed, 490 Lean audits, 807 Python tests). The pinned routes cannot run on this host; no move is predicted.",
+ "status_edits": [],
+ "ledger": [
+  {
+   "id": "CAST-BEFORE-STAR-READ-AS-BINARY",
+   "operation": "retire",
+   "why": "Discharged by CAST-BEFORE-STAR-READ-AS-BINARY (rule 74g): both readers that decided a single `*` before a name by counting the preceding `)` as an operand end now ask crates/qcore-c-gateway/src/ampersand_runs.rs `may_close_a_cast` (no second detector). After a `)` that may close a cast, legacy_refused_operands hands on both `*p` and `p`, a superset of either reading (the unary and binary places do not contain each other), and aggregate_store premise 4 refuses the base (the fail-closed direction; C11 6.5.5p2 bars a pointer operand of a binary `*`). Every gateway reader of a single `*` is classified (report §1). `(char *) *p`, `f(x) * n`, `(a) * b` as object and undecided, the function-pointer and pointer-to-array casts and `(void) *b` are pinned in unit tests, in crates/qcore-c-gateway/tests/leak_pin_audit.rs and in crates/qcore-c-gateway/tests/alias_aggregate.rs; the change fixtures fail at the base. The opt-in corpus measurement is in report §4.",
+   "source": "docs/reports/cast-before-star/README.md"
+  },
+  {
+   "id": "RETURN-FAMILY-STAR-AFTER-UNRESOLVED-CAST",
+   "operation": "register",
+   "source": "docs/reports/cast-before-star/README.md",
+   "recorded_by": "CAST-BEFORE-STAR-READ-AS-BINARY",
+   "title": "`legacy_return_family::unary_position` reads a `*` or `&` after a group it cannot resolve as binary",
+   "text": "CAST-BEFORE-STAR-READ-AS-BINARY's census (report §1) found one more reader that decides a single `*` and `&` by the token before it: crates/qcore-c-gateway/src/legacy_return_family.rs `unary_position` (family S of W45-RETURN-EXPRESSION-FAMILIES, with `stars_before` and the `starred` base test). It has its own declaration-resolved cast reading, `is_cast_group`, which reads `(T)` as a cast only when the unit's declaration reader resolves `T` as a never-variably-modified type, and otherwise reads it as binary. For `return (T) *p;` with `T` an unresolved type name and `p` untracked, `p` is then not a base of the read node, so the flow check's possible `unknown_alias` refusal is missed (the admitting direction; a may-bind `p` still refuses through `stars_before`). Routing the `)` arm through `ampersand_runs::may_close_a_cast` is not a same-shape fix: for a may-bind root, the unary reading turns `stars_before`'s refusal into an admitted dereference base. That is an Unknown-to-admission move, and it needs its own direction assessment. DISCHARGE: decide `unary_position`'s `)` arm with the shared detector, or show that an unresolved type name cannot reach family S. Assess both directions (the `starred` base and `stars_before`), pin `return (T) *p;` with `T` unresolved, and measure the system and slice routes."
+  }
+ ]
+}
