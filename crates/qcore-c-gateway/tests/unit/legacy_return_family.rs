@@ -38,6 +38,13 @@ impl NameFacts for Names {
             ["int"] | ["char"] | ["long"] | ["size_t"] | ["struct", "s"] | ["const", "char"]
         )
     }
+
+    /// Rule 74h: no declared objects, so every `( name )` this oracle does
+    /// not resolve as a type is undecided.
+    fn objects(&self) -> &BTreeSet<String> {
+        static NONE: BTreeSet<String> = BTreeSet::new();
+        &NONE
+    }
 }
 
 fn texts(expression: &str) -> Vec<&str> {

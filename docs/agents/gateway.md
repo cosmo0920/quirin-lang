@@ -13243,7 +13243,8 @@ through `ampersand_runs`.
     only declarators or statement-initial stores. The exception is
     `legacy_return_family`'s `unary_position`, which has its own
     declaration-resolved cast reading and reads a group it cannot resolve as
-    binary; it is registered as `RETURN-FAMILY-STAR-AFTER-UNRESOLVED-CAST`.
+    binary; it was registered as `RETURN-FAMILY-STAR-AFTER-UNRESOLVED-CAST`
+    and is now [rule 74h](#constraint-74h)'s.
     **Do not** write a second cast detector, and **do not** narrow the
     hand-on union to the unary reading alone. Premises stated, not proved:
     rule 74f's (trust boundary 28). A `*p` hand-on reaches a verdict only
@@ -13253,5 +13254,44 @@ through `ampersand_runs`.
     `an_undecided_group_hands_on_both`, `a_call_is_binary`,
     `premise_four_only_refuses_more`, `star_vectors_hold`);
     [report](../reports/cast-before-star/README.md).
+
+<a id="constraint-74h"></a>
+
+74h. **Family S keeps both readings of an undecided cast.** Card
+    RETURN-FAMILY-STAR-AFTER-UNRESOLVED-CAST, extending
+    [rule 74g](#constraint-74g) to the reader its census registered.
+    `legacy_return_family`'s `unary_position` read a `*` or `&` after a `)`
+    as unary only when `is_cast_group` resolved the group as a type the unit
+    declares, and as binary otherwise. An unresolved type name reaches
+    family S (`volatile` is a rejecting qualifier, a pointer typedef is left
+    unresolved), so `return (volatile long) *p;` made an untracked `p` no
+    base of the read node, and through a null `p` the function was `Safe`
+    (the admitting direction). `operator_at` now keeps `is_cast_group`'s
+    resolved cast, asks the one shared detector about every other `)`, and
+    calls a group it cannot rule out **undecided**. The three tests then
+    keep what either reading raises. **The `&` refusal** fires when either
+    reading takes an address. **The starred base** of an untracked root is
+    the union of both readings' bases. **A may-bind root** is the root of
+    one dereference only when `stars_before` counts exactly one `*` under
+    the operand reading **and** under the cast reading. A member or
+    subscript root must count none under the cast reading. The count is
+    monotone in the reading, so the two bound every mixed reading. The cast
+    reading alone would turn `stars_before`'s refusal of `(T) *q` into an
+    admitted dereference base; reading both keeps the refusal, which the
+    typed return route (rule 10k) then decides from Clang's AST. Every test
+    refuses wherever the base refused, and no admission moves toward `Safe`.
+    The detector's objects are rule 74f's (`publication::value_names`), read
+    from the unit's token stream on first use. With no body located the set
+    is empty, so every `( name )` is undecided. **Do not** write a second
+    cast detector, **do not** read an undecided group with one reading
+    alone, and **do not** drop `is_cast_group`'s resolved knowledge.
+    Premises stated, not proved: rule 74f's (trust boundary 28).
+    `QCore.ReturnFamilyStarCast` (`address_keeps_every_reading_refusal`,
+    `starred_keeps_every_reading_base`, `count_mono`,
+    `starred_admission_needs_every_reading`,
+    `member_admission_needs_every_reading`,
+    `the_fix_only_refuses_more_starred`, `the_fix_only_refuses_more_member`,
+    `the_cast_reading_alone_would_admit`, `family_vectors_hold`);
+    [report](../reports/return-family-star-cast/README.md).
 
 <!-- generated:rules:end -->
