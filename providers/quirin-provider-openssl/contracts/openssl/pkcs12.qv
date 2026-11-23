@@ -109,11 +109,17 @@ contract {
 // x_crl.c 3.5.5), and so runs those keys' provider, method and engine
 // functions and a CRL's X509_CRL_METHOD free: the unstated-slots premise of a
 // free names them.
-// Card OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS: the free releases its
-// argument, so it can state none of the teardown slots of the keys it frees
-// in turn (C04.19.3 reads a slot through a borrowed parameter); it names the
-// free statement through a released argument, beside the two teardown
-// premises. A CRL's X509_CRL_METHOD free function is left too.
+// Card OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS: it names the two teardown
+// premises. Card OPENSSL-RELEASED-PARAMETER-SLOTS (USER DECISION 2026-11-23;
+// C04.19.3 admits a slot invocation through a released parameter, read
+// before the release): it states through `a` the key's nine teardown slots,
+// run by the keys of the certificates and signer infos it frees
+// (crypto/pkcs7/pk7_asn1.c:141,184 at 3.5.5; a PKCS#12 bag holds its
+// certificates and CRLs as octet strings, crypto/pkcs12/p12_asn.c:52-53, so
+// only a signed PKCS#7 safe's decoded objects are freed). A CRL's
+// X509_CRL_METHOD free function (crypto/x509/x_crl.c:259-261) is left: its
+// only writer registers into its result (OPENSSL-SLOT-REGISTRATION-INTO-RESULT),
+// so the free statement stays for it alone.
 extern fn PKCS12_free(a: ptr<mut, u8>) -> unit
 contract {
     requires resource_contract_v1;
@@ -129,7 +135,16 @@ contract {
         -> #f |-> #inert
         && quant all #g in #in_turn(#f, #freed | #args | #created): #g in #library | #loaded);
     requires resource_premise(openssl_unstated_callback_slots,
-        quant all #o in #freed: #teardown(#o) \ #stated |-> #inert);
+        quant all #o in #freed: #teardown(#o) \ (#stated | #settable) |-> #inert);
     ensures normal resource_released(a, nullable);
+    ensures normal resource_callback_slot_invoked(a, dh_method.dh_meth_finish, _);
+    ensures normal resource_callback_slot_invoked(a, dsa_method.dsa_meth_finish, _);
+    ensures normal resource_callback_slot_invoked(a, ec_key_method_st.ec_key_meth_finish, _);
+    ensures normal resource_callback_slot_invoked(a, engine_st.engine_destroy, _);
+    ensures normal resource_callback_slot_invoked(a, engine_st.engine_finish, _);
+    ensures normal resource_callback_slot_invoked(a, engine_st.engine_pkey_asn1_meths, _, supplied_nullable, supplied_nullable, _);
+    ensures normal resource_callback_slot_invoked(a, engine_st.engine_pkey_meths, _, supplied_nullable, supplied_nullable, _);
+    ensures normal resource_callback_slot_invoked(a, evp_pkey_asn1_method_st.asn1_meth_pkey_free, _);
+    ensures normal resource_callback_slot_invoked(a, rsa_meth_st.rsa_meth_finish, _);
     ensures normal resource_return_none();
 };

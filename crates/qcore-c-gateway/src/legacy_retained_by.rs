@@ -733,6 +733,37 @@ impl Parser<'_> {
                 ),
             ));
         }
+        // Card OPENSSL-RELEASED-PARAMETER-SLOTS (C04.19.3 amended, rule 12n;
+        // USER DECISION 2026-11-23): a slot invoked through a parameter the
+        // declaration releases is read from the object before the release.
+        // What stands is each slot's decision over the run's closed set and
+        // the candidates' `resource_owned(n)` requirements, folded into the
+        // call's custody mode (read before its effects, below). The transfer
+        // applies the custody contract, the release included, before the
+        // callback route, so a candidate effect the callback route would
+        // apply (a member-path state, a member invocation deferred to the
+        // object's constructed state, a registry use) would read the object
+        // after its release: the call refuses.
+        if let Some(callbacks) = &operands.callbacks
+            && !released_slot_objects(&declaration).is_empty()
+            && (!callbacks.member_paths.is_empty()
+                || !callbacks.member_uses.is_empty()
+                || !callbacks.uses.is_empty()
+                || callbacks.arms.is_some()
+                || callbacks.constructed.is_some()
+                || !callbacks.direct_member_paths.is_empty())
+        {
+            return Some(refuse(
+                self,
+                crate::callback_contracts::refusal(
+                    function,
+                    "a callback slot it invokes through the parameter it releases is read \
+                     before the release, and a candidate would change or read the released \
+                     object after it",
+                    crate::callback_contracts::BESIDE_RELEASE,
+                ),
+            ));
+        }
         for retention in &declaration.retentions {
             // Card W43-ABI-ENUM-AND-CONST-PP (rule 12w): a guarded clause a
             // decided actual fails is not in force at this call; a decided
@@ -1059,13 +1090,27 @@ impl Parser<'_> {
                 // that requires a caller's actual live puts the requirement
                 // on the call's own position.
                 if let Some(callbacks) = &operands.callbacks {
+                    let released = released_slot_objects(&declaration);
                     for (&index, &nullable) in &callbacks.owned {
-                        if let Some(
-                            mode @ qcore_schemas::contract::ResourceParameterMode::Borrowed,
-                        ) = contract.parameters.get_mut(index)
-                        {
-                            *mode =
-                                qcore_schemas::contract::ResourceParameterMode::Owned { nullable };
+                        match contract.parameters.get_mut(index) {
+                            Some(
+                                mode @ qcore_schemas::contract::ResourceParameterMode::Borrowed,
+                            ) => {
+                                *mode = qcore_schemas::contract::ResourceParameterMode::Owned {
+                                    nullable,
+                                };
+                            }
+                            // Card OPENSSL-RELEASED-PARAMETER-SLOTS: a release
+                            // already requires the object held (or null where
+                            // nullable); a candidate requiring it non-null at
+                            // a released slot object strengthens the release,
+                            // read before it.
+                            Some(qcore_schemas::contract::ResourceParameterMode::Released {
+                                nullable: released_nullable,
+                            }) if released.contains(&index) => {
+                                *released_nullable = *released_nullable && nullable;
+                            }
+                            _ => {}
                         }
                     }
                 }
@@ -1219,6 +1264,32 @@ impl Parser<'_> {
 
 /// `-> f -> g` (or `.`) as member names, `None` for anything else; empty for
 /// no tokens.
+/// Card **OPENSSL-RELEASED-PARAMETER-SLOTS** (C04.19.3, rule 12n): the
+/// positions of `declaration`'s slot invocations whose object it releases
+/// (`resource_released`), read before the release.
+fn released_slot_objects(
+    declaration: &qcore_schemas::retained_by::RetainingContract,
+) -> BTreeSet<usize> {
+    declaration
+        .callbacks
+        .iter()
+        .filter_map(|clause| match clause {
+            qcore_schemas::callback::CallbackClause::MemberInvoked {
+                object: qcore_schemas::callback::MemberObject::Parameter { index },
+                slot: true,
+                ..
+            } if matches!(
+                declaration.contract.parameters.get(*index),
+                Some(qcore_schemas::contract::ResourceParameterMode::Released { .. })
+            ) =>
+            {
+                Some(*index)
+            }
+            _ => None,
+        })
+        .collect()
+}
+
 fn member_chain(tokens: &[&str]) -> Option<Vec<String>> {
     let tokens = merged_punctuators(tokens);
     let tokens = tokens.iter().map(String::as_str).collect::<Vec<_>>();

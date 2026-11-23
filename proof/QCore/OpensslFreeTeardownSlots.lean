@@ -39,14 +39,17 @@ theorems over the checker `providers/quirin-provider-openssl/src/check.rs`
 * **The released statement is the stronger one.** The statement of a free
   through a released argument entails the free statement
   (`released_statement_entails_free_statement`), so moving `PKCS12_free` and
-  `EVP_MD_CTX_free` to it narrows no premise.
+  `EVP_MD_CTX_free` to it narrowed no premise. Card
+  OPENSSL-RELEASED-PARAMETER-SLOTS: both now state their slots through the
+  released argument (C04.19.3 amended) and no declaration names it
+  (`QCore.OpensslReleasedSlots`).
 * **The audit.** A free keeps the premise exactly when its audit leaves items
   (`a_left_item_keeps_the_premise`, `nothing_left_drops_the_premise`); a
   running free names both teardown premises
   (`a_running_free_names_the_teardown_premises`) and states exactly its
-  audited teardown slots (`the_stated_slots_are_the_audited`); a free through
-  a released argument names the released statement alone and states no slot
-  (`a_released_free_states_no_slot`).
+  audited teardown slots (`the_stated_slots_are_the_audited`); no reading
+  accepts the released statement
+  (`the_released_statement_is_named_by_no_reading`).
 * **Source-derived entries** cite their own file and admit only 3.5.5
   (`a_source_entry_admits_only_the_release_read`).
 * **Vectors** from the crate's audit.
@@ -190,7 +193,6 @@ theorem the_teardown_formulas_are_well_formed :
 /-- A free audit reading (`Frees`). -/
 inductive Reading where
   | runs (slots : List String) (left : Nat)
-  | throughRelease (left : Nat)
   | namedBy (premise : String)
   | nothing
   deriving DecidableEq, Repr
@@ -230,9 +232,6 @@ def decideReading (e : Entry) : Reading → Bool
       !e.releasedStmt && !(e.freeStmt && e.handshake) &&
         (e.handshake || (e.freeStmt == (left != 0))) && e.builtin && e.loaded &&
         slots.all teardownSlots.contains && sameSet slots e.stated
-  | .throughRelease left =>
-      e.releasedStmt && !e.freeStmt && !e.handshake && e.builtin && e.loaded && left != 0 &&
-        e.stated.isEmpty
   | .namedBy p => !e.freeStmt && !e.releasedStmt && e.premises.contains p
   | .nothing => !e.freeStmt && !e.releasedStmt && e.stated.isEmpty
 
@@ -280,12 +279,12 @@ theorem the_stated_slots_are_the_audited {e : Entry} {slots : List String} {left
   simp only [sameSet, Bool.and_eq_true, List.all_eq_true, List.contains_iff_mem] at hset hall
   exact ⟨hset.1, hset.2, hall⟩
 
-theorem a_released_free_states_no_slot {e : Entry} {left : Nat}
-    (h : decideReading e (.throughRelease left) = true) :
-    e.releasedStmt = true ∧ e.freeStmt = false ∧ e.stated = [] ∧ e.builtin = true ∧
-      e.loaded = true := by
-  cases hr : e.releasedStmt <;> cases hf : e.freeStmt <;> cases hb : e.builtin <;>
-    cases hl : e.loaded <;> cases hs : e.stated <;> simp_all [decideReading]
+/-- Card OPENSSL-RELEASED-PARAMETER-SLOTS: the free audit has no reading of
+a free through a released argument any more, so the released statement is
+accepted nowhere. -/
+theorem the_released_statement_is_named_by_no_reading {e : Entry} {r : Reading}
+    (h : decideReading e r = true) : e.releasedStmt = false := by
+  cases r <;> cases hr : e.releasedStmt <;> simp_all [decideReading]
 
 theorem an_unaudited_release_refuses {e : Entry} {audit : List (String × Reading)}
     (hs : e.releases = true) (hn : listed e.function audit = []) : audited e audit = false := by
@@ -344,10 +343,11 @@ def handshakeSlots : List String :=
 def crateAudit : List (String × Reading) :=
   [("BIO_free", .namedBy "openssl_builtin_bio_methods"),
     ("ENGINE_free", .runs engineSlots 0),
-    ("EVP_MD_CTX_free", .throughRelease 1),
+    -- Card OPENSSL-RELEASED-PARAMETER-SLOTS: stated through the released argument.
+    ("EVP_MD_CTX_free", .runs handshakeSlots 0),
     ("EVP_PKEY_free", .runs keySlots 0),
     ("OPENSSL_sk_free", .nothing),
-    ("PKCS12_free", .throughRelease 2),
+    ("PKCS12_free", .runs keySlots 1),
     ("SSL_CTX_free", .runs keySlots 1),
     ("SSL_free", .runs teardownSlots 2),
     ("X509_STORE_free", .runs keySlots 1),
@@ -365,8 +365,8 @@ theorem vectors_as_landed :
     audited (landed "EVP_PKEY_free" false false keySlots) crateAudit = true ∧
       audited (landed "X509_free" false false keySlots) crateAudit = true ∧
       audited (landed "ENGINE_free" false false engineSlots) crateAudit = true ∧
-      audited (landed "EVP_MD_CTX_free" false true []) crateAudit = true ∧
-      audited (landed "PKCS12_free" false true []) crateAudit = true ∧
+      audited (landed "EVP_MD_CTX_free" false false handshakeSlots) crateAudit = true ∧
+      audited (landed "PKCS12_free" true false keySlots) crateAudit = true ∧
       audited (landed "SSL_CTX_free" true false keySlots) crateAudit = true ∧
       audited (landed "X509_STORE_free" true false keySlots) crateAudit = true ∧
       audited (landed "SSL_free" true false teardownSlots) crateAudit = true := by
@@ -394,9 +394,10 @@ theorem vectors_drifted_refuse :
       audited (landed "SSL_CTX_free" false false keySlots) crateAudit = false ∧
       -- one teardown slot not stated
       audited (landed "X509_free" false false keySlots.tail) crateAudit = false ∧
-      -- a released free stating a slot, or naming the free statement
+      -- the released statement, or no slot stated
       audited (landed "PKCS12_free" false true keySlots) crateAudit = false ∧
       audited (landed "PKCS12_free" true false []) crateAudit = false ∧
+      audited (landed "EVP_MD_CTX_free" false true []) crateAudit = false ∧
       -- a teardown premise dropped
       audited ⟨"ENGINE_free", true, false, false, false, true, false, [], engineSlots⟩ crateAudit =
         false ∧

@@ -523,12 +523,28 @@ pub(super) fn declaration(
             // Card OPENSSL-SSL-CTX-CALLBACK-SLOTS (§C04.19.3, rule 12n): a
             // slot of a record the library keeps opaque, read through a
             // borrowed parameter; one named field, never a path into a layout
-            // the run does not see, and no object the callee supplies.
+            // the run does not see, and no object the callee supplies. Card
+            // OPENSSL-RELEASED-PARAMETER-SLOTS (USER DECISION 2026-11-23): or a
+            // parameter the declaration releases (`resource_released`), the
+            // slot read from the object while it is live, before the release,
+            // as the member form reads one; the loader admits it only beside
+            // the custody contract, premises and other slot invocations.
             SLOT_INVOKED => {
                 let [read, member, rest @ ..] = arguments else {
                     return Err(shape());
                 };
-                let at = object(read, "slot invocation's object")?;
+                let at = match names.get(read.as_str()).copied() {
+                    Some(at)
+                        if matches!(
+                            contract.parameters[at],
+                            ResourceParameterMode::Released { .. }
+                        ) && DEPTH_ONE.contains(&parameter_types[at].as_str())
+                            && parameter_kinds[at].is_none() =>
+                    {
+                        at
+                    }
+                    _ => object(read, "slot invocation's object")?,
+                };
                 let member = slot_member(member)?;
                 let actuals = actuals(rest, None, false, false)?;
                 if !members_named.insert((MemberObject::Parameter { index: at }, member.clone())) {

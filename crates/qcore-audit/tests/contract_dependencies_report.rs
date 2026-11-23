@@ -341,6 +341,63 @@ contract {
     );
 }
 
+/// Card OPENSSL-RELEASED-PARAMETER-SLOTS: the dependency output of the two
+/// frees of a released argument names `openssl_unstated_callback_slots` only
+/// where it is stated: `PKCS12_free` with the free statement (a CRL's method
+/// is left), `EVP_MD_CTX_free` not at all (it states every teardown slot);
+/// both keep the ex_data and teardown premises.
+#[test]
+fn the_released_frees_name_the_unstated_premise_only_where_stated() {
+    let root = concat!(
+        env!("CARGO_MANIFEST_DIR"),
+        "/../../providers/quirin-provider-openssl/contracts/openssl/"
+    );
+    let sources = ["evp_digest.qv", "pkcs12.qv", "bio_slots.qv", "teardown_slots.qv"]
+        .into_iter()
+        .map(|module| {
+            (
+                module.to_owned(),
+                std::fs::read_to_string(format!("{root}{module}")).unwrap(),
+            )
+        })
+        .collect::<BTreeMap<_, _>>();
+    let contracts =
+        qcore_contract::contract_loader::load_resource_contract_sources(&sources).unwrap();
+    let premises = premises(&contracts).unwrap();
+    let named = |function: &str| {
+        premises[function]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|premise| {
+                (
+                    premise["name"].as_str().unwrap().to_owned(),
+                    premise["statement"].as_str().unwrap().to_owned(),
+                )
+            })
+            .collect::<BTreeMap<_, _>>()
+    };
+    let digest = named("EVP_MD_CTX_free");
+    assert!(
+        !digest.contains_key("openssl_unstated_callback_slots"),
+        "{digest:?}"
+    );
+    let pkcs12 = named("PKCS12_free");
+    assert_eq!(
+        pkcs12["openssl_unstated_callback_slots"],
+        "quant all #o in #freed: #teardown(#o) \\ (#stated | #settable) |-> #inert"
+    );
+    for premises in [&digest, &pkcs12] {
+        for name in [
+            "openssl_ex_data_callbacks",
+            "openssl_builtin_teardown_functions",
+            "openssl_loaded_module_functions",
+        ] {
+            assert!(premises.contains_key(name), "{name}: {premises:?}");
+        }
+    }
+}
+
 #[test]
 fn graph_section_erases_to_the_previous_premise_and_dependency_view() {
     use qcore_audit::contract_dependencies::erase_hypotheses;

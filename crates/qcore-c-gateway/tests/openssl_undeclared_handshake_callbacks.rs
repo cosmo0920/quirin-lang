@@ -2351,3 +2351,450 @@ fn a_remaining_slot_no_declaration_registers_refuses() {
         );
     }
 }
+
+// Card OPENSSL-RELEASED-PARAMETER-SLOTS (C04.19.3 amended in place, rule
+// 12n; USER DECISION 2026-11-23; this target, so the read census needs no new
+// unit): a slot invocation through a parameter the declaration releases, read
+// before the release, stated by `EVP_MD_CTX_free` and `PKCS12_free`.
+
+/// A synthetic object whose free (`robj_free`, a final release) invokes
+/// `robj_st.on_free`, handing it the released formal.
+const RELEASED_OBJ: &str = "module contract;
+
+extern fn robj_new() -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_return_owned(nullable);
+};
+
+extern fn robj_set_on_free(o: ptr<mut, u8>, cb: fnptr) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(o);
+    ensures normal resource_borrowed(cb);
+    ensures normal resource_callback_slot_registered(o, robj_st.on_free, cb);
+    ensures normal resource_return_none();
+};
+
+extern fn robj_use(o: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_owned(o, nonnull);
+    ensures normal resource_return_none();
+};
+
+extern fn robj_free(o: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(o, nullable);
+    ensures normal resource_callback_slot_invoked(o, robj_st.on_free, o);
+    ensures normal resource_return_none();
+};
+
+extern fn on_release_ok(o: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(o);
+    ensures normal resource_return_none();
+};
+
+extern fn on_release_live(o: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_owned(o, nonnull);
+    ensures normal resource_return_none();
+};
+
+extern fn on_release_payload(o: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(o);
+    ensures normal resource_return_none();
+    quant live #o: robj.payload |-> #released;
+};
+
+extern fn on_release_releasing(o: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(o, nonnull);
+    ensures normal resource_return_none();
+};
+";
+
+const RELEASED_HEADERS: &str = "\
+struct robj { int x; struct robj *payload; };
+struct robj *robj_new(void);
+void robj_set_on_free(struct robj *o, int (*cb)(struct robj *));
+void robj_use(struct robj *o);
+void robj_free(struct robj *o);
+int on_release_ok(struct robj *o);
+int on_release_live(struct robj *o);
+int on_release_payload(struct robj *o);
+int on_release_releasing(struct robj *o);
+";
+
+/// `checked` frees a non-null object; `unchecked` may free NULL; `after`
+/// uses the object after its release.
+const RELEASED_BODY: &str = "\
+void checked(void) { struct robj *o = robj_new(); if (!o) return; robj_use(o); robj_free(o); }
+void unchecked(void) { struct robj *o = robj_new(); robj_free(o); }
+void after(void) { struct robj *o = robj_new(); if (!o) return; robj_free(o); robj_use(o); }
+";
+
+/// The admission (C04.19.3 amended): slot invocations through a released
+/// parameter load, withheld from the function map; beside anything but the
+/// custody contract, premises and other slot invocations they reject; a
+/// consumed or owned object keeps rejecting; a borrowed object loads as
+/// before.
+#[test]
+fn a_slot_invocation_through_a_released_parameter_loads_alone() {
+    let module = |object: &str, clauses: &str| {
+        format!(
+            "module contract;
+
+extern fn robj_free(o: ptr<mut, u8>, cb: fnptr, h: ptr<mut, u8>) -> unit
+contract {{
+    requires resource_contract_v1;
+    requires resource_premise(robj_inert, #concurrent |-> #inert);
+    ensures normal {object};
+    ensures normal resource_borrowed(cb);
+    ensures normal resource_borrowed(h);
+{clauses}    ensures normal resource_return_none();
+}};
+"
+        )
+    };
+    let load = |text: String| {
+        load_resource_contract_sources(&BTreeMap::from([("robj.qv".to_owned(), text)]))
+    };
+    let released = "resource_released(o, nullable)";
+    let invoked = "    ensures normal resource_callback_slot_invoked(o, robj_st.on_free, o);\n";
+    let admitted = load(module(
+        released,
+        &format!(
+            "{invoked}    ensures normal resource_callback_slot_invoked(o, robj_st.on_other, _);\n"
+        ),
+    ))
+    .expect("slot invocations through a released parameter load");
+    assert!(admitted.contract("robj_free").is_none(), "withheld");
+    let declaration = admitted.retaining_contract("robj_free").unwrap();
+    assert_eq!(declaration.callbacks.len(), 2);
+    assert!(
+        declaration
+            .callbacks
+            .iter()
+            .all(|clause| matches!(clause, CallbackClause::MemberInvoked { slot: true, .. }))
+    );
+    // A borrowed object, unchanged.
+    load(module("resource_borrowed(o)", invoked)).expect("a borrowed slot object loads");
+    // Beside any other clause, it rejects.
+    for (extra, why) in [
+        (
+            "    ensures normal resource_callback_slot_registered(h, robj_st.on_free, cb);\n",
+            "beside a registration",
+        ),
+        (
+            "    ensures normal resource_callback_invoked(cb, h);\n",
+            "beside a synchronous invocation",
+        ),
+        (
+            "    ensures normal resource_callback_member_invoked(h, robj_st.on_other, _);\n",
+            "beside a plain member invocation",
+        ),
+        (
+            "    ensures normal resource_retained_by(h, global);\n",
+            "beside a retention",
+        ),
+        (
+            "    requires resource_literal_argument(h, 0);\n",
+            "beside a literal-argument premise",
+        ),
+    ] {
+        let refused = load(module(released, &format!("{invoked}{extra}")))
+            .unwrap_err()
+            .to_string();
+        assert!(
+            refused.contains("through a released parameter stands only beside"),
+            "{why}: {refused}"
+        );
+    }
+    // Any other object mode still rejects as before.
+    for object in ["resource_consumed(o, nullable)", "resource_owned(o, nonnull)"] {
+        let refused = load(module(object, invoked)).unwrap_err().to_string();
+        assert!(
+            refused.contains("a slot invocation's object names a `resource_borrowed` parameter"),
+            "{object}: {refused}"
+        );
+    }
+}
+
+/// The reading at a call (rule 12n): an identity candidate decides, whether
+/// the object may be null or not; a use after the release still refuses; a
+/// candidate requiring the object non-null strengthens the release, so the
+/// unchecked free refuses and the checked one decides; a candidate stating a
+/// member-path state of the released object refuses
+/// (`callback-beside-release`); a releasing candidate refuses; without the
+/// run's facts the slot never decides.
+#[test]
+fn a_released_slot_is_read_before_the_release() {
+    if !clang_available() {
+        return;
+    }
+    let contracts = load_resource_contract_sources(&BTreeMap::from([(
+        "robj.qv".to_owned(),
+        RELEASED_OBJ.to_owned(),
+    )]))
+    .expect("the synthetic module loads");
+    let run = |candidate: &str| {
+        Arc::new(RunMemberFacts::new(
+            vec![
+                unit_facts(
+                    RELEASED_HEADERS,
+                    &format!("void reg(struct robj *o) {{ robj_set_on_free(o, {candidate}); }}\n"),
+                ),
+                unit_facts(RELEASED_HEADERS, RELEASED_BODY),
+                declared(&contracts),
+            ],
+            BTreeMap::new(),
+        ))
+    };
+    let row = |name: &str, candidate: &str| {
+        unit_row(
+            RELEASED_HEADERS,
+            RELEASED_BODY,
+            name,
+            Some(run(candidate)),
+            &contracts,
+        )
+    };
+    for name in ["checked", "unchecked"] {
+        let (status, leaves) = row(name, "on_release_ok");
+        assert_eq!(status, AnalysisStatus::Safe, "{name}: {leaves:?}");
+    }
+    let (status, leaves) = row("after", "on_release_ok");
+    assert_ne!(
+        status,
+        AnalysisStatus::Safe,
+        "a use after the release: {leaves:?}"
+    );
+    let (status, leaves) = row("checked", "on_release_live");
+    assert_eq!(status, AnalysisStatus::Safe, "{leaves:?}");
+    let (status, _) = row("unchecked", "on_release_live");
+    assert_ne!(
+        status,
+        AnalysisStatus::Safe,
+        "a possibly null release, required non-null"
+    );
+    for name in ["checked", "unchecked"] {
+        let (status, leaves) = row(name, "on_release_payload");
+        assert_ne!(status, AnalysisStatus::Safe, "{name}");
+        assert!(
+            refused(&leaves, "callback-beside-release"),
+            "{name}: {leaves:?}"
+        );
+        let (status, leaves) = row(name, "on_release_releasing");
+        assert_ne!(status, AnalysisStatus::Safe, "{name}");
+        assert!(
+            leaves
+                .iter()
+                .any(|leaf| leaf.contains("on_release_releasing") && leaf.contains("callback-")),
+            "{name}: {leaves:?}"
+        );
+    }
+    let (status, leaves) = unit_row(
+        RELEASED_HEADERS,
+        RELEASED_BODY,
+        "checked",
+        None,
+        &contracts,
+    );
+    assert_ne!(status, AnalysisStatus::Safe);
+    assert!(refused(&leaves, "callback-member-open"), "{leaves:?}");
+}
+
+const EVP_DIGEST: &str =
+    include_str!("../../../providers/quirin-provider-openssl/contracts/openssl/evp_digest.qv");
+
+/// The two frees of a released argument, as shipped.
+fn released_free_crate(with_setters: bool) -> ResourceContracts {
+    let mut modules = vec![
+        ("evp_digest.qv", EVP_DIGEST),
+        ("pkcs12.qv", PKCS12),
+        ("bio_slots.qv", BIO_SLOTS),
+    ];
+    if with_setters {
+        modules.push(("teardown_slots.qv", TEARDOWN_SLOTS));
+    }
+    contracts(&modules)
+}
+
+const RELEASED_FREE_HEADERS: &str = "\
+#define NULL ((void *)0)
+typedef struct evp_md_ctx_st EVP_MD_CTX;
+typedef struct evp_md_st EVP_MD;
+typedef struct PKCS12_st PKCS12;
+typedef struct bio_st BIO;
+EVP_MD_CTX *EVP_MD_CTX_new(void);
+void EVP_MD_CTX_free(EVP_MD_CTX *ctx);
+PKCS12 *d2i_PKCS12_bio(BIO *bp, PKCS12 **p12);
+void PKCS12_free(PKCS12 *a);
+int EVP_MD_meth_set_cleanup(EVP_MD *md, int (*cleanup)(EVP_MD_CTX *));
+int md_cleanup_unknown(EVP_MD_CTX *ctx);
+";
+
+const RELEASED_FREES: &str = "\
+void digest_once(void) { EVP_MD_CTX *ctx = EVP_MD_CTX_new(); EVP_MD_CTX_free(ctx); }
+void digest_twice(void) { EVP_MD_CTX *ctx = EVP_MD_CTX_new(); if (!ctx) return; \
+EVP_MD_CTX_free(ctx); EVP_MD_CTX_free(ctx); }
+void pkcs12_once(BIO *b) { PKCS12 *p = d2i_PKCS12_bio(b, NULL); PKCS12_free(p); }
+";
+
+/// `EVP_MD_CTX_free` states the key's nine teardown slots and the digest,
+/// cipher and public key method cleanups through its released `ctx` (the
+/// digest's cleanup handed `ctx`), `PKCS12_free` the key's nine through `a`;
+/// both stay final releases.
+#[test]
+fn the_released_frees_state_their_teardown_slots() {
+    let contracts = released_free_crate(true);
+    for (free, extra) in [
+        (
+            "EVP_MD_CTX_free",
+            &[
+                "evp_cipher_st.cipher_meth_cleanup",
+                "evp_md_st.md_meth_cleanup",
+                "evp_pkey_method_st.pkey_meth_cleanup",
+            ][..],
+        ),
+        ("PKCS12_free", &[][..]),
+    ] {
+        assert!(contracts.contract(free).is_none(), "{free} is withheld");
+        let declaration = contracts.retaining_contract(free).expect(free);
+        assert!(matches!(
+            declaration.contract.parameters[0],
+            qcore_schemas::contract::ResourceParameterMode::Released { nullable: true }
+        ));
+        let mut keys = Vec::new();
+        for clause in &declaration.callbacks {
+            let CallbackClause::MemberInvoked {
+                object: qcore_schemas::callback::MemberObject::Parameter { index: 0 },
+                member,
+                actuals,
+                slot: true,
+            } = clause
+            else {
+                panic!("{free}: {clause:?}");
+            };
+            let key = member.spelling();
+            let expected = if key == "evp_md_st.md_meth_cleanup" {
+                vec![CallbackActual::Parameter { index: 0 }]
+            } else {
+                free_actuals(&key, actuals.len())
+            };
+            assert_eq!(*actuals, expected, "{free}: {key}");
+            keys.push(key);
+        }
+        keys.sort();
+        let mut want = KEY_FREED
+            .iter()
+            .chain(extra)
+            .map(|key| (*key).to_owned())
+            .collect::<Vec<_>>();
+        want.sort();
+        assert_eq!(keys, want, "{free}");
+    }
+}
+
+/// With the setters declared and nothing registered, each free decides
+/// `Safe` and the row rests on the free; a second release of the digest
+/// context (a use after the release) still refuses; an uncontracted digest
+/// cleanup refuses `EVP_MD_CTX_free` naming it and spares `PKCS12_free`;
+/// without the setters' declarations, or without the run's facts, the slots
+/// never decide.
+#[test]
+fn the_released_frees_decide_over_the_run() {
+    use qcore_c_gateway::contract_dependencies::{Recording, row_dependencies};
+    if !clang_available() {
+        return;
+    }
+    let contracts = released_free_crate(true);
+    let run = |registrar: &str, contracts: &ResourceContracts| {
+        Arc::new(RunMemberFacts::new(
+            vec![
+                unit_facts(RELEASED_FREE_HEADERS, registrar),
+                unit_facts(RELEASED_FREE_HEADERS, RELEASED_FREES),
+                declared(contracts),
+            ],
+            BTreeMap::new(),
+        ))
+    };
+    let row = |name: &str, run: Option<Arc<RunMemberFacts>>, contracts: &ResourceContracts| {
+        unit_row(RELEASED_FREE_HEADERS, RELEASED_FREES, name, run, contracts)
+    };
+    let nothing = run("void nothing(void) { }\n", &contracts);
+    for name in ["digest_once", "pkcs12_once"] {
+        let (status, leaves) = row(name, Some(nothing.clone()), &contracts);
+        assert_eq!(status, AnalysisStatus::Safe, "{name}: {leaves:?}");
+    }
+    let (status, leaves) = row("digest_twice", Some(nothing.clone()), &contracts);
+    assert_ne!(status, AnalysisStatus::Safe, "{leaves:?}");
+    // The Safe rows list the free each rests on.
+    let text = format!("{RELEASED_FREE_HEADERS}{RELEASED_FREES}");
+    for (name, free) in [
+        ("digest_once", "EVP_MD_CTX_free"),
+        ("pkcs12_once", "PKCS12_free"),
+    ] {
+        let recording = Recording::start();
+        let outcome = scoped(Some(nothing.clone()), || {
+            analyze_unrestricted_c11(
+                &C11TranslationUnit {
+                    source: &text,
+                    ..Default::default()
+                },
+                name,
+                &contracts,
+            )
+        })
+        .expect("analysed");
+        let record = recording.finish();
+        // The unit's other rows (`digest_twice`) are not Safe, so the
+        // unit's summary is the partial one; the row itself is Safe above.
+        let summary = match &outcome {
+            UnrestrictedLegacyResult::Safe(certificate) => &certificate.summary,
+            UnrestrictedLegacyResult::Unsafe(summary) => summary,
+            UnrestrictedLegacyResult::Unknown { partial, .. } => {
+                partial.as_ref().expect("a partial summary")
+            }
+        };
+        assert_eq!(summary.functions[name].status, AnalysisStatus::Safe, "{name}");
+        let dependencies = row_dependencies(&record, summary, &contracts);
+        assert!(
+            dependencies[name].declarations.contains(free),
+            "{name}: {:?}",
+            dependencies[name]
+        );
+    }
+    let unknown = run(
+        "void reg(EVP_MD *md) { EVP_MD_meth_set_cleanup(md, md_cleanup_unknown); }\n",
+        &contracts,
+    );
+    let (status, leaves) = row("digest_once", Some(unknown.clone()), &contracts);
+    assert_ne!(status, AnalysisStatus::Safe);
+    assert!(
+        leaves.iter().any(|leaf| leaf.contains("md_cleanup_unknown")),
+        "{leaves:?}"
+    );
+    let (status, leaves) = row("pkcs12_once", Some(unknown), &contracts);
+    assert_eq!(
+        status,
+        AnalysisStatus::Safe,
+        "PKCS12_free runs no digest cleanup: {leaves:?}"
+    );
+    let unregistered = released_free_crate(false);
+    let bare = run("void nothing(void) { }\n", &unregistered);
+    let (status, leaves) = row("digest_once", Some(bare), &unregistered);
+    assert_ne!(status, AnalysisStatus::Safe);
+    assert!(refused(&leaves, "no declaration registers"), "{leaves:?}");
+    let (status, leaves) = row("digest_once", None, &contracts);
+    assert_ne!(status, AnalysisStatus::Safe);
+    assert!(refused(&leaves, "callback-member-open"), "{leaves:?}");
+}

@@ -340,6 +340,7 @@ import QCore.OpensslFreeTeardownSlots
 import QCore.OpensslHandshakeSlots
 import QCore.OpensslInnerFreesAudit
 import QCore.OpensslObjectFreesAudit
+import QCore.OpensslReleasedSlots
 import QCore.OpensslRemainingSetters
 import QCore.OpensslUnstatedSlots
 import QCore.OrderedLifetimeReplay
