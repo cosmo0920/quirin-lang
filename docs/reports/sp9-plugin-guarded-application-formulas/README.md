@@ -338,3 +338,12 @@ None registered. One note: the frozen sidecars' `boundary` and
 `source_correspondence` fields are English descriptions of the documents.
 They are not conditions a symbol states, and the files are digest-held.
 They are of the same kind as SP10-FORMAL-BINDING-DESCRIPTIONS' scope.
+
+## Integrator measurement (2026-11-21)
+
+Landing `2aaf3a585` on base `e6d86d596`, measured with `--declared PREDICTION.md`:
+corpus, twelve-home, system and slice all match the declared prediction with
+0 moves. Comparison: `integration/native-comparison.json.gz` (uncompressed
+sha256 `f0aee59e50a1b57d83a0586640502f08b731f41a8bc6a9411aab7f4e0e4d1be0`). Landing gate: `integration/gate.json` (Rust 9984
+passed, 1 failed: the known host libcurl failure; Lean 493 audits; Python
+807 Provider gate not selected (no providers/ change).).
