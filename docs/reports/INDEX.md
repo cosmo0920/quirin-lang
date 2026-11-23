@@ -1319,7 +1319,11 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [sp5-global-prose-premise-ban](sp5-global-prose-premise-ban/README.md) | SP5-GLOBAL-PROSE-PREMISE-BAN |
 
+| [sp6-guarded-symbol-prose](sp6-guarded-symbol-prose/README.md) | SP6-GUARDED-SYMBOL-PROSE |
+
 | [sp6-symbolic-hypothesis-atoms](sp6-symbolic-hypothesis-atoms/README.md) | SP6-SYMBOLIC-HYPOTHESIS-ATOMS |
+
+| [sp8-outer-contract-symbolic-statements](sp8-outer-contract-symbolic-statements/README.md) | SP8-OUTER-CONTRACT-SYMBOLIC-STATEMENTS |
 
 | [stability-reeval-1](stability-reeval-1/README.md) | STABILITY-REEVAL #1 — under what conditions each current claim is unstable |
 

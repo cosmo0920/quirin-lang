@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 10,
-  "named_followups": 1063
+  "named_followups": 1064
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6924,7 +6924,7 @@
   "workspace_tests": 9904,
   "provider_tests": 174,
   "python_evidence_validator_tests": 807,
-  "lean_audits": 486,
+  "lean_audits": 488,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
    "AuditAggregateOwnedField.lean",
@@ -7241,10 +7241,12 @@
    "AuditPointerTypedefMember.lean",
    "AuditPremiseFlow.lean",
    "AuditPremiseFormula.lean",
+   "AuditPremiseFormulaCjsonGuardedSymbols.lean",
    "AuditPremiseFormulaCjsonTypedAtoms.lean",
    "AuditPremiseFormulaFluentBit.lean",
    "AuditPremiseFormulaLibevent.lean",
    "AuditPremiseFormulaLibrdkafka.lean",
+   "AuditPremiseFormulaOuter.lean",
    "AuditPremiseMetadataBridge.lean",
    "AuditPremiseRefinement.lean",
    "AuditPrintRouteSelection.lean",
@@ -14788,11 +14790,18 @@
    "recorded_by": "NULLABLE-LAZY-CONSTRUCTOR-IN-LOOP"
   },
   {
-   "id": "SP6-GUARDED-SYMBOL-PROSE",
-   "title": "State cJSON_DetachItemViaPointer's remaining guarded symbols as formulas",
-   "why": "Recorded by SP6-SYMBOLIC-HYPOTHESIS-ATOMS. The nine guarded prerequisite symbols that repeated the detach_* atoms' sentences now repeat their formulas, but the declaration's other eight resource_guarded_symbol_v1 texts (detach, environment, failure_case, invalid_membership, membership, original_list_unchanged, remaining_list_valid, success_case) and the resource_guarded_decomposition_v1 document's readable string are still English; membership is a prerequisite symbol and invalid_membership a condition. Under the user decision of 2026-11-20 they may want typed atoms or formulas too. DISCHARGE: each stated symbolically over registered terms (with a vocabulary block and Lean model for what is missing), the guarded adoption plan and the premise-guarded-decomposition applications read through the legacy reader, no verdict moved. Size: medium.",
-   "source": "docs/reports/sp6-symbolic-hypothesis-atoms/README.md",
-   "recorded_by": "SP6-SYMBOLIC-HYPOTHESIS-ATOMS"
+   "id": "SP7-PLUGIN-GUARDED-APPLICATION-FORMULAS",
+   "title": "State the frozen plugin guarded sidecar's English symbols as formulas",
+   "why": "Recorded by SP6-GUARDED-SYMBOL-PROSE. Guarded propositions must be canonical C04.18.9 typed-rendering formulas (QF003), so the frozen standalone sidecar docs/reports/premise-guarded-decomposition/applications/plugin.json, whose seven non-prerequisite symbols are English (environment, invoke, registered_case, default_case, registered_lifetime_valid, default_lifetime_valid, unregistered), no longer lowers: crates/qcore-contract/tests/guarded_decomposition.rs now shows it refused. DISCHARGE: each stated over registered terms (with a rendered-term block and Lean model over QCore.PluginPremiseDecomposition / GuardedContractApplications.Plugin for what is missing), recorded for the legacy reader, and the plugin replay restored as a positive test. No production module states these symbols. Size: medium.",
+   "source": "docs/reports/sp6-guarded-symbol-prose/README.md",
+   "recorded_by": "SP6-GUARDED-SYMBOL-PROSE"
+  },
+  {
+   "id": "SP7-FORMAL-BINDING-DESCRIPTIONS",
+   "title": "Replace the English environment descriptions of formal bindings",
+   "why": "Recorded by SP6-SYMBOLIC-HYPOTHESIS-ATOMS and SP6-GUARDED-SYMBOL-PROSE. Binding manifests' environment.variables descriptions and the FormalBinding records built in code (cjson_local_binding, plugin_source_witnesses) still describe their environments in English. They are not conditions a declaration states, and the manifests are digest-held, so converting them means a manifest migration. DISCHARGE: each description a reference to a registered term or typed definition, the manifests migrated with their digests, no verdict moved. Size: medium.",
+   "source": "docs/reports/sp6-guarded-symbol-prose/README.md",
+   "recorded_by": "SP6-GUARDED-SYMBOL-PROSE"
   }
  ],
  "updated": "Completed plugin premise integration; exact hand-maintained union retains810followups, borrowed measured-source8419Rust/354Lean/freshcard133provider, exact source equivalence checked; authoritative root committed-matrix Python confirmation in integration receipt. CMetrics map/opts API model specifications added at the explicit user request. Eight declared-model API contracts remain outside interpreted views, with CMT-MAP-OPTS-CONTRACT-ADOPTION and CMT-LABELED-HASH-ZERO-STATIC-STORAGE Open. No trusted API coverage is claimed; the source gate is recorded by this card alongside its separate initializer native checkpoint. W48-CMT-TRACKED-INTERIOR-SELF-INIT implements rule 36b's checked initializer effect transport for an exact live owned root or embedded record, retaining actual self writes, invalidating aliased member facts and preserving resource obligations; nondefault custody frames refuse and no ordinary summary is exported. The canonical CFL intrusive_list.qv declares matching audit preconditions/effects; two CMetrics .qv modules add six map and two opts lifecycle models, including transitive ownership, partial failure, borrowed results and uncleared cleanup fields. All remain outside interpreted views; checked API adoption and labeled zero-hash storage accounting have named Open follow-ups. Fresh BASE/planner precedes prediction f18d96065 and implementation; the later contract amendment 08da23123 precedes .qv edits. Native corpus BASE/TIP Safe/Unknown/Pending/provisional-Unsafe: 1009 / 3816 / 0 / 9 to 1011 / 3814 / 0 / 9; full system/slice, 5781 NULL dictionaries and runtime projections are compared, 241 semantic leaves accounted, zero unexplained leaves and no prior Safe loss. Gate 8654 Rust / 370 Lean / 374 Python, provider 133 Rust / 25 Python and all five package verifies pass. The actual deep source reader uses 328 KiB below 1 MiB. Full getter closure remains Open; W48-CMT-SELF-INIT-DISJOINT-FRAMES tracks the next bounded frame extension, and W48-EXACT-RETURN-WITNESS-PRECISION is unchanged. Native evidence is isolated to measured e92d8aef35a8bd14550e90219d19a56eb3b196e7; later source gate 2d0d85299b830aa24d7f200d63a308653582363f validates the added declared API models separately; see docs/reports/w48-cmt-tracked-interior-self-init/README.md."
