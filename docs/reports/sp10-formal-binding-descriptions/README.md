@@ -345,7 +345,7 @@ and receipts under `private/gate-1/`.
 | lean (`check_lean_audits.py`) | 0 | 492 audits (this card's included) |
 | python | 1 | 807 tests, **2 failures** |
 | provider package build, verify (all, librdkafka) | 0, 0, 0 | |
-| provider test | not run at hand-back | queued in the host's shared audit queue (ticket 338, first in line, waiting for slots `audit/0` and `audit/1`) behind a long-running measurement; the queued step was left to complete |
+| provider test, fmt, clippy | 0, 0, 0 | 49 summaries, 174 passed, 0 failed, 1 ignored (it waited about 6 hours in the host's shared audit queue behind a measurement before it ran) |
 
 The failures:
 
