@@ -101,7 +101,10 @@ fn is_name(text: &str) -> bool {
 /// The one cast detector of the unfused token stream, shared by every reader
 /// that decides a single `&` by the token before it
 /// (`legacy_refused_operands::handed_on`, `legacy_call_instantiation`'s
-/// `residual_takes_an_address`). A token reading cannot always tell a cast
+/// `residual_takes_an_address`) and, card **CAST-BEFORE-STAR-READ-AS-BINARY**
+/// (rule 74g), every reader that decides a single `*` by it the same way
+/// (`legacy_refused_operands`' dereference, `aggregate_store`'s premise 4):
+/// after a `)` that may close a cast, `*` may be a dereference. A token reading cannot always tell a cast
 /// from a parenthesised expression (`(a) & b` is either, by whether `a` names
 /// a type), so the answer leans to the cast, which reads more addresses:
 ///
@@ -206,14 +209,14 @@ pub(crate) const READERS: &[(&str, usize, &str)] = &[
     ("legacy_list_iteration.rs", 2, "fail-closed"),
     ("legacy_reference_result.rs", 1, "fail-closed"),
     ("indexed_collection.rs", 1, "fail-closed"),
-    ("aggregate_store.rs", 1, "fail-closed"),
+    ("aggregate_store.rs", 2, "fail-closed+cast"),
     ("registration_by_id.rs", 2, "fail-closed"),
     ("typed_field_access.rs", 1, "fail-closed"),
     ("borrowed_actual.rs", 2, "fail-closed"),
     ("legacy_retention_guard.rs", 1, "fail-closed"),
     ("legacy_reference_count.rs", 1, "fail-closed"),
     ("legacy_slot_move_borrow.rs", 1, "fail-closed"),
-    ("legacy_refused_operands.rs", 2, "fail-closed+cast"),
+    ("legacy_refused_operands.rs", 3, "fail-closed+cast"),
     ("legacy_in_place_custody.rs", 1, "fail-closed"),
     ("legacy_call_instantiation.rs", 2, "fail-closed+cast"),
 ];
@@ -256,6 +259,23 @@ pub(crate) const CAST_VECTORS: &[(&str, usize, &[&str], bool)] = &[
     ("T * ) & x", 2, &[], true),
 ];
 
+/// `(tokens, index of the `)`, declared objects, may close a cast?)` before a
+/// single `*` (rule 74g): the vectors `QCore.CastBeforeStar.starVectors`
+/// restates by class.
+#[cfg(test)]
+pub(crate) const STAR_VECTORS: &[(&str, usize, &[&str], bool)] = &[
+    ("( char * ) * p", 3, &[], true),
+    ("( unsigned char ) * p", 3, &["p"], true),
+    ("( a ) * b", 2, &[], true),
+    ("( a ) * b", 2, &["a"], false),
+    ("f ( x ) * n", 3, &[], false),
+    ("( void ( * ) ( int , . . . ) ) * fp", 12, &[], true),
+    ("( char ( * ) [ 4 ] ) * b", 8, &[], true),
+    ("sizeof ( T * ) * n", 4, &[], false),
+    ("__typeof__ ( x ) * b", 3, &[], false),
+    ("( a + 1 ) * n", 4, &[], false),
+];
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -265,6 +285,17 @@ mod tests {
         for (source, close, objects, cast) in CAST_VECTORS {
             let body = source.split(' ').collect::<Vec<_>>();
             assert_eq!(body[*close], ")", "{source}");
+            let objects = objects.iter().map(|name| (*name).to_owned()).collect();
+            assert_eq!(may_close_a_cast(&body, *close, &objects), *cast, "{source}");
+        }
+    }
+
+    #[test]
+    fn rule_74g_star_vectors_hold() {
+        for (source, close, objects, cast) in STAR_VECTORS {
+            let body = source.split(' ').collect::<Vec<_>>();
+            assert_eq!(body[*close], ")", "{source}");
+            assert_eq!(body[*close + 1], "*", "{source}");
             let objects = objects.iter().map(|name| (*name).to_owned()).collect();
             assert_eq!(may_close_a_cast(&body, *close, &objects), *cast, "{source}");
         }
