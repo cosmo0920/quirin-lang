@@ -1,0 +1,251 @@
+{
+ "by_form": {
+  "resource_callback_invoked": 13,
+  "resource_callback_invoked_or_default": 2,
+  "resource_callback_member_invoked": 45,
+  "resource_callback_slot_invoked": 562,
+  "resource_callback_table": 2
+ },
+ "clauses": 624,
+ "declarations": 49,
+ "non_borrowed_objects": [
+  {
+   "also_an_actual": false,
+   "at_risk": false,
+   "clause": "resource_callback_member_invoked",
+   "function": "mk_thread_destroy",
+   "mode": "released(nonnull)",
+   "name": "th"
+  },
+  {
+   "also_an_actual": true,
+   "at_risk": false,
+   "clause": "resource_callback_member_invoked",
+   "function": "rd_kafka_op_destroy",
+   "mode": "released(nonnull)",
+   "name": "rko"
+  },
+  {
+   "also_an_actual": false,
+   "at_risk": false,
+   "clause": "resource_callback_member_invoked",
+   "function": "rd_kafka_poll_cb",
+   "mode": "owned(nonnull)",
+   "name": "rko"
+  },
+  {
+   "also_an_actual": false,
+   "at_risk": false,
+   "clause": "resource_callback_member_invoked",
+   "function": "rd_kafka_poll_cb",
+   "mode": "owned(nonnull)",
+   "name": "rko"
+  },
+  {
+   "also_an_actual": true,
+   "at_risk": false,
+   "clause": "resource_callback_member_invoked",
+   "function": "rd_kafka_poll_cb",
+   "mode": "owned(nonnull)",
+   "name": "rko"
+  },
+  {
+   "also_an_actual": false,
+   "at_risk": true,
+   "clause": "resource_callback_slot_invoked",
+   "function": "EVP_MD_CTX_free",
+   "mode": "released(nullable)",
+   "name": "ctx"
+  },
+  {
+   "also_an_actual": false,
+   "at_risk": true,
+   "clause": "resource_callback_slot_invoked",
+   "function": "EVP_MD_CTX_free",
+   "mode": "released(nullable)",
+   "name": "ctx"
+  },
+  {
+   "also_an_actual": false,
+   "at_risk": true,
+   "clause": "resource_callback_slot_invoked",
+   "function": "EVP_MD_CTX_free",
+   "mode": "released(nullable)",
+   "name": "ctx"
+  },
+  {
+   "also_an_actual": false,
+   "at_risk": true,
+   "clause": "resource_callback_slot_invoked",
+   "function": "EVP_MD_CTX_free",
+   "mode": "released(nullable)",
+   "name": "ctx"
+  },
+  {
+   "also_an_actual": false,
+   "at_risk": true,
+   "clause": "resource_callback_slot_invoked",
+   "function": "EVP_MD_CTX_free",
+   "mode": "released(nullable)",
+   "name": "ctx"
+  },
+  {
+   "also_an_actual": false,
+   "at_risk": true,
+   "clause": "resource_callback_slot_invoked",
+   "function": "EVP_MD_CTX_free",
+   "mode": "released(nullable)",
+   "name": "ctx"
+  },
+  {
+   "also_an_actual": false,
+   "at_risk": true,
+   "clause": "resource_callback_slot_invoked",
+   "function": "EVP_MD_CTX_free",
+   "mode": "released(nullable)",
+   "name": "ctx"
+  },
+  {
+   "also_an_actual": false,
+   "at_risk": true,
+   "clause": "resource_callback_slot_invoked",
+   "function": "EVP_MD_CTX_free",
+   "mode": "released(nullable)",
+   "name": "ctx"
+  },
+  {
+   "also_an_actual": false,
+   "at_risk": true,
+   "clause": "resource_callback_slot_invoked",
+   "function": "EVP_MD_CTX_free",
+   "mode": "released(nullable)",
+   "name": "ctx"
+  },
+  {
+   "also_an_actual": false,
+   "at_risk": true,
+   "clause": "resource_callback_slot_invoked",
+   "function": "EVP_MD_CTX_free",
+   "mode": "released(nullable)",
+   "name": "ctx"
+  },
+  {
+   "also_an_actual": true,
+   "at_risk": true,
+   "clause": "resource_callback_slot_invoked",
+   "function": "EVP_MD_CTX_free",
+   "mode": "released(nullable)",
+   "name": "ctx"
+  },
+  {
+   "also_an_actual": false,
+   "at_risk": true,
+   "clause": "resource_callback_slot_invoked",
+   "function": "EVP_MD_CTX_free",
+   "mode": "released(nullable)",
+   "name": "ctx"
+  },
+  {
+   "also_an_actual": false,
+   "at_risk": true,
+   "clause": "resource_callback_slot_invoked",
+   "function": "PKCS12_free",
+   "mode": "released(nullable)",
+   "name": "a"
+  },
+  {
+   "also_an_actual": false,
+   "at_risk": true,
+   "clause": "resource_callback_slot_invoked",
+   "function": "PKCS12_free",
+   "mode": "released(nullable)",
+   "name": "a"
+  },
+  {
+   "also_an_actual": false,
+   "at_risk": true,
+   "clause": "resource_callback_slot_invoked",
+   "function": "PKCS12_free",
+   "mode": "released(nullable)",
+   "name": "a"
+  },
+  {
+   "also_an_actual": false,
+   "at_risk": true,
+   "clause": "resource_callback_slot_invoked",
+   "function": "PKCS12_free",
+   "mode": "released(nullable)",
+   "name": "a"
+  },
+  {
+   "also_an_actual": false,
+   "at_risk": true,
+   "clause": "resource_callback_slot_invoked",
+   "function": "PKCS12_free",
+   "mode": "released(nullable)",
+   "name": "a"
+  },
+  {
+   "also_an_actual": false,
+   "at_risk": true,
+   "clause": "resource_callback_slot_invoked",
+   "function": "PKCS12_free",
+   "mode": "released(nullable)",
+   "name": "a"
+  },
+  {
+   "also_an_actual": false,
+   "at_risk": true,
+   "clause": "resource_callback_slot_invoked",
+   "function": "PKCS12_free",
+   "mode": "released(nullable)",
+   "name": "a"
+  },
+  {
+   "also_an_actual": false,
+   "at_risk": true,
+   "clause": "resource_callback_slot_invoked",
+   "function": "PKCS12_free",
+   "mode": "released(nullable)",
+   "name": "a"
+  },
+  {
+   "also_an_actual": false,
+   "at_risk": true,
+   "clause": "resource_callback_slot_invoked",
+   "function": "PKCS12_free",
+   "mode": "released(nullable)",
+   "name": "a"
+  }
+ ],
+ "non_borrowed_parameter_actuals": [
+  {
+   "at_risk": false,
+   "clause": "resource_callback_member_invoked",
+   "function": "rd_kafka_op_destroy",
+   "mode": "released(nonnull)",
+   "name": "rko"
+  },
+  {
+   "at_risk": false,
+   "clause": "resource_callback_member_invoked",
+   "function": "rd_kafka_background_queue_serve",
+   "mode": "consumed(nonnull)",
+   "name": "rko"
+  },
+  {
+   "at_risk": false,
+   "clause": "resource_callback_member_invoked",
+   "function": "rd_kafka_poll_cb",
+   "mode": "owned(nonnull)",
+   "name": "rko"
+  },
+  {
+   "at_risk": true,
+   "clause": "resource_callback_slot_invoked",
+   "function": "EVP_MD_CTX_free",
+   "mode": "released(nullable)",
+   "name": "ctx"
+  }
+ ]
+}
