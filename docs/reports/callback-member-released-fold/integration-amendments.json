@@ -1,0 +1,24 @@
+{
+  "schema": "quirin-amendments/2",
+  "card": "CALLBACK-MEMBER-RELEASED-REQUIREMENT-FOLD",
+  "base": "2c60986b0",
+  "measured_tip": "9180fc26f",
+  "increment_paragraph": "**CALLBACK-MEMBER-RELEASED-REQUIREMENT-FOLD (2026-11-23).** USER DECISION 2026-11-23 (\"soundness first\" set). A candidate's resource_owned(n) requirement on a call's parameter actual was folded into the call's custody mode only at a borrowed position (rule 13u) and at a released slot object (r60); elsewhere it was dropped, since the loader restricts no actual's mode, so a plain member invocation through resource_released(OBJ, nullable), or a synchronous or member actual at a nullable owned or consumed position, handed a possibly null object to a candidate requiring it live (the gateway fixture's unchecked rows were Safe at base). New gateway rule 74j and one sentence in C04.19: callback_contracts::fold_requirement folds the requirement for every invocation form (synchronous, table, plain member, slot) at every held position (owned, consumed, released, stored: the mode kept, nullable only when it and every requirement are), and an out or removed position refuses the call (callback-requirement-unfolded); the registry invocation and a deferred member reading refuse any requirement as before. Census of the shipped declarations (624 invocation clauses in 49 declarations): no requirement reaches a position the fold changes (rd_kafka_op_destroy, rd_kafka_background_queue_serve and rd_kafka_poll_cb non-null; EVP_MD_CTX_free r60's slot object; mk_thread_destroy hands _), so no provider contract or lock changes. Lean: new QCore.CallbackRequirementFold (audited, 11 theorems; agrees with QCore.OpensslReleasedSlots.folded). Opt-in current over Fluent Bit 046accf6 (base 2c60986b0 vs 9180fc26f): 1172 Safe / 2 Pending / 3622 Unknown / 8 Unsafe on both sides, 0 status moves, 0 content changes, as predicted. Scoped card gate exit 0 (Rust 9978 passed, Lean 492 audits, Python 807). Pinned routes: none predicted; measure --declared is deferred to the integrator (no pinned inputs on this host).",
+  "status_edits": [],
+  "ledger": [
+    {
+      "id": "CALLBACK-MEMBER-RELEASED-REQUIREMENT-FOLD",
+      "operation": "retire",
+      "why": "Discharged by CALLBACK-MEMBER-RELEASED-REQUIREMENT-FOLD: gateway rule 74j and C04.19 fold a candidate's resource_owned(n) requirement at every held position (owned, consumed, released, stored) for every invocation clause form through callback_contracts::fold_requirement, and refuse the call (callback-requirement-unfolded) at an out or removed position; the gateway fixture callback_requirement_fold.rs pins the plain member invocation through a nullable release (Safe at base, refused unchecked at the tip) with the shipped rd_kafka_op_destroy and mk_thread_destroy shapes unchanged; Lean QCore.CallbackRequirementFold. No shipped declaration moves (census of 624 clauses).",
+      "source": "docs/reports/callback-member-released-fold/README.md"
+    },
+    {
+      "id": "CALLBACK-MEMBER-RELEASED-EFFECT-ORDER",
+      "operation": "register",
+      "title": "A candidate member effect beside a plain member invocation through a released object is applied after the release",
+      "text": "Found by CALLBACK-MEMBER-RELEASED-REQUIREMENT-FOLD. OPENSSL-RELEASED-PARAMETER-SLOTS refuses a call whose slot invocation through a released parameter has a candidate member effect (member-path state, member reading deferred to a constructed state, registry use: callback-beside-release), because the transfer applies the custody contract, release included, before the callback route. That check is keyed on released_slot_objects (legacy_retained_by.rs), so it covers slot invocations only; a plain resource_callback_member_invoked through a released object (rd_kafka_op_destroy) still has such effects applied after the release, as before r60. Not shown to be unsound; it may already be fail-closed through the route's reading of a released object. DISCHARGE: decide whether the plain member form needs the same refusal (or an ordering proof), with a gateway fixture and Lean parity. Size: small.",
+      "source": "docs/reports/callback-member-released-fold/README.md",
+      "recorded_by": "CALLBACK-MEMBER-RELEASED-REQUIREMENT-FOLD"
+    }
+  ]
+}
