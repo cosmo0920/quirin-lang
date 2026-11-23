@@ -65,6 +65,11 @@
 //!   custody actuals. [`report_uncertified_key_uses`] admits a by-value use
 //!   only where the settled state certifies the key; a released key is the
 //!   `use_after_close` candidate.
+//! * **Every in-place kind, certified and one object** (card
+//!   CG25-IN-PLACE-REGEX, rule 74i): [`report_uncertified_key_uses`] reads a
+//!   use of every in-place kind (`regexec(&re, …)` too), and every in-place
+//!   actual must name the one automatic object every reference of the name
+//!   designates (`Parser::automatic_object`), not only a key's.
 //!
 //! Everything here refuses rather than approximates.
 
@@ -654,14 +659,10 @@ impl Parser<'_> {
                 .filter(|_| !by_value)
                 .and_then(|argument| address_of_name(argument))
                 .filter(|name| self.in_place_names.kind(name) == Some(kind))
-                .filter(|name| {
-                    if kind == ResourceKind::ThreadKey {
-                        self.automatic_key(name)
-                    } else {
-                        self.typed_positions_index()
-                            .is_some_and(|index| one_automatic_object(&index.function, name))
-                    }
-                });
+                // Card CG25-IN-PLACE-REGEX (rule 74i): every in-place kind,
+                // not only `thread_key`, needs the one automatic object every
+                // reference of the name designates.
+                .filter(|name| self.automatic_object(name));
             if let Some(name) = name {
                 *slot = Some(name.to_owned());
                 continue;
@@ -695,10 +696,19 @@ impl Parser<'_> {
     /// file-scope object the local shadows.
     fn automatic_key(&self, name: &str) -> bool {
         self.in_place_names.kind(name) == Some(ResourceKind::ThreadKey)
-            && self.typed_positions_index().is_some_and(|index| {
-                one_automatic_object(&index.function, name)
-                    && every_reference_is(&index.function, name)
-            })
+            && self.automatic_object(name)
+    }
+
+    /// Card CG25-IN-PLACE-REGEX (rule 74i): whether `name` is the one
+    /// automatic object of this function by that name
+    /// ([`one_automatic_object`]) and every reference to `name` in the
+    /// function designates it ([`every_reference_is`]). Rule 11v (7) asked
+    /// this of a `thread_key` only; a block-scope `regex_t g` that shadows a
+    /// file-scope `g` the body also names is two objects behind one name.
+    fn automatic_object(&self, name: &str) -> bool {
+        self.typed_positions_index().is_some_and(|index| {
+            one_automatic_object(&index.function, name) && every_reference_is(&index.function, name)
+        })
     }
 
     /// Hook (rule 11v): whether `argument` is `&NAME` of a tracked object at
@@ -945,37 +955,48 @@ pub(crate) fn verify_cfg(cfg: &mut LegacyCfg) {
 }
 
 /// Card CG25-THREAD-KEY-AUTOMATIC-REVISIT (rule 11v (7)): the refusal of a
-/// by-value use of a tracked key its creation status has not certified.
-fn uncertified_use_refusal(name: &str) -> String {
-    format!("use of thread key `{name}` not certified by its creation status (rule 11v (7))")
+/// by-value use of a tracked key its creation status has not certified. Card
+/// CG25-IN-PLACE-REGEX (rule 74i): every other in-place kind's refusal.
+fn uncertified_use_refusal(name: &str, kind: ResourceKind) -> String {
+    if kind == ResourceKind::ThreadKey {
+        format!("use of thread key `{name}` not certified by its creation status (rule 11v (7))")
+    } else {
+        format!(
+            "use of in-place object `{name}` not certified by its initialiser status (rule 74i)"
+        )
+    }
 }
 
-/// Card CG25-THREAD-KEY-AUTOMATIC-REVISIT (rule 11v (7)): a by-value use of a
-/// tracked key (`pthread_getspecific(k)`) is admitted only where the key is
-/// certainly created: read from the settled incoming states, as
-/// `report_kind_violations` reads its candidates. The tracked keys are the
-/// places this CFG's own by-value-kind initialisers bind (a static-held
+/// Card CG25-THREAD-KEY-AUTOMATIC-REVISIT (rule 11v (7)), generalised by card
+/// CG25-IN-PLACE-REGEX (rule 74i) to **every in-place kind**: a use of a
+/// tracked object (`pthread_getspecific(k)`, `regexec(&re, …)`,
+/// `regerror(r, &re, …)`) is admitted only where the object is certainly
+/// initialised: read from the settled incoming states, as
+/// `report_kind_violations` reads its candidates. The tracked objects are the
+/// places this CFG's own in-place initialisers bind (a static-held key
 /// creation's position is borrowed, so it binds none).
 ///
-/// At such a use the binding of `k` must be an identity of exactly one site,
-/// not unknown, not possibly failed (`may_be_null` or a nullable site), and
-/// the site must be live. A site released on a reaching path is
+/// At such a use the binding of the object must be an identity of exactly
+/// one site, not unknown, not possibly failed (`may_be_null` or a nullable
+/// site), and the site must be live. A site released on a reaching path is
 /// `report_kind_violations`' `use_after_close` candidate and is left to it;
-/// every other uncertain state (before the creation, before the status test,
-/// on the failure edge, a join of those) refuses: POSIX leaves a use of a key
-/// value not obtained from `pthread_key_create` undefined.
+/// every other uncertain state (before the initialiser, before the status
+/// test, on the failure edge, a join of those) refuses. POSIX leaves a use of
+/// a key value not obtained from `pthread_key_create` undefined, and the
+/// contents of a `regex_t` whose `regcomp` failed undefined. The check reads
+/// no callee by name: the contract language does not tell `regerror`, which
+/// POSIX defines on the failed object, from `regexec`, so both refuse there.
 pub(super) fn report_uncertified_key_uses(
     cfg: &LegacyCfg,
     incoming: &[Option<AbstractState>],
     diagnostics: &mut BTreeSet<super::LegacyDiagnostic>,
 ) {
-    let by_value_positions = |contract: &ResourceFunctionContract, mode_is_use: bool| {
+    let in_place_positions = |contract: &ResourceFunctionContract, mode_is_use: bool| {
         (0..contract.parameters.len())
             .filter(move |position| {
                 let kind = contract.parameter_kind(*position);
                 let mode = contract.parameters.get(*position);
                 kind.is_in_place()
-                    && kind.finalised_by_value()
                     && if mode_is_use {
                         matches!(mode, Some(ResourceParameterMode::Borrowed))
                     } else {
@@ -992,7 +1013,7 @@ pub(super) fn report_uncertified_key_uses(
             ..
         } = &node.instruction
         {
-            for position in by_value_positions(contract, false) {
+            for position in in_place_positions(contract, false) {
                 if let Some(place) = arguments.get(position).and_then(Option::as_deref) {
                     tracked.insert(place.to_owned());
                 }
@@ -1014,7 +1035,7 @@ pub(super) fn report_uncertified_key_uses(
         let Some(state) = incoming.get(node_id).and_then(Option::as_ref) else {
             continue;
         };
-        for position in by_value_positions(contract, true) {
+        for position in in_place_positions(contract, true) {
             let Some(place) = arguments
                 .get(position)
                 .and_then(Option::as_deref)
@@ -1040,7 +1061,10 @@ pub(super) fn report_uncertified_key_uses(
                     function: cfg.function.clone(),
                     line: node.line,
                     kind: super::LegacyDiagnosticKind::Unsupported {
-                        description: uncertified_use_refusal(place),
+                        description: uncertified_use_refusal(
+                            place,
+                            contract.parameter_kind(position),
+                        ),
                     },
                 });
             }

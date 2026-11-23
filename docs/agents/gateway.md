@@ -13294,4 +13294,58 @@ through `ampersand_runs`.
     `the_cast_reading_alone_would_admit`, `family_vectors_hold`);
     [report](../reports/return-family-star-cast/README.md).
 
+<a id="constraint-74i"></a>
+
+74i. **Every in-place use is certified, and every in-place object is one
+    declaration.** Card CG25-IN-PLACE-REGEX (USER DECISION 2026-11-23, the
+    "soundness first" set; `legacy_in_place_custody.rs`:
+    `report_uncertified_key_uses`, `Parser::automatic_object`), discharging
+    `CG25-IN-PLACE-REGEX-USE-CERTIFIED` and
+    `CG25-IN-PLACE-REGEX-SHADOWED-NAME`. [Rule 11v](#constraint-11v) (7)
+    closed two fail-open shapes for `thread_key` only, and the `regex` kind
+    kept both. CG25's in-place use checked only the released bit, so
+    `regexec(&re, …)` before `if (r)` tested `regcomp`'s status, on the
+    nonzero edge, or before any `regcomp` was certified `Safe` (probes R3,
+    R4). And `one_automatic_object` counts only the function's own
+    `VarDecl`s, so a block-scope `regex_t g` shadowing a file-scope `g` that
+    the body also names was tracked across both objects: `{ regex_t g; r =
+    regcomp(&g, …); if (r) return 0; } regfree(&g);` was `Safe` though the
+    local is never freed (probe R2). (1) **Certified use, every in-place
+    kind.** 11v (7)'s check now reads every kinded borrowed position of
+    every in-place kind, by address as well as by value. A use of an object
+    that a creation in this CFG tracks is admitted only where the settled
+    state certifies it: one identity, not unknown, not possibly failed, site
+    live or released. A released site stays 11v's `use_after_close`
+    candidate. Every other state refuses (`Unknown`, "use of in-place object
+    `re` not certified by its initialiser status (rule 74i)"; a key keeps
+    11v (7)'s text). The refusal, not an `Unsafe` candidate, is the right
+    reading. Whether the failure edge or the untested path is reachable
+    depends on `regcomp` failing, and nothing validates that. An
+    unvalidated `Unsafe` would also accuse the common, defined `regerror`
+    use. (2) **One declaration, every in-place kind.** Every in-place actual
+    must name the one automatic object of its name (`one_automatic_object`),
+    and every `DeclRefExpr` naming it must designate that `VarDecl`
+    (`every_reference_is`). A `regex_t` shadowing a file-scope object the
+    body also names refuses with 11v (2)'s "not the address of one
+    automatic object". A shadowing local whose every reference is its own
+    stays tracked. (3) **Over-refusal, recorded.** The contract language has
+    no clause that tells `regerror`, which POSIX defines on the `regex_t` of
+    a failed `regcomp`, from `regexec`. Providers are outside this card, and
+    the rule reads no callee by name, so `regerror(r, &re, …)` on the
+    failure edge refuses too. That moves `rd_regex_match`, CG25's one
+    `Unknown -> Safe` row, back to `Unknown`. The follow-up that registered
+    the card said `rd_regex_match` uses `re` only after the zero edge; its
+    real spelling calls `regerror` on the failure edge
+    (`CG25-IN-PLACE-REGEX-REGERROR-FAILURE-EDGE`). **Do not** admit an
+    uncertified use of any in-place kind, name a callee to exempt one, or
+    track a name that a reference outside its one declaration can name.
+    Premises stated, not proved: CG25's libc premise (`regcomp` returns zero
+    exactly when it compiled the object) and faithful Clang declaration and
+    reference ids (trust boundary 28). `QCore.InPlaceCertifiedUse`
+    (`AuditInPlaceCertifiedUse.lean`: `each_step_agrees_or_refuses`,
+    `no_verdict_becomes_safe`, `a_safe_verdict_used_only_certified_objects`,
+    `a_shadowed_name_is_refused`, and probes R2-R4 `Safe` under CG25's
+    reading and refused under this one); `tests/in_place_regex_certified.rs`;
+    [report](../reports/cg25-in-place-regex/README.md).
+
 <!-- generated:rules:end -->
