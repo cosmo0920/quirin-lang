@@ -74,13 +74,20 @@ contract {
 // EVP_PKEY_CTX (its method cleanup, provider operation freectx, ENGINE finish
 // and keys; digest.c and pmeth_lib.c 3.5.5), whose setters no declaration
 // states: the unstated-slots premise of a free names them.
-// Card OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS: the free releases its
-// argument (`resource_released`), and a slot invocation reads a borrowed
-// parameter (C04.19.3), so it can state none of the teardown slots it runs
-// (the legacy digest's, cipher's and public key method's cleanup, a key's
-// method and engine functions). It names the free statement through a
-// released argument, which does not subtract the settable functions, beside
-// the two teardown premises.
+// Card OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS: it names the two teardown
+// premises. Card OPENSSL-RELEASED-PARAMETER-SLOTS (USER DECISION 2026-11-23;
+// C04.19.3 admits a slot invocation through a released parameter, read
+// before the release): it states the teardown slots it runs through `ctx`
+// (3.5.5): the digest's cleanup, handed `ctx` (`cleanup_old_md_data`,
+// crypto/evp/digest.c:32-34); the public key method's cleanup of the
+// EVP_PKEY_CTX it frees (`EVP_PKEY_CTX_free`, crypto/evp/pmeth_lib.c:394-395),
+// whose keys run the key's nine (the ASN.1 method free, the RSA, DSA, DH and
+// EC_KEY method finish, an engine's finish, destroy and method enumerators;
+// the digest's and the context's engines are finished too, digest.c:64,
+// pmeth_lib.c:407) and whose MAC method frees a cipher context (the cipher's
+// cleanup, crypto/evp/evp_enc.c:57). Provider dispatch functions are
+// `#library` or `#loaded`. Nothing is left, so it drops
+// `openssl_unstated_callback_slots`.
 extern fn EVP_MD_CTX_free(ctx: ptr<mut, u8>) -> unit
 contract {
     requires resource_contract_v1;
@@ -95,9 +102,19 @@ contract {
         quant all #o in #freed: quant all #f in #teardown(#o): #f in #loaded
         -> #f |-> #inert
         && quant all #g in #in_turn(#f, #freed | #args | #created): #g in #library | #loaded);
-    requires resource_premise(openssl_unstated_callback_slots,
-        quant all #o in #freed: #teardown(#o) \ #stated |-> #inert);
     ensures normal resource_released(ctx, nullable);
+    ensures normal resource_callback_slot_invoked(ctx, dh_method.dh_meth_finish, _);
+    ensures normal resource_callback_slot_invoked(ctx, dsa_method.dsa_meth_finish, _);
+    ensures normal resource_callback_slot_invoked(ctx, ec_key_method_st.ec_key_meth_finish, _);
+    ensures normal resource_callback_slot_invoked(ctx, engine_st.engine_destroy, _);
+    ensures normal resource_callback_slot_invoked(ctx, engine_st.engine_finish, _);
+    ensures normal resource_callback_slot_invoked(ctx, engine_st.engine_pkey_asn1_meths, _, supplied_nullable, supplied_nullable, _);
+    ensures normal resource_callback_slot_invoked(ctx, engine_st.engine_pkey_meths, _, supplied_nullable, supplied_nullable, _);
+    ensures normal resource_callback_slot_invoked(ctx, evp_pkey_asn1_method_st.asn1_meth_pkey_free, _);
+    ensures normal resource_callback_slot_invoked(ctx, rsa_meth_st.rsa_meth_finish, _);
+    ensures normal resource_callback_slot_invoked(ctx, evp_cipher_st.cipher_meth_cleanup, _);
+    ensures normal resource_callback_slot_invoked(ctx, evp_md_st.md_meth_cleanup, ctx);
+    ensures normal resource_callback_slot_invoked(ctx, evp_pkey_method_st.pkey_meth_cleanup, _);
     ensures normal resource_return_none();
 };
 

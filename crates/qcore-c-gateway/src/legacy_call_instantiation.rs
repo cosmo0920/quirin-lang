@@ -843,7 +843,25 @@ fn residual_takes_an_address(expression: &[Token]) -> bool {
             continue;
         }
         if text == "&" {
-            let unary = index == 0
+            // Rule 74e: the run of `&` tokens starting here, read by its
+            // parity. An even run is `&&` operators only (`a && b` takes no
+            // address); an odd run ends in a single `&`, unary after `&&` (a
+            // run of three or more) and otherwise decided by the token before
+            // it, as before.
+            let texts = expression
+                .iter()
+                .map(|token| token.text.as_str())
+                .collect::<Vec<_>>();
+            let run = texts[index..]
+                .iter()
+                .take_while(|text| **text == "&")
+                .count();
+            if !crate::ampersand_runs::ends_in_address(&texts, index + run) {
+                index += run;
+                continue;
+            }
+            let unary = run > 1
+                || index == 0
                 || matches!(
                     expression[index - 1].text.as_str(),
                     "(" | ","
@@ -863,32 +881,19 @@ fn residual_takes_an_address(expression: &[Token]) -> bool {
                         | "?"
                         | ":"
                 )
+                // Rule 74f: a `)` that may close a cast (the shared detector;
+                // an undecided group is a cast, so the `&` is unary).
                 || (expression[index - 1].text == ")"
-                    && index >= 2
-                    && is_cast_close(expression, index - 1));
+                    && crate::ampersand_runs::may_close_a_cast(
+                        &texts,
+                        index - 1,
+                        &std::collections::BTreeSet::new(),
+                    ));
             if unary {
                 return true;
             }
         }
         index += 1;
-    }
-    false
-}
-
-/// Whether the `)` at `close` ends a cast `( TYPE )` rather than a group:
-/// read conservatively, any parenthesised run of identifiers and `*` is a
-/// type name.
-fn is_cast_close(tokens: &[Token], close: usize) -> bool {
-    let mut at = close;
-    while at > 0 {
-        at -= 1;
-        match tokens[at].text.as_str() {
-            // A call's own parentheses are no cast.
-            "(" => return at + 1 < close && (at == 0 || !is_identifier(&tokens[at - 1].text)),
-            "*" => {}
-            text if is_identifier(text) => {}
-            _ => return false,
-        }
     }
     false
 }
@@ -904,5 +909,52 @@ fn holds_effect(node: &serde_json::Value) -> bool {
         "UnaryOperator" if matches!(node["opcode"].as_str(), Some("++" | "--")) => true,
         "BinaryOperator" if matches!(node["opcode"].as_str(), Some("=" | ",")) => true,
         _ => children(node).iter().any(holds_effect),
+    }
+}
+
+#[cfg(test)]
+mod ampersand_run_parity_tests {
+    use super::{Token, residual_takes_an_address};
+
+    fn tokens(text: &str) -> Vec<Token> {
+        text.split(' ')
+            .map(|text| Token {
+                text: text.to_owned(),
+                line: 1,
+            })
+            .collect()
+    }
+
+    /// Card AMPERSAND-RUN-PARITY-OTHER-READERS (rule 74e): `a && b` takes no
+    /// address (the old reading took the second `&` as unary); `a && &b` and
+    /// `&b` do; a binary `a & b` does not.
+    #[test]
+    fn a_return_takes_an_address_only_after_an_odd_run() {
+        assert!(!residual_takes_an_address(&tokens("a & & b")));
+        assert!(residual_takes_an_address(&tokens("a & & & b")));
+        assert!(residual_takes_an_address(&tokens("& b")));
+        assert!(!residual_takes_an_address(&tokens("a & b")));
+        assert!(residual_takes_an_address(&tokens("( int ) & b")));
+    }
+
+    /// Card CAST-BEFORE-AMPERSAND-READ-AS-BINARY (rule 74f): the shared cast
+    /// detector. A cast before `&` takes an address, including the type
+    /// names the old detector missed (a function-pointer or pointer-to-array
+    /// cast); a call's result and a value group before `&` are binary.
+    #[test]
+    fn a_return_takes_an_address_after_any_cast() {
+        assert!(residual_takes_an_address(&tokens("( struct s * ) & v")));
+        assert!(residual_takes_an_address(&tokens("( void ) & x")));
+        assert!(residual_takes_an_address(&tokens(
+            "( void ( * ) ( int ) ) & f"
+        )));
+        assert!(residual_takes_an_address(&tokens(
+            "( char ( * ) [ 4 ] ) & b"
+        )));
+        // Undecided `(a)`: this reader knows no objects, so it is a cast.
+        assert!(residual_takes_an_address(&tokens("( a ) & b")));
+        assert!(!residual_takes_an_address(&tokens("( a + 1 ) & b")));
+        assert!(!residual_takes_an_address(&tokens("( p [ 0 ] ) & b")));
+        assert!(!residual_takes_an_address(&tokens("f ( x ) & mask")));
     }
 }

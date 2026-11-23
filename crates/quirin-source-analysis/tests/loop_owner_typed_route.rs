@@ -824,3 +824,116 @@ void through_alias(plugin_t *p, anonymous_t *a)
         Some(&[TypedRecord::Record("struct flb_input_plugin".to_owned())].into())
     );
 }
+
+/// Card AMPERSAND-RUN-PARITY-OTHER-READERS (gateway rule 74e): the lexer
+/// spells `ins && &test.plugin` as `ins & & & test . plugin`. The copy check
+/// took an address only after exactly one `&`, so the copy's address escaped
+/// unseen and the flag derived (fails at the base). An odd run of `&` takes
+/// the address.
+#[test]
+fn nc_a_copy_addressed_after_a_logical_and_is_underived() {
+    let setup = format!("{DERIVED_SHAPE}    if (ins && &test.plugin) {{\n    }}\n");
+    let fixture = make_fixture("copy-and-address", &test_file(&setup, ""), &[]);
+    let typed_facts = facts(&fixture, &[]);
+    let typed = run(&fixture, Some(&typed_facts));
+    let id = typed
+        .reading
+        .index("tests/runtime/in_tail.c::cb_tail_pause_test")
+        .expect("id");
+    let flag = &typed.reading.instance_flags[&id];
+    assert_eq!(flag.derived, None, "{}", flag.reason);
+    assert!(
+        flag.reason.contains("the copy's address is passed on"),
+        "{}",
+        flag.reason
+    );
+    unresolved_with(&verdicts(&typed, "cb_tail_pause_test"), "may yield");
+}
+
+/// Rule 74e: `ins && &test` takes the address of the object holding the copy
+/// (fails at the base, which saw no `&` there).
+#[test]
+fn nc_the_copys_holder_addressed_after_a_logical_and_is_underived() {
+    let setup = format!("{DERIVED_SHAPE}    if (ins && &test) {{\n    }}\n");
+    let fixture = make_fixture("holder-and-address", &test_file(&setup, ""), &[]);
+    let typed_facts = facts(&fixture, &[]);
+    let typed = run(&fixture, Some(&typed_facts));
+    let id = typed
+        .reading
+        .index("tests/runtime/in_tail.c::cb_tail_pause_test")
+        .expect("id");
+    let flag = &typed.reading.instance_flags[&id];
+    assert_eq!(flag.derived, None, "{}", flag.reason);
+    assert!(
+        flag.reason.contains("holding the copy escapes"),
+        "{}",
+        flag.reason
+    );
+}
+
+/// Rule 74e: `test.original_plugin && &ins` takes the instance's address
+/// (fails at the base, which saw no `&` before `ins`).
+#[test]
+fn nc_the_instance_addressed_after_a_logical_and_is_underived() {
+    let setup = format!("{DERIVED_SHAPE}    if (test.original_plugin && &ins) {{\n    }}\n");
+    let fixture = make_fixture("instance-and-address", &test_file(&setup, ""), &[]);
+    let typed_facts = facts(&fixture, &[]);
+    let typed = run(&fixture, Some(&typed_facts));
+    let id = typed
+        .reading
+        .index("tests/runtime/in_tail.c::cb_tail_pause_test")
+        .expect("id");
+    let flag = &typed.reading.instance_flags[&id];
+    assert_ne!(flag.derived, Some(false), "{}", flag.reason);
+    assert!(
+        flag.reason
+            .contains("the address of the instance `ins` is taken"),
+        "{}",
+        flag.reason
+    );
+}
+
+/// Rule 74e: `on && &t->plugin` takes the copy member's address in the test's
+/// file, outside the installation; the holder-escape check read only a run
+/// of exactly one `&` and derived the escape (fails at the base).
+#[test]
+fn nc_the_copy_member_addressed_after_a_logical_and_keeps_the_escape() {
+    let extra =
+        "static int peek(struct tail_pause_test *t, int on)\n{\n    return on && &t->plugin;\n}\n";
+    let fixture = make_fixture("member-and-address", &test_file(FIXED_SHAPE, extra), &[]);
+    let typed_facts = facts(&fixture, &[]);
+    let typed = run(&fixture, Some(&typed_facts));
+    let flag = typed
+        .reading
+        .instance_flags
+        .get(
+            &typed
+                .reading
+                .index("tests/runtime/in_tail.c::cb_tail_pause_test")
+                .expect("id"),
+        )
+        .expect("a Step B derivation");
+    assert!(
+        flag.reason
+            .contains("the copy member `plugin` is written or its address taken"),
+        "{}",
+        flag.reason
+    );
+}
+
+/// Rule 74e: an even run takes no address. `ins && test.original_plugin`
+/// reads a member of the holder, which leaves the copy alone: the flag still
+/// derives no coroutine.
+#[test]
+fn a_logical_and_before_the_copys_holder_takes_no_address() {
+    let setup = format!("{DERIVED_SHAPE}    if (ins && test.original_plugin) {{\n    }}\n");
+    let fixture = make_fixture("holder-and-read", &test_file(&setup, ""), &[]);
+    let typed_facts = facts(&fixture, &[]);
+    let typed = run(&fixture, Some(&typed_facts));
+    let id = typed
+        .reading
+        .index("tests/runtime/in_tail.c::cb_tail_pause_test")
+        .expect("id");
+    let flag = &typed.reading.instance_flags[&id];
+    assert_eq!(flag.derived, Some(false), "{}", flag.reason);
+}

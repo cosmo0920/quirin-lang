@@ -1,0 +1,25 @@
+{
+ "schema": "quirin-amendments/2",
+ "card": "AMPERSAND-RUN-PARITY-OTHER-READERS",
+ "base": "9193b196a",
+ "measured_tip": "96218cc75",
+ "profiles": [],
+ "increment_paragraph": "**AMPERSAND-RUN-PARITY-OTHER-READERS** (USER DECISION 2026-11-23: \"launch the ampersand parity card\"; gateway rule 74e, extending rule 74d (C); `QCore.AmpersandRunParity`; [report](../../reports/ampersand-run-parity/README.md)). The importer emits one token per `&`, so `p && &q` is `p & & & q`; by maximal munch only an odd run ends in the `&` operator. Every `&`/`&&`/`Amp` match in `crates/` (376 lines, 133 files) was audited. Unsound (8, fixed): a run of exactly one `&` taken as the address in `loop_owner_instance::address_taken` (19 callers) and its copy-member check, `loop_owner_holder_opaque`'s carrier check, three `thread_entry_census` checks (instance, copy holder, copy); `flow_of` reading `p && &v` as a test; the coroutine call index dropping `x && f(i)`. Admitting (2): `only_holder_mentions`, `only_registry_mentions` took `p && name)` as `&name`. Fail-closed (18): any `&` read as an address. All now call `ampersand_runs` (28 call sites in 19 files, counted by a test); correct readers (fused streams, exact argument shapes, connective detectors, any-`&` refusals, AST readers, other crates) unchanged. Eight loop-owner fixtures fail at the base and pass at the tip; six spellings pinned through rule 10a's frame. One pin re-pinned deliberately (`libc-reading-site-evidence/bindings.json`, `typed_field_access.rs` digest). Opt-in `current --monkey-linked` over Fluent Bit 046accf6, each run on its own tree and binary: base 9193b196a 1,171/2/3,623/8; tip 96218cc75 1,172/2/3,622/8: one Unknown->Safe (`rdkafka_telemetry_encode.c` `get_member_id`, whose return of `&&` operands rule 5j read as an address), no Safe row lost, three rows leaf-only. Scoped gate at 01c9867d8: all 8 steps 0 (9,938 passed, 487 Lean audits, 807 Python tests). Pinned routes not runnable on the host; predicted: `get_member_id` may move on a corpus route, loop-owner premises could only be withdrawn on the system/slice routes.",
+ "status_edits": [],
+ "ledger": [
+  {
+   "id": "AMPERSAND-RUN-PARITY-OTHER-READERS",
+   "operation": "retire",
+   "why": "Discharged by AMPERSAND-RUN-PARITY-OTHER-READERS (rule 74e): every address decision of the unfused token stream reads the run parity through crates/qcore-c-gateway/src/ampersand_runs.rs (28 call sites in 19 files, counted against READERS); every `&` match in crates/ was audited and classified (report §1); `p && &q` is pinned through rule 10a's frame (crates/qcore-c-gateway/tests/ampersand_run_parity.rs) and through each of the eight fixed unsound readers (crates/quirin-source-analysis/tests/loop_owner_*.rs, each failing at the base).",
+   "source": "docs/reports/ampersand-run-parity/README.md"
+  },
+  {
+   "id": "CAST-BEFORE-AMPERSAND-READ-AS-BINARY",
+   "operation": "register",
+   "source": "docs/reports/ampersand-run-parity/README.md",
+   "recorded_by": "AMPERSAND-RUN-PARITY-OTHER-READERS",
+   "title": "`legacy_refused_operands` reads `(T *) &x->f` as a binary AND after `)`",
+   "text": "AMPERSAND-RUN-PARITY-OTHER-READERS kept each reader's reading of a single `&`. crates/qcore-c-gateway/src/legacy_refused_operands.rs decides a single `&` before a chain as binary when the token before it ends an operand (`ends_operand`: a name, a number, `)` or `]`), so a cast `(T *) &x->f` hands on `x->f`'s value rather than every prefix of the address chain (the unsound direction: fewer places handed on). `legacy_call_instantiation::residual_takes_an_address` already reads a cast close (`is_cast_close`). DISCHARGE: read `) &` as unary when the group is a cast, pin `(T *) &x->f` and `(a) & b`, measure the corpus."
+  }
+ ]
+}

@@ -1037,8 +1037,9 @@ fn valid_locals(body: &[&str], parent: &str, created: bool) -> Option<BTreeSet<S
     let assigned = assignments(body);
     // `&name` alone (not `&name->f`, the address of a member).
     let whole_address = |at: usize| {
+        // Rule 74e: an odd run of `&` (`p && name` takes no address).
         at > 0
-            && body[at - 1] == "&"
+            && crate::ampersand_runs::ends_in_address(body, at)
             && !matches!(body.get(at + 1).copied(), Some("->" | "." | "["))
     };
     let address_taken = |name: &str| {

@@ -1153,7 +1153,10 @@ impl StepB<'_> {
             for k in g.body.0..=g.body.1 {
                 if is_identifier(texts[k])
                     && texts.get(k + 1) == Some(&"(")
-                    && !matches!(texts[k - 1], "." | ">" | "&")
+                    // Rule 74e: `& f (` never takes an address (a call's
+                    // result is not an lvalue, C11 6.5.3.2p1), so a `&` before
+                    // a callee is a binary or logical AND (`x && f(i)`): a call.
+                    && !matches!(texts[k - 1], "." | ">")
                     && !g.parameters.contains(texts[k])
                 {
                     calls.entry(texts[k].to_owned()).or_default().push((d, k));

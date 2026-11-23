@@ -1,0 +1,13 @@
+{
+  "note": "Landing integrate/r61 (base main baa294d61, after r60; merges CAST-BEFORE-AMPERSAND-READ-AS-BINARY d4bbd802a, base d7540d746, in 31afcd73f; generated docs/agents/README.md, docs/agents/gateway.md and proof/QCore.lean auto-merged and regenerated, no conflicts; third_party/libevent checked out at d82464a27). USER DECISION 2026-11-23: \"launch the cast-before-ampersand card\". Amendments applied in 3204e06a3 with --profiles-base baa294d61: CAST-BEFORE-AMPERSAND-READ-AS-BINARY retired; CAST-BEFORE-STAR-READ-AS-BINARY registered; profiles []; status_edits empty. Full landing gate on 3204e06a3 (private/integrate-r61/gate, raw record beside this file as gate-scope.json) via scripts/gate_scope.py --base origin/main --full --landing through private/toolchain/env.sh: Rust 679 units / 724 summaries, 9953 passed, 0 failed, 21 ignored; fmt, Clippy and both reevaluation examples exit 0; Lean (all) exit 0, 489 audits (new QCore.CastBeforeAmpersand). No providers/ path changed, so the provider gate was not selected; provider_tests 174 is carried from r60. Python (807 tests) exited 1 only on the stale-matrix check test_the_derived_facts_are_recomputed_rather_than_carried, cleared by regenerating the matrix from this record. Change: rule 74f (new): a shared cast detector (ampersand_runs::may_close_a_cast) makes legacy_refused_operands read `(T *) &x->f` as an address (every prefix handed on; the one unsound site) and replaces rule 5j's is_cast_close, which missed function-pointer and pointer-to-array casts; an undecided `(a) & b` reads unary unless a is a declared object no typedef spells. No pin moved. Card measurement (opt-in current --monkey-linked, Fluent Bit 046accf6): base d7540d746 and tip both 1172/2/3622/8, no row or leaf changed. Pinned-route parity (quirin-audit measure --declared) was not run: this host holds no build/cycle19 inputs or baselines. No profile baseline is changed and land.py publish is owed.",
+  "workspace_tests": 9953,
+  "provider_tests": 174,
+  "python_evidence_validator_tests": 807,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "full landing gate: every step exits 0 except the Python suite's stale-matrix check, cleared by regenerating the matrix from this record; provider gate not selected (no providers/ change), provider count carried from r60",
+  "lean_audits": 489,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

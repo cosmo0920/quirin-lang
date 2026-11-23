@@ -1229,3 +1229,56 @@ fn another_plugins_init_is_not_the_holder_instances_callback() {
     );
     discharged_on_the_owners(&verdicts(&census, "cb_tail_pause_test"));
 }
+
+// Card AMPERSAND-RUN-PARITY-OTHER-READERS (gateway rule 74e): the lexer
+// spells `on && &p->flags` as `on & & & p - > flags`. The carrier reader took
+// an address only after exactly one `&`, and `flow_of` read any `& &` before a
+// value as a logical AND, so both missed the address (each fails at the base:
+// the holder derived opaque).
+
+#[test]
+fn nc_a_holder_byte_addressed_after_a_logical_and_keeps_the_route() {
+    let reader = r#"
+#include "fluent-bit/flb_input.h"
+void peek(struct flb_input_instance *ins, int on)
+{
+    struct flb_input_plugin *p = (struct flb_input_plugin *) ins->data;
+    if (on && &p->flags) {
+        return;
+    }
+}
+"#;
+    let fixture = holder_fixture("and-address", &[("src/reader.c", reader)]);
+    route_kept(
+        &run_region(&fixture, None),
+        "a holder byte is written or its address taken through it",
+    );
+}
+
+#[test]
+fn nc_an_init_callback_that_addresses_its_data_after_a_logical_and_keeps_the_route() {
+    let plugin = init_plugin(
+        "tail",
+        "    if (config && &data) {\n        return 1;\n    }",
+    );
+    let fixture = holder_fixture(
+        "init-and-address",
+        &[("src/init.c", INIT), ("plugins/in_init/init.c", &plugin)],
+    );
+    route_kept(&run_region(&fixture, None), "used as `& &");
+}
+
+#[test]
+fn an_init_callback_that_tests_its_data_after_a_logical_and_derives_the_holder_opaque() {
+    let plugin = init_plugin(
+        "tail",
+        "    if (config && data) {\n        return 1;\n    }",
+    );
+    let fixture = holder_fixture(
+        "init-and-test",
+        &[("src/init.c", INIT), ("plugins/in_init/init.c", &plugin)],
+    );
+    let census = run_region(&fixture, None);
+    let (derived, reason) = flag(&census);
+    assert_eq!(derived, Some(false), "{reason}");
+}

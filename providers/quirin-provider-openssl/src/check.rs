@@ -109,8 +109,8 @@ pub use crate::documented::{
     LOADED_TEARDOWN, LOADED_TEARDOWN_STATEMENT, NULLABLE_ARGUMENTS, Null, NullableArgument,
     Premise, SLOTS, SOURCE_CITATIONS, SOURCE_NULLABLE_ARGUMENTS, SOURCE_SERIES, SOURCE_SLOTS,
     SOURCE_TARBALL_SHA256, Slot, SourceCitation, SourceNullableArgument, SourceSlot,
-    TEARDOWN_SLOTS, UNSTATED_FREE_STATEMENT, UNSTATED_RELEASED_FREE_STATEMENT, UNSTATED_SLOTS,
-    UNSTATED_SLOTS_STATEMENT, nullable_argument,
+    TEARDOWN_SLOTS, UNSTATED_FREE_STATEMENT, UNSTATED_SLOTS, UNSTATED_SLOTS_STATEMENT,
+    nullable_argument,
 };
 
 /// The crate name a request's translation unit carries.
@@ -757,11 +757,8 @@ pub fn free_audited(
         .map(|(_, reading)| *reading)
         .collect::<Vec<_>>();
     let free_statement = documented.premises.contains(&Premise::UnstatedFreeSlots);
-    let released_statement = documented
-        .premises
-        .contains(&Premise::UnstatedReleasedFreeSlots);
     let handshake = documented.premises.contains(&Premise::UnstatedSlots);
-    let named = free_statement || released_statement || handshake;
+    let named = free_statement || handshake;
     let teardown = documented
         .premises
         .iter()
@@ -771,7 +768,7 @@ pub fn free_audited(
         })
         .collect::<std::collections::BTreeSet<_>>();
     match listed.as_slice() {
-        [] if free_statement || released_statement => Err(format!(
+        [] if free_statement => Err(format!(
             "names `{UNSTATED_SLOTS}` in the statement of a free but the free audit does not \
              list it"
         )),
@@ -784,40 +781,6 @@ pub fn free_audited(
             describe(documented.shape)
         )),
         [] => Ok(()),
-        [Frees::Runs { .. }] if released_statement => Err(format!(
-            "names `{UNSTATED_SLOTS}` in the statement of a free through a released argument, \
-             but the free audit reads it as stating its teardown slots"
-        )),
-        [Frees::RunsThroughRelease { .. }] if !released_statement || free_statement => {
-            Err(format!(
-                "releases its argument, so it states no teardown slot, but does not name \
-                 `{UNSTATED_SLOTS}` in the statement of a free through a released argument \
-                 alone"
-            ))
-        }
-        [Frees::RunsThroughRelease { .. }]
-            if documented.premises.contains(&Premise::UnstatedSlots) =>
-        {
-            Err(format!(
-                "names `{UNSTATED_SLOTS}` in both the handshake's statement and a free's"
-            ))
-        }
-        [Frees::RunsThroughRelease { .. }]
-            if !documented.premises.contains(&Premise::BuiltinTeardown)
-                || !documented.premises.contains(&Premise::LoadedTeardown) =>
-        {
-            Err(format!(
-                "runs teardown functions but does not name both `{BUILTIN_TEARDOWN}` and \
-                 `{LOADED_TEARDOWN}`"
-            ))
-        }
-        [Frees::RunsThroughRelease { left: [], .. }] => {
-            Err("its free audit entry names nothing left".to_owned())
-        }
-        [Frees::RunsThroughRelease { .. }] if !teardown.is_empty() => {
-            Err("releases its argument, yet states a teardown slot through it".to_owned())
-        }
-        [Frees::RunsThroughRelease { .. }] => Ok(()),
         [Frees::Runs { .. }] if free_statement && handshake => Err(format!(
             "names `{UNSTATED_SLOTS}` in both the handshake's statement and a free's"
         )),
@@ -1274,9 +1237,6 @@ pub fn expected_clauses(
             Premise::UnstatedFreeSlots => {
                 format!("requires resource_premise({UNSTATED_SLOTS}, {UNSTATED_FREE_STATEMENT})")
             }
-            Premise::UnstatedReleasedFreeSlots => format!(
-                "requires resource_premise({UNSTATED_SLOTS}, {UNSTATED_RELEASED_FREE_STATEMENT})"
-            ),
             Premise::BuiltinTeardown => format!(
                 "requires resource_premise({BUILTIN_TEARDOWN}, {BUILTIN_TEARDOWN_STATEMENT})"
             ),
@@ -1546,7 +1506,6 @@ mod tests {
             (BUILTIN_LOOKUP_METHODS, BUILTIN_LOOKUP_METHODS_STATEMENT),
             (BUILTIN_TEARDOWN, BUILTIN_TEARDOWN_STATEMENT),
             (LOADED_TEARDOWN, LOADED_TEARDOWN_STATEMENT),
-            (UNSTATED_SLOTS, UNSTATED_RELEASED_FREE_STATEMENT),
         ] {
             let formula = premise_text(name, statement);
             let prose = format!(
@@ -1573,15 +1532,16 @@ mod tests {
                 refused += 1;
             }
         }
-        // Every one of the 108 premise clauses: SP1's 53, the five frees'
+        // Every one of the 107 premise clauses: SP1's 53, the five frees'
         // free statements (card OPENSSL-OBJECT-FREES-SILENT-METHOD-CALLBACKS),
         // the nine inner frees' (card
         // OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS), less the three frees
         // that now state every item, and the two teardown premises on the
         // eight running frees and the fourteen calls that free inside (card
-        // OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS; two of the five frees'
-        // statements are now the released free's).
-        assert_eq!(refused, 108);
+        // OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS); card
+        // OPENSSL-RELEASED-PARAMETER-SLOTS: EVP_MD_CTX_free states every item
+        // and drops its statement, PKCS12_free names the free statement.
+        assert_eq!(refused, 107);
     }
 
     #[test]
@@ -3092,8 +3052,7 @@ mod tests {
         let premise = premise_text(UNSTATED_SLOTS, UNSTATED_FREE_STATEMENT);
         let builtin = premise_text(BUILTIN_TEARDOWN, BUILTIN_TEARDOWN_STATEMENT);
         let loaded = premise_text(LOADED_TEARDOWN, LOADED_TEARDOWN_STATEMENT);
-        let released_premise = premise_text(UNSTATED_SLOTS, UNSTATED_RELEASED_FREE_STATEMENT);
-        let (mut runs, mut leaving, mut released) = (0, 0, 0);
+        let (mut runs, mut leaving) = (0, 0);
         for (function, reading) in FREE_AUDIT {
             let documented = DOCUMENTED
                 .iter()
@@ -3165,29 +3124,6 @@ mod tests {
                         );
                     }
                 }
-                Frees::RunsThroughRelease { .. } => {
-                    runs += 1;
-                    released += 1;
-                    assert!(!named, "{function}");
-                    assert!(body.contains(released_premise.trim()), "{function}");
-                    assert!(body.contains(builtin.trim()), "{function}");
-                    assert!(body.contains(loaded.trim()), "{function}");
-                    // Dropping it, or reading it as the free statement that
-                    // leaves out the settable functions, refuses.
-                    let refused = check_function(path, &replaced(&released_premise, ""), function)
-                        .unwrap_err();
-                    assert!(refused.contains(UNSTATED_SLOTS), "{function}: {refused}");
-                    assert!(
-                        check_function(path, &replaced(&released_premise, &premise), function)
-                            .is_err(),
-                        "{function}"
-                    );
-                    for teardown in [&builtin, &loaded] {
-                        let refused =
-                            check_function(path, &replaced(teardown, ""), function).unwrap_err();
-                        assert!(refused.contains("teardown"), "{function}: {refused}");
-                    }
-                }
                 Frees::NamedBy { premise: other, .. } => {
                     assert!(!named, "{function}");
                     assert!(documented[0].premises.contains(other), "{function}");
@@ -3197,21 +3133,23 @@ mod tests {
         }
         // The eight frees reaching keys, certificates, stores, engines or
         // contexts. r39's three leave a CRL's method (SSL_free also the QUIC
-        // TLS release callback); PKCS12_free and EVP_MD_CTX_free release
-        // their argument and can state no slot; X509_free, EVP_PKEY_free and
-        // ENGINE_free state every item.
-        assert_eq!((runs, leaving, released), (8, 3, 2));
+        // TLS release callback); X509_free, EVP_PKEY_free and ENGINE_free
+        // state every item. Card OPENSSL-RELEASED-PARAMETER-SLOTS:
+        // EVP_MD_CTX_free states every item through its released argument,
+        // and PKCS12_free states the key's and leaves a CRL's method.
+        assert_eq!((runs, leaving), (8, 4));
         for documented in DOCUMENTED {
             let audited = FREE_AUDIT.iter().any(|(f, _)| *f == documented.function);
             if releases(documented.shape) {
                 assert!(audited, "{}", documented.function);
             }
         }
-        // Every module names the released free's statement only on the two
-        // released frees, and the teardown premises exactly where the audit
+        // Every module names the teardown premises exactly where the audit
         // reads a run: these eight and the fourteen calls that free inside
         // (card OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS). The free
-        // statement's count over every reading is that card's test's.
+        // statement's count over every reading is that card's test's. Card
+        // OPENSSL-RELEASED-PARAMETER-SLOTS: no module names the statement of
+        // a free through a released argument any more.
         let count = |needle: &str| {
             crate::MODULES
                 .iter()
@@ -3220,15 +3158,16 @@ mod tests {
         };
         let all_runs = FREE_AUDIT
             .iter()
-            .filter(|(_, reading)| {
-                matches!(
-                    reading,
-                    Frees::Runs { .. } | Frees::RunsThroughRelease { .. }
-                )
-            })
+            .filter(|(_, reading)| matches!(reading, Frees::Runs { .. }))
             .count();
         assert_eq!(all_runs, runs + 14);
-        assert_eq!(count(&released_premise), released);
+        assert_eq!(
+            count(&premise_text(
+                UNSTATED_SLOTS,
+                "quant all #o in #freed: #teardown(#o) \\ #stated |-> #inert"
+            )),
+            0
+        );
         assert_eq!(count(&builtin), all_runs);
         assert_eq!(count(&loaded), all_runs);
         let _ = leaving;
@@ -3365,9 +3304,6 @@ mod tests {
                     assert!(!names_handshake, "{function}");
                 }
                 Frees::NamedBy { .. } => panic!("{function}: no inner free is read so"),
-                Frees::RunsThroughRelease { .. } => {
-                    panic!("{function}: a call that frees inside releases no argument")
-                }
             }
         }
         // The loaders, the readers and the verify-path calls; the handshake
@@ -3383,10 +3319,12 @@ mod tests {
             }
         }
         // Every module names the free statement only where the audit reads a
-        // run through it: these nine and r39's three frees (card
+        // run through it: these nine, r39's three frees and PKCS12_free (card
         // OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS dropped it from three of
-        // r45's five and moved two to the released free's statement).
-        assert_eq!(free_runs, 12);
+        // r45's five; card OPENSSL-RELEASED-PARAMETER-SLOTS from
+        // EVP_MD_CTX_free, and moved PKCS12_free back to it from the released
+        // free's statement).
+        assert_eq!(free_runs, 13);
         let named = crate::MODULES
             .iter()
             .map(|(_, text)| strip_comments(text).matches(free.trim()).count())
@@ -3633,33 +3571,6 @@ mod tests {
         );
         assert!(free_audited(&free(&[]), &[("EVP_PKEY_free", BIO)]).is_err());
         assert!(free_audited(&free(&[FREE]), &[("EVP_PKEY_free", NOTHING)]).is_err());
-        // A free through a released argument: the released statement alone,
-        // both teardown premises, no teardown slot, something left.
-        const RELEASED: Frees = Frees::RunsThroughRelease {
-            how: "",
-            left: &["the released argument"],
-        };
-        const RFREE: Premise = Premise::UnstatedReleasedFreeSlots;
-        free_audited(&free(&[RFREE, B, L]), &[("EVP_PKEY_free", RELEASED)]).unwrap();
-        for premises in [
-            &[B, L][..],
-            &[FREE, B, L][..],
-            &[RFREE, FREE, B, L][..],
-            &[RFREE, Premise::UnstatedSlots, B, L][..],
-            &[RFREE, B][..],
-            &[RFREE, L][..],
-            &[RFREE, B, L, FINISH][..],
-        ] {
-            assert!(
-                free_audited(&free(premises), &[("EVP_PKEY_free", RELEASED)]).is_err(),
-                "{premises:?}"
-            );
-        }
-        let nothing_left = Frees::RunsThroughRelease { how: "", left: &[] };
-        assert!(free_audited(&free(&[RFREE, B, L]), &[("EVP_PKEY_free", nothing_left)]).is_err());
-        // The released statement where the audit reads stated slots.
-        assert!(free_audited(&free(&[RFREE, B, L]), &[("EVP_PKEY_free", RUNS)]).is_err());
-        assert!(free_audited(&free(&[RFREE, B, L, FINISH]), &[("EVP_PKEY_free", STATED)]).is_err());
         // A second listing.
         assert!(
             free_audited(

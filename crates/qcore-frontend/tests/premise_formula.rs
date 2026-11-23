@@ -329,10 +329,12 @@ fn the_openssl_formulas_are_the_lean_definitions() {
                 // the other five, conjoins the free statement). Card
                 // OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS: X509_free,
                 // EVP_PKEY_free and ENGINE_free state every item and drop
-                // it; PKCS12_free and EVP_MD_CTX_free release their argument
-                // and name the released free's statement.
-                ("def unstatedFreeFormula : Raw :=", 12),
-                ("def unstatedReleasedFreeFormula : Raw :=", 2),
+                // it. Card OPENSSL-RELEASED-PARAMETER-SLOTS: PKCS12_free and
+                // EVP_MD_CTX_free state their slots through the released
+                // argument; PKCS12_free names the free statement for a CRL's
+                // method, EVP_MD_CTX_free drops it, and no declaration names
+                // the released free's statement (`unstatedReleasedFreeFormula`).
+                ("def unstatedFreeFormula : Raw :=", 13),
             ],
         ),
         (
@@ -382,7 +384,7 @@ fn the_openssl_formulas_are_the_lean_definitions() {
             "{name}: a statement matches no Lean definition"
         );
     }
-    assert_eq!(total, 108);
+    assert_eq!(total, 107);
 }
 
 /// Card SP3-SYMBOLIC-FLUENT-BIT-LIBC-PREMISES: the three modules of

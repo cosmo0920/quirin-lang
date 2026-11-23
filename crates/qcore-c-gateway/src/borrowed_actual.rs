@@ -257,7 +257,8 @@ pub(crate) fn closure_reasons(
         }
         let previous = index.checked_sub(1).map(|at| body[at]);
         let next = body.get(index + 1).copied();
-        let reason = if previous == Some("&") {
+        // Rule 74e: an odd run of `&` (`p && x` takes no address).
+        let reason = if crate::ampersand_runs::ends_in_address(body, index) {
             "d:address"
         } else if (matches!(next, Some("+") | Some("-")) && body.get(index + 2).copied() == next)
             || matches!(previous, Some("+") | Some("-"))
@@ -403,7 +404,8 @@ fn seed_addresses_and_writes(body: &[&str], risky: &mut BTreeSet<String>) {
         let before = index.checked_sub(2).and_then(|at| body.get(at)).copied();
         let continues = matches!(next, Some("-") if after == Some(">"))
             || matches!(next, Some(".") | Some("[") | Some("("));
-        if previous == Some("&") && !continues {
+        // Rule 74e: an odd run of `&` (`p && x` takes no address).
+        if crate::ampersand_runs::ends_in_address(body, index) && !continues {
             risky.insert(text.to_owned());
             continue;
         }

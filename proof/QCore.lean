@@ -20,6 +20,7 @@ import QCore.AggregateComposition
 import QCore.AggregateOwnedField
 import QCore.AggregateStore
 import QCore.AggregateValue
+import QCore.AmpersandRunParity
 import QCore.AppRkCallbacks
 import QCore.ArmObligations
 import QCore.AssignmentDestinationSuffix
@@ -69,6 +70,7 @@ import QCore.CandidateComposition
 import QCore.CapacityBoundary
 import QCore.CarriedPublication
 import QCore.CastActualPlace
+import QCore.CastBeforeAmpersand
 import QCore.CastRepresentation
 import QCore.CastReturnEscape
 import QCore.CastSemantics
@@ -340,6 +342,7 @@ import QCore.OpensslFreeTeardownSlots
 import QCore.OpensslHandshakeSlots
 import QCore.OpensslInnerFreesAudit
 import QCore.OpensslObjectFreesAudit
+import QCore.OpensslReleasedSlots
 import QCore.OpensslRemainingSetters
 import QCore.OpensslUnstatedSlots
 import QCore.OrderedLifetimeReplay

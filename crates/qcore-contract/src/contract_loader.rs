@@ -3088,6 +3088,60 @@ fn load_function_in(
             &names,
         )?;
         if !callbacks.is_empty() {
+            // Card OPENSSL-RELEASED-PARAMETER-SLOTS (C04.19.3 amended in
+            // place, rule 12n; USER DECISION 2026-11-23): a slot invocation
+            // through a parameter the declaration releases is read before the
+            // release, so it stands only where nothing else could read or
+            // keep the object: beside the custody contract, named premises
+            // and other slot invocations. A retention, a reset, a slot move,
+            // a reference clause, an arm, a constructed state, a hand-off, a
+            // member-path state, a cell, a container effect, a
+            // literal-argument premise or any other callback clause beside it
+            // rejects.
+            let releases_a_slot_object = callbacks.iter().any(|clause| {
+                matches!(
+                    clause,
+                    qcore_schemas::callback::CallbackClause::MemberInvoked {
+                        object: qcore_schemas::callback::MemberObject::Parameter { index },
+                        slot: true,
+                        ..
+                    } if matches!(
+                        contract.parameters.get(*index),
+                        Some(ResourceParameterMode::Released { .. })
+                    )
+                )
+            });
+            if releases_a_slot_object
+                && (!callbacks.iter().all(|clause| {
+                    matches!(
+                        clause,
+                        qcore_schemas::callback::CallbackClause::MemberInvoked { slot: true, .. }
+                    )
+                }) || !retentions.is_empty()
+                    || !resets.is_empty()
+                    || !path_retentions.is_empty()
+                    || !removals.is_empty()
+                    || !slot_clauses.is_empty()
+                    || !reference_clauses.is_empty()
+                    || !discriminants.is_empty()
+                    || !arm_clauses.is_empty()
+                    || !constructed_clauses.is_empty()
+                    || !handoff_clauses.is_empty()
+                    || !member_path_clauses.is_empty()
+                    || !member_helper_clauses.is_empty()
+                    || !cell_clauses.is_empty()
+                    || !cell_releases.is_empty()
+                    || !removal_guards.is_empty()
+                    || !literal_arguments.is_empty()
+                    || !collected.container_effects.is_empty()
+                    || is_relational)
+            {
+                return Err(
+                    "a slot invocation through a released parameter stands only beside the \
+                     custody contract, premises and other slot invocations"
+                        .into(),
+                );
+            }
             // Card OPENSSL-FREE-SESSION-REMOVE-INVOCATION (C04.19 amended in
             // place): beside reference drops, and only drops, an opaque slot
             // invocation (`resource_callback_slot_invoked`) stands. The

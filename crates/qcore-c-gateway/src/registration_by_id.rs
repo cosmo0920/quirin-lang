@@ -317,7 +317,8 @@ fn creator(
                     member.path
                 ));
             }
-            if previous == Some("&") {
+            // Rule 74e: an odd run of `&` (`p && r->f` takes no address).
+            if crate::ampersand_runs::ends_in_address(words, at) {
                 if touches {
                     return Err(format!(
                         "the address of `{record}->{}` is taken",
@@ -496,7 +497,10 @@ pub(crate) fn validates(
         }
         if next == Some("->") {
             let (path, after) = chain(&words, at + 1);
-            if path.first() == Some(&field_root) || previous == Some("&") {
+            // Rule 74e: an odd run of `&` (`p && l->f` takes no address).
+            if path.first() == Some(&field_root)
+                || crate::ampersand_runs::ends_in_address(&words, at)
+            {
                 return Err(format!(
                     "`{local}->{}` is touched or viewed",
                     path.join("->")

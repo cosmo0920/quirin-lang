@@ -6211,7 +6211,9 @@ own anchor here.
     TAG.FIELD, F)` and `resource_callback_slot_invoked(OBJ, TAG.FIELD, A…)`
     are the member forms marked `slot` (`CallbackClause::MemberInvoked` /
     `MemberRegistered` with `slot: true`; one field below the tag, a
-    borrowed parameter object, no `supplied_owned`, no id). A slot is decided
+    borrowed parameter object (or, since card
+    OPENSSL-RELEASED-PARAMETER-SLOTS, a released one for an invocation,
+    below), no `supplied_owned`, no id). A slot is decided
     only over the run's facts (`Parser::member_candidates` refuses one
     without them), only while no unit of the run defines `struct TAG` and
     only when a declaration registers it
@@ -6492,9 +6494,10 @@ own anchor here.
     USER DECISION 2026-11-21 "Both conjuncts").
     The free audit lists each free's teardown slots and what it leaves; a
     free names the free statement exactly when something is left
-    (`EVP_PKEY_free`, `X509_free`, `ENGINE_free` drop it), and a free
-    releasing its argument (`PKCS12_free`, `EVP_MD_CTX_free`) states no
-    slot and names the released free's statement. No gateway code
+    (`EVP_PKEY_free`, `X509_free`, `ENGINE_free` drop it); a free
+    releasing its argument (`PKCS12_free`, `EVP_MD_CTX_free`) stated no
+    slot and named the released free's statement until card
+    OPENSSL-RELEASED-PARAMETER-SLOTS (below). No gateway code
     changed; the slots decide over the run's registrations like every
     opaque slot. **Do not** declare a teardown setter without stating its
     slot at every free that runs it: a declared setter makes its functions
@@ -6505,6 +6508,48 @@ own anchor here.
     `a_left_item_keeps_the_premise`, `nothing_left_drops_the_premise`,
     `the_stated_slots_are_the_audited`);
     [report](../reports/openssl-free-remaining-indirect-callbacks/README.md).
+
+    **A slot invocation through a released parameter** (card
+    OPENSSL-RELEASED-PARAMETER-SLOTS, amended in place; contract
+    specification C04.19.3 "Through a released parameter"; USER DECISION
+    2026-11-23). `resource_callback_slot_invoked(OBJ, TAG.FIELD, A…)` may
+    name a parameter the declaration releases (`resource_released`, no
+    kind; `contract_callback.rs`), read before the release as the member
+    form reads one. Such a declaration states nothing beside its custody
+    contract and premises but slot invocations (`contract_loader.rs`: a
+    retention, reset, slot move, reference clause, arm, constructed state,
+    hand-off, member-path state or helper, cell, container effect,
+    literal-argument premise, return-code classes or any other callback
+    clause beside it rejects); a consumed, owned or other object still
+    rejects. The transfer applies the custody contract, the release
+    included, before the callback route, so at a call
+    (`legacy_retained_by.rs`) a candidate effect the route would apply on the
+    released object (a member-path state, a member invocation deferred to
+    its constructed state, a registry use) refuses
+    (`callback-beside-release`), and a candidate's
+    `resource_owned(nonnull)` requirement at the released position makes a
+    nullable release non-null; each slot is otherwise decided exactly as
+    above, and a use after the release refuses as before. `EVP_MD_CTX_free`
+    states the key's nine teardown slots and the digest (handed `ctx`),
+    cipher and public key method cleanups through `ctx` and drops
+    `openssl_unstated_callback_slots`; `PKCS12_free` states the key's nine
+    through `a` and names the free statement for a CRL's method alone; no
+    declaration names the released free's statement. **Do not** admit a
+    released slot object beside any other clause, apply a candidate's effect
+    on the released object after the release, or read a requirement on it
+    after the release. `QCore.OpensslReleasedSlots`
+    (`the_admission_only_grows`,
+    `the_admission_grows_only_by_released_slot_invocations_alone`,
+    `another_object_mode_still_rejects`,
+    `a_released_slot_beside_another_clause_rejects`,
+    `the_reading_is_the_object_before_the_release`,
+    `a_member_effect_beside_a_release_refuses`,
+    `a_use_after_the_release_refuses`,
+    `a_non_null_requirement_strengthens_the_release`,
+    `nothing_reads_the_object_after_the_release`,
+    `the_premises_cover_exactly_what_remains`);
+    `tests/openssl_undeclared_handshake_callbacks.rs`;
+    [report](../reports/openssl-released-parameter-slots/README.md).
 
 <a id="constraint-12o"></a>
 
@@ -13037,5 +13082,99 @@ that only when every arriving edge has it.
     `the_renaming_keeps_the_verdict`, `the_run_ends_in_an_address_iff_odd`,
     `a_logical_and_takes_no_address`, `the_frame_only_widens_again`);
     [report](../reports/nullable-lazy-constructor-in-loop/README.md).
+
+Rule 74d (C) is extended by [rule 74e](#constraint-74e): every reader that
+decides address-taking from the unfused token stream reads the same parity
+through `ampersand_runs`.
+
+<a id="constraint-74e"></a>
+
+74e. **Every address decision reads a run of `&` by its parity.** Card
+    AMPERSAND-RUN-PARITY-OTHER-READERS (`crates/qcore-c-gateway/src/ampersand_runs.rs`,
+    new; 28 call sites in 19 files, counted by a test against `READERS`). It
+    extends [rule 74d](#constraint-74d)'s reading (C) from rule 10a's frame to
+    every reader of the unfused token stream. The importer emits one token per
+    `&`; C lexes a run of `k` adjacent `&` by maximal munch (C11 6.4p4), and a
+    whitespace-separated `a & &b` is not conforming (C11 6.5.10p2), so the
+    last `&` of a run before an operand is an `&` operator exactly when `k`
+    is odd (`ends_in_address`), and the operand of a logical AND when `k` is
+    even (`ends_in_logical_and`). Each reader keeps deciding a single `&`
+    after an operand end (binary AND) as it did; the parity replaces only its
+    reading of `&&`. The census of the base (report §1) found three readings.
+    **Unsound** (an address missed): a run of exactly one `&` taken as the
+    address (`texts[k-1] == "&" && texts[k-2] != "&"`), so `p && &x` hid
+    `&x`: `loop_owner_instance::address_taken` (19 callers among the
+    loop-owner premise derivations) and its copy-member check,
+    `loop_owner_holder_opaque`'s carrier check, and three checks of
+    `thread_entry_census` (the instance, the copy's holder, the copy);
+    `loop_owner_holder_opaque::flow_of` read any `& &` before a value as a
+    logical AND, so `p && &v` was a test; and the coroutine call index dropped
+    every callee after a `&`, so `x && f(i)` hid a caller whose argument the
+    instance premise never checked (`& f (` is never an address: a call's
+    result is not an lvalue, C11 6.5.3.2p1, so it is now always a call).
+    **Admitting** (an address read where none is, and the reading admits):
+    `only_holder_mentions` and `only_registry_mentions` admitted `p && name)`
+    as a whole `&name` actual of a holder callee. **Fail-closed** (an address
+    read where none is, and the reading refuses): eighteen readers took any
+    `&` before a name as its address, so `p && q` refused `q` (one of them,
+    rule 5j's `residual_takes_an_address`, read every `&` after a `&` as
+    unary). All three
+    classes now read the parity; the fail-closed ones stop refusing after an even run.
+    Correct readers are unchanged and listed in the report: the fused streams
+    (`condvar_census`, `stop_paths`, `container_publication::fuse`,
+    `owned_out_member`, `thread_entry_census`'s condition lexer, whose
+    longest match is already maximal munch), argument-initial shapes
+    (`["&", name]`), connective detectors (any run of two or more contains a
+    `&&`), readers that refuse any `&`, rule 71's `logical_and_before`, and
+    every typed AST `opcode` reader. **Do not** read a run of one `&` after an
+    operand end as an address where the reader did not, and **do not** take
+    an address after an even run. Premises stated, not proved: the importer's
+    character tokens, the conforming-program premise rule 74d rests on, and
+    that each reader's call site is the one the census lists (trust boundary
+    28). `QCore.AmpersandRunParity` (`parity_is_munch`,
+    `exactly_one_misses_an_odd_run`, `the_parity_keeps_every_single_address`,
+    `the_parity_drops_only_even_runs`, `logical_and_is_the_even_complement`,
+    `every_reader_reads_the_parity`, `decision_vectors_hold`);
+    [report](../reports/ampersand-run-parity/README.md).
+
+<a id="constraint-74f"></a>
+
+74f. **A `)` that may close a cast makes the next single `&` unary.** Card
+    CAST-BEFORE-AMPERSAND-READ-AS-BINARY (`ampersand_runs::may_close_a_cast`,
+    shared). [Rule 74e](#constraint-74e) left each reader's reading of a
+    single `&` as it was. The census of the base (report §1) found two
+    readers that decide it by the token before it: rule 5j's
+    `residual_takes_an_address`, which already checked a cast close with its
+    own detector, and the refused hand-on (`legacy_refused_operands`, W44),
+    which did not. Its `ends_operand` counted `)` as an operand end, so `(T *)
+    &x->f` read as a binary AND and handed on the value `x->f` instead of `x`
+    and every prefix of the chain. Since the reader only withdraws
+    accusations, missing those places is the unsound direction. Both readers
+    now call the one detector, and `legacy_call_instantiation`'s
+    `is_cast_close` is gone. A group is **not a cast** (binary) when it is an
+    argument list (its `(` follows a name other than a control keyword, or a
+    `)` or `]`, as in `f(x) & mask`), when it holds a token that no scalar
+    cast's type name has at its top level (C11 6.5.4p2: an operator other
+    than `*`, a literal, `[`, `.` or `,`, unless a nested declarator group
+    came first, as in `(char (*)[4])`), or when it is a single name the
+    reader knows as a declared object. Every other group **may be a cast**
+    (unary), including an unmatched `)`. The refused hand-on gets its objects
+    from the publication facts: the formals, the body's declarations and the
+    unit's file-scope objects, less every identifier any `typedef` declaration
+    spells. Rule 5j's reader has no such knowledge, so `(a) & b` is unary
+    there. The other 26 rule 74e call sites read any odd run as an address
+    whatever comes before it, and rule 71's `logical_and_before` decides only
+    a run of two `&` before a group, which no cast can precede. **Do not**
+    write a second cast detector, and **do not** read an undecided group as a
+    value. The same `ends_operand` reading of a `*` after `)` (a dereference
+    under a cast) is not changed here; it is registered as
+    `CAST-BEFORE-STAR-READ-AS-BINARY`. Premises stated, not proved: the
+    importer's character tokens, that a conforming body spells a cast's type
+    name within C11 6.5.4p2, and that the declaration readers find every
+    object name a function can mention (trust boundary 28).
+    `QCore.CastBeforeAmpersand` (`old_reading_misses_a_cast`,
+    `the_fix_only_adds_addresses`, `an_undecided_group_is_a_cast`,
+    `a_call_is_binary`, `the_address_hands_on_a_superset`,
+    `cast_vectors_hold`); [report](../reports/cast-before-ampersand/README.md).
 
 <!-- generated:rules:end -->

@@ -93,6 +93,12 @@ pub const MEMBER_OPEN: &str = "callback-member-open";
 /// invocation deferred to its constructed state), when the call does not
 /// decide whether its drop is the last.
 pub const BESIDE_DROP: &str = "callback-beside-drop";
+/// Card **OPENSSL-RELEASED-PARAMETER-SLOTS** (C04.19.3 amended, rule 12n): a
+/// slot invocation through a parameter the declaration releases whose
+/// candidates would change or read the released object (a member-path
+/// state, a member invocation deferred to its constructed state, a registry
+/// use), which the transfer would apply after the release.
+pub const BESIDE_RELEASE: &str = "callback-beside-release";
 /// Card **CG22-OP-CALLBACKS-AND-SERVED-QUEUES** (rule 12o): a discriminant
 /// value no arm declares.
 pub const ARM_UNDECLARED: &str = "arm-undeclared";

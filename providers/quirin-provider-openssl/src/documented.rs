@@ -127,15 +127,6 @@ pub enum Premise {
     /// runs.
     UnstatedFreeSlots,
     /// Card **OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS**: `requires
-    /// resource_premise(openssl_unstated_callback_slots, …)` with the
-    /// statement of a free through a released parameter
-    /// ([`UNSTATED_RELEASED_FREE_STATEMENT`]): a free whose argument the
-    /// declaration releases (`resource_released`) can state no slot
-    /// invocation (C04.19.3 reads a slot through a borrowed parameter), so
-    /// its premise names every teardown function no clause states, the
-    /// settable ones included.
-    UnstatedReleasedFreeSlots,
-    /// Card **OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS**: `requires
     /// resource_premise(openssl_builtin_teardown_functions, …)`
     /// ([`BUILTIN_TEARDOWN_STATEMENT`]), the library-value premise beside the
     /// stated teardown slots: a teardown function the library defines itself
@@ -331,16 +322,6 @@ pub const TEARDOWN_SLOTS: &[&str] = &[
     "async_wait_ctx_st.wait_fd_cleanup",
 ];
 
-/// Card **OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS**: the statement of the
-/// unstated-slots premise on a free through a released parameter
-/// (`PKCS12_free`, `EVP_MD_CTX_free`). Every callback the free of an object
-/// the call frees runs from the object's methods, provider or engine, or
-/// holds itself, that no clause states, takes, releases or retains nothing
-/// the caller holds. It does not subtract `#settable`: such a free cannot
-/// state the slots whose setters are declared.
-pub const UNSTATED_RELEASED_FREE_STATEMENT: &str =
-    "quant all #o in #freed: #teardown(#o) \\ #stated |-> #inert";
-
 /// Card **OPENSSL-OBJECT-FREES-SILENT-METHOD-CALLBACKS**: how a free stands
 /// to the functions of methods, providers and engines of the objects it
 /// frees (the free audit, read like [`EX_DATA_AUDIT`]).
@@ -357,14 +338,6 @@ pub enum Frees {
     Runs {
         how: &'static str,
         slots: &'static [&'static str],
-        left: &'static [&'static str],
-    },
-    /// Card **OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS**: the free releases
-    /// its argument (`resource_released`), so it can state no teardown slot:
-    /// it names [`Premise::UnstatedReleasedFreeSlots`] and both teardown
-    /// premises, and states no teardown slot. `left` names why.
-    RunsThroughRelease {
-        how: &'static str,
         left: &'static [&'static str],
     },
     /// What the free may run in turn is named by this other premise, which
@@ -410,11 +383,14 @@ pub const FREE_AUDIT: &[(&str, Frees)] = &[
     ),
     (
         "EVP_MD_CTX_free",
-        Frees::RunsThroughRelease {
+        // Card OPENSSL-RELEASED-PARAMETER-SLOTS: stated through the released
+        // `ctx` (C04.19.3 amended).
+        Frees::Runs {
             how: "frees the EVP_PKEY_CTX (method cleanup, provider freectx, engine, keys, a \
                   MAC context's cipher context) and clears the digest (cleanup, provider \
                   freectx, engine)",
-            left: &[RELEASED_ARGUMENT],
+            slots: DIGEST_CONTEXT_TEARDOWN,
+            left: &[],
         },
     ),
     (
@@ -454,10 +430,13 @@ pub const FREE_AUDIT: &[(&str, Frees)] = &[
     ),
     (
         "PKCS12_free",
-        Frees::RunsThroughRelease {
+        // Card OPENSSL-RELEASED-PARAMETER-SLOTS: stated through the released
+        // `a` (C04.19.3 amended); a CRL's method is left.
+        Frees::Runs {
             how: "frees the PKCS#7 safes' certificates (and so their keys), signer info keys \
                   and CRLs",
-            left: &[RELEASED_ARGUMENT, CRL_METHOD_FREE],
+            slots: KEY_TEARDOWN,
+            left: &[CRL_METHOD_FREE],
         },
     ),
     (
@@ -638,12 +617,6 @@ pub const FREE_AUDIT: &[(&str, Frees)] = &[
 pub const CRL_METHOD_FREE: &str = "the crl_free function of the X509_CRL_METHOD of a CRL freed in \
      turn (X509_CRL_METHOD_new registers into its result)";
 
-/// The teardown slots of a free whose argument the declaration releases: a
-/// slot invocation reads a borrowed parameter (C04.19.3), so none can be
-/// stated through it.
-pub const RELEASED_ARGUMENT: &str = "the teardown slots of the objects it frees in turn, which a \
-     slot invocation cannot read through the released argument (C04.19.3)";
-
 /// The QUIC TLS `crypto_release_rcd` callback of a TLS SSL object given
 /// `SSL_set_quic_tls_cbs`, run by `RECORD_LAYER_clear` at its free: the setter
 /// is handed a dispatch table, not a function pointer (C04.19.3).
@@ -700,6 +673,13 @@ pub const HANDSHAKE_TEARDOWN: &[&str] = &[
     "evp_cipher_st.cipher_meth_cleanup",
     "evp_pkey_method_st.pkey_meth_cleanup",
 ];
+
+/// Card **OPENSSL-RELEASED-PARAMETER-SLOTS**: `EVP_MD_CTX_free`, through its
+/// released context: the digest's cleanup, its `EVP_PKEY_CTX`'s public key
+/// method cleanup and keys, a MAC method's cipher context's cleanup, and the
+/// engines it finishes (OpenSSL 3.5.5 `digest.c`, `pmeth_lib.c`,
+/// `evp_enc.c`), the same slots as the handshake calls'.
+pub const DIGEST_CONTEXT_TEARDOWN: &[&str] = HANDSHAKE_TEARDOWN;
 
 /// `SSL_free`: every teardown slot.
 pub const CONNECTION_TEARDOWN: &[&str] = TEARDOWN_SLOTS;
@@ -3310,8 +3290,9 @@ const CONTEXT_FREED: [Premise; 3] = [
 const ASYNC_FREED: Premise = on_freed("async_wait_ctx_st.wait_fd_cleanup", &[None; 4]);
 
 /// `X509_free`: what a key freed in turn runs, beside the ex_data premise.
-/// `PKCS12_free` releases its argument, so it states no slot and names the
-/// released free's statement.
+/// Card **OPENSSL-RELEASED-PARAMETER-SLOTS**: `PKCS12_free` states the same
+/// through its released argument (C04.19.3 amended) and keeps the free
+/// statement for a CRL's method.
 const CERTIFICATE_FREED: &[Premise] = &[
     Premise::ExDataCallbacks,
     KEY_FREED[0],
@@ -3327,10 +3308,19 @@ const CERTIFICATE_FREED: &[Premise] = &[
     KEY_FREED[10],
 ];
 const PKCS12_FREED: &[Premise] = &[
-    Premise::UnstatedReleasedFreeSlots,
+    Premise::UnstatedFreeSlots,
     Premise::ExDataCallbacks,
-    Premise::BuiltinTeardown,
-    Premise::LoadedTeardown,
+    KEY_FREED[0],
+    KEY_FREED[1],
+    KEY_FREED[2],
+    KEY_FREED[3],
+    KEY_FREED[4],
+    KEY_FREED[5],
+    KEY_FREED[6],
+    KEY_FREED[7],
+    KEY_FREED[8],
+    KEY_FREED[9],
+    KEY_FREED[10],
 ];
 
 /// `EVP_PKEY_free`: the key's own ASN.1 method free is handed the argument.
@@ -3363,13 +3353,28 @@ const ENGINE_FREED: &[Premise] = &[
     ),
 ];
 
-/// `EVP_MD_CTX_free`: it releases its argument, so it states no teardown
-/// slot and names the released free's statement.
+/// `EVP_MD_CTX_free`: card **OPENSSL-RELEASED-PARAMETER-SLOTS** states its
+/// teardown slots through the released `ctx` (C04.19.3 amended): a key's
+/// nine and the cipher and public key method cleanups, every actual the
+/// library's, and the digest's cleanup handed `ctx` (`cleanup_old_md_data`,
+/// crypto/evp/digest.c:32-34 at 3.5.5). Nothing is left, so it names no
+/// unstated-slots premise.
 const DIGEST_CONTEXT_FREED: &[Premise] = &[
-    Premise::UnstatedReleasedFreeSlots,
     Premise::ExDataCallbacks,
-    Premise::BuiltinTeardown,
-    Premise::LoadedTeardown,
+    KEY_FREED[0],
+    KEY_FREED[1],
+    KEY_FREED[2],
+    KEY_FREED[3],
+    KEY_FREED[4],
+    KEY_FREED[5],
+    KEY_FREED[6],
+    KEY_FREED[7],
+    KEY_FREED[8],
+    KEY_FREED[9],
+    KEY_FREED[10],
+    CONTEXT_FREED[1],
+    on_freed("evp_md_st.md_meth_cleanup", &[Some(0)]),
+    CONTEXT_FREED[2],
 ];
 
 /// Card **OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS**:

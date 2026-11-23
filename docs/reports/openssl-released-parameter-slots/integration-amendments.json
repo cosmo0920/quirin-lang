@@ -1,0 +1,30 @@
+{
+  "schema": "quirin-amendments/2",
+  "card": "OPENSSL-RELEASED-PARAMETER-SLOTS",
+  "base": "9193b196a",
+  "measured_tip": "c1c2fbafe",
+  "increment_paragraph": "**OPENSSL-RELEASED-PARAMETER-SLOTS (2026-11-23).** USER DECISION 2026-11-23 on the vocabulary item of OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS (\"if yes, EVP_MD_CTX_free drops its premise, and PKCS12_free keeps it only for the CRL item. -> launch them, too\"). Contract specification C04.19.3 gains \"Through a released parameter\" and gateway rule 12n is amended in place (no new rule id): resource_callback_slot_invoked may name a parameter the declaration releases (resource_released, no kind; contract_callback.rs), read before the release as the member form reads one, and such a declaration states nothing beside its custody contract and premises but slot invocations (contract_loader.rs; any other clause, a literal-argument premise or return-code classes beside it reject; a consumed, owned or other object still rejects). The transfer applies the custody contract before the callback route, so at a call (legacy_retained_by.rs) a candidate effect the route would apply on the released object (member-path state, deferred member reading, registry use) refuses (callback-beside-release) and a candidate's resource_owned(nonnull) requirement at the released position makes a nullable release non-null; slots decide exactly as before. quirin-provider-openssl: EVP_MD_CTX_free states its twelve teardown slots through ctx (the key's nine, the cipher and public key method cleanups, the digest's cleanup handed ctx; OpenSSL 3.5.5 digest.c, pmeth_lib.c, evp_enc.c) and drops openssl_unstated_callback_slots; PKCS12_free states the key's nine through a and names the free statement (#teardown(#o) \\ (#stated | #settable)) for a CRL's X509_CRL_METHOD free alone; no declaration names the released free's statement, and the checker's Frees::RunsThroughRelease and Premise::UnstatedReleasedFreeSlots are removed. No setter added (all twelve declared since r53). contracts.lock: 2 digests changed (EVP_MD_CTX_free, PKCS12_free), 0 added or removed; load path and quirin-plugin.json unchanged. Lean: new QCore.OpensslReleasedSlots (audited, 16 theorems); QCore.OpensslFreeTeardownSlots loses the released reading (the_released_statement_is_named_by_no_reading). Opt-in current over Fluent Bit 046accf6 (base 9193b196a vs c1c2fbafe): 1171 Safe / 2 Pending / 3623 Unknown / 8 Unsafe on both sides, bindings 163 all Pending, 0 status moves, 0 content changes; the two rows resting on PKCS12_free (librdkafka rd_kafka_cert_new, rd_kafka_ssl_set_certs, Unknown on both) differ only in identity digests, and the recorded premises of the two frees changed exactly as predicted. Scoped card gate exit 0 (Rust 9920 passed, Lean 487 audits, Python 807, provider tests 174). Pinned routes read no user load path and no pinned module carries a slot invocation: no move predicted; measure --declared is deferred to the integrator (no pinned inputs on this host).",
+  "status_edits": [],
+  "ledger": [
+    {
+      "id": "OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS",
+      "operation": "retire",
+      "why": "Discharged by OPENSSL-RELEASED-PARAMETER-SLOTS (USER DECISION 2026-11-23): C04.19.3 and rule 12n admit a slot invocation through a released parameter, read before the release (Lean QCore.OpensslReleasedSlots); EVP_MD_CTX_free states its twelve teardown slots and drops openssl_unstated_callback_slots; PKCS12_free states the key's nine and keeps the free statement only for a CRL's crl_free, which OPENSSL-SLOT-REGISTRATION-INTO-RESULT tracks (as it does for the other CRL-freeing frees); the QUIC TLS item is OPENSSL-DISPATCH-TABLE-SLOT-REGISTRATION's. Nothing else remains on this entry.",
+      "source": "docs/reports/openssl-released-parameter-slots/README.md"
+    },
+    {
+      "id": "OPENSSL-SLOT-REGISTRATION-INTO-RESULT",
+      "operation": "append",
+      "text": "OPENSSL-RELEASED-PARAMETER-SLOTS (2026-11-23): PKCS12_free now states the key's nine teardown slots through its released argument and names the plain free statement (#teardown(#o) \\ (#stated | #settable)) for the CRL's crl_free alone, like X509_STORE_free; once crl_free is stated it drops openssl_unstated_callback_slots (the released-parameter reading already lets it state x509_crl_method_st.crl_meth_free through a).",
+      "source": "docs/reports/openssl-released-parameter-slots/README.md"
+    },
+    {
+      "id": "CALLBACK-MEMBER-RELEASED-REQUIREMENT-FOLD",
+      "operation": "register",
+      "title": "A member invocation through a nullable released parameter does not fold a candidate's non-null requirement",
+      "text": "Found by OPENSSL-RELEASED-PARAMETER-SLOTS. At a call, legacy_retained_by.rs folds a candidate's resource_owned(n) requirement into the call's custody mode only at a borrowed position; the card added the fold at a released position for slot invocations only (a nullable release becomes non-null). The plain member form (resource_callback_member_invoked) also admits a resource_released object, and there a candidate's resource_owned(nonnull) at a resource_released(OBJ, nullable) position would be dropped, so a possibly null object could be handed to a candidate requiring a live one. Not reachable today: every shipped member invocation through a released object releases it nonnull (rd_kafka_op_destroy, mk_thread_destroy). DISCHARGE: fold the requirement at a released (and owned-nullable) position for every callback clause, or refuse the call; a gateway fixture and Lean parity. Size: small.",
+      "source": "docs/reports/openssl-released-parameter-slots/README.md",
+      "recorded_by": "OPENSSL-RELEASED-PARAMETER-SLOTS"
+    }
+  ]
+}

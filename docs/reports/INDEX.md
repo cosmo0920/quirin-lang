@@ -25,6 +25,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [amendments-schema](amendments-schema/README.md) | AMENDMENTS-SCHEMA: a checked schema for integration amendments |
 
+| [ampersand-run-parity](ampersand-run-parity/README.md) | AMPERSAND-RUN-PARITY-OTHER-READERS: every `&` address decision reads the run parity |
+
 | [aom-binding-poison](aom-binding-poison/README.md) | AOM-BINDING-POISON — a refused statement stops destroying what it cannot write — 2026-09-12 |
 
 | [aom-destroy-siblings](aom-destroy-siblings/README.md) | AOM-DESTROY-SIBLINGS — the two undeclared sibling destructors, decided differently — 2026-09-11 |
@@ -120,6 +122,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [canonical-contract-locations](canonical-contract-locations/README.md) | Canonical contract locations |
 
 | [card-scope-guard](card-scope-guard/README.md) | `CARD-SCOPE-GUARD` — a mechanism that makes a delegated card unable to advance `main` |
+
+| [cast-before-ampersand](cast-before-ampersand/README.md) | CAST-BEFORE-AMPERSAND-READ-AS-BINARY: a cast close makes the next `&` unary |
 
 | [cast-formalization](cast-formalization/README.md) | CAST-FORMALIZATION: one formal cast semantics for route G |
 
@@ -860,6 +864,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [openssl-provider-plugin](openssl-provider-plugin/README.md) | OPENSSL-PROVIDER-PLUGIN: OpenSSL contracts on the user-contract SDK, with version-ranged declarations |
 
 | [openssl-provider-remaining-callees](openssl-provider-remaining-callees/README.md) | OPENSSL-PROVIDER-REMAINING-CALLEES: the census's remaining OpenSSL callees, and the measured opt-in arbiter |
+
+| [openssl-released-parameter-slots](openssl-released-parameter-slots/README.md) | OPENSSL-RELEASED-PARAMETER-SLOTS: slot invocations through a released parameter |
 
 | [openssl-remaining-handshake-setters](openssl-remaining-handshake-setters/README.md) | OPENSSL-REMAINING-HANDSHAKE-SETTERS: the handshake setters still undeclared |
 

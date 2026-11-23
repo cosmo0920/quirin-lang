@@ -663,6 +663,74 @@ struct flb_input_plugin in_other_plugin = {
     discharged_on_the_owners(&verdicts(&census, "in_dummy_collect"));
 }
 
+/// Card AMPERSAND-RUN-PARITY-OTHER-READERS (gateway rule 74e): the call index
+/// dropped every callee after a `&` token, so `data && dummy_register(ins)`
+/// (lexed `data & & dummy_register ( ins )`) hid another plugin's call and the
+/// registration derived from the plugin's own call alone (fails at the base).
+/// `& f (` never takes an address, so it is a call.
+#[test]
+fn nc_a_registration_called_after_a_logical_and_by_another_plugin_keeps_the_route() {
+    let extra = "static int in_dummy_collect2(struct flb_input_instance *ins, void *config, void *context)\n{\n    flb_input_collector_running(2, ins);\n    flb_io_net_write(0);\n    return 0;\n}\nint dummy_register(struct flb_input_instance *ins)\n{\n    flb_input_set_collector_time(ins, in_dummy_collect2, 1, 0, 0);\n    return 0;\n}\n";
+    let plugin = dummy_plugin("", "    dummy_register(ins);", "").replace(
+        "static int in_dummy_init",
+        &format!("{extra}static int in_dummy_init"),
+    );
+    let other = r#"
+#include "fluent-bit/flb_input.h"
+int dummy_register(struct flb_input_instance *ins);
+static int in_other_init(struct flb_input_instance *ins, void *config, void *data)
+{
+    if (data && dummy_register(ins)) {
+        return 1;
+    }
+    return 0;
+}
+struct flb_input_plugin in_other_plugin = {
+    .name = "other",
+    .cb_init = in_other_init,
+    .flags = FLB_INPUT_CORO
+};
+"#;
+    let fixture = make_fixture(
+        "other-and-call",
+        &plugin,
+        &test_file(""),
+        &[("plugins/in_other/other.c", other)],
+    );
+    let census = run(&fixture);
+    let registrations = premise(&census, "P-PLUGIN-DIR registrations");
+    assert!(
+        registrations
+            .iter()
+            .any(|l| l.contains("in_dummy_collect2") && l.contains("not derived")),
+        "{registrations:#?}"
+    );
+    unresolved_with(&verdicts(&census, "in_dummy_collect2"), "may yield");
+}
+
+/// Rule 74e: `ins->p && &ins` takes the address of the helper's instance
+/// parameter. `loop_owner_instance::address_taken` read only a run of exactly
+/// one `&` and the registration derived (fails at the base).
+#[test]
+fn nc_a_helper_addressing_its_instance_after_a_logical_and_keeps_the_route() {
+    let extra = "static int in_dummy_collect2(struct flb_input_instance *ins, void *config, void *context)\n{\n    flb_input_collector_running(2, ins);\n    flb_io_net_write(0);\n    return 0;\n}\nstatic void dummy_register(struct flb_input_instance *ins)\n{\n    if (ins->p && &ins) {\n        return;\n    }\n    flb_input_set_collector_time(ins, in_dummy_collect2, 1, 0, 0);\n}\n";
+    let plugin = dummy_plugin("", "    dummy_register(ins);", "").replace(
+        "static int in_dummy_init",
+        &format!("{extra}static int in_dummy_init"),
+    );
+    let fixture = make_fixture("helper-and-address", &plugin, &test_file(""), &[]);
+    let census = run(&fixture);
+    let registrations = premise(&census, "P-PLUGIN-DIR registrations");
+    assert!(
+        registrations
+            .iter()
+            .any(|l| l.contains("in_dummy_collect2")
+                && l.contains("reassigns its instance parameter")),
+        "{registrations:#?}"
+    );
+    unresolved_with(&verdicts(&census, "in_dummy_collect2"), "may yield");
+}
+
 /// The same helper called from the plugin's own `cb_init` derives.
 #[test]
 fn a_registration_through_the_plugins_own_helper_derives() {

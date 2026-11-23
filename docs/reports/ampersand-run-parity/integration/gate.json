@@ -1,0 +1,13 @@
+{
+  "note": "Landing integrate/r59 (base main 9193b196a, which carries SP6-SYMBOLIC-HYPOTHESIS-ATOMS landed from another session after r58; merges AMPERSAND-RUN-PARITY-OTHER-READERS 7157fbee3 in 8feb2f92d, no conflicts; third_party/libevent checked out at d82464a27). USER DECISION 2026-11-23: \"launch the ampersand parity card\". Amendments applied in acf8efc9e with --profiles-base 9193b196a: AMPERSAND-RUN-PARITY-OTHER-READERS retired; CAST-BEFORE-AMPERSAND-READ-AS-BINARY registered; profiles []; status_edits empty. Full landing gate on acf8efc9e (private/integrate-r59/gate, raw record beside this file as gate-scope.json) via scripts/gate_scope.py --base origin/main --full --landing through private/toolchain/env.sh: Rust 679 units / 724 summaries, 9938 passed, 0 failed, 21 ignored; fmt, Clippy and both reevaluation examples exit 0; Lean (all) exit 0, 487 audits (new QCore.AmpersandRunParity; SP6 added two). No providers/ path changed, so the provider gate was not selected; provider_tests 174 is carried from SP6's landing gate (174 passed, 0 failed, 1 ignored). Python (807 tests) exited 1 only on the stale-matrix check test_the_derived_facts_are_recomputed_rather_than_carried, cleared by regenerating the matrix from this record. Change: rule 74e (new; a line on 74d): every reader deciding address-taking from the unfused & token stream uses one run-parity helper (crates/qcore-c-gateway/src/ampersand_runs.rs); census of 376 lines in 133 files: 8 unsound sites fixed (each with a fixture failing at the base), 2 admitting, 18 fail-closed, 2 imprecise unchanged, the rest correct. One pin moved: docs/reports/libc-reading-site-evidence/bindings.json typed_field_access.rs digest. Card measurement (opt-in current --monkey-linked, Fluent Bit 046accf6): base 9193b196a 1171/2/3623/8 -> tip 1172/2/3622/8; one Unknown -> Safe, rdkafka_telemetry_encode.c get_member_id (its only leaf was rule 5j reading && as an address; on no declaration; unpredicted by the measure-prediction block), 0 Safe lost, three rows change leaves only. Pinned-route parity (quirin-audit measure --declared) was not run: this host holds no build/cycle19 inputs or baselines. No profile baseline is changed and land.py publish is owed.",
+  "workspace_tests": 9938,
+  "provider_tests": 174,
+  "python_evidence_validator_tests": 807,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "full landing gate: every step exits 0 except the Python suite's stale-matrix check, cleared by regenerating the matrix from this record; provider gate not selected (no providers/ change), provider count carried from SP6",
+  "lean_audits": 487,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
