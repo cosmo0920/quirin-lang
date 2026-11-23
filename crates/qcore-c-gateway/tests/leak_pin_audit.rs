@@ -470,6 +470,9 @@ fn a_dereference_after_an_operator_keeps_the_accusation() {
              if (!b) return; {statement} }}"
         ));
         assert_eq!(status, "Unsafe", "{keys:?}: {statement}");
-        assert!(keys.iter().any(|key| key == "leak"), "{keys:?}: {statement}");
+        assert!(
+            keys.iter().any(|key| key == "leak"),
+            "{keys:?}: {statement}"
+        );
     }
 }

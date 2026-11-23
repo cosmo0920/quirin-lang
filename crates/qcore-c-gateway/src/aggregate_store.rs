@@ -323,11 +323,7 @@ pub(crate) fn store_bases(
                     || text.as_bytes().first().is_some_and(u8::is_ascii_digit)
                     || matches!(text, ")" | "]")
             }) || (before == Some(")")
-                && crate::ampersand_runs::may_close_a_cast(
-                    body,
-                    index - 2,
-                    &BTreeSet::new(),
-                )));
+                && crate::ampersand_runs::may_close_a_cast(body, index - 2, &BTreeSet::new())));
         // Rule 74e: an odd run of `&` (`p && b` takes no address).
         if (crate::ampersand_runs::ends_in_address(body, index) && !selects)
             || dereferenced

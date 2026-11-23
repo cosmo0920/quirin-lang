@@ -632,7 +632,6 @@ fn the_same_store_is_admitted_against_both_declarations() {
     }
 }
 
-
 // --------------------------------------------------------------------------
 // Card CAST-BEFORE-STAR-READ-AS-BINARY (rule 74g)
 // --------------------------------------------------------------------------
@@ -671,7 +670,10 @@ fn a_cast_before_a_dereferenced_base_refuses_its_stores() {
     }
     let (status, lines, store) = refused_lines("(void) *b;");
     assert_eq!(status, AnalysisStatus::Unknown);
-    assert!(lines.contains(&store), "the store `b->any = it` refuses: {lines:?}");
+    assert!(
+        lines.contains(&store),
+        "the store `b->any = it` refuses: {lines:?}"
+    );
 }
 
 /// The control: `sizeof (int) * n` multiplies, so `b` stays admissible and
