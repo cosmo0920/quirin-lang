@@ -13348,4 +13348,49 @@ through `ampersand_runs`.
     reading and refused under this one); `tests/in_place_regex_certified.rs`;
     [report](../reports/cg25-in-place-regex/README.md).
 
+<a id="constraint-74j"></a>
+
+74j. **A candidate's requirement is folded at every position and clause
+    form.** Card CALLBACK-MEMBER-RELEASED-REQUIREMENT-FOLD
+    (`callback_contracts::fold_requirement`, applied in
+    `legacy_retained_by.rs`). The callback route collects a candidate's
+    `resource_owned(n)` requirement on a parameter actual of the call
+    (`require`) for the synchronous invocation (rule 13u, with its
+    `_or_default` form), the table dispatch (rule 13v) and the member
+    invocation in its plain and slot forms ([rule 12n](#constraint-12n)). The
+    registry invocation (rule 13w) and a member reading deferred to a
+    constructed state refuse any requirement (`callback-effectful`) and put
+    none on the call. Before this card the call folded the requirement only
+    at a borrowed position, which then reads as `resource_owned(n)`, and at a
+    released slot object (OPENSSL-RELEASED-PARAMETER-SLOTS). It dropped the
+    requirement everywhere else, because the loader restricts no actual's
+    mode. So a plain member invocation through `resource_released(OBJ,
+    nullable)`, or an actual at a nullable owned or consumed position, let a
+    possibly null object reach a candidate that requires it live. The fold
+    now reads no clause form. A borrowed position keeps rule 13u's reading.
+    An owned, consumed, released or stored position already requires the
+    object held, or null where nullable, before the call's effects: it keeps
+    its mode, nullable only when both the mode and every requirement on it
+    are (r60's slot fold, now general). An out position names a destination,
+    and a removed one an element its owner holds. No mode states the
+    requirement there, so the call refuses (`callback-requirement-unfolded`)
+    rather than drop it, as it does for a position the declaration does not
+    have. The fold only strengthens a held position, so no row the declared
+    mode refused becomes `Safe`. The census of the shipped declarations (624
+    invocation clauses in 49 declarations, report §1) found no requirement
+    where the fold changes a mode: the non-borrowed actuals are non-null
+    (`rd_kafka_op_destroy`, `rd_kafka_background_queue_serve`,
+    `rd_kafka_poll_cb`) or r60's slot object (`EVP_MD_CTX_free`), and
+    `mk_thread_destroy` hands its candidate `_`. **Do not** fold a
+    requirement anywhere but through `fold_requirement`, and **do not** drop
+    one at a position it cannot fold. Premises stated, not proved: a
+    candidate's contract in force states its requirement (trust boundary 28).
+    `QCore.CallbackRequirementFold`
+    (`the_old_fold_dropped_a_non_null_requirement`,
+    `the_fold_never_drops_a_non_null_requirement`,
+    `the_old_fold_differed_by_form`, `the_fold_agrees_with_the_slot_fold`,
+    `the_fold_only_strengthens`, `a_non_null_position_is_a_fixed_point`,
+    `out_and_removed_refuse`, `fold_vectors_hold`);
+    [report](../reports/callback-member-released-fold/README.md).
+
 <!-- generated:rules:end -->
