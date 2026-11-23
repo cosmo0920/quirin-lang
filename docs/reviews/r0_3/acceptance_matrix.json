@@ -6920,17 +6920,18 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Landing integrate/r58 (base main 1b7028430; merges NULLABLE-LAZY-CONSTRUCTOR-IN-LOOP 05cd98117 in 673e04110, no conflicts; third_party/libevent checked out at d82464a27). USER DECISION 2026-11-23: \"NULLABLE-LAZY-CONSTRUCTOR-IN-LOOP -> We need to launch this card after the dependent card is landed.\" Amendments applied in 8530e8744 with --profiles-base 1b7028430: NULLABLE-LAZY-CONSTRUCTOR-IN-LOOP retired; LATER-DECLARATOR-INITIALISER-UNREAD, REGISTRY-UNDECIDED-CALL-POISONS-EVERY-BINDING, UNCONTRACTED-ARM-JOIN-NULLABLE-LEAF, FLAG-CORRELATED-RELEASE and AMPERSAND-RUN-PARITY-OTHER-READERS registered; profiles []. Full landing gate on 8530e8744 (private/integrate-r58/gate, raw record beside this file as gate-scope.json) via scripts/gate_scope.py --base origin/main --full --landing through private/toolchain/env.sh: Rust 677 units / 722 summaries, 9904 passed, 0 failed, 21 ignored; fmt, Clippy and both reevaluation examples exit 0; Lean (all) exit 0, 484 audits (new QCore.NullableLazyConstructor). No providers/ path changed, so the provider gate was not selected; provider_tests 174 is carried from r57. Python (807 tests) exited 1 only on the two stale-matrix checks of test_build_matrix_sections, cleared by regenerating the matrix from this record. Change: rule 74d (new; notes on 14l and 10a): a possibly-null value returned under a non-null result mode with a resolved identity gets one leaf naming that, replacing the unresolved-identity plus nullable pair; rule 10a's frame now counts only an odd run of & as address-of, so `a && b` no longer poisons b. One pin moved (resource_kinds.rs k_dlopen return, still Unknown). Card measurement (opt-in current --monkey-linked, Fluent Bit 046accf6): base 1b7028430 and tip both 1171 Safe / 2 Pending / 3623 Unknown / 8 Unsafe, 0 status moves, 110 rows change leaves only; of the eight ledger rows, ShareFetch's 3 nullable leaves clear, owned_but_not_exist and revoking become the return leaf, five keep theirs on obstacles now registered. Pinned-route parity (quirin-audit measure --declared) was not run: this host holds no build/cycle19 inputs or baselines. No profile baseline is changed and land.py publish is owed.",
-  "workspace_tests": 9904,
+  "note": "Landing integrate/r59 (base main 9193b196a, which carries SP6-SYMBOLIC-HYPOTHESIS-ATOMS landed from another session after r58; merges AMPERSAND-RUN-PARITY-OTHER-READERS 7157fbee3 in 8feb2f92d, no conflicts; third_party/libevent checked out at d82464a27). USER DECISION 2026-11-23: \"launch the ampersand parity card\". Amendments applied in acf8efc9e with --profiles-base 9193b196a: AMPERSAND-RUN-PARITY-OTHER-READERS retired; CAST-BEFORE-AMPERSAND-READ-AS-BINARY registered; profiles []; status_edits empty. Full landing gate on acf8efc9e (private/integrate-r59/gate, raw record beside this file as gate-scope.json) via scripts/gate_scope.py --base origin/main --full --landing through private/toolchain/env.sh: Rust 679 units / 724 summaries, 9938 passed, 0 failed, 21 ignored; fmt, Clippy and both reevaluation examples exit 0; Lean (all) exit 0, 487 audits (new QCore.AmpersandRunParity; SP6 added two). No providers/ path changed, so the provider gate was not selected; provider_tests 174 is carried from SP6's landing gate (174 passed, 0 failed, 1 ignored). Python (807 tests) exited 1 only on the stale-matrix check test_the_derived_facts_are_recomputed_rather_than_carried, cleared by regenerating the matrix from this record. Change: rule 74e (new; a line on 74d): every reader deciding address-taking from the unfused & token stream uses one run-parity helper (crates/qcore-c-gateway/src/ampersand_runs.rs); census of 376 lines in 133 files: 8 unsound sites fixed (each with a fixture failing at the base), 2 admitting, 18 fail-closed, 2 imprecise unchanged, the rest correct. One pin moved: docs/reports/libc-reading-site-evidence/bindings.json typed_field_access.rs digest. Card measurement (opt-in current --monkey-linked, Fluent Bit 046accf6): base 9193b196a 1171/2/3623/8 -> tip 1172/2/3622/8; one Unknown -> Safe, rdkafka_telemetry_encode.c get_member_id (its only leaf was rule 5j reading && as an address; on no declaration; unpredicted by the measure-prediction block), 0 Safe lost, three rows change leaves only. Pinned-route parity (quirin-audit measure --declared) was not run: this host holds no build/cycle19 inputs or baselines. No profile baseline is changed and land.py publish is owed.",
+  "workspace_tests": 9938,
   "provider_tests": 174,
   "python_evidence_validator_tests": 807,
-  "lean_audits": 486,
+  "lean_audits": 487,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
    "AuditAggregateValue.lean",
    "AuditAll.lean",
+   "AuditAmpersandRunParity.lean",
    "AuditAppRkCallbacks.lean",
    "AuditArmObligations.lean",
    "AuditAssignmentDestinationSuffix.lean",
@@ -7417,9 +7418,9 @@
   "reevaluation_followup_exit": 0,
   "cargo_fmt": "clean",
   "cargo_clippy": "clean",
-  "standing_gate": "full landing gate: every step exits 0 except the Python suite's two stale-matrix checks, cleared by regenerating the matrix from this record; provider gate not selected (no providers/ change), provider count carried from r57",
+  "standing_gate": "full landing gate: every step exits 0 except the Python suite's stale-matrix check, cleared by regenerating the matrix from this record; provider gate not selected (no providers/ change), provider count carried from SP6",
   "full_language_conformance": false,
-  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
+  "measurement_provenance": "integrator_supplied (docs/reports/ampersand-run-parity/integration/gate.json)"
  },
  "named_followups": [
   {

@@ -25,6 +25,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [amendments-schema](amendments-schema/README.md) | AMENDMENTS-SCHEMA: a checked schema for integration amendments |
 
+| [ampersand-run-parity](ampersand-run-parity/README.md) | AMPERSAND-RUN-PARITY-OTHER-READERS: every `&` address decision reads the run parity |
+
 | [aom-binding-poison](aom-binding-poison/README.md) | AOM-BINDING-POISON — a refused statement stops destroying what it cannot write — 2026-09-12 |
 
 | [aom-destroy-siblings](aom-destroy-siblings/README.md) | AOM-DESTROY-SIBLINGS — the two undeclared sibling destructors, decided differently — 2026-09-11 |
