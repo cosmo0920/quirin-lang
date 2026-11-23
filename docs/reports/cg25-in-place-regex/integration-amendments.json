@@ -1,0 +1,39 @@
+{
+ "schema": "quirin-amendments/2",
+ "card": "CG25-IN-PLACE-REGEX",
+ "base": "2c60986b0",
+ "measured_tip": "a7e8bea5b",
+ "profiles": [],
+ "increment_paragraph": "**CG25-IN-PLACE-REGEX** (USER DECISION 2026-11-23: the \"soundness first\" set; gateway rule 74i; `QCore.InPlaceCertifiedUse`; [report](../../reports/cg25-in-place-regex/README.md)). Discharges `CG25-IN-PLACE-REGEX-USE-CERTIFIED` and `CG25-IN-PLACE-REGEX-SHADOWED-NAME`, both fail-open. Rule 11v (7)'s certified-use check (`report_uncertified_key_uses`) now reads every in-place kind: a `regexec`/`regerror` of a tracked `regex_t` before its status test, on the failure edge or before `regcomp` is refused as `Unknown`, not accused (probes R3, R4). Every in-place actual must name the one automatic object every `DeclRefExpr` designates (`Parser::automatic_object`), so a block-scope `regex_t` shadowing a file-scope one the body names refuses (probe R2). Lean: each step is CG25's or adds a refusal, so no verdict becomes `Safe` (`no_verdict_becomes_safe`), and a `Safe` verdict used only certified objects; R2-R4 are `Safe` under CG25's reading and refused now. The registered premise that `rd_regex_match` uses `re` only after the zero edge was wrong: it calls `regerror(r, &re, …)` on the failure edge, which POSIX defines but no contract clause tells from `regexec`, so it refuses too (over-refusal, `CG25-IN-PLACE-REGEX-REGERROR-FAILURE-EDGE`), as predicted before the implementation. Fixtures pin R2-R4, a use before `regcomp`, the failure-edge `regerror` and the real `rd_regex_match` spelling (all `Safe` at base, refused at tip), and the `resource_kinds.rs` `rd_regex_match` shape as a `Safe` control. Opt-in `current --monkey-linked` over Fluent Bit 046accf6, each side on its own tree and binary: base 2c60986b0 1,172/2/3,622/8, tip a7e8bea5b 1,171/2/3,623/8; the one move is `rd_regex_match` Safe -> Unknown, matching the prediction. Scoped gate at a7e8bea5b: all 8 steps 0 (9,980 passed, 492 Lean audits, 807 Python tests). Pinned routes are not runnable on the host; corpus `rd_regex_match` Safe -> Unknown predicted.",
+ "status_edits": [],
+ "ledger": [
+  {
+   "id": "CG25-IN-PLACE-REGEX-USE-CERTIFIED",
+   "operation": "retire",
+   "why": "Discharged by CG25-IN-PLACE-REGEX (rule 74i): crates/qcore-c-gateway/src/legacy_in_place_custody.rs `report_uncertified_key_uses` now reads every in-place kind's kinded borrowed positions, so a regex use before the status test, on the failure edge or before regcomp is refused (Unknown); probes R3, R4 and the pre-initialiser use are pinned in crates/qcore-c-gateway/tests/in_place_regex_certified.rs (Safe at base, refused at tip); QCore.InPlaceCertifiedUse proves each step only adds a refusal (no_verdict_becomes_safe) and a Safe verdict used only certified objects. The opt-in current measurement moves rd_regex_match Safe -> Unknown (its failure-edge regerror), as predicted; that over-refusal is CG25-IN-PLACE-REGEX-REGERROR-FAILURE-EDGE.",
+   "source": "docs/reports/cg25-in-place-regex/README.md"
+  },
+  {
+   "id": "CG25-IN-PLACE-REGEX-SHADOWED-NAME",
+   "operation": "retire",
+   "why": "Discharged by CG25-IN-PLACE-REGEX (rule 74i): every in-place actual now passes `Parser::automatic_object` (one_automatic_object and every_reference_is), so a block-scope regex_t shadowing a file-scope one the body also names refuses with rule 11v (2)'s actual refusal; probe R2 and a file-scope reference before the shadowing block are pinned in crates/qcore-c-gateway/tests/in_place_regex_certified.rs (Safe at base, refused at tip), and a shadowing local whose every reference is its own stays tracked; QCore.InPlaceCertifiedUse.a_shadowed_name_is_refused and probe_r2_was_safe_and_is_refused.",
+   "source": "docs/reports/cg25-in-place-regex/README.md"
+  },
+  {
+   "id": "CG25-IN-PLACE-REGEX-REGERROR-FAILURE-EDGE",
+   "operation": "register",
+   "source": "docs/reports/cg25-in-place-regex/README.md",
+   "recorded_by": "CG25-IN-PLACE-REGEX",
+   "title": "A regerror of a failed regcomp's object is refused, so rd_regex_match is Unknown",
+   "text": "Rule 74i refuses every use of a tracked in-place object that its initialiser status has not certified. POSIX defines regerror on the regex_t of a failed regcomp, but regex.qv kinds regerror's preg exactly as regexec's (resource_borrowed + resource_kind(preg, regex)), and the rule reads no callee by name, so `if (r) { regerror(r, &re, …); return 0; }` refuses. This moved rdregex.c rd_regex_match Safe -> Unknown on the opt-in current route (base 2c60986b0, tip a7e8bea5b; corpus predicted the same). DISCHARGE: a contract clause (contract language and libc provider) that marks a use defined on a possibly failed object, read by rule 74i as admitted on the failure edge and before the test but not before the initialiser or after the finaliser; pin regerror on the failure edge Safe and regexec there refused; remeasure rd_regex_match."
+  },
+  {
+   "id": "FRAME-HOLDER-SHADOWED-NAME",
+   "operation": "register",
+   "source": "docs/reports/cg25-in-place-regex/README.md",
+   "recorded_by": "CG25-IN-PLACE-REGEX",
+   "title": "Frame holders ask one_automatic_object without every_reference_is",
+   "text": "Rule 12t's frame holder (crates/qcore-c-gateway/src/legacy_retained_by.rs, `holder`) and the callback registry's `frame_registry_holder` (crates/qcore-c-gateway/src/legacy_callback_route.rs) accept `&NAME` as frame storage when one_automatic_object holds, which counts only the function's own VarDecls. A local holder shadowing a file-scope object of the same name that the body also names may be read as one frame object, the shape rule 74i closed for in-place kinds. Direction not assessed. DISCHARGE: assess whether a mention of the file-scope object can reach either reading; if so require every_reference_is (Parser::automatic_object) and pin the shadowing shape."
+  }
+ ]
+}
