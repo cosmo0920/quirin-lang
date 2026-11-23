@@ -1,0 +1,2 @@
+{"base_leaves": ["24098: indirect memory access is outside the resource projection"], "file": "lib/librdkafka-2.15.0/src/rdkafka_conf.c", "function": "rd_kafka_sw_str_sanitize_inplace", "move": "Unknown -> Safe", "occurrence": 1, "tip_declarations": [], "tip_summaries": []}
+{"moves": {"Unknown -> Safe": 1}}
