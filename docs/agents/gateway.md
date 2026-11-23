@@ -13177,4 +13177,55 @@ through `ampersand_runs`.
     `a_call_is_binary`, `the_address_hands_on_a_superset`,
     `cast_vectors_hold`); [report](../reports/cast-before-ampersand/README.md).
 
+<a id="constraint-74l"></a>
+
+74l. **An owned result stored through a formal's slot is a delivery only
+    when W4's `Out` summary validates; otherwise it is refused by name.**
+    Card OWNED-CONSTRUCTOR-OUT-PARAMETER-DELIVERY (`owned_out_formal.rs`, the
+    refusal at the unsanctioned-destination arm of `legacy_transfer.rs`'s
+    contract call, `legacy_summary::out_mode`). USER DECISION 2026-11-23:
+    picked as one of the "soundness first" cards. With
+    `rd_kafka_topic_partition_list_new` declared owned, `*partitions =
+    rd_kafka_topic_partition_list_new(0);` read as `discarded owned result of
+    resource API`. (1) **The delivery reading is W4's, unchanged.** The
+    summary search marks every formal the body stores through
+    (`out_parameter_candidates`), probes with `*NAME` sanctioned, and reads
+    `Out { nullable }` off the exits (`out_mode`): every reachable exit holds
+    a fresh, live, non-null heap site in the slot or the null constant
+    (`nullable`), and at least one holds a site; an exit leaving the slot
+    `Unwritten` (a partial-path store, an in-out slot `if (!*out) *out =
+    make();`) or `Ambiguous` (another object's value), a possibly-null site,
+    or a released, escaped or contained site (a store followed by a release,
+    a second store) reads no mode. The candidate is then validated by
+    condition (6) of the W4 gate (`out_slots_match`), and the published
+    summary binds the caller's slot variable to a fresh site at `fill(&p)`:
+    a caller that releases it discharges it, one that ignores it leaks in
+    the caller. (2) **The refusal.** Where no contract or validated summary
+    sanctions the slot, the body's own analysis runs with none, and a call
+    whose result carries custody stored through the unsanctioned `*NAME` is
+    refused as `owned result of resource API `F` stored through `*NAME`
+    without an out-parameter contract` (the sibling of rule 10v's
+    variable store, `store through `*NAME` without an out-parameter
+    contract`). Kind (`unsupported`), state poisoning and the summary gate
+    are unchanged, so the row stays `Unknown` and its callers keep `call to
+    uncontracted function`. A real discard (`make();`) and a store into a
+    destination the importer does not name (`a[i] = make();`) keep
+    `discarded owned result`. **Do not** read a partial-path, in-out,
+    possibly-null, released or overwritten slot store as a delivery, a slot
+    of a local pointer as the caller's, or the refusal as anything but
+    `Unknown`; a slot written on some exits only needs a return-code
+    disposition (C04.13, rule 11r) or a new mode, which this rule does not
+    state. Premises stated, not proved: faithful token and Clang extraction
+    (trust boundary 28) and the callee's declaration (C06).
+    `QCore.OwnedOutFormalDelivery` (`out_mode_vectors_hold`,
+    `a_partial_path_store_reads_no_mode`, `a_dead_delivery_reads_no_mode`,
+    `a_possibly_null_delivery_reads_no_mode`,
+    `a_read_mode_delivers_on_every_exit`,
+    `a_validated_out_summary_has_no_partial_path`,
+    `an_ignored_delivery_leaks_in_the_caller`,
+    `the_renaming_keeps_every_leaf`, `only_the_unsanctioned_slot_changed`
+    and seven more), bound to `OUT_MODE_VECTORS`;
+    `tests/owned_out_formal_delivery.rs`;
+    [report](../reports/owned-constructor-out-delivery/README.md).
+
 <!-- generated:rules:end -->
