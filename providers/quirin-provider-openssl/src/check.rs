@@ -109,8 +109,8 @@ pub use crate::documented::{
     LOADED_TEARDOWN, LOADED_TEARDOWN_STATEMENT, NULLABLE_ARGUMENTS, Null, NullableArgument,
     Premise, SLOTS, SOURCE_CITATIONS, SOURCE_NULLABLE_ARGUMENTS, SOURCE_SERIES, SOURCE_SLOTS,
     SOURCE_TARBALL_SHA256, Slot, SourceCitation, SourceNullableArgument, SourceSlot,
-    TEARDOWN_SLOTS, UNSTATED_FREE_STATEMENT, UNSTATED_SLOTS,
-    UNSTATED_SLOTS_STATEMENT, nullable_argument,
+    TEARDOWN_SLOTS, UNSTATED_FREE_STATEMENT, UNSTATED_SLOTS, UNSTATED_SLOTS_STATEMENT,
+    nullable_argument,
 };
 
 /// The crate name a request's translation unit carries.
