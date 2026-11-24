@@ -44,11 +44,15 @@ use qcore_contract::contract_loader::load_resource_contract_sources;
 
 const REGEX: &str = include_str!("../../../providers/quirin-provider-libc/contracts/libc/regex.qv");
 
+// Target-portable spellings: plain `long` is unreadable to the declared-ABI
+// reader unless the analysing Clang is LP64 (rule 11q), and `regex.qv` reads
+// `re_nsub`, `nmatch`, `errbuf_size` and `regerror`'s result as `usize`, so
+// these synthetic declarations spell POSIX `size_t` as `__SIZE_TYPE__`.
 const DECLARATIONS: &str = "\
-typedef struct { void *buffer; unsigned long re_nsub; } regex_t;
+typedef struct { void *buffer; __SIZE_TYPE__ re_nsub; } regex_t;
 int regcomp(regex_t *preg, const char *pattern, int cflags);
-int regexec(const regex_t *preg, const char *string, unsigned long nmatch, void *pmatch, int eflags);
-unsigned long regerror(int errcode, const regex_t *preg, char *errbuf, unsigned long errbuf_size);
+int regexec(const regex_t *preg, const char *string, __SIZE_TYPE__ nmatch, void *pmatch, int eflags);
+__SIZE_TYPE__ regerror(int errcode, const regex_t *preg, char *errbuf, __SIZE_TYPE__ errbuf_size);
 void regfree(regex_t *preg);
 regex_t global_re;
 ";
