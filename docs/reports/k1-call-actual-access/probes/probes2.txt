@@ -1,0 +1,14 @@
+long w(struct box *b) { return 31 * d_len(b->name); }
+long w(struct box *b) { return d_len(b->name) * 31; }
+long w(struct box *b) { return 31 * b->n; }
+long w(const char *s) { return 31 * d_len(s); }
+long w(struct box *b, long r) { return 31 * r + d_len(b->name); }
+long w(struct box *b) { return 31 * d_len(b->name) + 1; }
+long w(struct box *b) { return 1 + 31 * d_len(b->name); }
+long w(struct box *b) { return (31 * d_len(b->name)); }
+long w(struct box *b) { long r = 31 * d_len(b->name); return r; }
+long w(struct box *b) { return d_len(b->name) + d_len(b->next->name); }
+long w(struct box *b) { return 31 * d_len(b->name) + d_len(b->next->name); }
+long w(struct box *b) { return 31 * (b->name ? d_len(b->name) : 1) + 2; }
+long w(struct box *b) { return d_len(b->name) / 2; }
+long w(struct box *b) { return 2 - d_len(b->name); }

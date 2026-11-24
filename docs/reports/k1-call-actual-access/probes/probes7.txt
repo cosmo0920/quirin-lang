@@ -1,0 +1,7 @@
+typedef union { char b[40]; long a; } mtx_t; typedef struct t { mtx_t lock; long n; } t_t; long w(t_t *t) { d_len(&t->lock); return 0; }
+typedef struct { char b[40]; long a; } mtx_t; typedef struct t { mtx_t lock; long n; } t_t; long w(t_t *t) { d_len(&(t)->lock); return 0; }
+typedef struct { char b[40]; long a; } mtx_t; typedef struct t { mtx_t lock; long n; } t_t; long w(t_t *t) { d_len(&t->lock); return 0; }
+union mu { char b[40]; long a; }; typedef struct t { union mu lock; long n; } t_t; long w(t_t *t) { d_len(&t->lock); return 0; }
+union mu { char b[40]; long a; }; struct t { union mu lock; long n; }; long w(struct t *t) { d_len(&t->lock); return 0; }
+typedef union { char b[40]; long a; } mtx_t; struct t { mtx_t lock; long n; }; long w(struct t *t) { d_len(&(t)->lock); return 0; }
+typedef struct t { long n; char *name; } t_t; long w(t_t *t) { d_len(&(t)->n); return 0; }

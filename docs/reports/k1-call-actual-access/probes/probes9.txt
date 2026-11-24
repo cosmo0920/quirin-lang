@@ -1,0 +1,14 @@
+typedef struct t { long n; char *name; } t_t; long w(t_t *t) { k_free(t); d_len(&(t)->n); return 0; }
+typedef struct t { long n; char *name; } t_t; long w(t_t *t) { d_len(&(t)->n); k_free(t); return 0; }
+typedef struct t { long n; char *name; } t_t; void g(t_t **p); long w(t_t *t) { g(&(t)); d_len(&(t)->n); return 0; }
+typedef struct t { long n; char *name; } t_t; long w(void) { t_t *t = k_alloc(sizeof *t); if (!t) return 0; d_len(&(t)->n); k_free(t); return 0; }
+typedef struct t { long n; char *name; } t_t; long w(void) { t_t *t = k_alloc(sizeof *t); if (!t) return 0; k_free(t); d_len(&(t)->n); return 0; }
+typedef struct t { long n; struct t *next; } t_t; long w(t_t *t, int c) { while (c--) { d_len(&(t)->n); t = t->next; } return 0; }
+typedef struct t { long n; char *name; } t_t; long w(t_t *t, t_t *u) { t = u; d_len(&(t)->n); return 0; }
+typedef struct t { long n; char *name; } t_t; t_t *mk(void); long w(t_t *t) { t = mk(); d_len(&(t)->n); return 0; }
+typedef struct t { long n; char *name; } t_t; long w(t_t *t) { (t)++; d_len(&(t)->n); return 0; }
+typedef struct t { long n; char *name; } t_t; long w(t_t *t) { d_len(&(t)->name); return 0; }
+typedef struct t { long n; char *name; } t_t; long w(t_t *t) { d_consume(&(t)->n); return 0; }
+typedef struct t { long n; char *name; } t_t; long w(t_t *t) { d_free((t)->name); return 0; }
+typedef struct t { long n; long a[4]; } t_t; long w(t_t *t) { d_len(&(t)->a); return 0; }
+struct s { long n; }; long w(void) { struct s v; v.n = 1; d_len(&(v).n); return v.n; }
