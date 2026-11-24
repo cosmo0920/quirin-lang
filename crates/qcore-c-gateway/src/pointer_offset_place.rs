@@ -55,7 +55,7 @@
 
 use serde_json::Value;
 
-use crate::typed_access_path::{is_pointer_type, is_scalar, qual, strip};
+use crate::typed_access_path::{is_pointer_type, is_scalar, qual};
 use crate::typed_c_ast::{children, kind};
 
 /// The pointer and integer operands of a pointer offset `P + I`, `I + P` or
@@ -122,6 +122,7 @@ pub(crate) const OFFSET_VECTORS: &[(&str, &str, &str, bool, bool)] = &[
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::typed_access_path::strip;
 
     fn operand(class: &str) -> Value {
         let ty = match class {
