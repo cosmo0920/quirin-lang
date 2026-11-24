@@ -1,7 +1,7 @@
 // Card MEMBER-EFFECT-STORES (rule 38k): a throwaway unit probe, kept as text,
 // never a cargo target. Copied to crates/qcore-c-gateway/tests/ for one
 // release run and removed. It analyses each unit text `unit_texts.py` wrote
-// with the run's own contract manifest and prints each row's status, its
+// under the run's dialect with the run's own contract manifest and prints each row's status, its
 // diagnostics and its carried premises.
 //
 // EXPLORE_MANIFEST=<private/mes/units/manifest.txt> cargo test --release \
@@ -42,10 +42,28 @@ fn units() {
             let source = std::fs::read_to_string(&path).unwrap();
             let started = std::time::Instant::now();
             let mut text = format!("## {path}\n");
-            match qcore_c_gateway::legacy_c::analyze_legacy_c_translation_unit(
-                &source, &funcs[0], &contracts,
-            ) {
-                Ok(summary) => {
+            // The run's dialect (`-std=gnu17`, the units' last flag), so the
+            // typed AST is read as the route reads it (K3's CG30 harness limit).
+            let unit = qcore_c_gateway::legacy_c::C11TranslationUnit {
+                source: &source,
+                dialect: qcore_c_gateway::legacy_c::CCompilerDialect::Gnu17,
+                ..Default::default()
+            };
+            let result =
+                qcore_c_gateway::legacy_c::analyze_unrestricted_c11(&unit, &funcs[0], &contracts)
+                    .map(|outcome| match outcome {
+                        qcore_c_gateway::legacy_c::UnrestrictedLegacyResult::Safe(c) => {
+                            Some(c.summary)
+                        }
+                        qcore_c_gateway::legacy_c::UnrestrictedLegacyResult::Unsafe(s) => Some(s),
+                        qcore_c_gateway::legacy_c::UnrestrictedLegacyResult::Unknown {
+                            partial,
+                            ..
+                        } => partial,
+                    });
+            match result {
+                Ok(None) => text.push_str("!! no summary\n"),
+                Ok(Some(summary)) => {
                     for (name, function) in &summary.functions {
                         if !funcs.contains(name) {
                             continue;
