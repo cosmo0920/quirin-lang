@@ -13405,10 +13405,10 @@ through `ampersand_runs`.
     refuses a slot invocation through a released parameter beside any
     candidate effect (`callback-beside-release`, keyed on
     `released_slot_objects`); the plain member form
-    (`rd_kafka_op_destroy`), a synchronous or table invocation handing the
-    released object, and a member reading deferred to its constructed state
-    compose the candidates' member-path states after the release. That
-    order is sound, so this card adds no refusal: the release of site `s`
+    (`rd_kafka_op_destroy`), a synchronous invocation handing the released
+    object, and a member reading deferred to its constructed state compose
+    the candidates' member-path states after the release. That order is
+    sound, so this card adds no refusal: the release of site `s`
     (`resource_action`) writes `s`'s status, what `s` contains
     (`cascade_resource_action`) and the retentions `s` holds, never
     `field_links` (premise P-B08-SHALLOW), `constructed`, `registries` or
@@ -13429,7 +13429,9 @@ through `ampersand_runs`.
     release write a released object's field links or constructed state, or
     let a composition take a linked object that is not live, without
     adding the `callback-beside-release` refusal to every form this rule
-    reads. Premises stated, not proved: P-B08-SHALLOW. Pins:
+    reads. A table dispatch (rule 13v) composes no candidate state at all,
+    released object or not (follow-up CALLBACK-TABLE-MEMBER-PATH-STATES).
+    Premises stated, not proved: P-B08-SHALLOW. Pins:
     `tests/callback_member_released_effect_order.rs` (dropping the liveness
     read certifies the contained payload `Safe`: report §3).
     `QCore.CallbackReleasedEffectOrder`

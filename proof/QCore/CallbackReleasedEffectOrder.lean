@@ -19,8 +19,8 @@ Card **CALLBACK-MEMBER-RELEASED-EFFECT-ORDER** (gateway rule 74p, contract
 specification C04.19.6). The transfer (`legacy_transfer.rs`) applies a
 call's custody contract, the release of a parameter included, before the
 callback route (`legacy_callback_route::apply`) composes a candidate's
-member-path states at a plain member, synchronous or table invocation
-through that parameter (and a member reading deferred to the object's
+member-path states at a plain member or synchronous invocation through
+that parameter (and a member reading deferred to the object's
 constructed state, which reads `constructed` and then the same
 composition). In C the callback runs first. r60 refuses the slot form
 (`callback-beside-release`); this module proves the late order sound for

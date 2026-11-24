@@ -2490,9 +2490,8 @@ a declaration carrying member-path states beside a hand-off refuses
 
 **Through a released object** (card CALLBACK-MEMBER-RELEASED-EFFECT-ORDER,
 gateway rule 74p). When the invoking declaration releases the object
-(`resource_released`; the plain member form, a synchronous or table
-invocation handing it, or a member reading deferred to its constructed
-state), a consumer MAY compose the candidates' states after it applies the
+(`resource_released`; the plain member form, a synchronous invocation
+handing it, or a member reading deferred to its constructed state), a consumer MAY compose the candidates' states after it applies the
 release, as the gateway does, provided the release writes none of the
 object's links and constructed state and `gone` takes only a live linked
 object: a linked object the release itself releases (the object, or one it
