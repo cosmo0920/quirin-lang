@@ -85,9 +85,6 @@ impl Run {
 /// The rule 74i refusal of an uncertified use of `re`.
 const UNCERTIFIED: &str =
     "use of in-place object `re` not certified by its initialiser status (rule 74i)";
-/// The rule 11v (2) refusal, which rule 74i extends to a name that also
-/// designates another object.
-const ACTUAL: &str = "in-place resource object is not the address of one automatic object of this function (rule 11v)";
 
 fn run(source: &str) -> Run {
     let text = format!("{DECLARATIONS}\n{source}\n");
