@@ -1,0 +1,131 @@
+// Temporary K3 probe (not committed).
+#[path = "support/clang_gap.rs"]
+mod clang_gap;
+use clang_gap::*;
+
+const S: &str = "struct S { void *p; char *name; struct S *next; void (*cb)(void); int n; };\n\
+struct M { char *data; long len; };\n";
+
+#[test]
+fn probe() {
+    if !clang_available() {
+        return;
+    }
+    let cases = [
+        ("fresh-owner direct call", "struct S *subject(void) { struct S *s = q_alloc(); s->p = q_alloc(); return s; }"),
+        ("fresh-owner temp", "struct S *subject(void) { struct S *s = q_alloc(); void *t = q_alloc(); s->p = t; return s; }"),
+        ("fresh-owner temp guarded", "struct S *subject(void) { struct S *s = q_alloc(); if (!s) return 0; void *t = q_alloc(); s->p = t; return s; }"),
+        ("formal-owner direct call", "void subject(struct S *s) { s->p = q_alloc(); }"),
+        ("formal-owner temp", "void subject(struct S *s) { void *t = q_alloc(); s->p = t; }"),
+        ("formal-owner arithmetic self", "void subject(struct S *s, int n) { s->name = s->name + n; }"),
+        ("formal-owner arithmetic formal", "void subject(struct S *s, char *b, int n) { s->name = b + n; }"),
+        ("local record arithmetic formal", "struct M subject(char *b, long n) { struct M m; m.data = b + n; m.len = n; return m; }"),
+        ("fresh-owner formal pointer", "struct S *subject(void *m) { struct S *s = q_alloc(); s->p = m; return s; }"),
+        ("formal fnptr", "void subject(struct S *s, void (*cb)(void)) { s->cb = cb; }"),
+        ("local record formal", "int subject(char *b) { struct M m; m.data = b; return (int) m.len; }"),
+    ];
+    for (name, body) in cases {
+        let run = g(&format!("{S}{body}"));
+        eprintln!("== {name}: {:?}\n   {:?}", run.status, run.diagnostics);
+    }
+}
+
+#[test]
+fn units() {
+    let Ok(manifest) = std::env::var("EXPLORE_MANIFEST") else {
+        return;
+    };
+    let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
+    let contracts = std::sync::Arc::new(
+        qcore_contract::contract_loader::load_resource_contract_manifest(
+            &root.join("cycle19-resource-contracts.json"),
+        )
+        .unwrap(),
+    );
+    let text = std::fs::read_to_string(manifest).unwrap();
+    let jobs: Vec<(String, Vec<String>)> = text
+        .lines()
+        .filter(|l| !l.trim().is_empty())
+        .map(|l| {
+            let (path, funcs) = l.split_once(' ').unwrap();
+            (
+                path.to_owned(),
+                funcs.split(',').map(str::to_owned).collect(),
+            )
+        })
+        .collect();
+    let queue = std::sync::Arc::new(std::sync::Mutex::new(jobs));
+    let out = std::sync::Arc::new(std::sync::Mutex::new(Vec::<String>::new()));
+    let mut handles = Vec::new();
+    for _ in 0..6 {
+        let queue = queue.clone();
+        let out = out.clone();
+        let contracts = contracts.clone();
+        handles.push(std::thread::spawn(move || {
+            loop {
+                let Some((path, funcs)) = queue.lock().unwrap().pop() else {
+                    return;
+                };
+                let source = std::fs::read_to_string(&path).unwrap();
+                let mut text = format!("## {path}\n");
+                match qcore_c_gateway::legacy_c::analyze_legacy_c_translation_unit(
+                    &source, &funcs[0], &contracts,
+                ) {
+                    Ok(summary) => {
+                        for (name, function) in &summary.functions {
+                            if !funcs.contains(name) {
+                                continue;
+                            }
+                            text.push_str(&format!("== {name} {:?}\n", function.status));
+                            for d in &function.diagnostics {
+                                text.push_str(&format!("   {} {:?}\n", d.line, d.kind));
+                            }
+                        }
+                    }
+                    Err(error) => text.push_str(&format!("!! {error:?}\n")),
+                }
+                out.lock().unwrap().push(text);
+            }
+        }));
+    }
+    for handle in handles {
+        handle.join().unwrap();
+    }
+    let mut all = out.lock().unwrap().clone();
+    all.sort();
+    for text in all {
+        println!("{text}");
+    }
+}
+
+#[test]
+fn unit() {
+    let Ok(path) = std::env::var("EXPLORE_SOURCE") else {
+        return;
+    };
+    let source = std::fs::read_to_string(&path).unwrap();
+    let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
+    let contracts = qcore_contract::contract_loader::load_resource_contract_manifest(
+        &root.join("cycle19-resource-contracts.json"),
+    )
+    .unwrap();
+    let entry = std::env::var("EXPLORE_ENTRY").unwrap();
+    let wanted: Vec<String> = std::env::var("EXPLORE_FUNCS")
+        .unwrap_or_default()
+        .split(',')
+        .filter(|s| !s.is_empty())
+        .map(str::to_owned)
+        .collect();
+    let summary =
+        qcore_c_gateway::legacy_c::analyze_legacy_c_translation_unit(&source, &entry, &contracts)
+            .unwrap();
+    for (name, function) in &summary.functions {
+        if !wanted.is_empty() && !wanted.contains(name) {
+            continue;
+        }
+        println!("== {name} {:?}", function.status);
+        for d in &function.diagnostics {
+            println!("   {} {:?}", d.line, d.kind);
+        }
+    }
+}

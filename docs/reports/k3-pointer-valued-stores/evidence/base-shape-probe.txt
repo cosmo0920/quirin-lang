@@ -1,0 +1,22 @@
+== fresh-owner direct call: Safe
+   []
+== fresh-owner temp: Unknown
+   ["Unsupported { description: \"indirect memory access is outside the resource projection\" }"]
+== fresh-owner temp guarded: Unknown
+   ["Unsupported { description: \"indirect memory access is outside the resource projection\" }"]
+== formal-owner direct call: Unknown
+   ["Unsupported { description: \"store of a custody-carrying value into `s->p`, a member of the formal `s` (member-store-through-formal)\" }"]
+== formal-owner temp: Unknown
+   ["Unsupported { description: \"indirect memory access is outside the resource projection\" }"]
+== formal-owner arithmetic self: Unknown
+   ["Unsupported { description: \"indirect memory access is outside the resource projection\" }"]
+== formal-owner arithmetic formal: Unknown
+   ["Unsupported { description: \"indirect memory access is outside the resource projection\" }"]
+== local record arithmetic formal: Unknown
+   ["Unsupported { description: \"indirect memory access is outside the resource projection\" }"]
+== fresh-owner formal pointer: Unknown
+   ["Unsupported { description: \"indirect memory access is outside the resource projection\" }"]
+== formal fnptr: Safe
+   []
+== local record formal: Unknown
+   ["Unsupported { description: \"indirect memory access is outside the resource projection\" }"]

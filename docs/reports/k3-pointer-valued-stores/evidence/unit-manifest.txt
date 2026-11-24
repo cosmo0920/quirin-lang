@@ -1,0 +1,15 @@
+private/k3/units/lib__cmetrics__src__cmt_decode_msgpack.c.i create_counter_instance,create_exp_histogram_instance,create_gauge_instance,create_histogram_instance,create_summary_instance,create_untyped_instance,unpack_opts_unit
+private/k3/units/lib__ctraces__src__ctr_encode_opentelemetry.c.i otel_span_set_attributes,otel_span_set_events
+private/k3/units/lib__librdkafka-2.15.0__src__lz4.c.i LZ4_renormDictT
+private/k3/units/lib__librdkafka-2.15.0__src__nanopb__pb_decode.c.i buf_read,decode_pointer_field
+private/k3/units/lib__librdkafka-2.15.0__src__nanopb__pb_encode.c.i buf_write,pb_ostream_from_buffer
+private/k3/units/lib__librdkafka-2.15.0__src__rdbuf.c.i rd_buf_init
+private/k3/units/lib__librdkafka-2.15.0__src__rdlist.c.i rd_list_grow
+private/k3/units/lib__librdkafka-2.15.0__src__rdmap.c.i rd_map_alloc_buckets,rd_map_insert
+private/k3/units/lib__librdkafka-2.15.0__src__snappy.c.i rd_kafka_snappy_init_env,writer_set_expected_length
+private/k3/units/lib__chunkio__src__chunkio.c.i cio_set_log_callback
+private/k3/units/lib__monkey__mk_core__mk_iov.c.i mk_iov_consume
+private/k3/units/lib__monkey__mk_core__mk_memory.c.i mk_ptr_create
+private/k3/units/lib__monkey__mk_server__mk_http_parser.c.i request_set
+private/k3/units/lib__monkey__mk_server__mk_lib.c.i mk_vhost_set_property
+private/k3/units/lib__monkey__mk_server__mk_utils.c.i mk_buffer_cat

@@ -681,6 +681,13 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [joined-provenance-round-bound](joined-provenance-round-bound/README.md) | JOINED-PROVENANCE-ROUND-BOUND (wave 37) |
 
+## K
+
+| Card directory | Original report title |
+|---|---|
+
+| [k3-pointer-valued-stores](k3-pointer-valued-stores/README.md) | K3-POINTER-VALUED-STORES |
+
 ## L
 
 | Card directory | Original report title |
