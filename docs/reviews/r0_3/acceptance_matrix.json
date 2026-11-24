@@ -6920,11 +6920,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Landing integrate/r68 (base main d6dbb1b04, after r67; merges RETURN-FAMILY-DEREF-THROUGH-RESOLVED-CAST 7678fe5f1, base 3ca85c7a6; generated docs/agents/README.md and docs/agents/gateway.md conflicted on rules 74k-74m and were resolved by rerunning scripts/gen_rule_docs.py; proof/QCore.lean auto-merged and regenerated; third_party/libevent checked out; the landing was paused by the user after the gate and resumed). USER DECISION 2026-11-24: \"launch them all\" (the four r63-r65 follow-ups); \"yes, land it as r68\"; \"resume r68 and land through r76\". Amendments applied in 8502f6d30 with --profiles-base origin/main: RETURN-FAMILY-DEREF-THROUGH-RESOLVED-CAST retired; RETURN-FAMILY-UNTRACKED-DEREF-THROUGH-CAST and RETURN-FAMILY-STAR-OUTSIDE-ROOT-PARENTHESES registered; profiles []; status_edits empty. Full landing gate on 8502f6d30 (private/integrate-r68/gate, raw record beside this file as gate-scope.json; an untracked first start was stopped after seconds by its captured PIDs and restarted as a tracked job) via scripts/gate_scope.py --base origin/main --full --landing through private/toolchain/env.sh: Rust 687 units / 732 summaries, 10043 passed, 0 failed, 24 ignored; fmt, Clippy and both reevaluation examples exit 0; Lean (all) exit 0, 499 audits (new QCore.ReturnFamilyDerefCast). No providers/ path changed, so the provider gate was not selected; provider_tests 174 (1 ignored) is carried from the SP7/SP8 combined landing gate on 35b5f48a2. Python (807 tests) exited 1 only on the two stale-matrix checks in test_build_matrix_sections, cleared by regenerating the matrix from this record. Change: rule 74m (new): legacy_return_family's stars_before takes `through`, so a resolved cast group does not stop a starred may-bind root's count; a root is admitted only when the count is one both without and with `through`, under both of rule 74h's readings. At base `long w(void **q) { return *(long *)*q; }` was Safe; `*(T *)*q`, nested casts and `*(T *)(*q)` now refuse, `*(T *)q` and `(T) *q` keep their readings; one fixture moves Unsafe -> Unknown (after k_free, the same refusal `**q` gets). Card measurement (opt-in current --monkey-linked, Fluent Bit 046accf6): base 3ca85c7a6 and tip 1eae6f5e6 both 1171/2/3623/8, no row changed, matching the committed prediction (none). Pinned-route parity (quirin-audit measure --declared) was not run: its attempt refused for missing prepared inputs, and this host holds no build/cycle19 inputs or baselines. No profile baseline is changed and land.py publish is owed.",
-  "workspace_tests": 10043,
+  "note": "Landing integrate/r69 (base main b33dd2265, after r68; merges FRAME-HOLDER-SHADOWED-NAME 0fd56a0fc, base 3ca85c7a6; a generated file conflicted and was resolved by rerunning scripts/gen_rule_docs.py and gen_lean_roots.py; third_party/libevent checked out). USER DECISION 2026-11-24: \"launch them all\" (the four r63-r65 follow-ups); \"yes, land them as r69, r70, r71 and r72\"; \"resume r68 and land through r76\". Amendments applied in 0a50b7851 with --profiles-base origin/main: FRAME-HOLDER-SHADOWED-NAME retired; NAME-KEYED-HOLDER-SHADOWING registered; profiles []; status_edits empty. Full landing gate on 0a50b7851 (private/integrate-r69/gate, raw record beside this file as gate-scope.json) via scripts/gate_scope.py --base origin/main --full --landing through private/toolchain/env.sh: Rust 688 units / 733 summaries, 10048 passed, 0 failed, 24 ignored; fmt, Clippy and both reevaluation examples exit 0; Lean (all) exit 0, 500 audits (new QCore.FrameHolderOneDeclaration). No providers/ path changed, so the provider gate was not selected; provider_tests 174 (1 ignored) is carried from the SP7/SP8 combined landing gate on 35b5f48a2. Python (807 tests) exited 1 only on the stale-matrix check test_the_derived_facts_are_recomputed_rather_than_carried, cleared by regenerating the matrix from this record. Change: rule 74o (new): rule 12t's retention frame holder (legacy_retained_by.rs holder) and frame_registry_holder (legacy_callback_route.rs) also require every_reference_is, so a block-scope local shadowing a file-scope object named at holder positions is no longer one frame object; probes F1, F3 and F4 (a caller's object retained by the file-scope name, a reset dropping its record, a destroyed registry) were Safe at base and are refused (retention-undecided, callback-registry-undecided); only Safe -> Unknown can move. Card measurement (opt-in current --monkey-linked, Fluent Bit 046accf6): base 3ca85c7a6 and tip 10770a4db both 1171/2/3623/8, no row changed, matching the committed prediction (none). Pinned-route parity (quirin-audit measure --declared) was not run: this host holds no build/cycle19 inputs or baselines. No profile baseline is changed and land.py publish is owed.",
+  "workspace_tests": 10048,
   "provider_tests": 174,
   "python_evidence_validator_tests": 807,
-  "lean_audits": 499,
+  "lean_audits": 500,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
    "AuditAggregateOwnedField.lean",
@@ -7099,6 +7099,7 @@
    "AuditFloatPayloads.lean",
    "AuditFloatTypes.lean",
    "AuditFrameHelperTask.lean",
+   "AuditFrameHolderOneDeclaration.lean",
    "AuditFunctionPointerDeclarators.lean",
    "AuditFunctionPointerFormal.lean",
    "AuditFunctionTypedefPointer.lean",
@@ -7432,7 +7433,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "full landing gate: every step exits 0 except the Python suite's stale-matrix check, cleared by regenerating the matrix from this record; provider gate not selected (no providers/ change), provider count carried from the SP7/SP8 combined landing",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/return-family-deref-resolved-cast/integration/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/frame-holder-shadowed-name/integration/gate.json)"
  },
  "named_followups": [
   {

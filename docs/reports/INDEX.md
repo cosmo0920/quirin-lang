@@ -616,6 +616,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [fluent-bit-moving-revisions](fluent-bit-moving-revisions/README.md) | Moving Fluent Bit revisions — 2026-09-07 |
 
+| [frame-holder-shadowed-name](frame-holder-shadowed-name/README.md) | FRAME-HOLDER-SHADOWED-NAME |
+
 ## G
 
 | Card directory | Original report title |
