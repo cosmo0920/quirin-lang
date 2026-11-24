@@ -13848,4 +13848,46 @@ through `ampersand_runs`.
     `DECISION_VECTORS`, `VALUE_VECTORS` and `BINDING_VECTORS` by shared-vector
     unit tests.
 
+<a id="constraint-78"></a>
+
+78. **A pointer offset under an indirection or a subscript is read as the
+    subscript C defines it to be.** Card K7-RESIDUAL-CAUSES (round 34,
+    `pointer_offset_place.rs`, two delimited hooks in
+    `typed_access_path::Reader::path`: its `ArraySubscriptExpr` arm and a
+    `*` arm asked before the older one). It amends rules 10k's and 10t's refusal of
+    pointer arithmetic in a path for these forms only; every other premise of
+    10k, 10t, 10w, 11j, 12h and 12j stands. C11 6.5.2.1p2 defines `E1[E2]`
+    as `(*((E1)+(E2)))` and 6.5.6p8 makes `P + I` (either operand order) and
+    `P - I` the pointers `I` elements past and before `P`, so `*(P + I)`,
+    `*(I + P)`, `*(P - I)` and `(P + I)[K]` designate the objects `P[I]`,
+    `P[I]`, `P[-I]` and `P[I + K]` designate. Where the reader meets, after
+    its `strip`, a binary `+` or `-` whose own type is an object pointer
+    (`is_pointer_type`: no function pointer, no `union`, `volatile` or
+    `_Atomic` spelling), with exactly one pointer operand (on the left for
+    `-`) and an integer operand, it makes the subscript step it makes for
+    `P[I]`: the integer operand is read as an index expression
+    (`Reader::expression`, which refuses what it refuses for a subscript
+    index), the walk continues at `P`, and whether the step reads a pointer
+    from memory is decided on `P` (`subscript_hop`) exactly as for a
+    subscript's base. Nothing else changes: the place's root, steps, per-hop
+    obligations, union and view decisions and its lowering are the subscript
+    spelling's, so a read through a released pointer so spelled is the same
+    `use_after_release` candidate and an unchecked allocation the same
+    `unknown_alias`. **Do not** read a difference of two pointers, a sum
+    whose type is not an object pointer, a floating or other non-integer
+    operand, `I - P`, a cast between the indirection and the sum, a pointer
+    operand that is itself an offset (one offset per step), an offset under
+    `->` (`(P + 1)->f`), a compound assignment or increment (rule 10v's), or
+    claim a bound: as for every subscript, extents are outside the property.
+    Premises stated, not proved: faithful Clang extraction of operand types,
+    opcodes and cast kinds (trust boundary 28). Census and measurement:
+    [report](../reports/k7-residual-causes/README.md). `QCore.PointerOffsetPlace`
+    (`deref_offset_is_subscript`, `deref_difference_is_subscript`,
+    `subscript_of_offset`, `offset_vectors_hold`,
+    `a_deref_offset_reads_as_the_subscript`,
+    `an_offset_subscript_reads_as_the_subscript`,
+    `the_decision_is_the_subscripts`, `a_refused_offset_keeps_the_refusal`,
+    `a_nested_offset_is_refused`, `every_older_reading_stands` and six more),
+    bound to `OFFSET_VECTORS` by a shared-vector unit test.
+
 <!-- generated:rules:end -->

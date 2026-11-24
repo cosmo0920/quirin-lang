@@ -1,0 +1,125 @@
+{
+ "argv_requested": [
+  "python3",
+  "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ab90f892459fe5f11/docs/reports/k7-residual-causes/scripts/run_current_census.py",
+  "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ab90f892459fe5f11/private/k7/census-base",
+  "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ab90f892459fe5f11/private/k7/target-census/release/quirin-audit",
+  "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ab90f892459fe5f11/docs/reports/k7-residual-causes/artifacts/selection.json",
+  "4"
+ ],
+ "argv_run": [
+  "python3",
+  "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ab90f892459fe5f11/docs/reports/k7-residual-causes/scripts/run_current_census.py",
+  "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ab90f892459fe5f11/private/k7/census-base",
+  "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ab90f892459fe5f11/private/k7/target-census/release/quirin-audit",
+  "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ab90f892459fe5f11/docs/reports/k7-residual-causes/artifacts/selection.json",
+  "4"
+ ],
+ "budget": {
+  "QCORE_AUDIT_JOBS": {
+   "after": "3",
+   "before": null
+  },
+  "admission_mib": 7168,
+  "jobs_cap": 3,
+  "label": "7G",
+  "mechanism": "QCORE_AUDIT_JOBS",
+  "memory_budget_mib": 7168,
+  "route_class": null
+ },
+ "class": "audit",
+ "cwd": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ab90f892459fe5f11",
+ "exit": 0,
+ "finished": "2026-11-24T11:08:39+00:00",
+ "limits": {
+  "deadline_from": "default",
+  "deadline_seconds": null,
+  "queue": true,
+  "queue_lapse_from": "default",
+  "queue_lapse_seconds": 600.0,
+  "stall_timeout_from": "default",
+  "stall_timeout_seconds": 7200.0,
+  "stop_grace_seconds": 60.0
+ },
+ "max_rss_kib": 7861932,
+ "max_rss_within_admission": false,
+ "monitor": {
+  "admission_mib": 7168,
+  "deadline_seconds": null,
+  "io_unreadable_pids": [
+   1392490
+  ],
+  "last_sample": {
+   "admission_mib": 7168,
+   "at": "2026-11-24T11:08:38+00:00",
+   "cpu_seconds": 3346.82,
+   "deadline_seconds": null,
+   "io": {
+    "rchar": 110896764967,
+    "read_bytes": 76500992,
+    "syscr": 93862297,
+    "syscw": 110954538,
+    "wchar": 109114244292,
+    "write_bytes": 791224320
+   },
+   "last_progress_at": "2026-11-24T11:08:38+00:00",
+   "peak_tree_rss_kib": 7879700,
+   "processes": 2,
+   "stall_timeout_seconds": 7200.0,
+   "tree_rss_kib": 5664696
+  },
+  "peak_at": "2026-11-24T10:54:27+00:00",
+  "peak_tree_rss_kib": 7879700,
+  "progress_file": null,
+  "rss_over_admission": {
+   "first_after_seconds": 2402.0,
+   "first_at": "2026-11-24T10:54:17+00:00",
+   "first_tree_rss_kib": 7873556,
+   "largest_pid": 1347436,
+   "largest_rss_kib": 7855788,
+   "peak_tree_rss_kib": 7879700,
+   "samples_over": 14
+  },
+  "sample_errors": 0,
+  "sample_interval_seconds": 10.0,
+  "samples": 326,
+  "samples_unmeasured": 6,
+  "stall_timeout_seconds": 7200.0,
+  "stop_grace_seconds": 60.0
+ },
+ "pid": 831710,
+ "schema": "quirin-gate-slot/1",
+ "slot_record": {
+  "admitted_at": "2026-11-24T10:14:15+00:00",
+  "audit_slot_ceiling": 15,
+  "class": "audit",
+  "gate_dir": "/tmp/quirin-gate",
+  "held": [
+   "legacy",
+   "audit/1"
+  ],
+  "legacy_lock": {
+   "mode": "shared",
+   "path": "/tmp/qcore-c-card-validation-20261022.lock"
+  },
+  "mem_available_kib": 45275852,
+  "mem_total_kib": 63615012,
+  "queue": {
+   "admitted_at": "2026-11-24T10:14:15+00:00",
+   "ahead_at_request": 3,
+   "enabled": true,
+   "family": "audit",
+   "lapse_seconds": 600.0,
+   "lapsed_skipped": 0,
+   "passed_over": [],
+   "position": 2,
+   "position_at_request": 4,
+   "reclaimed": [],
+   "seq": 352
+  },
+  "slot": 1,
+  "slot_count": 6,
+  "waited_seconds": 15756.955
+ },
+ "started": "2026-11-24T10:14:15+00:00"
+}

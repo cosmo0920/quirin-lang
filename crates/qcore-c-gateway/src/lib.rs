@@ -296,6 +296,10 @@ mod aggregate_value;
 // Card CG13-UNION-AND-BITFIELD-PLACES (rule 10w): union-member and bit-field
 // place steps.
 mod union_bitfield;
+// Card K7-RESIDUAL-CAUSES (rule 78): `*(P + I)` and `(P + I)[K]` read as the
+// subscripts C11 6.5.2.1p2 defines them to be; the hook is
+// `typed_access_path::Reader::path`.
+mod pointer_offset_place;
 // Card CG15-STORAGE-DURATION-AND-VOLATILE (rule 11h): storage duration and
 // `volatile`; the G hooks are in `legacy_storage_duration.rs`.
 mod storage_duration;

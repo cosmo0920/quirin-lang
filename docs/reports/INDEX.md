@@ -696,6 +696,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [k5-local-origin-aliases](k5-local-origin-aliases/README.md) | K5-LOCAL-ORIGIN-ALIASES: locals holding only loads from untracked objects |
 
+| [k7-residual-causes](k7-residual-causes/README.md) | K7-RESIDUAL-CAUSES: the residual refusal causes of the access census, re-censused; rule 78 |
+
 ## L
 
 | Card directory | Original report title |

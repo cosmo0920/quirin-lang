@@ -1,0 +1,25 @@
+{
+  "command": [
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ab90f892459fe5f11/private/k7/target-tip/release/quirin-audit",
+    "current",
+    "--checkout",
+    "/media/Data/GitHub/quirin-lang/build/cycle19/clang/046accf6aded7906f66a1baf0202da349e521736/fluent-bit-clang-source/fluent-bit-clang-source",
+    "--profile-directory",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ab90f892459fe5f11/contract/profiles/fluent-bit",
+    "--compile-database",
+    "/media/Data/GitHub/quirin-lang/build/cycle19/clang/046accf6aded7906f66a1baf0202da349e521736/fluent-bit-clang-source/fluent-bit-clang-production/compile_commands.json",
+    "--selection",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ab90f892459fe5f11/docs/reports/k7-residual-causes/artifacts/selection.json",
+    "--report",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ab90f892459fe5f11/private/k7/census-tip/resource-diagnostics.json",
+    "--jobs",
+    "4"
+  ],
+  "binary_sha256": "3082e3464d83406587a76b8e70870e74c3513b577619cb0533bdf8eefe85f298",
+  "environment": {
+    "QCORE_CLANG": "/usr/lib/llvm-21/bin/clang"
+  },
+  "start": "2026-11-24T10:14:15.725729+00:00",
+  "exit": 0,
+  "end": "2026-11-24T10:45:22.166940+00:00"
+}
