@@ -27,6 +27,22 @@ def main() -> int:
     binary = pathlib.Path(sys.argv[2]).resolve()
     selection = pathlib.Path(sys.argv[3]).resolve()
     jobs = sys.argv[4] if len(sys.argv) > 4 else "4"
+    worst = run_one(out, binary, selection, jobs)
+    # K1: a companion file `OUT.then` (one `OUT BINARY` pair per line), read
+    # after the first run, names further runs of the same selection made one
+    # after another in the same gate slot (the tip after the base), so the
+    # pair waits for one audit slot, not two. Each run keeps its own run.json.
+    then = pathlib.Path(str(out) + ".then")
+    if then.exists():
+        for line in then.read_text().splitlines():
+            if line.strip():
+                next_out, next_binary = line.split()
+                worst = max(worst, run_one(pathlib.Path(next_out).resolve(),
+                                           pathlib.Path(next_binary).resolve(), selection, jobs))
+    return worst
+
+
+def run_one(out, binary, selection, jobs) -> int:
     out.mkdir(parents=True, exist_ok=False)
     environment = {k: v for k, v in os.environ.items() if not k.startswith("QCORE_")}
     command = [
