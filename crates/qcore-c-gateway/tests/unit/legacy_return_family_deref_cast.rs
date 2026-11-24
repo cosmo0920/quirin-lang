@@ -140,9 +140,9 @@ fn the_base_readings_are_kept() {
         );
     }
     assert_eq!(bases("* ( long * ) * p"), Some(vec!["p".to_owned()]));
-    // As at the base, an untracked root behind a cast group is no base: the
-    // registered follow-up RETURN-FAMILY-UNTRACKED-DEREF-THROUGH-CAST.
-    assert_eq!(bases("* ( long * ) p"), Some(vec![]));
+    // Rule 74r (RETURN-FAMILY-UNTRACKED-DEREF-THROUGH-CAST): an untracked
+    // root behind a cast group is a base too.
+    assert_eq!(bases("* ( long * ) p"), Some(vec!["p".to_owned()]));
     // Read as at the base: a conforming body cannot multiply by a pointer
     // (C11 6.5.5p2), and a declared scalar never reaches the may-bind test.
     assert_eq!(bases("sizeof ( long ) * q"), Some(vec!["q".to_owned()]));
