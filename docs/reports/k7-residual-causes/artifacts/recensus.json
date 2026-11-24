@@ -1,0 +1,2930 @@
+{
+ "schema": "qcore.k7-residual-recensus.v1",
+ "report": "/media/Data/GitHub/quirin-lang/build/cycle19/clang/046accf6aded7906f66a1baf0202da349e521736/fluent-bit-clang-source/reports/resource-diagnostics.json",
+ "rows": 4934,
+ "status": {
+  "Unknown": 3750,
+  "Safe": 1173,
+  "Unsafe": 11
+ },
+ "k7_leaves": 1798,
+ "k7_rows_touched": 701,
+ "per_tag": {
+  "address-of-base": {
+   "leaves": 0,
+   "rows": 0,
+   "alone": 0
+  },
+  "aggregate-value": {
+   "leaves": 246,
+   "rows": 164,
+   "alone": 7
+  },
+  "call": {
+   "leaves": 130,
+   "rows": 91,
+   "alone": 9
+  },
+  "cast": {
+   "leaves": 69,
+   "rows": 37,
+   "alone": 0
+  },
+  "function-designator": {
+   "leaves": 0,
+   "rows": 0,
+   "alone": 0
+  },
+  "indirect-call": {
+   "leaves": 155,
+   "rows": 118,
+   "alone": 6
+  },
+  "pointer-arithmetic": {
+   "leaves": 33,
+   "rows": 15,
+   "alone": 2
+  },
+  "pointer-field-step": {
+   "leaves": 1,
+   "rows": 1,
+   "alone": 0
+  },
+  "pointer-step": {
+   "leaves": 3,
+   "rows": 3,
+   "alone": 0
+  },
+  "root-other": {
+   "leaves": 14,
+   "rows": 10,
+   "alone": 0
+  },
+  "statement-expression": {
+   "leaves": 117,
+   "rows": 71,
+   "alone": 0
+  },
+  "static-local": {
+   "leaves": 64,
+   "rows": 18,
+   "alone": 2
+  },
+  "union": {
+   "leaves": 965,
+   "rows": 322,
+   "alone": 15
+  },
+  "volatile-atomic": {
+   "leaves": 1,
+   "rows": 1,
+   "alone": 0
+  }
+ },
+ "bundle_freed_alone": 47,
+ "bundle_freed_alone_distinct": 47,
+ "bundle_freed_alone_if_new_leaves_removable": 48,
+ "new_leaves_on_unknown_rows": {
+  "new:ALIAS": 661,
+  "new:COND": 162,
+  "new:IND": 532,
+  "new:RET": 7
+ },
+ "freed_rows": [
+  {
+   "file": "lib/cmetrics/src/cmt_decode_statsd.c",
+   "function": "cmt_get_statsd_type",
+   "library": "cmetrics",
+   "i": 7,
+   "items": [
+    "pointer-arithmetic"
+   ],
+   "k7": [
+    {
+     "line": 5920,
+     "origin": "lib/cmetrics/src/cmt_decode_statsd.c:505",
+     "family": "COND",
+     "tags": [
+      "pointer-arithmetic"
+     ],
+     "facts": {
+      "roots": [
+       "formal"
+      ],
+      "values": [
+       "scalar"
+      ],
+      "accesses": [
+       "read"
+      ],
+      "positions": [
+       "direct"
+      ],
+      "constructs": [
+       "cond-if"
+      ],
+      "max_hops": 1
+     }
+    }
+   ]
+  },
+  {
+   "file": "lib/cmetrics/src/cmt_encode_influx.c",
+   "function": "line_protocol_escape",
+   "library": "cmetrics",
+   "i": 9,
+   "items": [
+    "call"
+   ],
+   "k7": [
+    {
+     "line": 5779,
+     "origin": "lib/cmetrics/src/cmt_encode_influx.c:234",
+     "family": "COND",
+     "tags": [
+      "call"
+     ],
+     "facts": {
+      "roots": [
+       "call-result"
+      ],
+      "values": [
+       "scalar"
+      ],
+      "accesses": [
+       "read"
+      ],
+      "positions": [
+       "direct"
+      ],
+      "constructs": [
+       "cond-if"
+      ],
+      "max_hops": 2
+     }
+    }
+   ]
+  },
+  {
+   "file": "lib/cmetrics/src/cmt_encode_opentelemetry.c",
+   "function": "fetch_array_kvlist_entry",
+   "library": "cmetrics",
+   "i": 11,
+   "items": [
+    "union"
+   ],
+   "k7": [
+    {
+     "line": 6812,
+     "origin": "lib/cmetrics/src/cmt_encode_opentelemetry.c:124",
+     "family": "RET",
+     "tags": [
+      "union"
+     ],
+     "facts": {
+      "roots": [
+       "local"
+      ],
+      "values": [
+       "pointer"
+      ],
+      "accesses": [
+       "read"
+      ],
+      "positions": [
+       "direct"
+      ],
+      "constructs": [
+       "return"
+      ],
+      "max_hops": 1
+     }
+    }
+   ]
+  },
+  {
+   "file": "lib/cmetrics/src/cmt_encode_opentelemetry.c",
+   "function": "fetch_metadata_array_key",
+   "library": "cmetrics",
+   "i": 11,
+   "items": [
+    "union"
+   ],
+   "k7": [
+    {
+     "line": 6800,
+     "origin": "lib/cmetrics/src/cmt_encode_opentelemetry.c:108",
+     "family": "RET",
+     "tags": [
+      "union"
+     ],
+     "facts": {
+      "roots": [
+       "local"
+      ],
+      "values": [
+       "pointer"
+      ],
+      "accesses": [
+       "read"
+      ],
+      "positions": [
+       "direct"
+      ],
+      "constructs": [
+       "return"
+      ],
+      "max_hops": 1
+     }
+    }
+   ]
+  },
+  {
+   "file": "lib/cmetrics/src/cmt_encode_text.c",
+   "function": "fetch_metadata_kvlist_key",
+   "library": "cmetrics",
+   "i": 16,
+   "items": [
+    "union"
+   ],
+   "k7": [
+    {
+     "line": 5603,
+     "origin": "lib/cmetrics/src/cmt_encode_text.c:65",
+     "family": "RET",
+     "tags": [
+      "union"
+     ],
+     "facts": {
+      "roots": [
+       "local"
+      ],
+      "values": [
+       "pointer"
+      ],
+      "accesses": [
+       "read"
+      ],
+      "positions": [
+       "direct"
+      ],
+      "constructs": [
+       "return"
+      ],
+      "max_hops": 1
+     }
+    }
+   ]
+  },
+  {
+   "file": "lib/cmetrics/src/cmt_label.c",
+   "function": "cmt_labels_create",
+   "library": "cmetrics",
+   "i": 21,
+   "items": [
+    "call"
+   ],
+   "k7": [
+    {
+     "line": 5279,
+     "origin": "lib/cmetrics/src/cmt_label.c:35",
+     "family": "IND",
+     "tags": [
+      "call"
+     ],
+     "facts": {
+      "roots": [
+       "call-result"
+      ],
+      "values": [
+       "scalar"
+      ],
+      "accesses": [
+       "read"
+      ],
+      "positions": [
+       "call-arg"
+      ],
+      "constructs": [
+       "statement"
+      ],
+      "max_hops": 1
+     }
+    }
+   ]
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/cJSON.c",
+   "function": "buffer_skip_whitespace",
+   "library": "librdkafka",
+   "i": 48,
+   "items": [
+    "pointer-arithmetic"
+   ],
+   "k7": [
+    {
+     "line": 2129,
+     "origin": "lib/librdkafka-2.15.0/src/cJSON.c:1097",
+     "family": "COND",
+     "tags": [
+      "pointer-arithmetic"
+     ],
+     "facts": {
+      "roots": [
+       "formal"
+      ],
+      "values": [
+       "scalar"
+      ],
+      "accesses": [
+       "read"
+      ],
+      "positions": [
+       "direct"
+      ],
+      "constructs": [
+       "cond-while"
+      ],
+      "max_hops": 2
+     }
+    }
+   ]
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/cJSON.c",
+   "function": "cJSON_New_Item",
+   "library": "librdkafka",
+   "i": 48,
+   "items": [
+    "indirect-call"
+   ],
+   "k7": [
+    {
+     "line": 1470,
+     "origin": "lib/librdkafka-2.15.0/src/cJSON.c:243",
+     "family": "IND",
+     "tags": [
+      "indirect-call"
+     ],
+     "facts": {
+      "roots": [
+       "formal"
+      ],
+      "values": [
+       "function_pointer"
+      ],
+      "accesses": [
+       "read"
+      ],
+      "positions": [
+       "direct"
+      ],
+      "constructs": [
+       "statement"
+      ],
+      "max_hops": 1
+     }
+    }
+   ]
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/cJSON.c",
+   "function": "cJSON_free",
+   "library": "librdkafka",
+   "i": 48,
+   "items": [
+    "indirect-call"
+   ],
+   "k7": [
+    {
+     "line": 3795,
+     "origin": "lib/librdkafka-2.15.0/src/cJSON.c:3189",
+     "family": "IND",
+     "tags": [
+      "indirect-call"
+     ],
+     "facts": {
+      "roots": [
+       "global"
+      ],
+      "values": [
+       "function_pointer"
+      ],
+      "accesses": [
+       "read"
+      ],
+      "positions": [
+       "direct"
+      ],
+      "constructs": [
+       "statement"
+      ],
+      "max_hops": 0
+     }
+    }
+   ]
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/cJSON.c",
+   "function": "cJSON_malloc",
+   "library": "librdkafka",
+   "i": 48,
+   "items": [
+    "indirect-call"
+   ],
+   "k7": [
+    {
+     "line": 3791,
+     "origin": "lib/librdkafka-2.15.0/src/cJSON.c:3184",
+     "family": "RET",
+     "tags": [
+      "indirect-call"
+     ],
+     "facts": {
+      "roots": [
+       "global"
+      ],
+      "values": [
+       "function_pointer"
+      ],
+      "accesses": [
+       "read"
+      ],
+      "positions": [
+       "direct"
+      ],
+      "constructs": [
+       "return"
+      ],
+      "max_hops": 0
+     }
+    }
+   ]
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/lz4.c",
+   "function": "LZ4_resetStream_fast",
+   "library": "librdkafka",
+   "i": 50,
+   "items": [
+    "union"
+   ],
+   "k7": [
+    {
+     "line": 1082,
+     "origin": "lib/librdkafka-2.15.0/src/lz4.c:1531",
+     "family": "IND",
+     "tags": [
+      "union"
+     ],
+     "facts": {
+      "roots": [
+       "formal"
+      ],
+      "values": [
+       "address"
+      ],
+      "accesses": [
+       "address"
+      ],
+      "positions": [
+       "call-arg"
+      ],
+      "constructs": [
+       "statement"
+      ],
+      "max_hops": 1
+     }
+    }
+   ]
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/lz4.c",
+   "function": "LZ4_slideInputBuffer",
+   "library": "librdkafka",
+   "i": 50,
+   "items": [
+    "cast+union"
+   ],
+   "k7": [
+    {
+     "line": 1893,
+     "origin": "lib/librdkafka-2.15.0/src/lz4.c:2724",
+     "family": "RET",
+     "tags": [
+      "cast",
+      "union"
+     ],
+     "facts": {
+      "roots": [
+       "formal"
+      ],
+      "values": [
+       "pointer"
+      ],
+      "accesses": [
+       "read"
+      ],
+      "positions": [
+       "direct"
+      ],
+      "constructs": [
+       "return"
+      ],
+      "max_hops": 1
+     }
+    }
+   ]
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/lz4frame.c",
+   "function": "LZ4F_freeCDict",
+   "library": "librdkafka",
+   "i": 51,
+   "items": [
+    "aggregate-value",
+    "aggregate-value",
+    "aggregate-value",
+    "aggregate-value"
+   ],
+   "k7": [
+    {
+     "line": 1339,
+     "origin": "lib/librdkafka-2.15.0/src/lz4frame.c:574",
+     "family": "IND",
+     "tags": [
+      "aggregate-value"
+     ],
+     "facts": {
+      "roots": [
+       "formal"
+      ],
+      "values": [
+       "aggregate",
+       "pointer"
+      ],
+      "accesses": [
+       "read"
+      ],
+      "positions": [
+       "call-arg"
+      ],
+      "constructs": [
+       "statement"
+      ],
+      "max_hops": 1
+     }
+    },
+    {
+     "line": 1340,
+     "origin": "lib/librdkafka-2.15.0/src/lz4frame.c:575",
+     "family": "IND",
+     "tags": [
+      "aggregate-value"
+     ],
+     "facts": {
+      "roots": [
+       "formal"
+      ],
+      "values": [
+       "aggregate",
+       "pointer"
+      ],
+      "accesses": [
+       "read"
+      ],
+      "positions": [
+       "call-arg"
+      ],
+      "constructs": [
+       "statement"
+      ],
+      "max_hops": 1
+     }
+    },
+    {
+     "line": 1341,
+     "origin": "lib/librdkafka-2.15.0/src/lz4frame.c:576",
+     "family": "IND",
+     "tags": [
+      "aggregate-value"
+     ],
+     "facts": {
+      "roots": [
+       "formal"
+      ],
+      "values": [
+       "aggregate",
+       "pointer"
+      ],
+      "accesses": [
+       "read"
+      ],
+      "positions": [
+       "call-arg"
+      ],
+      "constructs": [
+       "statement"
+      ],
+      "max_hops": 1
+     }
+    },
+    {
+     "line": 1342,
+     "origin": "lib/librdkafka-2.15.0/src/lz4frame.c:577",
+     "family": "IND",
+     "tags": [
+      "aggregate-value"
+     ],
+     "facts": {
+      "roots": [
+       "formal"
+      ],
+      "values": [
+       "aggregate"
+      ],
+      "accesses": [
+       "read"
+      ],
+      "positions": [
+       "call-arg"
+      ],
+      "constructs": [
+       "statement"
+      ],
+      "max_hops": 1
+     }
+    }
+   ]
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/lz4frame.c",
+   "function": "LZ4F_freeCompressionContext",
+   "library": "librdkafka",
+   "i": 51,
+   "items": [
+    "aggregate-value",
+    "aggregate-value",
+    "aggregate-value"
+   ],
+   "k7": [
+    {
+     "line": 1367,
+     "origin": "lib/librdkafka-2.15.0/src/lz4frame.c:623",
+     "family": "IND",
+     "tags": [
+      "aggregate-value"
+     ],
+     "facts": {
+      "roots": [
+       "formal"
+      ],
+      "values": [
+       "aggregate",
+       "pointer"
+      ],
+      "accesses": [
+       "read"
+      ],
+      "positions": [
+       "call-arg"
+      ],
+      "constructs": [
+       "statement"
+      ],
+      "max_hops": 1
+     }
+    },
+    {
+     "line": 1368,
+     "origin": "lib/librdkafka-2.15.0/src/lz4frame.c:624",
+     "family": "IND",
+     "tags": [
+      "aggregate-value"
+     ],
+     "facts": {
+      "roots": [
+       "formal"
+      ],
+      "values": [
+       "aggregate",
+       "pointer"
+      ],
+      "accesses": [
+       "read"
+      ],
+      "positions": [
+       "call-arg"
+      ],
+      "constructs": [
+       "statement"
+      ],
+      "max_hops": 1
+     }
+    },
+    {
+     "line": 1369,
+     "origin": "lib/librdkafka-2.15.0/src/lz4frame.c:625",
+     "family": "IND",
+     "tags": [
+      "aggregate-value"
+     ],
+     "facts": {
+      "roots": [
+       "formal"
+      ],
+      "values": [
+       "aggregate"
+      ],
+      "accesses": [
+       "read"
+      ],
+      "positions": [
+       "call-arg"
+      ],
+      "constructs": [
+       "statement"
+      ],
+      "max_hops": 1
+     }
+    }
+   ]
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/lz4frame.c",
+   "function": "LZ4F_freeDecompressionContext",
+   "library": "librdkafka",
+   "i": 51,
+   "items": [
+    "aggregate-value",
+    "aggregate-value",
+    "aggregate-value"
+   ],
+   "k7": [
+    {
+     "line": 1800,
+     "origin": "lib/librdkafka-2.15.0/src/lz4frame.c:1264",
+     "family": "IND",
+     "tags": [
+      "aggregate-value"
+     ],
+     "facts": {
+      "roots": [
+       "formal"
+      ],
+      "values": [
+       "aggregate",
+       "pointer"
+      ],
+      "accesses": [
+       "read"
+      ],
+      "positions": [
+       "call-arg"
+      ],
+      "constructs": [
+       "statement"
+      ],
+      "max_hops": 1
+     }
+    },
+    {
+     "line": 1801,
+     "origin": "lib/librdkafka-2.15.0/src/lz4frame.c:1265",
+     "family": "IND",
+     "tags": [
+      "aggregate-value"
+     ],
+     "facts": {
+      "roots": [
+       "formal"
+      ],
+      "values": [
+       "aggregate",
+       "pointer"
+      ],
+      "accesses": [
+       "read"
+      ],
+      "positions": [
+       "call-arg"
+      ],
+      "constructs": [
+       "statement"
+      ],
+      "max_hops": 1
+     }
+    },
+    {
+     "line": 1802,
+     "origin": "lib/librdkafka-2.15.0/src/lz4frame.c:1266",
+     "family": "IND",
+     "tags": [
+      "aggregate-value"
+     ],
+     "facts": {
+      "roots": [
+       "formal"
+      ],
+      "values": [
+       "aggregate"
+      ],
+      "accesses": [
+       "read"
+      ],
+      "positions": [
+       "call-arg"
+      ],
+      "constructs": [
+       "statement"
+      ],
+      "max_hops": 1
+     }
+    }
+   ]
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/lz4hc.c",
+   "function": "LZ4_compressHC2_continue",
+   "library": "librdkafka",
+   "i": 52,
+   "items": [
+    "cast+union"
+   ],
+   "k7": [
+    {
+     "line": 1462,
+     "origin": "lib/librdkafka-2.15.0/src/lz4hc.c:1247",
+     "family": "IND",
+     "tags": [
+      "cast",
+      "union"
+     ],
+     "facts": {
+      "roots": [
+       "formal"
+      ],
+      "values": [
+       "address"
+      ],
+      "accesses": [
+       "address"
+      ],
+      "positions": [
+       "call-arg"
+      ],
+      "constructs": [
+       "return"
+      ],
+      "max_hops": 1
+     }
+    }
+   ]
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/lz4hc.c",
+   "function": "LZ4_compressHC2_limitedOutput_continue",
+   "library": "librdkafka",
+   "i": 52,
+   "items": [
+    "cast+union"
+   ],
+   "k7": [
+    {
+     "line": 1466,
+     "origin": "lib/librdkafka-2.15.0/src/lz4hc.c:1252",
+     "family": "IND",
+     "tags": [
+      "cast",
+      "union"
+     ],
+     "facts": {
+      "roots": [
+       "formal"
+      ],
+      "values": [
+       "address"
+      ],
+      "accesses": [
+       "address"
+      ],
+      "positions": [
+       "call-arg"
+      ],
+      "constructs": [
+       "return"
+      ],
+      "max_hops": 1
+     }
+    }
+   ]
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/lz4hc.c",
+   "function": "LZ4_createHC",
+   "library": "librdkafka",
+   "i": 52,
+   "items": [
+    "union"
+   ],
+   "k7": [
+    {
+     "line": 1451,
+     "origin": "lib/librdkafka-2.15.0/src/lz4hc.c:1233",
+     "family": "IND",
+     "tags": [
+      "union"
+     ],
+     "facts": {
+      "roots": [
+       "local"
+      ],
+      "values": [
+       "address"
+      ],
+      "accesses": [
+       "address"
+      ],
+      "positions": [
+       "call-arg"
+      ],
+      "constructs": [
+       "statement"
+      ],
+      "max_hops": 1
+     }
+    }
+   ]
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdhdrhistogram.c",
+   "function": "rd_hdr_getCountAtIndex",
+   "library": "librdkafka",
+   "i": 67,
+   "items": [
+    "call"
+   ],
+   "k7": [
+    {
+     "line": 4091,
+     "origin": "lib/librdkafka-2.15.0/src/rdhdrhistogram.c:176",
+     "family": "RET",
+     "tags": [
+      "call"
+     ],
+     "facts": {
+      "roots": [
+       "formal"
+      ],
+      "values": [
+       "scalar"
+      ],
+      "accesses": [
+       "read"
+      ],
+      "positions": [
+       "direct"
+      ],
+      "constructs": [
+       "return"
+      ],
+      "max_hops": 2
+     }
+    }
+   ]
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka.c",
+   "function": "rd_kafka_errno",
+   "library": "librdkafka",
+   "i": 69,
+   "items": [
+    "call"
+   ],
+   "k7": [
+    {
+     "line": 25111,
+     "origin": "lib/librdkafka-2.15.0/src/rdkafka.c:7137",
+     "family": "RET",
+     "tags": [
+      "call"
+     ],
+     "facts": {
+      "roots": [
+       "call-result"
+      ],
+      "values": [
+       "scalar"
+      ],
+      "accesses": [
+       "read"
+      ],
+      "positions": [
+       "direct"
+      ],
+      "constructs": [
+       "return"
+      ],
+      "max_hops": 1
+     }
+    }
+   ]
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_DescribeCluster_result_cluster_id",
+   "library": "librdkafka",
+   "i": 70,
+   "items": [
+    "call"
+   ],
+   "k7": [
+    {
+     "line": 26315,
+     "origin": "lib/librdkafka-2.15.0/src/rdkafka_admin.c:9418",
+     "family": "RET",
+     "tags": [
+      "call"
+     ],
+     "facts": {
+      "roots": [
+       "call-result"
+      ],
+      "values": [
+       "scalar"
+      ],
+      "accesses": [
+       "read"
+      ],
+      "positions": [
+       "direct"
+      ],
+      "constructs": [
+       "return"
+      ],
+      "max_hops": 1
+     }
+    }
+   ]
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_DescribeCluster_result_controller",
+   "library": "librdkafka",
+   "i": 70,
+   "items": [
+    "call"
+   ],
+   "k7": [
+    {
+     "line": 26319,
+     "origin": "lib/librdkafka-2.15.0/src/rdkafka_admin.c:9423",
+     "family": "RET",
+     "tags": [
+      "call"
+     ],
+     "facts": {
+      "roots": [
+       "call-result"
+      ],
+      "values": [
+       "pointer"
+      ],
+      "accesses": [
+       "read"
+      ],
+      "positions": [
+       "direct"
+      ],
+      "constructs": [
+       "return"
+      ],
+      "max_hops": 1
+     }
+    }
+   ]
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_DescribeConsumerGroups_result_groups",
+   "library": "librdkafka",
+   "i": 70,
+   "items": [
+    "union"
+   ],
+   "k7": [
+    {
+     "line": 25940,
+     "origin": "lib/librdkafka-2.15.0/src/rdkafka_admin.c:8891",
+     "family": "RET",
+     "tags": [
+      "union"
+     ],
+     "facts": {
+      "roots": [
+       "local"
+      ],
+      "values": [
+       "scalar"
+      ],
+      "accesses": [
+       "read"
+      ],
+      "positions": [
+       "direct"
+      ],
+      "constructs": [
+       "return"
+      ],
+      "max_hops": 1
+     }
+    }
+   ]
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_DescribeTopics_result_topics",
+   "library": "librdkafka",
+   "i": 70,
+   "items": [
+    "union"
+   ],
+   "k7": [
+    {
+     "line": 26122,
+     "origin": "lib/librdkafka-2.15.0/src/rdkafka_admin.c:9152",
+     "family": "RET",
+     "tags": [
+      "union"
+     ],
+     "facts": {
+      "roots": [
+       "local"
+      ],
+      "values": [
+       "scalar"
+      ],
+      "accesses": [
+       "read"
+      ],
+      "positions": [
+       "direct"
+      ],
+      "constructs": [
+       "return"
+      ],
+      "max_hops": 1
+     }
+    }
+   ]
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "rd_kafka_ElectLeaders_result_result",
+   "library": "librdkafka",
+   "i": 70,
+   "items": [
+    "union"
+   ],
+   "k7": [
+    {
+     "line": 26476,
+     "origin": "lib/librdkafka-2.15.0/src/rdkafka_admin.c:9653",
+     "family": "IND",
+     "tags": [
+      "union"
+     ],
+     "facts": {
+      "roots": [
+       "formal"
+      ],
+      "values": [
+       "address"
+      ],
+      "accesses": [
+       "address"
+      ],
+      "positions": [
+       "call-arg"
+      ],
+      "constructs": [
+       "return"
+      ],
+      "max_hops": 1
+     }
+    }
+   ]
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "ut_make_ListConsumerGroups_fanout",
+   "library": "librdkafka",
+   "i": 70,
+   "items": [
+    "union",
+    "union"
+   ],
+   "k7": [
+    {
+     "line": 26659,
+     "origin": "lib/librdkafka-2.15.0/src/rdkafka_admin.c:9927",
+     "family": "IND",
+     "tags": [
+      "union"
+     ],
+     "facts": {
+      "roots": [
+       "local"
+      ],
+      "values": [
+       "address"
+      ],
+      "accesses": [
+       "address"
+      ],
+      "positions": [
+       "call-arg"
+      ],
+      "constructs": [
+       "statement"
+      ],
+      "max_hops": 1
+     }
+    },
+    {
+     "line": 26661,
+     "origin": "lib/librdkafka-2.15.0/src/rdkafka_admin.c:9929",
+     "family": "IND",
+     "tags": [
+      "union"
+     ],
+     "facts": {
+      "roots": [
+       "local"
+      ],
+      "values": [
+       "address"
+      ],
+      "accesses": [
+       "address"
+      ],
+      "positions": [
+       "call-arg"
+      ],
+      "constructs": [
+       "statement"
+      ],
+      "max_hops": 1
+     }
+    }
+   ]
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_admin.c",
+   "function": "ut_make_ListConsumerGroups_partial_error",
+   "library": "librdkafka",
+   "i": 70,
+   "items": [
+    "union"
+   ],
+   "k7": [
+    {
+     "line": 26653,
+     "origin": "lib/librdkafka-2.15.0/src/rdkafka_admin.c:9915",
+     "family": "IND",
+     "tags": [
+      "union"
+     ],
+     "facts": {
+      "roots": [
+       "local"
+      ],
+      "values": [
+       "address"
+      ],
+      "accesses": [
+       "address"
+      ],
+      "positions": [
+       "call-arg"
+      ],
+      "constructs": [
+       "statement"
+      ],
+      "max_hops": 1
+     }
+    }
+   ]
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_assignor.c",
+   "function": "rtrim",
+   "library": "librdkafka",
+   "i": 72,
+   "items": [
+    "call"
+   ],
+   "k7": [
+    {
+     "line": 20522,
+     "origin": "lib/librdkafka-2.15.0/src/rdkafka_assignor.c:574",
+     "family": "COND",
+     "tags": [
+      "call"
+     ],
+     "facts": {
+      "roots": [
+       "call-result",
+       "local"
+      ],
+      "values": [
+       "scalar"
+      ],
+      "accesses": [
+       "read"
+      ],
+      "positions": [
+       "direct"
+      ],
+      "constructs": [
+       "cond-while"
+      ],
+      "max_hops": 2
+     }
+    }
+   ]
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+   "function": "rd_kafka_broker_monitor_op_cb",
+   "library": "librdkafka",
+   "i": 75,
+   "items": [
+    "indirect-call+union"
+   ],
+   "k7": [
+    {
+     "line": 24143,
+     "origin": "lib/librdkafka-2.15.0/src/rdkafka_broker.c:6417",
+     "family": "IND",
+     "tags": [
+      "indirect-call",
+      "union"
+     ],
+     "facts": {
+      "roots": [
+       "formal"
+      ],
+      "values": [
+       "function_pointer",
+       "pointer"
+      ],
+      "accesses": [
+       "read"
+      ],
+      "positions": [
+       "call-arg",
+       "direct"
+      ],
+      "constructs": [
+       "statement"
+      ],
+      "max_hops": 1
+     }
+    }
+   ]
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_conf.c",
+   "function": "rd_kafka_confval_get_ptr",
+   "library": "librdkafka",
+   "i": 79,
+   "items": [
+    "union"
+   ],
+   "k7": [
+    {
+     "line": 25577,
+     "origin": "lib/librdkafka-2.15.0/src/rdkafka_conf.c:3891",
+     "family": "RET",
+     "tags": [
+      "union"
+     ],
+     "facts": {
+      "roots": [
+       "formal"
+      ],
+      "values": [
+       "scalar"
+      ],
+      "accesses": [
+       "read"
+      ],
+      "positions": [
+       "direct"
+      ],
+      "constructs": [
+       "return"
+      ],
+      "max_hops": 1
+     }
+    }
+   ]
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_conf.c",
+   "function": "rd_kafka_confval_get_str",
+   "library": "librdkafka",
+   "i": 79,
+   "items": [
+    "union"
+   ],
+   "k7": [
+    {
+     "line": 25573,
+     "origin": "lib/librdkafka-2.15.0/src/rdkafka_conf.c:3886",
+     "family": "RET",
+     "tags": [
+      "union"
+     ],
+     "facts": {
+      "roots": [
+       "formal"
+      ],
+      "values": [
+       "scalar"
+      ],
+      "accesses": [
+       "read"
+      ],
+      "positions": [
+       "direct"
+      ],
+      "constructs": [
+       "return"
+      ],
+      "max_hops": 1
+     }
+    }
+   ]
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_conf.c",
+   "function": "rd_kafka_confval_init_ptr",
+   "library": "librdkafka",
+   "i": 79,
+   "items": [
+    "union"
+   ],
+   "k7": [
+    {
+     "line": 25485,
+     "origin": "lib/librdkafka-2.15.0/src/rdkafka_conf.c:3738",
+     "family": "IND",
+     "tags": [
+      "union"
+     ],
+     "facts": {
+      "roots": [
+       "formal"
+      ],
+      "values": [
+       "pointer"
+      ],
+      "accesses": [
+       "null-store"
+      ],
+      "positions": [
+       "direct"
+      ],
+      "constructs": [
+       "statement"
+      ],
+      "max_hops": 1
+     }
+    }
+   ]
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c",
+   "function": "rd_kafka_toppar_fetch_decide_next_fetch_start_pos",
+   "library": "librdkafka",
+   "i": 84,
+   "items": [
+    "aggregate-value",
+    "aggregate-value"
+   ],
+   "k7": [
+    {
+     "line": 22234,
+     "origin": "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c:3651",
+     "family": "RET",
+     "tags": [
+      "aggregate-value"
+     ],
+     "facts": {
+      "roots": [
+       "formal"
+      ],
+      "values": [
+       "aggregate"
+      ],
+      "accesses": [
+       "read"
+      ],
+      "positions": [
+       "direct"
+      ],
+      "constructs": [
+       "return"
+      ],
+      "max_hops": 1
+     }
+    },
+    {
+     "line": 22236,
+     "origin": "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c:3653",
+     "family": "RET",
+     "tags": [
+      "aggregate-value"
+     ],
+     "facts": {
+      "roots": [
+       "formal"
+      ],
+      "values": [
+       "aggregate"
+      ],
+      "accesses": [
+       "read"
+      ],
+      "positions": [
+       "direct"
+      ],
+      "constructs": [
+       "return"
+      ],
+      "max_hops": 1
+     }
+    }
+   ]
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_metadata_cache.c",
+   "function": "rd_kafka_metadata_cache_entry_by_id_cmp",
+   "library": "librdkafka",
+   "i": 90,
+   "items": [
+    "aggregate-value"
+   ],
+   "k7": [
+    {
+     "line": 20577,
+     "origin": "lib/librdkafka-2.15.0/src/rdkafka_metadata_cache.c:888",
+     "family": "IND",
+     "tags": [
+      "aggregate-value"
+     ],
+     "facts": {
+      "roots": [
+       "local"
+      ],
+      "values": [
+       "aggregate"
+      ],
+      "accesses": [
+       "read"
+      ],
+      "positions": [
+       "call-arg"
+      ],
+      "constructs": [
+       "return"
+      ],
+      "max_hops": 1
+     }
+    }
+   ]
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_mock.c",
+   "function": "rd_kafka_mock_error_stack_find",
+   "library": "librdkafka",
+   "i": 91,
+   "items": [
+    "aggregate-value"
+   ],
+   "k7": [
+    {
+     "line": 22669,
+     "origin": "lib/librdkafka-2.15.0/src/rdkafka_mock.c:2244",
+     "family": "IND",
+     "tags": [
+      "aggregate-value"
+     ],
+     "facts": {
+      "roots": [
+       "formal",
+       "local"
+      ],
+      "values": [
+       "aggregate"
+      ],
+      "accesses": [
+       "read"
+      ],
+      "positions": [
+       "direct"
+      ],
+      "constructs": [
+       "statement"
+      ],
+      "max_hops": 1
+     }
+    }
+   ]
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_mock.c",
+   "function": "rd_kafka_mock_topic_find_by_id",
+   "library": "librdkafka",
+   "i": 91,
+   "items": [
+    "aggregate-value",
+    "aggregate-value"
+   ],
+   "k7": [
+    {
+     "line": 21936,
+     "origin": "lib/librdkafka-2.15.0/src/rdkafka_mock.c:1039",
+     "family": "IND",
+     "tags": [
+      "aggregate-value"
+     ],
+     "facts": {
+      "roots": [
+       "formal",
+       "local"
+      ],
+      "values": [
+       "aggregate"
+      ],
+      "accesses": [
+       "read"
+      ],
+      "positions": [
+       "direct"
+      ],
+      "constructs": [
+       "statement"
+      ],
+      "max_hops": 1
+     }
+    },
+    {
+     "line": 21937,
+     "origin": "lib/librdkafka-2.15.0/src/rdkafka_mock.c:1040",
+     "family": "COND",
+     "tags": [
+      "aggregate-value"
+     ],
+     "facts": {
+      "roots": [
+       "local"
+      ],
+      "values": [
+       "aggregate"
+      ],
+      "accesses": [
+       "read"
+      ],
+      "positions": [
+       "call-arg"
+      ],
+      "constructs": [
+       "cond-if"
+      ],
+      "max_hops": 1
+     }
+    }
+   ]
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_msg.c",
+   "function": "rd_kafka_message_latency",
+   "library": "librdkafka",
+   "i": 95,
+   "items": [
+    "union"
+   ],
+   "k7": [
+    {
+     "line": 20658,
+     "origin": "lib/librdkafka-2.15.0/src/rdkafka_msg.c:1444",
+     "family": "RET",
+     "tags": [
+      "union"
+     ],
+     "facts": {
+      "roots": [
+       "local"
+      ],
+      "values": [
+       "scalar"
+      ],
+      "accesses": [
+       "read"
+      ],
+      "positions": [
+       "direct"
+      ],
+      "constructs": [
+       "return"
+      ],
+      "max_hops": 1
+     }
+    }
+   ]
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_msg.c",
+   "function": "rd_kafka_message_produce_errstr",
+   "library": "librdkafka",
+   "i": 95,
+   "items": [
+    "union"
+   ],
+   "k7": [
+    {
+     "line": 19756,
+     "origin": "lib/librdkafka-2.15.0/src/rdkafka_msg.c:66",
+     "family": "RET",
+     "tags": [
+      "union"
+     ],
+     "facts": {
+      "roots": [
+       "local"
+      ],
+      "values": [
+       "pointer"
+      ],
+      "accesses": [
+       "read"
+      ],
+      "positions": [
+       "direct"
+      ],
+      "constructs": [
+       "return"
+      ],
+      "max_hops": 1
+     }
+    }
+   ]
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_msg.c",
+   "function": "unittest_msg_seq_wrap",
+   "library": "librdkafka",
+   "i": 95,
+   "items": [
+    "statement-expression+static-local",
+    "static-local",
+    "static-local",
+    "static-local"
+   ],
+   "k7": [
+    {
+     "line": 21138,
+     "origin": "lib/librdkafka-2.15.0/src/rdkafka_msg.c:2273",
+     "family": "COND",
+     "tags": [
+      "static-local"
+     ],
+     "facts": {
+      "roots": [
+       "global"
+      ],
+      "values": [
+       "scalar"
+      ],
+      "accesses": [
+       "read"
+      ],
+      "positions": [
+       "direct"
+      ],
+      "constructs": [
+       "cond-for"
+      ],
+      "max_hops": 0
+     }
+    },
+    {
+     "line": 21139,
+     "origin": "lib/librdkafka-2.15.0/src/rdkafka_msg.c:2274",
+     "family": "IND",
+     "tags": [
+      "static-local"
+     ],
+     "facts": {
+      "roots": [
+       "global"
+      ],
+      "values": [
+       "scalar"
+      ],
+      "accesses": [
+       "read"
+      ],
+      "positions": [
+       "call-arg"
+      ],
+      "constructs": [
+       "statement"
+      ],
+      "max_hops": 0
+     }
+    },
+    {
+     "line": 21140,
+     "origin": "lib/librdkafka-2.15.0/src/rdkafka_msg.c:2275",
+     "family": "IND",
+     "tags": [
+      "statement-expression",
+      "static-local"
+     ],
+     "facts": {
+      "roots": [
+       "global"
+      ],
+      "values": [
+       "scalar"
+      ],
+      "accesses": [
+       "read"
+      ],
+      "positions": [
+       "call-arg",
+       "direct"
+      ],
+      "constructs": [
+       "statement"
+      ],
+      "max_hops": 0
+     }
+    },
+    {
+     "line": 21140,
+     "origin": "lib/librdkafka-2.15.0/src/rdkafka_msg.c:2275",
+     "family": "COND",
+     "tags": [
+      "static-local"
+     ],
+     "facts": {
+      "roots": [
+       "global"
+      ],
+      "values": [
+       "scalar"
+      ],
+      "accesses": [
+       "read"
+      ],
+      "positions": [
+       "direct"
+      ],
+      "constructs": [
+       "cond-if"
+      ],
+      "max_hops": 0
+     }
+    }
+   ]
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+   "function": "rd_kafka_fetch_pos2str",
+   "library": "librdkafka",
+   "i": 100,
+   "items": [
+    "static-local"
+   ],
+   "k7": [
+    {
+     "line": 22853,
+     "origin": "lib/librdkafka-2.15.0/src/rdkafka_partition.c:4946",
+     "family": "IND",
+     "tags": [
+      "static-local"
+     ],
+     "facts": {
+      "roots": [
+       "formal",
+       "global"
+      ],
+      "values": [
+       "address",
+       "scalar"
+      ],
+      "accesses": [
+       "address",
+       "read"
+      ],
+      "positions": [
+       "call-arg"
+      ],
+      "constructs": [
+       "statement"
+      ],
+      "max_hops": 0
+     }
+    }
+   ]
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer.c",
+   "function": "do_unittest_illegal_extension_keys_should_fail",
+   "library": "librdkafka",
+   "i": 109,
+   "items": [
+    "static-local",
+    "static-local"
+   ],
+   "k7": [
+    {
+     "line": 21115,
+     "origin": "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer.c:1775",
+     "family": "IND",
+     "tags": [
+      "static-local"
+     ],
+     "facts": {
+      "roots": [
+       "global"
+      ],
+      "values": [
+       "pointer"
+      ],
+      "accesses": [
+       "read"
+      ],
+      "positions": [
+       "call-arg"
+      ],
+      "constructs": [
+       "statement"
+      ],
+      "max_hops": 0
+     }
+    },
+    {
+     "line": 21117,
+     "origin": "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer.c:1777",
+     "family": "IND",
+     "tags": [
+      "static-local"
+     ],
+     "facts": {
+      "roots": [
+       "global"
+      ],
+      "values": [
+       "pointer"
+      ],
+      "accesses": [
+       "read"
+      ],
+      "positions": [
+       "call-arg"
+      ],
+      "constructs": [
+       "statement"
+      ],
+      "max_hops": 0
+     }
+    }
+   ]
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_sasl_scram.c",
+   "function": "rd_kafka_sasl_scram_H",
+   "library": "librdkafka",
+   "i": 112,
+   "items": [
+    "indirect-call"
+   ],
+   "k7": [
+    {
+     "line": 20227,
+     "origin": "lib/librdkafka-2.15.0/src/rdkafka_sasl_scram.c:156",
+     "family": "IND",
+     "tags": [
+      "indirect-call"
+     ],
+     "facts": {
+      "roots": [
+       "formal"
+      ],
+      "values": [
+       "function_pointer",
+       "pointer",
+       "scalar"
+      ],
+      "accesses": [
+       "read"
+      ],
+      "positions": [
+       "call-arg",
+       "direct"
+      ],
+      "constructs": [
+       "statement"
+      ],
+      "max_hops": 3
+     }
+    }
+   ]
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_telemetry_encode.c",
+   "function": "count_attributes",
+   "library": "librdkafka",
+   "i": 119,
+   "items": [
+    "indirect-call"
+   ],
+   "k7": [
+    {
+     "line": 20754,
+     "origin": "lib/librdkafka-2.15.0/src/rdkafka_telemetry_encode.c:699",
+     "family": "COND",
+     "tags": [
+      "indirect-call"
+     ],
+     "facts": {
+      "roots": [
+       "formal"
+      ],
+      "values": [
+       "function_pointer"
+      ],
+      "accesses": [
+       "read"
+      ],
+      "positions": [
+       "direct"
+      ],
+      "constructs": [
+       "cond-if"
+      ],
+      "max_hops": 1
+     }
+    }
+   ]
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdlog.c",
+   "function": "rd_hexdump",
+   "library": "librdkafka",
+   "i": 126,
+   "items": [
+    "call"
+   ],
+   "k7": [
+    {
+     "line": 19635,
+     "origin": "lib/librdkafka-2.15.0/src/rdlog.c:58",
+     "family": "IND",
+     "tags": [
+      "call"
+     ],
+     "facts": {
+      "roots": [
+       "call-result",
+       "local"
+      ],
+      "values": [
+       "scalar"
+      ],
+      "accesses": [
+       "read"
+      ],
+      "positions": [
+       "call-arg"
+      ],
+      "constructs": [
+       "statement"
+      ],
+      "max_hops": 2
+     }
+    }
+   ]
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdmap.c",
+   "function": "rd_map_elem_cmp",
+   "library": "librdkafka",
+   "i": 127,
+   "items": [
+    "indirect-call"
+   ],
+   "k7": [
+    {
+     "line": 2965,
+     "origin": "lib/librdkafka-2.15.0/src/rdmap.c:42",
+     "family": "RET",
+     "tags": [
+      "indirect-call"
+     ],
+     "facts": {
+      "roots": [
+       "formal"
+      ],
+      "values": [
+       "function_pointer",
+       "scalar"
+      ],
+      "accesses": [
+       "read"
+      ],
+      "positions": [
+       "call-arg",
+       "direct"
+      ],
+      "constructs": [
+       "return"
+      ],
+      "max_hops": 1
+     }
+    }
+   ]
+  },
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdstring.c",
+   "function": "ut_strcasestr",
+   "library": "librdkafka",
+   "i": 132,
+   "items": [
+    "statement-expression+static-local",
+    "static-local",
+    "static-local",
+    "static-local",
+    "static-local"
+   ],
+   "k7": [
+    {
+     "line": 3167,
+     "origin": "lib/librdkafka-2.15.0/src/rdstring.c:411",
+     "family": "COND",
+     "tags": [
+      "static-local"
+     ],
+     "facts": {
+      "roots": [
+       "global"
+      ],
+      "values": [
+       "scalar"
+      ],
+      "accesses": [
+       "read"
+      ],
+      "positions": [
+       "direct"
+      ],
+      "constructs": [
+       "cond-for"
+      ],
+      "max_hops": 0
+     }
+    },
+    {
+     "line": 3170,
+     "origin": "lib/librdkafka-2.15.0/src/rdstring.c:415",
+     "family": "IND",
+     "tags": [
+      "static-local"
+     ],
+     "facts": {
+      "roots": [
+       "global"
+      ],
+      "values": [
+       "scalar"
+      ],
+      "accesses": [
+       "read"
+      ],
+      "positions": [
+       "call-arg"
+      ],
+      "constructs": [
+       "statement"
+      ],
+      "max_hops": 0
+     }
+    },
+    {
+     "line": 3172,
+     "origin": "lib/librdkafka-2.15.0/src/rdstring.c:417",
+     "family": "IND",
+     "tags": [
+      "static-local"
+     ],
+     "facts": {
+      "roots": [
+       "global"
+      ],
+      "values": [
+       "scalar"
+      ],
+      "accesses": [
+       "read"
+      ],
+      "positions": [
+       "direct"
+      ],
+      "constructs": [
+       "statement"
+      ],
+      "max_hops": 0
+     }
+    },
+    {
+     "line": 3173,
+     "origin": "lib/librdkafka-2.15.0/src/rdstring.c:418",
+     "family": "IND",
+     "tags": [
+      "statement-expression",
+      "static-local"
+     ],
+     "facts": {
+      "roots": [
+       "global"
+      ],
+      "values": [
+       "scalar"
+      ],
+      "accesses": [
+       "read"
+      ],
+      "positions": [
+       "call-arg",
+       "direct"
+      ],
+      "constructs": [
+       "statement"
+      ],
+      "max_hops": 0
+     }
+    },
+    {
+     "line": 3173,
+     "origin": "lib/librdkafka-2.15.0/src/rdstring.c:418",
+     "family": "COND",
+     "tags": [
+      "static-local"
+     ],
+     "facts": {
+      "roots": [
+       "global"
+      ],
+      "values": [
+       "scalar"
+      ],
+      "accesses": [
+       "read"
+      ],
+      "positions": [
+       "direct"
+      ],
+      "constructs": [
+       "cond-if"
+      ],
+      "max_hops": 0
+     }
+    }
+   ]
+  },
+  {
+   "file": "lib/monkey/mk_core/mk_rconf.c",
+   "function": "check_indent",
+   "library": "monkey",
+   "i": 161,
+   "items": [
+    "call",
+    "call"
+   ],
+   "k7": [
+    {
+     "line": 1899,
+     "origin": "lib/monkey/mk_core/mk_rconf.c:183",
+     "family": "COND",
+     "tags": [
+      "call"
+     ],
+     "facts": {
+      "roots": [
+       "call-result",
+       "formal"
+      ],
+      "values": [
+       "scalar"
+      ],
+      "accesses": [
+       "read"
+      ],
+      "positions": [
+       "direct"
+      ],
+      "constructs": [
+       "cond-if"
+      ],
+      "max_hops": 2
+     }
+    },
+    {
+     "line": 1907,
+     "origin": "lib/monkey/mk_core/mk_rconf.c:192",
+     "family": "COND",
+     "tags": [
+      "call"
+     ],
+     "facts": {
+      "roots": [
+       "call-result",
+       "formal"
+      ],
+      "values": [
+       "scalar"
+      ],
+      "accesses": [
+       "read"
+      ],
+      "positions": [
+       "direct"
+      ],
+      "constructs": [
+       "cond-if"
+      ],
+      "max_hops": 2
+     }
+    }
+   ]
+  }
+ ],
+ "loose_rows": [
+  {
+   "file": "lib/librdkafka-2.15.0/src/rdmap.c",
+   "function": "rd_map_init",
+   "library": "librdkafka",
+   "i": 127,
+   "items": [
+    "aggregate-value",
+    "new:IND",
+    "new:IND",
+    "new:IND",
+    "new:IND"
+   ],
+   "k7": [
+    {
+     "line": 3081,
+     "origin": "lib/librdkafka-2.15.0/src/rdmap.c:208",
+     "family": "IND",
+     "tags": [
+      "aggregate-value"
+     ],
+     "facts": {
+      "roots": [
+       "formal"
+      ],
+      "values": [
+       "aggregate"
+      ],
+      "accesses": [
+       "store"
+      ],
+      "positions": [
+       "direct"
+      ],
+      "constructs": [
+       "statement"
+      ],
+      "max_hops": 1
+     }
+    }
+   ]
+  }
+ ],
+ "frozen_11_07": [
+  {
+   "function": "cmetrics::lib/cmetrics/src/cmt_decode_statsd.c::cmt_get_statsd_type",
+   "rows": [
+    {
+     "status": "Unknown",
+     "items": [
+      "pointer-arithmetic"
+     ],
+     "freed_by_k7": true
+    }
+   ]
+  },
+  {
+   "function": "cmetrics::lib/cmetrics/src/cmt_encode_influx.c::line_protocol_escape",
+   "rows": [
+    {
+     "status": "Unknown",
+     "items": [
+      "call"
+     ],
+     "freed_by_k7": true
+    }
+   ]
+  },
+  {
+   "function": "cmetrics::lib/cmetrics/src/cmt_encode_opentelemetry.c::fetch_array_kvlist_entry",
+   "rows": [
+    {
+     "status": "Unknown",
+     "items": [
+      "union"
+     ],
+     "freed_by_k7": true
+    }
+   ]
+  },
+  {
+   "function": "cmetrics::lib/cmetrics/src/cmt_encode_opentelemetry.c::fetch_metadata_array_key",
+   "rows": [
+    {
+     "status": "Unknown",
+     "items": [
+      "union"
+     ],
+     "freed_by_k7": true
+    }
+   ]
+  },
+  {
+   "function": "cmetrics::lib/cmetrics/src/cmt_encode_text.c::fetch_metadata_kvlist_key",
+   "rows": [
+    {
+     "status": "Unknown",
+     "items": [
+      "union"
+     ],
+     "freed_by_k7": true
+    }
+   ]
+  },
+  {
+   "function": "cmetrics::lib/cmetrics/src/cmt_label.c::cmt_labels_create",
+   "rows": [
+    {
+     "status": "Unknown",
+     "items": [
+      "call"
+     ],
+     "freed_by_k7": true
+    }
+   ]
+  },
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/cJSON.c::buffer_skip_whitespace",
+   "rows": [
+    {
+     "status": "Unknown",
+     "items": [
+      "pointer-arithmetic"
+     ],
+     "freed_by_k7": true
+    }
+   ]
+  },
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/cJSON.c::cJSON_New_Item",
+   "rows": [
+    {
+     "status": "Unknown",
+     "items": [
+      "indirect-call"
+     ],
+     "freed_by_k7": true
+    }
+   ]
+  },
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/cJSON.c::cJSON_free",
+   "rows": [
+    {
+     "status": "Unknown",
+     "items": [
+      "indirect-call"
+     ],
+     "freed_by_k7": true
+    }
+   ]
+  },
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/cJSON.c::cJSON_malloc",
+   "rows": [
+    {
+     "status": "Unknown",
+     "items": [
+      "indirect-call"
+     ],
+     "freed_by_k7": true
+    }
+   ]
+  },
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/lz4.c::LZ4_resetStream_fast",
+   "rows": [
+    {
+     "status": "Unknown",
+     "items": [
+      "union"
+     ],
+     "freed_by_k7": true
+    }
+   ]
+  },
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/lz4.c::LZ4_slideInputBuffer",
+   "rows": [
+    {
+     "status": "Unknown",
+     "items": [
+      "cast+union"
+     ],
+     "freed_by_k7": true
+    }
+   ]
+  },
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/lz4frame.c::LZ4F_freeCDict",
+   "rows": [
+    {
+     "status": "Unknown",
+     "items": [
+      "aggregate-value",
+      "aggregate-value",
+      "aggregate-value",
+      "aggregate-value"
+     ],
+     "freed_by_k7": true
+    }
+   ]
+  },
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/lz4frame.c::LZ4F_freeCompressionContext",
+   "rows": [
+    {
+     "status": "Unknown",
+     "items": [
+      "aggregate-value",
+      "aggregate-value",
+      "aggregate-value"
+     ],
+     "freed_by_k7": true
+    }
+   ]
+  },
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/lz4frame.c::LZ4F_freeDecompressionContext",
+   "rows": [
+    {
+     "status": "Unknown",
+     "items": [
+      "aggregate-value",
+      "aggregate-value",
+      "aggregate-value"
+     ],
+     "freed_by_k7": true
+    }
+   ]
+  },
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/lz4hc.c::LZ4_compressHC2_continue",
+   "rows": [
+    {
+     "status": "Unknown",
+     "items": [
+      "cast+union"
+     ],
+     "freed_by_k7": true
+    }
+   ]
+  },
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/lz4hc.c::LZ4_compressHC2_limitedOutput_continue",
+   "rows": [
+    {
+     "status": "Unknown",
+     "items": [
+      "cast+union"
+     ],
+     "freed_by_k7": true
+    }
+   ]
+  },
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/rdhdrhistogram.c::rd_hdr_getCountAtIndex",
+   "rows": [
+    {
+     "status": "Unknown",
+     "items": [
+      "call"
+     ],
+     "freed_by_k7": true
+    }
+   ]
+  },
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka.c::rd_kafka_errno",
+   "rows": [
+    {
+     "status": "Unknown",
+     "items": [
+      "call"
+     ],
+     "freed_by_k7": true
+    }
+   ]
+  },
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_admin.c::rd_kafka_DescribeCluster_result_cluster_id",
+   "rows": [
+    {
+     "status": "Unknown",
+     "items": [
+      "call"
+     ],
+     "freed_by_k7": true
+    }
+   ]
+  },
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_admin.c::rd_kafka_DescribeCluster_result_controller",
+   "rows": [
+    {
+     "status": "Unknown",
+     "items": [
+      "call"
+     ],
+     "freed_by_k7": true
+    }
+   ]
+  },
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_admin.c::rd_kafka_ElectLeaders_result_result",
+   "rows": [
+    {
+     "status": "Unknown",
+     "items": [
+      "union"
+     ],
+     "freed_by_k7": true
+    }
+   ]
+  },
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_assignor.c::rtrim",
+   "rows": [
+    {
+     "status": "Unknown",
+     "items": [
+      "call"
+     ],
+     "freed_by_k7": true
+    }
+   ]
+  },
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_broker.c::rd_kafka_broker_monitor_op_cb",
+   "rows": [
+    {
+     "status": "Unknown",
+     "items": [
+      "indirect-call+union"
+     ],
+     "freed_by_k7": true
+    }
+   ]
+  },
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_conf.c::rd_kafka_confval_get_ptr",
+   "rows": [
+    {
+     "status": "Unknown",
+     "items": [
+      "union"
+     ],
+     "freed_by_k7": true
+    }
+   ]
+  },
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_conf.c::rd_kafka_confval_get_str",
+   "rows": [
+    {
+     "status": "Unknown",
+     "items": [
+      "union"
+     ],
+     "freed_by_k7": true
+    }
+   ]
+  },
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_fetcher.c::rd_kafka_toppar_fetch_decide_next_fetch_start_pos",
+   "rows": [
+    {
+     "status": "Unknown",
+     "items": [
+      "aggregate-value",
+      "aggregate-value"
+     ],
+     "freed_by_k7": true
+    }
+   ]
+  },
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_metadata_cache.c::rd_kafka_metadata_cache_entry_by_id_cmp",
+   "rows": [
+    {
+     "status": "Unknown",
+     "items": [
+      "aggregate-value"
+     ],
+     "freed_by_k7": true
+    }
+   ]
+  },
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_mock.c::rd_kafka_mock_error_stack_find",
+   "rows": [
+    {
+     "status": "Unknown",
+     "items": [
+      "aggregate-value"
+     ],
+     "freed_by_k7": true
+    }
+   ]
+  },
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_mock.c::rd_kafka_mock_topic_find_by_id",
+   "rows": [
+    {
+     "status": "Unknown",
+     "items": [
+      "aggregate-value",
+      "aggregate-value"
+     ],
+     "freed_by_k7": true
+    }
+   ]
+  },
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_msg.c::rd_kafka_message_latency",
+   "rows": [
+    {
+     "status": "Unknown",
+     "items": [
+      "union"
+     ],
+     "freed_by_k7": true
+    }
+   ]
+  },
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_partition.c::rd_kafka_fetch_pos2str",
+   "rows": [
+    {
+     "status": "Unknown",
+     "items": [
+      "static-local"
+     ],
+     "freed_by_k7": true
+    }
+   ]
+  },
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer.c::do_unittest_illegal_extension_keys_should_fail",
+   "rows": [
+    {
+     "status": "Unknown",
+     "items": [
+      "static-local",
+      "static-local"
+     ],
+     "freed_by_k7": true
+    }
+   ]
+  },
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_sasl_scram.c::rd_kafka_sasl_scram_H",
+   "rows": [
+    {
+     "status": "Unknown",
+     "items": [
+      "indirect-call"
+     ],
+     "freed_by_k7": true
+    }
+   ]
+  },
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_telemetry_encode.c::get_member_id",
+   "rows": [
+    {
+     "status": "Safe",
+     "items": [],
+     "freed_by_k7": false
+    }
+   ]
+  },
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/rdmap.c::rd_map_elem_cmp",
+   "rows": [
+    {
+     "status": "Unknown",
+     "items": [
+      "indirect-call"
+     ],
+     "freed_by_k7": true
+    }
+   ]
+  },
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/rdmap.c::rd_map_init",
+   "rows": [
+    {
+     "status": "Unknown",
+     "items": [
+      "aggregate-value",
+      "new:IND",
+      "new:IND",
+      "new:IND",
+      "new:IND"
+     ],
+     "freed_by_k7": false
+    }
+   ]
+  },
+  {
+   "function": "monkey-libevent::lib/monkey/mk_core/mk_rconf.c::check_indent",
+   "rows": [
+    {
+     "status": "Unknown",
+     "items": [
+      "call",
+      "call"
+     ],
+     "freed_by_k7": true
+    }
+   ]
+  },
+  {
+   "function": "monkey-libevent::lib/monkey/mk_server/mk_stream.c::channel_write_in_file",
+   "rows": [
+    {
+     "status": "Unknown",
+     "items": [
+      "new:IND"
+     ],
+     "freed_by_k7": false
+    }
+   ]
+  },
+  {
+   "function": "monkey-libevent::lib/monkey/mk_server/mk_utils.c::mk_utils_hex2int",
+   "rows": [
+    {
+     "status": "Unknown",
+     "items": [
+      "new:COND"
+     ],
+     "freed_by_k7": false
+    }
+   ]
+  }
+ ],
+ "freed_new_since_11_07": [
+  "librdkafka::lib/librdkafka-2.15.0/src/lz4hc.c::LZ4_createHC",
+  "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_admin.c::rd_kafka_DescribeConsumerGroups_result_groups",
+  "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_admin.c::rd_kafka_DescribeTopics_result_topics",
+  "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_admin.c::ut_make_ListConsumerGroups_fanout",
+  "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_admin.c::ut_make_ListConsumerGroups_partial_error",
+  "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_conf.c::rd_kafka_confval_init_ptr",
+  "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_msg.c::rd_kafka_message_produce_errstr",
+  "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_msg.c::unittest_msg_seq_wrap",
+  "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_telemetry_encode.c::count_attributes",
+  "librdkafka::lib/librdkafka-2.15.0/src/rdlog.c::rd_hexdump",
+  "librdkafka::lib/librdkafka-2.15.0/src/rdstring.c::ut_strcasestr",
+  "monkey::lib/monkey/mk_core/mk_rconf.c::check_indent"
+ ]
+}

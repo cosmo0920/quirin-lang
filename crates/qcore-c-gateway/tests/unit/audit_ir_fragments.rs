@@ -335,6 +335,8 @@ fn pointer_store_static_labels_decode_without_leaking_or_accepting_unknown_label
         "arithmetic",
         "other-address",
         "other",
+        // Card K3-POINTER-VALUED-STORES (rule 10v amended).
+        "same-object-derived",
     ] {
         let value = PointerStore {
             root: "p".into(),

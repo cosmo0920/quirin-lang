@@ -1,0 +1,201 @@
+{
+ "rows_before": 1894,
+ "rows_after": 1894,
+ "totals_before": {
+  "Unknown": 1506,
+  "Safe": 386,
+  "Unsafe": 2
+ },
+ "totals_after": {
+  "Unknown": 1506,
+  "Safe": 386,
+  "Unsafe": 2
+ },
+ "moves": {},
+ "moved": [],
+ "content_changed": [
+  {
+   "library": "chunkio",
+   "file": "lib/chunkio/src/cio_chunk.c",
+   "configuration": 0,
+   "function": "cio_chunk_delete",
+   "status": "Unknown",
+   "removed": [
+    [
+     "unsupported",
+     "call to `cio_log_print`: the callbacks stored in `cio_options.log_cb` are not a closed set of functions (a formal that is not a function pointer) (callback-member-open)",
+     "lib/chunkio/src/cio_chunk.c:145"
+    ],
+    [
+     "unsupported",
+     "call to `cio_log_print`: the callbacks stored in `cio_options.log_cb` are not a closed set of functions (a formal that is not a function pointer) (callback-member-open)",
+     "lib/chunkio/src/cio_chunk.c:151"
+    ],
+    [
+     "unsupported",
+     "call to `cio_log_print`: the callbacks stored in `cio_options.log_cb` are not a closed set of functions (a formal that is not a function pointer) (callback-member-open)",
+     "lib/chunkio/src/cio_chunk.c:157"
+    ]
+   ],
+   "added": []
+  },
+  {
+   "library": "chunkio",
+   "file": "lib/chunkio/src/cio_chunk.c",
+   "configuration": 0,
+   "function": "cio_chunk_open",
+   "status": "Unknown",
+   "removed": [
+    [
+     "unsupported",
+     "call to `cio_log_print`: the callbacks stored in `cio_options.log_cb` are not a closed set of functions (a formal that is not a function pointer) (callback-member-open)",
+     "lib/chunkio/src/cio_chunk.c:39"
+    ],
+    [
+     "unsupported",
+     "call to `cio_log_print`: the callbacks stored in `cio_options.log_cb` are not a closed set of functions (a formal that is not a function pointer) (callback-member-open)",
+     "lib/chunkio/src/cio_chunk.c:44"
+    ],
+    [
+     "unsupported",
+     "call to `cio_log_print`: the callbacks stored in `cio_options.log_cb` are not a closed set of functions (a formal that is not a function pointer) (callback-member-open)",
+     "lib/chunkio/src/cio_chunk.c:50"
+    ]
+   ],
+   "added": []
+  },
+  {
+   "library": "chunkio",
+   "file": "lib/chunkio/src/cio_file.c",
+   "configuration": 0,
+   "function": "cio_file_delete",
+   "status": "Unknown",
+   "removed": [
+    [
+     "unsupported",
+     "call to `cio_log_print`: the callbacks stored in `cio_options.log_cb` are not a closed set of functions (a formal that is not a function pointer) (callback-member-open)",
+     "lib/chunkio/src/cio_file.c:795"
+    ]
+   ],
+   "added": []
+  },
+  {
+   "library": "chunkio",
+   "file": "lib/chunkio/src/cio_file.c",
+   "configuration": 0,
+   "function": "cio_file_format_check",
+   "status": "Unknown",
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     "lib/chunkio/src/cio_file.c:205"
+    ],
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     "lib/chunkio/src/cio_file.c:214"
+    ]
+   ],
+   "added": []
+  },
+  {
+   "library": "chunkio",
+   "file": "lib/chunkio/src/cio_file.c",
+   "configuration": 0,
+   "function": "cio_file_open",
+   "status": "Unknown",
+   "removed": [
+    [
+     "unsupported",
+     "call to `cio_log_print`: the callbacks stored in `cio_options.log_cb` are not a closed set of functions (a formal that is not a function pointer) (callback-member-open)",
+     "lib/chunkio/src/cio_file.c:652"
+    ],
+    [
+     "unsupported",
+     "call to `cio_log_print`: the callbacks stored in `cio_options.log_cb` are not a closed set of functions (a formal that is not a function pointer) (callback-member-open)",
+     "lib/chunkio/src/cio_file.c:752"
+    ],
+    [
+     "unsupported",
+     "call to `cio_log_print`: the callbacks stored in `cio_options.log_cb` are not a closed set of functions (a formal that is not a function pointer) (callback-member-open)",
+     "lib/chunkio/src/cio_file.c:755"
+    ]
+   ],
+   "added": []
+  },
+  {
+   "library": "chunkio",
+   "file": "lib/chunkio/src/cio_file.c",
+   "configuration": 0,
+   "function": "cio_file_write",
+   "status": "Unknown",
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     "lib/chunkio/src/cio_file.c:1040"
+    ]
+   ],
+   "added": []
+  },
+  {
+   "library": "chunkio",
+   "file": "lib/chunkio/src/cio_file.c",
+   "configuration": 0,
+   "function": "cio_file_write_metadata",
+   "status": "Unknown",
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     "lib/chunkio/src/cio_file.c:1125"
+    ]
+   ],
+   "added": []
+  },
+  {
+   "library": "cmetrics",
+   "file": "lib/cmetrics/src/cmt_filter.c",
+   "configuration": 0,
+   "function": "filter_context_label_key_value",
+   "status": "Unknown",
+   "removed": [
+    [
+     "unsupported",
+     "call to `cmt_log_print`: the callbacks stored in `cmt.log_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: /media/Data/GitHub/quirin-lang/build/cycle19/clang/046accf6aded7906f66a1baf0202da349e521736/fluent-bit-clang-source/fluent-bit-clang-source/src/simdutf/flb_simdutf_connector.cpp: a unit that is not C (`cpp`), naming `cmt`)) (callback-member-open)",
+     "lib/cmetrics/src/cmt_filter.c:295"
+    ],
+    [
+     "unsupported",
+     "call to `cmt_log_print`: the callbacks stored in `cmt.log_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: /media/Data/GitHub/quirin-lang/build/cycle19/clang/046accf6aded7906f66a1baf0202da349e521736/fluent-bit-clang-source/fluent-bit-clang-source/src/simdutf/flb_simdutf_connector.cpp: a unit that is not C (`cpp`), naming `cmt`)) (callback-member-open)",
+     "lib/cmetrics/src/cmt_filter.c:333"
+    ],
+    [
+     "unsupported",
+     "call to `cmt_log_print`: the callbacks stored in `cmt.log_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: /media/Data/GitHub/quirin-lang/build/cycle19/clang/046accf6aded7906f66a1baf0202da349e521736/fluent-bit-clang-source/fluent-bit-clang-source/src/simdutf/flb_simdutf_connector.cpp: a unit that is not C (`cpp`), naming `cmt`)) (callback-member-open)",
+     "lib/cmetrics/src/cmt_filter.c:371"
+    ],
+    [
+     "unsupported",
+     "call to `cmt_log_print`: the callbacks stored in `cmt.log_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: /media/Data/GitHub/quirin-lang/build/cycle19/clang/046accf6aded7906f66a1baf0202da349e521736/fluent-bit-clang-source/fluent-bit-clang-source/src/simdutf/flb_simdutf_connector.cpp: a unit that is not C (`cpp`), naming `cmt`)) (callback-member-open)",
+     "lib/cmetrics/src/cmt_filter.c:409"
+    ],
+    [
+     "unsupported",
+     "call to `cmt_log_print`: the callbacks stored in `cmt.log_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: /media/Data/GitHub/quirin-lang/build/cycle19/clang/046accf6aded7906f66a1baf0202da349e521736/fluent-bit-clang-source/fluent-bit-clang-source/src/simdutf/flb_simdutf_connector.cpp: a unit that is not C (`cpp`), naming `cmt`)) (callback-member-open)",
+     "lib/cmetrics/src/cmt_filter.c:447"
+    ],
+    [
+     "unsupported",
+     "call to `cmt_log_print`: the callbacks stored in `cmt.log_cb` are not a closed set of functions (1 unit(s) of the run may name it but were not read (first: /media/Data/GitHub/quirin-lang/build/cycle19/clang/046accf6aded7906f66a1baf0202da349e521736/fluent-bit-clang-source/fluent-bit-clang-source/src/simdutf/flb_simdutf_connector.cpp: a unit that is not C (`cpp`), naming `cmt`)) (callback-member-open)",
+     "lib/cmetrics/src/cmt_filter.c:485"
+    ]
+   ],
+   "added": []
+  }
+ ],
+ "unmatched": [],
+ "alias_leaves_removed": 0,
+ "diagnostics_added": {}
+}

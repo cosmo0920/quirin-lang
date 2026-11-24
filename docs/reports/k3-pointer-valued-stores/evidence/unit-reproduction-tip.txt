@@ -1,0 +1,90 @@
+== cio_set_log_callback Unknown
+   2435 Unsupported { description: "C extension types could not be excluded: the definition's typed AST is unavailable (CG30)" }
+   2437 Unsupported { description: "indirect memory access is outside the resource projection" }
+## lib__cmetrics__src__cmt_decode_msgpack.c.i
+== create_counter_instance Unknown
+   7057 Unsupported { description: "C extension types could not be excluded: the definition's typed AST is unavailable (CG30)" }
+   7068 Unsupported { description: "indirect memory access is outside the resource projection" }
+== create_exp_histogram_instance Unknown
+   7127 Unsupported { description: "C extension types could not be excluded: the definition's typed AST is unavailable (CG30)" }
+   7138 Unsupported { description: "indirect memory access is outside the resource projection" }
+== create_gauge_instance Unknown
+   7071 Unsupported { description: "C extension types could not be excluded: the definition's typed AST is unavailable (CG30)" }
+   7082 Unsupported { description: "indirect memory access is outside the resource projection" }
+== create_histogram_instance Unknown
+   7113 Unsupported { description: "C extension types could not be excluded: the definition's typed AST is unavailable (CG30)" }
+   7124 Unsupported { description: "indirect memory access is outside the resource projection" }
+== create_summary_instance Unknown
+   7099 Unsupported { description: "C extension types could not be excluded: the definition's typed AST is unavailable (CG30)" }
+   7110 Unsupported { description: "indirect memory access is outside the resource projection" }
+== create_untyped_instance Unknown
+   7085 Unsupported { description: "C extension types could not be excluded: the definition's typed AST is unavailable (CG30)" }
+   7096 Unsupported { description: "indirect memory access is outside the resource projection" }
+== unpack_opts_unit Unknown
+   7191 Unsupported { description: "C extension types could not be excluded: the definition's typed AST is unavailable (CG30)" }
+   7196 Unsupported { description: "unsupported assignment expression" }
+   7203 Unsupported { description: "indirect memory access is outside the resource projection" }
+## lib__ctraces__src__ctr_encode_opentelemetry.c.i
+== otel_span_set_attributes Unknown
+   9023 Unsupported { description: "C extension types could not be excluded: the definition's typed AST is unavailable (CG30)" }
+   9026 Unsupported { description: "indirect memory access is outside the resource projection" }
+   9027 Unsupported { description: "indirect memory access is outside the resource projection" }
+== otel_span_set_events Unknown
+   9082 Unsupported { description: "C extension types could not be excluded: the definition's typed AST is unavailable (CG30)" }
+   9085 Unsupported { description: "indirect memory access is outside the resource projection" }
+   9086 Unsupported { description: "indirect memory access is outside the resource projection" }
+## lib__librdkafka-2.15.0__src__lz4.c.i
+== LZ4_renormDictT Unknown
+   1144 Unsupported { description: "indirect memory access is outside the resource projection" }
+## lib__librdkafka-2.15.0__src__nanopb__pb_decode.c.i
+== buf_read Safe
+== decode_pointer_field Unknown
+   708 Unsupported { description: "unmodeled call, aggregate or indirect access in return expression" }
+## lib__librdkafka-2.15.0__src__nanopb__pb_encode.c.i
+== buf_write Unknown
+   361 Unsupported { description: "indirect memory access is outside the resource projection" }
+== pb_ostream_from_buffer Unknown
+   368 Unsupported { description: "indirect memory access is outside the resource projection" }
+   369 Unsupported { description: "indirect memory access is outside the resource projection" }
+## lib__librdkafka-2.15.0__src__rdbuf.c.i
+== rd_buf_init Unknown
+   3539 Unsupported { description: "indirect memory access is outside the resource projection" }
+## lib__librdkafka-2.15.0__src__rdlist.c.i
+== rd_list_grow Unknown
+   2959 Unsupported { description: "indirect memory access is outside the resource projection" }
+## lib__librdkafka-2.15.0__src__rdmap.c.i
+== rd_map_alloc_buckets Unknown
+   3071 Unsupported { description: "indirect memory access is outside the resource projection" }
+== rd_map_insert Unknown
+   2995 Unsupported { description: "indirect memory access is outside the resource projection" }
+   2996 Unsupported { description: "indirect memory access is outside the resource projection" }
+   2996 Unsupported { description: "unmodeled call, aggregate or indirect access in branch condition" }
+   2997 Unsupported { description: "indirect memory access is outside the resource projection" }
+   2997 Unsupported { description: "unmodeled call, aggregate or indirect access in branch condition" }
+## lib__librdkafka-2.15.0__src__snappy.c.i
+== rd_kafka_snappy_init_env Unknown
+   20543 Unsupported { description: "indirect memory access is outside the resource projection" }
+== writer_set_expected_length Safe
+## lib__monkey__mk_core__mk_iov.c.i
+== mk_iov_consume Safe
+## lib__monkey__mk_core__mk_memory.c.i
+== mk_ptr_create Unknown
+   1822 Unsupported { description: "indirect memory access is outside the resource projection" }
+## lib__monkey__mk_server__mk_http_parser.c.i
+== request_set Unknown
+   5027 Unsupported { description: "C extension types could not be excluded: the definition's typed AST is unavailable (CG30)" }
+   5029 Unsupported { description: "indirect memory access is outside the resource projection" }
+   5030 Unsupported { description: "indirect memory access is outside the resource projection" }
+## lib__monkey__mk_server__mk_lib.c.i
+== mk_vhost_set_property Unknown
+   6269 Unsupported { description: "C extension types could not be excluded: the definition's typed AST is unavailable (CG30)" }
+   6282 Unsupported { description: "indirect memory access is outside the resource projection" }
+   6283 Unsupported { description: "indirect memory access is outside the resource projection" }
+## lib__monkey__mk_server__mk_utils.c.i
+== mk_buffer_cat Unknown
+   5485 Unsupported { description: "C extension types could not be excluded: the definition's typed AST is unavailable (CG30)" }
+   5490 Unsupported { description: "indirect memory access is outside the resource projection" }
+   5491 Unsupported { description: "indirect memory access is outside the resource projection" }
+   5492 Unsupported { description: "indirect memory access is outside the resource projection" }
+   5493 Unsupported { description: "unrecognized assignment destination" }
+   5494 Unsupported { description: "indirect memory access is outside the resource projection" }

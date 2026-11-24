@@ -35,11 +35,28 @@ impl Fixture {
             ("model.lean".into(), model_bytes.to_vec()),
             ("audit.lean".into(), audit_bytes.to_vec()),
         ]);
+        // Card SP10-FORMAL-BINDING-DESCRIPTIONS: the valuation's terms and
+        // the never-derived source correspondence (`QF005`).
+        let definitions = graph
+            .atoms
+            .values()
+            .filter_map(qcore_contract::formal_binding::definition)
+            .collect::<Vec<_>>();
         let environment = EnvironmentDefinition {
             id: "assigned_finite_propositions_v1".into(),
             variables: BTreeMap::from([(
                 "valuation".into(),
-                "three assigned propositions; no C/source truth".into(),
+                qcore_contract::formal_binding::reference_to(
+                    &[
+                        "bnd_source_corresponds",
+                        "children",
+                        "live",
+                        "nodup",
+                        "parent",
+                    ],
+                    &definitions,
+                )
+                .unwrap(),
             )]),
         };
         let atoms = ["a", "b", "c"]
@@ -61,9 +78,13 @@ impl Fixture {
                             sha256: qcore_schemas::sha256_hex(audit_bytes),
                         },
                         environment: environment.id.clone(),
-                        quantifiers: vec![format!("assigned atom {id}; valuation : Nat -> Prop")],
+                        quantifiers: qcore_contract::formal_binding::derived(&graph.atoms[id])
+                            .unwrap()
+                            .0,
                         prerequisites: vec![environment.id.clone()],
-                        conclusion: format!("the assigned valuation of {id}"),
+                        conclusion: qcore_contract::formal_binding::derived(&graph.atoms[id])
+                            .unwrap()
+                            .1,
                     },
                 )
             })

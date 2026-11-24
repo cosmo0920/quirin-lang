@@ -226,7 +226,11 @@ fn values_that_are_reads_calls_arithmetic_or_other_addresses_are_refused() {
     for body in [
         "void subject(struct S *s, struct S *t) { s->p = t->p; }",
         "void subject(struct S *s, struct S *t) { s->pp = &t->p; }",
-        "void subject(struct S *s) { s->name = s->name + 1; }",
+        // Card K3-POINTER-VALUED-STORES re-pin: this row was
+        // `s->name = s->name + 1`, which K3's same-object reading admits
+        // (`tests/k3_pointer_valued_stores.rs`); arithmetic over another
+        // object keeps the refusal.
+        "void subject(struct S *s, struct S *t) { s->name = t->name + 1; }",
         "void subject(struct S *s) { s->p = cg_get(); }",
         "void subject(struct S *s) { int x = 0; s->p = &x; }",
         "void subject(struct S *s) { s->p = s->self ? (void *) 0 : (void *) 0; }",
@@ -296,7 +300,8 @@ fn every_decision_vector_is_the_route_outcome() {
         return;
     }
     let rows = vectors();
-    assert_eq!(rows.len(), 17);
+    // Card K3-POINTER-VALUED-STORES: two same-object rows added (17 -> 19).
+    assert_eq!(rows.len(), 19);
     for (spelling, value, owner, decision) in rows {
         let body = match owner.as_str() {
             "untracked" => format!(

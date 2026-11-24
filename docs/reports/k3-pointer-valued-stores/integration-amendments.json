@@ -1,0 +1,57 @@
+{
+ "schema": "quirin-amendments/2",
+ "card": "K3-POINTER-VALUED-STORES",
+ "base": "3ca85c7a6",
+ "measured_tip": "19c8902e4",
+ "profiles": [],
+ "increment_paragraph": "**K3-POINTER-VALUED-STORES** (round 34, USER DECISION 2026-11-24 \"Let's get started out of four\"; gateway rule 10v amended, no new id; `QCore.PointerStoreDerived`; [report](../../reports/k3-pointer-valued-stores/README.md)). Re-census of CURRENT-ACCESS-ALIAS-CENSUS bundle K3 on the user's 2026-11-24 `current` report (11-07 tags joined by file, function, line and family): 2,167 `pointer-valued-store` leaves (was 2,428) on 845 Unknown rows (929), 49 rows freed alone (53); of the 11-07 list 5 are Safe (AG1's rule 61 among them) and 2 changed blocker. By hand, the 49 are 19 owned values stored into a formal's member (MEMBER-EFFECT-STORES), 6 formal or local pointers (example C, decision class 1), 11 owned results into an acquired or declared record (rule 61/B08 premises), 10 other, and 3 arithmetic over the destination's own object, the one shape this card reads: `P = Q +/- E` (pointer-to-pointer casts only, `E` an integer) with `Q` a pointer read of the same place or of a pointer member of the same object (root-only) is the neutral class `same-object-derived`; by C11 6.5.6p8 the owner gains no reference it did not hold (Lean `a_derived_store_adds_no_reference`, against example C's `a_foreign_value_may_add_a_reference`), the owner decides as for every neutral value and the body publishes no summary. New module `pointer_store_derived.rs`, one hook in `pointer_store.rs`, one arm in `legacy_pointer_store.rs`; no brief-listed shared file edited. Re-pins: rule 10v's arithmetic vector spelling (now `s->name = t->name + 1`), two vectors added (17 -> 19), CG11's refused-values row. Unit reproduction (release, the run's compile database and manifest): `buf_read`, `writer_set_expected_length` and `mk_iov_consume` Safe, as predicted; the integrator's pinned and `current` measurements are owed. No card gate (user instruction 2026-11-24: the merged K tip's landing gate is the one gate); the started scoped gate was stopped after submodules, fmt and Clippy (all 0); targeted tests: k3_pointer_valued_stores 5, cg11_pointer_stores 12, lib pointer_store 12 passed; Lean QCore.PointerStoreDerived and QCore.PointerStore built, 2 audits passed.",
+ "status_edits": [],
+ "ledger": [
+  {
+   "id": "CG11-UNRESOLVED-OWNER-POINTER-STORES",
+   "operation": "amend",
+   "source": "docs/reports/k3-pointer-valued-stores/README.md",
+   "text": "K3-POINTER-VALUED-STORES (round 34) re-census on the user's 2026-11-24 `current` report: the `pointer-valued-store` bundle holds 2,167 leaves (IND 1,846, COND 254, RET 67) on 845 Unknown rows and frees 49 rows alone (53 at 11-07; 5 of the 11-07 list are Safe, 2 changed blocker). The census tag excludes null stores, so this entry's identity-free values barely appear (4 string or null leaves); the 49 are owned values into a formal's member 19 (MEMBER-EFFECT-STORES), formal or local pointers 6 (example C), owned results into an acquired or declared record 11 (K3-ACQUIRED-RECORD-CALL-RESULT-STORES), other 10, and 3 rows of arithmetic over the destination's own object, which rule 10v now reads as the neutral class `same-object-derived` (`pointer_store_derived.rs`, QCore.PointerStoreDerived; unit reproduction: buf_read, writer_set_expected_length, mk_iov_consume Safe). The unresolved-owner refusal itself is unchanged; its discharge stands."
+  },
+  {
+   "id": "CG11-UNREAD-POINTER-PLACES",
+   "operation": "amend",
+   "source": "docs/reports/k3-pointer-valued-stores/README.md",
+   "text": "K3-POINTER-VALUED-STORES (round 34): no unread-place sub-shape is among the 49 rows the bundle frees alone on the 2026-11-24 `current` report (every one of the 49 has a CG10 destination; cast, array, call and volatile roots stand as recorded). The same-object arithmetic reading (rule 10v amended) reads the value's place through the same `typed_place::read_place`, so an unread value place keeps the refusal."
+  },
+  {
+   "id": "MEMBER-EFFECT-STORES",
+   "operation": "amend",
+   "source": "docs/reports/k3-pointer-valued-stores/README.md",
+   "text": "K3-POINTER-VALUED-STORES re-census (2026-11-24 `current` report): an owned result or a local acquisition stored into a formal's member is the largest share of the `pointer-valued-store` rows freed alone, 19 of 49 (+2 Monkey rows on unmapped lines): rd_buf_init, rd_kafka_assignment_init, the two rd_kafkap_Fetch_reply_tags setters, rd_kafka_topic_partition_set_metadata_from_rktp_stored, the two SCRAM `out->ptr = rd_malloc(...)` helpers, rd_kafka_snappy_init_env, otel_span_set_attributes/_events, rd_list_grow and rd_kafka_topic_partition_list_grow (`rd_realloc` of the member into itself), the six cmt_decode_msgpack create_*_instance (`map->parent = (void *) counter`), unpack_opts_unit, and Monkey mk_buffer_cat and mk_vhost_set_property. K3 recommends this entry's body half next (the store read as a hand-off into an unrebound formal parent, summary withheld, callers refused at the call)."
+  },
+  {
+   "id": "K3-ACQUIRED-RECORD-CALL-RESULT-STORES",
+   "operation": "register",
+   "source": "docs/reports/k3-pointer-valued-stores/README.md",
+   "title": "Owned call results stored into a record the body acquired or declared stay refused on 11 rows the pointer-store bundle frees alone",
+   "text": "K3-POINTER-VALUED-STORES re-census on the user's 2026-11-24 `current` report: rd_kafka_DeleteRecords_new, rd_kafka_ElectLeaders_new, rd_kafka_ListOffsetsResultInfo_new, rd_kafka_TopicCollection_of_topic_names, rd_kafka_UserScramCredentialDeletion_new, rd_kafka_mock_cgrp_consumer_target_assignment_new0, rd_kafka_topic_partition_new_from_rktp, rd_kafka_share_ack_batch_entry_new and rd_kafka_member_assigned_partitions_pair_new store an owned call result into a member of a record allocated by `rd_calloc` in the same body and keep `indirect memory access is outside the resource projection`, although the fixture of the shape (`s->p = q_alloc()` into `struct S *s = q_alloc()`) is Safe through O04-B08 / rule 61 at base 3ca85c7a6; each unit fails a premise K3 did not isolate (the units are 19k-27k analysed lines). Also: rd_map_alloc_buckets (`buckets.p = rd_calloc(...)` into a local record returned by value, not B08's pointer base) and rd_kafka_op_new_reply (`rko->rko_rktp = rd_kafka_toppar_keep0(...)`, a reference-count keep, decision class 3). DISCHARGE: a parity census of the B08/rule-61 premise each store fails on the `current` route, then the narrow lift or contract it names; measured, with Lean parity for any semantic change."
+  },
+  {
+   "id": "K3-DERIVED-STORE-LOCAL-COPY",
+   "operation": "register",
+   "source": "docs/reports/k3-pointer-valued-stores/README.md",
+   "title": "Pointer arithmetic over a local copy of the destination's own pointer stays refused",
+   "text": "K3-POINTER-VALUED-STORES (rule 10v amended) reads `P = Q +/- E` only when `Q` is read directly from the destination's place or object. A local copy (nanopb buf_write `pb_byte_t *dest = (pb_byte_t *) stream->state; ... stream->state = dest + count;`, lz4 LZ4_renormDictT `dictEnd = dict->dictionary + dict->dictSize; dict->dictionary = dictEnd - dict->dictSize;`) keeps the refusal: a write to the place between the copy and the store would leave the copy pointing into an object the owner no longer references. 2 rows freed alone on the 2026-11-24 `current` report. DISCHARGE: a local initialised once from the place, never rebound, with no write to the place (or its object) on any path to the store; Lean parity; measured."
+  },
+  {
+   "id": "K3-SELF-OR-LITERAL-ERRMSG-STORE",
+   "operation": "register",
+   "source": "docs/reports/k3-pointer-valued-stores/README.md",
+   "title": "nanopb's PB_RETURN_ERROR store (the place's own value or a string literal) inside a return comma stays refused",
+   "text": "K3-POINTER-VALUED-STORES census: nanopb's `return (stream->errmsg = (stream)->errmsg ? (stream)->errmsg : (\"msg\")), 0;` (PB_RETURN_ERROR) is 67 RET and 4 IND `pointer-valued-store` leaves on 34 Unknown rows of the 2026-11-24 `current` report (decode_pointer_field freed alone). The value is the place's current value or a string literal, so it carries no identity, but the store sits in a return expression's comma operand, which the return route does not read. DISCHARGE: read a conditional whose arms are the destination's own value and a neutral value as rule 10v's neutral store, and the comma `(store), constant` in a return expression as the store then the constant return; Lean parity; measured."
+  },
+  {
+   "id": "K3-STATIC-RESULT-POINTER-STORES",
+   "operation": "register",
+   "source": "docs/reports/k3-pointer-valued-stores/README.md",
+   "title": "A pointer store of a call whose result has static storage (EVP_sha256()) stays refused",
+   "text": "K3-POINTER-VALUED-STORES census: rd_kafka_sasl_scram_conf_validate stores `EVP_sha1()`, `EVP_sha256()` or `EVP_sha512()` into `rk->rk_conf.sasl.scram_evp`; the only leaves of the row. OpenSSL documents the digest objects as static, but no contract states a result of static storage, and rule 10v never reads a call as identity-free. DISCHARGE: a contract clause for a static (non-owned, never-released) result in the OpenSSL provider, and rule 10v reading a call to such a callee as a neutral value; measured."
+  }
+ ]
+}

@@ -1138,6 +1138,10 @@ refused guard, a site joined provenance (over the tie names) ties to the
 tested name is settled as a decided guard's null edge settles it; the identity
 refusal stays.
 
+Rule 10b is amended by [rule 77](#constraint-77): a null test of a local
+holding only loads from untracked objects, whose binding has no target, is
+decided with no identity refusal; every other unknown binding keeps it.
+
 <a id="constraint-10c"></a>
 
 10c. **An expression statement is a classified effect or a refusal, never an
@@ -1538,6 +1542,10 @@ refusal stays.
     states. `QCore.OutParameterBodySummary`
     (`scalar_store_preserves_custody`, `released_base_refuses`);
     [report](../reports/out-parameter-body-summary/README.md).
+    Amended by [rule 75](#constraint-75) (K1-CALL-ACTUAL-ACCESS): a member
+    address over a parenthesised root, `&(p)->f` (the `rd_kafka_*_lock`
+    macros' spelling), meets (3)'s never-bound premise exactly as `&p->f`
+    does; the premise itself is unchanged.
 
 <a id="constraint-10l"></a>
 
@@ -1701,6 +1709,10 @@ refusal stays.
     Rule 10k's checked read-only actual is an explicit exception to the
     pointer-root `may_bind` over-approximation; the joined never-bound
     closure and every other lexical/AST binding remain required.
+    Amended by [rule 75](#constraint-75): the never-bound closure reads
+    `& ( p ) -> f` (a group followed by `->` under a unary `&`) as no address
+    of `p`, as the plain reader reads `& p -> f`; the aggregate store's
+    premises and `may_bind` keep this rule's reading.
 
 <a id="constraint-10p"></a>
 
@@ -2591,7 +2603,23 @@ refusal stays.
     never rebound stored into a member of a formal's object, as a retention
     its summary states), a local's pointer, a pointer read, a call,
     arithmetic, another object's address, and a cast other than a
-    qualification conversion. Every failing premise makes the node exactly
+    qualification conversion. **Same-object arithmetic** (card
+    K3-POINTER-VALUED-STORES, `pointer_store_derived.rs`, one hook in
+    `pointer_store.rs`): `P = Q ± E` (and `E + Q`), under pointer-to-pointer
+    casts only, with `E` an integer and `Q` a pointer read of the same place
+    as `P` (the same side-effect-free spelling: declarations, members, index
+    operands and literals) or of a pointer member of `P`'s own object (both
+    CG10 places root-only over one root), is the neutral class
+    `same-object-derived`: by C11 6.5.6p8 the value points into the object
+    `Q` points into, so the owner gains no reference it did not already hold
+    (`QCore.PointerStoreDerived.a_derived_store_adds_no_reference`; example
+    C's value may add one, `a_foreign_value_may_add_a_reference`), the
+    old-value check covers `Q`, which is rooted at the same root, and the read
+    and the offset carry their own per-hop obligations. Arithmetic over a
+    formal's or local's name, another object's pointer, a place read through
+    a pointer past the root other than the destination itself, a local copy
+    of the place (it may be stale), an integer round trip or an operand the
+    typed reader refuses keeps the refusal. Every failing premise makes the node exactly
     the gate's refusal, byte for byte. A body with such a store publishes no
     derived summary and establishes no specification (`has_pointer_store` in
     the W4 gate): a caller would read `Borrowed` for the formal whose object
@@ -2609,7 +2637,9 @@ refusal stays.
     this body's obligation. Premises stated, not proved: faithful Clang
     extraction of types, cast kinds and declaration ids (trust boundary 28).
     `QCore.PointerStore`, bound to the Rust decision table by shared-vector
-    tests; [report](../reports/cg11-pointer-valued-stores/README.md).
+    tests, and `QCore.PointerStoreDerived` for the same-object reading;
+    [report](../reports/cg11-pointer-valued-stores/README.md),
+    [K3 report](../reports/k3-pointer-valued-stores/README.md).
 
 <a id="constraint-10w"></a>
 
@@ -7893,6 +7923,33 @@ an undeclared OpenSSL producer). `QCore.NullableReferenceDrop` (12 audited,
     `lifetime_entails_default_lifetime`,
     `default_lifetime_does_not_give_the_unload_order`);
     [report](../reports/sp9-plugin-guarded-application-formulas/README.md).
+    **Amended by card SP10-FORMAL-BINDING-DESCRIPTIONS** (contract
+    specification C04.18.2, C04.18.3, C04.18.9's SP10 block; same user
+    decision; user 2026-11-23: "Launch both"; user decision
+    2026-11-24 on the prefix scheme: "Prefix, then land"): a binding manifest's or flow
+    model's environment component is a typed environment reference (the
+    canonical JSON list of G01p parameters, each a bound typed atom's
+    parameter or a registered term in its rendered sort) or a content
+    digest, and a formal binding's quantifiers and conclusion are its typed
+    atom's parameters and formula. An English description or field is
+    refused with `QF005` on every load route (`hypothesis_bindings::resolve*`,
+    `premise_flow::compile*`, through `qcore_contract::formal_binding`). The
+    167 live manifests were migrated with their digests and markers. A
+    reference asserts no condition: "Open" qualifiers are the never-derived
+    `#source_corresponds` (the detach environment) or
+    `#bnd_source_corresponds`. The SP10 terms follow SP9's A′ scheme:
+    plugin-model components are `#plg_*` over SP9's sorts, the binding's
+    own terms `#bnd_*`; a bound atom's own parameters keep their declared
+    names. Binding manifests are still read by no
+    verdict. **Do not** admit an English environment description or binding
+    field, derive `#bnd_source_corresponds` from any fact, reserve an unprefixed
+    name in the SP10 block, or read a
+    frozen description except through the legacy reader
+    (`lift_environment`). `QCore.FormalBindingEnvironments`
+    (`sp10_terms_denote`, `every_reference_resolves`,
+    `binding_source_correspondence_is_never_derived`,
+    `environment_vectors_agree`);
+    [report](../reports/sp10-formal-binding-descriptions/README.md).
 
 <a id="constraint-13i"></a>
 
@@ -13714,5 +13771,163 @@ through `ampersand_runs`.
     `a_parenthesised_dereference_is_unchanged`, `outside_vectors_hold`,
     `old_vectors_hold`);
     [report](../reports/return-family-star-outside-parentheses/README.md).
+
+<a id="constraint-75"></a>
+
+75. **Under a unary `&`, a parenthesised name followed by `->` is a member's
+    base, not the `&`'s operand.** Card K1-CALL-ACTUAL-ACCESS
+    (`parenthesised_member_operand.rs`; one hook in
+    `lexical_nested_assignment::parenthesised_writes_reading`, the
+    never-bound closure's call in `borrowed_actual::seed_nested`), the one
+    exact reading defect its re-census of W44-CALL-ARGUMENT-UNTYPED-ACTUAL
+    found. Macro expansion spells a member address with a parenthesised base:
+    librdkafka's `rd_kafka_toppar_lock(rktp)` is
+    `mtx_lock(&(rktp)->rktp_lock)`, `rd_kafka_terminating(rk)` reads
+    `rd_atomic32_get(&(rk)->rk_terminate)`, the `rd_kafka_buf_read_*` macros
+    hand `&(rkbuf)->rkbuf_reader` to `rd_slice_read`. Rule 10o's reader of
+    parenthesised writes seeded `p` as addressed whole there, so the closure
+    called `p` bound and every typed position over it that needs the
+    never-bound premise (rule 10k's address and pointer actuals, rule 10n(1)'s
+    member address, in statements, conditions and returns) kept the gate's
+    refusal wherever the lexical recogniser does not type the base (every
+    typedef-spelled handle); the plain spelling `&p->f` is not a seed (the
+    plain reader exempts a name followed by `->`). A postfix operator binds
+    tighter than a unary one (C11 6.5.2, 6.5.3), so `& ( p ) -> f` is
+    `& ( ( p ) -> f )`, and a parenthesised expression is the expression it
+    encloses (6.5.1p5): the `&` takes the member place, never `p`. The closure
+    now drops exactly that group's address seed when the two tokens after the
+    group are `-` `>`. The group's increment and compound seeds, a group
+    followed by `.`, `[`, `(` or anything else, a group that is not one name,
+    rule 71's logical AND and every other seed, assignment and round are
+    unchanged; a name addressed whole elsewhere (`g(&(p))`), released,
+    reassigned or incremented stays bound. **Do not** drop the seed of a group
+    followed by anything but `->`, extend the reading to the aggregate store's
+    premises 3 and 5 or to `may_bind` (both keep rule 10o's reading byte for
+    byte), or read a bound root's member address here (the typed positions'
+    premises are unchanged). Premises stated, not proved: the importer's
+    character tokens (`->` as `-` `>`) and that the increment and compound
+    seeds read only the tokens after the group (trust boundary 28).
+    `QCore.ParenthesisedMemberOperand` (`a_whole_address_is_seeded`,
+    `every_whole_address_is_seeded`, `only_a_member_operand_is_dropped`,
+    `at_least_the_plain_reader`, `the_old_reading_is_kept_without_the_arm`,
+    `the_closure_only_drops_seeds`, `decision_vectors_hold`), bound to
+    `DECISION_VECTORS`; [report](../reports/k1-call-actual-access/README.md).
+
+<a id="constraint-77"></a>
+
+77. **A local holding only loads from untracked objects is decided as the
+    load.** Card K5-LOCAL-ORIGIN-ALIASES, bundle K5 of
+    CURRENT-ACCESS-ALIAS-CENSUS on the user's decision of 2026-11-24 to start
+    the K cards (`borrowed_path_local.rs`: `read`, `decide`, `value_admits`,
+    `untracked`; the adapter `legacy_borrowed_path_local.rs`; the field
+    `TraversalNames::borrowed_path` in `legacy_c.rs`; one hook in the work
+    list's edge refinement and one in the leak-witness census, both through
+    `guard_refinement`; one `EscapeIfOwned` arm in
+    `legacy_transfer::transfer_base`). P2 lowers `L = R->F` on an unbound
+    root to a borrowed, target-free alias, and rules 14n and 11d already read
+    through it; but a null test of `L` took rule 10b's identity refusal
+    (`UnknownAlias L`, both edges unmodelled, so rule 11d then refused every
+    later read), and `return L;` reported the unknown binding, although
+    `return R->F;` is rule 10k (2)'s exit that escapes nothing
+    ([report](../reports/k5-local-origin-aliases/README.md)). Read from
+    Clang's AST of the function, asked only where a null test or a return
+    names a local the declaration reader does not call a scalar. (1)
+    **Roots.** A pointer formal, single-level, declared once and spelled by no
+    local, that rule 5b's full return premise answers for (the custody
+    closure proves it never bound **and** `may_bind` does not name it), every
+    reference to which is a null test, a dereference base, a call actual or a
+    `return`. (2) **Locals**, a greatest fixed point: rule 62's automatic
+    locals of object-pointer type every write of which (`=` or the
+    initializer), through parentheses and `NoOp`/`BitCast` casts, is a null
+    pointer constant, a string literal, a whole read of another admitted
+    local, or a **load**: the lvalue conversion of an object-pointer member or
+    element place whose base reaches an admitted root or local through loads,
+    `.` members, subscripts, a member array's decay used as a subscript base,
+    or `(&PLACE)->`; the value contains no call, assignment, step or
+    statement expression. Every reference is a null test, a dereference base,
+    a call actual, a `return`, the local's own rebinding or a copy into
+    another admitted local. The closure is **not** asked of the local (it
+    binds every name a value mentions, an index stepped by the loop
+    included); what makes its value untracked is read directly, and every
+    custody use of it is decided on its binding. (3) **Null test.** A
+    `BranchOnNull` of an admitted local whose incoming binding has no target,
+    the identity derivation and an unwidened state, and which is no status or
+    cell witness, is decided (`Refined`) where rule 10b's arm answered
+    `Unknown`: the narrowing that arm applied stands, and nothing else moves
+    (no obligation, site or other binding; no report, no unmodelled edge, no
+    rule 12e settling, which ties no site to a name that never holds one).
+    (4) **Return.** `EscapeIfOwned` of an admitted local whose binding is
+    untracked in the same sense escapes nothing. (5) **Soundness.** By
+    induction over any run, an admitted local holds null, a literal's address
+    or a value loaded from an object reachable from an admitted root through
+    loads, the value `R->F` itself has there; P2's premise that a never-bound
+    root reaches no tracked place is what makes that load target-free, and
+    the rule adds none. A release, a transfer or an owned or custody-taking
+    position still finds no target and refuses; a custody-taking actual
+    refuses at the call (rule 11d's record). **Do not** admit a value from a
+    call, a whole read of a formal (rule 62's copy, whose return W4 needs), an
+    address or an array decay as a value (an interior address, rule 5j and
+    W45-RETURN-POINTER-RESULT-READS), a file-scope or static object (rule 54's
+    and AG2-STATIC-OBJECT-COPY's boundary), a statement expression, a root a
+    statement writes, rebinds, copies or hands to a position the closure
+    binds, or a tested binding with a target, a mixed or derived derivation
+    or a widened state; and do not widen (3) to rule 10b's arm in general: a
+    lookup's result is no load. Premises stated, not proved: faithful Clang
+    extraction of declarations, storage, types, casts and parent nodes, route
+    G's lowering of the tested and returned names (trust boundary 28), the
+    closure and `may_bind` of rules 5b and 10l, and P2's premise (with the
+    heap's untracked links unchanged by any admitted store: a store of a
+    tracked value into an untracked place is refused by rules 5i and 10v).
+    `QCore.BorrowedPathLocal` (`decision_vectors_hold`,
+    `every_admitted_local_holds_an_untracked_value`,
+    `the_admitted_guard_leaves_the_old_state`,
+    `the_guard_touches_no_obligation`, `the_guard_narrows_only_its_binding`,
+    `a_tracked_binding_keeps_the_old_guard`,
+    `returning_an_untracked_local_escapes_nothing`,
+    `a_release_of_an_untracked_local_still_refuses`), bound to
+    `DECISION_VECTORS`, `VALUE_VECTORS` and `BINDING_VECTORS` by shared-vector
+    unit tests.
+
+<a id="constraint-78"></a>
+
+78. **A pointer offset under an indirection or a subscript is read as the
+    subscript C defines it to be.** Card K7-RESIDUAL-CAUSES (round 34,
+    `pointer_offset_place.rs`, two delimited hooks in
+    `typed_access_path::Reader::path`: its `ArraySubscriptExpr` arm and a
+    `*` arm asked before the older one). It amends rules 10k's and 10t's refusal of
+    pointer arithmetic in a path for these forms only; every other premise of
+    10k, 10t, 10w, 11j, 12h and 12j stands. C11 6.5.2.1p2 defines `E1[E2]`
+    as `(*((E1)+(E2)))` and 6.5.6p8 makes `P + I` (either operand order) and
+    `P - I` the pointers `I` elements past and before `P`, so `*(P + I)`,
+    `*(I + P)`, `*(P - I)` and `(P + I)[K]` designate the objects `P[I]`,
+    `P[I]`, `P[-I]` and `P[I + K]` designate. Where the reader meets, after
+    its `strip`, a binary `+` or `-` whose own type is an object pointer
+    (`is_pointer_type`: no function pointer, no `union`, `volatile` or
+    `_Atomic` spelling), with exactly one pointer operand (on the left for
+    `-`) and an integer operand, it makes the subscript step it makes for
+    `P[I]`: the integer operand is read as an index expression
+    (`Reader::expression`, which refuses what it refuses for a subscript
+    index), the walk continues at `P`, and whether the step reads a pointer
+    from memory is decided on `P` (`subscript_hop`) exactly as for a
+    subscript's base. Nothing else changes: the place's root, steps, per-hop
+    obligations, union and view decisions and its lowering are the subscript
+    spelling's, so a read through a released pointer so spelled is the same
+    `use_after_release` candidate and an unchecked allocation the same
+    `unknown_alias`. **Do not** read a difference of two pointers, a sum
+    whose type is not an object pointer, a floating or other non-integer
+    operand, `I - P`, a cast between the indirection and the sum, a pointer
+    operand that is itself an offset (one offset per step), an offset under
+    `->` (`(P + 1)->f`), a compound assignment or increment (rule 10v's), or
+    claim a bound: as for every subscript, extents are outside the property.
+    Premises stated, not proved: faithful Clang extraction of operand types,
+    opcodes and cast kinds (trust boundary 28). Census and measurement:
+    [report](../reports/k7-residual-causes/README.md). `QCore.PointerOffsetPlace`
+    (`deref_offset_is_subscript`, `deref_difference_is_subscript`,
+    `subscript_of_offset`, `offset_vectors_hold`,
+    `a_deref_offset_reads_as_the_subscript`,
+    `an_offset_subscript_reads_as_the_subscript`,
+    `the_decision_is_the_subscripts`, `a_refused_offset_keeps_the_refusal`,
+    `a_nested_offset_is_refused`, `every_older_reading_stands` and six more),
+    bound to `OFFSET_VECTORS` by a shared-vector unit test.
 
 <!-- generated:rules:end -->

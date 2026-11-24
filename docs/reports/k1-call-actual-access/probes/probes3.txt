@@ -1,0 +1,33 @@
+# array member decay
+struct u { char s[24]; }; long w(struct u *a, struct u *b) { d_copy(a->s, b->s, 23); return 0; }
+# array of struct member decay (poll)
+struct q { int fd; short e; }; struct p { struct q pfd[2]; int cnt; }; long w(struct p *r) { return d_copy(r->pfd, r->pfd, r->cnt) != 0; }
+struct q { int fd; short e; }; struct p { struct q pfd[2]; int cnt; }; long w(struct p *r) { long x; x = d_len(r->pfd); return x; }
+# address of union-typed member (mtx_t)
+typedef union { char b[40]; long a; } mtxu; struct t { mtxu lock; int n; }; long w(struct t *t) { d_len(&(t)->lock); return 0; }
+typedef union { char b[40]; long a; } mtxu; struct t { mtxu lock; int n; }; long w(struct t *t) { d_len(&t->lock); return 0; }
+# address of struct-typed member
+struct tm { long a; }; struct t { struct tm tmr; int n; }; long w(struct t *t) { d_len(&t->tmr); return 0; }
+struct tm { long a; }; struct eos { struct tm tmr; }; struct rk { struct eos eos; }; long w(struct rk *rk) { d_len(&rk->eos.tmr); return 0; }
+struct tm { long a; }; struct rk { struct tm timers; }; struct rkb { struct rk *rk; struct tm tmr; }; long w(struct rkb *rkb) { d_copy(&rkb->rk->timers, &rkb->tmr, 1); return 0; }
+struct tm { long a; }; struct rk { struct tm timers; }; struct rkb { struct rk *rk; struct tm tmr; }; long w(struct rkb *rkb) { if (d_len(&rkb->rk->timers) != 0) return 1; return 0; }
+# condition with struct member address
+struct ne { long a; }; struct tags { struct ne ne; }; long w(struct tags *tags) { if (d_len(&tags->ne) == 1) return 1; return 0; }
+# typedef record pointer formal
+typedef struct box box_t; long w(box_t *b) { d_len(b->name); return 0; }
+typedef struct box box_t; long w(box_t *b) { if (d_len(b->name) != 0) return 1; return 0; }
+typedef struct box box_t; long w(box_t *b) { return d_len(b->name); }
+# chain through typedef
+struct inner { char *name; }; struct outer { struct inner *in; }; long w(struct outer *o) { return d_len(o->in->name); }
+struct inner { char *name; }; struct outer { struct inner in; }; long w(struct outer *o) { return d_len(o->in.name); }
+# conditional tail actual
+long w(struct box *b) { d_copy(b->name, b->next ? b->next->name : "none", 3); return 0; }
+# scalar from deep chain
+long w(struct box *b) { ext2(3); d_len(b->next->next->name); return 0; }
+# integer chain in tail
+long w(struct box *b) { d_copy(b->name, b->name, b->next->n); return 0; }
+# sizeof(*p)
+long w(struct box *b) { d_copy(b->name, b->name, sizeof(*b->name) * b->n); return 0; }
+# element address
+long w(struct box *b, long *a) { d_len(&a[1]); return 0; }
+struct z { long *e; long c; }; long w(struct z *z) { d_copy(z->e, &z->e[1], sizeof(*z->e) * z->c); return 0; }

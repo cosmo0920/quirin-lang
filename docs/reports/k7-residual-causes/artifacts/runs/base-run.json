@@ -1,0 +1,32 @@
+{
+  "command": [
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ab90f892459fe5f11/private/k7/target-census/release/quirin-audit",
+    "current",
+    "--checkout",
+    "/media/Data/GitHub/quirin-lang/build/cycle19/clang/046accf6aded7906f66a1baf0202da349e521736/fluent-bit-clang-source/fluent-bit-clang-source",
+    "--profile-directory",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ab90f892459fe5f11/contract/profiles/fluent-bit",
+    "--compile-database",
+    "/media/Data/GitHub/quirin-lang/build/cycle19/clang/046accf6aded7906f66a1baf0202da349e521736/fluent-bit-clang-source/fluent-bit-clang-production/compile_commands.json",
+    "--selection",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ab90f892459fe5f11/docs/reports/k7-residual-causes/artifacts/selection.json",
+    "--report",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ab90f892459fe5f11/private/k7/census-base/resource-diagnostics.json",
+    "--jobs",
+    "4"
+  ],
+  "binary_sha256": "afeb124321f0cc3f2613f9d5b11f8703cddfce849e5ae8685264e249df2a712a",
+  "environment": {
+    "QCORE_CLANG": "/usr/lib/llvm-21/bin/clang",
+    "QCORE_ACCESS_PATH_CENSUS": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ab90f892459fe5f11/private/k7/census-base/access-path-units",
+    "QCORE_TYPED_PATH_PARITY": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ab90f892459fe5f11/private/k7/census-base/parity.jsonl",
+    "QCORE_INDIRECT_CENSUS": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ab90f892459fe5f11/private/k7/census-base/indirect.jsonl",
+    "QCORE_CALL_ARGUMENT_CENSUS": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ab90f892459fe5f11/private/k7/census-base/call-arguments.jsonl",
+    "QCORE_CHAIN_CENSUS": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ab90f892459fe5f11/private/k7/census-base/chains.jsonl",
+    "QCORE_SUB_OBJECT_STORE_CENSUS": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ab90f892459fe5f11/private/k7/census-base/sub-object-stores.jsonl",
+    "QCORE_DESTINATION_SUFFIX_CENSUS": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-ab90f892459fe5f11/private/k7/census-base/destination-suffix.jsonl"
+  },
+  "start": "2026-11-24T10:14:15.720652+00:00",
+  "exit": 0,
+  "end": "2026-11-24T11:08:39.696547+00:00"
+}

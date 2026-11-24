@@ -1,0 +1,17 @@
+{
+ "schema": "quirin-amendments/2",
+ "card": "MEMBER-EFFECT-STORES",
+ "base": "c5cd10688",
+ "measured_tip": "9a6390eef",
+ "profiles": [],
+ "increment_paragraph": "**MEMBER-EFFECT-STORES, body half: re-census and stop** (round 35, USER DECISION 2026-11-24 \"Launch MEMBER-EFFECT-STORES body half\"; base c5cd10688; no semantic change, no rule id; [report](../../reports/member-effect-stores/README.md)). The 21 rows K3 assigned to this owner are all Unknown on the user's 2026-11-24 `current` report with only the gate's `indirect memory access is outside the resource projection` at their stores (rd_kafka_assignment_init 4 leaves, every other row 1; the Monkey rows are mk_utils.c::mk_buffer_cat and mk_lib.c::mk_vhost_set_property). Read at Fluent Bit 046accf6 against the r35 brief's premises (the place used only at the store; the local never used, released or stored again; no failure path storing a stale value; the old member value established custody-free in the body or the realloc input under a non-null clause): 0 rows are readable today, 2 with a new whole-object `memset` zeroing reading (rd_buf_init; rd_kafka_snappy_init_env through its inline clear_env and with a post-store null test allowed), 4 if `rd_realloc` also gains rule 37's checked non-null specification (it states `resource_return_reallocated(ptr, nullable)`; rd_list_grow and rd_kafka_topic_partition_list_grow). 17 rows fail on the caller's old value (16 through the formal, unpack_opts_unit through a local alias), 6 also use the place after the store, 2 store into embedded paths and rd_kafkap_Fetch_reply_tags_set_topic past a pointer hop; the two rd_dassert old-value checks compile to nothing (ENABLE_DEVEL off). Below the brief's stop threshold of about 5, so the card stops with options: (1, recommended) carry rule 10v's stated P-CG11-CALLER-SLOT premise for the hand-off with every caller refused at the call (11-13 rows); (2) the brief as written plus the zeroing reading and an rd_realloc rule 37 specification (2-4 rows, a corpus-wide contract change); (3) option 1 plus borrowed uses of the place after the store (up to 17 rows).",
+ "status_edits": [],
+ "ledger": [
+  {
+   "id": "MEMBER-EFFECT-STORES",
+   "operation": "amend",
+   "source": "docs/reports/member-effect-stores/README.md",
+   "text": "Body-half re-census (round 35, base c5cd10688, the 2026-11-24 `current` report): the 21 rows are Unknown on their store leaves alone (the gate's text; rule 38i's premises fail on memory-reading actuals, local values, casts and embedded paths). Requiring the old member value to be established custody-free inside the body, as the r35 brief does, leaves 0 rows readable today, 2 with a whole-object memset zeroing reading (rd_buf_init, rd_kafka_snappy_init_env) and 4 with a rule 37 non-null rd_realloc specification (rd_list_grow, rd_kafka_topic_partition_list_grow); 17 rows fail on the caller's old value. The card stopped for a user choice: carry rule 10v's stated P-CG11-CALLER-SLOT premise for the hand-off with every caller refused at the call (recommended, 11-13 rows), keep the body-established old value (2-4 rows), or also admit borrowed uses of the place after the store (up to 17 rows)."
+  }
+ ]
+}

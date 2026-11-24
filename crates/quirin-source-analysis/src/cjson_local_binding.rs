@@ -667,14 +667,59 @@ impl CheckedNativeDomain {
             (model_path.into(), model_bytes.to_vec()),
             (audit_path.into(), audit_bytes.to_vec()),
         ]);
-        let environment=EnvironmentDefinition{id:ENVIRONMENT.into(),variables:BTreeMap::from([
-            ("native_observation_sha256".into(),self.native_observation_sha256.clone()),
-            ("entry_heap".into(),"Complete live native allocation identities and exact child/next/prev snapshots; finite sequence membership defines local domain only".into()),
-            ("case_domain".into(),"Empty plus lengths1..4 all valid detach indices;11case keys".into()),
-            ("prerequisites".into(),self.prerequisites.join(";")),
-            ("context".into(),serde_json::to_string(held_context).map_err(|e|e.to_string())?),
-            ("external_boundaries".into(),"Native execution/compiler/allocator correspondence is observed or assumed; arbitrary custody/writers and universal atoms remain Open".into()),
-        ])};
+        // Card SP10-FORMAL-BINDING-DESCRIPTIONS: each component is a typed
+        // environment reference over the bound atoms' parameters and the
+        // SP10 terms, or the digest of exact bytes (`QF005`).
+        let definitions = graph
+            .atoms
+            .values()
+            .filter_map(qcore_contract::formal_binding::definition)
+            .collect::<Vec<_>>();
+        let reference =
+            |names: &[&str]| qcore_contract::formal_binding::reference_to(names, &definitions);
+        let environment = EnvironmentDefinition {
+            id: ENVIRONMENT.into(),
+            variables: BTreeMap::from([
+                (
+                    "native_observation_sha256".into(),
+                    self.native_observation_sha256.clone(),
+                ),
+                (
+                    "entry_heap".into(),
+                    reference(&[
+                        "detach_chain",
+                        "detach_distinct",
+                        "detach_empty",
+                        "detach_first_prev",
+                        "detach_last_next",
+                        "detach_link_targets",
+                        "detach_parent_outside",
+                        "detach_predecessor",
+                        "holds",
+                        "post_comparison",
+                        "recorded",
+                    ])?,
+                ),
+                (
+                    "case_domain".into(),
+                    reference(&["recorded_count", "required_count"])?,
+                ),
+                (
+                    "prerequisites_sha256".into(),
+                    qcore_schemas::sha256_hex(self.prerequisites.join(";").as_bytes()),
+                ),
+                (
+                    "context_sha256".into(),
+                    qcore_schemas::sha256_hex(
+                        &serde_json::to_vec(held_context).map_err(|e| e.to_string())?,
+                    ),
+                ),
+                (
+                    "external_boundaries".into(),
+                    reference(&["bnd_source_corresponds"])?,
+                ),
+            ]),
+        };
         let atom_model = [
             (
                 "finite_entry_equations",
@@ -689,11 +734,34 @@ impl CheckedNativeDomain {
                 "QCore.LocalSourceBindings.incompleteFixedCaseDomain",
             ),
         ];
-        let atoms=atom_model.into_iter().map(|(id,prop)| Ok((id.into(),FormalBinding{
-            atom_sha256:qcore_schemas::sha256_hex(&serde_json::to_vec(&graph.atoms[id]).map_err(|e|e.to_string())?),proposition:prop.into(),
-            model:ArtifactReference{path:model_path.into(),sha256:qcore_schemas::sha256_hex(model_bytes)},
-            audit:ArtifactReference{path:audit_path.into(),sha256:qcore_schemas::sha256_hex(audit_bytes)},environment:ENVIRONMENT.into(),quantifiers:vec!["Every entry/post snapshot in exactly the independently observed11case finite domain".into()],prerequisites:vec![ENVIRONMENT.into()],conclusion:prop.into(),
-        }))).collect::<Result<_,String>>()?;
+        let atoms = atom_model
+            .into_iter()
+            .map(|(id, prop)| {
+                let (quantifiers, conclusion) =
+                    qcore_contract::formal_binding::derived(&graph.atoms[id])?;
+                Ok((
+                    id.into(),
+                    FormalBinding {
+                        atom_sha256: qcore_schemas::sha256_hex(
+                            &serde_json::to_vec(&graph.atoms[id]).map_err(|e| e.to_string())?,
+                        ),
+                        proposition: prop.into(),
+                        model: ArtifactReference {
+                            path: model_path.into(),
+                            sha256: qcore_schemas::sha256_hex(model_bytes),
+                        },
+                        audit: ArtifactReference {
+                            path: audit_path.into(),
+                            sha256: qcore_schemas::sha256_hex(audit_bytes),
+                        },
+                        environment: ENVIRONMENT.into(),
+                        quantifiers,
+                        prerequisites: vec![ENVIRONMENT.into()],
+                        conclusion,
+                    },
+                ))
+            })
+            .collect::<Result<_, String>>()?;
         let models = BTreeMap::from([(
             "qcore_cjson_native_domain".into(),
             Model { environment, atoms },

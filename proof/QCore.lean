@@ -34,6 +34,7 @@ import QCore.BooleanConditionProfile
 import QCore.BooleanFieldUnit
 import QCore.BorrowLiveness
 import QCore.BorrowedActual
+import QCore.BorrowedPathLocal
 import QCore.BoundFieldRead
 import QCore.BoundUntracked
 import QCore.BoundsBodyStanding
@@ -204,6 +205,7 @@ import QCore.FixedScalarQuery
 import QCore.FloatPayloads
 import QCore.FloatTypes
 import QCore.Flow
+import QCore.FormalBindingEnvironments
 import QCore.FrameHelperTask
 import QCore.FrameHolderOneDeclaration
 import QCore.Frontend
@@ -367,13 +369,16 @@ import QCore.PackageIdentity
 import QCore.PackageTemplateBinding
 import QCore.ParentTeardown
 import QCore.ParenthesisedCallee
+import QCore.ParenthesisedMemberOperand
 import QCore.PipeDesugaring
 import QCore.PluginNeutralOverlap
 import QCore.PluginPremiseDecomposition
 import QCore.PluginReadingEnvironment
 import QCore.PluginSourceWitnesses
+import QCore.PointerOffsetPlace
 import QCore.PointerQualifierReader
 import QCore.PointerStore
+import QCore.PointerStoreDerived
 import QCore.PointerTypedefMember
 import QCore.PremiseFlow
 import QCore.PremiseFormula

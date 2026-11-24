@@ -48,6 +48,7 @@ pub mod typed_profile;
 
 pub mod chunk_contract;
 
+pub mod formal_binding;
 pub mod hypothesis;
 pub mod hypothesis_bindings;
 

@@ -218,6 +218,10 @@ pub mod thread_local_read;
 // Card AG2-UNRESOLVED-ALIAS (rule 62): copy sources that carry no resource
 // identity (literals, enumerators, read-only copies of unbound formals).
 pub mod custody_free_copy;
+// K5-LOCAL-ORIGIN-ALIASES hook (rule 77): begin. A local holding only loads
+// from untracked objects is decided at a null test and a return as the load.
+pub mod borrowed_path_local;
+// K5-LOCAL-ORIGIN-ALIASES hook (rule 77): end
 #[cfg(feature = "indirect-census")]
 pub mod traversal_census;
 mod type_query;
@@ -252,6 +256,9 @@ mod scalar_element_address;
 mod typed_place;
 // Card CG11-POINTER-VALUED-STORES (rule 10v): pointer-valued stores.
 mod pointer_store;
+// Card K3-POINTER-VALUED-STORES (rule 10v amended): arithmetic over a
+// pointer the destination's own object holds.
+mod pointer_store_derived;
 // Card CG10-OWNED-OUT-PARAMETER-MEMBER-SLOT (rule 72).
 mod owned_out_member;
 // Card OWNED-CONSTRUCTOR-OUT-PARAMETER-DELIVERY (rule 74l): the refusal of an
@@ -263,6 +270,9 @@ mod member_store_retention;
 // Card CG10-READER-GAPS (rule 71): a logical AND before a parenthesised
 // name is not its address.
 mod logical_and_operand;
+// Card K1-CALL-ACTUAL-ACCESS (rule 75): `&(p)->f` is no address of `p` for
+// the never-bound closure.
+mod parenthesised_member_operand;
 // Card CG10-READER-GAPS (rule 71a): the return position's placement of rule
 // 12h's identity-preserving-view removal.
 mod return_cast_view;
@@ -286,6 +296,10 @@ mod aggregate_value;
 // Card CG13-UNION-AND-BITFIELD-PLACES (rule 10w): union-member and bit-field
 // place steps.
 mod union_bitfield;
+// Card K7-RESIDUAL-CAUSES (rule 78): `*(P + I)` and `(P + I)[K]` read as the
+// subscripts C11 6.5.2.1p2 defines them to be; the hook is
+// `typed_access_path::Reader::path`.
+mod pointer_offset_place;
 // Card CG15-STORAGE-DURATION-AND-VOLATILE (rule 11h): storage duration and
 // `volatile`; the G hooks are in `legacy_storage_duration.rs`.
 mod storage_duration;

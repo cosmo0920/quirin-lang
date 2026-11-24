@@ -1,0 +1,27 @@
+{
+ "schema": "quirin-gate-slot/1",
+ "class": "audit",
+ "argv_run": [
+  "bash",
+  "docs/reports/k5-local-origin-aliases/scripts/run_repro.sh",
+  "private/k5/bin/quirin-audit-k5",
+  "private/k5/repro/compile_commands.json",
+  "private/k5/repro/base"
+ ],
+ "started": "2026-11-24T10:14:16+00:00",
+ "finished": "2026-11-24T10:27:35+00:00",
+ "exit": 0,
+ "max_rss_kib": 2108656,
+ "budget": {
+  "QCORE_AUDIT_JOBS": {
+   "after": "2",
+   "before": null
+  },
+  "admission_mib": 5120,
+  "jobs_cap": 2,
+  "label": "5G",
+  "mechanism": "QCORE_AUDIT_JOBS",
+  "memory_budget_mib": 5120,
+  "route_class": null
+ }
+}

@@ -117,6 +117,8 @@ fn value_class(code: &str) -> ValueClass {
         "interior-address" => ValueClass::InteriorAddress,
         crate::member_store_retention::RETAINED => ValueClass::RetainedFormal,
         crate::owned_out_member::OWNED_OUT => ValueClass::OwnedOut,
+        // Card K3-POINTER-VALUED-STORES (rule 10v amended).
+        "same-object-derived" => ValueClass::SameObjectDerived,
         _ => ValueClass::Other,
     }
 }

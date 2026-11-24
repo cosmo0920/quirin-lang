@@ -222,11 +222,17 @@ fn explicit_bounds_bindings_require_actual_source_model_audit_and_complete_domai
         (model_path.to_owned(), model.clone()),
         (audit_path.to_owned(), audit.clone()),
     ]);
+    // Card SP10-FORMAL-BINDING-DESCRIPTIONS: the held Context and the
+    // never-derived source correspondence, as typed terms (`QF005`).
     let environment = EnvironmentDefinition {
         id: "independently-held-null-fixture".into(),
         variables: BTreeMap::from([(
             "context".into(),
-            "All nine exact property-specific caller-held coordinates; source binding Open".into(),
+            qcore_contract::formal_binding::reference_to(
+                &["bnd_source_corresponds", "bnd_held_context"],
+                &[],
+            )
+            .unwrap(),
         )]),
     };
     let atoms = graph.refinements[PREMISE]
@@ -249,11 +255,13 @@ fn explicit_bounds_bindings_require_actual_source_model_audit_and_complete_domai
                         sha256: qcore_schemas::sha256_hex(&audit),
                     },
                     environment: environment.id.clone(),
-                    quantifiers: vec![
-                        "all actual selected model events, interpreted source Open".into(),
-                    ],
+                    quantifiers: qcore_contract::formal_binding::derived(&graph.atoms[id])
+                        .unwrap()
+                        .0,
                     prerequisites: vec![environment.id.clone()],
-                    conclusion: "loadedArtifacts e".into(),
+                    conclusion: qcore_contract::formal_binding::derived(&graph.atoms[id])
+                        .unwrap()
+                        .1,
                 },
             )
         })

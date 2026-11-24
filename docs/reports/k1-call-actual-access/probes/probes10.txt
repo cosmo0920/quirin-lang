@@ -1,0 +1,8 @@
+struct conf { long debug; }; typedef struct k { struct conf conf; char *name; } k_t; void log0(const struct conf *c, k_t *k, void *x, int l, long f, const char *fac, const char *fmt, ...); long w(k_t *rk) { do { if ((__builtin_expect(((rk->conf).debug &(0x100)), 0))) d_len(&rk->conf); } while (0); return 0; }
+struct conf { long debug; }; typedef struct k { struct conf conf; char *name; } k_t; long w(k_t *rk) { if ((__builtin_expect(((rk->conf).debug &(0x100)), 0))) d_len(&rk->conf); return 0; }
+struct conf { long debug; }; typedef struct k { struct conf conf; char *name; } k_t; long w(k_t *rk) { if ((rk->conf).debug & 0x100) d_len(&rk->conf); return 0; }
+struct conf { long debug; }; typedef struct k { struct conf conf; char *name; } k_t; long w(k_t *rk) { if (rk->conf.debug & 0x100) d_len(&rk->conf); return 0; }
+struct conf { long debug; }; typedef struct k { struct conf conf; char *name; } k_t; long w(k_t *rk) { if (__builtin_expect(rk->conf.debug & 0x100, 0)) d_len(&rk->conf); return 0; }
+struct conf { long debug; }; typedef struct k { struct conf conf; char *name; } k_t; long w(k_t *rk) { long x = (rk->conf).debug; return x; }
+struct conf { long debug; }; typedef struct k { struct conf conf; char *name; } k_t; long w(k_t *rk) { d_copy(&rk->conf, rk->name, 1); return 0; }
+struct conf { long debug; }; typedef struct k { struct conf conf; char *name; } k_t; long w(k_t *rk) { d_copy(&rk->conf, rk, 1); return 0; }

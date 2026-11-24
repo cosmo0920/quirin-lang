@@ -327,10 +327,13 @@ fn bound_sort(sort: &str) -> qcore_schemas::quant_proposition::Sort {
 fn the_sp9_block_is_new_prefixed_and_bound_to_lean() {
     let sp9: Vec<_> = RENDERED_TERMS.iter().filter(|t| t.block == "SP9").collect();
     assert_eq!(sp9.len(), 63);
-    // Appended after the SP7 block, never reordering it.
+    // Appended after the SP7 block, never reordering it; contiguous, and
+    // followed only by later blocks (card SP10-FORMAL-BINDING-DESCRIPTIONS
+    // appends SP10 after it).
     let blocks: Vec<_> = RENDERED_TERMS.iter().map(|t| t.block).collect();
     let first = blocks.iter().position(|b| *b == "SP9").unwrap();
-    assert!(blocks[first..].iter().all(|b| *b == "SP9"));
+    assert!(blocks[first..first + sp9.len()].iter().all(|b| *b == "SP9"));
+    assert!(blocks[first + sp9.len()..].iter().all(|b| *b == "SP10"));
     assert_eq!(blocks[first - 1], "SP7");
     for t in &sp9 {
         assert!(t.name.starts_with(PREFIX), "#{}", t.name);

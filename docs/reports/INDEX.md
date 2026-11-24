@@ -685,6 +685,19 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [joined-provenance-round-bound](joined-provenance-round-bound/README.md) | JOINED-PROVENANCE-ROUND-BOUND (wave 37) |
 
+## K
+
+| Card directory | Original report title |
+|---|---|
+
+| [k1-call-actual-access](k1-call-actual-access/README.md) | K1-CALL-ACTUAL-ACCESS: call-actual access reads, re-censused; rule 75 |
+
+| [k3-pointer-valued-stores](k3-pointer-valued-stores/README.md) | K3-POINTER-VALUED-STORES |
+
+| [k5-local-origin-aliases](k5-local-origin-aliases/README.md) | K5-LOCAL-ORIGIN-ALIASES: locals holding only loads from untracked objects |
+
+| [k7-residual-causes](k7-residual-causes/README.md) | K7-RESIDUAL-CAUSES: the residual refusal causes of the access census, re-censused; rule 78 |
+
 ## L
 
 | Card directory | Original report title |
@@ -780,6 +793,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [member-access-projection](member-access-projection/README.md) | MEMBER-ACCESS-PROJECTION |
 
 | [member-effect-component-scope](member-effect-component-scope/README.md) | MEMBER-EFFECT-COMPONENT-SCOPE |
+
+| [member-effect-stores](member-effect-stores/README.md) | MEMBER-EFFECT-STORES, body half: re-census and stop |
 
 | [member-effect-summary](member-effect-summary/README.md) | MEMBER-EFFECT-SUMMARY |
 
@@ -1338,6 +1353,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [source-scalar-calls-v1](source-scalar-calls-v1/README.md) | SOURCE-SCALAR-CALLS-V1 |
 
 | [sp1-symbolic-openssl-premises](sp1-symbolic-openssl-premises/README.md) | SP1-SYMBOLIC-OPENSSL-PREMISES |
+
+| [sp10-formal-binding-descriptions](sp10-formal-binding-descriptions/README.md) | SP10-FORMAL-BINDING-DESCRIPTIONS |
 
 | [sp2-symbolic-librdkafka-premises](sp2-symbolic-librdkafka-premises/README.md) | SP2-SYMBOLIC-LIBRDKAFKA-PREMISES |
 

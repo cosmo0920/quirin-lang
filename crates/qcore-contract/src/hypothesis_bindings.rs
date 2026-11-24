@@ -207,6 +207,8 @@ fn resolve_replayed(
         {
             return Err("binding: incompatible manifest domain/environment/source status".into());
         }
+        // Card SP10-FORMAL-BINDING-DESCRIPTIONS: typed references only (`QF005`).
+        crate::formal_binding::check_model(&manifest.environment, &manifest.atoms, &graph.atoms)?;
         for (id, binding) in &manifest.atoms {
             let atom = &graph.atoms[id];
             if binding.atom_sha256

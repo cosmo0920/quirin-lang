@@ -1,0 +1,219 @@
+{
+ "rows": 1859,
+ "reproduced_user_rows": 1858,
+ "user_rows_in_selection": 1859,
+ "status": {
+  "base": {
+   "Unknown": 1394,
+   "Safe": 464,
+   "Unsafe": 1
+  },
+  "tip": {
+   "Unknown": 1392,
+   "Safe": 466,
+   "Unsafe": 1
+  }
+ },
+ "moves": [
+  {
+   "row": [
+    "lib/cmetrics/src/cmt_decode_statsd.c",
+    "cmt_get_statsd_type"
+   ],
+   "base": "Unknown",
+   "tip": "Safe"
+  },
+  {
+   "row": [
+    "lib/librdkafka-2.15.0/src/cJSON.c",
+    "buffer_skip_whitespace"
+   ],
+   "base": "Unknown",
+   "tip": "Safe"
+  }
+ ],
+ "leaf_changes": [
+  {
+   "row": [
+    "lib/cmetrics/src/cmt_decode_statsd.c",
+    "cmt_get_statsd_type"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     5920
+    ]
+   ],
+   "added": []
+  },
+  {
+   "row": [
+    "lib/cmetrics/src/cmt_decode_statsd.c",
+    "statsd_process_line"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     5940
+    ]
+   ],
+   "added": []
+  },
+  {
+   "row": [
+    "lib/librdkafka-2.15.0/src/cJSON.c",
+    "buffer_skip_whitespace"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in loop condition",
+     2129
+    ]
+   ],
+   "added": []
+  },
+  {
+   "row": [
+    "lib/librdkafka-2.15.0/src/cJSON.c",
+    "cJSON_ParseWithLengthOpts"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "call to uncontracted function `buffer_skip_whitespace`",
+     2186
+    ]
+   ],
+   "added": []
+  },
+  {
+   "row": [
+    "lib/librdkafka-2.15.0/src/cJSON.c",
+    "parse_array"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "call to uncontracted function `buffer_skip_whitespace`",
+     2450
+    ],
+    [
+     "unsupported",
+     "call to uncontracted function `buffer_skip_whitespace`",
+     2479
+    ],
+    [
+     "unsupported",
+     "call to uncontracted function `buffer_skip_whitespace`",
+     2484
+    ]
+   ],
+   "added": []
+  },
+  {
+   "row": [
+    "lib/librdkafka-2.15.0/src/cJSON.c",
+    "parse_number"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in switch expression",
+     1528
+    ]
+   ],
+   "added": []
+  },
+  {
+   "row": [
+    "lib/librdkafka-2.15.0/src/cJSON.c",
+    "parse_object"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "call to uncontracted function `buffer_skip_whitespace`",
+     2573
+    ],
+    [
+     "unsupported",
+     "call to uncontracted function `buffer_skip_whitespace`",
+     2606
+    ],
+    [
+     "unsupported",
+     "call to uncontracted function `buffer_skip_whitespace`",
+     2611
+    ],
+    [
+     "unsupported",
+     "call to uncontracted function `buffer_skip_whitespace`",
+     2619
+    ],
+    [
+     "unsupported",
+     "call to uncontracted function `buffer_skip_whitespace`",
+     2624
+    ]
+   ],
+   "added": []
+  },
+  {
+   "row": [
+    "lib/librdkafka-2.15.0/src/cJSON.c",
+    "parse_string"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     1910
+    ]
+   ],
+   "added": []
+  },
+  {
+   "row": [
+    "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+    "rd_kafka_broker_name_parse"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     23835
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `t`",
+     23835
+    ]
+   ]
+  },
+  {
+   "row": [
+    "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer.c",
+    "create_jws_compact_serialization"
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "unrecognized assignment destination",
+     20601
+    ]
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `jws_last_char`",
+     20601
+    ]
+   ]
+  }
+ ]
+}

@@ -558,7 +558,7 @@ extern fn impact_free(p: ptr<mut,u8>) -> unit contract { requires resource_contr
     // Resolve the exact production graph's formal references before the
     // context-scoped synthetic refutation/impact control.
     let manifest_bytes = include_bytes!(
-        "../../../docs/reports/sp6-symbolic-hypothesis-atoms/bindings/27c0736584d81d659e44dd29eae891ccdc37cfeaf019a57a620fadaa73d910a1.json"
+        "../../../docs/reports/sp10-formal-binding-descriptions/bindings/a1fa87c8c5bc126404bd955397ff7b1cff0b4f4feb28a436d32003c4ca01bf55.json"
     );
     let manifest_sha = qcore_schemas::sha256_hex(manifest_bytes);
     let expected_manifests = BTreeMap::from([(
@@ -768,7 +768,7 @@ fn concrete_attachment_preserves_closed_world_facts_and_publishes_checked_open_b
     );
     let expected_graphs = qcore_contract::hypothesis::replay(after.source_assumptions()).unwrap();
     let bytes = include_bytes!(
-        "../../../docs/reports/sp6-symbolic-hypothesis-atoms/bindings/27c0736584d81d659e44dd29eae891ccdc37cfeaf019a57a620fadaa73d910a1.json"
+        "../../../docs/reports/sp10-formal-binding-descriptions/bindings/a1fa87c8c5bc126404bd955397ff7b1cff0b4f4feb28a436d32003c4ca01bf55.json"
     );
     let sha = qcore_schemas::sha256_hex(bytes);
     let expected = BTreeMap::from([(sha.clone(), serde_json::from_slice(bytes).unwrap())]);

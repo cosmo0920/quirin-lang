@@ -1,7 +1,7 @@
 module contract;
-// qcore-premise-binding-manifest-v1 cb_kafka_logger rk_plugin_callback_closure 5d8df0a7aa98e83fb8e94813b1e881c1318b908ca4b2b2ae7aed56a2188bcfa1
-// qcore-premise-binding-manifest-v1 cb_kafka_msg rk_plugin_callback_closure 6e1d8aec31fcfd3a87c8a684f65a7dbe3613513d80cfa29b9e44d895346954a3
-// qcore-premise-binding-manifest-v1 oauthbearer_token_refresh_cb rk_plugin_callback_closure 69d4cf49d136e4ad86d3a4a7cb4b14560c46d5712f07ce12e662c2e955d0cd6f
+// qcore-premise-binding-manifest-v1 cb_kafka_logger rk_plugin_callback_closure cea8a761c16905033308e4829eab3f4f22b3b1df0876b1ff468b5312746c873d
+// qcore-premise-binding-manifest-v1 cb_kafka_msg rk_plugin_callback_closure 99a0f4a22265ff6f2869f4588b7c6338b4eb81bb9059b401dc5641a1a0c86c88
+// qcore-premise-binding-manifest-v1 oauthbearer_token_refresh_cb rk_plugin_callback_closure 31078d9e9791bd51a93a451eb3e40c8f64d3592b0c2aec26e65016a4dba49872
 
 // BEGIN OP-APP-RK-CALLBACKS-VIA-POLL-CB (scripts/write_contracts.py)
 

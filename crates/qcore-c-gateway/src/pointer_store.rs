@@ -119,6 +119,10 @@ pub(crate) enum ValueClass {
     /// an assignment: only rule 72's lowering builds it, and the flow decides
     /// it with rule 72's own table.
     OwnedOut,
+    /// Card K3-POINTER-VALUED-STORES (rule 10v amended): pointer arithmetic
+    /// over the destination's own value or a pointer of its own object
+    /// ([`crate::pointer_store_derived`]).
+    SameObjectDerived,
 }
 
 impl ValueClass {
@@ -139,6 +143,7 @@ impl ValueClass {
             Self::Other => "other",
             Self::RetainedFormal => crate::member_store_retention::RETAINED,
             Self::OwnedOut => crate::owned_out_member::OWNED_OUT,
+            Self::SameObjectDerived => "same-object-derived",
         }
     }
 
@@ -152,6 +157,7 @@ impl ValueClass {
                 | Self::FunctionPointerName
                 | Self::SelfAddress
                 | Self::InteriorAddress
+                | Self::SameObjectDerived
         )
     }
 }
@@ -267,8 +273,11 @@ pub(crate) const DECISION_VECTORS: &[(&str, &str, bool, &str, &str)] = &[
         "value-shape",
     ),
     ("s->p = cg_get()", "call", false, "untracked", "value-shape"),
+    // Card K3-POINTER-VALUED-STORES re-pin: the spelling was
+    // `s->name = s->name + 1`, now the same-object row below; arithmetic over
+    // another object keeps the refusal.
     (
-        "s->name = s->name + 1",
+        "s->name = t->name + 1",
         "arithmetic",
         false,
         "untracked",
@@ -290,6 +299,22 @@ pub(crate) const DECISION_VECTORS: &[(&str, &str, bool, &str, &str)] = &[
         "owned-field",
     ),
     ("d->p = 0", "null", false, "unresolved", "unresolved-owner"),
+    // Card K3-POINTER-VALUED-STORES: arithmetic over the destination's own
+    // object; the owner decides as for every other neutral value.
+    (
+        "s->name = s->name + 1",
+        "same-object-derived",
+        false,
+        "untracked",
+        "admit",
+    ),
+    (
+        "o->name = o->name + 1",
+        "same-object-derived",
+        false,
+        "tracked",
+        "owned-field",
+    ),
 ];
 
 /// The admitted store the flow decides ([`LegacyInstruction::PointerStore`]).
@@ -339,6 +364,7 @@ impl<'de> serde::Deserialize<'de> for PointerStore {
             ValueClass::Other,
             ValueClass::RetainedFormal,
             ValueClass::OwnedOut,
+            ValueClass::SameObjectDerived,
         ];
         let value = classes
             .into_iter()
@@ -530,6 +556,29 @@ pub(crate) fn classify_value<'a>(
     }
 }
 
+/// Card K3-POINTER-VALUED-STORES (rule 10v amended): [`classify_value`],
+/// then arithmetic or another shape refined to
+/// [`ValueClass::SameObjectDerived`] where [`crate::pointer_store_derived`]
+/// reads it.
+pub(crate) fn classify_store<'a>(
+    place: &Value,
+    value: &'a Value,
+    destination: &TypedPlace,
+    fields: &BTreeMap<String, Option<FieldFacts>>,
+) -> (
+    ValueReading<'a>,
+    Option<crate::pointer_store_derived::Derived<'a>>,
+) {
+    let mut reading = classify_value(value, destination, fields);
+    let derived = matches!(reading.class, ValueClass::Arithmetic | ValueClass::Other)
+        .then(|| crate::pointer_store_derived::read(place, value, destination, fields))
+        .flatten();
+    if derived.is_some() {
+        reading = ValueReading::of(ValueClass::SameObjectDerived);
+    }
+    (reading, derived)
+}
+
 /// A place reads no pointer but its root's: a pointer root whose only hop is
 /// the root (CG10's `root-only`), or a record root with no hop at all.
 fn root_only(place: &TypedPlace) -> bool {
@@ -606,7 +655,9 @@ pub(crate) fn read_store(reader: &mut Reader<'_>, place: &Value, value: &Value) 
             return None;
         }
     };
-    let mut reading = classify_value(value, &destination, reader.fields());
+    // Card K3-POINTER-VALUED-STORES hook (rule 10v amended): the store's
+    // classification, with arithmetic over the destination's own object.
+    let (mut reading, derived) = classify_store(place, value, &destination, reader.fields());
     // Card CG10-READER-GAPS (rule 71b): `T *` for a function typedef `T` is
     // a function-pointer name, not an object pointer.
     // Only a named formal: the flow decides a function-pointer name by it.
@@ -655,6 +706,12 @@ pub(crate) fn read_store(reader: &mut Reader<'_>, place: &Value, value: &Value) 
     if let Some(address) = reading.address {
         reader.address_target = true;
         reader.path(address, false, false)?;
+    }
+    // Card K3-POINTER-VALUED-STORES hook: the derived value's pointer read
+    // and offset carry their own per-hop obligations.
+    if let Some(derived) = &derived {
+        reader.path(derived.place, false, true)?;
+        reader.expression(derived.offset)?;
     }
     reader.plan.pointer_store = Some(PointerStore {
         root: destination.name.clone(),

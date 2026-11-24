@@ -2136,6 +2136,14 @@ fn analyze_cfg_with_entry_collected(
                 &mut edge_output,
                 &context.site_kinds,
             ) {
+                // K5-LOCAL-ORIGIN-ALIASES hook (rule 77): begin
+                let refinement = super::borrowed_path_local_route::guard_refinement(
+                    refinement,
+                    &node.instruction,
+                    &output,
+                    &context.traversal.borrowed_path,
+                );
+                // K5-LOCAL-ORIGIN-ALIASES hook (rule 77): end
                 match refinement {
                     // Card **SCALAR-ROUTE-EXIT-EDGE**. A loop header's exit
                     // edge is never removed, whatever the value route decides.
@@ -4489,6 +4497,16 @@ pub(super) fn transfer_base(
                         .iter()
                         .all(|site| context.derived_bases.contains(site))
             }) => {}
+        // K5-LOCAL-ORIGIN-ALIASES hook (rule 77): begin. Returning a local
+        // that only holds loads from untracked objects, with an untracked
+        // binding, escapes nothing: rule 10k (2)'s exit for `return R->F;`.
+        LegacyInstruction::EscapeIfOwned { source }
+            if super::borrowed_path_local_route::return_escapes_nothing(
+                &state,
+                source,
+                &context.traversal.borrowed_path,
+            ) => {}
+        // K5-LOCAL-ORIGIN-ALIASES hook (rule 77): end
         LegacyInstruction::EscapeIfOwned { source } => {
             // Card W43-INDEX-TRAVERSAL: returning a declared scalar whose
             // binding carries no target (a counter's zero fact) returns no

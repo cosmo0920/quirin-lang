@@ -1,0 +1,371 @@
+[
+ {
+  "library": "librdkafka",
+  "file": "rdbuf.c",
+  "function": "rd_buf_init",
+  "rows": [
+   {
+    "file": "lib/librdkafka-2.15.0/src/rdbuf.c",
+    "status": "Unknown",
+    "diagnostics": [
+     {
+      "category": "unsupported",
+      "description": "indirect memory access is outside the resource projection",
+      "line": 3539
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "library": "librdkafka",
+  "file": "rdkafka_assignment.c",
+  "function": "rd_kafka_assignment_init",
+  "rows": [
+   {
+    "file": "lib/librdkafka-2.15.0/src/rdkafka_assignment.c",
+    "status": "Unknown",
+    "diagnostics": [
+     {
+      "category": "unsupported",
+      "description": "indirect memory access is outside the resource projection",
+      "line": 20780
+     },
+     {
+      "category": "unsupported",
+      "description": "indirect memory access is outside the resource projection",
+      "line": 20781
+     },
+     {
+      "category": "unsupported",
+      "description": "indirect memory access is outside the resource projection",
+      "line": 20783
+     },
+     {
+      "category": "unsupported",
+      "description": "indirect memory access is outside the resource projection",
+      "line": 20785
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "library": "librdkafka",
+  "file": "rdkafka_fetcher.c",
+  "function": "rd_kafkap_Fetch_reply_tags_set_topic",
+  "rows": [
+   {
+    "file": "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c",
+    "status": "Unknown",
+    "diagnostics": [
+     {
+      "category": "unsupported",
+      "description": "indirect memory access is outside the resource projection",
+      "line": 20417
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "library": "librdkafka",
+  "file": "rdkafka_fetcher.c",
+  "function": "rd_kafkap_Fetch_reply_tags_set_topic_cnt",
+  "rows": [
+   {
+    "file": "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c",
+    "status": "Unknown",
+    "diagnostics": [
+     {
+      "category": "unsupported",
+      "description": "indirect memory access is outside the resource projection",
+      "line": 20407
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "library": "librdkafka",
+  "file": "rdkafka_partition.c",
+  "function": "rd_kafka_topic_partition_set_metadata_from_rktp_stored",
+  "rows": [
+   {
+    "file": "lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+    "status": "Unknown",
+    "diagnostics": [
+     {
+      "category": "unsupported",
+      "description": "indirect memory access is outside the resource projection",
+      "line": 21766
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "library": "librdkafka",
+  "file": "rdkafka_sasl_scram.c",
+  "function": "rd_kafka_sasl_scram_build_client_final_message_wo_proof",
+  "rows": [
+   {
+    "file": "lib/librdkafka-2.15.0/src/rdkafka_sasl_scram.c",
+    "status": "Unknown",
+    "diagnostics": [
+     {
+      "category": "unsupported",
+      "description": "indirect memory access is outside the resource projection",
+      "line": 20293
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "library": "librdkafka",
+  "file": "rdkafka_sasl_scram.c",
+  "function": "rd_kafka_sasl_scram_generate_nonce",
+  "rows": [
+   {
+    "file": "lib/librdkafka-2.15.0/src/rdkafka_sasl_scram.c",
+    "status": "Unknown",
+    "diagnostics": [
+     {
+      "category": "unsupported",
+      "description": "indirect memory access is outside the resource projection",
+      "line": 20191
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "library": "librdkafka",
+  "file": "snappy.c",
+  "function": "rd_kafka_snappy_init_env",
+  "rows": [
+   {
+    "file": "lib/librdkafka-2.15.0/src/snappy.c",
+    "status": "Unknown",
+    "diagnostics": [
+     {
+      "category": "unsupported",
+      "description": "indirect memory access is outside the resource projection",
+      "line": 20543
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "library": "ctraces",
+  "file": "ctr_encode_opentelemetry.c",
+  "function": "otel_span_set_attributes",
+  "rows": [
+   {
+    "file": "lib/ctraces/src/ctr_encode_opentelemetry.c",
+    "status": "Unknown",
+    "diagnostics": [
+     {
+      "category": "unsupported",
+      "description": "indirect memory access is outside the resource projection",
+      "line": 9027
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "library": "ctraces",
+  "file": "ctr_encode_opentelemetry.c",
+  "function": "otel_span_set_events",
+  "rows": [
+   {
+    "file": "lib/ctraces/src/ctr_encode_opentelemetry.c",
+    "status": "Unknown",
+    "diagnostics": [
+     {
+      "category": "unsupported",
+      "description": "indirect memory access is outside the resource projection",
+      "line": 9086
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "library": "librdkafka",
+  "file": "rdlist.c",
+  "function": "rd_list_grow",
+  "rows": [
+   {
+    "file": "lib/librdkafka-2.15.0/src/rdlist.c",
+    "status": "Unknown",
+    "diagnostics": [
+     {
+      "category": "unsupported",
+      "description": "indirect memory access is outside the resource projection",
+      "line": 2959
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "library": "librdkafka",
+  "file": "rdkafka_partition.c",
+  "function": "rd_kafka_topic_partition_list_grow",
+  "rows": [
+   {
+    "file": "lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+    "status": "Unknown",
+    "diagnostics": [
+     {
+      "category": "unsupported",
+      "description": "indirect memory access is outside the resource projection",
+      "line": 21599
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "library": "cmetrics",
+  "file": "cmt_decode_msgpack.c",
+  "function": "create_counter_instance",
+  "rows": [
+   {
+    "file": "lib/cmetrics/src/cmt_decode_msgpack.c",
+    "status": "Unknown",
+    "diagnostics": [
+     {
+      "category": "unsupported",
+      "description": "indirect memory access is outside the resource projection",
+      "line": 7068
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "library": "cmetrics",
+  "file": "cmt_decode_msgpack.c",
+  "function": "create_exp_histogram_instance",
+  "rows": [
+   {
+    "file": "lib/cmetrics/src/cmt_decode_msgpack.c",
+    "status": "Unknown",
+    "diagnostics": [
+     {
+      "category": "unsupported",
+      "description": "indirect memory access is outside the resource projection",
+      "line": 7138
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "library": "cmetrics",
+  "file": "cmt_decode_msgpack.c",
+  "function": "create_gauge_instance",
+  "rows": [
+   {
+    "file": "lib/cmetrics/src/cmt_decode_msgpack.c",
+    "status": "Unknown",
+    "diagnostics": [
+     {
+      "category": "unsupported",
+      "description": "indirect memory access is outside the resource projection",
+      "line": 7082
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "library": "cmetrics",
+  "file": "cmt_decode_msgpack.c",
+  "function": "create_histogram_instance",
+  "rows": [
+   {
+    "file": "lib/cmetrics/src/cmt_decode_msgpack.c",
+    "status": "Unknown",
+    "diagnostics": [
+     {
+      "category": "unsupported",
+      "description": "indirect memory access is outside the resource projection",
+      "line": 7124
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "library": "cmetrics",
+  "file": "cmt_decode_msgpack.c",
+  "function": "create_summary_instance",
+  "rows": [
+   {
+    "file": "lib/cmetrics/src/cmt_decode_msgpack.c",
+    "status": "Unknown",
+    "diagnostics": [
+     {
+      "category": "unsupported",
+      "description": "indirect memory access is outside the resource projection",
+      "line": 7110
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "library": "cmetrics",
+  "file": "cmt_decode_msgpack.c",
+  "function": "create_untyped_instance",
+  "rows": [
+   {
+    "file": "lib/cmetrics/src/cmt_decode_msgpack.c",
+    "status": "Unknown",
+    "diagnostics": [
+     {
+      "category": "unsupported",
+      "description": "indirect memory access is outside the resource projection",
+      "line": 7096
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "library": "cmetrics",
+  "file": "cmt_decode_msgpack.c",
+  "function": "unpack_opts_unit",
+  "rows": [
+   {
+    "file": "lib/cmetrics/src/cmt_decode_msgpack.c",
+    "status": "Unknown",
+    "diagnostics": [
+     {
+      "category": "unsupported",
+      "description": "indirect memory access is outside the resource projection",
+      "line": 7203
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "library": "monkey",
+  "file": "mk_iov.c",
+  "function": "mk_buffer_cat",
+  "rows": []
+ },
+ {
+  "library": "monkey",
+  "file": "mk_vhost.c",
+  "function": "mk_vhost_set_property",
+  "rows": []
+ }
+]

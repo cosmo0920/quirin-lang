@@ -1,0 +1,104 @@
+{
+ "schema": "quirin-amendments/2",
+ "card": "K7-RESIDUAL-CAUSES",
+ "base": "3ca85c7a6",
+ "measured_tip": "91214d248",
+ "increment_paragraph": "**K7-RESIDUAL-CAUSES** (round 34, USER DECISION 2026-11-24 \"Let's get started out of four.\"; gateway rule 78; Lean `QCore.PointerOffsetPlace`; [report](../../reports/k7-residual-causes/README.md)). Re-census of bundle K7 of CURRENT-ACCESS-ALIAS-CENSUS on the user's 2026-11-24 `current` run (1,173 / 3,750 / 11): 1,798 residual-cause leaves on 701 Unknown rows (11-07: 1,849 on 739), 47 rows freed alone (11-07: 40; of the frozen 40, 1 Safe, 3 changed blocker, 36 still freed; 11 newly freed). By concrete shape, 27 of the 47 are refused on purpose by earlier cards (pointer-valued returns 12, open indirect call sets 7, records with pointer members by value 3, cast views of a tracked root 2, list-helper custody 2, a pointer store through a union 1) and are not re-admitted. Rule 78 reads `*(P + I)`, `*(I + P)`, `*(P - I)` and `(P + I)[K]` in the typed access-path reader as the subscripts C11 6.5.2.1p2 defines them to be, with the subscript spelling's root, steps and per-hop obligations (two delimited hooks in `Reader::path`); forecast `cmt_get_statsd_type` and `buffer_skip_whitespace` Unknown -> Safe; the card's unit-scoped reproduction of `current` (26 units, the base reproducing 1,858 of the user's 1,859 rows) measured exactly those two moves (464 -> 466 Safe), 16 leaves removed (7 offset places, 9 same-unit `buffer_skip_whitespace` cascade leaves) and 2 `unknown_alias` added at bound bases, no accusation change. The card gate was stopped on the user's instruction (one gate on the merged K tip). The rest is registered: `<ctype.h>` table reads (4 rows), own array-element places (4), custody-free record values (4), union member address actuals (2), `errno` (2), a call in a subscript index (1), a call beside a cast in a return (1).",
+ "status_edits": [],
+ "ledger": [
+  {
+   "id": "CG13-UNION-LEAVES-OTHER-CAUSES",
+   "operation": "amend",
+   "text": "RE-CENSUSED by K7-RESIDUAL-CAUSES (round 34, base 3ca85c7a6, the user's 2026-11-24 current run: 4,934 rows, 1,173 Safe / 3,750 Unknown / 11 Unsafe; 11-07 tags joined by file, function and line): bundle K7 is 1,798 leaves on 701 Unknown rows and frees 47 rows alone (11-07: 40); union 965 leaves on 322 rows, 15 alone. The `union` tag is the census walker's, not the analyzer's reason (rule 10w already reads a union scalar read): of the 15 union-alone rows, 8 are pointer-valued returns (W45, refused on purpose), 2 list-helper addresses (decision class 1), 1 a pointer store through a union (rule 10w), 2 union member addresses handed to a same-unit callee (K7-UNION-MEMBER-ADDRESS-ACTUAL), 1 a call beside a cast in a return (W43-RETURN-COMPOUND-CALL), 1 a pointer return through rd_list_elem. Rule 78 (pointer offsets read as subscripts) takes the bundle's pointer-arithmetic rows; no union step is admitted by K7.",
+   "source": "docs/reports/k7-residual-causes/README.md"
+  },
+  {
+   "id": "CG14-AGGREGATE-VALUE-POSITIONS",
+   "operation": "amend",
+   "text": "RE-CENSUSED by K7-RESIDUAL-CAUSES (the user's 2026-11-24 current run): `aggregate-value` 246 leaves on 164 Unknown rows, 7 alone; 3 are LZ4F_free(p, x->cmem) with a pointer-bearing record (refused by name, pointer-members), 4 custody-free: a record return (`rd_kafka_toppar_fetch_decide_next_fetch_start_pos`, probe `return t->next;` refused in return position on base 3ca85c7a6), two `rd_kafka_Uuid_cmp(a->id, b->id)` actuals (a cross-unit callee) and a TAILQ_FOREACH loop. Not admitted by K7.",
+   "source": "docs/reports/k7-residual-causes/README.md"
+  },
+  {
+   "id": "CG22-OPEN-INDIRECT-CALLS",
+   "operation": "amend",
+   "text": "RE-CENSUSED by K7-RESIDUAL-CAUSES (the user's 2026-11-24 current run): `indirect-call` 155 leaves on 118 Unknown rows; 7 rows would be freed by it alone (cJSON's global_hooks.allocate/deallocate and hooks->allocate, rk_conf.sasl.scram_H, configs[i].getValue, rmap->rmap_cmp, rko_u.broker_monitor.cb): every one an open set (a mutable static's member, a member through a pointer, a formal); kept refused by design.",
+   "source": "docs/reports/k7-residual-causes/README.md"
+  },
+  {
+   "id": "CAST-FORMALIZATION-RESIDUAL-CENSUS",
+   "operation": "amend",
+   "text": "RE-CENSUSED by K7-RESIDUAL-CAUSES (the user's 2026-11-24 current run): `cast` in an access path 69 leaves on 37 Unknown rows, 0 alone; with `union` it frees 3 LZ4 rows, each a view of a tracked root (`&((LZ4_streamHC_t*)p)->internal_donotuse` twice, a punned pointer return once): class (a), kept refused.",
+   "source": "docs/reports/k7-residual-causes/README.md"
+  },
+  {
+   "id": "CG07-STATEMENT-EXPRESSION-POSITIONS",
+   "operation": "amend",
+   "text": "RE-CENSUSED by K7-RESIDUAL-CAUSES (the user's 2026-11-24 current run): `statement-expression` in an access path 117 leaves on 71 Unknown rows, 0 alone; with `static-local` it is part of two librdkafka unit tests (unittest_msg_seq_wrap, ut_strcasestr: RD_UT_ASSERT over a block-scope static table, K7-OWN-ARRAY-ELEMENT-PLACES).",
+   "source": "docs/reports/k7-residual-causes/README.md"
+  },
+  {
+   "id": "W44-CONDITION-CALL-REFUSED-SHAPES",
+   "operation": "amend",
+   "text": "RE-MEASURED by K7-RESIDUAL-CAUSES (the user's 2026-11-24 current run): the `<ctype.h>` table read `(*__ctype_b_loc())[c]` is the sole blocker of 4 rows (line_protocol_escape, rtrim, rd_hexdump, Monkey's check_indent), in conditions, a `?:` and a variadic actual; registered as K7-CTYPE-TABLE-READS.",
+   "source": "docs/reports/k7-residual-causes/README.md"
+  },
+  {
+   "id": "AG3-ERRNO-RETURN",
+   "operation": "amend",
+   "text": "RE-MEASURED by K7-RESIDUAL-CAUSES (the user's 2026-11-24 current run): `errno` is the sole blocker of 2 rows, `return errno;` (rd_kafka_errno) and `cmt_errno()` in cmt_labels_create (an actual of the cross-unit cmt_errno_print, Safe in its own unit: reading the actual would exchange the refusal for the callee's).",
+   "source": "docs/reports/k7-residual-causes/README.md"
+  },
+  {
+   "id": "W43-RETURN-COMPOUND-CALL",
+   "operation": "amend",
+   "text": "RE-MEASURED by K7-RESIDUAL-CAUSES (the user's 2026-11-24 current run): `return rd_clock() - rkm->rkm_ts_enq;` (rd_kafka_message_latency, a union scalar read beside a call) is a sole-blocker row; probe on base 3ca85c7a6: `return (long)d_len(s) - p->v.a;` refused while `return p->v.a;` is Safe, so the call and cast, not the union step, hold it.",
+   "source": "docs/reports/k7-residual-causes/README.md"
+  },
+  {
+   "id": "W45-RETURN-POINTER-RESULT-READS",
+   "operation": "amend",
+   "text": "RE-MEASURED by K7-RESIDUAL-CAUSES (the user's 2026-11-24 current run): 12 of the 47 rows bundle K7 frees alone are pointer-valued returns (union members: cmetrics' fetch_* x3, rd_kafka_message_produce_errstr, rd_kafka_confval_get_ptr/get_str, two admin result arrays; call results: rd_kafka_DescribeCluster_result_cluster_id/controller; LZ4_slideInputBuffer; rd_kafka_ElectLeaders_result_result); none admitted.",
+   "source": "docs/reports/k7-residual-causes/README.md"
+  },
+  {
+   "id": "K7-CTYPE-TABLE-READS",
+   "operation": "register",
+   "title": "`<ctype.h>` classification reads (`(*__ctype_b_loc())[c]`) stay refused: 4 sole-blocker rows on current",
+   "text": "Registered by K7-RESIDUAL-CAUSES. glibc spells isspace/isblank/isprint as `((*__ctype_b_loc())[(int)(c)] & (unsigned short)MASK)`; `__ctype_b_loc` has no libc declaration (probe on base 3ca85c7a6: `call to uncontracted function `__ctype_b_loc` in branch condition`), and the typed reader has no call-result root. Sole blocker of line_protocol_escape, rtrim, rd_hexdump and Monkey's check_indent in the user's 2026-11-24 current run (positions: a `?:` condition, a connective, a variadic actual's `?:`, a branch). DISCHARGE: a quirin-provider-libc declaration of `__ctype_b_loc` with a never-released static-table result (contracts.py sync and the lock diff), and a scalar read of one element of that result in the positions the condition and statement readers own, with fixtures and Lean parity; no bound is claimed.",
+   "source": "docs/reports/k7-residual-causes/README.md",
+   "recorded_by": "K7-RESIDUAL-CAUSES"
+  },
+  {
+   "id": "K7-OWN-ARRAY-ELEMENT-PLACES",
+   "operation": "register",
+   "title": "Element places of a function's own block-scope array (`exp[i].in`) stay refused: 4 sole-blocker rows on current",
+   "text": "Registered by K7-RESIDUAL-CAUSES. Probes on base 3ca85c7a6: `exp[i].in` over a block-scope `const struct {long in; int out;} exp[]` is refused (indirect access, for-loop condition) whether automatic or static, while the same table at file scope and a static `long tab[]` are Safe: the path is mixed (`[]` then `.`), the root is not proved never bound, rule 10t refuses an array root and rule 12j calls a subscript a hop and excludes static roots. An array subscript reads no pointer (array-to-pointer decay of the declared object). Sole blocker of unittest_msg_seq_wrap and ut_strcasestr (with RD_UT_ASSERT's statement expression), do_unittest_illegal_extension_keys_should_fail (a pointer element handed to an Unknown callee) and rd_kafka_fetch_pos2str (a static thread-local buffer, written). DISCHARGE: a no-hop place (`.` and array subscripts of the declared array) on a block-scope array object of the function (automatic, or static with a stated reentrancy premise for stores) read with no root premise as rule 12j reads a record object, with fixtures and Lean parity; thread-local and written static storage decided separately.",
+   "source": "docs/reports/k7-residual-causes/README.md",
+   "recorded_by": "K7-RESIDUAL-CAUSES"
+  },
+  {
+   "id": "K7-UNION-MEMBER-ADDRESS-ACTUAL",
+   "operation": "register",
+   "title": "A union member's address handed to a same-unit callee (`LZ4_prepareTable(&ctx->internal_donotuse, …)`) stays refused: 2 sole-blocker rows",
+   "text": "Registered by K7-RESIDUAL-CAUSES. LZ4_resetStream_fast and LZ4_createHC (user's 2026-11-24 current run) pass `&P->internal_donotuse` (a member of `union LZ4_stream_u`, the same address as `P`, C11 6.7.2.1p16) to LZ4_prepareTable (Safe) and LZ4HC_init_internal (itself Unknown). DISCHARGE: an interior address actual at a formal whose summary or contract borrows it, with rule 10w's punning check on the union; the two cast spellings (LZ4_compressHC2_*) stay CAST-FORMALIZATION (a).",
+   "source": "docs/reports/k7-residual-causes/README.md",
+   "recorded_by": "K7-RESIDUAL-CAUSES"
+  },
+  {
+   "id": "K7-CALL-IN-SUBSCRIPT-INDEX",
+   "operation": "register",
+   "title": "A call in a subscript index in a return (`return hdr->counts[f(hdr, b, s)];`) stays refused: 1 sole-blocker row",
+   "text": "Registered by K7-RESIDUAL-CAUSES. rd_hdr_getCountAtIndex (user's 2026-11-24 current run) returns `hdr->counts[rd_hdr_countsIndex(hdr, bucketIdx, subBucketIdx)]`; the callee is Safe in the same unit with a scalar result. Rules 14a and 67 read a scalar call only where the caller lowers it; the scalar-result return family refuses every call. DISCHARGE: the call lowered once before the read (an identity summary, rule 63's ordering argument), the read then the subscript's own, with fixtures and Lean parity.",
+   "source": "docs/reports/k7-residual-causes/README.md",
+   "recorded_by": "K7-RESIDUAL-CAUSES"
+  },
+  {
+   "id": "K7-OFFSET-RESIDUAL-FORMS",
+   "operation": "register",
+   "title": "Pointer offsets rule 78 does not read: under `->`, nested, and in a compound assignment",
+   "text": "Registered by K7-RESIDUAL-CAUSES (gateway rule 78). Rule 78 reads `*(P + I)`, `*(I + P)`, `*(P - I)` and `(P + I)[K]` in Reader::path. Refused and fixtured on base 3ca85c7a6: `(b + 1)->n` (an offset under `->`, exactly `b[1].n`), `*((s + i) + j)` (one offset per step), and `s += *(a + i)` (the compound-assignment route does not ask Reader::path; `s += a[i]` is Safe). 0 sole-blocker rows on the user's 2026-11-24 current run by the census tags. DISCHARGE: each read as its subscript spelling with fixtures and Lean parity when a measured row needs it.",
+   "source": "docs/reports/k7-residual-causes/README.md",
+   "recorded_by": "K7-RESIDUAL-CAUSES"
+  }
+ ]
+}

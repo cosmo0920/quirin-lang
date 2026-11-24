@@ -728,26 +728,55 @@ contract {{
             ("formal_model_sha256".into(), sha256_hex(FORMAL_MODEL)),
             ("formal_audit_sha256".into(), sha256_hex(FORMAL_AUDIT)),
             ("trace_model_sha256".into(), sha256_hex(MODEL.as_bytes())),
-            ("scope".into(), BOUNDS.into()),
-            ("assumptions".into(), ASSUMPTIONS.into()),
+            // Card SP10-FORMAL-BINDING-DESCRIPTIONS: the bounds and
+            // assumptions coordinates are bound by the digest of their exact
+            // bytes (`QF005` admits a typed reference or a digest only); the
+            // held Context states them and is compared by exact equality.
+            ("scope_sha256".into(), sha256_hex(BOUNDS.as_bytes())),
+            (
+                "assumptions_sha256".into(),
+                sha256_hex(ASSUMPTIONS.as_bytes()),
+            ),
         ]),
     };
-    let binding=FormalBinding{atom_sha256:digest(&graph.atoms[BOUNDED_ATOM])?,proposition:"QCore.PluginSourceWitnesses.DuplicateNoLoaderCalls".into(),model:ArtifactReference{path:model_path.into(),sha256:sha256_hex(&model)},audit:ArtifactReference{path:audit_path.into(),sha256:sha256_hex(&audit)},environment:environment.id.clone(),quantifiers:vec!["trace : List String; selected = rk_duplicate; exact held Context and explicit stub environment".into()],prerequisites:vec![environment.id.clone()],conclusion:"DuplicateNoLoaderCalls trace for this selected invocation only; old plugin atoms/envelopes remain independent".into()};
-    let mut completion = binding.clone();
-    completion.atom_sha256 = digest(&graph.atoms[COMPLETION_ATOM])?;
-    completion.proposition = "QCore.PluginSourceWitnesses.DuplicateCompleted".into();
-    completion.conclusion =
-        "DuplicateCompleted trace: zero return and matching end of the same selected invocation"
-            .into();
-    let mut go_complete = binding.clone();
-    go_complete.atom_sha256 = digest(&graph.atoms[GO_COMPLETE_ATOM])?;
-    go_complete.proposition = "QCore.PluginSourceWitnesses.GoCreatorCompleted".into();
-    go_complete.quantifiers=vec!["trace : List String; selected = go_create_ignores_register_failure; exact held Context and explicit stub environment".into()];
-    go_complete.conclusion = "GoCreatorCompleted trace for this exact selected invocation".into();
-    let mut go_implies = go_complete.clone();
-    go_implies.atom_sha256 = digest(&graph.atoms[GO_IMPLIES_ATOM])?;
-    go_implies.proposition = "QCore.PluginSourceWitnesses.GoCreatorImpliesRegistration".into();
-    go_implies.conclusion="GoCreatorImpliesRegistration trace for this exact selected invocation; a finite counterexample refutes only this implication".into();
+    // Each binding's quantifiers and conclusion are its typed atom's
+    // parameters and formula (SP10), so nothing is left to describe.
+    let bound = |atom: &str, proposition: &str| -> Result<FormalBinding, String> {
+        let (quantifiers, conclusion) =
+            qcore_contract::formal_binding::derived(&graph.atoms[atom])?;
+        Ok(FormalBinding {
+            atom_sha256: digest(&graph.atoms[atom])?,
+            proposition: proposition.into(),
+            model: ArtifactReference {
+                path: model_path.into(),
+                sha256: sha256_hex(&model),
+            },
+            audit: ArtifactReference {
+                path: audit_path.into(),
+                sha256: sha256_hex(&audit),
+            },
+            environment: environment.id.clone(),
+            quantifiers,
+            prerequisites: vec![environment.id.clone()],
+            conclusion,
+        })
+    };
+    let binding = bound(
+        BOUNDED_ATOM,
+        "QCore.PluginSourceWitnesses.DuplicateNoLoaderCalls",
+    )?;
+    let completion = bound(
+        COMPLETION_ATOM,
+        "QCore.PluginSourceWitnesses.DuplicateCompleted",
+    )?;
+    let go_complete = bound(
+        GO_COMPLETE_ATOM,
+        "QCore.PluginSourceWitnesses.GoCreatorCompleted",
+    )?;
+    let go_implies = bound(
+        GO_IMPLIES_ATOM,
+        "QCore.PluginSourceWitnesses.GoCreatorImpliesRegistration",
+    )?;
     let models = BTreeMap::from([(
         "plugin_fixture_duplicate".into(),
         qcore_schemas::premise_flow::Model {

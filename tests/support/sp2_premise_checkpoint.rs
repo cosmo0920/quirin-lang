@@ -45,6 +45,13 @@
 //! one comment (`docs/reports/sp6-guarded-symbol-prose/migration.json`,
 //! `files`). Those edits are written back before SP6's, with their own
 //! two-digest check.
+//!
+//! Card **SP10-FORMAL-BINDING-DESCRIPTIONS** then refreshed the 167 binding
+//! markers of seven modules when the manifests' environment descriptions
+//! became typed references
+//! (`docs/reports/sp10-formal-binding-descriptions/migration.json`, `files`).
+//! Those edits are written back first of all, with their own two-digest
+//! check.
 
 #![allow(dead_code)]
 
@@ -59,18 +66,25 @@ const SP6_EDITS: &str =
 
 const SP7_EDITS: &str = include_str!("../../docs/reports/sp6-guarded-symbol-prose/migration.json");
 
+const SP10_EDITS: &str =
+    include_str!("../../docs/reports/sp10-formal-binding-descriptions/migration.json");
+
 fn record() -> serde_json::Value {
     serde_json::from_str(RECORD).expect("the SP2 migration record is JSON")
 }
 
-/// `text` with every edit card SP6-GUARDED-SYMBOL-PROSE made, then every
+/// `text` with every edit card SP10-FORMAL-BINDING-DESCRIPTIONS made, then
+/// every edit card SP6-GUARDED-SYMBOL-PROSE made, then every
 /// edit card SP6-SYMBOLIC-HYPOTHESIS-ATOMS made, then every comment card
 /// SP5-GLOBAL-PROSE-PREMISE-BAN rewrote, written back as it stood before the
 /// card.
 pub fn unedit_comments(text: &str) -> String {
     unedit_with(
         SP5_COMMENTS,
-        &unedit_with(SP6_EDITS, &unedit_with(SP7_EDITS, text)),
+        &unedit_with(
+            SP6_EDITS,
+            &unedit_with(SP7_EDITS, &unedit_with(SP10_EDITS, text)),
+        ),
     )
 }
 
@@ -90,10 +104,18 @@ fn unedit_with(edits: &str, text: &str) -> String {
     out
 }
 
-/// The bytes of the module at `path` before cards SP6-GUARDED-SYMBOL-PROSE,
+/// The bytes of the module at `path` before cards
+/// SP10-FORMAL-BINDING-DESCRIPTIONS, SP6-GUARDED-SYMBOL-PROSE,
 /// SP6-SYMBOLIC-HYPOTHESIS-ATOMS and SP5-GLOBAL-PROSE-PREMISE-BAN edited it, every digest checked; any
 /// other module unchanged.
 pub fn unedited_file(path: &str, current: &str, sha256: fn(&[u8]) -> String) -> String {
+    let current = &unedited_with(
+        SP10_EDITS,
+        "SP10-FORMAL-BINDING-DESCRIPTIONS",
+        path,
+        current,
+        sha256,
+    );
     let current = &unedited_with(SP7_EDITS, "SP6-GUARDED-SYMBOL-PROSE", path, current, sha256);
     let base = unedited_with(
         SP6_EDITS,
