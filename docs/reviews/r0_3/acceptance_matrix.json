@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 10,
-  "named_followups": 1066
+  "named_followups": 1067
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6920,11 +6920,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Landing integrate/r71 (base main 69c64255f, after r70; merges RETURN-FAMILY-STAR-OUTSIDE-ROOT-PARENTHESES 42e814d75, base 7678fe5f1; generated files resolved by rerunning scripts/gen_rule_docs.py and gen_lean_roots.py where they conflicted; third_party/libevent checked out). USER DECISION 2026-11-24: \"launch the two return-family follow-up cards\"; \"yes, land them as r69, r70, r71 and r72\"; \"resume r68 and land through r76\". Amendments applied in 4f96d33d1 with --profiles-base origin/main (after r68's, which registered the id): RETURN-FAMILY-STAR-OUTSIDE-ROOT-PARENTHESES retired; RETURN-FAMILY-SUBSCRIPT-ENCLOSING-STARRED-ROOT registered; profiles []; status_edits empty. Full landing gate on 4f96d33d1 (private/integrate-r71/gate, raw record beside this file as gate-scope.json) via scripts/gate_scope.py --base origin/main --full --landing through private/toolchain/env.sh: Rust 690 units / 735 summaries, 10060 passed, 0 failed, 24 ignored; fmt, Clippy and both reevaluation examples exit 0; Lean (all) exit 0, 502 audits (new QCore.ReturnFamilyStarOutside). No providers/ path changed, so the provider gate was not selected; provider_tests 174 (1 ignored) is carried from the SP7/SP8 combined landing gate on 35b5f48a2. Python (807 tests) exited 1 on two checks: the stale-matrix check test_the_derived_facts_are_recomputed_rather_than_carried, cleared by regenerating the matrix from this record, and test_gate_scope_census.test_the_census_covers_the_suite (671 of 746 units, under its 90% bound: twelve qcore-c-gateway test units added by r56-r71 were never in the gate read census). The census was re-recorded at this tree (gate_read_census.py record --packages qcore-c-gateway, reduce; private/integrate-r71/census-record) and only those twelve units merged, in its own commit bb12bed4d, data only; the census tests then pass (5 OK) and the full Python suite was rerun after the records commit. Change: rule 74s (new): a starred may-bind root is refused when any parenthesised group around it is dereferenced (`[`, `->`, or a possibly unary `*` before it), so `*(*q + 1)`, `*((long *)*q + 1)`, `*(n + *q)`, `(*q + 1)[0]` and `(*q + 1)->f`, Safe at base, get the return refusal; `*q`, `(*q)`, `*q + 1` and `(T) *q` stay admitted; one fixture moves Unsafe -> Unknown after k_free. Card measurement (opt-in current --monkey-linked, Fluent Bit 046accf6): base 7678fe5f1 and tip 12ca1c33c both 1171/2/3623/8, no row changed, matching the committed prediction (none). Pinned-route parity (quirin-audit measure --declared) was not run: its attempt refused for missing prepared inputs, and this host holds no build/cycle19 inputs or baselines. No profile baseline is changed and land.py publish is owed.",
-  "workspace_tests": 10060,
+  "note": "Landing integrate/r72 (base main 4be28c3cd, after r71; merges RETURN-FAMILY-UNTRACKED-DEREF-THROUGH-CAST 7bfa0414b, base 7678fe5f1; crates/qcore-c-gateway/src/legacy_return_family.rs conflicted with r71's rule 74s in three independent additions and was resolved by hand keeping both sides: both module-header paragraphs, r71's outside_dereference/group_dereferenced and r72's cast_type_word/dereferenced_through_groups each with its own loop tail, and both #[cfg(test)] unit modules; generated docs/agents/README.md, docs/agents/gateway.md and proof/QCore.lean regenerated; third_party/libevent checked out). USER DECISION 2026-11-24: \"launch the two return-family follow-up cards\"; \"yes, land them as r69, r70, r71 and r72\"; \"resume r68 and land through r76\". Amendments applied in 7d8d2a85b with --profiles-base origin/main (after r68's, which registered the id): RETURN-FAMILY-UNTRACKED-DEREF-THROUGH-CAST retired; RETURN-FAMILY-UNTRACKED-MEMBER-THROUGH-CAST and TYPE-GROUP-QUALIFIED-POINTER registered; profiles []; status_edits empty. Full landing gate on 7d8d2a85b (private/integrate-r72/gate, raw record beside this file as gate-scope.json), the first run of the hand merge, via scripts/gate_scope.py --base origin/main --full --landing through private/toolchain/env.sh: Rust 691 units / 736 summaries, 10065 passed, 0 failed, 24 ignored; fmt, Clippy and both reevaluation examples exit 0; Lean (all) exit 0, 503 audits (new QCore.ReturnFamilyUntrackedDerefCast). No providers/ path changed, so the provider gate was not selected; provider_tests 174 (1 ignored) is carried from the SP7/SP8 combined landing gate on 35b5f48a2. Python (807 tests) exited 1 only on the two stale-matrix checks in test_build_matrix_sections, cleared by regenerating the matrix from this record. Change: rule 74r (new): family S's untracked-root base test also reads back from the root through `(` and through groups cast_semantics::type_group_open reads as a type to the first `*` that may be unary (rule 74h's undecided handling kept), so `const long *p = 0; return *(long *)p;` (Safe at base) is Unknown (unknown_alias:p), as `return *p;` is; nested casts, `*(T *)(p)`, `*(p)` and `*(p + 1)` likewise; a cast's own type word is never a base (cast_type_word); `(T) *p`, `*(T *)*q`, `sizeof (long) * q` and may-bind roots keep their readings; rule 74m's unit pin for `* ( long * ) p` now expects `p`. Card measurement (opt-in current --monkey-linked, Fluent Bit 046accf6): base 7678fe5f1 and tip 45133777b both 1171/2/3623/8, no row changed, matching the committed prediction (none). Pinned-route parity (quirin-audit measure --declared) was not run: its attempt refused for missing prepared inputs, and this host holds no build/cycle19 inputs or baselines. No profile baseline is changed and land.py publish is owed.",
+  "workspace_tests": 10065,
   "provider_tests": 174,
   "python_evidence_validator_tests": 807,
-  "lean_audits": 502,
+  "lean_audits": 503,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
    "AuditAggregateOwnedField.lean",
@@ -7322,6 +7322,7 @@
    "AuditReturnFamilyDerefCast.lean",
    "AuditReturnFamilyStarCast.lean",
    "AuditReturnFamilyStarOutside.lean",
+   "AuditReturnFamilyUntrackedDerefCast.lean",
    "AuditReturnPositionEscape.lean",
    "AuditReturnRefusedCallLowering.lean",
    "AuditReviewHoldStanding.lean",
@@ -7435,7 +7436,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "full landing gate: every step exits 0 except the Python suite's stale-matrix check, cleared by regenerating the matrix from this record; provider gate not selected (no providers/ change), provider count carried from the SP7/SP8 combined landing",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/return-family-star-outside-parentheses/integration/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/return-family-untracked-deref-cast/integration/gate.json)"
  },
  "named_followups": [
   {
