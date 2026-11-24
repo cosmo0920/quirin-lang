@@ -51,7 +51,7 @@ struct s { long n; long a[2]; struct s *next; };";
 fn contracts() -> ResourceContracts {
     load_resource_contract_sources(&BTreeMap::from([(
         "descriptor_generic.qcore".to_owned(),
-        include_str!("fixtures/contracts/descriptor_generic.qv").to_owned(),
+        include_str!("../fixtures/contracts/descriptor_generic.qv").to_owned(),
     )]))
     .expect("the fixtures load")
 }
