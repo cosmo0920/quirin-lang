@@ -1,0 +1,64 @@
+{
+ "sites": 5767,
+ "classes": {
+  "other": {
+   "sites": 3979,
+   "rows": 1334,
+   "freed_alone_rows": 110
+  },
+  "address-paren-root": {
+   "sites": 1691,
+   "rows": 441,
+   "freed_alone_rows": 4
+  },
+  "paren-root": {
+   "sites": 97,
+   "rows": 66,
+   "freed_alone_rows": 1
+  }
+ },
+ "examples": {
+  "other": [
+   "cfl_kvlist_destroy(cmt->internal_metadata);",
+   "cfl_list_init(&cmt->counters);",
+   "cfl_list_init(&cmt->gauges);",
+   "cfl_list_init(&cmt->histograms);",
+   "cfl_list_init(&cmt->exp_histograms);",
+   "cfl_list_init(&cmt->summaries);",
+   "cfl_list_init(&cmt->untypeds);",
+   "cmt_atomic_store(&metric_dst->exp_hist_count, cmt_atomic_load(&metric_src->exp_hist_count));",
+   "cmt_atomic_store(&metric_dst->exp_hist_sum_set, cmt_atomic_load(&metric_src->exp_hist_sum_set));",
+   "cmt_atomic_store(&metric_dst->exp_hist_sum, cmt_atomic_load(&metric_src->exp_hist_sum));",
+   "cmt_atomic_store(&metric_dst->exp_hist_sum, cmt_math_d64_to_uint64( cmt_math_uint64_to_d64( cmt_atomic_load(&metric_dst->exp_hist_sum)) + cmt_math_uint64_to_d64( cmt_atomic_load(&metric_src->exp_hist_",
+   "cmt_atomic_store(&metric_dst->exp_hist_sum, cmt_atomic_load(&metric_src->exp_hist_sum));"
+  ],
+  "paren-root": [
+   "if (((input_buffer != ((void*)0)) && (((input_buffer)->offset + 4) <= (input_buffer)->length)) && (strncmp((const char*)((input_buffer)->content + (input_buffer)->offset), \"null\", 4) == 0))",
+   "if (((input_buffer != ((void*)0)) && (((input_buffer)->offset + 5) <= (input_buffer)->length)) && (strncmp((const char*)((input_buffer)->content + (input_buffer)->offset), \"false\", 5) == 0))",
+   "if (((input_buffer != ((void*)0)) && (((input_buffer)->offset + 4) <= (input_buffer)->length)) && (strncmp((const char*)((input_buffer)->content + (input_buffer)->offset), \"true\", 4) == 0))",
+   "if (((buffer != ((void*)0)) && (((buffer)->offset + 4) < (buffer)->length)) && (strncmp((const char*)((buffer)->content + (buffer)->offset), \"\\xEF\\xBB\\xBF\", 3) == 0))",
+   "fprintf(stderr, \"((rd_slice_t *)%p):\\n\" \"  buf %p (len %\" \"zu\" \"), seg %p (absof %\" \"zu\" \"), \" \"rof %\" \"zu\" \", start %\" \"zu\" \", end %\" \"zu\" \", size %\" \"zu\" \", offset %\" \"zu\" \"\\n\", slice, slice->buf, r",
+   "if (__builtin_expect((((slice)->end - rd_slice_abs_offset(slice)) < size || slice->rof + size > slice->seg->seg_of), 0))",
+   "if (__builtin_expect((((slice)->end - rd_slice_abs_offset(slice)) < size), 0))",
+   "if ((rd_kafka_broker_termination_in_progress(rkb) || (rd_atomic32_get(&((rkb)->rkb_rk)->rk_terminate) & 0x1)))",
+   "do { if (!((rk)->rk_conf.enabled_events & 0x8)) { rd_kafka_log0(&rk->rk_conf, rk, ((void*)0), 3, 0x0, \"ERROR\", \"No brokers configured\"); break; } rd_kafka_q_op_err((rk)->rk_rep, RD_KAFKA_RESP_ERR__ALL",
+   "do { if (!((rk)->rk_conf.enabled_events & 0x8)) { rd_kafka_log0(&rk->rk_conf, rk, ((void*)0), 3, 0x0, \"ERROR\", \"Fatal error: %s: %s\", rd_kafka_err2str(err), rk->rk_fatal.errstr); break; } rd_kafka_q_o",
+   "if (rkb->rkb_share_fetch_enqueued || (rd_kafka_broker_termination_in_progress(rkb) || (rd_atomic32_get(&((rkb)->rkb_rk)->rk_terminate) & 0x1))) {",
+   "if (!reply_rkb->rkb_share_fetch_enqueued && !(rd_kafka_broker_termination_in_progress(reply_rkb) || (rd_atomic32_get(&((reply_rkb)->rkb_rk)->rk_terminate) & 0x1)) && reply_rkb->rkb_pending_commit_sync"
+  ],
+  "address-paren-root": [
+   "if ((rd_atomic32_get(&(rk)->rk_terminate) & 0x1)) {",
+   "if ((rd_atomic32_get(&(rk)->rk_terminate) & 0x1)) {",
+   "do { int32_t _v; int32_t *_vp = &cnt; do { size_t __len2 = (size_t)(sizeof(_v)); if (!rd_slice_read(&(reply)->rkbuf_reader, &_v, __len2)) do { size_t __len0 = (size_t)(__len2); if (__builtin_expect((_",
+   "do { int16_t _v; int16_t *_vp = &ErrorCode; do { size_t __len2 = (size_t)(sizeof(_v)); if (!rd_slice_read(&(reply)->rkbuf_reader, &_v, __len2)) do { size_t __len0 = (size_t)(__len2); if (__builtin_exp",
+   "do { int32_t _v; int32_t *_vp = &MemberCnt; do { size_t __len2 = (size_t)(sizeof(_v)); if (!rd_slice_read(&(reply)->rkbuf_reader, &_v, __len2)) do { size_t __len0 = (size_t)(__len2); if (__builtin_exp",
+   "mtx_lock(&(rkb)->rkb_lock);",
+   "mtx_unlock(&(rkb)->rkb_lock);",
+   "do { int16_t _v; int16_t *_vp = &ErrorCode; do { size_t __len2 = (size_t)(sizeof(_v)); if (!rd_slice_read(&(reply)->rkbuf_reader, &_v, __len2)) do { size_t __len0 = (size_t)(__len2); if (__builtin_exp",
+   "do { int32_t _v; int32_t *_vp = &cnt; do { size_t __len2 = (size_t)(sizeof(_v)); if (!rd_slice_read(&(reply)->rkbuf_reader, &_v, __len2)) do { size_t __len0 = (size_t)(__len2); if (__builtin_expect((_",
+   "mtx_lock(&(rkb)->rkb_lock);",
+   "mtx_unlock(&(rkb)->rkb_lock);",
+   "rwlock_rdlock(&(rk)->rk_lock);"
+  ]
+ }
+}

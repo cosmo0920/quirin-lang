@@ -1,0 +1,12 @@
+{
+ "candidate_leaves_on_unknown_rows": 2245,
+ "rows_touched": 441,
+ "rows_freed_ceiling": 2,
+ "freed_by_library": {
+  "librdkafka": 2
+ },
+ "freed": [
+  "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_broker.c::rd_kafka_broker_destroy_error",
+  "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c::map_cpair_toppar_list_t_new"
+ ]
+}

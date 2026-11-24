@@ -1,0 +1,137 @@
+{
+ "sites": 5767,
+ "features": {
+  "address": 2390,
+  "nested-call": 1411,
+  "log-or-format": 1087,
+  "custody-like-callee": 654,
+  "macro-upper": 300,
+  "conditional": 219,
+  "sizeof": 153,
+  "cast-in-actual": 113,
+  "deref-call": 1
+ },
+ "features_freed_alone": {
+  "address": 46,
+  "custody-like-callee": 37,
+  "nested-call": 35,
+  "conditional": 20,
+  "log-or-format": 15,
+  "cast-in-actual": 6,
+  "macro-upper": 5,
+  "sizeof": 1,
+  "deref-call": 1
+ },
+ "primary": {
+  "statement:address": {
+   "sites": 1535,
+   "rows": 487,
+   "freed_alone_sites": 24
+  },
+  "statement:plain": {
+   "sites": 1104,
+   "rows": 439,
+   "freed_alone_sites": 12
+  },
+  "statement:log-or-format": {
+   "sites": 1085,
+   "rows": 514,
+   "freed_alone_sites": 15
+  },
+  "statement:custody-like-callee": {
+   "sites": 621,
+   "rows": 311,
+   "freed_alone_sites": 29
+  },
+  "statement:nested-call": {
+   "sites": 418,
+   "rows": 256,
+   "freed_alone_sites": 7
+  },
+  "statement:macro-upper": {
+   "sites": 260,
+   "rows": 145,
+   "freed_alone_sites": 3
+  },
+  "condition:plain": {
+   "sites": 205,
+   "rows": 153,
+   "freed_alone_sites": 10
+  },
+  "condition:address": {
+   "sites": 122,
+   "rows": 95,
+   "freed_alone_sites": 7
+  },
+  "statement:sizeof": {
+   "sites": 107,
+   "rows": 82,
+   "freed_alone_sites": 1
+  },
+  "condition:nested-call": {
+   "sites": 92,
+   "rows": 78,
+   "freed_alone_sites": 1
+  },
+  "statement:cast-in-actual": {
+   "sites": 56,
+   "rows": 39,
+   "freed_alone_sites": 2
+  },
+  "statement:conditional": {
+   "sites": 56,
+   "rows": 49,
+   "freed_alone_sites": 5
+  },
+  "condition:cast-in-actual": {
+   "sites": 22,
+   "rows": 16,
+   "freed_alone_sites": 1
+  },
+  "return:custody-like-callee": {
+   "sites": 22,
+   "rows": 22,
+   "freed_alone_sites": 8
+  },
+  "return:plain": {
+   "sites": 15,
+   "rows": 13,
+   "freed_alone_sites": 4
+  },
+  "condition:custody-like-callee": {
+   "sites": 11,
+   "rows": 9,
+   "freed_alone_sites": 0
+  },
+  "return:conditional": {
+   "sites": 10,
+   "rows": 10,
+   "freed_alone_sites": 8
+  },
+  "condition:sizeof": {
+   "sites": 10,
+   "rows": 9,
+   "freed_alone_sites": 0
+  },
+  "return:cast-in-actual": {
+   "sites": 6,
+   "rows": 5,
+   "freed_alone_sites": 3
+  },
+  "return:address": {
+   "sites": 5,
+   "rows": 5,
+   "freed_alone_sites": 3
+  },
+  "return:nested-call": {
+   "sites": 4,
+   "rows": 4,
+   "freed_alone_sites": 2
+  },
+  "condition:conditional": {
+   "sites": 1,
+   "rows": 1,
+   "freed_alone_sites": 0
+  }
+ }
+}
