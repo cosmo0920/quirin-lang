@@ -11151,7 +11151,11 @@ that only when every arriving edge has it.
     `a_name_needs_every_premise`, `a_refusing_reading_keeps_a_call_shape_unnamed`,
     `a_store_needs_a_custody_value` and eleven more), bound by
     `tests/member_effect_summary.rs`;
-    [report](../reports/member-effect-summary/README.md).
+    [report](../reports/member-effect-summary/README.md). **Amended (card
+    MEMBER-EFFECT-STORES):** where every condition formula of
+    [rule 38k](#constraint-38k) holds, the store form is that rule's
+    hand-off, admitted under the stated premise `mes_caller_slot`; this
+    rule names the store's fallback wherever one of them fails.
 
 <a id="constraint-38j"></a>
 
@@ -11254,6 +11258,93 @@ that only when every arriving edge has it.
     `an_admitted_actual_is_a_struct_pointer_member`, `the_body_stays_sound`
     and nine more), bound by `tests/member_release_untyped_base.rs`;
     [report](../reports/member-release-untyped-base/README.md).
+
+<a id="constraint-38k"></a>
+
+38k. **A store of owned custody into a member of the caller's object is a
+    hand-off: every condition is a formula, the old value is the stated
+    premise, and no summary is published.** Card MEMBER-EFFECT-STORES, body
+    half (`member_handoff.rs`, the parser half and flow in
+    `legacy_member_handoff.rs`), on the user's decisions of 2026-11-25
+    ("Option 1: caller-slot premise"; "We must write down with logical
+    symbols for them"). Every condition is a formula of the C04.18.9 typed
+    rendering over the MES terms (`premise_formula::RENDERED_TERMS`, block
+    `MES`, prefix `mes_`), validated by `guarded_proposition`; the prose
+    after each formula only glosses it. **Admission**, for exactly the gate's
+    refusal of a statement with no braces (or W45's sub-object store of a
+    name, which admits only a value with no identity), after rule 72 and
+    before rule 12k:
+    `mes_place_shape` `(#mes_formal_root() && #mes_in(#mes_place,#mes_parent))`
+    (the root a formal, the place `P->F` then `.` selections, every member
+    ordinary, read from the Clang AST);
+    `mes_formal_kept` `forall (#s: mes_site) { !#mes_formal_written(#s) }`;
+    `mes_value_shape` `((#mes_owned_result() || #mes_local_acquisition()) && #mes_pointer_casts())`
+    (a whole call whose contract in force, no hold, returns
+    `resource_return_owned`, or a local's name; casts `BitCast`/`NoOp` only,
+    brief item 4);
+    `mes_h1_place_only_at_store` `forall (#s: mes_site) { (#mes_occurs(#s,#mes_place) => (#s == #mes_store || #mes_null_test(#s))) }`
+    (a null test reads the whole value only as a truth value; a `sizeof`
+    operand is no occurrence; a prefix of the place used whole is one);
+    `mes_h2_local_kept` `forall (#s: mes_site) { (!#mes_local_copy(#s) && (#mes_local_mention(#s) => !#mes_after(#s,#mes_store))) }`
+    (assigned once; before the store only its declaration, acquisition, null
+    tests, member or element accesses, dereferences);
+    `mes_h3_no_stale_value` `forall (#o: obj) { (#mes_stored(#o) => (#mes_owed(#o) && #mes_live(#o))) }`
+    (decided on the flow: exactly one live identity of this body, neither
+    released, escaped, contained nor unresolved; a target-free binding is
+    never read as null);
+    `mes_not_in_loop` `!#mes_in_loop(#mes_store)` (no `goto`/`setjmp` in the
+    body either);
+    `mes_nothing_released_after` `forall (#s: mes_site) { (#mes_after(#s,#mes_store) => ((!#mes_formal_passed(#s) && !#mes_indirect(#s)) && (#mes_call(#s) => #mes_borrowed_only(#s)))) }`;
+    `mes_owner_untracked` `(#mes_untracked_owner() && !#mes_bound_old())`
+    (rule 10v's owner class and old-value check, on the flow);
+    `mes_summary_withheld` `!#mes_published()`;
+    `mes_premise_stated` `#mes_premise_carried()`.
+    **The stated premise** (P-CG11-CALLER-SLOT, rule 10v's, for this store):
+    `mes_caller_slot: forall (#o: obj) { (#mes_holds(#mes_place,#o) => !#mes_owed(#o)) }`,
+    stated, not proved; `carry_premise` lists it in the verdict assumptions
+    (`rule_obligations`, rule `38k`) of every row whose CFG holds a hand-off,
+    and `enforce_premise` refuses a row that does not list it. **Discharge**:
+    the flow applies the store's access (the stored call, bound to a
+    reserved name), then `resource_consumed(v, nullable)` of the value, then
+    rule 10v's forgetting: the body's obligation for `V` is discharged by the
+    hand-off and by nothing else. The store is a rule-10v `PointerStore` of
+    value class `member-handoff`, so rule 10v's summary gate withholds every
+    summary (rule 70's retention statement refuses it too); every caller sees
+    an uncontracted callee and stays refused at the call. **Named refusals**
+    (the node is then the gate's refusal, rule 38i's name of it, or W45's
+    own store): `mes_refuse_realloc_self` `(#mes_reallocates() && !#mes_nonnull_clause())`;
+    `mes_refuse_value_shape` `!((#mes_owned_result() || #mes_local_acquisition()) && #mes_pointer_casts())`;
+    `mes_refuse_local_alias_of_formal` `!#mes_formal_root()`;
+    `mes_refuse_place_shape` `!#mes_in(#mes_place,#mes_parent)`;
+    `mes_refuse_rebound_formal` `exists (#s: mes_site) { #mes_formal_written(#s) }`;
+    `mes_refuse_loop` `#mes_in_loop(#mes_store)`;
+    `mes_refuse_place_used` `exists (#s: mes_site) { (#mes_occurs(#s,#mes_place) && !(#s == #mes_store || #mes_null_test(#s))) }`;
+    `mes_refuse_local_used` `exists (#s: mes_site) { (#mes_local_copy(#s) || (#mes_local_mention(#s) && #mes_after(#s,#mes_store))) }`;
+    `mes_refuse_borrowed_use_after` `exists (#s: mes_site) { (#mes_after(#s,#mes_store) && ((#mes_formal_passed(#s) || #mes_indirect(#s)) || (#mes_call(#s) && !#mes_borrowed_only(#s)))) }`;
+    `mes_refuse_owner` `!#mes_untracked_owner()`;
+    `mes_refuse_owned_old_value` `#mes_bound_old()`;
+    `mes_refuse_stale_value` `exists (#o: obj) { (#mes_stored(#o) && !(#mes_owed(#o) && #mes_live(#o))) }`;
+    `mes_refuse_premise_missing` `!#mes_premise_carried()`.
+    Parity runs record each consultation (`position: "member-handoff"`, the
+    refusal's id and formula). **Do not** admit a realloc self-assignment
+    (no provider change here), a borrowed use of the place after the store,
+    a store through a pointer hop below the formal or through a local alias
+    of it, a value read from memory, or a caller of an admitted body; **do
+    not** publish a summary for a body with a hand-off. Not in this rule: the
+    caller half (CG11 field links on a tracked parent; establishing the old
+    value at the call site), registered as MEMBER-EFFECT-STORES-CALLER-HALF.
+    Premises stated, not proved: `mes_caller_slot`, faithful Clang
+    extraction (trust boundary 28), the lexical over-approximation of
+    `#mes_after` in a body without loops and jumps. `QCore.MemberHandoff`
+    (`admitted_exactly_when`, `a_refusal_negates_its_condition`,
+    `discharged_only_by_the_handoff`, `a_used_local_keeps_the_refusal`,
+    `a_released_local_keeps_the_refusal`, `a_second_store_keeps_the_refusal`,
+    `the_old_value_is_custody_free_or_premised`,
+    `a_row_lacking_the_premise_is_refused`, `no_summary_with_a_handoff`,
+    `a_callers_decision_is_unchanged`, `decision_vectors_hold` and eight
+    more), bound by `tests/member_effect_stores.rs` and
+    `tests/unit/member_handoff.rs`;
+    [report](../reports/member-effect-stores/README.md).
 
 <a id="constraint-39"></a>
 

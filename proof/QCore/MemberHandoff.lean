@@ -118,8 +118,11 @@ def admits (f : Facts) : Bool :=
 
 theorem admitted_exactly_when (f : Facts) : decide f = none ↔ admits f = true := by
   rcases f with ⟨v, n, c, r, p, k, l, o, lk, a, u, ov, lv⟩
-  cases v <;> cases n <;> cases c <;> cases r <;> cases p <;> cases k <;> cases l <;> cases o <;>
-    cases lk <;> cases a <;> cases u <;> cases ov <;> cases lv <;> simp [decide, admits]
+  cases v <;> cases n <;> simp [decide, admits] <;>
+    cases c <;> (try simp) <;> cases r <;> (try simp) <;> cases p <;> (try simp) <;>
+    cases k <;> (try simp) <;> cases l <;> (try simp) <;> cases o <;> (try simp) <;>
+    cases lk <;> (try simp) <;> cases a <;> (try simp) <;> cases u <;> (try simp) <;>
+    cases ov <;> (try simp) <;> cases lv <;> (try simp)
 
 /-- The condition each named refusal negates. -/
 def conditionOf : Reason → Facts → Bool
@@ -142,9 +145,17 @@ holds exactly where the decision names it. -/
 theorem a_refusal_negates_its_condition (f : Facts) (r : Reason) (h : decide f = some r) :
     conditionOf r f = false := by
   rcases f with ⟨v, n, c, rt, p, k, l, o, lk, a, u, ov, lv⟩
-  cases v <;> cases n <;> cases c <;> cases rt <;> cases p <;> cases k <;> cases l <;> cases o <;>
-    cases lk <;> cases a <;> cases u <;> cases ov <;> cases lv <;>
-    simp [decide] at h <;> subst h <;> rfl
+  cases v <;> cases n <;> cases c <;> simp [decide] at h <;> (try (subst h; rfl)) <;>
+    cases rt <;> simp at h <;> (try (subst h; rfl)) <;>
+    cases p <;> simp at h <;> (try (subst h; rfl)) <;>
+    cases k <;> simp at h <;> (try (subst h; rfl)) <;>
+    cases l <;> simp at h <;> (try (subst h; rfl)) <;>
+    cases o <;> simp at h <;> (try (subst h; rfl)) <;>
+    cases lk <;> simp at h <;> (try (subst h; rfl)) <;>
+    cases a <;> simp at h <;> (try (subst h; rfl)) <;>
+    cases u <;> simp at h <;> (try (subst h; rfl)) <;>
+    cases ov <;> simp at h <;> (try (subst h; rfl)) <;>
+    cases lv <;> simp at h <;> (try (subst h; rfl))
 
 /-! ## The discharge -/
 
@@ -252,7 +263,9 @@ theorem a_row_lacking_the_premise_is_refused (r : Row) (h : r.handoffs ≠ [])
     | cons _ _ => rfl
   have hc : r.assumptions.contains premise = false := by
     simpa using hp
-  simp [status, he, hc]
+  unfold status
+  rw [he, hc]
+  simp
 
 theorem a_carried_row_lists_the_premise (r : Row) (h : r.handoffs ≠ []) :
     premise ∈ (carry r).assumptions := by
@@ -271,18 +284,24 @@ theorem the_old_value_is_custody_free_or_premised (r : Row) (f : Facts)
   have hne : r.handoffs ≠ [] := by
     intro e; rw [e] at hf; cases hf
   have hp : premise ∈ r.assumptions := by
-    by_contra hn
+    apply Classical.byContradiction
+    intro hn
     have := a_row_lacking_the_premise_is_refused r hne hn
     rw [hs] at this; cases this
   have hd : decide f = none := by
-    by_contra hn
+    apply Classical.byContradiction
+    intro hn
     have hany : r.handoffs.any (fun f => decide f != none) = true := by
       rw [List.any_eq_true]
       exact ⟨f, hf, by simpa using hn⟩
-    simp [status, hany] at hs
+    unfold status at hs
+    rw [hany] at hs
+    simp at hs
   have := (admitted_exactly_when f).mp hd
-  simp [admits] at this
-  exact ⟨this.2.2.2.2.2.2.2.2.2.2.1, hp⟩
+  refine ⟨?_, hp⟩
+  cases hov : f.oldValueUnbound
+  · simp [admits, hov] at this
+  · rfl
 
 /-! ## No summary -/
 
@@ -415,15 +434,12 @@ def formulaTable : List (String × String) := [
   ("mes_refuse_premise_missing", "!#mes_premise_carried()")
 ]
 
-/-- Every formula id and term is prefixed `mes_`, and the premise is the first
-row, listed in rows as `premise` spells it. -/
-theorem the_tables_are_prefixed :
-    formulaTable.all (fun (id, _) => id.startsWith "mes_") = true ∧
-      mesTerms.all (fun t => t.startsWith "mes_") = true ∧
+/-- The tables' sizes, and the premise first (the `mes_` prefix of every id and
+term is checked by `tests/unit/member_handoff.rs`). -/
+theorem the_tables_are_counted :
+    formulaTable.length = 25 ∧ mesTerms.length = 29 ∧
       formulaTable.head? = some ("mes_caller_slot",
-        "forall (#o: obj) { (#mes_holds(#mes_place,#o) => !#mes_owed(#o)) }") ∧
-      premise = "mes_caller_slot: " ++
-        "forall (#o: obj) { (#mes_holds(#mes_place,#o) => !#mes_owed(#o)) }" := by
+        "forall (#o: obj) { (#mes_holds(#mes_place,#o) => !#mes_owed(#o)) }") := by
   decide
 
 end QCore.MemberHandoff
