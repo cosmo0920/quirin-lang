@@ -1,0 +1,2 @@
+{"base_leaves": ["3048: use of in-place object `re` not certified by its initialiser status (rule 74i)"], "file": "lib/librdkafka-2.15.0/src/rdregex.c", "function": "rd_regex_match", "move": "Unknown -> Safe", "occurrence": 1, "tip_declarations": ["regcomp", "regerror", "regexec", "regfree"], "tip_summaries": []}
+{"moves": {"Unknown -> Safe": 1}}
