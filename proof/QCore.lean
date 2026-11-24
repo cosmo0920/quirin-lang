@@ -319,6 +319,7 @@ import QCore.NeutralPrefixPreservation
 import QCore.NoBuildScope
 import QCore.NullDeref
 import QCore.NullDerefGrade
+import QCore.NullJoinDischarge
 import QCore.NullLookupEvent
 import QCore.NullMemberPremise
 import QCore.NullMemberQualifier

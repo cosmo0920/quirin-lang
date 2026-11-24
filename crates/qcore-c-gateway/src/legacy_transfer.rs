@@ -24,6 +24,10 @@ use super::*;
 #[path = "legacy_out_slot_call_write.rs"]
 pub(crate) mod out_slot_call_write;
 
+// UNTRACKED-BASE-NULL-JOIN-DISCHARGE hook (rule 83).
+#[path = "legacy_null_join.rs"]
+pub(super) mod null_join_route;
+
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
 pub(super) struct AbstractPointer {
     pub(super) targets: BTreeSet<usize>,
@@ -369,6 +373,10 @@ pub(super) struct AbstractState {
     /// of a record.
     pub(super) cell_protocols:
         BTreeMap<super::descriptor_cells_route::FactKey, super::descriptor_cells_route::HostedFact>,
+    /// Card **UNTRACKED-BASE-NULL-JOIN-DISCHARGE** (rule 83): the names some
+    /// reaching path bound to the null constant since their last rebinding
+    /// ([`null_join_route`]). Joined by union; rule 14n never premises them.
+    pub(super) null_on_path: BTreeSet<String>,
 }
 
 /// The scalar facts one abstract state proves: a name bound to the null
@@ -535,6 +543,8 @@ impl AbstractState {
         self.widened |= incoming.widened;
         self.unmodeled |= incoming.unmodeled;
         self.join_collections(&before, incoming);
+        // UNTRACKED-BASE-NULL-JOIN-DISCHARGE hook (rule 83).
+        null_join_route::join(self, &before, incoming);
         *self != before
     }
 
@@ -2879,6 +2889,8 @@ pub(super) fn transfer(
     {
         state.link_ready.clear();
     }
+    // UNTRACKED-BASE-NULL-JOIN-DISCHARGE hook (rule 83).
+    let null_on_path = state.null_on_path.clone();
     let mut output = transfer_dispatch(
         function,
         node,
@@ -2888,6 +2900,7 @@ pub(super) fn transfer(
         alias,
         diagnostics,
     );
+    null_join_route::transfer(&node.instruction, &null_on_path, &mut output);
     container_publication::link_member::retain(&node.instruction, &mut output);
     slot_move_route::after(node, &mut output);
     // Card OUT-SLOT-CALL-WRITE-ALIASING (rule 11r(8)): a call that may write
