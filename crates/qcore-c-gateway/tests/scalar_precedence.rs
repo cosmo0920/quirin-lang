@@ -136,10 +136,14 @@ fn same_type_alias_and_custody_and_pointer_stores_are_not_erased() {
     for body in [
         "void subject(struct S *p, struct S *peer) { q_observe(p); q_free(peer); p->x = 1; }",
         "void subject(void) { struct S *p = q_alloc(); if (!p) return; p->x = 1; }",
-        "void subject(struct S *p) { struct S *q = q_alloc(); if (!q) return; p->next = q; }",
+        // Card MEMBER-EFFECT-STORES (rule 38k) re-pins the bare hand-off
+        // `p->next = q` deliberately (`Safe` under the stated premise
+        // `mes_caller_slot`, below); used after the store it stays refused.
+        "void subject(struct S *p) { struct S *q = q_alloc(); if (!q) return; p->next = q; q_free(q); }",
     ] {
         refused(body);
     }
+    is_safe("void subject(struct S *p) { struct S *q = q_alloc(); if (!q) return; p->next = q; }");
 }
 
 #[test]

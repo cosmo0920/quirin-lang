@@ -26,7 +26,7 @@
 //! Accepting controls: the `Name` branch of Monkey's `mk_vhost_set_property`
 //! (an owned copy linked into a body-acquired alias that is published into
 //! the caller's list); a duplicate released; an unlink then a full teardown.
-//! Refusing controls: the `DocumentRoot` branch (an owned copy stored over a
+//! Refusing controls (the `DocumentRoot` branch, an owned copy stored over a
 //! member of the caller's object, never `Safe`), the whole function, a
 //! partial link, a child released before the publication. Violation and leak
 //! controls: a duplicate leaked; a carried child released while published;
@@ -331,10 +331,21 @@ int cycle(struct mk_vhost *vh, char *v)
     assert!(kinds.contains(&"leak".to_owned()), "{kinds:?}");
 }
 
-// ---- DocumentRoot: never Safe ----
+// ---- DocumentRoot ----
+//
+// Card MEMBER-EFFECT-STORES (rule 38k, USER DECISION 2026-11-25 "Option 1:
+// caller-slot premise") re-pins both tests below deliberately. The store is
+// the hand-off of the fresh copy into the caller's host under the stated
+// premise `mes_caller_slot: forall (#o: obj) { (#mes_holds(#mes_place,#o) =>
+// !#mes_owed(#o)) }`: what the member held is the host's (its caller's), not
+// this body's, which is exactly where MONKEY-DOCUMENTROOT-OVERWRITE-CANDIDATE
+// puts the possible loss (a second DocumentRoot for one host). The body
+// publishes no summary, so `mk_vhost_set` and every other caller stays
+// refused at the call, and the candidate stays open there. A body that reads
+// the member after the store keeps the refusal.
 
 #[test]
-fn the_document_root_overwrite_is_never_safe() {
+fn the_document_root_overwrite_is_the_callers_premise() {
     let (status, kinds) = verdict(
         r#"
 int set_root(struct mk_vhost *vh, char *v)
@@ -346,32 +357,29 @@ int set_root(struct mk_vhost *vh, char *v)
 "#,
         "set_root",
     );
+    assert_eq!(status, AnalysisStatus::Safe, "{kinds:?}");
+    let (status, kinds) = verdict(
+        r#"
+int set_root(struct mk_vhost *vh, char *v)
+{
+    vh->documentroot.data = mk_string_dup(v);
+    vh->documentroot.len  = strlen(vh->documentroot.data);
+    return 0;
+}
+"#,
+        "set_root",
+    );
     assert_ne!(status, AnalysisStatus::Safe, "{kinds:?}");
     assert!(!kinds.is_empty(), "{kinds:?}");
 }
 
 #[test]
-fn the_whole_function_is_decided_except_for_the_document_root_branch() {
+fn the_whole_function_is_decided_under_the_callers_premise() {
     let summary = analyse(SET_PROPERTY, "mk_vhost_set_property");
     let row = function(&summary, "mk_vhost_set_property");
     let kinds = kinds(row);
-    assert_eq!(row.status, AnalysisStatus::Unknown, "{kinds:?}");
-    // Every remaining leaf is the DocumentRoot branch's; the Name branch
-    // (allocation, copy, length, publication) carries none.
-    let lines: Vec<usize> = row.diagnostics.iter().map(|d| d.line).collect();
-    let source = format!("{PRELUDE}\n{SET_PROPERTY}");
-    let document_root = source
-        .lines()
-        .position(|line| line.contains("vh->documentroot.data = mk_string_dup(v);"))
-        .expect("the DocumentRoot store")
-        + 1;
-    assert!(
-        lines
-            .iter()
-            .all(|line| *line == document_root || *line == document_root + 1),
-        "{lines:?} {kinds:?} (DocumentRoot at {document_root})"
-    );
-    assert!(!lines.is_empty());
+    assert_eq!(row.status, AnalysisStatus::Safe, "{kinds:?}");
+    assert!(qcore_c_gateway::member_handoff::premise_carried(row));
 }
 
 // ---- rule 12e: a refused null test establishes no leak ----
