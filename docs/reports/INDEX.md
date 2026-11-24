@@ -891,6 +891,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [outer-contract-design](outer-contract-design/README.md) | OUTER-CONTRACT-DESIGN: code loaded at runtime, stated as an outer contract |
 
+| [owned-constructor-out-delivery](owned-constructor-out-delivery/README.md) | OWNED-CONSTRUCTOR-OUT-PARAMETER-DELIVERY: an owned result stored through a formal's slot |
+
 | [owned-field-route-reach](owned-field-route-reach/README.md) | `OWNED-FIELD-ROUTE-REACH` (wave 41) — the reach of wave 39's owned-field rules, measured, then closed or named |
 
 ## P
