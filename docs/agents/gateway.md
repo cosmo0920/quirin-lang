@@ -1138,6 +1138,10 @@ refused guard, a site joined provenance (over the tie names) ties to the
 tested name is settled as a decided guard's null edge settles it; the identity
 refusal stays.
 
+Rule 10b is amended by [rule 77](#constraint-77): a null test of a local
+holding only loads from untracked objects, whose binding has no target, is
+decided with no identity refusal; every other unknown binding keeps it.
+
 <a id="constraint-10c"></a>
 
 10c. **An expression statement is a classified effect or a refusal, never an
@@ -13392,5 +13396,80 @@ through `ampersand_runs`.
     `the_fold_only_strengthens`, `a_non_null_position_is_a_fixed_point`,
     `out_and_removed_refuse`, `fold_vectors_hold`);
     [report](../reports/callback-member-released-fold/README.md).
+
+<a id="constraint-77"></a>
+
+77. **A local holding only loads from untracked objects is decided as the
+    load.** Card K5-LOCAL-ORIGIN-ALIASES, bundle K5 of
+    CURRENT-ACCESS-ALIAS-CENSUS on the user's decision of 2026-11-24 to start
+    the K cards (`borrowed_path_local.rs`: `read`, `decide`, `value_admits`,
+    `untracked`; the adapter `legacy_borrowed_path_local.rs`; the field
+    `TraversalNames::borrowed_path` in `legacy_c.rs`; one hook in the work
+    list's edge refinement and one in the leak-witness census, both through
+    `guard_refinement`; one `EscapeIfOwned` arm in
+    `legacy_transfer::transfer_base`). P2 lowers `L = R->F` on an unbound
+    root to a borrowed, target-free alias, and rules 14n and 11d already read
+    through it; but a null test of `L` took rule 10b's identity refusal
+    (`UnknownAlias L`, both edges unmodelled, so rule 11d then refused every
+    later read), and `return L;` reported the unknown binding, although
+    `return R->F;` is rule 10k (2)'s exit that escapes nothing
+    ([report](../reports/k5-local-origin-aliases/README.md)). Read from
+    Clang's AST of the function, asked only where a null test or a return
+    names a local the declaration reader does not call a scalar. (1)
+    **Roots.** A pointer formal, single-level, declared once and spelled by no
+    local, that rule 5b's full return premise answers for (the custody
+    closure proves it never bound **and** `may_bind` does not name it), every
+    reference to which is a null test, a dereference base, a call actual or a
+    `return`. (2) **Locals**, a greatest fixed point: rule 62's automatic
+    locals of object-pointer type every write of which (`=` or the
+    initializer), through parentheses and `NoOp`/`BitCast` casts, is a null
+    pointer constant, a string literal, a whole read of another admitted
+    local, or a **load**: the lvalue conversion of an object-pointer member or
+    element place whose base reaches an admitted root or local through loads,
+    `.` members, subscripts, a member array's decay used as a subscript base,
+    or `(&PLACE)->`; the value contains no call, assignment, step or
+    statement expression. Every reference is a null test, a dereference base,
+    a call actual, a `return`, the local's own rebinding or a copy into
+    another admitted local. The closure is **not** asked of the local (it
+    binds every name a value mentions, an index stepped by the loop
+    included); what makes its value untracked is read directly, and every
+    custody use of it is decided on its binding. (3) **Null test.** A
+    `BranchOnNull` of an admitted local whose incoming binding has no target,
+    the identity derivation and an unwidened state, and which is no status or
+    cell witness, is decided (`Refined`) where rule 10b's arm answered
+    `Unknown`: the narrowing that arm applied stands, and nothing else moves
+    (no obligation, site or other binding; no report, no unmodelled edge, no
+    rule 12e settling, which ties no site to a name that never holds one).
+    (4) **Return.** `EscapeIfOwned` of an admitted local whose binding is
+    untracked in the same sense escapes nothing. (5) **Soundness.** By
+    induction over any run, an admitted local holds null, a literal's address
+    or a value loaded from an object reachable from an admitted root through
+    loads, the value `R->F` itself has there; P2's premise that a never-bound
+    root reaches no tracked place is what makes that load target-free, and
+    the rule adds none. A release, a transfer or an owned or custody-taking
+    position still finds no target and refuses; a custody-taking actual
+    refuses at the call (rule 11d's record). **Do not** admit a value from a
+    call, a whole read of a formal (rule 62's copy, whose return W4 needs), an
+    address or an array decay as a value (an interior address, rule 5j and
+    W45-RETURN-POINTER-RESULT-READS), a file-scope or static object (rule 54's
+    and AG2-STATIC-OBJECT-COPY's boundary), a statement expression, a root a
+    statement writes, rebinds, copies or hands to a position the closure
+    binds, or a tested binding with a target, a mixed or derived derivation
+    or a widened state; and do not widen (3) to rule 10b's arm in general: a
+    lookup's result is no load. Premises stated, not proved: faithful Clang
+    extraction of declarations, storage, types, casts and parent nodes, route
+    G's lowering of the tested and returned names (trust boundary 28), the
+    closure and `may_bind` of rules 5b and 10l, and P2's premise (with the
+    heap's untracked links unchanged by any admitted store: a store of a
+    tracked value into an untracked place is refused by rules 5i and 10v).
+    `QCore.BorrowedPathLocal` (`decision_vectors_hold`,
+    `every_admitted_local_holds_an_untracked_value`,
+    `the_admitted_guard_leaves_the_old_state`,
+    `the_guard_touches_no_obligation`, `the_guard_narrows_only_its_binding`,
+    `a_tracked_binding_keeps_the_old_guard`,
+    `returning_an_untracked_local_escapes_nothing`,
+    `a_release_of_an_untracked_local_still_refuses`), bound to
+    `DECISION_VECTORS`, `VALUE_VECTORS` and `BINDING_VECTORS` by shared-vector
+    unit tests.
 
 <!-- generated:rules:end -->

@@ -216,6 +216,10 @@ pub mod thread_local_read;
 // Card AG2-UNRESOLVED-ALIAS (rule 62): copy sources that carry no resource
 // identity (literals, enumerators, read-only copies of unbound formals).
 pub mod custody_free_copy;
+// K5-LOCAL-ORIGIN-ALIASES hook (rule 77): begin. A local holding only loads
+// from untracked objects is decided at a null test and a return as the load.
+pub mod borrowed_path_local;
+// K5-LOCAL-ORIGIN-ALIASES hook (rule 77): end
 #[cfg(feature = "indirect-census")]
 pub mod traversal_census;
 mod type_query;

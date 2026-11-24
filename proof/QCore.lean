@@ -34,6 +34,7 @@ import QCore.BooleanConditionProfile
 import QCore.BooleanFieldUnit
 import QCore.BorrowLiveness
 import QCore.BorrowedActual
+import QCore.BorrowedPathLocal
 import QCore.BoundFieldRead
 import QCore.BoundUntracked
 import QCore.BoundsBodyStanding
