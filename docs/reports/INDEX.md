@@ -1254,6 +1254,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [retention-unmatched-removal-poisons](retention-unmatched-removal-poisons/README.md) | RETENTION-UNMATCHED-REMOVAL-POISONS |
 
+| [return-family-deref-resolved-cast](return-family-deref-resolved-cast/README.md) | RETURN-FAMILY-DEREF-THROUGH-RESOLVED-CAST: a starred may-bind root counts through cast groups |
+
 | [return-family-star-cast](return-family-star-cast/README.md) | RETURN-FAMILY-STAR-AFTER-UNRESOLVED-CAST: family S keeps both readings of an undecided cast |
 
 | [review-audit-runner](review-audit-runner/README.md) | Review audit-runner cancellation and failure observation |
