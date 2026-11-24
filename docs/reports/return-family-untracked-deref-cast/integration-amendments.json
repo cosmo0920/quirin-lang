@@ -1,0 +1,33 @@
+{
+  "schema": "quirin-amendments/2",
+  "card": "RETURN-FAMILY-UNTRACKED-DEREF-THROUGH-CAST",
+  "base": "7678fe5f1",
+  "measured_tip": "45133777b",
+  "profiles": [],
+  "increment_paragraph": "**RETURN-FAMILY-UNTRACKED-DEREF-THROUGH-CAST** (USER DECISION 2026-11-24: \"launch the two return-family follow-up cards\"; gateway rule 74r, extending rules 74h and 74m; `QCore.ReturnFamilyUntrackedDerefCast`; [report](../../reports/return-family-untracked-deref-cast/README.md)). Family S of `legacy_return_family` made an untracked root a starred base of the read node only when the token right before it was a `*`, so `long w(void) { const long *p = 0; return *(long *)p; }` was `Safe` while `return *p;` is `Unknown` (`unknown_alias:p`): the flow check never saw the dereference of the null `p`. The old test is kept, and a second one (`dereferenced_through_groups`) reads back from the root through `(` and through every group `cast_semantics::type_group_open` reads as a type to the first `*` that may be unary under either of rule 74h's readings; a word of a cast's type name (`cast_type_word`) is no root. Nested groups, a parenthesised cast or root, `*(p)` and `*(p + 1)` make `p` a base too. The change only adds bases, each an obligation the flow check must discharge, so nothing admits more than at the base; a may-bind root, `(T) *p`, `*(T *)*q` and `sizeof ( long ) * q` read as before. Pinned at unit level (`tests/unit/legacy_return_family_untracked_deref_cast.rs`, including `untrackedVectors`) and end to end (`tests/return_family_untracked_deref_cast.rs`); the change pins fail with the new reading disabled. Opt-in `current --monkey-linked` over Fluent Bit 046accf6: no row moves (1,171 / 2 / 3,623 / 8 at both), as predicted. The pinned system and slice routes need build/cycle19 inputs this host lacks and were not run. Two neighbouring admitting gaps are registered: RETURN-FAMILY-UNTRACKED-MEMBER-THROUGH-CAST and TYPE-GROUP-QUALIFIED-POINTER.",
+  "status_edits": [],
+  "ledger": [
+    {
+      "id": "RETURN-FAMILY-UNTRACKED-DEREF-THROUGH-CAST",
+      "operation": "retire",
+      "why": "Discharged by RETURN-FAMILY-UNTRACKED-DEREF-THROUGH-CAST (rule 74r). Reachability: `long w(void) { const long *p = 0; return *(long *)p; }` reached family S and was `Safe` at the base 7678fe5f1, while `return *p;` was `Unknown` (`unknown_alias:p`) (report §1). crates/qcore-c-gateway/src/legacy_return_family.rs keeps the old starred test and adds `dereferenced_through_groups`, which reads back from an untracked root through `(` and through every group `cast_semantics::type_group_open` reads as a type (rule 12h's transparency, the existing detector) to the first `*` that may be unary under either of rule 74h's readings; a word of a cast's type name (`cast_type_word`) is no root. The root is a base when either test says so. The change only adds bases and touches no refusal, so a result the tip admits the base admitted (`QCore.ReturnFamilyUntrackedDerefCast.the_fix_only_refuses_more`, `old_starred_kept`, `starred_keeps_every_reading_base`). The null case is pinned `Unknown` (`unknown_alias:p`) end to end through one, nested and parenthesised casts (crates/qcore-c-gateway/tests/return_family_untracked_deref_cast.rs), an unbound formal and a tracked root keep their verdicts, and the unit vectors bind the Lean rows; the change pins fail with the new reading disabled. The opt-in corpus measurement shows no move, as predicted (report §5). The pinned system and slice routes need build/cycle19 inputs this host lacks and were not run.",
+      "source": "docs/reports/return-family-untracked-deref-cast/README.md"
+    },
+    {
+      "id": "RETURN-FAMILY-UNTRACKED-MEMBER-THROUGH-CAST",
+      "operation": "register",
+      "title": "Family S makes no base of an untracked root under a member or subscript through a cast group",
+      "text": "RETURN-FAMILY-UNTRACKED-DEREF-THROUGH-CAST found (report §6, by an end-to-end probe at its base 7678fe5f1) that crates/qcore-c-gateway/src/legacy_return_family.rs `scalar_read` makes an untracked root a member or subscript base only when `->` or `[` follows the name directly. `struct s { long n; }; long w(void) { const void *p = 0; return ((const struct s *)p)->n; }` and `long w(void) { const long *p = 0; return ((const long *)p)[0]; }` are `Safe`, while `return p->n;` would make `p` a base. The member or subscript access dereferences the null `p` through the cast group. The direction is admitting. Rule 74r's change (the starred test) does not reach it. DISCHARGE: make an untracked root a base when a `->` or `[` follows the closing parentheses of a group whose operand is a cast of the root (rule 12h's transparency, `cast_semantics::type_group_open`, no second detector), or show that no such return reaches family S end to end. Pin both returns through a null untracked `p` end to end and measure; `((T *)ctx)->f` is common in the corpus, so expect Safe -> Unknown moves on possibly-null bindings.",
+      "source": "docs/reports/return-family-untracked-deref-cast/README.md",
+      "recorded_by": "RETURN-FAMILY-UNTRACKED-DEREF-THROUGH-CAST"
+    },
+    {
+      "id": "TYPE-GROUP-QUALIFIED-POINTER",
+      "operation": "register",
+      "title": "`cast_semantics::type_group_open` does not read a pointer type with a qualifier after its `*`",
+      "text": "RETURN-FAMILY-UNTRACKED-DEREF-THROUGH-CAST found (report §6) that crates/qcore-c-gateway/src/cast_semantics.rs `type_group_open` reads a group as a type only when it is names followed by trailing `*`s, so `( long * const )` is no type group. Rule 74r's untracked base, rule 74m's count through cast groups and rule 12h(4)'s transparency all stop at such a group. `long w(void) { const long *p = 0; return *(long * const)p; }` is `Safe` at the base 7678fe5f1 and at the tip, while `return *(long *)p;` is now `Unknown` (`unknown_alias:p`); the unit pin `the_base_readings_are_kept` in crates/qcore-c-gateway/tests/unit/legacy_return_family_untracked_deref_cast.rs holds the current reading. The direction is admitting for the untracked base and for rule 74m's may-bind count. DISCHARGE: let `type_group_open` read names, `*`s and qualifiers (`const`, `volatile`, `restrict`) after a `*`, keeping its callers' only-refuses-more direction, or show no such group reaches a caller. Pin `*(long * const)p` and `*(long * const)*q` end to end and measure.",
+      "source": "docs/reports/return-family-untracked-deref-cast/README.md",
+      "recorded_by": "RETURN-FAMILY-UNTRACKED-DEREF-THROUGH-CAST"
+    }
+  ]
+}
