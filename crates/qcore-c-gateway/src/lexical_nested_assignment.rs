@@ -216,6 +216,18 @@ pub(crate) fn assignments<'a>(body: &[&'a str]) -> Vec<Assignment<'a>> {
 /// `++ ( p )`, `( p ) ++`, `( p ) op= …`. The unparenthesised forms are the
 /// callers' own seeds; `( p ) = …` is an [`Assignment`].
 pub(crate) fn parenthesised_writes(body: &[&str]) -> BTreeSet<String> {
+    parenthesised_writes_reading(body, false)
+}
+
+/// [`parenthesised_writes`], and with `member_operands` (card
+/// K1-CALL-ACTUAL-ACCESS, rule 75: the never-bound closure's reading only) a
+/// group after a unary `&` that is the base of an arrow member, `& ( p ) -> f`,
+/// is not an address of `p`
+/// ([`crate::parenthesised_member_operand::member_operand`]).
+pub(crate) fn parenthesised_writes_reading(
+    body: &[&str],
+    member_operands: bool,
+) -> BTreeSet<String> {
     let mut out = BTreeSet::new();
     for close in 0..body.len() {
         if body[close] != ")" {
@@ -238,7 +250,11 @@ pub(crate) fn parenthesised_writes(body: &[&str]) -> BTreeSet<String> {
         // the address of `p`.
         let address = previous == Some("&")
             && !applied
-            && !crate::logical_and_operand::logical_and_before(body, open - 1);
+            && !crate::logical_and_operand::logical_and_before(body, open - 1)
+            // Rule 75 (K1-CALL-ACTUAL-ACCESS): `& ( p ) -> f` addresses the
+            // member, as the plain reader reads `& p -> f`.
+            && !(member_operands
+                && crate::parenthesised_member_operand::member_operand(body, close));
         let pre = matches!(
             (before, previous),
             (Some("+"), Some("+")) | (Some("-"), Some("-"))

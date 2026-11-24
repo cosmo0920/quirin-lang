@@ -685,6 +685,13 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [joined-provenance-round-bound](joined-provenance-round-bound/README.md) | JOINED-PROVENANCE-ROUND-BOUND (wave 37) |
 
+## K
+
+| Card directory | Original report title |
+|---|---|
+
+| [k1-call-actual-access](k1-call-actual-access/README.md) | K1-CALL-ACTUAL-ACCESS: call-actual access reads, re-censused; rule 75 |
+
 ## L
 
 | Card directory | Original report title |

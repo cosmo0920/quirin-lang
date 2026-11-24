@@ -1,0 +1,9 @@
+typedef struct t { long n; char *name; } t_t; long w(t_t *t, void *q) { d_copy(q, q, (t)->n); return 0; }
+typedef struct t { long n; char *name; } t_t; long w(t_t *t, void *q) { d_copy(q, q, t->n); return 0; }
+typedef struct t { long n; char *name; } t_t; long w(t_t *t) { d_len((t)->name); return 0; }
+typedef struct t { long n; char *name; } t_t; long w(t_t *t) { d_len(&t->n); d_copy(&(t)->n, t, 1); return 0; }
+typedef struct t { long n; char *name; } t_t; long w(t_t *t) { if ((t)->n > 2) return 1; return 0; }
+typedef struct t { long n; char *name; } t_t; long w(t_t *t) { if (d_len(&(t)->n)) return 1; return 0; }
+typedef struct t { long n; char *name; } t_t; long w(t_t *t) { return d_len(&(t)->n); }
+typedef struct t { long n; char *name; } t_t; long w(t_t *t) { (t)->n = 2; return 0; }
+typedef struct t { long n; char *name; } t_t; long w(t_t *t) { long x = (t)->n; return x; }

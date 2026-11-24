@@ -1,0 +1,27 @@
+long w(struct box *b) { d_len(b->name); return 0; }
+long w(struct box *b) { d_len(b->next->name); return 0; }
+long w(struct box *b) { long n; n = d_len(b->next->name); return n; }
+long w(struct box *b) { return d_len(b->name); }
+long w(struct box *b) { return d_len(b->next->name); }
+long w(struct box *b) { return 31 * d_len(b->name) + d_len(b->next->name); }
+long w(struct box *b) { return 31 * d_len(b->name); }
+long w(struct box *b) { if (d_len(b->name) != 0) return 1; return 0; }
+long w(struct box *b) { if (d_len(b->next->name) != 0) return 1; return 0; }
+long w(struct box *b) { while (d_len(b->name) > 3) b->n++; return 0; }
+long w(struct box *b) { if (b->n > 0 && d_len(b->name) != 0) return 1; return 0; }
+long w(struct box *b) { d_len((char *)b->name); return 0; }
+long w(struct box *b) { return d_len((char *)b->name); }
+long w(struct box *b) { d_len(b->name ? b->name : ""); return 0; }
+long w(char **a, int i) { d_len(a[i]); return 0; }
+long w(struct box *b, const char *s) { d_copy(b->name, s, 3); return 0; }
+long w(struct box *b) { d_len((const char *)&b->n); return 0; }
+long w(struct box *b) { long n = d_len(b->name); return n; }
+long w(struct box *b) { ext(b->n); return 0; }
+long w(struct box *b) { if (ext(b->n)) return 1; return 0; }
+long w(struct box *b) { return ext(b->n); }
+long w(struct box *b) { if (d_len(b->name) == 0) { return 1; } return 0; }
+long w(struct box *b) { if (d_len(b->name)) return 1; return 0; }
+long w(struct box *b) { return d_len(b->name) + 1; }
+long w(struct box *b) { return (long)d_len(b->name); }
+long w(struct box *b) { return b ? d_len(b->name) : 0; }
+long w(struct box *b) { return d_len(b->name) == 0; }
