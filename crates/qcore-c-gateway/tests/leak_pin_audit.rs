@@ -292,8 +292,19 @@ fn a_refused_store_of_the_identity_withdraws_the_leak() {
         outcome("void w(void **out) { void *p = k_alloc(1); if (!p) return; *out = p; }");
     assert_eq!(status, "Unknown", "{keys:?}");
     assert!(!keys.iter().any(|key| key == "leak"), "{keys:?}");
+    // Card MEMBER-EFFECT-STORES (rule 38k) re-pins the member form
+    // deliberately: `b->item = (void *)p` into a formal never rebound is the
+    // hand-off of `p` under the stated premise `mes_caller_slot`, `Safe`
+    // with no leak. The place compared after the store keeps rule 38k's
+    // refusal, and the refused store still withdraws the leak.
     let (status, keys) = outcome(
         "void w(struct k_box *b) { void *p = k_alloc(1); if (!p) return; b->item = (void *)p; }",
+    );
+    assert_eq!(status, "Safe", "{keys:?}");
+    assert!(!keys.iter().any(|key| key == "leak"), "{keys:?}");
+    let (status, keys) = outcome(
+        "void w(struct k_box *b) { void *p = k_alloc(1); if (!p) return; b->item = (void *)p; \
+         if (b->item == p) return; }",
     );
     assert_eq!(status, "Unknown", "{keys:?}");
     assert!(!keys.iter().any(|key| key == "leak"), "{keys:?}");

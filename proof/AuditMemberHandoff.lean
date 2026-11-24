@@ -34,4 +34,4 @@ import QCore.MemberHandoff
 #print axioms QCore.MemberHandoff.no_summary_with_a_handoff
 #print axioms QCore.MemberHandoff.a_callers_decision_is_unchanged
 #print axioms QCore.MemberHandoff.decision_vectors_hold
-#print axioms QCore.MemberHandoff.the_tables_are_prefixed
+#print axioms QCore.MemberHandoff.the_tables_are_counted
