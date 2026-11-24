@@ -115,6 +115,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [callback-member-non-c-units](callback-member-non-c-units/README.md) | CALLBACK-MEMBER-NON-C-UNITS |
 
+| [callback-member-released-effect-order](callback-member-released-effect-order/README.md) | CALLBACK-MEMBER-RELEASED-EFFECT-ORDER: a candidate's member effect after the release |
+
 | [callback-member-released-fold](callback-member-released-fold/README.md) | CALLBACK-MEMBER-RELEASED-REQUIREMENT-FOLD: a candidate's requirement at every position |
 
 | [callback-supplied-null-actual](callback-supplied-null-actual/README.md) | CALLBACK-SUPPLIED-NULL-ACTUAL: a callee-supplied callback actual that may be NULL |
