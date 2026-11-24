@@ -106,5 +106,5 @@ semantic choice for the user, not one to guess.
 No gate and no semantic change (the card stops before its prediction). The
 re-census script read only the user's report; nothing was written under
 `build/`. `python3 scripts/apply_amendments.py
-docs/reports/member-effect-stores/integration-amendments.json --check`: see
-the hand-back.
+docs/reports/member-effect-stores/integration-amendments.json --check`: exit 0
+(MEMBER-EFFECT-STORES amended with this census).
