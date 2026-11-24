@@ -67,6 +67,14 @@
 //! guarded metadata bindings; [`render_string_form`] reproduces the retired
 //! source form of frozen metadata, so a frozen digest can still be checked.
 //! An unrecorded string text stays a string, and the parser refuses it.
+//!
+//! Card **SP10-FORMAL-BINDING-DESCRIPTIONS** extends it to the retired English
+//! environment descriptions of binding manifests and flow models (contract
+//! specification C04.18.2, C04.18.3, `QF005`): [`lift_environment`] writes
+//! each recorded description as the typed environment reference that
+//! replaced it (`docs/reports/sp10-formal-binding-descriptions/migration.json`,
+//! `descriptions`). An unrecorded description stays English, and the
+//! resolver refuses it.
 
 //!
 //! Card **SP9-PLUGIN-GUARDED-APPLICATION-FORMULAS** extends [`lift_bindings`]
@@ -507,4 +515,51 @@ pub fn lifted_adoption_plan(
     plan["before_sha256"] = serde_json::Value::String(before);
     plan["after_sha256"] = serde_json::Value::String(after);
     serde_json::to_vec_pretty(&plan).unwrap()
+}
+
+const SP10_RECORD: &str =
+    include_str!("../../docs/reports/sp10-formal-binding-descriptions/migration.json");
+
+/// Card SP10-FORMAL-BINDING-DESCRIPTIONS: the recorded English environment
+/// descriptions, `(variable, description, typed terms)`; the typed reference
+/// that replaced each is the canonical JSON list of its terms.
+pub fn environment_descriptions() -> Vec<(String, String, serde_json::Value)> {
+    let record: serde_json::Value =
+        serde_json::from_str(SP10_RECORD).expect("the SP10 migration record is JSON");
+    record["descriptions"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|d| {
+            (
+                d["variable"].as_str().unwrap().to_owned(),
+                d["before"].as_str().unwrap().to_owned(),
+                d["terms"].clone(),
+            )
+        })
+        .collect()
+}
+
+/// Card SP10-FORMAL-BINDING-DESCRIPTIONS: a frozen binding manifest (or flow
+/// model) environment with every recorded English description written as
+/// the typed reference that replaced it, and nothing else. Returns how many
+/// were lifted. An unrecorded description stays as it is, so the resolver
+/// still refuses it (`QF005`): the lift never invents a reference.
+pub fn lift_environment(environment: &mut serde_json::Value) -> usize {
+    let recorded = environment_descriptions();
+    let mut lifted = 0;
+    for (variable, value) in environment["variables"].as_object_mut().unwrap() {
+        let Some(text) = value.as_str() else { continue };
+        if let Some((_, _, terms)) = recorded
+            .iter()
+            .find(|(v, before, _)| v == variable && before == text)
+        {
+            // The canonical encoding is the typed parameters' own field order.
+            let terms: Vec<qcore_schemas::quant_proposition::Parameter> =
+                serde_json::from_value(terms.clone()).unwrap();
+            *value = serde_json::Value::String(serde_json::to_string(&terms).unwrap());
+            lifted += 1;
+        }
+    }
+    lifted
 }

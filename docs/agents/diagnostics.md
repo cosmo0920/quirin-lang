@@ -306,3 +306,19 @@ compiler route as the `Q000` parse refusal whose message starts with
 `QF004`); the outer loader (`qcore_contract::outer_contract`) refuses it with
 the same code. A definition states a C04.18.9 formula, `quant #outer
 [[contract]] NAME, FORMULA;`.
+
+Card `SP10-FORMAL-BINDING-DESCRIPTIONS` adds `QF005` (`QF001`–`QF004` are
+taken): a binding manifest's or flow model's environment component, or a
+formal binding field, that is not a typed reference (contract specification
+C04.18.2, C04.18.3, C04.18.9's SP10 block). An environment value must be a
+typed environment reference (the canonical JSON list of G01p parameters,
+each a bound typed atom's parameter or a registered term in its rendered
+sort) or a content digest; the environment id and variable names are
+identifiers; a binding names a qualified proposition, and its quantifiers and
+conclusion are its typed atom's parameters and formula. English is refused
+on every load route: `qcore_contract::hypothesis_bindings::resolve`,
+`resolve_bounds`, `resolve_model` and `qcore_contract::premise_flow::compile`,
+`compile_bounds`, `compile_model`, through `qcore_contract::formal_binding`
+(`PROSE_BINDING`). Manifests are JSON, not contract source, so the parser
+and the compiler route are not involved; a frozen manifest is read only
+through the test-side legacy reader's `lift_environment`.

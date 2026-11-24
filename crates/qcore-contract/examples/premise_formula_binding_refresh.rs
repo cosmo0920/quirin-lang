@@ -30,7 +30,20 @@
 //!
 //! ```text
 //! premise_formula_binding_refresh BEFORE_ROOT AFTER_ROOT OLD_MANIFEST_ROOT OUTPUT_ROOT FILE...
+//! premise_formula_binding_refresh --environment-descriptions RECORD ROOT OLD_MANIFEST_ROOT[,ROOT...] OUTPUT_ROOT FILE...
 //! ```
+//!
+//! Card **SP10-FORMAL-BINDING-DESCRIPTIONS** adds the second form. It admits
+//! exactly one other change: each manifest's `environment.variables` values,
+//! recorded English descriptions, rewritten as the typed environment
+//! references the record states (`formal_binding::reference` of each
+//! record's terms). The graphs, atoms, bindings, environment id, variable
+//! names and every other byte stay; an unrecorded description or a manifest
+//! whose rewritten form the resolver refuses (`QF005` included) stops the
+//! tool. Each refreshed marker is patched in place, `index.json` records the
+//! previous and new manifest digests, and `edits.json` the per-module marker
+//! edits with both module digests (the shape
+//! `tests/support/sp2_premise_checkpoint.rs` reads).
 use qcore_contract::contract_inclusion::{ContractLoadPath, elaborate_contract_module};
 use qcore_contract::{bounds_hypotheses, hypothesis};
 use qcore_schemas::hypothesis::{BindingManifest, Graph, Proposition};
@@ -128,8 +141,211 @@ fn statement_rewrite_only(old: &Graph, new: &Graph) -> Result<usize, String> {
     Ok(changed)
 }
 
+/// Resolve the patched module's markers against the refreshed manifests,
+/// through the loader of its property view.
+fn resolve_view(
+    file: &str,
+    patched_view: String,
+    graphs: &BTreeMap<String, Graph>,
+    manifests: &BTreeMap<String, (BindingManifest, Vec<u8>)>,
+    artifacts: &BTreeMap<String, Vec<u8>>,
+) -> Result<(), String> {
+    let bounds = patched_view.contains("requires bounds_contract_v1;");
+    let resource = patched_view.contains("requires resource_contract_v1;");
+    let source = BTreeMap::from([(file.to_owned(), patched_view)]);
+    let expected = qcore_contract::hypothesis_bindings::requirements(&source, graphs)?
+        .iter()
+        .map(|r| r.manifest_sha256.clone())
+        .collect::<Vec<_>>();
+    let held = expected
+        .iter()
+        .map(|s| (s.clone(), manifests[s].0.clone()))
+        .collect();
+    let presented = expected
+        .iter()
+        .map(|s| (s.clone(), manifests[s].1.clone()))
+        .collect();
+    if bounds {
+        qcore_contract::hypothesis_bindings::resolve_bounds(
+            &source, graphs, &held, &presented, artifacts,
+        )?;
+    } else if resource {
+        qcore_contract::hypothesis_bindings::resolve(
+            &source, graphs, &held, &presented, artifacts,
+        )?;
+    } else {
+        qcore_contract::hypothesis_bindings::resolve_model(
+            &source, graphs, &held, &presented, artifacts,
+        )?;
+    }
+    Ok(())
+}
+
+/// Card SP10-FORMAL-BINDING-DESCRIPTIONS: rewrite each recorded English
+/// environment description as its typed environment reference.
+fn environment_descriptions(args: &[String]) -> Result<(), String> {
+    if args.len() < 5 {
+        return Err(
+            "--environment-descriptions RECORD ROOT OLD_MANIFEST_ROOT[,ROOT...] OUTPUT_ROOT FILE..."
+                .into(),
+        );
+    }
+    let record: serde_json::Value =
+        serde_json::from_slice(&read(&args[0])?).map_err(|e| e.to_string())?;
+    let mut rewrite = BTreeMap::new();
+    for d in record["descriptions"]
+        .as_array()
+        .ok_or("record: descriptions")?
+    {
+        let terms: Vec<qcore_schemas::quant_proposition::Parameter> =
+            serde_json::from_value(d["terms"].clone()).map_err(|e| e.to_string())?;
+        let key = (
+            d["variable"].as_str().ok_or("record: variable")?.to_owned(),
+            d["before"].as_str().ok_or("record: before")?.to_owned(),
+        );
+        if rewrite
+            .insert(key, qcore_contract::formal_binding::reference(&terms)?)
+            .is_some()
+        {
+            return Err("record: duplicate description".into());
+        }
+    }
+    let root = Path::new(&args[1]);
+    let old_roots = args[2].split(',').map(Path::new).collect::<Vec<_>>();
+    let output = Path::new(&args[3]);
+    if output.exists() {
+        return Err("fresh output directory required".into());
+    }
+    let load_path = qcore_contract::load_path_manifest::load_contract_load_path_manifest(
+        &root.join("providers/contract-load-path.json"),
+    )
+    .map_err(|e| e.to_string())?
+    .load_path;
+    let mut artifacts = BTreeMap::new();
+    let mut records = Vec::new();
+    let mut manifests = BTreeMap::new();
+    let mut patches = Vec::new();
+    let mut edits = Vec::new();
+    let mut rewritten = 0;
+    for file in &args[4..] {
+        let text = String::from_utf8(read(root.join(file))?).map_err(|e| e.to_string())?;
+        let view = materialized(file, &text, &load_path)?;
+        let graphs = graphs(file, &view)?;
+        let requirements = qcore_contract::hypothesis_bindings::requirements(
+            &BTreeMap::from([(file.clone(), text.clone())]),
+            &graphs,
+        )?;
+        let mut patched = text.clone();
+        let mut patched_view = view.clone();
+        let mut file_edits = Vec::new();
+        for required in requirements {
+            let name = format!("{}.json", required.manifest_sha256);
+            let bytes = old_roots
+                .iter()
+                .map(|r| r.join(&name))
+                .find(|p| p.exists())
+                .ok_or_else(|| format!("{name}: no old manifest"))
+                .and_then(read)?;
+            if qcore_schemas::sha256_hex(&bytes) != required.manifest_sha256 {
+                return Err("old manifest hash mismatch".into());
+            }
+            let old: BindingManifest = serde_json::from_slice(&bytes).map_err(|e| e.to_string())?;
+            if serde_json::to_vec(&old).map_err(|e| e.to_string())? != bytes
+                || old.source_binding != "open"
+                || old.graph_sha256 != required.graph_sha256
+                || old.declaration != required.declaration
+                || old.premise != required.premise
+            {
+                return Err("unexpected old manifest".into());
+            }
+            let mut manifest = old.clone();
+            for (variable, value) in &mut manifest.environment.variables {
+                let key = (variable.clone(), value.clone());
+                let after = rewrite.get(&key).ok_or_else(|| {
+                    format!(
+                        "{}: unrecorded description of `{variable}`",
+                        required.declaration
+                    )
+                })?;
+                value.clone_from(after);
+                rewritten += 1;
+            }
+            // The descriptions are the only change.
+            let mut check = manifest.clone();
+            check
+                .environment
+                .variables
+                .clone_from(&old.environment.variables);
+            if check != old {
+                return Err("the manifest changed beyond its descriptions".into());
+            }
+            for binding in manifest.atoms.values() {
+                for reference in [&binding.model, &binding.audit] {
+                    let bytes = read(root.join(&reference.path))?;
+                    if qcore_schemas::sha256_hex(&bytes) != reference.sha256 {
+                        return Err("model/audit identity changed".into());
+                    }
+                    artifacts.insert(reference.path.clone(), bytes);
+                }
+            }
+            let bytes = serde_json::to_vec(&manifest).map_err(|e| e.to_string())?;
+            let sha = qcore_schemas::sha256_hex(&bytes);
+            let needle = format!(
+                "// qcore-premise-binding-manifest-v1 {} {} {}",
+                required.declaration, required.premise, required.manifest_sha256
+            );
+            let replacement = format!(
+                "// qcore-premise-binding-manifest-v1 {} {} {}",
+                required.declaration, required.premise, sha
+            );
+            if patched.matches(&needle).count() != 1 || patched_view.matches(&needle).count() != 1 {
+                return Err("ambiguous old marker".into());
+            }
+            patched = patched.replace(&needle, &replacement);
+            patched_view = patched_view.replace(&needle, &replacement);
+            file_edits.push(json!({"before": needle, "after": replacement}));
+            records.push(json!({"file":file,"declaration":required.declaration,"premise":required.premise,"previous_manifest_sha256":required.manifest_sha256,"manifest_sha256":sha,"graph_sha256":required.graph_sha256,"source_binding":"open"}));
+            manifests.insert(sha, (manifest, bytes));
+        }
+        resolve_view(file, patched_view, &graphs, &manifests, &artifacts)?;
+        edits.push(json!({
+            "file": file,
+            "before_sha256": qcore_schemas::sha256_hex(text.as_bytes()),
+            "after_sha256": qcore_schemas::sha256_hex(patched.as_bytes()),
+            "edits": file_edits,
+        }));
+        patches.push((root.join(file), patched));
+    }
+    fs::create_dir_all(output).map_err(|e| e.to_string())?;
+    for (sha, (_, bytes)) in &manifests {
+        fs::write(output.join(format!("{sha}.json")), bytes).map_err(|e| e.to_string())?;
+    }
+    fs::write(
+        output.join("index.json"),
+        serde_json::to_vec_pretty(&json!({"source_binding":"open","occurrences":records}))
+            .map_err(|e| e.to_string())?,
+    )
+    .map_err(|e| e.to_string())?;
+    fs::write(
+        output.join("edits.json"),
+        serde_json::to_vec_pretty(&json!({"files": edits})).map_err(|e| e.to_string())?,
+    )
+    .map_err(|e| e.to_string())?;
+    for (path, text) in patches {
+        fs::write(path, text).map_err(|e| e.to_string())?;
+    }
+    println!(
+        "{} open binding references refreshed; {rewritten} environment descriptions rewritten",
+        records.len()
+    );
+    Ok(())
+}
+
 fn main() -> Result<(), String> {
     let args = env::args().skip(1).collect::<Vec<_>>();
+    if args.first().map(String::as_str) == Some("--environment-descriptions") {
+        return environment_descriptions(&args[1..]);
+    }
     if args.len() < 5 {
         return Err("BEFORE_ROOT AFTER_ROOT OLD_MANIFEST_ROOT OUTPUT_ROOT FILE...".into());
     }

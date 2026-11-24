@@ -7893,6 +7893,33 @@ an undeclared OpenSSL producer). `QCore.NullableReferenceDrop` (12 audited,
     `lifetime_entails_default_lifetime`,
     `default_lifetime_does_not_give_the_unload_order`);
     [report](../reports/sp9-plugin-guarded-application-formulas/README.md).
+    **Amended by card SP10-FORMAL-BINDING-DESCRIPTIONS** (contract
+    specification C04.18.2, C04.18.3, C04.18.9's SP10 block; same user
+    decision; user 2026-11-23: "Launch both"; user decision
+    2026-11-24 on the prefix scheme: "Prefix, then land"): a binding manifest's or flow
+    model's environment component is a typed environment reference (the
+    canonical JSON list of G01p parameters, each a bound typed atom's
+    parameter or a registered term in its rendered sort) or a content
+    digest, and a formal binding's quantifiers and conclusion are its typed
+    atom's parameters and formula. An English description or field is
+    refused with `QF005` on every load route (`hypothesis_bindings::resolve*`,
+    `premise_flow::compile*`, through `qcore_contract::formal_binding`). The
+    167 live manifests were migrated with their digests and markers. A
+    reference asserts no condition: "Open" qualifiers are the never-derived
+    `#source_corresponds` (the detach environment) or
+    `#bnd_source_corresponds`. The SP10 terms follow SP9's A′ scheme:
+    plugin-model components are `#plg_*` over SP9's sorts, the binding's
+    own terms `#bnd_*`; a bound atom's own parameters keep their declared
+    names. Binding manifests are still read by no
+    verdict. **Do not** admit an English environment description or binding
+    field, derive `#bnd_source_corresponds` from any fact, reserve an unprefixed
+    name in the SP10 block, or read a
+    frozen description except through the legacy reader
+    (`lift_environment`). `QCore.FormalBindingEnvironments`
+    (`sp10_terms_denote`, `every_reference_resolves`,
+    `binding_source_correspondence_is_never_derived`,
+    `environment_vectors_agree`);
+    [report](../reports/sp10-formal-binding-descriptions/README.md).
 
 <a id="constraint-13i"></a>
 
