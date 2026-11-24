@@ -1,0 +1,25 @@
+{
+ "schema": "quirin-amendments/2",
+ "card": "FRAME-HOLDER-SHADOWED-NAME",
+ "base": "3ca85c7a6",
+ "measured_tip": "10770a4db",
+ "profiles": [],
+ "increment_paragraph": "**FRAME-HOLDER-SHADOWED-NAME** (USER DECISION 2026-11-24, \"launch them all\"; gateway rule 74o; `QCore.FrameHolderOneDeclaration`; [report](../../reports/frame-holder-shadowed-name/README.md)). Discharges `FRAME-HOLDER-SHADOWED-NAME` (r64), assessed reachable and fail-open. The two callers of `one_automatic_object` without `every_reference_is`, rule 12t's retention frame holder (`legacy_retained_by.rs` `holder`) and the callback registry's `frame_registry_holder` (`legacy_callback_route.rs`), read a file-scope `&g` as the frame holder when a block-scope `g` shadowed it and every mention was a holder actual: a caller's object retained by the file-scope `g` (probes F1, F2), the local's reset dropping the file-scope record before a release (F3) and the file-scope registry destroyed under the local's registration (F4) were each `Safe`. Both readers now also ask `every_reference_is`, so a name that is not one declaration is no frame holder (`retention-undecided`, `callback-registry-undecided`); a shadowing local whose every reference is its own stays one. `Parser::automatic_object` was already guarded, and the other automatic-object readers are keyed by declaration id. Lean extends `InPlaceCertifiedUse.oneDeclaration` to frame holders: rule 74o's reading is a frame only where rule 12t's was, and a spelled path that replays `Safe` under it replayed `Safe` before (`no_verdict_becomes_safe`, by a record-subset simulation); F1, F3 and F4 are `Safe` under rule 12t and refused now. `tests/frame_holder_shadowed_name.rs` (2 passed, 3 failed at base, every failing shape `Safe`; 5 passed at tip). Opt-in `current --monkey-linked` over Fluent Bit 046accf6, each side on its own tree and binary: base 3ca85c7a6 and tip 10770a4db both 1,171/2/3,623/8 with no changed row, as predicted. Scoped gate at 2f8531c19: all 8 steps 0 (10,014 passed, 497 Lean audits, 807 Python tests). Pinned routes are not runnable on the host; no move predicted. Follow-up `NAME-KEYED-HOLDER-SHADOWING` (formal-keyed readings, unassessed).",
+ "status_edits": [],
+ "ledger": [
+  {
+   "id": "FRAME-HOLDER-SHADOWED-NAME",
+   "operation": "retire",
+   "why": "Discharged by FRAME-HOLDER-SHADOWED-NAME (rule 74o). Assessed reachable and fail-open: a block-scope holder shadowing a file-scope object the body also names as `&NAME` at a holder position passed both token censuses and one_automatic_object, so the file-scope `&g` was read as the frame holder (probes F1, F2: a caller's object retained by the file-scope g; F3: the local's reset dropped the file-scope record before a release; F4: the file-scope registry destroyed under the local's registration; all Safe at base). Both readers (legacy_retained_by.rs `holder`, legacy_callback_route.rs `frame_registry_holder`) now also require every_reference_is, so each probe refuses (retention-undecided / callback-registry-undecided) and the controls stay Safe; pinned in crates/qcore-c-gateway/tests/frame_holder_shadowed_name.rs (2 passed, 3 failed at base; 5 passed at tip). QCore.FrameHolderOneDeclaration extends InPlaceCertifiedUse.oneDeclaration to frame holders: no_verdict_becomes_safe (a simulation over RetainedBy replay), a_registry_key_is_the_old_one_or_refused, and the F1/F3/F4 witnesses.",
+   "source": "docs/reports/frame-holder-shadowed-name/README.md"
+  },
+  {
+   "id": "NAME-KEYED-HOLDER-SHADOWING",
+   "operation": "register",
+   "source": "docs/reports/frame-holder-shadowed-name/README.md",
+   "recorded_by": "FRAME-HOLDER-SHADOWED-NAME",
+   "title": "Rule 12t's formal-keyed readings may read a block-scope local shadowing the formal as the formal",
+   "text": "Rule 74o closed the frame holder's shadowed name (one_automatic_object plus every_reference_is, which read VarDecls only). Rule 12t's other name-keyed readings, the caller's object (an unrebound formal this body holds no custody of) and the path holder (a member path below an unrebound formal named only through member accesses off the path, legacy_retained_by.rs `path_holder`, P-HOLDER-PATH-STABLE), decide from the formal's name in the token stream. A block-scope local that shadows the formal and is named through the same spelling may be read as the formal. Direction not assessed; not probed. DISCHARGE: probe a shadowing local at each formal-keyed reading (retained actual, path holder, removal); where one reaches an admitting reading, require that every DeclRefExpr of the name designates the ParmVarDecl, and pin the shape."
+  }
+ ]
+}

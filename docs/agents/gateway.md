@@ -13420,4 +13420,286 @@ through `ampersand_runs`.
     `out_and_removed_refuse`, `fold_vectors_hold`);
     [report](../reports/callback-member-released-fold/README.md).
 
+<a id="constraint-74k"></a>
+
+74k. **A declaration of several init-declarators reads as its declarations
+    written one per statement, or keeps its old reading.** Card
+    LATER-DECLARATOR-INITIALISER-UNREAD
+    (`crates/qcore-c-gateway/src/later_declarator.rs`, the hook
+    `legacy_later_declarator.rs`, asked by the statement walker before an
+    expression or declaration statement's own lowering). The classifier reads
+    one assignment per statement, its first top-level `=`: in `T *a = X, *b =
+    Y;` the value `X , * b = Y` holds `* b`, so the declaration was refused as
+    an indirect access and neither name was bound after it (Fluent Bit's
+    `rd_kafka_mock_handle_ConsumerGroupHeartbeat`, whose `RD_IF_FREE` guard on
+    the later declarator was then refused). C gives each init-declarator its
+    own initialisation: a full declarator is a sequence point (C11 6.7.6p3)
+    and each name's scope begins after its declarator (6.2.1p7). The lexical
+    splitter reads the declarators at the top-level commas only when the
+    specifiers are words (no `typeof`, attribute, `_Alignas`), every later
+    declarator is `*`-and-qualifier prefixes and a name (no array,
+    function-pointer, parenthesised or attributed declarator), every
+    initialiser is non-empty and its `=` is the one rule 10o's lexical closure
+    reads with that name as destination, there are no braces and no repeated
+    names. The hook then needs Clang's AST: exactly one `DeclStmt` at the line
+    with the statement's exact tokens, whose children are the split's
+    `VarDecl`s by name and order, each automatic, each initialised exactly
+    when the spelling is; and at least one pointer declarator (a declaration
+    of scalars alone keeps rules 41 and O04's routes). Per declarator: an
+    uninitialised one is no event when rule 38h's facts hold for it alone; a
+    pointer declarator's initialiser is lowered as the declaration written
+    alone through the unchanged statement lowering, unless it spells `* )`
+    and is not the null constant (rule 12h's soundness repair reads such a
+    cast only from the statement's own Clang node, which a piece lacks); a
+    scalar declarator only with a numeric literal (no truth-value conversion
+    of a pointer, rule 11b's repair). One declarator outside the table keeps
+    the whole statement on its old reading, so no refusal turns into an
+    admission except through the reading of the same declarations one per
+    statement. **Do not** split a declaration the AST does not confirm, admit
+    a piece whose reading would need a node-matched repair, or lower a piece
+    by a route other than the statement lowering of its own tokens. A piece
+    is lowered without the statement's stream origin, so typed readers that
+    need a unique node for it answer nothing and refuse (fail-closed).
+    Pinned: the Heartbeat shape, `void *a = 0, *r = 0;` (moved from
+    `Unknown` to the one-per-statement `Safe`, NULLABLE-LAZY-CONSTRUCTOR-IN-LOOP's
+    pin updated), a leak behind a later declarator (`Unsafe`, as one per
+    statement), mixed declarators, an unreadable initialiser, rule 38h's
+    uninitialised pairs; arrays, function pointers, parenthesised
+    declarators, a non-null cast, a non-literal scalar and `static` keep the
+    old reading. Five more pins moved deliberately to their one-per-statement
+    verdicts: rule 61's `two_declarators` and rule 38h's `initialized` (`Safe`),
+    rule 41's `int a = 0, *p = 0;` (`Safe`), rule 10o's later-declarator alias
+    (`Unsafe`, a use after release), and the chained-assignment scram shape
+    (`Unsafe` on a provisional loop re-acquisition leak, as its one-per-statement
+    spelling is at the base; PASS-CORRELATED-LOOP-ALLOCATION). Premises stated, not proved: the token splitter, the Clang
+    `DeclStmt` match (trust boundary 28), and that the statement lowering of a
+    piece is the reading of that declaration alone. `QCore.LaterDeclarator`;
+    [report](../reports/later-declarator-initialiser/README.md).
+
+<a id="constraint-74l"></a>
+
+74l. **An owned result stored through a formal's slot is a delivery only
+    when W4's `Out` summary validates; otherwise it is refused by name.**
+    Card OWNED-CONSTRUCTOR-OUT-PARAMETER-DELIVERY (`owned_out_formal.rs`, the
+    refusal at the unsanctioned-destination arm of `legacy_transfer.rs`'s
+    contract call, `legacy_summary::out_mode`). USER DECISION 2026-11-23:
+    picked as one of the "soundness first" cards. With
+    `rd_kafka_topic_partition_list_new` declared owned, `*partitions =
+    rd_kafka_topic_partition_list_new(0);` read as `discarded owned result of
+    resource API`. (1) **The delivery reading is W4's, unchanged.** The
+    summary search marks every formal the body stores through
+    (`out_parameter_candidates`), probes with `*NAME` sanctioned, and reads
+    `Out { nullable }` off the exits (`out_mode`): every reachable exit holds
+    a fresh, live, non-null heap site in the slot or the null constant
+    (`nullable`), and at least one holds a site; an exit leaving the slot
+    `Unwritten` (a partial-path store, an in-out slot `if (!*out) *out =
+    make();`) or `Ambiguous` (another object's value), a possibly-null site,
+    or a released, escaped or contained site (a store followed by a release,
+    a second store) reads no mode. The candidate is then validated by
+    condition (6) of the W4 gate (`out_slots_match`), and the published
+    summary binds the caller's slot variable to a fresh site at `fill(&p)`:
+    a caller that releases it discharges it, one that ignores it leaks in
+    the caller. (2) **The refusal.** Where no contract or validated summary
+    sanctions the slot, the body's own analysis runs with none, and a call
+    whose result carries custody stored through the unsanctioned `*NAME` is
+    refused as `owned result of resource API `F` stored through `*NAME`
+    without an out-parameter contract` (the sibling of rule 10v's
+    variable store, `store through `*NAME` without an out-parameter
+    contract`). Kind (`unsupported`), state poisoning and the summary gate
+    are unchanged, so the row stays `Unknown` and its callers keep `call to
+    uncontracted function`. A real discard (`make();`) and a store into a
+    destination the importer does not name (`a[i] = make();`) keep
+    `discarded owned result`. **Do not** read a partial-path, in-out,
+    possibly-null, released or overwritten slot store as a delivery, a slot
+    of a local pointer as the caller's, or the refusal as anything but
+    `Unknown`; a slot written on some exits only needs a return-code
+    disposition (C04.13, rule 11r) or a new mode, which this rule does not
+    state. Premises stated, not proved: faithful token and Clang extraction
+    (trust boundary 28) and the callee's declaration (C06).
+    `QCore.OwnedOutFormalDelivery` (`out_mode_vectors_hold`,
+    `a_partial_path_store_reads_no_mode`, `a_dead_delivery_reads_no_mode`,
+    `a_possibly_null_delivery_reads_no_mode`,
+    `a_read_mode_delivers_on_every_exit`,
+    `a_validated_out_summary_has_no_partial_path`,
+    `an_ignored_delivery_leaks_in_the_caller`,
+    `the_renaming_keeps_every_leaf`, `only_the_unsanctioned_slot_changed`
+    and seven more), bound to `OUT_MODE_VECTORS`;
+    `tests/owned_out_formal_delivery.rs`;
+    [report](../reports/owned-constructor-out-delivery/README.md).
+
+<a id="constraint-74m"></a>
+
+74m. **A starred may-bind root counts through cast groups too.** Card
+    RETURN-FAMILY-DEREF-THROUGH-RESOLVED-CAST, extending
+    [rule 74h](#constraint-74h) and rule 12h(4). With a finite `closing`,
+    `stars_before` stopped a starred root's count at the `)` of the nearest
+    cast group, so `* ( long * ) * q` counted one `*`. Family S then admitted
+    a may-bind `q` as the root of one dereference (`bases: ["q"]`), although
+    the outer `*` dereferences the pointer `*q` reads, a second dereference,
+    which the module header refuses. That is the admitting direction, and it
+    is reachable: `long w(void **q) { return *(long *)*q; }` was `Safe` at
+    the base while `return **q;` kept the return refusal. Rule 12h's
+    transparency applied only where `closing` was `usize::MAX`, that is,
+    before a member or subscript root. `stars_before` now takes `through`,
+    and with it a group `cast_semantics::type_group_open` reads as a type
+    does not stop the count. A starred root is admitted only when the count
+    is exactly one **both** without and with `through`, under **both** of
+    rule 74h's readings. The count with `through` is never less than the
+    count without it, so every admission was one at the base. Nested casts
+    (`*(T *)(U *)*q`) and a parenthesised operand (`*(T *)(*q)`) refuse too.
+    `*(T *)q` dereferences the converted value. Its count without `through`
+    is 0, so it keeps its refusal, and the typed return route still decides
+    it. `(T) *q` and `(int)(long) *q` keep their admission. A newly refused
+    return falls through to the typed return route (rule 10k) and from there
+    to the return refusal, as `**q` does. After a release, `*(T *)*q` moves
+    from `Unsafe` (the flow check accused the first dereference) to that
+    refusal: it loses an accusation, but nothing moves toward `Safe`.
+    `sizeof ( long ) * q` still counts one, as at the base: a conforming body
+    cannot multiply by a pointer `q` (C11 6.5.5p2), and a declared scalar
+    never reaches the may-bind test. **Do not** read a starred root's count
+    through a cast group alone (that would admit `*(T *)q`), and **do not**
+    write a second type-group detector. Premises stated, not proved: the
+    token classes (trust boundary 28). `QCore.ReturnFamilyDerefCast`
+    (`inner_le_through`, `inner_mono`, `through_mono`,
+    `the_fix_only_refuses_more`, `admitted_is_one_dereference`,
+    `old_admits_a_second_dereference`,
+    `the_converted_value_keeps_its_refusal`,
+    `a_cast_of_one_dereference_is_unchanged`, `deref_vectors_hold`,
+    `old_vectors_hold`);
+    [report](../reports/return-family-deref-resolved-cast/README.md).
+
+<a id="constraint-74o"></a>
+
+74o. **A frame holder is one declaration.** Card FRAME-HOLDER-SHADOWED-NAME
+    (USER DECISION 2026-11-24, "launch them all"; `legacy_retained_by.rs`,
+    `holder`; `legacy_callback_route.rs`, `frame_registry_holder`),
+    discharging `FRAME-HOLDER-SHADOWED-NAME`. [Rule 12t](#constraint-12t)'s
+    frame holder and the callback registry's frame holder read `&NAME` as
+    storage of this frame when the token census admits every mention and
+    `one_automatic_object` holds. That counts only the function's own
+    `VarDecl`s, the shape [rule 74i](#constraint-74i) (2) closed for in-place
+    kinds. Census: these were the only callers of `one_automatic_object`
+    without `every_reference_is`; `Parser::automatic_object` asked both, and
+    the other automatic-object readers are keyed by declaration id. Both
+    were reachable and fail-open: with a block-scope `struct st g` shadowing
+    a file-scope `g` that the body also names as `&g` at a holder position,
+    the file-scope `&g` passed the census and was read as the frame holder.
+    A caller's object retained there "outlived" it (probes F1, F2), the
+    local's reset dropped the file-scope record before a release (F3), and a
+    destroy of the file-scope registry was read against the local's
+    registration (F4); each was `Safe`. Each frame reading now also asks
+    `every_reference_is`. A name that is not one declaration is no frame
+    holder: a retention there is `retention-undecided`, a registry there
+    `callback-registry-undecided` (both `Unknown`), and a reset there drops
+    nothing. A shadowing local whose every reference is its own stays a
+    frame holder. **Do not** read as a frame holder, for any route, a name a
+    reference outside its one declaration can name, or count declarations
+    without references. Premises stated, not proved: faithful Clang
+    declaration and reference ids and the token census (trust boundary 28).
+    `QCore.FrameHolderOneDeclaration` (`AuditFrameHolderOneDeclaration.lean`:
+    `a_frame_holder_was_one_before`, `a_shadowed_name_is_not_a_frame_holder`,
+    `no_verdict_becomes_safe`, `a_registry_key_is_the_old_one_or_refused`,
+    and probes F1, F3, F4 `Safe` under rule 12t's reading and refused under
+    this one), extending `QCore.InPlaceCertifiedUse.oneDeclaration`;
+    `tests/frame_holder_shadowed_name.rs`;
+    [report](../reports/frame-holder-shadowed-name/README.md).
+
+<a id="constraint-74p"></a>
+
+74p. **A candidate's member effect through a released object is composed
+    after the release, and only a live link is taken.** Card
+    CALLBACK-MEMBER-RELEASED-EFFECT-ORDER (contract specification C04.19.6
+    "Through a released object"). The transfer applies a call's custody
+    contract, the release included (`legacy_transfer.rs`,
+    `apply_contract_call`), before the callback route
+    (`legacy_callback_route::apply`). In C the callback runs first. r60
+    refuses a slot invocation through a released parameter beside any
+    candidate effect (`callback-beside-release`, keyed on
+    `released_slot_objects`); the plain member form
+    (`rd_kafka_op_destroy`), a synchronous invocation handing the released
+    object, and a member reading deferred to its constructed state compose
+    the candidates' member-path states after the release. That order is
+    sound, so this card adds no refusal: the release of site `s`
+    (`resource_action`) writes `s`'s status, what `s` contains
+    (`cascade_resource_action`) and the retentions `s` holds, never
+    `field_links` (premise P-B08-SHALLOW), `constructed`, `registries` or
+    `pointers`; and `legacy_member_path_route::apply` releases a linked
+    object only while it is live (`if single && live`). So a linked object
+    the release itself released (the object, or one it contains) refuses
+    `member-path-undecided`, and every composition the late order admits
+    is the one the C order admits, with the same state. The late order is
+    stricter, never looser: the contained payload the fixture links refuses
+    late, where in C it is a double release. The declaration's own effects
+    applied after the release (rule 12o's arms, rule 51's helper-destroyer
+    states, `mk_thread_destroy`) read the same links and liveness. A
+    registry use on the released holder is refused by the release itself
+    while the registry holds elements (`refuse_release_of_registry`). The
+    shipped controls are unchanged: the only member invocations through a
+    released object are the plain form, non-null (`rd_kafka_op_destroy`
+    with arms, `mk_thread_destroy` with its own states). **Do not** let the
+    release write a released object's field links or constructed state, or
+    let a composition take a linked object that is not live, without
+    adding the `callback-beside-release` refusal to every form this rule
+    reads. A table dispatch (rule 13v) composes no candidate state at all,
+    released object or not (follow-up CALLBACK-TABLE-MEMBER-PATH-STATES).
+    Premises stated, not proved: P-B08-SHALLOW. Pins:
+    `tests/callback_member_released_effect_order.rs` (dropping the liveness
+    read certifies the contained payload `Safe`: report §3).
+    `QCore.CallbackReleasedEffectOrder`
+    (`the_release_writes_no_link`, `late_admits_only_disjoint`,
+    `late_is_the_c_order`,
+    `the_late_order_never_admits_what_the_c_order_refuses`,
+    `a_link_the_release_releases_refuses`, `a_kept_path_changes_nothing`,
+    `the_late_order_is_stricter`, `order_vectors_hold`);
+    [report](../reports/callback-member-released-effect-order/README.md).
+
+<a id="constraint-74s"></a>
+
+74s. **A dereference outside a starred root's parentheses counts.** Card
+    RETURN-FAMILY-STAR-OUTSIDE-ROOT-PARENTHESES, extending
+    [rule 74m](#constraint-74m). `stars_before` reads back from a starred
+    root through `(` and `*` and stops at anything else: a binary operator
+    (`* ( 1 + * q )`) or a `*` behind more opening parentheses than close
+    right after the root (`* ( * q + 1 )`). `ends_one_dereference` reads
+    only up to the root's own parentheses, so `( * q + 1 ) [ 0 ]` passed
+    too. Each counted one `*`, and family S admitted a may-bind `q` as the
+    root of one dereference, although the outer `*`, `[` or `->`
+    dereferences a pointer computed from the value `*q` reads: a second
+    dereference. That is the admitting direction, and it is reachable:
+    `long w(long **q) { return *(*q + 1); }` and
+    `return *((long *)*q + 1);` were `Safe` at the base, while
+    `return **q;` kept the return refusal. A starred root is now refused
+    when any parenthesised group enclosing it is dereferenced
+    (`outside_dereference`, `group_dereferenced`): a `[` or `->` follows
+    its `)`, or the token before its `(`, read back through any
+    parenthesised group (a cast, an undecided group, or a call group the
+    expression already refuses), is a `*` that rule 74h's `operator_at`
+    reads as unary under either reading. A group outside a subscript
+    counts too, and an unbalanced group refuses. The reader cannot tell
+    whether such a group's value is the pointer computed from the root
+    (`*(p + *q)` with a pointer `p` dereferences `p`'s object), so every
+    dereferenced enclosing group refuses: the fail-closed reading. The
+    admission is rule 74m's and this further condition, so every admission
+    was one at the base. `*q`, `(*q)`, `((*q))`, `*q + 1`, `(*q + 1)`,
+    `n * (*q + 1)` (a binary `*`), `(T) *q`, `(long) (*q)` and `(*q).f`
+    keep their admission, and `*(T *)*q` keeps rule 74m's refusal. A newly
+    refused return falls through to the typed return route (rule 10k) and
+    from there to the return refusal, as `**q` does. After a release,
+    `return *(*q + 1);` moves from `Unsafe` (the flow check accused the
+    first dereference) to that refusal: it loses an accusation, but nothing
+    moves toward `Safe`. Member and subscript roots and untracked roots are
+    not this rule. A bracket enclosing the root (`n[*q]`) is not read as a
+    dereference of a value computed from the root, which is the registered
+    follow-up RETURN-FAMILY-SUBSCRIPT-ENCLOSING-STARRED-ROOT. **Do not**
+    narrow the refusal to groups whose contents look like pointer
+    arithmetic, and **do not** read the `*` before a group under one of
+    rule 74h's readings alone. Premises stated, not proved: the token
+    classes and the enclosing groups (trust boundary 28).
+    `QCore.ReturnFamilyStarOutside` (`deref_below_may`,
+    `the_fix_only_refuses_more`, `admitted_has_no_outside_dereference`,
+    `admitted_is_one_dereference`, `old_admits_a_second_dereference`,
+    `a_parenthesised_dereference_is_unchanged`, `outside_vectors_hold`,
+    `old_vectors_hold`);
+    [report](../reports/return-family-star-outside-parentheses/README.md).
+
 <!-- generated:rules:end -->

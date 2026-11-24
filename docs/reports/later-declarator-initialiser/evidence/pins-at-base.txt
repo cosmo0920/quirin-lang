@@ -1,0 +1,71 @@
+## ag1_indirect_member_access
+test a_formal_base_keeps_the_member_store_through_formal_name ... ok
+test a_constructor_spelled_through_a_defining_alias_is_safe ... ok
+test a_released_owner_still_leaks_its_linked_child ... ok
+test an_alias_that_does_not_name_one_struct_keeps_the_refusal ... FAILED
+test a_constructor_spelled_through_a_forward_and_a_defining_alias_is_safe ... ok
+test every_other_store_premise_still_decides ... ok
+test result: FAILED. 5 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.34s
+## chained_assignment
+test the_scram_shape_withdraws_the_leak_and_does_not_become_safe ... FAILED
+test a_chain_with_a_refused_destination_stays_refused_by_name ... ok
+test a_release_through_the_inner_name_is_matched ... ok
+test a_scalar_chain_is_unchanged ... ok
+test the_inner_name_holds_the_value_c_assigns_it ... ok
+test result: FAILED. 4 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.61s
+## later_declarator_initialiser
+test an_unreadable_initialiser_stays_refused ... FAILED
+test mixed_declarators_read_as_one_per_statement ... FAILED
+test uninitialised_declarators_stay_admitted ... ok
+test the_heartbeat_declaration_reads_as_one_per_statement ... FAILED
+test two_null_initialised_pointers_read_as_two_declarations ... FAILED
+test a_leak_behind_a_later_declarator_is_found ... FAILED
+test declarations_the_decision_refuses_keep_the_old_reading ... ok
+test unmodelled_declarators_stay_refused ... ok
+test result: FAILED. 3 passed; 5 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.19s
+## lexical_closure_nested_assignment
+test a_compound_assignment_and_a_tracked_copy_are_unchanged ... ok
+test a_never_bound_root_still_certifies ... ok
+test a_pointer_return_through_a_nested_binding_keeps_the_return_refusal ... ok
+test a_nested_binding_makes_the_read_through_its_root_need_an_identity ... FAILED
+test result: FAILED. 3 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.28s
+## member_access_projection
+test every_other_declaration_keeps_the_gate_refusal ... FAILED
+test an_admitted_declaration_suppresses_no_flow_refusal ... ok
+test the_predicted_crc32c_rows ... ok
+test typedef_specified_declarations_are_read_as_their_keyword_spellings ... ok
+test result: FAILED. 3 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.39s
+## nullable_lazy_constructor
+test an_unknown_binding_returned_keeps_its_identity_refusal ... ok
+test an_escaped_slot_after_the_guard_is_refused ... ok
+test a_possibly_null_return_under_a_non_null_mode_is_named ... ok
+test a_two_site_lazy_guard_refuses_on_identity_only ... ok
+test a_returned_lazy_loop_validates_a_nullable_summary ... ok
+test a_release_outside_any_guard_is_refused ... ok
+test a_genuine_leak_in_a_lazy_loop_stays_unsafe ... ok
+test the_other_shapes_stay_refused_without_a_leak ... FAILED
+test a_destroyed_and_nulled_return_is_named ... ok
+test an_odd_run_still_takes_the_address ... ok
+test lazy_construction_released_per_iteration_is_decided ... ok
+test a_reassignment_after_the_guard_is_refused ... ok
+test lazy_construction_outside_a_loop_is_decided ... ok
+test a_logical_and_takes_no_address ... ok
+test lazy_construction_in_a_loop_is_decided ... ok
+test result: FAILED. 14 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.15s
+## scalar_statement_forms
+test a_for_clause_step_is_read_from_its_original_spelling ... ok
+test a_volatile_object_keeps_its_refusal ... ok
+test an_object_of_an_inline_record_keeps_its_refusal ... ok
+test an_enumerator_spelling_an_object_keeps_its_refusal ... ok
+test pointer_arithmetic_in_the_value_keeps_its_refusal ... ok
+test a_shadowed_name_keeps_its_refusal ... ok
+test a_comma_of_steps_in_a_for_clause_keeps_its_refusal ... ok
+test a_type_declaration_runs_nothing ... ok
+test a_declaration_with_a_pointer_declarator_keeps_its_refusal ... FAILED
+test steps_and_compound_assignments_of_a_clang_scalar_are_admitted ... ok
+test a_compound_store_through_a_live_record_carries_its_obligation ... ok
+test several_scalar_declarators_are_their_declarators_in_order ... ok
+test a_compound_store_through_a_released_record_is_a_violation_candidate ... ok
+test an_unevaluated_sizeof_operand_reads_nothing ... ok
+test a_braced_scalar_initializer_is_its_expression ... ok
+test result: FAILED. 14 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.13s

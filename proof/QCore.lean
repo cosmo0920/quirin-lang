@@ -61,6 +61,7 @@ import QCore.CallbackContracts
 import QCore.CallbackCoverage
 import QCore.CallbackForward
 import QCore.CallbackLiteralPremise
+import QCore.CallbackReleasedEffectOrder
 import QCore.CallbackRequirementFold
 import QCore.CallbackSource
 import QCore.CallbackSuppliedNull
@@ -205,6 +206,7 @@ import QCore.FloatTypes
 import QCore.Flow
 import QCore.FormalBindingEnvironments
 import QCore.FrameHelperTask
+import QCore.FrameHolderOneDeclaration
 import QCore.Frontend
 import QCore.FunctionPointerDeclarators
 import QCore.FunctionPointerFormal
@@ -241,6 +243,7 @@ import QCore.JoinedProvenanceCallFrames
 import QCore.JoinedProvenanceCycles
 import QCore.JoinedProvenanceRoundBound
 import QCore.KindedCustody
+import QCore.LaterDeclarator
 import QCore.LayoutExtents
 import QCore.LegacyCAnalyzer
 import QCore.LexicalClosureNestedAssignment
@@ -357,6 +360,7 @@ import QCore.OutSlotCallWrite
 import QCore.OuterContract
 import QCore.OuterListCandidates
 import QCore.OwnedFieldCopyReach
+import QCore.OwnedOutFormalDelivery
 import QCore.OwnedOutMemberSlot
 import QCore.OwnedTaskExecution
 import QCore.Ownership
@@ -446,7 +450,9 @@ import QCore.ReturnCodeHandOff
 import QCore.ReturnCorrectness
 import QCore.ReturnExpressionEvaluation
 import QCore.ReturnExpressionFamilies
+import QCore.ReturnFamilyDerefCast
 import QCore.ReturnFamilyStarCast
+import QCore.ReturnFamilyStarOutside
 import QCore.ReturnPositionEscape
 import QCore.ReturnRefusedCallLowering
 import QCore.ReviewHoldStanding

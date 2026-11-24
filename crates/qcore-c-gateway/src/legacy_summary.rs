@@ -1521,7 +1521,12 @@ fn stored_mode(
 /// resolved to non-null would hand back a resource that may not exist without
 /// saying so: both yield no summary. `nullable` is claimed only for the one
 /// determinate case — an exit that stores a null constant.
-fn out_mode(index: usize, observations: &[ExitObservation]) -> Option<ResourceParameterMode> {
+/// Card OWNED-CONSTRUCTOR-OUT-PARAMETER-DELIVERY (rule 74l) runs its
+/// `OUT_MODE_VECTORS` against this function.
+pub(crate) fn out_mode(
+    index: usize,
+    observations: &[ExitObservation],
+) -> Option<ResourceParameterMode> {
     let mut nullable = false;
     let mut delivered = false;
     for observation in observations {

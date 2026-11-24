@@ -1,0 +1,33 @@
+{
+ "schema": "quirin-amendments/2",
+ "card": "OWNED-CONSTRUCTOR-OUT-PARAMETER-DELIVERY",
+ "base": "2c60986b0",
+ "measured_tip": "fcf76ce01",
+ "profiles": [],
+ "increment_paragraph": "**OWNED-CONSTRUCTOR-OUT-PARAMETER-DELIVERY** (USER DECISION 2026-11-23: one of the \"soundness first\" set of four implementation cards; gateway rule 74l; `QCore.OwnedOutFormalDelivery`; [report](../../reports/owned-constructor-out-delivery/README.md)). The out-parameter delivery summary the entry asked for already exists: W4 reads `Out { nullable }` off a body only when every reachable exit holds a fresh, live, non-null site in the slot (or the null constant), validates it, and binds the caller's slot variable to a fresh obligation, so a caller that ignores the delivery leaks. None of the four rows is such a delivery: `rd_kafka_assignment`/`rd_kafka_subscription` first store another object's member and the fresh list only when that is NULL and `err` is 0, `rd_kafka_handle_OffsetFetch` keeps the caller's list when it has one, and `ut_create_topic_partition_lists` stores into an array element. Stating them needs a new mode, registered for a user decision (OUT-SLOT-CONDITIONAL-DELIVERY). The card takes the discharge's alternative: a call whose owned result is stored through a `*NAME` slot nothing sanctions is now refused as `owned result of resource API `F` stored through `*NAME` without an out-parameter contract` instead of `discarded owned result`, the same `unsupported` kind, so no verdict can move. The 21 `*NAME` leaves of the base report's 30 `discarded owned result` leaves were censused (15 rows; only `resource_attributes` writes its slot on every exit, blocked by uncontracted callees). Pins: out-mode vectors against `out_mode`, the census shapes' summaries, end-to-end fixtures of the four shapes, a partial-path store, a store then release, a possibly-null result, a local slot and an ignored delivery; the seven text pins fail at the base. Opt-in `current --monkey-linked` over Fluent Bit 046accf6, each run on its own tree and binary: base 2c60986b0 and tip fcf76ce01 both 1,172/2/3,622/8; 15 rows re-worded (21 leaves), no status move, as predicted. Scoped gate at cad60e651: all 8 steps 0 (9,986 passed, 492 Lean audits, 807 Python tests). Pinned routes not runnable on the host; no move predicted.",
+ "status_edits": [],
+ "ledger": [
+  {
+   "id": "OWNED-CONSTRUCTOR-OUT-PARAMETER-DELIVERY",
+   "operation": "retire",
+   "why": "Discharged by OWNED-CONSTRUCTOR-OUT-PARAMETER-DELIVERY (rule 74l): the out-parameter summary is W4's Out mode (legacy_summary.rs out_mode and out_slots_match), which reads a delivery only when every reachable exit holds a fresh live non-null site and makes the caller take custody; the four rows are partial-path, in-out or element stores that no Out summary states (report section 2), so the refusal is named instead: crates/qcore-c-gateway/src/owned_out_formal.rs `unsanctioned_owned_store` replaces `discarded owned result` at an unsanctioned *NAME slot. Pinned in crates/qcore-c-gateway/tests/owned_out_formal_delivery.rs and tests/unit/owned_out_formal.rs (text pins failing at the base); re-measured: rd_kafka_assignment, rd_kafka_subscription and rd_kafka_handle_OffsetFetch re-worded and Unknown, ut_create_topic_partition_lists unchanged and Unknown, no status move on the opt-in route.",
+   "source": "docs/reports/owned-constructor-out-delivery/README.md"
+  },
+  {
+   "id": "OUT-SLOT-CONDITIONAL-DELIVERY",
+   "operation": "register",
+   "source": "docs/reports/owned-constructor-out-delivery/README.md",
+   "recorded_by": "OWNED-CONSTRUCTOR-OUT-PARAMETER-DELIVERY",
+   "title": "An owned result delivered through a formal's slot on some exits only has no summary mode",
+   "text": "OWNED-CONSTRUCTOR-OUT-PARAMETER-DELIVERY found W4's Out mode reads a slot only when every exit delivers (rule 74l). Three shapes on the opt-in route deliver on some exits: keep-or-deliver in-out slots (`if (!*out) *out = make();`: rdkafka_request.c rd_kafka_handle_OffsetFetch, rdkafka_broker.c rd_kafka_broker_share_session_add_remove_toppar, rdkafka_cgrp.c rd_kafka_cgrp_consumer_assignment_with_metadata), a slot first holding another object's member and then a conditional fresh object (rdkafka_subscription.c rd_kafka_assignment, rd_kafka_subscription, which write the slot even when `err` is nonzero), and error-path partial stores whose return code does not partition the slot (cio_file_unix.c cio_file_native_lookup_user/_group, rdkafka_request.c rd_kafka_handle_ApiVersion). Each needs a new effect mode (keep-or-deliver) or an inferred return-code disposition, neither with a precedent, so it is a user decision; every such row also has other blockers today. DISCHARGE: decide whether to add the mode, then state it with Lean parity, or record the refusal as final; re-measure these rows."
+  },
+  {
+   "id": "OWNED-RESULT-ELEMENT-STORE-READ-AS-DISCARD",
+   "operation": "register",
+   "source": "docs/reports/owned-constructor-out-delivery/README.md",
+   "recorded_by": "OWNED-CONSTRUCTOR-OUT-PARAMETER-DELIVERY",
+   "title": "An owned result stored into an array element is refused as a discarded owned result",
+   "text": "OWNED-CONSTRUCTOR-OUT-PARAMETER-DELIVERY renamed the refusal for an unsanctioned *NAME slot only (rule 74l). A store into an element the importer does not name (`lists[i] = rd_kafka_topic_partition_list_new(0);` in rdkafka_sticky_assignor.c ut_create_topic_partition_lists, `ALL_RACKS[i] = rd_kafkap_str_new(…)`, `metrics[idx] = rd_calloc(…)`, `tqh[qi] = rd_calloc(…)`) still reaches legacy_classify.rs's destination-free arm and reads `discarded owned result of resource API` (9 leaves in 5 rows at base 2c60986b0), the text a real discard carries. DISCHARGE: name the refusal for an element destination (or read it through W43's indexed collections where they apply), keeping the row Unknown; re-measure."
+  }
+ ]
+}

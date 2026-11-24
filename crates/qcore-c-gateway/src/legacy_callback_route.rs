@@ -1757,7 +1757,10 @@ impl Parser<'_> {
         .then_some(operands))
     }
 
-    /// Whether `name` is a frame registry holder of the calling function.
+    /// Whether `name` is a frame registry holder of the calling function:
+    /// every mention a registry actual, and the one automatic object every
+    /// reference of the name designates (card FRAME-HOLDER-SHADOWED-NAME,
+    /// rule 74o), never a file-scope object a block-scope holder shadows.
     pub(super) fn frame_registry_holder(&self, name: &str) -> bool {
         let Some((start, _)) = super::find_function_body(self.tokens, &self.typed_path_function)
         else {
@@ -1773,6 +1776,7 @@ impl Parser<'_> {
         only_registry_mentions(&body, name, self.contracts)
             && self.typed_positions_index().is_some_and(|index| {
                 super::in_place_custody::one_automatic_object(&index.function, name)
+                    && super::in_place_custody::every_reference_is(&index.function, name)
             })
     }
 }

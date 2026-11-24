@@ -1,0 +1,382 @@
+// SPDX-License-Identifier: Apache-2.0
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+//! Card CALLBACK-MEMBER-RELEASED-EFFECT-ORDER (gateway rule 74p; contract
+//! specification C04.19.6): a candidate's member-path state at an invocation
+//! through a parameter the declaration releases is applied by the callback
+//! route after the transfer has applied the release. The release changes
+//! only the released object's status (and that of what it contains, and the
+//! retentions it holds), never its field links, and the composition releases
+//! a linked object only while it is live; so the late order is the order the
+//! C code runs in, except where a linked object is the released one or one
+//! it contains, and there the late order reads it released and refuses. The
+//! rows below pin both halves, for the plain member form (`c_op_free`, the
+//! `rd_kafka_op_destroy` shape without arms), the member form with arms
+//! (`c_op_destroy`, rule 30's) and the synchronous form (`c_op_run`). The fixture callees
+//! are trusted test assumptions; a `Safe` here promotes nothing.
+
+use std::collections::BTreeMap;
+
+use qcore_c_gateway::legacy_c::{
+    AnalysisStatus, C11TranslationUnit, LegacyDiagnosticKind, LegacyProgramSummary,
+    ResourceContracts, UnrestrictedLegacyResult, analyze_unrestricted_c11,
+    check_legacy_safety_certificate,
+};
+use qcore_contract::contract_loader::load_resource_contract_sources;
+
+/// Beside rule 30's `member_paths.qv`: the plain release (no arms), the
+/// synchronous form, a store of an item into the op's custody, and a
+/// candidate whose stated path designates the op itself.
+const ORDER: &str = "module contract;
+
+extern fn c_op_new(type: i32) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(type);
+    ensures normal resource_return_owned(nonnull);
+};
+
+extern fn c_op_free(rko: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(rko, nonnull);
+    ensures normal resource_callback_member_invoked(rko, op.op_cb, _, _, rko);
+    ensures normal resource_return_none();
+};
+
+extern fn c_op_run(rko: ptr<mut, u8>, cb: fnptr) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(rko, nonnull);
+    ensures normal resource_borrowed(cb);
+    ensures normal resource_callback_invoked(cb, _, _, rko);
+    ensures normal resource_return_none();
+};
+
+extern fn c_op_keep(rko: ptr<mut, u8>, it: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_owned(rko, nonnull);
+    ensures normal resource_stored(it, rko, nonnull);
+    ensures normal resource_return_none();
+};
+
+extern fn c_op_table(table: ptr<mut, u8>, rko: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(table);
+    ensures normal resource_borrowed(rko);
+    ensures normal resource_callback_table(table, _, _, rko);
+    ensures normal resource_return_none();
+};
+
+extern fn c_op_drop(rko: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(rko, nonnull);
+    ensures normal resource_return_none();
+};
+
+extern fn c_item_free(it: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(it, nonnull);
+    ensures normal resource_return_none();
+};
+
+extern fn c_cb_self(rk: ptr<mut, u8>, rkq: ptr<mut, u8>, rko: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rk);
+    ensures normal resource_borrowed(rkq);
+    ensures normal resource_borrowed(rko);
+    ensures normal resource_return_none();
+    quant live #rko: op.self |-> #released;
+};
+";
+
+const PRELUDE: &str = "\
+#include <stddef.h>
+struct item { int x; };
+struct op;
+typedef int (*op_cb_t)(void *rk, void *rkq, struct op *rko);
+struct op { int type; op_cb_t op_cb; struct item *payload; struct item *aux; struct op *self; };
+struct item *c_item_new(int n);
+struct op *c_op_new(int type);
+struct op *c_op_new_cb(int type, op_cb_t cb);
+void c_op_destroy(struct op *rko);
+void c_op_free(struct op *rko);
+void c_op_run(struct op *rko, op_cb_t cb);
+void c_op_keep(struct op *rko, struct item *it);
+int c_cb_releases(void *rk, void *rkq, struct op *rko);
+int c_cb_other(void *rk, void *rkq, struct op *rko);
+int c_cb_self(void *rk, void *rkq, struct op *rko);
+struct entry { const char *name; op_cb_t handler; };
+int c_op_table(struct entry *table, struct op *rko);
+void c_item_free(struct item *it);\nvoid c_op_drop(struct op *rko);
+";
+
+fn environment() -> ResourceContracts {
+    load_resource_contract_sources(&BTreeMap::from([
+        (
+            "member_paths.qv".to_owned(),
+            include_str!("fixtures/contracts/member_paths.qv").to_owned(),
+        ),
+        ("effect_order.qv".to_owned(), ORDER.to_owned()),
+    ]))
+    .expect("the fixture contracts load")
+}
+
+fn clang_available() -> bool {
+    match qcore_c_gateway::clang_command() {
+        Ok(_) => true,
+        Err(reason) => {
+            assert!(
+                std::env::var_os("QCORE_CLANG").is_none(),
+                "explicit QCORE_CLANG configuration is invalid: {reason}"
+            );
+            eprintln!("skipping Clang-dependent effect order test: {reason}");
+            false
+        }
+    }
+}
+
+#[derive(Debug)]
+struct Row {
+    status: AnalysisStatus,
+    unsupported: Vec<String>,
+}
+
+impl Row {
+    fn safe(&self) -> bool {
+        self.status == AnalysisStatus::Safe && self.unsupported.is_empty()
+    }
+    fn refused_with(&self, key: &str) -> bool {
+        self.status != AnalysisStatus::Safe && self.unsupported.iter().any(|d| d.contains(key))
+    }
+}
+
+fn summary_of(outcome: &UnrestrictedLegacyResult) -> Option<&LegacyProgramSummary> {
+    match outcome {
+        UnrestrictedLegacyResult::Safe(certificate) => Some(&certificate.summary),
+        UnrestrictedLegacyResult::Unsafe(summary) => Some(summary),
+        UnrestrictedLegacyResult::Unknown { partial, .. } => partial.as_ref(),
+    }
+}
+
+/// The row of `f` in the unit `PRELUDE + source`.
+fn row(source: &str) -> Row {
+    let text = format!("{PRELUDE}\n{source}\n");
+    let outcome = analyze_unrestricted_c11(
+        &C11TranslationUnit {
+            source: &text,
+            ..Default::default()
+        },
+        "f",
+        &environment(),
+    )
+    .unwrap_or_else(|error| panic!("fixture rejected by Clang: {error:?}\n{text}"));
+    if let UnrestrictedLegacyResult::Safe(certificate) = &outcome {
+        check_legacy_safety_certificate(certificate).expect("a Safe result rechecks");
+    }
+    let summary = summary_of(&outcome).unwrap_or_else(|| panic!("no summary: {outcome:?}"));
+    let row = &summary.functions["f"];
+    Row {
+        status: row.status,
+        unsupported: row
+            .diagnostics
+            .iter()
+            .filter_map(|d| match &d.kind {
+                LegacyDiagnosticKind::Unsupported { description } => Some(description.clone()),
+                _ => None,
+            })
+            .collect(),
+    }
+}
+
+/// An op registering `cb` (the unit's one store into `op.op_cb`), a fresh
+/// item linked at its payload, `extra`, then `free`.
+fn body(cb: &str, extra: &str, free: &str) -> String {
+    format!(
+        "void f(int n) {{ struct item *it; struct op *o; it = c_item_new(n); \
+         if (!it) {{ return; }} o = c_op_new_cb(2, {cb}); o->payload = it; {extra} {free}; }}"
+    )
+}
+
+/// The plain member form through a released object (`rd_kafka_op_destroy`'s
+/// shape without arms): the candidate's `#released` payload is composed
+/// after the release and decides the call, as the C order (the callback,
+/// then the free) does; a candidate that leaves the payload kept leaves it
+/// live, and the caller loses it.
+#[test]
+fn a_plain_member_release_composes_its_candidate_after_the_release() {
+    if !clang_available() {
+        return;
+    }
+    let released = row(&body("c_cb_releases", "", "c_op_free(o)"));
+    assert!(released.safe(), "{released:?}");
+    let kept = row(&body("c_cb_other", "", "c_op_free(o)"));
+    assert_eq!(kept.status, AnalysisStatus::Unsafe, "{kept:?}");
+}
+
+/// The linked object is one the release itself releases: an item the op
+/// holds in custody (`resource_stored`) and also links at the payload. In
+/// C the callback frees it and the free then releases it again; the late
+/// order reads it released by the release's cascade and refuses. Never
+/// `Safe`, in the member form with or without arms and in the synchronous
+/// form.
+#[test]
+fn a_linked_object_the_release_contains_is_never_safe() {
+    if !clang_available() {
+        return;
+    }
+    for free in [
+        "c_op_free(o)",
+        "c_op_destroy(o)",
+        "c_op_run(o, c_cb_releases)",
+    ] {
+        let contained = row(&body("c_cb_releases", "c_op_keep(o, it);", free));
+        assert!(!contained.safe(), "{free}: {contained:?}");
+        assert!(
+            contained.refused_with("member-path-undecided"),
+            "{free}: {contained:?}"
+        );
+    }
+}
+
+/// The linked object is the released object itself (`o->self = o`): in C
+/// the callback frees `o` and the free frees it again. Never `Safe`. At this
+/// base the store itself is refused (indirect memory access), so the
+/// composition is not reached; the Lean model covers the released object
+/// among the linked ones (`QCore.CallbackReleasedEffectOrder`).
+#[test]
+fn a_path_designating_the_released_object_is_never_safe() {
+    if !clang_available() {
+        return;
+    }
+    let source = "void f(void) { struct op *o; o = c_op_new_cb(2, c_cb_self); o->self = o; \
+                  c_op_free(o); }";
+    let row = row(source);
+    assert!(!row.safe(), "{row:?}");
+}
+
+/// The synchronous form (rule 13u) handing the released object: the same
+/// composition after the release.
+#[test]
+fn a_synchronous_invocation_through_a_release_composes_after_it() {
+    if !clang_available() {
+        return;
+    }
+    let source = "void f(int n) { struct item *it; struct op *o; it = c_item_new(n); \
+                  if (!it) { return; } o = c_op_new(2); o->payload = it; \
+                  c_op_run(o, c_cb_releases); }";
+    let released = row(source);
+    assert!(released.safe(), "{released:?}");
+    let kept = row(&source.replace("c_cb_releases", "c_cb_other"));
+    assert!(!kept.safe(), "{kept:?}");
+}
+
+/// The member form with arms (`c_op_destroy`, rule 30's shape): type 2 has
+/// no arm on the payload, so only the candidate takes it, after the release.
+#[test]
+fn the_arms_member_release_reads_as_rule_30() {
+    if !clang_available() {
+        return;
+    }
+    let released = row(&body("c_cb_releases", "", "c_op_destroy(o)"));
+    assert!(released.safe(), "{released:?}");
+    let kept = row(&body("c_cb_other", "", "c_op_destroy(o)"));
+    assert!(!kept.safe(), "{kept:?}");
+}
+
+const RK_CLIENT: &str =
+    include_str!("../../../providers/qcore-provider-librdkafka/contracts/librdkafka/client.qv");
+const MK_LIST: &str =
+    include_str!("../../../providers/qcore-provider-libevent/contracts/monkey/intrusive_list.qv");
+
+/// The controls, the shipped member invocations through a released object:
+/// both are the plain form (never r60's slot form, so its
+/// `callback-beside-release` reads neither), both release non-null, and
+/// their effects applied after the release are the ones rule 30 composes:
+/// `rd_kafka_op_destroy`'s candidates' states before its arms, and
+/// `mk_thread_destroy`'s own states (a helper destroyer, rule 50) after its
+/// invocation.
+#[test]
+fn the_shipped_member_releases_are_the_plain_form() {
+    use qcore_schemas::callback::{CallbackClause, MemberObject};
+    use qcore_schemas::contract::ResourceParameterMode;
+    let mut seen = Vec::new();
+    for (module, text) in [
+        ("librdkafka/client.qv", RK_CLIENT),
+        ("monkey/intrusive_list.qv", MK_LIST),
+    ] {
+        let contracts =
+            load_resource_contract_sources(&BTreeMap::from([(module.to_owned(), text.to_owned())]))
+                .unwrap_or_else(|error| panic!("{module}: {error}"));
+        for (name, declaration) in contracts.retaining() {
+            for clause in &declaration.callbacks {
+                let CallbackClause::MemberInvoked {
+                    object: MemberObject::Parameter { index },
+                    slot,
+                    ..
+                } = clause
+                else {
+                    continue;
+                };
+                let mode = declaration.contract.parameters[*index];
+                if !matches!(mode, ResourceParameterMode::Released { .. }) {
+                    continue;
+                }
+                assert!(!slot, "{name}");
+                assert_eq!(
+                    mode,
+                    ResourceParameterMode::Released { nullable: false },
+                    "{name}"
+                );
+                seen.push((
+                    name.clone(),
+                    !declaration.arms.is_empty(),
+                    !declaration.member_paths.is_empty(),
+                ));
+            }
+        }
+    }
+    seen.sort();
+    seen.dedup();
+    assert_eq!(
+        seen,
+        [
+            ("mk_thread_destroy".to_owned(), false, true),
+            ("rd_kafka_op_destroy".to_owned(), true, false),
+        ]
+    );
+}
+
+#[test]
+fn probe_table() {
+    if !clang_available() {
+        return;
+    }
+    for cb in ["c_cb_releases", "c_cb_other"] {
+        let source = format!("void f(int n) {{ struct item *it; struct op *o; it = c_item_new(n); \
+            if (!it) {{ return; }} o = c_op_new(2); o->payload = it; \
+            struct entry table[] = {{ {{\"a\", {cb}}}, {{NULL, NULL}} }}; \
+            c_op_table(table, o); o->payload = NULL; c_item_free(it); c_op_drop(o); }}");
+        eprintln!("probe {cb}: {:?}", row(&source));
+        let source = format!("void f(int n) {{ struct item *it; struct op *o; it = c_item_new(n); \
+            if (!it) {{ return; }} o = c_op_new(2); o->payload = it; \
+            c_op_run(o, {cb}); c_item_free(it); }}");
+        eprintln!("probe-run {cb}: {:?}", row(&source));
+    }
+}

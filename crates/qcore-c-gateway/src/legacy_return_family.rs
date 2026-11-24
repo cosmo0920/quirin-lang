@@ -74,6 +74,22 @@
 //! untracked base, and a may-bind root's one dereference counted under both
 //! readings (`QCore.ReturnFamilyStarCast`).
 //!
+//! Card **RETURN-FAMILY-DEREF-THROUGH-RESOLVED-CAST** (gateway rule 74m): a
+//! starred may-bind root counts its `*`s twice, once stopping at the nearest
+//! cast group and once through every cast group (rule 12h's transparency),
+//! and is admitted only when both counts are one. `(T) *q` is one
+//! dereference; `*(T *)*q` and `*(T *)(U *)*q` are two and refuse;
+//! `*(T *)q` dereferences the converted value and keeps its refusal
+//! (`QCore.ReturnFamilyDerefCast`).
+//!
+//! Card **RETURN-FAMILY-STAR-OUTSIDE-ROOT-PARENTHESES** (gateway rule 74s): a
+//! starred may-bind root is refused when a parenthesised group enclosing it
+//! is dereferenced, by a `*` that may be unary before the group (read back
+//! through parenthesised groups) or a `[` or `->` after it. `*(*q + 1)`,
+//! `*(1 + *q)`, `*((T *)*q + 1)` and `(*q + 1)[0]` are second dereferences
+//! and refuse; `*q`, `(*q)`, `*q + 1` and `(T) *q` keep their admission
+//! (`QCore.ReturnFamilyStarOutside`).
+//!
 //! The read node is `IndirectScalarAccess` with no destination, no frame and
 //! no chain: it changes no binding, status, marker or link, and adds only the
 //! bases' obligations and the C02-P-ALIAS obligations of every `->` root. It
@@ -427,12 +443,16 @@ fn ends_one_dereference(texts: &[&str], mut after: usize) -> bool {
 /// `usize::MAX` counts every one, which only refuses. Rule 74h: a `*` after
 /// an undecided `)` counts under `reading`'s choice. The count is monotone in
 /// that choice, so the operand and cast readings bound every mixed one.
+/// Rule 74m: with `through`, a cast group does not stop the count at any
+/// `closing` (`*(T *)*q` counts two), so the count with `through` is never
+/// less than the count without it.
 fn stars_before(
     texts: &[&str],
     index: usize,
     names: &impl NameFacts,
     closing: usize,
     reading: Reading,
+    through: bool,
 ) -> usize {
     let mut at = index;
     let mut stars = 0;
@@ -454,8 +474,11 @@ fn stars_before(
             // `W45-SR5-SCALAR-READ-STAR-THROUGH-CAST`): where every `*` counts
             // (before a member or subscript root), a cast group is
             // transparent to the count (`QCore.CastSemantics.cast_transparent`):
-            // `*(T *)q->f` dereferences the value `q->f` reads.
-            ")" if closing == usize::MAX
+            // `*(T *)q->f` dereferences the value `q->f` reads. Card
+            // RETURN-FAMILY-DEREF-THROUGH-RESOLVED-CAST (rule 74m): so is a
+            // starred root's when `through` asks, so that `*(T *)*q`, which
+            // dereferences the value `*q` reads, counts two.
+            ")" if (closing == usize::MAX || through)
                 && let Some(open) = crate::cast_semantics::type_group_open(texts, previous) =>
             {
                 at = open;
@@ -464,6 +487,53 @@ fn stars_before(
         }
     }
     stars
+}
+
+/// Card RETURN-FAMILY-STAR-OUTSIDE-ROOT-PARENTHESES (rule 74s): is a
+/// parenthesised group enclosing the name at `index` itself dereferenced?
+/// `stars_before` stops at a binary operator and at a `*` beyond the root's
+/// own parentheses, so `*(*q + 1)`, `*(1 + *q)` and `(*q + 1)[0]` counted one
+/// `*`. The reader cannot tell whether such a group's value is the pointer
+/// computed from the root, so every enclosing group refuses that is
+/// dereferenced, a group outside a subscript included: [`group_dereferenced`].
+/// An unbalanced group refuses too. Only refuses.
+fn outside_dereference(texts: &[&str], index: usize, names: &impl NameFacts) -> bool {
+    let mut depth = 0usize;
+    for (close, text) in texts.iter().enumerate().skip(index + 1) {
+        match *text {
+            "(" | "[" => depth += 1,
+            ")" | "]" if depth > 0 => depth -= 1,
+            ")" => match open_of(texts, close) {
+                Some(open) if !group_dereferenced(texts, open, close, names) => {}
+                _ => return true,
+            },
+            _ => {}
+        }
+    }
+    false
+}
+
+/// Rule 74s: the group `texts[open..=close]` is dereferenced when a `[` or
+/// `->` follows its `)`, or when the token before its `(`, read back through
+/// any parenthesised group (a cast, an undecided group, or a call group the
+/// expression refuses anyway), is a `*` that may be unary under either of
+/// rule 74h's readings. A binary `*` (`n * (*q + 1)`) is not one.
+fn group_dereferenced(texts: &[&str], open: usize, close: usize, names: &impl NameFacts) -> bool {
+    if arrow_at(texts, close + 1) || texts.get(close + 1) == Some(&"[") {
+        return true;
+    }
+    let mut at = open;
+    while let Some(previous) = at.checked_sub(1) {
+        match texts[previous] {
+            ")" => match open_of(texts, previous) {
+                Some(group) => at = group,
+                None => return true,
+            },
+            "*" => return operator_at(texts, previous, names).may_be_unary(),
+            _ => return false,
+        }
+    }
+    false
 }
 
 /// Family S's shape and name premises over one `return` expression. `None`
@@ -570,13 +640,13 @@ pub(crate) fn scalar_read(texts: &[&str], names: &impl NameFacts) -> Option<Scal
         // cast reading, the larger count); a starred root needs exactly one
         // under both readings, so neither reading's refusal is lost.
         let root = if arrow_at(texts, index + 1) {
-            stars_before(texts, index, names, usize::MAX, Reading::Cast) == 0
+            stars_before(texts, index, names, usize::MAX, Reading::Cast, true) == 0
                 && texts
                     .get(index + 3)
                     .is_some_and(|text| super::is_identifier(text))
                 && ends_one_dereference(texts, index + 4)
         } else if next == Some("[") {
-            stars_before(texts, index, names, usize::MAX, Reading::Cast) == 0
+            stars_before(texts, index, names, usize::MAX, Reading::Cast, true) == 0
                 && close_of(texts, index + 1)
                     .is_some_and(|close| ends_one_dereference(texts, close + 1))
         } else {
@@ -584,11 +654,22 @@ pub(crate) fn scalar_read(texts: &[&str], names: &impl NameFacts) -> Option<Scal
                 .iter()
                 .take_while(|text| **text == ")")
                 .count();
+            // Rule 74m: exactly one `*` up to the nearest cast group (so
+            // `*(T *)q`, a dereference of the converted value, refuses) and
+            // exactly one through every cast group (so `*(T *)*q`, a second
+            // dereference, refuses).
             [Reading::Operand, Reading::Cast]
                 .into_iter()
-                .all(|reading| stars_before(texts, index, names, closing, reading) == 1)
+                .all(|reading| {
+                    [false, true].into_iter().all(|through| {
+                        stars_before(texts, index, names, closing, reading, through) == 1
+                    })
+                })
                 && next != Some(".")
                 && ends_one_dereference(texts, index + 1)
+                // Rule 74s: and no group enclosing the root is dereferenced
+                // (so `*(*q + 1)`, a second dereference, refuses).
+                && !outside_dereference(texts, index, names)
         };
         if !root {
             return None;
@@ -925,3 +1006,11 @@ mod tests;
 #[cfg(test)]
 #[path = "../tests/unit/legacy_return_family_star_cast.rs"]
 mod star_cast_tests;
+
+#[cfg(test)]
+#[path = "../tests/unit/legacy_return_family_deref_cast.rs"]
+mod deref_cast_tests;
+
+#[cfg(test)]
+#[path = "../tests/unit/legacy_return_family_star_outside.rs"]
+mod star_outside_tests;

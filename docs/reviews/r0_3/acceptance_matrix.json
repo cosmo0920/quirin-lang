@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 10,
-  "named_followups": 1064
+  "named_followups": 1067
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6920,11 +6920,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Landing integrate/r65 (base main 395cb4d00, after r64; merges CALLBACK-MEMBER-RELEASED-REQUIREMENT-FOLD e2ba78190, base 2c60986b0, in e5d1fa138; generated docs/agents/README.md and docs/agents/gateway.md conflicted on rules 74h/74i/74j and were resolved by rerunning scripts/gen_rule_docs.py; docs/QCORE_CONTRACT_SPEC_r0_3.md and proof/QCore.lean auto-merged; third_party/libevent checked out). USER DECISION 2026-11-23: picked the \"soundness first\" set; 2026-11-24: \"yes, land them as r63, r64 and r65\". Amendments applied in f683018c9 with --profiles-base origin/main: CALLBACK-MEMBER-RELEASED-REQUIREMENT-FOLD retired; CALLBACK-MEMBER-RELEASED-EFFECT-ORDER registered; profiles []; status_edits empty. Full landing gate on f683018c9 (private/integrate-r65/gate, raw record beside this file as gate-scope.json) via scripts/gate_scope.py --base origin/main --full --landing through private/toolchain/env.sh: Rust 684 units / 729 summaries, 10009 passed, 0 failed, 24 ignored; fmt, Clippy and both reevaluation examples exit 0; Lean (all) exit 0, 496 audits (new QCore.CallbackRequirementFold). No providers/ path changed, so the provider gate was not selected; provider_tests 174 (1 ignored) is carried from the SP7/SP8 combined landing gate on 35b5f48a2. Python (807 tests) exited 1 only on the stale-matrix check test_the_derived_facts_are_recomputed_rather_than_carried, cleared by regenerating the matrix from this record. Change: rule 74j (new), with a sentence in contract spec C04.19 item 2: callback_contracts::fold_requirement folds a candidate's resource_owned(n) requirement at every clause form (synchronous, table, plain member, slot): a borrowed position becomes owned(n); owned, consumed, released and stored positions keep their mode and are nullable only if every requirement is; out and removed positions refuse the call (callback-requirement-unfolded). At base the synchronous, table and plain member forms dropped the requirement (four fixture rows Safe at base). The shipped census (624 invocation clauses in 49 declarations) has no requirement where the fold changes a mode. Card measurement (opt-in current --monkey-linked, Fluent Bit 046accf6): base 2c60986b0 and tip 9180fc26f both 1172/2/3622/8, no row changed, matching the committed prediction (none). Pinned-route parity (quirin-audit measure --declared) was not run: this host holds no build/cycle19 inputs or baselines. No profile baseline is changed and land.py publish is owed.",
-  "workspace_tests": 10009,
+  "note": "Landing integrate/r71 (base main 69c64255f, after r70; merges RETURN-FAMILY-STAR-OUTSIDE-ROOT-PARENTHESES 42e814d75, base 7678fe5f1; generated files resolved by rerunning scripts/gen_rule_docs.py and gen_lean_roots.py where they conflicted; third_party/libevent checked out). USER DECISION 2026-11-24: \"launch the two return-family follow-up cards\"; \"yes, land them as r69, r70, r71 and r72\"; \"resume r68 and land through r76\". Amendments applied in 4f96d33d1 with --profiles-base origin/main (after r68's, which registered the id): RETURN-FAMILY-STAR-OUTSIDE-ROOT-PARENTHESES retired; RETURN-FAMILY-SUBSCRIPT-ENCLOSING-STARRED-ROOT registered; profiles []; status_edits empty. Full landing gate on 4f96d33d1 (private/integrate-r71/gate, raw record beside this file as gate-scope.json) via scripts/gate_scope.py --base origin/main --full --landing through private/toolchain/env.sh: Rust 690 units / 735 summaries, 10060 passed, 0 failed, 24 ignored; fmt, Clippy and both reevaluation examples exit 0; Lean (all) exit 0, 502 audits (new QCore.ReturnFamilyStarOutside). No providers/ path changed, so the provider gate was not selected; provider_tests 174 (1 ignored) is carried from the SP7/SP8 combined landing gate on 35b5f48a2. Python (807 tests) exited 1 on two checks: the stale-matrix check test_the_derived_facts_are_recomputed_rather_than_carried, cleared by regenerating the matrix from this record, and test_gate_scope_census.test_the_census_covers_the_suite (671 of 746 units, under its 90% bound: twelve qcore-c-gateway test units added by r56-r71 were never in the gate read census). The census was re-recorded at this tree (gate_read_census.py record --packages qcore-c-gateway, reduce; private/integrate-r71/census-record) and only those twelve units merged, in its own commit bb12bed4d, data only; the census tests then pass (5 OK) and the full Python suite was rerun after the records commit. Change: rule 74s (new): a starred may-bind root is refused when any parenthesised group around it is dereferenced (`[`, `->`, or a possibly unary `*` before it), so `*(*q + 1)`, `*((long *)*q + 1)`, `*(n + *q)`, `(*q + 1)[0]` and `(*q + 1)->f`, Safe at base, get the return refusal; `*q`, `(*q)`, `*q + 1` and `(T) *q` stay admitted; one fixture moves Unsafe -> Unknown after k_free. Card measurement (opt-in current --monkey-linked, Fluent Bit 046accf6): base 7678fe5f1 and tip 12ca1c33c both 1171/2/3623/8, no row changed, matching the committed prediction (none). Pinned-route parity (quirin-audit measure --declared) was not run: its attempt refused for missing prepared inputs, and this host holds no build/cycle19 inputs or baselines. No profile baseline is changed and land.py publish is owed.",
+  "workspace_tests": 10060,
   "provider_tests": 174,
   "python_evidence_validator_tests": 807,
-  "lean_audits": 497,
+  "lean_audits": 503,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
    "AuditAggregateOwnedField.lean",
@@ -6967,6 +6967,7 @@
    "AuditCallbackContracts.lean",
    "AuditCallbackForward.lean",
    "AuditCallbackLiteralPremise.lean",
+   "AuditCallbackReleasedEffectOrder.lean",
    "AuditCallbackRequirementFold.lean",
    "AuditCallbackSuppliedNull.lean",
    "AuditCallbackTaskHandoff.lean",
@@ -7100,6 +7101,7 @@
    "AuditFloatTypes.lean",
    "AuditFormalBindingEnvironments.lean",
    "AuditFrameHelperTask.lean",
+   "AuditFrameHolderOneDeclaration.lean",
    "AuditFunctionPointerDeclarators.lean",
    "AuditFunctionPointerFormal.lean",
    "AuditFunctionTypedefPointer.lean",
@@ -7129,6 +7131,7 @@
    "AuditJoinedProvenanceCycles.lean",
    "AuditJoinedProvenanceRoundBound.lean",
    "AuditKindedCustody.lean",
+   "AuditLaterDeclarator.lean",
    "AuditLayoutExtents.lean",
    "AuditLexicalClosureNestedAssignment.lean",
    "AuditLibcReadingPremises.lean",
@@ -7234,6 +7237,7 @@
    "AuditOuterContract.lean",
    "AuditOuterListCandidates.lean",
    "AuditOwnedFieldCopyReach.lean",
+   "AuditOwnedOutFormalDelivery.lean",
    "AuditOwnedOutMemberSlot.lean",
    "AuditPackageIdentity.lean",
    "AuditPackageTemplateBinding.lean",
@@ -7316,7 +7320,9 @@
    "AuditReturnCorrectness.lean",
    "AuditReturnExpressionEvaluation.lean",
    "AuditReturnExpressionFamilies.lean",
+   "AuditReturnFamilyDerefCast.lean",
    "AuditReturnFamilyStarCast.lean",
+   "AuditReturnFamilyStarOutside.lean",
    "AuditReturnPositionEscape.lean",
    "AuditReturnRefusedCallLowering.lean",
    "AuditReviewHoldStanding.lean",
@@ -14736,20 +14742,6 @@
    "recorded_by": "RK-TOPIC-PARTITION-LIST-CONSTRUCTORS"
   },
   {
-   "id": "OWNED-CONSTRUCTOR-OUT-PARAMETER-DELIVERY",
-   "title": "An owned constructor result stored through an out-parameter (`*out = ctor()`) is read as a discarded owned result",
-   "why": "RK-TOPIC-PARTITION-LIST-CONSTRUCTORS: with rd_kafka_topic_partition_list_new declared owned, `*partitions = rd_kafka_topic_partition_list_new(0)` (rdkafka_subscription.c:337, rd_kafka_assignment; :365, rd_kafka_subscription) and two more rows (rd_kafka_handle_OffsetFetch, ut_create_topic_partition_lists) carry `discarded owned result of resource API` (unsupported, Unknown): the delivery to the caller through the out-parameter is not read. Related to CG10-OWNED-OUT-PARAMETER-MEMBER-SLOT (an allocating callee writing into a member slot). DISCHARGE: read an owned result stored through a formal pointer as a delivery to the caller (an out-parameter summary), or name the refusal; re-measure the four rows.",
-   "source": "docs/reports/rk-topic-partition-list-constructors/README.md",
-   "recorded_by": "RK-TOPIC-PARTITION-LIST-CONSTRUCTORS"
-  },
-  {
-   "id": "LATER-DECLARATOR-INITIALISER-UNREAD",
-   "title": "A later declarator's initialiser (`T *a = X, *b = Y;`) is read as a store through `*b`",
-   "why": "NULLABLE-LAZY-CONSTRUCTOR-IN-LOOP traced rd_kafka_mock_handle_ConsumerGroupHeartbeat (rdkafka_mock_handlers.c:2894-2896, `rd_kafka_topic_partition_list_t *sent_assignment = NULL, *existing_assignment = NULL, *next_assignment = NULL;`): the statement reader takes the later declarators `*existing_assignment = NULL` as stores through a pointer (`indirect memory access is outside the resource projection` at the declaration), so `existing_assignment` has no binding on the path that skips its construction, the join makes it unknown, the `RD_IF_FREE` guard is refused (rule 10b) and the release keeps `nullable resource ... used by a non-null contract`. Pinned: crates/qcore-c-gateway/tests/nullable_lazy_constructor.rs `the_other_shapes_stay_refused_without_a_leak` (`void *a = 0, *r = 0;` Unknown; one declarator per statement Safe). DISCHARGE: read each init-declarator of a declaration as that name's initialisation (the lexical-closure reader of rule 10o already finds later declarators), measure the corpus (every multi-declarator pointer declaration with initialisers can move), re-measure the Heartbeat row.",
-   "source": "docs/reports/nullable-lazy-constructor-in-loop/README.md",
-   "recorded_by": "NULLABLE-LAZY-CONSTRUCTOR-IN-LOOP"
-  },
-  {
    "id": "REGISTRY-UNDECIDED-CALL-POISONS-EVERY-BINDING",
    "title": "A contract call refused for an undecided registry holder poisons every binding, not rule 10a's frame",
    "why": "NULLABLE-LAZY-CONSTRUCTOR-IN-LOOP traced rd_kafka_cgrp_consumer_assignment_with_metadata (rdkafka_cgrp.c:3036-3037, `*missing_topic_ids = rd_list_new(1, rd_list_Uuid_destroy);` inside the loop): the contract call's transfer, refused as `callback-registry-undecided` (rule 13w; the result is delivered through a formal's out slot), sets `unknown` and `may_be_null` on `assignment_with_metadata`, a local it cannot write (no address taken, not in the call's text), so the loop head joins the poisoned binding and `return assignment_with_metadata;` keeps the identity and nullable leaves. Related: OWNED-CONSTRUCTOR-OUT-PARAMETER-DELIVERY (the out-slot delivery), CG22-REGISTRY-OUTSIDE-THE-FRAME. DISCHARGE: give this refusal rule 10a's sparing frame (the call's text writes `*missing_topic_ids` only), keeping its own refusal; re-measure the row.",
@@ -14771,13 +14763,6 @@
    "recorded_by": "NULLABLE-LAZY-CONSTRUCTOR-IN-LOOP"
   },
   {
-   "id": "RETURN-FAMILY-DEREF-THROUGH-RESOLVED-CAST",
-   "title": "Family S counts `*(long *)*q` as one dereference of a may-bind `q`",
-   "why": "RETURN-FAMILY-STAR-AFTER-UNRESOLVED-CAST found (report §6, unit level, by a scratch probe at its tip; the base reads resolved casts the same way) that crates/qcore-c-gateway/src/legacy_return_family.rs `scalar_read` admits `* ( long * ) * q` with `q` may-bind as the root of one dereference (`bases: [\"q\"]`). `stars_before` with a finite `closing` stops at the `)` of the resolved cast group, so the outer `*`, which dereferences the converted value `*q`, is not counted. That is a second dereference, which the module header says refuses for a may-bind name, and rule 12h's cast transparency applies only where `closing` is `usize::MAX`. The direction is admitting. The same reading counts `sizeof ( long ) * q` as one dereference of `q`, but a conforming body cannot spell it with a pointer `q` (C11 6.5.5p2), and a declared scalar never reaches the may-bind test. DISCHARGE: make a resolved cast group transparent to a starred may-bind root's count (so `*(T *)*q` counts two and refuses) or show that no such return reaches family S end to end, without admitting `*(T *)q` (one dereference of the converted value, not of `q`'s pointee alone); pin `return *(long *)*q;` end to end and measure.",
-   "source": "docs/reports/return-family-star-cast/README.md",
-   "recorded_by": "RETURN-FAMILY-STAR-AFTER-UNRESOLVED-CAST"
-  },
-  {
    "id": "CG25-IN-PLACE-REGEX-REGERROR-FAILURE-EDGE",
    "title": "A regerror of a failed regcomp's object is refused, so rd_regex_match is Unknown",
    "why": "Rule 74i refuses every use of a tracked in-place object that its initialiser status has not certified. POSIX defines regerror on the regex_t of a failed regcomp, but regex.qv kinds regerror's preg exactly as regexec's (resource_borrowed + resource_kind(preg, regex)), and the rule reads no callee by name, so `if (r) { regerror(r, &re, …); return 0; }` refuses. This moved rdregex.c rd_regex_match Safe -> Unknown on the opt-in current route (base 2c60986b0, tip a7e8bea5b; corpus predicted the same). DISCHARGE: a contract clause (contract language and libc provider) that marks a use defined on a possibly failed object, read by rule 74i as admitted on the failure edge and before the test but not before the initialiser or after the finaliser; pin regerror on the failure edge Safe and regexec there refused; remeasure rd_regex_match.",
@@ -14785,18 +14770,58 @@
    "recorded_by": "CG25-IN-PLACE-REGEX"
   },
   {
-   "id": "FRAME-HOLDER-SHADOWED-NAME",
-   "title": "Frame holders ask one_automatic_object without every_reference_is",
-   "why": "Rule 12t's frame holder (crates/qcore-c-gateway/src/legacy_retained_by.rs, `holder`) and the callback registry's `frame_registry_holder` (crates/qcore-c-gateway/src/legacy_callback_route.rs) accept `&NAME` as frame storage when one_automatic_object holds, which counts only the function's own VarDecls. A local holder shadowing a file-scope object of the same name that the body also names may be read as one frame object, the shape rule 74i closed for in-place kinds. Direction not assessed. DISCHARGE: assess whether a mention of the file-scope object can reach either reading; if so require every_reference_is (Parser::automatic_object) and pin the shadowing shape.",
-   "source": "docs/reports/cg25-in-place-regex/README.md",
-   "recorded_by": "CG25-IN-PLACE-REGEX"
+   "id": "OUT-SLOT-CONDITIONAL-DELIVERY",
+   "title": "An owned result delivered through a formal's slot on some exits only has no summary mode",
+   "why": "OWNED-CONSTRUCTOR-OUT-PARAMETER-DELIVERY found W4's Out mode reads a slot only when every exit delivers (rule 74l). Three shapes on the opt-in route deliver on some exits: keep-or-deliver in-out slots (`if (!*out) *out = make();`: rdkafka_request.c rd_kafka_handle_OffsetFetch, rdkafka_broker.c rd_kafka_broker_share_session_add_remove_toppar, rdkafka_cgrp.c rd_kafka_cgrp_consumer_assignment_with_metadata), a slot first holding another object's member and then a conditional fresh object (rdkafka_subscription.c rd_kafka_assignment, rd_kafka_subscription, which write the slot even when `err` is nonzero), and error-path partial stores whose return code does not partition the slot (cio_file_unix.c cio_file_native_lookup_user/_group, rdkafka_request.c rd_kafka_handle_ApiVersion). Each needs a new effect mode (keep-or-deliver) or an inferred return-code disposition, neither with a precedent, so it is a user decision; every such row also has other blockers today. DISCHARGE: decide whether to add the mode, then state it with Lean parity, or record the refusal as final; re-measure these rows.",
+   "source": "docs/reports/owned-constructor-out-delivery/README.md",
+   "recorded_by": "OWNED-CONSTRUCTOR-OUT-PARAMETER-DELIVERY"
   },
   {
-   "id": "CALLBACK-MEMBER-RELEASED-EFFECT-ORDER",
-   "title": "A candidate member effect beside a plain member invocation through a released object is applied after the release",
-   "why": "Found by CALLBACK-MEMBER-RELEASED-REQUIREMENT-FOLD. OPENSSL-RELEASED-PARAMETER-SLOTS refuses a call whose slot invocation through a released parameter has a candidate member effect (member-path state, member reading deferred to a constructed state, registry use: callback-beside-release), because the transfer applies the custody contract, release included, before the callback route. That check is keyed on released_slot_objects (legacy_retained_by.rs), so it covers slot invocations only; a plain resource_callback_member_invoked through a released object (rd_kafka_op_destroy) still has such effects applied after the release, as before r60. Not shown to be unsound; it may already be fail-closed through the route's reading of a released object. DISCHARGE: decide whether the plain member form needs the same refusal (or an ordering proof), with a gateway fixture and Lean parity. Size: small.",
-   "source": "docs/reports/callback-member-released-fold/README.md",
-   "recorded_by": "CALLBACK-MEMBER-RELEASED-REQUIREMENT-FOLD"
+   "id": "OWNED-RESULT-ELEMENT-STORE-READ-AS-DISCARD",
+   "title": "An owned result stored into an array element is refused as a discarded owned result",
+   "why": "OWNED-CONSTRUCTOR-OUT-PARAMETER-DELIVERY renamed the refusal for an unsanctioned *NAME slot only (rule 74l). A store into an element the importer does not name (`lists[i] = rd_kafka_topic_partition_list_new(0);` in rdkafka_sticky_assignor.c ut_create_topic_partition_lists, `ALL_RACKS[i] = rd_kafkap_str_new(…)`, `metrics[idx] = rd_calloc(…)`, `tqh[qi] = rd_calloc(…)`) still reaches legacy_classify.rs's destination-free arm and reads `discarded owned result of resource API` (9 leaves in 5 rows at base 2c60986b0), the text a real discard carries. DISCHARGE: name the refusal for an element destination (or read it through W43's indexed collections where they apply), keeping the row Unknown; re-measure.",
+   "source": "docs/reports/owned-constructor-out-delivery/README.md",
+   "recorded_by": "OWNED-CONSTRUCTOR-OUT-PARAMETER-DELIVERY"
+  },
+  {
+   "id": "PASS-CORRELATED-LOOP-ALLOCATION",
+   "title": "A loop that allocates only on its first pass reports a provisional re-acquisition leak",
+   "why": "LATER-DECLARATOR-INITIALISER-UNREAD: the chained-assignment scram fixture (crates/qcore-c-gateway/tests/chained_assignment.rs `the_scram_shape_withdraws_the_leak_and_does_not_become_safe`, the shape of librdkafka rdkafka_sasl_scram.c:214-249 rd_kafka_sasl_safe_string, `for (pass = 0; pass < 2; pass++) { ... if (pass == 0) d = safe = alloc(); }`) was Unknown only because its declaration `char *safe = 0, *d = 0;` was refused. Read one per statement (rule 74k) it is Unsafe on a leak at the allocation: the loop does not correlate `pass == 0` with the allocation, so it keeps a path that allocates twice over a held `safe`. That is not a leak in C, and the one-per-statement spelling had the same verdict at the base. The function is not among the opt-in route's rows on 046accf6. DISCHARGE: a counted-loop or flag correlation that bounds the allocation to one pass, or a refusal that names the uncorrelated re-acquisition instead of a leak; re-pin the fixture.",
+   "source": "docs/reports/later-declarator-initialiser/README.md"
+  },
+  {
+   "id": "LATER-DECLARATOR-PIECE-CLANG-NODE",
+   "title": "Split declarators are lowered without a Clang node, so casts, non-literal scalars and nested declarations stay refused",
+   "why": "LATER-DECLARATOR-INITIALISER-UNREAD (rule 74k) lowers each init-declarator as its declaration written alone, but a piece has no Clang node of its own (node matching is by line and exact tokens), so the split declines an initialiser that spells a cast other than the null constant (rule 12h's repair is node-matched; e.g. rd_kafka_topic_cmp_rkt `rd_kafka_topic_t *rkt_a = (void *)_a, *rkt_b = (void *)_b;`, still Unknown) and a scalar initialiser that is not a numeric literal (rule 11b's pointer truth-value repair), and node-matched admissions are not asked for any piece. Declarations in a `for` clause and in a statement expression are not split. DISCHARGE: give each piece its VarDecl's node (or a synthetic one-declarator DeclStmt the typed readers accept), lift the two declines, extend the split to `for` clauses; measure the corpus.",
+   "source": "docs/reports/later-declarator-initialiser/README.md"
+  },
+  {
+   "id": "RETURN-FAMILY-UNTRACKED-DEREF-THROUGH-CAST",
+   "title": "Family S makes no base of an untracked root dereferenced through a cast group",
+   "why": "RETURN-FAMILY-DEREF-THROUGH-RESOLVED-CAST found (report §6, by an end-to-end probe at its base and its tip) that crates/qcore-c-gateway/src/legacy_return_family.rs `scalar_read` makes an untracked root a starred base only when the token right before it is a `*` (`texts[index - 1] == \"*\"`). `* ( long * ) p` therefore gives `bases: []`, and `long w(void) { const long *p = 0; return *(long *)p; }` is `Safe` at both, while `return *p;` and `return (long) *p;` are `Unknown` (`unknown_alias:p`). The flow check never sees the dereference of the null `p`. The direction is admitting. DISCHARGE: make an untracked root a base of the read node whenever a unary `*` applies to it through cast groups (rule 12h's transparency, `cast_semantics::type_group_open`, no second detector), keeping rule 74h's union over undecided groups, or show that no such return reaches family S end to end. Pin `return *(long *)p;` through a null untracked `p` end to end and measure.",
+   "source": "docs/reports/return-family-deref-resolved-cast/README.md",
+   "recorded_by": "RETURN-FAMILY-DEREF-THROUGH-RESOLVED-CAST"
+  },
+  {
+   "id": "NAME-KEYED-HOLDER-SHADOWING",
+   "title": "Rule 12t's formal-keyed readings may read a block-scope local shadowing the formal as the formal",
+   "why": "Rule 74o closed the frame holder's shadowed name (one_automatic_object plus every_reference_is, which read VarDecls only). Rule 12t's other name-keyed readings, the caller's object (an unrebound formal this body holds no custody of) and the path holder (a member path below an unrebound formal named only through member accesses off the path, legacy_retained_by.rs `path_holder`, P-HOLDER-PATH-STABLE), decide from the formal's name in the token stream. A block-scope local that shadows the formal and is named through the same spelling may be read as the formal. Direction not assessed; not probed. DISCHARGE: probe a shadowing local at each formal-keyed reading (retained actual, path holder, removal); where one reaches an admitting reading, require that every DeclRefExpr of the name designates the ParmVarDecl, and pin the shape.",
+   "source": "docs/reports/frame-holder-shadowed-name/README.md",
+   "recorded_by": "FRAME-HOLDER-SHADOWED-NAME"
+  },
+  {
+   "id": "CALLBACK-TABLE-MEMBER-PATH-STATES",
+   "title": "A table dispatch composes no candidate member-path state",
+   "why": "Found by CALLBACK-MEMBER-RELEASED-EFFECT-ORDER. legacy_callback_route::callback_operands collects a candidate's member-path states (member_path_route::operands) for the synchronous invocation and the member invocation but not for resource_callback_table (rule 13v), while classified_in reads a candidate stating member-path states as its custody contract. So a table candidate stating `quant live #rko: op.payload |-> #released` reads as borrowed and its state is dropped: the probe (report evidence/probe-table.rs.txt and probe-table.log, measured once over synthetic fixture callees) links an item at o->payload, dispatches c_op_table to c_cb_releases, then frees the item: Safe, where the same candidate through the synchronous form is Unsafe. No shipped table candidate is known to state member paths (2 shipped table clauses, r65 census), so no shipped row is shown to move. DISCHARGE: compose the candidates' states at a table dispatch as at a synchronous one (or refuse a table candidate stating member paths), with a gateway fixture, Lean parity and measurement. Size: small.",
+   "source": "docs/reports/callback-member-released-effect-order/README.md",
+   "recorded_by": "CALLBACK-MEMBER-RELEASED-EFFECT-ORDER"
+  },
+  {
+   "id": "RETURN-FAMILY-SUBSCRIPT-ENCLOSING-STARRED-ROOT",
+   "title": "Family S admits `n[*q]` with a scalar `n` and a may-bind `q` as one dereference",
+   "why": "RETURN-FAMILY-STAR-OUTSIDE-ROOT-PARENTHESES found (report §6, by an end-to-end probe at its base and its tip) that crates/qcore-c-gateway/src/legacy_return_family.rs `scalar_read` admits a starred may-bind root inside a subscript's brackets: `long w(long **q, long n) { return n[*q]; }` is `Safe` at both. C11 6.5.2.1p2 makes `n[*q]` `*(n + *q)`, which rule 74s refuses; with a scalar `n` the pointer dereferenced is computed from the value `*q` reads, a second dereference. Rule 74s reads only parenthesised enclosing groups, so a bracket enclosing the root is not counted. With a pointer subscripted base (`a[*q]`, `a` untracked) the access is `a`'s, which is a base of the read node, so refusing every bracket would cost that admission. The direction is admitting. DISCHARGE: refuse a starred may-bind root inside a subscript whose subscripted operand is not known to be a pointer (a declared scalar, a number, an undecided name), keeping `a[*q]` for an untracked pointer `a` only where the reader can say `a` is the pointer, or show that no such return reaches family S. Pin `return n[*q];` end to end and measure.",
+   "source": "docs/reports/return-family-star-outside-parentheses/README.md",
+   "recorded_by": "RETURN-FAMILY-STAR-OUTSIDE-ROOT-PARENTHESES"
   },
   {
    "id": "SP10-NATIVE-RECEIPT-INTERPRETATION-PROSE",

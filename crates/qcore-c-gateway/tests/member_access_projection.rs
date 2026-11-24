@@ -223,8 +223,11 @@ fn every_other_declaration_keeps_the_gate_refusal() {
     if !clang_available() {
         return;
     }
-    // An initialized multi-declarator: outside the rule (its own follow-up).
-    assert_gate_refusal(
+    // An initialized multi-declarator: outside the rule. Deliberate pin
+    // update, card LATER-DECLARATOR-INITIALISER-UNREAD (rule 74k), its
+    // follow-up: read as `char *p = NULL; char *q = NULL;`, Safe (was the
+    // gate refusal).
+    assert_safe(
         "initialized",
         "int initialized(void) {\n  char *p = NULL, *q = NULL;\n  return p == q;\n}",
     );

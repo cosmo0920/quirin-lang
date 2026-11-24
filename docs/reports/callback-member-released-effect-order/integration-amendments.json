@@ -1,0 +1,24 @@
+{
+  "schema": "quirin-amendments/2",
+  "card": "CALLBACK-MEMBER-RELEASED-EFFECT-ORDER",
+  "base": "3ca85c7a6",
+  "measured_tip": "f133d7b5c",
+  "increment_paragraph": "**CALLBACK-MEMBER-RELEASED-EFFECT-ORDER (2026-11-24).** USER DECISION 2026-11-24 (\"launch them all\"). r60 refuses a slot invocation through a released parameter beside any candidate effect (callback-beside-release), because the transfer applies the release before the callback route; the plain member form (rd_kafka_op_destroy) and a synchronous invocation handing the released object still compose the candidates' member-path states after the release. Finding: that late order is already fail-closed, so no refusal is added and no gateway source changes. The release (resource_action) writes the object's status, what it contains and the retentions it holds, never its field links or constructed state (P-B08-SHALLOW), and legacy_member_path_route::apply takes a linked object only while it is live, so a link the release itself released refuses member-path-undecided and every admitted composition equals the C order's. New gateway rule 74p and a C04.19.6 paragraph; Lean QCore.CallbackReleasedEffectOrder (audited, 10 theorems: late_is_the_c_order, late_admits_only_disjoint, a_link_the_release_releases_refuses, the_late_order_is_stricter, vectors). Gateway fixture callback_member_released_effect_order.rs (6 tests) pins the plain member, arms and synchronous forms (a released payload Safe, a kept one Unsafe, a payload the op also contains refused); a shipped one-mutation harness shows that dropping the liveness read certifies the contained payload Safe. Controls rd_kafka_op_destroy and mk_thread_destroy are the only member invocations through a released object (plain form, non-null), unchanged. Opt-in current over Fluent Bit 046accf6 (base 3ca85c7a6 vs f133d7b5c): 1171 Safe / 2 Pending / 3623 Unknown / 8 Unsafe on both sides, 0 status moves, 0 content changes, as predicted (the 112 rows naming the two controls unchanged). A probe found the table form (rule 13v) composes no candidate member-path state at all (registered: CALLBACK-TABLE-MEMBER-PATH-STATES). Scoped card gate exit 0 (Rust 61 passed in 12 targets, Lean 497 audits, Python 807). Pinned routes: none predicted; measure --declared is deferred to the integrator (no pinned inputs on this host).",
+  "status_edits": [],
+  "ledger": [
+    {
+      "id": "CALLBACK-MEMBER-RELEASED-EFFECT-ORDER",
+      "operation": "retire",
+      "why": "Discharged by CALLBACK-MEMBER-RELEASED-EFFECT-ORDER with an ordering proof rather than a refusal: the release writes no field link or constructed state of the released object (P-B08-SHALLOW) and the member-path composition takes a linked object only while it is live, so composing a candidate's states after the release (plain member, synchronous, deferred member reading) refuses a link the release released (member-path-undecided) and otherwise equals the C order (gateway rule 74p, C04.19.6; Lean QCore.CallbackReleasedEffectOrder.late_is_the_c_order). Gateway fixture callback_member_released_effect_order.rs with a one-mutation harness (dropping the liveness read certifies a contained payload Safe); shipped controls rd_kafka_op_destroy and mk_thread_destroy unchanged; opt-in current 0 moves.",
+      "source": "docs/reports/callback-member-released-effect-order/README.md"
+    },
+    {
+      "id": "CALLBACK-TABLE-MEMBER-PATH-STATES",
+      "operation": "register",
+      "title": "A table dispatch composes no candidate member-path state",
+      "text": "Found by CALLBACK-MEMBER-RELEASED-EFFECT-ORDER. legacy_callback_route::callback_operands collects a candidate's member-path states (member_path_route::operands) for the synchronous invocation and the member invocation but not for resource_callback_table (rule 13v), while classified_in reads a candidate stating member-path states as its custody contract. So a table candidate stating `quant live #rko: op.payload |-> #released` reads as borrowed and its state is dropped: the probe (report evidence/probe-table.rs.txt and probe-table.log, measured once over synthetic fixture callees) links an item at o->payload, dispatches c_op_table to c_cb_releases, then frees the item: Safe, where the same candidate through the synchronous form is Unsafe. No shipped table candidate is known to state member paths (2 shipped table clauses, r65 census), so no shipped row is shown to move. DISCHARGE: compose the candidates' states at a table dispatch as at a synchronous one (or refuse a table candidate stating member paths), with a gateway fixture, Lean parity and measurement. Size: small.",
+      "source": "docs/reports/callback-member-released-effect-order/README.md",
+      "recorded_by": "CALLBACK-MEMBER-RELEASED-EFFECT-ORDER"
+    }
+  ]
+}

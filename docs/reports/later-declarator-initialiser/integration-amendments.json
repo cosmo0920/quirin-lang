@@ -1,0 +1,31 @@
+{
+ "schema": "quirin-amendments/2",
+ "card": "LATER-DECLARATOR-INITIALISER-UNREAD",
+ "base": "2c60986b0",
+ "measured_tip": "f4f5a11a1",
+ "profiles": [],
+ "increment_paragraph": "**LATER-DECLARATOR-INITIALISER-UNREAD** (USER DECISION 2026-11-23: one of the \"soundness first\" four; gateway rule 74k; `QCore.LaterDeclarator`; [report](../../reports/later-declarator-initialiser/README.md)). The statement classifier read `T *a = X, *b = Y;` as one assignment to `a` whose value holds `* b`, refused the declaration as an indirect access and bound neither name (the census found it the only reader doing so; rule 10o's closure already read the later declarator as a name). `later_declarator.rs` splits the top-level commas when every declarator is `*`-and-qualifier prefixes and a name and each initialiser is rule 10o's assignment to it; `legacy_later_declarator.rs`, asked before the statement's lowering, needs one Clang `DeclStmt` of automatic `VarDecl`s with those names and a pointer declarator, and lowers the block of the declarations written one per statement: an uninitialised one as no event (rule 38h's facts alone), a pointer initialiser through the unchanged statement lowering unless it spells a cast other than the null constant, a scalar only with a numeric literal; one unread declarator keeps the old reading. Lean proves the declaration's ordered meaning is its split, the block reads as the sequence, the comma splitter gives the declarators back, and the fail-closed table (128 shared vectors). Pins: the Heartbeat shape and `void *a = 0, *r = 0;` are now `Safe` (the latter moved from `Unknown` in NULLABLE-LAZY-CONSTRUCTOR-IN-LOOP's pin), a later-declarator leak is `Unsafe`, arrays, function pointers, parenthesised declarators, non-null casts and non-literal scalars keep the refusal; five more pins moved to their one-per-statement verdicts (rule 61 `two_declarators`, rule 38h `initialized`, rule 41 `int a = 0, *p = 0;` Safe; rule 10o's later-declarator alias a use after release, Unsafe; the chained-assignment scram shape Unsafe on a provisional loop re-acquisition leak, as one per statement). Opt-in `current --monkey-linked` over Fluent Bit 046accf6, each run on its own tree and binary: base 2c60986b0 1,172/2/3,622/8, tip f4f5a11a1 1,173/2/3,621/8; one move, `rd_kafka_sw_str_sanitize_inplace` Unknown -> Safe (its declaration was its only leaf; it rests on null-dereference premises only); 13 rows change, access leaves -12; ConsumerGroupHeartbeat stays Unknown, 99 -> 96 leaves (the declaration's and the three `existing_assignment` leaves gone). The prediction named four other rows, wrongly: their leaves were later statements. Scoped gate at f4f5a11a1: all 8 steps 0 (9,984 passed, 492 Lean audits, 807 Python tests). Pinned routes not runnable on the host.",
+ "status_edits": [],
+ "ledger": [
+  {
+   "id": "LATER-DECLARATOR-INITIALISER-UNREAD",
+   "operation": "retire",
+   "why": "Discharged by LATER-DECLARATOR-INITIALISER-UNREAD (rule 74k): each init-declarator of a declaration with a pointer declarator is read as its own declaration (the one-per-statement reading, asserted equal in crates/qcore-c-gateway/tests/later_declarator_initialiser.rs), reusing rule 10o's reading of the later declarators' assignments; unread declarators keep the old refusal. The corpus was measured on the opt-in route (base 2c60986b0 1,172/2/3,622/8, tip f4f5a11a1 1,173/2/3,621/8: rd_kafka_sw_str_sanitize_inplace Unknown -> Safe, 13 rows changed) and the Heartbeat row re-measured: still Unknown on other obstacles, its declaration leaf and the three existing_assignment leaves gone. The pin `void *a = 0, *r = 0;` in nullable_lazy_constructor.rs moved deliberately to Safe.",
+   "source": "docs/reports/later-declarator-initialiser/README.md"
+  },
+  {
+   "id": "PASS-CORRELATED-LOOP-ALLOCATION",
+   "operation": "register",
+   "source": "docs/reports/later-declarator-initialiser/README.md",
+   "title": "A loop that allocates only on its first pass reports a provisional re-acquisition leak",
+   "text": "LATER-DECLARATOR-INITIALISER-UNREAD: the chained-assignment scram fixture (crates/qcore-c-gateway/tests/chained_assignment.rs `the_scram_shape_withdraws_the_leak_and_does_not_become_safe`, the shape of librdkafka rdkafka_sasl_scram.c:214-249 rd_kafka_sasl_safe_string, `for (pass = 0; pass < 2; pass++) { ... if (pass == 0) d = safe = alloc(); }`) was Unknown only because its declaration `char *safe = 0, *d = 0;` was refused. Read one per statement (rule 74k) it is Unsafe on a leak at the allocation: the loop does not correlate `pass == 0` with the allocation, so it keeps a path that allocates twice over a held `safe`. That is not a leak in C, and the one-per-statement spelling had the same verdict at the base. The function is not among the opt-in route's rows on 046accf6. DISCHARGE: a counted-loop or flag correlation that bounds the allocation to one pass, or a refusal that names the uncorrelated re-acquisition instead of a leak; re-pin the fixture."
+  },
+  {
+   "id": "LATER-DECLARATOR-PIECE-CLANG-NODE",
+   "operation": "register",
+   "source": "docs/reports/later-declarator-initialiser/README.md",
+   "title": "Split declarators are lowered without a Clang node, so casts, non-literal scalars and nested declarations stay refused",
+   "text": "LATER-DECLARATOR-INITIALISER-UNREAD (rule 74k) lowers each init-declarator as its declaration written alone, but a piece has no Clang node of its own (node matching is by line and exact tokens), so the split declines an initialiser that spells a cast other than the null constant (rule 12h's repair is node-matched; e.g. rd_kafka_topic_cmp_rkt `rd_kafka_topic_t *rkt_a = (void *)_a, *rkt_b = (void *)_b;`, still Unknown) and a scalar initialiser that is not a numeric literal (rule 11b's pointer truth-value repair), and node-matched admissions are not asked for any piece. Declarations in a `for` clause and in a statement expression are not split. DISCHARGE: give each piece its VarDecl's node (or a synthetic one-declarator DeclStmt the typed readers accept), lift the two declines, extend the split to `for` clauses; measure the corpus."
+  }
+ ]
+}

@@ -115,6 +115,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [callback-member-non-c-units](callback-member-non-c-units/README.md) | CALLBACK-MEMBER-NON-C-UNITS |
 
+| [callback-member-released-effect-order](callback-member-released-effect-order/README.md) | CALLBACK-MEMBER-RELEASED-EFFECT-ORDER: a candidate's member effect after the release |
+
 | [callback-member-released-fold](callback-member-released-fold/README.md) | CALLBACK-MEMBER-RELEASED-REQUIREMENT-FOLD: a candidate's requirement at every position |
 
 | [callback-supplied-null-actual](callback-supplied-null-actual/README.md) | CALLBACK-SUPPLIED-NULL-ACTUAL: a callee-supplied callback actual that may be NULL |
@@ -616,6 +618,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [fluent-bit-moving-revisions](fluent-bit-moving-revisions/README.md) | Moving Fluent Bit revisions — 2026-09-07 |
 
+| [frame-holder-shadowed-name](frame-holder-shadowed-name/README.md) | FRAME-HOLDER-SHADOWED-NAME |
+
 ## G
 
 | Card directory | Original report title |
@@ -695,6 +699,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [landing-publish-completion](landing-publish-completion/README.md) | LANDING-PUBLISH-COMPLETION |
 
 | [landing-repair](landing-repair/README.md) | LANDING-REPAIR |
+
+| [later-declarator-initialiser](later-declarator-initialiser/README.md) | LATER-DECLARATOR-INITIALISER-UNREAD: each init-declarator is its own declaration |
 
 | [lean-4-35-toolchain](lean-4-35-toolchain/README.md) | LEAN-4-35-TOOLCHAIN |
 
@@ -890,6 +896,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [outer-contract](outer-contract/README.md) | OUTER-CONTRACT: outer contracts and the runtime projection (stage 1) |
 
 | [outer-contract-design](outer-contract-design/README.md) | OUTER-CONTRACT-DESIGN: code loaded at runtime, stated as an outer contract |
+
+| [owned-constructor-out-delivery](owned-constructor-out-delivery/README.md) | OWNED-CONSTRUCTOR-OUT-PARAMETER-DELIVERY: an owned result stored through a formal's slot |
 
 | [owned-field-route-reach](owned-field-route-reach/README.md) | `OWNED-FIELD-ROUTE-REACH` (wave 41) — the reach of wave 39's owned-field rules, measured, then closed or named |
 
@@ -1250,7 +1258,11 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [retention-unmatched-removal-poisons](retention-unmatched-removal-poisons/README.md) | RETENTION-UNMATCHED-REMOVAL-POISONS |
 
+| [return-family-deref-resolved-cast](return-family-deref-resolved-cast/README.md) | RETURN-FAMILY-DEREF-THROUGH-RESOLVED-CAST: a starred may-bind root counts through cast groups |
+
 | [return-family-star-cast](return-family-star-cast/README.md) | RETURN-FAMILY-STAR-AFTER-UNRESOLVED-CAST: family S keeps both readings of an undecided cast |
+
+| [return-family-star-outside-parentheses](return-family-star-outside-parentheses/README.md) | RETURN-FAMILY-STAR-OUTSIDE-ROOT-PARENTHESES: a dereference outside a starred root's parentheses counts |
 
 | [review-audit-runner](review-audit-runner/README.md) | Review audit-runner cancellation and failure observation |
 

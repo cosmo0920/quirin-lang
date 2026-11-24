@@ -2930,6 +2930,16 @@
 "read": [],
 "seconds": 0.4
 },
+"qcore-c-gateway::test::ampersand_run_parity": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.5
+},
 "qcore-c-gateway::test::app_rk_callbacks": {
 "dirs": [],
 "exit": 0,
@@ -3132,6 +3142,26 @@
 "probed_count": 1,
 "read": [],
 "seconds": 0.2
+},
+"qcore-c-gateway::test::callback_member_released_effect_order": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 1.8
+},
+"qcore-c-gateway::test::callback_requirement_fold": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 1.7
 },
 "qcore-c-gateway::test::callee_retention_class1": {
 "dirs": [],
@@ -4357,6 +4387,16 @@
 "read": [],
 "seconds": 0.9
 },
+"qcore-c-gateway::test::frame_holder_shadowed_name": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.4
+},
 "qcore-c-gateway::test::function_pointer_declarators": {
 "dirs": [],
 "exit": 0,
@@ -4457,6 +4497,16 @@
 "read": [],
 "seconds": 2.4
 },
+"qcore-c-gateway::test::in_place_regex_certified": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.7
+},
 "qcore-c-gateway::test::index_traversal": {
 "dirs": [],
 "exit": 0,
@@ -4546,6 +4596,16 @@
 "probed_count": 1,
 "read": [],
 "seconds": 0.4
+},
+"qcore-c-gateway::test::later_declarator_initialiser": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 1.1
 },
 "qcore-c-gateway::test::layout_extents": {
 "dirs": [],
@@ -5163,6 +5223,26 @@
 "read": [],
 "seconds": 0.2
 },
+"qcore-c-gateway::test::nullable_guarded_release": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.3
+},
+"qcore-c-gateway::test::nullable_lazy_constructor": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.5
+},
 "qcore-c-gateway::test::o04_arms": {
 "dirs": [],
 "exit": 0,
@@ -5312,6 +5392,16 @@
 "probed_count": 1,
 "read": [],
 "seconds": 0.1
+},
+"qcore-c-gateway::test::owned_out_formal_delivery": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 0.8
 },
 "qcore-c-gateway::test::owned_out_member_slot": {
 "dirs": [],
@@ -5798,6 +5888,36 @@
 "probed_count": 1,
 "read": [],
 "seconds": 1.1
+},
+"qcore-c-gateway::test::return_family_deref_resolved_cast": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 1.1
+},
+"qcore-c-gateway::test::return_family_star_cast": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 1.0
+},
+"qcore-c-gateway::test::return_family_star_outside_parentheses": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 1,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 1.6
 },
 "qcore-c-gateway::test::return_position_modeled_call": {
 "dirs": [],

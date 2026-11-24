@@ -294,11 +294,15 @@ fn a_shadowed_name_keeps_its_refusal() {
 
 #[test]
 fn a_declaration_with_a_pointer_declarator_keeps_its_refusal() {
+    // Deliberate pin update, card LATER-DECLARATOR-INITIALISER-UNREAD (rule
+    // 74k): the pointer declarator is still not this rule's, but the
+    // declaration is now read as `int a = 0; int *p = 0;`, Safe (was the
+    // access refusal).
     expect(
-        "`int a = 0, *p = 0;`: the pointer declarator is not this rule's",
+        "`int a = 0, *p = 0;`: read one declaration per statement (rule 74k)",
         "int w(void) { int a = 0, *p = 0; return a + (p == 0); }",
-        "Unknown",
-        &[INDIRECT],
+        "Safe",
+        &[],
     );
 }
 

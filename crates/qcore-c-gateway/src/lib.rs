@@ -190,6 +190,8 @@ mod nested_call_effects; // CG05-NESTED-CALL-EFFECTS (rule 10y); G hook in legac
 #[cfg(test)]
 #[path = "../tests/unit/elaborator_call_footprints.rs"]
 mod elaborator_call_footprints_tests;
+// Card LATER-DECLARATOR-INITIALISER-UNREAD (rule 74k).
+mod later_declarator;
 // Card W47-LEXICAL-CLOSURE-NESTED-ASSIGNMENT (rule 10o).
 mod legacy_summary;
 mod lexical_nested_assignment;
@@ -252,6 +254,9 @@ mod typed_place;
 mod pointer_store;
 // Card CG10-OWNED-OUT-PARAMETER-MEMBER-SLOT (rule 72).
 mod owned_out_member;
+// Card OWNED-CONSTRUCTOR-OUT-PARAMETER-DELIVERY (rule 74l): the refusal of an
+// owned result stored through an unsanctioned `*NAME` slot.
+mod owned_out_formal;
 // Card CG10-MEMBER-STORE-RETAINED-BY (rule 70): a formal's pointer stored
 // into a member of a formal's object, read as a retention.
 mod member_store_retention;

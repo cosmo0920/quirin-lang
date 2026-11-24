@@ -2503,6 +2503,18 @@ linked object once and drops the link (`QCore.MemberPathRelease.gone_leaves_exac
 a declaration carrying member-path states beside a hand-off refuses
 (`member-path-direct`); every other direct call is read as below.
 
+**Through a released object** (card CALLBACK-MEMBER-RELEASED-EFFECT-ORDER,
+gateway rule 74p). When the invoking declaration releases the object
+(`resource_released`; the plain member form, a synchronous invocation
+handing it, or a member reading deferred to its constructed state), a consumer MAY compose the candidates' states after it applies the
+release, as the gateway does, provided the release writes none of the
+object's links and constructed state and `gone` takes only a live linked
+object: a linked object the release itself releases (the object, or one it
+contains) then refuses rather than being released twice, and every admitted
+composition equals the C order's (callback, then release). The slot form
+through a released parameter refuses any such effect instead (C04.19.3).
+The Lean model is `QCore.CallbackReleasedEffectOrder`.
+
 **A direct call (card FB-TEARDOWN-DESTROY-DECLARATIONS, rule 30 amended).**
 On the user's decision of 2026-10-16 (decision 2, verbatim: "Yes, allow it")
 and the card's brief ("rule 30 at a direct call of a body-checked
