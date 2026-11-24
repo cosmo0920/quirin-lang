@@ -309,4 +309,41 @@ other libc callee was examined, which is out of scope.
 
 ## 10. Gate
 
-GATE
+`sh private/toolchain/env.sh python3 scripts/gate_scope.py --base 3ca85c7a6
+--out private/gate-3` ran at `cbd597bfe` (the code is that of `ad79c44f7`;
+`cbd597bfe` adds only this directory) and exited 0. The record is
+[gate.json](gate.json).
+
+* **Scope:** full, because the diff reaches `qcore-c-gateway`.
+* **Lean:** every audit was checked, because `proof/QCore.lean` changed.
+* **Provider gate:** selected, because `providers/` changed.
+
+| Step | Exit | Counts |
+|---|---|---|
+| submodules, fmt, clippy | 0, 0, 0 | |
+| Rust suite | 0 | 686 units, 731 summaries; 10,017 passed, 0 failed, 24 ignored, 148 filtered |
+| reevaluation probe, follow-up | 0, 0 | |
+| Lean (`check_lean_audits.py`) | 0 | 497 audits |
+| Python suite | 0 | 807 tests, 0 skipped |
+| provider package build, verify-all, verify (libevent) | 0, 0, 0 | |
+| provider tests | 0 | 49 summaries; 174 passed, 0 failed, 1 ignored |
+| provider fmt, clippy | 0, 0 | |
+
+Logs are in `private/gate-3/`, with per-unit Rust logs under `rust-suite/`.
+
+**Earlier attempts, not evidence:**
+
+* `private/gate-1` failed clippy on an unused test constant and was
+  stopped. The fix is `ba5746092`.
+* `private/gate-2` failed the Rust suite in one unit,
+  `qcore-compiler::test::contract_loader`: the `regerror` previous-mode pin,
+  fixed in `ad79c44f7`. In that run, Lean (497) and Python (807) passed. It
+  was stopped during the provider tests.
+
+**Other checks:**
+
+* `python3 scripts/apply_amendments.py
+  docs/reports/regex-regerror-failure-edge/integration-amendments.json
+  --check` exited 0.
+* `providers/contracts.py sync` exited 1 on the first run, because of the
+  stale pin lock. After the re-pin it exited 0 (§4).
