@@ -13393,4 +13393,40 @@ through `ampersand_runs`.
     `out_and_removed_refuse`, `fold_vectors_hold`);
     [report](../reports/callback-member-released-fold/README.md).
 
+<a id="constraint-74o"></a>
+
+74o. **A frame holder is one declaration.** Card FRAME-HOLDER-SHADOWED-NAME
+    (USER DECISION 2026-11-24, "launch them all"; `legacy_retained_by.rs`,
+    `holder`; `legacy_callback_route.rs`, `frame_registry_holder`),
+    discharging `FRAME-HOLDER-SHADOWED-NAME`. [Rule 12t](#constraint-12t)'s
+    frame holder and the callback registry's frame holder read `&NAME` as
+    storage of this frame when the token census admits every mention and
+    `one_automatic_object` holds. That counts only the function's own
+    `VarDecl`s, the shape [rule 74i](#constraint-74i) (2) closed for in-place
+    kinds. Census: these were the only callers of `one_automatic_object`
+    without `every_reference_is`; `Parser::automatic_object` asked both, and
+    the other automatic-object readers are keyed by declaration id. Both
+    were reachable and fail-open: with a block-scope `struct st g` shadowing
+    a file-scope `g` that the body also names as `&g` at a holder position,
+    the file-scope `&g` passed the census and was read as the frame holder.
+    A caller's object retained there "outlived" it (probes F1, F2), the
+    local's reset dropped the file-scope record before a release (F3), and a
+    destroy of the file-scope registry was read against the local's
+    registration (F4); each was `Safe`. Each frame reading now also asks
+    `every_reference_is`. A name that is not one declaration is no frame
+    holder: a retention there is `retention-undecided`, a registry there
+    `callback-registry-undecided` (both `Unknown`), and a reset there drops
+    nothing. A shadowing local whose every reference is its own stays a
+    frame holder. **Do not** read as a frame holder, for any route, a name a
+    reference outside its one declaration can name, or count declarations
+    without references. Premises stated, not proved: faithful Clang
+    declaration and reference ids and the token census (trust boundary 28).
+    `QCore.FrameHolderOneDeclaration` (`AuditFrameHolderOneDeclaration.lean`:
+    `a_frame_holder_was_one_before`, `a_shadowed_name_is_not_a_frame_holder`,
+    `no_verdict_becomes_safe`, `a_registry_key_is_the_old_one_or_refused`,
+    and probes F1, F3, F4 `Safe` under rule 12t's reading and refused under
+    this one), extending `QCore.InPlaceCertifiedUse.oneDeclaration`;
+    `tests/frame_holder_shadowed_name.rs`;
+    [report](../reports/frame-holder-shadowed-name/README.md).
+
 <!-- generated:rules:end -->
