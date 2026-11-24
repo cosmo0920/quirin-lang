@@ -647,7 +647,15 @@ impl Parser<'_> {
                         .as_deref()
                         .is_some_and(|body| only_holder_mentions(body, name, this.contracts))
                         && this.typed_positions_index().is_some_and(|index| {
+                            // Card FRAME-HOLDER-SHADOWED-NAME (rule 74o): the
+                            // one automatic object every reference of the
+                            // name designates, never a file-scope object a
+                            // block-scope holder shadows.
                             super::in_place_custody::one_automatic_object(&index.function, name)
+                                && super::in_place_custody::every_reference_is(
+                                    &index.function,
+                                    name,
+                                )
                         });
                     frame.then(|| (HolderSpelling::Frame((*name).to_owned()), text))
                 }

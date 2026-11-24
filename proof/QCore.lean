@@ -204,6 +204,7 @@ import QCore.FloatPayloads
 import QCore.FloatTypes
 import QCore.Flow
 import QCore.FrameHelperTask
+import QCore.FrameHolderOneDeclaration
 import QCore.Frontend
 import QCore.FunctionPointerDeclarators
 import QCore.FunctionPointerFormal
