@@ -604,22 +604,58 @@ pub(crate) fn tail_transparent(class: ConversionClass) -> bool {
 /// `*`s, at least one identifier): a cast group the dereference count reads
 /// through. Whether the words resolve to a type is not asked: the caller
 /// only refuses more by reading through it.
+///
+/// Card **TYPE-GROUP-QUALIFIED-POINTER** (gateway rule 74u): the `*`s are
+/// C11 6.7.7's abstract declarator `pointer`, each `*` followed by a possibly
+/// empty type-qualifier list ([`POINTER_QUALIFIERS`]), so `( long * const )`,
+/// `( char ** const )`, `( const char * const * )` and
+/// `( long * restrict )` are type groups too. A word after a `*` that is no
+/// qualifier (`( a * b )`) still makes no group. Every group the base read is
+/// read, and every caller only refuses more through more groups
+/// (`QCore.TypeGroupQualifiedPointer`).
 pub(crate) fn type_group_open(texts: &[&str], close: usize) -> Option<usize> {
     if texts.get(close) != Some(&")") {
         return None;
     }
     let open = (0..close).rev().find(|&at| texts[at] == "(")?;
-    let group = &texts[open + 1..close];
-    let stars = group.iter().rev().take_while(|text| **text == "*").count();
-    let words = &group[..group.len() - stars];
-    (!words.is_empty()
-        && words.iter().all(|text| {
+    type_group(&texts[open + 1..close]).then_some(open)
+}
+
+/// Rule 74u: the type qualifiers C11 6.7.3 lets follow a `*` in a pointer
+/// declarator, with their GNU spellings and Clang's nullability qualifiers.
+pub(crate) const POINTER_QUALIFIERS: &[&str] = &[
+    "const",
+    "volatile",
+    "restrict",
+    "_Atomic",
+    "__const",
+    "__const__",
+    "__volatile",
+    "__volatile__",
+    "__restrict",
+    "__restrict__",
+    "_Nonnull",
+    "_Nullable",
+    "_Nullable_result",
+    "_Null_unspecified",
+];
+
+/// Rule 74u: whether `group` (the tokens between a group's parentheses) is
+/// a type name `word+ ( * qualifier* )*` (`QCore.TypeGroupQualifiedPointer.
+/// accepts`). The words before the first `*` are the specifier-qualifier
+/// list, read as identifiers as before the card.
+pub(crate) fn type_group(group: &[&str]) -> bool {
+    let words = group.iter().take_while(|text| **text != "*").count();
+    words > 0
+        && group[..words].iter().all(|text| {
             text.chars()
                 .next()
                 .is_some_and(|c| c.is_ascii_alphabetic() || c == '_')
                 && text.chars().all(|c| c.is_ascii_alphanumeric() || c == '_')
-        }))
-    .then_some(open)
+        })
+        && group[words..]
+            .iter()
+            .all(|text| *text == "*" || POINTER_QUALIFIERS.contains(text))
 }
 
 /// The scalar kinds whose `NoOp` reading is a scalar identity conversion.
@@ -1044,3 +1080,7 @@ pub(crate) fn explicit_casts(function: &Value) -> Vec<CastSite<'_>> {
 #[cfg(test)]
 #[path = "../tests/unit/cast_semantics.rs"]
 mod tests;
+
+#[cfg(test)]
+#[path = "../tests/unit/cast_semantics_type_group.rs"]
+mod type_group_tests;

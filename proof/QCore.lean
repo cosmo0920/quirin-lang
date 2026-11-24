@@ -527,6 +527,7 @@ import QCore.TrackedSelfInitDisjointFrame
 import QCore.Transferability
 import QCore.TranslationValidation
 import QCore.TwoDerivationAdmission
+import QCore.TypeGroupQualifiedPointer
 import QCore.TypedAccessPathPositionResiduals
 import QCore.TypedAccessPathPositions
 import QCore.TypedAccessPathStatements

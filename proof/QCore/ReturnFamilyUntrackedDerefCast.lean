@@ -200,7 +200,7 @@ def untrackedVectors : List (String × List Item × Bool × Bool) := [
   ("sizeof ( long ) * p", [.star .resolvedCast], true, true),
   ("n * ( long ) p", [.cast, .star .operandEnd], false, false),
   ("( n ) * ( long ) p", [.cast, .star (.close .object)], false, false),
-  ("* ( long * const ) p", [.other], false, false),
+  ("* ( long * const ) p", [.cast, .star .notOperandEnd], false, true),
   ("( long ) p", [.cast], false, false)
 ]
 
