@@ -85,8 +85,11 @@ fn a_store_outside_the_premises_keeps_the_refusal() {
         // The member is read through a second pointer, or is an element.
         "void subject(struct S *s, void *q) { s->self->p = q; }",
         "void subject(struct S *s, void *q, int i) { s->slots[i] = q; }",
-        // A local's pointer (here an owned allocation: a custody move).
-        "void subject(struct S *s) { void *q = q_alloc(); s->p = q; }",
+        // A local's pointer (here an owned allocation: a custody move). Card
+        // MEMBER-EFFECT-STORES (rule 38k) re-pins this deliberately: the bare
+        // move `void *q = q_alloc(); s->p = q;` is now its hand-off
+        // (`tests/member_effect_stores.rs`); used after the move it is refused.
+        "void subject(struct S *s) { void *q = q_alloc(); s->p = q; q_free(q); }",
     ] {
         let run = run(body);
         assert!(!run.safe(), "{body}: {run:?}");

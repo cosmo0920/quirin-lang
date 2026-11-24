@@ -262,6 +262,11 @@ fn statement(cfg: &crate::legacy_c::LegacyCfg, parameters: &[Option<String>]) ->
         if store.value == crate::owned_out_member::OWNED_OUT {
             return None;
         }
+        // MEMBER-EFFECT-STORES hook (rule 38k): a hand-off states no
+        // retention, and its summary is withheld.
+        if store.value == crate::member_handoff::HANDOFF {
+            return None;
+        }
         let Some(root) = index(&store.root) else {
             // A member of this frame's own record object: no caller sees it.
             if store.owner.is_none() && store.value != RETAINED {
