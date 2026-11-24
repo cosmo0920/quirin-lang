@@ -459,3 +459,36 @@ one copy of SP9's identical `RenderedSort::Function` variant), then renamed:
   digest and its replacement (round 1 was never on main).
 * **Lean**: `sp10Terms` renamed, `sp10Sorts` added, and two theorems:
   `sp10_names_are_prefixed` and `sp10_is_disjoint_from_sp9`.
+
+**Contracts and gate after the rework.** `contracts.py sync`
+(`private/logs/sync-2.log`) exit 0: the same shape as round 1 against main
+(`contract-inventory.lock`: the 7 module digests and 167 manifest
+references; `contracts.json`: the 7 digests; no other lock changed).
+`contracts.py check` (`private/logs/check-2.log`) exit 0.
+
+**Gate 2**: `python3 scripts/gate_scope.py --base a53d769ce --out
+private/gate-2` on `e93675b12` (mode full: the diff reaches
+`qcore-contract`). Console `private/logs/gate-2.console`.
+
+| Step | Exit | Counts |
+|---|---|---|
+| submodules, fmt, clippy | 0, 0, 0 | |
+| rust-suite | 101 | 682 units, 727 summaries, 9993 passed, **1 failed** (the host libcurl `curlver.h` test, as in gate 1), 24 ignored |
+| reevaluation probe, follow-up | 0, 0 | |
+| lean | 0 | 494 audits |
+| python | 0 | 807 tests |
+| provider package build, verify-all, verify | 0, 0, 0 | |
+| provider test, fmt, clippy | 0, 0, 0 | 49 summaries, 174 passed, 1 ignored |
+
+Targeted reruns before gate 2: `private/logs/t4.log` and `t5.log`. In t4,
+SP9's `the_sp9_block_is_new_prefixed_and_bound_to_lean` failed: it required
+SP9 to be the last block. It now requires the SP9 block to be contiguous and
+followed only by SP10 (a shared-file edit to
+`crates/qcore-contract/tests/plugin_guarded_symbols.rs`); t5 passed.
+
+**Merged with origin/main `3ca85c7a6`** (r63 to r65: gateway code, rules
+74h to 74j, Lean modules, records; disjoint from this card's files except
+generated docs; clean merge `1558afcb9`): `gen_lean_roots.py --check` 0 (553
+modules), `gen_rule_docs.py --check` 0, and `cargo test -p qcore-contract
+--test formal_binding_descriptions --test plugin_guarded_symbols --test
+hypothesis_bindings --test contract_premise` 0 (`private/logs/t6.log`).
