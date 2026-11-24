@@ -114,7 +114,32 @@ else) is the Rust reader's output (trust boundary 28), bound by `derefVectors`.
 
 ## 5. Measurement against the prediction
 
-MEASUREMENT
+This is the opt-in `current --monkey-linked` route over Fluent Bit 046accf6.
+Each run used its own `git archive` tree and release binary
+([evidence/runs.md](evidence/runs.md)).
+
+| run | Safe / Pending / Unknown / Unsafe | access rows / alone / leaves |
+|---|---|---|
+| base `3ca85c7a6` | 1,171 / 2 / 3,623 / 8 | 2,118 / 215 / 8,992 |
+| **tip `1eae6f5e6`** | **1,171 / 2 / 3,623 / 8** | 2,118 / 215 / 8,992 |
+
+No row changes status, and no row changes its leaf multiset. That matches the
+prediction, whose `measure-prediction` block was `none` on every route. The
+corpus has no `*` before a pointer cast group that is followed by `*`
+(PREDICTION.md's `grep`).
+
+**Pinned routes.** I attempted the system and slice routes with the tip side
+tree's release `quirin-audit` and `quirin-audit-measure`
+(`--side base=rev:3ca85c7a6 --side tip=rev:1eae6f5e6 --routes system,slice
+--declared docs/reports/return-family-deref-resolved-cast/PREDICTION.md`,
+over `crates/quirin-audit-plugin-measure/inputs/live.json`). The command exited
+1 before it measured anything, with verdict `Unknown`: `plugin-exit: the plugin
+ended with exit 1:
+/home/cosmo/Documents/GitHub/quirin-lang/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-production/compile_commands.json:
+No such file or directory (os error 2)`. The log is the worktree's
+`private/rfd/measure-declared.log`. **The pinned corpus, system and slice
+routes were not run.** No move is predicted on them. A move there would be
+`Safe` -> `Unknown` at a `return` that dereferences a cast of a dereference.
 
 ## 6. Findings outside scope (registered)
 
