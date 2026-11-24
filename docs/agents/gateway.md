@@ -13434,4 +13434,44 @@ through `ampersand_runs`.
     `old_vectors_hold`);
     [report](../reports/return-family-deref-resolved-cast/README.md).
 
+<a id="constraint-74r"></a>
+
+74r. **An untracked root dereferenced through a cast group is a base.** Card
+    RETURN-FAMILY-UNTRACKED-DEREF-THROUGH-CAST, extending
+    [rule 74h](#constraint-74h) and [rule 74m](#constraint-74m). Family S
+    admits any use of an untracked root, but a root a `*` dereferences is a
+    base of the read node, so the flow check stands behind the syntactic
+    premise. At the base the root was a starred base only when the token
+    right before it was a `*` that may be unary, so `* ( long * ) p` made no
+    base and `long w(void) { const long *p = 0; return *(long *)p; }` was
+    `Safe`, while `return *p;` is `Unknown` (`unknown_alias:p`): the
+    admitting direction. The test is kept, and a second one
+    (`dereferenced_through_groups`) reads back from the root through `(` and
+    through every group `cast_semantics::type_group_open` reads as a type
+    (rule 12h's transparency) to the first `*`, which counts when it may be
+    unary under either of rule 74h's readings. The root is a base when either
+    test says so. Nested groups (`*(T *)(U *)p`), a parenthesised cast
+    (`*((T *)p)`), a parenthesised root (`*(T *)(p)`, `*(p)`) and pointer
+    arithmetic in parentheses (`*(p + 1)`) make `p` a base too. A word of a
+    cast's type name (`cast_type_word`: a type group of more than one token,
+    or one name followed by what may start an operand) is no root, so `long`
+    in `* ( long * ) p` is not made a base. A `*` that is binary under every
+    reading (`n * ( long ) p`) makes no base. A base only adds the typed
+    access route's obligation, and no refusal changes, so every result the
+    tip admits the base admitted. A may-bind root, `(T) *p`, `*(T *)*q`
+    (rule 74m) and `sizeof ( long ) * q` read as before. A group with a
+    qualifier after its `*` (`( long * const )`) is no group
+    `type_group_open` reads and keeps the base's reading (registered
+    follow-up). **Do not** write a second type-group detector, and **do
+    not** drop the old test (the union is the reading). Premises stated, not
+    proved: the token classes (trust boundary 28).
+    `QCore.ReturnFamilyUntrackedDerefCast` (`old_starred_kept`,
+    `a_type_word_keeps_the_old_reading`, `starred_is_through`,
+    `through_mono`, `starred_keeps_every_reading_base`, `old_bases_kept`,
+    `the_fix_only_refuses_more`, `old_misses_the_base`,
+    `a_multiplication_is_no_base`,
+    `an_undecided_star_through_a_cast_is_a_base`, `untracked_vectors_hold`,
+    `old_vectors_hold`);
+    [report](../reports/return-family-untracked-deref-cast/README.md).
+
 <!-- generated:rules:end -->

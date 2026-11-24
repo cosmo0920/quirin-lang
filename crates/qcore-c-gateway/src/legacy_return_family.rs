@@ -82,6 +82,12 @@
 //! `*(T *)q` dereferences the converted value and keeps its refusal
 //! (`QCore.ReturnFamilyDerefCast`).
 //!
+//! Card **RETURN-FAMILY-UNTRACKED-DEREF-THROUGH-CAST** (gateway rule 74r): an
+//! untracked root is a starred base also when a `*` that may be unary reaches
+//! it through opening parentheses and cast groups
+//! ([`dereferenced_through_groups`]), so `*(T *)p` makes `p` a base as `*p`
+//! does. The change only adds bases (`QCore.ReturnFamilyUntrackedDerefCast`).
+//!
 //! The read node is `IndirectScalarAccess` with no destination, no frame and
 //! no chain: it changes no binding, status, marker or link, and adds only the
 //! bases' obligations and the C02-P-ALIAS obligations of every `->` root. It
@@ -481,6 +487,69 @@ fn stars_before(
     stars
 }
 
+/// Rule 74r: whether the name at `index` is a word of a cast's type name: it
+/// stands in a parenthesised group of names and `*`s with only names before
+/// it, and the group is no value group, that is, it holds more than one
+/// token (`( long * )`, `( unsigned long )`, `( long * const )`) or its one
+/// name is followed by what may start an operand (`( T ) x`, `( T ) * x`).
+/// `( p )` before the end, a `)` or a binary-only operator is a value group,
+/// and its name may be a root (`* ( long * ) ( p )`). A name this calls a
+/// type word only keeps the base's reading.
+fn cast_type_word(texts: &[&str], index: usize) -> bool {
+    let mut first = index;
+    while first
+        .checked_sub(1)
+        .is_some_and(|previous| super::is_identifier(texts[previous]))
+    {
+        first -= 1;
+    }
+    let Some(open) = first.checked_sub(1).filter(|open| texts[*open] == "(") else {
+        return false;
+    };
+    let mut close = index + 1;
+    while texts
+        .get(close)
+        .is_some_and(|text| *text == "*" || super::is_identifier(text))
+    {
+        close += 1;
+    }
+    texts.get(close) == Some(&")")
+        && (close - open > 2
+            || texts.get(close + 1).is_some_and(|text| {
+                super::is_identifier(text)
+                    || text.as_bytes().first().is_some_and(u8::is_ascii_digit)
+                    || matches!(*text, "(" | "*" | "&" | "+" | "-" | "!" | "~")
+            }))
+}
+
+/// Card RETURN-FAMILY-UNTRACKED-DEREF-THROUGH-CAST (rule 74r): whether a `*`
+/// that may be unary under either of rule 74h's readings dereferences the
+/// untracked root at `index` through opening parentheses and through groups
+/// `cast_semantics::type_group_open` reads as a type (rule 12h's
+/// transparency), so that `*(T *)p`, `*(T *)(U *)p` and `*((T *)p)` make `p`
+/// a base as `*p` does. It only adds bases, each an obligation the flow check
+/// must discharge (`QCore.ReturnFamilyUntrackedDerefCast`). A word of a
+/// cast's type name ([`cast_type_word`]) is no root, so `long` in
+/// `* ( long * ) p` is not made a base.
+fn dereferenced_through_groups(texts: &[&str], index: usize, names: &impl NameFacts) -> bool {
+    if cast_type_word(texts, index) {
+        return false;
+    }
+    let mut at = index;
+    while let Some(previous) = at.checked_sub(1) {
+        match texts[previous] {
+            "(" => at = previous,
+            ")" => match crate::cast_semantics::type_group_open(texts, previous) {
+                Some(open) => at = open,
+                None => return false,
+            },
+            "*" => return operator_at(texts, previous, names).may_be_unary(),
+            _ => return false,
+        }
+    }
+    false
+}
+
 /// Family S's shape and name premises over one `return` expression. `None`
 /// keeps the refusal. The declared-result premise and the descriptor premise
 /// are the caller's.
@@ -562,10 +631,12 @@ pub(crate) fn scalar_read(texts: &[&str], names: &impl NameFacts) -> Option<Scal
                 push_once(&mut read.arrow_roots, text);
             }
             // Rule 74h: a base when either reading dereferences it, the
-            // union of both readings' bases.
-            let starred = index >= 1
+            // union of both readings' bases. Rule 74r: also when a `*`
+            // dereferences it through parentheses and cast groups.
+            let starred = (index >= 1
                 && texts[index - 1] == "*"
-                && operator_at(texts, index - 1, names).may_be_unary();
+                && operator_at(texts, index - 1, names).may_be_unary())
+                || dereferenced_through_groups(texts, index, names);
             if arrow_at(texts, index + 1) || next == Some("[") || starred {
                 push_once(&mut read.bases, text);
             }
@@ -952,3 +1023,7 @@ mod star_cast_tests;
 #[cfg(test)]
 #[path = "../tests/unit/legacy_return_family_deref_cast.rs"]
 mod deref_cast_tests;
+
+#[cfg(test)]
+#[path = "../tests/unit/legacy_return_family_untracked_deref_cast.rs"]
+mod untracked_deref_cast_tests;
