@@ -119,6 +119,16 @@
 //! only grow and the one new refusal is the expression's, so nothing admits
 //! more (`QCore.ReturnFamilyUntrackedConditionalAccess`).
 //!
+//! Card **RETURN-FAMILY-ARITH-WALK-CROSSES-CONDITIONAL** (gateway rule 82):
+//! rule 74w's walk read a conditional group as the additive group around a
+//! later term of an arm's sum (`(c ? 1 + p - n : a)->f`, `(c ? a : n +
+//! p)[0]`) and refused. It now classifies such a group within the arm, the
+//! arm's `?` or `:` standing in for the parentheses ([`arm_around`]); when
+//! that is the only unclassified reading it returns
+//! [`ArithmeticAccess::Arm`], and family S refuses unless rule 74x made the
+//! root a base. A root in the condition and every other unclassified group
+//! refuse as before (`QCore.ReturnFamilyArithWalkConditional`).
+//!
 //! The read node is `IndirectScalarAccess` with no destination, no frame and
 //! no chain: it changes no binding, status, marker or link, and adds only the
 //! bases' obligations and the C02-P-ALIAS obligations of every `->` root. It
@@ -644,6 +654,12 @@ enum ArithmeticAccess {
     /// An access through an additive group whose other operands the reader
     /// cannot classify (`( p - q ) - > f`): family S refuses.
     Unclassified,
+    /// Rule 82: `Unclassified` only because a crossed group is a conditional
+    /// whose arm holds the span, every crossed group classified when the
+    /// arm's `?` or `:` delimit it (`( c ? 1 + p - n : a ) - > f`): family S
+    /// refuses unless rule 74x made the root a base, and a `->` root when
+    /// `true` (`->` accesses what the walk reached).
+    Arm(bool),
 }
 
 /// Rule 74w: whether `part`, the other operands of an additive group around
@@ -707,6 +723,34 @@ fn enclosing_group(texts: &[&str], start: usize) -> Option<(usize, usize)> {
     None
 }
 
+/// Rule 82: the arm `a_lo..a_hi` of the conditional group `open..=close`
+/// that holds the span `lo..=hi`, a term at the group's top level: the
+/// tokens between the nearest top-level `?` or `:` before the span and the
+/// nearest after it (or the group's `)`). `None` when the group holds no
+/// top-level `?`, nothing delimits the span before it, or a `?` follows it
+/// (the span is a condition, never an arm).
+fn arm_around(
+    texts: &[&str],
+    open: usize,
+    close: usize,
+    lo: usize,
+    hi: usize,
+) -> Option<(usize, usize)> {
+    let delimiter = |at: usize| matches!(texts[at], "?" | ":");
+    top_level(texts, open + 1, close, |at| texts[at] == "?")?;
+    let mut before = None;
+    let mut from = open + 1;
+    while let Some(at) = top_level(texts, from, lo, delimiter) {
+        before = Some(at);
+        from = at + 1;
+    }
+    let after = top_level(texts, hi + 1, close, delimiter);
+    if after.is_some_and(|at| texts[at] == "?") {
+        return None;
+    }
+    Some((before? + 1, after.unwrap_or(close)))
+}
+
 /// Card RETURN-FAMILY-UNTRACKED-ACCESS-THROUGH-ARITHMETIC (rule 74w): the
 /// access that reaches the untracked, non-scalar root at `index` through
 /// pointer arithmetic. The walk keeps a span `lo..=hi` of what it has read,
@@ -736,6 +780,11 @@ fn accessed_through_arithmetic(
     let (mut lo, mut hi) = (index, index);
     let mut crossed = false;
     let mut classified = true;
+    // Rule 82: whether a conditional's arm delimited a crossed group, and
+    // whether every crossed group is classified with the arm's `?` or `:`
+    // standing in for a conditional group's parentheses.
+    let mut delimited = false;
+    let mut classified_in_arms = true;
     loop {
         if let Some(open) = lo
             .checked_sub(1)
@@ -770,14 +819,21 @@ fn accessed_through_arithmetic(
         // Classified: the span is a term of the sum (`+`, `-` or the
         // group's own parenthesis on each side, so no product holds it), and
         // the other operands can never be a pointer.
-        let clean_left = (left_binary && matches!(left, Some("+" | "-"))) || lo == open + 1;
-        let clean_right = (right_operator && matches!(right, Some("+" | "-"))) || hi + 1 == close;
-        if !(clean_left
-            && clean_right
-            && integer_operands(&texts[open + 1..lo], names)
-            && integer_operands(&texts[hi + 1..close], names))
-        {
+        let term_of = |from: usize, to: usize| {
+            let clean_left = (left_binary && matches!(left, Some("+" | "-"))) || lo == from;
+            let clean_right = (right_operator && matches!(right, Some("+" | "-"))) || hi + 1 == to;
+            clean_left
+                && clean_right
+                && integer_operands(&texts[from..lo], names)
+                && integer_operands(&texts[hi + 1..to], names)
+        };
+        if !term_of(open + 1, close) {
             classified = false;
+        }
+        let arm = arm_around(texts, open, close, lo, hi);
+        delimited |= arm.is_some();
+        if !arm.map_or_else(|| term_of(open + 1, close), |(from, to)| term_of(from, to)) {
+            classified_in_arms = false;
         }
         crossed = true;
         lo = open;
@@ -793,6 +849,7 @@ fn accessed_through_arithmetic(
         });
     match (arrow || element, classified) {
         (false, _) => ArithmeticAccess::None,
+        (true, false) if delimited && classified_in_arms => ArithmeticAccess::Arm(arrow),
         (true, false) => ArithmeticAccess::Unclassified,
         (true, true) if arrow => ArithmeticAccess::Arrow,
         (true, true) => ArithmeticAccess::Element,
@@ -1061,7 +1118,7 @@ fn conditional_roots(texts: &[&str], names: &impl NameFacts) -> Option<Condition
         let access = conditional_group_access(texts, open, close, names);
         let arrow = match access {
             ArithmeticAccess::None => continue,
-            ArithmeticAccess::Unclassified => return None,
+            ArithmeticAccess::Unclassified | ArithmeticAccess::Arm(_) => return None,
             ArithmeticAccess::Arrow => true,
             ArithmeticAccess::Element => false,
         };
@@ -1185,8 +1242,17 @@ pub(crate) fn scalar_read(texts: &[&str], names: &impl NameFacts) -> Option<Scal
             };
             match arithmetic {
                 ArithmeticAccess::Unclassified => return None,
-                ArithmeticAccess::Arrow => push_once(&mut read.arrow_roots, text),
-                ArithmeticAccess::None | ArithmeticAccess::Element => {}
+                // Rule 82: the arm's refusal stands unless rule 74x read the
+                // arm and made this root a base.
+                ArithmeticAccess::Arm(_) if !conditional_arms.bases.contains(&index) => {
+                    return None;
+                }
+                ArithmeticAccess::Arrow | ArithmeticAccess::Arm(true) => {
+                    push_once(&mut read.arrow_roots, text)
+                }
+                ArithmeticAccess::None
+                | ArithmeticAccess::Element
+                | ArithmeticAccess::Arm(false) => {}
             }
             // Rule 74x: an arm of an accessed conditional, either arm.
             if conditional_arms.arrows.contains(&index) {
@@ -1600,3 +1666,7 @@ mod untracked_arith_access_tests;
 #[cfg(test)]
 #[path = "../tests/unit/legacy_return_family_untracked_conditional_access.rs"]
 mod untracked_conditional_access_tests;
+
+#[cfg(test)]
+#[path = "../tests/unit/legacy_return_family_arith_walk_conditional.rs"]
+mod arith_walk_conditional_tests;
