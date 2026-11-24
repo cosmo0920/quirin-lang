@@ -1,0 +1,52 @@
+lib/chunkio/src/cio_file_unix.c cio_file_native_lookup_group Unknown
+    star lib/chunkio/src/cio_file_unix.c:218 | discarded owned result of resource API `calloc` | *result = calloc(1, sizeof(gid_t));
+    star lib/chunkio/src/cio_file_unix.c:254 | discarded owned result of resource API `calloc` | *result = calloc(1, sizeof(gid_t));
+lib/chunkio/src/cio_file_unix.c cio_file_native_lookup_user Unknown
+    star lib/chunkio/src/cio_file_unix.c:156 | discarded owned result of resource API `calloc` | *result = calloc(1, sizeof(uid_t));
+    star lib/chunkio/src/cio_file_unix.c:192 | discarded owned result of resource API `calloc` | *result = calloc(1, sizeof(uid_t));
+lib/cmetrics/src/cmt_mpack_utils.c cmt_mpack_consume_string_tag Unknown
+    star lib/cmetrics/src/cmt_mpack_utils.c:162 | discarded owned result of resource API `cfl_sds_create_size` | *output_buffer = cfl_sds_create_size((size_t) string_length);
+lib/ctraces/src/ctr_mpack_utils.c ctr_mpack_consume_binary_tag Unknown
+    star lib/ctraces/src/ctr_mpack_utils.c:313 | discarded owned result of resource API `cfl_sds_create_size` | *output_buffer = cfl_sds_create_size(string_length);
+lib/ctraces/src/ctr_mpack_utils.c ctr_mpack_consume_string_tag Unknown
+    star lib/ctraces/src/ctr_mpack_utils.c:257 | discarded owned result of resource API `cfl_sds_create_size` | *output_buffer = cfl_sds_create_size(string_length + 1);
+lib/librdkafka-2.15.0/src/rdkafka_broker.c rd_kafka_broker_share_session_add_remove_toppar Unknown
+    star lib/librdkafka-2.15.0/src/rdkafka_broker.c:3203 | discarded owned result of resource API `rd_list_new` | *toppars_add_list =
+lib/librdkafka-2.15.0/src/rdkafka_cgrp.c rd_kafka_cgrp_consumer_assignment_with_metadata Unknown
+    star lib/librdkafka-2.15.0/src/rdkafka_cgrp.c:3036 | discarded owned result of resource API `rd_list_new` | *missing_topic_ids =
+lib/librdkafka-2.15.0/src/rdkafka_conf.c rd_kafka_anyconf_set_prop0 Unknown
+    star lib/librdkafka-2.15.0/src/rdkafka_conf.c:2070 | discarded owned result of resource API `rd_strdup` | *str = rd_strdup(istr);
+    star lib/librdkafka-2.15.0/src/rdkafka_conf.c:2072 | discarded owned result of resource API `rd_strdup` | *str = prop->sdef ? rd_strdup(prop->sdef) : NULL;
+    star lib/librdkafka-2.15.0/src/rdkafka_conf.c:2081 | discarded owned result of resource API `rd_kafkap_str_new` | *kstr = rd_kafkap_str_new(istr, -1);
+    star lib/librdkafka-2.15.0/src/rdkafka_conf.c:2083 | discarded owned result of resource API `rd_kafkap_str_new` | *kstr = prop->sdef ? rd_kafkap_str_new(prop->sdef, -1)
+lib/librdkafka-2.15.0/src/rdkafka_msgset_writer.c rd_kafka_gzip_compress Unknown
+    star lib/librdkafka-2.15.0/src/rdkafka_msgset_writer.c:984 | discarded owned result of resource API `rd_malloc` | *outbuf  = rd_malloc(*outlenp);
+lib/librdkafka-2.15.0/src/rdkafka_range_assignor.c rd_kafka_range_assignor_unittest Unknown
+    other lib/librdkafka-2.15.0/src/rdkafka_range_assignor.c:1682 | discarded owned result of resource API `rd_kafkap_str_new` | ALL_RACKS[i] = rd_kafkap_str_new(&c, 1);
+lib/librdkafka-2.15.0/src/rdkafka_request.c rd_kafka_handle_ApiVersion Unknown
+    star lib/librdkafka-2.15.0/src/rdkafka_request.c:3293 | discarded owned result of resource API `rd_malloc` | *apis = rd_malloc(sizeof(**apis) * ApiArrayCnt);
+lib/librdkafka-2.15.0/src/rdkafka_request.c rd_kafka_handle_OffsetFetch Unknown
+    star lib/librdkafka-2.15.0/src/rdkafka_request.c:1223 | discarded owned result of resource API `rd_kafka_topic_partition_list_new` | *offsets = rd_kafka_topic_partition_list_new(16);
+lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c rd_kafka_sticky_assignor_unittest Unknown
+    other lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c:4740 | discarded owned result of resource API `rd_kafkap_str_new` | ALL_RACKS[i] = rd_kafkap_str_new(&c, 1);
+lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c ut_create_topic_partition_lists Unknown
+    other lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c:2235 | discarded owned result of resource API `rd_kafka_topic_partition_list_new` | lists[i] = rd_kafka_topic_partition_list_new(0);
+lib/librdkafka-2.15.0/src/rdkafka_subscription.c rd_kafka_assignment Unknown
+    star lib/librdkafka-2.15.0/src/rdkafka_subscription.c:337 | discarded owned result of resource API `rd_kafka_topic_partition_list_new` | *partitions = rd_kafka_topic_partition_list_new(0);
+lib/librdkafka-2.15.0/src/rdkafka_subscription.c rd_kafka_subscription Unknown
+    star lib/librdkafka-2.15.0/src/rdkafka_subscription.c:365 | discarded owned result of resource API `rd_kafka_topic_partition_list_new` | *topics = rd_kafka_topic_partition_list_new(0);
+lib/librdkafka-2.15.0/src/rdkafka_telemetry_encode.c rd_kafka_telemetry_encode_metrics Unknown
+    other lib/librdkafka-2.15.0/src/rdkafka_telemetry_encode.c:1133 | discarded owned result of resource API `rd_calloc` | resource_attributes_key_values[ind] = rd_calloc(
+    other lib/librdkafka-2.15.0/src/rdkafka_telemetry_encode.c:1208 | discarded owned result of resource API `rd_calloc` | metrics[metric_idx] = rd_calloc(
+    other lib/librdkafka-2.15.0/src/rdkafka_telemetry_encode.c:1212 | discarded owned result of resource API `rd_calloc` | data_points[metric_idx] = rd_calloc(
+    other lib/librdkafka-2.15.0/src/rdkafka_telemetry_encode.c:1229 | discarded owned result of resource API `rd_calloc` | metrics[metric_idx] =
+    other lib/librdkafka-2.15.0/src/rdkafka_telemetry_encode.c:1231 | discarded owned result of resource API `rd_calloc` | data_points[metric_idx] = rd_calloc(
+lib/librdkafka-2.15.0/src/rdkafka_telemetry_encode.c resource_attributes Unknown
+    star lib/librdkafka-2.15.0/src/rdkafka_telemetry_encode.c:746 | discarded owned result of resource API `rd_malloc` | *attributes =
+lib/librdkafka-2.15.0/src/rdkafka_telemetry_encode.c serialize_Metric Unknown
+    star lib/librdkafka-2.15.0/src/rdkafka_telemetry_encode.c:971 | discarded owned result of resource API `rd_calloc` | *metric_name = rd_calloc(1, metric_name_len);
+lib/librdkafka-2.15.0/src/rdunittest.c ut_tq_test Unknown
+    other lib/librdkafka-2.15.0/src/rdunittest.c:175 | discarded owned result of resource API `rd_calloc` | tqh[qi] = rd_calloc(1, sizeof(*tqh[qi]));
+lib/monkey/mk_core/mk_string.c mk_string_build Unknown
+    star lib/monkey/mk_core/mk_string.c:418 | discarded owned result of resource API `mk_mem_alloc` | *buffer = (char *) mk_mem_alloc(_mem_alloc);
+21 rows, 30 leaves, {'star': 21, 'other': 9}

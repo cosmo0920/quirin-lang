@@ -1,0 +1,58 @@
+lib/chunkio/src/cio_file_unix.c cio_file_native_lookup_group Unknown -> Unknown
+   - 3100 discarded owned result of resource API `calloc`
+   - 3123 discarded owned result of resource API `calloc`
+   + 3100 owned result of resource API `calloc` stored through `*result` without an out-parameter contract
+   + 3123 owned result of resource API `calloc` stored through `*result` without an out-parameter contract
+lib/chunkio/src/cio_file_unix.c cio_file_native_lookup_user Unknown -> Unknown
+   - 3059 discarded owned result of resource API `calloc`
+   - 3082 discarded owned result of resource API `calloc`
+   + 3059 owned result of resource API `calloc` stored through `*result` without an out-parameter contract
+   + 3082 owned result of resource API `calloc` stored through `*result` without an out-parameter contract
+lib/cmetrics/src/cmt_mpack_utils.c cmt_mpack_consume_string_tag Unknown -> Unknown
+   - 6329 discarded owned result of resource API `cfl_sds_create_size`
+   + 6329 owned result of resource API `cfl_sds_create_size` stored through `*output_buffer` without an out-parameter contract
+lib/ctraces/src/ctr_mpack_utils.c ctr_mpack_consume_binary_tag Unknown -> Unknown
+   - 2180 discarded owned result of resource API `cfl_sds_create_size`
+   + 2180 owned result of resource API `cfl_sds_create_size` stored through `*output_buffer` without an out-parameter contract
+lib/ctraces/src/ctr_mpack_utils.c ctr_mpack_consume_string_tag Unknown -> Unknown
+   - 2143 discarded owned result of resource API `cfl_sds_create_size`
+   + 2143 owned result of resource API `cfl_sds_create_size` stored through `*output_buffer` without an out-parameter contract
+lib/librdkafka-2.15.0/src/rdkafka_broker.c rd_kafka_broker_share_session_add_remove_toppar Unknown -> Unknown
+   - 22532 discarded owned result of resource API `rd_list_new`
+   + 22532 owned result of resource API `rd_list_new` stored through `*toppars_add_list` without an out-parameter contract
+lib/librdkafka-2.15.0/src/rdkafka_cgrp.c rd_kafka_cgrp_consumer_assignment_with_metadata Unknown -> Unknown
+   - 21938 discarded owned result of resource API `rd_list_new`
+   + 21938 owned result of resource API `rd_list_new` stored through `*missing_topic_ids` without an out-parameter contract
+lib/librdkafka-2.15.0/src/rdkafka_conf.c rd_kafka_anyconf_set_prop0 Unknown -> Unknown
+   - 22860 discarded owned result of resource API `rd_strdup`
+   - 22862 discarded owned result of resource API `rd_strdup`
+   - 22871 discarded owned result of resource API `rd_kafkap_str_new`
+   - 22873 discarded owned result of resource API `rd_kafkap_str_new`
+   + 22860 owned result of resource API `rd_strdup` stored through `*str` without an out-parameter contract
+   + 22862 owned result of resource API `rd_strdup` stored through `*str` without an out-parameter contract
+   + 22871 owned result of resource API `rd_kafkap_str_new` stored through `*kstr` without an out-parameter contract
+   + 22873 owned result of resource API `rd_kafkap_str_new` stored through `*kstr` without an out-parameter contract
+lib/librdkafka-2.15.0/src/rdkafka_msgset_writer.c rd_kafka_gzip_compress Unknown -> Unknown
+   - 20095 discarded owned result of resource API `rd_malloc`
+   + 20095 owned result of resource API `rd_malloc` stored through `*outbuf` without an out-parameter contract
+lib/librdkafka-2.15.0/src/rdkafka_request.c rd_kafka_handle_ApiVersion Unknown -> Unknown
+   - 22275 discarded owned result of resource API `rd_malloc`
+   + 22275 owned result of resource API `rd_malloc` stored through `*apis` without an out-parameter contract
+lib/librdkafka-2.15.0/src/rdkafka_request.c rd_kafka_handle_OffsetFetch Unknown -> Unknown
+   - 21117 discarded owned result of resource API `rd_kafka_topic_partition_list_new`
+   + 21117 owned result of resource API `rd_kafka_topic_partition_list_new` stored through `*offsets` without an out-parameter contract
+lib/librdkafka-2.15.0/src/rdkafka_subscription.c rd_kafka_assignment Unknown -> Unknown
+   - 19758 discarded owned result of resource API `rd_kafka_topic_partition_list_new`
+   + 19758 owned result of resource API `rd_kafka_topic_partition_list_new` stored through `*partitions` without an out-parameter contract
+lib/librdkafka-2.15.0/src/rdkafka_subscription.c rd_kafka_subscription Unknown -> Unknown
+   - 19778 discarded owned result of resource API `rd_kafka_topic_partition_list_new`
+   + 19778 owned result of resource API `rd_kafka_topic_partition_list_new` stored through `*topics` without an out-parameter contract
+lib/librdkafka-2.15.0/src/rdkafka_telemetry_encode.c resource_attributes Unknown -> Unknown
+   - 20789 discarded owned result of resource API `rd_malloc`
+   + 20789 owned result of resource API `rd_malloc` stored through `*attributes` without an out-parameter contract
+lib/librdkafka-2.15.0/src/rdkafka_telemetry_encode.c serialize_Metric Unknown -> Unknown
+   - 20982 discarded owned result of resource API `rd_calloc`
+   + 20982 owned result of resource API `rd_calloc` stored through `*metric_name` without an out-parameter contract
+lib/monkey/mk_core/mk_string.c mk_string_build Unknown -> Unknown
+   - 2251 discarded owned result of resource API `mk_mem_alloc`
+   + 2251 owned result of resource API `mk_mem_alloc` stored through `*buffer` without an out-parameter contract

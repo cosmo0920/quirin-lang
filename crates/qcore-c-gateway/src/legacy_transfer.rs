@@ -4607,14 +4607,17 @@ pub(super) fn transfer_base(
                     );
                 }
                 // Custody would be created in a place this analysis cannot
-                // account for: refuse the whole call.
-                Some(_) => {
+                // account for: refuse the whole call. Card
+                // OWNED-CONSTRUCTOR-OUT-PARAMETER-DELIVERY (rule 74l): by
+                // name, since the result was stored through a slot no
+                // out-parameter contract sanctions, not discarded.
+                Some(place) => {
                     diagnostics.insert(LegacyDiagnostic {
                         function: function.to_owned(),
                         line: node.line,
                         kind: LegacyDiagnosticKind::Unsupported {
-                            description: format!(
-                                "discarded owned result of resource API `{called}`"
+                            description: crate::owned_out_formal::unsanctioned_owned_store(
+                                called, place,
                             ),
                         },
                     });
