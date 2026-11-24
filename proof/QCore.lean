@@ -368,6 +368,7 @@ import QCore.PluginNeutralOverlap
 import QCore.PluginPremiseDecomposition
 import QCore.PluginReadingEnvironment
 import QCore.PluginSourceWitnesses
+import QCore.PointerOffsetPlace
 import QCore.PointerQualifierReader
 import QCore.PointerStore
 import QCore.PointerTypedefMember

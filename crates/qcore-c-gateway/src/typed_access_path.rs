@@ -1849,11 +1849,42 @@ impl<'a> Reader<'a> {
                         return None;
                     }
                     self.expression(&pair[1])?;
-                    seen_hop |= crate::union_bitfield::subscript_hop(&pair[0]);
+                    // K7-RESIDUAL-CAUSES (rule 78) hook: `(P + I)[K]` is `P[I + K]`.
+                    let base = match strip(&pair[0])
+                        .and_then(crate::pointer_offset_place::offset_operands)
+                    {
+                        Some((pointer, index)) => {
+                            self.expression(index)?;
+                            pointer
+                        }
+                        None => &pair[0],
+                    };
+                    // End K7-RESIDUAL-CAUSES (rule 78) hook.
+                    seen_hop |= crate::union_bitfield::subscript_hop(base);
                     steps.push(("[]", String::new()));
-                    cursor = &pair[0];
+                    cursor = base;
                     pointer_operand = true;
                 }
+                // K7-RESIDUAL-CAUSES (rule 78) hook: `*(P + I)` is `P[I]`.
+                "UnaryOperator"
+                    if cursor["opcode"].as_str() == Some("*")
+                        && children(cursor)
+                            .first()
+                            .and_then(strip)
+                            .and_then(crate::pointer_offset_place::offset_operands)
+                            .is_some() =>
+                {
+                    let (pointer, index) = children(cursor)
+                        .first()
+                        .and_then(strip)
+                        .and_then(crate::pointer_offset_place::offset_operands)?;
+                    self.expression(index)?;
+                    seen_hop |= crate::union_bitfield::subscript_hop(pointer);
+                    steps.push(("[]", String::new()));
+                    cursor = pointer;
+                    pointer_operand = true;
+                }
+                // End K7-RESIDUAL-CAUSES (rule 78) hook.
                 "UnaryOperator" if cursor["opcode"].as_str() == Some("*") => {
                     seen_hop = true;
                     steps.push(("*", String::new()));
