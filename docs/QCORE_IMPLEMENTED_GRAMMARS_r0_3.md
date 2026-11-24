@@ -3797,6 +3797,9 @@ resource_predicate = "resource_borrowed", "(", IDENT, ")"
   | slot_predicate
   | reference_predicate
   | callback_predicate
+  | "resource_kind_failure_use", "(", IDENT, ",", IDENT, ")"
+    (* card CG25-IN-PLACE-REGEX-REGERROR-FAILURE-EDGE, contract
+       specification C04.6.1: the second IDENT an in-place kind *)
   | "resource_return_borrowed_from", "(", IDENT, ",", nullability, ")" ;
     (* card SLOT-MOVE-AND-INTERIOR-BORROW, contract spec C04.3.4 *)
 nullability = "nullable" | "nonnull" ;
@@ -3937,6 +3940,8 @@ The return-code dispositions (card CG23-RELATIONAL-POSTCONDITIONS, contract spec
 The counted-user and container predicates (card W45-FB-RETRY-LIFETIME) carry static conditions of their own: every parameter they name is a `resource_borrowed` pointer parameter; a publication's container is a distinct parameter with no container predicate of its own; a parameter carries at most one counted-user operation and at most one container predicate; `resource_user_neutral()` appears at most once and never beside another counted-user predicate; an exit clause requires an integer result type, its `integer_literal` follows the canonical-literal rule above, one parameter and returned value carry at most one clause, and a parameter carries either an operation or exit clauses, never both. Every violation rejects the whole module.
 
 Additional static conditions are mandatory: exactly one marker, exactly one mode per parameter, exactly one result mode, unique names, compatible pointer/scalar types, valid distinct owned parent references, an owned reallocation source, and — for `literal_argument_premise` — a parameter name the same declaration declares (of any admitted type, pointer included: see contract specification C04.5), at most one premise per parameter, and a `DIGITS` run the lexer produces as a single integer token with no leading zero, which excludes suffixed, alternate-base and octal spellings; `-0` is likewise rejected, so the declared literal is canonical. These conditions cannot be represented by context-free productions alone. Signature usage annotations, extra declarations, unsupported predicates and other exit selectors are rejected atomically, not ignored. See contract specification C04–C06 and `crates/qcore-contract/src/contract_loader.rs`.
+
+The failure use `resource_kind_failure_use(p, KIND)` (card CG25-IN-PLACE-REGEX-REGERROR-FAILURE-EDGE, contract specification C04.6.1, gateway rule 74n) carries static conditions of its own: `p` names a parameter of the declaration whose mode is `resource_borrowed`, whose type is `ptr<const, u8>` or `ptr<mut, u8>`, and which carries `resource_kind(p, KIND)` of the same kind; `KIND` is an in-place kind (`regex`, `thread_key`), never `heap`, `reference` or a pointer- or integer-carried kind; and a parameter carries at most one failure use. An initialiser (`resource_out`) or finaliser (`resource_released`) position, a by-value `u32` position, a position without the kind or of another kind, and a duplicate each reject the whole module. It is a predicate, never a string: a premise statement is refused (QF001). It loads as `ResourceFunctionContract::failure_uses`, omitted from the serialized form and the diagnostic text when empty.
 
 The whole-declaration tail clauses `resource_variadic_data_tail()` and (card CG26-VARIADICS) `resource_variadic_borrowed_tail()` take no argument; a declaration carries at most one of the two (a second, or both, rejects the module), and either requires the analysed C declaration to be variadic (contract specification C04.1, C04.2).
 

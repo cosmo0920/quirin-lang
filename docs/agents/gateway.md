@@ -13336,8 +13336,12 @@ through `ampersand_runs`.
     `Unknown -> Safe` row, back to `Unknown`. The follow-up that registered
     the card said `rd_regex_match` uses `re` only after the zero edge; its
     real spelling calls `regerror` on the failure edge
-    (`CG25-IN-PLACE-REGEX-REGERROR-FAILURE-EDGE`). **Do not** admit an
-    uncertified use of any in-place kind, name a callee to exempt one, or
+    (`CG25-IN-PLACE-REGEX-REGERROR-FAILURE-EDGE`), discharged by [rule
+    74n](#constraint-74n): `regerror`'s `preg` now carries
+    `resource_kind_failure_use`, and `rd_regex_match` is `Safe` again.
+    **Do not** admit an
+    uncertified use of any in-place kind outside rule 74n's clause, name a
+    callee to exempt one, or
     track a name that a reference outside its one declaration can name.
     Premises stated, not proved: CG25's libc premise (`regcomp` returns zero
     exactly when it compiled the object) and faithful Clang declaration and
@@ -13392,5 +13396,60 @@ through `ampersand_runs`.
     `the_fold_only_strengthens`, `a_non_null_position_is_a_fixed_point`,
     `out_and_removed_refuse`, `fold_vectors_hold`);
     [report](../reports/callback-member-released-fold/README.md).
+
+<a id="constraint-74n"></a>
+
+74n. **A use declared defined on a failed object is admitted where its
+    object may have failed.** Card CG25-IN-PLACE-REGEX-REGERROR-FAILURE-EDGE
+    (USER DECISION 2026-11-24, "launch them all";
+    `legacy_in_place_custody.rs`: `report_uncertified_key_uses`,
+    `failure_use_admitted`; `contract_in_place.rs`: `check_failure_uses`),
+    discharging `CG25-IN-PLACE-REGEX-REGERROR-FAILURE-EDGE`. [Rule
+    74i](#constraint-74i) refused every uncertified in-place use and read no
+    callee by name, so `regerror(r, &re, …)` on the failure edge of `regcomp`
+    refused with `regexec` (its recorded over-refusal: `rd_regex_match`
+    Safe -> Unknown). POSIX (Issue 8, regcomp()) defines `regerror` on the
+    `regex_t` of the failed `regcomp` (its `errcode` is "the last non-zero
+    value returned by regcomp() or regexec() with the given value of preg")
+    and leaves `regexec` there undefined. (1) **The clause.** `ensures normal
+    resource_kind_failure_use(p, KIND);` (contract spec §C04.6.1, grammar
+    G05) is a predicate, not a premise string: it stands only on a
+    by-address `resource_borrowed` pointer position that also carries
+    `resource_kind(p, KIND)` of the same in-place kind; an initialiser, a
+    finaliser, a by-value (`thread_key`) use, a position without the kind,
+    a non-in-place kind, `heap` and a duplicate each reject the whole module.
+    It loads as `ResourceFunctionContract::failure_uses`, omitted when empty,
+    and `custody_projection` drops it (no derived summary states it, so a
+    declaration carrying it is never body-checked). `regex.qv` states it on
+    `regerror`'s `preg` alone. (2) **The reading.** At a use with the clause
+    that rule 74i does not certify, the use is admitted when the settled
+    binding of the object is an identity, not unknown, names at most one
+    site, that site live and released on no reaching path, and a binding
+    with no site is definitely null (the nonzero edge removed it): the
+    failure edge, before the status test, or a join of those. Before any
+    initialiser there is no binding on some path, so the join is unknown and
+    the use refuses. A released site keeps rule 74i's reading, the
+    `use_after_close` candidate; a `regfree` on the failure edge is itself
+    refused (`UnknownAlias`). A use without the clause, `regexec` included,
+    reads exactly as under rule 74i. (3) **Invariant.** The one
+    Unknown -> Safe move this admits rests on the clause discharging rule
+    74i's obligation: rule 74i's refusal at a failure use is replaced only
+    where the declared contract states the use defined on that state. A
+    program without the clause runs exactly as under rule 74i. **Do not**
+    admit a use without the clause on an uncertified object, name a callee
+    to exempt one, admit a failure use on a released or unbound object, or
+    state the clause on `regexec` or any call POSIX leaves undefined on a
+    failed object. Premises stated, not proved: POSIX's `regerror`
+    definition, the declared assumption the clause states (trust boundary
+    28), and CG25's libc premise. `QCore.InPlaceFailureUse`
+    (`AuditInPlaceFailureUse.lean`: `admitted_iff`,
+    `admitted_on_the_failure_edge`, `admitted_before_the_status_test`,
+    `refused_before_the_initialiser`, `not_admitted_after_the_finaliser`,
+    `a_use_without_the_clause_is_rule_74i`,
+    `a_new_safe_verdict_rests_on_an_admitted_failure_use`,
+    `a_safe_verdict_used_only_admitted_objects`);
+    `tests/in_place_regex_failure_use.rs`,
+    `qcore-contract/tests/in_place_failure_use.rs`;
+    [report](../reports/regex-regerror-failure-edge/README.md).
 
 <!-- generated:rules:end -->

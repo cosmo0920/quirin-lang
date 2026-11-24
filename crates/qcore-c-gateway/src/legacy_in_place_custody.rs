@@ -984,8 +984,11 @@ fn uncertified_use_refusal(name: &str, kind: ResourceKind) -> String {
 /// test, on the failure edge, a join of those) refuses. POSIX leaves a use of
 /// a key value not obtained from `pthread_key_create` undefined, and the
 /// contents of a `regex_t` whose `regcomp` failed undefined. The check reads
-/// no callee by name: the contract language does not tell `regerror`, which
-/// POSIX defines on the failed object, from `regexec`, so both refuse there.
+/// no callee by name. Card CG25-IN-PLACE-REGEX-REGERROR-FAILURE-EDGE (rule
+/// 74n) lets the contract tell `regerror`, which POSIX defines on the failed
+/// object, from `regexec`: a use declared `resource_kind_failure_use` is also
+/// admitted where [`failure_use_admitted`] holds (the failure edge, before
+/// the test). Every other use reads as above.
 pub(super) fn report_uncertified_key_uses(
     cfg: &LegacyCfg,
     incoming: &[Option<AbstractState>],
@@ -1056,7 +1059,9 @@ pub(super) fn report_uncertified_key_uses(
                                 .is_some_and(|status| status & (super::LIVE | super::RELEASED) != 0)
                     })
             });
-            if !certified {
+            if !certified
+                && !(contract.is_failure_use(position) && failure_use_admitted(state, place))
+            {
                 diagnostics.insert(super::LegacyDiagnostic {
                     function: cfg.function.clone(),
                     line: node.line,
@@ -1070,6 +1075,39 @@ pub(super) fn report_uncertified_key_uses(
             }
         }
     }
+}
+
+/// Card CG25-IN-PLACE-REGEX-REGERROR-FAILURE-EDGE (rule 74n): whether a use
+/// declared `resource_kind_failure_use` (`regerror(r, &re, …)`) is admitted
+/// where rule 74i's certification does not hold. The use is defined on the
+/// object its latest initialiser left, whether that initialiser succeeded or
+/// failed, so it is admitted when, on every reaching path, `place` is bound
+/// to that initialiser's outcome and to nothing else:
+///
+/// * the binding exists on every path (a path that reaches before any
+///   initialiser joins to `unknown`), is an identity and is not `unknown`;
+/// * it names at most one site, which is live and released on no reaching
+///   path (a site only possibly failed, before the status test, is live);
+/// * a binding with no site is the failure edge's (rule 11v's nonzero edge
+///   removes the site and leaves the binding definitely null), and only that.
+///
+/// A released site is not admitted here: it keeps rule 74i's certified
+/// reading, `report_kind_violations`' `use_after_close` candidate. Before the
+/// initialiser there is no binding. Every other state refuses as before.
+fn failure_use_admitted(state: &AbstractState, place: &str) -> bool {
+    let Some(pointer) = state.pointers.get(place) else {
+        return false;
+    };
+    pointer.derivation.is_identity()
+        && !pointer.unknown
+        && pointer.targets.len() <= 1
+        && (!pointer.targets.is_empty() || pointer.may_be_null)
+        && pointer.targets.iter().all(|site| {
+            state
+                .resources
+                .get(site)
+                .is_some_and(|status| status & super::LIVE != 0 && status & super::RELEASED == 0)
+        })
 }
 
 /// Card CG25-VOID-CAST-GUARD-ESCAPE (rule 11v (6)): refuse the function at its

@@ -604,8 +604,8 @@
     {
       "function": "regerror",
       "module": "libc/regex.qv",
-      "contract_sha256": "2e144f76ae89cef736e25766aa251336d3d2d4bef7e7f10fef6e7778b3f8ecc8",
-      "pinned_at": "2026-10-25T18:10:00Z"
+      "contract_sha256": "fe06553a5b95c38e5b04048645f7f428defa035009a221e3839b52148342c0cc",
+      "pinned_at": "2026-11-24T00:30:00Z"
     },
     {
       "function": "regexec",

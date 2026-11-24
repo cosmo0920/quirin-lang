@@ -225,6 +225,7 @@ import QCore.Ieee754Round
 import QCore.Ieee754Vectors32
 import QCore.Ieee754Vectors64
 import QCore.InPlaceCertifiedUse
+import QCore.InPlaceFailureUse
 import QCore.InPlaceMentionGuard
 import QCore.Index
 import QCore.IndexExtent
