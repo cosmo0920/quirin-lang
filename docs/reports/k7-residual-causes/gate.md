@@ -38,6 +38,9 @@ all (a proof root changed), Python always, provider gate no.
 
 The base (`target-census`, census streams on) and tip (`target-tip`, report
 only) runs of the 26 non-Monkey units holding a freed row
-(`artifacts/selection.json`) waited about four hours for audit slots; their
-outcome, if they finished before hand-back, is in
-[artifacts/unit-compare.json](artifacts/unit-compare.json).
+(`artifacts/selection.json`) waited about four hours for audit slots, then
+ran 10:14–11:08 and 10:14–10:45 UTC, both exit 0 (`private/k7/census-base/`,
+`private/k7/census-tip/`; records in `artifacts/runs/`). Result in
+[README §4](README.md#4-measurement) and
+[artifacts/unit-compare.json](artifacts/unit-compare.json): exactly the two
+predicted moves.

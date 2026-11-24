@@ -156,12 +156,46 @@ placeholders): `deref_offset_is_subscript`, `deref_difference_is_subscript`,
 
 [PREDICTION.md](PREDICTION.md): `cmt_get_statsd_type` and
 `buffer_skip_whitespace` Unknown -> Safe on `current`, corpus and twelve-home;
-no system or slice move. The card's unit-scoped reproduction of the 26
-non-Monkey units holding a freed row ([scripts/census-run.sh](scripts/census-run.sh),
-[artifacts/selection.json](artifacts/selection.json), base and tip binaries
-built with `scripts/build.sh`) waited for an audit slot behind other cards'
-measurements; its outcome is recorded in §6 when it ran. The integrator
-measures every route with base `rev:3ca85c7a6`.
+no system or slice move.
+
+**Unit-scoped reproduction of `current`** (the user's command narrowed by
+`--selection` to the 26 non-Monkey units holding a freed row,
+[artifacts/selection.json](artifacts/selection.json),
+[scripts/census-run.sh](scripts/census-run.sh), one `audit` slot each, run
+records and receipts in [artifacts/runs/](artifacts/runs/)): base binary
+`afeb1243…` (`3ca85c7a6`, census streams on, 10:14–11:08 UTC, exit 0), tip
+binary `3082e346…` (`51af41b6e`'s analyzer, report only, 10:14–10:45 UTC,
+exit 0). The base reproduces **1,858 of the user's 1,859 rows** of those
+units (status and every leaf); the one difference,
+`rd_kafka_broker_start_reauth_cb` (`Safe` in both card runs), is the run-wide
+`rd_kafka_op_s.rko_op_cb` fold a selection cannot see (AG1 §1 saw the same).
+Base -> tip ([artifacts/unit-compare.json](artifacts/unit-compare.json),
+[scripts/compare.py](scripts/compare.py)):
+
+| Measure | Base | Tip |
+|---|---:|---:|
+| Rows Safe / Unsafe / Unknown | 464 / 1 / 1,394 | **466** / 1 / **1,392** |
+| Moves | | `cmt_get_statsd_type`, `buffer_skip_whitespace` Unknown -> Safe (exactly the prediction) |
+| Leaves removed / added | | 16 / 2 |
+
+The 16 removed leaves: 7 offset places read by rule 78 (the two moved rows'
+own leaves; `statsd_process_line` 5940, `parse_number` 1528, `parse_string`
+1910, `rd_kafka_broker_name_parse` 23835, `create_jws_compact_serialization`
+20601, a store refused as `unrecognized assignment destination`), and 9
+`call to uncontracted function `buffer_skip_whitespace`` leaves in its
+same-unit callers (`cJSON_ParseWithLengthOpts`, `parse_array`,
+`parse_object`), the summary cascade of its new `Safe`. The 2 added are
+`unknown_alias` of the read's base on the same lines (`t` in
+`rd_kafka_broker_name_parse`, `jws_last_char` in
+`create_jws_compact_serialization`): the subscript's base obligation on a
+bound base, a refusal, never an accusation. No leak, double release, use after
+release or summary conflict changed; no row left `Safe`. The parity stream's
+consultations at every K7 leaf of the 47 rows are in
+[artifacts/reasons.json.gz](artifacts/reasons.json.gz)
+([scripts/reasons.py](scripts/reasons.py)); they agree with §1.1 (for
+example `IndirectCallee` at the `<ctype.h>` conditions, `indirect call
+(CG22)` at cJSON's hooks, `pointer arithmetic (CG16)` at the cJSON loop).
+The integrator measures every route on the merged tip.
 
 ## 5. Shared-file hook points
 
