@@ -35,6 +35,7 @@ fn value(code: &str) -> ValueClass {
         ValueClass::Arithmetic,
         ValueClass::OtherAddress,
         ValueClass::Other,
+        ValueClass::SameObjectDerived,
     ]
     .into_iter()
     .find(|class| class.code() == code)
@@ -81,6 +82,7 @@ fn admitted_exactly_when_neutral_identity_free_and_untracked() {
         "arithmetic",
         "other-address",
         "other",
+        "same-object-derived",
     ];
     for code in values {
         for carries in [false, true] {
@@ -187,7 +189,9 @@ fn every_vector_spelling_classifies_as_its_value() {
         assert!(is_pointer_place(&pair[0]), "{spelling}");
         let place = crate::typed_place::read_place(&pair[0], &index.fields)
             .unwrap_or_else(|refusal| panic!("{spelling}: {refusal:?}"));
-        let reading = classify_value(&pair[1], &place, &index.fields);
+        // Card K3-POINTER-VALUED-STORES: the store's classification, with
+        // the same-object refinement the reader applies.
+        let (reading, _) = classify_store(&pair[0], &pair[1], &place, &index.fields);
         assert_eq!(reading.class.code(), *value_code, "{spelling}");
     }
 }

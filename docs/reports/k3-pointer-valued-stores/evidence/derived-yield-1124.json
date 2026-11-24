@@ -1,0 +1,26 @@
+{
+ "candidate_leaves": {
+  "same-object": 16,
+  "same-place": 2
+ },
+ "freed": [
+  "librdkafka::lib/librdkafka-2.15.0/src/nanopb/pb_decode.c::buf_read",
+  "librdkafka::lib/librdkafka-2.15.0/src/snappy.c::writer_set_expected_length",
+  "monkey::lib/monkey/mk_core/mk_iov.c::mk_iov_consume"
+ ],
+ "freed_rows": 3,
+ "touched": [
+  "librdkafka::lib/librdkafka-2.15.0/src/lz4frame.c::LZ4F_compressUpdateImpl",
+  "librdkafka::lib/librdkafka-2.15.0/src/lz4frame.c::LZ4F_decompress",
+  "librdkafka::lib/librdkafka-2.15.0/src/lz4frame.c::LZ4F_flush",
+  "librdkafka::lib/librdkafka-2.15.0/src/lz4hc.c::LZ4_saveDictHC",
+  "librdkafka::lib/librdkafka-2.15.0/src/nanopb/pb_common.c::load_descriptor_values",
+  "librdkafka::lib/librdkafka-2.15.0/src/nanopb/pb_decode.c::buf_read",
+  "librdkafka::lib/librdkafka-2.15.0/src/nanopb/pb_decode.c::decode_static_field",
+  "librdkafka::lib/librdkafka-2.15.0/src/nanopb/pb_encode.c::encode_array",
+  "librdkafka::lib/librdkafka-2.15.0/src/snappy.c::refill_tag",
+  "librdkafka::lib/librdkafka-2.15.0/src/snappy.c::writer_set_expected_length",
+  "monkey::lib/monkey/mk_core/mk_iov.c::mk_iov_consume"
+ ],
+ "unknown_rows_touched": 11
+}

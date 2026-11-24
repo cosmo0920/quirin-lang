@@ -376,6 +376,7 @@ import QCore.PluginReadingEnvironment
 import QCore.PluginSourceWitnesses
 import QCore.PointerQualifierReader
 import QCore.PointerStore
+import QCore.PointerStoreDerived
 import QCore.PointerTypedefMember
 import QCore.PremiseFlow
 import QCore.PremiseFormula

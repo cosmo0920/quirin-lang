@@ -252,6 +252,9 @@ mod scalar_element_address;
 mod typed_place;
 // Card CG11-POINTER-VALUED-STORES (rule 10v): pointer-valued stores.
 mod pointer_store;
+// Card K3-POINTER-VALUED-STORES (rule 10v amended): arithmetic over a
+// pointer the destination's own object holds.
+mod pointer_store_derived;
 // Card CG10-OWNED-OUT-PARAMETER-MEMBER-SLOT (rule 72).
 mod owned_out_member;
 // Card OWNED-CONSTRUCTOR-OUT-PARAMETER-DELIVERY (rule 74l): the refusal of an

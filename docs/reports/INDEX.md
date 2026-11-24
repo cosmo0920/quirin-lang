@@ -692,6 +692,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [k1-call-actual-access](k1-call-actual-access/README.md) | K1-CALL-ACTUAL-ACCESS: call-actual access reads, re-censused; rule 75 |
 
+| [k3-pointer-valued-stores](k3-pointer-valued-stores/README.md) | K3-POINTER-VALUED-STORES |
+
 ## L
 
 | Card directory | Original report title |

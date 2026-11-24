@@ -2599,7 +2599,23 @@ refusal stays.
     never rebound stored into a member of a formal's object, as a retention
     its summary states), a local's pointer, a pointer read, a call,
     arithmetic, another object's address, and a cast other than a
-    qualification conversion. Every failing premise makes the node exactly
+    qualification conversion. **Same-object arithmetic** (card
+    K3-POINTER-VALUED-STORES, `pointer_store_derived.rs`, one hook in
+    `pointer_store.rs`): `P = Q ± E` (and `E + Q`), under pointer-to-pointer
+    casts only, with `E` an integer and `Q` a pointer read of the same place
+    as `P` (the same side-effect-free spelling: declarations, members, index
+    operands and literals) or of a pointer member of `P`'s own object (both
+    CG10 places root-only over one root), is the neutral class
+    `same-object-derived`: by C11 6.5.6p8 the value points into the object
+    `Q` points into, so the owner gains no reference it did not already hold
+    (`QCore.PointerStoreDerived.a_derived_store_adds_no_reference`; example
+    C's value may add one, `a_foreign_value_may_add_a_reference`), the
+    old-value check covers `Q`, which is rooted at the same root, and the read
+    and the offset carry their own per-hop obligations. Arithmetic over a
+    formal's or local's name, another object's pointer, a place read through
+    a pointer past the root other than the destination itself, a local copy
+    of the place (it may be stale), an integer round trip or an operand the
+    typed reader refuses keeps the refusal. Every failing premise makes the node exactly
     the gate's refusal, byte for byte. A body with such a store publishes no
     derived summary and establishes no specification (`has_pointer_store` in
     the W4 gate): a caller would read `Borrowed` for the formal whose object
@@ -2617,7 +2633,9 @@ refusal stays.
     this body's obligation. Premises stated, not proved: faithful Clang
     extraction of types, cast kinds and declaration ids (trust boundary 28).
     `QCore.PointerStore`, bound to the Rust decision table by shared-vector
-    tests; [report](../reports/cg11-pointer-valued-stores/README.md).
+    tests, and `QCore.PointerStoreDerived` for the same-object reading;
+    [report](../reports/cg11-pointer-valued-stores/README.md),
+    [K3 report](../reports/k3-pointer-valued-stores/README.md).
 
 <a id="constraint-10w"></a>
 
