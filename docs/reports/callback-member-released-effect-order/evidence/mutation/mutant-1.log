@@ -1,0 +1,33 @@
+   Compiling qcore-c-gateway v0.1.0 (/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a08c5916e3a82bcdf/crates/qcore-c-gateway)
+warning: unused variable: `live`
+   --> crates/qcore-c-gateway/src/legacy_member_path_route.rs:212:25
+    |
+212 |                     let live = children.iter().all(|child| {
+    |                         ^^^^ help: if this is intentional, prefix it with an underscore: `_live`
+    |
+    = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: `qcore-c-gateway` (lib) generated 1 warning (run `cargo fix --lib -p qcore-c-gateway` to apply 1 suggestion)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 44.38s
+     Running tests/callback_member_released_effect_order.rs (target/debug/deps/callback_member_released_effect_order-3483d8571ce322ec)
+
+running 6 tests
+test a_linked_object_the_release_contains_is_never_safe ... 
+thread 'a_linked_object_the_release_contains_is_never_safe' (2760285) panicked at crates/qcore-c-gateway/tests/callback_member_released_effect_order.rs:220:9:
+c_op_free(o): Row { status: Safe, unsupported: [] }
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+FAILED
+test a_path_designating_the_released_object_is_never_safe ... ok
+test a_plain_member_release_composes_its_candidate_after_the_release ... ok
+test a_synchronous_invocation_through_a_release_composes_after_it ... ok
+test the_arms_member_release_reads_as_rule_30 ... ok
+test the_shipped_member_releases_are_the_plain_form ... ok
+
+failures:
+
+failures:
+    a_linked_object_the_release_contains_is_never_safe
+
+test result: FAILED. 5 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 5.35s
+
+error: test failed, to rerun pass `-p qcore-c-gateway --test callback_member_released_effect_order`
