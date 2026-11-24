@@ -119,6 +119,16 @@
 //! only grow and the one new refusal is the expression's, so nothing admits
 //! more (`QCore.ReturnFamilyUntrackedConditionalAccess`).
 //!
+//! Card **RETURN-FAMILY-CONDITIONAL-CONSTANT-PRUNING** (gateway rule 74z)
+//! decides a conditional's condition when it is an integer constant
+//! expression of literals and the integer operators that
+//! `constant::constant_condition` evaluates exactly, and then drops the roots
+//! of the arm C never evaluates (C11 6.5.15p4), so `(0 ? p : q)->f` makes
+//! only `q` a base. Both arms are still classified, every old test still
+//! reads both, and an undecided condition (a name, `sizeof`, a cast, a
+//! division by zero, an overflow) keeps rule 74x's reading
+//! (`QCore.ReturnFamilyConditionalConstant`).
+//!
 //! The read node is `IndirectScalarAccess` with no destination, no frame and
 //! no chain: it changes no binding, status, marker or link, and adds only the
 //! bases' obligations and the C02-P-ALIAS obligations of every `->` root. It
@@ -890,8 +900,9 @@ fn loaded_value(texts: &[&str], lo: usize, hi: usize) -> bool {
 /// of an accessed conditional) yields, pushed onto `roots`; `false` when the
 /// reader cannot classify the arm, which refuses the expression. An arm is
 /// classified when it is, after its parentheses: a conditional, whose
-/// condition is a read and both of whose arms are classified (neither is
-/// ever pruned, even under a constant condition); a sum whose binary `+` and
+/// condition is a read and both of whose arms are classified (rule 74z's
+/// [`conditional_arm_roots`] keeps only the evaluated arm's roots under a
+/// decided condition); a sum whose binary `+` and
 /// `-` terms are all [`integer_operands`] but at most one, itself
 /// classified and not subtracted; a cast of a classified operand; a numeric
 /// literal or a declared scalar (no root); a name this body never binds (a
@@ -916,8 +927,7 @@ fn arm_roots(
             return false;
         };
         return question > lo
-            && arm_roots(texts, question + 1, colon, names, roots)
-            && arm_roots(texts, colon + 1, hi, names, roots);
+            && conditional_arm_roots(texts, (lo, question, colon, hi), names, roots);
     }
     let binary = |at: usize| {
         matches!(texts[at], "+" | "-")
@@ -967,6 +977,35 @@ fn arm_roots(
         }
     }
     false
+}
+
+/// Card RETURN-FAMILY-CONDITIONAL-CONSTANT-PRUNING (rule 74z): the roots of
+/// the conditional `lo..hi` whose `?` is at `question` and whose `:` is at
+/// `colon`. Both arms are classified, so an arm the reader cannot classify
+/// refuses as under rule 74x. When the condition `lo..question` is an
+/// integer constant expression the reader evaluates exactly
+/// ([`constant::constant_condition`]), only the roots of the arm C evaluates
+/// (C11 6.5.15p4) are pushed: `( 0 ? p : q ) - > n` yields `q`,
+/// `( 1 ? q : p ) - > n` yields `q`. An undecided condition pushes both, rule
+/// 74x's reading (`QCore.ReturnFamilyConditionalConstant`).
+fn conditional_arm_roots(
+    texts: &[&str],
+    (lo, question, colon, hi): (usize, usize, usize, usize),
+    names: &impl NameFacts,
+    roots: &mut Vec<usize>,
+) -> bool {
+    let (mut middle, mut last) = (Vec::new(), Vec::new());
+    if !(arm_roots(texts, question + 1, colon, names, &mut middle)
+        && arm_roots(texts, colon + 1, hi, names, &mut last))
+    {
+        return false;
+    }
+    match constant::constant_condition(&texts[lo..question]) {
+        Some(true) => roots.extend(middle),
+        Some(false) => roots.extend(last),
+        None => roots.extend(middle.into_iter().chain(last)),
+    }
+    true
 }
 
 /// Rule 74x: what accesses the conditional group `lo..=hi`, widened outward
@@ -1600,3 +1639,11 @@ mod untracked_arith_access_tests;
 #[cfg(test)]
 #[path = "../tests/unit/legacy_return_family_untracked_conditional_access.rs"]
 mod untracked_conditional_access_tests;
+
+/// Rule 74z: the exact value of an integer constant expression condition.
+#[path = "legacy_return_family_constant.rs"]
+mod constant;
+
+#[cfg(test)]
+#[path = "../tests/unit/legacy_return_family_conditional_constant.rs"]
+mod conditional_constant_tests;

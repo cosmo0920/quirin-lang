@@ -163,8 +163,8 @@ fn rule_74x_cond_vectors_hold() {
 #[test]
 fn both_arms_of_an_accessed_conditional_are_bases() {
     for expression in [
-        "( 0 ? p : a ) - > n",
-        "( 1 ? p : a ) - > n",
+        "( n - n ? p : a ) - > n",
+        "( 1 / 0 ? p : a ) - > n",
         "( n ? p : a ) - > m",
         "( n ? p : a ) - > m . k",
         "( n ? p : a ) [ 0 ]",
