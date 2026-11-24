@@ -696,6 +696,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [landing-repair](landing-repair/README.md) | LANDING-REPAIR |
 
+| [later-declarator-initialiser](later-declarator-initialiser/README.md) | LATER-DECLARATOR-INITIALISER-UNREAD: each init-declarator is its own declaration |
+
 | [lean-4-35-toolchain](lean-4-35-toolchain/README.md) | LEAN-4-35-TOOLCHAIN |
 
 | [lean-build-performance](lean-build-performance/README.md) | Lean build performance and bounded audit runner — 2026-09-08 |

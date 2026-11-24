@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 10,
-  "named_followups": 1064
+  "named_followups": 1065
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6920,11 +6920,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Landing integrate/r66 (base main 3ca85c7a6, after r65; merges OWNED-CONSTRUCTOR-OUT-PARAMETER-DELIVERY 7c656c472, base 2c60986b0, in the merge commit before c9193274d; generated docs/agents/README.md and docs/agents/gateway.md conflicted on rules 74h-74l and were resolved by rerunning scripts/gen_rule_docs.py; proof/QCore.lean auto-merged and regenerated; third_party/libevent checked out; the landing was paused at the merge by the user and resumed). USER DECISION 2026-11-23: picked the \"soundness first\" set; 2026-11-24: \"yes, land them as r66 and r67\", \"resume r66 and r67 landings\". Amendments applied in c9193274d with --profiles-base origin/main: OWNED-CONSTRUCTOR-OUT-PARAMETER-DELIVERY retired; OUT-SLOT-CONDITIONAL-DELIVERY (a user decision: conditional out-slot delivery needs a new effect mode or inferred return-code disposition) and OWNED-RESULT-ELEMENT-STORE-READ-AS-DISCARD registered; profiles []; status_edits empty. Full landing gate on c9193274d (private/integrate-r66/gate, raw record beside this file as gate-scope.json) via scripts/gate_scope.py --base origin/main --full --landing through private/toolchain/env.sh: Rust 685 units / 730 summaries, 10024 passed, 0 failed, 24 ignored; fmt, Clippy and both reevaluation examples exit 0; Lean (all) exit 0, 497 audits (new QCore.OwnedOutFormalDelivery). This is the first run of the card (base 2c60986b0) together with r62-r65. No providers/ path changed, so the provider gate was not selected; provider_tests 174 (1 ignored) is carried from the SP7/SP8 combined landing gate on 35b5f48a2. Python (807 tests) exited 1 only on the two stale-matrix checks in test_build_matrix_sections (test_the_derived_facts_are_recomputed_rather_than_carried and test_each_derived_dimension_matches_the_section_it_counts), cleared by regenerating the matrix from this record. Change: rule 74l (new): the existing W4 Out-mode out-parameter summary already delivers an owned result stored on every exit; none of the four census rows can use it soundly (partial-path, in-out and element stores), so an owned result stored through `*FORMAL` without an out-parameter contract is now named (owned_out_formal.rs) instead of reported as a discarded owned result; same unsupported kind and poisoning, the rows stay Unknown. Card measurement (opt-in current --monkey-linked, Fluent Bit 046accf6): base 2c60986b0 and tip both 1172/2/3622/8, no status move; 15 rows re-worded (21 leaves, Unknown -> Unknown), matching the committed prediction. Pinned-route parity (quirin-audit measure --declared) was not run: this host holds no build/cycle19 inputs or baselines. No profile baseline is changed and land.py publish is owed.",
-  "workspace_tests": 10024,
+  "note": "Landing integrate/r67 (base main a341cbb28, after r66; merges LATER-DECLARATOR-INITIALISER-UNREAD 0a5aaaaf9, base 2c60986b0; crates/qcore-c-gateway/src/lib.rs and legacy_c.rs auto-merged beside r66's out-parameter changes; generated docs/agents/README.md and docs/agents/gateway.md conflicted on rules 74h-74l and were resolved by rerunning scripts/gen_rule_docs.py; proof/QCore.lean auto-merged and regenerated; third_party/libevent checked out). USER DECISION 2026-11-23: picked the \"soundness first\" set; 2026-11-24: \"yes, land them as r66 and r67\", \"resume r66 and r67 landings\", with the card's rd_kafka_sw_str_sanitize_inplace Unknown -> Safe move and its missed prediction reported before the decision. Amendments applied in acaf08abf with --profiles-base origin/main: LATER-DECLARATOR-INITIALISER-UNREAD retired; PASS-CORRELATED-LOOP-ALLOCATION and LATER-DECLARATOR-PIECE-CLANG-NODE registered; profiles []; status_edits empty. Full landing gate on acaf08abf (private/integrate-r67/gate, raw record beside this file as gate-scope.json) via scripts/gate_scope.py --base origin/main --full --landing through private/toolchain/env.sh: Rust 686 units / 731 summaries, 10037 passed, 0 failed, 24 ignored; fmt, Clippy and both reevaluation examples exit 0; Lean (all) exit 0, 498 audits (new QCore.LaterDeclarator). This is the first run of the card (base 2c60986b0, six deliberately updated pins) together with r62-r66. No providers/ path changed, so the provider gate was not selected; provider_tests 174 (1 ignored) is carried from the SP7/SP8 combined landing gate on 35b5f48a2. Python (807 tests) exited 1 only on the two stale-matrix checks in test_build_matrix_sections, cleared by regenerating the matrix from this record. Change: rule 74k (new): a multi-declarator declaration `T *a = X, *b = Y;` (plain-word specifiers, star-and-qualifier declarators, initialisers rule 10o's assignments() reads) is lowered as the same declarations written one per statement; any declarator outside that table keeps the old reading (fail-closed). Card measurement (opt-in current --monkey-linked, Fluent Bit 046accf6): base 2c60986b0 1172/2/3622/8, tip f4f5a11a1 1173/2/3621/8; the one move is rd_kafka_sw_str_sanitize_inplace Unknown -> Safe (its only leaf was the declaration `char *s = str, *d = str;`; it now rests only on null-dereference premises and touches no resource, the verdict its one-per-statement spelling already had); 13 rows changed leaves (access leaves -12); the Heartbeat row stays Unknown (99 -> 96 leaves); the committed prediction named four other rows that did not move and missed this one, as the report states. Pinned-route parity (quirin-audit measure --declared) was not run: this host holds no build/cycle19 inputs or baselines. No profile baseline is changed and land.py publish is owed.",
+  "workspace_tests": 10037,
   "provider_tests": 174,
   "python_evidence_validator_tests": 807,
-  "lean_audits": 497,
+  "lean_audits": 498,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
    "AuditAggregateOwnedField.lean",
@@ -7128,6 +7128,7 @@
    "AuditJoinedProvenanceCycles.lean",
    "AuditJoinedProvenanceRoundBound.lean",
    "AuditKindedCustody.lean",
+   "AuditLaterDeclarator.lean",
    "AuditLayoutExtents.lean",
    "AuditLexicalClosureNestedAssignment.lean",
    "AuditLibcReadingPremises.lean",
@@ -7430,7 +7431,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "full landing gate: every step exits 0 except the Python suite's stale-matrix check, cleared by regenerating the matrix from this record; provider gate not selected (no providers/ change), provider count carried from the SP7/SP8 combined landing",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/owned-constructor-out-delivery/integration/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/later-declarator-initialiser/integration/gate.json)"
  },
  "named_followups": [
   {
