@@ -82,6 +82,14 @@
 //! `*(T *)q` dereferences the converted value and keeps its refusal
 //! (`QCore.ReturnFamilyDerefCast`).
 //!
+//! Card **RETURN-FAMILY-STAR-OUTSIDE-ROOT-PARENTHESES** (gateway rule 74s): a
+//! starred may-bind root is refused when a parenthesised group enclosing it
+//! is dereferenced, by a `*` that may be unary before the group (read back
+//! through parenthesised groups) or a `[` or `->` after it. `*(*q + 1)`,
+//! `*(1 + *q)`, `*((T *)*q + 1)` and `(*q + 1)[0]` are second dereferences
+//! and refuse; `*q`, `(*q)`, `*q + 1` and `(T) *q` keep their admission
+//! (`QCore.ReturnFamilyStarOutside`).
+//!
 //! The read node is `IndirectScalarAccess` with no destination, no frame and
 //! no chain: it changes no binding, status, marker or link, and adds only the
 //! bases' obligations and the C02-P-ALIAS obligations of every `->` root. It
@@ -481,6 +489,53 @@ fn stars_before(
     stars
 }
 
+/// Card RETURN-FAMILY-STAR-OUTSIDE-ROOT-PARENTHESES (rule 74s): is a
+/// parenthesised group enclosing the name at `index` itself dereferenced?
+/// `stars_before` stops at a binary operator and at a `*` beyond the root's
+/// own parentheses, so `*(*q + 1)`, `*(1 + *q)` and `(*q + 1)[0]` counted one
+/// `*`. The reader cannot tell whether such a group's value is the pointer
+/// computed from the root, so every enclosing group refuses that is
+/// dereferenced, a group outside a subscript included: [`group_dereferenced`].
+/// An unbalanced group refuses too. Only refuses.
+fn outside_dereference(texts: &[&str], index: usize, names: &impl NameFacts) -> bool {
+    let mut depth = 0usize;
+    for (close, text) in texts.iter().enumerate().skip(index + 1) {
+        match *text {
+            "(" | "[" => depth += 1,
+            ")" | "]" if depth > 0 => depth -= 1,
+            ")" => match open_of(texts, close) {
+                Some(open) if !group_dereferenced(texts, open, close, names) => {}
+                _ => return true,
+            },
+            _ => {}
+        }
+    }
+    false
+}
+
+/// Rule 74s: the group `texts[open..=close]` is dereferenced when a `[` or
+/// `->` follows its `)`, or when the token before its `(`, read back through
+/// any parenthesised group (a cast, an undecided group, or a call group the
+/// expression refuses anyway), is a `*` that may be unary under either of
+/// rule 74h's readings. A binary `*` (`n * (*q + 1)`) is not one.
+fn group_dereferenced(texts: &[&str], open: usize, close: usize, names: &impl NameFacts) -> bool {
+    if arrow_at(texts, close + 1) || texts.get(close + 1) == Some(&"[") {
+        return true;
+    }
+    let mut at = open;
+    while let Some(previous) = at.checked_sub(1) {
+        match texts[previous] {
+            ")" => match open_of(texts, previous) {
+                Some(group) => at = group,
+                None => return true,
+            },
+            "*" => return operator_at(texts, previous, names).may_be_unary(),
+            _ => return false,
+        }
+    }
+    false
+}
+
 /// Family S's shape and name premises over one `return` expression. `None`
 /// keeps the refusal. The declared-result premise and the descriptor premise
 /// are the caller's.
@@ -612,6 +667,9 @@ pub(crate) fn scalar_read(texts: &[&str], names: &impl NameFacts) -> Option<Scal
                 })
                 && next != Some(".")
                 && ends_one_dereference(texts, index + 1)
+                // Rule 74s: and no group enclosing the root is dereferenced
+                // (so `*(*q + 1)`, a second dereference, refuses).
+                && !outside_dereference(texts, index, names)
         };
         if !root {
             return None;
@@ -952,3 +1010,7 @@ mod star_cast_tests;
 #[cfg(test)]
 #[path = "../tests/unit/legacy_return_family_deref_cast.rs"]
 mod deref_cast_tests;
+
+#[cfg(test)]
+#[path = "../tests/unit/legacy_return_family_star_outside.rs"]
+mod star_outside_tests;

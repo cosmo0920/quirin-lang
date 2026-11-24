@@ -13434,4 +13434,53 @@ through `ampersand_runs`.
     `old_vectors_hold`);
     [report](../reports/return-family-deref-resolved-cast/README.md).
 
+<a id="constraint-74s"></a>
+
+74s. **A dereference outside a starred root's parentheses counts.** Card
+    RETURN-FAMILY-STAR-OUTSIDE-ROOT-PARENTHESES, extending
+    [rule 74m](#constraint-74m). `stars_before` reads back from a starred
+    root through `(` and `*` and stops at anything else: a binary operator
+    (`* ( 1 + * q )`) or a `*` behind more opening parentheses than close
+    right after the root (`* ( * q + 1 )`). `ends_one_dereference` reads
+    only up to the root's own parentheses, so `( * q + 1 ) [ 0 ]` passed
+    too. Each counted one `*`, and family S admitted a may-bind `q` as the
+    root of one dereference, although the outer `*`, `[` or `->`
+    dereferences a pointer computed from the value `*q` reads: a second
+    dereference. That is the admitting direction, and it is reachable:
+    `long w(long **q) { return *(*q + 1); }` and
+    `return *((long *)*q + 1);` were `Safe` at the base, while
+    `return **q;` kept the return refusal. A starred root is now refused
+    when any parenthesised group enclosing it is dereferenced
+    (`outside_dereference`, `group_dereferenced`): a `[` or `->` follows
+    its `)`, or the token before its `(`, read back through any
+    parenthesised group (a cast, an undecided group, or a call group the
+    expression already refuses), is a `*` that rule 74h's `operator_at`
+    reads as unary under either reading. A group outside a subscript
+    counts too, and an unbalanced group refuses. The reader cannot tell
+    whether such a group's value is the pointer computed from the root
+    (`*(p + *q)` with a pointer `p` dereferences `p`'s object), so every
+    dereferenced enclosing group refuses: the fail-closed reading. The
+    admission is rule 74m's and this further condition, so every admission
+    was one at the base. `*q`, `(*q)`, `((*q))`, `*q + 1`, `(*q + 1)`,
+    `n * (*q + 1)` (a binary `*`), `(T) *q`, `(long) (*q)` and `(*q).f`
+    keep their admission, and `*(T *)*q` keeps rule 74m's refusal. A newly
+    refused return falls through to the typed return route (rule 10k) and
+    from there to the return refusal, as `**q` does. After a release,
+    `return *(*q + 1);` moves from `Unsafe` (the flow check accused the
+    first dereference) to that refusal: it loses an accusation, but nothing
+    moves toward `Safe`. Member and subscript roots and untracked roots are
+    not this rule. A bracket enclosing the root (`n[*q]`) is not read as a
+    dereference of a value computed from the root, which is the registered
+    follow-up RETURN-FAMILY-SUBSCRIPT-ENCLOSING-STARRED-ROOT. **Do not**
+    narrow the refusal to groups whose contents look like pointer
+    arithmetic, and **do not** read the `*` before a group under one of
+    rule 74h's readings alone. Premises stated, not proved: the token
+    classes and the enclosing groups (trust boundary 28).
+    `QCore.ReturnFamilyStarOutside` (`deref_below_may`,
+    `the_fix_only_refuses_more`, `admitted_has_no_outside_dereference`,
+    `admitted_is_one_dereference`, `old_admits_a_second_dereference`,
+    `a_parenthesised_dereference_is_unchanged`, `outside_vectors_hold`,
+    `old_vectors_hold`);
+    [report](../reports/return-family-star-outside-parentheses/README.md).
+
 <!-- generated:rules:end -->
