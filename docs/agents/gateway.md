@@ -13586,4 +13586,66 @@ through `ampersand_runs`.
     `another_pointer_refuses`, `arith_vectors_hold`);
     [report](../reports/return-family-untracked-arith-access/README.md).
 
+<a id="constraint-74y"></a>
+
+74y. **A root inside a subscript's brackets may be its pointer.** Card
+    RETURN-FAMILY-UNTRACKED-REVERSED-SUBSCRIPT, extending
+    [rule 74w](#constraint-74w) to the follow-up its card registered, and
+    closing RETURN-FAMILY-SUBSCRIPT-ENCLOSING-STARRED-ROOT, which rule 74s's
+    card registered. C11 6.5.2.1p2 defines `E1[E2]` as `(*((E1)+(E2)))`, and
+    the pointer of a sum may stand on either side, so `1[p]`, `n[p]` and
+    `k[(T *)p]` dereference `p` exactly as `p[1]` does. Family S read a root
+    as a subscript base only as `p [`, and rule 74w's `enclosing_group` stops
+    at a `[`. So `long w(long k) { const long *p = 0; return 1[p]; }`,
+    `k[p]`, `k[(const long *)p]`, `0[p + k]` and `(k + 1)[p]` were `Safe`,
+    while `return p[1];` is `Unknown` (`unknown_alias:p`); and
+    `long w(long **q, long n) { return n[*q]; }` admitted the may-bind `q` as
+    the root of one dereference although the subscript dereferences a pointer
+    computed from the value `*q` reads. Both are the admitting direction.
+
+    The old tests are kept. A new one, `subscript_index`, widens a span from
+    an untracked, non-scalar root as rule 74w's walk does (a group
+    `cast_semantics::type_group_open` reads as a type before it, a `(` and
+    `)` right around it, a parenthesised additive group around it) and asks
+    whether the span then fills a subscript's brackets, alone or as a term of
+    a sum whose innermost bracket is the `[`. If so, the root is the index
+    only when the subscripted operand is a name the declaration reader
+    declares as a pointer or array (`NameFacts::declared_pointer`, read from
+    `FunctionTypes::pointer_kind`; a member name after `.` or `- >` never
+    is). Otherwise the root is a base: under an integer operand (a literal, a
+    declared scalar) it is the pointer, and under an undecided one (`a[b]`
+    with neither declared) both are bases, the operand already being one when
+    it is untracked. A crossed sum that rule 74w would not classify
+    (`n[p + b]`, `n[p + (long) k]`) refuses the expression. A declared scalar
+    root is an index and is not read. A may-bind root (any of its admitted
+    shapes: `* q`, `q - > f`, `q [ i ]`) is refused when any `[` enclosing it
+    subscripts an operand that is not a declared pointer
+    (`inside_undecided_subscript`): `n[*q]`, `1[q->f]`, `n[q[0]]`, `b[*q]`.
+    `a[*q]` with a declared array `a` keeps its admission. This needs no part
+    of rule 74s's code, and the two refusals are independent.
+
+    Bases only grow and the new refusals are the expression's, so every
+    result the tip admits, the base admitted. `p[i]` with an untracked `p`,
+    `a[i]` with a declared array, tracked roots (refused as may-bind roots,
+    as before), an unbound formal (`return k[p];` is `Safe`: the base's
+    obligation discharges), `&k[p]` (family S's `&` refusal) and
+    `sizeof(k[p])` read as before. After `k_free(q)`, `return 0[*q];` moves
+    from `Unsafe` (the flow check accused the first dereference) to the
+    return refusal: it loses an accusation, but nothing moves toward `Safe`.
+    **Do not** read a root inside brackets as an index unless the subscripted
+    operand is a declared pointer, **do not** take the declared-pointer fact
+    for a member name, **do not** admit an unclassified sum in the brackets,
+    and **do not** drop the old tests (the union is the reading). Premises
+    stated, not proved: the token classes and the declared-pointer and
+    declared-scalar facts (trust boundary 28).
+    `QCore.ReturnFamilyUntrackedReversedSubscript` (`subscript_comm`,
+    `reversed_reads_the_inside_pointer`,
+    `a_pointer_outside_reads_its_own_object`,
+    `an_integer_outside_puts_the_pointer_inside`,
+    `index_only_under_a_pointer_outside`, `an_inside_pointer_is_never_missed`,
+    `old_base_kept`, `admitted_was_admitted`, `the_fix_only_refuses_more`,
+    `old_misses_the_base`, `subscript_vectors_hold`,
+    `may_bind_vectors_hold`);
+    [report](../reports/return-family-untracked-reversed-subscript/README.md).
+
 <!-- generated:rules:end -->

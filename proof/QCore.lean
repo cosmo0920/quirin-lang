@@ -450,6 +450,7 @@ import QCore.ReturnFamilyStarCast
 import QCore.ReturnFamilyUntrackedArithAccess
 import QCore.ReturnFamilyUntrackedDerefCast
 import QCore.ReturnFamilyUntrackedMemberCast
+import QCore.ReturnFamilyUntrackedReversedSubscript
 import QCore.ReturnPositionEscape
 import QCore.ReturnRefusedCallLowering
 import QCore.ReviewHoldStanding
