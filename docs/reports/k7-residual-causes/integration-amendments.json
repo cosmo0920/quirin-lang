@@ -2,7 +2,7 @@
  "schema": "quirin-amendments/2",
  "card": "K7-RESIDUAL-CAUSES",
  "base": "3ca85c7a6",
- "measured_tip": "51af41b6e",
+ "measured_tip": "91214d248",
  "increment_paragraph": "**K7-RESIDUAL-CAUSES** (round 34, USER DECISION 2026-11-24 \"Let's get started out of four.\"; gateway rule 78; Lean `QCore.PointerOffsetPlace`; [report](../../reports/k7-residual-causes/README.md)). Re-census of bundle K7 of CURRENT-ACCESS-ALIAS-CENSUS on the user's 2026-11-24 `current` run (1,173 / 3,750 / 11): 1,798 residual-cause leaves on 701 Unknown rows (11-07: 1,849 on 739), 47 rows freed alone (11-07: 40; of the frozen 40, 1 Safe, 3 changed blocker, 36 still freed; 11 newly freed). By concrete shape, 27 of the 47 are refused on purpose by earlier cards (pointer-valued returns 12, open indirect call sets 7, records with pointer members by value 3, cast views of a tracked root 2, list-helper custody 2, a pointer store through a union 1) and are not re-admitted. Rule 78 reads `*(P + I)`, `*(I + P)`, `*(P - I)` and `(P + I)[K]` in the typed access-path reader as the subscripts C11 6.5.2.1p2 defines them to be, with the subscript spelling's root, steps and per-hop obligations (two delimited hooks in `Reader::path`); forecast `cmt_get_statsd_type` and `buffer_skip_whitespace` Unknown -> Safe. The rest is registered: `<ctype.h>` table reads (4 rows), own array-element places (4), custody-free record values (4), union member address actuals (2), `errno` (2), a call in a subscript index (1), a call beside a cast in a return (1).",
  "status_edits": [],
  "ledger": [
