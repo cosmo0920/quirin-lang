@@ -268,7 +268,37 @@ the arm C does not evaluate.
 
 ## 7. Gate
 
-GATE
+The scoped card gate was run as `python3 scripts/gate_scope.py --base
+1187c3f6d --out private/rfcp/gate-N`, through `private/toolchain/env.sh`
+(Clang 21, Lean 4.35), with a clean tree. The records are
+[gate/gate-1.json](gate/gate-1.json) and [gate/gate-2.json](gate/gate-2.json).
+The logs are in this worktree's `private/rfcp/gate-1/` and `gate-2/`.
+
+**Run 1** (head `a197c18ca`) exited 1. Every step passed except the Python
+suite. In it, `test_gate_scope_census.test_the_census_covers_the_suite`
+failed with `671 not greater than 671.4`. The new end-to-end test target
+was the 746th unit, and the recorded read census covers only 671 of them,
+below its 90% threshold. The end-to-end pins were therefore moved, unchanged,
+into a module of rule 74x's target (`d268737ff`). Re-recording the census
+is the integrator's call. The next card that adds a test target will hit
+the same threshold.
+
+**Run 2** (head `d268737ff`) exited 0, with all 8 steps passed. Later
+commits change only this report and its gate records.
+
+| step | exit | result |
+|---|---:|---|
+| submodules | 0 | 1 submodule |
+| `cargo fmt --all -- --check` | 0 | |
+| `cargo clippy --all-targets -- -D warnings` | 0 | |
+| `run_test_binaries.py` | 0 | 689 units, 734 summaries; 10,048 passed, 0 failed, 24 ignored, 148 filtered |
+| `reevaluation_probe` / `reevaluation_followup` | 0 / 0 | |
+| `check_lean_audits.py` | 0 | 502 audits |
+| `python3 -m unittest discover -s scripts/tests` | 0 | 807 tests |
+
+No provider file changed, so the provider gate was not selected. The tip
+measurement (§6) used `a197c18ca`. `d268737ff` moves test code only, so the
+release binary's sources are the same.
 
 ## 8. Ledger, conflicts and follow-ups
 
