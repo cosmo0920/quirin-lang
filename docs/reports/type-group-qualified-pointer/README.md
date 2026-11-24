@@ -189,11 +189,59 @@ back are the Rust reader's output (trust boundary 28), bound by
 
 ## 6. Measurement against the prediction
 
-MEASUREMENT-PENDING
+This is the opt-in `current --monkey-linked` route over Fluent Bit 046accf6.
+Each run used its own `git archive` tree and release binary
+([evidence/runs.md](evidence/runs.md)).
+
+| run | Safe / Pending / Unknown / Unsafe | access rows / alone / leaves |
+|---|---|---|
+| base `7bfa0414b` | 1,171 / 2 / 3,623 / 8 | 2,118 / 215 / 8,992 |
+| **tip `8ed7a7a7f`** | **1,171 / 2 / 3,623 / 8** | 2,118 / 215 / 8,992 |
+
+No row changes status in either direction, and no row changes its leaf
+multiset (`moved.py`: `{"moves": {}}`; `changed_rows.py`: empty), so there is
+no move to account for. That matches the prediction, whose
+`measure-prediction` block was `none` on every route: the census found seven
+qualified pointer casts, none in a `return` expression, and
+`type_group_open` is read only by family S's `return` reader. The base
+figures equal the ones rule 74r's card measured at its base and tip.
+
+**Pinned routes.** I attempted the system and slice routes with the tip side
+tree's release `quirin-audit` and `quirin-audit-measure` (`--side
+base=rev:7bfa0414b --side tip=rev:8ed7a7a7f --routes system,slice --declared
+docs/reports/type-group-qualified-pointer/PREDICTION.md`, over
+`crates/quirin-audit-plugin-measure/inputs/live.json`; script
+`private/tgq/declared.sh`). The plugin built (exit 0); the command exited 1
+before it measured anything, with verdict `Unknown`: `plugin-exit: the
+plugin ended with exit 1:
+…/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-production/compile_commands.json:
+No such file or directory (os error 2)` (`private/tgq/measure-declared.log`).
+**The pinned corpus, system and slice routes were not run.** No move is
+predicted on them; a move there would be `Safe` -> `Unknown` at a `return`
+that dereferences an untracked root through a qualified pointer cast, or a
+may-bind member root under one losing its admission.
 
 ## 7. Gate
 
-GATE-PENDING
+Scoped card gate: `python3 scripts/gate_scope.py --base 7bfa0414b --out
+private/tgq/gate-1`, run through `private/toolchain/env.sh` (Clang 21, Lean
+4.35) at head `decc922a9` with a clean tree. It exited 0 with all 8 steps
+passed. Later commits change only this report and its evidence. The record
+is [gate/gate-1.json](gate/gate-1.json), and the logs are in the worktree's
+`private/tgq/gate-1/`. The tip measurement ran alongside it (the `fmt` step's
+2,012 s is mostly its build-slot wait).
+
+| step | exit | result |
+|---|---:|---|
+| submodules | 0 | 1 submodule |
+| `cargo fmt --all -- --check` | 0 | |
+| `cargo clippy --all-targets -- -D warnings` | 0 | |
+| `run_test_binaries.py` | 0 | 687 units, 732 summaries; 10,028 passed, 0 failed, 24 ignored, 148 filtered |
+| `reevaluation_probe` / `reevaluation_followup` | 0 / 0 | |
+| `check_lean_audits.py` | 0 | 499 audits |
+| `python3 -m unittest discover -s scripts/tests` | 0 | 807 tests |
+
+No provider file changed, so the provider gate was not selected.
 
 ## 8. Ledger, conflicts and follow-ups
 
