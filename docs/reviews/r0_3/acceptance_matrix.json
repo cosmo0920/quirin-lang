@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 10,
-  "named_followups": 1063
+  "named_followups": 1064
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6924,7 +6924,7 @@
   "workspace_tests": 10009,
   "provider_tests": 174,
   "python_evidence_validator_tests": 807,
-  "lean_audits": 496,
+  "lean_audits": 497,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
    "AuditAggregateOwnedField.lean",
@@ -7098,6 +7098,7 @@
    "AuditFixedScalarQuery.lean",
    "AuditFloatPayloads.lean",
    "AuditFloatTypes.lean",
+   "AuditFormalBindingEnvironments.lean",
    "AuditFrameHelperTask.lean",
    "AuditFunctionPointerDeclarators.lean",
    "AuditFunctionPointerFormal.lean",
@@ -7429,7 +7430,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "full landing gate: every step exits 0 except the Python suite's stale-matrix check, cleared by regenerating the matrix from this record; provider gate not selected (no providers/ change), provider count carried from the SP7/SP8 combined landing",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/callback-member-released-fold/integration/gate.json)"
+  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
  },
  "named_followups": [
   {
@@ -14770,13 +14771,6 @@
    "recorded_by": "NULLABLE-LAZY-CONSTRUCTOR-IN-LOOP"
   },
   {
-   "id": "SP7-FORMAL-BINDING-DESCRIPTIONS",
-   "title": "Replace the English environment descriptions of formal bindings",
-   "why": "Recorded by SP6-SYMBOLIC-HYPOTHESIS-ATOMS and SP6-GUARDED-SYMBOL-PROSE. Binding manifests' environment.variables descriptions and the FormalBinding records built in code (cjson_local_binding, plugin_source_witnesses) still describe their environments in English. They are not conditions a declaration states, and the manifests are digest-held, so converting them means a manifest migration. DISCHARGE: each description a reference to a registered term or typed definition, the manifests migrated with their digests, no verdict moved. Size: medium.",
-   "source": "docs/reports/sp6-guarded-symbol-prose/README.md",
-   "recorded_by": "SP6-GUARDED-SYMBOL-PROSE"
-  },
-  {
    "id": "RETURN-FAMILY-DEREF-THROUGH-RESOLVED-CAST",
    "title": "Family S counts `*(long *)*q` as one dereference of a may-bind `q`",
    "why": "RETURN-FAMILY-STAR-AFTER-UNRESOLVED-CAST found (report §6, unit level, by a scratch probe at its tip; the base reads resolved casts the same way) that crates/qcore-c-gateway/src/legacy_return_family.rs `scalar_read` admits `* ( long * ) * q` with `q` may-bind as the root of one dereference (`bases: [\"q\"]`). `stars_before` with a finite `closing` stops at the `)` of the resolved cast group, so the outer `*`, which dereferences the converted value `*q`, is not counted. That is a second dereference, which the module header says refuses for a may-bind name, and rule 12h's cast transparency applies only where `closing` is `usize::MAX`. The direction is admitting. The same reading counts `sizeof ( long ) * q` as one dereference of `q`, but a conforming body cannot spell it with a pointer `q` (C11 6.5.5p2), and a declared scalar never reaches the may-bind test. DISCHARGE: make a resolved cast group transparent to a starred may-bind root's count (so `*(T *)*q` counts two and refuses) or show that no such return reaches family S end to end, without admitting `*(T *)q` (one dereference of the converted value, not of `q`'s pointee alone); pin `return *(long *)*q;` end to end and measure.",
@@ -14803,6 +14797,20 @@
    "why": "Found by CALLBACK-MEMBER-RELEASED-REQUIREMENT-FOLD. OPENSSL-RELEASED-PARAMETER-SLOTS refuses a call whose slot invocation through a released parameter has a candidate member effect (member-path state, member reading deferred to a constructed state, registry use: callback-beside-release), because the transfer applies the custody contract, release included, before the callback route. That check is keyed on released_slot_objects (legacy_retained_by.rs), so it covers slot invocations only; a plain resource_callback_member_invoked through a released object (rd_kafka_op_destroy) still has such effects applied after the release, as before r60. Not shown to be unsound; it may already be fail-closed through the route's reading of a released object. DISCHARGE: decide whether the plain member form needs the same refusal (or an ordering proof), with a gateway fixture and Lean parity. Size: small.",
    "source": "docs/reports/callback-member-released-fold/README.md",
    "recorded_by": "CALLBACK-MEMBER-RELEASED-REQUIREMENT-FOLD"
+  },
+  {
+   "id": "SP10-NATIVE-RECEIPT-INTERPRETATION-PROSE",
+   "title": "State the cJSON native-domain receipt's interpretation strings symbolically",
+   "why": "Recorded by SP10-FORMAL-BINDING-DESCRIPTIONS. quirin-source-analysis::cjson_local_binding's native-domain receipt (the checked case JSON) carries English ownedChild_interpretation, next_prev_interpretation and trace_interpretation strings and the slugs universal_atoms / no_writer_trace. They are not a binding environment or a formal binding, so QF005 does not cover them. DISCHARGE: each a typed reference to the terms the receipt's cases instantiate (or removed where the receipt's checks already state it), the receipt digest and its consumers migrated, no verdict moved. Size: small.",
+   "source": "docs/reports/sp10-formal-binding-descriptions/README.md",
+   "recorded_by": "SP10-FORMAL-BINDING-DESCRIPTIONS"
+  },
+  {
+   "id": "SP10-RETIRE-HISTORICAL-BINDING-PRODUCERS",
+   "title": "Retire or re-target the two historical binding producers",
+   "why": "Recorded by SP10-FORMAL-BINDING-DESCRIPTIONS. crates/qcore-contract/examples/plugin_binding_catalog.rs reads a frozen design (docs/reports/plugin-premise-decomposition) whose environment components are English and string-atom inputs the format has refused since SP6, so its check mode now refuses (QF002/QF005); quant_binding_migration copies environments from the manifests it migrates and now refuses an English input. Neither is run by a test. DISCHARGE: remove both (their reports keep the command records), or re-target them to typed inputs with a replay test. Size: small.",
+   "source": "docs/reports/sp10-formal-binding-descriptions/README.md",
+   "recorded_by": "SP10-FORMAL-BINDING-DESCRIPTIONS"
   }
  ],
  "updated": "Completed plugin premise integration; exact hand-maintained union retains810followups, borrowed measured-source8419Rust/354Lean/freshcard133provider, exact source equivalence checked; authoritative root committed-matrix Python confirmation in integration receipt. CMetrics map/opts API model specifications added at the explicit user request. Eight declared-model API contracts remain outside interpreted views, with CMT-MAP-OPTS-CONTRACT-ADOPTION and CMT-LABELED-HASH-ZERO-STATIC-STORAGE Open. No trusted API coverage is claimed; the source gate is recorded by this card alongside its separate initializer native checkpoint. W48-CMT-TRACKED-INTERIOR-SELF-INIT implements rule 36b's checked initializer effect transport for an exact live owned root or embedded record, retaining actual self writes, invalidating aliased member facts and preserving resource obligations; nondefault custody frames refuse and no ordinary summary is exported. The canonical CFL intrusive_list.qv declares matching audit preconditions/effects; two CMetrics .qv modules add six map and two opts lifecycle models, including transitive ownership, partial failure, borrowed results and uncleared cleanup fields. All remain outside interpreted views; checked API adoption and labeled zero-hash storage accounting have named Open follow-ups. Fresh BASE/planner precedes prediction f18d96065 and implementation; the later contract amendment 08da23123 precedes .qv edits. Native corpus BASE/TIP Safe/Unknown/Pending/provisional-Unsafe: 1009 / 3816 / 0 / 9 to 1011 / 3814 / 0 / 9; full system/slice, 5781 NULL dictionaries and runtime projections are compared, 241 semantic leaves accounted, zero unexplained leaves and no prior Safe loss. Gate 8654 Rust / 370 Lean / 374 Python, provider 133 Rust / 25 Python and all five package verifies pass. The actual deep source reader uses 328 KiB below 1 MiB. Full getter closure remains Open; W48-CMT-SELF-INIT-DISJOINT-FRAMES tracks the next bounded frame extension, and W48-EXACT-RETURN-WITNESS-PRECISION is unchanged. Native evidence is isolated to measured e92d8aef35a8bd14550e90219d19a56eb3b196e7; later source gate 2d0d85299b830aa24d7f200d63a308653582363f validates the added declared API models separately; see docs/reports/w48-cmt-tracked-interior-self-init/README.md."

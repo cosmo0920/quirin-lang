@@ -1325,6 +1325,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [sp1-symbolic-openssl-premises](sp1-symbolic-openssl-premises/README.md) | SP1-SYMBOLIC-OPENSSL-PREMISES |
 
+| [sp10-formal-binding-descriptions](sp10-formal-binding-descriptions/README.md) | SP10-FORMAL-BINDING-DESCRIPTIONS |
+
 | [sp2-symbolic-librdkafka-premises](sp2-symbolic-librdkafka-premises/README.md) | SP2-SYMBOLIC-LIBRDKAFKA-PREMISES |
 
 | [sp3-symbolic-fluent-bit-libc-premises](sp3-symbolic-fluent-bit-libc-premises/README.md) | SP3-SYMBOLIC-FLUENT-BIT-LIBC-PREMISES |
