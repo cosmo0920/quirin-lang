@@ -1,0 +1,31 @@
+## lib__cmetrics__src__cmt_decode_msgpack.c.i
+== create_counter_instance Safe
+   premise 38k mes_caller_slot: forall (#o: obj) { (#mes_holds(#mes_place,#o) => !#mes_owed(#o)) }
+== create_exp_histogram_instance Safe
+   premise 38k mes_caller_slot: forall (#o: obj) { (#mes_holds(#mes_place,#o) => !#mes_owed(#o)) }
+== create_gauge_instance Safe
+   premise 38k mes_caller_slot: forall (#o: obj) { (#mes_holds(#mes_place,#o) => !#mes_owed(#o)) }
+== create_histogram_instance Safe
+   premise 38k mes_caller_slot: forall (#o: obj) { (#mes_holds(#mes_place,#o) => !#mes_owed(#o)) }
+== create_summary_instance Safe
+   premise 38k mes_caller_slot: forall (#o: obj) { (#mes_holds(#mes_place,#o) => !#mes_owed(#o)) }
+== create_untyped_instance Safe
+   premise 38k mes_caller_slot: forall (#o: obj) { (#mes_holds(#mes_place,#o) => !#mes_owed(#o)) }
+== unpack_opts_unit Unknown
+   7180 Unsupported { description: "indirect memory access is outside the resource projection" }
+   (98s)
+## lib__ctraces__src__ctr_encode_opentelemetry.c.i
+== otel_span_set_attributes Unknown
+   9002 Unsupported { description: "indirect memory access is outside the resource projection" }
+== otel_span_set_events Unknown
+   9061 Unsupported { description: "indirect memory access is outside the resource projection" }
+   (72s)
+## lib__monkey__mk_server__mk_lib.c.i
+== mk_vhost_set_property Safe
+   premise 38k mes_caller_slot: forall (#o: obj) { (#mes_holds(#mes_place,#o) => !#mes_owed(#o)) }
+   (15s)
+## lib__monkey__mk_server__mk_utils.c.i
+== mk_buffer_cat Unknown
+   5471 Unsupported { description: "indirect memory access is outside the resource projection" }
+   (8s)
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 98.52s

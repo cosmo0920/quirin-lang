@@ -2,16 +2,54 @@
  "schema": "quirin-amendments/2",
  "card": "MEMBER-EFFECT-STORES",
  "base": "c5cd10688",
- "measured_tip": "9a6390eef",
+ "measured_tip": "d3406e805",
  "profiles": [],
- "increment_paragraph": "**MEMBER-EFFECT-STORES, body half: re-census and stop** (round 35, USER DECISION 2026-11-24 \"Launch MEMBER-EFFECT-STORES body half\"; base c5cd10688; no semantic change, no rule id; [report](../../reports/member-effect-stores/README.md)). The 21 rows K3 assigned to this owner are all Unknown on the user's 2026-11-24 `current` report with only the gate's `indirect memory access is outside the resource projection` at their stores (rd_kafka_assignment_init 4 leaves, every other row 1; the Monkey rows are mk_utils.c::mk_buffer_cat and mk_lib.c::mk_vhost_set_property). Read at Fluent Bit 046accf6 against the r35 brief's premises (the place used only at the store; the local never used, released or stored again; no failure path storing a stale value; the old member value established custody-free in the body or the realloc input under a non-null clause): 0 rows are readable today, 2 with a new whole-object `memset` zeroing reading (rd_buf_init; rd_kafka_snappy_init_env through its inline clear_env and with a post-store null test allowed), 4 if `rd_realloc` also gains rule 37's checked non-null specification (it states `resource_return_reallocated(ptr, nullable)`; rd_list_grow and rd_kafka_topic_partition_list_grow). 17 rows fail on the caller's old value (16 through the formal, unpack_opts_unit through a local alias), 6 also use the place after the store, 2 store into embedded paths and rd_kafkap_Fetch_reply_tags_set_topic past a pointer hop; the two rd_dassert old-value checks compile to nothing (ENABLE_DEVEL off). Below the brief's stop threshold of about 5, so the card stops with options: (1, recommended) carry rule 10v's stated P-CG11-CALLER-SLOT premise for the hand-off with every caller refused at the call (11-13 rows); (2) the brief as written plus the zeroing reading and an rd_realloc rule 37 specification (2-4 rows, a corpus-wide contract change); (3) option 1 plus borrowed uses of the place after the store (up to 17 rows).",
+ "increment_paragraph": "**MEMBER-EFFECT-STORES, body half** (round 35; USER DECISIONS 2026-11-24 \"Launch MEMBER-EFFECT-STORES body half\", 2026-11-25 \"Option 1: caller-slot premise\" and \"We must write down with logical symbols for them\"; new gateway rule 38k, rule 38i amended by one sentence; `QCore.MemberHandoff`; [report](../../reports/member-effect-stores/README.md)). The card first stopped at its re-census (the 21 rows K3 left to this owner are Unknown on their store leaves alone; requiring the old member value custody-free inside the body left 0-4 readable) and resumed on option 1. A gate-refused store `P->F[.G...] = V` (or W45's sub-object store of a name) into a member of a formal no statement rebinds, `V` a call whose contract in force returns `Owned` or a local acquisition (pointer-to-pointer casts only), is the hand-off of `V`'s custody when every condition formula holds; each condition, the premise and each named refusal is a C04.18.9 typed-rendering formula over the new MES block (29 `mes_` terms, sorts `mes_site`, `mes_cell`) checked by the premise-formula validator, e.g. H1 `forall (#s: mes_site) { (#mes_occurs(#s,#mes_place) => (#s == #mes_store || #mes_null_test(#s))) }` and the stated premise `mes_caller_slot: forall (#o: obj) { (#mes_holds(#mes_place,#o) => !#mes_owed(#o)) }` (P-CG11-CALLER-SLOT), which every row holding a hand-off lists in its verdict assumptions and without which it is refused. The flow consumes the value (`resource_consumed(v, nullable)`) only for exactly one live identity of the body, under rule 10v's owner and old-value checks; the store is a rule-10v `PointerStore` of value class `member-handoff`, so no summary is published and every caller stays refused at the call. Refused by name: realloc self-assignment, the place used after the store, a hop below the formal, a local alias of the formal, a rebound formal, a loop, a used, copied or released local, a releasing call or indirect write after. Predicted on `current`: 11 rows Unknown -> Safe (rd_buf_init, rd_kafka_assignment_init, rd_kafkap_Fetch_reply_tags_set_topic_cnt, rd_kafka_snappy_init_env, the six create_*_instance, mk_vhost_set_property), up to 13 with the otel setters. Unit reproduction (release, the run's compile database and manifest, gnu17 where the C11 harness hit CG30): all 11 predicted rows Safe with no diagnostic and the premise listed; the otel setters stay Unknown at the store; every refused row keeps its store leaf. Deliberate re-pins of the admitted shape in nine gateway test files, each named in its test. No card gate (one gate on the merged tip); targeted checks: member_effect_stores 6, lib member_handoff 12 and lib 1,431 passed; one gateway crate run 4,229 passed, 9 failed (3 this card's shape, since re-pinned; 6 fail identically at base c5cd10688); clippy and fmt 0; Lean QCore.MemberHandoff built, AuditMemberHandoff passed (19 theorems, standard axioms only).",
  "status_edits": [],
  "ledger": [
   {
    "id": "MEMBER-EFFECT-STORES",
    "operation": "amend",
    "source": "docs/reports/member-effect-stores/README.md",
-   "text": "Body-half re-census (round 35, base c5cd10688, the 2026-11-24 `current` report): the 21 rows are Unknown on their store leaves alone (the gate's text; rule 38i's premises fail on memory-reading actuals, local values, casts and embedded paths). Requiring the old member value to be established custody-free inside the body, as the r35 brief does, leaves 0 rows readable today, 2 with a whole-object memset zeroing reading (rd_buf_init, rd_kafka_snappy_init_env) and 4 with a rule 37 non-null rd_realloc specification (rd_list_grow, rd_kafka_topic_partition_list_grow); 17 rows fail on the caller's old value. The card stopped for a user choice: carry rule 10v's stated P-CG11-CALLER-SLOT premise for the hand-off with every caller refused at the call (recommended, 11-13 rows), keep the body-established old value (2-4 rows), or also admit borrowed uses of the place after the store (up to 17 rows)."
+   "text": "Body half landed (round 35, gateway rule 38k, `QCore.MemberHandoff`; user decisions 2026-11-25 \"Option 1: caller-slot premise\" and formulas, never prose): a store of an `Owned` call result or a local acquisition into a member of an unrebound formal's object is the hand-off of its custody under the stated premise `mes_caller_slot: forall (#o: obj) { (#mes_holds(#mes_place,#o) => !#mes_owed(#o)) }`, every condition and refusal a validated typed-rendering formula over the MES terms; the summary is withheld and every caller stays refused. Before the decision the card's re-census found 0-4 of the 21 rows readable with the old value established inside the body. The caller half is MEMBER-EFFECT-STORES-CALLER-HALF; the refused sub-shapes are MEMBER-EFFECT-STORES-BORROWED-USE-AFTER, MEMBER-EFFECT-STORES-REALLOC-SELF and MEMBER-EFFECT-STORES-HOP-AND-ALIAS-ROOTS."
+  },
+  {
+   "id": "MONKEY-DOCUMENTROOT-OVERWRITE-CANDIDATE",
+   "operation": "amend",
+   "source": "docs/reports/member-effect-stores/README.md",
+   "text": "MEMBER-EFFECT-STORES (round 35, rule 38k, user decision 2026-11-25 \"Option 1: caller-slot premise\"): mk_vhost_set_property's DocumentRoot store is now the hand-off of the fresh copy into the caller's host under the stated premise `mes_caller_slot: forall (#o: obj) { (#mes_holds(#mes_place,#o) => !#mes_owed(#o)) }`, so the body is Safe under that premise (unit reproduction under gnu17). The possible loss this entry names is of the host's own copy, the caller's, which the premise leaves to the caller: the body publishes no summary, mk_vhost_set stays refused at the call, and this candidate stays open there until MEMBER-EFFECT-STORES-CALLER-HALF establishes the old value at the call site. Concern recorded for the integrator: confirm this reading (the card re-pinned `monkey_vhost_property_custody.rs` deliberately)."
+  },
+  {
+   "id": "MEMBER-EFFECT-STORES-CALLER-HALF",
+   "operation": "register",
+   "source": "docs/reports/member-effect-stores/README.md",
+   "recorded_by": "MEMBER-EFFECT-STORES",
+   "title": "The caller half of the member-effect store: a summary stating a hand-off into a formal's member, read at the call",
+   "text": "Rule 38k (MEMBER-EFFECT-STORES body half) admits a body that hands an owned value into a member of its formal's object under the stated premise `mes_caller_slot` and withholds its summary, so every call of it stays refused (uncontracted). DISCHARGE: a summary form stating the hand-off (the member path and the custody it takes), read only by the direct-call route: a tracked parent gains a field link in CG11's owned-field model, an untracked member's old value is established custody-free at the call site (fail closed otherwise), so the premise is discharged rather than stated; a formal parent cascades. Lean parity; measured."
+  },
+  {
+   "id": "MEMBER-EFFECT-STORES-BORROWED-USE-AFTER",
+   "operation": "register",
+   "source": "docs/reports/member-effect-stores/README.md",
+   "recorded_by": "MEMBER-EFFECT-STORES",
+   "title": "A hand-off store whose place is used after the store stays refused (mes_refuse_place_used)",
+   "text": "Rule 38k refuses `exists (#s: mes_site) { (#mes_occurs(#s,#mes_place) && !(#s == #mes_store || #mes_null_test(#s))) }`: the SCRAM pair (`out->ptr = rd_malloc(..)` then `rd_snprintf(out->ptr, ..)` / `dst->ptr[i] = ..`), rd_kafka_topic_partition_set_metadata_from_rktp_stored (`memcpy(rktpar->metadata, ..)`) and Monkey mk_buffer_cat on the 2026-11-24 `current` report. DISCHARGE: borrowed uses of the handed-off place after the store (reads and writes through it at `resource_borrowed` positions) with a stated argument that no call between the store and the return can release or rebind the member; Lean parity; measured."
+  },
+  {
+   "id": "MEMBER-EFFECT-STORES-REALLOC-SELF",
+   "operation": "register",
+   "source": "docs/reports/member-effect-stores/README.md",
+   "recorded_by": "MEMBER-EFFECT-STORES",
+   "title": "Realloc self-assignment into a formal's member stays refused without a non-null reallocation clause",
+   "text": "Rule 38k refuses `(#mes_reallocates() && !#mes_nonnull_clause())`: rd_list_grow and rd_kafka_topic_partition_list_grow (`P->F = rd_realloc(P->F, n)`), since `rd_realloc` states `resource_return_reallocated(ptr, nullable)` although `rd.h` asserts the result. DISCHARGE: a rule-37 checked non-null `rd_realloc` specification (a provider change read at every call, with LIBC-REALLOC-SIZE-ZERO's size-zero case settled), then the realloc input as the place's own old value; Lean parity; measured."
+  },
+  {
+   "id": "MEMBER-EFFECT-STORES-HOP-AND-ALIAS-ROOTS",
+   "operation": "register",
+   "source": "docs/reports/member-effect-stores/README.md",
+   "recorded_by": "MEMBER-EFFECT-STORES",
+   "title": "Hand-off stores past a pointer hop below the formal or through a local alias of it stay refused",
+   "text": "Rule 38k refuses `!#mes_in(#mes_place,#mes_parent)` (rd_kafkap_Fetch_reply_tags_set_topic, `reply_tags->Topics[TopicIdx].Partitions = rd_calloc(..)`) and `!#mes_formal_root()` (unpack_opts_unit, `map = (struct cmt_map *) context; map->unit = value`). DISCHARGE: an owner premise for the element object behind the hop, and a local initialised once from a formal (never rebound, never address-taken) read as the formal's object; Lean parity; measured."
   }
  ]
 }
