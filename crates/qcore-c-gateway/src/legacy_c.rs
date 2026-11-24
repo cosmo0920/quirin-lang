@@ -397,6 +397,10 @@ mod pointer_store_flow;
 // member path of a caller-supplied object.
 #[path = "legacy_owned_out_member.rs"]
 mod owned_out_member_route;
+// Card MEMBER-EFFECT-STORES (rule 38k): the hand-off store's parser half and
+// flow; the formulas and the decision live in `crate::member_handoff`.
+#[path = "legacy_member_handoff.rs"]
+mod member_handoff_route;
 // Card CG10-BOUND-UNTRACKED-ROOTS (rule 11d): the per-path bound-untracked
 // root premise, read off one state, and its census.
 #[path = "legacy_bound_untracked.rs"]
@@ -3661,6 +3665,10 @@ fn analyze_translation_unit_under_holds(
     // embedded storage. This can only append a witnessed violation to the
     // public root; every ordinary diagnostic remains evidence.
     legacy_conditional_embedded_storage::diagnose(&tokens, &mut functions);
+    // MEMBER-EFFECT-STORES hook (rule 38k): begin. Every row holding a
+    // hand-off lists its stated premise, or is refused.
+    crate::member_handoff::carry_premise(&mut functions);
+    // MEMBER-EFFECT-STORES hook (rule 38k): end
     // Card ARM-OBLIGATIONS: every row carries what the unit's admissions it
     // rests on rest on: premises into its assumptions, an open obligation out
     // of `Safe`. Card ARM-OBLIGATIONS-UNIT-GRAIN: an admission attributed to
@@ -6173,6 +6181,13 @@ impl Parser<'_> {
         if let Some(statement) = self.owned_out_member_statement(tokens, line, &instruction) {
             return statement;
         }
+        // MEMBER-EFFECT-STORES hook (rule 38k): begin. After rule 72, before
+        // rule 12k, only for the gate's refusal: a store handing a value's
+        // custody into a member of the caller's object.
+        if let Some(statement) = self.member_handoff_statement(tokens, line, origin, &instruction) {
+            return statement;
+        }
+        // MEMBER-EFFECT-STORES hook (rule 38k): end
         // Card CG10-INDIRECT-ACCESS-SOLE-RESIDUALS (rule 12k). Asked last,
         // only for the gate's refusal: it names the uncontracted callee where
         // the callee decides; the node stays the same refusal with its writes.

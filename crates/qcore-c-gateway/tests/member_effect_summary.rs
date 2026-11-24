@@ -218,28 +218,39 @@ fn a_custody_store_into_a_formal_member_is_named_and_stays_unknown() {
         "void setname(struct o *c, char *name) {\n  name = c->a;\n  c->a = name;\n}",
         &[stored("c", "a")],
     );
-    // `map->unit = cfl_sds_create(unit)`: an owned result. The UCRT's
+    // `map->unit = cfl_sds_create(unit)`: an owned result. Card
+    // MEMBER-EFFECT-STORES (rule 38k) flips this deliberately: the store is
+    // a hand-off into the caller's object under the stated premise
+    // `mes_caller_slot`, and the body publishes no summary. The UCRT's
     // `<stdlib.h>` spells `malloc` with Microsoft declaration specifiers the
     // declared-ABI reader does not read, so on Windows the libc contract is
-    // withdrawn against it and the call stays `Unknown` by that name; `setnew2`
-    // below carries the member-store refusal on every target (its declaration
-    // spells the parameter `__SIZE_TYPE__`, as the UCRT's `size_t` typedef is
-    // also unread there).
-    assert_leaves(
-        "setnew",
-        "void setnew(struct o *c) {\n  c->a = malloc(4);\n}",
-        &[if cfg!(windows) {
-            "call to `malloc` whose declared contract was withdrawn against its C declaration \
-             in this translation unit (abi-unreadable-declaration)"
-                .to_owned()
-        } else {
-            stored("c", "a")
-        }],
-    );
-    assert_leaves(
+    // withdrawn against it and the call stays `Unknown` by that name.
+    if cfg!(windows) {
+        assert_leaves(
+            "setnew",
+            "void setnew(struct o *c) {\n  c->a = malloc(4);\n}",
+            &[
+                "call to `malloc` whose declared contract was withdrawn against its C declaration \
+               in this translation unit (abi-unreadable-declaration)"
+                    .to_owned(),
+            ],
+        );
+    } else {
+        assert_safe(
+            "setnew",
+            "void setnew(struct o *c) {\n  c->a = malloc(4);\n}",
+        );
+    }
+    assert_safe(
         "setnew2",
         "void setnew2(struct o *c) {\n  c->a = obj_create(4);\n}",
-        &[stored("c", "a")],
+    );
+    // Rule 38k refuses a second store into the place (its first hand-off
+    // would be lost): both keep this rule's name.
+    assert_leaves(
+        "setnew3",
+        "void setnew3(struct o *c) {\n  c->a = obj_create(4);\n  c->a = obj_create(4);\n}",
+        &[stored("c", "a"), stored("c", "a")],
     );
     // An identity-free value is rule 10v's admission, unchanged.
     assert_safe("setnull", "void setnull(struct o *c) {\n  c->a = NULL;\n}");

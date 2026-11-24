@@ -261,6 +261,9 @@ mod pointer_store;
 mod pointer_store_derived;
 // Card CG10-OWNED-OUT-PARAMETER-MEMBER-SLOT (rule 72).
 mod owned_out_member;
+// Card MEMBER-EFFECT-STORES (rule 38k): the hand-off store into a member of
+// the caller's object, its formulas and its stated premise.
+pub mod member_handoff;
 // Card OWNED-CONSTRUCTOR-OUT-PARAMETER-DELIVERY (rule 74l): the refusal of an
 // owned result stored through an unsanctioned `*NAME` slot.
 mod owned_out_formal;

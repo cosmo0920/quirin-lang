@@ -123,6 +123,11 @@ pub(crate) enum ValueClass {
     /// over the destination's own value or a pointer of its own object
     /// ([`crate::pointer_store_derived`]).
     SameObjectDerived,
+    /// Card MEMBER-EFFECT-STORES (rule 38k): a value whose custody the store
+    /// hands into a member of the caller's object ([`crate::member_handoff`]).
+    /// Never neutral and never classified from an assignment: only rule
+    /// 38k's lowering builds it, and its own flow decides it.
+    MemberHandoff,
 }
 
 impl ValueClass {
@@ -144,6 +149,7 @@ impl ValueClass {
             Self::RetainedFormal => crate::member_store_retention::RETAINED,
             Self::OwnedOut => crate::owned_out_member::OWNED_OUT,
             Self::SameObjectDerived => "same-object-derived",
+            Self::MemberHandoff => crate::member_handoff::HANDOFF,
         }
     }
 
@@ -365,6 +371,7 @@ impl<'de> serde::Deserialize<'de> for PointerStore {
             ValueClass::RetainedFormal,
             ValueClass::OwnedOut,
             ValueClass::SameObjectDerived,
+            ValueClass::MemberHandoff,
         ];
         let value = classes
             .into_iter()

@@ -329,11 +329,16 @@ fn the_sp9_block_is_new_prefixed_and_bound_to_lean() {
     assert_eq!(sp9.len(), 63);
     // Appended after the SP7 block, never reordering it; contiguous, and
     // followed only by later blocks (card SP10-FORMAL-BINDING-DESCRIPTIONS
-    // appends SP10 after it).
+    // appends SP10 after it, card MEMBER-EFFECT-STORES its MES block after
+    // that).
     let blocks: Vec<_> = RENDERED_TERMS.iter().map(|t| t.block).collect();
     let first = blocks.iter().position(|b| *b == "SP9").unwrap();
     assert!(blocks[first..first + sp9.len()].iter().all(|b| *b == "SP9"));
-    assert!(blocks[first + sp9.len()..].iter().all(|b| *b == "SP10"));
+    assert!(
+        blocks[first + sp9.len()..]
+            .iter()
+            .all(|b| *b == "SP10" || *b == "MES")
+    );
     assert_eq!(blocks[first - 1], "SP7");
     for t in &sp9 {
         assert!(t.name.starts_with(PREFIX), "#{}", t.name);

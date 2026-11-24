@@ -2614,6 +2614,16 @@ pub const RENDERED_VALUE_SORTS: &[(&str, &str)] = &[
         "bnd_property_view",
         "the property view a bound graph is replayed from (resource, bounds/null or declared model)",
     ),
+    // Card MEMBER-EFFECT-STORES (gateway rule 38k, the MES block): the
+    // sorts of the hand-off store's conditions, prefixed `mes_`.
+    (
+        "mes_site",
+        "a position of the analysed body: a statement, a call, or an occurrence of a name or member place",
+    ),
+    (
+        "mes_cell",
+        "a member place of an object, spelled from a formal (`P->F`, `P->F.G`)",
+    ),
 ];
 
 /// The G01p sort of a rendered term: a value of a rendered value sort, a
@@ -3341,6 +3351,188 @@ pub const RENDERED_TERMS: &[RenderedTerm] = &[
         sort: PLG_EVENT_FLAG,
         meaning: "1 when the pointer used at the event is forged, else 0 (Lean `QCore.PluginPremiseDecomposition.Event.forged`)",
         block: "SP10",
+    },
+    // ---- Card MEMBER-EFFECT-STORES (gateway rule 38k; USER DECISIONS
+    // 2026-11-25, "Option 1: caller-slot premise" and "We must write down with
+    // logical symbols for them"): the terms of the hand-off store's
+    // admission conditions, its stated premise and its named refusals, each a
+    // formula of this rendering (`crate::premise_formula::guarded_proposition`
+    // validates them). Every name is prefixed `mes_`; the subject is one
+    // gate-refused store `P->F… = V` of one analysed body, implicit as SP9's
+    // environment is. The Lean list is `QCore.MemberHandoff.mesTerms`. ----
+    RenderedTerm {
+        name: "mes_store",
+        sort: RenderedSort::Value("mes_site"),
+        meaning: "the store statement `P->F… = V` the rule reads",
+        block: "MES",
+    },
+    RenderedTerm {
+        name: "mes_place",
+        sort: RenderedSort::Value("mes_cell"),
+        meaning: "the member place `P->F…` the store writes",
+        block: "MES",
+    },
+    RenderedTerm {
+        name: "mes_parent",
+        sort: OBJ,
+        meaning: "the object the formal `P` designates at the store",
+        block: "MES",
+    },
+    RenderedTerm {
+        name: "mes_in",
+        sort: RenderedSort::Predicate(&["mes_cell", "obj"]),
+        meaning: "`#mes_in(#c,#o)`: the place `#c` is storage of the object `#o` reached by `->` from the formal then `.` selections only, every member an ordinary (non-union, non-bit-field) member",
+        block: "MES",
+    },
+    RenderedTerm {
+        name: "mes_formal_root",
+        sort: NULLARY,
+        meaning: "the store's root is a formal parameter of the body (not a local, even one copied from a formal)",
+        block: "MES",
+    },
+    RenderedTerm {
+        name: "mes_formal_written",
+        sort: RenderedSort::Predicate(&["mes_site"]),
+        meaning: "`#mes_formal_written(#s)`: the site assigns, increments, decrements or takes the address of the formal `P`",
+        block: "MES",
+    },
+    RenderedTerm {
+        name: "mes_occurs",
+        sort: RenderedSort::Predicate(&["mes_site", "mes_cell"]),
+        meaning: "`#mes_occurs(#s,#c)`: the site is an evaluated occurrence (outside a `sizeof` operand) of the place `#c` or of a member path that is a prefix of it",
+        block: "MES",
+    },
+    RenderedTerm {
+        name: "mes_null_test",
+        sort: RenderedSort::Predicate(&["mes_site"]),
+        meaning: "`#mes_null_test(#s)`: the site reads the place's whole value only as a truth value (`!X`, `X == NULL`, `X != NULL`, `NULL == X`, `NULL != X`, `if (X)`, `while (X)`, an operand of `&&` or `||`)",
+        block: "MES",
+    },
+    RenderedTerm {
+        name: "mes_after",
+        sort: RenderedSort::Predicate(&["mes_site", "mes_site"]),
+        meaning: "`#mes_after(#s,#t)`: the site `#s` lies lexically after the site `#t` in the body (an over-approximation of may-execute-after in a body without loops and jumps)",
+        block: "MES",
+    },
+    RenderedTerm {
+        name: "mes_in_loop",
+        sort: RenderedSort::Predicate(&["mes_site"]),
+        meaning: "`#mes_in_loop(#s)`: the site lies in the body of a `for`, `while` or `do` loop, or the body contains a `goto`, `setjmp` or `longjmp`",
+        block: "MES",
+    },
+    RenderedTerm {
+        name: "mes_local_mention",
+        sort: RenderedSort::Predicate(&["mes_site"]),
+        meaning: "`#mes_local_mention(#s)`: the site mentions the stored local `V` (any occurrence of its name)",
+        block: "MES",
+    },
+    RenderedTerm {
+        name: "mes_local_copy",
+        sort: RenderedSort::Predicate(&["mes_site"]),
+        meaning: "`#mes_local_copy(#s)`: the site hands the stored local whole to a call, copies it, returns it, takes its address, or assigns it a second time",
+        block: "MES",
+    },
+    RenderedTerm {
+        name: "mes_formal_passed",
+        sort: RenderedSort::Predicate(&["mes_site"]),
+        meaning: "`#mes_formal_passed(#s)`: the site mentions the formal `P` other than as `P->G` for a member `G` other than the place's first member, a null test of `P`, or a `sizeof` operand",
+        block: "MES",
+    },
+    RenderedTerm {
+        name: "mes_indirect",
+        sort: RenderedSort::Predicate(&["mes_site"]),
+        meaning: "`#mes_indirect(#s)`: the site reads or writes through a pointer other than the formal `P` itself: `->` on another base or on a member, a subscript, or a unary `*`",
+        block: "MES",
+    },
+    RenderedTerm {
+        name: "mes_call",
+        sort: RenderedSort::Predicate(&["mes_site"]),
+        meaning: "`#mes_call(#s)`: the site is a call",
+        block: "MES",
+    },
+    RenderedTerm {
+        name: "mes_borrowed_only",
+        sort: RenderedSort::Predicate(&["mes_site"]),
+        meaning: "`#mes_borrowed_only(#s)`: the call at the site has a contract in force, no hold, and every parameter `resource_borrowed`",
+        block: "MES",
+    },
+    RenderedTerm {
+        name: "mes_stored",
+        sort: OBJ1,
+        meaning: "`#mes_stored(#o)`: the stored value designates the object `#o` (no object when it is null)",
+        block: "MES",
+    },
+    RenderedTerm {
+        name: "mes_owed",
+        sort: OBJ1,
+        meaning: "`#mes_owed(#o)`: at the store the body owes the custody of `#o`: an acquisition of this body (a live resource site of the flow), or the fresh `Owned` result of the stored call",
+        block: "MES",
+    },
+    RenderedTerm {
+        name: "mes_live",
+        sort: OBJ1,
+        meaning: "`#mes_live(#o)`: at the store `#o`'s site is live, neither released, escaped, contained nor under an unresolved effect",
+        block: "MES",
+    },
+    RenderedTerm {
+        name: "mes_holds",
+        sort: RenderedSort::Predicate(&["mes_cell", "obj"]),
+        meaning: "`#mes_holds(#c,#o)`: immediately before the store the place `#c` designates the object `#o`",
+        block: "MES",
+    },
+    RenderedTerm {
+        name: "mes_bound_old",
+        sort: NULLARY,
+        meaning: "at the store the projection binds a place rooted at the formal to a target or to an unknown value (rule 10v's old-value check)",
+        block: "MES",
+    },
+    RenderedTerm {
+        name: "mes_owned_result",
+        sort: NULLARY,
+        meaning: "the stored value is a call whose contract in force (no hold) returns `resource_return_owned`",
+        block: "MES",
+    },
+    RenderedTerm {
+        name: "mes_local_acquisition",
+        sort: NULLARY,
+        meaning: "the stored value is the name of a local (not a formal) of object pointer type",
+        block: "MES",
+    },
+    RenderedTerm {
+        name: "mes_reallocates",
+        sort: NULLARY,
+        meaning: "the stored value is a call whose contract in force returns `resource_return_reallocated` (the realloc self-assignment)",
+        block: "MES",
+    },
+    RenderedTerm {
+        name: "mes_nonnull_clause",
+        sort: NULLARY,
+        meaning: "the stored call's contract in force states its result `nonnull`",
+        block: "MES",
+    },
+    RenderedTerm {
+        name: "mes_pointer_casts",
+        sort: NULLARY,
+        meaning: "every cast around the stored value converts an object pointer to an object pointer (`BitCast` or `NoOp`)",
+        block: "MES",
+    },
+    RenderedTerm {
+        name: "mes_untracked_owner",
+        sort: NULLARY,
+        meaning: "at the store the projection binds neither the formal nor the object the place lives in (rule 10v's owner class `untracked`)",
+        block: "MES",
+    },
+    RenderedTerm {
+        name: "mes_published",
+        sort: NULLARY,
+        meaning: "the body publishes a summary: an ordinary W4 contract, a retention or a member effect",
+        block: "MES",
+    },
+    RenderedTerm {
+        name: "mes_premise_carried",
+        sort: NULLARY,
+        meaning: "the row's verdict assumptions list the premise `mes_caller_slot`",
+        block: "MES",
     },
 ];
 
