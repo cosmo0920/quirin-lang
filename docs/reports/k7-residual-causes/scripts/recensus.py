@@ -138,7 +138,7 @@ def main():
     frozen = []
     draft = (CENSUS.parent / "predictions" / "K7.md").read_text().split("## Frozen candidate list")[1]
     for line in draft.splitlines():
-        if line.count("::") == 2:
+        if line.count("::") == 2 and " " not in line.strip():
             lib, path, fn = line.strip().split("::")
             hits = [r for r in rows if r["function"] == fn and r["file"] == path]
             frozen.append({"function": line.strip(), "rows": [
@@ -163,9 +163,11 @@ def main():
         "freed_rows": [describe(r) for r in bundle_freed],
         "loose_rows": [describe(r) for r in loose if r not in bundle_freed],
         "frozen_11_07": frozen,
+        "freed_new_since_11_07": sorted(f"{r['library']}::{r['file']}::{r['function']}" for r in bundle_freed
+                                       if f"{r['library']}::{r['file']}::{r['function']}" not in {f["function"] for f in frozen}),
     }
     out_path.write_text(json.dumps(out, indent=1) + "\n")
-    print(json.dumps({k: v for k, v in out.items() if k not in ("freed_rows", "loose_rows", "frozen_11_07")},
+    print(json.dumps({k: v for k, v in out.items() if k not in ("freed_rows", "loose_rows", "frozen_11_07", "freed_new_since_11_07")},
                      indent=1))
     print("frozen 11-07:", collections.Counter(
         ("Safe" if all(x["status"] == "Safe" for x in f["rows"]) else

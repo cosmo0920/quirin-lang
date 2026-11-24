@@ -2420,10 +2420,6 @@
  ],
  "frozen_11_07": [
   {
-   "function": "(ceiling: freed alone; library::file::function)",
-   "rows": []
-  },
-  {
    "function": "cmetrics::lib/cmetrics/src/cmt_decode_statsd.c::cmt_get_statsd_type",
    "rows": [
     {
@@ -2916,5 +2912,19 @@
     }
    ]
   }
+ ],
+ "freed_new_since_11_07": [
+  "librdkafka::lib/librdkafka-2.15.0/src/lz4hc.c::LZ4_createHC",
+  "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_admin.c::rd_kafka_DescribeConsumerGroups_result_groups",
+  "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_admin.c::rd_kafka_DescribeTopics_result_topics",
+  "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_admin.c::ut_make_ListConsumerGroups_fanout",
+  "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_admin.c::ut_make_ListConsumerGroups_partial_error",
+  "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_conf.c::rd_kafka_confval_init_ptr",
+  "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_msg.c::rd_kafka_message_produce_errstr",
+  "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_msg.c::unittest_msg_seq_wrap",
+  "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_telemetry_encode.c::count_attributes",
+  "librdkafka::lib/librdkafka-2.15.0/src/rdlog.c::rd_hexdump",
+  "librdkafka::lib/librdkafka-2.15.0/src/rdstring.c::ut_strcasestr",
+  "monkey::lib/monkey/mk_core/mk_rconf.c::check_indent"
  ]
 }
