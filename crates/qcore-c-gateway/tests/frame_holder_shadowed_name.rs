@@ -71,7 +71,10 @@ fn retained() -> ResourceContracts {
 }
 
 fn callbacks() -> ResourceContracts {
-    load("callbacks.qv", include_str!("fixtures/contracts/callbacks.qv"))
+    load(
+        "callbacks.qv",
+        include_str!("fixtures/contracts/callbacks.qv"),
+    )
 }
 
 fn clang_available() -> bool {
