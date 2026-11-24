@@ -380,11 +380,14 @@ fn an_unknown_binding_returned_keeps_its_identity_refusal() {
 /// in another leaf, and is recorded as a follow-up, not refined here.
 ///
 /// * A later declarator's NULL initialiser (`T *a = 0, *b = 0;`, the
-///   `rd_kafka_mock_handle_ConsumerGroupHeartbeat` declaration) is read as a
-///   store through `*b` (`indirect memory access`), so `b` has no binding on
-///   the path that skips its construction, the join makes it unknown, and the
-///   guarded release is refused. The same body with one declarator per
-///   statement is `Safe`.
+///   `rd_kafka_mock_handle_ConsumerGroupHeartbeat` declaration) was read as a
+///   store through `*b` (`indirect memory access`), so `b` had no binding on
+///   the path that skips its construction, the join made it unknown, and the
+///   guarded release was refused. Deliberate pin update, card
+///   LATER-DECLARATOR-INITIALISER-UNREAD (rule 74k): each init-declarator is
+///   now read as its own initialisation, so the declaration has the verdict
+///   of the same body with one declarator per statement, `Safe` (was
+///   `Unknown` with the access, nullable and identity leaves).
 /// * A join with an uncontracted pointer result
 ///   (`rd_kafka_mock_cgrp_consumer_member_needs_revocation`,
 ///   `rd_kafka_cgrp_handle_SyncGroup_memberstate`): the uncontracted arm
@@ -400,13 +403,7 @@ fn the_other_shapes_stay_refused_without_a_leak() {
         "int subject(int n)",
         "void *a = 0, *r = 0;\nif (n) r = q_alloc();\nif (r) q_free(r);\nreturn 0;",
     );
-    assert_eq!(declarator.status, AnalysisStatus::Unknown, "{declarator:?}");
-    assert!(
-        declarator.refused("indirect memory access is outside the resource projection"),
-        "{declarator:?}"
-    );
-    assert!(declarator.refused(NULLABLE), "{declarator:?}");
-    assert_eq!(declarator.leaks(), 0, "{declarator:?}");
+    assert_eq!(declarator.status, AnalysisStatus::Safe, "{declarator:?}");
     let split = analyze(
         "int subject(int n)",
         "void *a = 0; void *r = 0;\nif (n) r = q_alloc();\nif (r) q_free(r);\nreturn 0;",

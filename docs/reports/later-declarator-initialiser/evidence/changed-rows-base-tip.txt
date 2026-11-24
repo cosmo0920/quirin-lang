@@ -1,0 +1,53 @@
+lib/cmetrics/src/cmt_decode_statsd.c statsd_process_line Unknown -> Unknown
+   - 5928 indirect memory access is outside the resource projection
+lib/librdkafka-2.15.0/src/rdkafka.c rd_kafka_share_select_broker Unknown -> Unknown
+   - 22712 indirect memory access is outside the resource projection
+lib/librdkafka-2.15.0/src/rdkafka_admin.c rd_kafka_ConsumerGroupDescribeResponse_parse Unknown -> Unknown
+   - 25643 indirect memory access is outside the resource projection
+   - 25647 indirect memory access is outside the resource projection
+   - 25691 indirect memory access is outside the resource projection
+   - 25780 unresolved resource identity `host`
+lib/librdkafka-2.15.0/src/rdkafka_admin.c rd_kafka_DescribeConsumerGroupsResponse_parse Unknown -> Unknown
+   - 25460 indirect memory access is outside the resource projection
+   - 25464 unresolved resource identity `reply`
+   - 25622 unresolved resource identity `host`
+   - 25623 unresolved resource identity `host`
+lib/librdkafka-2.15.0/src/rdkafka_admin.c rd_kafka_ListConsumerGroupsResponse_parse Unknown -> Unknown
+   - 24907 indirect memory access is outside the resource projection
+   - 24909 unresolved resource identity `reply`
+   - 24978 unresolved resource identity `group_id`
+   - 24979 unresolved resource identity `group_id`
+   - 24980 unresolved resource identity `group_state`
+   - 24981 unresolved resource identity `group_state`
+   - 24982 unresolved resource identity `proto_type`
+   - 24983 unresolved resource identity `proto_type`
+   - 24984 unresolved resource identity `group_type_str`
+   - 24985 unresolved resource identity `group_type_str`
+lib/librdkafka-2.15.0/src/rdkafka_cert.c rd_kafka_cert_new Unknown -> Unknown
+   - 20211 indirect memory access is outside the resource projection
+lib/librdkafka-2.15.0/src/rdkafka_conf.c rd_kafka_conf_finalize Unknown -> Unknown
+   - 24328 call to uncontracted function `rd_kafka_sw_str_sanitize_inplace`
+   - 24329 call to uncontracted function `rd_kafka_sw_str_sanitize_inplace`
+   + 24328 indirect memory access is outside the resource projection
+   + 24329 indirect memory access is outside the resource projection
+lib/librdkafka-2.15.0/src/rdkafka_conf.c rd_kafka_sw_str_sanitize_inplace Unknown -> Safe
+   - 24098 indirect memory access is outside the resource projection
+lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c rd_kafka_mock_handle_ConsumerGroupHeartbeat Unknown -> Unknown
+   - 23917 indirect memory access is outside the resource projection
+   - 24072 unresolved resource identity `existing_assignment`
+   - 24072 nullable resource `existing_assignment` used by a non-null contract
+   - 24078 unresolved resource identity `existing_assignment`
+   - 24079 unresolved resource identity `next_assignment`
+   + 23959 unresolved resource identity `sent_assignment`
+   + 24061 unresolved resource identity `next_assignment`
+lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c toppar_sort_by_list_cnt Unknown -> Unknown
+   - 22082 indirect memory access is outside the resource projection
+   + 22082 unresolved resource identity `_a`
+   + 22082 unresolved resource identity `_b`
+lib/librdkafka-2.15.0/src/rdkafka_telemetry_decode.c unit_test_telemetry Unknown -> Unknown
+   - 21773 indirect memory access is outside the resource projection
+lib/monkey/mk_core/mk_string.c _mk_string_search Unknown -> Unknown
+   - 2093 indirect memory access is outside the resource projection
+lib/monkey/mk_core/mk_string.c mk_string_trim Unknown -> Unknown
+   - 2344 indirect memory access is outside the resource projection
+   - 2346 unresolved resource identity `str`

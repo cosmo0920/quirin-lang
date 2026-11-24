@@ -324,6 +324,12 @@ mod settled_leak_route;
 #[path = "legacy_nullable_return.rs"]
 mod nullable_return_route;
 
+// Card LATER-DECLARATOR-INITIALISER-UNREAD (rule 74k): a declaration of
+// several init-declarators is read as its declarations written one per
+// statement, or keeps its old reading. The hook below naming the card is thin.
+#[path = "legacy_later_declarator.rs"]
+mod later_declarator_route;
+
 // Card B08-FIELD-LINK-JOIN-SILENT-UNRESOLVED (rule 11c): a field link that
 // holds on some paths only never leaves an obligation unresolved without a
 // diagnostic. The hooks below naming the card are thin.
@@ -5859,6 +5865,11 @@ impl Parser<'_> {
             Some(_) => {
                 let origin = self.cursor;
                 let tokens = self.consume_to_semicolon()?;
+                // Card LATER-DECLARATOR-INITIALISER-UNREAD (rule 74k): several
+                // init-declarators, read as one declaration per statement.
+                if let Some(split) = self.later_declarator_statement(&tokens, line) {
+                    return Ok(split);
+                }
                 Ok(self.expression_statement(&tokens, line, Some(origin)))
             }
             None => Err(line),

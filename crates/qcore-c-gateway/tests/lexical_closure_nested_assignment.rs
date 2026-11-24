@@ -180,18 +180,26 @@ fn a_nested_binding_makes_the_read_through_its_root_need_an_identity() {
             "{body}"
         );
     }
-    // A later declarator.
+    // A later declarator. Deliberate pin update, card
+    // LATER-DECLARATOR-INITIALISER-UNREAD (rule 74k): the declaration is now
+    // read as `struct c_box *a = c_make(1); struct c_box *b = a;`, so `b`
+    // holds `a`'s site and the read after the release is the use after
+    // release it is (was `Unknown` on the declaration's access refusal, with
+    // `unknown_alias:a`).
+    let body = "int w(void) { struct c_box *a = c_make(1), *b = a; if (!a) return 0; c_drop(a); \
+                return b->item->count; }";
+    let expected = (
+        "Unsafe",
+        vec![
+            "unknown_alias:b".to_owned(),
+            "unknown_alias:b/a".to_owned(),
+            "use_after_release".to_owned(),
+        ],
+    );
+    assert_eq!(outcome(body), expected);
     assert_eq!(
-        outcome(
-            "int w(void) { struct c_box *a = c_make(1), *b = a; if (!a) return 0; c_drop(a); \
-             return b->item->count; }"
-        ),
-        unknown(&[
-            "unknown_alias:a",
-            "unknown_alias:b",
-            "unknown_alias:b/a",
-            "unsupported:indirect memory access is outside the resource projection",
-        ])
+        outcome(&body.replace("c_make(1), *b = a;", "c_make(1); struct c_box *b = a;")),
+        expected
     );
     // An assignment in a `?:` arm.
     assert_eq!(

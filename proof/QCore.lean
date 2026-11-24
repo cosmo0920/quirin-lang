@@ -240,6 +240,7 @@ import QCore.JoinedProvenanceCallFrames
 import QCore.JoinedProvenanceCycles
 import QCore.JoinedProvenanceRoundBound
 import QCore.KindedCustody
+import QCore.LaterDeclarator
 import QCore.LayoutExtents
 import QCore.LegacyCAnalyzer
 import QCore.LexicalClosureNestedAssignment
