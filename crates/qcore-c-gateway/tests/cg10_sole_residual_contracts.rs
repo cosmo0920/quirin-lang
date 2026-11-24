@@ -266,10 +266,18 @@ fn round_4_rd_jitter_reads_its_scalar_member_actuals() {
 
 /// Round 4: `XXH32_digest_endian`'s shape, the declared `XXH32_finalize`
 /// handed a decayed array member of a `const` formal record.
+///
+/// Target-portable spelling: `lz4_stream.qv` reads `endian`/`align` as `u32`,
+/// but a plain `typedef enum { … }` is `int` under the MSVC ABI (`unsigned int`
+/// on Linux), so Windows withdrew the contract (`abi-parameter-type-disagreement`).
+/// A fixed underlying type (`enum : unsigned int`) is unreadable to the
+/// declared-ABI reader, so the two types are `unsigned int` typedefs beside
+/// untagged enumerations naming the same constants; the decayed-member read is
+/// unchanged.
 const XXH: &str = "\
 typedef unsigned int U32; \
-typedef enum { XXH_bigEndian=0, XXH_littleEndian=1 } XXH_endianess; \
-typedef enum { XXH_aligned, XXH_unaligned } XXH_alignment; \
+enum { XXH_bigEndian=0, XXH_littleEndian=1 }; typedef unsigned int XXH_endianess; \
+enum { XXH_aligned, XXH_unaligned }; typedef unsigned int XXH_alignment; \
 typedef struct { U32 total_len_32; U32 v3; U32 mem32[4]; U32 memsize; } XXH32_state_t; \
 static U32 XXH32_finalize(U32 h32, const void* ptr, size_t len, XXH_endianess endian, XXH_alignment align); \
 U32 subject(const XXH32_state_t* state, XXH_endianess endian) { U32 h32; \
@@ -292,11 +300,13 @@ fn round_4_rule_66_keeps_a_non_scalar_typedef_element_refused() {
     }
     // Rule 66 reads only a typedef resolving to a builtin scalar: an array of
     // a pointer typedef, of a record typedef or of a volatile scalar typedef
-    // keeps the refusal.
+    // keeps the refusal. The two `XXH_*` types are `unsigned int` typedefs for
+    // the target-portable reason `XXH` states: with plain enumerations Windows
+    // refused at the ABI check, not at rule 66.
     let head = "\
 typedef unsigned int U32; \
-typedef enum { XXH_bigEndian=0, XXH_littleEndian=1 } XXH_endianess; \
-typedef enum { XXH_aligned, XXH_unaligned } XXH_alignment; \
+enum { XXH_bigEndian=0, XXH_littleEndian=1 }; typedef unsigned int XXH_endianess; \
+enum { XXH_aligned, XXH_unaligned }; typedef unsigned int XXH_alignment; \
 static U32 XXH32_finalize(U32 h32, const void* ptr, size_t len, XXH_endianess endian, XXH_alignment align); ";
     for body in [
         "typedef char *cp; struct q { cp m[4]; }; \
