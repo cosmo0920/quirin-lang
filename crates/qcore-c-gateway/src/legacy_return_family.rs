@@ -96,6 +96,17 @@
 //! `p[i]` do. The change only adds bases and `->` roots
 //! (`QCore.ReturnFamilyUntrackedMemberCast`).
 //!
+//! Card **RETURN-FAMILY-UNTRACKED-ACCESS-THROUGH-ARITHMETIC** (gateway rule
+//! 74w): an untracked, non-scalar root is a base, and a `->` root, also when
+//! `->`, `[` or a `*` that may be unary reaches it through a parenthesised
+//! additive group as well as cast groups and parentheses
+//! ([`accessed_through_arithmetic`]), so `(p + n)->f`, `(n + p)[i]`,
+//! `((T *)p - n)->f` and `*(n + p)` make `p` a base. An access through a sum
+//! whose other operands are not literals, declared scalars or `sizeof` of a
+//! resolved type (`(p - q)->f`) refuses. Bases and `->` roots only grow and
+//! the one new refusal is the expression's, so nothing admits more
+//! (`QCore.ReturnFamilyUntrackedArithAccess`).
+//!
 //! The read node is `IndirectScalarAccess` with no destination, no frame and
 //! no chain: it changes no binding, status, marker or link, and adds only the
 //! bases' obligations and the C02-P-ALIAS obligations of every `->` root. It
@@ -607,6 +618,175 @@ fn accessed_through_groups(texts: &[&str], index: usize) -> Option<bool> {
     }
 }
 
+/// Rule 74w: what [`accessed_through_arithmetic`] read past an untracked
+/// root.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum ArithmeticAccess {
+    /// No additive group crossed, or nothing accesses what the walk reached:
+    /// the other tests' reading stands.
+    None,
+    /// `( p + n ) - > f`: a base and a `->` root.
+    Arrow,
+    /// `( p + n ) [ i ]` or `* ( n + p )`: a base.
+    Element,
+    /// An access through an additive group whose other operands the reader
+    /// cannot classify (`( p - q ) - > f`): family S refuses.
+    Unclassified,
+}
+
+/// Rule 74w: whether `part`, the other operands of an additive group around
+/// the root, holds only what can never be a pointer: numeric literals,
+/// declared scalars (no pointer level, [`NameFacts::declared_scalar`]), a
+/// type operator over a resolved type name, parentheses and `+ - * / %`.
+fn integer_operands(part: &[&str], names: &impl NameFacts) -> bool {
+    let mut at = 0usize;
+    while at < part.len() {
+        let text = part[at];
+        if TYPE_OPERATORS.contains(&text) {
+            let Some(close) = part
+                .get(at + 1)
+                .filter(|next| **next == "(")
+                .and_then(|_| close_of(part, at + 1))
+            else {
+                return false;
+            };
+            let words = &part[at + 2..close];
+            if words.is_empty()
+                || !words.iter().all(|word| super::is_identifier(word))
+                || !names.type_name(words)
+            {
+                return false;
+            }
+            at = close + 1;
+            continue;
+        }
+        let integer = matches!(text, "(" | ")" | "+" | "-" | "*" | "/" | "%")
+            || text.as_bytes().first().is_some_and(u8::is_ascii_digit)
+            || (super::is_identifier(text) && names.declared_scalar(text));
+        if !integer {
+            return false;
+        }
+        at += 1;
+    }
+    true
+}
+
+/// Rule 74w: whether `text` may end an operand, so that an operator after it
+/// is binary.
+fn operand_end(text: &str) -> bool {
+    matches!(text, ")" | "]")
+        || super::is_identifier(text)
+        || text.as_bytes().first().is_some_and(u8::is_ascii_digit)
+}
+
+/// Rule 74w: the `(` of the innermost group around `start..=end`, and its
+/// matching `)`, when the innermost bracket around it is a `(`.
+fn enclosing_group(texts: &[&str], start: usize) -> Option<(usize, usize)> {
+    let mut depth = 0usize;
+    for at in (0..start).rev() {
+        match texts[at] {
+            ")" | "]" => depth += 1,
+            "(" if depth == 0 => return close_of(texts, at).map(|close| (at, close)),
+            "[" if depth == 0 => return None,
+            "(" | "[" => depth -= 1,
+            _ => {}
+        }
+    }
+    None
+}
+
+/// Card RETURN-FAMILY-UNTRACKED-ACCESS-THROUGH-ARITHMETIC (rule 74w): the
+/// access that reaches the untracked, non-scalar root at `index` through
+/// pointer arithmetic. The walk keeps a span `lo..=hi` of what it has read,
+/// starting at the root, and widens it outward through a group
+/// `cast_semantics::type_group_open` reads as a type before it (rule 12h's
+/// transparency), through a `(` and `)` right around it, and through a
+/// parenthesised **arithmetic group**: a binary `+`, `-`, `/` or `%` (never
+/// `- >`, never `*`, which a type group spells too) next to the span, the
+/// other neighbour such an operator or the group's own parenthesis, inside
+/// the innermost `( … )` around the span, which becomes the span. Only that
+/// group's matching `)` is read, so no closing parenthesis past the ones the
+/// walk opened is. When at least one such group was crossed, a `->` or `[`
+/// after the span, or a `*` before it that may be unary under either of
+/// rule 74h's readings, accesses the root: `( p + n ) - > f`,
+/// `( n + p ) [ i ]`, `( ( T * ) p - n ) - > f`, `( ( T * ) ( p + n ) ) - > f`,
+/// `* ( n + p )`. A group is classified when the span is a term of a sum
+/// (`+`, `-` or the group's parenthesis on each side) and
+/// [`integer_operands`] accepts the rest; an access through any other
+/// crossed group (`( p - q ) - > f`, `( n % p ) - > f`) is
+/// [`ArithmeticAccess::Unclassified`] and family S refuses
+/// (`QCore.ReturnFamilyUntrackedArithAccess`).
+fn accessed_through_arithmetic(
+    texts: &[&str],
+    index: usize,
+    names: &impl NameFacts,
+) -> ArithmeticAccess {
+    let (mut lo, mut hi) = (index, index);
+    let mut crossed = false;
+    let mut classified = true;
+    loop {
+        if let Some(open) = lo
+            .checked_sub(1)
+            .filter(|previous| texts[*previous] == ")")
+            .and_then(|previous| crate::cast_semantics::type_group_open(texts, previous))
+        {
+            lo = open;
+            continue;
+        }
+        let left = lo.checked_sub(1).map(|previous| texts[previous]);
+        let right = texts.get(hi + 1).copied();
+        if left == Some("(") && right == Some(")") {
+            lo -= 1;
+            hi += 1;
+            continue;
+        }
+        // An arithmetic operator next to the span, binary (after an
+        // operand) on the left: a unary operator binds tighter, so its
+        // operand, not the span, is the term (`( * p + 1 )`, `( - p )`).
+        // A `*` is never read as a product: a type group's `*` reads the
+        // same (`( long * const )`), and a product is no pointer.
+        let left_binary =
+            matches!(left, Some("+" | "-" | "/" | "%")) && lo >= 2 && operand_end(texts[lo - 2]);
+        let right_operator =
+            matches!(right, Some("+" | "-" | "/" | "%")) && !arrow_at(texts, hi + 1);
+        if !((left_binary || left == Some("(")) && (right_operator || right == Some(")"))) {
+            break;
+        }
+        let Some((open, close)) = enclosing_group(texts, lo) else {
+            break;
+        };
+        // Classified: the span is a term of the sum (`+`, `-` or the
+        // group's own parenthesis on each side, so no product holds it), and
+        // the other operands can never be a pointer.
+        let clean_left = (left_binary && matches!(left, Some("+" | "-"))) || lo == open + 1;
+        let clean_right = (right_operator && matches!(right, Some("+" | "-"))) || hi + 1 == close;
+        if !(clean_left
+            && clean_right
+            && integer_operands(&texts[open + 1..lo], names)
+            && integer_operands(&texts[hi + 1..close], names))
+        {
+            classified = false;
+        }
+        crossed = true;
+        lo = open;
+        hi = close;
+    }
+    if !crossed {
+        return ArithmeticAccess::None;
+    }
+    let arrow = arrow_at(texts, hi + 1);
+    let element = texts.get(hi + 1) == Some(&"[")
+        || lo.checked_sub(1).is_some_and(|star| {
+            texts[star] == "*" && operator_at(texts, star, names).may_be_unary()
+        });
+    match (arrow || element, classified) {
+        (false, _) => ArithmeticAccess::None,
+        (true, false) => ArithmeticAccess::Unclassified,
+        (true, true) if arrow => ArithmeticAccess::Arrow,
+        (true, true) => ArithmeticAccess::Element,
+    }
+}
+
 /// Family S's shape and name premises over one `return` expression. `None`
 /// keeps the refusal. The declared-result premise and the descriptor premise
 /// are the caller's.
@@ -700,7 +880,25 @@ pub(crate) fn scalar_read(texts: &[&str], names: &impl NameFacts) -> Option<Scal
             if accessed == Some(true) {
                 push_once(&mut read.arrow_roots, text);
             }
-            if arrow_at(texts, index + 1) || next == Some("[") || starred || accessed.is_some() {
+            // Rule 74w: an access through pointer arithmetic on the root; a
+            // declared scalar is an index, never the pointer. An access
+            // through a sum the reader cannot classify refuses.
+            let arithmetic = if names.declared_scalar(text) {
+                ArithmeticAccess::None
+            } else {
+                accessed_through_arithmetic(texts, index, names)
+            };
+            match arithmetic {
+                ArithmeticAccess::Unclassified => return None,
+                ArithmeticAccess::Arrow => push_once(&mut read.arrow_roots, text),
+                ArithmeticAccess::None | ArithmeticAccess::Element => {}
+            }
+            if arrow_at(texts, index + 1)
+                || next == Some("[")
+                || starred
+                || accessed.is_some()
+                || arithmetic != ArithmeticAccess::None
+            {
                 push_once(&mut read.bases, text);
             }
             index += 1;
@@ -1094,3 +1292,7 @@ mod untracked_deref_cast_tests;
 #[cfg(test)]
 #[path = "../tests/unit/legacy_return_family_untracked_member_cast.rs"]
 mod untracked_member_cast_tests;
+
+#[cfg(test)]
+#[path = "../tests/unit/legacy_return_family_untracked_arith_access.rs"]
+mod untracked_arith_access_tests;

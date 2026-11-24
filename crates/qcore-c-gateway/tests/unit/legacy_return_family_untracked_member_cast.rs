@@ -93,6 +93,11 @@ fn rule_74t_member_vectors_hold() {
     let rows = lean_rows();
     assert_eq!(rows.len(), 17);
     for (spelling, base, arrow) in rows {
+        // Rule 74w: an access through pointer arithmetic is a base too, and a
+        // `->` root; the reading is the union (rule 74t's `accessed` still
+        // reads these rows as the Lean vectors say).
+        let arithmetic = ARITHMETIC.contains(&spelling.as_str());
+        let (base, arrow) = (base || arithmetic, arrow || arithmetic);
         let read = read(&spelling).unwrap_or_else(|| panic!("refused: {spelling}"));
         assert_eq!(
             read.bases,
@@ -106,6 +111,14 @@ fn rule_74t_member_vectors_hold() {
         );
     }
 }
+
+/// The `memberVectors` rows rule 74w reads as a `->` access through pointer
+/// arithmetic (`QCore.ReturnFamilyUntrackedArithAccess.arithVectors`).
+const ARITHMETIC: &[&str] = &[
+    "( n + p ) - > m",
+    "( ( long * ) p + n ) - > m",
+    "( n + ( p ) ) - > m",
+];
 
 /// `->` or `[` through one cast group, nested groups and parentheses makes
 /// the untracked root a base. At the base every one of these gave
@@ -161,11 +174,18 @@ fn the_base_readings_are_kept() {
         "( long ) p",
         "( ( long * ) p ) + n",
         "( ( long * ) p ) == ( ( long * ) a )",
-        "( n + p ) - > m",
-        "( ( long * ) p + n ) - > m",
-        "( n + ( p ) ) - > m",
     ] {
         assert_eq!(bases(expression), Some(vec![]), "{expression}");
+    }
+    // Rule 74w: an operand before the root stops this card's walk, but the
+    // access through the sum makes `p` a base
+    // (`legacy_return_family_untracked_arith_access.rs`).
+    for expression in ARITHMETIC {
+        assert_eq!(
+            bases(expression),
+            Some(vec!["p".to_owned()]),
+            "{expression}"
+        );
     }
     // An address and a `sizeof` of a member through a cast: refused, as at
     // the base.

@@ -13530,4 +13530,60 @@ through `ampersand_runs`.
     `member_vectors_hold`, `old_vectors_hold`);
     [report](../reports/return-family-untracked-member-cast/README.md).
 
+<a id="constraint-74w"></a>
+
+74w. **An untracked root accessed through pointer arithmetic is a base.**
+    Card RETURN-FAMILY-UNTRACKED-ACCESS-THROUGH-ARITHMETIC, extending
+    [rule 74r](#constraint-74r) and [rule 74t](#constraint-74t) to the
+    follow-up rule 74t's card registered. Family S admits any use of an
+    untracked root, but a root that `->`, `[` or a unary `*` accesses is a
+    base of the read node, and a `->` root carries its C02-P-ALIAS reading.
+    At the base the direct tests and both walks stopped at a `+` or `-`
+    between the root and the access. So `long w(long k) { const struct s *p
+    = 0; return (p + 1)->n; }`, `(k + p)->n`, `((const struct s *)p + 1)->n`,
+    `(p + 1)[0]` and `*(k + p)` were `Safe`, while `return p->n + 1;` and
+    `*(p + 1)` are `Unknown` (`unknown_alias:p`). That is the admitting
+    direction. The old tests are kept. A new one,
+    `accessed_through_arithmetic`, widens a span outward from the root
+    through a group `cast_semantics::type_group_open` reads as a type before
+    it (rule 12h's transparency, the one detector), through a `(` and `)`
+    right around it, and through a parenthesised **arithmetic group**: a
+    binary `+`, `-`, `/` or `%` next to the span (never `- >`), the other
+    neighbour such an operator or the group's own parenthesis, inside the
+    innermost `( … )` around the span. Only that group's matching `)` is
+    read, so no closing parenthesis past the ones the walk opened is (rule
+    74t's guard). When at least one arithmetic group was crossed and `->` or
+    `[` follows what the walk reached, or a `*` that may be unary under
+    either of rule 74h's readings precedes it, the root is a base, and a
+    `->` root for `->`. A group is **classified** when the span is a term of
+    a sum (`+`, `-` or the group's parenthesis on each side) and its other
+    operands are numeric literals, declared scalars (no pointer level),
+    `sizeof` of a resolved type, parentheses and `+ - * / %`. An access
+    through an unclassified group (`(p - q)->f`, `(a + p)[0]`, `(n % p)->f`,
+    `(p + (long) n)->f`) refuses the whole expression, which then falls to
+    the typed return route and the return refusal. A declared scalar root is
+    an index, never the pointer, and is not read. A `*` next to the root is
+    never read as a product: a type group's `*` spells the same
+    (`( long * const )`), and a product is no pointer, so `(p * 2 + 1)->f`
+    and a unary operand (`(*p + 1)->f`, `(-p + 1)->f`) keep the base's
+    reading.
+
+    Bases and `->` roots only grow, and the one new refusal is the
+    expression's, so every result the tip admits, the base admitted. Tracked
+    and may-bind roots (refused through arithmetic, as before), an unbound
+    formal (`Safe`), `&(p + 1)->n` (family S's `&` refusal), `sizeof((p +
+    1)->n)`, a comparison `(p + 1) != 0` and a pointer result `return p + 1;`
+    read as before. A sum inside a subscript (`a[p + 1]`) is an index and no
+    access of `p`. **Do not** write a second type-group detector, **do not**
+    admit an access through an unclassified group, **do not** read a `*` as
+    a product, and **do not** drop the old tests (the union is the reading).
+    Premises stated, not proved: the token classes and the declared-scalar
+    fact (trust boundary 28). `QCore.ReturnFamilyUntrackedArithAccess`
+    (`no_sum_keeps_the_reading`, `no_access_keeps_the_reading`,
+    `a_classified_sum_is_accessed`, `an_unclassified_access_refuses`,
+    `old_base_kept`, `old_arrow_kept`, `names_kept`,
+    `the_fix_only_refuses_more`, `old_misses_the_base`,
+    `another_pointer_refuses`, `arith_vectors_hold`);
+    [report](../reports/return-family-untracked-arith-access/README.md).
+
 <!-- generated:rules:end -->

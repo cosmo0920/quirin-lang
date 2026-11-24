@@ -447,6 +447,7 @@ import QCore.ReturnExpressionEvaluation
 import QCore.ReturnExpressionFamilies
 import QCore.ReturnFamilyDerefCast
 import QCore.ReturnFamilyStarCast
+import QCore.ReturnFamilyUntrackedArithAccess
 import QCore.ReturnFamilyUntrackedDerefCast
 import QCore.ReturnFamilyUntrackedMemberCast
 import QCore.ReturnPositionEscape
