@@ -1,0 +1,10 @@
+{
+ "schema": "quirin-amendments/2",
+ "card": "WINDOWS-CI-LLP64-FIXTURES-2",
+ "base": "69c64255f",
+ "measured_tip": "1cb8ea8c9",
+ "profiles": [],
+ "increment_paragraph": "**WINDOWS-CI-LLP64-FIXTURES-2** (USER DECISION 2026-11-24: fix the Windows CI failures on main; [report](../../reports/windows-ci-llp64-fixtures-2/README.md)). Test-only, by r42's method: Windows CI (`x86_64-pc-windows-msvc`, 689 units, 9530 passed, 8 failed) failed 7 of 9 `in_place_regex_certified` tests and `cg10_sole_residual_contracts::round_4_xxh_finalize_reads_a_decayed_member`. Neither is an analyser defect: the regex fixture spelled `regex.qv`'s `usize` positions (`regexec`'s `nmatch`, `regerror`'s result and `errbuf_size`) as plain `unsigned long`, unreadable to the declared-ABI reader under LLP64 (rule 11q, `abi-unreadable-declaration`), and the XXH fixture's `typedef enum` types at `lz4_stream.qv`'s `u32` positions are `int` under the MSVC ABI (`unsigned int` on Linux; Clang 21 `_Static_assert` on both targets), so rule 12u's reading disagreed (`abi-parameter-type-disagreement`). The regex `DECLARATIONS` now spell `__SIZE_TYPE__`; the XXH types are `unsigned int` typedefs beside untagged enumerations of the same constants (a C23 fixed underlying type is unreadable to the reader on both targets), also in the rule 66 refusal test, which on Windows had been `Unknown` at the ABI check instead of at rule 66. No gateway, contract, provider, rule or Lean change; assertions unchanged. Simulated Windows (Clang 21 `--target=x86_64-pc-windows-msvc` through `QCORE_CLANG`) reproduces exactly CI's 8 failures and diagnostics on the original fixtures and passes both targets (9 + 9) with the fix; Linux passes 9 + 9. A lister, `docs/reports/windows-ci-llp64-fixtures-2/scripts/llp64_fixture_scan.py`, matches plain-long, enum and host-include spellings against the contract signature position they bind and exits nonzero with file:line; over the queued branches it flags only r73's `in_place_regex_certified.rs` and new `in_place_regex_failure_use.rs` (same `DECLARATIONS`). Windows CI itself was not run here.",
+ "status_edits": [],
+ "ledger": []
+}
