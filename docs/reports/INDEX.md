@@ -115,6 +115,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [callback-member-non-c-units](callback-member-non-c-units/README.md) | CALLBACK-MEMBER-NON-C-UNITS |
 
+| [callback-member-released-fold](callback-member-released-fold/README.md) | CALLBACK-MEMBER-RELEASED-REQUIREMENT-FOLD: a candidate's requirement at every position |
+
 | [callback-supplied-null-actual](callback-supplied-null-actual/README.md) | CALLBACK-SUPPLIED-NULL-ACTUAL: a callee-supplied callback actual that may be NULL |
 
 | [callee-retention-class1](callee-retention-class1/README.md) | CALLEE-RETENTION-CLASS1: class 1 split by shape |
@@ -238,6 +240,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [cg23-relational-postconditions](cg23-relational-postconditions/README.md) | CG23-RELATIONAL-POSTCONDITIONS: return-code dispositions and exit-specific summaries |
 
 | [cg24-alias-extent-frame-vocabulary](cg24-alias-extent-frame-vocabulary/README.md) | CG24-ALIAS-EXTENT-FRAME-VOCABULARY |
+
+| [cg25-in-place-regex](cg25-in-place-regex/README.md) | CG25-IN-PLACE-REGEX |
 
 | [cg25-resource-kinds](cg25-resource-kinds/README.md) | CG25-RESOURCE-KINDS: a library-handle kind and an in-place kind |
 
@@ -1245,6 +1249,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [retaining-call-minted-name-actuals](retaining-call-minted-name-actuals/README.md) | RETAINING-CALL-MINTED-NAME-ACTUALS |
 
 | [retention-unmatched-removal-poisons](retention-unmatched-removal-poisons/README.md) | RETENTION-UNMATCHED-REMOVAL-POISONS |
+
+| [return-family-star-cast](return-family-star-cast/README.md) | RETURN-FAMILY-STAR-AFTER-UNRESOLVED-CAST: family S keeps both readings of an undecided cast |
 
 | [review-audit-runner](review-audit-runner/README.md) | Review audit-runner cancellation and failure observation |
 

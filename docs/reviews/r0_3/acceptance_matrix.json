@@ -6920,11 +6920,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Landing integrate/r62 (base main 2c60986b0, after r61 and the other session's SP6/SP7/SP8 landing; merges CAST-BEFORE-STAR-READ-AS-BINARY fd60e6eb0, base 7450d69af, in 156f8a339; generated docs/agents/README.md, docs/agents/gateway.md and proof/QCore.lean auto-merged and regenerated, no conflicts; third_party/libevent checked out). USER DECISION 2026-11-23: \"launch the cast-before-star card\"; \"yes, land the cast-before-star card as r62\". Amendments applied in 5cfca8170 with --profiles-base origin/main: CAST-BEFORE-STAR-READ-AS-BINARY retired; RETURN-FAMILY-STAR-AFTER-UNRESOLVED-CAST registered; profiles []; status_edits empty. Full landing gate on 5cfca8170 (private/integrate-r62/gate, raw record beside this file as gate-scope.json) via scripts/gate_scope.py --base origin/main --full --landing through private/toolchain/env.sh: Rust 680 units / 725 summaries, 9981 passed, 0 failed, 22 ignored; fmt, Clippy and both reevaluation examples exit 0; Lean (all) exit 0, 492 audits (new QCore.CastBeforeStar; SP7/SP8 added two). No providers/ path changed by the card, so the provider gate was not selected; provider_tests 174 (1 ignored) is carried from the SP7/SP8 combined landing gate on 35b5f48a2, which ran it. Python (807 tests) exited 1 only on the stale-matrix check test_the_derived_facts_are_recomputed_rather_than_carried, cleared by regenerating the matrix from this record. Change: rule 74g (new): legacy_refused_operands' dereference and aggregate_store premise 4 read a `*` after a `)` through ampersand_runs::may_close_a_cast; the refused hand-on hands on both `*p` and `p` when the group may close a cast (neither reading contains the other), and premise 4 counts such a `*` as a dereference (refusing the base). No pin moved. Card measurement (opt-in current --monkey-linked, Fluent Bit 046accf6): base 7450d69af and tip 404136f21 both 1172/2/3622/8, no row or leaf changed, matching the committed prediction (none). Pinned-route parity (quirin-audit measure --declared) was not run: this host holds no build/cycle19 inputs or baselines. No profile baseline is changed and land.py publish is owed.",
-  "workspace_tests": 9981,
+  "note": "Landing integrate/r65 (base main 395cb4d00, after r64; merges CALLBACK-MEMBER-RELEASED-REQUIREMENT-FOLD e2ba78190, base 2c60986b0, in e5d1fa138; generated docs/agents/README.md and docs/agents/gateway.md conflicted on rules 74h/74i/74j and were resolved by rerunning scripts/gen_rule_docs.py; docs/QCORE_CONTRACT_SPEC_r0_3.md and proof/QCore.lean auto-merged; third_party/libevent checked out). USER DECISION 2026-11-23: picked the \"soundness first\" set; 2026-11-24: \"yes, land them as r63, r64 and r65\". Amendments applied in f683018c9 with --profiles-base origin/main: CALLBACK-MEMBER-RELEASED-REQUIREMENT-FOLD retired; CALLBACK-MEMBER-RELEASED-EFFECT-ORDER registered; profiles []; status_edits empty. Full landing gate on f683018c9 (private/integrate-r65/gate, raw record beside this file as gate-scope.json) via scripts/gate_scope.py --base origin/main --full --landing through private/toolchain/env.sh: Rust 684 units / 729 summaries, 10009 passed, 0 failed, 24 ignored; fmt, Clippy and both reevaluation examples exit 0; Lean (all) exit 0, 496 audits (new QCore.CallbackRequirementFold). No providers/ path changed, so the provider gate was not selected; provider_tests 174 (1 ignored) is carried from the SP7/SP8 combined landing gate on 35b5f48a2. Python (807 tests) exited 1 only on the stale-matrix check test_the_derived_facts_are_recomputed_rather_than_carried, cleared by regenerating the matrix from this record. Change: rule 74j (new), with a sentence in contract spec C04.19 item 2: callback_contracts::fold_requirement folds a candidate's resource_owned(n) requirement at every clause form (synchronous, table, plain member, slot): a borrowed position becomes owned(n); owned, consumed, released and stored positions keep their mode and are nullable only if every requirement is; out and removed positions refuse the call (callback-requirement-unfolded). At base the synchronous, table and plain member forms dropped the requirement (four fixture rows Safe at base). The shipped census (624 invocation clauses in 49 declarations) has no requirement where the fold changes a mode. Card measurement (opt-in current --monkey-linked, Fluent Bit 046accf6): base 2c60986b0 and tip 9180fc26f both 1172/2/3622/8, no row changed, matching the committed prediction (none). Pinned-route parity (quirin-audit measure --declared) was not run: this host holds no build/cycle19 inputs or baselines. No profile baseline is changed and land.py publish is owed.",
+  "workspace_tests": 10009,
   "provider_tests": 174,
   "python_evidence_validator_tests": 807,
-  "lean_audits": 493,
+  "lean_audits": 496,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
    "AuditAggregateOwnedField.lean",
@@ -6967,6 +6967,7 @@
    "AuditCallbackContracts.lean",
    "AuditCallbackForward.lean",
    "AuditCallbackLiteralPremise.lean",
+   "AuditCallbackRequirementFold.lean",
    "AuditCallbackSuppliedNull.lean",
    "AuditCallbackTaskHandoff.lean",
    "AuditCalleeSummaryScope.lean",
@@ -7112,6 +7113,7 @@
    "AuditHttpComputedLength.lean",
    "AuditHypothesisGraph.lean",
    "AuditIeee754.lean",
+   "AuditInPlaceCertifiedUse.lean",
    "AuditInPlaceMentionGuard.lean",
    "AuditIndexExtent.lean",
    "AuditIndexExtentFrames.lean",
@@ -7313,6 +7315,7 @@
    "AuditReturnCorrectness.lean",
    "AuditReturnExpressionEvaluation.lean",
    "AuditReturnExpressionFamilies.lean",
+   "AuditReturnFamilyStarCast.lean",
    "AuditReturnPositionEscape.lean",
    "AuditReturnRefusedCallLowering.lean",
    "AuditReviewHoldStanding.lean",
@@ -7426,7 +7429,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "full landing gate: every step exits 0 except the Python suite's stale-matrix check, cleared by regenerating the matrix from this record; provider gate not selected (no providers/ change), provider count carried from the SP7/SP8 combined landing",
   "full_language_conformance": false,
-  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
+  "measurement_provenance": "integrator_supplied (docs/reports/callback-member-released-fold/integration/gate.json)"
  },
  "named_followups": [
   {
@@ -14459,20 +14462,6 @@
    "recorded_by": "CG25-THREAD-KEY-AUTOMATIC-REVISIT"
   },
   {
-   "id": "CG25-IN-PLACE-REGEX-USE-CERTIFIED",
-   "title": "A regex use before the status test or on the failure edge is admitted Safe",
-   "why": "CG25's in-place use (QCore.ResourceKinds.transferI .use, route G's report_kind_violations) checks only the released bit, so for the regex kind `t = regexec(&re, …)` before `if (r)` tests regcomp's status, or on the nonzero (failure) edge, is admitted Safe (probe R3/R4 in the CG25-THREAD-KEY-AUTOMATIC-REVISIT report). Rule 11v (7) closes the same shape for thread keys only (report_uncertified_key_uses). The only tracked regex object on any route, rd_regex_match, uses `re` only after the zero edge, so no published Safe rests on it. Extending the certified-use check to by-address uses of every in-place kind is a semantic change for the regex kind.",
-   "source": "docs/reports/cg25-thread-key-automatic-revisit/README.md",
-   "recorded_by": "CG25-THREAD-KEY-AUTOMATIC-REVISIT"
-  },
-  {
-   "id": "CG25-IN-PLACE-REGEX-SHADOWED-NAME",
-   "title": "A regex local shadowing a file-scope object is tracked across both",
-   "why": "one_automatic_object counts only the VarDecls inside the function, so a block-scope `regex_t g;` that shadows a file-scope `regex_t g;` is tracked under a name the body also uses for the file-scope object: `{ regex_t g; r = regcomp(&g, p, 0); if (r) return 0; } regfree(&g);` is certified Safe though the local is never freed and the regfree frees the file-scope object (probe R2 in the CG25-THREAD-KEY-AUTOMATIC-REVISIT report). Rule 11v (7) requires every DeclRefExpr of a tracked key to designate its one declaration (every_reference_is); the regex kind lacks that check. rd_regex_match, the only tracked regex object on any route, shadows nothing, so no published Safe rests on it.",
-   "source": "docs/reports/cg25-thread-key-automatic-revisit/README.md",
-   "recorded_by": "CG25-THREAD-KEY-AUTOMATIC-REVISIT"
-  },
-  {
    "id": "AG1-TWO-BORROWED-CALLS",
    "title": "A scalar statement or a nested call holding several Borrowed-only, None-result calls stays refused (rule 14a reads exactly one)",
    "why": "Rule 14a admits a scalar statement whose value holds exactly one call whose contract has a None result and every position Borrowed, and says `Do not admit two calls` (QCore.ResidualAccessReadings.two_calls_are_never_read). Its own argument (such a call changes no binding any read decides on) holds for each of several calls, and for a nested `store(&d->x, load(&s->x))`. Shapes: `len = strlen(a->p) + strlen(b->q) + 2` (get_stream_path), `cmt_atomic_store(&dst->f, cmt_atomic_load(&src->f))` (cat_summary_values), `cmt_math_uint64_to_d64(cmt_atomic_load(&m->f))` (append_metric_value); AG1 probes s11 and s12 refused at a9c6dcf44. DISCHARGE: amend rule 14a (or 10y's data reading) with the generalised commutation lemma in Lean, fixtures with a releasing or owned call as the near-miss, and a measurement. AMENDED (CG10-INDIRECT-ACCESS-SOLE-RESIDUALS round 3): the sibling half is discharged by gateway rule 67, which lifts rule 14a's one-call limit (several sibling calls, none inside another's actuals, each `None`-result and all-`Borrowed`, each lowered alone; QCore.SiblingBorrowedCalls proves every order leaves every read decided alike and the releasing sibling the counterexample; `two_calls_are_never_read` withdrawn): `get_stream_path` Unknown -> Safe on the opt-in route. Open: the nested half (`cmt_atomic_store(&dst->f, cmt_atomic_load(&src->f))`, `cmt_math_uint64_to_d64(cmt_atomic_load(...))` in append_metric_value), which needs the inner call's scalar result as the outer call's actual; and the `rd_kafka_dbg`/`rd_rkb_log` macro blocks whose callees include the held logger rd_kafka_log0 (the largest two-call class, not an access question). AMENDED (CG10-EMBEDDED-LIST-BORROWED-CONTAINER): `pack_static_labels` (cmetrics `cmt_encode_msgpack.c`, blocked by the access refusal alone) is the nested half: `mpack_start_array(writer, cfl_list_size(&cmt->static_labels->list))`, an all-Borrowed None-result call over an embedded list nested in another call's actual; rule 69 reads only the first call's own actuals and leaves it.",
@@ -14781,13 +14770,6 @@
    "recorded_by": "NULLABLE-LAZY-CONSTRUCTOR-IN-LOOP"
   },
   {
-   "id": "CALLBACK-MEMBER-RELEASED-REQUIREMENT-FOLD",
-   "title": "A member invocation through a nullable released parameter does not fold a candidate's non-null requirement",
-   "why": "Found by OPENSSL-RELEASED-PARAMETER-SLOTS. At a call, legacy_retained_by.rs folds a candidate's resource_owned(n) requirement into the call's custody mode only at a borrowed position; the card added the fold at a released position for slot invocations only (a nullable release becomes non-null). The plain member form (resource_callback_member_invoked) also admits a resource_released object, and there a candidate's resource_owned(nonnull) at a resource_released(OBJ, nullable) position would be dropped, so a possibly null object could be handed to a candidate requiring a live one. Not reachable today: every shipped member invocation through a released object releases it nonnull (rd_kafka_op_destroy, mk_thread_destroy). DISCHARGE: fold the requirement at a released (and owned-nullable) position for every callback clause, or refuse the call; a gateway fixture and Lean parity. Size: small.",
-   "source": "docs/reports/openssl-released-parameter-slots/README.md",
-   "recorded_by": "OPENSSL-RELEASED-PARAMETER-SLOTS"
-  },
-  {
    "id": "SP7-FORMAL-BINDING-DESCRIPTIONS",
    "title": "Replace the English environment descriptions of formal bindings",
    "why": "Recorded by SP6-SYMBOLIC-HYPOTHESIS-ATOMS and SP6-GUARDED-SYMBOL-PROSE. Binding manifests' environment.variables descriptions and the FormalBinding records built in code (cjson_local_binding, plugin_source_witnesses) still describe their environments in English. They are not conditions a declaration states, and the manifests are digest-held, so converting them means a manifest migration. DISCHARGE: each description a reference to a registered term or typed definition, the manifests migrated with their digests, no verdict moved. Size: medium.",
@@ -14795,11 +14777,32 @@
    "recorded_by": "SP6-GUARDED-SYMBOL-PROSE"
   },
   {
-   "id": "RETURN-FAMILY-STAR-AFTER-UNRESOLVED-CAST",
-   "title": "`legacy_return_family::unary_position` reads a `*` or `&` after a group it cannot resolve as binary",
-   "why": "CAST-BEFORE-STAR-READ-AS-BINARY's census (report §1) found one more reader that decides a single `*` and `&` by the token before it: crates/qcore-c-gateway/src/legacy_return_family.rs `unary_position` (family S of W45-RETURN-EXPRESSION-FAMILIES, with `stars_before` and the `starred` base test). It has its own declaration-resolved cast reading, `is_cast_group`, which reads `(T)` as a cast only when the unit's declaration reader resolves `T` as a never-variably-modified type, and otherwise reads it as binary. For `return (T) *p;` with `T` an unresolved type name and `p` untracked, `p` is then not a base of the read node, so the flow check's possible `unknown_alias` refusal is missed (the admitting direction; a may-bind `p` still refuses through `stars_before`). Routing the `)` arm through `ampersand_runs::may_close_a_cast` is not a same-shape fix: for a may-bind root, the unary reading turns `stars_before`'s refusal into an admitted dereference base. That is an Unknown-to-admission move, and it needs its own direction assessment. DISCHARGE: decide `unary_position`'s `)` arm with the shared detector, or show that an unresolved type name cannot reach family S. Assess both directions (the `starred` base and `stars_before`), pin `return (T) *p;` with `T` unresolved, and measure the system and slice routes.",
-   "source": "docs/reports/cast-before-star/README.md",
-   "recorded_by": "CAST-BEFORE-STAR-READ-AS-BINARY"
+   "id": "RETURN-FAMILY-DEREF-THROUGH-RESOLVED-CAST",
+   "title": "Family S counts `*(long *)*q` as one dereference of a may-bind `q`",
+   "why": "RETURN-FAMILY-STAR-AFTER-UNRESOLVED-CAST found (report §6, unit level, by a scratch probe at its tip; the base reads resolved casts the same way) that crates/qcore-c-gateway/src/legacy_return_family.rs `scalar_read` admits `* ( long * ) * q` with `q` may-bind as the root of one dereference (`bases: [\"q\"]`). `stars_before` with a finite `closing` stops at the `)` of the resolved cast group, so the outer `*`, which dereferences the converted value `*q`, is not counted. That is a second dereference, which the module header says refuses for a may-bind name, and rule 12h's cast transparency applies only where `closing` is `usize::MAX`. The direction is admitting. The same reading counts `sizeof ( long ) * q` as one dereference of `q`, but a conforming body cannot spell it with a pointer `q` (C11 6.5.5p2), and a declared scalar never reaches the may-bind test. DISCHARGE: make a resolved cast group transparent to a starred may-bind root's count (so `*(T *)*q` counts two and refuses) or show that no such return reaches family S end to end, without admitting `*(T *)q` (one dereference of the converted value, not of `q`'s pointee alone); pin `return *(long *)*q;` end to end and measure.",
+   "source": "docs/reports/return-family-star-cast/README.md",
+   "recorded_by": "RETURN-FAMILY-STAR-AFTER-UNRESOLVED-CAST"
+  },
+  {
+   "id": "CG25-IN-PLACE-REGEX-REGERROR-FAILURE-EDGE",
+   "title": "A regerror of a failed regcomp's object is refused, so rd_regex_match is Unknown",
+   "why": "Rule 74i refuses every use of a tracked in-place object that its initialiser status has not certified. POSIX defines regerror on the regex_t of a failed regcomp, but regex.qv kinds regerror's preg exactly as regexec's (resource_borrowed + resource_kind(preg, regex)), and the rule reads no callee by name, so `if (r) { regerror(r, &re, …); return 0; }` refuses. This moved rdregex.c rd_regex_match Safe -> Unknown on the opt-in current route (base 2c60986b0, tip a7e8bea5b; corpus predicted the same). DISCHARGE: a contract clause (contract language and libc provider) that marks a use defined on a possibly failed object, read by rule 74i as admitted on the failure edge and before the test but not before the initialiser or after the finaliser; pin regerror on the failure edge Safe and regexec there refused; remeasure rd_regex_match.",
+   "source": "docs/reports/cg25-in-place-regex/README.md",
+   "recorded_by": "CG25-IN-PLACE-REGEX"
+  },
+  {
+   "id": "FRAME-HOLDER-SHADOWED-NAME",
+   "title": "Frame holders ask one_automatic_object without every_reference_is",
+   "why": "Rule 12t's frame holder (crates/qcore-c-gateway/src/legacy_retained_by.rs, `holder`) and the callback registry's `frame_registry_holder` (crates/qcore-c-gateway/src/legacy_callback_route.rs) accept `&NAME` as frame storage when one_automatic_object holds, which counts only the function's own VarDecls. A local holder shadowing a file-scope object of the same name that the body also names may be read as one frame object, the shape rule 74i closed for in-place kinds. Direction not assessed. DISCHARGE: assess whether a mention of the file-scope object can reach either reading; if so require every_reference_is (Parser::automatic_object) and pin the shadowing shape.",
+   "source": "docs/reports/cg25-in-place-regex/README.md",
+   "recorded_by": "CG25-IN-PLACE-REGEX"
+  },
+  {
+   "id": "CALLBACK-MEMBER-RELEASED-EFFECT-ORDER",
+   "title": "A candidate member effect beside a plain member invocation through a released object is applied after the release",
+   "why": "Found by CALLBACK-MEMBER-RELEASED-REQUIREMENT-FOLD. OPENSSL-RELEASED-PARAMETER-SLOTS refuses a call whose slot invocation through a released parameter has a candidate member effect (member-path state, member reading deferred to a constructed state, registry use: callback-beside-release), because the transfer applies the custody contract, release included, before the callback route. That check is keyed on released_slot_objects (legacy_retained_by.rs), so it covers slot invocations only; a plain resource_callback_member_invoked through a released object (rd_kafka_op_destroy) still has such effects applied after the release, as before r60. Not shown to be unsound; it may already be fail-closed through the route's reading of a released object. DISCHARGE: decide whether the plain member form needs the same refusal (or an ordering proof), with a gateway fixture and Lean parity. Size: small.",
+   "source": "docs/reports/callback-member-released-fold/README.md",
+   "recorded_by": "CALLBACK-MEMBER-RELEASED-REQUIREMENT-FOLD"
   }
  ],
  "updated": "Completed plugin premise integration; exact hand-maintained union retains810followups, borrowed measured-source8419Rust/354Lean/freshcard133provider, exact source equivalence checked; authoritative root committed-matrix Python confirmation in integration receipt. CMetrics map/opts API model specifications added at the explicit user request. Eight declared-model API contracts remain outside interpreted views, with CMT-MAP-OPTS-CONTRACT-ADOPTION and CMT-LABELED-HASH-ZERO-STATIC-STORAGE Open. No trusted API coverage is claimed; the source gate is recorded by this card alongside its separate initializer native checkpoint. W48-CMT-TRACKED-INTERIOR-SELF-INIT implements rule 36b's checked initializer effect transport for an exact live owned root or embedded record, retaining actual self writes, invalidating aliased member facts and preserving resource obligations; nondefault custody frames refuse and no ordinary summary is exported. The canonical CFL intrusive_list.qv declares matching audit preconditions/effects; two CMetrics .qv modules add six map and two opts lifecycle models, including transitive ownership, partial failure, borrowed results and uncleared cleanup fields. All remain outside interpreted views; checked API adoption and labeled zero-hash storage accounting have named Open follow-ups. Fresh BASE/planner precedes prediction f18d96065 and implementation; the later contract amendment 08da23123 precedes .qv edits. Native corpus BASE/TIP Safe/Unknown/Pending/provisional-Unsafe: 1009 / 3816 / 0 / 9 to 1011 / 3814 / 0 / 9; full system/slice, 5781 NULL dictionaries and runtime projections are compared, 241 semantic leaves accounted, zero unexplained leaves and no prior Safe loss. Gate 8654 Rust / 370 Lean / 374 Python, provider 133 Rust / 25 Python and all five package verifies pass. The actual deep source reader uses 328 KiB below 1 MiB. Full getter closure remains Open; W48-CMT-SELF-INIT-DISJOINT-FRAMES tracks the next bounded frame extension, and W48-EXACT-RETURN-WITNESS-PRECISION is unchanged. Native evidence is isolated to measured e92d8aef35a8bd14550e90219d19a56eb3b196e7; later source gate 2d0d85299b830aa24d7f200d63a308653582363f validates the added declared API models separately; see docs/reports/w48-cmt-tracked-interior-self-init/README.md."

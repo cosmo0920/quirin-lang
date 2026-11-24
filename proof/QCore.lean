@@ -61,6 +61,7 @@ import QCore.CallbackContracts
 import QCore.CallbackCoverage
 import QCore.CallbackForward
 import QCore.CallbackLiteralPremise
+import QCore.CallbackRequirementFold
 import QCore.CallbackSource
 import QCore.CallbackSuppliedNull
 import QCore.CallbackTaskHandoff
@@ -224,6 +225,7 @@ import QCore.Ieee754Ops
 import QCore.Ieee754Round
 import QCore.Ieee754Vectors32
 import QCore.Ieee754Vectors64
+import QCore.InPlaceCertifiedUse
 import QCore.InPlaceMentionGuard
 import QCore.Index
 import QCore.IndexExtent
@@ -444,6 +446,7 @@ import QCore.ReturnCodeHandOff
 import QCore.ReturnCorrectness
 import QCore.ReturnExpressionEvaluation
 import QCore.ReturnExpressionFamilies
+import QCore.ReturnFamilyStarCast
 import QCore.ReturnPositionEscape
 import QCore.ReturnRefusedCallLowering
 import QCore.ReviewHoldStanding

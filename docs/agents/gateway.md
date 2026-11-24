@@ -13270,7 +13270,8 @@ through `ampersand_runs`.
     only declarators or statement-initial stores. The exception is
     `legacy_return_family`'s `unary_position`, which has its own
     declaration-resolved cast reading and reads a group it cannot resolve as
-    binary; it is registered as `RETURN-FAMILY-STAR-AFTER-UNRESOLVED-CAST`.
+    binary; it was registered as `RETURN-FAMILY-STAR-AFTER-UNRESOLVED-CAST`
+    and is now [rule 74h](#constraint-74h)'s.
     **Do not** write a second cast detector, and **do not** narrow the
     hand-on union to the unary reading alone. Premises stated, not proved:
     rule 74f's (trust boundary 28). A `*p` hand-on reaches a verdict only
@@ -13280,5 +13281,143 @@ through `ampersand_runs`.
     `an_undecided_group_hands_on_both`, `a_call_is_binary`,
     `premise_four_only_refuses_more`, `star_vectors_hold`);
     [report](../reports/cast-before-star/README.md).
+
+<a id="constraint-74h"></a>
+
+74h. **Family S keeps both readings of an undecided cast.** Card
+    RETURN-FAMILY-STAR-AFTER-UNRESOLVED-CAST, extending
+    [rule 74g](#constraint-74g) to the reader its census registered.
+    `legacy_return_family`'s `unary_position` read a `*` or `&` after a `)`
+    as unary only when `is_cast_group` resolved the group as a type the unit
+    declares, and as binary otherwise. An unresolved type name reaches
+    family S (`volatile` is a rejecting qualifier, a pointer typedef is left
+    unresolved), so `return (volatile long) *p;` made an untracked `p` no
+    base of the read node, and through a null `p` the function was `Safe`
+    (the admitting direction). `operator_at` now keeps `is_cast_group`'s
+    resolved cast, asks the one shared detector about every other `)`, and
+    calls a group it cannot rule out **undecided**. The three tests then
+    keep what either reading raises. **The `&` refusal** fires when either
+    reading takes an address. **The starred base** of an untracked root is
+    the union of both readings' bases. **A may-bind root** is the root of
+    one dereference only when `stars_before` counts exactly one `*` under
+    the operand reading **and** under the cast reading. A member or
+    subscript root must count none under the cast reading. The count is
+    monotone in the reading, so the two bound every mixed reading. The cast
+    reading alone would turn `stars_before`'s refusal of `(T) *q` into an
+    admitted dereference base; reading both keeps the refusal, which the
+    typed return route (rule 10k) then decides from Clang's AST. Every test
+    refuses wherever the base refused, and no admission moves toward `Safe`.
+    The detector's objects are rule 74f's (`publication::value_names`), read
+    from the unit's token stream on first use. With no body located the set
+    is empty, so every `( name )` is undecided. **Do not** write a second
+    cast detector, **do not** read an undecided group with one reading
+    alone, and **do not** drop `is_cast_group`'s resolved knowledge.
+    Premises stated, not proved: rule 74f's (trust boundary 28).
+    `QCore.ReturnFamilyStarCast` (`address_keeps_every_reading_refusal`,
+    `starred_keeps_every_reading_base`, `count_mono`,
+    `starred_admission_needs_every_reading`,
+    `member_admission_needs_every_reading`,
+    `the_fix_only_refuses_more_starred`, `the_fix_only_refuses_more_member`,
+    `the_cast_reading_alone_would_admit`, `family_vectors_hold`);
+    [report](../reports/return-family-star-cast/README.md).
+
+<a id="constraint-74i"></a>
+
+74i. **Every in-place use is certified, and every in-place object is one
+    declaration.** Card CG25-IN-PLACE-REGEX (USER DECISION 2026-11-23, the
+    "soundness first" set; `legacy_in_place_custody.rs`:
+    `report_uncertified_key_uses`, `Parser::automatic_object`), discharging
+    `CG25-IN-PLACE-REGEX-USE-CERTIFIED` and
+    `CG25-IN-PLACE-REGEX-SHADOWED-NAME`. [Rule 11v](#constraint-11v) (7)
+    closed two fail-open shapes for `thread_key` only, and the `regex` kind
+    kept both. CG25's in-place use checked only the released bit, so
+    `regexec(&re, …)` before `if (r)` tested `regcomp`'s status, on the
+    nonzero edge, or before any `regcomp` was certified `Safe` (probes R3,
+    R4). And `one_automatic_object` counts only the function's own
+    `VarDecl`s, so a block-scope `regex_t g` shadowing a file-scope `g` that
+    the body also names was tracked across both objects: `{ regex_t g; r =
+    regcomp(&g, …); if (r) return 0; } regfree(&g);` was `Safe` though the
+    local is never freed (probe R2). (1) **Certified use, every in-place
+    kind.** 11v (7)'s check now reads every kinded borrowed position of
+    every in-place kind, by address as well as by value. A use of an object
+    that a creation in this CFG tracks is admitted only where the settled
+    state certifies it: one identity, not unknown, not possibly failed, site
+    live or released. A released site stays 11v's `use_after_close`
+    candidate. Every other state refuses (`Unknown`, "use of in-place object
+    `re` not certified by its initialiser status (rule 74i)"; a key keeps
+    11v (7)'s text). The refusal, not an `Unsafe` candidate, is the right
+    reading. Whether the failure edge or the untested path is reachable
+    depends on `regcomp` failing, and nothing validates that. An
+    unvalidated `Unsafe` would also accuse the common, defined `regerror`
+    use. (2) **One declaration, every in-place kind.** Every in-place actual
+    must name the one automatic object of its name (`one_automatic_object`),
+    and every `DeclRefExpr` naming it must designate that `VarDecl`
+    (`every_reference_is`). A `regex_t` shadowing a file-scope object the
+    body also names refuses with 11v (2)'s "not the address of one
+    automatic object". A shadowing local whose every reference is its own
+    stays tracked. (3) **Over-refusal, recorded.** The contract language has
+    no clause that tells `regerror`, which POSIX defines on the `regex_t` of
+    a failed `regcomp`, from `regexec`. Providers are outside this card, and
+    the rule reads no callee by name, so `regerror(r, &re, …)` on the
+    failure edge refuses too. That moves `rd_regex_match`, CG25's one
+    `Unknown -> Safe` row, back to `Unknown`. The follow-up that registered
+    the card said `rd_regex_match` uses `re` only after the zero edge; its
+    real spelling calls `regerror` on the failure edge
+    (`CG25-IN-PLACE-REGEX-REGERROR-FAILURE-EDGE`). **Do not** admit an
+    uncertified use of any in-place kind, name a callee to exempt one, or
+    track a name that a reference outside its one declaration can name.
+    Premises stated, not proved: CG25's libc premise (`regcomp` returns zero
+    exactly when it compiled the object) and faithful Clang declaration and
+    reference ids (trust boundary 28). `QCore.InPlaceCertifiedUse`
+    (`AuditInPlaceCertifiedUse.lean`: `each_step_agrees_or_refuses`,
+    `no_verdict_becomes_safe`, `a_safe_verdict_used_only_certified_objects`,
+    `a_shadowed_name_is_refused`, and probes R2-R4 `Safe` under CG25's
+    reading and refused under this one); `tests/in_place_regex_certified.rs`;
+    [report](../reports/cg25-in-place-regex/README.md).
+
+<a id="constraint-74j"></a>
+
+74j. **A candidate's requirement is folded at every position and clause
+    form.** Card CALLBACK-MEMBER-RELEASED-REQUIREMENT-FOLD
+    (`callback_contracts::fold_requirement`, applied in
+    `legacy_retained_by.rs`). The callback route collects a candidate's
+    `resource_owned(n)` requirement on a parameter actual of the call
+    (`require`) for the synchronous invocation (rule 13u, with its
+    `_or_default` form), the table dispatch (rule 13v) and the member
+    invocation in its plain and slot forms ([rule 12n](#constraint-12n)). The
+    registry invocation (rule 13w) and a member reading deferred to a
+    constructed state refuse any requirement (`callback-effectful`) and put
+    none on the call. Before this card the call folded the requirement only
+    at a borrowed position, which then reads as `resource_owned(n)`, and at a
+    released slot object (OPENSSL-RELEASED-PARAMETER-SLOTS). It dropped the
+    requirement everywhere else, because the loader restricts no actual's
+    mode. So a plain member invocation through `resource_released(OBJ,
+    nullable)`, or an actual at a nullable owned or consumed position, let a
+    possibly null object reach a candidate that requires it live. The fold
+    now reads no clause form. A borrowed position keeps rule 13u's reading.
+    An owned, consumed, released or stored position already requires the
+    object held, or null where nullable, before the call's effects: it keeps
+    its mode, nullable only when both the mode and every requirement on it
+    are (r60's slot fold, now general). An out position names a destination,
+    and a removed one an element its owner holds. No mode states the
+    requirement there, so the call refuses (`callback-requirement-unfolded`)
+    rather than drop it, as it does for a position the declaration does not
+    have. The fold only strengthens a held position, so no row the declared
+    mode refused becomes `Safe`. The census of the shipped declarations (624
+    invocation clauses in 49 declarations, report §1) found no requirement
+    where the fold changes a mode: the non-borrowed actuals are non-null
+    (`rd_kafka_op_destroy`, `rd_kafka_background_queue_serve`,
+    `rd_kafka_poll_cb`) or r60's slot object (`EVP_MD_CTX_free`), and
+    `mk_thread_destroy` hands its candidate `_`. **Do not** fold a
+    requirement anywhere but through `fold_requirement`, and **do not** drop
+    one at a position it cannot fold. Premises stated, not proved: a
+    candidate's contract in force states its requirement (trust boundary 28).
+    `QCore.CallbackRequirementFold`
+    (`the_old_fold_dropped_a_non_null_requirement`,
+    `the_fold_never_drops_a_non_null_requirement`,
+    `the_old_fold_differed_by_form`, `the_fold_agrees_with_the_slot_fold`,
+    `the_fold_only_strengthens`, `a_non_null_position_is_a_fixed_point`,
+    `out_and_removed_refuse`, `fold_vectors_hold`);
+    [report](../reports/callback-member-released-fold/README.md).
 
 <!-- generated:rules:end -->
