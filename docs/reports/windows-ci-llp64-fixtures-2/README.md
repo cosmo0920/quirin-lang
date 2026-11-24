@@ -130,7 +130,7 @@ git diff --name-only <main>...<card tip> -- '*tests*' \
   `abi-parameter-type-disagreement` (`orig-win.log`).
 * **Simulated Windows, whole workspace with xwin headers:** 688 units, 9,402 passed, 559 failed in 147 units (qcore-c-gateway 32, qcore-compiler 77, qcore-verification 31, qcore-audit 4, others 3); both fixed targets pass 9 + 9 there. Every failing unit is outside CI's failure list, so each is a simulation artifact of the kinds named under Sweep, not a Windows failure
   (`sweep-win.out`, `sweep-win/`, `sweep-failures.txt`).
-* **Scoped gate:** GATE_RESULT.
+* **Scoped gate:** `sh private/toolchain/env.sh python3 scripts/gate_scope.py --base 69c64255f --out private/llp64/gate` at `3863195ed`, all 9 steps exit 0. Those steps were submodules, fmt, 5 scoped Clippy runs, the Rust suite (11 targets, 67 passed, 0 failed) and the Python suite (807 tests). There was no Lean step and no provider step (`private/llp64/gate/gate.json`).
 * Windows CI itself cannot run here. The next Windows CI run on main confirms
   the fix.
 
