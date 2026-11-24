@@ -251,9 +251,20 @@ fn a_condition_keeps_every_path_refusal() {
     assert_eq!(keys, ["unknown_alias:b->items"], "{keys:?}");
 }
 
-/// One `NAME = PATH` operand is P2's borrowed read, then the existing null
-/// branch on `NAME`, which narrows only that alias and keeps its identity
-/// refusal (constraint 10b).
+/// One `NAME = PATH` operand is P2's borrowed read, then the null branch on
+/// `NAME`.
+///
+/// Re-pinned by card K5-LOCAL-ORIGIN-ALIASES (gateway rule 77, clauses (1),
+/// (2) and (3); argument in `docs/reports/r34-k-repair/README.md`). BEFORE:
+/// `Unknown ["unknown_alias:it"]`, rule 10b's identity refusal, which rule 77
+/// amends. Here `root(b)`, `auto(it)`, `writes(it) = {load(b->item)}` and
+/// `uses(it) = {nullTest}`, so `it ∈ borrowed_path`; the tested binding has
+/// `targets(it) = ∅ ∧ derivation(it) = identity ∧ ¬widened`, so the guard is
+/// `Refined`.
+///
+/// Near-miss: `Address ∈ uses(it)` (`&it`) gives `decide(Local, Address) =
+/// Withhold`, so `it ∉ borrowed_path` and rule 10b's arm keeps the refusal
+/// (the other leaf is the `&it` initialiser's own).
 #[test]
 fn an_assignment_operand_is_a_borrowed_read_then_the_null_branch() {
     if !clang_available() {
@@ -261,7 +272,16 @@ fn an_assignment_operand_is_a_borrowed_read_then_the_null_branch() {
     }
     let body =
         "int w(struct c_box *b) { struct c_item *it; if (!(it = b->item)) return 0; return 1; }";
-    assert_eq!(outcome(body), unknown(&["unknown_alias:it"]));
+    assert_eq!(outcome(body), safe());
+    let addressed = "int w(struct c_box *b) { struct c_item *it; struct c_item **at = &it; \
+        if (!(it = b->item)) return 0; return at != 0; }";
+    assert_eq!(
+        outcome(addressed),
+        unknown(&[
+            "unknown_alias:it",
+            "unsupported:unsupported assignment expression"
+        ])
+    );
 }
 
 #[test]

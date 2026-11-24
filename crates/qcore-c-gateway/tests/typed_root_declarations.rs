@@ -350,9 +350,18 @@ fn an_unprototyped_definition_or_a_non_local_root_keeps_the_refusal() {
 
 /// A declared local the lexical reader does not type is answered by the AST:
 /// `it` is one automatic `struct c_item *` of this body, so `it = b->item` is
-/// P2's borrowed read followed by the null branch, which keeps its identity
-/// refusal (rule 10b). A formal, a `static` local and a shadowed local are not
-/// declared locals.
+/// P2's borrowed read followed by the null branch. A formal, a `static` local
+/// and a shadowed local are not declared locals.
+///
+/// Re-pinned by card K5-LOCAL-ORIGIN-ALIASES (gateway rule 77, clauses (1),
+/// (2) and (3); argument in `docs/reports/r34-k-repair/README.md`). BEFORE:
+/// `Unknown ["unknown_alias:it"]`, rule 10b's identity refusal, which rule 77
+/// amends: `root(b) ∧ auto(it) ∧ writes(it) = {load(b->item)} ∧ uses(it) =
+/// {nullTest}` gives `it ∈ borrowed_path`, and `targets(it) = ∅ ∧
+/// derivation(it) = identity ∧ ¬widened` decides the guard. The two
+/// near-misses below stay refused: `storage(it) = static` and `|decls(it)| =
+/// 2` each give `it ∉ borrowed_path` (rule 77 (2) reads rule 62's automatic
+/// locals of one declaration only).
 #[test]
 fn an_assignment_operand_reads_the_ast_declared_local() {
     if !clang_available() {
@@ -360,10 +369,7 @@ fn an_assignment_operand_reads_the_ast_declared_local() {
     }
     let local = "int w(struct c_box *b, int (*cb[1])(int)) { struct c_item *it; \
         if (!(it = b->item)) return 0; return 1; }";
-    assert_eq!(
-        outcome(local),
-        ("Unknown", vec!["unknown_alias:it".to_owned()])
-    );
+    assert_eq!(outcome(local), ("Safe", Vec::new()));
     for body in [
         "int w(struct c_box *b, int (*cb[1])(int)) { static struct c_item *it; \
          if (!(it = b->item)) return 0; return 1; }",

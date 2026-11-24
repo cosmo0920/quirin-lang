@@ -1,0 +1,5 @@
+90a88ad70265a2aed1b489c22cc0fe480ca1d5b4550fd09052d00b7d1cc45944  private/repair/bin/quirin-audit-base
+d7a92136c9f0b2ab4d75ecd47df6b3d6ad3f290d6e0655db2de042a0fa3c5b43  private/repair/bin/quirin-audit-k1
+245beda580dddafcede6b7f8f50d78b0aa7878e06e7227417f9a51a2096ded1f  private/repair/bin/quirin-audit-k5
+c8caf19508e37779d7522f896ffe1f3b2a36776b089a37fb5cef39613f316d3d  private/measure/r34-landing/sides/base/src/target/release/quirin-audit
+60e1909cb21b102e38c7f283debb771fcfc782887cb7307768a5ce3c558d053c  private/measure/r34-landing/sides/tip/src/target/release/quirin-audit

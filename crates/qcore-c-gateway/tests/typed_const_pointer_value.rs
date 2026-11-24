@@ -263,8 +263,22 @@ fn a_const_pointer_value_from_a_bound_root_is_not_safe() {
 
 /// Step 2: `NAME = PATH` where `PATH` is a `void *` member and `NAME` an
 /// object pointer is an implicit bit-cast of the same pointer. It is P2's
-/// borrowed read; the null test on `NAME` then keeps its identity refusal
-/// (rule 10b), as for an uncast pointer.
+/// borrowed read; the null test on `NAME` is then decided as for an uncast
+/// pointer.
+///
+/// Re-pinned by card K5-LOCAL-ORIGIN-ALIASES (gateway rule 77, clauses (1),
+/// (2) and (3); argument in `docs/reports/r34-k-repair/README.md`). BEFORE:
+/// `Unknown ["unknown_alias:l"]`, rule 10b's identity refusal, which rule 77
+/// amends; the cast was not the refusal (the declared form below was `Safe`
+/// at the base). Rule 77 (2) reads a write through `NoOp`/`BitCast` casts:
+/// `root(b) ∧ auto(l) ∧ writes(l) = {BitCast(load(b->opaque))} ∧
+/// objectPointer(void *) ∧ uses(l) = {nullTest, deref}` gives `l ∈
+/// borrowed_path`, and `targets(l) = ∅ ∧ derivation(l) = identity ∧
+/// ¬widened` decides the guard.
+///
+/// Near-miss: `Address ∈ uses(l)` gives `l ∉ borrowed_path`, so the test
+/// keeps rule 10b's refusal (the other two leaves are the `&l`
+/// initialiser's and the return's over `l` and `at`).
 #[test]
 fn a_void_pointer_bit_cast_is_a_borrowed_read() {
     if !clang_available() {
@@ -272,7 +286,18 @@ fn a_void_pointer_bit_cast_is_a_borrowed_read() {
     }
     let assigned = "int w(const struct c_box *b) { const struct c_leaf *l; \
         if (!(l = b->opaque)) return -1; return l->weight; }";
-    assert_eq!(outcome(assigned), unknown(&["unknown_alias:l"]));
+    assert_eq!(outcome(assigned), safe());
+    let addressed = "int w(const struct c_box *b) { const struct c_leaf *l; \
+        const struct c_leaf **at = &l; if (!(l = b->opaque)) return -1; \
+        return l->weight + (at != 0); }";
+    assert_eq!(
+        outcome(addressed),
+        unknown(&[
+            "unknown_alias:l",
+            RETURN,
+            "unsupported:unsupported assignment expression"
+        ])
+    );
     let declared =
         "int w(struct c_box *b) { struct c_leaf *l = b->conf.opaque; c_peek(l); return 0; }";
     assert_eq!(outcome(declared), safe());

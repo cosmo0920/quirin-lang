@@ -104,3 +104,18 @@ move rdkafka_partition.c::rd_kafka_toppar_get0 Unknown -> Safe
 move rdkafka_sasl_cyrus.c::rd_kafka_sasl_cyrus_ready Unknown -> Safe
 move snappy.c::get_hash_table Unknown -> Safe
 ```
+
+## Post-measurement amendment (R34-K-REPAIR, 2026-11-25)
+
+The block above is unchanged; this section records the one move the landing
+measurement of the combined K tip (`c5cd10688`) found for this card that the
+frozen forecast did not declare. A unit-scoped reproduction (Monkey linked)
+at this card's tip `ad6b12a75` against `3ca85c7a6` moves it
+([R34-K-REPAIR](../r34-k-repair/README.md) §1):
+
+| Route | Function | Base | Measured | Rule 77 clause |
+|---|---|---|---|---|
+| corpus, twelve-home | `mk_core/mk_string.c::mk_string_html_escape` | Unknown | Safe | `writes(escape) ⊆ {null, literal}`, `uses(escape) ⊆ {nullTest, callArgument}`: the guard at line 510 is decided; with no refusal left the in-unit summary validates `Owned {nullable: true}`, which permits the nullable `return mk_string_dup("")` at line 462 (rule 74d's leaf belongs to the contract-free run only) |
+
+The forecast missed it because the row carried a second leaf (line 462),
+which is a consequence of the first, not an independent blocker.

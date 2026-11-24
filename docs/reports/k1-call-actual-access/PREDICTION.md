@@ -86,3 +86,18 @@ none
 route slice
 none
 ```
+
+## Post-measurement amendment (R34-K-REPAIR, 2026-11-25)
+
+The table above is unchanged; this section records what the landing
+measurement of the combined K tip (`c5cd10688`, base `4be28c3cd`) moved for
+this card and the frozen forecast missed. The forecast's premise "no
+librdkafka unit" on corpus was false: the eight-home corpus and twelve-home
+analyse the pinned librdkafka units. A unit-scoped reproduction at this
+card's tip `a5d07e184` against `3ca85c7a6` moves exactly these two rows and
+no other ([R34-K-REPAIR](../r34-k-repair/README.md) §1):
+
+| Route | Function | Base | Measured | Rule 75 clause |
+|---|---|---|---|---|
+| corpus, twelve-home | `rdkafka_broker.c::rd_kafka_broker_destroy_error` | Unknown | Safe | `& ( rk ) -> rk_terminate` drops `rk`'s address seed; the forecast's `current` row |
+| corpus, twelve-home | `rdkafka_partition.c::rd_kafka_toppar_is_on_cgrp` | Unknown | Safe | `& ( rktp ) -> rktp_lock` (lines 2766, 2772) drops `rktp`'s seed, so `rktp ∉ bound` and the read at 2768 needs no identity |
