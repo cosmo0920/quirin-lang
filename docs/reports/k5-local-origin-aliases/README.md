@@ -318,3 +318,26 @@ rule could flip (none was found by the targeted runs).
   base=rev:3ca85c7a6 --side tip=rev:<tip> --declared
   docs/reports/k5-local-origin-aliases/PREDICTION.md` on corpus, twelve-home,
   system and slice, then the user's `current --monkey-linked` rerun.
+
+## 10. Re-pins after the combined landing gate (R34-K-REPAIR)
+
+The one landing gate on the combined K tip `c5cd10688` found six pinned
+refusals reading `Safe`; each reproduces at this card's tip `ad6b12a75` alone
+and at no other card tip ([R34-K-REPAIR](../r34-k-repair/README.md) §1). Each
+pin predates this card and pinned rule 10b's identity refusal, the arm rule
+77 (3) amends; rule 77's stated admission covers each body exactly, so each
+is re-pinned to `Safe` with a near-miss beside it that stays refused
+(argument per pin in that report's §2):
+
+| Test (file::function) | Admission |
+|---|---|
+| `access_path_positions::an_assignment_operand_is_a_borrowed_read_then_the_null_branch` | `root(b) ∧ writes(it) = {load(b->item)} ∧ uses(it) = {nullTest}` |
+| `typed_root_declarations::an_assignment_operand_reads_the_ast_declared_local` | the same, through the AST reader's local |
+| `lexical_closure_nested_assignment::a_never_bound_root_still_certifies` | `writes(it) = {load(b->item)} ∧ uses(it) = {nullTest, deref}` |
+| `typed_const_pointer_value::a_void_pointer_bit_cast_is_a_borrowed_read` | `writes(l) = {BitCast(load(b->opaque))}`, clause (2)'s cast |
+| `scalar_read_identity::pointer_destination_load_is_decided_at_its_null_test` (was `pointer_destination_retains_opaque_identity_refusal`) | `writes(p) = {load(ch->st->pointer)}`, an `OpaqueValue` binding with `targets = ∅` |
+| `detach_lookup_membership::production_lookup_baseline_reads_the_loaded_cursor` (was `production_lookup_baseline_refuses_the_unresolved_returned_cursor`) | `writes(current_child) = {null, load(array->child), load(current_child->next)}`, clause (4)'s return |
+
+The same report adds `mk_string_html_escape` (corpus and twelve-home) to this
+card's measured moves: `writes(escape) ⊆ {null, literal}` and `uses(escape) ⊆
+{nullTest, callArgument}`.

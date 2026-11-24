@@ -1009,6 +1009,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [r03-loop-counts](r03-loop-counts/README.md) | Revision 0.3 R06: exact repetition and maximum counts |
 
+| [r34-k-repair](r34-k-repair/README.md) | R34-K-REPAIR: the combined K tip's six pin failures and three unpredicted moves |
+
 | [rdhttp-header-summary-gap](rdhttp-header-summary-gap/README.md) | RDHTTP-HEADER-SUMMARY-GAP: the unit index of a unit nesting beyond the default JSON limit |
 
 | [records-tooling](records-tooling/README.md) | RECORDS-TOOLING: profiles check, evaluation records scope, landing check |

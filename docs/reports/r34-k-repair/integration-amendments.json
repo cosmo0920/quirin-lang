@@ -1,0 +1,9 @@
+{
+ "schema": "quirin-amendments/2",
+ "card": "R34-K-REPAIR",
+ "base": "c5cd10688",
+ "measured_tip": "c5cd10688",
+ "increment_paragraph": "**R34-K-REPAIR** (round 34, 2026-11-25; [report](../../reports/r34-k-repair/README.md)). The one landing gate of the combined K tip `c5cd10688` failed six pinned refusals that read `Safe`, and its measurement found three unpredicted corpus moves. Per-tip runs, each with its own target directory, and a unit-scoped reproduction of `current` attribute every item to one card, with no interaction: the six pins (`access_path_positions`, `typed_root_declarations`, `lexical_closure_nested_assignment`, `typed_const_pointer_value`, `scalar_read_identity`, `detach_lookup_membership`) and `mk_string_html_escape` to K5 (gateway rule 77), and `rd_kafka_broker_destroy_error` and `rd_kafka_toppar_is_on_cgrp` to K1 (rule 75). Each Safe reading falls inside its rule's stated admission (`l ∈ borrowed_path ∧ untracked(l)` for rule 77 (3)/(4); `seed(& ( p ) -> f) = ∅` for rule 75). Each pin had pinned rule 10b's identity refusal, the arm rule 77 amends, so the six are re-pinned with near-misses that stay refused (two tests renamed). No gateway, contract or Lean change. K1's and K5's PREDICTION.md gain post-measurement amendments, and the corrected combined prediction (corpus and twelve-home Safe +16 each) matches the measurement; the three K3 twelve-home rows are confirmed as K3's corpus rows.",
+ "status_edits": [],
+ "ledger": []
+}

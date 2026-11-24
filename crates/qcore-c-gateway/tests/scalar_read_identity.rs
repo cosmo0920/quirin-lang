@@ -83,17 +83,44 @@ fn source_shaped_scalar_chain_assignment() {
     );
 }
 
+/// A pointer destination keeps the opaque lowering (`OpaqueValue`, a
+/// target-free, possibly-null binding), never the scalar route.
+///
+/// Re-pinned by card K5-LOCAL-ORIGIN-ALIASES (gateway rule 77, clauses (1),
+/// (2) and (3); argument in `docs/reports/r34-k-repair/README.md`; test
+/// renamed from `pointer_destination_retains_opaque_identity_refusal`).
+/// BEFORE: not `Safe`, rule 10b's identity refusal of the null test on `p`,
+/// which rule 77 amends: `root(ch) ∧ auto(p) ∧ writes(p) =
+/// {load(ch->st->pointer)} ∧ objectPointer(void *) ∧ uses(p) = {nullTest}`
+/// gives `p ∈ borrowed_path`, and the `OpaqueValue` binding has `targets(p) =
+/// ∅ ∧ derivation(p) = identity ∧ ¬widened`, so the guard is decided.
+///
+/// Near-miss: `Address ∈ uses(p)` gives `p ∉ borrowed_path`, and the test
+/// keeps the refusal over the same `OpaqueValue` lowering.
 #[test]
-fn pointer_destination_retains_opaque_identity_refusal() {
+fn pointer_destination_load_is_decided_at_its_null_test() {
     let summary = run(
         "int subject(struct Chunk *ch) { void *p = ch->st->pointer; if (p == 0) return 1; return 0; }",
     );
-    assert_ne!(
+    assert_eq!(
         summary.functions["subject"].status,
         AnalysisStatus::Safe,
         "{summary:#?}"
     );
     assert!(summary.functions["subject"].cfg.nodes.iter().any(|node| matches!(
+        &node.instruction, qcore_c_gateway::legacy_c::LegacyInstruction::OpaqueValue { destination, .. } if destination == "p")));
+    let addressed = run(
+        "int subject(struct Chunk *ch) { void *p = ch->st->pointer; void **at = &p; if (p == 0) return 1; return at == 0; }",
+    );
+    assert_ne!(
+        addressed.functions["subject"].status,
+        AnalysisStatus::Safe,
+        "{addressed:#?}"
+    );
+    assert!(addressed.functions["subject"].diagnostics.iter().any(|d| matches!(
+        &d.kind, qcore_c_gateway::legacy_c::LegacyDiagnosticKind::UnknownAlias { variable } if variable == "p")),
+        "{addressed:#?}");
+    assert!(addressed.functions["subject"].cfg.nodes.iter().any(|node| matches!(
         &node.instruction, qcore_c_gateway::legacy_c::LegacyInstruction::OpaqueValue { destination, .. } if destination == "p")));
 }
 

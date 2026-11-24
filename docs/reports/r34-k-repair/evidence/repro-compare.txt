@@ -1,0 +1,36 @@
+## base -> k1
+base {'Unknown': 318, 'Safe': 66} tip {'Unknown': 316, 'Safe': 68}
+lib/librdkafka-2.15.0/src/rdkafka_broker.c::rd_kafka_broker_destroy_error Unknown -> Safe
+lib/librdkafka-2.15.0/src/rdkafka_partition.c::rd_kafka_toppar_is_on_cgrp Unknown -> Safe
+## base -> k5
+base {'Unknown': 318, 'Safe': 66} tip {'Unknown': 315, 'Safe': 69}
+lib/librdkafka-2.15.0/src/rdkafka_partition.c::rd_kafka_topic_partition_get_current_leader_epoch Unknown -> Safe
+lib/librdkafka-2.15.0/src/rdkafka_partition.c::rd_kafka_topic_partition_get_leader_epoch Unknown -> Safe
+lib/librdkafka-2.15.0/src/rdkafka_partition.c::rd_kafka_toppar_get0 Unknown -> Safe
+## main -> combined
+base {'Unknown': 318, 'Safe': 66} tip {'Unknown': 313, 'Safe': 71}
+lib/librdkafka-2.15.0/src/rdkafka_broker.c::rd_kafka_broker_destroy_error Unknown -> Safe
+lib/librdkafka-2.15.0/src/rdkafka_partition.c::rd_kafka_topic_partition_get_current_leader_epoch Unknown -> Safe
+lib/librdkafka-2.15.0/src/rdkafka_partition.c::rd_kafka_topic_partition_get_leader_epoch Unknown -> Safe
+lib/librdkafka-2.15.0/src/rdkafka_partition.c::rd_kafka_toppar_get0 Unknown -> Safe
+lib/librdkafka-2.15.0/src/rdkafka_partition.c::rd_kafka_toppar_is_on_cgrp Unknown -> Safe
+## base-m -> k1-m
+base {'Unknown': 327, 'Safe': 73} tip {'Unknown': 325, 'Safe': 75}
+lib/librdkafka-2.15.0/src/rdkafka_broker.c::rd_kafka_broker_destroy_error Unknown -> Safe
+lib/librdkafka-2.15.0/src/rdkafka_partition.c::rd_kafka_toppar_is_on_cgrp Unknown -> Safe
+## base-m -> k5-m
+base {'Unknown': 327, 'Safe': 73} tip {'Unknown': 323, 'Safe': 77}
+lib/librdkafka-2.15.0/src/rdkafka_partition.c::rd_kafka_topic_partition_get_current_leader_epoch Unknown -> Safe
+lib/librdkafka-2.15.0/src/rdkafka_partition.c::rd_kafka_topic_partition_get_leader_epoch Unknown -> Safe
+lib/librdkafka-2.15.0/src/rdkafka_partition.c::rd_kafka_toppar_get0 Unknown -> Safe
+lib/monkey/mk_core/mk_string.c::mk_string_html_escape Unknown -> Safe
+## main-m -> combined-m
+base {'Unknown': 327, 'Safe': 73} tip {'Unknown': 321, 'Safe': 79}
+lib/librdkafka-2.15.0/src/rdkafka_broker.c::rd_kafka_broker_destroy_error Unknown -> Safe
+lib/librdkafka-2.15.0/src/rdkafka_partition.c::rd_kafka_topic_partition_get_current_leader_epoch Unknown -> Safe
+lib/librdkafka-2.15.0/src/rdkafka_partition.c::rd_kafka_topic_partition_get_leader_epoch Unknown -> Safe
+lib/librdkafka-2.15.0/src/rdkafka_partition.c::rd_kafka_toppar_get0 Unknown -> Safe
+lib/librdkafka-2.15.0/src/rdkafka_partition.c::rd_kafka_toppar_is_on_cgrp Unknown -> Safe
+lib/monkey/mk_core/mk_string.c::mk_string_html_escape Unknown -> Safe
+## base -> main
+base {'Unknown': 318, 'Safe': 66} tip {'Unknown': 318, 'Safe': 66}

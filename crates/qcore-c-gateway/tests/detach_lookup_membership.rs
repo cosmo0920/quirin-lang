@@ -24,8 +24,27 @@ fn frame() -> String {
     retained_frame::for_target(ACTUAL_FRAME)
 }
 
+/// The single-function route over the retained lookup.
+///
+/// Re-pinned by card K5-LOCAL-ORIGIN-ALIASES (gateway rule 77, clauses (1),
+/// (2), (3) and (4); argument in `docs/reports/r34-k-repair/README.md`; test
+/// renamed from `production_lookup_baseline_refuses_the_unresolved_returned_cursor`).
+/// BEFORE: `Unknown`, one `UnknownAlias current_child` at `return
+/// current_child;`. Rule 77 reads the cursor: `root(array)` (its uses are
+/// `{nullTest, deref}`), `auto(current_child)`, `writes(current_child) =
+/// {null, load(array->child), load(current_child->next)}` and
+/// `uses(current_child) ⊆ {nullTest, deref, rebind, return}`, so
+/// `current_child ∈ borrowed_path`; `targets = ∅ ∧ derivation = identity ∧
+/// ¬widened` at the return gives `EscapeIfOwned` no escape (clause (4), rule
+/// 10k (2)'s answer for `return R->F;`). The custody summary the checked
+/// translation-unit route validates (Borrowed, parent 0) is unchanged
+/// (`checked_lookup_unit_reports_borrowed_result_without_fresh_identity`).
+///
+/// Near-miss: an advance that is arithmetic, `writes(current_child) ∋ Other`,
+/// gives `current_child ∉ borrowed_path`, and the returned cursor keeps its
+/// refusal.
 #[test]
-fn production_lookup_baseline_refuses_the_unresolved_returned_cursor() {
+fn production_lookup_baseline_reads_the_loaded_cursor() {
     let mut sources = vec![("retained tracked frame".to_owned(), ACTUAL_FRAME.to_owned())];
     if let Some(path) = std::env::var_os("QCORE_LOOKUP_PRODUCTION_INPUT") {
         let source = std::fs::read_to_string(&path)
@@ -36,14 +55,20 @@ fn production_lookup_baseline_refuses_the_unresolved_returned_cursor() {
         let row =
             analyze_legacy_c(&source, "get_array_item", &ResourceContracts::default()).unwrap();
         println!("{label}: {row:#?}");
-        assert_eq!(row.status, AnalysisStatus::Unknown, "{label}: {row:?}");
-        assert!(
-            row.diagnostics
-                .iter()
-                .any(|d| format!("{:?}", d.kind).contains("current_child")),
-            "{label}: {row:?}"
-        );
+        assert_eq!(row.status, AnalysisStatus::Safe, "{label}: {row:?}");
+        assert!(row.diagnostics.is_empty(), "{label}: {row:?}");
     }
+    let advance = "current_child = current_child->next;";
+    assert!(ACTUAL_FRAME.contains(advance));
+    let stepped = ACTUAL_FRAME.replace(advance, "current_child = current_child->next + 0;");
+    let row = analyze_legacy_c(&stepped, "get_array_item", &ResourceContracts::default()).unwrap();
+    assert_eq!(row.status, AnalysisStatus::Unknown, "{row:?}");
+    assert!(
+        row.diagnostics
+            .iter()
+            .any(|d| format!("{:?}", d.kind).contains("current_child")),
+        "{row:?}"
+    );
 }
 
 #[test]

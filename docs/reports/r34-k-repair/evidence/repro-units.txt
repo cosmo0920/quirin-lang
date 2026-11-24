@@ -1,0 +1,7 @@
+lib/librdkafka-2.15.0/src/rdkafka_broker.c
+lib/librdkafka-2.15.0/src/rdkafka_partition.c
+lib/monkey/mk_core/mk_string.c
+lib/ctraces/src/ctr_version.c
+lib/cmetrics/src/cmetrics.c
+lib/chunkio/src/cio_chunk.c
+src/flb_input_chunk.c

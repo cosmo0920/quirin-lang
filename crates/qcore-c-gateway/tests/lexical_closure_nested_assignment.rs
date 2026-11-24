@@ -297,13 +297,33 @@ fn a_never_bound_root_still_certifies() {
         outcome("char *w(struct c_box *b) { return b->item->leaf->name; }"),
         ("Safe", Vec::new())
     );
-    // `it = b->item` in the condition keeps its own identity refusal (rule
-    // 10b) and leaves `b` untouched, so the return's read needs nothing.
+    // `it = b->item` in the condition leaves `b` untouched, so the return's
+    // read needs nothing. Re-pinned by card K5-LOCAL-ORIGIN-ALIASES (gateway
+    // rule 77, clauses (1)-(3); argument in docs/reports/r34-k-repair/README.md).
+    // BEFORE: `Unknown ["unknown_alias:it"]`, rule 10b's identity refusal,
+    // which rule 77 amends: `root(b) ∧ auto(it) ∧ writes(it) =
+    // {load(b->item)} ∧ uses(it) = {nullTest, deref}` gives `it ∈
+    // borrowed_path`, and `targets(it) = ∅ ∧ derivation(it) = identity ∧
+    // ¬widened` decides the guard.
     assert_eq!(
         outcome(
             "int w(struct c_box *b) { struct c_item *it; if ((it = b->item)) c_use(it->count); \
              return b->item->count; }"
         ),
-        unknown(&["unknown_alias:it"])
+        ("Safe", Vec::new())
+    );
+    // Near-miss: `Address ∈ uses(it)` gives `it ∉ borrowed_path`, so the
+    // test keeps rule 10b's identity refusal (the other two leaves are the
+    // `&it` initialiser's and the return's over it, as at the base).
+    assert_eq!(
+        outcome(
+            "int w(struct c_box *b) { struct c_item *it; struct c_item **at = &it; \
+             if ((it = b->item)) c_use(it->count); return b->item->count + (at != 0); }"
+        ),
+        unknown(&[
+            "unknown_alias:it",
+            RETURN,
+            "unsupported:unsupported assignment expression"
+        ])
     );
 }
