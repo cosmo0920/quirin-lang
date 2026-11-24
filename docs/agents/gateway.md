@@ -13393,4 +13393,45 @@ through `ampersand_runs`.
     `out_and_removed_refuse`, `fold_vectors_hold`);
     [report](../reports/callback-member-released-fold/README.md).
 
+<a id="constraint-74m"></a>
+
+74m. **A starred may-bind root counts through cast groups too.** Card
+    RETURN-FAMILY-DEREF-THROUGH-RESOLVED-CAST, extending
+    [rule 74h](#constraint-74h) and rule 12h(4). With a finite `closing`,
+    `stars_before` stopped a starred root's count at the `)` of the nearest
+    cast group, so `* ( long * ) * q` counted one `*`. Family S then admitted
+    a may-bind `q` as the root of one dereference (`bases: ["q"]`), although
+    the outer `*` dereferences the pointer `*q` reads, a second dereference,
+    which the module header refuses. That is the admitting direction, and it
+    is reachable: `long w(void **q) { return *(long *)*q; }` was `Safe` at
+    the base while `return **q;` kept the return refusal. Rule 12h's
+    transparency applied only where `closing` was `usize::MAX`, that is,
+    before a member or subscript root. `stars_before` now takes `through`,
+    and with it a group `cast_semantics::type_group_open` reads as a type
+    does not stop the count. A starred root is admitted only when the count
+    is exactly one **both** without and with `through`, under **both** of
+    rule 74h's readings. The count with `through` is never less than the
+    count without it, so every admission was one at the base. Nested casts
+    (`*(T *)(U *)*q`) and a parenthesised operand (`*(T *)(*q)`) refuse too.
+    `*(T *)q` dereferences the converted value. Its count without `through`
+    is 0, so it keeps its refusal, and the typed return route still decides
+    it. `(T) *q` and `(int)(long) *q` keep their admission. A newly refused
+    return falls through to the typed return route (rule 10k) and from there
+    to the return refusal, as `**q` does. After a release, `*(T *)*q` moves
+    from `Unsafe` (the flow check accused the first dereference) to that
+    refusal: it loses an accusation, but nothing moves toward `Safe`.
+    `sizeof ( long ) * q` still counts one, as at the base: a conforming body
+    cannot multiply by a pointer `q` (C11 6.5.5p2), and a declared scalar
+    never reaches the may-bind test. **Do not** read a starred root's count
+    through a cast group alone (that would admit `*(T *)q`), and **do not**
+    write a second type-group detector. Premises stated, not proved: the
+    token classes (trust boundary 28). `QCore.ReturnFamilyDerefCast`
+    (`inner_le_through`, `inner_mono`, `through_mono`,
+    `the_fix_only_refuses_more`, `admitted_is_one_dereference`,
+    `old_admits_a_second_dereference`,
+    `the_converted_value_keeps_its_refusal`,
+    `a_cast_of_one_dereference_is_unchanged`, `deref_vectors_hold`,
+    `old_vectors_hold`);
+    [report](../reports/return-family-deref-resolved-cast/README.md).
+
 <!-- generated:rules:end -->
