@@ -1262,6 +1262,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [return-family-star-cast](return-family-star-cast/README.md) | RETURN-FAMILY-STAR-AFTER-UNRESOLVED-CAST: family S keeps both readings of an undecided cast |
 
+| [return-family-star-outside-parentheses](return-family-star-outside-parentheses/README.md) | RETURN-FAMILY-STAR-OUTSIDE-ROOT-PARENTHESES: a dereference outside a starred root's parentheses counts |
+
 | [review-audit-runner](review-audit-runner/README.md) | Review audit-runner cancellation and failure observation |
 
 | [review-certificate-scope](review-certificate-scope/README.md) | E01-TAIL-CERT-SCOPE — independent Safe-certificate denominator |
