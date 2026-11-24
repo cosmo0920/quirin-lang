@@ -82,12 +82,17 @@ inductive Value where
   | arithmetic
   | otherAddress
   | other
+  /-- Card K3-POINTER-VALUED-STORES (rule 10v amended): pointer arithmetic over
+  the destination's own value or a pointer of its own object
+  (`QCore.PointerStoreDerived`). -/
+  | sameObjectDerived
   deriving DecidableEq, Repr
 
 /-- The classes whose value denotes no object with custody: static storage, a
 function, or the destination's own object. -/
 def Value.neutral : Value → Bool
-  | .null | .string | .function | .functionPointerName | .selfAddress | .interiorAddress => true
+  | .null | .string | .function | .functionPointerName | .selfAddress | .interiorAddress
+  | .sameObjectDerived => true
   | _ => false
 
 /-- The identities an admitted value adds to the projection: none. A name of
@@ -164,11 +169,13 @@ def decisionVectors : List (String × Value × Bool × OwnerClass × Decision) :
   ("s->p = l", .localPointer, false, .untracked, .namedValue),
   ("s->p = t->p", .pointerRead, false, .untracked, .valueShape),
   ("s->p = cg_get()", .call, false, .untracked, .valueShape),
-  ("s->name = s->name + 1", .arithmetic, false, .untracked, .valueShape),
+  ("s->name = t->name + 1", .arithmetic, false, .untracked, .valueShape),
   ("s->pp = &t->p", .otherAddress, false, .untracked, .valueShape),
   ("o->p = 0", .null, false, .tracked, .ownedField),
   ("o->self = o", .selfAddress, false, .tracked, .ownedField),
-  ("d->p = 0", .null, false, .unresolved, .unresolvedOwner)
+  ("d->p = 0", .null, false, .unresolved, .unresolvedOwner),
+  ("s->name = s->name + 1", .sameObjectDerived, false, .untracked, .admit),
+  ("o->name = o->name + 1", .sameObjectDerived, false, .tracked, .ownedField)
 ]
 
 theorem decision_vectors_hold :
