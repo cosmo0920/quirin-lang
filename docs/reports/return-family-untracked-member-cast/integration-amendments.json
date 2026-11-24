@@ -1,0 +1,33 @@
+{
+  "schema": "quirin-amendments/2",
+  "card": "RETURN-FAMILY-UNTRACKED-MEMBER-THROUGH-CAST",
+  "base": "7bfa0414b",
+  "measured_tip": "c3228a355",
+  "profiles": [],
+  "increment_paragraph": "**RETURN-FAMILY-UNTRACKED-MEMBER-THROUGH-CAST** (USER DECISION 2026-11-24: \"launch the RETURN-FAMILY-UNTRACKED-MEMBER-THROUGH-CAST card\"; gateway rule 74t, extending rule 74r; `QCore.ReturnFamilyUntrackedMemberCast`; [report](../../reports/return-family-untracked-member-cast/README.md)). Family S of `legacy_return_family` made an untracked root a member or subscript base only when `->` or `[` came right after the name. So `long w(void) { const void *p = 0; return ((const struct s *)p)->n; }`, `… ((const long *)p)[0]` and `(p)->n` were `Safe`, while `return p->n + 1;` is `Unknown` (`unknown_alias:p`). The direct tests are kept, and `accessed_through_groups` adds a second one. It reads back from the root through `(` and through every group `cast_semantics::type_group_open` reads as a type, then forward through at least one and at most as many `)` as it opened. The root is a base when `->` or `[` follows, and a `->` root (C02-P-ALIAS) when the access is `->`. Nested groups and parenthesised roots count too. An operand before the root stops the walk, and no cast type word becomes a root. The change only adds bases and `->` roots, so nothing admits more than at the base. A may-bind root, `&((T *)p)->f` and `sizeof` read as before. Pinned at unit level (`memberVectors`, 17 rows) and end to end (11 null rows plus controls). The change pins fail with the new reading disabled. Opt-in `current --monkey-linked` over Fluent Bit 046accf6: no row moves (1,171 / 2 / 3,623 / 8 at both), as predicted. The on-route census hits dereference formals, and the corpus's `((T *)ctx)->f` returns sit inside calls family S refuses. The pinned routes need inputs this host lacks and were not run. Registered: RETURN-STRICT-MEMBER-NULL-UNTRACKED-ROOT and RETURN-FAMILY-UNTRACKED-ACCESS-THROUGH-ARITHMETIC.",
+  "status_edits": [],
+  "ledger": [
+    {
+      "id": "RETURN-FAMILY-UNTRACKED-MEMBER-THROUGH-CAST",
+      "operation": "retire",
+      "why": "Discharged by RETURN-FAMILY-UNTRACKED-MEMBER-THROUGH-CAST (rule 74t). Reachability: `long w(void) { const void *p = 0; return ((const struct s *)p)->n; }` and `… ((const long *)p)[0]` reached family S and were `Safe` at the base 7bfa0414b (report §1). crates/qcore-c-gateway/src/legacy_return_family.rs keeps the direct member and subscript tests and adds `accessed_through_groups`. It reads back from an untracked root through `(` and through every group `cast_semantics::type_group_open` reads as a type (rule 12h's transparency, the existing detector), then forward through at least one and at most as many `)` as it opened. The root is a base when `->` or `[` follows, and a `->` root when the access is `->`. The change only adds bases and `->` roots and touches no refusal, so a result the tip admits the base admitted (`QCore.ReturnFamilyUntrackedMemberCast.the_fix_only_refuses_more`, `old_bases_kept`, `every_group_reading_keeps_the_base`, `a_type_word_is_no_root`). The null cases are pinned `Unknown` (`unknown_alias:p`) end to end through one cast, nested casts and parenthesised roots (crates/qcore-c-gateway/tests/return_family_untracked_member_cast.rs). An unbound formal stays `Safe`, and tracked roots, `&((T *)p)->n` and `sizeof` keep their verdicts. The unit vectors bind the Lean rows, and the change pins fail with the new reading disabled. The opt-in corpus measurement shows no move, as predicted (report §5). The pinned routes need inputs this host lacks and were not run.",
+      "source": "docs/reports/return-family-untracked-member-cast/README.md"
+    },
+    {
+      "id": "RETURN-STRICT-MEMBER-NULL-UNTRACKED-ROOT",
+      "operation": "register",
+      "title": "`return p->n;` through a null untracked root is `Safe` through the return routes asked before family S",
+      "text": "RETURN-FAMILY-UNTRACKED-MEMBER-THROUGH-CAST found (report §1, by an end-to-end probe at its base 7bfa0414b and at its tip c3228a355) that `struct s { long n; }; long w(void) { const struct s *p = 0; return p->n; }` is `Safe`. Meanwhile `return p->n + 1;` (family S, `p` a base) and `long x = p->n; return x;` are `Unknown` (`unknown_alias:p`). The bare return never reaches family S. crates/qcore-c-gateway/src/legacy_c.rs `return_statement` admits it through `supported_expression(…, ExpressionRole::Returned)` or its `Decides` pointer-leaf widening, and neither puts the null `p`'s member access before the flow check. The direction is admitting. DISCHARGE: give the member read of an untracked root at those return routes the base obligation family S and the statement routes carry, or route a scalar member read to family S, or show the access is already checked. Pin `return p->n;` and `return p[0];` through a null untracked `p` end to end and measure. A Safe -> Unknown move is expected on possibly-null bindings.",
+      "source": "docs/reports/return-family-untracked-member-cast/README.md",
+      "recorded_by": "RETURN-FAMILY-UNTRACKED-MEMBER-THROUGH-CAST"
+    },
+    {
+      "id": "RETURN-FAMILY-UNTRACKED-ACCESS-THROUGH-ARITHMETIC",
+      "operation": "register",
+      "title": "Family S makes no base of an untracked root whose pointer arithmetic is accessed through a member or subscript",
+      "text": "RETURN-FAMILY-UNTRACKED-MEMBER-THROUGH-CAST found (report §1, by an end-to-end probe at its tip c3228a355) that `long w(void) { const struct s *p = 0; return (p + 1)->n; }`, `… const void *p = 0; return ((const struct s *)p + 1)->n;` and `… const long *p = 0; return (p + 1)[0];` are `Safe`. crates/qcore-c-gateway/src/legacy_return_family.rs `accessed_through_groups` (rule 74t) reads forward only through `)`, so a `+` after the root stops it. Rule 74r already makes `*(p + 1)` a base. The access goes through a pointer computed from the null `p`. The direction is admitting. DISCHARGE: make the root a base when the group the access follows holds the root under additive pointer arithmetic (`( p + 1 )`, `( n + p )`, `( ( T * ) p - i )` before `->` or `[`), keeping the only-adds-bases direction, or show it unreachable. Pin the three returns end to end and measure.",
+      "source": "docs/reports/return-family-untracked-member-cast/README.md",
+      "recorded_by": "RETURN-FAMILY-UNTRACKED-MEMBER-THROUGH-CAST"
+    }
+  ]
+}
