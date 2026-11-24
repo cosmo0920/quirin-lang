@@ -301,7 +301,7 @@ pub(crate) const ALL_USES: [Use; 10] = [
 ];
 
 /// The type spelling Clang gives a node, desugared where it prints one.
-fn type_of(node: &Value) -> Option<&str> {
+pub(crate) fn type_of(node: &Value) -> Option<&str> {
     node["type"]["desugaredQualType"]
         .as_str()
         .or_else(|| node["type"]["qualType"].as_str())
@@ -344,12 +344,12 @@ pub(crate) fn single_level_pointer(text: &str) -> bool {
     !pointee.ends_with('*')
 }
 
-struct Visit<'a> {
-    node: &'a Value,
-    ancestors: Vec<&'a Value>,
+pub(crate) struct Visit<'a> {
+    pub(crate) node: &'a Value,
+    pub(crate) ancestors: Vec<&'a Value>,
 }
 
-fn visit<'a>(node: &'a Value, ancestors: &mut Vec<&'a Value>, out: &mut Vec<Visit<'a>>) {
+pub(crate) fn visit<'a>(node: &'a Value, ancestors: &mut Vec<&'a Value>, out: &mut Vec<Visit<'a>>) {
     out.push(Visit {
         node,
         ancestors: ancestors.clone(),
@@ -389,7 +389,7 @@ fn consumer<'a>(mut value: &'a Value, ancestors: &[&'a Value]) -> Option<(&'a Va
 }
 
 /// The use one reference makes, with the automatic local it copies into.
-fn classify(
+pub(crate) fn classify(
     visit: &Visit<'_>,
     copies_into: &dyn Fn(&Value) -> Option<String>,
 ) -> (Use, Option<String>) {

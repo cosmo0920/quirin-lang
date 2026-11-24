@@ -234,6 +234,12 @@ mod typed_roots;
 mod custody_free_copy_route;
 // AG2-UNRESOLVED-ALIAS hook (rule 62): end
 
+// K5-LOCAL-ORIGIN-ALIASES hook (rule 77): begin. Locals holding only loads
+// from untracked objects, read from the Clang AST; the hooks below are thin.
+#[path = "legacy_borrowed_path_local.rs"]
+mod borrowed_path_local_route;
+// K5-LOCAL-ORIGIN-ALIASES hook (rule 77): end
+
 // Card CG02-ELABORATION-CORE (rule 10s): the elaborator's route-G adapter, a
 // fallback after every existing route of a statement, a `return` and a
 // call-free controlling expression. The hooks below naming the card are thin.
@@ -1035,6 +1041,10 @@ pub struct TraversalNames {
     )]
     pub custody_free: crate::custody_free_copy::CustodyFreeCopies,
     // AG2-UNRESOLVED-ALIAS hook (rule 62): end
+    // K5-LOCAL-ORIGIN-ALIASES hook (rule 77): begin
+    #[serde(default, skip_serializing_if = "BTreeSet::is_empty")]
+    pub borrowed_path: BTreeSet<String>,
+    // K5-LOCAL-ORIGIN-ALIASES hook (rule 77): end
 }
 
 /// Card **AOM-BINDING-POISON**. What a refused statement may do to the binding
@@ -4322,10 +4332,14 @@ fn build_function_cfg_unscoped(
     // AG2-UNRESOLVED-ALIAS hook (rule 62): begin
     let custody_free = parser.custody_free_copies(&cfg, &scalars, &pointers);
     // AG2-UNRESOLVED-ALIAS hook (rule 62): end
+    // K5-LOCAL-ORIGIN-ALIASES hook (rule 77): begin
+    let borrowed_path = parser.borrowed_path_locals(&cfg, &scalars);
+    // K5-LOCAL-ORIGIN-ALIASES hook (rule 77): end
     cfg.traversal = TraversalNames {
         scalars,
         pointers,
         custody_free,
+        borrowed_path,
     };
     // Card THREAD-LOCAL-CUSTODY-FREE-READ (rule 54). Asked only where the
     // unit spells a thread-local storage class before the body's end, so a

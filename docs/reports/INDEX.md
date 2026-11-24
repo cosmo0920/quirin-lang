@@ -694,6 +694,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [k3-pointer-valued-stores](k3-pointer-valued-stores/README.md) | K3-POINTER-VALUED-STORES |
 
+| [k5-local-origin-aliases](k5-local-origin-aliases/README.md) | K5-LOCAL-ORIGIN-ALIASES: locals holding only loads from untracked objects |
+
 ## L
 
 | Card directory | Original report title |

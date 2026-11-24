@@ -561,7 +561,17 @@ fn settle(
                         &mut edge_output,
                         &context.site_kinds,
                     )
-                    .map(|(_, refinement)| refinement);
+                    .map(|(_, refinement)| refinement)
+                    // K5-LOCAL-ORIGIN-ALIASES hook (rule 77): begin
+                    .map(|refinement| {
+                        super::borrowed_path_local_route::guard_refinement(
+                            refinement,
+                            &node.instruction,
+                            &output,
+                            &context.traversal.borrowed_path,
+                        )
+                    });
+                    // K5-LOCAL-ORIGIN-ALIASES hook (rule 77): end
                     edge_unknown.push(matches!(refinement, Some(PointerRefinement::Unknown)));
                     // Card SUP07-REFUSED-TEST-ACCUSATION (rule 12e): as in
                     // the work list.

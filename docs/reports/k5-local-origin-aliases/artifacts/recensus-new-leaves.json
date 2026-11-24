@@ -1,0 +1,1426 @@
+[
+{
+"lib": "cmetrics",
+"file": "lib/cmetrics/src/cmt_decode_msgpack.c",
+"fn": "unpack_static_label",
+"name": "new_static_label",
+"origin": "lib/cmetrics/src/cmt_decode_msgpack.c:438",
+"desc": "unresolved resource identity `new_static_label`"
+},
+{
+"lib": "cmetrics",
+"file": "lib/cmetrics/src/cmt_decode_msgpack.c",
+"fn": "unpack_static_label",
+"name": "new_static_label",
+"origin": "lib/cmetrics/src/cmt_decode_msgpack.c:442",
+"desc": "unresolved resource identity `new_static_label`"
+},
+{
+"lib": "ctraces",
+"file": "lib/ctraces/src/ctr_scope.c",
+"fn": "ctr_instrumentation_scope_create",
+"name": "ins_scope",
+"origin": "lib/ctraces/src/ctr_scope.c:123",
+"desc": "unresolved resource identity `ins_scope`"
+},
+{
+"lib": "ctraces",
+"file": "lib/ctraces/src/ctr_scope.c",
+"fn": "ctr_instrumentation_scope_create",
+"name": "ins_scope",
+"origin": "lib/ctraces/src/ctr_scope.c:124",
+"desc": "unresolved resource identity `ins_scope`"
+},
+{
+"lib": "ctraces",
+"file": "lib/ctraces/src/ctr_span.c",
+"fn": "ctr_span_event_add_ts",
+"name": "ev",
+"origin": "lib/ctraces/src/ctr_span.c:473",
+"desc": "unresolved resource identity `ev`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/lz4frame.c",
+"fn": "LZ4F_decompress",
+"name": "srcSizePtr",
+"origin": "lib/librdkafka-2.15.0/src/lz4frame.c:1578",
+"desc": "unresolved resource identity `srcSizePtr`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/lz4frame.c",
+"fn": "LZ4F_decompress",
+"name": "dstSizePtr",
+"origin": "lib/librdkafka-2.15.0/src/lz4frame.c:1579",
+"desc": "unresolved resource identity `dstSizePtr`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/lz4frame.c",
+"fn": "LZ4F_getFrameInfo",
+"name": "srcSizePtr",
+"origin": "lib/librdkafka-2.15.0/src/lz4frame.c:1447",
+"desc": "unresolved resource identity `srcSizePtr`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/lz4frame.c",
+"fn": "LZ4F_getFrameInfo",
+"name": "srcSizePtr",
+"origin": "lib/librdkafka-2.15.0/src/lz4frame.c:1449",
+"desc": "unresolved resource identity `srcSizePtr`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/lz4frame.c",
+"fn": "LZ4F_getFrameInfo",
+"name": "srcSizePtr",
+"origin": "lib/librdkafka-2.15.0/src/lz4frame.c:1455",
+"desc": "unresolved resource identity `srcSizePtr`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/lz4frame.c",
+"fn": "LZ4F_getFrameInfo",
+"name": "srcSizePtr",
+"origin": "lib/librdkafka-2.15.0/src/lz4frame.c:1457",
+"desc": "unresolved resource identity `srcSizePtr`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/lz4hc.c",
+"fn": "LZ4HC_compress_optimal",
+"name": "opt",
+"origin": "lib/librdkafka-2.15.0/src/lz4hc.c:1468",
+"desc": "unresolved resource identity `opt`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdaddr.c",
+"fn": "rd_addrinfo_prepare",
+"name": "snode",
+"origin": "lib/librdkafka-2.15.0/src/rdaddr.c:113",
+"desc": "unresolved resource identity `snode`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdhttp.c",
+"fn": "rd_http_error_new_from_buf",
+"name": "herr",
+"origin": "lib/librdkafka-2.15.0/src/rdhttp.c:103",
+"desc": "unresolved resource identity `herr`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka.c",
+"fn": "rd_kafka_DescribeGroups_resp_cb",
+"name": "_vp",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka.c:6747",
+"desc": "unresolved resource identity `_vp`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka.c",
+"fn": "rd_kafka_DescribeGroups_resp_cb",
+"name": "_vp",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka.c:6748",
+"desc": "unresolved resource identity `_vp`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka.c",
+"fn": "rd_kafka_DescribeGroups_resp_cb",
+"name": "_vp",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka.c:6749",
+"desc": "unresolved resource identity `_vp`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka.c",
+"fn": "rd_kafka_DescribeGroups_resp_cb",
+"name": "_vp",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka.c:6750",
+"desc": "unresolved resource identity `_vp`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka.c",
+"fn": "rd_kafka_DescribeGroups_resp_cb",
+"name": "_vp",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka.c:6782",
+"desc": "unresolved resource identity `_vp`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka.c",
+"fn": "rd_kafka_DescribeGroups_resp_cb",
+"name": "_vp",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka.c:6783",
+"desc": "unresolved resource identity `_vp`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka.c",
+"fn": "rd_kafka_DescribeGroups_resp_cb",
+"name": "_vp",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka.c:6784",
+"desc": "unresolved resource identity `_vp`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka.c",
+"fn": "rd_kafka_DescribeGroups_resp_cb",
+"name": "_vp",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka.c:6785",
+"desc": "unresolved resource identity `_vp`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka.c",
+"fn": "rd_kafka_DescribeGroups_resp_cb",
+"name": "_vp",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka.c:6786",
+"desc": "unresolved resource identity `_vp`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka.c",
+"fn": "rd_kafka_poll_cb",
+"name": "rko",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka.c:5843",
+"desc": "unresolved resource identity `rko`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_aux.c",
+"fn": "rd_kafka_Node_new_from_brokers",
+"name": "broker",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_aux.c:284",
+"desc": "unresolved resource identity `broker`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_aux.c",
+"fn": "rd_kafka_Node_new_from_brokers",
+"name": "node",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_aux.c:285",
+"desc": "unresolved resource identity `node`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_aux.c",
+"fn": "rd_kafka_Node_new_from_brokers",
+"name": "broker_internal",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_aux.c:287",
+"desc": "unresolved resource identity `broker_internal`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_aux.c",
+"fn": "rd_kafka_Node_new_from_brokers",
+"name": "node",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_aux.c:287",
+"desc": "unresolved resource identity `node`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_aux.c",
+"fn": "rd_kafka_Node_new_from_brokers",
+"name": "node",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_aux.c:289",
+"desc": "unresolved resource identity `node`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+"fn": "rd_kafka_broker_name_parse",
+"name": "proto",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_broker.c:5759",
+"desc": "unresolved resource identity `proto`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_cgrp.c",
+"fn": "rd_kafka_cgrp_assignor_run",
+"name": "errstr",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_cgrp.c:2090",
+"desc": "unresolved resource identity `errstr`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_cgrp.c",
+"fn": "rd_kafka_cgrp_consumer_assignment_with_metadata",
+"name": "assignment_with_metadata",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_cgrp.c:3050",
+"desc": "unresolved resource identity `assignment_with_metadata`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_conf.c",
+"fn": "rd_kafka_conf_properties_show",
+"name": "tmp",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_conf.c:3650",
+"desc": "unresolved resource identity `tmp`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_feature.c",
+"fn": "rd_kafka_get_legacy_ApiVersions",
+"name": "api_cntp",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_feature.c:319",
+"desc": "unresolved resource identity `api_cntp`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c",
+"fn": "rd_kafka_fetch_reply_handle",
+"name": "_vp",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c:802",
+"desc": "unresolved resource identity `_vp`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c",
+"fn": "rd_kafka_fetch_reply_handle",
+"name": "_vp",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c:828",
+"desc": "unresolved resource identity `_vp`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c",
+"fn": "rd_kafka_fetch_reply_handle",
+"name": "_vp",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c:832",
+"desc": "unresolved resource identity `_vp`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c",
+"fn": "rd_kafka_fetch_reply_handle",
+"name": "_vp",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c:858",
+"desc": "unresolved resource identity `_vp`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c",
+"fn": "rd_kafka_fetch_reply_handle",
+"name": "_vp",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c:862",
+"desc": "unresolved resource identity `_vp`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c",
+"fn": "rd_kafka_fetch_reply_handle_partition",
+"name": "_vp",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c:550",
+"desc": "unresolved resource identity `_vp`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c",
+"fn": "rd_kafka_fetch_reply_handle_partition",
+"name": "_vp",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c:569",
+"desc": "unresolved resource identity `_vp`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c",
+"fn": "rd_kafka_fetch_reply_handle_partition",
+"name": "_vp",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c:588",
+"desc": "unresolved resource identity `_vp`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c",
+"fn": "rd_kafka_fetch_reply_handle_partition",
+"name": "_vp",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c:602",
+"desc": "unresolved resource identity `_vp`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c",
+"fn": "rd_kafka_fetch_reply_handle_partition",
+"name": "_vp",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c:765",
+"desc": "unresolved resource identity `_vp`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_idempotence.c",
+"fn": "rd_kafka_idemp_broker_any",
+"name": "errp",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_idempotence.c:116",
+"desc": "unresolved resource identity `errp`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_idempotence.c",
+"fn": "rd_kafka_idemp_broker_any",
+"name": "errp",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_idempotence.c:126",
+"desc": "unresolved resource identity `errp`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_metadata.c",
+"fn": "rd_kafka_parse_Metadata0",
+"name": "_vp",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_metadata.c:639",
+"desc": "unresolved resource identity `_vp`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_metadata.c",
+"fn": "rd_kafka_parse_Metadata0",
+"name": "_vp",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_metadata.c:662",
+"desc": "unresolved resource identity `_vp`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_metadata.c",
+"fn": "rd_kafka_parse_Metadata0",
+"name": "_vp",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_metadata.c:668",
+"desc": "unresolved resource identity `_vp`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_metadata.c",
+"fn": "rd_kafka_parse_Metadata0",
+"name": "_vp",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_metadata.c:674",
+"desc": "unresolved resource identity `_vp`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_metadata.c",
+"fn": "rd_kafka_parse_Metadata0",
+"name": "_vp",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_metadata.c:679",
+"desc": "unresolved resource identity `_vp`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_metadata.c",
+"fn": "rd_kafka_parse_Metadata0",
+"name": "_vp",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_metadata.c:702",
+"desc": "unresolved resource identity `_vp`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_metadata.c",
+"fn": "rd_kafka_parse_Metadata0",
+"name": "_vp",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_metadata.c:719",
+"desc": "unresolved resource identity `_vp`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_metadata.c",
+"fn": "rd_kafka_parse_Metadata0",
+"name": "_vp",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_metadata.c:733",
+"desc": "unresolved resource identity `_vp`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_metadata.c",
+"fn": "rd_kafka_parse_Metadata0",
+"name": "_vp",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_metadata.c:782",
+"desc": "unresolved resource identity `_vp`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_metadata.c",
+"fn": "rd_kafka_parse_Metadata0",
+"name": "_vp",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_metadata.c:811",
+"desc": "unresolved resource identity `_vp`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_metadata.c",
+"fn": "rd_kafka_parse_Metadata0",
+"name": "_vp",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_metadata.c:843",
+"desc": "unresolved resource identity `_vp`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_metadata.c",
+"fn": "rd_kafka_parse_Metadata0",
+"name": "_vp",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_metadata.c:850",
+"desc": "unresolved resource identity `_vp`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_metadata.c",
+"fn": "rd_kafka_parse_Metadata0",
+"name": "_vp",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_metadata.c:863",
+"desc": "unresolved resource identity `_vp`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_metadata.c",
+"fn": "rd_kafka_parse_Metadata0",
+"name": "_vp",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_metadata.c:879",
+"desc": "unresolved resource identity `_vp`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_mock.c",
+"fn": "rd_kafka_mock_broker_destroy",
+"name": "errstack",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_mock.c:1899",
+"desc": "unresolved resource identity `errstack`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_mock.c",
+"fn": "rd_kafka_mock_broker_new",
+"name": "err",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_mock.c:2054",
+"desc": "unresolved resource identity `err`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_mock.c",
+"fn": "rd_kafka_mock_broker_new",
+"name": "err",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_mock.c:2062",
+"desc": "unresolved resource identity `err`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_mock.c",
+"fn": "rd_kafka_mock_broker_new",
+"name": "err",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_mock.c:2091",
+"desc": "unresolved resource identity `err`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_mock.c",
+"fn": "rd_kafka_mock_cluster_destroy0",
+"name": "errstack",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_mock.c:3228",
+"desc": "unresolved resource identity `errstack`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_mock.c",
+"fn": "rd_kafka_mock_partition_destroy",
+"name": "errstack",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_mock.c:899",
+"desc": "unresolved resource identity `errstack`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_mock.c",
+"fn": "rd_kafka_mock_topic_auto_create",
+"name": "errp",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_mock.c:1061",
+"desc": "unresolved resource identity `errp`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_mock_cgrp.c",
+"fn": "rd_kafka_mock_cgrp_consumer_member_needs_revocation",
+"name": "intersection",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_mock_cgrp.c:1182",
+"desc": "unresolved resource identity `intersection`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c",
+"fn": "rd_kafka_mock_handle_AddPartitionsToTxn",
+"name": "all_err",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c:2222",
+"desc": "unresolved resource identity `all_err`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c",
+"fn": "rd_kafka_mock_handle_ConsumerGroupHeartbeat",
+"name": "sent_assignment",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c:2961",
+"desc": "unresolved resource identity `sent_assignment`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c",
+"fn": "rd_kafka_mock_handle_OffsetCommit",
+"name": "all_err",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c:1119",
+"desc": "unresolved resource identity `all_err`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c",
+"fn": "rd_kafka_mock_handle_OffsetFetch",
+"name": "all_err",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c:923",
+"desc": "unresolved resource identity `all_err`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c",
+"fn": "rd_kafka_mock_pid_new",
+"name": "mpid",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c:1960",
+"desc": "unresolved resource identity `mpid`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_msg.c",
+"fn": "rd_kafka_msg_new0",
+"name": "errp",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_msg.c:246",
+"desc": "unresolved resource identity `errp`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_msgset_reader.c",
+"fn": "rd_kafka_aborted_txns_new",
+"name": "aborted_txns",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_msgset_reader.c:1832",
+"desc": "unresolved resource identity `aborted_txns`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_msgset_reader.c",
+"fn": "rd_kafka_msgset_reader_msg_v0_1",
+"name": "_vp",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_msgset_reader.c:688",
+"desc": "unresolved resource identity `_vp`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_msgset_reader.c",
+"fn": "rd_kafka_msgset_reader_msg_v0_1",
+"name": "_vp",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_msgset_reader.c:691",
+"desc": "unresolved resource identity `_vp`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_msgset_reader.c",
+"fn": "rd_kafka_msgset_reader_msg_v2",
+"name": "_vp",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_msgset_reader.c:799",
+"desc": "unresolved resource identity `_vp`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_msgset_reader.c",
+"fn": "rd_kafka_msgset_reader_msg_v2",
+"name": "_vp",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_msgset_reader.c:804",
+"desc": "unresolved resource identity `_vp`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_msgset_reader.c",
+"fn": "rd_kafka_msgset_reader_msg_v2",
+"name": "_vp",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_msgset_reader.c:805",
+"desc": "unresolved resource identity `_vp`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_msgset_reader.c",
+"fn": "rd_kafka_msgset_reader_msg_v2",
+"name": "_vp",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_msgset_reader.c:844",
+"desc": "unresolved resource identity `_vp`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+"fn": "rd_kafka_topic_partition_list_intersection0",
+"name": "ret",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_partition.c:4981",
+"desc": "unresolved resource identity `ret`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+"fn": "rd_kafka_topic_partition_list_union0",
+"name": "a",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_partition.c:5025",
+"desc": "unresolved resource identity `a`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+"fn": "rd_kafka_topic_partition_list_union0",
+"name": "b_minus_a",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_partition.c:5025",
+"desc": "unresolved resource identity `b_minus_a`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+"fn": "rd_kafka_handle_Produce_parse",
+"name": "_vp",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_request.c:3953",
+"desc": "unresolved resource identity `_vp`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+"fn": "rd_kafka_handle_Produce_parse",
+"name": "_vp",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_request.c:3962",
+"desc": "unresolved resource identity `_vp`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+"fn": "rd_kafka_handle_Produce_parse",
+"name": "_vp",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_request.c:3964",
+"desc": "unresolved resource identity `_vp`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+"fn": "rd_kafka_handle_Produce_parse",
+"name": "_vp",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_request.c:3965",
+"desc": "unresolved resource identity `_vp`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+"fn": "rd_kafka_handle_Produce_parse",
+"name": "_vp",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_request.c:3988",
+"desc": "unresolved resource identity `_vp`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+"fn": "rd_kafka_handle_Produce_parse",
+"name": "_vp",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_request.c:3997",
+"desc": "unresolved resource identity `_vp`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+"fn": "rd_kafka_handle_Produce_parse",
+"name": "_vp",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_request.c:4007",
+"desc": "unresolved resource identity `_vp`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+"fn": "rd_kafka_handle_Produce_parse",
+"name": "_vp",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_request.c:4011",
+"desc": "unresolved resource identity `_vp`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+"fn": "rd_kafka_handle_Produce_parse",
+"name": "_vp",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_request.c:4028",
+"desc": "unresolved resource identity `_vp`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+"fn": "rd_kafka_handle_Produce_parse",
+"name": "_vp",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_request.c:4033",
+"desc": "unresolved resource identity `_vp`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+"fn": "rd_kafka_handle_Produce_parse",
+"name": "_vp",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_request.c:4044",
+"desc": "unresolved resource identity `_vp`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+"fn": "rd_kafka_handle_idempotent_Produce_success",
+"name": "fatal_err",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_request.c:4787",
+"desc": "unresolved resource identity `fatal_err`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+"fn": "rd_kafka_op_handle_OffsetFetch",
+"name": "rko",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_request.c:1431",
+"desc": "unresolved resource identity `rko`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+"fn": "rd_kafka_op_handle_OffsetFetch",
+"name": "offsets",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_request.c:1445",
+"desc": "unresolved resource identity `offsets`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_sasl_scram.c",
+"fn": "rd_kafka_sasl_safe_string",
+"name": "safe",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_sasl_scram.c:249",
+"desc": "unresolved resource identity `safe`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_share_acknowledgement.c",
+"fn": "rd_kafka_share_ack_batch_resolve_leader_or_fail_acks",
+"name": "errp",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_share_acknowledgement.c:438",
+"desc": "unresolved resource identity `errp`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_share_acknowledgement.c",
+"fn": "rd_kafka_share_ack_batch_resolve_leader_or_fail_acks",
+"name": "errp",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_share_acknowledgement.c:467",
+"desc": "unresolved resource identity `errp`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_share_acknowledgement.c",
+"fn": "rd_kafka_share_ack_batch_resolve_leader_or_fail_acks",
+"name": "errp",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_share_acknowledgement.c:484",
+"desc": "unresolved resource identity `errp`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_share_acknowledgement.c",
+"fn": "rd_kafka_share_ack_batch_resolve_leader_or_fail_acks",
+"name": "errp",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_share_acknowledgement.c:502",
+"desc": "unresolved resource identity `errp`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_share_acknowledgement.c",
+"fn": "rd_kafka_share_ack_batch_resolve_leader_or_fail_acks",
+"name": "errp",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_share_acknowledgement.c:506",
+"desc": "unresolved resource identity `errp`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_share_acknowledgement.c",
+"fn": "rd_kafka_share_build_ack_details",
+"name": "del_key",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_share_acknowledgement.c:833",
+"desc": "unresolved resource identity `del_key`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_ssl.c",
+"fn": "rd_kafka_transport_ssl_cert_verify_cb",
+"name": "errstr",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_ssl.c:419",
+"desc": "unresolved resource identity `errstr`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c",
+"fn": "ConsumerGenerationPair_new",
+"name": "cgpair",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c:134",
+"desc": "unresolved resource identity `cgpair`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c",
+"fn": "ConsumerPair_new",
+"name": "cpair",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c:83",
+"desc": "unresolved resource identity `cpair`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c",
+"fn": "ConsumerPair_new",
+"name": "cpair",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c:84",
+"desc": "unresolved resource identity `cpair`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c",
+"fn": "sortPartitions",
+"name": "partitions",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c:1674",
+"desc": "unresolved resource identity `partitions`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_timer.c",
+"fn": "rd_kafka_timer_exp_backoff",
+"name": "rtmr",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_timer.c:217",
+"desc": "unresolved resource identity `rtmr`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_topic.c",
+"fn": "rd_kafka_topic_info_new",
+"name": "ti",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_topic.c:2151",
+"desc": "unresolved resource identity `ti`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_topic.c",
+"fn": "rd_kafka_topic_info_new",
+"name": "ti",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_topic.c:2152",
+"desc": "unresolved resource identity `ti`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_topic.c",
+"fn": "rd_kafka_topic_new0",
+"name": "existing",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_topic.c:347",
+"desc": "unresolved resource identity `existing`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_txnmgr.c",
+"fn": "rd_kafka_txn_handle_FindCoordinator",
+"name": "errstr",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_txnmgr.c:2920",
+"desc": "unresolved resource identity `errstr`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_txnmgr.c",
+"fn": "rd_kafka_txn_handle_TxnOffsetCommit",
+"name": "errstr",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_txnmgr.c:1492",
+"desc": "unresolved resource identity `errstr`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdkafka_txnmgr.c",
+"fn": "rd_kafka_txn_op_send_offsets_to_transaction",
+"name": "errstr",
+"origin": "lib/librdkafka-2.15.0/src/rdkafka_txnmgr.c:1946",
+"desc": "unresolved resource identity `errstr`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdlist.c",
+"fn": "rd_list_sort",
+"name": "rl",
+"origin": "lib/librdkafka-2.15.0/src/rdlist.c:270",
+"desc": "unresolved resource identity `rl`"
+},
+{
+"lib": "librdkafka",
+"file": "lib/librdkafka-2.15.0/src/rdstring.c",
+"fn": "rd_strtup_new0",
+"name": "strtup",
+"origin": "lib/librdkafka-2.15.0/src/rdstring.c:187",
+"desc": "unresolved resource identity `strtup`"
+},
+{
+"lib": "fluent-bit-chunk",
+"file": "src/flb_input_chunk.c",
+"fn": "append_to_ring_buffer",
+"name": "cr",
+"origin": "src/flb_input_chunk.c:3660",
+"desc": "unresolved resource identity `cr`"
+},
+{
+"lib": "fluent-bit-chunk",
+"file": "src/flb_input_chunk.c",
+"fn": "append_to_ring_buffer",
+"name": "cr",
+"origin": "src/flb_input_chunk.c:3683",
+"desc": "unresolved resource identity `cr`"
+},
+{
+"lib": "fluent-bit-chunk",
+"file": "src/flb_input_chunk.c",
+"fn": "flb_input_chunk_map",
+"name": "in",
+"origin": "src/flb_input_chunk.c:1497",
+"desc": "unresolved resource identity `in`"
+},
+{
+"lib": "fluent-bit-chunk",
+"file": "src/flb_input_chunk.c",
+"fn": "flb_input_chunk_ring_buffer_cleanup",
+"name": "cr",
+"origin": "src/flb_input_chunk.c:3728",
+"desc": "unresolved resource identity `cr`"
+},
+{
+"lib": "fluent-bit-chunk",
+"file": "src/flb_input_chunk.c",
+"fn": "flb_input_chunk_ring_buffer_collector",
+"name": "cr",
+"origin": "src/flb_input_chunk.c:3777",
+"desc": "unresolved resource identity `cr`"
+},
+{
+"lib": "fluent-bit-chunk",
+"file": "src/flb_input_chunk.c",
+"fn": "append_to_ring_buffer",
+"name": "cr",
+"origin": "src/flb_input_chunk.c:3660",
+"desc": "unresolved resource identity `cr`"
+},
+{
+"lib": "fluent-bit-chunk",
+"file": "src/flb_input_chunk.c",
+"fn": "append_to_ring_buffer",
+"name": "cr",
+"origin": "src/flb_input_chunk.c:3683",
+"desc": "unresolved resource identity `cr`"
+},
+{
+"lib": "fluent-bit-chunk",
+"file": "src/flb_input_chunk.c",
+"fn": "flb_input_chunk_map",
+"name": "in",
+"origin": "src/flb_input_chunk.c:1497",
+"desc": "unresolved resource identity `in`"
+},
+{
+"lib": "fluent-bit-chunk",
+"file": "src/flb_input_chunk.c",
+"fn": "flb_input_chunk_ring_buffer_cleanup",
+"name": "cr",
+"origin": "src/flb_input_chunk.c:3728",
+"desc": "unresolved resource identity `cr`"
+},
+{
+"lib": "fluent-bit-chunk",
+"file": "src/flb_input_chunk.c",
+"fn": "flb_input_chunk_ring_buffer_collector",
+"name": "cr",
+"origin": "src/flb_input_chunk.c:3777",
+"desc": "unresolved resource identity `cr`"
+},
+{
+"lib": "monkey",
+"file": "lib/monkey/mk_server/mk_http_parser.c",
+"fn": "header_lookup",
+"name": "header",
+"origin": "lib/monkey/mk_server/mk_http_parser.c:346",
+"desc": "unresolved resource identity `header`"
+},
+{
+"lib": "monkey",
+"file": "lib/monkey/mk_server/mk_http_parser.c",
+"fn": "header_lookup",
+"name": "header",
+"origin": "lib/monkey/mk_server/mk_http_parser.c:354",
+"desc": "unresolved resource identity `header`"
+},
+{
+"lib": "monkey",
+"file": "lib/monkey/mk_server/mk_http_parser.c",
+"fn": "header_lookup",
+"name": "header",
+"origin": "lib/monkey/mk_server/mk_http_parser.c:438",
+"desc": "unresolved resource identity `header`"
+},
+{
+"lib": "monkey",
+"file": "lib/monkey/mk_server/mk_http_thread.c",
+"fn": "mk_http_thread_destroy",
+"name": "th",
+"origin": "lib/monkey/mk_server/mk_http_thread.c:269",
+"desc": "unresolved resource identity `th`"
+},
+{
+"lib": "monkey",
+"file": "lib/monkey/tls/tls_openssl.c",
+"fn": "config_parse",
+"name": "conf_path",
+"origin": "lib/monkey/tls/tls_openssl.c:270",
+"desc": "unresolved resource identity `conf_path`"
+},
+{
+"lib": "monkey",
+"file": "lib/monkey/tls/tls_openssl.c",
+"fn": "config_parse",
+"name": "cert_file",
+"origin": "lib/monkey/tls/tls_openssl.c:290",
+"desc": "unresolved resource identity `cert_file`"
+},
+{
+"lib": "monkey",
+"file": "lib/monkey/tls/tls_openssl.c",
+"fn": "config_parse",
+"name": "cert_file",
+"origin": "lib/monkey/tls/tls_openssl.c:291",
+"desc": "unresolved resource identity `cert_file`"
+},
+{
+"lib": "monkey",
+"file": "lib/monkey/tls/tls_openssl.c",
+"fn": "config_parse",
+"name": "cert_chain_file",
+"origin": "lib/monkey/tls/tls_openssl.c:297",
+"desc": "unresolved resource identity `cert_chain_file`"
+},
+{
+"lib": "monkey",
+"file": "lib/monkey/tls/tls_openssl.c",
+"fn": "config_parse",
+"name": "cert_chain_file",
+"origin": "lib/monkey/tls/tls_openssl.c:298",
+"desc": "unresolved resource identity `cert_chain_file`"
+},
+{
+"lib": "monkey",
+"file": "lib/monkey/tls/tls_openssl.c",
+"fn": "config_parse",
+"name": "key_file",
+"origin": "lib/monkey/tls/tls_openssl.c:304",
+"desc": "unresolved resource identity `key_file`"
+},
+{
+"lib": "monkey",
+"file": "lib/monkey/tls/tls_openssl.c",
+"fn": "config_parse",
+"name": "key_file",
+"origin": "lib/monkey/tls/tls_openssl.c:305",
+"desc": "unresolved resource identity `key_file`"
+},
+{
+"lib": "monkey",
+"file": "lib/monkey/tls/tls_openssl.c",
+"fn": "config_parse",
+"name": "dh_param_file",
+"origin": "lib/monkey/tls/tls_openssl.c:311",
+"desc": "unresolved resource identity `dh_param_file`"
+},
+{
+"lib": "monkey",
+"file": "lib/monkey/tls/tls_openssl.c",
+"fn": "config_parse",
+"name": "dh_param_file",
+"origin": "lib/monkey/tls/tls_openssl.c:312",
+"desc": "unresolved resource identity `dh_param_file`"
+},
+{
+"lib": "monkey",
+"file": "lib/monkey/tls/tls_openssl.c",
+"fn": "config_parse",
+"name": "cert_file",
+"origin": "lib/monkey/tls/tls_openssl.c:317",
+"desc": "unresolved resource identity `cert_file`"
+},
+{
+"lib": "monkey",
+"file": "lib/monkey/tls/tls_openssl.c",
+"fn": "config_parse",
+"name": "cert_file",
+"origin": "lib/monkey/tls/tls_openssl.c:320",
+"desc": "unresolved resource identity `cert_file`"
+},
+{
+"lib": "monkey",
+"file": "lib/monkey/tls/tls_openssl.c",
+"fn": "config_parse",
+"name": "cert_file",
+"origin": "lib/monkey/tls/tls_openssl.c:325",
+"desc": "unresolved resource identity `cert_file`"
+},
+{
+"lib": "monkey",
+"file": "lib/monkey/tls/tls_openssl.c",
+"fn": "config_parse",
+"name": "cert_chain_file",
+"origin": "lib/monkey/tls/tls_openssl.c:328",
+"desc": "unresolved resource identity `cert_chain_file`"
+},
+{
+"lib": "monkey",
+"file": "lib/monkey/tls/tls_openssl.c",
+"fn": "config_parse",
+"name": "cert_chain_file",
+"origin": "lib/monkey/tls/tls_openssl.c:331",
+"desc": "unresolved resource identity `cert_chain_file`"
+},
+{
+"lib": "monkey",
+"file": "lib/monkey/tls/tls_openssl.c",
+"fn": "config_parse",
+"name": "cert_chain_file",
+"origin": "lib/monkey/tls/tls_openssl.c:336",
+"desc": "unresolved resource identity `cert_chain_file`"
+},
+{
+"lib": "monkey",
+"file": "lib/monkey/tls/tls_openssl.c",
+"fn": "config_parse",
+"name": "key_file",
+"origin": "lib/monkey/tls/tls_openssl.c:339",
+"desc": "unresolved resource identity `key_file`"
+},
+{
+"lib": "monkey",
+"file": "lib/monkey/tls/tls_openssl.c",
+"fn": "config_parse",
+"name": "key_file",
+"origin": "lib/monkey/tls/tls_openssl.c:342",
+"desc": "unresolved resource identity `key_file`"
+},
+{
+"lib": "monkey",
+"file": "lib/monkey/tls/tls_openssl.c",
+"fn": "config_parse",
+"name": "key_file",
+"origin": "lib/monkey/tls/tls_openssl.c:347",
+"desc": "unresolved resource identity `key_file`"
+},
+{
+"lib": "monkey",
+"file": "lib/monkey/tls/tls_openssl.c",
+"fn": "config_parse",
+"name": "dh_param_file",
+"origin": "lib/monkey/tls/tls_openssl.c:350",
+"desc": "unresolved resource identity `dh_param_file`"
+},
+{
+"lib": "monkey",
+"file": "lib/monkey/tls/tls_openssl.c",
+"fn": "config_parse",
+"name": "dh_param_file",
+"origin": "lib/monkey/tls/tls_openssl.c:353",
+"desc": "unresolved resource identity `dh_param_file`"
+},
+{
+"lib": "monkey",
+"file": "lib/monkey/tls/tls_openssl.c",
+"fn": "config_parse",
+"name": "dh_param_file",
+"origin": "lib/monkey/tls/tls_openssl.c:358",
+"desc": "unresolved resource identity `dh_param_file`"
+},
+{
+"lib": "monkey",
+"file": "lib/monkey/tls/tls_openssl.c",
+"fn": "context_get_head",
+"name": "cur",
+"origin": "lib/monkey/tls/tls_openssl.c:486",
+"desc": "unresolved resource identity `cur`"
+},
+{
+"lib": "monkey",
+"file": "lib/monkey/tls/tls_openssl.c",
+"fn": "context_get_head",
+"name": "cur",
+"origin": "lib/monkey/tls/tls_openssl.c:488",
+"desc": "unresolved resource identity `cur`"
+},
+{
+"lib": "monkey",
+"file": "lib/monkey/tls/tls_openssl.c",
+"fn": "context_get_head",
+"name": "cur",
+"origin": "lib/monkey/tls/tls_openssl.c:490",
+"desc": "unresolved resource identity `cur`"
+},
+{
+"lib": "monkey",
+"file": "lib/monkey/tls/tls_openssl.c",
+"fn": "context_new",
+"name": "thctx",
+"origin": "lib/monkey/tls/tls_openssl.c:528",
+"desc": "unresolved resource identity `thctx`"
+},
+{
+"lib": "monkey",
+"file": "lib/monkey/tls/tls_openssl.c",
+"fn": "context_new",
+"name": "ctx_head",
+"origin": "lib/monkey/tls/tls_openssl.c:539",
+"desc": "unresolved resource identity `ctx_head`"
+},
+{
+"lib": "monkey",
+"file": "lib/monkey/tls/tls_openssl.c",
+"fn": "context_unset",
+"name": "ctx_head",
+"origin": "lib/monkey/tls/tls_openssl.c:556",
+"desc": "unresolved resource identity `ctx_head`"
+},
+{
+"lib": "monkey",
+"file": "lib/monkey/tls/tls_openssl.c",
+"fn": "context_unset",
+"name": "ctx_head",
+"origin": "lib/monkey/tls/tls_openssl.c:558",
+"desc": "unresolved resource identity `ctx_head`"
+},
+{
+"lib": "monkey",
+"file": "lib/monkey/tls/tls_openssl.c",
+"fn": "contexts_free",
+"name": "ctx",
+"origin": "lib/monkey/tls/tls_openssl.c:566",
+"desc": "unresolved resource identity `ctx`"
+},
+{
+"lib": "monkey",
+"file": "lib/monkey/tls/tls_openssl.c",
+"fn": "contexts_free",
+"name": "cur",
+"origin": "lib/monkey/tls/tls_openssl.c:567",
+"desc": "unresolved resource identity `cur`"
+},
+{
+"lib": "monkey",
+"file": "lib/monkey/tls/tls_openssl.c",
+"fn": "contexts_free",
+"name": "cur",
+"origin": "lib/monkey/tls/tls_openssl.c:568",
+"desc": "unresolved resource identity `cur`"
+},
+{
+"lib": "monkey",
+"file": "lib/monkey/tls/tls_openssl.c",
+"fn": "contexts_free",
+"name": "cur",
+"origin": "lib/monkey/tls/tls_openssl.c:572",
+"desc": "unresolved resource identity `cur`"
+},
+{
+"lib": "monkey",
+"file": "lib/monkey/tls/tls_openssl.c",
+"fn": "mk_tls_close",
+"name": "fd",
+"origin": "lib/monkey/tls/tls_openssl.c:715",
+"desc": "unresolved resource identity `fd`"
+},
+{
+"lib": "monkey",
+"file": "lib/monkey/tls/tls_openssl.c",
+"fn": "mk_tls_exit",
+"name": "server_context",
+"origin": "lib/monkey/tls/tls_openssl.c:838",
+"desc": "unresolved resource identity `server_context`"
+},
+{
+"lib": "monkey",
+"file": "lib/monkey/tls/tls_openssl.c",
+"fn": "mk_tls_exit",
+"name": "thctx",
+"origin": "lib/monkey/tls/tls_openssl.c:841",
+"desc": "unresolved resource identity `thctx`"
+},
+{
+"lib": "monkey",
+"file": "lib/monkey/tls/tls_openssl.c",
+"fn": "mk_tls_exit",
+"name": "server_context",
+"origin": "lib/monkey/tls/tls_openssl.c:844",
+"desc": "unresolved resource identity `server_context`"
+},
+{
+"lib": "monkey",
+"file": "lib/monkey/tls/tls_openssl.c",
+"fn": "mk_tls_exit",
+"name": "server_context",
+"origin": "lib/monkey/tls/tls_openssl.c:850",
+"desc": "unresolved resource identity `server_context`"
+},
+{
+"lib": "monkey",
+"file": "lib/monkey/tls/tls_openssl.c",
+"fn": "mk_tls_init",
+"name": "server_context",
+"origin": "lib/monkey/tls/tls_openssl.c:778",
+"desc": "unresolved resource identity `server_context`"
+},
+{
+"lib": "monkey",
+"file": "lib/monkey/tls/tls_openssl.c",
+"fn": "tls_handle_return",
+"name": "head",
+"origin": "lib/monkey/tls/tls_openssl.c:225",
+"desc": "unresolved resource identity `head`"
+},
+{
+"lib": "monkey",
+"file": "lib/monkey/tls/tls_openssl.c",
+"fn": "tls_handle_return",
+"name": "head",
+"origin": "lib/monkey/tls/tls_openssl.c:236",
+"desc": "unresolved resource identity `head`"
+},
+{
+"lib": "monkey",
+"file": "lib/monkey/tls/tls_openssl.c",
+"fn": "tls_handle_return",
+"name": "head",
+"origin": "lib/monkey/tls/tls_openssl.c:242",
+"desc": "unresolved resource identity `head`"
+},
+{
+"lib": "monkey",
+"file": "lib/monkey/tls/tls_openssl.c",
+"fn": "tls_load_credentials",
+"name": "ctx",
+"origin": "lib/monkey/tls/tls_openssl.c:436",
+"desc": "unresolved resource identity `ctx`"
+},
+{
+"lib": "monkey",
+"file": "lib/monkey/tls/tls_openssl.c",
+"fn": "tls_load_credentials",
+"name": "ctx",
+"origin": "lib/monkey/tls/tls_openssl.c:447",
+"desc": "unresolved resource identity `ctx`"
+},
+{
+"lib": "monkey",
+"file": "lib/monkey/tls/tls_openssl.c",
+"fn": "tls_load_credentials",
+"name": "ctx",
+"origin": "lib/monkey/tls/tls_openssl.c:457",
+"desc": "unresolved resource identity `ctx`"
+},
+{
+"lib": "monkey",
+"file": "lib/monkey/tls/tls_openssl.c",
+"fn": "tls_load_credentials",
+"name": "ctx",
+"origin": "lib/monkey/tls/tls_openssl.c:461",
+"desc": "unresolved resource identity `ctx`"
+}
+]

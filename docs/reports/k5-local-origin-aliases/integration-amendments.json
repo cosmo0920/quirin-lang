@@ -1,0 +1,76 @@
+{
+  "schema": "quirin-amendments/2",
+  "card": "K5-LOCAL-ORIGIN-ALIASES",
+  "base": "3ca85c7a6",
+  "measured_tip": "43d93dcfc",
+  "increment_paragraph": "**K5-LOCAL-ORIGIN-ALIASES** (round 34, USER DECISION 2026-11-24 \"Let's get started out of four.\"; gateway rule 77; Lean `QCore.BorrowedPathLocal`; [report](../../reports/k5-local-origin-aliases/README.md)). A re-census of CURRENT-ACCESS-ALIAS-CENSUS's bundle K5 (ten local-origin alias groups) on the user's 2026-11-24 `current` run finds 5,754 leaves on 1,452 Unknown rows (6,823 on 1,654 on 11-07); of the 43 functions the bundle freed alone, 17 are Safe through AG2's rule 62 and 29 rows remain. Eleven of them hold a pointer local loaded from a formal's member or element and only null-test or return it: P2 binds the load a target-free alias that rules 14n and 11d already read through, but the null test took rule 10b's identity refusal (and marked its edges unmodelled, so rule 11d refused the reads after it) and the return reported the unknown binding although `return R->F;` escapes nothing (rule 10k (2)). Rule 77 reads from Clang's AST the automatic pointer locals every write of which is a load reached from a formal rule 5b's return premise answers for (or from another such local, a cursor included), null or a literal, and every use of which reads them; a null test of such a local's target-free binding is decided with the same narrowing and no report, and its return escapes nothing; every custody use still refuses. Call-result bases, a root inside `likely()`, interior addresses, `container_of`, file-scope arrays and non-pointer names stay refused with named owners. Predicted: 8 `Unknown -> Safe` rows on corpus, twelve-home and `current`. A unit-scoped reproduction of `current` (49 configurations, 1,894 rows, base equal to the user's report in status) moves exactly the 8 declared rows `Unknown -> Safe`, removes 19 alias leaves, adds no diagnostic and moves nothing out of Safe or Unsafe; no card gate was run, on the user's instruction to gate the merged K tip.",
+  "status_edits": [],
+  "ledger": [
+    {
+      "id": "W47-ALIAS-FLOW-RESIDUALS",
+      "operation": "amend",
+      "text": "K5-LOCAL-ORIGIN-ALIASES (gateway rule 77, Lean QCore.BorrowedPathLocal): re-census on the user's 2026-11-24 current run, the ten K5 groups are 5,754 leaves on 1,452 Unknown rows (11-07: 6,823 on 1,654), 29 rows blocked by them alone (11-07: 43; 17 of the 43 functions are Safe through rule 62). Rule 77 discharges the null tests and returns of an automatic pointer local holding only loads (member or element of object-pointer type) reached from a formal rule 5b's return premise answers for, or from another such local (a cursor `c = c->next` included), null or literals: the test is decided with rule 10b's narrowing and no identity refusal or unmodelled edge, the return escapes nothing. A unit-scoped reproduction of `current` (49 configurations, 1,894 rows, base equal to the user's report in status) moves exactly the 8 declared rows `Unknown -> Safe`, removes 19 alias leaves, adds no diagnostic and moves nothing out of Safe or Unsafe; no card gate was run, on the user's instruction to gate the merged K tip. Still open here: loads whose base is a call result (fetch_metadata_kvlist_key, context_get_head: K5-CALL-RESULT-BASE-LOADS), a root mentioned in `likely()` (rd_kafka_timers_next: K5-BUILTIN-EXPECT-ROOT-CLOSURE), a loop-carried loaded dereference with no test (pack_header: K5-LOOP-CARRIED-LOADED-DEREFERENCE), and call results released or published (mk_fifo_queue_id_destroy, mk_sched_event_free) or stored through (rd_kafka_topic_partition_new_with_topic_id), which are custody moves, not alias readings.",
+      "source": "docs/reports/k5-local-origin-aliases/README.md"
+    },
+    {
+      "id": "W47-ALIAS-TYPED-SCALAR-NAMES",
+      "operation": "amend",
+      "text": "K5-LOCAL-ORIGIN-ALIASES re-census (the user's 2026-11-24 current run): `non-pointer-name` is 518 leaves on 200 Unknown rows (11-07: 1,072 on 347; rule 62 took the literal and enumerator copies), 6 rows blocked by it alone: rd_kafka_global_cnt_get (a static int, AG2-STATIC-OBJECT-COPY), LZ4F_getBlockSize (an enumerator into a formal, AG2-LITERAL-OR-CONSTANT-INTO-FORMAL), net_plain_close (a descriptor formal closed: a correct refusal), and three still open here: an automatic `unsigned char bytes[16]` element store (rd_kafka_Uuid_str), a `static const size_t op2size[]` element read (rd_kafka_op_new0) and a `struct stat` record copy (mk_file_get_info). Rule 77 reads pointer locals only.",
+      "source": "docs/reports/k5-local-origin-aliases/README.md"
+    },
+    {
+      "id": "W47-ALIAS-NONNULL-ALLOCATOR-RESULTS",
+      "operation": "amend",
+      "text": "K5-LOCAL-ORIGIN-ALIASES re-census (the user's 2026-11-24 current run): `contracted-result-unguarded` is 482 leaves on 167 Unknown rows (11-07: 587 on 206), one row blocked by it alone with field-store-owner leaves: mk_rconf_section_entry_add's `new = mk_mem_alloc(...)` dereferenced unguarded, where Monkey's mk_mem_alloc returns NULL on failure, a real obligation. Rule 37 already gives rd_calloc and rd_strdup checked non-null results; the other wrappers (rd_malloc, rd_strndup, rd_realloc) free no row alone, so no provider contract was changed.",
+      "source": "docs/reports/k5-local-origin-aliases/README.md"
+    },
+    {
+      "id": "AG2-STATIC-OBJECT-COPY",
+      "operation": "amend",
+      "text": "K5-LOCAL-ORIGIN-ALIASES: two more rows of the user's 2026-11-24 current run are blocked alone by a file-scope array's decay walked by a cursor (`for (prop = rd_kafka_properties; prop->name; prop++)` in rd_kafka_conf_prop_find and rd_kafka_anyconf_warn_deprecated). An array's decay is its own static address, never a heap pointer, but rule 77 keeps rule 54's and rule 62's boundary (no file-scope object read) and the cursor is stepped, so it is left to this decision.",
+      "source": "docs/reports/k5-local-origin-aliases/README.md"
+    },
+    {
+      "id": "CG17-CONTAINER-OF-LIST-LOOKUPS",
+      "operation": "amend",
+      "text": "K5-LOCAL-ORIGIN-ALIASES: three rows of the user's 2026-11-24 current run are blocked alone by a local bound from `cfl_list_entry`/`mk_list_entry` over an iteration cursor: metrics_check_label_value_existence (null-tested after the loop) and cio_chunk_close_stream and mk_fifo_queue_destroy_all (the element released). Rule 77 does not read a statement expression; the release needs rule 10f's element identity.",
+      "source": "docs/reports/k5-local-origin-aliases/README.md"
+    },
+    {
+      "id": "AG3-RETURN-MEMBER-ADDRESS-DERIVED",
+      "operation": "amend",
+      "text": "K5-LOCAL-ORIGIN-ALIASES: the same interior address held in a local blocks two rows alone in the user's 2026-11-24 current run: mk_vhost_fdt_chain_lookup (`hc = &ht->chain[i]; ... return hc;`) and snappy's append (`iov = &s->iov[s->curvec]; ... iov++;`). Rule 77 admits loads only and withholds a local written an address.",
+      "source": "docs/reports/k5-local-origin-aliases/README.md"
+    },
+    {
+      "id": "W47-ALIAS-CALLEE-BORROWED-CLOSURE",
+      "operation": "amend",
+      "text": "K5-LOCAL-ORIGIN-ALIASES: net_plain_close (`return close(socket_fd);`, a descriptor formal released) is blocked alone by its `non-pointer-name` leaf in the user's 2026-11-24 current run; it needs a contract or a W4 summary for the formal, not an alias reading.",
+      "source": "docs/reports/k5-local-origin-aliases/README.md"
+    },
+    {
+      "id": "K5-CALL-RESULT-BASE-LOADS",
+      "operation": "register",
+      "title": "A local loaded from the member of a call result is not read by rule 77",
+      "text": "Registered by K5-LOCAL-ORIGIN-ALIASES. Rule 77 roots its loads at a formal rule 5b's return premise answers for. fetch_metadata_kvlist_key (`entry_variant = cfl_kvlist_fetch(kvlist, key); ... entry_kvlist = entry_variant->data.as_kvlist; return entry_kvlist;`) and context_get_head (`thctx = local_thread_context(); cur = thctx->contexts; while (cur) ... return cur;`) load from a call result, and each is blocked alone by those leaves in the user's 2026-11-24 current run. DISCHARGE: a root class for a local bound only to a `return_none` or `borrowed_from` result of a contracted callee (or a validated summary), whose loads are untracked by the callee's account rather than P2's premise, with fixtures for a released or owned result and Lean parity.",
+      "source": "docs/reports/k5-local-origin-aliases/README.md",
+      "recorded_by": "K5-LOCAL-ORIGIN-ALIASES"
+    },
+    {
+      "id": "K5-BUILTIN-EXPECT-ROOT-CLOSURE",
+      "operation": "register",
+      "title": "A root mentioned inside a __builtin_expect actual is bound by rule 5b's closure",
+      "text": "Registered by K5-LOCAL-ORIGIN-ALIASES. rd_kafka_timers_next tests `likely((rtmr = TAILQ_FIRST(&rkts->rkts_timers)) != NULL)`, i.e. `__builtin_expect(((rtmr = (&rkts->rkts_timers)->tqh_first) != NULL), 1)`; the custody closure binds every variable of an uncontracted call's actual, the builtin included, so `rkts` fails rule 5b's return premise and rule 77 does not read `rtmr` (the row is blocked alone in the user's 2026-11-24 current run). DISCHARGE: read `__builtin_expect(E, K)`'s first actual as E itself in the closure (rule 5h already reads the condition so, BUILTIN-EXPECT-NULL-TEST), with Lean parity and a measured re-pin.",
+      "source": "docs/reports/k5-local-origin-aliases/README.md",
+      "recorded_by": "K5-LOCAL-ORIGIN-ALIASES"
+    },
+    {
+      "id": "K5-LOOP-CARRIED-LOADED-DEREFERENCE",
+      "operation": "register",
+      "title": "A loaded local dereferenced in a loop after a correlated branch keeps its alias refusal",
+      "text": "Registered by K5-LOCAL-ORIGIN-ALIASES. pack_header (cmt_encode_msgpack.c) sets `summary = (struct cmt_summary *) map->parent` only under `map->type == CMT_SUMMARY` (NULL otherwise) and dereferences it under the same test in a `for` loop (`index < summary->quantiles_count`, `summary->quantiles[index]`); the dereference before the loop is read, the two inside report `unresolved resource identity summary` (the row is blocked alone in the user's 2026-11-24 current run). It is no null test or return, so rule 77 does not apply. DISCHARGE: find why the loop's reads refuse the premised binding (rule 14n or 11d), and admit them where the per-iteration premise holds, with Lean parity.",
+      "source": "docs/reports/k5-local-origin-aliases/README.md",
+      "recorded_by": "K5-LOCAL-ORIGIN-ALIASES"
+    }
+  ]
+}
