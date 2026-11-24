@@ -1,0 +1,33 @@
+{
+  "schema": "quirin-amendments/2",
+  "card": "RETURN-FAMILY-DEREF-THROUGH-RESOLVED-CAST",
+  "base": "3ca85c7a6",
+  "measured_tip": "1eae6f5e6",
+  "profiles": [],
+  "increment_paragraph": "**RETURN-FAMILY-DEREF-THROUGH-RESOLVED-CAST** (USER DECISION 2026-11-24: \"launch them all\"; gateway rule 74m, extending rule 74h and rule 12h(4); `QCore.ReturnFamilyDerefCast`; [report](../../reports/return-family-deref-resolved-cast/README.md)). Family S of `legacy_return_family` admits a may-bind name only as the root of one dereference, but for a starred root `stars_before` stopped its count at the nearest cast group. `* ( long * ) * q` therefore counted one `*`, and `long w(void **q) { return *(long *)*q; }` was `Safe` at the base, while `return **q;` keeps the return refusal. The outer `*` dereferences the pointer `*q` reads, which is a second dereference. A starred root now needs exactly one `*` both up to the nearest cast group and through every cast group (`cast_semantics::type_group_open`, rule 12h's transparency), under both of rule 74h's readings. The through count is never less than the old one, so the change only refuses. `*(T *)*q`, nested casts and `*(T *)(*q)` refuse and fall through to the return refusal, as `**q` does. After `k_free(q)`, `return *(long *)*q;` moves from `Unsafe` (`UseAfterRelease`) to that refusal. `*(T *)q` and `(T) *q` keep their base readings. Pinned at unit level (`tests/unit/legacy_return_family_deref_cast.rs`, including `QCore.ReturnFamilyDerefCast.derefVectors`) and end to end (`tests/return_family_deref_resolved_cast.rs`); every change pin fails at the base. Opt-in `current --monkey-linked` over Fluent Bit 046accf6: no row moves, as predicted. The pinned system and slice routes need build/cycle19 inputs this host lacks and were not run. Two pre-existing admitting gaps found by the same probe are registered: RETURN-FAMILY-UNTRACKED-DEREF-THROUGH-CAST and RETURN-FAMILY-STAR-OUTSIDE-ROOT-PARENTHESES.",
+  "status_edits": [],
+  "ledger": [
+    {
+      "id": "RETURN-FAMILY-DEREF-THROUGH-RESOLVED-CAST",
+      "operation": "retire",
+      "why": "Discharged by RETURN-FAMILY-DEREF-THROUGH-RESOLVED-CAST (rule 74m). Reachability: `long w(void **q) { return *(long *)*q; }` reached family S and was `Safe` at the base, while `return **q;` kept the return refusal (report §1). crates/qcore-c-gateway/src/legacy_return_family.rs `stars_before` now takes `through`, and with it a group `cast_semantics::type_group_open` reads as a type does not stop the count (rule 12h's transparency, the existing detector). A starred may-bind root is admitted only when the count is one both without and with `through`, under both of rule 74h's readings, so `*(T *)*q`, `*(T *)(U *)*q` and `*(T *)(*q)` count two and refuse. `*(T *)q` keeps its refusal (count 0 without `through`) and `(T) *q` its admission. The through count is never less than the old count, so nothing admits more than at the base (`QCore.ReturnFamilyDerefCast.the_fix_only_refuses_more`, `admitted_is_one_dereference`). `return *(long *)*q;` is pinned end to end (crates/qcore-c-gateway/tests/return_family_deref_resolved_cast.rs) and at unit level, and the change pins fail at the base. The opt-in corpus measurement shows no move, as predicted (report §5). The pinned system and slice routes need build/cycle19 inputs this host lacks and were not run.",
+      "source": "docs/reports/return-family-deref-resolved-cast/README.md"
+    },
+    {
+      "id": "RETURN-FAMILY-UNTRACKED-DEREF-THROUGH-CAST",
+      "operation": "register",
+      "title": "Family S makes no base of an untracked root dereferenced through a cast group",
+      "text": "RETURN-FAMILY-DEREF-THROUGH-RESOLVED-CAST found (report §6, by an end-to-end probe at its base and its tip) that crates/qcore-c-gateway/src/legacy_return_family.rs `scalar_read` makes an untracked root a starred base only when the token right before it is a `*` (`texts[index - 1] == \"*\"`). `* ( long * ) p` therefore gives `bases: []`, and `long w(void) { const long *p = 0; return *(long *)p; }` is `Safe` at both, while `return *p;` and `return (long) *p;` are `Unknown` (`unknown_alias:p`). The flow check never sees the dereference of the null `p`. The direction is admitting. DISCHARGE: make an untracked root a base of the read node whenever a unary `*` applies to it through cast groups (rule 12h's transparency, `cast_semantics::type_group_open`, no second detector), keeping rule 74h's union over undecided groups, or show that no such return reaches family S end to end. Pin `return *(long *)p;` through a null untracked `p` end to end and measure.",
+      "source": "docs/reports/return-family-deref-resolved-cast/README.md",
+      "recorded_by": "RETURN-FAMILY-DEREF-THROUGH-RESOLVED-CAST"
+    },
+    {
+      "id": "RETURN-FAMILY-STAR-OUTSIDE-ROOT-PARENTHESES",
+      "operation": "register",
+      "title": "Family S admits `*(*q + 1)` with a may-bind `q` as one dereference",
+      "text": "RETURN-FAMILY-DEREF-THROUGH-RESOLVED-CAST found (report §6, by an end-to-end probe at its base and its tip) that crates/qcore-c-gateway/src/legacy_return_family.rs `stars_before` stops a starred root's count at a `*` behind more opening parentheses than close right after the root (`opened > closing`). The count is still one, so the root is admitted. `long w(long **q) { return *(*q + 1); }` and `return *((long *)*q + 1);` are `Safe` at both, while `return **q;` keeps the return refusal. The outer `*` dereferences a pointer computed from the value `*q` reads, which is a second dereference that the module header refuses for a may-bind name. The direction is admitting. DISCHARGE: refuse a may-bind root whose enclosing parenthesised operand is itself under a unary `*`, through cast groups, or show that no such return reaches family S. Keep `(*q)`, `(T) *q` and `*q + 1` admitted. Pin `return *(*q + 1);` end to end and measure.",
+      "source": "docs/reports/return-family-deref-resolved-cast/README.md",
+      "recorded_by": "RETURN-FAMILY-DEREF-THROUGH-RESOLVED-CAST"
+    }
+  ]
+}
