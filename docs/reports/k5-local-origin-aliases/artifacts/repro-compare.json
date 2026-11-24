@@ -1,0 +1,292 @@
+{
+ "rows_before": 1894,
+ "rows_after": 1894,
+ "totals_before": {
+  "Unknown": 1506,
+  "Safe": 386,
+  "Unsafe": 2
+ },
+ "totals_after": {
+  "Unknown": 1498,
+  "Safe": 394,
+  "Unsafe": 2
+ },
+ "moves": {
+  "Unknown -> Safe": 8
+ },
+ "moved": [
+  {
+   "library": "chunkio",
+   "file": "lib/chunkio/src/cio_file.c",
+   "configuration": 0,
+   "function": "format_acl_error_message",
+   "before": "Unknown",
+   "after": "Safe",
+   "removed": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `group`",
+     "lib/chunkio/src/cio_file.c:609"
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `user`",
+     "lib/chunkio/src/cio_file.c:604"
+    ]
+   ],
+   "added": []
+  },
+  {
+   "library": "cmetrics",
+   "file": "lib/cmetrics/src/cmt_encode_opentelemetry_batch.c",
+   "configuration": 0,
+   "function": "request_data_point_count",
+   "before": "Unknown",
+   "after": "Safe",
+   "removed": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `resource`",
+     "lib/cmetrics/src/cmt_encode_opentelemetry_batch.c:533"
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `resource`",
+     "lib/cmetrics/src/cmt_encode_opentelemetry_batch.c:538"
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `scope`",
+     "lib/cmetrics/src/cmt_encode_opentelemetry_batch.c:539"
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `scope`",
+     "lib/cmetrics/src/cmt_encode_opentelemetry_batch.c:544"
+    ]
+   ],
+   "added": []
+  },
+  {
+   "library": "librdkafka",
+   "file": "lib/librdkafka-2.15.0/src/cJSON.c",
+   "configuration": 0,
+   "function": "cJSON_GetArraySize",
+   "before": "Unknown",
+   "after": "Safe",
+   "removed": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `child`",
+     "lib/librdkafka-2.15.0/src/cJSON.c:1896"
+    ]
+   ],
+   "added": []
+  },
+  {
+   "library": "librdkafka",
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+   "configuration": 0,
+   "function": "rd_kafka_topic_partition_get_current_leader_epoch",
+   "before": "Unknown",
+   "after": "Safe",
+   "removed": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `parpriv`",
+     "lib/librdkafka-2.15.0/src/rdkafka_partition.c:3013"
+    ]
+   ],
+   "added": []
+  },
+  {
+   "library": "librdkafka",
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+   "configuration": 0,
+   "function": "rd_kafka_topic_partition_get_leader_epoch",
+   "before": "Unknown",
+   "after": "Safe",
+   "removed": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `parpriv`",
+     "lib/librdkafka-2.15.0/src/rdkafka_partition.c:2989"
+    ]
+   ],
+   "added": []
+  },
+  {
+   "library": "librdkafka",
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+   "configuration": 0,
+   "function": "rd_kafka_toppar_get0",
+   "before": "Unknown",
+   "after": "Safe",
+   "removed": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `rktp`",
+     "lib/librdkafka-2.15.0/src/rdkafka_partition.c:432"
+    ]
+   ],
+   "added": []
+  },
+  {
+   "library": "librdkafka",
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_sasl_cyrus.c",
+   "configuration": 0,
+   "function": "rd_kafka_sasl_cyrus_ready",
+   "before": "Unknown",
+   "after": "Safe",
+   "removed": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `handle`",
+     "lib/librdkafka-2.15.0/src/rdkafka_sasl_cyrus.c:608"
+    ]
+   ],
+   "added": []
+  },
+  {
+   "library": "librdkafka",
+   "file": "lib/librdkafka-2.15.0/src/snappy.c",
+   "configuration": 0,
+   "function": "get_hash_table",
+   "before": "Unknown",
+   "after": "Safe",
+   "removed": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `table`",
+     "lib/librdkafka-2.15.0/src/snappy.c:834"
+    ]
+   ],
+   "added": []
+  }
+ ],
+ "content_changed": [
+  {
+   "library": "chunkio",
+   "file": "lib/chunkio/src/cio_file.c",
+   "configuration": 0,
+   "function": "cio_file_open",
+   "status": "Unknown",
+   "removed": [
+    [
+     "unsupported",
+     "call to uncontracted function `format_acl_error_message`",
+     "lib/chunkio/src/cio_file.c:749"
+    ]
+   ],
+   "added": []
+  },
+  {
+   "library": "cmetrics",
+   "file": "lib/cmetrics/src/cmt_encode_opentelemetry_batch.c",
+   "configuration": 0,
+   "function": "cmt_encode_opentelemetry_split_payload",
+   "status": "Unknown",
+   "removed": [
+    [
+     "unsupported",
+     "call to uncontracted function `request_data_point_count`",
+     "lib/cmetrics/src/cmt_encode_opentelemetry_batch.c:630"
+    ]
+   ],
+   "added": []
+  },
+  {
+   "library": "librdkafka",
+   "file": "lib/librdkafka-2.15.0/src/cJSON.c",
+   "configuration": 0,
+   "function": "add_item_to_array",
+   "status": "Unknown",
+   "removed": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `child`",
+     "lib/librdkafka-2.15.0/src/cJSON.c:2025"
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `child`",
+     "lib/librdkafka-2.15.0/src/cJSON.c:2035"
+    ],
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     "lib/librdkafka-2.15.0/src/cJSON.c:2029"
+    ]
+   ],
+   "added": []
+  },
+  {
+   "library": "librdkafka",
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+   "configuration": 0,
+   "function": "rd_kafka_share_toppar_enq_error",
+   "status": "Unknown",
+   "removed": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `rkcg`",
+     "lib/librdkafka-2.15.0/src/rdkafka_partition.c:2662"
+    ]
+   ],
+   "added": []
+  },
+  {
+   "library": "librdkafka",
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+   "configuration": 0,
+   "function": "rd_kafka_topic_partition_get_topic_id",
+   "status": "Unknown",
+   "removed": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `parpriv`",
+     "lib/librdkafka-2.15.0/src/rdkafka_partition.c:3042"
+    ]
+   ],
+   "added": []
+  },
+  {
+   "library": "librdkafka",
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer.c",
+   "configuration": 0,
+   "function": "rd_kafka_sasl_oauthbearer_close",
+   "status": "Unknown",
+   "removed": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `state`",
+     "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer.c:1038"
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `state`",
+     "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer.c:1041"
+    ]
+   ],
+   "added": []
+  },
+  {
+   "library": "librdkafka",
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer.c",
+   "configuration": 0,
+   "function": "rd_kafka_sasl_oauthbearer_ready",
+   "status": "Unknown",
+   "removed": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `handle`",
+     "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer.c:1387"
+    ]
+   ],
+   "added": []
+  }
+ ],
+ "unmatched": [],
+ "alias_leaves_removed": 19,
+ "diagnostics_added": {}
+}

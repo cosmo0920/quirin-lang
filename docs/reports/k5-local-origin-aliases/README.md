@@ -189,3 +189,132 @@ roots keep the full premise, because the load's untrackedness and rule 10k
 `rd_strdup` checked non-null results; the remaining wrappers free no row
 alone (the one `contracted-result-unguarded` row alone is `mk_mem_alloc`'s,
 a real obligation), so no provider contract is changed by this card.
+
+## 5. Fixtures and Lean
+
+[`tests/k5_local_origin_aliases.rs`](../../../crates/qcore-c-gateway/tests/k5_local_origin_aliases.rs)
+(9 tests; every `Safe` rechecks its certificate). Admitted (`Unknown` on the
+local at base, `Safe` at tip): a test of a local assigned in the condition, an
+initializer through `.` members and a `void *` member, a self-loading cursor,
+two nested loaded locals under a stepped index, a literal rebinding after the
+test, a test then a `Borrowed` actual, three returns (after a use, joined with
+null, a cursor returned from a loop), and a null stored into the loaded member
+after the load; each beside the direct-path reading that is `Safe` at base
+and tip. Near misses, unchanged from base (each answer was taken at base too):
+a release of the local, of a copy of it, and in a freeing cursor loop; a root
+released, rebound, handed to an uncontracted callee, or a call result; an
+acquisition on one path (the `Leak` stays), an address handed out, a step, an
+interior address returned, a shadowed spelling and a file-scope array's decay;
+and a leak on the tested path, already reported at base, still reported
+(`Unsafe`), with its released twin `Safe`. Unit tests
+(`tests/unit/borrowed_path_local.rs`, 4): the decision, value and binding
+tables against their vectors, each bound to the Lean lists. Rule 62's and 54's
+fixture files (`ag2_unresolved_alias` 14, `thread_local_custody_free_read` 9)
+pass unchanged.
+
+[`QCore.BorrowedPathLocal`](../../../proof/QCore/BorrowedPathLocal.lean),
+audited by `proof/AuditBorrowedPathLocal.lean` (19 theorems; 4 use no axiom,
+14 `propext`, 1 `propext, Classical.choice, Quot.sound`; no placeholder):
+`decision_vectors_hold`, `a_root_is_admitted_exactly_on_a_read`,
+`a_step_or_address_withholds_the_local`, `value_vectors_hold`,
+`binding_vectors_hold`, `a_widened_state_is_never_untracked`,
+`an_other_value_withholds`, `eval_untracked`,
+`an_admitted_write_keeps_every_local_untracked`,
+`every_admitted_local_holds_an_untracked_value`,
+`the_admitted_guard_leaves_the_old_state`, `the_guard_touches_no_obligation`,
+`the_guard_narrows_only_its_binding`, `the_admitted_guard_reports_nothing`,
+`a_withheld_guard_is_the_old_guard`, `a_tracked_binding_keeps_the_old_guard`,
+`returning_an_untracked_local_escapes_nothing`,
+`the_old_return_escaped_nothing_either`,
+`a_release_of_an_untracked_local_still_refuses`.
+
+## 6. Unit-scoped reproduction of `current`
+
+[scripts/run_repro.sh](scripts/run_repro.sh) runs the user's `current
+--monkey-linked` argv on the compile database filtered
+([scripts/filter_db.py](scripts/filter_db.py)) to AG2's 48 units
+([artifacts/repro-units.txt](artifacts/repro-units.txt): every unit of the
+29 rows, plus the units the route requires) and the full Monkey database: 49
+configurations, 1,894 rows, through `gate_slot.py audit` (`--jobs 3`, peak
+2.1 GB, about 12 minutes a side;
+[receipts](artifacts/repro-base.slot.json), [tip](artifacts/repro-tip.slot.json)).
+Both sides ran one binary (sha256 `11d957a2…`), built from the working tree
+committed as `43d93dcfc` while it still held a test-only switch,
+`K5_PROTOTYPE_OFF`, that returned the empty reading before the AST was asked
+(so the switched side takes exactly the base code paths); it was set for the
+base side, unset for the tip side, and removed before the commit, which differs
+from the measured tree otherwise only in doc comments and one test helper.
+**Fidelity:** the base side equals the user's 11-24 report in status on all
+1,894 rows; 8 rows differ only by run-wide diagnostics a unit subset cannot
+see, as in AG2's reproduction ([artifacts/repro-fidelity.json](artifacts/repro-fidelity.json)).
+
+| Measure | Base | Tip |
+|---|---:|---:|
+| rows Safe / Unknown / Unsafe | 386 / 1,506 / 2 | **394 / 1,498 / 2** |
+| `Unknown -> Safe` | | 8 |
+| other moves | | 0 |
+| `unknown_alias` leaves removed | | 19 |
+| diagnostics added | | 0 |
+| rows with changed content, status unchanged | | 7 (all Unknown, leaves removed only) |
+
+The 8 moves are exactly the 8 declared in [PREDICTION.md](PREDICTION.md);
+nothing unpredicted moved, no row left `Safe`, no `Unsafe` changed
+([artifacts/repro-compare.json](artifacts/repro-compare.json)). The 7
+content-changed rows (`cio_file_open`, `cmt_encode_opentelemetry_split_payload`,
+`add_item_to_array`, `rd_kafka_share_toppar_enq_error`,
+`rd_kafka_topic_partition_get_topic_id`, `rd_kafka_sasl_oauthbearer_close`,
+`rd_kafka_sasl_oauthbearer_ready`) lose loaded-local test or return leaves and
+keep other blockers. On the full run, the same rows of these units move; the
+other units' rows with such leaves are not measured here.
+
+## 7. Shared-file hook points
+
+New logic is in `borrowed_path_local.rs` and `legacy_borrowed_path_local.rs`.
+Shared files carry only blocks between `K5-LOCAL-ORIGIN-ALIASES hook (rule
+77): begin` and `end` comments:
+
+| File | Hook |
+|---|---|
+| `lib.rs` | `pub mod borrowed_path_local;` after `custody_free_copy` |
+| `legacy_c.rs` | the `#[path = "legacy_borrowed_path_local.rs"] mod borrowed_path_local_route;` declaration after rule 62's; the `borrowed_path` field of `TraversalNames` (serde default, skipped when empty); the call `parser.borrowed_path_locals(&cfg, &scalars)` after rule 62's and the field in the struct literal there |
+| `legacy_transfer.rs` | in the work list, `guard_refinement` applied to `refine_edge`'s answer before its `match`; one `EscapeIfOwned` arm before the generic one in `transfer_base` |
+| `legacy_leak_witness.rs` | the same `guard_refinement` on the census's `refine_edge` answer |
+| `custody_free_copy.rs` (rule 62's module) | `type_of`, `Visit`, `visit` and `classify` widened to `pub(crate)`; no behaviour change |
+
+No change to `legacy_cfg_builder.rs`, `legacy_classify.rs`,
+`typed_access_path.rs` or `typed_field_access.rs`.
+
+## 8. Gate
+
+Not run, on the user's instruction of 2026-11-24 relayed by the coordinator
+(verbatim): "We don't need to run the each of K-related gates. We must run the
+merged K-related tip's gate." A scoped gate started on `43d93dcfc`
+(`python3 scripts/gate_scope.py --base 3ca85c7a6 --out private/gate-1`) was
+stopped through its own task handle after 3 h 50 min while it still waited for
+the Rust-suite slot; nothing of it is evidence (`private/gate-1/STOPPED.txt`).
+Targeted checks run on this tree: `cargo test -p qcore-c-gateway --test
+k5_local_origin_aliases --test ag2_unresolved_alias --test
+thread_local_custody_free_read` (exit 0; 9, 14, 9 passed),
+`cargo test -p qcore-c-gateway --lib borrowed_path_local` (exit 0, 4 passed),
+`cargo clippy -p qcore-c-gateway --all-targets -- -D warnings` (exit 0, after
+one fix), `cargo fmt --all` (clean), `lake -d proof build
+QCore.BorrowedPathLocal` and the audit file under `lake env lean
+-DwarningAsError=true` (exit 0), `gen_rule_docs.py --check` and
+`gen_lean_roots.py --check` (exit 0). The full gate on the merged K tip is the
+arbiter, including for pinned expectations elsewhere in the suite that this
+rule could flip (none was found by the targeted runs).
+
+## 9. Records
+
+- [PREDICTION.md](PREDICTION.md), committed before the semantic commit, with
+  its `measure-prediction` block (8 declared moves on corpus and twelve-home).
+- [integration-amendments.json](integration-amendments.json): amends
+  `W47-ALIAS-FLOW-RESIDUALS`, `W47-ALIAS-TYPED-SCALAR-NAMES`,
+  `W47-ALIAS-NONNULL-ALLOCATOR-RESULTS`, `AG2-STATIC-OBJECT-COPY`,
+  `CG17-CONTAINER-OF-LIST-LOOKUPS`, `AG3-RETURN-MEMBER-ADDRESS-DERIVED` and
+  `W47-ALIAS-CALLEE-BORROWED-CLOSURE`; registers `K5-CALL-RESULT-BASE-LOADS`,
+  `K5-BUILTIN-EXPECT-ROOT-CLOSURE` and `K5-LOOP-CARRIED-LOADED-DEREFERENCE`.
+- Measurement command (the integrator's): `quirin-audit measure --side
+  base=rev:3ca85c7a6 --side tip=rev:<tip> --declared
+  docs/reports/k5-local-origin-aliases/PREDICTION.md` on corpus, twelve-home,
+  system and slice, then the user's `current --monkey-linked` rerun.
