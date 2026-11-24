@@ -10,6 +10,6 @@ target="$repo/private/k1/${3:-target-test}"
 cd "$repo" || exit 2
 CARGO_TARGET_DIR="$target" python3 scripts/gate_slot.py build \
   --receipt "$repo/private/k1/$name.receipt.json" -- \
-  cargo test -p qcore-c-gateway --test "$test" --no-run \
+  cargo test -p qcore-c-gateway $( [ "$test" = "--lib" ] && echo --lib || echo --test "$test" ) --no-run \
   > "$repo/private/k1/$name.log" 2>&1
 echo $? > "$repo/private/k1/$name.exit"

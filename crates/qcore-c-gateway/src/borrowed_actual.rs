@@ -341,10 +341,14 @@ fn result_code(result: qcore_schemas::contract::ResourceReturnMode) -> &'static 
 /// above do not spell (`&(p)`, `(p)++`, `++(p)`, `(p) op= …`), not already
 /// seeded.
 fn seed_nested(body: &[&str], risky: &BTreeSet<String>) -> BTreeSet<String> {
-    crate::lexical_nested_assignment::parenthesised_writes(body)
-        .into_iter()
-        .filter(|name| !risky.contains(name))
-        .collect()
+    // Rule 75 (K1-CALL-ACTUAL-ACCESS): `& ( p ) -> f` is no address of `p`.
+    crate::lexical_nested_assignment::parenthesised_writes_reading(
+        body,
+        crate::parenthesised_member_operand::ARM,
+    )
+    .into_iter()
+    .filter(|name| !risky.contains(name))
+    .collect()
 }
 
 /// Rule 10o: refuse the destination of every assignment the statement reading

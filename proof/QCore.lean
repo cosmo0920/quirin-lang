@@ -363,6 +363,7 @@ import QCore.PackageIdentity
 import QCore.PackageTemplateBinding
 import QCore.ParentTeardown
 import QCore.ParenthesisedCallee
+import QCore.ParenthesisedMemberOperand
 import QCore.PipeDesugaring
 import QCore.PluginNeutralOverlap
 import QCore.PluginPremiseDecomposition

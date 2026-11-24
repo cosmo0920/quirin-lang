@@ -258,6 +258,9 @@ mod member_store_retention;
 // Card CG10-READER-GAPS (rule 71): a logical AND before a parenthesised
 // name is not its address.
 mod logical_and_operand;
+// Card K1-CALL-ACTUAL-ACCESS (rule 75): `&(p)->f` is no address of `p` for
+// the never-bound closure.
+mod parenthesised_member_operand;
 // Card CG10-READER-GAPS (rule 71a): the return position's placement of rule
 // 12h's identity-preserving-view removal.
 mod return_cast_view;
