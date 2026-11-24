@@ -1,0 +1,794 @@
+{
+ "schema": "quirin-gate-scope/1",
+ "source": "git diff",
+ "base": "3ca85c7a609c927ab0685c17fcf9269822f0588b",
+ "head": "e7ea41f4718641ab65ca6de5543ae7e60c7d8aff",
+ "committed": [
+  "crates/qcore-c-gateway/tests/callback_member_released_effect_order.rs",
+  "docs/QCORE_CONTRACT_SPEC_r0_3.md",
+  "docs/agents/README.md",
+  "docs/agents/gateway.md",
+  "docs/agents/rules/74p.md",
+  "docs/reports/callback-member-released-effect-order/PREDICTION.md",
+  "docs/reports/callback-member-released-effect-order/evidence/base-fixture.log",
+  "docs/reports/callback-member-released-effect-order/evidence/mutation/baseline-1.log",
+  "docs/reports/callback-member-released-effect-order/evidence/mutation/baseline-1.log.exit",
+  "docs/reports/callback-member-released-effect-order/evidence/mutation/mutant-1.log",
+  "docs/reports/callback-member-released-effect-order/evidence/mutation/mutant-1.log.exit",
+  "docs/reports/callback-member-released-effect-order/evidence/probe-table.log",
+  "docs/reports/callback-member-released-effect-order/evidence/probe-table.rs.txt",
+  "docs/reports/callback-member-released-effect-order/integration-amendments.json",
+  "docs/reports/callback-member-released-effect-order/scripts/changed_rows.py",
+  "docs/reports/callback-member-released-effect-order/scripts/moved.py",
+  "docs/reports/callback-member-released-effect-order/scripts/mutation.py",
+  "docs/reports/callback-member-released-effect-order/scripts/opt-in-current.sh",
+  "docs/reports/callback-member-released-effect-order/scripts/run-test.sh",
+  "docs/reports/callback-member-released-effect-order/scripts/run.sh",
+  "docs/reports/callback-member-released-effect-order/scripts/totals.py",
+  "proof/AuditCallbackReleasedEffectOrder.lean",
+  "proof/QCore.lean",
+  "proof/QCore/CallbackReleasedEffectOrder.lean"
+ ],
+ "uncommitted": [],
+ "scope": {
+  "paths": [
+   "crates/qcore-c-gateway/tests/callback_member_released_effect_order.rs",
+   "docs/QCORE_CONTRACT_SPEC_r0_3.md",
+   "docs/agents/README.md",
+   "docs/agents/gateway.md",
+   "docs/agents/rules/74p.md",
+   "docs/reports/callback-member-released-effect-order/PREDICTION.md",
+   "docs/reports/callback-member-released-effect-order/evidence/base-fixture.log",
+   "docs/reports/callback-member-released-effect-order/evidence/mutation/baseline-1.log",
+   "docs/reports/callback-member-released-effect-order/evidence/mutation/baseline-1.log.exit",
+   "docs/reports/callback-member-released-effect-order/evidence/mutation/mutant-1.log",
+   "docs/reports/callback-member-released-effect-order/evidence/mutation/mutant-1.log.exit",
+   "docs/reports/callback-member-released-effect-order/evidence/probe-table.log",
+   "docs/reports/callback-member-released-effect-order/evidence/probe-table.rs.txt",
+   "docs/reports/callback-member-released-effect-order/integration-amendments.json",
+   "docs/reports/callback-member-released-effect-order/scripts/changed_rows.py",
+   "docs/reports/callback-member-released-effect-order/scripts/moved.py",
+   "docs/reports/callback-member-released-effect-order/scripts/mutation.py",
+   "docs/reports/callback-member-released-effect-order/scripts/opt-in-current.sh",
+   "docs/reports/callback-member-released-effect-order/scripts/run-test.sh",
+   "docs/reports/callback-member-released-effect-order/scripts/run.sh",
+   "docs/reports/callback-member-released-effect-order/scripts/totals.py",
+   "proof/AuditCallbackReleasedEffectOrder.lean",
+   "proof/QCore.lean",
+   "proof/QCore/CallbackReleasedEffectOrder.lean"
+  ],
+  "attribution": {
+   "crates/qcore-c-gateway/tests/callback_member_released_effect_order.rs": [
+    "owned by qcore-c-gateway (test targets qcore-c-gateway::test::callback_member_released_effect_order)",
+    "read by qcore-audit (walker, crates/qcore-audit/tests/rule_switch_entry_points.rs:0) in qcore-audit::test::rule_switch_entry_points",
+    "read by qcore-verification (walker, crates/qcore-verification/tests/composition_bounds.rs:302) in qcore-verification::test::composition_bounds",
+    "read by qcore-compiler (walker, compiler/tests/workspace_layering.rs:94) in qcore-compiler::test::workspace_layering",
+    "read by quirin-audit-plugin-measure (expansion, crates/quirin-audit-plugin-measure/tests/support/mod.rs:211) in quirin-audit-plugin-measure::test::host, quirin-audit-plugin-measure::test::link_resolution, quirin-audit-plugin-measure::test::measure, quirin-audit-plugin-measure::test::slot_wait, quirin-audit-plugin-measure::test::units",
+    "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:4349) in qcore-compiler::test::ct_corpus",
+    "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:3989) in qcore-compiler::test::ct_corpus",
+    "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:4003) in qcore-compiler::test::ct_corpus",
+    "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:4040) in qcore-compiler::test::ct_corpus",
+    "read by qcore-compiler (expansion, compiler/tests/ct_corpus.rs:4002) in qcore-compiler::test::ct_corpus"
+   ],
+   "docs/QCORE_CONTRACT_SPEC_r0_3.md": [
+    "class prose"
+   ],
+   "docs/agents/README.md": [
+    "class prose"
+   ],
+   "docs/agents/gateway.md": [
+    "class prose"
+   ],
+   "docs/agents/rules/74p.md": [
+    "class prose"
+   ],
+   "docs/reports/callback-member-released-effect-order/PREDICTION.md": [
+    "class prose"
+   ],
+   "docs/reports/callback-member-released-effect-order/evidence/base-fixture.log": [
+    "class prose"
+   ],
+   "docs/reports/callback-member-released-effect-order/evidence/mutation/baseline-1.log": [
+    "class prose"
+   ],
+   "docs/reports/callback-member-released-effect-order/evidence/mutation/baseline-1.log.exit": [
+    "class prose"
+   ],
+   "docs/reports/callback-member-released-effect-order/evidence/mutation/mutant-1.log": [
+    "class prose"
+   ],
+   "docs/reports/callback-member-released-effect-order/evidence/mutation/mutant-1.log.exit": [
+    "class prose"
+   ],
+   "docs/reports/callback-member-released-effect-order/evidence/probe-table.log": [
+    "class prose"
+   ],
+   "docs/reports/callback-member-released-effect-order/evidence/probe-table.rs.txt": [
+    "class prose"
+   ],
+   "docs/reports/callback-member-released-effect-order/integration-amendments.json": [
+    "class prose"
+   ],
+   "docs/reports/callback-member-released-effect-order/scripts/changed_rows.py": [
+    "class prose"
+   ],
+   "docs/reports/callback-member-released-effect-order/scripts/moved.py": [
+    "class prose"
+   ],
+   "docs/reports/callback-member-released-effect-order/scripts/mutation.py": [
+    "class prose"
+   ],
+   "docs/reports/callback-member-released-effect-order/scripts/opt-in-current.sh": [
+    "class prose"
+   ],
+   "docs/reports/callback-member-released-effect-order/scripts/run-test.sh": [
+    "class prose"
+   ],
+   "docs/reports/callback-member-released-effect-order/scripts/run.sh": [
+    "class prose"
+   ],
+   "docs/reports/callback-member-released-effect-order/scripts/totals.py": [
+    "class prose"
+   ],
+   "proof/AuditCallbackReleasedEffectOrder.lean": [
+    "read by qcore-compiler (walker, compiler/tests/float_ieee_vectors.rs:541) in qcore-compiler::test::float_ieee_vectors",
+    "read by qcore-compiler (walker, compiler/tests/proof_leg_digests.rs:120) in qcore-compiler::test::proof_leg_digests",
+    "class lean"
+   ],
+   "proof/QCore.lean": [
+    "read by qcore-compiler (walker, compiler/tests/float_ieee_vectors.rs:541) in qcore-compiler::test::float_ieee_vectors",
+    "read by qcore-compiler (walker, compiler/tests/proof_leg_digests.rs:120) in qcore-compiler::test::proof_leg_digests",
+    "class lean"
+   ],
+   "proof/QCore/CallbackReleasedEffectOrder.lean": [
+    "read by qcore-compiler (walker, compiler/tests/float_ieee_vectors.rs:541) in qcore-compiler::test::float_ieee_vectors",
+    "read by qcore-compiler (walker, compiler/tests/proof_leg_digests.rs:120) in qcore-compiler::test::proof_leg_digests",
+    "class lean"
+   ]
+  },
+  "affected": {},
+  "targets": {
+   "qcore-audit": {
+    "qcore-audit::test::rule_switch_entry_points": [
+     "walks **/tests/**/*.rs (declared reads of crates/qcore-audit/tests/rule_switch_entry_points.rs): crates/qcore-c-gateway/tests/callback_member_released_effect_order.rs (crates/qcore-audit/tests/rule_switch_entry_points.rs:0)"
+    ]
+   },
+   "qcore-c-gateway": {
+    "qcore-c-gateway::test::callback_member_released_effect_order": [
+     "owns crates/qcore-c-gateway/tests/callback_member_released_effect_order.rs"
+    ]
+   },
+   "qcore-compiler": {
+    "qcore-compiler::test::ct_corpus": [
+     "reads docs/reviews/r0_3/acceptance.json, which lists crates/qcore-c-gateway/tests/callback_member_released_effect_order.rs: crates/qcore-c-gateway/tests/callback_member_released_effect_order.rs (compiler/tests/ct_corpus.rs:4349)",
+     "reads docs/reports/remaining-t00/coverage.json, which lists crates/qcore-c-gateway/tests/callback_member_released_effect_order.rs: crates/qcore-c-gateway/tests/callback_member_released_effect_order.rs (compiler/tests/ct_corpus.rs:3989)",
+     "reads docs/reports/ct-proof-leg-2/ct_stage_evidence.json, which lists crates/qcore-c-gateway/tests/callback_member_released_effect_order.rs: crates/qcore-c-gateway/tests/callback_member_released_effect_order.rs (compiler/tests/ct_corpus.rs:4003)",
+     "reads docs/reports/ct-proof-leg-3/ct_stage_evidence.json, which lists crates/qcore-c-gateway/tests/callback_member_released_effect_order.rs: crates/qcore-c-gateway/tests/callback_member_released_effect_order.rs (compiler/tests/ct_corpus.rs:4040)",
+     "reads docs/reports/ct01-proof-leg/ct_stage_evidence.json, which lists crates/qcore-c-gateway/tests/callback_member_released_effect_order.rs: crates/qcore-c-gateway/tests/callback_member_released_effect_order.rs (compiler/tests/ct_corpus.rs:4002)"
+    ],
+    "qcore-compiler::test::float_ieee_vectors": [
+     "walks proof/** (walker of proof): proof/AuditCallbackReleasedEffectOrder.lean (compiler/tests/float_ieee_vectors.rs:541)",
+     "walks proof/** (walker of proof): proof/QCore.lean (compiler/tests/float_ieee_vectors.rs:541)",
+     "walks proof/** (walker of proof): proof/QCore/CallbackReleasedEffectOrder.lean (compiler/tests/float_ieee_vectors.rs:541)"
+    ],
+    "qcore-compiler::test::proof_leg_digests": [
+     "walks proof/** (walker of proof): proof/AuditCallbackReleasedEffectOrder.lean (compiler/tests/proof_leg_digests.rs:120)",
+     "walks proof/** (walker of proof): proof/QCore.lean (compiler/tests/proof_leg_digests.rs:120)",
+     "walks proof/** (walker of proof): proof/QCore/CallbackReleasedEffectOrder.lean (compiler/tests/proof_leg_digests.rs:120)"
+    ],
+    "qcore-compiler::test::workspace_layering": [
+     "walks crates/qcore-c-gateway/** (walker of crates/qcore-c-gateway): crates/qcore-c-gateway/tests/callback_member_released_effect_order.rs (compiler/tests/workspace_layering.rs:94)"
+    ]
+   },
+   "qcore-verification": {
+    "qcore-verification::test::composition_bounds": [
+     "walks crates/** (walker of crates): crates/qcore-c-gateway/tests/callback_member_released_effect_order.rs (crates/qcore-verification/tests/composition_bounds.rs:302)"
+    ]
+   },
+   "quirin-audit-plugin-measure": {
+    "quirin-audit-plugin-measure::test::host": [
+     "reads scripts/** (walker of scripts), which lists crates/qcore-c-gateway/tests/callback_member_released_effect_order.rs: crates/qcore-c-gateway/tests/callback_member_released_effect_order.rs (crates/quirin-audit-plugin-measure/tests/support/mod.rs:211)"
+    ],
+    "quirin-audit-plugin-measure::test::link_resolution": [
+     "reads scripts/** (walker of scripts), which lists crates/qcore-c-gateway/tests/callback_member_released_effect_order.rs: crates/qcore-c-gateway/tests/callback_member_released_effect_order.rs (crates/quirin-audit-plugin-measure/tests/support/mod.rs:211)"
+    ],
+    "quirin-audit-plugin-measure::test::measure": [
+     "reads scripts/** (walker of scripts), which lists crates/qcore-c-gateway/tests/callback_member_released_effect_order.rs: crates/qcore-c-gateway/tests/callback_member_released_effect_order.rs (crates/quirin-audit-plugin-measure/tests/support/mod.rs:211)"
+    ],
+    "quirin-audit-plugin-measure::test::slot_wait": [
+     "reads scripts/** (walker of scripts), which lists crates/qcore-c-gateway/tests/callback_member_released_effect_order.rs: crates/qcore-c-gateway/tests/callback_member_released_effect_order.rs (crates/quirin-audit-plugin-measure/tests/support/mod.rs:211)"
+    ],
+    "quirin-audit-plugin-measure::test::units": [
+     "reads scripts/** (walker of scripts), which lists crates/qcore-c-gateway/tests/callback_member_released_effect_order.rs: crates/qcore-c-gateway/tests/callback_member_released_effect_order.rs (crates/quirin-audit-plugin-measure/tests/support/mod.rs:211)"
+    ]
+   }
+  },
+  "mode": "scoped",
+  "full_reasons": [],
+  "rust_packages": [],
+  "rust_targets": [
+   "qcore-audit::test::rule_switch_entry_points",
+   "qcore-c-gateway::test::callback_member_released_effect_order",
+   "qcore-compiler::test::ct_corpus",
+   "qcore-compiler::test::float_ieee_vectors",
+   "qcore-compiler::test::proof_leg_digests",
+   "qcore-compiler::test::workspace_layering",
+   "qcore-verification::test::composition_bounds",
+   "quirin-audit-plugin-measure::test::host",
+   "quirin-audit-plugin-measure::test::link_resolution",
+   "quirin-audit-plugin-measure::test::measure",
+   "quirin-audit-plugin-measure::test::slot_wait",
+   "quirin-audit-plugin-measure::test::units"
+  ],
+  "probes": false,
+  "lean": {
+   "mode": "all",
+   "reasons": [
+    "proof/QCore.lean: a proof root changed"
+   ],
+   "modules": [],
+   "audits": []
+  },
+  "python_reasons": [
+   "docs/reports/callback-member-released-effect-order/scripts/changed_rows.py: Python",
+   "docs/reports/callback-member-released-effect-order/scripts/moved.py: Python",
+   "docs/reports/callback-member-released-effect-order/scripts/mutation.py: Python",
+   "docs/reports/callback-member-released-effect-order/scripts/totals.py: Python"
+  ],
+  "provider_gate": false,
+  "provider_reasons": [],
+  "provider_lock_check": false,
+  "provider_lock_reasons": [],
+  "provider_members_reached_without_providers_change": [],
+  "unresolved_includes": [
+   {
+    "crate": "qcore-audit",
+    "source": "crates/qcore-audit/src/contract_only_diff.rs:629",
+    "literal": "include_str!(PATH)\").is_err());",
+    "why": "argument is not a string literal (or the macro is inside a string)"
+   },
+   {
+    "crate": "qcore-audit",
+    "source": "crates/qcore-audit/src/contract_only_diff.rs:634",
+    "literal": "include_str!(concat!(\"a\", \"b\"))\"#",
+    "why": "argument is not a string literal (or the macro is inside a string)"
+   },
+   {
+    "crate": "qcore-audit",
+    "source": "crates/qcore-audit/src/contract_only_diff.rs:651",
+    "literal": "include_str!(PATH)\\n\",",
+    "why": "argument is not a string literal (or the macro is inside a string)"
+   },
+   {
+    "crate": "qcore-audit",
+    "source": "crates/qcore-audit/src/contract_only_diff.rs:652",
+    "literal": "include_str!(PATH)\\n\",",
+    "why": "argument is not a string literal (or the macro is inside a string)"
+   },
+   {
+    "crate": "qcore-audit",
+    "source": "crates/qcore-audit/src/contract_only_diff.rs:653",
+    "literal": "include_str!(PATH) */ still include_str!(PATH) */\\n\",",
+    "why": "argument is not a string literal (or the macro is inside a string)"
+   },
+   {
+    "crate": "qcore-audit",
+    "source": "crates/qcore-audit/src/contract_only_diff.rs:653",
+    "literal": "include_str!(PATH) */\\n\",",
+    "why": "argument is not a string literal (or the macro is inside a string)"
+   },
+   {
+    "crate": "qcore-audit",
+    "source": "crates/qcore-audit/src/contract_only_diff.rs:654",
+    "literal": "include_str!(PATH) \\\\\\\" include_str!(PATH)\\\";\\n\",",
+    "why": "argument is not a string literal (or the macro is inside a string)"
+   },
+   {
+    "crate": "qcore-audit",
+    "source": "crates/qcore-audit/src/contract_only_diff.rs:654",
+    "literal": "include_str!(PATH)\\\";\\n\",",
+    "why": "argument is not a string literal (or the macro is inside a string)"
+   },
+   {
+    "crate": "qcore-audit",
+    "source": "crates/qcore-audit/src/contract_only_diff.rs:655",
+    "literal": "include_str!(PATH) \\\" include_str!(PATH)\\\"#;\\n\",",
+    "why": "argument is not a string literal (or the macro is inside a string)"
+   },
+   {
+    "crate": "qcore-audit",
+    "source": "crates/qcore-audit/src/contract_only_diff.rs:655",
+    "literal": "include_str!(PATH)\\\"#;\\n\",",
+    "why": "argument is not a string literal (or the macro is inside a string)"
+   },
+   {
+    "crate": "qcore-audit",
+    "source": "crates/qcore-audit/src/contract_only_diff.rs:656",
+    "literal": "include_str!(PATH)\\\";\\n\",",
+    "why": "argument is not a string literal (or the macro is inside a string)"
+   },
+   {
+    "crate": "qcore-audit",
+    "source": "crates/qcore-audit/src/contract_only_diff.rs:657",
+    "literal": "include_str!(PATH) \\\"# include_str!(PATH)\\\"##;\\n\",",
+    "why": "argument is not a string literal (or the macro is inside a string)"
+   },
+   {
+    "crate": "qcore-audit",
+    "source": "crates/qcore-audit/src/contract_only_diff.rs:657",
+    "literal": "include_str!(PATH)\\\"##;\\n\",",
+    "why": "argument is not a string literal (or the macro is inside a string)"
+   },
+   {
+    "crate": "qcore-audit",
+    "source": "crates/qcore-audit/src/contract_only_diff.rs:677",
+    "literal": "include_str!(PATH);\\n\");",
+    "why": "argument is not a string literal (or the macro is inside a string)"
+   },
+   {
+    "crate": "qcore-audit",
+    "source": "crates/qcore-audit/src/contract_only_diff.rs:682",
+    "literal": "include_str!(\\\"../data/x.qv\\\");\\n\");",
+    "why": "argument is not a string literal (or the macro is inside a string)"
+   },
+   {
+    "crate": "qcore-audit",
+    "source": "crates/qcore-audit/src/contract_only_diff.rs:753",
+    "literal": "include_str!(\\\"../../../providers/p/contracts/embedded.qv\\\");\\n\",",
+    "why": "argument is not a string literal (or the macro is inside a string)"
+   },
+   {
+    "crate": "qcore-audit",
+    "source": "crates/qcore-audit/src/contract_only_diff.rs:757",
+    "literal": "include_str!(\\\"../../../providers/p/contracts/a.qv\\\");\\n\",",
+    "why": "argument is not a string literal (or the macro is inside a string)"
+   },
+   {
+    "crate": "qcore-audit",
+    "source": "crates/qcore-audit/src/contract_only_diff.rs:835",
+    "literal": "include_str!(PATH);\\n\",",
+    "why": "argument is not a string literal (or the macro is inside a string)"
+   },
+   {
+    "crate": "qcore-compiler",
+    "source": "compiler/tests/ct_corpus.rs:8083",
+    "literal": "include_str!(\\\"fixtures/ct/{id}/case.qr\\\")\");",
+    "why": "argument is not a string literal (or the macro is inside a string)"
+   }
+  ],
+  "undeclared_directory_literals": [],
+  "stale_walkers": []
+ },
+ "planned_steps": [
+  {
+   "name": "submodules",
+   "argv": [
+    "git",
+    "-C",
+    "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a08c5916e3a82bcdf",
+    "submodule",
+    "status",
+    "--recursive"
+   ],
+   "slot": null,
+   "slot_args": []
+  },
+  {
+   "name": "fmt",
+   "argv": [
+    "cargo",
+    "fmt",
+    "--all",
+    "--",
+    "--check"
+   ],
+   "slot": "build",
+   "slot_args": []
+  },
+  {
+   "name": "clippy-qcore-audit",
+   "argv": [
+    "cargo",
+    "clippy",
+    "-p",
+    "qcore-audit",
+    "--test",
+    "rule_switch_entry_points",
+    "--",
+    "-D",
+    "warnings"
+   ],
+   "slot": "build",
+   "slot_args": []
+  },
+  {
+   "name": "clippy-qcore-c-gateway",
+   "argv": [
+    "cargo",
+    "clippy",
+    "-p",
+    "qcore-c-gateway",
+    "--test",
+    "callback_member_released_effect_order",
+    "--",
+    "-D",
+    "warnings"
+   ],
+   "slot": "build",
+   "slot_args": []
+  },
+  {
+   "name": "clippy-qcore-compiler",
+   "argv": [
+    "cargo",
+    "clippy",
+    "-p",
+    "qcore-compiler",
+    "--test",
+    "ct_corpus",
+    "--test",
+    "float_ieee_vectors",
+    "--test",
+    "proof_leg_digests",
+    "--test",
+    "workspace_layering",
+    "--",
+    "-D",
+    "warnings"
+   ],
+   "slot": "build",
+   "slot_args": []
+  },
+  {
+   "name": "clippy-qcore-verification",
+   "argv": [
+    "cargo",
+    "clippy",
+    "-p",
+    "qcore-verification",
+    "--test",
+    "composition_bounds",
+    "--",
+    "-D",
+    "warnings"
+   ],
+   "slot": "build",
+   "slot_args": []
+  },
+  {
+   "name": "clippy-quirin-audit-plugin-measure",
+   "argv": [
+    "cargo",
+    "clippy",
+    "-p",
+    "quirin-audit-plugin-measure",
+    "--test",
+    "host",
+    "--test",
+    "link_resolution",
+    "--test",
+    "measure",
+    "--test",
+    "slot_wait",
+    "--test",
+    "units",
+    "--",
+    "-D",
+    "warnings"
+   ],
+   "slot": "build",
+   "slot_args": []
+  },
+  {
+   "name": "rust-suite",
+   "argv": [
+    "/usr/bin/python3",
+    "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a08c5916e3a82bcdf/scripts/run_test_binaries.py",
+    "--targets",
+    "qcore-audit::test::rule_switch_entry_points,qcore-c-gateway::test::callback_member_released_effect_order,qcore-compiler::test::ct_corpus,qcore-compiler::test::float_ieee_vectors,qcore-compiler::test::proof_leg_digests,qcore-compiler::test::workspace_layering,qcore-verification::test::composition_bounds,quirin-audit-plugin-measure::test::host,quirin-audit-plugin-measure::test::link_resolution,quirin-audit-plugin-measure::test::measure,quirin-audit-plugin-measure::test::slot_wait,quirin-audit-plugin-measure::test::units",
+    "--log-dir",
+    "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a08c5916e3a82bcdf/private/gate-2/rust-suite"
+   ],
+   "slot": "rust-suite",
+   "slot_args": []
+  },
+  {
+   "name": "lean",
+   "argv": [
+    "/usr/bin/python3",
+    "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a08c5916e3a82bcdf/scripts/check_lean_audits.py"
+   ],
+   "slot": "lean",
+   "slot_args": []
+  },
+  {
+   "name": "python",
+   "argv": [
+    "/usr/bin/python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/tests"
+   ],
+   "slot": null,
+   "slot_args": []
+  }
+ ],
+ "slots": true,
+ "landing": false,
+ "card_base": "3ca85c7a609c927ab0685c17fcf9269822f0588b",
+ "started": "20261124T002116Z",
+ "ran": true,
+ "steps": [
+  {
+   "name": "submodules",
+   "argv": [
+    "git",
+    "-C",
+    "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a08c5916e3a82bcdf",
+    "submodule",
+    "status",
+    "--recursive"
+   ],
+   "exit": 0,
+   "seconds": 0.1,
+   "log": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a08c5916e3a82bcdf/private/gate-2/submodules.log",
+   "counts": {
+    "submodules": 1,
+    "not_checked_out_or_moved": []
+   }
+  },
+  {
+   "name": "fmt",
+   "argv": [
+    "/usr/bin/python3",
+    "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a08c5916e3a82bcdf/scripts/gate_slot.py",
+    "build",
+    "--receipt",
+    "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a08c5916e3a82bcdf/private/gate-2/slots/fmt.json",
+    "--",
+    "cargo",
+    "fmt",
+    "--all",
+    "--",
+    "--check"
+   ],
+   "exit": 0,
+   "seconds": 18.3,
+   "log": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a08c5916e3a82bcdf/private/gate-2/fmt.log",
+   "counts": {},
+   "slot_receipt": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a08c5916e3a82bcdf/private/gate-2/slots/fmt.json"
+  },
+  {
+   "name": "clippy-qcore-audit",
+   "argv": [
+    "/usr/bin/python3",
+    "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a08c5916e3a82bcdf/scripts/gate_slot.py",
+    "build",
+    "--receipt",
+    "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a08c5916e3a82bcdf/private/gate-2/slots/clippy-qcore-audit.json",
+    "--",
+    "cargo",
+    "clippy",
+    "-p",
+    "qcore-audit",
+    "--test",
+    "rule_switch_entry_points",
+    "--",
+    "-D",
+    "warnings"
+   ],
+   "exit": 0,
+   "seconds": 196.6,
+   "log": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a08c5916e3a82bcdf/private/gate-2/clippy-qcore-audit.log",
+   "counts": {},
+   "slot_receipt": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a08c5916e3a82bcdf/private/gate-2/slots/clippy-qcore-audit.json"
+  },
+  {
+   "name": "clippy-qcore-c-gateway",
+   "argv": [
+    "/usr/bin/python3",
+    "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a08c5916e3a82bcdf/scripts/gate_slot.py",
+    "build",
+    "--receipt",
+    "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a08c5916e3a82bcdf/private/gate-2/slots/clippy-qcore-c-gateway.json",
+    "--",
+    "cargo",
+    "clippy",
+    "-p",
+    "qcore-c-gateway",
+    "--test",
+    "callback_member_released_effect_order",
+    "--",
+    "-D",
+    "warnings"
+   ],
+   "exit": 0,
+   "seconds": 69.7,
+   "log": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a08c5916e3a82bcdf/private/gate-2/clippy-qcore-c-gateway.log",
+   "counts": {},
+   "slot_receipt": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a08c5916e3a82bcdf/private/gate-2/slots/clippy-qcore-c-gateway.json"
+  },
+  {
+   "name": "clippy-qcore-compiler",
+   "argv": [
+    "/usr/bin/python3",
+    "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a08c5916e3a82bcdf/scripts/gate_slot.py",
+    "build",
+    "--receipt",
+    "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a08c5916e3a82bcdf/private/gate-2/slots/clippy-qcore-compiler.json",
+    "--",
+    "cargo",
+    "clippy",
+    "-p",
+    "qcore-compiler",
+    "--test",
+    "ct_corpus",
+    "--test",
+    "float_ieee_vectors",
+    "--test",
+    "proof_leg_digests",
+    "--test",
+    "workspace_layering",
+    "--",
+    "-D",
+    "warnings"
+   ],
+   "exit": 0,
+   "seconds": 3.0,
+   "log": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a08c5916e3a82bcdf/private/gate-2/clippy-qcore-compiler.log",
+   "counts": {},
+   "slot_receipt": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a08c5916e3a82bcdf/private/gate-2/slots/clippy-qcore-compiler.json"
+  },
+  {
+   "name": "clippy-qcore-verification",
+   "argv": [
+    "/usr/bin/python3",
+    "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a08c5916e3a82bcdf/scripts/gate_slot.py",
+    "build",
+    "--receipt",
+    "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a08c5916e3a82bcdf/private/gate-2/slots/clippy-qcore-verification.json",
+    "--",
+    "cargo",
+    "clippy",
+    "-p",
+    "qcore-verification",
+    "--test",
+    "composition_bounds",
+    "--",
+    "-D",
+    "warnings"
+   ],
+   "exit": 0,
+   "seconds": 6.5,
+   "log": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a08c5916e3a82bcdf/private/gate-2/clippy-qcore-verification.log",
+   "counts": {},
+   "slot_receipt": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a08c5916e3a82bcdf/private/gate-2/slots/clippy-qcore-verification.json"
+  },
+  {
+   "name": "clippy-quirin-audit-plugin-measure",
+   "argv": [
+    "/usr/bin/python3",
+    "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a08c5916e3a82bcdf/scripts/gate_slot.py",
+    "build",
+    "--receipt",
+    "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a08c5916e3a82bcdf/private/gate-2/slots/clippy-quirin-audit-plugin-measure.json",
+    "--",
+    "cargo",
+    "clippy",
+    "-p",
+    "quirin-audit-plugin-measure",
+    "--test",
+    "host",
+    "--test",
+    "link_resolution",
+    "--test",
+    "measure",
+    "--test",
+    "slot_wait",
+    "--test",
+    "units",
+    "--",
+    "-D",
+    "warnings"
+   ],
+   "exit": 0,
+   "seconds": 3.1,
+   "log": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a08c5916e3a82bcdf/private/gate-2/clippy-quirin-audit-plugin-measure.log",
+   "counts": {},
+   "slot_receipt": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a08c5916e3a82bcdf/private/gate-2/slots/clippy-quirin-audit-plugin-measure.json"
+  },
+  {
+   "name": "rust-suite",
+   "argv": [
+    "/usr/bin/python3",
+    "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a08c5916e3a82bcdf/scripts/gate_slot.py",
+    "rust-suite",
+    "--receipt",
+    "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a08c5916e3a82bcdf/private/gate-2/slots/rust-suite.json",
+    "--",
+    "/usr/bin/python3",
+    "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a08c5916e3a82bcdf/scripts/run_test_binaries.py",
+    "--targets",
+    "qcore-audit::test::rule_switch_entry_points,qcore-c-gateway::test::callback_member_released_effect_order,qcore-compiler::test::ct_corpus,qcore-compiler::test::float_ieee_vectors,qcore-compiler::test::proof_leg_digests,qcore-compiler::test::workspace_layering,qcore-verification::test::composition_bounds,quirin-audit-plugin-measure::test::host,quirin-audit-plugin-measure::test::link_resolution,quirin-audit-plugin-measure::test::measure,quirin-audit-plugin-measure::test::slot_wait,quirin-audit-plugin-measure::test::units",
+    "--log-dir",
+    "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a08c5916e3a82bcdf/private/gate-2/rust-suite"
+   ],
+   "exit": 0,
+   "seconds": 2692.1,
+   "log": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a08c5916e3a82bcdf/private/gate-2/rust-suite.log",
+   "counts": {
+    "units": 12,
+    "passed": 61,
+    "failed": 0,
+    "ignored": 0,
+    "measured": 0,
+    "filtered": 0,
+    "summaries": 12,
+    "packages": [],
+    "targets": [
+     "qcore-audit::test::rule_switch_entry_points",
+     "qcore-c-gateway::test::callback_member_released_effect_order",
+     "qcore-compiler::test::ct_corpus",
+     "qcore-compiler::test::float_ieee_vectors",
+     "qcore-compiler::test::proof_leg_digests",
+     "qcore-compiler::test::workspace_layering",
+     "qcore-verification::test::composition_bounds",
+     "quirin-audit-plugin-measure::test::host",
+     "quirin-audit-plugin-measure::test::link_resolution",
+     "quirin-audit-plugin-measure::test::measure",
+     "quirin-audit-plugin-measure::test::slot_wait",
+     "quirin-audit-plugin-measure::test::units"
+    ],
+    "summary": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a08c5916e3a82bcdf/private/gate-2/rust-suite/summary.json",
+    "ok": true
+   },
+   "slot_receipt": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a08c5916e3a82bcdf/private/gate-2/slots/rust-suite.json"
+  },
+  {
+   "name": "lean",
+   "argv": [
+    "/usr/bin/python3",
+    "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a08c5916e3a82bcdf/scripts/gate_slot.py",
+    "lean",
+    "--receipt",
+    "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a08c5916e3a82bcdf/private/gate-2/slots/lean.json",
+    "--",
+    "/usr/bin/python3",
+    "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a08c5916e3a82bcdf/scripts/check_lean_audits.py"
+   ],
+   "exit": 0,
+   "seconds": 228.8,
+   "log": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a08c5916e3a82bcdf/private/gate-2/lean.log",
+   "counts": {
+    "audits": 497
+   },
+   "slot_receipt": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a08c5916e3a82bcdf/private/gate-2/slots/lean.json"
+  },
+  {
+   "name": "python",
+   "argv": [
+    "/usr/bin/python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/tests"
+   ],
+   "exit": 0,
+   "seconds": 326.8,
+   "log": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a08c5916e3a82bcdf/private/gate-2/python.log",
+   "counts": {
+    "tests": 807,
+    "skipped": 0,
+    "ok": true
+   },
+   "env": {
+    "QUIRIN_CARD_GATE_BASE": "3ca85c7a609c927ab0685c17fcf9269822f0588b"
+   }
+  }
+ ],
+ "ok": true,
+ "finished": "20261124T012021Z"
+}
