@@ -16,7 +16,7 @@
 //! of an accessed conditional that is an integer constant expression the
 //! reader evaluates exactly prunes the roots of the arm C never evaluates;
 //! every other condition keeps rule 74x's reading. Over a fixed name oracle.
-//! End to end: `tests/return_family_conditional_constant_pruning.rs`.
+//! End to end: `tests/return_family_untracked_conditional_access/constant_pruning.rs`.
 
 use super::constant::{constant_condition, constant_value, literal};
 use super::*;

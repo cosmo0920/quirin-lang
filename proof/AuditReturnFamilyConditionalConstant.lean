@@ -15,7 +15,7 @@ rule 74x reads but pruning drops is in no execution. If the tip admits, rule
 each group's arms are trust boundary 28's, bound to `constVectors` and
 `pruneVectors`. It is pinned by
 `crates/qcore-c-gateway/tests/unit/legacy_return_family_conditional_constant.rs`
-and by `crates/qcore-c-gateway/tests/return_family_conditional_constant_pruning.rs`. -/
+and by `crates/qcore-c-gateway/tests/return_family_untracked_conditional_access/constant_pruning.rs`. -/
 
 -- The evaluator's exactness.
 #print axioms QCore.ReturnFamilyConditionalConstant.div_by_zero_undecided
