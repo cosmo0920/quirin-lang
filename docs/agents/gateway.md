@@ -13974,4 +13974,51 @@ through `ampersand_runs`.
     `tests/name_keyed_holder_shadowing.rs`;
     [report](../reports/name-keyed-holder-shadowing/README.md).
 
+    **Every consumer, and the guard at the entry.** Card
+    JUMPED-SHADOW-FORMAL-READINGS (USER DECISION 2026-11-25, "launch the
+    JUMPED-SHADOW-FORMAL-READINGS card"; `legacy_formal_declaration.rs`;
+    hooks in `legacy_c.rs` before and after the body is parsed,
+    `CallerFormals::by_declaration` in `legacy_container_publication.rs`, and
+    the counted-user pass's stable formals in `legacy_counted_users.rs`),
+    discharging `JUMPED-SHADOW-FORMAL-READINGS`. Probes: a jumped shadow
+    reached `Safe`, stopped only by the internal certificate check, in
+    container publication (a container rooted at the shadow read as the
+    caller's), rule 38's descriptor-cell `formal` closure and W4 entry
+    custody (a release through the shadow read as the formal's, and a caller
+    consuming that summary). A jumped or inner-block shadow of a derived
+    local `L = P->F` was read as the caller's container and was `Safe`
+    outright. The counted-user pass attributed an unrecognized declaration's
+    operations to the formal and recorded its clause `Held`. Slot moves
+    (their slot-mention census) and the counted-user pass (no `switch` or
+    jump) refused the jumped shapes; member custody attribution only
+    re-attributed a refusal. Now (1) `CallerFormals` is read by declaration
+    where it is built: a stable formal only where the name is one
+    declaration (`every_reference_is_the_formal`), a derived local only
+    where its own name is one `VarDecl` every `DeclRefExpr` designates
+    (`every_reference_is_the_local`) and its root stays stable, so every
+    consumer reads the narrowed set; (2) the counted-user pass's stable
+    formals are read the same; (3) the shadow guard reads Clang's
+    declarations: a formal that is not one declaration (a second declaration
+    of its name anywhere in the body, whatever its spelling, reached or
+    jumped over, or a reference to another declaration) refuses the function
+    at its entry, on every path (`local declaration may shadow a formal
+    resource identity: `P` is not one declaration`). Where Clang's reading of
+    the function is unavailable (a unit Clang does not accept), no derived
+    local is read and the function refuses at the entry when its body holds a
+    shape the lexical guard cannot see: a `switch` or `goto`, a token opening
+    an unrecognized declaration (`__attribute__`, `_Alignas`, `__typeof__`,
+    `typeof`, `__auto_type`, `enum`, `typedef`, ...), or a formal alone in
+    parentheses after anything but a callee or an expression keyword. Only
+    `Safe -> Unknown`. **Do not** read any formal's or derived local's
+    spelling as its declaration without Clang's reading, or rely on a
+    declaration statement's refusal lying on the paths that use the name.
+    Premises stated, not proved: as above, and, without Clang's reading, the
+    completeness of that lexical list (trust boundary 28).
+    `QCore.JumpedShadowFormalReadings`
+    (`AuditJumpedShadowFormalReadings.lean`: `reaches_narrows`,
+    `no_verdict_becomes_safe`, `a_shadowed_formal_refuses_at_entry`,
+    `a_keyed_event_needs_one_declaration`, and probes CJ1, CJ5 and WDJ1
+    `Safe` before and refused now); `tests/jumped_shadow_formal_readings.rs`;
+    [report](../reports/jumped-shadow-formal-readings/README.md).
+
 <!-- generated:rules:end -->

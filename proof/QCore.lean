@@ -243,6 +243,7 @@ import QCore.InteriorBorrow
 import QCore.JoinedProvenanceCallFrames
 import QCore.JoinedProvenanceCycles
 import QCore.JoinedProvenanceRoundBound
+import QCore.JumpedShadowFormalReadings
 import QCore.KindedCustody
 import QCore.LaterDeclarator
 import QCore.LayoutExtents
