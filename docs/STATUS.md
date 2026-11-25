@@ -155,7 +155,7 @@ figure is measured.
 | CT independent artifacts | **48** distinct source-fixture programs behind the 50 mapped cases; **9** reviewed byte-identical fixture groups | Same manifest, `artifact_identity`; [disclosure](reports/ct-shared-fixture-disclosure/README.md) |
 | CT case-bound proof | **5/50**: CT01, CT03, CT07, CT37, CT50 | Same manifest, per-case `proof` stage |
 | CT gated sanitized-native | **10/50, Linux/macOS only** | Same manifest, `native_sanitized` stage and host gates |
-| Lean | toolchain **`leanprover/lean4:v4.35.0`**; **508** audits | `proof/lean-toolchain`; `proof/Audit*.lean`, round-34 landing gate |
+| Lean | toolchain **`leanprover/lean4:v4.35.0`**; **512** audits | `proof/lean-toolchain`; `proof/Audit*.lean`, combined round-37 landing gate |
 | Contract corpus | **154** modules (1,002 declarations, 8,800 clauses) in the eleven inventory locks `qcore_contract_corpus.rs` pins: five `qcore-provider-*` crates 95, six `quirin-provider-*` crates 59; user crates outside the locks: OpenSSL 21, libcurl 4, plugin 1 | `providers/*/contract-inventory.lock`, [load path](../providers/contract-load-path.json), [ownership](../providers/README.md#contract-ownership) |
 | Registered follow-ups | **1,054** | [Matrix](reviews/r0_3/acceptance_matrix.json) `named_followups` |
 
@@ -245,18 +245,17 @@ Unsafe proposals downgrade to Unknown (`QP010`).
 
 ## Latest validated gate
 
-The [round-34 combined landing gate](reports/r34-k-repair/integration/gate.json)
-(SP10-FORMAL-BINDING-DESCRIPTIONS, K1, K3, K5 and K7, repaired by R34-K-REPAIR)
-ran the full landing gate on `c5cd10688` through
-`scripts/gate_scope.py --base 4be28c3cd --full --landing`.
-Root Rust: **10,097 passed / 7 failed / 24 ignored**, 695 units / 740 summaries:
-the known host libcurl failure and six rule-10b pins that K5's rule 77 reads
-Safe, re-pinned by R34-K-REPAIR. On the merged main the gateway crate
-(**4,224 passed / 0 failed**), Python (**807**), fmt and Lean (**508 audits**)
-were rerun and exit 0; the full workspace suite was not rerun there.
-Providers **174 passed / 1 ignored**. Clang: Ubuntu clang 21.1.8. Measurement
-(corpus, twelve-home, system, slice): every move Unknown -> Safe, equal to the
-corrected prediction; no profile baseline changed.
+The [combined MEMBER-EFFECT-STORES and round-37 landing gate](reports/k6-direct-position-access/integration/gate.json)
+(rule 38k; K2 rule 79, K4 census, K6 rule 81, ONIGMO-PROVIDER-PLUGIN) ran the
+full landing gate on `6821fddee` through
+`scripts/gate_scope.py --base 110a69c8e --full --landing`.
+Root Rust: **10,164 passed / 5 failed / 24 ignored**, 701 units / 746 summaries:
+the known host libcurl failure and four reading-site evidence tests on a stale
+digest, re-pinned and rerun (7 passed). **512 Lean audits**; fmt, Clippy and
+both reevaluation examples exit 0; Python **807**; providers **182 passed /
+1 ignored**. Clang: Ubuntu clang 21.1.8. Measurements (corpus, twelve-home,
+system, slice): every move Unknown -> Safe, each predicted or attributed
+(one pinned-tree body, one same-unit cascade); no profile baseline changed.
 
 ## Where to go next
 
