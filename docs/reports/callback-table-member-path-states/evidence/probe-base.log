@@ -1,0 +1,36 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.27s
+     Running tests/callback_table_member_path_states.rs (target/debug/deps/callback_table_member_path_states-ad630d4825945cbb)
+
+running 6 tests
+test the_shipped_table_clauses_are_the_map_unpackers ... ok
+
+thread 'table_candidates_join_and_disagreeing_ones_refuse' (3584094) panicked at crates/qcore-c-gateway/tests/callback_table_member_path_states.rs:253:5:
+Row { status: Unsafe, unsupported: [] }
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test table_candidates_join_and_disagreeing_ones_refuse ... FAILED
+
+thread 'a_table_candidate_releasing_the_linked_payload_takes_it' (3584090) panicked at crates/qcore-c-gateway/tests/callback_table_member_path_states.rs:240:5:
+Row { status: Unsafe, unsupported: [] }
+test a_table_candidate_releasing_the_linked_payload_takes_it ... FAILED
+
+thread 'a_table_candidate_releasing_the_linked_payload_then_a_free_is_never_safe' (3584091) panicked at crates/qcore-c-gateway/tests/callback_table_member_path_states.rs:225:5:
+Row { status: Safe, unsupported: [] }
+test a_table_candidate_releasing_the_linked_payload_then_a_free_is_never_safe ... FAILED
+
+thread 'rule_30_refusals_read_at_a_table_dispatch' (3584093) panicked at crates/qcore-c-gateway/tests/callback_table_member_path_states.rs:294:9:
+c_cb_stale: Row { status: Safe, unsupported: [] }
+test rule_30_refusals_read_at_a_table_dispatch ... FAILED
+test a_table_candidate_stating_nothing_at_the_path_keeps_the_payload ... ok
+
+failures:
+
+failures:
+    a_table_candidate_releasing_the_linked_payload_takes_it
+    a_table_candidate_releasing_the_linked_payload_then_a_free_is_never_safe
+    rule_30_refusals_read_at_a_table_dispatch
+    table_candidates_join_and_disagreeing_ones_refuse
+
+test result: FAILED. 2 passed; 4 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.86s
+
+error: test failed, to rerun pass `-p qcore-c-gateway --test callback_table_member_path_states`
+exit 101
