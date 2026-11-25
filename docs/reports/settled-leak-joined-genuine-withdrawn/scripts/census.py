@@ -25,7 +25,8 @@ import collections
 import json
 import sys
 
-UNSAFE_KINDS = ("leak", "double release", "release after escape", "use after")
+LEAK = "live obligation acquired at"
+OTHER_UNSAFE = ("repeated release", "release after escape", "use after")
 
 
 def classify(line):
@@ -63,11 +64,10 @@ def main() -> int:
         name = function["function"]
         leaks = sorted(
             (d.get("line"), d["description"]) for d in function["diagnostics"]
-            if d["description"].startswith("leak")
+            if d["description"].startswith(LEAK)
         )
         other = [d["description"] for d in function["diagnostics"]
-                 if not d["description"].startswith("leak")
-                 and d["description"].startswith(UNSAFE_KINDS[1:])]
+                 if d["description"].startswith(OTHER_UNSAFE)]
         groups = [g for (f, _), g in by_invocation.items() if f == name]
         classes = collections.Counter()
         matched = None
