@@ -239,6 +239,19 @@ and the tip binary (`private/k6/bin/quirin-audit-tip1`, the rule-81 analyzer
 code of `c674d3108` before formatting, its diff in
 `private/k6/bin/quirin-audit-tip1.diff`); section 6.1 records what it gave.
 
+### 6.1 The reproduction did not run
+
+Both reproduction jobs waited for an audit slot (base 1 h 38 min, tip 53
+min; queue positions 4 and 6 of 6 behind three audit holders each over 2 h)
+and were stopped before admission (exit 143, `private/k6/repro.stopped`;
+only this card's two PIDs were killed). No stream or report was written. The
+per-row evidence is the probe replicas (section 2) and the fixtures (section
+3); the integrator's merged-tip measurement tests
+[PREDICTION.md](PREDICTION.md). To repeat it: `python3 scripts/gate_slot.py
+audit -- bash docs/reports/k6-direct-position-access/scripts/run_repro.sh
+BINARY DB OUT`, with `DB` from K5's `filter_db.py` over
+[census/repro-units.txt](census/repro-units.txt).
+
 ## 7. Targeted checks (no card gate)
 
 No card gate (round-37 brief: one gate on the merged tip). Each check ran in
