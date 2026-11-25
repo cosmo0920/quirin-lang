@@ -376,3 +376,42 @@ proofs were rewritten as linear case chains and rerun.
 - `MEMBER-EFFECT-STORES-HOP-AND-ALIAS-ROOTS`: `Topics[i].Partitions` past a
   hop below the formal, and `unpack_opts_unit`'s local alias of a `void *`
   formal.
+
+## 11. Landing measurement: `ctr_link_set_trace_state`
+
+The integrator's landing measurement (base `rev:5087f9295`, tip
+`rev:e4db0e6a8`, the code of origin/main `110a69c8e`;
+`private/measure/r35-landing/native-comparison.json` in the main checkout)
+matched all 11 predicted corpus moves, and system and slice. One row moved
+unpredicted on corpus and twelve-home: ctraces
+`ctr_link.c::ctr_link_set_trace_state`, its removed leaf rule 38i's
+`member-store-through-formal` at `ctr_link.c:85`.
+
+**Cause: the two trees spell the body differently; no reader misses an
+occurrence.** The measured routes read the pinned tree
+(`private/measure/r35-landing/mirror/c-gateway-wave-pin/.../lib/ctraces/src/ctr_link.c:78-89`):
+
+    link->trace_state = cfl_sds_create(trace_state);
+    if (!link->trace_state) {
+        return -1;
+    }
+
+an `Owned` call result stored into a member of the unrebound formal `link`,
+then a null test of the place: every condition formula of rule 38k holds (H1
+reads `!link->trace_state` as `#mes_null_test`), and the row is `Safe` under
+`mes_caller_slot`, rule 38k's admission as stated. The body that releases the
+place first (`if (link->trace_state != NULL) { cfl_sds_destroy(link->trace_state); }`
+then `link->trace_state = new_trace_state;`) is the `current` tree's
+(`046accf6`, `ctr_link.c:82-101`). There rule 38k refuses it by
+`mes_refuse_place_used` (`exists (#s: mes_site) { (#mes_occurs(#s,#mes_place) && !(#s == #mes_store || #mes_null_test(#s))) }`:
+the release actual is an occurrence of the place that is no null test).
+Reproduced on that unit (`analyze_unrestricted_c11`, gnu17, the run's
+manifest, parity on): the row stays `Unknown` with both leaves, the release
+(rule 38i's `member-release-through-formal`) and the store (the gate's text
+after rule 38k's refusal). So there is no defect and no code change.
+
+Fixture `the_trace_state_setter_follows_its_tree` in
+`tests/member_effect_stores.rs` pins both spellings: the corpus body `Safe`
+with the premise listed, the `current` body (and the direct
+release-then-replace) refused. PREDICTION.md gains a twelve-home block,
+written after the measurement and labelled so.

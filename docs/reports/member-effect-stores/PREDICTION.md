@@ -98,3 +98,33 @@ this as its only blocker. Twelve-home: the corpus moves where its homes hold
 those units, nothing else. The integrator's `current` rerun: 11 (up to 13)
 rows Unknown -> Safe, the corresponding store leaves removed, every unit
 status otherwise unchanged.
+
+## Addendum after the landing measurement (2026-11-25, not a prediction)
+
+The block above had no twelve-home route, so the integrator's landing
+measurement (`private/measure/r35-landing/native-comparison.json`, main
+checkout) listed every twelve-home move as unpredicted. Written after that
+measurement, for the record only: the twelve-home moves are the corpus ones.
+
+```measure-prediction
+route twelve-home
+move rd_buf_init Unknown -> Safe
+move rd_kafka_assignment_init Unknown -> Safe
+move rd_kafkap_Fetch_reply_tags_set_topic_cnt Unknown -> Safe
+move rd_kafka_snappy_init_env Unknown -> Safe
+move create_counter_instance Unknown -> Safe
+move create_gauge_instance Unknown -> Safe
+move create_untyped_instance Unknown -> Safe
+move create_summary_instance Unknown -> Safe
+move create_histogram_instance Unknown -> Safe
+move create_exp_histogram_instance Unknown -> Safe
+move mk_vhost_set_property Unknown -> Safe
+move ctr_link_set_trace_state Unknown -> Safe
+```
+
+`ctr_link_set_trace_state` moved on corpus and twelve-home, unpredicted
+because this card did not read the pinned trees: the pinned ctraces
+(`c-gateway-wave-pin`, `lib/ctraces/src/ctr_link.c:78-89`) spells
+`link->trace_state = cfl_sds_create(trace_state); if (!link->trace_state)
+return -1;`, rule 38k's admitted shape (README section 11). On `current`
+(`046accf6`) the body releases the old value first and stays refused.
