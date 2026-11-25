@@ -1,0 +1,2 @@
+# RD_KAFKAP_BYTES_LEN / STR_LEN expansions (scalar ?: over (&X)->len)
+struct ks { int len; const char *str; }; struct mset { struct ks bytes; }; int w(struct mset *m, int c) { int size; size = (int)((((&m->bytes)->len) == -1 ? 0 : ((&m->bytes)->len)) / c); return size; }

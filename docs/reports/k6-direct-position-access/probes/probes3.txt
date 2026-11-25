@@ -1,0 +1,6 @@
+# (&X)->f return and ?: operands, parity on
+struct h { struct box *first; }; struct q { struct h head; long len; }; struct box *w(struct q *p) { return (&p->head)->first; }
+struct h { struct box *first; }; struct q { struct h head; long len; }; long w(struct q *p) { return (&p->head)->first->n; }
+struct ks { int len; const char *str; }; struct mset { struct ks bytes; }; int w(struct mset *m) { int size; size = ((&m->bytes)->len == -1 ? 0 : 1); return size; }
+struct L { void **e; int c; }; void *w(const struct L *l, int i) { if (i < l->c) return (void *)l->e[i]; return 0; }
+struct hc { char *end; char *start; unsigned dl; }; void w(struct hc *h) { unsigned long s = (unsigned long)(h->end - h->start); h->dl = s; }

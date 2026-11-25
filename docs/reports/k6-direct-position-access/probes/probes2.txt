@@ -1,0 +1,21 @@
+# P4 pointer load returns
+char *w(struct box *b) { return b->name; }
+typedef struct box box_t; char *w(const box_t *b) { return b->name; }
+void *w(struct box *b) { return (void *)b->name; }
+struct L { void **e; int c; }; void *w(const struct L *l, int i) { if (i < l->c) return (void *)l->e[i]; return 0; }
+struct L { void **e; int c; }; void *w(const struct L *l, int i) { if (i < l->c) return l->e[i]; return 0; }
+struct L { void **e; int c; }; struct M { struct L l; }; void **w(const struct M *m) { return m->l.e; }
+struct L { void **e; int c; }; struct M { struct L l; }; const char **w(const struct M *m) { return (const char **)m->l.e; }
+# P5 cast-copy local root
+struct box *w(const void *p) { const struct box *b = (const struct box *)p; return b->next; }
+struct box *w(const void *p) { const struct box *b = p; return b->next; }
+# P6 pointer difference
+struct hc { char *end; char *start; unsigned dl; }; void w(struct hc *h) { unsigned long s = (unsigned long)(h->end - h->start); h->dl = s; }
+# P7 call-actual root
+static int isx(const struct box *b) { if (b == 0) return 0; return b->n == 1; } char *w(struct box *b) { if (!isx(b)) return 0; return b->name; }
+# P8 multi-declarator locals from void * formals
+struct me { void *value; }; struct tl { int cnt; }; int w(const void *_a, const void *_b) { const struct me *a = _a, *b = _b; const struct tl *al = a->value, *bl = b->value; return al->cnt - bl->cnt; }
+struct me { void *value; }; struct tl { int cnt; }; int w(const void *_a) { const struct me *a = _a; const struct tl *al = a->value; return al->cnt; }
+# address returns (W45 / AG3 refusal)
+long *w(struct box *b) { return &b->n; }
+struct arr { char name[8]; }; char *w(struct arr *a) { return a->name; }
