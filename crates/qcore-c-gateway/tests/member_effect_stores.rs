@@ -154,6 +154,41 @@ fn a_near_miss_keeps_the_refusal() {
     }
 }
 
+/// `ctr_link_set_trace_state`, as the two Fluent Bit trees spell it (the
+/// landing measurement's one unpredicted row, 2026-11-25).
+///
+/// The pinned corpus (`c-gateway-wave-pin`, `ctr_link.c:78-89`) stores the
+/// owned copy and then null-tests the place: rule 38k's admitted shape (H1's
+/// `#mes_null_test`), `Safe` under `mes_caller_slot`. The `current` tree
+/// (`046accf6`, `ctr_link.c:82-101`) first releases what the place holds
+/// (`cfl_sds_destroy(link->trace_state)`, an occurrence of the place that is
+/// no null test), then stores: `mes_refuse_place_used`, so the row keeps its
+/// refusal there.
+#[test]
+fn the_trace_state_setter_follows_its_tree() {
+    if !clang_available() {
+        return;
+    }
+    let records = "typedef char *sds_t;\nstruct L { sds_t trace_state; };\n";
+    let corpus = "int subject(struct L *link, char *t) { if (!link || !t) return -1; \
+                  link->trace_state = q_maybe_alloc(); if (!link->trace_state) return -1; return 0; }";
+    let summary = row(&format!("{records}{corpus}"), "subject");
+    assert_eq!(summary.status, AnalysisStatus::Safe, "{summary:?}");
+    assert!(carries_premise(&summary));
+    let current = "int subject(struct L *link, char *t) { sds_t n; if (!link || !t) return -1; \
+                   n = q_maybe_alloc(); if (!n) return -1; \
+                   if (link->trace_state != 0) { q_nullable_free(link->trace_state); } \
+                   link->trace_state = n; return 0; }";
+    let run = g(&format!("{records}{current}"));
+    assert!(!run.safe(), "{run:?}");
+    assert!(run.refused(IND), "{run:?}");
+    // The same release-then-replace with the call stored directly.
+    let direct = "int subject(struct L *link) { q_nullable_free(link->trace_state); \
+                  link->trace_state = q_maybe_alloc(); return 0; }";
+    let run = g(&format!("{records}{direct}"));
+    assert!(!run.safe(), "{run:?}");
+}
+
 #[test]
 fn a_caller_of_an_admitted_body_stays_non_safe() {
     if !clang_available() {
