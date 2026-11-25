@@ -1,0 +1,24 @@
+# Probes at base 43410b230: a scratch test over tests/support/clang_gap.rs
+# (not committed), run through private/toolchain/env.sh; log
+# private/oscd/probe-base.log. Each line is the row's status and diagnostics.
+#
+# s1       void fill(void **out) { if (!*out) *out = q_alloc(); }
+# s1-caller-null   void *p = 0; fill(&p); q_free(p);
+# s1-caller-owned  void *p = q_alloc(); fill(&p); q_free(p);
+# s1-body-err  int fill(void **out, int c) { if (c) return -1;
+#              if (!*out) *out = q_alloc(); q_observe(*out); return 0; }
+# s2       int fill(struct H *h, void **out, int err) { if (!h) return -1;
+#          *out = h->m; h->m = 0; if (!*out && !err) { *out = q_alloc(); }
+#          return err; }
+# s3       int fill(void **out, int c) { *out = q_alloc(); if (c) return -1; return 0; }
+# s3-b     int fill(void **out, int c) { if (c) return -1; *out = q_alloc(); return 0; }
+# s3-c     int fill(void **out) { void *p = q_maybe_alloc(); if (!p) return -1;
+#          *out = p; return 0; }
+PROBE s1-body: Unknown ["Unsupported { description: \"owned result of resource API `q_alloc` stored through `*out` without an out-parameter contract\" }"]
+PROBE s1-caller-null: Unknown ["UnknownAlias { variable: \"p\" }", "Unsupported { description: \"call to uncontracted function `fill`\" }"]
+PROBE s1-caller-owned: Unknown ["UnknownAlias { variable: \"p\" }", "Unsupported { description: \"call to uncontracted function `fill`\" }"]
+PROBE s1-body-err: Unknown ["Unsupported { description: \"local declaration may shadow a formal resource identity\" }", "Unsupported { description: \"owned result of resource API `q_alloc` stored through `*out` without an out-parameter contract\" }"]
+PROBE s2-body: Unknown ["UnknownAlias { variable: \"out\" }", "Unsupported { description: \"indirect memory access is outside the resource projection\" }", "Unsupported { description: \"owned result of resource API `q_alloc` stored through `*out` without an out-parameter contract\" }"]
+PROBE s3-body: Safe []
+PROBE s3-body-b: Safe []
+PROBE s3-body-c: Safe []
