@@ -498,7 +498,7 @@ fn a_switch_runs_its_identity_calls_once_and_refuses_unsequenced_effects() {
 const DESCRIPTOR_DECLARATIONS: &str = "\
 int k_open(const char *path); \
 int k_close(int fd); \
-long k_read(int fd, void *buffer, unsigned long size);";
+__PTRDIFF_TYPE__ k_read(int fd, void *buffer, __SIZE_TYPE__ size);";
 
 fn descriptor_contracts() -> ResourceContracts {
     load_resource_contract_sources(&BTreeMap::from([(
