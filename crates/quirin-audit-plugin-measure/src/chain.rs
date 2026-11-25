@@ -248,6 +248,59 @@ impl Identity {
     }
 }
 
+/// The declared contract-dependency graph a report records
+/// (`assumptions.contract_revision.contract_dependencies`, card
+/// QUIRIN-AUDIT-CONNECT Part C), `null` when it records none.
+#[must_use]
+pub fn dependency_graph_of(document: &Value) -> Value {
+    document["assumptions"]["contract_revision"]["contract_dependencies"].clone()
+}
+
+/// Record both sides' dependency graphs in a route comparison, only when a
+/// side has one (so every other record is unchanged).
+pub fn record_dependency_graphs(
+    record: &mut Value,
+    before: &crate::rows::Rows,
+    after: &crate::rows::Rows,
+) {
+    let (left, right) = (
+        dependency_graph_of(&before.document),
+        dependency_graph_of(&after.document),
+    );
+    if !left.is_null() || !right.is_null() {
+        record["dependency_graph"] = json!({"before": left, "after": right});
+    }
+}
+
+/// A side's dependency graph from its route entries when its record has
+/// none: per route, the entry's graph for that side.
+fn graphs_of_routes(routes: &BTreeMap<String, Value>, side: &str) -> Value {
+    let graphs: BTreeMap<&String, &Value> = routes
+        .iter()
+        .filter(|(_, entry)| !entry["dependency_graph"][side].is_null())
+        .map(|(route, entry)| (route, &entry["dependency_graph"][side]))
+        .collect();
+    if graphs.is_empty() {
+        Value::Null
+    } else {
+        json!(graphs)
+    }
+}
+
+impl Step {
+    /// Fill each side's dependency graph from the route entries when the
+    /// side record carries none.
+    fn with_route_graphs(mut self) -> Self {
+        if self.before.dependency_graph.is_null() {
+            self.before.dependency_graph = graphs_of_routes(&self.routes, "before");
+        }
+        if self.after.dependency_graph.is_null() {
+            self.after.dependency_graph = graphs_of_routes(&self.routes, "after");
+        }
+        self
+    }
+}
+
 /// One loaded step.
 #[derive(Clone, Debug)]
 pub struct Step {
@@ -406,7 +459,8 @@ pub fn load_record_step(
             })
             .unwrap_or_default(),
         declared,
-    })
+    }
+    .with_route_graphs())
 }
 
 fn route_definition(run: &Value, route: &str) -> Result<crate::inputs::Route, String> {
@@ -468,6 +522,7 @@ pub fn load_runs_step(number: usize, before: &Path, after: &Path) -> Result<Step
             let right_rows = crate::rows::read(&after.join(&route).join(report), false)?;
             let (mut record, _) = crate::compare::rows(&left_rows, &right_rows);
             record["status_deltas"] = json!(crate::compare::deltas(&left_rows, &right_rows));
+            record_dependency_graphs(&mut record, &left_rows, &right_rows);
             record["composition"] = match (&left_rows.contribution, &right_rows.contribution) {
                 (Some(left), Some(right)) => {
                     let (_, union) = crate::compare::union(left, right);
@@ -503,7 +558,8 @@ pub fn load_runs_step(number: usize, before: &Path, after: &Path) -> Result<Step
         after: identity_of_run(&after_name, &right),
         routes: entries,
         declared: Value::Null,
-    })
+    }
+    .with_route_graphs())
 }
 
 /// One refused condition of a link.
@@ -834,53 +890,48 @@ fn reconcile(
     compared: &[bool],
 ) -> (Value, bool) {
     let points = steps.len() + 1;
-    let mut verdicts: Vec<Option<String>> = vec![None; points];
+    // A step *lists* the row's verdicts when it states both sides
+    // (`cx_listed`); the verdict at a side is the after verdict of the
+    // nearest listing on its left, else the before verdict of the nearest
+    // listing on its right (`QCore.MeasureConnect.recon`): an unlisted step
+    // keeps the verdict across it (`cx_unlisted_is_unchanged`).
+    let listing: Vec<Option<(String, String)>> = per_step
+        .iter()
+        .map(|event| {
+            event.and_then(|event| Some((event.before.clone()?, event.after.clone()?)))
+        })
+        .collect();
+    let verdicts: Vec<Option<String>> = (0..points)
+        .map(|point| {
+            listing[..point]
+                .iter()
+                .rev()
+                .find_map(|listed| listed.as_ref().map(|(_, after)| after.clone()))
+                .or_else(|| {
+                    listing[point..]
+                        .iter()
+                        .find_map(|listed| listed.as_ref().map(|(before, _)| before.clone()))
+                })
+        })
+        .collect();
+    // Two consecutive listings that disagree at the side between them
+    // (`cx_disagrees`) make the route incomplete.
     let mut disagreements = Vec::new();
-    let mut set = |at: usize, value: &Option<String>, verdicts: &mut Vec<Option<String>>| {
-        if let Some(value) = value {
-            match &verdicts[at] {
-                Some(known) if known != value => disagreements.push(json!({
-                    "point": at, "verdicts": [known, value],
-                    "formula": "cx_incomplete_row_disagrees"})),
-                _ => verdicts[at] = Some(value.clone()),
+    let mut previous: Option<(usize, &String)> = None;
+    for (position, listed) in listing.iter().enumerate() {
+        if let Some((before, after)) = listed {
+            if let Some((earlier, earlier_after)) = previous
+                && earlier_after != before
+            {
+                disagreements.push(json!({
+                    "steps": [steps[earlier].number, steps[position].number],
+                    "verdicts": [earlier_after, before],
+                    "formula": "cx_incomplete_row_disagrees"}));
             }
-        }
-    };
-    for (position, event) in per_step.iter().enumerate() {
-        if let Some(event) = event {
-            set(position, &event.before, &mut verdicts);
-            set(position + 1, &event.after, &mut verdicts);
+            previous = Some((position, after));
         }
     }
-    // An unlisted row of a compared step kept its verdict across it
-    // (`cx_unlisted_is_unchanged`).
-    loop {
-        let mut changed = false;
-        for position in 0..steps.len() {
-            let states = per_step[position]
-                .is_some_and(|event| event.before.is_some() || event.after.is_some());
-            if states || !compared[position] {
-                continue;
-            }
-            match (
-                verdicts[position].clone(),
-                verdicts[position + 1].clone(),
-            ) {
-                (Some(left), None) => {
-                    verdicts[position + 1] = Some(left);
-                    changed = true;
-                }
-                (None, Some(right)) => {
-                    verdicts[position] = Some(right);
-                    changed = true;
-                }
-                _ => {}
-            }
-        }
-        if !changed {
-            break;
-        }
-    }
+    let _ = compared;
     let moved_in: Vec<usize> = (0..steps.len())
         .filter(|&position| {
             per_step[position].is_some_and(|event| {
@@ -989,10 +1040,21 @@ fn diff_maps(before: &Value, after: &Value) -> Value {
 /// The dependency entries of a recorded graph whose identity changed, and the
 /// declarations they name (dependent and target).
 fn dependency_changes(before: &Value, after: &Value) -> (Value, BTreeSet<String>) {
+    // A side's graph is one record, or one per route.
     let entries = |graph: &Value| -> BTreeMap<String, Value> {
-        graph["dependencies"]
-            .as_array()
+        let lists: Vec<&Value> = if graph.get("dependencies").is_some() {
+            vec![&graph["dependencies"]]
+        } else {
+            graph
+                .as_object()
+                .into_iter()
+                .flatten()
+                .map(|(_, route)| &route["dependencies"])
+                .collect()
+        };
+        lists
             .into_iter()
+            .filter_map(Value::as_array)
             .flatten()
             .map(|entry| (entry["id"].as_str().unwrap_or_default().to_owned(), entry.clone()))
             .collect()

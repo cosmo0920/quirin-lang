@@ -395,6 +395,66 @@ fn run_json(directory: &Path, revision: &str) -> Value {
 }
 
 #[test]
+fn a_move_beside_a_dependency_change_lists_it_and_still_needs_a_prediction() {
+    let directory = scratch("chain-dependency");
+    let graph = |sha: &str| {
+        json!({"graph_sha256": sha, "dependencies": [{
+            "id": "quirin-provider-acme:acme_open->quirin-provider-libc:malloc",
+            "dependent": "acme_open", "target_function": "malloc",
+            "target_identity": {"sha256": sha}}]})
+    };
+    let mut moved = entry(&[("f", "Unknown", "Safe")], &[]);
+    moved["moves"][0]["contract_dependencies"] = json!({
+        "before": {"declarations": ["acme_open"]}, "after": {"declarations": ["acme_open"]}});
+    moved["dependency_graph"] = json!({"before": graph("old"), "after": graph("new")});
+    let mut first = entry(&[], &[]);
+    first["dependency_graph"] = json!({"before": graph("old"), "after": graph("old")});
+    let chain = [
+        Step {
+            before: R1,
+            after: R2,
+            entry: first,
+            declared: None,
+        },
+        Step {
+            before: R2,
+            after: R3,
+            entry: moved,
+            declared: None,
+        },
+    ];
+    let (completed, chained) = run(&directory, steps(&directory, &chain));
+    assert_eq!(chained["links"][0]["joined"], true, "{chained:#}");
+    let f = find(&chained, "f");
+    assert_eq!(
+        f["dependency_changes"]["formula"],
+        "cx_dependency_change_listed"
+    );
+    assert_eq!(f["dependency_changes"]["declarations"], json!(["acme_open"]));
+    // A dependency change is listed, never an attribution: the new Safe is
+    // still flagged.
+    assert_eq!(f["review"], true);
+    assert!(!completed);
+    // A side whose graph differs across a link refuses the link.
+    let mut broken = record(&Step {
+        before: R2,
+        after: R3,
+        entry: entry(&[], &[]),
+        declared: None,
+    });
+    broken["comparisons"][0]["routes"]["corpus"]["dependency_graph"] =
+        json!({"before": graph("other"), "after": graph("other")});
+    let path = write(&directory, "broken.json", &broken);
+    let mut arguments = steps(&directory, &chain[..1]);
+    arguments.extend(["--step".into(), path.display().to_string()]);
+    let (_, refused) = run(&directory, arguments);
+    assert_eq!(
+        refused_formulas(&refused, 0),
+        vec!["cx_refuse_dependency_graph".to_owned()]
+    );
+}
+
+#[test]
 fn measured_side_directories_chain_without_remeasurement() {
     let directory = scratch("chain-runs");
     let sides: Vec<PathBuf> = ["a", "b", "c"]

@@ -162,6 +162,16 @@ pub enum PinMismatchReason {
     /// Card OPENSSL-PROVIDER-PLUGIN: the audited build reports more than one
     /// version or header. Held as `Unknown`.
     LibraryVersionAmbiguous,
+    /// Card QUIRIN-AUDIT-CONNECT (contract spec C15.1): a declared contract
+    /// dependency names a declaration whose digest is not the declared one,
+    /// or one held for such a reason. Resolved by review and re-pin, so the
+    /// hold is `Pending`.
+    DependencyChanged,
+    /// Card QUIRIN-AUDIT-CONNECT: a declared contract dependency does not
+    /// resolve (crate missing or undeclared, declaration unloaded, version
+    /// out of range, a libc target named elsewhere, a cycle, or a target
+    /// held as `Unknown`). A tool decision: held as `Unknown`.
+    DependencyUnresolved,
 }
 
 impl PinMismatchReason {
@@ -178,6 +188,8 @@ impl PinMismatchReason {
             Self::LibraryVersionOutOfRange => "library-version-out-of-range",
             Self::LibraryVersionUnreadable => "library-version-unreadable",
             Self::LibraryVersionAmbiguous => "library-version-ambiguous",
+            Self::DependencyChanged => "dependency-changed",
+            Self::DependencyUnresolved => "dependency-unresolved",
         }
     }
 
@@ -209,6 +221,13 @@ impl PinMismatchReason {
         )
     }
 
+    /// Card QUIRIN-AUDIT-CONNECT: whether the reason is a declared contract
+    /// dependency's; such a declaration may be flexible.
+    #[must_use]
+    pub const fn is_dependency(self) -> bool {
+        matches!(self, Self::DependencyChanged | Self::DependencyUnresolved)
+    }
+
     /// Whether a call held for this reason is `Pending` (a person resolves
     /// it by review and re-pin) rather than `Unknown`: every reason but a
     /// library version outside the range, unreadable or ambiguous (the
@@ -220,6 +239,7 @@ impl PinMismatchReason {
             Self::LibraryVersionOutOfRange
                 | Self::LibraryVersionUnreadable
                 | Self::LibraryVersionAmbiguous
+                | Self::DependencyUnresolved
         )
     }
 }

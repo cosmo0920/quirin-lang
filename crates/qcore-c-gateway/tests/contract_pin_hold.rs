@@ -346,3 +346,51 @@ fn a_library_version_hold_keeps_its_reason_under_reduced_environments() {
         }
     }
 }
+
+/// Card QUIRIN-AUDIT-CONNECT (contract spec C15.1): a call whose callee is
+/// withheld because a contract dependency it declares does not resolve is
+/// `Unknown` with the dependency text (`missing-premise`); one withheld
+/// because the target's digest changed is `Pending` (`contract-pin-mismatch`).
+/// Never `Safe`, under the full and the reduced environments alike.
+#[test]
+fn a_dependency_hold_is_classified_by_its_reason() {
+    use qcore_c_gateway::legacy_c::pin_hold::dependency_hold_description;
+    use qcore_schemas::reason::ReasonCategory;
+    for reason in [
+        PinMismatchReason::DependencyChanged,
+        PinMismatchReason::DependencyUnresolved,
+    ] {
+        let mut contracts = load(BARE);
+        contracts
+            .withhold_for_pin_mismatch(
+                "k_close",
+                "k.qcore".into(),
+                reason,
+                None,
+                "a declared dependency".into(),
+            )
+            .unwrap();
+        let summary = analyze_legacy_c_translation_unit(&format!("{PRELUDE}{BALANCED}"), "w", &contracts)
+            .expect("the fixture tokenizes");
+        let w = function(&summary, "w");
+        let descriptions = w
+            .diagnostics
+            .iter()
+            .filter_map(|diagnostic| match &diagnostic.kind {
+                LegacyDiagnosticKind::Unsupported { description } => Some(description.clone()),
+                _ => None,
+            })
+            .collect::<Vec<_>>();
+        if reason.is_human_resolvable() {
+            assert_eq!(w.status, AnalysisStatus::Pending, "{descriptions:?}");
+            assert_eq!(descriptions, [hold_description("k_close")]);
+        } else {
+            assert_eq!(w.status, AnalysisStatus::Unknown, "{descriptions:?}");
+            assert_eq!(descriptions, [dependency_hold_description("k_close")]);
+            assert_eq!(
+                ReasonCategory::classify(&descriptions[0]).ok(),
+                Some(ReasonCategory::MissingPremise)
+            );
+        }
+    }
+}

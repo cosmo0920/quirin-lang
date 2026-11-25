@@ -43,6 +43,11 @@ pub const USAGE: &str = "usage: quirin-audit plugin views --load-path USER.json 
 ///
 /// A load path that is not a user load path, or a probe failure.
 pub fn views(load_path: &std::path::Path, write: bool) -> Result<bool, String> {
+    // Card QUIRIN-AUDIT-CONNECT (C15.1): each user crate's declared contract
+    // dependencies, read from its module texts with the loader's own clause
+    // reader, written before the strict read below (which refuses a stale
+    // entry) when `--write` is given.
+    let dependencies_current = user_contract_dependencies(load_path, write)?;
     let manifest = qcore_contract::load_path_manifest::load_contract_load_path_manifest(load_path)
         .map_err(|error| error.to_string())?;
     if manifest.extension.is_none() {
@@ -78,6 +83,67 @@ pub fn views(load_path: &std::path::Path, write: bool) -> Result<bool, String> {
             .flatten()
         {
             println!("{name}: {module} is outside the resource view: {reason}");
+        }
+    }
+    if write && !current {
+        let mut bytes = serde_json::to_vec_pretty(&file).map_err(|error| error.to_string())?;
+        bytes.push(b'\n');
+        fs::write(load_path, bytes).map_err(|error| format!("{}: {error}", load_path.display()))?;
+    }
+    Ok(current && dependencies_current)
+}
+
+/// Card QUIRIN-AUDIT-CONNECT: compare (and with `write`, set) every user
+/// crate record's `contract_dependencies` with the clauses its modules
+/// declare (`qcore_contract::contract_dependency::scan_module`). Returns
+/// whether every record was current.
+fn user_contract_dependencies(load_path: &std::path::Path, write: bool) -> Result<bool, String> {
+    let text = fs::read_to_string(load_path)
+        .map_err(|error| format!("{}: {error}", load_path.display()))?;
+    let mut file: Value = serde_json::from_str(&text).map_err(|error| error.to_string())?;
+    if file.get("extends").is_none() {
+        return Ok(true);
+    }
+    let base = load_path
+        .parent()
+        .unwrap_or_else(|| std::path::Path::new("."))
+        .to_path_buf();
+    let mut current = true;
+    for record in file["crates"].as_array_mut().into_iter().flatten() {
+        let name = record["name"].as_str().unwrap_or_default().to_owned();
+        let contracts = base.join(record["contracts"].as_str().unwrap_or_default());
+        let mut scanned = Vec::new();
+        for module in record["modules"].as_array().into_iter().flatten() {
+            let module = module.as_str().unwrap_or_default();
+            let path = contracts.join(module);
+            let text = fs::read_to_string(&path)
+                .map_err(|error| format!("{}: {error}", path.display()))?;
+            for (function, written) in qcore_contract::contract_dependency::scan_module(&text)
+                .map_err(|error| format!("{name}:{module}: {error}"))?
+            {
+                scanned.push(
+                    serde_json::to_value(written.of(&name, &function, module))
+                        .map_err(|error| error.to_string())?,
+                );
+            }
+        }
+        let declared = record.get("contract_dependencies").cloned();
+        let expected = (!scanned.is_empty()).then(|| Value::Array(scanned));
+        if declared != expected {
+            current = false;
+            println!("{name}: contract_dependencies declared {declared:?} probed {expected:?}");
+            if write {
+                if let Some(object) = record.as_object_mut() {
+                    match expected {
+                        Some(value) => {
+                            object.insert("contract_dependencies".into(), value);
+                        }
+                        None => {
+                            object.remove("contract_dependencies");
+                        }
+                    }
+                }
+            }
         }
     }
     if write && !current {

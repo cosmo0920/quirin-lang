@@ -162,7 +162,7 @@ pub const FORMULAS: &[(&str, &str)] = &[
     ),
     (
         "cx_moved_is_a_change",
-        "forall (#s: cx_step) { forall (#w: cx_row) { (#cx_moved(#s,#w) => !#cx_verdict(#cx_before(#s),#w) == #cx_verdict(#cx_after(#s),#w)) } }",
+        "forall (#s: cx_step) { forall (#w: cx_row) { ((#cx_moved(#s,#w) && !#cx_disagrees(#s,#cx_row_route(#w))) => !#cx_verdict(#cx_before(#s),#w) == #cx_verdict(#cx_after(#s),#w)) } }",
     ),
     (
         "cx_moved_is_reported",
@@ -910,30 +910,26 @@ fn local_failures(
     failures
 }
 
-/// Resolve every declared dependency against the environment (Part C). The
-/// result is the least fixed point of: a declaration is held when one of
-/// its dependencies fails locally, lies on a cycle, or targets a held
-/// declaration; its class is the join (`Pending < Unknown`) of its causes.
-/// A function of the **set** of `dependencies`.
+/// The declarations on a dependency cycle: those that reach themselves
+/// through declared dependencies (`cx_cycle_holds`). A function of the set
+/// of dependencies.
 #[must_use]
-pub fn resolve(
-    dependencies: &[DeclaredDependency],
-    environment: &BTreeMap<String, CrateFacts>,
-    libc_names: Option<&BTreeSet<String>>,
-) -> Resolution {
-    let mut dependencies: Vec<&DeclaredDependency> = dependencies.iter().collect();
-    dependencies.sort();
-    dependencies.dedup();
-    let node = |crate_name: &str, function: &str| (crate_name.to_owned(), function.to_owned());
-    // Edges: dependent -> target.
+pub fn cycles<'a>(
+    dependencies: impl IntoIterator<Item = &'a DeclaredDependency>,
+) -> BTreeSet<(String, String)> {
     let mut edges: BTreeMap<(String, String), BTreeSet<(String, String)>> = BTreeMap::new();
-    for dependency in &dependencies {
+    for dependency in dependencies {
         edges
-            .entry(node(&dependency.dependent_crate, &dependency.dependent))
+            .entry((
+                dependency.dependent_crate.clone(),
+                dependency.dependent.clone(),
+            ))
             .or_default()
-            .insert(node(&dependency.target_crate, &dependency.target_function));
+            .insert((
+                dependency.target_crate.clone(),
+                dependency.target_function.clone(),
+            ));
     }
-    // A node lies on a cycle when it reaches itself.
     let mut cycles = BTreeSet::new();
     for start in edges.keys() {
         let mut seen = BTreeSet::new();
@@ -950,6 +946,25 @@ pub fn resolve(
             }
         }
     }
+    cycles
+}
+
+/// Resolve every declared dependency against the environment (Part C). The
+/// result is the least fixed point of: a declaration is held when one of
+/// its dependencies fails locally, lies on a cycle, or targets a held
+/// declaration; its class is the join (`Pending < Unknown`) of its causes.
+/// A function of the **set** of `dependencies`.
+#[must_use]
+pub fn resolve(
+    dependencies: &[DeclaredDependency],
+    environment: &BTreeMap<String, CrateFacts>,
+    libc_names: Option<&BTreeSet<String>>,
+) -> Resolution {
+    let mut dependencies: Vec<&DeclaredDependency> = dependencies.iter().collect();
+    dependencies.sort();
+    dependencies.dedup();
+    let node = |crate_name: &str, function: &str| (crate_name.to_owned(), function.to_owned());
+    let cycles = cycles(dependencies.iter().copied());
     let mut standings: BTreeMap<(String, String), Standing> = BTreeMap::new();
     for dependency in &dependencies {
         let key = node(&dependency.dependent_crate, &dependency.dependent);

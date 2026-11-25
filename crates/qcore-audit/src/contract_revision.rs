@@ -824,6 +824,22 @@ impl ModuleOwners {
         })
     }
 
+    /// Card QUIRIN-AUDIT-CONNECT: every load-path crate's version and
+    /// declared dependencies (empty without a load path).
+    #[must_use]
+    pub fn load_path_facts(&self) -> crate::declared_dependencies::LoadPathFacts {
+        self.load_path
+            .iter()
+            .flat_map(|manifest| manifest.load_path.crates())
+            .map(|krate| {
+                (
+                    krate.name.clone(),
+                    (krate.version.clone(), krate.dependencies.clone()),
+                )
+            })
+            .collect()
+    }
+
     /// The crate root of a load-path crate.
     fn crate_root(&self, name: &str) -> Option<PathBuf> {
         let root = self.load_path.as_ref()?.contract_roots.get(name)?;
@@ -999,6 +1015,9 @@ pub struct PinEvaluation {
     /// Card OPENSSL-PROVIDER-PLUGIN: the library version evaluation, empty
     /// when no declaration states a range.
     library_versions: crate::library_version::Evaluation,
+    /// Card QUIRIN-AUDIT-CONNECT: the declared contract dependencies'
+    /// evaluation, empty when no declaration states one.
+    contract_dependencies: crate::declared_dependencies::Evaluation,
 }
 
 /// Compare every pinned declaration in force with its lock over the source at
@@ -1157,6 +1176,19 @@ pub fn apply_pins_probing(
             databases,
         )?;
     }
+    // Card QUIRIN-AUDIT-CONNECT (C15.1): every declared contract dependency,
+    // resolved after the pins and ranges so a withheld target holds its
+    // dependents.
+    if !contracts.contract_dependencies().is_empty() {
+        let owner = |module: &str| owners.lock_for(module).1;
+        evaluation.contract_dependencies = crate::declared_dependencies::evaluate(
+            contracts,
+            &evaluation.modules,
+            &evaluation.contract_sha256,
+            &owner,
+            &owners.load_path_facts(),
+        )?;
+    }
     Ok(evaluation)
 }
 
@@ -1267,6 +1299,11 @@ pub struct SectionTemplate {
     /// range.
     #[serde(default, skip_serializing_if = "Value::is_null")]
     pub library_versions: Value,
+    /// Card QUIRIN-AUDIT-CONNECT: the declared contract dependencies' record
+    /// (the dependency graph with its identities, and every hold), absent
+    /// (and so byte-identical to before) when no declaration states one.
+    #[serde(default, skip_serializing_if = "Value::is_null")]
+    pub contract_dependencies: Value,
     /// Per pinned outcome, in evaluation order: its record without the
     /// report-dependent keys, and whether it is in force.
     pub pinned: Vec<PinnedTemplate>,
@@ -1425,6 +1462,11 @@ pub fn template(contracts: &ResourceContracts, evaluation: &PinEvaluation) -> Se
         locks: json!(evaluation.locks),
         supersession: supersession_record(contracts),
         library_versions: evaluation.library_versions.record().unwrap_or(Value::Null),
+        contract_dependencies: evaluation
+            .contract_dependencies
+            .record
+            .clone()
+            .unwrap_or(Value::Null),
         pinned,
         flexible,
         inventory,
@@ -1553,6 +1595,9 @@ pub fn render(template: &SectionTemplate, facts: &ReportFacts) -> Value {
     }
     if !template.library_versions.is_null() {
         section["library_versions"] = template.library_versions.clone();
+    }
+    if !template.contract_dependencies.is_null() {
+        section["contract_dependencies"] = template.contract_dependencies.clone();
     }
     add_tip_tracking(&mut section, template);
     section

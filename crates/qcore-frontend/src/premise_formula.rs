@@ -3963,7 +3963,7 @@ pub const RENDERED_TERMS: &[RenderedTerm] = &[
     RenderedTerm {
         name: "cx_disagrees",
         sort: RenderedSort::Predicate(&["cx_step", "cx_route"]),
-        meaning: "`#cx_disagrees(#s,#r)`: a row of `#r` that `#s` and a neighbouring step both list has two verdicts at their shared side",
+        meaning: "`#cx_disagrees(#s,#r)`: a row of `#r` that `#s` lists has a before verdict other than the after verdict of its nearest earlier listing",
         block: "CX",
     },
     RenderedTerm {

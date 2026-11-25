@@ -1134,6 +1134,9 @@ fn measure(request: &Request, options: &Options) -> Result<Response, String> {
                 let (mut record, measured) = compare::rows(&left_rows, &right_rows);
                 let deltas = compare::deltas(&left_rows, &right_rows);
                 record["status_deltas"] = json!(deltas);
+                // Card QUIRIN-AUDIT-CONNECT Part C: each side's declared
+                // contract-dependency graph, recorded only when one has one.
+                chain::record_dependency_graphs(&mut record, &left_rows, &right_rows);
                 record["composition"] = match (&left_rows.contribution, &right_rows.contribution) {
                     (Some(left), Some(right)) => {
                         let (_, union) = compare::union(left, right);

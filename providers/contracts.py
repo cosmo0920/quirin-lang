@@ -239,7 +239,7 @@ def load_path_manifest(root=ROOT, metadata=None):
             raise ValueError(f"{name}: publishes modules it does not own: {missing}")
         dependencies = sorted({dependency["name"] for dependency in package["dependencies"]
                                if dependency["name"] in names and dependency.get("kind") is None})
-        crates.append({
+        record = {
             "name": name,
             "namespace": namespace,
             "version": package["version"],
@@ -247,9 +247,57 @@ def load_path_manifest(root=ROOT, metadata=None):
             "dependencies": dependencies,
             "modules": sorted(modules),
             "published": {module: sha256(modules[module]) for module in published},
-        })
+        }
+        declared = contract_dependencies(name, modules)
+        if declared:
+            record["contract_dependencies"] = declared
+        crates.append(record)
     package_module().validate_source_modes(source_paths)
     return {"schema_version": 1, "crates": crates}
+
+
+# Card QUIRIN-AUDIT-CONNECT (contract spec C15.1): a declaration's declared
+# contract dependencies, `requires resource_contract_dependency("CRATE",
+# NS::NAME[, since "V"[, removed "W"]][, sha256 "HEX"]);`. This lexical
+# reading writes the load path's `contract_dependencies` entry; the Rust
+# manifest reader (`qcore_contract::load_path_manifest`) rereads every module
+# with the loader's own clause reader and refuses an entry that differs
+# (`QI014`), so the two never disagree silently.
+_DEPENDENCY = re.compile(
+    r'\brequires\s+resource_contract_dependency\s*\(\s*"([^"]*)"\s*,\s*([A-Za-z_]\w*)\s*::\s*'
+    r'([A-Za-z_]\w*)((?:\s*,\s*(?:since|removed|sha256)\s+"[^"]*")*)\s*\)\s*;')
+_DEPENDENCY_KEY = re.compile(r'(since|removed|sha256)\s+"([^"]*)"')
+
+
+def _version(text):
+    parts = [int(part) for part in text.split(".")]
+    if len(parts) == 2:
+        parts.append(0)
+    if len(parts) != 3:
+        raise ValueError(f"`{text}` is not a version (MAJOR.MINOR[.PATCH])")
+    return {"major": parts[0], "minor": parts[1], "patch": parts[2]}
+
+
+def contract_dependencies(name, modules):
+    """Every declared contract dependency of a crate's modules (`{module:
+    path}`), in module then text order, as the load path records them."""
+    entries = []
+    for module in sorted(modules):
+        text = Path(modules[module]).read_text()
+        stripped = re.sub(r"/\*.*?\*/", " ", re.sub(r"//[^\n]*", "", text), flags=re.S)
+        declarations = [(match.start(), match.group(1)) for match in
+                        re.finditer(r"\bextern\s+fn\s+([A-Za-z_][A-Za-z0-9_]*)", stripped)]
+        for match in _DEPENDENCY.finditer(stripped):
+            owners = [function for start, function in declarations if start < match.start()]
+            if not owners:
+                raise ValueError(f"{name}/{module}: a contract dependency outside a declaration")
+            entry = {"dependent_crate": name, "dependent": owners[-1], "module": module,
+                     "target_crate": match.group(1), "target_namespace": match.group(2),
+                     "target_function": match.group(3)}
+            for key, value in _DEPENDENCY_KEY.findall(match.group(4)):
+                entry[key] = _version(value) if key in ("since", "removed") else value
+            entries.append(entry)
+    return entries
 
 
 def declared_functions(text):
