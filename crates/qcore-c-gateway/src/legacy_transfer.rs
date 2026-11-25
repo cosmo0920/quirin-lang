@@ -3122,6 +3122,36 @@ pub(super) fn transfer_dispatch(
         LegacyInstruction::SubObjectStore { .. } => {
             sub_object_store::transfer(function, node, state, context, alias, diagnostics, &base)
         }
+        // MEMBER-EFFECT-STORES hook (rule 38k): begin. A hand-off store's
+        // flow; its fallback (the gate's refusal, or W45's sub-object store
+        // it was read over) is dispatched in full.
+        LegacyInstruction::PointerStore { store, .. }
+            if store.value == crate::member_handoff::HANDOFF =>
+        {
+            let dispatch =
+                |node: &LegacyCfgNode,
+                 state: AbstractState,
+                 diagnostics: &mut BTreeSet<LegacyDiagnostic>| {
+                    transfer_dispatch(
+                        function,
+                        node,
+                        state,
+                        acquisition_lines,
+                        context,
+                        alias,
+                        diagnostics,
+                    )
+                };
+            super::member_handoff_route::transfer(
+                function,
+                node,
+                state,
+                diagnostics,
+                &base,
+                &dispatch,
+            )
+        }
+        // MEMBER-EFFECT-STORES hook (rule 38k): end
         // Card CG11-POINTER-VALUED-STORES (rule 10v).
         LegacyInstruction::PointerStore { .. } => {
             pointer_store_flow::transfer(function, node, state, diagnostics, &base)

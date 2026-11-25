@@ -1,0 +1,94 @@
+// Card MEMBER-EFFECT-STORES (rule 38k): a throwaway unit probe, kept as text,
+// never a cargo target. Copied to crates/qcore-c-gateway/tests/ for one
+// release run and removed. It analyses each unit text `unit_texts.py` wrote
+// under the run's dialect with the run's own contract manifest and prints each row's status, its
+// diagnostics and its carried premises.
+//
+// EXPLORE_MANIFEST=<private/mes/units/manifest.txt> cargo test --release \
+//   -p qcore-c-gateway --test mes_unit_probe -- --nocapture
+
+#[test]
+fn units() {
+    let Ok(manifest) = std::env::var("EXPLORE_MANIFEST") else {
+        return;
+    };
+    let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
+    let contracts = std::sync::Arc::new(
+        qcore_contract::contract_loader::load_resource_contract_manifest(
+            &root.join("cycle19-resource-contracts.json"),
+        )
+        .unwrap(),
+    );
+    let text = std::fs::read_to_string(manifest).unwrap();
+    let jobs: Vec<(String, Vec<String>)> = text
+        .lines()
+        .filter(|l| !l.trim().is_empty())
+        .map(|l| {
+            let (path, funcs) = l.split_once(' ').unwrap();
+            (path.to_owned(), funcs.split(',').map(str::to_owned).collect())
+        })
+        .collect();
+    let queue = std::sync::Arc::new(std::sync::Mutex::new(jobs));
+    let out = std::sync::Arc::new(std::sync::Mutex::new(Vec::<String>::new()));
+    let mut handles = Vec::new();
+    for _ in 0..4 {
+        let queue = queue.clone();
+        let out = out.clone();
+        let contracts = contracts.clone();
+        handles.push(std::thread::spawn(move || loop {
+            let Some((path, funcs)) = queue.lock().unwrap().pop() else {
+                return;
+            };
+            let source = std::fs::read_to_string(&path).unwrap();
+            let started = std::time::Instant::now();
+            let mut text = format!("## {path}\n");
+            // The run's dialect (`-std=gnu17`, the units' last flag), so the
+            // typed AST is read as the route reads it (K3's CG30 harness limit).
+            let unit = qcore_c_gateway::legacy_c::C11TranslationUnit {
+                source: &source,
+                dialect: qcore_c_gateway::legacy_c::CCompilerDialect::Gnu17,
+                ..Default::default()
+            };
+            let result =
+                qcore_c_gateway::legacy_c::analyze_unrestricted_c11(&unit, &funcs[0], &contracts)
+                    .map(|outcome| match outcome {
+                        qcore_c_gateway::legacy_c::UnrestrictedLegacyResult::Safe(c) => {
+                            Some(c.summary)
+                        }
+                        qcore_c_gateway::legacy_c::UnrestrictedLegacyResult::Unsafe(s) => Some(s),
+                        qcore_c_gateway::legacy_c::UnrestrictedLegacyResult::Unknown {
+                            partial,
+                            ..
+                        } => partial,
+                    });
+            match result {
+                Ok(None) => text.push_str("!! no summary\n"),
+                Ok(Some(summary)) => {
+                    for (name, function) in &summary.functions {
+                        if !funcs.contains(name) {
+                            continue;
+                        }
+                        text.push_str(&format!("== {name} {:?}\n", function.status));
+                        for d in &function.diagnostics {
+                            text.push_str(&format!("   {} {:?}\n", d.line, d.kind));
+                        }
+                        for p in &function.rule_obligations.premises {
+                            text.push_str(&format!("   premise {} {}\n", p.rule, p.name));
+                        }
+                    }
+                }
+                Err(error) => text.push_str(&format!("!! {error:?}\n")),
+            }
+            text.push_str(&format!("   ({:.0?})\n", started.elapsed()));
+            out.lock().unwrap().push(text);
+        }));
+    }
+    for handle in handles {
+        handle.join().unwrap();
+    }
+    let mut all = out.lock().unwrap().clone();
+    all.sort();
+    for text in all {
+        println!("{text}");
+    }
+}

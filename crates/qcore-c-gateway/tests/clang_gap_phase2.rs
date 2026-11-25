@@ -135,8 +135,12 @@ fn m03_field_stores_through_formals_and_local_owners_are_refused() {
     if !clang_available() {
         return;
     }
+    // Card MEMBER-EFFECT-STORES (rule 38k) flips this deliberately: the
+    // store hands `q`'s custody into the caller's object under the stated
+    // premise `mes_caller_slot`; the body publishes no summary. BEFORE:
+    // refused (IND).
     let run = gs("void subject(struct S *s) { void *q = q_alloc(); s->p = q; }");
-    assert!(run.refused(IND), "{run:?}");
+    assert!(run.safe(), "{run:?}");
     // A local owner acquired here is refused too in this shape.
     let run = gs(
         "void subject(void) { struct S *s = q_alloc(); void *q = q_alloc(); s->p = q; q_free(s->p); q_free(s); }",

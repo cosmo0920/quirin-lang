@@ -1,0 +1,3 @@
+UNIT rd_kafka_share_partition_offsets_list_new Unknown own=Some("Safe") []
+test unit_probe ... ok
+

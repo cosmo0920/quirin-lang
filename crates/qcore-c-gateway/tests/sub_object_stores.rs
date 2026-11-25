@@ -293,11 +293,14 @@ fn a_none_result_call_stored_into_a_scalar_member_keeps_its_refusal() {
 /// pin, and this card keeps it.
 #[test]
 fn an_owned_pointer_stored_into_a_caller_visible_record_escapes_the_leak_claim_only() {
+    // Card MEMBER-EFFECT-STORES (rule 38k) re-pins this deliberately: the
+    // store is a hand-off of `n`'s custody into the caller's record under the
+    // stated premise `mes_caller_slot`, and the body publishes no summary.
     expect(
         "`h->name = n` hands `n` to the caller's record",
         "void w(struct x_holder *h, const char *s) { char *n = x_dup(s); h->name = n; }",
-        "Unknown",
-        &[GATE],
+        "Safe",
+        &[],
     );
 }
 
@@ -308,13 +311,12 @@ fn an_owned_call_result_stored_into_a_caller_visible_record_keeps_its_refusal() 
     expect(
         "`h->name = x_dup(s)`",
         "void w(struct x_holder *h, const char *s) { h->name = x_dup(s); }",
-        "Unknown",
-        // Card MEMBER-EFFECT-SUMMARY (rule 38i) re-pins this deliberately: the owned result stored into a formal's
-        // member names its premise; still `Unknown`.
-        &[
-            "unsupported:store of a custody-carrying value into `h->name`, a member of the \
-           formal `h` (member-store-through-formal)",
-        ],
+        // Card MEMBER-EFFECT-SUMMARY (rule 38i) re-pinned this to its name;
+        // card MEMBER-EFFECT-STORES (rule 38k) re-pins it again deliberately:
+        // the owned result is handed into the caller's record under the stated
+        // premise `mes_caller_slot`, and the body publishes no summary.
+        "Safe",
+        &[],
     );
 }
 

@@ -1,0 +1,80 @@
+## lib__cmetrics__src__cmt_decode_msgpack.c.i
+== create_counter_instance Unknown
+   7057 Unsupported { description: "C extension types could not be excluded: the definition's typed AST is unavailable (CG30)" }
+   7068 Unsupported { description: "indirect memory access is outside the resource projection" }
+== create_exp_histogram_instance Unknown
+   7127 Unsupported { description: "C extension types could not be excluded: the definition's typed AST is unavailable (CG30)" }
+   7138 Unsupported { description: "indirect memory access is outside the resource projection" }
+== create_gauge_instance Unknown
+   7071 Unsupported { description: "C extension types could not be excluded: the definition's typed AST is unavailable (CG30)" }
+   7082 Unsupported { description: "indirect memory access is outside the resource projection" }
+== create_histogram_instance Unknown
+   7113 Unsupported { description: "C extension types could not be excluded: the definition's typed AST is unavailable (CG30)" }
+   7124 Unsupported { description: "indirect memory access is outside the resource projection" }
+== create_summary_instance Unknown
+   7099 Unsupported { description: "C extension types could not be excluded: the definition's typed AST is unavailable (CG30)" }
+   7110 Unsupported { description: "indirect memory access is outside the resource projection" }
+== create_untyped_instance Unknown
+   7085 Unsupported { description: "C extension types could not be excluded: the definition's typed AST is unavailable (CG30)" }
+   7096 Unsupported { description: "indirect memory access is outside the resource projection" }
+== unpack_opts_unit Unknown
+   7191 Unsupported { description: "C extension types could not be excluded: the definition's typed AST is unavailable (CG30)" }
+   7196 Unsupported { description: "unsupported assignment expression" }
+   7203 Unsupported { description: "indirect memory access is outside the resource projection" }
+   (214s)
+## lib__ctraces__src__ctr_encode_opentelemetry.c.i
+== otel_span_set_attributes Unknown
+   9023 Unsupported { description: "C extension types could not be excluded: the definition's typed AST is unavailable (CG30)" }
+   9026 Unsupported { description: "indirect memory access is outside the resource projection" }
+   9027 Unsupported { description: "indirect memory access is outside the resource projection" }
+== otel_span_set_events Unknown
+   9082 Unsupported { description: "C extension types could not be excluded: the definition's typed AST is unavailable (CG30)" }
+   9085 Unsupported { description: "indirect memory access is outside the resource projection" }
+   9086 Unsupported { description: "indirect memory access is outside the resource projection" }
+   (152s)
+## lib__librdkafka-2.15.0__src__rdbuf.c.i
+== rd_buf_init Safe
+   premise 38k mes_caller_slot: forall (#o: obj) { (#mes_holds(#mes_place,#o) => !#mes_owed(#o)) }
+   (18s)
+## lib__librdkafka-2.15.0__src__rdkafka_assignment.c.i
+== rd_kafka_assignment_init Safe
+   premise 38k mes_caller_slot: forall (#o: obj) { (#mes_holds(#mes_place,#o) => !#mes_owed(#o)) }
+   (343s)
+## lib__librdkafka-2.15.0__src__rdkafka_fetcher.c.i
+== rd_kafkap_Fetch_reply_tags_set_topic Unknown
+   20417 Unsupported { description: "indirect memory access is outside the resource projection" }
+   premise 37 asserted_allocation
+== rd_kafkap_Fetch_reply_tags_set_topic_cnt Safe
+   premise 37 asserted_allocation
+   premise 38k mes_caller_slot: forall (#o: obj) { (#mes_holds(#mes_place,#o) => !#mes_owed(#o)) }
+   (652s)
+## lib__librdkafka-2.15.0__src__rdkafka_sasl_scram.c.i
+== rd_kafka_sasl_scram_build_client_final_message_wo_proof Unknown
+   20293 Unsupported { description: "indirect memory access is outside the resource projection" }
+== rd_kafka_sasl_scram_generate_nonce Unknown
+   20191 Unsupported { description: "indirect memory access is outside the resource projection" }
+   (356s)
+## lib__librdkafka-2.15.0__src__rdlist.c.i
+== rd_list_grow Unknown
+   2959 Unsupported { description: "indirect memory access is outside the resource projection" }
+   (5s)
+## lib__librdkafka-2.15.0__src__snappy.c.i
+== rd_kafka_snappy_init_env Safe
+   premise 38k mes_caller_slot: forall (#o: obj) { (#mes_holds(#mes_place,#o) => !#mes_owed(#o)) }
+   (353s)
+## lib__monkey__mk_server__mk_lib.c.i
+== mk_vhost_set_property Unknown
+   6269 Unsupported { description: "C extension types could not be excluded: the definition's typed AST is unavailable (CG30)" }
+   6282 Unsupported { description: "indirect memory access is outside the resource projection" }
+   6283 Unsupported { description: "indirect memory access is outside the resource projection" }
+   (21s)
+## lib__monkey__mk_server__mk_utils.c.i
+== mk_buffer_cat Unknown
+   5485 Unsupported { description: "C extension types could not be excluded: the definition's typed AST is unavailable (CG30)" }
+   5490 Unsupported { description: "indirect memory access is outside the resource projection" }
+   5491 Unsupported { description: "indirect memory access is outside the resource projection" }
+   5492 Unsupported { description: "indirect memory access is outside the resource projection" }
+   5493 Unsupported { description: "unrecognized assignment destination" }
+   5494 Unsupported { description: "indirect memory access is outside the resource projection" }
+   (12s)
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 653.24s

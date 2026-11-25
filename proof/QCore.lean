@@ -282,6 +282,7 @@ import QCore.MemberAddressReader
 import QCore.MemberCustodyAttribution
 import QCore.MemberEffectSummary
 import QCore.MemberFormalType
+import QCore.MemberHandoff
 import QCore.MemberNonCUnits
 import QCore.MemberPathDirectCall
 import QCore.MemberPathRelease
@@ -538,6 +539,7 @@ import QCore.TrackedSelfInitDisjointFrame
 import QCore.Transferability
 import QCore.TranslationValidation
 import QCore.TwoDerivationAdmission
+import QCore.TypeQueryPositions
 import QCore.TypedAccessPathPositionResiduals
 import QCore.TypedAccessPathPositions
 import QCore.TypedAccessPathStatements

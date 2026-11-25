@@ -1571,6 +1571,11 @@ pub(crate) fn statement_end(texts: &[&str], start: usize) -> Option<usize> {
 /// an unreadable declaration refuse the whole function instead of silently
 /// leaving a shadowed name typed by an outer declaration.
 pub(crate) fn is_declaration_candidate(texts: &[&str], start: usize) -> bool {
+    // Card K2-NO-TYPED-ACCESS (rule 79): `NAME * sizeof` begins no
+    // declaration (a declarator identifier is never a keyword).
+    if crate::type_query_positions::product_run(texts, start) {
+        return false;
+    }
     let Some(first) = texts.get(start) else {
         return false;
     };

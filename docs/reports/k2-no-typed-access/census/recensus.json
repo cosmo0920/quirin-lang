@@ -1,0 +1,1191 @@
+{
+ "match": {
+  "access-leaf-tagged": 12083,
+  "access-leaf-untagged": 176
+ },
+ "old": {
+  "unknown_rows": 3832,
+  "k2_leaves": 1058,
+  "touched_unknown_rows": 601,
+  "freed_alone_rows": 40,
+  "freed_alone_distinct": 39
+ },
+ "new": {
+  "rows": 4934,
+  "unknown_rows": 3750,
+  "k2_leaves": 240,
+  "k2_leaves_on_unknown": 236,
+  "touched_unknown_rows": 181,
+  "freed_alone_rows": 19,
+  "freed_alone_distinct": 19,
+  "leaves_by_family": {
+   "COND:if": 95,
+   "IND:None": 74,
+   "RET:None": 29,
+   "COND:while": 28,
+   "COND:for": 10
+  }
+ },
+ "freed_alone": [
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/cJSON.c::cJSON_DetachItemFromObject",
+   "unit": 48,
+   "sites": [
+    [
+     "RET",
+     null,
+     "lib/librdkafka-2.15.0/src/cJSON.c:2298",
+     "unmodeled call, aggregate or indirect access in return expression"
+    ]
+   ]
+  },
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/cJSON.c::cJSON_DetachItemFromObjectCaseSensitive",
+   "unit": 48,
+   "sites": [
+    [
+     "RET",
+     null,
+     "lib/librdkafka-2.15.0/src/cJSON.c:2305",
+     "unmodeled call, aggregate or indirect access in return expression"
+    ]
+   ]
+  },
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/lz4.c::LZ4_NbCommonBytes",
+   "unit": 50,
+   "sites": [
+    [
+     "RET",
+     null,
+     "lib/librdkafka-2.15.0/src/lz4.c:589",
+     "unmodeled call, aggregate or indirect access in return expression"
+    ],
+    [
+     "RET",
+     null,
+     "lib/librdkafka-2.15.0/src/lz4.c:603",
+     "unmodeled call, aggregate or indirect access in return expression"
+    ],
+    [
+     "RET",
+     null,
+     "lib/librdkafka-2.15.0/src/lz4.c:614",
+     "unmodeled call, aggregate or indirect access in return expression"
+    ],
+    [
+     "RET",
+     null,
+     "lib/librdkafka-2.15.0/src/lz4.c:650",
+     "unmodeled call, aggregate or indirect access in return expression"
+    ]
+   ]
+  },
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/lz4.c::LZ4_hashPosition",
+   "unit": 50,
+   "sites": [
+    [
+     "COND",
+     "if",
+     "lib/librdkafka-2.15.0/src/lz4.c:783",
+     "unmodeled call, aggregate or indirect access in branch condition"
+    ]
+   ]
+  },
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka.c::rd_kafka_path_is_dir",
+   "unit": 69,
+   "sites": [
+    [
+     "RET",
+     null,
+     "lib/librdkafka-2.15.0/src/rdkafka.c:7073",
+     "unmodeled call, aggregate or indirect access in return expression"
+    ]
+   ]
+  },
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka.c::rd_kafka_purge_flags2str",
+   "unit": 69,
+   "sites": [
+    [
+     "RET",
+     null,
+     "lib/librdkafka-2.15.0/src/rdkafka.c:6576",
+     "unmodeled call, aggregate or indirect access in return expression"
+    ]
+   ]
+  },
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_broker.c::rd_kafka_broker_ApiVersion_at_least",
+   "unit": 75,
+   "sites": [
+    [
+     "RET",
+     null,
+     "lib/librdkafka-2.15.0/src/rdkafka_broker.c:327",
+     "unmodeled call, aggregate or indirect access in return expression"
+    ]
+   ]
+  },
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_broker.c::rd_kafka_broker_ApiVersion_at_least_no_lock",
+   "unit": 75,
+   "sites": [
+    [
+     "RET",
+     null,
+     "lib/librdkafka-2.15.0/src/rdkafka_broker.c:335",
+     "unmodeled call, aggregate or indirect access in return expression"
+    ]
+   ]
+  },
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_conf.c::rd_kafka_conf_validate_single",
+   "unit": 79,
+   "sites": [
+    [
+     "RET",
+     null,
+     "lib/librdkafka-2.15.0/src/rdkafka_conf.c:340",
+     "unmodeled call, aggregate or indirect access in return expression"
+    ]
+   ]
+  },
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_conf.c::rd_kafka_sw_str_sanitize_inplace",
+   "unit": 79,
+   "sites": [
+    [
+     "IND",
+     null,
+     "lib/librdkafka-2.15.0/src/rdkafka_conf.c:3932",
+     "indirect memory access is outside the resource projection"
+    ]
+   ]
+  },
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_msg.c::rd_kafka_msg_partitioner_fnv1a",
+   "unit": 95,
+   "sites": [
+    [
+     "RET",
+     null,
+     "lib/librdkafka-2.15.0/src/rdkafka_msg.c:1114",
+     "unmodeled call, aggregate or indirect access in return expression"
+    ]
+   ]
+  },
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_msg.c::rd_kafka_msg_partitioner_murmur2",
+   "unit": 95,
+   "sites": [
+    [
+     "RET",
+     null,
+     "lib/librdkafka-2.15.0/src/rdkafka_msg.c:1092",
+     "unmodeled call, aggregate or indirect access in return expression"
+    ]
+   ]
+  },
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_request.c::rd_kafka_actions2str",
+   "unit": 105,
+   "sites": [
+    [
+     "RET",
+     null,
+     "lib/librdkafka-2.15.0/src/rdkafka_request.c:67",
+     "unmodeled call, aggregate or indirect access in return expression"
+    ]
+   ]
+  },
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_share_acknowledgement.c::rd_kafka_share_partition_offsets_list_new",
+   "unit": 113,
+   "sites": [
+    [
+     "IND",
+     null,
+     "lib/librdkafka-2.15.0/src/rdkafka_share_acknowledgement.c:1120",
+     "indirect memory access is outside the resource projection"
+    ]
+   ]
+  },
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_topic.c::rd_kafka_topic_cmp_rkt",
+   "unit": 121,
+   "sites": [
+    [
+     "IND",
+     null,
+     "lib/librdkafka-2.15.0/src/rdkafka_topic.c:213",
+     "indirect memory access is outside the resource projection"
+    ]
+   ]
+  },
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/snappy.c::log2_floor",
+   "unit": 139,
+   "sites": [
+    [
+     "RET",
+     null,
+     "lib/librdkafka-2.15.0/src/snappy.c:254",
+     "unmodeled call, aggregate or indirect access in return expression"
+    ]
+   ]
+  },
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/tinycthread_extra.c::thrd_setname",
+   "unit": 141,
+   "sites": [
+    [
+     "COND",
+     "if",
+     "lib/librdkafka-2.15.0/src/tinycthread_extra.c:42",
+     "unmodeled call, aggregate or indirect access in branch condition"
+    ]
+   ]
+  },
+  {
+   "function": "monkey::lib/monkey/mk_server/mk_plugin.c::mk_handler_param_get",
+   "unit": 176,
+   "sites": [
+    [
+     "IND",
+     null,
+     "lib/monkey/mk_server/mk_plugin.c:798",
+     "indirect memory access is outside the resource projection"
+    ],
+    [
+     "RET",
+     null,
+     "lib/monkey/mk_server/mk_plugin.c:798",
+     "unmodeled call, aggregate or indirect access in return expression"
+    ]
+   ]
+  },
+  {
+   "function": "monkey::lib/monkey/mk_server/mk_socket.c::mk_socket_set_nonblocking",
+   "unit": 179,
+   "sites": [
+    [
+     "COND",
+     "if",
+     "lib/monkey/mk_server/mk_socket.c:68",
+     "unmodeled call, aggregate or indirect access in branch condition"
+    ]
+   ]
+  }
+ ],
+ "frozen": [
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/cJSON.c::cJSON_DetachItemFromObject",
+   "rows": [
+    {
+     "unit": 48,
+     "status": "Unknown",
+     "blockers": {
+      "RET:none": 1
+     },
+     "k2_sites": [
+      [
+       "RET",
+       null,
+       "lib/librdkafka-2.15.0/src/cJSON.c:2298",
+       "unmodeled call, aggregate or indirect access in return expression"
+      ]
+     ],
+     "other": []
+    }
+   ]
+  },
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/cJSON.c::cJSON_DetachItemFromObjectCaseSensitive",
+   "rows": [
+    {
+     "unit": 48,
+     "status": "Unknown",
+     "blockers": {
+      "RET:none": 1
+     },
+     "k2_sites": [
+      [
+       "RET",
+       null,
+       "lib/librdkafka-2.15.0/src/cJSON.c:2305",
+       "unmodeled call, aggregate or indirect access in return expression"
+      ]
+     ],
+     "other": []
+    }
+   ]
+  },
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/lz4.c::LZ4_NbCommonBytes",
+   "rows": [
+    {
+     "unit": 50,
+     "status": "Unknown",
+     "blockers": {
+      "RET:none": 4
+     },
+     "k2_sites": [
+      [
+       "RET",
+       null,
+       "lib/librdkafka-2.15.0/src/lz4.c:589",
+       "unmodeled call, aggregate or indirect access in return expression"
+      ],
+      [
+       "RET",
+       null,
+       "lib/librdkafka-2.15.0/src/lz4.c:603",
+       "unmodeled call, aggregate or indirect access in return expression"
+      ],
+      [
+       "RET",
+       null,
+       "lib/librdkafka-2.15.0/src/lz4.c:614",
+       "unmodeled call, aggregate or indirect access in return expression"
+      ],
+      [
+       "RET",
+       null,
+       "lib/librdkafka-2.15.0/src/lz4.c:650",
+       "unmodeled call, aggregate or indirect access in return expression"
+      ]
+     ],
+     "other": []
+    }
+   ]
+  },
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/lz4.c::LZ4_hashPosition",
+   "rows": [
+    {
+     "unit": 50,
+     "status": "Unknown",
+     "blockers": {
+      "COND:none": 1
+     },
+     "k2_sites": [
+      [
+       "COND",
+       "if",
+       "lib/librdkafka-2.15.0/src/lz4.c:783",
+       "unmodeled call, aggregate or indirect access in branch condition"
+      ]
+     ],
+     "other": []
+    }
+   ]
+  },
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/lz4.c::LZ4_initStream",
+   "rows": [
+    {
+     "unit": 50,
+     "status": "Safe",
+     "blockers": {},
+     "k2_sites": [],
+     "other": []
+    }
+   ]
+  },
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/nanopb/pb_decode.c::pb_decode_svarint",
+   "rows": [
+    {
+     "unit": 54,
+     "status": "Unknown",
+     "blockers": {
+      "UNC-RUN:pb_decode_varint": 1
+     },
+     "k2_sites": [],
+     "other": [
+      [
+       "UNC-RUN",
+       "pb_decode_varint",
+       "lib/librdkafka-2.15.0/src/nanopb/pb_decode.c:1358",
+       "call to uncontracted function `pb_decode_varint` in branch condition"
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/nanopb/pb_decode.c::pb_skip_varint",
+   "rows": [
+    {
+     "unit": 54,
+     "status": "Unknown",
+     "blockers": {
+      "UNC-RUN:pb_read": 1
+     },
+     "k2_sites": [],
+     "other": [
+      [
+       "UNC-RUN",
+       "pb_read",
+       "lib/librdkafka-2.15.0/src/nanopb/pb_decode.c:270",
+       "call to uncontracted function `pb_read` in branch condition"
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/nanopb/pb_encode.c::pb_encode",
+   "rows": [
+    {
+     "unit": 55,
+     "status": "Unknown",
+     "blockers": {
+      "UNC-RUN:pb_field_iter_begin_const": 1,
+      "UNC-RUN:pb_field_iter_next": 1,
+      "COND:none": 2
+     },
+     "k2_sites": [
+      [
+       "COND",
+       "if",
+       "lib/librdkafka-2.15.0/src/nanopb/pb_encode.c:521",
+       "unmodeled call, aggregate or indirect access in branch condition"
+      ],
+      [
+       "COND",
+       "if",
+       "lib/librdkafka-2.15.0/src/nanopb/pb_encode.c:527",
+       "unmodeled call, aggregate or indirect access in branch condition"
+      ]
+     ],
+     "other": [
+      [
+       "UNC-RUN",
+       "pb_field_iter_begin_const",
+       "lib/librdkafka-2.15.0/src/nanopb/pb_encode.c:514",
+       "call to uncontracted function `pb_field_iter_begin_const` in branch condition"
+      ],
+      [
+       "UNC-RUN",
+       "pb_field_iter_next",
+       "lib/librdkafka-2.15.0/src/nanopb/pb_encode.c:517",
+       "call to uncontracted function `pb_field_iter_next` in do-while condition"
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/nanopb/pb_encode.c::pb_get_encoded_size",
+   "rows": [
+    {
+     "unit": 55,
+     "status": "Unknown",
+     "blockers": {
+      "UNC-RUN:pb_encode": 1
+     },
+     "k2_sites": [],
+     "other": [
+      [
+       "UNC-RUN",
+       "pb_encode",
+       "lib/librdkafka-2.15.0/src/nanopb/pb_encode.c:560",
+       "call to uncontracted function `pb_encode` in branch condition"
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka.c::rd_kafka_path_is_dir",
+   "rows": [
+    {
+     "unit": 69,
+     "status": "Unknown",
+     "blockers": {
+      "RET:none": 1
+     },
+     "k2_sites": [
+      [
+       "RET",
+       null,
+       "lib/librdkafka-2.15.0/src/rdkafka.c:7073",
+       "unmodeled call, aggregate or indirect access in return expression"
+      ]
+     ],
+     "other": []
+    }
+   ]
+  },
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka.c::rd_kafka_purge_flags2str",
+   "rows": [
+    {
+     "unit": 69,
+     "status": "Unknown",
+     "blockers": {
+      "RET:none": 1
+     },
+     "k2_sites": [
+      [
+       "RET",
+       null,
+       "lib/librdkafka-2.15.0/src/rdkafka.c:6576",
+       "unmodeled call, aggregate or indirect access in return expression"
+      ]
+     ],
+     "other": []
+    }
+   ]
+  },
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka.c::rd_kafka_test_fatal_error",
+   "rows": [
+    {
+     "unit": 69,
+     "status": "Unknown",
+     "blockers": {
+      "UNC-RUN:rd_kafka_set_fatal_error0": 1
+     },
+     "k2_sites": [],
+     "other": [
+      [
+       "UNC-RUN",
+       "rd_kafka_set_fatal_error0",
+       "lib/librdkafka-2.15.0/src/rdkafka.c:995",
+       "call to uncontracted function `rd_kafka_set_fatal_error0` in branch condition"
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka.c::rd_kafka_wait_destroyed",
+   "rows": [
+    {
+     "unit": 69,
+     "status": "Unknown",
+     "blockers": {
+      "UNC-RUN:rd_kafka_global_cnt_get": 1
+     },
+     "k2_sites": [],
+     "other": [
+      [
+       "UNC-RUN",
+       "rd_kafka_global_cnt_get",
+       "lib/librdkafka-2.15.0/src/rdkafka.c:268",
+       "call to uncontracted function `rd_kafka_global_cnt_get` in loop condition"
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_broker.c::rd_kafka_broker_ApiVersion_at_least",
+   "rows": [
+    {
+     "unit": 75,
+     "status": "Unknown",
+     "blockers": {
+      "RET:none": 1
+     },
+     "k2_sites": [
+      [
+       "RET",
+       null,
+       "lib/librdkafka-2.15.0/src/rdkafka_broker.c:327",
+       "unmodeled call, aggregate or indirect access in return expression"
+      ]
+     ],
+     "other": []
+    }
+   ]
+  },
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_broker.c::rd_kafka_broker_ApiVersion_at_least_no_lock",
+   "rows": [
+    {
+     "unit": 75,
+     "status": "Unknown",
+     "blockers": {
+      "RET:none": 1
+     },
+     "k2_sites": [
+      [
+       "RET",
+       null,
+       "lib/librdkafka-2.15.0/src/rdkafka_broker.c:335",
+       "unmodeled call, aggregate or indirect access in return expression"
+      ]
+     ],
+     "other": []
+    }
+   ]
+  },
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_conf.c::rd_kafka_conf_finalize_oauthbearer_oidc_grant_type",
+   "rows": [
+    {
+     "unit": 79,
+     "status": "Unknown",
+     "blockers": {
+      "UNC-RUN:rd_kafka_conf_is_modified": 3
+     },
+     "k2_sites": [],
+     "other": [
+      [
+       "UNC-RUN",
+       "rd_kafka_conf_is_modified",
+       "lib/librdkafka-2.15.0/src/rdkafka_conf.c:4109",
+       "call to uncontracted function `rd_kafka_conf_is_modified` in branch condition"
+      ],
+      [
+       "UNC-RUN",
+       "rd_kafka_conf_is_modified",
+       "lib/librdkafka-2.15.0/src/rdkafka_conf.c:4118",
+       "call to uncontracted function `rd_kafka_conf_is_modified` in branch condition"
+      ],
+      [
+       "UNC-RUN",
+       "rd_kafka_conf_is_modified",
+       "lib/librdkafka-2.15.0/src/rdkafka_conf.c:4128",
+       "call to uncontracted function `rd_kafka_conf_is_modified` in branch condition"
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_conf.c::rd_kafka_conf_validate_single",
+   "rows": [
+    {
+     "unit": 79,
+     "status": "Unknown",
+     "blockers": {
+      "RET:none": 1
+     },
+     "k2_sites": [
+      [
+       "RET",
+       null,
+       "lib/librdkafka-2.15.0/src/rdkafka_conf.c:340",
+       "unmodeled call, aggregate or indirect access in return expression"
+      ]
+     ],
+     "other": []
+    }
+   ]
+  },
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_conf.c::rd_kafka_sw_str_sanitize_inplace",
+   "rows": [
+    {
+     "unit": 79,
+     "status": "Unknown",
+     "blockers": {
+      "IND:none": 1
+     },
+     "k2_sites": [
+      [
+       "IND",
+       null,
+       "lib/librdkafka-2.15.0/src/rdkafka_conf.c:3932",
+       "indirect memory access is outside the resource projection"
+      ]
+     ],
+     "other": []
+    }
+   ]
+  },
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_feature.c::rd_kafka_ApiVersion_is_queryable",
+   "rows": [
+    {
+     "unit": 83,
+     "status": "Unknown",
+     "blockers": {
+      "UNC-RUN:rd_kafka_get_legacy_ApiVersions": 1
+     },
+     "k2_sites": [],
+     "other": [
+      [
+       "UNC-RUN",
+       "rd_kafka_get_legacy_ApiVersions",
+       "lib/librdkafka-2.15.0/src/rdkafka_feature.c:353",
+       "call to uncontracted function `rd_kafka_get_legacy_ApiVersions` in branch condition"
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_msg.c::rd_kafka_msg_partitioner_fnv1a",
+   "rows": [
+    {
+     "unit": 95,
+     "status": "Unknown",
+     "blockers": {
+      "RET:none": 1
+     },
+     "k2_sites": [
+      [
+       "RET",
+       null,
+       "lib/librdkafka-2.15.0/src/rdkafka_msg.c:1114",
+       "unmodeled call, aggregate or indirect access in return expression"
+      ]
+     ],
+     "other": []
+    }
+   ]
+  },
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_msg.c::rd_kafka_msg_partitioner_murmur2",
+   "rows": [
+    {
+     "unit": 95,
+     "status": "Unknown",
+     "blockers": {
+      "RET:none": 1
+     },
+     "k2_sites": [
+      [
+       "RET",
+       null,
+       "lib/librdkafka-2.15.0/src/rdkafka_msg.c:1092",
+       "unmodeled call, aggregate or indirect access in return expression"
+      ]
+     ],
+     "other": []
+    }
+   ]
+  },
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_partition.c::rd_kafka_topic_partition_list_set_offset",
+   "rows": [
+    {
+     "unit": 100,
+     "status": "Unknown",
+     "blockers": {
+      "UNC-RUN:rd_kafka_topic_partition_list_find": 1
+     },
+     "k2_sites": [],
+     "other": [
+      [
+       "UNC-RUN",
+       "rd_kafka_topic_partition_list_find",
+       "lib/librdkafka-2.15.0/src/rdkafka_partition.c:3696",
+       "call to uncontracted function `rd_kafka_topic_partition_list_find` in branch condition"
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_pattern.c::rd_kafka_pattern_list_new",
+   "rows": [
+    {
+     "unit": 101,
+     "status": "Unknown",
+     "blockers": {
+      "UNC-RUN:rd_kafka_pattern_list_init": 1
+     },
+     "k2_sites": [],
+     "other": [
+      [
+       "UNC-RUN",
+       "rd_kafka_pattern_list_init",
+       "lib/librdkafka-2.15.0/src/rdkafka_pattern.c:210",
+       "call to uncontracted function `rd_kafka_pattern_list_init` in branch condition"
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_request.c::rd_kafka_actions2str",
+   "rows": [
+    {
+     "unit": 105,
+     "status": "Unknown",
+     "blockers": {
+      "RET:none": 1
+     },
+     "k2_sites": [
+      [
+       "RET",
+       null,
+       "lib/librdkafka-2.15.0/src/rdkafka_request.c:67",
+       "unmodeled call, aggregate or indirect access in return expression"
+      ]
+     ],
+     "other": []
+    }
+   ]
+  },
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_share_acknowledgement.c::rd_kafka_share_partition_offsets_list_new",
+   "rows": [
+    {
+     "unit": 113,
+     "status": "Unknown",
+     "blockers": {
+      "IND:none": 1
+     },
+     "k2_sites": [
+      [
+       "IND",
+       null,
+       "lib/librdkafka-2.15.0/src/rdkafka_share_acknowledgement.c:1120",
+       "indirect memory access is outside the resource projection"
+      ]
+     ],
+     "other": []
+    }
+   ]
+  },
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_telemetry.c::rd_kafka_filter_broker_by_GetTelemetrySubscription",
+   "rows": [
+    {
+     "unit": 117,
+     "status": "Unknown",
+     "blockers": {
+      "UNC-RUN:rd_kafka_broker_ApiVersion_at_least_no_lock": 1
+     },
+     "k2_sites": [],
+     "other": [
+      [
+       "UNC-RUN",
+       "rd_kafka_broker_ApiVersion_at_least_no_lock",
+       "lib/librdkafka-2.15.0/src/rdkafka_telemetry.c:55",
+       "call to uncontracted function `rd_kafka_broker_ApiVersion_at_least_no_lock` in branch condition"
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_topic.c::rd_kafka_topic_cmp_rkt",
+   "rows": [
+    {
+     "unit": 121,
+     "status": "Unknown",
+     "blockers": {
+      "IND:none": 1
+     },
+     "k2_sites": [
+      [
+       "IND",
+       null,
+       "lib/librdkafka-2.15.0/src/rdkafka_topic.c:213",
+       "indirect memory access is outside the resource projection"
+      ]
+     ],
+     "other": []
+    }
+   ]
+  },
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/rdlist.c::rd_list_index",
+   "rows": [
+    {
+     "unit": 125,
+     "status": "Unknown",
+     "blockers": {
+      "UNC-RUN:rd_list_elem": 1,
+      "COND:none": 1
+     },
+     "k2_sites": [
+      [
+       "COND",
+       "if",
+       "lib/librdkafka-2.15.0/src/rdlist.c:339",
+       "unmodeled call, aggregate or indirect access in branch condition"
+      ]
+     ],
+     "other": [
+      [
+       "UNC-RUN",
+       "rd_list_elem",
+       "lib/librdkafka-2.15.0/src/rdlist.c:338",
+       "call to uncontracted function `rd_list_elem` in for-loop condition"
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/rdrand.c::rd_rand_bytes",
+   "rows": [
+    {
+     "unit": 130,
+     "status": "Unknown",
+     "blockers": {
+      "UNC-RUN:rd_rand_bytes_by_ossl": 1,
+      "UNC-EXT:getentropy": 1
+     },
+     "k2_sites": [],
+     "other": [
+      [
+       "UNC-RUN",
+       "rd_rand_bytes_by_ossl",
+       "lib/librdkafka-2.15.0/src/rdrand.c:116",
+       "call to uncontracted function `rd_rand_bytes_by_ossl` in branch condition"
+      ],
+      [
+       "UNC-EXT",
+       "getentropy",
+       "lib/librdkafka-2.15.0/src/rdrand.c:120",
+       "call to uncontracted function `getentropy` in branch condition"
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/rdrand.c::rd_rand_bytes_by_ossl",
+   "rows": [
+    {
+     "unit": 130,
+     "status": "Unknown",
+     "blockers": {
+      "UNC-EXT:RAND_priv_bytes": 1
+     },
+     "k2_sites": [],
+     "other": [
+      [
+       "UNC-EXT",
+       "RAND_priv_bytes",
+       "lib/librdkafka-2.15.0/src/rdrand.c:81",
+       "call to uncontracted function `RAND_priv_bytes` in loop condition"
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/snappy.c::log2_floor",
+   "rows": [
+    {
+     "unit": 139,
+     "status": "Unknown",
+     "blockers": {
+      "RET:none": 1
+     },
+     "k2_sites": [
+      [
+       "RET",
+       null,
+       "lib/librdkafka-2.15.0/src/snappy.c:254",
+       "unmodeled call, aggregate or indirect access in return expression"
+      ]
+     ],
+     "other": []
+    }
+   ]
+  },
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/snappy.c::rd_kafka_snappy_uncompressed_length",
+   "rows": [
+    {
+     "unit": 139,
+     "status": "Unknown",
+     "blockers": {
+      "UNC-RUN:varint_parse32_with_limit": 1
+     },
+     "k2_sites": [],
+     "other": [
+      [
+       "UNC-RUN",
+       "varint_parse32_with_limit",
+       "lib/librdkafka-2.15.0/src/snappy.c:783",
+       "call to uncontracted function `varint_parse32_with_limit` in branch condition"
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "function": "librdkafka::lib/librdkafka-2.15.0/src/tinycthread_extra.c::thrd_setname",
+   "rows": [
+    {
+     "unit": 141,
+     "status": "Unknown",
+     "blockers": {
+      "COND:none": 1
+     },
+     "k2_sites": [
+      [
+       "COND",
+       "if",
+       "lib/librdkafka-2.15.0/src/tinycthread_extra.c:42",
+       "unmodeled call, aggregate or indirect access in branch condition"
+      ]
+     ],
+     "other": []
+    }
+   ]
+  },
+  {
+   "function": "monkey-libevent::lib/monkey/mk_core/mk_file.c::mk_file_to_buffer",
+   "rows": [
+    {
+     "unit": 158,
+     "status": "Unknown",
+     "blockers": {
+      "UNC-RUN:mk_file_get_info": 1
+     },
+     "k2_sites": [],
+     "other": [
+      [
+       "UNC-RUN",
+       "mk_file_get_info",
+       "lib/monkey/mk_core/mk_file.c:128",
+       "call to uncontracted function `mk_file_get_info` in branch condition"
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "function": "monkey-libevent::lib/monkey/mk_server/mk_plugin.c::mk_handler_param_get",
+   "rows": [
+    {
+     "unit": 176,
+     "status": "Unknown",
+     "blockers": {
+      "IND:none": 1,
+      "RET:none": 1
+     },
+     "k2_sites": [
+      [
+       "IND",
+       null,
+       "lib/monkey/mk_server/mk_plugin.c:798",
+       "indirect memory access is outside the resource projection"
+      ],
+      [
+       "RET",
+       null,
+       "lib/monkey/mk_server/mk_plugin.c:798",
+       "unmodeled call, aggregate or indirect access in return expression"
+      ]
+     ],
+     "other": []
+    }
+   ]
+  },
+  {
+   "function": "monkey-libevent::lib/monkey/mk_server/mk_socket.c::mk_socket_set_nonblocking",
+   "rows": [
+    {
+     "unit": 179,
+     "status": "Unknown",
+     "blockers": {
+      "COND:none": 1
+     },
+     "k2_sites": [
+      [
+       "COND",
+       "if",
+       "lib/monkey/mk_server/mk_socket.c:68",
+       "unmodeled call, aggregate or indirect access in branch condition"
+      ]
+     ],
+     "other": []
+    }
+   ]
+  },
+  {
+   "function": "monkey-libevent::lib/monkey/mk_server/mk_user.c::mk_user_undo_uidgid",
+   "rows": [
+    {
+     "unit": 181,
+     "status": "Unknown",
+     "blockers": {
+      "UNC-EXT:setegid": 1,
+      "UNC-EXT:seteuid": 1
+     },
+     "k2_sites": [],
+     "other": [
+      [
+       "UNC-EXT",
+       "setegid",
+       "lib/monkey/mk_server/mk_user.c:143",
+       "call to uncontracted function `setegid` in branch condition"
+      ],
+      [
+       "UNC-EXT",
+       "seteuid",
+       "lib/monkey/mk_server/mk_user.c:146",
+       "call to uncontracted function `seteuid` in branch condition"
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "function": "monkey-libevent::lib/monkey/mk_server/mk_utils.c::mk_utils_gmt2utime",
+   "rows": [
+    {
+     "unit": 182,
+     "status": "Unknown",
+     "blockers": {
+      "UNC-EXT:strptime": 1
+     },
+     "k2_sites": [],
+     "other": [
+      [
+       "UNC-EXT",
+       "strptime",
+       "lib/monkey/mk_server/mk_utils.c:387",
+       "call to uncontracted function `strptime` in branch condition"
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "function": "fluent-bit-chunk::src/flb_input_chunk.c::flb_input_chunk_prefers_physical_delete",
+   "rows": [
+    {
+     "unit": 155,
+     "status": "Unknown",
+     "blockers": {
+      "UNC-RUN:flb_input_chunk_has_other_routes": 1
+     },
+     "k2_sites": [],
+     "other": [
+      [
+       "UNC-RUN",
+       "flb_input_chunk_has_other_routes",
+       "src/flb_input_chunk.c:977",
+       "call to uncontracted function `flb_input_chunk_has_other_routes` in branch condition"
+      ]
+     ]
+    },
+    {
+     "unit": 156,
+     "status": "Unknown",
+     "blockers": {
+      "UNC-RUN:flb_input_chunk_has_other_routes": 1
+     },
+     "k2_sites": [],
+     "other": [
+      [
+       "UNC-RUN",
+       "flb_input_chunk_has_other_routes",
+       "src/flb_input_chunk.c:977",
+       "call to uncontracted function `flb_input_chunk_has_other_routes` in branch condition"
+      ]
+     ]
+    }
+   ]
+  }
+ ]
+}

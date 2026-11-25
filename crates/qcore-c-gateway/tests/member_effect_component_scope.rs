@@ -163,13 +163,12 @@ fn the_cmt_opts_pair_is_admitted_whatever_spells_the_members() {
         );
         let pair = format!("{}{OPTS_INIT}{OPTS_EXIT}", opts_record(member));
         assert_safe("cmt_opts_exit", &pair);
-        let found = assert_not_safe("cmt_opts_init", &pair);
-        assert!(
-            found
-                .iter()
-                .any(|d| d.contains("member-store-through-formal")),
-            "{found:?}"
-        );
+        // Card MEMBER-EFFECT-STORES (rule 38k) flips this deliberately: each
+        // `opts->F = cfl_sds_create(..)` is a hand-off into the caller's
+        // object under the stated premise `mes_caller_slot` (the null tests
+        // after the stores read the value only as a truth value), and the
+        // body publishes no summary.
+        assert_safe("cmt_opts_init", &pair);
     }
     // Rule 5k's shape over the same members: the parent released afterwards.
     assert_safe(

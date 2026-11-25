@@ -370,6 +370,23 @@ void k_fill(struct k_box *b, int n) \
     if (!it) { return; } \
     b->item = it; \
 }";
+    // Card MEMBER-EFFECT-STORES (rule 38k) re-pins this deliberately: the
+    // base is a formal never rebound, so the store is rule 38k's hand-off of
+    // `it` into the caller's object, under the stated premise
+    // `mes_caller_slot`, with the summary withheld (no caller reads it). This
+    // rule (B08) still admits nothing here.
+    let measured = summary_of(body, "k_fill");
+    assert_eq!(measured.status, AnalysisStatus::Safe);
+    // A base this rule refuses and rule 38k does not read keeps the refusal.
+    let body = "\
+void k_fill(struct k_box *b, int n) \
+{ \
+    struct k_item *it; \
+    it = k_take(n); \
+    if (!it) { return; } \
+    b->item = it; \
+    k_untracked(b); \
+}";
     let measured = summary_of(body, "k_fill");
     assert_ne!(measured.status, AnalysisStatus::Safe);
     assert!(

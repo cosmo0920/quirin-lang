@@ -11151,7 +11151,11 @@ that only when every arriving edge has it.
     `a_name_needs_every_premise`, `a_refusing_reading_keeps_a_call_shape_unnamed`,
     `a_store_needs_a_custody_value` and eleven more), bound by
     `tests/member_effect_summary.rs`;
-    [report](../reports/member-effect-summary/README.md).
+    [report](../reports/member-effect-summary/README.md). **Amended (card
+    MEMBER-EFFECT-STORES):** where every condition formula of
+    [rule 38k](#constraint-38k) holds, the store form is that rule's
+    hand-off, admitted under the stated premise `mes_caller_slot`; this
+    rule names the store's fallback wherever one of them fails.
 
 <a id="constraint-38j"></a>
 
@@ -11254,6 +11258,93 @@ that only when every arriving edge has it.
     `an_admitted_actual_is_a_struct_pointer_member`, `the_body_stays_sound`
     and nine more), bound by `tests/member_release_untyped_base.rs`;
     [report](../reports/member-release-untyped-base/README.md).
+
+<a id="constraint-38k"></a>
+
+38k. **A store of owned custody into a member of the caller's object is a
+    hand-off: every condition is a formula, the old value is the stated
+    premise, and no summary is published.** Card MEMBER-EFFECT-STORES, body
+    half (`member_handoff.rs`, the parser half and flow in
+    `legacy_member_handoff.rs`), on the user's decisions of 2026-11-25
+    ("Option 1: caller-slot premise"; "We must write down with logical
+    symbols for them"). Every condition is a formula of the C04.18.9 typed
+    rendering over the MES terms (`premise_formula::RENDERED_TERMS`, block
+    `MES`, prefix `mes_`), validated by `guarded_proposition`; the prose
+    after each formula only glosses it. **Admission**, for exactly the gate's
+    refusal of a statement with no braces (or W45's sub-object store of a
+    name, which admits only a value with no identity), after rule 72 and
+    before rule 12k:
+    `mes_place_shape` `(#mes_formal_root() && #mes_in(#mes_place,#mes_parent))`
+    (the root a formal, the place `P->F` then `.` selections, every member
+    ordinary, read from the Clang AST);
+    `mes_formal_kept` `forall (#s: mes_site) { !#mes_formal_written(#s) }`;
+    `mes_value_shape` `((#mes_owned_result() || #mes_local_acquisition()) && #mes_pointer_casts())`
+    (a whole call whose contract in force, no hold, returns
+    `resource_return_owned`, or a local's name; casts `BitCast`/`NoOp` only,
+    brief item 4);
+    `mes_h1_place_only_at_store` `forall (#s: mes_site) { (#mes_occurs(#s,#mes_place) => (#s == #mes_store || #mes_null_test(#s))) }`
+    (a null test reads the whole value only as a truth value; a `sizeof`
+    operand is no occurrence; a prefix of the place used whole is one);
+    `mes_h2_local_kept` `forall (#s: mes_site) { (!#mes_local_copy(#s) && (#mes_local_mention(#s) => !#mes_after(#s,#mes_store))) }`
+    (assigned once; before the store only its declaration, acquisition, null
+    tests, member or element accesses, dereferences);
+    `mes_h3_no_stale_value` `forall (#o: obj) { (#mes_stored(#o) => (#mes_owed(#o) && #mes_live(#o))) }`
+    (decided on the flow: exactly one live identity of this body, neither
+    released, escaped, contained nor unresolved; a target-free binding is
+    never read as null);
+    `mes_not_in_loop` `!#mes_in_loop(#mes_store)` (no `goto`/`setjmp` in the
+    body either);
+    `mes_nothing_released_after` `forall (#s: mes_site) { (#mes_after(#s,#mes_store) => ((!#mes_formal_passed(#s) && !#mes_indirect(#s)) && (#mes_call(#s) => #mes_borrowed_only(#s)))) }`;
+    `mes_owner_untracked` `(#mes_untracked_owner() && !#mes_bound_old())`
+    (rule 10v's owner class and old-value check, on the flow);
+    `mes_summary_withheld` `!#mes_published()`;
+    `mes_premise_stated` `#mes_premise_carried()`.
+    **The stated premise** (P-CG11-CALLER-SLOT, rule 10v's, for this store):
+    `mes_caller_slot: forall (#o: obj) { (#mes_holds(#mes_place,#o) => !#mes_owed(#o)) }`,
+    stated, not proved; `carry_premise` lists it in the verdict assumptions
+    (`rule_obligations`, rule `38k`) of every row whose CFG holds a hand-off,
+    and `enforce_premise` refuses a row that does not list it. **Discharge**:
+    the flow applies the store's access (the stored call, bound to a
+    reserved name), then `resource_consumed(v, nullable)` of the value, then
+    rule 10v's forgetting: the body's obligation for `V` is discharged by the
+    hand-off and by nothing else. The store is a rule-10v `PointerStore` of
+    value class `member-handoff`, so rule 10v's summary gate withholds every
+    summary (rule 70's retention statement refuses it too); every caller sees
+    an uncontracted callee and stays refused at the call. **Named refusals**
+    (the node is then the gate's refusal, rule 38i's name of it, or W45's
+    own store): `mes_refuse_realloc_self` `(#mes_reallocates() && !#mes_nonnull_clause())`;
+    `mes_refuse_value_shape` `!((#mes_owned_result() || #mes_local_acquisition()) && #mes_pointer_casts())`;
+    `mes_refuse_local_alias_of_formal` `!#mes_formal_root()`;
+    `mes_refuse_place_shape` `!#mes_in(#mes_place,#mes_parent)`;
+    `mes_refuse_rebound_formal` `exists (#s: mes_site) { #mes_formal_written(#s) }`;
+    `mes_refuse_loop` `#mes_in_loop(#mes_store)`;
+    `mes_refuse_place_used` `exists (#s: mes_site) { (#mes_occurs(#s,#mes_place) && !(#s == #mes_store || #mes_null_test(#s))) }`;
+    `mes_refuse_local_used` `exists (#s: mes_site) { (#mes_local_copy(#s) || (#mes_local_mention(#s) && #mes_after(#s,#mes_store))) }`;
+    `mes_refuse_borrowed_use_after` `exists (#s: mes_site) { (#mes_after(#s,#mes_store) && ((#mes_formal_passed(#s) || #mes_indirect(#s)) || (#mes_call(#s) && !#mes_borrowed_only(#s)))) }`;
+    `mes_refuse_owner` `!#mes_untracked_owner()`;
+    `mes_refuse_owned_old_value` `#mes_bound_old()`;
+    `mes_refuse_stale_value` `exists (#o: obj) { (#mes_stored(#o) && !(#mes_owed(#o) && #mes_live(#o))) }`;
+    `mes_refuse_premise_missing` `!#mes_premise_carried()`.
+    Parity runs record each consultation (`position: "member-handoff"`, the
+    refusal's id and formula). **Do not** admit a realloc self-assignment
+    (no provider change here), a borrowed use of the place after the store,
+    a store through a pointer hop below the formal or through a local alias
+    of it, a value read from memory, or a caller of an admitted body; **do
+    not** publish a summary for a body with a hand-off. Not in this rule: the
+    caller half (CG11 field links on a tracked parent; establishing the old
+    value at the call site), registered as MEMBER-EFFECT-STORES-CALLER-HALF.
+    Premises stated, not proved: `mes_caller_slot`, faithful Clang
+    extraction (trust boundary 28), the lexical over-approximation of
+    `#mes_after` in a body without loops and jumps. `QCore.MemberHandoff`
+    (`admitted_exactly_when`, `a_refusal_negates_its_condition`,
+    `discharged_only_by_the_handoff`, `a_used_local_keeps_the_refusal`,
+    `a_released_local_keeps_the_refusal`, `a_second_store_keeps_the_refusal`,
+    `the_old_value_is_custody_free_or_premised`,
+    `a_row_lacking_the_premise_is_refused`, `no_summary_with_a_handoff`,
+    `a_callers_decision_is_unchanged`, `decision_vectors_hold` and eight
+    more), bound by `tests/member_effect_stores.rs` and
+    `tests/unit/member_handoff.rs`;
+    [report](../reports/member-effect-stores/README.md).
 
 <a id="constraint-39"></a>
 
@@ -13929,5 +14020,69 @@ through `ampersand_runs`.
     `the_decision_is_the_subscripts`, `a_refused_offset_keeps_the_refusal`,
     `a_nested_offset_is_refused`, `every_older_reading_stands` and six more),
     bound to `OFFSET_VECTORS` by a shared-vector unit test.
+
+<a id="constraint-79"></a>
+
+79. **A `sizeof` type query is read as the no-access it is: in a connective
+    condition, and beside a parenthesised product.** Card K2-NO-TYPED-ACCESS
+    (round 37, `type_query_positions.rs`; one delimited hook in
+    `legacy_elaboration::elaborate_condition` and one in
+    `typed_field_access::is_declaration_candidate`), on the user's decision
+    of 2026-11-25 ("Build the 2 rows"). It amends rule 10s's condition
+    lowering (which lowered no `Branch`/`Merge`) and the declaration reader
+    rule 10l and W46-ACCESS-PATH-STATEMENTS share; every other premise of
+    10k, 10n, 10s, 10z and 5h stands. Every condition is a formula of the
+    C04.18.9 typed rendering over the K2 terms
+    (`premise_formula::RENDERED_TERMS`, block `K2`, prefix `k2_`), validated
+    by `guarded_proposition` before any admission; the prose after each
+    formula only glosses it. **(1) Admission**, asked in
+    `elaborate_condition` after its result is a non-pointer value and only
+    when the elaboration holds a region (before the rule every such
+    condition was refused at the lowering):
+    `k2_region_site` `((#k2_older_refused(#k2_condition) && #k2_region(#k2_condition)) && #k2_scalar_result(#k2_condition))`
+    (structural: the hook is the position's last route);
+    `k2_type_query_present` `exists (#q: k2_query) { #k2_query_of(#q,#k2_condition) }`;
+    `k2_queries_unevaluated` `forall (#q: k2_query) { (#k2_query_of(#q,#k2_condition) => (#k2_type_operand(#q) && !#k2_variably_modified(#q))) }`
+    (a type-name operand whose Clang spelling, and desugared spelling, holds
+    no array declarator: such an operand is not evaluated, C11 6.5.3.4p2);
+    `k2_events_inert` `forall (#e: k2_event) { (#k2_event_of(#e,#k2_condition) => (#k2_branch_event(#e) || (#k2_object_read(#e) && #k2_unaliased(#e)))) }`
+    (on every arm: a region's `Branch`/`Merge`, or a read of an automatic
+    local or formal through its own name whose address no `&` of the body
+    takes, the elaborator's `Context::unaliased`). An admitted condition is
+    lowered as no instruction and one branch to both edges refining
+    neither: whichever arm C evaluates it changes no abstract state and owes
+    no obligation, and not refining keeps both successors.
+    **Named refusals** (each the formula whose truth refuses; the condition
+    then keeps the position's older refusal byte for byte):
+    `k2_refuse_no_type_query` `forall (#q: k2_query) { !#k2_query_of(#q,#k2_condition) }`;
+    `k2_refuse_evaluated_query` `exists (#q: k2_query) { (#k2_query_of(#q,#k2_condition) && (!#k2_type_operand(#q) || #k2_variably_modified(#q))) }`;
+    `k2_refuse_event` `exists (#e: k2_event) { (#k2_event_of(#e,#k2_condition) && (!#k2_branch_event(#e) && (!#k2_object_read(#e) || !#k2_unaliased(#e)))) }`
+    (a call, a store, an increment, a member/subscript/dereference read, a
+    lifetime boundary, or the read of a static, global or address-taken
+    object). **(2) The product run.**
+    `k2_product_run_is_no_declaration` `(#k2_name_star_sizeof(#k2_run_at) => !#k2_declaration(#k2_run_at))`:
+    a declaration naming a variable puts an identifier after the `*`, and
+    the keyword `sizeof` is none (C11 6.4.1p2, 6.7.6), so
+    `is_declaration_candidate` drops a run whose first token is an
+    identifier, second `*` and third `sizeof`; every declaration is still a
+    candidate and the readers keep their total-or-reject premise. What the
+    statement then means is the older routes' (the elaborator's `sizeof(*p)`
+    is card CG08's type query). **Do not** lower an arm's path read, call or
+    store unconditionally (it would move its obligation off the edge C
+    evaluates it on), admit an expression or variably modified operand
+    here, or drop any other run from the candidates. Premises stated, not
+    proved: faithful Clang extraction of the region, the events and the
+    operand types (trust boundary 28), and the conservative
+    variably-modified test. `QCore.TypeQueryPositions`
+    (`admitted_exactly_when`, `a_refusal_negates_its_condition`,
+    `an_admitted_condition_is_the_identity_on_every_path`,
+    `an_admitted_condition_owes_nothing`, `the_lowering_is_the_condition`,
+    `a_call_or_store_is_refused`, `an_aliased_read_is_refused`,
+    `an_evaluated_query_is_refused`, `a_variably_modified_query_is_refused`,
+    `a_product_run_is_no_declaration`,
+    `dropping_product_runs_loses_no_declaration`, `decision_vectors_hold`,
+    `the_tables_are_counted`), bound to `DECISION_VECTORS`, the formula
+    table and the K2 term list by shared-vector unit tests;
+    [report](../reports/k2-no-typed-access/README.md).
 
 <!-- generated:rules:end -->

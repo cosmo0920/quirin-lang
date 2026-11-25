@@ -1,0 +1,10 @@
+private/mes/units/lib__cmetrics__src__cmt_decode_msgpack.c.i create_counter_instance,create_gauge_instance,create_untyped_instance,create_summary_instance,create_histogram_instance,create_exp_histogram_instance,unpack_opts_unit
+private/mes/units/lib__ctraces__src__ctr_encode_opentelemetry.c.i otel_span_set_attributes,otel_span_set_events
+private/mes/units/lib__librdkafka-2.15.0__src__rdbuf.c.i rd_buf_init
+private/mes/units/lib__librdkafka-2.15.0__src__rdlist.c.i rd_list_grow
+private/mes/units/lib__librdkafka-2.15.0__src__snappy.c.i rd_kafka_snappy_init_env
+private/mes/units/lib__librdkafka-2.15.0__src__rdkafka_assignment.c.i rd_kafka_assignment_init
+private/mes/units/lib__librdkafka-2.15.0__src__rdkafka_fetcher.c.i rd_kafkap_Fetch_reply_tags_set_topic_cnt,rd_kafkap_Fetch_reply_tags_set_topic
+private/mes/units/lib__librdkafka-2.15.0__src__rdkafka_sasl_scram.c.i rd_kafka_sasl_scram_build_client_final_message_wo_proof,rd_kafka_sasl_scram_generate_nonce
+private/mes/units/lib__monkey__mk_server__mk_utils.c.i mk_buffer_cat
+private/mes/units/lib__monkey__mk_server__mk_lib.c.i mk_vhost_set_property

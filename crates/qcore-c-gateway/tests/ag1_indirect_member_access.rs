@@ -279,10 +279,22 @@ fn a_formal_base_keeps_the_member_store_through_formal_name() {
     if !clang_available() {
         return;
     }
-    let diagnostics = assert_not_safe(
+    // Card MEMBER-EFFECT-STORES (rule 38k) re-pins this deliberately: the
+    // owned result is handed into the caller's object (a formal never
+    // rebound, the place `n->host`) under the stated premise
+    // `mes_caller_slot`, and the body publishes no summary. AG1's rule 61
+    // still plays no part: the base is a formal, not a constructor's record.
+    assert_safe(
         "node_set",
         &format!(
             "{DEFINING}void node_set(node_t *n, const char *host) {{\n  n->host = strdup(host);\n}}"
+        ),
+    );
+    // Used after the store, it keeps rule 38i's name, not a new admission.
+    let diagnostics = assert_not_safe(
+        "node_set",
+        &format!(
+            "{DEFINING}void node_set(node_t *n, const char *host) {{\n  n->host = strdup(host);\n  free(n->host);\n}}"
         ),
     );
     assert!(

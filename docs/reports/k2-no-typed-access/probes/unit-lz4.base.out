@@ -1,0 +1,5 @@
+UNIT LZ4_hashPosition Unknown ["521:unsupported:unmodeled call, aggregate or indirect access in branch condition"]
+UNIT LZ4_NbCommonBytes Unknown ["451:unsupported:unmodeled call, aggregate or indirect access in return expression", "453:unsupported:unmodeled call, aggregate or indirect access in return expression", "457:unsupported:unmodeled call, aggregate or indirect access in return expression", "459:unsupported:unmodeled call, aggregate or indirect access in return expression"]
+test unit_probe ... ok
+
+exit 0

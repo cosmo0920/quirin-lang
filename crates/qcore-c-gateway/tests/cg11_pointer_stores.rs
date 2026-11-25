@@ -142,9 +142,15 @@ fn example_c_a_store_into_a_formals_object_without_an_owner_premise_is_refused()
     assert!(run.safe(), "{run:?}");
     let run = gs("void subject(struct S *s, void *q) { q = s->self; s->p = q; }");
     assert!(run.unknown() && run.refused(IND), "{run:?}");
-    // An owned identity stored into the caller's object (OWNED-VALUE).
+    // An owned identity stored into the caller's object (OWNED-VALUE). Card
+    // MEMBER-EFFECT-STORES (rule 38k) flips this deliberately: the store hands
+    // the local's acquisition into the caller's object under the stated
+    // premise `mes_caller_slot`, and the body publishes no summary.
     let run = gs("void subject(struct S *s) { void *q = q_alloc(); s->p = q; }");
-    assert!(run.unknown() && run.refused(IND), "{run:?}");
+    assert!(run.safe(), "{run:?}");
+    // Used after the hand-off, it keeps this rule's refusal.
+    let run = gs("void subject(struct S *s) { void *q = q_alloc(); s->p = q; q_free(q); }");
+    assert!(!run.safe() && run.refused(IND), "{run:?}");
     // A local pointer that carries no identity is refused all the same.
     let run = gs("void subject(struct S *s) { void *l = 0; s->p = l; }");
     assert!(run.unknown(), "{run:?}");

@@ -1,0 +1,28 @@
+# K2 base probes: the freed-alone shapes, generic contracts (d_len, d_chr Borrowed; k_free releases).
+# sizeof(*p) in a call-free scalar statement
+long w(struct box *b, long n) { long s; s = sizeof(*b) + n * sizeof(char *); return s; }
+long w(struct box *b, long n) { long s = sizeof(*b) + n; return s; }
+long w(struct box *b, long n) { long s; s = sizeof(*b); return s; }
+long w(struct box *b, long n) { long s; s = n * sizeof(char *); return s; }
+long w(struct box *b, long n) { void *p; p = k_alloc(sizeof(*b) + n); k_free(p); return 0; }
+# sizeof(T) in a condition
+int w(int t) { if (sizeof(long) == 8) return 1; return 0; }
+int w(int t) { if ((sizeof(long) == 8) && (t != 2)) return 1; return 0; }
+int w(int t) { if (sizeof(long) == 8 && t != 2) return 1; return 0; }
+int w(int t) { if ((t == 8) && (t != 2)) return 1; return 0; }
+int w(int t) { long v; if (sizeof(v) == 8) return 1; return 0; }
+# builtin bit counts
+unsigned w(unsigned long long v) { return (unsigned)__builtin_ctzll((unsigned long long)v) >> 3; }
+unsigned w(unsigned v) { return __builtin_clz(v); }
+unsigned w(unsigned v) { unsigned r; r = __builtin_clz(v); return r; }
+int w(unsigned n) { return n == 0 ? -1 : 31 ^ __builtin_clz(n); }
+int w(unsigned n) { if (n == 0) return -1; return 31 ^ __builtin_clz(n); }
+# calls in returned scalar values
+int w(const char *v) { return !d_chr(v, ',') && !d_chr(v, ' '); }
+long w(const char *v) { return d_len(v) % 7; }
+long w(const char *v) { return d_len(v); }
+long w(const char *v) { long r = d_len(v) % 7; return r; }
+int w(const char *v) { if (!d_chr(v, ',')) return 1; return 0; }
+int w(const char *v) { return d_chr(v, ',') != 0; }
+int w(const char *v) { return d_len(v) != 0; }
+int w(const char *v) { return !d_len(v); }

@@ -1,0 +1,20 @@
+[
+ [
+  "rd_kafka_share_partition_offsets_list_new",
+  20182,
+  "elaboration-statement",
+  "indirect memory access is outside the resource projection",
+  "unlisted form: write to an object the gateway does not read as a scalar local",
+  "size = sizeof ( * list ) + ( capacity * sizeof ( rd_kafka_share_partition_offsets_t * ) )",
+  5
+ ],
+ [
+  "rd_kafka_share_partition_offsets_list_new",
+  20184,
+  "elaboration-statement",
+  "call to uncontracted function `rd_calloc`",
+  "unlisted form: no value form of this card",
+  "list = rd_calloc ( 1 , size )",
+  5
+ ]
+]

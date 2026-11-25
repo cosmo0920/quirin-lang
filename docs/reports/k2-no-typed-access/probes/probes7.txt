@@ -1,0 +1,4 @@
+# K2 base probes 7: LZ4_hashPosition's own spelling (typedef'd operand, enum formal).
+typedef unsigned long reg_t; typedef enum { clearedTable = 0, byPtr, byU32, byU16 } tableType_t; unsigned w(const void* const p, tableType_t const tableType) { if ((sizeof(reg_t)==8) && (tableType != byU16)) return 1; return 0; }
+typedef unsigned long reg_t; int w(int t) { if ((sizeof(reg_t) == 8) && (t != 2)) return 1; return 0; }
+typedef enum { clearedTable = 0, byPtr, byU32, byU16 } tableType_t; int w(tableType_t const t) { if ((sizeof(long) == 8) && (t != byU16)) return 1; return 0; }

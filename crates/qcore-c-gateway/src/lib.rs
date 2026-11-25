@@ -261,6 +261,9 @@ mod pointer_store;
 mod pointer_store_derived;
 // Card CG10-OWNED-OUT-PARAMETER-MEMBER-SLOT (rule 72).
 mod owned_out_member;
+// Card MEMBER-EFFECT-STORES (rule 38k): the hand-off store into a member of
+// the caller's object, its formulas and its stated premise.
+pub mod member_handoff;
 // Card OWNED-CONSTRUCTOR-OUT-PARAMETER-DELIVERY (rule 74l): the refusal of an
 // owned result stored through an unsanctioned `*NAME` slot.
 mod owned_out_formal;
@@ -300,6 +303,14 @@ mod union_bitfield;
 // subscripts C11 6.5.2.1p2 defines them to be; the hook is
 // `typed_access_path::Reader::path`.
 mod pointer_offset_place;
+// Card K2-NO-TYPED-ACCESS (rule 79): a connective condition with a type
+// query, and `NAME * sizeof` read as no declaration; the hooks are
+// `legacy_elaboration::elaborate_condition` and
+// `typed_field_access::is_declaration_candidate`.
+mod type_query_positions;
+#[cfg(test)]
+#[path = "../tests/unit/type_query_positions.rs"]
+mod type_query_positions_tests;
 // Card CG15-STORAGE-DURATION-AND-VOLATILE (rule 11h): storage duration and
 // `volatile`; the G hooks are in `legacy_storage_duration.rs`.
 mod storage_duration;

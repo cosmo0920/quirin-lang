@@ -1,0 +1,38 @@
+[
+ [
+  "rd_kafka_conf_validate_single",
+  22765,
+  "call-instantiation",
+  "unmodeled call, aggregate or indirect access in return expression",
+  "a connective (CG06)",
+  "! strchr ( val , __qcore_literal__ ) & & ! strchr ( val , __qcore_literal__ )",
+  7
+ ],
+ [
+  "rd_kafka_conf_validate_single",
+  22765,
+  "elaboration-return",
+  "unmodeled call, aggregate or indirect access in return expression",
+  "unlisted form: no unique Clang node for the return",
+  "! strchr ( val , __qcore_literal__ ) & & ! strchr ( val , __qcore_literal__ )",
+  7
+ ],
+ [
+  "rd_kafka_conf_validate_single",
+  22765,
+  "nested-call",
+  "unmodeled call, aggregate or indirect access in return expression",
+  "no unique Clang node for the return value",
+  "! strchr ( val , __qcore_literal__ ) & & ! strchr ( val , __qcore_literal__ )",
+  7
+ ],
+ [
+  "rd_kafka_conf_validate_single",
+  22765,
+  "value-connective-return",
+  "unmodeled call, aggregate or indirect access in return expression",
+  "no unique Clang node",
+  "! strchr ( val , __qcore_literal__ ) & & ! strchr ( val , __qcore_literal__ )",
+  7
+ ]
+]
