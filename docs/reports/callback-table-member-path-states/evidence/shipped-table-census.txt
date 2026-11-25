@@ -1,0 +1,5 @@
+# grep -rl --include='*.qv' 'resource_callback_table(' providers contract
+providers/qcore-provider-cmetrics/contracts/cmetrics/mpack_utils.qv
+providers/qcore-provider-ctraces/contracts/ctraces/context_lifetime.qv
+# grep -rc --include='*.qv' '|->' providers/qcore-provider-cmetrics providers/qcore-provider-ctraces | grep -v ':0$'
+# grep exit 1 (1: no member-path state in either provider)

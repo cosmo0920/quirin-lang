@@ -330,75 +330,49 @@ fn a_table_candidate_stating_nothing_at_the_path_keeps_the_payload() {
     }
 }
 
-/// The shipped table clauses: exactly the cmetrics and ctraces map
-/// unpackers (every shipped `.qv` naming `resource_callback_table` is one
-/// of their two modules), and neither provider states a member path, so no
-/// candidate their own declarations govern carries a state this card now
-/// composes (their handlers are read from in-unit summaries, which state
-/// none). Their readings are measured by the report's opt-in `current` run.
+const CMT_MPACK: &str =
+    include_str!("../../../providers/qcore-provider-cmetrics/contracts/cmetrics/mpack_utils.qv");
+const CTR_CONTEXT: &str =
+    include_str!("../../../providers/qcore-provider-ctraces/contracts/ctraces/context_lifetime.qv");
+
+/// The shipped table clauses: the cmetrics and ctraces map unpackers, each
+/// the one table declaration of its module, and neither module states a
+/// member path, so no candidate those declarations govern carries a state
+/// this card now composes (their handlers are read from in-unit summaries,
+/// which state none). That these two modules are the only shipped `.qv`
+/// naming `resource_callback_table`, and that neither provider states a
+/// member path anywhere, is the report's census
+/// (`evidence/shipped-table-census.txt`); their readings are measured by its
+/// opt-in `current` run.
 #[test]
 fn the_shipped_table_clauses_are_the_map_unpackers() {
     use qcore_schemas::callback::CallbackClause;
-    let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../providers");
-    let mut files = Vec::new();
-    let mut stack = vec![root.clone()];
-    while let Some(dir) = stack.pop() {
-        for entry in std::fs::read_dir(&dir).expect("providers dir").flatten() {
-            let path = entry.path();
-            if path.is_dir() {
-                if path.file_name().is_some_and(|name| name == "target") {
-                    continue;
-                }
-                stack.push(path);
-            } else if path.extension().is_some_and(|e| e == "qv") {
-                files.push(path);
-            }
-        }
-    }
-    let mut tables = Vec::new();
-    let mut table_modules = Vec::new();
-    for path in &files {
-        let text = std::fs::read_to_string(path).expect("qv");
-        if !text.contains("resource_callback_table(") {
-            continue;
-        }
-        let module = path
-            .strip_prefix(&root)
-            .expect("below providers")
-            .to_string_lossy()
-            .into_owned();
+    for (module, text, expected) in [
+        ("cmetrics/mpack_utils.qv", CMT_MPACK, "cmt_mpack_unpack_map"),
+        (
+            "ctraces/context_lifetime.qv",
+            CTR_CONTEXT,
+            "ctr_mpack_unpack_map",
+        ),
+    ] {
+        assert!(!text.contains("|->"), "{module} states a member path");
         let loaded =
-            load_resource_contract_sources(&BTreeMap::from([(module.clone(), text.clone())]))
+            load_resource_contract_sources(&BTreeMap::from([(module.to_owned(), text.to_owned())]))
                 .unwrap_or_else(|error| panic!("{module}: {error}"));
-        for (name, declaration) in loaded.retaining() {
-            if declaration
-                .callbacks
-                .iter()
-                .any(|clause| matches!(clause, CallbackClause::Table { .. }))
-            {
-                tables.push(name.clone());
-            }
-        }
-        table_modules.push(module);
+        let tables = loaded
+            .retaining()
+            .iter()
+            .filter(|(_, declaration)| {
+                declaration
+                    .callbacks
+                    .iter()
+                    .any(|clause| matches!(clause, CallbackClause::Table { .. }))
+            })
+            .map(|(name, declaration)| {
+                assert!(declaration.member_paths.is_empty(), "{name}");
+                name.clone()
+            })
+            .collect::<Vec<_>>();
+        assert_eq!(tables, [expected], "{module}");
     }
-    tables.sort();
-    table_modules.sort();
-    assert_eq!(tables, ["cmt_mpack_unpack_map", "ctr_mpack_unpack_map"]);
-    assert_eq!(
-        table_modules,
-        [
-            "qcore-provider-cmetrics/contracts/cmetrics/mpack_utils.qv",
-            "qcore-provider-ctraces/contracts/ctraces/context_lifetime.qv",
-        ]
-    );
-    // Neither provider states a member path (`quant live #P: TAG.PATH |-> V`).
-    let stating = files
-        .iter()
-        .filter(|path| {
-            let path = path.to_string_lossy();
-            path.contains("qcore-provider-cmetrics/") || path.contains("qcore-provider-ctraces/")
-        })
-        .filter(|path| std::fs::read_to_string(path).expect("qv").contains("|->"))
-        .collect::<Vec<_>>();
-    assert!(stating.is_empty(), "{stating:?}");
 }
