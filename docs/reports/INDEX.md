@@ -796,7 +796,7 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [member-effect-component-scope](member-effect-component-scope/README.md) | MEMBER-EFFECT-COMPONENT-SCOPE |
 
-| [member-effect-stores](member-effect-stores/README.md) | MEMBER-EFFECT-STORES, body half: re-census and stop |
+| [member-effect-stores](member-effect-stores/README.md) | MEMBER-EFFECT-STORES, body half (gateway rule 38k) |
 
 | [member-effect-summary](member-effect-summary/README.md) | MEMBER-EFFECT-SUMMARY |
 
