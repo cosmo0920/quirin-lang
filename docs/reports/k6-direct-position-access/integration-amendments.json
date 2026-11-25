@@ -1,0 +1,93 @@
+{
+ "schema": "quirin-amendments/2",
+ "card": "K6-DIRECT-POSITION-ACCESS",
+ "base": "5087f9295",
+ "measured_tip": "c674d3108",
+ "profiles": [],
+ "increment_paragraph": "**K6-DIRECT-POSITION-ACCESS** (round 37; USER DECISION 2026-11-25, \"Launch K2, K4 and K6 cards\"; gateway rule 81, rules 10k and 10n pointing at it; Lean `QCore.AddressArrowPlace`; [report](../../reports/k6-direct-position-access/README.md)). Re-census of bundle K6 (direct-position access in statements, conditions and returns) on the user's 2026-11-24 `current` run: 1,395 leaves on 671 Unknown rows, 25 rows freed alone against 21 on 11-07; 16 of the 25 are refused on purpose by earlier cards (interior-address returns, a pointer difference, a sibling call, file-scope record stores, formal copies), 6 keep named refusals, and 3 are one exact reading gap: `(&X)->f` (`TAILQ_FIRST`, `RD_KAFKAP_BYTES_LEN`, `RD_KAFKAP_STR_LEN`), which rule 10n (1) reads as `X.f` in the typed reader but the lexical `may_bind` reader read as an address of the root and the elaborator's place reader refused. Rule 81 gives both readers the plain spelling's reading (C11 6.5.2.3p4, 6.5.3.2p3, 6.5.1p5); predicted three rows Unknown -> Safe on current, corpus and twelve-home, none on system or slice. No card gate (round-37 brief); targeted fixtures (17 files), unit tests, Clippy, fmt and the Lean module and audit pass. Follow-ups K6-RETURN-IDENTITY-CAST, K6-SWITCH-CONDITIONAL-TYPEDEF-BASE, K6-FILE-SCOPE-RECORD-SCALAR-STORE, K6-POINTER-DIFFERENCE-SCALAR, K6-RULE-FORMULA-VOCABULARY.",
+ "status_edits": [],
+ "ledger": [
+  {
+   "id": "W47-ACCESS-PATH-POSITION-RESIDUALS",
+   "operation": "amend",
+   "text": "K6-DIRECT-POSITION-ACCESS (round 37, base 5087f9295; re-census of the user's 2026-11-24 current run, 1,173 Safe / 3,750 Unknown / 11 Unsafe rows): bundle K6 (direct-position access: statement 875, condition 465, return 55 leaves) touches 671 Unknown rows and frees 25 rows (25 functions) alone, against 1,571 leaves / 769 rows / 21 on 11-07; none of the 21 frozen functions is Safe, 20 still freed alone. Of the 25: 10 return an interior address (array decay, `&B->F`, `&B->A[I]`, an offset; W45 / AG3, kept refused), 6 are refused on purpose by other rules (a pointer difference, rule 78; a sibling call beside a deciding operand, rule 10z (3); two file-scope record stores, rule 12j; two formal copies, rule 77), 3 are the `(&X)->f` spelling (`TAILQ_FIRST(&p->q)` returned, `RD_KAFKAP_BYTES_LEN(&m->bytes)` and `RD_KAFKAP_STR_LEN(&p->a[i].Host)` in rule 10z edges), read by gateway rule 81 (QCore.AddressArrowPlace; predicted Unknown -> Safe on current, corpus and twelve-home: rd_kafka_mock_partition_next_leader_response, rd_kafka_mock_msgset_est_record_size, rd_kafkap_leader_discovery_tmpabuf_add_alloc_brokers), and 6 keep named refusals: an identity cast of a returned element load (rd_list_elem, K6-RETURN-IDENTITY-CAST), a root a read-only callee takes before the pointer return (cJSON_GetStringValue, rd_kafka_ConfigResource_configs, rd_kafka_ListConsumerGroups_result_errors; W48-POINTER-RETURN-THROUGH-CALL-ACTUAL-ROOT), a switch over a `?:` on a typedef-spelled base (rd_kafka_event_name, K6-SWITCH-CONDITIONAL-TYPEDEF-BASE) and a `_Generic` selection in a condition (rd_kafka_sasl_cyrus_cb_canon, CG06-VALUE-CONNECTIVE-RESIDUALS). The `(&X)->f` spelling sits on 192 K6 leaf groups of 125 functions (list-walk macros chiefly), most with other blockers.",
+   "source": "docs/reports/k6-direct-position-access/README.md"
+  },
+  {
+   "id": "CG10-BOUND-ROOT-PATH-REFUSED",
+   "operation": "amend",
+   "text": "K6-DIRECT-POSITION-ACCESS (round 37, base 5087f9295; re-census of the user's 2026-11-24 current run, 1,173 Safe / 3,750 Unknown / 11 Unsafe rows): the root-premise arm of bundle K6 on current is 875 statement leaves (8 rows freed alone, 11-07: 985 / 6). Rule 81 corrects one lexical over-approximation of the premise (`( & p -> q ) -> f` read as an address of `p` by `may_bind`); the path-wide decision of this entry is unchanged.",
+   "source": "docs/reports/k6-direct-position-access/README.md"
+  },
+  {
+   "id": "CG10-BOUND-ROOT-NULLABLE-OR-TRACKED",
+   "operation": "amend",
+   "text": "K6-DIRECT-POSITION-ACCESS (round 37, base 5087f9295; re-census of the user's 2026-11-24 current run, 1,173 Safe / 3,750 Unknown / 11 Unsafe rows): no row bundle K6 frees alone on current is refused for a nullable or tracked bound root; the class is unchanged by rule 81.",
+   "source": "docs/reports/k6-direct-position-access/README.md"
+  },
+  {
+   "id": "W45-RETURN-POINTER-RESULT-READS",
+   "operation": "amend",
+   "text": "K6-DIRECT-POSITION-ACCESS (round 37, base 5087f9295; re-census of the user's 2026-11-24 current run, 1,173 Safe / 3,750 Unknown / 11 Unsafe rows): 3 of the 25 rows bundle K6 frees alone return an array member by decay (rd_kafka_name `char[128]`, rd_kafka_ConfigEntry_name `char name[1]`, rd_kafka_share_partition_offsets_offsets, a flexible array member) and 2 an offset (cJSON_GetErrorPtr `global_error.json + global_error.position`, extra_alloc `p = rbuf->rbuf_extra + of; ... return p;`); none admitted, the derivation decision stands.",
+   "source": "docs/reports/k6-direct-position-access/README.md"
+  },
+  {
+   "id": "AG3-RETURN-MEMBER-ADDRESS-DERIVED",
+   "operation": "amend",
+   "text": "K6-DIRECT-POSITION-ACCESS (round 37, base 5087f9295; re-census of the user's 2026-11-24 current run, 1,173 Safe / 3,750 Unknown / 11 Unsafe rows): 6 of the rows bundle K6 frees alone are this shape (rd_kafka_conf, rd_kafka_MemberDescription_assignment, rd_kafka_TopicDescription_topic_id, rd_kafka_UserScramCredentialsDescription_scramcredentialinfo, rd_kafka_mock_partition_find, and mk_plugin_time_now_human, whose leaf moved line); none admitted.",
+   "source": "docs/reports/k6-direct-position-access/README.md"
+  },
+  {
+   "id": "W48-POINTER-RETURN-THROUGH-CALL-ACTUAL-ROOT",
+   "operation": "amend",
+   "text": "K6-DIRECT-POSITION-ACCESS (round 37, base 5087f9295; re-census of the user's 2026-11-24 current run, 1,173 Safe / 3,750 Unknown / 11 Unsafe rows): three rows bundle K6 frees alone keep the pointer-return refusal because a callee takes the root before the return: rd_kafka_ConfigResource_configs and rd_kafka_ListConsumerGroups_result_errors (`rd_list_cnt(&config->config)`; the probe replica over the unit's typedefs is refused with and without `__attribute__((unused))` on the `static inline` body, uncast as cast; the cast alone is decided, so the refusal is the root premise; not diagnosed further) and cJSON_GetStringValue (`cJSON_IsString(item)`, a same-unit read-only callee this exception does not name). DISCHARGE as before, or a validated read-only summary for the callee position.",
+   "source": "docs/reports/k6-direct-position-access/README.md"
+  },
+  {
+   "id": "CG06-VALUE-CONNECTIVE-RESIDUALS",
+   "operation": "amend",
+   "text": "K6-DIRECT-POSITION-ACCESS (round 37, base 5087f9295; re-census of the user's 2026-11-24 current run, 1,173 Safe / 3,750 Unknown / 11 Unsafe rows): two rows bundle K6 frees alone keep a rule 10z refusal: rd_kafka_broker_weight_usable (`(rd_clock() - (tx_last > 0 ? tx_last : rkb->rkb_ts_state))`, a sibling call beside the deciding operand, rule 10z (3)) and rd_kafka_sasl_cyrus_cb_canon (glibc's `strstr` expands to a `_Generic` selection over the condition, refused by name). Rule 81 lifts the `(&X)->f` edge refusal (the elaborator's place reader), not these.",
+   "source": "docs/reports/k6-direct-position-access/README.md"
+  },
+  {
+   "id": "K6-RETURN-IDENTITY-CAST",
+   "operation": "register",
+   "title": "A returned pointer load under an identity cast, `return (void *)rl->rl_elems[idx];`, keeps the return refusal although the uncast return is decided",
+   "text": "K6 re-census of the 2026-11-24 current run: rd_list_elem (rdlist.c:328) is freed alone by this leaf. The typed return reader (rule 10k (2), typed_access_positions::value) strips only implicit `LValueToRValue`/`NoOp`/`BitCast` conversions, so an explicit cast of a load is no value form; the lexical route admits `(void *)b->name` but not a subscripted load. DISCHARGE: read a top-level explicit pointer conversion rule 12h classes as identity-preserving (`#class(#cast) == QUALIFIER`, byte or typed view of an object pointer) as its operand in the return value reader, with fixtures (a released root, a function-pointer or integer cast refused), Lean parity and a measured re-pin.",
+   "source": "docs/reports/k6-direct-position-access/README.md",
+   "recorded_by": "K6-DIRECT-POSITION-ACCESS"
+  },
+  {
+   "id": "K6-SWITCH-CONDITIONAL-TYPEDEF-BASE",
+   "operation": "register",
+   "title": "A switch over a scalar `?:` on a typedef-spelled base, `switch (e ? e->t : 0)`, keeps the switch refusal; the `struct T *` spelling and `int t = e ? e->t : 0; switch (t)` are decided",
+   "text": "K6 re-census of the 2026-11-24 current run: rd_kafka_event_name (rdkafka_event.c:39, its only leaf) is this shape. The elaborated condition answers `no value form of this card`; the lexical route decides the `struct` spelling only. DISCHARGE: lower the switch controlling `?:` as rule 10z lowers a declaration of a fresh scalar temporary (C evaluates the controlling expression once, C11 6.8.4.2p4), with fixtures, Lean parity and a measured re-pin.",
+   "source": "docs/reports/k6-direct-position-access/README.md",
+   "recorded_by": "K6-DIRECT-POSITION-ACCESS"
+  },
+  {
+   "id": "K6-FILE-SCOPE-RECORD-SCALAR-STORE",
+   "operation": "register",
+   "title": "A scalar store into a member of a file-scope or static record object keeps the gate refusal (rule 12j admits automatic storage only)",
+   "text": "K6 re-census of the 2026-11-24 current run: clear_unit_test_data (14 leaves, three of them an array-member element `G.v[0] = 0`) and unit_test_telemetry_decoded_int64 (rdkafka_telemetry_decode.c) are freed alone by stores into `static struct ... unit_test_data`. A read of such a member and a condition on it are decided at the base (rule 11h (3)); the store is refused because rule 12j says not to read a file-scope root. Rule 11h (4) refuses a tracked identity stored into static storage, so a scalar store of `#value` with `#carries_identity(#value) == FALSE` changes no binding. DISCHARGE: a user decision whether rule 12j's storage boundary is lifted for scalar stores under rule 11h (3)-(4), then fixtures (a descriptor value, a pointer member, an element), Lean parity and a measured re-pin.",
+   "source": "docs/reports/k6-direct-position-access/README.md",
+   "recorded_by": "K6-DIRECT-POSITION-ACCESS"
+  },
+  {
+   "id": "K6-POINTER-DIFFERENCE-SCALAR",
+   "operation": "register",
+   "title": "A difference of two pointer members converted to an integer, `(size_t)(h->end - h->start)`, keeps the gate refusal",
+   "text": "K6 re-census of the 2026-11-24 current run: LZ4HC_init_internal (lz4hc.c:102, its only leaf). Rule 78 says not to read a difference of two pointers. The difference is a `ptrdiff_t` (C11 6.5.6p9) of two loads; whether the integer it yields may carry a tracked identity (`pointer X converted to an integer may carry a tracked identity`) is the open question. DISCHARGE: a reading of `P - Q` over two loads as a scalar with each load's per-hop obligation, with Lean parity, or a recorded decision to keep it refused.",
+   "source": "docs/reports/k6-direct-position-access/README.md",
+   "recorded_by": "K6-DIRECT-POSITION-ACCESS"
+  },
+  {
+   "id": "K6-RULE-FORMULA-VOCABULARY",
+   "operation": "register",
+   "title": "Gateway rule admission conditions are formulas the premise-formula reader parses but whose terms the closed vocabulary does not register",
+   "text": "K6-DIRECT-POSITION-ACCESS states rule 81's admission and refusal conditions as C04.18.9 formulas (`#exempt(#a) == TRUE -> #binds(#a) == #binds(#plain(#a))`, ...); crates/qcore-frontend/tests/rule81_formulas.rs checks their syntax and canonical printing with qcore_frontend::premise_formula::parse_tokens, while `check` rejects every one for an unknown term (`#exempt`, `#binds`, `#place`, ...) and the unregistered constants `TRUE`/`FALSE`: the vocabulary holds contract-premise terms only. DISCHARGE: a gateway reading block of terms (with their Lean table rows) so rule conditions are sort-checked, or a recorded decision that gateway rule conditions are syntax-checked only.",
+   "source": "docs/reports/k6-direct-position-access/README.md",
+   "recorded_by": "K6-DIRECT-POSITION-ACCESS"
+  }
+ ]
+}
