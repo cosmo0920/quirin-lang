@@ -1546,6 +1546,10 @@ decided with no identity refusal; every other unknown binding keeps it.
     address over a parenthesised root, `&(p)->f` (the `rd_kafka_*_lock`
     macros' spelling), meets (3)'s never-bound premise exactly as `&p->f`
     does; the premise itself is unchanged.
+    Amended by [rule 81](#constraint-81) (K6-DIRECT-POSITION-ACCESS): (2)'s
+    `may_bind` premise reads `( & p SEL ) -> f` as its plain spelling
+    `p SEL . f`, which names no address of `p`; the premise itself is
+    unchanged.
 
 <a id="constraint-10l"></a>
 
@@ -1665,6 +1669,9 @@ decided with no identity refusal; every other unknown binding keeps it.
     Amended by [rule 14c](#constraint-14c): (1)'s callee shape also admits a
     scalar element `&PATH[I]`; and by [rule 14d](#constraint-14d): an
     interior offset `P ± n` at an actual is read under (1)'s premise.
+    Amended by [rule 81](#constraint-81) (K6-DIRECT-POSITION-ACCESS): (1)'s
+    reading of `(&X)->f` as `X.f` also holds in the lexical `may_bind` reader
+    and in the elaborator's place reader; this reader is unchanged.
 
 <a id="constraint-10o"></a>
 
@@ -14020,5 +14027,69 @@ through `ampersand_runs`.
     `the_decision_is_the_subscripts`, `a_refused_offset_keeps_the_refusal`,
     `a_nested_offset_is_refused`, `every_older_reading_stands` and six more),
     bound to `OFFSET_VECTORS` by a shared-vector unit test.
+
+<a id="constraint-81"></a>
+
+81. **`(&X)->f` is `X.f` in the lexical `may_bind` reader and in the
+    elaborator's place reader.** Card K6-DIRECT-POSITION-ACCESS, bundle K6 of
+    CURRENT-ACCESS-ALIAS-CENSUS (`address_arrow_place.rs`: `ARM`,
+    `dereferenced_address_group`; one delimited hook in
+    `typed_field_access::is_written_at`'s address arm and one in
+    `elaboration::path_place`'s `MemberExpr` arm, which calls rule 10n's
+    `typed_position_shapes::arrow_through_address`). Macro expansion spells a
+    member of an embedded record through the record's address:
+    `TAILQ_FIRST(&p->q)` is `((&p->q)->tqh_first)`,
+    `RD_KAFKAP_BYTES_LEN(&m->bytes)` reads `((&m->bytes)->len)`,
+    `RD_KAFKAP_STR_LEN(&p->a[i].Host)` reads `((&p->a[i].Host)->len)`. The
+    typed access-path reader already read these as `X.f` (rule 10n (1)), but
+    the lexical `may_bind` reader read the `& p` as an address of `p`, so rule
+    5b's pointer-return premise (rule 10k (2)) named `p`, and the elaborator's
+    place reader refused a path through the `&`, so a rule 10z edge carrying
+    the spelling was refused. In each case the plain spelling `p->q.f` was
+    decided. C settles both readings: `E1->E2` is `(*(E1)).E2` (C11
+    6.5.2.3p4), `*&E` is `E` (6.5.3.2p3), and a parenthesised expression is the
+    expression it encloses (6.5.1p5). A postfix operator binds tighter than a
+    unary one (6.5.2, 6.5.3), so the `&` of `& p -> q` takes the member place,
+    never `p`, and the group's `->` dereferences that address at once, so it
+    is no value of the program. Stated as formulas over the occurrence `#a`
+    of a single `&` before a name and its plain spelling `#plain(#a)`:
+    (1) **`may_bind`.**
+    `#exempt(#a) == TRUE -> #binds(#a) == #binds(#plain(#a))`, where
+    `#exempt(#a) == TRUE` holds exactly when
+    `#opens_group(#a) == TRUE && #name_arrow(#a) == TRUE && #selection_chain(#a) == TRUE && #group_arrow(#a) == TRUE && #outer_address(#a) == FALSE`.
+    That is, the `&` directly follows `(`, the name is followed by `->`, the
+    tokens up to the group's `)` are member selections (`-> f`, `. f`) and
+    balanced subscripts, `->` follows the group, and reading back from the
+    group through `(` meets no `&`. The exempted occurrence binds nothing;
+    every other occurrence binds as before, and both hold:
+    `#outer_address(#a) == TRUE -> #binds(#a) == TRUE` (`&((&p->q)->f)` is
+    `&p->q.f`, which the plain arm binds) and
+    `#name_arrow(#a) == FALSE -> #binds(#a) == TRUE` (a whole-object address).
+    (2) **Places.** For an arrow member `#e` whose base, through parentheses,
+    is `&` of a `MemberExpr` or `ArraySubscriptExpr` place,
+    `#place(#e) == #place(#plain(#e)) && #root(#e) == #root(#plain(#e))`:
+    the same spelling, root and indirection. An arrow over the address of a
+    whole object (`(&s)->f`) and a `.` over an address keep the refusal.
+    Both readings only remove a binding or a refusal, and only where the
+    plain spelling has none. **Do not** exempt an occurrence under an outer
+    unary `&`, a group followed by anything but `->`, a group holding an
+    operator other than a member selection or subscript (`(&p->q + 1)->f`),
+    or `& p . q`. Do not widen the arm to `&p->f` outside such a group (the
+    plain reader binds it on purpose, rule 75), or read `(&X)->f` in a
+    reader that does not already read `X.f`. The rule changes no route
+    order, premise or obligation: the read still carries every per-hop
+    obligation of the plain spelling, so a read after a release is the same
+    accusation and a rebound, consumed or addressed root keeps its refusal.
+    Premises stated, not proved: the token classes and the group's matching
+    `)` (trust boundary 28), and faithful Clang extraction of `MemberExpr`,
+    `UnaryOperator` and `ParenExpr` nodes. `QCore.AddressArrowPlace`
+    (`new_place_is_c_place`, `the_rule_only_adds`,
+    `arrow_through_address_is_dot`, `same_root_as_plain`,
+    `a_lifted_refusal_is_an_arrow_over_an_address`, `the_rule_only_removes`,
+    `at_least_the_plain_reader`, `agrees_with_the_plain_spelling`,
+    `an_exempted_address_is_a_member_address`, `a_whole_address_is_bound`,
+    `an_outer_address_keeps_the_binding`, `lexical_vectors_hold`), bound to
+    `LEXICAL_VECTORS` by a shared-vector unit test;
+    [report](../reports/k6-direct-position-access/README.md).
 
 <!-- generated:rules:end -->

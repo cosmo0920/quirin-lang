@@ -2014,13 +2014,22 @@ pub(crate) fn path_place(node: &Value) -> Result<Place, Refusal> {
             }
             "MemberExpr" => {
                 let arrow = cursor["isArrow"].as_bool() == Some(true);
+                let base = children(cursor).first().ok_or_else(empty)?;
+                // K6-DIRECT-POSITION-ACCESS hook (rule 81): `(&X)->f` is
+                // `X.f`, rule 10n's own reading.
+                let (base, arrow) = if crate::address_arrow_place::ARM {
+                    crate::typed_position_shapes::arrow_through_address(base, arrow)
+                } else {
+                    (base, arrow)
+                };
+                // End K6-DIRECT-POSITION-ACCESS hook (rule 81).
                 indirect |= arrow;
                 spelling.push(format!(
                     "{}{}",
                     if arrow { "->" } else { "." },
                     cursor["name"].as_str().unwrap_or("?")
                 ));
-                cursor = children(cursor).first().ok_or_else(empty)?;
+                cursor = base;
             }
             "ArraySubscriptExpr" => {
                 spelling.push("[]".to_owned());

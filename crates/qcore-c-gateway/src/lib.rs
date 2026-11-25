@@ -26,6 +26,9 @@
 // typed access-path census.
 #[cfg(feature = "indirect-census")]
 pub mod access_path_census;
+// Card K6-DIRECT-POSITION-ACCESS (rule 81): `(&X)->f` is `X.f` in the
+// lexical `may_bind` reader and the elaborator's place reader.
+mod address_arrow_place;
 mod aggregate_store;
 // Card AMPERSAND-RUN-PARITY-OTHER-READERS (rule 74e): the run-parity reading
 // of `&` tokens every address decision of the unfused token stream uses.
