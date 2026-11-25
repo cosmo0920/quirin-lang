@@ -30,7 +30,18 @@
 //!     [--legacy-rows] [--reuse-contract-only [--verify-reuse]] [--link-resolution NAME]...
 //! quirin-audit --plugin-path DIR --output <baselines>/<sha> measure publish \
 //!     --from OUT/sides/NAME [--routes R,...]
+//! quirin-audit --plugin-path DIR --output OUT measure chain \
+//!     (--step RECORD[#BEFORE->AFTER] | --runs BEFORE_DIR AFTER_DIR)... \
+//!     [--declared N=PREDICTION.md]... [--attribute N=RECORD[#BEFORE->AFTER]]...
+//! quirin-audit --plugin-path DIR --output OUT measure compose --load-path FILE... \
+//!     [--bundle CRATE]... [--report REPORT.json] [--libc-names FILE]
 //! ```
+//!
+//! Card QUIRIN-AUDIT-CONNECT: `measure chain` joins two or more saved
+//! measurements into one chained record ([`chain`], `quirin-measure-chain/1`)
+//! and `measure compose` composes two or more contract bundles for one
+//! measurement or verdict ([`compose`], `quirin-contract-composition/1`);
+//! neither measures, and neither claims a verdict.
 //!
 //! The output is one **native-comparison record**
 //! (`OUT/native-comparison.json`, schema [`COMPARISON_SCHEMA`]): per side its
@@ -86,8 +97,11 @@ pub const USAGE: &str = "usage: quirin-audit --output OUT measure (--profile NAM
 [--source-date-epoch SECONDS|none] [--baselines DIR] [--legacy-rows] \
 [--reuse-contract-only [--verify-reuse]] [--link-resolution NAME]...\n       quirin-audit --output \
 <baselines>/<sha> measure \
-publish --from OUT/sides/NAME [--routes R,...]\nSPEC: rev:<rev> | <directory> | <binary> | \
-baseline:<sha> | run:<side directory>";
+publish --from OUT/sides/NAME [--routes R,...]\n       quirin-audit --output OUT measure chain \
+(--step RECORD[#BEFORE->AFTER] | --runs BEFORE_DIR AFTER_DIR)... [--declared N=FILE]... \
+[--attribute N=RECORD[#BEFORE->AFTER]]...\n       quirin-audit --output OUT measure compose \
+--load-path FILE... [--bundle CRATE]... [--report REPORT.json] [--libc-names FILE]\nSPEC: \
+rev:<rev> | <directory> | <binary> | baseline:<sha> | run:<side directory>";
 
 /// The default fixed mount root of snapshot sides and the mirror.
 pub const DEFAULT_MOUNT_ROOT: &str = "/tmp/quirin-measure";

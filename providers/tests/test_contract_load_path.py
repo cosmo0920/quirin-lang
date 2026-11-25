@@ -683,5 +683,41 @@ class LoadPathManifest(unittest.TestCase):
                                 "qcore-provider-librdkafka": 2})
 
 
+class ContractDependencies(unittest.TestCase):
+    """Card QUIRIN-AUDIT-CONNECT (contract spec C15.1): the load path's
+    `contract_dependencies` entry, read lexically here and checked against
+    the loader's own clause reader by `qcore_contract::load_path_manifest`."""
+
+    TEXT = ("module contract;\n// requires resource_contract_dependency(\"quirin-provider-libc\", "
+            "libc::calloc, since \"0.1\"); a comment\n"
+            "extern fn acme_open(n: usize) -> ptr<mut, u8>\ncontract {\n"
+            "    requires resource_contract_v1;\n"
+            "    requires resource_contract_dependency(\"quirin-provider-libc\", libc::malloc, "
+            "since \"0.1\", removed \"0.2.0\");\n};\n"
+            "extern fn acme_close(p: ptr<mut, u8>) -> unit\ncontract {\n"
+            "    requires resource_contract_dependency(\"quirin-provider-libc\", libc::free, "
+            "sha256 \"" + "a" * 64 + "\");\n};\n")
+
+    def test_entries_follow_declarations_in_text_order_and_skip_comments(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            path = Path(temporary) / "open.qv"
+            path.write_text(self.TEXT)
+            entries = contracts.contract_dependencies("quirin-provider-acme", {"acme/open.qv": path})
+        self.assertEqual([(e["dependent"], e["target_function"]) for e in entries],
+                         [("acme_open", "malloc"), ("acme_close", "free")])
+        self.assertEqual(entries[0]["since"], {"major": 0, "minor": 1, "patch": 0})
+        self.assertEqual(entries[0]["removed"], {"major": 0, "minor": 2, "patch": 0})
+        self.assertEqual(entries[1]["sha256"], "a" * 64)
+        self.assertNotIn("since", entries[1])
+        self.assertEqual(entries[0]["module"], "acme/open.qv")
+
+    def test_no_clause_no_entry(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            path = Path(temporary) / "open.qv"
+            path.write_text(PARENT)
+            self.assertEqual(contracts.contract_dependencies("quirin-provider-libc",
+                                                             {"libc/memory.qv": path}), [])
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -3745,6 +3745,7 @@ resource_clause = "requires", "resource_contract_v1", ";"
                 | "ensures", "normal", clause_review_marker, ";"
                 | "requires", contract_revision_marker, ";"
                 | "requires", library_version_range, ";"
+                | "requires", contract_dependency, ";"
                 | "ensures", "normal", clause_revision_marker, ";" ;
 hypothesis_atom = "resource_hypothesis", "(", premise_name, ",", STRING, ")" ;
   (* card SP6-SYMBOLIC-HYPOTHESIS-ATOMS, contract specification C04.18.7:
@@ -3771,6 +3772,14 @@ library_version_range =
   (* card OPENSSL-PROVIDER-PLUGIN, contract specification C06.2: library_name
      is [a-z_][a-z0-9_]*; version_string a STRING spelling MAJOR.MINOR or
      MAJOR.MINOR.PATCH in decimal *)
+contract_dependency =
+    "resource_contract_dependency", "(", STRING, ",", IDENT, "::", IDENT,
+    [ ",", "since", version_string, [ ",", "removed", version_string ] ],
+    [ ",", "sha256", STRING ], ")" ;
+  (* card QUIRIN-AUDIT-CONNECT, contract specification C15.1: the STRING is a
+     `quirin-provider-NAME` or `qcore-provider-NAME` package name and the
+     first IDENT its derived namespace; at least one of `since` and `sha256`;
+     the sha256 STRING 64 lowercase hex digits *)
 contract_review_marker =
     "resource_review_pending", "(", review_note, ")" ;
 clause_review_marker =
@@ -3947,6 +3956,8 @@ The whole-declaration tail clauses `resource_variadic_data_tail()` and (card CG2
 The review markers (card W45-CONTRACT-DEFERRED-REVIEW, contract specification C06) carry their own static conditions. The first `STRING` is the mandatory reason and the second the optional reviewer or owner; each is one lexer string literal, not blank, with no backslash escape and no control character, so each has one spelling. A declaration carries either one `contract_review_marker` or any number of `clause_review_marker`s, never both and never two contract-level markers. A `clause_review_marker` wraps exactly one `resource_predicate` (the kind clauses and `resource_variadic_data_tail()` included), which is then subject to every condition above as if written bare; it cannot wrap a marker, the `resource_contract_v1` selector or a `literal_argument_premise`, and it is admitted only under `ensures normal`, as the contract-level form is only under `requires`. Every violation rejects the whole module. A marked declaration is loaded and validated in full and then withheld (C06); inheritance (G05a, C15) copies its markers with its clauses.
 
 The revision markers (card W45-CONTRACT-REVISION-MODE, contract specification C06.2) have their own static conditions. A declaration carries at most one `contract_revision_marker`; a second one is a duplicate (the same mode) or a conflict (the other mode). A `clause_revision_marker` wraps exactly one `resource_predicate`, read as if written bare, and may not restate the contract-level marker's mode. It cannot wrap a marker of either kind, and a `clause_review_marker` cannot wrap it; it cannot wrap the selector or a `literal_argument_premise`, which take the contract's mode; and it is admitted only under `ensures normal`, as the contract-level form is only under `requires`. A `revision_mode` other than `pinned` or `flexible` is malformed. Every violation rejects the whole module. With no marker a declaration is pinned. Inheritance (G05a, C15) does not copy a parent's revision markers: elaboration drops the contract-level form and unwraps the clause-level one.
+
+A `contract_dependency` (card QUIRIN-AUDIT-CONNECT, contract specification C15.1) is admitted only under `requires`, once per target; a crate that is not a provider package name, a namespace other than the crate's derived one, no identity, the keys out of order or repeated, an unknown key, a digest that is not 64 lowercase hex digits, a removal not above `since`, a removal without `since`, a declaration depending on itself, a libc/POSIX target (`libc::`) named under a crate other than `quirin-provider-libc` and an `ensures` form each reject the whole module. Inheritance does not copy it.
 
 A `library_version_range` (card OPENSSL-PROVIDER-PLUGIN, contract specification C06.2) is admitted only under `requires`, at most once per declaration; a version that is not `MAJOR.MINOR[.PATCH]` in decimal, a removal not above the lower bound, a lower-bound word other than `since` or `documented`, an unquoted version, an argument after the removal and an `ensures` form each reject the whole module. Inheritance does not copy it.
 

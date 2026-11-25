@@ -377,6 +377,32 @@ fn an_unattributed_new_safe_is_flagged_and_fails_the_run() {
     let (completed, record) = run(&directory, arguments);
     assert!(completed, "{record:#}");
     assert_eq!(record["unattributed_new_safe"], json!([]));
+    // A landing's card measured and predicted the same move: its own record
+    // attributes it (`--attribute`); a card that measured it unpredicted
+    // does not.
+    for (unpredicted, attributed) in [(&[][..], true), (&["f"][..], false)] {
+        let card = write(
+            &directory,
+            "card.json",
+            &crate::record(&Step {
+                before: R1,
+                after: ("rc", "cc", "d1"),
+                entry: entry(&[("f", "Unknown", "Safe")], &[]),
+                declared: Some(declared("card/PREDICTION.md", unpredicted)),
+            }),
+        );
+        let mut arguments = steps(&directory, &chain);
+        arguments.extend(["--attribute".into(), format!("1={}", card.display())]);
+        let (completed, attributed_record) = run(&directory, arguments);
+        assert_eq!(completed, attributed, "{attributed_record:#}");
+        assert_eq!(
+            attributed_record["unattributed_new_safe"]
+                .as_array()
+                .unwrap()
+                .is_empty(),
+            attributed
+        );
+    }
 }
 
 fn run_json(directory: &Path, revision: &str) -> Value {

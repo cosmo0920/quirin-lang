@@ -1573,6 +1573,91 @@ The guarded symbols of the frozen plugin sidecar `premise-guarded-decomposition/
 | `#k6_refused` | k6_place | the place reader's refusal (no place) |
 | `#k6_over_address`, `#k6_over_member_address` | predicate<k6_member> | the member's base is, through parentheses, a unary `&` (of a member or subscript place for the second: `E.arrow (E.addr x) _` with `isMemberPlace x`) |
 
+**CX block: connecting measurements and contracts** (card QUIRIN-AUDIT-CONNECT; user decisions of 2026-11-26: every condition and refusal of `measure chain`, `measure compose` and the declared contract dependencies is a formula the premise-formula validator checks). Appended after the K6 block in the Rust table `RENDERED_TERMS` (`block: "CX"`) and, for its ten sorts, `RENDERED_VALUE_SORTS`: `cx_step` (a step of a chain), `cx_route`, `cx_row` (a function or unit row of a route), `cx_point` (a side of a chain), `cx_field` (an identity field a link compares), `cx_ident` (an identity value, or the unrecorded marker), `cx_verdict`, `cx_bundle` (a contract crate on a load path), `cx_fn` and `cx_dep` (a declared contract dependency). No premise formula names them, so the premise `VOCABULARY`, grammar, decision vectors and Lean `vocab` are unchanged. Every name is prefixed `cx_`. The 60 formulas (`qcore_schemas::connect::FORMULAS`; `crates/qcore-frontend/tests/connect_formulas.rs`) are checked by `guarded_proposition`, and every record names the conditions it applies by id. The Lean model is `QCore.MeasureConnect`: one definition per term (`cxTerms`) and one theorem per formula (`formula_*`, the formulas as written in `formulaTable`).
+
+| Term | Sort | Meaning |
+|---|---|---|
+| `#cx_next` | `pred(cx_step, cx_step)` | `#cx_next(#s,#t)`: step `#t` directly follows step `#s` in the chain |
+| `#cx_joined` | `pred(cx_step, cx_step)` | `#cx_joined(#s,#t)`: the link from `#s` to `#t` is admitted (`chain::link` names no refusal) |
+| `#cx_after_id` | `(cx_step, cx_field) → cx_ident` | `#cx_after_id(#s,#f)`: field `#f` of step `#s`'s after side (for the tool, the step's measurement tool) |
+| `#cx_before_id` | `(cx_step, cx_field) → cx_ident` | `#cx_before_id(#s,#f)`: field `#f` of step `#s`'s before side (for the tool, the step's measurement tool) |
+| `#cx_required` | `pred(cx_field)` | `#cx_required(#f)`: a link needs `#f` recorded on both sides (tool, revision, analyzer, bundles) |
+| `#cx_unrecorded` | `cx_ident` | the identity of a field a record does not carry |
+| `#cx_compares` | `pred(cx_step, cx_route)` | `#cx_compares(#s,#r)`: step `#s` compares route `#r` |
+| `#cx_after_inputs` | `(cx_step, cx_route) → cx_ident` | `#cx_after_inputs(#s,#r)`: the inputs record of route `#r` on `#s`'s after side (compile-database digests, route digest, spelling, source date) |
+| `#cx_before_inputs` | `(cx_step, cx_route) → cx_ident` | `#cx_before_inputs(#s,#r)`: the inputs record of route `#r` on `#s`'s before side |
+| `#cx_f_tool` | `cx_field` | the measurement tool's identity (name, version, SHA-256) |
+| `#cx_f_revision` | `cx_field` | the side's revision |
+| `#cx_f_analyzer` | `cx_field` | the side's analyzer binary SHA-256 |
+| `#cx_f_bundles` | `cx_field` | the side's contract-bundle identities |
+| `#cx_f_build_commit` | `cx_field` | the side's build commit |
+| `#cx_f_link_resolution` | `cx_field` | whether the side ran under its link-resolution artifact |
+| `#cx_f_rules_off` | `cx_field` | the side's rule switch (rules off) |
+| `#cx_f_dependency_graph` | `cx_field` | the side's contract-dependency graph with its identities (Part C) |
+| `#cx_before` | `(cx_step) → cx_point` | `#cx_before(#s)`: step `#s`'s before side |
+| `#cx_after` | `(cx_step) → cx_point` | `#cx_after(#s)`: step `#s`'s after side |
+| `#cx_member` | `pred(cx_step)` | `#cx_member(#s)`: `#s` is a step of the segment being reconciled |
+| `#cx_chain_complete` | `pred(cx_route)` | `#cx_chain_complete(#r)`: the chained record calls route `#r` complete in the segment |
+| `#cx_status_complete` | `pred(cx_step, cx_route)` | `#cx_status_complete(#s,#r)`: step `#s`'s entry for `#r` has status `complete` |
+| `#cx_unmatched` | `pred(cx_step, cx_route)` | `#cx_unmatched(#s,#r)`: step `#s` lists an unmatched function row of `#r` |
+| `#cx_unmatched_units` | `pred(cx_step, cx_route)` | `#cx_unmatched_units(#s,#r)`: step `#s` lists an unmatched unit row of `#r` |
+| `#cx_conflicted` | `pred(cx_step, cx_route)` | `#cx_conflicted(#s,#r)`: a side of step `#s` has a composition-conflict row of `#r` |
+| `#cx_disagrees` | `pred(cx_step, cx_route)` | `#cx_disagrees(#s,#r)`: a row of `#r` that `#s` lists has a before verdict other than the after verdict of its nearest earlier listing |
+| `#cx_row_route` | `(cx_row) → cx_route` | `#cx_row_route(#w)`: the route row `#w` belongs to |
+| `#cx_listed` | `pred(cx_step, cx_row)` | `#cx_listed(#s,#w)`: step `#s` lists `#w` (moved, content-changed, unmatched, a unit move or unit field difference) |
+| `#cx_verdict` | `(cx_point, cx_row) → cx_verdict` | `#cx_verdict(#p,#w)`: the verdict of `#w` at side `#p`, as that side's report states it |
+| `#cx_first` | `cx_point` | the segment's first side |
+| `#cx_last` | `cx_point` | the segment's last side |
+| `#cx_net_before` | `(cx_row) → cx_verdict` | `#cx_net_before(#w)`: the first verdict of `#w`'s net move |
+| `#cx_net_after` | `(cx_row) → cx_verdict` | `#cx_net_after(#w)`: the last verdict of `#w`'s net move |
+| `#cx_moved` | `pred(cx_step, cx_row)` | `#cx_moved(#s,#w)`: the chained record lists `#s` among the steps that moved `#w` |
+| `#cx_reported` | `pred(cx_row)` | `#cx_reported(#w)`: the chained record lists `#w` with its verdict at every side |
+| `#cx_moves` | `(cx_row) → integer` | `#cx_moves(#w)`: how many steps moved `#w` |
+| `#cx_cancelled` | `pred(cx_row)` | `#cx_cancelled(#w)`: the record's pattern of `#w` is `cancelled` |
+| `#cx_cascade` | `pred(cx_row)` | `#cx_cascade(#w)`: the record's pattern of `#w` is `cascade` |
+| `#cx_evidence_changed` | `pred(cx_step, cx_row)` | `#cx_evidence_changed(#s,#w)`: step `#s` lists a change of `#w`'s leaves, fields or contract dependencies |
+| `#cx_published` | `(cx_point, cx_row) → cx_verdict` | `#cx_published(#p,#w)`: the verdict the chained record states for `#w` at `#p` |
+| `#cx_safe` | `cx_verdict` | `Safe` |
+| `#cx_pending` | `cx_verdict` | `Pending` |
+| `#cx_unknown` | `cx_verdict` | `Unknown` |
+| `#cx_new_safe` | `pred(cx_step, cx_row)` | `#cx_new_safe(#s,#w)`: `#s` moves `#w` to `Safe` |
+| `#cx_declared_move` | `pred(cx_step, cx_row)` | `#cx_declared_move(#s,#w)`: a prediction given for `#s` (a `--declared` block or the step record's own declared check) covers `#w`'s move |
+| `#cx_unattributed` | `pred(cx_step, cx_row)` | `#cx_unattributed(#s,#w)`: the record lists `#w`'s move in `#s` as unattributed |
+| `#cx_review` | `pred(cx_step, cx_row)` | `#cx_review(#s,#w)`: the record flags `#w`'s new `Safe` in `#s` for review (`unattributed_new_safe`), failing the run |
+| `#cx_accepted` | `pred(cx_step, cx_row)` | `#cx_accepted(#s,#w)`: the record accepts `#w`'s new `Safe` in `#s` |
+| `#cx_dependency_changed` | `pred(cx_step, cx_row)` | `#cx_dependency_changed(#s,#w)`: a dependency entry naming a declaration `#w` rests on changed identity in `#s` |
+| `#cx_dependency_listed` | `pred(cx_step, cx_row)` | `#cx_dependency_listed(#s,#w)`: the record lists that change beside `#w`'s move (never as its attribution) |
+| `#cx_declares` | `pred(cx_bundle, cx_fn)` | `#cx_declares(#b,#g)`: bundle `#b`'s lock records a reviewed declaration of `#g` |
+| `#cx_text` | `(cx_bundle, cx_fn) → cx_ident` | `#cx_text(#b,#g)`: the SHA-256 of `#b`'s declaration of `#g` (normalised text, C06.2) |
+| `#cx_libc_name` | `pred(cx_fn)` | `#cx_libc_name(#g)`: `#g` is a libc/POSIX name (the libc crate's name list or a libc declaration) |
+| `#cx_libc_owner` | `pred(cx_bundle)` | `#cx_libc_owner(#b)`: `#b` is `quirin-provider-libc` |
+| `#cx_refused` | `pred(cx_bundle, cx_fn)` | `#cx_refused(#b,#g)`: the composition refuses `#b`'s declaration of `#g` |
+| `#cx_stamps_decide` | `pred(cx_fn)` | `#cx_stamps_decide(#g)`: the pin stamps of `#g`'s declarations decide one in force (C06.6) |
+| `#cx_rank` | `(cx_verdict) → integer` | `#cx_rank(#v)`: the verdict's position in `Safe < Pending < Unknown < Unsafe` (0 to 3) |
+| `#cx_contribution` | `(cx_bundle, cx_fn) → cx_verdict` | `#cx_contribution(#b,#g)`: the verdict bundle `#b` contributes to `#g` (declaration standing, checker, holds) |
+| `#cx_composed` | `(cx_fn) → cx_verdict` | `#cx_composed(#g)`: the composed verdict of `#g` |
+| `#cx_host` | `(cx_fn) → cx_verdict` | `#cx_host(#g)`: the host analysis's own verdict for `#g` |
+| `#cx_reasons_kept` | `pred(cx_bundle, cx_fn)` | `#cx_reasons_kept(#b,#g)`: the composed record keeps every reason `#b` gave for `#g` |
+| `#cx_plugin` | `pred(cx_bundle)` | `#cx_plugin(#b)`: `#b` binds an out-of-process checker (`quirin-plugin.json`) |
+| `#cx_proposes_decision` | `pred(cx_bundle, cx_fn)` | `#cx_proposes_decision(#b,#g)`: `#b`'s checker proposed `Safe` or `Unsafe` for `#g` |
+| `#cx_checked` | `pred(cx_bundle, cx_fn)` | `#cx_checked(#b,#g)`: a trusted-core checker accepted the certificate or validated the witness (`certified-safe`, `validated-unsafe`) |
+| `#cx_checker_verdict` | `(cx_bundle, cx_fn) → cx_verdict` | `#cx_checker_verdict(#b,#g)`: the verdict the firewall class of `#b`'s checker answer stands for (rule 10h) |
+| `#cx_recorded_verdict` | `(cx_bundle, cx_fn) → cx_verdict` | `#cx_recorded_verdict(#b,#g)`: the verdict the report's checker record states |
+| `#cx_satisfied` | `pred(cx_dep)` | `#cx_satisfied(#d)`: dependency `#d` resolves |
+| `#cx_loaded` | `pred(cx_dep)` | `#cx_loaded(#d)`: `#d`'s target crate is on the load path and its target declaration is loaded |
+| `#cx_in_range` | `pred(cx_dep)` | `#cx_in_range(#d)`: the target crate's version lies in `#d`'s range (or `#d` states none) |
+| `#cx_digest_matches` | `pred(cx_dep)` | `#cx_digest_matches(#d)`: the target declaration's SHA-256 is `#d`'s (or `#d` states none) |
+| `#cx_declared_crate` | `pred(cx_dep)` | `#cx_declared_crate(#d)`: the target crate is a declared dependency of the dependent's crate (or the same crate) |
+| `#cx_owner_named` | `pred(cx_dep)` | `#cx_owner_named(#d)`: a libc/POSIX target is named under `quirin-provider-libc` |
+| `#cx_held` | `pred(cx_bundle, cx_fn)` | `#cx_held(#b,#g)`: `#b`'s declaration of `#g` is held (not in force) |
+| `#cx_target_bundle` | `(cx_dep) → cx_bundle` | `#cx_target_bundle(#d)`: the crate `#d` names |
+| `#cx_target` | `(cx_dep) → cx_fn` | `#cx_target(#d)`: the declaration `#d` names |
+| `#cx_dependent_bundle` | `(cx_dep) → cx_bundle` | `#cx_dependent_bundle(#d)`: the crate of the declaration that states `#d` |
+| `#cx_dependent` | `(cx_dep) → cx_fn` | `#cx_dependent(#d)`: the declaration that states `#d` |
+| `#cx_on_cycle` | `pred(cx_bundle, cx_fn)` | `#cx_on_cycle(#b,#g)`: `#b`'s declaration of `#g` reaches itself through declared dependencies |
+| `#cx_hold_verdict` | `(cx_bundle, cx_fn) → cx_verdict` | `#cx_hold_verdict(#b,#g)`: the verdict a hold of `#b`'s `#g` contributes (`Safe` when not held) |
+| `#cx_human_resolvable` | `pred(cx_bundle, cx_fn)` | `#cx_human_resolvable(#b,#g)`: every cause of the hold is resolved by a person's review and re-pin |
+
 **Typed environment references.** A binding manifest's and a flow model's `environment.variables` value is a typed environment reference: the canonical JSON list of G01p parameters (`{"name","sort"}`, the encoding the bindings use for quantifiers), nonempty and strictly increasing by name, each term a parameter of a bound atom's typed definition in the same sort or a registered term in its rendered sort (the vocabulary and the SP6, SP7, SP9 and SP10 blocks). It says which typed terms an environment component consists of and asserts no condition; the qualifiers the retired descriptions carried ("source interpretation Open", "completeness Open", "hashes bind references only", "no cross-property Context transport") are kept by the never-derived correspondence term (`#source_corresponds` or `#bnd_source_corresponds`), by the resolver's reference-integrity semantics (C04.18.2) and by exact Context equality, not restated. A component that binds exact bytes held elsewhere is their content digest (64 lowercase hex). The environment id and the variable names are identifiers. A formal binding's proposition is a qualified name (a Lean definition or a recorded proposition id), and its quantifiers and conclusion are exactly its typed atom's parameters and formula, each canonical JSON. Anything else, an English description above all, is refused with **`QF005`** on every load route (`hypothesis_bindings::resolve`, `resolve_bounds`, `resolve_model`, `premise_flow::compile`, `compile_bounds`, `compile_model`; `qcore_contract::formal_binding`), fail-closed. The 167 live manifests were migrated with their content digests and markers; the 22 recorded descriptions and their references are in the card's record, frozen manifests are read only through the test-side legacy reader, and `QCore.FormalBindingEnvironments` proves each recorded reference resolves (`every_reference_resolves`), every bound plugin and detach atom parameter belongs to a recorded component, and the decision vectors agree with the Rust `ENVIRONMENT_DECISION_VECTORS` (`environment_vectors_agree`) ([report](reports/sp10-formal-binding-descriptions/README.md)). A bound atom's own parameters keep their declared, unprefixed names and sorts (`#env: environment`, `#in_trace: predicate<environment,event>`, the detach atoms' registered `#parent`, `#live`, …): a reference to one is a reference to that parameter, not to a registered rendered term, so it reserves no name.
 
 **K2 block: type-query positions** (card K2-NO-TYPED-ACCESS, gateway rule 79; USER DECISION 2026-11-20 as above; user 2026-11-25, verbatim: "Build the 2 rows"). Appended after the MES block in the Rust table `RENDERED_TERMS` (`block: "K2"`) and, for its four sorts, `RENDERED_VALUE_SORTS`. These are the terms of rule 79's admission conditions and named refusals (`type_query_positions::CONDITIONS`, `Reason::formula`), each validated by `guarded_proposition` before any admission. No premise formula names them, so the premise `VOCABULARY`, grammar, decision vectors and Lean `vocab` are unchanged. Every name is prefixed `k2_`; the subject (one controlling expression, one token run of the declaration reader) is implicit. The Lean model is `QCore.TypeQueryPositions` (`k2Terms`, `k2Sorts`, `termModel`, `formulaTable`; `an_admitted_condition_is_the_identity_on_every_path`, `a_product_run_is_no_declaration`).
@@ -4500,6 +4585,28 @@ contract inherit libc::memcpy;
 **The real load path and selections** (card CONTRACT-INHERIT-ADOPTION). Each `quirin-provider-*` crate records `NAMESPACE` and `PUBLISHED` beside `CONTRACTS`, and each executable `qcore-provider-*` crate records them in its `src/main.rs` (card CONTRACT-INHERIT-QCORE-PROVIDER-NAMING; the conformance harness `qcore-provider-conformance` owns no contracts and is not a load-path crate). `python3 providers/contracts.py sync` writes `providers/contract-load-path.json` from Cargo metadata (package name, version, and the normal dependencies that are themselves load-path crates) and those constants, with every owned module listed and every published module's SHA-256 pinned; `check` refuses a stale file. Core consumers read it as data (`qcore_contract::load_path_manifest`), never by linking a provider crate, and MUST refuse (`QI014`) a malformed manifest, a module list that differs from the crate's contract directory, and a published module whose text is not its pin. A resource manifest of **schema 2** names that file as `load_path` and MAY select a module by `CRATE:MODULE` reference (the `#include` spelling) beside path entries; path entries MUST resolve and be retained exactly as in schema 1, a reference is elaborated and gated as above and retained under its `CRATE:MODULE` key, and one total-or-reject load covers both kinds. The corpus index `contract/corpus.json` schema 2 names the same load path so that a corpus consumer reads an inheriting module as its elaboration. Clause-count pins count elaborated clauses; the written inheritance is pinned separately.
 
 The refusal codes are the loader-owned `QI001`–`QI020`, listed in [the diagnostics namespace page](agents/diagnostics.md). Implementation: `crates/qcore-frontend/src/contract_inclusion.rs` (directive scanner), `crates/qcore-contract/src/contract_inclusion.rs` (load path, resolver, elaborator, replay), `crates/qcore-contract/src/contract_loader.rs` (v1 loader). Lean model: `proof/QCore/ContractInherit.lean`. Rationale and evidence: [CONTRACT-INHERIT](reports/contract-inherit/README.md).
+
+### C15.1. Declared contract dependencies
+
+Card QUIRIN-AUDIT-CONNECT (Part C; user decision of 2026-11-26). A resource-v1 declaration MAY state which other crates' declarations its contract relies on, with their identity:
+
+```qcore
+extern fn onig_new(reg: ptr<mut, u8>, pattern: ptr<const, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_contract_dependency("quirin-provider-libc", libc::malloc, since "0.1.0");
+    requires resource_contract_dependency("quirin-provider-libc", libc::free, sha256 "<64 hex>");
+    ...
+};
+```
+
+**The clause.** A contract-level requirement (G05 `contract_dependency`): the crate's package name (the `#include` spelling), the declaration as `NS::NAME` with `NS` the crate's derived namespace (C15), and an identity: a version range over the crate's version (`since` inclusive, `removed` exclusive, read as `resource_library_version` reads them) and/or the SHA-256 of the target declaration's normalised text (`c-tokens-v1`, the `contract_sha256` its lock records, C06.2). At least one identity is stated; one clause per target. It adds no obligation and changes no other clause's reading. Loading is total-or-reject (G05). `libc` declarations stay owned by `quirin-provider-libc` (rule 10j, card W43-LIBC-CONTRACTS): a dependency on one names that crate and never re-declares it (`cx_refuse_libc_target_elsewhere`).
+
+**The manifest.** The load-path manifest records each crate's declared dependencies (`contract_dependencies`, one entry per clause: dependent crate, function and module; target crate, namespace and function; `since`, `removed`, `sha256`), absent when a crate declares none so every other manifest is unchanged. `python3 providers/contracts.py sync` writes it for the shipped load path and `quirin-audit plugin views --write` for a user load path; `qcore_contract::load_path_manifest` rereads every module with the loader's own clause reader and refuses (`QI014`) an entry that differs, and refuses a load path whose declared dependencies form a cycle (`cx_cycle_holds`).
+
+**Resolution.** After the pins (C06.2) and the library version ranges, the audit resolves every stated dependency of a declaration in force against the loaded environment and its load path (`qcore_schemas::connect::resolve`, `qcore_audit::declared_dependencies`). A dependency is **satisfied** exactly when its target crate is on the load path and is the dependent's crate or one of its declared dependencies, the target declaration is loaded, the crate's version lies in the range, the declaration's digest is the stated one, a libc target names `quirin-provider-libc`, and the target is not itself held (`cx_satisfied_is_every_check`, `cx_every_check_is_satisfied`). An unsatisfied dependency **holds** its declaration, a held declaration holds every declaration that depends on it (`cx_held_dependency_holds_dependents`), and a declaration on a cycle is held (`cx_cycle_holds`). The held set is the least fixed point of these rules over the **set** of dependencies, so it does not depend on their order, and a declaration that is not held reaches no held declaration and no cycle (`QCore.MeasureConnect`: `held_is_order_independent`, `resolution_is_acyclic`). A held declaration is withheld through the pin-mismatch table (C06.2): `dependency-changed`, every cause a changed digest or a target held `Pending`, is `Pending` (`contract-pin-mismatch`: a review and re-pin resolve it); `dependency-unresolved`, any other cause, is `Unknown` (`missing-premise`; the call site reads ``call to `NAME` whose declared contract dependency does not resolve (dependency-unresolved)``). Never `Safe`, never a provisional `Unsafe` (`cx_held_is_never_safe`). A declaration whose module lies on no load path has no owning crate, so every dependency it states is unresolved. A report's `contract_revision` section carries `contract_dependencies` (the graph with every target's identity, the cycles and every hold) only when some declaration states one, so every other report is byte-identical to before.
+
+**Measurement and composition.** `quirin-audit measure` records each side's graph per route (`dependency_graph`); `measure chain` refuses a link whose graphs differ (`cx_refuse_dependency_graph`) and lists a dependency change beside a move it may explain, never as its attribution (`cx_dependency_change_listed`); `measure compose` resolves the bundles' declared dependencies and joins each hold into the functions resting on the held declaration.
 
 ## Runtime source import boundary
 

@@ -368,4 +368,28 @@ mod tests {
         assert!(evaluation.record.is_none());
         assert!(contracts.pin_mismatch().is_empty());
     }
+
+    /// Adopting a dependency in an existing declaration changes the
+    /// declaration's normalised digest (the clause is part of its text), so
+    /// its lock entry no longer covers it (`contract-changed`) until a person
+    /// re-pins it: why no shipped contract adopts one in this card.
+    #[test]
+    fn adopting_a_dependency_changes_the_declaration_digest() {
+        let digest = |clause: &str| {
+            let sources = BTreeMap::from([(
+                "quirin-provider-acme:acme/open.qv".to_owned(),
+                user(clause),
+            )]);
+            qcore_contract::contract_revision::declaration_digests(&sources).unwrap()["acme_open"]
+                .1
+                .clone()
+        };
+        assert_ne!(
+            digest(""),
+            digest(
+                "requires resource_contract_dependency(\"quirin-provider-libc\", libc::malloc, \
+                 since \"0.1.0\");"
+            )
+        );
+    }
 }

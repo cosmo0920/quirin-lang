@@ -85,8 +85,8 @@ pub const CHAIN_FILE: &str = "chain.json";
 
 /// Usage text.
 pub const USAGE: &str = "usage: quirin-audit --output OUT measure chain \
-(--step RECORD[#BEFORE->AFTER] | --runs BEFORE_DIR AFTER_DIR)... [--declared N=FILE]...\n\
-two or more steps, in chain order";
+(--step RECORD[#BEFORE->AFTER] | --runs BEFORE_DIR AFTER_DIR)... [--declared N=FILE]... \
+[--attribute N=RECORD[#BEFORE->AFTER]]...\ntwo or more steps, in chain order";
 
 /// One step as given.
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -104,8 +104,12 @@ pub enum StepSpec {
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
 pub struct ChainOptions {
     pub steps: Vec<StepSpec>,
-    /// `(step number, 1-based; prediction file)`.
+    /// `(step number, 1-based; prediction file)`, any number per step.
     pub declared: Vec<(usize, String)>,
+    /// `(step number; a card's own native-comparison record[#LABEL])`: the
+    /// card's measured and predicted moves attribute the same moves of the
+    /// step (a landing's cards), any number per step.
+    pub attribute: Vec<(usize, String)>,
 }
 
 /// Parse the arguments after `measure chain`.
@@ -147,20 +151,26 @@ pub fn parse(arguments: &[String]) -> Result<ChainOptions, String> {
                 options.steps.push(StepSpec::Runs { before, after });
                 index += 3;
             }
-            "--declared" => {
+            "--declared" | "--attribute" => {
                 let text = value(1)?;
                 let (number, file) = text
                     .split_once('=')
-                    .ok_or_else(|| format!("--declared `{text}`: N=FILE"))?;
+                    .ok_or_else(|| format!("{flag} `{text}`: N=FILE"))?;
                 let number: usize = number
                     .parse()
                     .ok()
                     .filter(|number| *number > 0)
-                    .ok_or_else(|| format!("--declared `{text}`: N is a step number from 1"))?;
-                if options.declared.iter().any(|(known, _)| *known == number) {
-                    return Err(format!("--declared names step {number} twice"));
+                    .ok_or_else(|| format!("{flag} `{text}`: N is a step number from 1"))?;
+                let entry = (number, file.to_owned());
+                let list = if flag == "--declared" {
+                    &mut options.declared
+                } else {
+                    &mut options.attribute
+                };
+                if list.contains(&entry) {
+                    return Err(format!("{flag} {text} is given twice"));
                 }
-                options.declared.push((number, file.to_owned()));
+                list.push(entry);
                 index += 2;
             }
             other => return Err(format!("unknown argument `{other}`\n{USAGE}")),
@@ -169,10 +179,10 @@ pub fn parse(arguments: &[String]) -> Result<ChainOptions, String> {
     if options.steps.len() < 2 {
         return Err(format!("a chain joins two or more steps\n{USAGE}"));
     }
-    for (number, _) in &options.declared {
+    for (number, _) in options.declared.iter().chain(&options.attribute) {
         if *number > options.steps.len() {
             return Err(format!(
-                "--declared names step {number}; the chain has {}",
+                "--declared or --attribute names step {number}; the chain has {}",
                 options.steps.len()
             ));
         }
@@ -988,6 +998,9 @@ struct Attribution {
     declaration: Option<declared::Declaration>,
     /// The record's own check (`declared.routes`), when that is the source.
     record_check: Option<Value>,
+    /// A card's own measurement: route and row to its move and whether the
+    /// card's declared check predicted it.
+    measured: Option<BTreeMap<(String, String), (String, String, bool)>>,
 }
 
 impl Attribution {
@@ -1006,6 +1019,11 @@ impl Attribution {
                     && (movement.before == "*" || movement.before == before)
                     && (movement.after == "*" || movement.after == after)
             });
+        }
+        if let Some(measured) = &self.measured {
+            return measured
+                .get(&(route.to_owned(), key.to_owned()))
+                .is_some_and(|(b, a, predicted)| *predicted && b == before && a == after);
         }
         if let Some(check) = &self.record_check {
             let route_check = &check["routes"][route];
@@ -1084,8 +1102,43 @@ fn dependency_changes(before: &Value, after: &Value) -> (Value, BTreeSet<String>
 ///
 /// An unreadable or malformed prediction file.
 #[allow(clippy::too_many_lines)]
-pub fn chain(steps: &[Step], predictions: &[(usize, PathBuf)]) -> Result<Value, String> {
+pub fn chain(
+    steps: &[Step],
+    predictions: &[(usize, PathBuf)],
+    measurements: &[(usize, Step)],
+) -> Result<Value, String> {
     let mut attributions: BTreeMap<usize, Vec<Attribution>> = BTreeMap::new();
+    for (number, card) in measurements {
+        let mut measured = BTreeMap::new();
+        for (route, entry) in &card.routes {
+            let check = &card.declared["routes"][route];
+            for movement in entry["moves"].as_array().into_iter().flatten() {
+                let (Some(key), Some((before, after))) =
+                    (movement["row"].as_str(), pair(&movement["status"]))
+                else {
+                    continue;
+                };
+                let predicted = check["declared"] == json!(true)
+                    && !check["unpredicted"]
+                        .as_array()
+                        .into_iter()
+                        .flatten()
+                        .any(|row| row["row"] == json!(key));
+                measured.insert((route.clone(), key.to_owned()), (before, after, predicted));
+            }
+        }
+        attributions.entry(*number).or_default().push(Attribution {
+            label: format!(
+                "{} ({})",
+                card.source["path"].as_str().unwrap_or_default(),
+                card.comparison
+            ),
+            sha256: card.source["sha256"].as_str().unwrap_or_default().to_owned(),
+            declaration: None,
+            record_check: None,
+            measured: Some(measured),
+        });
+    }
     for (number, path) in predictions {
         let text = std::fs::read_to_string(path)
             .map_err(|error| format!("{}: {error}", path.display()))?;
@@ -1096,6 +1149,7 @@ pub fn chain(steps: &[Step], predictions: &[(usize, PathBuf)]) -> Result<Value, 
                 declared::parse(&text).map_err(|error| format!("{}: {error}", path.display()))?,
             ),
             record_check: None,
+            measured: None,
         });
     }
     for step in steps {
@@ -1108,6 +1162,7 @@ pub fn chain(steps: &[Step], predictions: &[(usize, PathBuf)]) -> Result<Value, 
                 sha256: step.declared["sha256"].as_str().unwrap_or_default().to_owned(),
                 declaration: None,
                 record_check: Some(step.declared.clone()),
+                measured: None,
             });
         }
     }
@@ -1387,7 +1442,8 @@ pub fn chain(steps: &[Step], predictions: &[(usize, PathBuf)]) -> Result<Value, 
         "attribution_sources": attributions.iter().map(|(number, sources)| json!({
             "step": number,
             "sources": sources.iter().map(|s| json!({"declared": s.label, "sha256": s.sha256,
-                "kind": if s.declaration.is_some() { "prediction" } else { "record-declared" }}))
+                "kind": if s.declaration.is_some() { "prediction" }
+                    else if s.measured.is_some() { "card-measurement" } else { "record-declared" }}))
                 .collect::<Vec<_>>(),
         })).collect::<Vec<_>>(),
         "links": links,
@@ -1437,7 +1493,18 @@ pub fn answer(request: &Request, arguments: &[String]) -> Result<Response, Strin
         .iter()
         .map(|(number, path)| (*number, request.resolve_argument(path)))
         .collect();
-    let record = chain(&steps, &predictions)?;
+    let mut measurements = Vec::new();
+    for (number, text) in &options.attribute {
+        let (path, label) = match text.split_once('#') {
+            Some((path, label)) => (path, Some(label)),
+            None => (text.as_str(), None),
+        };
+        measurements.push((
+            *number,
+            load_record_step(*number, &request.resolve_argument(path), label)?,
+        ));
+    }
+    let record = chain(&steps, &predictions, &measurements)?;
     let path = output.join(CHAIN_FILE);
     write_json(&path, &record)?;
     let mut response = Response::completed();

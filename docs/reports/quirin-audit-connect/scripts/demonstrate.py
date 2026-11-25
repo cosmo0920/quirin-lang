@@ -29,6 +29,24 @@ CHAINS = {
         "landing-556460e31/native-comparison.json.gz",
         "sp1-symbolic-openssl-premises/integration/native-comparison.json.gz",
     ],
+    # The landing's hand attribution, mechanically: its cards' own
+    # integration records attribute its moves (`--attribute 1=RECORD`).
+    "landing-556460e31-attributed-to-its-cards": {
+        "steps": [
+            "landing-556460e31/native-comparison.json.gz",
+            "sp1-symbolic-openssl-premises/integration/native-comparison.json.gz",
+        ],
+        "attribute": [
+            f"{card}/integration/native-comparison.json.gz" for card in [
+                "callback-member-non-c-units", "chained-assignment-inner-destination",
+                "current-monkey-linked-configuration", "fluent-bit-link-prepare",
+                "link-standing", "loop-reacquisition-leak-accusation",
+                "member-effect-component-scope", "member-release-untyped-base",
+                "out-parameter-body-summary", "out-parameter-scalar-frame-premise",
+                "out-slot-call-write-aliasing", "scalar-statement-forms",
+            ]
+        ],
+    },
     "landing-556460e31-then-member-effect-component-scope": [
         "landing-556460e31/native-comparison.json.gz",
         "member-effect-component-scope/integration/native-comparison.json.gz",
@@ -78,13 +96,20 @@ def main():
     plugin, out = sys.argv[1], Path(sys.argv[2])
     summary = {}
     for name, records in CHAINS.items():
+        attribute = []
+        if isinstance(records, dict):
+            records, attribute = records["steps"], records["attribute"]
         arguments = ["chain"]
         for record in records:
             arguments += ["--step", str(REPORTS / record)]
+        for record in attribute:
+            arguments += ["--attribute", f"1={REPORTS / record}"]
         code, response = run(plugin, out / name, arguments)
         chain = json.loads((out / name / "chain.json").read_text())
-        with gzip.open(out / name / "chain.json.gz", "wt") as handle:
-            handle.write(json.dumps(chain, indent=1, sort_keys=True) + "\n")
+        text = json.dumps(chain, indent=1, sort_keys=True) + "\n"
+        with open(out / name / "chain.json.gz", "wb") as raw, \
+                gzip.GzipFile(fileobj=raw, mode="wb", mtime=0) as handle:
+            handle.write(text.encode())
         (out / name / "chain.json").unlink()
         entry = {
             "steps": [{"record": r, "comparison": s["comparison"],
@@ -99,7 +124,16 @@ def main():
             "segments": [],
             "unattributed_moves": len(chain["unattributed_moves"]),
             "unattributed_new_safe": chain["unattributed_new_safe"],
+            "attributed_by_source": {},
         }
+        for segment in chain["segments"]:
+            for route, record in segment["routes"].items():
+                for row in record["rows"]:
+                    for source in row["attributed"]:
+                        label = source.get("declared", "derived-from-function-rows")
+                        label = label.split("docs/reports/")[-1]
+                        entry["attributed_by_source"].setdefault(label, []).append(
+                            f"{route}:{row['row'].split('::')[-1]}")
         for segment in chain["segments"]:
             routes = {}
             for route, record in segment["routes"].items():
