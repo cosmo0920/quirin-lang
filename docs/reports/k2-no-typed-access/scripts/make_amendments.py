@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""make_amendments.py OUT_JSON SHARE_SHAPE -- K2: write the card's
-integration-amendments.json (records only: the card stopped at the re-census)."""
+"""make_amendments.py OUT_JSON MEASURED_TIP -- K2: write the card's
+integration-amendments.json (rule 79, USER DECISION 2026-11-25 "Build the 2 rows")."""
 import json
 import sys
 
-out, share = sys.argv[1:3]
+out, tip = sys.argv[1:3]
 SRC = "docs/reports/k2-no-typed-access/README.md"
 CENSUS = ("RE-CENSUSED by K2-NO-TYPED-ACCESS (round 37, base 5087f9295, the user's 2026-11-24 current run: "
           "4,934 rows, 1,173 Safe / 3,750 Unknown / 11 Unsafe; 11-07 tags joined by file, function, family and "
@@ -14,26 +14,37 @@ CENSUS = ("RE-CENSUSED by K2-NO-TYPED-ACCESS (round 37, base 5087f9295, the user
           "freed rows, 6 wait on an Unknown callee summary, 3 on an uncontracted cross-unit callee, 4 are refused "
           "on purpose (formal-aliasing multi-declarators, a returned `mk_list_entry`, a nested call on a "
           "descriptor), 1 is glibc's `_Generic` strchr (CG07-GENERIC-TOKEN-AST-MATCH), 2 are bit-count builtins "
-          "(K2-BUILTIN-BIT-COUNTS, a user decision) and 2 are decidable shapes (K2-CONNECTIVE-CONDITION-TYPE-QUERY, "
-          "K2-SIZEOF-OPERAND-PRODUCT). The card stopped at the re-census (remaining yield near zero) and changed "
-          "no analyzer code.")
+          "(K2-BUILTIN-BIT-COUNTS, a user decision) and 2 are decidable. USER DECISION 2026-11-25 \"Build the 2 "
+          "rows\": gateway rule 79 (type_query_positions.rs; Lean QCore.TypeQueryPositions; every condition a "
+          "formula over the new K2 block of the C04.18.9 typed rendering, checked by guarded_proposition) admits "
+          "(1) a controlling expression every older route refused whose elaboration holds a value region, a "
+          "sizeof/_Alignof of a type name that is not variably modified and only Branch/Merge events and reads of "
+          "unaliased automatic objects by name (LZ4_hashPosition), and (2) drops `NAME * sizeof` from the "
+          "declaration candidates, so a function holding `(n * sizeof(T *))` has its declared types read "
+          "(rd_kafka_share_partition_offsets_list_new). Forecast: both rows Unknown -> Safe on current, corpus and "
+          "twelve-home.")
 document = {
     "schema": "quirin-amendments/2",
     "card": "K2-NO-TYPED-ACCESS",
-    "base": "5087f9295",
-    "measured_tip": "5087f9295",
+    "base": "110a69c8e",
+    "measured_tip": tip,
     "increment_paragraph": (
-        "**K2-NO-TYPED-ACCESS** (round 37, USER DECISION 2026-11-25 \"Launch K2, K4 and K6 cards\"; records "
-        "only; [report](../../reports/k2-no-typed-access/README.md)). Re-census of bundle K2 of "
+        "**K2-NO-TYPED-ACCESS** (round 37, USER DECISIONS 2026-11-25 \"Launch K2, K4 and K6 cards\" and "
+        "\"Build the 2 rows\"; gateway rule 79; Lean `QCore.TypeQueryPositions`; "
+        "[report](../../reports/k2-no-typed-access/README.md)). Re-census of bundle K2 of "
         "CURRENT-ACCESS-ALIAS-CENSUS on the user's 2026-11-24 `current` run (1,173 / 3,750 / 11): 240 "
         "no-typed-access leaves on 181 Unknown rows (11-07: 1,058 on 601), 19 rows freed alone (11-07: 40); 801 "
         "of the 11-07 condition leaves were AG3 rule 63 (2) re-attributions to uncontracted callees. Read from the "
-        "bodies (generic and real-unit probes with the parity stream), 15 of the 19 keep a callee's or an "
-        "earlier card's deliberate refusal, 2 need a user decision (the `__builtin_clz`/`__builtin_ctz` result at "
-        "0) and 2 are decidable (`LZ4_hashPosition`'s `(sizeof(T) == 8) && …` condition, "
-        "`rd_kafka_share_partition_offsets_list_new`'s `sizeof` statement). The card stopped under the brief's "
-        "near-zero-yield condition: no analyzer, contract, Lean or rule change, no row moves; the three "
-        "residual shapes are registered."),
+        "bodies, 15 of the 19 keep a callee's or an earlier card's deliberate refusal, 2 need a user decision "
+        "(the bit-count builtins, registered) and 2 were built. Rule 79 (1) lowers a controlling expression every "
+        "older route refused, whose elaboration holds a value region, a `sizeof` of a type name that is not "
+        "variably modified and only Branch/Merge events and reads of unaliased automatic objects by name, as one "
+        "branch refining neither edge; (2) drops `NAME * sizeof` from the declaration candidates of the "
+        "total-or-reject declaration reader. Every condition and refusal is a formula over the new `k2_` block of "
+        "the C04.18.9 typed rendering (14 terms, 4 sorts, appended after MES), validated by "
+        "`guarded_proposition`. Forecast: `LZ4_hashPosition` and "
+        "`rd_kafka_share_partition_offsets_list_new` Unknown -> Safe on `current`, corpus and twelve-home; system "
+        "and slice unchanged; the tip unit probe reads `LZ4_hashPosition` Safe."),
     "status_edits": [],
     "ledger": [
         {"id": "W46-LEXICAL-GATE-NON-ACCESS", "operation": "amend", "text": CENSUS, "source": SRC},
@@ -60,29 +71,6 @@ document = {
                   "Clang node` (real-unit probe with the parity stream on base 5087f9295). The same body spelled "
                   "with a non-macro interior-result callee is Safe; a sole-blocker row of this entry."),
          "source": SRC},
-        {"id": "K2-CONNECTIVE-CONDITION-TYPE-QUERY", "operation": "register",
-         "title": "A connective condition with a `sizeof` leaf stays refused: `LZ4_hashPosition`, 1 sole-blocker row on current",
-         "text": ("Registered by K2-NO-TYPED-ACCESS. `if ((sizeof(reg_t)==8) && (tableType != byU16))` "
-                  "(lz4.c:783): rule 5h's leaf reader refuses the `sizeof` leaf (``C operator `sizeof` requires "
-                  "type/operand analysis``) and the elaborator's condition lowering refuses the CG06 region "
-                  "(``unlisted form: event outside this card's lowering``: `lower_events` lowers no Branch/Merge). "
-                  "Generic probes on 5087f9295: `if (sizeof(long) == 8)` Safe, `if ((t == 8) && (t != 2))` Safe, "
-                  "`if ((sizeof(long) == 8) && (t != 2))` Unknown, `return (sizeof(long) == 8) && (t != 2);` Safe. "
-                  "DISCHARGE: lower such a condition as rule 10z's value region then a branch refining no edge, "
-                  "admitted only when ∀ e ∈ events(region). e ∈ {Read(x) | automatic(x) ∧ ¬addr_taken(x)} ∪ "
-                  "{Branch, Merge}, with a Lean model and near-miss fixtures (`p && p->x`, a call in an arm), "
-                  "measured; or record the shape as outside the projection."),
-         "source": SRC, "recorded_by": "K2-NO-TYPED-ACCESS"},
-        {"id": "K2-SIZEOF-OPERAND-PRODUCT", "operation": "register",
-         "title": "A call-free `sizeof` statement of the flexible-allocation size stays refused: `rd_kafka_share_partition_offsets_list_new`, 1 sole-blocker row on current",
-         "text": ("Registered by K2-NO-TYPED-ACCESS. `size = sizeof(*list) + (capacity * "
-                  "sizeof(rd_kafka_share_partition_offsets_t *));` (rdkafka_share_acknowledgement.c:1120; the "
-                  "sibling at :1082 is on a row with another blocker). " + share + " C11 6.5.3.4p2: an operand "
-                  "whose type is not variably modified is not evaluated. DISCHARGE: read the operand as "
-                  "W44-COLLECTION-ALLOCATION's unevaluated operand in this position too, admitted only when "
-                  "¬variably_modified(type(operand)), with a Lean model (no event) and VLA near-miss fixtures, "
-                  "measured."),
-         "source": SRC, "recorded_by": "K2-NO-TYPED-ACCESS"},
         {"id": "K2-BUILTIN-BIT-COUNTS", "operation": "register",
          "title": "`__builtin_clz`/`__builtin_ctz` calls stay refused: `LZ4_NbCommonBytes`, `log2_floor`, 2 sole-blocker rows on current; needs a user decision",
          "text": ("Registered by K2-NO-TYPED-ACCESS. No contract or table names the bit-count builtins "

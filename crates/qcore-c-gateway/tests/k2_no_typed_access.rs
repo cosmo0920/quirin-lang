@@ -36,8 +36,7 @@ typedef struct box box_t; \
 struct flex { long n; struct box *e[]; }; \
 typedef struct flex flex_t;";
 
-const BRANCH: &str =
-    "unsupported:unmodeled call, aggregate or indirect access in branch condition";
+const BRANCH: &str = "unsupported:unmodeled call, aggregate or indirect access in branch condition";
 const GATE: &str = "unsupported:indirect memory access is outside the resource projection";
 
 fn contracts() -> ResourceContracts {

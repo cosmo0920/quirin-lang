@@ -60,7 +60,10 @@ fn the_k2_block_is_new_prefixed_and_lean_s() {
     for t in &k2 {
         assert!(t.name.starts_with("k2_"), "#{}", t.name);
         assert!(qcore_frontend::premise_formula::term(t.name).is_none());
-        assert_eq!(RENDERED_TERMS.iter().filter(|u| u.name == t.name).count(), 1);
+        assert_eq!(
+            RENDERED_TERMS.iter().filter(|u| u.name == t.name).count(),
+            1
+        );
         assert!(!t.meaning.is_empty());
     }
     let names = k2
@@ -130,7 +133,11 @@ fn a_region_with_a_type_query_and_inert_events_is_admitted() {
             type_operand: true,
             variably_modified: false,
         }],
-        events: vec![EventClass::Branch, EventClass::ObjectRead { unaliased: true }, EventClass::Branch],
+        events: vec![
+            EventClass::Branch,
+            EventClass::ObjectRead { unaliased: true },
+            EventClass::Branch,
+        ],
     };
     assert_eq!(decide(&facts), Ok(()));
     let mut store = facts.clone();
@@ -190,7 +197,10 @@ fn a_query_is_read_from_the_clang_node() {
         vec![],
     );
     assert!(read(&hidden)[0].variably_modified);
-    let expression = query(json!({"qualType": "int"}), vec![json!({"kind": "DeclRefExpr"})]);
+    let expression = query(
+        json!({"qualType": "int"}),
+        vec![json!({"kind": "DeclRefExpr"})],
+    );
     assert!(!read(&expression)[0].type_operand);
     let decision = |queries: Vec<Query>| {
         decide(&Facts {

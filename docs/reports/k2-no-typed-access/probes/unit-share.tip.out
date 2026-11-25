@@ -1,0 +1,4 @@
+UNIT rd_kafka_share_partition_offsets_list_new Unknown own=Some("Unknown") ["20184:unsupported:call to uncontracted function `rd_calloc`"]
+UNIT rd_kafka_share_partition_offsets_new Unknown own=Some("Unknown") ["20164:unsupported:call to uncontracted function `rd_calloc`", "20165:unsupported:indirect memory access is outside the resource projection", "20168:unknown_alias:elem"]
+test unit_probe ... ok
+

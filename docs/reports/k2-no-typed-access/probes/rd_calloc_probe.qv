@@ -1,0 +1,12 @@
+// K2 probe only (not a provider contract): the effect clauses of
+// qcore-provider-librdkafka's `rd_calloc` (memory.qv), without its inclusion,
+// body-check requirement and premise, which the probe loader cannot resolve.
+module contract;
+
+extern fn rd_calloc(count: usize, size: usize) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(count);
+    ensures normal resource_borrowed(size);
+    ensures normal resource_return_owned(nonnull);
+};

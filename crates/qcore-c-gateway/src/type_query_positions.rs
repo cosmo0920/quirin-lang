@@ -87,6 +87,7 @@ use serde_json::Value;
 
 use crate::elaboration::{Elaboration, Event, Place};
 
+#[allow(dead_code, reason = "read by the unit tests and the Lean binding")]
 /// The rule.
 pub(crate) const RULE: &str = "79";
 
@@ -145,9 +146,7 @@ impl Reason {
     #[must_use]
     pub(crate) fn formula(self) -> &'static str {
         match self {
-            Self::NoTypeQuery => {
-                "forall (#q: k2_query) { !#k2_query_of(#q,#k2_condition) }"
-            }
+            Self::NoTypeQuery => "forall (#q: k2_query) { !#k2_query_of(#q,#k2_condition) }",
             Self::EvaluatedQuery => {
                 "exists (#q: k2_query) { (#k2_query_of(#q,#k2_condition) && (!#k2_type_operand(#q) || #k2_variably_modified(#q))) }"
             }
@@ -159,6 +158,7 @@ impl Reason {
 
     /// The condition of [`CONDITIONS`] this reason negates.
     #[must_use]
+    #[allow(dead_code, reason = "read by the unit tests and the Lean binding")]
     pub(crate) fn condition(self) -> &'static str {
         match self {
             Self::NoTypeQuery => "k2_type_query_present",
@@ -296,17 +296,31 @@ pub(crate) fn validated() -> Result<(), String> {
         .clone()
 }
 
+#[allow(dead_code, reason = "read by the unit tests and the Lean binding")]
 /// The decision vectors shared with `QCore.TypeQueryPositions.decisionVectors`:
 /// (name, the one fact that differs from an admitted condition, the answer).
 pub(crate) const DECISION_VECTORS: &[(&str, &str, &str)] = &[
     ("admitted", "none", "admit"),
     ("no_query", "no type query", "k2_refuse_no_type_query"),
-    ("expression_operand", "an expression operand", "k2_refuse_evaluated_query"),
-    ("vla_operand", "a variably modified operand", "k2_refuse_evaluated_query"),
+    (
+        "expression_operand",
+        "an expression operand",
+        "k2_refuse_evaluated_query",
+    ),
+    (
+        "vla_operand",
+        "a variably modified operand",
+        "k2_refuse_evaluated_query",
+    ),
     ("call_event", "a call event", "k2_refuse_event"),
-    ("aliased_read", "an address-taken object read", "k2_refuse_event"),
+    (
+        "aliased_read",
+        "an address-taken object read",
+        "k2_refuse_event",
+    ),
 ];
 
+#[allow(dead_code, reason = "read by the unit tests and the Lean binding")]
 /// The facts of one decision vector.
 pub(crate) fn vector_facts(differs: &str) -> Facts {
     let query = Query {
@@ -340,6 +354,7 @@ pub(crate) fn vector_facts(differs: &str) -> Facts {
     facts
 }
 
+#[allow(dead_code, reason = "read by the unit tests and the Lean binding")]
 /// The answer code of a decision.
 pub(crate) fn code(decision: Result<(), Reason>) -> &'static str {
     match decision {

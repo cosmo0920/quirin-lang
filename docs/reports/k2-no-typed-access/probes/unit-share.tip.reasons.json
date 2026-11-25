@@ -1,0 +1,47 @@
+[
+ [
+  "rd_kafka_share_partition_offsets_list_new",
+  20182,
+  "elaboration-statement",
+  "indirect memory access is outside the resource projection",
+  null,
+  "size = sizeof ( * list ) + ( capacity * sizeof ( rd_kafka_share_partition_offsets_t * ) )",
+  12
+ ],
+ [
+  "rd_kafka_share_partition_offsets_list_new",
+  20184,
+  "elaboration-statement",
+  "call to uncontracted function `rd_calloc`",
+  "unlisted form: no value form of this card",
+  "list = rd_calloc ( 1 , size )",
+  12
+ ],
+ [
+  "rd_kafka_share_partition_offsets_new",
+  20163,
+  "elaboration-statement",
+  "indirect memory access is outside the resource projection",
+  null,
+  "size = sizeof ( * elem ) + ( offsets_cnt * sizeof ( int64_t ) )",
+  12
+ ],
+ [
+  "rd_kafka_share_partition_offsets_new",
+  20164,
+  "elaboration-statement",
+  "call to uncontracted function `rd_calloc`",
+  "unlisted form: no value form of this card",
+  "elem = rd_calloc ( 1 , size )",
+  12
+ ],
+ [
+  "rd_kafka_share_partition_offsets_new",
+  20165,
+  "elaboration-statement",
+  "indirect memory access is outside the resource projection",
+  "unlisted form: no value form of this card",
+  "elem - > partition = rd_kafka_topic_partition_new_with_id_and_name ( rd_kafka_topic_partition_get_topic_id ( tp ) , tp - > topic , tp - > partition )",
+  12
+ ]
+]

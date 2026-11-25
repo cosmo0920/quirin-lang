@@ -1080,7 +1080,10 @@ impl Parser<'_> {
             let facts = k2::facts(node, &elaborated, &|decl| context.unaliased(decl));
             k2::decide(&facts).map_err(|reason| Refusal::Unlisted(reason.id()))?;
             let successors = vec![Target::True, Target::False];
-            let nodes = vec![PlanNode { instruction: LegacyInstruction::NoOp, successors }];
+            let nodes = vec![PlanNode {
+                instruction: LegacyInstruction::NoOp,
+                successors,
+            }];
             return Ok(ConditionPlan { nodes, entry: 0 });
         }
         let instructions = self.lower_events(&elaborated)?;

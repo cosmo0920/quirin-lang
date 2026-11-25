@@ -171,7 +171,7 @@ checked by its validator; any option that implements them needs those terms'
 specification rows and Lean models first, or the user's ruling that gateway
 admission conditions are outside that vocabulary.
 
-## 3. Stop: the remaining yield is near zero
+## 3. The stop (first hand-back): the remaining yield is near zero
 
 The brief's stop condition holds: of the draft's 39 frozen functions (forecast
 15 Safe, band 10-20), **2 rows can move without a user decision**
@@ -179,9 +179,8 @@ The brief's stop condition holds: of the draft's 39 frozen functions (forecast
 only under a semantic choice** (the builtins), against 3,750 Unknown rows. 801
 of the 1,058 leaves were AG3 re-attributions to uncontracted callees, 6 freed
 rows' constructs wait on their callees' own Unknown summaries, and the rest are
-refusals earlier cards made on purpose. No semantic change, Lean module,
-fixture or rule text was written; no PREDICTION.md was frozen; rule id 79 was
-not taken.
+refusals earlier cards made on purpose. At that hand-back no semantic change,
+Lean module, fixture or rule text had been written.
 
 ### Options (recommendation first)
 
@@ -214,13 +213,162 @@ not taken.
    `call = __builtin_c{l,t}z{,l,ll}(x) ∧ (path ⊢ x ≠ 0) ⇒ custody_neutral(call)`;
    under (b) `call = __builtin_c{l,t}z{,l,ll}(x) ⇒ custody_neutral(call)`.
 
-## 4. Records
+**Decision.** USER DECISION 2026-11-25 (verbatim): "Build the 2 rows":
+option 2 only; the builtins stay out with their open choices
+(`K2-BUILTIN-BIT-COUNTS`). The formula rule stands: the vocabulary gap is
+closed as rule 38k closed it, with a prefixed K2 block of the typed rendering
+(§4). The branch was then rebased onto origin/main `110a69c8e`
+(MEMBER-EFFECT-STORES landed), and the K2 block appended after its MES block.
+
+## 4. Rule 79: the two shapes and why each is sound
+
+[Rule 79](../../agents/rules/79.md), `crates/qcore-c-gateway/src/type_query_positions.rs`;
+Lean `QCore.TypeQueryPositions` (`proof/QCore/TypeQueryPositions.lean`,
+audit `proof/AuditTypeQueryPositions.lean`). Every condition and refusal is a
+formula of the C04.18.9 typed rendering over the K2 terms, validated by
+`premise_formula::guarded_proposition` before any admission (an unvalidated
+table admits nothing); the gloss after each formula only reads it.
+
+**The K2 block** (`qcore-frontend/src/premise_formula.rs`, appended after
+MES; [spec C04.18.9](../../QCORE_CONTRACT_SPEC_r0_3.md), "K2 block"): sorts
+`k2_site`, `k2_event`, `k2_query`, `k2_run`; terms `#k2_condition`,
+`#k2_older_refused`, `#k2_region`, `#k2_scalar_result`, `#k2_event_of`,
+`#k2_branch_event`, `#k2_object_read`, `#k2_unaliased`, `#k2_query_of`,
+`#k2_type_operand`, `#k2_variably_modified`, `#k2_run_at`,
+`#k2_name_star_sizeof`, `#k2_declaration`. Each is modelled in Lean
+(`termModel`: `Facts`, `EventClass`, `Query`, `Run`, `nameStarSizeof`,
+`isDeclaration`).
+
+### (1) A connective condition with a type query (`LZ4_hashPosition`)
+
+Asked in `elaborate_condition` after its result is a non-pointer value, only
+when the elaboration holds a CG06 region; before the rule every such condition
+was refused at the lowering (`Branch` is no lowered event), so it only adds
+admissions.
+
+| id | formula |
+|---|---|
+| `k2_region_site` | `((#k2_older_refused(#k2_condition) && #k2_region(#k2_condition)) && #k2_scalar_result(#k2_condition))` |
+| `k2_type_query_present` | `exists (#q: k2_query) { #k2_query_of(#q,#k2_condition) }` |
+| `k2_queries_unevaluated` | `forall (#q: k2_query) { (#k2_query_of(#q,#k2_condition) => (#k2_type_operand(#q) && !#k2_variably_modified(#q))) }` |
+| `k2_events_inert` | `forall (#e: k2_event) { (#k2_event_of(#e,#k2_condition) => (#k2_branch_event(#e) \|\| (#k2_object_read(#e) && #k2_unaliased(#e)))) }` |
+
+*Sound because* a type query of a type that is not variably modified is not
+evaluated (C11 6.5.3.4p2), and every other event, on every arm, is a
+`Branch`/`Merge` (no storage) or a read of an automatic object through its own
+name whose address is never taken (no lvalue but its name designates it: no
+dereference, no non-null or live obligation, no state change). Whichever arm
+C evaluates, the condition is the identity and owes nothing
+(`an_admitted_condition_is_the_identity_on_every_path`,
+`an_admitted_condition_owes_nothing`), so lowering it as no instruction and a
+branch refining neither edge is the condition on both edges
+(`the_lowering_is_the_condition`); not refining keeps both successors.
+
+### (2) `NAME * sizeof` is no declaration (`rd_kafka_share_partition_offsets_list_new`)
+
+| id | formula |
+|---|---|
+| `k2_product_run_is_no_declaration` | `(#k2_name_star_sizeof(#k2_run_at) => !#k2_declaration(#k2_run_at))` |
+
+The total-or-reject declaration reader tried `capacity * sizeof ( T * )`
+(after the `(` of `(capacity * sizeof(T *))`) as a declaration, failed, and
+left the whole function's declared types unread; the elaborator then refused
+the store into `size`. `is_declaration_candidate` now drops a run whose
+tokens are an identifier, `*`, `sizeof`. *Sound because* a declaration naming
+a variable puts an identifier after the `*` and the keyword `sizeof` is none
+(C11 6.4.1p2, 6.7.6): no declaration is lost, and every reader of the
+candidate keeps its total-or-reject premise
+(`a_product_run_is_no_declaration`,
+`dropping_product_runs_loses_no_declaration`). What the statement means is
+then decided by the routes that already read it (the elaborator's
+`sizeof(*p)` is card CG08's type query: unevaluated unless variably
+modified).
+
+## 5. Refused shapes and their named reasons
+
+| Reason | Formula (its truth refuses) | Near-miss fixtures |
+|---|---|---|
+| `k2_refuse_no_type_query` | `forall (#q: k2_query) { !#k2_query_of(#q,#k2_condition) }` | unit vector `no_query` |
+| `k2_refuse_evaluated_query` | `exists (#q: k2_query) { (#k2_query_of(#q,#k2_condition) && (!#k2_type_operand(#q) \|\| #k2_variably_modified(#q))) }` | `(sizeof(t) == 4) && (t != 2)` (expression operand); unit: `int[n]`, a typedef desugaring to `int[n]` |
+| `k2_refuse_event` | `exists (#e: k2_event) { (#k2_event_of(#e,#k2_condition) && (!#k2_branch_event(#e) && (!#k2_object_read(#e) \|\| !#k2_unaliased(#e)))) }` | an uncontracted call in an arm, a store `(g = t)`, an address-taken local, a global read, a `volatile` formal, a path read `((b + 1)->n != 2)` |
+
+Each keeps the position's older refusal byte for byte. Shapes an older route
+already decides at base keep that answer and rule 79 is not asked (an
+assignment to a local, an increment, a member read, a contracted call, a
+variably modified `sizeof`, `||`): `what_an_older_route_decides_is_unchanged`.
+Statement side: a variably modified operand (`int (*v)[n]`) stays Unknown;
+`( T * p )` and `( T * sizeofx )` stay declaration candidates. Still out of
+scope and registered: the bit-count builtins (`K2-BUILTIN-BIT-COUNTS`) and the
+other 15 freed-alone rows of §1 (their owners).
+
+## 6. Tests and Lean
+
+- `crates/qcore-c-gateway/tests/k2_no_typed_access.rs` (13 tests): admitted
+  shapes (LZ4's own spelling with a typedef'd operand and an enum formal, both
+  operand orders, `while`, `for`, `do`; the parenthesised product with a
+  typedef'd and a plain pointer, the flexible allocation) and every near-miss
+  above. Each body's base answer is in [probes/](probes/) (`probes1`-`probes7`,
+  `*.base.out`, the base binary built from `5087f9295`).
+- `crates/qcore-c-gateway/tests/unit/type_query_positions.rs` (9 tests): every
+  formula validated and K2-only; the K2 block new, prefixed, contiguous and the
+  table's tail, its term and sort lists equal to Lean's; the formula table and
+  decision vectors equal to Lean's; each refusal negates its condition; the
+  Clang-node query reading (type operand, VLA, typedef'd VLA, expression); the
+  product run against `is_declaration_candidate`.
+- `crates/qcore-contract/tests/plugin_guarded_symbols.rs`: the SP9 ordering
+  test now allows `SP10`, `MES` and `K2` after SP9 (the one edit outside the
+  card's files besides the hooks).
+- Lean `QCore.TypeQueryPositions`, 17 audited theorems, placeholder-free,
+  axioms `propext` and `Quot.sound` only.
+
+## 7. Shared-file hook points
+
+| File | Hook |
+|---|---|
+| `crates/qcore-c-gateway/src/legacy_elaboration.rs` | `elaborate_condition`: one block before `self.lower_events(&elaborated)?`, guarded by `!elaborated.branches.is_empty()` (validated, facts, decide, one `NoOp` branch plan) |
+| `crates/qcore-c-gateway/src/typed_field_access.rs` | `is_declaration_candidate`: three lines at the top (`product_run` → `false`) |
+| `crates/qcore-c-gateway/src/lib.rs` | `mod type_query_positions;` and its `#[cfg(test)]` unit-test module, after `mod pointer_offset_place;` |
+| `crates/qcore-c-gateway/Cargo.toml` | the comment line beside MES's `qcore-frontend` dependency (the dependency itself is MES's) |
+| `crates/qcore-frontend/src/premise_formula.rs` | the K2 sorts after MES's in `RENDERED_VALUE_SORTS`, the K2 terms after MES's in `RENDERED_TERMS` (K6's k6_ block merges beside it) |
+| `crates/qcore-contract/tests/plugin_guarded_symbols.rs` | the SP9 tail check: `"SP10" \|\| "MES" \|\| "K2"` |
+| `docs/QCORE_CONTRACT_SPEC_r0_3.md` | the K2 block paragraph and table, before the SP8 block |
+| generated: `docs/agents/gateway.md`, `docs/agents/README.md`, `proof/QCore.lean` | `gen_rule_docs.py`, `gen_lean_roots.py` (rerun on merge) |
+
+## 8. Prediction and the tip probes
+
+[PREDICTION.md](PREDICTION.md), committed before the semantic change:
+`LZ4_hashPosition` and `rd_kafka_share_partition_offsets_list_new` Unknown →
+Safe on `current`, corpus (eight-home) and twelve-home; system and slice
+unchanged; 1,173 → 1,175 Safe on `current`. Tip unit probes (release build of
+the scratch harness over the real preprocessed units with libc `string.qv`,
+[scripts/tip-unit-probes.sh](scripts/tip-unit-probes.sh)):
+[probes/unit-lz4.tip.out](probes/unit-lz4.tip.out): `LZ4_hashPosition` own
+status `Safe` with no leaf (base: its one branch-condition leaf);
+`LZ4_getPosition`/`LZ4_putPosition` keep only their other callee's leaf, as
+predicted.
+[probes/unit-share.tip.out](probes/unit-share.tip.out),
+[probes/unit-share.tip.reasons.json](probes/unit-share.tip.reasons.json): the
+`size = sizeof(*list) + (capacity * sizeof(T *));` statement (`:1120`) and its
+sibling `:1082` are now admitted by the elaborator (base: the gate leaf and
+"write to an object the gateway does not read as a scalar local"); with only
+`string.qv` loaded the probe still refuses `rd_calloc` (uncontracted there,
+contracted in production), and with a probe copy of `rd_calloc`'s effect
+clauses ([probes/rd_calloc_probe.qv](probes/rd_calloc_probe.qv), not a
+provider contract) `rd_kafka_share_partition_offsets_list_new`'s own status is
+`Safe` with no leaf ([probes/unit-share-rd_calloc.tip.out](probes/unit-share-rd_calloc.tip.out)).
+`rd_kafka_share_partition_offsets_new` keeps its `:1085` member-store leaf
+(an `unknown_alias:elem` also appears beside it in the probe), as predicted
+Unknown. A unit's own result in these probes is the whole unit's (Unknown).
+
+## 9. Records
 
 - [census/](census/): re-census join, leaf fates, Monkey line offsets, shapes,
-  the unrun selection.
+  product-run sites, the unrun selection.
 - [scripts/](scripts/): `slim.py`, `recensus.py`, `offsets.py`, `fate.py`,
   `allsites.py`, `classify.py` (re-census); `probe-build.sh`, `probe-run.sh`,
-  `preprocess.py`, `unit-probe.sh`, `parity_reasons.py` (probes);
-  `build.sh`, `run_current_census.py` (the stopped unit reproduction).
+  `preprocess.py`, `unit-probe.sh`, `parity_reasons.py`, `tip-unit-probes.sh`
+  (probes); `product_sites.py`; `targeted-tests.sh` (the card's checks);
+  `build.sh`, `run_current_census.py` (the stopped unit reproduction);
+  `make_amendments.py`.
 - [probes/](probes/): probe inputs, outputs and parity extracts.
 - [integration-amendments.json](integration-amendments.json).
