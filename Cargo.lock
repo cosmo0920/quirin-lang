@@ -125,7 +125,6 @@ version = "0.1.0"
 dependencies = [
  "qcore-contract",
  "qcore-core",
- "qcore-frontend",
  "qcore-gateway-rule-api",
  "qcore-schemas",
  "rule-32a-caller-frame-hold",

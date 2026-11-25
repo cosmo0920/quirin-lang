@@ -30,7 +30,7 @@ fn fused(text: &str) -> Vec<String> {
 #[test]
 fn every_formula_is_a_validated_typed_rendering() {
     for (id, formula) in formulas() {
-        qcore_frontend::premise_formula::guarded_proposition(id, formula)
+        qcore_contract::premise_formula::guarded_proposition(id, formula)
             .unwrap_or_else(|error| panic!("{id}: {error}"));
     }
     assert_eq!(validated(), Ok(()));
@@ -54,7 +54,7 @@ fn prose_is_refused_by_the_validator() {
         "#mes_in(#mes_store,#mes_parent)",
     ] {
         assert!(
-            qcore_frontend::premise_formula::guarded_proposition("mes_probe", prose).is_err(),
+            qcore_contract::premise_formula::guarded_proposition("mes_probe", prose).is_err(),
             "{prose}"
         );
     }
@@ -103,7 +103,7 @@ fn the_formula_table_is_lean_s() {
 
 #[test]
 fn the_mes_block_is_lean_s() {
-    let names = qcore_frontend::premise_formula::RENDERED_TERMS
+    let names = qcore_contract::premise_formula::RENDERED_TERMS
         .iter()
         .filter(|term| term.block == "MES")
         .map(|term| format!("\"{}\"", term.name))

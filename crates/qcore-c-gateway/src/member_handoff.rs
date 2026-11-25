@@ -20,7 +20,7 @@
 //! "Plus, banned for just written down as English description. We must write
 //! down with logical symbols for them." Every condition below is therefore a
 //! formula of the C04.18.9 typed rendering over the MES terms
-//! (`qcore_frontend::premise_formula::RENDERED_TERMS`, block `MES`), checked
+//! (`qcore_contract::premise_formula::RENDERED_TERMS`, block `MES`), checked
 //! by the premise-formula validator ([`validated`]); the prose beside each is
 //! a gloss.
 //!
@@ -446,7 +446,7 @@ pub fn validated() -> Result<(), String> {
     VALIDATED
         .get_or_init(|| {
             for (id, formula) in formulas() {
-                qcore_frontend::premise_formula::guarded_proposition(id, formula)?;
+                qcore_contract::premise_formula::guarded_proposition(id, formula)?;
             }
             Ok(())
         })

@@ -25,11 +25,12 @@ const LEAN: &str = include_str!("../../../../proof/QCore/TypeQueryPositions.lean
 #[test]
 fn every_formula_is_a_checked_typed_rendering_formula() {
     for (id, formula) in formulas() {
-        qcore_frontend::premise_formula::guarded_proposition(id, formula).unwrap_or_else(|e| {
-            let tokens = qcore_frontend::lexer::lex(formula).expect("lexes");
+        qcore_contract::premise_formula::guarded_proposition(id, formula).unwrap_or_else(|e| {
+            let tokens = qcore_contract::formula_syntax::lexer::lex(formula).expect("lexes");
             let kinds = tokens.into_iter().map(|t| t.kind).collect::<Vec<_>>();
-            let canonical = qcore_frontend::quant_proposition::parse_formula_tokens(&kinds)
-                .map(|f| qcore_frontend::quant_proposition::print(&f));
+            let canonical =
+                qcore_contract::formula_syntax::quant_proposition::parse_formula_tokens(&kinds)
+                    .map(|f| qcore_contract::formula_syntax::quant_proposition::print(&f));
             panic!("{id}: {e}\ncanonical: {canonical:?}")
         });
     }
@@ -54,12 +55,12 @@ fn every_formula_names_only_k2_terms_and_sorts() {
 
 #[test]
 fn the_k2_block_is_new_prefixed_and_lean_s() {
-    use qcore_frontend::premise_formula::{RENDERED_TERMS, RENDERED_VALUE_SORTS};
+    use qcore_contract::premise_formula::{RENDERED_TERMS, RENDERED_VALUE_SORTS};
     let k2: Vec<_> = RENDERED_TERMS.iter().filter(|t| t.block == "K2").collect();
     assert_eq!(k2.len(), 14);
     for t in &k2 {
         assert!(t.name.starts_with("k2_"), "#{}", t.name);
-        assert!(qcore_frontend::premise_formula::term(t.name).is_none());
+        assert!(qcore_contract::premise_formula::term(t.name).is_none());
         assert_eq!(
             RENDERED_TERMS.iter().filter(|u| u.name == t.name).count(),
             1
@@ -81,10 +82,13 @@ fn the_k2_block_is_new_prefixed_and_lean_s() {
     assert_eq!(sorts.len(), 4);
     let line = format!("def k2Sorts : List String := [{}]", sorts.join(", "));
     assert!(LEAN.lines().any(|l| l == line), "no `{line}`");
-    // Appended last: the K2 block is contiguous and the table's tail.
+    // Appended after MES: the K2 block is contiguous and followed only by
+    // the K6 block (card K6-DIRECT-POSITION-ACCESS, rule 81), never reordered.
     let blocks: Vec<_> = RENDERED_TERMS.iter().map(|t| t.block).collect();
     let first = blocks.iter().position(|b| *b == "K2").unwrap();
-    assert!(blocks[first..].iter().all(|b| *b == "K2"));
+    let count = blocks.iter().filter(|b| **b == "K2").count();
+    assert!(blocks[first..first + count].iter().all(|b| *b == "K2"));
+    assert!(blocks[first + count..].iter().all(|b| *b == "K6"));
 }
 
 #[test]

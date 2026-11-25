@@ -59,7 +59,7 @@
 //! has none. `QCore.AddressArrowPlace`.
 //!
 //! Every condition and refusal is a formula of the C04.18.9 typed rendering
-//! over the K6 block (`qcore_frontend::premise_formula::RENDERED_TERMS`,
+//! over the K6 block (`qcore_contract::premise_formula::RENDERED_TERMS`,
 //! block `K6`; sorts `k6_amp`, `k6_member`, `k6_place`), checked by the
 //! premise-formula validator `guarded_proposition` ([`FORMULAS`], the same
 //! table as `crates/qcore-frontend/tests/rule81_formulas.rs` and
@@ -237,7 +237,7 @@ mod tests {
     #[test]
     fn every_formula_is_a_validated_typed_rendering() {
         for (id, formula) in FORMULAS {
-            qcore_frontend::premise_formula::guarded_proposition(id, formula)
+            qcore_contract::premise_formula::guarded_proposition(id, formula)
                 .unwrap_or_else(|error| panic!("{id}: {error}"));
         }
     }
@@ -267,14 +267,14 @@ mod tests {
     /// The K6 block is Lean's `k6Terms`, in order.
     #[test]
     fn the_k6_block_is_lean_s() {
-        let names = qcore_frontend::premise_formula::RENDERED_TERMS
+        let names = qcore_contract::premise_formula::RENDERED_TERMS
             .iter()
             .filter(|term| term.block == "K6")
             .map(|term| format!("\"{}\"", term.name))
             .collect::<Vec<_>>();
         let line = format!("def k6Terms : List String := [{}]", names.join(", "));
         assert!(LEAN.lines().any(|l| l == line), "no `{line}`");
-        let sorts = qcore_frontend::premise_formula::RENDERED_VALUE_SORTS
+        let sorts = qcore_contract::premise_formula::RENDERED_VALUE_SORTS
             .iter()
             .filter(|(s, _)| s.starts_with("k6_"))
             .map(|(s, _)| format!("\"{s}\""))

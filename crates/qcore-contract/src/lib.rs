@@ -20,6 +20,17 @@
 //! `chunk_contract` evaluates declared schema paths; source import remains a
 //! separately checked boundary in the caller.
 
+/// The premise-formula vocabulary and validator, re-exported for the gateway
+/// (rules 38k, 79 and 81 check their conditions with it): the workspace
+/// layering lets `qcore-c-gateway` depend on this crate, never on
+/// `qcore-frontend` directly.
+pub use qcore_frontend::premise_formula;
+/// The G01p lexer and quantified-proposition printer behind
+/// [`premise_formula`], re-exported for the gateway's formula-table tests
+/// (canonical printing checks), under the same layering rule.
+pub mod formula_syntax {
+    pub use qcore_frontend::{lexer, quant_proposition};
+}
 pub mod bounds_contract;
 pub mod bounds_hypotheses;
 pub mod bounds_quant;

@@ -17,7 +17,7 @@
 //!
 //! USER DECISION 2026-11-25 (verbatim): "Build the 2 rows". Every condition
 //! and named refusal below is a formula of the C04.18.9 typed rendering over
-//! the K2 terms (`qcore_frontend::premise_formula::RENDERED_TERMS`, block
+//! the K2 terms (`qcore_contract::premise_formula::RENDERED_TERMS`, block
 //! `K2`), checked by the premise-formula validator ([`validated`]); the prose
 //! beside each is a gloss.
 //!
@@ -289,7 +289,7 @@ pub(crate) fn validated() -> Result<(), String> {
     VALIDATED
         .get_or_init(|| {
             for (id, formula) in formulas() {
-                qcore_frontend::premise_formula::guarded_proposition(id, formula)?;
+                qcore_contract::premise_formula::guarded_proposition(id, formula)?;
             }
             Ok(())
         })
