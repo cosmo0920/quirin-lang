@@ -798,6 +798,14 @@ pub struct ResourceContracts {
     /// serializes byte for byte as it did before the card.
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
     library_version: BTreeMap<String, crate::library_version::LibraryVersionBound>,
+    /// Card QUIRIN-AUDIT-CONNECT (contract spec C15.1): the declared
+    /// cross-crate contract dependencies of every declaration that states one
+    /// (`resource_contract_dependency`), keyed by function name, each with
+    /// an empty dependent crate (the module's owner is known only on a load
+    /// path). Omitted when empty, so every environment without one
+    /// serializes byte for byte as it did before the card.
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    contract_dependency: BTreeMap<String, Vec<crate::connect::DeclaredDependency>>,
     /// Card W45-REFUTED-CONTRACT-WITHDRAWAL: declarations some analysed body
     /// refutes, found by an audit's first phase (contract spec §C06.4). Unlike
     /// a pin mismatch the declaration stays in `functions`, so its own body is
@@ -884,6 +892,7 @@ impl std::fmt::Debug for ResourceContracts {
             .field("revision", &self.revision)
             .field("pin_mismatch", &self.pin_mismatch)
             .field("library_version", &self.library_version)
+            .field("contract_dependency", &self.contract_dependency)
             .field("refuted_by_body", &self.refuted_by_body)
             .field("relational", &self.relational)
             .field("retaining", &self.retaining)
@@ -958,6 +967,13 @@ impl ResourceContracts {
                 "result_ranges": entry(&self.result_ranges, name)?,
                 "member_effects": entry(&self.member_effects, name)?,
             });
+            // Card QUIRIN-AUDIT-CONNECT: a name with declared dependencies
+            // adds its entry; every other name hashes exactly as before.
+            let mut tables = tables;
+            if let Some(dependencies) = self.contract_dependency.get(name) {
+                tables["contract_dependency"] =
+                    serde_json::to_value(dependencies).map_err(|error| error.to_string())?;
+            }
             entries.insert(name.clone(), tables);
         }
         let value = serde_json::json!({
@@ -984,6 +1000,7 @@ impl ResourceContracts {
             || self.revision.contains_key(name)
             || self.pin_mismatch.contains_key(name)
             || self.library_version.contains_key(name)
+            || self.contract_dependency.contains_key(name)
             || self.refuted_by_body.contains_key(name)
             || self.relational.contains_key(name)
             || self.retaining.contains_key(name)
@@ -1014,6 +1031,7 @@ impl ResourceContracts {
             revision: BTreeMap::new(),
             pin_mismatch: BTreeMap::new(),
             library_version: BTreeMap::new(),
+            contract_dependency: BTreeMap::new(),
             refuted_by_body: BTreeMap::new(),
             relational: BTreeMap::new(),
             retaining: BTreeMap::new(),
@@ -1315,6 +1333,25 @@ impl ResourceContracts {
         &self.library_version
     }
 
+    /// Card QUIRIN-AUDIT-CONNECT: every declaration's declared contract
+    /// dependencies, keyed by function name.
+    #[must_use]
+    pub fn contract_dependencies(
+        &self,
+    ) -> &BTreeMap<String, Vec<crate::connect::DeclaredDependency>> {
+        self.lookups.whole("contract_dependencies");
+        &self.contract_dependency
+    }
+
+    /// Declares the environment's contract dependencies. The contract loader
+    /// rechecks them against the retained source text.
+    pub fn set_contract_dependencies(
+        &mut self,
+        dependencies: BTreeMap<String, Vec<crate::connect::DeclaredDependency>>,
+    ) {
+        self.contract_dependency = dependencies;
+    }
+
     /// Declares the environment's library version ranges. The contract
     /// loader rechecks them against the retained source text.
     pub fn set_library_versions(
@@ -1351,9 +1388,11 @@ impl ResourceContracts {
         detail: String,
     ) -> Result<(), String> {
         // Card OPENSSL-PROVIDER-PLUGIN: a library version range is checked
-        // whatever the declaration's revision mode.
+        // whatever the declaration's revision mode; card QUIRIN-AUDIT-CONNECT:
+        // so is a declared contract dependency.
         if self.revision_mode(name) != crate::contract_revision::RevisionMode::Pinned
             && !reason.is_library_version()
+            && !reason.is_dependency()
         {
             return Err(format!("`{name}` is flexible and has no pin to mismatch"));
         }

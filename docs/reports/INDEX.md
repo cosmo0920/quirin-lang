@@ -996,6 +996,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [quiet-emission-streams](quiet-emission-streams/README.md) | Quiet emission and composable streams |
 
+| [quirin-audit-connect](quirin-audit-connect/README.md) | QUIRIN-AUDIT-CONNECT: connecting measurements and contracts |
+
 | [quirin-provider-shared](quirin-provider-shared/README.md) | QUIRIN-PROVIDER-SHARED: the providers' shared assets become real crates |
 
 | [quirin-review-integration](quirin-review-integration/README.md) | Quirin review priority integration |

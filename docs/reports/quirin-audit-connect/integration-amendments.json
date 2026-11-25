@@ -1,0 +1,75 @@
+{
+ "schema": "quirin-amendments/2",
+ "card": "QUIRIN-AUDIT-CONNECT",
+ "base": "9aed1913a",
+ "measured_tip": "f528c5638",
+ "profiles": [],
+ "increment_paragraph": "**QUIRIN-AUDIT-CONNECT** (round 38; USER DECISIONS 2026-11-26, connecting two or more measurements and contracts, measurements first, and declared cross-crate contract dependencies; contract spec C15.1 and the CX block of C04.18.9; Lean `QCore.MeasureConnect`; [report](../../reports/quirin-audit-connect/README.md)). `quirin-audit measure chain` joins two or more saved native-comparison records or measured side directories into one `quirin-measure-chain/1` record: links checked fail-closed on tool, revision, analyzer, bundles, build commit, inputs, link resolution, rule switch and dependency graph (an unrecorded field refuses, a refused link splits the chain, never bridged), per-route completeness, every row reconciled with its verdict at every side (cancelled and cascading moves kept), per-step contract and evidence changes, moves attributed to predictions, record checks or the landed cards' own records, and every unattributed new Safe flagged and failing. `measure compose` composes two or more contract bundles as data (`quirin-contract-composition/1`): libc declarations outside quirin-provider-libc refused, duplicates decided by C06.6's stamps, verdicts the four-value join with every contributor's reasons, plugin records checked against their firewall class. Declarations may state `requires resource_contract_dependency(\"CRATE\", NS::NAME, since/removed/sha256)`; the load path records them (`providers/contracts.py sync`, `quirin-audit plugin views --write`) and refuses a stale entry or a cycle, and the audit withholds every declaration whose dependency does not resolve (dependency-changed Pending, dependency-unresolved Unknown, a held target holding its dependents); no shipped contract adopts one (each adoption changes a pinned digest). Every condition is one of 60 CX formulas checked by `guarded_proposition`; 90 Lean theorems. qcore-schemas 29.0.0. The demonstration on committed records: landing-556460e31 joins none of the later landings (other bases), the out-parameter, SP2-SP4 and member-effect landings join, and with its cards' records the landing's hand attribution is reproduced (22 moves attributed, 6 unpredicted ones flagged). No card gate (round-38 brief); targeted tests, Clippy, fmt, workspace_layering and the Lean module and audit.",
+ "status_edits": [],
+ "ledger": [
+  {
+   "id": "CONNECT-ADOPT-DECLARED-DEPENDENCIES",
+   "operation": "register",
+   "title": "No shipped contract states a declared contract dependency yet: onigmo's, librdkafka's and cmetrics' reliance on libc's and cfl's declarations stays implicit",
+   "text": "QUIRIN-AUDIT-CONNECT added `requires resource_contract_dependency(...)` (C15.1) but adopted it nowhere: one clause changes its declaration's normalised digest, so its lock entry stops covering it (contract-changed, Pending) until a person re-pins it. The scratch trial (docs/reports/quirin-audit-connect/scripts/adoption_trial.py, onig_new -> libc::malloc) shows what follows: the module diff, the load path's contract_dependencies entry, the lock entry 2e6db491... no longer covering the text, a Cargo dependency from quirin-provider-onigmo on quirin-provider-libc (cx_declared_crate) and providers/Cargo.lock, the user load path and the checker binding's module digest. DISCHARGE: per crate, state each dependency its contracts rely on (allocator, list and string contracts), regenerate the load paths, review and re-pin every changed declaration, and measure; a user decision on the scope (every reliance, or only ownership-transferring ones) first.",
+   "source": "docs/reports/quirin-audit-connect/README.md",
+   "recorded_by": "QUIRIN-AUDIT-CONNECT"
+  },
+  {
+   "id": "CONNECT-SDK-LOAD-PATH-DEPENDENCIES",
+   "operation": "register",
+   "title": "`quirin-plugin load-path` does not write a user crate's contract_dependencies; only `quirin-audit plugin views --write` does",
+   "text": "QUIRIN-AUDIT-CONNECT: the core manifest reader refuses a user crate whose modules declare a contract dependency the load path does not record (QI014), so a user who regenerates the load path with the plugin SDK must run `quirin-audit plugin views --write` after it (as for the resource views). The SDK (providers/quirin-provider-plugin/src/load_path.rs) links no core crate and has no clause reader. DISCHARGE: either have the SDK emit the entry with a lexical reader the core reader cross-checks, or document the two-step workflow in the SDK README and its `check`.",
+   "source": "docs/reports/quirin-audit-connect/README.md",
+   "recorded_by": "QUIRIN-AUDIT-CONNECT"
+  },
+  {
+   "id": "CONNECT-BASELINE-SIDE-IDENTITY",
+   "operation": "register",
+   "title": "A native-comparison record does not carry a baseline side's analyzer or bundle identity, so `measure chain` refuses every link through a baseline side",
+   "text": "QUIRIN-AUDIT-CONNECT demonstration: landing-556460e31 -> MEMBER-EFFECT-COMPONENT-SCOPE and -> landing-777fba16e are refused with cx_refuse_unrecorded because a `baseline:` side's record carries `binary: null, bundles: null` (the baseline manifest has them; `measure` does not copy them into `sides`). Fail-closed and correct, but it keeps landings measured against a published baseline from joining the rev-measured cards. DISCHARGE: `measure` copies the verified baseline manifest's binary SHA-256, bundles and inputs into the side record; `measure chain` then joins on them (no re-measurement of committed records; new records only).",
+   "source": "docs/reports/quirin-audit-connect/README.md",
+   "recorded_by": "QUIRIN-AUDIT-CONNECT"
+  },
+  {
+   "id": "CONNECT-CHAIN-SHARED-TIP-COMPARISONS",
+   "operation": "register",
+   "title": "A record comparing prev->tip and common->tip (a shared tip) chains only through its side directories",
+   "text": "QUIRIN-AUDIT-CONNECT: the Priority 0 remeasurement compares prev->tip and common->tip in one record; `measure chain --step` takes one comparison per step in its own direction, so prev -> common -> tip is chained with `--runs sides/prev sides/common --runs sides/common sides/tip` (compared here, no re-measurement). DISCHARGE (optional): a reversed step (`--step RECORD#common->tip~`) whose rows are the comparison's with sides swapped, with its own fixture and Lean parity of the reversal.",
+   "source": "docs/reports/quirin-audit-connect/README.md",
+   "recorded_by": "QUIRIN-AUDIT-CONNECT"
+  },
+  {
+   "id": "CONNECT-PUBLICATION-CONSUMES-CHAINS",
+   "operation": "register",
+   "title": "`land.py publish` and `evaluation_profiles.py check --history` do not yet read `quirin-measure-chain/1`",
+   "text": "QUIRIN-AUDIT-CONNECT delivered the chained record but did not wire its consumers: the publication step still compares one record against one baseline and cannot join routes measured at different baselines. DISCHARGE: `land.py publish` accepts a joined chain whose last side is the published tip (refusing a refused or incomplete chain and an unattributed new Safe), and `evaluation_profiles.py check --history` reads per-row histories from it; with tests.",
+   "source": "docs/reports/quirin-audit-connect/README.md",
+   "recorded_by": "QUIRIN-AUDIT-CONNECT"
+  },
+  {
+   "id": "CONNECT-COMPOSE-CURRENT-DIGESTS",
+   "operation": "register",
+   "title": "`measure compose` composes the bundles' reviewed (locked) declarations, not their current texts",
+   "text": "QUIRIN-AUDIT-CONNECT: the measurement plugin links no contract parser, so a bundle's declarations are its contracts.lock entries with their reviewed digests; a declaration unpinned or changed since review is outside the composition (the loader holds it, C06.2). DISCHARGE: a host-written bundle record (`quirin-audit plugin views` or the report's contract_revision inventory) carrying every declaration's current normalised digest, read by `measure compose`, so a stale lock entry is named in the composition too.",
+   "source": "docs/reports/quirin-audit-connect/README.md",
+   "recorded_by": "QUIRIN-AUDIT-CONNECT"
+  },
+  {
+   "id": "CONNECT-DEPENDENCY-OTHER-VIEWS",
+   "operation": "register",
+   "title": "A declared contract dependency is read only in the resource view; the bounds and outer loaders refuse the clause",
+   "text": "QUIRIN-AUDIT-CONNECT: `resource_contract_dependency` is a resource-v1 requirement. A bounds or outer contract relying on another crate's contract cannot state it, and a module in those views stating it is refused by their loaders (fail-closed). DISCHARGE: read the clause in the bounds contract v1 and outer contract v1 loaders with the same reader and resolution, when a contract of those views needs one.",
+   "source": "docs/reports/quirin-audit-connect/README.md",
+   "recorded_by": "QUIRIN-AUDIT-CONNECT"
+  },
+  {
+   "id": "CONNECT-RESOLVER-ITERATION-PARITY",
+   "operation": "register",
+   "title": "The Lean model states the dependency holds as a least fixed point; that the Rust iteration reaches it is a premise",
+   "text": "QUIRIN-AUDIT-CONNECT: QCore.MeasureConnect.Held is the inductive least set closed under the four causes, and its order independence and acyclicity are proved; `qcore_schemas::connect::resolve` iterates to a fixed point over sorted dependencies, which the Rust tests exercise (transitive, cycle, order reversal) but no theorem relates to `Held`. DISCHARGE: a Lean model of the iteration with fuel = the number of dependencies and a theorem that it equals `Held`, bound to the Rust function by decision vectors.",
+   "source": "docs/reports/quirin-audit-connect/README.md",
+   "recorded_by": "QUIRIN-AUDIT-CONNECT"
+  }
+ ]
+}

@@ -30,7 +30,18 @@
 //!     [--legacy-rows] [--reuse-contract-only [--verify-reuse]] [--link-resolution NAME]...
 //! quirin-audit --plugin-path DIR --output <baselines>/<sha> measure publish \
 //!     --from OUT/sides/NAME [--routes R,...]
+//! quirin-audit --plugin-path DIR --output OUT measure chain \
+//!     (--step RECORD[#BEFORE->AFTER] | --runs BEFORE_DIR AFTER_DIR)... \
+//!     [--declared N=PREDICTION.md]... [--attribute N=RECORD[#BEFORE->AFTER]]...
+//! quirin-audit --plugin-path DIR --output OUT measure compose --load-path FILE... \
+//!     [--bundle CRATE]... [--report REPORT.json] [--libc-names FILE]
 //! ```
+//!
+//! Card QUIRIN-AUDIT-CONNECT: `measure chain` joins two or more saved
+//! measurements into one chained record ([`chain`], `quirin-measure-chain/1`)
+//! and `measure compose` composes two or more contract bundles for one
+//! measurement or verdict ([`compose`], `quirin-contract-composition/1`);
+//! neither measures, and neither claims a verdict.
 //!
 //! The output is one **native-comparison record**
 //! (`OUT/native-comparison.json`, schema [`COMPARISON_SCHEMA`]): per side its
@@ -53,7 +64,9 @@ use quirin_audit_plugin::{Request, Response, Severity};
 use serde_json::{Value, json};
 
 pub mod baseline;
+pub mod chain;
 pub mod compare;
+pub mod compose;
 pub mod declared;
 pub mod inputs;
 pub mod ledger;
@@ -84,8 +97,11 @@ pub const USAGE: &str = "usage: quirin-audit --output OUT measure (--profile NAM
 [--source-date-epoch SECONDS|none] [--baselines DIR] [--legacy-rows] \
 [--reuse-contract-only [--verify-reuse]] [--link-resolution NAME]...\n       quirin-audit --output \
 <baselines>/<sha> measure \
-publish --from OUT/sides/NAME [--routes R,...]\nSPEC: rev:<rev> | <directory> | <binary> | \
-baseline:<sha> | run:<side directory>";
+publish --from OUT/sides/NAME [--routes R,...]\n       quirin-audit --output OUT measure chain \
+(--step RECORD[#BEFORE->AFTER] | --runs BEFORE_DIR AFTER_DIR)... [--declared N=FILE]... \
+[--attribute N=RECORD[#BEFORE->AFTER]]...\n       quirin-audit --output OUT measure compose \
+--load-path FILE... [--bundle CRATE]... [--report REPORT.json] [--libc-names FILE]\nSPEC: \
+rev:<rev> | <directory> | <binary> | baseline:<sha> | run:<side directory>";
 
 /// The default fixed mount root of snapshot sides and the mirror.
 pub const DEFAULT_MOUNT_ROOT: &str = "/tmp/quirin-measure";
@@ -344,6 +360,13 @@ fn canonical(path: &Path) -> Result<PathBuf, String> {
 ///
 /// A refusal or failure, with its reason (the response is then `failed`).
 pub fn answer(request: &Request) -> Result<Response, String> {
+    // Card QUIRIN-AUDIT-CONNECT: `measure chain` joins saved measurements and
+    // `measure compose` composes contract bundles; neither measures.
+    match request.arguments.first().map(String::as_str) {
+        Some("chain") => return chain::answer(request, &request.arguments[1..]),
+        Some("compose") => return compose::answer(request, &request.arguments[1..]),
+        _ => {}
+    }
     let options = parse(&request.arguments)?;
     if options.publish {
         return publish(request, &options);
@@ -1125,6 +1148,9 @@ fn measure(request: &Request, options: &Options) -> Result<Response, String> {
                 let (mut record, measured) = compare::rows(&left_rows, &right_rows);
                 let deltas = compare::deltas(&left_rows, &right_rows);
                 record["status_deltas"] = json!(deltas);
+                // Card QUIRIN-AUDIT-CONNECT Part C: each side's declared
+                // contract-dependency graph, recorded only when one has one.
+                chain::record_dependency_graphs(&mut record, &left_rows, &right_rows);
                 record["composition"] = match (&left_rows.contribution, &right_rows.contribution) {
                     (Some(left), Some(right)) => {
                         let (_, union) = compare::union(left, right);

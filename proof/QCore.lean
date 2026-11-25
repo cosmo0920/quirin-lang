@@ -278,6 +278,7 @@ import QCore.LoopSwitchCallEvaluation
 import QCore.LoopWindows
 import QCore.Lowering
 import QCore.MayAlias
+import QCore.MeasureConnect
 import QCore.MemberAddress
 import QCore.MemberAddressReader
 import QCore.MemberCustodyAttribution

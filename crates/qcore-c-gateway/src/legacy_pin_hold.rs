@@ -84,11 +84,31 @@ pub fn library_version_hold_description(callee: &str, reason: &str) -> String {
     )
 }
 
+/// Card QUIRIN-AUDIT-CONNECT (contract spec C15.1): the refusal a call site
+/// carries when its callee's contract is withheld because a dependency it
+/// declares on another crate's contract does not resolve
+/// (`dependency-unresolved`). Like [`library_version_hold_description`] it
+/// is no [`held_call`]: no person's review of this contract resolves it, so
+/// the call is `Unknown` (`missing-premise`). A changed target digest
+/// (`dependency-changed`) keeps [`hold_description`] and is `Pending`.
+#[must_use]
+pub fn dependency_hold_description(callee: &str) -> String {
+    format!(
+        "call to `{callee}` whose declared contract dependency does not resolve \
+         (dependency-unresolved)"
+    )
+}
+
 /// The description a held call site of `callee` carries, by the reason its
 /// declaration is withheld for.
 #[must_use]
 pub fn hold_description_for(callee: &str, contracts: &ResourceContracts) -> String {
     match contracts.pin_mismatch().get(callee) {
+        Some(withheld)
+            if withheld.reason.is_dependency() && !withheld.reason.is_human_resolvable() =>
+        {
+            dependency_hold_description(callee)
+        }
         Some(withheld) if !withheld.reason.is_human_resolvable() => {
             library_version_hold_description(callee, withheld.reason.as_str())
         }

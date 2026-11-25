@@ -535,6 +535,18 @@ const REASON_RULES: &[(&str, ReasonCategory)] = &[
         "not in force at the audited library version",
         ReasonCategory::StaleEvidence,
     ),
+    // ---- a declared contract dependency that does not resolve (card
+    // QUIRIN-AUDIT-CONNECT, contract spec C15.1): the contract relies on
+    // another crate's declaration that is missing, unloaded, out of range,
+    // named under the wrong crate, on a cycle or held `Unknown`, so a premise
+    // the contract needs is unusable: `missing-premise`, never
+    // human-resolvable. Matched before every source-subject rule. Site:
+    // `qcore_c_gateway::legacy_c`'s held-call statement
+    // (`pin_hold::dependency_hold_description`).
+    (
+        "whose declared contract dependency does not resolve",
+        ReasonCategory::MissingPremise,
+    ),
     // ---- a declared contract its own analysed body refutes (card
     // W45-REFUTED-CONTRACT-WITHDRAWAL, contract spec C06.4): the call was
     // held, and the declaration is evidence about a body other than the one

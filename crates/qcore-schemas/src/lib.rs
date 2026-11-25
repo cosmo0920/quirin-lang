@@ -25,6 +25,9 @@ pub mod arm_release;
 pub mod callback;
 // Card AUDIT-COMPOSITION: the integration semigroup across results.
 pub mod composition;
+// Card QUIRIN-AUDIT-CONNECT: chained measurements, composed bundles and
+// declared contract dependencies (the pure part).
+pub mod connect;
 pub mod constructed_state;
 pub mod contract;
 pub mod descriptor_cell;

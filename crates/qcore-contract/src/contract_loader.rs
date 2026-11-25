@@ -706,6 +706,10 @@ struct LoadedDeclaration {
     /// Card OPENSSL-PROVIDER-PLUGIN: the declaration's library version range
     /// (`requires resource_library_version(...)`), at most one.
     library_version: Option<qcore_schemas::library_version::LibraryVersionBound>,
+    /// Card QUIRIN-AUDIT-CONNECT: the declaration's declared contract
+    /// dependencies (`requires resource_contract_dependency(...)`, C15.1), in
+    /// clause order.
+    contract_dependencies: Vec<crate::contract_dependency::WrittenDependency>,
     /// Card W48-QR-C-STRUCT-IMPORT: the declaration carries
     /// `[| quant #c_ffi |]`. It is withheld from the function map.
     ffi: Option<DeclaredFfiFunction>,
@@ -1005,6 +1009,9 @@ fn load_resource_contract_sources_strict(
     // Card OPENSSL-PROVIDER-PLUGIN: the library version range of every
     // declaration that states one, pending declarations included.
     let mut library_versions = BTreeMap::new();
+    // Card QUIRIN-AUDIT-CONNECT: the declared contract dependencies of every
+    // declaration that states one, pending declarations included.
+    let mut contract_dependencies = BTreeMap::new();
     for (path, source) in sources {
         reject_retired_premise_directive(path, source)?;
         reject_unresolved_inclusion(path, source)?;
@@ -1041,6 +1048,16 @@ fn load_resource_contract_sources_strict(
             }
             if let Some(range) = loaded.library_version {
                 library_versions.insert(decl.name.clone(), range);
+            }
+            if !loaded.contract_dependencies.is_empty() {
+                contract_dependencies.insert(
+                    decl.name.clone(),
+                    loaded
+                        .contract_dependencies
+                        .iter()
+                        .map(|written| written.of("", &decl.name, path))
+                        .collect::<Vec<_>>(),
+                );
             }
             // Card W45-CONTRACT-DEFERRED-REVIEW: a declaration carrying a
             // review marker is validated in full above and then withheld. It
@@ -1082,6 +1099,7 @@ fn load_resource_contract_sources_strict(
     contracts.set_pending_review(pending);
     contracts.set_declared_revisions(revisions);
     contracts.set_library_versions(library_versions);
+    contracts.set_contract_dependencies(contract_dependencies);
     Ok(Ok(contracts))
 }
 
@@ -1450,6 +1468,7 @@ pub fn check_source_assumptions(contracts: &ResourceContracts) -> Result<(), Str
             || loaded.pending_review() != contracts.pending_review()
             || loaded.declared_revisions() != contracts.declared_revisions()
             || loaded.library_versions() != contracts.library_versions()
+            || loaded.contract_dependencies() != contracts.contract_dependencies()
             || loaded.relational() != &declared_relational(contracts)
             || loaded.retaining() != &declared_retaining(contracts, false)
             || loaded.guarded_retaining() != &declared_retaining(contracts, true)
@@ -1999,6 +2018,7 @@ fn load_function_in(
     let mut review: Vec<ReviewDeferral> = Vec::new();
     let mut revision: Vec<qcore_schemas::contract_revision::RevisionMarker> = Vec::new();
     let mut library_version: Option<qcore_schemas::library_version::LibraryVersionBound> = None;
+    let mut contract_dependencies: Vec<crate::contract_dependency::WrittenDependency> = Vec::new();
     let mut collected = counted_users::Collected::default();
     // Card CG23-RELATIONAL-POSTCONDITIONS: every `resource_on_return` clause,
     // in clause order.
@@ -2089,6 +2109,25 @@ fn load_function_in(
             if library_version.replace(range).is_some() {
                 return Err("a declaration states at most one library version range".into());
             }
+            continue;
+        }
+        // Card QUIRIN-AUDIT-CONNECT: a declared contract dependency (C15.1),
+        // a requirement that adds no obligation; one per target.
+        if let Some(written) = crate::contract_dependency::contract_dependency_clause(
+            requires,
+            &clause.value.expression_source,
+        )? {
+            if contract_dependencies.iter().any(|known| {
+                known.target_crate == written.target_crate
+                    && known.target_function == written.target_function
+            }) {
+                return Err(format!(
+                    "a declaration states one contract dependency per target; `{}::{}` is \
+                     named twice",
+                    written.target_namespace, written.target_function
+                ));
+            }
+            contract_dependencies.push(written);
             continue;
         }
         // Card W45-CONTRACT-REVISION-MODE: a revision marker, contract-level (a
@@ -3495,6 +3534,7 @@ fn load_function_in(
         body_checked,
         revision: crate::contract_revision::declared_revision(revision)?,
         library_version,
+        contract_dependencies,
         ffi: None,
     })
 }
@@ -3708,6 +3748,7 @@ fn load_ffi_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, Stri
         body_checked: false,
         revision: None,
         library_version: None,
+        contract_dependencies: Vec::new(),
         ffi: Some(DeclaredFfiFunction {
             name: decl.name.clone(),
             module: String::new(),

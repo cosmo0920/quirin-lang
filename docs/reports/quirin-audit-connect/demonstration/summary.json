@@ -1,0 +1,3849 @@
+{
+ "landing-556460e31-attributed-to-its-cards": {
+  "attributed_by_source": {
+   "chained-assignment-inner-destination/integration/native-comparison.json.gz (base->tip)": [
+    "corpus:rd_kafka_sasl_safe_string#0"
+   ],
+   "derived-from-function-rows": [
+    "corpus:librdkafka"
+   ],
+   "member-effect-component-scope/integration/native-comparison.json.gz (base->tip)": [
+    "corpus:cmt_opts_exit#0"
+   ],
+   "member-release-untyped-base/integration/native-comparison.json.gz (base->tip)": [
+    "corpus:rd_kafka_Node_destroy#0",
+    "corpus:rd_kafka_Node_free#0",
+    "corpus:rd_kafka_mock_error_stack_destroy#0",
+    "corpus:rd_kafka_mock_sgrp_record_release#0",
+    "corpus:rd_kafka_share_ack_batch_entry_destroy#0",
+    "corpus:rd_kafka_share_ack_batch_entry_destroy_free#0",
+    "corpus:mk_ptr_free#0"
+   ],
+   "out-parameter-body-summary/integration/native-comparison.json.gz (base->tip)": [
+    "corpus:rd_kafka_message_timestamp#0",
+    "corpus:rd_kafka_toppar_get_avail#0"
+   ],
+   "out-parameter-scalar-frame-premise/integration/native-comparison.json.gz (base->tip)": [
+    "corpus:cio_memfs_content_copy#0",
+    "corpus:cio_utils_read_file#0"
+   ],
+   "scalar-statement-forms/integration/native-comparison.json.gz (base->tip)": [
+    "corpus:LZ4_getIndexOnHash#0",
+    "corpus:LZ4_stream_t_alignment#0",
+    "corpus:LZ4F_returnErrorCode#0",
+    "corpus:LZ4HC_rotatePattern#0",
+    "corpus:LZ4_streamHC_t_alignment#0",
+    "corpus:rd_kafka_version_str#0",
+    "corpus:XXH32_canonicalFromHash#0",
+    "corpus:XXH64_canonicalFromHash#0",
+    "corpus:_next_target#0"
+   ]
+  },
+  "links": [
+   {
+    "between": [
+     1,
+     2
+    ],
+    "joined": false,
+    "refused_because": [
+     "cx_refuse_analyzer",
+     "cx_refuse_build_commit",
+     "cx_refuse_bundles",
+     "cx_refuse_revision",
+     "cx_refuse_tool"
+    ]
+   }
+  ],
+  "outcome": {
+   "failed": "the chain is refused: every refused link and incomplete route is named in /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a2e786432c09d2193/docs/reports/quirin-audit-connect/demonstration/landing-556460e31-attributed-to-its-cards/chain.json"
+  },
+  "plugin_exit": 1,
+  "segments": [
+   {
+    "bundle_changes": [
+     {
+      "crates": [
+       "contract",
+       "providers/qcore-provider-chunkio/contracts",
+       "providers/qcore-provider-cmetrics/contracts",
+       "providers/qcore-provider-ctraces/contracts",
+       "providers/qcore-provider-libevent/contracts",
+       "providers/qcore-provider-librdkafka/contracts",
+       "providers/quirin-provider-cfl/contracts",
+       "providers/quirin-provider-fluent-bit/contracts",
+       "providers/quirin-provider-libc/contracts",
+       "providers/quirin-provider-mpack/contracts",
+       "providers/quirin-provider-msgpack/contracts",
+       "providers/quirin-provider-shared/contracts"
+      ],
+      "step": 1
+     }
+    ],
+    "routes": {
+     "corpus": {
+      "cancelled": [],
+      "cascade": [],
+      "counts": {
+       "evidence_only": 587,
+       "moved": 27
+      },
+      "moved": [
+       {
+        "attributed_steps": [
+         1
+        ],
+        "row": "chunkio::cio_memfs.c::unit#0::resource-custody.v1::chunkio::cio_memfs_content_copy#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [
+         1
+        ],
+        "row": "chunkio::cio_utils.c::unit#0::resource-custody.v1::chunkio::cio_utils_read_file#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [
+         1
+        ],
+        "row": "cmetrics::cmt_opts.c::unit#0::resource-custody.v1::cmetrics::cmt_opts_exit#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "ctraces::ctr_id.c::unit#0::resource-custody.v1::ctraces::ctr_id_destroy#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "fluent-bit-chunk::flb_input_chunk.c::unit#0::resource-custody.v1::fluent-bit-chunk::destroy_chunk_raw#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::lz4.c::unit#0::resource-custody.v1::librdkafka::LZ4_createStreamDecode#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [
+         1
+        ],
+        "row": "librdkafka::lz4.c::unit#0::resource-custody.v1::librdkafka::LZ4_getIndexOnHash#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::lz4.c::unit#0::resource-custody.v1::librdkafka::LZ4_initStream#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [
+         1
+        ],
+        "row": "librdkafka::lz4.c::unit#0::resource-custody.v1::librdkafka::LZ4_stream_t_alignment#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [
+         1
+        ],
+        "row": "librdkafka::lz4frame.c::unit#0::resource-custody.v1::librdkafka::LZ4F_returnErrorCode#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [
+         1
+        ],
+        "row": "librdkafka::lz4hc.c::unit#0::resource-custody.v1::librdkafka::LZ4HC_rotatePattern#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [
+         1
+        ],
+        "row": "librdkafka::lz4hc.c::unit#0::resource-custody.v1::librdkafka::LZ4_streamHC_t_alignment#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [
+         1
+        ],
+        "row": "librdkafka::rdkafka.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_version_str#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [
+         1
+        ],
+        "row": "librdkafka::rdkafka_aux.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_Node_destroy#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [
+         1
+        ],
+        "row": "librdkafka::rdkafka_aux.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_Node_free#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [
+         1
+        ],
+        "row": "librdkafka::rdkafka_mock.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_mock_error_stack_destroy#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [
+         1
+        ],
+        "row": "librdkafka::rdkafka_mock_sharegrp.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_mock_sgrp_record_release#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [
+         1
+        ],
+        "row": "librdkafka::rdkafka_msg.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_message_timestamp#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [
+         1
+        ],
+        "row": "librdkafka::rdkafka_partition.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_toppar_get_avail#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [
+         1
+        ],
+        "row": "librdkafka::rdkafka_sasl_scram.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_sasl_safe_string#0",
+        "verdicts": [
+         "Unsafe",
+         "Unknown"
+        ]
+       },
+       {
+        "attributed_steps": [
+         1
+        ],
+        "row": "librdkafka::rdkafka_share_acknowledgement.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_share_ack_batch_entry_destroy#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [
+         1
+        ],
+        "row": "librdkafka::rdkafka_share_acknowledgement.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_share_ack_batch_entry_destroy_free#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [
+         1
+        ],
+        "row": "librdkafka::rdxxhash.c::unit#0::resource-custody.v1::librdkafka::XXH32_canonicalFromHash#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [
+         1
+        ],
+        "row": "librdkafka::rdxxhash.c::unit#0::resource-custody.v1::librdkafka::XXH64_canonicalFromHash#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [
+         1
+        ],
+        "row": "monkey-libevent::mk_core/mk_memory.c::unit#0::resource-custody.v1::monkey-libevent::mk_ptr_free#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [
+         1
+        ],
+        "row": "monkey-libevent::mk_server/mk_scheduler.c::unit#0::resource-custody.v1::monkey-libevent::_next_target#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [
+         1
+        ],
+        "row": "librdkafka::rdkafka_sasl_scram.c::unit#0::resource-custody.v1::librdkafka",
+        "verdicts": [
+         "Unsafe",
+         "Unknown"
+        ]
+       }
+      ],
+      "net_status_delta": {
+       "Safe": 25,
+       "Unknown": -24,
+       "Unsafe": -1
+      },
+      "status": "complete"
+     },
+     "slice": {
+      "cancelled": [],
+      "cascade": [],
+      "counts": {
+       "evidence_only": 16
+      },
+      "moved": [],
+      "net_status_delta": {
+       "Pending": 0,
+       "Safe": 0,
+       "Unknown": 0,
+       "Unsafe": 0
+      },
+      "status": "complete"
+     },
+     "system": {
+      "cancelled": [],
+      "cascade": [],
+      "counts": {
+       "evidence_only": 27,
+       "moved": 2
+      },
+      "moved": [
+       {
+        "attributed_steps": [],
+        "row": "fluent-bit-system::src/flb_input_chunk.c::unit#0::resource-custody.v1::fluent-bit-system::destroy_chunk_raw#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "fluent-bit-system::src/flb_input_chunk.c::unit#1::resource-custody.v1::fluent-bit-system::destroy_chunk_raw#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       }
+      ],
+      "net_status_delta": {
+       "Safe": 2,
+       "Unknown": -2,
+       "Unsafe": 0
+      },
+      "status": "complete"
+     }
+    },
+    "steps": [
+     1
+    ]
+   },
+   {
+    "bundle_changes": [
+     {
+      "crates": [
+       "providers/quirin-provider-openssl/contracts"
+      ],
+      "step": 2
+     }
+    ],
+    "routes": {
+     "corpus": {
+      "cancelled": [],
+      "cascade": [],
+      "counts": {},
+      "moved": [],
+      "net_status_delta": {
+       "Safe": 0,
+       "Unknown": 0,
+       "Unsafe": 0
+      },
+      "status": "complete"
+     },
+     "slice": {
+      "cancelled": [],
+      "cascade": [],
+      "counts": {},
+      "moved": [],
+      "net_status_delta": {
+       "Pending": 0,
+       "Safe": 0,
+       "Unknown": 0,
+       "Unsafe": 0
+      },
+      "status": "complete"
+     },
+     "system": {
+      "cancelled": [],
+      "cascade": [],
+      "counts": {},
+      "moved": [],
+      "net_status_delta": {
+       "Safe": 0,
+       "Unknown": 0,
+       "Unsafe": 0
+      },
+      "status": "complete"
+     },
+     "twelve-home": {
+      "cancelled": [],
+      "cascade": [],
+      "counts": {},
+      "moved": [],
+      "net_status_delta": {
+       "Safe": 0,
+       "Unknown": 0,
+       "Unsafe": 0
+      },
+      "status": "complete"
+     }
+    },
+    "steps": [
+     2
+    ]
+   }
+  ],
+  "status": "refused",
+  "steps": [
+   {
+    "after": "556460e31f4b0fe00cfa477855771ed50f209236",
+    "before": "7b726587bdf6a8213f451fa1c78297bb5e476ef7",
+    "comparison": "prev->tip",
+    "record": "landing-556460e31/native-comparison.json.gz"
+   },
+   {
+    "after": "2c07390b6b34f59880e2cd67a98c640a149a443c",
+    "before": "b7f86a0deb7a2c93d806166599b8838c9a2e32d6",
+    "comparison": "base->tip",
+    "record": "sp1-symbolic-openssl-premises/integration/native-comparison.json.gz"
+   }
+  ],
+  "unattributed_moves": 6,
+  "unattributed_new_safe": [
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "ctraces::ctr_id.c::unit#0::resource-custody.v1::ctraces::ctr_id_destroy#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "fluent-bit-chunk::flb_input_chunk.c::unit#0::resource-custody.v1::fluent-bit-chunk::destroy_chunk_raw#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "librdkafka::lz4.c::unit#0::resource-custody.v1::librdkafka::LZ4_createStreamDecode#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "librdkafka::lz4.c::unit#0::resource-custody.v1::librdkafka::LZ4_initStream#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "system",
+    "row": "fluent-bit-system::src/flb_input_chunk.c::unit#0::resource-custody.v1::fluent-bit-system::destroy_chunk_raw#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "system",
+    "row": "fluent-bit-system::src/flb_input_chunk.c::unit#1::resource-custody.v1::fluent-bit-system::destroy_chunk_raw#0",
+    "steps": [
+     1
+    ]
+   }
+  ]
+ },
+ "landing-556460e31-then-landing-777fba16e": {
+  "attributed_by_source": {},
+  "links": [
+   {
+    "between": [
+     1,
+     2
+    ],
+    "joined": false,
+    "refused_because": [
+     "cx_refuse_build_commit",
+     "cx_refuse_revision",
+     "cx_refuse_unrecorded"
+    ]
+   }
+  ],
+  "outcome": {
+   "failed": "the chain is refused: every refused link and incomplete route is named in /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a2e786432c09d2193/docs/reports/quirin-audit-connect/demonstration/landing-556460e31-then-landing-777fba16e/chain.json"
+  },
+  "plugin_exit": 1,
+  "segments": [
+   {
+    "bundle_changes": [
+     {
+      "crates": [
+       "contract",
+       "providers/qcore-provider-chunkio/contracts",
+       "providers/qcore-provider-cmetrics/contracts",
+       "providers/qcore-provider-ctraces/contracts",
+       "providers/qcore-provider-libevent/contracts",
+       "providers/qcore-provider-librdkafka/contracts",
+       "providers/quirin-provider-cfl/contracts",
+       "providers/quirin-provider-fluent-bit/contracts",
+       "providers/quirin-provider-libc/contracts",
+       "providers/quirin-provider-mpack/contracts",
+       "providers/quirin-provider-msgpack/contracts",
+       "providers/quirin-provider-shared/contracts"
+      ],
+      "step": 1
+     }
+    ],
+    "routes": {
+     "corpus": {
+      "cancelled": [],
+      "cascade": [],
+      "counts": {
+       "evidence_only": 587,
+       "moved": 27
+      },
+      "moved": [
+       {
+        "attributed_steps": [],
+        "row": "chunkio::cio_memfs.c::unit#0::resource-custody.v1::chunkio::cio_memfs_content_copy#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "chunkio::cio_utils.c::unit#0::resource-custody.v1::chunkio::cio_utils_read_file#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "cmetrics::cmt_opts.c::unit#0::resource-custody.v1::cmetrics::cmt_opts_exit#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "ctraces::ctr_id.c::unit#0::resource-custody.v1::ctraces::ctr_id_destroy#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "fluent-bit-chunk::flb_input_chunk.c::unit#0::resource-custody.v1::fluent-bit-chunk::destroy_chunk_raw#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::lz4.c::unit#0::resource-custody.v1::librdkafka::LZ4_createStreamDecode#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::lz4.c::unit#0::resource-custody.v1::librdkafka::LZ4_getIndexOnHash#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::lz4.c::unit#0::resource-custody.v1::librdkafka::LZ4_initStream#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::lz4.c::unit#0::resource-custody.v1::librdkafka::LZ4_stream_t_alignment#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::lz4frame.c::unit#0::resource-custody.v1::librdkafka::LZ4F_returnErrorCode#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::lz4hc.c::unit#0::resource-custody.v1::librdkafka::LZ4HC_rotatePattern#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::lz4hc.c::unit#0::resource-custody.v1::librdkafka::LZ4_streamHC_t_alignment#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::rdkafka.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_version_str#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::rdkafka_aux.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_Node_destroy#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::rdkafka_aux.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_Node_free#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::rdkafka_mock.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_mock_error_stack_destroy#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::rdkafka_mock_sharegrp.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_mock_sgrp_record_release#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::rdkafka_msg.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_message_timestamp#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::rdkafka_partition.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_toppar_get_avail#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::rdkafka_sasl_scram.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_sasl_safe_string#0",
+        "verdicts": [
+         "Unsafe",
+         "Unknown"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::rdkafka_share_acknowledgement.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_share_ack_batch_entry_destroy#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::rdkafka_share_acknowledgement.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_share_ack_batch_entry_destroy_free#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::rdxxhash.c::unit#0::resource-custody.v1::librdkafka::XXH32_canonicalFromHash#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::rdxxhash.c::unit#0::resource-custody.v1::librdkafka::XXH64_canonicalFromHash#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "monkey-libevent::mk_core/mk_memory.c::unit#0::resource-custody.v1::monkey-libevent::mk_ptr_free#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "monkey-libevent::mk_server/mk_scheduler.c::unit#0::resource-custody.v1::monkey-libevent::_next_target#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::rdkafka_sasl_scram.c::unit#0::resource-custody.v1::librdkafka",
+        "verdicts": [
+         "Unsafe",
+         "Unknown"
+        ]
+       }
+      ],
+      "net_status_delta": {
+       "Safe": 25,
+       "Unknown": -24,
+       "Unsafe": -1
+      },
+      "status": "complete"
+     },
+     "slice": {
+      "cancelled": [],
+      "cascade": [],
+      "counts": {
+       "evidence_only": 16
+      },
+      "moved": [],
+      "net_status_delta": {
+       "Pending": 0,
+       "Safe": 0,
+       "Unknown": 0,
+       "Unsafe": 0
+      },
+      "status": "complete"
+     },
+     "system": {
+      "cancelled": [],
+      "cascade": [],
+      "counts": {
+       "evidence_only": 27,
+       "moved": 2
+      },
+      "moved": [
+       {
+        "attributed_steps": [],
+        "row": "fluent-bit-system::src/flb_input_chunk.c::unit#0::resource-custody.v1::fluent-bit-system::destroy_chunk_raw#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "fluent-bit-system::src/flb_input_chunk.c::unit#1::resource-custody.v1::fluent-bit-system::destroy_chunk_raw#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       }
+      ],
+      "net_status_delta": {
+       "Safe": 2,
+       "Unknown": -2,
+       "Unsafe": 0
+      },
+      "status": "complete"
+     }
+    },
+    "steps": [
+     1
+    ]
+   },
+   {
+    "bundle_changes": [
+     {
+      "crates": [
+       "contract",
+       "providers/qcore-provider-chunkio/contracts",
+       "providers/qcore-provider-cmetrics/contracts",
+       "providers/qcore-provider-ctraces/contracts",
+       "providers/qcore-provider-libevent/contracts",
+       "providers/qcore-provider-librdkafka/contracts",
+       "providers/quirin-provider-cfl/contracts",
+       "providers/quirin-provider-fluent-bit/contracts",
+       "providers/quirin-provider-libc/contracts",
+       "providers/quirin-provider-mpack/contracts",
+       "providers/quirin-provider-msgpack/contracts",
+       "providers/quirin-provider-shared/contracts"
+      ],
+      "step": 2
+     }
+    ],
+    "routes": {
+     "corpus": {
+      "cancelled": [],
+      "cascade": [],
+      "counts": {
+       "evidence_only": 1029,
+       "moved": 44
+      },
+      "moved": [
+       {
+        "attributed_steps": [],
+        "row": "chunkio::cio_file_unix.c::unit#0::resource-custody.v1::chunkio::cio_file_native_resize#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "chunkio::cio_file_unix.c::unit#0::resource-custody.v1::chunkio::cio_file_native_sync#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "cmetrics::cmt_decode_statsd.c::unit#0::resource-custody.v1::cmetrics::decode_statsd_message#0",
+        "verdicts": [
+         "Unknown",
+         "Unsafe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "cmetrics::cmt_encode_cloudwatch_emf.c::unit#0::resource-custody.v1::cmetrics::pack_summary_metric#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "cmetrics::cmt_encode_opentelemetry.c::unit#0::resource-custody.v1::cmetrics::fetch_metadata_int64_key#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "cmetrics::cmt_encode_opentelemetry.c::unit#0::resource-custody.v1::cmetrics::kvlist_fetch_bool#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "cmetrics::cmt_encode_opentelemetry.c::unit#0::resource-custody.v1::cmetrics::kvlist_fetch_double#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "cmetrics::cmt_encode_opentelemetry.c::unit#0::resource-custody.v1::cmetrics::kvlist_fetch_uint64#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "cmetrics::cmt_encode_opentelemetry.c::unit#0::resource-custody.v1::cmetrics::resolve_data_point_start_timestamp#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "cmetrics::cmt_encode_splunk_hec.c::unit#0::resource-custody.v1::cmetrics::double_to_string#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "cmetrics::cmt_map.c::unit#0::resource-custody.v1::cmetrics::metric_release_storage#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "cmetrics::cmt_metric.c::unit#0::resource-custody.v1::cmetrics::cmt_metric_exp_hist_snapshot_destroy#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "ctraces::ctr_attributes.c::unit#0::resource-custody.v1::ctraces::ctr_attributes_create#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "ctraces::ctr_attributes.c::unit#0::resource-custody.v1::ctraces::ctr_attributes_destroy#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "ctraces::ctr_decode_opentelemetry.c::unit#0::resource-custody.v1::ctraces::convert_bool_value#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "ctraces::ctr_decode_opentelemetry.c::unit#0::resource-custody.v1::ctraces::convert_bytes_value#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "ctraces::ctr_decode_opentelemetry.c::unit#0::resource-custody.v1::ctraces::convert_double_value#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "ctraces::ctr_decode_opentelemetry.c::unit#0::resource-custody.v1::ctraces::convert_int_value#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "ctraces::ctr_decode_opentelemetry.c::unit#0::resource-custody.v1::ctraces::convert_string_value#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "ctraces::ctr_id.c::unit#0::resource-custody.v1::ctraces::ctr_id_to_lower_base16#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::crc32c.c::unit#0::resource-custody.v1::librdkafka::crc32c_init_hw#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::crc32c.c::unit#0::resource-custody.v1::librdkafka::crc32c_zeros#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::crc32c.c::unit#0::resource-custody.v1::librdkafka::crc32c_zeros_op#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::rdbuf.c::unit#0::resource-custody.v1::librdkafka::rd_slice_crc32#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::rdkafka.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_outq_len#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::rdkafka.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_share_fetch_fanout_enqueue#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::rdkafka.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_share_record_poll_start#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::rdkafka_buf.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_buf_upgrade_flexver_request#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::rdkafka_metadata.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_metadata_partition_clear#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::rdkafka_mock_handlers.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_mock_Produce_reply_tags_partition_write#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::rdkafka_msg.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_msg_partitioner_consistent#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::rdkafka_msgset_writer.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_msgset_writer_write_MessageSet_v2_header#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::rdkafka_msgset_writer.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_msgset_writer_write_Produce_header#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::rdkafka_partition.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_partition_leader_destroy_free#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::rdkafka_queue.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_queue_length#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::rdkafka_queue.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_queue_yield#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::rdkafka_sticky_assignor.c::unit#0::resource-custody.v1::librdkafka::ut_testConflictingPreviousAssignments#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::rdkafka_topic.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_toppar_needs_query#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::rdkafka_transport.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_transport_shutdown#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::rdstring.c::unit#0::resource-custody.v1::librdkafka::_rd_strcasestr#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "monkey-libevent::mk_server/mk_lib.c::unit#0::resource-custody.v1::monkey-libevent::free_chunk_header#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "monkey-libevent::mk_server/mk_plugin.c::unit#0::resource-custody.v1::monkey-libevent::mk_plugin_sched_get_thread_conf#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "cmetrics::cmt_decode_statsd.c::unit#0::resource-custody.v1::cmetrics",
+        "verdicts": [
+         "Unknown",
+         "Unsafe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "ctraces::ctr_attributes.c::unit#0::resource-custody.v1::ctraces",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       }
+      ],
+      "net_status_delta": {
+       "Safe": 41,
+       "Unknown": -42,
+       "Unsafe": 1
+      },
+      "status": "complete"
+     },
+     "slice": {
+      "cancelled": [],
+      "cascade": [],
+      "counts": {
+       "evidence_only": 38,
+       "moved": 1
+      },
+      "moved": [
+       {
+        "attributed_steps": [],
+        "row": "fluent-bit-tail-pause::plugins/in_tail/tail_fs_stat.c::unit#0::resource-custody.v1::fluent-bit-tail-pause::flb_tail_fs_stat_remove#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       }
+      ],
+      "net_status_delta": {
+       "Pending": 0,
+       "Safe": 1,
+       "Unknown": -1,
+       "Unsafe": 0
+      },
+      "status": "complete"
+     },
+     "system": {
+      "cancelled": [],
+      "cascade": [],
+      "counts": {
+       "evidence_only": 39
+      },
+      "moved": [],
+      "net_status_delta": {
+       "Safe": 0,
+       "Unknown": 0,
+       "Unsafe": 0
+      },
+      "status": "complete"
+     }
+    },
+    "steps": [
+     2
+    ]
+   }
+  ],
+  "status": "refused",
+  "steps": [
+   {
+    "after": "556460e31f4b0fe00cfa477855771ed50f209236",
+    "before": "7b726587bdf6a8213f451fa1c78297bb5e476ef7",
+    "comparison": "prev->tip",
+    "record": "landing-556460e31/native-comparison.json.gz"
+   },
+   {
+    "after": "777fba16efa49c67634fd9eec0b3db12051b0edd",
+    "before": "c8c7edf2165a2065c234f3a63b4eed23e937ced6",
+    "comparison": "prev->tip",
+    "record": "landing-777fba16e/native-comparison.json.gz"
+   }
+  ],
+  "unattributed_moves": 74,
+  "unattributed_new_safe": [
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "chunkio::cio_memfs.c::unit#0::resource-custody.v1::chunkio::cio_memfs_content_copy#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "chunkio::cio_utils.c::unit#0::resource-custody.v1::chunkio::cio_utils_read_file#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "cmetrics::cmt_opts.c::unit#0::resource-custody.v1::cmetrics::cmt_opts_exit#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "ctraces::ctr_id.c::unit#0::resource-custody.v1::ctraces::ctr_id_destroy#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "fluent-bit-chunk::flb_input_chunk.c::unit#0::resource-custody.v1::fluent-bit-chunk::destroy_chunk_raw#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "librdkafka::lz4.c::unit#0::resource-custody.v1::librdkafka::LZ4_createStreamDecode#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "librdkafka::lz4.c::unit#0::resource-custody.v1::librdkafka::LZ4_getIndexOnHash#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "librdkafka::lz4.c::unit#0::resource-custody.v1::librdkafka::LZ4_initStream#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "librdkafka::lz4.c::unit#0::resource-custody.v1::librdkafka::LZ4_stream_t_alignment#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "librdkafka::lz4frame.c::unit#0::resource-custody.v1::librdkafka::LZ4F_returnErrorCode#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "librdkafka::lz4hc.c::unit#0::resource-custody.v1::librdkafka::LZ4HC_rotatePattern#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "librdkafka::lz4hc.c::unit#0::resource-custody.v1::librdkafka::LZ4_streamHC_t_alignment#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "librdkafka::rdkafka.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_version_str#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "librdkafka::rdkafka_aux.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_Node_destroy#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "librdkafka::rdkafka_aux.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_Node_free#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "librdkafka::rdkafka_mock.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_mock_error_stack_destroy#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "librdkafka::rdkafka_mock_sharegrp.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_mock_sgrp_record_release#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "librdkafka::rdkafka_msg.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_message_timestamp#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "librdkafka::rdkafka_partition.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_toppar_get_avail#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "librdkafka::rdkafka_share_acknowledgement.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_share_ack_batch_entry_destroy#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "librdkafka::rdkafka_share_acknowledgement.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_share_ack_batch_entry_destroy_free#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "librdkafka::rdxxhash.c::unit#0::resource-custody.v1::librdkafka::XXH32_canonicalFromHash#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "librdkafka::rdxxhash.c::unit#0::resource-custody.v1::librdkafka::XXH64_canonicalFromHash#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "monkey-libevent::mk_core/mk_memory.c::unit#0::resource-custody.v1::monkey-libevent::mk_ptr_free#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "monkey-libevent::mk_server/mk_scheduler.c::unit#0::resource-custody.v1::monkey-libevent::_next_target#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "system",
+    "row": "fluent-bit-system::src/flb_input_chunk.c::unit#0::resource-custody.v1::fluent-bit-system::destroy_chunk_raw#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "system",
+    "row": "fluent-bit-system::src/flb_input_chunk.c::unit#1::resource-custody.v1::fluent-bit-system::destroy_chunk_raw#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "chunkio::cio_file_unix.c::unit#0::resource-custody.v1::chunkio::cio_file_native_resize#0",
+    "steps": [
+     2
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "chunkio::cio_file_unix.c::unit#0::resource-custody.v1::chunkio::cio_file_native_sync#0",
+    "steps": [
+     2
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "cmetrics::cmt_encode_cloudwatch_emf.c::unit#0::resource-custody.v1::cmetrics::pack_summary_metric#0",
+    "steps": [
+     2
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "cmetrics::cmt_encode_opentelemetry.c::unit#0::resource-custody.v1::cmetrics::fetch_metadata_int64_key#0",
+    "steps": [
+     2
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "cmetrics::cmt_encode_opentelemetry.c::unit#0::resource-custody.v1::cmetrics::kvlist_fetch_bool#0",
+    "steps": [
+     2
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "cmetrics::cmt_encode_opentelemetry.c::unit#0::resource-custody.v1::cmetrics::kvlist_fetch_double#0",
+    "steps": [
+     2
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "cmetrics::cmt_encode_opentelemetry.c::unit#0::resource-custody.v1::cmetrics::kvlist_fetch_uint64#0",
+    "steps": [
+     2
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "cmetrics::cmt_encode_opentelemetry.c::unit#0::resource-custody.v1::cmetrics::resolve_data_point_start_timestamp#0",
+    "steps": [
+     2
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "cmetrics::cmt_encode_splunk_hec.c::unit#0::resource-custody.v1::cmetrics::double_to_string#0",
+    "steps": [
+     2
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "cmetrics::cmt_map.c::unit#0::resource-custody.v1::cmetrics::metric_release_storage#0",
+    "steps": [
+     2
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "cmetrics::cmt_metric.c::unit#0::resource-custody.v1::cmetrics::cmt_metric_exp_hist_snapshot_destroy#0",
+    "steps": [
+     2
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "ctraces::ctr_attributes.c::unit#0::resource-custody.v1::ctraces::ctr_attributes_create#0",
+    "steps": [
+     2
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "ctraces::ctr_attributes.c::unit#0::resource-custody.v1::ctraces::ctr_attributes_destroy#0",
+    "steps": [
+     2
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "ctraces::ctr_decode_opentelemetry.c::unit#0::resource-custody.v1::ctraces::convert_bool_value#0",
+    "steps": [
+     2
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "ctraces::ctr_decode_opentelemetry.c::unit#0::resource-custody.v1::ctraces::convert_bytes_value#0",
+    "steps": [
+     2
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "ctraces::ctr_decode_opentelemetry.c::unit#0::resource-custody.v1::ctraces::convert_double_value#0",
+    "steps": [
+     2
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "ctraces::ctr_decode_opentelemetry.c::unit#0::resource-custody.v1::ctraces::convert_int_value#0",
+    "steps": [
+     2
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "ctraces::ctr_decode_opentelemetry.c::unit#0::resource-custody.v1::ctraces::convert_string_value#0",
+    "steps": [
+     2
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "ctraces::ctr_id.c::unit#0::resource-custody.v1::ctraces::ctr_id_to_lower_base16#0",
+    "steps": [
+     2
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "librdkafka::crc32c.c::unit#0::resource-custody.v1::librdkafka::crc32c_init_hw#0",
+    "steps": [
+     2
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "librdkafka::crc32c.c::unit#0::resource-custody.v1::librdkafka::crc32c_zeros#0",
+    "steps": [
+     2
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "librdkafka::crc32c.c::unit#0::resource-custody.v1::librdkafka::crc32c_zeros_op#0",
+    "steps": [
+     2
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "librdkafka::rdbuf.c::unit#0::resource-custody.v1::librdkafka::rd_slice_crc32#0",
+    "steps": [
+     2
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "librdkafka::rdkafka.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_outq_len#0",
+    "steps": [
+     2
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "librdkafka::rdkafka.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_share_fetch_fanout_enqueue#0",
+    "steps": [
+     2
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "librdkafka::rdkafka.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_share_record_poll_start#0",
+    "steps": [
+     2
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "librdkafka::rdkafka_buf.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_buf_upgrade_flexver_request#0",
+    "steps": [
+     2
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "librdkafka::rdkafka_metadata.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_metadata_partition_clear#0",
+    "steps": [
+     2
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "librdkafka::rdkafka_mock_handlers.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_mock_Produce_reply_tags_partition_write#0",
+    "steps": [
+     2
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "librdkafka::rdkafka_msg.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_msg_partitioner_consistent#0",
+    "steps": [
+     2
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "librdkafka::rdkafka_msgset_writer.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_msgset_writer_write_MessageSet_v2_header#0",
+    "steps": [
+     2
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "librdkafka::rdkafka_msgset_writer.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_msgset_writer_write_Produce_header#0",
+    "steps": [
+     2
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "librdkafka::rdkafka_partition.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_partition_leader_destroy_free#0",
+    "steps": [
+     2
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "librdkafka::rdkafka_queue.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_queue_length#0",
+    "steps": [
+     2
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "librdkafka::rdkafka_queue.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_queue_yield#0",
+    "steps": [
+     2
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "librdkafka::rdkafka_sticky_assignor.c::unit#0::resource-custody.v1::librdkafka::ut_testConflictingPreviousAssignments#0",
+    "steps": [
+     2
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "librdkafka::rdkafka_topic.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_toppar_needs_query#0",
+    "steps": [
+     2
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "librdkafka::rdkafka_transport.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_transport_shutdown#0",
+    "steps": [
+     2
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "librdkafka::rdstring.c::unit#0::resource-custody.v1::librdkafka::_rd_strcasestr#0",
+    "steps": [
+     2
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "monkey-libevent::mk_server/mk_lib.c::unit#0::resource-custody.v1::monkey-libevent::free_chunk_header#0",
+    "steps": [
+     2
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "monkey-libevent::mk_server/mk_plugin.c::unit#0::resource-custody.v1::monkey-libevent::mk_plugin_sched_get_thread_conf#0",
+    "steps": [
+     2
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "ctraces::ctr_attributes.c::unit#0::resource-custody.v1::ctraces",
+    "steps": [
+     2
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "slice",
+    "row": "fluent-bit-tail-pause::plugins/in_tail/tail_fs_stat.c::unit#0::resource-custody.v1::fluent-bit-tail-pause::flb_tail_fs_stat_remove#0",
+    "steps": [
+     2
+    ]
+   }
+  ]
+ },
+ "landing-556460e31-then-member-effect-component-scope": {
+  "attributed_by_source": {
+   "member-effect-component-scope/PREDICTION.md": [
+    "corpus:cmt_opts_exit#0"
+   ]
+  },
+  "links": [
+   {
+    "between": [
+     1,
+     2
+    ],
+    "joined": false,
+    "refused_because": [
+     "cx_refuse_build_commit",
+     "cx_refuse_revision",
+     "cx_refuse_tool",
+     "cx_refuse_unrecorded"
+    ]
+   }
+  ],
+  "outcome": {
+   "failed": "the chain is refused: every refused link and incomplete route is named in /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a2e786432c09d2193/docs/reports/quirin-audit-connect/demonstration/landing-556460e31-then-member-effect-component-scope/chain.json"
+  },
+  "plugin_exit": 1,
+  "segments": [
+   {
+    "bundle_changes": [
+     {
+      "crates": [
+       "contract",
+       "providers/qcore-provider-chunkio/contracts",
+       "providers/qcore-provider-cmetrics/contracts",
+       "providers/qcore-provider-ctraces/contracts",
+       "providers/qcore-provider-libevent/contracts",
+       "providers/qcore-provider-librdkafka/contracts",
+       "providers/quirin-provider-cfl/contracts",
+       "providers/quirin-provider-fluent-bit/contracts",
+       "providers/quirin-provider-libc/contracts",
+       "providers/quirin-provider-mpack/contracts",
+       "providers/quirin-provider-msgpack/contracts",
+       "providers/quirin-provider-shared/contracts"
+      ],
+      "step": 1
+     }
+    ],
+    "routes": {
+     "corpus": {
+      "cancelled": [],
+      "cascade": [],
+      "counts": {
+       "evidence_only": 587,
+       "moved": 27
+      },
+      "moved": [
+       {
+        "attributed_steps": [],
+        "row": "chunkio::cio_memfs.c::unit#0::resource-custody.v1::chunkio::cio_memfs_content_copy#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "chunkio::cio_utils.c::unit#0::resource-custody.v1::chunkio::cio_utils_read_file#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "cmetrics::cmt_opts.c::unit#0::resource-custody.v1::cmetrics::cmt_opts_exit#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "ctraces::ctr_id.c::unit#0::resource-custody.v1::ctraces::ctr_id_destroy#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "fluent-bit-chunk::flb_input_chunk.c::unit#0::resource-custody.v1::fluent-bit-chunk::destroy_chunk_raw#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::lz4.c::unit#0::resource-custody.v1::librdkafka::LZ4_createStreamDecode#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::lz4.c::unit#0::resource-custody.v1::librdkafka::LZ4_getIndexOnHash#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::lz4.c::unit#0::resource-custody.v1::librdkafka::LZ4_initStream#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::lz4.c::unit#0::resource-custody.v1::librdkafka::LZ4_stream_t_alignment#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::lz4frame.c::unit#0::resource-custody.v1::librdkafka::LZ4F_returnErrorCode#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::lz4hc.c::unit#0::resource-custody.v1::librdkafka::LZ4HC_rotatePattern#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::lz4hc.c::unit#0::resource-custody.v1::librdkafka::LZ4_streamHC_t_alignment#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::rdkafka.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_version_str#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::rdkafka_aux.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_Node_destroy#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::rdkafka_aux.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_Node_free#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::rdkafka_mock.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_mock_error_stack_destroy#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::rdkafka_mock_sharegrp.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_mock_sgrp_record_release#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::rdkafka_msg.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_message_timestamp#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::rdkafka_partition.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_toppar_get_avail#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::rdkafka_sasl_scram.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_sasl_safe_string#0",
+        "verdicts": [
+         "Unsafe",
+         "Unknown"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::rdkafka_share_acknowledgement.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_share_ack_batch_entry_destroy#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::rdkafka_share_acknowledgement.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_share_ack_batch_entry_destroy_free#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::rdxxhash.c::unit#0::resource-custody.v1::librdkafka::XXH32_canonicalFromHash#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::rdxxhash.c::unit#0::resource-custody.v1::librdkafka::XXH64_canonicalFromHash#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "monkey-libevent::mk_core/mk_memory.c::unit#0::resource-custody.v1::monkey-libevent::mk_ptr_free#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "monkey-libevent::mk_server/mk_scheduler.c::unit#0::resource-custody.v1::monkey-libevent::_next_target#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::rdkafka_sasl_scram.c::unit#0::resource-custody.v1::librdkafka",
+        "verdicts": [
+         "Unsafe",
+         "Unknown"
+        ]
+       }
+      ],
+      "net_status_delta": {
+       "Safe": 25,
+       "Unknown": -24,
+       "Unsafe": -1
+      },
+      "status": "complete"
+     },
+     "slice": {
+      "cancelled": [],
+      "cascade": [],
+      "counts": {
+       "evidence_only": 16
+      },
+      "moved": [],
+      "net_status_delta": {
+       "Pending": 0,
+       "Safe": 0,
+       "Unknown": 0,
+       "Unsafe": 0
+      },
+      "status": "complete"
+     },
+     "system": {
+      "cancelled": [],
+      "cascade": [],
+      "counts": {
+       "evidence_only": 27,
+       "moved": 2
+      },
+      "moved": [
+       {
+        "attributed_steps": [],
+        "row": "fluent-bit-system::src/flb_input_chunk.c::unit#0::resource-custody.v1::fluent-bit-system::destroy_chunk_raw#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "fluent-bit-system::src/flb_input_chunk.c::unit#1::resource-custody.v1::fluent-bit-system::destroy_chunk_raw#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       }
+      ],
+      "net_status_delta": {
+       "Safe": 2,
+       "Unknown": -2,
+       "Unsafe": 0
+      },
+      "status": "complete"
+     }
+    },
+    "steps": [
+     1
+    ]
+   },
+   {
+    "bundle_changes": [
+     {
+      "crates": [
+       "contract",
+       "providers/qcore-provider-chunkio/contracts",
+       "providers/qcore-provider-cmetrics/contracts",
+       "providers/qcore-provider-ctraces/contracts",
+       "providers/qcore-provider-libevent/contracts",
+       "providers/qcore-provider-librdkafka/contracts",
+       "providers/quirin-provider-cfl/contracts",
+       "providers/quirin-provider-fluent-bit/contracts",
+       "providers/quirin-provider-libc/contracts",
+       "providers/quirin-provider-mpack/contracts",
+       "providers/quirin-provider-msgpack/contracts",
+       "providers/quirin-provider-shared/contracts"
+      ],
+      "step": 2
+     }
+    ],
+    "routes": {
+     "corpus": {
+      "cancelled": [],
+      "cascade": [],
+      "counts": {
+       "evidence_only": 475,
+       "moved": 3
+      },
+      "moved": [
+       {
+        "attributed_steps": [
+         2
+        ],
+        "row": "cmetrics::cmt_opts.c::unit#0::resource-custody.v1::cmetrics::cmt_opts_exit#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "ctraces::ctr_id.c::unit#0::resource-custody.v1::ctraces::ctr_id_destroy#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "fluent-bit-chunk::flb_input_chunk.c::unit#0::resource-custody.v1::fluent-bit-chunk::destroy_chunk_raw#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       }
+      ],
+      "net_status_delta": {
+       "Safe": 3,
+       "Unknown": -3,
+       "Unsafe": 0
+      },
+      "status": "complete"
+     },
+     "slice": {
+      "cancelled": [],
+      "cascade": [],
+      "counts": {},
+      "moved": [],
+      "net_status_delta": {
+       "Pending": 0,
+       "Safe": 0,
+       "Unknown": 0,
+       "Unsafe": 0
+      },
+      "status": "complete"
+     },
+     "system": {
+      "cancelled": [],
+      "cascade": [],
+      "counts": {
+       "evidence_only": 8,
+       "moved": 2
+      },
+      "moved": [
+       {
+        "attributed_steps": [],
+        "row": "fluent-bit-system::src/flb_input_chunk.c::unit#0::resource-custody.v1::fluent-bit-system::destroy_chunk_raw#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "fluent-bit-system::src/flb_input_chunk.c::unit#1::resource-custody.v1::fluent-bit-system::destroy_chunk_raw#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       }
+      ],
+      "net_status_delta": {
+       "Safe": 2,
+       "Unknown": -2,
+       "Unsafe": 0
+      },
+      "status": "complete"
+     }
+    },
+    "steps": [
+     2
+    ]
+   }
+  ],
+  "status": "refused",
+  "steps": [
+   {
+    "after": "556460e31f4b0fe00cfa477855771ed50f209236",
+    "before": "7b726587bdf6a8213f451fa1c78297bb5e476ef7",
+    "comparison": "prev->tip",
+    "record": "landing-556460e31/native-comparison.json.gz"
+   },
+   {
+    "after": "662dc54a498d29d9c71a8f937ecdd44ea2614b18",
+    "before": "7b726587bdf6a8213f451fa1c78297bb5e476ef7",
+    "comparison": "base->tip",
+    "record": "member-effect-component-scope/integration/native-comparison.json.gz"
+   }
+  ],
+  "unattributed_moves": 33,
+  "unattributed_new_safe": [
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "chunkio::cio_memfs.c::unit#0::resource-custody.v1::chunkio::cio_memfs_content_copy#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "chunkio::cio_utils.c::unit#0::resource-custody.v1::chunkio::cio_utils_read_file#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "cmetrics::cmt_opts.c::unit#0::resource-custody.v1::cmetrics::cmt_opts_exit#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "ctraces::ctr_id.c::unit#0::resource-custody.v1::ctraces::ctr_id_destroy#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "fluent-bit-chunk::flb_input_chunk.c::unit#0::resource-custody.v1::fluent-bit-chunk::destroy_chunk_raw#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "librdkafka::lz4.c::unit#0::resource-custody.v1::librdkafka::LZ4_createStreamDecode#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "librdkafka::lz4.c::unit#0::resource-custody.v1::librdkafka::LZ4_getIndexOnHash#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "librdkafka::lz4.c::unit#0::resource-custody.v1::librdkafka::LZ4_initStream#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "librdkafka::lz4.c::unit#0::resource-custody.v1::librdkafka::LZ4_stream_t_alignment#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "librdkafka::lz4frame.c::unit#0::resource-custody.v1::librdkafka::LZ4F_returnErrorCode#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "librdkafka::lz4hc.c::unit#0::resource-custody.v1::librdkafka::LZ4HC_rotatePattern#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "librdkafka::lz4hc.c::unit#0::resource-custody.v1::librdkafka::LZ4_streamHC_t_alignment#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "librdkafka::rdkafka.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_version_str#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "librdkafka::rdkafka_aux.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_Node_destroy#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "librdkafka::rdkafka_aux.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_Node_free#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "librdkafka::rdkafka_mock.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_mock_error_stack_destroy#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "librdkafka::rdkafka_mock_sharegrp.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_mock_sgrp_record_release#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "librdkafka::rdkafka_msg.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_message_timestamp#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "librdkafka::rdkafka_partition.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_toppar_get_avail#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "librdkafka::rdkafka_share_acknowledgement.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_share_ack_batch_entry_destroy#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "librdkafka::rdkafka_share_acknowledgement.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_share_ack_batch_entry_destroy_free#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "librdkafka::rdxxhash.c::unit#0::resource-custody.v1::librdkafka::XXH32_canonicalFromHash#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "librdkafka::rdxxhash.c::unit#0::resource-custody.v1::librdkafka::XXH64_canonicalFromHash#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "monkey-libevent::mk_core/mk_memory.c::unit#0::resource-custody.v1::monkey-libevent::mk_ptr_free#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "monkey-libevent::mk_server/mk_scheduler.c::unit#0::resource-custody.v1::monkey-libevent::_next_target#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "system",
+    "row": "fluent-bit-system::src/flb_input_chunk.c::unit#0::resource-custody.v1::fluent-bit-system::destroy_chunk_raw#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "system",
+    "row": "fluent-bit-system::src/flb_input_chunk.c::unit#1::resource-custody.v1::fluent-bit-system::destroy_chunk_raw#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "ctraces::ctr_id.c::unit#0::resource-custody.v1::ctraces::ctr_id_destroy#0",
+    "steps": [
+     2
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "fluent-bit-chunk::flb_input_chunk.c::unit#0::resource-custody.v1::fluent-bit-chunk::destroy_chunk_raw#0",
+    "steps": [
+     2
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "system",
+    "row": "fluent-bit-system::src/flb_input_chunk.c::unit#0::resource-custody.v1::fluent-bit-system::destroy_chunk_raw#0",
+    "steps": [
+     2
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "system",
+    "row": "fluent-bit-system::src/flb_input_chunk.c::unit#1::resource-custody.v1::fluent-bit-system::destroy_chunk_raw#0",
+    "steps": [
+     2
+    ]
+   }
+  ]
+ },
+ "landing-556460e31-then-sp1": {
+  "attributed_by_source": {},
+  "links": [
+   {
+    "between": [
+     1,
+     2
+    ],
+    "joined": false,
+    "refused_because": [
+     "cx_refuse_analyzer",
+     "cx_refuse_build_commit",
+     "cx_refuse_bundles",
+     "cx_refuse_revision",
+     "cx_refuse_tool"
+    ]
+   }
+  ],
+  "outcome": {
+   "failed": "the chain is refused: every refused link and incomplete route is named in /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a2e786432c09d2193/docs/reports/quirin-audit-connect/demonstration/landing-556460e31-then-sp1/chain.json"
+  },
+  "plugin_exit": 1,
+  "segments": [
+   {
+    "bundle_changes": [
+     {
+      "crates": [
+       "contract",
+       "providers/qcore-provider-chunkio/contracts",
+       "providers/qcore-provider-cmetrics/contracts",
+       "providers/qcore-provider-ctraces/contracts",
+       "providers/qcore-provider-libevent/contracts",
+       "providers/qcore-provider-librdkafka/contracts",
+       "providers/quirin-provider-cfl/contracts",
+       "providers/quirin-provider-fluent-bit/contracts",
+       "providers/quirin-provider-libc/contracts",
+       "providers/quirin-provider-mpack/contracts",
+       "providers/quirin-provider-msgpack/contracts",
+       "providers/quirin-provider-shared/contracts"
+      ],
+      "step": 1
+     }
+    ],
+    "routes": {
+     "corpus": {
+      "cancelled": [],
+      "cascade": [],
+      "counts": {
+       "evidence_only": 587,
+       "moved": 27
+      },
+      "moved": [
+       {
+        "attributed_steps": [],
+        "row": "chunkio::cio_memfs.c::unit#0::resource-custody.v1::chunkio::cio_memfs_content_copy#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "chunkio::cio_utils.c::unit#0::resource-custody.v1::chunkio::cio_utils_read_file#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "cmetrics::cmt_opts.c::unit#0::resource-custody.v1::cmetrics::cmt_opts_exit#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "ctraces::ctr_id.c::unit#0::resource-custody.v1::ctraces::ctr_id_destroy#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "fluent-bit-chunk::flb_input_chunk.c::unit#0::resource-custody.v1::fluent-bit-chunk::destroy_chunk_raw#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::lz4.c::unit#0::resource-custody.v1::librdkafka::LZ4_createStreamDecode#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::lz4.c::unit#0::resource-custody.v1::librdkafka::LZ4_getIndexOnHash#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::lz4.c::unit#0::resource-custody.v1::librdkafka::LZ4_initStream#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::lz4.c::unit#0::resource-custody.v1::librdkafka::LZ4_stream_t_alignment#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::lz4frame.c::unit#0::resource-custody.v1::librdkafka::LZ4F_returnErrorCode#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::lz4hc.c::unit#0::resource-custody.v1::librdkafka::LZ4HC_rotatePattern#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::lz4hc.c::unit#0::resource-custody.v1::librdkafka::LZ4_streamHC_t_alignment#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::rdkafka.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_version_str#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::rdkafka_aux.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_Node_destroy#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::rdkafka_aux.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_Node_free#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::rdkafka_mock.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_mock_error_stack_destroy#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::rdkafka_mock_sharegrp.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_mock_sgrp_record_release#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::rdkafka_msg.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_message_timestamp#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::rdkafka_partition.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_toppar_get_avail#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::rdkafka_sasl_scram.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_sasl_safe_string#0",
+        "verdicts": [
+         "Unsafe",
+         "Unknown"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::rdkafka_share_acknowledgement.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_share_ack_batch_entry_destroy#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::rdkafka_share_acknowledgement.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_share_ack_batch_entry_destroy_free#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::rdxxhash.c::unit#0::resource-custody.v1::librdkafka::XXH32_canonicalFromHash#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::rdxxhash.c::unit#0::resource-custody.v1::librdkafka::XXH64_canonicalFromHash#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "monkey-libevent::mk_core/mk_memory.c::unit#0::resource-custody.v1::monkey-libevent::mk_ptr_free#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "monkey-libevent::mk_server/mk_scheduler.c::unit#0::resource-custody.v1::monkey-libevent::_next_target#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "librdkafka::rdkafka_sasl_scram.c::unit#0::resource-custody.v1::librdkafka",
+        "verdicts": [
+         "Unsafe",
+         "Unknown"
+        ]
+       }
+      ],
+      "net_status_delta": {
+       "Safe": 25,
+       "Unknown": -24,
+       "Unsafe": -1
+      },
+      "status": "complete"
+     },
+     "slice": {
+      "cancelled": [],
+      "cascade": [],
+      "counts": {
+       "evidence_only": 16
+      },
+      "moved": [],
+      "net_status_delta": {
+       "Pending": 0,
+       "Safe": 0,
+       "Unknown": 0,
+       "Unsafe": 0
+      },
+      "status": "complete"
+     },
+     "system": {
+      "cancelled": [],
+      "cascade": [],
+      "counts": {
+       "evidence_only": 27,
+       "moved": 2
+      },
+      "moved": [
+       {
+        "attributed_steps": [],
+        "row": "fluent-bit-system::src/flb_input_chunk.c::unit#0::resource-custody.v1::fluent-bit-system::destroy_chunk_raw#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "fluent-bit-system::src/flb_input_chunk.c::unit#1::resource-custody.v1::fluent-bit-system::destroy_chunk_raw#0",
+        "verdicts": [
+         "Unknown",
+         "Safe"
+        ]
+       }
+      ],
+      "net_status_delta": {
+       "Safe": 2,
+       "Unknown": -2,
+       "Unsafe": 0
+      },
+      "status": "complete"
+     }
+    },
+    "steps": [
+     1
+    ]
+   },
+   {
+    "bundle_changes": [
+     {
+      "crates": [
+       "providers/quirin-provider-openssl/contracts"
+      ],
+      "step": 2
+     }
+    ],
+    "routes": {
+     "corpus": {
+      "cancelled": [],
+      "cascade": [],
+      "counts": {},
+      "moved": [],
+      "net_status_delta": {
+       "Safe": 0,
+       "Unknown": 0,
+       "Unsafe": 0
+      },
+      "status": "complete"
+     },
+     "slice": {
+      "cancelled": [],
+      "cascade": [],
+      "counts": {},
+      "moved": [],
+      "net_status_delta": {
+       "Pending": 0,
+       "Safe": 0,
+       "Unknown": 0,
+       "Unsafe": 0
+      },
+      "status": "complete"
+     },
+     "system": {
+      "cancelled": [],
+      "cascade": [],
+      "counts": {},
+      "moved": [],
+      "net_status_delta": {
+       "Safe": 0,
+       "Unknown": 0,
+       "Unsafe": 0
+      },
+      "status": "complete"
+     },
+     "twelve-home": {
+      "cancelled": [],
+      "cascade": [],
+      "counts": {},
+      "moved": [],
+      "net_status_delta": {
+       "Safe": 0,
+       "Unknown": 0,
+       "Unsafe": 0
+      },
+      "status": "complete"
+     }
+    },
+    "steps": [
+     2
+    ]
+   }
+  ],
+  "status": "refused",
+  "steps": [
+   {
+    "after": "556460e31f4b0fe00cfa477855771ed50f209236",
+    "before": "7b726587bdf6a8213f451fa1c78297bb5e476ef7",
+    "comparison": "prev->tip",
+    "record": "landing-556460e31/native-comparison.json.gz"
+   },
+   {
+    "after": "2c07390b6b34f59880e2cd67a98c640a149a443c",
+    "before": "b7f86a0deb7a2c93d806166599b8838c9a2e32d6",
+    "comparison": "base->tip",
+    "record": "sp1-symbolic-openssl-premises/integration/native-comparison.json.gz"
+   }
+  ],
+  "unattributed_moves": 29,
+  "unattributed_new_safe": [
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "chunkio::cio_memfs.c::unit#0::resource-custody.v1::chunkio::cio_memfs_content_copy#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "chunkio::cio_utils.c::unit#0::resource-custody.v1::chunkio::cio_utils_read_file#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "cmetrics::cmt_opts.c::unit#0::resource-custody.v1::cmetrics::cmt_opts_exit#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "ctraces::ctr_id.c::unit#0::resource-custody.v1::ctraces::ctr_id_destroy#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "fluent-bit-chunk::flb_input_chunk.c::unit#0::resource-custody.v1::fluent-bit-chunk::destroy_chunk_raw#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "librdkafka::lz4.c::unit#0::resource-custody.v1::librdkafka::LZ4_createStreamDecode#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "librdkafka::lz4.c::unit#0::resource-custody.v1::librdkafka::LZ4_getIndexOnHash#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "librdkafka::lz4.c::unit#0::resource-custody.v1::librdkafka::LZ4_initStream#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "librdkafka::lz4.c::unit#0::resource-custody.v1::librdkafka::LZ4_stream_t_alignment#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "librdkafka::lz4frame.c::unit#0::resource-custody.v1::librdkafka::LZ4F_returnErrorCode#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "librdkafka::lz4hc.c::unit#0::resource-custody.v1::librdkafka::LZ4HC_rotatePattern#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "librdkafka::lz4hc.c::unit#0::resource-custody.v1::librdkafka::LZ4_streamHC_t_alignment#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "librdkafka::rdkafka.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_version_str#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "librdkafka::rdkafka_aux.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_Node_destroy#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "librdkafka::rdkafka_aux.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_Node_free#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "librdkafka::rdkafka_mock.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_mock_error_stack_destroy#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "librdkafka::rdkafka_mock_sharegrp.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_mock_sgrp_record_release#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "librdkafka::rdkafka_msg.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_message_timestamp#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "librdkafka::rdkafka_partition.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_toppar_get_avail#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "librdkafka::rdkafka_share_acknowledgement.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_share_ack_batch_entry_destroy#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "librdkafka::rdkafka_share_acknowledgement.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_share_ack_batch_entry_destroy_free#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "librdkafka::rdxxhash.c::unit#0::resource-custody.v1::librdkafka::XXH32_canonicalFromHash#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "librdkafka::rdxxhash.c::unit#0::resource-custody.v1::librdkafka::XXH64_canonicalFromHash#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "monkey-libevent::mk_core/mk_memory.c::unit#0::resource-custody.v1::monkey-libevent::mk_ptr_free#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "monkey-libevent::mk_server/mk_scheduler.c::unit#0::resource-custody.v1::monkey-libevent::_next_target#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "system",
+    "row": "fluent-bit-system::src/flb_input_chunk.c::unit#0::resource-custody.v1::fluent-bit-system::destroy_chunk_raw#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "system",
+    "row": "fluent-bit-system::src/flb_input_chunk.c::unit#1::resource-custody.v1::fluent-bit-system::destroy_chunk_raw#0",
+    "steps": [
+     1
+    ]
+   }
+  ]
+ },
+ "member-effect-component-scope-then-member-release-untyped-base": {
+  "attributed_by_source": {
+   "member-effect-component-scope/PREDICTION.md": [
+    "corpus:cmt_opts_exit#0"
+   ],
+   "member-release-untyped-base/PREDICTION.md": [
+    "corpus:rd_kafka_Node_destroy#0",
+    "corpus:rd_kafka_Node_free#0",
+    "corpus:rd_kafka_mock_error_stack_destroy#0",
+    "corpus:rd_kafka_mock_sgrp_record_release#0",
+    "corpus:rd_kafka_share_ack_batch_entry_destroy#0",
+    "corpus:rd_kafka_share_ack_batch_entry_destroy_free#0",
+    "corpus:mk_ptr_free#0"
+   ]
+  },
+  "links": [
+   {
+    "between": [
+     1,
+     2
+    ],
+    "joined": true,
+    "refused_because": []
+   }
+  ],
+  "outcome": {
+   "failed": "4 unattributed new Safe row(s) are flagged for review in /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a2e786432c09d2193/docs/reports/quirin-audit-connect/demonstration/member-effect-component-scope-then-member-release-untyped-base/chain.json; none is accepted"
+  },
+  "plugin_exit": 1,
+  "segments": [
+   {
+    "bundle_changes": [
+     {
+      "crates": [
+       "contract",
+       "providers/qcore-provider-chunkio/contracts",
+       "providers/qcore-provider-cmetrics/contracts",
+       "providers/qcore-provider-ctraces/contracts",
+       "providers/qcore-provider-libevent/contracts",
+       "providers/qcore-provider-librdkafka/contracts",
+       "providers/quirin-provider-cfl/contracts",
+       "providers/quirin-provider-fluent-bit/contracts",
+       "providers/quirin-provider-libc/contracts",
+       "providers/quirin-provider-mpack/contracts",
+       "providers/quirin-provider-msgpack/contracts",
+       "providers/quirin-provider-shared/contracts"
+      ],
+      "step": 1
+     },
+     {
+      "crates": [],
+      "step": 2
+     }
+    ],
+    "routes": {
+     "corpus": {
+      "cancelled": [],
+      "cascade": [],
+      "counts": {
+       "evidence_only": 487,
+       "moved": 10
+      },
+      "moved": [
+       {
+        "attributed_steps": [
+         1
+        ],
+        "row": "cmetrics::cmt_opts.c::unit#0::resource-custody.v1::cmetrics::cmt_opts_exit#0",
+        "verdicts": [
+         "Unknown",
+         "Safe",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "ctraces::ctr_id.c::unit#0::resource-custody.v1::ctraces::ctr_id_destroy#0",
+        "verdicts": [
+         "Unknown",
+         "Safe",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "fluent-bit-chunk::flb_input_chunk.c::unit#0::resource-custody.v1::fluent-bit-chunk::destroy_chunk_raw#0",
+        "verdicts": [
+         "Unknown",
+         "Safe",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [
+         2
+        ],
+        "row": "librdkafka::rdkafka_aux.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_Node_destroy#0",
+        "verdicts": [
+         "Unknown",
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [
+         2
+        ],
+        "row": "librdkafka::rdkafka_aux.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_Node_free#0",
+        "verdicts": [
+         "Unknown",
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [
+         2
+        ],
+        "row": "librdkafka::rdkafka_mock.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_mock_error_stack_destroy#0",
+        "verdicts": [
+         "Unknown",
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [
+         2
+        ],
+        "row": "librdkafka::rdkafka_mock_sharegrp.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_mock_sgrp_record_release#0",
+        "verdicts": [
+         "Unknown",
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [
+         2
+        ],
+        "row": "librdkafka::rdkafka_share_acknowledgement.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_share_ack_batch_entry_destroy#0",
+        "verdicts": [
+         "Unknown",
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [
+         2
+        ],
+        "row": "librdkafka::rdkafka_share_acknowledgement.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_share_ack_batch_entry_destroy_free#0",
+        "verdicts": [
+         "Unknown",
+         "Unknown",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [
+         2
+        ],
+        "row": "monkey-libevent::mk_core/mk_memory.c::unit#0::resource-custody.v1::monkey-libevent::mk_ptr_free#0",
+        "verdicts": [
+         "Unknown",
+         "Unknown",
+         "Safe"
+        ]
+       }
+      ],
+      "net_status_delta": {
+       "Safe": 10,
+       "Unknown": -10,
+       "Unsafe": 0
+      },
+      "status": "complete"
+     },
+     "slice": {
+      "cancelled": [],
+      "cascade": [],
+      "counts": {
+       "evidence_only": 4
+      },
+      "moved": [],
+      "net_status_delta": {
+       "Pending": 0,
+       "Safe": 0,
+       "Unknown": 0,
+       "Unsafe": 0
+      },
+      "status": "complete"
+     },
+     "system": {
+      "cancelled": [],
+      "cascade": [],
+      "counts": {
+       "evidence_only": 10,
+       "moved": 2
+      },
+      "moved": [
+       {
+        "attributed_steps": [],
+        "row": "fluent-bit-system::src/flb_input_chunk.c::unit#0::resource-custody.v1::fluent-bit-system::destroy_chunk_raw#0",
+        "verdicts": [
+         "Unknown",
+         "Safe",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [],
+        "row": "fluent-bit-system::src/flb_input_chunk.c::unit#1::resource-custody.v1::fluent-bit-system::destroy_chunk_raw#0",
+        "verdicts": [
+         "Unknown",
+         "Safe",
+         "Safe"
+        ]
+       }
+      ],
+      "net_status_delta": {
+       "Safe": 2,
+       "Unknown": -2,
+       "Unsafe": 0
+      },
+      "status": "complete"
+     }
+    },
+    "steps": [
+     1,
+     2
+    ]
+   }
+  ],
+  "status": "complete",
+  "steps": [
+   {
+    "after": "662dc54a498d29d9c71a8f937ecdd44ea2614b18",
+    "before": "7b726587bdf6a8213f451fa1c78297bb5e476ef7",
+    "comparison": "base->tip",
+    "record": "member-effect-component-scope/integration/native-comparison.json.gz"
+   },
+   {
+    "after": "278f87412192bf071420191e21e7365a319936fa",
+    "before": "662dc54a498d29d9c71a8f937ecdd44ea2614b18",
+    "comparison": "base->tip",
+    "record": "member-release-untyped-base/integration/native-comparison.json.gz"
+   }
+  ],
+  "unattributed_moves": 4,
+  "unattributed_new_safe": [
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "ctraces::ctr_id.c::unit#0::resource-custody.v1::ctraces::ctr_id_destroy#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "corpus",
+    "row": "fluent-bit-chunk::flb_input_chunk.c::unit#0::resource-custody.v1::fluent-bit-chunk::destroy_chunk_raw#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "system",
+    "row": "fluent-bit-system::src/flb_input_chunk.c::unit#0::resource-custody.v1::fluent-bit-system::destroy_chunk_raw#0",
+    "steps": [
+     1
+    ]
+   },
+   {
+    "formula": "cx_unattributed_new_safe_is_reviewed",
+    "route": "system",
+    "row": "fluent-bit-system::src/flb_input_chunk.c::unit#1::resource-custody.v1::fluent-bit-system::destroy_chunk_raw#0",
+    "steps": [
+     1
+    ]
+   }
+  ]
+ },
+ "out-parameter-three-landings": {
+  "attributed_by_source": {
+   "out-parameter-body-summary/PREDICTION.md": [
+    "corpus:rd_kafka_message_timestamp#0",
+    "corpus:rd_kafka_toppar_get_avail#0"
+   ],
+   "out-parameter-scalar-frame-premise/PREDICTION.md": [
+    "corpus:cio_file_content_copy#0",
+    "corpus:cio_memfs_content_copy#0",
+    "corpus:cio_utils_read_file#0"
+   ],
+   "out-slot-call-write-aliasing/PREDICTION.md": [
+    "corpus:cio_file_content_copy#0"
+   ]
+  },
+  "links": [
+   {
+    "between": [
+     1,
+     2
+    ],
+    "joined": true,
+    "refused_because": []
+   },
+   {
+    "between": [
+     2,
+     3
+    ],
+    "joined": true,
+    "refused_because": []
+   }
+  ],
+  "outcome": "completed",
+  "plugin_exit": 0,
+  "segments": [
+   {
+    "bundle_changes": [
+     {
+      "crates": [
+       "contract",
+       "providers/qcore-provider-chunkio/contracts",
+       "providers/qcore-provider-cmetrics/contracts",
+       "providers/qcore-provider-ctraces/contracts",
+       "providers/qcore-provider-libevent/contracts",
+       "providers/qcore-provider-librdkafka/contracts",
+       "providers/quirin-provider-cfl/contracts",
+       "providers/quirin-provider-fluent-bit/contracts",
+       "providers/quirin-provider-libc/contracts",
+       "providers/quirin-provider-mpack/contracts",
+       "providers/quirin-provider-msgpack/contracts",
+       "providers/quirin-provider-shared/contracts"
+      ],
+      "step": 1
+     },
+     {
+      "crates": [],
+      "step": 2
+     },
+     {
+      "crates": [],
+      "step": 3
+     }
+    ],
+    "routes": {
+     "corpus": {
+      "cancelled": [
+       "chunkio::cio_file.c::unit#0::resource-custody.v1::chunkio::cio_file_content_copy#0"
+      ],
+      "cascade": [],
+      "counts": {
+       "cancelled": 1,
+       "evidence_only": 210,
+       "moved": 4
+      },
+      "moved": [
+       {
+        "attributed_steps": [
+         2,
+         3
+        ],
+        "row": "chunkio::cio_file.c::unit#0::resource-custody.v1::chunkio::cio_file_content_copy#0",
+        "verdicts": [
+         "Unknown",
+         "Unknown",
+         "Safe",
+         "Unknown"
+        ]
+       },
+       {
+        "attributed_steps": [
+         2
+        ],
+        "row": "chunkio::cio_memfs.c::unit#0::resource-custody.v1::chunkio::cio_memfs_content_copy#0",
+        "verdicts": [
+         "Unknown",
+         "Unknown",
+         "Safe",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [
+         2
+        ],
+        "row": "chunkio::cio_utils.c::unit#0::resource-custody.v1::chunkio::cio_utils_read_file#0",
+        "verdicts": [
+         "Unknown",
+         "Unknown",
+         "Safe",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [
+         1
+        ],
+        "row": "librdkafka::rdkafka_msg.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_message_timestamp#0",
+        "verdicts": [
+         "Unknown",
+         "Safe",
+         "Safe",
+         "Safe"
+        ]
+       },
+       {
+        "attributed_steps": [
+         1
+        ],
+        "row": "librdkafka::rdkafka_partition.c::unit#0::resource-custody.v1::librdkafka::rd_kafka_toppar_get_avail#0",
+        "verdicts": [
+         "Unknown",
+         "Safe",
+         "Safe",
+         "Safe"
+        ]
+       }
+      ],
+      "net_status_delta": {
+       "Safe": 4,
+       "Unknown": -4,
+       "Unsafe": 0
+      },
+      "status": "complete"
+     },
+     "slice": {
+      "cancelled": [],
+      "cascade": [],
+      "counts": {
+       "evidence_only": 12
+      },
+      "moved": [],
+      "net_status_delta": {
+       "Pending": 0,
+       "Safe": 0,
+       "Unknown": 0,
+       "Unsafe": 0
+      },
+      "status": "complete"
+     },
+     "system": {
+      "cancelled": [],
+      "cascade": [],
+      "counts": {
+       "evidence_only": 13
+      },
+      "moved": [],
+      "net_status_delta": {
+       "Safe": 0,
+       "Unknown": 0,
+       "Unsafe": 0
+      },
+      "status": "complete"
+     }
+    },
+    "steps": [
+     1,
+     2,
+     3
+    ]
+   }
+  ],
+  "status": "complete",
+  "steps": [
+   {
+    "after": "41d1b48a5abadaf2f9a562e91bb49fa33f6f2c8f",
+    "before": "7b726587bdf6a8213f451fa1c78297bb5e476ef7",
+    "comparison": "base->tip",
+    "record": "out-parameter-body-summary/integration/native-comparison.json.gz"
+   },
+   {
+    "after": "aa39993332297a679289458b19c07ab091bc0106",
+    "before": "41d1b48a5abadaf2f9a562e91bb49fa33f6f2c8f",
+    "comparison": "base->tip",
+    "record": "out-parameter-scalar-frame-premise/integration/native-comparison.json.gz"
+   },
+   {
+    "after": "898fba85511d0836dbc6d2d8bd018ea7cde03f4d",
+    "before": "aa39993332297a679289458b19c07ab091bc0106",
+    "comparison": "base->tip",
+    "record": "out-slot-call-write-aliasing/integration/native-comparison.json.gz"
+   }
+  ],
+  "unattributed_moves": 0,
+  "unattributed_new_safe": []
+ },
+ "sp2-sp3-sp4": {
+  "attributed_by_source": {},
+  "links": [
+   {
+    "between": [
+     1,
+     2
+    ],
+    "joined": true,
+    "refused_because": []
+   },
+   {
+    "between": [
+     2,
+     3
+    ],
+    "joined": true,
+    "refused_because": []
+   }
+  ],
+  "outcome": "completed",
+  "plugin_exit": 0,
+  "segments": [
+   {
+    "bundle_changes": [
+     {
+      "crates": [
+       "providers/qcore-provider-librdkafka/contracts"
+      ],
+      "step": 1
+     },
+     {
+      "crates": [
+       "providers/quirin-provider-fluent-bit/contracts"
+      ],
+      "step": 2
+     },
+     {
+      "crates": [
+       "providers/qcore-provider-libevent/contracts"
+      ],
+      "step": 3
+     }
+    ],
+    "routes": {
+     "corpus": {
+      "cancelled": [],
+      "cascade": [],
+      "counts": {
+       "evidence_only": 185
+      },
+      "moved": [],
+      "net_status_delta": {
+       "Safe": 0,
+       "Unknown": 0,
+       "Unsafe": 0
+      },
+      "status": "complete"
+     },
+     "slice": {
+      "cancelled": [],
+      "cascade": [],
+      "counts": {
+       "evidence_only": 16
+      },
+      "moved": [],
+      "net_status_delta": {
+       "Pending": 0,
+       "Safe": 0,
+       "Unknown": 0,
+       "Unsafe": 0
+      },
+      "status": "complete"
+     },
+     "system": {
+      "cancelled": [],
+      "cascade": [],
+      "counts": {
+       "evidence_only": 15
+      },
+      "moved": [],
+      "net_status_delta": {
+       "Safe": 0,
+       "Unknown": 0,
+       "Unsafe": 0
+      },
+      "status": "complete"
+     },
+     "twelve-home": {
+      "cancelled": [],
+      "cascade": [],
+      "counts": {
+       "evidence_only": 185
+      },
+      "moved": [],
+      "net_status_delta": {
+       "Safe": 0,
+       "Unknown": 0,
+       "Unsafe": 0
+      },
+      "status": "complete"
+     }
+    },
+    "steps": [
+     1,
+     2,
+     3
+    ]
+   }
+  ],
+  "status": "complete",
+  "steps": [
+   {
+    "after": "17b0e77b25e5c59eb207d78c598d655027b90a31",
+    "before": "70e10930f01d9092e012ccc0de082c5ac6373f35",
+    "comparison": "base->tip",
+    "record": "sp2-symbolic-librdkafka-premises/integration/native-comparison.json.gz"
+   },
+   {
+    "after": "8952bdb8d484b77c3aa73f79865dfbc1363ab2fe",
+    "before": "17b0e77b25e5c59eb207d78c598d655027b90a31",
+    "comparison": "base->tip",
+    "record": "sp3-symbolic-fluent-bit-libc-premises/integration/native-comparison.json.gz"
+   },
+   {
+    "after": "1deb8fd9b1119250b72721ec06ac9d9e2136bca8",
+    "before": "8952bdb8d484b77c3aa73f79865dfbc1363ab2fe",
+    "comparison": "base->tip",
+    "record": "sp4-symbolic-libevent-premises/integration/native-comparison.json.gz"
+   }
+  ],
+  "unattributed_moves": 0,
+  "unattributed_new_safe": []
+ }
+}

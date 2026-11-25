@@ -211,6 +211,10 @@ struct CrateRecord {
     /// Card OUTER-CONTRACT.
     #[serde(default)]
     outer_view: Option<Vec<String>>,
+    /// Card QUIRIN-AUDIT-CONNECT (C15.1): every declared contract dependency
+    /// of the crate's modules, in module then text order. Absent when none.
+    #[serde(default)]
+    contract_dependencies: Option<Vec<qcore_schemas::connect::DeclaredDependency>>,
 }
 
 /// A load path read from its manifest, with the directory each crate's
@@ -236,6 +240,10 @@ pub struct LoadPathManifest {
     /// Card W45-USER-CONTRACT-PLUGINS: present exactly for a manifest that
     /// extends a shipped one.
     pub extension: Option<LoadPathExtension>,
+    /// Card QUIRIN-AUDIT-CONNECT (C15.1): crate name to the contract
+    /// dependencies its modules declare, each checked against the module
+    /// texts. A crate that declares none is absent.
+    pub contract_dependencies: BTreeMap<String, Vec<qcore_schemas::connect::DeclaredDependency>>,
 }
 
 impl LoadPathManifest {
@@ -391,6 +399,7 @@ fn read_manifest(
     let mut resource_views = BTreeMap::new();
     let mut bounds_views = BTreeMap::new();
     let mut outer_views = BTreeMap::new();
+    let mut contract_dependencies = BTreeMap::new();
     for record in manifest.crates {
         let name = record.name.clone();
         if !relative_directory(&record.contracts) {
@@ -543,6 +552,35 @@ fn read_manifest(
                 String::from_utf8(bytes).map_err(|e| refuse(&name, format!("{module}: {e}")))?;
             modules.insert(module.clone(), text);
         }
+        // Card QUIRIN-AUDIT-CONNECT: the recorded dependencies are exactly
+        // the clauses the module texts declare, read by the loader's reader.
+        let mut scanned = Vec::new();
+        for (module, text) in &modules {
+            let clauses = crate::contract_dependency::scan_module(text)
+                .map_err(|e| refuse(&name, format!("{module}: {e}")))?;
+            scanned.extend(
+                clauses
+                    .into_iter()
+                    .map(|(function, written)| written.of(&name, &function, module)),
+            );
+        }
+        if record.contract_dependencies.clone().unwrap_or_default() != scanned
+            || record
+                .contract_dependencies
+                .as_ref()
+                .is_some_and(Vec::is_empty)
+        {
+            return Err(refuse(
+                &name,
+                "`contract_dependencies` differs from the dependencies its modules declare \
+                 (C15.1); regenerate the load-path manifest (`python3 providers/contracts.py \
+                 sync`, or `quirin-audit plugin views --write` for a user load path)"
+                    .into(),
+            ));
+        }
+        if !scanned.is_empty() {
+            contract_dependencies.insert(name.clone(), scanned);
+        }
         contract_roots.insert(name.clone(), root);
         crates.push(PublishedContractCrate {
             name,
@@ -554,6 +592,7 @@ fn read_manifest(
         });
     }
     let Some((shipped, base_path, base_sha256)) = extended else {
+        refuse_dependency_cycles(&origin, &contract_dependencies)?;
         return Ok(LoadPathManifest {
             load_path: ContractLoadPath::new(crates)?,
             contract_roots,
@@ -561,6 +600,7 @@ fn read_manifest(
             bounds_views,
             outer_views,
             extension: None,
+            contract_dependencies,
         });
     };
     let user_crates: BTreeSet<String> = contract_roots.keys().cloned().collect();
@@ -649,12 +689,16 @@ fn read_manifest(
     all_bounds_views.extend(bounds_views);
     let mut all_outer_views = shipped.outer_views;
     all_outer_views.extend(outer_views);
+    let mut all_dependencies = shipped.contract_dependencies;
+    all_dependencies.extend(contract_dependencies);
+    refuse_dependency_cycles(&origin, &all_dependencies)?;
     Ok(LoadPathManifest {
         load_path: ContractLoadPath::new(all)?,
         contract_roots: roots,
         resource_views: views,
         bounds_views: all_bounds_views,
         outer_views: all_outer_views,
+        contract_dependencies: all_dependencies,
         extension: Some(LoadPathExtension {
             base: base_path,
             base_sha256,
@@ -664,4 +708,29 @@ fn read_manifest(
             checkers,
         }),
     })
+}
+
+/// Card QUIRIN-AUDIT-CONNECT (C15.1): a load path whose declared contract
+/// dependencies form a cycle is refused (`cx_cycle_holds`), naming every
+/// declaration on one.
+fn refuse_dependency_cycles(
+    origin: &str,
+    dependencies: &BTreeMap<String, Vec<qcore_schemas::connect::DeclaredDependency>>,
+) -> Result<(), ContractInclusionError> {
+    let cycles = qcore_schemas::connect::cycles(dependencies.values().flatten());
+    if cycles.is_empty() {
+        return Ok(());
+    }
+    Err(ContractInclusionError::new(
+        InclusionCode::Qi014,
+        origin,
+        format!(
+            "declared contract dependencies form a cycle (cx_cycle_holds): {}",
+            cycles
+                .iter()
+                .map(|(krate, function)| format!("{krate}:{function}"))
+                .collect::<Vec<_>>()
+                .join(", ")
+        ),
+    ))
 }
