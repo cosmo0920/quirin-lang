@@ -38,6 +38,8 @@ pub mod contract_supersession;
 pub mod digest;
 pub mod handoff;
 pub mod identity;
+// Card OUT-SLOT-CONDITIONAL-DELIVERY (gateway rule 85): in-out slots.
+pub mod keep_or_deliver;
 pub mod library_version;
 pub mod loop_lifetime;
 pub mod mechanism;

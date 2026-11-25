@@ -862,6 +862,12 @@ pub struct ResourceContracts {
     /// empty, so every environment without one serializes as before.
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
     member_effects: BTreeMap<String, crate::member_effect::MemberEffectSummary>,
+    /// Card OUT-SLOT-CONDITIONAL-DELIVERY (gateway rule 85): the validated
+    /// keep-or-deliver summaries of in-out slots. Never in [`Self::functions`]:
+    /// only the direct-call route that branches on the slot reads one. Omitted
+    /// when empty, so every environment without one serializes as before.
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    keep_or_deliver: BTreeMap<String, crate::keep_or_deliver::KeepOrDeliverSummary>,
 }
 
 /// Card MEASURE-LOOKUP-RECORD-REUSE: the derived `Debug` output, field for
@@ -896,6 +902,7 @@ impl std::fmt::Debug for ResourceContracts {
             .field("contract_conflict", &self.contract_conflict)
             .field("result_ranges", &self.result_ranges)
             .field("member_effects", &self.member_effects)
+            .field("keep_or_deliver", &self.keep_or_deliver)
             .finish()
     }
 }
@@ -957,6 +964,7 @@ impl ResourceContracts {
                 "contract_conflict": entry(&self.contract_conflict, name)?,
                 "result_ranges": entry(&self.result_ranges, name)?,
                 "member_effects": entry(&self.member_effects, name)?,
+                "keep_or_deliver": entry(&self.keep_or_deliver, name)?,
             });
             entries.insert(name.clone(), tables);
         }
@@ -995,6 +1003,7 @@ impl ResourceContracts {
             || self.contract_conflict.contains_key(name)
             || self.result_ranges.contains_key(name)
             || self.member_effects.contains_key(name)
+            || self.keep_or_deliver.contains_key(name)
     }
 
     #[must_use]
@@ -1026,6 +1035,7 @@ impl ResourceContracts {
             contract_conflict: BTreeMap::new(),
             result_ranges: BTreeMap::new(),
             member_effects: BTreeMap::new(),
+            keep_or_deliver: BTreeMap::new(),
         }
     }
 
@@ -1060,6 +1070,45 @@ impl ResourceContracts {
             return;
         }
         self.member_effects.insert(name, summary);
+    }
+
+    /// Card OUT-SLOT-CONDITIONAL-DELIVERY (rule 85): `name`'s validated
+    /// keep-or-deliver summary, if it has one.
+    #[must_use]
+    pub fn keep_or_deliver(
+        &self,
+        name: &str,
+    ) -> Option<&crate::keep_or_deliver::KeepOrDeliverSummary> {
+        let found = self.keep_or_deliver.get(name);
+        self.lookups.name(name, found.is_some());
+        found
+    }
+
+    /// Card OUT-SLOT-CONDITIONAL-DELIVERY: every keep-or-deliver summary in
+    /// force.
+    #[must_use]
+    pub fn keep_or_deliver_summaries(
+        &self,
+    ) -> &BTreeMap<String, crate::keep_or_deliver::KeepOrDeliverSummary> {
+        self.lookups.whole("keep_or_deliver");
+        &self.keep_or_deliver
+    }
+
+    /// Card OUT-SLOT-CONDITIONAL-DELIVERY: install `name`'s keep-or-deliver
+    /// summary. A name the ordinary table or a guarded interface already
+    /// holds keeps that entry and gets none: a declaration is never replaced
+    /// by an inference.
+    pub fn insert_keep_or_deliver(
+        &mut self,
+        name: impl Into<String>,
+        summary: crate::keep_or_deliver::KeepOrDeliverSummary,
+    ) {
+        let name = name.into();
+        self.lookups.name(&name, self.functions.contains_key(&name));
+        if self.functions.contains_key(&name) || self.has_guarded_interface(&name) {
+            return;
+        }
+        self.keep_or_deliver.insert(name, summary);
     }
 
     /// Card CELL-GUARD-RESULT-RANGE-CHECKED (rule 38e): the pin-derived result

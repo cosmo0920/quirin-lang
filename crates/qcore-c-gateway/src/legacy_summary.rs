@@ -559,6 +559,20 @@ pub(crate) fn derive_custody_summaries(
                                     derivation.environment.insert_relational(name, summary);
                                     installed = true;
                                 }
+                                // Card OUT-SLOT-CONDITIONAL-DELIVERY (rule
+                                // 85), after every other route: an in-out
+                                // slot kept where non-null and delivered
+                                // where null, in its own table.
+                                None if component.len() == 1
+                                    && let Some(summary) = keep_or_deliver::infer(
+                                        tokens,
+                                        &name,
+                                        &derivation.environment,
+                                    ) =>
+                                {
+                                    derivation.environment.insert_keep_or_deliver(name, summary);
+                                    installed = true;
+                                }
                                 None => still_pending.push(name),
                             },
                         }
@@ -2134,6 +2148,11 @@ pub(crate) mod effective_type;
 // and the per-class row.
 #[path = "legacy_relational_forwarding.rs"]
 pub(crate) mod relational_forwarding;
+
+// Card OUT-SLOT-CONDITIONAL-DELIVERY (gateway rule 85): the keep-or-deliver
+// summary of an in-out slot.
+#[path = "legacy_keep_or_deliver_summary.rs"]
+mod keep_or_deliver;
 
 #[cfg(test)]
 #[path = "../tests/unit/legacy_summary.rs"]

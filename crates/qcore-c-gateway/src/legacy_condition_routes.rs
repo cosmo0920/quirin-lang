@@ -280,6 +280,11 @@ impl Parser<'_> {
         if self.opaque_callee(condition) {
             return None;
         }
+        // Card OUT-SLOT-CONDITIONAL-DELIVERY (rule 85): only while a
+        // keep-or-deliver validation builds this body.
+        if let Some(condition) = self.slot_null_condition(condition) {
+            return Some(condition);
+        }
         // Card W43-DESCRIPTOR-RESOURCE-TRACKING: a test of a descriptor name is
         // a validity test, never a null test — descriptor `0` is valid, so a
         // null-shaped test of one (`if (fd)`) must not remove its site.

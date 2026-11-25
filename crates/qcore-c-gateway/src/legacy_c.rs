@@ -395,6 +395,9 @@ pub(crate) mod sub_object_store;
 mod pointer_store_flow;
 // Card CG10-OWNED-OUT-PARAMETER-MEMBER-SLOT (rule 72): an out slot handed a
 // member path of a caller-supplied object.
+// Card OUT-SLOT-CONDITIONAL-DELIVERY (gateway rule 85).
+#[path = "legacy_keep_or_deliver.rs"]
+pub(crate) mod keep_or_deliver;
 #[path = "legacy_owned_out_member.rs"]
 mod owned_out_member_route;
 // Card CG10-BOUND-UNTRACKED-ROOTS (rule 11d): the per-path bound-untracked
@@ -4018,6 +4021,10 @@ fn build_function_cfg_unscoped(
     // data, read only by rule 72's lowering.
     let owned_out_environment = crate::owned_out_member::minted_environment(tokens, contracts);
     let contracts = owned_out_environment.as_ref().unwrap_or(contracts);
+    // Card OUT-SLOT-CONDITIONAL-DELIVERY (rule 85): both readings of every
+    // keep-or-deliver summary the stream names, read only by its call route.
+    let keep_or_deliver_environment = keep_or_deliver::minted_environment(tokens, contracts);
+    let contracts = keep_or_deliver_environment.as_ref().unwrap_or(contracts);
     let normalized = out_alias::normalize(tokens, function, contracts);
     census_stage("out-alias", tokens, normalized.as_ref());
     let tokens = normalized.as_deref().unwrap_or(tokens);
@@ -6184,6 +6191,11 @@ impl Parser<'_> {
         // function whose member-effect summary is in force, lowered under its
         // contract where this body's check admitted it, else named.
         if let Some(statement) = self.member_effect_call(tokens, line, &instruction) {
+            return statement;
+        }
+        // Card OUT-SLOT-CONDITIONAL-DELIVERY (rule 85), likewise: a direct call
+        // to a keep-or-deliver function, branched on its slot actual.
+        if let Some(statement) = self.keep_or_deliver_call(tokens, line, &instruction) {
             return statement;
         }
         Statement::Instruction(instruction, line)
