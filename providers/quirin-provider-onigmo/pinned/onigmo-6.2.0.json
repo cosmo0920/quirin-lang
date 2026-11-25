@@ -1,0 +1,167 @@
+{
+ "schema_version": 1,
+ "generated_by": "providers/quirin-provider-onigmo/scripts/pin_prototypes.py",
+ "version": "6.2.0",
+ "provenance": "Fluent Bit 046accf6aded7906f66a1baf0202da349e521736 lib/onigmo (vendored Onigmo)",
+ "headers": {
+  "onigmo.h": "6217b2834613955a58e26211923d215bf540db73e7daaca95c133545935312a1"
+ },
+ "typedefs": {
+  "OnigEncoding": "const struct OnigEncodingTypeST *",
+  "OnigErrorInfo": "OnigErrorInfo",
+  "OnigOptionType": "unsigned int",
+  "OnigPosition": "long",
+  "OnigRegex": "struct re_pattern_buffer *",
+  "OnigRegion": "struct re_registers",
+  "OnigSyntaxType": "OnigSyntaxType",
+  "OnigUChar": "unsigned char"
+ },
+ "prototypes": {
+  "onig_foreach_name": {
+   "declaration": "int onig_foreach_name(OnigRegex reg, int (*func)(const OnigUChar*, const OnigUChar*,int,int*,OnigRegex,void*), void* arg)",
+   "header": "onigmo.h",
+   "result": "int",
+   "parameters": [
+    "OnigRegex",
+    "fnptr",
+    "void *"
+   ],
+   "canonical_result": "int",
+   "canonical_parameters": [
+    "struct re_pattern_buffer *",
+    "fnptr",
+    "void *"
+   ]
+  },
+  "onig_free": {
+   "declaration": "void onig_free(OnigRegex)",
+   "header": "onigmo.h",
+   "result": "void",
+   "parameters": [
+    "OnigRegex"
+   ],
+   "canonical_result": "void",
+   "canonical_parameters": [
+    "struct re_pattern_buffer *"
+   ]
+  },
+  "onig_init": {
+   "declaration": "int onig_init(void)",
+   "header": "onigmo.h",
+   "result": "int",
+   "parameters": [],
+   "canonical_result": "int",
+   "canonical_parameters": []
+  },
+  "onig_match": {
+   "declaration": "OnigPosition onig_match(OnigRegex, const OnigUChar* str, const OnigUChar* end, const OnigUChar* at, OnigRegion* region, OnigOptionType option)",
+   "header": "onigmo.h",
+   "result": "OnigPosition",
+   "parameters": [
+    "OnigRegex",
+    "const OnigUChar *",
+    "const OnigUChar *",
+    "const OnigUChar *",
+    "OnigRegion *",
+    "OnigOptionType"
+   ],
+   "canonical_result": "long",
+   "canonical_parameters": [
+    "struct re_pattern_buffer *",
+    "const unsigned char *",
+    "const unsigned char *",
+    "const unsigned char *",
+    "struct re_registers *",
+    "unsigned int"
+   ]
+  },
+  "onig_name_to_backref_number": {
+   "declaration": "int onig_name_to_backref_number(OnigRegex reg, const OnigUChar* name, const OnigUChar* name_end, const OnigRegion *region)",
+   "header": "onigmo.h",
+   "result": "int",
+   "parameters": [
+    "OnigRegex",
+    "const OnigUChar *",
+    "const OnigUChar *",
+    "const OnigRegion *"
+   ],
+   "canonical_result": "int",
+   "canonical_parameters": [
+    "struct re_pattern_buffer *",
+    "const unsigned char *",
+    "const unsigned char *",
+    "const struct re_registers *"
+   ]
+  },
+  "onig_new": {
+   "declaration": "int onig_new(OnigRegex*, const OnigUChar* pattern, const OnigUChar* pattern_end, OnigOptionType option, OnigEncoding enc, const OnigSyntaxType* syntax, OnigErrorInfo* einfo)",
+   "header": "onigmo.h",
+   "result": "int",
+   "parameters": [
+    "OnigRegex *",
+    "const OnigUChar *",
+    "const OnigUChar *",
+    "OnigOptionType",
+    "OnigEncoding",
+    "const OnigSyntaxType *",
+    "OnigErrorInfo *"
+   ],
+   "canonical_result": "int",
+   "canonical_parameters": [
+    "struct re_pattern_buffer **",
+    "const unsigned char *",
+    "const unsigned char *",
+    "unsigned int",
+    "const struct OnigEncodingTypeST *",
+    "const OnigSyntaxType *",
+    "OnigErrorInfo *"
+   ]
+  },
+  "onig_region_free": {
+   "declaration": "void onig_region_free(OnigRegion* region, int free_self)",
+   "header": "onigmo.h",
+   "result": "void",
+   "parameters": [
+    "OnigRegion *",
+    "int"
+   ],
+   "canonical_result": "void",
+   "canonical_parameters": [
+    "struct re_registers *",
+    "int"
+   ]
+  },
+  "onig_region_new": {
+   "declaration": "OnigRegion* onig_region_new(void)",
+   "header": "onigmo.h",
+   "result": "OnigRegion *",
+   "parameters": [],
+   "canonical_result": "struct re_registers *",
+   "canonical_parameters": []
+  },
+  "onig_search": {
+   "declaration": "OnigPosition onig_search(OnigRegex, const OnigUChar* str, const OnigUChar* end, const OnigUChar* start, const OnigUChar* range, OnigRegion* region, OnigOptionType option)",
+   "header": "onigmo.h",
+   "result": "OnigPosition",
+   "parameters": [
+    "OnigRegex",
+    "const OnigUChar *",
+    "const OnigUChar *",
+    "const OnigUChar *",
+    "const OnigUChar *",
+    "OnigRegion *",
+    "OnigOptionType"
+   ],
+   "canonical_result": "long",
+   "canonical_parameters": [
+    "struct re_pattern_buffer *",
+    "const unsigned char *",
+    "const unsigned char *",
+    "const unsigned char *",
+    "const unsigned char *",
+    "struct re_registers *",
+    "unsigned int"
+   ]
+  }
+ }
+}
