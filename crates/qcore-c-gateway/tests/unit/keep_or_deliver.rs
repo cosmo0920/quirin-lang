@@ -59,9 +59,8 @@ fn keep_or_deliver_vectors_hold() {
             .iter()
             .map(|spelling| exit(slot(spelling)))
             .collect::<Vec<_>>();
-        let read =
-            decide(crate::legacy_summary::out_mode(0, &observations), held)
-                .map(|nullable| if nullable { "out-nullable" } else { "out" });
+        let read = decide(crate::legacy_summary::out_mode(0, &observations), held)
+            .map(|nullable| if nullable { "out-nullable" } else { "out" });
         assert_eq!(read, *expected, "{null_run:?} {held:?}");
     }
 }

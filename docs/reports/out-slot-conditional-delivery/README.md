@@ -203,7 +203,35 @@ none anywhere. The `measure-prediction` block (no pinned-route move) stands.
 
 ## 7. Gate
 
-GATE
+Scoped card gate `python3 scripts/gate_scope.py --base 43410b230 --out
+private/gate` through `private/toolchain/env.sh` (Clang 21, Lean 4.35), head
+`827ff788f` (code, tests, Lean and rule as at `80f747e4b`). Mode full (the
+diff reaches `qcore-schemas` and `qcore-c-gateway`); provider gate not
+selected. Record [gate/gate-1.json](gate/gate-1.json), logs in the worktree's
+`private/gate/`.
+
+| step | exit | result |
+|---|---:|---|
+| submodules | 0 | 1 submodule |
+| `cargo fmt --all -- --check` | **1** | one rustfmt diff in `tests/unit/keep_or_deliver.rs`; fixed in the next commit, `cargo fmt --all -- --check` then exit 0 (`private/oscd/fmt-check-2.log`), the unit target re-run 3/3 |
+| `cargo clippy --all-targets -- -D warnings` | 0 | |
+| `run_test_binaries.py` | 101 | 697 units, 742 summaries; 10,117 passed, **6 failed**, 24 ignored, 148 filtered (4 h 05 min, most of it queued in the shared audit slot) |
+| `reevaluation_probe` / `reevaluation_followup` | 0 / 0 | |
+| `check_lean_audits.py` | 0 | 509 audits |
+| `python3 -m unittest discover -s scripts/tests` | 0 | 807 tests |
+
+**The 6 failures are the known base failures** (K5-LOCAL-ORIGIN-ALIASES,
+rule 77 pins awaiting a user decision), none of this card's:
+`scalar_read_identity::pointer_destination_retains_opaque_identity_refusal`,
+`detach_lookup_membership::production_lookup_baseline_refuses_the_unresolved_returned_cursor`,
+`access_path_positions::an_assignment_operand_is_a_borrowed_read_then_the_null_branch`,
+`typed_const_pointer_value::a_void_pointer_bit_cast_is_a_borrowed_read`,
+`lexical_closure_nested_assignment::a_never_bound_root_still_certifies`,
+`typed_root_declarations::an_assignment_operand_reads_the_ast_declared_local`.
+The gate was not re-run after the formatting commit (a whitespace change to
+one test file).
+
+LLP64 fixture scan over the changed test paths: exit 0.
 
 ## 8. Follow-ups (in [integration-amendments.json](integration-amendments.json))
 
