@@ -1,0 +1,23 @@
+{
+ "leaves": {
+  "kept (same refusal text)": 247,
+  "exchanged for AG3's named callee text (rule 63 (2))": 801,
+  "row Safe": 1,
+  "gone (no diagnostic at the line)": 9
+ },
+ "by_family": {
+  "IND": {
+   "kept (same refusal text)": 75,
+   "gone (no diagnostic at the line)": 2
+  },
+  "COND": {
+   "exchanged for AG3's named callee text (rule 63 (2))": 801,
+   "kept (same refusal text)": 143,
+   "row Safe": 1,
+   "gone (no diagnostic at the line)": 7
+  },
+  "RET": {
+   "kept (same refusal text)": 29
+  }
+ }
+}

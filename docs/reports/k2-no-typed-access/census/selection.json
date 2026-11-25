@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "name": "k2-no-typed-access",
+  "description": "K2-NO-TYPED-ACCESS unit-scoped reproduction of the user's 046accf6 current run: the non-Monkey units holding a row the K2 bundle frees alone at 11-24, and lz4hc.c (a sizeof operand site)",
+  "groups": [
+    {
+      "library": "librdkafka",
+      "files": [
+        "lib/librdkafka-2.15.0/src/cJSON.c",
+        "lib/librdkafka-2.15.0/src/lz4.c",
+        "lib/librdkafka-2.15.0/src/lz4hc.c",
+        "lib/librdkafka-2.15.0/src/rdkafka.c",
+        "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+        "lib/librdkafka-2.15.0/src/rdkafka_conf.c",
+        "lib/librdkafka-2.15.0/src/rdkafka_msg.c",
+        "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+        "lib/librdkafka-2.15.0/src/rdkafka_share_acknowledgement.c",
+        "lib/librdkafka-2.15.0/src/rdkafka_topic.c",
+        "lib/librdkafka-2.15.0/src/snappy.c",
+        "lib/librdkafka-2.15.0/src/tinycthread_extra.c"
+      ]
+    }
+  ]
+}
