@@ -207,7 +207,40 @@ changed here. Each is a provisional Unsafe and no upstream defect claim.
 
 ## 5. Gate
 
-GATE_PLACEHOLDER
+`sh private/toolchain/env.sh python3 scripts/gate_scope.py --base 43410b230
+--out <worktree>/private/gate` (Clang 21, Lean 4.35). The plan was taken at
+`65870f6f4` (mode full: the diff reaches `qcore-c-gateway`). The slot-queued
+steps ran on the working tree after `da06cea81` (the `k_read` spelling) and
+`5f2f0e1eb` (records) were committed: the rust suite was admitted at about
+04:27 UTC and the Python suite ran at about 04:45 UTC. Record:
+[gate/gate.json](gate/gate.json). Logs are in the worktree's `private/gate/`.
+
+| step | exit | result |
+|---|---:|---|
+| submodules | 0 | 1 submodule |
+| `cargo fmt --all -- --check` | 0 | |
+| `cargo clippy --all-targets -- -D warnings` | 0 | |
+| `run_test_binaries.py` (24 packages) | 101 | 697 units, 742 summaries; 10,107 passed, **6 failed**, 24 ignored, 148 filtered |
+| `reevaluation_probe` / `reevaluation_followup` | 0 / 0 | |
+| `check_lean_audits.py` (all) | 0 | 509 audits |
+| `python3 -m unittest discover -s scripts/tests` | 0 | 807 tests |
+
+**The six failures are the base failures** named in the brief: the
+K5-LOCAL-ORIGIN-ALIASES (rule 77) pins awaiting a user decision, one per unit,
+and they fail identically at `43410b230`. This card did not edit them:
+
+* `scalar_read_identity::pointer_destination_retains_opaque_identity_refusal`;
+* `detach_lookup_membership::production_lookup_baseline_refuses_the_unresolved_returned_cursor`;
+* `access_path_positions::an_assignment_operand_is_a_borrowed_read_then_the_null_branch`;
+* `typed_const_pointer_value::a_void_pointer_bit_cast_is_a_borrowed_read`;
+* `lexical_closure_nested_assignment::a_never_bound_root_still_certifies`;
+* `typed_root_declarations::an_assignment_operand_reads_the_ast_declared_local`.
+
+No other test failed. Clippy with `--features indirect-census` on
+`qcore-c-gateway` (the census field) was also run separately and exited 0.
+No provider file changed, so the provider gate was not selected. The LLP64
+fixture scan over the changed test files exits 0, and
+`apply_amendments.py --check --profiles-base 43410b230` exits 0.
 
 ## 6. Ledger and follow-ups
 
