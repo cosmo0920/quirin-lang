@@ -1,66 +1,40 @@
-# Planned Quirin extension migration
+# Quirin file-extension migration (`EXT-01`–`EXT-04`)
 
-Status: EXT-01 compatibility passed its full gate; physical renames EXT-02/03 passed their combined gate ([report](../../reports/extension-physical-migration/README.md)); retirement EXT-04 remains planned. See the [EXT-01 report](../../reports/extension-compatibility/README.md). Decision recorded 2026-09-27 against `2e44e963`. The active checkpoint change keeps `.qo`; the source/ABI renames below belong to subsequent migration cards. The user subsequently required updating or removing outdated historical files. The migration updates archived sources and runnable references, while recorded measurements remain explicitly attributed to their original revision.
+> [!NOTE]
+> **Current status (completed active migration).** Compatibility readers (`EXT-01`, [report](../../reports/extension-compatibility/README.md)) and physical repository-wide renames (`EXT-02` and `EXT-03`, [combined report](../../reports/extension-physical-migration/README.md)) are **complete and merged**, followed by `#import` runtime resolution ([report](../../reports/runtime-source-imports/README.md)). Zero `EXT-*` items remain in `acceptance_matrix.json#named_followups`. Legacy `.qcore` and `.qcorelib` spellings remain accepted as compatibility aliases with stderr warnings; undated final removal of legacy reader support (`EXT-04`) awaits downstream readiness.
 
-| Meaning | Target | Existing | Classification rule |
+## 1. Canonical suffix scheme (in force)
+
+| Meaning | Current suffix | Legacy alias | Classification and trust rule |
 |---|---|---|---|
-| Quirin checkpoint object | `.qo` | `.qo` | Binary checkpoint; schema/version migration is independent of extension migration |
-| Quirin formal verification source | `.qv` | `.qcore` | **Contract mode: `module contract;`**, as explicitly directed by the user |
-| Quirin executable/runtime source | `.qr` | `.qcore` | Executable/runtime source; classify `module library;` inputs by their actual consumer before renaming |
-| Quirin C ABI definitions | `.qrlib` | `.qcorelib` | Existing native-library ABI definition/manifest grammar; renaming does not widen linkage or contract authority |
+| Quirin checkpoint object | `.qo` | `.qo` | Binary audit checkpoint; schema/version migration is independent of source suffixes. |
+| Quirin formal contract source | `.qv` | `.qcore` | **Contract mode (`module contract;`)**. Identifies contract declarations, not a proof certificate or proved C body. |
+| Quirin runtime / library source | `.qr` | `.qcore` | Executable (`module executable;` or unmarked) and helper library (`module library;`) source files. |
+| Quirin native ABI manifest | `.qrlib` | `.qcorelib` | Native-library ABI manifest grammar (`v1` declared / `v2` symbol-generated); grants no unspoken contract or linkage authority. |
 
-`.qv` identifies contract mode, not a proof certificate and not evidence that a contract body has been proved. `.qr` identifies runtime source, not a native executable. The extensions do not change grammar, semantics, checking obligations, provider trust or verdicts. Keep `.qcore` as a migration alias until the retirement gate below passes; do not silently interpret a contract as an executable from its suffix.
+The file extensions do not alter grammar, checking obligations, provider trust, or verdicts. A wrong-extension / wrong-mode combination refuses (`Q403` / `Q039`) rather than silently selecting a weaker checker, and legacy `.qcore`/`.qcorelib` inputs emit an explicit compatibility warning without changing safety verdicts.
 
-## User-directed scope update (2026-09-27)
+---
 
-The user subsequently required outdated historical sources to be changed or removed to avoid confusion. This supersedes the frozen-source exclusions below for EXT-02/03: rename all 621 classified inputs (195 `.qv`, 421 `.qr`, five `.qrlib`), update runnable examples and links, and distinguish original measurement provenance from current source names. Historical verdicts and digests remain factual records of their measured revision, not silently rewritten results. The earlier preservation statements describe the original plan and EXT-01 compatibility measurement only. After these renames, the separate [runtime import card](../runtime-imports/README.md) adds relative `.qr` imports and rewrites current and archived source examples from `import` to `#import`.
+## 2. Migration slices and completion standing
 
-## Inventory at the planning base
+| Slice | Scope | Standing |
+|---|---|---|
+| **EXT-01** — Compatibility readers & warnings | Parser-derived mode classification; `.qv`, `.qr`, and `.qrlib` reader support; duplicate legacy/new alias refusal; immediate stderr compatibility warnings. | **Completed** — [EXT-01 report](../../reports/extension-compatibility/README.md) |
+| **EXT-02** — Contract-mode `.qv` rename | Atomic rename of live and archived contract modules, `#include` targets, provider exports, bundle selections, and lock/inventory paths with zero verdict drift. | **Completed** — [EXT-02/03 report](../../reports/extension-physical-migration/README.md) |
+| **EXT-03** — Runtime `.qr` & ABI `.qrlib` rename | Rename of classified runtime sources, examples, CLI help, test fixtures, and `.qrlib` manifests, preserving emitted C bytes and diagnostics. | **Completed** — [EXT-02/03 report](../../reports/extension-physical-migration/README.md) |
+| **EXT-04** — Legacy alias retirement | Eventual removal of `.qcore` / `.qcorelib` fallback readers once external consumers require no compatibility window. Warning emission from `EXT-04` is already active since `EXT-01`. | **Undated option (not scheduled)** — legacy warnings and collision/wrong-mode refusal tests remain enforced in CI. |
 
-`git ls-files` records **616 `.qcore` files**: compiler 223, contract 1, crates 46, docs 182, examples 41, providers 123. Of these, **182 are under frozen `docs/reports/`**, and 434 are elsewhere. There are **5 `.qcorelib` files** (four compiler fixtures, one example), and no tracked `.qo`, `.qv`, `.qr`, `.qrlib` or `.qc` files. Virtual `.qc` source names occur in tests and are separate from tracked files. These are filename counts, not contract coverage.
+---
 
-A lexical scan finds 195 `module contract;` candidates and 421 requiring classification; these include archived inputs and are **not** an approved rename list. The implementation card must obtain module mode from the real parser, identify intentional malformed fixtures, distinguish library inputs from contract-mode inputs, and publish a per-file old/new mapping. Re-inventory at that card's base; the repository is changing concurrently.
+## 3. Historical planning record (2026-09-27, base `2e44e963`)
 
-Known consumers requiring coordinated work:
+The inventory and design notes below preserve the original pre-migration baseline (`2e44e963`) and the user's 2026-09-27 scope override requiring historical/archived inputs and runnable references to migrate to `.qv`, `.qr`, and `.qrlib` while attributing recorded measurements to their original commits.
 
-- Frontend: `crates/qcore-frontend/src/contract_inclusion.rs` restricts included module suffixes; module-mode checks and diagnostic source paths must remain meaningful.
-- Contracts: `crates/qcore-contract/src/{bundle,load_path_manifest,contract_views}.rs`, provider module exports, `contract/corpus.json`, and every named manifest/include/lock/module reference.
-- Auditing: `crates/qcore-audit/src/contract_pin.rs` discovers `.qcore` modules; source-contract/profile loaders and the shared source-analysis crate must resolve the same declaration identity.
-- Provider packaging: `providers/contracts.py`, `providers/package.py`, load-path generation, inventories, package digests and integrity checks.
-- Runtime/native linkage: `quirin check`/`emit`, `.qcorelib` native-library fixtures and their `from …` contract references, generated artifact naming and command examples.
-- Tooling: tracked-file test inventories, fixture include paths, source fixtures in Rust/Python, documentation links, editor/file-type associations, CI and package/install commands.
-
-The initial search is a starting inventory, not evidence that every consumer is listed. Each card reruns the repository-wide suffix/reference census and records unhandled references explicitly.
-
-## Candidate cards and order
-
-### EXT-01 — Classification and compatibility readers
-
-Generate the tracked-file mapping with parser-derived module modes and a separate frozen-archive list. Add `.qv`, `.qr` and `.qrlib` acceptance to the appropriate readers while retaining legacy spellings. Define wrong-extension/wrong-mode errors without accepting new syntax; a formal/runtime mismatch must not select a less restrictive checker. Define one module identity when a legacy/new spelling refers to the same declaration: reject ambiguous duplicate candidates rather than choose by search order. Classify `module library;`, mixed multi-file invocations and malformed fixtures explicitly.
-The compatibility readers introduced here emit the EXT-04 legacy-extension warning from their first release, including for retained frozen `.qcore` inputs; warning behavior is not deferred until retirement.
-
-Acceptance: old commands retain their verdicts and emitted C bytes; renamed temporary copies have matching results except recorded path spellings. Tests cover both aliases, mismatched modes, duplicate modules, includes, provider load paths, lock evaluation and native-library contract references. Follow the standing gate and add matching Lean only where semantics actually change. No bulk rename before this card passes.
-
-### EXT-02 — Contract-mode `.qv` migration
-
-Rename live contract-mode sources and update includes, provider exports, bundle selections, contract inventories, `.qrlib`/legacy native-manifest references, tests and current documentation atomically. Deliberately update load-bearing contract-count/path tables and package digests; preserve contract text and checked clause counts. Path-addressed lock/module records require explicit migration with declaration/source identity comparisons, never a blind textual substitution or blanket re-pin. Verify that no formerly held/Unknown result becomes Safe because a declaration fell out of discovery or acquired the wrong pin.
-
-Acceptance: tracked mapping accounts for every renamed file, inventories select the same declarations, pins preserve reviewed identities, provider build/verify/conformance gate and core standing gate pass, and archived corpus comparisons attribute every path/digest delta with zero unexplained verdict movement. Include archived contract inputs and executable references, as explicitly requested by the user. Attribute old measurements to their original revision and record the migration separately.
-
-### EXT-03 — Runtime `.qr` and ABI `.qrlib` migration
-
-Rename classified runtime sources and ABI-definition inputs, update current examples/CLI help, fixture paths, native linkage references, build/install tooling and file-type associations. Follow EXT-01's recorded decision for library-mode sources. Runtime and ABI changes may be implemented independently after compatible readers exist, but integrate one at a time.
-
-Acceptance: reference programs emit identical C and retain diagnostics/verdicts apart from explicit source-path changes; native-library linkage and contract attribution remain total; all tracked live references resolve and the standing gate passes.
-
-### EXT-04 — Defaults, deprecation and retirement
-
-Make generated/current examples prefer the new extensions; publish the compatibility window and exact legacy behavior. Remove legacy reader support only after the reference census, package consumers and downstream migration evidence show it can be retired. Archived source files and runnable references migrate to the new names, as explicitly requested by the user. Legacy aliases remain supported with a visible outdated-extension warning for external inputs and deliberate compatibility tests. Recorded historical logs and digests describe the original revision; migration reports identify their replacement paths without presenting past observations as fresh measurements. Obsolete fixed-checkpoint scripts must identify their required historical checkout instead of silently omitting renamed files.
-
-The compatibility reader emits a stable legacy-extension warning with input path, detected mode and recommended suffix on stderr, and records the warning in its machine-readable diagnostics when that interface exists. A historical input remains supported during the declared compatibility window; warning emission must not change its safety verdict or allow a wrong-mode dispatch. Do not allocate a diagnostic code without the repository namespace procedure. Add tests for warning emission on archived and other legacy inputs, no extension warning for current suffixes, and preservation of source behavior across the mapped rename.
-
-Acceptance: no active loader/package/test depends unintentionally on a legacy suffix; outdated naming metadata and legacy warning tests pass; alias-collision and wrong-mode refusal controls pass; pinned parity evidence is archived before any legacy route is deleted. No retirement date is implied by this plan.
-
-## Resume and evidence requirements
-
-These are prospective cards, not completed implementations or additions to the acceptance matrix. When dispatched, each receives a fresh base, generated task-reading union, committed prediction, bounded ownership, report and full standing gate per `docs/agents/operations.md`. Provider changes add the provider gate. Update obsolete historical inputs and runnable references under the user override, and store rename maps, path/digest attribution and before/after parity in the new card's report. Any classifier ambiguity or sole tracker displaced by migration must be recorded as an owned follow-up before closing a card.
+- **Pre-migration baseline inventory (`2e44e963`):** 616 tracked `.qcore` files (223 in `compiler/`, 1 in `contract/`, 46 in `crates/`, 182 in `docs/reports/`, 41 in `examples/`, 123 in `providers/`) and 5 `.qcorelib` files (621 total classified inputs: 195 `.qv`, 421 `.qr`, 5 `.qrlib`).
+- **Consumer boundaries coordinated during migration:**
+  - *Frontend*: `crates/qcore-frontend/src/contract_inclusion.rs` included-module suffix checks and module-mode staging.
+  - *Contracts*: `crates/qcore-contract/src/{bundle,load_path_manifest,contract_views}.rs`, provider exports, and `providers/contract-load-path.json`.
+  - *Auditing*: `crates/qcore-audit/src/contract_pin.rs`, source-contract/profile loaders, and `crates/quirin-source-analysis/`.
+  - *Provider packaging*: `providers/contracts.py`, `providers/package.py`, `contract-inventory.lock` pins, and reproducible package digests.
+  - *Runtime & native linkage*: `quirin check`/`emit`, `.qrlib` `from MODULE` contract slice references, and tracked-file test inventories.

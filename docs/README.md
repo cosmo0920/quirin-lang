@@ -14,16 +14,18 @@ They are not interchangeable.
 | Find code or a crate boundary | [Architecture and entry points](development/architecture.md) |
 | Know what is supported/proved | [Status and provenance](STATUS.md) · [implemented grammars](QCORE_IMPLEMENTED_GRAMMARS_r0_3.md) |
 | Implement or review a change | [Agent startup](../AGENTS.md) · [numbered rule router](agents/README.md) |
-| Select future work | [Planning](#planning) |
+| Select future work | [Planning](#planning) · [planning index](plans/README.md) |
 | Find evidence for a past claim | [Reports index](reports/INDEX.md) · [wave index](development/increments/README.md) |
 | Check a platform claim | [Platform evidence and limits](development/platform-evidence.md) |
 
 ## Specifications
 
 - [Language specification r0.3](QCORE_SPEC_r0_3.md) and
-  [contract specification](QCORE_CONTRACT_SPEC_r0_3.md): normative definitions.
-- [Implemented grammars](QCORE_IMPLEMENTED_GRAMMARS_r0_3.md): consumer support;
-  broad parser support is not full conformance.
+  [contract specification](QCORE_CONTRACT_SPEC_r0_3.md): normative definitions,
+  semantic domains, contract consumers, and verdict/diagnostic architecture.
+- [Implemented grammars](QCORE_IMPLEMENTED_GRAMMARS_r0_3.md): exact consumer
+  input grammars and profile boundaries; broad parser support is not full
+  conformance.
 - [Module modes](QCORE_MODULE_MODES.md) and [QTT alignment](QTT_ALIGNMENT.md).
 - [Reevaluation contract](REEVALUATION_SPEC.md) and
   [follow-up](REEVALUATION_FOLLOWUP.md): trust, verdicts and audit gates.
@@ -33,24 +35,21 @@ They are not interchangeable.
 
 ## Planning
 
+Start at the [planning and workstream index](plans/README.md), which separates
+active engineering queues from completed or halted migration plans.
+
 | Scope | Authority |
 |---|---|
-| Registered open work | `named_followups` in the [acceptance matrix](reviews/r0_3/acceptance_matrix.json), then the named card's report |
-| Planned `.qv` / `.qr` / `.qrlib` naming | [Quirin extension migration](plans/quirin-extension-migration/README.md) |
-| Architecture and W0–W7 direction | [Generalization plan](GENERALIZATION_PLAN.md) |
-| Component audit IR and a 6–7 GB audit budget | [AUDIT-IR implementation card](development/audit-ir-card.md) |
-| Prospective backlog, retry and engine cards | [Fluent Bit system coverage queue](plans/fluent-bit-system-coverage/README.md) |
-| Prospective coverage cards (typed access paths, callee closure) | [Unsupported coverage queue](plans/unsupported-coverage/README.md) |
-| Gate and measurement time requirements (scoper, count pins, incremental measurement) | [Gate time reduction](plans/gate-time-reduction/README.md) |
-| Prospective expression, place and core-connection cards from the Clang gap analysis | [Clang gap card queue](plans/clang-gap-cards/README.md) |
-| Atomic hypotheses below contract premises | [CONTRACT-HYPOTHESIS-GRAPH-V1](plans/contract-hypothesis-graph/README.md) |
-| Executed system audit investigations and resume queue | [Three Fluent Bit investigation cards](reports/fb-system-audit-cards/README.md) |
-| Broader workstreams | [Post-Cycle-9 roadmap](ROADMAP_AFTER_CYCLE_9.md) |
-| Restart/context tooling plan | [Resume plan](plans/resume-2026-09-13/README.md) (dated checkpoint; revalidate old blockers) |
+| Canonical open-work tracker | `named_followups` in the [acceptance matrix](reviews/r0_3/acceptance_matrix.json), then each named card's report |
+| Active C-gateway & coverage queues | [Clang gap queue (`CG00`–`CG30` residuals)](plans/clang-gap-cards/README.md) · [Typed access paths & callee closure](plans/unsupported-coverage/README.md) · [Fluent Bit system coverage](plans/fluent-bit-system-coverage/README.md) |
+| Active infrastructure & memory budgets | [Gate and measurement time reduction](plans/gate-time-reduction/README.md) · [AUDIT-IR 6–7 GB budget](development/audit-ir-card.md) |
+| Architecture, crate layering & cycle milestones | [Generalization plan (`W0`–`W7`)](GENERALIZATION_PLAN.md) · [Pluggable card seams (`A`–`G`)](plans/pluggable-cards/README.md) · [Post-Cycle-9 roadmap (`Cycles 10–20`)](ROADMAP_AFTER_CYCLE_9.md) |
+| Completed or halted plan archives | [Extension migration (`.qv`/`.qr`/`.qrlib` landed)](plans/quirin-extension-migration/README.md) · [Runtime `#import` (landed)](plans/runtime-imports/README.md) · [Hypothesis graphs (`v1`–`v4` landed; guarded adoption halted)](plans/contract-hypothesis-graph/README.md) · [Executed Fluent Bit investigations](reports/fb-system-audit-cards/README.md) |
 
-Search an exact card id before choosing work. A report's follow-on may have been
-discharged later; neither a historical title nor a rule mention establishes
-current open status. Add matrix entries through its generator, not by hand.
+Search an exact card id before choosing work. A report's follow-on or a plan's
+row may have been discharged later; neither a historical title nor a rule
+mention establishes current open status. Add matrix entries through
+`scripts/apply_amendments.py` and the matrix generator, not by hand.
 
 ## Evidence and history
 

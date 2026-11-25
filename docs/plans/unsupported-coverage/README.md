@@ -1,309 +1,41 @@
-# Unsupported coverage: typed access paths and callee closure
+# Unsupported coverage: typed access paths, callee closure, and alias residuals
 
-Review date: 2026-09-27. Status: a proposed card queue, not dispatched work and
-not a coverage claim. Priority is relative within this queue. It does not
-override soundness repairs, G1/G4 ordering or the integrator's wave selection.
+> [!NOTE]
+> **Current status (active C-gateway coverage plan; `P0`–`P3` and initial `P4`–`P6` waves landed).** Since the 2026-09-27 baseline below (398 Safe corpus functions), typed access paths, expression elaboration, `AG1`–`AG3`, and `CG00`–`CG30` slices have raised the corpus to **1,079 Safe** on the committed baseline (`556460e31`) and **1,119 Safe** on the latest measured SP1 landing (`2c07390b6`; see [`docs/STATUS.md`](../../STATUS.md)). Legacy shape-route retirement parity (`W46-ACCESS-PATH-PARITY`), bottom-up callee body residuals (`W48-BOTTOM-UP-RESIDUAL-PLAN`), general owned-field pointer stores (`P5`), and remaining alias cards (`P6`) remain open in `acceptance_matrix.json#named_followups`.
 
-## 1. Measurements this plan rests on
+## 1. Execution standing across `P0`–`P6`
 
-**Source.** Every figure is read from the diagnostics of the 185-unit corpus
-arbiter, archived at
-[`w45-container-root-reach/integration/artifacts/diagnostics.json.gz`](../../reports/w45-container-root-reach/integration/artifacts/).
-`main`'s diagnostics are byte-identical to it at `b1744a2a`, as every later
-integration gate records.
+| Track | Subject | Landed implementations & measurements | Remaining open work |
+|---|---|---|---|
+| **P0** — `W45-SR5-SOUNDNESS` | Close `STABILITY-REEVAL-5` admitting findings before access/member widening | **Completed** (`85a35431`, [report](../../reports/w45-sr5-soundness/README.md)) | Closed |
+| **P1** — `ACCESS-PATH-CENSUS` | Classify `IND`, `COND`, and `RET` leaves from Clang's typed AST and freeze predictions | **Completed** — [W46-ACCESS-PATH-CENSUS](../../reports/w46-access-path-census/README.md) | Closed |
+| **P2** — `ACCESS-PATH-STATEMENTS` | Typed AST access-path fallback for statements alongside shape routes | **Bounded fallback landed** — [W46-CONTRACT-ACCESS-EXPANSION](../../reports/w46-contract-access-expansion/README.md), expanded by `CG10` rounds 1–4 and `AG1` | `W46-ACCESS-PATH-PARITY` (archived parity required before retiring legacy shape routes); mixed paths over tracked roots (`CG10-*`) |
+| **P3** — `ACCESS-PATH-POSITIONS` | Typed access paths in controlling expressions, returns, and call actuals | **Landed** — [W47-ACCESS-PATH-POSITIONS](../../reports/w47-access-path-positions/README.md), [root reader](../../reports/w47-typed-root-declaration-reader/README.md), [nested assignment closure](../../reports/w47-lexical-closure-nested-assignment/README.md), [const pointer value](../../reports/w47-typed-const-pointer-value/README.md), [position residuals](../../reports/w47-access-path-position-residuals/README.md), `AG3` | `W46-ACCESS-PATH-PARITY`, `W47-SUMMARY-VALIDATION-PROTECTED-FORMALS`, `?:` actuals/pointer returns, nested-call actuals |
+| **P4** — `CALLEE-CLOSURE` | Bottom-up in-corpus summary cascade + high-leverage external provider contracts | **Rounds 2–4 executed** — [R2](../../reports/w47-callee-closure-r2/README.md), [R3](../../reports/w48-callee-closure-r3/README.md), [R4 bottom-up bodies](../../reports/w48-bottom-up-callee-bodies/README.md) | `W48-BOTTOM-UP-RESIDUAL-PLAN`, `W48-POINTER-RETURN-THROUGH-CALL-ACTUAL-ROOT`, `W48-CALLEE-DECISION-TABLE` |
+| **P5** — `FIELD-CUSTODY` | Pointer-valued stores moving custody through struct fields (`p->next = q`, `p->buf = alloc()`) | **Initial slices landed** — [CG11-POINTER-VALUED-STORES](../../reports/cg11-pointer-valued-stores/README.md) (rule 10v), [CG10-MEMBER-STORE-RETAINED-BY](../../reports/cg10-member-store-retained-by/README.md), [CG10-OWNED-OUT-PARAMETER-MEMBER-SLOT](../../reports/cg10-owned-out-parameter-member-slot/README.md), `K6` (rule 81) | `CG11-POINTER-STORE-SUMMARY-MODE`, `CG11-UNRESOLVED-OWNER-POINTER-STORES`, `CG11-UNREAD-POINTER-PLACES`, `CG10-OWNED-OUT-MEMBER-TRACKED-OWNER` |
+| **P6** — `ALIAS-RESIDUALS` | Classify and discharge `unknown_alias` leaves in coordination with `IND` and `UNC` | **Census + bounded slices landed** — [W47-ALIAS-RESIDUALS-CENSUS](../../reports/w47-alias-residuals-census/README.md) (7,440 corpus leaves classified), [AG2-UNRESOLVED-ALIAS](../../reports/ag2-unresolved-alias/README.md), [K4](../../reports/k4-formal-custody-aliases/README.md), [K5](../../reports/k5-local-origin-aliases/README.md) | `W47-ALIAS-TYPED-SCALAR-NAMES`, `W47-ALIAS-FORMAL-COPY`, `W47-ALIAS-CALLEE-BORROWED-CLOSURE`, `W47-ALIAS-NONNULL-ALLOCATOR-RESULTS`, `W47-ALIAS-FLOW-RESIDUALS` |
 
-**Headline figures.**
-- Functions: 398 Safe / 9 provisional Unsafe / 4,427 Unknown.
-- Unsupported leaves: 41,314, in 31 families.
+---
 
-The functions below are counted by the set of diagnostic families that block
-them. A family counts as blocking whenever the function has at least one leaf in
-it.
+## 2. Core architectural findings guiding remaining C-gateway work
 
-| Family (leaf description) | Leaves | Share |
-|---|---:|---:|
-| `IND`: indirect memory access is outside the resource projection | 17,042 | 41.2% |
-| `UNC`: call to uncontracted function | 9,179 | 22.2% |
-| `COND`: unmodeled call, aggregate or indirect access in a branch, loop or for-loop condition | 8,578 | 20.8% |
-| `RET`: the same, in a return expression | 304 | 0.7% |
-| `OTHER`: initializers, assignment forms, increments, operators and the rest | 6,211 | 15.0% |
+1. **Token-shape rules hit a typing ceiling; Clang's AST resolves it.** Earlier lexical/token rules (`5h`–`5l`) could not resolve typedef roots, nested aggregates, or indirect single-pointer reads without full declaration types. Lowering typed access paths from `typed_c_ast.rs` while enforcing per-hop non-null and liveness obligations generalizes statements (`P2`) and expression positions (`P3`) uniformly—while refusing unions, bit-fields, pointer arithmetic, volatile/atomic hops, or incomplete records unless a dedicated sound rule (`CG13`–`CG19`) applies.
+2. **Uncontracted calls (`UNC`) are primarily a bottom-up in-corpus body problem, not an external contract backlog.** Roughly 75% of uncontracted call sites target corpus-defined functions that are themselves `Unknown`; `W48-BOTTOM-UP-CALLEE-BODIES` showed that making in-corpus callee bodies `Safe` unblocks ~390–416 callers in a single summary-cascade round without adding external assumptions, whereas no remaining bodiless external callee in the existing vocabulary unblocks even two functions alone.
+3. **Pointer-valued field stores (`P5`) are custody transitions, not neutral reads.** Storing a pointer into a member (`p->f = q`) transfers, retains, or overwrites custody and must be governed by owned-field, retained-by, and container rules with audited Lean models (`STABILITY-REEVAL-5`), never folded into custody-neutral scalar access rules.
+4. **Alias leaves (`P6`) rarely block functions alone.** In `W47-ALIAS-RESIDUALS-CENSUS`, 1,922 `Unknown` functions carried `unknown_alias` leaves, but only **8** were blocked by alias alone (vs. 232 co-blocked with `IND` and 76 with `UNC`); alias cards yield verdict moves when paired with `P3`/`CG10` and `P4`.
 
-**How many functions each fix could unblock at most.** A function counts when
-its blocking families all lie inside the set being removed. This is an upper
-bound: a modeled access can still fail its obligations.
+---
 
-| Removed families | Functions whose only blockers they are |
-|---|---:|
-| `IND` | 418 |
-| `COND` | 83 |
-| `UNC` | 436 |
-| `IND` + `COND` | 763 |
-| `IND` + `COND` + `RET` | 879 |
-| `IND` + `COND` + `RET` + `UNC` | 2,045 |
-| every unsupported family | 3,076 |
+## 3. Standing card acceptance rules
 
-`unknown_alias` also blocks 1,359 functions, and a leak blocks 9.
+Every card cut from this queue requires:
+- **Committed prediction (`PREDICTION.md`)** before measurement, verified via `quirin-audit measure --declared`;
+- **Fail-closed parity (Hard Invariants 1 & 3)**: no refactor turns `Unknown` into `Safe` without discharged obligations, and no legacy shape route is deleted before archived byte-for-byte parity;
+- **Audited Lean parity (Hard Invariant 6)**: registered in `proof/Audit*.lean` via `gen_lean_roots.py` with zero placeholders or project axioms;
+- **Provisional `Unsafe` discipline**: newly surfaced leak or use-after-release candidates are classified by source reading and never presented as upstream defects.
 
-**Uncontracted calls.**
-- **Callee location:** 6,895 of the 9,179 uncontracted call sites (75%) call a
-  function defined in the corpus: 2,170 of 2,560 distinct callees.
-- **Callee verdicts:** 2,115 of those callees are themselves Unknown, 49 Safe and
-  6 provisional Unsafe.
-- **The long tail:** the 436 functions blocked only by `UNC` spread over 236
-  distinct single callees. The largest is `cJSON_New_Item`, with 10.
+---
 
-## 2. Findings
+## 4. Historical 2026-09-27 baseline (`w45-container-root-reach`, `b1744a2a`)
 
-1. **`IND` and `COND` are one problem in two positions.** Most `COND` leaves are
-   the same pointer or member access appearing inside a controlling expression.
-   Modeling access in statements alone reaches at most 418 functions. Modeling it
-   everywhere reaches at most 879.
-2. **The shape rules have reached their ceiling, and the ceiling is typing.**
-   - **Current routes:** rules 5h–5l, the member-chain route and the
-     call-argument route (reports `w42-indirect-access` through
-     `w45-container-root-reach`). Each recognises token shapes, and each removed
-     about 1,000 leaves.
-   - **The residual classes are typing gaps**, as registered:
-     - `W43-INDIRECT-UNTYPED-SINGLE-ACCESS`: 3,136 leaves.
-     - `W44-CHAIN-NESTED-AGGREGATE`: 1,287.
-     - `W44-CHAIN-TYPEDEF-ROOT`: 580.
-     - `W44-CHAIN-UNDECLARED-ROOT`: 396.
-     - `W44-CHAIN-INCOMPLETE-RECORD`: 195.
-   - **Clang already has these types.** The gateway's typed-AST transport
-     (`crates/qcore-c-gateway/src/typed_c_ast.rs`) serves the source-profile
-     interpreters but not the resource projection.
-3. **Uncontracted calls are mostly a bottom-up closure problem, not a contract
-   backlog.**
-   - Three quarters of the sites call corpus functions that are themselves
-     Unknown.
-   - A callee that becomes Safe serves its callers through the existing summary
-     rules (W45-CALLEE-SUMMARY-CASCADE, constraint 8 for declared callees).
-   - So making leaf functions Safe also unblocks callers. Only the external
-     remainder, 2,284 sites to 390 callees, needs contracts in provider crates:
-     libc only in `quirin-provider-libc`, and other libraries in their own
-     crates.
-4. **Pointer values stored into fields are a different model.** `p->next = q`
-   and `p->buf = malloc(n)` move custody through fields. That belongs to the
-   owned-field and container rules (5k, 10d, 10f), where STABILITY-REEVAL-5
-   found `MEMBER-RELEASE-BEFORE-SUMMARY-RELEASE`: a double release published
-   Safe. It is not part of the access-path model.
-
-## 3. Priority queue
-
-| Order | Card | Kind | Effort | Prerequisite | Intended decision |
-|---|---|---|---|---|---|
-| P0 | W45-SR5-SOUNDNESS | Soundness repair | High (done, `85a35431`) | none | Close the admitting findings of STABILITY-REEVAL-5 before any widening in the access and member areas, including `SCALAR-READ-PARENTHESISED-DOUBLE-DEREF` and `GATEWAY-5L-ELEMENT-TRACKED-AFTER-FOREIGN-UNLINK` |
-| P1 | ACCESS-PATH-CENSUS | Measurement | Medium (done: [W46-ACCESS-PATH-CENSUS](../../reports/w46-access-path-census/README.md), prediction frozen: P2 38 Safe / 7 Unknown, P3 83 Safe / 137 Unknown) | P0 landed | Classify every `IND`, `COND` and `RET` leaf by its Clang-typed access path; predict, per function, verdicts rather than leaves; compute the callee-closure gain |
-| P2 | ACCESS-PATH-STATEMENTS | Semantic implementation | High (bounded fallback landed; replacement parity open) | P1 | [Typed statement fallback](../../reports/w46-access-path-statements/README.md) runs beside retained shape routes; archived disagreements must be resolved before any route is retired |
-| P3 | ACCESS-PATH-POSITIONS | Semantic implementation | High (landed: [W47-ACCESS-PATH-POSITIONS](../../reports/w47-access-path-positions/README.md), +60 Safe with the enum arm; residuals: [W47-ACCESS-PATH-POSITION-RESIDUALS](../../reports/w47-access-path-position-residuals/README.md), +12 Safe, four shapes) | P2 | The same layer in conditions, returns and call arguments |
-| P4 | CALLEE-CLOSURE | Measurement, then contracts | High (contracts); Medium (closure re-measurement) | P1 (measurement); P2 and P3 (the gain) | Measure the bottom-up gain; contract the external callees that block the most functions |
-| P5 | FIELD-CUSTODY | Semantic implementation | High (first slice landed as [CG11-POINTER-VALUED-STORES](../../reports/cg11-pointer-valued-stores/README.md), gateway 10v: identity-free pointer stores into untracked owners, +5 corpus / +1 system Safe; formal, owned and named values stay refused, example C among them) | P0; the owned-field Lean model | Pointer-valued stores into fields |
-| P6 | ALIAS-RESIDUALS | Measurement, then semantic cards | Medium (measured: [W47-ALIAS-RESIDUALS-CENSUS](../../reports/w47-alias-residuals-census/README.md)); High (the cards below) | P3 landed; P4 for yield | 7,440 corpus leaves classified, 0 unclassified; only 8 functions blocked by `unknown_alias` alone; four ranked cards, see P6 below |
-
-P1 is the only card that can be dispatched now, once P0 lands. Each later card's
-brief must carry P1's function lists and predictions.
-
-**Effort tiers.** Every card carries an effort level:
-- **High:** cards whose error could publish a wrong Safe. That covers analyzer or gateway semantics, provider contracts, Lean, soundness repairs and stability reviews.
-- **Medium:** measurement, census, native-observation, documentation and records-only cards.
-- **Gate helpers** run on a smaller model at medium effort.
-
-Wave 46 dispatched P1 at Medium and P4's external-contract arm (W46-EXTERNAL-CALLEE-CONTRACTS) at High.
-
-### P1: ACCESS-PATH-CENSUS
-- **Status:** measured by W46-ACCESS-PATH-CENSUS on base `9bce3986`. Its
-  [PREDICTION.md](../../reports/w46-access-path-census/PREDICTION.md) carries the
-  function lists P2 and P3 are measured against, and its report recommends one
-  typed layer for statements, returns and call-free conditions first, with call
-  arguments second.
-- **Reuse the census route.** Reuse the existing census machinery (the
-  `indirect-census` feature and the census-sink guard) rather than a new scanner.
-  Classify each leaf from Clang's typed AST: the root (local, formal, global,
-  call result), then each step (`.f`, `->f`, `*`, `[i]`) with its resolved type,
-  and the position (statement, condition, return, call argument).
-- **Mark each path.** A path is either expressible as a typed access path, or
-  refused, with a named cause:
-  - union;
-  - bitfield;
-  - incomplete record;
-  - cast in the path;
-  - pointer arithmetic;
-  - volatile or atomic;
-  - a pointer-valued store (which belongs to P5).
-- **Predict per function:**
-  - for every Unknown function whose blockers would all go, the obligations its
-    accesses would carry (non-null and live per hop) and whether the current
-    facts discharge them;
-  - Safe, Unknown or provisional Unsafe, each with its reason.
-  - Freeze the prediction before P2 starts.
-- **Closure:** compute the call-graph closure. Which Unknown callers depend only
-  on callees that the prediction makes Safe, and how many rounds that takes.
-- **Records:** no analyzer change, and the corpus stays byte-identical.
-
-### P2: ACCESS-PATH-STATEMENTS
-- **Status:** the bounded fallback is integrated by
-  [W46-CONTRACT-ACCESS-EXPANSION](../../reports/w46-contract-access-expansion/README.md).
-  Exact source/frontend identity, positive field ownership and value types,
-  and existing tracked-root obligations are required. Mixed paths with a
-  tracked root remain refused. All legacy routes remain; replacement parity
-  is open under `W46-ACCESS-PATH-PARITY`, with tracked mixed paths and later
-  expression positions separately registered. The superseded isolated
-  checkpoints are not validation of the final scalar-type repair.
-- **Lowering.** Build a typed access path from Clang's AST, with typedefs
-  resolved and record and field types known. Anything the AST cannot give
-  exactly is refused (Unknown), never guessed.
-- **Obligations.**
-  - Every pointer the path reads through is non-null and live, generalising the
-    per-hop obligation of the chain route.
-  - A read or store of a non-pointer value leaves the custody frame unchanged.
-  - A pointer value read through a path is a borrowed alias with no custody.
-  - A pointer-valued store stays refused (P5).
-- **Parity (hard invariant 3).**
-  - The layer runs beside the shape routes, and every disagreement is recorded.
-  - A shape route is retired only after the layer reproduces its pinned verdicts
-    and coverage, with the diff archived under `docs/reports/`.
-  - Each Safe to non-Safe move is a named correction.
-- **Lean.**
-  - Per-hop obligations suffice for the access to be defined in the model.
-  - A non-pointer store preserves the frame.
-  - Refusal is preserved for every unlisted path form.
-- **Measure:** corpus arbiter BEFORE and AFTER, and the Fluent Bit slice at
-  `046accf6`.
-
-### P3: ACCESS-PATH-POSITIONS
-- **Status:** landed as a fallback after every older route by
-  [W47-ACCESS-PATH-POSITIONS](../../reports/w47-access-path-positions/README.md)
-  (gateway 10k), with the owner-aware enum arm measured as its own step.
-  Residuals: `W47-ACCESS-PATH-POSITION-RESIDUALS`; parity stays open under
-  `W46-ACCESS-PATH-PARITY`. The typed-root premises are answered from the
-  Clang AST where the lexical reader answers nothing
-  ([W47-TYPED-ROOT-DECLARATION-READER](../../reports/w47-typed-root-declaration-reader/README.md),
-  gateway 10l; no verdict moves); the twelve forecast misses it was opened for
-  refuse on the value type, not the premise, and the lexical-closure blind
-  spot it found is closed by
-  [W47-LEXICAL-CLOSURE-NESTED-ASSIGNMENT](../../reports/w47-lexical-closure-nested-assignment/README.md)
-  (gateway 10o: the closure reads every assignment, nested, `for`-clause,
-  later-declarator and parenthesised, and the typed positions serve its join
-  with the AST closure; six Safe functions withdrawn through AST classes rules
-  5l/5i read as unbound, `W47-JOIN-AST-CONSERVATIVE-CLASSES`). The value type
-  is read since
-  [W47-TYPED-CONST-POINTER-VALUE](../../reports/w47-typed-const-pointer-value/README.md)
-  (gateway 10m): a lone top-level `const` on a pointer value is erased, and a
-  `void *` bit-cast at the top of a pointer-destination statement is the
-  uncast read. That is +10 Safe (eight of the ten named, and two summary
-  cascades); the bit-cast step moves nothing. Its summary-validation boundary
-  is `W47-SUMMARY-VALIDATION-PROTECTED-FORMALS`.
-  [W47-ACCESS-PATH-POSITION-RESIDUALS](../../reports/w47-access-path-position-residuals/README.md)
-  (gateway 10n) sized the refused rows by shape and ranked them by functions
-  freed alone (no shape frees more than 9), then admitted the top four as
-  separate measured steps: addresses (+10 Safe), ambiguous operands matched
-  in their controlling expression (0), the anonymous inline enum member (+1)
-  and scalar connective returns (+1): 510 → **522 Safe**. After it the
-  largest residual is the root premise (4,367 rows; the never-bound closure's
-  cards); `?:` actuals, nested-call actuals and pointer `?:` returns stay
-  refused and sized under the residual follow-up.
-- **Positions:** apply P2's layer in controlling expressions (`if`, `while`,
-  `for`, `?:`, `&&`/`||` with their evaluation order), in return expressions,
-  and in call arguments.
-- **Call arguments** keep the callee's contract in force: an access passed at a
-  position that takes custody stays refused, as `W44-CALL-ARGUMENT-CUSTODY-POSITION`
-  records.
-- **Conditions:** a condition's access obligations hold on both branches, and a
-  short-circuit operand's obligations only where it is evaluated.
-
-### P4: CALLEE-CLOSURE
-- **Status (round 4, bottom-up):**
-  [W48-BOTTOM-UP-CALLEE-BODIES](../../reports/w48-bottom-up-callee-bodies/README.md)
-  (main `c85cb8806`) ranked every Unknown in-corpus callee body by the
-  callers it frees and its own blockers: every body taken Safe frees 416,
-  338 of them waiting on exactly one body, and no single body frees more
-  than 12. It lifted one rule residual (gateway 12f, a scalar `return` value
-  read as a statement value): `rd_clock` and `rd_uclock` validate, corpus
-  647 → 648 Safe (`rd_kafka_timer_next`), 112 call leaves removed. The
-  cross-unit route was re-measured (5, 10 counting calls held in return and
-  condition leaves) and not built. The residual plan is
-  `W48-BOTTOM-UP-RESIDUAL-PLAN`; the largest coherent shape left is
-  `W48-POINTER-RETURN-THROUGH-CALL-ACTUAL-ROOT` (24).
-- **Status (round 3):** ranked over every callee class on the corpus, system
-  and tail-pause routes by
-  [W48-CALLEE-CLOSURE-R3](../../reports/w48-callee-closure-r3/README.md)
-  (main `c374de96`). 469 corpus functions are blocked only by calls; the
-  summary rules free 0, a cross-unit route 5 (6 at its ceiling; registered
-  with that size, not built), every in-corpus callee body taken Safe 390 in
-  one round. No bodiless callee in existing vocabulary frees 2 functions
-  alone. Two libc facts declared (`lstat`, `clock_gettime`): slice +1 Safe,
-  corpus and system no move. The remaining leverage is the callees' own
-  bodies (Clang-gap residuals) and the eight decision classes, sized in
-  `W48-CALLEE-DECISION-TABLE`.
-- **Status (round 2):** measured and contracted by
-  [W47-CALLEE-CLOSURE-R2](../../reports/w47-callee-closure-r2/README.md) on
-  the post-P3 corpus. The in-corpus closure frees 0 functions under the
-  existing rules and 3 under a cross-unit route. Two external callees were
-  declared (+3 Safe). The remaining ranking (`W47-EXTERNAL-RESIDUAL-RANKING-R2`)
-  waits on decisions listed in that report's §6.
-- **The in-corpus gain:** re-run P1's closure on the post-P3 corpus. That gain
-  arrives through the existing summary rules. P4 adds no new trust.
-- **External callees:** rank them by the functions they would unblock alone.
-  Contract the top ones in their provider crates, where they are reviewed and
-  pinned in revision mode, and checked, never trusted.
-
-### P6: ALIAS-RESIDUALS
-- **Status:** measured by
-  [W47-ALIAS-RESIDUALS-CENSUS](../../reports/w47-alias-residuals-census/README.md)
-  on the integrated wave-47 baseline (`3ba72320`, archived there; corpus
-  diagnostics byte-identical to P3's AFTER). Every `unknown_alias` leaf is
-  classified from its own function's Clang AST: corpus 7,440 and system 985,
-  0 unclassified.
-- **Finding.** Of 4,318 Unknown corpus functions, 1,922 carry an alias leaf,
-  but only **8** are blocked by alias alone and 352 by alias plus exactly one
-  other family (IND 232, UNC 76). The in-corpus closure adds nothing. Alias
-  cards therefore remove leaves; their functions move only beside the IND
-  (P3 residuals) and UNC (P4) work.
-- **Groups** (leaves / functions / exclusive / alone / plus one family):
-
-  | Group | Leaves | Functions | Exclusive | Alone | +1 |
-  |---|---:|---:|---:|---:|---:|
-  | formals the never-bound closure refuses because an uncontracted callee's actual mentions them | 2,350 | 732 | 399 | 0 | 108 |
-  | non-pointer names | 930 | 329 | 83 | 4 | 10 |
-  | poisoned by a later refusal | 900 | 365 | 130 | 0 | 39 |
-  | unguarded derived locals | 746 | 298 | 72 | 0 | 10 |
-  | unguarded uncontracted results | 705 | 360 | 147 | 0 | 6 |
-  | unguarded borrowed path reads | 503 | 236 | 78 | 1 | 14 |
-  | unguarded contracted allocator results | 442 | 178 | 123 | 0 | 8 |
-  | formal copies | 176 | 162 | 85 | 0 | 56 |
-  | smaller groups | 688 | | | 1 | |
-
-- **Ranked cards** (report §6, each registered with its size):
-  1. `W47-ALIAS-TYPED-SCALAR-NAMES` (High).
-  2. `W47-ALIAS-FORMAL-COPY` (High).
-  3. `W47-ALIAS-CALLEE-BORROWED-CLOSURE` (High; pair with P4).
-  4. `W47-ALIAS-NONNULL-ALLOCATOR-RESULTS` (High, provider).
-
-  The rest is sized in `W47-ALIAS-FLOW-RESIDUALS`.
-
-## 4. Acceptance for every card
-Each card must have:
-- a frozen `PREDICTION.md`;
-- BEFORE reproducing the current baseline;
-- AFTER with every moving function attributed;
-- corrections named;
-- new leaks or violations classified by reading.
-
-Beyond that:
-- **Fail-closed.** No refactor turns an Unknown into a Safe without discharged
-  obligations.
-- **Lean parity.** Registered in an `Audit*.lean`, with no placeholders and no
-  project axioms.
-- **Provisional Unsafe** from newly modeled accesses is never presented as an
-  upstream defect.
-
-## 5. Limits and expected yield
-- The upper bounds in §1 count functions whose blockers would all be removed,
-  not functions that become Safe. Accesses whose base may be null or released
-  will give Unknown or provisional Unsafe, as they should. P1 exists to replace
-  the bounds with a prediction.
-- **Rough estimate:** P1 is one card. P2 and P3 are about two waves, and P4 runs
-  in parallel.
-- Leaf counts are not verdicts. The shape cards of waves 42–45 each removed about
-  1,000 leaves and moved few functions, because the co-blockers remained. This
-  plan orders the work by the functions it frees, not by the leaves it removes.
+Recorded for provenance of the original `P1`–`P5` sizing: 398 Safe / 9 provisional Unsafe / 4,427 Unknown functions; 41,314 unsupported leaves across 31 families (`IND` 17,042 [41.2%, 418 sole], `UNC` 9,179 [22.2%, 436 sole], `COND` 8,578 [20.8%, 83 sole], `RET` 304 [0.7%], `OTHER` 6,211 [15.0%]; `IND+COND+RET+UNC` combined upper bound 2,045 functions). Current figures live in [`docs/STATUS.md`](../../STATUS.md).
