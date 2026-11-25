@@ -2515,6 +2515,17 @@ composition equals the C order's (callback, then release). The slot form
 through a released parameter refuses any such effect instead (C04.19.3).
 The Lean model is `QCore.CallbackReleasedEffectOrder`.
 
+**At a table dispatch** (card CALLBACK-TABLE-MEMBER-PATH-STATES, gateway
+rule 13v amended). `resource_callback_table` is a callback invocation here
+like the others: a consumer MUST compose its candidates' states at the
+dispatch exactly as at a synchronous invocation, joined over the candidates,
+and MUST NOT drop them. The callee may call several entries, in any order;
+the join is sound for any non-empty sequence of the candidates' readings,
+because a `gone` join takes the object once and clears the member on every
+reading, and candidates that disagree refuse. As at every form, `gone` under
+no arm reads the dispatch as invoking a candidate. The Lean model is
+`QCore.CallbackTableMemberPathStates`.
+
 **A direct call (card FB-TEARDOWN-DESTROY-DECLARATIONS, rule 30 amended).**
 On the user's decision of 2026-10-16 (decision 2, verbatim: "Yes, allow it")
 and the card's brief ("rule 30 at a direct call of a body-checked

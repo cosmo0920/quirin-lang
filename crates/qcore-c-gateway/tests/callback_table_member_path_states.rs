@@ -315,7 +315,11 @@ fn a_table_candidate_stating_nothing_at_the_path_keeps_the_payload() {
         ));
         assert!(freed.safe(), "{candidates:?}: {freed:?}");
         let lost = row(&table(candidates, "c_op_drop(o);"));
-        assert_eq!(lost.status, AnalysisStatus::Unsafe, "{candidates:?}: {lost:?}");
+        assert_eq!(
+            lost.status,
+            AnalysisStatus::Unsafe,
+            "{candidates:?}: {lost:?}"
+        );
     }
     for cb in ["c_cb_plain", "c_cb_other"] {
         let sync = row(&synchronous(

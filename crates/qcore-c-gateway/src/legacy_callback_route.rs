@@ -1536,6 +1536,18 @@ impl Parser<'_> {
                     if let (Ok(candidates), Ok(classes)) = (&resolution, &classes) {
                         classes.note_relied(candidates);
                         self.require(candidates, actuals, classes, &mut operands.owned);
+                        // Card CALLBACK-TABLE-MEMBER-PATH-STATES (rules 13v
+                        // and 30 amended): the candidates' member-path states,
+                        // composed exactly as at a synchronous invocation.
+                        operands
+                            .member_paths
+                            .extend(super::member_path_route::operands(
+                                self.contracts,
+                                candidates,
+                                actuals,
+                                actual,
+                                &text(*table),
+                            ));
                     }
                 }
                 CallbackClause::Registered {
