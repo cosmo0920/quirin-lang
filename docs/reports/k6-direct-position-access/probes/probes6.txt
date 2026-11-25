@@ -1,0 +1,9 @@
+# (&X)->f family: the 10z edges and typedef bases
+typedef struct ks_s { int len; const char *str; } ks_t; typedef struct ms_s { ks_t bytes; } ms_t; int w(ms_t *m, int c) { int size; size = (int)(((&m->bytes)->len) / c); return size; }
+typedef struct ks_s { int len; const char *str; } ks_t; typedef struct ms_s { ks_t bytes; } ms_t; int w(ms_t *m, int c) { int size; size = (int)((m->bytes.len) / c); return size; }
+typedef struct ks_s { int len; const char *str; } ks_t; typedef struct ms_s { ks_t bytes; } ms_t; int w(ms_t *m, int c) { int size; size = (int)((((&m->bytes)->len) == -1 ? 0 : ((&m->bytes)->len)) / c); return size; }
+typedef struct ks_s { int len; const char *str; } ks_t; typedef struct ms_s { ks_t bytes; } ms_t; int w(ms_t *m, int c) { int size; size = (int)((((m->bytes.len)) == -1 ? 0 : ((m->bytes.len))) / c); return size; }
+typedef struct ks_s { int len; const char *str; } ks_t; typedef struct ne_s { ks_t Host; } ne_t; typedef struct nes_s { int cnt; ne_t *eps; } nes_t; long w(nes_t *p, int i) { long s = (((&p->eps[i].Host)->len) == -1 ? 0 : ((&p->eps[i].Host)->len)) + 1; return s; }
+typedef struct ks_s { int len; const char *str; } ks_t; typedef struct ne_s { ks_t Host; } ne_t; typedef struct nes_s { int cnt; ne_t *eps; } nes_t; long w(nes_t *p, int i) { long s = (((p->eps[i].Host.len)) == -1 ? 0 : ((p->eps[i].Host.len))) + 1; return s; }
+struct lr { struct lr *tqh_first; struct lr **tqh_last; }; typedef struct mp_s { int id; struct lr leader_responses; } mp_t; struct lr *w(mp_t *mpart) { return ((mpart->leader_responses.tqh_first)); }
+typedef struct ev_s { int rko_evtype; } ev_t; const char *w(const ev_t *rkev) { int t = rkev ? rkev->rko_evtype : 0x0; switch (t) { case 0x0: return "(NONE)"; default: return "?ERROR?"; } }

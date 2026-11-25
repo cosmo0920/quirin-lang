@@ -1,0 +1,20 @@
+# near-misses for rule 81, each followed by its plain spelling
+struct lr { struct lr *tqh_first; }; typedef struct mp_s { long id; struct lr q; } mp_t; struct lr *w(mp_t *m) { k_free(m); return ((&m->q)->tqh_first); }
+struct lr { struct lr *tqh_first; }; typedef struct mp_s { long id; struct lr q; } mp_t; struct lr *w(mp_t *m) { k_free(m); return ((m->q.tqh_first)); }
+struct lr { struct lr *tqh_first; }; typedef struct mp_s { long id; struct lr q; } mp_t; struct lr *w(mp_t *m) { m = k_alloc(8); return ((&m->q)->tqh_first); }
+struct lr { struct lr *tqh_first; }; typedef struct mp_s { long id; struct lr q; } mp_t; struct lr *w(mp_t *m) { m = k_alloc(8); return ((m->q.tqh_first)); }
+struct lr { struct lr *tqh_first; }; typedef struct mp_s { long id; struct lr q; } mp_t; struct lr **w(mp_t *m) { return &((&m->q)->tqh_first); }
+struct lr { struct lr *tqh_first; }; typedef struct mp_s { long id; struct lr q; } mp_t; struct lr **w(mp_t *m) { return &((m->q.tqh_first)); }
+struct lr { struct lr *tqh_first; }; void ext_take(void *p); void ext_take(void *p); typedef struct mp_s { long id; struct lr q; } mp_t; struct lr *w(mp_t *m) { ext_take(m); return ((&m->q)->tqh_first); }
+struct lr { struct lr *tqh_first; }; void ext_take(void *p); void ext_take(void *p); typedef struct mp_s { long id; struct lr q; } mp_t; struct lr *w(mp_t *m) { ext_take(m); return ((m->q.tqh_first)); }
+struct lr { struct lr *tqh_first; }; typedef struct mp_s { long id; struct lr q; } mp_t; struct lr *w(mp_t *m) { struct lr **s = &m->q.tqh_first; *s = 0; return ((&m->q)->tqh_first); }
+struct lr { struct lr *tqh_first; }; typedef struct mp_s { long id; struct lr q; } mp_t; struct lr *w(mp_t *m) { struct lr **s = &m->q.tqh_first; *s = 0; return ((m->q.tqh_first)); }
+struct lr { struct lr *tqh_first; }; typedef struct mp_s { long id; struct lr q; } mp_t; struct lr *w(mp_t *m) { struct lr **s = &((&m->q)->tqh_first); *s = 0; return ((&m->q)->tqh_first); }
+typedef struct ks_s { int len; const char *str; } ks_t; typedef struct ms_s { ks_t bytes; struct ms_s *next; } ms_t; int w(ms_t *m) { int s; k_free(m); s = (((&m->bytes)->len) == -1 ? 0 : 1); return s; }
+typedef struct ks_s { int len; const char *str; } ks_t; typedef struct ms_s { ks_t bytes; struct ms_s *next; } ms_t; int w(ms_t *m) { int s; k_free(m); s = (((m->bytes.len)) == -1 ? 0 : 1); return s; }
+typedef struct ks_s { int len; const char *str; } ks_t; typedef struct ms_s { ks_t bytes; struct ms_s *next; } ms_t; long w(ms_t *m, int c) { long t = 0; while (c-- > 0 && m) { t += (((&m->bytes)->len) == -1 ? 0 : ((&m->bytes)->len)); m = m->next; } return t; }
+typedef struct ks_s { int len; const char *str; } ks_t; typedef struct ms_s { ks_t bytes; struct ms_s *next; } ms_t; long w(ms_t *m, int c) { long t = 0; while (c-- > 0 && m) { t += (((m->bytes.len)) == -1 ? 0 : ((m->bytes.len))); m = m->next; } return t; }
+typedef struct ks_s { int len; const char *str; } ks_t; typedef struct ms_s { ks_t bytes; struct ms_s *next; } ms_t; int w(void) { ms_t *m = k_alloc(sizeof *m); int s; if (!m) return 0; s = (((&m->bytes)->len) == -1 ? 0 : ((&m->bytes)->len)); k_free(m); return s; }
+typedef struct ks_s { int len; const char *str; } ks_t; typedef struct ms_s { ks_t bytes; struct ms_s *next; } ms_t; int w(void) { ms_t *m = k_alloc(sizeof *m); int s; if (!m) return 0; s = (((m->bytes.len)) == -1 ? 0 : ((m->bytes.len))); k_free(m); return s; }
+typedef struct ks_s { int len; const char *str; } ks_t; typedef struct ms_s { ks_t bytes; struct ms_s *next; } ms_t; int w(void) { ms_t *m = k_alloc(sizeof *m); int s; if (!m) return 0; k_free(m); s = (((&m->bytes)->len) == -1 ? 0 : ((&m->bytes)->len)); return s; }
+typedef struct ks_s { int len; const char *str; } ks_t; typedef struct ms_s { ks_t bytes; struct ms_s *next; } ms_t; int w(void) { ms_t *m = k_alloc(sizeof *m); int s; if (!m) return 0; k_free(m); s = (((m->bytes.len)) == -1 ? 0 : ((m->bytes.len))); return s; }

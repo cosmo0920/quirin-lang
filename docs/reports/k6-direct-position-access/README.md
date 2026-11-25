@@ -54,11 +54,12 @@ Nothing below is re-admitted by this card.
   carries nothing it would let a caller release `B` and keep using the result
   unaccused. Its discharge is a `Derived { parameter, extent }` result through
   the derived-summary route, which is that owner's card, not this one.
-  **11 of the 25 rows**: `rd_kafka_name` (`rk->rk_name`, `char[128]`),
+  **10 of the 25 rows**, and `mk_plugin_time_now_human` (`&B->F`, its leaf
+  `new` on 11-24): `rd_kafka_name` (`rk->rk_name`, `char[128]`),
   `rd_kafka_ConfigEntry_name` (`entry->kv->name`, `char name[1]`),
   `rd_kafka_share_partition_offsets_offsets` (a flexible array member),
   `rd_kafka_MemberDescription_assignment`, `rd_kafka_TopicDescription_topic_id`,
-  `rd_kafka_conf`, `mk_plugin_time_now_human` (`&B->F`),
+  `rd_kafka_conf` (`&B->F`),
   `rd_kafka_UserScramCredentialsDescription_scramcredentialinfo`,
   `rd_kafka_mock_partition_find` (`&B->A[I]`), `cJSON_GetErrorPtr`
   (`global_error.json + global_error.position`) and `extra_alloc`
