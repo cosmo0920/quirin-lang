@@ -1,0 +1,57 @@
+[
+ {
+  "origin": "lib/librdkafka-2.15.0/src/rdkafka.c:6772",
+  "text": "rd_malloc(MemberCnt * sizeof(*gi->members));",
+  "function": "rd_kafka_DescribeGroups_resp_cb",
+  "rows": [
+   [
+    "Unknown",
+    108
+   ]
+  ]
+ },
+ {
+  "origin": "lib/librdkafka-2.15.0/src/rdkafka_share_acknowledgement.c:1082",
+  "text": "size = sizeof(*elem) + (offsets_cnt * sizeof(int64_t));",
+  "function": "rd_kafka_share_partition_offsets_new",
+  "rows": [
+   [
+    "Unknown",
+    2
+   ]
+  ]
+ },
+ {
+  "origin": "lib/librdkafka-2.15.0/src/rdkafka_share_acknowledgement.c:1121",
+  "text": "(capacity * sizeof(rd_kafka_share_partition_offsets_t *));",
+  "function": "rd_kafka_share_partition_offsets_list_new",
+  "rows": [
+   [
+    "Unknown",
+    1
+   ]
+  ]
+ },
+ {
+  "origin": "lib/monkey/mk_core/mk_iov.c:50",
+  "text": "s_iovec    = (n * sizeof(struct mk_iovec));  /* iovec array size      */",
+  "function": "mk_iov_create",
+  "rows": [
+   [
+    "Unknown",
+    3
+   ]
+  ]
+ },
+ {
+  "origin": "lib/monkey/mk_core/mk_iov.c:51",
+  "text": "s_free_buf = (n * sizeof(void *));        /* free buf array        */",
+  "function": "mk_iov_create",
+  "rows": [
+   [
+    "Unknown",
+    3
+   ]
+  ]
+ }
+]
