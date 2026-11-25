@@ -155,7 +155,7 @@ figure is measured.
 | CT independent artifacts | **48** distinct source-fixture programs behind the 50 mapped cases; **9** reviewed byte-identical fixture groups | Same manifest, `artifact_identity`; [disclosure](reports/ct-shared-fixture-disclosure/README.md) |
 | CT case-bound proof | **5/50**: CT01, CT03, CT07, CT37, CT50 | Same manifest, per-case `proof` stage |
 | CT gated sanitized-native | **10/50, Linux/macOS only** | Same manifest, `native_sanitized` stage and host gates |
-| Lean | toolchain **`leanprover/lean4:v4.35.0`**; **512** audits | `proof/lean-toolchain`; `proof/Audit*.lean`, combined round-37 landing gate |
+| Lean | toolchain **`leanprover/lean4:v4.35.0`**; **513** audits | `proof/lean-toolchain`; `proof/Audit*.lean`, full quant-variant audit run |
 | Contract corpus | **154** modules (1,002 declarations, 8,800 clauses) in the eleven inventory locks `qcore_contract_corpus.rs` pins: five `qcore-provider-*` crates 95, six `quirin-provider-*` crates 59; user crates outside the locks: OpenSSL 21, libcurl 4, plugin 1 | `providers/*/contract-inventory.lock`, [load path](../providers/contract-load-path.json), [ownership](../providers/README.md#contract-ownership) |
 | Registered follow-ups | **1,054** | [Matrix](reviews/r0_3/acceptance_matrix.json) `named_followups` |
 

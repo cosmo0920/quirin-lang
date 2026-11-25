@@ -408,6 +408,7 @@ import QCore.QuantIntegrationBoundaries
 import QCore.QuantProposition
 import QCore.QuantRegionSource
 import QCore.QuantTheorem
+import QCore.QuantVariant
 import QCore.RawDirectiveLexing
 import QCore.ReachGatePosition
 import QCore.ReadLoan

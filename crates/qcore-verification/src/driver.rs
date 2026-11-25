@@ -184,6 +184,7 @@ pub enum CustodyPayloadProfile {
     /// Normal owned-byte helper results; the sealed `as_resource_calls()` graph
     /// retains their types. This does not admit typed error payloads.
     TypedResourceBytes,
+    SealedVariant,
 }
 
 /// Checked evidence for `source.bitfield-concurrency.v1`.
@@ -212,6 +213,7 @@ pub enum BitfieldTaskAssumption {
 /// modules never carry a sequential CFG with their task operations erased.
 #[derive(Clone, Debug)]
 pub enum CheckedSourceModule {
+    QuantVariant(Box<CheckedVariantModule>),
     ScalarCalls(Box<qcore_core::scalar_calls::Checked>),
     Sequential(Box<CheckedProgram>),
     ScopedTasks(Box<task_execution::CheckedTaskModule>),
@@ -439,6 +441,13 @@ pub struct CheckedComposedModule {
     pub sequential: CheckedProgram,
 }
 
+#[derive(Clone, Debug)]
+pub struct CheckedVariantModule {
+    pub program: qcore_frontend::quant_variant::CheckedVariantProgram,
+    pub assumptions: Vec<extern_call::ExternAssumption>,
+    pub selected_sources: BTreeMap<String, String>,
+}
+
 /// A checked `source.extern-call.v1` module.
 #[derive(Clone, Debug)]
 pub struct CheckedExternModule {
@@ -540,7 +549,7 @@ pub struct ComposedRegionEvidence {
 impl CheckedSourceModule {
     pub fn as_sequential(&self) -> Option<&CheckedProgram> {
         match self {
-            Self::ScalarCalls(_) => None,
+            Self::QuantVariant(_) | Self::ScalarCalls(_) => None,
             Self::Sequential(program) => Some(program),
             Self::ScopedTasks(_)
             | Self::BitfieldTasks(_)
@@ -566,7 +575,8 @@ impl CheckedSourceModule {
     /// ask for the composition and see the accounting half beside it.
     pub fn as_scoped_tasks(&self) -> Option<&task_execution::CheckedTaskModule> {
         match self {
-            Self::ScalarCalls(_)
+            Self::QuantVariant(_)
+            | Self::ScalarCalls(_)
             | Self::Sequential(_)
             | Self::BitfieldTasks(_)
             | Self::CheckedMutexGuards(_)
@@ -588,7 +598,8 @@ impl CheckedSourceModule {
 
     pub fn as_checked_mutex_guards(&self) -> Option<&CheckedMutexGuardModule> {
         match self {
-            Self::ScalarCalls(_)
+            Self::QuantVariant(_)
+            | Self::ScalarCalls(_)
             | Self::Sequential(_)
             | Self::ScopedTasks(_)
             | Self::BitfieldTasks(_)
@@ -613,7 +624,8 @@ impl CheckedSourceModule {
     /// `as_scoped_tasks` does.
     pub fn as_checked_epoch_bound(&self) -> Option<&CheckedEpochModule> {
         match self {
-            Self::ScalarCalls(_)
+            Self::QuantVariant(_)
+            | Self::ScalarCalls(_)
             | Self::Sequential(_)
             | Self::ScopedTasks(_)
             | Self::BitfieldTasks(_)
@@ -635,7 +647,8 @@ impl CheckedSourceModule {
 
     pub fn as_composed_epoch_tasks(&self) -> Option<&ComposedEpochModule> {
         match self {
-            Self::ScalarCalls(_)
+            Self::QuantVariant(_)
+            | Self::ScalarCalls(_)
             | Self::Sequential(_)
             | Self::ScopedTasks(_)
             | Self::BitfieldTasks(_)
@@ -657,7 +670,8 @@ impl CheckedSourceModule {
 
     pub fn as_extern_calls(&self) -> Option<&CheckedExternModule> {
         match self {
-            Self::ScalarCalls(_)
+            Self::QuantVariant(_)
+            | Self::ScalarCalls(_)
             | Self::Sequential(_)
             | Self::ScopedTasks(_)
             | Self::BitfieldTasks(_)
@@ -679,7 +693,8 @@ impl CheckedSourceModule {
 
     pub fn as_standard_io(&self) -> Option<&CheckedStdIoModule> {
         match self {
-            Self::ScalarCalls(_)
+            Self::QuantVariant(_)
+            | Self::ScalarCalls(_)
             | Self::Sequential(_)
             | Self::ScopedTasks(_)
             | Self::BitfieldTasks(_)
@@ -706,7 +721,8 @@ impl CheckedSourceModule {
     /// one must ask for the composition and see the other beside it.
     pub fn as_composed(&self) -> Option<&CheckedComposedModule> {
         match self {
-            Self::ScalarCalls(_)
+            Self::QuantVariant(_)
+            | Self::ScalarCalls(_)
             | Self::Sequential(_)
             | Self::ScopedTasks(_)
             | Self::BitfieldTasks(_)
@@ -734,7 +750,8 @@ impl CheckedSourceModule {
     /// `tasks()` from it, with the placed lines in view beside it.
     pub fn as_composed_tasks(&self) -> Option<&composed_tasks::CheckedComposedTaskModule> {
         match self {
-            Self::ScalarCalls(_)
+            Self::QuantVariant(_)
+            | Self::ScalarCalls(_)
             | Self::Sequential(_)
             | Self::ScopedTasks(_)
             | Self::BitfieldTasks(_)
@@ -757,7 +774,8 @@ impl CheckedSourceModule {
     /// The checked byte-buffer evidence (card `STD-BUFFER`).
     pub fn as_standard_buffer(&self) -> Option<&CheckedBufferModule> {
         match self {
-            Self::ScalarCalls(_)
+            Self::QuantVariant(_)
+            | Self::ScalarCalls(_)
             | Self::Sequential(_)
             | Self::ScopedTasks(_)
             | Self::BitfieldTasks(_)
@@ -785,7 +803,8 @@ impl CheckedSourceModule {
     /// The checked string-view evidence (card `STRING-SLICE`).
     pub fn as_standard_string(&self) -> Option<&CheckedStringModule> {
         match self {
-            Self::ScalarCalls(_)
+            Self::QuantVariant(_)
+            | Self::ScalarCalls(_)
             | Self::Sequential(_)
             | Self::ScopedTasks(_)
             | Self::BitfieldTasks(_)
@@ -808,7 +827,8 @@ impl CheckedSourceModule {
     /// The checked socket evidence (card `QUIRIN-SOCKET-V1`).
     pub fn as_standard_socket(&self) -> Option<&CheckedSocketModule> {
         match self {
-            Self::ScalarCalls(_)
+            Self::QuantVariant(_)
+            | Self::ScalarCalls(_)
             | Self::Sequential(_)
             | Self::ScopedTasks(_)
             | Self::BitfieldTasks(_)
@@ -831,7 +851,8 @@ impl CheckedSourceModule {
     /// The checked HTTP evidence (card `HTTP-QUIRIN-V1`).
     pub fn as_standard_http(&self) -> Option<&CheckedHttpModule> {
         match self {
-            Self::ScalarCalls(_)
+            Self::QuantVariant(_)
+            | Self::ScalarCalls(_)
             | Self::Sequential(_)
             | Self::ScopedTasks(_)
             | Self::BitfieldTasks(_)
@@ -853,6 +874,7 @@ impl CheckedSourceModule {
 
     pub fn function_count(&self) -> usize {
         match self {
+            Self::QuantVariant(module) => module.program.function_names().len(),
             Self::ScalarCalls(program) => program.program().functions.len(),
             Self::Sequential(program) => program.functions.len(),
             Self::ScopedTasks(program) => program.module().functions.len(),
@@ -911,6 +933,7 @@ impl CheckedSourceModule {
 pub enum SourceExecutionProfile {
     /// I32/unit functions with checked arithmetic, direct calls and explicit std.io.
     ScalarCallsV1,
+    QuantVariantV1,
     /// A closed acyclic source call graph over extent-carrying `bytes` values,
     /// with owned moves and whole-buffer read/write loans checked through the
     /// existing ownership IR and byte-buffer checker.
@@ -1207,6 +1230,7 @@ impl CompiledModule {
 
     pub fn declared_assumptions(&self) -> &[extern_call::ExternAssumption] {
         match &self.checked {
+            CheckedSourceModule::QuantVariant(module) => &module.assumptions,
             CheckedSourceModule::ExternCalls(module) => &module.certificate.assumptions,
             // Card `STD-IO-COMPOSE`: composing must not lose the surface at
             // which a reader sees an unchecked-linkage waiver. The composed

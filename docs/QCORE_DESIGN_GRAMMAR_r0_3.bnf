@@ -32,6 +32,7 @@
 <module-path> ::= <identifier> | <identifier> "." <module-path>
 
 <declaration> ::= <dimension-declaration>
+                | <quant-variant-declaration>
                 | <axis-declaration>
                 | <type-declaration>
                 | <resource-type-declaration>
@@ -93,6 +94,7 @@
                    | <identifier> ":" "Share"
 
 <type> ::= <atomic-type>
+         | <quant-variant-type>
          | <named-type>
          | <tuple-type>
          | <array-type>
@@ -271,6 +273,7 @@
                          | <contract-clause> <contract-clause-list>
 
 <contract-clause> ::= "requires" <constraint> ";"
+                    | <quant-variant-map>
                     | "ensures" <exit-selector> <constraint> ";"
                     | "quant" <exit-selector> <quant-relation> ";"
                     | <formal-proposition-clause>
@@ -555,6 +558,20 @@
 <constructor-expression> ::= <identifier> "::" <identifier>
                            | <identifier> "::" <identifier> "(" <optional-argument-list> ")"
                            | <identifier> "::" <identifier> "{" <optional-initializer-list> "}"
+
+(* L09.1 and C04.13.2. G02d.4 implements the custody/none subset. *)
+<quant-variant-declaration> ::= "quant" "variant" <identifier> "(" <identifier> ")" "{" <quant-arm> <quant-arms> "}"
+<quant-arms> ::= ε | <quant-arm> <quant-arms>
+<quant-arm> ::= <identifier> <quant-code-field> "carries" <quant-carried> ";"
+<quant-code-field> ::= ε | "(" "code" ":" "i32" ")"
+<quant-carried> ::= "none" | "custody" "(" <identifier> ")"
+                  | "protocol" "(" <identifier> "," <identifier> ")"
+<quant-variant-type> ::= "quant" "variant" <identifier> "(" <identifier> ")"
+<quant-variant-map> ::= "quant" "variant" "on_return" "(" <quant-return-op> "," <quant-return-value> ")"
+                        <identifier> "::" <identifier> <quant-arm-effect> ";"
+<quant-return-op> ::= "eq" | "ne" | "lt" | "le" | "gt" | "ge"
+<quant-return-value> ::= <integer-literal> | "-" <integer-literal>
+<quant-arm-effect> ::= ε | "using" "#" <identifier>
 
 <optional-initializer-list> ::= ε
                               | <initializer-list>

@@ -6925,7 +6925,7 @@
   "workspace_tests": 10164,
   "provider_tests": 182,
   "python_evidence_validator_tests": 807,
-  "lean_audits": 512,
+  "lean_audits": 513,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
    "AuditAddressArrowPlace.lean",
@@ -7281,6 +7281,7 @@
    "AuditQuantProposition.lean",
    "AuditQuantRegionSource.lean",
    "AuditQuantTheorem.lean",
+   "AuditQuantVariant.lean",
    "AuditRawDirectiveLexing.lean",
    "AuditReachGatePosition.lean",
    "AuditReadLoan.lean",
@@ -7446,7 +7447,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "full landing gate on 6821fddee: every step exits 0 except rust-suite (5 failed: known host libcurl failure and four reading-site evidence tests fixed by the digest re-pin and rerun)",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/k6-direct-position-access/integration/gate.json)"
+  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
  },
  "named_followups": [
   {

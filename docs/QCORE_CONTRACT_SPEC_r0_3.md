@@ -900,6 +900,83 @@ contract {
 
 The declaration's own `&NAME` reading (C04.13) is unchanged. The Lean model is `QCore.OwnedOutMemberSlot`.
 
+#### C04.13.2. Packing a return-code disposition
+
+An opt-in adapter may produce a [quant variant](QCORE_SPEC_r0_3.md#l091-quant-variants)
+at a typed Quirin call boundary. The extern declaration keeps its C scalar
+result. The following design example shows the complete declaration and
+the additional mapping clauses. The custody adapter is implemented in
+`source.quant-variant.v1` (G02d.4), with a separately selected C04.13
+contract. The protocol/effect adapter remains Proposed.
+
+```qcore
+quant variant TakeResult(p) {
+    Taken carries none;
+    Retained(code: i32) carries custody(p);
+}
+extern fn take(p: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_on_return(eq, 0, resource_consumed(p, nonnull));
+    ensures normal resource_on_return(ne, 0, resource_owned(p, nonnull));
+    ensures normal resource_return_none();
+    quant variant on_return(eq, 0) TakeResult::Taken;
+    quant variant on_return(ne, 0) TakeResult::Retained;
+};
+```
+
+1. **Select and bind.** This adapter accepts a normal signed `i32`
+   result with an ABI-checked 32-bit C representation. Bind the variant's
+   subject by name to a unique extern formal, then to its caller identity
+   and generation. In the typed interface this call returns
+   `quant variant TakeResult(p)` after actual substitution. The underlying
+   ABI call still returns its integer. To observe an arbitrary return code
+   in an arm, declare its `code: i32` field. The field receives the exact
+   returned value. An unbound subject, unsupported clause combination or
+   consumer lacking this adapter must refuse the mapped declaration.
+2. **Validate the partition.** Require one mapping for each tag, unique
+   canonical comparison classes, pairwise disjoint and exhaustive under
+   C04.13. For a relational declaration the map must use its exact class
+   keys. Validate the underlying declaration independently, including
+   body contradiction/withdrawal and its existing restrictions. The map
+   cannot rehabilitate a withdrawn declaration or introduce an effect in
+   the underlying disposition loader. A protocol-only adapter over a plain
+   admitted contract may instead declare its own total partition; the
+   plain contract applies in every class. This does not admit a redundant
+   relational declaration.
+3. **Derive each package.** Apply the selected *underlying* disposition
+   once, then partition its post-state by L09.1. `resource_consumed`
+   transfers custody out; the `Taken` package is empty. On `Retained`,
+   the existing caller duty moves into the package. No rule allocates or
+   discharges a second duty. Residual obligations on other formals remain
+   in the caller frame. Admission requires an expressible common residual
+   frame at the call or preserved exit alternatives.
+4. **Protocol evidence.** For an arm carrying `protocol`, the mapping
+   must include `using #effectName`, a unique selected G01e effect. Other
+   arms omit it. For example, the two mappings for L09.1's socket could
+   use `#bind_named` and `#keep_raw`. Bind the effect's typed arguments
+   by the selected contract's source valuation (including any relation
+   and function parameters); require a unique interpretation of each
+   parameter and the actual generation of the mapped subject. Bind its
+   states to this call's entry and
+   normal return. Prove occurrence, exit selection, guard (using the
+   class and established entry facts), transition including interfering
+   steps, and frame on every path in that class. Its post-state must
+   entail the named protocol predicate for this exact generation.
+   A return-code comparison proves only class membership. An uninterpreted
+   G01e relation, unknown binding, or missing occurrence/frame evidence
+   leaves the adapter unsupported. Preserve all assumptions and provenance
+   of the admitted source and contract. G01e alone is model evidence.
+5. **Lower the boundary.** Evaluate arguments and invoke the ABI function
+   once. Save the signed result, classify that value with the validated
+   comparisons and construct the corresponding internal tag and data.
+   Reuse the scalar as a discriminant only when the lowering preserves
+   delayed matches, code payloads and single evaluation. No ABI-visible
+   struct, extra resource operation or second call may be introduced.
+   C04.13's immediate-test and untested-call rules continue to govern
+   existing C analysis. This new constructor applies only at the selected
+   typed adapter boundary.
+
 ### C04.14. Retained pointers
 
 Card CALLEE-RETENTION-CLASS1 (gateway rule 12t), on the user's decision recorded here verbatim from the card's brief:

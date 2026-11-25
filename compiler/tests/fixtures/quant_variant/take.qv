@@ -1,0 +1,10 @@
+// SPDX-License-Identifier: Apache-2.0
+module contract;
+
+extern fn take(p: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_on_return(eq, 0, resource_consumed(p, nonnull));
+    ensures normal resource_on_return(ne, 0, resource_owned(p, nonnull));
+    ensures normal resource_return_none();
+};

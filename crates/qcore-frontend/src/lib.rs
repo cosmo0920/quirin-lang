@@ -88,3 +88,5 @@ pub mod quant_effect;
 pub mod quant_theorem;
 
 pub mod quant_condition;
+
+pub mod quant_variant;

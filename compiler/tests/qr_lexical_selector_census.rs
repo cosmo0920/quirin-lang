@@ -202,6 +202,7 @@ fn path_for(mode: &str) -> &'static str {
 
 fn variant(checked: &CheckedSourceModule) -> &'static str {
     match checked {
+        CheckedSourceModule::QuantVariant(_) => "QuantVariant",
         CheckedSourceModule::ScalarCalls(_) => "ScalarCalls",
         CheckedSourceModule::Sequential(_) => "Sequential",
         CheckedSourceModule::ScopedTasks(_) => "ScopedTasks",

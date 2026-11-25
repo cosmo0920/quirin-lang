@@ -39,6 +39,34 @@ pub struct SourceResultMatchArm {
     pub body: SourceBlock,
 }
 
+impl SourceResultMatchArm {
+    /// Introduce only a declared quant variant's arm-local code binding.
+    /// The consuming checker validates the particular tag and its payload.
+    pub(super) fn variant_binding(&self, program: &SourceProgram) -> Option<&str> {
+        use TokenKind::{Symbol as S, Word};
+        let [
+            Word(variant),
+            S(Symbol::ColonColon),
+            Word(_),
+            S(Symbol::LeftBrace),
+            Word(field),
+            S(Symbol::Colon),
+            Word(binding),
+            S(Symbol::RightBrace),
+        ] = self.pattern_tokens.as_slice()
+        else {
+            return None;
+        };
+        (field == "code"
+            && !is_reserved_source_word(binding)
+            && binding != "_"
+            && program.declarations.iter().any(|decl| {
+                decl.value.kind == DeclarationKind::QuantVariant && decl.value.name == *variant
+            }))
+        .then_some(binding.as_str())
+    }
+}
+
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct SourceResultMatch {
     pub span: Span,

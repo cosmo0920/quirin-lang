@@ -2519,6 +2519,64 @@ for a file that calls C, and it must resolve to a generated (v2) manifest
 v1 manifest (`Q065`) and a callee no manifest the file bound binds (`Q066`,
 widened) refuse. The other routes keep the opt-in rule above byte for byte.
 
+### G02d.4. Delayed custody results (`source.quant-variant.v1`)
+
+A `module library;` importing `#import std.extern;` may adapt a signed
+32-bit C return code to a movable custody result. See the complete
+[source library](../compiler/tests/fixtures/quant_variant/delayed.qr),
+[selected contract](../compiler/tests/fixtures/quant_variant/take.qv)
+and [C caller](../compiler/tests/fixtures/quant_variant/caller.c).
+
+```sh
+quirin check --contracts compiler/tests/fixtures/quant_variant/take.qv compiler/tests/fixtures/quant_variant/delayed.qr
+quirin emit --contracts compiler/tests/fixtures/quant_variant/take.qv compiler/tests/fixtures/quant_variant/delayed.qr -o delayed.c
+```
+
+Declare each variant before its mapped extern. The design grammar's
+`quant-variant-declaration`, `quant-variant-type` and `quant-variant-map`
+productions apply with the following restrictions:
+
+* The subject is one generation of heap storage. Arms carry `none` or
+  `custody(p)` and optionally one `code: i32` field. The extern has a single
+  `ptr<mut, u8>` formal and returns `i32`. Each integer class maps to a
+  distinct arm. The selected C04.13 contract and the inline declaration
+  must agree on ABI, the set of class predicates and their full dispositions.
+  Exactly the nonnull consumed and owned modes are admitted. No assumption
+  about the external implementation is inferred from a tag or from its name.
+* Functions form an acyclic call graph and return `i32`. An `own<Buffer>` formal accepts a unique,
+  nonnull, live allocation compatible with C `free`. A helper can bind
+  a subject `p: ptr<mut, u8>` together with `v: quant variant V(p)`.
+  At a call site each package must have the declared variant and the
+  generation of the actual subject. Distinct resource formals require
+  distinct generations. A raw subject alone grants no release authority.
+* A body may bind a pointer alias (`let q = p;`), call an adapter
+  (`let v = take(q);`), move a package (`let w = move v;`), bind a scalar,
+  call a helper, `drop` a live owner, match, or return a scalar. A helper
+  call passes a subject by name and a package or owner with `move`.
+  A consuming `match v` (also `match move v`) has one arm per declared
+  tag, with match nesting bounded at 32. An arm with data binds `V::Tag { code: rc }`; an empty data list
+  uses `V::Tag`. Continuing arms must agree on the surviving frame.
+  Every returning path discharges or transfers all custody and opens or
+  transfers every sealed result. Helpers are checked even when uncalled.
+* The C ABI exports owner-only functions as `qv_entry_NAME`. The caller
+  supplies separate live allocations. The adapter calls the named C symbol
+  once, classifies that integer and retains the exact payload if requested.
+  Private helpers receive the package by value and a reference to the
+  subject's pointer slot, so a successful taking call may already have freed
+  its subject before handoff. Matching the empty arm never reads the dead
+  pointer. Generated code requires eight-bit bytes and a signed 32-bit C
+  `int`. Internal tags and helper signatures have no external ABI.
+
+Checking an unsupported `protocol` or `using #effect` arm refuses. G01e
+supplies no verified C effect occurrence. The resource model is
+[`QCore.QuantVariant`](../proof/QCore/QuantVariant.lean); the emitted
+code and the selected C implementation remain separate evidence.
+
+`Q020` covers a refused body, including opening a moved result or dropping
+its subject through an alias. `Q023` covers missing or unloadable selections
+and `Q027` covers an ABI or disposition mismatch. The checked library retains
+the trusted contract sources and reports the assumption for each mapped callee.
+
 ## G02e. Flat-epoch quantitative bound
 
 `source.epoch.bound.v1`. Selected before every other concurrent route by the

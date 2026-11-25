@@ -63,6 +63,7 @@ For documentation, this revision names the current boundaries as follows. These 
 |---|---|---|
 | `source.structural` | `parse_source_program`, `elaborate_source` | Broad structural syntax; selected name, usage-grade, and quantitative-index checks. |
 | `source.exec12` | `compile_files`, `quirin check`, `quirin emit` | Flat artificial resource operations, literal returns, and restricted direct calls. |
+| `source.quant-variant.v1` | `compile_files`, `quirin check`, `quirin emit` | Library calls and delayed custody matches for a declared, separately selected C return-code contract. [G02d.4](QCORE_IMPLEMENTED_GRAMMARS_r0_3.md#g02d4-delayed-custody-results-sourcequant-variantv1) defines the admitted fragment. |
 | `source.resource-calls.v1` | `compile_files`, `quirin check`, `quirin emit` | Closed acyclic helper calls carrying owned `bytes`, whole-call read/write loans and scalar values; per-call extent, custody and effect checks. No general error recovery, returned loans or separately compiled resource ABI. |
 | `source.tasks.copy.v1` | `compile_files`, `quirin check`, `quirin emit` | Linux C11 threads or the emitted macOS/Windows compatibility subset; finite scalar-copy leaf workers, explicit joins, checked creation/error paths; no resources, loans or shared source memory. |
 | `source.extern-call.v1` | `compile_files` with an explicit `CompileOptions` extern contract selection | A flat sequential entry calling declared extern functions under admitted resource-contract v1 shapes; results are valid only relative to those declarations. No extents, no excluded C04 mode, no concurrent or error-region context. |
@@ -476,6 +477,121 @@ An identity in the general design includes a lifetime generation. Reusing a nume
 Resource footprints may include memory, handles, protocol cells, or nested resource identities. Aggregate custody requires explicit parent-child relations. Releasing a parent object does not, by itself, discharge its child allocations, OS endpoints, or pending callbacks. Transfer and destruction of an aggregate may cascade only under a contract that accounts for those children.
 
 The ownership IR includes checks for acquire, move, borrow, borrow completion, drop, and transfer operations. Its accepted `ResourceId` and `Footprint` values are supplied model inputs. Complete source-level borrow inference, arbitrary pointer alias analysis, C layout derivation, and Send/Sync derivation do not follow from that API.
+
+### L09.1. Quant variants
+
+A `quant variant` packages an exit-specific fragment of authority in a
+movable result. The custody/empty fragment is source-checked under
+`source.quant-variant.v1` (G02d.4). Protocol fragments and general source
+constructors remain Proposed. G01e represents effect relations
+and G02bc implements one owned error payload. Neither establishes support
+for this profile. Its declaration, type use and C adapter clauses are in
+[the design grammar](QCORE_DESIGN_GRAMMAR_r0_3.bnf).
+
+```qcore
+quant variant BindResult(s) {
+    Bound carries protocol(s, Named);
+    Failed(code: i32) carries protocol(s, Raw);
+}
+```
+
+In a signature such as `fn bind(s: Socket) -> quant variant BindResult(s)`,
+the declaration's formal denotes the generation of the actual resource at
+entry. The checker substitutes that identity at every call and move.
+Rebinding the variable or reusing its numeric handle cannot change it.
+The initial profile admits one subject, distinct tags and at most one
+signed 32-bit data field per tag. A protocol label must resolve in the
+subject's selected, versioned resource protocol with a defined state
+predicate, transition rules and protected footprint. Unresolved identities,
+overlapping incompatible authority or uninterpreted labels refuse.
+
+Each arm describes one fragment: `none` is empty; `custody(s)` is the
+unique live responsibility in L; `protocol(s, S)` is the exclusive
+authority in K to rely on and change that protocol state for this identity.
+The protocol's interpretation specifies which operations invalidate it,
+including release, transfer outside the protocol and lifetime end. A
+protocol fragment grants no access shares or destruction right. All other
+entry requirements of an operation still apply.
+
+**Typing.** Write `D = F ⊕ P` for a compatible partition of the current
+resource/protocol state. Composition preserves generation, alias and borrow
+constraints and uniqueness of each authority. X supplies a separate D per
+reachable exit. The following obligations apply also on error and cleanup
+paths.
+
+For fixed generation ρ, write Φᵢ(ρ) for arm i's fragment and V(ρ)
+for the instantiated variant. The resource part of introduction and
+elimination is:
+
+```text
+pack i   F ⊕ Φᵢ(ρ)                 → F, v : V(ρ) sealed with (i, Φᵢ(ρ))
+move v   F, v : V(ρ)                → F, w : V(ρ) with the same seal
+open v   F′, v : V(ρ), observed i   → F′ ⊕ Φᵢ(ρ), arm i's data
+```
+
+Each arrow consumes the state on its left. The enclosing expression still
+checks usage U, credit C, access A and effects E under their own rules;
+a grade of `one` proves neither the fragment nor the observed tag.
+
+1. **Construct.** In the expected instantiated result type, check the
+   payload and resolve the tag. At that exact program point prove the
+   declared state and partition D into the carried fragment P and residual
+   F. Constructing `BindResult::Failed { code: rc }` leaves F available
+   and binds P to the fresh result value. Every producing path must
+   justify its own tag. For a transition justified by §L19.1/G01e, bind
+   subject, pre/post states and actual exit to the same operation; discharge
+   the guard, occurrence, reads/writes, transition and preserved frame.
+   The established postcondition must entail the arm predicate. An identity
+   transition (e.g. Raw on failure) also needs preservation evidence.
+2. **Move and protect.** Every value of the declared variant type,
+   including an empty arm before discrimination, is move-only. A move,
+   argument or return transfers the package once and invalidates its source.
+   Its subject and all dependencies must outlive its use. Until opening,
+   any operation through any alias that needs or could invalidate sealed
+   authority refuses. This includes opaque calls with unproven effects.
+   A compatible operation on a disjoint resource may proceed. Copy,
+   implicit discard, overwrite and raw byte reconstruction refuse.
+3. **Open.** An exhaustive consuming `match` has one explicit arm per tag.
+   Remove the package and type each arm with its payload and `F_now ⊕ P_tag`.
+   Check compatibility against the current frame. No earlier snapshot is
+   restored. Each outgoing path must account for every extracted duty or
+   authority by the usual release, protocol transition, repack or transfer
+   rules. Reaching the same program point with different sealed values
+   requires a common instantiated type and compatible residual frame, or
+   explicit exit alternatives. Summing live counts cannot justify a join.
+
+For example, a checked callee can receive `s` and a moved
+`quant variant BindResult(s)`. In `match result`, the arm
+`BindResult::Bound => { … }` recovers the permission for Named operations
+on that same socket; `BindResult::Failed { code: rc } => { … }` recovers
+the Raw permission and the runtime error code. A package for a different
+socket cannot satisfy the parameter type, even if both sockets are Raw.
+At a merge the checker must retain the correlation between tag, payload
+and sealed fragment; joining the three components independently is unsound.
+
+**C lowering.** For an internal result, emit a discriminant and storage for
+the selected payload (a tag alone suffices without data). Construct the
+declared tag and its active field together. Evaluate a match scrutinee once,
+branch on the tag and read only that tag's initialized fields. Every
+reachable tag must select exactly the source arm; an invalid tag at a
+checked boundary must fail before unpacking. Rejected source programs
+cannot reach emission. Generation and authority may be erased after
+checking because no admitted C operation can forge a package or duplicate
+its use. Compiler-generated temporaries must preserve single consumption
+on all paths. This layout has no public C ABI by default. Passing it through
+untyped C storage, exporting it by value to unchecked C or reconstructing
+it from caller-supplied bytes requires a separately verified boundary.
+The integer ABI adapter in §C04.13.2 of the contract specification is a
+distinct, bounded construction rule.
+
+**Conformance before promotion.** Require matching Rust and audited Lean
+rules for pack/move/open, preservation of the disjoint frame, indexed
+generation and at-most-once recovery. Exercise delayed matching across a
+function boundary with another resource released in between, both outcomes
+and their emitted C payloads. Reject wrong generation, mismatched effect
+or result class, use after move, double open, lost package on error,
+invalidation through an alias, incomplete matches and forged boundary
+tags. Record source verdict, model proof and native observations separately.
 
 ## L10. Resource-flow algebra and loop bounds
 
