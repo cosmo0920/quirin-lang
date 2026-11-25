@@ -436,6 +436,10 @@ mod stream_line_order;
 // keeps, the release and exit refusals).
 #[path = "legacy_retained_by.rs"]
 pub(crate) mod retained_by_route;
+// Card NAME-KEYED-HOLDER-SHADOWING (rule 86): rule 12t's formal-keyed
+// readings need the formal to be one declaration.
+#[path = "legacy_formal_declaration.rs"]
+mod formal_declaration;
 // Card MK-EVENT-DESCRIPTOR-QUANT (rule 38): descriptor cells (the operands,
 // the cell table's transfer, the witnesses, the exit and release refusals).
 #[path = "legacy_descriptor_cells.rs"]

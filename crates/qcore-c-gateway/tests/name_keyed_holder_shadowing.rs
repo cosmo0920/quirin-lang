@@ -24,19 +24,24 @@
 //! the shadow dropping the formal's record, or the shadow's record removed
 //! through the formal.
 //!
-//! At base every probe already refuses. The shadow's declaration is refused
-//! by the classifier's guard (`local declaration may shadow a formal
-//! resource identity`, `legacy_classify.rs`) wherever the guard recognizes
-//! a declaration. Where it does not (a declaration opening with
+//! At base most probes refuse before the reading. The classifier's guard
+//! (`local declaration may shadow a formal resource identity`,
+//! `legacy_classify.rs`) refuses the shadow's declaration wherever it
+//! recognizes one. Where it does not (a declaration opening with
 //! `__attribute__`, `_Alignas` or `__typeof__`, or a parenthesized
-//! declarator), the declaration is refused by another route: an
-//! uncontracted call, an indirect access, an unmodelled initializer. Those
-//! refusals are incidental to the shape. Rule 86 makes the readings
-//! themselves decide from Clang's declaration ids, so they no longer rest
-//! on either refusal: a formal is read as one only where the name has one
-//! declaration in the function, its `ParmVarDecl`, and every `DeclRefExpr`
-//! of the name designates it (`legacy_formal_declaration.rs`, unit tests
-//! there). The controls keep their readings.
+//! declarator), another route refuses the declaration: an uncontracted
+//! call, an indirect access, an unmodelled initializer. Those refusals are
+//! incidental to the shape. But a declaration that control jumps over
+//! (before a switch's first label, or past a `goto` target) puts the
+//! guard's refusal on no path: the reading admitted the shadow as the
+//! formal, the verdict was `Safe`, and only the internal certificate check
+//! rejected the unit (probes J1-J9, which failed at base).
+//!
+//! Rule 86 makes the readings themselves decide from Clang's declaration
+//! ids: a formal is read as one only where the name has one declaration in
+//! the function, its `ParmVarDecl`, and every `DeclRefExpr` of the name
+//! designates it (`legacy_formal_declaration.rs`, with unit tests there).
+//! The controls keep their readings.
 //!
 //! The `r_*` and `ev_*` declarations are synthetic trusted test assumptions
 //! (`fixtures/contracts/retained_by.qv`, `fixtures/contracts/event_loop.qv`):
