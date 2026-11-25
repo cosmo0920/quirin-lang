@@ -255,7 +255,7 @@ unit-scoped reproduction of the 17 units of the 25 rows
 database, [scripts/run_repro.sh](scripts/run_repro.sh), parity stream on) was
 queued for the base binary (`private/k6/bin/quirin-audit-base`, `5087f9295`)
 and the tip binary (`private/k6/bin/quirin-audit-tip1`, the rule-81 analyzer
-code of `c674d3108` before formatting, its diff in
+code of `c674d3108` (`0f6dbb89e` after the rebase onto `110a69c8e`) before formatting, its diff in
 `private/k6/bin/quirin-audit-tip1.diff`); section 6.1 records what it gave.
 
 ### 6.1 The reproduction did not run
@@ -274,7 +274,7 @@ BINARY DB OUT`, with `DB` from K5's `filter_db.py` over
 ## 7. Targeted checks (no card gate)
 
 No card gate (round-37 brief: one gate on the merged tip). Each check ran in
-a gate slot on the committed code of `c674d3108` (CARGO_TARGET_DIR
+a gate slot on the committed code of `c674d3108` (`0f6dbb89e` after the rebase onto `110a69c8e`) (CARGO_TARGET_DIR
 `private/k6/target-test`), logs and exits under `private/k6/`:
 
 | Check | Command | Exit | Result |

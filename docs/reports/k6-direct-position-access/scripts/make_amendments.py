@@ -150,7 +150,7 @@ def main():
         "schema": "quirin-amendments/2",
         "card": CARD,
         "base": "5087f9295",
-        "measured_tip": "c674d3108",
+        "measured_tip": "109eaca15",
         "profiles": [],
         "increment_paragraph": INCREMENT,
         "status_edits": [],
