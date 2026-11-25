@@ -692,11 +692,15 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [k1-call-actual-access](k1-call-actual-access/README.md) | K1-CALL-ACTUAL-ACCESS: call-actual access reads, re-censused; rule 75 |
 
+| [k2-no-typed-access](k2-no-typed-access/README.md) | K2-NO-TYPED-ACCESS: leaves with no typed access, re-censused |
+
 | [k3-pointer-valued-stores](k3-pointer-valued-stores/README.md) | K3-POINTER-VALUED-STORES |
 
 | [k4-formal-custody-aliases](k4-formal-custody-aliases/README.md) | K4-FORMAL-CUSTODY-ALIASES: re-census and stop (no semantic change) |
 
 | [k5-local-origin-aliases](k5-local-origin-aliases/README.md) | K5-LOCAL-ORIGIN-ALIASES: locals holding only loads from untracked objects |
+
+| [k6-direct-position-access](k6-direct-position-access/README.md) | K6-DIRECT-POSITION-ACCESS: direct-position access, re-censused |
 
 | [k7-residual-causes](k7-residual-causes/README.md) | K7-RESIDUAL-CAUSES: the residual refusal causes of the access census, re-censused; rule 78 |
 
