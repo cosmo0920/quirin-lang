@@ -1,0 +1,108 @@
+// SPDX-License-Identifier: Apache-2.0
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+module contract;
+
+// Card ONIGMO-PROVIDER-PLUGIN. Searching and matching (see regex.qv for what
+// every declaration of this crate shares).
+
+// onig_search (`regexec.c:3792-3797`) is `onig_search_gpos(reg, str, end,
+// start, start, range, region, option)` (`:3799-4170`). What the body does
+// with each argument:
+// * `reg` is dereferenced on every path that reaches the search
+//   (`reg->num_mem` `:3818` with a region, `reg->anchor` `:3874`, then
+//   `reg->enc`, `reg->options`; only `start > end || start < str` `:3822`
+//   exits before), never written or released, and doc/API names it "regex
+//   object": the caller must hold a
+//   live regex object and keeps it, `resource_owned(reg, nonnull)`. (A
+//   borrowed position would demand nothing, so a use of a possibly-null
+//   binding after `onig_free` would pass; the owned requirement refuses it.)
+// * `str`, `end`, `start`, `range` are compared and read through; no
+//   pointer into the subject is stored anywhere that outlives the call: the
+//   match state `msa` is automatic and `MATCH_ARG_FREE(msa)` frees its stack
+//   on every exit after `MATCH_ARG_INIT` (`:4144`, `:4168`); the region holds
+//   offsets (`OnigPosition`), not pointers.
+// * `region` may be NULL (doc/API "NULL is allowed"; `if (region)`
+//   `:3817`); otherwise it is resized and cleared in place
+//   (`onig_region_resize_clear`, `:3818`; its `beg`/`end` arrays are the
+//   region's own, `regexec.c:249-296`), so the caller must hold the live
+//   region and keeps it: `resource_owned(region, nullable)`.
+// Result classes (`:4141`, `:4159`, `:4169`; doc/API "normal return: match
+// position offset (i.e. p - str >= 0)", "not found: ONIG_MISMATCH (< 0)"):
+// `#result >= 0` a match at that offset, `#result == -1` (ONIG_MISMATCH,
+// `onigmo.h:628`) none, `#result <= -2` an ONIGERR_* code (`:3819` the
+// region's resize). The classes partition the type and carry no custody, so
+// no result set is stated (C09.4 admits one from the C library crate only).
+//
+// NOT CLAIMED: that `str <= start <= end` and `range` bound the subject (no
+// bounds claim), the match semantics, or `ONIG_OPTION_FIND_LONGEST`'s
+// region content.
+extern fn onig_search(reg: ptr<mut, u8>, string: ptr<const, u8>, string_end: ptr<const, u8>, search_start: ptr<const, u8>, search_range: ptr<const, u8>, region: ptr<mut, u8>, option: u32) -> isize
+contract {
+    requires resource_contract_v1;
+    requires resource_library_version(onigmo, documented "6.1.2");
+    ensures normal resource_owned(reg, nonnull);
+    ensures normal resource_borrowed(string);
+    ensures normal resource_borrowed(string_end);
+    ensures normal resource_borrowed(search_start);
+    ensures normal resource_borrowed(search_range);
+    ensures normal resource_owned(region, nullable);
+    ensures normal resource_borrowed(option);
+    ensures normal resource_return_none();
+};
+
+// onig_match (`regexec.c:3523-3556`): `MATCH_ARG_INIT(msa, option, region,
+// at, at)` (`:3531`), the region resized and cleared when not NULL
+// (`:3539-3540`), `reg->enc` read and `match_at(reg, str, end, ..., at, prev,
+// &msa)` (`:3546-3547`), `MATCH_ARG_FREE(msa)` and `return r;`
+// (`:3554-3555`). The same reading as `onig_search`: `reg` dereferenced on
+// every path, a NULL region allowed (doc/API "NULL is allowed"), nothing
+// stored or released. Result classes (doc/API
+// "normal return: match length (>= 0)", "not match: ONIG_MISMATCH ( < 0)"):
+// `#result >= 0` a match of that length, `#result == -1` none,
+// `#result <= -2` an ONIGERR_* code.
+extern fn onig_match(reg: ptr<mut, u8>, string: ptr<const, u8>, string_end: ptr<const, u8>, at: ptr<const, u8>, region: ptr<mut, u8>, option: u32) -> isize
+contract {
+    requires resource_contract_v1;
+    requires resource_library_version(onigmo, documented "6.1.2");
+    ensures normal resource_owned(reg, nonnull);
+    ensures normal resource_borrowed(string);
+    ensures normal resource_borrowed(string_end);
+    ensures normal resource_borrowed(at);
+    ensures normal resource_owned(region, nullable);
+    ensures normal resource_borrowed(option);
+    ensures normal resource_return_none();
+};
+
+// onig_name_to_backref_number (`regparse.c:916-938`, the USE_NAMED_GROUP
+// definition `regint.h:69` selects): `onig_name_to_group_numbers`
+// (`:894-914`) looks the name up through `name_find` (`:541-552`), which reads
+// `reg->name_table` on every call, so the caller holds the live regex object
+// (`resource_owned(reg, nonnull)`); when a name has several groups the
+// region's `beg` entries are read (`:930-933`), a NULL region skipping them
+// (`resource_owned(region, nullable)`). Nothing is stored or released. Result
+// classes (doc/API
+// "normal return: group number."): `#result >= 1` a group number,
+// `#result <= -1` an ONIGERR_* code (`ONIGERR_UNDEFINED_NAME_REFERENCE`,
+// `ONIGERR_PARSER_BUG`).
+extern fn onig_name_to_backref_number(reg: ptr<mut, u8>, name: ptr<const, u8>, name_end: ptr<const, u8>, region: ptr<const, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_library_version(onigmo, documented "6.1.2");
+    ensures normal resource_owned(reg, nonnull);
+    ensures normal resource_borrowed(name);
+    ensures normal resource_borrowed(name_end);
+    ensures normal resource_owned(region, nullable);
+    ensures normal resource_return_none();
+};

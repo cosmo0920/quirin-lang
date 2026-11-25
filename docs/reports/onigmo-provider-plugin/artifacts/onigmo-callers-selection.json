@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "name": "onigmo-callers",
+  "description": "Card ONIGMO-PROVIDER-PLUGIN: the two Fluent Bit 046accf6 units that call Onigmo (src/flb_regex.c, src/flb_router.c), audited with and without quirin-provider-onigmo on the user load path. Every distinct compilation configuration is kept.",
+  "groups": [
+    {
+      "library": "fluent_bit",
+      "label": "onigmo-callers",
+      "files": [
+        "src/flb_regex.c",
+        "src/flb_router.c"
+      ]
+    }
+  ]
+}

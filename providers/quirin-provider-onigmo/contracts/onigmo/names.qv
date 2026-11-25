@@ -1,0 +1,52 @@
+// SPDX-License-Identifier: Apache-2.0
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+module contract;
+
+// Card ONIGMO-PROVIDER-PLUGIN. Named groups (see regex.qv for what every
+// declaration of this crate shares).
+
+// onig_foreach_name (`regparse.c:581-596`, the USE_NAMED_GROUP and
+// USE_ST_LIBRARY definition `regint.h:69`, `:83` select): with `reg`'s name
+// table not NULL it fills an automatic `INamesArg` (`func`, `reg`, `arg`) and
+// runs `onig_st_foreach(t, i_names, &narg)`; `i_names` (`:562-578`) calls
+//
+//     (*(arg->func))(e->name, e->name + e->name_len, e->back_num,
+//                    (e->back_num > 1 ? e->back_refs : &(e->back_ref1)),
+//                    arg->reg, arg->arg);
+//
+// once per name, stopping at the first nonzero result, which the call
+// returns (`0` otherwise; doc/API "normal return: 0", "error: func's return
+// value"). So `func` is invoked synchronously during the call only, never
+// kept (C04.19 `resource_callback_invoked`), with:
+// * positions 1-4 values the callee supplies (`_`): the name's bytes and its
+//   group list live in `reg`'s name table (`e->name` is `strdup_with_null`'s
+//   copy, `:799`), valid only while the table is, and the callback is handed
+//   them for the duration of its run: a candidate whose contract is not the
+//   identity on them (one that keeps or releases one) is refused
+//   (`callback-effectful`);
+// * position 5 the caller's `reg`, position 6 the caller's `arg`.
+// `reg->name_table` is read on every call (`:586`), so the caller holds the
+// live regex object and keeps it (`resource_owned(reg, nonnull)`); nothing is
+// written or released. `arg` is only forwarded.
+extern fn onig_foreach_name(reg: ptr<mut, u8>, func: fnptr, arg: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_library_version(onigmo, documented "6.1.2");
+    ensures normal resource_owned(reg, nonnull);
+    ensures normal resource_borrowed(func);
+    ensures normal resource_borrowed(arg);
+    ensures normal resource_callback_invoked(func, _, _, _, _, reg, arg);
+    ensures normal resource_return_none();
+};

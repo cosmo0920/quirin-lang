@@ -101,7 +101,7 @@ jobs:
           done
 
       # Card OPENSSL-PROVIDER-PLUGIN: the user crates' checker plugins
-      # (quirin-provider-openssl, quirin-provider-libcurl) are built, installed as verified packages
+      # (quirin-provider-openssl, quirin-provider-libcurl, quirin-provider-onigmo) are built, installed as verified packages
       # where their bindings name them, and the generated user load path is
       # checked against them (views and locks); the build reuses the
       # packaging target directory.

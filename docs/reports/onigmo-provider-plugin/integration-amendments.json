@@ -1,0 +1,110 @@
+{
+  "schema": "quirin-amendments/2",
+  "card": "ONIGMO-PROVIDER-PLUGIN",
+  "base": "5087f9295",
+  "measured_tip": "5087f9295",
+  "increment_paragraph": "**ONIGMO-PROVIDER-PLUGIN** (user decisions 2026-11-25: \"We must write down quirin-provider-onigmo with contracts of onigmo's regex functions.\" and \"This must be depending on quirin-provider-plugin crate and using its plugin mechanism.\"; no new clause kind or rule; Lean `QCore.OnigmoContractPlugin`; [report](../../reports/onigmo-provider-plugin/README.md)). New user crate providers/quirin-provider-onigmo (namespace onigmo) on the quirin-provider-plugin SDK, its checker quirin-onigmo-check bound to every declaration, registered as the third USER_LOAD_PATH_PACKAGES crate (regenerated user-crates-load-path.json, conformance user-crate pin 2 -> 3, CI comment) and never on contract-load-path.json. Nine declarations of the Onigmo 6.2.0 Fluent Bit vendors at lib/onigmo, each read off the vendored body at 046accf6 and pinned to its sites (9 pinned, 0 flexible), each `documented \"6.1.2\"` (Onigmo's doc/API names no version that added a function): onig_new (`resource_out(reg, nullable)`, the slot NULL on every nonzero result; enc/syntax retained by the conservative `global` holder, the pattern by einfo), onig_free, onig_search, onig_match, onig_name_to_backref_number (the regex `resource_owned(reg, nonnull)`, the region `resource_owned(region, nullable)`, so a use after onig_free is refused), onig_region_new, onig_region_free (bounded by `resource_literal_argument(free_self, 1)`), onig_foreach_name (a synchronous invocation `(func, _, _, _, _, reg, arg)`) and onig_init; onig_end is not declared (its use-after-end protocol has no clause). Every checker diagnostic is a formula. Fixtures (crates/qcore-c-gateway/tests/onigmo_user_crate_fixtures.rs): eight admitted shapes (one per contracted function but onig_new and onig_free, which share one), nineteen refused or accused near-misses. No unit of any measured route or of the user's current run calls Onigmo and none reads a user load path: predicted verdict-identical. Findings: the pin scanner records no definition of onig_search, onig_match or onig_region_free because regexec.c's conditional groups do not balance (C-IDENTITY-SITES-AFTER-UNBALANCED-BODY, a fail-closed defect).",
+  "status_edits": [],
+  "ledger": [
+    {
+      "id": "C-IDENTITY-SITES-AFTER-UNBALANCED-BODY",
+      "operation": "register",
+      "title": "The pin scanner records no site after the first body of a file whose conditional groups do not balance",
+      "text": "Found by ONIGMO-PROVIDER-PLUGIN (report section 2; crate test the_crate_is_on_the_user_load_path_only). crates/qcore-audit/src/c_identity.rs file_sites: in a file `structure` marks unbalanced, a definition's body runs to the end of the file (the digest covers more text, the intended fail-closed direction), but the scan then resumes at body_end + 1, so every later declaration or definition of a wanted name in that file is never visited. Fluent Bit 046accf6's lib/onigmo/regexec.c is unbalanced (a brace opened inside one `#ifndef USE_NEWLINE_AT_END_OF_STRING_HAS_EMPTY_LINE` group and closed in another, :2439-2447; evidence/conditional_balance.py), so `quirin-audit pin` gives onig_region_new (:331) a body running to the end of the file and records onig_region_free (:342), onig_match (:3523) and onig_search (:3792) with their onigmo.h declaration only: a change to those bodies leaves their pinned contracts in force, against C06.2's guarantee that every change of a function's text changes its identity. DISCHARGE: resume the scan after the definition's declaration (or its true close when one is known) instead of after a run-to-end body, so later sites are still recorded; re-pin the affected locks (shipped locks first audited for unbalanced files); a test with a later site after an unbalanced body.",
+      "source": "docs/reports/onigmo-provider-plugin/README.md",
+      "recorded_by": "ONIGMO-PROVIDER-PLUGIN"
+    },
+    {
+      "id": "ONIGMO-END-PROTOCOL",
+      "operation": "register",
+      "title": "onig_end is not declared: its use-after-end protocol and end-call registry have no clause",
+      "text": "onig_end (lib/onigmo/regcomp.c:5957-5972 at Fluent Bit 046accf6) runs every function onig_add_end_call registered (:5927-5955) and clears onig_inited; doc/API: \"It is not allowed to use regex objects which created before onig_end() call\", the condition `quant all #o in #created_before(#call): #used_after(#o, #call) -> #false`. Resource v1 has no clause invalidating every live object of a library by a global call, so quirin-provider-onigmo leaves it undeclared and flb_regex_exit stays Unknown on an uncontracted callee. DISCHARGE: a user decision on a library-end clause (or a premise term) and its consumer, or an observation contract under review.",
+      "source": "docs/reports/onigmo-provider-plugin/README.md",
+      "recorded_by": "ONIGMO-PROVIDER-PLUGIN"
+    },
+    {
+      "id": "ONIGMO-REGION-FREE-ARRAYS-ARM",
+      "operation": "register",
+      "title": "onig_region_free's free_self == 0 arm (arrays only, the object kept) is not declared",
+      "text": "regexec.c:342-355 releases the region object exactly when free_self != 0 and otherwise only its beg/end arrays. quirin-provider-onigmo states the release under `resource_literal_argument(free_self, 1)`; a call with 0 or a variable is undeclared (refused). No Fluent Bit call passes 0. DISCHARGE: a clause for an interior release that keeps the object, or a second arm per literal, with Lean parity (QCore.OnigmoContractPlugin.the_zero_arm_is_not_a_release).",
+      "source": "docs/reports/onigmo-provider-plugin/README.md",
+      "recorded_by": "ONIGMO-PROVIDER-PLUGIN"
+    },
+    {
+      "id": "ONIGMO-RELEASER-KIND",
+      "operation": "register",
+      "title": "Onigmo's regex and region objects are heap custody: a plain free reads as their release",
+      "text": "quirin-provider-onigmo states onig_new's slot, onig_region_new's result and their releases in the heap kind (no kind clause), as the libcurl crate states curl_url/curl_url_cleanup. Heap custody does not name the releaser, so free(reg) after onig_new, or free(region) after onig_region_new, reads as a release while the body's interior allocations (onig_free_body, the region arrays) leak. Under rule 10h every row applying the crate is at most Pending. DISCHARGE: a pointer-carried resource kind per object (C04.6, `no kind is added without a declared use`), so a heap release of either is a kind mismatch, with Lean parity in QCore.KindedCustody.",
+      "source": "docs/reports/onigmo-provider-plugin/README.md",
+      "recorded_by": "ONIGMO-PROVIDER-PLUGIN"
+    },
+    {
+      "id": "ONIGMO-OUT-SLOT-HOLDER",
+      "operation": "register",
+      "title": "onig_new retains enc and syntax in the object its out slot receives, a holder C04.14 cannot name",
+      "text": "regcomp.c:5849, :5851 store enc and syntax into the new regex_t. C04.14 has no out-slot holder and a retention cannot stand beside a return-code disposition, so quirin-provider-onigmo names the `global` holder (the refusing direction, QCore.OnigmoContractPlugin.global_admission_holds_for_every_holder). Fluent Bit's actuals &OnigEncodingUTF_8 and &OnigSyntaxRuby are addresses of file-scope objects, which rule 12t classes `other`, so str_to_regex's call is refused retention-undecided. DISCHARGE: either an out-slot holder (the slot's object as holder, ended by its release), or RETENTION-FILE-SCOPE-OBJECT-ADDRESS.",
+      "source": "docs/reports/onigmo-provider-plugin/README.md",
+      "recorded_by": "ONIGMO-PROVIDER-PLUGIN"
+    },
+    {
+      "id": "RETENTION-FILE-SCOPE-OBJECT-ADDRESS",
+      "operation": "register",
+      "title": "Rule 12t does not read `&G` of a file-scope object as static storage",
+      "text": "Rule 12t's static class is a string literal (and the predefined identifiers); `&G`, G a file-scope object of static storage duration the calling function does not shadow, outlives every holder as well, but is classed `other` and refused under every holder. Found by ONIGMO-PROVIDER-PLUGIN: Fluent Bit's onig_new call passes ONIG_ENCODING_UTF8 = (&OnigEncodingUTF_8) and ONIG_SYNTAX_RUBY = (&OnigSyntaxRuby) (onigmo.h:242, :514), retained by the `global` holder. DISCHARGE: a structural reading of `&NAME` (matched parentheses erased) whose Clang declaration is a file-scope variable with static storage as Retained::Static, never a local, a member or a cast, with fixtures and QCore.RetainedBy parity.",
+      "source": "docs/reports/onigmo-provider-plugin/README.md",
+      "recorded_by": "ONIGMO-PROVIDER-PLUGIN"
+    },
+    {
+      "id": "OWNED-NULLABLE-NULL-CONSTANT-ACTUAL",
+      "operation": "register",
+      "title": "A null pointer constant at a resource_owned(p, nullable) position is refused",
+      "text": "Found by ONIGMO-PROVIDER-PLUGIN's fixtures (search_no_region, match_no_region): onig_search(reg, s, e, s, e, 0, 0) and the `((void *) 0)` spelling are refused \"arguments do not match resource contract\" although the position is nullable and a null constant designates no object. Fluent Bit's flb_regex_match and router_match pass NULL there. Precision only (refusing). DISCHARGE: admit C04.5.1's null pointer constant spellings at an owned nullable position as no object, with a fixture and Lean parity.",
+      "source": "docs/reports/onigmo-provider-plugin/README.md",
+      "recorded_by": "ONIGMO-PROVIDER-PLUGIN"
+    },
+    {
+      "id": "RETAINING-OUT-SLOT-NULL-REFINEMENT",
+      "operation": "register",
+      "title": "A null test of an out slot a retaining declaration wrote does not refine its nullable identity",
+      "text": "Found by ONIGMO-PROVIDER-PLUGIN's fixtures (search_after_compile, search_after_null_exit): after onig_new(&reg, ...) (resource_out(reg, nullable), withheld as retaining), `if (reg != 0)` or `if (!reg) return` does not make the identity non-null, so onig_search(reg, ...) at resource_owned(reg, nonnull) is refused. Precision only (refusing). DISCHARGE: the null-test refinement applied to the identity route G binds through a retaining declaration's out slot, with fixtures.",
+      "source": "docs/reports/onigmo-provider-plugin/README.md",
+      "recorded_by": "ONIGMO-PROVIDER-PLUGIN"
+    },
+    {
+      "id": "ONIGMO-FLUENT-BIT-WRAPPER-ROWS",
+      "operation": "register",
+      "title": "Fluent Bit's Onigmo callers stay Unknown, and their 164 wrapper callers are outside every measured route",
+      "text": "src/flb_regex.c and src/flb_router.c are audited by no measured route and not by the user's current run. In the opt-in run (report section 6) their Onigmo calls pass r->regex, result->region and match_regex->regex (members of formals) at owned positions, cb_onig_named calls s->cb_match through a member, and str_to_regex's onig_new is retention-undecided, so every row but flb_regex_init stays Unknown; the flb_regex_* wrappers (164 calls in 44 files) are uncontracted. DISCHARGE: checked contracts for the flb_regex_* wrappers in quirin-provider-fluent-bit (bodies read, Onigmo's declarations as callees), and the member-actual readings of the K bundles.",
+      "source": "docs/reports/onigmo-provider-plugin/README.md",
+      "recorded_by": "ONIGMO-PROVIDER-PLUGIN"
+    },
+    {
+      "id": "ONIGMO-RESULT-SETS",
+      "operation": "register",
+      "title": "Onigmo's body-derived result classes are recorded, not stated",
+      "text": "quirin-provider-onigmo records each function's result classes as formulas over #result in its checker table and module comments (onig_search, onig_match: `#result >= 0`, `#result == -1`, `#result <= -2`; onig_name_to_backref_number: `#result >= 1`, `#result <= -1`; onig_new: `#result == 0`, `#result != 0`) but states no result_set clause: C09.4 admits one only from quirin-provider-libc, and an audit route holds one from any other crate. DISCHARGE: a user decision admitting result sets on pinned user-crate declarations (with pin-time derivation from the vendored bodies), or none.",
+      "source": "docs/reports/onigmo-provider-plugin/README.md",
+      "recorded_by": "ONIGMO-PROVIDER-PLUGIN"
+    },
+    {
+      "id": "ONIGMO-DOCUMENTED-SERIES-HISTORY",
+      "operation": "register",
+      "title": "Onigmo's version bounds rest on the vendored 6.1.2 reference only",
+      "text": "Every quirin-provider-onigmo declaration states `documented \"6.1.2\"`, the series of the vendored doc/API (SHA-256 f46442df8f83...) and doc/API.ja; no older series' reference was examined, so the bound claims nothing below 6.1.2. DISCHARGE: examine upstream Onigmo's tagged doc/API of older series (and Oniguruma's lineage where the API is shared), record each with its digest in doc-snapshots.json, and lower each bound to the oldest series that documents the function; never a `since` without a history entry.",
+      "source": "docs/reports/onigmo-provider-plugin/README.md",
+      "recorded_by": "ONIGMO-PROVIDER-PLUGIN"
+    },
+    {
+      "id": "LIBRARY-VERSION-PROBE-UNIT-SCOPE",
+      "operation": "amend",
+      "text": "AMENDED (ONIGMO-PROVIDER-PLUGIN): the Onigmo user crate shows it again: 655 of the prepared database's 1,419 commands pass no -I .../lib/onigmo, so under the whole database onigmo.h is unreadable and every Onigmo declaration is held Unknown; the selected units' four commands all pass it (report section 6).",
+      "source": "docs/reports/onigmo-provider-plugin/README.md"
+    },
+    {
+      "id": "W45-PLUGIN-CERTIFICATE-CHECKER",
+      "operation": "amend",
+      "text": "AMENDED (ONIGMO-PROVIDER-PLUGIN): the nine onigmo.contract_check bindings are claims without certificates too, so every row applying them is at most Pending.",
+      "source": "docs/reports/onigmo-provider-plugin/README.md"
+    }
+  ]
+}

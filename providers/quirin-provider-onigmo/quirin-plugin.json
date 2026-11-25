@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "checkers": [
+    { "module": "onigmo/init.qv", "functions": ["onig_init"], "package": "checkers/onigmo-check" },
+    { "module": "onigmo/names.qv", "functions": ["onig_foreach_name"], "package": "checkers/onigmo-check" },
+    { "module": "onigmo/regex.qv", "functions": ["onig_new"], "package": "checkers/onigmo-check" },
+    { "module": "onigmo/regex.qv", "functions": ["onig_free"], "package": "checkers/onigmo-check" },
+    { "module": "onigmo/region.qv", "functions": ["onig_region_new"], "package": "checkers/onigmo-check" },
+    { "module": "onigmo/region.qv", "functions": ["onig_region_free"], "package": "checkers/onigmo-check" },
+    { "module": "onigmo/search.qv", "functions": ["onig_search"], "package": "checkers/onigmo-check" },
+    { "module": "onigmo/search.qv", "functions": ["onig_match"], "package": "checkers/onigmo-check" },
+    { "module": "onigmo/search.qv", "functions": ["onig_name_to_backref_number"], "package": "checkers/onigmo-check" }
+  ],
+  "overrides": []
+}
