@@ -1,0 +1,13 @@
+# K2 base probes 3: isolating the share_partition_offsets_list_new statement and the strchr return.
+typedef struct box box_t; long w(box_t *b, long n) { long s; s = sizeof(*b) + n * sizeof(box_t *); return s; }
+typedef struct box box_t; long w(box_t *b, long n) { long s; s = sizeof(*b) + (n * 4); return s; }
+typedef struct box box_t; long w(box_t *b, long n) { long s; s = n * sizeof(box_t *); return s; }
+typedef struct box box_t; long w(box_t *b, long n) { long s; s = (n * sizeof(box_t *)); return s; }
+long w(struct box *b, long n) { long s; s = sizeof(*b) + (n * sizeof(char *)); return s; }
+long w(struct box *b, long n) { long s; s = (n * sizeof(char *)); return s; }
+long w(struct box *b, long n) { long s; s = (n * sizeof(long)); return s; }
+long w(struct box *b, long n) { long s; s = (sizeof(long) * n); return s; }
+long w(struct box *b, long n) { long s; s = (n * 4); return s; }
+int w(const char *v) { return !d_chr(v, ',') && !d_chr(v, ' '); }
+static int w(const char *v) { return !d_chr(v, ',') && !d_chr(v, ' '); }
+int w(const void *p, const char *v, int i) { return !d_chr(v, ',') && !d_chr(v, ' '); }

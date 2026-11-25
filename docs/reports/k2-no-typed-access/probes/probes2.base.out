@@ -1,0 +1,26 @@
+PROBE Unknown ["unsupported:unmodeled call, aggregate or indirect access in branch condition"]
+   int w(int t) { if ((sizeof(long) == 8) && (t != 2)) return 1; return 0; }
+PROBE Unknown ["unsupported:unmodeled call, aggregate or indirect access in branch condition"]
+   int w(int t) { if ((t != 2) && (sizeof(long) == 8)) return 1; return 0; }
+PROBE Safe []
+   int w(int t) { if (sizeof(long) == 8 || t != 2) return 1; return 0; }
+PROBE Safe []
+   int w(int t) { if (!(sizeof(long) == 8)) return 1; return 0; }
+PROBE Safe []
+   int w(int t) { return (sizeof(long) == 8) && (t != 2); }
+PROBE Unknown ["unsupported:C operator `sizeof` requires type/operand analysis"]
+   int w(int t) { int r; r = (sizeof(long) == 8) && (t != 2); return r; }
+PROBE Unknown ["unsupported:unmodeled call, aggregate or indirect access in branch condition"]
+   int w(int t) { if ((sizeof(t) == 8) && (t != 2)) return 1; return 0; }
+PROBE Safe []
+   typedef struct box box_t; long w(box_t *b, long n) { long s; s = sizeof(*b) + n; return s; }
+PROBE Unknown ["unsupported:indirect memory access is outside the resource projection"]
+   typedef struct box box_t; long w(box_t *b, long n) { long s; s = sizeof(*b) + (n * sizeof(box_t *)); return s; }
+PROBE Unknown ["unsupported:indirect memory access is outside the resource projection", "unsupported:possibly-null resource `b` returned under a non-null result mode"]
+   typedef struct box box_t; box_t *w(long n) { box_t *b; long s; s = sizeof(*b) + (n * sizeof(box_t *)); b = k_alloc(s); return b; }
+PROBE Unknown ["unsupported:indirect memory access is outside the resource projection", "unsupported:possibly-null resource `b` returned under a non-null result mode"]
+   struct flex { long n; struct box *e[]; }; typedef struct flex flex_t; flex_t *w(long n) { flex_t *b; long s; s = sizeof(*b) + (n * sizeof(struct box *)); b = k_alloc(s); return b; }
+PROBE Safe []
+   long w(const char *v, long n) { return d_len(v) % n; }
+PROBE Safe []
+   long w(const char *v, long n) { return (d_len(v) & 0x7fffffff) % n; }

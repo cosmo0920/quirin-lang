@@ -1,0 +1,58 @@
+{
+ "schema": "quirin-amendments/2",
+ "card": "K2-NO-TYPED-ACCESS",
+ "base": "5087f9295",
+ "measured_tip": "5087f9295",
+ "increment_paragraph": "**K2-NO-TYPED-ACCESS** (round 37, USER DECISION 2026-11-25 \"Launch K2, K4 and K6 cards\"; records only; [report](../../reports/k2-no-typed-access/README.md)). Re-census of bundle K2 of CURRENT-ACCESS-ALIAS-CENSUS on the user's 2026-11-24 `current` run (1,173 / 3,750 / 11): 240 no-typed-access leaves on 181 Unknown rows (11-07: 1,058 on 601), 19 rows freed alone (11-07: 40); 801 of the 11-07 condition leaves were AG3 rule 63 (2) re-attributions to uncontracted callees. Read from the bodies (generic and real-unit probes with the parity stream), 15 of the 19 keep a callee's or an earlier card's deliberate refusal, 2 need a user decision (the `__builtin_clz`/`__builtin_ctz` result at 0) and 2 are decidable (`LZ4_hashPosition`'s `(sizeof(T) == 8) && …` condition, `rd_kafka_share_partition_offsets_list_new`'s `sizeof` statement). The card stopped under the brief's near-zero-yield condition: no analyzer, contract, Lean or rule change, no row moves; the three residual shapes are registered.",
+ "status_edits": [],
+ "ledger": [
+  {
+   "id": "W46-LEXICAL-GATE-NON-ACCESS",
+   "operation": "amend",
+   "text": "RE-CENSUSED by K2-NO-TYPED-ACCESS (round 37, base 5087f9295, the user's 2026-11-24 current run: 4,934 rows, 1,173 Safe / 3,750 Unknown / 11 Unsafe; 11-07 tags joined by file, function, family and preprocessed line, Monkey after a per-file line shift): bundle K2 is 240 leaves (COND 133, IND 74, RET 29) on 181 Unknown rows, 19 freed alone (11-07: 1,058 leaves, 601 rows, 40 alone). 801 of the 952 11-07 COND leaves were exchanged by AG3's rule 63 (2) for the named uncontracted-callee text. Of the 19 freed rows, 6 wait on an Unknown callee summary, 3 on an uncontracted cross-unit callee, 4 are refused on purpose (formal-aliasing multi-declarators, a returned `mk_list_entry`, a nested call on a descriptor), 1 is glibc's `_Generic` strchr (CG07-GENERIC-TOKEN-AST-MATCH), 2 are bit-count builtins (K2-BUILTIN-BIT-COUNTS, a user decision) and 2 are decidable shapes (K2-CONNECTIVE-CONDITION-TYPE-QUERY, K2-SIZEOF-OPERAND-PRODUCT). The card stopped at the re-census (remaining yield near zero) and changed no analyzer code.",
+   "source": "docs/reports/k2-no-typed-access/README.md"
+  },
+  {
+   "id": "W44-CONDITION-CALL-REFUSED-SHAPES",
+   "operation": "amend",
+   "text": "RE-CENSUSED by K2-NO-TYPED-ACCESS (round 37, the user's 2026-11-24 current run): the condition share of bundle K2 is 133 leaves (11-07: 952); 801 were exchanged by AG3's rule 63 (2) for named uncontracted callees. Of what remains, negated direct calls of run-defined callees with no summary in force 33 leaves / 21 rows, other direct calls (nested, pointer arithmetic actuals, uncontracted externals) 25 / 22, calls through a function pointer 12 / 12, `rd_kafka_buf_*_tags` loop macros 13 / 4, OpenSSL `sk_*_num` 4 / 3, pointer comparisons 4 / 3; sole blocker of 2 rows (`thrd_setname`: `!pthread_setname_np(pthread_self(), name)`, nested and uncontracted; Monkey `mk_socket_set_nonblocking`: a nested `fcntl` on a descriptor formal).",
+   "source": "docs/reports/k2-no-typed-access/README.md"
+  },
+  {
+   "id": "W44-CONDITION-CALL-ASSIGNMENT",
+   "operation": "amend",
+   "text": "RE-CENSUSED by K2-NO-TYPED-ACCESS (round 37, the user's 2026-11-24 current run): 33 K2 leaves on 31 Unknown rows are an assignment in a condition (`if ((err = f(...)))`, `(err = ErrorCode)`); none is the sole blocker of a row.",
+   "source": "docs/reports/k2-no-typed-access/README.md"
+  },
+  {
+   "id": "CG07-GENERIC-TOKEN-AST-MATCH",
+   "operation": "amend",
+   "text": "OBSERVED by K2-NO-TYPED-ACCESS (round 37): `rd_kafka_conf_validate_single`'s only leaf, `return !strchr(val, ',') && !strchr(val, ' ');`, is glibc's const-preserving `strchr` `_Generic` (`_Generic (0 ? (val) : (void *) 1, const void *: (const char *) (strchr (val, ',')), default: strchr (val, ','))`); the value-connective and nested-call readers answer `no unique Clang node` (real-unit probe with the parity stream on base 5087f9295). The same body spelled with a non-macro interior-result callee is Safe; a sole-blocker row of this entry.",
+   "source": "docs/reports/k2-no-typed-access/README.md"
+  },
+  {
+   "id": "K2-CONNECTIVE-CONDITION-TYPE-QUERY",
+   "operation": "register",
+   "title": "A connective condition with a `sizeof` leaf stays refused: `LZ4_hashPosition`, 1 sole-blocker row on current",
+   "text": "Registered by K2-NO-TYPED-ACCESS. `if ((sizeof(reg_t)==8) && (tableType != byU16))` (lz4.c:783): rule 5h's leaf reader refuses the `sizeof` leaf (``C operator `sizeof` requires type/operand analysis``) and the elaborator's condition lowering refuses the CG06 region (``unlisted form: event outside this card's lowering``: `lower_events` lowers no Branch/Merge). Generic probes on 5087f9295: `if (sizeof(long) == 8)` Safe, `if ((t == 8) && (t != 2))` Safe, `if ((sizeof(long) == 8) && (t != 2))` Unknown, `return (sizeof(long) == 8) && (t != 2);` Safe. DISCHARGE: lower such a condition as rule 10z's value region then a branch refining no edge, admitted only when ∀ e ∈ events(region). e ∈ {Read(x) | automatic(x) ∧ ¬addr_taken(x)} ∪ {Branch, Merge}, with a Lean model and near-miss fixtures (`p && p->x`, a call in an arm), measured; or record the shape as outside the projection.",
+   "source": "docs/reports/k2-no-typed-access/README.md",
+   "recorded_by": "K2-NO-TYPED-ACCESS"
+  },
+  {
+   "id": "K2-SIZEOF-OPERAND-PRODUCT",
+   "operation": "register",
+   "title": "A call-free `sizeof` statement of the flexible-allocation size stays refused: `rd_kafka_share_partition_offsets_list_new`, 1 sole-blocker row on current",
+   "text": "Registered by K2-NO-TYPED-ACCESS. `size = sizeof(*list) + (capacity * sizeof(rd_kafka_share_partition_offsets_t *));` (rdkafka_share_acknowledgement.c:1120; the sibling at :1082 is on a row with another blocker). Lexical gate: `indirect memory access is outside the resource projection`; the elaborator: `unlisted form: write to an object the gateway does not read as a scalar local` (real-unit probe on 5087f9295); W44-COLLECTION-ALLOCATION's unevaluated-operand reading covers `sizeof(*v)` only in a statement whose first call is an ordinary callee, and generic probes refuse exactly `s = sizeof(*b) + (n * sizeof(char *));` while admitting it without the parentheses. C11 6.5.3.4p2: an operand whose type is not variably modified is not evaluated. DISCHARGE: read the operand as W44-COLLECTION-ALLOCATION's unevaluated operand in this position too, admitted only when ¬variably_modified(type(operand)), with a Lean model (no event) and VLA near-miss fixtures, measured.",
+   "source": "docs/reports/k2-no-typed-access/README.md",
+   "recorded_by": "K2-NO-TYPED-ACCESS"
+  },
+  {
+   "id": "K2-BUILTIN-BIT-COUNTS",
+   "operation": "register",
+   "title": "`__builtin_clz`/`__builtin_ctz` calls stay refused: `LZ4_NbCommonBytes`, `log2_floor`, 2 sole-blocker rows on current; needs a user decision",
+   "text": "Registered by K2-NO-TYPED-ACCESS. No contract or table names the bit-count builtins (``call to uncontracted function `__builtin_clz` ``; the elaborator reads a builtin callee as an indirect call, CG22). Their result is undefined at 0. OPEN USER CHOICES: (a) obligation-bearing, call = __builtin_c{l,t}z{,l,ll}(x) ∧ (path ⊢ x ≠ 0) ⇒ custody_neutral(call): admits `log2_floor` (`n == 0 ? -1 : 31 ^ rd_clz(n)`) and not `LZ4_NbCommonBytes` (its `assert(val != 0)` is `((void)0)`); (b) value-only, call = __builtin_c{l,t}z{,l,ll}(x) ⇒ custody_neutral(call): admits both, departing from rule 10s's rule that a node with a C fault case is never custody-neutral; and where the declarations live (not libc). DISCHARGE: the decision, then a table or provider with a Lean model and fixtures, measured.",
+   "source": "docs/reports/k2-no-typed-access/README.md",
+   "recorded_by": "K2-NO-TYPED-ACCESS"
+  }
+ ]
+}

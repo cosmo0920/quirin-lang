@@ -1,0 +1,119 @@
+[
+ [
+  "LZ4_NbCommonBytes",
+  451,
+  "call-instantiation",
+  "unmodeled call, aggregate or indirect access in return expression",
+  "CallRefused(\"__builtin_ctzll\", \"call to uncontracted function `_`\")",
+  "( unsigned ) __builtin_ctzll ( ( U64 ) val ) > > 3",
+  12
+ ],
+ [
+  "LZ4_NbCommonBytes",
+  451,
+  "elaboration-return",
+  "unmodeled call, aggregate or indirect access in return expression",
+  "indirect call (CG22)",
+  "( unsigned ) __builtin_ctzll ( ( U64 ) val ) > > 3",
+  12
+ ],
+ [
+  "LZ4_NbCommonBytes",
+  451,
+  "nested-call",
+  "unmodeled call, aggregate or indirect access in return expression",
+  "indirect call (CG22)",
+  "( unsigned ) __builtin_ctzll ( ( U64 ) val ) > > 3",
+  12
+ ],
+ [
+  "LZ4_NbCommonBytes",
+  453,
+  "call-instantiation",
+  "unmodeled call, aggregate or indirect access in return expression",
+  "CallRefused(\"__builtin_ctz\", \"call to uncontracted function `_`\")",
+  "( unsigned ) __builtin_ctz ( ( U32 ) val ) > > 3",
+  12
+ ],
+ [
+  "LZ4_NbCommonBytes",
+  453,
+  "elaboration-return",
+  "unmodeled call, aggregate or indirect access in return expression",
+  "indirect call (CG22)",
+  "( unsigned ) __builtin_ctz ( ( U32 ) val ) > > 3",
+  12
+ ],
+ [
+  "LZ4_NbCommonBytes",
+  453,
+  "nested-call",
+  "unmodeled call, aggregate or indirect access in return expression",
+  "indirect call (CG22)",
+  "( unsigned ) __builtin_ctz ( ( U32 ) val ) > > 3",
+  12
+ ],
+ [
+  "LZ4_NbCommonBytes",
+  457,
+  "call-instantiation",
+  "unmodeled call, aggregate or indirect access in return expression",
+  "CallRefused(\"__builtin_clzll\", \"call to uncontracted function `_`\")",
+  "( unsigned ) __builtin_clzll ( ( U64 ) val ) > > 3",
+  12
+ ],
+ [
+  "LZ4_NbCommonBytes",
+  457,
+  "elaboration-return",
+  "unmodeled call, aggregate or indirect access in return expression",
+  "indirect call (CG22)",
+  "( unsigned ) __builtin_clzll ( ( U64 ) val ) > > 3",
+  12
+ ],
+ [
+  "LZ4_NbCommonBytes",
+  457,
+  "nested-call",
+  "unmodeled call, aggregate or indirect access in return expression",
+  "indirect call (CG22)",
+  "( unsigned ) __builtin_clzll ( ( U64 ) val ) > > 3",
+  12
+ ],
+ [
+  "LZ4_NbCommonBytes",
+  459,
+  "call-instantiation",
+  "unmodeled call, aggregate or indirect access in return expression",
+  "CallRefused(\"__builtin_clz\", \"call to uncontracted function `_`\")",
+  "( unsigned ) __builtin_clz ( ( U32 ) val ) > > 3",
+  12
+ ],
+ [
+  "LZ4_NbCommonBytes",
+  459,
+  "elaboration-return",
+  "unmodeled call, aggregate or indirect access in return expression",
+  "indirect call (CG22)",
+  "( unsigned ) __builtin_clz ( ( U32 ) val ) > > 3",
+  12
+ ],
+ [
+  "LZ4_NbCommonBytes",
+  459,
+  "nested-call",
+  "unmodeled call, aggregate or indirect access in return expression",
+  "indirect call (CG22)",
+  "( unsigned ) __builtin_clz ( ( U32 ) val ) > > 3",
+  12
+ ],
+ [
+  "LZ4_hashPosition",
+  521,
+  "elaboration-condition",
+  "unmodeled call, aggregate or indirect access in branch condition",
+  "unlisted form: event outside this card's lowering",
+  "( sizeof ( reg_t ) = = 8 ) & & ( tableType ! = byU16 )",
+  12
+ ]
+]
