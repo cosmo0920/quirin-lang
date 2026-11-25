@@ -106,6 +106,13 @@ struct Run {
 }
 
 fn run(prelude: &str, source: &str, environment: &ResourceContracts) -> Run {
+    try_run(prelude, source, environment)
+        .unwrap_or_else(|error| panic!("fixture rejected: {error}\n{prelude}\n{source}"))
+}
+
+/// The row of `subject`, or the unit's rejection (at base the internal
+/// certificate check rejected a `Safe` that kept an unknown instruction).
+fn try_run(prelude: &str, source: &str, environment: &ResourceContracts) -> Result<Run, String> {
     let text = format!("{prelude}\n{source}\n");
     let outcome = analyze_unrestricted_c11(
         &C11TranslationUnit {
@@ -115,7 +122,7 @@ fn run(prelude: &str, source: &str, environment: &ResourceContracts) -> Run {
         "subject",
         environment,
     )
-    .unwrap_or_else(|error| panic!("fixture rejected by Clang: {error:?}\n{text}"));
+    .map_err(|error| format!("{error:?}"))?;
     if let UnrestrictedLegacyResult::Safe(certificate) = &outcome {
         check_legacy_safety_certificate(certificate).expect("a Safe result rechecks");
     }
@@ -127,7 +134,7 @@ fn run(prelude: &str, source: &str, environment: &ResourceContracts) -> Run {
     let row = summary
         .and_then(|summary| summary.functions.get("subject"))
         .unwrap_or_else(|| panic!("`subject` projected: {outcome:?}"));
-    Run {
+    Ok(Run {
         status: row.status,
         unsupported: row
             .diagnostics
@@ -137,7 +144,7 @@ fn run(prelude: &str, source: &str, environment: &ResourceContracts) -> Run {
                 other => format!("{other:?}"),
             })
             .collect(),
-    }
+    })
 }
 
 const GUARD: &str = "local declaration may shadow a formal resource identity";
@@ -146,12 +153,18 @@ const INDIRECT: &str = "indirect memory access";
 
 type Shape<'a> = (&'a str, &'a [&'a str], &'a str);
 
-/// Each shape must not be `Safe`, and must carry one of its refusal
-/// fragments.
+/// Each shape must be analysed, must not be `Safe`, and must carry one of
+/// its refusal fragments.
 fn refused(prelude: &str, environment: &ResourceContracts, shapes: &[Shape<'_>]) {
     let mut admitted = Vec::new();
     for (name, fragments, source) in shapes {
-        let run = run(prelude, source, environment);
+        let run = match try_run(prelude, source, environment) {
+            Ok(run) => run,
+            Err(error) => {
+                admitted.push(format!("{name}: {source}: rejected: {error}"));
+                continue;
+            }
+        };
         if run.status == AnalysisStatus::Safe
             || !fragments
                 .iter()
@@ -426,6 +439,93 @@ fn an_unguarded_shadow_is_refused_and_never_read_as_the_formal() {
                 "U16",
                 &[INDIRECT],
                 "typedef struct obj objt; void subject(struct coll *coll, struct obj *o) { ev_add(coll->evl, o); { objt (o)[1]; o[0].x = 0; ev_del(coll->evl, o); } }",
+            ),
+        ],
+    );
+}
+
+/// A shadow whose declaration control jumps over: before a switch's first
+/// label (J2-J8), or in a block a `goto` enters past it (J1, J9). The
+/// guard's refusal of the declaration lies on no path, so it decides
+/// nothing. The name at the call is the shadow, in scope though its
+/// declaration never ran, yet rule 12t read it as the formal: a local array
+/// "outliving" a frame holder (J2-J4) or released with a tracked holder
+/// (J5), a removal through the shadow dropping the formal's record (J6, J9),
+/// the shadow's record removed through the formal (J7), an interior of the
+/// shadow in a tracked loop (J8). At base each verdict was `Safe` on its
+/// paths, and only the internal certificate check stopped it, rejecting the
+/// unit (`certificate check failed: function `subject` retains an unknown
+/// instruction`). Under rule 86 the name is not one declaration, so each
+/// refuses at the reading (`retention-undecided`). J1 names the formal
+/// outside the shadow's block. It refuses too: rule 86 reads declarations,
+/// not scopes.
+#[test]
+fn a_jumped_shadow_is_refused_at_the_reading() {
+    if !clang_available() {
+        return;
+    }
+    const UNDECIDED: &str = "retention-undecided";
+    refused(
+        RETAINED,
+        &retained(),
+        &[
+            (
+                "J1",
+                &[UNDECIDED],
+                "int subject(const char *src) { struct st s; goto out; { char src[4]; r_keep(&s, src); } out: return r_keep(&s, src); }",
+            ),
+            (
+                "J2",
+                &[UNDECIDED],
+                "int subject(const char *src) { struct st s; switch (0) { char src[4]; default: return r_keep(&s, src); } }",
+            ),
+            (
+                "J3",
+                &[UNDECIDED],
+                "int subject(const char *src) { struct st s; int r = 0; switch (r) { char src[4]; default: r = r_keep(&s, src); } return r; }",
+            ),
+            (
+                "J4",
+                &[UNDECIDED],
+                "int subject(const char *src) { struct st s; int r = 0; switch (r) { char src[4]; case 0: r = r_keep(&s, src); break; default: break; } return r; }",
+            ),
+            (
+                "J5",
+                &[UNDECIDED],
+                "void subject(const char *src) { struct st *h = r_alloc(sizeof(struct st)); if (!h) return; switch (0) { char src[4]; default: r_keep(h, src); } r_free(h); }",
+            ),
+        ],
+    );
+    refused(
+        LOOP,
+        &event_loop(),
+        &[
+            (
+                "J6",
+                &[UNDECIDED],
+                "void subject(struct coll *coll, struct obj *o) { ev_add(coll->evl, o); switch (0) { struct obj o[1]; default: ev_del(coll->evl, o); } }",
+            ),
+            (
+                "J7",
+                &[UNDECIDED],
+                "void subject(struct coll *coll, struct obj *o) { switch (0) { struct obj o[1]; default: ev_add(coll->evl, o); } ev_del(coll->evl, o); }",
+            ),
+            (
+                "J8",
+                &[UNDECIDED],
+                "void subject(struct coll *coll) { struct ev_loop *l = ev_loop_create(); if (!l) return; switch (0) { struct coll coll[1]; default: ev_add(l, &coll->event); } ev_loop_destroy(l); }",
+            ),
+            (
+                "J9",
+                &[UNDECIDED],
+                "void subject(struct coll *coll, struct obj *o) { ev_add(coll->evl, o); goto out; { struct obj o[1]; out: ev_del(coll->evl, o); } }",
+            ),
+            // The path root jumped-shadowed: the path census already refuses
+            // (the declarator is a bare mention of the root).
+            (
+                "J10",
+                &[INDIRECT],
+                "void subject(struct coll *coll, struct obj *o) { ev_add(coll->evl, o); switch (0) { struct coll coll[1]; default: ev_del(coll->evl, o); } }",
             ),
         ],
     );
