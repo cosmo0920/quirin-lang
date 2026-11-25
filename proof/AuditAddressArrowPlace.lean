@@ -16,10 +16,11 @@ import QCore.AddressArrowPlace
 
 /-! Audited companion to K6-DIRECT-POSITION-ACCESS (gateway rule 81). -/
 
-#print axioms QCore.AddressArrowPlace.new_place_is_c_place
+#print axioms QCore.AddressArrowPlace.new_place_sound
 #print axioms QCore.AddressArrowPlace.the_rule_only_adds
 #print axioms QCore.AddressArrowPlace.arrow_through_address_is_dot
 #print axioms QCore.AddressArrowPlace.same_root_as_plain
+#print axioms QCore.AddressArrowPlace.a_whole_object_address_is_refused
 #print axioms QCore.AddressArrowPlace.a_lifted_refusal_is_an_arrow_over_an_address
 #print axioms QCore.AddressArrowPlace.the_rule_only_removes
 #print axioms QCore.AddressArrowPlace.at_least_the_plain_reader
@@ -28,3 +29,16 @@ import QCore.AddressArrowPlace
 #print axioms QCore.AddressArrowPlace.a_whole_address_is_bound
 #print axioms QCore.AddressArrowPlace.an_outer_address_keeps_the_binding
 #print axioms QCore.AddressArrowPlace.lexical_vectors_hold
+#print axioms QCore.AddressArrowPlace.formula_k6_exempt_is_the_shape
+#print axioms QCore.AddressArrowPlace.formula_k6_the_shape_is_exempt
+#print axioms QCore.AddressArrowPlace.formula_k6_exempt_binds_as_the_plain_spelling
+#print axioms QCore.AddressArrowPlace.formula_k6_at_least_the_plain_reader
+#print axioms QCore.AddressArrowPlace.formula_k6_only_removes_bindings
+#print axioms QCore.AddressArrowPlace.formula_k6_place_is_the_plain_place
+#print axioms QCore.AddressArrowPlace.formula_k6_place_only_adds
+#print axioms QCore.AddressArrowPlace.formula_k6_refuse_outer_address
+#print axioms QCore.AddressArrowPlace.formula_k6_refuse_whole_address
+#print axioms QCore.AddressArrowPlace.formula_k6_refuse_operator_in_group
+#print axioms QCore.AddressArrowPlace.formula_k6_refuse_undereferenced_group
+#print axioms QCore.AddressArrowPlace.formula_k6_refuse_no_group
+#print axioms QCore.AddressArrowPlace.formula_k6_refuse_whole_object_address

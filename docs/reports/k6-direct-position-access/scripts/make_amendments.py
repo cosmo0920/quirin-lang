@@ -34,7 +34,8 @@ LEDGER = [
           "`RD_KAFKAP_STR_LEN(&p->a[i].Host)` in rule 10z edges), read by gateway rule 81 "
           "(QCore.AddressArrowPlace; predicted Unknown -> Safe on current, corpus and twelve-home: "
           "rd_kafka_mock_partition_next_leader_response, rd_kafka_mock_msgset_est_record_size, "
-          "rd_kafkap_leader_discovery_tmpabuf_add_alloc_brokers), and 6 keep named refusals: an "
+          "rd_kafkap_leader_discovery_tmpabuf_add_alloc_brokers; its conditions are formulas over the K6 block "
+          "of the typed rendering, checked by guarded_proposition), and 6 keep named refusals: an "
           "identity cast of a returned element load (rd_list_elem, K6-RETURN-IDENTITY-CAST), a "
           "root a read-only callee takes before the pointer return (cJSON_GetStringValue, "
           "rd_kafka_ConfigResource_configs, rd_kafka_ListConsumerGroups_result_errors; "
@@ -119,17 +120,6 @@ LEDGER = [
              "(`pointer X converted to an integer may carry a tracked identity`) is the open question. "
              "DISCHARGE: a reading of `P - Q` over two loads as a scalar with each load's per-hop "
              "obligation, with Lean parity, or a recorded decision to keep it refused."),
-    register("K6-RULE-FORMULA-VOCABULARY",
-             "Gateway rule admission conditions are formulas the premise-formula reader parses but whose "
-             "terms the closed vocabulary does not register",
-             "K6-DIRECT-POSITION-ACCESS states rule 81's admission and refusal conditions as C04.18.9 "
-             "formulas (`#exempt(#a) == TRUE -> #binds(#a) == #binds(#plain(#a))`, ...); "
-             "crates/qcore-frontend/tests/rule81_formulas.rs checks their syntax and canonical printing "
-             "with qcore_frontend::premise_formula::parse_tokens, while `check` rejects every one for an "
-             "unknown term (`#exempt`, `#binds`, `#place`, ...) and the unregistered constants "
-             "`TRUE`/`FALSE`: the vocabulary holds contract-premise terms only. DISCHARGE: a gateway "
-             "reading block of terms (with their Lean table rows) so rule conditions are sort-checked, "
-             "or a recorded decision that gateway rule conditions are syntax-checked only."),
 ]
 
 INCREMENT = (
@@ -143,11 +133,15 @@ INCREMENT = (
     "exact reading gap: `(&X)->f` (`TAILQ_FIRST`, `RD_KAFKAP_BYTES_LEN`, `RD_KAFKAP_STR_LEN`), which "
     "rule 10n (1) reads as `X.f` in the typed reader but the lexical `may_bind` reader read as an "
     "address of the root and the elaborator's place reader refused. Rule 81 gives both readers the "
-    "plain spelling's reading (C11 6.5.2.3p4, 6.5.3.2p3, 6.5.1p5); predicted three rows Unknown -> "
+    "plain spelling's reading (C11 6.5.2.3p4, 6.5.3.2p3, 6.5.1p5); its 13 conditions and refusals are "
+    "formulas over a new K6 block of the typed rendering (16 `k6_` terms, sorts `k6_amp`, `k6_member`, "
+    "`k6_place`, after MES), each checked by `guarded_proposition`, one Lean definition per term and "
+    "one theorem per formula; predicted three rows Unknown -> "
     "Safe on current, corpus and twelve-home, none on system or slice. No card gate (round-37 brief); "
-    "targeted fixtures (17 files), unit tests, Clippy, fmt and the Lean module and audit pass. "
+    "targeted fixtures (17 files), unit tests, the qcore-frontend and qcore-contract tests, Clippy, fmt "
+    "and the Lean module and audit pass. "
     "Follow-ups K6-RETURN-IDENTITY-CAST, K6-SWITCH-CONDITIONAL-TYPEDEF-BASE, "
-    "K6-FILE-SCOPE-RECORD-SCALAR-STORE, K6-POINTER-DIFFERENCE-SCALAR, K6-RULE-FORMULA-VOCABULARY."
+    "K6-FILE-SCOPE-RECORD-SCALAR-STORE, K6-POINTER-DIFFERENCE-SCALAR."
 )
 
 

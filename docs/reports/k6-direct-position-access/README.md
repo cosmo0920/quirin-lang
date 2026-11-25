@@ -121,18 +121,34 @@ expansions in functions with other blockers
 
 1. **The lexical `may_bind` reader** (`typed_field_access::bound_names`,
    rule 5b's premise for a pointer handed out of the body, rule 10k (2)) read
-   the `& p` of `( & p -> q ) -> f` as an address of `p`. For the occurrence
-   `#a` of a single `&` before a name and its plain spelling `#plain(#a)`:
-   `#exempt(#a) == TRUE -> #binds(#a) == #binds(#plain(#a))`, with
-   `#exempt(#a) == TRUE` exactly when
-   `#opens_group(#a) == TRUE && #name_arrow(#a) == TRUE && #selection_chain(#a) == TRUE && #group_arrow(#a) == TRUE && #outer_address(#a) == FALSE`;
-   and `#outer_address(#a) == TRUE -> #binds(#a) == TRUE`,
-   `#name_arrow(#a) == FALSE -> #binds(#a) == TRUE`.
+   the `& p` of `( & p -> q ) -> f` as an address of `p`.
 2. **The elaborator's place reader** (`elaboration::path_place`) refused a
-   path through the `&`. For an arrow member `#e` over the address of a member
-   or subscript place:
-   `#arrow_over_member_address(#e) == TRUE -> (#place(#e) == #place(#plain(#e)) && #root(#e) == #root(#plain(#e)))`,
-   through rule 10n's own `arrow_through_address` (one shared item).
+   path through the `&`; rule 81 reads it through rule 10n's own
+   `arrow_through_address` (one shared item).
+
+Each condition and refusal is a formula of the C04.18.9 typed rendering over
+the **K6 block** (16 `k6_`-prefixed terms, sorts `k6_amp`, `k6_member`,
+`k6_place`; `RENDERED_TERMS`/`RENDERED_VALUE_SORTS` in
+`qcore_frontend::premise_formula`, the contract specification's C04.18.9 K6
+table, Lean `k6Terms`/`k6Sorts`), checked by `guarded_proposition`
+(`crates/qcore-frontend/tests/rule81_formulas.rs`,
+`address_arrow_place::tests`); prose is refused:
+
+| Id | Formula |
+|---|---|
+| `k6_exempt_is_the_shape` | `forall (#a: k6_amp) { (#k6_exempt(#a) => ((((#k6_opens_group(#a) && #k6_name_arrow(#a)) && #k6_selection_chain(#a)) && #k6_group_arrow(#a)) && !#k6_outer_address(#a))) }` |
+| `k6_the_shape_is_exempt` | `forall (#a: k6_amp) { (((((#k6_opens_group(#a) && #k6_name_arrow(#a)) && #k6_selection_chain(#a)) && #k6_group_arrow(#a)) && !#k6_outer_address(#a)) => #k6_exempt(#a)) }` |
+| `k6_exempt_binds_as_the_plain_spelling` | `forall (#a: k6_amp) { (#k6_exempt(#a) => (!#k6_binds(#a) && !#k6_plain_binds(#a))) }` |
+| `k6_at_least_the_plain_reader` | `forall (#a: k6_amp) { (#k6_plain_binds(#a) => #k6_binds(#a)) }` |
+| `k6_only_removes_bindings` | `forall (#a: k6_amp) { (#k6_binds(#a) => #k6_old_binds(#a)) }` |
+| `k6_place_is_the_plain_place` | `forall (#e: k6_member) { (#k6_over_member_address(#e) => (#k6_place(#e) == #k6_plain_place(#e) && #k6_root(#k6_place(#e)) == #k6_root(#k6_plain_place(#e)))) }` |
+| `k6_place_only_adds` | `forall (#e: k6_member) { (!#k6_old_place(#e) == #k6_refused => #k6_place(#e) == #k6_old_place(#e)) }` |
+| `k6_refuse_outer_address` | `forall (#a: k6_amp) { (#k6_outer_address(#a) => #k6_binds(#a)) }` |
+| `k6_refuse_whole_address` | `forall (#a: k6_amp) { (!#k6_name_arrow(#a) => #k6_binds(#a)) }` |
+| `k6_refuse_operator_in_group` | `forall (#a: k6_amp) { (!#k6_selection_chain(#a) => #k6_binds(#a)) }` |
+| `k6_refuse_undereferenced_group` | `forall (#a: k6_amp) { (!#k6_group_arrow(#a) => #k6_binds(#a)) }` |
+| `k6_refuse_no_group` | `forall (#a: k6_amp) { (!#k6_opens_group(#a) => #k6_binds(#a)) }` |
+| `k6_refuse_whole_object_address` | `forall (#e: k6_member) { ((#k6_over_address(#e) && !#k6_over_member_address(#e)) => #k6_place(#e) == #k6_refused) }` |
 
 **Soundness.** `E1->E2` is `(*(E1)).E2` (C11 6.5.2.3p4), `*&E` is `E`
 (6.5.3.2p3) and a parenthesised expression is the expression it encloses
@@ -150,26 +166,24 @@ read keeps every per-hop obligation of the plain spelling, so nothing is
 discharged: a read after a release is the same `UseAfterRelease`, a rebound,
 consumed or addressed root keeps its refusal.
 
-**Lean.** `QCore.AddressArrowPlace` (`proof/AuditAddressArrowPlace.lean`, 12
-theorems; axioms `propext`, `Quot.sound` only, no project axiom): the place
-reader is C's designation (`new_place_is_c_place`), keeps every old answer
-(`the_rule_only_adds`), reads `(&X)->f` as `X.f` with the same root
-(`arrow_through_address_is_dot`, `same_root_as_plain`), lifts only an arrow
-over an address (`a_lifted_refusal_is_an_arrow_over_an_address`); the
-`may_bind` arm only removes (`the_rule_only_removes`), never binds less than
-the plain spelling (`at_least_the_plain_reader`), agrees with it on every
-dereferenced group (`agrees_with_the_plain_spelling`), exempts only a member
-address (`an_exempted_address_is_a_member_address`), keeps a whole address
-and an outer address (`a_whole_address_is_bound`,
+**Lean.** `QCore.AddressArrowPlace` (`proof/AuditAddressArrowPlace.lean`, 26
+theorems; axioms `propext`, `Quot.sound` only, no project axiom). One
+definition per K6 term (`k6_binds` is `newBinds`, `k6_place` is `newPlace`,
+`k6_plain_place` reads `(&X)->f` as `X.f`, …; `k6Terms` and `k6Sorts` are the
+Rust block, bound by `address_arrow_place::tests::the_k6_block_is_lean_s`) and
+one theorem per formula (`formula_k6_*`; `formulaTable` is the Rust table, row
+for row). Underneath: every answer of the place reader is C's designation
+(`new_place_sound`), it keeps every old answer (`the_rule_only_adds`), reads
+`(&X)->f` as `X.f` with the same root for a member or subscript place
+(`arrow_through_address_is_dot`, `same_root_as_plain`) and refuses `(&s)->f`
+(`a_whole_object_address_is_refused`); the `may_bind` arm only removes
+(`the_rule_only_removes`), never binds less than the plain spelling
+(`at_least_the_plain_reader`), agrees with it on every dereferenced group
+(`agrees_with_the_plain_spelling`), exempts only a member address
+(`an_exempted_address_is_a_member_address`), keeps a whole address and an
+outer address (`a_whole_address_is_bound`,
 `an_outer_address_keeps_the_binding`); `lexical_vectors_hold` replays the
 Rust `LEXICAL_VECTORS`.
-
-**Formulas.** The statements above are read by the premise-formula reader
-(`crates/qcore-frontend/tests/rule81_formulas.rs`: `parse_tokens` accepts each
-and its canonical printing reparses). The sort step cannot accept them: the
-closed vocabulary registers contract-premise terms only, no gateway-reading
-term and no `TRUE`/`FALSE` constant; the test pins that every rejection is an
-unknown term or constant (follow-up K6-RULE-FORMULA-VOCABULARY).
 
 **Fixtures** (`crates/qcore-c-gateway/tests/k6_direct_position_access.rs`, 4
 tests, every row's status and full key set, every near-miss beside its plain
@@ -191,18 +205,20 @@ a `.` over an address refused).
 
 ## 4. Refused shapes and their named reasons
 
-Rows freed alone on 11-24, by the formula of their refusal (`#r` the row):
+Rule 81's own refusals are the `k6_refuse_*` formulas of section 3. The rows
+below are refused by other rules, each under that rule's own named refusal
+(not restated here); this card only classifies the rows freed alone on 11-24:
 
-| Shape | Rows | Refusal | Owner |
+| Shape | Rows | Refused by | Owner |
 |---|---:|---|---|
-| interior address returned | 10 | `#returns_interior(#r) == TRUE -> #result_derived(#r) == TRUE` (a `None` result would let a caller release the base) | W45-RETURN-POINTER-RESULT-READS, AG3-RETURN-MEMBER-ADDRESS-DERIVED |
-| root handed to a callee before a pointer return | 3 | `#handed(#root) == TRUE -> #may_bind(#root) == TRUE` | W48-POINTER-RETURN-THROUGH-CALL-ACTUAL-ROOT |
-| explicit cast of a returned load | 1 | `#explicit_cast(#value) == TRUE -> #value_form(#value) == FALSE` | K6-RETURN-IDENTITY-CAST |
-| switch over a `?:`, typedef base | 1 | `#switch_conditional(#c) == TRUE -> #value_form(#c) == FALSE` | K6-SWITCH-CONDITIONAL-TYPEDEF-BASE |
-| `_Generic` in a condition; a sibling call beside a deciding operand | 2 | `#generic(#region) == TRUE -> #lowered(#region) == FALSE`; `#sibling_call(#region) == TRUE -> #lowered(#region) == FALSE` | CG06-VALUE-CONNECTIVE-RESIDUALS |
-| pointer difference | 1 | `#pointer_difference(#e) == TRUE -> #place_read(#e) == FALSE` | K6-POINTER-DIFFERENCE-SCALAR |
-| file-scope record scalar store | 2 | `#storage(#root) == STATIC -> #admitted_12j(#root) == FALSE` | K6-FILE-SCOPE-RECORD-SCALAR-STORE |
-| formal copied into a local | 2 | `#writes(#l) == {#whole_read(#formal)} -> #admitted_77(#l) == FALSE` | (rule 77, by design) |
+| interior address returned | 10 | rules 5j, 10k (2), 10n (1): an interior address is a derived result | W45-RETURN-POINTER-RESULT-READS, AG3-RETURN-MEMBER-ADDRESS-DERIVED |
+| root handed to a callee before a pointer return | 3 | rule 5b's `may_bind` premise (rule 10k (2)); W48's read-only frame exception not granted | W48-POINTER-RETURN-THROUGH-CALL-ACTUAL-ROOT |
+| explicit cast of a returned load | 1 | rule 10k (2)'s value forms | K6-RETURN-IDENTITY-CAST |
+| switch over a `?:`, typedef base | 1 | the elaborated condition's value forms | K6-SWITCH-CONDITIONAL-TYPEDEF-BASE |
+| `_Generic` in a condition; a sibling call beside a deciding operand | 2 | rule 10z (2) and (3) | CG06-VALUE-CONNECTIVE-RESIDUALS |
+| pointer difference | 1 | rule 78 | K6-POINTER-DIFFERENCE-SCALAR |
+| file-scope record scalar store | 2 | rule 12j's storage boundary | K6-FILE-SCOPE-RECORD-SCALAR-STORE |
+| formal copied into a local | 2 | rule 77 | (rule 77, by design) |
 
 ## 5. Shared-file hook points
 
@@ -213,6 +229,9 @@ Rows freed alone on 11-24, by the formula of their refusal (`#r` the row):
 | `crates/qcore-c-gateway/src/lib.rs` | `mod address_arrow_place;` before `mod aggregate_store;` |
 | `proof/QCore.lean` | `import QCore.AddressArrowPlace` (alphabetical, after `AbiEnumConstPointer`) |
 | `docs/agents/rules/10k.md`, `10n.md` | one "Amended by rule 81" sentence each; `gateway.md`/`README.md` regenerated |
+| `crates/qcore-frontend/src/premise_formula.rs` | the K6 block: three `RENDERED_VALUE_SORTS` rows (`k6_amp`, `k6_member`, `k6_place`) after `mes_cell`, and 16 `RENDERED_TERMS` rows (`block: "K6"`) after the MES block, each under a `Card K6-DIRECT-POSITION-ACCESS` comment |
+| `crates/qcore-contract/tests/plugin_guarded_symbols.rs` | the SP9 block-order test admits `K6` after SP10 and MES (one disjunct and its comment) |
+| `docs/QCORE_CONTRACT_SPEC_r0_3.md` | C04.18.9: the K6 block paragraph and term table after the SP10 table |
 
 Of the six files the brief names as shared, only `typed_field_access.rs` is
 touched (the one hook above); `legacy_c.rs`, `legacy_cfg_builder.rs`,
@@ -264,16 +283,34 @@ a gate slot on the committed code of `c674d3108` (CARGO_TARGET_DIR
 | unit tests | the same script, `cargo test -p qcore-c-gateway --lib -- address_arrow_place elaboration typed_field_access typed_position_shapes typed_root_declarations readonly_actual_frame value_connective` | 0 | 73 passed (`t3-lib.log`) |
 | src unit tests spelling `(&p->q)->f` | `cargo test -p qcore-c-gateway --lib -- legacy_list_iteration pointer_store typed_dispatch_census` | 0 | 12 passed (`t2-lib.log`) |
 | qcore-audit test spelling it | `cargo test -p qcore-audit --test loop_measure_selection` | 0 | 3 passed (`t2-audit.log`) |
-| formula statements | `cargo test -p qcore-frontend --test rule81_formulas` | 0 | 2 passed (`formulas-1.log`) |
+| formula statements | `cargo test -p qcore-frontend --test rule81_formulas` | 0 | 3 passed (`formulas-3.log`) |
 | Clippy | `cargo clippy -p qcore-c-gateway --all-targets -- -D warnings` | 0 | (`clippy-1.log`) |
 | fmt | `cargo fmt --all -- --check` | 0 | (`fmt-5.log`) |
 | Lean | `scripts/gate_lean.py --module QCore.AddressArrowPlace --module QCore --audit AuditAddressArrowPlace.lean` | 0 | 2 targets built, 1 audit passed; axioms `propext`, `Quot.sound` only (`gate-lean-1.log`) |
 | rule docs | `python3 scripts/gen_rule_docs.py` | 0 | `gateway.md`, `README.md` regenerated |
-| amendments | `python3 scripts/apply_amendments.py docs/reports/k6-direct-position-access/integration-amendments.json --check` | 0 | valid (7 amends, 5 registers) |
+| amendments | `python3 scripts/apply_amendments.py docs/reports/k6-direct-position-access/integration-amendments.json --check` | 0 | valid (7 amends, 4 registers) |
 
 Rule off (`address_arrow_place::ARM = false`, once by hand, not committed):
 the three admitting fixture tests fail with the base refusals
 (`private/k6/fixture-off.txt`).
+
+### 7.1 The K6 formula block (integrator's request, after rebasing on `110a69c8e`)
+
+The branch was rebased onto origin/main `110a69c8e` (MEMBER-EFFECT-STORES)
+and rule 81's conditions restated over the K6 block. Checks
+([scripts/block-checks.sh](scripts/block-checks.sh) `b1`, each in a `build`
+slot; counts by [scripts/summarise_checks.py](scripts/summarise_checks.py)):
+
+| Check | Command | Exit | Result |
+|---|---|---:|---|
+| qcore-frontend tests (with `rule81_formulas`) | `cargo test -p qcore-frontend` | 0 | 315 passed over 23 binaries; `rule81_formulas` 3 passed (`b1-frontend.log`) |
+| the rendered-block tests | `cargo test -p qcore-contract --test plugin_guarded_symbols --test formal_binding_descriptions --test cjson_guarded_symbols` | 0 | 21 passed (`b1-contract.log`) |
+| gateway unit tests | `cargo test -p qcore-c-gateway --lib -- address_arrow_place member_handoff elaboration typed_field_access` | 0 | 73 passed, the 8 `address_arrow_place` tests among them (`b1-gateway-lib.log`) |
+| K6 fixtures and neighbours | `cargo test -p qcore-c-gateway --test k6_direct_position_access --test access_path_positions --test access_path_position_residuals --test cg06_value_connectives --test cg11_pointer_stores --test return_position_pointer_leaf --test reach_gate_positions` | 0 | 66 passed (`b1-gateway-fixtures.log`) |
+| Clippy | `cargo clippy -p qcore-frontend --all-targets -- -D warnings`; the same for `qcore-c-gateway` | 0, 0 | (`b1-clippy-frontend.log`, `b1-clippy-gateway.log`) |
+| fmt | `cargo fmt --all -- --check` | 0 | (`fmt-6.log`) |
+| Lean | `scripts/gate_lean.py --module QCore.AddressArrowPlace --module QCore --audit AuditAddressArrowPlace.lean` | 0 | 26 theorems audited: 21 `propext`, 4 `propext, Quot.sound`, 1 none (`gate-lean-3.log`) |
+| rule docs | `python3 scripts/gen_rule_docs.py --check` | 0 | |
 
 ## 8. Follow-ups
 
@@ -284,6 +321,4 @@ CG10-BOUND-ROOT-NULLABLE-OR-TRACKED) amended with the 11-24 figures and rule
 W48-POINTER-RETURN-THROUGH-CALL-ACTUAL-ROOT and CG06-VALUE-CONNECTIVE-RESIDUALS
 amended with their rows; new: K6-RETURN-IDENTITY-CAST,
 K6-SWITCH-CONDITIONAL-TYPEDEF-BASE, K6-FILE-SCOPE-RECORD-SCALAR-STORE (a user
-decision on rule 12j's storage boundary), K6-POINTER-DIFFERENCE-SCALAR,
-K6-RULE-FORMULA-VOCABULARY (the closed premise vocabulary has no
-gateway-reading terms, so rule conditions are syntax-checked only).
+decision on rule 12j's storage boundary), K6-POINTER-DIFFERENCE-SCALAR.

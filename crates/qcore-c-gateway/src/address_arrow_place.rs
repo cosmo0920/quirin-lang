@@ -57,6 +57,13 @@
 //!
 //! Both only remove a binding or a refusal and only where the plain spelling
 //! has none. `QCore.AddressArrowPlace`.
+//!
+//! Every condition and refusal is a formula of the C04.18.9 typed rendering
+//! over the K6 block (`qcore_frontend::premise_formula::RENDERED_TERMS`,
+//! block `K6`; sorts `k6_amp`, `k6_member`, `k6_place`), checked by the
+//! premise-formula validator `guarded_proposition` ([`FORMULAS`], the same
+//! table as `crates/qcore-frontend/tests/rule81_formulas.rs` and
+//! `QCore.AddressArrowPlace.formulaTable`, row for row).
 
 /// Whether the reading is in force (a test switch for the shared-vector
 /// tests; always `true` in the gateway).
@@ -162,9 +169,119 @@ pub(crate) const LEXICAL_VECTORS: &[(&str, bool)] = &[
     ("( & p - > a [ i ) - > f", false),
 ];
 
+/// Rule 81's admission conditions, then its named refusals, `(id, formula)`,
+/// each validated by `guarded_proposition` (the K6 block).
+#[cfg(test)]
+pub(crate) const FORMULAS: &[(&str, &str)] = &[
+    (
+        "k6_exempt_is_the_shape",
+        "forall (#a: k6_amp) { (#k6_exempt(#a) => ((((#k6_opens_group(#a) && #k6_name_arrow(#a)) && #k6_selection_chain(#a)) && #k6_group_arrow(#a)) && !#k6_outer_address(#a))) }",
+    ),
+    (
+        "k6_the_shape_is_exempt",
+        "forall (#a: k6_amp) { (((((#k6_opens_group(#a) && #k6_name_arrow(#a)) && #k6_selection_chain(#a)) && #k6_group_arrow(#a)) && !#k6_outer_address(#a)) => #k6_exempt(#a)) }",
+    ),
+    (
+        "k6_exempt_binds_as_the_plain_spelling",
+        "forall (#a: k6_amp) { (#k6_exempt(#a) => (!#k6_binds(#a) && !#k6_plain_binds(#a))) }",
+    ),
+    (
+        "k6_at_least_the_plain_reader",
+        "forall (#a: k6_amp) { (#k6_plain_binds(#a) => #k6_binds(#a)) }",
+    ),
+    (
+        "k6_only_removes_bindings",
+        "forall (#a: k6_amp) { (#k6_binds(#a) => #k6_old_binds(#a)) }",
+    ),
+    (
+        "k6_place_is_the_plain_place",
+        "forall (#e: k6_member) { (#k6_over_member_address(#e) => (#k6_place(#e) == #k6_plain_place(#e) && #k6_root(#k6_place(#e)) == #k6_root(#k6_plain_place(#e)))) }",
+    ),
+    (
+        "k6_place_only_adds",
+        "forall (#e: k6_member) { (!#k6_old_place(#e) == #k6_refused => #k6_place(#e) == #k6_old_place(#e)) }",
+    ),
+    (
+        "k6_refuse_outer_address",
+        "forall (#a: k6_amp) { (#k6_outer_address(#a) => #k6_binds(#a)) }",
+    ),
+    (
+        "k6_refuse_whole_address",
+        "forall (#a: k6_amp) { (!#k6_name_arrow(#a) => #k6_binds(#a)) }",
+    ),
+    (
+        "k6_refuse_operator_in_group",
+        "forall (#a: k6_amp) { (!#k6_selection_chain(#a) => #k6_binds(#a)) }",
+    ),
+    (
+        "k6_refuse_undereferenced_group",
+        "forall (#a: k6_amp) { (!#k6_group_arrow(#a) => #k6_binds(#a)) }",
+    ),
+    (
+        "k6_refuse_no_group",
+        "forall (#a: k6_amp) { (!#k6_opens_group(#a) => #k6_binds(#a)) }",
+    ),
+    (
+        "k6_refuse_whole_object_address",
+        "forall (#e: k6_member) { ((#k6_over_address(#e) && !#k6_over_member_address(#e)) => #k6_place(#e) == #k6_refused) }",
+    ),
+];
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    const LEAN: &str = include_str!("../../../proof/QCore/AddressArrowPlace.lean");
+    const FRONTEND: &str = include_str!("../../qcore-frontend/tests/rule81_formulas.rs");
+
+    #[test]
+    fn every_formula_is_a_validated_typed_rendering() {
+        for (id, formula) in FORMULAS {
+            qcore_frontend::premise_formula::guarded_proposition(id, formula)
+                .unwrap_or_else(|error| panic!("{id}: {error}"));
+        }
+    }
+
+    /// The table is the frontend test's and Lean's `formulaTable`, row for row.
+    #[test]
+    fn the_formula_table_is_the_frontend_s_and_lean_s() {
+        for (id, formula) in FORMULAS {
+            let quoted_id = format!("\"{id}\",");
+            let quoted = format!("\"{formula}\",");
+            assert!(
+                FRONTEND.lines().any(|l| l.trim() == quoted_id)
+                    && FRONTEND.lines().any(|l| l.trim() == quoted),
+                "{id} is not the frontend's row"
+            );
+            let row = format!("  (\"{id}\", \"{formula}\"),");
+            let last = format!("  (\"{id}\", \"{formula}\")");
+            assert!(
+                LEAN.lines().any(|l| l == row || l == last),
+                "no Lean row for {id}"
+            );
+        }
+        let frontend_rows = FRONTEND.matches("(\n        \"k6_").count();
+        assert_eq!(frontend_rows, FORMULAS.len());
+    }
+
+    /// The K6 block is Lean's `k6Terms`, in order.
+    #[test]
+    fn the_k6_block_is_lean_s() {
+        let names = qcore_frontend::premise_formula::RENDERED_TERMS
+            .iter()
+            .filter(|term| term.block == "K6")
+            .map(|term| format!("\"{}\"", term.name))
+            .collect::<Vec<_>>();
+        let line = format!("def k6Terms : List String := [{}]", names.join(", "));
+        assert!(LEAN.lines().any(|l| l == line), "no `{line}`");
+        let sorts = qcore_frontend::premise_formula::RENDERED_VALUE_SORTS
+            .iter()
+            .filter(|(s, _)| s.starts_with("k6_"))
+            .map(|(s, _)| format!("\"{s}\""))
+            .collect::<Vec<_>>();
+        let line = format!("def k6Sorts : List String := [{}]", sorts.join(", "));
+        assert!(LEAN.lines().any(|l| l == line), "no `{line}`");
+    }
 
     fn tokens(text: &str) -> Vec<&str> {
         text.split_whitespace().collect()

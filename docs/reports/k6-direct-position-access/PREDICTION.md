@@ -13,15 +13,15 @@ queued for an audit slot when this file was committed.
 ## Mechanism and what it can move
 
 **Rule 81** reads `(&X)->f` as `X.f`, rule 10n (1)'s own reading, in two more
-readers (each condition a formula; `#plain(#a)` is the same occurrence in the
-plain spelling `p SEL . f`):
+readers. (Edited after the freeze, notation only: the conditions are now
+stated over the K6 block and validated, README §3; the forecast below is
+unchanged.)
 
-* the lexical `may_bind` reader: for every single `&` before a name,
-  `#exempt(#a) == TRUE -> #binds(#a) == #binds(#plain(#a))`, where
-  `#exempt(#a) == TRUE` holds exactly when
-  `#opens_group(#a) == TRUE && #name_arrow(#a) == TRUE && #selection_chain(#a) == TRUE && #group_arrow(#a) == TRUE && #outer_address(#a) == FALSE`;
-* the elaborator's place reader: for every arrow member over an address of a
-  member or subscript place, `#place(#e) == #place(#plain(#e))`.
+* the lexical `may_bind` reader: `k6_exempt_is_the_shape`,
+  `k6_the_shape_is_exempt` and `k6_exempt_binds_as_the_plain_spelling`, e.g.
+  `forall (#a: k6_amp) { (#k6_exempt(#a) => (!#k6_binds(#a) && !#k6_plain_binds(#a))) }`;
+* the elaborator's place reader: `k6_place_is_the_plain_place`,
+  `forall (#e: k6_member) { (#k6_over_member_address(#e) => (#k6_place(#e) == #k6_plain_place(#e) && #k6_root(#k6_place(#e)) == #k6_root(#k6_plain_place(#e)))) }`.
 
 Both only remove a binding or a refusal, and only where the plain spelling
 has none (`QCore.AddressArrowPlace.the_rule_only_adds`,
