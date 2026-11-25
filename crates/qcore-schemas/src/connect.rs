@@ -526,10 +526,10 @@ pub fn checker_contribution(record: &CheckerRecord) -> ReasonedVerdict {
                     .expect("provider failure is not human-resolvable")
             }
             Verdict::Unsafe => ReasonedVerdict::violation(
-                record
-                    .reasons
-                    .first()
-                    .map_or_else(|| "validated-unsafe".to_owned(), |reason| reason.code.clone()),
+                record.reasons.first().map_or_else(
+                    || "validated-unsafe".to_owned(),
+                    |reason| reason.code.clone(),
+                ),
                 detail,
             ),
         },
@@ -680,10 +680,7 @@ impl DeclaredDependency {
             ));
         }
         if self.removed.is_some() && self.since.is_none() {
-            return Err(format!(
-                "dependency {}: `removed` needs `since`",
-                self.id()
-            ));
+            return Err(format!("dependency {}: `removed` needs `since`", self.id()));
         }
         if let (Some(since), Some(removed)) = (self.since, self.removed)
             && removed <= since
@@ -705,7 +702,10 @@ impl DeclaredDependency {
             ));
         }
         if self.dependent_crate == self.target_crate && self.dependent == self.target_function {
-            return Err(format!("dependency {}: a declaration depends on itself", self.id()));
+            return Err(format!(
+                "dependency {}: a declaration depends on itself",
+                self.id()
+            ));
         }
         let libc_target = self.target_namespace == "libc"
             || libc_names.is_some_and(|names| names.contains(&self.target_function));
@@ -978,7 +978,9 @@ pub fn resolve(
             standing.causes.push((dependency.id(), failure));
         }
         if cycles.contains(&key) {
-            standing.causes.push((dependency.id(), DependencyFailure::Cycle));
+            standing
+                .causes
+                .push((dependency.id(), DependencyFailure::Cycle));
         }
     }
     // Propagate holds to the least fixed point.
@@ -1005,7 +1007,9 @@ pub fn resolve(
                 continue;
             };
             let key = node(&dependency.dependent_crate, &dependency.dependent);
-            let standing = standings.get_mut(&key).expect("every dependent has a standing");
+            let standing = standings
+                .get_mut(&key)
+                .expect("every dependent has a standing");
             let failure = DependencyFailure::TargetHeld { class };
             let entry = (dependency.id(), failure);
             if !standing.causes.contains(&entry) {

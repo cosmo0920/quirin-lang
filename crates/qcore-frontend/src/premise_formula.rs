@@ -2691,10 +2691,7 @@ pub const RENDERED_VALUE_SORTS: &[(&str, &str)] = &[
         "cx_bundle",
         "a contract bundle: one contract crate on a load path (a provider or plugin-SDK user crate)",
     ),
-    (
-        "cx_fn",
-        "a declared function name",
-    ),
+    ("cx_fn", "a declared function name"),
     (
         "cx_dep",
         "a declared contract dependency (`requires resource_contract_dependency(...)`)",

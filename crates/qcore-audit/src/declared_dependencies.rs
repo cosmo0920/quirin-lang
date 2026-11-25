@@ -232,14 +232,16 @@ mod tests {
 
     fn run(clause: &str, crates: &LoadPathFacts) -> (ResourceContracts, Evaluation) {
         let sources = BTreeMap::from([
-            ("quirin-provider-libc:libc/memory.qv".to_owned(), LIBC.to_owned()),
+            (
+                "quirin-provider-libc:libc/memory.qv".to_owned(),
+                LIBC.to_owned(),
+            ),
             ("quirin-provider-acme:acme/open.qv".to_owned(), user(clause)),
         ]);
         let mut contracts = load_resource_contract_sources(&sources).expect("loads");
-        let digests = qcore_contract::contract_revision::declaration_digests(
-            contracts.source_assumptions(),
-        )
-        .unwrap();
+        let digests =
+            qcore_contract::contract_revision::declaration_digests(contracts.source_assumptions())
+                .unwrap();
         let modules: BTreeMap<String, String> = digests
             .iter()
             .map(|(name, (module, _))| (name.clone(), module.clone()))
@@ -376,10 +378,8 @@ mod tests {
     #[test]
     fn adopting_a_dependency_changes_the_declaration_digest() {
         let digest = |clause: &str| {
-            let sources = BTreeMap::from([(
-                "quirin-provider-acme:acme/open.qv".to_owned(),
-                user(clause),
-            )]);
+            let sources =
+                BTreeMap::from([("quirin-provider-acme:acme/open.qv".to_owned(), user(clause))]);
             qcore_contract::contract_revision::declaration_digests(&sources).unwrap()["acme_open"]
                 .1
                 .clone()

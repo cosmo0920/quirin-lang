@@ -146,7 +146,10 @@ fn manifest_crates(path: &Path) -> Result<Vec<(PathBuf, Value, String)>, String>
     if manifest["schema_version"] != json!(1) {
         return Err(format!("{}: not a schema 1 load path", path.display()));
     }
-    let base = path.parent().unwrap_or_else(|| Path::new(".")).to_path_buf();
+    let base = path
+        .parent()
+        .unwrap_or_else(|| Path::new("."))
+        .to_path_buf();
     let digest = sha_file(path)?;
     let mut out = Vec::new();
     if let Some(extends) = manifest["extends"].as_str() {
@@ -218,8 +221,7 @@ fn read_bundle(base: &Path, record: &Value, manifest_sha256: &str) -> Result<Bun
             });
         }
     }
-    let contract_dependencies: Vec<DeclaredDependency> = match record.get("contract_dependencies")
-    {
+    let contract_dependencies: Vec<DeclaredDependency> = match record.get("contract_dependencies") {
         None => Vec::new(),
         Some(entries) => serde_json::from_value(entries.clone())
             .map_err(|error| format!("{name}: contract_dependencies: {error}"))?,
@@ -361,10 +363,7 @@ pub fn compose(
                 .in_force
                 .as_ref()
                 .is_some_and(|d| d.bundle == bundle.name);
-            let refused = entry
-                .refused
-                .iter()
-                .any(|(d, _)| d.bundle == bundle.name);
+            let refused = entry.refused.iter().any(|(d, _)| d.bundle == bundle.name);
             if in_force || refused {
                 facts.declarations.insert(
                     declaration.function.clone(),
@@ -401,8 +400,7 @@ pub fn compose(
     let declaration_records: BTreeMap<&String, Value> = composed
         .iter()
         .filter(|(_, entry)| {
-            entry.refused.len() + entry.superseded.len() + usize::from(entry.in_force.is_some())
-                > 1
+            entry.refused.len() + entry.superseded.len() + usize::from(entry.in_force.is_some()) > 1
                 || !entry.refused.is_empty()
         })
         .map(|(function, entry)| {

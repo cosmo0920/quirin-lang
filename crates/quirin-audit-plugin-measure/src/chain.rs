@@ -356,10 +356,7 @@ fn identity_of_record_side(name: &str, side: &Value) -> Identity {
             .cloned()
             .filter(|value| !value.is_null())
             .unwrap_or_else(|| rules_off_of(&side["spec"])),
-        dependency_graph: side
-            .get("dependency_graph")
-            .cloned()
-            .unwrap_or(Value::Null),
+        dependency_graph: side.get("dependency_graph").cloned().unwrap_or(Value::Null),
     }
 }
 
@@ -389,10 +386,7 @@ fn identity_of_run(name: &str, run: &Value) -> Identity {
             ),
             _ => Value::Null,
         },
-        dependency_graph: run
-            .get("dependency_graph")
-            .cloned()
-            .unwrap_or(Value::Null),
+        dependency_graph: run.get("dependency_graph").cloned().unwrap_or(Value::Null),
     }
 }
 
@@ -635,7 +629,12 @@ pub fn link(earlier: &Step, later: &Step) -> Vec<Value> {
             &a.link_resolution,
             &b.link_resolution,
         ),
-        ("cx_refuse_rules_off", "rules_off", &a.rules_off, &b.rules_off),
+        (
+            "cx_refuse_rules_off",
+            "rules_off",
+            &a.rules_off,
+            &b.rules_off,
+        ),
         (
             "cx_refuse_dependency_graph",
             "dependency_graph",
@@ -689,8 +688,10 @@ fn incomplete_causes(entry: Option<&Value>) -> Vec<Value> {
     };
     let mut causes = Vec::new();
     if entry["status"] != json!("complete") {
-        causes.push(json!({"formula": "cx_incomplete_status", "status": entry["status"],
-                           "why": entry.get("why").or_else(|| entry.get("incomplete_because"))}));
+        causes.push(
+            json!({"formula": "cx_incomplete_status", "status": entry["status"],
+                           "why": entry.get("why").or_else(|| entry.get("incomplete_because"))}),
+        );
     }
     let nonempty = |value: &Value| value.as_array().is_some_and(|items| !items.is_empty());
     if nonempty(&entry["unmatched"]) {
@@ -865,7 +866,10 @@ fn split_key(kind: Kind, key: &str) -> Option<(Vec<&str>, Option<&str>)> {
 /// under another key: a rekeyed (renamed) row, reported as such.
 fn rekeyed(entry: &Value) -> Vec<Value> {
     let mut out = Vec::new();
-    for (list, kind) in [("unmatched", Kind::Function), ("unmatched_units", Kind::Unit)] {
+    for (list, kind) in [
+        ("unmatched", Kind::Function),
+        ("unmatched_units", Kind::Unit),
+    ] {
         let rows: Vec<(&str, &str)> = entry[list]
             .as_array()
             .into_iter()
@@ -880,9 +884,11 @@ fn rekeyed(entry: &Value) -> Vec<Value> {
         for (gone, _) in rows.iter().filter(|(_, only)| *only == "before") {
             for (new, _) in rows.iter().filter(|(_, only)| *only == "after") {
                 if identity(gone).is_some() && identity(gone) == identity(new) {
-                    out.push(json!({"kind": if kind == Kind::Unit { "unit" } else { "function" },
+                    out.push(
+                        json!({"kind": if kind == Kind::Unit { "unit" } else { "function" },
                                     "before_key": gone, "after_key": new,
-                                    "formula": "cx_incomplete_unmatched"}));
+                                    "formula": "cx_incomplete_unmatched"}),
+                    );
                 }
             }
         }
@@ -907,9 +913,7 @@ fn reconcile(
     // keeps the verdict across it (`cx_unlisted_is_unchanged`).
     let listing: Vec<Option<(String, String)>> = per_step
         .iter()
-        .map(|event| {
-            event.and_then(|event| Some((event.before.clone()?, event.after.clone()?)))
-        })
+        .map(|event| event.and_then(|event| Some((event.before.clone()?, event.after.clone()?))))
         .collect();
     let verdicts: Vec<Option<String>> = (0..points)
         .map(|point| {
@@ -991,6 +995,9 @@ fn reconcile(
     )
 }
 
+/// A card measurement: route and row to the move and whether it was predicted.
+type Measured = BTreeMap<(String, String), (String, String, bool)>;
+
 /// A declaration's attribution source for one step.
 struct Attribution {
     label: String,
@@ -1000,7 +1007,7 @@ struct Attribution {
     record_check: Option<Value>,
     /// A card's own measurement: route and row to its move and whether the
     /// card's declared check predicted it.
-    measured: Option<BTreeMap<(String, String), (String, String, bool)>>,
+    measured: Option<Measured>,
 }
 
 impl Attribution {
@@ -1050,7 +1057,12 @@ fn diff_maps(before: &Value, after: &Value) -> Value {
     let changed: BTreeMap<&String, Value> = keys
         .into_iter()
         .filter(|key| left.get(*key) != right.get(*key))
-        .map(|key| (key, json!({"before": left.get(key), "after": right.get(key)})))
+        .map(|key| {
+            (
+                key,
+                json!({"before": left.get(key), "after": right.get(key)}),
+            )
+        })
         .collect();
     json!(changed)
 }
@@ -1074,7 +1086,12 @@ fn dependency_changes(before: &Value, after: &Value) -> (Value, BTreeSet<String>
             .into_iter()
             .filter_map(Value::as_array)
             .flatten()
-            .map(|entry| (entry["id"].as_str().unwrap_or_default().to_owned(), entry.clone()))
+            .map(|entry| {
+                (
+                    entry["id"].as_str().unwrap_or_default().to_owned(),
+                    entry.clone(),
+                )
+            })
             .collect()
     };
     let (left, right) = (entries(before), entries(after));
@@ -1133,7 +1150,10 @@ pub fn chain(
                 card.source["path"].as_str().unwrap_or_default(),
                 card.comparison
             ),
-            sha256: card.source["sha256"].as_str().unwrap_or_default().to_owned(),
+            sha256: card.source["sha256"]
+                .as_str()
+                .unwrap_or_default()
+                .to_owned(),
             declaration: None,
             record_check: None,
             measured: Some(measured),
@@ -1154,16 +1174,22 @@ pub fn chain(
     }
     for step in steps {
         if !step.declared.is_null() {
-            attributions.entry(step.number).or_default().push(Attribution {
-                label: step.declared["path"]
-                    .as_str()
-                    .unwrap_or("(the record's declared check)")
-                    .to_owned(),
-                sha256: step.declared["sha256"].as_str().unwrap_or_default().to_owned(),
-                declaration: None,
-                record_check: Some(step.declared.clone()),
-                measured: None,
-            });
+            attributions
+                .entry(step.number)
+                .or_default()
+                .push(Attribution {
+                    label: step.declared["path"]
+                        .as_str()
+                        .unwrap_or("(the record's declared check)")
+                        .to_owned(),
+                    sha256: step.declared["sha256"]
+                        .as_str()
+                        .unwrap_or_default()
+                        .to_owned(),
+                    declaration: None,
+                    record_check: Some(step.declared.clone()),
+                    measured: None,
+                });
         }
     }
     // Links, and the segments they leave.
@@ -1190,15 +1216,14 @@ pub fn chain(
     let mut unattributed_new_safe = Vec::new();
     let mut every_route_complete = true;
     for segment in &segments {
-        let routes: BTreeSet<&String> = segment.iter().flat_map(|step| step.routes.keys()).collect();
+        let routes: BTreeSet<&String> =
+            segment.iter().flat_map(|step| step.routes.keys()).collect();
         let mut route_records = BTreeMap::new();
         let step_changes: Vec<(usize, BTreeSet<String>, Value)> = segment
             .iter()
             .map(|step| {
-                let (changes, names) = dependency_changes(
-                    &step.before.dependency_graph,
-                    &step.after.dependency_graph,
-                );
+                let (changes, names) =
+                    dependency_changes(&step.before.dependency_graph, &step.after.dependency_graph);
                 (step.number, names, changes)
             })
             .collect();
@@ -1252,8 +1277,10 @@ pub fn chain(
                         .filter(|source| {
                             *kind == Kind::Function && source.covers(route, key, before, after)
                         })
-                        .map(|source| json!({"step": step.number, "declared": source.label,
-                                             "sha256": source.sha256}))
+                        .map(|source| {
+                            json!({"step": step.number, "declared": source.label,
+                                             "sha256": source.sha256})
+                        })
                         .collect()
                 };
                 for (position, step) in segment.iter().enumerate() {
@@ -1279,18 +1306,22 @@ pub fn chain(
                             })
                             .map(|((_, function_key), _)| function_key)
                             .collect();
-                        let all = !function_moves.is_empty()
-                            && function_moves.iter().all(|function_key| {
-                                let event = &per_step[position][&(Kind::Function, (*function_key).clone())];
-                                attributions.get(&step.number).into_iter().flatten().any(|source| {
-                                    source.covers(
-                                        route,
-                                        function_key,
-                                        event.before.as_deref().unwrap_or_default(),
-                                        event.after.as_deref().unwrap_or_default(),
+                        let all =
+                            !function_moves.is_empty()
+                                && function_moves.iter().all(|function_key| {
+                                    let event = &per_step[position]
+                                        [&(Kind::Function, (*function_key).clone())];
+                                    attributions.get(&step.number).into_iter().flatten().any(
+                                        |source| {
+                                            source.covers(
+                                                route,
+                                                function_key,
+                                                event.before.as_deref().unwrap_or_default(),
+                                                event.after.as_deref().unwrap_or_default(),
+                                            )
+                                        },
                                     )
-                                })
-                            });
+                                });
                         if all {
                             sources.push(json!({"step": step.number,
                                 "derived_from_function_rows": function_moves}));
@@ -1300,13 +1331,17 @@ pub fn chain(
                         .1
                         .iter()
                         .filter(|name| {
-                            row["evidence"].as_array().into_iter().flatten().any(|evidence| {
-                                evidence["step"] == json!(step.number)
+                            row["evidence"]
+                                .as_array()
+                                .into_iter()
+                                .flatten()
+                                .any(|evidence| {
+                                    evidence["step"] == json!(step.number)
                                     && evidence["evidence"]["contract_dependencies_after"]
                                         ["declarations"]
                                         .as_array()
                                         .is_some_and(|names| names.contains(&json!(name)))
-                            })
+                                })
                         })
                         .collect();
                     if !candidates.is_empty() {
@@ -1352,18 +1387,22 @@ pub fn chain(
                 .iter()
                 .zip(&entries)
                 .flat_map(|(step, entry)| {
-                    entry.map(rekeyed).unwrap_or_default().into_iter().map(
-                        move |mut rekey| {
+                    entry
+                        .map(rekeyed)
+                        .unwrap_or_default()
+                        .into_iter()
+                        .map(move |mut rekey| {
                             rekey["step"] = json!(step.number);
                             rekey
-                        },
-                    )
+                        })
                 })
                 .collect();
             let complete = causes.is_empty();
             every_route_complete &= complete;
             let totals = |entry: Option<&Value>, side: &str| {
-                entry.map_or(Value::Null, |entry| entry["totals"][side]["function_status"].clone())
+                entry.map_or(Value::Null, |entry| {
+                    entry["totals"][side]["function_status"].clone()
+                })
             };
             let net_delta = {
                 let (first, last) = (

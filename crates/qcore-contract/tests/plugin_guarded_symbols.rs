@@ -336,11 +336,11 @@ fn the_sp9_block_is_new_prefixed_and_bound_to_lean() {
     let blocks: Vec<_> = RENDERED_TERMS.iter().map(|t| t.block).collect();
     let first = blocks.iter().position(|b| *b == "SP9").unwrap();
     assert!(blocks[first..first + sp9.len()].iter().all(|b| *b == "SP9"));
-    assert!(
-        blocks[first + sp9.len()..]
-            .iter()
-            .all(|b| *b == "SP10" || *b == "MES" || *b == "K2" || *b == "K6" || *b == "CX")
-    );
+    assert!(blocks[first + sp9.len()..].iter().all(|b| *b == "SP10"
+        || *b == "MES"
+        || *b == "K2"
+        || *b == "K6"
+        || *b == "CX"));
     assert_eq!(blocks[first - 1], "SP7");
     for t in &sp9 {
         assert!(t.name.starts_with(PREFIX), "#{}", t.name);

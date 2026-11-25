@@ -53,7 +53,13 @@ fn version(minor: u32) -> Value {
 }
 
 /// One crate directory and its load-path record.
-fn krate(root: &Path, name: &str, lock: &[Value], dependencies: &[&str], declared: &[Value]) -> Value {
+fn krate(
+    root: &Path,
+    name: &str,
+    lock: &[Value],
+    dependencies: &[&str],
+    declared: &[Value],
+) -> Value {
     let directory = root.join(name);
     std::fs::create_dir_all(directory.join("contracts/m")).unwrap();
     std::fs::write(directory.join("contracts/m/m.qv"), "module contract;\n").unwrap();
@@ -62,7 +68,9 @@ fn krate(root: &Path, name: &str, lock: &[Value], dependencies: &[&str], declare
         serde_json::to_string(&json!({"lock_version": 4, "pinned": lock, "flexible": []})).unwrap(),
     )
     .unwrap();
-    let namespace = name.trim_start_matches("quirin-provider-").replace('-', "_");
+    let namespace = name
+        .trim_start_matches("quirin-provider-")
+        .replace('-', "_");
     let mut record = json!({"name": name, "namespace": namespace, "version": "0.1.0",
         "contracts": format!("{name}/contracts"), "dependencies": dependencies,
         "modules": ["m/m.qv"], "published": {}});
@@ -110,7 +118,10 @@ fn libc(root: &Path) -> Value {
     krate(
         root,
         "quirin-provider-libc",
-        &[entry("malloc", "m/m.qv", &sha('a')), entry("free", "m/m.qv", &sha('b'))],
+        &[
+            entry("malloc", "m/m.qv", &sha('a')),
+            entry("free", "m/m.qv", &sha('b')),
+        ],
         &[],
         &[],
     )
@@ -124,7 +135,10 @@ fn bundles_agree_disagree_and_a_duplicate_libc_declaration_is_refused() {
         krate(
             &root,
             "quirin-provider-a",
-            &[entry("f", "m/m.qv", &sha('1')), entry("g", "m/m.qv", &sha('2'))],
+            &[
+                entry("f", "m/m.qv", &sha('1')),
+                entry("g", "m/m.qv", &sha('2')),
+            ],
             &[],
             &[],
         ),
@@ -195,14 +209,16 @@ fn a_plugin_pending_is_kept_with_its_reasons_and_never_lowered() {
     };
     std::fs::write(
         &report,
-        serde_json::to_string(&json!({"units": [{"library": "fb", "file": "a.c", "functions": [
-            {"function": "caller", "status": "Pending", "host_status": "Safe",
-             "contract_dependencies": {"declarations": ["onig_new"]},
-             "plugin_links": [link("uncertified-safe", "Pending")]},
-            {"function": "liar", "status": "Safe", "host_status": "Safe",
-             "contract_dependencies": {"declarations": ["onig_new"]},
-             "plugin_links": [link("uncertified-safe", "Safe")]},
-        ]}]}))
+        serde_json::to_string(
+            &json!({"units": [{"library": "fb", "file": "a.c", "functions": [
+                {"function": "caller", "status": "Pending", "host_status": "Safe",
+                 "contract_dependencies": {"declarations": ["onig_new"]},
+                 "plugin_links": [link("uncertified-safe", "Pending")]},
+                {"function": "liar", "status": "Safe", "host_status": "Safe",
+                 "contract_dependencies": {"declarations": ["onig_new"]},
+                 "plugin_links": [link("uncertified-safe", "Safe")]},
+            ]}]}),
+        )
         .unwrap(),
     )
     .unwrap();
@@ -306,7 +322,12 @@ fn declared_dependencies_hold_their_dependents() {
         .as_array()
         .unwrap()
         .iter()
-        .map(|h| (h["function"].as_str().unwrap(), h["verdict"].as_str().unwrap()))
+        .map(|h| {
+            (
+                h["function"].as_str().unwrap(),
+                h["verdict"].as_str().unwrap(),
+            )
+        })
         .collect();
     assert!(!held.iter().any(|(f, _)| *f == "ok"), "{held:?}");
     for (function, verdict) in [

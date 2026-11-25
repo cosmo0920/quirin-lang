@@ -2018,8 +2018,7 @@ fn load_function_in(
     let mut review: Vec<ReviewDeferral> = Vec::new();
     let mut revision: Vec<qcore_schemas::contract_revision::RevisionMarker> = Vec::new();
     let mut library_version: Option<qcore_schemas::library_version::LibraryVersionBound> = None;
-    let mut contract_dependencies: Vec<crate::contract_dependency::WrittenDependency> =
-        Vec::new();
+    let mut contract_dependencies: Vec<crate::contract_dependency::WrittenDependency> = Vec::new();
     let mut collected = counted_users::Collected::default();
     // Card CG23-RELATIONAL-POSTCONDITIONS: every `resource_on_return` clause,
     // in clause order.

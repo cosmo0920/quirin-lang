@@ -370,8 +370,9 @@ fn a_dependency_hold_is_classified_by_its_reason() {
                 "a declared dependency".into(),
             )
             .unwrap();
-        let summary = analyze_legacy_c_translation_unit(&format!("{PRELUDE}{BALANCED}"), "w", &contracts)
-            .expect("the fixture tokenizes");
+        let summary =
+            analyze_legacy_c_translation_unit(&format!("{PRELUDE}{BALANCED}"), "w", &contracts)
+                .expect("the fixture tokenizes");
         let w = function(&summary, "w");
         let descriptions = w
             .diagnostics

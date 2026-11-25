@@ -104,7 +104,9 @@ pub fn dependency_hold_description(callee: &str) -> String {
 #[must_use]
 pub fn hold_description_for(callee: &str, contracts: &ResourceContracts) -> String {
     match contracts.pin_mismatch().get(callee) {
-        Some(withheld) if withheld.reason.is_dependency() && !withheld.reason.is_human_resolvable() => {
+        Some(withheld)
+            if withheld.reason.is_dependency() && !withheld.reason.is_human_resolvable() =>
+        {
             dependency_hold_description(callee)
         }
         Some(withheld) if !withheld.reason.is_human_resolvable() => {

@@ -102,8 +102,7 @@ fn run(directory: &Path, arguments: Vec<String>) -> (bool, Value) {
     let response = invocation.response.expect("a response");
     let completed = response.outcome == quirin_audit_plugin::Outcome::Completed;
     let chain: Value =
-        serde_json::from_str(&std::fs::read_to_string(output.join("chain.json")).unwrap())
-            .unwrap();
+        serde_json::from_str(&std::fs::read_to_string(output.join("chain.json")).unwrap()).unwrap();
     (completed, chain)
 }
 
@@ -183,7 +182,10 @@ fn a_clean_three_step_chain_reconciles_cancels_and_cascades() {
     );
     // A cancelled move stays reported with its verdict at every side.
     let f = find(&record, "f");
-    assert_eq!(f["verdicts"], json!(["Unknown", "Safe", "Unknown", "Unknown"]));
+    assert_eq!(
+        f["verdicts"],
+        json!(["Unknown", "Safe", "Unknown", "Unknown"])
+    );
     assert_eq!(f["pattern"], "cancelled");
     assert_eq!(f["moved_in"], json!([1, 2]));
     assert_eq!(f["net"], json!(["Unknown", "Unknown"]));
@@ -198,7 +200,10 @@ fn a_clean_three_step_chain_reconciles_cancels_and_cascades() {
     // change.
     let e = find(&record, "e");
     assert_eq!(e["pattern"], "evidence-only");
-    assert_eq!(e["verdicts"], json!(["Unknown", "Unknown", "Unknown", "Unknown"]));
+    assert_eq!(
+        e["verdicts"],
+        json!(["Unknown", "Unknown", "Unknown", "Unknown"])
+    );
     assert_eq!(
         e["evidence"][0]["evidence"]["contract_dependencies"]["declarations"]["added"],
         json!(["\"calloc\""])
@@ -329,7 +334,10 @@ fn an_incomplete_route_and_a_rekeyed_row_are_named() {
     assert!(causes.contains(&"cx_incomplete_status"));
     assert!(causes.contains(&"cx_incomplete_unmatched"));
     assert_eq!(route["rekeyed"][0]["kind"], "function");
-    assert_eq!(route["net_status_delta"], "not derived: the route's chain is incomplete");
+    assert_eq!(
+        route["net_status_delta"],
+        "not derived: the route's chain is incomplete"
+    );
 }
 
 #[test]
@@ -456,7 +464,10 @@ fn a_move_beside_a_dependency_change_lists_it_and_still_needs_a_prediction() {
         f["dependency_changes"]["formula"],
         "cx_dependency_change_listed"
     );
-    assert_eq!(f["dependency_changes"]["declarations"], json!(["acme_open"]));
+    assert_eq!(
+        f["dependency_changes"]["declarations"],
+        json!(["acme_open"])
+    );
     // A dependency change is listed, never an attribution: the new Safe is
     // still flagged.
     assert_eq!(f["review"], true);

@@ -64,9 +64,8 @@ fn every_cx_term_is_used_typed_and_bound_to_lean() {
         .filter(|t| t.block == "CX")
         .collect::<Vec<_>>();
     assert_eq!(cx.len(), 80);
-    let registered = |s: &str| {
-        s == "obj" || s == "integer" || RENDERED_VALUE_SORTS.iter().any(|(v, _)| *v == s)
-    };
+    let registered =
+        |s: &str| s == "obj" || s == "integer" || RENDERED_VALUE_SORTS.iter().any(|(v, _)| *v == s);
     for t in &cx {
         assert!(t.name.starts_with("cx_"), "#{}", t.name);
         assert!(term(t.name).is_none(), "#{} is a premise term", t.name);
@@ -103,7 +102,8 @@ fn every_cx_term_is_used_typed_and_bound_to_lean() {
     assert_eq!(blocks[first - 1], "K6");
     // Every formula has its Lean theorem, every term its Lean definition.
     let lean = std::fs::read_to_string(
-        std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../proof/QCore/MeasureConnect.lean"),
+        std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("../../proof/QCore/MeasureConnect.lean"),
     )
     .expect("QCore.MeasureConnect");
     for (id, formula) in FORMULAS {

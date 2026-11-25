@@ -130,11 +130,14 @@ pub fn contract_dependency_clause(
     if !symbol(1, Symbol::LeftParen)
         || !symbol(3, Symbol::Comma)
         || !symbol(5, Symbol::ColonColon)
-        || !tokens.last().is_some_and(|t| **t == TokenKind::Symbol(Symbol::RightParen))
+        || !tokens
+            .last()
+            .is_some_and(|t| **t == TokenKind::Symbol(Symbol::RightParen))
     {
         return Err(malformed(expression));
     }
-    let (Some(target_crate), Some(namespace), Some(function)) = (string(2), word(4), word(6)) else {
+    let (Some(target_crate), Some(namespace), Some(function)) = (string(2), word(4), word(6))
+    else {
         return Err(malformed(expression));
     };
     let plain = |text: &str| {
@@ -143,7 +146,8 @@ pub fn contract_dependency_clause(
                 .bytes()
                 .all(|b| b.is_ascii_lowercase() || b.is_ascii_digit() || b == b'-')
     };
-    if !(target_crate.starts_with("quirin-provider-") || target_crate.starts_with("qcore-provider-"))
+    if !(target_crate.starts_with("quirin-provider-")
+        || target_crate.starts_with("qcore-provider-"))
         || !plain(&target_crate)
     {
         return Err(format!(
