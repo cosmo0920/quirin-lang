@@ -1,0 +1,53 @@
+lib/cmetrics/src/cmt_decode_msgpack.c unpack_basic_type Unknown -> Unknown
+   - 8382 local declaration may shadow a formal resource identity
+   - 8414 local declaration may shadow a formal resource identity
+   + 8382 call to uncontracted function `cmt_map_destroy`
+   + 8414 call to uncontracted function `cmt_map_destroy`
+lib/cmetrics/src/cmt_mpack_utils.c cmt_mpack_consume_string_tag Unknown -> Unknown
+   - 6334 local declaration may shadow a formal resource identity
+   - 6336 local declaration may shadow a formal resource identity
+   + 6334 unresolved resource identity `output_buffer`
+   + 6336 unresolved resource identity `output_buffer`
+lib/ctraces/src/ctr_mpack_utils.c ctr_mpack_consume_binary_tag Unknown -> Unknown
+   - 2184 local declaration may shadow a formal resource identity
+   - 2187 local declaration may shadow a formal resource identity
+   - 2193 local declaration may shadow a formal resource identity
+   + 2184 unresolved resource identity `output_buffer`
+   + 2187 indirect memory access is outside the resource projection
+   + 2193 indirect memory access is outside the resource projection
+lib/ctraces/src/ctr_mpack_utils.c ctr_mpack_consume_string_tag Unknown -> Unknown
+   - 2147 local declaration may shadow a formal resource identity
+   - 2150 local declaration may shadow a formal resource identity
+   - 2156 local declaration may shadow a formal resource identity
+   + 2147 unresolved resource identity `output_buffer`
+   + 2150 indirect memory access is outside the resource projection
+   + 2156 indirect memory access is outside the resource projection
+lib/librdkafka-2.15.0/src/rdkafka_broker.c rd_kafka_broker_share_session_add_remove_toppar Unknown -> Unknown
+   - 22536 local declaration may shadow a formal resource identity
+   - 22543 local declaration may shadow a formal resource identity
+   + 22536 indirect memory access is outside the resource projection
+   + 22543 indirect memory access is outside the resource projection
+lib/librdkafka-2.15.0/src/rdkafka_cgrp.c rd_kafka_cgrp_consumer_assignment_with_metadata Unknown -> Unknown
+   - 21940 local declaration may shadow a formal resource identity
+   + 21940 indirect memory access is outside the resource projection
+lib/librdkafka-2.15.0/src/rdkafka_feature.c rd_kafka_ApiVersions_copy Unknown -> Unknown
+   - 19827 local declaration may shadow a formal resource identity
+   + 19827 indirect memory access is outside the resource projection
+lib/librdkafka-2.15.0/src/rdkafka_msgset_writer.c rd_kafka_gzip_compress Unknown -> Unknown
+   - 20104 local declaration may shadow a formal resource identity
+   - 20113 local declaration may shadow a formal resource identity
+   + 20104 indirect memory access is outside the resource projection
+   + 20113 indirect memory access is outside the resource projection
+lib/librdkafka-2.15.0/src/rdkafka_request.c rd_kafka_handle_ApiVersion Unknown -> Unknown
+   - 22288 local declaration may shadow a formal resource identity
+   - 22295 local declaration may shadow a formal resource identity
+   + 22288 indirect memory access is outside the resource projection
+   + 22295 indirect memory access is outside the resource projection
+lib/librdkafka-2.15.0/src/rdkafka_telemetry_encode.c serialize_Metric Unknown -> Unknown
+   - 20983 local declaration may shadow a formal resource identity
+lib/monkey/mk_server/mk_utils.c mk_utils_gmt_cache_get Unknown -> Unknown
+   - 5403 local declaration may shadow a formal resource identity
+   + 5403 indirect memory access is outside the resource projection
+lib/monkey/mk_server/mk_utils.c mk_utils_utime2gmt Unknown -> Unknown
+   - 5471 local declaration may shadow a formal resource identity
+   + 5471 call to uncontracted function `mk_utils_gmt_cache_add`
