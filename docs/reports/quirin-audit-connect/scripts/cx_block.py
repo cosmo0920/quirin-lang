@@ -52,7 +52,7 @@ TERMS = [
     ("cx_unmatched", P, ["cx_step", "cx_route"], None, "`#cx_unmatched(#s,#r)`: step `#s` lists an unmatched function row of `#r`"),
     ("cx_unmatched_units", P, ["cx_step", "cx_route"], None, "`#cx_unmatched_units(#s,#r)`: step `#s` lists an unmatched unit row of `#r`"),
     ("cx_conflicted", P, ["cx_step", "cx_route"], None, "`#cx_conflicted(#s,#r)`: a side of step `#s` has a composition-conflict row of `#r`"),
-    ("cx_disagrees", P, ["cx_step", "cx_route"], None, "`#cx_disagrees(#s,#r)`: a row of `#r` that `#s` and a neighbouring step both list has two verdicts at their shared side"),
+    ("cx_disagrees", P, ["cx_step", "cx_route"], None, "`#cx_disagrees(#s,#r)`: a row of `#r` that `#s` lists has a before verdict other than the after verdict of its nearest earlier listing"),
     # Part A: rows
     ("cx_row_route", F, ["cx_row"], "cx_route", "`#cx_row_route(#w)`: the route row `#w` belongs to"),
     ("cx_listed", P, ["cx_step", "cx_row"], None, "`#cx_listed(#s,#w)`: step `#s` lists `#w` (moved, content-changed, unmatched, a unit move or unit field difference)"),
