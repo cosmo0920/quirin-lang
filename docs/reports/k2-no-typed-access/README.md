@@ -360,6 +360,23 @@ provider contract) `rd_kafka_share_partition_offsets_list_new`'s own status is
 (an `unknown_alias:elem` also appears beside it in the probe), as predicted
 Unknown. A unit's own result in these probes is the whole unit's (Unknown).
 
+## 8a. Targeted checks (no card gate, user 2026-11-24)
+
+On the tip `3e1b54f5a` (analyzer bytes; later commits are records), rebased on `110a69c8e`:
+
+| Command | Exit | Counts | Log (private) |
+|---|---:|---|---|
+| `scripts/targeted-tests.sh t3`: `cargo test -p qcore-c-gateway --lib` | 0 | 1,443 passed, 2 ignored | `private/k2/t3/gateway-lib.log` |
+| same: `--test k2_no_typed_access` | 0 | 13 passed | `private/k2/t3/gateway-k2_no_typed_access.log` |
+| same: every gateway test file holding a product run or a `sizeof(T)` comparison: `cg08_casts_and_type_queries`, `neutral_expression_positions`, `scalar_statement_forms`, `sizeof_operand` | 0 each | 14, 34, 15, 17 passed | `private/k2/t3/gateway-*.log` |
+| same: `qcore-contract` `plugin_guarded_symbols`, `formal_binding_descriptions`, `cjson_guarded_symbols` | 0 each | 4, 9, 8 passed | `private/k2/t3/contract-*.log` |
+| same: `cargo test -p qcore-frontend` | 0 | 312 passed | `private/k2/t3/frontend.log` |
+| `cargo clippy -p qcore-c-gateway -p qcore-frontend --all-targets -- -D warnings` | 0 | | `private/k2/clippy2.log` |
+| `cargo fmt --check` | 0 | | |
+| `gate_lean.py --module QCore.TypeQueryPositions --audit AuditTypeQueryPositions.lean` (lean slot) | 0 | 17 theorems audited, axioms `propext`, `Quot.sound` only | `private/k2/lean3.log` |
+| `gen_rule_docs.py --check`, `gen_lean_roots.py --check` | 0 | 274 rule files, 566 modules | |
+| `apply_amendments.py integration-amendments.json --check` | 0 | 4 amended, 1 registered | |
+
 ## 9. Records
 
 - [census/](census/): re-census join, leaf fates, Monkey line offsets, shapes,
