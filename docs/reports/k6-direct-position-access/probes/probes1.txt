@@ -1,0 +1,22 @@
+# P1 file-scope / static record object, scalar member (clear_unit_test_data shape)
+struct g { int a; long b; char v[4]; struct box *p; }; static struct g G; void w(void) { G.a = 1; }
+struct g { int a; long b; char v[4]; struct box *p; }; static struct g G; void w(long x) { G.b = x; }
+struct g { int a; long b; char v[4]; struct box *p; }; static struct g G; void w(void) { G.v[0] = 0; }
+struct g { int a; long b; char v[4]; struct box *p; }; static struct g G; long w(void) { return G.b; }
+struct g { int a; long b; char v[4]; struct box *p; }; static struct g G; int w(void) { if (G.a) return 1; return 0; }
+struct g { int a; long b; char v[4]; struct box *p; }; struct g G; void w(void) { G.a = 1; }
+struct g { int a; long b; char v[4]; struct box *p; }; void w(void) { static struct g S; S.a = 1; }
+struct g { int a; long b; char v[4]; struct box *p; }; void w(void) { struct g L; L.a = 1; }
+struct g { int a; long b; char v[4]; struct box *p; }; void w(void) { struct g L; L.v[0] = 0; }
+struct g { int a; long b; char v[4]; struct box *p; }; static struct g G; void w(void) { G.p = 0; }
+struct g { int a; long b; char v[4]; struct box *p; }; static struct g G; void w(void) { d_copy(&G, &G, sizeof(G)); G.a = 1; }
+# P2 (&X)->f
+struct h { struct box *first; }; struct q { struct h head; long len; }; struct box *w(struct q *p) { return (&p->head)->first; }
+struct h { struct box *first; }; struct q { struct h head; long len; }; struct box *w(struct q *p) { return p->head.first; }
+struct ks { int len; const char *str; }; struct mset { struct ks bytes; }; int w(struct mset *m, int c) { int size; size = (int)((((&m->bytes)->len) == -1 ? 0 : ((&m->bytes)->len)) / c); return size; }
+struct ks { int len; const char *str; }; struct mset { struct ks bytes; }; int w(struct mset *m, int c) { int size; size = (int)(((m->bytes.len) == -1 ? 0 : (m->bytes.len)) / c); return size; }
+struct ks { int len; const char *str; }; struct mset { struct ks bytes; }; int w(struct mset *m) { int size; size = (&m->bytes)->len; return size; }
+struct ks { int len; const char *str; }; struct ne { struct ks Host; }; struct nes { int cnt; struct ne *eps; }; long w(struct nes *p, int i) { long s = (((&p->eps[i].Host)->len) == -1 ? 0 : ((&p->eps[i].Host)->len)) + 1; return s; }
+# P3 switch over a scalar ?:
+struct ev { int t; }; const char *w(const struct ev *e) { switch (e ? e->t : 0) { case 0: return "a"; default: return "b"; } }
+struct ev { int t; }; const char *w(const struct ev *e) { int t = e ? e->t : 0; switch (t) { case 0: return "a"; default: return "b"; } }

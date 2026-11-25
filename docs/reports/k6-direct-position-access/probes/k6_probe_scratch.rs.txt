@@ -1,0 +1,147 @@
+// SPDX-License-Identifier: Apache-2.0
+//
+// Scratch probe for card K6 (not committed).
+
+use std::collections::BTreeMap;
+
+use qcore_c_gateway::legacy_c::{
+    C11TranslationUnit, LegacyDiagnosticKind, LegacyProgramSummary, ResourceContracts,
+    UnrestrictedLegacyResult, analyze_unrestricted_c11,
+};
+use qcore_contract::contract_loader::load_resource_contract_sources;
+
+const DECLARATIONS: &str = "\
+int k_open(const char *path); \
+int k_close(int fd); \
+void *k_alloc(__SIZE_TYPE__ size); \
+void k_free(void *p); \
+__SIZE_TYPE__ d_len(const void *s); \
+char *d_chr(const char *s, int c); \
+void *d_copy(void *dst, const void *src, __SIZE_TYPE__ n); \
+int ext(int); \
+int ext2(int); \
+struct box { long n; char *name; struct box *next; int (*cb)(int); };";
+
+fn contracts() -> ResourceContracts {
+    load_resource_contract_sources(&BTreeMap::from([
+        (
+            "descriptor_generic.qv".to_owned(),
+            include_str!("fixtures/contracts/descriptor_generic.qv").to_owned(),
+        ),
+        (
+            "derived_result_generic.qv".to_owned(),
+            include_str!("fixtures/contracts/derived_result_generic.qv").to_owned(),
+        ),
+    ]))
+    .expect("the fixtures load")
+}
+
+fn program(result: &UnrestrictedLegacyResult) -> &LegacyProgramSummary {
+    match result {
+        UnrestrictedLegacyResult::Safe(certificate) => &certificate.summary,
+        UnrestrictedLegacyResult::Unsafe(summary) => summary,
+        UnrestrictedLegacyResult::Unknown {
+            partial: Some(summary),
+            ..
+        } => summary,
+        other => panic!("no projection at all: {other:?}"),
+    }
+}
+
+fn key(kind: &LegacyDiagnosticKind) -> String {
+    match kind {
+        LegacyDiagnosticKind::UnknownAlias { variable } => format!("unknown_alias:{variable}"),
+        LegacyDiagnosticKind::Leak { .. } => "leak".to_owned(),
+        LegacyDiagnosticKind::Unsupported { description } => format!("unsupported:{description}"),
+        other => format!("{other:?}")
+            .split([' ', '{'])
+            .next()
+            .unwrap_or("")
+            .to_owned(),
+    }
+}
+
+fn outcome(body: &str) -> (&'static str, Vec<String>) {
+    let source = format!("{DECLARATIONS} {body}");
+    let result = analyze_unrestricted_c11(
+        &C11TranslationUnit {
+            source: &source,
+            ..Default::default()
+        },
+        "w",
+        &contracts(),
+    )
+    .unwrap_or_else(|error| panic!("fixture rejected by Clang: {error:?}\n{source}"));
+    let status = match &result {
+        UnrestrictedLegacyResult::Safe(_) => "Safe",
+        UnrestrictedLegacyResult::Unsafe(_) => "Unsafe",
+        UnrestrictedLegacyResult::Unknown { .. } => "Unknown",
+    };
+    let function = program(&result).functions.get("w").expect("w analysed");
+    let mut keys = function
+        .diagnostics
+        .iter()
+        .map(|diagnostic| key(&diagnostic.kind))
+        .collect::<Vec<_>>();
+    keys.sort();
+    keys.dedup();
+    (status, keys)
+}
+
+#[test]
+fn probe() {
+    let bodies: Vec<String> = match std::env::var("K6_PROBE_FILE") {
+        Ok(path) => std::fs::read_to_string(path)
+            .expect("probe file")
+            .lines()
+            .filter(|line| !line.trim().is_empty() && !line.starts_with('#'))
+            .map(str::to_owned)
+            .collect(),
+        Err(_) => vec!["long w(struct box *b) { d_len(b->name); return 0; }".to_owned()],
+    };
+    for body in bodies {
+        let (status, keys) = outcome(&body);
+        println!("PROBE {status} {keys:?}\n   {body}");
+    }
+}
+
+/// K6 scratch: analyse functions of a preprocessed unit (`K6_UNIT_FILE`,
+/// `K6_UNIT_FUNCS` comma-separated) over the generic fixture contracts.
+#[test]
+fn unit_probe() {
+    let (Ok(file), Ok(funcs)) = (std::env::var("K6_UNIT_FILE"), std::env::var("K6_UNIT_FUNCS"))
+    else {
+        return;
+    };
+    let source = std::fs::read_to_string(&file).expect("unit file");
+    for name in funcs.split(',') {
+        let result = analyze_unrestricted_c11(
+            &C11TranslationUnit {
+                source: &source,
+                ..Default::default()
+            },
+            name,
+            &contracts(),
+        );
+        let Ok(result) = result else {
+            println!("UNIT {name} rejected: {:?}", result.err());
+            continue;
+        };
+        let status = match &result {
+            UnrestrictedLegacyResult::Safe(_) => "Safe",
+            UnrestrictedLegacyResult::Unsafe(_) => "Unsafe",
+            UnrestrictedLegacyResult::Unknown { .. } => "Unknown",
+        };
+        let keys = program(&result).functions.get(name).map(|function| {
+            let mut keys = function
+                .diagnostics
+                .iter()
+                .map(|diagnostic| format!("{}@{}", key(&diagnostic.kind), diagnostic.line))
+                .collect::<Vec<_>>();
+            keys.sort();
+            keys.dedup();
+            keys
+        });
+        println!("UNIT {status} {name} {keys:?}");
+    }
+}

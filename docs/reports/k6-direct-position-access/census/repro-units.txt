@@ -1,0 +1,17 @@
+lib/librdkafka-2.15.0/src/cJSON.c
+lib/librdkafka-2.15.0/src/lz4hc.c
+lib/librdkafka-2.15.0/src/rdbuf.c
+lib/librdkafka-2.15.0/src/rdkafka.c
+lib/librdkafka-2.15.0/src/rdkafka_admin.c
+lib/librdkafka-2.15.0/src/rdkafka_broker.c
+lib/librdkafka-2.15.0/src/rdkafka_conf.c
+lib/librdkafka-2.15.0/src/rdkafka_event.c
+lib/librdkafka-2.15.0/src/rdkafka_mock.c
+lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c
+lib/librdkafka-2.15.0/src/rdkafka_partition.c
+lib/librdkafka-2.15.0/src/rdkafka_request.c
+lib/librdkafka-2.15.0/src/rdkafka_sasl_cyrus.c
+lib/librdkafka-2.15.0/src/rdkafka_share_acknowledgement.c
+lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c
+lib/librdkafka-2.15.0/src/rdkafka_telemetry_decode.c
+lib/librdkafka-2.15.0/src/rdlist.c

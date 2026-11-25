@@ -2642,6 +2642,20 @@ pub const RENDERED_VALUE_SORTS: &[(&str, &str)] = &[
         "k2_run",
         "a run of a body's tokens the declaration reader tries as a local declaration (one starting after `{`, `}`, `;`, `(` or `:`)",
     ),
+    // Card K6-DIRECT-POSITION-ACCESS (gateway rule 81, the K6 block): the
+    // sorts of rule 81's readings, prefixed `k6_`.
+    (
+        "k6_amp",
+        "an occurrence of a single unary `&` directly before a name in a body's token stream",
+    ),
+    (
+        "k6_member",
+        "an arrow member expression of a function's Clang AST (`E->f`)",
+    ),
+    (
+        "k6_place",
+        "what a place reader answers for an expression: a root object with its member, subscript and dereference steps, or a refusal",
+    ),
 ];
 
 /// The G01p sort of a rendered term: a value of a rendered value sort, a
@@ -3642,6 +3656,109 @@ pub const RENDERED_TERMS: &[RenderedTerm] = &[
         sort: RenderedSort::Predicate(&["k2_run"]),
         meaning: "`#k2_declaration(#r)`: the run begins a C11 6.7 declaration whose first declarator's identifier follows the run's `*` (a declarator identifier is never a keyword, C11 6.4.1p2 and 6.7.6)",
         block: "K2",
+    },
+    // ---- Card K6-DIRECT-POSITION-ACCESS (gateway rule 81; user rules
+    // 2026-11-20 and 2026-11-25, every condition a formula): the terms of
+    // rule 81's admission conditions and refusals, each a formula of this
+    // rendering (`guarded_proposition` validates them). Every name is
+    // prefixed `k6_`. An `k6_amp` is one `&` occurrence of a body, a
+    // `k6_member` one arrow member of a function's AST. The Lean model is
+    // `QCore.AddressArrowPlace` (`k6Terms`, one definition per term). ----
+    RenderedTerm {
+        name: "k6_binds",
+        sort: RenderedSort::Predicate(&["k6_amp"]),
+        meaning: "`#k6_binds(#a)`: the lexical `may_bind` reader's address arm, with rule 81, binds the name after `#a` (Lean `newBinds`)",
+        block: "K6",
+    },
+    RenderedTerm {
+        name: "k6_old_binds",
+        sort: RenderedSort::Predicate(&["k6_amp"]),
+        meaning: "`#k6_old_binds(#a)`: the address arm before rule 81 binds the name after `#a`; it binds every single `&` before a name (Lean `oldBinds`)",
+        block: "K6",
+    },
+    RenderedTerm {
+        name: "k6_plain_binds",
+        sort: RenderedSort::Predicate(&["k6_amp"]),
+        meaning: "`#k6_plain_binds(#a)`: the address arm binds the name in the plain spelling of `#a`'s place (`( & p SEL ) -> f` written `p SEL . f`, an outer `&` kept), which has a `&` before the name only under an outer `&` (Lean `plainBinds`)",
+        block: "K6",
+    },
+    RenderedTerm {
+        name: "k6_exempt",
+        sort: RenderedSort::Predicate(&["k6_amp"]),
+        meaning: "`#k6_exempt(#a)`: `address_arrow_place::dereferenced_address_group` answers true at `#a` (Lean `exempt`)",
+        block: "K6",
+    },
+    RenderedTerm {
+        name: "k6_opens_group",
+        sort: RenderedSort::Predicate(&["k6_amp"]),
+        meaning: "`#k6_opens_group(#a)`: the token before `#a` is `(`, opening the group `( & NAME`",
+        block: "K6",
+    },
+    RenderedTerm {
+        name: "k6_name_arrow",
+        sort: RenderedSort::Predicate(&["k6_amp"]),
+        meaning: "`#k6_name_arrow(#a)`: the name after `#a` is followed by `->`, so the `&` takes a member place, never the name (C11 6.5.2 binds tighter than 6.5.3)",
+        block: "K6",
+    },
+    RenderedTerm {
+        name: "k6_selection_chain",
+        sort: RenderedSort::Predicate(&["k6_amp"]),
+        meaning: "`#k6_selection_chain(#a)`: the tokens from the name to the group's matching `)` are member selections (`-> f`, `. f`) and balanced subscripts only",
+        block: "K6",
+    },
+    RenderedTerm {
+        name: "k6_group_arrow",
+        sort: RenderedSort::Predicate(&["k6_amp"]),
+        meaning: "`#k6_group_arrow(#a)`: the group's `)` is followed by `->`, which dereferences the address at once",
+        block: "K6",
+    },
+    RenderedTerm {
+        name: "k6_outer_address",
+        sort: RenderedSort::Predicate(&["k6_amp"]),
+        meaning: "`#k6_outer_address(#a)`: reading back from the group through `(` tokens meets a `&` (`&((&p->q)->f)`, the plain `&p->q.f`)",
+        block: "K6",
+    },
+    RenderedTerm {
+        name: "k6_place",
+        sort: RenderedSort::Function(&["k6_member"], "k6_place"),
+        meaning: "`#k6_place(#e)`: what the elaborator's place reader `path_place`, with rule 81, answers for `#e` (Lean `newPlace`)",
+        block: "K6",
+    },
+    RenderedTerm {
+        name: "k6_old_place",
+        sort: RenderedSort::Function(&["k6_member"], "k6_place"),
+        meaning: "`#k6_old_place(#e)`: what `path_place` answered for `#e` before rule 81 (Lean `oldPlace`)",
+        block: "K6",
+    },
+    RenderedTerm {
+        name: "k6_plain_place",
+        sort: RenderedSort::Function(&["k6_member"], "k6_place"),
+        meaning: "`#k6_plain_place(#e)`: what `path_place` answers for the plain spelling of `#e`, `(&X)->f` written `X.f`; `#e` itself when its base is no address (Lean `plainPlace`)",
+        block: "K6",
+    },
+    RenderedTerm {
+        name: "k6_root",
+        sort: RenderedSort::Function(&["k6_place"], "obj"),
+        meaning: "`#k6_root(#p)`: the object a place answer is rooted at (Lean `Place.root`; a refusal has none)",
+        block: "K6",
+    },
+    RenderedTerm {
+        name: "k6_refused",
+        sort: RenderedSort::Value("k6_place"),
+        meaning: "the place reader's refusal (no place)",
+        block: "K6",
+    },
+    RenderedTerm {
+        name: "k6_over_address",
+        sort: RenderedSort::Predicate(&["k6_member"]),
+        meaning: "`#k6_over_address(#e)`: `#e`'s base is, through parentheses, a unary `&`",
+        block: "K6",
+    },
+    RenderedTerm {
+        name: "k6_over_member_address",
+        sort: RenderedSort::Predicate(&["k6_member"]),
+        meaning: "`#k6_over_member_address(#e)`: `#e`'s base is, through parentheses, `&` of a member or subscript place (`MemberExpr`, `ArraySubscriptExpr`), rule 10n's `arrow_through_address` shape",
+        block: "K6",
     },
 ];
 

@@ -1,0 +1,308 @@
+{
+ "report": "/media/Data/GitHub/quirin-lang/build/cycle19/clang/046accf6aded7906f66a1baf0202da349e521736/fluent-bit-clang-source/reports/resource-diagnostics.json",
+ "rows": 4934,
+ "unknown_rows": 3750,
+ "safe_rows": 1173,
+ "unsafe_rows": 11,
+ "join": {
+  "alias-joined": 9420,
+  "group-joined": 11541,
+  "alias-new": 688,
+  "group-new": 718
+ },
+ "k6_leaf_groups": {
+  "expr:statement:direct": 875,
+  "expr:cond:direct": 465,
+  "expr:return:direct": 55
+ },
+ "k6_leaves": {
+  "expr:statement:direct": 875,
+  "expr:cond:direct": 465,
+  "expr:return:direct": 55
+ },
+ "k6_leaves_total": 1395,
+ "k6_fine_tags": {
+  "expr:statement:direct:local": 402,
+  "expr:statement:direct:formal": 329,
+  "expr:cond-if:direct:local": 240,
+  "expr:cond-if:direct:formal": 140,
+  "expr:statement:direct:formal+local": 108,
+  "expr:cond-for:direct:local": 51,
+  "expr:statement:direct:global": 35,
+  "expr:return:direct:formal": 30,
+  "expr:return:direct:local": 22,
+  "expr:cond-for:direct:formal": 9,
+  "expr:cond-if:direct:global": 9,
+  "expr:cond-if:direct:formal+local": 5,
+  "expr:cond-while:direct:local": 5,
+  "expr:return:direct:global": 3,
+  "expr:cond-for:direct:global": 2,
+  "expr:cond-while:direct:formal+local": 1,
+  "expr:cond-switch:direct:formal": 1,
+  "expr:cond-while:direct:formal": 1,
+  "expr:statement:direct:formal+global": 1,
+  "expr:cond-switch:direct:global": 1
+ },
+ "k6_rows_touched": 671,
+ "k6_rows_freed_alone": 25,
+ "k6_distinct_freed_alone": 25,
+ "per_tag_freed_alone": {
+  "expr:cond:direct": 2,
+  "expr:return:direct": 15,
+  "expr:statement:direct": 8
+ },
+ "next_blocker_of_touched": {
+  "ALIAS+COND+IND+SYNTAX": 68,
+  "ALIAS+IND+UNC-RUN": 64,
+  "ALIAS+COND+IND+UNC-RUN": 40,
+  "ALIAS+UNC-RUN": 36,
+  "ALIAS+IND": 33,
+  "ALIAS+CALLBACK+COND+IND": 33,
+  "ALIAS+IND+SYNTAX+UNC-RUN": 32,
+  "none": 25,
+  "ALIAS+COND+IND+REFCOUNT": 25,
+  "ALIAS+IND+SYNTAX": 23,
+  "ALIAS": 22,
+  "UNC-RUN": 18,
+  "IND": 17,
+  "ALIAS+COND+IND+OUTPARAM": 15,
+  "ALIAS+IND+UNC-EXT+UNC-RUN": 11,
+  "IND+UNC-RUN": 11,
+  "ALIAS+CALLBACK+IND+UNC-RUN": 10,
+  "ALIAS+IND+SYNTAX+UNC-EXT": 9,
+  "ALIAS+COND+UNC-RUN": 9,
+  "IND+SYNTAX": 7,
+  "SYNTAX": 7,
+  "ALIAS+IND+OUTPARAM+SYNTAX": 6,
+  "COND": 6,
+  "ALIAS+IND+REFCOUNT+SYNTAX": 6,
+  "ALIAS+COND+IND": 6
+ },
+ "frozen_list": {
+  "size": 21,
+  "safe_now": 0,
+  "absent_now": 0,
+  "still_freed_alone": 20,
+  "unknown_with_no_k6_leaf": 1,
+  "rows": [
+   {
+    "function": "librdkafka::lib/librdkafka-2.15.0/src/cJSON.c::cJSON_GetErrorPtr",
+    "statuses": [
+     "Unknown"
+    ],
+    "k6_leaves_now": 1,
+    "freed_alone_now": true,
+    "other_blockers": {}
+   },
+   {
+    "function": "librdkafka::lib/librdkafka-2.15.0/src/cJSON.c::cJSON_GetStringValue",
+    "statuses": [
+     "Unknown"
+    ],
+    "k6_leaves_now": 1,
+    "freed_alone_now": true,
+    "other_blockers": {}
+   },
+   {
+    "function": "librdkafka::lib/librdkafka-2.15.0/src/rdbuf.c::extra_alloc",
+    "statuses": [
+     "Unknown"
+    ],
+    "k6_leaves_now": 1,
+    "freed_alone_now": true,
+    "other_blockers": {}
+   },
+   {
+    "function": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka.c::rd_kafka_name",
+    "statuses": [
+     "Unknown"
+    ],
+    "k6_leaves_now": 1,
+    "freed_alone_now": true,
+    "other_blockers": {}
+   },
+   {
+    "function": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_admin.c::rd_kafka_ConfigEntry_name",
+    "statuses": [
+     "Unknown"
+    ],
+    "k6_leaves_now": 1,
+    "freed_alone_now": true,
+    "other_blockers": {}
+   },
+   {
+    "function": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_admin.c::rd_kafka_ConfigResource_configs",
+    "statuses": [
+     "Unknown"
+    ],
+    "k6_leaves_now": 1,
+    "freed_alone_now": true,
+    "other_blockers": {}
+   },
+   {
+    "function": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_admin.c::rd_kafka_MemberDescription_assignment",
+    "statuses": [
+     "Unknown"
+    ],
+    "k6_leaves_now": 1,
+    "freed_alone_now": true,
+    "other_blockers": {}
+   },
+   {
+    "function": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_admin.c::rd_kafka_TopicDescription_topic_id",
+    "statuses": [
+     "Unknown"
+    ],
+    "k6_leaves_now": 1,
+    "freed_alone_now": true,
+    "other_blockers": {}
+   },
+   {
+    "function": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_admin.c::rd_kafka_UserScramCredentialsDescription_scramcredentialinfo",
+    "statuses": [
+     "Unknown"
+    ],
+    "k6_leaves_now": 1,
+    "freed_alone_now": true,
+    "other_blockers": {}
+   },
+   {
+    "function": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_broker.c::rd_kafka_broker_weight_usable",
+    "statuses": [
+     "Unknown"
+    ],
+    "k6_leaves_now": 1,
+    "freed_alone_now": true,
+    "other_blockers": {}
+   },
+   {
+    "function": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_conf.c::rd_kafka_conf",
+    "statuses": [
+     "Unknown"
+    ],
+    "k6_leaves_now": 1,
+    "freed_alone_now": true,
+    "other_blockers": {}
+   },
+   {
+    "function": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_event.c::rd_kafka_event_name",
+    "statuses": [
+     "Unknown"
+    ],
+    "k6_leaves_now": 1,
+    "freed_alone_now": true,
+    "other_blockers": {}
+   },
+   {
+    "function": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_mock.c::rd_kafka_mock_partition_find",
+    "statuses": [
+     "Unknown"
+    ],
+    "k6_leaves_now": 1,
+    "freed_alone_now": true,
+    "other_blockers": {}
+   },
+   {
+    "function": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_mock.c::rd_kafka_mock_partition_next_leader_response",
+    "statuses": [
+     "Unknown"
+    ],
+    "k6_leaves_now": 1,
+    "freed_alone_now": true,
+    "other_blockers": {}
+   },
+   {
+    "function": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c::rd_kafka_mock_msgset_est_record_size",
+    "statuses": [
+     "Unknown"
+    ],
+    "k6_leaves_now": 1,
+    "freed_alone_now": true,
+    "other_blockers": {}
+   },
+   {
+    "function": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_request.c::rd_kafkap_leader_discovery_tmpabuf_add_alloc_brokers",
+    "statuses": [
+     "Unknown"
+    ],
+    "k6_leaves_now": 1,
+    "freed_alone_now": true,
+    "other_blockers": {}
+   },
+   {
+    "function": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_share_acknowledgement.c::rd_kafka_share_partition_offsets_offsets",
+    "statuses": [
+     "Unknown"
+    ],
+    "k6_leaves_now": 1,
+    "freed_alone_now": true,
+    "other_blockers": {}
+   },
+   {
+    "function": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_telemetry_decode.c::clear_unit_test_data",
+    "statuses": [
+     "Unknown"
+    ],
+    "k6_leaves_now": 14,
+    "freed_alone_now": true,
+    "other_blockers": {}
+   },
+   {
+    "function": "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_telemetry_decode.c::unit_test_telemetry_decoded_int64",
+    "statuses": [
+     "Unknown"
+    ],
+    "k6_leaves_now": 1,
+    "freed_alone_now": true,
+    "other_blockers": {}
+   },
+   {
+    "function": "librdkafka::lib/librdkafka-2.15.0/src/rdlist.c::rd_list_elem",
+    "statuses": [
+     "Unknown"
+    ],
+    "k6_leaves_now": 1,
+    "freed_alone_now": true,
+    "other_blockers": {}
+   },
+   {
+    "function": "monkey-libevent::lib/monkey/mk_server/mk_plugin.c::mk_plugin_time_now_human",
+    "statuses": [
+     "Unknown"
+    ],
+    "k6_leaves_now": 0,
+    "freed_alone_now": false,
+    "other_blockers": {
+     "RET:new": 1
+    }
+   }
+  ]
+ },
+ "freed_alone_now": [
+  "librdkafka::lib/librdkafka-2.15.0/src/cJSON.c::cJSON_GetErrorPtr",
+  "librdkafka::lib/librdkafka-2.15.0/src/cJSON.c::cJSON_GetStringValue",
+  "librdkafka::lib/librdkafka-2.15.0/src/lz4hc.c::LZ4HC_init_internal",
+  "librdkafka::lib/librdkafka-2.15.0/src/rdbuf.c::extra_alloc",
+  "librdkafka::lib/librdkafka-2.15.0/src/rdkafka.c::rd_kafka_name",
+  "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_admin.c::rd_kafka_ConfigEntry_name",
+  "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_admin.c::rd_kafka_ConfigResource_configs",
+  "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_admin.c::rd_kafka_ListConsumerGroups_result_errors",
+  "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_admin.c::rd_kafka_MemberDescription_assignment",
+  "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_admin.c::rd_kafka_TopicDescription_topic_id",
+  "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_admin.c::rd_kafka_UserScramCredentialsDescription_scramcredentialinfo",
+  "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_broker.c::rd_kafka_broker_weight_usable",
+  "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_conf.c::rd_kafka_conf",
+  "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_event.c::rd_kafka_event_name",
+  "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_mock.c::rd_kafka_mock_partition_find",
+  "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_mock.c::rd_kafka_mock_partition_next_leader_response",
+  "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c::rd_kafka_mock_msgset_est_record_size",
+  "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_partition.c::rd_kafka_topic_partition_topic",
+  "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_request.c::rd_kafkap_leader_discovery_tmpabuf_add_alloc_brokers",
+  "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_sasl_cyrus.c::rd_kafka_sasl_cyrus_cb_canon",
+  "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_share_acknowledgement.c::rd_kafka_share_partition_offsets_offsets",
+  "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c::sort_by_map_elem_val_toppar_list_cnt",
+  "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_telemetry_decode.c::clear_unit_test_data",
+  "librdkafka::lib/librdkafka-2.15.0/src/rdkafka_telemetry_decode.c::unit_test_telemetry_decoded_int64",
+  "librdkafka::lib/librdkafka-2.15.0/src/rdlist.c::rd_list_elem"
+ ]
+}

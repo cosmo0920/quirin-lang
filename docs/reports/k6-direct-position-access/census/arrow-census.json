@@ -1,0 +1,39 @@
+{
+ "groups": {
+  "COND:dereferenced": 37,
+  "COND:outer-address": 1,
+  "IND:dereferenced": 153,
+  "RET:dereferenced": 1
+ },
+ "functions": {
+  "COND:dereferenced": 33,
+  "COND:outer-address": 1,
+  "IND:dereferenced": 122,
+  "RET:dereferenced": 1
+ },
+ "distinct_functions": 125,
+ "freed_alone": [
+  "lib/librdkafka-2.15.0/src/rdkafka_mock.c::rd_kafka_mock_partition_next_leader_response",
+  "lib/librdkafka-2.15.0/src/rdkafka_mock_handlers.c::rd_kafka_mock_msgset_est_record_size"
+ ],
+ "samples": {
+  "IND:dereferenced": [
+   "set_up_time_series_for_label_set: for( head = (&context->time_series_entries)->next; head != (&context->time_series_entries); head = head->next ) {",
+   "set_up_time_series_for_label_set: for( head = (&metric->labels)->next; head != (&metric->labels); head = head->next ) {",
+   "set_up_time_series_for_label_set: for( head = (&context->cmt->static_labels->list)->next; head != (&context->cmt->static_labels->list); head = head->next ) {",
+   "set_up_time_series_for_label_set: for( head = (&metric->labels)->next; head != (&metric->labels); head = head->next ) {"
+  ],
+  "COND:dereferenced": [
+   "rd_buf_destroy: for ((seg) = ((&rbuf->rbuf_segments)->tqh_first); (seg) != (((void*)0)) && ((tmp) = ((seg)->seg_link.tqe_next), 1); (seg) = (tmp)) {",
+   "rd_kafka_destroy_internal: for ((rkt) = ((&rk->rk_topics)->tqh_first); (rkt) != (((void*)0)) && ((rkt_tmp) = ((rkt)->rkt_link.tqe_next), 1); (rkt) = (rkt_tmp)) {",
+   "rd_kafka_broker_bufq_purge_by_toppar: for ((rkbuf) = ((&rkbq->rkbq_bufs)->tqh_first); (rkbuf) != (((void*)0)) && ((tmp) = ((rkbuf)->rkbuf_link.tqe_next), 1); (rkbuf) = (tmp)) {",
+   "rd_kafka_broker_bufq_timeout_scan: for ((rkbuf) = ((&rkbq->rkbq_bufs)->tqh_first); (rkbuf) != (((void*)0)) && ((tmp) = ((rkbuf)->rkbuf_link.tqe_next), 1); (rkbuf) = (tmp)) {"
+  ],
+  "RET:dereferenced": [
+   "rd_kafka_mock_partition_next_leader_response: return ((&mpart->leader_responses)->tqh_first);"
+  ],
+  "COND:outer-address": [
+   "rd_kafka_txn_handle_AddPartitionsToTxn: do { rd_kafka_toppar_t * _cstmp; rd_kafka_toppar_t * _cstmp2; if ((((&rk->rk_eos.txn_pending_rktps)->tqh_first) == (((void*)0)))) { do { if (!(((&rk->rk_eos.txn"
+  ]
+ }
+}

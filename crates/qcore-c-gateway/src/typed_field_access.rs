@@ -1817,7 +1817,11 @@ fn is_written_at(body: &[&str], index: usize) -> bool {
     let previous = index.checked_sub(1).and_then(|at| body.get(at)).copied();
     let before = index.checked_sub(2).and_then(|at| body.get(at)).copied();
     // Rule 74e: an odd run of `&` (`p && x` takes no address).
-    crate::ampersand_runs::ends_in_address(body, index)
+    (crate::ampersand_runs::ends_in_address(body, index)
+        // K6-DIRECT-POSITION-ACCESS hook (rule 81): `( & p -> q ) -> f` is
+        // `p -> q . f`, which takes no address of `p`.
+        && !crate::address_arrow_place::dereferenced_address_group(body, index - 1))
+        // End K6-DIRECT-POSITION-ACCESS hook (rule 81).
         || matches!(
             (before, previous),
             (Some("+"), Some("+")) | (Some("-"), Some("-"))
