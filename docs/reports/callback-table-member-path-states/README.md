@@ -5,7 +5,9 @@
   four of queued cards", with CALLBACK-TABLE-MEMBER-PATH chosen as the fourth.
 * **Commits:** probe fixture `3836b3a40` (fails at base),
   [PREDICTION](PREDICTION.md) `75bd8b10d`, the semantic commit `e60f4522c`
-  (the measured tip), and this report.
+  (the measured tip), the shipped-clause test without a tree walk plus
+  records `cdb2db6af` (the gated tree; the change is test-only), and this
+  gate section.
 
 ## 1. Finding at base
 
@@ -168,7 +170,46 @@ corpus, system and slice) is for the integrator.
 
 ## 6. Gate, conflicts and follow-ups
 
-GATE
+**Record:** [`gate/gate-2.json`](gate/gate-2.json). **Command:** `sh
+private/toolchain/env.sh python3 scripts/gate_scope.py --base 43410b230
+--out private/gate-2` (Clang 21, Lean 4.35). The log is
+`private/logs/gate-2.log`. The tree was `cdb2db6af`, with this section and
+the gate record uncommitted (docs only). Scoped run, Lean all, no provider
+gate (`providers/` unchanged). **Exit 1, from the six known base failures
+alone.**
+
+| Step | Exit | Counts |
+|---|---:|---|
+| submodules, `fmt`, `clippy` | 0, 0, 0 | `third_party/libevent` checked out |
+| Rust suite (scoped) | 101 | 697 units; 10109 passed, **6 failed**, 24 ignored |
+| `reevaluation_probe`, `reevaluation_followup` | 0, 0 | |
+| Lean (`check_lean_audits.py`) | 0 | 509 audits |
+| Python suite | 0 | 807 tests |
+
+The 6 Rust failures are exactly the K5-LOCAL-ORIGIN-ALIASES (rule 77) pins
+that fail at base and are being re-pinned by a separate card:
+`scalar_read_identity::pointer_destination_retains_opaque_identity_refusal`,
+`detach_lookup_membership::production_lookup_baseline_refuses_the_unresolved_returned_cursor`,
+`access_path_positions::an_assignment_operand_is_a_borrowed_read_then_the_null_branch`,
+`typed_const_pointer_value::a_void_pointer_bit_cast_is_a_borrowed_read`,
+`lexical_closure_nested_assignment::a_never_bound_root_still_certifies`
+and `typed_root_declarations::an_assignment_operand_reads_the_ast_declared_local`.
+None of them was edited.
+
+**Gate 1** ([`gate/gate-1.json`](gate/gate-1.json), `private/gate-1`, tree
+`e60f4522c`) also exited 1. Its Rust suite had the same 6 base failures
+(10109 passed). It also had 3 Python failures. Two of them,
+`test_gate_scope_census.test_every_directory_literal_is_declared` and
+`test_tracked_files.test_every_remaining_tree_walk_in_the_tests_is_a_reviewed_one`,
+came from the shipped-clause test's walk of `providers/`. That walk was
+removed in `cdb2db6af` (§4). The third,
+`test_gate_slot_lane.test_a_short_job_overtakes_queued_audits_and_a_draining_suite`
+(`short/1` against `short/0`), ran while other worktrees held audit slots.
+It passed when rerun alone, as did the other two modules after the fix, and
+the whole suite passes in gate 2. Lean passed with 509 audits.
+
+**LLP64 fixture scan:** `llp64_fixture_scan.py --stdin` over the changed
+test paths exits 0. The fixture uses no size type and no enum.
 
 **Files likely to conflict, with the hook points:**
 `crates/qcore-c-gateway/src/legacy_callback_route.rs` (13 lines inside the
