@@ -1,0 +1,221 @@
+{
+ "old_groups": {
+  "poisoned-by-refusal": 1281,
+  "field-store-owner": 56,
+  "formal-handed-uncontracted": 3803,
+  "formal-handed-contracted": 150,
+  "borrowed-path-unguarded": 875,
+  "address-taken": 284,
+  "statement-expression-unguarded": 98,
+  "guarded-other": 674,
+  "derived-local-unguarded": 1037,
+  "formal-copied": 273,
+  "peer-release": 27,
+  "uncontracted-result-unguarded": 859,
+  "contracted-result-unguarded": 587,
+  "non-pointer-name": 1072,
+  "formal-not-handed": 63,
+  "unclassified": 33,
+  "global-pointer": 5
+ },
+ "groups_1124": {
+  "poisoned-by-refusal": 1114,
+  "formal-handed-uncontracted": 3725,
+  "formal-handed-contracted": 139,
+  "borrowed-path-unguarded": 860,
+  "address-taken": 275,
+  "field-store-owner": 48,
+  "guarded-other": 624,
+  "derived-local-unguarded": 1027,
+  "new": 178,
+  "peer-release": 27,
+  "uncontracted-result-unguarded": 768,
+  "non-pointer-name": 518,
+  "statement-expression-unguarded": 38,
+  "contracted-result-unguarded": 482,
+  "formal-not-handed": 62,
+  "unclassified": 23,
+  "formal-copied": 155,
+  "global-pointer": 5
+ },
+ "group_rows_1124": {
+  "poisoned-by-refusal": 423,
+  "formal-handed-uncontracted": 866,
+  "formal-handed-contracted": 88,
+  "borrowed-path-unguarded": 350,
+  "address-taken": 110,
+  "field-store-owner": 33,
+  "guarded-other": 344,
+  "derived-local-unguarded": 312,
+  "new": 75,
+  "peer-release": 8,
+  "uncontracted-result-unguarded": 328,
+  "non-pointer-name": 200,
+  "statement-expression-unguarded": 26,
+  "contracted-result-unguarded": 167,
+  "formal-not-handed": 46,
+  "unclassified": 9,
+  "formal-copied": 134,
+  "global-pointer": 4
+ },
+ "k4_leaves_1124": 4081,
+ "k4_rows_touched": 1085,
+ "k4_alone_rows": 3,
+ "k4_alone_distinct": 3,
+ "k4_alone": [
+  {
+   "lib": "cmetrics",
+   "file": "lib/cmetrics/src/cmt_encode_prometheus.c",
+   "fn": "metric_escape",
+   "groups": [
+    "formal-handed-contracted"
+   ],
+   "n": 1
+  },
+  {
+   "lib": "librdkafka",
+   "file": "lib/librdkafka-2.15.0/src/rddl.c",
+   "fn": "rd_dl_close",
+   "groups": [
+    "formal-handed-contracted"
+   ],
+   "n": 1
+  },
+  {
+   "lib": "monkey",
+   "file": "lib/monkey/mk_server/mk_config.c",
+   "fn": "mk_config_print_error_msg",
+   "groups": [
+    "formal-handed-contracted"
+   ],
+   "n": 1
+  }
+ ],
+ "k4_alone_with_new_rows": 1,
+ "k4_alone_with_new": [
+  {
+   "lib": "monkey",
+   "file": "lib/monkey/tls/tls_openssl.c",
+   "fn": "context_get_head",
+   "groups": [
+    "new"
+   ],
+   "n": 3,
+   "new": [
+    [
+     "lib/monkey/tls/tls_openssl.c:486",
+     "cur"
+    ],
+    [
+     "lib/monkey/tls/tls_openssl.c:488",
+     "cur"
+    ],
+    [
+     "lib/monkey/tls/tls_openssl.c:490",
+     "cur"
+    ]
+   ]
+  }
+ ],
+ "alone_by_single_tag": {
+  "alias:borrowed-path-unguarded": 10,
+  "alias:formal-handed-contracted": 3,
+  "alias:statement-expression-unguarded": 3,
+  "alias:non-pointer-name": 6,
+  "alias:poisoned-by-refusal": 1,
+  "alias:contracted-result-unguarded": 1,
+  "alias:derived-local-unguarded": 2,
+  "alias:guarded-other": 1,
+  "alias:uncontracted-result-unguarded": 1,
+  "alias:new": 1
+ },
+ "frozen_status_1124": {
+  "lib/cmetrics/src/cmt_encode_opentelemetry.c::get_context_arena": [
+   "Safe"
+  ],
+  "lib/cmetrics/src/cmt_encode_prometheus.c::metric_escape": [
+   "Unknown"
+  ],
+  "lib/librdkafka-2.15.0/src/rddl.c::rd_dl_close": [
+   "Unknown"
+  ],
+  "lib/librdkafka-2.15.0/src/rdkafka_assignor.c::rd_kafka_assignor_cmp_str": [
+   "Safe"
+  ],
+  "lib/librdkafka-2.15.0/src/rdkafka_assignor.c::rd_kafka_group_member_cmp": [
+   "Safe"
+  ],
+  "lib/librdkafka-2.15.0/src/rdkafka_broker.c::rd_kafka_broker_start_reauth_cb": [
+   "Unknown"
+  ],
+  "lib/librdkafka-2.15.0/src/rdkafka_cert.c::rd_kafka_conf_ssl_passwd_cb": [
+   "Safe"
+  ],
+  "lib/librdkafka-2.15.0/src/rdkafka_header.c::rd_kafka_header_cmp_str": [
+   "Safe"
+  ],
+  "lib/librdkafka-2.15.0/src/rdkafka_mock.c::rd_kafka_mock_connection_write_out_tmr_cb": [
+   "Safe"
+  ],
+  "lib/librdkafka-2.15.0/src/rdkafka_partition.c::rd_kafka_topic_partition_cmp": [
+   "Safe"
+  ],
+  "lib/librdkafka-2.15.0/src/rdkafka_partition.c::rd_kafka_topic_partition_cmp_topic": [
+   "Safe"
+  ],
+  "lib/librdkafka-2.15.0/src/rdkafka_partition.c::rd_kafka_topic_partition_not_regex": [
+   "Safe"
+  ],
+  "lib/librdkafka-2.15.0/src/rdkafka_range_assignor.c::rd_kafka_member_assigned_partitions_pair_cmp": [
+   "Safe"
+  ],
+  "lib/librdkafka-2.15.0/src/rdkafka_ssl.c::rd_kafka_transport_ssl_passwd_cb": [
+   "Safe"
+  ],
+  "lib/librdkafka-2.15.0/src/rdkafka_topic.c::rd_kafka_topic_info_topic_cmp": [
+   "Safe"
+  ],
+  "lib/monkey/mk_server/mk_config.c::mk_config_print_error_msg": [
+   "Unknown"
+  ]
+ },
+ "frozen_blockers_1124": {
+  "lib/cmetrics/src/cmt_encode_prometheus.c::metric_escape": [
+   {
+    "u": 13,
+    "status": "Unknown",
+    "blockers": {
+     "alias:formal-handed-contracted": 1
+    }
+   }
+  ],
+  "lib/librdkafka-2.15.0/src/rddl.c::rd_dl_close": [
+   {
+    "u": 64,
+    "status": "Unknown",
+    "blockers": {
+     "alias:formal-handed-contracted": 1
+    }
+   }
+  ],
+  "lib/librdkafka-2.15.0/src/rdkafka_broker.c::rd_kafka_broker_start_reauth_cb": [
+   {
+    "u": 75,
+    "status": "Unknown",
+    "blockers": {
+     "unsupported:call to `_`: the run's stores into `_` do not keep the stated result s": 1
+    }
+   }
+  ],
+  "lib/monkey/mk_server/mk_config.c::mk_config_print_error_msg": [
+   {
+    "u": 166,
+    "status": "Unknown",
+    "blockers": {
+     "alias:formal-handed-contracted": 1
+    }
+   }
+  ]
+ },
+ "new_leaf_count": 178
+}

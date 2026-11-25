@@ -1,0 +1,385 @@
+{
+ "uses": {
+  "formal-handed-uncontracted": [
+   [
+    "deref-statement",
+    2537
+   ],
+   [
+    "deref-condition",
+    2385
+   ],
+   [
+    "actual:contracted",
+    310
+   ],
+   [
+    "(none)",
+    41
+   ],
+   [
+    "actual:same-unit",
+    16
+   ],
+   [
+    "actual:cross-unit",
+    6
+   ],
+   [
+    "null-tested",
+    5
+   ],
+   [
+    "actual:same-unit-header",
+    4
+   ],
+   [
+    "deref-return",
+    1
+   ]
+  ],
+  "formal-handed-contracted": [
+   [
+    "deref-statement",
+    52
+   ],
+   [
+    "actual:contracted",
+    47
+   ],
+   [
+    "deref-condition",
+    26
+   ],
+   [
+    "(none)",
+    20
+   ]
+  ],
+  "formal-not-handed": [
+   [
+    "deref-statement",
+    39
+   ],
+   [
+    "deref-condition",
+    23
+   ],
+   [
+    "null-tested",
+    2
+   ],
+   [
+    "deref-return",
+    1
+   ]
+  ],
+  "formal-copied": [
+   [
+    "(none)",
+    155
+   ]
+  ]
+ },
+ "callee_at_leaf": {
+  "formal-handed-uncontracted": [
+   [
+    "if",
+    858
+   ],
+   [
+    "rd_kafka_dbg",
+    308
+   ],
+   [
+    "rd_rkb_dbg",
+    254
+   ],
+   [
+    "rd_kafka_buf_read_str",
+    158
+   ],
+   [
+    "rd_kafka_buf_read_i32",
+    116
+   ],
+   [
+    "rd_kafka_buf_read_arraycnt",
+    81
+   ],
+   [
+    "rd_kafka_buf_skip_tags",
+    77
+   ],
+   [
+    "rd_kafka_buf_read_i16",
+    68
+   ],
+   [
+    "rd_free",
+    54
+   ],
+   [
+    "rd_assert",
+    48
+   ],
+   [
+    "rd_kafka_q_enq",
+    43
+   ],
+   [
+    "rd_kafka_buf_parse_fail",
+    39
+   ],
+   [
+    "rd_kafka_buf_read_throttle_time",
+    38
+   ],
+   [
+    "for",
+    36
+   ],
+   [
+    "rd_kafka_assert",
+    36
+   ],
+   [
+    "rd_kafka_buf_read_i64",
+    35
+   ],
+   [
+    "rd_rkb_log",
+    30
+   ],
+   [
+    "while",
+    29
+   ],
+   [
+    "switch",
+    25
+   ],
+   [
+    "rd_kafka_buf_read_i8",
+    25
+   ],
+   [
+    "free",
+    20
+   ],
+   [
+    "RD_IF_FREE",
+    17
+   ],
+   [
+    "rd_snprintf",
+    16
+   ],
+   [
+    "rd_kafka_buf_read_uuid",
+    15
+   ],
+   [
+    "rd_kafka_q_destroy_owner",
+    12
+   ],
+   [
+    "rd_kafka_buf_read_kbytes",
+    11
+   ],
+   [
+    "rd_kafka_op_destroy",
+    11
+   ],
+   [
+    "rd_kafka_buf_read_bool",
+    10
+   ],
+   [
+    "mk_list_foreach",
+    10
+   ],
+   [
+    "rd_kafka_buf_skip",
+    9
+   ]
+  ],
+  "formal-handed-contracted": [
+   [
+    "rd_free",
+    33
+   ],
+   [
+    "if",
+    15
+   ],
+   [
+    "for",
+    8
+   ],
+   [
+    "rd_kafka_q_enq",
+    6
+   ],
+   [
+    "mk_mem_free",
+    5
+   ],
+   [
+    "free",
+    3
+   ],
+   [
+    "RD_IF_FREE",
+    3
+   ],
+   [
+    "rd_kafka_buf_read_str",
+    2
+   ],
+   [
+    "switch",
+    1
+   ],
+   [
+    "ctr_destroy",
+    1
+   ],
+   [
+    "dlclose",
+    1
+   ],
+   [
+    "fprintf",
+    1
+   ],
+   [
+    "TAILQ_REMOVE",
+    1
+   ],
+   [
+    "rd_rkb_dbg",
+    1
+   ],
+   [
+    "rd_kafka_op_destroy",
+    1
+   ],
+   [
+    "strtoul",
+    1
+   ]
+  ],
+  "formal-not-handed": [
+   [
+    "if",
+    18
+   ],
+   [
+    "RD_KAFKA_TPLIST_FOREACH",
+    1
+   ],
+   [
+    "for",
+    1
+   ]
+  ],
+  "formal-copied": [
+   [
+    "for",
+    5
+   ],
+   [
+    "if",
+    2
+   ],
+   [
+    "rd_strdupa",
+    1
+   ]
+  ]
+ },
+ "samples": {
+  "formal-handed-contracted": [
+   "cat_exp_histogram_values `metric_dst`: first_lock_target = metric_dst;",
+   "cat_exp_histogram_values `metric_src`: second_lock_target = metric_src;",
+   "cat_exp_histogram_values `metric_src`: first_lock_target = metric_src;",
+   "cat_exp_histogram_values `metric_dst`: second_lock_target = metric_dst;",
+   "cat_exp_histogram_values `metric_dst`: if (metric_dst->exp_hist_positive_buckets == NULL &&",
+   "cat_exp_histogram_values `metric_dst`: merged_buckets[(size_t) (dst_start + index - merged_start)] +=",
+   "cat_exp_histogram_values `metric_src`: merged_buckets[(size_t) (src_start + index - merged_start)] +=",
+   "cat_exp_histogram_values `metric_dst`: tmp_buckets = metric_dst->exp_hist_positive_buckets;",
+   "cat_exp_histogram_values `metric_dst`: metric_dst->exp_hist_positive_count = merged_count;",
+   "cat_exp_histogram_values `metric_dst`: merged_buckets[(size_t) (dst_start + index - merged_start)] +=",
+   "cat_exp_histogram_values `metric_src`: merged_buckets[(size_t) (src_start + index - merged_start)] +=",
+   "cat_exp_histogram_values `metric_dst`: tmp_buckets = metric_dst->exp_hist_negative_buckets;",
+   "cat_exp_histogram_values `metric_dst`: metric_dst->exp_hist_negative_count = merged_count;",
+   "unpack_metric_exp_histogram `context`: decode_context = (struct cmt_msgpack_decode_context *) context;",
+   "metric_escape `description`: switch (description[i]) {",
+   "cmt_labels_destroy `labels`: free(labels);",
+   "unpack_event `ctx`: struct ctr_msgpack_decode_context    *context = ctx;",
+   "unpack_link `ctx`: struct ctr_msgpack_decode_context    *context = ctx;",
+   "unpack_resource_span `ctx`: struct ctr_msgpack_decode_context    *context = ctx;",
+   "unpack_scope_span `ctx`: struct ctr_msgpack_decode_context    *context = ctx;",
+   "unpack_scope_span_instrumentation_scope `ctx`: struct ctr_msgpack_decode_context    *context = ctx;",
+   "unpack_span `ctx`: struct ctr_msgpack_decode_context    *context = ctx;",
+   "decode_opentelemetry_error `ctr`: ctr_destroy(ctr);",
+   "destroy_resource_spans `rs`: resource_span = rs[resource_span_index];",
+   "destroy_resource_spans `rs`: free(rs);"
+  ],
+  "formal-not-handed": [
+   "pack_basic_type `metric_index`: (*metric_index)++;",
+   "metric_view_create `source`: if (source->data_case ==",
+   "metric_view_create `source`: else if (source->data_case ==",
+   "metric_view_create `source`: else if (source->data_case ==",
+   "metric_view_create `source`: else if (source->data_case ==",
+   "metric_view_create `source`: else if (source->data_case ==",
+   "cmt_summary_create `quantiles`: s->quantiles[i] = quantiles[i];",
+   "LZ4F_compressFrameBound `preferencesPtr`: if (preferencesPtr!=NULL) prefs = *preferencesPtr;",
+   "LZ4F_getFrameInfo `frameInfoPtr`: *frameInfoPtr = dctx->frameInfo;",
+   "pb_decode_fixed32 `dest`: *(uint32_t*)dest = u.fixed32;",
+   "pb_decode_fixed64 `dest`: *(uint64_t*)dest = u.fixed64;",
+   "pb_decode_tag `wire_type`: *wire_type = (pb_wire_type_t)(temp & 7);",
+   "read_raw_value `size`: (*size)++;",
+   "rd_buf_append_segment `seg`: seg->seg_absof = rbuf->rbuf_len;",
+   "rd_buf_append_segment `seg`: rbuf->rbuf_len += seg->seg_of;",
+   "rd_buf_append_segment `seg`: rbuf->rbuf_size += seg->seg_size;",
+   "rd_http_get `headers_array`: header = headers_array[j];",
+   "rd_http_parse_json `jsonp`: if (!*jsonp)",
+   "rd_kafka_get_err_descs `cntp`: *cntp     = RD_ARRAYSIZE(rd_kafka_err_descs);",
+   "rd_kafka_get_watermark_offsets `low`: *low  = rktp->rktp_lo_offset;",
+   "rd_kafka_get_watermark_offsets `high`: *high = rktp->rktp_hi_offset;",
+   "rd_kafka_DescribeCluster_result_authorized_operations `cntp`: *cntp = RD_MAX(clusterdesc->authorized_operations_cnt, 0);",
+   "rd_kafka_DescribeCluster_result_nodes `cntp`: *cntp = clusterdesc->node_cnt;",
+   "rd_kafka_assignment_apply_offsets `offsets`: RD_KAFKA_TPLIST_FOREACH(rktpar, offsets) {",
+   "rd_kafka_assignment_apply_offsets `offsets`: if (offsets->cnt > 0 && err != RD_KAFKA_RESP_ERR_STALE_MEMBER_EPOCH)"
+  ],
+  "formal-copied": [
+   "cmt_mpack_unpack_map `callback_list`: callback_entry = callback_list;",
+   "ctr_mpack_unpack_map `callback_list`: callback_entry = callback_list;",
+   "crc32c_hw `buf`: const unsigned char *next = buf;",
+   "crc32c_sw `buf`: const unsigned char *next = buf;",
+   "LZ4_clearHash `tableBase`: case byPtr: { const BYTE** hashTable = (const BYTE**)tableBase; hashTable[h] = NULL; return; }",
+   "LZ4_clearHash `tableBase`: case byU32: { U32* hashTable = (U32*) tableBase; hashTable[h] = 0; return; }",
+   "LZ4_clearHash `tableBase`: case byU16: { U16* hashTable = (U16*) tableBase; hashTable[h] = 0; return; }",
+   "LZ4_decompress_unsafe_generic `istart`: const BYTE* ip = istart;",
+   "LZ4_decompress_unsafe_generic `ostart`: BYTE* op = (BYTE*)ostart;",
+   "LZ4_getPositionOnHash `tableBase`: if (tableType == byPtr) { const BYTE* const* hashTable = (const BYTE* const*) tableBase; return hash",
+   "LZ4_getPositionOnHash `tableBase`: if (tableType == byU32) { const U32* const hashTable = (const U32*) tableBase; return hashTable[h] +",
+   "LZ4_getPositionOnHash `tableBase`: { const U16* const hashTable = (const U16*) tableBase; return hashTable[h] + srcBase; }   /* default",
+   "LZ4_loadDict `dictionary`: const BYTE* p = (const BYTE*)dictionary;",
+   "LZ4_putPositionOnHash `tableBase`: case byPtr: { const BYTE** hashTable = (const BYTE**)tableBase; hashTable[h] = p; return; }",
+   "LZ4_putPositionOnHash `tableBase`: case byU32: { U32* hashTable = (U32*) tableBase; hashTable[h] = (U32)(p-srcBase); return; }",
+   "LZ4_putPositionOnHash `tableBase`: case byU16: { U16* hashTable = (U16*) tableBase; hashTable[h] = (U16)(p-srcBase); return; }",
+   "LZ4_wildCopy32 `dstPtr`: BYTE* d = (BYTE*)dstPtr;",
+   "LZ4_wildCopy32 `srcPtr`: const BYTE* s = (const BYTE*)srcPtr;",
+   "LZ4_wildCopy32 `dstEnd`: BYTE* const e = (BYTE*)dstEnd;",
+   "LZ4_wildCopy8 `dstPtr`: BYTE* d = (BYTE*)dstPtr;",
+   "LZ4_wildCopy8 `srcPtr`: const BYTE* s = (const BYTE*)srcPtr;",
+   "LZ4_wildCopy8 `dstEnd`: BYTE* const e = (BYTE*)dstEnd;",
+   "LZ4F_compressBegin_usingCDict `dstBuffer`: BYTE* const dstStart = (BYTE*)dstBuffer;",
+   "LZ4F_createCDict_advanced `dictBuffer`: const char* dictStart = (const char*)dictBuffer;",
+   "LZ4F_decodeHeader `src`: const BYTE* srcPtr = (const BYTE*)src;"
+  ]
+ }
+}

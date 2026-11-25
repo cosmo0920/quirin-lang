@@ -1,0 +1,38 @@
+{
+  "schema": "quirin-amendments/2",
+  "card": "K4-FORMAL-CUSTODY-ALIASES",
+  "base": "5087f9295",
+  "measured_tip": "5087f9295",
+  "increment_paragraph": "**K4-FORMAL-CUSTODY-ALIASES** (round 37, USER DECISION 2026-11-25 \"Launch K2, K4 and K6 cards\"; no rule, no code change; [report](../../reports/k4-formal-custody-aliases/README.md)). A re-census of CURRENT-ACCESS-ALIAS-CENSUS's bundle K4 (four formal-custody alias groups) on the user's 2026-11-24 `current` run finds 4,081 leaves on 1,085 Unknown rows (4,289 on 1,211 on 11-07); of the 16 functions the bundle freed alone, 12 are Safe through AG2's rule 62 (formal copies read through), one now shows a hidden constructed-state refusal, and 3 rows remain: a typedef'd pointer formal subscripted and handed as `d + i` (`metric_escape`, reduced: `Safe` when spelled `char *`), a release of a `dynamic_library`-kinded formal (`rd_dl_close`, no W4 kinded `Released` summary) and a release before a no-return call (`mk_config_print_error_msg`, no normal exit for W4). `formal-handed-uncontracted` (3,725 leaves, 866 rows) still frees no row alone; 721 of its 883 formal mentions on rows with an uncontracted-call leaf are bare actuals of that callee, so it is the callee-closure lane's (K4 + UNC-RUN frees 69 rows). The card stopped at the census as its brief requires for a near-zero yield and predicts no row move.",
+  "status_edits": [],
+  "ledger": [
+    {
+      "id": "W47-ALIAS-CALLEE-BORROWED-CLOSURE",
+      "operation": "amend",
+      "text": "K4-FORMAL-CUSTODY-ALIASES re-census (the user's 2026-11-24 current run, base 5087f9295): the four formal-custody groups are 4,081 leaves on 1,085 Unknown rows (11-07: 4,289 on 1,211); `formal-handed-uncontracted` 3,725 leaves on 866 rows, 0 rows alone; `formal-copied` 155 on 134 (every remaining copy stepped, written through, returned or stored: rule 62's deliberate withholding, W43-INDEX-TRAVERSAL-FORMAL-COPY); `formal-handed-contracted` 139 on 88, 3 rows alone; `formal-not-handed` 62 on 46, 0 alone. 12 of the 16 frozen functions are Safe through AG2's rule 62. Lexical mention split of `formal-handed-uncontracted` (one per row and formal): on rows that also carry an uncontracted-call leaf, 883 pairs, 721 handing the formal bare to that callee and 70 mentioning it only as a member read or member address; on rows without one, 112 pairs, 38 bare and 31 member-only. Freed rows with other families removed: K4 + UNC-RUN 69, K4 + IND 53, K4 + every access, alias and UNC-RUN family 496. A member address (`cfl_list_add(&map->metrics, ...)`) can be linked and so retain `p`; a member read hands no copy of `p` but frees no row alone. The group is the bottom-up callee-closure lane's (W48-BOTTOM-UP-RESIDUAL-PLAN): each row needs the callee's validated Borrowed position.",
+      "source": "docs/reports/k4-formal-custody-aliases/README.md"
+    },
+    {
+      "id": "W43-DESCRIPTOR-W4-SUMMARIES",
+      "operation": "amend",
+      "text": "K4-FORMAL-CUSTODY-ALIASES: rd_dl_close (`dlclose((void *)handle);`, rddl.c:151) is blocked alone by its formal's unresolved-identity report in the user's 2026-11-24 current run. Reduced at base 5087f9295: `released(h) ∧ kind(h) = dynamic_library` gives no W4 `Released` summary, so the row keeps the binding signal's report; the same body releasing through a heap `free` is Safe under its `Released` summary (docs/reports/k4-formal-custody-aliases/scripts/probe.rs). A kind-preserving release summary would decide it.",
+      "source": "docs/reports/k4-formal-custody-aliases/README.md"
+    },
+    {
+      "id": "K4-TYPEDEF-POINTER-FORMAL-ARITHMETIC",
+      "operation": "register",
+      "title": "A typedef'd pointer formal subscripted in a loop and handed as pointer arithmetic keeps an unresolved-identity report its spelled `char *` twin does not",
+      "text": "Registered by K4-FORMAL-CUSTODY-ALIASES. metric_escape (cmt_encode_prometheus.c:80, `cfl_sds_t description`; `switch (description[i])` in a loop and `cfl_sds_cat_safe(buf, description + i, 1)`) is blocked alone by `unknown_alias:description` in the user's 2026-11-24 current run. Reduced at base 5087f9295 (docs/reports/k4-formal-custody-aliases/scripts/probe.rs): `decl(d) = T ∧ T ≡ char * ∧ subscript(d, i) ∈ cond ∧ actual(d + i)` is Unknown, while the same body with `decl(d) = char *` is Safe, and dropping either the arithmetic actual or the subscripted loop is Safe. 1 of the 4,081 K4 leaves has a typedef'd pointer formal. DISCHARGE: locate the reader that reads the typedef'd declaration differently, desugar it as rule 62 does (C11 6.7.8p3: a typedef is the same type), with a fixture pair (typedef and spelled) and Lean parity if the reader is semantic.",
+      "source": "docs/reports/k4-formal-custody-aliases/README.md",
+      "recorded_by": "K4-FORMAL-CUSTODY-ALIASES"
+    },
+    {
+      "id": "K4-RELEASE-BEFORE-NO-RETURN-SUMMARY",
+      "operation": "register",
+      "title": "A body that releases a formal and then always calls a no-return function has no W4 summary to be decided under",
+      "text": "Registered by K4-FORMAL-CUSTODY-ALIASES. mk_config_print_error_msg (mk_config.c:130-136: `mk_err(..., path); mk_mem_free(path); exit(EXIT_FAILURE);`) is blocked alone by `unknown_alias:path` in the user's 2026-11-24 current run. Reduced at base 5087f9295 (docs/reports/k4-formal-custody-aliases/scripts/probe.rs): `released(p) ∧ ∀ e ∈ exits(w). ¬normal(e)` is Unknown because W4 observes no normal exit to validate `Released` on; without the exit call the body is Safe under its `Released` summary. A user-owned choice: whether a body with no normal exit may be decided under `Released ∧ no_return` (and what a caller then reads). Not an alias reading.",
+      "source": "docs/reports/k4-formal-custody-aliases/README.md",
+      "recorded_by": "K4-FORMAL-CUSTODY-ALIASES"
+    }
+  ]
+}
