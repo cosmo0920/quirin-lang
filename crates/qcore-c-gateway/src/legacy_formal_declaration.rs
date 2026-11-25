@@ -218,6 +218,37 @@ impl Parser<'_> {
         })
     }
 
+    /// Whether no identifier of the function's parameter list (read where it
+    /// directly precedes the body) is spelled in the body. Then no
+    /// declaration or reference in the body names a parameter, so every
+    /// parameter is one declaration, no derived local exists (its
+    /// initialiser names a formal), and Clang's reading need not be asked
+    /// for (a function with no parameters, for one). `false` where the list
+    /// is not read.
+    fn no_parameter_name_in_body(&self) -> bool {
+        let start = self.owned_out_body_start;
+        let Some(end) = super::matching(self.tokens, start, "{", "}") else {
+            return false;
+        };
+        let Some((open, close)) =
+            super::function_parameter_range(self.tokens, &self.typed_path_function, start)
+        else {
+            return false;
+        };
+        let names = self.tokens[open + 1..close]
+            .iter()
+            .map(|token| token.text.as_str())
+            .filter(|text| {
+                text.chars()
+                    .next()
+                    .is_some_and(|c| c == '_' || c.is_ascii_alphabetic())
+            })
+            .collect::<std::collections::BTreeSet<_>>();
+        !self.tokens[start + 1..end]
+            .iter()
+            .any(|token| names.contains(token.text.as_str()))
+    }
+
     /// Every name a `typedef` statement of the unit mentions: a superset of
     /// the unit's typedef names, read from the tokens.
     fn typedef_names(&self) -> std::collections::BTreeSet<&str> {
@@ -250,6 +281,9 @@ impl Parser<'_> {
     /// does not accept), no derived local is read and a formal keeps the
     /// census reading, guarded by [`Self::shadow_refusal`].
     pub(super) fn read_formals_by_declaration(&mut self) -> ShadowReading {
+        if self.no_parameter_name_in_body() {
+            return ShadowReading::Read(Vec::new());
+        }
         let function = self
             .typed_positions_index()
             .map(|index| std::sync::Arc::clone(&index.function));
