@@ -1,5 +1,9 @@
 # Quirin
 
+<p align="center">
+  <img src="assets/brand/quirin-kirin-horizontal.png" alt="Quirin logo with a gold and charcoal kirin" width="720">
+</p>
+
 Quirin is a research language for quantitative types, owned resources, typed
 recoverable errors, checked cleanup and concurrency, lowering to C11. It also
 provides a conservative checker for existing C, exercised on a pinned Fluent Bit
