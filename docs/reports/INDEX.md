@@ -862,6 +862,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | Card directory | Original report title |
 |---|---|
 
+| [onigmo-provider-plugin](onigmo-provider-plugin/README.md) | ONIGMO-PROVIDER-PLUGIN: Onigmo's regex contracts on the user-contract SDK |
+
 | [op-app-rk-callbacks](op-app-rk-callbacks/README.md) | OP-APP-RK-CALLBACKS-VIA-POLL-CB: application rk_conf callbacks |
 
 | [op-callback-candidate-contracts](op-callback-candidate-contracts/README.md) | OP-CALLBACK-CANDIDATE-CONTRACTS: contracts for the op-callback candidates |

@@ -99,8 +99,8 @@ documentation record `doc-snapshots.json` (`scripts/snapshot_docs.py`).
   (`lib/onigmo/doc/API` and `doc/API.ja`, both headed "Version 6.1.2
   2017/05/10", SHA-256 `f46442df…` and `b87b858b…`) names no version that
   added any function. The bound is the series of the reference examined (C06.2);
-  no upstream history was fetched, so no lower bound is claimed. The checker
-  refuses `since`.
+  no upstream history was fetched, so nothing below 6.1.2 is claimed
+  (`ONIGMO-DOCUMENTED-SERIES-HISTORY`). The checker refuses `since`.
 * **The header's spellings, as the gateway reads them.** The checker maps the
   vendored header's spellings with the typedef map the pin script verified by
   `_Static_assert(__builtin_types_compatible_p(…))`; a pointer typedef
@@ -231,3 +231,95 @@ series, a range excluding 6.2.0, another library, no range, a flexible
 revision, two wrong signatures (`option: i32`, `enc: ptr<const, u8>`), the
 `free_self` premise dropped or bound to `0`, a non-null region, the regex
 read as borrowed, a string premise, a moved callback position.
+
+## 6. The opt-in `current` run (not run here)
+
+[`evidence/callers.sh`](evidence/callers.sh) (sides `without`, `with-selected`,
+`with-full`) and [`evidence/compare_callers.py`](evidence/compare_callers.py)
+are committed. Both runs were queued through `scripts/gate_slot.py audit` for
+about two hours behind the integrator's r35 landing measurement (three audit
+slots held, two of its sides ahead) and never admitted; this card stopped its
+own two queued jobs (exit 143, nothing audited) rather than leave them
+unattended. The prediction ([PREDICTION.md](PREDICTION.md)) stands
+unmeasured. To reproduce, with this tip's release `quirin-audit`, the
+installed checker packages (`python3 providers/package.py checkers`) and the
+prepared tree:
+
+```sh
+python3 scripts/gate_slot.py audit -- sh docs/reports/onigmo-provider-plugin/evidence/callers.sh \
+  target/release/quirin-audit build/cycle19/clang/046accf6…/fluent-bit-clang-source \
+  SELECTED_DATABASE OUT
+python3 docs/reports/onigmo-provider-plugin/evidence/compare_callers.py OUT OUT/comparison.json
+```
+
+`SELECTED_DATABASE` is the four commands of the prepared database whose
+`file` is `src/flb_regex.c` or `src/flb_router.c` (sha256 `41cc67a2…` as
+extracted here into `private/onigmo-selected-db.json`); every one passes
+`-I …/lib/onigmo`. The gateway fixtures (§3, §4) already exercise every
+contracted shape and every Fluent Bit shape the prediction names
+(`compile_fluent_bit`, `search_member`, `search_no_region`), so the run would
+attribute rows, not decide a reading.
+
+## 7. The measured routes, and the pin scanner finding
+
+Prediction: corpus, twelve-home, system and slice verdict-identical
+(`none`), and the user's `current` unchanged. The card changes no analyzer
+crate; its `crates/` change is one gateway test. No measured unit calls
+Onigmo (§1) and no measured route reads the user load path.
+
+**C-IDENTITY-SITES-AFTER-UNBALANCED-BODY** (a fail-closed defect, registered).
+`quirin-audit pin` recorded `onig_region_free`, `onig_match` and
+`onig_search` with their `onigmo.h` declaration only. Cause:
+`crates/qcore-audit/src/c_identity.rs` `file_sites` runs a definition's body
+to the end of a file whose conditional groups do not balance, then resumes
+the scan after that end, so no later site in the file is visited.
+`lib/onigmo/regexec.c` is unbalanced (`:2439-2447`: a `{` opened in one
+`#ifndef USE_NEWLINE_AT_END_OF_STRING_HAS_EMPTY_LINE` group and closed in
+another; [`evidence/conditional_balance.py`](evidence/conditional_balance.py)
+reproduces `structure`'s test), and `onig_region_new` (`:331`) is its first
+wanted definition. A later change to those three bodies would leave their
+contracts in force. `regcomp.c` and `regparse.c` balance. The crate's test
+`the_crate_is_on_the_user_load_path_only` pins the finding, so a repair moves
+it deliberately.
+
+## 8. Checks (no card gate)
+
+Tip `bda74c253` plus this report commit; logs under `private/logs/`.
+
+| Command | Exit | Counts / log |
+|---|---:|---|
+| `cargo test --manifest-path providers/Cargo.toml -p quirin-provider-onigmo` | 0 | 5 unit + 3 integration passed (`onigmo-crate-tests-2.log`) |
+| `cargo test -p qcore-c-gateway --test onigmo_user_crate_fixtures` | 0 | 4 passed (`onigmo-fixtures-10.log`) |
+| `cargo test -p qcore-compiler --test qcore_contract_corpus` | 0 | 6 passed (`contract-corpus.log`) |
+| `cargo test --manifest-path providers/Cargo.toml -p qcore-provider-conformance --test packages` | 0 | 6 passed (`conformance-packages.log`) |
+| `python3 -m unittest discover -s providers/tests` | 0 | 26 tests OK (`providers-py-tests.log`) |
+| `cargo fmt --check` (root), `cargo fmt --manifest-path providers/Cargo.toml --all -- --check` | 0, 0 | |
+| `cargo clippy --manifest-path providers/Cargo.toml --workspace --all-targets --locked --offline -- -D warnings` | 0 | (`clippy-providers.log`) |
+| `cargo clippy --locked --offline -p qcore-c-gateway --test onigmo_user_crate_fixtures -- -D warnings` | 0 | (`clippy-gateway-test.log`) |
+| `python3 providers/contracts.py sync`; `check` | 0, 0 | no shipped lock changed |
+| `python3 providers/package.py checkers` | 0 | three packages installed, views and locks verified (`package-checkers-3.log`) |
+| `evidence/user-path.sh` (check, package, verify, load-path, views `--write`, pin `--crate quirin-provider-onigmo`, `--verify-contracts`) | 0 ×7 | `private/user-path-3/`; pin: 9 pinned, 0 flexible, `onigmo` 6.2.0 |
+| `scripts/gate_lean.py --module QCore.OnigmoContractPlugin --audit AuditOnigmoContractPlugin.lean` | 0 | 1 audit passed, 19 theorems, `propext`/`Quot.sound` only (`lean-2.log`) |
+| `python3 scripts/gen_lean_roots.py`; `build_docs_index.py --check` | 0, 0 | |
+| `python3 scripts/apply_amendments.py docs/reports/onigmo-provider-plugin/integration-amendments.json --check` | 0 | 11 registered, 2 amended |
+
+## 9. Follow-ups
+
+Registered or amended in [`integration-amendments.json`](integration-amendments.json):
+`C-IDENTITY-SITES-AFTER-UNBALANCED-BODY` (§7), `ONIGMO-END-PROTOCOL` (§4),
+`ONIGMO-REGION-FREE-ARRAYS-ARM`, `ONIGMO-RELEASER-KIND` (a plain `free` of a
+regex or region reads as its release, heap kind, as libcurl's `curl_url`),
+`ONIGMO-OUT-SLOT-HOLDER`, `RETENTION-FILE-SCOPE-OBJECT-ADDRESS` (the reading
+that would admit Fluent Bit's `onig_new`), `OWNED-NULLABLE-NULL-CONSTANT-ACTUAL`,
+`RETAINING-OUT-SLOT-NULL-REFINEMENT`, `ONIGMO-FLUENT-BIT-WRAPPER-ROWS`,
+`ONIGMO-RESULT-SETS`, `ONIGMO-DOCUMENTED-SERIES-HISTORY`; amended
+`LIBRARY-VERSION-PROBE-UNIT-SCOPE` and `W45-PLUGIN-CERTIFICATE-CHECKER`.
+
+## 10. Files likely to conflict
+
+`providers/contracts.py` (`USER_LOAD_PATH_PACKAGES`), `providers/Cargo.toml`
+and `Cargo.lock`, `providers/user-crates-load-path.json` (regenerate with the
+crates named sorted: libcurl, onigmo, openssl; then `plugin views --write`),
+`providers/README.md`, `providers/conformance/tests/packages.rs` (user-crate
+pin 3), the CI comment, `proof/QCore.lean` (regenerate), `docs/reports/INDEX.md`
+(regenerate).
