@@ -128,19 +128,17 @@ fn user_contract_dependencies(load_path: &std::path::Path, write: bool) -> Resul
             }
         }
         let declared = record.get("contract_dependencies").cloned();
-        let expected = (!scanned.is_empty()).then(|| Value::Array(scanned));
+        let expected = (!scanned.is_empty()).then_some(Value::Array(scanned));
         if declared != expected {
             current = false;
             println!("{name}: contract_dependencies declared {declared:?} probed {expected:?}");
-            if write {
-                if let Some(object) = record.as_object_mut() {
-                    match expected {
-                        Some(value) => {
-                            object.insert("contract_dependencies".into(), value);
-                        }
-                        None => {
-                            object.remove("contract_dependencies");
-                        }
+            if write && let Some(object) = record.as_object_mut() {
+                match expected {
+                    Some(value) => {
+                        object.insert("contract_dependencies".into(), value);
+                    }
+                    None => {
+                        object.remove("contract_dependencies");
                     }
                 }
             }
