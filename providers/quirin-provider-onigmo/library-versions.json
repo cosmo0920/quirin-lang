@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "libraries": {
+    "onigmo": {
+      "header": "onigmo.h",
+      "major": "ONIGMO_VERSION_MAJOR",
+      "minor": "ONIGMO_VERSION_MINOR",
+      "patch": "ONIGMO_VERSION_TEENY"
+    }
+  }
+}

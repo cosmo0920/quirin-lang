@@ -1,0 +1,129 @@
+// SPDX-License-Identifier: Apache-2.0
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+module contract;
+
+// Card ONIGMO-PROVIDER-PLUGIN (user decision 2026-11-25: "We must write down
+// quirin-provider-onigmo with contracts of onigmo's regex functions." and
+// "This must be depending on quirin-provider-plugin crate and using its
+// plugin mechanism."). Onigmo's regex objects.
+//
+// What every declaration of this crate shares:
+//
+// * Source. Fluent Bit vendors Onigmo 6.2.0 at `lib/onigmo`
+//   (`onigmo.h:40-42`: ONIGMO_VERSION_MAJOR 6, _MINOR 2, _TEENY 0). Every
+//   clause is read off the vendored body at Fluent Bit 046accf6 (file:line
+//   below) or Onigmo's own API reference `lib/onigmo/doc/API` (series 6.1.2,
+//   `doc-snapshots.json` keeps its SHA-256 and the cited section). No clause
+//   rests on a Fluent Bit caller's test.
+// * Revision: pinned (no marker). The bodies are in the audited tree, so
+//   `contracts.lock` pins each function's sites as `quirin-audit pin` scans
+//   them (the `onigmo.h` declaration and the definitions it finds): a changed
+//   site takes the declaration out of force until it is reviewed and
+//   re-pinned. The scanner finds no definition of `onig_region_free`,
+//   `onig_match` or `onig_search`: `regexec.c`'s conditional groups do not
+//   balance (`:2439-2447`), so its first wanted body (`onig_region_new`)
+//   runs to the end of the file and the scan resumes after it
+//   (C-IDENTITY-SITES-AFTER-UNBALANCED-BODY). Those three identities are
+//   their `onigmo.h` declarations alone, as strong as a flexible
+//   declaration's, while every later change to `regexec.c` takes
+//   `onig_region_new` out of force.
+// * Range: `documented "6.1.2"`. The reference names no version that added a
+//   function, so the bound is the series of the reference examined (C06.2),
+//   never an invented `since`. The probe reads `onigmo.h`
+//   (`library-versions.json`); a version other than the lock's is Pending,
+//   an unreadable, ambiguous or out-of-range one Unknown.
+// * Checker: every declaration is bound to `checkers/onigmo-check`
+//   (`quirin-plugin.json`), so a caller applying one is at most Pending while
+//   no trusted certificate checker exists (rule 10h).
+// * Types: `OnigRegex` is `struct re_pattern_buffer *` (`onigmo.h:803`),
+//   `OnigUChar` `unsigned char` (`:79`), `OnigOptionType` `unsigned int`
+//   (`:448`), `OnigEncoding` `const OnigEncodingType *` (`:182`),
+//   `OnigPosition` `ptrdiff_t` (`:83`, `isize`), each checked by the compiler
+//   in `pinned/onigmo-6.2.0.json`. A parameter spelled with a pointer
+//   typedef (`OnigRegex`, `OnigEncoding`) is `ptr<mut, u8>`: the gateway's
+//   ABI reader folds the typedef chain to the aggregate and reads no pointee
+//   qualifier through it (`legacy_declared_abi.rs`, `project_scalar`), and
+//   the checker maps the header's spellings the same way.
+// * Kinds: heap (no kind clause). `xmalloc`/`xfree` are `malloc`/`free`
+//   (`regint.h:142-145`). Resource-v1's heap custody does not name the
+//   releaser, so a plain `free` of a regex object reads as its release while
+//   the body leaks its interior; recorded as ONIGMO-RELEASER-KIND.
+
+// onig_new (`regcomp.c:5875-5895`):
+//
+//     *reg = (regex_t* )xmalloc(sizeof(regex_t));          5882
+//     if (IS_NULL(*reg)) return ONIGERR_MEMORY;            5883
+//     r = onig_reg_init(*reg, option, ..., enc, syntax);   5885
+//     if (r) goto err;                                     5886
+//     r = onig_compile(*reg, pattern, pattern_end, einfo); 5888
+//     if (r) { err: onig_free(*reg); *reg = NULL; }        5889-5893
+//     return r;                                            5894
+//
+// So on every return the slot holds NULL or a fresh `regex_t`: fresh exactly
+// when the result is `0` (ONIG_NORMAL, `onigmo.h:627`; doc/API "normal
+// return: ONIG_NORMAL"), NULL on every nonzero result. That is the
+// unconditional `resource_out(reg, nullable)`: no class of the result leaves
+// the slot unwritten or holding anything but NULL or the fresh object.
+//
+// Retentions (`resource_retained_by`, C04.14), each read off the body:
+// * `onig_reg_init` stores `enc` and `syntax` into the new object
+//   (`regcomp.c:5849`, `:5851`), which `onig_search`/`onig_match` read until
+//   `onig_free`. The holder is the object the slot receives, which C04.14
+//   cannot name (no out-slot holder; a retention never stands beside a
+//   return-code disposition), so the holder is `global`: the strongest
+//   holder, which admits only static storage. Weaker than the body only in
+//   the refusing direction.
+// * `onig_compile`'s error exit stores pointers into the pattern into
+//   `*einfo` (`regcomp.c:5802-5806`: `einfo->par = scan_env.error;
+//   einfo->par_end = scan_env.error_end;`).
+// The pattern is otherwise copied: names by `strdup_with_null`
+// (`regparse.c:799`), the exact string by `xmalloc` (`regcomp.c:5224`).
+//
+// NOT CLAIMED: the compiled program's meaning, option validity
+// (`ONIGERR_INVALID_COMBINATION_OF_OPTIONS`), that `pattern <= pattern_end`,
+// or the error codes' values (C09.4's result sets are admitted from the C
+// library crate only; the classes are recorded in the checker's table).
+extern fn onig_new(reg: ptr<mut, ptr<mut, u8>>, pattern: ptr<const, u8>, pattern_end: ptr<const, u8>, option: u32, enc: ptr<mut, u8>, syntax: ptr<const, u8>, einfo: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_library_version(onigmo, documented "6.1.2");
+    ensures normal resource_out(reg, nullable);
+    ensures normal resource_borrowed(pattern);
+    ensures normal resource_borrowed(pattern_end);
+    ensures normal resource_borrowed(option);
+    ensures normal resource_borrowed(enc);
+    ensures normal resource_borrowed(syntax);
+    ensures normal resource_borrowed(einfo);
+    ensures normal resource_retained_by(enc, global);
+    ensures normal resource_retained_by(syntax, global);
+    ensures normal resource_retained_by(pattern, einfo);
+    ensures normal resource_retained_by(pattern_end, einfo);
+    ensures normal resource_return_none();
+};
+
+// onig_free (`regcomp.c:5548-5555`):
+//
+//     if (IS_NOT_NULL(reg)) { onig_free_body(reg); xfree(reg); }
+//
+// `onig_free_body` (`:5533-5546`) frees the object's own buffers (`p`,
+// `exact`, `repeat_range`, the chained regex, the name table). doc/API:
+// "Free memory used by regex object." A NULL `reg` does nothing.
+extern fn onig_free(reg: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_library_version(onigmo, documented "6.1.2");
+    ensures normal resource_released(reg, nullable);
+    ensures normal resource_return_none();
+};

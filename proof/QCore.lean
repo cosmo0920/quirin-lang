@@ -337,6 +337,7 @@ import QCore.NullableReferenceDrop
 import QCore.NullableRemoval
 import QCore.ObsReordering
 import QCore.ObservedWaitComposition
+import QCore.OnigmoContractPlugin
 import QCore.OpCallbacks
 import QCore.OpaqueCallbackSlots
 import QCore.OpensslBioReaders

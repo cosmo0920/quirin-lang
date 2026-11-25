@@ -672,7 +672,12 @@ fn artifact_dependencies_are_only_schemas_and_serialization() {
         // first-party. It is never on the shipped load path.
         // Card LIBCURL-PROVIDER-PLUGIN (deliberate pin update): the second
         // user crate, quirin-provider-libcurl, under the same pin.
-        let is_user_crate = matches!(name, "quirin-provider-openssl" | "quirin-provider-libcurl");
+        // Card ONIGMO-PROVIDER-PLUGIN (deliberate pin update): the third,
+        // quirin-provider-onigmo, likewise.
+        let is_user_crate = matches!(
+            name,
+            "quirin-provider-openssl" | "quirin-provider-libcurl" | "quirin-provider-onigmo"
+        );
         if is_user_crate {
             user_crates += 1;
             for dependency in package["dependencies"].as_array().unwrap() {
@@ -782,7 +787,7 @@ fn artifact_dependencies_are_only_schemas_and_serialization() {
     assert_eq!(artifacts, 5);
     assert_eq!(shared, 6);
     assert_eq!(sdk, 1);
-    assert_eq!(user_crates, 2);
+    assert_eq!(user_crates, 3);
     // Card CONTRACT-INHERIT-ADOPTION: the one contract-use edge among the data
     // crates. Adding another is a deliberate edit here.
     data_edges.sort();

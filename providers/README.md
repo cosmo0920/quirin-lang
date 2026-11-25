@@ -60,7 +60,7 @@ quirin-audit contracts --load-path providers/user-crates-load-path.json \
 Regenerate the user load path after a module or binding changes with
 `quirin-plugin load-path --extends contract-load-path.json --output
 providers/user-crates-load-path.json providers/quirin-provider-libcurl
-providers/quirin-provider-openssl` and
+providers/quirin-provider-onigmo providers/quirin-provider-openssl` and
 `quirin-audit plugin views --load-path providers/user-crates-load-path.json
 --write`; re-pin after review with `quirin-audit pin --load-path
 providers/user-crates-load-path.json --source-root SRC`, which also records the
@@ -79,6 +79,20 @@ in which `contracts.py check` expects their bindings), and pin one crate with
 libcurl's development headers are not on Clang's default search path, set
 `QCORE_LIBRARY_VERSION_COMPILE_DATABASE` to a database whose every command
 passes them, or each libcurl call is held `Unknown`.
+
+`quirin-provider-onigmo` (card ONIGMO-PROVIDER-PLUGIN, user decision
+2026-11-25) is the third, on the same terms: the Onigmo regex functions
+Fluent Bit calls (`onig_new`, `onig_free`, `onig_search`, `onig_match`,
+`onig_region_new`, `onig_region_free`, `onig_name_to_backref_number`,
+`onig_foreach_name`, `onig_init`; `onig_end` is deliberately not declared),
+each `documented "6.1.2"` (the series of Onigmo's own `doc/API`, which names
+no version that added a function), its checker `checkers/onigmo-check`, and
+its version read from `onigmo.h` (`ONIGMO_VERSION_MAJOR`, `_MINOR`,
+`_TEENY`). Fluent Bit vendors Onigmo at `lib/onigmo`, so its declarations are
+**pinned** to the vendored sites (`pin --source-root` the Fluent Bit
+checkout), and the probe needs a database whose every command passes
+`-I …/lib/onigmo` (Fluent Bit's own units' commands do; the whole prepared
+database does not).
 
 Provider crates own their supplied Quirin contracts under `contracts/`, beside
 `src/` and `provider-template.json`. `contracts.json` records their package paths

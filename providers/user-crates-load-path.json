@@ -49,6 +49,78 @@
       "package": "quirin-provider-libcurl/checkers/libcurl-check"
     },
     {
+      "crate": "quirin-provider-onigmo",
+      "functions": [
+        "onig_init"
+      ],
+      "module": "onigmo/init.qv",
+      "package": "quirin-provider-onigmo/checkers/onigmo-check"
+    },
+    {
+      "crate": "quirin-provider-onigmo",
+      "functions": [
+        "onig_foreach_name"
+      ],
+      "module": "onigmo/names.qv",
+      "package": "quirin-provider-onigmo/checkers/onigmo-check"
+    },
+    {
+      "crate": "quirin-provider-onigmo",
+      "functions": [
+        "onig_new"
+      ],
+      "module": "onigmo/regex.qv",
+      "package": "quirin-provider-onigmo/checkers/onigmo-check"
+    },
+    {
+      "crate": "quirin-provider-onigmo",
+      "functions": [
+        "onig_free"
+      ],
+      "module": "onigmo/regex.qv",
+      "package": "quirin-provider-onigmo/checkers/onigmo-check"
+    },
+    {
+      "crate": "quirin-provider-onigmo",
+      "functions": [
+        "onig_region_new"
+      ],
+      "module": "onigmo/region.qv",
+      "package": "quirin-provider-onigmo/checkers/onigmo-check"
+    },
+    {
+      "crate": "quirin-provider-onigmo",
+      "functions": [
+        "onig_region_free"
+      ],
+      "module": "onigmo/region.qv",
+      "package": "quirin-provider-onigmo/checkers/onigmo-check"
+    },
+    {
+      "crate": "quirin-provider-onigmo",
+      "functions": [
+        "onig_search"
+      ],
+      "module": "onigmo/search.qv",
+      "package": "quirin-provider-onigmo/checkers/onigmo-check"
+    },
+    {
+      "crate": "quirin-provider-onigmo",
+      "functions": [
+        "onig_match"
+      ],
+      "module": "onigmo/search.qv",
+      "package": "quirin-provider-onigmo/checkers/onigmo-check"
+    },
+    {
+      "crate": "quirin-provider-onigmo",
+      "functions": [
+        "onig_name_to_backref_number"
+      ],
+      "module": "onigmo/search.qv",
+      "package": "quirin-provider-onigmo/checkers/onigmo-check"
+    },
+    {
       "crate": "quirin-provider-openssl",
       "functions": [
         "BIO_free"
@@ -1323,6 +1395,28 @@
         "libcurl/global.qv",
         "libcurl/slist.qv",
         "libcurl/url.qv"
+      ],
+      "version": "0.1.0"
+    },
+    {
+      "contracts": "quirin-provider-onigmo/contracts",
+      "dependencies": [],
+      "modules": [
+        "onigmo/init.qv",
+        "onigmo/names.qv",
+        "onigmo/regex.qv",
+        "onigmo/region.qv",
+        "onigmo/search.qv"
+      ],
+      "name": "quirin-provider-onigmo",
+      "namespace": "onigmo",
+      "published": {},
+      "resource_view": [
+        "onigmo/init.qv",
+        "onigmo/names.qv",
+        "onigmo/regex.qv",
+        "onigmo/region.qv",
+        "onigmo/search.qv"
       ],
       "version": "0.1.0"
     },

@@ -1,0 +1,45 @@
+// SPDX-License-Identifier: Apache-2.0
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+module contract;
+
+// Card ONIGMO-PROVIDER-PLUGIN. Library initialisation (see regex.qv for what
+// every declaration of this crate shares).
+
+// onig_init (`regcomp.c:5903-5922`):
+//
+//     if (onig_inited != 0) return 0;
+//     onig_inited = 1;
+//     onigenc_init();                          regenc.c:35-39: return 0;
+//     return 0;
+//
+// It writes the file-scope flag `onig_inited` (`regcomp.c:5815`) and nothing
+// else, and always returns `0`. No argument, no custody. doc/API: in a
+// multi-threaded program it must be called from one thread before any
+// `onig_new`, "because onig_init() is not thread safe": an ordering of
+// threads, which no custody clause states (as libcurl's `curl_global_init`).
+//
+// `onig_end` (`regcomp.c:5957-5972`) is NOT declared: it runs every function
+// `onig_add_end_call` registered (`exec_end_call_list`, `:5940-5955`) and
+// clears `onig_inited`, and doc/API says "It is not allowed to use regex
+// objects which created before onig_end() call". That use-after-end protocol
+// over every live regex object, and the end-call registry, have no clause in
+// resource v1, so a call of `onig_end` stays an uncontracted callee
+// (ONIGMO-END-PROTOCOL).
+extern fn onig_init() -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_library_version(onigmo, documented "6.1.2");
+    ensures normal resource_return_none();
+};

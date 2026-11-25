@@ -1,0 +1,62 @@
+// SPDX-License-Identifier: Apache-2.0
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+module contract;
+
+// Card ONIGMO-PROVIDER-PLUGIN. Match regions (see regex.qv for what every
+// declaration of this crate shares).
+
+// onig_region_new (`regexec.c:331-340`):
+//
+//     r = (OnigRegion* )xmalloc(sizeof(OnigRegion));
+//     if (r) onig_region_init(r);
+//     return r;
+//
+// A fresh heap object or NULL (`xmalloc` is `malloc`, `regint.h:142`);
+// `onig_region_init` (`:319-329`) sets every field, allocating nothing.
+// doc/API: "Create a region."
+extern fn onig_region_new() -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    requires resource_library_version(onigmo, documented "6.1.2");
+    ensures normal resource_return_owned(nullable);
+};
+
+// onig_region_free (`regexec.c:342-355`):
+//
+//     if (r) {
+//       if (r->allocated > 0) { if (r->beg) xfree(r->beg);
+//                               if (r->end) xfree(r->end); r->allocated = 0; }
+//       history_root_free(r);                 (USE_CAPTURE_HISTORY)
+//       if (free_self) xfree(r);
+//     }
+//
+// The body switches on the scalar `free_self` (doc/API "free_self: [1: free
+// all, 0: free memory used in region but not self]"): with `free_self != 0`
+// the region object itself is released, with `free_self == 0` only its
+// arrays and the object stays the caller's, to be reused or freed. One
+// declaration states one arm, so the literal-argument premise (C04.5) bounds
+// it to the calls whose actual is exactly `1`: there the call releases
+// `region`, NULL accepted. At every other call (`0`, any other value, a
+// variable) the declaration does not apply and the call is an uncontracted
+// callee. The `free_self == 0` arm is not stated (ONIGMO-REGION-FREE-ARRAYS-ARM).
+extern fn onig_region_free(region: ptr<mut, u8>, free_self: i32) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_library_version(onigmo, documented "6.1.2");
+    requires resource_literal_argument(free_self, 1);
+    ensures normal resource_released(region, nullable);
+    ensures normal resource_borrowed(free_self);
+    ensures normal resource_return_none();
+};
