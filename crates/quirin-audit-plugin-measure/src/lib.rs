@@ -53,7 +53,9 @@ use quirin_audit_plugin::{Request, Response, Severity};
 use serde_json::{Value, json};
 
 pub mod baseline;
+pub mod chain;
 pub mod compare;
+pub mod compose;
 pub mod declared;
 pub mod inputs;
 pub mod ledger;
@@ -344,6 +346,13 @@ fn canonical(path: &Path) -> Result<PathBuf, String> {
 ///
 /// A refusal or failure, with its reason (the response is then `failed`).
 pub fn answer(request: &Request) -> Result<Response, String> {
+    // Card QUIRIN-AUDIT-CONNECT: `measure chain` joins saved measurements and
+    // `measure compose` composes contract bundles; neither measures.
+    match request.arguments.first().map(String::as_str) {
+        Some("chain") => return chain::answer(request, &request.arguments[1..]),
+        Some("compose") => return compose::answer(request, &request.arguments[1..]),
+        _ => {}
+    }
     let options = parse(&request.arguments)?;
     if options.publish {
         return publish(request, &options);
