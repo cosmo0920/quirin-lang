@@ -904,7 +904,10 @@ impl Parser<'_> {
                     && declaration.get(1).is_some_and(|second| {
                         is_identifier(second)
                             || *second == "*"
-                            || (*second == "(" && declaration.get(2) == Some(&"*"))
+                            || (*second == "("
+                                && declaration.get(2) == Some(&"*")
+                                // Rule 89: unless Clang reads a call.
+                                && self.paren_star_declarator(tokens))
                     }))
         });
         let mut nesting = 0usize;

@@ -14021,4 +14021,40 @@ through `ampersand_runs`.
     `a_nested_offset_is_refused`, `every_older_reading_stands` and six more),
     bound to `OFFSET_VECTORS` by a shared-vector unit test.
 
+<a id="constraint-89"></a>
+
+89. **A call whose first actual is `*NAME` is not a function-pointer
+    declarator.** Card CALL-WITH-DEREF-ACTUAL-READ-AS-DECLARATION
+    (`legacy_call_not_declarator.rs`, one hook in the declaration-likeness
+    test of `classify_simple_base` in `legacy_classify.rs`). The test reads a
+    statement prefix `IDENT ( *` as the declarator `T (*NAME)…`, and the
+    shadow guard then refused every such statement naming a formal outside an
+    initializer: `q_observe(*out);`, and librdkafka's
+    `rd_list_add(*toppars_add_list, rd_kafka_toppar_keep(rktp));`. Tokens
+    cannot tell a call from a declarator here (a typedef name and a function
+    name are both identifiers). Where that disjunct holds, the statement's
+    unique Clang node (by line and exact tokens, several told apart by
+    occurrence, as rule 10t) is asked its kind: a `CallExpr` drops the
+    disjunct, since a call expression declares nothing (C11 6.7p1, 6.8.3p2);
+    a `DeclStmt`, any other kind, or no unique node keeps it. The keyword,
+    `IDENT IDENT` and `IDENT *` disjuncts are not consulted, so `int (*out);`
+    and `void (*out)(void);` stay refused through the keyword test and
+    `T (*out);`, `T (*out)[4];` and a macro spelling a declarator through
+    Clang's `DeclStmt`. The admitted call then takes the classifier's normal
+    reading unchanged: an uncontracted callee, an actual the access gate
+    refuses (`**out`, an owning `q_store(*list, …)`) and a leak the refusal
+    hid each keep or surface their own verdict; the rule removes one refusal
+    and adds no admission of its own. **Do not** read a `__typeof__`,
+    `__attribute__` or `_Alignas` prefix, a parenthesized declarator or a
+    jumped-over shadow here (card JUMPED-SHADOW-FORMAL-READINGS owns those
+    readings of the same guard), and do not drop the disjunct on a token
+    guess (a known callee name) when Clang has no answer. Premise stated, not
+    proved: faithful Clang extraction of the statement's node kind (trust
+    boundary 28). `QCore.CallNotDeclarator` (`vectors_match`,
+    `never_adds_a_declaration`, `an_admission_is_a_call`,
+    `an_admission_is_only_the_paren_star_disjunct`,
+    `a_declaration_keeps_the_refusal`, `a_non_call_keeps_the_old_test`,
+    `no_ast_answer_keeps_the_old_test`, `a_keyword_declarator_stays`);
+    [report](../reports/call-with-deref-actual/README.md).
+
 <!-- generated:rules:end -->
