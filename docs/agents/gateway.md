@@ -13930,4 +13930,75 @@ through `ampersand_runs`.
     `a_nested_offset_is_refused`, `every_older_reading_stands` and six more),
     bound to `OFFSET_VECTORS` by a shared-vector unit test.
 
+<a id="constraint-84"></a>
+
+84. **A withdrawn leak with a path avoiding every mark is published.** Card
+    SETTLED-LEAK-JOINED-GENUINE-WITHDRAWN
+    (`crates/qcore-c-gateway/src/legacy_joined_leak_witness.rs`, new; one
+    call after rule 74c's settlement in `analyze_cfg_with_entry_collected`
+    and one module line in `legacy_c.rs`). It amends
+    [rule 74c](#constraint-74c) (A). Rule 74c (A) withdraws a report when
+    the settled exit marks the identity by a refused release beside an
+    `Unknown` leaf. The union join cannot tell the refused release's path
+    from another path to the same exit, so a genuine leak on the other path
+    was withdrawn with it. Whether an iterate claimed that leak at all
+    depended on the schedule (rule 6): `if (flag && k_close(fd) == 0) {}` was
+    claimed and withdrawn, and `if (flag) { k_close(fd); }` was never
+    claimed. **The candidates** are, at every exit, the current-generation
+    identities its settled incoming state marks unresolved with a refused
+    release among the marks, when the function carries an `Unknown` leaf.
+    These are exactly the reports (A) withdraws, held or not. **The
+    witness.** The custody work list is replayed for the identity with the
+    same transfers, edge refinements (rule 77's hook included), joins and
+    schedule, except that an edge whose state marks the identity unresolved
+    or is `unmodeled` (some instruction on the path was refused, or an edge
+    taken was an undecided test or a retained infeasible loop exit) is not
+    propagated. The restricted states are then joins over exactly the CFG
+    paths on which nothing marked the identity and nothing was refused.
+    Every refusing branch of a release marks its targets
+    (`mark_unresolved_effect`), so none of those paths passes a refused
+    release of the identity, and none passes a refused test's null edge, a
+    refused hand-on, re-acquisition, escape or any refused statement. The
+    refusal cut is required: without it a refused guard's null edge (rule
+    10b) carries a site live that the test would have found NULL, the
+    Metadata shape (A) was written to withdraw (`ampersand_run_parity`,
+    `nullable_guarded_release` pin it). The leak `(exit line, acquisition
+    line)` is published when both hold: the restricted exit output claims
+    the identity by `report_leaks`' own conditions (`LIVE`, not exempt, not
+    marked, no reference family) and is not `unmodeled`, and a breadth-first
+    path from a producer of the identity to that exit keeps it `LIVE`,
+    unmarked and unrefused on every restricted edge and node output it takes
+    (the leak-witness census's search, over the restricted states).
+    Otherwise the withdrawal stands, including for a leak whose only
+    avoiding path passes an unrelated refused statement (the precision this
+    keeps). **Premises:** (P1) the analyzer's
+    path-feasibility reading, the one every published leak rests on: an edge
+    no refinement proves infeasible is taken, and a `LIVE` bit at an exit is
+    the may-evidence `report_leaks` publishes; (P2) every refused release
+    marks the identities it could not discharge; (P3) the replay is the work
+    list. Under `debug_assertions` the uncut replay is asserted equal to the
+    settled states, so a hook added to the work list and not to the replay
+    fails the gateway suite on any fixture with a candidate. Only
+    `Unknown -> Unsafe` moves follow, plus extra `Leak` leaves in rows already
+    `Unsafe`. Each published leak is provisional, beside the refused
+    release's own refusal. Nothing becomes `Safe`. **Do not** publish a
+    candidate whose only live paths pass a mark of it; **do not** treat a
+    previous or older generation here (rule 42 keeps those); **do not**
+    read a mark from any refusal other than a refused release as a
+    candidate (rules 12e, W44 and 42 keep those, and 74c (A) does not
+    withdraw them). Pinned instances (`tests/settled_leak_joined.rs`): the
+    `condition_call_desugar` descriptor shape, a refused close on one arm, in
+    a `while` loop, on two arms of three, beside an early return, and a
+    nullable stream closed `nonnull` on one arm are `Unsafe`. The close on
+    the only path, on both arms or in a `do`/`while` body, the other arm's
+    refused hand-on, a discharging other arm and a returning other arm stay
+    `Unknown`. `QCore.SettledLeakJoined`
+    (`the_cut_join_is_the_avoiding_join`,
+    `a_witness_avoids_every_refused_release`, `a_witness_passes_no_refusal`,
+    `no_witness_through_a_refused_release`,
+    `a_refused_only_leak_stays_withdrawn`, `publish_vectors_hold`,
+    `an_unwithdrawn_report_is_untouched`, `a_publication_is_never_safe`,
+    `the_pinned_instance`, `the_both_arms_control`);
+    [report](../reports/settled-leak-joined-genuine-withdrawn/README.md).
+
 <!-- generated:rules:end -->

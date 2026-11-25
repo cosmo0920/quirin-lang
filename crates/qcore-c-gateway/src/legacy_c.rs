@@ -324,6 +324,12 @@ mod loop_reacquisition_leak_route;
 #[path = "legacy_settled_leak.rs"]
 mod settled_leak_route;
 
+// Card SETTLED-LEAK-JOINED-GENUINE-WITHDRAWN (rule 84): a leak rule 74c (A)
+// withdraws is published when a path avoiding every mark of its identity
+// carries it. The hooks below naming the card are thin.
+#[path = "legacy_joined_leak_witness.rs"]
+mod joined_leak_route;
+
 // Card NULLABLE-LAZY-CONSTRUCTOR-IN-LOOP (rule 74d): a resolved, possibly-null
 // resource returned under a non-null result mode is refused as that. The hook
 // below naming the card is thin.
