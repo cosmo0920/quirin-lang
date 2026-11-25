@@ -14021,4 +14021,68 @@ through `ampersand_runs`.
     `a_nested_offset_is_refused`, `every_older_reading_stands` and six more),
     bound to `OFFSET_VECTORS` by a shared-vector unit test.
 
+<a id="constraint-79"></a>
+
+79. **A `sizeof` type query is read as the no-access it is: in a connective
+    condition, and beside a parenthesised product.** Card K2-NO-TYPED-ACCESS
+    (round 37, `type_query_positions.rs`; one delimited hook in
+    `legacy_elaboration::elaborate_condition` and one in
+    `typed_field_access::is_declaration_candidate`), on the user's decision
+    of 2026-11-25 ("Build the 2 rows"). It amends rule 10s's condition
+    lowering (which lowered no `Branch`/`Merge`) and the declaration reader
+    rule 10l and W46-ACCESS-PATH-STATEMENTS share; every other premise of
+    10k, 10n, 10s, 10z and 5h stands. Every condition is a formula of the
+    C04.18.9 typed rendering over the K2 terms
+    (`premise_formula::RENDERED_TERMS`, block `K2`, prefix `k2_`), validated
+    by `guarded_proposition` before any admission; the prose after each
+    formula only glosses it. **(1) Admission**, asked in
+    `elaborate_condition` after its result is a non-pointer value and only
+    when the elaboration holds a region (before the rule every such
+    condition was refused at the lowering):
+    `k2_region_site` `((#k2_older_refused(#k2_condition) && #k2_region(#k2_condition)) && #k2_scalar_result(#k2_condition))`
+    (structural: the hook is the position's last route);
+    `k2_type_query_present` `exists (#q: k2_query) { #k2_query_of(#q,#k2_condition) }`;
+    `k2_queries_unevaluated` `forall (#q: k2_query) { (#k2_query_of(#q,#k2_condition) => (#k2_type_operand(#q) && !#k2_variably_modified(#q))) }`
+    (a type-name operand whose Clang spelling, and desugared spelling, holds
+    no array declarator: such an operand is not evaluated, C11 6.5.3.4p2);
+    `k2_events_inert` `forall (#e: k2_event) { (#k2_event_of(#e,#k2_condition) => (#k2_branch_event(#e) || (#k2_object_read(#e) && #k2_unaliased(#e)))) }`
+    (on every arm: a region's `Branch`/`Merge`, or a read of an automatic
+    local or formal through its own name whose address no `&` of the body
+    takes, the elaborator's `Context::unaliased`). An admitted condition is
+    lowered as no instruction and one branch to both edges refining
+    neither: whichever arm C evaluates it changes no abstract state and owes
+    no obligation, and not refining keeps both successors.
+    **Named refusals** (each the formula whose truth refuses; the condition
+    then keeps the position's older refusal byte for byte):
+    `k2_refuse_no_type_query` `forall (#q: k2_query) { !#k2_query_of(#q,#k2_condition) }`;
+    `k2_refuse_evaluated_query` `exists (#q: k2_query) { (#k2_query_of(#q,#k2_condition) && (!#k2_type_operand(#q) || #k2_variably_modified(#q))) }`;
+    `k2_refuse_event` `exists (#e: k2_event) { (#k2_event_of(#e,#k2_condition) && (!#k2_branch_event(#e) && (!#k2_object_read(#e) || !#k2_unaliased(#e)))) }`
+    (a call, a store, an increment, a member/subscript/dereference read, a
+    lifetime boundary, or the read of a static, global or address-taken
+    object). **(2) The product run.**
+    `k2_product_run_is_no_declaration` `(#k2_name_star_sizeof(#k2_run_at) => !#k2_declaration(#k2_run_at))`:
+    a declaration naming a variable puts an identifier after the `*`, and
+    the keyword `sizeof` is none (C11 6.4.1p2, 6.7.6), so
+    `is_declaration_candidate` drops a run whose first token is an
+    identifier, second `*` and third `sizeof`; every declaration is still a
+    candidate and the readers keep their total-or-reject premise. What the
+    statement then means is the older routes' (the elaborator's `sizeof(*p)`
+    is card CG08's type query). **Do not** lower an arm's path read, call or
+    store unconditionally (it would move its obligation off the edge C
+    evaluates it on), admit an expression or variably modified operand
+    here, or drop any other run from the candidates. Premises stated, not
+    proved: faithful Clang extraction of the region, the events and the
+    operand types (trust boundary 28), and the conservative
+    variably-modified test. `QCore.TypeQueryPositions`
+    (`admitted_exactly_when`, `a_refusal_negates_its_condition`,
+    `an_admitted_condition_is_the_identity_on_every_path`,
+    `an_admitted_condition_owes_nothing`, `the_lowering_is_the_condition`,
+    `a_call_or_store_is_refused`, `an_aliased_read_is_refused`,
+    `an_evaluated_query_is_refused`, `a_variably_modified_query_is_refused`,
+    `a_product_run_is_no_declaration`,
+    `dropping_product_runs_loses_no_declaration`, `decision_vectors_hold`,
+    `the_tables_are_counted`), bound to `DECISION_VECTORS`, the formula
+    table and the K2 term list by shared-vector unit tests;
+    [report](../reports/k2-no-typed-access/README.md).
+
 <!-- generated:rules:end -->

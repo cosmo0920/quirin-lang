@@ -303,6 +303,14 @@ mod union_bitfield;
 // subscripts C11 6.5.2.1p2 defines them to be; the hook is
 // `typed_access_path::Reader::path`.
 mod pointer_offset_place;
+// Card K2-NO-TYPED-ACCESS (rule 79): a connective condition with a type
+// query, and `NAME * sizeof` read as no declaration; the hooks are
+// `legacy_elaboration::elaborate_condition` and
+// `typed_field_access::is_declaration_candidate`.
+mod type_query_positions;
+#[cfg(test)]
+#[path = "../tests/unit/type_query_positions.rs"]
+mod type_query_positions_tests;
 // Card CG15-STORAGE-DURATION-AND-VOLATILE (rule 11h): storage duration and
 // `volatile`; the G hooks are in `legacy_storage_duration.rs`.
 mod storage_duration;

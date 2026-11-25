@@ -1072,6 +1072,17 @@ impl Parser<'_> {
         if !matches!(elaborated.result, Operand::Value { pointer: false, .. }) {
             return Err(Refusal::Unlisted("a condition that is not a scalar value"));
         }
+        // Card K2-NO-TYPED-ACCESS (rule 79): a value region with a type
+        // query, every event inert, is one branch refining neither edge.
+        if !elaborated.branches.is_empty() {
+            use crate::type_query_positions as k2;
+            k2::validated().map_err(|_| Refusal::Unlisted("rule 79 formulas unchecked"))?;
+            let facts = k2::facts(node, &elaborated, &|decl| context.unaliased(decl));
+            k2::decide(&facts).map_err(|reason| Refusal::Unlisted(reason.id()))?;
+            let successors = vec![Target::True, Target::False];
+            let nodes = vec![PlanNode { instruction: LegacyInstruction::NoOp, successors }];
+            return Ok(ConditionPlan { nodes, entry: 0 });
+        }
         let instructions = self.lower_events(&elaborated)?;
         // The events in order, then one branch that refines nothing.
         let mut nodes = instructions

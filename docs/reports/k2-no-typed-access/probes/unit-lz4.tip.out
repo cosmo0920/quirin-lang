@@ -1,0 +1,6 @@
+UNIT LZ4_hashPosition Unknown own=Some("Safe") []
+UNIT LZ4_hash5 Unknown own=Some("Safe") []
+UNIT LZ4_read_ARCH Unknown own=Some("Safe") []
+UNIT LZ4_getPosition Unknown own=Some("Unknown") ["590:unsupported:call to uncontracted function `LZ4_getPositionOnHash`"]
+test unit_probe ... ok
+

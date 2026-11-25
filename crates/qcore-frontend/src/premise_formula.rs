@@ -2624,6 +2624,24 @@ pub const RENDERED_VALUE_SORTS: &[(&str, &str)] = &[
         "mes_cell",
         "a member place of an object, spelled from a formal (`P->F`, `P->F.G`)",
     ),
+    // Card K2-NO-TYPED-ACCESS (gateway rule 79, the K2 block): the sorts of
+    // the rule's conditions, prefixed `k2_`.
+    (
+        "k2_site",
+        "a controlling expression or an expression statement of the analysed body",
+    ),
+    (
+        "k2_event",
+        "an event of a site's Clang elaboration (rule 10s): a read, a write, a call, a branch, a merge or a lifetime boundary",
+    ),
+    (
+        "k2_query",
+        "a `sizeof` or `_Alignof` operator occurring in a site",
+    ),
+    (
+        "k2_run",
+        "a run of a body's tokens the declaration reader tries as a local declaration (one starting after `{`, `}`, `;`, `(` or `:`)",
+    ),
 ];
 
 /// The G01p sort of a rendered term: a value of a rendered value sort, a
@@ -3533,6 +3551,97 @@ pub const RENDERED_TERMS: &[RenderedTerm] = &[
         sort: NULLARY,
         meaning: "the row's verdict assumptions list the premise `mes_caller_slot`",
         block: "MES",
+    },
+    // ---- Card K2-NO-TYPED-ACCESS (gateway rule 79; USER DECISION 2026-11-25,
+    // "Build the 2 rows"): the terms of the rule's admission conditions and
+    // named refusals, each a formula of this rendering
+    // (`crate::premise_formula::guarded_proposition` validates them). Every
+    // name is prefixed `k2_`; the subject (one controlling expression, one
+    // token run of the declaration reader) is implicit as SP9's environment
+    // is. The Lean list is `QCore.TypeQueryPositions.k2Terms`. ----
+    RenderedTerm {
+        name: "k2_condition",
+        sort: RenderedSort::Value("k2_site"),
+        meaning: "the controlling expression (`if`, `while`, `for`, `do`) the rule reads",
+        block: "K2",
+    },
+    RenderedTerm {
+        name: "k2_older_refused",
+        sort: RenderedSort::Predicate(&["k2_site"]),
+        meaning: "`#k2_older_refused(#s)`: every older route of the position refused the site (rules 5h, 10s, 10x, 12c, 63)",
+        block: "K2",
+    },
+    RenderedTerm {
+        name: "k2_region",
+        sort: RenderedSort::Predicate(&["k2_site"]),
+        meaning: "`#k2_region(#s)`: the site's Clang elaboration (rule 10s) holds a value `&&`, `||`, `?:` or `X ?: B` region (rule 10z)",
+        block: "K2",
+    },
+    RenderedTerm {
+        name: "k2_scalar_result",
+        sort: RenderedSort::Predicate(&["k2_site"]),
+        meaning: "`#k2_scalar_result(#s)`: the elaboration's result is a value of non-pointer type",
+        block: "K2",
+    },
+    RenderedTerm {
+        name: "k2_event_of",
+        sort: RenderedSort::Predicate(&["k2_event", "k2_site"]),
+        meaning: "`#k2_event_of(#e,#s)`: the event is one of the site's elaborated events, on any arm",
+        block: "K2",
+    },
+    RenderedTerm {
+        name: "k2_branch_event",
+        sort: RenderedSort::Predicate(&["k2_event"]),
+        meaning: "`#k2_branch_event(#e)`: the event is a region's `Branch` or `Merge`, which touches no storage",
+        block: "K2",
+    },
+    RenderedTerm {
+        name: "k2_object_read",
+        sort: RenderedSort::Predicate(&["k2_event"]),
+        meaning: "`#k2_object_read(#e)`: the event reads a named object through its own name (a `DeclRefExpr`), no member, subscript or dereference",
+        block: "K2",
+    },
+    RenderedTerm {
+        name: "k2_unaliased",
+        sort: RenderedSort::Predicate(&["k2_event"]),
+        meaning: "`#k2_unaliased(#e)`: the object the event names is an automatic local or formal whose address no `&` of the body takes (the elaborator's `Context::unaliased`)",
+        block: "K2",
+    },
+    RenderedTerm {
+        name: "k2_query_of",
+        sort: RenderedSort::Predicate(&["k2_query", "k2_site"]),
+        meaning: "`#k2_query_of(#q,#s)`: the `sizeof` or `_Alignof` operator `#q` occurs in the site",
+        block: "K2",
+    },
+    RenderedTerm {
+        name: "k2_type_operand",
+        sort: RenderedSort::Predicate(&["k2_query"]),
+        meaning: "`#k2_type_operand(#q)`: the operator's operand is a type name, not an expression",
+        block: "K2",
+    },
+    RenderedTerm {
+        name: "k2_variably_modified",
+        sort: RenderedSort::Predicate(&["k2_query"]),
+        meaning: "`#k2_variably_modified(#q)`: Clang's spelling of the operand type holds an array declarator (an over-approximation of C11 6.7.6p3's variably modified type, whose `sizeof` is evaluated, C11 6.5.3.4p2)",
+        block: "K2",
+    },
+    RenderedTerm {
+        name: "k2_run_at",
+        sort: RenderedSort::Value("k2_run"),
+        meaning: "the token run the declaration reader (`typed_field_access::read_locals`) is at",
+        block: "K2",
+    },
+    RenderedTerm {
+        name: "k2_name_star_sizeof",
+        sort: RenderedSort::Predicate(&["k2_run"]),
+        meaning: "`#k2_name_star_sizeof(#r)`: the run's first token is an identifier, its second `*` and its third the keyword `sizeof`",
+        block: "K2",
+    },
+    RenderedTerm {
+        name: "k2_declaration",
+        sort: RenderedSort::Predicate(&["k2_run"]),
+        meaning: "`#k2_declaration(#r)`: the run begins a C11 6.7 declaration whose first declarator's identifier follows the run's `*` (a declarator identifier is never a keyword, C11 6.4.1p2 and 6.7.6)",
+        block: "K2",
     },
 ];
 

@@ -33,6 +33,8 @@ qcore-contract = { path = "../qcore-contract", version = "0.1.0" }
 qcore-core = { path = "../qcore-core", version = "0.1.0" }
 # Card MEMBER-EFFECT-STORES (rule 38k): the premise-formula validator its
 # conditions and premise are checked with.
+# Card K2-NO-TYPED-ACCESS (rule 79): the premise-formula validator its
+# conditions and refusals are checked with.
 qcore-frontend = { path = "../qcore-frontend", version = "0.1.0" }
 # Card GATEWAY-RULE-API: the rule-package interface, the registry model and
 # the run-time switches the generated tables read.
