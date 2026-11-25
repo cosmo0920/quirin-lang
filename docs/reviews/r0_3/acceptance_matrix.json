@@ -170,7 +170,7 @@
   "note": "Prose revision 0.3 is the specification revision. It is separate from, and does not move with, the package/protocol/evidence/schema versions below.",
   "prose_specification_revision": "0.3",
   "documentation_revision": "0.3",
-  "qcore_schemas_rust_api": "28.0.0",
+  "qcore_schemas_rust_api": "29.0.0",
   "qcore_schemas_version_cause": "P02 added the public PluginLimits::additional field (3.0.0); P04 then added the counter_summary module and one variant each to witness/obligation/plugin plus an optional request field, three source-incompatible additions the documented policy makes a major change (4.0.0). Every later major (5.0.0 through 13.0.0) is the same policy applied to a further source-incompatible Rust API addition as a transported vocabulary landed; 13.0.0 is P04-COMPOSE-FS's three enum variants plus CompositionFamilyInput::nested() returning a vector because that family has two nested questions and one slot could not publish both. Existing wire bytes are unchanged at every step and pinned by crates/qcore-schemas/tests/counter_request_wire.rs and crates/qcore-schemas/tests/composition_request_wire.rs; COMPOSITION_SOURCE_INPUT_VERSION stays 2, so no existing task digest moved; 14.0.0 is P04-COMPOSE-UNSUPPORTED's three enum variants for the fifth and last reachable composition family, with COMPOSITION_SOURCE_INPUT_VERSION still 2 and no accessor changing shape, because P04-COMPOSE-FS had already paid that cost.",
   "plugin_protocol": "v1 (unchanged)",
   "semantic_evidence": "v2 (unchanged)",
@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 10,
-  "named_followups": 1108
+  "named_followups": 1116
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6925,7 +6925,7 @@
   "workspace_tests": 10164,
   "provider_tests": 182,
   "python_evidence_validator_tests": 807,
-  "lean_audits": 512,
+  "lean_audits": 513,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
    "AuditAddressArrowPlace.lean",
@@ -7163,6 +7163,7 @@
    "AuditLoopSwitchCallEvaluation.lean",
    "AuditLoopWindows.lean",
    "AuditMayAlias.lean",
+   "AuditMeasureConnect.lean",
    "AuditMemberAddress.lean",
    "AuditMemberAddressReader.lean",
    "AuditMemberCustodyAttribution.lean",
@@ -7446,7 +7447,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "full landing gate on 6821fddee: every step exits 0 except rust-suite (5 failed: known host libcurl failure and four reading-site evidence tests fixed by the digest re-pin and rerun)",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/k6-direct-position-access/integration/gate.json)"
+  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
  },
  "named_followups": [
   {
@@ -15129,6 +15130,62 @@
    "why": "K6 re-census of the 2026-11-24 current run: LZ4HC_init_internal (lz4hc.c:102, its only leaf). Rule 78 says not to read a difference of two pointers. The difference is a `ptrdiff_t` (C11 6.5.6p9) of two loads; whether the integer it yields may carry a tracked identity (`pointer X converted to an integer may carry a tracked identity`) is the open question. DISCHARGE: a reading of `P - Q` over two loads as a scalar with each load's per-hop obligation, with Lean parity, or a recorded decision to keep it refused.",
    "source": "docs/reports/k6-direct-position-access/README.md",
    "recorded_by": "K6-DIRECT-POSITION-ACCESS"
+  },
+  {
+   "id": "CONNECT-ADOPT-DECLARED-DEPENDENCIES",
+   "title": "No shipped contract states a declared contract dependency yet: onigmo's, librdkafka's and cmetrics' reliance on libc's and cfl's declarations stays implicit",
+   "why": "QUIRIN-AUDIT-CONNECT added `requires resource_contract_dependency(...)` (C15.1) but adopted it nowhere: one clause changes its declaration's normalised digest, so its lock entry stops covering it (contract-changed, Pending) until a person re-pins it. The scratch trial (docs/reports/quirin-audit-connect/scripts/adoption_trial.py, onig_new -> libc::malloc) shows what follows: the module diff, the load path's contract_dependencies entry, the lock entry 2e6db491... no longer covering the text, a Cargo dependency from quirin-provider-onigmo on quirin-provider-libc (cx_declared_crate) and providers/Cargo.lock, the user load path and the checker binding's module digest. DISCHARGE: per crate, state each dependency its contracts rely on (allocator, list and string contracts), regenerate the load paths, review and re-pin every changed declaration, and measure; a user decision on the scope (every reliance, or only ownership-transferring ones) first.",
+   "source": "docs/reports/quirin-audit-connect/README.md",
+   "recorded_by": "QUIRIN-AUDIT-CONNECT"
+  },
+  {
+   "id": "CONNECT-SDK-LOAD-PATH-DEPENDENCIES",
+   "title": "`quirin-plugin load-path` does not write a user crate's contract_dependencies; only `quirin-audit plugin views --write` does",
+   "why": "QUIRIN-AUDIT-CONNECT: the core manifest reader refuses a user crate whose modules declare a contract dependency the load path does not record (QI014), so a user who regenerates the load path with the plugin SDK must run `quirin-audit plugin views --write` after it (as for the resource views). The SDK (providers/quirin-provider-plugin/src/load_path.rs) links no core crate and has no clause reader. DISCHARGE: either have the SDK emit the entry with a lexical reader the core reader cross-checks, or document the two-step workflow in the SDK README and its `check`.",
+   "source": "docs/reports/quirin-audit-connect/README.md",
+   "recorded_by": "QUIRIN-AUDIT-CONNECT"
+  },
+  {
+   "id": "CONNECT-BASELINE-SIDE-IDENTITY",
+   "title": "A native-comparison record does not carry a baseline side's analyzer or bundle identity, so `measure chain` refuses every link through a baseline side",
+   "why": "QUIRIN-AUDIT-CONNECT demonstration: landing-556460e31 -> MEMBER-EFFECT-COMPONENT-SCOPE and -> landing-777fba16e are refused with cx_refuse_unrecorded because a `baseline:` side's record carries `binary: null, bundles: null` (the baseline manifest has them; `measure` does not copy them into `sides`). Fail-closed and correct, but it keeps landings measured against a published baseline from joining the rev-measured cards. DISCHARGE: `measure` copies the verified baseline manifest's binary SHA-256, bundles and inputs into the side record; `measure chain` then joins on them (no re-measurement of committed records; new records only).",
+   "source": "docs/reports/quirin-audit-connect/README.md",
+   "recorded_by": "QUIRIN-AUDIT-CONNECT"
+  },
+  {
+   "id": "CONNECT-CHAIN-SHARED-TIP-COMPARISONS",
+   "title": "A record comparing prev->tip and common->tip (a shared tip) chains only through its side directories",
+   "why": "QUIRIN-AUDIT-CONNECT: the Priority 0 remeasurement compares prev->tip and common->tip in one record; `measure chain --step` takes one comparison per step in its own direction, so prev -> common -> tip is chained with `--runs sides/prev sides/common --runs sides/common sides/tip` (compared here, no re-measurement). DISCHARGE (optional): a reversed step (`--step RECORD#common->tip~`) whose rows are the comparison's with sides swapped, with its own fixture and Lean parity of the reversal.",
+   "source": "docs/reports/quirin-audit-connect/README.md",
+   "recorded_by": "QUIRIN-AUDIT-CONNECT"
+  },
+  {
+   "id": "CONNECT-PUBLICATION-CONSUMES-CHAINS",
+   "title": "`land.py publish` and `evaluation_profiles.py check --history` do not yet read `quirin-measure-chain/1`",
+   "why": "QUIRIN-AUDIT-CONNECT delivered the chained record but did not wire its consumers: the publication step still compares one record against one baseline and cannot join routes measured at different baselines. DISCHARGE: `land.py publish` accepts a joined chain whose last side is the published tip (refusing a refused or incomplete chain and an unattributed new Safe), and `evaluation_profiles.py check --history` reads per-row histories from it; with tests.",
+   "source": "docs/reports/quirin-audit-connect/README.md",
+   "recorded_by": "QUIRIN-AUDIT-CONNECT"
+  },
+  {
+   "id": "CONNECT-COMPOSE-CURRENT-DIGESTS",
+   "title": "`measure compose` composes the bundles' reviewed (locked) declarations, not their current texts",
+   "why": "QUIRIN-AUDIT-CONNECT: the measurement plugin links no contract parser, so a bundle's declarations are its contracts.lock entries with their reviewed digests; a declaration unpinned or changed since review is outside the composition (the loader holds it, C06.2). DISCHARGE: a host-written bundle record (`quirin-audit plugin views` or the report's contract_revision inventory) carrying every declaration's current normalised digest, read by `measure compose`, so a stale lock entry is named in the composition too.",
+   "source": "docs/reports/quirin-audit-connect/README.md",
+   "recorded_by": "QUIRIN-AUDIT-CONNECT"
+  },
+  {
+   "id": "CONNECT-DEPENDENCY-OTHER-VIEWS",
+   "title": "A declared contract dependency is read only in the resource view; the bounds and outer loaders refuse the clause",
+   "why": "QUIRIN-AUDIT-CONNECT: `resource_contract_dependency` is a resource-v1 requirement. A bounds or outer contract relying on another crate's contract cannot state it, and a module in those views stating it is refused by their loaders (fail-closed). DISCHARGE: read the clause in the bounds contract v1 and outer contract v1 loaders with the same reader and resolution, when a contract of those views needs one.",
+   "source": "docs/reports/quirin-audit-connect/README.md",
+   "recorded_by": "QUIRIN-AUDIT-CONNECT"
+  },
+  {
+   "id": "CONNECT-RESOLVER-ITERATION-PARITY",
+   "title": "The Lean model states the dependency holds as a least fixed point; that the Rust iteration reaches it is a premise",
+   "why": "QUIRIN-AUDIT-CONNECT: QCore.MeasureConnect.Held is the inductive least set closed under the four causes, and its order independence and acyclicity are proved; `qcore_schemas::connect::resolve` iterates to a fixed point over sorted dependencies, which the Rust tests exercise (transitive, cycle, order reversal) but no theorem relates to `Held`. DISCHARGE: a Lean model of the iteration with fuel = the number of dependencies and a theorem that it equals `Held`, bound to the Rust function by decision vectors.",
+   "source": "docs/reports/quirin-audit-connect/README.md",
+   "recorded_by": "QUIRIN-AUDIT-CONNECT"
   }
  ],
  "updated": "Completed plugin premise integration; exact hand-maintained union retains810followups, borrowed measured-source8419Rust/354Lean/freshcard133provider, exact source equivalence checked; authoritative root committed-matrix Python confirmation in integration receipt. CMetrics map/opts API model specifications added at the explicit user request. Eight declared-model API contracts remain outside interpreted views, with CMT-MAP-OPTS-CONTRACT-ADOPTION and CMT-LABELED-HASH-ZERO-STATIC-STORAGE Open. No trusted API coverage is claimed; the source gate is recorded by this card alongside its separate initializer native checkpoint. W48-CMT-TRACKED-INTERIOR-SELF-INIT implements rule 36b's checked initializer effect transport for an exact live owned root or embedded record, retaining actual self writes, invalidating aliased member facts and preserving resource obligations; nondefault custody frames refuse and no ordinary summary is exported. The canonical CFL intrusive_list.qv declares matching audit preconditions/effects; two CMetrics .qv modules add six map and two opts lifecycle models, including transitive ownership, partial failure, borrowed results and uncleared cleanup fields. All remain outside interpreted views; checked API adoption and labeled zero-hash storage accounting have named Open follow-ups. Fresh BASE/planner precedes prediction f18d96065 and implementation; the later contract amendment 08da23123 precedes .qv edits. Native corpus BASE/TIP Safe/Unknown/Pending/provisional-Unsafe: 1009 / 3816 / 0 / 9 to 1011 / 3814 / 0 / 9; full system/slice, 5781 NULL dictionaries and runtime projections are compared, 241 semantic leaves accounted, zero unexplained leaves and no prior Safe loss. Gate 8654 Rust / 370 Lean / 374 Python, provider 133 Rust / 25 Python and all five package verifies pass. The actual deep source reader uses 328 KiB below 1 MiB. Full getter closure remains Open; W48-CMT-SELF-INIT-DISJOINT-FRAMES tracks the next bounded frame extension, and W48-EXACT-RETURN-WITNESS-PRECISION is unchanged. Native evidence is isolated to measured e92d8aef35a8bd14550e90219d19a56eb3b196e7; later source gate 2d0d85299b830aa24d7f200d63a308653582363f validates the added declared API models separately; see docs/reports/w48-cmt-tracked-interior-self-init/README.md."
