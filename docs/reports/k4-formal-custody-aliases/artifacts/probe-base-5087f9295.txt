@@ -1,0 +1,23 @@
+PROBE metric_escape: Safe
+PROBE metric_escape without the arithmetic actual: Safe
+PROBE metric_escape with an if instead of a switch: Safe
+PROBE metric_escape, typedef'd formal, as in the source: Unknown
+   unknown_alias:description 4
+PROBE B1 char formal, x_sds_t *buf: Safe
+PROBE B2 typedef formal, char **buf: Unknown
+   unknown_alias:description 4
+PROBE B3 typedef formal, char **buf, no arithmetic: Safe
+PROBE B4 typedef formal, arithmetic actual, no loop: Safe
+PROBE B5 char formal, arithmetic actual, no loop: Safe
+PROBE B6 typedef formal, bare actual: Safe
+PROBE typedef'd formal, subscript in an if: Safe
+PROBE typedef'd formal, subscript in a switch: Safe
+PROBE plain formal, subscript in a switch: Safe
+PROBE rd_dl_close: Safe
+PROBE rd_dl_close with the dynamic_library release: Unknown
+   unknown_alias:handle 2
+PROBE mk_config_print_error_msg without the exit: Safe
+PROBE rd_dl_close without the cast: Safe
+PROBE mk_config_print_error_msg: Unknown
+   unknown_alias:path 2
+exit 0

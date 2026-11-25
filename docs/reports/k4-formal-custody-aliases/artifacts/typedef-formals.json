@@ -1,0 +1,31 @@
+{
+ "kind_by_group": {
+  "formal-handed-uncontracted": {
+   "spelled-pointer": 3724,
+   "unread": 1
+  },
+  "formal-handed-contracted": {
+   "spelled-pointer": 138,
+   "typedef-pointer": 1
+  },
+  "formal-not-handed": {
+   "spelled-pointer": 62
+  },
+  "formal-copied": {
+   "spelled-pointer": 155
+  }
+ },
+ "typedef_types": [
+  [
+   "cfl_sds_t",
+   1
+  ]
+ ],
+ "rows_alone_typedef_only": [
+  [
+   13,
+   "lib/cmetrics/src/cmt_encode_prometheus.c",
+   "metric_escape"
+  ]
+ ]
+}

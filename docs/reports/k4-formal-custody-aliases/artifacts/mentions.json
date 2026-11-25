@@ -1,0 +1,207 @@
+{
+ "pairs": 995,
+ "by_kind": [
+  [
+   "bare",
+   "UNC",
+   365
+  ],
+  [
+   "bare+member",
+   "UNC",
+   173
+  ],
+  [
+   "none-found",
+   "UNC",
+   69
+  ],
+  [
+   "address+bare+member",
+   "UNC",
+   51
+  ],
+  [
+   "member",
+   "UNC",
+   50
+  ],
+  [
+   "address+bare",
+   "UNC",
+   46
+  ],
+  [
+   "bare+member+other",
+   "UNC",
+   45
+  ],
+  [
+   "none-found",
+   "noUNC",
+   36
+  ],
+  [
+   "bare+other",
+   "UNC",
+   22
+  ],
+  [
+   "member",
+   "noUNC",
+   19
+  ],
+  [
+   "other",
+   "UNC",
+   18
+  ],
+  [
+   "bare",
+   "noUNC",
+   18
+  ],
+  [
+   "address+bare+member+other",
+   "UNC",
+   17
+  ],
+  [
+   "address+member",
+   "UNC",
+   16
+  ],
+  [
+   "bare+other",
+   "noUNC",
+   8
+  ],
+  [
+   "address+member",
+   "noUNC",
+   7
+  ],
+  [
+   "bare+member",
+   "noUNC",
+   5
+  ],
+  [
+   "address",
+   "noUNC",
+   5
+  ],
+  [
+   "other",
+   "noUNC",
+   5
+  ],
+  [
+   "address",
+   "UNC",
+   4
+  ],
+  [
+   "address+bare",
+   "noUNC",
+   3
+  ],
+  [
+   "member+other",
+   "UNC",
+   3
+  ],
+  [
+   "address+bare+other",
+   "UNC",
+   2
+  ],
+  [
+   "address+bare+member",
+   "noUNC",
+   2
+  ],
+  [
+   "address+other",
+   "UNC",
+   2
+  ],
+  [
+   "arith+bare",
+   "noUNC",
+   2
+  ],
+  [
+   "address+other",
+   "noUNC",
+   1
+  ],
+  [
+   "member+other",
+   "noUNC",
+   1
+  ]
+ ],
+ "samples": {
+  "member": [
+   "cmt_destroy: cmt_labels_destroy(... cmt->static_labels ...)",
+   "cmt_counter_destroy: cmt_map_destroy(... counter->map ...)",
+   "pack_metric: cmt_labels_count(... cmt->static_labels ...)",
+   "append_sample_to_metric: destroy_data_point(... map->type ...)",
+   "append_sample_to_metric: destroy_data_point(... map->type ...)",
+   "append_sample_to_metric: destroy_data_point(... map->type ...)",
+   "append_sample_to_metric: destroy_data_point(... map->type ...)",
+   "append_sample_to_metric: destroy_data_point(... map->type ...)",
+   "append_sample_to_metric: append_attribute_to_data_point(... map->type ...)",
+   "append_sample_to_metric: destroy_data_point(... map->type ...)",
+   "append_sample_to_metric: destroy_data_point(... map->type ...)",
+   "append_sample_to_metric: destroy_data_point(... map->type ...)"
+  ],
+  "bare": [
+   "cmt_cat_copy_map: cmt_map_metric_get(... dst ...)",
+   "decode_exponential_histogram_data_point: decode_data_point_labels(... map ...)",
+   "decode_exponential_histogram_data_point: get_or_create_data_point_metadata_context(... map ...)",
+   "decode_histogram_data_point: decode_data_point_labels(... map ...)",
+   "decode_histogram_data_point: get_or_create_data_point_metadata_context(... map ...)",
+   "decode_numerical_data_point: decode_data_point_labels(... map ...)",
+   "decode_numerical_data_point: get_or_create_data_point_metadata_context(... map ...)",
+   "decode_summary_data_point: decode_data_point_labels(... map ...)",
+   "decode_summary_data_point: get_or_create_data_point_metadata_context(... map ...)",
+   "decode_histogram_points: decode_labels(... map ...)",
+   "decode_numerical_samples: decode_labels(... map ...)",
+   "pack_metric: pack_basic_header(... cmt ...)"
+  ],
+  "address": [
+   "cmt_counter_destroy: cfl_list_del(... &counter->_head ...)",
+   "cmt_counter_destroy: cmt_opts_exit(... &counter->opts ...)",
+   "decode_exponential_histogram_data_point: cfl_list_add(... &map->metrics ...)",
+   "decode_histogram_data_point: cfl_list_add(... &map->metrics ...)",
+   "decode_numerical_data_point: cfl_list_add(... &map->metrics ...)",
+   "decode_summary_data_point: cfl_list_add(... &map->metrics ...)",
+   "decode_histogram_points: cfl_list_add(... &map->metrics ...)",
+   "decode_numerical_samples: cfl_list_add(... &map->metrics ...)",
+   "cmt_exp_histogram_destroy: cfl_list_del(... &exp_histogram->_head ...)",
+   "cmt_exp_histogram_destroy: cmt_opts_exit(... &exp_histogram->opts ...)",
+   "cmt_gauge_destroy: cfl_list_del(... &gauge->_head ...)",
+   "cmt_gauge_destroy: cmt_opts_exit(... &gauge->opts ...)"
+  ],
+  "other": [
+   "append_sample_to_metric: initialize_attribute_list(... get_context_arena(context) ...)",
+   "append_sample_to_metric: initialize_numerical_data_point(... get_context_arena(context) ...)",
+   "append_sample_to_metric: initialize_summary_data_point(... get_context_arena(context) ...)",
+   "append_sample_to_metric: initialize_histogram_data_point(... get_context_arena(context) ...)",
+   "append_sample_to_metric: initialize_string_attribute(... get_context_arena(context) ...)",
+   "append_sample_to_metric: initialize_string_attribute(... get_context_arena(context) ...)",
+   "append_entry_to_prometheus_label_list: prometheus__label__init(... label_list[*index] ...)",
+   "append_entry_to_prometheus_label_list: prometheus__label__init(... label_list[*index] ...)",
+   "parse_value: parse_array(... parse_buffer * const input_buffer ...)",
+   "parse_value: parse_object(... parse_buffer * const input_buffer ...)",
+   "parse_value: parse_array(... cJSON * const item ...)",
+   "parse_value: parse_object(... cJSON * const item ...)"
+  ],
+  "arith": [
+   "emit_literal: unaligned_copy64(... literal + 8 ...)",
+   "writer_try_fast_append: unaligned_copy64(... ip + 8 ...)"
+  ]
+ }
+}
