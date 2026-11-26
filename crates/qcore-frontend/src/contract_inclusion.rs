@@ -91,18 +91,42 @@ impl ContractInheritSite {
     }
 }
 
+/// Card CONNECT-ADOPT-DECLARED-DEPENDENCIES (`linkage_contract_v1`, grammar
+/// G05l): one module-level link import, `#include NS::NAME as quant #link;`.
+/// It makes `NAME` nameable by a bare `quant #link NAME;` in this module and
+/// links nothing by itself.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct ContractLinkImport {
+    /// From the `#` through the terminating `;`.
+    pub span: Span,
+    pub namespace: String,
+    pub function: String,
+}
+
+/// A bare `quant #link NAME;` of a module that imports names for linking:
+/// the span of `NAME`, which the elaborator writes as `NS::NAME`.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct ContractBareLink {
+    pub span: Span,
+    pub name: String,
+}
+
 /// Every inclusion form in one module, in source order.
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
 pub struct ContractInclusionSyntax {
     pub includes: Vec<ContractIncludeDirective>,
     pub inherits: Vec<ContractInheritSite>,
+    /// Card CONNECT-ADOPT-DECLARED-DEPENDENCIES: the module-level link
+    /// imports, and the bare links they name.
+    pub link_imports: Vec<ContractLinkImport>,
+    pub bare_links: Vec<ContractBareLink>,
 }
 
 impl ContractInclusionSyntax {
-    /// Whether the module uses either form at all.
+    /// Whether the module uses any form at all.
     #[must_use]
     pub fn is_empty(&self) -> bool {
-        self.includes.is_empty() && self.inherits.is_empty()
+        self.includes.is_empty() && self.inherits.is_empty() && self.link_imports.is_empty()
     }
 }
 
@@ -117,6 +141,9 @@ pub enum ContractInclusionSyntaxErrorKind {
     ExtensionClauses,
     /// An include operand that is not `crate:module` in the admitted charset.
     Target,
+    /// Card CONNECT-ADOPT-DECLARED-DEPENDENCIES: a module-level link import
+    /// that is not `#include NS::NAME as quant #link;` (`QL006`).
+    LinkImport,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -250,6 +277,41 @@ pub fn scan_contract_inclusion(
     }
     let mut cursor = 3;
     while is_symbol(&tokens, cursor, Symbol::Hash) && is_word(&tokens, cursor + 1, "include") {
+        // Card CONNECT-ADOPT-DECLARED-DEPENDENCIES: `#include NS::NAME as
+        // quant #link;`, a module-level link import among the directives.
+        if let Some(TokenKind::Word(namespace)) = tokens.get(cursor + 2).map(|t| &t.kind)
+            && is_symbol(&tokens, cursor + 3, Symbol::ColonColon)
+        {
+            let function = match tokens.get(cursor + 4).map(|t| &t.kind) {
+                Some(TokenKind::Word(function)) => Some(function.clone()),
+                _ => None,
+            };
+            let shaped = is_symbol(&tokens, cursor + 3, Symbol::ColonColon)
+                && function.is_some()
+                && is_word(&tokens, cursor + 5, "as")
+                && is_word(&tokens, cursor + 6, "quant")
+                && is_symbol(&tokens, cursor + 7, Symbol::Hash)
+                && is_word(&tokens, cursor + 8, "link")
+                && is_symbol(&tokens, cursor + 9, Symbol::Semicolon);
+            let Some(function) = function.filter(|_| shaped) else {
+                return Err(ContractInclusionSyntaxError {
+                    kind: ContractInclusionSyntaxErrorKind::LinkImport,
+                    span: span_at(cursor + 2),
+                    message: "a module-level link import is `#include NS::NAME as quant #link;`"
+                        .to_owned(),
+                });
+            };
+            result.link_imports.push(ContractLinkImport {
+                span: Span {
+                    start: tokens[cursor].span.start,
+                    end: tokens[cursor + 9].span.end,
+                },
+                namespace: namespace.clone(),
+                function,
+            });
+            cursor += 10;
+            continue;
+        }
         let Some(TokenKind::StringLiteral(text)) = tokens.get(cursor + 2).map(|t| &t.kind) else {
             return Err(malformed(
                 span_at(cursor + 2),
@@ -290,6 +352,19 @@ pub fn scan_contract_inclusion(
             }
             TokenKind::Symbol(Symbol::RightBrace | Symbol::RightParen | Symbol::RightBracket) => {
                 depth -= 1;
+            }
+            TokenKind::Word(word)
+                if word == "quant"
+                    && is_symbol(&tokens, index + 1, Symbol::Hash)
+                    && is_word(&tokens, index + 2, "link")
+                    && is_symbol(&tokens, index + 4, Symbol::Semicolon) =>
+            {
+                if let Some(TokenKind::Word(name)) = tokens.get(index + 3).map(|t| &t.kind) {
+                    result.bare_links.push(ContractBareLink {
+                        span: tokens[index + 3].span,
+                        name: name.clone(),
+                    });
+                }
             }
             TokenKind::Symbol(Symbol::Hash) if is_word(&tokens, index + 1, "include") => {
                 return Err(malformed(

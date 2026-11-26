@@ -1,0 +1,141 @@
+{
+  "schema": "quirin-linkage-reliances/1",
+  "note": "Card CONNECT-ADOPT-DECLARED-DEPENDENCIES (user decisions of 2026-11-26, \"Every reliance\", \"Accept all\"): every cross-crate reliance a Safe or Unsafe verdict can rest on that no contract text states by itself, reviewed. A contract inherit directive is its own link and is not listed. providers/contracts.py check refuses a resource_body_checked declaration or a frame of another crate's function missing here, a recorded reliance without its link, and a link that is no recorded reliance (cx_reliance_is_linked). The census is docs/reports/connect-adopt-declared-dependencies/census.json.",
+  "declarations": [
+    {
+      "crate": "qcore-provider-librdkafka",
+      "function": "rd_calloc",
+      "kind": "body-checked-specification",
+      "targets": [
+        "libc::calloc"
+      ],
+      "reading": "rule 37 checked specification: resource_return_owned(nonnull) is established against the wrapper body in lib/librdkafka-2.15.0/src/rd.h, whose allocation is read through the libc declaration (owned nullable) before the asserted failure arm; the no-return of __assert_fail is a gateway built-in, not a declaration; body calloc(num, sz), rd_assert(p) (rd.h:139-143)"
+    },
+    {
+      "crate": "qcore-provider-librdkafka",
+      "function": "rd_strdup",
+      "kind": "body-checked-specification",
+      "targets": [
+        "libc::strdup"
+      ],
+      "reading": "rule 37 checked specification: resource_return_owned(nonnull) is established against the wrapper body in lib/librdkafka-2.15.0/src/rd.h, whose allocation is read through the libc declaration (owned nullable) before the asserted failure arm; the no-return of __assert_fail is a gateway built-in, not a declaration; body strdup(s) (_strdup on Windows, undeclared), rd_assert(n) (rd.h:161-169)"
+    },
+    {
+      "crate": "quirin-provider-fluent-bit",
+      "function": "cb_queue_chunks",
+      "kind": "body-checked-specification",
+      "targets": [
+        "chunkio::cio_chunk_close",
+        "chunkio::cio_chunk_down",
+        "chunkio::cio_chunk_get_content_size",
+        "chunkio::cio_chunk_is_up",
+        "chunkio::cio_chunk_up_force"
+      ],
+      "reading": "resource_body_checked: the specification stands only where the gateway's reading of its body in plugins/in_storage_backlog/sb.c establishes it, and its own row is analysed under it; that reading applies each callee's declaration at the call (sb.c read at 046accf6; callees by docs/reports/connect-adopt-declared-dependencies/scripts/callees.py); callees: flb_input_chunk_total_size (fluent-bit), cio_chunk_close/down/get_content_size/is_up/up_force (chunkio resource view); flb_input_chunk_map is undeclared"
+    },
+    {
+      "crate": "quirin-provider-fluent-bit",
+      "function": "flb_config_set_program_name",
+      "kind": "call-frame",
+      "targets": [
+        "libevent::mk_list_del"
+      ],
+      "reading": "quant cell mk_list_del: flb_input_instance |-> #untouched; and the same for flb_output_instance (G05k frame_clause), applied by legacy_cell_frames at every mk_list_del call: a Safe across that call rests on the frame and on libevent::mk_list_del's declaration together (monkey/intrusive_list.qv is the resource view's; chunkio/list_unlink.qv is not)"
+    },
+    {
+      "crate": "quirin-provider-fluent-bit",
+      "function": "sb_allocate_backlogs",
+      "kind": "body-checked-specification",
+      "targets": [
+        "libevent::mk_list_add"
+      ],
+      "reading": "resource_body_checked: the specification stands only where the gateway's reading of its body in plugins/in_storage_backlog/sb.c establishes it, and its own row is analysed under it; that reading applies each callee's declaration at the call (sb.c read at 046accf6; callees by docs/reports/connect-adopt-declared-dependencies/scripts/callees.py); callees: flb_calloc, sb_destroy_backlogs (fluent-bit), mk_list_add (monkey/intrusive_list.qv, the resource view's)"
+    },
+    {
+      "crate": "quirin-provider-fluent-bit",
+      "function": "sb_allocate_chunk",
+      "kind": "body-checked-specification",
+      "targets": [],
+      "reading": "resource_body_checked: the specification stands only where the gateway's reading of its body in plugins/in_storage_backlog/sb.c establishes it, and its own row is analysed under it; that reading applies each callee's declaration at the call (sb.c read at 046accf6; callees by docs/reports/connect-adopt-declared-dependencies/scripts/callees.py); callees: flb_calloc (fluent-bit; its contract inherit libc::calloc is its own link)"
+    },
+    {
+      "crate": "quirin-provider-fluent-bit",
+      "function": "sb_append_chunk_to_segregated_backlog",
+      "kind": "body-checked-specification",
+      "targets": [
+        "libevent::mk_list_add"
+      ],
+      "reading": "resource_body_checked: the specification stands only where the gateway's reading of its body in plugins/in_storage_backlog/sb.c establishes it, and its own row is analysed under it; that reading applies each callee's declaration at the call (sb.c read at 046accf6; callees by docs/reports/connect-adopt-declared-dependencies/scripts/callees.py); callees: sb_allocate_chunk, flb_output_name (fluent-bit), mk_list_add (monkey/intrusive_list.qv)"
+    },
+    {
+      "crate": "quirin-provider-fluent-bit",
+      "function": "sb_append_chunk_to_segregated_backlogs",
+      "kind": "body-checked-specification",
+      "targets": [
+        "libc::memset"
+      ],
+      "reading": "resource_body_checked: the specification stands only where the gateway's reading of its body in plugins/in_storage_backlog/sb.c establishes it, and its own row is analysed under it; that reading applies each callee's declaration at the call (sb.c read at 046accf6; callees by docs/reports/connect-adopt-declared-dependencies/scripts/callees.py); callees: sb_append_chunk_to_segregated_backlog (fluent-bit), memset (libc/string.qv); cio_chunk_get_real_size and flb_input_chunk_get_tag are undeclared"
+    },
+    {
+      "crate": "quirin-provider-fluent-bit",
+      "function": "sb_destroy_backlog",
+      "kind": "body-checked-specification",
+      "targets": [],
+      "reading": "resource_body_checked: the specification stands only where the gateway's reading of its body in plugins/in_storage_backlog/sb.c establishes it, and its own row is analysed under it; that reading applies each callee's declaration at the call (sb.c read at 046accf6; callees by docs/reports/connect-adopt-declared-dependencies/scripts/callees.py); callees: sb_remove_chunk_from_segregated_backlogs (fluent-bit); mk_list_entry and mk_list_foreach_safe are macros"
+    },
+    {
+      "crate": "quirin-provider-fluent-bit",
+      "function": "sb_destroy_backlogs",
+      "kind": "body-checked-specification",
+      "targets": [
+        "libevent::mk_list_del"
+      ],
+      "reading": "resource_body_checked: the specification stands only where the gateway's reading of its body in plugins/in_storage_backlog/sb.c establishes it, and its own row is analysed under it; that reading applies each callee's declaration at the call (sb.c read at 046accf6; callees by docs/reports/connect-adopt-declared-dependencies/scripts/callees.py); callees: flb_free, sb_destroy_backlog (fluent-bit), mk_list_del (monkey/intrusive_list.qv)"
+    },
+    {
+      "crate": "quirin-provider-fluent-bit",
+      "function": "sb_destroy_chunk",
+      "kind": "body-checked-specification",
+      "targets": [],
+      "reading": "resource_body_checked: the specification stands only where the gateway's reading of its body in plugins/in_storage_backlog/sb.c establishes it, and its own row is analysed under it; that reading applies each callee's declaration at the call (sb.c read at 046accf6; callees by docs/reports/connect-adopt-declared-dependencies/scripts/callees.py); callees: flb_free (fluent-bit; its contract inherit libc::free is its own link)"
+    },
+    {
+      "crate": "quirin-provider-fluent-bit",
+      "function": "sb_release_output_queue_space",
+      "kind": "body-checked-specification",
+      "targets": [
+        "chunkio::cio_chunk_close"
+      ],
+      "reading": "resource_body_checked: the specification stands only where the gateway's reading of its body in plugins/in_storage_backlog/sb.c establishes it, and its own row is analysed under it; that reading applies each callee's declaration at the call (sb.c read at 046accf6; callees by docs/reports/connect-adopt-declared-dependencies/scripts/callees.py); callees: sb_remove_chunk_from_segregated_backlogs, flb_output_name (fluent-bit), cio_chunk_close (chunkio/resource_open_close.qv)"
+    },
+    {
+      "crate": "quirin-provider-fluent-bit",
+      "function": "sb_remove_chunk_from_segregated_backlog",
+      "kind": "body-checked-specification",
+      "targets": [
+        "libevent::mk_list_del"
+      ],
+      "reading": "resource_body_checked: the specification stands only where the gateway's reading of its body in plugins/in_storage_backlog/sb.c establishes it, and its own row is analysed under it; that reading applies each callee's declaration at the call (sb.c read at 046accf6; callees by docs/reports/connect-adopt-declared-dependencies/scripts/callees.py); callees: sb_destroy_chunk, flb_output_name (fluent-bit), mk_list_del (monkey/intrusive_list.qv); its row is Unsafe at 9aed1913a with a leak at sb.c:226, the mk_list_del unlink (Priority 0 chain)"
+    },
+    {
+      "crate": "quirin-provider-fluent-bit",
+      "function": "sb_remove_chunk_from_segregated_backlogs",
+      "kind": "body-checked-specification",
+      "targets": [],
+      "reading": "resource_body_checked: the specification stands only where the gateway's reading of its body in plugins/in_storage_backlog/sb.c establishes it, and its own row is analysed under it; that reading applies each callee's declaration at the call (sb.c read at 046accf6; callees by docs/reports/connect-adopt-declared-dependencies/scripts/callees.py); callees: sb_remove_chunk_from_segregated_backlog (fluent-bit); list macros"
+    },
+    {
+      "crate": "quirin-provider-fluent-bit",
+      "function": "sb_segregate_chunks",
+      "kind": "body-checked-specification",
+      "targets": [
+        "chunkio::cio_chunk_close",
+        "chunkio::cio_chunk_down",
+        "chunkio::cio_chunk_get_content_size",
+        "chunkio::cio_chunk_is_up",
+        "chunkio::cio_chunk_up_force"
+      ],
+      "reading": "resource_body_checked: the specification stands only where the gateway's reading of its body in plugins/in_storage_backlog/sb.c establishes it, and its own row is analysed under it; that reading applies each callee's declaration at the call (sb.c read at 046accf6; callees by docs/reports/connect-adopt-declared-dependencies/scripts/callees.py); callees: sb_allocate_backlogs, sb_append_chunk_to_segregated_backlogs (fluent-bit), cio_chunk_close/down/get_content_size/is_up/up_force (chunkio resource view); cio_chunk_lock and cio_error_get are undeclared"
+    }
+  ]
+}

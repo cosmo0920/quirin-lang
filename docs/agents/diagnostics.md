@@ -254,6 +254,26 @@ derived, or shared (one remainder under both prefixes included); `QI018` unquali
 `QI019` namespace names no directly included crate; `QI020` child named like
 its qualified parent.
 
+<a id="contract-linkage-namespace-ql"></a>
+
+### Contract linkage namespace (`QL`)
+
+Card `CONNECT-ADOPT-DECLARED-DEPENDENCIES` (user decision 2026-11-26, "Accept
+all", L2 (b)) opens `QL001`–`QL009`, owned by the contract loader's linkage
+reader (`qcore_contract::contract_dependency::LinkageCode`; the elaborator
+carries it as `InclusionCode::Linkage`) for the `linkage_contract_v1`
+vocabulary (contract specification C15.2, grammar G05m), on the `QI`/`QP`
+precedent: no `Q` route code is allocated. Conditions: `QL001` a link without
+`requires linkage_contract_v1;`; `QL002` the marker without a link, or stated
+twice; `QL003` a link target that is not `NS::NAME` (a nested qualifier, a bare
+name no module-level import names); `QL004` one target linked twice by one
+declaration; `QL005` the retired written form `resource_contract_dependency`;
+`QL006` a module-level link import that is malformed, repeated, unused or names
+an own declaration; `QL007` a link to a namespace no load-path crate derives
+or to a declaration its crate's lock does not record; `QL008` a libc/POSIX
+target under another crate; `QL009` a manifest entry without a valid recorded
+identity. A stale manifest entry and a dependency cycle stay `QI014`.
+
 <a id="premise-formula-namespace-qf"></a>
 
 ### Premise formula namespace (`QF`)

@@ -38,9 +38,9 @@
 //! ```
 //!
 //! Card QUIRIN-AUDIT-CONNECT: `measure chain` joins two or more saved
-//! measurements into one chained record ([`chain`], `quirin-measure-chain/1`)
+//! measurements into one chained record ([`chain`], `quirin-measure-chain/2`)
 //! and `measure compose` composes two or more contract bundles for one
-//! measurement or verdict ([`compose`], `quirin-contract-composition/1`);
+//! measurement or verdict ([`compose`], `quirin-contract-composition/2`);
 //! neither measures, and neither claims a verdict.
 //!
 //! The output is one **native-comparison record**

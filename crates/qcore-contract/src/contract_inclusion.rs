@@ -151,6 +151,10 @@ pub enum InclusionCode {
     Qi019,
     /// An inheriting declaration named like its qualified parent.
     Qi020,
+    /// Card CONNECT-ADOPT-DECLARED-DEPENDENCIES: a `linkage_contract_v1`
+    /// refusal the elaborator meets (a module-level link import), in its own
+    /// loader-owned `QL` namespace.
+    Linkage(crate::contract_dependency::LinkageCode),
 }
 
 impl InclusionCode {
@@ -177,6 +181,7 @@ impl InclusionCode {
             Self::Qi018 => "QI018",
             Self::Qi019 => "QI019",
             Self::Qi020 => "QI020",
+            Self::Linkage(code) => code.as_str(),
         }
     }
 }
@@ -689,6 +694,9 @@ fn syntax_code(kind: ContractInclusionSyntaxErrorKind) -> InclusionCode {
         ContractInclusionSyntaxErrorKind::Malformed => InclusionCode::Qi001,
         ContractInclusionSyntaxErrorKind::ExtensionClauses => InclusionCode::Qi002,
         ContractInclusionSyntaxErrorKind::Target => InclusionCode::Qi003,
+        ContractInclusionSyntaxErrorKind::LinkImport => {
+            InclusionCode::Linkage(crate::contract_dependency::LinkageCode::Ql006)
+        }
     }
 }
 
@@ -760,6 +768,11 @@ fn clauses_of(declaration: &SourceDeclaration) -> Vec<Clause> {
                         SourceContractClauseKind::QuantRegistered => "quant registered".into(),
                         SourceContractClauseKind::QuantVariantMap => "quant variant".into(),
                         SourceContractClauseKind::QuantCell => "quant cell".into(),
+                        // Card CONNECT-ADOPT-DECLARED-DEPENDENCIES: the expression is
+                        // the target, so this re-renders the link as written.
+                        SourceContractClauseKind::QuantLink => {
+                            crate::contract_dependency::LINK_INTRODUCER.into()
+                        }
                     };
                     (introducer, clause.value.expression_source.clone())
                 })
@@ -797,7 +810,10 @@ fn canonical_shape(declaration: &SourceDeclaration, body: &str) -> bool {
         "extern fn {}({parameters}) -> {} contract {{ {body} }};",
         declaration.name, result.source
     );
-    token_kinds(&expected).as_ref() == Some(&declaration.tokens)
+    token_kinds(&expected).as_ref()
+        == Some(&crate::contract_dependency::without_linkage_blocks(
+            &declaration.tokens,
+        ))
 }
 
 fn parameter_names(declaration: &SourceDeclaration) -> Vec<String> {
@@ -1029,6 +1045,9 @@ impl<'r> Elaborator<'r> {
         for directive in &syntax.includes {
             blank(&mut probe, directive.span.start, directive.span.end);
         }
+        for import in &syntax.link_imports {
+            blank(&mut probe, import.span.start, import.span.end);
+        }
         for site in &syntax.inherits {
             blank(&mut probe, site.span.start, site.span.end);
             probe[site.span.start] = b'{';
@@ -1052,6 +1071,44 @@ impl<'r> Elaborator<'r> {
         }
         let own: Vec<SourceDeclaration> =
             parsed.declarations.into_iter().map(|d| d.value).collect();
+        // Card CONNECT-ADOPT-DECLARED-DEPENDENCIES (G5 (a)): a module-level
+        // link import makes one name nameable by a bare link and links
+        // nothing itself; it is used, unique, and names no own declaration.
+        let linkage = |message: String| {
+            error(
+                InclusionCode::Linkage(crate::contract_dependency::LinkageCode::Ql006),
+                message,
+            )
+        };
+        for (index, import) in syntax.link_imports.iter().enumerate() {
+            let spelled = format!(
+                "`#include {}::{} as quant #link;`",
+                import.namespace, import.function
+            );
+            if syntax.link_imports[..index]
+                .iter()
+                .any(|known| known.function == import.function)
+            {
+                return Err(linkage(format!("{spelled} imports a name twice")));
+            }
+            if own
+                .iter()
+                .any(|declaration| declaration.name == import.function)
+            {
+                return Err(linkage(format!(
+                    "{spelled} names a function this module declares"
+                )));
+            }
+            if !syntax
+                .bare_links
+                .iter()
+                .any(|bare| bare.name == import.function)
+            {
+                return Err(linkage(format!(
+                    "{spelled} is used by no link of this module"
+                )));
+            }
+        }
         let own_spans: Vec<_> = own
             .iter()
             .map(|d| d.function_contract.as_ref().map(|c| c.span.start))
@@ -1105,6 +1162,9 @@ impl<'r> Elaborator<'r> {
         for directive in &syntax.includes {
             blank(&mut text, directive.span.start, directive.span.end);
         }
+        for import in &syntax.link_imports {
+            blank(&mut text, import.span.start, import.span.end);
+        }
         let mut text =
             String::from_utf8(text).map_err(|e| error(InclusionCode::Qi001, e.to_string()))?;
         let mut replacements: Vec<(usize, usize, String)> = Vec::new();
@@ -1119,6 +1179,21 @@ impl<'r> Elaborator<'r> {
                 site.span.end,
                 format!("{{ {} }}", render_clauses(clauses)),
             ));
+        }
+        // Card CONNECT-ADOPT-DECLARED-DEPENDENCIES: an imported bare link is
+        // written qualified, so every reader (and the digest) sees `NS::NAME`.
+        for bare in &syntax.bare_links {
+            if let Some(import) = syntax
+                .link_imports
+                .iter()
+                .find(|import| import.function == bare.name)
+            {
+                replacements.push((
+                    bare.span.start,
+                    bare.span.end,
+                    format!("{}::{}", import.namespace, import.function),
+                ));
+            }
         }
         replacements.sort_by_key(|replacement| std::cmp::Reverse(replacement.0));
         for (start, end, block) in replacements {
@@ -1367,8 +1442,12 @@ impl Resolution<'_> {
         let clauses = rename_clauses(
             &parameter_names(parent_declaration),
             &parameter_names(child),
-            &crate::library_version::strip_library_version(
-                &crate::contract_revision::strip_revision_markers(&parent_clauses),
+            // Card CONNECT-ADOPT-DECLARED-DEPENDENCIES (G7): nor are a
+            // parent's links and marker; the directive is the child's link.
+            &crate::contract_dependency::strip_linkage(
+                &crate::library_version::strip_library_version(
+                    &crate::contract_revision::strip_revision_markers(&parent_clauses),
+                ),
             ),
         )
         .map_err(|message| self.error(InclusionCode::Qi012, message))?;

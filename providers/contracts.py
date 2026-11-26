@@ -46,6 +46,16 @@ example `contract_inventory`; the corpus tests read these locks
 instead of literal tables, so a contract change is a reviewed lock diff.
 The retired ``contract/qcore`` compatibility tree is refused so it cannot
 silently become a second source of provider contracts again.
+Card CONNECT-ADOPT-DECLARED-DEPENDENCIES (`linkage_contract_v1`, contract
+spec C15.2): each record's `contract_dependencies` lists every link (`quant
+#link NS::NAME;`, a bare name a module-level `#include NS::NAME as quant
+#link;` imports) and every cross-crate `contract inherit NS::NAME;` of its
+modules, with the identity a link never writes: the target crate's version
+(`since`) and the target declaration's lock digest (`sha256`). `check` also
+runs the linkage check (`check_linkage`): every reliance of
+`linkage-reliances.json` is linked and every link is a recorded reliance,
+every `resource_body_checked` declaration is recorded, and every frame of
+another crate's function is recorded (`cx_reliance_is_linked`).
 """
 import argparse
 import hashlib
@@ -248,25 +258,32 @@ def load_path_manifest(root=ROOT, metadata=None):
             "modules": sorted(modules),
             "published": {module: sha256(modules[module]) for module in published},
         }
-        declared = contract_dependencies(name, modules)
-        if declared:
-            record["contract_dependencies"] = declared
         crates.append(record)
     package_module().validate_source_modes(source_paths)
+    # Card CONNECT-ADOPT-DECLARED-DEPENDENCIES: the links and cross-crate
+    # inherit directives, once every crate's namespace and version is known.
+    by_namespace = {record["namespace"]: record for record in crates}
+    for record in crates:
+        modules = files(root / record["name"] / "contracts")
+        declared = contract_dependencies(record["name"], record["namespace"], modules,
+                                         by_namespace, root)
+        if declared:
+            record["contract_dependencies"] = declared
     return {"schema_version": 1, "crates": crates}
 
 
-# Card QUIRIN-AUDIT-CONNECT (contract spec C15.2): a declaration's declared
-# contract dependencies, `requires resource_contract_dependency("CRATE",
-# NS::NAME[, since "V"[, removed "W"]][, sha256 "HEX"]);`. This lexical
-# reading writes the load path's `contract_dependencies` entry; the Rust
+# Card CONNECT-ADOPT-DECLARED-DEPENDENCIES (`linkage_contract_v1`, contract
+# spec C15.2, grammar G05l): a declaration's links and cross-crate inherit
+# directives. This lexical reading writes the load path's
+# `contract_dependencies` entry with each target's recorded identity; the Rust
 # manifest reader (`qcore_contract::load_path_manifest`) rereads every module
-# with the loader's own clause reader and refuses an entry that differs
-# (`QI014`), so the two never disagree silently.
-_DEPENDENCY = re.compile(
-    r'\brequires\s+resource_contract_dependency\s*\(\s*"([^"]*)"\s*,\s*([A-Za-z_]\w*)\s*::\s*'
-    r'([A-Za-z_]\w*)((?:\s*,\s*(?:since|removed|sha256)\s+"[^"]*")*)\s*\)\s*;')
-_DEPENDENCY_KEY = re.compile(r'(since|removed|sha256)\s+"([^"]*)"')
+# with the loader's own reader (`contract_dependency::scan_module`) and refuses
+# an entry that differs (`QI014`), so the two never disagree silently.
+LINKAGE_VOCABULARY = "linkage_contract_v1"
+_IMPORT = re.compile(r"#\s*include\s+([a-z][a-z0-9_]*)\s*::\s*([A-Za-z_]\w*)\s+as\s+quant\s*#\s*link\s*;")
+_LINK = re.compile(r"\bquant\s*#\s*link\s+(?:([a-z][a-z0-9_]*)\s*::\s*)?([A-Za-z_]\w*)\s*;")
+_INHERIT = re.compile(r"\bcontract\s+inherit\s+([A-Za-z_]\w*)\s*::\s*([A-Za-z_]\w*)\s*;")
+_RETIRED = re.compile(r"\bresource_contract_dependency\s*\(")
 
 
 def _version(text):
@@ -278,26 +295,172 @@ def _version(text):
     return {"major": parts[0], "minor": parts[1], "patch": parts[2]}
 
 
-def contract_dependencies(name, modules):
-    """Every declared contract dependency of a crate's modules (`{module:
-    path}`), in module then text order, as the load path records them."""
+def _strip_comments(text):
+    return re.sub(r"/\*.*?\*/", " ", re.sub(r"//[^\n]*", "", text), flags=re.S)
+
+
+def lock_digest(root, crate, function):
+    """The reviewed digest `crate`'s `contracts.lock` records for `function`."""
+    lock = Path(root) / crate / "contracts.lock"
+    if not lock.is_file():
+        return None
+    document = json.loads(lock.read_text())
+    for kind in ("pinned", "flexible", "tip"):
+        for entry in document.get(kind) or []:
+            if entry["function"] == function:
+                return entry["contract_sha256"]
+    return None
+
+
+def module_links(text):
+    """The links and qualified inherit directives of one module's text, as
+    `(function, namespace, target, form)` in text order (the reading of
+    `qcore_contract::contract_dependency::scan_module`)."""
+    stripped = _strip_comments(text)
+    if _RETIRED.search(stripped):
+        raise ValueError("QL005: the written form `resource_contract_dependency(...)` is retired; "
+                         "state `requires linkage_contract_v1;` and `quant #link NS::NAME;`")
+    imports = {}
+    for match in _IMPORT.finditer(stripped):
+        if match.group(2) in imports:
+            raise ValueError(f"QL006: `{match.group(2)}` is imported for linking twice")
+        imports[match.group(2)] = match.group(1)
+    body = _IMPORT.sub(lambda m: " " * len(m.group(0)), stripped)
+    declarations = [(match.start(), match.group(1)) for match in
+                    re.finditer(r"\bextern\s+fn\s+([A-Za-z_][A-Za-z0-9_]*)", body)]
+    found = []
+    used = set()
+    for match in list(_LINK.finditer(body)) + list(_INHERIT.finditer(body)):
+        owners = [function for start, function in declarations if start < match.start()]
+        if not owners:
+            raise ValueError("QL003: a link outside a declaration")
+        if match.re is _LINK:
+            namespace, target = match.group(1), match.group(2)
+            if namespace is None:
+                if target not in imports:
+                    raise ValueError(f"QL003: `quant #link {target};` names no crate")
+                namespace = imports[target]
+                used.add(target)
+            found.append((match.start(), owners[-1], namespace, target, "link"))
+        else:
+            found.append((match.start(), owners[-1], match.group(1), match.group(2), "inherit"))
+    unused = sorted(set(imports) - used)
+    if unused:
+        raise ValueError(f"QL006: link imports used by no link: {unused}")
+    return [entry[1:] for entry in sorted(found)]
+
+
+def contract_dependencies(name, namespace, modules, by_namespace, root):
+    """Every link and cross-crate inherit directive of a crate's modules
+    (`{module: path}`), in module then text order, each with its target's
+    recorded identity, as the load path records them."""
     entries = []
+    names_file = Path(root) / "quirin-provider-libc" / "libc-names.txt"
+    libc_names = ({line.strip() for line in names_file.read_text().splitlines()
+                   if line.strip() and not line.lstrip().startswith("#")}
+                  if names_file.is_file() else set())
     for module in sorted(modules):
-        text = Path(modules[module]).read_text()
-        stripped = re.sub(r"/\*.*?\*/", " ", re.sub(r"//[^\n]*", "", text), flags=re.S)
-        declarations = [(match.start(), match.group(1)) for match in
-                        re.finditer(r"\bextern\s+fn\s+([A-Za-z_][A-Za-z0-9_]*)", stripped)]
-        for match in _DEPENDENCY.finditer(stripped):
-            owners = [function for start, function in declarations if start < match.start()]
-            if not owners:
-                raise ValueError(f"{name}/{module}: a contract dependency outside a declaration")
-            entry = {"dependent_crate": name, "dependent": owners[-1], "module": module,
-                     "target_crate": match.group(1), "target_namespace": match.group(2),
-                     "target_function": match.group(3)}
-            for key, value in _DEPENDENCY_KEY.findall(match.group(4)):
-                entry[key] = _version(value) if key in ("since", "removed") else value
-            entries.append(entry)
+        for function, target_namespace, target, form in module_links(Path(modules[module]).read_text()):
+            if form == "inherit" and target_namespace == namespace:
+                continue
+            if target in libc_names and target_namespace != "libc":
+                raise ValueError(f"QL008: {name}/{module}: `{target_namespace}::{target}` is a "
+                                 "libc/POSIX name, owned by quirin-provider-libc "
+                                 "(cx_refuse_libc_target_elsewhere)")
+            owner = by_namespace.get(target_namespace)
+            if owner is None:
+                raise ValueError(f"QL007: {name}/{module}: `{target_namespace}::{target}`: no "
+                                 "load-path crate derives the namespace")
+            digest = lock_digest(root, owner["name"], target)
+            if digest is None:
+                raise ValueError(f"QL007: {name}/{module}: `{target_namespace}::{target}`: "
+                                 f"{owner['name']}'s lock records no such declaration")
+            entries.append({"dependent_crate": name, "dependent": function, "module": module,
+                            "target_crate": owner["name"], "target_namespace": target_namespace,
+                            "target_function": target, "since": _version(owner["version"]),
+                            "sha256": digest, "form": form, "vocabulary": LINKAGE_VOCABULARY})
     return entries
+
+
+LINKAGE_RELIANCES = "linkage-reliances.json"
+_FRAME = re.compile(r"\bquant\s+cell\s+([A-Za-z_]\w*)\s*:\s*[A-Za-z_]\w*\s*\|->\s*#\s*untouched\s*;")
+
+
+def check_linkage(root, load_path):
+    """Card CONNECT-ADOPT-DECLARED-DEPENDENCIES: the linkage check
+    (`cx_reliance_is_linked`, `cx_unlinked_reliance_fails_the_check`). The
+    reviewed record `linkage-reliances.json` lists every cross-crate reliance
+    a `Safe` or `Unsafe` can rest on that no contract text states by itself
+    (a body-checked specification's callees, a frame of another crate's
+    function). Fail-closed: every `resource_body_checked` declaration and
+    every frame naming a function another crate declares must be recorded,
+    every recorded reliance must be linked, and every link must be a recorded
+    reliance (an inherit directive is its own link). Returns the counts."""
+    root = Path(root)
+    record = json.loads((root / LINKAGE_RELIANCES).read_text())
+    if record.get("schema") != "quirin-linkage-reliances/1":
+        raise ValueError(f"{LINKAGE_RELIANCES}: unsupported schema")
+    recorded = {}
+    for entry in record["declarations"]:
+        key = (entry["crate"], entry["function"])
+        if key in recorded:
+            raise ValueError(f"{LINKAGE_RELIANCES}: {key} recorded twice")
+        if not entry.get("reading"):
+            raise ValueError(f"{LINKAGE_RELIANCES}: {key} states no reading")
+        recorded[key] = entry
+    by_namespace = {c["namespace"]: c["name"] for c in load_path["crates"]}
+    declared_by = {}
+    body_checked = set()
+    frames = {}
+    for crate in load_path["crates"]:
+        for module, path in files(root / crate["contracts"]).items():
+            text = _strip_comments(Path(path).read_text())
+            starts = [(m.start(), m.group(1)) for m in
+                      re.finditer(r"\bextern\s+fn\s+([A-Za-z_][A-Za-z0-9_]*)", text)]
+            for index, (start, function) in enumerate(starts):
+                end = starts[index + 1][0] if index + 1 < len(starts) else len(text)
+                block = text[start:end]
+                declared_by.setdefault(function, set()).add(crate["name"])
+                if re.search(r"\brequires\s+resource_body_checked\s*;", block):
+                    body_checked.add((crate["name"], function))
+                for callee in _FRAME.findall(block):
+                    frames.setdefault((crate["name"], function), set()).add(callee)
+    failures = []
+    for key in sorted(body_checked):
+        if key not in recorded:
+            failures.append(f"{key[0]}:{key[1]} is resource_body_checked and not in "
+                            f"{LINKAGE_RELIANCES} (record its callees' crates)")
+    for key, callees in sorted(frames.items()):
+        foreign = sorted(c for c in callees if key[0] not in declared_by.get(c, {key[0]}))
+        if foreign and key not in recorded:
+            failures.append(f"{key[0]}:{key[1]} frames {foreign}, declared by another crate, "
+                            f"and is not in {LINKAGE_RELIANCES}")
+    links = {}
+    for crate in load_path["crates"]:
+        for dependency in crate.get("contract_dependencies", []):
+            if dependency["form"] == "link":
+                links.setdefault((crate["name"], dependency["dependent"]), set()).add(
+                    f"{dependency['target_namespace']}::{dependency['target_function']}")
+    for key in sorted(set(recorded) | set(links)):
+        required = set(recorded.get(key, {}).get("targets", []))
+        for target in required:
+            namespace = target.split("::", 1)[0]
+            if by_namespace.get(namespace) == key[0]:
+                failures.append(f"{key[0]}:{key[1]} records a same-crate reliance {target}")
+        stated = links.get(key, set())
+        if required - stated:
+            failures.append(f"{key[0]}:{key[1]} relies on {sorted(required - stated)} "
+                            "without linking it (cx_reliance_is_linked)")
+        if stated - required:
+            failures.append(f"{key[0]}:{key[1]} links {sorted(stated - required)}, which "
+                            f"{LINKAGE_RELIANCES} records as no reliance")
+    if failures:
+        raise ValueError("linkage check: " + "; ".join(failures))
+    return {"recorded": len(recorded), "linked_declarations": len(links),
+            "links": sum(len(v) for v in links.values()),
+            "inherit_links": sum(1 for c in load_path["crates"]
+                                 for d in c.get("contract_dependencies", [])
+                                 if d["form"] == "inherit")}
 
 
 def declared_functions(text):
@@ -815,6 +978,7 @@ def main():
         rows = maintain(sync=args.action == "sync", load_path=load_path)
         locks = verify_locks(ROOT, ROOT / LOAD_PATH)
         user_crates = check_user_crates(ROOT)
+        linkage = check_linkage(ROOT, load_path)
         legacy_sources = {}
         for record in load_path["crates"]:
             directory = ROOT / record["contracts"]
@@ -828,6 +992,7 @@ def main():
         parser.exit(1, f"provider contracts: {error}\n")
     print(json.dumps({
         "locks": locks,
+        "linkage": linkage,
         "user_crates": user_crates,
         "inventory_locks": inventory,
         "providers": rows,

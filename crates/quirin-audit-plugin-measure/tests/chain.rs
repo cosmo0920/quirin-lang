@@ -170,7 +170,7 @@ fn a_clean_three_step_chain_reconciles_cancels_and_cascades() {
         },
     ];
     let (completed, record) = run(&directory, steps(&directory, &chain));
-    assert_eq!(record["schema"], "quirin-measure-chain/1");
+    assert_eq!(record["schema"], "quirin-measure-chain/2");
     assert_eq!(record["status"], "complete", "{record:#}");
     assert!(completed);
     assert!(

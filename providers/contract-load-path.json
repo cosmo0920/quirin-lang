@@ -156,6 +156,56 @@
         "monkey/wrapper_paths.qv"
       ],
       "published": {},
+      "contract_dependencies": [
+        {
+          "dependent_crate": "qcore-provider-libevent",
+          "dependent": "mk_mem_alloc",
+          "module": "monkey/memory.qv",
+          "target_crate": "quirin-provider-libc",
+          "target_namespace": "libc",
+          "target_function": "malloc",
+          "since": {
+            "major": 0,
+            "minor": 1,
+            "patch": 0
+          },
+          "sha256": "1f50a774faa60a1c1900b1dd236613e164fa798279324ded86b885dac5e9c9f7",
+          "form": "inherit",
+          "vocabulary": "linkage_contract_v1"
+        },
+        {
+          "dependent_crate": "qcore-provider-libevent",
+          "dependent": "mk_mem_alloc_z",
+          "module": "monkey/memory.qv",
+          "target_crate": "quirin-provider-libc",
+          "target_namespace": "libc",
+          "target_function": "malloc",
+          "since": {
+            "major": 0,
+            "minor": 1,
+            "patch": 0
+          },
+          "sha256": "1f50a774faa60a1c1900b1dd236613e164fa798279324ded86b885dac5e9c9f7",
+          "form": "inherit",
+          "vocabulary": "linkage_contract_v1"
+        },
+        {
+          "dependent_crate": "qcore-provider-libevent",
+          "dependent": "mk_mem_free",
+          "module": "monkey/memory.qv",
+          "target_crate": "quirin-provider-libc",
+          "target_namespace": "libc",
+          "target_function": "free",
+          "since": {
+            "major": 0,
+            "minor": 1,
+            "patch": 0
+          },
+          "sha256": "a1a483555e1fb7422588aa089e3dbf91a873905cbd573f823957dee3d15b6a22",
+          "form": "inherit",
+          "vocabulary": "linkage_contract_v1"
+        }
+      ],
       "resource_view": [
         "monkey/event_loop.qv",
         "monkey/intrusive_list.qv",
@@ -198,6 +248,88 @@
         "librdkafka/typed_queue.qv"
       ],
       "published": {},
+      "contract_dependencies": [
+        {
+          "dependent_crate": "qcore-provider-librdkafka",
+          "dependent": "rd_malloc",
+          "module": "librdkafka/memory.qv",
+          "target_crate": "quirin-provider-libc",
+          "target_namespace": "libc",
+          "target_function": "malloc",
+          "since": {
+            "major": 0,
+            "minor": 1,
+            "patch": 0
+          },
+          "sha256": "1f50a774faa60a1c1900b1dd236613e164fa798279324ded86b885dac5e9c9f7",
+          "form": "inherit",
+          "vocabulary": "linkage_contract_v1"
+        },
+        {
+          "dependent_crate": "qcore-provider-librdkafka",
+          "dependent": "rd_calloc",
+          "module": "librdkafka/memory.qv",
+          "target_crate": "quirin-provider-libc",
+          "target_namespace": "libc",
+          "target_function": "calloc",
+          "since": {
+            "major": 0,
+            "minor": 1,
+            "patch": 0
+          },
+          "sha256": "beb03c3611449ac83f20c1ebeffcdcc66adadc385fe9e8cb28b37f9ab2c95fa1",
+          "form": "link",
+          "vocabulary": "linkage_contract_v1"
+        },
+        {
+          "dependent_crate": "qcore-provider-librdkafka",
+          "dependent": "rd_strdup",
+          "module": "librdkafka/memory.qv",
+          "target_crate": "quirin-provider-libc",
+          "target_namespace": "libc",
+          "target_function": "strdup",
+          "since": {
+            "major": 0,
+            "minor": 1,
+            "patch": 0
+          },
+          "sha256": "df0d0b224585ec41cb414c157ec316421a917515100b2e6cc3a9e1da8f46b86b",
+          "form": "link",
+          "vocabulary": "linkage_contract_v1"
+        },
+        {
+          "dependent_crate": "qcore-provider-librdkafka",
+          "dependent": "rd_strndup",
+          "module": "librdkafka/memory.qv",
+          "target_crate": "quirin-provider-libc",
+          "target_namespace": "libc",
+          "target_function": "strndup",
+          "since": {
+            "major": 0,
+            "minor": 1,
+            "patch": 0
+          },
+          "sha256": "16a4b6a8218a66a03b819a146adbe51c670d687a7e769201b4aa92b07c33ee46",
+          "form": "inherit",
+          "vocabulary": "linkage_contract_v1"
+        },
+        {
+          "dependent_crate": "qcore-provider-librdkafka",
+          "dependent": "rd_free",
+          "module": "librdkafka/memory.qv",
+          "target_crate": "quirin-provider-libc",
+          "target_namespace": "libc",
+          "target_function": "free",
+          "since": {
+            "major": 0,
+            "minor": 1,
+            "patch": 0
+          },
+          "sha256": "a1a483555e1fb7422588aa089e3dbf91a873905cbd573f823957dee3d15b6a22",
+          "form": "inherit",
+          "vocabulary": "linkage_contract_v1"
+        }
+      ],
       "resource_view": [
         "librdkafka/cjson.qv",
         "librdkafka/client.qv",
@@ -282,6 +414,360 @@
         "fluent_bit/time.qv"
       ],
       "published": {},
+      "contract_dependencies": [
+        {
+          "dependent_crate": "quirin-provider-fluent-bit",
+          "dependent": "flb_malloc",
+          "module": "fluent_bit/resource_memory.qv",
+          "target_crate": "quirin-provider-libc",
+          "target_namespace": "libc",
+          "target_function": "malloc",
+          "since": {
+            "major": 0,
+            "minor": 1,
+            "patch": 0
+          },
+          "sha256": "1f50a774faa60a1c1900b1dd236613e164fa798279324ded86b885dac5e9c9f7",
+          "form": "inherit",
+          "vocabulary": "linkage_contract_v1"
+        },
+        {
+          "dependent_crate": "quirin-provider-fluent-bit",
+          "dependent": "flb_calloc",
+          "module": "fluent_bit/resource_memory.qv",
+          "target_crate": "quirin-provider-libc",
+          "target_namespace": "libc",
+          "target_function": "calloc",
+          "since": {
+            "major": 0,
+            "minor": 1,
+            "patch": 0
+          },
+          "sha256": "beb03c3611449ac83f20c1ebeffcdcc66adadc385fe9e8cb28b37f9ab2c95fa1",
+          "form": "inherit",
+          "vocabulary": "linkage_contract_v1"
+        },
+        {
+          "dependent_crate": "quirin-provider-fluent-bit",
+          "dependent": "flb_free",
+          "module": "fluent_bit/resource_memory.qv",
+          "target_crate": "quirin-provider-libc",
+          "target_namespace": "libc",
+          "target_function": "free",
+          "since": {
+            "major": 0,
+            "minor": 1,
+            "patch": 0
+          },
+          "sha256": "a1a483555e1fb7422588aa089e3dbf91a873905cbd573f823957dee3d15b6a22",
+          "form": "inherit",
+          "vocabulary": "linkage_contract_v1"
+        },
+        {
+          "dependent_crate": "quirin-provider-fluent-bit",
+          "dependent": "flb_strdup",
+          "module": "fluent_bit/resource_string.qv",
+          "target_crate": "quirin-provider-libc",
+          "target_namespace": "libc",
+          "target_function": "strdup",
+          "since": {
+            "major": 0,
+            "minor": 1,
+            "patch": 0
+          },
+          "sha256": "df0d0b224585ec41cb414c157ec316421a917515100b2e6cc3a9e1da8f46b86b",
+          "form": "inherit",
+          "vocabulary": "linkage_contract_v1"
+        },
+        {
+          "dependent_crate": "quirin-provider-fluent-bit",
+          "dependent": "flb_strndup",
+          "module": "fluent_bit/resource_string.qv",
+          "target_crate": "quirin-provider-libc",
+          "target_namespace": "libc",
+          "target_function": "strndup",
+          "since": {
+            "major": 0,
+            "minor": 1,
+            "patch": 0
+          },
+          "sha256": "16a4b6a8218a66a03b819a146adbe51c670d687a7e769201b4aa92b07c33ee46",
+          "form": "inherit",
+          "vocabulary": "linkage_contract_v1"
+        },
+        {
+          "dependent_crate": "quirin-provider-fluent-bit",
+          "dependent": "sb_allocate_backlogs",
+          "module": "fluent_bit/storage_backlog.qv",
+          "target_crate": "qcore-provider-libevent",
+          "target_namespace": "libevent",
+          "target_function": "mk_list_add",
+          "since": {
+            "major": 0,
+            "minor": 1,
+            "patch": 0
+          },
+          "sha256": "748bf3d90bd350fe94aeb48d10bcd5efab02f4cbbec9c2093d113352288bf493",
+          "form": "link",
+          "vocabulary": "linkage_contract_v1"
+        },
+        {
+          "dependent_crate": "quirin-provider-fluent-bit",
+          "dependent": "sb_destroy_backlogs",
+          "module": "fluent_bit/storage_backlog.qv",
+          "target_crate": "qcore-provider-libevent",
+          "target_namespace": "libevent",
+          "target_function": "mk_list_del",
+          "since": {
+            "major": 0,
+            "minor": 1,
+            "patch": 0
+          },
+          "sha256": "507931da3352aced60a7f9f6956c920fbde74253949416a2eb473f52304c48a1",
+          "form": "link",
+          "vocabulary": "linkage_contract_v1"
+        },
+        {
+          "dependent_crate": "quirin-provider-fluent-bit",
+          "dependent": "sb_remove_chunk_from_segregated_backlog",
+          "module": "fluent_bit/storage_backlog.qv",
+          "target_crate": "qcore-provider-libevent",
+          "target_namespace": "libevent",
+          "target_function": "mk_list_del",
+          "since": {
+            "major": 0,
+            "minor": 1,
+            "patch": 0
+          },
+          "sha256": "507931da3352aced60a7f9f6956c920fbde74253949416a2eb473f52304c48a1",
+          "form": "link",
+          "vocabulary": "linkage_contract_v1"
+        },
+        {
+          "dependent_crate": "quirin-provider-fluent-bit",
+          "dependent": "sb_append_chunk_to_segregated_backlog",
+          "module": "fluent_bit/storage_backlog.qv",
+          "target_crate": "qcore-provider-libevent",
+          "target_namespace": "libevent",
+          "target_function": "mk_list_add",
+          "since": {
+            "major": 0,
+            "minor": 1,
+            "patch": 0
+          },
+          "sha256": "748bf3d90bd350fe94aeb48d10bcd5efab02f4cbbec9c2093d113352288bf493",
+          "form": "link",
+          "vocabulary": "linkage_contract_v1"
+        },
+        {
+          "dependent_crate": "quirin-provider-fluent-bit",
+          "dependent": "sb_append_chunk_to_segregated_backlogs",
+          "module": "fluent_bit/storage_backlog.qv",
+          "target_crate": "quirin-provider-libc",
+          "target_namespace": "libc",
+          "target_function": "memset",
+          "since": {
+            "major": 0,
+            "minor": 1,
+            "patch": 0
+          },
+          "sha256": "05ca1acccd0a9a43f068f546434b67bf47c4e984a041fb900518835cb13e2233",
+          "form": "link",
+          "vocabulary": "linkage_contract_v1"
+        },
+        {
+          "dependent_crate": "quirin-provider-fluent-bit",
+          "dependent": "sb_segregate_chunks",
+          "module": "fluent_bit/storage_backlog.qv",
+          "target_crate": "qcore-provider-chunkio",
+          "target_namespace": "chunkio",
+          "target_function": "cio_chunk_close",
+          "since": {
+            "major": 0,
+            "minor": 5,
+            "patch": 0
+          },
+          "sha256": "4e05d5ca414bbb75d3dbbec8d81e23e030162acd061112f1ed0587cab39b59d8",
+          "form": "link",
+          "vocabulary": "linkage_contract_v1"
+        },
+        {
+          "dependent_crate": "quirin-provider-fluent-bit",
+          "dependent": "sb_segregate_chunks",
+          "module": "fluent_bit/storage_backlog.qv",
+          "target_crate": "qcore-provider-chunkio",
+          "target_namespace": "chunkio",
+          "target_function": "cio_chunk_down",
+          "since": {
+            "major": 0,
+            "minor": 5,
+            "patch": 0
+          },
+          "sha256": "38dac558f5ddc758de78aaef0761d2c1f0ac7bcde051ee011424adda641935f9",
+          "form": "link",
+          "vocabulary": "linkage_contract_v1"
+        },
+        {
+          "dependent_crate": "quirin-provider-fluent-bit",
+          "dependent": "sb_segregate_chunks",
+          "module": "fluent_bit/storage_backlog.qv",
+          "target_crate": "qcore-provider-chunkio",
+          "target_namespace": "chunkio",
+          "target_function": "cio_chunk_get_content_size",
+          "since": {
+            "major": 0,
+            "minor": 5,
+            "patch": 0
+          },
+          "sha256": "72654b936718cfdc4da1bf83f5b6ef0e9be6b25da1f6d4817baa27d5e8d350d9",
+          "form": "link",
+          "vocabulary": "linkage_contract_v1"
+        },
+        {
+          "dependent_crate": "quirin-provider-fluent-bit",
+          "dependent": "sb_segregate_chunks",
+          "module": "fluent_bit/storage_backlog.qv",
+          "target_crate": "qcore-provider-chunkio",
+          "target_namespace": "chunkio",
+          "target_function": "cio_chunk_is_up",
+          "since": {
+            "major": 0,
+            "minor": 5,
+            "patch": 0
+          },
+          "sha256": "cb3491ca510c7fff7f42e40c911e9e93ad583d96d96427e3c704f430840432c6",
+          "form": "link",
+          "vocabulary": "linkage_contract_v1"
+        },
+        {
+          "dependent_crate": "quirin-provider-fluent-bit",
+          "dependent": "sb_segregate_chunks",
+          "module": "fluent_bit/storage_backlog.qv",
+          "target_crate": "qcore-provider-chunkio",
+          "target_namespace": "chunkio",
+          "target_function": "cio_chunk_up_force",
+          "since": {
+            "major": 0,
+            "minor": 5,
+            "patch": 0
+          },
+          "sha256": "3d32f5993f3f654412f751c2ddaa8333a7a5ee74a49727537274866ac81240b8",
+          "form": "link",
+          "vocabulary": "linkage_contract_v1"
+        },
+        {
+          "dependent_crate": "quirin-provider-fluent-bit",
+          "dependent": "sb_release_output_queue_space",
+          "module": "fluent_bit/storage_backlog.qv",
+          "target_crate": "qcore-provider-chunkio",
+          "target_namespace": "chunkio",
+          "target_function": "cio_chunk_close",
+          "since": {
+            "major": 0,
+            "minor": 5,
+            "patch": 0
+          },
+          "sha256": "4e05d5ca414bbb75d3dbbec8d81e23e030162acd061112f1ed0587cab39b59d8",
+          "form": "link",
+          "vocabulary": "linkage_contract_v1"
+        },
+        {
+          "dependent_crate": "quirin-provider-fluent-bit",
+          "dependent": "cb_queue_chunks",
+          "module": "fluent_bit/storage_backlog.qv",
+          "target_crate": "qcore-provider-chunkio",
+          "target_namespace": "chunkio",
+          "target_function": "cio_chunk_close",
+          "since": {
+            "major": 0,
+            "minor": 5,
+            "patch": 0
+          },
+          "sha256": "4e05d5ca414bbb75d3dbbec8d81e23e030162acd061112f1ed0587cab39b59d8",
+          "form": "link",
+          "vocabulary": "linkage_contract_v1"
+        },
+        {
+          "dependent_crate": "quirin-provider-fluent-bit",
+          "dependent": "cb_queue_chunks",
+          "module": "fluent_bit/storage_backlog.qv",
+          "target_crate": "qcore-provider-chunkio",
+          "target_namespace": "chunkio",
+          "target_function": "cio_chunk_down",
+          "since": {
+            "major": 0,
+            "minor": 5,
+            "patch": 0
+          },
+          "sha256": "38dac558f5ddc758de78aaef0761d2c1f0ac7bcde051ee011424adda641935f9",
+          "form": "link",
+          "vocabulary": "linkage_contract_v1"
+        },
+        {
+          "dependent_crate": "quirin-provider-fluent-bit",
+          "dependent": "cb_queue_chunks",
+          "module": "fluent_bit/storage_backlog.qv",
+          "target_crate": "qcore-provider-chunkio",
+          "target_namespace": "chunkio",
+          "target_function": "cio_chunk_get_content_size",
+          "since": {
+            "major": 0,
+            "minor": 5,
+            "patch": 0
+          },
+          "sha256": "72654b936718cfdc4da1bf83f5b6ef0e9be6b25da1f6d4817baa27d5e8d350d9",
+          "form": "link",
+          "vocabulary": "linkage_contract_v1"
+        },
+        {
+          "dependent_crate": "quirin-provider-fluent-bit",
+          "dependent": "cb_queue_chunks",
+          "module": "fluent_bit/storage_backlog.qv",
+          "target_crate": "qcore-provider-chunkio",
+          "target_namespace": "chunkio",
+          "target_function": "cio_chunk_is_up",
+          "since": {
+            "major": 0,
+            "minor": 5,
+            "patch": 0
+          },
+          "sha256": "cb3491ca510c7fff7f42e40c911e9e93ad583d96d96427e3c704f430840432c6",
+          "form": "link",
+          "vocabulary": "linkage_contract_v1"
+        },
+        {
+          "dependent_crate": "quirin-provider-fluent-bit",
+          "dependent": "cb_queue_chunks",
+          "module": "fluent_bit/storage_backlog.qv",
+          "target_crate": "qcore-provider-chunkio",
+          "target_namespace": "chunkio",
+          "target_function": "cio_chunk_up_force",
+          "since": {
+            "major": 0,
+            "minor": 5,
+            "patch": 0
+          },
+          "sha256": "3d32f5993f3f654412f751c2ddaa8333a7a5ee74a49727537274866ac81240b8",
+          "form": "link",
+          "vocabulary": "linkage_contract_v1"
+        },
+        {
+          "dependent_crate": "quirin-provider-fluent-bit",
+          "dependent": "flb_config_set_program_name",
+          "module": "fluent_bit/teardown_destroy.qv",
+          "target_crate": "qcore-provider-libevent",
+          "target_namespace": "libevent",
+          "target_function": "mk_list_del",
+          "since": {
+            "major": 0,
+            "minor": 1,
+            "patch": 0
+          },
+          "sha256": "507931da3352aced60a7f9f6956c920fbde74253949416a2eb473f52304c48a1",
+          "form": "link",
+          "vocabulary": "linkage_contract_v1"
+        }
+      ],
       "resource_view": [
         "fluent_bit/hash_table_publication.qv",
         "fluent_bit/input_chunk_destroy.qv",

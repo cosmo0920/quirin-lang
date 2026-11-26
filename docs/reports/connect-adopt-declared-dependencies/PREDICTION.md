@@ -45,6 +45,15 @@ pinned route:
 * the graph is acyclic (every target is a libc, monkey or chunkio
   declaration that links nothing).
 
+One residual only a route measurement settles: the monkey and chunkio
+targets' pins are reviewed at 046accf6 and 66910c10, not 34155955 (slice).
+Wherever a target's pin is out of force while its dependent's is in force, the
+dependent is now held too. The storage-backlog dependents are reviewed at the
+same two revisions as their targets; `flb_config_set_program_name` is also
+reviewed at 34155955, where `libevent::mk_list_del` is in force only if its
+sites equal a reviewed identity's. A slice row that moves for this reason is
+listed by the measurement, not accepted.
+
 The re-pinned declarations change only their own digest, re-pinned with the
 same reviewed identities at 046accf6, 34155955 and 66910c10, so each stays in
 force exactly where it was.

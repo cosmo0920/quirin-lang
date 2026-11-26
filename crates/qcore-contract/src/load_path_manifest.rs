@@ -400,6 +400,21 @@ fn read_manifest(
     let mut bounds_views = BTreeMap::new();
     let mut outer_views = BTreeMap::new();
     let mut contract_dependencies = BTreeMap::new();
+    // Card CONNECT-ADOPT-DECLARED-DEPENDENCIES (D1 (a)): a link names its
+    // target by namespace; the target crate is the load-path crate deriving
+    // it, on this manifest or the one it extends.
+    let mut namespace_owners: BTreeMap<String, String> = manifest
+        .crates
+        .iter()
+        .map(|record| (record.namespace.clone(), record.name.clone()))
+        .collect();
+    if let Some((shipped, _, _)) = &extended {
+        for krate in shipped.load_path.crates() {
+            namespace_owners
+                .entry(krate.namespace.clone())
+                .or_insert_with(|| krate.name.clone());
+        }
+    }
     for record in manifest.crates {
         let name = record.name.clone();
         if !relative_directory(&record.contracts) {
@@ -552,19 +567,37 @@ fn read_manifest(
                 String::from_utf8(bytes).map_err(|e| refuse(&name, format!("{module}: {e}")))?;
             modules.insert(module.clone(), text);
         }
-        // Card QUIRIN-AUDIT-CONNECT: the recorded dependencies are exactly
-        // the clauses the module texts declare, read by the loader's reader.
+        // Card CONNECT-ADOPT-DECLARED-DEPENDENCIES (`linkage_contract_v1`,
+        // C15.2): the recorded dependencies are exactly the links and the
+        // cross-crate inherit directives the module texts state, read by the
+        // loader's reader; the identity is the manifest's alone, and each
+        // entry must state one (QL009) whose shape `validate` checks.
         let mut scanned = Vec::new();
         for (module, text) in &modules {
             let clauses = crate::contract_dependency::scan_module(text)
                 .map_err(|e| refuse(&name, format!("{module}: {e}")))?;
-            scanned.extend(
-                clauses
-                    .into_iter()
-                    .map(|(function, written)| written.of(&name, &function, module)),
-            );
+            for (function, written) in clauses {
+                if written.target_namespace == record.namespace
+                    && written.form == qcore_schemas::connect::DependencyForm::Inherit
+                {
+                    continue;
+                }
+                let target = namespace_owners
+                    .get(&written.target_namespace)
+                    .cloned()
+                    .unwrap_or_default();
+                scanned.push(written.of_target(&name, &function, module, &target));
+            }
         }
-        if record.contract_dependencies.clone().unwrap_or_default() != scanned
+        let recorded = record.contract_dependencies.clone().unwrap_or_default();
+        let without_identity = |dependency: &qcore_schemas::connect::DeclaredDependency| {
+            let mut bare = dependency.clone();
+            bare.since = None;
+            bare.removed = None;
+            bare.sha256 = None;
+            bare
+        };
+        if recorded.iter().map(without_identity).collect::<Vec<_>>() != scanned
             || record
                 .contract_dependencies
                 .as_ref()
@@ -572,14 +605,39 @@ fn read_manifest(
         {
             return Err(refuse(
                 &name,
-                "`contract_dependencies` differs from the dependencies its modules declare \
-                 (C15.2); regenerate the load-path manifest (`python3 providers/contracts.py \
-                 sync`, or `quirin-audit plugin views --write` for a user load path)"
+                "`contract_dependencies` differs from the links and inherit directives its \
+                 modules state (C15.2); regenerate the load-path manifest (`python3 \
+                 providers/contracts.py sync`, or `quirin-audit plugin views --write` for a user \
+                 load path)"
                     .into(),
             ));
         }
-        if !scanned.is_empty() {
-            contract_dependencies.insert(name.clone(), scanned);
+        for dependency in &recorded {
+            if dependency.target_crate.is_empty() {
+                return Err(refuse(
+                    &name,
+                    crate::contract_dependency::refusal(
+                        crate::contract_dependency::LinkageCode::Ql007,
+                        format!(
+                            "{}: no load-path crate derives the namespace `{}`",
+                            dependency.id(),
+                            dependency.target_namespace
+                        ),
+                    ),
+                ));
+            }
+            dependency.validate(None).map_err(|e| {
+                refuse(
+                    &name,
+                    crate::contract_dependency::refusal(
+                        crate::contract_dependency::LinkageCode::Ql009,
+                        e,
+                    ),
+                )
+            })?;
+        }
+        if !recorded.is_empty() {
+            contract_dependencies.insert(name.clone(), recorded);
         }
         contract_roots.insert(name.clone(), root);
         crates.push(PublishedContractCrate {

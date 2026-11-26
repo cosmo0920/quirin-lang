@@ -307,6 +307,65 @@ pub const FORMULAS: &[(&str, &str)] = &[
         "cx_held_is_never_safe",
         "forall (#b: cx_bundle) { forall (#g: cx_fn) { (#cx_held(#b,#g) => !#cx_contribution(#b,#g) == #cx_safe) } }",
     ),
+    // ---- Card CONNECT-ADOPT-DECLARED-DEPENDENCIES (user decisions of
+    // 2026-11-26, "Every reliance", "Accept all"): the reliance rule and the
+    // `linkage_contract_v1` vocabulary. A declaration relies on another
+    // bundle's declaration when it reads that declaration in a way that can
+    // decide a `Safe` or an `Unsafe`; every such cross-bundle reliance is a
+    // link (or an inherit directive, D2), every link is exactly one C15.2
+    // dependency, and a link needs its declaration's marker. ----
+    (
+        "cx_relies_is_a_deciding_read",
+        "forall (#b: cx_bundle) { forall (#g: cx_fn) { forall (#c: cx_bundle) { forall (#h: cx_fn) { (#cx_relies(#b,#g,#c,#h) => (#cx_reads(#b,#g,#c,#h) && #cx_decides(#b,#g,#c,#h))) } } } }",
+    ),
+    (
+        "cx_deciding_read_relies",
+        "forall (#b: cx_bundle) { forall (#g: cx_fn) { forall (#c: cx_bundle) { forall (#h: cx_fn) { ((#cx_reads(#b,#g,#c,#h) && #cx_decides(#b,#g,#c,#h)) => #cx_relies(#b,#g,#c,#h)) } } } }",
+    ),
+    (
+        "cx_undeciding_read_not_required",
+        "forall (#b: cx_bundle) { forall (#g: cx_fn) { forall (#c: cx_bundle) { forall (#h: cx_fn) { ((#cx_reads(#b,#g,#c,#h) && !#cx_decides(#b,#g,#c,#h)) => !#cx_relies(#b,#g,#c,#h)) } } } }",
+    ),
+    (
+        "cx_co_use_is_not_reliance",
+        "forall (#b: cx_bundle) { forall (#g: cx_fn) { forall (#c: cx_bundle) { forall (#h: cx_fn) { ((#cx_co_used(#b,#g,#c,#h) && !#cx_reads(#b,#g,#c,#h)) => !#cx_relies(#b,#g,#c,#h)) } } } }",
+    ),
+    (
+        "cx_required_is_a_cross_bundle_reliance",
+        "forall (#b: cx_bundle) { forall (#g: cx_fn) { forall (#c: cx_bundle) { forall (#h: cx_fn) { (#cx_link_required(#b,#g,#c,#h) => (#cx_relies(#b,#g,#c,#h) && !#b == #c)) } } } }",
+    ),
+    (
+        "cx_cross_bundle_reliance_is_required",
+        "forall (#b: cx_bundle) { forall (#g: cx_fn) { forall (#c: cx_bundle) { forall (#h: cx_fn) { ((#cx_relies(#b,#g,#c,#h) && !#b == #c) => #cx_link_required(#b,#g,#c,#h)) } } } }",
+    ),
+    (
+        "cx_same_bundle_not_required",
+        "forall (#b: cx_bundle) { forall (#g: cx_fn) { forall (#h: cx_fn) { !#cx_link_required(#b,#g,#b,#h) } } }",
+    ),
+    (
+        "cx_reliance_is_linked",
+        "forall (#b: cx_bundle) { forall (#g: cx_fn) { forall (#c: cx_bundle) { forall (#h: cx_fn) { ((#cx_link_required(#b,#g,#c,#h) && #cx_check_passes(#b)) => (#cx_links(#b,#g,#c,#h) || #cx_inherits(#b,#g,#c,#h))) } } } }",
+    ),
+    (
+        "cx_unlinked_reliance_fails_the_check",
+        "forall (#b: cx_bundle) { forall (#g: cx_fn) { forall (#c: cx_bundle) { forall (#h: cx_fn) { ((#cx_link_required(#b,#g,#c,#h) && (!#cx_links(#b,#g,#c,#h) && !#cx_inherits(#b,#g,#c,#h))) => !#cx_check_passes(#b)) } } } }",
+    ),
+    (
+        "cx_link_needs_marker",
+        "forall (#b: cx_bundle) { forall (#g: cx_fn) { ((exists (#c: cx_bundle) { exists (#h: cx_fn) { #cx_links(#b,#g,#c,#h) } } && !#cx_marked(#b,#g)) => #cx_load_refused(#b,#g)) } }",
+    ),
+    (
+        "cx_marker_needs_link",
+        "forall (#b: cx_bundle) { forall (#g: cx_fn) { ((#cx_marked(#b,#g) && !exists (#c: cx_bundle) { exists (#h: cx_fn) { #cx_links(#b,#g,#c,#h) } }) => #cx_load_refused(#b,#g)) } }",
+    ),
+    (
+        "cx_link_is_a_dependency",
+        "forall (#b: cx_bundle) { forall (#g: cx_fn) { forall (#c: cx_bundle) { forall (#h: cx_fn) { ((#cx_links(#b,#g,#c,#h) || #cx_inherits(#b,#g,#c,#h)) => exists (#d: cx_dep) { (((#cx_dependent_bundle(#d) == #b && #cx_dependent(#d) == #g) && #cx_target_bundle(#d) == #c) && #cx_target(#d) == #h) }) } } } }",
+    ),
+    (
+        "cx_dependency_is_a_link",
+        "forall (#d: cx_dep) { (#cx_links(#cx_dependent_bundle(#d),#cx_dependent(#d),#cx_target_bundle(#d),#cx_target(#d)) || #cx_inherits(#cx_dependent_bundle(#d),#cx_dependent(#d),#cx_target_bundle(#d),#cx_target(#d))) }",
+    ),
 ];
 
 /// The formula `(id, text)` of an id.
@@ -601,9 +660,48 @@ pub fn compose_function(
 
 // ---- Part C: declared contract dependencies ----
 
-/// One declared dependency of a declaration on another crate's declaration:
-/// `requires resource_contract_dependency("CRATE", NS::NAME[, since "V"]
-/// [, removed "W"][, sha256 "HEX"]);` (contract spec C15.2).
+/// The vocabulary every dependency is stated in (card
+/// CONNECT-ADOPT-DECLARED-DEPENDENCIES, contract spec C15.2): a change of
+/// the forms or of their elaboration is a new version, never a widening.
+pub const LINKAGE_VOCABULARY: &str = "linkage_contract_v1";
+
+/// How a dependency was stated.
+#[derive(
+    Clone, Copy, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize,
+)]
+#[serde(rename_all = "kebab-case")]
+pub enum DependencyForm {
+    /// A `linkage_contract_v1` link (`quant #link NS::NAME;`, a `link { ... }`
+    /// entry, or a bare name a module-level `#include NS::NAME as quant
+    /// #link;` makes nameable).
+    #[default]
+    Link,
+    /// A `contract inherit NS::NAME;` directive, which is itself the link
+    /// (D2): the child elaborates to the parent's clauses.
+    Inherit,
+}
+
+impl DependencyForm {
+    /// The stable spelling.
+    #[must_use]
+    pub const fn as_str(self) -> &'static str {
+        match self {
+            Self::Link => "link",
+            Self::Inherit => "inherit",
+        }
+    }
+}
+
+fn linkage_vocabulary() -> String {
+    LINKAGE_VOCABULARY.to_owned()
+}
+
+/// One declared dependency of a declaration on another crate's declaration
+/// (contract spec C15.2), elaborated from a `linkage_contract_v1` link or a
+/// `contract inherit` directive. The identity (`since`, `sha256`) is never
+/// written in a contract: `providers/contracts.py sync` (and `quirin-audit
+/// plugin views --write`) records the target's lock digest and crate version
+/// in the load-path manifest's `contract_dependencies` entry.
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct DeclaredDependency {
@@ -629,6 +727,12 @@ pub struct DeclaredDependency {
     /// its lock records it.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub sha256: Option<String>,
+    /// How it was stated.
+    #[serde(default)]
+    pub form: DependencyForm,
+    /// The vocabulary it was stated in, part of its identity.
+    #[serde(default = "linkage_vocabulary")]
+    pub vocabulary: String,
 }
 
 impl DeclaredDependency {
@@ -641,7 +745,24 @@ impl DeclaredDependency {
         )
     }
 
-    /// The written clause (the canonical spelling).
+    /// The written link (the canonical spelling of its form).
+    #[must_use]
+    pub fn link(&self) -> String {
+        match self.form {
+            DependencyForm::Link => format!(
+                "quant #link {}::{};",
+                self.target_namespace, self.target_function
+            ),
+            DependencyForm::Inherit => format!(
+                "contract inherit {}::{};",
+                self.target_namespace, self.target_function
+            ),
+        }
+    }
+
+    /// The elaborated record: the dependency with its recorded identity, in
+    /// the retired written spelling. Since `linkage_contract_v1` it is never
+    /// written in a contract; a loader refuses it there.
     #[must_use]
     pub fn clause(&self) -> String {
         let mut parts = vec![
@@ -672,6 +793,13 @@ impl DeclaredDependency {
     ///
     /// The first check that fails.
     pub fn validate(&self, libc_names: Option<&BTreeSet<String>>) -> Result<(), String> {
+        if self.vocabulary != LINKAGE_VOCABULARY {
+            return Err(format!(
+                "dependency {}: vocabulary `{}` is not {LINKAGE_VOCABULARY}",
+                self.id(),
+                self.vocabulary
+            ));
+        }
         if self.since.is_none() && self.sha256.is_none() {
             return Err(format!(
                 "dependency {} states no identity: give `since \"V\"` (a version range) or \
@@ -701,6 +829,17 @@ impl DeclaredDependency {
                 self.id()
             ));
         }
+        self.validate_link(libc_names)
+    }
+
+    /// The static checks of a written link, which states no identity: no
+    /// declaration depends on itself, and a libc/POSIX target names
+    /// [`LIBC_CRATE`] (`cx_refuse_libc_target_elsewhere`).
+    ///
+    /// # Errors
+    ///
+    /// The first check that fails.
+    pub fn validate_link(&self, libc_names: Option<&BTreeSet<String>>) -> Result<(), String> {
         if self.dependent_crate == self.target_crate && self.dependent == self.target_function {
             return Err(format!(
                 "dependency {}: a declaration depends on itself",
@@ -725,7 +864,10 @@ impl DeclaredDependency {
 #[derive(Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub struct CrateFacts {
     pub version: Option<LibraryVersion>,
-    /// Its declared (Cargo) dependencies that are load-path crates.
+    /// Its declared (Cargo) dependencies that are load-path crates. Recorded,
+    /// not read by [`resolve`]: since CONNECT-ADOPT-DECLARED-DEPENDENCIES (D1
+    /// (a)) a dependency is satisfied through the load path's contract-level
+    /// graph.
     pub dependencies: BTreeSet<String>,
     /// Its loaded declarations: function to the SHA-256 of the normalised
     /// text and, when the environment already holds it (a pin, a review, a
@@ -769,8 +911,8 @@ impl HoldClass {
 pub enum DependencyFailure {
     /// The target crate is not on the load path.
     CrateMissing,
-    /// The target crate is not a declared dependency of the dependent's
-    /// crate.
+    /// The dependent's crate is not on the load path (D1 (a): the
+    /// contract-level graph is the load path's, not Cargo's).
     CrateUndeclared,
     /// A libc/POSIX target named under a crate other than
     /// [`LIBC_CRATE`].
@@ -872,10 +1014,12 @@ fn local_failures(
     if libc_target && dependency.target_crate != LIBC_CRATE {
         failures.push(DependencyFailure::LibcElsewhere);
     }
-    let declared = environment
-        .get(&dependency.dependent_crate)
-        .is_some_and(|facts| facts.dependencies.contains(&dependency.target_crate));
-    if !declared && dependency.dependent_crate != dependency.target_crate {
+    // D1 (a) of CONNECT-ADOPT-DECLARED-DEPENDENCIES: the contract-level crate
+    // graph is the load path's, not Cargo's. The dependent's crate must be on
+    // the load path (a declaration off every load path has no owning crate);
+    // the target crate's presence is `CrateMissing` below, and cycles are
+    // refused by the manifest and held by `cycles`.
+    if !environment.contains_key(&dependency.dependent_crate) {
         failures.push(DependencyFailure::CrateUndeclared);
     }
     let Some(target) = environment.get(&dependency.target_crate) else {
@@ -895,8 +1039,13 @@ fn local_failures(
     match target.declarations.get(&dependency.target_function) {
         None => failures.push(DependencyFailure::Unloaded),
         Some(facts) => {
-            if let Some(expected) = &dependency.sha256
-                && *expected != facts.sha256
+            // Card CONNECT-ADOPT-DECLARED-DEPENDENCIES: an unrecorded digest
+            // never matches (a link states no identity; the manifest records
+            // it after review), so it holds `Pending`, never satisfied.
+            if dependency
+                .sha256
+                .as_ref()
+                .is_none_or(|expected| *expected != facts.sha256)
             {
                 failures.push(DependencyFailure::DigestChanged {
                     loaded: facts.sha256.clone(),
@@ -1078,7 +1227,69 @@ mod tests {
             since: Some(v("0.1.0")),
             removed: Some(v("0.2.0")),
             sha256: Some("a".repeat(64)),
+            form: DependencyForm::Link,
+            vocabulary: LINKAGE_VOCABULARY.into(),
         }
+    }
+
+    #[test]
+    fn the_contract_level_graph_is_the_load_paths() {
+        // D1 (a): no Cargo edge is needed; the target crate on the load path
+        // is enough.
+        let mut env = environment();
+        env.get_mut("quirin-provider-onigmo")
+            .unwrap()
+            .dependencies
+            .clear();
+        let deps = [dependency(
+            ("quirin-provider-onigmo", "onig_new"),
+            (LIBC_CRATE, "libc", "malloc"),
+        )];
+        assert_eq!(resolve(&deps, &env, None).held().count(), 0);
+        // A dependent off the load path has no owning crate: unresolved.
+        let off = [dependency(
+            ("", "acme_open"),
+            (LIBC_CRATE, "libc", "malloc"),
+        )];
+        let r = resolve(&off, &env, None);
+        let standing = r.held().next().unwrap();
+        assert_eq!(standing.held, Some(HoldClass::Unknown));
+        assert!(
+            standing
+                .causes
+                .iter()
+                .any(|(_, f)| *f == DependencyFailure::CrateUndeclared)
+        );
+    }
+
+    #[test]
+    fn a_link_is_spelled_by_its_form_and_carries_its_vocabulary() {
+        let mut d = dependency(
+            ("quirin-provider-onigmo", "onig_new"),
+            (LIBC_CRATE, "libc", "malloc"),
+        );
+        assert_eq!(d.link(), "quant #link libc::malloc;");
+        d.form = DependencyForm::Inherit;
+        assert_eq!(d.link(), "contract inherit libc::malloc;");
+        assert!(d.validate(None).is_ok());
+        d.vocabulary = "linkage_contract_v2".into();
+        assert!(
+            d.validate(None)
+                .unwrap_err()
+                .contains("linkage_contract_v1")
+        );
+        // A record without the two fields reads as a v1 link.
+        let read: DeclaredDependency = serde_json::from_str(
+            "{\"dependent_crate\":\"a\",\"dependent\":\"f\",\"module\":\"m.qv\",\
+             \"target_crate\":\"quirin-provider-libc\",\"target_namespace\":\"libc\",\
+             \"target_function\":\"free\"}",
+        )
+        .unwrap();
+        assert_eq!(read.form, DependencyForm::Link);
+        assert_eq!(read.vocabulary, LINKAGE_VOCABULARY);
+        // A written link states no identity; its static checks pass.
+        assert!(read.validate_link(None).is_ok());
+        assert!(read.validate(None).is_err(), "no recorded identity");
     }
 
     fn environment() -> BTreeMap<String, CrateFacts> {

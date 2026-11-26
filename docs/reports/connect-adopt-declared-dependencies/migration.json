@@ -1,0 +1,22 @@
+{
+ "card": "CONNECT-ADOPT-DECLARED-DEPENDENCIES",
+ "base": "1ecaf97e9",
+ "note": "The linkage_contract_v1 links this card added to a module an earlier migration record pins (read by tests/support/sp2_premise_checkpoint.rs, files): removing each edit's after text restores the base bytes, both digests checked.",
+ "files": [
+  {
+   "file": "librdkafka/memory.qv",
+   "before_sha256": "eee05fae518e09aaf90d9e5ecd827c32d8bdb0e6fab15008d4ed2570bc33565b",
+   "after_sha256": "2f33c9108312a5614c60044b0dfd32d9e14e67ef827eb3443d494367e59b7da2",
+   "edits": [
+    {
+     "before": "",
+     "after": "    requires linkage_contract_v1;\n    quant #link libc::calloc;\n"
+    },
+    {
+     "before": "",
+     "after": "    requires linkage_contract_v1;\n    quant #link libc::strdup;\n"
+    }
+   ]
+  }
+ ]
+}

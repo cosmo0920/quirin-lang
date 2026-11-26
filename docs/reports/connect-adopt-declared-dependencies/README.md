@@ -1,48 +1,43 @@
-# CONNECT-ADOPT-DECLARED-DEPENDENCIES: census of verdict reliances
+# CONNECT-ADOPT-DECLARED-DEPENDENCIES: every verdict reliance, declared
 
-Round 40, base `1ecaf97e9`, branch `r40-adopt-dependencies`. User decision of
+Round 40, base `1ecaf97e9`, branch `r40-adopt-dependencies`. User decisions of
 2026-11-26: "Every reliance", "which is related to validate whether Safe or
-Unsafe". Later the same day the user added a linkage syntax: `premises { link {
-quant #link CRATE::FUNCTION } ... }`, `quant #link CRATE::FUNCTION`, and a
-module-level `#include quirin_provider_libc::free as quant #link`.
+Unsafe"; the linkage syntax (`premises { link { quant #link CRATE::FUNCTION }
+... }`, `quant #link CRATE::FUNCTION`, a module-level `#include ... as quant
+#link`); "This custody linkage can be standardized by linkage_contract_v1";
+and, on the census hand-back (commit `df682b93d`), "Accept all".
+[PREDICTION.md](PREDICTION.md) was committed before implementation
+(`64a21fefb`).
 
-This commit holds the census only. Nothing is applied: no contract, lock,
-manifest, grammar or Lean file changes. The card stops here because of
-decisions D1 to D3 and the open grammar points G1 to G7 below.
-The brief and the user addition both require a hand-back with options for
-these.
+## The rule, as checked formulas
 
-## The rule, as a formula (draft, unchecked)
+Ten CX terms were added to the C04.18.9 typed rendering (the table authority
+is [scripts/cx_block.py](scripts/cx_block.py), which extends the frozen
+QUIRIN-AUDIT-CONNECT copy): `cx_reads`, `cx_decides`, `cx_relies`,
+`cx_co_used`, `cx_link_required`, `cx_check_passes`, `cx_links`,
+`cx_inherits`, `cx_marked`, `cx_load_refused`. Thirteen formulas
+(`qcore_schemas::connect::FORMULAS`, 73 in all, each checked by
+`guarded_proposition` in `crates/qcore-frontend/tests/connect_formulas.rs`):
 
-The draft adds three CX terms:
+| Formula | States |
+|---|---|
+| `cx_relies_is_a_deciding_read`, `cx_deciding_read_relies` | a reliance is exactly a reading that can decide a `Safe` or an `Unsafe` |
+| `cx_required_is_a_cross_bundle_reliance`, `cx_cross_bundle_reliance_is_required` | the rule requires exactly the cross-bundle reliances |
+| `cx_reliance_is_linked` | `((#cx_link_required(#b,#g,#c,#h) && #cx_check_passes(#b)) => (#cx_links(#b,#g,#c,#h) \|\| #cx_inherits(#b,#g,#c,#h)))` |
+| `cx_unlinked_reliance_fails_the_check` | an unlinked reliance fails the linkage check |
+| `cx_undeciding_read_not_required` | converse: a reading that yields only `Unknown`/`Pending` is no reliance |
+| `cx_co_use_is_not_reliance` | converse: two declarations used by one row are no reliance |
+| `cx_same_bundle_not_required` | converse: no same-bundle link is required |
+| `cx_link_needs_marker`, `cx_marker_needs_link` | a link without `requires linkage_contract_v1;`, or the marker without a link, refuses the module |
+| `cx_link_is_a_dependency`, `cx_dependency_is_a_link` | the C15.2 dependencies are exactly the links and inherit directives |
 
-* `cx_reads(#b,#g,#c,#h)`: declaration `g` of bundle `b` reads declaration
-  `h` of bundle `c`.
-* `cx_decides(#b,#g,#c,#h)`: that reading can discharge a `Safe` obligation
-  or validate an `Unsafe` violation.
-* `cx_links(#b,#g,#c,#h)`: `g` states a link to `c::h`.
-
-`cx_relies` is the conjunction of the first two. None of these terms is
-registered yet, so the premise-formula validator has not checked the
-formulas. Checking them comes after the decisions.
-
-* `cx_relies_is_a_deciding_read`:
-  `forall (#b: cx_bundle) { forall (#g: cx_fn) { forall (#c: cx_bundle) { forall (#h: cx_fn) { (#cx_relies(#b,#g,#c,#h) => (#cx_reads(#b,#g,#c,#h) && #cx_decides(#b,#g,#c,#h))) } } } }`
-  and its converse `cx_deciding_read_relies`.
-* `cx_reliance_is_linked`:
-  `forall (#b: cx_bundle) { forall (#g: cx_fn) { forall (#c: cx_bundle) { forall (#h: cx_fn) { ((#cx_relies(#b,#g,#c,#h) && !#b == #c) => #cx_links(#b,#g,#c,#h)) } } } }`.
-  The enforcement check fails on every counterexample.
-* Converse refusals:
-  * `cx_undeciding_read_not_required`:
-    `(#cx_reads(..) && !#cx_decides(..)) => !#cx_relies(..)`.
-    A reading that can only yield `Unknown` or `Pending` is not required.
-  * `cx_same_bundle_not_required`: `#b == #c => !#cx_relies(..)` for the
-    purpose of this rule.
-  * `cx_co_use_is_not_reliance`:
-    `(#cx_co_used(..) && !#cx_reads(..)) => !#cx_relies(..)`.
-    Two declarations used by one function row are not a reliance.
-  * The existing `cx_refuse_libc_target_elsewhere`. A libc target always
-    names `quirin-provider-libc`.
+The existing `cx_refuse_libc_target_elsewhere` is the libc converse. Lean
+(`QCore.MeasureConnect`, audited in `AuditMeasureConnect.lean`): one theorem
+per formula, and `elaboration_is_the_dependency_set` (the model's
+dependencies are the elaboration of its written links),
+`link_forms_elaborate_alike` (the form is not part of the dependency) and
+`a_held_link_target_holds_its_dependent` (from
+`held_dependency_holds_dependents`). Standard axioms only, no placeholder.
 
 ## Census
 
@@ -129,197 +124,116 @@ Readings that are not required, each with its ground:
   snapshots. The QUIRIN-AUDIT-CONNECT trial's `onig_new -> libc::malloc` was
   a scratch demonstration, not a reliance.
 
-**Re-pin count.** 22 declarations, under the stop bound of about 150. If D1
-and D2 below go as recommended, 11 are re-pinned: `rd_calloc`, `rd_strdup`,
-the 8 storage-backlog specifications and `flb_config_set_program_name`.
+**Re-pin count.** 22 declarations, under the stop bound of about 150; with D2
+the 11 inherit children keep their text and pins, so 11 are re-pinned.
 
-## Decisions the census raises
+## Decided ("Accept all") and applied
 
-**D1. 16 edges target executable provider crates.** `qcore-provider-chunkio`
-and `qcore-provider-libevent` are binary-only crates (`src/main.rs`, no
-library target), so no crate can name them as a Cargo dependency. Cargo also
-runs the other way: chunkio and libevent depend on `quirin-provider-shared`,
-which depends on fluent-bit. C15.2 satisfies a dependency only when the
-target crate is a declared dependency (`cx_declared_crate`). Declaring these
-16 edges today would therefore hold 8 fluent-bit declarations `Unknown`
-(`cx_undeclared_crate_is_unknown`), and verdicts would move. That contradicts
-the brief's "no move" prediction.
+* **D1 (a).** A dependency resolves through the load path's contract-level
+  graph: the dependent's crate and the target crate on one load path, the
+  graph acyclic (`QI014`, `cx_cycle_holds`); Cargo dependencies are recorded,
+  no longer read (`qcore_schemas::connect::local_failures`; the
+  `cx_declared_crate` gloss changed, the formulas did not). An unrecorded
+  digest now matches nothing (`Pending`), so an identity-less link can never
+  resolve.
+* **D2.** A `contract inherit NS::NAME;` directive is its own link: the
+  manifest records it (`form: inherit`) with the parent's identity; the 11
+  children keep their text and pins. Inheritance copies neither a link nor
+  the marker (`contract_dependency::strip_linkage`).
+* **D3.** The body-checked edges stay: a specification's own row is analysed
+  under its entry custody even when it is not established, so its body
+  reading of the callee can yield an `Unsafe` (it can never yield `Safe`).
+  Measured evidence: the Priority 0 chain
+  (`docs/reports/priority0-remeasurement/chain/chain.json.gz`) has
+  `sb_remove_chunk_from_segregated_backlog` `Unknown -> Unsafe` at
+  `9aed1913a` (system route), a leak at `sb.c:226`, the `mk_list_del`
+  unlink. In the same chain `sb_allocate_backlogs`, `sb_destroy_backlogs` and
+  `sb_segregate_chunks` are `Unknown` at all three sides; the other rows did
+  not move, so their status is the base record's. No edge was dropped; each
+  establishment status was not remeasured at `1ecaf97e9` on this host.
+* **Syntax (G1-G7, grammar G05m: `G05l` was already allocated).** `quant #link
+  NS::NAME;`; `premises { ... };` (an optional grouping: its clauses are read
+  in place, no existing premise moved) holding `link { quant #link ...; };`;
+  `;` terminators, blocks closed `};`; `#link` reserved only at the start of a
+  clause; namespace spelling in all forms; `#include NS::NAME as quant
+  #link;` only makes `NAME` nameable (the elaborator writes bare links
+  qualified, so their digest is the qualified one); no link in `[[local]]`.
+* **L1-L6.** `requires linkage_contract_v1;` per declaration; C15.2 is the
+  `linkage_contract_v1` section; the new loader-owned `QL001`-`QL009`
+  namespace (`docs/agents/diagnostics.md`); a change is v2; the vocabulary is
+  in every manifest entry, report graph entry, `quirin-contract-composition/2`
+  and (through the report graphs) `quirin-measure-chain/2`; qcore-schemas
+  30.0.0; the written `resource_contract_dependency(...)` is retired (`QL005`)
+  and survives only as the elaborated record (`DeclaredDependency::clause`).
 
-* (a) **Recommended.** Separate a contract-level crate graph from Cargo. A
-  dependency is satisfied when its target crate is on the same load path,
-  and the manifest's contract-dependency graph is acyclic (the existing
-  `QI014` cycle refusal). This changes the `cx_declared_crate` reading, its
-  formulas and the Lean model. A load path without chunkio or libevent still
-  holds the dependents `Unknown`.
-* (b) Move the monkey `mk_list_*` and chunkio `cio_*` resource declarations
-  into library crates that fluent-bit depends on. This is a large move, and
-  their lock entries change owner.
-* (c) Declare the edges and accept the holds. Verdicts move.
-* (d) Phase the work. Apply now only what can be satisfied and is not an
-  inherit edge (3 edges: `rd_calloc`, `rd_strdup`, `memset`), and register
-  the rest as follow-ups.
+**Contracts changed (no other clause).** `git diff 1ecaf97e9 --
+providers/*/contracts` adds only `requires linkage_contract_v1;` and `quant
+#link ...;` lines:
 
-**D2. Inheriting declarations cannot carry a clause.** Extension clauses
-after `contract inherit P` are refused (`QI002`, C15), so the 11 inherit
-edges cannot state a dependency line or a `link`.
+| Crate | Declarations | Lines added |
+|---|---|---:|
+| quirin-provider-fluent-bit (`storage_backlog.qv`) | 8 storage-backlog specifications | 24 |
+| quirin-provider-fluent-bit (`teardown_destroy.qv`) | `flb_config_set_program_name` | 2 |
+| qcore-provider-librdkafka (`memory.qv`) | `rd_calloc`, `rd_strdup` | 4 |
 
-* (a) **Recommended.** The inherit directive *is* the link. Elaboration
-  records it as the C15.2 dependency, `contracts.py sync` records the
-  parent's identity in the manifest, and the enforcement check counts the
-  directive. None of the 11 children is re-pinned. A parent change already
-  changes the child's elaborated text, which is a pin mismatch (`Pending`).
-* (b) Admit `quant #link` after `contract inherit P` and lift `QI002` for
-  that one clause.
-* (c) Write the 11 contracts out. This drops inheritance and is rejected.
+**Re-pins.** `quirin-audit pin --source-root` at exactly the revisions each
+entry was reviewed at before (the 8 storage-backlog entries at 046accf6 and
+66910c10; `flb_config_set_program_name`, `rd_calloc` and `rd_strdup` also at
+34155955; script `private/r40/pin.sh`, log `private/r40/pin-1.log`). A
+comparison of every lock entry before and after: only `contract_sha256` and
+`pinned_at` of the 11 entries changed; every identity's revision-to-sites map
+is unchanged; no other entry changed.
 
-**D3. Body-checked edges are conditional.** The 18 body-checked edges are
-required only for specifications that can discharge. Before the re-pin,
-read each specification's status at `1ecaf97e9` from a measured report, and
-drop the edges of any specification that never discharges.
+**Lock and manifest diff.** `providers/contract-load-path.json`: 30
+`contract_dependencies` entries (fluent-bit 5 inherit + 1 link to libc, 5
+links to libevent, 11 to chunkio; librdkafka 3 inherit + 2 links to libc;
+libevent 3 inherit to libc), each with `since`, `sha256`, `form` and
+`vocabulary`. `contract-inventory.lock`: fluent-bit `storage_backlog.qv` and
+`teardown_destroy.qv`, librdkafka `memory.qv` clause counts (+2 or more per
+changed declaration; declaration counts unchanged); librdkafka
+`contracts.json` the module digest. `contracts.lock`: the 11 re-pins above.
 
-## The linkage syntax: grammar fit (user addition, 2026-11-26)
+**Enforcement.** `providers/contracts.py check` runs `check_linkage` against
+the reviewed record [providers/linkage-reliances.json](../../../providers/linkage-reliances.json)
+(15 declarations: the 14 `resource_body_checked` specifications, 4 of them
+with no cross-crate callee, and the frame): it refuses a body-checked
+declaration or a frame of another crate's function the record lacks, a
+recorded reliance without its link, and a link the record does not list.
 
-The proposal: a `link` elaborates to exactly one C15.2 dependency, with the
-same resolution, holds and cycle refusal. The target's identity
-(`contract_sha256`, plus `since` for a versioned crate) is written by
-`providers/contracts.py sync` into the manifest's `contract_dependencies`
-entry, not into the text. `requires resource_contract_dependency(...)` would
-be retired as a written form and kept only as the manifest's elaborated
-record, so there is one source of truth.
+## Fixtures
 
-The existing grammar does not settle these points:
+* Frontend (`crates/qcore-frontend/tests/linkage_syntax.rs`, 5): the user's
+  example shape (`premises { link { ... }; quant live ...; };`) parses to flat
+  clauses; a single link and a bare link; misplacement (`link` outside
+  `premises`, nested `premises`, a non-link in `link`, an empty block, a
+  missing `};`, a `.` terminator, two targets, a nested qualifier, `#link` as
+  a condition, a link in `[[local]]`); `#link` as a binder in a proposition is
+  unaffected; the module-level import directive and its malformed spellings.
+* `qcore_contract::contract_dependency` (7): targets, the marker rule
+  (`QL001`, `QL002`, `QL004`), the retired form (`QL005`), no inheritance of
+  links, the block-free token reconstruction, a module scan reading all three
+  forms and inherit directives, import refusals (`QL003`, `QL006`).
+* `qcore_schemas::connect` (13): the contract-level graph (no Cargo edge
+  needed; a dependent off every load path unresolved), the link spelling per
+  form, the vocabulary in the identity, a record without the new fields read
+  as a v1 link.
+* `qcore_audit::declared_dependencies` (8): a resolved link; a stale digest
+  after a target re-pin holds `Pending`; out of range, a missing crate and an
+  unloaded target hold `Unknown`; a link the manifest does not record is held
+  `Pending`; a dependent off every load path `Unknown`; a recorded inherit
+  directive resolved like a link; adopting a link changes the digest; the
+  retired form refused.
+* `crates/qcore-audit/tests/linkage_shipped_resolution.rs`: every shipped link
+  resolves on the cycle19 module set with the shipped manifest: held set
+  empty, no cycle, 11 inherit + 19 link dependencies.
+* Providers Python (`providers/tests/test_contract_load_path.py`):
+  `ContractDependencies` (3: the entries with identity in text order; an
+  unknown crate or function `QL007`, the retired form `QL005`, a repeated or
+  unused import `QL006`, a bare name without import `QL003`) and
+  `LinkageCheck` (3: a wrapper release resting on libc `free` must link it;
+  a body-checked declaration must be recorded; a reading that only yields
+  `Unknown` requires no link and a link to it is refused). A libc name under
+  another crate is refused by `sync` (`QL008`) and by the resolver
+  (`dependency-libc-elsewhere`); a cycle by the manifest (`QI014`) and the
+  existing `a_cycle_is_held_unknown`.
 
-* **G1. Clause envelope.** G01 `contract = "contract", "{", { clause }, "}"`
-  admits only clauses that start with `requires`, `ensures` or `quant`, and
-  each ends with `;`. A `premises { ... }` block is a new clause form, so G01,
-  the structural parser and G05's `resource_clause` must all be extended.
-  Under constraint 14 (no reserved word), `premises` and `link` would be
-  read only in clause-head position. No contract uses either word as a clause
-  head today.
-* **G2. Terminator.** A trailing `.` is ambiguous. Clause bodies are
-  balanced token regions in which `.` builds member paths, so
-  `quant #link libc::free.` followed by `quant` lexes as `free.quant`.
-  Use `;`. For blocks, there are two options:
-  * (a) **Recommended.** Follow the `condition_block` precedent: entries end
-    with `;` and the block ends `};`.
-  * (b) Close the block with `}` and no `;`, as the user's example does.
-* **G3. `#link` and `link` already appear inside formulas.**
-  `cfl/intrusive_list.qv` (`#r072`, `#r136`) binds `#link: link`, with
-  `link` as a sort. A clause-head `quant #link` can be told apart by
-  position, because the next token is `IDENT ::` rather than `=`, `in` or
-  `:`. G05g's `#outer` is the precedent for a reserved `#` word after
-  `quant`. Recommendation: reserve `#link` only in clause-head position. A
-  condition named `link` would be refused, and none exists.
-* **G4. Spelling of `CRATE`.** Three spellings are possible:
-  * `libc::free`: the derived namespace, already used by
-    `contract inherit` and C15.2's `NS::NAME`, and unique per load path
-    (`QI017`).
-  * `"quirin-provider-libc"`: the package string used by `#include`.
-  * `quirin_provider_libc::free`: the user's top-level form, used nowhere
-    today.
-
-  Recommendation: the namespace in all three forms. The manifest records the
-  package and namespace beside it.
-* **G5. Meaning of the module-level form.** The `#include` scanner admits
-  only one string operand
-  (`crates/qcore-frontend/src/contract_inclusion.rs`, `QI001`), so
-  `#include NS::F as quant #link;` is a new directive form. It can be told
-  apart lexically (an identifier versus a string). There are two readings:
-  * (a) **Recommended.** It makes `F` linkable by bare name in the module
-    and links nothing on its own. The per-declaration `quant #link F;` or
-    `link { ... }` entries remain what elaboration and the enforcement check
-    count. This keeps "exactly the reliances a Safe or Unsafe rests on"
-    exact.
-  * (b) It links every declaration in the module. This hides which
-    declaration relies on what, and it adds links the rule does not require.
-    Rejected.
-* **G6. What `premises { ... }` means for the clauses inside it.**
-  * (a) **Recommended.** A pure grouping: a clause inside it reads exactly
-    as it would at contract level. The block is optional, and existing
-    premises are not moved. The braces are part of the `c-tokens-v1`
-    normalised text, so moving clauses would re-pin every declaration.
-  * (b) A block that is required for premises, which would re-pin the whole
-    corpus.
-
-  A `link` inside a `[[local]]` condition block is refused, because links
-  are unconditional.
-* **G7. Inheritance.** Inheritance copies named premises verbatim, but
-  C15.2 states that it does not copy a dependency clause. Combined with D2
-  (a), the recommendation is that links are not inherited and the inherit
-  directive is the child's link.
-
-The other checks raise no issue:
-
-* Q038 is not triggered, because `::` already lexes inside a `requires`
-  clause, as `resource_contract_dependency(..., libc::malloc, ...)` shows.
-* Digest normalisation is unaffected. A link is part of its declaration's
-  text, so adding one changes the digest, which the re-pin expects.
-
-## `linkage_contract_v1` (user addition, 2026-11-26)
-
-The proposal: the link forms become a versioned vocabulary,
-`linkage_contract_v1`, beside `resource_contract_v1`, `bounds_contract_v1` and
-`outer_contract_v1`. These points need decisions:
-
-* **L1. Where the marker goes.**
-  * (a) **Recommended: on each declaration.** `requires
-    linkage_contract_v1;` sits beside `requires resource_contract_v1;` on
-    every declaration that states a `quant #link` or a `link { ... }` entry.
-    A declaration with a link and no marker rejects the module (total or
-    nothing). So does a marker with no link.
-  * (b) On the module.
-
-  The reliance rule works one declaration at a time, and the marker is part
-  of the declaration's pinned text, so (a) keeps each re-pin exactly the
-  declarations that rely on another crate. A module-level
-  `#include NS::F as quant #link;` would need a module-level selector. Under
-  G5 (a) the include only names `F` for the module, so it is admitted only
-  when at least one declaration in the module carries the marker and links
-  `F`. Otherwise it is an unused import, which is refused.
-* **L2. Spec and grammar homes.** C15.2 would become the
-  `linkage_contract_v1` section: forms, elaboration, identity in the
-  manifest, resolution and holds. The grammar would gain a new section, G05l,
-  beside G05g.
-
-  For diagnostics, the `QI` band was opened as `QI001`–`QI020` and all 20
-  codes are used. Options:
-  * (a) Extend `QI` from `QI021`.
-  * (b) **Recommended.** Open a loader-owned `QL` namespace (unused today;
-    the precedents are `QI`, `QF` and `QP`). A linkage form is not an
-    inclusion, and C15.2's present refusals report through `QI014`.
-
-  Today's C15.2 holds are reported as `dependency-unresolved` and
-  `dependency-changed`. They would keep those reasons.
-* **L3. Versioning.** v1 fixes the three forms and their elaboration to one
-  C15.2 dependency each. A new form, a new key or a changed reading is a v2
-  marker, never a widening of v1.
-* **L4. Composition and chain.** Each manifest `contract_dependencies` entry,
-  each `measure compose` dependency record and each side's `dependency_graph`
-  in `measure chain` gains `vocabulary: "linkage_contract_v1"`. A link's
-  version then becomes part of its identity, and a version change refuses
-  the chain link (`cx_refuse_dependency_graph`). The record schemas
-  (`quirin-contract-composition`, `quirin-measure-chain`) and `qcore-schemas`
-  each take a version bump.
-* **L5. Lean.** `QCore.MeasureConnect` gains a theorem that the elaboration
-  of a module's `linkage_contract_v1` links is exactly its C15.2 dependency
-  set. `held_dependency_holds_dependents` then covers links without change.
-* **L6. The legacy written form.** `requires
-  resource_contract_dependency(...)`, from QUIRIN-AUDIT-CONNECT, no shipped
-  contract uses it.
-  * (a) **Recommended.** Retire it as a written form. It stays the
-    elaborated record that the manifest carries, which keeps one source of
-    truth.
-  * (b) Keep it as an alternative spelling. Rejected, because it would give
-    two sources of truth.
-
-## Next steps once the decisions are made
-
-PREDICTION.md comes next: no move with D1 (a) and D2 (a), and the chain
-link refused by `cx_refuse_dependency_graph`. Then:
-
-1. Register the terms and formulas, and extend `QCore.MeasureConnect` with
-   the rule theorem and the link-to-dependency elaboration.
-2. Extend G01, G05 and C15.2 with the `link` forms and implement them.
-3. Add the fixtures and the enforcement check in `contracts.py check`.
-4. Make the 11 edits and re-pin them, run `sync`, and write the
-   integration amendments.
