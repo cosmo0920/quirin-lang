@@ -26,3 +26,21 @@ Created a unified planning index at [`docs/plans/README.md`](../../plans/README.
 
 - **Cross-link & anchor check:** Automated verification across all three specifications, all reconciled planning pages, and **215 `#fragment` references** across `AGENTS.md`, `CLAUDE.md`, `README.md`, `DEVELOPMENT.md`, `docs/`, `crates/`, `providers/`, and `compiler/` passed with **0 missing anchors, 0 broken relative links, and exact preservation of the `source_mutex.rs` example**.
 - **Hard invariants preserved:** Fail-closed `Unknown` semantics, the four-value verdict lattice `Safe < Pending < Unknown < Unsafe` (`§L21.2`), provisional-only existing-C `Unsafe` wording, unpromoted raw source units, `contract-inventory.lock` / submodule pins, and frozen historical reports under `docs/reports/` remain untouched.
+
+## 4. Validation gate and host observations
+
+All validation commands were executed on Windows (`x86_64-pc-windows-msvc`, `cargo 1.100.0`, `clang 22.1.8`, `Python 3.11.9`) with logs retained under ignored `private/spec-restructure-gate/` and `private/test-binaries/20261126T085333Z-41724/`:
+
+| Step / Command | Exit | Counts / Outcome | Private log path & host notes |
+|---|---:|---|---|
+| `python -X utf8 scripts/build_docs_index.py --check` | `0` | `Report index matches all report directories` | `private/spec-restructure-gate/build_docs_index.log` |
+| Anchor, relative-link & pinned-example audit (`verify_specs.py`) | `0` | `278` + `293` + `419` anchors; `215` repo-wide `#fragment` refs verified (`0` errors) | Verified across `AGENTS.md`, `CLAUDE.md`, `README.md`, `DEVELOPMENT.md`, `docs/`, `crates/`, `providers/`, `compiler/` |
+| `cargo fmt --all -- --check` | `1` | Windows `CreateProcess` argv limit (`os error 206`) | `private/spec-restructure-gate/cargo_fmt.log`; per-package equivalent run immediately below |
+| Per-package `cargo fmt -p <pkg> -- --check` (all 24 workspace members) | `0` | `24 / 24` packages clean (`0` failures) | `private/spec-restructure-gate/cargo_fmt_per_pkg.log` |
+| `cargo clippy --all-targets -- -D warnings` | `0` | Clean across all workspace crates & targets (`20.99s`) | `private/spec-restructure-gate/cargo_clippy.log` |
+| `cargo test --config build.incremental=false -p qcore-frontend --test source_mutex` | `0` | `75 passed; 0 failed` (including `the_documented_grammar_example_checks`) | `private/spec-restructure-gate/source_mutex.log` |
+| `cargo run --config build.incremental=false -p qcore-compiler --example reevaluation_probe` | `0` | All probe checks `pass: true` | `private/spec-restructure-gate/reevaluation_probe.log` |
+| `cargo run --config build.incremental=false -p qcore-compiler --example reevaluation_followup` | `0` | All followup checks `pass: true` | `private/spec-restructure-gate/reevaluation_followup.log` |
+| `python scripts/run_test_binaries.py` (`PYTHONUTF8=1`) | `101` | `702` units, `745` summaries: `9,548 passed; 110 failed; 22 ignored` | `private/test-binaries/20261126T085333Z-41724/summary.json` (`private/spec-restructure-gate/run_test_binaries.log`). Zero Rust crates read the modified `docs/` files; all `110` failures across `41` units are pre-existing Windows host environment effects (`core.autocrlf=true` `\r\n` byte digests / `\n\n` searches on `.lean`/`.qv` files, missing `cl.exe` in `native_windows` socket tests, and sandbox `.git/modules` access). |
+| `python -m unittest` over `scripts/tests/test_*.py` (`PYTHONUTF8=1`) | `1` | `626` run: `588 passed; 14 failed; 24 errors; 6 skipped` (`test_check_lean_audits.py` cancelled separately due to Windows child-pipe timeout hang) | `private/spec-restructure-gate/python_tests_non_lean_spawn.log` (`python_tests.log`). Zero failures in doc/index/matrix/rule/scoper suites; all `38` failures/errors are Windows POSIX path-separator (`\` vs `/`), missing `fcntl`, and `core.autocrlf=true` CRLF digest checks. |
+| `python -X utf8 scripts/check_lean_audits.py` | `1` | `lake` not installed on Windows `PATH` (`0` `.lean` files modified) | `private/spec-restructure-gate/lean_audits.log` |
