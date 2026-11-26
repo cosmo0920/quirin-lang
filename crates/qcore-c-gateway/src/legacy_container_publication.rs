@@ -421,6 +421,27 @@ impl CallerFormals {
         self
     }
 
+    /// Card JUMPED-SHADOW-FORMAL-READINGS (gateway rule 86): the same
+    /// reading with every name read by its declarations. A stable formal
+    /// stays one only where `formal(name)` (the name is one declaration, its
+    /// `ParmVarDecl`), and a derived local only where `local(name)` (one
+    /// `VarDecl`) and its root formal stays stable. `all` and `statics` are
+    /// kept: a name in `all` refuses where it is read. Only a narrowing.
+    pub(crate) fn by_declaration(
+        mut self,
+        formal: &dyn Fn(&str) -> bool,
+        local: &dyn Fn(&str) -> bool,
+    ) -> Self {
+        self.stable.retain(|name| formal(name));
+        let stable = &self.stable;
+        self.derived_roots
+            .retain(|name, root| stable.contains(root) && local(name));
+        let roots = &self.derived_roots;
+        self.derived.retain(|name| roots.contains_key(name));
+        self.aliases.retain(|name, _| roots.contains_key(name));
+        self
+    }
+
     /// Whether `name` is a formal of this function, rebound or not.
     pub fn is_formal(&self, name: &str) -> bool {
         self.all.contains(name)

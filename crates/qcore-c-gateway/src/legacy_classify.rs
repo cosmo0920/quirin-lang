@@ -925,6 +925,9 @@ impl Parser<'_> {
             }
         }
         if may_shadow_formal {
+            // JUMPED-SHADOW-FORMAL-READINGS hook (rule 86): recorded for the
+            // entry guard.
+            self.shadow_guard_refused.set(true);
             return LegacyInstruction::Unknown {
                 description: "local declaration may shadow a formal resource identity".into(),
                 writes: self.refused_writes(&texts),

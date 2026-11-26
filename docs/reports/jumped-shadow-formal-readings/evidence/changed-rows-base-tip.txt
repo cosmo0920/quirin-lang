@@ -1,0 +1,5 @@
+lib/librdkafka-2.15.0/src/rdkafka_admin.c rd_kafka_CreateAclsResponse_parse Unknown -> Unknown
+   + 23448 local declaration may shadow a formal resource identity: `errstr` is not one declaration
+lib/librdkafka-2.15.0/src/rdkafka_admin.c rd_kafka_DeleteAclsResponse_parse Unknown -> Unknown
+   + 24297 local declaration may shadow a formal resource identity: `errstr` is not one declaration
+   + 24303 unresolved resource identity `reply`
