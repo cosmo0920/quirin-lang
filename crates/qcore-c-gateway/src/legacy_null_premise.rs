@@ -51,6 +51,10 @@ pub(super) fn premised(state: &super::AbstractState, base: &str) -> bool {
             state.widened,
         )
     })
+    // UNTRACKED-BASE-NULL-JOIN-DISCHARGE hook (rule 83): a binding some
+    // reaching path held as the null constant is a known null there, which
+    // this premise never reads non-null.
+    && !super::transfer::null_join_route::refuses_premise(state, base)
 }
 
 /// The dereference obligation of a scalar access's base, with decision 1's

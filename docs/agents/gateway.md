@@ -14635,4 +14635,55 @@ through `ampersand_runs`.
     `an_arm_74x_refuses_still_refuses`, `walk_vectors_hold`);
     [report](../reports/return-family-arith-walk-conditional/README.md).
 
+<a id="constraint-83"></a>
+
+83. **A null constant on some reaching path is never rule 14n's premised
+    alias.** Card UNTRACKED-BASE-NULL-JOIN-DISCHARGE, registered by
+    [rule 74v](#constraint-74v)'s card. Rule [14n](#constraint-14n) reads a
+    target-free, `unknown`, possibly-null identity binding non-null at a
+    dereference under the premise `null-deref:F:LINE:VAR` and never premises a
+    known binding, so the null constant (`p = 0`, a `Clear`: no target, known,
+    possibly null) refuses: `const struct s *p = 0; return p->n + 1;` is
+    `Unknown` (`unknown_alias:p`). `AbstractState::join` forgot that
+    knowledge. Its one-sided arm makes a binding present on one path only
+    `unknown` and possibly null, and its two-sided arm joins `unknown` by
+    disjunction. So the null constant joined with an unbound copy (rule 62's
+    custody-free arm leaves `p = f` unbound for an unbound formal `f`) or with
+    a pointer read (`p = f->next`) is exactly the premised shape, and
+    `const struct s *p = 0; if (f) p = f; return p->n + 1;`, `return p->n;`
+    (rule 74v), `long x = p->n; return x;`, statements, conditions, stores,
+    `p[0]`, `*p`, chains, copies `q = p`, the unguarded `if (c) p = f;` and
+    `if (!f) p = 0; else p = f;` were `Safe` under a premise the function's
+    own null constant refutes on one path. That is the admitting direction.
+
+    `legacy_null_join.rs` keeps `AbstractState::null_on_path`, the names some
+    reaching path bound definitely null since their last rebinding. The join
+    is the union of both sides' sets and of every name either side binds
+    definitely null, kept where the joined state still binds the name (hook in
+    `AbstractState::join`). The transfer removes every name the node rebinds
+    (`rebound_names`, and an `Alias` destination of any spelling) and carries
+    the set across a copy from a flagged name (hook in `transfer`, around
+    `transfer_dispatch`). Rule 14n's premise (`legacy_null_premise::premised`)
+    refuses a flagged name, which covers the base, chain and chain-owner
+    readings. Nothing else reads the set.
+
+    A join with no definitely-null side keeps the base verdict (an unbound
+    formal, a pointer read, their joins and copies, a null constant every arm
+    overwrites); a null test's non-null arm is not possibly null and needs no
+    premise, so it discharges whatever the set says; a tracked binding is never
+    premised. A null test of the joined `unknown` binding itself stays refused
+    by [rule 10b](#constraint-10b), and a guard on a correlated name (`if (!f)
+    return 0;` after `if (f) p = f;`) is not related to `p`: both are
+    `Unknown`, the second a precision loss at the base's `Safe`. **Do not**
+    read a binding some path held as the null constant non-null under a
+    premise, and **do not** clear the set except by a rebinding. Premises
+    stated, not proved: the lowering of C statements to bindings (trust
+    boundary 28). `QCore.NullJoinDischarge`
+    (`a_null_on_some_path_is_never_discharged`,
+    `a_null_on_some_path_is_never_premised`, `the_fix_only_refuses_more`,
+    `no_null_keeps_the_verdict`, `a_guard_proved_non_null_is_discharged`,
+    `an_overwritten_null_keeps_the_premise`, `an_unbound_base_discharges`,
+    `old_premises_a_joined_null`, `join_vectors_hold`);
+    [report](../reports/untracked-base-null-join/README.md).
+
 <!-- generated:rules:end -->
