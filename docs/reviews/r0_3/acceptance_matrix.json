@@ -14775,13 +14775,6 @@
    "recorded_by": "NULLABLE-LAZY-CONSTRUCTOR-IN-LOOP"
   },
   {
-   "id": "CG25-IN-PLACE-REGEX-REGERROR-FAILURE-EDGE",
-   "title": "A regerror of a failed regcomp's object is refused, so rd_regex_match is Unknown",
-   "why": "Rule 74i refuses every use of a tracked in-place object that its initialiser status has not certified. POSIX defines regerror on the regex_t of a failed regcomp, but regex.qv kinds regerror's preg exactly as regexec's (resource_borrowed + resource_kind(preg, regex)), and the rule reads no callee by name, so `if (r) { regerror(r, &re, …); return 0; }` refuses. This moved rdregex.c rd_regex_match Safe -> Unknown on the opt-in current route (base 2c60986b0, tip a7e8bea5b; corpus predicted the same). DISCHARGE: a contract clause (contract language and libc provider) that marks a use defined on a possibly failed object, read by rule 74i as admitted on the failure edge and before the test but not before the initialiser or after the finaliser; pin regerror on the failure edge Safe and regexec there refused; remeasure rd_regex_match.",
-   "source": "docs/reports/cg25-in-place-regex/README.md",
-   "recorded_by": "CG25-IN-PLACE-REGEX"
-  },
-  {
    "id": "OUT-SLOT-CONDITIONAL-DELIVERY",
    "title": "An owned result delivered through a formal's slot on some exits only has no summary mode",
    "why": "OWNED-CONSTRUCTOR-OUT-PARAMETER-DELIVERY found W4's Out mode reads a slot only when every exit delivers (rule 74l). Three shapes on the opt-in route deliver on some exits: keep-or-deliver in-out slots (`if (!*out) *out = make();`: rdkafka_request.c rd_kafka_handle_OffsetFetch, rdkafka_broker.c rd_kafka_broker_share_session_add_remove_toppar, rdkafka_cgrp.c rd_kafka_cgrp_consumer_assignment_with_metadata), a slot first holding another object's member and then a conditional fresh object (rdkafka_subscription.c rd_kafka_assignment, rd_kafka_subscription, which write the slot even when `err` is nonzero), and error-path partial stores whose return code does not partition the slot (cio_file_unix.c cio_file_native_lookup_user/_group, rdkafka_request.c rd_kafka_handle_ApiVersion). Each needs a new effect mode (keep-or-deliver) or an inferred return-code disposition, neither with a precedent, so it is a user decision; every such row also has other blockers today. DISCHARGE: decide whether to add the mode, then state it with Lean parity, or record the refusal as final; re-measure these rows.",
@@ -14820,27 +14813,6 @@
    "why": "Found by CALLBACK-MEMBER-RELEASED-EFFECT-ORDER. legacy_callback_route::callback_operands collects a candidate's member-path states (member_path_route::operands) for the synchronous invocation and the member invocation but not for resource_callback_table (rule 13v), while classified_in reads a candidate stating member-path states as its custody contract. So a table candidate stating `quant live #rko: op.payload |-> #released` reads as borrowed and its state is dropped: the probe (report evidence/probe-table.rs.txt and probe-table.log, measured once over synthetic fixture callees) links an item at o->payload, dispatches c_op_table to c_cb_releases, then frees the item: Safe, where the same candidate through the synchronous form is Unsafe. No shipped table candidate is known to state member paths (2 shipped table clauses, r65 census), so no shipped row is shown to move. DISCHARGE: compose the candidates' states at a table dispatch as at a synchronous one (or refuse a table candidate stating member paths), with a gateway fixture, Lean parity and measurement. Size: small.",
    "source": "docs/reports/callback-member-released-effect-order/README.md",
    "recorded_by": "CALLBACK-MEMBER-RELEASED-EFFECT-ORDER"
-  },
-  {
-   "id": "RETURN-FAMILY-SUBSCRIPT-ENCLOSING-STARRED-ROOT",
-   "title": "Family S admits `n[*q]` with a scalar `n` and a may-bind `q` as one dereference",
-   "why": "RETURN-FAMILY-STAR-OUTSIDE-ROOT-PARENTHESES found (report §6, by an end-to-end probe at its base and its tip) that crates/qcore-c-gateway/src/legacy_return_family.rs `scalar_read` admits a starred may-bind root inside a subscript's brackets: `long w(long **q, long n) { return n[*q]; }` is `Safe` at both. C11 6.5.2.1p2 makes `n[*q]` `*(n + *q)`, which rule 74s refuses; with a scalar `n` the pointer dereferenced is computed from the value `*q` reads, a second dereference. Rule 74s reads only parenthesised enclosing groups, so a bracket enclosing the root is not counted. With a pointer subscripted base (`a[*q]`, `a` untracked) the access is `a`'s, which is a base of the read node, so refusing every bracket would cost that admission. The direction is admitting. DISCHARGE: refuse a starred may-bind root inside a subscript whose subscripted operand is not known to be a pointer (a declared scalar, a number, an undecided name), keeping `a[*q]` for an untracked pointer `a` only where the reader can say `a` is the pointer, or show that no such return reaches family S. Pin `return n[*q];` end to end and measure.",
-   "source": "docs/reports/return-family-star-outside-parentheses/README.md",
-   "recorded_by": "RETURN-FAMILY-STAR-OUTSIDE-ROOT-PARENTHESES"
-  },
-  {
-   "id": "RETURN-FAMILY-UNTRACKED-MEMBER-THROUGH-CAST",
-   "title": "Family S makes no base of an untracked root under a member or subscript through a cast group",
-   "why": "RETURN-FAMILY-UNTRACKED-DEREF-THROUGH-CAST found (report §6, by an end-to-end probe at its base 7678fe5f1) that crates/qcore-c-gateway/src/legacy_return_family.rs `scalar_read` makes an untracked root a member or subscript base only when `->` or `[` follows the name directly. `struct s { long n; }; long w(void) { const void *p = 0; return ((const struct s *)p)->n; }` and `long w(void) { const long *p = 0; return ((const long *)p)[0]; }` are `Safe`, while `return p->n;` would make `p` a base. The member or subscript access dereferences the null `p` through the cast group. The direction is admitting. Rule 74r's change (the starred test) does not reach it. DISCHARGE: make an untracked root a base when a `->` or `[` follows the closing parentheses of a group whose operand is a cast of the root (rule 12h's transparency, `cast_semantics::type_group_open`, no second detector), or show that no such return reaches family S end to end. Pin both returns through a null untracked `p` end to end and measure; `((T *)ctx)->f` is common in the corpus, so expect Safe -> Unknown moves on possibly-null bindings.",
-   "source": "docs/reports/return-family-untracked-deref-cast/README.md",
-   "recorded_by": "RETURN-FAMILY-UNTRACKED-DEREF-THROUGH-CAST"
-  },
-  {
-   "id": "TYPE-GROUP-QUALIFIED-POINTER",
-   "title": "`cast_semantics::type_group_open` does not read a pointer type with a qualifier after its `*`",
-   "why": "RETURN-FAMILY-UNTRACKED-DEREF-THROUGH-CAST found (report §6) that crates/qcore-c-gateway/src/cast_semantics.rs `type_group_open` reads a group as a type only when it is names followed by trailing `*`s, so `( long * const )` is no type group. Rule 74r's untracked base, rule 74m's count through cast groups and rule 12h(4)'s transparency all stop at such a group. `long w(void) { const long *p = 0; return *(long * const)p; }` is `Safe` at the base 7678fe5f1 and at the tip, while `return *(long *)p;` is now `Unknown` (`unknown_alias:p`); the unit pin `the_base_readings_are_kept` in crates/qcore-c-gateway/tests/unit/legacy_return_family_untracked_deref_cast.rs holds the current reading. The direction is admitting for the untracked base and for rule 74m's may-bind count. DISCHARGE: let `type_group_open` read names, `*`s and qualifiers (`const`, `volatile`, `restrict`) after a `*`, keeping its callers' only-refuses-more direction, or show no such group reaches a caller. Pin `*(long * const)p` and `*(long * const)*q` end to end and measure.",
-   "source": "docs/reports/return-family-untracked-deref-cast/README.md",
-   "recorded_by": "RETURN-FAMILY-UNTRACKED-DEREF-THROUGH-CAST"
   },
   {
    "id": "SP10-NATIVE-RECEIPT-INTERPRETATION-PROSE",
@@ -15243,6 +15215,69 @@
    "why": "Found by PRIORITY0-ATTRIBUTION: landing records measured at other bases and binaries never join (refused revision, analyzer, build commit), so a chain over the sides sees no move that cancels inside a step. Two did (mk_sched_threads_purge and mk_sched_threads_destroy_all: Unknown -> Safe in LIST-ENTRY-RELEASE-IDENTITY, back in RULE50-CONSUMER-COMPOSITION's landing); they were found by placing the 23 records with equal inputs on main's first-parent line and reading their side figures (docs/reports/priority0-remeasurement/scripts/landing_records.py). DISCHARGE: accept non-joining records with equal inputs as figure and row checkpoints inside a step, listing every row a checkpoint shows at a verdict the step's ends do not.",
    "source": "docs/reports/priority0-remeasurement/README.md",
    "recorded_by": "PRIORITY0-ATTRIBUTION"
+  },
+  {
+   "id": "RETURN-FAMILY-RESOLVED-QUALIFIED-CAST",
+   "title": "`legacy_return_family::is_cast_group` does not resolve a qualified pointer cast group",
+   "why": "TYPE-GROUP-QUALIFIED-POINTER found (report §1) that crates/qcore-c-gateway/src/legacy_return_family.rs `cast_target` (behind `is_cast_group` and family K's `cast_call`) resolves a group only as resolved words followed by trailing `*`s, so `( long * const )` is never a resolved cast. The direction is refusing: rule 74h then reads a `*` or `&` after it as undecided and keeps both readings' refusals, family S reads `( long * const ) ( x )` as a call and refuses, and family K refuses `return ( T * const ) f ( x );`. Rule 74u deliberately kept this reading, because resolving the group would admit more (a starred may-bind root after it would need only the cast reading's count, and family K would take an `Owned` result under a qualified pointer cast). DISCHARGE: let `cast_target` read `POINTER_QUALIFIERS` after each `*` (the shape of rule 74u's `type_group`) only with a proof that each newly admitted reading is sound (a cast to a qualified pointer type converts the value as the unqualified type does, C11 6.5.4p5 and 6.7.3p5), pin the admissions end to end and measure, or show no such return reaches family S or K.",
+   "source": "docs/reports/type-group-qualified-pointer/README.md",
+   "recorded_by": "TYPE-GROUP-QUALIFIED-POINTER"
+  },
+  {
+   "id": "TYPE-GROUP-NESTED-DECLARATOR",
+   "title": "`cast_semantics::type_group_open` does not read a nested abstract declarator, `_Atomic ( T )` or an attribute",
+   "why": "TYPE-GROUP-QUALIFIED-POINTER found (report §1) that crates/qcore-c-gateway/src/cast_semantics.rs `type_group_open` still reads no group holding parentheses or brackets: a pointer to an array or a function (`( int ( * ) [ 4 ] )`, `( void ( * ) ( void ) )`), the `_Atomic ( T )` specifier, `__typeof__ ( x )` and `__attribute__ ( ( ... ) )`. Its nearest-`(` search finds the inner group, which is no type name. Rule 74r's reading through groups, rule 74m's through count and rule 12h(4)'s member count stop at such a group, the same admitting direction rule 74u closed for qualifiers (for example `**(int (*)[4])p` through a null untracked `p` makes no base). DISCHARGE: read the C11 6.7.7 direct abstract declarator in `type_group_open` (balanced groups, keeping the only-refuses-more direction of every caller, `QCore.TypeGroupQualifiedPointer.the_fix_only_refuses_more`), or show no such cast reaches family S; pin and measure.",
+   "source": "docs/reports/type-group-qualified-pointer/README.md",
+   "recorded_by": "TYPE-GROUP-QUALIFIED-POINTER"
+  },
+  {
+   "id": "TOKEN-CAST-READERS-QUALIFIED-POINTER",
+   "title": "Four token cast readers refuse a pointer cast with a qualifier after its `*`",
+   "why": "TYPE-GROUP-QUALIFIED-POINTER's census (report §1) found four token readers that read a pointer cast only when its group ends in `*`, so `( T * const )` is no cast to them: `legacy_token_shapes::cast_place` (rule 12y's borrowed base, then `Unmodeled` or `the base is not a place`), `legacy_sub_object_store::strip_pointer_cast` (`value-shape`), `legacy_reference_result::uncast` (a null constant or a returned name under such a cast is not read, so the check is not admitted), and `legacy_cast_return::cast_of_operand` (the target is classed `Other`, not `Pointer`, so a place under it is refused or left to the pre-card routes). Every one refuses or falls back to an older reading, so the direction is precision only. DISCHARGE: read `POINTER_QUALIFIERS` after each `*` in these readers (rule 74u's `type_group` shape, ideally by calling it) with a direction assessment per reader, pin and measure; or record that no qualified cast reaches them on the corpus.",
+   "source": "docs/reports/type-group-qualified-pointer/README.md",
+   "recorded_by": "TYPE-GROUP-QUALIFIED-POINTER"
+  },
+  {
+   "id": "RETURN-CALL-ACTUAL-NULL-UNTRACKED-ROOT",
+   "title": "A borrowed call actual read through a null untracked root is `Safe`, in a statement and in a return",
+   "why": "RETURN-STRICT-MEMBER-NULL-UNTRACKED-ROOT found, by an end-to-end probe at its base 497c859fc and at its tip 8434d92a3 (report §2 and §7, `private/rsm/reach/census-*.log`), that with `long k_read(int fd, void *b, __SIZE_TYPE__ n)` contracted all-`Borrowed` with a `None` result, both `long w(void) { const struct s *p = 0; return k_read(p->n, 0, 0); }` and `… k_read(p->n, 0, 0); return 0; }` are `Safe`. The actual `p->n` dereferences the null `p`. C02-P's borrowed actual (crates/qcore-c-gateway/src/borrowed_actual.rs) admits a `ROOT -> FIELD` actual over a never-bound root at a `Borrowed` position. It carries no base obligation for the root, which is the same premise-4 gap rule 74v closed for B01's return read. The direction is admitting. DISCHARGE: give a borrowed actual's dereferenced never-bound root family S's base obligation (the flow check refuses a possibly-null binding with `unknown_alias`), or show the access is checked elsewhere. Pin both spellings end to end and measure. A Safe -> Unknown move is possible on possibly-null roots.",
+   "source": "docs/reports/return-strict-member-null/README.md",
+   "recorded_by": "RETURN-STRICT-MEMBER-NULL-UNTRACKED-ROOT"
+  },
+  {
+   "id": "RETURN-FAMILY-CONDITIONAL-GROUP-WALK-NESTED",
+   "title": "Rule 74x's conditional-group walk reads an outer conditional as the additive group around a nested conditional in an arm's sum",
+   "why": "RETURN-FAMILY-ARITH-WALK-CROSSES-CONDITIONAL (rule 82) fixed rule 74w's walk but left rule 74x's `conditional_group_access` (legacy_return_family.rs), which widens a conditional group with the same loop: when the group is a later term of an outer conditional's arm sum followed by an operator or `)`, it takes the outer conditional's parentheses as the additive group, finds `?` and returns `Unclassified`, so `conditional_roots` refuses `(c ? 1 + (d ? p : a) - n : b)->m` and `(c ? 1 + (d ? 1 + p - n : a) - n : b)->m` (unit pins in crates/qcore-c-gateway/tests/unit/legacy_return_family_arith_walk_conditional.rs). Fail-closed, a precision loss; end to end rule 10z's lowering reads these (`Unknown` over null roots). DISCHARGE: classify such a crossing within the outer arm as rule 82 does, keep the refusal when that arm is unclassified, and prove no refusal is lost except where rule 74x reads the outer arm.",
+   "source": "docs/reports/return-family-arith-walk-conditional/README.md",
+   "recorded_by": "RETURN-FAMILY-ARITH-WALK-CROSSES-CONDITIONAL"
+  },
+  {
+   "id": "GATE-SCOPE-READ-CENSUS-COVERAGE-EDGE",
+   "title": "The gate's read census covers just over 90% of the test units, so one new test target fails the Python suite",
+   "why": "RETURN-FAMILY-ARITH-WALK-CROSSES-CONDITIONAL's first scoped gate failed `scripts/tests/test_gate_scope_census.py` (`test_the_census_covers_the_suite`: 671 observed units not greater than 0.9 x 746). At base `1187c3f6d` the read census (docs/reports/gate-scope-precise-selection/read-census.json) observes 671 of 745 root-workspace test units, so any card that adds a test target crosses the threshold. The card moved its end-to-end rows into an existing target instead; sibling cards from the same base that add a target will meet the same failure. DISCHARGE: record the read census again with scripts/gate_read_census.py at a landing (keeping the frozen census beside it), or restate the coverage rule, and keep the scoper's observed-read checks.",
+   "source": "docs/reports/return-family-arith-walk-conditional/README.md",
+   "recorded_by": "RETURN-FAMILY-ARITH-WALK-CROSSES-CONDITIONAL"
+  },
+  {
+   "id": "NULL-JOIN-CORRELATED-GUARD",
+   "title": "A test of the name a joined binding was copied from does not narrow the joined binding",
+   "why": "UNTRACKED-BASE-NULL-JOIN-DISCHARGE (rule 83) refuses rule 14n's premise for a name some reaching path bound to the null constant. In `long w(const struct s *f) { const struct s *p = 0; if (f) p = f; if (!f) return 0; return p->n + 1; }` the test of `f` proves `p` non-null at the read, but the reader does not relate `p` to `f`: the row was `Safe` (under a premise) at the base 2a598d2af and is `Unknown` (`unknown_alias:p`) at bd9aa123e, a precision loss pinned in crates/qcore-c-gateway/tests/untracked_base_null_join.rs (`near_misses_are_refused`). The dominating test of the joined binding itself (`if (p) return p->n;`, `if (!p) return 0;`) is `Unknown` on both sides because `refine_pointer_null` refuses a null test of an `unknown` binding (rule 10b). DISCHARGE: narrow a joined target-free binding on a test of the name it was copied from on every non-null path, or let a null test of a target-free `unknown` binding narrow its own binding without refusing, each with a Lean model and pins; no opt-in corpus status depends on it today (report §6).",
+   "source": "docs/reports/untracked-base-null-join/README.md",
+   "recorded_by": "UNTRACKED-BASE-NULL-JOIN-DISCHARGE"
+  },
+  {
+   "id": "RETURN-FAMILY-UNTAKEN-ARM-DIRECT-BASES",
+   "title": "Family S's old tests read the roots of a conditional's untaken arm under a constant condition",
+   "why": "RETURN-FAMILY-CONDITIONAL-CONSTANT-PRUNING (rule 74z) prunes only rule 74x's bases of the arm C never evaluates. Family S's old tests (the direct tests and rules 74r's, 74t's and 74w's walks) still read every root of both arms. So `return 0 ? p->n : q->n;` and `return (0 ? p->next : q)->n;` with a null local `p` stay `Unknown` (`unknown_alias:p`), while rule 10z and the `if` routes prune the same constant (`if (0) return p->n;` is `Safe`). The declaration form `long v = (0 ? p : q)->n;` is `Unknown` too (report §2 probe). This is precision, not soundness. DISCHARGE: prune by token position at every conditional whose condition rule 74z decides, in the old tests and the may-bind refusal alike; prove that every dropped base lies in an unevaluated arm and that no refusal is lost.",
+   "source": "docs/reports/return-family-conditional-constant-pruning/README.md",
+   "recorded_by": "RETURN-FAMILY-CONDITIONAL-CONSTANT-PRUNING"
+  },
+  {
+   "id": "RETURN-AST-ROUTE-REVERSED-SUBSCRIPT-DEREF",
+   "title": "An older typed route admits `n[q[0]]` with a scalar `n` before family S refuses it",
+   "why": "RETURN-FAMILY-UNTRACKED-REVERSED-SUBSCRIPT (rule 74y) observed `long w(long **q, long n) { return n[q[0]]; }` Safe at its base and tip: family S refuses the shape (unit pin `n [ q [ 0 ] ]`), so an older route admits it before family S is asked. C11 6.5.2.1p2 makes it `*(n + q[0])`, a dereference of the pointer `q[0]` reads. Direction not assessed. DISCHARGE: find the admitting route, check that its typed (Clang-AST) reading knows which operand is the pointer and what custody `q[0]` carries, refuse where it does not, pin the shape end to end and measure.",
+   "source": "docs/reports/return-family-untracked-reversed-subscript/README.md",
+   "recorded_by": "RETURN-FAMILY-UNTRACKED-REVERSED-SUBSCRIPT"
   }
  ],
  "updated": "Completed plugin premise integration; exact hand-maintained union retains810followups, borrowed measured-source8419Rust/354Lean/freshcard133provider, exact source equivalence checked; authoritative root committed-matrix Python confirmation in integration receipt. CMetrics map/opts API model specifications added at the explicit user request. Eight declared-model API contracts remain outside interpreted views, with CMT-MAP-OPTS-CONTRACT-ADOPTION and CMT-LABELED-HASH-ZERO-STATIC-STORAGE Open. No trusted API coverage is claimed; the source gate is recorded by this card alongside its separate initializer native checkpoint. W48-CMT-TRACKED-INTERIOR-SELF-INIT implements rule 36b's checked initializer effect transport for an exact live owned root or embedded record, retaining actual self writes, invalidating aliased member facts and preserving resource obligations; nondefault custody frames refuse and no ordinary summary is exported. The canonical CFL intrusive_list.qv declares matching audit preconditions/effects; two CMetrics .qv modules add six map and two opts lifecycle models, including transitive ownership, partial failure, borrowed results and uncleared cleanup fields. All remain outside interpreted views; checked API adoption and labeled zero-hash storage accounting have named Open follow-ups. Fresh BASE/planner precedes prediction f18d96065 and implementation; the later contract amendment 08da23123 precedes .qv edits. Native corpus BASE/TIP Safe/Unknown/Pending/provisional-Unsafe: 1009 / 3816 / 0 / 9 to 1011 / 3814 / 0 / 9; full system/slice, 5781 NULL dictionaries and runtime projections are compared, 241 semantic leaves accounted, zero unexplained leaves and no prior Safe loss. Gate 8654 Rust / 370 Lean / 374 Python, provider 133 Rust / 25 Python and all five package verifies pass. The actual deep source reader uses 328 KiB below 1 MiB. Full getter closure remains Open; W48-CMT-SELF-INIT-DISJOINT-FRAMES tracks the next bounded frame extension, and W48-EXACT-RETURN-WITNESS-PRECISION is unchanged. Native evidence is isolated to measured e92d8aef35a8bd14550e90219d19a56eb3b196e7; later source gate 2d0d85299b830aa24d7f200d63a308653582363f validates the added declared API models separately; see docs/reports/w48-cmt-tracked-interior-self-init/README.md."

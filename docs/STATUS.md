@@ -156,7 +156,7 @@ figure is measured.
 | CT case-bound proof | **5/50**: CT01, CT03, CT07, CT37, CT50 | Same manifest, per-case `proof` stage |
 | CT gated sanitized-native | **10/50, Linux/macOS only** | Same manifest, `native_sanitized` stage and host gates |
 | Lean | toolchain **`leanprover/lean4:v4.35.0`**; **514** audits | `proof/lean-toolchain`; `proof/Audit*.lean`, QUIRIN-AUDIT-CONNECT landing gate |
-| Contract corpus | **154** modules (1,002 declarations, 8,800 clauses) in the eleven inventory locks `qcore_contract_corpus.rs` pins: five `qcore-provider-*` crates 95, six `quirin-provider-*` crates 59; user crates outside the locks: OpenSSL 21, libcurl 4, plugin 1 | `providers/*/contract-inventory.lock`, [load path](../providers/contract-load-path.json), [ownership](../providers/README.md#contract-ownership) |
+| Contract corpus | **154** modules (1,002 declarations, 8,801 clauses) in the eleven inventory locks `qcore_contract_corpus.rs` pins: five `qcore-provider-*` crates 95, six `quirin-provider-*` crates 59; user crates outside the locks: OpenSSL 21, libcurl 4, plugin 1 | `providers/*/contract-inventory.lock`, [load path](../providers/contract-load-path.json), [ownership](../providers/README.md#contract-ownership) |
 | Registered follow-ups | **1,054** | [Matrix](reviews/r0_3/acceptance_matrix.json) `named_followups` |
 
 Re-derived by [`rederive.py`](reports/status-compact/scripts/rederive.py); the
