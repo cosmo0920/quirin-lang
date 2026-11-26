@@ -60,9 +60,21 @@
 //! every CFG edge an edge refinement does not prove infeasible is taken, and a
 //! `LIVE` bit at the exit is the may-evidence `report_leaks` publishes), plus
 //! that the replay is the work list's (checked under `debug_assertions`: the
-//! uncut replay must reproduce the settled states exactly). Only
-//! `Unknown -> Unsafe` moves follow (or an extra `Leak` leaf in a row already
-//! `Unsafe`). Nothing becomes `Safe`.
+//! uncut replay must reproduce the settled states exactly). Nothing becomes
+//! `Safe`.
+//!
+//! Card **SETTLED-LEAK-OTHER-REFUSAL-SCHEDULE** extends the candidates to
+//! every refusal kind. A refused hand-on, test, re-acquisition or escape marks
+//! its identity too, and a leak claimed on an iterate before such a marker
+//! joined the exit was published while the same leak was not when the marker
+//! arrived first. [`candidates`] now takes, at every exit, each
+//! current-generation identity that the settled incoming state or the exit's
+//! own output marks unresolved by any refusal, beside an `Unknown` leaf
+//! ([`decides`]). Rule 74c's held reports leave those to [`settle`], which
+//! publishes each exactly when witnessed and withdraws it otherwise. Moves
+//! follow both ways (`Unsafe -> Unknown` for a claim only an iterate made,
+//! `Unknown -> Unsafe` for a refusal-free arm the schedule hid), never to
+//! `Safe`: every decided report sits beside an `Unknown` leaf.
 //!
 //! The Lean model is `QCore.SettledLeakJoined`
 //! (`proof/QCore/SettledLeakJoined.lean`); [`PUBLISH_VECTORS`] is shared with
@@ -246,29 +258,23 @@ impl Replay<'_, '_> {
             && !output.references.contains_key(&site)
     }
 
+    /// The restricted replay for `site`: each node's step from its restricted
+    /// settled incoming state.
+    fn restricted(&self, site: usize) -> Vec<Option<Step>> {
+        self.fixed_point(Some(site))
+            .into_iter()
+            .enumerate()
+            .map(|(node, state)| state.map(|state| self.step(node, state)))
+            .collect()
+    }
+
     /// A path from a producer of `site` to `exit` that no mark of `site`
-    /// lies on and that keeps it live, or `None`. `settled` is the work
-    /// list's own fixed point, read only by the `debug_assertions` check that
-    /// the replay is the work list's.
-    pub(super) fn witness(
-        &self,
-        site: usize,
-        exit: usize,
-        settled: &[Option<AbstractState>],
-    ) -> Option<Vec<usize>> {
-        if exit >= self.cfg.nodes.len() || self.cfg.entry >= self.cfg.nodes.len() {
+    /// lies on and that keeps it live, over the restricted replay `steps`
+    /// ([`Self::restricted`]), or `None`.
+    fn witness(&self, steps: &[Option<Step>], site: usize, exit: usize) -> Option<Vec<usize>> {
+        if exit >= self.cfg.nodes.len() {
             return None;
         }
-        debug_assert!(
-            self.fixed_point(None) == settled,
-            "the replay must reproduce the custody work list"
-        );
-        let incoming = self.fixed_point(Some(site));
-        let steps = incoming
-            .iter()
-            .enumerate()
-            .map(|(node, state)| state.clone().map(|state| self.step(node, state)))
-            .collect::<Vec<_>>();
         let arrives = |node: usize| {
             steps[node].as_ref().is_some_and(|step| {
                 if node == exit {
@@ -319,28 +325,32 @@ impl Replay<'_, '_> {
     }
 }
 
-/// Publish every leak key rule 74c (A) withdraws, or would withdraw, at a
-/// settled exit that a path avoiding every mark of its identity carries.
-///
-/// The candidates are the current-generation identities an exit's settled
-/// incoming state marks unresolved with a refused release among the marks,
-/// beside an `Unknown` leaf: exactly the reports rule 74c (A) withdraws,
-/// whether or not an iterate claimed them. Whether the work list claimed one
-/// depends on its schedule (rule 6: a joined path that arrives before the exit
-/// is first processed hides the claim), so each candidate is decided by
-/// [`Replay::witness`] alone and the decision reads settled facts only.
-pub(super) fn settle(
+/// Card SETTLED-LEAK-OTHER-REFUSAL-SCHEDULE: whether rule 84 decides a leak
+/// report of an identity (`QCore.SettledLeakJoined.decides`): the settled
+/// exit marks it unresolved, by any refusal, beside an `Unknown` leaf.
+pub(super) const fn decides(marked: bool, unknown_leaf: bool) -> bool {
+    marked && unknown_leaf
+}
+
+/// The reports rule 84 decides, as `(exit node, identity)`: at every exit,
+/// the current-generation identities its settled incoming state, or the
+/// exit's own output computed from it, marks unresolved by any refusal (a
+/// refused release, hand-on, test, re-acquisition, escape or any other
+/// marking refusal), when the function carries an `Unknown` leaf. Read from
+/// the settled states only. Rule 74c's [`super::settled_leak_route::Held`]
+/// leaves these to [`settle`], whether or not an iterate claimed them.
+pub(super) fn candidates(
     replay: &Replay<'_, '_>,
     settled: &[Option<AbstractState>],
-    diagnostics: &mut BTreeSet<LegacyDiagnostic>,
-) {
+    diagnostics: &BTreeSet<LegacyDiagnostic>,
+) -> BTreeSet<(usize, usize)> {
     let unknown_leaf = diagnostics
         .iter()
         .any(|diagnostic| super::verdict::diagnostic_verdict(&diagnostic.kind) == Verdict::Unknown);
-    if !unknown_leaf {
-        return;
+    let mut candidates = BTreeSet::new();
+    if !decides(true, unknown_leaf) {
+        return candidates;
     }
-    let mut reports = BTreeSet::new();
     for (exit, node) in replay.cfg.nodes.iter().enumerate() {
         let Some(state) = settled.get(exit).and_then(Option::as_ref) else {
             continue;
@@ -348,25 +358,60 @@ pub(super) fn settle(
         if !node.is_exit {
             continue;
         }
+        let output = replay.step(exit, state.clone()).output;
         for &site in state
-            .refused_release_sites
-            .intersection(&state.unresolved_effect_sites)
+            .unresolved_effect_sites
+            .union(&output.unresolved_effect_sites)
         {
             if crate::loop_generations::generation(site)
-                != crate::loop_generations::Generation::Current
+                == crate::loop_generations::Generation::Current
             {
-                continue;
+                candidates.insert((exit, site));
             }
-            let key = (
-                node.line,
-                super::acquisition_line(replay.acquisition_lines, site),
-            );
-            // A candidate is one rule 74c (A) withdraws.
-            if !reports.contains(&key)
-                && publishes(true, replay.witness(site, exit, settled).is_some())
-            {
-                reports.insert(key);
-            }
+        }
+    }
+    candidates
+}
+
+/// Publish every leak report rule 84 decides ([`candidates`]) that a path
+/// avoiding every mark of its identity, and every refusal, carries.
+///
+/// A candidate's identity is marked at a settled exit beside an `Unknown`
+/// leaf, so rule 74c (A) and its held reports no longer decide it. Whether the
+/// work list claimed it on some iterate depends on its schedule (rule 6: a
+/// marked path that joins before the exit is first processed hides the claim,
+/// one that joins after it does not), so each candidate is decided by
+/// [`Replay::witness`] alone and the decision reads settled facts only.
+pub(super) fn settle(
+    replay: &Replay<'_, '_>,
+    settled: &[Option<AbstractState>],
+    candidates: &BTreeSet<(usize, usize)>,
+    diagnostics: &mut BTreeSet<LegacyDiagnostic>,
+) {
+    if candidates.is_empty() {
+        return;
+    }
+    debug_assert!(
+        replay.fixed_point(None) == settled,
+        "the replay must reproduce the custody work list"
+    );
+    let mut restricted = BTreeMap::<usize, Vec<Option<Step>>>::new();
+    let mut reports = BTreeSet::new();
+    for &(exit, site) in candidates {
+        let node = &replay.cfg.nodes[exit];
+        let key = (
+            node.line,
+            super::acquisition_line(replay.acquisition_lines, site),
+        );
+        if reports.contains(&key) {
+            continue;
+        }
+        let steps = restricted
+            .entry(site)
+            .or_insert_with(|| replay.restricted(site));
+        // A candidate is withdrawn unless witnessed.
+        if publishes(true, replay.witness(steps, site, exit).is_some()) {
+            reports.insert(key);
         }
     }
     for (line, acquisition_line) in reports {

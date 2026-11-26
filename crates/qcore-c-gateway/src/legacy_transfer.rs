@@ -2256,24 +2256,25 @@ fn analyze_cfg_with_entry_collected(
     // Card LOOP-REACQUISITION-LEAK-ACCUSATION (rule 42): publish every
     // deferred earlier-generation leak the settled refusal does not withdraw.
     deferred_leaks.settle(&cfg, &incoming, &mut diagnostics);
+    // Card SETTLED-LEAK-JOINED-GENUINE-WITHDRAWN (rule 84), amended by card
+    // SETTLED-LEAK-OTHER-REFUSAL-SCHEDULE: the reports rule 84 decides (an
+    // identity a settled exit marks by any refusal beside an `Unknown` leaf),
+    // read from the settled states before rule 74c's held reports.
+    let replay = joined_leak_route::Replay {
+        cfg: &cfg,
+        context: &context,
+        alias: &alias,
+        joined: &joined,
+        tie: tie.as_deref(),
+        acquisition_lines: &acquisition_lines,
+        entry: entry_custody,
+    };
+    let decided = joined_leak_route::candidates(&replay, &incoming, &diagnostics);
     // Card NULLABLE-GUARDED-RELEASE (rule 74c): publish every held leak the
-    // settled exit does not withdraw.
-    held_leaks.settle(&cfg, &incoming, &mut diagnostics);
-    // Card SETTLED-LEAK-JOINED-GENUINE-WITHDRAWN (rule 84): publish every
-    // leak rule 74c withdraws that a path avoiding every mark carries.
-    joined_leak_route::settle(
-        &joined_leak_route::Replay {
-            cfg: &cfg,
-            context: &context,
-            alias: &alias,
-            joined: &joined,
-            tie: tie.as_deref(),
-            acquisition_lines: &acquisition_lines,
-            entry: entry_custody,
-        },
-        &incoming,
-        &mut diagnostics,
-    );
+    // settled exit does not withdraw and rule 84 does not decide.
+    held_leaks.settle(&cfg, &incoming, &decided, &mut diagnostics);
+    // Rule 84: publish every decided leak a path avoiding every mark carries.
+    joined_leak_route::settle(&replay, &incoming, &decided, &mut diagnostics);
 
     if incoming.iter().flatten().any(|state| state.widened) {
         diagnostics.insert(LegacyDiagnostic {

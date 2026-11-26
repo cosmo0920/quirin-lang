@@ -899,6 +899,11 @@ Rule 6 is amended by [rule 74c](#constraint-74c): a current-generation leak
 report made on an iterate is published only if the settled exit does not mark
 its identity unresolved beside an `Unknown` leaf.
 
+Rule 6 is amended by [rule 84](#constraint-84) (card
+SETTLED-LEAK-OTHER-REFUSAL-SCHEDULE): a leak whose settled exit marks the
+identity by any refusal beside an `Unknown` leaf is decided from the settled
+states alone, whatever iterate claimed it.
+
 <a id="constraint-7"></a>
 
 7. Leak diagnostics are **34** across the pinned 185-unit corpus
@@ -13236,6 +13241,11 @@ that only when every arriving edge has it.
     `the_non_null_edge_denotes_the_site`, `the_null_edge_owes_nothing`,
     `a_reassignment_breaks_it`); [report](../reports/nullable-guarded-release/README.md).
 
+Rule 74c is amended by [rule 84](#constraint-84) (card
+SETTLED-LEAK-OTHER-REFUSAL-SCHEDULE): a held report whose settled exit marks
+the identity by any refusal beside an `Unknown` leaf is no longer decided
+here. Rule 84 publishes it exactly when a refusal-free witness carries it.
+
 <a id="constraint-74d"></a>
 
 74d. **A lazy constructor decides its name; a possibly-null return is refused
@@ -14850,6 +14860,50 @@ through `ampersand_runs`.
     `an_unwithdrawn_report_is_untouched`, `a_publication_is_never_safe`,
     `the_pinned_instance`, `the_both_arms_control`);
     [report](../reports/settled-leak-joined-genuine-withdrawn/README.md).
+
+Rule 84 is amended by card SETTLED-LEAK-OTHER-REFUSAL-SCHEDULE (same module;
+the hook after rule 42's settlement now computes rule 84's candidates first,
+and rule 74c's `Held::settle` skips them). **Every refusal kind.** A refused
+hand-on, test, re-acquisition or escape marks its identity as a refused
+release does, but rule 74c (A) withdrew only a refused release's mark and
+rule 84 read only those. So a leak `report_leaks` claimed on an iterate
+before another refusal's marker joined the exit was published, and the same
+leak was not when the marker arrived first (rule 6's hazard;
+`if (flag) { n = n + 1; u_keep(s); }` was `Unsafe` and
+`if (flag) { u_keep(s); } else { n = n + 1; n = n + 2; }` `Unknown` at
+`98c51878f`). **The candidates** are now, at every exit, the
+current-generation identities that its settled incoming state, or the exit's
+own output computed from it, marks unresolved by any refusal, when the
+function carries an `Unknown` leaf (`decides`). Rule 74c's held reports for
+those `(exit, identity)` pairs are left to rule 84, so whether an iterate
+held one no longer matters. Each candidate is published exactly when the
+restricted replay and the breadth-first witness above carry it, and is
+otherwise withdrawn. The replay for one identity is computed once and shared
+by its exits; the `debug_assertions` check runs once per analysis with a
+candidate. Moves: `Unsafe -> Unknown` (a claim only an iterate made, with no
+refusal-free path: the scram shape beside rule 42's refused re-acquisition,
+`chained_assignment`; a leak past an undecided loop test,
+`scalar_route_exit_edge`'s `z_unknown` row), and `Unknown -> Unsafe` (a
+refusal-free arm in the marker-first order). Nothing becomes `Safe`: a
+decided report sits beside an `Unknown` leaf. **Do not** decide a report
+when the function has no `Unknown` leaf (rule 74c's held report is
+published as before; the schedule question there is recorded as
+SETTLED-LEAK-MARK-WITHOUT-UNKNOWN-LEAF, not
+decided); **do not** treat an earlier generation here (rule 42's). Rule
+W44's hand-on, rule 12e's settled null edge and rule 42's earlier-generation
+accusations are kept wherever a refusal-free path carries the leak; a
+refusal on every live path withdraws it. Pinned in
+`tests/settled_leak_other_refusal.rs`: the hand-on, the escape and the
+condition call, each on one arm in two schedules (both `Unsafe`), and each
+on every path in two schedules (both `Unknown`). Kept pins:
+`sup07_refused_test_accusation` (12e), `leak_pin_audit` (W44) and
+`loop_reacquisition_leak` `refused-current-generation-leak` (42).
+`QCore.SettledLeakJoined` (`a_witness_avoids_every_refusal_kind`,
+`held_at_an_unmarked_exit`, `publication_is_order_independent`,
+`the_old_decision_read_the_schedule`, `both_orders_publish_the_avoiding_arm`,
+`a_refused_only_leak_stays_withdrawn_any_kind`,
+`every_kind_on_both_arms_is_withdrawn`, `a_decided_report_is_never_safe`);
+[report](../reports/settled-leak-other-refusal-schedule/README.md).
 
 <a id="constraint-85"></a>
 

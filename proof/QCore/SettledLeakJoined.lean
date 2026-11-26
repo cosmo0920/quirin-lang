@@ -60,6 +60,19 @@ refused release of it) and whether the identity is live when the path ends.
   (`the_pinned_instance`). With the close on every path, nothing is witnessed
   (`the_both_arms_control`).
 
+* **Every refusal kind** (card SETTLED-LEAK-OTHER-REFUSAL-SCHEDULE, the
+  last section). A witness avoids every refusal of every kind
+  (`a_witness_avoids_every_refusal_kind`). The amended decision reads the
+  settled runs only, so two schedules of the same runs decide the same
+  (`publication_is_order_independent`), where the old one did not
+  (`the_old_decision_read_the_schedule`). A leak whose every live run passes
+  a refusal stays withdrawn in every order
+  (`a_refused_only_leak_stays_withdrawn_any_kind`), and a decided report is
+  never `Safe` (`a_decided_report_is_never_safe`). The order independence is
+  stated where rule 84 decides the report or the settled exit is unmarked; a
+  mark beside no `Unknown` leaf is outside it, and the Rust leaves that case
+  to rule 74c.
+
 ## What this is not
 
 A proof that the Rust replays the work list faithfully, or that its path
@@ -216,5 +229,193 @@ theorem the_both_arms_control :
     markedAtExit bothArms = true ∧ witnessed bothArms = false ∧
       publishes (markedAtExit bothArms) (witnessed bothArms) = false := by
   decide
+
+/-! ## Every refusal kind (card SETTLED-LEAK-OTHER-REFUSAL-SCHEDULE)
+
+Rule 84 decided only the identities a refused release marks. A refused
+hand-on, test, re-acquisition or escape marks its identity too, and a leak
+`report_leaks` claimed on an iterate before such a marker joined the exit was
+published, while the same leak was not when the marker arrived first. The
+amended rule decides every report whose settled exit marks the identity by any
+refusal beside an `Unknown` leaf from the settled runs alone: it is published
+exactly when a run no mark lies on keeps the identity live.
+
+A schedule is the order in which the runs reach the exit. The work list's
+iterate after a prefix of it sees the union join of that prefix, and claims
+the identity when it is live there and unmarked. `held` is whether some
+iterate claimed it. -/
+
+/-- The refusal kinds that mark an identity unresolved. -/
+inductive Kind where
+  | release
+  | handOn
+  | test
+  | reacquisition
+  | escape
+  | other
+deriving DecidableEq, Repr
+
+/-- One step of a path: whether it blocks the replay, and which refusal, if
+any, it is. -/
+structure KStep where
+  marks : Bool
+  refusal : Option Kind
+deriving DecidableEq, Repr
+
+/-- One reaching path with refusal kinds. -/
+structure KRun where
+  steps : List KStep
+  live : Bool
+deriving DecidableEq, Repr
+
+/-- No mark of the identity lies on the path. -/
+def kAvoids (p : KRun) : Bool := p.steps.all (fun s => !s.marks)
+
+/-- The settled exit marks the identity: some run marks it. -/
+def kMarked (runs : List KRun) : Bool := runs.any (fun p => !kAvoids p)
+
+/-- The restricted replay's witness: a run no mark lies on keeps it live. -/
+def kWitnessed (runs : List KRun) : Bool := runs.any (fun p => kAvoids p && p.live)
+
+/-- The premise, over every kind: every refusal of the identity marks it (or
+sets `unmodeled`, which the replay cuts as a mark). -/
+def EveryRefusalMarks (runs : List KRun) : Prop :=
+  ∀ p ∈ runs, ∀ s ∈ p.steps, s.refusal.isSome = true → s.marks = true
+
+theorem a_witness_avoids_every_refusal_kind (runs : List KRun)
+    (premise : EveryRefusalMarks runs) (w : kWitnessed runs = true) :
+    ∃ p ∈ runs, p.live = true ∧ ∀ s ∈ p.steps, ∀ k : Kind, s.refusal ≠ some k := by
+  unfold kWitnessed at w
+  obtain ⟨p, mem, hp⟩ := List.any_eq_true.mp w
+  simp only [Bool.and_eq_true] at hp
+  refine ⟨p, mem, hp.2, ?_⟩
+  intro s smem k hk
+  have hall := List.all_eq_true.mp hp.1 s smem
+  have := premise p mem s smem (by simp [hk])
+  simp [this] at hall
+
+/-- An iterate after the prefix `pre` claims the identity: live in the
+union join and unmarked. -/
+def claimsOn (pre : List KRun) : Bool := pre.any (·.live) && !kMarked pre
+
+/-- Some iterate of the schedule `order` claimed the identity: the join of
+some prefix of it did. -/
+def held (order : List KRun) : Bool :=
+  (List.range (order.length + 1)).any (fun n => claimsOn (order.take n))
+
+/-- Whether rule 84 decides the report (`decides` in the Rust). -/
+def decides (marked unknownLeaf : Bool) : Bool := marked && unknownLeaf
+
+/-- The decision before this card for an identity marked only by refusals
+other than a release: rule 74c (A) did not withdraw a held report, and rule
+84 did not take the identity, so the report was published exactly when an
+iterate held it. -/
+def oldDecision (order : List KRun) : Bool := held order
+
+/-- The amended decision: a report rule 84 decides is published when
+witnessed; any other report as before. -/
+def decision (unknownLeaf : Bool) (order : List KRun) : Bool :=
+  if decides (kMarked order) unknownLeaf then kWitnessed order else held order
+
+theorem any_perm {α : Type} (f : α → Bool) {xs ys : List α} (h : xs.Perm ys) :
+    xs.any f = ys.any f := by
+  apply Bool.eq_iff_iff.mpr
+  simp only [List.any_eq_true]
+  exact ⟨fun ⟨x, m, fx⟩ => ⟨x, h.mem_iff.mp m, fx⟩,
+    fun ⟨x, m, fx⟩ => ⟨x, h.mem_iff.mpr m, fx⟩⟩
+
+/-- At an unmarked settled exit, some iterate claimed the identity exactly when
+the settled exit does (every prefix's join is below the settled join). -/
+theorem held_at_an_unmarked_exit (order : List KRun) (h : kMarked order = false) :
+    held order = claimsOn order := by
+  apply Bool.eq_iff_iff.mpr
+  constructor
+  · intro hh
+    unfold held at hh
+    obtain ⟨n, _, hc⟩ := List.any_eq_true.mp hh
+    unfold claimsOn at hc ⊢
+    simp only [Bool.and_eq_true] at hc
+    obtain ⟨p, pm, pl⟩ := List.any_eq_true.mp hc.1
+    simp only [h, Bool.not_false, Bool.and_true]
+    exact List.any_eq_true.mpr ⟨p, (List.take_sublist n order).subset pm, pl⟩
+  · intro hc
+    unfold held
+    refine List.any_eq_true.mpr ⟨order.length, ?_, ?_⟩
+    · simp
+    · simpa using hc
+
+/-- **Publication is order-independent.** Two schedules of the same runs
+decide the same, whenever rule 84 decides the report or the settled exit does
+not mark the identity. -/
+theorem publication_is_order_independent (unknownLeaf : Bool) (o₁ o₂ : List KRun)
+    (perm : o₁.Perm o₂) (scope : unknownLeaf = true ∨ kMarked o₁ = false) :
+    decision unknownLeaf o₁ = decision unknownLeaf o₂ := by
+  have hm : kMarked o₁ = kMarked o₂ := any_perm _ perm
+  have hw : kWitnessed o₁ = kWitnessed o₂ := any_perm _ perm
+  have hl : o₁.any (·.live) = o₂.any (·.live) := any_perm _ perm
+  have unmarked : kMarked o₁ = false → held o₁ = held o₂ := by
+    intro hk
+    have hk₂ : kMarked o₂ = false := hm ▸ hk
+    rw [held_at_an_unmarked_exit o₁ hk, held_at_an_unmarked_exit o₂ hk₂]
+    unfold claimsOn
+    rw [hl, hk, hk₂]
+  unfold decision
+  cases hk : kMarked o₁
+  · have hk₂ : kMarked o₂ = false := hm ▸ hk
+    simp [decides, hk₂, unmarked hk]
+  · have hk₂ : kMarked o₂ = true := hm ▸ hk
+    rcases scope with hu | hu
+    · simp [decides, hk₂, hu, hw]
+    · simp [hk] at hu
+
+/-- A refused-only leak stays withdrawn, whatever refusal kinds mark it and
+whatever the schedule. -/
+theorem a_refused_only_leak_stays_withdrawn_any_kind (order : List KRun)
+    (premise : EveryRefusalMarks order)
+    (every : ∀ p ∈ order, p.live = true → ∃ s ∈ p.steps, s.refusal.isSome = true)
+    (marked : kMarked order = true) :
+    decision true order = false := by
+  have hw : kWitnessed order = false := by
+    cases w : kWitnessed order
+    · rfl
+    · obtain ⟨p, mem, live, none⟩ := a_witness_avoids_every_refusal_kind order premise w
+      obtain ⟨s, smem, hs⟩ := every p mem live
+      cases hr : s.refusal with
+      | none => simp [hr] at hs
+      | some k => exact absurd hr (none s smem k)
+  simp [decision, decides, marked, hw]
+
+/-- A hand-on refused on one arm, and the other arm that avoids it: in either
+order, the run that arrives first decides the old outcome. -/
+def handOnArm : KRun := ⟨[⟨true, some .handOn⟩], true⟩
+def avoidingArm : KRun := ⟨[], true⟩
+
+/-- **The hazard, reproduced.** Before this card the outcome read the
+schedule: the avoiding arm first was claimed and published, the hand-on arm
+first was not. -/
+theorem the_old_decision_read_the_schedule :
+    oldDecision [avoidingArm, handOnArm] = true ∧
+      oldDecision [handOnArm, avoidingArm] = false := by
+  decide
+
+/-- **The amended decision does not.** Both orders publish the avoiding arm's
+leak. -/
+theorem both_orders_publish_the_avoiding_arm :
+    decision true [avoidingArm, handOnArm] = true ∧
+      decision true [handOnArm, avoidingArm] = true := by
+  decide
+
+/-- Each kind on both arms: nothing is witnessed in either order. -/
+theorem every_kind_on_both_arms_is_withdrawn (k : Kind) :
+    decision true [⟨[⟨true, some k⟩], true⟩, ⟨[⟨true, some k⟩], true⟩] = false := by
+  cases k <;> decide
+
+/-- A publication under the amended rule sits beside the `Unknown` leaf that
+`decides` requires, so the function folds to provisional `Unsafe`; a
+withdrawal leaves that `Unknown` leaf. Neither is ever `Safe`. -/
+theorem a_decided_report_is_never_safe (xs : List V) (published : Bool) :
+    fold (xs ++ [.unknown] ++ (if published then [.provisionalUnsafe] else [])) ≠ .safe := by
+  cases published <;> simp only [QCore.VerdictSemigroup.fold_append] <;>
+    cases fold xs <;> decide
 
 end QCore.SettledLeakJoined

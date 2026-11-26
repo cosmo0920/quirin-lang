@@ -135,6 +135,12 @@ pub struct Witness {
     /// release is among the site's marks at the settled exit (the population
     /// rule 74c (A) withdraws and rule 84 re-publishes by its own witness).
     pub refused_release: bool,
+    /// Card SETTLED-LEAK-OTHER-REFUSAL-SCHEDULE: every node whose settled
+    /// output marks the site unresolved and whose own transfer reported an
+    /// `Unknown` leaf, with those leaves: the refusals that may have marked it
+    /// (a node inside a loop may receive the mark on its incoming state too,
+    /// so this over-approximates the marking nodes).
+    pub markers: Vec<Marker>,
     /// The site is exempt at the settled exit (a caller-held or out-slot site).
     pub exempt: bool,
     pub exit_unmodeled: bool,
@@ -160,6 +166,17 @@ pub struct Witness {
     /// A path avoiding only those of the edges above at which joined
     /// provenance ties the site to the tested name.
     pub untied_path: Option<Vec<Step>>,
+}
+
+/// Card SETTLED-LEAK-OTHER-REFUSAL-SCHEDULE: one refused node whose settled
+/// output marks a leaked site unresolved.
+#[derive(Clone, Debug, serde::Serialize)]
+pub struct Marker {
+    pub node: usize,
+    pub line: usize,
+    pub instruction: String,
+    /// The node's own `Unknown` leaves (`Debug` text, truncated).
+    pub refusals: Vec<String>,
 }
 
 /// Card SUP07-REFUSED-TEST-ACCUSATION: one refused test's null (invalid)
@@ -202,6 +219,9 @@ struct Settled {
     /// refused test's null (invalid) edge.
     absent: Vec<Option<AbsentEdge>>,
     instruction: String,
+    /// Card SETTLED-LEAK-OTHER-REFUSAL-SCHEDULE: the node's own `Unknown`
+    /// leaves.
+    refusals: Vec<String>,
 }
 
 fn label(instruction: &LegacyInstruction) -> String {
@@ -366,6 +386,7 @@ pub(super) fn record(
                         status: 0,
                         unresolved: false,
                         refused_release: false,
+                        markers: Vec::new(),
                         exempt: false,
                         exit_unmodeled: false,
                         exit_widened: false,
@@ -457,6 +478,7 @@ fn best_witness(
                     status,
                     unresolved: output.unresolved_effect_sites.contains(&site),
                     refused_release: output.refused_release_sites.contains(&site),
+                    markers: markers(cfg, settled, site),
                     exempt: exempt.contains(&site),
                     exit_unmodeled: output.unmodeled,
                     exit_widened: output.widened,
@@ -511,6 +533,7 @@ fn settle(
                     edge_unknown: Vec::new(),
                     absent: Vec::new(),
                     instruction,
+                    refusals: Vec::new(),
                 };
             };
             // Card CG04-LOOP-SITE-GENERATIONS: as in the work list.
@@ -545,6 +568,18 @@ fn settle(
             refused_operands::apply(&mut output, &withdrawn, &local);
             super::loop_generations_route::settle_refused(&shifted, &mut output, &local);
             let refused = refused_operands::refused(&local);
+            let refusals = local
+                .iter()
+                .filter(|diagnostic| {
+                    super::verdict::diagnostic_verdict(&diagnostic.kind)
+                        == qcore_schemas::verdict::Verdict::Unknown
+                })
+                .map(|diagnostic| {
+                    let mut text = format!("{:?}", diagnostic.kind);
+                    text.truncate(text.floor_char_boundary(200));
+                    text
+                })
+                .collect();
             let marked = if refused && !withdrawn.is_empty() {
                 let mut probe = output.clone();
                 probe.unresolved_effect_sites.clear();
@@ -633,7 +668,30 @@ fn settle(
                 edge_unknown,
                 absent,
                 instruction,
+                refusals,
             }
+        })
+        .collect()
+}
+
+/// Card SETTLED-LEAK-OTHER-REFUSAL-SCHEDULE: the refused nodes whose settled
+/// output marks `site` unresolved.
+fn markers(cfg: &LegacyCfg, settled: &[Settled], site: usize) -> Vec<Marker> {
+    settled
+        .iter()
+        .enumerate()
+        .filter(|(_, node)| {
+            !node.refusals.is_empty()
+                && node
+                    .output
+                    .as_ref()
+                    .is_some_and(|output| output.unresolved_effect_sites.contains(&site))
+        })
+        .map(|(node, settled)| Marker {
+            node,
+            line: cfg.nodes[node].line,
+            instruction: settled.instruction.clone(),
+            refusals: settled.refusals.clone(),
         })
         .collect()
 }

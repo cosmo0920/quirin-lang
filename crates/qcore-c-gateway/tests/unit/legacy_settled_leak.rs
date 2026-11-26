@@ -138,7 +138,12 @@ fn settle_reads_the_settled_exit() {
         if leaf {
             diagnostics.insert(refusal());
         }
-        held.settle(&cfg(), &settled(marked, refused), &mut diagnostics);
+        held.settle(
+            &cfg(),
+            &settled(marked, refused),
+            &BTreeSet::new(),
+            &mut diagnostics,
+        );
         assert_eq!(
             diagnostics.contains(&leak()),
             published,
@@ -158,7 +163,7 @@ fn any_unwithdrawn_identity_publishes_the_key() {
     held.hold(9, 2, 1, 0);
     held.hold(9, 2, 5, 0);
     let mut diagnostics = BTreeSet::from([refusal()]);
-    held.settle(&cfg(), &[Some(state)], &mut diagnostics);
+    held.settle(&cfg(), &[Some(state)], &BTreeSet::new(), &mut diagnostics);
     assert!(diagnostics.contains(&leak()));
 }
 

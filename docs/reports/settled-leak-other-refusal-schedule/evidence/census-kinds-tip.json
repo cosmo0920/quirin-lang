@@ -1,0 +1,153 @@
+{
+ "by_kind": {
+  "hand-on+test": 2,
+  "test": 6
+ },
+ "functions": {
+  "rd_kafka_snappy_java_uncompress": [
+   {
+    "acquisition_line": 20500,
+    "invocation": 26,
+    "kinds": [
+     "test"
+    ],
+    "leaves": [
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_snappy_uncompress` in branch condition\" }",
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_snappy_uncompressed_length` in branch condition\" }"
+    ],
+    "line": 20470,
+    "marker_lines": [
+     20472,
+     20481
+    ],
+    "unresolved": true
+   },
+   {
+    "acquisition_line": 20500,
+    "invocation": 26,
+    "kinds": [
+     "test"
+    ],
+    "leaves": [
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_snappy_uncompress` in branch condition\" }",
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_snappy_uncompressed_length` in branch condition\" }"
+    ],
+    "line": 20498,
+    "marker_lines": [
+     20472,
+     20481
+    ],
+    "unresolved": true
+   },
+   {
+    "acquisition_line": 20500,
+    "invocation": 27,
+    "kinds": [
+     "test"
+    ],
+    "leaves": [
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_snappy_uncompress` in branch condition\" }",
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_snappy_uncompressed_length` in branch condition\" }"
+    ],
+    "line": 20470,
+    "marker_lines": [
+     20472,
+     20481
+    ],
+    "unresolved": true
+   },
+   {
+    "acquisition_line": 20500,
+    "invocation": 27,
+    "kinds": [
+     "test"
+    ],
+    "leaves": [
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_snappy_uncompress` in branch condition\" }",
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_snappy_uncompressed_length` in branch condition\" }"
+    ],
+    "line": 20498,
+    "marker_lines": [
+     20472,
+     20481
+    ],
+    "unresolved": true
+   },
+   {
+    "acquisition_line": 20500,
+    "invocation": 28,
+    "kinds": [
+     "test"
+    ],
+    "leaves": [
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_snappy_uncompress` in branch condition\" }",
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_snappy_uncompressed_length` in branch condition\" }"
+    ],
+    "line": 20470,
+    "marker_lines": [
+     20472,
+     20481
+    ],
+    "unresolved": true
+   },
+   {
+    "acquisition_line": 20500,
+    "invocation": 28,
+    "kinds": [
+     "test"
+    ],
+    "leaves": [
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_snappy_uncompress` in branch condition\" }",
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_snappy_uncompressed_length` in branch condition\" }"
+    ],
+    "line": 20498,
+    "marker_lines": [
+     20472,
+     20481
+    ],
+    "unresolved": true
+   },
+   {
+    "acquisition_line": 20500,
+    "invocation": 29,
+    "kinds": [
+     "hand-on",
+     "test"
+    ],
+    "leaves": [
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_snappy_uncompress` in branch condition\" }",
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_snappy_uncompressed_length` in branch condition\" }",
+     "Unsupported { description: \"possibly-null resource `outbuf` returned under a non-null result mode\" }"
+    ],
+    "line": 20470,
+    "marker_lines": [
+     20472,
+     20481,
+     20509
+    ],
+    "unresolved": true
+   },
+   {
+    "acquisition_line": 20500,
+    "invocation": 29,
+    "kinds": [
+     "hand-on",
+     "test"
+    ],
+    "leaves": [
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_snappy_uncompress` in branch condition\" }",
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_snappy_uncompressed_length` in branch condition\" }",
+     "Unsupported { description: \"possibly-null resource `outbuf` returned under a non-null result mode\" }"
+    ],
+    "line": 20498,
+    "marker_lines": [
+     20472,
+     20481,
+     20509
+    ],
+    "unresolved": true
+   }
+  ]
+ },
+ "lines": 8
+}

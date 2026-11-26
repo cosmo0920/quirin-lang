@@ -1,0 +1,83 @@
+{
+ "rests_on": {
+  "a settled leak": 4,
+  "intermediate only": 2,
+  "no leak leaf": 1,
+  "no witness line": 1
+ },
+ "rows": [
+  {
+   "classes": {},
+   "file": "lib/cmetrics/src/cmt_decode_statsd.c",
+   "function": "decode_statsd_message",
+   "leaks": 0,
+   "rests_on": "no leak leaf"
+  },
+  {
+   "classes": {},
+   "file": "lib/cmetrics/src/cmt_map.c",
+   "function": "cmt_map_metric_get",
+   "leaks": 1,
+   "rests_on": "no witness line"
+  },
+  {
+   "classes": {
+    "intermediate": 4
+   },
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c",
+   "function": "ut_testSameSubscriptions",
+   "leaks": 4,
+   "rests_on": "intermediate only"
+  },
+  {
+   "classes": {
+    "settled": 1
+   },
+   "file": "lib/librdkafka-2.15.0/src/rdunittest_acknowledge.c",
+   "function": "ut_case_acknowledge_accept",
+   "leaks": 1,
+   "rests_on": "a settled leak"
+  },
+  {
+   "classes": {
+    "settled": 3
+   },
+   "file": "lib/librdkafka-2.15.0/src/rdunittest_acknowledge.c",
+   "function": "ut_case_acknowledge_multiple_partitions",
+   "leaks": 3,
+   "rests_on": "a settled leak"
+  },
+  {
+   "classes": {
+    "intermediate": 3
+   },
+   "file": "lib/librdkafka-2.15.0/src/snappy.c",
+   "function": "rd_kafka_snappy_java_uncompress",
+   "leaks": 3,
+   "rests_on": "intermediate only"
+  },
+  {
+   "classes": {
+    "settled": 1
+   },
+   "file": "lib/monkey/mk_server/mk_http.c",
+   "function": "mk_http_error",
+   "leaks": 1,
+   "rests_on": "a settled leak"
+  },
+  {
+   "classes": {
+    "settled": 1
+   },
+   "file": "lib/monkey/mk_server/mk_net.c",
+   "function": "mk_net_conn_create",
+   "leaks": 1,
+   "rests_on": "a settled leak"
+  }
+ ],
+ "unsafe_rows": 8,
+ "witness_lines": {
+  "intermediate": 31,
+  "settled": 64
+ }
+}

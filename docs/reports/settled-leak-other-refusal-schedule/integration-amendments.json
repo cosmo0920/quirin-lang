@@ -1,0 +1,25 @@
+{
+ "schema": "quirin-amendments/2",
+ "card": "SETTLED-LEAK-OTHER-REFUSAL-SCHEDULE",
+ "base": "98c51878f",
+ "measured_tip": "1ac8ba66b",
+ "profiles": [],
+ "increment_paragraph": "**SETTLED-LEAK-OTHER-REFUSAL-SCHEDULE** (USER DECISION 2026-11-26: \"launch the SETTLED-LEAK-OTHER-REFUSAL-SCHEDULE card\"; gateway rule 84 amended in place, with amendment lines in rules 74c and 6; `QCore.SettledLeakJoined` extended; [report](../../reports/settled-leak-other-refusal-schedule/README.md)). Rule 84 decided from settled facts only the identities a refused release marks, so a leak claimed on an iterate before a refused hand-on's, test's, re-acquisition's or escape's marker joined the exit was published, and the same leak was not when the marker arrived first (rule 6; probe `1ebe639f6`: a hand-on, an escape and a condition call on one arm are Unsafe in one order and Unknown in the other at `98c51878f`). Rule 84's candidates are now every current-generation identity a settled exit (incoming state or the exit's own output) marks by any refusal beside an `Unknown` leaf; rule 74c's held reports leave them to rule 84, which publishes each exactly when its restricted replay (every marked or `unmodeled` edge cut) and producer-to-exit witness carry it and withdraws it otherwise, so the decision reads settled states only. Lean: every-kind witness, order independence over permutations of the reaching runs, refused-only withdrawal, never Safe. Deliberate pins: `chained_assignment`'s scram \"old\" spelling and `scalar_route_exit_edge`'s `z_unknown` row lose an iterate-only leak and stay Unknown. Base census by kind: the 31 `settled: false` lines are hand-on and condition-call marks (`ut_testSameSubscriptions` 16, `rd_kafka_snappy_java_uncompress` 12, `rd_kafka_cgrp_calculate_subscribe_revoking_partitions` 3). Opt-in `current --monkey-linked` over Fluent Bit 046accf6, own tree and binary each: base 1,205/2/3,589/8, tip 1,205/2/3,590/7; `ut_testSameSubscriptions` provisional Unsafe -> Unknown (no witness for its four leaks), `rd_kafka_snappy_java_uncompress` stays provisional Unsafe with one leak withdrawn and two published on witnesses the analyzer's path reading takes (pass correlation unmodelled), no other row changed. Pinned routes not runnable on the host. A mark beside no `Unknown` leaf (the Pending-hold fixtures) is recorded as SETTLED-LEAK-MARK-WITHOUT-UNKNOWN-LEAF.",
+ "status_edits": [],
+ "ledger": [
+  {
+   "id": "SETTLED-LEAK-OTHER-REFUSAL-SCHEDULE",
+   "operation": "retire",
+   "why": "DISCHARGE (SETTLED-LEAK-OTHER-REFUSAL-SCHEDULE, 2026-11-26): gateway rule 84 now decides every current-generation leak whose settled exit marks the identity by any refusal beside an Unknown leaf, held or not, by its restricted replay and witness alone (rule 74c's held reports leave those to it), so publication no longer reads the work-list schedule (fixtures in both orders; QCore.SettledLeakJoined.publication_is_order_independent). Measured on the opt-in route: ut_testSameSubscriptions Unsafe -> Unknown (no witness), rd_kafka_snappy_java_uncompress stays provisional Unsafe on two witnessed leaks, one withdrawn; no other row moved. W44 accusations with a refusal-free arm are kept (published in both orders); 12e and 42 pins pass unchanged.",
+   "source": "docs/reports/settled-leak-other-refusal-schedule/README.md"
+  },
+  {
+   "id": "SETTLED-LEAK-MARK-WITHOUT-UNKNOWN-LEAF",
+   "operation": "register",
+   "title": "A leak whose settled exit marks the identity beside no Unknown leaf is still published by schedule",
+   "text": "SETTLED-LEAK-OTHER-REFUSAL-SCHEDULE's rule 84 decides a marked report only beside an Unknown leaf. Where the function has none (the gateway suite's Pending-hold fixtures: a pending or deferred contract marks the identity; 114 exit marks in a suite-wide probe), rule 74c's held report is still published exactly when some iterate claimed it. Deciding it needs a choice fail-closed does not settle: withdrawing could leave a row with no blocking leaf, and publishing an unwitnessed claim is not evidence. DISCHARGE: decide these from settled states (for example rule 84's witness, with the row kept non-Safe when the witness is missing), measure, and keep every Pending hold's reason.",
+   "source": "docs/reports/settled-leak-other-refusal-schedule/README.md",
+   "recorded_by": "SETTLED-LEAK-OTHER-REFUSAL-SCHEDULE"
+  }
+ ]
+}

@@ -134,11 +134,16 @@ impl Held {
             .insert((line, acquisition_line, identity, node));
     }
 
-    /// Insert every held report the rule does not withdraw.
+    /// Insert every held report the rule does not withdraw. A report whose
+    /// `(exit node, identity)` is in `decided` is left to gateway rule 84
+    /// (card SETTLED-LEAK-OTHER-REFUSAL-SCHEDULE): its settled exit marks the
+    /// identity by some refusal beside an `Unknown` leaf, and rule 84 decides
+    /// it from the settled states whether or not an iterate held it.
     pub(super) fn settle(
         self,
         cfg: &LegacyCfg,
         incoming: &[Option<AbstractState>],
+        decided: &BTreeSet<(usize, usize)>,
         diagnostics: &mut BTreeSet<LegacyDiagnostic>,
     ) {
         if self.reports.is_empty() {
@@ -148,6 +153,9 @@ impl Held {
             .iter()
             .any(|diagnostic| super::verdict::diagnostic_verdict(&diagnostic.kind) == UNKNOWN);
         for (line, acquisition_line, identity, node) in self.reports {
+            if decided.contains(&(node, identity)) {
+                continue;
+            }
             let settled = incoming.get(node).and_then(Option::as_ref);
             let marked =
                 settled.is_some_and(|state| state.unresolved_effect_sites.contains(&identity));
