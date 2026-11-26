@@ -237,3 +237,27 @@ recorded reliance without its link, and a link the record does not list.
   (`dependency-libc-elsewhere`); a cycle by the manifest (`QI014`) and the
   existing `a_cycle_is_held_unknown`.
 
+
+**Fixtures that build a manifest.** A test manifest with a cross-crate
+inherit now records it (`contract_dependency::unreviewed_manifest_entries`,
+version only); an inherit parent no lock records carries its version alone
+and resolves `Pending`, while a link to an unreviewed target is refused
+(`QL007`). The rule-37 token fixture and `migration.json` (the checkpoint
+record of `tests/support/sp2_premise_checkpoint.rs`) state the two links.
+
+## Checks (no card gate; logs under `private/r40/`, ignored)
+
+| Command | Exit | Counts |
+|---|---:|---|
+| `python3 providers/contracts.py sync` (then the 11 re-pins) | 1, then 0 on `check` | the first `sync` stops at the 11 stale locks by design |
+| `python3 providers/contracts.py check` | 0 | linkage: 15 recorded, 11 linked declarations, 19 links, 11 inherit links |
+| `cargo test -p qcore-schemas -p qcore-frontend -p qcore-contract -p quirin-audit-plugin-measure` | 0 after the checkpoint record | 975 passed, 3 ignored; the one failure before (the SP10 checkpoint) passes on rerun |
+| `cargo test -p qcore-audit --lib` and its dependency, report, plugin and selection tests | 0 | 208 lib; `linkage_shipped_resolution` 1; `provider_selection` 17 |
+| `cargo test -p qcore-compiler` (`qcore_contract_corpus`, `contract_loader`, `contract_inherit_adoption`, `contract_inherit_qcore_provider`) and `-p qcorec` | 0 | after the fixture updates |
+| `cargo clippy --workspace --all-targets -- -D warnings` (root, providers) | 0, 0 | |
+| `cargo fmt --check` (root, providers) | 0, 0 | |
+| `gate_lean.py --module QCore.MeasureConnect --audit AuditMeasureConnect.lean` | 0 | 1 module, 1 audit; new theorems on `propext`/`Quot.sound` or none |
+| `python3 -m unittest discover -s providers/tests` | 0 | 32 |
+| `scripts.tests.test_contract_corpus`, `test_package_contract_includes` | 0, 0 | 9, all |
+| `gen_lean_roots.py --check`, `gen_rule_docs.py --check` | 0, 0 | |
+| `apply_amendments.py integration-amendments.json --check` | 0 | |
