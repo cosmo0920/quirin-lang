@@ -146,8 +146,9 @@ impl Held {
     /// Insert every held report the rule does not withdraw. A report whose
     /// `(exit node, identity)` is in `decided` is left to gateway rule 84
     /// (card SETTLED-LEAK-OTHER-REFUSAL-SCHEDULE): its settled exit marks the
-    /// identity by some refusal beside an `Unknown` leaf, and rule 84 decides
-    /// it from the settled states whether or not an iterate held it.
+    /// identity by some refusal beside an `Unknown` leaf (or, since card
+    /// SETTLED-LEAK-MARK-WITHOUT-UNKNOWN-LEAF, a `Pending` leaf), and rule 84
+    /// decides it from the settled states whether or not an iterate held it.
     pub(super) fn settle(
         self,
         cfg: &LegacyCfg,

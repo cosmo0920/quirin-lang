@@ -76,13 +76,20 @@
 //! `Unknown -> Unsafe` for a refusal-free arm the schedule hid), never to
 //! `Safe`: every decided report sits beside an `Unknown` leaf.
 //!
+//! Card **SETTLED-LEAK-MARK-WITHOUT-UNKNOWN-LEAF** widens the side condition
+//! to an `Unknown` **or `Pending`** leaf
+//! ([`super::mark_without_unknown_route::blocking`]): a call held for a human
+//! act marks what it hands on, and in a function whose only blocking leaves
+//! are such holds rule 74c's held report still read the schedule. A
+//! withdrawal there keeps the `Pending` leaf and its reason, so the row stays
+//! at least `Pending` (and rule 10i's standing analysis may raise it to
+//! `Unknown`). A mark beside no blocking leaf stays with rule 74c.
+//!
 //! The Lean model is `QCore.SettledLeakJoined`
 //! (`proof/QCore/SettledLeakJoined.lean`); [`PUBLISH_VECTORS`] is shared with
 //! it.
 
 use std::collections::{BTreeMap, BTreeSet, VecDeque};
-
-use qcore_schemas::verdict::Verdict;
 
 use super::{
     AbstractState, EntryCustody, LIVE, LegacyCfg, LegacyDiagnostic, LegacyDiagnosticKind,
@@ -213,7 +220,8 @@ impl Replay<'_, '_> {
     }
 
     /// The work list's output of `node_id` from `state` (card
-    /// SETTLED-LEAK-MARK-WITHOUT-UNKNOWN-LEAF).
+    /// SETTLED-LEAK-MARK-WITHOUT-UNKNOWN-LEAF's census).
+    #[cfg_attr(not(feature = "indirect-census"), allow(dead_code))]
     pub(super) fn step_output(&self, node_id: usize, state: AbstractState) -> AbstractState {
         self.step(node_id, state).output
     }
@@ -347,30 +355,22 @@ impl Replay<'_, '_> {
 
 /// Card SETTLED-LEAK-OTHER-REFUSAL-SCHEDULE: whether rule 84 decides a leak
 /// report of an identity (`QCore.SettledLeakJoined.decides`): the settled
-/// exit marks it unresolved, by any refusal, beside an `Unknown` leaf.
+/// exit marks it unresolved, by any refusal, beside an `Unknown` leaf. Card
+/// SETTLED-LEAK-MARK-WITHOUT-UNKNOWN-LEAF passes
+/// [`super::mark_without_unknown_route::blocking`] (an `Unknown` or `Pending`
+/// leaf) as the second argument.
 pub(super) const fn decides(marked: bool, unknown_leaf: bool) -> bool {
     marked && unknown_leaf
 }
 
-/// The reports rule 84 decides, as `(exit node, identity)`: at every exit,
-/// the current-generation identities its settled incoming state, or the
-/// exit's own output computed from it, marks unresolved by any refusal (a
-/// refused release, hand-on, test, re-acquisition, escape or any other
-/// marking refusal), when the function carries an `Unknown` leaf. Read from
-/// the settled states only. Rule 74c's [`super::settled_leak_route::Held`]
-/// leaves these to [`settle`], whether or not an iterate claimed them.
-pub(super) fn candidates(
+/// The marked current-generation `(exit node, identity)` pairs of a settled
+/// analysis: each exit's settled incoming state, or the exit's own output
+/// computed from it, marks the identity unresolved.
+pub(super) fn marked_exits(
     replay: &Replay<'_, '_>,
     settled: &[Option<AbstractState>],
-    diagnostics: &BTreeSet<LegacyDiagnostic>,
 ) -> BTreeSet<(usize, usize)> {
-    let unknown_leaf = diagnostics
-        .iter()
-        .any(|diagnostic| super::verdict::diagnostic_verdict(&diagnostic.kind) == Verdict::Unknown);
-    let mut candidates = BTreeSet::new();
-    if !decides(true, unknown_leaf) {
-        return candidates;
-    }
+    let mut marked = BTreeSet::new();
     for (exit, node) in replay.cfg.nodes.iter().enumerate() {
         let Some(state) = settled.get(exit).and_then(Option::as_ref) else {
             continue;
@@ -386,11 +386,34 @@ pub(super) fn candidates(
             if crate::loop_generations::generation(site)
                 == crate::loop_generations::Generation::Current
             {
-                candidates.insert((exit, site));
+                marked.insert((exit, site));
             }
         }
     }
-    candidates
+    marked
+}
+
+/// The reports rule 84 decides, as `(exit node, identity)`: at every exit,
+/// the current-generation identities its settled incoming state, or the
+/// exit's own output computed from it, marks unresolved by any refusal (a
+/// refused release, hand-on, test, re-acquisition, escape or any other
+/// marking refusal), when the function carries an `Unknown` leaf or, since
+/// card SETTLED-LEAK-MARK-WITHOUT-UNKNOWN-LEAF, a `Pending` leaf
+/// ([`super::mark_without_unknown_route::blocking`]). Read from the settled
+/// states only. Rule 74c's [`super::settled_leak_route::Held`] leaves these to
+/// [`settle`], whether or not an iterate claimed them.
+pub(super) fn candidates(
+    replay: &Replay<'_, '_>,
+    settled: &[Option<AbstractState>],
+    diagnostics: &BTreeSet<LegacyDiagnostic>,
+) -> BTreeSet<(usize, usize)> {
+    // Card SETTLED-LEAK-MARK-WITHOUT-UNKNOWN-LEAF: an `Unknown` or `Pending`
+    // leaf.
+    let blocking_leaf = super::mark_without_unknown_route::blocking_leaf(diagnostics);
+    if !decides(true, blocking_leaf) {
+        return BTreeSet::new();
+    }
+    marked_exits(replay, settled)
 }
 
 /// Publish every leak report rule 84 decides ([`candidates`]) that a path

@@ -12,22 +12,57 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//! Card **SETTLED-LEAK-MARK-WITHOUT-UNKNOWN-LEAF** (gateway rule 84, amended):
-//! the census of current-generation identities a settled exit marks in a
-//! function that carries no `Unknown` leaf.
+//! Card **SETTLED-LEAK-MARK-WITHOUT-UNKNOWN-LEAF** (gateway rule 84,
+//! amended): a leak whose settled exit marks the identity in a function with
+//! no `Unknown` leaf, beside a `Pending` hold, is decided from the settled
+//! states.
 //!
-//! With the `indirect-census` feature on and `QCORE_MARK_CENSUS` naming a
-//! file, one JSON line is appended per `(exit, identity)`: whether an iterate
-//! held a leak report for it, whether rule 84's restricted replay witnesses
-//! it, and the function's leaves at the settle point.
+//! Rule 84 (card SETTLED-LEAK-OTHER-REFUSAL-SCHEDULE) decided a marked report
+//! only beside an `Unknown` leaf. A call held for a human act (rule 10i: a
+//! declaration awaiting review, a pin mismatch, a held callee frame) refuses
+//! its statement with a `Pending` reason, and that refusal hands its operands
+//! on, so it marks them; in a function whose only blocking leaves are such
+//! holds, rule 74c's held report was published exactly when some iterate had
+//! claimed the identity before the mark joined the exit (rule 6's hazard).
+//! The probe pinned it: a held `k_close(h, 0)` on one arm and an arm leaving
+//! `h` open was `Unsafe` in one schedule and `Unknown` in the other.
+//!
+//! [`blocking`] widens rule 84's side condition from an `Unknown` leaf to an
+//! `Unknown` **or `Pending`** leaf. Such a candidate is then published exactly
+//! when rule 84's restricted replay and breadth-first witness carry it (a path
+//! that passes no mark of the identity and no refusal, the held call
+//! included), and withdrawn otherwise. A withdrawal removes only the `Leak`:
+//! the `Pending` leaf and its reason stay, so the row folds to at least
+//! `Pending`, and rule 10i's standing analysis
+//! (W45-REVIEW-HOLD-PREEMPTS-STATEMENT-REFUSAL) then joins in every reason
+//! the function would carry with the held declarations in force, so a leak the
+//! accepted declaration would leave makes the row `Unknown`. Nothing becomes
+//! `Safe`, and no `Pending` reason is added or removed.
+//!
+//! **Not decided here:** a mark beside no blocking leaf at all (a modelled
+//! effect such as rule 43's `ElementsReleased` marks without a refusal).
+//! Withdrawing a held report there would leave a row with no non-`Safe` leaf,
+//! so rule 74c's held report keeps deciding it; the census measures it.
+//!
+//! The census: with the `indirect-census` feature on and `QCORE_MARK_CENSUS`
+//! naming a file, one JSON line is appended per marked `(exit, identity)` of a
+//! function with no `Unknown` leaf: whether an iterate held a leak report for
+//! it, whether rule 84's witness carries it, and the function's leaves at the
+//! settle point.
+//!
+//! The Lean model is `QCore.SettledLeakJoined`, its last section.
 
-use std::collections::{BTreeMap, BTreeSet};
+#[cfg(feature = "indirect-census")]
+use std::collections::BTreeMap;
+use std::collections::BTreeSet;
 
 use qcore_schemas::verdict::Verdict;
 
+#[cfg(any(test, feature = "indirect-census"))]
+use super::LegacyDiagnosticKind;
 use super::joined_leak_route::Replay;
 use super::settled_leak_route::Held;
-use super::{AbstractState, LegacyDiagnostic, LegacyDiagnosticKind};
+use super::{AbstractState, LegacyDiagnostic};
 
 /// The environment variable naming the census stream.
 #[cfg(feature = "indirect-census")]
@@ -56,34 +91,19 @@ struct Line {
     markers: Vec<(usize, String)>,
 }
 
-/// The marked current-generation `(exit node, identity)` pairs of a settled
-/// analysis: each exit's settled incoming state, or its own output computed
-/// from it, marks the identity unresolved.
-pub(super) fn marked_exits(
-    replay: &Replay<'_, '_>,
-    settled: &[Option<AbstractState>],
-) -> BTreeSet<(usize, usize)> {
-    let mut marked = BTreeSet::new();
-    for (exit, node) in replay.cfg.nodes.iter().enumerate() {
-        let Some(state) = settled.get(exit).and_then(Option::as_ref) else {
-            continue;
-        };
-        if !node.is_exit {
-            continue;
-        }
-        let output = replay.step_output(exit, state.clone());
-        for &site in state
-            .unresolved_effect_sites
-            .union(&output.unresolved_effect_sites)
-        {
-            if crate::loop_generations::generation(site)
-                == crate::loop_generations::Generation::Current
-            {
-                marked.insert((exit, site));
-            }
-        }
-    }
-    marked
+/// Whether a function's leaves block a withdrawal from reaching `Safe`
+/// (`QCore.SettledLeakJoined.blocking`): an `Unknown` or a `Pending` leaf.
+pub(super) const fn blocking(unknown_leaf: bool, pending_leaf: bool) -> bool {
+    unknown_leaf || pending_leaf
+}
+
+/// Whether the function's diagnostics so far carry a blocking leaf
+/// ([`blocking`]).
+pub(super) fn blocking_leaf(diagnostics: &BTreeSet<LegacyDiagnostic>) -> bool {
+    blocking(
+        has_leaf(diagnostics, Verdict::Unknown),
+        has_leaf(diagnostics, Verdict::Pending),
+    )
 }
 
 fn has_leaf(diagnostics: &BTreeSet<LegacyDiagnostic>, verdict: Verdict) -> bool {
@@ -110,7 +130,7 @@ pub(super) fn record(
         if has_leaf(diagnostics, Verdict::Unknown) {
             return;
         }
-        let marked = marked_exits(replay, settled);
+        let marked = super::joined_leak_route::marked_exits(replay, settled);
         if marked.is_empty() {
             return;
         }
@@ -185,3 +205,7 @@ pub(super) fn record(
         }
     }
 }
+
+#[cfg(test)]
+#[path = "../tests/unit/legacy_mark_without_unknown.rs"]
+mod tests;

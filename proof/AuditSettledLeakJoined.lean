@@ -72,3 +72,17 @@ are trust boundary 28's, pinned by
 #print axioms QCore.SettledLeakJoined.every_kind_on_both_arms_is_withdrawn
 -- A publication is never Safe.
 #print axioms QCore.SettledLeakJoined.a_decided_report_is_never_safe
+
+-- Card SETTLED-LEAK-MARK-WITHOUT-UNKNOWN-LEAF: a mark beside a Pending hold.
+-- Order independence, the Pending case included.
+#print axioms QCore.SettledLeakJoined.publication_is_order_independent_beside_a_hold
+#print axioms QCore.SettledLeakJoined.the_pending_case_read_the_schedule
+#print axioms QCore.SettledLeakJoined.both_orders_publish_beside_a_hold
+#print axioms QCore.SettledLeakJoined.a_hold_on_both_arms_is_withdrawn
+#print axioms QCore.SettledLeakJoined.a_refused_only_leak_stays_withdrawn_beside_a_hold
+#print axioms QCore.SettledLeakJoined.a_mark_beside_no_blocking_leaf_is_left_to_rule_74c
+-- Every Pending reason is preserved; never Safe.
+#print axioms QCore.SettledLeakJoined.a_pending_reason_is_preserved
+#print axioms QCore.SettledLeakJoined.a_decision_beside_a_blocking_leaf_is_never_safe
+#print axioms QCore.SettledLeakJoined.fold_of_pendings
+#print axioms QCore.SettledLeakJoined.a_withdrawal_beside_holds_only_is_pending

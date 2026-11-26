@@ -904,6 +904,11 @@ SETTLED-LEAK-OTHER-REFUSAL-SCHEDULE): a leak whose settled exit marks the
 identity by any refusal beside an `Unknown` leaf is decided from the settled
 states alone, whatever iterate claimed it.
 
+Rule 6 is amended by [rule 84](#constraint-84) (card
+SETTLED-LEAK-MARK-WITHOUT-UNKNOWN-LEAF): the same holds beside a `Pending`
+leaf (a call held for a human act); a mark beside no blocking leaf is still
+rule 74c's.
+
 <a id="constraint-7"></a>
 
 7. Leak diagnostics are **34** across the pinned 185-unit corpus
@@ -13297,6 +13302,10 @@ Rule 74c is amended by [rule 84](#constraint-84) (card
 SETTLED-LEAK-OTHER-REFUSAL-SCHEDULE): a held report whose settled exit marks
 the identity by any refusal beside an `Unknown` leaf is no longer decided
 here. Rule 84 publishes it exactly when a refusal-free witness carries it.
+Rule 74c is amended by [rule 84](#constraint-84) (card
+SETTLED-LEAK-MARK-WITHOUT-UNKNOWN-LEAF): the same holds beside a `Pending`
+leaf with no `Unknown` leaf (a call held for a human act marks the identity);
+only a mark beside no blocking leaf is still decided here.
 
 <a id="constraint-74d"></a>
 
@@ -14938,10 +14947,8 @@ refusal-free path: the scram shape beside rule 42's refused re-acquisition,
 `scalar_route_exit_edge`'s `z_unknown` row), and `Unknown -> Unsafe` (a
 refusal-free arm in the marker-first order). Nothing becomes `Safe`: a
 decided report sits beside an `Unknown` leaf. **Do not** decide a report
-when the function has no `Unknown` leaf (rule 74c's held report is
-published as before; the schedule question there is recorded as
-SETTLED-LEAK-MARK-WITHOUT-UNKNOWN-LEAF, not
-decided); **do not** treat an earlier generation here (rule 42's). Rule
+when the function has no `Unknown` leaf (amended below by
+SETTLED-LEAK-MARK-WITHOUT-UNKNOWN-LEAF); **do not** treat an earlier generation here (rule 42's). Rule
 W44's hand-on, rule 12e's settled null edge and rule 42's earlier-generation
 accusations are kept wherever a refusal-free path carries the leak; a
 refusal on every live path withdraws it. Pinned in
@@ -14956,6 +14963,45 @@ on every path in two schedules (both `Unknown`). Kept pins:
 `a_refused_only_leak_stays_withdrawn_any_kind`,
 `every_kind_on_both_arms_is_withdrawn`, `a_decided_report_is_never_safe`);
 [report](../reports/settled-leak-other-refusal-schedule/README.md).
+
+Rule 84 is amended by card SETTLED-LEAK-MARK-WITHOUT-UNKNOWN-LEAF
+(`crates/qcore-c-gateway/src/legacy_mark_without_unknown.rs`, new: `blocking`,
+`blocking_leaf` and the feature-gated `QCORE_MARK_CENSUS` census; in this
+module `candidates` reads `blocking_leaf`, and the exit loop is
+`marked_exits`). **A mark beside a `Pending` hold.** A call held for a human
+act (rule 10i: a declaration awaiting review, a pin mismatch, a held callee
+frame) refuses its statement with a `Pending` reason and hands its operands
+on, so it marks them. In a function whose only blocking leaves were such
+holds, rule 74c's held report was published exactly when an iterate had
+claimed the identity: at `07833c86a` a held `k_close(h, 0)` on one arm and an
+arm leaving `h` open was `Unsafe` when the open arm reached the exit first
+and `Unknown` (no leak; rule 10i's standing analysis) when the held arm did.
+**The side condition** is now a blocking leaf, an `Unknown` **or a
+`Pending`** leaf (`blocking`), read on the diagnostics at the settle point;
+the candidates, replay, witness and decision are unchanged. A withdrawal
+removes only the `Leak`: the `Pending` leaf and its reason stay, so the row is
+at least `Pending`, and rule 10i's standing analysis
+(W45-REVIEW-HOLD-PREEMPTS-STATEMENT-REFUSAL) then records any reason the
+function would carry with the held declarations in force (a leak there makes
+it `Unknown`). No `Pending` reason is added or removed, and nothing becomes
+`Safe`. **Do not** decide a mark beside no blocking leaf: withdrawing there
+could leave a row with no non-`Safe` leaf, so rule 74c's held report keeps
+deciding it (in the gateway suite such marks come from a modelled effect,
+rule 43's `ElementsReleased` on an entry-custody site, and are never
+claimable). Pinned in `tests/settled_leak_mark_without_unknown.rs`: the held
+close on one arm in two schedules (both `Unsafe`, one leak, the hold kept),
+on both arms (both `Pending`, the hold's reason only), and the open arm past
+an unrelated held call (both `Unknown`, no leak, both holds kept).
+`QCore.SettledLeakJoined` (`blocking`,
+`publication_is_order_independent_beside_a_hold`,
+`the_pending_case_read_the_schedule`, `both_orders_publish_beside_a_hold`,
+`a_hold_on_both_arms_is_withdrawn`,
+`a_refused_only_leak_stays_withdrawn_beside_a_hold`,
+`a_mark_beside_no_blocking_leaf_is_left_to_rule_74c`,
+`a_pending_reason_is_preserved`,
+`a_decision_beside_a_blocking_leaf_is_never_safe`,
+`a_withdrawal_beside_holds_only_is_pending`);
+[report](../reports/settled-leak-mark-without-unknown-leaf/README.md).
 
 <a id="constraint-85"></a>
 

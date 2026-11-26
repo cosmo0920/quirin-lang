@@ -22,6 +22,8 @@
 //! that arm. Each fixture comes in two schedules of the same shape: the arm
 //! that avoids the held call reaches the exit first (an iterate claims the
 //! leak), or the held arm does (its mark joins first and nothing is claimed).
+//! At base `07833c86a` the one-arm shape was `Unsafe` in the first order and
+//! `Unknown` in the second (rule 6's hazard); both orders now decide the same.
 //! The `k_*` family is declared inline and held out of every production
 //! library; each `Unsafe` is provisional, over synthetic trusted test
 //! assumptions.
@@ -154,35 +156,46 @@ fn keeps_the_hold(w: &LegacyFunctionSummary) -> bool {
     })
 }
 
-/// Probe at base `07833c86a`: the one-arm shape's verdict reads the schedule.
-/// The avoiding arm first is claimed on an iterate and published (`Unsafe`,
-/// one leak); the held arm first is never claimed, so the row is `Pending`
-/// until rule 10i's standing analysis records the leak candidate the accepted
-/// declaration would leave (`Unknown`, no leak).
+/// The avoiding arm's leak is published in both schedules, beside the held
+/// reason. At base `07833c86a` the held arm first was `Unknown` with no leak
+/// (the probe's `the_verdict_reads_the_schedule_at_base`): rule 84 now
+/// decides the marked identity beside the `Pending` leaf, and the arm that
+/// passes no mark and no refusal witnesses it.
 #[test]
-fn the_verdict_reads_the_schedule_at_base() {
-    let first = analyse(ONE_ARM[0].1);
-    assert_eq!(first.status, AnalysisStatus::Unsafe, "{first:?}");
-    assert_eq!(leaks(&first), 1, "{first:?}");
-    let second = analyse(ONE_ARM[1].1);
-    assert_eq!(second.status, AnalysisStatus::Unknown, "{second:?}");
-    assert_eq!(leaks(&second), 0, "{second:?}");
+fn an_avoiding_arm_is_published_in_both_schedules() {
+    for (order, body) in ONE_ARM {
+        let w = analyse(body);
+        assert_eq!(w.status, AnalysisStatus::Unsafe, "{order}: {w:?}");
+        assert_eq!(leaks(&w), 1, "{order}: {w:?}");
+        assert!(keeps_the_hold(&w), "{order}: {w:?}");
+    }
+}
+
+/// The held call on every path: nothing is witnessed, nothing is claimed,
+/// and the row stays `Pending` on the hold's own reason in both schedules,
+/// never `Safe`.
+#[test]
+fn a_hold_on_every_path_stays_pending_in_both_schedules() {
     for (order, body) in BOTH_ARMS {
         let w = analyse(body);
         assert_eq!(w.status, AnalysisStatus::Pending, "{order}: {w:?}");
         assert_eq!(leaks(&w), 0, "{order}: {w:?}");
+        assert_eq!(held(&w), ["k_close"], "{order}: {w:?}");
+        assert!(keeps_the_hold(&w), "{order}: {w:?}");
     }
+}
+
+/// The open arm passes an unrelated held call: it is not a refusal-free path,
+/// so nothing is witnessed and the leak is withdrawn. Both holds keep their
+/// reasons, and rule 10i's standing analysis records the leak candidate the
+/// accepted declarations would leave, so the row is `Unknown`, never `Safe`.
+#[test]
+fn an_open_arm_past_another_hold_is_withdrawn_and_stays_unknown() {
     for (order, body) in OTHER_HOLD {
         let w = analyse(body);
         assert_eq!(w.status, AnalysisStatus::Unknown, "{order}: {w:?}");
         assert_eq!(leaks(&w), 0, "{order}: {w:?}");
         assert_eq!(held(&w), ["k_close", "k_note"], "{order}: {w:?}");
-    }
-    for (_, body) in ONE_ARM
-        .iter()
-        .chain(BOTH_ARMS.iter())
-        .chain(OTHER_HOLD.iter())
-    {
-        assert!(keeps_the_hold(&analyse(body)), "{body}");
+        assert!(keeps_the_hold(&w), "{order}: {w:?}");
     }
 }
