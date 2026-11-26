@@ -28,7 +28,7 @@ native-comparison record committed after it (45 records)
 [chain/argv.json](chain/argv.json)). The link joins (no refused field);
 every route is `complete`. The tool exits 1 by design: 111 new `Safe` rows
 had no attribution it can make (below). Record:
-[chain/chain.json.gz](chain/chain.json.gz), digests in
+[chain/chain.json.gz](chain/chain.json.gz) (content sha256 `9bb99d0c0d0eb475dd98ce88fef02f486f0e05009ec431b96535745be6ad7c0e`, archive `4d15b7a00fd624940ee7e1950caaa3600b48eb1a38421521ee3f507bb050cc1e`), all digests in
 [artifacts/SHA256.json](artifacts/SHA256.json).
 
 ## Figures
@@ -102,7 +102,8 @@ committed landing records.
    moved identically in the same step (the cards' blocks had no
    twelve-home route): 36 rows.
 
-Nothing is held: every move has one of the three (criterion 2).
+Every custody move has one of the three (criterion 2); none is held. One
+NULL-property `Safe` is held for its published assumptions (below).
 
 ### Attribution summary
 
@@ -145,9 +146,10 @@ block 12; the card's rule on the pinned tree's body 2
 (`ctr_link_set_attributes`); and a cause verified here 14 (the
 NULLABLE-GUARDED-RELEASE and RULE50 rows, `flb_output_set_context` and
 `flb_input_set_context`). The K3/K5/K7 rows are attributed through the
-round-34 record, whose declared check is R34-K-REPAIR's corrected union
-prediction; K1's two and K5's `mk_string_html_escape` were unpredicted by
-the union block and are attributed by R34-K-REPAIR's report section 4.
+round-34 record, whose declared check is the four cards' union block, and
+their own blocks; K1's two rows and K5's `mk_string_html_escape`, the
+record's three unpredicted rows, are attributed by R34-K-REPAIR's corrected
+prediction (its report section 4).
 
 ### The attribution table
 
@@ -367,27 +369,51 @@ here against the row's base leaf and the rule text:
   their only common leaf is the access refusal of that store; rule 70 as
   above. CG10-MEMBER-STORE-RETAINED-BY predicted no system or slice move
   without measuring either route.
-* AG2's seven unpredicted rows were each checked against base diagnostics
-  and source in its report (rule 62); K6's `rd_kafka_msgq_allow_wakeup_at`
-  and MES's `ctr_link_set_trace_state` in the round-37 landing note.
+* AG2's unpredicted rows (corpus 4, system 5) were each checked against
+  base diagnostics and source in its report (rule 62); K6's
+  `rd_kafka_msgq_allow_wakeup_at` and MES's `ctr_link_set_trace_state` in
+  the round-37 landing note.
 
 Rows resting on declarations not yet validated against a body, which the
 verdict contract allows only with the assumption published (each row's
 `declarations` and `hypothesis_context` carry it): the ten unpack_* rows
 (CG10-OOM-DECLARATIONS-UNVALIDATED), CG10 round 4's seven
-(CG10-R4-NEUTRAL-DECLARATIONS-UNVALIDATED), RK-TOPIC's two
-(RK-TOPIC-PARTITION-CONSTRUCTORS-UNVALIDATED), and the four **NULL** moves:
-`unittest_list_to_map`, `unittest_set_intersect`, `unittest_set_subtract`
-(`rdkafka_cgrp.c`) and `rd_kafka_mock_cgrp_consumer_member_needs_assignment`
-go NULL Unknown -> Safe in common->tip, every newly proved check citing
-`result:declared:rd_kafka_topic_partition_list_new`,
-`result:declared:rd_kafka_topic_partition_new` or a callee summary returning
-the former (`rd_kafka_mock_cgrp_consumer_member_target_assignment_assignable`,
+(CG10-R4-NEUTRAL-DECLARATIONS-UNVALIDATED) and RK-TOPIC's two
+(RK-TOPIC-PARTITION-CONSTRUCTORS-UNVALIDATED).
+
+**NULL property.** `unittest_list_to_map`, `unittest_set_intersect`,
+`unittest_set_subtract` (`rdkafka_cgrp.c`) and
+`rd_kafka_mock_cgrp_consumer_member_needs_assignment` go NULL Unknown ->
+Safe in common->tip (corpus and twelve-home), every newly proved check
+citing `result:declared:rd_kafka_topic_partition_list_new`,
+`result:declared:rd_kafka_topic_partition_new` or a callee summary
+returning the former
+(`rd_kafka_mock_cgrp_consumer_member_target_assignment_assignable`,
 `rdkafka_mock_cgrp.c:1075`): RK-TOPIC-PARTITION-LIST-CONSTRUCTORS'
-non-null declarations, unpredicted by its custody block
+non-null result declarations, which its custody block does not predict.
+`_new` validates against its body (W4) and is published as no assumption;
+`_list_new` does not (RK-TOPIC-PARTITION-CONSTRUCTORS-UNVALIDATED), and
+`unittest_list_to_map`, which uses its result directly, publishes it
+(`declared:rd_kafka_topic_partition_list_new: a non-null result (resource
+contract)`). Their custody (`combined`) stays Unknown
 ([scripts/null_moves.py](scripts/null_moves.py),
-[artifacts/null-moves.json.gz](artifacts/null-moves.json.gz)). Their
-custody (`combined`) stays Unknown. **No new Safe is held.**
+[artifacts/null-moves.json.gz](artifacts/null-moves.json.gz)).
+
+**HELD: `rdkafka_mock_cgrp.c::rd_kafka_mock_cgrp_consumer_member_needs_assignment`,
+NULL property, corpus and twelve-home.** Its new proof at `:1218` is
+`result:summary:rd_kafka_mock_cgrp_consumer_member_target_assignment_assignable`,
+whose `returns_non_null: true` comes from `ret =
+rd_kafka_topic_partition_list_new(…)` (`:1075`), the unvalidated declaration.
+Neither row publishes that assumption: the callee's NULL record lists only
+`inferred … #member` and no dependency on `_list_new`, the caller's the
+same. The direct use publishes it and the use through a summary does not,
+so this `Safe`'s assumption set is incomplete as published (hard invariant
+2). The cause is known; the evidence the verdict contract requires is not
+on the row. Follow-up P0-NULL-SUMMARY-DECLARED-ASSUMPTION.
+
+No other new Safe is held: every custody `Safe` above has its cause and an
+empty diagnostic list, and the other three NULL `Safe` rows rest on the
+validated `_new` or publish `_list_new`.
 
 ## Safe -> Unknown
 
@@ -463,7 +489,122 @@ system 5 / 3, slice 1 / 1; none is filed or presented upstream.
 
 ## Evidence-only rows
 
-EVIDENCE_SECTION
+Rows whose verdict did not move but whose evidence did (leaves added or
+removed, contract dependencies, NULL premises, hypothesis atoms, other
+fields): corpus 1,495, twelve-home 1,498, system 131, slice 91 in the chain
+(a row is counted once per step it changes in). Each step's change is
+classified by [scripts/evidence_classes.py](scripts/evidence_classes.py)
+([artifacts/evidence-classes.json.gz](artifacts/evidence-classes.json.gz)),
+in this order of strength:
+
+* `record:` the same row changes in a committed pinned landing record
+  inside the step (same inputs);
+* `decl:` / `atom:` / `text:` an added declaration, hypothesis atom or
+  leaf text that did not exist at the step's start and was introduced
+  inside it by the named commit (`git grep` at both ends, `git log -S`
+  for the commit; source and contract trees only);
+* `cascade`: a summary dependency added or withdrawn, which follows the
+  callee's own row;
+* `note:` a leaf tag or field the named card's own report gives as its
+  effect (`NOTE_MAP`, step 2 only; weaker, stated as such).
+
+| Route | Step | Rows with an evidence change | Attributed | Unattributed |
+|---|---|---|---|---|
+| corpus | prev->common | 817 | 812 | 5 |
+| corpus | common->tip | 710 | 518 | 192 |
+| slice | prev->common | 54 | 37 | 17 |
+| slice | common->tip | 35 | 11 | 24 |
+| system | prev->common | 97 | 61 | 36 |
+| system | common->tip | 32 | 8 | 24 |
+| twelve-home | prev->common | 820 | 815 | 5 |
+| twelve-home | common->tip | 710 | 518 | 192 |
+
+Causes, step 1 (rows; a row may have several):
+
+| Cause | corpus | twelve-home | system | slice |
+|---|---|---|---|---|
+| record:ag1-indirect-member-access+combined | 805 | 808 | 47 | 35 |
+| record:ag3-condition-return-calls | 495 | 495 | 35 | 29 |
+| record:ag2-unresolved-alias | 304 | 309 | 15 | 6 |
+| record:ag1-indirect-member-access | 77 | 77 | 0 | 0 |
+| cascade | 54 | 56 | 9 | 0 |
+| unattributed | 5 | 5 | 36 | 17 |
+| decl:368a56875 CURRENT-CONTEXT-NEW-TRIAGE D3 [f0d91bf51] | 4 | 4 | 0 | 0 |
+| record:current-context-new-triage+d3 | 4 | 0 | 10 | 2 |
+| atom:b19659a5a WIP rule 50 reader, loader placement and declarations [893181cc4] | 1 | 1 | 0 | 0 |
+| decl:b19659a5a WIP rule 50 reader, loader placement and declarations [893181cc4] | 1 | 1 | 0 | 0 |
+| record:thread-local-custody-free-read | 0 | 0 | 4 | 0 |
+| text:875d5e6d4 LERI-HELD-AND-LINK-MEMBER-PREMISES [01a7e8084] | 0 | 0 | 0 | 1 |
+
+Causes, step 2 (rows; a row may have several):
+
+| Cause | corpus | twelve-home | system | slice |
+|---|---|---|---|---|
+| unattributed | 192 | 192 | 24 | 24 |
+| decl:e03c4835f RK-TOPIC-PARTITION-LIST-CONSTRUCTORS [3c79b276c] | 147 | 147 | 0 | 0 |
+| text:62f63371a NULLABLE-LAZY-CONSTRUCTOR-IN-LOOP [663892ace] | 105 | 105 | 0 | 3 |
+| record:r34-k-repair | 66 | 66 | 2 | 0 |
+| note:K2-NO-TYPED-ACCESS / K6-DIRECT-POSITION-ACCESS (reading-site declaration-reader digest re-pinned for rules 79/81) | 54 | 54 | 0 | 0 |
+| cascade | 39 | 39 | 4 | 4 |
+| note:CG10-EMBEDDED-LIST-BORROWED-CONTAINER (r45 note: access leaves become retention-undecided) | 33 | 33 | 0 | 0 |
+| note:CG10-MEMBER-STORE-RETAINED-BY / MEMBER-EFFECT-STORES (rules 70, 38k) | 29 | 29 | 0 | 0 |
+| note:CG10-EMBEDDED-LIST-BORROWED-CONTAINER (r45 note: access leaves become callback-registry-undecided) | 27 | 27 | 0 | 1 |
+| record:k6-direct-position-access | 27 | 27 | 0 | 0 |
+| decl:bedc1a5c1 Rule 72 [02ff22744] | 22 | 22 | 0 | 0 |
+| decl:e9aeaa511 Declare rd_jitter and the xxHash finalizers; gateway rule 66 [02ff22744] | 22 | 22 | 0 | 0 |
+| note:OWNED-CONSTRUCTOR-OUT-PARAMETER-DELIVERY | 21 | 21 | 0 | 3 |
+| note:MEMBER-EFFECT-STORES (rule obligations of rule 38k) | 7 | 7 | 2 | 0 |
+| record:member-effect-stores | 7 | 7 | 2 | 0 |
+| note:CG10-OWNED-OUT-PARAMETER-MEMBER-SLOT (rule 72) | 6 | 6 | 0 | 0 |
+| note:NULLABLE-GUARDED-RELEASE (rule 74c member-address frame) | 6 | 6 | 0 | 0 |
+
+Classes of the unattributed rows (rows per class):
+
+| Route | Step | Class | Rows |
+|---|---|---|---|
+| corpus | 1 | leaf+ unsupported | 2 |
+| corpus | 1 | field rule_obligations | 2 |
+| corpus | 1 | leaf- unknown_alias | 1 |
+| corpus | 2 | leaf- unknown_alias | 140 |
+| corpus | 2 | leaf- unsupported | 76 |
+| corpus | 2 | field null_premises | 27 |
+| corpus | 2 | dep-removed null_premises | 26 |
+| corpus | 2 | leaf+ unsupported | 18 |
+| corpus | 2 | leaf+ unknown_alias | 7 |
+| slice | 1 | leaf+ unsupported | 12 |
+| slice | 1 | leaf- unknown_alias | 5 |
+| slice | 2 | leaf- unknown_alias | 21 |
+| slice | 2 | leaf- unsupported | 4 |
+| slice | 2 | dep-removed null_premises | 3 |
+| slice | 2 | field null_premises | 3 |
+| slice | 2 | leaf+ unknown_alias | 1 |
+| system | 1 | leaf+ unsupported | 24 |
+| system | 1 | leaf- unknown_alias | 12 |
+| system | 2 | leaf- unknown_alias | 24 |
+| system | 2 | leaf- unsupported | 11 |
+| system | 2 | leaf+ unknown_alias | 5 |
+| system | 2 | dep-removed null_premises | 4 |
+| system | 2 | field null_premises | 4 |
+| system | 2 | leaf+ unsupported | 4 |
+| twelve-home | 1 | leaf+ unsupported | 2 |
+| twelve-home | 1 | field rule_obligations | 2 |
+| twelve-home | 1 | leaf- unknown_alias | 1 |
+| twelve-home | 2 | leaf- unknown_alias | 140 |
+| twelve-home | 2 | leaf- unsupported | 76 |
+| twelve-home | 2 | field null_premises | 27 |
+| twelve-home | 2 | dep-removed null_premises | 26 |
+| twelve-home | 2 | leaf+ unsupported | 18 |
+| twelve-home | 2 | leaf+ unknown_alias | 7 |
+
+**Unattributed: 495 row-steps** (corpus 197, twelve-home 197, system 60,
+slice 41), listed by row and class in the artifact. They are
+overwhelmingly removals of generic leaves (`unresolved resource
+identity`, `indirect memory access …`) and NULL-premise id changes in
+step 2, whose cause sits in one of the r41-r73 landings that did not
+measure the pinned routes; a removal names no rule, so no record or text
+can tie it to one of them. None changes a verdict, and every row of them
+keeps its status at all three sides. Follow-up P0-EVIDENCE-ONLY-UNATTRIBUTED
+(discharge: a pinned measurement per unmeasured landing).
 
 ## G1 (certificate containment)
 

@@ -1,0 +1,26 @@
+{
+ "artifacts/evidence-classes.json.gz": {
+  "content_sha256": "2eb8207789f47481412282d248a622bf2c978660ff795263b727cc28907cde3b",
+  "gzip_sha256": "30cbc1fd36c9ee85478d7156533f707f884728fd8f2fd4397295f44bb6244075"
+ },
+ "artifacts/landing-records.json.gz": {
+  "content_sha256": "370c8641e9ac7af4b499bf3e8c4e0aa4d856db81b3d334602eab24390a8dde06",
+  "gzip_sha256": "336b727bc272a7364740c5778c0f26ccf3ba3b4c77984b3f6e13948c20ce3633"
+ },
+ "artifacts/moves-table.json.gz": {
+  "content_sha256": "e43eaf27fdec2d2727ff91a09dd09f71b7a44efe87179fe459bd7489af0fadda",
+  "gzip_sha256": "9573dcf24a114a42ee189e0e2c60dbd0b849056668cb41f354d6e2b9705b7ad7"
+ },
+ "artifacts/newsafe.json.gz": {
+  "content_sha256": "9dbd39c3e1078d7fb79f5d74f5ea806fd0b89a814d4be1ed1b25f09394df1ae6",
+  "gzip_sha256": "9d3b7f37026f4782b015bf41d4484997d7d2e28ed534ce434a77170101af2b4a"
+ },
+ "artifacts/null-moves.json.gz": {
+  "content_sha256": "42493527f73fbea829621c2a5fd736a22fedaa7a02d8b1e39a399e624cb3fdd9",
+  "gzip_sha256": "6abb6b9e43d3e988a6495d128ef6830828aa15215610a4016c760ccd509c7791"
+ },
+ "chain/chain.json.gz": {
+  "content_sha256": "9bb99d0c0d0eb475dd98ce88fef02f486f0e05009ec431b96535745be6ad7c0e",
+  "gzip_sha256": "4d15b7a00fd624940ee7e1950caaa3600b48eb1a38421521ee3f507bb050cc1e"
+ }
+}
