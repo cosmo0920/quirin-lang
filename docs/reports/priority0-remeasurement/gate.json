@@ -1,0 +1,391 @@
+{
+ "schema": "quirin-gate-scope/1",
+ "source": "git diff",
+ "base": "8f988f246f60e25fa8c735a094f9a1ee0c9f7594",
+ "head": "d77e427ed396f08b7170ccb170d5a11b499c83b4",
+ "committed": [
+  "docs/reports/priority0-remeasurement/README.md",
+  "docs/reports/priority0-remeasurement/artifacts/SHA256.json",
+  "docs/reports/priority0-remeasurement/artifacts/evidence-classes.json.gz",
+  "docs/reports/priority0-remeasurement/artifacts/landing-records.json.gz",
+  "docs/reports/priority0-remeasurement/artifacts/moves-table.json.gz",
+  "docs/reports/priority0-remeasurement/artifacts/newsafe.json.gz",
+  "docs/reports/priority0-remeasurement/artifacts/null-moves.json.gz",
+  "docs/reports/priority0-remeasurement/chain/argv.json",
+  "docs/reports/priority0-remeasurement/chain/chain.json.gz",
+  "docs/reports/priority0-remeasurement/chain/exit",
+  "docs/reports/priority0-remeasurement/chain/predictions/cg10-indirect-access-sole-residuals-r3.block1.md",
+  "docs/reports/priority0-remeasurement/chain/predictions/cg10-indirect-access-sole-residuals-r3.block2.md",
+  "docs/reports/priority0-remeasurement/chain/predictions/member-effect-stores.block1.md",
+  "docs/reports/priority0-remeasurement/chain/quirin-audit-measure.report.json",
+  "docs/reports/priority0-remeasurement/chain/stdout.log",
+  "docs/reports/priority0-remeasurement/integration-amendments.json",
+  "docs/reports/priority0-remeasurement/scripts/card_intervals.py",
+  "docs/reports/priority0-remeasurement/scripts/evidence_classes.py",
+  "docs/reports/priority0-remeasurement/scripts/evidence_summary.py",
+  "docs/reports/priority0-remeasurement/scripts/landing_records.py",
+  "docs/reports/priority0-remeasurement/scripts/moves_table.py",
+  "docs/reports/priority0-remeasurement/scripts/new_safe_evidence.py",
+  "docs/reports/priority0-remeasurement/scripts/null_moves.py",
+  "docs/reports/priority0-remeasurement/scripts/run_chain.py"
+ ],
+ "uncommitted": [],
+ "scope": {
+  "paths": [
+   "docs/reports/priority0-remeasurement/README.md",
+   "docs/reports/priority0-remeasurement/artifacts/SHA256.json",
+   "docs/reports/priority0-remeasurement/artifacts/evidence-classes.json.gz",
+   "docs/reports/priority0-remeasurement/artifacts/landing-records.json.gz",
+   "docs/reports/priority0-remeasurement/artifacts/moves-table.json.gz",
+   "docs/reports/priority0-remeasurement/artifacts/newsafe.json.gz",
+   "docs/reports/priority0-remeasurement/artifacts/null-moves.json.gz",
+   "docs/reports/priority0-remeasurement/chain/argv.json",
+   "docs/reports/priority0-remeasurement/chain/chain.json.gz",
+   "docs/reports/priority0-remeasurement/chain/exit",
+   "docs/reports/priority0-remeasurement/chain/predictions/cg10-indirect-access-sole-residuals-r3.block1.md",
+   "docs/reports/priority0-remeasurement/chain/predictions/cg10-indirect-access-sole-residuals-r3.block2.md",
+   "docs/reports/priority0-remeasurement/chain/predictions/member-effect-stores.block1.md",
+   "docs/reports/priority0-remeasurement/chain/quirin-audit-measure.report.json",
+   "docs/reports/priority0-remeasurement/chain/stdout.log",
+   "docs/reports/priority0-remeasurement/integration-amendments.json",
+   "docs/reports/priority0-remeasurement/scripts/card_intervals.py",
+   "docs/reports/priority0-remeasurement/scripts/evidence_classes.py",
+   "docs/reports/priority0-remeasurement/scripts/evidence_summary.py",
+   "docs/reports/priority0-remeasurement/scripts/landing_records.py",
+   "docs/reports/priority0-remeasurement/scripts/moves_table.py",
+   "docs/reports/priority0-remeasurement/scripts/new_safe_evidence.py",
+   "docs/reports/priority0-remeasurement/scripts/null_moves.py",
+   "docs/reports/priority0-remeasurement/scripts/run_chain.py"
+  ],
+  "attribution": {
+   "docs/reports/priority0-remeasurement/README.md": [
+    "class prose"
+   ],
+   "docs/reports/priority0-remeasurement/artifacts/SHA256.json": [
+    "class prose"
+   ],
+   "docs/reports/priority0-remeasurement/artifacts/evidence-classes.json.gz": [
+    "class prose"
+   ],
+   "docs/reports/priority0-remeasurement/artifacts/landing-records.json.gz": [
+    "class prose"
+   ],
+   "docs/reports/priority0-remeasurement/artifacts/moves-table.json.gz": [
+    "class prose"
+   ],
+   "docs/reports/priority0-remeasurement/artifacts/newsafe.json.gz": [
+    "class prose"
+   ],
+   "docs/reports/priority0-remeasurement/artifacts/null-moves.json.gz": [
+    "class prose"
+   ],
+   "docs/reports/priority0-remeasurement/chain/argv.json": [
+    "class prose"
+   ],
+   "docs/reports/priority0-remeasurement/chain/chain.json.gz": [
+    "class prose"
+   ],
+   "docs/reports/priority0-remeasurement/chain/exit": [
+    "class prose"
+   ],
+   "docs/reports/priority0-remeasurement/chain/predictions/cg10-indirect-access-sole-residuals-r3.block1.md": [
+    "class prose"
+   ],
+   "docs/reports/priority0-remeasurement/chain/predictions/cg10-indirect-access-sole-residuals-r3.block2.md": [
+    "class prose"
+   ],
+   "docs/reports/priority0-remeasurement/chain/predictions/member-effect-stores.block1.md": [
+    "class prose"
+   ],
+   "docs/reports/priority0-remeasurement/chain/quirin-audit-measure.report.json": [
+    "class prose"
+   ],
+   "docs/reports/priority0-remeasurement/chain/stdout.log": [
+    "class prose"
+   ],
+   "docs/reports/priority0-remeasurement/integration-amendments.json": [
+    "class prose"
+   ],
+   "docs/reports/priority0-remeasurement/scripts/card_intervals.py": [
+    "class prose"
+   ],
+   "docs/reports/priority0-remeasurement/scripts/evidence_classes.py": [
+    "class prose"
+   ],
+   "docs/reports/priority0-remeasurement/scripts/evidence_summary.py": [
+    "class prose"
+   ],
+   "docs/reports/priority0-remeasurement/scripts/landing_records.py": [
+    "class prose"
+   ],
+   "docs/reports/priority0-remeasurement/scripts/moves_table.py": [
+    "class prose"
+   ],
+   "docs/reports/priority0-remeasurement/scripts/new_safe_evidence.py": [
+    "class prose"
+   ],
+   "docs/reports/priority0-remeasurement/scripts/null_moves.py": [
+    "class prose"
+   ],
+   "docs/reports/priority0-remeasurement/scripts/run_chain.py": [
+    "class prose"
+   ]
+  },
+  "affected": {},
+  "targets": {},
+  "mode": "scoped",
+  "full_reasons": [],
+  "rust_packages": [],
+  "rust_targets": [],
+  "probes": false,
+  "lean": {
+   "mode": "none",
+   "reasons": [],
+   "modules": [],
+   "audits": []
+  },
+  "python_reasons": [
+   "docs/reports/priority0-remeasurement/scripts/card_intervals.py: Python",
+   "docs/reports/priority0-remeasurement/scripts/evidence_classes.py: Python",
+   "docs/reports/priority0-remeasurement/scripts/evidence_summary.py: Python",
+   "docs/reports/priority0-remeasurement/scripts/landing_records.py: Python",
+   "docs/reports/priority0-remeasurement/scripts/moves_table.py: Python",
+   "docs/reports/priority0-remeasurement/scripts/new_safe_evidence.py: Python",
+   "docs/reports/priority0-remeasurement/scripts/null_moves.py: Python",
+   "docs/reports/priority0-remeasurement/scripts/run_chain.py: Python"
+  ],
+  "provider_gate": false,
+  "provider_reasons": [],
+  "provider_lock_check": false,
+  "provider_lock_reasons": [],
+  "provider_members_reached_without_providers_change": [],
+  "unresolved_includes": [
+   {
+    "crate": "qcore-audit",
+    "source": "crates/qcore-audit/src/contract_only_diff.rs:629",
+    "literal": "include_str!(PATH)\").is_err());",
+    "why": "argument is not a string literal (or the macro is inside a string)"
+   },
+   {
+    "crate": "qcore-audit",
+    "source": "crates/qcore-audit/src/contract_only_diff.rs:634",
+    "literal": "include_str!(concat!(\"a\", \"b\"))\"#",
+    "why": "argument is not a string literal (or the macro is inside a string)"
+   },
+   {
+    "crate": "qcore-audit",
+    "source": "crates/qcore-audit/src/contract_only_diff.rs:651",
+    "literal": "include_str!(PATH)\\n\",",
+    "why": "argument is not a string literal (or the macro is inside a string)"
+   },
+   {
+    "crate": "qcore-audit",
+    "source": "crates/qcore-audit/src/contract_only_diff.rs:652",
+    "literal": "include_str!(PATH)\\n\",",
+    "why": "argument is not a string literal (or the macro is inside a string)"
+   },
+   {
+    "crate": "qcore-audit",
+    "source": "crates/qcore-audit/src/contract_only_diff.rs:653",
+    "literal": "include_str!(PATH) */ still include_str!(PATH) */\\n\",",
+    "why": "argument is not a string literal (or the macro is inside a string)"
+   },
+   {
+    "crate": "qcore-audit",
+    "source": "crates/qcore-audit/src/contract_only_diff.rs:653",
+    "literal": "include_str!(PATH) */\\n\",",
+    "why": "argument is not a string literal (or the macro is inside a string)"
+   },
+   {
+    "crate": "qcore-audit",
+    "source": "crates/qcore-audit/src/contract_only_diff.rs:654",
+    "literal": "include_str!(PATH) \\\\\\\" include_str!(PATH)\\\";\\n\",",
+    "why": "argument is not a string literal (or the macro is inside a string)"
+   },
+   {
+    "crate": "qcore-audit",
+    "source": "crates/qcore-audit/src/contract_only_diff.rs:654",
+    "literal": "include_str!(PATH)\\\";\\n\",",
+    "why": "argument is not a string literal (or the macro is inside a string)"
+   },
+   {
+    "crate": "qcore-audit",
+    "source": "crates/qcore-audit/src/contract_only_diff.rs:655",
+    "literal": "include_str!(PATH) \\\" include_str!(PATH)\\\"#;\\n\",",
+    "why": "argument is not a string literal (or the macro is inside a string)"
+   },
+   {
+    "crate": "qcore-audit",
+    "source": "crates/qcore-audit/src/contract_only_diff.rs:655",
+    "literal": "include_str!(PATH)\\\"#;\\n\",",
+    "why": "argument is not a string literal (or the macro is inside a string)"
+   },
+   {
+    "crate": "qcore-audit",
+    "source": "crates/qcore-audit/src/contract_only_diff.rs:656",
+    "literal": "include_str!(PATH)\\\";\\n\",",
+    "why": "argument is not a string literal (or the macro is inside a string)"
+   },
+   {
+    "crate": "qcore-audit",
+    "source": "crates/qcore-audit/src/contract_only_diff.rs:657",
+    "literal": "include_str!(PATH) \\\"# include_str!(PATH)\\\"##;\\n\",",
+    "why": "argument is not a string literal (or the macro is inside a string)"
+   },
+   {
+    "crate": "qcore-audit",
+    "source": "crates/qcore-audit/src/contract_only_diff.rs:657",
+    "literal": "include_str!(PATH)\\\"##;\\n\",",
+    "why": "argument is not a string literal (or the macro is inside a string)"
+   },
+   {
+    "crate": "qcore-audit",
+    "source": "crates/qcore-audit/src/contract_only_diff.rs:677",
+    "literal": "include_str!(PATH);\\n\");",
+    "why": "argument is not a string literal (or the macro is inside a string)"
+   },
+   {
+    "crate": "qcore-audit",
+    "source": "crates/qcore-audit/src/contract_only_diff.rs:682",
+    "literal": "include_str!(\\\"../data/x.qv\\\");\\n\");",
+    "why": "argument is not a string literal (or the macro is inside a string)"
+   },
+   {
+    "crate": "qcore-audit",
+    "source": "crates/qcore-audit/src/contract_only_diff.rs:753",
+    "literal": "include_str!(\\\"../../../providers/p/contracts/embedded.qv\\\");\\n\",",
+    "why": "argument is not a string literal (or the macro is inside a string)"
+   },
+   {
+    "crate": "qcore-audit",
+    "source": "crates/qcore-audit/src/contract_only_diff.rs:757",
+    "literal": "include_str!(\\\"../../../providers/p/contracts/a.qv\\\");\\n\",",
+    "why": "argument is not a string literal (or the macro is inside a string)"
+   },
+   {
+    "crate": "qcore-audit",
+    "source": "crates/qcore-audit/src/contract_only_diff.rs:835",
+    "literal": "include_str!(PATH);\\n\",",
+    "why": "argument is not a string literal (or the macro is inside a string)"
+   },
+   {
+    "crate": "qcore-compiler",
+    "source": "compiler/tests/ct_corpus.rs:8083",
+    "literal": "include_str!(\\\"fixtures/ct/{id}/case.qr\\\")\");",
+    "why": "argument is not a string literal (or the macro is inside a string)"
+   }
+  ],
+  "undeclared_directory_literals": [],
+  "stale_walkers": []
+ },
+ "planned_steps": [
+  {
+   "name": "submodules",
+   "argv": [
+    "git",
+    "-C",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a14d1f75495df89fd",
+    "submodule",
+    "status",
+    "--recursive"
+   ],
+   "slot": null,
+   "slot_args": []
+  },
+  {
+   "name": "fmt",
+   "argv": [
+    "cargo",
+    "fmt",
+    "--all",
+    "--",
+    "--check"
+   ],
+   "slot": "build",
+   "slot_args": []
+  },
+  {
+   "name": "python",
+   "argv": [
+    "/usr/bin/python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/tests"
+   ],
+   "slot": null,
+   "slot_args": []
+  }
+ ],
+ "slots": true,
+ "landing": false,
+ "card_base": "8f988f246f60e25fa8c735a094f9a1ee0c9f7594",
+ "started": "20261126T011723Z",
+ "ran": true,
+ "steps": [
+  {
+   "name": "submodules",
+   "argv": [
+    "git",
+    "-C",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a14d1f75495df89fd",
+    "submodule",
+    "status",
+    "--recursive"
+   ],
+   "exit": 0,
+   "seconds": 0.1,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a14d1f75495df89fd/private/gate-scope/20261126T011723Z-1249467/submodules.log",
+   "counts": {
+    "submodules": 1,
+    "not_checked_out_or_moved": []
+   }
+  },
+  {
+   "name": "fmt",
+   "argv": [
+    "/usr/bin/python3",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a14d1f75495df89fd/scripts/gate_slot.py",
+    "build",
+    "--receipt",
+    "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a14d1f75495df89fd/private/gate-scope/20261126T011723Z-1249467/slots/fmt.json",
+    "--",
+    "cargo",
+    "fmt",
+    "--all",
+    "--",
+    "--check"
+   ],
+   "exit": 0,
+   "seconds": 9.6,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a14d1f75495df89fd/private/gate-scope/20261126T011723Z-1249467/fmt.log",
+   "counts": {},
+   "slot_receipt": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a14d1f75495df89fd/private/gate-scope/20261126T011723Z-1249467/slots/fmt.json"
+  },
+  {
+   "name": "python",
+   "argv": [
+    "/usr/bin/python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/tests"
+   ],
+   "exit": 0,
+   "seconds": 213.9,
+   "log": "/media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a14d1f75495df89fd/private/gate-scope/20261126T011723Z-1249467/python.log",
+   "counts": {
+    "tests": 807,
+    "skipped": 0,
+    "ok": true
+   },
+   "env": {
+    "QUIRIN_CARD_GATE_BASE": "8f988f246f60e25fa8c735a094f9a1ee0c9f7594"
+   }
+  }
+ ],
+ "ok": true,
+ "finished": "20261126T012107Z"
+}
