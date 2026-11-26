@@ -343,12 +343,11 @@ pub fn without_linkage_blocks(tokens: &[TokenKind]) -> Vec<TokenKind> {
         }
         match token {
             TokenKind::Symbol(Symbol::LeftBrace) => braces.push(false),
-            TokenKind::Symbol(Symbol::RightBrace) => {
-                if braces.pop() == Some(true) {
-                    skip_semicolon = true;
-                    index += 1;
-                    continue;
-                }
+            // The guard pops every closing brace; a wrapper's is dropped.
+            TokenKind::Symbol(Symbol::RightBrace) if braces.pop() == Some(true) => {
+                skip_semicolon = true;
+                index += 1;
+                continue;
             }
             _ => {}
         }
@@ -487,6 +486,53 @@ pub fn scan_module(text: &str) -> Result<Vec<(String, WrittenDependency)>, Strin
                 unused.namespace, unused.function
             ),
         ));
+    }
+    Ok(out)
+}
+
+/// The `contract_dependencies` entries of one crate's modules as a load-path
+/// manifest records them, each with the target crate's version as `since`
+/// and no digest: the record of a crate whose targets no lock reviews (a
+/// test fixture, an unreviewed crate), which therefore resolves `Pending`.
+/// `owner` maps a namespace to its load-path crate and that crate's version;
+/// a qualified inherit directive of the crate's own namespace is no
+/// dependency. `providers/contracts.py sync` writes the same entries with
+/// the reviewed digest.
+///
+/// # Errors
+///
+/// A module [`scan_module`] refuses, a namespace `owner` does not know
+/// (`QL007`), or a version that does not parse.
+pub fn unreviewed_manifest_entries(
+    crate_name: &str,
+    namespace: &str,
+    modules: &[(&str, &str)],
+    owner: &dyn Fn(&str) -> Option<(String, String)>,
+) -> Result<Vec<DeclaredDependency>, String> {
+    let mut sorted = modules.to_vec();
+    sorted.sort_by(|a, b| a.0.cmp(b.0));
+    let mut out = Vec::new();
+    for (module, text) in sorted {
+        for (function, written) in scan_module(text)? {
+            if written.form == DependencyForm::Inherit && written.target_namespace == namespace {
+                continue;
+            }
+            let (target, version) = owner(&written.target_namespace).ok_or_else(|| {
+                refusal(
+                    LinkageCode::Ql007,
+                    format!(
+                        "`{}::{}`: no load-path crate derives the namespace",
+                        written.target_namespace, written.target_function
+                    ),
+                )
+            })?;
+            let mut dependency = written.of_target(crate_name, &function, module, &target);
+            dependency.since = Some(
+                qcore_schemas::library_version::LibraryVersion::parse(&version)
+                    .map_err(|error| format!("{target}: {error}"))?,
+            );
+            out.push(dependency);
+        }
     }
     Ok(out)
 }

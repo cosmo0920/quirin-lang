@@ -402,11 +402,16 @@ fn read_manifest(
     let mut contract_dependencies = BTreeMap::new();
     // Card CONNECT-ADOPT-DECLARED-DEPENDENCIES (D1 (a)): a link names its
     // target by namespace; the target crate is the load-path crate deriving
-    // it, on this manifest or the one it extends.
+    // it, on this manifest or the one it extends. The derived namespace, not
+    // the recorded one: a recorded namespace that is not the derived one is
+    // `QI017`'s refusal, checked when the load path is built.
     let mut namespace_owners: BTreeMap<String, String> = manifest
         .crates
         .iter()
-        .map(|record| (record.namespace.clone(), record.name.clone()))
+        .filter_map(|record| {
+            crate::contract_inclusion::derive_contract_namespace(&record.name)
+                .map(|namespace| (namespace, record.name.clone()))
+        })
         .collect();
     if let Some((shipped, _, _)) = &extended {
         for krate in shipped.load_path.crates() {
@@ -577,7 +582,8 @@ fn read_manifest(
             let clauses = crate::contract_dependency::scan_module(text)
                 .map_err(|e| refuse(&name, format!("{module}: {e}")))?;
             for (function, written) in clauses {
-                if written.target_namespace == record.namespace
+                if crate::contract_inclusion::derive_contract_namespace(&name).as_deref()
+                    == Some(written.target_namespace.as_str())
                     && written.form == qcore_schemas::connect::DependencyForm::Inherit
                 {
                     continue;
@@ -597,11 +603,15 @@ fn read_manifest(
             bare.sha256 = None;
             bare
         };
-        if recorded.iter().map(without_identity).collect::<Vec<_>>() != scanned
-            || record
-                .contract_dependencies
-                .as_ref()
-                .is_some_and(Vec::is_empty)
+        // A crate name with neither admitted prefix is `QI017`'s refusal when
+        // the load path is built; its dependencies are not compared first.
+        let named = crate::contract_inclusion::derive_contract_namespace(&name).is_some();
+        if named
+            && (recorded.iter().map(without_identity).collect::<Vec<_>>() != scanned
+                || record
+                    .contract_dependencies
+                    .as_ref()
+                    .is_some_and(Vec::is_empty))
         {
             return Err(refuse(
                 &name,

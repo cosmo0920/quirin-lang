@@ -372,13 +372,19 @@ def contract_dependencies(name, namespace, modules, by_namespace, root):
                 raise ValueError(f"QL007: {name}/{module}: `{target_namespace}::{target}`: no "
                                  "load-path crate derives the namespace")
             digest = lock_digest(root, owner["name"], target)
-            if digest is None:
+            if digest is None and form == "link":
                 raise ValueError(f"QL007: {name}/{module}: `{target_namespace}::{target}`: "
                                  f"{owner['name']}'s lock records no such declaration")
-            entries.append({"dependent_crate": name, "dependent": function, "module": module,
-                            "target_crate": owner["name"], "target_namespace": target_namespace,
-                            "target_function": target, "since": _version(owner["version"]),
-                            "sha256": digest, "form": form, "vocabulary": LINKAGE_VOCABULARY})
+            entry = {"dependent_crate": name, "dependent": function, "module": module,
+                     "target_crate": owner["name"], "target_namespace": target_namespace,
+                     "target_function": target, "since": _version(owner["version"])}
+            # An inherit directive whose parent no lock records (an unreviewed
+            # crate) carries its version alone; the resolver holds it Pending,
+            # since an unrecorded digest matches nothing.
+            if digest is not None:
+                entry["sha256"] = digest
+            entry.update({"form": form, "vocabulary": LINKAGE_VOCABULARY})
+            entries.append(entry)
     return entries
 
 

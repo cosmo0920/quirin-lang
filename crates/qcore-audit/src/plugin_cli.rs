@@ -184,13 +184,19 @@ fn user_contract_dependencies(load_path: &std::path::Path, write: bool) -> Resul
                     qcore_schemas::library_version::LibraryVersion::parse(version)
                         .map_err(|error| refuse(format!("{target}: {error}")))?,
                 );
-                dependency.sha256 =
-                    Some(lock_digest(root, &written.target_function).ok_or_else(|| {
-                        refuse(format!(
-                            "`{}::{}`: {target}'s lock records no such declaration",
-                            written.target_namespace, written.target_function
-                        ))
-                    })?);
+                // A link names a reviewed declaration (QL007 otherwise); an
+                // inherit directive whose parent no lock records carries its
+                // version alone and resolves `Pending` (an unrecorded digest
+                // matches nothing).
+                dependency.sha256 = lock_digest(root, &written.target_function);
+                if dependency.sha256.is_none()
+                    && written.form == qcore_schemas::connect::DependencyForm::Link
+                {
+                    return Err(refuse(format!(
+                        "`{}::{}`: {target}'s lock records no such declaration",
+                        written.target_namespace, written.target_function
+                    )));
+                }
                 scanned.push(serde_json::to_value(dependency).map_err(|error| error.to_string())?);
             }
         }
