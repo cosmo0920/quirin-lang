@@ -258,6 +258,7 @@ record of `tests/support/sp2_premise_checkpoint.rs`) state the two links.
 | `cargo fmt --check` (root, providers) | 0, 0 | |
 | `gate_lean.py --module QCore.MeasureConnect --audit AuditMeasureConnect.lean` | 0 | 1 module, 1 audit; new theorems on `propext`/`Quot.sound` or none |
 | `python3 -m unittest discover -s providers/tests` | 0 | 32 |
+| `cargo test --manifest-path providers/Cargo.toml` (fluent-bit, librdkafka, libc, chunkio, libevent, conformance) | 0 | 57 passed |
 | `scripts.tests.test_contract_corpus`, `test_package_contract_includes` | 0, 0 | 9, all |
 | `gen_lean_roots.py --check`, `gen_rule_docs.py --check` | 0, 0 | |
 | `apply_amendments.py integration-amendments.json --check` | 0 | |
