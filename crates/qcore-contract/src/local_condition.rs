@@ -735,6 +735,7 @@ pub(crate) fn without_local(
                     SourceContractClauseKind::Requires => "requires",
                     SourceContractClauseKind::Ensures(E::Normal) => "ensures normal",
                     SourceContractClauseKind::QuantLive => "quant live",
+                    SourceContractClauseKind::QuantLink => "quant #link",
                     SourceContractClauseKind::QuantEffect(_) => {
                         return Err("quant effect models are not resource summaries".into());
                     }
@@ -791,7 +792,7 @@ pub(crate) fn without_local(
             rendered.join(" ")
         ))
     };
-    if tokens(&render(true)?)? != decl.tokens {
+    if tokens(&render(true)?)? != crate::contract_dependency::without_linkage_blocks(&decl.tokens) {
         return Err(
             "local-condition-signature: unsupported signature, effect or declaration suffix".into(),
         );

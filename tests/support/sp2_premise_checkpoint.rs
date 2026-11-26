@@ -69,6 +69,9 @@ const SP7_EDITS: &str = include_str!("../../docs/reports/sp6-guarded-symbol-pros
 const SP10_EDITS: &str =
     include_str!("../../docs/reports/sp10-formal-binding-descriptions/migration.json");
 
+const LINKAGE_EDITS: &str =
+    include_str!("../../docs/reports/connect-adopt-declared-dependencies/migration.json");
+
 fn record() -> serde_json::Value {
     serde_json::from_str(RECORD).expect("the SP2 migration record is JSON")
 }
@@ -83,7 +86,10 @@ pub fn unedit_comments(text: &str) -> String {
         SP5_COMMENTS,
         &unedit_with(
             SP6_EDITS,
-            &unedit_with(SP7_EDITS, &unedit_with(SP10_EDITS, text)),
+            &unedit_with(
+                SP7_EDITS,
+                &unedit_with(SP10_EDITS, &unedit_with(LINKAGE_EDITS, text)),
+            ),
         ),
     )
 }
@@ -105,10 +111,17 @@ fn unedit_with(edits: &str, text: &str) -> String {
 }
 
 /// The bytes of the module at `path` before cards
-/// SP10-FORMAL-BINDING-DESCRIPTIONS, SP6-GUARDED-SYMBOL-PROSE,
+/// CONNECT-ADOPT-DECLARED-DEPENDENCIES, SP10-FORMAL-BINDING-DESCRIPTIONS, SP6-GUARDED-SYMBOL-PROSE,
 /// SP6-SYMBOLIC-HYPOTHESIS-ATOMS and SP5-GLOBAL-PROSE-PREMISE-BAN edited it, every digest checked; any
 /// other module unchanged.
 pub fn unedited_file(path: &str, current: &str, sha256: fn(&[u8]) -> String) -> String {
+    let current = &unedited_with(
+        LINKAGE_EDITS,
+        "CONNECT-ADOPT-DECLARED-DEPENDENCIES",
+        path,
+        current,
+        sha256,
+    );
     let current = &unedited_with(
         SP10_EDITS,
         "SP10-FORMAL-BINDING-DESCRIPTIONS",

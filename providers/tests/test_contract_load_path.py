@@ -684,39 +684,130 @@ class LoadPathManifest(unittest.TestCase):
 
 
 class ContractDependencies(unittest.TestCase):
-    """Card QUIRIN-AUDIT-CONNECT (contract spec C15.2): the load path's
-    `contract_dependencies` entry, read lexically here and checked against
-    the loader's own clause reader by `qcore_contract::load_path_manifest`."""
+    """Card CONNECT-ADOPT-DECLARED-DEPENDENCIES (`linkage_contract_v1`,
+    contract spec C15.2): the load path's `contract_dependencies` entry, read
+    lexically here with each target's recorded identity, and checked against
+    the loader's own reader by `qcore_contract::load_path_manifest`."""
 
-    TEXT = ("module contract;\n// requires resource_contract_dependency(\"quirin-provider-libc\", "
-            "libc::calloc, since \"0.1\"); a comment\n"
+    TEXT = ("module contract;\n#include libc::free as quant #link;\n"
+            "// quant #link libc::calloc; a comment\n"
             "extern fn acme_open(n: usize) -> ptr<mut, u8>\ncontract {\n"
-            "    requires resource_contract_v1;\n"
-            "    requires resource_contract_dependency(\"quirin-provider-libc\", libc::malloc, "
-            "since \"0.1\", removed \"0.2.0\");\n};\n"
+            "    requires resource_contract_v1;\n    requires linkage_contract_v1;\n"
+            "    premises {\n        link { quant #link libc::malloc; };\n    };\n};\n"
             "extern fn acme_close(p: ptr<mut, u8>) -> unit\ncontract {\n"
-            "    requires resource_contract_dependency(\"quirin-provider-libc\", libc::free, "
-            "sha256 \"" + "a" * 64 + "\");\n};\n")
+            "    requires linkage_contract_v1;\n    quant #link free;\n};\n"
+            "extern fn acme_alloc(n: usize) -> ptr<mut, u8> contract inherit libc::malloc;\n"
+            "extern fn acme_own(n: usize) -> ptr<mut, u8> contract inherit acme::acme_open;\n")
 
-    def test_entries_follow_declarations_in_text_order_and_skip_comments(self):
+    def tree(self, temporary):
+        root = Path(temporary)
+        lock = {"pinned": [], "flexible": [
+            {"function": name, "module": "libc/memory.qv", "contract_sha256": digit * 64}
+            for name, digit in (("malloc", "a"), ("free", "b"))]}
+        (root / "quirin-provider-libc").mkdir()
+        (root / "quirin-provider-libc" / "contracts.lock").write_text(json.dumps(lock))
+        path = root / "open.qv"
+        path.write_text(self.TEXT)
+        by_namespace = {"libc": {"name": "quirin-provider-libc", "version": "0.1.0"},
+                        "acme": {"name": "quirin-provider-acme", "version": "0.3.0"}}
+        return root, path, by_namespace
+
+    def test_entries_follow_declarations_in_text_order_with_identity(self):
         with tempfile.TemporaryDirectory() as temporary:
-            path = Path(temporary) / "open.qv"
-            path.write_text(self.TEXT)
-            entries = contracts.contract_dependencies("quirin-provider-acme", {"acme/open.qv": path})
-        self.assertEqual([(e["dependent"], e["target_function"]) for e in entries],
-                         [("acme_open", "malloc"), ("acme_close", "free")])
+            root, path, by_namespace = self.tree(temporary)
+            entries = contracts.contract_dependencies("quirin-provider-acme", "acme",
+                                                      {"acme/open.qv": path}, by_namespace, root)
+        self.assertEqual([(e["dependent"], e["target_function"], e["form"]) for e in entries],
+                         [("acme_open", "malloc", "link"), ("acme_close", "free", "link"),
+                          ("acme_alloc", "malloc", "inherit")])
         self.assertEqual(entries[0]["since"], {"major": 0, "minor": 1, "patch": 0})
-        self.assertEqual(entries[0]["removed"], {"major": 0, "minor": 2, "patch": 0})
-        self.assertEqual(entries[1]["sha256"], "a" * 64)
-        self.assertNotIn("since", entries[1])
+        self.assertEqual(entries[0]["sha256"], "a" * 64)
+        self.assertEqual(entries[1]["sha256"], "b" * 64)
+        self.assertTrue(all(e["vocabulary"] == "linkage_contract_v1" for e in entries))
         self.assertEqual(entries[0]["module"], "acme/open.qv")
 
-    def test_no_clause_no_entry(self):
+    def test_unknown_crate_or_function_and_the_retired_form_are_refused(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root, path, by_namespace = self.tree(temporary)
+            for text, code in (
+                    (self.TEXT.replace("libc::malloc; }", "cfl::malloc; }"), "QL007"),
+                    (self.TEXT.replace("libc::malloc; }", "libc::calloc; }"), "QL007"),
+                    (self.TEXT.replace("quant #link free;",
+                                       "requires resource_contract_dependency(\"x\", a::b);"),
+                     "QL005"),
+                    (self.TEXT.replace("quant #link free;", "quant #link libc::free;"), "QL006"),
+                    (self.TEXT.replace("quant #link free;", "quant #link realloc;"), "QL003")):
+                path.write_text(text)
+                with self.assertRaises(ValueError) as caught:
+                    contracts.contract_dependencies("quirin-provider-acme", "acme",
+                                                    {"acme/open.qv": path}, by_namespace, root)
+                self.assertIn(code, str(caught.exception))
+
+    def test_no_link_no_entry(self):
         with tempfile.TemporaryDirectory() as temporary:
             path = Path(temporary) / "open.qv"
             path.write_text(PARENT)
-            self.assertEqual(contracts.contract_dependencies("quirin-provider-libc",
-                                                             {"libc/memory.qv": path}), [])
+            self.assertEqual(contracts.contract_dependencies(
+                "quirin-provider-libc", "libc", {"libc/memory.qv": path}, {}, temporary), [])
+
+
+class LinkageCheck(unittest.TestCase):
+    """Card CONNECT-ADOPT-DECLARED-DEPENDENCIES: the enforcement check
+    (`cx_reliance_is_linked`) over a recorded reliance set."""
+
+    WRAPPER = ("module contract;\n"
+               "extern fn acme_free(p: ptr<mut, u8>) -> unit\ncontract {\n"
+               "    requires resource_contract_v1;\n{links}    requires resource_body_checked;\n"
+               "    ensures normal resource_released(p, nonnull);\n"
+               "    ensures normal resource_return_none();\n}};\n")
+
+    def run_check(self, links, record):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            contracts_dir = root / "quirin-provider-acme" / "contracts" / "acme"
+            contracts_dir.mkdir(parents=True)
+            (contracts_dir / "free.qv").write_text(self.WRAPPER.replace("{links}", links).replace("}}", "}"))
+            (root / contracts.LINKAGE_RELIANCES).write_text(json.dumps(
+                {"schema": "quirin-linkage-reliances/1", "declarations": record}))
+            stated = [{"dependent": "acme_free", "form": "link", "target_namespace": "libc",
+                       "target_function": "free"}] if "#link" in links else []
+            load_path = {"crates": [
+                {"name": "quirin-provider-acme", "namespace": "acme",
+                 "contracts": "quirin-provider-acme/contracts",
+                 **({"contract_dependencies": stated} if stated else {})},
+                {"name": "quirin-provider-libc", "namespace": "libc",
+                 "contracts": "quirin-provider-libc/contracts"}]}
+            libc = root / "quirin-provider-libc" / "contracts" / "libc"
+            libc.mkdir(parents=True)
+            (libc / "memory.qv").write_text(
+                "module contract;\nextern fn free(p: ptr<mut, u8>) -> unit\ncontract {\n"
+                "    requires resource_contract_v1;\n    ensures normal resource_released(p, nullable);\n"
+                "    ensures normal resource_return_none();\n};\n")
+            return contracts.check_linkage(root, load_path)
+
+    RECORD = [{"crate": "quirin-provider-acme", "function": "acme_free",
+               "kind": "body-checked-specification", "targets": ["libc::free"],
+               "reading": "body calls free"}]
+    LINK = "    requires linkage_contract_v1;\n    quant #link libc::free;\n"
+
+    def test_a_wrapper_release_resting_on_libc_free_must_link_it(self):
+        self.assertEqual(self.run_check(self.LINK, self.RECORD)["links"], 1)
+        with self.assertRaises(ValueError) as caught:
+            self.run_check("", self.RECORD)
+        self.assertIn("cx_reliance_is_linked", str(caught.exception))
+
+    def test_a_body_checked_declaration_must_be_recorded(self):
+        with self.assertRaises(ValueError) as caught:
+            self.run_check(self.LINK, [])
+        self.assertIn("not in linkage-reliances.json", str(caught.exception))
+
+    def test_a_reliance_that_only_yields_unknown_is_not_required(self):
+        # Recorded with no targets (its reading decides nothing across crates):
+        # no link is required, and a link would be refused as unrecorded.
+        record = [dict(self.RECORD[0], targets=[], reading="only an undeclared callee")]
+        self.assertEqual(self.run_check("", record)["links"], 0)
+        with self.assertRaises(ValueError):
+            self.run_check(self.LINK, record)
 
 
 if __name__ == "__main__":

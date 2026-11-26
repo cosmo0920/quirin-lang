@@ -359,7 +359,16 @@ fn load_path_json(pin: &str) -> serde_json::Value {
                 "name": "quirin-provider-app", "namespace": "app", "version": "0.1.0",
                 "contracts": "quirin-provider-app/contracts",
                 "dependencies": ["quirin-provider-demo"],
-                "modules": ["app/wrap.qcore"], "published": {}
+                "modules": ["app/wrap.qcore"], "published": {},
+                // Card CONNECT-ADOPT-DECLARED-DEPENDENCIES: the inherit
+                // directive is a recorded dependency (unreviewed: no digest).
+                "contract_dependencies": [{
+                    "dependent_crate": "quirin-provider-app", "dependent": "app_free",
+                    "module": "app/wrap.qcore", "target_crate": "quirin-provider-demo",
+                    "target_namespace": "demo", "target_function": "free",
+                    "since": {"major": 0, "minor": 1, "patch": 0},
+                    "form": "inherit", "vocabulary": "linkage_contract_v1"
+                }]
             },
             {
                 "name": "quirin-provider-demo", "namespace": "demo", "version": "0.1.0",

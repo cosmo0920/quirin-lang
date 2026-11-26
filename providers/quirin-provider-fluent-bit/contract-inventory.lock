@@ -1090,7 +1090,7 @@
       "sha256": "34dd56381d51f5a43eb87d0a2a5053f2f26181e3cccfe5756afedbfcc7294823"
     },
     "fluent_bit/storage_backlog.qv": {
-      "clause_count": 62,
+      "clause_count": 86,
       "declaration_count": 12,
       "declarations": [
         {
@@ -1138,7 +1138,7 @@
           "resource_table": "functions"
         },
         {
-          "clauses": 4,
+          "clauses": 6,
           "name": "sb_allocate_backlogs",
           "resource_mode": {
             "parameters": [
@@ -1149,7 +1149,7 @@
           "resource_table": "functions"
         },
         {
-          "clauses": 4,
+          "clauses": 6,
           "name": "sb_destroy_backlogs",
           "resource_mode": {
             "parameters": [
@@ -1160,7 +1160,7 @@
           "resource_table": "functions"
         },
         {
-          "clauses": 6,
+          "clauses": 8,
           "name": "sb_remove_chunk_from_segregated_backlog",
           "resource_mode": {
             "parameters": [
@@ -1185,7 +1185,7 @@
           "resource_table": "functions"
         },
         {
-          "clauses": 7,
+          "clauses": 9,
           "name": "sb_append_chunk_to_segregated_backlog",
           "resource_mode": {
             "parameters": [
@@ -1199,7 +1199,7 @@
           "resource_table": "functions"
         },
         {
-          "clauses": 6,
+          "clauses": 8,
           "name": "sb_append_chunk_to_segregated_backlogs",
           "resource_mode": {
             "parameters": [
@@ -1212,7 +1212,7 @@
           "resource_table": "functions"
         },
         {
-          "clauses": 4,
+          "clauses": 10,
           "name": "sb_segregate_chunks",
           "resource_mode": {
             "parameters": [
@@ -1223,7 +1223,7 @@
           "resource_table": "functions"
         },
         {
-          "clauses": 5,
+          "clauses": 7,
           "name": "sb_release_output_queue_space",
           "resource_mode": {
             "parameters": [
@@ -1235,7 +1235,7 @@
           "resource_table": "functions"
         },
         {
-          "clauses": 6,
+          "clauses": 12,
           "name": "cb_queue_chunks",
           "resource_mode": {
             "parameters": [
@@ -1252,7 +1252,7 @@
       "other_declarations": [],
       "premise_bindings": [],
       "premises": {},
-      "sha256": "faa7539381275f7a7ad2d97d598d1abbffb30f76bc844092bc616be4c6fbd1de"
+      "sha256": "bc803c24cdaf2e98e1676b0b9f90c71f687cc52678489497c176d7e455e1f9aa"
     },
     "fluent_bit/task_route_queries.qv": {
       "clause_count": 20,
@@ -1418,7 +1418,7 @@
       "sha256": "bfe88a73a94c1371007da844dc0898dec947237b6960799bc5171355521672b8"
     },
     "fluent_bit/teardown_destroy.qv": {
-      "clause_count": 172,
+      "clause_count": 174,
       "declaration_count": 15,
       "declarations": [
         {
@@ -1547,7 +1547,7 @@
           "resource_table": "retaining"
         },
         {
-          "clauses": 24,
+          "clauses": 26,
           "name": "flb_config_set_program_name",
           "resource_mode": null,
           "resource_table": "retaining"
@@ -1557,7 +1557,7 @@
       "other_declarations": [],
       "premise_bindings": [],
       "premises": {},
-      "sha256": "cfcde66dfe2defc9174742abae64bde14b5742f0211025f5f57b01864b0e7307"
+      "sha256": "2e8f644446ea81881d177969ad457378963dd39f4c5b3ea11f11987028debe2e"
     },
     "fluent_bit/time.qv": {
       "clause_count": 2,

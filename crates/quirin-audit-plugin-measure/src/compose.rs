@@ -68,7 +68,7 @@ use serde_json::{Value, json};
 use crate::util::{read_json, sha_file, write_json};
 
 /// The composition record's schema.
-pub const COMPOSITION_SCHEMA: &str = "quirin-contract-composition/1";
+pub const COMPOSITION_SCHEMA: &str = "quirin-contract-composition/2";
 
 /// The composition record's file name.
 pub const COMPOSITION_FILE: &str = "composition.json";
@@ -511,11 +511,13 @@ pub fn compose(
             "shared_or_refused": declaration_records,
         },
         "dependency_graph": {
+            "vocabulary": connect::LINKAGE_VOCABULARY,
             "dependencies": dependencies.iter().map(|d| json!({
                 "id": d.id(), "dependent": d.dependent, "dependent_crate": d.dependent_crate,
                 "target_crate": d.target_crate, "target_function": d.target_function,
                 "since": d.since.map(|v| v.to_string()), "removed": d.removed.map(|v| v.to_string()),
-                "sha256": d.sha256, "clause": d.clause(),
+                "sha256": d.sha256, "form": d.form.as_str(), "vocabulary": d.vocabulary,
+                "link": d.link(), "clause": d.clause(),
                 "target_identity": environment.get(&d.target_crate).map(|facts| json!({
                     "version": facts.version.map(|v| v.to_string()),
                     "sha256": facts.declarations.get(&d.target_function).map(|f| f.sha256.clone()),

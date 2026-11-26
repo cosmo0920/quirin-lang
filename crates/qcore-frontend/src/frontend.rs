@@ -210,6 +210,25 @@ pub enum SourceContractClauseKind {
     /// descriptor-cell protocol at a record type. Read only by the S3
     /// lifetime loader; every other consumer skips or rejects it.
     QuantCell,
+    /// Card CONNECT-ADOPT-DECLARED-DEPENDENCIES (user decisions of
+    /// 2026-11-26, `linkage_contract_v1`, contract spec C15.2, grammar G05l):
+    /// `quant #link NS::NAME;`, directly in a contract, inside `premises {
+    /// ... };` or as a `link { ... };` entry. The expression is the target
+    /// (`NS::NAME`, or a bare `NAME` a module-level `#include NS::NAME as
+    /// quant #link;` makes nameable). Only the resource v1 loader reads it,
+    /// and only beside `requires linkage_contract_v1;`; every other consumer
+    /// rejects it. Before this card the spelling was a parse error.
+    QuantLink,
+}
+
+/// Where a contract clause list is read (card
+/// CONNECT-ADOPT-DECLARED-DEPENDENCIES): a contract's own clauses, a
+/// `premises { ... };` block, or a `link { ... };` block.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum LinkageBlock {
+    Contract,
+    Premises,
+    Link,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -1318,14 +1337,145 @@ impl<'a> SourceParser<'a> {
         close: usize,
         allow_local: bool,
     ) -> Result<SourceFunctionContract, SourceParseError> {
-        let mut clauses = Vec::new();
         let mut premise_names = BTreeSet::new();
+        let clauses = self.contract_clauses(
+            open,
+            close,
+            allow_local,
+            &mut premise_names,
+            LinkageBlock::Contract,
+        )?;
+        Ok(SourceFunctionContract {
+            span: self.range_span(contract_start, close + 1),
+            clauses,
+        })
+    }
+
+    /// Card CONNECT-ADOPT-DECLARED-DEPENDENCIES (`linkage_contract_v1`,
+    /// contract spec C15.2, grammar G05l): a `premises { ... };` or `link {
+    /// ... };` block between `open` and its matching `close`, its clauses
+    /// read exactly as at contract level and spliced in place (the block
+    /// groups; it changes no clause's reading). `};` closes a block, as it
+    /// closes a `[[local]]` condition block.
+    fn linkage_block(
+        &self,
+        word_at: usize,
+        close: usize,
+        allow_local: bool,
+        premise_names: &mut BTreeSet<String>,
+        inner: LinkageBlock,
+    ) -> Result<(Vec<Located<SourceContractClause>>, usize), SourceParseError> {
+        let open = word_at + 1;
+        let inner_close = self.close(open)?;
+        if inner_close >= close {
+            return Err(self.error(open, "linkage-block: the block exceeds its contract"));
+        }
+        if !self.symbol(inner_close + 1, Symbol::Semicolon) {
+            return Err(self.error(
+                inner_close,
+                "linkage-block: expected `};` after a `premises` or `link` block",
+            ));
+        }
+        let clauses =
+            self.contract_clauses(open, inner_close, allow_local, premise_names, inner)?;
+        if clauses.is_empty() {
+            return Err(self.error(
+                open,
+                "linkage-block: a `premises` or `link` block is not empty",
+            ));
+        }
+        Ok((clauses, inner_close + 2))
+    }
+
+    fn contract_clauses(
+        &self,
+        open: usize,
+        close: usize,
+        allow_local: bool,
+        premise_names: &mut BTreeSet<String>,
+        block: LinkageBlock,
+    ) -> Result<Vec<Located<SourceContractClause>>, SourceParseError> {
+        let mut clauses = Vec::new();
         let mut cursor = open + 1;
         while cursor < close {
             let clause_start = cursor;
+            // Card CONNECT-ADOPT-DECLARED-DEPENDENCIES: `premises { ... };`
+            // groups clauses at contract level; `link { ... };` holds links
+            // inside it. Neither word was a clause head before.
+            if self.word(cursor, "premises") && self.symbol(cursor + 1, Symbol::LeftBrace) {
+                if block != LinkageBlock::Contract || !allow_local {
+                    return Err(self.error(
+                        cursor,
+                        "linkage-premises-placement: a `premises { ... };` block stands only at \
+                         a contract's top level",
+                    ));
+                }
+                let (inner, next) = self.linkage_block(
+                    cursor,
+                    close,
+                    allow_local,
+                    premise_names,
+                    LinkageBlock::Premises,
+                )?;
+                clauses.extend(inner);
+                cursor = next;
+                continue;
+            }
+            if self.word(cursor, "link") && self.symbol(cursor + 1, Symbol::LeftBrace) {
+                if block != LinkageBlock::Premises {
+                    return Err(self.error(
+                        cursor,
+                        "linkage-link-placement: a `link { ... };` block stands only inside a \
+                         `premises { ... };` block",
+                    ));
+                }
+                let (inner, next) = self.linkage_block(
+                    cursor,
+                    close,
+                    allow_local,
+                    premise_names,
+                    LinkageBlock::Link,
+                )?;
+                if let Some(other) = inner
+                    .iter()
+                    .find(|clause| clause.value.kind != SourceContractClauseKind::QuantLink)
+                {
+                    return Err(SourceParseError {
+                        span: other.span,
+                        message: "linkage-link-entry: a `link { ... };` block holds only \
+                                  `quant #link NS::NAME;` entries"
+                            .into(),
+                    });
+                }
+                clauses.extend(inner);
+                cursor = next;
+                continue;
+            }
+            if self.word(cursor, "quant")
+                && self.symbol(cursor + 1, Symbol::Hash)
+                && self.word(cursor + 2, "link")
+            {
+                clauses.push(self.link_clause(clause_start, close)?);
+                cursor = self.semicolon_before(cursor + 3, close)? + 1;
+                continue;
+            }
+            if block == LinkageBlock::Link {
+                return Err(self.error(
+                    cursor,
+                    "linkage-link-entry: a `link { ... };` block holds only `quant #link \
+                     NS::NAME;` entries",
+                ));
+            }
             if self.word(cursor, "quant") {
                 let negated = self.word(cursor + 1, "not");
                 let hash = cursor + if negated { 2 } else { 1 };
+                if self.symbol(hash, Symbol::Hash) && self.word(hash + 1, "link") {
+                    return Err(self.error(
+                        hash + 1,
+                        "linkage-reserved: `#link` at the start of a clause is a \
+                         linkage_contract_v1 link (`quant #link NS::NAME;`), never a condition",
+                    ));
+                }
                 if self.symbol(hash, Symbol::Hash)
                     && !self.word(hash + 1, "outer")
                     && self.word(hash + 2, "in")
@@ -1493,7 +1643,7 @@ impl<'a> SourceParser<'a> {
             // read by the contract format itself, total-or-reject in every
             // vocabulary (resource v1, bounds v1, a model contract).
             if self.word(expression_start, PREMISE_CLAUSE_WORD) {
-                self.premise_clause(&kind, expression_start, semicolon, &mut premise_names)?;
+                self.premise_clause(&kind, expression_start, semicolon, premise_names)?;
             }
             // Card SP6-SYMBOLIC-HYPOTHESIS-ATOMS (contract specification
             // C04.18.7): the string hypothesis atom is retired and refused
@@ -1561,9 +1711,49 @@ impl<'a> SourceParser<'a> {
             });
             cursor = semicolon + 1;
         }
-        Ok(SourceFunctionContract {
-            span: self.range_span(contract_start, close + 1),
-            clauses,
+        Ok(clauses)
+    }
+
+    /// Card CONNECT-ADOPT-DECLARED-DEPENDENCIES (`linkage_contract_v1`,
+    /// grammar G05l): `quant #link NS::NAME;`, or `quant #link NAME;` with a
+    /// bare name a module-level `#include NS::NAME as quant #link;` makes
+    /// nameable (resolved by the inclusion elaborator before this parser runs
+    /// on a load path). The expression is the target as written.
+    fn link_clause(
+        &self,
+        clause_start: usize,
+        close: usize,
+    ) -> Result<Located<SourceContractClause>, SourceParseError> {
+        let start = clause_start + 3;
+        if self.symbol(start, Symbol::Equal) || self.word(start, "in") {
+            return Err(self.error(
+                clause_start + 2,
+                "linkage-reserved: `#link` at the start of a clause is a linkage_contract_v1 \
+                 link (`quant #link NS::NAME;`), never a condition",
+            ));
+        }
+        let semicolon = self.semicolon_before(start, close)?;
+        let qualified = semicolon == start + 3
+            && self.word_value(start).is_some()
+            && self.symbol(start + 1, Symbol::ColonColon)
+            && self.word_value(start + 2).is_some();
+        let bare = semicolon == start + 1 && self.word_value(start).is_some();
+        if !(qualified || bare) {
+            return Err(self.error(
+                start,
+                "linkage-link-target: a link names one declaration, `quant #link NS::NAME;`",
+            ));
+        }
+        let expression_span = self.range_span(start, semicolon);
+        Ok(Located {
+            span: self.range_span(clause_start, semicolon + 1),
+            value: SourceContractClause {
+                kind: SourceContractClauseKind::QuantLink,
+                expression_span,
+                expression_source: self.source[expression_span.start..expression_span.end]
+                    .trim()
+                    .to_owned(),
+            },
         })
     }
 

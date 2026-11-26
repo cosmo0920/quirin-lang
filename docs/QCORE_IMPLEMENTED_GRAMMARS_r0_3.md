@@ -159,6 +159,7 @@ Bundled semantic capabilities require an explicit, file-local `#import <module>;
 - [G05k. Callee frames over a declared cell protocol (`#untouched`)](#g05k-callee-frames-over-a-declared-cell-protocol)
 - [G05j. C library result sets and written sets (`result_set`, `written_set`)](#g05j-c-library-result-sets)
 - [G05l. List-finiteness premises (`quant list ... |-> #finite`)](#g05l-list-finiteness-premises)
+- [G05m. Contract linkage v1 (`linkage_contract_v1`, `quant #link`, `premises { link { ... }; };`)](#g05m-contract-linkage-v1) (`QL001`–`QL009`)
 
 ### Part VI — Observation Policies, Service Configuration, Existing-C Subsets, and Extended BNF
 
@@ -207,7 +208,8 @@ contract        = "contract", "{", { clause }, "}" ;
 clause          = "requires", NONEMPTY_EXPRESSION_TOKENS, ";"
                 | "ensures", selector, NONEMPTY_EXPRESSION_TOKENS, ";"
                 | "quant", selector, NONEMPTY_EXPRESSION_TOKENS, ";"
-                | quant_formal_clause ;                             (* §G01p/c/t/e, Part V *)
+                | quant_formal_clause                               (* §G01p/c/t/e, Part V *)
+                | linkage_clause ;                                  (* §G05m *)
 selector        = "normal"
                 | "any"
                 | "error", "(", NONEMPTY_TYPE_TOKENS, ")" ;
@@ -3737,7 +3739,9 @@ resource_clause   = "requires", req_clause, ";"
                   | condition_binding                                 (* §G05h *)
                   | condition_block                                   (* §G05h *)
                   | cell_protocol_clause                              (* §G05i *)
-                  | cell_frame_clause ;                               (* §G05k *)
+                  | cell_frame_clause                                 (* §G05k *)
+                  | link_clause                                       (* §G05m *)
+                  | premises_block ;                                  (* §G05m *)
 
 (* ---- Precondition Clauses (requires) ---- *)
 req_clause        = "resource_contract_v1"
@@ -3746,7 +3750,7 @@ req_clause        = "resource_contract_v1"
                   | contract_review_marker
                   | contract_revision_marker
                   | library_version_range
-                  | contract_dependency                               (* §C15.2 *)
+                  | "linkage_contract_v1"                             (* §G05m, §C15.2 *)
                   | named_premise
                   | hypothesis_all
                   | hypothesis_decomposition
@@ -3769,13 +3773,10 @@ library_version_range    = "resource_library_version", "(", library_name, ",",
                            ( "since" | "documented" ), STRING,
                            [ ",", "removed", STRING ], ")" ;
 
-contract_dependency      = "resource_contract_dependency", "(", STRING, ",", IDENT, "::", IDENT,
-                           [ ",", "since", STRING, [ ",", "removed", STRING ] ],
-                           [ ",", "sha256", STRING ], ")" ;
-  (* card QUIRIN-AUDIT-CONNECT, contract specification C15.2: the first STRING is a
-     `quirin-provider-NAME` or `qcore-provider-NAME` package name and the first
-     IDENT its derived namespace; at least one of `since` and `sha256`; versions
-     spell MAJOR.MINOR[.PATCH]; the sha256 STRING is 64 lowercase hex digits *)
+  (* card CONNECT-ADOPT-DECLARED-DEPENDENCIES: the written form of card
+     QUIRIN-AUDIT-CONNECT, `resource_contract_dependency(...)`, is retired and
+     refused by name (`QL005`); a dependency is a `linkage_contract_v1` link,
+     §G05m, whose identity the load-path manifest records *)
 
 named_premise            = "resource_premise", "(", premise_name, ",", premise_formula, ")" ;
 hypothesis_all           = "resource_premise_all", "(", premise_name, ",",
@@ -4001,7 +4002,7 @@ The contract format enforces strict bans on retired prose and comment carriers a
 
 3. **Literal-Argument Premises, Review/Revision Markers, Version Bounds, and Obligation Clauses.**
    - **`resource_literal_argument(p, LIT)` (§C04.5):** `p` may be any parameter type (including pointer `0`, which structurally matches `0`, `(0)`, `0L`, and — for `ptr<…>`/`fnptr` at `0` — `((void *) 0)`). At most one premise per parameter. Beside retaining/callback clauses, admitted **only** when every retaining clause is a synchronous `resource_callback_invoked`, `resource_callback_invoked_or_default`, or opaque `resource_callback_slot_invoked` (gateway rule 57).
-   - **Declared Contract Dependencies (§C15.2):** `resource_contract_dependency` is admitted only under `requires`, once per target; a crate that is not a provider package name, a namespace other than the crate's derived one, no identity, the keys out of order or repeated, an unknown key, a digest that is not 64 lowercase hex digits, a removal not above `since`, a removal without `since`, a declaration depending on itself, a libc/POSIX target (`libc::`) named under a crate other than `quirin-provider-libc` and an `ensures` form each reject the whole module. Inheritance does not copy it.
+   - **Declared Contract Dependencies (§C15.2, §G05m):** `requires linkage_contract_v1;` and the links it admits are read by the resource v1 loader; the retired written form `resource_contract_dependency(...)` rejects the whole module (`QL005`). Inheritance copies neither a link nor the marker; the inherit directive is itself the child's link.
    - **Review & Revision Markers (§C06.1–C06.3):** `review_note` strings must be non-blank single-token literals with no backslash escapes or control characters. Either one contract-level `requires resource_review_pending(…);` **or** clause-level `ensures normal resource_review_pending(PRED, …);` wrappers (never both, never nested). Likewise, at most one `requires resource_revision(MODE);`, and `ensures normal resource_revision(PRED, MODE);` may not restate the contract-level mode or nest with review markers (unmarked default is `pinned`). `requires resource_library_version(lib, since|documented "M.N[.P]" [, removed "M.N[.P]"]);` appears at most once with `removed` strictly greater than the lower bound. `requires resource_body_checked;` appears at most once.
    - **Concurrency & Lifecycle Obligations (§C04.9–C04.11):** At most one `resource_loop_owner` (pointer parameter), `resource_thread_sync` (`ptr<mut, u8>` condvar and distinct `ptr<mut, u8>` mutex for waits; `u64`/`usize` thread for `join`), or `resource_lifecycle` (`ptr<mut, u8>` context); none may be wrapped in a clause-level review marker.
    - **Premises & Hypothesis Graphs (§C04.18):** `resource_premise(NAME, FORMULA)` requires unique `NAME`s per declaration and a valid [G05-formula](#g05-formula-symbolic-premise-statements). `resource_premise_all` and `resource_premise_decomposition` take non-empty, unique, strictly increasing atom IDs referencing `quant proposition #id` (§G01p) definitions (`legacy_` prefix reserved; `resource_premise_decomposition` attaches to an existing named premise in graph v2).
@@ -4922,6 +4923,75 @@ quant list flb_config.outputs |-> #finite;
 ```
 
 **Implementation & Provenance:** `crates/qcore-contract/src/list_finiteness.rs`, `contract/profiles/fluent-bit/list-finiteness.qv`; contract spec [§C04.22](QCORE_CONTRACT_SPEC_r0_3.md#c0422-the-list-finiteness-premise), gateway rule `48`; card `W45-FB-LIST-FINITENESS-PREMISE`.
+
+---
+
+<a id="g05m-contract-linkage-v1"></a>
+
+## G05m. Contract linkage v1 (`linkage_contract_v1`)
+
+### Consumer and Vocabulary
+
+Card CONNECT-ADOPT-DECLARED-DEPENDENCIES (user decisions of 2026-11-26, "Every reliance" and "Accept all"; contract specification [§C15.2](QCORE_CONTRACT_SPEC_r0_3.md#c152-declared-contract-dependencies)). A resource v1 declaration states each other crate's declaration a `Safe` or `Unsafe` verdict using it can rest on as a **link**. The resource v1 loader (`crates/qcore-contract/src/contract_loader.rs`) reads links beside the per-declaration marker `requires linkage_contract_v1;`; every other consumer rejects them. Version 1 fixes the three forms below and their elaboration to one C15.2 dependency each; a change is `linkage_contract_v2`, never a widening of v1. (`G05l` was already allocated, so the linkage vocabulary is `G05m`.)
+
+### Consolidated Grammar
+
+```ebnf
+linkage_clause = link_clause | premises_block ;             (* inside contract { ... } *)
+link_clause    = "quant", "#", "link", link_target, ";" ;
+link_target    = NAMESPACE, "::", NAME                      (* the target crate's derived namespace, C15 *)
+               | NAME ;                                      (* only when a link import names it *)
+premises_block = "premises", "{", premises_entry, { premises_entry }, "}", ";" ;
+premises_entry = link_block | resource_clause ;             (* any clause the contract admits, except premises_block *)
+link_block     = "link", "{", link_clause, { link_clause }, "}", ";" ;
+
+link_import    = "#", "include", NAMESPACE, "::", NAME, "as", "quant", "#", "link", ";" ;
+                                                            (* module level, among the #include directives *)
+NAMESPACE      = /[a-z][a-z0-9_]*/ ;
+NAME           = /[A-Za-z_][A-Za-z0-9_]*/ ;
+```
+
+### Semantic Side Conditions
+
+Every violation rejects the **entire module** (total-or-reject):
+
+- **Marker (`QL001`, `QL002`):** a declaration with a link states `requires linkage_contract_v1;` exactly once, and a declaration stating the marker has at least one link (`cx_link_needs_marker`, `cx_marker_needs_link`).
+- **Target (`QL003`, `QL004`):** a link names one declaration as `NAMESPACE::NAME`; a bare `NAME` only when a module-level link import names it (the inclusion elaborator writes it qualified before any reader runs, so the digest of a bare and a qualified link is one); no target is linked twice by one declaration.
+- **Blocks:** `premises { ... };` stands only at a contract's top level and groups clauses without changing their reading (its clauses are read in place; no existing premise is moved into one); `link { ... };` stands only inside `premises` and holds only links; a block is not empty and ends `};`, as a `[[local]]` condition block does. A trailing `.` is no terminator: inside a balanced clause region `.` builds member paths.
+- **Reserved word:** `#link` directly after `quant` at the start of a clause is a link; `quant #link = (...)` and `quant [not] #link in { ... }` are refused (no condition is named `link`). `#link` as a binder and `link` as a sort inside a formula are unaffected (constraint 14: no reserved word elsewhere).
+- **Placement:** no link inside a `[[local]]` block (links are unconditional); a `contract inherit` declaration carries no clause (`QI002`); its directive is itself its link.
+- **Module-level imports (`QL006`):** each is used by a bare link of the module, names a function the module does not declare, and is not repeated; it links nothing by itself (only the per-declaration forms are dependencies, and only they are what the enforcement check counts).
+- **Load path (`QL007`–`QL009`, `QI014`):** `providers/contracts.py sync` (or `quirin-audit plugin views --write`) records each link, and each cross-crate inherit directive, in the load-path manifest's `contract_dependencies` with the target crate (the load-path crate deriving `NAMESPACE`), its version as `since` and the target declaration's lock digest as `sha256`, and `vocabulary: "linkage_contract_v1"`. A namespace no load-path crate derives, a target its crate's lock does not record (`QL007`), a libc/POSIX name under another crate (`QL008`), a missing identity (`QL009`), an entry that differs from the module texts and a cycle (`QI014`) are refused.
+
+### Concrete Example
+
+```qv
+module contract;
+#include libc::free as quant #link;
+
+extern fn acme_new(size: usize) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    requires linkage_contract_v1;
+    premises {
+        link { quant #link libc::malloc; };
+        requires resource_revision(flexible);
+    };
+    ensures normal resource_borrowed(size);
+    ensures normal resource_return_owned(nullable);
+};
+
+extern fn acme_free(p: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    requires linkage_contract_v1;
+    quant #link free;
+    ensures normal resource_released(p, nullable);
+    ensures normal resource_return_none();
+};
+```
+
+**Implementation & Provenance:** `crates/qcore-frontend/src/frontend.rs` (`QuantLink`, `premises`/`link` blocks), `crates/qcore-frontend/src/contract_inclusion.rs` (link imports), `crates/qcore-contract/src/contract_dependency.rs` (`QL` codes, `scan_module`), `crates/qcore-contract/src/load_path_manifest.rs`, `providers/contracts.py` (`contract_dependencies`, `check_linkage`); Lean `QCore.MeasureConnect` (`elaboration_is_the_dependency_set`); card `CONNECT-ADOPT-DECLARED-DEPENDENCIES`.
 
 ---
 

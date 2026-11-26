@@ -47,6 +47,17 @@ by `crates/qcore-frontend/tests/connect_formulas.rs`).
   only through membership (`held_is_order_independent`), and a declaration
   that is not held reaches no held declaration and no cycle
   (`resolution_is_acyclic`).
+* **`linkage_contract_v1`** (card CONNECT-ADOPT-DECLARED-DEPENDENCIES). The
+  dependencies are the elaboration of the written links, a `quant #link`
+  link or a `contract inherit` directive, which is itself the link
+  (`elaboration_is_the_dependency_set`; the form is not part of the
+  dependency, `link_forms_elaborate_alike`), so a held target holds the
+  declaration that links it (`a_held_link_target_holds_its_dependent`, by
+  `held_dependency_holds_dependents`). A declaration relies on another
+  bundle's declaration when it reads it in a way that can decide a verdict
+  (`relies`); the linkage check passes for a bundle exactly when every
+  cross-bundle reliance is linked (`checkPasses`), and a link needs its
+  declaration's marker (`loadRefused`).
 
 Premises stated, not proved: a side's report is a function of its identity
 (the measurement's determinism, checked by byte comparison elsewhere); the
@@ -505,6 +516,35 @@ structure Dep where
 /-- A declaration: its bundle and function. -/
 abbrev Node := Nat × Nat
 
+/-- How a dependency was stated (card CONNECT-ADOPT-DECLARED-DEPENDENCIES): a
+`linkage_contract_v1` link, or a `contract inherit` directive, itself the link
+(D2). -/
+inductive LinkForm where
+  | link
+  | inherit
+  deriving DecidableEq, Repr
+
+/-- A written link: who states it, what it names, and how. -/
+structure Link where
+  dependentBundle : Nat
+  dependent : Nat
+  targetBundle : Nat
+  target : Nat
+  form : LinkForm
+
+/-- What the resolver computes of a link from the environment and the
+identity the load-path manifest records for it. -/
+structure Checks where
+  loaded : Prop
+  inRange : Prop
+  digestMatches : Prop
+  declaredCrate : Prop
+
+/-- The elaboration of a link to its C15.2 dependency. -/
+def Link.toDep (l : Link) (c : Checks) : Dep :=
+  ⟨l.dependentBundle, l.dependent, l.targetBundle, l.target, c.loaded, c.inRange, c.digestMatches,
+    c.declaredCrate⟩
+
 def Dep.source (d : Dep) : Node := (d.dependentBundle, d.dependent)
 def Dep.goal (d : Dep) : Node := (d.targetBundle, d.target)
 
@@ -526,12 +566,49 @@ structure Model where
   claim : Nat → Nat → Claim
   recorded : Nat → Nat → V
   plugin : Nat → Prop
-  deps : List Dep
+  /-- The written links (card CONNECT-ADOPT-DECLARED-DEPENDENCIES); the
+  dependencies are their elaboration (`Model.deps`). -/
+  written : List Link
+  checks : Link → Checks
   env : Node → Option HoldClass
+  /-- `#cx_reads`, `#cx_decides`, `#cx_co_used`. -/
+  reads : Nat → Nat → Nat → Nat → Prop
+  decides : Nat → Nat → Nat → Nat → Prop
+  coUsed : Nat → Nat → Nat → Nat → Prop
+  /-- `#cx_marked`. -/
+  marked : Nat → Nat → Prop
 
 namespace Model
 
 variable (m : Model)
+
+/-- The C15.2 dependencies: the elaboration of every written link. -/
+def deps : List Dep := m.written.map (fun l => l.toDep (m.checks l))
+
+/-- `#cx_relies`: a reading that can decide a verdict. -/
+def relies (b g c h : Nat) : Prop := m.reads b g c h ∧ m.decides b g c h
+
+/-- `#cx_link_required`: a cross-bundle reliance. -/
+def linkRequired (b g c h : Nat) : Prop := m.relies b g c h ∧ ¬ b = c
+
+/-- `#cx_links`: a written `linkage_contract_v1` link. -/
+def links (b g c h : Nat) : Prop :=
+  ∃ l ∈ m.written, l.form = .link ∧ l.dependentBundle = b ∧ l.dependent = g ∧
+    l.targetBundle = c ∧ l.target = h
+
+/-- `#cx_inherits`: a `contract inherit` directive, itself the link. -/
+def inherits (b g c h : Nat) : Prop :=
+  ∃ l ∈ m.written, l.form = .inherit ∧ l.dependentBundle = b ∧ l.dependent = g ∧
+    l.targetBundle = c ∧ l.target = h
+
+/-- `#cx_check_passes`: every cross-bundle reliance of the bundle is linked. -/
+def checkPasses (b : Nat) : Prop :=
+  ∀ g c h, m.linkRequired b g c h → m.links b g c h ∨ m.inherits b g c h
+
+/-- `#cx_load_refused`: a link without the marker, or the marker without a
+link. -/
+def loadRefused (b g : Nat) : Prop :=
+  ((∃ c h, m.links b g c h) ∧ ¬ m.marked b g) ∨ (m.marked b g ∧ ¬ ∃ c h, m.links b g c h)
 
 /-- `#cx_declares`. -/
 def declares (b g : Nat) : Prop := b ∈ m.bundles ∧ m.text b g ≠ none
@@ -752,6 +829,30 @@ theorem resolution_is_acyclic {x y : Node} (free : ¬ m.Held m.deps x)
     | trans _ _ ih1 ih2 => intro hx; exact ih2 (ih1 hx)
   have hy := notHeld h free
   exact ⟨hy, fun hc => hy (.cycle hc)⟩
+
+/-- **The elaboration of `linkage_contract_v1` is exactly the C15.2
+dependency set**: a dependency is the elaboration of a written link, and
+every written link elaborates to one. -/
+theorem elaboration_is_the_dependency_set (d : Dep) :
+    d ∈ m.deps ↔ ∃ l ∈ m.written, l.toDep (m.checks l) = d :=
+  List.mem_map
+
+/-- The form is not part of the dependency: a link and an inherit directive
+naming the same target elaborate alike. -/
+theorem link_forms_elaborate_alike (l l' : Link) (c : Checks)
+    (same : l.dependentBundle = l'.dependentBundle ∧ l.dependent = l'.dependent ∧
+      l.targetBundle = l'.targetBundle ∧ l.target = l'.target) :
+    l.toDep c = l'.toDep c := by
+  obtain ⟨a, b, e, f⟩ := same
+  simp [Link.toDep, a, b, e, f]
+
+/-- A held target holds the declaration that links it
+(`held_dependency_holds_dependents` over the elaboration). -/
+theorem a_held_link_target_holds_its_dependent {l : Link} (hl : l ∈ m.written)
+    (h : m.Held m.deps (l.targetBundle, l.target)) :
+    m.Held m.deps (l.dependentBundle, l.dependent) :=
+  m.held_dependency_holds_dependents (d := l.toDep (m.checks l))
+    ((m.elaboration_is_the_dependency_set _).mpr ⟨l, hl, rfl⟩) h
 
 theorem holdVerdict_of_unknown {x : Node} (h : m.HeldUnknown m.deps x) :
     m.holdVerdict x.1 x.2 = .unknown := by
@@ -1132,6 +1233,76 @@ theorem formula_cx_held_is_never_safe : ∀ b g, m.Held m.deps (b, g) →
   rcases m.holdVerdict_of_held (x := (b, g)) h with e | e <;>
     · simp only at e; rw [e] at hle; simp [V.rank] at hle
 
+theorem formula_cx_relies_is_a_deciding_read : ∀ b g c h,
+    m.relies b g c h → (m.reads b g c h ∧ m.decides b g c h) :=
+  fun _ _ _ _ h => h
+
+theorem formula_cx_deciding_read_relies : ∀ b g c h,
+    (m.reads b g c h ∧ m.decides b g c h) → m.relies b g c h :=
+  fun _ _ _ _ h => h
+
+theorem formula_cx_undeciding_read_not_required : ∀ b g c h,
+    (m.reads b g c h ∧ ¬ m.decides b g c h) → ¬ m.relies b g c h :=
+  fun _ _ _ _ ⟨_, hd⟩ hr => hd hr.2
+
+theorem formula_cx_co_use_is_not_reliance : ∀ b g c h,
+    (m.coUsed b g c h ∧ ¬ m.reads b g c h) → ¬ m.relies b g c h :=
+  fun _ _ _ _ ⟨_, hn⟩ hr => hn hr.1
+
+theorem formula_cx_required_is_a_cross_bundle_reliance : ∀ b g c h,
+    m.linkRequired b g c h → (m.relies b g c h ∧ ¬ b = c) :=
+  fun _ _ _ _ h => h
+
+theorem formula_cx_cross_bundle_reliance_is_required : ∀ b g c h,
+    (m.relies b g c h ∧ ¬ b = c) → m.linkRequired b g c h :=
+  fun _ _ _ _ h => h
+
+theorem formula_cx_same_bundle_not_required : ∀ b g h, ¬ m.linkRequired b g b h :=
+  fun _ _ _ ⟨_, hne⟩ => hne rfl
+
+theorem formula_cx_reliance_is_linked : ∀ b g c h,
+    (m.linkRequired b g c h ∧ m.checkPasses b) → (m.links b g c h ∨ m.inherits b g c h) :=
+  fun _ g c h ⟨hr, hp⟩ => hp g c h hr
+
+theorem formula_cx_unlinked_reliance_fails_the_check : ∀ b g c h,
+    (m.linkRequired b g c h ∧ (¬ m.links b g c h ∧ ¬ m.inherits b g c h)) →
+      ¬ m.checkPasses b := by
+  intro b g c h ⟨hr, hl, hi⟩ hp
+  rcases hp g c h hr with x | x
+  · exact hl x
+  · exact hi x
+
+theorem formula_cx_link_needs_marker : ∀ b g,
+    ((∃ c h, m.links b g c h) ∧ ¬ m.marked b g) → m.loadRefused b g :=
+  fun _ _ h => Or.inl h
+
+theorem formula_cx_marker_needs_link : ∀ b g,
+    (m.marked b g ∧ ¬ ∃ c h, m.links b g c h) → m.loadRefused b g :=
+  fun _ _ h => Or.inr h
+
+theorem formula_cx_link_is_a_dependency : ∀ b g c h,
+    (m.links b g c h ∨ m.inherits b g c h) →
+      ∃ d : D m, ((d.1.dependentBundle = b ∧ d.1.dependent = g) ∧ d.1.targetBundle = c) ∧
+        d.1.target = h := by
+  intro b g c h hl
+  have : ∃ l ∈ m.written, l.dependentBundle = b ∧ l.dependent = g ∧ l.targetBundle = c ∧
+      l.target = h := by
+    rcases hl with ⟨l, hm, _, e⟩ | ⟨l, hm, _, e⟩
+    · exact ⟨l, hm, e⟩
+    · exact ⟨l, hm, e⟩
+  obtain ⟨l, hm, e1, e2, e3, e4⟩ := this
+  exact ⟨⟨l.toDep (m.checks l), (m.elaboration_is_the_dependency_set _).mpr ⟨l, hm, rfl⟩⟩,
+    ⟨⟨e1, e2⟩, e3⟩, e4⟩
+
+theorem formula_cx_dependency_is_a_link : ∀ d : D m,
+    m.links d.1.dependentBundle d.1.dependent d.1.targetBundle d.1.target ∨
+      m.inherits d.1.dependentBundle d.1.dependent d.1.targetBundle d.1.target := by
+  intro ⟨d, hd⟩
+  obtain ⟨l, hm, rfl⟩ := (m.elaboration_is_the_dependency_set d).mp hd
+  cases hf : l.form with
+  | link => exact Or.inl ⟨l, hm, hf, rfl, rfl, rfl, rfl⟩
+  | inherit => exact Or.inr ⟨l, hm, hf, rfl, rfl, rfl, rfl⟩
+
 end Formulas
 
 /-! ## The CX terms and the formula table -/
@@ -1175,10 +1346,15 @@ def cxTerms : List (String × String) := [
   ("cx_held", "Model.Held"), ("cx_target_bundle", "Dep.targetBundle"),
   ("cx_target", "Dep.target"), ("cx_dependent_bundle", "Dep.dependentBundle"),
   ("cx_dependent", "Dep.dependent"), ("cx_on_cycle", "Model.OnCycle"),
-  ("cx_hold_verdict", "Model.holdVerdict"), ("cx_human_resolvable", "Model.humanResolvable")
+  ("cx_hold_verdict", "Model.holdVerdict"), ("cx_human_resolvable", "Model.humanResolvable"),
+  ("cx_reads", "Model.reads"), ("cx_decides", "Model.decides"), ("cx_relies", "Model.relies"),
+  ("cx_co_used", "Model.coUsed"), ("cx_link_required", "Model.linkRequired"),
+  ("cx_check_passes", "Model.checkPasses"), ("cx_links", "Model.links"),
+  ("cx_inherits", "Model.inherits"), ("cx_marked", "Model.marked"),
+  ("cx_load_refused", "Model.loadRefused")
 ]
 
-theorem cxTerms_count : cxTerms.length = 80 := by decide
+theorem cxTerms_count : cxTerms.length = 90 := by decide
 
 /-- The formulas of `qcore_schemas::connect::FORMULAS`, as written. -/
 def formulaTable : List (String × String) := [
@@ -1301,9 +1477,35 @@ def formulaTable : List (String × String) := [
   ("cx_hold_bounds_contribution",
    "forall (#b: cx_bundle) { forall (#g: cx_fn) { (#cx_held(#b,#g) => #cx_rank(#cx_hold_verdict(#b,#g)) <= #cx_rank(#cx_contribution(#b,#g))) } }"),
   ("cx_held_is_never_safe",
-   "forall (#b: cx_bundle) { forall (#g: cx_fn) { (#cx_held(#b,#g) => !#cx_contribution(#b,#g) == #cx_safe) } }")
+   "forall (#b: cx_bundle) { forall (#g: cx_fn) { (#cx_held(#b,#g) => !#cx_contribution(#b,#g) == #cx_safe) } }"),
+  ("cx_relies_is_a_deciding_read",
+   "forall (#b: cx_bundle) { forall (#g: cx_fn) { forall (#c: cx_bundle) { forall (#h: cx_fn) { (#cx_relies(#b,#g,#c,#h) => (#cx_reads(#b,#g,#c,#h) && #cx_decides(#b,#g,#c,#h))) } } } }"),
+  ("cx_deciding_read_relies",
+   "forall (#b: cx_bundle) { forall (#g: cx_fn) { forall (#c: cx_bundle) { forall (#h: cx_fn) { ((#cx_reads(#b,#g,#c,#h) && #cx_decides(#b,#g,#c,#h)) => #cx_relies(#b,#g,#c,#h)) } } } }"),
+  ("cx_undeciding_read_not_required",
+   "forall (#b: cx_bundle) { forall (#g: cx_fn) { forall (#c: cx_bundle) { forall (#h: cx_fn) { ((#cx_reads(#b,#g,#c,#h) && !#cx_decides(#b,#g,#c,#h)) => !#cx_relies(#b,#g,#c,#h)) } } } }"),
+  ("cx_co_use_is_not_reliance",
+   "forall (#b: cx_bundle) { forall (#g: cx_fn) { forall (#c: cx_bundle) { forall (#h: cx_fn) { ((#cx_co_used(#b,#g,#c,#h) && !#cx_reads(#b,#g,#c,#h)) => !#cx_relies(#b,#g,#c,#h)) } } } }"),
+  ("cx_required_is_a_cross_bundle_reliance",
+   "forall (#b: cx_bundle) { forall (#g: cx_fn) { forall (#c: cx_bundle) { forall (#h: cx_fn) { (#cx_link_required(#b,#g,#c,#h) => (#cx_relies(#b,#g,#c,#h) && !#b == #c)) } } } }"),
+  ("cx_cross_bundle_reliance_is_required",
+   "forall (#b: cx_bundle) { forall (#g: cx_fn) { forall (#c: cx_bundle) { forall (#h: cx_fn) { ((#cx_relies(#b,#g,#c,#h) && !#b == #c) => #cx_link_required(#b,#g,#c,#h)) } } } }"),
+  ("cx_same_bundle_not_required",
+   "forall (#b: cx_bundle) { forall (#g: cx_fn) { forall (#h: cx_fn) { !#cx_link_required(#b,#g,#b,#h) } } }"),
+  ("cx_reliance_is_linked",
+   "forall (#b: cx_bundle) { forall (#g: cx_fn) { forall (#c: cx_bundle) { forall (#h: cx_fn) { ((#cx_link_required(#b,#g,#c,#h) && #cx_check_passes(#b)) => (#cx_links(#b,#g,#c,#h) || #cx_inherits(#b,#g,#c,#h))) } } } }"),
+  ("cx_unlinked_reliance_fails_the_check",
+   "forall (#b: cx_bundle) { forall (#g: cx_fn) { forall (#c: cx_bundle) { forall (#h: cx_fn) { ((#cx_link_required(#b,#g,#c,#h) && (!#cx_links(#b,#g,#c,#h) && !#cx_inherits(#b,#g,#c,#h))) => !#cx_check_passes(#b)) } } } }"),
+  ("cx_link_needs_marker",
+   "forall (#b: cx_bundle) { forall (#g: cx_fn) { ((exists (#c: cx_bundle) { exists (#h: cx_fn) { #cx_links(#b,#g,#c,#h) } } && !#cx_marked(#b,#g)) => #cx_load_refused(#b,#g)) } }"),
+  ("cx_marker_needs_link",
+   "forall (#b: cx_bundle) { forall (#g: cx_fn) { ((#cx_marked(#b,#g) && !exists (#c: cx_bundle) { exists (#h: cx_fn) { #cx_links(#b,#g,#c,#h) } }) => #cx_load_refused(#b,#g)) } }"),
+  ("cx_link_is_a_dependency",
+   "forall (#b: cx_bundle) { forall (#g: cx_fn) { forall (#c: cx_bundle) { forall (#h: cx_fn) { ((#cx_links(#b,#g,#c,#h) || #cx_inherits(#b,#g,#c,#h)) => exists (#d: cx_dep) { (((#cx_dependent_bundle(#d) == #b && #cx_dependent(#d) == #g) && #cx_target_bundle(#d) == #c) && #cx_target(#d) == #h) }) } } } }"),
+  ("cx_dependency_is_a_link",
+   "forall (#d: cx_dep) { (#cx_links(#cx_dependent_bundle(#d),#cx_dependent(#d),#cx_target_bundle(#d),#cx_target(#d)) || #cx_inherits(#cx_dependent_bundle(#d),#cx_dependent(#d),#cx_target_bundle(#d),#cx_target(#d))) }")
 ]
 
-theorem formulaTable_count : formulaTable.length = 60 := by decide
+theorem formulaTable_count : formulaTable.length = 73 := by decide
 
 end QCore.MeasureConnect

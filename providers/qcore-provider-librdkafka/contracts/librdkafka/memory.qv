@@ -32,6 +32,8 @@ extern fn rd_malloc(size: usize) -> ptr<mut, u8> contract inherit libc::malloc;
 extern fn rd_calloc(count: usize, size: usize) -> ptr<mut, u8>
 contract {
     requires resource_contract_v1;
+    requires linkage_contract_v1;
+    quant #link libc::calloc;
     requires resource_body_checked;
     requires resource_premise(asserted_allocation, #deployed_assertion && #deployed_failure_call && #call |-> #failure_no_return);
     ensures normal resource_borrowed(count);
@@ -45,6 +47,8 @@ contract {
 extern fn rd_strdup(str: ptr<const, u8>) -> ptr<mut, u8>
 contract {
     requires resource_contract_v1;
+    requires linkage_contract_v1;
+    quant #link libc::strdup;
     requires resource_body_checked;
     requires resource_premise(asserted_allocation, #deployed_assertion && #deployed_failure_call && #call |-> #failure_no_return);
     ensures normal resource_borrowed(str);

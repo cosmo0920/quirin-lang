@@ -201,19 +201,23 @@ fn constructor_result_evolution(
 }
 
 fn constructor_specification_tokens(name: &str) -> Vec<qcore_frontend::lexer::TokenKind> {
-    let (parameters, borrowed) = match name {
+    // Card CONNECT-ADOPT-DECLARED-DEPENDENCIES: each specification also
+    // links the libc allocation its body is read through.
+    let (parameters, borrowed, parent) = match name {
         "rd_calloc" => (
             "count: usize, size: usize",
             "ensures normal resource_borrowed(count); ensures normal resource_borrowed(size);",
+            "calloc",
         ),
         "rd_strdup" => (
             "str: ptr<const, u8>",
             "ensures normal resource_borrowed(str);",
+            "strdup",
         ),
         _ => panic!("not a rule-37 checked wrapper"),
     };
     let source = format!(
-        r#"module contract; extern fn {name}({parameters}) -> ptr<mut, u8> contract {{ requires resource_contract_v1; requires resource_body_checked; requires resource_premise(asserted_allocation, #deployed_assertion && #deployed_failure_call && #call |-> #failure_no_return); {borrowed} ensures normal resource_return_owned(nonnull); }};"#
+        r#"module contract; extern fn {name}({parameters}) -> ptr<mut, u8> contract {{ requires resource_contract_v1; requires linkage_contract_v1; quant #link libc::{parent}; requires resource_body_checked; requires resource_premise(asserted_allocation, #deployed_assertion && #deployed_failure_call && #call |-> #failure_no_return); {borrowed} ensures normal resource_return_owned(nonnull); }};"#
     );
     parse_source_program(&source)
         .unwrap()

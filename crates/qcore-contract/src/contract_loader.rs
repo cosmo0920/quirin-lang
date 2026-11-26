@@ -1952,19 +1952,24 @@ fn load_function_in(
                 // state, read below; every other `quant` form still rejects.
                 SourceContractClauseKind::QuantLive => "quant live",
                 SourceContractClauseKind::QuantProposition => "quant proposition",
+                // Card CONNECT-ADOPT-DECLARED-DEPENDENCIES: a link.
+                SourceContractClauseKind::QuantLink => crate::contract_dependency::LINK_INTRODUCER,
                 _ => return Err("unsupported error, any-exit, or quantitative clause"),
             };
             Ok(format!("{prefix} {};", c.value.expression_source))
         })
         .collect::<Result<Vec<_>, _>>()?
         .join(" ");
+    // A `premises { ... };` or `link { ... };` block groups clauses; the
+    // reconstruction compares the clauses it holds, in place.
+    let written_tokens = crate::contract_dependency::without_linkage_blocks(&decl.tokens);
     let return_type = result_abi_types()
         .find(|ty| {
             let expected = format!(
                 "extern fn {}({parameter_text}) -> {ty} contract {{ {clause_text} }};",
                 decl.name
             );
-            token_kinds(&expected).ok().as_ref() == Some(&decl.tokens)
+            token_kinds(&expected).ok().as_ref() == Some(&written_tokens)
         })
         .ok_or("unsupported signature, effects, or declaration suffix")?;
 
@@ -2069,10 +2074,19 @@ fn load_function_in(
     let mut cell_clauses: Vec<descriptor_cell::Written> = Vec::new();
     let mut cell_releases: Vec<(String, descriptor_cell::WrittenEquality)> = Vec::new();
     let mut removal_guards: Vec<descriptor_cell::WrittenEquality> = Vec::new();
+    let mut linkage_markers = 0_usize;
     for clause in clauses {
         if clause.value.kind == SourceContractClauseKind::QuantProposition {
             // The whole graph was type checked above; this is an explicit
             // hypothesis representation, never an interpreted C effect.
+            continue;
+        }
+        // Card CONNECT-ADOPT-DECLARED-DEPENDENCIES: a `linkage_contract_v1`
+        // link (C15.2), recorded per declaration; it adds no obligation.
+        if clause.value.kind == SourceContractClauseKind::QuantLink {
+            contract_dependencies.push(crate::contract_dependency::link_target(
+                &clause.value.expression_source,
+            )?);
             continue;
         }
         if clause.value.kind == SourceContractClauseKind::QuantLive {
@@ -2118,23 +2132,13 @@ fn load_function_in(
             }
             continue;
         }
-        // Card QUIRIN-AUDIT-CONNECT: a declared contract dependency (C15.2),
-        // a requirement that adds no obligation; one per target.
-        if let Some(written) = crate::contract_dependency::contract_dependency_clause(
-            requires,
-            &clause.value.expression_source,
-        )? {
-            if contract_dependencies.iter().any(|known| {
-                known.target_crate == written.target_crate
-                    && known.target_function == written.target_function
-            }) {
-                return Err(format!(
-                    "a declaration states one contract dependency per target; `{}::{}` is \
-                     named twice",
-                    written.target_namespace, written.target_function
-                ));
-            }
-            contract_dependencies.push(written);
+        // Card CONNECT-ADOPT-DECLARED-DEPENDENCIES (`linkage_contract_v1`,
+        // C15.2): the marker, a requirement that adds no obligation. The
+        // links are read above; the written form of QUIRIN-AUDIT-CONNECT is
+        // retired (QL005).
+        crate::contract_dependency::refuse_retired(&clause.value.expression_source)?;
+        if crate::contract_dependency::is_marker(requires, &clause.value.expression_source) {
+            linkage_markers += 1;
             continue;
         }
         // Card W45-CONTRACT-REVISION-MODE: a revision marker, contract-level (a
@@ -3504,6 +3508,13 @@ fn load_function_in(
                 .into(),
         );
     }
+    // Card CONNECT-ADOPT-DECLARED-DEPENDENCIES: a link needs the marker, the
+    // marker a link, and no target is linked twice (QL001, QL002, QL004).
+    crate::contract_dependency::check_declaration(
+        &decl.name,
+        linkage_markers,
+        &contract_dependencies,
+    )?;
     let mut premises: Vec<DeclaredPremise> = premises
         .into_iter()
         .chain(literal_arguments.iter().map(|premise| DeclaredPremise {
