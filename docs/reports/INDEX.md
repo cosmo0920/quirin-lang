@@ -727,6 +727,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [landing-batch-c](landing-batch-c/README.md) | Landing batch C (integrate/r76): leak witness, keep-or-deliver, callback tables |
 
+| [landing-batch-d](landing-batch-d/README.md) | Landing batch D (integrate/r77): refusal-kind leaks, member-path invocation |
+
 | [landing-provider-lock](landing-provider-lock/README.md) | Landing repair: provider workspace lock (2026-11-01) |
 
 | [landing-publish-completion](landing-publish-completion/README.md) | LANDING-PUBLISH-COMPLETION |
@@ -821,6 +823,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [member-helper-clause-spelling](member-helper-clause-spelling/README.md) | MEMBER-HELPER-CLAUSE-SPELLING: the user keeps `resource_member_helper` |
 
 | [member-path-direct-refusal-text](member-path-direct-refusal-text/README.md) | MEMBER-PATH-DIRECT-REFUSAL-TEXT |
+
+| [member-path-invocation-premise](member-path-invocation-premise/README.md) | MEMBER-PATH-INVOCATION-PREMISE: `gone` only under an established invocation |
 
 | [member-path-unit-helpers](member-path-unit-helpers/README.md) | MEMBER-PATH-STATES-THROUGH-UNIT-HELPERS: rule 30's body check through the unit's helpers |
 
@@ -1387,6 +1391,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [serve-forwarded-callback-formals](serve-forwarded-callback-formals/README.md) | SERVE-FORWARDED-CALLBACK-FORMALS: forwarded callback formals |
 
 | [settled-leak-joined-genuine-withdrawn](settled-leak-joined-genuine-withdrawn/README.md) | SETTLED-LEAK-JOINED-GENUINE-WITHDRAWN: a withdrawn leak with an avoiding path is published |
+
+| [settled-leak-other-refusal-schedule](settled-leak-other-refusal-schedule/README.md) | SETTLED-LEAK-OTHER-REFUSAL-SCHEDULE: a leak marked by any refusal is decided from settled states |
 
 | [slice-permissions-write-lend](slice-permissions-write-lend/README.md) | SLICE-PERMISSIONS-WRITE-LEND — the write half of CT07, and the fraction that finally exists (wave 29) |
 

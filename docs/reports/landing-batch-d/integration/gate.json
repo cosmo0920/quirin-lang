@@ -1,0 +1,13 @@
+{
+  "note": "Landing integrate/r77, landing batch D (base main 98c51878f; USER DECISION 2026-11-27 \"land as rNN.\"). Contents: SETTLED-LEAK-OTHER-REFUSAL-SCHEDULE b6307d1b9 (rule 84 amended in place, rules 74c and 6 point to it; a leak whose settled exit marks the identity by any refusal is published only on a restricted-replay witness avoiding every refusal, else withdrawn, independent of schedule; QCore.SettledLeakJoined); MEMBER-PATH-INVOCATION-PREMISE b02341e94 (rule 30 amended, rule 13v points to it; a member-path gone reading under some or no arm needs an invoking body that calls a candidate on every path, else member-path-invocation-unestablished; QCore.MemberPathInvocationPremise). Both merges clean; generated rule docs and Lean roots regenerated; third_party/libevent checked out. Amendments applied in order with --profiles-base origin/main; MEMBER-PATH retires MEMBER-PATH-INVOCATION-PREMISE, SETTLED-LEAK registers SETTLED-LEAK-MARK-WITHOUT-UNKNOWN-LEAF. llp64_fixture_scan over the batch's test changes: 0 counted. Full landing gate on 07833c86a (private/integrate-r77/gate, raw record beside this file as gate-scope.json) via scripts/gate_scope.py --base origin/main --full --landing through private/toolchain/env.sh: Rust 725 units / 770 summaries, 10363 passed, 0 failed, 24 ignored; fmt, Clippy and both reevaluation examples exit 0; Lean (all) exit 0, 531 audits. The gate scope did not select the provider gate; provider_tests 182 (1 ignored) is carried from the integrate/r74 landing batch A gate. Python (807 tests) exited 1 only on the two stale-matrix checks in test_build_matrix_sections, cleared by regenerating the matrix from this record. Measurements are each card's own (opt-in current --monkey-linked over Fluent Bit 046accf6, base vs tip, in its report: SETTLED-LEAK moves ut_testSameSubscriptions provisional Unsafe -> Unknown, Unsafe 8 -> 7; MEMBER-PATH no status move); no combined measurement was run for the batch. Pinned-route parity (quirin-audit measure --declared) was not run: this host holds no build/cycle19 inputs or baselines. No profile baseline is changed and land.py publish is owed.",
+  "workspace_tests": 10363,
+  "provider_tests": 182,
+  "python_evidence_validator_tests": 807,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "full landing gate: every step exits 0 except the Python suite's stale-matrix check, cleared by regenerating the matrix from this record; provider gate not selected (no providers/ change), provider count carried from the integrate/r74 landing batch A gate",
+  "lean_audits": 531,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
