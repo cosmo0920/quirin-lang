@@ -470,6 +470,7 @@ import QCore.ReturnFamilyUntrackedMemberCast
 import QCore.ReturnFamilyUntrackedReversedSubscript
 import QCore.ReturnPositionEscape
 import QCore.ReturnRefusedCallLowering
+import QCore.ReturnStrictMemberNull
 import QCore.ReviewHoldStanding
 import QCore.RkLogCallerFrame
 import QCore.RouteSelection

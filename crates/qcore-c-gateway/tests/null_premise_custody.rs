@@ -159,11 +159,24 @@ fn no_premise_where_nothing_is_read_through_the_alias() {
     assert!(outcome.premises.is_empty(), "{outcome:?}");
     // A plain pointer read of a never-bound root leaves its destination
     // unbound: custody already reads its dereference as an untracked object
-    // (W43-INDIRECT-ACCESS-GENERAL), with no premise (pre-existing; the null
-    // property checks it).
-    let outcome = run("int subject(struct S *a) { struct S *n = a->next; return n->a; }");
-    assert_eq!(outcome.status, AnalysisStatus::Safe, "{outcome:?}");
-    assert!(outcome.premises.is_empty(), "{outcome:?}");
+    // (W43-INDIRECT-ACCESS-GENERAL). Card RETURN-STRICT-MEMBER-NULL-UNTRACKED-
+    // ROOT (rule 74v): the bare `return n->a;` used to lower through B01's
+    // obligation-free `OpaqueValue`, so no premise was named, while
+    // `return n->a + 1;` and `int v = n->a; return v;` name `n`. It now
+    // carries family S's base and names the same premise.
+    for source in [
+        "int subject(struct S *a) { struct S *n = a->next; return n->a; }",
+        "int subject(struct S *a) { struct S *n = a->next; return n->a + 1; }",
+        "int subject(struct S *a) { struct S *n = a->next; int v = n->a; return v; }",
+    ] {
+        let outcome = run(source);
+        assert_eq!(outcome.status, AnalysisStatus::Safe, "{outcome:?}");
+        assert_eq!(
+            outcome.premises,
+            vec![(5, "n".to_owned())],
+            "{source}\n{outcome:?}"
+        );
+    }
 }
 
 #[test]

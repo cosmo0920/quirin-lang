@@ -1,0 +1,3 @@
+{"unit": 149, "file": "src/flb_input_chunk.c", "function": "flb_input_chunk_get_name", "status": ["Safe", "Safe"], "null_premises": [[], ["null-deref:flb_input_chunk_get_name:20522:ch"]], "diagnostics_equal": true}
+{"unit": 150, "file": "src/flb_input_chunk.c", "function": "flb_input_chunk_get_name", "status": ["Safe", "Safe"], "null_premises": [[], ["null-deref:flb_input_chunk_get_name:20522:ch"]], "diagnostics_equal": true}
+{"changed_rows": 2}

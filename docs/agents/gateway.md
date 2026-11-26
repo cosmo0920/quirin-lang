@@ -14032,6 +14032,61 @@ through `ampersand_runs`.
     `a_member_root_through_the_group_refuses`, `type_group_vectors_hold`);
     [report](../reports/type-group-qualified-pointer/README.md).
 
+<a id="constraint-74v"></a>
+
+74v. **A bare member read through an untracked root keeps family S's base.**
+    Card RETURN-STRICT-MEMBER-NULL-UNTRACKED-ROOT, registered by
+    [rule 74t](#constraint-74t)'s card. `return_expression_instruction` asks
+    card B01's routes before family S. One of them classifies the synthetic
+    `PLACE = E ;` and admits an `OpaqueValue` into the return place when `E`
+    has exactly one member selection. The classifier produces that value only
+    for C02-P's opaque field read, one admitted access over a root
+    `UntrackedBases::never_bound` reports (premise 4). So the value carries no
+    tracked identity and the exit escapes nothing. That premise says nothing
+    about nullness, though, and the `OpaqueValue` carried no obligation for the
+    root `->` dereferences. So
+    `long w(void) { const struct s *p = 0; return p->n; }`,
+    `struct s *w(void) { const struct s *p = 0; return p->next; }` and its
+    `(void *)` cast, which `cast_return` strips first, were `Safe`.
+    Meanwhile `return p->n + 1;` (family S) and
+    `long x = p->n; return x;` are `Unknown` (`unknown_alias:p`). That is the
+    admitting direction. The strict `Returned` rule and its `Decides`
+    widening do not admit these spellings. Their F3/F4 chains require
+    `!FunctionTypes::may_bind(base)`, which a written root fails, and an
+    unwritten root (a formal or an uninitialised local) has no binding, so
+    family S's obligation discharges for it anyway.
+
+    `member_read_base` reads what the admitted expression dereferences.
+    `ROOT - > FIELD` with two names lowers to `IndirectScalarAccess`, with the
+    root as its only base and the root's C02-P-ALIAS reading, no destination,
+    no frame and no chain. That is family S's node for the spelling
+    (`scalar_read` gives the same base and `->` root), so the bare read gets
+    the verdict family S gives `p->n + 1`. An expression with no `>`, `[`,
+    `]`, `*` or `&` (a `.` read of a record value) dereferences nothing and
+    keeps the `OpaqueValue`. Every other spelling declines, and the later
+    routes (W43, family S, rule 10k, rule 11h) decide it. B01 admits none
+    today. The exit is still a `NoOp`, so nothing new escapes.
+
+    B01 admitted every expression it read, and a declined one goes to routes
+    that only see expressions B01 admitted at the base, so nothing admits
+    more than at the base. An unbound formal, an uninitialised local, a copy
+    of a formal, a member read and a root a null test guards keep `Safe`. A
+    tracked root is never B01's (premise 4), and an address `&p->n` and the
+    spellings family S already decides keep their verdicts. **Do not** keep an
+    obligation-free node for a read that dereferences, **do not** route these
+    returns to family S alone (it declines a pointer result, which would lose
+    the unbound formal's `Safe`), and **do not** widen `member_read_base`
+    without its vectors. Premises stated, not proved: the token classes
+    (trust boundary 28). `QCore.ReturnStrictMemberNull`
+    (`the_fix_only_refuses_more`, `outside_b01_unchanged`,
+    `a_value_read_is_unchanged`, `a_root_read_needs_its_base`,
+    `a_declined_read_defers`, `the_bare_read_gets_family_s_verdict`,
+    `a_discharged_root_keeps_its_admission`,
+    `the_root_is_the_dereferenced_name`,
+    `a_value_read_dereferences_nothing`, `old_misses_the_base`,
+    `read_vectors_hold`);
+    [report](../reports/return-strict-member-null/README.md).
+
 <a id="constraint-74w"></a>
 
 74w. **An untracked root accessed through pointer arithmetic is a base.**

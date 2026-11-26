@@ -18,6 +18,11 @@
 //!
 //! Moved verbatim from `legacy_c.rs` (only visibility widened to
 //! `pub(super)` where the parent or a sibling module reads an item).
+//!
+//! Card RETURN-STRICT-MEMBER-NULL-UNTRACKED-ROOT (gateway rule 74v): B01's
+//! opaque member read lowers a `ROOT -> FIELD` read to family S's read node,
+//! so the dereferenced untracked root keeps its base obligation
+//! (`member_read_base`, `QCore.ReturnStrictMemberNull`).
 
 use super::*;
 
@@ -265,8 +270,10 @@ impl Parser<'_> {
                 if destination == return_call::RETURN_RESULT_PLACE
         ) && direct_member_read;
         self.restore_probe_state(&restore);
-        if admitted {
-            return Some((instruction, false));
+        // Card RETURN-STRICT-MEMBER-NULL-UNTRACKED-ROOT (rule 74v): a `->`
+        // read keeps family S's untracked-root base; see `member_read_base`.
+        if admitted && let Some(admission) = self.opaque_member_read_return(&texts, &instruction) {
+            return Some(admission);
         }
         // Card W43-RETURN-EXPRESSION. Asked last, after every admitting route
         // above has declined: a whole-call return whose synthetic assignment
@@ -292,4 +299,78 @@ impl Parser<'_> {
         // the address of a static-duration object carries no identity.
         self.static_address_return(expression)
     }
+
+    /// Card **RETURN-STRICT-MEMBER-NULL-UNTRACKED-ROOT** (rule 74v): the
+    /// lowering of B01's admitted opaque member read, `instruction` being the
+    /// `OpaqueValue` the classifier assigned to the return place.
+    ///
+    /// The read is admitted only over a root `UntrackedBases::never_bound`
+    /// reports (C02-P premise 4), so its value carries no tracked identity
+    /// and the exit escapes nothing. That premise says nothing about
+    /// nullness: a `->` read dereferences the root, and the `OpaqueValue`
+    /// carried no obligation for it, so `return p->n;` through a null local
+    /// `p` was `Safe` while family S refuses `return p->n + 1;`
+    /// (`unknown_alias:p`). A `->` read is therefore lowered to family S's
+    /// own read node for that spelling: `IndirectScalarAccess` with the root
+    /// as its only base and the root's C02-P-ALIAS reading, no destination,
+    /// no frame and no chain. A `.` read of a record value dereferences
+    /// nothing and keeps the `OpaqueValue`. Any other spelling (none is
+    /// admitted by B01 today) declines, and the later routes decide it.
+    fn opaque_member_read_return(
+        &self,
+        texts: &[&str],
+        instruction: &LegacyInstruction,
+    ) -> Option<(LegacyInstruction, bool)> {
+        match member_read_base(texts) {
+            MemberReadBase::Value => Some((instruction.clone(), false)),
+            MemberReadBase::Root(root) => Some((
+                LegacyInstruction::IndirectScalarAccess {
+                    typed_alternative: None,
+                    alias_reads: self.read_alias(Some(root)).into_iter().collect(),
+                    bases: vec![root.to_owned()],
+                    destination: None,
+                    frame: None,
+                    chains: Vec::new(),
+                    borrowed_destination: false,
+                    readback: None,
+                },
+                false,
+            )),
+            MemberReadBase::Declined => None,
+        }
+    }
 }
+
+/// Rule 74v: what a B01 opaque member read dereferences.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(super) enum MemberReadBase<'a> {
+    /// No `->`, `[` or `*`: a `.` read of a record value, no dereference.
+    Value,
+    /// Exactly `ROOT -> FIELD`: `ROOT` is dereferenced, family S's base.
+    Root(&'a str),
+    /// Anything else: the admission is declined (fail-closed).
+    Declined,
+}
+
+/// Rule 74v's reading of the expression B01's opaque member read admitted.
+/// `ROOT - > FIELD` with two names is the root's dereference; an expression
+/// with no `->`, `[` or `*` dereferences nothing; every other spelling is
+/// declined, so the later routes decide it.
+pub(super) fn member_read_base<'a>(texts: &[&'a str]) -> MemberReadBase<'a> {
+    match texts {
+        [root, "-", ">", field] if is_identifier(root) && is_identifier(field) => {
+            MemberReadBase::Root(root)
+        }
+        _ if !texts
+            .iter()
+            .any(|text| matches!(*text, ">" | "[" | "]" | "*" | "&")) =>
+        {
+            MemberReadBase::Value
+        }
+        _ => MemberReadBase::Declined,
+    }
+}
+
+#[cfg(test)]
+#[path = "../tests/unit/legacy_return_member_read.rs"]
+mod member_read_tests;
