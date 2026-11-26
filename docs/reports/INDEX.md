@@ -123,6 +123,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [callback-supplied-null-actual](callback-supplied-null-actual/README.md) | CALLBACK-SUPPLIED-NULL-ACTUAL: a callee-supplied callback actual that may be NULL |
 
+| [callback-table-member-path-states](callback-table-member-path-states/README.md) | CALLBACK-TABLE-MEMBER-PATH-STATES: a table dispatch composes its candidates' member-path states |
+
 | [callee-retention-class1](callee-retention-class1/README.md) | CALLEE-RETENTION-CLASS1: class 1 split by shape |
 
 | [canonical-contract-locations](canonical-contract-locations/README.md) | Canonical contract locations |
@@ -721,6 +723,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [landing-batch-b](landing-batch-b/README.md) | Landing batch B (integrate/r75): formal-name readings and the Windows types notice |
 
+| [landing-batch-c](landing-batch-c/README.md) | Landing batch C (integrate/r76): leak witness, keep-or-deliver, callback tables |
+
 | [landing-provider-lock](landing-provider-lock/README.md) | Landing repair: provider workspace lock (2026-11-01) |
 
 | [landing-publish-completion](landing-publish-completion/README.md) | LANDING-PUBLISH-COMPLETION |
@@ -925,6 +929,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [out-parameter-scalar-frame-premise](out-parameter-scalar-frame-premise/README.md) | OUT-PARAMETER-SCALAR-FRAME-PREMISE |
 
 | [out-slot-call-write-aliasing](out-slot-call-write-aliasing/README.md) | OUT-SLOT-CALL-WRITE-ALIASING |
+
+| [out-slot-conditional-delivery](out-slot-conditional-delivery/README.md) | OUT-SLOT-CONDITIONAL-DELIVERY: the keep-or-deliver summary of an in-out slot |
 
 | [outer-contract](outer-contract/README.md) | OUTER-CONTRACT: outer contracts and the runtime projection (stage 1) |
 
@@ -1377,6 +1383,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [selection-routes-split-caller-and-home](selection-routes-split-caller-and-home/README.md) | SELECTION-ROUTES-SPLIT-CALLER-AND-HOME |
 
 | [serve-forwarded-callback-formals](serve-forwarded-callback-formals/README.md) | SERVE-FORWARDED-CALLBACK-FORMALS: forwarded callback formals |
+
+| [settled-leak-joined-genuine-withdrawn](settled-leak-joined-genuine-withdrawn/README.md) | SETTLED-LEAK-JOINED-GENUINE-WITHDRAWN: a withdrawn leak with an avoiding path is published |
 
 | [slice-permissions-write-lend](slice-permissions-write-lend/README.md) | SLICE-PERMISSIONS-WRITE-LEND — the write half of CT07, and the fraction that finally exists (wave 29) |
 

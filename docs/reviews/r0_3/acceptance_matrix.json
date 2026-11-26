@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 10,
-  "named_followups": 1128
+  "named_followups": 1130
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6921,11 +6921,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Landing integrate/r75, landing batch B (base main 1ecaf97e9, merged up to main 6ebc40c76 after batch A in 554b7f1fa; USER DECISION 2026-11-26 \"Three batches\", after \"yes, land it as r75\" for the Windows types notice, \"yes, land it as r76 after the Windows notice\" for NAME-KEYED-HOLDER-SHADOWING and the launches of the other two). Contents: WINDOWS-TYPES-NOTICE (documentation: docs/development/windows-types.md, routed from AGENTS.md, CLAUDE.md and docs/development/README.md); NAME-KEYED-HOLDER-SHADOWING 4fef267f4 (rule 86); JUMPED-SHADOW-FORMAL-READINGS e04c00636 (rule 86 extended, built on 4fef267f4); CALL-WITH-DEREF-ACTUAL-READ-AS-DECLARATION 3f6ed07d5 (rule 89). The cards merged with generated-file conflicts only, regenerated; both shadow-guard hooks in crates/qcore-c-gateway/src/legacy_classify.rs (rule 89's paren_star_declarator alternative, rule 86's shadow_guard_refused record) are kept; third_party/libevent checked out. Amendments applied in order with --profiles-base origin/main, then LANDING-BATCH-B, which retires BASE-GATEWAY-FRONTEND-LAYERING (discharged on main by 6821fddee); CALL-WITH-DEREF-ACTUAL-READ-AS-DECLARATION is retired in batch C, where OUT-SLOT registers it. llp64_fixture_scan over the batch's test changes: 0 counted. Full landing gate on 554b7f1fa (private/integrate-r75/gate, raw record beside this file as gate-scope.json) via scripts/gate_scope.py --base origin/main --full --landing through private/toolchain/env.sh: Rust 717 units / 762 summaries, 10309 passed, 0 failed, 24 ignored; fmt, Clippy and both reevaluation examples exit 0; Lean (all) exit 0, 527 audits. No providers/ path changed, so the provider gate was not selected; provider_tests 182 (1 ignored) is carried from the integrate/r74 landing batch A gate. Python (807 tests) exited 1 only on the two stale-matrix checks in test_build_matrix_sections, cleared by regenerating the matrix from this record. Measurements are each card's own (opt-in current --monkey-linked over Fluent Bit 046accf6, base vs tip, in its report: no status move in any of the three); no combined measurement was run for the batch. Pinned-route parity (quirin-audit measure --declared) was not run: this host holds no build/cycle19 inputs or baselines. No profile baseline is changed and land.py publish is owed.",
-  "workspace_tests": 10309,
+  "note": "Landing integrate/r76, landing batch C (base main 1ecaf97e9, merged up to main ab111d238 after batches A and B in 5dc7d2a3b; USER DECISION 2026-11-26 \"Three batches\", after the launches \"lanich four of queued cards\"). Contents: SETTLED-LEAK-JOINED-GENUINE-WITHDRAWN 72bb3387b (rule 84, amends 74c (A); Unknown -> Unsafe only on a witnessed path avoiding every refused release); OUT-SLOT-CONDITIONAL-DELIVERY 3d1937748 (rule 85, keep-or-deliver summary in its own table); CALLBACK-TABLE-MEMBER-PATH-STATES 1001bc95e (rules 13v and 74p amended; a table dispatch composes its candidates' member-path states). Hand merge: CALLBACK-TABLE's \"At a table dispatch\" paragraph placed in main's reorganised contract spec C04.19.6 (4a578d1df); the merge with main took main's acceptance matrix and wave-48-part13.md and re-applied batch C's amendments on top; generated rule docs and Lean roots regenerated; third_party/libevent checked out. Amendments applied in order with --profiles-base origin/main, then LANDING-BATCH-C, which retires CALL-WITH-DEREF-ACTUAL-READ-AS-DECLARATION (registered here by OUT-SLOT, discharged by rule 89 in batch B). SETTLED-LEAK's Replay::step mirrors the work-list loop; its debug_assertions equality with the settled states ran in this gate over the merged tree (rules 79, 81, 38k, 85 and batch A/B hooks included). llp64_fixture_scan over the batch's test changes: 0 counted. Full landing gate on 5dc7d2a3b (private/integrate-r76/gate, raw record beside this file as gate-scope.json) via scripts/gate_scope.py --base origin/main --full --landing through private/toolchain/env.sh: Rust 720 units / 765 summaries, 10333 passed, 0 failed, 24 ignored; fmt, Clippy and both reevaluation examples exit 0; Lean (all) exit 0, 530 audits. The gate scope did not select the provider gate; provider_tests 182 (1 ignored) is carried from the integrate/r74 landing batch A gate. Python (807 tests) exited 1 only on the two stale-matrix checks in test_build_matrix_sections, cleared by regenerating the matrix from this record. Measurements are each card's own (opt-in current --monkey-linked over Fluent Bit 046accf6, base vs tip, in its report: no status move in any of the three); no combined measurement was run for the batch. Pinned-route parity (quirin-audit measure --declared) was not run: this host holds no build/cycle19 inputs or baselines. No profile baseline is changed and land.py publish is owed.",
+  "workspace_tests": 10333,
   "provider_tests": 182,
   "python_evidence_validator_tests": 807,
-  "lean_audits": 527,
+  "lean_audits": 530,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
    "AuditAddressArrowPlace.lean",
@@ -6974,6 +6974,7 @@
    "AuditCallbackReleasedEffectOrder.lean",
    "AuditCallbackRequirementFold.lean",
    "AuditCallbackSuppliedNull.lean",
+   "AuditCallbackTableMemberPathStates.lean",
    "AuditCallbackTaskHandoff.lean",
    "AuditCalleeSummaryScope.lean",
    "AuditCallerFrameHoldSwitch.lean",
@@ -7245,6 +7246,7 @@
    "AuditOutParameterBodySummary.lean",
    "AuditOutParameterScalarFramePremise.lean",
    "AuditOutSlotCallWrite.lean",
+   "AuditOutSlotKeepOrDeliver.lean",
    "AuditOuterContract.lean",
    "AuditOuterListCandidates.lean",
    "AuditOwnedFieldCopyReach.lean",
@@ -7372,6 +7374,7 @@
    "AuditScalarTypedErrors.lean",
    "AuditScalarTypes.lean",
    "AuditSchedulerLifetime.lean",
+   "AuditSettledLeakJoined.lean",
    "AuditSiblingBorrowedCalls.lean",
    "AuditSingleEmissionRoute.lean",
    "AuditSizeofOperand.lean",
@@ -7461,7 +7464,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "full landing gate: every step exits 0 except the Python suite's stale-matrix check, cleared by regenerating the matrix from this record; provider gate not selected (no providers/ change), provider count carried from the integrate/r74 landing batch A gate",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/landing-batch-b/integration/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/landing-batch-c/integration/gate.json)"
  },
  "named_followups": [
   {
