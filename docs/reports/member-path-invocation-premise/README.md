@@ -175,3 +175,23 @@ registers none. The body check does not follow a helper call such as
 `rd_kafka_op_call`, which keeps it fail-closed. A stated premise
 vocabulary was not needed, because no shipped body could make the
 statement true.
+
+## 7. Gate
+
+**Record:** [`gate/gate-1.json`](gate/gate-1.json). **Command:** `sh
+private/toolchain/env.sh python3 scripts/gate_scope.py --base 98c51878f
+--out private/gate` (Clang 21, Lean 4.35); log `private/logs/gate-1.log`.
+The gated tree is `74708f332`; this section and its record are docs only.
+**Exit 0, 8 steps passed.** This was a scoped run with Lean `all` and no
+provider gate, since `providers/` is unchanged.
+
+| Step | Exit | Counts |
+|---|---:|---|
+| submodules, `fmt`, `clippy -D warnings` | 0, 0, 0 | `third_party/libevent` checked out |
+| Rust suite (scoped) | 0 | 722 units; 10344 passed, 0 failed, 24 ignored |
+| `reevaluation_probe`, `reevaluation_followup` | 0, 0 | |
+| Lean (`check_lean_audits.py`) | 0 | 531 audits |
+| Python suite | 0 | 807 tests |
+
+No base failures were seen. **LLP64 fixture scan** over the four changed
+test paths: exit 0 (0 counted).
