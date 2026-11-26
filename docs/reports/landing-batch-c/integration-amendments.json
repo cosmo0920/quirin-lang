@@ -1,0 +1,17 @@
+{
+ "schema": "quirin-amendments/2",
+ "card": "LANDING-BATCH-C",
+ "base": "1ecaf97e9",
+ "measured_tip": "1ecaf97e9",
+ "profiles": [],
+ "status_edits": [],
+ "ledger": [
+  {
+   "id": "CALL-WITH-DEREF-ACTUAL-READ-AS-DECLARATION",
+   "operation": "retire",
+   "source": "docs/reports/call-with-deref-actual/README.md",
+   "why": "Discharged by CALL-WITH-DEREF-ACTUAL-READ-AS-DECLARATION (gateway rule 89, landing batch B, integrate/r75): where legacy_classify.rs's declaration-likeness test matches `IDENT ( *`, the statement's unique Clang node decides; a CallExpr drops only that alternative, a DeclStmt or no unique node keeps it (crates/qcore-c-gateway/src/legacy_call_not_declarator.rs, QCore.CallNotDeclarator). `q_observe(*out);` and the add_remove_toppar shape are no longer refused as declarations; every real declarator stays refused (crates/qcore-c-gateway/tests/call_with_deref_actual.rs). Opt-in current: no status move; 21 shadow leaves at `IDENT ( *` calls on 12 rows replaced by each call's own reading."
+  }
+ ],
+ "increment_paragraph": "**LANDING-BATCH-C** (integrate/r76; USER DECISION 2026-11-26 \"Three batches\"; [record](../../reports/landing-batch-c/README.md)). SETTLED-LEAK-JOINED-GENUINE-WITHDRAWN (rule 84), OUT-SLOT-CONDITIONAL-DELIVERY (rule 85, keep-or-deliver) and CALLBACK-TABLE-MEMBER-PATH-STATES (rules 13v and 74p amended) landed in one integrate branch with one full landing gate; CALLBACK-TABLE's spec paragraph is placed in main's reorganised C04.19.6. CALL-WITH-DEREF-ACTUAL-READ-AS-DECLARATION, registered by OUT-SLOT, is retired as discharged by rule 89 (batch B)."
+}

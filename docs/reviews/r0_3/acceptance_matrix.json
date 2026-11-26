@@ -14733,13 +14733,6 @@
    "recorded_by": "GATE-SLOT-TEST-FLAKES"
   },
   {
-   "id": "SETTLED-LEAK-JOINED-GENUINE-WITHDRAWN",
-   "title": "Rule 74c (A) withdraws a genuine leak on a path that joins a refused release's path before the exit",
-   "why": "NULLABLE-GUARDED-RELEASE (rule 74c (A)) withdraws a held leak report when the settled exit marks the identity by a refused release beside an Unknown leaf; the union join cannot tell a path through the refused release from another path to the same exit, so a genuine leak on the other path is withdrawn with it (Unsafe -> Unknown, fail-closed). Pinned instance: crates/qcore-c-gateway/tests/condition_call_desugar.rs, `int fd = k_open(path); if (flag && k_close(fd) == 0) {}` (the close of a possibly-invalid descriptor is refused; the flag-false path leaves a valid descriptor open). No opt-in row moved by (A) alone at 686ddf8f4. DISCHARGE: keep the refused release's mark path-separated (per-edge provenance at the join, or a witness search like the leak-witness census's untested and handed paths) so a leak with a path avoiding every refused release is published; census on the corpus how many provisional Unsafe rows rest on an intermediate-iterate claim (the census `settled: false` population). PRIORITY0-ATTRIBUTION measured an instance on the pinned corpus and twelve-home routes: librdkafka rdhttp.c unittest_http_get_params_append and its unit, Unsafe -> Unknown in this card's landing (corpus Unknown 3,672 -> 3,673 and Unsafe 12 -> 11 between 38cf960fa and 1f2007667); its leak of rk (rdhttp.c:802, live at the RD_UT_ASSERT return :805) is withdrawn beside the row's Unknown leaves.",
-   "source": "docs/reports/nullable-guarded-release/README.md, docs/reports/priority0-remeasurement/README.md",
-   "recorded_by": "NULLABLE-GUARDED-RELEASE"
-  },
-  {
    "id": "RK-TOPIC-PARTITION-CONSTRUCTORS-UNVALIDATED",
    "title": "rd_kafka_topic_partition_list_new, _list_copy and rd_kafka_topic_partition_copy are declared owned but their bodies do not validate",
    "why": "RK-TOPIC-PARTITION-LIST-CONSTRUCTORS declared them resource_return_owned(nonnull) in librdkafka/topic_partition_constructors.qv (pinned at 66910c10 and 046accf6); rd_kafka_topic_partition_new and rd_kafka_topic_partition_destroy validate (W4, entry), these three do not in rdkafka_partition.c on the opt-in run: _list_new's row is Unknown on the uncontracted static rd_kafka_topic_partition_list_grow (rd_realloc of the list's own elems member), _list_copy's on an access leaf (_add_copy into dst's elements), rd_kafka_topic_partition_copy's on the uncontracted static rd_kafka_topic_partition_update (metadata copy and a toppar reference into dst's _private). Two Safe rows (rd_kafka_topic_partition_copy_void, rd_kafka_topic_partition_list_copy_opaque) rest on them. DISCHARGE: validate each body (a realloc into a fresh object's member, the element copy, the reference taken into the result) or record the refusal that keeps them declared.",
@@ -14782,13 +14775,6 @@
    "recorded_by": "CG25-IN-PLACE-REGEX"
   },
   {
-   "id": "OUT-SLOT-CONDITIONAL-DELIVERY",
-   "title": "An owned result delivered through a formal's slot on some exits only has no summary mode",
-   "why": "OWNED-CONSTRUCTOR-OUT-PARAMETER-DELIVERY found W4's Out mode reads a slot only when every exit delivers (rule 74l). Three shapes on the opt-in route deliver on some exits: keep-or-deliver in-out slots (`if (!*out) *out = make();`: rdkafka_request.c rd_kafka_handle_OffsetFetch, rdkafka_broker.c rd_kafka_broker_share_session_add_remove_toppar, rdkafka_cgrp.c rd_kafka_cgrp_consumer_assignment_with_metadata), a slot first holding another object's member and then a conditional fresh object (rdkafka_subscription.c rd_kafka_assignment, rd_kafka_subscription, which write the slot even when `err` is nonzero), and error-path partial stores whose return code does not partition the slot (cio_file_unix.c cio_file_native_lookup_user/_group, rdkafka_request.c rd_kafka_handle_ApiVersion). Each needs a new effect mode (keep-or-deliver) or an inferred return-code disposition, neither with a precedent, so it is a user decision; every such row also has other blockers today. DISCHARGE: decide whether to add the mode, then state it with Lean parity, or record the refusal as final; re-measure these rows.",
-   "source": "docs/reports/owned-constructor-out-delivery/README.md",
-   "recorded_by": "OWNED-CONSTRUCTOR-OUT-PARAMETER-DELIVERY"
-  },
-  {
    "id": "OWNED-RESULT-ELEMENT-STORE-READ-AS-DISCARD",
    "title": "An owned result stored into an array element is refused as a discarded owned result",
    "why": "OWNED-CONSTRUCTOR-OUT-PARAMETER-DELIVERY renamed the refusal for an unsanctioned *NAME slot only (rule 74l). A store into an element the importer does not name (`lists[i] = rd_kafka_topic_partition_list_new(0);` in rdkafka_sticky_assignor.c ut_create_topic_partition_lists, `ALL_RACKS[i] = rd_kafkap_str_new(…)`, `metrics[idx] = rd_calloc(…)`, `tqh[qi] = rd_calloc(…)`) still reaches legacy_classify.rs's destination-free arm and reads `discarded owned result of resource API` (9 leaves in 5 rows at base 2c60986b0), the text a real discard carries. DISCHARGE: name the refusal for an element destination (or read it through W43's indexed collections where they apply), keeping the row Unknown; re-measure.",
@@ -14813,13 +14799,6 @@
    "why": "Rule 74o closed the frame holder's shadowed name (one_automatic_object plus every_reference_is, which read VarDecls only). Rule 12t's other name-keyed readings, the caller's object (an unrebound formal this body holds no custody of) and the path holder (a member path below an unrebound formal named only through member accesses off the path, legacy_retained_by.rs `path_holder`, P-HOLDER-PATH-STABLE), decide from the formal's name in the token stream. A block-scope local that shadows the formal and is named through the same spelling may be read as the formal. Direction not assessed; not probed. DISCHARGE: probe a shadowing local at each formal-keyed reading (retained actual, path holder, removal); where one reaches an admitting reading, require that every DeclRefExpr of the name designates the ParmVarDecl, and pin the shape.",
    "source": "docs/reports/frame-holder-shadowed-name/README.md",
    "recorded_by": "FRAME-HOLDER-SHADOWED-NAME"
-  },
-  {
-   "id": "CALLBACK-TABLE-MEMBER-PATH-STATES",
-   "title": "A table dispatch composes no candidate member-path state",
-   "why": "Found by CALLBACK-MEMBER-RELEASED-EFFECT-ORDER. legacy_callback_route::callback_operands collects a candidate's member-path states (member_path_route::operands) for the synchronous invocation and the member invocation but not for resource_callback_table (rule 13v), while classified_in reads a candidate stating member-path states as its custody contract. So a table candidate stating `quant live #rko: op.payload |-> #released` reads as borrowed and its state is dropped: the probe (report evidence/probe-table.rs.txt and probe-table.log, measured once over synthetic fixture callees) links an item at o->payload, dispatches c_op_table to c_cb_releases, then frees the item: Safe, where the same candidate through the synchronous form is Unsafe. No shipped table candidate is known to state member paths (2 shipped table clauses, r65 census), so no shipped row is shown to move. DISCHARGE: compose the candidates' states at a table dispatch as at a synchronous one (or refuse a table candidate stating member paths), with a gateway fixture, Lean parity and measurement. Size: small.",
-   "source": "docs/reports/callback-member-released-effect-order/README.md",
-   "recorded_by": "CALLBACK-MEMBER-RELEASED-EFFECT-ORDER"
   },
   {
    "id": "RETURN-FAMILY-SUBSCRIPT-ENCLOSING-STARRED-ROOT",
@@ -15243,6 +15222,41 @@
    "why": "Found by PRIORITY0-ATTRIBUTION: landing records measured at other bases and binaries never join (refused revision, analyzer, build commit), so a chain over the sides sees no move that cancels inside a step. Two did (mk_sched_threads_purge and mk_sched_threads_destroy_all: Unknown -> Safe in LIST-ENTRY-RELEASE-IDENTITY, back in RULE50-CONSUMER-COMPOSITION's landing); they were found by placing the 23 records with equal inputs on main's first-parent line and reading their side figures (docs/reports/priority0-remeasurement/scripts/landing_records.py). DISCHARGE: accept non-joining records with equal inputs as figure and row checkpoints inside a step, listing every row a checkpoint shows at a verdict the step's ends do not.",
    "source": "docs/reports/priority0-remeasurement/README.md",
    "recorded_by": "PRIORITY0-ATTRIBUTION"
+  },
+  {
+   "id": "SETTLED-LEAK-OTHER-REFUSAL-SCHEDULE",
+   "title": "A leak claimed on an iterate whose settled exit marks the site by a non-release refusal is published by schedule",
+   "why": "SETTLED-LEAK-JOINED-GENUINE-WITHDRAWN (rule 84) decides from settled facts only the identities a refused release marks. A leak report_leaks claims on an iterate before another refusal's marker (a refused hand-on, refused test, refused re-acquisition, refused escape) joins the exit is still published, and the same leak is not when the marker arrives first (rule 6 hazard). The tip census (Fluent Bit 046accf6, opt-in route) finds 31 such settled:false current-generation witness lines; two provisional Unsafe rows rest only on them: ut_testSameSubscriptions (4 leaks, RD_UT_ASSERT failure returns) and rd_kafka_snappy_java_uncompress (3 leaks, beside rule 42's refusal). DISCHARGE: decide these claims from settled states (rule 84's restricted replay over the marks of each refusal kind, or a withdrawal with a witness), measure the two rows, and keep rules 12e, W44 and 42's accusations where a refusal-free avoiding path exists.",
+   "source": "docs/reports/settled-leak-joined-genuine-withdrawn/README.md",
+   "recorded_by": "SETTLED-LEAK-JOINED-GENUINE-WITHDRAWN"
+  },
+  {
+   "id": "OUT-SLOT-MEMBER-THEN-FRESH",
+   "title": "A slot that first takes another object's member and then a conditional fresh object has no sound reading",
+   "why": "OUT-SLOT-CONDITIONAL-DELIVERY (rule 85(4)) refused rdkafka_subscription.c rd_kafka_assignment and rd_kafka_subscription: the slot first takes rko->rko_u.….partitions/topics (overwriting whatever the caller held, so no keep-or-deliver summary), then a fresh list only when that is NULL and err is 0, and the early returns of RD_KAFKA_RESP_ERR__UNKNOWN_GROUP/__TIMED_OUT leave it unwritten while `return err` can return the same codes, so the status does not partition the slot. Options: (a) declare the op's member custody (moved out and nulled before rd_kafka_op_destroy); (b) a delivers-or-leaves-unwritten mode read only by a caller whose slot is known null, which amends rule 74l; (c) keep the refusal. USER DECISION needed. DISCHARGE: implement the chosen option with Lean parity, or record (c) as final; re-measure the two rows.",
+   "source": "docs/reports/out-slot-conditional-delivery/README.md",
+   "recorded_by": "OUT-SLOT-CONDITIONAL-DELIVERY"
+  },
+  {
+   "id": "KEEP-OR-DELIVER-OWN-ROW",
+   "title": "A function with a keep-or-deliver summary keeps rule 74l's refusal on its own row",
+   "why": "OUT-SLOT-CONDITIONAL-DELIVERY (rule 85(2)) publishes the summary its callers read, but analyze_defined_function reads only the function map, so the callee's own row still runs with no contract and keeps `owned result of resource API `F` stored through `*NAME` without an out-parameter contract` (Unknown). DISCHARGE: decide the row under the two validated entries (null slot and held object) with a certificate the checker re-derives, or record the Unknown row as final; re-measure.",
+   "source": "docs/reports/out-slot-conditional-delivery/README.md",
+   "recorded_by": "OUT-SLOT-CONDITIONAL-DELIVERY"
+  },
+  {
+   "id": "SLOT-NULL-TEST-ORDINARY-BUILDS",
+   "title": "A null test of an out slot `*NAME` reads as an indirect access outside rule 85's validation builds",
+   "why": "OUT-SLOT-CONDITIONAL-DELIVERY reads `!*NAME`, `*NAME == NULL` and the like as BranchOnNull on the slot's binding only while its own validation builds the body (rule 85(1)). Every other build, W4's included, lowers the test as an IndirectScalarAccess whose unbound root reports UnknownAlias of the formal, so an every-exit Out body that tests its slot (rdkafka_request.c rd_kafka_handle_ApiVersion's `if (*apis)`) refuses. DISCHARGE: decide whether a slot null test may refine the slot's binding in every build where the formal is an Out slot (with the deref premise of the slot pointer stated), with Lean parity; re-measure.",
+   "source": "docs/reports/out-slot-conditional-delivery/README.md",
+   "recorded_by": "OUT-SLOT-CONDITIONAL-DELIVERY"
+  },
+  {
+   "id": "MEMBER-PATH-INVOCATION-PREMISE",
+   "title": "A #released or #moved candidate state under no arm reads the invocation as run, at every invocation form",
+   "why": "Found by CALLBACK-TABLE-MEMBER-PATH-STATES. Rule 30 (C04.19.6's table, user decision 2026-10-15) composes a candidate's #released or #moved state under no arm as gone at a synchronous, member and (since this card) table invocation, while each clause says the callback is called zero or more times. If the callee calls no candidate, the linked object stays live while the caller reads it released: a leak is missed, and a later free of it reads as a double release. QCore.CallbackTableMemberPathStates.the_gone_reading_assumes_an_invocation names the premise (run [] false = 0); it is not proved. DISCHARGE: a stated, published premise per invoking declaration that a candidate runs (or a body check establishing it), or a user decision to refuse gone under no arm where the invocation may not run, with a census of the shipped member-path invocations. Size: small to medium.",
+   "source": "docs/reports/callback-table-member-path-states/README.md",
+   "recorded_by": "CALLBACK-TABLE-MEMBER-PATH-STATES"
   }
  ],
  "updated": "Completed plugin premise integration; exact hand-maintained union retains810followups, borrowed measured-source8419Rust/354Lean/freshcard133provider, exact source equivalence checked; authoritative root committed-matrix Python confirmation in integration receipt. CMetrics map/opts API model specifications added at the explicit user request. Eight declared-model API contracts remain outside interpreted views, with CMT-MAP-OPTS-CONTRACT-ADOPTION and CMT-LABELED-HASH-ZERO-STATIC-STORAGE Open. No trusted API coverage is claimed; the source gate is recorded by this card alongside its separate initializer native checkpoint. W48-CMT-TRACKED-INTERIOR-SELF-INIT implements rule 36b's checked initializer effect transport for an exact live owned root or embedded record, retaining actual self writes, invalidating aliased member facts and preserving resource obligations; nondefault custody frames refuse and no ordinary summary is exported. The canonical CFL intrusive_list.qv declares matching audit preconditions/effects; two CMetrics .qv modules add six map and two opts lifecycle models, including transitive ownership, partial failure, borrowed results and uncleared cleanup fields. All remain outside interpreted views; checked API adoption and labeled zero-hash storage accounting have named Open follow-ups. Fresh BASE/planner precedes prediction f18d96065 and implementation; the later contract amendment 08da23123 precedes .qv edits. Native corpus BASE/TIP Safe/Unknown/Pending/provisional-Unsafe: 1009 / 3816 / 0 / 9 to 1011 / 3814 / 0 / 9; full system/slice, 5781 NULL dictionaries and runtime projections are compared, 241 semantic leaves accounted, zero unexplained leaves and no prior Safe loss. Gate 8654 Rust / 370 Lean / 374 Python, provider 133 Rust / 25 Python and all five package verifies pass. The actual deep source reader uses 328 KiB below 1 MiB. Full getter closure remains Open; W48-CMT-SELF-INIT-DISJOINT-FRAMES tracks the next bounded frame extension, and W48-EXACT-RETURN-WITNESS-PRECISION is unchanged. Native evidence is isolated to measured e92d8aef35a8bd14550e90219d19a56eb3b196e7; later source gate 2d0d85299b830aa24d7f200d63a308653582363f validates the added declared API models separately; see docs/reports/w48-cmt-tracked-interior-self-init/README.md."
