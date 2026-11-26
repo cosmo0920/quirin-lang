@@ -15282,13 +15282,6 @@
    "recorded_by": "OUT-SLOT-CONDITIONAL-DELIVERY"
   },
   {
-   "id": "MEMBER-PATH-INVOCATION-PREMISE",
-   "title": "A #released or #moved candidate state under no arm reads the invocation as run, at every invocation form",
-   "why": "Found by CALLBACK-TABLE-MEMBER-PATH-STATES. Rule 30 (C04.19.6's table, user decision 2026-10-15) composes a candidate's #released or #moved state under no arm as gone at a synchronous, member and (since this card) table invocation, while each clause says the callback is called zero or more times. If the callee calls no candidate, the linked object stays live while the caller reads it released: a leak is missed, and a later free of it reads as a double release. QCore.CallbackTableMemberPathStates.the_gone_reading_assumes_an_invocation names the premise (run [] false = 0); it is not proved. DISCHARGE: a stated, published premise per invoking declaration that a candidate runs (or a body check establishing it), or a user decision to refuse gone under no arm where the invocation may not run, with a census of the shipped member-path invocations. Size: small to medium.",
-   "source": "docs/reports/callback-table-member-path-states/README.md",
-   "recorded_by": "CALLBACK-TABLE-MEMBER-PATH-STATES"
-  },
-  {
    "id": "CONNECT-LIBC-EFFECT-CLAIMS",
    "title": "libevent states task and defer effects of libc callees outside quirin-provider-libc",
    "why": "MEASURED by card CONNECT-ADOPT-DECLARED-DEPENDENCIES (base 1ecaf97e9): qcore-provider-libevent's monkey/callback_task_handoff.qv declares effect_send, effect_perror and effect_errno_location (callee == \"send\", \"perror\", \"__errno_location\"; task_spawn == 0; defer == 0), and monkey/timeout_teardown.qv records path_calls through send, __errno_location and perror. They name libc symbols and read no libc clause, so no link is required, but they are effect claims about libc functions held outside quirin-provider-libc (rule 10j owns libc declarations, not effect observations). DISCHARGE: decide whether task and defer effect claims about libc callees move into quirin-provider-libc (and are then linked), or are recorded as observations owned by the observing crate.",
