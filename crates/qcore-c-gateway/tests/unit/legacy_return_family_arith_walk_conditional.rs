@@ -254,7 +254,6 @@ fn the_base_readings_are_kept() {
         ("( n ? 1 + p : a ) - > m", vec!["a", "p"]),
         ("( p + 1 ) - > m", vec!["p"]),
         ("n ? ( 1 + p - n ) - > m : 0", vec!["p"]),
-        ("b [ n ? 1 + p - n : 0 ]", vec!["b"]),
     ] {
         assert_eq!(
             sorted_bases(expression),
@@ -264,4 +263,14 @@ fn the_base_readings_are_kept() {
     }
     assert_eq!(read("& ( n ? 1 + p - n : a ) - > m"), None);
     assert_eq!(read("sizeof ( ( n ? 1 + p - n : a ) - > m )"), None);
+}
+
+/// Re-pinned deliberately at landing batch A (integrate/r74): with rule 74y
+/// (RETURN-FAMILY-UNTRACKED-REVERSED-SUBSCRIPT, same batch) a conditional
+/// filling the brackets of an undecided `b` may hold the pointer
+/// (`b[E]` is `*(b + E)`), and that group is not one rule 74y classifies, so
+/// the read refuses instead of making only `b` a base.
+#[test]
+fn a_conditional_in_undecided_brackets_refuses() {
+    assert_eq!(sorted_bases("b [ n ? 1 + p - n : 0 ]"), None);
 }

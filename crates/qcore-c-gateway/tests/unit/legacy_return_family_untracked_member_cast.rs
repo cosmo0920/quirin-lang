@@ -198,7 +198,12 @@ fn the_base_readings_are_kept() {
     assert_eq!(bases("( q ) - > n"), None);
     assert_eq!(bases("q - > n"), Some(vec!["q".to_owned()]));
     assert_eq!(bases("q [ 0 ]"), Some(vec!["q".to_owned()]));
-    // A qualifier after the `*` is no group `type_group_open` reads: kept as
-    // at the base (rule 74r's registered follow-up TYPE-GROUP-QUALIFIED-POINTER).
-    assert_eq!(bases("( ( long * const ) p ) - > n"), Some(vec![]));
+    // A qualifier after the `*`: re-pinned deliberately at landing batch A
+    // (integrate/r74). TYPE-GROUP-QUALIFIED-POINTER, landed in the same batch,
+    // makes `type_group_open` read `long * const` as a type group, so this
+    // card's member-through-cast reading makes `p` a base (bases only grow).
+    assert_eq!(
+        bases("( ( long * const ) p ) - > n"),
+        Some(vec!["p".to_owned()])
+    );
 }
