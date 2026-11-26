@@ -1175,7 +1175,9 @@ impl Parser<'_> {
             Some([name]) if crate::retained_by::PREDEFINED_IDENTIFIERS.contains(name) => {
                 Some(RetainedSpelling::Literal)
             }
-            Some([name]) if is_identifier(name) => Some(if self.caller_formals.contains(name) {
+            // Card NAME-KEYED-HOLDER-SHADOWING (rule 86): a caller's object
+            // only where the formal is one declaration.
+            Some([name]) if is_identifier(name) => Some(if self.one_declaration_formal(name) {
                 RetainedSpelling::Formal((*name).to_owned())
             } else {
                 crate::loop_lifetime_source::immutable_holder_alias(
@@ -1199,7 +1201,7 @@ impl Parser<'_> {
                     .filter(|(_, alias)| alias.is_empty())
                     .map(|(formal, _)| formal)
                     .unwrap_or_else(|| (*root).to_owned());
-                    let caller = self.caller_formals.contains(root.as_str());
+                    let caller = self.one_declaration_formal(root.as_str());
                     RetainedSpelling::Interior(root, fields, caller)
                 }),
             _ => None,
@@ -1262,8 +1264,10 @@ impl Parser<'_> {
                 own,
             )
         });
+        // Card NAME-KEYED-HOLDER-SHADOWING (rule 86): the root is also one
+        // declaration, besides the path census.
         if chain.is_empty()
-            || !self.caller_formals.contains(name.as_str())
+            || !self.one_declaration_formal(name.as_str())
             || !body.is_some_and(|body| {
                 framed_path_stable_with(
                     self.tokens,

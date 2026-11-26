@@ -311,6 +311,7 @@ import QCore.MutexInvariant
 import QCore.MutexShareCross
 import QCore.MutexShareCrossArms
 import QCore.MutexShareCrossEmission
+import QCore.NameKeyedHolderShadowing
 import QCore.NativeLibrary
 import QCore.NativeLibraryContract
 import QCore.NativeLibraryHeader
