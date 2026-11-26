@@ -2249,6 +2249,21 @@ fn analyze_cfg_with_entry_collected(
     // Card NULLABLE-GUARDED-RELEASE (rule 74c): publish every held leak the
     // settled exit does not withdraw.
     held_leaks.settle(&cfg, &incoming, &mut diagnostics);
+    // Card SETTLED-LEAK-JOINED-GENUINE-WITHDRAWN (rule 84): publish every
+    // leak rule 74c withdraws that a path avoiding every mark carries.
+    joined_leak_route::settle(
+        &joined_leak_route::Replay {
+            cfg: &cfg,
+            context: &context,
+            alias: &alias,
+            joined: &joined,
+            tie: tie.as_deref(),
+            acquisition_lines: &acquisition_lines,
+            entry: entry_custody,
+        },
+        &incoming,
+        &mut diagnostics,
+    );
 
     if incoming.iter().flatten().any(|state| state.widened) {
         diagnostics.insert(LegacyDiagnostic {

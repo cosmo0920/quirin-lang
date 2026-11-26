@@ -131,6 +131,10 @@ pub struct Witness {
     pub status: u8,
     /// The site carries an unresolved effect at the settled exit.
     pub unresolved: bool,
+    /// Card SETTLED-LEAK-JOINED-GENUINE-WITHDRAWN (rule 84): a refused
+    /// release is among the site's marks at the settled exit (the population
+    /// rule 74c (A) withdraws and rule 84 re-publishes by its own witness).
+    pub refused_release: bool,
     /// The site is exempt at the settled exit (a caller-held or out-slot site).
     pub exempt: bool,
     pub exit_unmodeled: bool,
@@ -361,6 +365,7 @@ pub(super) fn record(
                         settled: false,
                         status: 0,
                         unresolved: false,
+                        refused_release: false,
                         exempt: false,
                         exit_unmodeled: false,
                         exit_widened: false,
@@ -451,6 +456,7 @@ fn best_witness(
                     settled: reproduced,
                     status,
                     unresolved: output.unresolved_effect_sites.contains(&site),
+                    refused_release: output.refused_release_sites.contains(&site),
                     exempt: exempt.contains(&site),
                     exit_unmodeled: output.unmodeled,
                     exit_widened: output.widened,

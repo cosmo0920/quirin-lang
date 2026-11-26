@@ -498,7 +498,7 @@ fn a_switch_runs_its_identity_calls_once_and_refuses_unsequenced_effects() {
 const DESCRIPTOR_DECLARATIONS: &str = "\
 int k_open(const char *path); \
 int k_close(int fd); \
-long k_read(int fd, void *buffer, unsigned long size);";
+__PTRDIFF_TYPE__ k_read(int fd, void *buffer, __SIZE_TYPE__ size);";
 
 fn descriptor_contracts() -> ResourceContracts {
     load_resource_contract_sources(&BTreeMap::from([(
@@ -523,21 +523,22 @@ fn a_descriptor_keeps_the_sentinel_validity_rules() {
     assert_eq!(run.status, AnalysisStatus::Safe, "{run:?}");
     // Without the validity leaf, a valid descriptor may reach the exit open.
     //
-    // Deliberate pin update, card NULLABLE-GUARDED-RELEASE (rule 74c):
-    // Unsafe -> Unknown. The close of a possibly-invalid descriptor is a
-    // refused release (`nullable resource `fd` used by a non-null contract`),
-    // which marks `fd`; the union join carries the mark to the one exit, so
-    // the settled exit does not claim `fd`. The leak was claimed on an
-    // iterate on which only the `flag`-false edge had arrived, and is now
-    // withdrawn beside the refusal: a refused release is evidence of neither
-    // a discharge nor a leak. The open descriptor on the `flag`-false path is
-    // the precision this costs (the report's "What it costs").
+    // Deliberate pin update, card SETTLED-LEAK-JOINED-GENUINE-WITHDRAWN
+    // (rule 84): Unknown -> Unsafe, back to the status before rule 74c. The
+    // close of a possibly-invalid descriptor is a refused release (`nullable
+    // resource `fd` used by a non-null contract`), which marks `fd`, and rule
+    // 74c (A) withdrew the leak because the union join carries the mark to the
+    // one exit. Rule 84 replays the work list without every edge that marks
+    // `fd` or carries a refusal: the `flag`-false path reaches the exit with
+    // a valid descriptor open, so the leak is published on that witness,
+    // beside the refused close's own refusal (provisional).
     let source = format!(
         "{DESCRIPTOR_DECLARATIONS}\nvoid w(const char *path, int flag) {{ int fd = k_open(path); if (flag && k_close(fd) == 0) {{ }} }}\n"
     );
     let run = run_with(&source, "w", &descriptor_contracts());
     assert!(!run.refused(BRANCH), "{run:?}");
-    assert_eq!(run.status, AnalysisStatus::Unknown, "{run:?}");
+    assert_eq!(run.status, AnalysisStatus::Unsafe, "{run:?}");
+    assert_eq!(run.leaks(), 1, "{run:?}");
     assert!(
         run.refused("nullable resource `fd` used by a non-null contract"),
         "{run:?}"

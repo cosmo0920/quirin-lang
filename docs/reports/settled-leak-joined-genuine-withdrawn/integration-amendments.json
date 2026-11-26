@@ -1,0 +1,25 @@
+{
+ "schema": "quirin-amendments/2",
+ "card": "SETTLED-LEAK-JOINED-GENUINE-WITHDRAWN",
+ "base": "43410b230",
+ "measured_tip": "8c3daa33b",
+ "profiles": [],
+ "increment_paragraph": "**SETTLED-LEAK-JOINED-GENUINE-WITHDRAWN** (USER DECISION 2026-11-25: \"lanich four of queued cards\"; gateway rule 84, amending rule 74c (A); `QCore.SettledLeakJoined`; [report](../../reports/settled-leak-joined-genuine-withdrawn/README.md)). Rule 74c (A) withdrew a leak when the settled exit marked the identity by a refused release beside an `Unknown` leaf, so a genuine leak on another path to the same exit went with it, and whether an iterate claimed it at all depended on the schedule (the pinned `if (flag && k_close(fd) == 0)` was claimed; `if (flag) { k_close(fd); }` never was). `legacy_joined_leak_witness.rs` takes every such identity at every settled exit, held or not, and replays the custody work list (same transfers, refinements, rule 77 hook, joins and schedule) dropping every edge that marks the identity or is `unmodeled`; the leak is published when the restricted exit claims it by `report_leaks`' conditions and a producer-to-exit path keeps it live, unmarked and unrefused, otherwise the withdrawal stands. The refusal cut is required: without it a refused guard's null edge re-published the Metadata shape (five `ampersand_run_parity` / `nullable_guarded_release` pins). Under `debug_assertions` the uncut replay must equal the settled states. Only Unknown -> Unsafe. Pins: `condition_call_desugar`'s descriptor shape Unknown -> Unsafe (deliberate); `tests/settled_leak_joined.rs` six Unsafe, six Unknown controls. Opt-in `current --monkey-linked` over Fluent Bit 046accf6, each run on its own tree and binary: base 43410b230 and tip 8c3daa33b both 1,187/2/3,607/8, no status or leaf changes, as predicted. Leak-witness census on the tip: 60 settled and 31 `settled: false` current-generation lines, none marked by a refused release; of the eight provisional Unsafe rows, `ut_testSameSubscriptions` and `rd_kafka_snappy_java_uncompress` rest only on intermediate-iterate claims marked by other refusals (registered as SETTLED-LEAK-OTHER-REFUSAL-SCHEDULE). Pinned routes not runnable on the host; predicted no status moves.",
+ "status_edits": [],
+ "ledger": [
+  {
+   "id": "SETTLED-LEAK-JOINED-GENUINE-WITHDRAWN",
+   "operation": "retire",
+   "why": "DISCHARGE (SETTLED-LEAK-JOINED-GENUINE-WITHDRAWN, 2026-11-25): gateway rule 84 keeps the refused release's mark path-separated by a restricted replay of the custody work list (every edge marking the identity or carrying a refusal dropped); a leak with a path avoiding every refused release and every refusal is published (the pinned descriptor shape is Unsafe again), one whose live paths all pass a mark stays withdrawn. Census taken on the opt-in route: 31 settled:false current-generation witness lines, none marked by a refused release; two provisional Unsafe rows (ut_testSameSubscriptions, rd_kafka_snappy_java_uncompress) rest only on intermediate-iterate claims marked by other refusals (registered as SETTLED-LEAK-OTHER-REFUSAL-SCHEDULE). Opt-in route: no moves (1,187/2/3,607/8 at base and tip).",
+   "source": "docs/reports/settled-leak-joined-genuine-withdrawn/README.md"
+  },
+  {
+   "id": "SETTLED-LEAK-OTHER-REFUSAL-SCHEDULE",
+   "operation": "register",
+   "title": "A leak claimed on an iterate whose settled exit marks the site by a non-release refusal is published by schedule",
+   "text": "SETTLED-LEAK-JOINED-GENUINE-WITHDRAWN (rule 84) decides from settled facts only the identities a refused release marks. A leak report_leaks claims on an iterate before another refusal's marker (a refused hand-on, refused test, refused re-acquisition, refused escape) joins the exit is still published, and the same leak is not when the marker arrives first (rule 6 hazard). The tip census (Fluent Bit 046accf6, opt-in route) finds 31 such settled:false current-generation witness lines; two provisional Unsafe rows rest only on them: ut_testSameSubscriptions (4 leaks, RD_UT_ASSERT failure returns) and rd_kafka_snappy_java_uncompress (3 leaks, beside rule 42's refusal). DISCHARGE: decide these claims from settled states (rule 84's restricted replay over the marks of each refusal kind, or a withdrawal with a witness), measure the two rows, and keep rules 12e, W44 and 42's accusations where a refusal-free avoiding path exists.",
+   "source": "docs/reports/settled-leak-joined-genuine-withdrawn/README.md",
+   "recorded_by": "SETTLED-LEAK-JOINED-GENUINE-WITHDRAWN"
+  }
+ ]
+}
