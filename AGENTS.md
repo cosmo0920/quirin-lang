@@ -80,6 +80,14 @@ Read [the numbered rule router](docs/agents/README.md). The full text lives in
 topic files, not in this startup guide. Evidence/trust rules 21–28 apply across
 topics; diagnostic and source-identity rules also cross crate boundaries.
 
+## Windows types notice
+
+Fixtures and synthetic C declarations must read the same on Windows (LLP64)
+as on Linux: spell `size_t` as `__SIZE_TYPE__`, never plain `long`/`unsigned
+long` at a contract position, and give enumerations an `unsigned int` typedef.
+Read [Windows types](docs/development/windows-types.md) before writing a test
+fixture, and run its scan before handing back or landing.
+
 ## Status ledger (do not overstate)
 
 See [current measurements and provenance](docs/STATUS.md).

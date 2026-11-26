@@ -13,6 +13,10 @@ See [operations](docs/agents/operations.md#working-rules).
 
 See [worktree policy](docs/agents/operations.md#worktree-and-measurement-hygiene).
 
+## Windows types (size_t, long, enums)
+
+See [Windows types notice](docs/development/windows-types.md).
+
 ## Platform records
 
 See [platform evidence](docs/development/platform-evidence.md).

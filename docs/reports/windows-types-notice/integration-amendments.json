@@ -1,0 +1,10 @@
+{
+ "schema": "quirin-amendments/2",
+ "card": "WINDOWS-TYPES-NOTICE",
+ "base": "1ecaf97e9",
+ "measured_tip": "1ecaf97e9",
+ "profiles": [],
+ "increment_paragraph": "**WINDOWS-TYPES-NOTICE** (USER DECISION 2026-11-25: a `size_t` notice on the AGENTS.md and CLAUDE.md indexes linking a Windows types page; [report](../../reports/windows-types-notice/README.md)). Documentation only, made at integration: new [`docs/development/windows-types.md`](../windows-types.md) states what gateway rules 11q and 12u mean for fixtures that must pass Windows (LLP64) CI: `size_t` as `__SIZE_TYPE__` (or `host_abi::size_t_declaration!`), `ssize_t`/`ptrdiff_t` as `__PTRDIFF_TYPE__`, 64-bit integers as `long long`, never plain `long` at a contract position; an `unsigned int` typedef for an enumeration at a `u32` position; libc callees declared in the fixture; and the `llp64_fixture_scan.py` command for hand-back and landing. `AGENTS.md` gains a Windows types notice section, `CLAUDE.md` a pointer, and `docs/development/README.md` a row. Grounds: Windows CI rounds r42 (14 tests) and r73 (8 tests), and the same spelling in a queued card's test fixed at r74. No rule, gateway, contract, provider, Lean or test change.",
+ "status_edits": [],
+ "ledger": []
+}
