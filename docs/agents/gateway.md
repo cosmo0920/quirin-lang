@@ -8464,9 +8464,11 @@ an undeclared OpenSSL producer). `QCore.NullableReferenceDrop` (12 audited,
     and clears the member, so later entries find it cleared; `stays` only
     where every reading keeps it; candidates that disagree refuse
     `member-path-undecided`, and rule 30's stale, unstated and double-release
-    refusals stand. The `gone` reading with no arm reads the dispatch as
-    invoking a candidate, which C04.19.6 reads alike at every invocation
-    form (named, not proved, in `the_gone_reading_assumes_an_invocation`).
+    refusals stand. The `gone` reading under some or no arm reads the
+    dispatch as invoking a candidate; rule 30's amendment by card
+    MEMBER-PATH-INVOCATION-PREMISE (its one authority) reads it only where
+    the dispatcher's body calls a table entry on every path, and refuses
+    `member-path-invocation-unestablished` otherwise.
     The shipped table clauses (`cmt_mpack_unpack_map`,
     `ctr_mpack_unpack_map`) have no candidate stating a member path, and
     their rows do not move. **Do not** drop a table candidate's stated
@@ -9822,6 +9824,56 @@ that only when every arriving edge has it.
     followed helper no longer ends the reading, and a member's value handed
     to a declared unit helper is composed there; every other sentence of
     this rule stands, a member's value still reaches nothing of the formal.
+    **Amended by card MEMBER-PATH-INVOCATION-PREMISE** (C04.19.6; the
+    acceptance matrix's follow-up of CALLBACK-TABLE-MEMBER-PATH-STATES):
+    **a candidate's state reads the invocation as run only where the
+    invoking body establishes that a candidate runs.** Every invocation is
+    zero or more times, so the 2026-10-15 table's `gone` for `#released` /
+    `#moved` under some or no arm rested on an unproved premise (with no
+    invocation the object stays live). `crates/qcore-c-gateway/src/member_path_invocation.rs`
+    (`established`, `body_establishes`, `unestablished`, `INVOCATION`),
+    hooked in `legacy_member_path_route::apply` (once per call, where a
+    state other than `#kept` is read) with the site
+    (`MemberPathOperands::invocation`: the form, arity, composed position
+    and handed formal) filled by `callback_operands` at a synchronous
+    (`Form::Formal`), member (`Form::Member`; a `supplied_owned` object is
+    none) and table (`Form::Table`) invocation and by the constructed
+    route's `MemberUse::form`; rule 50's candidate composition passes none.
+    Established: in a unit that defines the invoking declaration (one
+    definition), its Clang body read as `member_path_reading::Graph` (the
+    graph rule 30's body check reads; `goto`, `switch`, loops), a forward
+    data flow with `and` as the meet, passes through a call of the formal
+    (`F(…)`, `(*F)(…)`), of `P->PATH(…)` (the member path spelled from
+    `P`), or of a table entry (`T[i].f(…)`, `T->f(…)`) before every
+    `return` and the end of the body; the call has the clause's arity and
+    hands the composed formal itself at the composed position; neither
+    formal is assigned, incremented or has its address taken; a call counts
+    only where it is evaluated unconditionally (not under `&&` / `||`'s
+    right operand, `?:`'s arms, `sizeof` or a statement expression). Not
+    established (no body in the unit, more than one, a body the graph does
+    not read, or a path that may skip the call): each candidate state `V`
+    reads `{V, #kept}`; where that changes a decided reading, the call
+    refuses `member-path-invocation-unestablished` (the object's state is
+    undecided after the call). Under an arm join releasing the path on
+    every arm the reading is unchanged (`gone` either way), and every
+    refusal of this rule stands as before. This only refuses more. The
+    shipped invocations reaching a candidate with such a state are
+    `rd_kafka_op_destroy`'s and `rd_kafka_poll_cb`'s `rko_op_cb` (position 2,
+    `rko`); both bodies call it only under a condition
+    (`rdkafka_op.c:349`, `rdkafka.c:5822-6083`), so neither is established
+    (measured: see the report). **Do not** read `gone` under some or no arm
+    where the invoking body is not seen or may skip the call, count a call
+    under a condition or in a loop body, or count a call handing another
+    object. `QCore.MemberPathInvocationPremise`
+    (`an_unestablished_gone_needs_every_arm`,
+    `an_unestablished_gone_leaves_exactly_once`,
+    `an_unestablished_stays_never_leaves`,
+    `a_taking_candidate_without_an_arm_refuses_unestablished`,
+    `the_weakening_only_refuses_more`, `must_sound`,
+    `an_established_body_calls_on_every_exit`, `may_not_call_vectors_hold`,
+    `each_shape_has_an_execution_with_no_call`,
+    `the_premise_is_discharged`); `tests/member_path_invocation_premise.rs`;
+    [report](../reports/member-path-invocation-premise/README.md).
 
 <a id="constraint-31"></a>
 

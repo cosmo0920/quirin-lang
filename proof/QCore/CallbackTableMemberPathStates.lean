@@ -268,7 +268,11 @@ theorem disagreeing_candidates_refuse (f : Fate) (hf : f = .released ∨ f = .mo
 
 /-- **The shared premise**: `gone` with no arm reads the invocation as run;
 with no invocation no object leaves. C04.19.6 reads it so at every
-invocation form; the table form adds nothing beyond it. -/
+invocation form; the table form adds nothing beyond it. Discharged by card
+MEMBER-PATH-INVOCATION-PREMISE: `QCore.MemberPathInvocationPremise` reads
+`gone` under some or no arm only under an established invocation
+(`the_premise_is_discharged`) and weakens each state to `{V, #kept}`
+otherwise (`an_unestablished_gone_leaves_exactly_once`). -/
 theorem the_gone_reading_assumes_an_invocation :
     tableOutcome [some ⟨.released, false⟩] .none = some .gone ∧ run [] false = 0 :=
   ⟨rfl, rfl⟩

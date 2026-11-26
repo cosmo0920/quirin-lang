@@ -405,6 +405,18 @@ fn member_path_helper<'a>(
     })
 }
 
+/// Card MEMBER-PATH-INVOCATION-PREMISE: a member invocation's form, for
+/// the invoking body's check (a `supplied_owned` object is none).
+fn member_form(object: &MemberObject, path: &str) -> Option<crate::member_path_invocation::Form> {
+    match object {
+        MemberObject::Parameter { index } => Some(crate::member_path_invocation::Form::Member {
+            object: *index,
+            path: path.to_owned(),
+        }),
+        MemberObject::SuppliedOwned => None,
+    }
+}
+
 fn is_identifier(text: &str) -> bool {
     let mut chars = text.chars();
     chars
@@ -936,6 +948,7 @@ impl Parser<'_> {
                     actuals,
                     &|_| None,
                     &spelled,
+                    None,
                 );
                 for operands in stated {
                     let Some(CallbackActual::Parameter { index }) = actuals.get(operands.position)
@@ -1505,6 +1518,9 @@ impl Parser<'_> {
                                 actuals,
                                 actual,
                                 &text(*callback),
+                                Some(crate::member_path_invocation::Form::Formal {
+                                    callback: *callback,
+                                }),
                             ));
                     }
                 }
@@ -1547,6 +1563,7 @@ impl Parser<'_> {
                                 actuals,
                                 actual,
                                 &text(*table),
+                                Some(crate::member_path_invocation::Form::Table { table: *table }),
                             ));
                     }
                 }
@@ -1661,6 +1678,7 @@ impl Parser<'_> {
                             object: name.clone(),
                             key: spelled.clone(),
                             actuals: actuals.clone(),
+                            form: member_form(object, &member.path),
                             refusal: description,
                             member_paths: self
                                 .contracts
@@ -1750,6 +1768,7 @@ impl Parser<'_> {
                             actuals,
                             actual,
                             &spelled,
+                            member_form(object, &member.path),
                         ));
                 }
             }
@@ -1862,7 +1881,7 @@ pub(super) fn apply(
                 // Card OP-CALLBACK-MEMBER-PATH-RELEASE (rule 30): the decided
                 // candidates' member-path states, composed with the arms.
                 for (position, handed) in use_.actuals.iter().enumerate() {
-                    let CallbackActual::Parameter { .. } = handed else {
+                    let CallbackActual::Parameter { index: handed } = handed else {
                         continue;
                     };
                     let candidates = decided
@@ -1890,6 +1909,14 @@ pub(super) fn apply(
                             position,
                             candidates,
                             member: use_.key.clone(),
+                            invocation: use_.form.clone().map(|form| {
+                                crate::member_path_invocation::Site {
+                                    form,
+                                    arity: use_.actuals.len(),
+                                    position,
+                                    handed: *handed,
+                                }
+                            }),
                         },
                         operands.arms.as_ref(),
                         state,
