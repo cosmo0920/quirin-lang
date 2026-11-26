@@ -713,6 +713,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [landing-777fba16e](landing-777fba16e/README.md) | Landing checkpoint 777fba16e |
 
+| [landing-batch-a](landing-batch-a/README.md) | Landing batch A (integrate/r74): return-family rules |
+
 | [landing-provider-lock](landing-provider-lock/README.md) | Landing repair: provider workspace lock (2026-11-01) |
 
 | [landing-publish-completion](landing-publish-completion/README.md) | LANDING-PUBLISH-COMPLETION |
@@ -1039,6 +1041,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [refused-store-of-call-result-escape](refused-store-of-call-result-escape/README.md) | REFUSED-STORE-OF-CALL-RESULT-ESCAPE: hypothesis refuted |
 
+| [regex-regerror-failure-edge](regex-regerror-failure-edge/README.md) | CG25-IN-PLACE-REGEX-REGERROR-FAILURE-EDGE |
+
 | [region-credit-joins](region-credit-joins/README.md) | REGION-CREDIT-JOINS — the composed region: parent-local credit after the joins |
 
 | [region-joins-duties](region-joins-duties/README.md) | REGION-JOINS-DUTIES — real duties in the composed region's pack |
@@ -1287,13 +1291,27 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [retention-unmatched-removal-poisons](retention-unmatched-removal-poisons/README.md) | RETENTION-UNMATCHED-REMOVAL-POISONS |
 
+| [return-family-arith-walk-conditional](return-family-arith-walk-conditional/README.md) | RETURN-FAMILY-ARITH-WALK-CROSSES-CONDITIONAL: rule 74w's walk stops at a conditional's arm |
+
+| [return-family-conditional-constant-pruning](return-family-conditional-constant-pruning/README.md) | RETURN-FAMILY-CONDITIONAL-CONSTANT-PRUNING: a decided condition prunes the arm C never evaluates |
+
 | [return-family-deref-resolved-cast](return-family-deref-resolved-cast/README.md) | RETURN-FAMILY-DEREF-THROUGH-RESOLVED-CAST: a starred may-bind root counts through cast groups |
 
 | [return-family-star-cast](return-family-star-cast/README.md) | RETURN-FAMILY-STAR-AFTER-UNRESOLVED-CAST: family S keeps both readings of an undecided cast |
 
 | [return-family-star-outside-parentheses](return-family-star-outside-parentheses/README.md) | RETURN-FAMILY-STAR-OUTSIDE-ROOT-PARENTHESES: a dereference outside a starred root's parentheses counts |
 
+| [return-family-untracked-arith-access](return-family-untracked-arith-access/README.md) | RETURN-FAMILY-UNTRACKED-ACCESS-THROUGH-ARITHMETIC: an untracked root accessed through pointer arithmetic is a base |
+
+| [return-family-untracked-conditional-access](return-family-untracked-conditional-access/README.md) | RETURN-FAMILY-UNTRACKED-CONDITIONAL-ACCESS: both arms of an accessed conditional are bases |
+
 | [return-family-untracked-deref-cast](return-family-untracked-deref-cast/README.md) | RETURN-FAMILY-UNTRACKED-DEREF-THROUGH-CAST: an untracked root dereferenced through a cast group is a base |
+
+| [return-family-untracked-member-cast](return-family-untracked-member-cast/README.md) | RETURN-FAMILY-UNTRACKED-MEMBER-THROUGH-CAST: an untracked member or subscript root through a cast group is a base |
+
+| [return-family-untracked-reversed-subscript](return-family-untracked-reversed-subscript/README.md) | RETURN-FAMILY-UNTRACKED-REVERSED-SUBSCRIPT: a root inside a subscript's brackets may be its pointer |
+
+| [return-strict-member-null](return-strict-member-null/README.md) | RETURN-STRICT-MEMBER-NULL-UNTRACKED-ROOT: a bare member read through an untracked root keeps family S's base |
 
 | [review-audit-runner](review-audit-runner/README.md) | Review audit-runner cancellation and failure observation |
 
@@ -1441,12 +1459,16 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [tsan-rows-2](tsan-rows-2/README.md) | `TSAN-ROWS-2` — contention-forcing ThreadSanitizer schedules on the task route, and the CT46 decision (wave 39) |
 
+| [type-group-qualified-pointer](type-group-qualified-pointer/README.md) | TYPE-GROUP-QUALIFIED-POINTER: a qualifier after a pointer `*` keeps a group a type group |
+
 ## U
 
 | Card directory | Original report title |
 |---|---|
 
 | [union-opaque-record-writes](union-opaque-record-writes/README.md) | UNION-OPAQUE-RECORD-WRITES-BY-TYPE: opaque record writes keyed by target |
+
+| [untracked-base-null-join](untracked-base-null-join/README.md) | UNTRACKED-BASE-NULL-JOIN-DISCHARGE: a null constant on some reaching path is never rule 14n's premised alias |
 
 ## V
 
