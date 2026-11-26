@@ -362,6 +362,7 @@ import QCore.OsEndpointPostState
 import QCore.OutParameterBodySummary
 import QCore.OutParameterScalarFramePremise
 import QCore.OutSlotCallWrite
+import QCore.OutSlotKeepOrDeliver
 import QCore.OuterContract
 import QCore.OuterListCandidates
 import QCore.OwnedFieldCopyReach

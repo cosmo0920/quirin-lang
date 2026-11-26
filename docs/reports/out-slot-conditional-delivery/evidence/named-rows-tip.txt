@@ -1,0 +1,90 @@
+lib/librdkafka-2.15.0/src/rdkafka_broker.c::rd_kafka_broker_share_session_add_remove_toppar Unknown
+    1 call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)
+    1 call to `rd_list_new`: the registry holder `the returned object` is not one this body tracks (callback-registry-undecided)
+    1 call to uncontracted function `rd_list_remove`
+    2 local declaration may shadow a formal resource identity
+    1 owned result of resource API `rd_list_new` stored through `*toppars_add_list` without an out-parameter contract
+    1 store through `*toppars_remove_list` without an out-parameter contract
+    2 unmodeled call, aggregate or indirect access in branch condition
+    1 unresolved resource identity `toppars_remove_list`
+lib/librdkafka-2.15.0/src/rdkafka_cgrp.c::rd_kafka_cgrp_consumer_assignment_with_metadata Unknown
+    1 call to `rd_list_new`: the registry holder `the returned object` is not one this body tracks (callback-registry-undecided)
+    1 call to uncontracted function `rd_kafka_metadata_cache_find_by_id`
+    1 call to uncontracted function `rd_kafka_topic_partition_list_add_with_topic_name_and_id`
+    1 call to uncontracted function `rd_kafka_topic_partition_list_find_topic_by_id`
+    1 call to uncontracted function `rd_list_deduplicate`
+    4 indirect memory access is outside the resource projection
+    1 local declaration may shadow a formal resource identity
+    2 loop re-acquisition: an earlier generation that may be live is still held
+    1 nullable resource `assignment_with_metadata` used by a non-null contract
+    1 owned result of resource API `rd_list_new` stored through `*missing_topic_ids` without an out-parameter contract
+    1 unresolved resource identity `assignment_with_metadata`
+    2 unresolved resource identity `missing_topic_ids`
+    1 unresolved resource identity `rkmce`
+    1 unresolved resource identity `rktpar`
+    2 unresolved resource identity `topic_name`
+lib/librdkafka-2.15.0/src/rdkafka_request.c::rd_kafka_handle_ApiVersion Unknown
+    1 call to uncontracted function `rd_kafka_op_throttle_time`
+    11 indirect memory access is outside the resource projection
+    2 local declaration may shadow a formal resource identity
+    1 owned result of resource API `rd_malloc` stored through `*apis` without an out-parameter contract
+    2 store through `*apis` without an out-parameter contract
+    8 unmodeled call, aggregate or indirect access in branch condition
+    1 unrecognized assignment destination
+    1 unresolved resource identity `ErrorCode`
+    1 unresolved resource identity `apis`
+    2 unresolved resource identity `err`
+    2 unresolved resource identity `rkb`
+    9 unresolved resource identity `rkbuf`
+    5 unsupported assignment expression
+lib/librdkafka-2.15.0/src/rdkafka_request.c::rd_kafka_handle_OffsetFetch Unknown
+    1 braced initializer, expression, or declaration is not modeled
+    1 call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)
+    1 call to uncontracted function `__builtin_alloca`
+    1 call to uncontracted function `rd_kafka_buf_retry` in branch condition
+    1 call to uncontracted function `rd_kafka_op_throttle_time`
+    1 call to uncontracted function `rd_kafka_topic_partition_get_toppar`
+    1 call to uncontracted function `rd_kafka_topic_partition_list_add`
+    1 call to uncontracted function `rd_kafka_topic_partition_list_find`
+    1 call to uncontracted function `rd_kafka_topic_partition_list_set_offsets`
+    1 call to uncontracted function `rd_kafka_topic_partition_set_leader_epoch`
+    26 indirect memory access is outside the resource projection
+    1 loop re-acquisition: an earlier generation that may be live is still held
+    1 owned result of resource API `rd_kafka_topic_partition_list_new` stored through `*offsets` without an out-parameter contract
+    15 unmodeled call, aggregate or indirect access in branch condition
+    3 unrecognized assignment destination
+    1 unresolved resource identity `ErrorCode`
+    1 unresolved resource identity `err`
+    1 unresolved resource identity `metadata_bytes`
+    2 unresolved resource identity `offsets`
+    4 unresolved resource identity `rkb`
+    15 unresolved resource identity `rkbuf`
+    3 unresolved resource identity `rktpar`
+    14 unsupported assignment expression
+lib/librdkafka-2.15.0/src/rdkafka_subscription.c::rd_kafka_assignment Unknown
+    3 indirect memory access is outside the resource projection
+    1 owned result of resource API `rd_kafka_topic_partition_list_new` stored through `*partitions` without an out-parameter contract
+    1 unresolved resource identity `partitions`
+    1 unresolved resource identity `rkcg`
+    2 unresolved resource identity `rko`
+lib/librdkafka-2.15.0/src/rdkafka_subscription.c::rd_kafka_subscription Unknown
+    3 indirect memory access is outside the resource projection
+    1 owned result of resource API `rd_kafka_topic_partition_list_new` stored through `*topics` without an out-parameter contract
+    1 unresolved resource identity `rkcg`
+    2 unresolved resource identity `rko`
+    1 unresolved resource identity `topics`
+lib/chunkio/src/cio_file_unix.c::cio_file_native_lookup_group Unknown
+    1 `query_buffer` is released or transferred while a live holder retains it (retention-released-while-held)
+    1 indirect memory access is outside the resource projection
+    2 local declaration may shadow a formal resource identity
+    2 owned result of resource API `calloc` stored through `*result` without an out-parameter contract
+    1 unrecognized assignment destination
+    2 unresolved resource identity `query_buffer`
+    2 unresolved resource identity `result`
+lib/chunkio/src/cio_file_unix.c::cio_file_native_lookup_user Unknown
+    1 `query_buffer` is released or transferred while a live holder retains it (retention-released-while-held)
+    1 indirect memory access is outside the resource projection
+    2 owned result of resource API `calloc` stored through `*result` without an out-parameter contract
+    1 unrecognized assignment destination
+    2 unresolved resource identity `query_buffer`
+    2 unresolved resource identity `result`

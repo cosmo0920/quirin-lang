@@ -1,0 +1,49 @@
+{
+ "schema": "quirin-amendments/2",
+ "card": "OUT-SLOT-CONDITIONAL-DELIVERY",
+ "base": "43410b230",
+ "measured_tip": "80f747e4b",
+ "profiles": [],
+ "increment_paragraph": "**OUT-SLOT-CONDITIONAL-DELIVERY** (USER DECISION 2026-11-25: \"lanich four of queued cards\", the return-family and this-lane set; gateway rule 85; `QCore.OutSlotKeepOrDeliver`; [report](../../reports/out-slot-conditional-delivery/README.md)). An in-out slot written only where it held null (`if (!*out) *out = make();`) now has a keep-or-deliver summary of its own. The body is validated twice on the CFG built with the delivered contract as its own: from a null slot under W4's unchanged `Out` gate, and from a slot holding a caller-held live object, which every exit must still hold, live, under the gate with the slot read `Owned { nullable: false }`; a null test of exactly that slot reads as a branch on its binding only inside these builds. The summary lives in its own environment table (`qcore_schemas::keep_or_deliver`), never the function map, so unaware consumers see an uncontracted function; the callee's own row keeps rule 74l's refusal. A caller's whole-statement call with the slot actual `&NAME` is lowered to a branch on `NAME`'s nullness, each arm under a minted reading: a known-null slot takes custody of the delivery, a held object stays the caller's and is never minted twice, anything else reaches the kept arm's `Owned` position with no identity and stays `Unknown`. Shape 2 (`rd_kafka_assignment`/`rd_kafka_subscription`: the slot first takes an op's member) is refused with options for a user decision; shape 3's literal-status part keeps rule 11r(6), `cio_file_native_lookup_*` is refused as final, and `rd_kafka_handle_ApiVersion` is an every-exit store blocked elsewhere. Lean: 15 audited theorems, bound to `KEEP_OR_DELIVER_VECTORS`. Pins: 10 end-to-end fixtures (the 4 change pins fail at the base) and 4 unit tests. Opt-in `current --monkey-linked` over Fluent Bit 046accf6, each run on its own tree and binary: base 43410b230 and tip 80f747e4b both 1,187/2/3,607/8, no row moved and no leaf changed, as predicted; every named row still `Unknown` with its other blockers. Scoped gate at 827ff788f: clippy, probes, Lean (509 audits) and Python (807) 0; Rust 10,117 passed, 6 failed (the six named K5-LOCAL-ORIGIN-ALIASES base failures); fmt 1 on one test file, fixed after (check 0). Pinned routes not runnable on the host; no move predicted.",
+ "status_edits": [],
+ "ledger": [
+  {
+   "id": "OUT-SLOT-CONDITIONAL-DELIVERY",
+   "operation": "retire",
+   "why": "Discharged by OUT-SLOT-CONDITIONAL-DELIVERY (gateway rule 85, USER DECISION 2026-11-25): shape 1 (keep-or-deliver in-out slot) is a summary mode of its own, qcore_schemas::keep_or_deliver in its own environment table, validated by crates/qcore-c-gateway/src/legacy_keep_or_deliver_summary.rs on a null-slot run (W4's Out gate) and a held-object run (the object kept, live, at every exit), and read by callers only by the branch on their own slot in crates/qcore-c-gateway/src/legacy_keep_or_deliver.rs; Lean QCore.OutSlotKeepOrDeliver (15 audited theorems). Shape 2 is refused with a named reason and registered as OUT-SLOT-MEMBER-THEN-FRESH for a user decision; shape 3's literal-status part keeps rule 11r(6)'s reading, cio_file_native_lookup_user/_group is refused as final (no reading of CIO_ERROR states the slot), and rd_kafka_handle_ApiVersion is an every-exit store (W4 Out shape) blocked elsewhere. Pinned in crates/qcore-c-gateway/tests/out_slot_keep_or_deliver.rs and tests/unit/keep_or_deliver.rs; the named rows re-measured on the opt-in route, all still Unknown with their other blockers (report section 6).",
+   "source": "docs/reports/out-slot-conditional-delivery/README.md"
+  },
+  {
+   "id": "OUT-SLOT-MEMBER-THEN-FRESH",
+   "operation": "register",
+   "source": "docs/reports/out-slot-conditional-delivery/README.md",
+   "recorded_by": "OUT-SLOT-CONDITIONAL-DELIVERY",
+   "title": "A slot that first takes another object's member and then a conditional fresh object has no sound reading",
+   "text": "OUT-SLOT-CONDITIONAL-DELIVERY (rule 85(4)) refused rdkafka_subscription.c rd_kafka_assignment and rd_kafka_subscription: the slot first takes rko->rko_u.….partitions/topics (overwriting whatever the caller held, so no keep-or-deliver summary), then a fresh list only when that is NULL and err is 0, and the early returns of RD_KAFKA_RESP_ERR__UNKNOWN_GROUP/__TIMED_OUT leave it unwritten while `return err` can return the same codes, so the status does not partition the slot. Options: (a) declare the op's member custody (moved out and nulled before rd_kafka_op_destroy); (b) a delivers-or-leaves-unwritten mode read only by a caller whose slot is known null, which amends rule 74l; (c) keep the refusal. USER DECISION needed. DISCHARGE: implement the chosen option with Lean parity, or record (c) as final; re-measure the two rows."
+  },
+  {
+   "id": "KEEP-OR-DELIVER-OWN-ROW",
+   "operation": "register",
+   "source": "docs/reports/out-slot-conditional-delivery/README.md",
+   "recorded_by": "OUT-SLOT-CONDITIONAL-DELIVERY",
+   "title": "A function with a keep-or-deliver summary keeps rule 74l's refusal on its own row",
+   "text": "OUT-SLOT-CONDITIONAL-DELIVERY (rule 85(2)) publishes the summary its callers read, but analyze_defined_function reads only the function map, so the callee's own row still runs with no contract and keeps `owned result of resource API `F` stored through `*NAME` without an out-parameter contract` (Unknown). DISCHARGE: decide the row under the two validated entries (null slot and held object) with a certificate the checker re-derives, or record the Unknown row as final; re-measure."
+  },
+  {
+   "id": "SLOT-NULL-TEST-ORDINARY-BUILDS",
+   "operation": "register",
+   "source": "docs/reports/out-slot-conditional-delivery/README.md",
+   "recorded_by": "OUT-SLOT-CONDITIONAL-DELIVERY",
+   "title": "A null test of an out slot `*NAME` reads as an indirect access outside rule 85's validation builds",
+   "text": "OUT-SLOT-CONDITIONAL-DELIVERY reads `!*NAME`, `*NAME == NULL` and the like as BranchOnNull on the slot's binding only while its own validation builds the body (rule 85(1)). Every other build, W4's included, lowers the test as an IndirectScalarAccess whose unbound root reports UnknownAlias of the formal, so an every-exit Out body that tests its slot (rdkafka_request.c rd_kafka_handle_ApiVersion's `if (*apis)`) refuses. DISCHARGE: decide whether a slot null test may refine the slot's binding in every build where the formal is an Out slot (with the deref premise of the slot pointer stated), with Lean parity; re-measure."
+  },
+  {
+   "id": "CALL-WITH-DEREF-ACTUAL-READ-AS-DECLARATION",
+   "operation": "register",
+   "source": "docs/reports/out-slot-conditional-delivery/README.md",
+   "recorded_by": "OUT-SLOT-CONDITIONAL-DELIVERY",
+   "title": "A call statement whose first actual is `*NAME` of a formal is refused as a declaration",
+   "text": "OUT-SLOT-CONDITIONAL-DELIVERY's probes found `q_observe(*out);` refused as `local declaration may shadow a formal resource identity`: legacy_classify.rs's declaration-likeness test reads `IDENT ( * NAME` as a function-pointer declarator `T (*NAME)`. rdkafka_broker.c rd_kafka_broker_share_session_add_remove_toppar's `rd_list_add(*toppars_add_list, …)` has this shape. DISCHARGE: tell a call to a declared or called function from a declarator (a known callee, or Clang's reading), keeping a real shadowing declaration refused; re-measure."
+  }
+ ]
+}
