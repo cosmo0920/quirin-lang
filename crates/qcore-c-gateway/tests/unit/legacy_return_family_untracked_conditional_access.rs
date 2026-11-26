@@ -249,12 +249,16 @@ fn an_unclassifiable_arm_refuses() {
     ] {
         assert_eq!(bases(expression), None, "{expression}");
     }
-    // Rule 74w's walk, unchanged, reads the conditional group as the sum
-    // around a root that is a later term of an arm's sum with an operator or
-    // the group's `)` after it, and refuses: the base's refusal, kept (a
-    // registered follow-up).
+    // Rule 82 (card RETURN-FAMILY-ARITH-WALK-CROSSES-CONDITIONAL) changed
+    // these two pins deliberately. Rule 74w's walk read the conditional
+    // group as the sum around a later term of an arm's sum and refused; it
+    // now classifies that group within the arm, and the refusal stands only
+    // unless rule 74x made the root a base, which it does here: both arms'
+    // roots are bases.
     for expression in ["( n ? 1 + p - n : a ) - > m", "( n ? a : n + p ) [ 0 ]"] {
-        assert_eq!(bases(expression), None, "{expression}");
+        let mut found = bases(expression).unwrap_or_else(|| panic!("refused: {expression}"));
+        found.sort();
+        assert_eq!(found, ["a", "p"], "{expression}");
     }
 }
 

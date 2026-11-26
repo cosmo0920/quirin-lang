@@ -315,3 +315,9 @@ const REFUSED: (&str, &[&str]) = (
     "Unknown",
     &["unsupported:unmodeled call, aggregate or indirect access in return expression"],
 );
+
+/// Card RETURN-FAMILY-ARITH-WALK-CROSSES-CONDITIONAL (gateway rule 82): its
+/// end-to-end rows, compiled into this test target rather than a new one
+/// (that card's report, section 6).
+#[path = "return_family_untracked_conditional_access/arith_walk_conditional.rs"]
+mod arith_walk_conditional;

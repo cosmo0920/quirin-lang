@@ -460,6 +460,7 @@ import QCore.ReturnCodeHandOff
 import QCore.ReturnCorrectness
 import QCore.ReturnExpressionEvaluation
 import QCore.ReturnExpressionFamilies
+import QCore.ReturnFamilyArithWalkConditional
 import QCore.ReturnFamilyDerefCast
 import QCore.ReturnFamilyStarCast
 import QCore.ReturnFamilyStarOutside
