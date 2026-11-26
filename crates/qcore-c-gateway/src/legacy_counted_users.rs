@@ -406,7 +406,11 @@ impl Unit<'_> {
         let (owned, origins) = unit.fused(body);
         let texts = owned.iter().map(String::as_str).collect::<Vec<_>>();
         let formals = function_parameters(tokens, function).unwrap_or_default();
-        let stable = stable_formals(&texts, &formals);
+        // JUMPED-SHADOW-FORMAL-READINGS hook (rule 86): one declaration each.
+        let stable = super::formal_declaration::one_declaration_formals(
+            function,
+            stable_formals(&texts, &formals),
+        );
         // The formals a clause names or a body operation attributes.
         let mut tracked = BTreeSet::new();
         if let Some(own) = own {

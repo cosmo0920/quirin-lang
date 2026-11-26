@@ -29,8 +29,10 @@
 //!
 //! The `rd_regex_match` shape without its failure-edge `regerror` is the
 //! control: `Safe` at base and after. The real function calls `regerror(r,
-//! &re, …)` on the failure edge, which the rule refuses with `regexec` (no
-//! contract clause tells them apart): a recorded over-refusal.
+//! &re, …)` on the failure edge, which this card refused with `regexec` (no
+//! contract clause told them apart): a recorded over-refusal, discharged by
+//! card CG25-IN-PLACE-REGEX-REGERROR-FAILURE-EDGE (rule 74n,
+//! `in_place_regex_failure_use.rs`).
 //! A `Safe` here is `Safe` over the libc assumptions and promotes nothing.
 //! Lean: `QCore.InPlaceCertifiedUse`.
 
@@ -135,8 +137,8 @@ fn run(source: &str) -> Run {
 /// The control: the `rd_regex_match` shape `tests/resource_kinds.rs` pins
 /// (its failure-edge `regerror` replaced by a write of `errstr`) uses `re`
 /// only after the zero edge. It is `Safe` at base and stays `Safe`, with no
-/// diagnostic. The real spelling, with `regerror`, is in
-/// `a_regerror_on_the_failure_edge_is_refused`.
+/// diagnostic. The real spelling, with `regerror`, is pinned in
+/// `in_place_regex_failure_use.rs` (rule 74n).
 #[test]
 fn the_rd_regex_match_shape_stays_safe() {
     if !clang_available() {
@@ -205,31 +207,11 @@ fn a_use_before_the_initialiser_is_refused() {
     assert!(run.refused(UNCERTIFIED), "{run:?}");
 }
 
-/// `regerror(r, &re, …)` on the failure edge is a use of the same kind and
-/// position, and the rule reads no callee by name, so it refuses too. POSIX
-/// permits it there; this is a recorded over-refusal
-/// (`CG25-IN-PLACE-REGEX-REGERROR-FAILURE-EDGE`), not a finding.
-#[test]
-fn a_regerror_on_the_failure_edge_is_refused() {
-    if !clang_available() {
-        return;
-    }
-    for source in [
-        "int subject(const char *p, char *buf, unsigned long n) { regex_t re; int r; \
-         r = regcomp(&re, p, 0); if (r) { regerror(r, &re, buf, n); return 0; } \
-         regfree(&re); return 1; }",
-        // `rd_regex_match` as rdregex.c spells it under HAVE_REGEX: the
-        // published `Safe` row this card moves to `Unknown`.
-        "int subject(const char *pattern, const char *str, char *errstr, unsigned long errstr_size) { \
-         regex_t re; int r; r = regcomp(&re, pattern, 1 | 8); \
-         if (r) { if (errstr) regerror(r, &re, errstr, errstr_size); return 0; } \
-         r = regexec(&re, str, 0, 0, 0) != 1; regfree(&re); return r; }",
-    ] {
-        let run = run(source);
-        assert_eq!(run.status, AnalysisStatus::Unknown, "{source}: {run:?}");
-        assert!(run.refused(UNCERTIFIED), "{source}: {run:?}");
-    }
-}
+// Card CG25-IN-PLACE-REGEX-REGERROR-FAILURE-EDGE (rule 74n) retired this
+// card's `a_regerror_on_the_failure_edge_is_refused`, the recorded
+// over-refusal: `regerror`'s `preg` now carries `resource_kind_failure_use`,
+// and its pins (the same two shapes, now `Safe`) are in
+// `in_place_regex_failure_use.rs`.
 
 /// A use after `regfree` stays rule 11v's `use_after_close` candidate; the
 /// released site is certified for this rule, so no refusal is added.

@@ -96,6 +96,68 @@
 //! ([`dereferenced_through_groups`]), so `*(T *)p` makes `p` a base as `*p`
 //! does. The change only adds bases (`QCore.ReturnFamilyUntrackedDerefCast`).
 //!
+//! Card **RETURN-FAMILY-UNTRACKED-MEMBER-THROUGH-CAST** (gateway rule 74t): an
+//! untracked root is a member or subscript base, and a `->` root, also when
+//! `->` or `[` reaches it through closing parentheses whose groups hold only
+//! opening parentheses and cast groups before it ([`accessed_through_groups`]),
+//! so `((T *)p)->f`, `((T *)p)[i]` and `(p)->f` make `p` a base as `p->f` and
+//! `p[i]` do. The change only adds bases and `->` roots
+//! (`QCore.ReturnFamilyUntrackedMemberCast`).
+//!
+//! Card **RETURN-FAMILY-UNTRACKED-ACCESS-THROUGH-ARITHMETIC** (gateway rule
+//! 74w): an untracked, non-scalar root is a base, and a `->` root, also when
+//! `->`, `[` or a `*` that may be unary reaches it through a parenthesised
+//! additive group as well as cast groups and parentheses
+//! ([`accessed_through_arithmetic`]), so `(p + n)->f`, `(n + p)[i]`,
+//! `((T *)p - n)->f` and `*(n + p)` make `p` a base. An access through a sum
+//! whose other operands are not literals, declared scalars or `sizeof` of a
+//! resolved type (`(p - q)->f`) refuses. Bases and `->` roots only grow and
+//! the one new refusal is the expression's, so nothing admits more
+//! (`QCore.ReturnFamilyUntrackedArithAccess`).
+//!
+//! Card **RETURN-FAMILY-UNTRACKED-REVERSED-SUBSCRIPT** (gateway rule 74y): C11
+//! 6.5.2.1p2 makes `E1[E2]` `*((E1)+(E2))`, so the pointer may stand inside
+//! the brackets. An untracked, non-scalar root filling a subscript's brackets
+//! (through cast groups, parentheses and rule 74w's sums; [`subscript_index`])
+//! is a base unless the subscripted operand is a declared pointer or array,
+//! so `1[p]`, `n[p]`, `n[(T *)p]` and `n[p + k]` make `p` a base as `p[1]`
+//! does; an undecided `a[b]` makes both bases. A may-bind root inside such
+//! brackets refuses (`n[*q]` is a second dereference). Bases only grow and
+//! the new refusals are the expression's, so nothing admits more
+//! (`QCore.ReturnFamilyUntrackedReversedSubscript`).
+//!
+//! Card **RETURN-FAMILY-UNTRACKED-CONDITIONAL-ACCESS** (gateway rule 74x):
+//! when `->`, `[` or a `*` that may be unary accesses a parenthesised
+//! conditional, through cast groups, parentheses and classified additive
+//! groups as rule 74w reads them, every untracked, non-scalar root of
+//! **either** arm is a base, and a `->` root for `->`
+//! ([`conditional_roots`]), so `(c ? p : q)->f`, `(0 ? p : q)->f`,
+//! `*(c ? p : q)` and `((T *)(c ? p : q))[i]` make both `p` and `q` bases.
+//! The condition is a read and is never decided. An arm the reader cannot
+//! classify (a string, a unary `-`, a product) refuses. Bases and `->` roots
+//! only grow and the one new refusal is the expression's, so nothing admits
+//! more (`QCore.ReturnFamilyUntrackedConditionalAccess`).
+//!
+//! Card **RETURN-FAMILY-ARITH-WALK-CROSSES-CONDITIONAL** (gateway rule 82):
+//! rule 74w's walk read a conditional group as the additive group around a
+//! later term of an arm's sum (`(c ? 1 + p - n : a)->f`, `(c ? a : n +
+//! p)[0]`) and refused. It now classifies such a group within the arm, the
+//! arm's `?` or `:` standing in for the parentheses ([`arm_around`]); when
+//! that is the only unclassified reading it returns
+//! [`ArithmeticAccess::Arm`], and family S refuses unless rule 74x made the
+//! root a base. A root in the condition and every other unclassified group
+//! refuse as before (`QCore.ReturnFamilyArithWalkConditional`).
+//!
+//! Card **RETURN-FAMILY-CONDITIONAL-CONSTANT-PRUNING** (gateway rule 74z)
+//! decides a conditional's condition when it is an integer constant
+//! expression of literals and the integer operators that
+//! `constant::constant_condition` evaluates exactly, and then drops the roots
+//! of the arm C never evaluates (C11 6.5.15p4), so `(0 ? p : q)->f` makes
+//! only `q` a base. Both arms are still classified, every old test still
+//! reads both, and an undecided condition (a name, `sizeof`, a cast, a
+//! division by zero, an overflow) keeps rule 74x's reading
+//! (`QCore.ReturnFamilyConditionalConstant`).
+//!
 //! The read node is `IndirectScalarAccess` with no destination, no frame and
 //! no chain: it changes no binding, status, marker or link, and adds only the
 //! bases' obligations and the C02-P-ALIAS obligations of every `->` root. It
@@ -278,6 +340,13 @@ pub(crate) trait NameFacts {
     /// the body's declarations and the unit's file-scope objects, less every
     /// name a `typedef` spells. A `( name )` of one of them is an operand.
     fn objects(&self) -> &BTreeSet<String>;
+    /// Rule 74y: declared by this function's declaration reader as a
+    /// single-level pointer or an array (`FunctionTypes::pointer_kind`), so a
+    /// subscript `name [ … ]` subscripts it and its brackets hold the index.
+    /// The default knows no such name, which only adds bases and refusals.
+    fn declared_pointer(&self, _name: &str) -> bool {
+        false
+    }
 }
 
 /// Family S's read: the may-bind bases it dereferences and the `->` roots
@@ -605,6 +674,580 @@ fn dereferenced_through_groups(texts: &[&str], index: usize, names: &impl NameFa
     false
 }
 
+/// Card RETURN-FAMILY-UNTRACKED-MEMBER-THROUGH-CAST (rule 74t): the access
+/// (`->` or `[`) that reaches the untracked root at `index` through closing
+/// parentheses whose groups hold nothing before the root but opening
+/// parentheses and groups `cast_semantics::type_group_open` reads as a type
+/// (rule 12h's transparency), so that `((T *)p)->f`, `((T *)p)[i]`,
+/// `((T *)(p))->f` and `(p)->f` make `p` a base as `p->f` and `p[i]` do.
+/// `Some(true)` is a `->`, `Some(false)` a `[`, and `None` is no such access:
+/// at least one `)` must stand between the root and the access (the direct
+/// spellings are the old test's), and no more than the walk back opened, so
+/// a group with an operand before the root (`( n + p )`, `( n + ( p ) )`) is
+/// never read through. (`f ( p ) -> m` reads as an access of `p`: one more
+/// base in an expression family S refuses as a call anyway.) A cast's type
+/// word is followed inside its group by
+/// another word, a `*` or the `)` before an operand, never by `)` then `->`
+/// or `[`, so it is no root here. It only adds bases and `->` roots
+/// (`QCore.ReturnFamilyUntrackedMemberCast`).
+fn accessed_through_groups(texts: &[&str], index: usize) -> Option<bool> {
+    let mut at = index;
+    let mut opened = 0usize;
+    while let Some(previous) = at.checked_sub(1) {
+        match texts[previous] {
+            "(" => {
+                opened += 1;
+                at = previous;
+            }
+            ")" => match crate::cast_semantics::type_group_open(texts, previous) {
+                Some(open) => at = open,
+                None => break,
+            },
+            _ => break,
+        }
+    }
+    let closes = texts[index + 1..]
+        .iter()
+        .take(opened)
+        .take_while(|text| **text == ")")
+        .count();
+    let after = index + 1 + closes;
+    if closes == 0 {
+        None
+    } else if arrow_at(texts, after) {
+        Some(true)
+    } else if texts.get(after) == Some(&"[") {
+        Some(false)
+    } else {
+        None
+    }
+}
+
+/// Rule 74w: what [`accessed_through_arithmetic`] read past an untracked
+/// root.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum ArithmeticAccess {
+    /// No additive group crossed, or nothing accesses what the walk reached:
+    /// the other tests' reading stands.
+    None,
+    /// `( p + n ) - > f`: a base and a `->` root.
+    Arrow,
+    /// `( p + n ) [ i ]` or `* ( n + p )`: a base.
+    Element,
+    /// An access through an additive group whose other operands the reader
+    /// cannot classify (`( p - q ) - > f`): family S refuses.
+    Unclassified,
+    /// Rule 82: `Unclassified` only because a crossed group is a conditional
+    /// whose arm holds the span, every crossed group classified when the
+    /// arm's `?` or `:` delimit it (`( c ? 1 + p - n : a ) - > f`): family S
+    /// refuses unless rule 74x made the root a base, and a `->` root when
+    /// `true` (`->` accesses what the walk reached).
+    Arm(bool),
+}
+
+/// Rule 74w: whether `part`, the other operands of an additive group around
+/// the root, holds only what can never be a pointer: numeric literals,
+/// declared scalars (no pointer level, [`NameFacts::declared_scalar`]), a
+/// type operator over a resolved type name, parentheses and `+ - * / %`.
+fn integer_operands(part: &[&str], names: &impl NameFacts) -> bool {
+    let mut at = 0usize;
+    while at < part.len() {
+        let text = part[at];
+        if TYPE_OPERATORS.contains(&text) {
+            let Some(close) = part
+                .get(at + 1)
+                .filter(|next| **next == "(")
+                .and_then(|_| close_of(part, at + 1))
+            else {
+                return false;
+            };
+            let words = &part[at + 2..close];
+            if words.is_empty()
+                || !words.iter().all(|word| super::is_identifier(word))
+                || !names.type_name(words)
+            {
+                return false;
+            }
+            at = close + 1;
+            continue;
+        }
+        let integer = matches!(text, "(" | ")" | "+" | "-" | "*" | "/" | "%")
+            || text.as_bytes().first().is_some_and(u8::is_ascii_digit)
+            || (super::is_identifier(text) && names.declared_scalar(text));
+        if !integer {
+            return false;
+        }
+        at += 1;
+    }
+    true
+}
+
+/// Rule 74w: whether `text` may end an operand, so that an operator after it
+/// is binary.
+fn operand_end(text: &str) -> bool {
+    matches!(text, ")" | "]")
+        || super::is_identifier(text)
+        || text.as_bytes().first().is_some_and(u8::is_ascii_digit)
+}
+
+/// Rule 74w: the `(` of the innermost group around `start..=end`, and its
+/// matching `)`, when the innermost bracket around it is a `(`.
+fn enclosing_group(texts: &[&str], start: usize) -> Option<(usize, usize)> {
+    let mut depth = 0usize;
+    for at in (0..start).rev() {
+        match texts[at] {
+            ")" | "]" => depth += 1,
+            "(" if depth == 0 => return close_of(texts, at).map(|close| (at, close)),
+            "[" if depth == 0 => return None,
+            "(" | "[" => depth -= 1,
+            _ => {}
+        }
+    }
+    None
+}
+
+/// Rule 82: the arm `a_lo..a_hi` of the conditional group `open..=close`
+/// that holds the span `lo..=hi`, a term at the group's top level: the
+/// tokens between the nearest top-level `?` or `:` before the span and the
+/// nearest after it (or the group's `)`). `None` when the group holds no
+/// top-level `?`, nothing delimits the span before it, or a `?` follows it
+/// (the span is a condition, never an arm).
+fn arm_around(
+    texts: &[&str],
+    open: usize,
+    close: usize,
+    lo: usize,
+    hi: usize,
+) -> Option<(usize, usize)> {
+    let delimiter = |at: usize| matches!(texts[at], "?" | ":");
+    top_level(texts, open + 1, close, |at| texts[at] == "?")?;
+    let mut before = None;
+    let mut from = open + 1;
+    while let Some(at) = top_level(texts, from, lo, delimiter) {
+        before = Some(at);
+        from = at + 1;
+    }
+    let after = top_level(texts, hi + 1, close, delimiter);
+    if after.is_some_and(|at| texts[at] == "?") {
+        return None;
+    }
+    Some((before? + 1, after.unwrap_or(close)))
+}
+
+/// Card RETURN-FAMILY-UNTRACKED-ACCESS-THROUGH-ARITHMETIC (rule 74w): the
+/// access that reaches the untracked, non-scalar root at `index` through
+/// pointer arithmetic. The walk keeps a span `lo..=hi` of what it has read,
+/// starting at the root, and widens it outward through a group
+/// `cast_semantics::type_group_open` reads as a type before it (rule 12h's
+/// transparency), through a `(` and `)` right around it, and through a
+/// parenthesised **arithmetic group**: a binary `+`, `-`, `/` or `%` (never
+/// `- >`, never `*`, which a type group spells too) next to the span, the
+/// other neighbour such an operator or the group's own parenthesis, inside
+/// the innermost `( … )` around the span, which becomes the span. Only that
+/// group's matching `)` is read, so no closing parenthesis past the ones the
+/// walk opened is. When at least one such group was crossed, a `->` or `[`
+/// after the span, or a `*` before it that may be unary under either of
+/// rule 74h's readings, accesses the root: `( p + n ) - > f`,
+/// `( n + p ) [ i ]`, `( ( T * ) p - n ) - > f`, `( ( T * ) ( p + n ) ) - > f`,
+/// `* ( n + p )`. A group is classified when the span is a term of a sum
+/// (`+`, `-` or the group's parenthesis on each side) and
+/// [`integer_operands`] accepts the rest; an access through any other
+/// crossed group (`( p - q ) - > f`, `( n % p ) - > f`) is
+/// [`ArithmeticAccess::Unclassified`] and family S refuses
+/// (`QCore.ReturnFamilyUntrackedArithAccess`).
+fn accessed_through_arithmetic(
+    texts: &[&str],
+    index: usize,
+    names: &impl NameFacts,
+) -> ArithmeticAccess {
+    let (mut lo, mut hi) = (index, index);
+    let mut crossed = false;
+    let mut classified = true;
+    // Rule 82: whether a conditional's arm delimited a crossed group, and
+    // whether every crossed group is classified with the arm's `?` or `:`
+    // standing in for a conditional group's parentheses.
+    let mut delimited = false;
+    let mut classified_in_arms = true;
+    loop {
+        if let Some(open) = lo
+            .checked_sub(1)
+            .filter(|previous| texts[*previous] == ")")
+            .and_then(|previous| crate::cast_semantics::type_group_open(texts, previous))
+        {
+            lo = open;
+            continue;
+        }
+        let left = lo.checked_sub(1).map(|previous| texts[previous]);
+        let right = texts.get(hi + 1).copied();
+        if left == Some("(") && right == Some(")") {
+            lo -= 1;
+            hi += 1;
+            continue;
+        }
+        // An arithmetic operator next to the span, binary (after an
+        // operand) on the left: a unary operator binds tighter, so its
+        // operand, not the span, is the term (`( * p + 1 )`, `( - p )`).
+        // A `*` is never read as a product: a type group's `*` reads the
+        // same (`( long * const )`), and a product is no pointer.
+        let left_binary =
+            matches!(left, Some("+" | "-" | "/" | "%")) && lo >= 2 && operand_end(texts[lo - 2]);
+        let right_operator =
+            matches!(right, Some("+" | "-" | "/" | "%")) && !arrow_at(texts, hi + 1);
+        if !((left_binary || left == Some("(")) && (right_operator || right == Some(")"))) {
+            break;
+        }
+        let Some((open, close)) = enclosing_group(texts, lo) else {
+            break;
+        };
+        // Classified: the span is a term of the sum (`+`, `-` or the
+        // group's own parenthesis on each side, so no product holds it), and
+        // the other operands can never be a pointer.
+        let term_of = |from: usize, to: usize| {
+            let clean_left = (left_binary && matches!(left, Some("+" | "-"))) || lo == from;
+            let clean_right = (right_operator && matches!(right, Some("+" | "-"))) || hi + 1 == to;
+            clean_left
+                && clean_right
+                && integer_operands(&texts[from..lo], names)
+                && integer_operands(&texts[hi + 1..to], names)
+        };
+        if !term_of(open + 1, close) {
+            classified = false;
+        }
+        let arm = arm_around(texts, open, close, lo, hi);
+        delimited |= arm.is_some();
+        if !arm.map_or_else(|| term_of(open + 1, close), |(from, to)| term_of(from, to)) {
+            classified_in_arms = false;
+        }
+        crossed = true;
+        lo = open;
+        hi = close;
+    }
+    if !crossed {
+        return ArithmeticAccess::None;
+    }
+    let arrow = arrow_at(texts, hi + 1);
+    let element = texts.get(hi + 1) == Some(&"[")
+        || lo.checked_sub(1).is_some_and(|star| {
+            texts[star] == "*" && operator_at(texts, star, names).may_be_unary()
+        });
+    match (arrow || element, classified) {
+        (false, _) => ArithmeticAccess::None,
+        (true, false) if delimited && classified_in_arms => ArithmeticAccess::Arm(arrow),
+        (true, false) => ArithmeticAccess::Unclassified,
+        (true, true) if arrow => ArithmeticAccess::Arrow,
+        (true, true) => ArithmeticAccess::Element,
+    }
+}
+
+/// Rule 74x: the untracked roots of accessed conditional arms, by token
+/// index: every one a base, and the `->` ones also `->` roots.
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
+struct ConditionalRoots {
+    bases: BTreeSet<usize>,
+    arrows: BTreeSet<usize>,
+}
+
+/// Rule 74x: the first index in `lo..hi` where `wanted` holds at bracket
+/// depth zero.
+fn top_level(
+    texts: &[&str],
+    lo: usize,
+    hi: usize,
+    mut wanted: impl FnMut(usize) -> bool,
+) -> Option<usize> {
+    let mut depth = 0usize;
+    for (at, text) in texts.iter().enumerate().take(hi).skip(lo) {
+        match *text {
+            "(" | "[" => depth += 1,
+            ")" | "]" => depth = depth.saturating_sub(1),
+            _ if depth == 0 && wanted(at) => return Some(at),
+            _ => {}
+        }
+    }
+    None
+}
+
+/// Rule 74x: the `:` in `lo..hi` that closes the conditional whose `?` is
+/// just before `lo`, counting the nested conditionals of its middle arm.
+fn matching_colon(texts: &[&str], lo: usize, hi: usize) -> Option<usize> {
+    let mut open = 0usize;
+    top_level(texts, lo, hi, |at| match texts[at] {
+        "?" => {
+            open += 1;
+            false
+        }
+        ":" if open == 0 => true,
+        ":" => {
+            open -= 1;
+            false
+        }
+        _ => false,
+    })
+}
+
+/// Rule 74x: whether `lo..hi` is a value C loads from memory: a unary `*`
+/// of an operand, or a name or parenthesised group followed by at least one
+/// `- > F`, `. F` or `[ … ]` that ends at `hi`. Its roots are read by the
+/// old tests (a member, subscript or starred root is a base already), and
+/// what it loads is a place of an untracked object the function never
+/// names, so it yields no root here.
+fn loaded_value(texts: &[&str], lo: usize, hi: usize) -> bool {
+    if texts[lo] == "*" {
+        return hi > lo + 1;
+    }
+    let mut at = if texts[lo] == "(" {
+        match close_of(texts, lo) {
+            Some(close) if close < hi => close + 1,
+            _ => return false,
+        }
+    } else if super::is_identifier(texts[lo]) {
+        lo + 1
+    } else {
+        return false;
+    };
+    let mut postfix = false;
+    while at < hi {
+        if arrow_at(texts, at) || texts[at] == "." {
+            let member = at + if texts[at] == "." { 1 } else { 2 };
+            if member >= hi || !super::is_identifier(texts[member]) {
+                return false;
+            }
+            at = member + 1;
+        } else if texts[at] == "[" {
+            match close_of(texts, at) {
+                Some(close) if close < hi => at = close + 1,
+                _ => return false,
+            }
+        } else {
+            return false;
+        }
+        postfix = true;
+    }
+    postfix
+}
+
+/// Rule 74x: the untracked, non-scalar roots of the value `lo..hi` (an arm
+/// of an accessed conditional) yields, pushed onto `roots`; `false` when the
+/// reader cannot classify the arm, which refuses the expression. An arm is
+/// classified when it is, after its parentheses: a conditional, whose
+/// condition is a read and both of whose arms are classified (rule 74z's
+/// [`conditional_arm_roots`] keeps only the evaluated arm's roots under a
+/// decided condition); a sum whose binary `+` and
+/// `-` terms are all [`integer_operands`] but at most one, itself
+/// classified and not subtracted; a cast of a classified operand; a numeric
+/// literal or a declared scalar (no root); a name this body never binds (a
+/// root); or a [`loaded_value`]. A string, a unary `-`, `!` or `~`, a
+/// product or comparison of the whole arm, a may-bind name and every other
+/// spelling refuse.
+fn arm_roots(
+    texts: &[&str],
+    lo: usize,
+    hi: usize,
+    names: &impl NameFacts,
+    roots: &mut Vec<usize>,
+) -> bool {
+    if lo >= hi {
+        return false;
+    }
+    if texts[lo] == "(" && close_of(texts, lo) == Some(hi - 1) {
+        return arm_roots(texts, lo + 1, hi - 1, names, roots);
+    }
+    if let Some(question) = top_level(texts, lo, hi, |at| texts[at] == "?") {
+        let Some(colon) = matching_colon(texts, question + 1, hi) else {
+            return false;
+        };
+        return question > lo
+            && conditional_arm_roots(texts, (lo, question, colon, hi), names, roots);
+    }
+    let binary = |at: usize| {
+        matches!(texts[at], "+" | "-")
+            && at > lo
+            && operand_end(texts[at - 1])
+            && !arrow_at(texts, at)
+    };
+    if top_level(texts, lo, hi, binary).is_some() {
+        let mut pointer: Option<(usize, usize)> = None;
+        let mut start = lo;
+        while start < hi {
+            let end = top_level(texts, start + 1, hi, binary).unwrap_or(hi);
+            let term = if start == lo { start } else { start + 1 };
+            if term >= end {
+                return false;
+            }
+            if !integer_operands(&texts[term..end], names) {
+                if pointer.is_some() || (texts[start] == "-" && start != lo) {
+                    return false;
+                }
+                pointer = Some((term, end));
+            }
+            start = end;
+        }
+        return pointer.is_none_or(|(term, end)| arm_roots(texts, term, end, names, roots));
+    }
+    if loaded_value(texts, lo, hi) {
+        return true;
+    }
+    if texts[lo] == "("
+        && let Some(close) = close_of(texts, lo)
+        && close + 1 < hi
+        && crate::cast_semantics::type_group_open(texts, close) == Some(lo)
+    {
+        return arm_roots(texts, close + 1, hi, names, roots);
+    }
+    if hi == lo + 1 {
+        let text = texts[lo];
+        if text.as_bytes().first().is_some_and(u8::is_ascii_digit)
+            || (super::is_identifier(text) && names.declared_scalar(text))
+        {
+            return true;
+        }
+        if super::is_identifier(text) && names.untracked(text) {
+            roots.push(lo);
+            return true;
+        }
+    }
+    false
+}
+
+/// Card RETURN-FAMILY-CONDITIONAL-CONSTANT-PRUNING (rule 74z): the roots of
+/// the conditional `lo..hi` whose `?` is at `question` and whose `:` is at
+/// `colon`. Both arms are classified, so an arm the reader cannot classify
+/// refuses as under rule 74x. When the condition `lo..question` is an
+/// integer constant expression the reader evaluates exactly
+/// ([`constant::constant_condition`]), only the roots of the arm C evaluates
+/// (C11 6.5.15p4) are pushed: `( 0 ? p : q ) - > n` yields `q`,
+/// `( 1 ? q : p ) - > n` yields `q`. An undecided condition pushes both, rule
+/// 74x's reading (`QCore.ReturnFamilyConditionalConstant`).
+fn conditional_arm_roots(
+    texts: &[&str],
+    (lo, question, colon, hi): (usize, usize, usize, usize),
+    names: &impl NameFacts,
+    roots: &mut Vec<usize>,
+) -> bool {
+    let (mut middle, mut last) = (Vec::new(), Vec::new());
+    if !(arm_roots(texts, question + 1, colon, names, &mut middle)
+        && arm_roots(texts, colon + 1, hi, names, &mut last))
+    {
+        return false;
+    }
+    match constant::constant_condition(&texts[lo..question]) {
+        Some(true) => roots.extend(middle),
+        Some(false) => roots.extend(last),
+        None => roots.extend(middle.into_iter().chain(last)),
+    }
+    true
+}
+
+/// Rule 74x: what accesses the conditional group `lo..=hi`, widened outward
+/// as rule 74w's walk widens a root: through a group
+/// `cast_semantics::type_group_open` reads as a type before it, a `(` and
+/// `)` right around it, and a parenthesised arithmetic group around it,
+/// which is classified as in [`accessed_through_arithmetic`]. Unlike that
+/// walk no arithmetic group needs to be crossed: the conditional group is
+/// already a value of its own.
+fn conditional_group_access(
+    texts: &[&str],
+    mut lo: usize,
+    mut hi: usize,
+    names: &impl NameFacts,
+) -> ArithmeticAccess {
+    let mut classified = true;
+    loop {
+        if let Some(open) = lo
+            .checked_sub(1)
+            .filter(|previous| texts[*previous] == ")")
+            .and_then(|previous| crate::cast_semantics::type_group_open(texts, previous))
+        {
+            lo = open;
+            continue;
+        }
+        let left = lo.checked_sub(1).map(|previous| texts[previous]);
+        let right = texts.get(hi + 1).copied();
+        if left == Some("(") && right == Some(")") {
+            lo -= 1;
+            hi += 1;
+            continue;
+        }
+        let left_binary =
+            matches!(left, Some("+" | "-" | "/" | "%")) && lo >= 2 && operand_end(texts[lo - 2]);
+        let right_operator =
+            matches!(right, Some("+" | "-" | "/" | "%")) && !arrow_at(texts, hi + 1);
+        if !((left_binary || left == Some("(")) && (right_operator || right == Some(")"))) {
+            break;
+        }
+        let Some((open, close)) = enclosing_group(texts, lo) else {
+            break;
+        };
+        let clean_left = (left_binary && matches!(left, Some("+" | "-"))) || lo == open + 1;
+        let clean_right = (right_operator && matches!(right, Some("+" | "-"))) || hi + 1 == close;
+        if !(clean_left
+            && clean_right
+            && integer_operands(&texts[open + 1..lo], names)
+            && integer_operands(&texts[hi + 1..close], names))
+        {
+            classified = false;
+        }
+        lo = open;
+        hi = close;
+    }
+    let arrow = arrow_at(texts, hi + 1);
+    let element = texts.get(hi + 1) == Some(&"[")
+        || lo.checked_sub(1).is_some_and(|star| {
+            texts[star] == "*" && operator_at(texts, star, names).may_be_unary()
+        });
+    match (arrow || element, classified) {
+        (false, _) => ArithmeticAccess::None,
+        (true, false) => ArithmeticAccess::Unclassified,
+        (true, true) if arrow => ArithmeticAccess::Arrow,
+        (true, true) => ArithmeticAccess::Element,
+    }
+}
+
+/// Card RETURN-FAMILY-UNTRACKED-CONDITIONAL-ACCESS (rule 74x): the roots of
+/// every parenthesised conditional group that `->`, `[` or a `*` that may be
+/// unary accesses ([`conditional_group_access`]), from both arms
+/// ([`arm_roots`]): `( c ? p : q ) - > f`, `( c ? p : q ) [ i ]`,
+/// `* ( c ? p : q )`, `( ( T * ) ( c ? p : q ) ) - > f`,
+/// `( ( c ? p : q ) + n ) - > f`, `( c ? ( d ? p : r ) : q ) - > f`,
+/// `( c ? p + n : q ) - > f`. The condition is a read and is never decided.
+/// `None` refuses the expression: an accessed group with an arm the reader
+/// cannot classify, or reached through an unclassified arithmetic group.
+/// A conditional group nothing accesses (`( c ? p : q ) != 0`,
+/// `( c ? p - > n : q - > n )`) yields nothing
+/// (`QCore.ReturnFamilyUntrackedConditionalAccess`).
+fn conditional_roots(texts: &[&str], names: &impl NameFacts) -> Option<ConditionalRoots> {
+    let mut found = ConditionalRoots::default();
+    for open in 0..texts.len() {
+        if texts[open] != "(" {
+            continue;
+        }
+        let Some(close) = close_of(texts, open) else {
+            continue;
+        };
+        if top_level(texts, open + 1, close, |at| texts[at] == "?").is_none() {
+            continue;
+        }
+        let access = conditional_group_access(texts, open, close, names);
+        let arrow = match access {
+            ArithmeticAccess::None => continue,
+            ArithmeticAccess::Unclassified | ArithmeticAccess::Arm(_) => return None,
+            ArithmeticAccess::Arrow => true,
+            ArithmeticAccess::Element => false,
+        };
+        let mut roots = Vec::new();
+        if !arm_roots(texts, open + 1, close, names, &mut roots) {
+            return None;
+        }
+        for root in roots {
+            found.bases.insert(root);
+            if arrow {
+                found.arrows.insert(root);
+            }
+        }
+    }
+    Some(found)
+}
+
 /// Family S's shape and name premises over one `return` expression. `None`
 /// keeps the refusal. The declared-result premise and the descriptor premise
 /// are the caller's.
@@ -613,6 +1256,9 @@ pub(crate) fn scalar_read(texts: &[&str], names: &impl NameFacts) -> Option<Scal
         return None;
     }
     let conditional = conditional_positions(texts);
+    // Rule 74x: the roots of accessed conditional arms; an arm the reader
+    // cannot classify refuses.
+    let conditional_arms = conditional_roots(texts, names)?;
     let mut read = ScalarRead::default();
     let mut index = 0usize;
     while index < texts.len() {
@@ -692,8 +1338,59 @@ pub(crate) fn scalar_read(texts: &[&str], names: &impl NameFacts) -> Option<Scal
                 && texts[index - 1] == "*"
                 && operator_at(texts, index - 1, names).may_be_unary())
                 || dereferenced_through_groups(texts, index, names);
-            if arrow_at(texts, index + 1) || next == Some("[") || starred {
+            // Rule 74t: a member or subscript root also through closing
+            // parentheses and cast groups, with its `->` reading.
+            let accessed = accessed_through_groups(texts, index);
+            if accessed == Some(true) {
+                push_once(&mut read.arrow_roots, text);
+            }
+            // Rule 74w: an access through pointer arithmetic on the root; a
+            // declared scalar is an index, never the pointer. An access
+            // through a sum the reader cannot classify refuses.
+            let arithmetic = if names.declared_scalar(text) {
+                ArithmeticAccess::None
+            } else {
+                accessed_through_arithmetic(texts, index, names)
+            };
+            match arithmetic {
+                ArithmeticAccess::Unclassified => return None,
+                // Rule 82: the arm's refusal stands unless rule 74x read the
+                // arm and made this root a base.
+                ArithmeticAccess::Arm(_) if !conditional_arms.bases.contains(&index) => {
+                    return None;
+                }
+                ArithmeticAccess::Arrow | ArithmeticAccess::Arm(true) => {
+                    push_once(&mut read.arrow_roots, text)
+                }
+                ArithmeticAccess::None
+                | ArithmeticAccess::Element
+                | ArithmeticAccess::Arm(false) => {}
+            }
+            // Rule 74x: an arm of an accessed conditional, either arm.
+            if conditional_arms.arrows.contains(&index) {
+                push_once(&mut read.arrow_roots, text);
+            }
+            if arrow_at(texts, index + 1)
+                || next == Some("[")
+                || starred
+                || accessed.is_some()
+                || arithmetic != ArithmeticAccess::None
+                || conditional_arms.bases.contains(&index)
+            {
                 push_once(&mut read.bases, text);
+            }
+            // Rule 74y: a root filling a subscript's brackets is the pointer
+            // (C11 6.5.2.1p2, `n [ p ]` is `* ( n + p )`) unless the
+            // subscripted operand is a declared pointer; a declared scalar is
+            // an index, never the pointer.
+            match if names.declared_scalar(text) {
+                SubscriptIndex::None
+            } else {
+                subscript_index(texts, index, names)
+            } {
+                SubscriptIndex::Unclassified => return None,
+                SubscriptIndex::Base => push_once(&mut read.bases, text),
+                SubscriptIndex::None => {}
             }
             index += 1;
             continue;
@@ -745,6 +1442,12 @@ pub(crate) fn scalar_read(texts: &[&str], names: &impl NameFacts) -> Option<Scal
         if !root {
             return None;
         }
+        // Rule 74y: inside a subscript's brackets whose subscripted operand
+        // is not a declared pointer, the root's value may be the pointer the
+        // subscript dereferences (`n [ * q ]`), a second dereference.
+        if inside_undecided_subscript(texts, index, names) {
+            return None;
+        }
         if arrow_at(texts, index + 1) {
             push_once(&mut read.arrow_roots, text);
         }
@@ -752,6 +1455,149 @@ pub(crate) fn scalar_read(texts: &[&str], names: &impl NameFacts) -> Option<Scal
         index += 1;
     }
     Some(read)
+}
+
+/// Rule 74y: what [`subscript_index`] read around an untracked root.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum SubscriptIndex {
+    /// The root fills no subscript's brackets, or the subscripted operand is
+    /// a declared pointer, so the root is its index: the other tests'
+    /// reading stands.
+    None,
+    /// `n [ p ]`, `1 [ ( T * ) p ]`, `n [ p + k ]`: the root may be the
+    /// pointer the subscript dereferences, a base.
+    Base,
+    /// The root is a term of a sum in the brackets whose other operands the
+    /// reader cannot classify (`n [ p + a ]`): family S refuses.
+    Unclassified,
+}
+
+/// Rule 74y: whether the operand subscripted by the `[` at `open` is a name
+/// the declaration reader declares as a pointer or an array
+/// ([`NameFacts::declared_pointer`]), so the brackets hold the index. A
+/// member name (after `.` or `- >`) and every other operand are undecided.
+fn subscripted_pointer(texts: &[&str], open: usize, names: &impl NameFacts) -> bool {
+    let Some(operand) = open.checked_sub(1) else {
+        return false;
+    };
+    let member = operand
+        .checked_sub(1)
+        .is_some_and(|before| texts[before] == ".")
+        || operand
+            .checked_sub(2)
+            .is_some_and(|before| arrow_at(texts, before));
+    super::is_identifier(texts[operand]) && !member && names.declared_pointer(texts[operand])
+}
+
+/// Rule 74y: the innermost bracket (`(` or `[`) around `start`, its matching
+/// closer, and whether it is a `[`.
+fn enclosing_bracket(texts: &[&str], start: usize) -> Option<(usize, usize, bool)> {
+    let mut depth = 0usize;
+    for at in (0..start).rev() {
+        match texts[at] {
+            ")" | "]" => depth += 1,
+            "(" | "[" if depth == 0 => {
+                return close_of(texts, at).map(|close| (at, close, texts[at] == "["));
+            }
+            "(" | "[" => depth -= 1,
+            _ => {}
+        }
+    }
+    None
+}
+
+/// Card RETURN-FAMILY-UNTRACKED-REVERSED-SUBSCRIPT (rule 74y): whether the
+/// untracked, non-scalar root at `index` fills the brackets of a subscript
+/// `X [ … ]`. C11 6.5.2.1p2 defines `E1 [ E2 ]` as `( * ( ( E1 ) + ( E2 ) ) )`,
+/// so the pointer may stand on either side: `1 [ p ]`, `n [ p ]` and
+/// `n [ ( T * ) p ]` dereference `p` as `p [ 1 ]` does. The walk keeps a span
+/// `lo..=hi`, starting at the root, and widens it as rule 74w's does: through
+/// a group `cast_semantics::type_group_open` reads as a type before it, a `(`
+/// and `)` right around it, and a parenthesised additive group around it. It
+/// ends at a `[` and `]` right around the span, or at a sum whose innermost
+/// bracket is a `[` (`n [ p + k ]`). The root is then the index only when the
+/// subscripted operand is a declared pointer ([`subscripted_pointer`]); with
+/// an integer `X` it is the pointer, and with an undecided `X` both are
+/// bases (`X` is already one when it is untracked). A sum crossed on the way
+/// whose other operands [`integer_operands`] does not accept, or whose root
+/// side is not additive, is [`SubscriptIndex::Unclassified`] and refuses, as
+/// rule 74w refuses (`QCore.ReturnFamilyUntrackedReversedSubscript`).
+fn subscript_index(texts: &[&str], index: usize, names: &impl NameFacts) -> SubscriptIndex {
+    let (mut lo, mut hi) = (index, index);
+    let mut classified = true;
+    let bracket = loop {
+        if let Some(open) = lo
+            .checked_sub(1)
+            .filter(|previous| texts[*previous] == ")")
+            .and_then(|previous| crate::cast_semantics::type_group_open(texts, previous))
+        {
+            lo = open;
+            continue;
+        }
+        let left = lo.checked_sub(1).map(|previous| texts[previous]);
+        let right = texts.get(hi + 1).copied();
+        if left == Some("[") && right == Some("]") {
+            break lo - 1;
+        }
+        if left == Some("(") && right == Some(")") {
+            lo -= 1;
+            hi += 1;
+            continue;
+        }
+        // Rule 74w's operator test: binary on the left, never `- >`, never
+        // a `*`.
+        let left_binary =
+            matches!(left, Some("+" | "-" | "/" | "%")) && lo >= 2 && operand_end(texts[lo - 2]);
+        let right_operator =
+            matches!(right, Some("+" | "-" | "/" | "%")) && !arrow_at(texts, hi + 1);
+        if !((left_binary || matches!(left, Some("(" | "[")))
+            && (right_operator || matches!(right, Some(")" | "]"))))
+        {
+            return SubscriptIndex::None;
+        }
+        let Some((open, close, square)) = enclosing_bracket(texts, lo) else {
+            return SubscriptIndex::None;
+        };
+        let clean_left = (left_binary && matches!(left, Some("+" | "-"))) || lo == open + 1;
+        let clean_right = (right_operator && matches!(right, Some("+" | "-"))) || hi + 1 == close;
+        if !(clean_left
+            && clean_right
+            && integer_operands(&texts[open + 1..lo], names)
+            && integer_operands(&texts[hi + 1..close], names))
+        {
+            classified = false;
+        }
+        if square {
+            break open;
+        }
+        lo = open;
+        hi = close;
+    };
+    if subscripted_pointer(texts, bracket, names) {
+        SubscriptIndex::None
+    } else if classified {
+        SubscriptIndex::Base
+    } else {
+        SubscriptIndex::Unclassified
+    }
+}
+
+/// Rule 74y: whether a `[` enclosing the may-bind root at `index` subscripts
+/// an operand that is not a declared pointer ([`subscripted_pointer`]). Then
+/// the bracket's value may be the pointer the subscript dereferences, and
+/// that pointer is computed from the value the root's one dereference reads
+/// (`n [ * q ]` is `* ( n + * q )`), a second dereference. Only refuses.
+fn inside_undecided_subscript(texts: &[&str], index: usize, names: &impl NameFacts) -> bool {
+    let mut depth = 0usize;
+    for at in (0..index).rev() {
+        match texts[at] {
+            ")" | "]" => depth += 1,
+            "(" | "[" if depth > 0 => depth -= 1,
+            "[" if !subscripted_pointer(texts, at, names) => return true,
+            _ => {}
+        }
+    }
+    false
 }
 
 /// Family K's shape: the casts (`true` for a pointer target), in order, and
@@ -831,6 +1677,10 @@ impl NameFacts for ParserNames<'_, '_> {
 
     fn type_name(&self, words: &[&str]) -> bool {
         self.parser.typed_model.never_variably_modified(words)
+    }
+
+    fn declared_pointer(&self, name: &str) -> bool {
+        self.parser.typed_types.pointer_kind(name).is_some()
     }
 
     /// Rule 74f's set, read from the unit's token stream as the publication
@@ -1089,3 +1939,31 @@ mod star_outside_tests;
 #[cfg(test)]
 #[path = "../tests/unit/legacy_return_family_untracked_deref_cast.rs"]
 mod untracked_deref_cast_tests;
+
+#[cfg(test)]
+#[path = "../tests/unit/legacy_return_family_untracked_member_cast.rs"]
+mod untracked_member_cast_tests;
+
+#[cfg(test)]
+#[path = "../tests/unit/legacy_return_family_untracked_arith_access.rs"]
+mod untracked_arith_access_tests;
+
+#[cfg(test)]
+#[path = "../tests/unit/legacy_return_family_untracked_reversed_subscript.rs"]
+mod untracked_reversed_subscript_tests;
+
+#[cfg(test)]
+#[path = "../tests/unit/legacy_return_family_untracked_conditional_access.rs"]
+mod untracked_conditional_access_tests;
+
+#[cfg(test)]
+#[path = "../tests/unit/legacy_return_family_arith_walk_conditional.rs"]
+mod arith_walk_conditional_tests;
+
+/// Rule 74z: the exact value of an integer constant expression condition.
+#[path = "legacy_return_family_constant.rs"]
+mod constant;
+
+#[cfg(test)]
+#[path = "../tests/unit/legacy_return_family_conditional_constant.rs"]
+mod conditional_constant_tests;

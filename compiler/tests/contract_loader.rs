@@ -681,11 +681,15 @@ fn production_contracts_preserve_the_previous_resource_modes() {
     );
     for (name, arity) in [("regexec", 5), ("regerror", 4)] {
         let position = usize::from(name == "regerror");
-        old.insert_contract(
-            name,
-            ResourceFunctionContract::new(vec![P::Borrowed; arity], R::None)
-                .with_parameter_kind(position, ResourceKind::Regex),
-        );
+        let mut contract = ResourceFunctionContract::new(vec![P::Borrowed; arity], R::None)
+            .with_parameter_kind(position, ResourceKind::Regex);
+        // Card CG25-IN-PLACE-REGEX-REGERROR-FAILURE-EDGE (rule 74n):
+        // `regerror`'s `__preg` is also a use defined on a failed object
+        // (`resource_kind_failure_use`); `regexec`'s is not.
+        if name == "regerror" {
+            contract.failure_uses.insert(position);
+        }
+        old.insert_contract(name, contract);
     }
     // Card W45-FB-BACKLOG-CUSTODY: the twelve checked specifications of
     // `fluent_bit/storage_backlog.qv`; ten borrow every argument and return

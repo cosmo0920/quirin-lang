@@ -88,6 +88,9 @@ pub(super) const PARSER_FIELDS: &[(&str, FieldClass)] = &[
     ("readonly_list_count_certified", FieldClass::LazyCache),
     ("declared_no_return", FieldClass::LazyCache),
     ("call_graph_components", FieldClass::LazyCache),
+    // Card JUMPED-SHADOW-FORMAL-READINGS: only ever set; a probe that set
+    // it and was discarded leaves a refusal, never an admission.
+    ("shadow_guard_refused", FieldClass::MonotoneFact),
     ("cursor", FieldClass::ProbeState),
     ("contracts", FieldClass::FunctionFact),
     ("next_site", FieldClass::ProbeState),
@@ -199,6 +202,7 @@ impl Parser<'_> {
             readonly_list_count_certified: _,
             declared_no_return: _,
             call_graph_components: _,
+            shadow_guard_refused: _,
             cursor,
             contracts: _,
             next_site,

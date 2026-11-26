@@ -222,6 +222,11 @@ mod typed_positions;
 #[path = "legacy_typed_declaration.rs"]
 mod typed_declaration_gate;
 
+// Card CALL-WITH-DEREF-ACTUAL-READ-AS-DECLARATION (rule 89): an `IDENT ( *`
+// statement prefix Clang reads as a call is not a declarator. One thin hook.
+#[path = "legacy_call_not_declarator.rs"]
+mod call_not_declarator;
+
 // Card W47-TYPED-ROOT-DECLARATION-READER (rule 10l): the typed positions'
 // never-bound, `may_bind` and declared-local premises, from the Clang AST
 // where the lexical declaration reader answers nothing. Hooks are thin.
@@ -449,6 +454,10 @@ mod stream_line_order;
 // keeps, the release and exit refusals).
 #[path = "legacy_retained_by.rs"]
 pub(crate) mod retained_by_route;
+// Card NAME-KEYED-HOLDER-SHADOWING (rule 86): rule 12t's formal-keyed
+// readings need the formal to be one declaration.
+#[path = "legacy_formal_declaration.rs"]
+mod formal_declaration;
 // Card MK-EVENT-DESCRIPTOR-QUANT (rule 38): descriptor cells (the operands,
 // the cell table's transfer, the witnesses, the exit and release refusals).
 #[path = "legacy_descriptor_cells.rs"]
@@ -4285,6 +4294,7 @@ fn build_function_cfg_unscoped(
         readonly_list_count_certified: std::cell::OnceCell::new(),
         declared_no_return: std::cell::OnceCell::new(),
         call_graph_components: std::cell::OnceCell::new(),
+        shadow_guard_refused: std::cell::Cell::new(false),
     };
     // Card W47-TYPED-ROOT-DECLARATION-READER: parity runs only.
     parser.record_typed_root_parity();
@@ -4297,6 +4307,9 @@ fn build_function_cfg_unscoped(
     parser.record_layout_census();
     #[cfg(feature = "indirect-census")]
     crate::traversal_census::record_function(function, &parser.typed_types);
+    // JUMPED-SHADOW-FORMAL-READINGS hook (rule 86): begin
+    let shadow_reading = parser.read_formals_by_declaration();
+    // JUMPED-SHADOW-FORMAL-READINGS hook (rule 86): end
     let mut statements =
         parser
             .parse_block()
@@ -4304,6 +4317,19 @@ fn build_function_cfg_unscoped(
                 function: function.to_owned(),
                 line: failure_line.max(line),
             })?;
+    // JUMPED-SHADOW-FORMAL-READINGS hook (rule 86): the guard at the entry.
+    if let Some(description) = parser.shadow_refusal(shadow_reading) {
+        statements.insert(
+            0,
+            Statement::Instruction(
+                LegacyInstruction::Unknown {
+                    description,
+                    writes: RefusedWrites::Unbounded,
+                },
+                line,
+            ),
+        );
+    }
     if let Some(description) = line_order_refusal {
         statements.insert(
             0,
@@ -5096,6 +5122,9 @@ struct Parser<'a> {
     /// keyed by the token slice's address, which a later stream allocated at
     /// the same address with the same length could have answered.
     call_graph_components: std::cell::OnceCell<BTreeMap<String, usize>>,
+    /// Card JUMPED-SHADOW-FORMAL-READINGS (rule 86): whether the classifier's
+    /// lexical shadow guard refused a declaration of this body.
+    shadow_guard_refused: std::cell::Cell<bool>,
     cursor: usize,
     contracts: &'a ResourceContracts,
     next_site: usize,

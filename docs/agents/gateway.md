@@ -13525,8 +13525,12 @@ through `ampersand_runs`.
     `Unknown -> Safe` row, back to `Unknown`. The follow-up that registered
     the card said `rd_regex_match` uses `re` only after the zero edge; its
     real spelling calls `regerror` on the failure edge
-    (`CG25-IN-PLACE-REGEX-REGERROR-FAILURE-EDGE`). **Do not** admit an
-    uncertified use of any in-place kind, name a callee to exempt one, or
+    (`CG25-IN-PLACE-REGEX-REGERROR-FAILURE-EDGE`), discharged by [rule
+    74n](#constraint-74n): `regerror`'s `preg` now carries
+    `resource_kind_failure_use`, and `rd_regex_match` is `Safe` again.
+    **Do not** admit an
+    uncertified use of any in-place kind outside rule 74n's clause, name a
+    callee to exempt one, or
     track a name that a reference outside its one declaration can name.
     Premises stated, not proved: CG25's libc premise (`regcomp` returns zero
     exactly when it compiled the object) and faithful Clang declaration and
@@ -13730,6 +13734,61 @@ through `ampersand_runs`.
     `old_vectors_hold`);
     [report](../reports/return-family-deref-resolved-cast/README.md).
 
+<a id="constraint-74n"></a>
+
+74n. **A use declared defined on a failed object is admitted where its
+    object may have failed.** Card CG25-IN-PLACE-REGEX-REGERROR-FAILURE-EDGE
+    (USER DECISION 2026-11-24, "launch them all";
+    `legacy_in_place_custody.rs`: `report_uncertified_key_uses`,
+    `failure_use_admitted`; `contract_in_place.rs`: `check_failure_uses`),
+    discharging `CG25-IN-PLACE-REGEX-REGERROR-FAILURE-EDGE`. [Rule
+    74i](#constraint-74i) refused every uncertified in-place use and read no
+    callee by name, so `regerror(r, &re, …)` on the failure edge of `regcomp`
+    refused with `regexec` (its recorded over-refusal: `rd_regex_match`
+    Safe -> Unknown). POSIX (Issue 8, regcomp()) defines `regerror` on the
+    `regex_t` of the failed `regcomp` (its `errcode` is "the last non-zero
+    value returned by regcomp() or regexec() with the given value of preg")
+    and leaves `regexec` there undefined. (1) **The clause.** `ensures normal
+    resource_kind_failure_use(p, KIND);` (contract spec §C04.6.1, grammar
+    G05) is a predicate, not a premise string: it stands only on a
+    by-address `resource_borrowed` pointer position that also carries
+    `resource_kind(p, KIND)` of the same in-place kind; an initialiser, a
+    finaliser, a by-value (`thread_key`) use, a position without the kind,
+    a non-in-place kind, `heap` and a duplicate each reject the whole module.
+    It loads as `ResourceFunctionContract::failure_uses`, omitted when empty,
+    and `custody_projection` drops it (no derived summary states it, so a
+    declaration carrying it is never body-checked). `regex.qv` states it on
+    `regerror`'s `preg` alone. (2) **The reading.** At a use with the clause
+    that rule 74i does not certify, the use is admitted when the settled
+    binding of the object is an identity, not unknown, names at most one
+    site, that site live and released on no reaching path, and a binding
+    with no site is definitely null (the nonzero edge removed it): the
+    failure edge, before the status test, or a join of those. Before any
+    initialiser there is no binding on some path, so the join is unknown and
+    the use refuses. A released site keeps rule 74i's reading, the
+    `use_after_close` candidate; a `regfree` on the failure edge is itself
+    refused (`UnknownAlias`). A use without the clause, `regexec` included,
+    reads exactly as under rule 74i. (3) **Invariant.** The one
+    Unknown -> Safe move this admits rests on the clause discharging rule
+    74i's obligation: rule 74i's refusal at a failure use is replaced only
+    where the declared contract states the use defined on that state. A
+    program without the clause runs exactly as under rule 74i. **Do not**
+    admit a use without the clause on an uncertified object, name a callee
+    to exempt one, admit a failure use on a released or unbound object, or
+    state the clause on `regexec` or any call POSIX leaves undefined on a
+    failed object. Premises stated, not proved: POSIX's `regerror`
+    definition, the declared assumption the clause states (trust boundary
+    28), and CG25's libc premise. `QCore.InPlaceFailureUse`
+    (`AuditInPlaceFailureUse.lean`: `admitted_iff`,
+    `admitted_on_the_failure_edge`, `admitted_before_the_status_test`,
+    `refused_before_the_initialiser`, `not_admitted_after_the_finaliser`,
+    `a_use_without_the_clause_is_rule_74i`,
+    `a_new_safe_verdict_rests_on_an_admitted_failure_use`,
+    `a_safe_verdict_used_only_admitted_objects`);
+    `tests/in_place_regex_failure_use.rs`,
+    `qcore-contract/tests/in_place_failure_use.rs`;
+    [report](../reports/regex-regerror-failure-edge/README.md).
+
 <a id="constraint-74o"></a>
 
 74o. **A frame holder is one declaration.** Card FRAME-HOLDER-SHADOWED-NAME
@@ -13905,6 +13964,405 @@ through `ampersand_runs`.
     `a_parenthesised_dereference_is_unchanged`, `outside_vectors_hold`,
     `old_vectors_hold`);
     [report](../reports/return-family-star-outside-parentheses/README.md).
+
+<a id="constraint-74t"></a>
+
+74t. **An untracked member or subscript root through a cast group is a
+    base.** Card RETURN-FAMILY-UNTRACKED-MEMBER-THROUGH-CAST, extending
+    [rule 74r](#constraint-74r) to the member and subscript tests its card
+    registered. Family S admits any use of an untracked root, but a root that
+    `->` or `[` accesses is a base of the read node, and a `->` root carries
+    its C02-P-ALIAS reading. That way the flow check stands behind the
+    syntactic premise. At the base both tests needed `->` or `[` right after
+    the name. So `( ( T * ) p ) - > n` made no base, and
+    `long w(void) { const void *p = 0; return ((const struct s *)p)->n; }`
+    and `… return ((const long *)p)[0]; }` were `Safe`, while
+    `return p->n + 1;` is `Unknown` (`unknown_alias:p`). That is the
+    admitting direction. The direct tests are kept. A second one,
+    `accessed_through_groups`, reads back from the root through `(` and
+    through every group `cast_semantics::type_group_open` reads as a type
+    (rule 12h's transparency, the one detector), counting the opening
+    parentheses it crosses. It then reads forward through at least one and at
+    most that many `)`, and the root is accessed when `->` or `[` follows. The
+    root is a base when either test says so, and a `->` root when either says
+    `->`. Nested groups (`((T *)(U *)p)->f`), a parenthesised root
+    (`((T *)(p))->f`, `(p)->f`, `((p))[i]`) and a doubled parenthesis
+    (`(((T *)p))->f`) make `p` a base too.
+
+    `type_group_open` asks no resolution, so a group that rule 74h would call
+    undecided is read as a cast. The operand reading stops the walk, and the
+    cast reading accesses every root that the operand reading does. `->` and
+    `[` are postfix with no unary reading, so `operator_at` has no operator
+    to decide here. A cast's type word is followed, inside its group, by a
+    word, a `*`, or the `)` before an operand, never by `)` and then `->` or
+    `[`. So no type word becomes a root, and `cast_type_word` is not needed.
+    Closing parentheses past the ones opened are not read, so an operand
+    before the root (`( n + p ) - > m`, `( n + ( p ) ) - > m`) stops the
+    test. Arithmetic inside the group (`((T *)p + 1)->f`) keeps the base's
+    reading, which is a registered follow-up. `f ( p ) - > m` reads as an
+    access of `p`, but family S refuses that expression as a call anyway.
+
+    A base and a `->` root only add obligations, and no refusal changes. So
+    every result the tip admits, the base admitted. A may-bind root (refused
+    through a cast or a parenthesis, as before; the typed return route still
+    decides a tracked root's member through a cast), `&((T *)p)->f` (family
+    S's `&` refusal) and `sizeof (((T *)p)->f)` read as before. A group with
+    a qualifier after its `*` (`( long * const )`) keeps the base's reading,
+    as in rule 74r. **Do not** write a second type-group detector, **do not**
+    drop the direct tests (the union is the reading), and **do not** read
+    closing parentheses past the ones the walk opened. Premises stated, not
+    proved: the token classes (trust boundary 28).
+    `QCore.ReturnFamilyUntrackedMemberCast` (`old_member_kept`,
+    `old_arrow_kept`, `closeRun_le`, `closeRun_stable`, `opened_mono`,
+    `accessed_mono`, `every_group_reading_keeps_the_base`,
+    `a_type_word_is_no_root`, `an_operand_before_the_root_is_no_access`,
+    `bases_kept`, `old_bases_kept`, `the_fix_only_refuses_more`,
+    `old_misses_the_base`, `a_converted_operand_is_no_base`,
+    `member_vectors_hold`, `old_vectors_hold`);
+    [report](../reports/return-family-untracked-member-cast/README.md).
+
+<a id="constraint-74u"></a>
+
+74u. **A qualifier after a `*` keeps a group a type group.** Card
+    TYPE-GROUP-QUALIFIED-POINTER, amending rule 12h's shared
+    `type_group_open` and so [rule 74m](#constraint-74m)'s through count and
+    [rule 74r](#constraint-74r)'s starred base. At the base the detector read
+    words followed only by trailing `*`s, so `( long * const )` was no type
+    group: rule 74r's reading stopped at it, and
+    `long w(void) { const long *p = 0; return *(long * const)p; }` was `Safe`
+    while `*(long *)p` was `Unknown` (`unknown_alias:p`), the admitting
+    direction. Rule 12h(4)'s count stopped there too, so a may-bind
+    `*(long * const)q->f` was admitted as one dereference. The detector
+    (`cast_semantics::type_group`) now reads one or more words (the
+    specifier-qualifier list, as before), then any number of `*`, each
+    followed by words of `POINTER_QUALIFIERS` only: C11 6.7.3's `const`,
+    `volatile`, `restrict` and `_Atomic`, their GNU spellings and Clang's
+    nullability qualifiers. A word after a `*` that is no qualifier
+    (`( a * b )`) still makes no group, and so do a nested declarator group
+    (`( char ( * ) [ 4 ] )`), `_Atomic ( T )` and an attribute (registered
+    follow-up). Every group the base read is read. **Direction.** Each
+    reader only refuses more through more groups: rule 12h(4)'s member and
+    subscript count and rule 74m's through count only grow, so a root
+    admitted at a count of zero or one was admitted at the base, and rule
+    74r's starred bases only grow, each an obligation the flow check must
+    discharge. Rule 74m's starred root cannot reach a qualified group
+    today: a `*` right after one is undecided (rule 74h) and a `(` right
+    after one is read as a call, so both keep their refusals. **Kept
+    readings.** `legacy_return_family::is_cast_group` (and family K's
+    `cast_target`) does not resolve a qualified group. That only refuses
+    (the group is undecided under rule 74h, and `( T * const ) ( x )` is
+    read as a call), and resolving it would admit more, so it is kept
+    (registered follow-up). Rule 74f's `may_close_a_cast` and the other
+    token cast readers already accept a qualifier anywhere in the group or
+    refuse a group they cannot read (the census in the report). **Do not**
+    accept a non-qualifier word after a `*`, write a second type-group
+    detector, or resolve a qualified group in `is_cast_group` without a
+    proof that the admission is sound. Premises stated, not proved: the
+    token classes and that a conforming body spells a cast's type name
+    within C11 6.7.7 (trust boundary 28).
+    `QCore.TypeGroupQualifiedPointer` (`accepts_iff` against the grammar
+    `TypeName`, `old_le_new`, `count_mono`, `member_admission_shrinks`,
+    `starred_admission_shrinks`, `through_mono`, `bases_grow`,
+    `the_fix_only_refuses_more`, `qualified_only_refuses_more`,
+    `old_misses_the_qualified_group`,
+    `a_member_root_through_the_group_refuses`, `type_group_vectors_hold`);
+    [report](../reports/type-group-qualified-pointer/README.md).
+
+<a id="constraint-74v"></a>
+
+74v. **A bare member read through an untracked root keeps family S's base.**
+    Card RETURN-STRICT-MEMBER-NULL-UNTRACKED-ROOT, registered by
+    [rule 74t](#constraint-74t)'s card. `return_expression_instruction` asks
+    card B01's routes before family S. One of them classifies the synthetic
+    `PLACE = E ;` and admits an `OpaqueValue` into the return place when `E`
+    has exactly one member selection. The classifier produces that value only
+    for C02-P's opaque field read, one admitted access over a root
+    `UntrackedBases::never_bound` reports (premise 4). So the value carries no
+    tracked identity and the exit escapes nothing. That premise says nothing
+    about nullness, though, and the `OpaqueValue` carried no obligation for the
+    root `->` dereferences. So
+    `long w(void) { const struct s *p = 0; return p->n; }`,
+    `struct s *w(void) { const struct s *p = 0; return p->next; }` and its
+    `(void *)` cast, which `cast_return` strips first, were `Safe`.
+    Meanwhile `return p->n + 1;` (family S) and
+    `long x = p->n; return x;` are `Unknown` (`unknown_alias:p`). That is the
+    admitting direction. The strict `Returned` rule and its `Decides`
+    widening do not admit these spellings. Their F3/F4 chains require
+    `!FunctionTypes::may_bind(base)`, which a written root fails, and an
+    unwritten root (a formal or an uninitialised local) has no binding, so
+    family S's obligation discharges for it anyway.
+
+    `member_read_base` reads what the admitted expression dereferences.
+    `ROOT - > FIELD` with two names lowers to `IndirectScalarAccess`, with the
+    root as its only base and the root's C02-P-ALIAS reading, no destination,
+    no frame and no chain. That is family S's node for the spelling
+    (`scalar_read` gives the same base and `->` root), so the bare read gets
+    the verdict family S gives `p->n + 1`. An expression with no `>`, `[`,
+    `]`, `*` or `&` (a `.` read of a record value) dereferences nothing and
+    keeps the `OpaqueValue`. Every other spelling declines, and the later
+    routes (W43, family S, rule 10k, rule 11h) decide it. B01 admits none
+    today. The exit is still a `NoOp`, so nothing new escapes.
+
+    B01 admitted every expression it read, and a declined one goes to routes
+    that only see expressions B01 admitted at the base, so nothing admits
+    more than at the base. An unbound formal, an uninitialised local, a copy
+    of a formal, a member read and a root a null test guards keep `Safe`. A
+    tracked root is never B01's (premise 4), and an address `&p->n` and the
+    spellings family S already decides keep their verdicts. **Do not** keep an
+    obligation-free node for a read that dereferences, **do not** route these
+    returns to family S alone (it declines a pointer result, which would lose
+    the unbound formal's `Safe`), and **do not** widen `member_read_base`
+    without its vectors. Premises stated, not proved: the token classes
+    (trust boundary 28). `QCore.ReturnStrictMemberNull`
+    (`the_fix_only_refuses_more`, `outside_b01_unchanged`,
+    `a_value_read_is_unchanged`, `a_root_read_needs_its_base`,
+    `a_declined_read_defers`, `the_bare_read_gets_family_s_verdict`,
+    `a_discharged_root_keeps_its_admission`,
+    `the_root_is_the_dereferenced_name`,
+    `a_value_read_dereferences_nothing`, `old_misses_the_base`,
+    `read_vectors_hold`);
+    [report](../reports/return-strict-member-null/README.md).
+
+<a id="constraint-74w"></a>
+
+74w. **An untracked root accessed through pointer arithmetic is a base.**
+    Card RETURN-FAMILY-UNTRACKED-ACCESS-THROUGH-ARITHMETIC, extending
+    [rule 74r](#constraint-74r) and [rule 74t](#constraint-74t) to the
+    follow-up rule 74t's card registered. Family S admits any use of an
+    untracked root, but a root that `->`, `[` or a unary `*` accesses is a
+    base of the read node, and a `->` root carries its C02-P-ALIAS reading.
+    At the base the direct tests and both walks stopped at a `+` or `-`
+    between the root and the access. So `long w(long k) { const struct s *p
+    = 0; return (p + 1)->n; }`, `(k + p)->n`, `((const struct s *)p + 1)->n`,
+    `(p + 1)[0]` and `*(k + p)` were `Safe`, while `return p->n + 1;` and
+    `*(p + 1)` are `Unknown` (`unknown_alias:p`). That is the admitting
+    direction. The old tests are kept. A new one,
+    `accessed_through_arithmetic`, widens a span outward from the root
+    through a group `cast_semantics::type_group_open` reads as a type before
+    it (rule 12h's transparency, the one detector), through a `(` and `)`
+    right around it, and through a parenthesised **arithmetic group**: a
+    binary `+`, `-`, `/` or `%` next to the span (never `- >`), the other
+    neighbour such an operator or the group's own parenthesis, inside the
+    innermost `( … )` around the span. Only that group's matching `)` is
+    read, so no closing parenthesis past the ones the walk opened is (rule
+    74t's guard). When at least one arithmetic group was crossed and `->` or
+    `[` follows what the walk reached, or a `*` that may be unary under
+    either of rule 74h's readings precedes it, the root is a base, and a
+    `->` root for `->`. A group is **classified** when the span is a term of
+    a sum (`+`, `-` or the group's parenthesis on each side) and its other
+    operands are numeric literals, declared scalars (no pointer level),
+    `sizeof` of a resolved type, parentheses and `+ - * / %`. An access
+    through an unclassified group (`(p - q)->f`, `(a + p)[0]`, `(n % p)->f`,
+    `(p + (long) n)->f`) refuses the whole expression, which then falls to
+    the typed return route and the return refusal. A declared scalar root is
+    an index, never the pointer, and is not read. A `*` next to the root is
+    never read as a product: a type group's `*` spells the same
+    (`( long * const )`), and a product is no pointer, so `(p * 2 + 1)->f`
+    and a unary operand (`(*p + 1)->f`, `(-p + 1)->f`) keep the base's
+    reading.
+
+    Bases and `->` roots only grow, and the one new refusal is the
+    expression's, so every result the tip admits, the base admitted. Tracked
+    and may-bind roots (refused through arithmetic, as before), an unbound
+    formal (`Safe`), `&(p + 1)->n` (family S's `&` refusal), `sizeof((p +
+    1)->n)`, a comparison `(p + 1) != 0` and a pointer result `return p + 1;`
+    read as before. A sum inside a subscript (`a[p + 1]`) is an index and no
+    access of `p`. **Do not** write a second type-group detector, **do not**
+    admit an access through an unclassified group, **do not** read a `*` as
+    a product, and **do not** drop the old tests (the union is the reading).
+    Premises stated, not proved: the token classes and the declared-scalar
+    fact (trust boundary 28). `QCore.ReturnFamilyUntrackedArithAccess`
+    (`no_sum_keeps_the_reading`, `no_access_keeps_the_reading`,
+    `a_classified_sum_is_accessed`, `an_unclassified_access_refuses`,
+    `old_base_kept`, `old_arrow_kept`, `names_kept`,
+    `the_fix_only_refuses_more`, `old_misses_the_base`,
+    `another_pointer_refuses`, `arith_vectors_hold`);
+    [report](../reports/return-family-untracked-arith-access/README.md).
+
+<a id="constraint-74x"></a>
+
+74x. **Both arms of an accessed conditional are bases.** Card
+    RETURN-FAMILY-UNTRACKED-CONDITIONAL-ACCESS, extending
+    [rule 74w](#constraint-74w) to the follow-up its card registered. Family
+    S admits any use of an untracked root, but a root that `->`, `[` or a
+    unary `*` accesses is a base of the read node, and a `->` root carries
+    its C02-P-ALIAS reading. Family S refuses only GNU `X ?: B`, so a
+    conditional reaches it, and it is asked inside
+    `return_expression_instruction`, before rule 10z's
+    `typed_connective_return`, which never sees what family S admits. At the
+    base no test read a root that is an arm of an accessed conditional: the
+    direct tests need the access next to the name, and rules 74r's, 74t's
+    and 74w's walks stop at the `?` or `:` beside it. So `long w(void) {
+    const struct s *p = 0, *q = 0; return (0 ? p : q)->n; }`, `(k ? p :
+    q)[0]` and `*(k ? p : q)` were `Safe`, while `return k ? p->n : q->n;` is
+    `Unknown` (`unknown_alias:p`, `unknown_alias:q`). That is the admitting
+    direction. The old tests are kept. A new one, `conditional_roots`, takes
+    every parenthesised group whose top level holds a `?` and widens it
+    outward as rule 74w's walk widens a root (a type group before it,
+    `cast_semantics::type_group_open`, the one detector; a `(` and `)` around
+    it; a parenthesised additive group, classified as in rule 74w), without
+    needing an additive group to be crossed. When `->` or `[` follows what it
+    reached, or a `*` that may be unary under either of rule 74h's readings
+    precedes it, both arms are read (`arm_roots`). After its parentheses an
+    arm is classified when it is a conditional (its condition is a read, and
+    both its arms are classified), a sum whose terms are all literals,
+    declared scalars or `sizeof` of a resolved type but at most one,
+    classified and not subtracted, a loaded value (`a->f`, `a[i]`, `*a`,
+    whose roots the old tests read), a cast of a classified arm, a numeric
+    literal or declared scalar (no root), or a name the body never binds (a
+    root). Every untracked, non-scalar root an arm yields is a base, and a
+    `->` root for `->`. **Both arms are always taken**: the condition is
+    never decided, not even when it is a constant (`(0 ? p : q)` makes `p` a
+    base). An arm the reader cannot classify (a string, a unary `-`, `!` or
+    `~`, a product or comparison, a may-bind name, two pointer terms) or an
+    access through an unclassified additive group refuses the whole
+    expression, which falls to the later routes (rule 10z lowers a string
+    arm by branching). A call, an assignment or a comma in an arm keeps
+    family S's own refusal.
+
+    Bases and `->` roots only grow, and the one new refusal is the
+    expression's, so every result the tip admits, the base admitted. Tracked
+    and may-bind roots (refused in an arm or a condition, as before),
+    unbound formals (`Safe`), `&(c ? p : q)->f` (family S's `&` refusal),
+    `sizeof((c ? p : q)->f)`, a comparison `(c ? p : q) != 0` and
+    `return c ? p->n : q->n;` (no access of the conditional; its arms are
+    bases already) read as before. Rule 74w's walk read the conditional
+    group as the sum around a later term of an arm's sum followed by an
+    operator or `)` (`(c ? 1 + p - n : q)->f`, `(c ? q : n + p)[0]`) and
+    refused; [rule 82](#constraint-82) now classifies that group within
+    the arm. **Do not** decide the condition, even when constant (pruning
+    is a registered follow-up), **do not** read the condition as an arm,
+    **do not** admit an unclassified arm, **do not** write a second
+    type-group detector, and **do not** drop the old tests (the union is the
+    reading). Premises stated, not proved: the token classes and the
+    declared-scalar fact (trust boundary 28).
+    `QCore.ReturnFamilyUntrackedConditionalAccess` (`both_arms_are_taken`,
+    `the_condition_is_not_decided`, `an_unclassifiable_arm_refuses`,
+    `no_access_keeps_the_reading`, `an_unclassified_group_refuses`,
+    `old_base_kept`, `old_arrow_kept`, `names_kept`,
+    `the_fix_only_refuses_more`, `old_misses_the_base`,
+    `the_condition_is_no_base`, `cond_vectors_hold`);
+    [report](../reports/return-family-untracked-conditional-access/README.md).
+
+<a id="constraint-74y"></a>
+
+74y. **A root inside a subscript's brackets may be its pointer.** Card
+    RETURN-FAMILY-UNTRACKED-REVERSED-SUBSCRIPT, extending
+    [rule 74w](#constraint-74w) to the follow-up its card registered, and
+    closing RETURN-FAMILY-SUBSCRIPT-ENCLOSING-STARRED-ROOT, which rule 74s's
+    card registered. C11 6.5.2.1p2 defines `E1[E2]` as `(*((E1)+(E2)))`, and
+    the pointer of a sum may stand on either side, so `1[p]`, `n[p]` and
+    `k[(T *)p]` dereference `p` exactly as `p[1]` does. Family S read a root
+    as a subscript base only as `p [`, and rule 74w's `enclosing_group` stops
+    at a `[`. So `long w(long k) { const long *p = 0; return 1[p]; }`,
+    `k[p]`, `k[(const long *)p]`, `0[p + k]` and `(k + 1)[p]` were `Safe`,
+    while `return p[1];` is `Unknown` (`unknown_alias:p`); and
+    `long w(long **q, long n) { return n[*q]; }` admitted the may-bind `q` as
+    the root of one dereference although the subscript dereferences a pointer
+    computed from the value `*q` reads. Both are the admitting direction.
+
+    The old tests are kept. A new one, `subscript_index`, widens a span from
+    an untracked, non-scalar root as rule 74w's walk does (a group
+    `cast_semantics::type_group_open` reads as a type before it, a `(` and
+    `)` right around it, a parenthesised additive group around it) and asks
+    whether the span then fills a subscript's brackets, alone or as a term of
+    a sum whose innermost bracket is the `[`. If so, the root is the index
+    only when the subscripted operand is a name the declaration reader
+    declares as a pointer or array (`NameFacts::declared_pointer`, read from
+    `FunctionTypes::pointer_kind`; a member name after `.` or `- >` never
+    is). Otherwise the root is a base: under an integer operand (a literal, a
+    declared scalar) it is the pointer, and under an undecided one (`a[b]`
+    with neither declared) both are bases, the operand already being one when
+    it is untracked. A crossed sum that rule 74w would not classify
+    (`n[p + b]`, `n[p + (long) k]`) refuses the expression. A declared scalar
+    root is an index and is not read. A may-bind root (any of its admitted
+    shapes: `* q`, `q - > f`, `q [ i ]`) is refused when any `[` enclosing it
+    subscripts an operand that is not a declared pointer
+    (`inside_undecided_subscript`): `n[*q]`, `1[q->f]`, `n[q[0]]`, `b[*q]`.
+    `a[*q]` with a declared array `a` keeps its admission. This needs no part
+    of rule 74s's code, and the two refusals are independent.
+
+    Bases only grow and the new refusals are the expression's, so every
+    result the tip admits, the base admitted. `p[i]` with an untracked `p`,
+    `a[i]` with a declared array, tracked roots (refused as may-bind roots,
+    as before), an unbound formal (`return k[p];` is `Safe`: the base's
+    obligation discharges), `&k[p]` (family S's `&` refusal) and
+    `sizeof(k[p])` read as before. After `k_free(q)`, `return 0[*q];` moves
+    from `Unsafe` (the flow check accused the first dereference) to the
+    return refusal: it loses an accusation, but nothing moves toward `Safe`.
+    **Do not** read a root inside brackets as an index unless the subscripted
+    operand is a declared pointer, **do not** take the declared-pointer fact
+    for a member name, **do not** admit an unclassified sum in the brackets,
+    and **do not** drop the old tests (the union is the reading). Premises
+    stated, not proved: the token classes and the declared-pointer and
+    declared-scalar facts (trust boundary 28).
+    `QCore.ReturnFamilyUntrackedReversedSubscript` (`subscript_comm`,
+    `reversed_reads_the_inside_pointer`,
+    `a_pointer_outside_reads_its_own_object`,
+    `an_integer_outside_puts_the_pointer_inside`,
+    `index_only_under_a_pointer_outside`, `an_inside_pointer_is_never_missed`,
+    `old_base_kept`, `admitted_was_admitted`, `the_fix_only_refuses_more`,
+    `old_misses_the_base`, `subscript_vectors_hold`,
+    `may_bind_vectors_hold`);
+    [report](../reports/return-family-untracked-reversed-subscript/README.md).
+
+<a id="constraint-74z"></a>
+
+74z. **A decided condition prunes the arm C never evaluates.** Card
+    RETURN-FAMILY-CONDITIONAL-CONSTANT-PRUNING, amending
+    [rule 74x](#constraint-74x) to the follow-up its card registered. Rule
+    74x makes every untracked root of both arms of an accessed conditional a
+    base and never decides the condition, so `long w(const struct s *q) {
+    const struct s *p = 0; return (0 ? p : q)->n; }` was `Unknown`
+    (`unknown_alias:p`), though C evaluates the second operand only if the
+    first compares unequal to 0 and the third only if it compares equal to 0
+    (C11 6.5.15p4). Rule 74x's `arm_roots` now calls
+    `conditional_arm_roots`, which classifies both arms as before (an arm the
+    reader cannot classify still refuses the expression) and asks
+    `constant::constant_condition` for the condition. **Accepted grammar:**
+    integer literals (decimal, octal, hex, with the C11 `u`, `l`, `ll`
+    suffixes), parentheses, unary `+ - ! ~` and binary `* / % + - << >> < >
+    <= >= == != & ^ | && ||`, read from the one-byte punctuator tokens (`< <`,
+    `= =`; `+ +` and `- -` are undecided). **Evaluation** is exact under the
+    readers' LP64 premise ([rule 11y](#constraint-11y)): `int` is 32 bits,
+    `long` and `long long` 64, two's complement, a literal takes the first
+    type of its C11 6.4.4.1p5 list, the binary operators apply the usual
+    arithmetic conversions, unsigned arithmetic is modular, and `&&`/`||`
+    need both operands decided. **Undecided**, so both arms are kept: a name
+    of any kind (an enumeration constant, and a macro that expands to a
+    name), `sizeof`, a cast, a call, a float, a character, `?:`, a comma,
+    division or modulo by zero, a signed result out of range (`INT_MIN /
+    -1` included), a shift count that is negative or not below the left
+    operand's width, a negative signed shift operand, and a literal no listed
+    type represents. Under a decided condition only the evaluated arm's
+    roots become bases and `->` roots. A nested conditional prunes only where
+    its own condition is decided.
+
+    Only rule 74x's contribution is pruned. The old tests (direct, rules
+    74r's, 74t's and 74w's walks) still read the untaken arm, so
+    `(0 ? p->next : q)->n` keeps `p`. The may-bind refusal, the
+    unclassified-arm refusal and the condition's own reading are unchanged,
+    and an unaccessed conditional (`return 0 ? p->n : q->n;`) is not touched.
+    So the tip discharges nothing rule 74x kept except a base from an arm C
+    never evaluates. Family S reads the **preprocessed** token stream, so a
+    macro's name never reaches it: a macro that expands to a literal is read
+    as that literal, which is what C compiles in the analysed translation
+    unit. Rule 10z's branching and the `if` routes already prune such
+    constants (`(0 ? p : "ab")[0]` and `if (0) return p->n;` are `Safe`), and
+    this grammar is a subset of what they fold, so the readers agree. **Do
+    not** decide a name, `sizeof`, a cast or any undefined operation, **do
+    not** skip classifying the untaken arm, and **do not** drop a base an old
+    test gives. Premises stated, not proved: the LP64 data model and two's
+    complement (rule 11y's target premise), and the token classes (trust
+    boundary 28). `QCore.ReturnFamilyConditionalConstant`
+    (`signed_arith_exact`, `unsigned_arith_modular`, `div_by_zero_undecided`,
+    `signed_overflow_undecided`, `shift_out_of_range_undecided`,
+    `undecided_propagates`, `only_one_arm_is_evaluated`,
+    `pruned_covers_every_run`, `pruning_removes_only_unevaluated_bases`,
+    `undecided_keeps_74x_reading`, `pruning_keeps_every_refusal`,
+    `only_dropped_bases_are_discharged`, `const_vectors_hold`,
+    `prune_vectors_hold`);
+    [report](../reports/return-family-conditional-constant-pruning/README.md).
 
 <a id="constraint-75"></a>
 
@@ -14213,6 +14671,115 @@ through `ampersand_runs`.
     (`k6Terms`, `k6Sorts`) by unit tests;
     [report](../reports/k6-direct-position-access/README.md).
 
+<a id="constraint-82"></a>
+
+82. **Rule 74w's walk stops at a conditional's arm.** Card
+    RETURN-FAMILY-ARITH-WALK-CROSSES-CONDITIONAL, refining
+    [rule 74w](#constraint-74w) at the follow-up
+    [rule 74x](#constraint-74x)'s card registered. At the base, when the
+    root was a later term of an arm's sum and an operator or the group's
+    `)` followed it, rule 74w's walk took the conditional's parentheses as
+    the additive group (`enclosing_group`), found `?` among the other
+    operands, and returned `Unclassified`, so family S refused
+    `return (c ? 1 + p - n : a)->m;` and `return (c ? a : n + p)[0];`
+    although rule 74x reads that arm. That was fail-closed, a precision
+    loss. The walk keeps its path and its old result. For each group it
+    crosses it also computes a second classification (`arm_around`): when
+    the group holds a top-level `?`, a top-level `?` or `:` precedes the
+    span, and the first top-level `?` or `:` after the span is not a `?`,
+    the span lies in an arm, and the group is classified as rule 74w
+    classifies a sum, with the arm's delimiters standing in for the
+    group's parentheses. When the old result is `Unclassified`, some
+    crossed group was such an arm, and every crossed group is classified
+    under that reading, the walk returns `ArithmeticAccess::Arm` (with
+    whether `->` accesses) instead. Family S then refuses as before
+    **unless** rule 74x's `conditional_roots` made that root a base; when
+    it did, the root is a base, and a `->` root for `->`.
+
+    So the one refusal removed is the arm delimiter's, and only where rule
+    74x reads the arm and makes the root a base. Rule 74x refuses the whole
+    expression unless every arm of every accessed conditional is classified,
+    and every untracked, non-scalar root of those arms is a base, so a row
+    moves from `Unknown` to `Safe` only when every root of every arm is a
+    discharged base. Everything else stays unclassified: a root in a
+    condition, also of a nested conditional (`(1 + p - n ? a : b)->m`), a
+    non-additive operand (`(c ? 1 + p / 2 : a)->m`), another pointer term
+    (`(c ? 1 + p - a : b)->m`), an unclassified group before or after the
+    conditional (`((c ? 1 + p - n : a) - b)->m`), and a subtracted pointer
+    or a may-bind arm, which rule 74x refuses. A conditional nested inside
+    an arm's sum (`(c ? 1 + (d ? 1 + p - n : a) - n : b)->m`) still
+    refuses, because rule 74x's own `conditional_group_access` reads the
+    outer conditional as the inner one's additive group (registered
+    follow-up). `?:` in a call's argument keeps family S's call refusal.
+    No refusal is added and every old base and `->` root is kept. **Do
+    not** admit an arm-delimited access whose root rule 74x did not make a
+    base, **do not** read a condition as an arm, **do not** classify any
+    other operand that cannot be a sum term, and **do not** drop the old
+    walk result (the arm outcome replaces only its `Unclassified`). Premises
+    stated, not proved: the token classes and the declared-scalar fact
+    (trust boundary 28). `QCore.ReturnFamilyArithWalkConditional`
+    (`walk_off_the_arm`, `an_arm_was_unclassified`,
+    `a_condition_keeps_its_refusal`, `another_group_keeps_its_refusal`,
+    `old_refuses_the_arm`, `no_new_refusal`, `the_only_refusal_removed`,
+    `old_base_kept`, `old_arrow_kept`, `both_refusal_kept`,
+    `both_base_kept`, `both_arrow_kept`, `names_kept`, `admits_weaker`,
+    `where_the_base_admitted_nothing_admits_more`,
+    `nothing_admits_more_than_both`, `a_relaxed_root_is_discharged`,
+    `the_arm_is_read`, `the_condition_still_refuses`,
+    `an_arm_74x_refuses_still_refuses`, `walk_vectors_hold`);
+    [report](../reports/return-family-arith-walk-conditional/README.md).
+
+<a id="constraint-83"></a>
+
+83. **A null constant on some reaching path is never rule 14n's premised
+    alias.** Card UNTRACKED-BASE-NULL-JOIN-DISCHARGE, registered by
+    [rule 74v](#constraint-74v)'s card. Rule [14n](#constraint-14n) reads a
+    target-free, `unknown`, possibly-null identity binding non-null at a
+    dereference under the premise `null-deref:F:LINE:VAR` and never premises a
+    known binding, so the null constant (`p = 0`, a `Clear`: no target, known,
+    possibly null) refuses: `const struct s *p = 0; return p->n + 1;` is
+    `Unknown` (`unknown_alias:p`). `AbstractState::join` forgot that
+    knowledge. Its one-sided arm makes a binding present on one path only
+    `unknown` and possibly null, and its two-sided arm joins `unknown` by
+    disjunction. So the null constant joined with an unbound copy (rule 62's
+    custody-free arm leaves `p = f` unbound for an unbound formal `f`) or with
+    a pointer read (`p = f->next`) is exactly the premised shape, and
+    `const struct s *p = 0; if (f) p = f; return p->n + 1;`, `return p->n;`
+    (rule 74v), `long x = p->n; return x;`, statements, conditions, stores,
+    `p[0]`, `*p`, chains, copies `q = p`, the unguarded `if (c) p = f;` and
+    `if (!f) p = 0; else p = f;` were `Safe` under a premise the function's
+    own null constant refutes on one path. That is the admitting direction.
+
+    `legacy_null_join.rs` keeps `AbstractState::null_on_path`, the names some
+    reaching path bound definitely null since their last rebinding. The join
+    is the union of both sides' sets and of every name either side binds
+    definitely null, kept where the joined state still binds the name (hook in
+    `AbstractState::join`). The transfer removes every name the node rebinds
+    (`rebound_names`, and an `Alias` destination of any spelling) and carries
+    the set across a copy from a flagged name (hook in `transfer`, around
+    `transfer_dispatch`). Rule 14n's premise (`legacy_null_premise::premised`)
+    refuses a flagged name, which covers the base, chain and chain-owner
+    readings. Nothing else reads the set.
+
+    A join with no definitely-null side keeps the base verdict (an unbound
+    formal, a pointer read, their joins and copies, a null constant every arm
+    overwrites); a null test's non-null arm is not possibly null and needs no
+    premise, so it discharges whatever the set says; a tracked binding is never
+    premised. A null test of the joined `unknown` binding itself stays refused
+    by [rule 10b](#constraint-10b), and a guard on a correlated name (`if (!f)
+    return 0;` after `if (f) p = f;`) is not related to `p`: both are
+    `Unknown`, the second a precision loss at the base's `Safe`. **Do not**
+    read a binding some path held as the null constant non-null under a
+    premise, and **do not** clear the set except by a rebinding. Premises
+    stated, not proved: the lowering of C statements to bindings (trust
+    boundary 28). `QCore.NullJoinDischarge`
+    (`a_null_on_some_path_is_never_discharged`,
+    `a_null_on_some_path_is_never_premised`, `the_fix_only_refuses_more`,
+    `no_null_keeps_the_verdict`, `a_guard_proved_non_null_is_discharged`,
+    `an_overwritten_null_keeps_the_premise`, `an_unbound_base_discharges`,
+    `old_premises_a_joined_null`, `join_vectors_hold`);
+    [report](../reports/untracked-base-null-join/README.md).
+
 <a id="constraint-84"></a>
 
 84. **A withdrawn leak with a path avoiding every mark is published.** Card
@@ -14349,5 +14916,132 @@ through `ampersand_runs`.
     `a_borrowed_reading_hides_a_delivery` and six more), bound to
     `KEEP_OR_DELIVER_VECTORS`; `tests/out_slot_keep_or_deliver.rs`;
     [report](../reports/out-slot-conditional-delivery/README.md).
+
+<a id="constraint-86"></a>
+
+86. **A formal-keyed reading is one declaration.** Card
+    NAME-KEYED-HOLDER-SHADOWING (USER DECISION 2026-11-25, "lanich four of
+    queued cards"; `legacy_formal_declaration.rs`; hooks in
+    `legacy_retained_by.rs` `retained_spelling` and `path_holder_at`),
+    discharging `NAME-KEYED-HOLDER-SHADOWING`, which
+    [rule 74o](#constraint-74o)'s card registered. [Rule 12t](#constraint-12t)
+    reads a retained actual `NAME` as a caller's object, an interior
+    `&NAME->f` as its member, and a path holder `NAME->f` as storage the
+    caller supplied, and keys a removal on either. Each reading starts from
+    the token census `CallerFormals::contains`, which cannot tell the formal
+    from a block-scope local that shadows it. Probes: every shadow the
+    classifier's guard recognizes (`local declaration may shadow a formal
+    resource identity`) refuses at its declaration, and a declaration the
+    guard does not recognize (`__attribute__`, `_Alignas`, `__typeof__`, a
+    parenthesized declarator) refuses by an incidental route. But a
+    declaration that control jumps over (before a switch's first label,
+    past a `goto` target) puts the guard's refusal on no path. The shadow
+    was then read as the formal: a local array "outlived" a frame holder or
+    was released with a tracked holder, and a removal through the shadow
+    dropped the formal's record. Each verdict was `Safe` on its paths, and
+    only the internal certificate check rejected the unit (probes J1-J9).
+    Each formal-keyed reading now also requires that the name have one
+    declaration in the function, its `ParmVarDecl`, and that every
+    `DeclRefExpr` of the name designate it (`every_reference_is_the_formal`;
+    no Clang reading of the function, no formal). A name that fails is read
+    as a plain name: a tracked identity, or `retention-undecided`. A path
+    rooted there is no path holder, and a removal keyed on it is unmatched,
+    so it drops nothing and poisons what it may name. An unshadowed formal
+    keeps every reading. **Do not** read a spelling as a formal, for any
+    retention, holder or removal, without the declaration reading, or count
+    declarations without references. Premises stated, not proved: faithful
+    Clang declaration and reference ids and the token census (trust boundary
+    28). `QCore.NameKeyedHolderShadowing`
+    (`AuditNameKeyedHolderShadowing.lean`: `a_formal_was_one_before`,
+    `a_shadowed_name_is_not_a_formal`, `decision_weakens`, `key_weakens`,
+    `no_verdict_becomes_safe` by a record-cover simulation over
+    `QCore.RetentionPath`, and probes J2 and J6 `Safe` under rule 12t's
+    reading and refused under this one), extending
+    `QCore.InPlaceCertifiedUse.oneDeclaration`;
+    `tests/name_keyed_holder_shadowing.rs`;
+    [report](../reports/name-keyed-holder-shadowing/README.md).
+
+    **Every consumer, and the guard at the entry.** Card
+    JUMPED-SHADOW-FORMAL-READINGS (USER DECISION 2026-11-25, "launch the
+    JUMPED-SHADOW-FORMAL-READINGS card"; `legacy_formal_declaration.rs`;
+    hooks in `legacy_c.rs` before and after the body is parsed,
+    `CallerFormals::by_declaration` in `legacy_container_publication.rs`, and
+    the counted-user pass's stable formals in `legacy_counted_users.rs`),
+    discharging `JUMPED-SHADOW-FORMAL-READINGS`. Probes: a jumped shadow
+    reached `Safe`, stopped only by the internal certificate check, in
+    container publication (a container rooted at the shadow read as the
+    caller's), rule 38's descriptor-cell `formal` closure and W4 entry
+    custody (a release through the shadow read as the formal's, and a caller
+    consuming that summary). A jumped or inner-block shadow of a derived
+    local `L = P->F` was read as the caller's container and was `Safe`
+    outright. The counted-user pass attributed an unrecognized declaration's
+    operations to the formal and recorded its clause `Held`. Slot moves
+    (their slot-mention census) and the counted-user pass (no `switch` or
+    jump) refused the jumped shapes; member custody attribution only
+    re-attributed a refusal. Now (1) `CallerFormals` is read by declaration
+    where it is built: a stable formal only where the name is one
+    declaration (`every_reference_is_the_formal`), a derived local only
+    where its own name is one `VarDecl` every `DeclRefExpr` designates
+    (`every_reference_is_the_local`) and its root stays stable, so every
+    consumer reads the narrowed set; (2) the counted-user pass's stable
+    formals are read the same; (3) the shadow guard reads Clang's
+    declarations: a formal that is not one declaration (a second declaration
+    of its name anywhere in the body, whatever its spelling, reached or
+    jumped over, or a reference to another declaration) refuses the function
+    at its entry, on every path (`local declaration may shadow a formal
+    resource identity: `P` is not one declaration`). Where Clang's reading of
+    the function is unavailable (a unit Clang does not accept), no derived
+    local is read and the function refuses at the entry when its body holds a
+    shape the lexical guard cannot see: a `switch` or `goto`, a token opening
+    an unrecognized declaration (`__attribute__`, `_Alignas`, `__typeof__`,
+    `typeof`, `__auto_type`, `enum`, `typedef`, ...), or a formal alone in
+    parentheses after anything but a callee or an expression keyword. Only
+    `Safe -> Unknown`. **Do not** read any formal's or derived local's
+    spelling as its declaration without Clang's reading, or rely on a
+    declaration statement's refusal lying on the paths that use the name.
+    Premises stated, not proved: as above, and, without Clang's reading, the
+    completeness of that lexical list (trust boundary 28).
+    `QCore.JumpedShadowFormalReadings`
+    (`AuditJumpedShadowFormalReadings.lean`: `reaches_narrows`,
+    `no_verdict_becomes_safe`, `a_shadowed_formal_refuses_at_entry`,
+    `a_keyed_event_needs_one_declaration`, and probes CJ1, CJ5 and WDJ1
+    `Safe` before and refused now); `tests/jumped_shadow_formal_readings.rs`;
+    [report](../reports/jumped-shadow-formal-readings/README.md).
+
+<a id="constraint-89"></a>
+
+89. **A call whose first actual is `*NAME` is not a function-pointer
+    declarator.** Card CALL-WITH-DEREF-ACTUAL-READ-AS-DECLARATION
+    (`legacy_call_not_declarator.rs`, one hook in the declaration-likeness
+    test of `classify_simple_base` in `legacy_classify.rs`). The test reads a
+    statement prefix `IDENT ( *` as the declarator `T (*NAME)…`, and the
+    shadow guard then refused every such statement naming a formal outside an
+    initializer: `q_observe(*out);`, and librdkafka's
+    `rd_list_add(*toppars_add_list, rd_kafka_toppar_keep(rktp));`. Tokens
+    cannot tell a call from a declarator here (a typedef name and a function
+    name are both identifiers). Where that disjunct holds, the statement's
+    unique Clang node (by line and exact tokens, several told apart by
+    occurrence, as rule 10t) is asked its kind: a `CallExpr` drops the
+    disjunct, since a call expression declares nothing (C11 6.7p1, 6.8.3p2);
+    a `DeclStmt`, any other kind, or no unique node keeps it. The keyword,
+    `IDENT IDENT` and `IDENT *` disjuncts are not consulted, so `int (*out);`
+    and `void (*out)(void);` stay refused through the keyword test and
+    `T (*out);`, `T (*out)[4];` and a macro spelling a declarator through
+    Clang's `DeclStmt`. The admitted call then takes the classifier's normal
+    reading unchanged: an uncontracted callee, an actual the access gate
+    refuses (`**out`, an owning `q_store(*list, …)`) and a leak the refusal
+    hid each keep or surface their own verdict; the rule removes one refusal
+    and adds no admission of its own. **Do not** read a `__typeof__`,
+    `__attribute__` or `_Alignas` prefix, a parenthesized declarator or a
+    jumped-over shadow here (card JUMPED-SHADOW-FORMAL-READINGS owns those
+    readings of the same guard), and do not drop the disjunct on a token
+    guess (a known callee name) when Clang has no answer. Premise stated, not
+    proved: faithful Clang extraction of the statement's node kind (trust
+    boundary 28). `QCore.CallNotDeclarator` (`vectors_match`,
+    `never_adds_a_declaration`, `an_admission_is_a_call`,
+    `an_admission_is_only_the_paren_star_disjunct`,
+    `a_declaration_keeps_the_refusal`, `a_non_call_keeps_the_old_test`,
+    `no_ast_answer_keeps_the_old_test`, `a_keyword_declarator_stays`);
+    [report](../reports/call-with-deref-actual/README.md).
 
 <!-- generated:rules:end -->

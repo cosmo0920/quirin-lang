@@ -107,6 +107,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [c-gateway-wave](c-gateway-wave/README.md) | C gateway refinements after the worktree sweep |
 
+| [call-with-deref-actual](call-with-deref-actual/README.md) | CALL-WITH-DEREF-ACTUAL-READ-AS-DECLARATION |
+
 | [callback-candidate-literal-premise](callback-candidate-literal-premise/README.md) | CALLBACK-CANDIDATE-LITERAL-PREMISE: a premise at a callback candidate |
 
 | [callback-member-cxx-ast-stores](callback-member-cxx-ast-stores/README.md) | CALLBACK-MEMBER-CXX-AST-STORES |
@@ -685,6 +687,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [joined-provenance-round-bound](joined-provenance-round-bound/README.md) | JOINED-PROVENANCE-ROUND-BOUND (wave 37) |
 
+| [jumped-shadow-formal-readings](jumped-shadow-formal-readings/README.md) | JUMPED-SHADOW-FORMAL-READINGS |
+
 ## K
 
 | Card directory | Original report title |
@@ -712,6 +716,10 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [landing-556460e31](landing-556460e31/README.md) | Landing checkpoint 556460e31 |
 
 | [landing-777fba16e](landing-777fba16e/README.md) | Landing checkpoint 777fba16e |
+
+| [landing-batch-a](landing-batch-a/README.md) | Landing batch A (integrate/r74): return-family rules |
+
+| [landing-batch-b](landing-batch-b/README.md) | Landing batch B (integrate/r75): formal-name readings and the Windows types notice |
 
 | [landing-provider-lock](landing-provider-lock/README.md) | Landing repair: provider workspace lock (2026-11-01) |
 
@@ -836,6 +844,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | Card directory | Original report title |
 |---|---|
+
+| [name-keyed-holder-shadowing](name-keyed-holder-shadowing/README.md) | NAME-KEYED-HOLDER-SHADOWING |
 
 | [native-library-header-decoration](native-library-header-decoration/README.md) | NATIVE-LIBRARY-HEADER-DECORATION — the export macro, derived — 2026-09-11 |
 
@@ -1038,6 +1048,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [reference-drop-null-accepting](reference-drop-null-accepting/README.md) | REFERENCE-DROP-NULL-ACCEPTING: the NULL-accepting reference drop |
 
 | [refused-store-of-call-result-escape](refused-store-of-call-result-escape/README.md) | REFUSED-STORE-OF-CALL-RESULT-ESCAPE: hypothesis refuted |
+
+| [regex-regerror-failure-edge](regex-regerror-failure-edge/README.md) | CG25-IN-PLACE-REGEX-REGERROR-FAILURE-EDGE |
 
 | [region-credit-joins](region-credit-joins/README.md) | REGION-CREDIT-JOINS — the composed region: parent-local credit after the joins |
 
@@ -1287,13 +1299,27 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [retention-unmatched-removal-poisons](retention-unmatched-removal-poisons/README.md) | RETENTION-UNMATCHED-REMOVAL-POISONS |
 
+| [return-family-arith-walk-conditional](return-family-arith-walk-conditional/README.md) | RETURN-FAMILY-ARITH-WALK-CROSSES-CONDITIONAL: rule 74w's walk stops at a conditional's arm |
+
+| [return-family-conditional-constant-pruning](return-family-conditional-constant-pruning/README.md) | RETURN-FAMILY-CONDITIONAL-CONSTANT-PRUNING: a decided condition prunes the arm C never evaluates |
+
 | [return-family-deref-resolved-cast](return-family-deref-resolved-cast/README.md) | RETURN-FAMILY-DEREF-THROUGH-RESOLVED-CAST: a starred may-bind root counts through cast groups |
 
 | [return-family-star-cast](return-family-star-cast/README.md) | RETURN-FAMILY-STAR-AFTER-UNRESOLVED-CAST: family S keeps both readings of an undecided cast |
 
 | [return-family-star-outside-parentheses](return-family-star-outside-parentheses/README.md) | RETURN-FAMILY-STAR-OUTSIDE-ROOT-PARENTHESES: a dereference outside a starred root's parentheses counts |
 
+| [return-family-untracked-arith-access](return-family-untracked-arith-access/README.md) | RETURN-FAMILY-UNTRACKED-ACCESS-THROUGH-ARITHMETIC: an untracked root accessed through pointer arithmetic is a base |
+
+| [return-family-untracked-conditional-access](return-family-untracked-conditional-access/README.md) | RETURN-FAMILY-UNTRACKED-CONDITIONAL-ACCESS: both arms of an accessed conditional are bases |
+
 | [return-family-untracked-deref-cast](return-family-untracked-deref-cast/README.md) | RETURN-FAMILY-UNTRACKED-DEREF-THROUGH-CAST: an untracked root dereferenced through a cast group is a base |
+
+| [return-family-untracked-member-cast](return-family-untracked-member-cast/README.md) | RETURN-FAMILY-UNTRACKED-MEMBER-THROUGH-CAST: an untracked member or subscript root through a cast group is a base |
+
+| [return-family-untracked-reversed-subscript](return-family-untracked-reversed-subscript/README.md) | RETURN-FAMILY-UNTRACKED-REVERSED-SUBSCRIPT: a root inside a subscript's brackets may be its pointer |
+
+| [return-strict-member-null](return-strict-member-null/README.md) | RETURN-STRICT-MEMBER-NULL-UNTRACKED-ROOT: a bare member read through an untracked root keeps family S's base |
 
 | [review-audit-runner](review-audit-runner/README.md) | Review audit-runner cancellation and failure observation |
 
@@ -1441,12 +1467,16 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [tsan-rows-2](tsan-rows-2/README.md) | `TSAN-ROWS-2` — contention-forcing ThreadSanitizer schedules on the task route, and the CT46 decision (wave 39) |
 
+| [type-group-qualified-pointer](type-group-qualified-pointer/README.md) | TYPE-GROUP-QUALIFIED-POINTER: a qualifier after a pointer `*` keeps a group a type group |
+
 ## U
 
 | Card directory | Original report title |
 |---|---|
 
 | [union-opaque-record-writes](union-opaque-record-writes/README.md) | UNION-OPAQUE-RECORD-WRITES-BY-TYPE: opaque record writes keyed by target |
+
+| [untracked-base-null-join](untracked-base-null-join/README.md) | UNTRACKED-BASE-NULL-JOIN-DISCHARGE: a null constant on some reaching path is never rule 14n's premised alias |
 
 ## V
 
@@ -1999,6 +2029,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [windows-std-event-af-unix](windows-std-event-af-unix/README.md) | EVENT-V1-WINDOWS-AFUNIX — capability-selected Windows endpoint pairs |
 
 | [windows-test-portability](windows-test-portability/README.md) | Windows test portability and F02 pin repair |
+
+| [windows-types-notice](windows-types-notice/README.md) | WINDOWS-TYPES-NOTICE |
 
 | [windows-vs2026](windows-vs2026/README.md) | Windows Visual Studio 2026 toolchain repair |
 

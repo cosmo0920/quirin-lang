@@ -148,7 +148,8 @@ fn the_base_readings_are_kept() {
     assert_eq!(bases("* ( long * ) q"), None);
     assert_eq!(bases("( long ) * q"), Some(vec!["q".to_owned()]));
     assert_eq!(bases("sizeof ( long ) * q"), Some(vec!["q".to_owned()]));
-    // A qualifier after the `*` is no group `type_group_open` reads: kept as
-    // at the base (registered follow-up).
-    assert_eq!(bases("* ( long * const ) p"), Some(vec![]));
+    // Card TYPE-GROUP-QUALIFIED-POINTER (rule 74u): a qualifier after the
+    // `*` is now a group `type_group_open` reads, so the root is a base (was
+    // `Some(vec![])`, this card's registered gap).
+    assert_eq!(bases("* ( long * const ) p"), Some(vec!["p".to_owned()]));
 }

@@ -54,6 +54,7 @@ import QCore.CallArgumentAccess
 import QCore.CallExits
 import QCore.CallFreeConditionReads
 import QCore.CallInstantiation
+import QCore.CallNotDeclarator
 import QCore.CallResultUse
 import QCore.CallUseAdmission
 import QCore.CallbackBinding
@@ -231,6 +232,7 @@ import QCore.Ieee754Round
 import QCore.Ieee754Vectors32
 import QCore.Ieee754Vectors64
 import QCore.InPlaceCertifiedUse
+import QCore.InPlaceFailureUse
 import QCore.InPlaceMentionGuard
 import QCore.Index
 import QCore.IndexExtent
@@ -245,6 +247,7 @@ import QCore.InteriorBorrow
 import QCore.JoinedProvenanceCallFrames
 import QCore.JoinedProvenanceCycles
 import QCore.JoinedProvenanceRoundBound
+import QCore.JumpedShadowFormalReadings
 import QCore.KindedCustody
 import QCore.LaterDeclarator
 import QCore.LayoutExtents
@@ -312,6 +315,7 @@ import QCore.MutexInvariant
 import QCore.MutexShareCross
 import QCore.MutexShareCrossArms
 import QCore.MutexShareCrossEmission
+import QCore.NameKeyedHolderShadowing
 import QCore.NativeLibrary
 import QCore.NativeLibraryContract
 import QCore.NativeLibraryHeader
@@ -328,6 +332,7 @@ import QCore.NeutralPrefixPreservation
 import QCore.NoBuildScope
 import QCore.NullDeref
 import QCore.NullDerefGrade
+import QCore.NullJoinDischarge
 import QCore.NullLookupEvent
 import QCore.NullMemberPremise
 import QCore.NullMemberQualifier
@@ -461,12 +466,19 @@ import QCore.ReturnCodeHandOff
 import QCore.ReturnCorrectness
 import QCore.ReturnExpressionEvaluation
 import QCore.ReturnExpressionFamilies
+import QCore.ReturnFamilyArithWalkConditional
+import QCore.ReturnFamilyConditionalConstant
 import QCore.ReturnFamilyDerefCast
 import QCore.ReturnFamilyStarCast
 import QCore.ReturnFamilyStarOutside
+import QCore.ReturnFamilyUntrackedArithAccess
+import QCore.ReturnFamilyUntrackedConditionalAccess
 import QCore.ReturnFamilyUntrackedDerefCast
+import QCore.ReturnFamilyUntrackedMemberCast
+import QCore.ReturnFamilyUntrackedReversedSubscript
 import QCore.ReturnPositionEscape
 import QCore.ReturnRefusedCallLowering
+import QCore.ReturnStrictMemberNull
 import QCore.ReviewHoldStanding
 import QCore.RkLogCallerFrame
 import QCore.RouteSelection
@@ -545,6 +557,7 @@ import QCore.TrackedSelfInitDisjointFrame
 import QCore.Transferability
 import QCore.TranslationValidation
 import QCore.TwoDerivationAdmission
+import QCore.TypeGroupQualifiedPointer
 import QCore.TypeQueryPositions
 import QCore.TypedAccessPathPositionResiduals
 import QCore.TypedAccessPathPositions

@@ -1,0 +1,33 @@
+{
+ "schema": "quirin-amendments/2",
+ "card": "RETURN-FAMILY-ARITH-WALK-CROSSES-CONDITIONAL",
+ "base": "1187c3f6d",
+ "measured_tip": "d09d2d5d9",
+ "profiles": [],
+ "increment_paragraph": "**RETURN-FAMILY-ARITH-WALK-CROSSES-CONDITIONAL** (USER DECISION 2026-11-24: \"launch the conditional-access follow-up cards\"; gateway rule 82, refining rule 74w at rule 74x's follow-up; `QCore.ReturnFamilyArithWalkConditional`; [report](../../reports/return-family-arith-walk-conditional/README.md)). Rule 74w's walk read a parenthesised conditional as the additive group around a later term of an arm's sum: in `(c ? 1 + p - n : a)->m` and `(c ? a : n + p)[0]` it crossed the conditional's parentheses, found `?` among the other operands and returned `Unclassified`, so family S refused although rule 74x reads that arm. The walk keeps its path and its old result, and also classifies each crossed conditional group within the arm that holds the span (`arm_around`: the arm's `?` or `:` stand in for the parentheses; no arm reading for a root in a condition). When that is the only unclassified reading it returns `ArithmeticAccess::Arm`, and family S refuses as before unless rule 74x made the root a base. So the one refusal removed is the arm delimiter's, and a row can move to `Safe` only when rule 74x accepted every accessed conditional and every root of every arm is a discharged base. A root in a condition, a non-additive operand, another pointer term, a subtracted pointer, a may-bind arm, an unclassified group around the conditional, a conditional nested in an arm's sum and `?:` in a call argument still refuse. Lean proves that the only refusal removed is that one and its root is a rule 74x base, that no refusal is added, and that nothing admits more than with both rules reading the arm. Pinned at unit level (`walkVectors`, 17 rows; 13 base and 20 adversarial spellings); rule 74x's two refusal pins for these spellings were changed deliberately; the change pins fail with the new reading disabled. End to end the relaxation changes no verdict on 19 probed spellings, because rule 10z's connective lowering read them at the base; the 12 end-to-end rows (null roots `Unknown`, unbound formals `Safe`, adversarial controls) pass on both sides and live in rule 74x's test target, since the gate's read census sits at its 90% coverage edge. Opt-in `current --monkey-linked` over Fluent Bit 046accf6: no row moves (1,171 / 2 / 3,623 / 8 at both), as predicted. The pinned routes need inputs this host lacks and were not run. Registered: RETURN-FAMILY-CONDITIONAL-GROUP-WALK-NESTED and GATE-SCOPE-READ-CENSUS-COVERAGE-EDGE.",
+ "status_edits": [],
+ "ledger": [
+  {
+   "id": "RETURN-FAMILY-ARITH-WALK-CROSSES-CONDITIONAL",
+   "operation": "retire",
+   "why": "Discharged by RETURN-FAMILY-ARITH-WALK-CROSSES-CONDITIONAL (gateway rule 82). crates/qcore-c-gateway/src/legacy_return_family.rs: `accessed_through_arithmetic` keeps its path and old result and also classifies each crossed conditional group within the arm holding the span (`arm_around`, the arm's top-level `?` or `:` standing in for the group's parentheses; a root followed by a top-level `?` is a condition and has no arm reading). When the old result is `Unclassified` only because of that delimiter it returns `ArithmeticAccess::Arm`, and `scalar_read` refuses unless rule 74x's `conditional_roots` made the root a base, so `( n ? 1 + p - n : a ) - > m` and `( n ? a : n + p ) [ 0 ]` make both `p` and `a` bases (the two unit pins of rule 74x's card changed deliberately). `QCore.ReturnFamilyArithWalkConditional` proves `the_only_refusal_removed`, `no_new_refusal`, `a_relaxed_root_is_discharged`, `where_the_base_admitted_nothing_admits_more` and `nothing_admits_more_than_both`; condition roots, non-additive operands, other pointer terms, subtracted pointers, may-bind arms and unclassified surrounding groups keep the refusal. End to end no verdict moves on 19 probed spellings (rule 10z's lowering read them at the base), and the opt-in route moves no row.",
+   "source": "docs/reports/return-family-arith-walk-conditional/README.md"
+  },
+  {
+   "id": "RETURN-FAMILY-CONDITIONAL-GROUP-WALK-NESTED",
+   "operation": "register",
+   "title": "Rule 74x's conditional-group walk reads an outer conditional as the additive group around a nested conditional in an arm's sum",
+   "text": "RETURN-FAMILY-ARITH-WALK-CROSSES-CONDITIONAL (rule 82) fixed rule 74w's walk but left rule 74x's `conditional_group_access` (legacy_return_family.rs), which widens a conditional group with the same loop: when the group is a later term of an outer conditional's arm sum followed by an operator or `)`, it takes the outer conditional's parentheses as the additive group, finds `?` and returns `Unclassified`, so `conditional_roots` refuses `(c ? 1 + (d ? p : a) - n : b)->m` and `(c ? 1 + (d ? 1 + p - n : a) - n : b)->m` (unit pins in crates/qcore-c-gateway/tests/unit/legacy_return_family_arith_walk_conditional.rs). Fail-closed, a precision loss; end to end rule 10z's lowering reads these (`Unknown` over null roots). DISCHARGE: classify such a crossing within the outer arm as rule 82 does, keep the refusal when that arm is unclassified, and prove no refusal is lost except where rule 74x reads the outer arm.",
+   "source": "docs/reports/return-family-arith-walk-conditional/README.md",
+   "recorded_by": "RETURN-FAMILY-ARITH-WALK-CROSSES-CONDITIONAL"
+  },
+  {
+   "id": "GATE-SCOPE-READ-CENSUS-COVERAGE-EDGE",
+   "operation": "register",
+   "title": "The gate's read census covers just over 90% of the test units, so one new test target fails the Python suite",
+   "text": "RETURN-FAMILY-ARITH-WALK-CROSSES-CONDITIONAL's first scoped gate failed `scripts/tests/test_gate_scope_census.py` (`test_the_census_covers_the_suite`: 671 observed units not greater than 0.9 x 746). At base `1187c3f6d` the read census (docs/reports/gate-scope-precise-selection/read-census.json) observes 671 of 745 root-workspace test units, so any card that adds a test target crosses the threshold. The card moved its end-to-end rows into an existing target instead; sibling cards from the same base that add a target will meet the same failure. DISCHARGE: record the read census again with scripts/gate_read_census.py at a landing (keeping the frozen census beside it), or restate the coverage rule, and keep the scoper's observed-read checks.",
+   "source": "docs/reports/return-family-arith-walk-conditional/README.md",
+   "recorded_by": "RETURN-FAMILY-ARITH-WALK-CROSSES-CONDITIONAL"
+  }
+ ]
+}

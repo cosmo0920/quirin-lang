@@ -1,0 +1,2 @@
+lib/librdkafka-2.15.0/src/rdregex.c rd_regex_match Unknown -> Safe
+   - 3048 use of in-place object `re` not certified by its initialiser status (rule 74i)

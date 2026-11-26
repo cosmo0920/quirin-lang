@@ -88,6 +88,7 @@ contract {
     ensures normal resource_borrowed(errcode);
     ensures normal resource_borrowed(preg);
     ensures normal resource_kind(preg, regex);
+    ensures normal resource_kind_failure_use(preg, regex);
     ensures normal resource_borrowed(errbuf);
     ensures normal resource_borrowed(errbuf_size);
     ensures normal resource_return_none();
@@ -114,6 +115,21 @@ contract {
 // `regfree` is a `use_after_release` candidate. `regerror`'s `__preg` may name
 // the object a failed `regcomp` left (POSIX lets the caller pass it for the
 // message), which owes nothing and is no use of an obligation.
+//
+// Card CG25-IN-PLACE-REGEX-REGERROR-FAILURE-EDGE states that difference:
+// `resource_kind_failure_use(preg, regex)` on `regerror` alone (contract spec
+// C04.6.1, gateway rule 74n). POSIX (The Open Group Base Specifications Issue
+// 8, regcomp()): regerror's `errcode` is one "which the application shall
+// ensure is the last non-zero value returned by regcomp() or regexec() with
+// the given value of preg", so the `regex_t` of a failed `regcomp` is the
+// object the call is defined on, although "the content of preg is undefined"
+// after that failure; and "If the preg argument to regexec() or regfree() is
+// not a compiled regular expression returned by regcomp(), the result is
+// undefined", so `regexec` carries no such clause. Before the status test the
+// object is compiled or failed, and either is defined for `regerror` (a zero
+// `errcode` only leaves the message unspecified). After `regfree` "A preg is
+// no longer treated as a compiled regular expression", and the clause admits
+// nothing there.
 //
 // The kind is no other kind: `free(&re)`, `regfree(p)` on a heap pointer and a
 // second `regfree(&re)` are each refused or accused. A consumer binds the

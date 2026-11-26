@@ -95,7 +95,7 @@ fn the_snapshot_carries_exactly_the_probe_state_class() {
         .filter(|(_, class)| *class == FieldClass::MonotoneFact)
         .map(|(name, _)| *name)
         .collect::<Vec<_>>();
-    assert_eq!(monotone, ["list_frames"]);
+    assert_eq!(monotone, ["shadow_guard_refused", "list_frames"]);
 }
 
 fn contracts() -> ResourceContracts {
@@ -145,6 +145,7 @@ pub(in crate::legacy_c) fn bare<'a>(
         readonly_list_count_certified: std::cell::OnceCell::new(),
         declared_no_return: std::cell::OnceCell::new(),
         call_graph_components: std::cell::OnceCell::new(),
+        shadow_guard_refused: std::cell::Cell::new(false),
         cursor: 0,
         contracts,
         next_site: 3,

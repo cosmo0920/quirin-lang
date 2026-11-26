@@ -13,6 +13,7 @@ entry point and heading links.
 | Numbered constraints and operational policy | [Rule router](../agents/README.md) |
 | Historical cycle evidence | [Cycle status and recorded evidence](cycle-status.md) |
 | Build, Lean and Windows setup | [Build and test](build-and-test.md) |
+| `size_t`, `long` and enum spellings that pass Windows (LLP64) CI | [Windows types](windows-types.md) |
 | Per-group audit checkpoints (`.qo`): format, resume, composition | [Audit checkpoints](audit-checkpoints.md) |
 | Writing an external `quirin-audit NAME` subcommand plugin | [Audit subcommand plugins](audit-subcommand-plugins.md) |
 | Current record location and every historical group | [Increment history index](increments/README.md) |

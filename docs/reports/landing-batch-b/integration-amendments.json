@@ -1,0 +1,17 @@
+{
+ "schema": "quirin-amendments/2",
+ "card": "LANDING-BATCH-B",
+ "base": "1ecaf97e9",
+ "measured_tip": "1ecaf97e9",
+ "profiles": [],
+ "status_edits": [],
+ "ledger": [
+  {
+   "id": "BASE-GATEWAY-FRONTEND-LAYERING",
+   "operation": "retire",
+   "why": "Discharged on main by 6821fddee (Keep qcore-c-gateway off qcore-frontend: reach the premise-formula validator through qcore-contract), before landing batch B: crates/qcore-c-gateway no longer depends on qcore-frontend, so compiler/tests/workspace_layering.rs's workspace_dependencies_point_strictly_downward and the providers lock's --locked metadata hold; batch B's full landing gate (layering test and provider gate) is the evidence on the merged tree.",
+   "source": "docs/reports/landing-batch-b/README.md"
+  }
+ ],
+ "increment_paragraph": "**LANDING-BATCH-B** (integrate/r75; USER DECISION 2026-11-26 \"Three batches\"; [record](../../reports/landing-batch-b/README.md)). The Windows types notice, NAME-KEYED-HOLDER-SHADOWING (rule 86), JUMPED-SHADOW-FORMAL-READINGS (rule 86 extended) and CALL-WITH-DEREF-ACTUAL-READ-AS-DECLARATION (rule 89) landed in one integrate branch with one full landing gate. Both shadow-guard hooks in legacy_classify.rs are kept. BASE-GATEWAY-FRONTEND-LAYERING is retired, discharged on main by 6821fddee; CALL-WITH-DEREF-ACTUAL-READ-AS-DECLARATION is retired in batch C once OUT-SLOT's registration lands."
+}

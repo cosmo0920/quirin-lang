@@ -1,0 +1,41 @@
+{
+  "schema": "quirin-amendments/2",
+  "card": "TYPE-GROUP-QUALIFIED-POINTER",
+  "base": "7bfa0414b",
+  "measured_tip": "8ed7a7a7f",
+  "profiles": [],
+  "increment_paragraph": "**TYPE-GROUP-QUALIFIED-POINTER** (USER DECISION 2026-11-24: \"launch the TYPE-GROUP-QUALIFIED-POINTER card\"; gateway rule 74u, amending rule 12h's shared `type_group_open` and so rules 74m and 74r; `QCore.TypeGroupQualifiedPointer`; [report](../../reports/type-group-qualified-pointer/README.md)). `cast_semantics::type_group_open` read a group as a type only when it was words followed by trailing `*`s, so `( long * const )` was no type group: `long w(void) { const long *p = 0; return *(long * const)p; }` was `Safe` while `*(long *)p` is `Unknown` (`unknown_alias:p`), and a may-bind `*(long * const)q->f` was admitted as one dereference. The detector now reads C11 6.7.7's abstract declarator `pointer`: words, then any number of `*`, each followed by a possibly empty list of `POINTER_QUALIFIERS` (C11 6.7.3's four, their GNU spellings, Clang's nullability qualifiers); a non-qualifier word after a `*` still makes no group. A census of the token cast readers found no other admitting gap: rule 74f's `may_close_a_cast`, `cast_start`, `is_leading_cast`, `is_type_group` and `called_after_cast` already accept a qualifier anywhere, while `is_cast_group`/`cast_target`, `cast_place`, `strip_pointer_cast`, `legacy_reference_result::uncast` and `cast_of_operand` refuse (or misclass to a refusing class) a qualified group and are kept. Every consumer of `type_group_open` only refuses more through more groups (`QCore.TypeGroupQualifiedPointer.qualified_only_refuses_more`, over the grammar proof `accepts_iff`). Pinned at unit level (`tests/unit/cast_semantics_type_group.rs`, binding `typeGroupVectors`) and end to end (`tests/return_family_type_group.rs`); rule 74r's unit pin and Lean vector for `* ( long * const ) p` move from no base to a base, deliberately. The change pins fail with the base reading restored. Opt-in `current --monkey-linked` over Fluent Bit 046accf6: no row moves (1,171 / 2 / 3,623 / 8 at both), as predicted. The pinned system and slice routes need build/cycle19 inputs this host lacks and were not run. Follow-ups registered: RETURN-FAMILY-RESOLVED-QUALIFIED-CAST, TYPE-GROUP-NESTED-DECLARATOR and TOKEN-CAST-READERS-QUALIFIED-POINTER.",
+  "status_edits": [],
+  "ledger": [
+    {
+      "id": "TYPE-GROUP-QUALIFIED-POINTER",
+      "operation": "retire",
+      "why": "Discharged by TYPE-GROUP-QUALIFIED-POINTER (rule 74u). crates/qcore-c-gateway/src/cast_semantics.rs `type_group_open` now reads C11 6.7.7's abstract declarator `pointer` through the new `type_group`: one or more words, then any number of `*`, each followed by a possibly empty list of `POINTER_QUALIFIERS` (`const`, `volatile`, `restrict`, `_Atomic`, their GNU spellings and Clang's nullability qualifiers); a non-qualifier word after a `*` still makes no group, and every group the base read is still read (`QCore.TypeGroupQualifiedPointer.accepts_iff`, `old_le_new`). Each consumer only refuses more through more groups: rule 12h(4)'s member count and rule 74m's through count grow (`count_mono`, `member_admission_shrinks`, `starred_admission_shrinks`), and rule 74r's bases grow (`through_mono`, `bases_grow`), so family S admits at the tip only what it admitted at the base (`qualified_only_refuses_more`). `long w(void) { const long *p = 0; return *(long * const)p; }` moves from `Safe` to `Unknown` (`unknown_alias:p`) end to end (crates/qcore-c-gateway/tests/return_family_type_group.rs, with every qualifier spelling and two pointer levels), a may-bind `* ( long * const ) q - > f` is refused at unit level, and `*(long * const)*q` keeps the return refusal (it was already refused by rule 74h's undecided `*`, so rule 74m's count changes nothing reachable there). Rule 74r's unit pin and its Lean vector for `* ( long * const ) p` moved deliberately from no base to a base. The change pins fail with the base reading restored (report §4). The opt-in corpus measurement shows no move, as predicted (report §6). The pinned system and slice routes need build/cycle19 inputs this host lacks and were not run.",
+      "source": "docs/reports/type-group-qualified-pointer/README.md"
+    },
+    {
+      "id": "RETURN-FAMILY-RESOLVED-QUALIFIED-CAST",
+      "operation": "register",
+      "title": "`legacy_return_family::is_cast_group` does not resolve a qualified pointer cast group",
+      "text": "TYPE-GROUP-QUALIFIED-POINTER found (report §1) that crates/qcore-c-gateway/src/legacy_return_family.rs `cast_target` (behind `is_cast_group` and family K's `cast_call`) resolves a group only as resolved words followed by trailing `*`s, so `( long * const )` is never a resolved cast. The direction is refusing: rule 74h then reads a `*` or `&` after it as undecided and keeps both readings' refusals, family S reads `( long * const ) ( x )` as a call and refuses, and family K refuses `return ( T * const ) f ( x );`. Rule 74u deliberately kept this reading, because resolving the group would admit more (a starred may-bind root after it would need only the cast reading's count, and family K would take an `Owned` result under a qualified pointer cast). DISCHARGE: let `cast_target` read `POINTER_QUALIFIERS` after each `*` (the shape of rule 74u's `type_group`) only with a proof that each newly admitted reading is sound (a cast to a qualified pointer type converts the value as the unqualified type does, C11 6.5.4p5 and 6.7.3p5), pin the admissions end to end and measure, or show no such return reaches family S or K.",
+      "source": "docs/reports/type-group-qualified-pointer/README.md",
+      "recorded_by": "TYPE-GROUP-QUALIFIED-POINTER"
+    },
+    {
+      "id": "TYPE-GROUP-NESTED-DECLARATOR",
+      "operation": "register",
+      "title": "`cast_semantics::type_group_open` does not read a nested abstract declarator, `_Atomic ( T )` or an attribute",
+      "text": "TYPE-GROUP-QUALIFIED-POINTER found (report §1) that crates/qcore-c-gateway/src/cast_semantics.rs `type_group_open` still reads no group holding parentheses or brackets: a pointer to an array or a function (`( int ( * ) [ 4 ] )`, `( void ( * ) ( void ) )`), the `_Atomic ( T )` specifier, `__typeof__ ( x )` and `__attribute__ ( ( ... ) )`. Its nearest-`(` search finds the inner group, which is no type name. Rule 74r's reading through groups, rule 74m's through count and rule 12h(4)'s member count stop at such a group, the same admitting direction rule 74u closed for qualifiers (for example `**(int (*)[4])p` through a null untracked `p` makes no base). DISCHARGE: read the C11 6.7.7 direct abstract declarator in `type_group_open` (balanced groups, keeping the only-refuses-more direction of every caller, `QCore.TypeGroupQualifiedPointer.the_fix_only_refuses_more`), or show no such cast reaches family S; pin and measure.",
+      "source": "docs/reports/type-group-qualified-pointer/README.md",
+      "recorded_by": "TYPE-GROUP-QUALIFIED-POINTER"
+    },
+    {
+      "id": "TOKEN-CAST-READERS-QUALIFIED-POINTER",
+      "operation": "register",
+      "title": "Four token cast readers refuse a pointer cast with a qualifier after its `*`",
+      "text": "TYPE-GROUP-QUALIFIED-POINTER's census (report §1) found four token readers that read a pointer cast only when its group ends in `*`, so `( T * const )` is no cast to them: `legacy_token_shapes::cast_place` (rule 12y's borrowed base, then `Unmodeled` or `the base is not a place`), `legacy_sub_object_store::strip_pointer_cast` (`value-shape`), `legacy_reference_result::uncast` (a null constant or a returned name under such a cast is not read, so the check is not admitted), and `legacy_cast_return::cast_of_operand` (the target is classed `Other`, not `Pointer`, so a place under it is refused or left to the pre-card routes). Every one refuses or falls back to an older reading, so the direction is precision only. DISCHARGE: read `POINTER_QUALIFIERS` after each `*` in these readers (rule 74u's `type_group` shape, ideally by calling it) with a direction assessment per reader, pin and measure; or record that no qualified cast reaches them on the corpus.",
+      "source": "docs/reports/type-group-qualified-pointer/README.md",
+      "recorded_by": "TYPE-GROUP-QUALIFIED-POINTER"
+    }
+  ]
+}
