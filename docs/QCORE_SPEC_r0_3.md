@@ -345,7 +345,7 @@ discharging an obligation in one domain by altering state in another.
 | **3. Spendable credit** | `C` | *How much pre-authorized capacity remains available to spend?* | Conservatively split, transferred, and consumed `quant<credit, q>` balances per dimension. | That any live allocation has been freed; abandoning unused credit never releases custody. |
 | **4. Live custody** | `L` | *Which specific resource lifetimes currently owe destruction or handoff?* | Identity- and generation-indexed live resources, aggregate field paths, and outstanding duties (`quant<live, q>`). | Memory bounds, pointer non-nullness of untracked C pointers, or thread-sharing safety alone. |
 | **5. Cost upper bounds** | *(flow `P`, `T`)* | *What is the upper bound on cumulative work or peak occupancy?* | Monotone `cost.total` accumulation and `cost.peak` high-water marks across sequential/parallel composition. | Spendable tokens, transferable authority, or wall-clock latency without a separate schedule model. |
-| **6. Effects** | `E` | *What side effects or typed error exits may this computation perform?* | Permitted capability tokens (`io`, `alloc`, `mut`, `spawn`, `join`, `may_block`, `partial_eq`, `partial_ord`) and `throws<Error>`. | Custody cleanup on its own, or C error-sentinel mapping without an explicit contract adapter. |
+| **6. Effects** | `E` | *What side effects or typed error exits may this computation perform?* | Permitted capability tokens (`io`, `alloc`, `mut`, `unsafe`, `spawn`, `join`, `may_block`, `partial_eq`, `partial_ord`) and `throws<Error>`. | Custody cleanup on its own, or C error-sentinel mapping without an explicit contract adapter. |
 | **7. Footprint access authority** | `A` | *Which party currently holds read or write permission over which bytes or cells?* | Fractional read shares (out of `FULL = 1024`), disjoint byte write leases `[low, high)`, mutex guard tokens, and protocol cells. | Destruction authority (`drop`/`close` remains the owner's duty) or infinite lifetime. |
 | **8. Per-exit post-states & protocol context** | `X`, `K` | *What obligations and protocol states hold on each distinct control exit, and under what enclosing scope?* | Exit-indexed post-states (`normal`, `return`, `error(E)`, `cancel`) and active task/mutex/cleanup-pack protocol context `K`. | That incompatible branch resource states can be averaged or merged into an "optional" leak. |
 
@@ -457,7 +457,8 @@ where the components carry the following exact responsibilities:
 - `T`: value result type produced on the normal continuation exit;
 - `E`: derived or checked effect and typed-error row of `e`; and
 - `X`: exit-indexed family of post-states `(C_exit, L_exit, A_exit, K_exit)` for
-  every normal, `return`, and `error` exit admitted by `E`.
+  every normal, `return`, and `error` exit admitted by `E`, and every
+  cancellation safe point the profile models (`§L13`).
 
 > **Architectural note.** This judgmental notation specifies **semantic
 > responsibilities and composition invariants**, not an assertion that one
@@ -810,22 +811,24 @@ draws a hard line between **structural retention** and **semantic validation**.
 ### What the Structural Front End Recognizes and Retains
 
 `parse_source_program` and `elaborate_source` (`crates/qcore-frontend/src/frontend.rs`)
-recognize twelve `DeclarationKind` forms:
+recognize thirteen `DeclarationKind` forms:
 
 1. `concurrency checked;` profile markers (`ConcurrencyProfile`);
 2. `verify scope NAME { ... }` provider configurations (`VerifierScope`);
 3. `dimension D : Idx + Ordered;` nominal index dimensions (`Dimension`);
 4. `quant axis A : MODE<D>;` quantitative axes (`Axis`);
-5. `type Alias = ...;` type aliases (`TypeAlias`);
-6. `type Name { field: Type, ... }` aggregate record declarations (`Record`);
-7. `struct! { type Name = c"struct Tag" from "header.h"; fields { ... } }` C FFI
+5. `quant variant Name(subject) { Arm carries ...; ... }` delayed custody
+   result declarations (`QuantVariant`, `§L09.1`);
+6. `type Alias = ...;` type aliases (`TypeAlias`);
+7. `type Name { field: Type, ... }` aggregate record declarations (`Record`);
+8. `struct! { type Name = c"struct Tag" from "header.h"; fields { ... } }` C FFI
    struct imports (`ImportedStruct`);
-8. `resource type Name { ... }` nominal resource declarations (`ResourceType`);
-9. `error Name { Variant; ... }` typed error declarations (`ErrorType`);
-10. `const NAME ...;` constant declarations (`Constant`);
-11. `[unsafe] extern fn ...;` external function declarations, optionally
+9. `resource type Name { ... }` nominal resource declarations (`ResourceType`);
+10. `error Name { Variant; ... }` typed error declarations (`ErrorType`);
+11. `const NAME ...;` constant declarations (`Constant`);
+12. `[unsafe] extern fn ...;` external function declarations, optionally
     preceded by `[| quant #c_ffi |]` (`ExternFunction`); and
-12. `fn name(...) -> Result [effects { ... }] [contract { ... }] { ... }` source
+13. `fn name(...) -> Result [effects { ... }] [contract { ... }] { ... }` source
     functions (`Function`), plus lifted closure workers (`SourceClosure`).
 
 For each declaration, the AST retains parameter lists (`SourceParameter`), exact
@@ -1317,11 +1320,11 @@ The closed `index.closed` type resolver (`§L06`) is not a general credit-flow
 solver over arbitrary `.qr` function bodies. In the compiler and core crates,
 the usage checker (`u64`), resource-flow checker (`u64` / `i128`), closed index
 evaluator (`u128`), ownership ledger (`ResourceId` / `Place`), and concurrency
-checkers (`u32` / `u64` shares and generations) maintain distinct data
-structures and APIs; any conversion across their numeric ranges `MUST` be
-explicit and checked for overflow.
+checkers (`u16` / `u32` shares, `u32` / `u64` identifiers and generations)
+maintain distinct data structures and APIs; any conversion across their
+numeric ranges `MUST` be explicit and checked for overflow.
 
-> **Implementation & Provenance.** `crates/qcore-core/src/{quant,resource_flow,concurrency,epoch_accounting,epoch_credit_recovery}.rs`,
+> **Implementation & Provenance.** `crates/qcore-core/src/{resource_flow,concurrency,epoch_accounting,epoch_credit_recovery}.rs`,
 > `proof/QCore/{Quant,Flow,Ct03ReadShares,EpochAccounting}.lean`.
 
 ---
@@ -1378,8 +1381,9 @@ lifetime generation**:
   or pointers targeting the old generation remain invalid (`UseAfterDrop` /
   destroyed-generation access).
 - **Bounded integer-ID models:** any checker or IR that represents resources by
-  plain integers (`ResourceId(u32)` or `(task_id, alloc_ordinal)` in
-  `ScopedOwnedTasksV1`) `MUST` either enforce single-assignment uniqueness per
+  plain integers (the `u64` alias `ResourceId`, the `u32` aliases
+  `SharedResourceId`, `AdvancedResourceId`, `ExternalResourceId` and
+  `NativeResourceId`, or `(task_id, alloc_ordinal)` in `ScopedOwnedTasksV1`) `MUST` either enforce single-assignment uniqueness per
   ID or import an explicitly verified generation mapping; it `MUST NOT` equate
   numeric pointer equality with generation equality.
 
