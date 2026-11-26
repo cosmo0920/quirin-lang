@@ -35,9 +35,22 @@
 //!
 //! An owned, consumed, stored or removed in-place position, and an in-place
 //! result, are refused: storage is neither transferred nor returned.
+//!
+//! Card **CG25-IN-PLACE-REGEX-REGERROR-FAILURE-EDGE** adds one refinement of a
+//! use, `resource_kind_failure_use(p, KIND)`: the use at `p` is defined on an
+//! object whose initialiser may have failed (POSIX `regerror`, whose `preg` is
+//! the `regex_t` of the `regcomp` that returned `errcode`). It stands only on
+//! a by-address use position of the same in-place kind
+//! ([`check_failure_uses`]); a consumer admits such a use on the failure edge
+//! and before the status test, never before the initialiser or after the
+//! finaliser (gateway rule 74n).
 
 use super::{DeclaredKinds, ValidityWord};
 use qcore_schemas::contract::{ResourceKind, ResourceParameterMode, ResourceReturnMode};
+use std::collections::BTreeSet;
+
+/// The clause head of a failure use (`resource_kind_failure_use(p, KIND)`).
+pub(super) const FAILURE_USE: &str = "resource_kind_failure_use";
 
 /// One in-place-kinded parameter position.
 pub(super) fn check_parameter(
@@ -129,4 +142,45 @@ pub(super) fn check_declaration(
         return Err("an in-place initialiser moves no other custody".into());
     }
     Ok(())
+}
+
+/// Card CG25-IN-PLACE-REGEX-REGERROR-FAILURE-EDGE: every failure-use clause
+/// names a by-address use of its own in-place kind. A by-value use (a
+/// `thread_key`'s `u32`) is refused: the value a failed initialiser left is no
+/// object a call could be defined on. The positions, once every rule holds.
+pub(super) fn check_failure_uses(
+    declared: &DeclaredKinds,
+    parameters: &[ResourceParameterMode],
+    types: &[String],
+    stated: &[Option<ResourceKind>],
+) -> Result<BTreeSet<usize>, String> {
+    let mut positions = BTreeSet::new();
+    for (index, kind) in stated.iter().enumerate() {
+        let Some(kind) = *kind else {
+            continue;
+        };
+        let spelling = kind.spelling();
+        if !kind.is_in_place() {
+            return Err(format!(
+                "`{FAILURE_USE}` names an in-place kind; {spelling} is not one"
+            ));
+        }
+        if declared.parameter_kind(index) != kind {
+            return Err(format!(
+                "`{FAILURE_USE}` restates its position's kind: `resource_kind(_, {spelling})` must stand on it"
+            ));
+        }
+        if parameters.get(index) != Some(&ResourceParameterMode::Borrowed)
+            || !matches!(
+                types.get(index).map(String::as_str),
+                Some("ptr<mut, u8>" | "ptr<const, u8>")
+            )
+        {
+            return Err(format!(
+                "`{FAILURE_USE}` stands on a by-address {spelling} use: `resource_borrowed` on a pointer"
+            ));
+        }
+        positions.insert(index);
+    }
+    Ok(positions)
 }

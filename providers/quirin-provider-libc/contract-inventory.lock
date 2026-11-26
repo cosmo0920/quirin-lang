@@ -459,7 +459,7 @@
       "sha256": "257c1a55aa5b5584503dc74e0da9d0a191f9f36810e5fb21979184f5a0192d50"
     },
     "libc/regex.qv": {
-      "clause_count": 29,
+      "clause_count": 30,
       "declaration_count": 4,
       "declarations": [
         {
@@ -481,9 +481,12 @@
           "resource_table": "functions"
         },
         {
-          "clauses": 8,
+          "clauses": 9,
           "name": "regerror",
           "resource_mode": {
+            "failure_uses": [
+              1
+            ],
             "parameter_kinds": {
               "1": "regex"
             },
@@ -540,7 +543,7 @@
       "other_declarations": [],
       "premise_bindings": [],
       "premises": {},
-      "sha256": "f224448be822956d853c26d9003ffeef5d2530d8d086087b9dec3412c551d775"
+      "sha256": "5b0483c95b2b6a56e4907ef49249cc4cf5dfd92acc7cea1ea77f8b0f903195ed"
     },
     "libc/result_sets.qv": {
       "clause_count": 11,

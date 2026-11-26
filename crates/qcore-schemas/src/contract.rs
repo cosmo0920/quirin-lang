@@ -315,6 +315,15 @@ pub struct ResourceFunctionContract {
     /// byte as before.
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
     pub link_members: BTreeMap<usize, String>,
+    /// Card **CG25-IN-PLACE-REGEX-REGERROR-FAILURE-EDGE** (contract
+    /// specification §C04.6.1, gateway rule 74n): the in-place use positions
+    /// whose use is defined on an object whose initialiser may have failed
+    /// (`resource_kind_failure_use(p, KIND)`: `regerror`'s `preg`). Each is a
+    /// by-address `resource_borrowed` position of an in-place kind. Omitted
+    /// when empty, so every contract without one serializes byte for byte as
+    /// before.
+    #[serde(default, skip_serializing_if = "BTreeSet::is_empty")]
+    pub failure_uses: BTreeSet<usize>,
 }
 
 /// Card **W45-FB-RETRY-LIFETIME**: an intrusive-container effect on the object
@@ -432,6 +441,9 @@ impl std::fmt::Debug for ResourceFunctionContract {
         if !self.link_members.is_empty() {
             debug.field("link_members", &self.link_members);
         }
+        if !self.failure_uses.is_empty() {
+            debug.field("failure_uses", &self.failure_uses);
+        }
         debug.finish()
     }
 }
@@ -450,6 +462,7 @@ impl ResourceFunctionContract {
             container_effects: BTreeMap::new(),
             counted_users: CountedUserClauses::default(),
             link_members: BTreeMap::new(),
+            failure_uses: BTreeSet::new(),
         }
     }
 
@@ -462,7 +475,7 @@ impl ResourceFunctionContract {
     }
 
     /// Card W45-FB-RETRY-LIFETIME: the same contract without its container
-    /// (with their link members) and counted-user clauses — the part a derived custody summary can
+    /// (with their link members), counted-user and failure-use clauses — the part a derived custody summary can
     /// state, and so the part it is compared with.
     #[must_use]
     pub fn custody_projection(&self) -> Self {
@@ -470,6 +483,9 @@ impl ResourceFunctionContract {
         projection.container_effects.clear();
         projection.counted_users = CountedUserClauses::default();
         projection.link_members.clear();
+        // Card CG25-IN-PLACE-REGEX-REGERROR-FAILURE-EDGE: no derived summary
+        // states where a use is defined on a failed object.
+        projection.failure_uses.clear();
         projection
     }
 
@@ -489,6 +505,14 @@ impl ResourceFunctionContract {
     pub const fn with_result_kind(mut self, kind: ResourceKind) -> Self {
         self.result_kind = kind;
         self
+    }
+
+    /// Card CG25-IN-PLACE-REGEX-REGERROR-FAILURE-EDGE: whether the use at
+    /// parameter `index` is declared defined on a possibly failed in-place
+    /// object (`resource_kind_failure_use`).
+    #[must_use]
+    pub fn is_failure_use(&self, index: usize) -> bool {
+        self.failure_uses.contains(&index)
     }
 
     /// The kind of parameter `index`: heap unless declared otherwise.

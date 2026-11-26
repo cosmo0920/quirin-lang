@@ -1,0 +1,23 @@
+{
+ "schema": "quirin-amendments/2",
+ "card": "CG25-IN-PLACE-REGEX-REGERROR-FAILURE-EDGE",
+ "base": "3ca85c7a6",
+ "measured_tip": "16ad6f982",
+ "profiles": [],
+ "increment_paragraph": "**CG25-IN-PLACE-REGEX-REGERROR-FAILURE-EDGE** (USER DECISION 2026-11-24: \"launch them all\"; gateway rule 74n; contract spec C04.6.1; `QCore.InPlaceFailureUse`; [report](../../reports/regex-regerror-failure-edge/README.md)). Discharges the over-refusal rule 74i recorded. A new contract clause `ensures normal resource_kind_failure_use(p, KIND);` states that an in-place use is defined on an object whose initialiser may have failed. It is a predicate, not a premise string, loaded as `ResourceFunctionContract::failure_uses` (omitted when empty, dropped by `custody_projection`), and it rejects the module anywhere but a by-address `resource_borrowed` use of its own in-place kind. Rule 74i's certified-use check also admits a use carrying it where the object is bound to at most one live, unreleased site of its latest initialiser, or is definitely null on the nonzero edge: before the status test and on the failure edge. It still refuses before the initialiser, keeps the `use_after_close` candidate after `regfree`, and reads every use without the clause (`regexec`) as before. `regex.qv` states the clause on `regerror`'s `preg` only, grounded in POSIX Issue 8 (`errcode` is \"the last non-zero value returned by regcomp() or regexec() with the given value of preg\"). The libc inventory lock goes `regex.qv` 29 -> 30 clauses (corpus 8,800 -> 8,801), and the libc `contracts.lock` re-pins `regerror` (flexible). Lean: each step is rule 74i's or an admitted failure use, so only the clause can turn a verdict `Safe` (`a_new_safe_verdict_rests_on_an_admitted_failure_use`). Pins: `regerror` on the failure edge and before the test, and the real `rd_regex_match`, are `Unknown` at base and `Safe` at tip; `regexec` on the failure edge, `regerror` before `regcomp`, after `regfree` and after a failure-edge `regfree` stay non-Safe. Opt-in `current --monkey-linked` over Fluent Bit 046accf6, each side on its own tree and binary: base 3ca85c7a6 1,171/2/3,623/8, tip 16ad6f982 1,172/2/3,622/8. The one move is `rd_regex_match` Unknown -> Safe, matching the prediction. Pinned routes are not runnable on the host; corpus `rd_regex_match` Unknown -> Safe is predicted.",
+ "status_edits": [
+  {
+   "section": "### Conformance, proof and corpus",
+   "old": "1,002 declarations, 8,800 clauses",
+   "new": "1,002 declarations, 8,801 clauses"
+  }
+ ],
+ "ledger": [
+  {
+   "id": "CG25-IN-PLACE-REGEX-REGERROR-FAILURE-EDGE",
+   "operation": "retire",
+   "why": "Discharged by CG25-IN-PLACE-REGEX-REGERROR-FAILURE-EDGE (rule 74n). The contract clause resource_kind_failure_use(p, KIND) (contract spec C04.6.1, grammar G05; crates/qcore-contract/src/contract_in_place.rs check_failure_uses; ResourceFunctionContract::failure_uses) marks a use defined on a possibly failed in-place object, and regex.qv states it on regerror's preg only (POSIX Issue 8 regcomp() page). crates/qcore-c-gateway/src/legacy_in_place_custody.rs failure_use_admitted admits such a use on the failure edge and before the status test, never before the initialiser or after regfree; regexec keeps rule 74i's refusal. Pinned in crates/qcore-c-gateway/tests/in_place_regex_failure_use.rs: regerror on the failure edge and the real rd_regex_match are Unknown at base and Safe at tip, and regexec there is refused. QCore.InPlaceFailureUse proves the admitted positions and that only the clause turns a verdict Safe. Opt-in current: rd_regex_match Unknown -> Safe, the only move (base 3ca85c7a6, tip 16ad6f982), as predicted.",
+   "source": "docs/reports/regex-regerror-failure-edge/README.md"
+  }
+ ]
+}
