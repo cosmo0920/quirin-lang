@@ -1,0 +1,33 @@
+{
+  "schema": "quirin-amendments/2",
+  "card": "RETURN-FAMILY-UNTRACKED-CONDITIONAL-ACCESS",
+  "base": "03aadb221",
+  "measured_tip": "c88cf5357",
+  "profiles": [],
+  "increment_paragraph": "**RETURN-FAMILY-UNTRACKED-CONDITIONAL-ACCESS** (USER DECISION 2026-11-24: \"launch the two arithmetic-access follow-up cards\"; gateway rule 74x, extending rule 74w; `QCore.ReturnFamilyUntrackedConditionalAccess`; [report](../../reports/return-family-untracked-conditional-access/README.md)). Family S of `legacy_return_family` read no root that is an arm of a parenthesised conditional that `->`, `[` or a unary `*` accesses: the direct tests need the access next to the name, and rules 74r's, 74t's and 74w's walks stop at the `?` or `:`. So `long w(void) { const struct s *p = 0, *q = 0; return (0 ? p : q)->n; }`, `(k ? p : q)[0]` and `*(k ? p : q)` were `Safe`, while `return k ? p->n : q->n;` is `Unknown`. Family S is asked before rule 10z's connective return, so it was the admitting reader. The old tests are kept, and `conditional_roots` adds one: it widens each conditional group as rule 74w widens a root (type groups, parentheses, classified additive groups) and, when the group is accessed, makes every untracked, non-scalar root of both arms a base, and a `->` root for `->`. Nested conditionals, casts around the group or an arm, and a classified sum in an arm are read. The condition is a read and is never decided, even when constant. An arm the reader cannot classify (a string, a unary `-`, a product, a may-bind name, two pointer terms) or an access through an unclassified sum refuses the expression. Bases only grow and the one new refusal is the expression's, so nothing admits more than at the base. Tracked and may-bind roots, unbound formals, `&(k ? p : q)->n`, `sizeof`, a comparison and `return k ? p->n : q->n;` read as before. Pinned at unit level (`condVectors`, 23 rows, old fields checked against the base's functions) and end to end (15 null rows, a refused string arm, controls); the change pins fail with the new reading disabled. Opt-in `current --monkey-linked` over Fluent Bit 046accf6: no row moves (1,171 / 2 / 3,623 / 8 at both), as predicted; the census finds no accessed conditional in a `return` on the route. The pinned routes need inputs this host lacks and were not run. Registered: RETURN-FAMILY-CONDITIONAL-CONSTANT-PRUNING and RETURN-FAMILY-ARITH-WALK-CROSSES-CONDITIONAL.",
+  "status_edits": [],
+  "ledger": [
+    {
+      "id": "RETURN-FAMILY-UNTRACKED-CONDITIONAL-ACCESS",
+      "operation": "retire",
+      "why": "Discharged by RETURN-FAMILY-UNTRACKED-CONDITIONAL-ACCESS (rule 74x). Reachability: `(0 ? p : q)->n`, `(k ? p : q)[0]`, `*(k ? p : q)`, nested and cast conditionals and `(k ? p + 1 : q)->n` through null untracked roots reached family S (asked inside `return_expression_instruction`, before rule 10z's `typed_connective_return`) and were `Safe` with the base's reading (report §1). crates/qcore-c-gateway/src/legacy_return_family.rs keeps every old test and adds `conditional_roots`: each parenthesised conditional group is widened as rule 74w widens a root (the existing `type_group_open`, parentheses, additive groups classified by `integer_operands`); when `->`, `[` or a may-be-unary `*` accesses it, `arm_roots` makes every untracked, non-scalar root of both arms a base (and a `->` root for `->`), never deciding the condition, and an arm it cannot classify refuses the expression. Bases only grow and the one new refusal is the expression's, so a result the tip admits the base admitted (`QCore.ReturnFamilyUntrackedConditionalAccess.the_fix_only_refuses_more`, `both_arms_are_taken`, `the_condition_is_not_decided`, `an_unclassifiable_arm_refuses`). The null cases are pinned `Unknown` end to end (crates/qcore-c-gateway/tests/return_family_untracked_conditional_access.rs); unbound formals stay `Safe`, and tracked roots, `&(k ? p : q)->n`, `sizeof` and `return k ? p->n : q->n;` keep their verdicts. The unit vectors bind the Lean rows, and the change pins fail with the new reading disabled. The opt-in corpus measurement shows no move, as predicted (report §5). The pinned routes need inputs this host lacks and were not run.",
+      "source": "docs/reports/return-family-untracked-conditional-access/README.md"
+    },
+    {
+      "id": "RETURN-FAMILY-CONDITIONAL-CONSTANT-PRUNING",
+      "operation": "register",
+      "title": "Family S reads both arms of an accessed conditional even under a constant condition",
+      "text": "RETURN-FAMILY-UNTRACKED-CONDITIONAL-ACCESS (rule 74x) makes every untracked root of both arms of an accessed conditional a base and never decides the condition, as its brief required. So `long w(const struct s *q) { const struct s *p = 0; return (0 ? p : q)->n; }` is `Unknown` (`unknown_alias:p`) although C never evaluates `p` (C11 6.5.15p4). The direction is precision, not soundness. DISCHARGE: decide the condition only when it is an integer constant expression (C11 6.6) the reader evaluates exactly, prune the arm C never evaluates, keep both arms otherwise; prove in Lean that pruning removes only bases of an unevaluated arm. Pin end to end and measure.",
+      "source": "docs/reports/return-family-untracked-conditional-access/README.md",
+      "recorded_by": "RETURN-FAMILY-UNTRACKED-CONDITIONAL-ACCESS"
+    },
+    {
+      "id": "RETURN-FAMILY-ARITH-WALK-CROSSES-CONDITIONAL",
+      "operation": "register",
+      "title": "Rule 74w's walk reads a conditional group as the sum around a later term of an arm's sum",
+      "text": "RETURN-FAMILY-UNTRACKED-CONDITIONAL-ACCESS found (report §2, unit pins in crates/qcore-c-gateway/tests/unit/legacy_return_family_untracked_conditional_access.rs) that `( n ? 1 + p - n : a ) - > m` and `( n ? a : n + p ) [ 0 ]` refuse in family S: `accessed_through_arithmetic` (rule 74w) meets a binary `+` before `p` and an operator or `)` after it, takes the conditional's parentheses as the additive group (`enclosing_group`), finds `?` among the other operands and returns `Unclassified`. This is the base's reading, kept: fail-closed, a precision loss. DISCHARGE: stop the walk at a top-level `?` or `:` of the enclosing group, so rule 74x's `arm_roots` reads the arm's sum; keep the only-adds-bases direction and prove that no refusal is lost except where rule 74x reads the arm.",
+      "source": "docs/reports/return-family-untracked-conditional-access/README.md",
+      "recorded_by": "RETURN-FAMILY-UNTRACKED-CONDITIONAL-ACCESS"
+    }
+  ]
+}

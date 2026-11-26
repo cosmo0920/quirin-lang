@@ -464,6 +464,7 @@ import QCore.ReturnFamilyDerefCast
 import QCore.ReturnFamilyStarCast
 import QCore.ReturnFamilyStarOutside
 import QCore.ReturnFamilyUntrackedArithAccess
+import QCore.ReturnFamilyUntrackedConditionalAccess
 import QCore.ReturnFamilyUntrackedDerefCast
 import QCore.ReturnFamilyUntrackedMemberCast
 import QCore.ReturnFamilyUntrackedReversedSubscript
