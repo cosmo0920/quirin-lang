@@ -63,6 +63,9 @@
 //! - `resource_no_return()` -> the call never returns and no frame of the
 //!   caller's thread resumes (card CG21-CALL-EXITS-AND-BOUNDARIES). See
 //!   below.
+//! - `resource_kind_failure_use(p, KIND)` -> the in-place use at `p` is
+//!   defined on an object whose initialiser may have failed (card
+//!   CG25-IN-PLACE-REGEX-REGERROR-FAILURE-EDGE; `contract_in_place.rs`).
 //!
 //! and one further **precondition** beside the marker:
 //!
@@ -2003,6 +2006,10 @@ fn load_function_in(
     let mut result_word: Option<ValidityWord> = None;
     let mut parameter_kinds: Vec<Option<ResourceKind>> = vec![None; decl.parameters.len()];
     let mut result_kind: Option<ResourceKind> = None;
+    // Card CG25-IN-PLACE-REGEX-REGERROR-FAILURE-EDGE (§C04.6.1): the kind each
+    // `resource_kind_failure_use(p, KIND)` states, checked against the
+    // position's own kind and mode once every mode is read.
+    let mut failure_uses: Vec<Option<ResourceKind>> = vec![None; decl.parameters.len()];
     let mut names = BTreeMap::new();
     for (index, parameter) in decl.parameters.iter().enumerate() {
         if names.insert(parameter.name.value.as_str(), index).is_some() {
@@ -2474,6 +2481,13 @@ fn load_function_in(
                 }
                 continue;
             }
+            [in_place::FAILURE_USE, p, kind] => {
+                let kind = declared_kind(kind)?;
+                if failure_uses[index(p)?].replace(kind).is_some() {
+                    return Err(format!("duplicate failure use for {p}"));
+                }
+                continue;
+            }
             ["resource_return_kind", kind] => {
                 let kind = declared_result_kind(kind)?;
                 if result_kind.replace(kind).is_some() {
@@ -2900,7 +2914,10 @@ fn load_function_in(
                     .into(),
             );
         }
+        let failure_uses =
+            in_place::check_failure_uses(&kinds, &parameters, &parameter_types, &failure_uses)?;
         let mut contract = ResourceFunctionContract::new(parameters, result);
+        contract.failure_uses = failure_uses;
         contract.parameter_kinds = kinds.parameter_kinds;
         contract.result_kind = kinds.result_kind;
         contract.container_effects = collected.container_effects.clone();

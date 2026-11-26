@@ -1,0 +1,19 @@
+{
+ "schema": "quirin-amendments/2",
+ "card": "LANDING-BATCH-A",
+ "base": "1ecaf97e9",
+ "measured_tip": "1ecaf97e9",
+ "profiles": [],
+ "status_edits": [],
+ "ledger": [
+  {
+   "id": "RETURN-AST-ROUTE-REVERSED-SUBSCRIPT-DEREF",
+   "operation": "register",
+   "recorded_by": "RETURN-FAMILY-UNTRACKED-REVERSED-SUBSCRIPT",
+   "source": "docs/reports/return-family-untracked-reversed-subscript/README.md",
+   "title": "An older typed route admits `n[q[0]]` with a scalar `n` before family S refuses it",
+   "text": "RETURN-FAMILY-UNTRACKED-REVERSED-SUBSCRIPT (rule 74y) observed `long w(long **q, long n) { return n[q[0]]; }` Safe at its base and tip: family S refuses the shape (unit pin `n [ q [ 0 ] ]`), so an older route admits it before family S is asked. C11 6.5.2.1p2 makes it `*(n + q[0])`, a dereference of the pointer `q[0]` reads. Direction not assessed. DISCHARGE: find the admitting route, check that its typed (Clang-AST) reading knows which operand is the pointer and what custody `q[0]` carries, refuse where it does not, pin the shape end to end and measure."
+  }
+ ],
+ "increment_paragraph": "**LANDING-BATCH-A** (integrate/r74; USER DECISION 2026-11-26 \"Three batches\"; [record](../../reports/landing-batch-a/README.md)). Ten return-family and regex cards landed in one integrate branch with one full landing gate, in the approved order: regerror (74n), member-through-cast (74t), qualified-pointer, arithmetic access (74w), reversed subscript (74y), conditional access (74x), strict member, arith walk (82), null join (83) and constant pruning (74z, macro option A). Main's reorganised contract spec and grammar received the regerror card's text in its new structure; legacy_return_family.rs's two conflicts were independent additions kept on both sides; the regerror fixture's regex sizes are spelled `__SIZE_TYPE__`. Registered RETURN-AST-ROUTE-REVERSED-SUBSCRIPT-DEREF from the reversed-subscript report's observation."
+}
