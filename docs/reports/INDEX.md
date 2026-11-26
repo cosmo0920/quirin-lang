@@ -107,6 +107,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [c-gateway-wave](c-gateway-wave/README.md) | C gateway refinements after the worktree sweep |
 
+| [call-with-deref-actual](call-with-deref-actual/README.md) | CALL-WITH-DEREF-ACTUAL-READ-AS-DECLARATION |
+
 | [callback-candidate-literal-premise](callback-candidate-literal-premise/README.md) | CALLBACK-CANDIDATE-LITERAL-PREMISE: a premise at a callback candidate |
 
 | [callback-member-cxx-ast-stores](callback-member-cxx-ast-stores/README.md) | CALLBACK-MEMBER-CXX-AST-STORES |
@@ -685,6 +687,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [joined-provenance-round-bound](joined-provenance-round-bound/README.md) | JOINED-PROVENANCE-ROUND-BOUND (wave 37) |
 
+| [jumped-shadow-formal-readings](jumped-shadow-formal-readings/README.md) | JUMPED-SHADOW-FORMAL-READINGS |
+
 ## K
 
 | Card directory | Original report title |
@@ -714,6 +718,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [landing-777fba16e](landing-777fba16e/README.md) | Landing checkpoint 777fba16e |
 
 | [landing-batch-a](landing-batch-a/README.md) | Landing batch A (integrate/r74): return-family rules |
+
+| [landing-batch-b](landing-batch-b/README.md) | Landing batch B (integrate/r75): formal-name readings and the Windows types notice |
 
 | [landing-provider-lock](landing-provider-lock/README.md) | Landing repair: provider workspace lock (2026-11-01) |
 
@@ -838,6 +844,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | Card directory | Original report title |
 |---|---|
+
+| [name-keyed-holder-shadowing](name-keyed-holder-shadowing/README.md) | NAME-KEYED-HOLDER-SHADOWING |
 
 | [native-library-header-decoration](native-library-header-decoration/README.md) | NATIVE-LIBRARY-HEADER-DECORATION — the export macro, derived — 2026-09-11 |
 
@@ -2021,6 +2029,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [windows-std-event-af-unix](windows-std-event-af-unix/README.md) | EVENT-V1-WINDOWS-AFUNIX — capability-selected Windows endpoint pairs |
 
 | [windows-test-portability](windows-test-portability/README.md) | Windows test portability and F02 pin repair |
+
+| [windows-types-notice](windows-types-notice/README.md) | WINDOWS-TYPES-NOTICE |
 
 | [windows-vs2026](windows-vs2026/README.md) | Windows Visual Studio 2026 toolchain repair |
 
