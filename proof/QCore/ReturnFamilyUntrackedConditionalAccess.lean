@@ -241,9 +241,9 @@ theorem the_condition_is_no_base :
 the untracked `p`. The Rust unit test reads the spelling, the old fields
 (against the base's functions) and the last three (against `scalar_read`). -/
 def condVectors : List (String × List Group × Bool × Bool × Bool × Bool × Bool) := [
-  ("( 0 ? p : a ) - > n", [⟨[], .arrow, .cond (some false) (.root "p") (.root "a")⟩],
+  ("( n - n ? p : a ) - > n", [⟨[], .arrow, .cond none (.root "p") (.root "a")⟩],
     false, false, true, true, false),
-  ("( 1 ? a : p ) - > n", [⟨[], .arrow, .cond (some true) (.root "a") (.root "p")⟩],
+  ("( 1 / 0 ? a : p ) - > n", [⟨[], .arrow, .cond none (.root "a") (.root "p")⟩],
     false, false, true, true, false),
   ("( n ? p : a ) [ 0 ]", [⟨[], .element, .cond none (.root "p") (.root "a")⟩],
     false, false, true, false, false),

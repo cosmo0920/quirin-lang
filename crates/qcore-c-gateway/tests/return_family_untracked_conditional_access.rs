@@ -136,19 +136,35 @@ fn expect(label: &str, body: &str, status: &str, vector: &[&str]) {
     );
 }
 
+/// Rule 74z's end-to-end pins (card RETURN-FAMILY-CONDITIONAL-CONSTANT-PRUNING).
+#[path = "return_family_untracked_conditional_access/constant_pruning.rs"]
+mod constant_pruning;
+
 const BOTH: &[&str] = &["unknown_alias:p", "unknown_alias:q"];
 
 /// A parenthesised conditional over null untracked `p` and `q`, then `->`,
-/// `[` or `*`: both arms are bases of the read node, whatever the condition,
-/// constant or not. At the base every row was `Safe`.
+/// `[` or `*`: both arms are bases of the read node under every condition
+/// the reader does not decide. Rule 74z prunes under a decided one
+/// (`return_family_untracked_conditional_access/constant_pruning.rs`). At the base every row
+/// was `Safe`.
 #[test]
 fn both_null_arms_of_an_accessed_conditional_are_bases() {
     if !clang_available() {
         return;
     }
     for (label, pointer, expression, keys) in [
-        ("member, constant false", "struct s", "(0 ? p : q)->n", BOTH),
-        ("member, constant true", "struct s", "(1 ? p : q)->n", BOTH),
+        (
+            "member, undecided zero",
+            "struct s",
+            "(k - k ? p : q)->n",
+            BOTH,
+        ),
+        (
+            "member, undecided sizeof",
+            "struct s",
+            "(sizeof(int) - 3 ? p : q)->n",
+            BOTH,
+        ),
         ("member", "struct s", "(k ? p : q)->n + 1", BOTH),
         ("element", "long", "(k ? p : q)[0]", BOTH),
         ("dereference", "long", "*(k ? p : q)", BOTH),
