@@ -68,7 +68,7 @@ pub fn has_scalar_calls(p: &SourceProgram) -> bool {
             && (d.value.body.as_ref().is_some_and(|b| {
                 b.statements.iter().any(|s| {
                     let ts = p
-                        .lexical_tokens()
+                        .tokens_near(s.span)
                         .iter()
                         .filter(|t| s.span.start <= t.span.start && t.span.end <= s.span.end)
                         .collect::<Vec<_>>();
@@ -772,7 +772,7 @@ pub fn lower(p: &SourceProgram) -> Result<Lowered, SourceDiagnostic> {
     {
         let mut r = Reader {
             tokens: p
-                .lexical_tokens()
+                .tokens_near(d.span)
                 .iter()
                 .filter(|t| d.span.start <= t.span.start && t.span.end <= d.span.end)
                 .collect(),

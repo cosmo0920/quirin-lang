@@ -190,8 +190,9 @@ pub struct LoweredStringModule {
     pub scope_span: Span,
 }
 
-fn window(tokens: &[Token], span: Span) -> Vec<&Token> {
+fn window(tokens: crate::lexer::TokenStream<'_>, span: Span) -> Vec<&Token> {
     tokens
+        .near(span)
         .iter()
         .filter(|token| span.start <= token.span.start && token.span.end <= span.end)
         .collect()
@@ -404,10 +405,14 @@ fn bracket_holds_a_colon(window: &[&Token], cursor: usize) -> bool {
 /// entirely — see the module header.
 #[must_use]
 pub fn string_uses(program: &SourceProgram) -> BTreeMap<StringUse, Span> {
-    let tokens = program.lexical_tokens();
+    let tokens = program.token_stream();
     let mut found: BTreeMap<StringUse, Span> = BTreeMap::new();
 
-    fn scan(block: &SourceBlock, tokens: &[Token], found: &mut BTreeMap<StringUse, Span>) {
+    fn scan(
+        block: &SourceBlock,
+        tokens: crate::lexer::TokenStream<'_>,
+        found: &mut BTreeMap<StringUse, Span>,
+    ) {
         for statement in &block.statements {
             let window = window(tokens, statement.span);
             if let Some(kind) = string_use(&window) {
@@ -1107,7 +1112,7 @@ pub fn lower_source_string_for_target(
     entry: &str,
     target: Option<&qcore_core::scalar_types::RecordedTarget>,
 ) -> Result<LoweredStringModule, Vec<SourceDiagnostic>> {
-    let tokens = parsed.lexical_tokens();
+    let tokens = parsed.token_stream();
     let mut diagnostics = Vec::new();
 
     let Some(declaration) = parsed.declarations.iter().find(|declaration| {
@@ -1129,7 +1134,11 @@ pub fn lower_source_string_for_target(
         }
         if let Some(body) = &other.value.body {
             let mut found = BTreeMap::new();
-            fn scan(block: &SourceBlock, tokens: &[Token], found: &mut BTreeMap<StringUse, Span>) {
+            fn scan(
+                block: &SourceBlock,
+                tokens: crate::lexer::TokenStream<'_>,
+                found: &mut BTreeMap<StringUse, Span>,
+            ) {
                 for statement in &block.statements {
                     let window = window(tokens, statement.span);
                     if let Some(kind) = string_use(&window) {
@@ -1238,7 +1247,10 @@ pub fn lower_source_string_for_target(
             // a `len`, a `concat` or a text line is a view construct this
             // composition's loop body does not model
             // (`LOOP-ON-COMPOSED-ROUTE-BODY-VOCABULARY`).
-            fn body_string_use(block: &SourceBlock, tokens: &[Token]) -> Option<(StringUse, Span)> {
+            fn body_string_use(
+                block: &SourceBlock,
+                tokens: crate::lexer::TokenStream<'_>,
+            ) -> Option<(StringUse, Span)> {
                 for statement in &block.statements {
                     let window = window(tokens, statement.span);
                     if let Some(kind) = string_use(&window) {

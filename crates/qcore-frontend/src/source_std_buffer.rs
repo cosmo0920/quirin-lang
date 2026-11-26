@@ -166,8 +166,9 @@ pub struct LoweredBufferModule {
     pub scope_span: Span,
 }
 
-fn window(tokens: &[Token], span: Span) -> Vec<&Token> {
+fn window(tokens: crate::lexer::TokenStream<'_>, span: Span) -> Vec<&Token> {
     tokens
+        .near(span)
         .iter()
         .filter(|token| span.start <= token.span.start && token.span.end <= span.end)
         .collect()
@@ -305,10 +306,14 @@ fn bracket_holds_a_colon(window: &[&Token], cursor: usize) -> bool {
 /// first occurrence of each kind.
 #[must_use]
 pub fn buffer_uses(program: &SourceProgram) -> BTreeMap<BufferUse, Span> {
-    let tokens = program.lexical_tokens();
+    let tokens = program.token_stream();
     let mut found: BTreeMap<BufferUse, Span> = BTreeMap::new();
 
-    fn scan(block: &SourceBlock, tokens: &[Token], found: &mut BTreeMap<BufferUse, Span>) {
+    fn scan(
+        block: &SourceBlock,
+        tokens: crate::lexer::TokenStream<'_>,
+        found: &mut BTreeMap<BufferUse, Span>,
+    ) {
         for statement in &block.statements {
             let window = window(tokens, statement.span);
             if let Some(kind) = buffer_use(&window) {
@@ -1134,7 +1139,7 @@ fn lower_store(
 /// reader, and like the conversion here it is not a `buffer_use`, so it
 /// selects no route.
 pub fn value_statement(parsed: &SourceProgram, span: Span) -> Option<Result<BufferEvent, String>> {
-    let tokens = parsed.lexical_tokens();
+    let tokens = parsed.token_stream();
     let window = window(tokens, span);
     if word(&window, 0) != Some("let") || !symbol(&window, 2, Symbol::Equal) {
         return None;
@@ -1182,7 +1187,7 @@ pub fn value_statement(parsed: &SourceProgram, span: Span) -> Option<Result<Buff
 }
 
 pub fn buffer_statement(parsed: &SourceProgram, span: Span) -> Option<Result<BufferEvent, String>> {
-    let tokens = parsed.lexical_tokens();
+    let tokens = parsed.token_stream();
     let window = window(tokens, span);
     let mut diagnostics = Vec::new();
     let event = match word(&window, 0) {
@@ -1239,7 +1244,7 @@ pub fn lower_source_buffer_for_target(
     entry: &str,
     target: Option<&qcore_core::scalar_types::RecordedTarget>,
 ) -> Result<LoweredBufferModule, Vec<SourceDiagnostic>> {
-    let tokens = parsed.lexical_tokens();
+    let tokens = parsed.token_stream();
     let mut diagnostics = Vec::new();
 
     let Some(declaration) = parsed.declarations.iter().find(|declaration| {
@@ -1261,7 +1266,11 @@ pub fn lower_source_buffer_for_target(
         }
         if let Some(body) = &other.value.body {
             let mut found = BTreeMap::new();
-            fn scan(block: &SourceBlock, tokens: &[Token], found: &mut BTreeMap<BufferUse, Span>) {
+            fn scan(
+                block: &SourceBlock,
+                tokens: crate::lexer::TokenStream<'_>,
+                found: &mut BTreeMap<BufferUse, Span>,
+            ) {
                 for statement in &block.statements {
                     let window = window(tokens, statement.span);
                     if let Some(kind) = buffer_use(&window) {
@@ -1664,7 +1673,7 @@ impl LoweringConstants {
 #[allow(clippy::too_many_arguments)]
 fn lower_statements(
     parsed: &SourceProgram,
-    tokens: &[Token],
+    tokens: crate::lexer::TokenStream<'_>,
     statements: &[crate::frontend::Located<crate::frontend::StatementKind>],
     constants: &mut LoweringConstants,
     events: &mut Vec<BufferEvent>,
@@ -1905,7 +1914,7 @@ pub fn lower_for_statement(
     };
     lower_loop(
         parsed,
-        parsed.lexical_tokens(),
+        parsed.token_stream(),
         binding,
         body,
         statement.span,
@@ -1933,7 +1942,7 @@ fn loop_shape_diagnostic(span: Span, message: impl Into<String>) -> SourceDiagno
 #[allow(clippy::too_many_arguments)]
 fn lower_loop(
     parsed: &SourceProgram,
-    tokens: &[Token],
+    tokens: crate::lexer::TokenStream<'_>,
     binding: &str,
     body: &SourceBlock,
     span: Span,

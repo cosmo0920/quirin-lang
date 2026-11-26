@@ -123,8 +123,9 @@ pub const BOUND_CLAUSE: &str = "bound";
 
 /// The attribute's clause-list tokens: everything from `[|` through `|]`.
 #[must_use]
-pub fn attribute_window(tokens: &[Token], span: Span) -> Vec<&Token> {
+pub fn attribute_window(tokens: crate::lexer::TokenStream<'_>, span: Span) -> Vec<&Token> {
     tokens
+        .near(span)
         .iter()
         .filter(|token| span.start <= token.span.start && token.span.end <= span.end)
         .collect()
@@ -280,8 +281,9 @@ pub fn refusal_diagnostic(refusal: &LoopRefusal, span: Span) -> SourceDiagnostic
 
 /// The header tokens of a `for` statement: everything before its body's `{`.
 #[must_use]
-pub fn header_window(tokens: &[Token], span: Span) -> Vec<&Token> {
+pub fn header_window(tokens: crate::lexer::TokenStream<'_>, span: Span) -> Vec<&Token> {
     let mut window: Vec<&Token> = tokens
+        .near(span)
         .iter()
         .filter(|token| span.start <= token.span.start && token.span.end <= span.end)
         .collect();

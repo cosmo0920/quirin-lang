@@ -4088,7 +4088,7 @@ fn validate_emittable_calls(
 /// slice-relative offsets to absolute ones is not observable.
 fn statement_tokens(program: &SourceProgram, span: Span) -> Result<Vec<Token>, SourceDiagnostic> {
     Ok(program
-        .lexical_tokens()
+        .tokens_near(span)
         .iter()
         .filter(|token| span.start <= token.span.start && token.span.end <= span.end)
         .cloned()

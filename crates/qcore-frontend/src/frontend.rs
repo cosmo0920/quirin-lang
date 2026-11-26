@@ -463,6 +463,8 @@ pub struct SourceProgram {
     aliases: Vec<Located<SourceAlias>>,
     source: String,
     lexical_tokens: Vec<Token>,
+    /// `crate::lexer::tokens_in_source_order` of `lexical_tokens`, read once.
+    lexical_tokens_in_source_order: bool,
     task_expressions: Vec<SourceTaskExpression>,
     result_matches: Vec<SourceResultMatch>,
     tokens: Vec<TokenKind>,
@@ -579,6 +581,26 @@ impl SourceProgram {
 
     pub fn lexical_tokens(&self) -> &[Token] {
         &self.lexical_tokens
+    }
+
+    /// [`Self::lexical_tokens`] with its recorded order, for a reader that is
+    /// handed the stream and looks tokens up by span.
+    #[must_use]
+    pub fn token_stream(&self) -> crate::lexer::TokenStream<'_> {
+        crate::lexer::TokenStream::new(&self.lexical_tokens, self.lexical_tokens_in_source_order)
+    }
+
+    /// A slice of [`Self::lexical_tokens`] holding every token whose span lies
+    /// inside `span`, without scanning the whole file when the stream is in
+    /// source order. It may hold other tokens too (a desugared pipeline's
+    /// stream is returned whole), so a caller keeps its own span test.
+    #[must_use]
+    pub fn tokens_near(&self, span: Span) -> &[Token] {
+        &self.lexical_tokens[crate::lexer::span_candidates(
+            &self.lexical_tokens,
+            self.lexical_tokens_in_source_order,
+            span,
+        )]
     }
 
     /// Pipelines this file's parse refused to desugar (card `PIPE-OPERATOR`).
@@ -701,6 +723,8 @@ pub fn parse_source_module_mode(source: &str) -> Result<SourceModuleMode, Source
 struct SourceParser<'a> {
     source: &'a str,
     tokens: Vec<Token>,
+    /// `crate::lexer::tokens_in_source_order` of `tokens`, read once.
+    tokens_in_source_order: bool,
     matching: BTreeMap<usize, usize>,
     pipe_refusals: Vec<crate::pipe::PipeRefusal>,
     /// Card `W48-QR-CLOSURES`: the lifted closures, keyed by the index of
@@ -765,11 +789,18 @@ impl<'a> SourceParser<'a> {
         }
         Ok(Self {
             source,
+            tokens_in_source_order: crate::lexer::tokens_in_source_order(&tokens),
             tokens,
             matching,
             pipe_refusals,
             closures: BTreeMap::new(),
         })
+    }
+
+    /// The indices of `tokens` that can lie inside `span`
+    /// (`crate::lexer::span_candidates`); a caller keeps its own span test.
+    fn span_candidates(&self, span: Span) -> std::ops::Range<usize> {
+        crate::lexer::span_candidates(&self.tokens, self.tokens_in_source_order, span)
     }
 
     fn module_header(&self) -> Result<(SourceModuleMode, Option<Span>, usize), SourceParseError> {
@@ -1033,6 +1064,7 @@ impl<'a> SourceParser<'a> {
                 mode_span,
                 source: self.source.to_owned(),
                 lexical_tokens: self.tokens.clone(),
+                lexical_tokens_in_source_order: self.tokens_in_source_order,
                 tokens: self.tokens.iter().map(|token| token.kind.clone()).collect(),
                 pipe_refusals: self.pipe_refusals.clone(),
                 closures: self
@@ -3227,17 +3259,23 @@ pub fn elaborate_source(
                 usage: parameter.usage.clone(),
             });
         }
-        let forbidden_names: BTreeSet<String> = globals
-            .keys()
-            .cloned()
-            .chain(
-                declaration
-                    .value
-                    .parameters
-                    .iter()
-                    .map(|parameter| parameter.name.value.clone()),
-            )
-            .collect();
+        // Read only by the quantitative index types below, so a declaration
+        // with none does not copy every global name.
+        let forbidden_names: BTreeSet<String> = if declaration.value.quant_index_types.is_empty() {
+            BTreeSet::new()
+        } else {
+            globals
+                .keys()
+                .cloned()
+                .chain(
+                    declaration
+                        .value
+                        .parameters
+                        .iter()
+                        .map(|parameter| parameter.name.value.clone()),
+                )
+                .collect()
+        };
         let mut quant_index_types = Vec::new();
         for source_type in &declaration.value.quant_index_types {
             let mut forbidden_names = forbidden_names.clone();
@@ -3541,7 +3579,7 @@ fn lexical_references(
     statement: &Located<StatementKind>,
     program: &SourceProgram,
 ) -> BTreeSet<String> {
-    let lexical_tokens = program.lexical_tokens();
+    let lexical_tokens = program.tokens_near(statement.span);
     // Card `LOOP-UNROLL-BUDGET`: every word inside `[| #unroll, where #bound <
     // N |]` is a clause word of the attribute grammar and none of them is a
     // reference to a binding, so the list contributes no referenced name at

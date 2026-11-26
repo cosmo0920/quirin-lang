@@ -110,7 +110,7 @@ pub fn has_source_ffi(program: &SourceProgram) -> bool {
 
 fn window(program: &SourceProgram, span: Span) -> Vec<&Token> {
     program
-        .lexical_tokens()
+        .tokens_near(span)
         .iter()
         .filter(|token| span.start <= token.span.start && token.span.end <= span.end)
         .filter(|token| token.span.start < token.span.end)

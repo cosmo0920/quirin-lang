@@ -54,6 +54,36 @@ fn within(outer: Span, inner: Span) -> bool {
     outer.start <= inner.start && inner.end <= outer.end
 }
 
+/// A set of spans answering "does any member contain this span" without
+/// reading every member: the members' starts in ascending order, each paired
+/// with the greatest end among the members up to and including it. Some
+/// member contains `span` exactly when the greatest end among the members
+/// starting at or before `span.start` reaches `span.end`, so the answer is
+/// the one a scan of the members gives, whether or not they overlap.
+#[derive(Clone, Debug, Default)]
+struct SpanCover(Vec<(usize, usize)>);
+
+impl SpanCover {
+    fn of(mut spans: Vec<Span>) -> Self {
+        spans.sort_by_key(|span| span.start);
+        let mut greatest_end = 0;
+        Self(
+            spans
+                .into_iter()
+                .map(|span| {
+                    greatest_end = greatest_end.max(span.end);
+                    (span.start, greatest_end)
+                })
+                .collect(),
+        )
+    }
+
+    fn contains(&self, span: Span) -> bool {
+        let starting_at_or_before = self.0.partition_point(|(start, _)| *start <= span.start);
+        starting_at_or_before > 0 && self.0[starting_at_or_before - 1].1 >= span.end
+    }
+}
+
 /// Where a token-stream selector may read: every retained token except a
 /// declaration's own **name**, a parameter's name, a contract clause and a
 /// library binding.
@@ -73,17 +103,18 @@ pub struct SelectorScope {
     bodies: Vec<Span>,
     /// Spans never read: non-record declaration names, parameter names,
     /// contract clauses.
-    excluded: Vec<Span>,
+    excluded: SpanCover,
     /// Every declaration's own name token, records included: a declaration
     /// is never a use of its own name ([`ambiguous_selector_use`]).
-    names: Vec<Span>,
+    names: SpanCover,
 }
 
 impl SelectorScope {
     #[must_use]
     pub fn of(program: &SourceProgram) -> Self {
-        let tokens = program.lexical_tokens();
         let mut scope = Self::default();
+        let mut excluded = Vec::new();
+        let mut names = Vec::new();
         for declaration in &program.declarations {
             if declaration.value.kind == DeclarationKind::Function
                 && let Some(body) = &declaration.value.body
@@ -96,37 +127,38 @@ impl SelectorScope {
             // as text, not as a span, and every head word before it is a
             // keyword. A synthesized name (the concurrency profile's) matches
             // no token and excludes nothing.
-            if let Some(name) = tokens.iter().find(|token| {
+            if let Some(name) = program.tokens_near(declaration.span).iter().find(|token| {
                 within(declaration.span, token.span)
                     && token.span.start < token.span.end
                     && matches!(&token.kind, TokenKind::Word(word) if *word == declaration.value.name)
             }) {
-                scope.names.push(name.span);
+                names.push(name.span);
                 if declaration.value.kind != DeclarationKind::Record {
-                    scope.excluded.push(name.span);
+                    excluded.push(name.span);
                 }
             }
             for parameter in &declaration.value.parameters {
-                scope.excluded.push(parameter.name.span);
+                excluded.push(parameter.name.span);
             }
             if let Some(contract) = &declaration.value.function_contract {
-                scope.excluded.push(contract.span);
+                excluded.push(contract.span);
             }
         }
+        scope.excluded = SpanCover::of(excluded);
+        scope.names = SpanCover::of(names);
         scope
     }
 
     /// Whether a token-stream selector reads the token at `span`.
     #[must_use]
     pub fn reads(&self, program: &SourceProgram, span: Span) -> bool {
-        !program.in_library_binding(span)
-            && !self.excluded.iter().any(|excluded| within(*excluded, span))
+        !program.in_library_binding(span) && !self.excluded.contains(span)
     }
 
     /// Whether `span` is a declaration's own name token (records included).
     #[must_use]
     pub fn is_declaration_name(&self, span: Span) -> bool {
-        self.names.iter().any(|name| within(*name, span))
+        self.names.contains(span)
     }
 
     /// The source function bodies' spans, braces included (the print-call
@@ -211,4 +243,43 @@ pub fn ambiguous_selector_use(program: &SourceProgram) -> Option<SourceDiagnosti
             ),
         })
     })
+}
+
+#[cfg(test)]
+mod span_cover_tests {
+    use super::{Span, SpanCover, within};
+
+    /// Overlapping, nested, adjacent, repeated and empty members.
+    #[test]
+    fn contains_is_the_scan_of_the_members() {
+        let pairs = [
+            (4, 9),
+            (0, 3),
+            (5, 6),
+            (4, 4),
+            (12, 20),
+            (14, 30),
+            (12, 20),
+            (40, 41),
+        ];
+        let members: Vec<Span> = pairs
+            .iter()
+            .map(|(start, end)| Span {
+                start: *start,
+                end: *end,
+            })
+            .collect();
+        let cover = SpanCover::of(members.clone());
+        for start in 0..45 {
+            for end in start..45 {
+                let span = Span { start, end };
+                assert_eq!(
+                    cover.contains(span),
+                    members.iter().any(|member| within(*member, span)),
+                    "{span:?}"
+                );
+            }
+        }
+        assert!(!SpanCover::default().contains(Span { start: 0, end: 0 }));
+    }
 }

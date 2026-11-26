@@ -194,8 +194,9 @@ fn symbol(window: &[&Token], cursor: usize, expected: Symbol) -> bool {
 
 /// The tokens of `span`, in source order.
 #[must_use]
-pub fn window(tokens: &[Token], span: Span) -> Vec<&Token> {
+pub fn window(tokens: crate::lexer::TokenStream<'_>, span: Span) -> Vec<&Token> {
     tokens
+        .near(span)
         .iter()
         .filter(|token| span.start <= token.span.start && token.span.end <= span.end)
         .collect()
@@ -476,7 +477,7 @@ pub fn record_declarations_admitting_floats(
 }
 
 fn declarations(program: &SourceProgram, floats: bool) -> Result<Vec<RecordType>, (Span, String)> {
-    let tokens = program.lexical_tokens();
+    let tokens = program.token_stream();
     // Card `OWNED-FIELD-ROUTE-REACH`: the module's record type **names**,
     // collected before any field is read, so a field naming a record declared
     // *after* it refuses as `AGGREGATE-NESTED` exactly as a backward reference
@@ -611,7 +612,10 @@ pub fn has_source_record(program: &SourceProgram) -> bool {
 /// Used to refuse a record construct in a function that is not the entry, the
 /// way `source_loop::block_loop_span` refuses a loop there.
 #[must_use]
-pub fn block_record_span(block: &SourceBlock, tokens: &[Token]) -> Option<Span> {
+pub fn block_record_span(
+    block: &SourceBlock,
+    tokens: crate::lexer::TokenStream<'_>,
+) -> Option<Span> {
     for statement in &block.statements {
         let window = window(tokens, statement.span);
         if record_statement_shape(&window).is_some() || field_path_statement_shape(&window) {

@@ -62,7 +62,7 @@ use std::collections::BTreeMap;
 use crate::frontend::{
     DeclarationKind, SemanticPass, SourceDiagnostic, SourceProgram, TypedSourceProgram,
 };
-use crate::lexer::{Span, Token, TokenKind};
+use crate::lexer::{Span, TokenKind};
 use crate::source_extern::{self, LoweredExternModule};
 use crate::source_std_io::{
     self, FLUSH_KEYWORD, LOG_KEYWORD, LOG_LEVEL_KEYWORD, LoweredStdIoModule, PRINT_KEYWORD,
@@ -124,8 +124,9 @@ enum Owner {
     Both,
 }
 
-fn statement_head(tokens: &[Token], span: Span) -> Option<&str> {
+fn statement_head(tokens: crate::lexer::TokenStream<'_>, span: Span) -> Option<&str> {
     tokens
+        .near(span)
         .iter()
         .find(|token| span.start <= token.span.start && token.span.end <= span.end)
         .and_then(|token| match &token.kind {
@@ -168,7 +169,7 @@ pub fn lower_source_composed_for_target(
         ("print", "log", "log_level", "flush"),
         "the statement heads this router splits on are the standard-IO route's own"
     );
-    let tokens = parsed.lexical_tokens();
+    let tokens = parsed.token_stream();
     let Some(declaration) = parsed.declarations.iter().find(|declaration| {
         declaration.value.kind == DeclarationKind::Function && declaration.value.name == entry
     }) else {

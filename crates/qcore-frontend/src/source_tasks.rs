@@ -77,7 +77,7 @@ fn failure(span: Span, pass: SemanticPass, message: impl Into<String>) -> Source
 /// closure reads `spawn SCOPE |CAPTURES|`, its hand-written twin's shape.
 fn tokens_for(source: &SourceProgram, span: Span) -> Vec<Token> {
     source
-        .lexical_tokens()
+        .tokens_near(span)
         .iter()
         .filter(|token| {
             token.span.start >= span.start

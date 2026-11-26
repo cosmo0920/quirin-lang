@@ -131,8 +131,9 @@ pub struct LoweredHttpModule {
     pub scope_span: Span,
 }
 
-fn window(tokens: &[Token], span: Span) -> Vec<&Token> {
+fn window(tokens: crate::lexer::TokenStream<'_>, span: Span) -> Vec<&Token> {
     tokens
+        .near(span)
         .iter()
         .filter(|token| span.start <= token.span.start && token.span.end <= span.end)
         .collect()
@@ -225,7 +226,7 @@ fn http_use(window: &[&Token]) -> Option<HttpUse> {
 /// first occurrence of each kind.
 #[must_use]
 pub fn http_uses(program: &SourceProgram) -> BTreeMap<HttpUse, Span> {
-    let tokens = program.lexical_tokens();
+    let tokens = program.token_stream();
     let mut found: BTreeMap<HttpUse, Span> = BTreeMap::new();
     for declaration in &program.declarations {
         if declaration.value.kind != DeclarationKind::Function {
@@ -238,7 +239,11 @@ pub fn http_uses(program: &SourceProgram) -> BTreeMap<HttpUse, Span> {
     found
 }
 
-fn scan(block: &SourceBlock, tokens: &[Token], found: &mut BTreeMap<HttpUse, Span>) {
+fn scan(
+    block: &SourceBlock,
+    tokens: crate::lexer::TokenStream<'_>,
+    found: &mut BTreeMap<HttpUse, Span>,
+) {
     for statement in &block.statements {
         let window = window(tokens, statement.span);
         if let Some(kind) = http_use(&window) {
@@ -276,8 +281,8 @@ pub fn text_binding_span(program: &SourceProgram) -> Option<Span> {
     if !has_source_http(program) {
         return None;
     }
-    let tokens = program.lexical_tokens();
-    fn walk(block: &SourceBlock, tokens: &[Token]) -> Option<Span> {
+    let tokens = program.token_stream();
+    fn walk(block: &SourceBlock, tokens: crate::lexer::TokenStream<'_>) -> Option<Span> {
         for statement in &block.statements {
             let window = window(tokens, statement.span);
             if word(&window, 0) == Some("let")
@@ -660,7 +665,7 @@ pub fn lower_source_http(
     typed: &TypedSourceProgram,
     entry: &str,
 ) -> Result<LoweredHttpModule, Vec<SourceDiagnostic>> {
-    let tokens = parsed.lexical_tokens();
+    let tokens = parsed.token_stream();
     let mut diagnostics = Vec::new();
 
     let Some(declaration) = parsed.declarations.iter().find(|declaration| {

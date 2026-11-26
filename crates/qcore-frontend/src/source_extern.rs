@@ -381,7 +381,7 @@ fn unsupported(span: Span, message: impl Into<String>) -> SourceDiagnostic {
 /// same bytes — and every existing extern fixture is unmoved.
 fn statement_tokens(program: &SourceProgram, span: Span) -> Result<Vec<Token>, SourceDiagnostic> {
     let tokens: Vec<Token> = program
-        .lexical_tokens()
+        .tokens_near(span)
         .iter()
         .filter(|token| span.start <= token.span.start && token.span.end <= span.end)
         .cloned()

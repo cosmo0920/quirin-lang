@@ -342,7 +342,8 @@ pub(super) fn parse_inventory(
     ) -> Result<(), SourceParseError> {
         for statement in &body.statements {
             let children = statement.value.nested_blocks();
-            for (i, token) in parser.tokens.iter().enumerate() {
+            for i in parser.span_candidates(statement.span) {
+                let token = &parser.tokens[i];
                 if token.span.start < statement.span.start
                     || token.span.end > statement.span.end
                     || children.iter().any(|child| {
@@ -408,7 +409,7 @@ pub(super) fn find_closures(
         for statement in &block.statements {
             let children = statement.value.nested_blocks();
             let mut taken: Vec<Span> = Vec::new();
-            for index in 0..parser.tokens.len() {
+            for index in parser.span_candidates(statement.span) {
                 let span = parser.tokens[index].span;
                 if span.start < statement.span.start
                     || span.end > statement.span.end

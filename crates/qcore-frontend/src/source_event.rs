@@ -111,8 +111,9 @@ pub struct LoweredEventModule {
     pub scope_span: Span,
 }
 
-fn statement_head(tokens: &[Token], span: Span) -> Option<&str> {
+fn statement_head(tokens: crate::lexer::TokenStream<'_>, span: Span) -> Option<&str> {
     tokens
+        .near(span)
         .iter()
         .find(|token| span.start <= token.span.start && token.span.end <= span.end)
         .and_then(|token| match &token.kind {
@@ -121,8 +122,9 @@ fn statement_head(tokens: &[Token], span: Span) -> Option<&str> {
         })
 }
 
-fn window(tokens: &[Token], span: Span) -> Vec<&Token> {
+fn window(tokens: crate::lexer::TokenStream<'_>, span: Span) -> Vec<&Token> {
     tokens
+        .near(span)
         .iter()
         .filter(|token| span.start <= token.span.start && token.span.end <= span.end)
         .collect()
@@ -158,9 +160,9 @@ fn ends_with_semicolon(window: &[&Token], cursor: usize) -> bool {
 /// field named `thread` out of the concurrency gate.
 #[must_use]
 pub fn source_event_span(program: &SourceProgram) -> Option<Span> {
-    let tokens = program.lexical_tokens();
+    let tokens = program.token_stream();
 
-    fn scan(block: &SourceBlock, tokens: &[Token]) -> Option<Span> {
+    fn scan(block: &SourceBlock, tokens: crate::lexer::TokenStream<'_>) -> Option<Span> {
         for statement in &block.statements {
             if let Some(head) = statement_head(tokens, statement.span)
                 && SELECTING_KEYWORDS.contains(&head)
@@ -202,9 +204,9 @@ pub fn has_source_event(program: &SourceProgram) -> bool {
 /// capability.
 #[must_use]
 pub fn event_log_level_span(program: &SourceProgram) -> Option<Span> {
-    let tokens = program.lexical_tokens();
+    let tokens = program.token_stream();
 
-    fn scan(block: &SourceBlock, tokens: &[Token]) -> Option<Span> {
+    fn scan(block: &SourceBlock, tokens: crate::lexer::TokenStream<'_>) -> Option<Span> {
         for statement in &block.statements {
             if statement_head(tokens, statement.span) == Some("log_level") {
                 return Some(statement.span);
@@ -485,7 +487,7 @@ pub fn lower_source_event(
     _typed: &TypedSourceProgram,
     entry: &str,
 ) -> Result<LoweredEventModule, Vec<SourceDiagnostic>> {
-    let tokens = parsed.lexical_tokens();
+    let tokens = parsed.token_stream();
     let mut diagnostics = Vec::new();
 
     let Some(declaration) = parsed.declarations.iter().find(|declaration| {
@@ -506,7 +508,7 @@ pub fn lower_source_event(
             continue;
         }
         if let Some(body) = &other.value.body {
-            fn scan(block: &SourceBlock, tokens: &[Token]) -> Option<Span> {
+            fn scan(block: &SourceBlock, tokens: crate::lexer::TokenStream<'_>) -> Option<Span> {
                 for statement in &block.statements {
                     // A line-producing statement counts here too: the route
                     // models the entry, and a `print` in a function this route

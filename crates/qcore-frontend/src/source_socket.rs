@@ -255,8 +255,9 @@ pub struct LoweredSocketModule {
     pub scope_span: Span,
 }
 
-fn window(tokens: &[Token], span: Span) -> Vec<&Token> {
+fn window(tokens: crate::lexer::TokenStream<'_>, span: Span) -> Vec<&Token> {
     tokens
+        .near(span)
         .iter()
         .filter(|token| span.start <= token.span.start && token.span.end <= span.end)
         .collect()
@@ -572,7 +573,7 @@ fn carries_text_payload(window: &[&Token]) -> bool {
 /// first occurrence of each kind.
 #[must_use]
 pub fn socket_uses(program: &SourceProgram) -> BTreeMap<SocketUse, Span> {
-    let tokens = program.lexical_tokens();
+    let tokens = program.token_stream();
     let mut found: BTreeMap<SocketUse, Span> = BTreeMap::new();
     for declaration in &program.declarations {
         if declaration.value.kind != DeclarationKind::Function {
@@ -585,7 +586,11 @@ pub fn socket_uses(program: &SourceProgram) -> BTreeMap<SocketUse, Span> {
     found
 }
 
-fn scan(block: &SourceBlock, tokens: &[Token], found: &mut BTreeMap<SocketUse, Span>) {
+fn scan(
+    block: &SourceBlock,
+    tokens: crate::lexer::TokenStream<'_>,
+    found: &mut BTreeMap<SocketUse, Span>,
+) {
     for statement in &block.statements {
         let window = window(tokens, statement.span);
         if let Some(kind) = socket_use(&window) {
@@ -617,7 +622,7 @@ pub fn has_source_socket(program: &SourceProgram) -> bool {
 /// **not** part of [`socket_uses`]: route selection and the `std.socket` import
 /// gate both read that map, and a pure `source.event.v1` module must select
 /// neither.
-fn reactor_span(block: &SourceBlock, tokens: &[Token]) -> Option<Span> {
+fn reactor_span(block: &SourceBlock, tokens: crate::lexer::TokenStream<'_>) -> Option<Span> {
     for statement in &block.statements {
         let window = window(tokens, statement.span);
         if word(&window, 0).is_some_and(|head| REACTOR_HEADS.contains(&head)) {
@@ -1393,7 +1398,7 @@ pub fn lower_source_socket(
     _typed: &TypedSourceProgram,
     entry: &str,
 ) -> Result<LoweredSocketModule, Vec<SourceDiagnostic>> {
-    let tokens = parsed.lexical_tokens();
+    let tokens = parsed.token_stream();
     let mut diagnostics = Vec::new();
 
     let Some(declaration) = parsed.declarations.iter().find(|declaration| {

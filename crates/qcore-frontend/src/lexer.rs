@@ -207,6 +207,89 @@ pub fn lex(source: &str) -> Result<Vec<Token>, LexError> {
     Lexer { source, offset: 0 }.run()
 }
 
+/// Whether `tokens` are in source order: starts and ends both non-decreasing.
+/// A lexed stream always is; a stream `crate::pipe::desugar_pipes` rewrote
+/// may not be, because a desugared pipeline keeps each written token's own
+/// span while moving it.
+#[must_use]
+pub fn tokens_in_source_order(tokens: &[Token]) -> bool {
+    tokens.windows(2).all(|pair| {
+        pair[0].span.start <= pair[1].span.start && pair[0].span.end <= pair[1].span.end
+    })
+}
+
+/// An index range of `tokens` that holds every token whose span lies inside
+/// `span` (`span.start <= token.span.start && token.span.end <= span.end`).
+///
+/// `in_source_order` must be [`tokens_in_source_order`] of the same stream.
+/// When it holds, the range is found by binary search and is exactly those
+/// tokens; when it does not, the range is the whole stream. Either way it is a
+/// superset, so a caller keeps its own span test over the range and reads the
+/// same tokens, in the same order, as a scan of the whole stream.
+#[must_use]
+pub fn span_candidates(
+    tokens: &[Token],
+    in_source_order: bool,
+    span: Span,
+) -> std::ops::Range<usize> {
+    if !in_source_order {
+        return 0..tokens.len();
+    }
+    let low = tokens.partition_point(|token| token.span.start < span.start);
+    let high = tokens.partition_point(|token| token.span.end <= span.end);
+    low..high.max(low)
+}
+
+/// A token stream together with whether it is in source order, so a reader
+/// handed the stream can still narrow a span lookup ([`Self::near`]) without
+/// re-deriving the order. It reads as the slice it wraps.
+#[derive(Clone, Copy, Debug)]
+pub struct TokenStream<'a> {
+    tokens: &'a [Token],
+    in_source_order: bool,
+}
+
+impl<'a> TokenStream<'a> {
+    /// `in_source_order` must be [`tokens_in_source_order`] of `tokens`.
+    #[must_use]
+    pub fn new(tokens: &'a [Token], in_source_order: bool) -> Self {
+        Self {
+            tokens,
+            in_source_order,
+        }
+    }
+
+    /// The whole stream.
+    #[must_use]
+    pub fn all(self) -> &'a [Token] {
+        self.tokens
+    }
+
+    /// A slice holding every token whose span lies inside `span`
+    /// ([`span_candidates`]); a caller keeps its own span test.
+    #[must_use]
+    pub fn near(self, span: Span) -> &'a [Token] {
+        &self.tokens[span_candidates(self.tokens, self.in_source_order, span)]
+    }
+
+    pub fn iter(self) -> std::slice::Iter<'a, Token> {
+        self.tokens.iter()
+    }
+
+    #[must_use]
+    pub fn get(self, index: usize) -> Option<&'a Token> {
+        self.tokens.get(index)
+    }
+}
+
+impl std::ops::Deref for TokenStream<'_> {
+    type Target = [Token];
+
+    fn deref(&self) -> &[Token] {
+        self.tokens
+    }
+}
+
 struct Lexer<'a> {
     source: &'a str,
     offset: usize,

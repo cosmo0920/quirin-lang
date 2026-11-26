@@ -115,8 +115,9 @@ pub enum StdIoUse {
     Flush,
 }
 
-fn statement_head(tokens: &[Token], span: Span) -> Option<&str> {
+fn statement_head(tokens: crate::lexer::TokenStream<'_>, span: Span) -> Option<&str> {
     tokens
+        .near(span)
         .iter()
         .find(|token| span.start <= token.span.start && token.span.end <= span.end)
         .and_then(|token| match &token.kind {
@@ -125,8 +126,9 @@ fn statement_head(tokens: &[Token], span: Span) -> Option<&str> {
         })
 }
 
-fn window(tokens: &[Token], span: Span) -> Vec<&Token> {
+fn window(tokens: crate::lexer::TokenStream<'_>, span: Span) -> Vec<&Token> {
     tokens
+        .near(span)
         .iter()
         .filter(|token| span.start <= token.span.start && token.span.end <= span.end)
         .collect()
@@ -138,10 +140,14 @@ fn window(tokens: &[Token], span: Span) -> Vec<&Token> {
 /// imports, or need them without being routed here.
 #[must_use]
 pub fn std_io_uses(program: &SourceProgram) -> BTreeMap<StdIoUse, Span> {
-    let tokens = program.lexical_tokens();
+    let tokens = program.token_stream();
     let mut found: BTreeMap<StdIoUse, Span> = BTreeMap::new();
 
-    fn scan(block: &SourceBlock, tokens: &[Token], found: &mut BTreeMap<StdIoUse, Span>) {
+    fn scan(
+        block: &SourceBlock,
+        tokens: crate::lexer::TokenStream<'_>,
+        found: &mut BTreeMap<StdIoUse, Span>,
+    ) {
         for statement in &block.statements {
             if let Some(head) = statement_head(tokens, statement.span) {
                 let use_kind = match head {
@@ -250,7 +256,7 @@ pub fn rendered_borrowed_operands(program: &SourceProgram, entry: &str) -> Vec<(
 /// the lowering below reads, so the two cannot disagree about what an entry
 /// renders.
 fn rendered_operands(program: &SourceProgram, entry: &str) -> Vec<(Span, StdIoOperand)> {
-    let tokens = program.lexical_tokens();
+    let tokens = program.token_stream();
     let Some(declaration) = program.declarations.iter().find(|declaration| {
         declaration.value.kind == DeclarationKind::Function && declaration.value.name == entry
     }) else {
@@ -291,10 +297,10 @@ fn rendered_operands(program: &SourceProgram, entry: &str) -> Vec<(Span, StdIoOp
 /// are refusals, and the second names the actual fault.
 #[must_use]
 pub fn rendering_span(program: &SourceProgram) -> Option<Span> {
-    let tokens = program.lexical_tokens();
+    let tokens = program.token_stream();
     let mut found: Option<Span> = None;
 
-    fn scan(block: &SourceBlock, tokens: &[Token], found: &mut Option<Span>) {
+    fn scan(block: &SourceBlock, tokens: crate::lexer::TokenStream<'_>, found: &mut Option<Span>) {
         for statement in &block.statements {
             let window = window(tokens, statement.span);
             // The selector position of each head, read with the same grammar
@@ -469,7 +475,7 @@ pub fn std_io_statement(
     program: &SourceProgram,
     span: Span,
 ) -> Option<Result<StdIoEvent, &'static str>> {
-    let tokens = program.lexical_tokens();
+    let tokens = program.token_stream();
     let window = window(tokens, span);
     let head = word(&window, 0)?;
     std_io_event(&window, head)
@@ -652,7 +658,7 @@ pub fn lower_source_std_io_skipping(
     provided_identities: &BTreeMap<String, i32>,
     composed: &ComposedValues,
 ) -> Result<LoweredStdIoModule, Vec<SourceDiagnostic>> {
-    let tokens = parsed.lexical_tokens();
+    let tokens = parsed.token_stream();
     let mut diagnostics = Vec::new();
 
     let Some(declaration) = parsed.declarations.iter().find(|declaration| {
@@ -674,7 +680,11 @@ pub fn lower_source_std_io_skipping(
         }
         if let Some(body) = &other.value.body {
             let mut found = BTreeMap::new();
-            fn scan(block: &SourceBlock, tokens: &[Token], found: &mut BTreeMap<StdIoUse, Span>) {
+            fn scan(
+                block: &SourceBlock,
+                tokens: crate::lexer::TokenStream<'_>,
+                found: &mut BTreeMap<StdIoUse, Span>,
+            ) {
                 for statement in &block.statements {
                     if let Some(head) = statement_head(tokens, statement.span) {
                         match head {

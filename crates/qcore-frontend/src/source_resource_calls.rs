@@ -75,7 +75,7 @@ fn usage_diagnostic(span: Span, message: impl Into<String>) -> SourceDiagnostic 
 
 fn tokens_for(program: &SourceProgram, span: Span) -> Vec<&Token> {
     program
-        .lexical_tokens()
+        .tokens_near(span)
         .iter()
         .filter(|token| span.start <= token.span.start && token.span.end <= span.end)
         .collect()

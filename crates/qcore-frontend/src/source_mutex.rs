@@ -368,7 +368,7 @@ fn integer(token: Option<&Token>) -> Option<u32> {
 /// header ends at its first `{`.
 fn header_tokens(source: &SourceProgram, span: Span) -> Vec<Token> {
     let mut tokens = source
-        .lexical_tokens()
+        .tokens_near(span)
         .iter()
         .filter(|token| token.span.start >= span.start && token.span.end <= span.end)
         .cloned()
