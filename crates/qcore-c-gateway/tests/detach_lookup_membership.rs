@@ -45,7 +45,10 @@ fn frame() -> String {
 /// refusal.
 #[test]
 fn production_lookup_baseline_reads_the_loaded_cursor() {
-    let mut sources = vec![("retained tracked frame".to_owned(), ACTUAL_FRAME.to_owned())];
+    // The target's spelling of the frame: Clang's Windows (LLP64) target
+    // predeclares `size_t` as `unsigned long long`, so the retained LP64
+    // typedef is a redefinition error there and no AST is read.
+    let mut sources = vec![("retained tracked frame".to_owned(), frame())];
     if let Some(path) = std::env::var_os("QCORE_LOOKUP_PRODUCTION_INPUT") {
         let source = std::fs::read_to_string(&path)
             .expect("explicit retained production source must be readable");
@@ -60,7 +63,7 @@ fn production_lookup_baseline_reads_the_loaded_cursor() {
     }
     let advance = "current_child = current_child->next;";
     assert!(ACTUAL_FRAME.contains(advance));
-    let stepped = ACTUAL_FRAME.replace(advance, "current_child = current_child->next + 0;");
+    let stepped = frame().replace(advance, "current_child = current_child->next + 0;");
     let row = analyze_legacy_c(&stepped, "get_array_item", &ResourceContracts::default()).unwrap();
     assert_eq!(row.status, AnalysisStatus::Unknown, "{row:?}");
     assert!(
