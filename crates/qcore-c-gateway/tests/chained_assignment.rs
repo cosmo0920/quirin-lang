@@ -146,10 +146,15 @@ fn the_scram_shape_withdraws_the_leak_and_does_not_become_safe() {
     let instructions = lowered(SCRAM);
     assert!(binds(&instructions, "safe"), "{instructions:?}");
     assert!(aliases(&instructions, "d", "safe"), "{instructions:?}");
-    // The old reading, spelled out: the call bound to `d` alone leaks at the
-    // chain and reports the loop re-acquisition there.
+    // The old reading, spelled out: the call bound to `d` alone reports the
+    // loop re-acquisition at the chain. Deliberate pin update, card
+    // SETTLED-LEAK-OTHER-REFUSAL-SCHEDULE (rule 84 amended): its leak was
+    // claimed only on an iterate before the refused re-acquisition's marker
+    // joined the exit. The settled exit marks the allocation and every path
+    // to it passes a refusal (the undecided tests of `s` and `d`), so no
+    // witness carries it and it is withdrawn: `Unknown`, never `Safe`.
     let old = gs(&SCRAM.replace("d = safe = q_maybe_alloc();", "d = q_maybe_alloc();"));
-    assert!(old.unsafe_() && leaks(&old), "{old:?}");
+    assert!(!old.safe() && !old.unsafe_() && !leaks(&old), "{old:?}");
     assert!(
         old.refused("loop re-acquisition: an earlier generation that may be live is still held"),
         "{old:?}"

@@ -320,10 +320,16 @@ fn a_body_that_writes_the_deciding_scalar_reaches_the_unknown_arm() {
             "`{body}` never reaches the Infeasible arm, so nothing is retained: {:?}",
             run.diagnostics
         );
+        // Deliberate pin update, card SETTLED-LEAK-OTHER-REFUSAL-SCHEDULE
+        // (rule 84 amended): with `z_unknown` the leak was claimed only on
+        // the header's first iterate, before the refused body's marker
+        // joined. The settled exit marks `p` and every path to it takes the
+        // undecided test's edge, so no witness carries it and it is
+        // withdrawn; the refusals keep the function `Unknown`.
         assert_eq!(
             run.leaks(),
-            1,
-            "the acquisition after the loop is still reported: {:?}",
+            usize::from(!unknown_arm),
+            "the acquisition after the loop is reported unless withdrawn: {:?}",
             run.diagnostics
         );
     }

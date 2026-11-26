@@ -63,3 +63,18 @@ fn a_withdrawn_report_needs_a_witness() {
     assert!(!publishes(true, false));
     assert!(publishes(true, true));
 }
+
+/// Card SETTLED-LEAK-OTHER-REFUSAL-SCHEDULE: rule 84 decides a report exactly
+/// when the settled exit marks it beside an `Unknown` leaf, as
+/// `QCore.SettledLeakJoined.decides` states.
+#[test]
+fn rule_84_decides_a_marked_report_beside_an_unknown_leaf() {
+    assert!(
+        LEAN.contains("def decides (marked unknownLeaf : Bool) : Bool := marked && unknownLeaf")
+    );
+    for marked in [false, true] {
+        for unknown_leaf in [false, true] {
+            assert_eq!(decides(marked, unknown_leaf), marked && unknown_leaf);
+        }
+    }
+}

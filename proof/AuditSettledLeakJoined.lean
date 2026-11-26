@@ -57,3 +57,18 @@ are trust boundary 28's, pinned by
 #print axioms QCore.SettledLeakJoined.a_publication_is_never_safe
 #print axioms QCore.SettledLeakJoined.the_pinned_instance
 #print axioms QCore.SettledLeakJoined.the_both_arms_control
+
+-- Card SETTLED-LEAK-OTHER-REFUSAL-SCHEDULE: every refusal kind.
+-- A witness avoids every refusal mark of every kind.
+#print axioms QCore.SettledLeakJoined.a_witness_avoids_every_refusal_kind
+-- Publication is order-independent.
+#print axioms QCore.SettledLeakJoined.any_perm
+#print axioms QCore.SettledLeakJoined.held_at_an_unmarked_exit
+#print axioms QCore.SettledLeakJoined.publication_is_order_independent
+#print axioms QCore.SettledLeakJoined.the_old_decision_read_the_schedule
+#print axioms QCore.SettledLeakJoined.both_orders_publish_the_avoiding_arm
+-- A refused-only leak stays withdrawn.
+#print axioms QCore.SettledLeakJoined.a_refused_only_leak_stays_withdrawn_any_kind
+#print axioms QCore.SettledLeakJoined.every_kind_on_both_arms_is_withdrawn
+-- A publication is never Safe.
+#print axioms QCore.SettledLeakJoined.a_decided_report_is_never_safe

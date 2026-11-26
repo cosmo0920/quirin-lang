@@ -155,27 +155,30 @@ const SCHEDULES: [(&str, &str, &str, &str); 3] = [
     ),
 ];
 
-/// The probe at `98c51878f`: the verdict reads the schedule. With the
-/// avoiding arm first an iterate claims the leak and it is published; with
-/// the refusing arm first no iterate claims it.
+/// The avoiding arm's leak is published in both schedules, beside the
+/// refusal. At `98c51878f` the second order was `Unknown` with no leak (the
+/// probe commit's `the_verdict_reads_the_schedule_at_base`). A refusal-free
+/// path keeps the accusation: rule W44's hand-on, the escape and the
+/// condition call each mark only their own arm.
 #[test]
-fn the_verdict_reads_the_schedule_at_base() {
+fn an_avoiding_arm_is_published_in_both_schedules() {
     if !clang_available() {
         return;
     }
     for (kind, first, second, refusal) in SCHEDULES {
-        let run = analyze(first);
-        assert_eq!(run.status, AnalysisStatus::Unsafe, "{kind}, first: {run:?}");
-        assert_eq!(run.leaks(), 1, "{kind}, first: {run:?}");
-        assert!(run.refused(refusal), "{kind}, first: {run:?}");
-        let run = analyze(second);
-        assert_eq!(
-            run.status,
-            AnalysisStatus::Unknown,
-            "{kind}, second: {run:?}"
-        );
-        assert_eq!(run.leaks(), 0, "{kind}, second: {run:?}");
-        assert!(run.refused(refusal), "{kind}, second: {run:?}");
+        for (order, body) in [
+            ("avoiding arm first", first),
+            ("refusing arm first", second),
+        ] {
+            let run = analyze(body);
+            assert_eq!(
+                run.status,
+                AnalysisStatus::Unsafe,
+                "{kind}, {order}: {run:?}"
+            );
+            assert_eq!(run.leaks(), 1, "{kind}, {order}: {run:?}");
+            assert!(run.refused(refusal), "{kind}, {order}: {run:?}");
+        }
     }
 }
 
