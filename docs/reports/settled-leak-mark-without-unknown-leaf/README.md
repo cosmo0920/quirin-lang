@@ -227,6 +227,11 @@ Other checks:
   found"). The paths were passed as arguments, because the sandbox refused
   the `--stdin` pipe form.
 * `apply_amendments.py --check --profiles-base 07833c86a`: exit 0.
+* On the records head `7849ca27a`:
+  * `scripts/check_lean_audits.py` passed 531 audits (exit 0);
+  * the Python suite ran 807 tests with exactly the two base
+    `test_build_matrix_sections` failures above (exit 1), and the census
+    test passed.
 * No provider file changed, so the provider gate was not selected.
 
 ## 5. Ledger and follow-ups
