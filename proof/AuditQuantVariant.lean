@@ -23,3 +23,14 @@ import QCore.QuantVariant
 #print axioms QCore.QuantVariant.open_preserves_current_frame
 #print axioms QCore.QuantVariant.selected_arm_survives_handoff
 #print axioms QCore.QuantVariant.delayed_match
+
+#print axioms QCore.QuantVariant.Verification.transfers_preserve_package
+#print axioms QCore.QuantVariant.Verification.contract_pack_custody
+#print axioms QCore.QuantVariant.Verification.release_removes_custody
+#print axioms QCore.QuantVariant.Verification.trace_exclusive
+#print axioms QCore.QuantVariant.Verification.handoff_conserves
+#print axioms QCore.QuantVariant.Verification.unpack_conserves
+#print axioms QCore.QuantVariant.Verification.empty_slots_exclusive
+#print axioms QCore.QuantVariant.Verification.reachable_sealed_alias_refuses
+#print axioms QCore.QuantVariant.Verification.malformed_seed_allows_two_releases
+#print axioms QCore.QuantVariant.Verification.malformed_seed_unreachable

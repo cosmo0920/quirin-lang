@@ -173,4 +173,176 @@ theorem delayed_match (s : State) (id : Identity) (src dst : Slot) (code : Int32
   rw [selected_arm_survives_handoff s id src dst _ code live srcFree dstFree distinct]
   by_cases zero : code = 0 <;> simp [takeMapping, selectArm, zero]
 
+namespace Verification
+
+/-- A generation has at most one sealed slot. While sealed it has no
+    accessible destruction right. Values in other slots are unrestricted. -/
+def Exclusive (s : State) : Prop :=
+  ∀ k p, s.slots k = some p →
+    s.owned p.subject = false ∧
+    ∀ j q, s.slots j = some q → q.subject = p.subject → j = k
+
+private theorem pack_shape (s t : State) (id : Identity) (k : Slot)
+    (m : Mapping) (c : Int32) (h : pack s id k m c = some t) :
+    s.owned id = true ∧ s.slots k = none ∧
+    t = ⟨write s.owned id false, write s.slots k (some ⟨id, selectArm m c⟩)⟩ := by
+  unfold pack at h
+  split at h <;> simp_all <;> exact h.symm
+
+private theorem handoff_shape (s t : State) (id : Identity) (a b : Slot)
+    (h : handoff s id a b = some t) :
+    ∃ p, s.slots a = some p ∧ p.subject = id ∧ s.slots b = none ∧
+      t = ⟨s.owned, write (write s.slots a none) b (some p)⟩ := by
+  cases hp : s.slots a with
+  | none => simp [handoff, hp] at h
+  | some p =>
+    simp [handoff, hp] at h
+    obtain ⟨⟨hid, hb⟩, rfl⟩ := h
+    exact ⟨p, rfl, hid, hb, rfl⟩
+
+private theorem unpack_shape (s t : State) (id : Identity) (k : Slot)
+    (arm : Arm) (h : unpack s id k = some (arm, t)) :
+    ∃ p, s.slots k = some p ∧ p.subject = id ∧ p.arm = arm ∧
+      t = ⟨write s.owned id (decide (arm.fragment = .custody)), write s.slots k none⟩ := by
+  cases hp : s.slots k with
+  | none => simp [unpack, hp] at h
+  | some p =>
+    by_cases ok : p.subject = id ∧ s.owned id = false
+    · simp [unpack, hp, ok] at h
+      obtain ⟨rfl, rfl⟩ := h
+      exact ⟨p, rfl, ok.1, rfl, rfl⟩
+    · simp [unpack, hp, ok] at h
+
+variable {id : Identity} {s t : State} {a b k : Slot} {m : Mapping} {c : Int32} {arm : Arm}
+
+theorem pack_exclusive (hs : Exclusive s) (h : pack s id k m c = some t) :
+    Exclusive t := by
+  obtain ⟨_, _, rfl⟩ := pack_shape _ _ _ _ _ _ h
+  unfold Exclusive at *
+  simp only [write]
+  grind
+
+theorem handoff_exclusive (hs : Exclusive s) (h : handoff s id a b = some t) :
+    Exclusive t := by
+  obtain ⟨_, _, _, _, rfl⟩ := handoff_shape _ _ _ _ _ h
+  unfold Exclusive at *
+  simp only [write]
+  grind
+
+theorem unpack_exclusive (hs : Exclusive s) (h : unpack s id k = some (arm, t)) :
+    Exclusive t := by
+  obtain ⟨_, _, _, _, rfl⟩ := unpack_shape _ _ _ _ _ h
+  unfold Exclusive at *
+  simp only [write]
+  grind
+
+theorem release_exclusive (hs : Exclusive s) (h : release s id = some t) :
+    Exclusive t := by
+  have shape : release s id = (if s.owned id then some { s with owned := write s.owned id false } else none) := rfl
+  rw [shape] at h
+  split at h <;> simp_all
+  subst t
+  unfold Exclusive at *
+  simp only [write]
+  grind
+
+/-- Available or sealed custody, observed without modifying the ledger. -/
+def HasCustody (s : State) (i : Identity) : Prop :=
+  s.owned i = true ∨ ∃ k p, s.slots k = some p ∧ p.subject = i ∧ p.arm.fragment = .custody
+
+theorem handoff_conserves (h : handoff s id a b = some t) (i : Identity) :
+    HasCustody t i ↔ HasCustody s i := by
+  obtain ⟨p, _, _, _, rfl⟩ := handoff_shape _ _ _ _ _ h
+  simp only [HasCustody, write]
+  grind
+
+theorem unpack_conserves (h : unpack s id k = some (arm, t)) (i : Identity) :
+    HasCustody t i ↔ HasCustody s i := by
+  obtain ⟨p, hp, hi, ha, rfl⟩ := unpack_shape _ _ _ _ _ h
+  have sealed : s.owned id = false := by
+    cases ht : s.owned id with
+    | false => rfl
+    | true =>
+      simp [unpack, hp, ht] at h
+  simp only [HasCustody, write]
+  grind
+
+inductive Trace (start : State) : State → Prop where
+  | initial : Trace start start
+  | packed {s t : State} {id : Identity} {k : Slot} {m : Mapping} {c : Int32} : Trace start s → pack s id k m c = some t → Trace start t
+  | moved {s t : State} {id : Identity} {a b : Slot} : Trace start s → handoff s id a b = some t → Trace start t
+  | opened {s t : State} {id : Identity} {k : Slot} {arm : Arm} : Trace start s → unpack s id k = some (arm, t) → Trace start t
+  | released {s t : State} {id : Identity} : Trace start s → release s id = some t → Trace start t
+
+theorem trace_exclusive (init : Exclusive start) (path : Trace start t) : Exclusive t := by
+  induction path with
+  | initial => exact init
+  | packed _ h ih => exact pack_exclusive ih h
+  | moved _ h ih => exact handoff_exclusive ih h
+  | opened _ h ih => exact unpack_exclusive ih h
+  | released _ h ih => exact release_exclusive ih h
+
+theorem empty_slots_exclusive (owned : Identity → Bool) :
+    Exclusive ⟨owned, fun _ => none⟩ := by simp [Exclusive]
+
+theorem reachable_sealed_alias_refuses (init : Exclusive start) (path : Trace start t)
+    (hp : t.slots k = some p) (aliasId : Identity) (same : aliasId = p.subject) :
+    release t aliasId = none := by
+  simp [same, release, (trace_exclusive init path k p hp).1]
+
+/-- Negative control: manufacture two sealed copies in the initial ledger.
+    The step guards then allow two releases for the same generation. -/
+private def duplicateSeed : State :=
+  ⟨fun _ => false, fun slot =>
+    if slot < 2 then some ⟨⟨7, 1⟩, ⟨1, .custody, some 42⟩⟩ else none⟩
+
+def twiceReleased : Bool := (do
+  let (_, first) ← unpack duplicateSeed ⟨7, 1⟩ 0
+  let released ← release first ⟨7, 1⟩
+  let (_, second) ← unpack released ⟨7, 1⟩ 1
+  release second ⟨7, 1⟩).isSome
+
+theorem malformed_seed_allows_two_releases : twiceReleased = true := by decide
+
+theorem malformed_seed_unreachable (init : Exclusive start) : ¬Trace start duplicateSeed := by
+  intro path
+  have h := trace_exclusive init path 0 ⟨⟨7,1⟩, ⟨1,.custody,some 42⟩⟩ (by rfl)
+  have impossible := h.2 1 ⟨⟨7,1⟩, ⟨1,.custody,some 42⟩⟩ (by rfl) rfl
+  contradiction
+
+/-- On the packed generation, the contract selects exactly whether custody
+    survives. Every other generation retains its current responsibility. -/
+theorem contract_pack_custody (init : Exclusive s) (h : pack s id k m c = some t)
+    (i : Identity) :
+    HasCustody t i ↔ (if i = id then m.fragment = .custody else HasCustody s i) := by
+  obtain ⟨_, _, rfl⟩ := pack_shape _ _ _ _ _ _ h
+  unfold Exclusive at init
+  simp only [HasCustody, write, selectArm]
+  grind
+
+theorem release_removes_custody (init : Exclusive s) (h : release s id = some t)
+    (i : Identity) : HasCustody t i ↔ i ≠ id ∧ HasCustody s i := by
+  have shape : release s id = (if s.owned id then some { s with owned := write s.owned id false } else none) := rfl
+  rw [shape] at h
+  split at h <;> simp_all
+  subst t
+  unfold Exclusive at init
+  simp only [HasCustody, write]
+  grind
+
+/-- Any finite sequence of private helper calls can reuse a vacated slot. -/
+inductive Transfers (id : Identity) (start : State) (origin : Slot) : State → Slot → Prop where
+  | initial : Transfers id start origin start origin
+  | moved {s t : State} {a b : Slot} : Transfers id start origin s a →
+      handoff s id a b = some t → Transfers id start origin t b
+
+theorem transfers_preserve_package (path : Transfers id s a t b)
+    (hp : s.slots a = some p) : t.slots b = some p := by
+  induction path with
+  | initial => exact hp
+  | moved _ h ih =>
+    obtain ⟨pkg, hs, _, _, rfl⟩ := handoff_shape _ _ _ _ _ h
+    simp_all [write]
+
+end Verification
 end QCore.QuantVariant
