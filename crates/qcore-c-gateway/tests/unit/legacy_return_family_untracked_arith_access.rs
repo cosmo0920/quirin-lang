@@ -253,12 +253,15 @@ fn the_base_readings_are_kept() {
             "{expression}"
         );
     }
-    // A sum inside a subscript is an index: only the subscripted `a` is a
-    // base.
+    // A sum inside a subscript is no access through arithmetic. Rule 74y
+    // (RETURN-FAMILY-UNTRACKED-REVERSED-SUBSCRIPT): this oracle declares no
+    // pointer, so `a` is undecided and the root inside its brackets may be
+    // the pointer (C11 6.5.2.1p2): both are bases. Under a declared pointer
+    // `a` only `a` is (`legacy_return_family_untracked_reversed_subscript.rs`).
     for expression in ["a [ p + 1 ]", "a [ ( p + 1 ) ]"] {
         assert_eq!(
             bases(expression),
-            Some(vec!["a".to_owned()]),
+            Some(vec!["a".to_owned(), "p".to_owned()]),
             "{expression}"
         );
     }

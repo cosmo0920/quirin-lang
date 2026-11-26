@@ -115,6 +115,17 @@
 //! the one new refusal is the expression's, so nothing admits more
 //! (`QCore.ReturnFamilyUntrackedArithAccess`).
 //!
+//! Card **RETURN-FAMILY-UNTRACKED-REVERSED-SUBSCRIPT** (gateway rule 74y): C11
+//! 6.5.2.1p2 makes `E1[E2]` `*((E1)+(E2))`, so the pointer may stand inside
+//! the brackets. An untracked, non-scalar root filling a subscript's brackets
+//! (through cast groups, parentheses and rule 74w's sums; [`subscript_index`])
+//! is a base unless the subscripted operand is a declared pointer or array,
+//! so `1[p]`, `n[p]`, `n[(T *)p]` and `n[p + k]` make `p` a base as `p[1]`
+//! does; an undecided `a[b]` makes both bases. A may-bind root inside such
+//! brackets refuses (`n[*q]` is a second dereference). Bases only grow and
+//! the new refusals are the expression's, so nothing admits more
+//! (`QCore.ReturnFamilyUntrackedReversedSubscript`).
+//!
 //! The read node is `IndirectScalarAccess` with no destination, no frame and
 //! no chain: it changes no binding, status, marker or link, and adds only the
 //! bases' obligations and the C02-P-ALIAS obligations of every `->` root. It
@@ -297,6 +308,13 @@ pub(crate) trait NameFacts {
     /// the body's declarations and the unit's file-scope objects, less every
     /// name a `typedef` spells. A `( name )` of one of them is an operand.
     fn objects(&self) -> &BTreeSet<String>;
+    /// Rule 74y: declared by this function's declaration reader as a
+    /// single-level pointer or an array (`FunctionTypes::pointer_kind`), so a
+    /// subscript `name [ … ]` subscripts it and its brackets hold the index.
+    /// The default knows no such name, which only adds bases and refusals.
+    fn declared_pointer(&self, _name: &str) -> bool {
+        false
+    }
 }
 
 /// Family S's read: the may-bind bases it dereferences and the `->` roots
@@ -956,6 +974,19 @@ pub(crate) fn scalar_read(texts: &[&str], names: &impl NameFacts) -> Option<Scal
             {
                 push_once(&mut read.bases, text);
             }
+            // Rule 74y: a root filling a subscript's brackets is the pointer
+            // (C11 6.5.2.1p2, `n [ p ]` is `* ( n + p )`) unless the
+            // subscripted operand is a declared pointer; a declared scalar is
+            // an index, never the pointer.
+            match if names.declared_scalar(text) {
+                SubscriptIndex::None
+            } else {
+                subscript_index(texts, index, names)
+            } {
+                SubscriptIndex::Unclassified => return None,
+                SubscriptIndex::Base => push_once(&mut read.bases, text),
+                SubscriptIndex::None => {}
+            }
             index += 1;
             continue;
         }
@@ -1006,6 +1037,12 @@ pub(crate) fn scalar_read(texts: &[&str], names: &impl NameFacts) -> Option<Scal
         if !root {
             return None;
         }
+        // Rule 74y: inside a subscript's brackets whose subscripted operand
+        // is not a declared pointer, the root's value may be the pointer the
+        // subscript dereferences (`n [ * q ]`), a second dereference.
+        if inside_undecided_subscript(texts, index, names) {
+            return None;
+        }
         if arrow_at(texts, index + 1) {
             push_once(&mut read.arrow_roots, text);
         }
@@ -1013,6 +1050,149 @@ pub(crate) fn scalar_read(texts: &[&str], names: &impl NameFacts) -> Option<Scal
         index += 1;
     }
     Some(read)
+}
+
+/// Rule 74y: what [`subscript_index`] read around an untracked root.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum SubscriptIndex {
+    /// The root fills no subscript's brackets, or the subscripted operand is
+    /// a declared pointer, so the root is its index: the other tests'
+    /// reading stands.
+    None,
+    /// `n [ p ]`, `1 [ ( T * ) p ]`, `n [ p + k ]`: the root may be the
+    /// pointer the subscript dereferences, a base.
+    Base,
+    /// The root is a term of a sum in the brackets whose other operands the
+    /// reader cannot classify (`n [ p + a ]`): family S refuses.
+    Unclassified,
+}
+
+/// Rule 74y: whether the operand subscripted by the `[` at `open` is a name
+/// the declaration reader declares as a pointer or an array
+/// ([`NameFacts::declared_pointer`]), so the brackets hold the index. A
+/// member name (after `.` or `- >`) and every other operand are undecided.
+fn subscripted_pointer(texts: &[&str], open: usize, names: &impl NameFacts) -> bool {
+    let Some(operand) = open.checked_sub(1) else {
+        return false;
+    };
+    let member = operand
+        .checked_sub(1)
+        .is_some_and(|before| texts[before] == ".")
+        || operand
+            .checked_sub(2)
+            .is_some_and(|before| arrow_at(texts, before));
+    super::is_identifier(texts[operand]) && !member && names.declared_pointer(texts[operand])
+}
+
+/// Rule 74y: the innermost bracket (`(` or `[`) around `start`, its matching
+/// closer, and whether it is a `[`.
+fn enclosing_bracket(texts: &[&str], start: usize) -> Option<(usize, usize, bool)> {
+    let mut depth = 0usize;
+    for at in (0..start).rev() {
+        match texts[at] {
+            ")" | "]" => depth += 1,
+            "(" | "[" if depth == 0 => {
+                return close_of(texts, at).map(|close| (at, close, texts[at] == "["));
+            }
+            "(" | "[" => depth -= 1,
+            _ => {}
+        }
+    }
+    None
+}
+
+/// Card RETURN-FAMILY-UNTRACKED-REVERSED-SUBSCRIPT (rule 74y): whether the
+/// untracked, non-scalar root at `index` fills the brackets of a subscript
+/// `X [ … ]`. C11 6.5.2.1p2 defines `E1 [ E2 ]` as `( * ( ( E1 ) + ( E2 ) ) )`,
+/// so the pointer may stand on either side: `1 [ p ]`, `n [ p ]` and
+/// `n [ ( T * ) p ]` dereference `p` as `p [ 1 ]` does. The walk keeps a span
+/// `lo..=hi`, starting at the root, and widens it as rule 74w's does: through
+/// a group `cast_semantics::type_group_open` reads as a type before it, a `(`
+/// and `)` right around it, and a parenthesised additive group around it. It
+/// ends at a `[` and `]` right around the span, or at a sum whose innermost
+/// bracket is a `[` (`n [ p + k ]`). The root is then the index only when the
+/// subscripted operand is a declared pointer ([`subscripted_pointer`]); with
+/// an integer `X` it is the pointer, and with an undecided `X` both are
+/// bases (`X` is already one when it is untracked). A sum crossed on the way
+/// whose other operands [`integer_operands`] does not accept, or whose root
+/// side is not additive, is [`SubscriptIndex::Unclassified`] and refuses, as
+/// rule 74w refuses (`QCore.ReturnFamilyUntrackedReversedSubscript`).
+fn subscript_index(texts: &[&str], index: usize, names: &impl NameFacts) -> SubscriptIndex {
+    let (mut lo, mut hi) = (index, index);
+    let mut classified = true;
+    let bracket = loop {
+        if let Some(open) = lo
+            .checked_sub(1)
+            .filter(|previous| texts[*previous] == ")")
+            .and_then(|previous| crate::cast_semantics::type_group_open(texts, previous))
+        {
+            lo = open;
+            continue;
+        }
+        let left = lo.checked_sub(1).map(|previous| texts[previous]);
+        let right = texts.get(hi + 1).copied();
+        if left == Some("[") && right == Some("]") {
+            break lo - 1;
+        }
+        if left == Some("(") && right == Some(")") {
+            lo -= 1;
+            hi += 1;
+            continue;
+        }
+        // Rule 74w's operator test: binary on the left, never `- >`, never
+        // a `*`.
+        let left_binary =
+            matches!(left, Some("+" | "-" | "/" | "%")) && lo >= 2 && operand_end(texts[lo - 2]);
+        let right_operator =
+            matches!(right, Some("+" | "-" | "/" | "%")) && !arrow_at(texts, hi + 1);
+        if !((left_binary || matches!(left, Some("(" | "[")))
+            && (right_operator || matches!(right, Some(")" | "]"))))
+        {
+            return SubscriptIndex::None;
+        }
+        let Some((open, close, square)) = enclosing_bracket(texts, lo) else {
+            return SubscriptIndex::None;
+        };
+        let clean_left = (left_binary && matches!(left, Some("+" | "-"))) || lo == open + 1;
+        let clean_right = (right_operator && matches!(right, Some("+" | "-"))) || hi + 1 == close;
+        if !(clean_left
+            && clean_right
+            && integer_operands(&texts[open + 1..lo], names)
+            && integer_operands(&texts[hi + 1..close], names))
+        {
+            classified = false;
+        }
+        if square {
+            break open;
+        }
+        lo = open;
+        hi = close;
+    };
+    if subscripted_pointer(texts, bracket, names) {
+        SubscriptIndex::None
+    } else if classified {
+        SubscriptIndex::Base
+    } else {
+        SubscriptIndex::Unclassified
+    }
+}
+
+/// Rule 74y: whether a `[` enclosing the may-bind root at `index` subscripts
+/// an operand that is not a declared pointer ([`subscripted_pointer`]). Then
+/// the bracket's value may be the pointer the subscript dereferences, and
+/// that pointer is computed from the value the root's one dereference reads
+/// (`n [ * q ]` is `* ( n + * q )`), a second dereference. Only refuses.
+fn inside_undecided_subscript(texts: &[&str], index: usize, names: &impl NameFacts) -> bool {
+    let mut depth = 0usize;
+    for at in (0..index).rev() {
+        match texts[at] {
+            ")" | "]" => depth += 1,
+            "(" | "[" if depth > 0 => depth -= 1,
+            "[" if !subscripted_pointer(texts, at, names) => return true,
+            _ => {}
+        }
+    }
+    false
 }
 
 /// Family K's shape: the casts (`true` for a pointer target), in order, and
@@ -1092,6 +1272,10 @@ impl NameFacts for ParserNames<'_, '_> {
 
     fn type_name(&self, words: &[&str]) -> bool {
         self.parser.typed_model.never_variably_modified(words)
+    }
+
+    fn declared_pointer(&self, name: &str) -> bool {
+        self.parser.typed_types.pointer_kind(name).is_some()
     }
 
     /// Rule 74f's set, read from the unit's token stream as the publication
@@ -1358,3 +1542,7 @@ mod untracked_member_cast_tests;
 #[cfg(test)]
 #[path = "../tests/unit/legacy_return_family_untracked_arith_access.rs"]
 mod untracked_arith_access_tests;
+
+#[cfg(test)]
+#[path = "../tests/unit/legacy_return_family_untracked_reversed_subscript.rs"]
+mod untracked_reversed_subscript_tests;
