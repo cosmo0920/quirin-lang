@@ -464,6 +464,7 @@ import QCore.ReturnFamilyDerefCast
 import QCore.ReturnFamilyStarCast
 import QCore.ReturnFamilyStarOutside
 import QCore.ReturnFamilyUntrackedDerefCast
+import QCore.ReturnFamilyUntrackedMemberCast
 import QCore.ReturnPositionEscape
 import QCore.ReturnRefusedCallLowering
 import QCore.ReviewHoldStanding

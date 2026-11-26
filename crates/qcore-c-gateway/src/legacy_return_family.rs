@@ -96,6 +96,14 @@
 //! ([`dereferenced_through_groups`]), so `*(T *)p` makes `p` a base as `*p`
 //! does. The change only adds bases (`QCore.ReturnFamilyUntrackedDerefCast`).
 //!
+//! Card **RETURN-FAMILY-UNTRACKED-MEMBER-THROUGH-CAST** (gateway rule 74t): an
+//! untracked root is a member or subscript base, and a `->` root, also when
+//! `->` or `[` reaches it through closing parentheses whose groups hold only
+//! opening parentheses and cast groups before it ([`accessed_through_groups`]),
+//! so `((T *)p)->f`, `((T *)p)[i]` and `(p)->f` make `p` a base as `p->f` and
+//! `p[i]` do. The change only adds bases and `->` roots
+//! (`QCore.ReturnFamilyUntrackedMemberCast`).
+//!
 //! The read node is `IndirectScalarAccess` with no destination, no frame and
 //! no chain: it changes no binding, status, marker or link, and adds only the
 //! bases' obligations and the C02-P-ALIAS obligations of every `->` root. It
@@ -605,6 +613,55 @@ fn dereferenced_through_groups(texts: &[&str], index: usize, names: &impl NameFa
     false
 }
 
+/// Card RETURN-FAMILY-UNTRACKED-MEMBER-THROUGH-CAST (rule 74t): the access
+/// (`->` or `[`) that reaches the untracked root at `index` through closing
+/// parentheses whose groups hold nothing before the root but opening
+/// parentheses and groups `cast_semantics::type_group_open` reads as a type
+/// (rule 12h's transparency), so that `((T *)p)->f`, `((T *)p)[i]`,
+/// `((T *)(p))->f` and `(p)->f` make `p` a base as `p->f` and `p[i]` do.
+/// `Some(true)` is a `->`, `Some(false)` a `[`, and `None` is no such access:
+/// at least one `)` must stand between the root and the access (the direct
+/// spellings are the old test's), and no more than the walk back opened, so
+/// a group with an operand before the root (`( n + p )`, `( n + ( p ) )`) is
+/// never read through. (`f ( p ) -> m` reads as an access of `p`: one more
+/// base in an expression family S refuses as a call anyway.) A cast's type
+/// word is followed inside its group by
+/// another word, a `*` or the `)` before an operand, never by `)` then `->`
+/// or `[`, so it is no root here. It only adds bases and `->` roots
+/// (`QCore.ReturnFamilyUntrackedMemberCast`).
+fn accessed_through_groups(texts: &[&str], index: usize) -> Option<bool> {
+    let mut at = index;
+    let mut opened = 0usize;
+    while let Some(previous) = at.checked_sub(1) {
+        match texts[previous] {
+            "(" => {
+                opened += 1;
+                at = previous;
+            }
+            ")" => match crate::cast_semantics::type_group_open(texts, previous) {
+                Some(open) => at = open,
+                None => break,
+            },
+            _ => break,
+        }
+    }
+    let closes = texts[index + 1..]
+        .iter()
+        .take(opened)
+        .take_while(|text| **text == ")")
+        .count();
+    let after = index + 1 + closes;
+    if closes == 0 {
+        None
+    } else if arrow_at(texts, after) {
+        Some(true)
+    } else if texts.get(after) == Some(&"[") {
+        Some(false)
+    } else {
+        None
+    }
+}
+
 /// Family S's shape and name premises over one `return` expression. `None`
 /// keeps the refusal. The declared-result premise and the descriptor premise
 /// are the caller's.
@@ -692,7 +749,13 @@ pub(crate) fn scalar_read(texts: &[&str], names: &impl NameFacts) -> Option<Scal
                 && texts[index - 1] == "*"
                 && operator_at(texts, index - 1, names).may_be_unary())
                 || dereferenced_through_groups(texts, index, names);
-            if arrow_at(texts, index + 1) || next == Some("[") || starred {
+            // Rule 74t: a member or subscript root also through closing
+            // parentheses and cast groups, with its `->` reading.
+            let accessed = accessed_through_groups(texts, index);
+            if accessed == Some(true) {
+                push_once(&mut read.arrow_roots, text);
+            }
+            if arrow_at(texts, index + 1) || next == Some("[") || starred || accessed.is_some() {
                 push_once(&mut read.bases, text);
             }
             index += 1;
@@ -1089,3 +1152,7 @@ mod star_outside_tests;
 #[cfg(test)]
 #[path = "../tests/unit/legacy_return_family_untracked_deref_cast.rs"]
 mod untracked_deref_cast_tests;
+
+#[cfg(test)]
+#[path = "../tests/unit/legacy_return_family_untracked_member_cast.rs"]
+mod untracked_member_cast_tests;

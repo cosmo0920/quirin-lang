@@ -13929,6 +13929,62 @@ through `ampersand_runs`.
     `old_vectors_hold`);
     [report](../reports/return-family-star-outside-parentheses/README.md).
 
+<a id="constraint-74t"></a>
+
+74t. **An untracked member or subscript root through a cast group is a
+    base.** Card RETURN-FAMILY-UNTRACKED-MEMBER-THROUGH-CAST, extending
+    [rule 74r](#constraint-74r) to the member and subscript tests its card
+    registered. Family S admits any use of an untracked root, but a root that
+    `->` or `[` accesses is a base of the read node, and a `->` root carries
+    its C02-P-ALIAS reading. That way the flow check stands behind the
+    syntactic premise. At the base both tests needed `->` or `[` right after
+    the name. So `( ( T * ) p ) - > n` made no base, and
+    `long w(void) { const void *p = 0; return ((const struct s *)p)->n; }`
+    and `… return ((const long *)p)[0]; }` were `Safe`, while
+    `return p->n + 1;` is `Unknown` (`unknown_alias:p`). That is the
+    admitting direction. The direct tests are kept. A second one,
+    `accessed_through_groups`, reads back from the root through `(` and
+    through every group `cast_semantics::type_group_open` reads as a type
+    (rule 12h's transparency, the one detector), counting the opening
+    parentheses it crosses. It then reads forward through at least one and at
+    most that many `)`, and the root is accessed when `->` or `[` follows. The
+    root is a base when either test says so, and a `->` root when either says
+    `->`. Nested groups (`((T *)(U *)p)->f`), a parenthesised root
+    (`((T *)(p))->f`, `(p)->f`, `((p))[i]`) and a doubled parenthesis
+    (`(((T *)p))->f`) make `p` a base too.
+
+    `type_group_open` asks no resolution, so a group that rule 74h would call
+    undecided is read as a cast. The operand reading stops the walk, and the
+    cast reading accesses every root that the operand reading does. `->` and
+    `[` are postfix with no unary reading, so `operator_at` has no operator
+    to decide here. A cast's type word is followed, inside its group, by a
+    word, a `*`, or the `)` before an operand, never by `)` and then `->` or
+    `[`. So no type word becomes a root, and `cast_type_word` is not needed.
+    Closing parentheses past the ones opened are not read, so an operand
+    before the root (`( n + p ) - > m`, `( n + ( p ) ) - > m`) stops the
+    test. Arithmetic inside the group (`((T *)p + 1)->f`) keeps the base's
+    reading, which is a registered follow-up. `f ( p ) - > m` reads as an
+    access of `p`, but family S refuses that expression as a call anyway.
+
+    A base and a `->` root only add obligations, and no refusal changes. So
+    every result the tip admits, the base admitted. A may-bind root (refused
+    through a cast or a parenthesis, as before; the typed return route still
+    decides a tracked root's member through a cast), `&((T *)p)->f` (family
+    S's `&` refusal) and `sizeof (((T *)p)->f)` read as before. A group with
+    a qualifier after its `*` (`( long * const )`) keeps the base's reading,
+    as in rule 74r. **Do not** write a second type-group detector, **do not**
+    drop the direct tests (the union is the reading), and **do not** read
+    closing parentheses past the ones the walk opened. Premises stated, not
+    proved: the token classes (trust boundary 28).
+    `QCore.ReturnFamilyUntrackedMemberCast` (`old_member_kept`,
+    `old_arrow_kept`, `closeRun_le`, `closeRun_stable`, `opened_mono`,
+    `accessed_mono`, `every_group_reading_keeps_the_base`,
+    `a_type_word_is_no_root`, `an_operand_before_the_root_is_no_access`,
+    `bases_kept`, `old_bases_kept`, `the_fix_only_refuses_more`,
+    `old_misses_the_base`, `a_converted_operand_is_no_base`,
+    `member_vectors_hold`, `old_vectors_hold`);
+    [report](../reports/return-family-untracked-member-cast/README.md).
+
 <a id="constraint-75"></a>
 
 75. **Under a unary `&`, a parenthesised name followed by `->` is a member's

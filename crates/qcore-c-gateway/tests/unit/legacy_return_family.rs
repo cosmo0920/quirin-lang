@@ -87,9 +87,13 @@ fn a_directly_dereferenced_untracked_root_is_a_base() {
     assert_eq!(bases("p ? p - > code : 0"), Some(vec!["p".to_owned()]));
     assert_eq!(bases("* p = = 1"), Some(vec!["p".to_owned()]));
     assert_eq!(bases("zeros [ n ]"), Some(vec!["zeros".to_owned()]));
-    // A name only compared, or inside a cast group, is not dereferenced here.
+    // A name only compared is not dereferenced here.
     assert_eq!(bases("p ! = 0"), Some(vec![]));
-    assert_eq!(bases("( ( const char * ) p ) - > u16"), Some(vec![]));
+    // Rule 74t: a member access through a cast group dereferences the root.
+    assert_eq!(
+        bases("( ( const char * ) p ) - > u16"),
+        Some(vec!["p".to_owned()])
+    );
     assert_eq!(bases("sizeof ( struct s ) + n"), Some(vec![]));
 }
 
