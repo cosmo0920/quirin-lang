@@ -1,0 +1,33 @@
+{
+  "schema": "quirin-amendments/2",
+  "card": "RETURN-FAMILY-UNTRACKED-ACCESS-THROUGH-ARITHMETIC",
+  "base": "497c859fc",
+  "measured_tip": "f2a2f314c",
+  "profiles": [],
+  "increment_paragraph": "**RETURN-FAMILY-UNTRACKED-ACCESS-THROUGH-ARITHMETIC** (USER DECISION 2026-11-24: \"launch both cards\"; gateway rule 74w, extending rules 74r and 74t; `QCore.ReturnFamilyUntrackedArithAccess`; [report](../../reports/return-family-untracked-arith-access/README.md)). Family S of `legacy_return_family` stopped every base test at a `+` or `-` between an untracked root and its access. So `long w(long k) { const struct s *p = 0; return (p + 1)->n; }`, `(k + p)->n`, `((const struct s *)p + 1)->n`, `(p + 1)[0]` and `*(k + p)` were `Safe`, while `return p->n + 1;` and `*(p + 1)` are `Unknown` (`unknown_alias:p`). The old tests are kept, and `accessed_through_arithmetic` adds one. It widens a span outward from the root through type groups (`cast_semantics::type_group_open`), parentheses and parenthesised arithmetic groups, reading only the matching `)` of a `(` it crossed. When it crossed an arithmetic group and `->`, `[` or a `*` that may be unary accesses what it reached, the root is a base, and a `->` root for `->`. An access through a group whose other operands are not literals, declared scalars or `sizeof` of a resolved type (`(p - q)[a]`, `(a + p)[0]`) refuses the expression. A `*` is never read as a product, so a cast's type words are never roots. Bases only grow and the one new refusal is the expression's, so nothing admits more than at the base. Tracked and may-bind roots, an unbound formal, `&(p + 1)->n`, `sizeof` and `return p + 1;` read as before. Pinned at unit level (`arithVectors`, 23 rows, old fields checked against the base's functions) and end to end (12 null rows, 2 refusals, controls); rule 74t's two pins holding `( n + p ) - > m` at `bases: []` now expect the union. The change pins fail with the new reading disabled. Opt-in `current --monkey-linked` over Fluent Bit 046accf6: no row moves (1,171 / 2 / 3,623 / 8 at both), as predicted; every census hit sits inside a call family S refuses. The pinned routes need inputs this host lacks and were not run. Registered: RETURN-FAMILY-UNTRACKED-CONDITIONAL-ACCESS and RETURN-FAMILY-UNTRACKED-REVERSED-SUBSCRIPT.",
+  "status_edits": [],
+  "ledger": [
+    {
+      "id": "RETURN-FAMILY-UNTRACKED-ACCESS-THROUGH-ARITHMETIC",
+      "operation": "retire",
+      "why": "Discharged by RETURN-FAMILY-UNTRACKED-ACCESS-THROUGH-ARITHMETIC (rule 74w). Reachability: `(p + 1)->n`, `(k + p)->n`, `((const struct s *)p + 1)->n`, `(p + 1)[0]` and `*(k + p)` through a null untracked `p` reached family S and were `Safe` with the base's reading (report §1). crates/qcore-c-gateway/src/legacy_return_family.rs keeps the direct tests and rules 74r's and 74t's walks and adds `accessed_through_arithmetic`, which widens a span outward through type groups (the existing `type_group_open`), parentheses and parenthesised arithmetic groups, reading only the matching `)` of a `(` it crossed. When an arithmetic group was crossed and `->`, `[` or a may-be-unary `*` accesses the span, the root is a base (and a `->` root for `->`); an access through a group whose other operands the reader cannot classify (another pointer name, a cast, a member, a product holding the root) refuses the expression. Bases only grow and the one new refusal is the expression's, so a result the tip admits the base admitted (`QCore.ReturnFamilyUntrackedArithAccess.the_fix_only_refuses_more`, `old_base_kept`, `no_sum_keeps_the_reading`, `no_access_keeps_the_reading`). The null cases are pinned `Unknown` (`unknown_alias:p`) end to end (crates/qcore-c-gateway/tests/return_family_untracked_arith_access.rs); an unbound formal stays `Safe`, and tracked roots, `&(p + 1)->n`, `sizeof` and `return p + 1;` keep their verdicts. The unit vectors bind the Lean rows, and the change pins fail with the new reading disabled. The opt-in corpus measurement shows no move, as predicted (report §5). The pinned routes need inputs this host lacks and were not run.",
+      "source": "docs/reports/return-family-untracked-arith-access/README.md"
+    },
+    {
+      "id": "RETURN-FAMILY-UNTRACKED-CONDITIONAL-ACCESS",
+      "operation": "register",
+      "title": "Family S makes no base of an untracked root that is an operand of `?:` inside an accessed group",
+      "text": "RETURN-FAMILY-UNTRACKED-ACCESS-THROUGH-ARITHMETIC found (report §1, by an end-to-end probe at its base reading and at its tip f2a2f314c) that `struct s { long n; }; long w(void) { const struct s *p = 0; const struct s *q = 0; return (0 ? p : q)->n; }` is `Safe`. crates/qcore-c-gateway/src/legacy_return_family.rs reads a root as accessed only directly, through `(` and type groups (rules 74r, 74t) or through arithmetic groups (rule 74w); a `?` or `:` beside the root stops every walk, so neither `p` nor `q` is a base although `->` dereferences one of them. The direction is admitting. DISCHARGE: make every untracked root that is a second or third operand of a conditional group which is then accessed a base (both branches, the union), or refuse such an expression; keep the only-adds-bases direction. Pin the return end to end and measure.",
+      "source": "docs/reports/return-family-untracked-arith-access/README.md",
+      "recorded_by": "RETURN-FAMILY-UNTRACKED-ACCESS-THROUGH-ARITHMETIC"
+    },
+    {
+      "id": "RETURN-FAMILY-UNTRACKED-REVERSED-SUBSCRIPT",
+      "operation": "register",
+      "title": "Family S makes no base of an untracked root subscripted in the reversed `i[p]` spelling",
+      "text": "RETURN-FAMILY-UNTRACKED-ACCESS-THROUGH-ARITHMETIC found (report §1, by an end-to-end probe at its base reading and at its tip f2a2f314c) that `long w(void) { const long *p = 0; return 1[p]; }` is `Safe`. C11 6.5.2.1p2 defines `E1[E2]` as `*((E1)+(E2))`, so `1[p]` dereferences `p`, but crates/qcore-c-gateway/src/legacy_return_family.rs reads a subscript base only as `p [` (directly or through groups); a root inside the brackets is read as an index. The direction is admitting. DISCHARGE: make an untracked, non-scalar root that is the whole bracketed operand (or a classified sum in it, as rule 74w classifies) of a subscript whose left operand is an integer a base, or refuse a bracket holding a non-scalar root; keep the only-adds-bases direction. Pin the return end to end and measure.",
+      "source": "docs/reports/return-family-untracked-arith-access/README.md",
+      "recorded_by": "RETURN-FAMILY-UNTRACKED-ACCESS-THROUGH-ARITHMETIC"
+    }
+  ]
+}
