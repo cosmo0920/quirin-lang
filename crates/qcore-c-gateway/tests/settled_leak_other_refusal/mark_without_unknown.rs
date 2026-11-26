@@ -12,7 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//! Card SETTLED-LEAK-MARK-WITHOUT-UNKNOWN-LEAF (gateway rule 84, amended): a
+//! Card SETTLED-LEAK-MARK-WITHOUT-UNKNOWN-LEAF (gateway rule 84, amended; a
+//! module of `settled_leak_other_refusal.rs`, adding no test target): a
 //! leak whose settled exit marks the identity in a function with no `Unknown`
 //! leaf (a call held for review marks it) is decided from the settled states.
 //!
