@@ -134,6 +134,15 @@ impl Held {
             .insert((line, acquisition_line, identity, node));
     }
 
+    /// Whether an iterate held a report of `identity` at `node` (card
+    /// SETTLED-LEAK-MARK-WITHOUT-UNKNOWN-LEAF's census).
+    #[cfg_attr(not(feature = "indirect-census"), allow(dead_code))]
+    pub(super) fn holds(&self, node: usize, identity: usize) -> bool {
+        self.reports
+            .iter()
+            .any(|&(_, _, held, at)| held == identity && at == node)
+    }
+
     /// Insert every held report the rule does not withdraw. A report whose
     /// `(exit node, identity)` is in `decided` is left to gateway rule 84
     /// (card SETTLED-LEAK-OTHER-REFUSAL-SCHEDULE): its settled exit marks the

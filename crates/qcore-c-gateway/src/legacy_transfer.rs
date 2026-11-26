@@ -2270,6 +2270,8 @@ fn analyze_cfg_with_entry_collected(
         entry: entry_custody,
     };
     let decided = joined_leak_route::candidates(&replay, &incoming, &diagnostics);
+    // Card SETTLED-LEAK-MARK-WITHOUT-UNKNOWN-LEAF: census (feature-gated).
+    mark_without_unknown_route::record(&replay, &incoming, &held_leaks, &diagnostics);
     // Card NULLABLE-GUARDED-RELEASE (rule 74c): publish every held leak the
     // settled exit does not withdraw and rule 84 does not decide.
     held_leaks.settle(&cfg, &incoming, &decided, &mut diagnostics);

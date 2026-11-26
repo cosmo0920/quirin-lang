@@ -120,7 +120,7 @@ pub(super) struct Replay<'a, 'c> {
 }
 
 /// One node's output and per-edge outputs, as the work list computes them.
-struct Step {
+pub(super) struct Step {
     output: AbstractState,
     edges: Vec<Option<AbstractState>>,
 }
@@ -212,6 +212,12 @@ impl Replay<'_, '_> {
         Step { output, edges }
     }
 
+    /// The work list's output of `node_id` from `state` (card
+    /// SETTLED-LEAK-MARK-WITHOUT-UNKNOWN-LEAF).
+    pub(super) fn step_output(&self, node_id: usize, state: AbstractState) -> AbstractState {
+        self.step(node_id, state).output
+    }
+
     /// The work list's fixed point, except that an edge whose state marks
     /// `cut` unresolved is not propagated. With `cut` `None` it is the work
     /// list's own fixed point, schedule included.
@@ -248,6 +254,15 @@ impl Replay<'_, '_> {
         incoming
     }
 
+    /// `report_leaks`' conditions on `site` at an exit output, the mark
+    /// aside (card SETTLED-LEAK-MARK-WITHOUT-UNKNOWN-LEAF's census).
+    #[cfg_attr(not(feature = "indirect-census"), allow(dead_code))]
+    pub(super) fn claimable(&self, output: &AbstractState, site: usize) -> bool {
+        live(output, site)
+            && !self.entry.exempt_sites(output).contains(&site)
+            && !output.references.contains_key(&site)
+    }
+
     /// Whether the restricted exit claims `site` by `report_leaks`' own
     /// conditions.
     fn claims(&self, output: &AbstractState, site: usize) -> bool {
@@ -260,7 +275,7 @@ impl Replay<'_, '_> {
 
     /// The restricted replay for `site`: each node's step from its restricted
     /// settled incoming state.
-    fn restricted(&self, site: usize) -> Vec<Option<Step>> {
+    pub(super) fn restricted(&self, site: usize) -> Vec<Option<Step>> {
         self.fixed_point(Some(site))
             .into_iter()
             .enumerate()
@@ -271,7 +286,12 @@ impl Replay<'_, '_> {
     /// A path from a producer of `site` to `exit` that no mark of `site`
     /// lies on and that keeps it live, over the restricted replay `steps`
     /// ([`Self::restricted`]), or `None`.
-    fn witness(&self, steps: &[Option<Step>], site: usize, exit: usize) -> Option<Vec<usize>> {
+    pub(super) fn witness(
+        &self,
+        steps: &[Option<Step>],
+        site: usize,
+        exit: usize,
+    ) -> Option<Vec<usize>> {
         if exit >= self.cfg.nodes.len() {
             return None;
         }
