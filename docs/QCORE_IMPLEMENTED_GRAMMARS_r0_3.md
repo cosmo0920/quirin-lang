@@ -5,1709 +5,2413 @@
 > surface, the diagnostics codes, the legacy `.qcore` alias and this file's name —
 > and those component identifiers are unchanged by the branding. Current contract inputs use `.qv`, executable/library inputs use `.qr`, and native ABI manifests use `.qrlib`; legacy names remain warned compatibility aliases.
 
-> Repository integration: 2026-09-07. Normative requirements are adopted from
-> the supplied review; implementation status is reconciled with main in the
+> **Repository integration:** 2026-09-07. Normative requirements are adopted from
+> the supplied review; implementation status is reconciled with `main` in the
 > [acceptance ledger](reviews/r0_3/REVIEW.md). The original archive findings
 > are historical observations, not a claim that later merged repairs are absent.
 > Full revision-0.3 conformance is not claimed.
 
-Historical `.qcore`/`.qc` census counts below describe their original checkpoints. Current files may have `.qv` or `.qr` names while preserving those recorded source bytes and observations.
+Historical `.qcore`/`.qc` census counts below describe their original checkpoints. Current files carry `.qv`, `.qr`, or `.qrlib` names while preserving those recorded source bytes and observations.
 
-**Source scope:** supplied archive review, reconciled with the implementation records in the [acceptance ledger](reviews/r0_3/REVIEW.md).  
-**Purpose:** distinguish exact consumer inputs from the broader [design BNF](QCORE_DESIGN_GRAMMAR_r0_3.bnf).
+- **Source scope:** Supplied archive review, reconciled with the implementation records in the [acceptance ledger](reviews/r0_3/REVIEW.md), the [language specification](QCORE_SPEC_r0_3.md), and the [contract specification](QCORE_CONTRACT_SPEC_r0_3.md).
+- **Purpose:** Specify the exact input grammars, profile selection gates, and semantic side conditions accepted by each implemented compiler, contract loader, and audit consumer — distinguishing implemented subsets from the broader target [design BNF](QCORE_DESIGN_GRAMMAR_r0_3.bnf).
 
-The grammars below use EBNF: quoted tokens are literals; `{ X }` means repetition; `[ X ]` means optional; `|` means alternatives. `IDENT` is an ASCII identifier and `NAT` is an unsigned decimal token. Lexical recognition alone does not determine semantic admissibility. Historical line references name the reviewed files; the integration source inventory separately binds available current files.
+---
+
+## EBNF notation, lexical primitives, and module modes
+
+Every grammar block in this reference uses ISO-style Extended Backus–Naur Form (EBNF) over the token stream produced by `qcore_frontend::lexer` (or the dedicated manifest/JSON reader noted by the section). Lexical recognition or structural parsing alone never establishes semantic admissibility; each route enforces its own total-or-reject lowering and model checks.
+
+### Meta-syntax conventions
+
+| Notation | Meaning |
+|---|---|
+| `"token"` | Exact keyword, operator, or punctuation literal |
+| `A , B` | Concatenation (`A` followed by `B`) |
+| `A \| B` | Alternation (`A` or `B`) |
+| `[ A ]` | Optional occurrence (zero or one `A`) |
+| `{ A }` | Repetition (zero or more occurrences of `A`) |
+| `( A )` | Grouping |
+| `A+` | One or more occurrences of `A` (equivalent to `A , { A }`) |
+| `(* note *)` | Normative inline annotation or cross-reference |
+| `;` | End of EBNF production rule |
+
+### Lexical primitives
+
+| Terminal | Lexical form and admissibility rules |
+|---|---|
+| `IDENT` / `NAME` | ASCII identifier `[A-Za-z_][A-Za-z0-9_]*` unless a consumer narrows it (for example, `id` in formal contract clauses requires `[a-z][a-z0-9_]*` of 1–128 bytes). |
+| `NAT` / `INTEGER` / `DIGITS` | Unsigned decimal digit sequence `[0-9]+`. Signed positions write `[ "-" ], NAT` explicitly. Consumers range-check values against their target domain (`i32`, `u32`, `u64`, `i128`, `u128`, or unbounded `integer`) and refuse overflow rather than wrapping. |
+| `FLOAT` | `DIGITS, ".", DIGITS, [ EXPONENT ] \| DIGITS, EXPONENT`, where `EXPONENT = ( "e" \| "E" ), [ "+" \| "-" ], DIGITS` (one token when a digit follows the optional sign; `1.5e` and `1e+` lex as a number followed by identifier `e`). |
+| `STRING` / `STRING-TOKEN` | Double-quoted literal `"..."`. Relative import paths, inclusion directives, and review notes require raw single-line strings with no backslash escapes or control characters; `source.string.v1`, `source.http.v1`, and `G06b` decode `\n`, `\t`, `\r`, `\0`, `\\`, `\"`, and `\xHH` into validated UTF-8 bytes. |
+| `BOOL` | `"true" \| "false"`. |
+| Comments & trivia | Whitespace, `//` line comments, and non-nested `/* ... */` block comments are skipped in `.qr` and `.qv` sources. Native library manifests (`.qrlib`) use `#` to end-of-line comments. Byte spans are half-open UTF-8 byte ranges. |
+
+### Source file extensions and module modes
+
+| Extension | Legacy alias | Required mode / role | Notes |
+|---|---|---|---|
+| `.qr` | `.qcore` | `module executable;` (default) or `module library;` | Runtime/library source checked or compiled to C11 by `quirin check` / `quirin emit`. Incompatible mode/suffix or ambiguous stem pairing refuses at `Q403`. |
+| `.qv` | `.qcore`, `.qc` | `module contract;` | Entry-free external C contract, premise, bounds, null-dereference, cell-protocol, or observation-policy module. |
+| `.qrlib` | `.qcorelib` | `native_library manifest v1;` or `v2;` | Native C library artifact, ABI premise, header, and symbol-table linkage manifest (`G02d.2`, `G02d.2.1`). |
+| `.qgd` | — | `guarded_decomposition_v1;` | Standalone readable guarded-decomposition document (`G05-guarded`). |
+| `.json` | — | `schema_version: 1` or `2` | Audit service configuration (`G08`), contract load-path / resource manifests (`G05a`), or recorded target (`G02t`). |
+
+### Bundled `#import` capability registry
+
+Bundled semantic capabilities require an explicit, file-local `#import <module>;` directive (bare `import <module>;` remains a compatibility alias). Capabilities never transfer across files in a multi-file compilation and never imply one another:
+
+| Bundled module | Gated capability | Missing-import diagnostic | Primary grammar |
+|---|---|---|---|
+| `std.ffi.unsafe` | `struct! { ... }` C layout import and file-wide unsafe-FFI assumption | `Q032` | [G02u](#g02u-imported-c-structs-sourceffiv1) |
+| `std.concurrency` | `concurrency checked;`, `thread scope`, `spawn`/`join`, `mutex`, `epoch`, `Buffer` intrinsics | `Q015` | [G02a](#g02a-scoped-copy-task-execution)–[G02f](#g02f-flat-epoch-bound-over-a-checked-task-region), [G09](#g09-concurrent-field-footprint-questions) |
+| `std.extern` | Calling declared `extern fn` symbols | `Q022` | [G02d](#g02d-bounded-extern-calls), [G02i-extern-io](#g02i-composed-extern-calls-and-rendered-lines), [G02u](#g02u-imported-c-structs-sourceffiv1) |
+| `std.extern.unsafe` | Declaring uncontracted `unsafe extern fn` waivers | `Q032` | [G02d.1](#g02d1-unchecked-linkage) |
+| `std.fmt` | Scalar rendering selectors (`dec`, `hex`) on line statements | `Q015` | [G02g](#g02g-rendered-lines-stdfmt-stdio-and-stdlogger), [G02t](#g02t-fixed-width-scalar-types) |
+| `std.io` | Standard-output line statements (`print ...;`, `print(expr);`) | `Q015` / `Q020` | [G02g](#g02g-rendered-lines-stdfmt-stdio-and-stdlogger), [G02s](#g02s-scalar-functions-and-explicit-output-sourcescalar-callsv1) |
+| `std.logger` | Standard-error `log`, `flush`, and diagnostic threshold `log_level` | `Q015` | [G02g](#g02g-rendered-lines-stdfmt-stdio-and-stdlogger), [G02k-event](#g02k-the-checked-event-surface) |
+| `std.buffer` | Owned byte buffers (`bytes`, `extent`, `lend(b, lo, hi)`, byte indexing) | `Q015` | [G02k-buffer](#g02k-an-owned-byte-buffer-stdbuffer), [G02r](#g02r-resource-aware-byte-helpers-sourceresource-callsv1) |
+| `std.string` | Immutable UTF-8 string views (`"..."`, `len`, slicing, `concat`, `borrow_utf8`) | `Q015` | [G07.9](#g079-immutable-utf-8-string-views-v1-sourcestringv1), [G07.10](#g0710-a-checked-http11-message-subset-sourcehttpv1) |
+| `std.event` | Single-threaded event reactor (`event open/close`, `endpoints`, `watch`, `dispatch`) | `Q015` | [G02k-event](#g02k-the-checked-event-surface), [G07.11](#g0711-a-checked-socket-as-a-reactor-registered-event-source) |
+| `std.socket` | Loopback TCP/UDP sockets (`tcp`, `udp`, `bind`, `listen`, `connect`, `accept`, `send`/`recv`, `disjoint`) | `Q015` | [G07.11](#g0711-a-checked-socket-as-a-reactor-registered-event-source) |
+| `std.http` | Checked HTTP/1.1 messages (`request`, `response`, `header`, `content`) | `Q015` | [G07.10](#g0710-a-checked-http11-message-subset-sourcehttpv1) |
+
+---
+
+## Profile-to-grammar navigation and table of contents
+
+### Part I — Structural Source Envelope, Formal Clauses, and Module Bundles
+
+| Section | Profile / Consumer | Mode | Diagnostic band | Summary |
+|---|---|---|---|---|
+| [G01](#g01-structural-source-envelope) | `source.structural` | `.qr`, `.qv` | `Q000`, `Q010`–`Q015` | Module headers, top-level declarations, contract blocks, and per-file capability gates |
+| [G01a](#g01a-runtime-import-bundle) | Runtime bundle resolver | `.qr` | `Q014`, `Q403` | Bundled `#import std.*;` and recursive relative `#import "./file.qr";` resolution |
+| [G01p](#g01p-typed-contract-propositions-graph-version-3) | Hypothesis graph v3 | `.qv` | `QF002` | `quant proposition #id(...) = formula;` first-order integer/uninterpreted predicates |
+| [G01c](#g01c-explicit-entry-and-exit-conditions) | Hypothesis graph v4 / Boolean profile | `.qv` | — | `quant condition entry\|normal\|any\|error(E) #id(...) = formula;` |
+| [G01t](#g01t-typed-theorem-instantiation-obligations) | `quant_theorem::instantiate` | `.qv` | — | `quant theorem #id(...) using ref(...) requires (...) yields formula;` |
+| [G01e](#g01e-typed-conditional-own-operation-effects) | `quant_effect` | `.qv` | — | `quant effect <sel> #id(...) from #s to #s' when ... reads (...) writes (...) frame ... = ...;` |
+
+### Part II — Sequential `.qr` Execution Grammars
+
+| Section | Profile ID | Required `#import` | Diagnostic band | Summary |
+|---|---|---|---|---|
+| [G02](#g02-source-execution-profile) | `source.exec12` | *(none)* | `Q020`–`Q021`, `Q1xx`–`Q5xx` | Base sequential model (`qcore_acquire`, `qcore_check`, `drop`, `move`, zero-arg calls) |
+| [G02s](#g02s-scalar-functions-and-explicit-output-sourcescalar-callsv1) | `source.scalar-calls.v1` | `std.io` *(for IO)* | `Q020`–`Q021`, `Q028`, `Q030` | Direct acyclic scalar/record functions, checked arithmetic, `ArithmeticError`, `print` |
+| [G02t](#g02t-fixed-width-scalar-types) | Cross-route scalar tier | *(per route)* | `Q020` *(+ route band)* | Fixed-width integers (`bool`, `i8`..`usize`), `as` casts, `ArithmeticError`, IEEE `f32`/`f64` |
+| [G07.13](#g0713-the-first-source-level-aggregate-sourcerecordv1) | `source.record.v1` | *(none)* | `Q051`–`Q055` / `Q020` / `Q600` | Nominal `type R { ... }` records, nested paths, field writes, owned `bytes`/`Buffer` fields |
+| [G02k-buffer](#g02k-an-owned-byte-buffer-stdbuffer) | `source.buffer.v1` | `std.buffer` | `Q051`–`Q057` | Owned `bytes(N)`, `extent(b)`, indexed loads/stores, copy binds, disjoint `lend(b, lo, hi)` |
+| [G02r](#g02r-resource-aware-byte-helpers-sourceresource-callsv1) | `source.resource-calls.v1` | `std.buffer` | `Q020`–`Q021`, `Q051`–`Q057`, `Q100` | Direct helper functions passing `own<bytes> use one`, `borrow<bytes>`, and `lend<bytes>` |
+| [G07.9](#g079-immutable-utf-8-string-views-v1-sourcestringv1) | `source.string.v1` | `std.string` | `Q068`–`Q073`, `Q075`–`Q079` | Immutable UTF-8 views, `len`, `s[lo:hi]`, static `concat`, range-wise `borrow_utf8` |
+| [G02h](#g02h-the-pipe-operator-and-the-operator-token-family) | `source.pipe.v1` *(desugaring)* | *(none)* | `Q036`–`Q038` | Parse-time `\|>` pipeline desugaring and operator token gate (`\|`, `&`, `^`, `\|\|`, `&&`) |
+| [G02i-branch](#g02i-the-source-branching-construct) | `source.branch.v1` | *(none)* | `Q044`–`Q046`, `Q103`, `Q202` | Two-sorted check-time `if / else` conditions and four-model custody-join arms |
+| [G07.12](#g0712-the-checked-bounded-counted-loop-sourceloopv1) | `source.loop.v1` | *(none)* | `Q097`–`Q099` | Bounded `for i in 0..BOUND` loops and `[#unroll]` three-layer iteration budgets |
+| [G02g](#g02g-rendered-lines-stdfmt-stdio-and-stdlogger) | `source.std-io.v1` | `std.fmt`, `std.io`, `std.logger` | `Q028`–`Q031` | Deterministic rendered scalar lines (`print`, `log`, `log_level`, `flush`) |
+| [G02k-event](#g02k-the-checked-event-surface) | `source.event.v1` | `std.event` | `Q058`–`Q062`, `Q074` | Single-threaded event reactor (`event open/close`, `endpoints`, `watch`, `wake`, `dispatch`) |
+| [G07.11](#g0711-a-checked-socket-as-a-reactor-registered-event-source) | `source.socket.v1` | `std.socket` *(+ `std.event`)* | `Q080`–`Q089`, `Q664` | Checked loopback TCP/UDP sockets, IPv4/IPv6 endpoints, reactor loans, `disjoint` cells |
+| [G07.10](#g0710-a-checked-http11-message-subset-sourcehttpv1) | `source.http.v1` | `std.http`, `std.socket` | `Q090`–`Q096`, `Q664` | Checked RFC 9112 HTTP/1.1 requests/responses, static framing, verified `Content-Length` |
+
+### Part III — Quantitative and Concurrent `.qr` Execution Grammars
+
+| Section | Profile ID | Required `#import` / Marker | Diagnostic band | Summary |
+|---|---|---|---|---|
+| [G03](#g03-source-parameter-usage-grades) | Usage grade parser | *(any `.qr` / `.qv`)* | `Q100` | `use zero \| one \| affine \| relevant \| many \| N \| [lo, hi]` parameter grades |
+| [G04](#g04-closed-quantitative-indices) | `index.closed` | *(any `.qr` / `.qv`)* | `Q001`, `Q016` | `quant<...>` and `quant[\| ... \|]` credit/live indices and `where` constraints |
+| [G02a](#g02a-scoped-copy-task-execution) | `source.tasks.copy.v1` | `std.concurrency` + `concurrency checked;` | `Q020`, `Q300`, `Q500`, `Q600` | `thread scope`, `spawn`/`join`, `Result` recovery, scalar `copy`, and task records |
+| [G02v](#g02v-closures-with-explicit-capture-lists) | Closure lifting (`source.tasks.*`) | `std.concurrency` + `concurrency checked;` | `Q000`, `Q011`, `Q013`, `Q038`, `Q600` | Inline `spawn s \|captures\| -> T { ... }` closures lifted to hidden leaf workers |
+| [G02b](#g02b-owned-buffer-task-execution) | `ScopedOwnedTasksV1` | `std.concurrency` + `concurrency checked;` | `Q020`, `Q300`, `Q600` | Heap-allocated `own<Buffer<T>>` move captures, `qcore_buffer_new`/`read`, task ordinals |
+| [G02bb](#g02bb-scoped-read-loan) | `ScopedReadLoansV1` | `std.concurrency` + `concurrency checked;` | `Q020`, `Q600` | `borrow<Buffer<T>>` worker parameters and `read PLACE share FULL` scoped loans |
+| [G02bc-shares](#g02bc-counted-read-shares-and-the-checked-buffer-write) | `ScopedReadSharesV1` | `std.concurrency` + `concurrency checked;` | `Q020`, `Q600` | Fractional `share S` (`FULL = 1024`), `lend PLACE lo..hi` write leases, byte/whole writes |
+| [G02bc-errors](#g02bc-tagged-error-payload) | `ScopedErrorPayloadV1` | `std.concurrency` + `concurrency checked;` | `Q300`, `Q600` | Uniform `Variant(own<Buffer>)` error payloads and `qcore_error_payload` extraction |
+| [G02c](#g02c-guarded-fixed-footprint-mutex) | `source.mutex.guard.v1` | `std.concurrency` | `Q600`, `Q610`–`Q627` | Lexical `with lock`, `open`/`close`, `rank`, `grow`, `fact`, `under`, `share ... under` |
+| [G02e](#g02e-flat-epoch-quantitative-bound) | `source.epoch.bound.v1` | `std.concurrency` | `Q600`, `Q630`–`Q641` | Check-only `thread scope s epoch { ... }` memory/effort accounting over declared shapes |
+| [G02f](#g02f-flat-epoch-bound-over-a-checked-task-region) | `source.epoch.tasks.v1` | `std.concurrency` + `concurrency checked;` | `Q300`–`Q309`, `Q600`, `Q630`–`Q641` | Epoch plan reconciled with real scoped tasks, credit error recovery, `error region` epilogue |
+| [G02j](#g02j-composed-scoped-tasks-and-rendered-lines) | `source.std-io-tasks.v1` | `std.concurrency` + output modules | `Q050`, `Q030`, `Q600` | Scoped tasks composed with parent/worker rendered lines (`qcore.obs-reordering.v1`) |
+| [G09](#g09-concurrent-field-footprint-questions) | `source.bitfield-concurrency.v1` | `std.concurrency` + `concurrency checked;` | `Q600`, `Q661` | Property-only `field<off, sz>` / `bits<...>` concurrent write disjointness check |
+
+### Part IV — Native C Interoperability and `.qrlib` Linkage Grammars
+
+- [G02d. Bounded extern calls (`source.extern-call.v1`)](#g02d-bounded-extern-calls) (`Q022`–`Q027`)
+- [G02i-extern-io. Composed extern calls and rendered lines (`source.std-io-extern.v1`)](#g02i-composed-extern-calls-and-rendered-lines) (`Q043`)
+- [G02d.1. Unchecked linkage (`std.extern.unsafe`)](#g02d1-unchecked-linkage) (`Q032`–`Q035`)
+- [G02d.2. Native-library manifest v1 (`source.native-library.v1`)](#g02d2-the-native-library-manifest) (`Q039`–`Q042`, `Q047`–`Q049`, `Q063`–`Q064`)
+- [G02d.2.1. Generated native-library manifest v2 (`.qrlib`)](#g02d21-the-generated-manifest-v2) (`Q039`)
+- [G02d.3. Source library binding (`extern library NAME;`)](#g02d3-the-source-library-binding) (`Q065`–`Q067`)
+- [G02d.4. Delayed custody results (`source.quant-variant.v1`)](#g02d4-delayed-custody-results-sourcequant-variantv1)
+- [G02u. Imported C structs (`source.ffi.v1`, `std.ffi.unsafe`)](#g02u-imported-c-structs-sourceffiv1) (`Q022`–`Q035`, `Q051`–`Q053`, `Q063`–`Q067`)
+
+### Part V — `.qv` Contract Loader and Property Clause Grammars
+
+- [G05. Resource contract loader v1 (`contract.resource.v1`)](#g05-resource-loader-v1) (`QF001`, `QF002`, `QF005`)
+  - [G05-formula. Symbolic premise statements](#g05-formula-symbolic-premise-statements) (`QF001`)
+  - [G05-flow. Proposed premise expressions (`resource_premise_flow_v1`)](#g05-flow-proposed-premise-expressions)
+  - [G05-lifecycle. Typed symbolic lifecycle clauses (`resource_lifecycle_v1`)](#g05-lifecycle-typed-symbolic-lifecycle-clauses)
+  - [G05-guarded. Standalone readable guarded decomposition (`.qgd`)](#g05-guarded-standalone-readable-guarded-decomposition)
+  - [G05-guarded-source. Explicit guarded source embedding](#g05-guarded-source-explicit-guarded-source-embedding) (`QF003`)
+- [G05a. Contract inclusion and inheritance (`#include`, `contract inherit`)](#g05a-contract-inclusion-and-inheritance) (`QI001`–`QI020`)
+- [G05b. Bounds contract v1 (`bounds_contract_v1`)](#g05b-bounds-contract-v1)
+- [G05c. Quantified index checks (`quant checks`)](#g05c-quantified-index-checks)
+- [G05d. Null-dereference, dereference shorthand, and `quant live` checks](#g05d-null-dereference-checks)
+- [G05e. Null-property member, result, and result-range declarations](#g05e-null-property-member-and-result-declarations)
+- [G05f. Scoped member invariants (`[[stable]]`, `[[scope]]`)](#g05f-scoped-member-invariants)
+- [G05g. Outer contract v1 (`outer_contract_v1`, `quant #outer`)](#g05g-outer-contract-v1) (`QF004`)
+- [G05h. Local condition and registered-lifetime clauses (`[[local]]`)](#g05h-local-condition-and-registered-lifetime-clauses)
+- [G05i. Declared cell protocols (`quant cell`)](#g05i-declared-cell-protocols)
+- [G05k. Callee frames over a declared cell protocol (`#untouched`)](#g05k-callee-frames-over-a-declared-cell-protocol)
+- [G05j. C library result sets and written sets (`result_set`, `written_set`)](#g05j-c-library-result-sets)
+- [G05l. List-finiteness premises (`quant list ... |-> #finite`)](#g05l-list-finiteness-premises)
+
+### Part VI — Observation Policies, Service Configuration, Existing-C Subsets, and Extended BNF
+
+- [G06. Observation predicate grammar (`contract.observation`)](#g06-observation-predicate-grammar)
+  - [G06a. Bounded observed timed-wait contract consumer](#g06a-bounded-observed-timed-wait-contract-consumer)
+  - [G06b. Typed executable policy predicates (`check_typed_contract_facts`)](#g06b-typed-executable-policy-predicates)
+- [G08. Source-contract service configuration v1 & v2 (JSON)](#g08-source-contract-service-configuration-v1)
+- [Configured C audit composition (`source_contracts`)](#configured-c-audit-composition)
+- [G10. Existing C: C11 `_Generic` selections](#g10-existing-c-generic-selections)
+- [G11. Existing C: indexed `child`/`next` lookup](#g11-existing-c-indexed-childnext-lookup)
+- [G12. Existing C: checked call-free condition composition](#g12-existing-c-checked-call-free-condition-composition)
+- [G07. Extended design grammar and conformance boundary (`QCORE_DESIGN_GRAMMAR_r0_3.bnf`)](#g07-extended-grammar-and-conformance)
+
+---
+
+# Part I — Structural Source Envelope, Formal Clauses, and Module Bundles
+
+<a id="g01-structural-source-envelope"></a>
 
 ## G01. Structural source envelope
 
+### Purpose and module modes
+
+`G01` (`source.structural`) defines the top-level file envelope recognized by the Quirin front end before route-specific semantic elaboration. It governs module headers, bundled capability imports, runtime file imports, library bindings, top-level declaration categories, and structural `contract { ... }` blocks across `.qr` (executable or library) and `.qv` (contract) inputs.
+
+- **Optional header:** A `module_header` may appear at most once per file and must precede all imports and declarations. Omitting the header selects `executable` mode.
+- **Contract modules:** `module contract;` files are entry-free; declaring `contract` mode does not by itself install an observation policy or a C resource summary. Contract inclusion across provider crates uses `#include` ([G05a](#g05a-contract-inclusion-and-inheritance)), resolved exclusively by the contract loader before `G01` runs.
+- **Multi-file combination:** Multiple compilation inputs share one global declaration namespace, but header constraints and capability imports are checked **per file before combining declarations**. Combined compilation mode resolves as `executable` if any root is executable, else `library` if any root is a library, else `contract`.
+
+### Consolidated EBNF
+
 ```ebnf
-module_header = "module", ("executable" | "library" | "contract"), ";" ;
-source        = [module_header], {module_import | declaration} ;
-module_import = "import", IDENT, {".", IDENT}, ";" ;
-contract      = "contract", "{", {clause}, "}" ;
-clause        = "requires", NONEMPTY_EXPRESSION_TOKENS, ";"
-              | "ensures", selector, NONEMPTY_EXPRESSION_TOKENS, ";"
-              | "quant", selector, NONEMPTY_EXPRESSION_TOKENS, ";" ;
-selector      = "normal" | "any" | "error", "(", NONEMPTY_TYPE_TOKENS, ")" ;
+source          = [ module_header ], { top_level_item } ;
+module_header   = "module", ( "executable" | "library" | "contract" ), ";" ;
+
+top_level_item  = standard_import
+                | runtime_import
+                | library_binding
+                | declaration ;
+
+standard_import = [ "#" ], "import", IDENT, { ".", IDENT }, ";" ;
+runtime_import  = "#", "import", QUOTED_RELATIVE_QR_PATH, ";" ;     (* §G01a *)
+library_binding = "extern", "library", IDENT, ";" ;                 (* §G02d.3 *)
+
+contract        = "contract", "{", { clause }, "}" ;
+clause          = "requires", NONEMPTY_EXPRESSION_TOKENS, ";"
+                | "ensures", selector, NONEMPTY_EXPRESSION_TOKENS, ";"
+                | "quant", selector, NONEMPTY_EXPRESSION_TOKENS, ";"
+                | quant_formal_clause ;                             (* §G01p/c/t/e, Part V *)
+selector        = "normal"
+                | "any"
+                | "error", "(", NONEMPTY_TYPE_TOKENS, ")" ;
 ```
 
-`declaration` and the two uppercase token-sequence placeholders above deliberately denote structural parser regions, not a claim of full expression/type checking. The parser tracks balanced regions and clause spans. The relevant implementation is `crates/qcore-frontend/src/frontend.rs`, particularly declaration validation, contract parsing, parameter parsing and `elaborate_source`.
+### Structural retention vs. semantic admissibility
 
-Recognized declaration categories are concurrency profile, verifier scope, dimension, axis, type alias, resource type, error, constant, extern function and function. Broad statement/type classification includes forms that the source compiler will subsequently reject. The structural grammar is therefore not a sound shortcut for discovering executable capabilities by trying tokens until parsing succeeds.
+- **Balanced token regions:** `declaration`, `NONEMPTY_EXPRESSION_TOKENS`, and `NONEMPTY_TYPE_TOKENS` denote balanced structural parser regions rather than universally type-checked expressions. Broad statement and type classification retains forms that downstream execution routes subsequently reject; trial parsing is therefore **not** a sound way to probe executable capabilities.
+- **Recognized declaration categories:**
+  1. Concurrency profile marker (`concurrency checked;`)
+  2. Verifier scope (`verify scope ...`)
+  3. Nominal dimension (`dimension D : Idx + Ordered;`)
+  4. Quantitative axis (`quant axis a : credit<...> | live<...> | cost.total<...> | cost.peak<...>;`)
+  5. Type alias (`type Name = ...;`) and source record (`type Name { ... }`, [G07.13](#g0713-the-first-source-level-aggregate-sourcerecordv1))
+  6. Resource type (`resource type Name { ... }`)
+  7. Nominal error type (`error Name { Variant; Variant(own<Buffer>); }`)
+  8. Constant (`const ...`)
+  9. Imported C struct (`struct! { ... }`, [G02u](#g02u-imported-c-structs-sourceffiv1)) and source library binding (`extern library Name;`, [G02d.3](#g02d3-the-source-library-binding))
+  10. External function (`[unsafe] extern fn ...;`) and source function (`fn ... { ... }`)
+- **Structured task records (`frontend_tasks.rs`):** Structural parsing records `spawn S worker(...)` with ordered `copy`, `move`, `read ... share ...`, `lend ... LOW..HIGH`, and `write` place captures, `join move H`, and trailing `?` propagation, resolving live scopes, matching-arity source workers, capture roots, and handle binders. Typed statements preserve fresh binder IDs after resolving initializers. Structural task records do not widen `G02`'s sequential profile; actual task execution is checked on [G02a](#g02a-scoped-copy-task-execution)–[G02bc-errors](#g02bc-errors).
+- **Per-file bundled import rules:**
+  - Imports may appear after the optional `module_header` and between top-level declarations; they apply to the entire file in which they are written and are idempotent when repeated.
+  - Unknown bundled module names refuse at `Q014`.
+  - Using gated syntax without its file-local `#import` refuses (`Q015` for `std.concurrency`, `std.fmt`, `std.io`, `std.logger`, `std.buffer`, `std.string`, `std.event`, `std.socket`, `std.http`; `Q022` for `std.extern`; `Q032` for `std.extern.unsafe` and `std.ffi.unsafe`), including inside uncalled functions and non-executable modules.
+  - Importing vocabulary never discharges operation checks: scoped-task modules still require `concurrency checked;`. Package resolution, import aliases, wildcards, and reexports are unsupported.
 
-A header may occur at most once and only before declarations. The default is executable mode. A contract module is entry-free; it is not automatically an observation policy or a resource table. Multiple input modes combine as executable first, library second, contract last. Each file still has its own header constraint, and declarations share one namespace.
-
-Task syntax now has structured records in `frontend_tasks.rs`: `spawn S worker(...)`
-retains ordered `copy`, `move`, `read ... share ...` and `write` place captures;
-`join move H` retains its handle place. An immediately following `?` is retained.
-Name resolution identifies a live scope, a source worker with matching arity,
-capture roots and the handle binder. Typed statements preserve new binder IDs
-after resolving their initializers. Place/share syntax is not proof of capture
-types, permissions or live handles. These records do not extend G02's sequential executable profile. The separate
-G02a path now checks and executes its supported task subset; the earlier
-[task foundations record](reports/w6-source-task-foundations/README.md) remains historical.
-
-Bundled semantic modules require an explicit top-level `#import` in each source
-file. The current registry contains `std.concurrency`:
+### Examples
 
 ```qcore
 #import std.concurrency;
 concurrency checked;
+
+fn worker(x: i32) -> i32 {
+    return x;
+}
+
+fn main() -> i32 effects { throws<SpawnError>, spawn, join, may_block } {
+    thread scope s {
+        let h = spawn s worker(copy 7)?;
+        let out = join move h?;
+        return out;
+    }
+}
 ```
 
-Bundled import paths are dot-separated identifiers terminated by a semicolon. Imports
-may occur between top-level declarations, after the optional module header, and
-apply to the whole file. Repeated imports are idempotent. Unknown module names
-reject with `Q014`; concurrency forms without their import reject with `Q015`,
-including in uncalled bodies and non-executable modules. Each input file is
-checked before combining declarations: another file's import cannot grant it
-concurrency. Importing vocabulary does not discharge operation checks or make an
-unsupported profile executable. The task profile still requires its
-`concurrency checked;` marker. Runtime file imports are implemented by the source-bundle resolver below.
-Package resolution, import aliases, wildcards and reexports remain unsupported,
-and capabilities never transfer transitively. Bare `import` remains a bundled
-module compatibility spelling; a contract module takes another
-contract module's declarations through the separate `#include` directive of
-G05a, resolved by the contract loader against a published load path and never
-by this front end.
+### Implementation & Provenance
 
-### G01p. Typed contract propositions (graph version 3)
+- **Implementation:** `crates/qcore-frontend/src/frontend.rs` (declaration validation, contract parsing, parameter parsing, `elaborate_source`), `crates/qcore-frontend/src/frontend_tasks.rs`, `crates/qcore-frontend/src/module_imports.rs`.
+- **Historical reference:** [Task foundations record](reports/w6-source-task-foundations/README.md).
 
-`quant proposition` is contextual inside a function contract. The structural
-parser retains kind, text and span. Typed model inspection and graph replay
-parse and check the complete definition. A declared model's standalone formulas
-are entry obligations; they are not established by declaration. The strict
-resource/bounds loaders refuse unbound standalone entry obligations rather than
-installing a summary that ignores them. Grouped hypothesis metadata retains its
-existing evidence-only role. Theorem and effect representations are in
-G01t/G01e below. Since card SP6-SYMBOLIC-HYPOTHESIS-ATOMS this is the only
-declared hypothesis atom form: the string atom `resource_hypothesis(ID,
-STRING)` is refused (`QF002`, G05). A typed atom whose parameters are
-registered C04.18.9 terms in their rendered sorts (value sorts `obj`, `cls`,
-`fn`, `meth`, `res`, `run`; the SP6 term `#runs: predicate<fn,run>`) is a
-typed rendering of a premise formula (contract specification C04.18.9, SP6
-block; `qcore_frontend::premise_formula::check_rendering`).
+---
 
-```ebnf
-proposition = "quant", "proposition", "#", id, "(", [parameters], ")",
-              "=", formula, ";" ;
-parameters  = parameter, {",", parameter} ;
-parameter   = "#", id, ":", sort ;
-sort        = id | "predicate", "<", [ids], ">"
-              | "function", "<", ids, ">" ;
-ids         = id, {",", id} ;
-formula     = "#", id, "(", [arguments], ")"
-            | term, ("==" | "!=" | "<" | "<=" | ">" | ">="), term
-            | "!", formula | "(", formula, ")"
-            | "(", formula, ("&&" | "||" | "=>"), formula, ")"
-            | ("forall" | "exists"), "(", "#", id, ":", id, ")",
-              "{", formula, "}" ;
-arguments   = term, {",", term} ;
-term        = sum ;
-sum         = product, {("+" | "-"), product} ;
-product     = primary, {"*", primary} ;
-primary     = "#", id | INTEGER | "-", primary
-            | "#", id, "(", [arguments], ")" | "(", term, ")" ;
-```
-
-An `id` is 1–128 lowercase ASCII letters/digits/underscores beginning with a
-letter. `predicate` and `function` are type constructors, never value sorts.
-`predicate<...>` lists ordered argument sorts (`predicate<>` is nullary).
-`function<A, B, R>` has arguments A/B and result R; `function<R>` is nullary.
-All relation/function symbols are explicitly bound parameters. Calls require
-exact arity and value sorts; equality requires equal value sorts. Free names,
-duplicate parameters, active binder shadowing, higher-order quantification,
-prose strings, implicit predicates/functions and unsupported operators refuse.
-
-The value sort `integer` denotes mathematical unbounded integers. INTEGER is
-0 or a nonzero-leading decimal with at most 128 digits. Arithmetic and order
-require integer operands; `!=` lowers to negated equality. Functions/relations
-receive no C interpretation by their names. Target widths, sizes, constants,
-field identities, floating conversion and backend meanings require explicit
-bindings. Arithmetic does not wrap or assert that corresponding C arithmetic
-is defined. Other quantifier sorts may be empty; no finite or nonempty domain
-is inferred. Every source/model interpretation and actual premise remains open
-until checked for the exact environment. Missing interpretations are not
-negation evidence.
-
-Limits: 65,536 source bytes per definition; 64 parameters; 16 call arguments;
-256 combined formula/term AST nodes and depth 32 (root depth zero). Source
-nesting and parser work are additionally bounded (131,072 parsing steps;
-backtracking never replenishes work fuel). Schema validation rechecks identifier,
-sort, arity, node and depth limits. One definition creates one graph atom with
-its `#` binder as ID. `legacy_` is reserved; duplicate formal IDs refuse.
-
-A graph with formal atoms uses version 3. It records ungrouped formal IDs in
-its canonical sorted `requirements` list, so standalone model prerequisites
-cannot disappear. This field is omitted when empty; versions 1 and 2 retain
-their exact original encoding and refuse formal atoms or requirements. Group,
-refinement and lifecycle references retain their existing rules. Exact formal
-ASTs and requirements participate in graph digests and source replay.
-Interpretation/type checking alone supplies no theorem warrant or verdict.
-
-Implementation: `qcore_frontend::quant_proposition`,
-`qcore_schemas::quant_proposition`, `qcore_contract::hypothesis`.
-`quant_proposition_inventory` inspects specified model files and emits source/
-graph identities and entry requirements; it grants no C call permission.
-
-### G01c. Explicit entry and exit conditions
-
-User decision 2026-10-26: `quant condition` uses an explicit selector:
-
-```ebnf
-condition = "quant", "condition", condition-selector,
-            "#", id, "(", [parameters], ")", "=", formula, ";" ;
-condition-selector = "entry" | "normal" | "any"
-                   | "error", "(", error-type, ")" ;
-```
-
-Signatures, terms, formulas and their bounds are G01p's. The selected typed
-reader also bounds an error-type label to 1,024 bytes, nonblank and free of
-control characters. The structural selector retains the existing error-type
-source text; no error hierarchy or subtype matching is inferred.
-
-`entry` states a prerequisite at function entry. `normal` states an assertion at
-every normal return. `error(E)` selects exactly the matching typed error exit;
-`any` selects every terminating normal/error exit. None asserts termination.
-A negative C return code is a normal return. All before/after/result/trace
-projections are explicit typed parameters requiring actual source bindings.
-A missing condition interpretation is not negation evidence. Declarations,
-artifact identities and theorem names alone establish none of these assertions.
-
-`qcore_contract::quant_condition::declaration` inspects every typed condition
-and rejects duplicate IDs across condition/proposition/effect/theorem clauses.
-Structural parsing and generic inclusion/views preserve selectors and bodies.
-Strict resource/bounds/local-condition consumers refuse the new clauses.
-Hypothesis-only graph inspection retains explicit entry conditions as distinct
-`entry-condition` atoms in graph version 4. Every such atom is always present
-in canonical sorted `requirements`, even when metadata groups/refinements also
-reference it. Grouping cannot discharge an entry assertion. Versions 1–3 retain
-their prior bytes and rules; a v4 entry atom under an older version refuses.
-No graph inspection supplies the required valuation. Exit conditions are
-validated without treating those guarantees as antecedents. Whole-condition consumers must use the typed
-condition view. No interpreted C summary is installed by this interface.
-
-The bounded Boolean source-contract reader additionally accepts exact entry
-role definitions for modeled-object liveness, caller-exclusive modeled access,
-and `old_field` (unit) or `old_busy`/`old_lock` (i32) membership in `{0, 1}`.
-`qcore_contract::boolean_condition_profile` owns the exact typed signatures and
-formulas; matching an identifier alone is insufficient. Its `modeled(env,o)`
-interpretation includes every object mapped by the chosen source profile, and
-`during(env,e)` includes the selected call interval. Liveness and exclusivity
-are caller assumptions over that interpretation, not extracted C facts.
-
-For `normal` assertions this reader binds integer parameters only to its
-existing entry/exit ghosts (`old_*`, unprefixed fields, i32 `result`, and helper
-`field_*` writes). It accepts equality/inequality with integer literals,
-addition, subtraction and negation under checked i64 evaluation. Unsupported
-sorts, functions, operators, selectors or missing valuations refuse. Declaring
-an unused exit variable does not satisfy the existing requirement to constrain
-all exit fields/result/helper writes. Entry roles, signatures, both Boolean
-prestates, companion fields and complete source-path validation remain required.
-Every typed entry definition's canonical SHA-256 joins the task's explicit
-assumptions, alongside the entire source identity. This bounded consumer creates
-no generic graph support or ordinary C-call permission.
-
-The introducer and selectors are contextual ordinary words; no globally
-reserved word or lexer token is added. This form is distinct from the existing
-`quant #guard = [...]` bindings and
-local-condition blocks. Implementation: `qcore_schemas::quant_condition`,
-`qcore_frontend::quant_condition`, `qcore_contract::quant_condition`;
-semantics/audit: `QCore.QuantCondition` / `AuditQuantCondition.lean`.
-
-### G01t. Typed theorem instantiation obligations
-
-Inside a function contract, the contextual form is:
-
-```ebnf
-theorem = "quant", "theorem", "#", id, "(", [parameters], ")",
-          "using", reference, "(", [symbols], ")",
-          "requires", "(", [formula, {",", formula}], ")",
-          "yields", formula, ";" ;
-symbols = "#", id, {",", "#", id} ;
-reference = word, {".", word} ;
-```
-
-Parameters, terms and formulas follow G01p. A reference consists of nonempty ASCII
-identifier segments (letters/underscore first, letters/digits/underscores
-thereafter), at most 128 bytes each and 1,024 bytes overall, preserving case. It identifies the
-requested theorem; a spelling supplies no proof. Arguments are declared value,
-predicate or function symbols, at most 64. There are at most 32 prerequisites.
-A complete application has at most 65,536 source bytes, 64 parameters and 256
-combined formula/term nodes, depth 32. The selected reader consumes all bytes.
-
-`qcore_contract::quant_theorem::instantiate` accepts an explicitly supplied
-`TheoremSchema` and application. It checks both typed signatures, exact reference,
-argument sorts/arity and exact substituted prerequisites/conclusion. Substitution
-is conservative: a bound-name capture is refused; different binder spellings
-are not automatically equated. Model/audit references require well-formed paths
-and SHA256 values. No file, artifact contents, proof or registry authority is
-verified by those checks. The sealed, serialize-only result retains all premises,
-conclusion and artifact identities with `model_proof_binding` and `source_binding`
-**open**. No result can establish plugin suitability or discharge a premise.
-
-Structural parsing preserves the clause and generic views render it. Strict
-resource/bounds and local-condition consumers refuse applications. Implementation:
-`qcore_schemas::quant_theorem`, `qcore_frontend::quant_theorem`,
-`qcore_contract::quant_theorem`; conditional semantics/audit:
-`QCore.QuantTheorem` / `AuditQuantTheorem.lean`.
-
-### G01e. Typed conditional own-operation effects
-
-```ebnf
-effect = "quant", "effect", selector, "#", id, "(", [parameters], ")",
-         "from", "#", id, "to", "#", id,
-         "when", formula, "reads", "(", [arguments], ")",
-         "writes", "(", [arguments], ")", "frame", formula,
-         "=", formula, ";" ;
-selector = "normal" | "any" | "error", "(", word, ")" ;
-```
-
-Parameters/formulas/terms follow G01p. Entry and exit names are distinct bound
-values of sort `state`. Each footprint term has sort `object`. Reads and writes
-may overlap for read-modify-write operations. Each list has at most 64 terms;
-structurally identical duplicates within a list refuse. This is no alias proof.
-The complete definition has at most 65,536 bytes, 64 parameters and 256 combined
-formula/term nodes, depth 32 (footprint roots conservatively checked at depth 2).
-Guard, frame and transition are typed formulas over the same explicit signature.
-
-An effect is a conditional relation for the operation's own step. Its declaration
-establishes no occurrence, atomicity, memory order, synchronization, whole-call
-frame or source binding. Interference requires separate events and footprints.
-Structural parsing preserves selector/text/span; generic inclusion/views render
-it. Strict resource/bounds and local-condition consumers refuse it. No effect is
-installed as a call summary. Implementation: `qcore_schemas::quant_effect`,
-`qcore_frontend::quant_effect`; semantics/audit: `QCore.QuantEffect` /
-`AuditQuantEffect.lean`.
+<a id="g01a-runtime-import-bundle"></a>
 
 ### G01a. Runtime import bundle
 
-```ebnf
-standard_import = [ "#" ], "import", identifier, { ".", identifier }, ";" ;
-runtime_import = "#", "import", quoted_relative_runtime_path, ";" ;
-```
+#### Purpose and module mode
 
-Canonical usage is `#import std.io;`, `#import "./helper";` and
-`#import "../shared/helper.qr";`. Quoted paths contain no escapes or control
-characters and name relative `.qr` files, with exactly `.qr` appended when
-omitted. Top-level directives resolve recursively relative to their own source
-file, without package, directory or legacy-suffix fallback.
-`inspect_source_imports` returns mode/header/import metadata only;
-`parse_source_program` rejects unresolved runtime directives. The verification
-driver resolves the graph before parsing its derived checking projection.
+`G01a` specifies top-level bundled module imports and relative `.qr` file imports resolved into a deterministic, acyclic source bundle before route checking.
 
-`compile_files` and `compile_files_with_registry` use supplied snapshots only,
-all as roots. `compile_source_bundle_with_registry` separates roots from the
-available pool and explicitly selects snapshot-only or filesystem loading;
-the CLI selects filesystem loading. Snapshot precedence, modes, identity,
-bounded ordering and retained evidence follow [Runtime source imports](QCORE_SPEC_r0_3.md#runtime-source-imports).
-Unmarked/library dependencies contribute declarations but never executable
-root intent. Missing/ambiguous/cyclic/wrong-mode/bounded-out resolution refuses
-at Q014 (existing filename incompatibility Q403). No code is allocated.
-Capability checks are per file, including extern calls whose declaration comes
-from another file. Imports do not broaden execution profiles or supported call
-compositions. Contract inclusion remains the separate G05a loader.
-
-## G02. Source execution profile
-
-The following is the supported canonical body syntax, not a claim that every possible structurally accepted spelling of a declaration has ordinary type semantics:
+#### Consolidated EBNF
 
 ```ebnf
-body          = "{", {statement}, "}" ;
-statement     = acquisition | constant | check | direct_call | drop | move | return ;
-constant      = "let", IDENT, [ ":", "i32" ], "=", [ "-" ], NAT, ";" ;
-acquisition   = "let", IDENT, "=", "qcore_acquire", "(", RESOURCE_ID,
-                ",", BOOL, ",", ERROR_NAME, ")", ";" ;
-check         = "qcore_check", "(", BOOL, ",", ERROR_NAME, ")", ";" ;
-direct_call   = FUNCTION_NAME, "(", ")", ";" ;
-drop          = "drop", RESOURCE_BINDING, ";" ;
-move          = "move", RESOURCE_BINDING, ";" ;
-return        = "return", [ ["-"], NAT ], ";" ;
-BOOL          = "true" | "false" ;
+standard_import = [ "#" ], "import", IDENT, { ".", IDENT }, ";" ;
+runtime_import  = "#", "import", QUOTED_RELATIVE_RUNTIME_PATH, ";" ;
 ```
 
-The optional `i32` annotation on an integer literal binding is checked against
-the lowered value. Mismatched or unsupported explicit annotations and malformed
-local heads refuse at Q020. `qcore_acquire` publishes a custody identity without
-a nominal result type; annotations on its binding, including `own<T>`, refuse
-until the operation supplies that evidence. Error-region nesting does not bypass
-this check. Local usage annotations retain Q100.
+#### Semantic side conditions, bounds, and resolution rules
 
-A parameter annotation is checked too (card `W48-QR-SCALAR-TYPES-R2`). This
-body path supplies no argument to any parameter — a direct call names a
-zero-parameter function and the emitted entry has none — so a parameter's type
-must be one of the §G02t scalar table (`isize`/`usize` only with a recorded
-target) and every other annotation (`Widget`, `fn() -> i32`, `own<T>`,
-`borrow<T>`, …) refuses at Q020. Before the card no parameter annotation was
-read at all (the named boundary B-1 of `docs/reports/remaining-v03`).
+- **Path syntax:** `QUOTED_RELATIVE_RUNTIME_PATH` must be non-empty, contain no backslash escapes, backslashes, control characters, or drive prefixes, and name a relative `.qr` file. Omitting the extension appends `.qr` (`"./helper"` resolves `"./helper.qr"`); any explicit extension other than `.qr` refuses. Bare `import "./helper";` without `#` is rejected.
+- **No search fallback:** Directives resolve recursively relative to the importing file's own directory, with no package, directory, environment, or legacy-extension (`.qcore`) fallback. Contract source (`module contract;`) must not use runtime file imports; contract inclusion remains `#include` ([G05a](#g05a-contract-inclusion-and-inheritance)).
+- **Frontend vs. driver entry points:**
+  - `inspect_source_imports` extracts mode, header, and import metadata only.
+  - `parse_source_program` rejects unresolved runtime `#import "..."` directives (`Q000`).
+  - `compile_files` and `compile_files_with_registry` resolve against caller-supplied snapshots only, treating all supplied files as roots.
+  - `compile_source_bundle_with_registry` separates explicit roots from an available snapshot pool and selects either snapshot-only virtual resolution or filesystem loading (used by CLI `quirin check` and `quirin emit`).
+- **Filesystem & snapshot hygiene:** Supplied snapshots take precedence over disk at the same lookup identity; duplicate snapshot identities refuse even if byte-identical. Filesystem mode resolves physical symlink targets before simplifying `..` and refuses unresolved parent steps.
+- **Mode and capability isolation:** Unmarked or `module library;` dependencies contribute declarations in source-order depth-first postorder (every dependency completed before its importer), but never contribute executable root intent (`module executable;` or `module contract;` dependencies refuse). Every file's `#import std.*;` capabilities are checked independently: calling an `extern fn` declared in an imported helper still requires `#import std.extern;` in the calling file (`Q022`).
+- **Bundle bounds and diagnostics:** Maximum **1,024** supplied/selected modules, **16 MiB** total retained UTF-8 source bytes, and recursive traversal depth **128**. Missing, unreadable, cyclic, ambiguous, wrong-mode, or bound-exceeding imports refuse at `Q014` (filename/mode incompatibility refuses at `Q403`).
 
-An `extern fn` declaration no body calls is read too (card
-`W48-QR-SCALAR-TYPES-R3`, on every route of an executable or library module):
-its parameters and result must be in the §C04.1 ABI vocabulary, and anything
-else — `Widget`, `own<T>`, a `quant<…>` parameter — refuses at Q020 (§G02t,
-"Every extern declaration is read").
-
-`RESOURCE_ID` must fit `u32`. `ERROR_NAME` must be declared; when no error declarations exist the driver provides its default `Failure` case. Resource bindings must satisfy ownership and cleanup checks. A `move` transfers to the abstract result payload; it does not simply release an external endpoint. A unit result uses bare return, represented as zero in the reduced ABI. An i32 result requires its signed literal; the separate custody payload is explicitly identified in compilation result metadata.
-
-`qcore_acquire` and `qcore_check` take literal Boolean controls in this profile. They are model operations, not general malloc calls or arbitrary runtime conditions. General expressions, argument-taking calls, indirect calls, calls through a shadowing local, calls to extern declarations, nested source control flow, source lambdas and source threading are not accepted by this driver body path. Local `use` annotations are explicitly rejected here rather than ignored. A bounded extern call is accepted by the separate `source.extern-call.v1` path of §G02d, which is selected before this one and does not widen it: this body path still refuses every call whose target is not a zero-parameter source function.
-
-A direct call must resolve to a zero-parameter source function. For C emission, it must also have supported acyclic call structure and an interpreted observation with no resource trace, a normal result, and no owned payload. It is not enough that the function's aggregate net resource change is zero. Declared user effects and general contract predicates are not comprehensively checked by this slice.
-
-The executable driver admits explicit i32/unit result annotations and validates each return form. Signed i32 literals include both extrema; the signed value is range-checked in a wider representation. Other result annotations, nonliteral returns and scalar/type mismatches reject. Structural tooling preserves richer result syntax, but full owned-result/per-exit typing is still unsupported. A separate custody identity ledger retains the reduced model's transfer payload; it is not proof that an i32 annotation describes owned values.
-
-An example within the canonical slice is:
+#### Example
 
 ```qcore
+// main.qr
+#import std.io;
+#import "./math_helpers";
+#import "../shared/constants.qr";
+
+fn main() -> i32 effects { io } {
+    let v = add_offset(10);
+    print(v);
+    return 0;
+}
+```
+
+#### Implementation & Provenance
+
+- **Specification:** [Runtime source imports](QCORE_SPEC_r0_3.md#runtime-source-imports).
+- **Implementation:** `crates/qcore-frontend/src/module_imports.rs`, `crates/qcore-verification/src/driver.rs` (`CompiledModule::source_bundle`).
+
+---
+
+<a id="g01p-typed-contract-propositions-graph-version-3"></a>
+
+### G01p. Typed contract propositions (graph version 3)
+
+#### Purpose and module mode
+
+Inside a function `contract { ... }` block (typically in `.qv` contract/model modules), `quant proposition` declares a named, explicitly sorted first-order formula over mathematical integers and uninterpreted value/predicate/function parameters.
+
+- **Sole hypothesis atom form:** Since card `SP6-SYMBOLIC-HYPOTHESIS-ATOMS`, `quant proposition` is the **only** admitted hypothesis atom declaration; the legacy prose string form `resource_hypothesis(ID, STRING)` is refused on every route with `QF002` ([G05](#g05-resource-loader-v1)).
+- **Premise rendering bridge:** A typed atom whose parameters are registered C04.18.9 terms in their rendered sorts (value sorts `obj`, `cls`, `fn`, `meth`, `res`, `run`, plus `#runs: predicate<fn, run>`) serves as a checked typed rendering of a symbolic premise formula ([contract spec §C04.18.9](QCORE_CONTRACT_SPEC_r0_3.md), `qcore_frontend::premise_formula::check_rendering`).
+- **Obligation discipline:** Standalone formulas in a declared model are **entry obligations**, never self-establishing facts. Strict resource and bounds loaders refuse unbound standalone entry obligations rather than installing a summary that ignores them.
+
+#### Consolidated EBNF
+
+```ebnf
+proposition = "quant", "proposition", "#", id, "(", [ parameters ], ")",
+              "=", formula, ";" ;
+parameters  = parameter, { ",", parameter } ;
+parameter   = "#", id, ":", sort ;
+sort        = id
+            | "predicate", "<", [ ids ], ">"
+            | "function", "<", ids, ">" ;
+ids         = id, { ",", id } ;
+
+formula     = "#", id, "(", [ arguments ], ")"
+            | term, ( "==" | "!=" | "<" | "<=" | ">" | ">=" ), term
+            | "!", formula
+            | "(", formula, ")"
+            | "(", formula, ( "&&" | "||" | "=>" ), formula, ")"
+            | ( "forall" | "exists" ), "(", "#", id, ":", id, ")",
+              "{", formula, "}" ;
+
+arguments   = term, { ",", term } ;
+term        = sum ;
+sum         = product, { ( "+" | "-" ), product } ;
+product     = primary, { "*", primary } ;
+primary     = "#", id
+            | INTEGER
+            | "-", primary
+            | "#", id, "(", [ arguments ], ")"
+            | "(", term, ")" ;
+```
+
+#### Semantic side conditions and quantitative bounds
+
+- **Identifiers and literals:**
+  - `id` is 1–128 lowercase ASCII characters `[a-z][a-z0-9_]*` beginning with a letter. The prefix `legacy_` is reserved; duplicate formal IDs refuse.
+  - `INTEGER` is `0` or a nonzero-leading decimal literal of at most 128 digits.
+- **Sorting and scoping:**
+  - `predicate` and `function` are higher-order sort constructors for formal parameters, never value sorts and never quantifiable inside `forall`/`exists`.
+  - `predicate<S1, ..., Sn>` takes ordered value-sort arguments (`predicate<>` is nullary). `function<A1, ..., An, R>` takes argument sorts `A1..An` and returns value sort `R` (`function<R>` is nullary).
+  - Every predicate and function symbol in `formula` or `term` must be an explicitly bound `#` parameter; calls require exact arity and matching value sorts.
+  - `==` and `!=` require equal value sorts (`!=` lowers to negated equality). Arithmetic (`+`, `-`, `*`, unary `-`) and ordering (`<`, `<=`, `>`, `>=`) require the built-in value sort `integer` (mathematical unbounded $\mathbb{Z}$, never wrapping or asserting C overflow safety).
+  - Free names, duplicate parameter names, shadowing of active `#` binders, prose strings, implicit symbols, and binary connectives without enclosing parentheses (`(A && B)`) refuse.
+  - Uninterpreted quantifier value sorts may denote empty or infinite domains; no C width, field layout, constant value, or non-emptiness is inferred from parameter names.
+- **Graph version 3 encoding:** One `quant proposition` creates one graph atom keyed by its `#id`. Any hypothesis graph containing formal atoms uses schema **version 3** and records ungrouped formal IDs in its canonical sorted `requirements` list (omitted when empty; graph versions 1 and 2 refuse formal atoms and `requirements`). Exact formal ASTs and `requirements` participate in graph digests and source replay.
+
+| Resource / Complexity Bound | Maximum |
+|---|---|
+| Source bytes per `quant proposition` | 65,536 bytes |
+| Formal parameters | 64 |
+| Call arguments per application | 16 |
+| Combined formula + term AST nodes | 256 nodes |
+| AST depth (root at depth 0) | 32 |
+| Parser work fuel (backtracking never replenishes) | 131,072 steps |
+
+#### Example
+
+```qcore
+module contract;
+
+extern fn counter_inc(c: ptr<mut, u8>) -> i32 contract {
+    quant proposition #monotonic_step(
+        #before: integer,
+        #after: integer,
+        #valid: predicate<integer>
+    ) = (#valid(#before) => ((#after == #before + 1) && (#after > #before)));
+};
+```
+
+#### Implementation & Provenance
+
+- **Cards:** `SP6-SYMBOLIC-HYPOTHESIS-ATOMS` (2026-10-26 formal hypothesis track).
+- **Implementation:** `qcore_frontend::quant_proposition`, `qcore_schemas::quant_proposition`, `qcore_contract::hypothesis`, `quant_proposition_inventory`, `qcore_frontend::premise_formula::check_rendering`.
+- **Lean model:** `QCore.QuantProposition`.
+
+---
+
+<a id="g01c-explicit-entry-and-exit-conditions"></a>
+
+### G01c. Explicit entry and exit conditions
+
+#### Purpose and module mode
+
+Inside a function `contract { ... }` block, `quant condition` states a typed mathematical assertion anchored to an explicit function entry or exit selector (user decision 2026-10-26).
+
+#### Consolidated EBNF
+
+```ebnf
+condition          = "quant", "condition", condition_selector,
+                     "#", id, "(", [ parameters ], ")", "=", formula, ";" ;
+condition_selector = "entry"
+                   | "normal"
+                   | "any"
+                   | "error", "(", error_type, ")" ;
+```
+
+*(Here `id`, `parameters`, and `formula` — along with their AST, parameter, and parser-fuel bounds — are inherited verbatim from [G01p](#g01p-typed-contract-propositions-graph-version-3).)*
+
+#### Semantic side conditions, graph v4 rules, and bounded Boolean consumer
+
+- **Selector semantics:**
+  - `entry`: caller prerequisite at function entry.
+  - `normal`: postcondition on every normal C/Quirin return (a negative C integer return code is a `normal` return unless mapped by an error adapter).
+  - `error(E)`: postcondition on the exact nominal typed error exit `E` (`error_type` is 1–1,024 bytes, non-blank, free of control characters, with no subtype hierarchy).
+  - `any`: postcondition across every terminating `normal` or `error` exit.
+  - **Partial correctness:** None of the four selectors asserts termination. Before/after states, return values, and trace projections must be passed as explicit `#` parameters and bound by the consumer; missing interpretations are never treated as negation evidence.
+- **Cross-clause uniqueness and Graph v4:**
+  - `qcore_contract::quant_condition::declaration` rejects duplicate `#id` names across `condition`, `proposition`, `effect`, and `theorem` clauses in the same contract.
+  - Strict resource-v1, bounds-v1, and local-condition loaders refuse `quant condition` clauses.
+  - Hypothesis-graph inspection records `entry` conditions as `entry-condition` atoms in **graph version 4**, unconditionally placing every `entry-condition` ID in canonical sorted `requirements` even if referenced by metadata groups/refinements (grouping cannot discharge an entry obligation; graph versions 1–3 refuse v4 atoms). Exit conditions are validated without assuming entry guarantees as implicit antecedents.
+- **Bounded Boolean source-contract reader (`qcore_contract::boolean_condition_profile`):**
+  - **Entry roles:** Admits exact typed formulas for modeled-object liveness, caller-exclusive access (`modeled(env, o)` over mapped profile objects; `during(env, e)` over the call interval), and Boolean prestate membership (`old_field` unit or `old_busy`/`old_lock` `i32` in `{0, 1}`). Every entry definition's canonical SHA-256 is recorded in the task's explicit assumptions.
+  - **`normal` exit assertions:** Binds `integer` parameters only to established ghosts (`old_*`, unprefixed post-fields, `i32` `result`, and helper `field_*` writes), admitting `==`, `!=`, `+`, `-`, and unary `-` with integer literals under checked `i64` evaluation. Declaring an unused parameter does not satisfy the obligation to constrain all exit fields, `result`, and helper writes.
+- **Lexical status:** `quant`, `condition`, `entry`, `normal`, `any`, and `error` are contextual ordinary words here; no global reserved word or lexer token is added. Distinct from `quant #guard = (...)` ([G05h](#g05h-local-condition-and-registered-lifetime-clauses)).
+
+#### Example
+
+```qcore
+module contract;
+
+extern fn flag_reset(s: ptr<mut, u8>) -> i32 contract {
+    quant condition entry #pre_bit(#old_busy: integer) =
+        ((#old_busy == 0) || (#old_busy == 1));
+    quant condition normal #post_clear(#busy: integer, #result: integer) =
+        ((#busy == 0) && (#result == 0));
+};
+```
+
+#### Implementation & Provenance
+
+- **Implementation:** `qcore_schemas::quant_condition`, `qcore_frontend::quant_condition`, `qcore_contract::quant_condition`, `qcore_contract::boolean_condition_profile`.
+- **Lean model & audit:** `QCore.QuantCondition`, `AuditQuantCondition.lean`.
+
+---
+
+<a id="g01t-typed-theorem-instantiation-obligations"></a>
+
+### G01t. Typed theorem instantiation obligations
+
+#### Purpose and module mode
+
+Inside a function `contract { ... }` block, `quant theorem` records an explicit instantiation request against a named formal theorem schema, retaining all substituted prerequisite obligations and open proof/source bindings.
+
+#### Consolidated EBNF
+
+```ebnf
+theorem   = "quant", "theorem", "#", id, "(", [ parameters ], ")",
+            "using", reference, "(", [ symbols ], ")",
+            "requires", "(", [ formula, { ",", formula } ], ")",
+            "yields", formula, ";" ;
+symbols   = "#", id, { ",", "#", id } ;
+reference = word, { ".", word } ;
+```
+
+*(Here `id`, `parameters`, and `formula` follow [G01p](#g01p-typed-contract-propositions-graph-version-3); `word` is a case-preserving ASCII identifier `[A-Za-z_][A-Za-z0-9_]*`.)*
+
+#### Semantic side conditions and bounds
+
+- **Reference and arity limits:**
+  - `reference`: non-empty dot-separated ASCII identifier segments (`word`), at most **128 bytes** per segment and **1,024 bytes** overall, case-preserving. Spelling a theorem name supplies zero proof authority.
+  - `symbols`: at most **64** declared value, predicate, or function `#id` symbols from `parameters`.
+  - `requires (...)`: at most **32** prerequisite formulas.
+  - Overall clause limits: at most **65,536** source bytes, **64** parameters, and **256** combined formula/term AST nodes at maximum depth **32**.
+- **Conservative instantiation (`qcore_contract::quant_theorem::instantiate`):**
+  - Checks an explicitly supplied `TheoremSchema` against the clause's typed signature, exact `reference`, symbol argument arity/sorts, and exact substituted `requires` and `yields` formulas.
+  - Substitution is strictly capture-avoiding: bound-variable capture refuses, and distinct quantified binder spellings are **not** silently alpha-equated.
+  - Model and audit artifact references require well-formed paths and SHA-256 digests, but instantiation performs **no** filesystem read, Lean kernel check, or registry trust elevation: the sealed, serialize-only result leaves both `model_proof_binding` and `source_binding` **open**.
+  - Strict resource-v1, bounds-v1, and local-condition loaders refuse `quant theorem` clauses.
+
+#### Example
+
+```qcore
+module contract;
+
+extern fn step_counter(p: ptr<mut, u8>) -> unit contract {
+    quant theorem #step_nonneg(#n: integer, #next: integer)
+        using QCore.CounterModel.step_preserves_nonneg(#n, #next)
+        requires (#n >= 0, #next == #n + 1)
+        yields (#next >= 0);
+};
+```
+
+#### Implementation & Provenance
+
+- **Implementation:** `qcore_schemas::quant_theorem`, `qcore_frontend::quant_theorem`, `qcore_contract::quant_theorem`.
+- **Lean model & audit:** `QCore.QuantTheorem`, `AuditQuantTheorem.lean`.
+
+---
+
+<a id="g01e-typed-conditional-own-operation-effects"></a>
+
+### G01e. Typed conditional own-operation effects
+
+#### Purpose and module mode
+
+Inside a function `contract { ... }` block, `quant effect` specifies a typed relational transition for an operation's own step between explicit entry and exit `state` binders, naming its precondition guard (`when`), `object` read/write footprints, preserved `frame` formula, and post-state relation (`=`).
+
+#### Consolidated EBNF
+
+```ebnf
+effect   = "quant", "effect", selector, "#", id, "(", [ parameters ], ")",
+           "from", "#", id, "to", "#", id,
+           "when", formula,
+           "reads", "(", [ arguments ], ")",
+           "writes", "(", [ arguments ], ")",
+           "frame", formula,
+           "=", formula, ";" ;
+selector = "normal" | "any" | "error", "(", word, ")" ;
+```
+
+*(Here `id`, `parameters`, `arguments`, and `formula` follow [G01p](#g01p-typed-contract-propositions-graph-version-3); `word` is an ASCII identifier.)*
+
+#### Semantic side conditions and bounds
+
+- **State and footprint typing:**
+  - The `from #s` and `to #s'` binders must be **distinct** parameters declared in `parameters` with value sort `state`.
+  - Every term in `reads(...)` and `writes(...)` must have value sort `object` and conservative root depth at most **2**.
+  - `reads` and `writes` may overlap (representing read-modify-write operations), with at most **64** terms in each list. Structurally identical duplicate terms within the same list refuse; distinct terms are **not** assumed non-aliasing without separate disjointness evidence.
+  - Guard (`when`), `frame`, and transition (`=`) formulas are typed over the shared `parameters` signature.
+- **Overall bounds:** At most **65,536** source bytes, **64** parameters, and **256** combined formula/term AST nodes at maximum depth **32**.
+- **Authority boundary:** Declaring an effect states a conditional own-step relation only; it establishes no execution occurrence, atomicity, C11 memory order, cross-thread synchronization, whole-call frame, or C call summary. Strict resource-v1, bounds-v1, and local-condition loaders refuse `quant effect` clauses.
+
+#### Example
+
+```qcore
+module contract;
+
+extern fn cell_write(c: ptr<mut, u8>, v: i32) -> unit contract {
+    quant effect normal #write_cell(
+        #s0: state,
+        #s1: state,
+        #cell: object,
+        #val: function<state, object, integer>,
+        #v: integer
+    )
+    from #s0 to #s1
+    when (#v >= 0)
+    reads ()
+    writes (#cell)
+    frame (forall (#other: object) { (#other != #cell => (#val(#s1, #other) == #val(#s0, #other))) })
+    = (#val(#s1, #cell) == #v);
+};
+```
+
+#### Implementation & Provenance
+
+- **Implementation:** `qcore_schemas::quant_effect`, `qcore_frontend::quant_effect`.
+- **Lean model & audit:** `QCore.QuantEffect`, `AuditQuantEffect.lean`.
+
+---
+
+# Part II — Sequential `.qr` Execution Grammars
+
+<a id="g02-source-execution-profile"></a>
+
+## G02. Base sequential resource profile (`source.exec12`)
+
+### Purpose and module mode
+
+`source.exec12` is the baseline sequential `.qr` execution profile (`executable` mode by default, or entry-free `library` mode). It requires no `#import` unless optional diagnostic logging (`log_level`, `#import std.logger;`) is configured, and serves as the sequential fallback route when no specialized stdlib, scalar-call, extern, FFI, or concurrent route is selected. Check-time `if / else` branching ([G02i-branch](#g02i-the-source-branching-construct)) and sequential `error region` blocks (`source.region.v1`) lower directly onto this profile's multi-model sequential IR.
+
+### Consolidated EBNF
+
+```ebnf
+body        = "{", { statement }, "}" ;
+statement   = acquisition
+            | constant
+            | check
+            | direct_call
+            | drop
+            | move
+            | if_stmt                                           (* §G02i-branch *)
+            | region_stmt                                       (* source.region.v1 *)
+            | return ;
+
+constant    = "let", IDENT, [ ":", "i32" ], "=", [ "-" ], NAT, ";" ;
+acquisition = "let", IDENT, "=", "qcore_acquire", "(",
+              RESOURCE_ID, ",", BOOL, ",", ERROR_NAME, ")", ";" ;
+check       = "qcore_check", "(", BOOL, ",", ERROR_NAME, ")", ";" ;
+direct_call = FUNCTION_NAME, "(", ")", ";" ;
+drop        = "drop", RESOURCE_BINDING, ";" ;
+move        = "move", RESOURCE_BINDING, ";" ;
+return      = "return", [ [ "-" ], NAT ], ";" ;
+BOOL        = "true" | "false" ;
+
+region_stmt = "error", "region", IDENT, "{",
+                { acquisition | drop | "credit", NAT, ";" | "effort", NAT, ";" },
+                "qcore_check", "(", "false", ",", ERROR_NAME, ")", ";",
+              "}", "catch", "(", ERROR_NAME, ")",
+              [ "quant", "open", IDENT, "as", IDENT ],
+              "{", { "discharge", IDENT, ";" }, "}" ;
+```
+
+### Semantic side conditions, annotations, and boundaries
+
+- **Checked annotations (`SOURCE-ANNOTATION-ENFORCEMENT`, `W48-QR-SCALAR-TYPES-R2`, `R3`):**
+  - **Local bindings:** Optional `: i32` on an integer literal `let` is checked against the full signed 32-bit range (`-2147483648 ..= 2147483647`). Mismatched or unsupported local type annotations and malformed local heads refuse at `Q020`. Because `qcore_acquire` establishes custody identity without publishing a nominal payload type, **every** explicit type annotation on its `let` binding (including `own<T>`) refuses at `Q020`, even inside an `error region`. Local `use` grade annotations refuse at `Q100`.
+  - **Function parameters:** Even though `direct_call` passes zero arguments and the executable entry takes none, every function parameter annotation is validated against the [G02t](#g02t-fixed-width-scalar-types) scalar table (`isize`/`usize` require `--recorded-target`). Non-scalar parameter types (`Widget`, `fn() -> i32`, `own<T>`, `borrow<T>`) refuse at `Q020`.
+  - **Uncalled `extern fn` declarations:** On every route of an `executable` or `library` module, all `extern fn` signatures are validated even if never called: parameter types must belong to the `§C04.1` ABI vocabulary ([G02t](#g02t-fixed-width-scalar-types) scalars or custody pointers) and result types to that vocabulary or `unit`; anything else (`Widget`, `own<T>`, `quant<...>`) refuses at `Q020`. (`module contract;` files are exempt and validated by their contract loader.)
+- **Controlled model intrinsics and custody:**
+  - `RESOURCE_ID` must fit `u32`. `ERROR_NAME` must name a declared `error` type; if the module declares none, the driver synthesizes a default `Failure` error type.
+  - `qcore_acquire` and `qcore_check` require literal `BOOL` controls; they are controlled model operations, not general `malloc` calls or runtime predicates.
+  - `drop` releases live custody; `move` transfers a live resource to the modeled function result payload (`CompiledModule.result_profile`), not an external OS handle.
+  - Result annotations on executable functions must be `i32` (requiring a range-checked signed integer literal `return`) or `unit` (requiring bare `return;`, encoded as `0` in the reduced ABI).
+- **Direct calls and C11 emission:**
+  - `direct_call` must resolve to an unshadowed, zero-parameter source function in an acyclic call graph.
+  - For C emission, every reachable callee must be observationally pure in the reduced model: empty resource trace, normal exit, and no moved custody payload (net-zero aggregate resource flow alone is insufficient).
+- **Excluded forms:** General arithmetic expressions, argument-passing calls, indirect calls, extern calls (routed to [G02d](#g02d-bounded-extern-calls) ahead of `G02`), loops, lambdas, threading, and non-empty inline `contract { ... }` blocks (`Q021`; empty `contract {}` is accepted).
+
+### Example
+
+```qcore
+error Failure { Failed; }
+
 fn main() -> i32 {
     let item = qcore_acquire(1, true, Failure);
+    qcore_check(true, Failure);
     drop item;
     return 0;
 }
 ```
 
-This example does not demonstrate arbitrary allocation ABI support. Source references: `compiler/src/driver.rs:390–610, 724–767, 775–932`.
+### Implementation & Provenance
 
+- **Cards:** `SOURCE-ANNOTATION-ENFORCEMENT`, `QUANT-REGION-SOURCE`, `W48-QR-SCALAR-TYPES-R2`, `W48-QR-SCALAR-TYPES-R3`.
+- **Implementation:** `compiler/src/driver.rs`, `crates/qcore-frontend/src/whole_program.rs`, `crates/qcore-frontend/src/source_region.rs`.
+
+---
+
+<a id="g02s-scalar-functions-and-explicit-output-sourcescalar-callsv1"></a>
 <a id="g02s-pure-scalar-functions-sourcescalar-callsv1"></a>
 
 ## G02s. Scalar functions and explicit output (`source.scalar-calls.v1`)
 
-`SOURCE-SCALAR-CALLS-V1` adds the executable subset below. This profile is
-selected after specialized profiles and before the legacy standard-IO route
-when retained tokens contain the function-style `print(` form. Otherwise a
-nonliteral return/local, an annotated local, or an argument-taking statement
-call to a declared source function selects it. Sequential resource intrinsics
-retain their previous route. Card `W48-QR-SCALAR-TYPES` adds one more door: a
-module with `std.io` line statements **and** the scalar-call syntax above
-reaches this route when the `source.std-io.v1` lowering refuses it; every module
-that lowering admits keeps that route byte for byte. It adds no tokens or
-reserved words and does not widen the other profiles.
+### Purpose and route selection
+
+`source.scalar-calls.v1` compiles direct, acyclic multi-function `.qr` programs over fixed-width scalars, IEEE floats, scalar records, checked arithmetic with optional `ArithmeticError` propagation/recovery, and deterministic standard-output / logger lines.
+
+- **Route selection:** Selected after concurrent, FFI, extern, event, buffer, string, HTTP, and socket routes, and **before** `source.std-io.v1`, whenever:
+  1. Retained tokens contain the function-style `print(` form;
+  2. A function contains a non-literal `return` or `let`, a typed local annotation, or an argument-taking call to a source function;
+  3. A module mixes `std.io` line statements with scalar-call syntax that `source.std-io.v1` refuses (leaving every module admitted by `source.std-io.v1` byte-identical); or
+  4. A module declares a buffer-free record ([G07.13](#g0713-the-first-source-level-aggregate-sourcerecordv1)) alongside more than one function (`W48-QR-USABLE-RECORDS`).
+- **Required `#import`s:** Pure scalar/record modules need no import. `print(expr);` requires `#import std.io;`. Line statements require `#import std.io;` (`print`), `#import std.logger;` (`log`, `flush`), and `#import std.fmt;` (`dec`, `hex`).
+
+### Consolidated EBNF
 
 ```ebnf
-function = "fn", NAME, "(", [parameter, {",", parameter}], ")", "->", result,
-           ["effects", "{", [effect, {",", effect}], "}"], ["contract", "{", "}"],
-           block ;
-effect = "io" | "throws", "<", "ArithmeticError", ">"
-       | "partial_eq" | "partial_ord" ;                        (* each once; §G02t *)
-block = "{", {statement}, end, "}" ;
-end = "return", [expression], ";"
-    | "raise", (NAME | "ArithmeticError", "::", VARIANT), ";"
-    | "match", call, "{", arm, arm, "}" ;                      (* one Ok, one Err *)
-arm = "Result", "::", "Ok", "{", "value", ":", NAME, "}", "=>", block
-    | "Result", "::", "Err", "{", "error", ":", NAME, "}", "=>", block ;
-VARIANT = "Overflow" | "DivisionByZero" | "OutOfRange" ;
-parameter = NAME, ":", SCALAR ;
-result = SCALAR | "unit" ;
-SCALAR = "bool" | "i8" | "i16" | "i32" | "i64" | "isize"
-       | "u8" | "u16" | "u32" | "u64" | "usize"
-       | "f32" | "f64" ;                                        (* §G02t *)
-statement = "let", NAME, [":", SCALAR], "=", expression, ";"
-          | call, ["?"], ";"
-          | "print", "(", expression, ")", ";"                  (* i32 only *)
-          | "print", RENDERING, OPERAND, ";"                    (* §G02g's reader *)
-          | "log", LEVEL, RENDERING, OPERAND, ";"
-          | "flush", ";" ;
-expression = sum, [CMP, sum] ;                                  (* non-associative *)
-sum = product, {("+" | "-"), product} ;
-product = cast, {("*" | "/" | "%"), cast} ;
-cast = unary, {"as", SCALAR} ;
-unary = "-", unary | NAT | FLOAT | "true" | "false" | NAME | call, ["?"]
-      | "(", expression, ")" ;
-CMP = "==" | "!=" | "<" | "<=" | ">" | ">=" ;
-call = FUNCTION_NAME, "(", [expression, {",", expression}], ")" ;
+function   = "fn", NAME, "(", [ parameter, { ",", parameter } ], ")", "->", result,
+             [ "effects", "{", [ effect, { ",", effect } ], "}" ],
+             [ "contract", "{", "}" ],
+             block ;
+
+parameter  = NAME, ":", ( SCALAR | RECORD ) ;
+result     = SCALAR | "unit" | RECORD ;
+SCALAR     = "bool"
+           | "i8" | "i16" | "i32" | "i64" | "isize"
+           | "u8" | "u16" | "u32" | "u64" | "usize"
+           | "f32" | "f64" ;                                    (* §G02t *)
+
+effect     = "io"
+           | "throws", "<", "ArithmeticError", ">"
+           | "partial_eq"
+           | "partial_ord" ;                                    (* each at most once *)
+
+block      = "{", { statement }, end, "}" ;
+end        = "return", [ expression ], ";"
+           | "raise", ( NAME | "ArithmeticError", "::", VARIANT ), ";"
+           | "match", call, "{", arm, arm, "}" ;                (* one Ok, one Err *)
+arm        = "Result", "::", "Ok", "{", "value", ":", NAME, "}", "=>", block
+           | "Result", "::", "Err", "{", "error", ":", NAME, "}", "=>", block ;
+VARIANT    = "Overflow" | "DivisionByZero" | "OutOfRange" ;
+
+statement  = "let", NAME, [ ":", ( SCALAR | RECORD ) ], "=", expression, ";"
+           | call, [ "?" ], ";"
+           | "print", "(", expression, ")", ";"                 (* legacy i32-only builtin *)
+           | "print", RENDERING, OPERAND, ";"                   (* §G02g reader *)
+           | "log", LEVEL, RENDERING, OPERAND, ";"              (* §G02g reader *)
+           | "flush", ";" ;
+
+expression = sum, [ CMP, sum ] ;                                (* non-associative *)
+sum        = product, { ( "+" | "-" ), product } ;
+product    = cast, { ( "*" | "/" | "%" ), cast } ;
+cast       = postfix, { "as", SCALAR } ;
+postfix    = unary, { ".", NAME } ;                             (* record field path *)
+unary      = "-", unary
+           | NAT | FLOAT | "true" | "false"
+           | RECORD, "{", [ field_init, { ",", field_init }, [ "," ] ], "}"
+           | call, [ "?" ]
+           | NAME
+           | "(", expression, ")" ;
+field_init = NAME, ":", expression ;
+CMP        = "==" | "!=" | "<" | "<=" | ">" | ">=" ;
+call       = FUNCTION_NAME, "(", [ expression, { ",", expression } ], ")" ;
+OPERAND    = [ "-" ], NAT | NAME ;
 ```
 
-Every parameter, local and result has one type of the §G02t table (a result
-may also be `unit`); unit calls cannot occupy a scalar position. The typing,
-arithmetic, conversion and rendering rules of the table are §G02t's; a program
-that names only `i32` types and uses none of the forms above that card added
-checks, runs and emits exactly as before it.
-Every definition is checked, including uncalled bodies. Calls must be direct
-and the entire graph acyclic. Locals are immutable, nonshadowing within each
-function, and initializers resolve before binding. All functions end with one
-explicit return. Operands/arguments evaluate left to right; binary operators
-associate left. Literal magnitudes must fit their type, including -2147483648
-for `i32`.
+### Semantic side conditions, effects, and bounds
 
-`print(EXPRESSION);` evaluates one i32 expression and writes its decimal value
-followed by one newline to standard output. The source file must declare
-`#import std.io;`; `std.fmt` is neither required nor consulted because this form
-has no rendering selector. An absent effect row infers `io` from a direct print
-or transitively from a called function. `effects {io}` explicitly permits it,
-while `effects {}` explicitly excludes it and therefore refuses any direct or
-transitive IO. The one other row entry is `throws<ArithmeticError>` (§G02t,
-card `W48-QR-SCALAR-TYPES-R2`), never inferred; every other effect or error
-name is outside this profile. Output follows
-ordinary statement order and the left-to-right argument order above. The
-builtin form stays `i32`-only and is refused in a module that uses any §G02t
-form (a non-`i32` type, a comparison, a conversion, `bool` or a line
-statement): such a module renders through `print dec|hex X;`.
+- **Whole-module checking and evaluation order:**
+  - Every function in the module is type-checked, including uncalled helpers and `module library;` definitions. Calls must be direct and the call graph strictly acyclic.
+  - Locals are immutable and non-shadowing within a function; initializers resolve before binding the new name. Operands and call arguments evaluate strictly left to right; binary `+`, `-`, `*`, `/`, `%`, and `as` associate left; comparisons (`CMP`) are non-associative.
+  - An executable entry takes zero parameters and returns `i32` or `unit`. `unit`-returning calls cannot appear inside value expressions. Library modules check all definitions without publishing a closed observation or standalone `main`.
+- **Effect row inference vs. explicit permissions:**
+  - `io` is **inferred** when `effects { ... }` is omitted and the function directly or transitively prints, logs, or flushes; `effects { io }` permits IO, while `effects {}` forbids direct and transitive IO (`Q020`).
+  - `throws<ArithmeticError>`, `partial_eq` (float `==`/`!=`), and `partial_ord` (float `<`/`<=`/`>`/`>=`) are **never inferred** (`Q020`). On this route, a caller must also declare every `partial_eq`/`partial_ord` effect its callees derive.
+- **Output forms:**
+  - `print(EXPRESSION);` evaluates an `i32` expression and writes decimal digits + `\n` to stdout. It is restricted to pure-`i32` modules and **refuses** (`Q020`) if the module uses any [G02t](#g02t-fixed-width-scalar-types) extension (non-`i32` types, comparisons, `as` conversions, `bool`, floats, or line statements).
+  - `print RENDERING OPERAND;`, `log LEVEL RENDERING OPERAND;`, and `flush;` (including `x |> print dec;` pipe sinks, [G02h](#g02h-the-pipe-operator-and-the-operator-token-family)) use [G02g](#g02g-rendered-lines-stdfmt-stdio-and-stdlogger)'s reader and render any `SCALAR` at its own type (`borrow NAME` refuses at `Q028`; `log_level` refuses at `Q030`).
+- **Checked arithmetic and C emission:**
+  - Literal-only subexpressions fold during type checking: a constant fault (`Overflow`, `DivisionByZero`, `OutOfRange`, including `MIN / -1` and `MIN % -1`) refuses at check time (`Q020`) in **every** function, regardless of `throws<ArithmeticError>`.
+  - Without `throws<ArithmeticError>`, closed-entry evaluation faults refuse at check time (`Q020`), and emitted C range-tests operands before computing, exiting with status `86` and empty streams on fault. With `throws<ArithmeticError>`, non-literal faults return error tags (`1`..`3`) consumed via `?` or `match` (propagating out of `main` exits `80 + tag`; see [G02t](#g02t-fixed-width-scalar-types)).
+  - File-scope C fragments merge through `c_program::assemble` (deduplicating the IO prelude and emitting one `main`); scalar functions still cannot call functions owned by another profile.
+- **Records across calls (`W48-QR-USABLE-RECORDS`):**
+  - Records of scalars (and nested records of scalars) pass and return **by value** (`copy` semantics; emitted as `struct qcore_record_NAME` in topological dependency order). Custody wrappers (`own<R>`, `borrow<R>`, `ptr<const, R>`, `move p`) refuse (`Q020`).
+  - Construction supplies every declared field once in any order; `.f1.f2` reads nested fields; arithmetic/comparison/casts/rendering on a whole record refuse (`Q020`).
+  - Records containing an owned `bytes` field (`W48-QR-OWNED-RECORD-ACROSS-CALL`), field mutations (`W48-QR-SCALAR-CALLS-FIELD-WRITE`), and record return types on functions declaring `throws<ArithmeticError>` (`W48-QR-RECORD-THROWS-RESULT`) refuse at `Q020`.
 
-The line statements are `source.std-io.v1`'s own (§G02g), read by that route's
-own reader over the statement's tokens, so a line one route admits and the
-other refuses is not expressible, and a pipe sink (`x |> print dec;`, §G02h)
-desugars to one. They may stand in any function; a line derives `io` exactly
-as a builtin print does. `OPERAND` is an integer literal (an `i32`) or a scalar
-name this function bound; `borrow NAME` refuses at `Q028` because this route
-has no custody model, and `log_level` refuses at `Q030` because this route
-installs no system-trace adapter. The per-stream line trace is published
-beside the entry's value, as `source.std-io.v1` publishes its own.
+| Compiler / Evaluator Bound | Maximum |
+|---|---|
+| Functions per module | 256 |
+| Expression, call, parser-nesting, or binary-chain depth | 64 |
+| IR expression nodes per module | 16,384 |
+| Lexical tokens per function | 16,384 |
+| Closed-entry evaluated expression steps | 100,000 |
 
-Arithmetic is checked: overflow and zero division refuse the closed entry at
-check time, and a subexpression whose leaves are all literals is folded while it
-is typed, so a constant fault refuses even in a function no entry calls (a
-library module included). MIN/-1 division and remainder both refuse. Division
-truncates toward zero. Emitted C retains calls and guards arithmetic, exiting 86
-on a fault;
-a fault writes nothing to either stream, and a source program without a print
-writes nothing. A library check makes no claim that every possible argument is
-overflow-free. An executable entry has no parameters and returns `i32` or
-`unit`. Library modules check definitions but publish neither a closed
-observation nor standalone C.
+### Examples
 
-The C backend exposes file-scope fragments plus an entry-body contribution.
-Those fragments contain no entry-point definition; the shared
-`c_program::assemble` step emits exactly one `main`. Merging fragments uses the
-established keys for the common IO include and prelude, so the prelude is
-deduplicated before assembly. This is emission composition, not general
-cross-profile source-call composition: a scalar function still cannot call a
-function owned by another execution profile.
+```qcore
+#import std.fmt;
+#import std.io;
 
-Limits are 256 functions, expression/call depth 64, 16,384 IR expression nodes,
-16,384 tokens per function, and 100,000 evaluated expression steps. Parser nesting
-and each left-associated binary chain also have a limit of 64. Exceeding any
-limit refuses; no truncation is performed. Control flow, non-IO effects,
-ownership, usage annotations, generic/indirect calls, and cross-profile call
-composition remain outside this subset. Unsupported ordinary forms use Q020;
-nonempty contracts retain Q021.
-[Implementation and evidence](reports/source-scalar-calls-v1/README.md).
+type Pair { lo: i16, hi: i16 }
 
-**Records across calls (card `W48-QR-USABLE-RECORDS`).** A module that declares
-a record type (§G07.13), holds no buffer and declares a function besides its
-entry reaches this route; every such module was refused before (the buffer
-route models its entry only, `Q051`), and a record module with one function
-keeps the buffer route byte for byte. A record of scalars — and of records of
-scalars — is a plain value here:
+fn span(p: Pair) -> i32 {
+    return (p.hi as i32) - (p.lo as i32);
+}
 
-```ebnf
-parameter = NAME, ":", ( SCALAR | RECORD ) ;
-result    = SCALAR | "unit" | RECORD ;
-statement = "let", NAME, [":", ( SCALAR | RECORD )], "=", expression, ";" | … ;
-unary     = … | RECORD, "{", [NAME, ":", expression, {",", NAME, ":", expression}], "}"
-          | unary, ".", NAME, {".", NAME} ;              (* a field path *)
+fn checked_scale(x: i32, k: i32) -> i32 effects { throws<ArithmeticError> } {
+    return x * k;
+}
+
+fn main() -> i32 effects { io } {
+    let p = Pair { lo: -10, hi: 32 };
+    let d = span(p);
+    match checked_scale(d, 2) {
+        Result::Ok { value: total } => {
+            print dec total;
+            return 0;
+        }
+        Result::Err { error: _e } => {
+            return 1;
+        }
+    }
+}
 ```
 
-* A call **copies** a record argument in and a `return` copies a record result
-  out: no custody is involved, and a callee building a new record leaves the
-  caller's as it was. A parameter is a record by value only — `own<R>`,
-  `borrow<R>`, `ptr<const, R>` and `move p` refuse at `Q020`.
-* A construction names every declared field exactly once, in any order; the
-  checker types each value at its field's type and orders them as declared.
-  A field path names declared fields, each but the last a record. A record
-  has no arithmetic, comparison, conversion or rendering; read the field.
-* The record declarations are read by §G07.13's own reader; a type holding an
-  owned `bytes` field anywhere refuses by name (`W48-QR-OWNED-RECORD-ACROSS-CALL`),
-  a field write refuses (its rows admit `io` and the typed error, and a write
-  derives `mut`: `W48-QR-SCALAR-CALLS-FIELD-WRITE`), and a function whose row
-  permits `throws<ArithmeticError>` returns a scalar or `unit`
-  (`W48-QR-RECORD-THROWS-RESULT`), each at `Q020`.
-* The emitted C declares one `struct qcore_record_NAME` per record, a held
-  record before its holder, and passes and returns it by value.
+### Implementation & Provenance
+
+- **Cards:** `SOURCE-SCALAR-CALLS-V1`, `W48-QR-SCALAR-TYPES`, `W48-QR-SCALAR-TYPES-R2`, `W48-QR-FLOATING-POINT`, `W48-QR-USABLE-RECORDS`.
+- **Implementation:** `crates/qcore-frontend/src/source_scalar_calls.rs`.
+- **Report:** [Implementation and evidence](reports/source-scalar-calls-v1/README.md).
+
+---
 
 <a id="g02t-fixed-width-scalar-types"></a>
+<a id="g02t-fixed-width-scalar-types-aritherror-and-ieee-floating-point"></a>
 
-## G02t. Fixed-width scalar types
+## G02t. Fixed-width scalar types, `ArithError`, and IEEE floating point
 
-Card `W48-QR-SCALAR-TYPES` makes the §G05 `scalar_abi` table first-class values
-of `.qr` sources. It is implemented on `source.scalar-calls.v1` (§G02s) and
-rendered through `std.fmt`/`std.io`/`std.logger` (§G02g); every other position
-keeps its existing refusal (table below). The definitions are
-`crates/qcore-core/src/scalar_types.rs`, stated in Lean as `QCore.ScalarTypes`.
+### Purpose
 
-| Type | Values | C11 | `dec` | `hex` |
+`G02t` promotes the contract ABI scalar table ([G05](#g05-resource-loader-v1)) and IEEE 754 binary32/binary64 floating point into first-class `.qr` types, together with checked `as` conversions, the built-in `ArithmeticError` typed error discipline (abbreviated `ArithError` in navigation summaries; always spelled `ArithmeticError` in source), and the shared single-operation `value_statement` grammar used across non-expression routes.
+
+### Scalar type and rendering table
+
+| Quirin type | Mathematical / bit domain | Emitted C11 type | `dec` rendering (`std.fmt`) | `hex` rendering (`std.fmt`) |
 |---|---|---|---|---|
-| `bool` | `false`, `true` | `bool` (`<stdbool.h>`) | `false` / `true` | refused |
-| `i8` `i16` `i32` `i64` | two's-complement range of the width | `int8_t` … `int64_t` | signed decimal | `0x` + 2/4/8/16 digits |
-| `u8` `u16` `u32` `u64` | `0 ..= 2^w - 1` | `uint8_t` … `uint64_t` | unsigned decimal | `0x` + 2/4/8/16 digits |
-| `isize` | signed range of the recorded width `W` | `ptrdiff_t` | signed decimal | `0x` + `W/4` digits |
-| `usize` | `0 ..= 2^W - 1` | `size_t` | unsigned decimal | `0x` + `W/4` digits |
+| `bool` | `false`, `true` | `bool` (`<stdbool.h>`) | `false` / `true` | *refused* |
+| `i8`, `i16`, `i32`, `i64` | Signed two's-complement $-2^{w-1} \dots 2^{w-1}-1$ | `int8_t` .. `int64_t` | Signed decimal | `0x` + 2 / 4 / 8 / 16 uppercase hex digits (two's complement) |
+| `u8`, `u16`, `u32`, `u64` | Unsigned $0 \dots 2^w - 1$ | `uint8_t` .. `uint64_t` | Unsigned decimal | `0x` + 2 / 4 / 8 / 16 uppercase hex digits |
+| `isize` | Signed range of recorded pointer width $W \in \{32, 64\}$ | `ptrdiff_t` | Signed decimal | `0x` + $W/4$ uppercase hex digits |
+| `usize` | Unsigned $0 \dots 2^W - 1$ of recorded pointer width $W$ | `size_t` | Unsigned decimal | `0x` + $W/4$ uppercase hex digits |
+| `f32` | All IEEE 754 binary32 bit patterns | `float` | Shortest round-trip (ECMAScript layout; `-0`, `nan`, `inf`, `-inf`) | Normalized C hex float (`0x1.8p+1`, `-0x0p+0`, `nan`, `inf`, `-inf`) |
+| `f64` | All IEEE 754 binary64 bit patterns | `double` | Shortest round-trip (ECMAScript layout; `-0`, `nan`, `inf`, `-inf`) | Normalized C hex float (`0x1p-1074`, `-0x0p+0`, `nan`, `inf`, `-inf`) |
 
-* **Typing.** No implicit conversion exists anywhere. An arithmetic or
-  comparison operand pair has one type; two different types refuse ("mixed-type
-  operands"), and so does a `let`, argument or return whose type differs from
-  the expression's. An integer literal takes its type from its context and
-  defaults to `i32`, which is what keeps every existing program's typing
-  unchanged; it must be a value of that type (the minimum included), else it
-  refuses.
-* **Checked arithmetic.** `+ - * / %` and unary `-` are defined on the ten
-  integer types and compute the exact mathematical result, which must be a
-  value of the type; otherwise the operation faults. A zero divisor faults, and
-  so do `MIN / -1` and `MIN % -1` of a signed type. Division truncates toward
-  zero. Unary `-` is `0 - x`, so on an unsigned type it succeeds only at `0`.
-  There is no wrapping operation. On this route every operand of an executable
-  entry is a check-time constant of its closed evaluation and every
-  literal-only subexpression is folded while it is typed, so the fault is
-  decided at check time and refuses (`Q020`); the emitted C still tests the
-  operands against the type's limits **before** each operation, with explicit
-  range tests rather than compiler builtins, and exits 86 on a fault.
-* **Conversions.** `EXPR as TYPE` is the one spelling. It is **total** when
-  every value of the source type is a value of the target (a widening), and
-  then it is a plain cast; otherwise it is **checked** — the same number at the
-  new type, or the fault when the number does not fit — never a truncation or a
-  reinterpretation. There is no conversion to or from `bool`. `as` binds
-  tighter than every binary operator and looser than unary `-`. The word `as`
-  was already reserved, and a scalar type name after it is not collected as a
-  reference by name resolution; the constraint-14 census
-  (`docs/reports/w48-qr-scalar-types/census_spelling.py`) found no `as` followed
-  by a scalar type name in any of the 625 tracked `.qr`/`.qv`/`.qrlib` files.
-* **`bool`.** Comparisons produce `bool`. `bool` has `==` and `!=`, no ordering,
-  no arithmetic, no conversion and no `hex` rendering.
-* **`isize`/`usize` and the recorded target.** Their width is the builder's
-  recorded target (`quirin --recorded-target FILE`, a closed three-key record:
-  `pointer_width` 32 or 64, `triple`, `compiler`; total or reject). A program
-  naming either type with no record refuses; nothing guesses a width. With one,
-  the program is checked for exactly that width, the result carries it as a
-  named assumption (`recorded target: …` among the declared assumptions), and
-  the emitted C `_Static_assert`s `SIZE_MAX`, `PTRDIFF_MIN` and `PTRDIFF_MAX`
-  against it, so a C compiler for another width refuses to build it. A program
-  naming neither is unaffected by a record.
-* **Rendering.** `print dec|hex X;` and `log LEVEL dec|hex X;` render every
-  type: `dec` the number itself, `hex` the type's own bit pattern (two's
-  complement for a negative value) in upper-case digits zero-padded to a
-  quarter of the width, which for `i32` is the established `0x000000FF`. A
-  `bool` renders `true`/`false` under `dec` and refuses `hex`.
-
-**The typed arithmetic error** (card `W48-QR-SCALAR-TYPES-R2`). The builtin,
-payload-free `ArithmeticError` has three variants: `Overflow` (an exact result
-outside the type, `MIN / -1` and `MIN % -1` included), `DivisionByZero` (a zero
-divisor of `/` or `%`) and `OutOfRange` (a conversion whose value does not fit).
-It is the task profile's error discipline (§G02a) on this route:
-
-* **Permission.** A function raises it only when its row lists
-  `throws<ArithmeticError>`; the permission is never inferred, so an absent row
-  permits no error and `effects { throws<ArithmeticError> }` alone excludes
-  `io`. Any other error name in a row refuses.
-* **Where it is raised.** In a function with the permission, an operation
-  whose operands are not all literals — a parameter, a local, a call result —
-  raises its fault's variant instead of faulting. A fault decided from
-  literals alone (the fold of §G02s) is refused at check time whatever the row
-  permits, and a function without the permission keeps the route's closed-entry
-  refusal. Each is the same fault: `QCore.ScalarTypedErrors.static_fault_variant`
-  and `static_fault_is_dynamic_raise` prove the fold's refusal is the raise the
-  dynamic path would take.
-* **Consumption.** A call of a function that may raise must be consumed:
-  `CALL?` propagates the error unchanged and needs the caller's permission
-  (`CALL?;` stands as a statement for a `unit` callee), and
-  `match CALL { Result::Ok { value: v } => { … } Result::Err { error: e } => { … } }`
-  runs the arm the outcome names — exactly one arm of each, in either order,
-  over a callee with a scalar result. Every block ends in `return`, `raise` or a
-  `match`, so no arm falls through; an arm's binding is in scope in that arm
-  only. `raise e;` re-raises a bound error and `raise ArithmeticError::VARIANT;`
-  raises one explicitly, both under the permission. An unconsumed call, and `?`
-  or `match` on a callee that cannot raise, refuse.
-* **Emission.** A function with the permission returns its error tag as an
-  `int` (`0` success; `Overflow` 1, `DivisionByZero` 2, `OutOfRange` 3) and its
-  value through a trailing pointer. Every operation in it — `i32` included —
-  calls a `q_scalar_try_*` helper that tests the operands before computing and
-  returns the tag instead of exiting 86, and the function returns that tag at
-  once; `match` branches on it. An entry that propagates the error publishes it
-  as its error outcome (`ArithmeticError::VARIANT` with its tag) and exits with
-  status `80 + tag` after the lines it already wrote. A function without the
-  permission emits exactly what it emitted before.
-* **Reservation.** No word is reserved. `match`, `raise`, `Result`, `value` and
-  `error` are the task profile's; `ArithmeticError` is skipped by name
-  resolution only where `::` follows it, and the constraint-14 census found it
-  in no tracked source file.
-
-**Annotations every route admits** (card `W48-QR-SCALAR-TYPES-R2`). Every
-route checks every annotation it admits. The sequential route checks
-parameters against this table (§G02). The six routes that model their entry
-only — `source.std-io.v1`, `source.buffer.v1` (with its record and loop
-forms), `source.string.v1`, `source.socket.v1`, `source.http.v1` and
-`source.event.v1` — used to admit any other function unread: its parameter,
-result and local annotations and its body. Each now refuses such a function at
-its own existing "models the entry only" code (`Q030`, `Q051`, `Q068`, `Q080`,
-`Q090`, `Q058`). A module with `std.io` lines, scalar-call syntax and a helper
-reaches this route instead, which checks every function.
-
-**Positions.** Widened by card `W48-QR-SCALAR-TYPES`: parameters, results,
-annotated and inferred locals, literals, arithmetic, comparisons and
-conversions on `source.scalar-calls.v1`, its line statements, and the `|>`
-sinks that desugar to them. Widened by card `W48-QR-SCALAR-TYPES-R3` (below):
-the record fields of `source.buffer.v1` and that route's whole value
-environment (§G07.13, §G02k), and extern results as values on the extern and
-composed extern + io routes (§G02d, §G02i). Widened by card
-`W48-QR-SCALAR-TYPES-R4` (below): task worker parameters and results, `copy`
-captures, value statements in every task function, and the composed tasks + io
-operands (§G02a, §G02j). Widened by card `W48-QR-SCALAR-TYPES-R5` (below):
-loop bounds and indices (§G07.12) and the value statement on
-`source.buffer.v1` (§G02k). Widened by card `W48-QR-SCALAR-TYPES-R6` (below):
-the `Buffer` payload and the `protected` payload (§G02b, §G02c), the composed
-epoch route's task half (§G02f), the fixed-width worker outcome in the F02
-observable alphabet, and the whole tier on the composed string/buffer route
-(§G07.9). Every other position that takes `i32` keeps its existing refusal
-and is a named follow-up: an error variant's payload, which stays the `i32`
-Buffer (§G02bc, `W48-QR-TYPES-ERROR-PAYLOAD`), and an executable entry result
-other than `i32`/`unit` (C's `main` returns `int`; the entry's value is
-published, never returned; a task entry's likewise). A typed `let` beside an `std.io` line is
-scalar-call syntax, so such a module reaches this route and needs no change
-to `source.std-io.v1`. A conversion written on one of those routes was
-refused at `Q013` before this card (name resolution collected the type name);
-it now reaches that route's own reader and is refused at that route's own code.
-
-**The buffer route's typed environment** (card `W48-QR-SCALAR-TYPES-R3`,
-§G07.13, §G02k). Every name `source.buffer.v1` binds to a scalar has exactly
-one §G02t type: a literal `let`, a byte read, an `extent` and a loop index are
-`i32`, as before; a read of a record field has the field's declared type; a
-conversion has its target type; a copy bind keeps its source's type. Every
-position checks the type it takes — an index, a stored byte, a lend bound and
-a loop bound take an `i32` and refuse a name of any other type (`Q052`, "`x`
-is a `u8` and this position takes an `i32`"); a field value takes exactly its
-field's type; a rendering operand takes any type and renders it at that type.
-The route had **no arithmetic** — it never had an expression — so the one
-operation this card gave it is the conversion statement (card
-`W48-QR-SCALAR-TYPES-R5` adds the value statement, below) `let NAME = OPERAND as TYPE;`
-(one operand: an `i32` literal or a bound name). Every value on this route is a
-check-time constant, so a conversion that does not fit is refused at check
-time (`Q053`, the range condition) and the emitted C calls a helper whose
-operand test — §G02t's own, shared with `source.scalar-calls.v1` — is a
-witness that aborts, the route's discipline. Nothing converts to or from
-`bool` (`Q052`), and `isize`/`usize` in a field or a conversion need the
-recorded target (`Q051`), which the route receives and publishes as the named
-assumption.
-
-**Extern results as values** (card `W48-QR-SCALAR-TYPES-R3`, §G02d, §G02i).
-A bound extern scalar result has its declared result's §G02t type, a literal
-binding is an `i32`, and the extern route gains the **value statement**, one
-§G02t operation per statement over bound values and literals:
+### Consolidated EBNF across routes
 
 ```ebnf
+SCALAR          = INT_SCALAR | "bool" | FLOAT_SCALAR ;
+INT_SCALAR      = "i8" | "i16" | "i32" | "i64" | "isize"
+                | "u8" | "u16" | "u32" | "u64" | "usize" ;
+FLOAT_SCALAR    = "f32" | "f64" ;
+
+FLOAT           = DIGITS, ".", DIGITS, [ EXPONENT ]
+                | DIGITS, EXPONENT ;                            (* single lexer token *)
+EXPONENT        = ( "e" | "E" ), [ "+" | "-" ], DIGITS ;
+
+(* Shared single-operation value statement on extern, task, buffer, and composed string routes *)
 value_statement = "let", NAME, "=", value_expr, ";" ;
-value_expr = operand, ("+" | "-" | "*" | "/" | "%"), operand
-           | operand, ("==" | "!=" | "<" | "<=" | ">" | ">="), operand
-           | "-", NAME
-           | operand, "as", SCALAR ;
-operand    = NAME | ["-"], INTEGER | "true" | "false" ;
+value_expr      = operand, ( "+" | "-" | "*" | "/" | "%" ), operand
+                | operand, ( "==" | "!=" | "<" | "<=" | ">" | ">=" ), operand
+                | "-", NAME
+                | operand, "as", SCALAR ;
+operand         = NAME | [ "-" ], INTEGER | [ "-" ], FLOAT | "true" | "false" ;
+
+(* Typed payloads on concurrent task and mutex routes (§G02b, §G02c) *)
+buffer_type     = ( "own" | "borrow" | "lend" ), "<", "Buffer", [ "<", SCALAR, ">" ], ">" ;
+protected_decl  = "let", NAME, "=", "protected", ( NAT | SCALAR ), ";" ;
 ```
 
-A literal operand takes the other operand's type (`i32` when both are
-literals). A value is **known** when its number is a literal, a declared
-`succeeds INTEGER` outcome, or a statement over known values; a statement over
-known values is folded at check time — a fault refuses (`Q024`), naming the
-variant the typed path would raise. A statement reading a value known only at
-run time (an undeclared result) that can fault — arithmetic, negation, a
-conversion that is not total — is admitted only when the entry's row declares
-`throws<ArithmeticError>`, and then takes the typed path: the emitted program
-calls §G02t's `q_scalar_try_*` helper and, on a nonzero tag, logs the raise and
-exits `80 + tag`. A comparison and a total conversion never fault. A declared
-outcome is now read at any width and range-checked against the declared
-result (`Q024`); with no recorded target, an `isize`/`usize` outcome is carried
-unchecked as before and any statement computing with it refuses. At a
-declared scalar parameter an argument is a value of exactly the parameter's
-type, and a literal argument is range-checked against it (`Q024`): there is no
-implicit conversion at the extern boundary either. A value statement calls
-nothing and is observed as nothing in the call trace. On the composed
-extern + io route a rendering reads a known value of **every** §G02t type at
-that type (before the card, an `i32` only); a value known only at run time
-still refuses (`Q043`, "no model computed"), and `isize`/`usize` render only
-with a recorded target (`Q043`).
+### Typing, checked integer arithmetic, and `as` conversions
 
-**Task workers and `copy` captures** (card `W48-QR-SCALAR-TYPES-R4`, §G02a,
-§G02j). On the scoped-task route a worker parameter and a worker result may be
-any type of the table, a local annotation any type (a literal after it takes
-its type, range-checked), and a `copy` capture copies a value of any type into
-a parameter of exactly that type — there is no conversion at the boundary, and
-the transferability judgment classifies the other ten types as one duplicated
-kind beside `i32` (`TransferKind::FixedScalar`, `QCore.Transferability`). A
-task entry's result stays `i32`, `unit` or its error. Every task function —
-the entry and every worker — gains the extern route's **value statement**
-(the grammar above, read by the same reader and decided by the same decision,
-`qcore_core::scalar_values`): a statement over values known at check time (a
-literal, a copy of a known value, a statement over such values) is folded and
-a fault refuses (`Q020`); a statement reading a value known only at run time —
-a parameter, which is what a capture is inside the worker, a joined outcome, a
-buffer read — that can fault is refused without the function's
-`throws<ArithmeticError>` (`Q300`) and with it lowers to a checked step whose
-error edge is the route's **ordinary error exit**: the scope exits, then
-`raise` of the classified variant. So a raise is an exit like any other, and a
-worker that still holds an owned Buffer there is refused (`Q600`).
-`ArithmeticError` is a builtin error type of the route, payload-free, beside
-`SpawnError` and `AllocError`, and like them may not be redeclared (`Q013`); a
-worker's `ArithmeticError` is an ordinary typed worker error, which `join`
-collects and the creator consumes with `?` (under its own permission) or
-`match` (`QCore.ScalarTasks.worker_error_reaches_creator_unchanged`). The
-emitted C widens the task value by a union holding one member per fixed-width
-type the module names, calls §G02t's `q_scalar_*` / `q_scalar_try_*` helpers,
-and logs a fixed-width worker result under the name `=TYPE`; a module that
-names none of the table's other types and performs no value statement emits
-exactly the bytes it always did. A composed rendering reads a value of any type
-at its type, in the parent or in a worker; `bool` has no `hex` (`Q050`). A
-fixed-width worker outcome has no spelling in the F02 observable alphabet, so
-such a program sits outside F02 relational comparison (`reference_trace`
-refuses it) and its native evidence is the byte comparison of the maintained
-trace, whose sink prints `QCORE_TASK_RESULT TASK TYPE NUMBER`.
+- **Zero implicit conversions:** Mixed-type binary operands, mismatched `let` annotations, mismatched call/spawn arguments, and mismatched `return` values refuse. Integer literals take their expected integer type from context (defaulting to `i32` when unconstrained) and must fit that type's range (including `MIN`). Float literals take their expected float type from context (defaulting to `f64`, or the target float type of `FLOAT as f32`); an integer literal is never a float and a float literal is never an integer.
+- **Exact checked integer arithmetic:** `+`, `-`, `*`, `/`, `%`, and unary `-` (`0 - x`, succeeding on unsigned types only at `0`) compute exact mathematical integers and fault if the result lies outside the type's range, on `/ 0` or `% 0`, or on signed `MIN / -1` and `MIN % -1`. Division truncates toward zero; no operation wraps. Emitted C tests operand bounds explicitly (without compiler builtins) **before** executing C arithmetic.
+- **`EXPR as TYPE` conversions:** `as` binds tighter than binary operators and looser than unary `-` (`as` was already reserved; scalar type names after `as` are skipped by reference collection). Integer/float conversions are **total** when widening (every source value fits) and **checked** (`OutOfRange` on failure) when narrowing or changing signedness — never bit-reinterpreting or modularly truncating. Nothing converts to or from `bool`.
+- **`bool` restrictions:** Produced by comparisons; supports `==` and `!=` only (no ordering, arithmetic, conversion, or `hex` rendering).
+- **Target-width types (`isize`, `usize`):** Require `quirin --recorded-target FILE` (a closed 3-key JSON record: `pointer_width` `32` or `64`, `triple`, `compiler`). Without a recorded target, naming `isize` or `usize` refuses; with one, the result publishes `recorded target: ...` in its declared assumptions and emitted C `_Static_assert`s `SIZE_MAX`, `PTRDIFF_MIN`, and `PTRDIFF_MAX`.
 
-**Typed loops and the buffer route's value statement** (card
-`W48-QR-SCALAR-TYPES-R5`, §G07.12, §G02k). On `source.buffer.v1` a `for` bound
-may be a value of any integer type of the table, and the **index has the
-bound's type**: the low end is the literal `0`, which takes the bound's type as
-every literal takes its context's, so a range has one type and no mixed-type
-range is expressible. A literal bound is an `i32`, so a bound of another type
-is a name of the lowering's constant tier (§G07.12), which now also holds a
-conversion or a value statement over the tier's own values, folded by the
-shared decision (`qcore_core::scalar_values`) under the recorded target. The
-bound is decided at every type by the loop's own rules, in `LOOP-V1`'s order —
-a `bool` bound, an `isize`/`usize` bound with no recorded target, a negative
-bound, a zero bound and a bound above 4096 refuse (`Q098`), and the count must
-be a value of the index type — and the budget is unchanged. Because the count
-is at most the ceiling and a value of the type, every index value
-`0 … count-1` and the final step's `count` are values of it: the emitted
-`i += 1` never overflows or truncates, and the loop runs exactly `count` times
-(`QCore.ScalarLoopBounds.the_loop_runs_exactly_count_times`); a `u64` near its
-maximum and a signed bound near `MIN` or `MAX` are refused by the ceiling or
-the sign rule before any index exists. The checker re-derives the count from
-the bound's value in its own typed environment and binds the index at its type
-per iteration; a typed index is refused at an `i32` position (`Q052`) and is
-converted with `as` to be one. The emitted loop is
-`for (T i = 0; i < BOUND; i += 1)` at the type, against the bound's own C
-object; a loop over a literal, a literal `let` or an `extent` is exactly the
-`i32` loop it was.
+### Built-in `ArithmeticError` discipline
 
-The route also gains the **value statement** of the extern and task routes —
-`let NAME = A OP B;`, `A CMP B` or `-NAME`, one operation, read by the same
-reader and decided by the same decision (its `as` form is the route's existing
-conversion). Every value on this route is known at check time, the loop index
-once per iteration, so every statement is folded: a fault refuses (`Q053`,
-naming the variant the typed path would raise), a literal outside its type
-refuses (`Q053`), mixed operand types and `bool` arithmetic, negation or
-ordering refuse (`Q052`), a target width with no record refuses (`Q051`), and
-a chained expression refuses (`Q051`). Nothing on the route raises, so it needs
-no `throws<ArithmeticError>`. The result is a value of its type: renderable,
-convertible, copyable, a loop bound when its operands are of the constant
-tier, and refused at an `i32` position unless it is an `i32`. The emitted C
-calls §G02t's shared `q_scalar_*` helpers, whose fault test is a witness the
-checker proved never taken, and makes each comparison through a two-parameter
-function. Card R5 refused the tier on the composed string/buffer route
-(§G07.9) by name (`Q077`); card R6 admits it there (below).
+- **Variants and tags:** Payload-free built-in `error` type with variants `Overflow` (tag `1`), `DivisionByZero` (tag `2`), and `OutOfRange` (tag `3`). Cannot be redeclared by user code (`Q013`).
+- **Static fold vs. dynamic raise:** Literal-only subexpressions (and all operations on `source.buffer.v1`) fold at check time and refuse statically (`Q020` / `Q024` / `Q053`) even if `throws<ArithmeticError>` is declared (`QCore.ScalarTypedErrors.static_fault_is_dynamic_raise`). Operations with runtime-varying operands (`G02s` parameters/locals/calls, `G02d` undeclared extern outcomes, `G02a` worker parameters/joined outcomes/`Buffer` reads) require `throws<ArithmeticError>` in the enclosing function's `effects` row (`Q020` / `Q024` / `Q300` otherwise) and dynamically raise the classified variant.
+- **Consumption and C ABI:** On `G02s` and `G02a`, calls/joins that may raise `ArithmeticError` must be consumed via `?` (requiring caller `throws<ArithmeticError>`) or canonical two-arm `Result::Ok` / `Result::Err` `match`, or raised explicitly via `raise ArithmeticError::VARIANT;` / `raise err;`. `?` or `match` on an infallible callee refuses. Emitted `G02s` functions return `int` tag (`0` ok, `1..3` error) + out-pointer; unhandled propagation from `main` exits with status `80 + tag`. On `G02a`, `ArithmeticError` uses the ordinary scope-exit + typed-error capsule (`Q600` if an owned `Buffer` is leaked on the raising edge) and reaches the parent unchanged through `join`.
+- **Contextual name resolution:** `ArithmeticError` is skipped by reference collection only when immediately followed by `::` (or inside `throws<...>`).
 
-**Typed payloads** (card `W48-QR-SCALAR-TYPES-R6`, `W48-QR-TYPES-PAYLOADS`,
-§G02b, §G02c). The payload type is part of a Buffer's type:
+### IEEE 754 floating point (`f32` and `f64`)
 
-```ebnf
-buffer_type = ("own" | "borrow" | "lend"), "<", "Buffer", ["<", SCALAR, ">"], ">" ;
-protected   = "let", NAME, "=", "protected", (NAT | SCALAR), ";" ;
-```
+- **Single-rounding literals:** Read once at their target format (`f32` or `f64`); literals overflowing to `±inf` or nonzero literals underflowing to `0.0` refuse. No `nan`, `inf`, or hex-float source literals exist (write `0.0 / 0.0` or `1.0 / 0.0`).
+- **Arithmetic and effects:** `+`, `-`, `*`, `/` and unary `-` follow IEEE 754 round-to-nearest-even and never fault (`NaN` and `±inf` propagate as values); `%` on floats refuses. Float comparisons require explicit `partial_eq` (`==`, `!=`) or `partial_ord` (`<`, `<=`, `>`, `>=`) in `effects { ... }`.
+- **Float ↔ integer casts:** Integer/`f64` → `f32` and integer → `f64` round to nearest-even and never fault; `f32 as f64` is exact; `float as INT` truncates toward zero and faults (`OutOfRange`) on `NaN`, `±inf`, or out-of-target-range values (tested against exact hex thresholds before C casting).
+- **Environment & rendering:** Emitted C includes `<float.h>` and `<string.h>`, emits `#pragma STDC FP_CONTRACT OFF` and one helper per float operation, `_Static_assert`s IEEE binary32/binary64 parameters and `FLT_EVAL_METHOD == 0`, `#error`s on `__FAST_MATH__` or finite-math-only, renders `dec` (Dragon4/ECMAScript) and normalized `hex` without `libc` formatting, and publishes the IEEE floating-point premise in result assumptions ([spec §L14.7](QCORE_SPEC_r0_3.md)).
 
-`own<Buffer>` is `own<Buffer<i32>>` — every Buffer before the card, with its
-bytes unchanged — and `own<Buffer<T>>` holds one value of any §G02t type `T`
-(likewise `borrow<…>` and `lend<…>`). The payload type is named at
-acquisition by the initializer: `qcore_buffer_new(VALUE)` holds a payload of
-`VALUE`'s own type (an `i32` literal, or a binding of any type); a whole
-read yields a value of the payload type and a whole write takes exactly one,
-a literal ranged against it. Types are compared exactly at every boundary: a
-capture, a lend and a lease deliver a Buffer of the parameter's payload type
-and nothing converts. A range write lease's byte extent — and an owner's byte
-read's — is the payload type's **size** (`bool` 1, `i8`/`u8` 1, … `i64`/`u64`
-8, `isize`/`usize` the recorded width over 8, never guessed), not a fixed
-four; a lease past it refuses at the capture (`Q600`), and so does a byte
-index past it. A byte **write** into a `bool` payload refuses (`Q600`): a byte
-other than 0 or 1 is not a `bool`, so a `bool` payload's byte view is
-read-only. An error variant's payload stays `own<Buffer>`, the `i32` payload;
-`V(own<Buffer<T>>)` refuses at the declaration (`Q300`,
-`W48-QR-TYPES-ERROR-PAYLOAD`). The `WRITE-LEND-TASKS` exclusivity holds over
-typed extents — no byte has two write authorities, and every leased byte is a
-payload byte (`QCore.ScalarPayloads`). The emitted C holds a typed payload in
-its own member beside the historical `int32_t`, `_Static_assert`s each payload
-type's size, and logs a typed payload event under a `=TYPE` name through an
-adapter arm installed only where needed; its trace line is the historical one
-with `TYPE NUMBER` for the number (`QCORE_BUFFER_ALLOC 0 1 U16 258`), so every
-`i32`-payload program keeps its bytes and its F02 trace. The F02 alphabet has
-no typed payload event, so such a run is refused by the reference encoding
-rather than narrowed (`W48-QR-F02-TYPED-PAYLOADS`). `protected TYPE` declares
-a mutex-protected payload of the type's size (`protected i32` is
-`protected 4`, byte for byte); the route has no value position, and a write
-into a `protected bool` stores the fill's low bit, so the cell is a `bool`
-after every write. `isize`/`usize` payloads need the recorded target, which
-the result names.
+### Cross-route scalar & float support summary
 
-**The composed epoch route's task half** (card `W48-QR-SCALAR-TYPES-R6`,
-`W48-QR-TYPES-EPOCH-TASKS`, §G02f). The task half of `source.epoch.tasks.v1`
-admits the whole task-route tier — worker parameters and results of every
-type, `copy` captures of any scalar, typed payloads and the value statement —
-under the recorded target the builder records. The epoch's derived shape reads
-no scalar type (a `copy` of any type is `copy;`; a result of an owned Buffer of
-any payload type is retained), every byte figure stays declared, and a
-worker's `ArithmeticError` is the join-failure edge the recovery plan already
-carries. A creator's raising statement is a creator exit, admitted by the
-scope rule only with no child of the scope outstanding (`ScopeBusy`
-otherwise), so it abandons no credit (`QCore.ScalarEpochTasks`).
-
-**Fixed-width outcomes in F02** (card `W48-QR-SCALAR-TYPES-R6`,
-`W48-QR-F02-FIXED-OUTCOMES`). The F02 observable alphabet gains the
-fixed-width worker outcome, parsed from `QCORE_TASK_RESULT TASK TYPE NUMBER`
-(`true`/`false` for `BOOL`; a number outside its type, and an unknown type
-name, do not parse). A run whose worker returns one is encoded and related,
-not refused; a trace without one relates exactly as before, and no pinned
-digest moves (`QCore.TaskTraceFixedOutcomes`).
-
-**The composed string/buffer route** (card `W48-QR-SCALAR-TYPES-R6`,
-`W48-QR-TYPES-COMPOSED-STRING`, §G07.9). A composed module — one holding a
-buffer — reads a top-level conversion and value statement with
-`source.buffer.v1`'s reader, and its loops (any integer index type, typed
-bounds of the lowering's tier) and their bodies' conversions and value
-statements as before; all of them are decided by that route's runner over its
-typed environment, under the recorded target. A typed name renders at its type
-at the top level and in a body, and refuses at an `i32` position of this route
-(a slice bound, a composed piece) by name (`Q077`); every other refusal is the
-buffer route's own under this route's `Q077`. A typed statement stores no byte,
-so the borrow window is decided exactly as for an `i32` program
-(`QCore.ScalarComposedString`). The emitter keeps one typed environment for
-the whole entry and defines each helper once.
-
-**Emitted C under `-Werror`** (card `W48-QR-SCALAR-TYPES-R6`). A scalar binding
-of `source.buffer.v1` that nothing after it in its block reads — a loop bound
-whose `i32` loop is written against its literal count, a body binding no later
-body statement reads — is followed by `(void) NAME;`, as the string route
-already did (`W48-QR-LOOP-BOUND-NAME-UNUSED-C`); every value-statement
-comparison on the scalar, extern and task routes is the shared two-parameter
-function `q_scalar_CMP_T`, so a value compared with itself builds
-(`W48-QR-INLINE-COMPARISON-WERROR`).
-
-**Every extern declaration is read** (card `W48-QR-SCALAR-TYPES-R3`,
-`W48-INERT-EXTERN-DECLARATION-TYPES`). An executable or library module's
-`extern fn` declarations are read whether or not a body calls them: each
-parameter must be a §G02t scalar or one of the three custody pointers of
-§C04.1, and the result that or `unit`; anything else refuses at `Q020`,
-naming the parameter or the result. The check runs after the admitting route's
-own passes, so every refusal given before keeps its bytes. A contract module is
-exempt: its declarations are the contract surface itself, in the resource
-contract language's wider vocabulary, read by the contract loader.
-
-**Floating point: `f32` and `f64`** (card `W48-QR-FLOATING-POINT`;
-semantics and normative limitations in specification §L14.7). The table gains
-two types, outside the integer table: `ScalarType::parse` still reads the
-eleven above, and a position admits a float only by reading its types with
-`parse_admitting_floats`, so every position this card did not widen keeps its
-refusal.
-
-| Type | Values | C11 | `dec` | `hex` |
-|---|---|---|---|---|
-| `f32` | every IEEE 754 binary32 bit pattern | `float` | shortest round-trip, ECMAScript layout | C hex float, normalised |
-| `f64` | every IEEE 754 binary64 bit pattern | `double` | shortest round-trip, ECMAScript layout | C hex float, normalised |
-
-```ebnf
-FLOAT    = DIGITS, ".", DIGITS, [EXPONENT] | DIGITS, EXPONENT ;  (* one token *)
-EXPONENT = ("e" | "E"), ["+" | "-"], DIGITS ;
-effect   = ... | "partial_eq" | "partial_ord" ;                 (* each once *)
-```
-
-* **Lexing.** `DIGITS . DIGITS` was already the lexer's `Float` token; card
-  `W48-QR-FLOATING-POINT` extends it with an exponent written directly after
-  the digits, taken only when a digit follows the `e` and its sign, so `1.5e`
-  and `1e+` lex as before (a literal and the name `e`). The census
-  (`docs/reports/w48-qr-floating-point/census_float_spelling.py`) found no
-  tracked file spelling an exponent form.
-* **Literals.** A float literal takes its context's float type, `f64` when
-  there is none (a literal-only operand of `as` to a float type takes that
-  type), and is read once at it; one that rounds to ±inf or a nonzero one that
-  rounds to zero refuses. An integer literal is never a float, a float literal
-  never an integer. `-` is unary minus, exact on every float. There is no
-  literal for NaN or an infinity (write `0.0 / 0.0`, `1.0 / 0.0`) and no
-  hexadecimal float literal.
-* **Operations.** `+ - * /` and unary `-` are IEEE (round to nearest, ties to
-  even) and never fault; `%` refuses. `f32` and `f64` do not mix. The emitted C
-  performs each operation in its own helper (`q_scalar_add_f64`), so no C
-  expression holds two float operations.
-* **Comparisons** need their effect in the declared row — `partial_eq` for
-  `==`/`!=`, `partial_ord` for the orderings — never inferred; on the scalar
-  route a caller declares every comparison effect its callees derive. Integer
-  and `bool` comparisons are unchanged.
-* **Conversions.** `as` from an integer or `f64` to `f32`, and from an integer
-  to `f64`, rounds to nearest, ties to even, and is total; `f32 as f64` is
-  exact; a float to an integer truncates toward zero and faults (`OutOfRange`)
-  for NaN, ±inf and a value outside the target, tested in C against exact
-  hexadecimal thresholds before the cast.
-* **Renderings.** `dec` prints the shortest decimal that reads back to the same
-  value at its type, laid out as ECMAScript's `Number::toString` (`1.5`,
-  `100000000000000000000`, `1e+21`, `0.000001`, `1e-7`) with `-0` for negative
-  zero; `hex` prints `0x1.8p+1`, `0x1p-1074`, `-0x0p+0`; a NaN renders `nan`
-  and the infinities `inf`/`-inf` under both. The emitted renderers
-  (`q_float_dec_T`, `q_float_hex_T`) use no C library formatting.
-* **Environment.** A program holding a float includes `<float.h>` and
-  `<string.h>`, `_Static_assert`s the binary32/binary64 parameters and
-  `FLT_EVAL_METHOD == 0`, `#error`s under fast-math or finite-math-only, and
-  names the IEEE premise among its assumptions.
-
-| Position | Floats |
+| Route / Construct | Supported `G02t` capabilities and route-specific rules |
 |---|---|
-| §G02s parameters, results, locals, literals, arithmetic, comparisons, conversions, renderings, records (card `W48-QR-USABLE-RECORDS`) | admitted |
-| §G02d extern declarations (`AbiType` `f32`/`f64`, `float`/`double`), literal arguments, declared outcomes (`succeeds 1.5`, compared bit for bit), `let NAME = FLOAT;` (`f64`), value statements; §G02i rendering | admitted |
-| §G02d.1 unchecked declarations | admitted (the `Q033` vocabulary now has them) |
-| §G02u `struct!` fields (`float`/`double` members), `#c_ffi` parameters and results, literals, outcomes, helpers | admitted |
-| §G02a/§G02j worker parameters, results, `copy` captures, value statements, record leaves (card `W48-QR-TASK-RECORD-CAPTURES`); §G02v closures; §G02f the epoch route's task half | admitted |
-| §G07.13 records of `source.buffer.v1`, its conversions and value statements, loop bodies (§G07.12); the composed string route (card `W48-QR-FLOAT-BUFFER-PAYLOADS`, below) | admitted |
-| §G02b `Buffer<f32>`/`Buffer<f64>` and §G02c `protected f32`/`protected f64` payloads (card `W48-QR-FLOAT-BUFFER-PAYLOADS`, below) | admitted |
-| a loop bound | refused on every route, by name (`Q098`) |
-| the `.qrlib` manifest's C declaration spellings (`double`, `float`) and the header reader's projection | admitted (card `W48-QRLIB-LINKAGE`, both manifest versions) |
+| **Entry-only route gate** (`G02g`, `G02k-buffer`, `G02k-event`, `G07.9`, `G07.11`, `G07.10`) | Declaring any function besides the entry refuses at the route's own code (`Q030`, `Q051`, `Q058`, `Q068`, `Q080`, `Q090`), closing unread-helper annotations. |
+| **`source.buffer.v1` & composed `source.string.v1`** ([G02k-buffer](#g02k-an-owned-byte-buffer-stdbuffer), [G07.9](#g079-immutable-utf-8-string-views-v1-sourcestringv1)) | Typed scalar/float environment (`let x = 1.5;`, `let x = 1.5 as f32;`, conversions, `value_statement` with `partial_eq`/`partial_ord`, record fields, integer-typed `for` bounds/indices). Byte indices, stored bytes, slice bounds, and `lend` bounds require `i32` (`Q052` / `Q077`); float loop bounds refuse on every route (`Q098`). Unused scalar locals emit `(void) NAME;` for `-Werror`. |
+| **`source.extern-call.v1` & `source.std-io-extern.v1`** ([G02d](#g02d-bounded-extern-calls), [G02i-extern-io](#g02i-composed-extern-calls-and-rendered-lines)) | All `SCALAR` ABI parameters/results (`f32`/`f64` included), range/bit-exact `succeeds` outcomes, `let x = FLOAT;`, `value_statement` (runtime operands require `throws<ArithmeticError>`, exiting `80 + tag`), and composed rendering of known values (`Q024`, `Q043`). `G02d.1` waivers also admit `f32`/`f64`. |
+| **`source.ffi.v1` & `.qrlib`** ([G02u](#g02u-imported-c-structs-sourceffiv1), [G02d.2.1](#g02d21-the-generated-manifest-v2)) | `struct!` fields, `#c_ffi` parameters/results, `.qr` helpers, and `.qrlib` v1/v2 `float`/`double` C ABI types. |
+| **`source.tasks.*`, `G02v`, `G02f`, `G02j`** ([G02a](#g02a-scoped-copy-task-execution)–[G02f](#g02f-flat-epoch-bound-over-a-checked-task-region), [G02j](#g02j-composed-scoped-tasks-and-rendered-lines)) | Worker parameters/results, `copy` captures (`TransferKind::FixedScalar`), closures, record leaves, `value_statement`, composed parent/worker renderings, and F02 fixed-width integer/bool worker outcomes (`QCORE_TASK_RESULT TASK TYPE NUMBER`). Executable/task entry return types stay `i32` or `unit`. |
+| **Typed `Buffer<T>` & `protected T`** ([G02b](#g02b-owned-buffer-task-execution), [G02c](#g02c-guarded-fixed-footprint-mutex)) | `own/borrow/lend<Buffer<T>>` (`own<Buffer>` = `own<Buffer<i32>>`) with byte lease extent `sizeof(T)` (1, 2, 4, 8, or target `W/8`; byte writes into `Buffer<bool>` refused at `Q600`, admitted on `Buffer<f32>`/`Buffer<f64>`; typed payload runs sit outside F02 encoding). `protected T` allocates `sizeof(T)` bytes (`protected bool` masks low bit). Error payloads `Variant(own<Buffer>)` remain `i32`-only (`Q300`). |
 
-**Floats on the byte-buffer route and in payloads** (card
-`W48-QR-FLOAT-BUFFER-PAYLOADS`; limitations §L14.7 items 14–19).
+### Example
 
-```ebnf
-EFFECT  = "io" | "alloc" | "mut" | "partial_eq" | "partial_ord" ;  (* source.buffer.v1, source.string.v1 *)
-stmt    = ... | "let", NAME, "=", ["-"], FLOAT, ";"               (* an f64 *)
-        | "let", NAME, "=", ["-"], FLOAT, "as", SCALAR, ";" ;      (* read once at a float SCALAR *)
-field   = NAME, ":", (SCALAR | "f32" | "f64" | "bytes" | RECORD) ;
-payload = "Buffer", "<", (SCALAR | "f32" | "f64"), ">" ;
-protected = "let", NAME, "=", "protected", (NAT | SCALAR | "f32" | "f64"), ";" ;
+```qcore
+#import std.fmt;
+#import std.io;
+
+fn hypot_sq(x: f64, y: f64) -> f64 {
+    return x * x + y * y;
+}
+
+fn main() -> i32 effects { io, partial_ord } {
+    let h = hypot_sq(1.5, 2.0);
+    let ok = h > 6.0;
+    print dec h;       // stdout: 6.25
+    print hex h;       // stdout: 0x1.9p+2
+    print dec ok;      // stdout: true
+    return 0;
+}
 ```
 
-* **`source.buffer.v1`** reads its record declarations, conversions and value
-  statements with the float-admitting readers (§G07.13, §G02k): a field may be
-  `f32`/`f64` and takes a float literal (read once at the field's type) or a
-  name of exactly its type; `as` converts to and from floats; a value
-  statement takes float literals and names; `let NAME = FLOAT;` binds an
-  `f64`. Loop bodies read the same statements. Every value on the route is a
-  check-time constant, so every statement is folded by the shared decision: a
-  float → integer conversion that does not fit (NaN and ±inf included) is
-  refused at check time (`Q053`), and the emitted C computes each operation
-  again through §G02t's helpers and renders through the language's own
-  renderers, under the float environment of this section. A float comparison
-  needs `partial_eq`/`partial_ord` in the entry's row (`Q052` otherwise); the
-  certificate publishes the comparison effects its statements used. A float
-  loop bound — a float name, directly or through the lowering's constant tier
-  — is refused by name (`Q098`) before its number is read. A float at an
-  `i32` position (an index, a stored byte, a lend bound) is refused (`Q052`).
-* **The composed string route** reads the same statements through the buffer
-  route's reader, under its own entry row's `partial_eq`/`partial_ord`, and
-  refuses each at its own `Q077`.
-* **`Buffer<f32>`/`Buffer<f64>`** (§G02b): the payload's lease and byte extent
-  is 4 or 8 bytes (`size_bytes`), a byte view is the value's IEEE object
-  representation — every byte pattern is a value, so a byte write into a float
-  payload is admitted — and whole writes take exactly the payload's type (an
-  integer literal refuses, `Q020`). The payload event is logged as its bit
-  pattern, copied with `memcpy`, and traced `F32 BITS`/`F64 BITS`, every NaN as
-  `nan`, through a sink branch installed only in a program holding a float
-  payload.
-* **`protected f32`/`protected f64`** (§G02c) protect 4 and 8 bytes — `protected
-  4`/`protected 8` to the model, byte for byte — and the emitted C asserts the
-  IEEE environment.
+### Implementation & Provenance
 
-**Diagnostics.** No code is allocated. Every new refusal on this route is a
-widened condition of `Q020` (type, literal-range, mixed-type, `bool`,
-conversion, recorded-target and fault refusals, and card
-`W48-QR-SCALAR-TYPES-R2`'s typed-error refusals); a line statement's shape keeps
-`source.std-io.v1`'s `Q030`, a `borrow` operand its `Q028`, and a missing
-import the gate's `Q015`. The annotation rule above widens the sequential
-route's `Q020` and each entry-only route's own code.
+- **Cards:** `W48-QR-SCALAR-TYPES`, `R2`–`R6`, `W48-QR-FLOATING-POINT`, `W48-QR-FLOAT-IEEE-LEAN-MODEL`, `W48-QR-FLOAT-BUFFER-PAYLOADS`.
+- **Implementation:** `crates/qcore-core/src/scalar_types.rs`, `crates/qcore-core/src/scalar_values.rs`, `crates/qcore-frontend/src/source_value_statement.rs`.
+- **Lean models:** `QCore.ScalarTypes`, `QCore.ScalarTypedErrors`, `QCore.ScalarTasks`, `QCore.ScalarLoopBounds`, `QCore.ScalarPayloads`, `QCore.ScalarEpochTasks`, `QCore.ScalarComposedString`, `QCore.Ieee754`, `QCore.Ieee754Round`, `QCore.Ieee754Ops`, `QCore.FloatTypes`.
 
-<a id="g02u-imported-c-structs-sourceffiv1"></a>
+---
 
-## G02u. Imported C structs (`source.ffi.v1`)
+<a id="g0713-the-first-source-level-aggregate-sourcerecordv1"></a>
 
-Card `W48-QR-C-STRUCT-IMPORT`, card 1 of the `.qr` language track, on five
-user decisions (2026-09-29/30): the import line, the file-wide trust mark, the
-import form, the `#c_ffi` marker on the contract side (contract spec §C04.12),
-and output only through `std.fmt`/`std.io`/`std.logger`.
+## G07.13. Source records (`source.record.v1`)
+
+### Purpose and cross-route support
+
+`source.record.v1` defines Quirin's nominal source-level product aggregate: `type NAME { ... }`. Like `if` and `for`, it is a core language construct requiring **no `#import`**, **zero new reserved words**, and **zero dedicated diagnostic codes** (attributing refusals to the admitting route's pass band).
+
+Records are supported across three `.qr` execution families (plus C layout imports via `struct!` in [G02u](#g02u-imported-c-structs-sourceffiv1)):
+
+| Admitting route | Allowed field types | Supported operations | Route selection & custody notes |
+|---|---|---|---|
+| **`source.buffer.v1`** ([G02k-buffer](#g02k-an-owned-byte-buffer-stdbuffer)) | Any [G02t](#g02t-fixed-width-scalar-types) `SCALAR` (`bool`, ints, `f32`/`f64`), `"bytes"`, or another declared `RECORD` | Construction, `.path` scalar read or owned-`bytes` partial move out, `.path = val` scalar write or hole refill (`mut`), `.path[i]` byte load/store, `extent(r.path)`, `drop r.path;`, `drop r;`, scalar-record copy `let q = r;` | Single-function entry only (`Q051`–`Q057`). Selected for any single-function module declaring `type NAME { ... }` or holding `"bytes"`. |
+| **`source.scalar-calls.v1`** ([G02s](#g02s-scalar-functions-and-explicit-output-sourcescalar-callsv1)) | Any `SCALAR` or scalar-only `RECORD` (`"bytes"` refused at `Q020`) | Construction, `.path` nested field reads, `let` bindings, by-value function parameters and `return` results | Multi-function buffer-free modules (`Q020`). Immutable plain values; field writes and `throws<ArithmeticError>` record returns refuse. |
+| **`source.tasks.*` & `G02j`** ([G02a](#g02a-scoped-copy-task-execution), [G02j](#g02j-composed-scoped-tasks-and-rendered-lines)) | Any `SCALAR`, `own<Buffer[<T>]>`, or declared `RECORD` (`"bytes"` refused at `Q500`) | Construction, `.path` read/move-out, `.path = val` write/refill (`mut`), `let q = r;` (scalar records), `drop r[.path];`, `qcore_buffer_read/write(r.path, ...)`, whole/field `spawn` captures, worker `return [move] r;`, `G02j` `print/log ... r.path;` | Decomposed into depth-first leaf slots (`Q020`, `Q300`, `Q600`, `Q050`). Refused on `source.epoch.tasks.v1` (`Q500`). |
+
+### Consolidated EBNF
 
 ```ebnf
-ffi_module    = "#import", "std.ffi.unsafe", ";", { import },
-                { struct_import | extern_decl | entry | helper } ;
-helper        = "fn", NAME, "(", [ NAME, ":", ( SCALAR | NAME ), { ",", … } ], ")",
-                [ "->", ( "unit" | SCALAR | NAME ) ], [ "effects", "{", EFFECT, { ",", EFFECT }, "}" ],
-                "{", { stmt }, "return", [ value ], ";", "}" ;   (* W48-QR-USABLE-RECORDS *)
-struct_import = "struct", "!", "{", "type", NAME, "=", C_STRUCT, "from", STRING, ";",
-                "fields", "{", field, { ",", field }, [ "," ], "}", "}" ;
-C_STRUCT      = "c", STRING ;          (* no byte between; the text is exactly `struct TAG` *)
-field         = NAME, ":", SCALAR ;    (* §G02t; 1 to 32 fields, names distinct *)
-extern_decl   = "extern", "fn", NAME, "(", [ param, { ",", param } ], ")", "->", FFI_RESULT, ";" ;
-param         = NAME, ":", ( SCALAR | NAME | "ptr", "<", "const", ",", NAME, ">" ) ;
-FFI_RESULT    = "unit" | SCALAR | NAME ;   (* NAME: an imported struct *)
-entry         = "fn", NAME, "(", ")", "->", "unit", "effects", "{", EFFECT, { ",", EFFECT }, "}",
-                "{", { stmt }, "return", ";", "}" ;
-stmt          = "let", NAME, "=", NAME, "{", assign, { ",", assign }, [ "," ], "}", ";"
-              | "let", NAME, "=", NAME, ".", NAME, ";"
-              | [ "let", NAME, "=" ], NAME, "(", [ value, { ",", value } ], ")",
-                [ "succeeds", outcome ], ";"
-              | NAME, ".", NAME, "=", value, ";"                (* a listed field *)
-              | "let", NAME, "=", NAME, ";"                     (* a copy *)
-              | print_stmt | log_stmt | "flush", ";" ;          (* §G02g *)
-assign        = NAME, ":", value ;
-value         = [ "-" ], INTEGER | "true" | "false" | NAME ;
-outcome       = [ "-" ], INTEGER | "true" | "false"
-              | NAME, "{", assign, { ",", assign }, [ "," ], "}" ;   (* literal values only *)
+record_decl = "type", NAME, "{", field, { ",", field }, [ "," ], "}" ;
+field       = NAME, ":", field_type ;
+field_type  = SCALAR                                            (* §G02t, floats included *)
+            | "bytes"                                           (* source.buffer.v1 only *)
+            | "own", "<", "Buffer", [ "<", SCALAR, ">" ], ">"   (* source.tasks.* only *)
+            | RECORD_NAME ;                                     (* acyclic nested record *)
+
+path        = ".", NAME, { ".", NAME } ;
+
+(* Statement forms on source.buffer.v1 and source.tasks.* (G02s embeds construction/paths in expressions) *)
+record_stmt = "let", NAME, "=", RECORD_NAME, "{", assign, { ",", assign }, [ "," ], "}", ";"
+            | "let", NAME, "=", NAME, path, ";"                 (* scalar copy or owned move-out *)
+            | "let", NAME, "=", NAME, ";"                       (* copy bind: scalar-only records *)
+            | NAME, path, "=", VALUE, ";"                       (* scalar write or owned hole refill *)
+            | "let", NAME, "=", NAME, path, "[", OPERAND, "]", ";"      (* source.buffer.v1 *)
+            | NAME, path, "[", OPERAND, "]", "=", OPERAND, ";"          (* source.buffer.v1 *)
+            | "let", NAME, "=", "extent", "(", NAME, path, ")", ";"     (* source.buffer.v1 *)
+            | "drop", NAME, [ path ], ";" ;
+
+assign      = NAME, ":", VALUE ;
+VALUE       = [ "-" ], INTEGER | [ "-" ], FLOAT | "true" | "false" | NAME ;
 ```
 
-* **The import enables it, and marks the whole file.** `#import std.ffi.unsafe;`
-  is spelled like every bundled import and granted by no other module (the
-  `std.extern.unsafe` precedent, §G02d.1): a `struct!` in a file without it
-  refuses at `Q032`. A call still needs `#import std.extern;` (`Q022`), and a
-  line its output module. Every result from the file holds under the
-  **unsafe-FFI assumption** — that the imported layouts are faithful and each
-  `#c_ffi` function behaves as its contract states — which the certificate
-  names with every imported struct and every marked function called; the
-  verdict is at best "Safe under the unsafe-ffi assumption" and never plain
-  `Safe` (language specification §L14.6, §L20). This is not the `Unsafe`
-  verdict.
-* **Route selection.** `source.ffi.v1` is selected **before every other
-  route**, by the import or by a `struct!`: an FFI file reaches no route that
-  would publish without the assumption, and a declaration or statement this
-  route does not model refuses (`Q026`) instead of reaching one.
-* **The layout is the compiler's, never the source's.** The listing names
-  fields and `.qr` types; no offset, size or alignment is written. The header
-  resolves against the declaring file's own directory (one candidate path, no
-  search). The builder's recorded target (`--recorded-target`) must name the
-  running Clang — its first `--version` line as `compiler`, its `-dumpmachine`
-  as `triple` — and that compiler's typed AST and record layout
-  (`qcore_c_gateway::ffi_layout`) give each member's written and canonical
-  type and its offset. A listed field must be a direct member whose canonical
-  type is the canonical type of the field's §G02t C11 spelling under the same
-  compiler (`int64_t` and `ptrdiff_t` are both `long` on LP64, so `i64` and
-  `isize` both read a `long`; a `long long` reads as neither), and the listing
-  must follow the layout order — that is how a listed field's offset is
-  compared, since the listing states none. An unreadable header or context, no
-  recorded target, another compiler, no complete `struct TAG` (an unknown tag),
-  a union, a bit-field, a flexible array member, an anonymous member, any
-  attribute on the record or a member (`packed`, `aligned`, `#pragma pack`),
-  and a listed member with no §G02t equivalent refuse at `Q063`; a listed field
-  that is not a member, of another type or out of layout order refuses at
-  `Q064`.
-* **Unlisted members are opaque bytes.** A read or a construction naming one
-  refuses at `Q051`; a member of any type may stay unlisted. A construction
-  zeroes the object before storing the listed fields.
-* **Records are §G07.13's.** A construction supplies every listed field exactly
-  once (`Q051`), each value of exactly the field's type (`Q052`; a literal
-  range-checked, `Q053`); a read binds a value of the field's type. Card
-  `W48-QR-USABLE-RECORDS`: `RECORD.FIELD = VALUE;` writes a **listed** field
-  with a value of exactly its type and derives `mut` (an opaque or unknown
-  member, `Q051`); `let q = r;` copies a record or a scalar. Nesting an
-  imported struct stays `W48-QR-FFI-NESTED-AND-ARRAY-FIELDS`.
-* **`.qr` helper functions (card `W48-QR-USABLE-RECORDS`).** A function other
-  than the entry takes §G02t scalars and imported records **by value**
-  (a pointer parameter refuses, `Q026`) and returns `unit`, a scalar or a
-  record; an absent effect row is inferred, an explicit one must admit what
-  the body does (`Q029`). A helper is checked at **every** call, with the
-  values it is given — records copied — by the entry's own statement rules;
-  the call graph is acyclic and at most 16 deep, and a helper the entry never
-  reaches refuses (`Q026`). A helper call declares no outcome (`Q025`). The
-  emitted C defines each as `static RESULT qr_fn_NAME(…)`, by value, and a
-  declared outcome that disagrees inside one exits 70 through `exit`.
-* **The mark is a file's.** In a bundle of several files, a function in a file
-  that does not itself import `std.ffi.unsafe` refuses (`Q032`): no code is
-  checked under the unsafe-FFI assumption in a file that never took it.
-* **Calls.** A declared callee is admitted against the explicit contract
-  selection, by name, parameter names and types. A position carrying an
-  imported struct — by value or `ptr<const, NAME>`, a result by value — is
-  admitted **only through a `[| quant #c_ffi |]` declaration** whose types name
-  the same C tag; through an unmarked one it refuses at `Q033`. An unmarked
-  custody-free scalar contract (every parameter borrowed, no result custody)
-  may be called as well. A pointer result, `ptr<mut, …>` over a struct and any
-  other type refuse at `Q024`; a signature disagreeing with its contract at
-  `Q027`; an `unsafe extern fn` at `Q034`.
-* **Linkage (card `W48-QRLIB-LINKAGE`).** Every admitted callee resolves
-  through a **generated** `.qrlib` (§G02d.2.1) that its declaring file binds
-  with `extern library NAME;` (§G02d.3): no binding, a binding to a v1
-  manifest (`Q065`), a callee the bound manifests do not bind (`Q066`), an
-  entry naming another contract module or another C signature — struct
-  positions compared by tag (`Q041`), a manifest header whose digest is not
-  the header the `struct!` read, for a struct the callee carries (`Q064`), and
-  a slice that is not total (`Q047`) refuse. The trusted premise "the builder
-  links the library that supplies each callee" is gone: the builder keeps only
-  the include path (`BuilderIncludes`), and each called function carries a
-  linkage premise — symbol X from artifact Y@sha256 (static), or stub
-  Y@sha256 plus runtime premise R (dynamic), under ABI premises Z — which the
-  certificate must name for every call (`Q067`, the tripwire) and the verdict
-  lists as `linked:NAME`. It says which code is linked, never that it is safe:
-  the unsafe-FFI assumption is unchanged.
-* **Declared outcomes.** A C result is a value with no number until the source
-  declares one: `succeeds INTEGER` on a scalar result, `succeeds NAME { … }`
-  with every listed field's literal on a struct result. The emitted C compares
-  the real result and exits 70 before anything reads it. Rendering a value no
-  outcome determined refuses at `Q043`.
-* **Emission.** The C `#include`s the header as written (the builder puts its
-  directory on the include path), uses the real `struct TAG`, never re-declares
-  it, and asserts `sizeof`, each listed `offsetof` and each listed member's type
-  (`_Generic`), so a header whose layout drifted after checking does not build.
-  Each callee is declared from its contract signature, so a header declaring it
-  otherwise makes the unit ill-formed. A `const` pointer argument is `&r_NAME`,
-  a by-value one `r_NAME`.
+### Semantic side conditions, custody paths, and bounds
 
-Census (constraint 14, `docs/reports/w48-qr-c-struct-import/census_ffi_spelling.py`):
-no tracked `.qr`/`.qv`/`.qrlib`/`.qcore`/`.qc` file contained `struct !`,
-`c"…"`, `[|`, `|]`, `c_ffi` or a `std.ffi` import before the card; no word is
-reserved. Card 4's capture list `|copy x, …|` lexes as single bars and is
-untouched: `[|` and `|]` form only with an adjacent `[` or `]`.
+- **Declaration syntax and formation bounds:**
+  - Introduced by the existing reserved keyword `type` followed by `NAME {` (disambiguated from `type NAME = ...;` aliases by `{`, and from `resource type NAME {` by an earlier parser branch; `record` was rejected by the constraint-14 census to preserve archived `Q000` probe pins).
+  - Each record declares **1 to 32** uniquely named fields (`Q051` duplicate/malformed; `Q053` count > 32).
+  - Nested records may appear in either declaration order, provided the containment graph is **acyclic** (`Q051`), at most **8** levels deep, and flattens to at most **256** total leaf fields (`Q053`).
+- **Total construction and exact field typing:**
+  - Construction supplies every declared field **once by name** in any order (`Q051` on missing, extra, or duplicate fields; `Q013` on undeclared `RECORD_NAME`).
+  - Field initializers and writes must match the field's exact `G02t` or record type with no implicit conversion (`Q052` type mismatch, `Q053` out-of-range literal, `Q051` missing `--recorded-target` for `isize`/`usize`).
+- **Path-extended ownership for owned fields (`AGGREGATE-OWNED-FIELD`, `W48-QR-USABLE-RECORDS`):**
+  - Supplying an acquired buffer binding (`bytes` on `source.buffer.v1`, `own<Buffer<T>>` on `source.tasks.*`) or an owning nested record at construction **moves** custody into `RECORD.PATH` (`qcore_core::ownership::Place`).
+  - `let x = r.path;` copies a scalar or scalar sub-record, and **moves out** an owned leaf (leaving a **hole**; reading or dropping a hole refuses at `Q054` / `Q600`; whole reads of owning sub-records and whole writes of any sub-record refuse at `Q051`).
+  - `r.path = val;` mutates a scalar leaf or **refills** an owned hole (`OverwriteOfLiveField` `Q054` / `Q600` if the leaf is still live) and derives effect `mut`. On `source.buffer.v1`, reading or writing even a scalar field of an owning record requires the record to be live (`UseAfterDrop` `Q054` after `drop r;`).
+  - `drop r;` releases every live owned leaf depth-first in declaration order; leaking any owned leaf at exit reports `RECORD.PATH` (`Q054` / `Q600`).
+  - `let q = r;` copies scalar-only records and refuses records declaring any owned field (`CopyOfOwned` `Q054`, even if all owned leaves were moved out).
+- **Lexical `.` adjacency and C11 emission:**
+  - Because `Float` tokens begin only at digits, `p.x` always lexes as `Word Dot Word` (leaving IPv4 `127.0.0.1` `Float Dot Float` untouched); numeric paths such as `p.1.2` refuse at `Q051`.
+  - Emitted C defines `struct qcore_record_NAME` with `f_FIELD` members in topological order before holders and emits designated initializers `{ .f_x = ... }` so C keywords never collide.
+- **Remaining boundaries (`source.buffer.v1`):** `string` view fields (`AGGREGATE-VIEW-FIELD`), `lend(...)` in an entry that constructs an owning record (`OWNED-FIELD-LEND-WINDOW`, `Q051`), and owned-field operations inside `for` loop bodies (`OWNED-FIELD-LOOP-BODY`, `Q051`).
 
+### Example
+
+```qcore
+#import std.buffer;
+#import std.fmt;
+#import std.io;
+
+type Header { version: u8, tag: i32 }
+type Packet { head: Header, payload: bytes }
+
+fn main() -> unit effects { io, alloc, mut } {
+    let raw = bytes(4);
+    raw[0] = 79;
+    raw[1] = 75;
+
+    let h = Header { version: 1, tag: 200 };
+    let pkt = Packet { head: h, payload: raw };
+
+    pkt.head.tag = 204;
+    let first = pkt.payload[0];
+    let code = pkt.head.tag;
+    print dec first;            // stdout: 79
+    print dec code;             // stdout: 204
+
+    drop pkt;                   // releases pkt.payload
+    return;
+}
+```
+
+### Implementation & Provenance
+
+- **Cards:** `AGGREGATES-V1`, `AGGREGATE-OWNED-FIELD`, `OWNED-FIELD-ROUTE-REACH`, `COMPOSED-WINDOW-REACH`, `W48-QR-SCALAR-TYPES-R3`, `W48-QR-FLOAT-BUFFER-PAYLOADS`, `W48-QR-USABLE-RECORDS`, `W48-QR-TASK-RECORD-CAPTURES`.
+- **Implementation:** `crates/qcore-frontend/src/source_record.rs`, `crates/qcore-core/src/source_record.rs`, `crates/qcore-core/src/ownership.rs`.
+- **Lean models:** `QCore.OwnedFieldCopyReach`, `QCore.TaskRecordCaptures`.
+
+---
+
+<a id="g02k-an-owned-byte-buffer-stdbuffer"></a>
+<a id="g02k-buffer"></a>
+
+## G02k-buffer. Owned byte buffers and disjoint write lends (`std.buffer`, `source.buffer.v1`)
+
+### Purpose and required `#import`
+
+`source.buffer.v1` (`std.buffer`) provides a source-level, extent-carrying, zero-initialized owned byte buffer with check-time bounds verification, disjoint range write lends, bounded counted loops, records, and typed check-time scalar/float operations.
+
+- **Required `#import`s:** `#import std.buffer;` (`Q015` without it when acquiring, measuring, lending, or indexing a buffer; `drop` alone is ungated). Output statements additionally require `#import std.io;`, `#import std.logger;`, and `#import std.fmt;`.
+- **Tier distinction:** Implements the self-contained C11 source tier of [`STD_BUFFER_V1.md`](design/STD_BUFFER_V1.md) §1 (no extern boundary, extent carried in the ownership ledger), distinct from the native-library-backed C04 pointer tier and from concurrent task `Buffer<T>` ([G02b](#g02b-owned-buffer-task-execution)).
+- **Route selection:** Selected after concurrent, FFI, extern, and event routes, and **before** `source.string.v1` (unless `borrow_utf8` bridges them, [G07.9](#g079-immutable-utf-8-string-views-v1-sourcestringv1)) and `source.std-io.v1`. Models a single zero-parameter `unit` entry (`Q051` if helper functions exist; multi-function byte helpers use [G02r](#g02r-resource-aware-byte-helpers-sourceresource-callsv1)).
+
+### Consolidated EBNF
+
+```ebnf
+module    = { import }, { error_decl | record_decl | entry } ;
+import    = [ "#" ], "import",
+            ( "std.buffer" | "std.fmt" | "std.io" | "std.logger" ), ";" ;
+entry     = "fn", NAME, "(", ")", "->", "unit",
+            [ "effects", "{", [ EFFECT, { ",", EFFECT } ], "}" ],
+            "{", { stmt }, "}" ;
+
+stmt      = "let", NAME, "=", [ "-" ], INTEGER, ";"                 (* i32 binding *)
+          | "let", NAME, "=", [ "-" ], FLOAT, ";"                   (* f64 binding, §G02t *)
+          | "let", NAME, "=", [ "-" ], FLOAT, "as", SCALAR, ";"     (* single-round float *)
+          | "let", NAME, "=", OPERAND, "as", SCALAR, ";"            (* checked conversion *)
+          | value_statement                                         (* single §G02t op *)
+          | "let", NAME, "=", NAME, ";"                             (* copy bind *)
+          | "let", NAME, "=", "bytes", "(", INTEGER, ")", ";"       (* acquire 1..=4096 *)
+          | "let", NAME, "=", "extent", "(", target, ")", ";"       (* bind byte length *)
+          | "let", NAME, "=", "lend", "(", NAME, ",", OPERAND, ",", OPERAND, ")", ";"
+          | "let", NAME, "=", target, "[", OPERAND, "]", ";"        (* byte load, i32 *)
+          | target, "[", OPERAND, "]", "=", OPERAND, ";"            (* byte store, 0..=255 *)
+          | "drop", target, ";"                                     (* release owner *)
+          | record_stmt                                             (* §G07.13 *)
+          | [ unroll_attr ], "for", NAME, "in", "0", "..", BOUND, "{", { stmt }, "}"
+          | "print", RENDERING, OPERAND, ";"
+          | "log", LEVEL, RENDERING, OPERAND, ";"
+          | "flush", ";"
+          | "return", ";" ;
+
+target    = NAME | NAME, path ;                                     (* buffer/loan or owned field *)
+OPERAND   = [ "-" ], INTEGER | NAME ;
+BOUND     = INTEGER | NAME ;
+EFFECT    = "io" | "alloc" | "mut" | "partial_eq" | "partial_ord" ;
+```
+
+### Semantic side conditions, disjoint write lends, and diagnostics
+
+- **Transported extent and inherited custody:**
+  - `bytes(N)` requires an integer literal `N` in **`1 ..= 4096`** (`Q051` non-literal, `Q053` out of range) and lowers to `OwnershipOp::Acquire { footprint: Footprint::single("bytes", N) }`. `extent(b)` reads `N` back from the custody ledger as an `i32`.
+  - Leak at return (`NormalPathLeak`), double release (`DoubleDrop`), use after release (`UseAfterDrop`), rebound live names (`BindingAlreadyExists`), and copy of owned resources (`CopyOfOwned`) are decided by the inherited cycle-3 `qcore_core::ownership` checker and reported at `Q054`.
+- **Check-time constant decidability and typed environment:**
+  - Every scalar/float binding carries one [G02t](#g02t-fixed-width-scalar-types) type (`i32` for integer `let`, `extent`, byte loads, and literal loop bounds). Every operation is folded at check time (`Q053` on arithmetic/conversion fault).
+  - Byte indices, stored byte values (`0 ..= 255`), and `lend` bounds require type `i32` (`Q052` for other scalar types — convert explicitly with `as i32`; `Q053` for index outside `[0, extent)` or byte outside `0..=255`; `Q055` if a buffer or loan is passed at an operand/render position).
+  - `let q = p;` (copy bind) copies scalars and scalar-only records and refuses buffers, write loans, and owning records (`Q054`). It does **not** select `source.buffer.v1` on its own, avoiding collision with `let s = tcp;` ([G07.11](#g0711-a-checked-socket-as-a-reactor-registered-event-source)).
+- **Disjoint write lends (`let sub = lend(b, LOW, HIGH);`, cards `SLICE-PERMISSIONS-WRITE-LEND`, `LOOPS-ON-COMPOSED-ROUTES`):**
+  - Lends exclusive read/write authority over `[LOW, HIGH)` of owned buffer `b` (`0 <= LOW <= HIGH <= extent(b)`; `LOW` and `HIGH` must belong to the lowering's constant tier — literals, literal `let`, `extent`, or constant conversions/value statements, refusing byte-derived bounds at `Q053`).
+  - `sub[i]` checks `0 <= i < HIGH - LOW` (`Q053`) and rebases to `b[LOW + i]`; `extent(sub)` yields `HIGH - LOW`.
+  - **Window & disjointness (`QCore.WriteLend`, `QCore.LoopWindows`):** Each loan's window runs from `lend(...)` through its last top-level use (extending across all iterations of any `for` loop whose body names `sub`). Two lends of `b` may be live simultaneously iff their byte intervals are disjoint (`max low < min high`; `OverlappingLends` `Q054` otherwise). While a lend is live, owner reads/writes outside all live lends succeed, owner reads/writes overlapping a live lend refuse (`Q054`), and `drop b;` refuses (`DropWhileBorrowed` `Q054`).
+  - Window-shape restrictions (`Q051` / `Q052`): Crossed (non-nested, overlapping-lifetime) lend windows (`Q051`), acquisitions or drops inside a live lend window or lending-entry loop body (`Q051`), per-iteration `lend(...)` inside a `for` body (`Q051`), lending a record field (`Q051`), re-lending a loan (`Q052`), and `drop sub;` on a loan (`Q052`, loans expire at last use) all refuse.
+- **Reserved vs. contextual words:** `bytes` and `extent` are reserved (`buffer` was left unreserved to protect 555 existing corpus bindings). `lend` is **contextual** — recognized only immediately before `(` in a `let` initializer, so `let lend = 5;` remains valid.
+- **Derived effects and C11 emission:**
+  - `bytes(N)` and `drop` derive `alloc`; byte/field stores derive `mut`; `print`/`log`/`flush` derive `io`; float comparisons require `partial_eq`/`partial_ord` (`Q057` / `Q052` if undeclared; `Q056` certificate recheck).
+  - Emits self-contained C11 using `calloc` (zero-initialized), displaced `const` loan pointers, and bounds-checking witnesses that `abort()` if ever violated; stdout and stderr are compared per stream against reference execution.
+
+### Example
+
+```qcore
+#import std.buffer;
+#import std.fmt;
+#import std.io;
+
+fn main() -> unit effects { io, alloc, mut } {
+    let b = bytes(8);
+    let left = lend(b, 0, 4);
+    let right = lend(b, 4, 8);
+
+    for i in 0..4 {
+        left[i] = 65;
+        right[i] = 90;
+    }
+
+    let a = b[0];               // lend windows closed after the loop
+    let z = b[7];
+    print dec a;                // stdout: 65
+    print dec z;                // stdout: 90
+    drop b;
+    return;
+}
+```
+
+### Implementation & Provenance
+
+- **Cards:** `STD-BUFFER`, `SLICE-PERMISSIONS-WRITE-LEND`, `LOOPS-ON-COMPOSED-ROUTES`, `OWNED-FIELD-ROUTE-REACH`, `COMPOSED-WINDOW-REACH`, `W48-QR-SCALAR-TYPES-R3`, `R5`, `W48-QR-FLOAT-BUFFER-PAYLOADS`.
+- **Implementation:** `crates/qcore-frontend/src/source_std_buffer.rs`, `crates/qcore-core/src/std_buffer.rs`.
+- **Design & reports:** [`design/STD_BUFFER_V1.md`](design/STD_BUFFER_V1.md), [Wave 22 std.buffer report](reports/wave22-std-buffer/README.md).
+- **Lean models:** `QCore.WriteLend`, `QCore.LoopWindows`, `QCore.ScalarLoopBounds`.
+
+---
+
+<a id="g02r-resource-aware-byte-helpers-sourceresource-callsv1"></a>
 <a id="g02r-resource-aware-functions-sourceresource-callsv1"></a>
 
 ## G02r. Resource-aware byte helpers (`source.resource-calls.v1`)
 
-`source.resource-calls.v1` is a closed, executable extension for direct calls
-that carry `std.buffer` byte storage across source function boundaries. The
-type spelling is deliberately `bytes`: task execution's `Buffer` is a distinct
-fixed four-byte resource and is refused on this route. Whitespace inside the
-angle brackets is insignificant.
+### Purpose and required `#import`
+
+`source.resource-calls.v1` extends `std.buffer` across direct, acyclic `.qr` helper function boundaries, checking affine `own<bytes> use one` transfers, call-scoped `borrow<bytes>` read loans, call-scoped `lend<bytes>` read/write loans, minimum extent preconditions, and transitive `alloc`/`mut` effects.
+
+- **Required `#import`:** `#import std.buffer;` (`Q015` without it).
+- **Type distinction:** Always spelled `bytes` (whitespace inside `< ... >` is insignificant); concurrent `Buffer` ([G02b](#g02b-owned-buffer-task-execution)) is a distinct resource and refuses on this route (`Q020`).
+
+### Consolidated EBNF
 
 ```ebnf
-parameter = NAME, ":", ("i32"
-          | "own", "<", "bytes", ">", "use", grade-one
-          | "borrow", "<", "bytes", ">"
-          | "lend", "<", "bytes", ">") ;
-grade-one = "one" | "1" | "[", "1", ",", "1", "]" ;
-result = "unit" | "i32" | "own", "<", "bytes", ">" ;
-argument = scalar-operand | "move", NAME | "borrow", NAME
-         | "lend", "(", NAME, ")" ;
-call = FUNCTION_NAME, "(", [argument, {",", argument}], ")" ;
-return = "return", ";" | "return", scalar-operand, ";"
-       | "return", "move", NAME, ";" ;
+helper_fn  = "fn", NAME, "(", [ parameter, { ",", parameter } ], ")", "->", result,
+             [ "effects", "{", effect, { ",", effect }, "}" ],
+             "{", { helper_stmt }, return_stmt, "}" ;
+
+parameter  = NAME, ":", ( "i32"
+                        | "own", "<", "bytes", ">", "use", grade_one
+                        | "borrow", "<", "bytes", ">"
+                        | "lend", "<", "bytes", ">" ) ;
+grade_one  = "one" | "1" | "[", "1", ",", "1", "]" ;
+result     = "unit" | "i32" | "own", "<", "bytes", ">" ;
+effect     = "alloc" | "mut" ;                                  (* no trailing comma *)
+
+helper_stmt = "let", NAME, "=", [ "-" ], INTEGER, ";"
+            | "let", NAME, "=", "bytes", "(", INTEGER, ")", ";"
+            | "let", NAME, "=", "extent", "(", NAME, ")", ";"
+            | "let", NAME, "=", NAME, "[", OPERAND, "]", ";"
+            | NAME, "[", OPERAND, "]", "=", OPERAND, ";"
+            | "drop", NAME, ";"
+            | "let", NAME, "=", call, ";"
+            | call, ";" ;                                       (* unit-returning callee *)
+
+call        = FUNCTION_NAME, "(", [ argument, { ",", argument } ], ")" ;
+argument    = OPERAND
+            | "move", NAME
+            | "borrow", NAME
+            | "lend", "(", NAME, ")" ;
+return_stmt = "return", ";"
+            | "return", OPERAND, ";"
+            | "return", "move", NAME, ";" ;
+OPERAND     = [ "-" ], INTEGER | NAME ;
 ```
 
-Functions may also use the flat `source.buffer.v1` acquisition, extent, byte
-load/store and drop statements, plus `let NAME = call;` or an unbound unit
-call. Calls are direct. A local or parameter that shadows a helper name makes
-the apparent call indirect and therefore refuses. The graph must be acyclic,
-and every declared helper must be reachable from the selected entry; this v1
-profile does not claim universal checking of an uncalled public library.
+### Semantic side conditions, aliasing, extent obligations, and bounds
 
-An owned argument transfers its one live slot and leaves the caller name stale.
-A read loan permits whole-buffer reads; a write loan permits reads and writes.
-Loans exist for one call and cannot be returned, stored, subloaned or relended.
-The same owner may occur more than once in one call only when every occurrence
-is a read loan. Each helper derives the minimum extent required of each byte
-parameter from its checked accesses and transitive calls; every call site must
-prove the actual extent meets that minimum. Owned results must be bound and
-are transferred back to the caller. All custody operations are projected onto
-the existing ownership checker, and the flattened byte events are checked by
-the existing standard-buffer checker and certificate recheck.
+- **Call graph and reachability:**
+  - Calls must be direct; shadowing a helper name with a parameter or local makes the call indirect and refuses (`Q020`).
+  - The call graph must be **acyclic**, and **every** declared helper in the module must be reachable from the selected entry (`Q020` for unreachable helpers or library-only modules).
+- **Custody, loans, and alias discipline:**
+  - `move NAME` transfers one live `own<bytes>` slot into an `own<bytes> use one` parameter, leaving the caller binding stale. `return move NAME;` transfers an owned buffer back to the caller, where it **must** be bound by `let` (`Q054`).
+  - `borrow NAME` passes a call-scoped read loan (`borrow<bytes>`, permitting byte reads and `extent`); `lend(NAME)` passes a call-scoped read/write loan (`lend<bytes>`, permitting byte reads, byte stores, and `extent`).
+  - Loans exist for one call only and cannot be returned, stored, subloaned, or relended. One owner may appear multiple times in a single call's argument list **only** when every occurrence is `borrow NAME` (`Q054` if combined with `move` or `lend`).
+- **Derived minimum extents and zero-owner allocation safety:**
+  - Each helper derives the minimum byte extent required of every `bytes` parameter from its checked indices and transitive calls; every call site must prove the passed buffer's actual extent meets that minimum (`Q053`).
+  - Transitive `alloc` and `mut` effects are inferred when `effects { ... }` is omitted and checked when written (`Q057`; no trailing comma, at most one `effects` clause, empty/nonempty `contract` blocks refuse at `Q020`/`Q021`).
+  - Because `calloc` failure exits with status `86` without unwinding, `bytes(N)` or any `alloc`-performing helper call is admitted **only** when zero other live owners exist in the caller or callee at that point (`Q054`).
+- **Excluded forms:** Branches, loops, records, extern calls, concurrent `Buffer`, local `use` grades, borrowed return types, computed extents/indices, and cross-profile calls.
 
-The derived effect row contains `alloc` and/or `mut`, transitively. An absent
-row infers them. An explicit row must contain all derived effects; no other
-effect is supported. An explicit row uses commas between effects, permits no
-trailing comma, appears at most once and consumes the rest of the header;
-residual header tokens refuse. Allocation failure exits with status 86 and has no error
-payload in this profile. Therefore an allocation or allocation-performing call
-is admitted only when its failure cannot strand another live owner in the
-caller or callee. This is an allocation-failure cleanup condition, not general
-typed-error support.
+| Resource-Helper Bound | Maximum |
+|---|---|
+| Functions per module | 256 |
+| Parameters per function | 256 |
+| Call DAG depth | 64 |
+| Source IR statements | 16,384 |
+| Expanded DAG items (visited stmts + buffer/ownership ops) | 32,768 |
 
-Limits are 256 functions, 256 parameters per function, call depth 64, 16,384
-source IR statements, and 32,768 expanded items. An expanded item is one
-visited statement, emitted buffer event, or generated ownership operation,
-including literal-argument binds and loan wrappers. All limits refuse rather
-than truncate. The expanded-item bound applies while flattening the call DAG,
-so repeated high-arity calls cannot cause exponential work under the depth
-bound. Branches, loops,
-records, extern calls, task `Buffer`, source contracts, local usage forms other
-than `own<bytes> use one`, borrowed results, computed extents and indices, and
-cross-profile calls remain outside this subset.
+### Example
 
-The profile allocates no diagnostic code. Ordinary signature, call-graph and
-shape refusals use Q020; an empty contract block is an unsupported header at
-Q020 and nonempty source contracts retain Q021; invalid usage
-grades use Q100. Buffer statement shape uses Q051, extent obligations Q053,
-inherited custody refusals Q054, certificate recheck failures Q056 and missing
-transitive effects Q057. The Lean module proves bounded decision lemmas for
-alias compatibility, affine slots, extent composition, acyclicity, transitive
-effects and zero-owner allocation failure. It is not a proof of the complete
-frontend-to-C translation.
+```qcore
+#import std.buffer;
 
-[Implementation and evidence](reports/resource-helper-functions/README.md).
+fn fill_header(buf: lend<bytes>, tag: i32) -> unit effects { mut } {
+    buf[0] = tag;
+    buf[1] = 1;
+    return;
+}
 
-## G02a. Scoped-copy task execution
+fn first_byte(buf: borrow<bytes>) -> i32 {
+    let b = buf[0];
+    return b;
+}
 
-`source.tasks.copy.v1` uses the ordinary compiler commands and requires exactly
-one `concurrency checked;` marker. All definitions are checked. The entry has no
-parameters; leaf workers accept named i32 parameters and return i32/unit —
-since card `W48-QR-SCALAR-TYPES-R4`, parameters and results of every §G02t type
-(§G02t, "Task workers and `copy` captures"; the entry's result stays i32/unit).
-Local scalar bindings are immutable. A return may use an i32 literal or live
-scalar slot; unit uses bare return or a live unit result slot. Explicit supported effect rows permit
-`spawn`, `join`, `may_block` and `throws<E>`; every actual effect/error must be
-permitted. Payload-free error variants preserve their exact `E::Variant` tags.
+fn make_packet() -> own<bytes> effects { alloc, mut } {
+    let p = bytes(4);
+    fill_header(lend(p), 65);
+    return move p;
+}
+
+fn main() -> i32 effects { alloc, mut } {
+    let pkt = make_packet();
+    let head = first_byte(borrow pkt);
+    drop pkt;
+    return head;
+}
+```
+
+### Implementation & Provenance
+
+- **Card:** `RESOURCE-HELPER-FUNCTIONS`.
+- **Implementation:** `crates/qcore-frontend/src/source_resource_calls.rs`.
+- **Report & Lean:** [Resource helper functions report](reports/resource-helper-functions/README.md) (Lean decision lemmas for alias compatibility, affine slots, extent composition, acyclicity, transitive effects, and zero-owner allocation failure).
+
+---
+
+<a id="g079-immutable-utf-8-string-views-v1-sourcestringv1"></a>
+
+## G07.9. Immutable UTF-8 string views, `concat`, and `borrow_utf8` (`std.string`, `source.string.v1`)
+
+### Purpose and required `#import`s
+
+`source.string.v1` (`std.string`) implements immutable, custody-free `{ ptr, len }` UTF-8 string views, `O(1)` byte lengths, code-point-checked slicing, compile-time `concat` composition, range-wise `borrow_utf8` bridges over `std.buffer` storage, and length-bounded stream output.
+
+- **Required `#import`s:** `#import std.string;` (`Q015` without it; quoted strings in declaration metadata such as `verify scope` need no import). Rendering text requires `#import std.io;` (`print`) or `#import std.logger;` (`log`), **without** needing `std.fmt` unless scalar `dec`/`hex` line selectors are also used. Bridging a byte buffer requires `#import std.buffer;`.
+- **Route selection:** Selected after concurrent, FFI, extern, event, and unbridged `source.buffer.v1` routes (and **ahead** of `source.buffer.v1` when `borrow_utf8(...)` is spelled, and ahead of `source.std-io.v1` when a constructed string literal, inline slice, `len`, `concat`, or `borrow_utf8` appears in a function body; bare `print bogus;` without string constructs stays on `source.std-io.v1`).
+
+### Consolidated EBNF
+
+```ebnf
+module    = { import }, { error_decl | record_decl | entry } ;
+import    = [ "#" ], "import",
+            ( "std.string" | "std.buffer" | "std.fmt" | "std.io" | "std.logger" ), ";" ;
+entry     = "fn", NAME, "(", ")", "->", "unit",
+            [ "effects", "{", [ EFFECT, { ",", EFFECT } ], "}" ],
+            "{", { stmt }, "}" ;
+
+stmt      = "let", NAME, [ ":", "string" ], "=", STRING-TOKEN, ";"
+          | "let", NAME, [ ":", "string" ], "=", NAME, "[", OPERAND, ":", OPERAND, "]", ";"
+          | "let", NAME, [ ":", "string" ], "=", "concat", "(", PIECE, ",", PIECE, { ",", PIECE }, ")", ";"
+          | "let", NAME, [ ":", "string" ], "=", "borrow_utf8", "(", NAME, ")", ";"
+          | "let", NAME, [ ":", "string" ], "=", "borrow_utf8", "(", NAME, ",", OPERAND, ",", OPERAND, ")", ";"
+          | "let", NAME, "=", "len", "(", NAME, ")", ";"
+          | "let", NAME, "=", [ "-" ], INTEGER, ";"
+          | BUFFER_STMT                                         (* §G02k-buffer, when bytes(N) is acquired *)
+          | "print", TEXT, ";"                                  (* selector-free UTF-8 output *)
+          | "log", LEVEL, TEXT, ";"                             (* selector-free UTF-8 log *)
+          | "print", RENDERING, OPERAND, ";"
+          | "log", LEVEL, RENDERING, OPERAND, ";"
+          | "log_level", LEVEL, ";"
+          | "flush", ";"
+          | "return", ";" ;
+
+TEXT      = STRING-TOKEN | NAME | NAME, "[", OPERAND, ":", OPERAND, "]" ;
+PIECE     = TEXT | ( "dec" | "hex" ), "(", NAME, ")" ;
+OPERAND   = [ "-" ], INTEGER | NAME ;
+EFFECT    = "io" | "alloc" | "mut" | "partial_eq" | "partial_ord" ;
+```
+
+### Semantic side conditions, `borrow_utf8` windows, and diagnostics
+
+- **Contextual keywords (zero new reserved words):** `len`, `concat`, and `borrow_utf8` are recognized only immediately before `(` (preserving `len` as an identifier in contracts); `string` is recognized only after `:` on `let`.
+- **Literal decoding and UTF-8 slicing (`Q068`–`Q073`):**
+  - `STRING-TOKEN` admits escapes `\\`, `\"`, `\n`, `\t`, `\r`, `\0`, and `\xHH` only; decoded payloads must be well-formed UTF-8 of at most **4,096 bytes** (`Q070`). Views are `{ ptr, len }` and may contain embedded `\0` bytes (never `strlen`-measured).
+  - `len(s)` binds `s`'s byte count as a check-time `i32`.
+  - `s[low:high]` (bound or inline in `TEXT`/`PIECE`) requires check-time `i32` bounds (`Q069` / `Q077` if non-`i32` or non-constant) satisfying `0 <= low <= high <= len(s)` and falling on UTF-8 code-point boundaries (`Q071` — never rounded).
+- **Static `concat` (`STRING-CONCAT`, `Q077`):**
+  - Requires **at least two** `PIECE`s and produces a `static const` byte array at compile time (max **4,096 bytes**, `Q077`), deriving **neither `alloc` nor `mut`**. `dec(NAME)` and `hex(NAME)` format check-time-constant scalars using `std.fmt`'s exact rules.
+- **Range-wise `borrow_utf8` and embedded `std.buffer` (`STRING-CONCAT`, `CT07-SLICE-PERMISSIONS`, `LOOPS-ON-COMPOSED-ROUTES`, `W48-QR-SCALAR-TYPES-R6`, `W48-QR-FLOAT-BUFFER-PAYLOADS`):**
+  - Modules acquiring `bytes(N)` embed `G02k-buffer`'s statements (including conversions, `value_statement`, and typed `for` loops; `lend(...)` is refused on the composed route at `Q077`, `SLICE-PERMISSIONS-COMPOSED-LEND`).
+  - `borrow_utf8` takes **1 or 3** arguments (`borrow_utf8(b)` is identical to `borrow_utf8(b, 0, extent)`). Bounds satisfy `0 <= low <= high <= extent(b)` (`Q077`).
+  - **Two static checks:** (1) UTF-8 validity of `b[low..high]` is proved at check time from `b`'s constant write history (`Q079`, including code points split by `low`/`high`); (2) inside the borrow's **window** (from `borrow_utf8` to the last read of the view or any slice derived from it, extended across loop iterations), stores into `[low, high)` and any `drop b;` refuse (`Q078`), while owner stores into disjoint bytes (`max low < min high`) and overlapping read borrows succeed.
+- **Text vs. scalar output (`STRING-SLICE-IO`, `Q075`–`Q076`):**
+  - Closed-word separation: `print`/`log` followed by `dec` or `hex` renders a scalar (`print dec s;` refuses at `Q072`); without a selector (`print s;`, `s |> print;`, `s[0:4] |> log info;`), it writes exact UTF-8 bytes via length-bounded `fwrite` (`\0` bytes intact) and derives `io` (`Q073` if undeclared; `Q075` malformed text line; `Q076` non-string name).
+- **Excluded follow-ons:** Freezing a buffer into an owned string (`STRING-SLICE-FREEZE`), runtime-varying pieces or borrows (`STRING-SLICE-CONCAT-RUNTIME`, `STRING-SLICE-BORROW-VARYING`), C04/FFI string ABI transport (`STRING-SLICE-ABI`), string equality/search, single-byte indexing on `string`, and mutable `{ ptr, len, cap }` slices.
+
+### Example
+
+```qcore
+#import std.string;
+#import std.buffer;
+#import std.io;
+
+fn main() -> unit effects { io, alloc, mut } {
+    let b = bytes(8);
+    b[0] = 79;                  // 'O'
+    b[1] = 75;                  // 'K'
+
+    let status = borrow_utf8(b, 0, 2);
+    b[4] = 33;                  // disjoint byte write outside [0, 2) is admitted
+
+    let count = len(status);
+    let line = concat("status=", status, " (", dec(count), " bytes)");
+    line |> print;              // stdout: status=OK (2 bytes)
+
+    drop b;                     // borrow window ended at `concat`
+    return;
+}
+```
+
+### Implementation & Provenance
+
+- **Cards:** `STRING-SLICE`, `STRING-SLICE-IO`, `STRING-CONCAT`, `CT07-SLICE-PERMISSIONS`, `LOOPS-ON-COMPOSED-ROUTES`, `W48-QR-SCALAR-TYPES-R6`, `W48-QR-FLOAT-BUFFER-PAYLOADS`.
+- **Implementation:** `crates/qcore-frontend/src/source_std_string.rs`, `crates/qcore-core/src/std_string.rs`.
+- **Design & reports:** [`design/STRING_SLICE_V1.md`](design/STRING_SLICE_V1.md), `docs/reports/string-slice/README.md`, `docs/reports/string-slice-io/README.md`, `docs/reports/string-concat/README.md`, `docs/reports/ct07-slice-permissions/README.md`.
+- **Lean models:** `QCore.StringSliceIo`, `QCore.StringConcat`, `QCore.LoopWindows`, `QCore.ScalarComposedString`.
+
+---
+
+<a id="g02h-the-pipe-operator-and-the-operator-token-family"></a>
+## G02h. The pipe operator and the operator token family
+
+### Consumer and Desugaring Model
+
+`source.pipe.v1` is a **parse-time token desugaring, not a standalone execution profile**: no source file selects it, and no semantic route observes `|>` directly. Before the delimiter map is built and before structural parsing (`G01`) runs, every well-formed pipeline statement is rewritten into the exact token stream of the ordinary statement(s) a programmer would have written by hand. Consequently, name resolution, custody/ownership checking, effect rows, usage linearity, concurrency ledgers, whole-program checking, reference execution, and C11 emission all inspect ordinary statements. A piped `.qr` program and its hand-written twin are `syntax_equivalent` and emit byte-identical C11.
+
+### Consolidated EBNF
+
+```ebnf
+pipe_stmt   = [ "let", NAME, "=" ], OPERAND, ( "|>", STAGE )+, ";" ;
+OPERAND     = token, { token } ;                     (* verbatim: `x`, `-7`, `move b`, `s[0:4]` *)
+
+STAGE       = [ "move" ], STAGE_BODY ;
+STAGE_BODY  = "print", [ RENDERING ]                 (* G02g / G07.9 sink; 0 or 1 selector *)
+            | "log", LEVEL, [ RENDERING ]            (* G02g / G07.9 sink; 1 or 2 selectors *)
+            | "drop"                                 (* ownership release; final stage only *)
+            | NAME, [ "(", [ arg, { ",", arg } ], ")" ], [ ADAPTER ] ;
+
+ADAPTER     = "succeeds", BOOL, "else", { disposition }, "raise", NAME ;
+RENDERING   = "dec" | "hex" ;
+LEVEL       = "trace" | "debug" | "info" | "warn" | "error" | "fatal" ;
+```
+
+### Canonical Desugaring Table
+
+| Written pipeline | Desugared statement sequence |
+|---|---|
+| `total \|> print dec;` | `print dec total;` |
+| `total \|> log fatal dec;` | `log fatal dec total;` |
+| `s \|> print;` | `print s;` |
+| `s[0:4] \|> log info;` | `log info s[0:4];` |
+| `b \|> drop;` | `drop b;` |
+| `x \|> f;` and `x \|> f();` | `f(x);` |
+| `b \|> f(7);` | `f(b, 7);` |
+| `move b \|> release;` | `release(move b);` |
+| `let r = x \|> f succeeds true else raise E;` | `let r = f(x) succeeds true else raise E;` |
+| `8 \|> alloc succeeds true else raise E \|> move free;` | `let qcore__pipe0 = alloc(8) succeeds true else raise E;` `free(move qcore__pipe0);` |
+| `7 \|> qcore_buffer_new? \|> drop;` | `let qcore__pipe0 = qcore_buffer_new(7)?;` `drop qcore__pipe0;` |
+
+### Semantic Side Conditions and Operator Token Family
+
+- **Multi-stage chains and hygienic temporaries:**
+  - A pipeline of $n$ stages desugars into $n$ statements: each non-final stage binds its output to a synthesized temporary `qcore__pipeN`, which becomes the incoming operand of stage $n+1$; the final stage retains the outer wrapper (`let NAME = ...;` or bare statement).
+  - Custody flows through `qcore__pipeN` under the unedited checkers: an allocating intermediate stage whose result is never consumed or dropped fails at the route's leak diagnostic (`Q202` / `Q600`).
+  - **Refusal-enforced hygiene (`Q036`):** Single-stage pipelines allocate zero temporaries. Any file requiring multi-stage temporaries that also writes an identifier starting with `qcore__pipe` is refused at `Q036` rather than silently $\alpha$-renamed.
+- **Stage value production vs. statement sinks:**
+  - Whether a stage can feed a successor is decided syntactically by stage kind: **call stages** (`NAME(...)`, including call-shaped model intrinsics) produce bindable expressions, whereas **sink stages** (`print`, `log`, `drop`) and operandless statements (`flush`) produce no value and are refused in non-final position (`Q037`) or under `let NAME = ...` (`Q036`).
+  - Whether a specific callee's return type is actually bindable (for example, refusing a `unit`-returning `extern fn` or `qcore_buffer_write` mid-chain) is decided by the **target route** at its own diagnostic code (`Q024`, `Q050`), never by `G02h`.
+  - Sink selector arities are inclusive ranges (`print`: `0..=1`, `log`: `1..=2`); routes that require `dec`/`hex` (such as `source.std-io.v1`) refuse selectorless scalar `x |> print;` at their own code (`Q030`).
+- **Intrinsic stage admissibility:**
+  - Call-shaped model intrinsics (`qcore_buffer_new`, `qcore_buffer_read`, `qcore_buffer_write`, `qcore_error_payload`, `qcore_acquire`, `qcore_check`) match the `NAME(...)` call alternative directly; sequential routes read the post-desugaring token stream so `qcore_acquire` / `qcore_check` work identically piped or unpiped.
+  - Keyword-shaped statements (`spawn`, `join`, `share`, `read`, `write`, `grow`, `open`, `close`, `bound`, `overhead`) are **not** pipeline stages (`Q036`); `"drop"` is the sole admitted keyword-shaped release stage (`final`-stage-only).
+- **First-argument insertion and `move` forwarding:**
+  - Quirin pipelines use **first-argument insertion** (`x |> f(7)` $\mapsto$ `f(x, 7)`).
+  - Two spellings consume an incoming resource: `move OPERAND |> STAGE` for stage 1 (`|> move STAGE` on stage 1 refuses at `Q036`), and `|> move STAGE` for stage $k \ge 2$ (consuming `qcore__pipe{k-2}`). Inside an `ADAPTER`'s `else` disposition list, a bare `move` names the piped incoming temporary so multi-acquisition chains can dispose of intermediate resources on failure.
+- **Span attribution:** User-written tokens preserve their exact byte spans. Synthesized punctuation and temporaries take zero-width spans anchored at the originating `|>` (`start` for stage 1, `end` for later stages, keeping adjacent statement spans disjoint); in multi-stage `let NAME = ...` chains, the outer `let NAME =` is re-anchored at the final `|>`.
+- **The vertical-bar and bitwise/logical operator token family:**
+  Two-byte operators are lexed by longest match before single-byte tokens:
+
+  | Spelling | Lexer token | Admitted grammatical positions | Outside admitted positions |
+  |---|---|---|---|
+  | `[\|` / `\|]` | `QuantOpen` / `QuantClose` | Quantitative index delimiters ([G04](#g04-closed-quantitative-indices)) and loop `[#unroll]` attributes ([G07.12](#g0712-the-checked-bounded-counted-loop-sourceloopv1)) | `Q000` if mismatched |
+  | `\|>` | `PipeInto` | Pipeline stage separator (desugared before parsing) | `Q036` / `Q045` (in `if` condition) |
+  | `\|\|` | `PipePipe` | Short-circuit logical OR in `if` conditions ([G02i-branch](#g02i-the-source-branching-construct)) and zero-capture spawn closures `\|\|` ([G02v](#g02v-closures-with-explicit-capture-lists)) | `Q038` |
+  | `&&` | `AndAnd` | Short-circuit logical AND in `if` conditions (tighter than `\|\|`) | `Q038` |
+  | `\|` | `Pipe` | Parenthesized bitwise OR in `if` comparison operands ([G02i-branch](#g02i-the-source-branching-construct)), and spawn closure capture delimiters `\|...\|` ([G02v](#g02v-closures-with-explicit-capture-lists)) | `Q038` |
+  | `^` | `Caret` | Parenthesized bitwise XOR in `if` comparison operands (between `&` and `\|`) | `Q038` |
+  | `&` | `Ampersand` | Parenthesized bitwise AND in `if` comparison operands (tighter than `^`) | `Q038` |
+
+  Note: `[|>` lexes as `[|` followed by `>`; `[||]` lexes as `[|` followed by `|]`; `(1 | 2) > 0` requires spacing or parentheses so `|` and `>` do not form `|>` (`1 |> 2` inside `if (...)` refuses at `Q045`).
+- **Diagnostics:** `Q036` malformed pipeline shape, `move` on stage 1, bare `move` without a binding operand, assignment pipeline (`PIPE-ASSIGN`), or `qcore__pipe` prefix collision; `Q037` operandless stage (`flush`) or non-final sink stage; `Q038` operator token (`|`, `&`, `^`, `||`, `&&`) outside an admitted position.
+
+### Implementation & Provenance
+
+- **Cards:** `PIPE-OPERATOR`, `PIPE-CHAIN`, `PIPE-SCALAR-RESULT`, `PIPE-INTRINSIC-STAGE`, `PIPE-DROP-STAGE`, `OR-AND-LOWERING`, `BITWISE-CONDITIONS`, `STRING-SLICE-IO`, `W48-QR-CLOSURES`.
+- **Implementation:** `crates/qcore-frontend/src/pipe.rs`, `crates/qcore-frontend/src/lexer.rs`.
+- **Reports:** `docs/reports/wave19-or-and-lowering/README.md`, `docs/reports/wave20-bitwise-conditions/README.md`.
+
+---
+
+<a id="g02i-the-source-branching-construct"></a>
+## G02i-branch. The source branching construct (`source.branch.v1`)
+
+### Consumer and Route Scope
+
+`source.branch.v1` checks and lowers `if (...) { ... } else ...` conditional statements on the base sequential route ([G02](#g02-source-execution-profile)). (`source.scalar-calls.v1` additionally admits typed runtime scalar `if`/`else` conditions over `bool` variables and scalar comparisons as specified in [G02s](#g02s-scalar-functions-and-explicit-output-sourcescalar-callsv1) and [G02t](#g02t-fixed-width-scalar-types); this section specifies the foundational two-sorted check-time branch construct and four-model custody join.) No `#import` directive and no new reserved words are required (`if`, `else`, `true`, `false` were already reserved). `else if` chains flatten into right-nested branches, and nested `if` statements inside arms are admitted.
+
+### Consolidated Two-Sorted EBNF
+
+```ebnf
+branch_stmt = "if", "(", cond, ")", block, [ "else", ( block | branch_stmt ) ] ;
+
+(* Sort 1: Condition tier — precedence levels 1..4 *)
+cond        = conj, { "||", conj } ;                 (* 1: logical OR, left-associative *)
+conj        = neg,  { "&&", neg  } ;                 (* 2: logical AND, left-associative *)
+neg         = "!", neg | cmp ;                       (* 3: logical NOT, right-associative *)
+cmp         = int_expr, [ cmp_op, int_expr ] ;       (* 4: comparison, non-associative *)
+
+(* Sort 2: Integer tier — precedence levels 5..7 *)
+int_expr    = xor_expr, { "|", xor_expr } ;          (* 5: bitwise OR, left-associative *)
+xor_expr    = and_expr, { "^", and_expr } ;          (* 6: bitwise XOR, left-associative *)
+and_expr    = atom,     { "&", atom     } ;          (* 7: bitwise AND, left-associative *)
+
+atom        = "(", cond, ")"
+            | "true" | "false"
+            | [ "-" ], INTEGER
+            | NAME ;                                 (* check-time i32 constant binding *)
+
+cmp_op      = "==" | "!=" | "<" | "<=" | ">" | ">=" ;
+```
+
+### Semantic Side Conditions, Precedence Discipline, and Custody Join
+
+- **Strict two-sorted typing (zero implicit coercion):**
+  - Levels 1–4 produce a **condition**; levels 5–7 produce a signed 32-bit **integer**; `atom` produces whichever sort its spelling denotes. Neither sort coerces to the other: `if (mask & 4)` and `if (true | false)` both refuse at `Q045`.
+  - On `source.branch.v1`, `NAME` in `atom` must resolve to a top-level check-time constant binding `let NAME [: i32] = INTEGER;` (`Q013` if unbound; `Q045` if bound to a resource identity or non-integer).
+- **C-compatible precedence rule (`Q045` on C-divergent unparenthesized mixes):**
+  - Precedence is declared only where it matches C11 (`&&` tighter than `||`; `&` tighter than `^` tighter than `|`, all left-associative).
+  - Where C11's precedence conflicts with two-sortedness (C11 binds `!` tighter than `<` and `|`/`^`/`&` looser than `==`), unparenthesized forms such as `!a < b` and `a | b == c` are **refused** (`Q045`); write `!(a < b)` and `(a | b) == c`. Comparisons are non-associative (`1 < 2 < 3` refuses at `Q045`), and `|>` inside a condition refuses at `Q045`.
+- **Structural connective and negation lowering:**
+  - `if (A || B) T else E` lowers to `if (A) { T } else if (B) { T } else { E }`.
+  - `if (A && B) T else E` lowers to `if (A) { if (B) { T } else { E } } else { E }`.
+  - `if (!C) { A } else { B }` lowers by swapping the arms to `if (C) { B } else { A }`.
+  - Both arms are validated in full and emitted as real C11 basic blocks computing the comparison (`if (INT32_C(3) < INT32_C(5)) { goto ...; }`), cross-checked by the translation-validation triangle and native execution.
+- **Admitted arm statements and continuation hoisting:**
+
+  | Arm statement | Status | Rule |
+  |---|---|---|
+  | `qcore_check(BOOL, Error);` | Admitted | Custody-neutral check |
+  | `drop NAME;` / `move NAME;` | Admitted | Validated across surviving arms at the join |
+  | Nested `if (...) { ... }` / empty arm | Admitted | Missing `else` is an empty fallthrough arm |
+  | `return ...;` | Admitted | Discharges exit obligations at its own exit (`Q202` if leaking) and leaves the join |
+  | Zero-arg `f();` | Admitted | Admitted conditionally only when `f`'s summary resource flow is neutral (`Q044` otherwise, `IF-ARM-CALL-FLOW`) |
+  | `let NAME = ...;` | Refused (`Q044`) | Arm-local bindings have no post-join scope |
+  | `let r = qcore_acquire(...);` | Refused (`Q103`) | Divergent resource-identity ledgers (`IF-ARM-ACQUIRE`) |
+  | `while`, `match`, `defer`, `raise` | Refused | Retain their existing pass refusals (`Q500`, etc.) |
+
+  When exactly one arm returns, statements written *after* the `if` are **moved** (never duplicated) into the surviving fallthrough arm before checking; nested one-sided early returns that would require duplicating the continuation, or statements written after an `if/else` where both arms return, refuse at `Q044` (`IF-ARM-RETURN-NESTED`).
+- **Five-model join discipline:** Surviving fallthrough arms must agree on ordered live lists and transferred sets across cleanup lowering (`SourceOp::Branch`), ownership (`OwnershipOp::Branch`, `Q046` / `Q103`), typed errors (`ErrorOp::Branch`), and resource flow (`Flow::join_branches`), while usage (`UsageExpr::Branch`) joins arm demands.
+
+### Example
+
+```qcore
+error CheckFailed;
+
+fn main() -> i32 {
+    let flags = 6;
+    let a = qcore_acquire(1);
+    if ((flags & 2) == 2 && !(flags < 0)) {
+        qcore_check(true, CheckFailed);
+        drop a;
+    } else {
+        drop a;
+        return 1;
+    }
+    return 0;
+}
+```
+
+### Implementation & Provenance
+
+- **Cards:** `IF-STATEMENT`, `OR-AND-LOWERING`, `BITWISE-CONDITIONS`, `IF-ARMS`.
+- **Implementation:** `crates/qcore-frontend/src/source_branch.rs`, `crates/qcore-core/src/ownership.rs`, `crates/qcore-core/src/cleanup_lowering.rs`.
+- **Design & reports:** [`design/SOURCE_BRANCH_V1.md`](design/SOURCE_BRANCH_V1.md), `docs/reports/wave19-if-statement/README.md`, `docs/reports/wave20-bitwise-conditions/README.md`, `docs/reports/wave20-if-arms/README.md`.
+
+---
+
+<a id="g0712-the-checked-bounded-counted-loop-sourceloopv1"></a>
+## G07.12. The checked bounded counted loop (`source.loop.v1`)
+
+### Consumer and Admitting Routes
+
+`source.loop.v1` is a **control-flow construct**, not a bundled module: it requires no `#import`, reserves `for`, treats `in` as a contextual keyword, and reads `..` as two adjacent `Dot` tokens. It is admitted on:
+1. **`source.buffer.v1`** ([G02k-buffer](#g02k-an-owned-byte-buffer-stdbuffer)), including record and fixed-width scalar compositions on that route; and
+2. **`source.string.v1` buffer-embedding entries** ([G07.9](#g079-immutable-utf-8-string-views-v1-sourcestringv1), card `LOOPS-ON-COMPOSED-ROUTES`), where `borrow_utf8` windows are checked across all loop iterations (`QCore.LoopWindows`).
+
+Every other execution route retains its existing nested-block refusal (`LOOP-ROUTE-WIDENING`).
+
+### Consolidated EBNF
+
+```ebnf
+loop_stmt   = [ unroll_attr ], "for", NAME, "in", "0", "..", BOUND,
+              "{", { body_stmt }, "}" ;
+
+unroll_attr = "[|", "#", "unroll", ",", "where", "#", "bound", "<", INTEGER, "|]" ;
+BOUND       = INTEGER | NAME ;
+```
+
+### Three-Layer Unroll Budget and Semantic Side Conditions
+
+- **Check-time constant `BOUND` (`Q098`):**
+  - Low endpoint must be the literal `0` (`Q097` for any non-zero start, `LOOP-RANGE-LOW`).
+  - `BOUND` must evaluate at lowering time to a positive integer in `1..=4096`: an integer literal, a `let` constant, `extent(buf)`, or a checked scalar conversion / `value_statement` over check-time constants of any [G02t](#g02t-fixed-width-scalar-types) integer type (excluding `bool`, and excluding `isize`/`usize` without a recorded target). Bounds read dynamically from a buffer byte, record field, or copy binding refuse at `Q098` (`LOOP-BOUND-FROM-BYTE`).
+- **Three-layer iteration budget (`Q097`, `Q098`):**
+
+  | Budget layer | Limit | Enforcement rule |
+  |---|---|---|
+  | **1. Absolute per-loop ceiling** | `4,096` | Inviolable maximum; `#bound < N` with `N > 4097` refuses *before* inspecting `BOUND` (`#bound < 4097` licenses up to `4,096`, matching `std.buffer`'s max extent). Vacuous clauses (`#bound < 1`, `#bound < 0`) also refuse up front. |
+  | **2. Default unattributed budget** | `256` | A `for` without `unroll_attr` admits `BOUND` in `1..=256`; larger bounds refuse at `Q098` with the exact `[|#unroll, where #bound < ...|]` licence printed in the diagnostic. |
+  | **3. Statement-adjacent `[|#unroll, ...|]`** | Strict `< N` | Licenses the single immediately following `for` when `BOUND < N` (`Q098` if `BOUND >= N`). Malformed, duplicate, dangling, or non-`for`-preceding attributes refuse at `Q097` (`Q000` if `[|` is unterminated). |
+  | **Entry total unrolled events** | `8,192` | Total unrolled operations across the entire entry (including nested licensed loops) may not exceed `8,192` (`Q098`). |
+
+  The `[|#unroll, ...|]` attribute **erases completely** after checking: attributed and unattributed loops of the same bound emit byte-identical C11 and identical certificates.
+- **Scoping, nesting, and per-iteration custody neutrality (`Q097`, `Q099`):**
+  - The induction variable `NAME` takes `0, 1, ..., BOUND - 1` at `BOUND`'s integer type, is immutable inside the body, and is out of scope after `}`. Body-local bindings do not escape and may not shadow outer entry bindings (`Q097`).
+  - Nested `for` loops are admitted; `break`, `continue`, and `return` inside a loop body refuse by name at `Q097`.
+  - **Net identity custody (`Q099`):** On `source.buffer.v1`, a single iteration's net custody effect must be the identity (acquiring and dropping within the same iteration is admitted; leaking an acquisition or dropping an outer buffer refuses at `Q099`). On `source.string.v1`'s composed route, body statements are restricted to pure `source.buffer.v1` statements with no body acquisitions/releases, no `lend(...)`, and no per-iteration `borrow_utf8` (`Q077`), while stores into bytes covered by an outer live `borrow_utf8` window refuse at `Q078`.
+- **Asymmetric check vs. emission:** The checker unrolls the exact iterations so the certificate and reference run predict every byte, while the C11 backend emits a genuine `for (...)` loop, making native execution an independent witness of the unrolling.
+
+### Example
+
+```qcore
+#import std.buffer;
+#import std.fmt;
+#import std.io;
+
+fn main() -> unit effects { io, alloc, mut } {
+    let buf = bytes(512);
+    let n = extent(buf);
+    [|#unroll, where #bound < 513|]
+    for i in 0..n {
+        buf[i] = 1;
+    }
+    let head = buf[0];
+    print dec head;
+    drop buf;
+    return;
+}
+```
+
+### Implementation & Provenance
+
+- **Cards:** `LOOP-V1`, `LOOP-UNROLL-BUDGET`, `LOOPS-ON-COMPOSED-ROUTES`, `W48-QR-SCALAR-TYPES-R5`.
+- **Implementation:** `crates/qcore-frontend/src/source_loop.rs`, `crates/qcore-frontend/src/source_std_buffer.rs`, `crates/qcore-frontend/src/source_std_string.rs`.
+- **Reports & Lean:** `docs/reports/loop-v1/README.md`, `docs/reports/loop-unroll-budget/README.md`, `QCore.LoopWindows`.
+
+---
+
+<a id="g02g-rendered-lines-stdfmt-stdio-and-stdlogger"></a>
+## G02g. Rendered lines: `std.fmt`, `std.io`, and `std.logger` (`source.std-io.v1`)
+
+### Consumer and Capability Split
+
+`source.std-io.v1` is the standalone sequential output route for modules that render scalar lines without buffers, strings, sockets, events, tasks, or extern calls. Each of the three bundled output modules gates its exact capability (`Q015` when missing):
+- **`std.io`**: `print ...;` to standard output.
+- **`std.logger`**: `log LEVEL ...;` to standard error, `flush;` (`fflush` sink handoff), and `log_level LEVEL;` (system-trace diagnostic sink threshold).
+- **`std.fmt`**: scalar rendering selectors `dec` and `hex` (`flush;` and `log_level` need no `std.fmt`).
+
+Note: The same line statements also compose into `source.scalar-calls.v1` ([G02s](#g02s-scalar-functions-and-explicit-output-sourcescalar-callsv1)), `source.buffer.v1` ([G02k-buffer](#g02k-an-owned-byte-buffer-stdbuffer)), `source.string.v1` ([G07.9](#g079-immutable-utf-8-string-views-v1-sourcestringv1)), `source.event.v1` ([G02k-event](#g02k-the-checked-event-surface)), `source.socket.v1` ([G07.11](#g0711-a-checked-socket-as-a-reactor-registered-event-source)), `source.std-io-extern.v1` ([G02i-extern-io](#g02i-composed-extern-calls-and-rendered-lines)), and `source.std-io-tasks.v1` ([G02j](#g02j-composed-scoped-tasks-and-rendered-lines)), which take route precedence when their features appear.
+
+### Consolidated EBNF
+
+```ebnf
+stdio_module = [ module_header ], { import_stmt }, { error_decl | entry_fn } ;
+import_stmt  = ( "#import" | "import" ),
+               ( "std.fmt" | "std.io" | "std.logger" ), ";" ;
+
+entry_fn     = "fn", NAME, "(", ")", "->", "unit",
+               [ "effects", "{", EFFECT, { ",", EFFECT }, "}" ],
+               "{", { stmt }, "}" ;
+
+stmt         = "let", NAME, "=", [ "-" ], INTEGER, ";"
+             | "print", RENDERING, OPERAND, ";"
+             | "log", LEVEL, RENDERING, OPERAND, ";"
+             | "log_level", LEVEL, ";"
+             | "flush", ";"
+             | "return", ";" ;
+
+RENDERING    = "dec" | "hex" ;
+LEVEL        = "trace" | "debug" | "info" | "warn" | "error" | "fatal" ;
+OPERAND      = [ "-" ], INTEGER | NAME | "borrow", NAME ;
+EFFECT       = "io" | "alloc" | "mut" ;
+```
+
+### Semantic Side Conditions and Stream Observation Rules
+
+- **Operand custody exclusion (`Q028`, `Q030`):**
+  - On `source.std-io.v1`, a bare `OPERAND` is an `i32` literal or a local `let` bound to an `i32` literal (`Q030` if `let` binds anything else; `Q028` if `NAME` is not a local integer binding). Because bare operands cannot denote buffers or handles, rendering cannot consume, leak, or retain custody.
+  - **`borrow NAME` (`STD-FMT-BORROW`):** Renders a live resource's **model identity** (`rN`) — never raw pointers, descriptors, or object bytes — and is admitted **only** on routes whose checked custody model supplies and proves `NAME` live at that statement (namely `source.std-io-extern.v1`, [G02i-extern-io](#g02i-composed-extern-calls-and-rendered-lines)). On `source.std-io.v1` there is no custody model, so every `borrow NAME` refuses structurally at `Q028`. Because `borrow` precedes `NAME`, `x |> print dec` can never synthesize a borrowed render.
+- **Keyword choices:** Highest log severity is spelled `fatal` (preserving `error` as the error-type declaration keyword). Unreserved words in `RENDERING` or `LEVEL` positions are collected as identifier references and fail closed at `Q013` before `Q030`.
+- **Effects and per-stream comparison (`Q029`):**
+  - Any `print`, `log`, `flush`, or `log_level` derives `{ io }` (empty `{}` if none appear; never `alloc` or `mut`); the entry's `effects { ... }` clause must include `io` (`Q029`).
+  - Reference validation compares `stdout` against the reference `stdout` projection and `stderr` against `stderr` **independently per stream** (no cross-stream ordering between `stdout` and `stderr` is modeled or claimed). `flush;` emits `fflush` (sink handoff, not `fsync` crash durability). `log_level LEVEL;` configures the at-most-once hosted system-trace sink threshold without filtering source-authored `log` statements.
+
+### Example
+
+```qcore
+#import std.fmt;
+#import std.io;
+#import std.logger;
+
+fn main() -> unit effects { io } {
+    let total = 42;
+    print dec total;            // stdout: 42
+    print hex 255;              // stdout: 0x000000FF
+    log warn dec total;         // stderr: [WARN] 42
+    flush;                      // sink handoff; writes no line
+    return;
+}
+```
+
+### Implementation & Provenance
+
+- **Cards:** `STD-MODULES`, `STD-FMT-BORROW`, `W48-QR-SCALAR-TYPES`.
+- **Implementation:** `crates/qcore-frontend/src/source_std_io.rs`, `crates/qcore-core/src/std_io.rs`.
+- **Reports:** `docs/reports/wave17-std-modules/README.md`, `docs/reports/wave18-std-fmt-borrow/README.md`.
+
+---
+
+<a id="g02k-the-checked-event-surface"></a>
+## G02k-event. The checked event surface (`source.event.v1`)
+
+### Consumer and Reactor Projection Model
+
+`source.event.v1` exposes the single-threaded event-reactor custody model (`qcore_core::event_reactor`) to `.qr` programs behind `#import std.event;`, composed with `source.std-io.v1` rendered lines. Modules using both `std.socket` and `std.event` select `source.socket.v1` ([G07.11](#g0711-a-checked-socket-as-a-reactor-registered-event-source)); modules using only `std.event` (plus optional output modules) select `source.event.v1`.
+
+### Consolidated EBNF
+
+```ebnf
+event_module = [ module_header ], { import_stmt }, entry_fn ;
+import_stmt  = ( "#import" | "import" ),
+               ( "std.event" | "std.logger" | "std.io" | "std.fmt" ), ";" ;
+
+entry_fn     = "fn", NAME, "(", ")", "->", "i32",
+               [ "effects", "{", effect, { ",", effect }, "}" ],
+               "{", { stmt }, "}" ;
+
+stmt         = "event", "open", ";"
+             | "event", "close", ";"
+             | "endpoints", NAME, NAME, ";"
+             | "watch", NAME, NAME, interest, ";"
+             | "unwatch", NAME, ";"
+             | "wake", NAME, [ byte ], ";"
+             | "dispatch", "ready", NAME, ";"
+             | "let", NAME, "=", "dispatch", "ready", NAME, ";"
+             | "dispatch", "idle", ";"
+             | "close", NAME, ";"
+             | "log_level", level, ";"
+             | "print", rendering, operand, ";"
+             | "log", level, rendering, operand, ";"
+             | "flush", ";"
+             | "return", [ "-" ], INTEGER, ";" ;
+
+interest     = "read" | "write" ;
+byte         = INTEGER ;                             (* 0..=255; out-of-range refused *)
+rendering    = "dec" | "hex" ;
+operand      = INTEGER | NAME ;                      (* drained byte binding only *)
+level        = "trace" | "debug" | "info" | "warn" | "error" | "fatal" ;
+effect       = "io" | "alloc" | "mut" ;
+```
+
+### Projection Table and Determinism Boundary
+
+| Source statement | Projected `EventOperation` sequence | Notes |
+|---|---|---|
+| `event open;` / `event close;` | `CreateBase` / `FreeBase` | Single live reactor context |
+| `endpoints A B;` | `CreateSocketPair` (success branch) | Acquires paired local descriptors `A`, `B` |
+| `watch E D INTEREST;` | `Assign(D)`, `Add` | Registers `E` watching descriptor `D` at priority `0` |
+| `unwatch E;` | `Delete`, `FreeEvent` | Retires registration cookie `E` |
+| `wake D [BYTE];` | *(no reactor op)* | Induces readiness on `D`'s peer; optional `BYTE` in `0..=255` |
+| `[let V =] dispatch ready E;` | `BeginDispatch`, `Activate`, `CallbackEnter`, `CallbackExit`, `EndDispatch` | Verifies `poll`/`WSAPoll` readiness; `let V =` binds drained byte |
+| `dispatch idle;` | `BeginDispatch`, `EndDispatch` | Verifies zero ready registrations |
+| `close D;` | `CloseSocket` | Releases descriptor `D` |
+| `print` / `log` / `flush` / `log_level` | *(no reactor op)* | Erases cleanly (`QCore.ComposeEventLines`) |
+
+- **Single value form (`COMPOSE-EVENT-LINES`, `Q074`):** `let V = dispatch ready E;` is the sole `let` form on this route, binding the `0..=255` byte drained by `E`'s callback (carrying platform premise `EVENT-V1-STREAM-BYTE-ORDER`, verified at runtime). Rendering an endpoint or registration custody name — bare or via `borrow NAME` — refuses at `Q074`.
+- **Determinism boundary (`Q061`) and `write` interest:**
+  - Readiness must be induced by the program's own `wake` statements. Any `dispatch` turn at which **two or more** registrations are simultaneously ready refuses by name at `Q061` because OS `poll(2)`/`WSAPoll` callback ordering within a ready set is implementation-defined.
+  - Registering `write` interest is fully custody-checked (`Q060`) and accepted as **check-only** (emitting no C11).
+- **Diagnostics:** `Q058` entry/statement shape; `Q059` unbound custody name; `Q060` inherited `event_reactor` (`L00`–`L12`) refusal; `Q061` multi-ready or uninduced determinism violation; `Q062` undeclared `{ io }` effect; `Q074` composed value/rendering refusal.
+
+### Example
+
+```qcore
+#import std.event;
+#import std.fmt;
+#import std.io;
+
+fn main() -> i32 effects { io } {
+    event open;
+    endpoints reader writer;
+    watch on_read reader read;
+    wake writer 99;
+    let msg = dispatch ready on_read;
+    msg |> print dec;
+    unwatch on_read;
+    close reader;
+    close writer;
+    event close;
+    return 0;
+}
+```
+
+### Implementation & Provenance
+
+- **Cards:** `STD-EVENT`, `COMPOSE-EVENT-LINES`.
+- **Implementation:** `crates/qcore-frontend/src/source_std_event.rs`, `crates/qcore-core/src/event_reactor.rs`, `crates/qcore-core/src/std_event.rs`.
+- **Design & Lean:** [`design/STD_EVENT_V1.md`](design/STD_EVENT_V1.md), [`../examples/events/README.md`](../examples/events/README.md), `QCore.ComposeEventLines`.
+
+---
+
+<a id="g0711-a-checked-socket-as-a-reactor-registered-event-source"></a>
+## G07.11. Checked loopback sockets and reactor-registered event sources (`source.socket.v1`)
+
+### Consumer and Vocabulary Composition
+
+`source.socket.v1` implements the `std.socket` checked loopback TCP/UDP transport surface (`Q080`–`Q089`), including declared IPv4/IPv6 loopback endpoints (`SOCKET-INET-ADDRESSES`), UTF-8 string literal payloads (`SOCKET-STRING-PAYLOAD`), protocol-cell disjointness queries (`CT42-CELL-ROUTE`, `Q664`), and reactor-registered socket loans (`SOCKET-EVENT-COMPOSE` with `#import std.event;`). A module using both `std.socket` and `std.event` selects `source.socket.v1`; a module also declaring `std.http` messages selects `source.http.v1` ([G07.10](#g0710-a-checked-http11-message-subset-sourcehttpv1)).
+
+### Consolidated EBNF
+
+```ebnf
+socket_module = [ module_header ], { import_stmt }, { error_decl | entry_fn } ;
+import_stmt   = ( "#import" | "import" ),
+                ( "std.socket" | "std.event" | "std.string"
+                | "std.fmt" | "std.io" | "std.logger" ), ";" ;
+
+entry_fn      = "fn", NAME, "(", ")", "->", "unit",
+                [ "effects", "{", EFFECT, { ",", EFFECT }, "}" ],
+                "{", { socket_stmt }, "}" ;
+
+socket_stmt   = "let", NAME, "=", [ "-" ], INTEGER, ";"
+              | "let", NAME, "=", ( "tcp" | "udp" ), ";"
+              | "bind", NAME, [ ADDRESS ], ";"
+              | "listen", NAME, ";"
+              | "connect", NAME, ( NAME | ADDRESS ), ";"
+              | "let", NAME, "=", "accept", NAME, ";"
+              | "send", NAME, ( PAYLOAD | STRING-TOKEN ), ";"
+              | "recv", NAME, ( INTEGER | STRING-TOKEN ), ";"
+              | "let", NAME, "=", "recv", NAME, ";"
+              | "sendto", NAME, ( NAME | ADDRESS ), PAYLOAD, ";"
+              | "recvfrom", NAME, INTEGER, ";"
+              | "let", NAME, "=", "recvfrom", NAME, ";"
+              | "close", NAME, ";"
+              | "disjoint", NAME, NAME, ";"
+              (* Reactor composition — requires `#import std.event;` *)
+              | "event", "open", ";"
+              | "event", "close", ";"
+              | "watch", NAME, NAME, INTEREST, ";"
+              | "unwatch", NAME, ";"
+              | "dispatch", "ready", NAME, ";"
+              | "dispatch", "idle", ";"
+              (* Rendered lines — gated by std.io / std.logger / std.fmt *)
+              | "print", RENDERING, OPERAND, ";"
+              | "log", LEVEL, RENDERING, OPERAND, ";"
+              | "flush", ";"
+              | "return", ";" ;
+
+PAYLOAD       = "[", OPERAND, { ",", OPERAND }, "]" ;
+OPERAND       = [ "-" ], INTEGER | NAME ;
+ADDRESS       = IPV4_ADJACENT, ":", PORT
+              | "[", IPV6_ADJACENT, "]", ":", PORT ;
+PORT          = INTEGER | NAME ;
+INTEREST      = "read" | "write" ;
+RENDERING     = "dec" | "hex" ;
+LEVEL         = "trace" | "debug" | "info" | "warn" | "error" | "fatal" ;
+EFFECT        = "io" | "alloc" | "mut" ;
+```
+
+### Semantic Side Conditions, Reactor Loans, and Disjointness
+
+- **Loopback-only determinism and address resolution (`Q080`, `Q084`, `Q085`):**
+  - Programs execute on one thread over loopback (`127.0.0.1` or `[::1]`). `ADDRESS` tokens must be lexically adjacent (`127.0.0.1:8080`, `[::1]:8080`); hostnames refuse at `Q080` (`SOCKET-DNS`), out-of-range ports/bytes/counts (`recv` count `1..=64` bytes, payload bytes `0..=255`) refuse at `Q084`, and `connect`/`sendto` targeting an address not bound by this same entry refuses at `Q085` (`SOCKET-EXTERNAL-PEER`).
+  - Every transmitted byte is check-time-constant (`PAYLOAD` or `STRING-TOKEN`, the latter gated by `#import std.string;`), allowing the checker to decide every `recv` / `recvfrom` outcome before emission (`Q085` when committed send history does not satisfy a receive) and verify received bytes at runtime.
+- **Reactor registration as a lexical shared loan (`SOCKET-EVENT-COMPOSE`, `Q083`):**
+  - `wake` and `endpoints` are intentionally absent here: readiness is induced by `connect`, `send`, and `sendto`, and descriptors come from `tcp`, `udp`, and `accept`.
+  - `watch E S INTEREST;` projects to `OwnershipOp::BorrowShared` of socket `S` to registration `E` until `unwatch E;`. Consequently, the unedited ownership checker refuses `close S;` and state-mutating `bind`/`listen`/`connect` while `S` is watched (`Q083`), while admitting `send`, `recv`, and `accept`.
+  - Registration spans are **strictly lexical** (LIFO retirement; crossed spans refuse, `SOCKET-EVENT-CROSSED-SPANS`). `dispatch ready E;` observes level-triggered readiness and drains nothing; `write` interest is checked in full and admitted as check-only (no C11 emitted).
+- **Protocol-cell disjointness (`disjoint A B;`, `CT42-CELL-ROUTE`):**
+  - Asks `qcore_core::socket_footprint` (`DisjointFootprintsV1`) whether live sockets `A` and `B` have disjoint derived protocol cells (`Q081` if not sockets, `Q083`/`Q082` if closed, `Q664` `SharedProtocolCell` when they share a cell, such as two endpoints or aliasing custodians).
+- **Diagnostics:** `Q080` entry/statement/address shape; `Q081` non-constant operand or non-socket custody name; `Q082` TCP/UDP state-machine violation; `Q083` inherited ownership or reactor (`L00`–`L12`) custody refusal; `Q084` byte/payload/count/port range; `Q085` unsatisfied receive or external peer; `Q086` socket/value crossing; `Q087` undeclared `{ io }` effect; `Q088` certificate recheck; `Q089` backend refusal; `Q664` shared protocol cell.
+
+### Example
+
+```qcore
+#import std.socket;
+#import std.event;
+#import std.fmt;
+#import std.io;
+
+fn main() -> unit effects { io } {
+    event open;
+    let listener = tcp;
+    bind listener 127.0.0.1:19080;
+    listen listener;
+
+    let client = tcp;
+    connect client 127.0.0.1:19080;
+    let server = accept listener;
+    disjoint client server;
+
+    watch readable server read;
+    send client [65];
+    dispatch ready readable;
+    let got = recv server;
+    unwatch readable;
+
+    print dec got;
+    close server;
+    close client;
+    close listener;
+    event close;
+    return;
+}
+```
+
+### Implementation & Provenance
+
+- **Cards:** `QUIRIN-SOCKET-V1`, `SOCKET-INET-ADDRESSES`, `SOCKET-EVENT-COMPOSE`, `HTTP-QUIRIN-V1` (`SOCKET-STRING-PAYLOAD`), `CT42-CELL-ROUTE`.
+- **Implementation:** `crates/qcore-frontend/src/source_socket.rs`, `crates/qcore-core/src/std_socket.rs`, `crates/qcore-core/src/socket_address.rs`, `crates/qcore-core/src/socket_footprint.rs`.
+- **Reports:** `docs/reports/quirin-socket-v1/README.md`, `docs/reports/socket-inet-addresses/README.md`, `docs/reports/socket-event-compose/README.md`, `docs/reports/ct42-cell-route/README.md`.
+
+---
+
+<a id="g0710-a-checked-http11-message-subset-sourcehttpv1"></a>
+## G07.10. A checked HTTP/1.1 message subset (`source.http.v1`)
+
+### Consumer and Scope Boundary
+
+`source.http.v1` implements `#import std.http;` (`Q090`–`Q096`) on top of `source.socket.v1`'s unedited loopback transport. It checks an **executed RFC 9112 HTTP/1.1 subset with explicit boundaries** (never full HTTP/1.1 conformance): messages are constructed with compiler-synthesized CRLF framing and check-time-verified `Host` and `Content-Length` invariants, then transmitted and verified over loopback TCP sockets.
+
+### Consolidated EBNF
+
+```ebnf
+http_module = [ module_header ], { import_stmt }, entry_fn ;
+import_stmt = ( "#import" | "import" ),
+              ( "std.http" | "std.socket" | "std.string"
+              | "std.fmt" | "std.io" | "std.logger" ), ";" ;
+
+entry_fn    = "fn", NAME, "(", ")", "->", "unit",
+              [ "effects", "{", EFFECT, { ",", EFFECT }, "}" ],
+              "{", { http_stmt }, "}" ;
+
+http_stmt   = "let", NAME, "=", "request", STRING-TOKEN, STRING-TOKEN, STRING-TOKEN, ";"
+            | "let", NAME, "=", "response", STRING-TOKEN, INTEGER, STRING-TOKEN, ";"
+            | "header", NAME, STRING-TOKEN, VALUE, ";"
+            | "content", NAME, VALUE, ";"
+            | "let", NAME, "=", STRING-TOKEN, ";"              (* requires std.string *)
+            | "let", NAME, "=", "concat", "(", VALUE, { ",", VALUE }, ")", ";"
+            | "let", NAME, "=", "len", "(", NAME, ")", ";"     (* requires std.string *)
+            | "send", NAME, NAME, ";"                          (* socket, message/view *)
+            | "recv", NAME, NAME, ";"                          (* verified against message/view *)
+            | SOCKET-STMT ;                                    (* G07.11 non-reactor statements *)
+
+VALUE       = STRING-TOKEN
+            | NAME                                             (* bound string view *)
+            | ( "dec" | "hex" ), "(", NAME, ")" ;              (* formatted integer binding *)
+
+EFFECT      = "io" | "alloc" | "mut" ;
+```
+
+### Semantic Side Conditions and Unforgeable Framing
+
+- **Reserved message words:** `request`, `response`, `header`, and `content` (following RFC 9110 §6.4's `content` terminology; `send`, `recv`, `let`, `close` are reused). `SOCKET-STMT` delegates directly to `source_socket::socket_statement` (reactor composition with `std.event` remains outside `source.http.v1`, `HTTP-V1-EVENT-COMPOSE`).
+- **Compiler-constructed framing and RFC 9112 gates (`Q091`–`Q093`):**
+  - Source programs never write `\r\n` framing; the compiler emits CRLF after the start line, after each header field, and after the header block.
+  - Every component `VALUE` resolves statically at check time to `static const` bytes (max **4,096 bytes**, `concat` requiring $\ge 2$ pieces, `Q090`), deriving neither `alloc` nor `mut`.
+  - **`Q091` (start line):** Protocol version must be `"HTTP/1.1"`; request method must be an RFC 9110 `token`; request target must be origin-form (`/path`); status code must be a valid 3-digit status.
+  - **`Q092` (header fields & injection exclusion):** Header field names must be `token`s (written `STRING-TOKEN` literals; computed field names are `HTTP-V1-COMPUTED-FIELD-NAME`); **no** start-line or header component — literal or `concat`-computed — may contain `CR` (`\r`) or `LF` (`\n`), making header/framing injection unrepresentable; requests must declare **exactly one** `Host` header (RFC 9112 §3.2).
+  - **`Q093` (framing & `Content-Length`):** Any declared `Content-Length` header value must equal the exact UTF-8 byte count of the message's `content` (whether spelled as a literal or computed via `dec(len(body))`).
+- **Fine-grained `#import` gates (`Q015`):**
+  - `#import std.http;` gates `request`, `response`, `header`, `content`, and inline `dec(N)`/`hex(N)` at `VALUE` positions (needing neither `std.string` nor `std.fmt`).
+  - `#import std.string;` is required when binding `let s = "...";`, `let s = concat(...);`, or `let n = len(s);`.
+  - `#import std.socket;` gates socket creation, connection, `send`, `recv`, and `close`.
+- **Diagnostics & explicit non-claims:** `Q090` shape / payload $> 4,096$ B / `concat` $< 2$ args; `Q091` start line; `Q092` header syntax, `CR`/`LF`, or missing/duplicate `Host`; `Q093` `Content-Length` mismatch; `Q094` non-message name at message position; `Q095` inherited `source.socket.v1` refusal; `Q096` undeclared `{ io }`. Parsing arbitrary untrusted wire input (`HTTP-V1-PARSE`), chunked transfer coding (`HTTP-V1-CHUNKED`), persistent/pipelined connections (`HTTP-V1-PERSISTENT`), `100 Continue`, external peers, and TLS (`HTTP-V1-TLS`) remain named follow-ons.
+
+### Example
+
+```qcore
+#import std.http;
+#import std.socket;
+#import std.string;
+
+fn main() -> unit effects { io } {
+    let body = "{\"ok\":true}";
+    let n = len(body);
+
+    let req = request "POST" "/v1/health" "HTTP/1.1";
+    header req "Host" "127.0.0.1:19081";
+    header req "Content-Length" dec(n);
+    content req body;
+
+    let res = response "HTTP/1.1" 200 "OK";
+    header res "Content-Length" "2";
+    content res "ok";
+
+    let listener = tcp;
+    bind listener 127.0.0.1:19081;
+    listen listener;
+    let client = tcp;
+    connect client 127.0.0.1:19081;
+    let server = accept listener;
+
+    send client req;
+    recv server req;
+    send server res;
+    recv client res;
+
+    close server;
+    close client;
+    close listener;
+    return;
+}
+```
+
+### Implementation & Provenance
+
+- **Cards:** `HTTP-QUIRIN-V1`, `HTTP-V1-COMPUTED-LENGTH`.
+- **Implementation:** `crates/qcore-frontend/src/source_http.rs`, `crates/qcore-core/src/std_http.rs`.
+- **Reports:** `docs/reports/http-quirin-v1/README.md`, `docs/reports/http-v1-computed-length/README.md`, [`../examples/http/README.md`](../examples/http/README.md).
+
+---
+
+# Part III — Quantitative and Concurrent .qr Execution Grammars
+
+Part III specifies the surface grammars for quantitative parameter grades and closed indices (`G03`, `G04`), followed by the checked concurrency profiles gated behind `#import std.concurrency;`: scoped tasks with scalar/record copies, inline spawn closures, heap-allocated `Buffer<T>` custody, fractional read shares, disjoint range write leases, and uniform error payloads (`G02a`–`G02bc`, `G02j`), guarded fixed-footprint mutexes (`G02c`), flat-epoch quantitative accounting (`G02e`, `G02f`), and concurrent bit-field footprint checks (`G09`).
+
+---
+
+<a id="g03-source-parameter-usage-grades"></a>
+## G03. Source parameter usage grades
+
+### Consumer and Grade Lattice
+
+`G03` is parsed on function and external parameters across `.qr` and `.qv` modules (`frontend.rs`, evaluated over `qcore_core::usage`). Every grade denotes a closed interval $[\text{lo}, \text{hi}] \subseteq \mathbb{N} \cup \{\infty\}$ constraining how many times the callee's dynamic execution paths may consume or observe the parameter.
+
+### Consolidated EBNF
+
+```ebnf
+usage_annotation = "use", grade ;
+grade            = "zero"
+                 | "one"
+                 | "affine"
+                 | "relevant"
+                 | "many"
+                 | NAT
+                 | "[", NAT, ",", ( NAT | "inf" ), "]" ;
+```
+
+### Grade Denotation and Side Conditions
+
+| Written grade | Interval meaning | Semantic discipline |
+|---|---|---|
+| `use zero` | $[0, 0]$ | Erased / ghost / compile-time-only parameter |
+| `use one` | $[1, 1]$ | Strictly linear: consumed on every exit path exactly once |
+| `use affine` | $[0, 1]$ | At most once: may be dropped unused or consumed once |
+| `use relevant` | $[1, \infty]$ | At least once: must be used on every path |
+| `use many` | $[0, \infty]$ | Unrestricted duplicable usage |
+| `use N` | $[N, N]$ | Exact natural count $N \in 0..=2^{64}-1$ |
+| `use [lo, hi]` | $[\text{lo}, \text{hi}]$ | Explicit interval with $\text{lo} \in 0..=2^{64}-1$ and $\text{lo} \le \text{hi}$ |
+
+- **Bounds and symbolic exclusion:** Finite bounds must fit unsigned `u64` and satisfy `lo <= hi` (`Q000` / `Q100` otherwise). Symbolic arithmetic expressions are not admitted in source parameter `use` annotations; while `qcore_core::usage` implements checked interval addition, scalar multiplication, branch hull ($\sqcup$), and subtyping containment, that semantic algebra does not widen `G03`'s surface grammar.
+
+### Implementation & Provenance
+
+- **Implementation:** `crates/qcore-frontend/src/frontend.rs`, `crates/qcore-core/src/usage.rs`.
+- **Specification cross-reference:** [Language specification §L07](QCORE_SPEC_r0_3.md#l07-usage-grades).
+
+---
+
+<a id="g04-closed-quantitative-indices"></a>
+## G04. Closed quantitative indices (`index.closed`)
+
+### Consumer and Delimiter Alias
+
+`G04` (`index.closed`, `qcore_frontend::quant_index`) parses and resolves closed natural-number `quant<...>` and `quant[| ... |]` types over declared module `quant axis` dimensions (`Q001`, `Q016`). The axis environment is built and validated unconditionally on every module, even when no `quant` type occurrence appears.
+
+### Consolidated EBNF
+
+```ebnf
+quant_type   = "quant", "<",  quant_body, ">"
+             | "quant", "[|", quant_body, "|]" ;
+
+quant_body   = ( scalar_index | vector_index ), [ where_clause ] ;
+scalar_index = expr ;
+vector_index = ( "credit" | "live" ), ",", "{", field, { ",", field }, "}" ;
+field        = IDENT, "=", expr ;
+
+where_clause = "where", where_item, { ( "," | "and" ), where_item } ;
+where_item   = IDENT, ":=", expr
+             | expr, relation, expr
+             | "true" ;
+
+relation     = "==" | "!=" | "<" | "<=" | ">" | ">=" ;
+expr         = product, { "+", product } ;
+product      = atom, [ "*", atom ] ;
+atom         = NAT
+             | IDENT
+             | "(", expr, ")"
+             | ( "min" | "max" | "monus" ), "(", expr, ",", expr, ")" ;
+```
+
+### Semantic Side Conditions and Evaluation Limits
+
+- **Matched delimiter rule:** `[|` and `|]` are atomic lexer tokens introduced so `where`-clause `<` / `>` comparisons do not collide visually with outer angle brackets. Both spellings produce identical closed-index types, and the opener fixes the required closer (`quant[| ... >` refuses at `Q000`, never repaired).
+- **Linear-product restriction:** In `atom * atom`, at least one operand must parse syntactically to a **literal node** (including a parenthesized literal); multiplying two `IDENT`s is refused even if `where` definitions bind both to constants, and unparenthesized `a * b * c` chains are refused.
+- **Axis typing and closed `u128` arithmetic (`Q001`, `Q016`):**
+  - `scalar_index` is shorthand for `credit` and requires the module to declare **exactly one** `credit` axis. `vector_index` fields must be non-empty, uniquely named, mode-compatible (`credit` vs. `live`), and dimension-checked.
+  - Local `IDENT := expr` bindings are pure, fresh, and closed (forward references allowed; dependency cycles, runtime variable references, and unreferenced bindings without an inferable dimension refuse). Every `relation` item must evaluate to `true`.
+  - Evaluation uses checked `u128` arithmetic: `monus(a, b)` requires `b <= a` and computes `a - b` (refusing invalid subtraction rather than saturating to `0`); overflow refuses rather than wrapping.
+  - `quant<cost, ...>` is refused as an unimplemented profile; `quant<access, ...>` is skipped by `quant_index` for separate handling (never treated as verified source access).
+- **Explicit parser guards:** Atom nesting depth is capped at **32** and addition chains at **64** terms (`Q001`).
+
+### Example
+
+```qcore
+module contract;
+dimension Chunk : Idx + Ordered;
+quant axis chunks : credit<Count<Chunk>>;
+
+extern fn keep(q: quant<n where n := 5> use one) -> unit;
+extern fn hold(q: quant[|credit, { chunks = 2 * n } where n := 4, n > 0|] use one) -> unit;
+```
+
+### Implementation & Provenance
+
+- **Cards:** `R05`, `QUANT-BRACKET-DELIMITERS`.
+- **Implementation:** `crates/qcore-frontend/src/quant_index.rs`, `crates/qcore-frontend/src/frontend.rs`.
+
+---
+
+<a id="g02a-scoped-copy-task-execution"></a>
+## G02a. Scoped-copy task execution (`source.tasks.copy.v1`)
+
+### Consumer and Profile Requirements
+
+`source.tasks.copy.v1` checks and compiles structured fork/join task modules behind `#import std.concurrency;` and an explicit `concurrency checked;` module declaration. Every function in the module is checked: the entry takes zero parameters and returns `i32` or `unit`; non-recursive, task-free leaf workers accept parameters of any [G02t](#g02t-fixed-width-scalar-types) scalar type or nominal [G07.13](#g0713-the-first-source-level-aggregate-sourcerecordv1) task record (`W48-QR-SCALAR-TYPES-R4`, `W48-QR-TASK-RECORD-CAPTURES`) and return any scalar, `unit`, or task record.
+
+### Consolidated EBNF
+
+```ebnf
+task_module   = [ module_header ],
+                ( "#import" | "import" ), "std.concurrency", ";",
+                "concurrency", "checked", ";",
+                { error_decl | record_decl | worker_fn }, entry_fn ;
+
+record_decl   = "type", RECORD_NAME, "{",
+                field_decl, { ",", field_decl }, [ "," ], "}" ;
+field_decl    = NAME, ":", ( SCALAR_TYPE | owned_buf | RECORD_NAME ) ;
+owned_buf     = "own", "<", "Buffer", [ "<", SCALAR_TYPE, ">" ], ">" ;
+
+worker_fn     = "fn", NAME, "(", [ worker_params ], ")", "->", worker_ret,
+                [ "effects", "{", task_effect, { ",", task_effect }, "}" ],
+                "{", { worker_stmt }, "}" ;
+worker_params = worker_param, { ",", worker_param } ;
+worker_param  = NAME, ":", SCALAR_TYPE
+              | NAME, ":", RECORD_NAME, [ "use", "one" ]
+              | G02b_buffer_param ;                          (* §G02b–§G02bc *)
+worker_ret    = "unit" | SCALAR_TYPE | RECORD_NAME | owned_buf ;
+
+task_effect   = "spawn" | "join" | "may_block" | "alloc" | "mut"
+              | "throws", "<", ERROR_NAME, ">" ;
+
+scope_block   = "thread", "scope", SCOPE_NAME, "{", { scope_stmt }, "}" ;
+
+spawn_expr    = "spawn", SCOPE_NAME, WORKER_NAME, "(", [ captures ], ")"
+              | "spawn", SCOPE_NAME, closure ;               (* §G02v *)
+captures      = capture, { ",", capture } ;
+capture       = ( "copy" | "move" ), NAME, [ field_path ]
+              | "read", NAME, [ field_path ], "share", SHARE (* §G02bb–§G02bc *)
+              | "lend", NAME, [ field_path ], LOW, "..", HIGH ;
+
+scope_stmt    = "let", NAME, "=", spawn_expr, [ "?" ], ";"
+              | "let", NAME, "=", "join", "move", HANDLE_NAME, [ "?" ], ";"
+              | "join", "move", HANDLE_NAME, ";"             (* infallible unit worker only *)
+              | "let", NAME, "=", RESULT_NAME, "?", ";"
+              | match_result
+              | record_or_scalar_stmt
+              | "raise", ( ERROR_BOUND_NAME | ERROR_NAME, "::", VARIANT ), ";"
+              | "return", [ "move" ], [ expr_atom ], ";" ;
+
+match_result  = "match", ( spawn_expr | "join", "move", HANDLE_NAME | RESULT_NAME ), "{",
+                  ok_arm, err_arm | err_arm, ok_arm,
+                "}" ;
+ok_arm        = "Result::Ok",  "{", "value", ":", NAME, "}", "=>", "{", { scope_stmt }, "}" ;
+err_arm       = "Result::Err", "{", "error", ":", NAME, "}", "=>", "{", { scope_stmt }, "}" ;
+```
+
+### Semantic Side Conditions and Record-Across-Task Rules
+
+- **Explicit lifecycle and failure recovery (`Q300`, `Q600`):**
+  - `spawn` dynamically succeeds or raises `SpawnError`; `join move h` consumes the task handle once and yields the worker's typed `Result`; `?` propagates errors (or extracts infallible `Result`s when the worker's declared error set is empty).
+  - There is **no implicit join**: scope exits, `return`, `raise`, and `?` failure edges refuse if any spawned handle or unconsumed `Result` remains live (`Q600`). Handled `SpawnError`s inside `match spawn ...` do not require `throws<SpawnError>` unless re-raised.
+- **Scalar and record captures (`W48-QR-SCALAR-TYPES-R4`, `W48-QR-TASK-RECORD-CAPTURES`):**
+  - **Leaf decomposition:** A task record binding expands to one task slot per scalar or `own<Buffer<T>>` leaf in depth-first declaration order (`bytes` fields from `std.buffer` refuse at `Q500`, `WRITE-LEND-TASKS-EXTENT`; records in composed epoch modules refuse at `Q500`, `W48-QR-TASK-RECORD-EPOCH`).
+  - **Whole-record vs. field captures:** Copyable scalar records cross `spawn` via `copy r` (into `param: R`); records containing any `own<Buffer<T>>` leaf cross via `move r` (into `param: R use one`, transferring every owned leaf and duplicating scalar leaves; restored whole on spawn failure). `write` captures and whole-record `read`/`lend` shares refuse by name at `Q600`.
+  - **Per-field captures & holes:** `copy r.f` copies a scalar leaf; `move r.buf` moves out one owned leaf, leaving a **hole** in `r` that refuses reads/drops until refilled by `r.buf = fresh_buf;` (deriving `mut`). Two distinct `own<Buffer<T>>` fields of `r` are independent resources and may be leased (`lend r.a ...`, `lend r.b ...`) to two concurrent workers simultaneously.
+  - **Record results:** `return r;` (copyable) or `return move r;` (owned-bearing) packs leaves through `join` (`QCORE_TASK_RESULT TASK RECORD N`; F02 reference encoding refuses record entry outcomes rather than flattening them, `W48-QR-TASK-RECORD-F02`).
+- **Native host support:** Emits C11 threads on Linux, pthread adapter on macOS, and winpthreads-derived C11 subset on Windows (other targets refuse explicitly).
+
+### Example
 
 ```qcore
 #import std.concurrency;
 concurrency checked;
-fn worker(x: i32) -> i32 { return x; }
+
+fn worker(x: i32) -> i32 {
+    return x;
+}
+
 fn main() -> i32 effects { throws<SpawnError>, spawn, join, may_block } {
     let x = 42;
     thread scope s {
-        let h = spawn s worker(copy x)?;
-        let collected = join move h;
-        let y = collected?;
-        return y;
+        match spawn s worker(copy x) {
+            Result::Ok { value: h } => {
+                let y = join move h?;
+                return y;
+            }
+            Result::Err { error: failure } => {
+                raise failure;
+            }
+        }
     }
 }
 ```
 
-Creation succeeds or raises the distinguished SpawnError dynamically. `join`
-collects the worker's typed Result; `?` is a separate propagation operation.
-`let y = join move h?;` combines those operations. A bare join may discard only
-an infallible unit result. Scope exits, returns and propagation reject live
-handles or unconsumed Results, including the failure edge of a later spawn.
-There is no automatic join. Sequential spawn/join pairs are supported.
-An infallible `?` consumes the Result and extracts its scalar value without
-inventing an error exit; the core requires an empty declared error set.
+### Implementation & Provenance
 
-Explicit recovery uses exactly one of each canonical arm, in either order:
+- **Cards:** `W6-TASK-RECOVERY`, `CT47-COPY-CAPTURE`, `W48-QR-SCALAR-TYPES-R4`, `W48-QR-TASK-RECORD-CAPTURES`.
+- **Implementation:** `crates/qcore-frontend/src/frontend_tasks.rs`, `crates/qcore-core/src/scoped_tasks.rs`, `crates/qcore-core/src/transfer.rs`.
+- **Reports:** `docs/reports/w6-task-recovery/README.md`, `docs/reports/w48-qr-task-record-captures/README.md`.
 
-```qcore
-match spawn s worker(copy x) {
-    Result::Ok { value: h } => { let y = join move h?; return y; }
-    Result::Err { error: failure } => { return 0; }
-}
-```
+---
 
-The scrutinee may instead be `join move h` or an existing Result binding.
-Scrutinees are whole expressions without `?`. Each arm binds one local name;
-its checked body may return, raise or continue with outer identities. Arm
-bindings do not escape. `raise failure;` rethrows a bound error with its exact
-tag; `raise E::Variant;` remains supported. Handled creation errors need no
-`throws<SpawnError>` permission unless propagated. Spawn itself requires its
-spawn effect. Prior live siblings remain obligations on every arm and must be
-explicitly joined before exit. Other patterns, guards, arm values, arbitrary
-match scrutinees and general branching remain unsupported. Explicit matching
-of an infallible Result conservatively checks both arms; only infallible `?`
-uses the empty-error extraction rule.
-
-Captures must be `copy` of direct immutable i32 local/parameter names (since
-card `W48-QR-SCALAR-TYPES-R4`, of any §G02t type, into a parameter of exactly
-that type). General expressions, assignments, loops, general branches,
-resources, loans, move/read/write captures, mutexes, externs, globals, user
-contracts and task-bearing workers reject in every definition; the one
-expression form admitted, by the same card, is §G02t's value statement — one
-operation per `let`, with `ArithmeticError` raised through the ordinary error
-exit. Entry-free task modules are not admitted yet.
-
-**Records across tasks** (card `W48-QR-TASK-RECORD-CAPTURES`; §G07.13, §G02b,
-§G02j). A task module may declare record types and use them in every task
-function — construct, read, write, pass to a worker, return from one:
-
-```ebnf
-field     = NAME, ":", ( SCALAR | owned | RECORD ) ;   (* §G07.13's declaration *)
-owned     = "own", "<", "Buffer", [ "<", SCALAR, ">" ], ">" ;
-param     = NAME, ":", RECORD                  (* a record of scalars *)
-          | NAME, ":", RECORD, "use", "one" ;  (* a record that owns a Buffer *)
-result    = RECORD ;
-capture   = ( "copy" | "move" ), NAME, [ path ]           (* a record or a sub-record *)
-          | ( "copy" | "move" ), NAME, path               (* one scalar or owned field *)
-          | "read", NAME, path, "share", SHARE
-          | "lend", NAME, path, LOW, "..", HIGH ;
-stmt      = "let", NAME, "=", RECORD, "{", assign, { ",", assign }, [ "," ], "}", ";"
-          | "let", NAME, "=", NAME, [ path ], ";"      (* a field read, or a copy *)
-          | NAME, path, "=", VALUE, ";"                 (* a field write, or a refill *)
-          | "drop", NAME, [ path ], ";"
-          | "return", [ "move" ], NAME, ";" ;           (* a record result *)
-task_effect = … | "mut" ;                             (* in a module declaring a record *)
-```
-
-* **A record is its leaves.** A record binding is one task slot per scalar or
-  owned-`Buffer<T>` leaf, depth-first in declaration order (card
-  `W48-QR-USABLE-RECORDS`' leaf order); a record parameter is one worker
-  parameter per leaf; a record capture is its leaves' captures. So every
-  custody question about a record is the unedited checker's question about an
-  owned leaf. A `bytes` field is `source.buffer.v1`'s byte buffer, which crosses
-  no spawn here (`Q500`, `WRITE-LEND-TASKS-EXTENT`); a record type in a composed
-  epoch module refuses (`Q500`, `W48-QR-TASK-RECORD-EPOCH`).
-* **Crossing a spawn.** The transferability judgment's aggregate kind decides a
-  whole-record capture from its leaves: a record of scalars crosses by `copy`
-  (duplicated), a record that owns by `move` (custody of every owned leaf
-  transferred, its scalars duplicated); `move` of a record of scalars, `copy`
-  of one that owns (naming the owned leaf and the contract it lacks), `write`
-  (by name, before any leaf is asked) and every sharing mode (a record shares
-  no protocol whole) refuse at `Q600`, as does a record into a parameter of
-  another record type (types are nominal). A successful creation moves a
-  record whole: on that path it is used no more (`Q600`); a failed creation
-  restores it exactly. A record moved into another record at construction is
-  used no more either.
-* **Field captures** are the existing captures of one leaf: `copy r.f` of a
-  scalar field, `move r.buf` of an owned one (leaving a **hole**, used before a
-  refill at `Q600` by the checker on that path), `read r.buf share N` and
-  `lend r.buf LOW..HIGH` with the loan and lease rules over that leaf. The
-  one-leased-resource-at-a-time bound is **per resource** since this card: two
-  fields — two resources — may be leased to two workers at once; two leases of
-  one field still may not share a byte, and a read share and a write lease
-  still do not mix. A sub-record of scalars crosses by `copy`; a sub-record that
-  owns crosses field by field (`W48-QR-NESTED-OWNED-SUBRECORD-MOVE`).
-* **Results.** `return r;` returns a record of scalars and `return move r;` one
-  that owns; `join` collects it whole and it is unpacked into fresh leaf slots
-  where it is taken (`?` or the `Ok` arm). The entry's result stays `i32`/`unit`.
-* **Operations in any task function**: construction (every field once; a scalar
-  field a literal of its type or a name of exactly its type, an owned field a
-  Buffer of its payload type moved in, a record field a record of its type
-  copied or moved in), a field read (a scalar copied, an owned field moved out),
-  `let q = r;` (a record of scalars; one that owns has no whole-move spelling,
-  `W48-QR-RECORD-WHOLE-MOVE`), a field write (a fresh value of exactly the
-  field's type; at an owned field the **refill**, admitted exactly into a hole,
-  `OverwriteOfLiveField` otherwise) which derives `mut` — admitted in the row of
-  a module that declares a record, and required (`Q300`) —, `drop r.buf;`, and
-  `drop r;` of every owned leaf (a hole refuses), `qcore_buffer_read(r.buf)` and
-  `qcore_buffer_write(r.buf, v)`. A record left in different states by two arms
-  of a `match` that both continue is unsettled and used no more
-  (`W48-QR-TASK-RECORD-ARM-MERGE`).
-* **Emission.** A record result travels in the task result's `leaves` array
-  (installed only in a module that returns a record); its trace is
-  `QCORE_TASK_RESULT TASK RECORD N` followed by one result line per leaf. The
-  F02 observable alphabet has no record outcome, so such a run is refused by
-  the reference encoding rather than flattened (`W48-QR-TASK-RECORD-F02`).
-  See [the card's report](reports/w48-qr-task-record-captures/README.md).
-
-**Closures** (card `W48-QR-CLOSURES`, §G02v). A spawn may write its worker in
-place, `spawn SCOPE |CAPTURES| -> TYPE [effects { … }] { BODY }`; the capture
-list uses exactly this section's capture spellings, and the closure is lifted
-into a hidden named worker before any rule above applies.
-
-The native driver supports Linux C11 threads, macOS through an emitted pthread
-adapter, and Windows through an emitted winpthreads-derived C11 thread subset;
-it explicitly rejects other targets. Its start record survives until successful native join; failed
-join aborts without reclaiming possibly accessed storage. These rules do not
-establish general C11/shared-memory or cross-platform refinement. See the
-[recovery execution record](reports/w6-task-recovery/README.md).
-
+<a id="g02v-closures-with-explicit-capture-lists"></a>
 ## G02v. Closures with explicit capture lists
 
-Card `W48-QR-CLOSURES` (user decision of 2026-09-29: an explicit capture list,
-lifted into a hidden named worker; no implicit capture). On the scoped-task
-routes (§G02a–§G02bc and the composed route §G02j) a spawn may write its worker
-in place:
+### Consumer and Lifting Model
+
+On scoped-task routes ([G02a](#g02a-scoped-copy-task-execution)–[G02bc-errors](#g02bc-tagged-error-payload) and [G02j](#g02j-composed-scoped-tasks-and-rendered-lines)), `spawn SCOPE` may write its leaf worker inline as an explicit-capture closure (`W48-QR-CLOSURES`). There is **zero implicit capture**: every accessed binding from the enclosing function must be listed in `|...|` with its explicit transfer mode, and the parser lifts each closure into a hidden named worker `ENCLOSING#closureN` before semantic checking, emitting C11 byte-identical to a hand-written worker (`QCore.Closures`).
+
+### Consolidated EBNF
 
 ```ebnf
-spawn      = "spawn", SCOPE, closure ;
-closure    = captures, "->", TYPE, [ "effects", "{", EFFECTS, "}" ], block ;
-captures   = "||"                                     (* no capture: one token *)
-           | "|", capture, { ",", capture }, "|" ;
-capture    = G02a_capture, [ "as", NAME ] ;           (* a named worker's spellings *)
-G02a_capture = ( "copy" | "move" ), PLACE
-           | "read", PLACE, "share", SHARE
-           | "lend", PLACE, LOW, "..", HIGH
-           | "write", PLACE ;                         (* refused by the judgment *)
+closure_spawn = "spawn", SCOPE_NAME, closure ;
+closure       = capture_list, "->", worker_ret,
+                [ "effects", "{", task_effect, { ",", task_effect }, "}" ],
+                "{", { worker_stmt }, "}" ;
+
+capture_list  = "||"                                         (* zero captures: PipePipe token *)
+              | "|", closure_cap, { ",", closure_cap }, "|" ;
+
+closure_cap   = G02a_capture, [ "as", NAME ] ;
+G02a_capture  = ( "copy" | "move" ), PLACE
+              | "read", PLACE, "share", SHARE
+              | "lend", PLACE, LOW, "..", HIGH
+              | "write", PLACE ;                             (* parsed, refused at Q600 *)
 ```
 
-```qcore
-thread scope lanes {
-    match spawn lanes |copy bonus, move job, lend pixels 0..2| -> Job effects { mut } {
-        job.count = bonus;
-        let low = qcore_buffer_write(pixels, 0, 17);
-        return move job;
-    } {
-        Result::Ok { value: first } => { … }
-        Result::Err { error: failure } => { … }
-    }
-}
-```
+### Semantic Side Conditions
 
-* **The lift.** The parser lifts each closure into a **hidden worker** named
-  `ENCLOSING#closureN` — the enclosing function's name and the closure's
-  ordinal there in source order; `#` is no identifier character, so no source
-  name collides — declared immediately before the enclosing function (a
-  closure's own closures before it), with one parameter per capture, the
-  written result type and effect row, and the closure's body. The spawn is an
-  ordinary spawn of that worker with the written captures, in either spawn
-  form: `let h = spawn … { … }?;` or `match spawn … { … } { arms }`. The
-  closure's tokens stay where they are written; a statement that contains a
-  closure reads its capture list and skips its header and body, which are the
-  hidden worker's.
-* **Parameter names and types.** A capture binds the place's root name, a field
-  capture's last segment (`copy r.f` binds `f`), or the name after `as`. The
-  **type** is the captured place's type at the spawn site, decided by the task
-  route there: a scalar's type, a record's record type, an owned Buffer's
-  `own<Buffer<T>> use one` (for `move`), its `borrow<Buffer<T>>` (for `read …
-  share`) and its `lend<Buffer<T>>` (for `lend …`). That is the only type the
-  transferability judgment could admit for the place and mode, so the judgment
-  decides each capture exactly as for a named worker, and the lifted program
-  checks and emits byte for byte as its hand-written twin — each closure a
-  named worker before the enclosing function (`QCore.Closures`).
-* **No implicit capture.** The hidden worker's scope is its capture binders and
-  the module's globals (record, error and function names). A body naming any
-  other name of the enclosing scope is refused (`Q013`), naming it and saying
-  the closure does not capture it. A place captured twice, or two captures
-  bound to one name, is refused (`Q011`); `as NAME` resolves a clash.
-* **Required, not inferred.** The result type is required (`Q000` without
-  `->`); the effect row follows the worker rules, so a closure that raises
-  `ArithmeticError` declares `throws<ArithmeticError>`, and the error reaches
-  the creator through `join` unchanged.
-* **Spawn targets only.** A capture list anywhere but directly after
-  `spawn SCOPE` — a closure stored in a binding, passed to a worker or called —
-  is refused (`Q038`, `Q000`; `W48-QR-CLOSURE-VALUES`). A capture list never
-  touches `[` or `]` (`Q000`): `[|` and `|]` are the quant delimiters.
-* **Worker rules unchanged.** A closure that spawns — another closure in its
-  own scope, or anything else — is a task-bearing worker and refused by the
-  first-order leaf rule, at the closure's span; a closure has no name, so it
-  cannot recur. Closures are lowered by the scoped-task and composed task
-  routes only: on an epoch route (`W48-QR-CLOSURE-EPOCH`), the mutex route
-  (`W48-QR-CLOSURE-MUTEX`), the field-footprint route (`W48-QR-CLOSURE-ROUTES`)
-  and the FFI route (`W48-QR-TASK-FFI-STRUCT-WORKER`) a closure refuses at
-  `Q600` by name.
-* **Lexical.** No reserved word is added. `|` and `||` are claimed only
-  directly after `spawn SCOPE` (and the closing `|` of that list); `as` is
-  claimed only after a capture inside a closure's list. The census
-  (`docs/reports/w48-qr-closures/census_closure_spelling.py`) found none of
-  these shapes in any tracked `.qr`/`.qv`/`.qrlib`/`.qcore`/`.qc` file.
+- **Explicit capture scope and binder naming (`Q011`, `Q013`):**
+  - Parameter binder defaults to `PLACE`'s root name (`copy bonus` binds `bonus`) or final field segment (`copy r.f` binds `f`), overridable via `as NAME` when two field captures share a segment name. Capturing the same place twice or colliding binder names refuses at `Q011`; referencing any uncaptured outer local refuses at `Q013` naming the missing capture.
+  - Parameter types are determined uniquely from `PLACE` and mode at the spawn site (`T` for `copy`, `R use one` or `own<Buffer<T>> use one` for `move`, `borrow<Buffer<T>>` for `read ... share`, `lend<Buffer<T>>` for `lend ...`).
+- **Required return type & spawn-only placement (`Q000`, `Q038`, `Q600`):**
+  - `-> worker_ret` is mandatory (`Q000` if omitted); effect rows (`throws<...>`, `alloc`, `mut`, `io` on `G02j`) follow identical leaf-worker rules.
+  - Closures are admitted **only immediately after `spawn SCOPE`**: first-class closure values (`let f = |...| ...;`) refuse at `Q038`/`Q000` (`W48-QR-CLOSURE-VALUES`), nested spawns inside a closure refuse by the leaf-worker rule (`Q600`), and closures on epoch, mutex, bitfield, or FFI routes refuse by name at `Q600`. Capture lists never use `[` or `]` (`[|`/`|]` remain quant delimiters).
 
-See [the card's report](reports/w48-qr-closures/README.md) and
-[`examples/threads`](../examples/threads/README.md#closures).
-
-## G02b. Owned-buffer task execution
-
-`ScopedOwnedTasksV1` extends G02a with one concrete builtin type:
-`own<Buffer>`. Each Buffer is a malloc-backed allocation with a fresh generation
-and one i32 payload — or, since card `W48-QR-SCALAR-TYPES-R6`, one payload of
-any §G02t type, `own<Buffer<T>>` (§G02t, "Typed payloads"). Its resource identity is separate from source
-slot and scalar identities. This is not arbitrary `own<T>` elaboration.
+### Example
 
 ```qcore
 #import std.concurrency;
 concurrency checked;
-fn worker(buffer: own<Buffer> use one) -> own<Buffer> {
+
+type Job { count: i32 }
+
+fn main() -> i32 effects { throws<SpawnError>, spawn, join, may_block } {
+    let bonus = 7;
+    let job = Job { count: 35 };
+    thread scope lanes {
+        let h = spawn lanes |copy bonus, copy job.count as base| -> i32 {
+            let sum = base + bonus;
+            return sum;
+        }?;
+        let total = join move h?;
+        return total;
+    }
+}
+```
+
+### Implementation & Provenance
+
+- **Cards:** `W48-QR-CLOSURES`.
+- **Implementation:** `crates/qcore-frontend/src/closures.rs`, `crates/qcore-frontend/src/frontend_tasks.rs`.
+- **Reports & Lean:** `docs/reports/w48-qr-closures/README.md`, `QCore.Closures`.
+
+---
+
+<a id="g02b-owned-buffer-task-execution"></a>
+## G02b. Owned-buffer task execution (`ScopedOwnedTasksV1`)
+
+### Consumer and Heap Generation Identity
+
+`ScopedOwnedTasksV1` extends [G02a](#g02a-scoped-copy-task-execution) with heap-allocated single-payload buffers `own<Buffer>` (default `i32` payload) and typed `own<Buffer<T>>` for any [G02t](#g02t-fixed-width-scalar-types) scalar or IEEE float `T` (`W48-QR-SCALAR-TYPES-R6`, `W48-QR-FLOAT-BUFFER-PAYLOADS`). Each successful `qcore_buffer_new` mints a fresh runtime generation `task * 2^32 + ordinal` (`task` $\in 0..2^{32}-1$, `ordinal` $\in 1..2^{32}-1$), keeping heap resource identity disjoint from local variable slots.
+
+### Consolidated EBNF Additions
+
+```ebnf
+buffer_type   = "own", "<", "Buffer", [ "<", SCALAR_TYPE, ">" ], ">" ;
+worker_param  = NAME, ":", buffer_type, "use", "one" ;       (* linear grade mandatory *)
+
+alloc_stmt    = "let", NAME, [ ":", buffer_type ], "=",
+                "qcore_buffer_new", "(", OPERAND, ")", "?" , ";"
+              | "match", "qcore_buffer_new", "(", OPERAND, ")", "{", ... "}" ;
+
+read_stmt     = "let", NAME, "=", "qcore_buffer_read", "(", NAME, [ path ], ")", ";" ;
+drop_stmt     = "drop", NAME, [ path ], ";" ;
+return_owned  = "return", "move", NAME, ";" ;
+```
+
+### Semantic Side Conditions
+
+- **Linearity and spawn rollback (`Q020`, `Q300`, `Q600`):**
+  - Owned parameters must write `use one`; root `main` may not take or return `own<Buffer<T>>`.
+  - `qcore_buffer_new(v)` requires `alloc` and must either propagate `AllocError` with `?` (requiring `throws<AllocError>`) or handle both `Result` arms via `match`. Failed allocations mint no generation and require any previously live owners to be dropped on the error path.
+  - `spawn s worker(move buf)` consumes `buf` on the `Ok` path and **restores `buf` intact** on the `SpawnError` path; `join move h?` delivers returned custody into a fresh binding without reviving the consumed `buf` name.
+  - `qcore_buffer_read(buf)` reads the payload without consuming ownership; `drop buf;` and `return move buf;` consume ownership. Every normal and error exit must account for all owned bindings, handles, and `Result`s.
+
+### Example
+
+```qcore
+#import std.concurrency;
+concurrency checked;
+
+fn worker(buffer: own<Buffer<i64>> use one) -> own<Buffer<i64>> {
     return move buffer;
 }
+
 fn main() -> i32 effects { alloc, throws<AllocError>, spawn, join, may_block } {
-    let buffer = qcore_buffer_new(42)?;
+    let seed: i64 = 42;
+    let buffer = qcore_buffer_new(seed)?;
     thread scope s {
         match spawn s worker(move buffer) {
             Result::Ok { value: handle } => {
                 let returned = join move handle?;
                 let value = qcore_buffer_read(returned);
                 drop returned;
-                return value;
+                let code = value as i32;
+                return code;
             }
             Result::Err { error: failure } => {
-                let value = qcore_buffer_read(buffer);
                 drop buffer;
-                return value;
+                return 0;
             }
         }
     }
 }
 ```
 
-Owned parameters require exactly `use one`. Captures must use `move` for owned
-Buffer parameters and `copy` for i32 parameters, with exact arity and no duplicate
-owned capture. Successful creation consumes the original parent bindings;
-failed creation restores them, without altering prior siblings. A later join
-returns custody through a fresh Result/value binding; it never revives the
-original moved binding. Reading does not consume ownership; `drop name;` and
-`return move name;` consume it. Repeated reads require the same live owner.
+### Implementation & Provenance
 
-Card `W48-QR-TASK-RECORD-CAPTURES`: an owned Buffer may also be a **field** of a
-record (§G02a, "Records across tasks"). A record that owns is a parameter
-spelled `NAME: RECORD use one` and crosses by `move` — each owned leaf an owned
-capture of this section, reserved, committed or rolled back with the others in
-one creation — and a worker hands it back with `return move NAME;`, `join`
-returning custody of every owned leaf at once. Duplicate owned captures, a
-moved field used before a refill, and a record moved while one of its leaves
-is lent or leased refuse by this section's rules, per leaf.
+- **Cards:** `W6-OWNED-SOURCE-TASKS`, `W6-WORKER-ALLOCATION`, `W48-QR-SCALAR-TYPES-R6`, `W48-QR-FLOAT-BUFFER-PAYLOADS`.
+- **Implementation:** `crates/qcore-frontend/src/frontend_tasks.rs`, `crates/qcore-core/src/scoped_tasks.rs`.
+- **Reports:** `docs/reports/w6-owned-source-tasks/README.md`, `docs/reports/w6-worker-allocation/README.md`.
 
-`qcore_buffer_new(I32_OPERAND)` requires `alloc` in the root or a leaf worker. It must either
-be propagated with `?` under `throws<AllocError>`, or directly matched using the
-same canonical Result arms as G02a. A failed allocation produces no Buffer or
-new generation. Earlier owners must be released on that failure path. Local
-annotations may be i32, unit or `own<Buffer>` and must match the initializer;
-local quantitative annotations remain unsupported. `qcore_buffer_read(NAME)`
-requires one live owned binding and returns i32. The builtin function names and
-AllocError cannot be shadowed by source declarations.
+---
 
-Workers may read/drop owned inputs and locally allocated Buffers, return exactly
-one remaining input or fresh local, or drop all of them before returning
-scalar/unit or raising a payload-free error. The core derives this relation from
-checked exits and applies exact caller capture identities or a checked fresh
-result; return annotations alone cannot create custody. Multiple owned inputs
-are supported. Owned root-entry results reject, including in uncalled definitions.
-Workers remain nonrecursive task-free leaves. Every scope/return/error exit must
-account for owned bindings, Results and handles; there is no implicit cleanup
-or join in this profile. Local move aliases and general assignment are not
-part of the current source grammar.
+<a id="g02bb-scoped-read-loan"></a>
+## G02bb. Scoped read loan (`ScopedReadLoansV1`)
 
-The native and reference allocation identity is `task * 2^32 + ordinal`, with
-task in `0..2^32-1` and a per-task successful-allocation ordinal in `1..2^32-1`.
-Root task identity is zero. Failed allocation consumes no generation; native
-worker scheduling cannot change another task's counter. Native execution aborts
-if these bounds are exhausted. Task-local fault scripts select allocation
-attempts by successful runtime task identity. See the
-[worker-allocation record](reports/w6-worker-allocation/README.md).
+### Consumer and Whole-Share Borrowing
 
-The finite task checker rejects unreachable blocks. Owned Result analysis uses
-actual checked worker exits rather than inventing resource-bearing alternatives:
-explicit matches with an impossible owned-result arm, and propagation from an
-owned-return worker with an unused nonempty error row, may therefore reject.
-Use infallible `?` for the empty-error owned-return case. General branch reasoning
-and dead-code validation remain open.
+`ScopedReadLoansV1` extends [G02b](#g02b-owned-buffer-task-execution) with a scoped read loan of a parent-owned `Buffer<T>` to a child worker, reclaimed strictly at the creator's `join`. It is selected whenever a checked worker declares a `borrow<Buffer<T>>` parameter without fractional shares or buffer writes.
 
-Native worker buffer observations are retained privately and printed by the
-parent after successful join. The transcript is a normalized collection order,
-not a wall-clock schedule. C11 publication/join, allocator correctness and
-source/core/native correspondence remain explicit refinement boundaries.
-Lean model lemmas and fixed native pointer/sanitizer observations are separate
-evidence. Owned graphs/error payloads, shared memory, mutexes, nested
-workers, general control flow and targets other than Linux, macOS and Windows remain unsupported.
-One bounded borrowing form is admitted by G02bb below; every other loan form
-remains unsupported.
-See [the owned task report](reports/w6-owned-source-tasks/README.md).
+### Consolidated EBNF Additions
 
-## G02bb. Scoped read loan
+```ebnf
+loan_param    = NAME, ":", "borrow", "<", "Buffer", [ "<", SCALAR_TYPE, ">" ], ">" ;
+loan_capture  = "read", PLACE, "share", "FULL" ;
+worker_read   = "let", NAME, "=", "qcore_buffer_read", "(", LOAN_NAME, ")", ";" ;
+```
 
-`ScopedReadLoansV1` extends G02b with one bounded borrowing form: a **scoped
-read loan** of one parent-owned Buffer to one child, returned by the creator's
-join. It is selected whenever any checked function has a `borrow<Buffer>`
-parameter; a module that lends nothing keeps its G02a/G02b profile unchanged.
+### Semantic Side Conditions
+
+- **Ungraded non-value loan:** `borrow<Buffer<T>>` carries **no** `use` grade: the worker may call `qcore_buffer_read(payload)` any number of times and cannot return, copy, move, drop, byte-index, or re-lend `payload` (`Q020` / `Q600`).
+- **Lender freeze until `join`:** While `share FULL` is outstanding, the parent retains whole-payload `qcore_buffer_read` authority over its own `Buffer<T>` while losing all exclusive authority (mutation, `drop`, `move`, or a second loan all refuse naming `LoanOutstanding`, `Q600`). Failed `spawn` opens no loan and restores exclusive authority immediately; successful `spawn` holds the loan until `join` completes.
+
+### Example
 
 ```qcore
 #import std.concurrency;
 concurrency checked;
+
 fn reader(payload: borrow<Buffer>) -> i32 {
     let seen = qcore_buffer_read(payload);
     return seen;
 }
-fn main() -> i32 effects { alloc, throws<AllocError>, spawn, join, may_block } {
+
+fn main() -> i32 effects { alloc, throws<AllocError>, throws<SpawnError>, spawn, join, may_block } {
     let buffer = qcore_buffer_new(42)?;
     thread scope s {
-        match spawn s reader(read buffer share FULL) {
-            Result::Ok { value: handle } => {
-                let during = qcore_buffer_read(buffer);
-                let seen = join move handle?;
-                let after = qcore_buffer_read(buffer);
-                drop buffer;
-                return seen;
-            }
-            Result::Err { error: failure } => {
-                let restored = qcore_buffer_read(buffer);
-                drop buffer;
-                return restored;
-            }
-        }
+        let h = spawn s reader(read buffer share FULL)?;
+        let parent_view = qcore_buffer_read(buffer);
+        let child_view = join move h?;
+        drop buffer;
+        return child_view;
     }
 }
 ```
 
-A loan parameter is spelled exactly `NAME: borrow<Buffer>`, with **no** usage
-grade: the borrower may read it any number of times and may do nothing else
-with it. Grading loan reads is not part of this profile. The only capture that
-produces one is `read PLACE share FULL`, against a place whose type is
-`own<Buffer>`. A `share` expression names how much read authority the borrower
-receives; `share FULL` is the whole of it. Fractions are card T05's grammar,
-G02bc below.
+### Implementation & Provenance
 
-A read loan is not a value. It is refused as a function result, as an entry
-parameter, as a copy source, as a move source, as a `drop` operand and as a
-re-loan source; `qcore_buffer_read(NAME)` is the only operation that accepts
-one. A worker cannot lend onward for two independent reasons: a loan is not an
-`own<Buffer>` place, and a spawned worker is a first-order leaf.
+- **Cards:** `T04` (`REMAINING-T04`), `W48-QR-SCALAR-TYPES-R6`.
+- **Implementation:** `crates/qcore-frontend/src/frontend_tasks.rs`, `crates/qcore-core/src/scoped_tasks.rs`.
+- **Reports:** `docs/reports/remaining-t04/README.md`.
 
-While a loan is outstanding, the lender **keeps read authority** over its own
-Buffer and loses every exclusive authority over it — mutation, release, move
-and re-loan are all refused, naming the loan rather than a custody transfer.
-The bounds are structural: at most one loan per creation, at most one
-lent *resource* at a time, and one creation may not both move and lend the
-same resource. It may move one Buffer and lend another.
+---
 
-Creation failure restores the lender exactly and opens no loan; the reservation
-window before that outcome is known grants nobody anything, read included.
-Only the creator's successful join closes a loan. A child that completed but
-has not been joined still holds its loan. A path that never joins its borrower
-cannot leave the scope: the scope-busy rule reaches that first, and the exit
-rule's own loan check is a redundant backstop.
+<a id="g02bc-counted-read-shares-and-the-checked-buffer-write"></a>
+## G02bc-shares. Counted read shares, range write leases, and checked `Buffer` writes (`ScopedReadSharesV1`)
 
-Native emission passes the same pointer for a move and for a loan and differs
-only in what the caller keeps: a moved capture is consumed, a lent one is not.
-The typed `TaskLoan` diagnostic event is submitted only after a creation that
-actually returned a child, and `TaskReturn` only after a collection that
-actually returned. Concurrent reads by lender and
-borrower are admitted because nothing may write a loaned resource; that is a
-checker rule, not a dynamic measurement — no race detector covers this backend,
-because ThreadSanitizer does not intercept C11 `thrd_create`.
+### Consumer and Fractional / Disjoint Authority Model
 
-Write loans, loans of anything but a Buffer, loans across nested workers,
-loans held past a scope and targets other than Linux, macOS and Windows remain unsupported. See
-[the read-loan report](reports/remaining-t04/README.md). Fractional and
-multi-reader shares are G02bc.
+`ScopedReadSharesV1` extends [G02bb](#g02bb-scoped-read-loan) along two dual axes over `own<Buffer<T>>`:
+1. **Counted read shares (`T05`):** Fractional `read PLACE share S` captures split a per-resource read budget of `FULL` (`1024`, matching `FULL_ACCESS`) across up to **two** concurrent readers (`S1 + S2 <= 1024`), while whole-payload `qcore_buffer_write(buf, val)` demands reconstructed full exclusive authority.
+2. **Disjoint range write leases (`WRITE-LEND-TASKS`, `WRITE-LEND-TASKS-EXERCISE`):** `lend PLACE LOW..HIGH` captures transfer exclusive byte-range write authority over `[LOW, HIGH)` (within `0..sizeof(T)`) to concurrent `lend<Buffer<T>>` workers, exercised via rebased byte accesses `qcore_buffer_write(lease, idx, byte)` and `qcore_buffer_read(lease_or_owner, idx)`.
 
-## G02bc. Counted read shares and the checked Buffer write
+### Consolidated EBNF Additions
 
-`ScopedReadSharesV1` extends G02bb by *counting* the lent authority. Each
-`read PLACE share S` capture transfers `S` out of a per-resource budget of
-`FULL` (1024, the same unit as the concurrency model's `FULL_ACCESS`), so one
-allocation may be lent to at most two borrowers whose shares sum to no more
-than `FULL`. It is selected when some capture lends a share other than `FULL`,
-or when the module writes a Buffer; a module that does neither keeps its
-G02a/G02b/G02bb profile unchanged.
+```ebnf
+lease_param   = NAME, ":", "lend", "<", "Buffer", [ "<", SCALAR_TYPE, ">" ], ">" ;
+
+share_capture = "read", PLACE, "share", share_expr ;
+share_expr    = "FULL"
+              | NAT
+              | "(", share_expr, ")"
+              | share_expr, "+", share_expr ;
+
+lease_capture = "lend", PLACE, LOW_BOUND, "..", HIGH_BOUND ;
+
+whole_write   = "let", NAME, "=", "qcore_buffer_write", "(", OWNER_PLACE, ",", OPERAND, ")", ";" ;
+byte_write    = "let", NAME, "=", "qcore_buffer_write", "(", LEASE_NAME, ",", CONST_IDX, ",", BYTE_VAL, ")", ";" ;
+byte_read     = "let", NAME, "=", "qcore_buffer_read",  "(", ( LEASE_NAME | OWNER_NAME ), ",", CONST_IDX, ")", ";" ;
+```
+
+### Semantic Side Conditions
+
+- **Counted read shares (`share S`):**
+  - `share_expr` must evaluate to $1 \le S \le 1024$ (`0`, $> 1024$, or named share constants refuse at `Q600`). At most **two** simultaneous read borrowers are admitted per resource, with total lent share $\le 1024$.
+  - Owner whole-payload `qcore_buffer_read(buf)` stays admitted during read loans, whereas `qcore_buffer_write(buf, val)`, `drop`, and `move` refuse until **every** outstanding borrower has been joined (`Q600`).
+- **Range write leases (`lend PLACE LOW..HIGH` $\to$ `lend<Buffer<T>>`):**
+  - `lend` is contextual (recognized before `<Buffer` in worker parameters and at capture heads; a worker takes **at most one** `lend<Buffer<T>>` parameter, `Q020`).
+  - Bounds must satisfy `0 <= LOW < HIGH <= sizeof(T)` (`bool` payloads refuse byte writes; `isize`/`usize` payloads require a recorded target; empty `LOW == HIGH` leases refuse as `InvalidLease`, `Q600`).
+  - **Disjointness & complete owner exclusion:** Two concurrent leases on the same `Buffer<T>` must satisfy `ownership::axes_overlap == false` (`OverlappingLeases`, max two writers `TooManyWriters`, `Q600`), and read shares and write leases on the same resource never mix. While **any** write lease is outstanding, the owner holds **zero** whole-payload or byte-read authority (`LeaseOutstanding`, `Q600`) until `join` reclaims the lease (`QCore.WriteLendTasks.no_byte_has_two_write_authorities`).
+  - **Split worker/creator footprint check (`QCore.WriteLendTasksExercise`):** Arity selects byte operations: `qcore_buffer_write(lease, idx, byte)` (3 args, `lease` only — owners have no 3-arg byte write) and `qcore_buffer_read(name, idx)` (2 args, `lease` or unleased `owner` — `borrow<Buffer>` read shares have no byte read, `Q020`). `idx` is a check-time constant relative to `lease`'s `LOW` base (`0` for owner); the worker summarizes its maximum accessed offset, and the creator's `spawn` site verifies `LOW + max_end <= HIGH` (`Q600`). Emitted C writes `((unsigned char *)&buffer->payload)[base + idx]` (distinct C11 §3.14 byte locations).
+
+### Example
 
 ```qcore
 #import std.concurrency;
 concurrency checked;
-fn reader(payload: borrow<Buffer>) -> i32 {
-    let seen = qcore_buffer_read(payload);
-    return seen;
+
+fn paint_pair(slice: lend<Buffer<u32>>) -> unit {
+    let w0 = qcore_buffer_write(slice, 0, 17);
+    let w1 = qcore_buffer_write(slice, 1, 34);
+    return;
 }
-fn main() -> i32 effects { alloc, throws<AllocError>, spawn, join, may_block } {
-    let buffer = qcore_buffer_new(1)?;
-    let prepared = qcore_buffer_write(buffer, 42);   // exclusive authority
+
+fn main() -> i32 effects { alloc, throws<AllocError>, throws<SpawnError>, spawn, join, may_block } {
+    let init: u32 = 0;
+    let buf = qcore_buffer_new(init)?;
     thread scope s {
-        match spawn s reader(read buffer share 512) {
-            Result::Ok { value: first } => {
-                match spawn s reader(read buffer share 512) {
-                    Result::Ok { value: second } => {
-                        let during = qcore_buffer_read(buffer);
-                        let a = join move first?;
-                        let b = join move second?;
-                        let restored = qcore_buffer_write(buffer, 7);
-                        let after = qcore_buffer_read(buffer);
-                        drop buffer;
-                        return after;
-                    }
-                    /* … creation-failure arms elided … */
-                }
-            }
-        }
+        let h_lo = spawn s paint_pair(lend buf 0..2)?;
+        let h_hi = spawn s paint_pair(lend buf 2..4)?;
+        join move h_lo;
+        join move h_hi;
+        let b0 = qcore_buffer_read(buf, 0);
+        let b2 = qcore_buffer_read(buf, 2);
+        drop buf;
+        let sum = (b0 as i32) + (b2 as i32);
+        return sum;
     }
 }
 ```
 
-A share expression is `FULL`, a decimal literal, a parenthesised share, or a
-sum of shares. It must evaluate to a positive value at most `FULL`; zero, an
-over-full value and a named share are represented refusals, and a name that
-does not resolve is refused earlier still by name resolution. This profile has
-no declared share constants.
+### Implementation & Provenance
 
-The budget is over the authority handed **out**. Lending transfers `S` from the
-resource's unlent authority to the borrower; the outstanding total may never
-exceed `FULL`, and an over-allocation is refused as a whole — no partial share
-is ever granted. At most two holders exist at once; a third is refused by the
-declared bound even when authority remains. The owner's own read is *not*
-budgeted: it is retained across committed lending exactly as G02bb retains it,
-and is sound only because a write demands the reconstructed exclusive
-authority. The separation-logic reading, in which the owner's read is itself a
-consumed fraction, is not this profile.
+- **Cards:** `T05` (`REMAINING-T05`), `WRITE-LEND-TASKS`, `WRITE-LEND-TASKS-EXERCISE`, `TASK-ROUTE-TSAN`, `TSAN-ROWS-2`, `W48-QR-SCALAR-TYPES-R6`.
+- **Implementation:** `crates/qcore-frontend/src/frontend_tasks.rs`, `crates/qcore-core/src/scoped_tasks.rs`.
+- **Reports & Lean:** `docs/reports/remaining-t05/README.md`, `docs/reports/write-lend-tasks/README.md`, `docs/reports/write-lend-tasks-exercise/README.md`, `QCore.WriteLendTasks`, `QCore.WriteLendTasksExercise`.
 
-`qcore_buffer_write(BUFFER, VALUE)` evaluates to `unit`, takes one exact
-`own<Buffer>` name and one i32, and demands exclusive authority. It is
-therefore refused for the whole window in which any share is outstanding —
-including after only one of two borrowers has been joined — and a borrower
-cannot reach it at all, because a read loan is not an `own<Buffer>` binding.
-Exclusive authority, and with it the write, the release and the move, return
-only when the *last* share comes back: one join out of two reconstructs
-nothing.
+---
 
-Two borrowers of one allocation are two holders of one identity. The backend
-hands both the same pointer, so the allocation's live bytes are counted once,
-and lending never consumes the lender's binding — only its release does.
-The typed `ResourceWrite` diagnostic event is submitted by an admitted write;
-the loan and return event meanings are unchanged from G02bb.
+<a id="g02bc-tagged-error-payload"></a>
+<a id="g02bc-errors"></a>
+## G02bc-errors. Tagged error payload (`ScopedErrorPayloadV1`)
 
-Disjoint slicing, write shares, more than two simultaneous readers, several
-lent resources at once, nested workers and targets other than Linux, macOS and Windows remain
-unsupported. See [the read-share report](reports/remaining-t05/README.md).
+### Consumer and Uniform Failure-Custody Transfer
 
-## G02bc. Tagged error payload
+`ScopedErrorPayloadV1` extends [G02b](#g02b-owned-buffer-task-execution) so a failing worker can transfer custody of **one `own<Buffer>`** back to its parent inside a nominal error variant across the completion capsule and `join`. It is selected whenever any checked error declaration carries a payload variant.
 
-`ScopedErrorPayloadV1` extends G02b with one bounded failure-edge transfer: an
-explicitly tagged error variant carrying exactly one owned Buffer out of one
-child, through its completion capsule and its creator's join. It is selected
-whenever any checked function declares an error payload; a module whose error
-variants are all payload-free keeps its G02a/G02b/G02bb profile unchanged.
+### Consolidated EBNF Additions
+
+```ebnf
+payload_error_decl = "error", ERROR_NAME, "{",
+                     payload_variant, { payload_variant }, "}" ;
+payload_variant    = VARIANT_NAME, "(", "own", "<", "Buffer", ">", ")", ";" ;
+
+raise_payload      = "raise", ERROR_NAME, "::", VARIANT_NAME, "(", BUFFER_NAME, ")", ";" ;
+take_payload       = "let", NAME, "=", "qcore_error_payload", "(", ERROR_BINDING, ")", ";" ;
+```
+
+### Semantic Side Conditions
+
+- **Uniform error-row rule (`Q300`, `Q600`):** Every variant of an `error E { ... }` type must either carry `(own<Buffer>)` or carry no payload; mixed payload/payload-free variants, scalar payloads, `borrow<Buffer>` payloads, or multi-field payloads refuse at the declaration. Builtin `AllocError` and `SpawnError` are always payload-free, and the root entry `main` may never declare `throws<E>` for a payload-carrying `E`.
+- **Single-take extraction (`qcore_error_payload`):**
+  - `raise E::Variant(buf);` consumes `buf` on the worker's error exit (all other worker-owned buffers must be dropped beforehand).
+  - In the parent's `Result::Err { error: failure }` arm on `join move h`, `let recovered = qcore_error_payload(failure);` extracts the `own<Buffer>` **exactly once**. A second `qcore_error_payload(failure)` refuses, and leaving the `Err` arm (or re-raising `failure`) before extracting the payload refuses as an unreleased obligation (`Q600`). Once extracted, `recovered` is an ordinary `own<Buffer>` governed by linear drop/move rules.
+
+### Example
 
 ```qcore
 #import std.concurrency;
 concurrency checked;
+
 error Recovery { Failed(own<Buffer>); }
+
 fn worker(payload: own<Buffer> use one) -> i32 effects { alloc, throws<Recovery> } {
     match qcore_buffer_new(7) {
         Result::Ok { value: scratch } => {
@@ -1721,15 +2425,14 @@ fn worker(payload: own<Buffer> use one) -> i32 effects { alloc, throws<Recovery>
         }
     }
 }
+
 fn main() -> i32 effects { alloc, throws<AllocError>, spawn, join, may_block } {
     let buffer = qcore_buffer_new(42)?;
     thread scope s {
         match spawn s worker(move buffer) {
             Result::Ok { value: handle } => {
                 match join move handle {
-                    Result::Ok { value: seen } => {
-                        return seen;
-                    }
+                    Result::Ok { value: seen } => { return seen; }
                     Result::Err { error: failure } => {
                         let recovered = qcore_error_payload(failure);
                         let value = qcore_buffer_read(recovered);
@@ -1747,2962 +2450,2254 @@ fn main() -> i32 effects { alloc, throws<AllocError>, spawn, join, may_block } {
 }
 ```
 
-A payload variant is declared exactly `VARIANT(own<Buffer>);` inside an
-`error NAME { … }` declaration. Scalar payloads, `borrow<Buffer>` payloads,
-empty parameter lists and several payload fields are each refused at the
-declaration. A declared error row is **uniform**: either every variant carries a
-payload or none does, so a joined error always holds exactly one Buffer and the
-parent's take is total. A mixed row is a represented refusal, not a widening.
+### Implementation & Provenance
 
-`raise NAME::VARIANT(BUFFER);` moves one owned Buffer into the raised error, and
-`raise NAME::VARIANT;` stays the payload-free spelling. The declaration decides
-which is required, in both directions. `AllocError` and `SpawnError` never carry
-a payload — the runtime raises them after a failure that acquired nothing — and
-the task entry may not declare a payload row at all, because it has no external
-custodian, exactly as it may not declare an `own<Buffer>` result.
+- **Cards:** `T06` (`REMAINING-T06`).
+- **Implementation:** `crates/qcore-frontend/src/frontend_tasks.rs`, `crates/qcore-core/src/scoped_tasks.rs`.
+- **Reports:** `docs/reports/remaining-t06/README.md`.
 
-`let NAME = qcore_error_payload(ERROR);` is the only way a payload leaves an
-error. The error keeps its tag and loses its payload, so a second take is
-refused, and until the take happens the bound error may neither be discarded at
-an exit nor re-raised. A taken payload is an ordinary owned Buffer with the
-ordinary duty: forgetting it is a leak on the path that forgot it.
+---
 
-A worker's error exit must account for every identity it acquired: locals it did
-not carry must already be released, and the completion names exactly the one
-identity the outcome carries. A creation that failed transfers nothing. A second
-join of the same handle is refused, so the payload can never be collected twice.
-One Buffer may be a normal owned result on one path and a payload on another;
-the checker keeps the two exits apart.
+<a id="g02c-guarded-fixed-footprint-mutex"></a>
+## G02c. Guarded fixed-footprint mutex (`source.mutex.guard.v1`)
 
-Two core gates cannot be reached from this source surface, because the uniform
-row rule and the entry rule refuse earlier: propagating a payload-carrying
-Result with `?` from a function that also declares a builtin failure, and
-re-raising a bound error that still holds its payload. Both are checked on
-mutated IR so that widening the surface later cannot silently admit them.
+### Consumer and Route Precedence
 
-Native emission carries the payload in the result value alongside the error tag
-and clears every stale copy as it moves, submitting a typed `TaskResult` event
-whose error tag and optional payload generation distinguish a payload-bearing
-result from a payload-free error.
+`CheckedMutexGuardsV1` (`source.mutex.guard.v1`) lowers lexical lock guards, invariant open/close protocols, refinement facts, opt-in lock ranks, monotonic footprint growth, guard-local child joins, and `share ... under` task crossings onto `CheckedMutexInvariantV1` (`qcore_core::mutex_invariant`, `Q610`–`Q627`). Selected by `mutex [rank N] guards ...` ahead of scoped-task routes, it does not mix with `G02a`'s `spawn`/`join` expressions (`Q600`).
 
-Several payloads, recursive owned graphs, arbitrary error ABIs, payloads on
-nested workers, loans inside payloads and targets other than Linux, macOS and Windows remain
-unsupported. See [the error-payload report](reports/remaining-t06/README.md).
+### Consolidated EBNF
 
-## G02c. Guarded fixed-footprint mutex
+```ebnf
+mutex_module = [ module_header ],
+               ( "#import" | "import" ), "std.concurrency", ";",
+               { error_decl }, entry_fn ;
 
-`CheckedMutexGuardsV1`, profile id `source.mutex.guard.v1`, lowers a lexical
-guard onto the `CheckedMutexInvariantV1` model checker
-(`crates/qcore-core/src/mutex_invariant.rs`). It is selected by the presence of
-a `mutex guards` declaration, ahead of the scoped-task routes. It composes with
-none of them: a module using the scoped-task `spawn`/`join` expressions is
-refused. Its own bounded child-task form is a nested `thread scope` block
-(card T03-F).
+entry_fn     = "fn", NAME, "(", ")", "->", "unit", "{", root_scope, "}" ;
+root_scope   = "thread", "scope", NAME, "{", { outer_stmt }, "}" ;
+
+outer_stmt   = "let", NAME, "=", "protected", ( NAT | SCALAR_TYPE ), ";"
+             | "let", NAME, "=", "mutex", "guards", NAME, ";"
+             | "let", NAME, "=", "mutex", "rank", NAT, "guards", NAME, ";"
+             | "let", NAME, "=", "fact", NAME, ";"
+             | ( "read" | "write" ), NAME, ";"
+             | "wait", NAME, ";"
+             | "use", NAME, ";"
+             | child_scope
+             | "with", "lock", NAME, "as", NAME, "{", { inner_stmt }, "}" ;
+
+inner_stmt   = "open", NAME, ";"
+             | "close", NAME, [ "unchanged" ], ";"
+             | "grow", NAME, "guards", NAME, ";"
+             | ( "read" | "write" ), NAME, "with", NAME, ";"
+             | "let", NAME, "=", "borrow", NAME, "with", NAME, ";"
+             | "drop", NAME, ";"
+             | "assert", NAME, "with", NAME, ";"
+             | "use", NAME, ";"
+             | "wait", NAME, ";"
+             | child_scope
+             | "thread", "scope", NAME, "under", NAME, "{", { child_stmt }, "}"
+             | "raise", NAME, "::", NAME, ";" ;
+
+child_scope  = "thread", "scope", NAME, [ "share", NAME, "under", NAME ],
+               "{", { child_stmt }, "}" ;
+child_stmt   = (* any `outer_stmt` or `inner_stmt` except `let` resource/mutex/fact
+                  declarations and `drop` of a parent borrow *) ;
+```
+
+### Semantic Side Conditions and Native Emission Shapes
+
+- **Fixed/grown footprint, `open`/`close` witnesses, and guard borrows (`Q610`–`Q627`):**
+  - `let buf = protected (NAT | SCALAR_TYPE);` (`isize`/`usize` requires a recorded target, `Q600`) creates a shared resource; `let m = mutex guards buf;` consumes `FULL_ACCESS` over `buf`, refusing duplicate mutexes (`Q617`) and unguarded `read`/`write` (`Q611`).
+  - Inside `with lock m as g { ... }`, `g` is lexically scoped (`Q013` outside). Writing requires `open g;` first (`Q613`), and normal exit or `raise` requires the invariant closed (`Q614`) and all `borrow buf with g` handles dropped (`Q615`).
+  - `close g;` supplies a declared restoration witness (recording `InvariantPredicateDeclared` on the certificate); `close g unchanged;` supplies a **checked** witness admitted only when every operation since `open g;` was a `read` or `use` of a fact (`Q600` otherwise, never downgraded).
+  - **`grow g guards r;` (`CT34-GROWTH`):** Requires `g`'s invariant open (`Q626`), `r` unprotected (`Q617`), creator full share over `r` (`Q621`), and mints a fresh invariant identity (`Q627`), permanently adding `r` to `m`'s footprint (`close g unchanged;` is refused in a grown section).
+- **Guard-scoped facts (`T03-F`):** `let f = fact buf;` declares a refinement fact; `assert f with g;` mints an active fact valid only until `g`'s critical section ends (`use f;` after unlock or in a child task refuses at `Q616`; unasserted `use f;` refuses at `Q600`).
+- **Opt-in lock ranks (`CT33-RANKS`):** Without `rank`, nested `with lock` refuses at `Q622`. Declaring `mutex rank N guards r;` (`N` $\in 0..=2^{32}-1$) enables module-wide lock ordering: **every** mutex in the module must then declare a rank (`Q625`), and acquiring a mutex of rank $\le$ the currently held rank refuses at `Q624` (establishing acyclicity of declared lock acquisitions, not general liveness/deadlock freedom).
+- **Child scopes, `under g`, and `share buf under m` (`T03-F`, `T03-GUARD-JOIN`, `MUTEX-SHARE-CROSS`):**
+  - Plain `thread scope c { ... }` inside a critical section refuses (`Q600 JoinWhileGuardHeld`). Opt-in `thread scope c under g { ... }` (`GuardLocalJoin`) admits joining inside `g` only when `g` is the sole held lock, closed with no live borrow, and `c` (and its descendants) touches no mutex, guard, fact, or shared resource.
+  - **`thread scope d share buf under m { ... }` (`CT46` / rule 15o):** Transfers `MutexShare` over `buf` across the child task boundary (`qcore_core::transfer` checks protocol request `MutexGuard`, crossing gates check absent/mismatched mutex footprint at `Q600`, and unguarded child access hits `Q611`).
+  - **Two native C11 emission shapes (`MUTEX-SHARE-CROSS-EMISSION`):** `mutex_c_emit::classify_trace` emits C11 (`mtx_t`, plus `thrd_t` for children) for (1) single-task traces and (2) non-nested fork/join traces whose child events are contiguous between `Spawn` and `Join` (with adjacent operation/log emission, witnessing a real thread boundary without claiming contention or C11 weak-memory race proofs). Traces with guard-local joins, nested spawns, interleaved parent/child events, `wait`, or child `raise` exits check cleanly and publish **without C**.
+
+### Pinned Canonical Example (`source_mutex.rs`)
 
 ```qcore
 #import std.concurrency;
 error Fault { Broken; }
 fn main() -> unit {
     thread scope s {
-        let buf = protected 4;          // one shared resource, 4 bytes
-        let m = mutex guards buf;       // protected footprint fixed here
+        let buf = protected 4;
+        let m = mutex guards buf;
         with lock m as g {
-            open g;                     // the invariant may now be broken
+            open g;
             write buf with g;
-            close g;                    // restored, by a declared predicate
+            close g;
             let b = borrow buf with g;
             read buf with g;
-            drop b;                     // the borrow dies inside its section
+            drop b;
         }
         with lock m as g2 { read buf with g2; }
-        let f = fact buf;               // a guard-scoped refinement fact
+        let f = fact buf;
         with lock m as g3 {
             assert f with g3;
             open g3;
             read buf with g3;
             use f;
-            close g3 unchanged;         // restored, and *checked*: no write
+            close g3 unchanged;
         }
-        thread scope c {                // one child task, joined at `}`
+        thread scope c {
             with lock m as gc { read buf with gc; }
         }
-        thread scope d share buf under m {   // CT46's declared crossing
+        thread scope d share buf under m {
             with lock m as gd { read buf with gd; }
         }
-    }                                   // scope exit destroys m, then buf
+    }
 }
 ```
 
-```ebnf
-module      = { error_declaration } , entry ;
-entry       = "fn" , NAME , "(" , ")" , "->" , "unit" , "{" , scope , "}" ;
-scope       = "thread" , "scope" , NAME , "{" , { outer } , "}" ;
-outer       = "let" , NAME , "=" , "protected" , ( NAT | SCALAR ) , ";"
-            | "let" , NAME , "=" , "mutex" , "guards" , NAME , ";"
-            | "let" , NAME , "=" , "mutex" , "rank" , NAT , "guards" , NAME , ";"
-            | "let" , NAME , "=" , "fact" , NAME , ";"
-            | ( "read" | "write" ) , NAME , ";"
-            | "wait" , NAME , ";"
-            | "use" , NAME , ";"
-            | "thread" , "scope" , NAME , "{" , { child } , "}"
-            | "thread" , "scope" , NAME , "share" , NAME , "under" , NAME ,
-              "{" , { child } , "}"
-            | "with" , "lock" , NAME , "as" , NAME , "{" , { inner } , "}" ;
-inner       = "open" , NAME , ";"
-            | "close" , NAME , [ "unchanged" ] , ";"
-            | "grow" , NAME , "guards" , NAME , ";"
-            | ( "read" | "write" ) , NAME , "with" , NAME , ";"
-            | "let" , NAME , "=" , "borrow" , NAME , "with" , NAME , ";"
-            | "drop" , NAME , ";"
-            | "assert" , NAME , "with" , NAME , ";"
-            | "use" , NAME , ";"
-            | "wait" , NAME , ";"
-            | "thread" , "scope" , NAME , "{" , { child } , "}"
-            | "thread" , "scope" , NAME , "share" , NAME , "under" , NAME ,
-              "{" , { child } , "}"
-            | "raise" , NAME , "::" , NAME , ";" ;
-child       = (* any `outer` or `inner` form except a declaration and except
-                 `drop`; a child inherits the enclosing critical section
-                 lexically and holds none of its authority *) ;
-```
+### Implementation & Provenance
 
-`mutex guards R;` declares the protected footprint syntactically, and the only
-way to change it afterwards is card CT34-GROWTH's `grow` statement below, under
-its own rule; a dynamic protected shape is otherwise not expressible rather than
-being detected later. Creation consumes the declaring task's `FULL_ACCESS` share over
-`R`, so a second `mutex guards R;` cannot obtain it (`Q617`) and an unguarded
-access to `R` has no fallback authority (`Q611`). A guard obtained over one
-generation authorizes only that generation's footprint (`Q610`).
+- **Cards:** `T03`, `T03-F`, `T03-GUARD-JOIN`, `CT33-RANKS`, `CT34-GROWTH`, `MUTEX-SHARE-CROSS`, `MUTEX-SHARE-CROSS-EMISSION`, `MUTEX-SHARE-CROSS-ARMS`, `W48-QR-SCALAR-TYPES-R6`.
+- **Implementation:** `crates/qcore-frontend/src/source_mutex.rs`, `crates/qcore-core/src/mutex_invariant.rs`, `crates/qcore-backend-c/src/mutex_c_emit.rs`, `crates/qcore-frontend/tests/source_mutex.rs`.
+- **Reports & Lean:** `docs/reports/remaining-t03/README.md`, `docs/reports/remaining-ct33-ranks/README.md`, `docs/reports/remaining-ct34-growth/README.md`, `docs/reports/mutex-share-cross/README.md`, `docs/reports/mutex-share-cross-emission/README.md`, `QCore.MutexShareCrossEmission`, `QCore.MutexShareCrossArms`.
 
-Guard names bind only inside their own `with lock` body, so a guard-derived
-name mentioned after the block is `Q013`, not a concurrency diagnostic. A write
-requires the invariant to be declared broken first, and both the normal block
-end and a `raise` require it restored and every guard-derived borrow released
-(`Q613`, `Q614`, `Q615`). `close g;` supplies a *declared* witness, so a
-certificate covering it carries `InvariantPredicateDeclared`;
-`close g unchanged;` supplies the **checked** witness and carries none.
-`DeclaredFootprintShape` is on every certificate from this route, and
-`GuardFootprintAuthority` and `SynchronizedCustodyEdges` never are. Unless the
-module declares a lock rank (card CT33-RANKS below), a nested `with lock` lowers
-to an explicit unsupported-construct event and is refused at `Q622`; `defer`
-inside a critical section, and every other statement outside the grammar above,
-is refused at `Q600`. Scope exit destroys each generation and then each
-resource, under the model's quiescence rules.
+---
 
-Card T03-F's three completions, each bounded by a stated rule:
+<a id="g02e-flat-epoch-quantitative-bound"></a>
+## G02e. Flat-epoch quantitative bound (`source.epoch.bound.v1`)
 
-* **`close g unchanged;`** is admitted only when every statement since this
-  guard's `open` was a read or a fact use — the shape the lowering can decide.
-  Any other shape is refused at `Q600` and never silently downgraded to the
-  declared witness.
-* **`let f = fact r;` / `assert f with g;` / `use f;`** are guard-scoped
-  refinement facts. Each assertion mints a fresh model identity, so relying on
-  a fact after its guard was released is `Q616`, relying on one that was never
-  asserted is `Q600 UnknownFact`, and a child task relying on its parent's fact
-  is `Q616`.
-* **A nested `thread scope c { … }`** is one child task, created where the
-  block opens and joined where it closes. The child receives no share and no
-  custody, so a protected footprint is reachable to it only through its own
-  acquisition (`Q611` otherwise); naming the enclosing guard is `Q612`; and a
-  child block written *inside* a critical section is refused because its join
-  lands while the creator holds the guard (`Q600 JoinWhileGuardHeld`). A child
-  declares no resource, generation or fact, and may not release a borrow it did
-  not take (`Q600`). **`wait m;`** announces an acquisition and, if never
-  performed, blocks the generation's destruction (`Q619`).
+### Consumer and Check-Only Accounting Model
 
-Card T03-GUARD-JOIN adds one opt-in form to that last rule and changes nothing
-else about it:
+`source.epoch.bound.v1` is selected ahead of non-epoch concurrency routes when a `thread scope` carries the `epoch` keyword **without** `concurrency checked;`. It lowers declared memory and effort quantities onto `FlatEpochBoundV1` (`qcore_core::epoch_accounting`, `Q630`–`Q641`) as a **check-only** accounting verification (emitting no C11 and running no native execution).
 
-* **`thread scope c under g { … }`**, written inside `g`'s own section, lowers
-  its join to the core's `GuardLocalJoin` rather than `Join`. `under` names the
-  enclosing section explicitly; outside one, or naming a different guard, it is
-  a lowering refusal (`Q600`) or an unresolvable name (`Q013`). Admission is the
-  core's decision, not the grammar's: the child must have been created strictly
-  inside this same section, the section must be the only one held, with its
-  invariant closed and no live borrow, and the child *and every task under it*
-  must have named no mutex, guard or guard-scoped fact anywhere in the trace and
-  hold no share or custody. Anything else keeps the same
-  `Q600 JoinWhileGuardHeld` refusal, so a plain `thread scope c { … }` inside a
-  section is unchanged. Because a child in this profile holds no share and no
-  custody, a guard-local child cannot touch a declared resource at all: the
-  admission is about the *join*, not about giving the child authority. It adds
-  no premise to the certificate — every condition is checked — and each admitted
-  join is named on it. `under` is reserved. See
-  [the T03-GUARD-JOIN record](reports/remaining-t03-guard-join/README.md).
-
-Card CT33-RANKS adds the ranked declaration and nothing else to the grammar:
-
-* **`let m = mutex rank N guards r;`** declares `m`'s position in a lock order.
-  `N` is one decimal literal in `0 ..= 4294967295`; any other spelling is a
-  lowering refusal (`Q600`). Declaring at least one rank turns on the core's
-  opt-in discipline for the whole module, and two things follow. Every mutex the
-  module declares must then be ranked, or the module is refused at `Q625` — a
-  partly ranked module has no order, so it is not checked over its ranked part.
-  And a nested `with lock` becomes expressible: you may nest exactly where you
-  have declared in which order, and the core then refuses any acquisition made
-  while holding an equal-or-higher rank (`Q624`), which is what makes a
-  lock-order cycle writable and refused rather than inexpressible. Nesting buys
-  the right to hold two guards, not to conflate them: the inner body's frame
-  carries only the inner section, so naming the enclosing guard from inside is
-  `Q600`, and a nested acquisition invalidates the decidable region behind
-  `close g unchanged;`. A task re-locking a generation it holds keeps its
-  existing `Q600 DuplicateLockCapability`, since the rank test runs last and
-  never displaces an existing refusal. Declaring no rank leaves every module
-  written before this card byte-identical, including the `Q622` nesting refusal.
-  A passing rank check is not a deadlock-freedom proof — see
-  `docs/QCORE_SPEC_r0_3.md` for exactly what it does and does not establish.
-  `rank` is reserved. See
-  [the CT33-RANKS record](reports/remaining-ct33-ranks/README.md).
-
-Card CT34-GROWTH adds one statement and nothing else to the grammar:
-
-* **`grow g guards r;`**, written inside `g`'s own section, adds `r` to the
-  protected footprint of the generation `g` guards. It names the guard, and the
-  core reads the generation off it, so a growth can never reach a mutex its
-  holder does not hold. Admission is the core's decision, not the grammar's: the
-  invariant must be open at the growth (`Q626`); `r` must be protected by no
-  live generation, this one included (`Q617`); the growing task must be the
-  generation's creator and hold the full share over `r` (`Q621`); and the growth
-  must move the generation's declared invariant to an identity it has never
-  carried (`Q627`), which the lowering mints. A growth is a change to the
-  protected region, so `close g unchanged;` is refused in a section that grew
-  (`Q600`) rather than downgraded, and the section must close by declaration.
-  Growth is permanent: `r` is behind the guard from then on — an unguarded
-  access to it becomes `Q611` — the originally declared footprint stays
-  protected, and there is no shrink or replacement form. A refused growth leaves
-  the generation's shape, its declared identity and the ledger untouched, so the
-  section's own `close` then names an identity the generation never took; that
-  fallout is reported rather than repaired. Growth adds no premise beyond the
-  `InvariantPredicateDeclared` the new identity carries, and each admitted
-  growth is named on the certificate. The unconditional `Q618` fixed-shape
-  refusal is unchanged and has no source form. `grow` is reserved. See
-  [the CT34-GROWTH record](reports/remaining-ct34-growth/README.md).
-
-Native emission uses one thread and C11 `mtx_t` with real heap footprints on
-Linux, macOS and Windows (the latter two through the emitted compatibility layer);
-the reference execution of the checked event list must reproduce the same
-observation. There is no condition variable, no try/timed lock and no
-reader/writer lock in this profile. A module whose trace
-carries task structure (`spawn`, `join`, a custody transfer or an announced
-acquisition) is checked but has **no native rendering**: the backend emits one
-thread, so the module is published with no C rather than with C the backend did
-not produce. See [the T03 record](reports/remaining-t03/README.md) and
-[the T03-F record](reports/remaining-t03-f/README.md).
-
-## G02d. Bounded extern calls
-
-`source.extern-call.v1`. Selected when a source file declares an `extern fn`
-and a function body calls it, after the concurrent routes: a module that also
-spawns or locks stays with those routes and keeps their existing refusals.
+### Consolidated EBNF
 
 ```ebnf
-extern_module = "import", "std.extern", ";",
-                { error_decl | extern_decl | entry } ;
-extern_decl   = "extern", "fn", NAME, "(", [ param, { ",", param } ], ")",
-                "->", ABI_TYPE, ";" ;
-entry         = "fn", NAME, "(", ")", "->", "unit",
-                [ "effects", "{", EFFECT, { ",", EFFECT }, "}" ],
-                "{", { extern_stmt }, "}" ;
-extern_stmt   = acquisition | scalar_binding | scalar_literal | plain_call
-              | value_statement                      (* §G02t, card W48-QR-SCALAR-TYPES-R3 *)
-              | "return", ";" ;
-acquisition   = "let", NAME, "=", CALLEE, "(", [ arg, { ",", arg } ], ")",
-                "succeeds", BOOL, "else", { disposition },
-                "raise", ERROR_NAME, ";" ;
-disposition   = CALLEE, "(", [ arg, { ",", arg } ], ")" ;
-scalar_binding = "let", NAME, "=", CALLEE, "(", [ arg, { ",", arg } ], ")",
-                 [ "succeeds", [ "-" ], NAT ], ";" ;
-scalar_literal = "let", NAME, "=", [ "-" ], NAT, ";" ;
-plain_call    = CALLEE, "(", [ arg, { ",", arg } ], ")", ";" ;
-arg           = [ "-" ], NAT | NAME | "move", NAME | "out" ;
-EFFECT        = "io" | "alloc" | "mut"
-              | "throws", "<", "ArithmeticError", ">" ;  (* card W48-QR-SCALAR-TYPES-R3 *)
+epoch_module  = [ module_header ],
+                ( "#import" | "import" ), "std.concurrency", ";",
+                entry_fn ;
+entry_fn      = "fn", NAME, "(", ")", "->", "unit", "{", epoch_scope, "}" ;
+epoch_scope   = "thread", "scope", NAME, "epoch", "{", { header | worker_block }, "}" ;
+
+header        = shared_cell | allocation | overhead | latency_claim ;
+shared_cell   = "let", NAME, "=", "share", NAT, ";" ;
+allocation    = "bound", NAT, "effort", NAT, ";" ;
+overhead      = "overhead", "scope", NAT, "thread", NAT, [ "measured", NAT ], ";" ;
+latency_claim = "bound", "effort", "as", "latency", ";" ;
+
+worker_block  = "thread", "scope", NAME, "{", { worker_clause }, "}" ;
+worker_clause = "read", NAME, ";"
+              | "write", NAME, ";"
+              | "peak", NAT, ";"
+              | "effort", NAT, ";"
+              | "credit", NAT, "effort", NAT, ";"
+              | "retained", NAT, ";"
+              | "join", "(", ( "move" | "drop" | "close" ), ")", ";"
+              | error_arm
+              | worker_block ;
+
+error_arm     = "error", "(", ( "move" | "drop" | "close" ), ")", ";"
+              | "error", "(", "move", NAT, "effort", NAT, ")", ";" ;
 ```
 
-Card `W48-QR-SCALAR-TYPES-R3` makes the value namespace **typed** (§G02t,
-"Extern results as values"): a bound result has its declared result's type, a
-`value_statement` computes one §G02t operation over bound values and literals,
-a declared `succeeds INTEGER` is a value of the result's type at any width, and
-an argument at a declared scalar parameter is a value — or a literal in range —
-of exactly that parameter's type. `throws<ArithmeticError>` in the row is the
-permission a statement over a run-time value needs to raise; it derives no
-effect.
+### Semantic Side Conditions
 
-Two of those forms are card `STD-IO-COMPOSE`'s and both stay inside the value
-namespace card `PIPE-SCALAR-RESULT` opened. `scalar_literal` binds a number
-written at the site: it calls nothing, so it derives no effect, admits no
-argument, opens no obligation and can carry no custody in any position — the
-narrowest widening that lets a rendered value originate in the module that
-renders it (`EXTERN-SCALAR-LITERAL`). The optional `succeeds` tail on
-`scalar_binding` is the site's **declared outcome**, the same concept the
-acquisition adapter already spells with that word: `succeeds BOOL` declares
-which arm a nullable owned return takes and `succeeds INTEGER` declares which
-number a scalar result carries. The two are told apart by the literal alone, so
-no malformed adapter tail can be read as the other and `Q025` keeps its exact
-shape; no reserved word was added. Neither control is believed by the emitted
-program, which compares the real result and exits 70 on disagreement.
+- **Cardinality and `u64` bounds:** Every `NAT` is range-checked at `u64` (never wrapped). `allocation` and `overhead` appear **exactly once** per epoch; `credit` appears **exactly once** per worker; `peak`, `effort`, `retained`, and `join(...)` appear at most once per worker. Parentheses on `join(...)` are mandatory so the scoped-task scanner does not claim bare `join`.
+- **Represented model refusals (`Q630`–`Q641`):**
+  - `join(move)` transfers the child's retained result to the creator; `join(drop)` releases it at join; `join(close)` claims liveness ended without transfer/release (`Q634`); omitting `join(...)` leaves an unjoined worker (`Q635`).
+  - `write NAME;` (`SharedMutation`) and nested `worker_block` (`NestedTask`) refuse at `Q632`; reading an undeclared cell refuses at `Q631`; duplicate `read NAME;` in one worker or `error(...)` on this declared-shape route refuses at `Q630`; `bound effort as latency;` refuses at `Q639` (no schedule/wall-clock model); `overhead ... measured RUNS;` refuses at `Q640`.
+  - Certificates carry declared premises `DeclaredTaskFootprints`, `DeclaredRuntimeOverhead`, `DisjointSharedStorageCells`, and `NoScheduleModel`.
 
-A bound value whose number the source did **not** declare is still a value: it
-may be passed at a declared scalar parameter exactly as before. What it may not
-do is be *rendered*, which is a `source.std-io-extern.v1` rule (§G02i) and not
-one of this route's — this route renders nothing.
+### Example
 
-`ABI_TYPE` is exactly the resource-contract v1 projection of §G05. The callee's
-contract is **not** written here: it comes from an explicit `CompileOptions`
-selection loaded by the same total-or-reject loader, and an inline
-`contract { … }` block on a called extern declaration is refused (`Q027`) rather
-than enforced. The source declaration's parameter names, parameter types and
-result type must equal the selected module's, or the call is refused.
+```qcore
+#import std.concurrency;
 
-Callable C04 shapes are exactly: scalars by value (data only), `resource_borrowed`
-on `ptr<mut, u8>` or `ptr<const, u8>`, `resource_consumed(p, nonnull)` on
-`ptr<mut, u8>`, `resource_return_none()` with a `unit` or scalar result,
-`resource_return_owned(nullable)` returning `ptr<mut, u8>`, and — card
-`EXTERN-F1` — `resource_out(p, nullable)` on `ptr<mut, ptr<mut, u8>>` plus
-`resource_stored(p, owner, nonnull)` on `ptr<mut, u8>` beneath a distinct
-`resource_owned(owner, nonnull)` parameter on `ptr<mut, u8>` — and, card
-`EXTERN-MODES`, `resource_released(p, nonnull)` on `ptr<mut, u8>` plus
-`resource_return_reallocated(p, nullable)` returning `ptr<mut, u8>` over a
-subject declared `resource_owned(p, nonnull)` on `ptr<mut, u8>`. Contract spec
-§C04.2 requires a stored parameter's owner to be a distinct `Owned` parameter
-and §C04.3 requires a reallocation subject to be `Owned`, so `resource_owned` is
-callable in exactly those two designated positions and nowhere else.
-`resource_removed`, a nonnull owned return, a nonnull reallocated return, a
-reallocation subject that is out of range, not `Owned`, nullable or on any other
-pointer, a reallocated result on any other type, a reallocation beside an out
-slot, a nullable released parameter, a release on any other pointer, a nonnull
-out slot, an out slot on any other ABI type, two
-out slots, an out slot beside an owned return, a store beside either, a nullable
-stored parameter, a store on a `const` pointer, a store beneath itself or
-beneath a non-`Owned` parameter, a nullable or `const`-pointer declared owner, a
-`resource_owned` parameter that owns nothing, a nullable consumed parameter, a
-custody mode on a scalar, a borrowed `ptr<mut, ptr<mut, u8>>` and a consumed
-`ptr<const, u8>` are each refused by their own name (`Q024`).
+fn main() -> unit {
+    thread scope ep epoch {
+        let table = share 64;
+        bound 512 effort 100;
+        overhead scope 32 thread 16;
 
-`resource_removed` is refused on a measured ground rather than by omission: a
-removal names a child this profile stopped tracking when it was stored, because
-`EXTERN-F1` records the residual beneath a declared owner as a premise and not
-as a modeled owner-to-child index, so admitting it would mint a caller identity
-out of a premise. `resource_released(p, nullable)` is refused for the reason the
-nullable consumed mode is: a nullable release discharges nothing when the
-modeled value is null (§C04.2), and this profile does not model that value.
+        thread scope w1 {
+            read table;
+            credit 128 effort 40;
+            peak 96;
+            effort 30;
+            retained 32;
+            join(drop);
+        }
+    }
+}
+```
 
-`out` marks the position of the declared out slot; it names a parameter
-position, never a binding, and is reserved. The `let` binder names the identity
-the callee writes into that slot. `move NAME` at a declared store removes the
-binding from the body exactly as a consumption does, so every later use is
-refused; where the custody went is declared by the contract, not by the call
-site, and is recorded on the certificate as a premise. Card `EXTERN-MODES` adds
-no argument syntax and no reserved word: `move NAME` also spells a declared
-release and a declared reallocation subject, and which of the four departing
-modes ran comes from the declaration alone. The certificate keeps them apart —
-a release is published under `releases`, a replacement as one `(replaced,
-established)` pair — because contract spec §C04.2 warns that a false release
-declaration can invalidate a safety conclusion while a false consumption only
-relocates an obligation.
+### Implementation & Provenance
 
-A reallocation is the one departing argument an acquiring call may carry.
-Contract spec §C04.3 states both of its arms — a null failure preserves the
-incoming custody, a success replaces it exactly once — so the subject stays on
-the error arm's live list and must be dispositioned there like any other live
-identity. Every other departing mode beside an acquisition stays refused, for
-the reason that refusal exists: an ordinary declaration constrains only its
-normal exit.
+- **Cards:** `T08-EPOCH-SRC` (`REMAINING-T08-EPOCH-SRC`), `CT23-CREDIT-ERROR-PATH`.
+- **Implementation:** `crates/qcore-frontend/src/source_epoch.rs`, `crates/qcore-core/src/epoch_accounting.rs`.
+- **Reports:** `docs/reports/remaining-t08-epoch-src/README.md`.
 
-`succeeds BOOL` is the fixture's literal outcome control, exactly as in
-`qcore_acquire`/`qcore_check`: a controlled model operation, not a claim about
-when a production allocator fails. Both arms are exercisable, and the emitted C
-compares the real result's nullness against the declared control and exits with
-status 70 if they disagree — for an out slot the emitted local starts `NULL`, so
-a callee that never wrote it is observed as the failure arm rather than
-believed. The `else … raise ERROR;` arm is mandatory for each acquisition
-source, an owned nullable return and an out slot alike (`Q025`).
+---
 
-Card `EXTERN-ERR-REL` gives that arm its dispositions. Between `else` and
-`raise` the handler names one call per still-live identity, and the arm is
-admitted only when it *is* this acquisition's established cleanup edge: the
-sequential lowering `qcore_core::cleanup_lowering` releases every identity live
-before a failing acquisition in reverse acquisition order, and the arm must
-release the same identities, each exactly once, in that order. This is a
-rendering, not a second rule — an extern-acquired identity is released only by
-calling a declared `resource_consumed` callee, and the profile cannot invent
-one. A disposition that acquires, that stores, that discharges other than
-exactly one identity, that names an identity not live on the arm, that runs in
-another order, or whose derived effect row the entry's declared row does not
-admit is refused (`Q025`), as is an identity that reaches the raise still live
-— the v1 abandonment refusal, narrowed to the undispositioned case and not
-weakened. An acquiring call that also moves custody out is refused there too,
-because a declaration constrains only its normal exit. The arm is a path: a
-disposition never removes a binding from the success path. That is what makes a
-store reachable — it needs two simultaneously live identities, the child and its
-declared owner, which the second acquisition's arm now accounts for.
+<a id="g02f-flat-epoch-bound-over-a-checked-task-region"></a>
+## G02f. Flat-epoch bound over a checked task region (`source.epoch.tasks.v1`)
 
-Card `PIPE-SCALAR-RESULT` adds `scalar_binding` and one meaning to a bare
-`NAME` argument, and adds no reserved word. `let NAME = CALLEE(ARGS);` binds a
-**non-acquiring call's scalar result** to a local, and a bound scalar may then
-be passed at a declared scalar (data) parameter. The admission is exactly:
-the callee establishes fresh custody through none of the three acquisition
-sources, and its declared result is a custody-free scalar of the §C04.1 ABI
-vocabulary. `unit` is refused — there is no value — and every pointer result is
-refused, including a pointer declared `resource_return_none()`, because such a
-result is an address the declaration says nothing about (`Q024`, naming the
-declared result). Binding an acquiring call's result refuses at `Q025`: an
-acquisition has exactly one spelling, the mandatory adapter, and this card adds
-no second one.
+### Consumer and Plan-to-Task Reconciliation
 
-Scalars and identities are **separate namespaces**. A bound scalar is admitted
-at a declared data parameter and at no other mode; a resource binding is refused
-at a data parameter (`Q024`, "a declared scalar parameter carries data, never
-custody"); a scalar binding removes nothing from and adds nothing to the ledger,
-so an unread one is not a leak; and a `let` whose name already means the other
-kind of thing is refused rather than resolved by lookup order — measured, the
-reachable refusal is name resolution's own `Q012` (duplicate local binding), and
-the lowering keeps its `Q026` arm as an unreachable fail-closed backstop. The
-certificate publishes `(callee, value)` per binding in trace order, beside the
-custody fields and never inside them. A **scalar literal** binding
-(`let n = 42;`) is deliberately *not* added here and stays refused; it is
-follow-on `EXTERN-SCALAR-LITERAL`, and `STD-IO-COMPOSE` is the card that needs
-it. The emitted C declares the result at its ABI spelling, discards it to
-`void` so the translation unit stays warning-clean, and prints an observation
-that names the callee, the value and the arguments —
-`value CALLEE vN ARG…`.
+`source.epoch.tasks.v1` is selected ahead of [G02e](#g02e-flat-epoch-quantitative-bound) when a module carries **both** `concurrency checked;` and a `thread scope ... epoch { ... }` plan as the entry's first statement, followed by a real scoped-task region ([G02a](#g02a-scoped-copy-task-execution)–[G02bc-errors](#g02bc-tagged-error-payload)) and an optional `error region` cleanup epilogue. Emission and native execution are byte-for-byte those of the underlying scoped-task route, while `FlatEpochBoundV1`, `EpochCreditRecoveryV1`, and `error_region` check the quantitative plan and cleanup duties on top.
 
-Card `EXTERN-SCALAR-OUTCOME` (trace half) appends the number to that line, and
-only where a `succeeds INTEGER` outcome is declared: `value CALLEE vN ARG… -> N`.
-A reference interpreter still cannot compute a C function's result; what it
-prints is the *declared* number, and the emitted program compares the real
-result against that same number and exits 70 **before** reaching the
-observation write, so a run only ever publishes the line having established
-that the declared number is the returned one. A binding with no declared
-outcome keeps the card-`PIPE-SCALAR-RESULT` line byte for byte, because nothing
-in either model computes a number for it — that remainder is deliberate, not an
-omission. The ordering of the comparison and the write is load-bearing rather
-than incidental.
-
-The derived effect row is `{io}`, plus `alloc` exactly when the call establishes
-fresh custody through any of the three acquisition sources and `mut` exactly
-when some parameter is a `mut` pointer; the entry's declared row must admit it, and an
-absent row therefore admits no extern call at all. Length
-and extent are not transported, so no declaration here constrains how many bytes
-a callee touches. Custody liveness, leaks and resource flow are checked by the
-established sequential passes over the same lowering, not by a second extern
-code. Emission declares each callee from the ABI table and calls it directly;
-which object file supplies the symbol is the builder's premise. See
-[the extern-call record](reports/extern-call-v1/README.md) and
-[the out/stored extension](reports/extern-call-f1/README.md),
-[the error-arm release record](reports/remaining-extern-err-rel/README.md) and
-[the released/reallocated extension](reports/remaining-extern-modes/README.md).
-
-### G02d.1. Unchecked linkage
-
-Card `UNSAFE-LINKAGE`. An external library with **no contract at all** may be
-linked, under an explicit recorded waiver. This widens G02d's *declaration* form
-and nothing else: the statement grammar, the argument forms and every refusal
-above are unchanged, and without the waiver an uncontracted callee still refuses
-at `Q023`.
+### Consolidated EBNF
 
 ```ebnf
-unsafe_module   = "import", "std.extern", ";",
-                  "import", "std.extern.unsafe", ";",
-                  { error_decl | extern_decl | unsafe_extern_decl | entry } ;
-unsafe_extern_decl = "unsafe", "extern", "fn", NAME,
-                     "(", [ param, { ",", param } ], ")",
-                     "->", SCALAR_ABI_TYPE, ";" ;
-SCALAR_ABI_TYPE = "bool" | "i8" | "i16" | "i32" | "i64" | "isize"
-                | "u8" | "u16" | "u32" | "u64" | "usize" | "unit" ;
+composed_entry  = "fn", NAME, "(", ")", "->", ( "unit" | "i32" ),
+                  [ "effects", "{", task_effect, { ",", task_effect }, "}" ],
+                  "{", epoch_plan, { task_or_region_stmt }, "}" ;
+
+epoch_plan      = "thread", "scope", NAME, "epoch", "{", { plan_header | worker_row }, "}" ;
+plan_header     = allocation | overhead | latency_claim ;     (* G02e headers minus `shared_cell` *)
+
+worker_row      = "thread", "scope", WORKER_NAME, "{", { row_clause }, "}" ;
+row_clause      = "move", ";" | "copy", ";" | "read", ";"
+                | "peak", NAT, ";" | "effort", NAT, ";"
+                | "credit", NAT, "effort", NAT, ";"
+                | "retained", NAT, ";"
+                | "join", "(", ( "move" | "drop" | "close" ), ")", ";"
+                | error_arm ;
+
+region_epilogue = "error", "region", REGION_NAME, "{",
+                    { "credit", NAT, ";"
+                    | "effort", NAT, ";"
+                    | "let", NAME, "=", "qcore_buffer_new", "(", NAT, ")", "?", ";"
+                    | "drop", NAME, ";"
+                    | "move", NAME, ";" },
+                    "qcore_check", "(", "false", ",", ERROR_NAME, ")", ";",
+                  "}",
+                  "catch", "(", ERROR_NAME, ")",
+                  [ "quant", "open", REGION_NAME, "as", PACK_BINDING ],
+                  "{", { "discharge", PACK_BINDING, ";" }, "}" ;
 ```
 
-Both imports are required and neither implies the other: `std.extern` is the
-call vocabulary and grants no waiver, `std.extern.unsafe` is the waiver and
-grants no call. The waiver import is required by the *declaration* (`Q032`),
-not by a call to it — declaring an uncontracted symbol is itself the trust act,
-so a file that links one and never calls it still names the module. `unsafe`
-was already a reserved source word (it introduces the `unsafe { … }` statement),
-so this form adds none.
+### Semantic Side Conditions
 
-Parameters take `SCALAR_ABI_TYPE` minus `unit`, and the result takes it whole;
-**every pointer spelling is refused in every position** (`Q033`), including
-`ptr<const, u8>`, and so is any spelling outside the §G05 ABI table. The
-contract is waived; the ABI is not. The admitted signature therefore carries no
-custody in either direction, which is why an uncontracted call cannot change the
-caller's ledger whatever the callee does. A waiver may not sit beside a
-checkable declaration (`Q034`): not an inline `contract { … }` block, and not a
-name the selected contract environment also declares — there the contracted
-route wins whether or not the two signatures agree.
+- **1-to-1 `TrySpawn` correspondence (`Q600`, `Q630`–`Q641`):**
+  - Rows naming `WORKER_NAME` match that worker's `TrySpawn` sites in source order (`Q600` if mismatched). Ordered `move;`, `copy;`, and place-free `read;` (`REGION-JOINS-LOAN`, matching `read PLACE share N` captures without contributing epoch bytes because creator-owned buffers sit outside the epoch allocation) must match the spawn's capture modes.
+  - `retained BYTES;` is required iff the worker returns `own<Buffer<T>>`. `join(...)` is optional and, if written, must equal the disposal derived from the checked task IR.
+- **Creator error-edge credit recovery (`CT23-CREDIT-ERROR-PATH`):**
+  - Optional `error_arm` (`error(drop);` default when omitted) specifies how derived `spawn_error` and fallible `join` edges treat the row's credit grant: `error(move);` restores all credit, `error(move B effort E);` restores `(B, E)` (`Q636` if exceeding the grant; restoration does not reduce `granted_credits`), `error(drop);` spends all credit, and `error(close);` refuses at `Q635`.
+- **Optional `error region` epilogue (`REGION-CREDIT-JOINS`, `REGION-JOINS-DUTIES`, `REGION-JOINS-LOAN`, `CT24-CLEANUP-TASK-COMPOSITION`):**
+  - Admitted either as a direct task-scope epilogue **after every `spawn` and `join`** (`Q600` if any spawn/join span follows it) or inside the `Result::Ok` arm of a direct `match spawn`.
+  - Supports local `credit`/`effort` remainders, fresh `qcore_buffer_new(N)?` acquisitions, and `move NAME;` **adoption** of a live parent `own<Buffer>` (for example, destroying an owner after workers holding counted read shares have joined — CT25).
+  - Pack obligations are checked at `Q302`–`Q309` (`quant open ... as p { discharge p; }`), and the region erases cleanly into straight-line `drop NAME;` statements checked and emitted by the unedited task route.
 
-The derived effect row of an uncontracted callee is `{io, alloc, mut}`
-unconditionally, because nothing is known about it, so an entry calling one
-declares the whole row. A module may mix contracted and uncontracted callees; a
-module all of whose callees are uncontracted needs no contract selection at all,
-which is what `quirin check` and `quirin emit` can compile today.
+### Example
 
-Every certificate names each uncontracted callee, with its declared ABI, as an
-unchecked-linkage premise, on the same channel that carries a trusted declared
-contract; a published certificate missing one is refused (`Q035`). See
-`docs/design/UNSAFE_LINKAGE_V1.md` and
-[the unchecked-linkage record](reports/wave18-unsafe-linkage/README.md).
+```qcore
+#import std.concurrency;
+concurrency checked;
+error Abort;
 
-### G02d.2. The native-library manifest
+fn reader(b: borrow<Buffer>) -> i32 {
+    let v = qcore_buffer_read(b);
+    return v;
+}
 
-Cards `UNSAFE-LINKAGE-ARTIFACT`, `NATIVE-LIBRARY-CONTRACT-SLICE` and
-`NATIVE-LIBRARY-HEADER`. A **manifest** is not source: it is a separate
-declarative file a builder selects (`quirin --native-library MANIFEST`,
-`CompileOptions::native_libraries`), and it adds no form to G02d's or G02d.1's
-source grammar and no reserved word. What it changes is the *premise* a call
-publishes: a G02d.1 waiver moves from "symbol X, unchecked" to "symbol X,
-unchecked, from artifact Y@hash under ABI premises Z", and — card
-`NATIVE-LIBRARY-CONTRACT-SLICE` — a G02d **contracted** call gains a second
-premise beside its declared-contract one, "contracted X per contract C, from
-artifact Y@hash under ABI premises Z". The second premise **stacks with** the
-declared-contract premise and never replaces it: one says what the code does,
-the other which code it is.
+fn main() -> i32 effects { alloc, throws<AllocError>, throws<SpawnError>, spawn, join, may_block } {
+    thread scope plan epoch {
+        bound 256 effort 64;
+        overhead scope 16 thread 8;
+        thread scope reader {
+            read;
+            credit 64 effort 16;
+            error(move);
+        }
+    }
+    let owner = qcore_buffer_new(9)?;
+    thread scope s {
+        let h = spawn s reader(read owner share 512)?;
+        let out = join move h?;
+        error region cleanup {
+            credit 12;
+            move owner;
+            qcore_check(false, Abort);
+        } catch (Abort) quant open cleanup as pack {
+            discharge pack;
+        }
+        return out;
+    }
+}
+```
+
+### Implementation & Provenance
+
+- **Cards:** `T08-COMPOSE`, `CT23-CREDIT-ERROR-PATH`, `REGION-CREDIT-JOINS`, `REGION-JOINS-DUTIES`, `REGION-JOINS-LOAN`, `CT24-CLEANUP-TASK-COMPOSITION`, `W48-QR-SCALAR-TYPES-R6`.
+- **Implementation:** `crates/qcore-frontend/src/source_epoch_tasks.rs`, `crates/qcore-core/src/epoch_credit_recovery.rs`, `crates/qcore-core/src/error_region.rs`.
+- **Reports:** `docs/reports/remaining-t08-compose/README.md`, `docs/reports/ct23-credit-error-path/README.md`, `docs/reports/region-credit-joins/README.md`, `docs/reports/region-joins-duties/README.md`, `docs/reports/region-joins-loan/README.md`.
+
+---
+
+<a id="g02j-composed-scoped-tasks-and-rendered-lines"></a>
+## G02j. Composed scoped tasks and rendered lines (`source.std-io-tasks.v1`)
+
+### Consumer and Windowed Observation Relation
+
+`source.std-io-tasks.v1` is selected for modules satisfying `has_source_tasks && has_source_std_io && !has_source_extern` (after epoch and mutex routes, and before standalone task routes). It composes the full scoped-task surface ([G02a](#g02a-scoped-copy-task-execution)–[G02bc-errors](#g02bc-tagged-error-payload), including closures [G02v](#g02v-closures-with-explicit-capture-lists) and task records) with [G02g](#g02g-rendered-lines-stdfmt-stdio-and-stdlogger)'s rendered scalar lines (`print`, `log`, `flush`).
+
+### Consolidated EBNF Additions
 
 ```ebnf
-manifest     = marker, { field | entry } ;
-marker       = "native_library", "manifest", "v1", ";" ;
-field        = ( "library" | "version" | "artifact" ), TOKEN, ";"
-             | "hash", "sha256:", 64 * LOWER_HEX, ";"
-             | "data_model", "lp64", ";"
-             | "unwinding", "abort", ";"
-             | "allocator_custody", "closed", ";"
-             | "thread_posture", "single_caller", ";"
-             | "header", TOKEN, ";"                        (* card `NATIVE-LIBRARY-HEADER` *)
-             | "header_hash", "sha256:", 64 * LOWER_HEX, ";" ;
-entry        = waived_entry | contract_entry ;
-waived_entry = "unchecked", "fn", NAME,
-               "(", [ C_ABI_TYPE, { ",", C_ABI_TYPE } ], ")",
-               "->", C_ABI_TYPE, ";" ;
-contract_entry
-             = "contract", "fn", NAME,                     (* card `NATIVE-LIBRARY-CONTRACT-SLICE` *)
-               "(", [ C_ABI_TYPE, { ",", C_ABI_TYPE } ], ")",
-               "->", C_ABI_TYPE, "from", MODULE_REF, ";" ;
-C_ABI_TYPE   = "_Bool" | "int8_t" | "int16_t" | "int32_t" | "int64_t"
-             | "intptr_t" | "uint8_t" | "uint16_t" | "uint32_t"
-             | "uint64_t" | "uintptr_t" | "void"
-             | C_POINTER ;                                 (* a waived entry refuses C_POINTER *)
-C_POINTER    = "uint8_t *" | "const uint8_t *" | "uint8_t **" ;
-MODULE_REF   = TOKEN ;   (* the contract selection's own key, compared exactly *)
+composed_task_stmt = task_stmt
+                   | "print", RENDERING, TASK_OPERAND, ";"
+                   | "log", LEVEL, RENDERING, TASK_OPERAND, ";"
+                   | "flush", ";" ;
+
+TASK_OPERAND       = [ "-" ], INTEGER
+                   | NAME                                    (* live scalar slot *)
+                   | NAME, field_path ;                      (* scalar leaf of a task record *)
+
+task_effect        = "alloc" | "mut" | "spawn" | "join" | "may_block"
+                   | "throws", "<", ERROR_NAME, ">"
+                   | "io" ;                                  (* admitted on this route *)
 ```
 
-`#` begins a comment; statements are `;`-terminated and may span lines. The
-eight identity and ABI-premise fields are mandatory and each may be stated once.
-The two **header-binding** fields (card `NATIVE-LIBRARY-HEADER`) are optional
-**as a pair**: both, or neither. One without the other is a `Q039` missing-field
-rejection, on the same ground as every mandatory field — an identity missing a
-field is not a weaker identity but an unusable one — and naming neither is the
-default, which leaves every manifest written before that card byte-valid and
-byte-unchanged. Entry types are
-the **C** spellings of the exported header declaration, not the QCore ones, so
-the agreement check compares a projection rather than a string. The pointer
-spellings `uint8_t *`, `const uint8_t *` and `uint8_t **` are recognised
-(the space before `*` optional) and then **refused in a contract-less entry**,
-which is a rejection with its own name rather than an unreadable spelling: a
-library's pointer symbols belong in a **contract slice entry**, and card
-`NATIVE-LIBRARY-CONTRACT-SLICE` is where they now go. The two entry kinds are
-told apart by their keyword and never by their shape: a `contract fn` without
-its `from MODULE` tail, and an `unchecked fn` carrying one, are each a named
-rejection rather than a reading of the other.
+### Semantic Side Conditions and `qcore.obs-reordering.v1`
 
-A `contract fn` entry binds its symbol to a declared contract **module
-reference** — the contract selection's own key, compared exactly and never
-normalised. The contract machinery is unchanged: the manifest selects and
-attributes, it states no mode and no effect of its own, and the contract is
-loaded, admitted and bridged by the unedited resource-contract v1 route.
-The binding is total in **both** directions (`Q047`): every entry must resolve to
-a declared contract in the module it names, and every declaration of a module the
-slice names must be bound by an entry. The slice is derived from the entries
-themselves rather than declared by a second statement, because a second spelling
-would be a second place the slice could be wrong.
+- **Parent vs. worker placement (`OBS-REORDERING`, `Q050`):**
+  - **Parent-only lines:** Because worker task-trace events are buffered privately and replayed by the parent thread at `join`, parent `print`/`log` lines have a deterministic byte-for-byte stream order.
+  - **Spawned worker lines:** Admitted when the worker's **own** `effects { ... }` row declares `io` (`Q050` if missing, or if a line appears in an unspawned helper function). Placing a line inside a worker declares the windowed observation relation **`qcore.obs-reordering.v1`**, comparing streams window-by-window (bounded by points where zero workers are live) and per-emitter thread.
+- **Operands (`Q050`):** Any [G02t](#g02t-fixed-width-scalar-types) scalar slot or scalar record leaf `r.f` computed by the task model (`bool` refuses `hex` at `Q050`); owned `Buffer`s, loans, leases, whole records, and `borrow NAME` refuse (`Q050`). Erasing source lines leaves the exact underlying task trace (`QCore.ComposedTasks.erasing_the_source_lines_leaves_the_task_trace`).
 
-Loading is total or reject (`Q039`), the selection's binding must be a function
-(`Q040`), a **waived** declaration the manifest contradicts is refused (`Q041`),
-a name the manifest declares contract-less may not also be reached through a
-declared contract (`Q042`), a contract slice binding must resolve in both
-directions (`Q047`), a **contracted** declaration the manifest contradicts is
-**withdrawn for the unit** and its call sites fall to `Q023` (`Q048`), and a
-published certificate must carry both stacked premises of every manifest-bound
-contracted callee (`Q049`). Selecting no manifest is the default and leaves every
-G02d and G02d.1 program byte-identical.
+### Example
 
-A `header` field binds the library's **exported header** and `header_hash` its
-digest (card `NATIVE-LIBRARY-HEADER`, spec §L14.4). Where they are present, every
-entry's transcribed declaration above is read out of that header's own text and
-compared against it, for both entry kinds alike, rather than believed: the
-header's text is supplied to the checker (`CompileOptions::native_library_headers`;
-`quirin` resolves the reference against the manifest's own directory), its digest
-is measured over exactly those bytes and **verified** against `header_hash`, and
-a declaration outside the bounded reader subset refuses the manifest by name
-(`Q063`). A transcription the header contradicts refuses (`Q064`) — the `Q041`
-disposition, not `Q048`'s, because the weaker admissible reading here is this
-same manifest without a header and that is accepted. Declarations the manifest
-does not name are ignored: a header is the library's whole exported surface.
+```qcore
+#import std.concurrency;
+#import std.fmt;
+#import std.io;
+concurrency checked;
 
-An `include SPELLING from REFERENCE HASH` statement declares one text that
-header's own `#include` lines may be read from (card
-`NATIVE-LIBRARY-HEADER-DECORATION`, spec §L14.4.1). The statement is repeatable,
-requires a `header` to read the texts into, and names three things: the
-`#include` operand exactly as the header writes it (`<event2/visibility.h>` or
-`"local.h"`, delimiters included), the reference the text is resolved and
-supplied under — the same namespace as `header`, and `quirin` resolves it against
-the manifest's own directory — and its `sha256` digest. Declaring none is the
-default and is the wave-22 behaviour byte for byte.
+fn worker(x: i32) -> i32 effects { io } {
+    print dec x;
+    return x;
+}
 
-What the statement does **not** say is the point of the card. It says nothing
-about what the text contains, and in particular it does not declare that any name
-may be erased. The reader **derives** from the declared texts' own `#define`s
-that an export-decoration macro is erasable — every definition object-like, every
-body in the reader's own published vocabulary of type-neutral decorations, never
-`#undef`ed, and defined on every path through the conditional structure, which no
-condition is evaluated to establish. A name that is not derivable is not erased
-and its declaration keeps the `Q063` refusal it already had. An `#include` the
-manifest does not declare is not followed; a declared text that is not supplied,
-whose digest does not match, or that nothing reaches refuses at `Q063`, as does a
-supplied text no manifest declares once a header is bound.
+fn main() -> i32 effects { io, throws<SpawnError>, spawn, join, may_block } {
+    thread scope s {
+        let h = spawn s worker(copy 7)?;
+        let v = join move h?;
+        v |> print dec;
+        return 0;
+    }
+}
+```
 
-See `docs/design/NATIVE_LIBRARY_LINKAGE_V1.md`,
-`docs/design/NATIVE_LIBRARY_HEADER_V1.md`,
-[the manifest record](reports/wave19-unsafe-linkage-artifact/README.md),
-[the contract slice record](reports/wave20-native-library-contract-slice/README.md)
-[the header record](reports/wave22-native-library-header/README.md)
-and [the decoration record](reports/native-library-header-decoration/README.md).
+### Implementation & Provenance
 
-#### G02d.2.1. The generated manifest (v2)
+- **Cards:** `COMPOSE-CONCURRENCY`, `OBS-REORDERING`, `W48-QR-SCALAR-TYPES-R4`, `W48-QR-TASK-RECORD-CAPTURES`.
+- **Implementation:** `crates/qcore-frontend/src/source_std_io_tasks.rs`, `crates/qcore-core/src/obs_reordering.rs`.
+- **Design & Lean:** [`design/OBS_REORDERING_V1.md`](design/OBS_REORDERING_V1.md), `QCore.ComposedTasks`.
 
-Card `W48-QRLIB-LINKAGE` (user decisions, 2026-09-30). `.qrlib` is **the** C
-linkage manifest of the FFI route (§G02u), and a v2 manifest is **generated on
-every build, before linking**, never written by hand: `quirin qrlib generate`
-(or the library API `qcore_c_gateway::linkage::generate`) derives it from the
-artifact's bytes and the build's declared inputs, `quirin qrlib check` and
-`quirin build` regenerate it and refuse a stored manifest that is not byte for
-byte the regenerated one as **stale**, and `quirin build` (the `LinkPlan` API)
-hashes every pinned file again immediately before handing the linker exactly
-the pinned artifact. The v1 grammar above loads unchanged, and `float`/`double`
-join `C_ABI_TYPE` in both versions (`W48-QR-FLOAT-QRLIB-SPELLING`).
+---
+
+<a id="g09-concurrent-field-footprint-questions"></a>
+## G09. Concurrent field-footprint questions (`source.bitfield-concurrency.v1`)
+
+### Consumer and Property-Only Scope
+
+`source.bitfield-concurrency.v1` is a **property-only** checker (emitting no C11 and claiming neither task failure recovery nor lifetime safety) that routes explicit byte-field and C bit-field record layouts to `DisjointFootprintsV1` (`Q650`–`Q667`).
+
+### Consolidated EBNF
+
+```ebnf
+bitfield_module = [ module_header ],
+                  ( "#import" | "import" ), "std.concurrency", ";",
+                  "concurrency", "checked", ";",
+                  layout_record, worker_fn, { worker_fn }, entry_fn ;
+
+layout_record   = "type", RECORD_NAME, "{",
+                  layout_field, { ",", layout_field }, [ "," ], "}" ;
+layout_field    = NAME, ":",
+                  ( "field", "<", BYTE_OFFSET, ",", BYTE_SIZE, ">"
+                  | "bits", "<", STORAGE_UNIT, ",", BIT_OFFSET, ",", BIT_WIDTH,
+                    ",", BYTE_OFFSET, ",", BYTE_SIZE, ">" ) ;
+
+worker_fn       = "fn", NAME, "(", PARAM, ":", "i32", ")", "->", "unit",
+                  "effects", "{", "mut", "}",
+                  "{", "write", PARAM, ";", "return", ";", "}" ;
+
+entry_fn        = "fn", NAME, "(", ")", "->", "unit",
+                  "effects", "{", "spawn", ",", "join", ",", "mut", "}",
+                  "{",
+                    "let", OBJ, "=", RECORD_NAME, ";",
+                    "thread", "scope", SCOPE, "{",
+                      spawn_write, spawn_write, { spawn_write },
+                      join_stmt,   join_stmt,   { join_stmt },
+                    "}",
+                    "return", ";",
+                  "}" ;
+
+spawn_write     = "let", HANDLE, "=", "spawn", SCOPE, WORKER,
+                  "(", "write", OBJ, ".", FIELD, ")", "?", ";" ;
+join_stmt       = "let", RES, "=", "join", "move", HANDLE, "?", ";" ;
+```
+
+### Semantic Side Conditions
+
+- **Contextual layout keywords:** `field` and `bits` are recognized contextually inside `layout_record` without reserving new global keywords. Layout accuracy remains an explicit declared ABI premise on the certificate.
+- **Storage-unit race rule (`Q661`):** Concurrent `write OBJ.FIELD` spawns into byte-overlapping fields — or into **two `bits<...>` bit-fields sharing the same `STORAGE_UNIT`, even when their bit ranges `[BIT_OFFSET, BIT_OFFSET + BIT_WIDTH)` are disjoint** — refuse at `Q661` (`SameBitfieldStorageUnit`, reflecting C11 §3.14 non-atomic read-modify-write storage units). Admitted programs establish pairwise byte/storage-unit disjointness across the successful `spawn`/`join` window only.
+
+### Example
+
+```qcore
+#import std.concurrency;
+concurrency checked;
+
+type PacketHeader {
+    flags: bits<0, 0, 4, 0, 2>,
+    length: field<2, 2>,
+}
+
+fn touch(slot: i32) -> unit effects { mut } {
+    write slot;
+    return;
+}
+
+fn main() -> unit effects { spawn, join, mut } {
+    let pkt = PacketHeader;
+    thread scope s {
+        let h1 = spawn s touch(write pkt.flags)?;
+        let h2 = spawn s touch(write pkt.length)?;
+        let r1 = join move h1?;
+        let r2 = join move h2?;
+    }
+    return;
+}
+```
+
+### Implementation & Provenance
+
+- **Cards:** `CT10-SOURCE-LAYOUT`.
+- **Implementation:** `crates/qcore-frontend/src/source_bitfield.rs`, `crates/qcore-core/src/disjoint_footprints.rs`.
+- **Reports:** `docs/reports/ct10-source-layout/README.md`.
+
+---
+
+# Part IV — Native C Interoperability and .qrlib Linkage Grammars
+
+Part IV specifies the source profiles and declarative linkage manifests through which `.qr` executable and library modules call external C symbols, bind native build artifacts, and exchange C `struct` records across the FFI boundary. Every route in this part enforces explicit bundled module imports (`std.extern`, `std.extern.unsafe`, `std.ffi.unsafe`), separates scalar data bindings from custody-bearing resource identities, and records every external contract, unchecked waiver, header digest, and linkage binding as an auditable premise on the published certificate.
+
+---
+
+<a id="g02d-bounded-extern-calls"></a>
+## G02d. Bounded contracted extern calls (`source.extern-call.v1`)
+
+### Consumer and Route Selection
+
+`source.extern-call.v1` checks and lowers flat sequential `.qr` entry functions that invoke contracted external C functions. Route selection chooses `source.extern-call.v1` after `source.ffi.v1` ([G02u](#g02u-imported-c-structs-sourceffiv1)), after every concurrent route (`source.tasks.v1`, `source.mutex.v1`, `source.epoch.tasks.v1`, `source.bitfield-concurrency.v1`), and after the composed `std.io` + `extern` route ([G02i-extern-io](#g02i-composed-extern-calls-and-rendered-lines)), whenever a source file declares at least one `extern fn` and a function body calls it without also emitting `std.io` / `std.logger` lines. A module that mixes `extern` calls with task spawns, mutex locks, or error regions stays on its concurrent route and retains that route's refusal surface.
+
+Every module on this route lowers simultaneously into two checked representations — no partial lowering or optimistic fallback exists:
+1. An `ExternProgram` validated by `qcore_core::extern_call` for custody transitions, error-arm cleanup edges, scalar/float type rules, and certificate premises.
+2. A `FunctionSemantics` bundle validated by all established sequential passes (`qcore_core::ownership`, `qcore_core::cleanup_lowering`, `qcore_core::error_region`, `qcore_core::resource_flow`, `qcore_core::typed_errors`).
+
+### Consolidated Grammar
+
+```ebnf
+extern_module    = [ module_header ],
+                   { import_stmt | library_binding },
+                   { error_decl | extern_decl | entry_fn } ;
+
+import_stmt      = ( "#import" | "import" ), "std.extern", ";" ;
+library_binding  = "extern", "library", NAME, ";" ;                 (* optional, §G02d.3 *)
+
+error_decl       = "error", ERROR_NAME, ";" ;
+extern_decl      = "extern", "fn", NAME, "(", [ param_list ], ")",
+                   "->", result_abi_type, ";" ;
+param_list       = param, { ",", param } ;
+param            = NAME, ":", param_abi_type ;
+
+param_abi_type   = scalar_abi_type | pointer_abi_type ;
+result_abi_type  = "unit" | param_abi_type ;
+scalar_abi_type  = "bool"
+                 | "i8" | "i16" | "i32" | "i64" | "isize"
+                 | "u8" | "u16" | "u32" | "u64" | "usize"
+                 | "f32" | "f64" ;
+pointer_abi_type = "ptr", "<", "mut", ",", "u8", ">"
+                 | "ptr", "<", "const", ",", "u8", ">"
+                 | "ptr", "<", "mut", ",", "ptr", "<", "mut", ",", "u8", ">", ">" ;
+
+entry_fn         = "fn", NAME, "(", ")", "->", "unit",
+                   [ "effects", "{", effect_list, "}" ],
+                   "{", { extern_stmt }, "}" ;
+effect_list      = effect, { ",", effect } ;
+effect           = "io" | "alloc" | "mut"
+                 | "partial_eq" | "partial_ord"
+                 | "throws", "<", "ArithmeticError", ">" ;
+
+extern_stmt      = acquisition_stmt
+                 | scalar_binding
+                 | value_statement
+                 | float_literal
+                 | scalar_literal
+                 | plain_call
+                 | "return", ";" ;
+
+acquisition_stmt = "let", NAME, "=", CALLEE, "(", [ arg_list ], ")",
+                   "succeeds", BOOL,
+                   "else", { disposition_call }, "raise", ERROR_NAME, ";" ;
+disposition_call = CALLEE, "(", [ arg_list ], ")" ;
+
+scalar_binding   = "let", NAME, "=", CALLEE, "(", [ arg_list ], ")",
+                   [ "succeeds", declared_scalar ], ";" ;
+declared_scalar  = [ "-" ], NAT | [ "-" ], FLOAT | BOOL ;
+
+value_statement  = "let", NAME, "=", value_expr, ";" ;
+value_expr       = value_operand, ( "+" | "-" | "*" | "/" | "%" ), value_operand
+                 | value_operand, ( "==" | "!=" | "<" | "<=" | ">" | ">=" ), value_operand
+                 | "-", NAME
+                 | value_operand, "as", scalar_abi_type ;
+value_operand    = NAME | [ "-" ], NAT | [ "-" ], FLOAT | BOOL ;
+
+float_literal    = "let", NAME, "=", [ "-" ], FLOAT, ";" ;          (* binds f64 *)
+scalar_literal   = "let", NAME, "=", [ "-" ], NAT, ";" ;            (* binds i32 *)
+plain_call       = CALLEE, "(", [ arg_list ], ")", ";" ;
+
+arg_list         = arg, { ",", arg } ;
+arg              = [ "-" ], NAT
+                 | [ "-" ], FLOAT
+                 | BOOL
+                 | NAME
+                 | "move", NAME
+                 | "out" ;
+BOOL             = "true" | "false" ;
+```
+
+`out` is a reserved positional marker denoting the callee's declared output slot, never a local variable binding. `succeeds` reuses the single outcome keyword across acquisitions (`succeeds true` / `succeeds false`, discriminated by `else … raise ERROR;`) and scalar bindings (`succeeds INTEGER` / `succeeds FLOAT` / `succeeds BOOL`, terminated directly by `;`), adding zero new reserved words beyond `out`.
+
+### Semantic Side Conditions and Refusal Boundaries
+
+1. **External contract binding (never inline).**
+   - Calling an `extern fn` requires `#import std.extern;` (or compatibility `import std.extern;`); calling without the import refuses (`Q015` / `Q022`).
+   - A callee's contract is never written inline on the `.qr` declaration: an inline `contract { … }` block on a called `extern fn` is refused (`Q027`). Instead, contracts are supplied through `CompileOptions::extern_contracts` and loaded total-or-reject via [G05](#g05-resource-loader-v1).
+   - Every executable or library module's `extern fn` declarations are type-checked even when uncalled (`W48-INERT-EXTERN-DECLARATION-TYPES`): parameters must be §G02t scalars or the three C04.1 pointers above, and results those or `unit` (otherwise refused at `Q020`).
+   - For every called `extern fn`, parameter count, parameter names, parameter ABI types, and result ABI type must match the selected contract declaration exactly (`Q027`), and the callee must be present in the selected contract environment (`Q023`).
+
+2. **Admitted vs. refused C04 custody shapes (`Q024`).**
+   The bridge (`qcore_contract::extern_bridge`) admits an exact closed subset of [G05](#g05-resource-loader-v1) parameter and result modes and refuses every other shape by name (`Q024`):
+
+   | Position / Mode | Admitted Signature & Combination Rules | Refused Shapes (`Q024`) |
+   | --- | --- | --- |
+   | **Scalar data** | `resource_borrowed(p)` on any `scalar_abi_type`; `resource_return_none()` on `unit` or `scalar_abi_type` | Any custody mode on a scalar; `fnptr` or `va_list`; non-heap `resource_kind` (including `descriptor`) |
+   | **Borrowed pointer** | `resource_borrowed(p)` on `ptr<mut, u8>` or `ptr<const, u8>` | `resource_borrowed` on `ptr<mut, ptr<mut, u8>>` or `ptr<mut, ptr<const, u8>>` |
+   | **Consumed / Released** | `resource_consumed(p, nonnull)` or `resource_released(p, nonnull)` on `ptr<mut, u8>` | `nullable` consumed or released parameters; consumption or release on `ptr<const, u8>` or double pointers |
+   | **Owned return** | `resource_return_owned(nullable)` returning `ptr<mut, u8>` | `resource_return_owned(nonnull)`; owned return on `ptr<const, u8>`, double pointers, or scalars; derived/borrowed/removed returns |
+   | **Out-slot acquisition** | `resource_out(p, nullable)` on `ptr<mut, ptr<mut, u8>>` with `resource_return_none()` | `resource_out(p, nonnull)`; out slot on any other pointer type; two out slots; out slot beside an owned or reallocated return |
+   | **Indexed store** | `resource_stored(p, owner, nonnull)` on `ptr<mut, u8>` beneath a distinct `resource_owned(owner, nonnull)` on `ptr<mut, u8>` | `nullable` stored or owner parameter; `const` pointer on stored or owner; self-ownership; `resource_owned` parameter that neither owns a store nor is reallocated; store beside an acquisition; `resource_removed` |
+   | **Reallocation** | `resource_return_reallocated(p, nullable)` returning `ptr<mut, u8>` over `resource_owned(p, nonnull)` on `ptr<mut, u8>` | `resource_return_reallocated(p, nonnull)`; subject out of range, not `Owned`, `nullable`, or not `ptr<mut, u8>`; reallocation beside an out slot or another departing parameter |
+
+   *Why `resource_removed` and `nullable` release/consume are refused:* `EXTERN-F1` records stored child custody beneath `owner` as a certificate premise rather than a modeled owner-to-child map, so admitting `resource_removed` would mint a live caller identity out of an unmodeled premise. `resource_released(p, nullable)` and `resource_consumed(p, nullable)` are refused because a null value discharges nothing (§C04.2), and this profile models live non-null identities rather than nullable variables.
+
+3. **Argument bridging and certificate separation of `move NAME`.**
+   - `arg` forms map strictly by the parameter's declared contract mode (`Q024` on mismatch):
+     - Literal numbers / booleans or bound value `NAME` → `Data` (scalar parameter).
+     - Bare `NAME` → `Borrowed` pointer or `Owned` store-owner (resource liveness checked; binding remains live).
+     - `move NAME` → `Consumed`, `Stored`, `Released`, or `ReallocSubject` (which of the four departing modes ran is determined solely by the contract declaration).
+     - `out` → `OutSlot` (no caller binding read; the `let` binder receives the acquired identity on the success arm).
+   - Even though `move NAME` spells all four departing modes in `.qr` syntax, the certificate distinguishes them: `resource_released` is published under `releases`, `resource_consumed` and `resource_stored` as transfers/premises, and `resource_return_reallocated` as a `(replaced, established)` pair, preserving §C04.2's distinction between obligation relocation and safety-critical destruction.
+
+4. **Acquisitions, reallocation liveness, and `EXTERN-ERR-REL` error-arm cleanup (`Q025`).**
+   - Every call that establishes fresh custody — `resource_return_owned(nullable)`, `resource_out(p, nullable)`, or `resource_return_reallocated(p, nullable)` — **must** use `acquisition_stmt` with `succeeds BOOL else { disposition_call } raise ERROR_NAME;` (`Q025`). Calling an acquiring function via `scalar_binding` or `plain_call` refuses (`Q025`), and using `acquisition_stmt` on a non-acquiring function refuses (`Q025`).
+   - No departing `move` argument may accompany an acquiring call *except* the reallocation subject of `resource_return_reallocated`: under §C04.3, null failure preserves the incoming subject while non-null success replaces it once. Consequently, the reallocation subject stays live on the failure arm and **must** be released in the `else` handler alongside earlier live identities, whereas on the success arm it is replaced by the newly bound identity.
+   - **Exact cleanup rendering (`EXTERN-ERR-REL`):** Between `else` and `raise ERROR_NAME;`, the `disposition_call` sequence must match the established sequential cleanup edge (`qcore_core::cleanup_lowering`) **exactly** — releasing every identity live immediately before the failing call (including a reallocation subject), each **once**, in **reverse acquisition order**, using declared `resource_consumed` or `resource_released` callees (`Q025`). A disposition call that acquires, stores, discharges zero or multiple identities, names a non-live identity, runs out of reverse acquisition order, or derives effects outside the entry's declared row is refused (`Q025`). Because the error arm is an exit path, resolving disposition arguments does **not** remove bindings from the continuing success path.
+   - **Runtime witness check (exit 70):** `succeeds BOOL` is a literal fixture outcome control, never trusted at runtime. Emitted C initializes out-slot pointers to `NULL`, invokes the C callee, compares actual nullness against `succeeds BOOL`, and immediately calls `exit(70)` on disagreement before executing either branch.
+
+5. **Typed scalar namespace, value statements, and declared scalar outcomes.**
+   - **Disjoint namespaces:** Resource identities (`bindings`) and scalar/float values (`values`) occupy separate maps. Rebinding a live resource name as a scalar or vice versa refuses (`Q012` at name resolution, backed by `Q026` in lowering). Passing a resource binding at a scalar parameter or a scalar binding at a pointer parameter refuses (`Q024`). Unused scalar bindings are data and never constitute resource leaks.
+   - **Scalar result bindings (`PIPE-SCALAR-RESULT`, `W48-QR-SCALAR-TYPES-R3`, `W48-QR-FLOATING-POINT`):** `let x = callee(args) [succeeds OUTCOME];` requires a non-acquiring callee whose result is a custody-free `scalar_abi_type`. `unit` and all pointer results (even `ptr<…, u8>` with `resource_return_none()`) refuse (`Q024`). If `succeeds OUTCOME` is present, `OUTCOME` is range-checked (or converted bit-for-bit at `f32`/`f64`) against the declared return type (`Q024`), and emitted C checks the actual C return value against `OUTCOME` (bitwise for floats), exiting `70` **before** writing the call trace line:
+     - Without `succeeds`: `value CALLEE vN ARG…`
+     - With `succeeds OUTCOME`: `value CALLEE vN ARG… -> OUTCOME`
+   - **Literals and `value_statement`:** `let n = 42;` binds `i32`; `let x = 1.5;` binds `f64`. `value_statement` evaluates one §G02t binary arithmetic/comparison, unary `-NAME`, or `as` conversion. Operations on check-time-known values (literals, `succeeds`-declared call results, and folded operations over them) fold at check time and refuse on overflow/division-by-zero/out-of-range (`Q024`). Operations reading run-time-only call results (bound without `succeeds`) that can fault require `throws<ArithmeticError>` in the entry's `effects` row (`Q024` / `Q029`) and emit `q_scalar_try_*` helpers exiting `80 + tag` on fault. Float comparisons require `partial_eq` (`==`, `!=`) or `partial_ord` (`<`, `<=`, `>`, `>=`) in `effects`. `isize`/`usize` computation requires `--recorded-target`.
+
+6. **Derived effect row and scope bounds.**
+   - Entry functions take zero parameters, return `unit`, contain a flat statement sequence (no nested `if`, `for`, `match`, or `thread scope` blocks, `Q026`), and end with `return;`.
+   - Every extern call derives `{io}`, plus `alloc` if it acquires custody, plus `mut` if any parameter is `ptr<mut, …>`. The entry's declared `effects { … }` row must cover every called function on both the normal path and all `else` cleanup arms (`Q025` / `Q029`); an omitted `effects` row is empty and admits no extern calls.
+   - Pointer ABI types carry no byte length (`ExternAssumption::NoExtentTransport`); extent safety of the C callee remains part of the declared contract assumption.
+
+### Concrete Example
+
+```qr
+module executable;
+#import std.extern;
+
+error AllocFailed;
+
+extern fn buf_new(cap: usize) -> ptr<mut, u8>;
+extern fn buf_grow(buf: ptr<mut, u8>, cap: usize) -> ptr<mut, u8>;
+extern fn buf_checksum(buf: ptr<const, u8>, seed: u32) -> u32;
+extern fn buf_free(buf: ptr<mut, u8>) -> unit;
+
+fn main() -> unit effects { io, alloc, mut } {
+    let b0 = buf_new(64) succeeds true else raise AllocFailed;
+    // Reallocation keeps b0 on the failure cleanup arm and replaces it on success:
+    let b1 = buf_grow(move b0, 128) succeeds true else buf_free(move b0) raise AllocFailed;
+    let sum = buf_checksum(b1, 7) succeeds 42;
+    let next_seed = sum + 1;
+    let _ = buf_checksum(b1, next_seed);
+    buf_free(move b1);
+    return;
+}
+```
+
+**Implementation & Provenance:** `crates/qcore-frontend/src/source_extern.rs`, `crates/qcore-core/src/extern_call.rs`, `crates/qcore-contract/src/extern_bridge.rs`; language spec [§L14](QCORE_SPEC_r0_3.md) & contract spec [§C04.1–C04.3](QCORE_CONTRACT_SPEC_r0_3.md#c041-abi-projection); cards `EXTERN-CALL-V1`, `EXTERN-F1`, `EXTERN-ERR-REL`, `EXTERN-MODES`, `PIPE-SCALAR-RESULT`, `EXTERN-SCALAR-LITERAL`, `EXTERN-SCALAR-OUTCOME`, `W48-QR-SCALAR-TYPES-R3`, `W48-QR-FLOATING-POINT`; reports [extern-call-v1](reports/extern-call-v1/README.md), [extern-call-f1](reports/extern-call-f1/README.md), [remaining-extern-err-rel](reports/remaining-extern-err-rel/README.md), [remaining-extern-modes](reports/remaining-extern-modes/README.md).
+
+---
+
+<a id="g02i-composed-extern-calls-and-rendered-lines"></a>
+## G02i-extern-io. Composed extern calls and rendered lines (`source.std-io-extern.v1`)
+
+### Consumer and Route Selection
+
+`source.std-io-extern.v1` composes two sequential models — bounded contracted extern calls ([G02d](#g02d-bounded-extern-calls)) and standard-IO line rendering (`source.std-io.v1`, §G02g) — without introducing any new statement syntax. Route selection triggers when a module satisfies the conjunction of both selectors (it calls a declared `extern fn` **and** writes at least one `print`, `log`, `log_level`, or `flush` statement), evaluated **after** `source.ffi.v1` and all concurrent routes and **before** `source.extern-call.v1` and `source.std-io.v1` individually. A module using only one feature set stays on its single-feature route byte-for-byte; a module mixing either with task spawns or locks stays on the concurrent route and refuses there.
+
+### Consolidated Grammar
+
+```ebnf
+composed_module = [ module_header ],
+                  { composed_import | library_binding },
+                  { error_decl | extern_decl | unsafe_extern_decl | composed_entry } ;
+
+composed_import = ( "#import" | "import" ),
+                  ( "std.extern" | "std.extern.unsafe"
+                  | "std.fmt" | "std.io" | "std.logger" ), ";" ;
+
+composed_entry  = "fn", NAME, "(", ")", "->", "unit",
+                  [ "effects", "{", effect, { ",", effect }, "}" ],
+                  "{", { composed_stmt }, "}" ;
+
+composed_stmt   = extern_stmt                       (* §G02d, lowered by source_extern *)
+                | io_stmt ;                         (* §G02g, lowered by source_std_io *)
+
+io_stmt         = "print", rendering, io_operand, ";"
+                | "log", log_level, rendering, io_operand, ";"
+                | "log_level", log_level, ";"
+                | "flush", ";" ;
+
+rendering       = "dec" | "hex" ;
+log_level       = "trace" | "debug" | "info" | "warn" | "error" | "fatal" ;
+io_operand      = [ "-" ], NAT
+                | [ "-" ], FLOAT
+                | BOOL
+                | NAME                              (* resolves against G02d value namespace *)
+                | "borrow", NAME ;                  (* resolves against G02d custody namespace *)
+```
+
+### Semantic Side Conditions and Refusal Boundaries
+
+1. **Disjoint statement dispatch (skip-set lowering).**
+   - Every statement in `composed_entry` is dispatched by its leading keyword alone: `print`, `log`, `log_level`, and `flush` go to `source_std_io` (with extern spans skipped); `return;` is shared as the mandatory single terminal return; every other statement goes to `source_extern` (with IO spans skipped). Neither lowering sees statements outside its vocabulary, so neither refusal surface shifts.
+   - Bundled capability imports remain per-statement (`Q015`): `std.extern` for extern calls, `std.io` for `print`, `std.logger` for `log` / `log_level` / `flush`, and `std.fmt` whenever `dec` or `hex` is named.
+
+2. **Scalar rendering operands and check-time outcome determinism (`Q043`).**
+   - A bare `NAME` in `io_operand` resolves exclusively against the extern lowering's **value** namespace (never its custody namespace).
+   - The operand must be bound by an earlier step to a §G02t scalar or float (`W48-QR-SCALAR-TYPES-R3`, `W48-QR-FLOATING-POINT`), and its value **must be check-time-known** — originating from a literal binding (`let n = 42;`, `let x = 1.5;`), a `scalar_binding` with an explicit `succeeds OUTCOME` tail, or a `value_statement` folded over known values.
+   - Rendering a bound extern call result that has **no** `succeeds` clause is refused (`Q043`, "no model computed"), because the reference interpreter cannot predict an unmodeled C return value.
+   - Rendering an `isize` or `usize` binding without `--recorded-target` refuses (`Q043`); `bool` admits `dec` (`true`/`false`) and refuses `hex` (`Q030` / `Q043`).
+
+3. **Borrowed resource identity rendering (`borrow NAME`, card `STD-FMT-BORROW`, `Q043`).**
+   - `borrow NAME` resolves exclusively against the extern model's **custody** namespace (`ever_bound`) and renders the resource's deterministic model identity number (`rN`) — never its runtime pointer address, pointee bytes, or extent.
+   - **Liveness gate:** `borrow NAME` is admitted if and only if the extern checker's published custody ledger holds that identity **live** at that exact composed step. An unknown name, an identity from a `succeeds false` failed acquisition, or an identity already departed via `move NAME` (consumed, released, stored, or reallocated) before the rendering statement is refused (`Q043`).
+   - **Zero custody mutation & non-publication:** Rendering `borrow NAME` opens no obligation, discharges none, and leaves the custody ledger identical before and after the line. Writing the model number to `stdout`/`stderr` is not a §L21 constraint-10 pointer publication because streams are write-only byte sinks outside the custody graph.
+   - Note that pipeline desugaring (`x |> print dec;`) produces `print dec x;` without `borrow` and rejects extra sink words (`Q036`), so `borrow NAME` must be written directly.
+
+4. **Effect union and per-stream observation.**
+   - The composed entry's derived effect row is the **set union** of the extern model's derived row and the `std.io` model's `{io}` row, checked against the entry's single declared `effects { … }` clause (`Q029`).
+   - Observations are compared per stream: `stdout` interleaves `print` lines and extern call-trace lines (`acquire`, `value`, `call`, …) in exact sequential program order; `stderr` carries `log` lines. Relative ordering between `stdout` and `stderr` is unmodeled.
+
+### Concrete Example
+
+```qr
+module executable;
+#import std.extern;
+#import std.fmt;
+#import std.io;
+#import std.logger;
+
+error OpenFailed;
+
+extern fn session_open(port: u16) -> ptr<mut, u8>;
+extern fn session_code(s: ptr<const, u8>) -> i32;
+extern fn session_close(s: ptr<mut, u8>) -> unit;
+
+fn main() -> unit effects { io, alloc, mut } {
+    let sess = session_open(8080) succeeds true else raise OpenFailed;
+    print dec borrow sess;                  // renders live model identity (1)
+    let status = session_code(sess) succeeds 200;
+    let next = status + 4;
+    log info dec next;                      // stderr: [INFO] 204
+    session_close(move sess);
+    // `print dec borrow sess;` here would refuse with Q043 (identity departed)
+    flush;
+    return;
+}
+```
+
+**Implementation & Provenance:** `crates/qcore-frontend/src/source_composed.rs`, `crates/qcore-frontend/src/source_extern.rs` (`lower_source_extern_skipping`), `crates/qcore-frontend/src/source_std_io.rs`; cards `STD-IO-COMPOSE`, `STD-FMT-BORROW`, `W48-QR-SCALAR-TYPES-R3`, `W48-QR-FLOATING-POINT`.
+
+---
+
+<a id="g02d1-unchecked-linkage"></a>
+### G02d.1. Unchecked scalar linkage (`unsafe extern fn`)
+
+#### Consumer and Selection Mechanism
+
+Card `UNSAFE-LINKAGE` widens the declaration surface of [G02d](#g02d-bounded-extern-calls) and [G02i-extern-io](#g02i-composed-extern-calls-and-rendered-lines) so a `.qr` module can link and call a scalar-only external C symbol that has **no `.qv` contract**, under an explicit, file-local waiver import and a recorded certificate premise. It adds no new statement form, argument syntax, or reserved word (`unsafe` was already reserved). Without the waiver, calling an uncontracted symbol continues to refuse at `Q023`.
+
+#### Consolidated Grammar
+
+```ebnf
+unsafe_extern_module = [ module_header ],
+                       ( "#import" | "import" ), "std.extern", ";",
+                       ( "#import" | "import" ), "std.extern.unsafe", ";",
+                       { other_import | library_binding },
+                       { error_decl | extern_decl | unsafe_extern_decl | entry_fn } ;
+
+unsafe_extern_decl   = "unsafe", "extern", "fn", NAME,
+                       "(", [ unsafe_param, { ",", unsafe_param } ], ")",
+                       "->", unsafe_result_type, ";" ;
+
+unsafe_param         = NAME, ":", unsafe_param_type ;
+unsafe_param_type    = "bool"
+                     | "i8" | "i16" | "i32" | "i64" | "isize"
+                     | "u8" | "u16" | "u32" | "u64" | "usize"
+                     | "f32" | "f64" ;
+unsafe_result_type   = "unit" | unsafe_param_type ;
+```
+
+#### Semantic Side Conditions and Refusal Boundaries
+
+- **Dual orthogonal imports (`Q015`, `Q032`):** Neither `std.extern` nor `std.extern.unsafe` implies the other. `std.extern` grants the extern call vocabulary without waiving contracts; `std.extern.unsafe` grants the `unsafe extern fn` declaration waiver without granting calls. Declaring an `unsafe extern fn` — even if never called in the body — requires `std.extern.unsafe` in the declaring file (`Q032`), because declaring an uncontracted symbol is itself the trust act.
+- **Strictly pointer-free ABI (`Q033`):** Every parameter must be in `unsafe_param_type` (which excludes `unit`) and the result in `unsafe_result_type` (`f32`/`f64` included since `W48-QR-FLOATING-POINT`). **Every pointer type — including `ptr<const, u8>` — is refused in every position (`Q033`)**, as is any non-ABI type. Because no pointer crosses the boundary, an unchecked call cannot alter the caller's custody ledger regardless of callee behavior. Note that `unsafe extern fn` is completely refused on `source.ffi.v1` (`Q034`, [G02u](#g02u-imported-c-structs-sourceffiv1)).
+- **No shadowing of checkable contracts (`Q034`):** An `unsafe extern fn` may not carry an inline `contract { … }` block (`Q034`), and may not name a symbol that is also declared in the selected `.qv` contract environment (`Q034`) — if a contract exists in the selection, the contracted route governs regardless of signature agreement.
+- **Maximal derived effect row (`{io, alloc, mut}`):** Because nothing is proved about an uncontracted callee's side effects, calling one unconditionally derives `{io, alloc, mut}` (plus float comparison effects if used in the body), which the entry's `effects` row must declare (`Q029`). Modules may freely mix `extern fn` (contracted) and `unsafe extern fn` (waived) declarations; a module whose callees are all `unsafe extern fn` compiles under `quirin check` and `quirin emit` with no `--extern-contracts` selection at all.
+- **Mandatory certificate premise (`Q035`):** Every published certificate must record each `unsafe extern fn` callee alongside its declared scalar ABI signature as an `unchecked_linkage` premise; a certificate omitting one fails recheck (`Q035`).
+
+#### Concrete Example
+
+```qr
+module executable;
+#import std.extern;
+#import std.extern.unsafe;
+
+unsafe extern fn c_crc32_step(acc: u32, byte: u8) -> u32;
+
+fn main() -> unit effects { io, alloc, mut } {
+    let h = c_crc32_step(0, 65) succeeds 2212294583;
+    let _ = c_crc32_step(h, 66);
+    return;
+}
+```
+
+**Implementation & Provenance:** `crates/qcore-frontend/src/source_extern.rs`, `crates/qcore-core/src/extern_call.rs`; design [`docs/design/UNSAFE_LINKAGE_V1.md`](design/UNSAFE_LINKAGE_V1.md); card `UNSAFE-LINKAGE`, `W48-QR-FLOATING-POINT`; report [wave18-unsafe-linkage](reports/wave18-unsafe-linkage/README.md).
+
+---
+
+<a id="g02d2-the-native-library-manifest"></a>
+### G02d.2. The native-library manifest (`.qrlib` v1)
+
+#### Consumer and Selection Mechanism
+
+A `.qrlib` v1 manifest (`source.native-library.v1`) is a standalone declarative artifact-pinning file selected by the builder (`quirin --native-library MANIFEST`, `CompileOptions::native_libraries`). It adds no `.qr` source syntax or reserved words. Instead, it upgrades call-site certificate premises:
+- For an `unsafe extern fn` ([G02d.1](#g02d1-unchecked-linkage)), the premise strengthens from *"symbol X, unchecked"* to *"symbol X, unchecked, from artifact Y@sha256 under ABI premises Z"*.
+- For a contracted `extern fn` ([G02d](#g02d-bounded-extern-calls)), a **stacked** artifact premise (*"contracted X per contract C, from artifact Y@sha256 under ABI premises Z"*) is recorded **beside** the declared contract premise — never replacing it (one states what the code does; the other states which binary build supplies it).
+
+Selecting no manifest is the default on [G02d](#g02d-bounded-extern-calls) and [G02d.1](#g02d1-unchecked-linkage), leaving existing programs byte-identical.
+
+#### Consolidated Grammar
+
+```ebnf
+manifest_v1      = "native_library", "manifest", "v1", ";",
+                   { field_v1 | include_stmt | entry_v1 } ;
+
+field_v1         = ( "library" | "version" | "artifact" ), TOKEN, ";"
+                 | "hash", sha256_digest, ";"
+                 | "data_model", "lp64", ";"
+                 | "unwinding", "abort", ";"
+                 | "allocator_custody", "closed", ";"
+                 | "thread_posture", "single_caller", ";"
+                 | "header", TOKEN, ";"
+                 | "header_hash", sha256_digest, ";" ;
+
+include_stmt     = "include", include_spelling, "from", TOKEN, sha256_digest, ";" ;
+include_spelling = "<", TOKEN, ">" | '"', TOKEN, '"' ;
+
+entry_v1         = waived_entry | contract_entry ;
+
+waived_entry     = "unchecked", "fn", NAME,
+                   "(", [ c_abi_type, { ",", c_abi_type } ], ")",
+                   "->", c_abi_type, ";" ;
+
+contract_entry   = "contract", "fn", NAME,
+                   "(", [ c_abi_type, { ",", c_abi_type } ], ")",
+                   "->", c_abi_type, "from", MODULE_REF, ";" ;
+
+c_abi_type       = "_Bool"
+                 | "int8_t" | "int16_t" | "int32_t" | "int64_t" | "intptr_t"
+                 | "uint8_t" | "uint16_t" | "uint32_t" | "uint64_t" | "uintptr_t"
+                 | "float" | "double"
+                 | "void"
+                 | c_pointer_type ;
+
+c_pointer_type   = "uint8_t", [ " " ], "*"
+                 | "const", "uint8_t", [ " " ], "*"
+                 | "uint8_t", [ " " ], "**" ;
+
+sha256_digest    = "sha256:", 64 * LOWER_HEX ;
+MODULE_REF       = TOKEN ;   (* exact contract selection key, never normalized *)
+```
+
+`#` introduces a line comment to end-of-line; statements are `;`-terminated and may span lines; `TOKEN` is a non-empty whitespace-free, `;`-free, `#`-free token.
+
+#### Semantic Side Conditions and Refusal Boundaries
+
+1. **Total-or-reject field discipline (`Q039`).**
+   - `native_library manifest v1;` must be the first statement, and at least one symbol entry must appear (`Q039`).
+   - The 8 core fields (`library`, `version`, `artifact`, `hash`, `data_model`, `unwinding`, `allocator_custody`, `thread_posture`) are **mandatory** and each may appear at most once (`Q039`). `v1` admits `data_model lp64;` only (`llp64` and `struct TAG` types are `v2`-only, `Q039`).
+   - The 2 header-binding fields (`header`, `header_hash`) are **optional as a pair**: both must be present or neither; writing one without the other rejects the manifest as a missing-field error (`Q039`).
+
+2. **Entry separation, C ABI projections, and bidirectional slice totality.**
+   - Entry types use C `<stdint.h>` / `<stdbool.h>` / `float` / `double` spellings rather than Quirin spellings (`float` and `double` joined both v1 and v2 in `W48-QR-FLOAT-QRLIB-SPELLING`). `void` is valid only as a return type (empty `()` denotes zero parameters).
+   - `unchecked fn` and `contract fn` are distinguished strictly by keyword: `unchecked fn` rejects `c_pointer_type` in every position and rejects any `from MODULE` tail (`Q039`); `contract fn` requires `from MODULE_REF` and admits pointers (`Q039`). No symbol may be bound twice (`Q039`).
+   - **Bidirectional contract slice totality (`Q047`):** Every `contract fn … from MODULE_REF;` entry must resolve to a declared function in the selected contract module `MODULE_REF` (compared byte-for-byte without path normalization), **and** every declaration in any contract module named by the manifest must be bound by a `contract fn` entry in the manifest (`Q047`).
+   - **Cross-checks and diagnostics:**
+     - `Q040`: selected binding is not a function.
+     - `Q041`: `unsafe extern fn` signature in `.qr` contradicts the manifest's `unchecked fn` projection.
+     - `Q042`: symbol declared `unchecked fn` in the manifest is also present in the selected `.qv` contract environment.
+     - `Q048`: contracted `extern fn` contradicts the manifest's `contract fn` projection — the contract is **withdrawn** for the unit and calls fall to `Q023`.
+     - `Q049`: published certificate omits either of the two stacked premises for a manifest-bound contracted call.
+
+3. **Exported C header verification and decoration derivation (`Q063`, `Q064`).**
+   - When `header` and `header_hash` are present (card `NATIVE-LIBRARY-HEADER`), the driver reads the referenced `.h` file (resolved relative to the manifest's directory via `CompileOptions::native_library_headers`), verifies its SHA-256 against `header_hash` (`Q063` on mismatch or missing text), parses the header through the bounded preprocessor-free reader (`qcore_core::native_library_header`, admitting comments, line splices, a whole-file `#ifndef`/`#define`/`#endif` include guard, the standard `<stdint.h>`/`<stddef.h>` LP64 prelude, and depth-zero `typedef` and function declarations), and verifies every manifest entry's C signature against the header's own declaration (`Q063` if outside the bounded C reader subset; `Q064` if the header contradicts the manifest entry). Extra declarations in the header not named by the manifest are ignored.
+   - **Included decoration headers (`NATIVE-LIBRARY-HEADER-DECORATION`):** Repeatable `include SPELLING from REFERENCE sha256:…;` statements require `header` to be present and bind exact `#include` operands (`<event2/visibility.h>` or `"local.h"`, delimiters included) to supplied file references and digests. The statement never asserts that a macro is erasable; instead, the reader **derives** from the included text's own `#define`s that an object-like export-decoration macro expands on every conditional branch exclusively to the reader's published vocabulary of type-neutral visibility/calling-convention decorations and is never `#undef`ed. Non-derivable macros, undeclared `#include`s, unreached `include` bindings, or digest mismatches refuse (`Q063`).
+
+#### Concrete Example (`.qrlib` v1)
+
+```text
+# Hand-authored v1 native library manifest with checked header + visibility include
+native_library manifest v1;
+library demo_codec;
+version 1.2.0;
+artifact libdemo_codec.a;
+hash sha256:9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08;
+data_model lp64;
+unwinding abort;
+allocator_custody closed;
+thread_posture single_caller;
+header include/demo_codec.h;
+header_hash sha256:4b227777d4dd1fc61c6f884f48641d02b4d121d3fd328cb08b5531fcacdabf8a;
+include "demo_export.h" from include/demo_export.h sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855;
+
+unchecked fn demo_version_major() -> uint32_t;
+contract fn demo_buf_new(uintptr_t) -> uint8_t * from contracts/demo_codec.qv;
+contract fn demo_buf_free(uint8_t *) -> void from contracts/demo_codec.qv;
+```
+
+**Implementation & Provenance:** `crates/qcore-core/src/native_library.rs`, `crates/qcore-core/src/native_library_header.rs`; design [`docs/design/NATIVE_LIBRARY_LINKAGE_V1.md`](design/NATIVE_LIBRARY_LINKAGE_V1.md), [`docs/design/NATIVE_LIBRARY_HEADER_V1.md`](design/NATIVE_LIBRARY_HEADER_V1.md), spec [§L14.4](QCORE_SPEC_r0_3.md); cards `UNSAFE-LINKAGE-ARTIFACT`, `NATIVE-LIBRARY-CONTRACT-SLICE`, `NATIVE-LIBRARY-HEADER`, `NATIVE-LIBRARY-HEADER-DECORATION`, `W48-QR-FLOAT-QRLIB-SPELLING`; reports [wave19](reports/wave19-unsafe-linkage-artifact/README.md), [wave20](reports/wave20-native-library-contract-slice/README.md), [wave22](reports/wave22-native-library-header/README.md), [decoration](reports/native-library-header-decoration/README.md).
+
+---
+
+<a id="g02d21-the-generated-manifest-v2"></a>
+#### G02d.2.1. The symbol-generated manifest (`.qrlib` v2)
+
+##### Consumer and Generation Discipline
+
+`.qrlib` v2 (`native_library manifest v2;`, card `W48-QRLIB-LINKAGE`) is the **mandatory** linkage manifest format for `source.ffi.v1` ([G02u](#g02u-imported-c-structs-sourceffiv1)) and may also bind contracted callees on other routes. Unlike v1, a v2 manifest is **generated on every build before linking and never written by hand**:
+- `quirin qrlib generate` (`qcore_c_gateway::linkage::generate`) inspects the binary artifact's own symbol tables (via Quirin's internal ELF, Mach-O/TBD, and COFF/PE readers — never external `nm`), follows GNU `ld` linker scripts, hashes all artifacts and headers, and emits canonical v2 text.
+- `quirin qrlib check` and `quirin build` regenerate the v2 manifest from the build inputs and refuse any stored `.qrlib` file that differs by even a single byte as **stale**.
+- Immediately prior to invoking the system linker, `quirin build` (`LinkPlan`) re-verifies every pinned SHA-256 digest and passes the exact pinned artifact paths to the linker.
+
+##### Consolidated Grammar
 
 ```ebnf
 manifest_v2   = "native_library", "manifest", "v2", ";",
                 { field_v2 | entry_v2 } ;
+
 field_v2      = ( "library" | "version" | "artifact" | "target" ), TOKEN, ";"
-              | "hash", DIGEST, ";"
+              | "hash", sha256_digest, ";"
               | "linkage", ( "static" | "dynamic" ), ";"
               | "format", ( "elf" | "macho" | "coff" ), ";"
-              | "input", TOKEN, DIGEST, [ "as_needed" ], ";"        (* repeatable *)
-              | "runtime", RUNTIME, ";"                              (* repeatable *)
+              | "input", TOKEN, sha256_digest, [ "as_needed" ], ";"   (* repeatable *)
+              | "runtime", runtime_spec, ";"                          (* repeatable *)
               | "data_model", ( "lp64" | "llp64" ), ";"
-              | "unwinding", "abort", ";" | "allocator_custody", "closed", ";"
+              | "unwinding", "abort", ";"
+              | "allocator_custody", "closed", ";"
               | "thread_posture", "single_caller", ";"
-              | "header", TOKEN, ";" | "header_hash", DIGEST, ";" ;
-RUNTIME       = "soname", TOKEN, "in", TOKEN
+              | "header", TOKEN, ";"
+              | "header_hash", sha256_digest, ";" ;
+
+runtime_spec  = "soname", TOKEN, "in", TOKEN
               | "install_name", TOKEN, [ "current_version", TOKEN ]
               | "dll", TOKEN, "os_build", TOKEN ;
-entry_v2      = "contract", "fn", NAME, "(", [ C_TYPE, { ",", C_TYPE } ], ")",
-                "->", C_TYPE, "from", MODULE_REF, "export", EXPORT, ";" ;
-EXPORT        = TOKEN, [ "version", TOKEN ], ( "global" | "weak" ), [ "ifunc" ],
-                [ "dll", TOKEN ], "in", TOKEN ;
-C_TYPE        = C_ABI_TYPE | "float" | "double"
-              | "struct", TAG | "struct", TAG, "*" | "const", "struct", TAG, "*" ;
-DIGEST        = "sha256:", 64 * LOWER_HEX ;
+
+entry_v2      = "contract", "fn", NAME,
+                "(", [ c_type_v2, { ",", c_type_v2 } ], ")",
+                "->", c_type_v2,
+                "from", MODULE_REF,
+                "export", export_clause, ";" ;
+
+export_clause = TOKEN,                                (* object-level symbol, e.g. _sqrt *)
+                [ "version", TOKEN ],                 (* default ELF symbol version *)
+                ( "global" | "weak" ),
+                [ "ifunc" ],                          (* STT_GNU_IFUNC *)
+                [ "dll", TOKEN ],                     (* COFF import DLL name *)
+                "in", TOKEN ;                         (* defining file or archive(member) *)
+
+c_type_v2     = c_abi_type                            (* §G02d.2, float/double included *)
+              | "struct", TAG
+              | "struct", TAG, [ " " ], "*"
+              | "const", "struct", TAG, [ " " ], "*" ;
 ```
 
-* **What is derived.** `hash` is the sha256 of the file the link names
-  (`artifact`); an `ld` script is followed and every file it names is an
-  `input` with its own digest, in script order, `AS_NEEDED` kept; `format`,
-  `target` and `data_model` come from the recorded target (`llp64` for 64-bit
-  COFF); each entry's `export` clause is what the artifact's own symbol table
-  says of the symbol — its object-level name (`_sqrt` on Mach-O), its default
-  ELF version, `global` or `weak`, `ifunc` for an `STT_GNU_IFUNC`, the DLL a
-  COFF import names, and the file (and archive member) that defines it; a
-  dynamic link's `runtime` premises are the shared objects' `DT_SONAME`s, a
-  stub's install name and current version, or each imported DLL with the
-  declared OS build. `header_hash` is measured over the declared header.
-* **What is declared.** `library`, `version`, `linkage`, the three ABI
-  premises (never defaulted), the header, the contract modules — **every**
-  declaration of each becomes one entry, so the slice is total by
-  construction — and the Windows OS build.
-* **Linkage means the exported symbol table** (the view `nm` gives, read by
-  the card's own ELF, Mach-O and COFF/PE readers, never by `nm`). A bound
-  symbol must be exported and defined in the pinned artifact: missing
-  (stripped), undefined, local-only, doubly defined, defined only under a
-  hidden version, not listed by an archive's index, imported by ordinal only,
-  or — on Windows — not exported by name by the runtime DLL or exported as a
-  forwarder each refuses generation by name. A defined weak symbol is admitted
-  and recorded `weak`.
-* **Static and dynamic.** `static` pins the code (an ELF, Mach-O or COFF
-  archive, or a script naming archives) and states no `runtime`; `dynamic`
-  pins the link-time stub (an ELF shared object or a script naming them, a
-  `.tbd` text stub — read for the target's slice, `arm64e-macos` standing in
-  for an unlisted `arm64-macos` — or a dylib export trie, a COFF import
-  library) and states
-  at least one `runtime` premise, because the OS owns the library the program
-  loads. A script naming both kinds, the linkage kind the artifact is not, a
-  static link resolving to an import and a dynamic COFF link resolving to code
-  are refused.
-* **Refusals.** Each is a `Q039` load refusal by its own name: a v2 statement
-  in a v1 manifest or `include` in a v2 one, an `unchecked fn` in a v2
-  manifest, a v2 entry without its `export` clause, a malformed `export`,
-  `input` or `runtime`, a static manifest with a `runtime`, a dynamic one
-  without, and a missing `linkage`/`format`/`target`. Struct spellings are
-  refused in a v1 manifest.
+##### Semantic Side Conditions and Refusal Boundaries
 
-§L14.8 states the linkage limitations. See
-[the card record](reports/w48-qrlib-linkage/README.md).
+- **Derived vs. declared metadata:**
+  - *Declared by build configuration:* `library`, `version`, `linkage`, the three ABI posture premises (`unwinding`, `allocator_custody`, `thread_posture` — never defaulted), the `header` path, the selected `.qv` contract modules (every declaration of each module becomes one `entry_v2`, making the slice total by construction), and on Windows the `os_build` string.
+  - *Derived from artifacts and recorded target:* `hash` (SHA-256 of `artifact`), `input` lines in script order for every file referenced by an `ld` linker script (preserving `AS_NEEDED` as `as_needed`), `format` (`elf` / `macho` / `coff`), `target` triple, `data_model` (`llp64` on 64-bit COFF, `lp64` on 64-bit Unix), `header_hash`, `runtime` library identities, and every entry's `export` symbol resolution record.
+- **Exported symbol-table validation (generation refusals):** Every bound symbol must be exported and defined in the pinned artifact. Generation refuses by name if a symbol is missing/stripped, undefined, local-only, multiply defined, hidden-version-only, omitted from an archive symbol index, imported by ordinal only, or (on Windows) absent from the runtime DLL's named export table or exported as a DLL forwarder. Defined weak symbols are admitted and recorded as `weak`.
+- **Static vs. dynamic linkage invariants (`Q039`):**
+  - `linkage static;` pins code archives (ELF/Mach-O/COFF `.a`/`.lib` or `ld` scripts of archives) and **forbids** `runtime` statements (`Q039`).
+  - `linkage dynamic;` pins link-time stubs (ELF `.so` or scripts thereof, Mach-O `.dylib` export tries or `.tbd` text stubs — matching `arm64e-macos` when `arm64-macos` is unlisted — or COFF import libraries) and **requires at least one** `runtime` premise (`soname`, `install_name`, or `dll … os_build …`) naming the OS-loaded shared library (`Q039`).
+  - Mixing archive and shared inputs in a script, mismatching artifact format vs. `linkage`, static linkage resolving to a COFF import, or dynamic COFF linkage resolving to raw code refuses.
+- **Strict v1 / v2 separation (`Q039`):** Writing `unchecked fn` or `include … from …` inside a v2 manifest, omitting `linkage`/`format`/`target` or an entry's `export` clause in v2, or writing v2 statements or `struct TAG` types in a v1 manifest refuses (`Q039`).
 
-### G02d.3. The source library binding
+##### Concrete Example (`.qrlib` v2)
 
-Card `NATIVE-LIBRARY-SOURCE-BINDING`. §G02d.2's manifest is selected by the
-*builder*; until this card, resolution was by **symbol name across the whole
-selection**, so whichever selected manifest happened to name a symbol supplied
-that symbol's premise and no source file said so. This adds the one form a
-source file needs to say it:
+```text
+native_library manifest v2;
+library qr_pkt;
+version 0.4.0;
+artifact libqr_pkt.a;
+hash sha256:6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b;
+linkage static;
+format elf;
+target x86_64-unknown-linux-gnu;
+data_model lp64;
+unwinding abort;
+allocator_custody closed;
+thread_posture single_caller;
+header qr_pkt.h;
+header_hash sha256:d4735e3a265e16eee03f59718b9b5d03019c07d8b6c51f90da3a666eec13ab35;
+
+contract fn qr_pkt_checksum(const struct qr_pkt *) -> uint32_t from contracts/qr_pkt.qv export qr_pkt_checksum global in libqr_pkt.a(qr_pkt.o);
+```
+
+**Implementation & Provenance:** `crates/qcore-core/src/native_library.rs`, `crates/qcore-c-gateway/src/linkage.rs`; spec [§L14.8](QCORE_SPEC_r0_3.md); cards `W48-QRLIB-LINKAGE`, `W48-QR-FLOAT-QRLIB-SPELLING`; report [w48-qrlib-linkage](reports/w48-qrlib-linkage/README.md).
+
+---
+
+<a id="g02d3-the-source-library-binding"></a>
+### G02d.3. The source library binding (`extern library`)
+
+#### Consumer and Selection Mechanism
+
+Before card `NATIVE-LIBRARY-SOURCE-BINDING`, manifest resolution matched symbol names across the builder's entire `--native-library` selection without the `.qr` source file stating which library supplied its extern declarations. `extern library NAME;` is an import-adjacent top-level directive that binds a single `.qr` input file's extern surface to specific selected `.qrlib` manifests.
+
+- **On `source.ffi.v1` ([G02u](#g02u-imported-c-structs-sourceffiv1)):** Mandatory whenever the file calls any C function, and must resolve to a generated **v2** manifest (`Q065`, `Q066`).
+- **On all other routes ([G02d](#g02d-bounded-extern-calls), [G02d.1](#g02d1-unchecked-linkage), [G02i-extern-io](#g02i-composed-extern-calls-and-rendered-lines)):** Opt-in; a file writing zero `extern library` directives preserves selection-wide symbol resolution byte-for-byte (and never triggers manifest loading if none is referenced).
+
+#### Consolidated Grammar
 
 ```ebnf
 library_binding = "extern", "library", NAME, ";" ;
 ```
 
-It is **import-adjacent**: it stands at file scope beside the `import` lines, it
-declares no name, and it grants no capability — it states which manifest-bound
-library *this file's* declared extern surface is resolved against. It mints **no
-reserved word** (constraint 14): `extern` has introduced a declaration since
-§G02d and `library` has been a source word since `module library;`; what is new
-is the two-word sequence `extern library` at declaration position, which was a
-parse error before this card. `library` stays an ordinary identifier everywhere
-else.
+Both `extern` and `library` were existing source words (`extern fn`, `module library;`); the two-token sequence `extern library` at top-level declaration position reserves **zero** new keywords, and `library` remains a legal ordinary identifier everywhere else.
 
-`NAME` is a selected manifest's own `library` field, compared **exactly** and
-never normalised — two spellings that normalise together are two different
-selections.
+#### Semantic Side Conditions and Refusal Boundaries
 
-The binding is **opt-in**. A file that declares none keeps the selection-wide
-resolution byte for byte, which is every program written against §G02d.2 before
-this card. A file that declares one or more resolves only against the manifests
-it named, and:
+- **Exact, unnormalized matching (`Q065`):** `NAME` is compared byte-for-byte against the `library` field of the builder's selected `.qrlib` manifests. An unbound `NAME` matching zero manifests, matching two selected manifests, repeated `extern library NAME;` lines in one file, or writing `extern library` when no `--native-library` was passed refuses (`Q065`).
+- **No silent fallback to unbound manifests (`Q066`):** In a file that writes at least one `extern library` directive, declaring an `extern fn` whose symbol is bound by another selected manifest that *this file did not name* refuses (`Q066`) rather than silently dropping the build identity premise. Conversely, a symbol bound by *no* selected manifest at all keeps its ordinary premise (except on `source.ffi.v1`, where every called C symbol must be bound by a named v2 manifest, `Q066`).
+- **Per-file scope & pre-route validation:** Resolution is strictly per `.qr` input file — another file's `extern library` binding in a multi-file compilation neither grants nor restricts this file's declarations. Every written `extern library` directive is validated **before** route selection, even in a file that declares zero `extern fn`s.
+- **Stacked certificate premise (`Q067`):** Every published certificate for a module containing `extern library NAME;` must carry a `SourceLibraryBinding` premise (`library@sha256` plus its ABI posture fields) for every bound library (`Q067`), even if zero symbols from that library were called.
 
-* a name no selected manifest declares, a name two of them declare, a repeated
-  binding, or a binding with nothing selected each refuse the module (`Q065`) —
-  nothing resolves implicitly and nothing falls back;
-* a symbol this file declares that a selected manifest it did **not** bind
-  binds refuses (`Q066`). It is not silently handed the weaker premise: that
-  would let a file stop its certificate naming a build by binding a different
-  library, which is `Q041`'s disposition read from the other side;
-* a symbol **no** selected manifest binds is unaffected and keeps exactly the
-  premise it had — absence of evidence is not evidence, and the two absences are
-  different;
-* a published certificate must carry a source-binding premise for every
-  `extern library` the module declares (`Q067`).
+#### Concrete Example
 
-Resolution is **per input file**: the *declaring* file's binding decides a
-declaration, on card `UNSAFE-LINKAGE`'s own ground that declaring a symbol is
-itself the trust act. A binding in another compilation input grants a file
-nothing and takes nothing away, which is constraint 13's discipline applied to a
-binding.
+```qr
+module executable;
+#import std.extern;
+extern library demo_codec;
 
-A binding is resolved **wherever it is written**, before route selection, so a
-module carrying one and no extern surface is refused if it does not resolve
-rather than carrying a declaration nothing looked at. The check is guarded on the
-file having written a binding: a module that writes none never causes the
-selection to be loaded, so a manifest that does not load cannot refuse a module
-that never mentioned one.
+error AllocError;
 
-The premise a bound module publishes names the spelling the file wrote, the
-manifest that declared it, and that manifest's artifact identity — `library@hash`
-— beside the four ABI premise fields. It **stacks** with every callee premise and
-replaces none: the callee premises say what each symbol was read as, and this one
-says which build this file declared its extern surface to come from. A module that
-binds a library and calls nothing it exports still carries it, because the binding
-is a trust act whether or not a call site consumed it.
+extern fn demo_buf_new(size: usize) -> ptr<mut, u8>;
+extern fn demo_buf_free(buf: ptr<mut, u8>) -> unit;
 
-See [the source binding record](reports/native-library-source-binding/README.md).
+fn main() -> unit effects { io, alloc, mut } {
+    let p = demo_buf_new(32) succeeds true else raise AllocError;
+    demo_buf_free(move p);
+    return;
+}
+```
 
-Card `W48-QRLIB-LINKAGE`: on the FFI route (§G02u) the binding is **required**
-for a file that calls C, and it must resolve to a generated (v2) manifest
-(§G02d.2.1); a file with no binding (`Q065`, widened), a binding resolving to a
-v1 manifest (`Q065`) and a callee no manifest the file bound binds (`Q066`,
-widened) refuse. The other routes keep the opt-in rule above byte for byte.
+**Implementation & Provenance:** `crates/qcore-core/src/native_library.rs` (`SourceLibraryBinding`), `crates/qcore-frontend/src/frontend.rs`; cards `NATIVE-LIBRARY-SOURCE-BINDING`, `W48-QRLIB-LINKAGE`; report [native-library-source-binding](reports/native-library-source-binding/README.md).
 
+---
+
+<a id="g02d4-delayed-custody-results-sourcequant-variantv1"></a>
 ### G02d.4. Delayed custody results (`source.quant-variant.v1`)
 
-A `module library;` importing `#import std.extern;` may adapt a signed
-32-bit C return code to a movable custody result. See the complete
-[source library](../compiler/tests/fixtures/quant_variant/delayed.qr),
-[selected contract](../compiler/tests/fixtures/quant_variant/take.qv)
-and [C caller](../compiler/tests/fixtures/quant_variant/caller.c).
+#### Consumer and Invocation
+
+`source.quant-variant.v1` allows a `module library;` importing `#import std.extern;` to adapt a signed 32-bit C return-code disposition ([§C04.13.2](QCORE_CONTRACT_SPEC_r0_3.md#c04132-packing-a-return-code-disposition)) into a generation-indexed, move-only `quant variant` package ([§L09.1](QCORE_SPEC_r0_3.md#l091-quant-variants)) that can be moved across private helper functions and opened by a delayed `match`:
 
 ```sh
 quirin check --contracts compiler/tests/fixtures/quant_variant/take.qv compiler/tests/fixtures/quant_variant/delayed.qr
-quirin emit --contracts compiler/tests/fixtures/quant_variant/take.qv compiler/tests/fixtures/quant_variant/delayed.qr -o delayed.c
+quirin emit  --contracts compiler/tests/fixtures/quant_variant/take.qv compiler/tests/fixtures/quant_variant/delayed.qr -o delayed.c
 ```
 
-Declare each variant before its mapped extern. The design grammar's
-`quant-variant-declaration`, `quant-variant-type` and `quant-variant-map`
-productions apply with the following restrictions:
-
-* The subject is one generation of heap storage. Arms carry `none` or
-  `custody(p)` and optionally one `code: i32` field. The extern has a single
-  `ptr<mut, u8>` formal and returns `i32`. Each integer class maps to a
-  distinct arm. The selected C04.13 contract and the inline declaration
-  must agree on ABI, the set of class predicates and their full dispositions.
-  Exactly the nonnull consumed and owned modes are admitted. No assumption
-  about the external implementation is inferred from a tag or from its name.
-* Functions form an acyclic call graph and return `i32`. An `own<Buffer>` formal accepts a unique,
-  nonnull, live allocation compatible with C `free`. A helper can bind
-  a subject `p: ptr<mut, u8>` together with `v: quant variant V(p)`.
-  At a call site each package must have the declared variant and the
-  generation of the actual subject. Distinct resource formals require
-  distinct generations. A raw subject alone grants no release authority.
-* A body may bind a pointer alias (`let q = p;`), call an adapter
-  (`let v = take(q);`), move a package (`let w = move v;`), bind a scalar,
-  call a helper, `drop` a live owner, match, or return a scalar. A helper
-  call passes a subject by name and a package or owner with `move`.
-  A consuming `match v` (also `match move v`) has one arm per declared
-  tag, with match nesting bounded at 32. An arm with data binds `V::Tag { code: rc }`; an empty data list
-  uses `V::Tag`. Continuing arms must agree on the surviving frame.
-  Every returning path discharges or transfers all custody and opens or
-  transfers every sealed result. Helpers are checked even when uncalled.
-* The C ABI exports owner-only functions as `qv_entry_NAME`. The caller
-  supplies separate live allocations. The adapter calls the named C symbol
-  once, classifies that integer and retains the exact payload if requested.
-  Private helpers receive the package by value and a reference to the
-  subject's pointer slot, so a successful taking call may already have freed
-  its subject before handoff. Matching the empty arm never reads the dead
-  pointer. Generated code requires eight-bit bytes and a signed 32-bit C
-  `int`. Internal tags and helper signatures have no external ABI.
-
-Checking an unsupported `protocol` or `using #effect` arm refuses. G01e
-supplies no verified C effect occurrence. The resource model is
-[`QCore.QuantVariant`](../proof/QCore/QuantVariant.lean); the emitted
-code and the selected C implementation remain separate evidence.
-
-`Q020` covers a refused body, including opening a moved result or dropping
-its subject through an alias. `Q023` covers missing or unloadable selections
-and `Q027` covers an ABI or disposition mismatch. The checked library retains
-the trusted contract sources and reports the assumption for each mapped callee.
-
-## G02e. Flat-epoch quantitative bound
-
-`source.epoch.bound.v1`. Selected before every other concurrent route by the
-`epoch` marker on a thread scope, because an epoch scope is also a
-`thread scope` and a module declaring a quantitative epoch must not be handed to
-a route that models no accounting. Lowers onto the unedited `FlatEpochBoundV1`
-checker (`qcore_core::epoch_accounting`, diagnostics `Q630`–`Q641`).
+#### Consolidated EBNF Subset (over `QCORE_DESIGN_GRAMMAR_r0_3.bnf`)
 
 ```ebnf
-epoch_module = "import", "std.concurrency", ";", entry ;
-entry        = "fn", NAME, "(", ")", "->", "unit", "{", epoch_scope, "}" ;
-epoch_scope  = "thread", "scope", NAME, "epoch", "{", { header | worker }, "}" ;
+qv_library_module = "module", "library", ";",
+                    ( "#import" | "import" ), "std.extern", ";",
+                    { quant_variant_decl | mapped_extern_decl | qv_fn_decl } ;
 
-header       = cell | allocation | overhead | latency_claim ;
-cell         = "let", NAME, "=", "share", NAT, ";" ;
-allocation   = "bound", NAT, "effort", NAT, ";" ;
-overhead     = "overhead", "scope", NAT, "thread", NAT, [ "measured", NAT ], ";" ;
-latency_claim= "bound", "effort", "as", "latency", ";" ;
+quant_variant_decl = "quant", "variant", VARIANT_NAME, "(", SUBJ_IDENT, ")", "{",
+                       quant_arm, { quant_arm },
+                     "}" ;
+quant_arm          = TAG_NAME, [ "(", "code", ":", "i32", ")" ],
+                     "carries", ( "none" | "custody", "(", SUBJ_IDENT, ")" ), ";" ;
 
-worker       = "thread", "scope", NAME, "{", { clause }, "}" ;
-clause       = "read", NAME, ";" | "write", NAME, ";"
-             | "peak", NAT, ";" | "effort", NAT, ";"
-             | "credit", NAT, "effort", NAT, ";"
-             | "retained", NAT, ";"
-             | "join", "(", ( "move" | "drop" | "close" ), ")", ";"
-             | error_arm
-             | worker ;
-error_arm    = "error", "(", ( "move" | "drop" | "close" ), ")", ";"
-             | "error", "(", "move", NAT, "effort", NAT, ")", ";" ;
+mapped_extern_decl = "extern", "fn", NAME, "(", SUBJ_IDENT, ":", "ptr", "<", "mut", ",", "u8", ">", ")",
+                     "->", "i32",
+                     "contract", "{",
+                       "requires", "resource_contract_v1", ";",
+                       { c0413_on_return_clause },
+                       "ensures", "normal", "resource_return_none", "(", ")", ";",
+                       { "quant", "variant", "on_return", "(", rel_op, ",", INT, ")",
+                         VARIANT_NAME, "::", TAG_NAME, ";" },
+                     "}", ";" ;
+
+qv_param           = NAME, ":", "own", "<", "Buffer", ">", "use", "one"
+                   | NAME, ":", "ptr", "<", "mut", ",", "u8", ">"
+                   | NAME, ":", "quant", "variant", VARIANT_NAME, "(", SUBJ_NAME, ")" ;
 ```
 
-Two axes are declared: `memory` carries every byte figure and `effort` carries
-the profile's work quantity. `allocation` and `overhead` each appear exactly
-once; `credit` appears exactly once per worker; `peak`, `effort`, `retained` and
-the join clause at most once each. Every `NAT` is read at `u64` and an
-out-of-range literal is refused, never wrapped.
+#### Semantic Side Conditions and C ABI Boundary
 
-The join clause is the creator's act, written in the child's block:
-`join(move)` transfers the completed child's result to the creator,
-`join(drop)` releases it there, and `join(close)` is the representable claim
-that the result stopped being live at completion — refused by the core at
-`Q634`. A worker with no join clause lowers to an unjoined task (`Q635`). The
-parentheses are load-bearing: a bare `join` is claimed by the scoped-task
-profile's expression scanner, so this profile's join is always written
-`join(...)`.
+- **Declaration & contract agreement:** Each `quant variant` precedes its mapped `extern fn` (single `ptr<mut, u8>` formal, `-> i32` result, arms carrying `none` or `custody(p)` plus optional `code: i32`). Inline `quant variant on_return(...)` clauses and the `--contracts` selected `C04.13` `.qv` declaration must agree on ABI, comparison classes, and full non-null `resource_consumed` / `resource_owned` dispositions (no assumption is inferred from tag names; `protocol(...)` and `using #effect` arms are refused).
+- **Acyclic functions, generation matching, and delayed `match`:**
+  - All functions (checked even when uncalled) form an acyclic call graph returning `i32`. `own<Buffer>` formals accept distinct, non-null, `free`-compatible heap allocations; helpers taking `p: ptr<mut, u8>` alongside `v: quant variant V(p)` require `v` to match `p`'s exact actual generation at every call site (raw `p` alone grants zero release authority).
+  - Admitted body statements: pointer alias `let q = p;`, adapter call `let v = take(q);`, package move `let w = move v;`, scalar `let`, helper calls (passing subjects by name and packages/owners with `move`), `drop` of a live owner, exhaustive consuming `match [move] v { V::Tag => { ... } V::Retained { code: rc } => { ... } }` (max nesting depth **32**, continuing arms agreeing on the surviving frame), and scalar `return`. Every exit path must discharge or transfer all custody and open or transfer every sealed package.
+- **Exported C ABI (`qv_entry_NAME`):** Owner-only entry functions export as `qv_entry_NAME` (assuming 8-bit bytes and 32-bit signed C `int`); the adapter calls the underlying C symbol once, classifies the return code, and passes private helpers the package by value plus a reference to the subject's pointer slot so matching the empty arm never reads a freed pointer.
 
-Shapes the profile does not model become *program content* the core refuses
-rather than grammar the lowering hides: `write NAME;` is
-`UnsupportedEpochShape::SharedMutation` and a nested worker block is
-`NestedTask` (both `Q632`); a shared entry naming something other than a
-declared cell keeps an identity the storage list does not contain (`Q631`); a
-repeated `read` of one cell in one worker is not deduplicated (`Q630`); and
-`overhead … measured RUNS;` offers a native measurement in place of the declared
-figures, which is `Q640`. Everything outside this grammar — a clause word the
-profile does not have, a missing header, a second declaration, a `spawn`/`join`
-task expression, `join(close)` with nothing retained — is refused at `Q600`.
+**Implementation & Provenance:** [`compiler/tests/fixtures/quant_variant/delayed.qr`](../compiler/tests/fixtures/quant_variant/delayed.qr), [`take.qv`](../compiler/tests/fixtures/quant_variant/take.qv), [`caller.c`](../compiler/tests/fixtures/quant_variant/caller.c), `compiler/tests/quant_variant.rs`, [`proof/QCore/QuantVariant.lean`](../proof/QCore/QuantVariant.lean).
 
-`bound effort as latency;` is a request, not a grant: the lowering records it
-and the driver puts it to `epoch_wall_clock_bound`, which always refuses
-(`Q639`). This profile has no schedule model, so no quantity it derives is ever
-a time.
+---
 
-`error_arm` declares what the **creator's own error edges** do with the credit
-granted to that worker (card `CT23-CREDIT-ERROR-PATH`,
-`qcore_core::epoch_credit_recovery`). It reserves no new word: `error`, `move`,
-`drop`, `close` and `effort` are all already reserved. On **this** route it is
-always refused, at `Q630`, because a declared worker is not a creation the
-creator could fail to make — the refusal comes from the core's own band, not
-from this grammar pretending the word is unknown. Its meaning is given in §G02f,
-where the creator's error edges exist and are derived.
+<a id="g02u-imported-c-structs-sourceffiv1"></a>
+## G02u. Imported C structs (`struct!`, `source.ffi.v1`)
 
-Every quantity here is a **declared premise** of `FlatEpochBoundV1`
-(`DeclaredTaskFootprints`, `DeclaredRuntimeOverhead`,
-`DisjointSharedStorageCells`, `NoScheduleModel`); nothing on this route imports
-a peak, a result, a credit or an overhead figure from C, from an allocator or
-from a measured run. The route is **check-only**: an admitted epoch is a checked
-accounting statement about a declared shape, so it emits no C, runs no reference
-execution and implies no native run. See
-[the epoch source record](reports/remaining-t08-epoch-src/README.md).
+### Consumer and Route Selection
 
-## G02f. Flat-epoch bound over a checked task region
+`source.ffi.v1` enables `.qr` programs to import real C `struct TAG` types from C headers, construct and mutate their listed scalar/float fields, pass and return them across C calls and by-value `.qr` helper functions, and render known outcomes via `std.io` / `std.logger`.
 
-`source.epoch.tasks.v1`. Selected before G02e by an `epoch` marker **and** the
-scoped-task profile's own `concurrency checked;` declaration: a module carrying
-both is accounting for a real task region, not for declared worker shapes. The
-entry's first statement is an epoch *plan*; the rest of the entry is an ordinary
-scoped-task region. No diagnostic code is added by this route.
+**Highest-priority route selection:** `has_source_ffi` runs **before every other route** in the compiler. Any module that writes `#import std.ffi.unsafe;` **or** contains a `struct!` declaration is routed unconditionally to `source.ffi.v1`. This prevents an FFI file from ever reaching a route that could publish a plain `Safe` verdict without the **unsafe-FFI assumption**, and guarantees that unsupported constructs in an FFI file refuse directly at `Q026` rather than falling through. Under §L14.6 and §L20, every verdict emitted on this route is at best *"Safe under the unsafe-ffi assumption"* (naming every imported struct, every called `#c_ffi` function, and `linked:LIBRARY` premises) — never plain `Safe` (note: this is an explicit conditional `Safe` assumption, not the `Unsafe` verdict).
+
+### Consolidated Grammar
+
+#### `.qr` Source Grammar (`source.ffi.v1`)
 
 ```ebnf
-composed_entry = "fn", NAME, "(", ")", "->", result, "{", plan, { statement }, "}" ;
-plan           = "thread", "scope", NAME, "epoch", "{", { header | row }, "}" ;
-header         = allocation | overhead | latency_claim ;   (* G02e's, minus `cell` *)
-row            = "thread", "scope", WORKER, "{", { clause }, "}" ;
-clause         = "move", ";" | "copy", ";" | "read", ";"
-               | "peak", NAT, ";" | "effort", NAT, ";"
-               | "credit", NAT, "effort", NAT, ";"
-               | "retained", NAT, ";"
-               | [ "join", "(", ( "move" | "drop" | "close" ), ")", ";" ]
-               | [ error_arm ] ;                            (* G02e's *)
+ffi_module    = [ module_header ],
+                "#import", "std.ffi.unsafe", ";",
+                { ffi_import | library_binding },
+                { struct_import | ffi_extern | ffi_entry | ffi_helper } ;
+
+ffi_import    = ( "#import" | "import" ),
+                ( "std.extern" | "std.fmt" | "std.io" | "std.logger" ), ";" ;
+library_binding = "extern", "library", NAME, ";" ;                  (* required for C calls, §G02d.3 *)
+
+struct_import = "struct", "!", "{",
+                "type", NAME, "=", C_STRUCT_LIT, "from", STRING, ";",
+                "fields", "{", ffi_field, { ",", ffi_field }, [ "," ], "}",
+                "}" ;
+C_STRUCT_LIT  = "c", STRING ;        (* adjacent tokens, no whitespace; STRING = "struct TAG" *)
+ffi_field     = NAME, ":", ffi_scalar ;
+
+ffi_scalar    = "bool"
+              | "i8" | "i16" | "i32" | "i64" | "isize"
+              | "u8" | "u16" | "u32" | "u64" | "usize"
+              | "f32" | "f64" ;
+
+ffi_extern    = "extern", "fn", NAME,
+                "(", [ ffi_param, { ",", ffi_param } ], ")",
+                "->", ffi_result, ";" ;
+ffi_param     = NAME, ":",
+                ( ffi_scalar | RECORD_NAME | "ptr", "<", "const", ",", RECORD_NAME, ">" ) ;
+ffi_result    = "unit" | ffi_scalar | RECORD_NAME ;
+
+ffi_entry     = "fn", NAME, "(", ")", "->", "unit",
+                [ "effects", "{", ffi_effect, { ",", ffi_effect }, "}" ],
+                "{", { ffi_stmt }, "}" ;
+
+ffi_helper    = "fn", NAME,
+                "(", [ helper_param, { ",", helper_param } ], ")",
+                [ "->", ( "unit" | ffi_scalar | RECORD_NAME ) ],
+                [ "effects", "{", ffi_effect, { ",", ffi_effect }, "}" ],
+                "{", { ffi_stmt }, "}" ;
+helper_param  = NAME, ":", ( ffi_scalar | RECORD_NAME ) ;           (* by value only *)
+ffi_effect    = "io" | "alloc" | "mut" ;
+
+ffi_stmt      = "let", NAME, "=", RECORD_NAME, "{", field_init, { ",", field_init }, [ "," ], "}", ";"
+              | "let", NAME, "=", NAME, ".", NAME, ";"              (* listed field read *)
+              | NAME, ".", NAME, "=", ffi_value, ";"                (* listed field write; derives mut *)
+              | "let", NAME, "=", NAME, ";"                         (* by-value scalar or record copy *)
+              | [ "let", NAME, "=" ], CALLEE, "(", [ ffi_value, { ",", ffi_value } ], ")",
+                [ "succeeds", ffi_outcome ], ";"
+              | io_line_stmt                                        (* print / log / log_level / flush, §G02g *)
+              | "return", [ ffi_value ], ";" ;                      (* bare in entry; value in non-unit helper *)
+
+field_init    = NAME, ":", ffi_value ;
+ffi_value     = [ "-" ], INTEGER | [ "-" ], FLOAT | "true" | "false" | NAME ;
+ffi_outcome   = [ "-" ], INTEGER
+              | [ "-" ], FLOAT
+              | "true" | "false"
+              | RECORD_NAME, "{", literal_init, { ",", literal_init }, [ "," ], "}" ;
+literal_init  = NAME, ":", ( [ "-" ], INTEGER | [ "-" ], FLOAT | "true" | "false" ) ;
 ```
 
-`WORKER` names a source function the region spawns. Rows naming `WORKER`, in
-declaration order, correspond one-to-one with that worker's `TrySpawn` sites in
-the checked task IR, in source order; a declared row with no matching creation
-and a creation with no declared row are both refused, per worker. A row's
-ordered `move;`/`copy;`/`read;` clauses must equal that creation's ordered
-argument operands, and `retained BYTES;` is required exactly when the spawned
-worker's checked result type is an owned Buffer.
-
-The `read;` clause (card `REGION-JOINS-LOAN`, wave 30, discharging
-`T08-COMPOSE-LOAN` deliberately) declares a **counted read share** — the task
-route's own `read PLACE share N` at the spawn argument. Like `move;` and
-`copy;` it is place-free, and it also spells no share: the lent place and the
-share are the checked task region's, not the plan's, to name. The wave-15
-refusal reason ("a read loan's residency is shared with the lender, which this
-flat accounting does not represent") dissolved rather than being overridden:
-the lender on this route is always the **creator** — a spawned worker is a
-leaf function and lends nothing — and creator-scope bytes are outside the
-epoch's allocation (`REGION-JOINS-EPOCH-AXIS`), so the loan contributes no
-epoch byte and no shared cell. Share arithmetic, the write exclusion while a
-share is out, the refusal of a `drop` of the lent owner (`LoanOutstanding`)
-and the share's return at the join stay the **unedited** task ledger's own
-rules on the task half. A `read NAME;` clause — the shared-cell read — still
-has no referent here (`T08-COMPOSE-SHARED`).
-
-The `join` clause is **optional here**: the creator's disposal is derived from
-the checked IR (the handle's joins, the outcome's eliminations, and whether the
-bound value is released), and a written clause must equal what was derived. The
-task count, each task's identity and `joined` are derived and cannot be
-declared at all.
-
-No byte or work figure is derivable: this backend's `Buffer` carries no extent
-(`TryAllocateBuffer` takes an initial scalar value, not a size) and the profile
-has no cost model, so `peak`, `effort`, `credit`, `bound` and `overhead` stay
-declared premises exactly as in G02e.
-
-The `error_arm` clause is **optional**, at most once per row, and declares what
-the creator's own error edges do with that row's grant
-(card `CT23-CREDIT-ERROR-PATH`, checked by `EpochCreditRecoveryV1` beside the
-bound): `error(move);` returns the whole grant to the epoch,
-`error(move BYTES effort UNITS);` returns that much and spends the rest,
-`error(drop);` spends all of it, and `error(close);` is the representable claim
-that it is neither returned nor spent — refused at `Q635`. An elided clause is
-`error(drop);`, so every module written before the clause existed keeps a
-byte-identical certificate and byte-identical emitted C. The *edges* are
-**derived**, never declared: every `TrySpawn` carries a `spawn_error` successor,
-and a join edge exists exactly where a `TryOutcome` eliminates that creation's
-join outcome, which is to say where the child can actually raise. Restoring more
-than the grant is refused at `Q636`. Restoration does **not** reduce
-`granted_credits` and therefore relaxes no `Q637`: an epoch whose recovery path
-re-grants restored credit is `CT23-RESTORE-REUSE`. See
-[the error-path record](reports/ct23-credit-error-path/README.md).
-
-**The region epilogue** (card `REGION-CREDIT-JOINS`, wave 28) is the composed
-entry's one optional `error region` statement — CT22's scenario, *"quant
-opening discards parent-local unused credit after joins"*, made expressible:
+#### Paired `.qv` Contract Attribute Grammar (§C04.12)
 
 ```ebnf
-region_epilogue = "error", "region", NAME, "{",
-                    { "credit", NAT, ";" | "effort", NAT, ";"
-                    | "let", NAME, "=", "qcore_buffer_new", "(", NAT, ")", "?", ";"
-                    | "drop", NAME, ";"
-                    | "move", NAME, ";" },
-                    "qcore_check", "(", "false", ",", ERROR, ")", ";",
-                  "}",
-                  "catch", "(", ERROR, ")",
-                  [ "quant", "open", NAME, "as", BINDING ],
-                  "{", { "discharge", BINDING, ";" }, "}" ;
+c_ffi_contract_decl = "[|", "quant", "#", "c_ffi", "|]",
+                      "extern", "fn", IDENT,
+                      "(", [ c_ffi_param, { ",", c_ffi_param } ], ")",
+                      "->", c_ffi_result,
+                      "contract", "{",
+                          "requires", "resource_contract_v1", ";",
+                          { "ensures", "normal", "resource_borrowed", "(", IDENT, ")", ";" },
+                          "ensures", "normal", "resource_return_none", "(", ")", ";",
+                      "}", ";" ;
+
+c_ffi_param         = IDENT, ":", ( ffi_scalar | C_STRUCT_LIT | "ptr", "<", "const", ",", C_STRUCT_LIT, ">" ) ;
+c_ffi_result        = "unit" | ffi_scalar | C_STRUCT_LIT ;
 ```
 
-It is admitted as a direct epilogue of the entry's task scope, **after every
-spawn and join**, or as a direct statement of the exact `Result::Ok` arm of a
-direct task-scope `match spawn` (`CT24-CLEANUP-TASK-COMPOSITION`). The epilogue's
-ordering is derived from checked task-IR spans and refused at `Q600` when false.
-The success-arm form may precede its join: the existing task ledger refuses a
-cleanup release while a child holds that owner's share (`LoanOutstanding`),
-while independent-owner cleanup is admitted. Other nested placements remain
-refused. Published cleanup quantities and releases in this arm are conditional
-on reaching it; spawn-failure recovery is checked separately by the task route. Since card
-`REGION-JOINS-DUTIES` (wave 29, deliberately superseding the wave-28 duty-free
-premise) the body admits the task route's **own** acquisition and release
-beside the parent's quantities, so the sealed pack carries real cleanup duties
-(`Destroy`, one per unreleased owner) beside the remainder, and the opening's
-`discharge` destroys the owners in reverse acquisition order — CT25's duty
-half. The region **erases into its straight-line twin**: the split keeps each
-acquisition and body release at its own byte offsets in the task half and
-writes one `drop NAME;` per remaining duty into the blanks after them, so the
-**unedited** scoped-task route compiles, custody-checks, emits and
-reference-executes the destruction the model decided; a duty-free region
-still blanks completely and keeps the emitted C, source map and reference
-observation byte-identical with and without it (constraint 15l, the wave-28
-measurement unchanged). Both published figures are re-derived before
-publication: `abandoned_credit` against the reader's quantity fold and
-`released` against its duty fold, over the model's own cleanup trace. Shape
-refusals are `Q302` and an undeclared error is `Q300`, per §L21 — including a
-release of a name the region did not acquire, an owner colliding with an
-entry binding, an erasure that does not fit inside the statement it erases
-(`REGION-JOINS-ERASURE-FIT`), and the sequential `qcore_acquire` spelling,
-which names no task-route resource; every pack obligation keeps the model's
-own `Q303`–`Q309`. Two simultaneously live owners refuse at the task route's
-existing custody `Q600` — the second acquisition's `?` failure edge discards
-the first, the erased program's real leak path (`REGION-JOINS-MULTI-OWNER`).
+Lexically, `[|` and `|]` form single delimiter tokens only when `[` and `|` (or `|` and `]`) are immediately adjacent (leaving closure capture lists `|copy x|` untouched), and `c"struct TAG"` requires the identifier `c` to immediately abut the string literal with zero intervening bytes.
 
-Since card `REGION-JOINS-LOAN` (wave 30) the body also admits the **adoption**
-`move NAME;`: the region takes a live entry owner's cleanup duty into the
-pack — the same sealed `Destroy`, an acquisition from the pack's side — so an
-**acquired** owner's name is the region's own while an **adopted** owner's
-name is the entry's own (a name the entry does not bind refuses at `Q302`, as
-does one owner taken twice through either shape). The adoption erases
-completely — the owner's acquisition already stands in the entry's own text —
-and the discharge's `drop NAME;` is written into the blanks at the region's
-source position (after every join for the direct epilogue), where the
-**unedited** task route decides everything custodial: an adopted
-scalar refuses at that route's `Q500` ("drop requires an owned buffer"), a
-drop of a still-lent owner at its `Q600` (`LoanOutstanding`), and an
-acquisition beside an adopted owner keeps the `REGION-JOINS-MULTI-OWNER`
-boundary. With a worker capturing a counted read share of the adopted owner,
-this is **CT25's whole scenario** — cleanup destroys owner after joins *and
-loan expiry* — because the share returns at the join under the unedited task
-ledger, and the wave-28 after-joins rule (`Q600`) orders the erased release
-after every join and therefore after the expiry.
-See [the composition record](reports/region-credit-joins/README.md),
-[the duty record](reports/region-joins-duties/README.md) and
-[the loan record](reports/region-joins-loan/README.md).
+### Semantic Side Conditions and Refusal Boundaries
 
-Refused at `Q600`, each with a named follow-on: shared storage cells and
-shared-cell `read NAME;`/`write` clauses (`T08-COMPOSE-SHARED`; the read-loan
-refusal `T08-COMPOSE-LOAN` is **discharged** by card `REGION-JOINS-LOAN`
-above), a mutex generation anywhere in the composed body
-(`T08-COMPOSE-GUARD`, ranked or not), a joined owned result the creator hands on
-rather than releasing or keeping (`T08-COMPOSE-RESULT-REUSE`), a plan that is
-not the entry's first statement, a second epoch scope, and a spawn or join
-whose span follows the region epilogue (`REGION-CREDIT-JOINS`). The profile's
-own refusals still come from the core's `Q630`-`Q641` band. Emission and
-reference execution are the scoped-task route's own, byte for byte; the epoch
-and the region epilogue are check-only on top. See
-[the composition record](reports/remaining-t08-compose/README.md).
+1. **File-scoped trust import (`Q032`).**
+   - Every `.qr` file containing `struct!` or checked on `source.ffi.v1` must explicitly write `#import std.ffi.unsafe;` (`Q032` if omitted, including across multi-file bundles: one file's import never licenses another file). Calling C still requires `#import std.extern;` (`Q015` / `Q022`), and output lines require `std.io` / `std.logger` / `std.fmt` (`Q015`).
 
-## G02g. Rendered lines: `std.fmt`, `std.io` and `std.logger`
+2. **Compiler-derived layout verification (`Q051`–`Q053`, `Q063`, `Q064`).**
+   - `.qr` source never writes byte offsets, sizes, or alignments. Instead, `from "HEADER.h"` resolves strictly relative to the declaring `.qr` file's directory (single candidate path, no include-path search).
+   - `--recorded-target` is **mandatory** and must match the running Clang (`compiler` equal to Clang's first `--version` line, `triple` equal to `-dumpmachine`). `qcore_c_gateway::ffi_layout` invokes that Clang's AST and record layout engine to extract the complete `struct TAG`.
+   - Each listed field (1 to 32 fields, distinct names; `Q051` / `Q053`) must be a direct member of `struct TAG` whose canonical Clang type equals the canonical Clang type of the `.qr` field's C11 projection (`int64_t` and `ptrdiff_t` are both `long` on LP64, so `i64` and `isize` both match `long`, while `long long` matches neither; `f32`/`f64` match `float`/`double`), listed in **increasing layout offset order**.
+   - **Refusals:** Missing/mismatched `--recorded-target`, unreadable header, incomplete/unknown `struct TAG`, `union`, bit-fields, flexible array members, anonymous members, any alignment/packing attribute (`packed`, `aligned`, `#pragma pack`), or a listed member lacking a §G02t equivalent refuses at `Q063`. A listed field that is absent from `struct TAG`, has a different canonical C type, or appears out of layout order refuses at `Q064`.
+   - **Opaque unlisted members:** C struct members of any type may be left unlisted as opaque padding/payload bytes. Construction zero-initializes the entire C struct (`memset` / zeroed storage) before writing listed fields; attempting to read, write, or construct an unlisted or unknown field name refuses (`Q051`).
 
-`source.std-io.v1` (card `STD-MODULES`) is the whole implemented surface of the
-three output modules. A file selects it by using one of its three statements.
+3. **Record operations and `.qr` by-value helper functions (`W48-QR-USABLE-RECORDS`).**
+   - Construction (`let r = Hdr { a: 1, b: 2 };`) must supply every listed field exactly once (`Q051`) with an exact type match (`Q052`) and range-checked literals (`Q053`).
+   - `r.field = val;` mutates a listed field with an exact-type value (`Q051` / `Q052` / `Q053`) and derives the `mut` effect (`Q029`). `let r2 = r;` copies a record or scalar by value. Nested imported struct fields remain a separate follow-on (`W48-QR-FFI-NESTED-AND-ARRAY-FIELDS`).
+   - **`.qr` helpers:** Non-entry `fn` declarations take §G02t scalars and imported records **by value** (`ptr<…>` parameters on `.qr` helpers refuse at `Q026`) and return `unit`, a scalar, or an imported record by value. If `effects` is omitted on a helper, its effect row is inferred; if written, it must cover the body (`Q029`). Helpers are checked per call site over copied values, with an **acyclic call graph of depth at most 16**; unreachable/uncalled helpers refuse (`Q026`), and helper calls may **not** write `succeeds` (`Q025`). Helpers emit as `static RESULT qr_fn_NAME(…)`.
 
-```ebnf
-module    = { import }, { error_decl | entry } ;
-import    = "import", ( "std.fmt" | "std.io" | "std.logger" ), ";" ;
-entry     = "fn", NAME, "(", ")", "->", "unit",
-            [ "effects", "{", EFFECT, { ",", EFFECT }, "}" ],
-            "{", { stmt }, "}" ;
-stmt      = "let", NAME, "=", [ "-" ], INTEGER, ";"
-          | "print", RENDERING, OPERAND, ";"
-          | "log", LEVEL, RENDERING, OPERAND, ";"
-          | "log_level", LEVEL, ";"
-          | "flush", ";"
-          | "return", ";" ;
-RENDERING = "dec" | "hex" ;
-LEVEL     = "trace" | "debug" | "info" | "warn" | "error" | "fatal" ;
-OPERAND   = [ "-" ], INTEGER | NAME | "borrow", NAME ;
-EFFECT    = "io" | "alloc" | "mut" ;
+4. **Contracted `#c_ffi` calls, generated `.qrlib` v2 linkage, and outcomes.**
+   - Any C call carrying an imported struct (by value, `ptr<const, NAME>`, or by-value struct return) is admitted **only** if its `.qv` contract declaration carries `[| quant #c_ffi |]` with matching `c"struct TAG"` spellings (`Q033` if unmarked; `[| quant #c_ffi |]` in a non-contract file also refuses at `Q033`). Unmarked custody-free scalar C contracts (`resource_borrowed` on all parameters, `resource_return_none()`) may also be called. Mutable struct pointers (`ptr<mut, NAME>`), pointer returns, and `unsafe extern fn` refuse (`Q024` / `Q034`).
+   - **Mandatory v2 `.qrlib` linkage (`Q041`, `Q047`, `Q064`–`Q067`):** Every called C function must resolve via `extern library NAME;` in the declaring `.qr` file to an entry in a **generated v2 `.qrlib` manifest** ([G02d.2.1](#g02d21-the-generated-manifest-v2)) naming the exact contract module and C signature (`Q065` if missing or v1; `Q066` if unbound; `Q041` on module/signature mismatch; `Q047` if non-total), and for any struct-carrying callee the manifest's `header_hash` must equal the SHA-256 of the header read by `struct!` (`Q064`). Every certificate must carry the linkage premise (`Q067`), surfacing `linked:NAME` in the verdict.
+   - **Declared outcomes & C emission:** C return values are unknown until declared via `succeeds LIT` (scalar/float, compared bit-for-bit on floats) or `succeeds NAME { field: LIT, … }` (struct, every listed field literal). Emitted C `#include`s the real C header without redeclaring `struct TAG`, emits `_Static_assert`s on `sizeof`, `offsetof`, and `_Generic` member types so post-check header drift fails C compilation, passes `ptr<const, NAME>` as `&r_NAME` and by-value structs as `r_NAME`, compares actual C results against `succeeds` (exiting `70` on mismatch), and refuses rendering of undetermined results (`Q043`).
+
+### Concrete Example
+
+```c
+/* pkt.h */
+#include <stdint.h>
+struct qr_pkt {
+    uint16_t magic;
+    uint16_t payload_len;
+    void *opaque_Internal; /* unlisted opaque member — zeroed on construction */
+    double weight;
+};
+uint32_t qr_pkt_score(const struct qr_pkt *p);
 ```
 
-```qcore
-#import std.fmt;
-#import std.io;
-#import std.logger;
-
-fn main() -> unit effects { io } {
-    let total = 42;
-    print dec total;            // stdout: 42
-    print hex 255;              // stdout: 0x000000FF
-    log warn dec total;         // stderr: [WARN] 42
-    flush;                      // sink handoff; writes no line
-    return;
-}
-```
-
-**The operand rule is the effect discipline.** A *bare* `OPERAND` is an integer
-literal or a name the entry bound with `let` to an integer literal. Neither form
-can denote an owned buffer, a share or a handle, so a bare rendering cannot
-consume, release, store or retain custody of anything — it is not that the
-checker refuses those uses, it is that the profile cannot express them. A name
-that is not one of the entry's integer bindings is `Q028`; a `let` bound to
-anything but an integer literal is `Q030`. The derived effect row is
-exactly `{Io}` for a program that writes and empty for one that does not; it is
-never `Alloc` and never `Mut`. The entry's declared `effects { … }` row must
-admit the derived one (`Q029`).
-
-**The borrowed render** (card `STD-FMT-BORROW`) is the one operand form that
-names a resource. `borrow NAME` renders that resource's **model identity** — the
-number the emitted C's own call trace spells `rN` — and nothing else: no byte of
-the object, no address, no extent, no descriptor, because no model a rendering
-can reach carries one. It is admitted only where a checked custody model both
-supplied the identity **and** holds it live at that statement, which
-`source.std-io.v1` never does: this route has no custody model, so every
-`borrow NAME` written on it refuses at `Q028` — structurally, for want of a
-model, rather than by a rule the route states. §G02i is where the form is
-reachable, and the liveness rule is that route's join.
-
-Card `W48-QR-SCALAR-TYPES`: the three line statements are also read, by the
-reader above, on `source.scalar-calls.v1`, where their operand is a scalar of
-any §G02t type and `dec`/`hex` render it at its own type. A module reaches that
-route only when this route's lowering refuses it and it uses scalar-call
-syntax (§G02s), so every module this route admits keeps it byte for byte.
-
-`borrow` was **already** a reserved source word (the checked mutex-guard
-profile's), so the form adds none and moves no pinned surface. The marker is
-also what keeps the pipe out: `x |> print dec` desugars to `print dec x;` with
-no marker, and a sink stage naming an extra selector word refuses at `Q036`
-(§G02h), so no pipeline can spell a borrowed render in this revision.
-
-Each module gates its own capability: `print` needs `std.io`, `log` and `flush`
-need `std.logger`, and naming a rendering needs `std.fmt`. `flush` names no
-rendering, so a logger-only file that never renders needs no `std.fmt`. A
-missing import is `Q015` naming the module.
-
-The severity is spelled `fatal`, not `error`: `error` is the reserved
-error-type declaration keyword, and this card renamed its own syntax rather than
-edit the pinned declaration surface, exactly as `work` became `effort` in G02e.
-Eight words are newly reserved — `print`, `log`, `flush`, `dec`, `hex`, `info`,
-`warn`, `fatal`. An **unreserved** word in a rendering or level position is
-collected as a referenced name and refuses at `Q013` before this route's own
-`Q030` message; the refusal is correct and fail-closed, and only the message is
-less specific.
-
-The route emits C11 and has a reference execution, compared **per stream**: the
-run's stdout against the reference's stdout projection and its stderr against
-the stderr projection. **No order between the two streams is modeled or
-claimed.** `flush` emits `fflush` and produces no line — sink handoff, not
-durability: no `fsync` is performed and no crash survival is claimed. There is
-no format-string language, no string or character value, no file or descriptor,
-and no per-record source logger filter. `log_level LEVEL;` is the separate,
-at-most-once system-trace adapter selection described by the quiet-emission
-amendment; it derives `Io`, requires `std.logger`, and does not filter
-source-authored `log` records. A `print` inside a `thread scope` or beside an
-extern call stays with the more specific route and keeps its refusal. See
-[the module record](reports/wave17-std-modules/README.md).
-
-## G02k. An owned byte buffer: `std.buffer`
-
-`source.buffer.v1` (card `STD-BUFFER`) is the whole implemented surface of the
-byte-buffer module. A file selects it by using one of its four constructs. It is
-the **source-level** tier of the two `std.buffer` tiers
-[`STD_BUFFER_V1.md`](design/STD_BUFFER_V1.md) §1 distinguishes; the
-native-library-backed tier of `NATIVE_LIBRARY_LINKAGE_V1.md` §6 is untouched by
-it and neither retires the other.
-
-```ebnf
-module    = { import }, { error_decl | entry } ;
-import    = "import",
-            ( "std.buffer" | "std.fmt" | "std.io" | "std.logger" ), ";" ;
-entry     = "fn", NAME, "(", ")", "->", "unit",
-            [ "effects", "{", EFFECT, { ",", EFFECT }, "}" ],
-            "{", { stmt }, "}" ;
-stmt      = "let", NAME, "=", [ "-" ], INTEGER, ";"
-          | "let", NAME, "=", "bytes", "(", INTEGER, ")", ";"
-          | "let", NAME, "=", "extent", "(", NAME, ")", ";"
-          | "let", NAME, "=", NAME, "[", OPERAND, "]", ";"
-          | NAME, "[", OPERAND, "]", "=", OPERAND, ";"
-          | "drop", NAME, ";"
-          | "print", RENDERING, OPERAND, ";"
-          | "log", LEVEL, RENDERING, OPERAND, ";"
-          | "flush", ";"
-          | "for", NAME, "in", "0", "..", BOUND, "{", { stmt }, "}"
-          | "let", NAME, "=", OPERAND, "as", SCALAR, ";"     (* card W48-QR-SCALAR-TYPES-R3 *)
-          | "return", ";" ;
-OPERAND   = [ "-" ], INTEGER | NAME ;
-BOUND     = INTEGER | NAME ;
-EFFECT    = "io" | "alloc" | "mut" ;
-```
-
-**The conversion row and the typed environment are card
-`W48-QR-SCALAR-TYPES-R3`'s** (§G02t, "The buffer route's typed environment"):
-every scalar name this route binds has one §G02t type, `i32` for every source
-this section lists, and every position below that takes an integer takes an
-`i32`. The conversion is not a buffer construct, so it selects no route.
-
-**The `for` row is `source.loop.v1`'s** (card `LOOP-V1`, §G07.12), admitted here
-and on no other route in v1. It is the **only** nested block this profile reads:
-every other one still refuses at `Q051`. Its own refusals carry `Q097`–`Q099`;
-its body's statements are the rows above, read by this profile's own reader.
-
-```qcore
-#import std.buffer;
-#import std.fmt;
-#import std.io;
-
-fn main() -> unit effects { io, alloc, mut } {
-    let b = bytes(8);           // acquire eight zeroed bytes; the obligation opens
-    b[0] = 65;                  // write one byte at a checked index
-    let n = extent(b);          // the declared length, as an ordinary integer
-    let first = b[0];           // read one byte
-    print dec n;                // stdout: 8
-    print dec first;            // stdout: 65
-    drop b;                     // release; the obligation closes
-    return;
-}
-```
-
-**The extent is transported.** `bytes(N)` lowers to an ownership acquisition
-whose footprint is `N` on a byte axis, so the declared length lives in the
-custody model's own ledger for the resource's whole lifetime and `extent(b)`
-reads it back out of there rather than out of a side table. This is the
-capability `ExternAssumption::NoExtentTransport` names as missing, supplied **on
-the source side only**: a declared C04 contract still cannot say how many bytes
-a callee touches, and this profile does not change that.
-
-**Custody is inherited, not reimplemented.** The lowering hands the event
-sequence to the unedited cycle-3 ownership checker, which owns every custody
-refusal at `Q054`: a leak at the normal exit, a double release, an access after
-release, a rebound live name. This profile adds only the rules about *indices*,
-because nothing in the language had ever indexed anything.
-
-**Every index, length and stored byte is a check-time constant** — an integer
-literal or a name bound to one, which includes a name bound by `extent(…)` or by
-a byte read. A non-constant operand refuses at `Q052`. The rule is load-bearing
-rather than conservative: this route's evidence is a byte comparison between a
-reference execution and a native run, and a value the reference interpreter
-cannot compute is one it cannot predict a line for. `Q053` is the bounds and
-range rule — an index outside `[0, extent)`, a stored byte outside `0..=255`, an
-extent outside `1..=4096` — decided **before emission**, so an out-of-range
-access is a refusal and not a run-time trap. `Q055` refuses a buffer at a
-position it may not cross: a rendering operand (bare or `borrow`), an index, or a
-stored byte.
-
-The derived effect row carries `Alloc` and `Mut`, where `source.std-io.v1`'s is
-exactly `{Io}` because its operand grammar admits no resource. §G02d derives
-those two as well, but from a **declared contract**'s projections — `Alloc` when
-the contract says the callee acquires — whereas here they follow from an
-acquisition and a store this profile checks and discharges itself. An
-acquisition and a release derive `Alloc`, a store derives `Mut`, a read derives
-nothing, and the declared `effects { … }` row must admit each (`Q057` — this
-profile's own code, not a reuse of §G02g's `Q029`, because §L21 forbids a second
-semantic pass reusing one and this row can carry effects `Q029` never reports).
-
-**Two words are newly reserved: `bytes` and `extent`.** The release is the
-**existing** `drop` — the operation is the ownership IR's own drop, so a new
-word would have been a synonym — and the byte accessors are the **existing** `[`
-and `]`, consumed elsewhere only in usage-interval positions (§G04) and never in
-a statement body, so `b[0] = 65;` needs no parser change at all. The acquisition
-is spelled `bytes` and **not** `buffer`: `buffer` was measured at 555
-occurrences across the source-side corpus, in *binding* position in shipped
-fixtures (`let buffer = qcore_buffer_new(1)?;` in
-`examples/threads/shared_readers.qr`), so reserving it would refuse them and
-this card renamed its own syntax instead — the `work` → `effort` (§G02e)
-precedent. The *module* keeps the name `std.buffer`.
-
-The route emits **self-contained** C11 — `calloc`, `free` and two bounds-checked
-accessors defined in the emitted file, with no extern declaration, no library
-and no boundary — and has a reference execution, compared per stream exactly as
-§G02g's is. `calloc` rather than `malloc` so a read before a write has a defined
-answer. The emitted bounds comparison and allocation check **abort**, and both
-are *witnesses*: every index is a constant the checker already proved in range,
-so the comparison is provably never taken, and if one ever fired that would be a
-defect in the checker. Every claim on this route is therefore
-**partial-correctness**: if the emitted program produces an observation at all,
-it is the reference observation; an aborting run produces none.
-
-**No string, and no crossing.** There is no text, no encoding, no literal and no
-concatenation — a byte buffer is not a string (follow-ons
-`STD-BUFFER-STRING-LITERAL`, `STD-BUFFER-RENDER`). A module that buffers *and*
-extern-calls stays with §G02d and keeps that route's refusal; one that buffers
-*and* spawns stays with the concurrent route and keeps its `Q600`; one that
-buffers and prints reaches this route, whose line statements are §G02g's own.
-See [the module record](reports/wave22-std-buffer/README.md).
-
-## G02i. Composed extern calls and rendered lines
-
-`source.std-io-extern.v1` (card `STD-IO-COMPOSE`). Selected when a module both
-calls a declared `extern fn` (§G02d) and writes one of the standard-IO
-statements (§G02g) — the conjunction of those two routes' own selectors, and
-nothing else.
-
-```ebnf
-composed_module = "import", "std.extern", ";",
-                  { "import", STD_IO_MODULE, ";" },
-                  { error_decl | extern_decl | entry } ;
-composed_stmt   = extern_stmt | io_stmt ;   (* §G02d and §G02g, verbatim *)
-```
-
-**This route adds no statement.** Every statement of a composed entry is lowered
-by one of the two existing lowerings, unedited, chosen by the statement head
-alone: `print`, `log` and `flush` are the standard-IO model's, `return;` is the
-single return *both* models require, and everything else is the extern model's.
-Each lowering runs with the other's statements skipped, so neither ever sees a
-statement it does not model and neither refusal surface moves. A module using
-one feature set is not composed and keeps that route byte for byte.
-
-Route selection places this composition **after every concurrent route and
-before both routes it composes**. A module that prints and spawns, or
-extern-calls and spawns, therefore keeps its concurrent route's existing
-refusal: this card composes two *sequential* models and no other pair.
-
-What the composition decides, and all it decides, is **which value a rendering
-reads**. The extern model owns the value namespace, so the operand names of
-`print`/`log` resolve against its bindings — a bound scalar, never a resource
-identity, which has no operand form at all (§G02g's effect discipline is
-structural and is unchanged here). The operand must be bound by an earlier
-composed step, must be of a §G02t type (card `W48-QR-SCALAR-TYPES-R3`; before
-it, the one ABI width `int32_t` the two renderings were total on), and
-must be a value whose number the source **determined**: a `scalar_literal`, or a
-`scalar_binding` carrying its declared `succeeds INTEGER` outcome. A bound call
-result with no declared outcome is refused at `Q043`, because rendering it would
-publish a line no model computed.
-
-Card `STD-FMT-BORROW` adds one rule to that join and no code: a `borrow NAME`
-operand resolves against the extern model's **custody** namespace — never its
-value namespace — and is admitted only where that model's own published ledger
-holds the identity live at the rendering's composed step. An identity never
-established (including one whose acquisition took its declared null arm), or one
-that departed by consumption, release, storage or reallocation before the
-rendering, is refused at `Q043` rather than rendered. The rendering opens no
-obligation and discharges none: the composed ledger is still exactly the extern
-projection's, and the identity is as live after the line as before it. A
-rendering is not a *publication* in §L21's constraint-10 sense — the destination
-is a byte stream rather than an object of the custody graph, the bytes carry a
-copy of the identity number rather than the address, and no model operation
-reads a stream back — so no second reachable path to the resource exists. The
-emitted program reads nothing out of the object: the identity is a number the
-checker determined, and what the borrow buys is the checked precondition, not a
-run-time read.
-
-The composed program's derived effect row is the **union** of the two models'
-rows and must be admitted by the one row the entry declares. Its observation is
-per stream: standard output carries this route's `print` lines *and* the extern
-route's synthesized call trace, in one real order on that one stream, and no
-order between stdout and stderr is modeled — the boundary §G02g already stated.
-
-## G02j. Composed scoped tasks and rendered lines
-
-`source.std-io-tasks.v1` (card `COMPOSE-CONCURRENCY`) is selected for a module
-that uses **both** the scoped-task forms (§G02c) and the line-producing
-statements (§G02g), and that uses no extern call — the conjunction
-`has_source_tasks ∧ has_source_std_io ∧ ¬has_source_extern`, and nothing else.
-It is selected **after** the composed-epoch, epoch and mutex routes and
-**before** the task route it composes, so every other concurrency exclusion is
-unchanged: a module with an epoch scope or a mutex generation keeps that model's
-refusal, a module that extern-calls and spawns keeps the task route's `Q600`,
-and a module using one of the two composed feature sets falls through to that
-route byte for byte.
-
-The grammar adds **no statement and no reserved word**. The three line-producing
-statements are §G02g's, read by that route's own parser; the scoped-task forms
-are §G02c's, lowered by that route's own lowering. One thing is widened: a task
-function's `effects { … }` row admits `io`, and *only* on this route — off it,
-`io` is still the unsupported task effect that refuses at `Q020`. The entry must
-declare it whenever the composed program writes at all, and since card
-`OBS-REORDERING` a **worker** that writes must declare it in its own row too.
-
-```ebnf
-task_stmt   = ... | io_stmt ;          (* §G02c plus §G02g's three, verbatim *)
-task_effect = "alloc" | "spawn" | "join" | "may_block"
-            | "throws", "<", NAME, ">"
-            | "io" ;                   (* this route only *)
-```
-
-**Placement.** A line stands in the **parent's** body, or — since card
-`OBS-REORDERING` — in the body of a function this entry spawns as a worker.
-
-In the parent it may stand anywhere: before any `spawn`, between two `join`s,
-inside a `match` arm on the creation or allocation outcome, or after every join.
-The reason is a measurement of the emitted runtime rather than a convention:
-every *trace* write an emitted task program performs is performed by the
-parent's thread, because a worker's trace events are appended to that worker's
-private array and replayed by the parent at the join. So a parent line's
-position relative to every trace line is determined, and such a program's
-streams are compared **byte for byte**.
-
-In a **worker** it is performed by that worker's own thread, concurrently with
-the parent's writes and with its siblings'. Card `COMPOSE-CONCURRENCY` refused
-that and named its own repair — the comparison-up-to-an-admitted-reordering
-capability — and card `OBS-REORDERING` landed it
-(`qcore.obs-reordering.v1`, `docs/design/OBS_REORDERING_V1.md`). A worker line
-is admitted, and placing one is what **declares** the relation: that program's
-streams are compared window by window and emitter by emitter, where a window
-boundary is a point of the run at which no worker is live and an emitter is the
-thread that wrote the bytes. Two extra conditions come with it, both `Q050`:
-
-* the worker's **own** `effects { … }` row must admit `io` — the effect
-  discipline is per function, and a worker body is a function body;
-* a line in a function that is neither the entry nor a spawned worker is refused
-  outright: nothing in this profile makes such a function run, so its line has
-  no thread to attribute it to.
-
-A program that places **no** worker line declares nothing, and its comparison is
-unchanged: a relation whose windows each have one emitter admits exactly one
-stream, its own. All four published `examples/threads` programs are of that
-kind.
-
-**Operands.** A rendering operand is an integer literal or a name the *task*
-model bound to an `i32` — since card `W48-QR-SCALAR-TYPES-R4`, to a value of
-any §G02t type, rendered at its type (§G02t; `bool` has no `hex`, `Q050`):
-
-```ebnf
-OPERAND     = [ "-" ], INTEGER | NAME     (* no `borrow NAME` on this route *)
-            | NAME, path ;                (* a scalar field of a record, W48-QR-TASK-RECORD-CAPTURES *)
-```
-
-Card `W48-QR-TASK-RECORD-CAPTURES` adds the field operand: `print dec r.f;` or
-`log LEVEL dec r.f;` renders a **scalar** field of a record the function holds
-at the field's type, in the parent or in a worker, read out of the field's
-leaf slot; a sub-record, an owned field and a whole record refuse (`Q050`).
-The operand is read by this route alone, so every other route's §G02g grammar
-is unchanged.
-
-Unlike §G02g's own `let`-bound literals and §G02i's declared outcomes, the number
-is **computed by the task model** at the rendering's own step — the value a
-`qcore_buffer_read` read out of a live buffer, or the outcome a `join`
-collected — so the reference execution reads it out of the slot the task model
-wrote. Whether the name may be read at that position is decided by
-`check_task_module`, over an ordinary copy of the scalar inserted at exactly that
-position; the composition states no liveness rule of its own. A name denoting an
-owned Buffer, a read loan or a task handle is refused, and `borrow NAME` is
-refused on this route entirely (§G02i is where a borrowed render is admitted,
-over a model that publishes a ledger the join can read).
-
-The composed observation is per stream, exactly as elsewhere: standard output
-carries this route's `print` lines *and* the synthesized task trace, on that one
-stream, and no order between stdout and stderr is modeled. That stream's order
-is one real order when every line on it is the parent's — which it is unless a
-worker `print`s — and otherwise is the declared reordering relation's.
-Removing this route's own lines from standard output leaves exactly the task
-route's rendering of the same module, which is checked over the four published
-`examples/threads` programs and proved in general as
-`QCore.ComposedTasks.erasing_the_source_lines_leaves_the_task_trace`.
-
-## G02h. The pipe operator, and the operator token family
-
-`source.pipe.v1` (card `PIPE-OPERATOR`) is a **parse-time desugaring, not a
-profile**: a file does not select it, and no route knows it exists. A
-well-formed pipeline is rewritten into the tokens of the statement a reader
-would have written without it, before the delimiter map is built and before any
-parsing, so name resolution, custody, effects, linearity, concurrency,
-whole-program checking, reference execution and C emission all see an ordinary
-statement. A piped program and its hand-written twin are `syntax_equivalent`
-and emit byte-identical C11.
-
-```ebnf
-stmt       = [ "let", NAME, "=" ], OPERAND, ( "|>", STAGE )+, ";" ;
-OPERAND    = token, { token } ;            (* verbatim: `x`, `-7`, `move b` *)
-STAGE      = [ "move" ], STAGE_BODY ;
-STAGE_BODY = "print", [ RENDERING ]        (* a G02g sink; no selector renders text *)
-           | "log", LEVEL, [ RENDERING ]   (* a G02g sink; no selector renders text *)
-           | "drop"                        (* the ownership IR's own release *)
-           | NAME, [ "(", [ arg, { ",", arg } ], ")" ], [ ADAPTER ] ;  (* a G02d call *)
-ADAPTER    = "succeeds", BOOL, "else", { disposition }, "raise", NAME ;
-```
-
-| Written | Desugars to |
-|---|---|
-| `total \|> print dec;` | `print dec total;` |
-| `total \|> log fatal dec;` | `log fatal dec total;` |
-| `s \|> print;` | `print s;` (card `STRING-SLICE-IO`) |
-| `s[0:4] \|> log info;` | `log info s[0:4];` (card `STRING-SLICE-IO`) |
-| `b \|> drop;` | `drop b;` |
-| `x \|> f;` and `x \|> f();` | `f(x);` |
-| `b \|> f(7);` | `f(b, 7);` |
-| `move b \|> release;` | `release(move b);` |
-| `8 \|> alloc succeeds true else raise E \|> move free;` | `let ⟨t⟩ = alloc(8) succeeds true else raise E;` then `free(move ⟨t⟩);` |
-| `let r = x \|> f succeeds true else raise E;` | `let r = f(x) succeeds true else raise E;` |
-
-**A chain is a statement sequence** (card `PIPE-CHAIN`). A pipeline of `n`
-stages desugars to `n` statements: each non-final stage binds its result to a
-hygienic temporary the next stage receives, and the final stage keeps the
-statement form the reader wrote around the whole pipeline. Custody flows through
-the temporaries under the unedited checkers — by the time any of them runs a
-temporary is an ordinary binding — so a chain that drops a live result refuses
-at the pre-existing `Q202`, and a value consumed mid-chain cannot be used after
-the pipeline.
-
-**"Produces a value" is decided by stage kind**, syntactically and with no
-contract knowledge in the desugaring: a call stage produces a value, and a
-statement stage (`print`, `log`, `drop`) or an operandless statement (`flush`)
-does not. Card
-`PIPE-CHAIN` decided it by the presence of `succeeds`, because the acquisition
-adapter was then the only `let`-with-call the language admitted; card
-`PIPE-SCALAR-RESULT` adds the other one — a non-acquiring call's scalar result
-(§G02d) — so the keyword no longer separates the two. Whether a particular
-callee's declared result is bindable is the **route's** question, answered from
-the declaration and reported at that stage's own span: a `unit`-returning callee
-in a non-final position still refuses, at `Q024` naming its result rather than
-at `Q037` naming the pipe. This is what makes `x |> render |> scale`
-expressible, which card `PIPE-CHAIN` measured as the first of the two boundaries
-under the brief's `value |> render |> log`; the second, a module that both calls
-an extern function and prints, is unchanged and remains `STD-IO-COMPOSE`.
-
-**A model intrinsic is a call stage** (card `PIPE-INTRINSIC-STAGE`). Card
-`COMPOSE-CONCURRENCY` filed the brief's literal `buffer |> read |> render |> log`
-as needing "a pipeline stage for a task intrinsic, which is a pipe-grammar
-change". It is not, and the census is the reason: the source language's model
-intrinsics fall into two shapes, and this grammar already decides both.
-
-| Shape | Intrinsics | Where | As a stage |
-|---|---|---|---|
-| **call-shaped**, `NAME(ARGS)` | `qcore_buffer_new`, `qcore_buffer_read`, `qcore_buffer_write`, `qcore_error_payload` | §G02b task routes and every route that composes them (`ComposedStdIoTasksV1`, `ComposedEpochTasksV1`) | **admitted** by the `NAME [ "(" … ")" ] [ ADAPTER ]` alternative above, with no table entry of its own |
-| **call-shaped**, `NAME(ARGS)` | `qcore_acquire`, `qcore_check` | the sequential route | **admitted**, likewise |
-| **keyword-shaped** | `spawn S W(ARGS)?`, `join move H?`, `share N`, `read N`, `write N`, `grow`, `open`, `close`, `bound`, `overhead` | their own routes | **refused**: their operands are not a parenthesized argument list, so no call stage produces them, and the closed statement table does not name them |
-| **keyword-shaped** | `drop N` | every route with custody | **admitted** by the `"drop"` alternative above (card `PIPE-DROP-STAGE`), and it is the only keyword-shaped head that is |
-
-So `buffer |> qcore_buffer_read |> log info dec;` is the statement sequence
-`let ⟨t0⟩ = qcore_buffer_read(buffer); log info dec ⟨t0⟩;` under the ordinary
-chain rule, emitting byte-identical C against that hand-written pair. An
-intrinsic whose result the surrounding statement discards, or whose result the
-next stage's route cannot bind, refuses at **that route's** own code and span —
-`qcore_buffer_write` returns `unit` and refuses mid-chain at `Q050`, not at
-`Q037` — which is the rule §G02d already states for a `unit`-returning callee.
-A chain whose intermediate stage *allocates* binds an owned resource to a
-temporary no reader can name; unless the chain **ends in a release** it leaks and
-refuses at the route's pre-existing leak diagnostic.
-
-**One keyword-shaped head is a stage: the release** (card `PIPE-DROP-STAGE`).
-`drop` names the statement table's third entry and its only *releasing* one, so
-`b |> drop;` is `drop b;` and `7 |> qcore_buffer_new? |> drop;` is the pair
-`let ⟨t0⟩ = qcore_buffer_new(7)?; drop ⟨t0⟩;` — the allocating chain above,
-spellable end to end, with the pipeline releasing the temporary it invented. A
-releasing entry emits by the same rule as a rendering one and binds no result by
-the same rule, so it is **last-stage-only** without a rule of its own: a released
-value cannot feed a later stage because there is no value to feed (`Q037`), and a
-bound pipeline cannot end in one (`Q036`). What a *later statement* does with a
-released binding is the checker's unchanged business — `b |> drop; b |> drop;` is
-the ordinary double release. Every other keyword-shaped head keeps the refusal it
-had, on a criterion stated in `crates/qcore-frontend/src/pipe.rs`'s stage table:
-an entry earns its place only when the statement form is `HEAD SELECTOR* OPERAND`
-with closed selectors **and** some stage can feed it a value no reader can name.
-
-Card `STRING-SLICE-IO` made each entry's selector count an **inclusive range**
-rather than a number — `print` takes 0 or 1, `log` takes 1 or 2 — because a
-rendered string names no `std.fmt` rendering (§G07.9). The pipe decides nothing
-about which arity a route admits: it emits the head, the selector words the
-reader wrote and then the operand, and the route's own reader refuses a shape it
-does not model at its own code and span. `x |> print;` on `source.std-io.v1`
-therefore refuses at `Q030` naming the missing `dec`/`hex` rather than at `Q036`
-naming the pipe — a refusal moved from the pipe to the route, never an
-acceptance, and every pipeline this table accepted before that card desugars to
-the same tokens because every one of them wrote the maximum.
-
-The same card makes "no later pass can tell a pipe was written" true of **every**
-route. The sequential route recovered each statement's tokens by re-lexing its
-source bytes rather than reading the program's own post-desugaring stream, which
-for a pipeline recovers the pipeline: the operand sits left of the callee in the
-bytes and right of it in the statement, so that route's own `qcore_acquire`
-reader saw the operand where it wanted the callee name. Reading the parsed
-stream is identical on every pipe-free file — it is the lex of that same source —
-and it is what admits the two sequential intrinsics above.
-
-**Two spellings name the value a previous stage produced**, because a hygienic
-temporary has no name a reader could write: `|> move STAGE` consumes it,
-mirroring `move OPERAND |> STAGE` for the first stage (where `move` on the stage
-is refused, one spelling per meaning); and a bare `move` inside a stage's adapter
-tail names it, so an acquisition's error arm can dispose of the value piped into
-it. Without the second, `Q025` would cap a chain at one acquisition.
-
-**Hygiene is enforced by refusal.** Temporaries are named `qcore__pipeN`; a file
-that needs them and also writes that prefix is refused at `Q036` rather than
-silently α-renamed, so no diagnostic can name a binding the reader did not
-write. A file whose pipelines are all single-stage generates none and is
-untouched.
-
-**Insertion is at the stage's first operand position** — Elixir-style
-first-argument insertion, chosen because QCore is subject-first and has no
-currying, so there is no partial application for a last-argument rule to
-compose with. For a parenthesized call that position is immediately after `(`,
-before any argument already written. For a statement stage the head and its
-closed selector words are not arguments, so the operand follows them; both v1
-statement stages take exactly one operand, so "first operand position" and
-"append" coincide and no selector-arity table is needed.
-
-**Attribution.** Every token the reader wrote keeps its own span, unmoved, so a
-refusal inside a desugared statement points at the bytes that were typed: an
-operand fault at the operand, a stage fault at *that stage*. Only `let`, `=`,
-`;`, `(`, `)`, `,` and the temporaries are synthesized, each anchored zero-width
-at the `|>` it came from — at that pipe's start for the first stage and at its
-end for a later one, which is what keeps consecutive statements' byte spans
-strictly disjoint where a `|>` abuts its neighbours, since a statement's
-synthesized terminator sits at the next pipe's start and `|>` is two bytes wide.
-The one exception is recorded rather than hidden: in a **multi-stage** bound
-pipeline the `let NAME =` the reader wrote sits to the left of every stage, so
-keeping its spans would make the last statement's span swallow the ones before
-it; the binder is re-anchored at the final `|>` with the reader's own name
-preserved. A one-stage bound pipeline keeps its binder tokens where they were.
-
-**Refusals.** `Q036` a pipeline shape this profile does not model — an empty
-side, a stage that is not a name, a sink stage of the wrong selector arity, an
-unbalanced call stage, a malformed or value-less `let NAME =` binder, an
-assignment pipeline (follow-on `PIPE-ASSIGN`), `move` on the first stage, a bare
-`move` whose incoming value is not a binding, or a file that needs pipeline
-temporaries and writes the `qcore__pipe` prefix itself; `Q037` a stage that
-cannot receive the operand — `flush`, which takes none, or a **sink** in a
-non-final position, since only a call stage binds a result;
-`Q038` an operator token used where this revision gives it no meaning — one of
-the five operator spellings `|`, `&`, `^`, `||`, `&&` **outside an `if`
-condition** (see the table below). Card `BITWISE-CONDITIONS` gave the three
-single-byte spellings a meaning in that one position, so the gate is now
-positional for all five and no longer holds any of them as a pure reservation.
-Dropping the `;` of the last statement in a body is a parse failure (`Q000`)
-before the pipe pass runs.
-
-### The operator token family
-
-Two-byte spellings are tried before every one-byte spelling, so tokenization is
-longest-match at a fixed width of two. The vertical-bar-family spellings are
-pairwise distinct byte pairs (or a single byte), so their order in the table is
-immaterial and the resolution is decided by width alone.
-
-| Spelling | Token | Status |
-|---|---|---|
-| `[\|` / `\|]` | `QuantOpen` / `QuantClose` | **unchanged** — the G04 quant-index delimiter alias |
-| `\|>` | `PipeInto` | **landed** — desugared away before parsing (§G02h above) |
-| `\|\|` | `PipePipe` | **logical or** — one token; admitted in an `if` condition and lowered there (§G02i) |
-| `&&` | `AndAnd` | **logical and** — same, binding **tighter** than `\|\|` |
-| `\|` | `Pipe` | **bitwise or** — admitted only as a parenthesized comparison operand in an `if` condition (§G02i); `Q038` elsewhere |
-| `&` | `Ampersand` | **bitwise and** — same position, binding **tighter** than `^` |
-| `^` | `Caret` | **bitwise xor** — same position, between `&` and `\|` |
-
-**This table supersedes card `PIPE-OPERATOR`'s, by explicit user direction**
-(card `OR-AND-LOWERING`). That card had decided the single `|` was logical or
-and `&&` logical and, with `&` held for binary use and `||` refused as a
-misspelling of `|`. The retable inverts the or half: **both** logical operators
-are double-character and short-circuit, and **all three** single characters are
-freed for a future bitwise wave. That also answers the open note wave 18 left —
-bitwise or had no spelling left — by giving it `|` back.
-
-`[|` is matched at the `[`, so `[|>` is always `[|` then `>` and never `[` then
-`|>`, and `[||]` is the two quant delimiters and never an or-operator. `|>` wins
-over `||` and over `|`, so the ambiguity wave 18 recorded (`a |> b` against a
-hypothetical `a | > b`) was inherited by **`BITWISE-CONDITIONS`**, which
-measured it and recorded the answer: `|| >` is unambiguous, and a bitwise `|`
-adjacent to a `>` must be spaced — but the adjacency can never produce a wrong
-*acceptance*, only a refusal, because `>` has no left operand inside an integer
-expression. `(1 | 2) > 0` is the spaced spelling and it parses; `1 |> 2` is a
-pipeline in a condition and refuses at `Q045`.
-`|||` is `||` then the reserved `|`; `&&&` is `&&` then the reserved `&`.
-
-**Two deliberate pin updates, neither changing any program's verdict.** A bare
-`|` was a lex error before card `PIPE-OPERATOR` and a `Q038` refusal after it; it
-stays a `Q038` refusal outside a condition, with the message naming the position
-it *is* admitted in rather than claiming the token. A bare `^` was a lex error
-(`unexpected character '^'`) and became a token whose occurrences refuse at
-`Q038` — the same move one card later, for the same reason: an actionable
-message. A bare `&` refused downstream in whichever route claimed the module and
-now refuses at the gate. In all three cases the retable itself left the set of
-accepted programs unchanged and moved only the layer and the message; card
-`BITWISE-CONDITIONS` then *widened* the set, in one position and by one
-grammar production each (§G02i). The census behind the retable
-is in [the card record](reports/wave19-or-and-lowering/README.md): `[|`, `|]`,
-`||`, `&` outside comments and `^` appear in **no** `.qcore` file at all, and
-`|>` only in the four pipe fixtures.
-
-## G02i. The source branching construct
-
-```ebnf
-stmt     = "if", "(", cond, ")", block, [ "else", ( block | stmt ) ] ;
-cond     = conj, { "||", conj } ;                 (* 1, left-associative  *)
-conj     = neg,  { "&&", neg  } ;                 (* 2, left-associative  *)
-neg      = "!", neg | cmp ;                       (* 3, right-associative *)
-cmp      = int, [ op, int ] ;                     (* 4, non-associative   *)
-int      = xor, { "|", xor } ;                    (* 5, left-associative  *)
-xor      = and, { "^", and } ;                    (* 6, left-associative  *)
-and      = atom, { "&", atom } ;                  (* 7, left-associative  *)
-atom     = "(", cond, ")" | "true" | "false"
-         | [ "-" ], INTEGER | NAME ;
-op       = "==" | "!=" | "<" | "<=" | ">" | ">=" ;
-```
-
-The grammar is **two-sorted**: levels 1–4 produce a *condition* and levels 5–7
-an *integer*, `atom` produces either, and one parser reads both — so a sort
-mismatch is a refusal rather than a second parse. There is no coercion in either
-direction: `if (mask & 4)` and `if (true | false)` are both refused (`Q045`).
-
-`source.branch.v1` (card `IF-STATEMENT`), on the **sequential route only**. The
-statement shape is the one the parser has always accepted; what the card added
-is that the condition's bytes are now *recorded* rather than discarded, so a
-semantic pass can read them. `else if` flattens into one statement with one
-condition per header, and lowers to a right-nested branch. Nesting an `if`
-inside an arm is admitted — it is the shape a short-circuit lowering needs.
-
-**No new reserved word and no new token.** `if`, `else`, `true` and `false` were
-already reserved source words, and `==`, `!=`, `<=`, `>=`, `<` and `>` were
-already single tokens. The census across all 369 `.qcore`/`.qc` files (317 of
-them source-side, where wave 18 counted 294) found `if`
-as a word in four files — three of them `//` comment text quoting C inside
-`providers/quirin-provider-fluent-bit/contracts/fluent_bit/`, and one an archived probe the standing gate does
-not replay — and `else` in sixteen, every one of them the extern adapter's
-`succeeds BOOL else … raise ERROR` tail, which is a `;`-terminated statement and
-never follows a `}`.
-
-**The condition is decidable at check time**, exactly as the `succeeds` and
-`passes` literal outcome controls beside it are, because the translation
-certificate compares one reference observation, one CFG observation and one
-observation parsed from the compiled program's own output. Every leaf is closed
-over literals, so evaluation stays state-free however the leaves are combined.
-
-**The connectives (card `OR-AND-LOWERING`).** Card `IF-STATEMENT` shipped the
-tier with one leaf and no connectives, naming the successor card that would add
-them. `||` and `&&` are now admitted **in a condition and nowhere else**, and
-they are a pure desugaring onto this construct:
-
-```text
-if (A || B) T else E   ==>   if (A) { T } else if (B) { T } else { E }
-if (A && B) T else E   ==>   if (A) { if (B) { T } else { E } } else { E }
-```
-
-The arms are lowered **once** and their operation vectors duplicated into nested
-branches, so a connective adds no statement, no acquisition and no checker rule;
-`qcore_core` is byte-unchanged by the card, and the emitted C is byte-identical
-to the hand-lowered twin's. Short-circuit is structural rather than asserted —
-the right operand is the condition of a branch nested inside an arm of the left
-operand's — though it is not *observable*, because every leaf is a pure literal
-comparison; `IF-RUNTIME-CONDITION` is what would make it so. Every connective
-level runs the same four-model custody join, so a connective cannot launder a
-`Q046` disagreement: `if (A || B) { drop a; }` is the conditional leak exactly as
-`if (A) { drop a; }` is.
-
-**The negation and the integer tier (card `BITWISE-CONDITIONS`).** Unary `!` is
-eliminated by an **arm swap**: `if (!C) { A } else { B }` is the branch a reader
-writes as `if (C) { B } else { A }`, so `!!A` is literally `A`'s own lowering,
-the emitted C is byte-identical to the hand-swapped twin's, and no checked model
-sees a negation. The three bitwise operators `|`, `^` and `&` are admitted in
-**one** position — a parenthesized comparison operand — over signed 32-bit
-literals and names bound to one. A `NAME` atom is a **check-time constant
-binding**, `let NAME [: i32] = INTEGER;`, admitted at the top level of a sequential
-entry body and substituted for its value here; a name that denotes a resource
-identity is refused, so no custody-bearing value gains a position in this tier.
-
-**Precedence is declared, and the rule for declaring it is stated once: a
-precedence is declared only where it agrees with C, and where this tier's two
-sorts would force a different ranking than C's, the unparenthesized spelling is
-refused rather than silently redefined.** Levels 1, 2, 5, 6 and 7 are C's own
-order and are declared: `&&` tighter than `||`, `&` tighter than `^` tighter
-than `|`, all left-associative, parentheses group. Levels 3 and 4 are not — C
-ranks `!` tighter and `|`/`^`/`&` looser than the comparisons, while a tier in
-which a comparison yields a condition and a condition is never an integer
-operand must rank them the other way — so `!A < B` and `A | B == C` are
-**refused** (`Q045`) and `!(A < B)` and `(A | B) == C` are the spellings. A
-comparison is non-associative, so `1 < 2 < 3` is refused too.
-
-Two measured consequences are recorded rather than designed. For a *homogeneous*
-chain the lowering is associative on the nose — `(A || B) || C` and
-`A || (B || C)` emit identical C, and so do the two groupings of `1 | 2 | 4` —
-so each associativity declaration is load-bearing only where operators of
-different levels mix. And a negation over two *identical* arms is unobservable,
-for the same reason a swap of equals is: `!` is load-bearing exactly when the
-arms differ.
-
-`|>` is **not** in the tier and is never given a precedence relative to anything
-in it: a condition mixing them is refused at `Q045`.
-
-**The branch is nonetheless real.** Both arms are validated in full, both are
-emitted as basic blocks, and the emitted C computes the comparison itself —
-`if (INT32_C(3) < INT32_C(5)) { goto …; } else { goto …; }` — rather than
-receiving the decided literal, so the reference evaluator and a C compiler are
-cross-checked by the translation-validation triangle and by a sanitized native
-run. Only the *observation* is single-valued; follow-on `IF-RUNTIME-CONDITION`.
-
-**The custody join is agreement between the arms that survive it, never
-widening.** Both arms are validated from the same incoming state, and an arm
-that **returns** discharged its obligations at its own exit and does not reach
-the join at all (card `IF-ARMS`); the join compares the arms that fall through,
-and where there are two of them it admits only equal ordered live lists and equal
-transferred sets. **Four** models check that agreement — the cleanup lowering,
-ownership (`OwnershipOp::Branch`), typed errors (`ErrorOp::Branch`) and resource
-flow (`Flow::join_branches`) — and a fifth, usage (`UsageExpr::Branch`), joins
-the arms' *demands*. Only `SourceOp::Branch`, in the cleanup lowering, is new:
-the other four were all already shipped, each with its own mismatch error.
-
-### The arm statement subset
-
-| Arm statement | Admitted | Ground |
-|---|---|---|
-| `qcore_check(BOOL, Error);` | yes | custody-neutral |
-| `drop NAME;` / `move NAME;` | yes | the join's own subject |
-| a nested `if` | yes | the shape `\|\|`/`&&` lower onto |
-| an empty arm; `if` with no `else` | yes | the missing arm is the empty arm |
-| `return …;` | **yes** (card `IF-ARMS`) | an exit from an arm carries exactly the obligations the sequential route imposes at any exit, so the returning arm discharges at its own exit and leaves the join |
-| a zero-argument call `f();` | **yes** (card `IF-ARMS`) | a source call emits no C at all in this subset; it composes the callee's summary flow into the caller's, and a *conditional* call is admitted only when that composition is the identity |
-| `let NAME = …;` | no — `Q044` | an arm-local binding has no position after the join |
-| `let n = qcore_acquire(…);` | no — `Q103` | two arms leave different resource-identity ledgers; `IF-ARM-ACQUIRE` |
-| `while`, `match`, `defer`, `raise`, … | no | each keeps its own code; `while` inside an arm is still `Q500` |
-
-**The continuation moves with the exit.** Four of the five models cannot express
-"this arm exited", so the driver does not hand them a one-sided join: the
-statements written *after* a branch one arm of which returns are lowered inside
-the arm that survives to reach them, which is where they run. The rewrite is a
-**move**, never a duplication — the continuation is lowered exactly once — so the
-shape that would need it in two arms (an early return in one arm of a nested
-branch whose sibling also falls through) is refused rather than served by
-duplicating acquisitions, calls and demands.
-
-**Refusals.** `Q044` a shape this profile does not model — inconsistent block and
-condition counts; a `let` inside an arm; a branch with one returning arm and no continuation for the
-survivor to reach, or one whose continuation still reaches no `return`
-(`IF-ARM-RETURN-NESTED`); statements after a branch every arm of which returns;
-or a conditional call whose callee's summary flow is not neutral
-(`IF-ARM-CALL-FLOW`). `Q045` a
-condition outside the tier — a chained comparison, an arithmetic expression, a
-shift, a complement, a pipeline, an empty condition, an unbalanced parenthesis,
-a connective missing an operand, an integer where a condition is required or a
-condition where an integer is required, an **ungrouped** bitwise comparison
-operand or `!` operand, a name bound to a resource identity, or a non-integer
-operand.
-`Q046` two surviving arms do not reach the join in the same custody state.
-`Q202` an arm exit with an owned resource still live — the same condition, and
-the same code, as the program's own exit, reported at the exit that leaks. A name
-written in a condition that is bound to nothing is collected as a referenced
-name and refuses earlier at `Q013`. An operator token written **outside** a
-condition refuses at `Q038` before the tier is consulted — all five of `|`,
-`&`, `^`, `||` and `&&`. An acquisition
-inside an arm — or in a continuation hoisted into one — is refused by the
-pre-existing ownership join at `Q103`, inherited unedited and only re-attributed
-(`IF-ARM-ACQUIRE`). Every other route keeps its own refusal, measured: `Q030` on
-`source.std-io.v1`, the extern route's nested-block refusal on
-`source.extern-call.v1`, and `Q500` on the copy-scalar task profile — and neither
-a connective in the condition nor a widened arm statement changes which refusal
-answers. See
-[the branch record](reports/wave19-if-statement/README.md),
-[the connective record](reports/wave19-or-and-lowering/README.md),
-[the integer-tier record](reports/wave20-bitwise-conditions/README.md),
-[the arm record](reports/wave20-if-arms/README.md) and
-[the design note](design/SOURCE_BRANCH_V1.md).
-
-## G02k. The checked event surface
-
-Card `STD-EVENT`. Design record: [`design/STD_EVENT_V1.md`](design/STD_EVENT_V1.md).
-Example page: [`../examples/events/README.md`](../examples/events/README.md).
-
-```ebnf
-module    = { import }, entry ;
-import    = "import", ( "std.event" | "std.logger" | "std.io" | "std.fmt" ), ";" ;
-entry     = "fn", NAME, "(", ")", "->", "i32",
-            [ "effects", "{", effect, { ",", effect }, "}" ], "{", { stmt }, "}" ;
-stmt      = "event", "open", ";"
-          | "log_level", level, ";"
-          | "event", "close", ";"
-          | "endpoints", NAME, NAME, ";"
-          | "watch", NAME, NAME, interest, ";"
-          | "unwatch", NAME, ";"
-          | "wake", NAME, [ byte ], ";"
-          | "dispatch", "ready", NAME, ";"
-          | "let", NAME, "=", "dispatch", "ready", NAME, ";"
-          | "dispatch", "idle", ";"
-          | "close", NAME, ";"
-          | "print", rendering, operand, ";"
-          | "log", level, rendering, operand, ";"
-          | "flush", ";"
-          | "return", [ "-" ], INTEGER, ";" ;
-interest  = "read" | "write" ;
-byte      = INTEGER (* 0 through 255, refused rather than truncated *) ;
-rendering = "dec" | "hex" ;
-operand   = INTEGER | NAME ;
-level     = "trace" | "debug" | "info" | "warn" | "error" | "fatal" ;
-effect    = "io" | "alloc" | "mut" ;
-```
-
-**The value vocabulary is exactly one form** (card `COMPOSE-EVENT-LINES`).
-Until that card this grammar had no `let` and no scalar operand at all: every
-name it resolved denoted an endpoint or a registration, a custody name. It now
-has `let NAME = dispatch ready E;` and nothing else — the byte that turn's
-callback drained off the endpoint, which is the byte this program's own `wake`
-delivered. A custody name is still not an operand: rendering one refuses at
-`Q074`, and `borrow NAME` refuses there too, because this route publishes no
-live custody identity for a render (`STD-FMT-DESCRIPTOR`). The derived effect
-row is still exactly `{Io}`, and `Alloc` and `Mut` are still unreachable — now
-because the one value form binds a byte rather than because there is no value
-form.
-
-The line-producing statements are `source.std-io.v1`'s own, read by that route's
-own reader and rendered by that route's own emitter, on the `source.buffer.v1`
-precedent; each is gated by its own module (`print` by `std.io`, `log` and
-`flush` by `std.logger`, a rendering by `std.fmt`) exactly as it is there. Every
-line in `examples/events` is spelled as a `|>` pipeline — `value |> log info dec;`
-— which desugars to the statement form and emits the same C byte for byte, so
-that is a rule about how the examples read rather than a restriction on the
-route.
-
-The original eight reserved words are `event`, `endpoints`, `watch`, `unwatch`,
-`wake`, `dispatch`, `ready`, and `idle`; the quiet-emission amendment adds
-`log_level`; card `COMPOSE-EVENT-LINES` adds **none** — `let` is the language's
-own binding word, and `print`, `log`, `flush`, `dec`, `hex` and the six levels
-were reserved by `STD-MODULES` and by the amendment. Four existing ones are reused rather
-than respelled: `open`, `close`, `read`, `write`. The context pair is spelled
-`event open;` / `event close;` for exactly that reason. The standing constraint
-14 census over every `.qcore`/`.qc` fixture and every inline source string found
-no collision: the corpus occurrences of `event` are ghost-field names inside
-`contract { … }` clauses, never a statement head and never a binding.
-
-`log_level LEVEL;` may occur once, with or without a live event context. It
-sets the typed diagnostic sink threshold for this emitted event program. If it
-is absent the sink is null; if present, admitted event records at or above the
-level are rendered on stdout by the hosted system-trace adapter. It projects to no reactor operation and changes
-no custody or readiness judgment.
-
-**The custody half is the existing model.** Each statement projects onto
-`qcore_core::event_reactor::EventOperation`s and the projection is handed to
-that model's own checker unmodified; a refusal at `Q060` carries its `L00`–`L12`
-diagnostic verbatim. This card is what made that model reachable from source at
-all.
-
-| Statement | Projection |
-|---|---|
-| `event open;` / `event close;` | `CreateBase` / `FreeBase` |
-| `endpoints A B;` | `CreateSocketPair` (success branch) |
-| `watch E D INTEREST;` | `Assign` naming the descriptor, then `Add` — the custody edge |
-| `unwatch E;` | `Delete` then `FreeEvent`, retiring the registration's cookie |
-| `wake D;` / `wake D BYTE;` | *(none — the reactor models no byte flow; the payload is a value and never a trace record)* |
-| `let V = dispatch ready E;` | the same five operations `dispatch ready E;` projects to; the binding names the drained byte |
-| `print` / `log` / `flush` | *(none — a source line is program output, not a compiler observation)* |
-| `dispatch ready E;` | `BeginDispatch`, `Activate`, `CallbackEnter`, `CallbackExit`, `EndDispatch` |
-| `dispatch idle;` | `BeginDispatch`, `EndDispatch` |
-| `close D;` | `CloseSocket` (success branch) |
-
-**The determinism boundary is this route's own.** A certificate compares one
-observation, so v1 waits only on readiness the program itself induced with
-`wake D;`, and each turn declares what it reports — a declaration the emitted
-program verifies against what `poll(2)`/`WSAPoll` really reported, exiting
-non-zero on disagreement. A turn at which two or more registrations are ready is
-refused **by name** at `Q061`: `poll(2)` reports a set, and the callback order
-within one ready set is the implementation's rather than one the program
-induced. Every registration carries priority `0` so that a priority order is not
-smuggled in as an undeclared ordering premise. A `write` interest is accepted
-and checked and makes the module emit no C at all, on the `accept_check_only`
-precedent.
-
-Diagnostics: `Q058` shape, `Q059` an unbound custody name, `Q060` the reactor
-model's own refusal, `Q061` the determinism boundary, `Q062` the effect row,
-`Q074` the composed line and value vocabulary's own refusals (second band of the
-same pass, card `COMPOSE-EVENT-LINES`, relocated at integration from `Q065`), and `Q015` for a missing
-`#import std.event;` or a line-producing statement's own module.
-
-**The composition moves none of the five codes above.** A line erases to no
-reactor operation and no ledger transition —
-`QCore.ComposeEventLines.erasing_the_lines_leaves_the_reactor_projection` and
-`…_leaves_the_run_unchanged` — so `Q061`'s two-member refusal, the
-declared-readiness rule and the `write`-interest check-only arm answer exactly as
-they did. A program that names a drained byte carries a second named platform
-premise, `EVENT-V1-STREAM-BYTE-ORDER`, and the emitted program checks it: a byte
-that is not the one the model predicted exits non-zero rather than rendering a
-line no model computed. Both streams of an executable module are compared byte
-for byte, which is this route's own measurement — one accepted profile, one
-thread, so every record of the derived `qcore.obs-reordering.v1` relation is a
-barrier and the relation is strict.
-
-## G03. Source parameter usage grades
-
-```ebnf
-usage_annotation = "use", grade ;
-grade            = "zero" | "one" | "affine" | "relevant" | "many"
-                 | NAT
-                 | "[", NAT, ",", (NAT | "inf"), "]" ;
-```
-
-A natural grade denotes `[n,n]`. Bounds must fit `u64`; finite lower bounds must not exceed upper bounds. Named meanings are `[0,0]`, `[1,1]`, `[0,1]`, `[1,inf]` and `[0,inf]`, respectively. Symbolic grade expressions are not evaluated by this source parameter parser. The independent usage algebra has checked addition, multiplication, interval hull and containment semantics; that algebra does not broaden this surface grammar. See `frontend.rs:838–878` and `crates/qcore-core/src/usage.rs`.
-
-## G04. Closed quantitative indices
-
-```ebnf
-quant_type = "quant", "<", (scalar | vector), [where_clause], ">"
-           | "quant", "[|", (scalar | vector), [where_clause], "|]" ;
-scalar     = expr ;
-vector     = ("credit" | "live"), ",", "{", field, {",", field}, "}" ;
-field      = IDENT, "=", expr ;
-where_clause = "where", where_item, {("," | "and"), where_item} ;
-where_item = IDENT, ":=", expr | expr, relation, expr | "true" ;
-relation   = "==" | "!=" | "<" | "<=" | ">" | ">=" ;
-expr       = product, {"+", product} ;
-product    = atom, ["*", atom] ;
-atom       = NAT | IDENT | "(", expr, ")"
-           | ("min" | "max" | "monus"), "(", expr, ",", expr, ")" ;
-```
-
-The product rule has an additional semantic restriction: one operand must parse to a literal node. Two names are rejected even if later definitions would resolve both to constants. A parenthesized literal may still be a literal node. An unparenthesized product chain is not a general multiplication expression under this grammar.
-
-Scalar shorthand is credit-only and requires exactly one declared credit axis. Vector fields are nonempty, uniquely named, mode-compatible and dimension-checked. Every local definition is pure, fresh and closed; forward definitions are allowed, dependency cycles and unknown/runtime names are rejected. Constraints must evaluate true. Unreferenced definitions without an inferable dimension are not silently assigned a dimension.
-
-Numbers and arithmetic use checked `u128` natural semantics. `monus(a,b)` requires `b <= a` and computes the checked difference; it does not saturate an invalid subtraction to zero. There is no free subtraction, division or nonlinear symbolic solver. Overflow and structural limits are errors, not wraparound or assumed inequalities.
-
-The parser rejects atom nesting beyond its depth-32 condition and addition beyond its term-limit condition of 64 added terms. Resolution/evaluation impose additional depth/dependency guards in the same implementation. These are explicit implementation limits, not mathematical restrictions on natural numbers.
-
-`quant[| ... |]` is a delimiter alias for `quant< ... >` over the identical interior grammar: `[|` and `|]` are single lexer symbols, both spellings resolve to the same closed-index type, and the opener fixes the required closer, so a mixed pair such as `quant[| ... >` is refused, never repaired. A bare `|` remains a lexer error. The alias exists because `<`/`>` collide visually with where-clause comparison operators; it adds no semantic surface.
-
-`quant<cost,...>` is rejected by this resolver as a future total/peak profile. `quant<access,...>` is skipped by this closed-index parser for separate handling; skipping it is not source-level access verification. The axis environment is now built and validated unconditionally, including modules without quantitative type occurrences (R05).
-
-Source: `crates/qcore-frontend/src/quant_index.rs`, `frontend.rs:1519–1548`. A supported canonical example is:
-
-```qcore
+```qv
+// contracts/pkt.qv
 module contract;
-quant axis chunks : credit<Count<Chunk>>;
-extern fn keep(q: quant<n where n := 5> use one) -> unit;
-extern fn hold(q: quant[|n where n := 5|] use one) -> unit;
+
+[| quant #c_ffi |]
+extern fn qr_pkt_score(p: ptr<const, c"struct qr_pkt">) -> u32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(p);
+    ensures normal resource_return_none();
+};
 ```
 
-## G05. Resource loader v1
+```qr
+// app.qr
+module executable;
+#import std.ffi.unsafe;
+#import std.extern;
+#import std.fmt;
+#import std.io;
+extern library qr_pkt;
+
+struct! {
+    type Packet = c"struct qr_pkt" from "pkt.h";
+    fields {
+        magic: u16,
+        payload_len: u16,
+        weight: f64,
+    }
+}
+
+extern fn qr_pkt_score(p: ptr<const, Packet>) -> u32;
+
+fn prepare(len: u16) -> Packet effects { mut } {
+    let p = Packet { magic: 1, payload_len: 0, weight: 2.5 };
+    p.payload_len = len;
+    return p;
+}
+
+fn main() -> unit effects { io, mut } {
+    let pkt = prepare(64);
+    let s = qr_pkt_score(pkt) succeeds 65;
+    print dec s;
+    return;
+}
+```
+
+**Implementation & Provenance:** `crates/qcore-frontend/src/source_ffi.rs`, `crates/qcore-core/src/ffi.rs`, `crates/qcore-c-gateway/src/ffi_layout.rs`, `crates/qcore-contract/src/contract_loader.rs` (`ffi_declarations`); language spec [§L14.6, §L14.8, §L20](QCORE_SPEC_r0_3.md), contract spec [§C04.12](QCORE_CONTRACT_SPEC_r0_3.md#c0412-ffi-function-definitions--quant-c_ffi-); cards `W48-QR-C-STRUCT-IMPORT`, `W48-QR-USABLE-RECORDS`, `W48-QR-FLOATING-POINT`, `W48-QRLIB-LINKAGE`; reports [w48-qr-c-struct-import](reports/w48-qr-c-struct-import/README.md), [w48-qrlib-linkage](reports/w48-qrlib-linkage/README.md).
+
+---
+
+# Part V — Contract Loader and Property Clause Grammars (`.qv`)
+
+Part V defines the declarative `.qv` (legacy `.qcore`) contract grammars consumed by Quirin's verification, C-gateway, bounds, null-dereference, runtime-plugin, and lifetime loaders. Every contract loader operates **total-or-reject** at module granularity: each vocabulary is gated by an explicit `requires *_contract_v1;` selector, unknown or cross-vocabulary clauses reject the entire module rather than dropping unread facts, and every loaded declaration remain a **declared assumption** (or specification to check against a C body) rather than self-proving C source truth.
+
+---
+
+<a id="g05-resource-loader-v1"></a>
+## G05. External resource contract loader v1 (`resource_contract_v1`)
+
+### Consumer and Selection Mechanism
+
+`crates/qcore-contract/src/contract_loader.rs` is the total-or-reject bridge from `.qv` resource contract modules to the legacy-C resource custody analyzer (`qcore-c-gateway`), the `.qr` extern call bridge (`qcore_contract::extern_bridge`, [G02d](#g02d-bounded-extern-calls)), and independent certificate replay.
+
+- **Selector:** Every `extern fn` declaration in a module passed to this loader **must** carry `requires resource_contract_v1;` exactly once. Declarations lacking the marker, modules holding other top-level items (besides `alias #NAME = @ENUM;` and pre-elaborated [G05a](#g05a-contract-inclusion-and-inheritance) `#include` directives), and clauses belonging to observation ([G06](#g06-observation-predicate-grammar)), bounds ([G05b](#g05b-bounds-contract-v1)), or outer ([G05g](#g05g-outer-contract-v1)) vocabularies reject the entire module atomically.
+- **Function-map withholding discipline:** Plain custody, kind, derived-result, variadic-tail, and no-return declarations populate `ResourceContracts::functions`. Declarations carrying richer relational, retention, callback, slot, reference-count, hand-off, member-path, descriptor-cell, review-hold, or `#c_ffi` clauses are validated in full and **withheld from the plain function map** into dedicated side tables so that any consumer unaware of a richer effect sees an uncontracted callee (`Unknown`) and never silently weakens it to `resource_borrowed`.
+
+### Consolidated Grammar
 
 ```ebnf
-resource_module = "module", "contract", ";", {alias_declaration}, resource_fn,
-                  {resource_fn | alias_declaration} ;
-  (* card SUPPLIED-OWNED-RETURN-CODE-HANDOFF, contract specification C04.19.5 *)
+resource_module   = "module", "contract", ";",
+                    { include_directive },                            (* elaborated first, §G05a *)
+                    { alias_declaration },
+                    resource_decl, { resource_decl | alias_declaration } ;
+
 alias_declaration = "alias", "#", IDENT, "=", "@", IDENT, ";" ;
-resource_fn = "extern", "fn", IDENT, "(", [parameter, {",", parameter}], ")",
-              "->", result_abi, "contract", "{", resource_clause,
-              {resource_clause}, "}", ";" ;
-parameter   = IDENT, ":", parameter_abi ;
-parameter_abi = scalar_abi | pointer_abi ;
-result_abi  = "unit" | parameter_abi ;
-scalar_abi  = "bool" | "i8" | "i16" | "i32" | "i64" | "isize"
-            | "u8" | "u16" | "u32" | "u64" | "usize" ;
-pointer_abi = "ptr", "<", "mut", ",", "u8", ">"
-            | "ptr", "<", "const", ",", "u8", ">"
-            | "ptr", "<", "mut", ",", "ptr", "<", "mut", ",", "u8", ">", ">"
-            | "ptr", "<", "mut", ",", "ptr", "<", "const", ",", "u8", ">", ">" ;
-  (* the last: card W43-ABI-ENUM-AND-CONST-PP, a pointer to a pointer to const,
-     contract specification C04.1 *)
-resource_clause = "requires", "resource_contract_v1", ";"
-                | "requires", literal_argument_premise, ";"
-                | "requires", contract_review_marker, ";"
-                | "requires", "resource_body_checked", ";"
-                | "requires", named_premise, ";"
-                | "requires", hypothesis_atom, ";"
-                | "requires", hypothesis_all, ";"
-                | "requires", hypothesis_decomposition, ";"
-                | "requires", premise_flow, ";"
-                | "requires", discriminant, ";"
-                | "ensures", "normal", resource_predicate, ";"
-                | "ensures", "normal", arm_predicate, ";"
-                | "ensures", "normal", return_code_disposition, ";"
-                | "ensures", "normal", clause_review_marker, ";"
-                | "requires", contract_revision_marker, ";"
-                | "requires", library_version_range, ";"
-                | "ensures", "normal", clause_revision_marker, ";" ;
-hypothesis_atom = "resource_hypothesis", "(", premise_name, ",", STRING, ")" ;
-  (* card SP6-SYMBOLIC-HYPOTHESIS-ATOMS, contract specification C04.18.7:
-     retired; any clause headed resource_hypothesis rejects the module,
-     diagnostic QF002. An atom is a G01p proposition. *)
-hypothesis_all = "resource_premise_all", "(", premise_name, ",", premise_name, {",", premise_name}, ")" ;
-hypothesis_decomposition = "resource_premise_decomposition", "(", premise_name, ",", premise_name, {",", premise_name}, ")" ;
-named_premise =
-    "resource_premise", "(", premise_name, ",", premise_formula, ")" ;
-  (* card VERDICT-CONTRACT-DEPENDENCIES, contract specification C04.18:
-     premise_name is [a-z][a-z0-9_]*; card SP1-SYMBOLIC-OPENSSL-PREMISES,
-     C04.18.9: the statement a premise_formula, G05-formula. Card
-     SP5-GLOBAL-PROSE-PREMISE-BAN: the retired STRING statement (and any
-     statement holding a STRING) rejects the module, diagnostic QF001 *)
-contract_revision_marker =
-    "resource_revision", "(", revision_mode, ")" ;
-clause_revision_marker =
-    "resource_revision", "(", resource_predicate, ",", revision_mode, ")" ;
-revision_mode = "pinned" | "flexible" ;
-library_version_range =
-    "resource_library_version", "(", library_name, ",",
-    ( "since" | "documented" ), version_string,
-    [ ",", "removed", version_string ], ")" ;
-  (* card OPENSSL-PROVIDER-PLUGIN, contract specification C06.2: library_name
-     is [a-z_][a-z0-9_]*; version_string a STRING spelling MAJOR.MINOR or
-     MAJOR.MINOR.PATCH in decimal *)
-contract_review_marker =
-    "resource_review_pending", "(", review_note, ")" ;
-clause_review_marker =
-    "resource_review_pending", "(", resource_predicate, ",", review_note, ")" ;
-review_note = STRING, [",", STRING], [",", "rewrite_before_acceptance"] ;
-  (* reason, then optional owner, then the optional disposition of card
-     W47-REVIEW-HOLD-CONCRETE-REASON, contract specification C06.1 *)
-literal_argument_premise =
-    "resource_literal_argument", "(", IDENT, ",", integer_literal, ")" ;
-integer_literal = ["-"], DIGITS ;
-resource_predicate = "resource_borrowed", "(", IDENT, ")"
-  | ("resource_owned" | "resource_consumed" | "resource_released" | "resource_out"),
-    "(", IDENT, ",", nullability, ")"
-  | ("resource_stored" | "resource_removed"),
-    "(", IDENT, ",", IDENT, ",", nullability, ")"
-  | "resource_return_none", "(", ")"
-  | "resource_return_owned", "(", nullability, ")"
-  | "resource_return_removed", "(", IDENT, ",", nullability, ")"
-  | "resource_return_reallocated", "(", IDENT, ",", nullability, ")"
-  | "resource_no_return", "(", ")"   (* card CG21, contract spec C04.3.3 *)
-  | counted_user_predicate
-  | container_predicate
-  | retention_predicate
-  | slot_predicate
-  | reference_predicate
-  | callback_predicate
-  | "resource_return_borrowed_from", "(", IDENT, ",", nullability, ")" ;
-    (* card SLOT-MOVE-AND-INTERIOR-BORROW, contract spec C04.3.4 *)
-nullability = "nullable" | "nonnull" ;
-(* card W45-FB-RETRY-LIFETIME, contract specification C04.7 and C04.8 *)
-counted_user_predicate =
-    ("resource_user_added" | "resource_user_dropped"
-     | "resource_user_dropped_checked" | "resource_user_release_check"),
-    "(", IDENT, ",", IDENT, ")"              (* parameter, counter member *)
-  | "resource_user_neutral", "(", ")"
-  | "resource_user_exit", "(", IDENT, ",", integer_literal, ",",
-    ("added" | "restored" | "dropped"), ")" ;
-container_predicate =
-    "resource_published", "(", IDENT, ",", IDENT, ")"   (* entry, container *)
-  | "resource_unpublished", "(", IDENT, ")"
-  | "resource_unpublished", "(", IDENT, ",", IDENT, ")" ;
-    (* entry, link member: an element destroyer only; card
-       LERI-HELD-AND-LINK-MEMBER-PREMISES, contract specification C04.8 *)
-(* card CG23-RELATIONAL-POSTCONDITIONS, contract specification C04.13 *)
-return_code_disposition =
-    "resource_on_return", "(", relation_op, ",", integer_literal, ",",
-    disposition_predicate, ")" ;
-relation_op = "eq" | "ne" | "lt" | "le" | "gt" | "ge" ;
+
+resource_decl     = [ c_ffi_attr ],
+                    "extern", "fn", IDENT, "(", [ param_list ], ")",
+                    "->", result_abi,
+                    ( "contract", "{", resource_clause, { resource_clause }, "}"
+                    | "contract", "inherit", parent_ref ),            (* elaborated first, §G05a *)
+                    ";" ;
+
+c_ffi_attr        = "[|", "quant", "#", "c_ffi", "|]" ;               (* §C04.12 / §G02u *)
+param_list        = parameter, { ",", parameter } ;
+parameter         = IDENT, ":", parameter_abi ;
+
+(* ---- ABI Type Projection (§C04.1) ---- *)
+parameter_abi     = scalar_abi
+                  | pointer_abi
+                  | "fnptr"
+                  | "va_list"
+                  | c_struct_abi ;                                    (* admitted under c_ffi_attr only *)
+result_abi        = "unit"
+                  | scalar_abi
+                  | pointer_abi
+                  | "fnptr"
+                  | C_STRUCT_LIT ;                                    (* admitted under c_ffi_attr only *)
+
+scalar_abi        = "bool"
+                  | "i8" | "i16" | "i32" | "i64" | "isize"
+                  | "u8" | "u16" | "u32" | "u64" | "usize"
+                  | "f32" | "f64" ;                                   (* C enums project to underlying integer *)
+
+pointer_abi       = "ptr", "<", "mut", ",", "u8", ">"
+                  | "ptr", "<", "const", ",", "u8", ">"
+                  | "ptr", "<", "mut", ",", "ptr", "<", "mut", ",", "u8", ">", ">"
+                  | "ptr", "<", "mut", ",", "ptr", "<", "const", ",", "u8", ">", ">" ;
+
+c_struct_abi      = C_STRUCT_LIT | "ptr", "<", "const", ",", C_STRUCT_LIT, ">" ;
+C_STRUCT_LIT      = "c", STRING ;                                     (* exact text "struct TAG", §G02u *)
+
+(* ---- Clause Envelope ---- *)
+resource_clause   = "requires", req_clause, ";"
+                  | "ensures", "normal", ens_clause, ";"
+                  | quant_resource_clause
+                  | condition_binding                                 (* §G05h *)
+                  | condition_block                                   (* §G05h *)
+                  | cell_protocol_clause                              (* §G05i *)
+                  | cell_frame_clause ;                               (* §G05k *)
+
+(* ---- Precondition Clauses (requires) ---- *)
+req_clause        = "resource_contract_v1"
+                  | literal_argument_premise
+                  | "resource_body_checked"
+                  | contract_review_marker
+                  | contract_revision_marker
+                  | library_version_range
+                  | named_premise
+                  | hypothesis_all
+                  | hypothesis_decomposition
+                  | premise_flow                                      (* §G05-flow *)
+                  | lifecycle_clause                                  (* §G05-lifecycle *)
+                  | guarded_symbol_body                               (* §G05-guarded-source *)
+                  | guarded_source_body                               (* §G05-guarded-source *)
+                  | discriminant_clause
+                  | loop_owner_clause
+                  | thread_sync_clause
+                  | paired_lifecycle_clause ;
+
+literal_argument_premise = "resource_literal_argument", "(", IDENT, ",", canonical_int, ")" ;
+contract_review_marker   = "resource_review_pending", "(", review_note, ")" ;
+contract_revision_marker = "resource_revision", "(", revision_mode, ")" ;
+revision_mode            = "pinned" | "flexible" ;
+review_note              = STRING, [ ",", STRING ], [ ",", "rewrite_before_acceptance" ] ;
+
+library_version_range    = "resource_library_version", "(", library_name, ",",
+                           ( "since" | "documented" ), STRING,
+                           [ ",", "removed", STRING ], ")" ;
+
+named_premise            = "resource_premise", "(", premise_name, ",", premise_formula, ")" ;
+hypothesis_all           = "resource_premise_all", "(", premise_name, ",",
+                           premise_name, { ",", premise_name }, ")" ;
+hypothesis_decomposition = "resource_premise_decomposition", "(", premise_name, ",",
+                           premise_name, { ",", premise_name }, ")" ;
+
+discriminant_clause      = "resource_discriminant", "(", IDENT, ",", member_path, ",", canonical_nat, ")" ;
+loop_owner_clause        = "resource_loop_owner", "(", IDENT, ",", ( "read" | "mutate" ), ")" ;
+thread_sync_clause       = "resource_thread_sync", "(", IDENT, ",", IDENT, ",",
+                           ( "cond_wait" | "cond_timedwait" ), ")"
+                         | "resource_thread_sync", "(", IDENT, ",",
+                           ( "cond_signal" | "cond_init" | "cond_destroy" | "join" ), ")" ;
+paired_lifecycle_clause  = "resource_lifecycle", "(", IDENT, ",", ( "start" | "stop" | "destroy" ), ")" ;
+
+(* ---- Postcondition Clauses (ensures normal) ---- *)
+ens_clause        = resource_predicate
+                  | guarded_release_body
+                  | arm_predicate
+                  | return_code_disposition
+                  | member_cell_predicate
+                  | clause_review_marker
+                  | clause_revision_marker ;
+
+clause_review_marker   = "resource_review_pending", "(", resource_predicate, ",", review_note, ")" ;
+clause_revision_marker = "resource_revision", "(", resource_predicate, ",", revision_mode, ")" ;
+
+resource_predicate = param_mode_predicate
+                   | result_mode_predicate
+                   | kind_predicate
+                   | tail_or_exit_predicate
+                   | counted_user_predicate
+                   | container_predicate
+                   | retention_predicate
+                   | slot_predicate
+                   | reference_predicate
+                   | callback_predicate
+                   | result_state_predicate
+                   | member_helper_predicate ;
+
+param_mode_predicate  = "resource_borrowed", "(", IDENT, ")"
+                      | ( "resource_owned" | "resource_consumed"
+                        | "resource_released" | "resource_out" ),
+                        "(", IDENT, ",", validity, ")"
+                      | ( "resource_stored" | "resource_removed" ),
+                        "(", IDENT, ",", IDENT, ",", nullability, ")" ;
+
+guarded_release_body  = "resource_released", "(", IDENT, ",", "valid", ")", member_equality ;
+
+result_mode_predicate = "resource_return_none", "(", ")"
+                      | "resource_return_owned", "(", validity, ")"
+                      | "resource_return_reallocated", "(", IDENT, ",", nullability, ")"
+                      | "resource_return_removed", "(", IDENT, ",", nullability, ")"
+                      | "resource_return_alias", "(", IDENT, ",", nullability, ")"
+                      | "resource_return_interior", "(", IDENT, ",", nullability, ")"
+                      | "resource_return_borrowed_from", "(", IDENT, ",", nullability, ")" ;
+
+nullability           = "nullable" | "nonnull" ;
+validity              = nullability | "sentinel" | "valid" ;
+
+kind_predicate        = "resource_kind", "(", IDENT, ",", param_kind_name, ")"
+                      | "resource_return_kind", "(", return_kind_name, ")" ;
+param_kind_name       = "descriptor" | "stream" | "directory"
+                      | "dynamic_library" | "regex" | "thread_key" ;
+return_kind_name      = "descriptor" | "stream" | "directory"
+                      | "dynamic_library" | "thread_key" | "reference" ;
+
+tail_or_exit_predicate = "resource_variadic_data_tail", "(", ")"
+                       | "resource_variadic_borrowed_tail", "(", ")"
+                       | "resource_no_return", "(", ")" ;
+
+return_code_disposition = "resource_on_return", "(", relation_op, ",", canonical_int, ",",
+                          disposition_predicate, ")" ;
+relation_op           = "eq" | "ne" | "lt" | "le" | "gt" | "ge" ;
 disposition_predicate = "resource_borrowed", "(", IDENT, ")"
-  | ("resource_owned" | "resource_consumed" | "resource_released" | "resource_out"),
-    "(", IDENT, ",", nullability, ")" ;
-(* card CALLEE-RETENTION-CLASS1, contract specification C04.14 *)
-retention_predicate =
-    "resource_retained_by", "(", IDENT, ",", (IDENT | "global" | "result"), ")",  (* retained, holder *)
-    [retention_guard]
-  | "resource_retained_by", "(", IDENT, ",", holder_path, ")"   (* card FB-EVENT-LOOP-RETENTION-AND-REGISTRATION, C04.14.3 *)
-  | "resource_holder_reset", "(", IDENT, ")" ;
-holder_path = IDENT, ".", member_path ;          (* a formal of the declaration, then its members *)
-(* card W43-ABI-ENUM-AND-CONST-PP, contract specification C04.14.1 *)
-retention_guard = "when", IDENT, guard_op, integer_literal ;
-guard_op = "==" | "<" | ">" | "<=" | ">=" ;
-(* card SLOT-MOVE-AND-INTERIOR-BORROW, contract specification C04.15, C04.16 *)
-slot_predicate =
-    "resource_slot_moved", "(", IDENT, ",", nullability, ")"            (* slot *)
-  | "resource_out_derived", "(", IDENT, ",", IDENT, ",", nullability, ")" ;  (* slot, base *)
-(* card REFCOUNT-RESOURCE-KIND, contract specification C04.17 *)
-reference_predicate =
-    "resource_reference_kept", "(", IDENT, ")"
-  | "resource_reference_dropped", "(", IDENT, [ ",", "nullable" ], ")" ;  (* card REFERENCE-DROP-NULL-ACCEPTING *)
-(* card CG22-CALLBACK-REGISTRY-CONTRACT, contract specification C04.19 *)
-callback_predicate =
-    "resource_callback_invoked", "(", IDENT, { ",", callback_actual }, ")"   (* fnptr, actuals *)
-  | "resource_callback_invoked_or_default", "(", IDENT, { ",", callback_actual }, ")"   (* the same; a null fnptr invokes nothing *)
-  | "resource_callback_table", "(", IDENT, { ",", callback_actual }, ")"     (* table, actuals *)
-  | "resource_callback_registered", "(", IDENT, ",", (IDENT | "result"), ")"  (* fnptr, holder *)
-  | "resource_callback_registry_invoked", "(", IDENT, { ",", (callback_actual | "element") }, ")"
-  | ("resource_callback_unregistered" | "resource_elements_dropped"
-     | "resource_released_if_constructed"), "(", IDENT, ")"                  (* holder *)
-  | "resource_element_added", "(", IDENT, ",", IDENT, ")"                  (* element, holder *)
-  | "resource_callback_member_invoked", "(", (IDENT | "supplied_owned"), ",", IDENT, ".", member_path,
-    { ",", callback_actual }, ")"                                            (* object, TAG.FIELD, actuals *)
-  | "resource_callback_member_registered", "(", IDENT, ",", IDENT, ".", member_path, ",", IDENT, ")"
-                                                  (* OP-APP-RK-CALLBACKS-VIA-POLL-CB: holder, TAG.FIELD, fnptr *)
-  | "resource_callback_member_registered", "(", "#", IDENT, ",", IDENT, ".", member_path, ",", IDENT, ")",
-    "where", "#", IDENT, "=", "#", "result", "in", holder_path
-                                                  (* FB-EVENT-LOOP-RETENTION-AND-REGISTRATION, C04.19.3: by id *)
-  | "resource_callback_slot_invoked", "(", IDENT, ",", IDENT, ".", IDENT, { ",", callback_actual }, ")"
-                                                  (* OPENSSL-SSL-CTX-CALLBACK-SLOTS, C04.19.3: object, TAG.FIELD, actuals *)
-  | "resource_callback_slot_registered", "(", IDENT, ",", IDENT, ".", IDENT, ",", IDENT, ")" ;
-                                                  (* OPENSSL-SSL-CTX-CALLBACK-SLOTS, C04.19.3: holder, TAG.FIELD, fnptr *)
-callback_actual = IDENT | "_" | "supplied_owned" | "supplied_nullable" ;
-                                                  (* CALLBACK-SUPPLIED-NULL-ACTUAL, C04.19: a supplied value that may be NULL *)
-(* card CG22-OP-CALLBACKS-AND-SERVED-QUEUES, contract specification C04.19.2 *)
-member_path = IDENT, { ".", IDENT } ;
-discriminant = "resource_discriminant", "(", IDENT, ",", member_path, ",", integer_literal, ")" ;
-arm_predicate =
-    ( "resource_arm_released", "(", IDENT, ",", member_path, ")"
-    | "resource_arm_empty", "(", IDENT, ")" ),
-    ( "when", member_path, "==", integer_literal | "otherwise" ) ;
-(* card OP-CONSTRUCTOR-DECLARATIONS, contract specification C04.19.4 *)
-result_state_predicate =
-    "resource_discriminant_set", "(", "result", ",", IDENT, ".", member_path, ",",
-        IDENT, ",", integer_literal, ")"                    (* TAG.FIELD, P, FLAGS *)
-  | "resource_callback_member_registered", "(", "result", ",", IDENT, ".", member_path, ",",
-        (IDENT | "#", "absent"), ")" ;                      (* TAG.FIELD, F or a function *)
-result_state_clause = "quant", "live", "#", "result",
-    [ ":", IDENT, ".", member_path, MAPS_TO, ("#", "absent" | IDENT) ], ";" ;   (* G05d *)
-(* card SUPPLIED-OWNED-RETURN-CODE-HANDOFF, contract specification C04.19.5 *)
-handoff_clause = "quant", "live", "#", IDENT, ":", "#", "owner", MAPS_TO, "#", "callback",
-    "when", "#", "result", ("==" | "!="), ("@", IDENT | "#", IDENT), ";" ;   (* G05d *)
-(* card FB-EVENT-LOOP-RETENTION-AND-REGISTRATION, contract specification C04.14.3 *)
-removal_clause = "quant", "live", "#", IDENT, ":", "#", "holds", "(", IDENT, ")", MAPS_TO, "#", "absent", ";" ;   (* G05d *)
-(* card OP-CALLBACK-MEMBER-PATH-RELEASE, contract specification C04.19.6 *)
-path_fate = "#", ("released" | "moved" | "stale" | "kept") ;
-member_path_clause = "quant", "live", "#", IDENT, ":", IDENT, ".", member_path, MAPS_TO,
-    ( path_fate | "{", "#", ("released" | "moved" | "stale"), ",", "#", "kept", "}" ),
-    [ "when", "#", "result", ("==" | "!="), ("@", IDENT | "#", IDENT)
-    (* card FB-TEARDOWN-DESTROY-DECLARATIONS, decision 2 of 2026-10-16 *)
-    | "when", "#", IDENT, ("==" | "!=" | "<" | ">" | "<=" | ">="),
-        ( [ "-" ], integer_literal | "@", IDENT | "#", IDENT ) ], ";" ;   (* G05d *)
-(* card MK-EVENT-DESCRIPTOR-QUANT, contract specification C04.6.2; USER DECISION 2026-11-01 *)
-cell_kind = "descriptor" ;
-cell_value = "#", "fresh", "(", cell_kind, ")" | "#", "stale", "(", cell_kind, ")"
-    | "{", "#", "stale", "(", cell_kind, ")", ",", "#", "kept", "}" | "#", "same", "(", IDENT, ")" ;
-witness_guard = "when", "#", "result", ( "!=", "-", "1" | "==", "-", "1" | "==", "0" | "!=", "0" ) ;
-member_equality = "when", "#", IDENT, ":", IDENT, ".", member_path, "==", "#", IDENT ;
-cell_clause = "quant", "live", "#", IDENT, ":", ( IDENT, ".", member_path | "#", "pointee" ), MAPS_TO,
-    cell_value, [ witness_guard ], ";" ;   (* G05d *)
-guarded_release = "ensures", "normal", "resource_released", "(", IDENT, ",", "valid", ")",
-    member_equality, ";" ;   (* G05 *)
-guarded_removal = "quant", "live", "#", IDENT, ":", "#", "holds", "(", IDENT, ")", MAPS_TO, "#", "absent",
-    member_equality, ";" ;   (* G05d *)
+                      | ( "resource_owned" | "resource_consumed"
+                        | "resource_released" | "resource_out" ),
+                        "(", IDENT, ",", validity, ")" ;
+
+counted_user_predicate = ( "resource_user_added" | "resource_user_dropped"
+                         | "resource_user_dropped_checked" | "resource_user_release_check" ),
+                         "(", IDENT, ",", IDENT, ")"
+                       | "resource_user_neutral", "(", ")"
+                       | "resource_user_exit", "(", IDENT, ",", canonical_int, ",",
+                         ( "added" | "restored" | "dropped" ), ")" ;
+
+container_predicate   = "resource_published", "(", IDENT, ",", IDENT, ")"
+                      | "resource_unpublished", "(", IDENT, [ ",", IDENT ], ")" ;
+
+retention_predicate   = "resource_retained_by", "(", IDENT, ",",
+                        ( IDENT | "global" | "result" ), ")", [ retention_guard ]
+                      | "resource_retained_by", "(", IDENT, ",", holder_path, ")"
+                      | "resource_holder_reset", "(", IDENT, ")" ;
+holder_path           = IDENT, ".", member_path ;
+retention_guard       = "when", IDENT, guard_op, canonical_int ;
+guard_op              = "==" | "<" | ">" | "<=" | ">=" ;
+
+slot_predicate        = "resource_slot_moved", "(", IDENT, ",", nullability, ")"
+                      | "resource_out_derived", "(", IDENT, ",", IDENT, ",", nullability, ")" ;
+
+reference_predicate   = "resource_reference_kept", "(", IDENT, ")"
+                      | "resource_reference_dropped", "(", IDENT, [ ",", "nullable" ], ")" ;
+
+callback_predicate    = "resource_callback_invoked", "(", IDENT, { ",", callback_actual }, ")"
+                      | "resource_callback_invoked_or_default", "(", IDENT, { ",", callback_actual }, ")"
+                      | "resource_callback_table", "(", IDENT, { ",", callback_actual }, ")"
+                      | "resource_callback_registered", "(", IDENT, ",", ( IDENT | "result" ), ")"
+                      | "resource_callback_registry_invoked", "(", IDENT, { ",", ( callback_actual | "element" ) }, ")"
+                      | ( "resource_callback_unregistered" | "resource_elements_dropped"
+                        | "resource_released_if_constructed" ), "(", IDENT, ")"
+                      | "resource_element_added", "(", IDENT, ",", IDENT, ")"
+                      | "resource_callback_member_invoked", "(", ( IDENT | "supplied_owned" ), ",",
+                        IDENT, ".", member_path, { ",", callback_actual }, ")"
+                      | "resource_callback_member_registered", "(", IDENT, ",",
+                        IDENT, ".", member_path, ",", IDENT, ")"
+                      | "resource_callback_member_registered", "(", "#", IDENT, ",",
+                        IDENT, ".", member_path, ",", IDENT, ")",
+                        "where", "#", IDENT, "=", "#", "result", "in", holder_path
+                      | "resource_callback_slot_invoked", "(", IDENT, ",",
+                        IDENT, ".", IDENT, { ",", callback_actual }, ")"
+                      | "resource_callback_slot_registered", "(", IDENT, ",",
+                        IDENT, ".", IDENT, ",", IDENT, ")" ;
+callback_actual       = IDENT | "_" | "supplied_owned" | "supplied_nullable" ;
+
+result_state_predicate = "resource_discriminant_set", "(", "result", ",",
+                         IDENT, ".", member_path, ",", IDENT, ",", canonical_nat, ")"
+                       | "resource_callback_member_registered", "(", "result", ",",
+                         IDENT, ".", member_path, ",", ( IDENT | "#", "absent" ), ")" ;
+
+arm_predicate         = ( "resource_arm_released", "(", IDENT, ",", member_path, ")"
+                        | "resource_arm_empty", "(", IDENT, ")" ),
+                        ( "when", member_path, "==", canonical_int | "otherwise" ) ;
+
+member_helper_predicate = "resource_member_helper", "(", IDENT, ",", IDENT, ".", member_path, ",", IDENT, ")" ;
+
 member_cell_predicate = "resource_member_kind", "(", IDENT, ",", IDENT, ".", member_path, ",", cell_kind, ")"
-    | "resource_member_released", "(", IDENT, ",", IDENT, ".", member_path, ",", "stale", ")"
-    | "resource_on_return", "(", ( "eq" | "ne" ), ",", ( "0" | "-", "1" ), ",",
-        ( "resource_member_out" | "resource_member_stale_or_kept" ), "(", IDENT, ",", IDENT, ".", member_path, ")"
-        | "resource_member_alias", "(", IDENT, ",", IDENT, ".", member_path, ",", IDENT, ")", ")" ;   (* G05 *)
+                      | "resource_member_released", "(", IDENT, ",", IDENT, ".", member_path, ",", "stale", ")"
+                      | "resource_on_return", "(", ( "eq" | "ne" ), ",", ( "0" | "-", "1" ), ",",
+                        ( ( "resource_member_out" | "resource_member_stale_or_kept" ),
+                          "(", IDENT, ",", IDENT, ".", member_path, ")"
+                        | "resource_member_alias", "(", IDENT, ",", IDENT, ".", member_path, ",", IDENT, ")" ),
+                        ")" ;
+
+(* ---- Quantitative Clauses Admitted in Resource v1 ---- *)
+quant_resource_clause = proposition_clause                            (* §G01p: quant proposition #id(...) = ...; *)
+                      | result_state_clause
+                      | handoff_clause
+                      | removal_clause
+                      | member_path_clause
+                      | descriptor_cell_clause ;
+
+result_state_clause   = "quant", "live", "#", "result",
+                        [ ":", IDENT, ".", member_path, MAPS_TO, ( "#", "absent" | IDENT ) ], ";" ;
+
+handoff_clause        = "quant", "live", "#", IDENT, ":", "#", "owner", MAPS_TO, "#", "callback",
+                        "when", "#", "result", ( "==" | "!=" ), enum_const_ref, ";" ;
+
+removal_clause        = "quant", "live", "#", IDENT, ":", "#", "holds", "(", IDENT, ")",
+                        MAPS_TO, "#", "absent", [ member_equality ], ";" ;
+
+member_path_clause    = "quant", "live", "#", IDENT, ":", IDENT, ".", member_path, MAPS_TO,
+                        ( path_fate | "{", "#", ( "released" | "moved" | "stale" ), ",", "#", "kept", "}" ),
+                        [ "when", "#", "result", ( "==" | "!=" ), enum_const_ref
+                        | "when", "#", IDENT, ( "==" | "!=" | "<" | ">" | "<=" | ">=" ),
+                          ( canonical_int | enum_const_ref ) ], ";" ;
+path_fate             = "#", ( "released" | "moved" | "stale" | "kept" ) ;
+
+descriptor_cell_clause = "quant", "live", "#", IDENT, ":",
+                         ( IDENT, ".", member_path | "#", "pointee" ), MAPS_TO,
+                         cell_value, [ witness_guard ], ";" ;
+cell_kind             = "descriptor" ;
+cell_value            = "#", "fresh", "(", cell_kind, ")"
+                      | "#", "stale", "(", cell_kind, ")"
+                      | "{", "#", "stale", "(", cell_kind, ")", ",", "#", "kept", "}"
+                      | "#", "same", "(", IDENT, ")" ;
+witness_guard         = "when", "#", "result",
+                        ( "!=", "-", "1" | "==", "-", "1" | "==", "0" | "!=", "0" ) ;
+member_equality       = "when", "#", IDENT, ":", IDENT, ".", member_path, "==", "#", IDENT ;
+
+(* ---- Lexical & Shared Nonterminals ---- *)
+enum_const_ref        = "@", IDENT | "#", IDENT ;
+member_path           = IDENT, { ".", IDENT } ;
+MAPS_TO               = "|->" ;
+premise_name          = [a-z][a-z0-9_]* ;
+library_name          = [a-z_][a-z0-9_]* ;
+canonical_nat         = "0" | [1-9][0-9]* ;
+canonical_int         = "0" | [ "-" ], [1-9][0-9]* ;
 ```
 
-The descriptor cells of card MK-EVENT-DESCRIPTOR-QUANT (contract specification C04.6.2; USER DIRECTION 2026-11-01, "We must decompose the premise into quant like composed clauses."; USER DECISION 2026-11-01, "I approve the changes of D1-D5.") carry static conditions of their own. A `cell_clause`'s binder names a depth-one pointer parameter, `resource_borrowed`, with no kind (`quant-live-cell-binder`); with `#pointee` it is a `ptr<mut, u8>` slot. Its `cell_kind` is `descriptor` (`quant-live-cell-kind`); a `#fresh` and a `#same` value take a `witness_guard` (`quant-live-cell-guard`), every guard of the declaration is of one pair (`!= -1` / `== -1` or `== 0` / `!= 0`) over a signed integer result with `resource_return_none()`, and a cell is stated for every return or per class, one state per class (`quant-live-cell-duplicate`); `#same(S)` names a slot stated `#fresh` in the same class (`quant-live-cell-value`). Every cell has one kind, from its values or a `resource_member_kind` / `resource_kind` clause, and a kind clause names a stated cell. The lower level (`member_cell_predicate`, and a slot's `resource_on_return(eq, 0, resource_out(S, nonnull))`, `resource_on_return(ne, 0, resource_borrowed(S))` and `resource_kind(S, descriptor)`) elaborates to the same canonical set as the shorthand; an agreeing overlap merges and a disagreeing one rejects. A `member_equality` names a borrowed depth-one pointer and an `i32` formal released under it; a declaration states one, a `guarded_release`'s formal states `resource_kind(X, descriptor)` and no other mode, and a guarded removal guards every removal of its declaration (`quant-live-cell-equality`). Cells stand beside retentions, removals and plain predicates only, and withhold the declaration from the function map; `fresh`, `same` and `pointee` join the reserved keywords of a `#` form. Every violation rejects the whole module.
+### Retired Spellings and Parse-Time Format Bans (`QF001`, `QF002`, `QF005`)
 
-The hand-off and its surface (card SUPPLIED-OWNED-RETURN-CODE-HANDOFF, contract specification C04.19.5; USER DECISIONS 2026-10-15) carry static conditions of their own. `#` marks binders and value keywords (`#absent`, `#owner`, `#callback`), `@IDENT` a C enumerator; the lexer reads `@` as one symbol (`Symbol::At`; before the card a lexer error, and the census found no `@` and no `alias` in code position in any tracked source file). An `alias_declaration` stands only in a contract module (an explicit executable or library header is a parse error; a headerless staged view is checked against the file's own mode), once per name, its name no reserved keyword (`absent`, `owner`, `callback`, `result`) and no parameter of any declaration in the module (`alias-collision`); it is part of the digest of every declaration spelling `#NAME`. A `handoff_clause`'s binder names a depth-one pointer parameter that the declaration states `resource_owned(P, nonnull)` (`quant-live-unbacked` otherwise), its constant an `@` name or a module alias (`quant-live-handoff-alias` for an undeclared one; a number, a bare word, an ordering and any other shape: `quant-live-handoff-constant`, `-guard`, `-owner`, `-binder`, `-shape`); the result is an integer or enumeration type with `resource_return_none()` (`quant-live-handoff-result`); one per declaration. A declaration carrying any `#` form (a hand-off or a result state) rejects a parameter named like a reserved keyword. A member invocation's object may be the handed formal (`resource_owned`), never another owned formal. The clause stands where a callback predicate may and withholds the declaration from the function map. `#absent` is the one spelling of the result state's value at both levels; a bare `absent` rejects naming `#absent` (`quant-live-absent`). An `@` name's resolution (an enumerator of the candidate's own result type) is Clang's, per unit and after the pinned route's pre-pass, never the loader's (C04.19.5). Every violation rejects the whole module.
+The contract format enforces strict bans on retired prose and comment carriers across **all** contract loaders (never skipped or downgraded):
 
-The holder paths, removals and id-forwarded registrations of card FB-EVENT-LOOP-RETENTION-AND-REGISTRATION (contract specification C04.14.3, C04.19.3; USER DECISIONS 2026-10-16, "Tracked holder path", "R3: quant state", "Result + list") carry static conditions of their own. A `holder_path` stands only as a retention's holder: its first `IDENT` names a depth-one pointer parameter of the declaration, `resource_borrowed`, with no kind (it may be the retained parameter); a record tag there is an unknown parameter and rejects the module; it takes no `retention_guard`; a parameter is retained at most once across both holder forms. A `removal_clause`'s binder and its `#holds` operand name distinct depth-one pointer parameters, `resource_borrowed`, with no kind; one removal per pair, never beside a retention of the same pair; a parameter named `holds` or `absent` rejects the module beside one; any other shape after `#holds` (another value, `->`, a second operand) rejects (`quant-live-holds-shape`). An id-forwarded registration's first operand `#IDENT` is bound by its own `where` clause to `#result` (another binder or value rejects) over an integer result with `resource_return_none()`, the binder naming no parameter; `in` takes a `holder_path` whose formal is a depth-one pointer parameter, `resource_borrowed`, with no kind; its `fnptr` and member follow the setter form's conditions. All three stand where a retention may and withhold the declaration from the function map. Every violation rejects the whole module.
+| Retired Form | Replacement | Refusal / Diagnostic |
+| --- | --- | --- |
+| `requires resource_premise(NAME, "PROSE");` (or any premise statement containing a `STRING` token) | Symbolic `premise_formula` ([G05-formula](#g05-formula-symbolic-premise-statements)) | Rejected at parse across every route with **`QF001`** (`SP5-GLOBAL-PROSE-PREMISE-BAN`). |
+| `resource_hypothesis(ID, "PROSE")` (under any introducer or arguments) | Typed `quant proposition #id(...) = formula;` (§G01p) | Rejected at parse across every route with **`QF002`** (`SP6-SYMBOLIC-HYPOTHESIS-ATOMS`). |
+| Non-symbolic strings in `resource_guarded_symbol_v1` / `resource_guarded_decomposition_v1` | Unquoted `guarded_formula` and `source_clause` ([G05-guarded-source](#g05-guarded-source-explicit-guarded-source-embedding)) | Rejected at parse with **`QF003`** (`SP6-GUARDED-SYMBOL-PROSE`). |
+| Prose strings in `quant #outer [[contract]] NAME, "PROSE"` | Unquoted `premise_formula` ([G05g](#g05g-outer-contract-v1)) | Rejected at parse with **`QF004`** (`SP8-OUTER-CONTRACT-SYMBOLIC-STATEMENTS`). |
+| Non-canonical strings in formal-binding JSON manifests (`environment.variables`, `proposition`, `quantifiers`, `conclusion`) | Canonical `DIGEST` or sorted `TERM_LIST` JSON, qualified `A.B` proposition name, exact atom parameters & formula JSON | Rejected on every load route with **`QF005`** (`SP10-FORMAL-BINDING-DESCRIPTIONS`). |
+| `// qcore-premise: ...` machine-parsed comment directive anywhere in module text | `requires resource_literal_argument(p, LIT);` | Whole module rejected by `contract_loader.rs` (`RETIRED_PREMISE_DIRECTIVE`). |
 
-The member-path states of card OP-CALLBACK-MEMBER-PATH-RELEASE (contract specification C04.19.6; USER DECISION 2026-10-15, "B: state + set") carry static conditions of their own: the binder names a depth-one pointer parameter stated `resource_borrowed` or (card FB-TEARDOWN-DESTROY-DECLARATIONS, a destroyer's own object) `resource_released` with no kind, or the formal the declaration's hand-off hands (`resource_owned(P, nonnull)`) (`quant-live-path-binder`); the left of `|->` is a dotted `TAG.FIELD` (`quant-live-path-member`; a bare `->` rejects naming `|->`, `quant-live-maps-to`); the right is one of the four value keywords or exactly the set `{V, #kept}` with `V` one of `#released`, `#moved`, `#stale` (any other set, `{#kept, V}` included, rejects: `quant-live-path-set`; any other value, `#absent` included: `quant-live-path-value`); a result guard stands only beside a hand-off of the same formal and is its complement, the same constant with the other operator (`quant-live-path-guard`); a parameter guard (card FB-TEARDOWN-DESTROY-DECLARATIONS, contract specification C04.19.6 amended; USER DECISION 2026-10-16, "Yes, allow it") names a plain integer parameter other than the binder (`i8` through `i64`, `isize`, `u8` through `u64`, `usize`) with one of the six comparisons and a canonical decimal in that parameter's range that partitions it, an `@` enumerator or a module alias (`quant-live-path-guard`, `quant-live-path-guard-constant`, `quant-live-handoff-alias`), and stands with or without a hand-off; one state per path of a formal, never a path below another stated one (`quant-live-path-duplicate`). The keywords `released`, `moved`, `stale` and `kept` join the reserved keywords of a `#` form (a parameter or an alias so named rejects). The clauses stand only beside a hand-off and plain predicates (a retention, a callback or arm clause, a result state, a slot or reference clause beside them rejects) and withhold the declaration from the function map. Card SCHEDULER-DESTROY-MEMBER-STATES (contract specification C04.19.6 amended, gateway rule 50; USER DECISION 2026-11-14, "Go with 1, 2A and typed refinements for 3") admits one exception, a *helper destroyer*: `resource_callback_member_invoked(P, TAG.FIELD, A…)` clauses stand beside the states when every state and every member invocation bind the same formal `P`, the declaration states `resource_released(P, …)`, and it carries no hand-off; an invocation of another object, a synchronous or table invocation, a registration, a borrowed binder or a hand-off beside them still rejects. Card RULE50-CONSUMER-COMPOSITION (contract specification C04.19.6 amended, gateway rule 51) adds one predicate beside the states, `resource_member_helper(P, TAG.PATH, H)` (the unit helper `H` takes the object the path held): at most one per declaration (`member-helper-duplicate`), `P` a formal the declaration releases (`member-helper-binder`), `TAG.PATH` a path `P` states exactly `#stale`, unguarded and not a set (`member-helper-path`; alone, with no state, it rejects the same way), `H` an identifier other than the declaration's own name, on a declaration with no callback clause and no hand-off, so a helper destroyer never names a helper (`member-helper-placement`); a malformed clause rejects. Every violation rejects the whole module.
+### Semantic Side Conditions by Clause Family
 
-The result-state predicates of card OP-CONSTRUCTOR-DECLARATIONS (contract specification C04.19.4; USER DECISIONS 2026-10-14, A1, B1 and C) carry static conditions of their own: the object is the word `result`, which requires `resource_return_owned(nonnull)` (`quant-live-unbacked`); a parameter named `result`, `absent`, `owner` or `callback` rejects the module (card SUPPLIED-OWNED-RETURN-CODE-HANDOFF: the reserved keywords of a `#` form); the member is a dotted `TAG.FIELD`; `resource_discriminant_set`'s `P` names an integer parameter and its `FLAGS` is a canonical non-negative decimal, at most one per declaration; `resource_callback_member_registered`'s `F` names a `fnptr` parameter whose mode is `resource_borrowed` and which no other clause of the declaration invokes or registers, or is the value keyword `#absent` (card SUPPLIED-OWNED-RETURN-CODE-HANDOFF; a bare `absent` rejects), or (card OP-APP-RK-CALLBACKS-VIA-POLL-CB, USER DECISION 2026-10-14, D1) is an identifier naming no parameter, a function designator, the stated default; the same word with a parameter in place of `result` (card OP-APP-RK-CALLBACKS-VIA-POLL-CB, Q2) is a setter's registration, read with the callback predicates: the holder names a depth-one pointer parameter, `resource_borrowed`, with no kind, `F` a `fnptr` parameter no other clause names, one registration per holder and member, and `result` there is the result state above; a member carries one state (an agreeing overlap merges, a different second state rejects). `result_state_clause` and (card SUPPLIED-OWNED-RETURN-CODE-HANDOFF) `handoff_clause` are the only `quant` forms resource v1 admits (G05d, "Result states"). They stand where a callback predicate may and withhold the declaration from the function map. Every violation rejects the whole module.
+1. **Core ABI, Enumerations, Double Pointers, `fnptr`, `va_list`, and Undeclarable Names (§C04.1).**
+   - Every parameter and the result must appear in **exactly one** base mode (or covered across every class of a `resource_on_return` disposition). Parameter names must be unique; no usage annotations, generic brackets, `effects` rows, `ensures any`, or `ensures error(...)` are admitted.
+   - **Canonical integer literals:** `canonical_int` forbids leading zeros (`00`, `010`), `-0`, `+`, hex/binary prefixes, and integer suffixes (`0L`, `0u`).
+   - **C Enumerations (rule 12u, `W43-ABI-ENUM-AND-CONST-PP`):** C `enum` parameters and results (tagged, untagged, or typedef'd) have no dedicated contract keyword; they are spelled as the exact fixed-width integer (`i32`, `u32`, `i64`, `u64`, …) matching the underlying integer type Clang reports for that enum in the analyzed unit (never assumed `int`, never `isize`/`usize`).
+   - **Pointers to pointers to `const` (rule 12v, `W43-ABI-ENUM-AND-CONST-PP`):** `ptr<mut, ptr<const, u8>>` reads qualifiers outside-in: an unqualified mutable outer slot pointing to a `const` inner pointee (`const char **`, `const void **`). `char **` and `const char **` do not match each other; slot-qualified `char *const *` has no spelling and refuses; `resource_out` requires `ptr<mut, ptr<mut, u8>>` (except `resource_out_derived`, which admits both double-pointer spellings).
+   - **`fnptr` and `va_list`:** Both are non-`ptr<…>` ABI tokens and therefore admit `resource_borrowed` **only** (never custody modes or owned returns). `va_list` (`__builtin_va_list` / `__gnuc_va_list`) is a **parameter-only** type and is rejected in `result_abi`.
+   - **`UNDECLARABLE_C_NAMES`:** Functions with non-standard control flow or Clang AST pseudo-call shapes (`setjmp`, `longjmp`, `siglongjmp`, `setcontext`, `pthread_exit`, `thrd_exit`, `__builtin_choose_expr`, `__builtin_offsetof`, …) are unconditionally rejected regardless of clauses.
+   - **C source & body agreement (`LOADER-ABI`, `LOADER-ABI-MODES`):** Consumers withdraw a declaration in any C unit whose own prototype disagrees in arity, parameter/result ABI projection, or variadic status, or whose validated body summary contradicts a parameter/result custody duty.
 
-The callback predicates (card CG22-CALLBACK-REGISTRY-CONTRACT, contract specification C04.19) carry static conditions of their own: the first `IDENT` of `resource_callback_invoked` and `resource_callback_registered` names a `fnptr` parameter (whose only mode is `resource_borrowed`), and one callback is named by at most one invocation or registration; a table, a holder and an element name depth-one pointer parameters (`ptr<mut, u8>` or `ptr<const, u8>`) whose mode is `resource_borrowed` and which carry no kind; a `callback_actual` `IDENT` names a parameter of the declaration other than the invoked callback, `_` a value the callee supplies, and `element` (a registry invocation only) each element the holder holds; a declaration with a parameter named `_` or `element` rejects every callback predicate, and one with a parameter named `result` rejects a `result` holder, which further requires `resource_return_owned(nonnull)`; an element is not its own holder and is never also a retained pointer; a declaration carries at most one predicate of each keyword per position, and never both a registration in a parameter holder and a registry predicate on the same holder; and a callback predicate stands where a retention predicate may, beside retention predicates, but never beside a slot predicate, and beside reference predicates only when every reference predicate is a `resource_reference_dropped` and every callback predicate a `resource_callback_slot_invoked` (card OPENSSL-FREE-SESSION-REMOVE-INVOCATION, contract specification C04.19 amended). Every violation rejects the whole module. A declaration carrying one is withheld from the function map with the retaining declarations (C04.14).
+2. **Custody Modes, Derived/Borrowed/Removed Results, Resource Kinds, Variadic Tails, and `resource_no_return()`.**
+   - **Stored/Removed (`resource_stored`, `resource_removed`):** Second `IDENT` (`owner`) must be a distinct `resource_owned` parameter. `resource_return_removed(item, n)` (§C04.3.5) requires matching `resource_removed(item, parent, n)` and `resource_owned(parent, nonnull)` on distinct mutable depth-one heap pointers, all other parameters `resource_borrowed`, no rich clauses/tails, and — for physical C body verification — the `detach_list_representation` named premise.
+   - **Derived & Borrowed Results (§C04.3.1, §C04.3.4):** `resource_return_alias(p, n)` and `resource_return_interior(p, n)` require `p` to be `resource_borrowed` on `ptr<mut, u8>` or `ptr<const, u8>` with a depth-one pointer result (`const_dropped` recorded if `ptr<const, u8>` → `ptr<mut, u8>`). `resource_return_borrowed_from(p, n)` (`SLOT-MOVE-AND-INTERIOR-BORROW`) additionally admits `ptr<mut, ptr<mut, u8>>` and `ptr<mut, ptr<const, u8>>` results (arrays of parent-owned children) and withholds the declaration into the retaining table if paired with slot/retention clauses.
+   - **Resource Kinds (§C04.6, §C04.6.1):** `heap` is spelled solely by omitting a kind clause (writing `heap` rejects). `descriptor` requires an `i32` position and **must** spell validity `sentinel` (`-1` failure) or `valid` (never `nullable`/`nonnull`; conversely `sentinel`/`valid` on any non-descriptor position rejects). In-place `regex` stands on `ptr<mut, u8>` (or `ptr<const, u8>` for borrowed use): `resource_out(p, nullable)` + `resource_kind(p, regex)` on an `i32` `resource_return_none()` initializer, `resource_released(p, nonnull)` + `resource_kind(p, regex)` finalizer, or `resource_borrowed(p)` + `resource_kind(p, regex)` use. `thread_key` (`pthread_key_t`) also admits by-value `u32` finalizers and uses (`resource_released(k, nonnull)` / `resource_borrowed(k)` + `resource_kind(k, thread_key)`). `reference` is valid **only** in `resource_return_kind(reference)` beside `resource_return_owned` (writing `resource_kind(p, reference)` on a parameter rejects).
+   - **Variadic Tails & No-Return (§C04.2, §C04.3.3):** At most one of `resource_variadic_data_tail()` or `resource_variadic_borrowed_tail()` per declaration (requires C `...` prototype). `resource_no_return()` appears at most once, requires `-> unit`, `resource_return_none()`, and `resource_borrowed` on all parameters, and forbids counted-user, container, loop-owner, thread-sync, and lifecycle clauses alongside it.
 
-The predicates of card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (contract specification C04.19.1-C04.19.3; USER DECISION 2026-10-14) carry static conditions of their own. `supplied_owned` is an actual of `resource_callback_invoked` and `resource_callback_member_invoked` only, at most once per actual list; a declaration with a parameter named `supplied_owned` rejects every callback predicate. `supplied_nullable` (card CALLBACK-SUPPLIED-NULL-ACTUAL, contract specification C04.19) stands wherever `_` does, in any number, and is never a member's object; a declaration with a parameter named `supplied_nullable` rejects every callback predicate. A member invocation's object is a depth-one pointer parameter with no kind whose mode is `resource_borrowed` or `resource_released`, or `supplied_owned` (only where some clause of the declaration hands a callback that object); its member is `TAG.FIELD` with at least one `.`; one clause per object and member. The slot predicates of card OPENSSL-SSL-CTX-CALLBACK-SLOTS (contract specification C04.19.3, an opaque slot) are the member predicates' marked forms with narrower conditions: the object or holder is a depth-one pointer parameter, `resource_borrowed`, with no kind (never `supplied_owned`, never `result`, never forwarded by id); the slot is `TAG.FIELD` with exactly one `.` (a path below the field rejects); an actual is a parameter other than a callback, `_` or `supplied_nullable` (never `supplied_owned`); a registration's `F` is a `fnptr` parameter no other clause names; one slot or member clause per object and key. A `discriminant` names a depth-one pointer parameter with no kind that the declaration releases, a member path and a canonical decimal mask; a declaration carries at most one, and exactly when it carries arm predicates. Each arm names the discriminated parameter; its guard is `when FIELD == VALUE` with the discriminant's member path and a canonical decimal `VALUE` (`==` only, no name, no value the mask clears) or `otherwise`; a guard carries one `resource_arm_empty` or released paths, never both and never one path twice, and a path is never the discriminant itself. Arm predicates and the discriminant stand where a callback predicate may and withhold the declaration from the function map. Every violation rejects the whole module.
+3. **Literal-Argument Premises, Review/Revision Markers, Version Bounds, and Obligation Clauses.**
+   - **`resource_literal_argument(p, LIT)` (§C04.5):** `p` may be any parameter type (including pointer `0`, which structurally matches `0`, `(0)`, `0L`, and — for `ptr<…>`/`fnptr` at `0` — `((void *) 0)`). At most one premise per parameter. Beside retaining/callback clauses, admitted **only** when every retaining clause is a synchronous `resource_callback_invoked`, `resource_callback_invoked_or_default`, or opaque `resource_callback_slot_invoked` (gateway rule 57).
+   - **Review & Revision Markers (§C06.1–C06.3):** `review_note` strings must be non-blank single-token literals with no backslash escapes or control characters. Either one contract-level `requires resource_review_pending(…);` **or** clause-level `ensures normal resource_review_pending(PRED, …);` wrappers (never both, never nested). Likewise, at most one `requires resource_revision(MODE);`, and `ensures normal resource_revision(PRED, MODE);` may not restate the contract-level mode or nest with review markers (unmarked default is `pinned`). `requires resource_library_version(lib, since|documented "M.N[.P]" [, removed "M.N[.P]"]);` appears at most once with `removed` strictly greater than the lower bound. `requires resource_body_checked;` appears at most once.
+   - **Concurrency & Lifecycle Obligations (§C04.9–C04.11):** At most one `resource_loop_owner` (pointer parameter), `resource_thread_sync` (`ptr<mut, u8>` condvar and distinct `ptr<mut, u8>` mutex for waits; `u64`/`usize` thread for `join`), or `resource_lifecycle` (`ptr<mut, u8>` context); none may be wrapped in a clause-level review marker.
+   - **Premises & Hypothesis Graphs (§C04.18):** `resource_premise(NAME, FORMULA)` requires unique `NAME`s per declaration and a valid [G05-formula](#g05-formula-symbolic-premise-statements). `resource_premise_all` and `resource_premise_decomposition` take non-empty, unique, strictly increasing atom IDs referencing `quant proposition #id` (§G01p) definitions (`legacy_` prefix reserved; `resource_premise_decomposition` attaches to an existing named premise in graph v2).
 
-The reference predicates (card REFCOUNT-RESOURCE-KIND, contract specification C04.17) carry static conditions of their own: the named parameter is a depth-one pointer (`ptr<mut, u8>` or `ptr<const, u8>`) whose mode is `resource_borrowed` and which carries no kind; a declaration carries at most one reference predicate; a keep's result is `resource_return_alias(p, nonnull)` on the same parameter or `resource_return_none()`, a drop's is `resource_return_none()`; a drop may name `nullable` after its parameter (a NULL-accepting drop, card REFERENCE-DROP-NULL-ACCEPTING), and any other word there, or any word after a keep's parameter, rejects the module (`nonnull` is what a drop without the word means, so it has one spelling); the referenced parameter is never also retained, a slot or a derived out slot's base; a reference predicate stands where a retention predicate may; and the kind `reference` is spelled by `resource_return_kind(reference)` only beside `resource_return_owned` (a returned reference) and never by `resource_kind` on a parameter (the module is rejected). Every violation rejects the whole module. A declaration carrying one is withheld from the function map with the retaining declarations (C04.14).
+4. **Return-Code Dispositions, Counted Users, Container Publication, Retentions, Slots, and Reference Counts.**
+   - **`resource_on_return(OP, VAL, PRED)` (§C04.13):** Requires a signed integer result with `resource_return_none()`, canonical `int`-fitting `VAL`, and exit classes that are **pairwise disjoint and partition all integers** (`VAL - 1`, `VAL`, `VAL + 1` check). Conditional parameters must agree in entry custody demand across classes; classes may not all produce identical contracts; incompatible with in-place kinds, review/checked markers, literal premises, variadic tails, and counted-user/container/sync/lifecycle clauses.
+   - **Counted Users & Containers (§C04.7, §C04.8):** Operate on `resource_borrowed` pointer parameters — **except** an *element destroyer*, where `resource_unpublished(p [, link_member])` sits beside `resource_released(p, …)` (and optionally member-path states, rules 34/43/46; `link_member` is forbidden without `resource_released`). `resource_user_neutral()` stands alone; a parameter takes either one user operation or `resource_user_exit` clauses (requiring integer return), never both.
+   - **Retentions, Holder Paths & Removals (§C04.14):** `resource_retained_by(P, H)` requires `P` (and `H` if a formal) to be distinct depth-one `resource_borrowed` pointers with no kind (`result` holder requires `resource_return_owned(nonnull)`). Optional `when X OP K` (not admitted on `holder_path` `FORMAL.FIELD…`) requires `X` to be a distinct integer parameter and `K` to partition `X`'s range (`==`, `<`, `>`, `<=`, `>=` only). `quant live #H: #holds(P) |-> #absent;` removes one registration on distinct borrowed depth-one pointers `H` and `P` (never beside a retention of the same pair; `holds` and `absent` forbidden as parameter names).
+   - **Slots & Reference Counts (§C04.15–C04.17):** `resource_slot_moved(s, n)` requires `ptr<mut, ptr<mut, u8>>`; `resource_out_derived(s, base, n)` requires double-pointer `s` and distinct depth-one `base` (all `resource_borrowed`, unkinded). At most one `reference_predicate` per declaration on a depth-one unkinded `resource_borrowed` pointer: `resource_reference_kept(p)` requires `resource_return_alias(p, nonnull)` or `resource_return_none()`; `resource_reference_dropped(p [, nullable])` requires `resource_return_none()`.
 
-The slot predicates and the borrowed result (card SLOT-MOVE-AND-INTERIOR-BORROW, contract specification C04.3.4, C04.15, C04.16) carry static conditions of their own: a moved slot names a `ptr<mut, ptr<mut, u8>>` parameter, a derived out slot a `ptr<mut, ptr<mut, u8>>` or `ptr<mut, ptr<const, u8>>` parameter, each `resource_borrowed` with no kind; a derived out slot's base is a distinct depth-one pointer parameter, `resource_borrowed`, with no kind; a slot is named by at most one slot predicate and is never also a retained pointer; a slot predicate stands where a retention predicate may (beside plain parameter and result predicates, revision markers and retention predicates), and a declaration carrying one is withheld from the function map with the retaining declarations (C04.14). `resource_return_borrowed_from(p, n)` loads to the derived result at the `Borrowed` extent: `p` names a depth-one `resource_borrowed` pointer parameter and the result is a depth-one pointer or `ptr<mut, ptr<mut, u8>>` / `ptr<mut, ptr<const, u8>>` (an array of the parent's children); every other placement rejects the module. A slot predicate inside `resource_on_return` is not admitted (an unsupported predicate). Every violation rejects the whole module.
+5. **Callbacks, Result States, Hand-Offs, Member-Path States, Helper Destroyers, and Descriptor Cells (§C04.19, §C04.6.2).**
+   - **Callbacks (§C04.19):** `fnptr` parameters are `resource_borrowed` and named by at most one invocation or registration; holders, tables, and elements are depth-one unkinded `resource_borrowed` pointers (`_` and `element` forbidden as parameter names when used; `supplied_owned` at most once in `resource_callback_invoked` or `resource_callback_member_invoked`; `supplied_nullable` anywhere `_` stands). Slot forms (`resource_callback_slot_invoked` / `resource_callback_slot_registered`) require depth-one borrowed `IDENT` object/holder, `TAG.FIELD` with **exactly one** `.`, and forbid `supplied_owned`. Callback clauses may stand beside `reference_predicate` **only** when every reference clause is `resource_reference_dropped` and every callback clause is `resource_callback_slot_invoked`.
+   - **Discriminants & Arm Releases (§C04.19.2):** `requires resource_discriminant(p, path, mask);` (at most one, on a released depth-one unkinded pointer) must pair with `resource_arm_released` / `resource_arm_empty` clauses guarded by `when path == VAL` (masked bits non-cleared) or `otherwise`.
+   - **Constructor Result States (`result_state_clause`, §C04.19.4):** Requires `resource_return_owned(nonnull)`; `#absent` (never bare `absent`) or a non-parameter function designator names the default callback (`quant-live-absent`, `quant-live-value`).
+   - **Return-Code Hand-Offs (`handoff_clause`, §C04.19.5):** `#P` names a `resource_owned(P, nonnull)` depth-one pointer over an integer/enum `resource_return_none()` result; constant is `@ENUM` (resolved per unit by Clang) or module `alias #NAME = @ENUM;`.
+   - **Member-Path States & Helper Destroyers (`member_path_clause`, §C04.19.6, rules 50–51):** `#P` is `resource_borrowed`, `resource_released`, or the declaration's `handoff_clause` formal (`#released`, `#moved`, `#stale`, `#kept`, or `{#released|#moved|#stale, #kept}`). A `#result` guard must be the exact complement of a same-formal `handoff_clause`; a `#PARAM` guard compares a distinct integer formal against a range-partitioning literal, `@ENUM`, or `#ALIAS`. Under **rule 50** (*helper destroyer*), `resource_callback_member_invoked(P, TAG.FIELD, …)` may stand beside member-path states when all bind the same `resource_released` formal `P` with no hand-off. Under **rule 51**, at most one `resource_member_helper(P, TAG.PATH, H)` may stand beside an unguarded `#stale` state on released `P` with no callbacks or hand-off.
+   - **Descriptor Cells (`descriptor_cell_clause`, §C04.6.2):** `#P` is a depth-one unkinded `resource_borrowed` pointer (`#S: #pointee` on `ptr<mut, u8>` `int *` slot); `#fresh(descriptor)` and `#same(S)` require a `witness_guard` from a single pair (`!= -1`/`== -1` or `== 0`/`!= 0`) over a signed integer `resource_return_none()` result. `guarded_release` (`when #P: TAG.FIELD == #X`) guards an `i32` formal stating `resource_kind(X, descriptor)` and every `#holds` removal of the declaration.
 
-A `retention_guard` (card W43-ABI-ENUM-AND-CONST-PP, contract specification C04.14.1) stands only on `resource_retained_by` (a guard on any other predicate, and a second `when`, reject the module; a clause-level revision marker wraps a guarded clause as it wraps a bare one); `when` is reserved in a clause expression. Its `IDENT` names an integer parameter of the declaration (`i8` through `i64`, `isize`, `u8` through `u64`, `usize`; never `bool`, a float, a pointer, `fnptr` or `va_list`) other than the clause's retained pointer and holder; its `integer_literal` follows the canonical-literal rule below and lies in that parameter's range; and the guard partitions the range (some value satisfies it and some does not). `!=` and Boolean combinations are not admitted. Every violation rejects the whole module.
+### Concrete Examples
 
-The retention predicates (card CALLEE-RETENTION-CLASS1, contract specification C04.14) carry static conditions of their own: the retained parameter and a holder parameter are distinct depth-one pointer parameters (`ptr<mut, u8>` or `ptr<const, u8>`) whose mode is `resource_borrowed` and which carry no kind; the holder is either such a parameter, the word `global`, or (card REFCOUNT-REFERENCE-RETURNING-DECLARATIONS, contract specification C04.14.2) the word `result`, which requires the declaration's result to be `resource_return_owned(nonnull)` (a heap object or, with `resource_return_kind(reference)`, a returned reference); a declaration with a parameter named `global` rejects the clause, and one with a parameter named `result` rejects a `result` holder; a parameter is retained at most once and a holder reset at most once; and a retention predicate stands only beside plain parameter and result predicates and revision markers (a return-code disposition, a review marker, the checked-specification marker, a literal premise, a variadic tail, the no-return exit and a counted-user, container, loop-owner, thread-synchronization or lifecycle clause each reject the module beside it). Every violation rejects the whole module. A declaration carrying one is loaded and validated in full and then withheld from the function map (C04.14); inheritance (G05a) compares its retentions.
+```qv
+module contract;
 
-The return-code dispositions (card CG23-RELATIONAL-POSTCONDITIONS, contract specification C04.13) carry static conditions of their own: the distinct `(relation_op, integer_literal)` pairs are pairwise disjoint and cover every integer; the literal is canonical and fits a C `int`; a parameter carries either one ordinary mode or exactly one disposition per class; the entry requirement of a conditional parameter agrees across classes; the result is `resource_return_none()` over a signed integer type; classes that all state the same contract, a disposition beside an in-place kind, and a disposition beside a review marker, the checked-specification marker, a literal premise, a variadic tail or a counted-user, container, loop-owner, thread-synchronization or lifecycle clause, reject the module. Every violation rejects the whole module.
+alias #OP_PASS = @RD_KAFKA_OP_RES_PASS;
 
-The counted-user and container predicates (card W45-FB-RETRY-LIFETIME) carry static conditions of their own: every parameter they name is a `resource_borrowed` pointer parameter; a publication's container is a distinct parameter with no container predicate of its own; a parameter carries at most one counted-user operation and at most one container predicate; `resource_user_neutral()` appears at most once and never beside another counted-user predicate; an exit clause requires an integer result type, its `integer_literal` follows the canonical-literal rule above, one parameter and returned value carry at most one clause, and a parameter carries either an operation or exit clauses, never both. Every violation rejects the whole module.
+// 1. Descriptor creator with variadic data tail and library version bound:
+extern fn openat(dirfd: i32, path: ptr<const, u8>, flags: i32) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_library_version(libc, since "2.4");
+    ensures normal resource_borrowed(dirfd);
+    ensures normal resource_borrowed(path);
+    ensures normal resource_borrowed(flags);
+    ensures normal resource_variadic_data_tail();
+    ensures normal resource_return_owned(sentinel);
+    ensures normal resource_return_kind(descriptor);
+};
 
-Additional static conditions are mandatory: exactly one marker, exactly one mode per parameter, exactly one result mode, unique names, compatible pointer/scalar types, valid distinct owned parent references, an owned reallocation source, and — for `literal_argument_premise` — a parameter name the same declaration declares (of any admitted type, pointer included: see contract specification C04.5), at most one premise per parameter, and a `DIGITS` run the lexer produces as a single integer token with no leading zero, which excludes suffixed, alternate-base and octal spellings; `-0` is likewise rejected, so the declared literal is canonical. These conditions cannot be represented by context-free productions alone. Signature usage annotations, extra declarations, unsupported predicates and other exit selectors are rejected atomically, not ignored. See contract specification C04–C06 and `crates/qcore-contract/src/contract_loader.rs`.
+// 2. Callback hand-off and complementary member-path fate with symbolic premise:
+extern fn rd_kafka_poll_cb(rk: ptr<mut, u8>, rkq: ptr<mut, u8>, rko: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_premise(rk_plugin_callback_closure, #app_callbacks |-> #neutral);
+    ensures normal resource_borrowed(rk);
+    ensures normal resource_borrowed(rkq);
+    ensures normal resource_owned(rko, nonnull);
+    quant live #rko: #owner |-> #callback when #result != #OP_PASS;
+    quant live #rko: rd_kafka_op_s.rko_u.leaders.partitions |-> {#moved, #kept} when #result == #OP_PASS;
+    ensures normal resource_return_none();
+};
 
-The whole-declaration tail clauses `resource_variadic_data_tail()` and (card CG26-VARIADICS) `resource_variadic_borrowed_tail()` take no argument; a declaration carries at most one of the two (a second, or both, rejects the module), and either requires the analysed C declaration to be variadic (contract specification C04.1, C04.2).
+// 3. Descriptor cell creation with slot alias and witness guard:
+extern fn mk_event_channel_create(
+    loop: ptr<mut, u8>,
+    r_fd: ptr<mut, u8>,
+    w_fd: ptr<mut, u8>,
+    data: ptr<mut, u8>
+) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(loop);
+    ensures normal resource_borrowed(r_fd);
+    ensures normal resource_borrowed(w_fd);
+    ensures normal resource_borrowed(data);
+    ensures normal resource_retained_by(data, loop);
+    quant live #r_fd: #pointee |-> #fresh(descriptor) when #result == 0;
+    quant live #w_fd: #pointee |-> #fresh(descriptor) when #result == 0;
+    quant live #data: mk_event.fd |-> #same(r_fd) when #result == 0;
+    ensures normal resource_return_none();
+};
+```
 
-`resource_no_return()` (card CG21-CALL-EXITS-AND-BOUNDARIES) appears at most once, only on a `unit` result with `resource_return_none()` and `resource_borrowed` on every parameter, and never beside a counted-user, container, loop-owner, thread-synchronization or lifecycle clause; a declaration of a name in `UNDECLARABLE_C_NAMES` (`contract_loader.rs`: the Clang extension nodes spelled like calls, the returns-twice calls and the non-local exits) is rejected whatever its clauses. See contract specification C04.3.3.
+**Implementation & Provenance:** `crates/qcore-contract/src/contract_loader.rs` and submodules (`contract_counted_users.rs`, `contract_in_place.rs`, `contract_relational.rs`, `contract_retained_by.rs`, `contract_slot_move.rs`, `contract_reference_count.rs`, `contract_callback.rs`, `contract_arm_release.rs`, `contract_constructed_state.rs`, `contract_handoff.rs`, `contract_member_path.rs`, `contract_descriptor_cell.rs`), `crates/qcore-frontend/src/premise_formula.rs`; contract spec [§C04–C06](QCORE_CONTRACT_SPEC_r0_3.md).
 
-`literal_argument_premise` (card HASH-CLAUSE) states where the declaration is applied, not what it means: a consumer treats the callee as undeclared at every call site whose actual at the named parameter is not exactly that integer constant. It never widens a declaration and never changes a mode. Which call-site *spellings* are that constant is fixed by contract specification C04.5.1 (card HASH-REFINE): matched enclosing parentheses and an integer suffix are erased structurally, and every spelling needing arithmetic, a base, a cast or symbol resolution is refused. Beside retaining clauses (G05, C04.14, C04.19) a premise stands only when every one of them is a `resource_callback_invoked` or `resource_callback_invoked_or_default` synchronous invocation (card OPENSSL-PEM-CALLBACK-ARM, gateway rule 57) or a `resource_callback_slot_invoked` opaque slot invocation (card OPENSSL-BIO-READER-INVOCATIONS, rule 57 amended); beside any other retaining clause, a plain `resource_callback_member_invoked` included, the module rejects. `resource_callback_invoked_or_default` carries exactly the static conditions of `resource_callback_invoked` (it is the same invocation for one-clause-per-callback counting); it adds that a null pointer constant at the callback invokes nothing (contract specification C04.19).
+---
 
-The review markers (card W45-CONTRACT-DEFERRED-REVIEW, contract specification C06) carry their own static conditions. The first `STRING` is the mandatory reason and the second the optional reviewer or owner; each is one lexer string literal, not blank, with no backslash escape and no control character, so each has one spelling. A declaration carries either one `contract_review_marker` or any number of `clause_review_marker`s, never both and never two contract-level markers. A `clause_review_marker` wraps exactly one `resource_predicate` (the kind clauses and `resource_variadic_data_tail()` included), which is then subject to every condition above as if written bare; it cannot wrap a marker, the `resource_contract_v1` selector or a `literal_argument_premise`, and it is admitted only under `ensures normal`, as the contract-level form is only under `requires`. Every violation rejects the whole module. A marked declaration is loaded and validated in full and then withheld (C06); inheritance (G05a, C15) copies its markers with its clauses.
-
-The revision markers (card W45-CONTRACT-REVISION-MODE, contract specification C06.2) have their own static conditions. A declaration carries at most one `contract_revision_marker`; a second one is a duplicate (the same mode) or a conflict (the other mode). A `clause_revision_marker` wraps exactly one `resource_predicate`, read as if written bare, and may not restate the contract-level marker's mode. It cannot wrap a marker of either kind, and a `clause_review_marker` cannot wrap it; it cannot wrap the selector or a `literal_argument_premise`, which take the contract's mode; and it is admitted only under `ensures normal`, as the contract-level form is only under `requires`. A `revision_mode` other than `pinned` or `flexible` is malformed. Every violation rejects the whole module. With no marker a declaration is pinned. Inheritance (G05a, C15) does not copy a parent's revision markers: elaboration drops the contract-level form and unwraps the clause-level one.
-
-A `library_version_range` (card OPENSSL-PROVIDER-PLUGIN, contract specification C06.2) is admitted only under `requires`, at most once per declaration; a version that is not `MAJOR.MINOR[.PATCH]` in decimal, a removal not above the lower bound, a lower-bound word other than `since` or `documented`, an unquoted version, an argument after the removal and an `ensures` form each reject the whole module. Inheritance does not copy it.
-
-The named premise `requires resource_premise(NAME, FORMULA);` (card VERDICT-CONTRACT-DEPENDENCIES, contract specification C04.18; the formula card SP1-SYMBOLIC-OPENSSL-PREMISES, G05-formula, C04.18.9) names an assumption the declaration rests on: `NAME` a lowercase identifier, the statement a well-formed formula, each name at most once per declaration; any other shape, a repeated name and an `ensures` spelling each reject the whole module. Card SP5-GLOBAL-PROSE-PREMISE-BAN retires the string statement `resource_premise(NAME, "STATEMENT")`: a statement that is or holds a `STRING` rejects the whole module with `QF001`, on every route (the reader is `qcore_frontend::premise_formula::premise_clause`, which the parser and every loader share). It changes no mode, is rederived from the retained texts (`declaration_premises`), is part of the declaration's text and so of its contract digest and pin, and inheritance (G05a) copies it, compared by the agreement check. Since card LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER the shape check belongs to the contract format: `crates/qcore-frontend/src/frontend.rs` (`premise_clause`) refuses, at parse, any other shape, an introducer other than `requires` and a repeated name in one declaration, in every module. A resource-v1, bounds-v1 (G05f, beside a member clause of any kind only) or Quirin model contract is rejected whole. A model contract's premises are read by `contract_loader::module_premises`.
-
-Card SP6-SYMBOLIC-HYPOTHESIS-ATOMS retires the string atom `resource_hypothesis(ID, STRING)` (contract specification C04.18.1, C04.18.7): a clause headed `resource_hypothesis`, under any introducer and whatever its arguments, rejects the whole module with `QF002`, at parse (`crates/qcore-frontend/src/frontend.rs`, through `qcore_frontend::premise_formula::hypothesis_clause`), so on every route; an atom is a G01p `quant proposition`, the only declared atom form, and a repeated typed atom refuses even when identical. The rest of this paragraph is the version-1 rule as introduced. The conjunction-only graph extension (CONTRACT-HYPOTHESIS-GRAPH-V1, C04.18.1) admits `requires resource_hypothesis(ID, STRING);` and `requires resource_premise_all(NAME, ID {, ID});` in resource-v1 declarations. Both heads and IDs remain ordinary `Word` tokens: the reserved-word census adds zero words and zero lexer token variants. Statements are plain strings: not blank, no escape, no control character (the restrictions of C04.18's string statement, which card SP5-GLOBAL-PROSE-PREMISE-BAN retired for named premises; card SP6-SYMBOLIC-HYPOTHESIS-ATOMS retired the string atom too). IDs are lowercase identifiers, with `legacy_` reserved. Conjunction references are nonempty, unique and strictly increasing; only atom references are admitted. Unused/missing/conflicting atoms and any typed predicate reject the whole module. Equal duplicate atoms coalesce. There is no `any` or `not` grammar and no graph clause under a scoped S3 prerequisite or FFI vocabulary. The bounds-v1 exception is the separately bounded same-name extension below; `resource_premise_all` remains unavailable there. Inheritance preserves graph symbols, independent of formal renaming. All graph records remain evidence-only; C04.18.1 defines exact context, digest, replay and erasure rules.
-
-C04.18.2 additionally admits the ordinary-word contextual head `requires resource_premise_decomposition(EXISTING_NAME, ATOM {, ATOM});`. It resolves exactly one declared legacy premise in the same declaration, creates no named premise, and retains that premise's exact singleton/erasure. Only nonlegacy atom children are admitted; malformed, repeated, missing or noncanonical attachment data reject. Nonempty attachment maps use graph2; unchanged v1 bytes/digests remain canonical. Proposed conjunction composition is separate from original proposition truth. The plain module-comment binding marker and canonical explicitly supplied manifest are metadata outside the expression grammar, with strict version/content-address/reference checks under C04.18.2. No operators, reserved words or typed predicates are added. The PLUGIN-PREMISE-DECOMPOSITION extension also admits the same atom and same-name attachment heads in bounds-v1 declarations. The complete bounds parser still validates every ordinary clause; graph metadata introduces no interpreted BoundsClause or solver fact, and `resource_premise_all` remains refused there. Replay uses a separately held bounds/null source view and retains exact original premise erasure and semantic clause identity. Resource loading continues to refuse bounds vocabulary. Explicit manifest integrity uses that property-specific replay; a null row can attach only through its actual consulted member-fact/premise dependency records. The declared resource-type model view is replayed separately and makes no C ABI claim. Unattached graphs retain exact canonical v1 bytes; a nonempty proposed refinement uses v2 and older v1-only readers refuse it. The extension reuses schema20 graph/binding records without adding fields or operators.
-
-The manifest a binding marker pins is JSON outside the contract grammar, so card SP10-FORMAL-BINDING-DESCRIPTIONS (contract specification C04.18.2, C04.18.3, C04.18.9's SP10 block) adds no production; it fixes the content of the manifest's and a flow model's string fields. An `environment.variables` value is `DIGEST` (64 lowercase hex) or a `TERM_LIST`: the canonical JSON serialization of a nonempty list of G01p parameters `{"name":NAME,"sort":SORT}` (G01p's `value`, `predicate` and `function` sorts), strictly increasing by `NAME`, each a bound typed atom's parameter in the same sort or a registered term in its rendered sort. The environment id is `[A-Za-z][A-Za-z0-9_.-]*` and a variable name `[A-Za-z][A-Za-z0-9_]*`. A formal binding's `proposition` is a qualified name (dot-separated `[A-Za-z0-9_']` segments, at least two); its `quantifiers` are exactly its typed atom's parameters and its `conclusion` that atom's formula, each canonical JSON. Anything else is refused with `QF005` on every load route.
-
-The checked-specification marker `requires resource_body_checked;` (card W45-FB-BACKLOG-CUSTODY, contract specification C06.3) takes no argument, occurs at most once and only as a contract-level requirement; a second one, an argument, and an `ensures` spelling each reject the whole module. It changes no mode: the loaded contract is the one the same declaration without it loads, and which declarations carry it is rederived from the retained texts (`declared_checked_specifications`), as the variadic tail and the literal premise are. Inheritance (G05a) copies it with the other clauses, and the inherited-declaration agreement check compares it. It composes with the revision and review markers: it is read after they are peeled, neither may wrap it, and a declaration a review marker withholds, or an unpinned declaration out of force, is never a specification.
-
-The grammar describes tokens, not required whitespace. Apart from the one `clause_review_marker`, `clause_revision_marker` and `return_code_disposition` wrappings, it provides no general predicate-call nesting. It also does not turn an admitted trusted declaration into proof that a C function obeys it.
-
-`resource_return_removed(item, n)` (C04.3.5) names a matching
-`resource_removed(item, parent, n)` parameter and a distinct nonnull owned
-parent, with matching nullability and mutable depth-one heap pointer types.
-Every other parameter is borrowed; richer effect/clause families and variadic
-tails are refused. The result retains the item's identity. The physical-body
-reader additionally requires the exact explicit `detach_list_representation`
-premise and complete bounded list layout/unlink frame; neither its syntax nor
-its premise establishes caller membership.
-
-
+<a id="g05-formula-symbolic-premise-statements"></a>
 ### G05-formula. Symbolic premise statements
 
-Card SP1-SYMBOLIC-OPENSSL-PREMISES (contract specification C04.18.9): the
-statement of `resource_premise(NAME, …)` may be a formula instead of a string;
-since card SP5-GLOBAL-PROSE-PREMISE-BAN it must be (a string is `QF001`).
-The formula is exactly the tokens between the comma after `NAME` and the
-clause's closing parenthesis:
+#### Consumer and Selection Mechanism
+
+`qcore_frontend::premise_formula` parses, sort-checks, and canonically prints the symbolic formula occupying the second argument of `requires resource_premise(NAME, FORMULA);` (across resource-v1, bounds-v1 member premises, local-condition blocks, and model contracts) as well as the header statement of `quant #outer [[contract]] NAME, FORMULA;` ([G05g](#g05g-outer-contract-v1)). Since `SP5-GLOBAL-PROSE-PREMISE-BAN` and `SP8-OUTER-CONTRACT-SYMBOLIC-STATEMENTS`, prose string literals in these positions are banned at parse (`QF001` / `QF004`).
+
+#### Consolidated Grammar
 
 ```ebnf
 premise_formula = implication ;
-implication = conjunction, [ "->", implication ] ;          (* right-associative *)
-conjunction = maps_to, { "&&", maps_to } ;                   (* left-associative *)
-maps_to     = relation, [ "|->", relation ] ;                (* no chaining *)
-relation    = set_expr, [ ( "in" | "==" ), set_expr ] ;      (* no chaining *)
-set_expr    = primary, { "|", primary }
-            | primary, "\\", primary ;                       (* never mixed, never chained *)
-primary     = "(", implication, ")"
-            | "quant", "all", "#", name, "in", set_expr, ":", implication
-            | "#", name, [ "(", implication, [ ",", implication ], ")" ]
-            | CONSTANT
-            | "{", "}" ;
-name        = [a-z][a-z0-9_]* ;  CONSTANT = [A-Z][A-Z0-9_]* ;
+
+implication     = conjunction, [ "->", implication ] ;              (* right-associative *)
+conjunction     = maps_to, { "&&", maps_to } ;                      (* left-associative *)
+maps_to         = relation, [ "|->", relation ] ;                   (* non-associative, no chaining *)
+relation        = set_expr, [ ( "in" | "==" ), set_expr ] ;         (* non-associative, no chaining *)
+set_expr        = primary, { "|", primary }                         (* set union *)
+                | primary, "\\", primary ;                          (* set difference: never mixed or chained *)
+
+primary         = "(", implication, ")"
+                | "quant", "all", "#", term_name, "in", set_expr, ":", implication
+                | "#", term_name, [ "(", implication, [ ",", implication ], ")" ]
+                | CLASS_CONSTANT
+                | "{", "}" ;
+
+term_name       = [a-z][a-z0-9_]* ;
+CLASS_CONSTANT  = [A-Z][A-Z0-9_]* ;
 ```
 
-Every token but one is an existing one: `#` (`Hash`), `|->` (`MapsTo`), `->`
-(`Arrow`), `&&` (`AndAnd`), `==` (`EqualEqual`), `|` (`Pipe`), braces,
-parentheses, `:`, `,` and the ordinary words `quant`, `all` and `in`. Set
-difference is `\` (`Backslash`), the one token this card adds (USER DECISION
-2026-11-20, "Add '\'"): a bare backslash was an `unexpected character` lex
-error, and no tracked `.qcore`, `.qc`, `.qr`, `.qv` or `.qcorelib` file had one
-in code position (781 files), so the promotion accepts nothing new elsewhere;
-inside a string or character literal a backslash is still the literal's
-escape. It is one byte with no two-byte spelling: `\|` is `Backslash` then
-`Pipe`, and `|->`, `||->`, `->|`, `!->` keep their longest-match identities.
-`-` (`Minus`) is refused inside a formula, so difference has one spelling. A quantifier's body extends as far as it can. The
-reader is bounded (1024 tokens, nesting depth 48, 512 nodes); exhaustion
-rejects. The sort judgment then requires every `#name` to be a registered term
-of C04.18.9 applied to arguments of its signature, or a variable bound by an
-enclosing `quant` (no variable shadows a term or another variable), every
-`CONSTANT` a registered class, and the whole formula a proposition.
-Any failure rejects the whole module, in every vocabulary, exactly as a
-malformed string premise does. A string statement that itself reads as a
-formula rejects too (write it unquoted), so the two forms never share a
-statement. The statement every rendering prints is the canonical printing:
-single spaces around binary operators, `: ` after a quantifier's domain, `, `
-between arguments, parentheses only where the precedence needs them.
+#### Semantic Side Conditions, Lexical Rules, and Bounds
 
-The frontend's operator gate (`Q038`) admits `&&` and `|` inside a `requires
-resource_premise(NAME, FORMULA);` clause whose statement the premise reader
-accepts as a formula, and nowhere else it did not already
-(`crates/qcore-frontend/src/pipe.rs`, `premise_formula_spans`; cards
-SP2-SYMBOLIC-LIBRDKAFKA-PREMISES and SP3-SYMBOLIC-FLUENT-BIT-LIBC-PREMISES,
-whose librdkafka and Fluent Bit modules are the first formula premises the
-compiler regression sweep of the contract corpus compiles; one exemption for
-both, SP3's reader-accepted test kept at the merge). A string statement or a
-formula the reader refuses gets no such span, so its operators still refuse.
+- **Lexical tokens and `\` (`Backslash`):** Every token reuses the standard Quirin lexer (`#`, `|->`, `->`, `&&`, `==`, `|`, `{`, `}`, `(`, `)`, `:`, `,`, and contextual words `quant`, `all`, `in`), plus `\` (`Symbol::Backslash`), added specifically for set difference (`A \ B`). `\` has no multi-byte operator combinations (`\|` lexes as `\` then `|`, while `|->`, `||->`, `->|`, `!->` keep longest-match priority). `-` (`Minus`) is rejected inside `premise_formula` so set difference has one canonical spelling. A `quant all #x in S: BODY` body extends as far rightward as possible.
+- **Explicit AST & token bounds:** At most **1,024 tokens**, **nesting depth 48**, and **512 AST nodes** per formula; exceeding any bound rejects the module.
+- **Sort judgment (§C04.18.9):** Every `#term_name` must either be a registered C04.18.9 vocabulary symbol applied to the exact arity and sorts of its signature, or a variable bound by an enclosing `quant all` (shadowing a registered symbol or an outer variable is rejected). Every `CLASS_CONSTANT` must be a registered uppercase class constant, and the root expression must have sort `Prop`. Inside `F |-> E`, `|->` states that every invocation of callback (or callback set) `F` during the call satisfies effect specification `E`.
+- **Operator gate (`Q038`) & canonical printing:** `crates/qcore-frontend/src/pipe.rs` (`premise_formula_spans`) exempts `&&` and `|` from the contract-module operator gate (`Q038`) **only** inside `resource_premise` and `quant #outer [[contract]]` clauses accepted by this reader. Digest computation and rendering always emit the **canonical printing** (single spaces around binary operators, `: ` after quantifier domain, `, ` between arguments, minimal precedence-preserving parentheses).
 
-`|->` is the lexer's one `MapsTo` token everywhere (three bytes, matched before
-`||`, `|>`, `->` and `|`, so `A |-> B` never lexes as a union followed by an
-implication). Its meaning is decided by the delimited context that reads it: a
-contract state clause, a `resource_premise_flow_v1` expression (G05-flow), or
-this formula, where `F |-> E` says every run of callback `F` (or of every
-member of callback set `F`) during the call has effect `E`.
+#### Concrete Example
 
-Card SP2-SYMBOLIC-LIBRDKAFKA-PREMISES: the grammar is unchanged (its new
-terms are vocabulary, C04.18.9). The source operator gate (G01, `Q038`) reads
-a `|` or `&&` inside a `requires resource_premise(…)` clause the premise reader
-accepts as a formula (above) as the formula's own union or conjunction, as it reads a quant check's connectives and a result
-set's operators, so a contract module stating a formula compiles; a `|` or
-`&&` anywhere else keeps its refusal, and every other token of the clause is
-the premise reader's to accept or refuse.
-Card SP4-SYMBOLIC-LIBEVENT-PREMISES's libevent formulas compile through the same one exemption; the card adds none.
+```qv
+requires resource_premise(
+    served_queue,
+    #op_callbacks |-> #takes(#held_on(#served)) == {}
+);
 
+requires resource_premise(
+    ssl_slot_closure,
+    quant all #cb in #registered_slots \ #verified_slots: #cb |-> #neutral
+);
+```
+
+**Implementation & Provenance:** `crates/qcore-frontend/src/premise_formula.rs`, `crates/qcore-frontend/src/pipe.rs`; contract spec [§C04.18.9](QCORE_CONTRACT_SPEC_r0_3.md); cards `SP1-SYMBOLIC-OPENSSL-PREMISES`, `SP2-SYMBOLIC-LIBRDKAFKA-PREMISES`, `SP3-SYMBOLIC-FLUENT-BIT-LIBC-PREMISES`, `SP4-SYMBOLIC-LIBEVENT-PREMISES`, `SP5-GLOBAL-PROSE-PREMISE-BAN`.
+
+---
+
+<a id="g05-flow-proposed-premise-expressions"></a>
 ### G05-flow. Proposed premise expressions
 
-C04.18.3 adds one contextual clause, also admitted in the explicit bounds and resource-type model views after full vocabulary validation:
+#### Consumer and Selection Mechanism
+
+`crates/qcore-contract/src/premise_flow.rs` validates contextual `requires resource_premise_flow_v1(…);` metadata clauses inside `resource_contract_v1`, `bounds_contract_v1` (explicit bounds view), and resource-type model contract views after full base-vocabulary validation. These clauses express structured three-valued premise composition over declared §G01p graph atoms without introducing executable source expressions or proof authority.
+
+#### Consolidated Grammar
 
 ```ebnf
-premise_flow = "resource_premise_flow_v1", "(", flow_id, ",", flow_expr, ")" ;
-flow_expr = atom_id | "flow", "(", flow_id, ")"
-          | "(", flow_expr, flow_operator, flow_expr, ")" ;
-flow_operator = "|->" | "||->" | "!->" | "->|" ;
+premise_flow_clause = "requires", premise_flow, ";" ;
+premise_flow        = "resource_premise_flow_v1", "(", flow_id, ",", flow_expr, ")" ;
+
+flow_expr           = atom_id
+                    | "flow", "(", flow_id, ")"
+                    | "(", flow_expr, flow_operator, flow_expr, ")" ;
+
+flow_operator       = "|->" | "||->" | "!->" | "->|" ;
+flow_id             = [a-z][a-z0-9_]* ;
+atom_id             = [a-z][a-z0-9_]* ;
 ```
 
-IDs match `[a-z][a-z0-9_]*`. Every binary operation requires its own parentheses; no precedence or associativity is inferred. `|->` reuses MapsTo only inside this clause; elsewhere its state-clause meaning is unchanged. The lexer uses longest matching for three additional symbols `||->`, `!->`, `->|`; the contextual heads remain ordinary words. `flow(ID)` resolves only a same-declaration entry; atom IDs resolve only existing graph atoms. Full reference validation rejects missing IDs, duplicate entries, cycles, excessive expansion and terminal composition below the root, including through references. Every branch and entry is checked. The exact limits, three-valued truth tables, positive-refutation requirement, explicit discharged terminal condition, source/model/Context replay and evidence-only authority boundary are C04.18.3. These records add no graph field or premise, and inherited graph/flow identifiers are literal metadata independent of formal parameter renaming. The source-language expression grammar, scoped S3 and FFI vocabularies do not gain general flow expressions.
+#### Semantic Side Conditions and Refusal Boundaries
 
+- **Mandatory parenthesization:** Every binary `flow_operator` application **must** carry its own enclosing parentheses `(A OP B)` — no operator precedence or associativity is inferred.
+- **Longest-match operators & contextual heads:** `||->`, `!->`, and `->|` are lexed atomically by longest match alongside `|->` (`MapsTo`). `resource_premise_flow_v1` and `flow` remain ordinary contextual words (zero reserved keywords added). Not admitted in `.qr` source expressions, S3 local-condition blocks ([G05h](#g05h-local-condition-and-registered-lifetime-clauses)), or `#c_ffi` declarations.
+- **Reference & acyclicity checks (§C04.18.3):** `atom_id` must resolve to a declared §G01p proposition atom in the same declaration's hypothesis graph; `flow(ID)` resolves only to another `resource_premise_flow_v1` entry in the **same declaration**. Missing IDs, duplicate `flow_id` entries, reference cycles, DAG expansion blowup beyond C04.18.3 bounds, and terminal `->|` composition nested below the root (directly or transitively via `flow(ID)`) reject the entire module. Inherited flow/atom IDs are literal metadata unaffected by formal parameter renaming.
 
+#### Concrete Example
+
+```qv
+quant proposition #env_ready(#c: cls) = #initialized(#c);
+quant proposition #op_step(#f: fn, #r: run) = #runs(#f, #r);
+quant proposition #post_clean(#r: run) = #neutral_run(#r);
+requires resource_premise_flow_v1(step_flow, (#env_ready |-> #op_step));
+requires resource_premise_flow_v1(full_flow, (flow(step_flow) ->| #post_clean));
+```
+
+**Implementation & Provenance:** `crates/qcore-frontend/src/premise_flow.rs`, `crates/qcore-contract/src/premise_flow.rs`, `crates/qcore-contract/src/premise_metadata_bridge.rs`; contract spec [§C04.18.3](QCORE_CONTRACT_SPEC_r0_3.md).
+
+---
+
+<a id="g05-lifecycle-typed-symbolic-lifecycle-clauses"></a>
 ### G05-lifecycle. Typed symbolic lifecycle clauses
 
-C04.18.4 admits the following source-version1 metadata through the existing resource, bounds and explicit resource-type-model views:
+#### Consumer and Selection Mechanism
+
+`crates/qcore-frontend/src/contract_lifecycle.rs` and `crates/qcore-contract/src/contract_lifecycle.rs` parse and validate `requires resource_lifecycle_v1(…);` symbolic intent metadata across `resource_contract_v1`, `bounds_contract_v1`, and explicit resource-type model views. Like [G05-flow](#g05-flow-proposed-premise-expressions), these clauses record structured evidence-only lifecycle transitions and carry no standalone proof or custody-discharge authority.
+
+#### Consolidated Grammar
 
 ```ebnf
-lifecycle_clause = "resource_lifecycle_v1", "(", entry_id, ",",
-                   lifecycle_operator, lifecycle_target, ")" ;
-lifecycle_operator = "|^+" | "|^-" ;
-lifecycle_target = ("resource" | "hypothesis"), "(", target_id, ")" ;
+lifecycle_req_clause = "requires", lifecycle_clause, ";" ;
+lifecycle_clause     = "resource_lifecycle_v1", "(", entry_id, ",",
+                       lifecycle_operator, lifecycle_target, ")" ;
+
+lifecycle_operator   = "|^+" | "|^-" ;
+lifecycle_target     = ( "resource" | "hypothesis" ), "(", target_id, ")" ;
+
+entry_id             = [a-z][a-z0-9_]* ;
+target_id            = [a-z][a-z0-9_]* ;
 ```
 
-The enclosing source clause is `requires lifecycle_clause;`. Operators are atomic by longest match and remain unsupported in ordinary expressions, flow-v1 expressions and other contract vocabularies. No untyped operand, target path, nested lifecycle expression or trailing token is admitted. IDs are literal metadata with the exact bounds/reference/inheritance rules of C04.18.4. These forms retain typed symbolic intents only; they introduce no executable lifecycle or proof authority. Existing maps-to, flow, pipe and arithmetic spellings keep their identities.
+#### Semantic Side Conditions and Refusal Boundaries
 
+- **Atomic operators:** `|^+` (establishment/activation intent) and `|^-` (retirement/discharge intent) are lexed atomically by longest match and are rejected in `.qr` source expressions, `G05-flow` expressions, and non-participating contract vocabularies.
+- **Strict flat target structure (§C04.18.4):** The operand after `|^+` or `|^-` must be typed explicitly as `resource(target_id)` or `hypothesis(target_id)`. Bare identifiers, dotted paths, nested lifecycle operators, and trailing tokens reject the whole module. All IDs obey §C04.18.4 reference, size, and formal-renaming-invariant inheritance rules.
+
+#### Concrete Example
+
+```qv
+quant proposition #loop_active(#o: obj) = #active(#o);
+requires resource_lifecycle_v1(activate_evl, |^+ hypothesis(loop_active));
+requires resource_lifecycle_v1(retire_handle, |^- resource(evl_handle));
+```
+
+**Implementation & Provenance:** `crates/qcore-frontend/src/contract_lifecycle.rs`, `crates/qcore-contract/src/contract_lifecycle.rs`; contract spec [§C04.18.4](QCORE_CONTRACT_SPEC_r0_3.md).
+
+---
+
+<a id="g05-guarded-standalone-readable-guarded-decomposition"></a>
 ### G05-guarded. Standalone readable guarded decomposition
 
-C04.18.5 defines this separate version1 document. It is **not** an ordinary
-source program or a `.qv` contract clause; `.qgd` is used for the two explicit
-report-owned applications. No source-language word or lexer token is added.
+#### Consumer and Selection Mechanism
+
+`crates/qcore-frontend/src/guarded_decomposition.rs` and `crates/qcore-contract/src/guarded_decomposition.rs` read standalone `.qgd` (`guarded_decomposition_v1`) documents. A `.qgd` file is **not** a `.qr` program or a `.qv` contract module; it is a standalone human-auditable guarded decomposition artifact (or the canonical rendered projection of [G05-guarded-source](#g05-guarded-source-explicit-guarded-source-embedding)) verified against a supplied typed §G01p proposition map and a fully replayed property-specific source hypothesis graph.
+
+#### Consolidated Grammar
 
 ```ebnf
-guarded_document = "guarded_decomposition_v1", ";", guarded_clause, { guarded_clause } ;
-guarded_clause = "(", environment_id, "∧", prerequisite_id,
-                   { "∧", prerequisite_id }, ")", "|->", operation_id, ";"
-               | condition_id, "!->", operation_id, ";"
-               | operation_id, "||->", case_id, "/", case_id, { "/", case_id }, ";"
-               | case_id, "->|", postcondition_id, ";" ;
+guarded_document = "guarded_decomposition_v1", ";",
+                   guarded_clause, { guarded_clause } ;
+
+guarded_clause   = "(", environment_id, "∧", prerequisite_id,
+                     { "∧", prerequisite_id }, ")", "|->", operation_id, ";"
+                 | condition_id, "!->", operation_id, ";"
+                 | operation_id, "||->", case_id, "/", case_id, { "/", case_id }, ";"
+                 | case_id, "->|", postcondition_id, ";" ;
+
+environment_id   = [a-z][a-z0-9_]* ;
+prerequisite_id  = [a-z][a-z0-9_]* ;
+condition_id     = [a-z][a-z0-9_]* ;
+operation_id     = [a-z][a-z0-9_]* ;
+case_id          = [a-z][a-z0-9_]* ;
+postcondition_id = [a-z][a-z0-9_]* ;
 ```
 
-IDs match `[a-z][a-z0-9_]*`. Only surrounding whitespace is insignificant;
-operator spellings are atomic, and the conjunction symbol is exactly `∧`.
-Every symbol is resolved against an explicitly supplied typed proposition map
-bound to a fully replayed property-specific source graph. No nesting, precedence,
-flow reference, lifecycle operation, implicit case or trailing token is supplied.
-All operations/cases must be completely paired with guards, alternatives and
-separate terminals. Exact role/reference/size limits, admission-direction
-lowering, positive-refutation and Context checks are C04.18.5. Existing G05-flow,
-G05-lifecycle and maps-to meanings are unchanged.
+#### Semantic Side Conditions and Refusal Boundaries
 
+- **Exact Unicode conjunction & flat pairing (§C04.18.5):** In standalone `.qgd` files, the conjunction symbol inside an enabling guard is **exact Unicode `∧` (U+2227)**, and `|->`, `!->`, `||->`, `->|`, `/` are atomic tokens with only surrounding whitespace ignored.
+- **Complete pairing & totality:** No nested expressions, implicit precedence, `flow(...)` references, lifecycle operators, singleton `||->` cases (at least two `/`-separated `case_id`s are required), or unpaired symbols are admitted. Every `operation_id` must be guarded (`|->`, optionally inhibited by `!->`) and split into cases (`||->`), and every `case_id` must map to a distinct terminal (`->|`), with every ID bound in the supplied role/proposition map and verified under §C04.18.5 admission-direction lowering and positive-refutation checks.
+
+#### Concrete Example (`.qgd`)
+
+```text
+guarded_decomposition_v1;
+(ctx_env ∧ pool_live ∧ key_valid) |-> parse_entry;
+pool_corrupt !-> parse_entry;
+parse_entry ||-> case_hit / case_miss;
+case_hit ->| post_borrowed_entry;
+case_miss ->| post_null_unchanged;
+```
+
+**Implementation & Provenance:** `crates/qcore-frontend/src/guarded_decomposition.rs`, `crates/qcore-contract/src/guarded_decomposition.rs`; contract spec [§C04.18.5](QCORE_CONTRACT_SPEC_r0_3.md).
+
+---
+
+<a id="g05-guarded-source-explicit-guarded-source-embedding"></a>
 ### G05-guarded-source. Explicit guarded source embedding
 
-C04.18.6 extends the contract metadata vocabulary explicitly. Existing contextual
-flow-v1/lifecycle-v1 expressions retain their meanings. Card
-SP6-GUARDED-SYMBOL-PROSE retires the string forms. A symbol states an unquoted
-formula, and a document states its unquoted clauses. A string token anywhere in
-either clause rejects the module with `QF003`, at parse, under any introducer.
+#### Consumer and Selection Mechanism
+
+`crates/qcore-contract/src/guarded_metadata_bridge.rs` embeds a complete guarded decomposition and its typed role/formula symbol table directly inside a `.qv` declaration's `requires` clauses. Every identifier starting with `resource_guarded_` is reserved exclusively to this total-or-reject reader (including unknown future version suffixes).
+
+#### Consolidated Grammar
 
 ```ebnf
-guarded_symbol = "requires", "resource_guarded_symbol_v1", "(", ID, ",", role,
-                 ",", guarded_formula, { ",", graph_atom_id }, ")", ";" ;
-guarded_source = "requires", "resource_guarded_decomposition_v1", "(", entry_id,
-                 ",", source_clause, { ",", source_clause }, ")", ";" ;
-role = "environment" | "prerequisite" | "operation" | "condition" | "case" | "postcondition" ;
-(* A G01p formula (no `#ID(...) =` head) whose free names are registered
-   C04.18.9 terms or SP6/SP7 rendered terms, typed in their rendered sorts. *)
-guarded_formula = formula ;  (* G01p's formula production *)
-(* G05-guarded's clauses with `&&` for `∧`. *)
-source_clause = "(", environment_id, "&&", prerequisite_id,
-                  { "&&", prerequisite_id }, ")", "|->", operation_id
-              | condition_id, "!->", operation_id
-              | operation_id, "||->", case_id, "/", case_id, { "/", case_id }
-              | case_id, "->|", postcondition_id ;
+guarded_symbol        = "requires", guarded_symbol_body, ";" ;
+guarded_symbol_body   = "resource_guarded_symbol_v1", "(", symbol_id, ",",
+                        guarded_role, ",", guarded_formula,
+                        { ",", graph_atom_id }, ")" ;
+
+guarded_source        = "requires", guarded_source_body, ";" ;
+guarded_source_body   = "resource_guarded_decomposition_v1", "(", entry_id, ",",
+                        source_guarded_clause, { ",", source_guarded_clause }, ")" ;
+
+guarded_role          = "environment" | "prerequisite" | "operation"
+                      | "condition" | "case" | "postcondition" ;
+
+guarded_formula       = formula ;   (* §G01p formula production, unquoted *)
+
+source_guarded_clause = "(", environment_id, "&&", prerequisite_id,
+                          { "&&", prerequisite_id }, ")", "|->", operation_id
+                      | condition_id, "!->", operation_id
+                      | operation_id, "||->", case_id, "/", case_id, { "/", case_id }
+                      | case_id, "->|", postcondition_id ;
 ```
 
-The readable G05-guarded document is rendered from the source clauses: the line
-`guarded_decomposition_v1;`, then one clause per line, each ending in `;`, with
-`∧` for `&&`. That rendered document is checked by G05-guarded and its SHA is
-the readable SHA. The binding's proposition is the formula's canonical G01p
-printing. One document and its complete role/proposition map are required per
-participating declaration. The source clause limit is 131,072 bytes. The
-embedded document, statement, identifier, symbol and dependency bounds remain
-C04.18.5's, and a proposition's printing is at most 4,096 bytes. Every
-`resource_guarded_` head is reserved to this total-or-reject reader, including
-unsupported versions. No executable lifecycle or source truth is introduced.
-The sealed bridge version 2 is separately bounded to one resource module and
-declaration; it is not a general source eraser.
+#### Semantic Side Conditions, Bounds, and `QF003` Prose Ban
 
-## G05a. Contract inclusion and inheritance
+- **Prose ban (`QF003`, card `SP6-GUARDED-SYMBOL-PROSE`):** Both `guarded_formula` and `source_guarded_clause` are **unquoted symbolic syntax**. Any `STRING` token anywhere inside `resource_guarded_symbol_v1` or `resource_guarded_decomposition_v1` (under any clause introducer) rejects the module at parse with **`QF003`**.
+- **Formula typing:** `guarded_formula` is a headless §G01p `formula` whose free `#name` identifiers are registered §C04.18.9 / SP6 / SP7 terms typed in their rendered sorts (`obj`, `cls`, `fn`, `meth`, `res`, `run`, `#runs: predicate<fn, run>`, …). Its canonical §G01p printing (bounded at **4,096 bytes**) forms the formal binding's proposition.
+- **Deterministic `.qgd` projection:** From `resource_guarded_decomposition_v1`, the loader synthesizes the standalone [G05-guarded](#g05-guarded-standalone-readable-guarded-decomposition) text (`guarded_decomposition_v1;` followed by one `;`-terminated line per `source_guarded_clause` with `&&` rendered as `∧`), validates it with the G05-guarded checker, and records its SHA-256 as the readable digest.
+- **Size & cardinality bounds:** Each participating declaration requires **exactly one** `resource_guarded_decomposition_v1` clause and a complete `resource_guarded_symbol_v1` map covering all referenced symbols. Each source clause is bounded at **131,072 bytes**; document, identifier, symbol-count, and dependency bounds follow §C04.18.5. Sealed bridge v2 remains scoped to one resource module and declaration.
 
-Card CONTRACT-INHERIT. A directive layer read by
-`crates/qcore-frontend/src/contract_inclusion.rs` and resolved by
-`crates/qcore-contract/src/contract_inclusion.rs` **before** any consumer
-parses the module. The structural parser of G01 does not admit either form:
-it refuses them with a `Q000` parse error naming the contract loader, so an
-unresolved inclusion never reaches a consumer.
+#### Concrete Example
 
-```ebnf
-contract_module   = "module", "contract", ";", {include_directive},
-                    declaration, {declaration} ;
-include_directive = "#", "include", STRING, ";" ;
-(* STRING content: CRATE ":" MODULE, with
-   CRATE  = [a-z0-9][a-z0-9_-]*                       (the Cargo package name)
-   MODULE = SEGMENT {"/" SEGMENT} (".qv" | ".qcore"), SEGMENT = [a-z0-9_-]+ *)
-inheriting_fn     = "extern", "fn", IDENT, "(", [parameter, {",", parameter}], ")",
-                    "->", TYPE, "contract", "inherit", parent, ";" ;
-parent            = [IDENT, "::"], IDENT ;            (* one qualifier level *)
+```qv
+quant proposition #atom_pool(#p: obj) = #live_pool(#p);
+requires resource_guarded_symbol_v1(ctx_env, environment, #valid_ctx(#ctx));
+requires resource_guarded_symbol_v1(pool_ok, prerequisite, #live_pool(#pool), atom_pool);
+requires resource_guarded_symbol_v1( bad_state, condition, #corrupted(#pool) );
+requires resource_guarded_symbol_v1(lookup_op, operation, #runs(#callee, #run));
+requires resource_guarded_symbol_v1(hit_case, case, #found_item(#run));
+requires resource_guarded_symbol_v1(miss_case, case, !#found_item(#run));
+requires resource_guarded_symbol_v1(post_ok, postcondition, #preserved_custody(#pool));
+requires resource_guarded_symbol_v1(post_nil, postcondition, #unchanged_pool(#pool));
+requires resource_guarded_decomposition_v1(
+    lookup_guard,
+    (ctx_env && pool_ok) |-> lookup_op,
+    bad_state !-> lookup_op,
+    lookup_op ||-> hit_case / miss_case,
+    hit_case ->| post_ok,
+    miss_case ->| post_nil
+);
 ```
 
-`#` is the existing attribute-marker token and `::` the existing `ColonColon`
-token; `include` and `inherit` are **contextual** (read only after `#` at a
-contract module's top level and only directly after `contract`), so no
-reserved word is added and both remain ordinary identifiers elsewhere. The
-constraint-14 census found no `#` in code position, no `#include`, no
-`inherit` and no non-block `contract` tail in any of the 571 tracked Quirin
-sources, archived probes included.
+**Implementation & Provenance:** `crates/qcore-contract/src/guarded_metadata_bridge.rs`, `crates/qcore-frontend/src/premise_formula.rs`; contract spec [§C04.18.6](QCORE_CONTRACT_SPEC_r0_3.md); card `SP6-GUARDED-SYMBOL-PROSE`.
 
-Static conditions (each a `QI` refusal, contract specification C15): the
-directives precede every declaration of a `module contract;` module; the
-included crate is the includer's crate or a declared dependency and the module
-is in its published set; no include cycle or repeated include; the parent is
-the one own declaration named `NAME`, or the one declaration named `NAME` in
-the directly included modules of the crate whose namespace is `NS`; the parent
-is a plain `extern fn … contract { … };`; arity, parameter types and result
-type agree; the positional renaming captures no word; no inheritance cycle; no
-clause after `inherit PARENT`. The elaborated text replaces each directive by
-blanks and each `inherit PARENT` by the parent's clause block under the
-renaming; resource-v1 then loads it through G05 unchanged and additionally
-requires the child's loaded record to equal the parent's.
+---
 
-The include string carries the **package name** (`quirin-provider-libc`), which
-the dependency rule checks; the qualifier carries the **namespace** derived from
-it (`libc`: the package name without `quirin-provider-`, `-` read as `_`). Card
-CONTRACT-INHERIT-QCORE-PROVIDER-NAMING admits exactly one second prefix,
-`qcore-provider-` (`qcore-provider-libevent` → `libevent`, so Monkey's
-`mk_mem_alloc` is written `libevent::mk_mem_alloc`); one remainder under both
-prefixes is one namespace and is refused (`QI017`).
+<a id="g05a-contract-inclusion-and-inheritance"></a>
+## G05a. Contract inclusion (`#include`) and inheritance (`contract inherit`)
 
-Card CONTRACT-INHERIT-ADOPTION adds the selection form. A schema-2 resource
-manifest (`cycle19-resource-contracts.json`) is JSON, not QCore source:
+### Consumer and Elaboration Discipline
+
+`crates/qcore-frontend/src/contract_inclusion.rs` and `crates/qcore-contract/src/contract_inclusion.rs` implement a pre-consumer **elaboration layer** for `resource_contract_v1` modules, resolving cross-crate `#include` directives against the published provider load path (`providers/contract-load-path.json`) and expanding `contract inherit` declarations before [G05](#g05-resource-loader-v1) parses the module.
+
+- **Fail-closed in the raw frontend:** G01's structural parser (`parse_source_program`) deliberately **refuses** both `#include` and `contract inherit` with a `Q000` parse error naming the contract loader, ensuring an unelaborated module can never reach any consumer.
+- **Disallowed in `bounds_contract_v1`:** [G05b](#g05b-bounds-contract-v1) explicitly rejects `#include` and `contract inherit` (gateway rule [14j](agents/gateway.md#constraint-14j)).
+
+### Consolidated Grammar
+
+#### `.qv` Directive and Inheritance Grammar
 
 ```ebnf
-manifest = "{", '"schema_version": 2', ",", '"load_path": ', PATH, ",",
-           '"modules": [', entry, {",", entry}, "]", "}" ;
-entry    = PATH | REFERENCE ;          (* a REFERENCE contains ":"; a PATH may not *)
-REFERENCE = CRATE ":" MODULE ;         (* exactly the include target above *)
+inheriting_module = "module", "contract", ";",
+                    { include_directive },
+                    contract_item, { contract_item } ;
+
+include_directive = "#", "include", INCLUDE_STRING, ";" ;
+(* INCLUDE_STRING lexical content:
+     include_target = crate_name, ":", module_relpath ;
+     crate_name     = [a-z0-9], { [a-z0-9_-] } ;
+     module_relpath = path_segment, { "/", path_segment }, ( ".qv" | ".qcore" ) ;
+     path_segment   = [a-z0-9_-]+ ; *)
+
+contract_item     = alias_declaration
+                  | resource_decl_block
+                  | inheriting_fn ;
+
+inheriting_fn     = "extern", "fn", IDENT, "(", [ param_list ], ")",
+                    "->", result_abi, "contract", "inherit", parent_ref, ";" ;
+
+parent_ref        = [ IDENT, "::" ], IDENT ;       (* at most one namespace qualifier *)
 ```
 
-`PATH` is relative with no traversal and resolves as in schema 1; the load path
-is the generated `providers/contract-load-path.json`. Schema 1 (paths only, no
-`load_path`) is unchanged. The first adopting modules are
-`fluent_bit/resource_memory.qv` (`flb_malloc`, `flb_calloc`, `flb_free`
-inherit `libc::malloc`, `libc::calloc`, `libc::free`) and
-`fluent_bit/resource_string.qv` (`flb_strdup`, `flb_strndup` inherit
-`libc::strdup`, `libc::strndup`).
-
-## G05b. Bounds contract v1
-
-Card CG16-INDEX-AND-OFFSET-EXTENTS, contract specification
-[C09.1](QCORE_CONTRACT_SPEC_r0_3.md#c091-reviewed-index-and-extent-contracts-planned).
-A separate consumer (`crates/qcore-contract/src/bounds_contract.rs`) over the
-G01 envelope, selected by its own marker, loaded total-or-reject:
+#### Schema-2 Resource Contract Selection Manifest (JSON)
 
 ```ebnf
-bounds_module = "module", "contract", ";", bounds_fn, {bounds_fn} ;
-bounds_fn     = "extern", "fn", IDENT, "(", [parameter, {",", parameter}], ")",
+resource_manifest_v2 = "{",
+                         '"schema_version":', "2", ",",
+                         '"load_path":', JSON_REL_PATH, ",",
+                         '"modules":', "[", manifest_entry, { ",", manifest_entry }, "]",
+                       "}" ;
+
+manifest_entry       = JSON_REL_PATH               (* relative file path, contains no ":" *)
+                     | JSON_MODULE_REF ;           (* "crate_name:module_relpath" *)
+```
+
+`include` and `inherit` are **contextual** words (recognized only immediately after `#` in a contract module's header prefix and immediately after `contract` on an `extern fn`), reserving zero words.
+
+### Semantic Side Conditions and `QI***` Refusal Boundaries
+
+1. **Placement, dependency graph, and namespace derivation (`QI***`, §C15):**
+   - Every `#include` directive must follow `module contract;` and precede all declarations (`QI***`).
+   - The target `crate_name` must be either the includer's own provider crate or an explicit dependency in the load path, and `module_relpath` must belong to that crate's published resource contract set. Repeated includes and include cycles reject (`QI***`).
+   - **Namespace mapping:** An `#include` string names the Cargo **package** (`quirin-provider-libc` or legacy `qcore-provider-libevent`), whereas `NS::parent` uses the derived **namespace** — stripping `quirin-provider-` or `qcore-provider-` and mapping `-` to `_` (e.g., `quirin-provider-libc` → `libc`, `qcore-provider-libevent` → `libevent`). If two packages strip to the same namespace remainder, loading refuses (`QI017`).
+
+2. **Parent resolution, renaming, and post-elaboration equality:**
+   - Unqualified `inherit NAME;` resolves to the unique declaration `NAME` in the current module; qualified `inherit NS::NAME;` resolves to the unique declaration `NAME` across the directly `#include`d modules of namespace `NS`.
+   - The parent must be a concrete `extern fn … contract { … };` block (inheritance chains / cycles and trailing clauses after `inherit PARENT` reject).
+   - Child and parent must agree in arity, parameter ABI types, and result ABI type, and positional substitution of child parameter names for parent parameter names must capture no identifier (`QI***`).
+   - **Clause copying vs. stripping:** Elaboration blanks `#include` directives and splices the parent's renamed clause block into the child — preserving custody modes, kinds, literal premises, named premises, hypothesis/flow/lifecycle symbols (literal metadata, unrenamed), review markers, `resource_body_checked`, and loop-owner/thread-sync/lifecycle obligations, while **stripping** parent `resource_revision` markers (contract-level dropped, clause-level unwrapped) and `resource_library_version` bounds so the child carries its own pin/version posture. Finally, G05 loads both and checks that the child's loaded contract record equals the parent's.
+
+### Concrete Example
+
+```qv
+module contract;
+#include "quirin-provider-libc:libc/memory.qv";
+#include "quirin-provider-libc:libc/string.qv";
+
+extern fn flb_malloc(size: usize) -> ptr<mut, u8>
+    contract inherit libc::malloc;
+
+extern fn flb_calloc(nmemb: usize, size: usize) -> ptr<mut, u8>
+    contract inherit libc::calloc;
+
+extern fn flb_free(ptr: ptr<mut, u8>) -> unit
+    contract inherit libc::free;
+
+extern fn flb_strdup(s: ptr<const, u8>) -> ptr<mut, u8>
+    contract inherit libc::strdup;
+```
+
+**Implementation & Provenance:** `crates/qcore-frontend/src/contract_inclusion.rs`, `crates/qcore-contract/src/contract_inclusion.rs`, `crates/qcore-contract/src/load_path_manifest.rs`; contract spec [§C15](QCORE_CONTRACT_SPEC_r0_3.md); cards `CONTRACT-INHERIT`, `CONTRACT-INHERIT-QCORE-PROVIDER-NAMING`, `CONTRACT-INHERIT-ADOPTION`.
+
+---
+
+<a id="g05b-bounds-contract-v1"></a>
+
+## G05b. Bounds contract v1 (`c.bounds.v1`)
+
+### Consumer and Vocabulary Separation
+
+`bounds_contract_v1` is a standalone, total-or-reject contract loader (`crates/qcore-contract/src/bounds_contract.rs`) over the `G01` structural contract envelope, implementing contract specification [§C09.1](QCORE_CONTRACT_SPEC_r0_3.md#c091-reviewed-index-and-extent-contracts-planned). Its predicates (`bounds_*`) and the resource loader's predicates (`resource_*`) are disjoint, so each loader rejects modules belonging to the other. Bounds modules are published in a provider crate's `bounds_view` on the contract load path (never in its `resource_view`) and pinned using `C06.2`'s lock format in `bounds-contracts.lock`.
+
+Unlike `G05a`, **no `#include` or `contract inherit` exists for bounds contracts**: the bounds loader rejects inclusion and inheritance directives, generated bounds views omit modules carrying them, and load-path selections naming one in a bounds view fail closed.
+
+### Consolidated Grammar
+
+```ebnf
+bounds_module = "module", "contract", ";", bounds_fn, { bounds_fn } ;
+bounds_fn     = "extern", "fn", IDENT, "(", [ parameter, { ",", parameter } ], ")",
                 "->", result_abi, "contract", "{", bounds_clause,
-                {bounds_clause}, "}", ";" ;
+                { bounds_clause }, "}", ";" ;
+
 bounds_clause = "requires", "bounds_contract_v1", ";"
               | "requires", bounds_pre, ";"
               | "requires", "bounds_review_pending", "(", review_note, ")", ";"
               | "requires", "bounds_review_pending", "(", bounds_pre, ",", review_note, ")", ";"
               | "ensures", "normal", bounds_post, ";"
-              | "ensures", "normal", "bounds_review_pending", "(", bounds_post, ",", review_note, ")", ";" ;
+              | "ensures", "normal", "bounds_review_pending", "(", bounds_post, ",", review_note, ")", ";"
+              | quant_check           (* G05c *)
+              | null_deref            (* G05d *)
+              | deref                 (* G05d *)
+              | live                  (* G05d *)
+              | bounds_hypothesis_metadata ;
+
 bounds_pre    = "bounds_extent", "(", IDENT, ",", count, ",", unit, ")"
               | "bounds_index", "(", IDENT, ",", count, ")"
-              | "bounds_global_extent", "(", IDENT, ",", DIGITS, ",", unit, ")" ;
+              | "bounds_global_extent", "(", IDENT, ",", DIGITS, ",", unit, ")"
+              | member_clause         (* G05e, G05f *)
+              | named_premise         (* G05f: only beside a member_clause *)
+              | "bounds_revision", "(", "flexible", ")" ;   (* G05j *)
+
 bounds_post   = "bounds_return_extent", "(", count, ",", unit, ")"
               | "bounds_preserves_extents", "(", ")"
               | "bounds_frame_reads", "(", IDENT, ")"
               | "bounds_frame_writes", "(", IDENT, ")"
               | "bounds_frame_moves", "(", IDENT, ")"
-              | "bounds_return_derived", "(", IDENT, ",", count, ",", count, ",", unit, ")" ;
+              | "bounds_return_derived", "(", IDENT, ",", count, ",", count, ",", unit, ")"
+              | "nonnull_result", "(", ")"                          (* G05e *)
+              | "nonnull_result_range", "(", signed, ",", signed, ")" (* G05e *)
+              | "result_set", "(", set, ")"                         (* G05j *)
+              | "written_set", "(", IDENT, [ "[", DIGITS, "]" ], ",", set, ")",
+                "when", "#", "result", "==", signed ;               (* G05j *)
+
 count         = IDENT | DIGITS ;
 unit          = "elements" | "bytes" ;
 ```
 
-Card CG24-ALIAS-EXTENT-FRAME-VOCABULARY (gateway rule
-[11e](agents/gateway.md#constraint-11e)) added the four `bounds_frame_*` and
-`bounds_return_derived` postconditions and the *slot* parameter type
-`ptr<mut, ptr<mut, u8>>` (a C `T **`), under the same selector; every text
-CG16 accepted keeps its meaning. Their static conditions, each rejecting the
-whole module: a frame clause names a pointer or slot parameter; a declaration
-that states any frame states exactly one for **every** pointer and slot
-parameter (a closed frame), and a slot parameter appears only in a frame
-clause (never in `bounds_extent` or a relation), so a declaration with a slot
-states a frame; `bounds_preserves_extents()` and a `bounds_frame_moves` exclude
-each other; `bounds_return_derived` names a pointer parameter as its base, its
-offset and length are `count`s, it needs a pointer result, it excludes
-`bounds_return_extent`, its base is not declared `bounds_frame_moves`, and
-there is at most one relation per base (several bases make a multi-base
-relation).
+`parameter` (including single-level pointers and the slot type `ptr<mut, ptr<mut, u8>>` representing C `T **`), `result_abi`, and `review_note` reuse `G05`'s productions, except that floating-point parameter/result types are excluded.
 
-`parameter`, `result_abi` and `review_note` are G05's. Static conditions,
-each rejecting the whole module: exactly one `bounds_contract_v1` per
-declaration; `bounds_extent` names a pointer parameter and `bounds_index` a
-scalar one; a `count` IDENT names a scalar parameter of the same declaration,
-and `DIGITS` is canonical (no sign, suffix, base or leading zero);
-`bounds_global_extent` names a C object, not a parameter;
-`bounds_return_extent` needs a pointer result; at most one clause per
-parameter, object, return and `bounds_preserves_extents`; one contract-level
-marker, or clause-level markers, never both, never a marker around a marker
-or around the selector; only `requires` and `ensures normal`. No inclusion or
-inheritance (G05a) exists for this vocabulary. Card CG16-BOUNDS-TRANSPORT-AND-CHUNKIO-NEIGHBOURS
-(gateway rule [14j](agents/gateway.md#constraint-14j)) keeps it so: the loader
-refuses `#include` and `contract inherit`, the generated bounds view leaves
-such a module out, and a load path naming one in a bounds view refuses the
-selection. Card QUANT-INDEX-CHECKS adds the
-quantified index check [G05c](#g05c-quantified-index-checks). The meanings are C09.1's;
-`elements` counts the C pointee type the audited declaration states.
-`resource_*` and `bounds_*` predicates are disjoint, so each loader rejects the
-other's modules. The reserved words were absent from every tracked contract
-module when they were introduced (the census test
-`the_reserved_spellings_are_unused_by_tracked_contracts`). Card
-CHUNKIO-META-LEN-BOUNDS-CONTRACTS (gateway rule
-[12r](agents/gateway.md#constraint-12r)) ships the first tracked bounds
-module, `providers/qcore-provider-chunkio/contracts/chunkio/meta_len_bounds.qv`,
-in its crate's `bounds_view` on the load path (never its resource view); the
-census now exempts a module the bounds loader accepts and still finds the
-words in no other tracked module. A bounds module is a `.qv` contract module
-like any other, so the compiler's frontend gate also reads it: the `&&` and
-`||` of a G05c predicate are the predicate's own connectives, admitted by the
-operator gate (`Q038`) inside a `quant checks` clause and nowhere else in a
-contract module (before the card a tracked quant check failed the contract
-corpus's compiler regression on its `&&`). Pins: C06.2's lock format, in the
-crate's `bounds-contracts.lock`.
+### Semantic Side Conditions and Closed-Frame Discipline
 
-## G05c. Quantified index checks
+Every violation below rejects the **entire bounds module**:
 
-Card QUANT-INDEX-CHECKS, contract specification
-[C09.2](QCORE_CONTRACT_SPEC_r0_3.md#c092-quantified-index-checks-quant-checks),
-gateway rule [12l](agents/gateway.md#constraint-12l). One more `bounds_clause`
-of G05b, read by `crates/qcore-contract/src/bounds_quant.rs` (decisions:
-`qcore_core::index_quant`):
+1. **Selector and review markers:** Every declaration `MUST` contain exactly one `requires bounds_contract_v1;` selector, and only `requires`, `ensures normal`, and the admitted `quant` bounds clauses are accepted. Review-hold markers (`bounds_review_pending`) are either a single contract-level marker or clause-level wrappers around predicate calls—never both in one declaration, and never nested around another marker or the version selector.
+2. **Extents and indices:**
+   - `bounds_extent(p, count, unit)` names a pointer parameter `p`; `bounds_index(i, count)` names a scalar parameter `i`; `bounds_global_extent(obj, N, unit)` names an external C object `obj` (never a formal parameter) with a canonical unsigned decimal `DIGITS` (no sign, suffix, base, or leading zero).
+   - A `count` written as `IDENT` `MUST` name a scalar parameter of the same declaration; `unit = elements` counts elements of the C pointee type declared in the audited C signature.
+   - `bounds_return_extent(count, unit)` requires a pointer result type. At most one clause may govern each parameter, global object, return, or `bounds_preserves_extents()`.
+3. **Closed pointer/slot frames and derived return bounds (`CG24`):**
+   - `bounds_frame_reads(p)`, `bounds_frame_writes(p)`, and `bounds_frame_moves(p)` name a pointer or slot (`ptr<mut, ptr<mut, u8>>`) parameter.
+   - **Closed-frame rule:** Any declaration that states at least one frame clause `MUST` state **exactly one** frame clause for **every** pointer and slot parameter in its signature. Because a slot parameter (`T **`) is permitted *only* in frame clauses (never in `bounds_extent` or derived-return relations), any declaration with a slot parameter `MUST` declare a complete closed frame.
+   - `bounds_preserves_extents()` and `bounds_frame_moves(_)` are mutually exclusive.
+   - `bounds_return_derived(base, offset, length, unit)` requires a pointer result, names a pointer parameter `base` that is **not** `bounds_frame_moves`, takes `count` expressions for `offset` and `length`, excludes `bounds_return_extent`, and admits at most one relation per `base` (multiple `bounds_return_derived` clauses over distinct bases form a multi-base relation).
 
-```ebnf
-bounds_clause = … | quant_check ;
-quant_check   = "quant", "checks", IDENT, ",", "Idx", "#", IDENT, ":", q_or, ";" ;
-q_or          = q_and, {"||", q_and} ;
-q_and         = q_primary, {"&&", q_primary} ;
-q_primary     = "(", q_or, ")" | q_side, q_relation, q_side ;
-q_side        = "#", IDENT | q_term ;
-q_term        = ["-"], q_operand, {("+" | "-"), q_operand} ;
-q_operand     = DIGITS | IDENT ;
-q_relation    = "==" | "<" | ">" | "<=" | ">=" ;
+### Concrete Example
+
+```qv
+module contract;
+
+extern fn cio_meta_write(
+    ch: ptr<mut, u8>,
+    buf: ptr<const, u8>,
+    len: usize
+) -> i32
+contract {
+    requires bounds_contract_v1;
+    requires bounds_frame_writes(ch);
+    requires bounds_extent(buf, len, bytes);
+    ensures normal bounds_frame_reads(buf);
+};
 ```
 
-The structural parser (G01) reads `quant checks` as its own clause kind
-(`SourceContractClauseKind::QuantCheck`, no exit selector) and retains the text
-after it; before this card the spelling was a parse error, so no previously
-accepted text changes meaning. Static conditions, each rejecting the whole
-module with a named diagnostic: the subject `IDENT` is a pointer parameter
-(`ptr<mut, u8>` or `ptr<const, u8>`; not a scalar, a slot or another name,
-`quant-check-subject`); the binder is exactly `Idx #VAR`
-(`quant-check-binder`, `quant-check-shape`); every `#` names `VAR`, which stands
-alone on exactly one side of every comparison (`quant-check-variable`); a
-comparison is not chained (`quant-check-chained`); `!=`, `!`, `*` and every other
-operator are refused (`quant-check-operator`); a `q_operand` is a canonical
-`DIGITS` (no sign, suffix, base or leading zero) or a scalar parameter of the
-declaration, never an enumeration constant, macro or global, and a term names
-at most one parameter with coefficient one and takes no parentheses
-(`quant-check-term`); an end that overflows the integer model is refused
-(`quant-check-overflow`); at most 512 predicate tokens, 64 nested groups and 64
-ranges in the disjunctive normal form (`quant-check-size`); every range bounds
-the variable from below and from above (`quant-check-unbounded`); a constant
-predicate admits some index (`quant-check-empty`); at most one quant check per
-formal (`duplicate bounds clause for quant P`) and none on a formal that also
-states `bounds_extent` (`quant-check-with-extent`). An unbalanced group is
-refused by the structural parser before the reader. The clause is part of the
-declaration digest. Review markers are contract-level only (a clause-level
-`bounds_review_pending(…)` wraps a predicate call, which this clause is not).
-`resource_*` consumers reject the clause kind.
+**Implementation & Provenance:** `crates/qcore-contract/src/bounds_contract.rs`, `providers/qcore-provider-chunkio/contracts/chunkio/meta_len_bounds.qv`; contract spec [§C09.1](QCORE_CONTRACT_SPEC_r0_3.md#c091-reviewed-index-and-extent-contracts-planned), gateway rules [11e](agents/gateway.md#constraint-11e), [11s](agents/gateway.md#constraint-11s), [12r](agents/gateway.md#constraint-12r), [14j](agents/gateway.md#constraint-14j); cards `CG16-INDEX-AND-OFFSET-EXTENTS`, `CG16-BOUNDS-TRANSPORT-AND-CHUNKIO-NEIGHBOURS`, `CG24-ALIAS-EXTENT-FRAME-VOCABULARY`, `CHUNKIO-META-LEN-BOUNDS-CONTRACTS`.
 
-## G05d. Null-dereference checks
+---
 
-Card NULL-SAFETY-PROPERTY (USER DECISION 2026-10-10, decision 2), contract
-specification
-[C09.3](QCORE_CONTRACT_SPEC_r0_3.md#c093-null-dereference-the-property-cnullderefv1-and-quant-null-deref),
-gateway rules [14o](agents/gateway.md#constraint-14o) and
-[14p](agents/gateway.md#constraint-14p). One more `bounds_clause` of G05b,
-read by `crates/qcore-contract/src/bounds_contract.rs`:
+<a id="g05c-quantified-index-checks"></a>
+
+## G05c. Quantified index checks (`quant checks`)
+
+### Consumer and Structural Gate
+
+`quant checks` extends `G05b` to specify exact valid index intervals on a pointer parameter (`crates/qcore-contract/src/bounds_quant.rs`, semantic decision in `qcore_core::index_quant`; contract specification [§C09.2](QCORE_CONTRACT_SPEC_r0_3.md#c092-quantified-index-checks-quant-checks)). The structural parser (`G01`) retains `quant checks` as `SourceContractClauseKind::QuantCheck` (with no exit selector), and the frontend operator gate (`Q038`) permits `&&` and `||` inside a `quant checks` predicate and nowhere else in a `.qv` contract module outside formula/set clauses. `resource_*` consumers reject `QuantCheck` clauses.
+
+### Consolidated Grammar
 
 ```ebnf
-bounds_clause   = … | null_deref | deref | live ;
-null_deref      = "quant", "null", "-", "deref", "#", IDENT, ";" ;
-deref           = "quant", "deref", "#", IDENT, ";" ;   (* NULL-DEREF-QTT-GROUNDING *)
-live            = "quant", "live", "#", IDENT, ";" ;    (* NULL-DEREF-QTT-GROUNDING *)
+quant_check = "quant", "checks", IDENT, ",", "Idx", "#", IDENT, ":", q_or, ";" ;
+q_or        = q_and, { "||", q_and } ;
+q_and       = q_primary, { "&&", q_primary } ;
+q_primary   = "(", q_or, ")" | q_side, q_relation, q_side ;
+q_side      = "#", IDENT | q_term ;
+q_term      = [ "-" ], q_operand, { ( "+" | "-" ), q_operand } ;
+q_operand   = DIGITS | IDENT ;
+q_relation  = "==" | "<" | ">" | "<=" | ">=" ;
 ```
 
-The structural parser (G01) reads `quant null-deref` as its own clause kind
-(`SourceContractClauseKind::QuantNullDeref`, no exit selector) and retains
-the text after it; before this card the spelling was a parse error (`null` is
-no exit selector), so no previously accepted text changes meaning. Static
-conditions, each rejecting the whole module with a named diagnostic: the
-clause is exactly `#` and one `IDENT` (`quant-null-deref-shape`); the `IDENT`
-is a pointer parameter of the declaration (`ptr<mut, u8>` or
-`ptr<const, u8>`; not a scalar, a slot or another name,
-`quant-null-deref-parameter`); at most one per formal (`duplicate bounds
-clause for null-deref P`). The clause is part of the declaration digest
-(`quant null-deref #P`) and is pinned with the declaration
-(`bounds-contracts.lock`). Only the null-dereference property reads it: the
-bounds consumer reads the environment without it (a declaration and a module
-left with no clause leave the bounds identity), and `resource_*` consumers
-reject the clause kind, as they do `quant checks`. A declaration holding only
-null-dereference checks still carries `requires bounds_contract_v1;`, and its
-signature obeys G05b (no floating type; a slot only with a closed frame).
+### Semantic Side Conditions and Bounds
 
-**Grounding** (card NULL-DEREF-QTT-GROUNDING, USER DECISION 2026-10-11: "We
-need grounding."). The production is spelled with `quant` because it is a
-quantitative form, but not the §L06 one that G05c reads. It is the
-contract-level projection of a §L07 usage grade, read with §L08–§L09 access
-and identity ([language §L07](QCORE_SPEC_r0_3.md#l07-usage-grades),
-"Null-dereference demand"; [contract
-§C09.3](QCORE_CONTRACT_SPEC_r0_3.md#c093-null-dereference-the-property-cnullderefv1-and-quant-null-deref),
-"Grounding"). `quant null-deref #B;` reads as "`B`'s dereference demand has
-grade `relevant`": every terminating path uses `B`'s pointee before any NULL
-test, so every caller must pass an existing identity (non-NULL). The
-production adds no type, dimension, axis, grade literal or predicate. Its
-`#IDENT` binder names a formal as G05c's `Idx #IDENT` names an index variable,
-and the two clauses stay separate kinds (`QuantNullDeref`, `QuantCheck`), each
-read by one consumer only.
+Every violation below rejects the **entire module** with its named diagnostic:
 
-**Two levels** (card NULL-DEREF-QTT-GROUNDING; USER DECISION 2026-10-11:
-"Two levels"; [contract
-§C09.3](QCORE_CONTRACT_SPEC_r0_3.md#c093-null-dereference-the-property-cnullderefv1-and-quant-null-deref),
-"Two levels"). Two more clause kinds, `SourceContractClauseKind::QuantDeref`
-and `QuantLive`. Before this card both spellings were parse errors (`deref`
-and `live` are no exit selectors), so no previously accepted text changes
-meaning. The bounds contract v1 loader elaborates every written form into
-canonical parts (`crates/qcore-contract/src/deref_parts.rs`):
+- **Subject and binder (`quant-check-subject`, `quant-check-binder`, `quant-check-shape`):** The subject `IDENT` `MUST` be a single-level pointer parameter (`ptr<mut, u8>` or `ptr<const, u8>`, never a scalar, slot, or undeclared name), and the binder `MUST` be `Idx #VAR`. At most one `quant checks` clause is allowed per formal, and never on a formal that also carries `bounds_extent` (`quant-check-with-extent`).
+- **Variable and relational form (`quant-check-variable`, `quant-check-chained`, `quant-check-operator`):** Every `#` reference `MUST` name `VAR`, which stands alone on **exactly one side** of each comparison. Comparisons cannot chain, and `!=`, `!`, `*`, and all unlisted operators are refused.
+- **Linear bound terms (`quant-check-term`, `quant-check-overflow`):** Each `q_operand` is a canonical unsigned `DIGITS` or a scalar parameter of the same declaration (never a C macro, enum constant, or global). Each `q_term` mentions at most one parameter with unit coefficient (`±1`), contains no parentheses, and `MUST NOT` overflow the integer model.
+- **Size, boundedness, and non-emptiness (`quant-check-size`, `quant-check-unbounded`, `quant-check-empty`):** Predicates are bounded at **512 tokens**, **64 nested groups**, and **64 disjunctive-normal-form intervals**. Every disjunct `MUST` bound `#VAR` both below and above, and any purely constant predicate `MUST` admit at least one integer index.
+- **Review markers:** Only contract-level `bounds_review_pending("note")` applies (clause-level wrappers wrap predicate calls, not `quant` clauses).
 
-| Written | Canonical parts |
-| --- | --- |
-| `quant deref #B;` | `quant null-deref #B;` · `quant checks B, Idx #i: #i == 0;` · `quant live #B;` |
-| `quant null-deref #B;` | the existence part alone (unchanged) |
-| `quant checks B, Idx #i: P;` | itself (G05c) |
-| `quant live #B;` | the liveness part alone |
+### Concrete Example
 
-Static conditions, each rejecting the whole module with a named diagnostic:
-the clause is exactly `#` and one `IDENT` (`quant-deref-shape`,
-`quant-live-shape`); the `IDENT` is a pointer parameter
-(`quant-deref-parameter`, `quant-live-parameter`); at most one shorthand per
-formal (`duplicate bounds clause for deref P`) and at most one written
-liveness part (`duplicate bounds clause for live P`). A shorthand's part and a
-written part for the same formal are merged when they agree (equal pointers
-and, for the extent part, an equal predicate, the bound variable's spelling
-aside) and are otherwise refused (`quant-deref-conflict`). A `bounds_extent`
-beside a shorthand's extent part is refused as well (`quant-deref-conflict`;
-G05c's `quant-check-with-extent`). The parser refuses `quant WORD #IDENT;`
-with a word that names no form (`quant-shorthand-unknown`). The pinned digest
-(`text_sha256`) covers each line as written (`quant deref #P`, `quant live
-#P`), so a shorthand and its decomposition pin differently. `canonical_sha256`
-covers the signature and the sorted canonical part set, so the two have one
-canonical digest. Resource v1 and every other consumer reject both clause
-kinds. On an audit route, a liveness part is admitted only where the
-function's resource v1 declaration in force states `resource_owned` at that
-position (`quant-live-unbacked`, `quant-live-contradicts-custody`).
+```qv
+module contract;
 
-**Result states in resource v1** (card OP-CONSTRUCTOR-DECLARATIONS, contract
-specification [C04.19.4](QCORE_CONTRACT_SPEC_r0_3.md#c04194-a-constructors-result-state),
-gateway rule [14e](agents/gateway.md#constraint-14e); USER DECISION
-2026-10-14, C, and the maps-to token). Beside `quant live` and `quant deref`,
-a constructor's resource v1 declaration may state its result's member state
-in maps-to notation:
+extern fn read_window(buf: ptr<const, u8>, len: usize) -> i32
+contract {
+    requires bounds_contract_v1;
+    quant checks buf, Idx #i: #i >= 0 && #i < len;
+};
+```
+
+**Implementation & Provenance:** `crates/qcore-contract/src/bounds_quant.rs`, `crates/qcore-core/src/index_quant.rs`; contract spec [§C09.2](QCORE_CONTRACT_SPEC_r0_3.md#c092-quantified-index-checks-quant-checks), gateway rule [12l](agents/gateway.md#constraint-12l); card `QUANT-INDEX-CHECKS`.
+
+---
+
+<a id="g05d-null-dereference-checks"></a>
+
+## G05d. Null-dereference, three-part dereference, and `quant live` clauses
+
+### Consumer, QTT Grounding, and Two-Level Elaboration
+
+`G05d` defines two related syntactic families using `quant`:
+
+1. **Formal parameter dereference clauses in `bounds_contract_v1` modules** ([contract §C09.3](QCORE_CONTRACT_SPEC_r0_3.md#c093-null-dereference-the-property-cnullderefv1-and-quant-null-deref), [language §L07.4](QCORE_SPEC_r0_3.md#l07-usage-grades)):
+   - `quant null-deref #B;` projects a `§L07` `relevant` (`[1, inf]`) dereference-demand grade onto the contract boundary: every terminating path dereferences `B`'s entry pointee before any `NULL` test, obligating callers to pass an existing (non-`NULL`) identity.
+   - `quant deref #B;` is the **two-level shorthand** decomposing a pointer dereference into its three orthogonal projections (`crates/qcore-contract/src/deref_parts.rs`):
+
+   | Surface clause | Elaborated canonical parts | Consuming property / backing |
+   |---|---|---|
+   | `quant deref #B;` | `quant null-deref #B;` · `quant checks B, Idx #i: #i == 0;` · `quant live #B;` | Split across null-deref, bounds, and custody-backed liveness |
+   | `quant null-deref #B;` | Existence part alone (`QuantNullDeref`) | Read only by `c.null.deref.v1` (`for_bounds()` strips it) |
+   | `quant checks B, Idx #i: P;` | Extent part (`QuantCheck`, `G05c`) | Read by `c.bounds.v1` |
+   | `quant live #B;` | Liveness part alone (`QuantLive`) | Admitted on audit routes iff `resource_contract_v1` declares `resource_owned(B, ...)` |
+
+2. **Constructed result states, return-code hand-offs, and member-path states in `resource_contract_v1` modules** ([contract §C04.19.4–§C04.19.6](QCORE_CONTRACT_SPEC_r0_3.md#c04194-a-constructors-result-state)):
+   Uses the dedicated ASCII maps-to token **`|->`** (`Symbol::MapsTo`, chosen over `->` and `>->` to match mathematical `↦` without colliding with return arrows, `|>`, or `||`) and `#`-prefixed state keywords (`#absent`, `#owner`, `#callback`, `#moved`, `#kept`).
+
+### Consolidated Grammar
 
 ```ebnf
+(* 1. Formal parameter clauses inside bounds_contract_v1 (G05b) *)
+null_deref = "quant", "null", "-", "deref", "#", IDENT, ";" ;
+deref      = "quant", "deref", "#", IDENT, ";" ;
+live       = "quant", "live", "#", IDENT, ";" ;
+
+(* Neutral bounds-v1 hypothesis metadata attachment *)
+bounds_hypothesis_metadata = "requires", ( hypothesis_atom | hypothesis_decomposition ), ";" ;
+
+(* 2. Constructed state, hand-off, and member-path clauses inside resource_contract_v1 (G05) *)
+MAPS_TO             = "|->" ;
 result_state_clause = "quant", "live", "#", "result",
-    [ ":", IDENT, ".", member_path, MAPS_TO, ("#", "absent" | IDENT) ], ";" ;
-handoff_clause = "quant", "live", "#", IDENT, ":", "#", "owner", MAPS_TO, "#", "callback",
-    "when", "#", "result", ("==" | "!="), ("@", IDENT | "#", IDENT), ";" ;
-MAPS_TO = "|->" ;   (* one lexer token, qcore_frontend::lexer::MAPS_TO *)
+                      [ ":", IDENT, ".", member_path, MAPS_TO, ( "#", "absent" | IDENT ) ], ";" ;
+handoff_clause      = "quant", "live", "#", IDENT, ":", "#", "owner", MAPS_TO, "#", "callback",
+                      "when", "#", "result", ( "==" | "!=" ), ( "@", IDENT | "#", IDENT ), ";" ;
+member_path_clause  = "quant", "live", "#", IDENT, ":", IDENT, ".", member_path, MAPS_TO,
+                      "{", state_item, { ",", state_item }, "}",
+                      [ "when", "#", "result", ( "==" | "!=" ), ( "@", IDENT | "#", IDENT ) ], ";" ;
+state_item          = "#", ( "moved" | "kept" | "released" | "absent" ) ;
 ```
 
-`|->` is the ASCII maps-to `↦`: `->` was rejected because it collides with C
-member access in contract text and with the `.qr` return-type arrow, `>->`
-because Z and set-theory notation read it as `↣`, an injective function;
-`|->` is the standard ASCII for `↦` (Z, Isabelle, TLA+). It is one lexer
-token (`Symbol::MapsTo`), matched before every two-byte spelling, so `|>`
-stays the pipe and `||` the logical or (and `||->` is `||` then `->`); before
-the card the same bytes lexed as `|` then `->`, which no reader admitted.
-`absent` is a reserved word, distinct from C's `NULL`; since card
-SUPPLIED-OWNED-RETURN-CODE-HANDOFF (USER DECISION 2026-10-15) it is the value
-keyword `#absent`, its one spelling, and a bare `absent` rejects the module
-naming `#absent` (`quant-live-absent`). Static conditions,
-each rejecting the whole module with a named diagnostic: the binder is
-`#result` (`quant-live-result-shape`; a formal is a bounds-module liveness
-part, never a resource v1 one); the left of `|->` is a dotted `TAG.FIELD`
-(`quant-live-member`; `result->rko_op_cb` and a bare `->` reject with
-`quant-live-maps-to`, which names `|->`); the right is `#absent` or, since card OP-APP-RK-CALLBACKS-VIA-POLL-CB (USER
-DECISION 2026-10-14, D1: "the right-hand side is either `absent` or a function
-designator. Anything else rejects the module"), one identifier naming a
-function: never a parameter of the declaration, `result`, C's `NULL` or
-`nullptr`, a number or an expression (`quant-live-value`). A function value
-is the member's stated default (`quant live #result: rd_kafka_conf_s.log_cb
-|-> rd_kafka_log_print;`), and its lower level is
-`resource_callback_member_registered(result, TAG.FIELD, f)`. **Two levels:** the clause is the shorthand of `quant
-live #result;` (the liveness part, restating `resource_return_owned(nonnull)`)
-and the member's state (`#absent` or the function), written alone as
-`resource_callback_member_registered(result, TAG.FIELD, #absent)` (or `…, f)`;
-`QCore.AppRkCallbacks.the_function_shorthand_and_its_parts_mean_the_same`); the loader
-elaborates every spelling into these canonical parts
-(`crates/qcore-contract/src/contract_constructed_state.rs`), so the shorthand,
-its decomposition and both together give one `ConstructedState`
-(`crates/qcore-contract/tests/op_constructor_clause.rs`). The pinned digest
-covers the text as written. Every other `quant` form still rejects in
-resource v1, but for the hand-off and the member-path states below.
+### Semantic Side Conditions
 
-**Hand-offs in resource v1** (card SUPPLIED-OWNED-RETURN-CODE-HANDOFF,
-contract specification [C04.19.5](QCORE_CONTRACT_SPEC_r0_3.md#c04195-a-hand-off-by-return-code),
-gateway rules [12m](agents/gateway.md#constraint-12m) and
-[13l](agents/gateway.md#constraint-13l); USER DECISIONS 2026-10-15). A
-formal's binder in a `quant live` clause states a hand-off by return code
-(`handoff_clause`, G05): `quant live #rko: #owner |-> #callback when #result
-!= @RD_KAFKA_OP_RES_PASS;`. It elaborates into the formal's liveness part
-(`quant live #rko;`, backed by `resource_owned(rko, nonnull)`) and the
-guarded transfer; the alias and the `@` name read identically. `quant live
-#P;` alone with a formal stays the result-state reader's rejection
-(`quant-live-result-shape`: a formal's liveness part belongs to a bounds
-module). The static conditions are G05's.
+- **Bounds-module formal clauses (`quant-null-deref-*`, `quant-deref-*`, `quant-live-*`):**
+  - Target `#IDENT` `MUST` be a single-level pointer parameter (`ptr<mut, u8>` or `ptr<const, u8>`), at most one `null-deref`, `deref`, and `live` per formal; unknown `quant WORD #IDENT;` forms fail (`quant-shorthand-unknown`).
+  - Overlapping explicit and `deref`-elaborated parts for the same formal merge idempotently when identical (ignoring bound index-variable renaming) and reject on disagreement or alongside `bounds_extent` (`quant-deref-conflict`).
+  - `text_sha256` pins exact written text, whereas `canonical_sha256` hashes signature + sorted canonical parts.
+  - On audit routes, `quant live #B;` requires an in-force `resource_owned` declaration on `B` (`quant-live-unbacked`, `quant-live-contradicts-custody`).
+- **Resource-module `|->` clauses (`quant-live-result-shape`, `quant-live-maps-to`, `quant-live-absent`, `quant-live-value`):**
+  - Bare `quant live #P;` on a formal parameter is rejected in `resource_contract_v1` (formal liveness belongs to bounds modules); bare `#result` restates `resource_return_owned(nonnull)`.
+  - Left of `|->` in `#result` state `MUST` be `TAG.FIELD` (`->` is rejected naming `|->`); right of `|->` `MUST` be `#absent` (bare `absent`, `NULL`, `nullptr`, literals, parameters, and `result` all reject) or a single C function designator `f`, elaborating to `quant live #result;` plus `resource_callback_member_registered(result, TAG.FIELD, #absent | f)`.
+  - `#P: #owner |-> #callback when #result ...` states a conditional callback custody hand-off backed by `resource_owned(P, nonnull)`; `#P: TAG.path |-> {...}` states post-call member-path dispositions (`G05`).
+- **Bounds hypothesis metadata:** Validates against an existing named bounds premise on the same declaration without `hypothesis_all` or solver discharge.
 
-**Member-path states in resource v1** (card OP-CALLBACK-MEMBER-PATH-RELEASE,
-contract specification [C04.19.6](QCORE_CONTRACT_SPEC_r0_3.md#c04196-a-release-or-move-out-at-a-member-path),
-gateway rule [30](agents/gateway.md#constraint-30); USER DECISION
-2026-10-15, "B: state + set"). A formal's binder followed by a member path
-states what the call leaves there (`member_path_clause`, G05): `quant live
-#rko: rd_kafka_op_s.rko_u.leaders.partitions |-> {#moved, #kept} when
-#result != @RD_KAFKA_OP_RES_KEEP;`. A `#P: #owner …` clause is a hand-off, a
-`#result: …` clause a result state, any other `#P: …` a member-path state
-(`crates/qcore-contract/src/contract_member_path.rs`). The static conditions
-are G05's.
-The neutral bounds-v1 metadata production additionally reuses G05's atom and attachment productions (PLUGIN-PREMISE-DECOMPOSITION):
+### Concrete Examples
 
-```ebnf
-bounds_hypothesis_metadata = "requires", (hypothesis_atom | hypothesis_decomposition), ";" ;
+```qv
+// Bounds/null-deref module:
+module contract;
+extern fn parse_header(hdr: ptr<const, u8>) -> i32
+contract {
+    requires bounds_contract_v1;
+    quant deref #hdr;
+};
 ```
 
-It is validated against the same declaration's existing named bounds premise,
-creates no new named premise or interpreted bounds/null clause, and has no
-solver semantics. `hypothesis_all` is not admitted in this production. The
-property-specific replay and exact compatibility conditions are G05's.
+```qv
+// Resource-v1 constructor & callback hand-off clauses:
+quant live #result: rd_kafka_conf_s.log_cb |-> rd_kafka_log_print;
+quant live #rko: #owner |-> #callback when #result != @RD_KAFKA_OP_RES_PASS;
+```
 
-## G05e. Null-property member and result declarations
+**Implementation & Provenance:** `crates/qcore-contract/src/{bounds_contract,deref_parts,contract_constructed_state,contract_member_path}.rs`; `QCore.{NullDerefGrade,DerefDecomposition,AppRkCallbacks}`; cards `NULL-SAFETY-PROPERTY`, `NULL-DEREF-QTT-GROUNDING`, `OP-CONSTRUCTOR-DECLARATIONS`, `OP-APP-RK-CALLBACKS-VIA-POLL-CB`, `SUPPLIED-OWNED-RETURN-CODE-HANDOFF`, `OP-CALLBACK-MEMBER-PATH-RELEASE`.
 
-Card NULL-CANDIDATE-TRIAGE, contract specification
-[C09.3](QCORE_CONTRACT_SPEC_r0_3.md#c093-null-dereference-the-property-cnullderefv1-and-quant-null-deref),
-gateway rules [14t](agents/gateway.md#constraint-14t) and
-[14u](agents/gateway.md#constraint-14u). Two more clauses of G05b, read by
-`crates/qcore-contract/src/bounds_contract.rs` (`BoundsClause::NonnullMember`,
-`BoundsClause::NonnullResult`):
+---
+
+<a id="g05e-null-property-member-and-result-declarations"></a>
+
+## G05e. Null-property member, result, and result-range declarations
+
+### Consumer and Relation to Resource Contracts
+
+`G05e` extends `bounds_contract_v1` (`G05b`) with member non-nullness, pointer-result non-nullness, and scalar result-range postconditions consumed **exclusively** by the `c.null.deref.v1` analyzer (`BoundsContracts::for_bounds()` strips them from bounds identity, and `resource_*` loaders reject them). When a function has both a `resource_contract_v1` declaration and a null-property declaration in its crate's `bounds_view`, the pair forms a checked `null_deref_beside` view relation.
+
+### Consolidated Grammar
 
 ```ebnf
 bounds_pre  = … | "nonnull_member", "(", IDENT, ",", IDENT, ")" ;
-bounds_post = … | "nonnull_result", "(", ")" ;
+bounds_post = … | "nonnull_result", "(", ")"
+                | "nonnull_result_range", "(", signed, ",", signed, ")" ;
+signed      = [ "-" ], DIGITS ;
 ```
 
-Static conditions, each rejecting the whole module: the first `IDENT` of
-`nonnull_member` is a C struct tag, never a parameter of the
-declaration, and the second a member name (`nonnull-member-shape`); at most one
-per (tag, member) per declaration; `nonnull_result()` is an `ensures
-normal` postcondition of a declaration with a pointer result
-(`nonnull-result-pointer`), at most one. Both words were absent from every
-tracked contract module when introduced (the reserved-spelling census
-exempts modules the bounds loader accepts). The card introduced them as
-`null_member_nonnull` and `null_result_nonnull`; card NULL-MEMBER-INVARIANT-SCOPE
-renamed them on the user's decision of 2026-10-11 (one `nonnull_` scheme,
-`nullable_` reserved for clauses stating a value may be NULL; contract
-specification C09.3, "Naming"). There is no alias: the old spellings are
-refused as any unknown bounds clause is. Since card
-NONNULL-MEMBER-UNIFIED-QUALIFIER `nonnull_member` is G05f's `member_clause`,
-whose plain kind is this clause; a named premise may stand beside it. The clauses are part of the
-declaration digest and pinned with it. Only the null property reads them:
-`BoundsContracts::for_bounds()` removes them like `quant null-deref`, and
-`resource_*` consumers reject the module. A declaration beside a
-resource-v1 declaration of the same function is a registered
-`null_deref_beside` relation (it states only the selector and null-property
-clauses).
+### Semantic Side Conditions
 
-Card NULL-TRIAGE-UNRESOLVED-PATHS (gateway rule
-[15q](agents/gateway.md#constraint-15q)) adds one postcondition:
+- **`nonnull_member(TAG, MEMBER)` (`nonnull-member-shape`):** First `IDENT` is a C struct tag (never a formal parameter name of the declaration) and second `IDENT` is a member name; at most one plain clause per `(TAG, MEMBER)` per declaration (`requires` only; unified with `G05f` qualifiers below). Legacy retired names `null_member_nonnull` and `null_result_nonnull` have no aliases and reject.
+- **`nonnull_result()` (`nonnull-result-pointer`):** `ensures normal` postcondition on a pointer-returning function, at most one per declaration.
+- **`nonnull_result_range(LO, HI)` (`nonnull-result-range-*`):** `ensures normal` postcondition on a scalar-returning function; `LO` and `HI` are canonical signed 64-bit decimal integers (no leading zeros, suffixes, bases, or `-0`) satisfying `LO <= HI`, at most one per declaration (e.g., `cfl_list_size` returning `[0, ...]` in `cfl/null_deref.qv`).
+
+**Implementation & Provenance:** `crates/qcore-contract/src/bounds_contract.rs`; contract spec [§C09.3](QCORE_CONTRACT_SPEC_r0_3.md#c093-null-dereference-the-property-cnullderefv1-and-quant-null-deref), gateway rules [14t](agents/gateway.md#constraint-14t), [14u](agents/gateway.md#constraint-14u), [15q](agents/gateway.md#constraint-15q); cards `NULL-CANDIDATE-TRIAGE`, `NULL-MEMBER-INVARIANT-SCOPE`, `NULL-TRIAGE-UNRESOLVED-PATHS`.
+
+---
+
+<a id="g05f-scoped-member-invariants"></a>
+
+## G05f. Scoped member invariants (`where quant #scope [[stable | scope]]`)
+
+### Consumer and Unified Qualifier Surface
+
+`G05f` unifies plain constructor-hosted member non-nullness (`14t`), type-wide stable member invariants (`14x`), and function-scoped parameter member preconditions (`14z`) under a single `nonnull_member(...)` syntax with an explicit `where quant #scope [[...]]` qualifier (`QCore.NullMemberQualifier`), and permits a `G05` named premise (`resource_premise`) alongside any `member_clause`.
+
+### Consolidated Grammar
 
 ```ebnf
-bounds_post = … | "nonnull_result_range", "(", signed, ",", signed, ")" ;
-signed      = ["-"], DIGITS ;
-```
-
-Static conditions, each rejecting the whole module: the declaration has a
-scalar result (`nonnull-result-range-scalar`); both bounds are canonical
-decimal literals (no suffix, base or leading zero, never `-0`, inside the
-64-bit range: `nonnull-result-range-shape`) and `LO <= HI`
-(`nonnull-result-range-empty`); at most one per declaration. The word was absent
-from every tracked contract module when introduced. The clause is part of
-the declaration digest and pinned with it; only the null property reads it
-(`for_bounds()` removes it), and `resource_*` consumers reject the module.
-The first tracked use is `providers/quirin-provider-cfl/contracts/cfl/null_deref.qv`
-(`cfl_list_size`, in the crate's new `bounds_view`).
-## G05f. Scoped member invariants
-
-Card NULL-MEMBER-INVARIANT-SCOPE, contract specification
-[C09.3](QCORE_CONTRACT_SPEC_r0_3.md#c093-null-dereference-the-property-cnullderefv1-and-quant-null-deref)
-("Scoped member invariants"), gateway rules
-[14x](agents/gateway.md#constraint-14x)–[14z](agents/gateway.md#constraint-14z);
-one clause since card NONNULL-MEMBER-UNIFIED-QUALIFIER (gateway rule
-[14t](agents/gateway.md#constraint-14t); USER DECISION 2026-10-16, decision 3,
-verbatim: "As shown above", "Migrate, one spelling", "Yes, all kinds"). G05e's
-member clause takes a qualifier, read by
-`crates/qcore-contract/src/bounds_contract.rs` (`member_clause`,
-`member_qualifier`):
-
-```ebnf
-bounds_pre       = … | member_clause ;
-member_clause    = "nonnull_member", "(", IDENT, ",", IDENT, ")"                       (* plain, 14t *)
-                 | "nonnull_member", "(", IDENT, ",", IDENT, ")", member_qualifier      (* [[stable]], 14x *)
+bounds_pre       = … | member_clause | named_premise ;
+member_clause    = "nonnull_member", "(", IDENT, ",", IDENT, ")"
+                 | "nonnull_member", "(", IDENT, ",", IDENT, ")", member_qualifier
                  | "nonnull_member", "(", IDENT, ",", IDENT, ",", IDENT, ")", member_qualifier ;
-                                                                                         (* [[scope]], 14z *)
-member_qualifier = "where", "quant", "#", "scope", "[", "[", ("stable" | "scope"), "]", "]" ;
+member_qualifier = "where", "quant", "#", "scope", "[", "[", ( "stable" | "scope" ), "]", "]" ;
 ```
 
-The three kinds load to exactly the facts the three spellings before the card
-loaded to: plain `BoundsClause::NonnullMember`, `[[stable]]`
-`BoundsClause::NonnullMemberStable`, `[[scope]]`
-`BoundsClause::NonnullMemberScope` (`QCore.NullMemberQualifier`:
-`the_merged_surface_is_equivalent_to_the_old_forms`). Static conditions,
-each rejecting the whole module with a named diagnostic:
+### Semantic Side Conditions
 
-* the first `IDENT` is a C struct tag, never a parameter of the declaration,
-  and the second a member name; any other argument shape
-  (`nonnull-member-shape`);
-* the third `IDENT` is admitted only with `[[scope]]`
-  (`nonnull-member-parameter-needs-scope`), `[[scope]]` only with it
-  (`nonnull-member-scope-needs-parameter`), and it names a pointer parameter
-  of the declaration (`nonnull-member-scope-parameter`);
-* the qualifier is exactly `where quant #scope [[WORD]]`
-  (`nonnull-member-qualifier-shape`), `WORD` `stable` or `scope`
-  (`nonnull-member-qualifier-unknown`);
-* the clause is a `requires`, never an `ensures` (`nonnull-member-requires`);
-* at most one plain clause and one `[[stable]]` clause per (tag, member), and
-  one `[[scope]]` clause per (parameter, tag, member), per declaration;
-* the retired words `nonnull_member_stable` and `nonnull_member_scope` (the
-  card's migration rewrote every tracked declaration: librdkafka 67, Fluent
-  Bit 14) are rejected in every position, a held one included, with a
-  diagnostic naming the form to write (`nonnull-member-retired-spelling`).
-  There is no alias. Both words stay in `RESERVED_SPELLINGS` (17), so no other
-  vocabulary takes them.
+1. **Arity-to-qualifier matching (`nonnull-member-*`):**
+   - Two arguments `(TAG, MEMBER)` take either no qualifier (`BoundsClause::NonnullMember`) or `where quant #scope [[stable]]` (`BoundsClause::NonnullMemberStable`), both hosted as type-level declarations on the struct's constructor.
+   - Three arguments `(TAG, MEMBER, PARAM)` `MUST` carry `where quant #scope [[scope]]` (`BoundsClause::NonnullMemberScope`), and `[[scope]]` `MUST` carry three arguments where `PARAM` names a pointer formal of the host function (`nonnull-member-parameter-needs-scope`, `nonnull-member-scope-needs-parameter`, `nonnull-member-scope-parameter`).
+2. **Placement, uniqueness, and retired spellings:** Admitted only under `requires` (`nonnull-member-requires`), at most one plain and one `[[stable]]` per `(TAG, MEMBER)` and one `[[scope]]` per `(PARAM, TAG, MEMBER)` per declaration. The retired surface names `nonnull_member_stable` and `nonnull_member_scope` reject everywhere (`nonnull-member-retired-spelling`) while remaining reserved words (note: internal audit assumption/check labels retain `nonnull_member_stable` / `nonnull_member_scope(...)` as non-surface identifiers).
+3. **Premised member facts (`premise-beside-member`):** A `named_premise` (`resource_premise(...)`) is admitted in a bounds declaration **only** when that declaration also contains at least one `member_clause` (plain, `[[stable]]`, or `[[scope]]`); writing a premise alone or beside only `quant null-deref` / `bounds_*` clauses rejects the module.
 
-The clauses are part of the declaration digest and pinned with it; the text
-the digest covers renders the qualifier as written above, so spacing does
-not move it. Only the null property reads them:
-`BoundsContracts::for_bounds()` removes them, and `resource_*` consumers
-reject the module. A declaration beside a resource-v1 declaration of the same
-function is a registered `null_deref_beside` relation. A plain or
-`[[stable]]` clause is a type-level declaration hosted, like G05e's member
-declaration, on the record's constructor; a `[[scope]]` clause belongs to the
-function it is written on. The null property's evidence labels keep their
-kind names (`nonnull_member_stable; …` in an assumption, `nonnull_member_scope(TAG,
-FIELD, P)` in a scope or check subject), byte for byte: they are not surface
-spellings.
+### Concrete Example
 
-Card LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER (contract specification C04.18
-"Every vocabulary", C09.3 "Premised member facts"), extended by card
-NONNULL-MEMBER-UNIFIED-QUALIFIER ("Yes, all kinds"): G05's named premise is a
-bounds precondition only beside a member clause, of any kind
-(`BoundsClause::Premise`):
+```qv
+module contract;
 
-```ebnf
-bounds_pre = … | named_premise ;   (* only in a declaration that also states
-                                      a member_clause of any kind *)
+extern fn rd_kafka_broker_op(rkb: ptr<mut, u8>) -> unit
+contract {
+    requires bounds_contract_v1;
+    requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
+};
 ```
 
-A declaration with a premise and no member clause rejects the module
-(`premise-beside-member`). The same applies beside `quant null-deref` or any
-bounds clause. A premise under `ensures`, a malformed one and a repeated name
-reject it at parse, in every vocabulary. No reserved spelling is added:
-`resource_premise` is G05's.
+**Implementation & Provenance:** `crates/qcore-contract/src/bounds_contract.rs`; `QCore.NullMemberQualifier`; contract spec [§C09.3](QCORE_CONTRACT_SPEC_r0_3.md#c093-null-dereference-the-property-cnullderefv1-and-quant-null-deref), gateway rules [14t](agents/gateway.md#constraint-14t), [14x](agents/gateway.md#constraint-14x)–[14z](agents/gateway.md#constraint-14z); cards `NULL-MEMBER-INVARIANT-SCOPE`, `LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER`, `NONNULL-MEMBER-UNIFIED-QUALIFIER`.
 
-## G05g. Outer contract v1
+---
 
-Card OUTER-CONTRACT, contract specification
-[C04.20](QCORE_CONTRACT_SPEC_r0_3.md#c0420-outer-contracts-code-loaded-at-runtime),
-gateway rule [31](agents/gateway.md#constraint-31); USER DECISIONS 2026-10-17,
-D1 "B: loader envelope" and D2 "Yes, as proposed". A module whose every
-declaration selects `outer_contract_v1` is read by
-`crates/qcore-contract/src/outer_contract.rs`. The frontend reads a clause that
-begins `quant #outer` as its own kind (`SourceContractClauseKind::QuantOuter`,
-expression from `#outer`); every other consumer rejects it.
+<a id="g05g-outer-contract-v1"></a>
+
+## G05g. Outer contract v1 (`outer_contract_v1`)
+
+### Consumer and Runtime-Projection Purpose
+
+Modules whose declarations select `requires outer_contract_v1;` are loaded by `crates/qcore-contract/src/outer_contract.rs` to state closed-world envelope assumptions about dynamically loaded code (`dlopen` plugins) in the separate **runtime projection** ([contract §C04.20](QCORE_CONTRACT_SPEC_r0_3.md#c0420-outer-contracts-code-loaded-at-runtime), gateway rule [31](agents/gateway.md#constraint-31)). Clauses beginning `quant #outer` parse as `SourceContractClauseKind::QuantOuter` and are rejected by every other consumer.
+
+### Consolidated Grammar
 
 ```ebnf
 outer_declaration = "extern", "fn", IDENT, "(", parameters, ")", "->", type,
-    "contract", "{", outer_clause, { outer_clause }, "}", ";" ;
+                    "contract", "{", outer_clause, { outer_clause }, "}", ";" ;
 outer_clause      = "requires", "outer_contract_v1", ";"
                   | "quant", "#", "outer", outer_form, ";" ;
 outer_form        = "[[", "contract", "]]", NAME, [ ",", premise_formula ]
@@ -4711,250 +4706,187 @@ outer_form        = "[[", "contract", "]]", NAME, [ ",", premise_formula ]
                   | "#", "loaded", ":", envelope ;
 envelope          = IDENT, ".", IDENT, { ".", IDENT }, MAPS_TO, "#", ( "kept" | "registered" )
                   | "#", "premise", IDENT ;
-NAME              = lowercase identifier, [a-z][a-z0-9_]* ;
-(* premise_formula is G05-formula's: card SP8-OUTER-CONTRACT-SYMBOLIC-STATEMENTS
-   retires the string statement, diagnostic QF004 *)
 ```
 
-Card SP8-OUTER-CONTRACT-SYMBOLIC-STATEMENTS (contract specification C04.20
-and C04.18.9's SP8 block): a definition's statement is a G05-formula formula,
-exactly the tokens after the comma that follows `NAME`, read by
-`qcore_frontend::premise_formula::outer_header` at parse (so on every route)
-and by the outer loader; its canonical printing is the statement and is what
-the declaration's digest covers. A statement that is or holds a `STRING`
-rejects the whole module with `QF004`, whatever the name's spelling; a
-formula the sort judgment refuses rejects at parse too. The operator gate
-(`Q038`) admits the `&&` and `|` of a statement the reader accepts, as it
-does a premise formula's.
+`NAME` is a lowercase identifier `[a-z][a-z0-9_]*`, and `premise_formula` is `G05-formula`'s symbolic formula (`qcore_frontend::premise_formula::outer_header`; the operator gate `Q038` admits `&&` and `|` inside valid formula statements).
 
-Static conditions, each rejecting the whole selection with the named
-diagnostic: exactly one `requires outer_contract_v1;` (and no other
-`requires` or `ensures`, `outer-clause-foreign`); exactly one header
-(`outer-contract-missing`, `outer-contract-repeated`, `outer-contract-shape`,
-`outer-statement` (a formula the outer loader's reader refuses), `QF004` (a
-string statement)); at least one runtime condition (`outer-runtime-missing`),
-each binding a distinct pointer formal (`outer-binder-parameter`,
-`outer-binder-pointer`, `outer-runtime-repeated`, `outer-runtime-shape`), a
-guard only on an integer result (`outer-guard-result`); `#loaded`,
-`#kept` and `#registered` written with `#` (`outer-loaded-keyword`,
-`outer-envelope-keyword`); a dotted member path (`outer-envelope-member`) and
-one of the two values (`outer-envelope-value`); no repeated envelope key
-(`outer-envelope-repeated`); envelope lines only on the defining declaration
-(`outer-envelope-citation`); across the selection one definition per contract
-(`outer-contract-defined-twice`) and no citation without one
-(`outer-contract-undefined`). The digest of a declaration covers every clause as
-written (`text_sha256`), and the pin (`quirin-audit pin --outer`) binds it to
-the loader's body.
+### Semantic Side Conditions
+
+Every violation below rejects the **entire selection**:
+
+- **Selector and symbolic header (`outer-clause-foreign`, `outer-contract-*`, `QF004`):** Each declaration `MUST` carry `requires outer_contract_v1;`, no other `requires`/`ensures` clauses, and **exactly one** `[[contract]] NAME [, formula]` header. Any header statement that is or contains a string literal rejects with **`QF004`** on every route; ill-sorted formulas reject at parse and loader (`outer-statement`).
+- **Runtime binder conditions (`outer-runtime-*`, `outer-binder-*`, `outer-guard-result`):** At least one `where #P in #loaded [[runtime]]` clause is required, each binding a distinct pointer parameter `P`; an optional `when #result ==/!= INT` guard requires an integer return type.
+- **Defining vs. citing declarations (`outer-envelope-*`, `outer-contract-defined-twice`, `outer-contract-undefined`):** `#loaded`, `#kept`, `#registered`, and `#premise` require their `#` prefix; `#loaded: TAG.field... |-> #kept|#registered` and `#loaded: #premise ID` envelope clauses may appear **only on the defining declaration** (which carries the `formula`), with unique keys, exactly one definition per `NAME` across the selection, and no citation of an undefined `NAME`. Pins (`quirin-audit pin --outer`) bind `text_sha256` to the dynamic loader's C body.
+
+**Implementation & Provenance:** `crates/qcore-contract/src/outer_contract.rs`, `crates/qcore-frontend/src/premise_formula.rs`; contract spec [§C04.20](QCORE_CONTRACT_SPEC_r0_3.md#c0420-outer-contracts-code-loaded-at-runtime), gateway rule [31](agents/gateway.md#constraint-31); cards `OUTER-CONTRACT`, `SP8-OUTER-CONTRACT-SYMBOLIC-STATEMENTS`.
+
+---
+
+<a id="g05h-local-condition-and-registered-lifetime-clauses"></a>
 
 ## G05h. Local condition and registered-lifetime clauses
 
-Card FB-EVENT-LOOP-CROSS-FUNCTION-LIFETIME S3, C04.21. These alternatives
-extend `resource_clause`; the resource vocabulary selector stays unconditional.
+### Consumer and Scope
+
+`G05h` extends `resource_contract_v1` (`G05`) with guarded `[[local]]` prerequisite blocks and cross-function `quant registered` lifetime links (`crates/qcore-contract/src/local_condition.rs`; contract specification [§C04.21](QCORE_CONTRACT_SPEC_r0_3.md)). These local contexts remain completely distinct from `G05g`'s dynamic-loading `#outer` scenarios.
+
+### Consolidated Grammar
 
 ```ebnf
-condition_binding = "quant", "#", IDENT, "=", "(", "#", IDENT, ".",
-                    member_path, "!=", "0", ")", ";" ;
-condition_block = "quant", ["not"], "#", IDENT, "in", "{",
-                  local_clause, {local_clause}, "}", ":", "[[", "local", "]]", ";" ;
-local_clause = "requires", local_prerequisite, ";" | registered_clause ;
+condition_binding  = "quant", "#", IDENT, "=", "(", "#", IDENT, ".",
+                     member_path, "!=", "0", ")", ";" ;
+condition_block    = "quant", [ "not" ], "#", IDENT, "in", "{",
+                     local_clause, { local_clause }, "}", ":", "[[", "local", "]]", ";" ;
+local_clause       = "requires", local_prerequisite, ";" | registered_clause ;
 local_prerequisite = named_premise
-  | "resource_loop_owner", "(", IDENT, ",", ("read" | "mutate"), ")"
-  | "resource_thread_sync", "(", IDENT, [",", IDENT], ",",
-      ("cond_wait" | "cond_timedwait" | "cond_signal" | "cond_init" | "cond_destroy" | "join"), ")"
-  | "resource_lifecycle", "(", IDENT, ",", ("start" | "stop" | "destroy"), ")" ;
-registered_clause = "quant", "registered", "#", IDENT, ":", IDENT, ".",
-                    member_path, MAPS_TO, IDENT, ".", member_path, ";" ;
+                   | "resource_loop_owner", "(", IDENT, ",", ( "read" | "mutate" ), ")"
+                   | "resource_thread_sync", "(", IDENT, [ ",", IDENT ], ",",
+                     ( "cond_wait" | "cond_timedwait" | "cond_signal"
+                     | "cond_init" | "cond_destroy" | "join" ), ")"
+                   | "resource_lifecycle", "(", IDENT, ",", ( "start" | "stop" | "destroy" ), ")" ;
+registered_clause  = "quant", "registered", "#", IDENT, ":", IDENT, ".",
+                     member_path, MAPS_TO, IDENT, ".", member_path, ";" ;
 ```
 
-The binding root is a depth-one pointer formal of the host declaration; the
-source reader must prove the final member is a nonvolatile integer. Both
-registered paths must use the same record. Bindings are unique and used; one block per polarity is accepted. No implicit/free
-record binder escapes a registered clause. The parser rejects nested blocks,
-empty blocks, other attributes and unsupported inner clauses; each local
-clause is limited to 64 KiB and each member path to 64 segments. Existing
-prerequisite loaders validate their arguments rather than accepting opaque
-text. Current source discharge for active prerequisites is the exact guarded
-named-entry-premise subset; other active obligations remain Unknown. These
-local contexts are distinct from G05g's runtime/static outer scenarios.
+### Semantic Side Conditions
 
-## G05i. Declared cell protocols
+- **Condition root and polarity:** The `#IDENT` inside `(#ROOT.member_path != 0)` `MUST` name a depth-one pointer formal of the host declaration whose final member Clang proves to be a non-`volatile` integer. Condition names are unique, every declared binding `MUST` be referenced, and at most one `[[local]]` block per polarity (`#c` and `not #c`) is admitted.
+- **Registered paths and bounds:** Both sides of `|->` in `quant registered` `MUST` name the same record tag with no free/implicit record binders escaping. Nested blocks, empty blocks, unknown attributes, and unlisted inner clauses reject; each local clause is bounded at **64 KiB** and each `member_path` at **64 segments**. Currently, only the exact guarded named-entry-premise subset discharges from source; other active local obligations stay `Unknown`.
 
-Card MK-EVENT-CELL-CROSS-FUNCTION (USER DECISION 2026-11-02, verbatim: "B as
-recommended"), contract specification
-[C04.6.3](QCORE_CONTRACT_SPEC_r0_3.md#c0463-declared-cell-protocols), gateway
-rule [38c](agents/gateway.md#constraint-38c). One more `resource_clause`
-alternative, read by `crates/qcore-contract/src/local_condition.rs` (`cell`,
-`cell_protocols`):
+**Implementation & Provenance:** `crates/qcore-contract/src/local_condition.rs`; contract spec `§C04.21`; card `FB-EVENT-LOOP-CROSS-FUNCTION-LIFETIME` (S3).
+
+---
+
+<a id="g05i-declared-cell-protocols"></a>
+
+## G05i. Declared cell protocols (`quant cell #B: ...`)
+
+### Consumer and Purpose
+
+`G05i` extends `resource_contract_v1` (`SourceContractClauseKind::QuantCell`, `crates/qcore-contract/src/local_condition.rs`) to declare record-level descriptor-cell protocols—such as pipe/socketpair channel ends stored in struct fields or fixed-index arrays and guarded either by a record-wide flag or by per-end descriptor sentinels ([contract §C04.6.3](QCORE_CONTRACT_SPEC_r0_3.md#c0463-declared-cell-protocols), gateway rules [38c](agents/gateway.md#constraint-38c), [38f](agents/gateway.md#constraint-38f)).
+
+### Consolidated Grammar
 
 ```ebnf
-cell_clause = "quant", "cell", "#", IDENT, ":", IDENT, ".", cell_path, MAPS_TO,
-              ( "#", "fresh", "(", "descriptor", ")" | "#", "same", "(", cell_path, ")" ),
-              "when", "#", IDENT, ".", cell_path, cell_guard, ";" ;
-cell_path   = cell_segment, { ".", cell_segment } ;
-cell_segment = IDENT, [ "[", DECIMAL, "]" ] ;      (* canonical: no leading zero *)
-cell_guard  = "!=", "-", "1" | ">", "0" | "==", "1" ;
+cell_clause  = "quant", "cell", "#", IDENT, ":", IDENT, ".", cell_path, MAPS_TO,
+               ( "#", "fresh", "(", "descriptor", ")" | "#", "same", "(", cell_path, ")" ),
+               "when", "#", IDENT, ".", cell_path, cell_guard,
+               [ "live_set", "(", set, ")" ], [ "absent_set", "(", set, ")" ], ";" ;
+cell_path    = cell_segment, { ".", cell_segment } ;
+cell_segment = IDENT, [ "[", DECIMAL, "]" ] ;      (* canonical decimal: no leading zero *)
+cell_guard   = "!=", "-", "1" | ">", "0" | "==", "1" ;
 ```
 
-The structural parser (G01) reads `quant cell` as its own clause kind
-(`SourceContractClauseKind::QuantCell`). Before this card it was a parse error,
-so no previously accepted text changes meaning.
+`set` reuses `G05j`'s integer set grammar (`|`, `&`, and `^` are admitted by the `Q038` operator gate inside suffixed `quant cell` clauses).
 
-Static conditions. Each one rejects the whole module (`quant-cell-*`):
+### Semantic Side Conditions
 
-- **Binder.** The binder is no reserved `#` word, and one record uses one
-  binder.
-- **Guard.** The guard's binder is the clause's own. Every clause of a guard
-  states the same `OP V`. Card CELL-PROTOCOL-PER-END-GUARDS (USER DECISION
-  2026-11-03, verbatim: "Per-end sentinels"; gateway rule
-  [38f](agents/gateway.md#constraint-38f)) amends "every clause of a record
-  states the same guard": a record's clauses are grouped by guard, and a
-  record states at most one guard that is not a **per-end sentinel** (a
-  `!= -1` or `> 0` guard over exactly one `#fresh` cell, that cell itself,
-  with its `#same` names). So each channel end may carry its own sentinel
-  (`when #B.END > 0` on the end's own clause) beside one record guard.
-- **Kind.** `#fresh` takes exactly `descriptor`.
-- **Cells.** Each cell is stated once in the record. Every guard has at
-  least one `#fresh` cell. A `#same` target is a `#fresh` cell of the same
-  guard.
-- **Guard and cells.**
-  - A `!= -1` or `> 0` guard is a `#fresh` cell of its own guard.
-  - A `== 1` guard is no cell of the record.
-- **Size.** A path has at most 64 segments.
+Every violation rejects the **entire module** (`quant-cell-*`):
 
-Card CELL-RESULT-SET-ALIGNMENT (USER DECISIONS 2026-11-04, Q2 (i) and Q3
-"(α) live_set suffix"; contract specification C04.6.3, gateway rule 38f (6))
-adds two optional suffixes after the guard of a per-end sentinel's own
-`#fresh` clause, in this order, each at most once:
+1. **Binder and path limits:** One record uses a single non-reserved `#IDENT` binder (`untouched`, `fresh`, `same`, etc. are reserved `#` words), and each `cell_path` has at most **64 segments**.
+2. **Record-level vs. per-end sentinel guards:** Clauses on a record group by their `when #B.path OP V` guard. A record may state **at most one non-per-end guard** (`== 1`, whose path `MUST NOT` be any cell of the record) alongside any number of **per-end sentinels** (`!= -1` or `> 0` guarding `#B.END` over that exact `#fresh(descriptor)` cell and its `#same(...)` aliases; `>= 0` is not admitted).
+3. **Cell uniqueness and `#same` targets:** Each cell path appears at most once in a record; every guard group has at least one `#fresh(descriptor)` cell; every `#same(target)` points to a `#fresh` cell of the **same** guard group.
+4. **Optional `live_set` / `absent_set` suffixes (`quant-cell-set`, `quant-cell-live-set`, `quant-cell-absent-set`):** Admitted *only* on a per-end sentinel's own `#fresh` clause, in `live_set` then `absent_set` order (at most one of each). `live_set` and `absent_set` `MUST` be disjoint, and `absent_set` `MUST` be disjoint from the guard's live edge.
+5. **Cross-declaration agreement:** A declaration carrying `quant cell` becomes a withheld lifetime host; `ResourceContracts::cell_protocols` retains a record's protocols only when every declaration mentioning that record states the identical protocol set.
+
+### Concrete Example
+
+```qv
+quant cell #ins: flb_input_instance.ch_manager[0] |-> #fresh(descriptor)
+    when #ins.ch_manager[0] > 0 live_set([1, MAX]) absent_set([-1, 0]);
+```
+
+**Implementation & Provenance:** `crates/qcore-contract/src/local_condition.rs`, `providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv`; contract spec [§C04.6.3](QCORE_CONTRACT_SPEC_r0_3.md#c0463-declared-cell-protocols), gateway rules `38c`, `38f`; cards `MK-EVENT-CELL-CROSS-FUNCTION`, `CELL-PROTOCOL-PER-END-GUARDS`, `CELL-RESULT-SET-ALIGNMENT`.
+
+---
+
+<a id="g05j-c-library-result-sets"></a>
+
+## G05j. C library result sets and slot `written_set` clauses
+
+### Consumer and Operator Precedence
+
+`G05j` extends `bounds_contract_v1` (`G05b`) with integer `result_set(...)` and conditional output-slot `written_set(...)` postconditions under `requires bounds_revision(flexible);` ([contract §C09.4](QCORE_CONTRACT_SPEC_r0_3.md#c094-declared-c-library-result-sets), gateway rules [38e](agents/gateway.md#constraint-38e), [38f](agents/gateway.md#constraint-38f)). Only the null-dereference and cell/resource result-derivation passes read these clauses (`BoundsContracts::for_bounds()` strips them, and `resource_*` loaders reject the module).
+
+### Consolidated Grammar
 
 ```ebnf
-cell_clause = … , "when", "#", IDENT, ".", cell_path, cell_guard,
-              [ "live_set", "(", set, ")" ], [ "absent_set", "(", set, ")" ], ";" ;
+bounds_pre  = … | "bounds_revision", "(", "flexible", ")" ;
+bounds_post = … | "result_set", "(", set, ")"
+                | "written_set", "(", IDENT, [ "[", DIGITS, "]" ], ",", set, ")",
+                  "when", "#", "result", "==", signed ;
+
+set         = xor_set, { "|", xor_set } ;          (* set union, loosest *)
+xor_set     = and_set, { "^", xor_set } ;          (* symmetric difference *)
+and_set     = atom, { "&", atom } ;                (* set intersection, tightest *)
+atom        = bound | "[", bound, ",", bound, "]" | "(", set, ")" ;
+bound       = signed | "MIN" | "MAX" ;
+signed      = [ "-" ], DIGITS ;                    (* canonical: no leading zero, never -0 *)
 ```
 
-`set` is G05j's, over `int`. Static conditions, each rejecting the whole
-module:
-- the absent set meets nothing on the guard's live edge (`quant-cell-absent-set`);
-- the live set and the absent set are disjoint (`quant-cell-live-set`);
-- the suffixes stand only on a per-end sentinel's own `#fresh` clause
-  (`quant-cell-set`).
+### Semantic Side Conditions
 
-They load to `CellProtocol::live_set` / `absent_set` (canonical intervals,
-omitted when absent, so an older protocol serializes as before). The
-frontend's operator gate admits `|`, `&` and `^` in a `quant cell` clause that
-carries a suffix. `>= 0` is not admitted: the user's third patch uses `> 0`.
+- **Set algebra and operator gate (`result-set-*`):** `|`, `^`, and `&` are left-associative with standard C bitwise precedence and admitted by the `Q038` operator gate inside `result_set`/`written_set`/`live_set`/`absent_set` spans (`||`, `&&`, `[|`, `|]`, and non-ASCII tokens are rejected). The host function `MUST` return an integer type (`result-set-integer`), every literal bound `MUST` fit that return/element type (`result-set-outside-type`), every interval `MUST` satisfy `lo <= hi`, and every sub-expression and total set `MUST` be non-empty (`result-set-empty`).
+- **Flexible revision scope (`bounds-revision-*`, `result-set-needs-flexible`):** `bounds_revision(flexible)` appears at most once, is mandatory whenever `result_set` is present, and is permitted *only* on an unheld declaration whose clauses consist solely of its single `ensures normal result_set(...)` and zero or more `ensures normal written_set(...)` slot clauses.
+- **Conditional slot `written_set` (`written-set-*`):** `IDENT` names a pointer parameter (with optional constant element index `[DIGITS]`, at most one clause per slot element), stating the integer set written into that slot when `#result == signed`.
 
-The clauses of one declaration load to one canonical `CellProtocol` per guard
-(`LoopLifetimeContract::cells`, sorted, omitted when empty; a record with one
-guard loads as before). The host becomes a withheld lifetime declaration, as
-with G05h's registered clauses. Across declarations,
-`ResourceContracts::cell_protocols` keeps a record's protocols only when
-every declaration states the same set. The first per-end declarations are
-`providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv`'s
-(`flb_input_instance`, `flb_output_instance`, `flb_input_thread_instance`).
+### Concrete Example
 
-## G05k. Callee frames over a declared cell protocol
+```qv
+module contract;
 
-Card CELL-PROTOCOL-RELEASE-WINDOW-FRAMES (USER DECISION 2026-11-04, verbatim:
-"(a) Callee frames"), contract specification
-[C04.6.4](QCORE_CONTRACT_SPEC_r0_3.md#c0464-callee-frames-over-a-declared-cell-protocol),
-gateway rule [38g](agents/gateway.md#constraint-38g). One more spelling of
-G05i's `quant cell` clause, read by `crates/qcore-contract/src/local_condition.rs`
-(`frame`, `cell_frames`):
+extern fn pipe(pipefd: ptr<mut, u8>) -> i32
+contract {
+    requires bounds_contract_v1;
+    requires bounds_revision(flexible);
+    ensures normal result_set([-1, 0]);
+    ensures normal written_set(pipefd[0], [0, MAX]) when #result == 0;
+    ensures normal written_set(pipefd[1], [0, MAX]) when #result == 0;
+};
+```
+
+**Implementation & Provenance:** `crates/qcore-contract/src/bounds_contract.rs`, `crates/qcore-core/src/result_set.rs`, `providers/quirin-provider-libc/contracts/libc/result_sets.qv`; contract spec [§C09.4](QCORE_CONTRACT_SPEC_r0_3.md#c094-declared-c-library-result-sets), gateway rules `38e`, `38f`; cards `CELL-GUARD-RESULT-RANGE-CHECKED`, `CELL-RESULT-SET-ALIGNMENT`.
+
+---
+
+<a id="g05k-callee-frames-over-a-declared-cell-protocol"></a>
+
+## G05k. Callee frames over a declared cell protocol (`quant cell CALLEE: ...`)
+
+### Consumer and Disambiguation from `G05i`
+
+`G05k` adds a second `quant cell` form to `resource_contract_v1` (`crates/qcore-contract/src/local_condition.rs`; [contract §C04.6.4](QCORE_CONTRACT_SPEC_r0_3.md#c0464-callee-frames-over-a-declared-cell-protocol), gateway rule [38g](agents/gateway.md#constraint-38g)) declaring that an external helper (such as `mk_list_del`) leaves all descriptor cells of a protocol-governed record untouched during a release window. It is distinguished from `G05i` by opening with a bare `IDENT` (the callee name) rather than a `#IDENT` binder.
+
+### Consolidated Grammar
 
 ```ebnf
 frame_clause = "quant", "cell", IDENT, ":", IDENT, MAPS_TO, "#", "untouched", ";" ;
 ```
 
-The first `IDENT` is the callee, the second the record tag. A `quant cell`
-clause that opens with a name, not G05i's `#` binder, is a frame; before this
-card it was refused (`quant-cell-shape`), so no previously accepted text
-changes meaning. Static conditions, each rejecting the whole module:
+### Semantic Side Conditions
 
-- **Shape.** Exactly the form above (`quant-frame-shape`).
-- **Record.** The same declaration states a protocol of the record
-  (`quant-frame-record`).
-- **Once.** One clause per callee and record (`quant-frame-duplicate`).
-- **Binder.** `untouched` joins the reserved `#` words a G05i binder may not
-  be.
+- **Shape and co-location (`quant-frame-shape`, `quant-frame-record`, `quant-frame-duplicate`):** First `IDENT` is the callee function name, second `IDENT` is the C struct tag, and the right-hand side is `#untouched` (`untouched` is reserved against `G05i` binders). The **same declaration** `MUST` also declare a `G05i` cell protocol for that struct tag, and each `(callee, record)` pair may appear at most once per declaration.
+- **Cross-declaration agreement:** `ResourceContracts::cell_frames` retains frames for a record only if `cell_protocols` retains that record's protocol *and* every declaration stating that record's protocol declares the identical set of frame callees. The clause alters nothing about its host function's own call summary.
 
-The clauses load to `LoopLifetimeContract::frames` (sorted, omitted when
-empty, so an older declaration serializes as before) and, across
-declarations, to `ResourceContracts::cell_frames`: a record keeps its frames
-only where it keeps its protocol and every declaration stating the protocol
-states the same callees. The clause adds nothing to its host's own contract.
-The first declarations are `mk_list_del`'s frames over `flb_input_instance`
-and `flb_output_instance` in
-`providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv`.
+### Concrete Example
 
-## G05j. C library result sets
-
-Card CELL-GUARD-RESULT-RANGE-CHECKED, contract specification
-[C09.4](QCORE_CONTRACT_SPEC_r0_3.md#c094-declared-c-library-result-sets),
-gateway rule [38e](agents/gateway.md#constraint-38e) (USER DECISION
-2026-11-03, option C; USER DIRECTION 2026-11-03, the programming-language
-operators). Two more clauses of G05b, read by
-`crates/qcore-contract/src/bounds_contract.rs` (`result_set_clause`,
-`BoundsClause::ResultSet`, `BoundsFunctionContract::flexible`) and
-`crates/qcore-core/src/result_set.rs` (`parse`, `SetExpr::eval`):
-
-```ebnf
-bounds_pre  = … | "bounds_revision", "(", "flexible", ")" ;
-bounds_post = … | "result_set", "(", set, ")" ;
-set         = xor_set, { "|", xor_set } ;          (* union, loosest *)
-xor_set     = and_set, { "^", and_set } ;          (* symmetric difference *)
-and_set     = atom, { "&", atom } ;                (* intersection, tightest *)
-atom        = bound | "[", bound, ",", bound, "]" | "(", set, ")" ;
-bound       = signed | "MIN" | "MAX" ;
-signed      = ["-"], DIGITS ;                      (* canonical: no leading zero, never -0 *)
+```qv
+quant cell mk_list_del: flb_input_instance |-> #untouched;
 ```
 
-The operators are left associative with C's precedence; `||`, `&&`, `[|`,
-`|]` and every non-ASCII character are not part of a set. The frontend's
-operator gate (`Q038`) admits `|`, `&` and `^` inside a `result_set(…)`
-clause and nowhere else in a contract module
-(`crates/qcore-frontend/src/pipe.rs`, `result_set_spans`). Static conditions,
-each rejecting the whole module: an integer result
-(`result-set-integer`); a literal inside the result type
-(`result-set-outside-type`); every operand and the whole set non-empty, every
-interval's bounds in order (`result-set-empty`); an `ensures normal`
-postcondition (`result-set-ensures`); `bounds_revision` only as
-`(flexible)`, at most once (`bounds-revision-shape`); a result set only with
-the marker (`result-set-needs-flexible`) and the marker only on a declaration
-whose one clause is an unheld result set (`bounds-revision-flexible-scope`).
-Both words were absent from every tracked contract module when introduced and
-are reserved. Only the null property and the result derivation read the
-clause (`for_bounds()` removes it); `resource_*` consumers reject the module.
-The first tracked use is `providers/quirin-provider-libc/contracts/libc/result_sets.qv`
-(`pipe`, `epoll_ctl`, `open`), the libc crate's bounds view.
+**Implementation & Provenance:** `crates/qcore-contract/src/local_condition.rs`, `providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv`; contract spec [§C04.6.4](QCORE_CONTRACT_SPEC_r0_3.md#c0464-callee-frames-over-a-declared-cell-protocol), gateway rule `38g`; card `CELL-PROTOCOL-RELEASE-WINDOW-FRAMES`.
 
-Card CELL-RESULT-SET-ALIGNMENT (USER DECISIONS 2026-11-04: Q1 (a), the
-per-element and per-class refinements, "Write [1, MAX]") adds a third clause:
+---
 
-```ebnf
-bounds_post = … | "written_set", "(", IDENT, [ "[", DIGITS, "]" ], ",", set, ")",
-              "when", "#", "result", "==", signed ;
-```
+<a id="g05l-list-finiteness-premises"></a>
 
-(`BoundsClause::WrittenSet`; `crates/qcore-contract/src/bounds_contract.rs`,
-`written_set_clause`). Static conditions:
-- `IDENT` is a pointer parameter (`written-set-slot`);
-- the clause is an `ensures normal` postcondition (`written-set-ensures`);
-- the class is stated (`written-set-class`);
-- at most one clause per slot element.
+## G05l. List-finiteness premises (`quant list TAG.MEMBER |-> #finite;`)
 
-A flexible declaration's clauses are its one `result_set` and its slots'
-written sets (`bounds-revision-flexible-scope`, amended). The word is
-reserved. Only the null and resource readers read it (`for_bounds()` removes
-it).
+### Consumer and Standalone File Boundary
 
-## G05l. List-finiteness premises
+Unlike `G05`–`G05k`, a list-finiteness file is **not** a `module contract;` bundle member: it is a standalone line-oriented premise file selected via `QCORE_LIST_FINITENESS_PREMISES` and parsed total-or-reject by `crates/qcore-contract/src/list_finiteness.rs` (`parse_list_finiteness_premises`; [contract §C04.22](QCORE_CONTRACT_SPEC_r0_3.md#c0422-the-list-finiteness-premise), gateway rule [48](agents/gateway.md#constraint-48)). It is excluded from provider packages and resource-bundle digests.
 
-Card W45-FB-LIST-FINITENESS-PREMISE, contract specification
-[C04.22](QCORE_CONTRACT_SPEC_r0_3.md#c0422-the-list-finiteness-premise),
-gateway rule [48](agents/gateway.md#constraint-48). A premise file of its own,
-named by `QCORE_LIST_FINITENESS_PREMISES` and read by
-`crates/qcore-contract/src/list_finiteness.rs`
-(`parse_list_finiteness_premises`), one item per line:
+### Consolidated Grammar
 
 ```ebnf
 premise_file = { line } ;
@@ -4962,614 +4894,113 @@ line         = blank | "//", { any } | premise ;
 premise      = "quant", "list", IDENT, ".", IDENT, MAPS_TO, "#", "finite", ";" ;
 ```
 
-The first `IDENT` is the record tag (`struct TAG`), the second the list-head
-member. Whitespace may separate any two tokens, but a `premise` takes one line.
-Static conditions, each rejecting the **whole file** (a rejected file declares
-nothing, so every traversal refuses `premise-not-declared` with the loader's
-error in its detail):
+### Semantic Side Conditions
 
-- **Shape.** Every non-blank line is a `//` comment or exactly the form above.
-- **Once.** One premise per `TAG.MEMBER`.
+- Each `premise` `MUST` appear on a single line, naming `TAG.MEMBER` (`struct TAG` and its intrusive list-head field) at most once across the file.
+- Any malformed non-comment line or duplicate `TAG.MEMBER` rejects the **entire file**, leaving zero premises in force so every list-length loop refuses with `premise-not-declared` (recording the loader failure in its detail).
 
-The file is no contract module: it is not part of any provider package,
-profile contract set or bundle digest, and no resource-v1 loader reads it. The
-first file is the Fluent Bit system selection's
-`contract/profiles/fluent-bit/list-finiteness.qv`.
+### Concrete Example
 
-## G06. Observation predicate grammar
-
-```ebnf
-predicate = or_expr ;
-or_expr   = and_expr, {"or", and_expr} ;
-and_expr  = comparison, {"and", comparison} ;
-comparison = sum, {relation, sum} ;
-sum       = product, {("+" | "-"), product} ;
-product   = unary, {"*", unary} ;
-unary     = ("-" | "!" | "not"), unary | primary ;
-primary   = NAT | IDENT | "true" | "false" | "(", predicate, ")" ;
-relation  = "==" | "!=" | "<" | "<=" | ">" | ">=" ;
+```qv
+// contract/profiles/fluent-bit/list-finiteness.qv
+quant list flb_config.inputs |-> #finite;
+quant list flb_config.outputs |-> #finite;
 ```
 
-Reserved operator/literal words take their parser meanings rather than binding arbitrary facts. The interpreter uses signed `i128`, checked arithmetic, nonzero truth, eager evaluation and left-associated binary operators, including repeated comparisons. Thus `a < b < c` is not mathematical chained comparison syntax; write `(a < b) and (b < c)` to express that intended predicate.
+**Implementation & Provenance:** `crates/qcore-contract/src/list_finiteness.rs`, `contract/profiles/fluent-bit/list-finiteness.qv`; contract spec [§C04.22](QCORE_CONTRACT_SPEC_r0_3.md#c0422-the-list-finiteness-premise), gateway rule `48`; card `W45-FB-LIST-FINITENESS-PREMISE`.
 
-A predicate is limited to 512 non-EOF tokens and the parser's depth-64 guard. Signed decimal literals are range-checked with sufficient magnitude capacity, including the full i128 minimum (R07). Out-of-range literals and checked arithmetic overflow reject. Negating an already minimal supplied fact still overflows; literal support does not authorize unchecked arithmetic.
+---
 
-Only `requires` and `ensures normal` envelopes are admitted by this consumer, with at least one postcondition. Function-call predicates, `old(...)`, `resource_*` calls, quant clauses, `&&`/`||`, typed errors and `any` exits do not extend this grammar. A missing fact or overflow errors even in `true or missing_fact`, and a malformed postcondition errors even when a precondition is false. Source: `crates/qcore-contract/src/contract_observation.rs`.
+# Part VI — Observation Policies, Service Configuration, Existing-C Subsets, and Extended BNF
+
+<a id="g06-observation-predicate-grammar"></a>
+
+## G06. Observation predicate grammar (`contract.observation`)
+
+### Consumer and Evaluation Semantics
+
+`crates/qcore-contract/src/contract_observation.rs` evaluates arithmetic and Boolean contract clauses over an explicitly supplied `IDENT -> i128` integer fact map (`contract.observation`, contract specification [§C07](QCORE_CONTRACT_SPEC_r0_3.md)). It evaluates **eagerly** (no short-circuiting: `true or missing_fact` still rejects on the missing fact, and malformed postconditions reject even when preconditions evaluate false) using checked signed `i128` arithmetic and nonzero truthiness.
+
+### Consolidated Grammar
+
+```ebnf
+predicate  = or_expr ;
+or_expr    = and_expr, { "or", and_expr } ;
+and_expr   = comparison, { "and", comparison } ;
+comparison = sum, { relation, sum } ;
+sum        = product, { ( "+" | "-" ), product } ;
+product    = unary, { "*", unary } ;
+unary      = ( "-" | "!" | "not" ), unary | primary ;
+primary    = NAT | IDENT | "true" | "false" | "(", predicate, ")" ;
+relation   = "==" | "!=" | "<" | "<=" | ">" | ">=" ;
+```
+
+### Semantic Side Conditions and Bounds
+
+- **Envelope restrictions:** Only `requires` and `ensures normal` clauses are admitted, with **at least one** `ensures normal` postcondition. Function calls, `old(...)`, `resource_*` / `bounds_*` predicates, `quant` clauses, `&&`/`||`, `error(E)`, and `any` selectors are rejected.
+- **Associativity and overflow:** All binary operators—including relational comparisons—associate left-to-right, so `a < b < c` parses as `(a < b) < c` rather than mathematical chaining; write `(a < b) and (b < c)`. Signed decimal literals support the full `i128` range (including `i128::MIN`, repair `R07`), while arithmetic overflow (such as negating `i128::MIN` in a supplied fact) rejects.
+- **Structural bounds:** At most **512 non-EOF tokens** and **parser depth 64**.
+
+---
+
+<a id="g06a-bounded-observed-timed-wait-contract-consumer"></a>
 
 ### G06a. Bounded observed timed-wait contract consumer
 
-`quirin-audit observed-wait` uses the structural contract parser to load exactly
-the selected declarations for `_mk_event_loop_create`, `_mk_event_wait_2`,
-`_mk_event_wait_with_flags`, `_mk_event_loop_destroy` and `cb_wait_2_timeout`
-from `monkey/wrapper_paths.qv` and `monkey/composition.qv`. The consumer
-requires the supported extern signatures, parameter usage/ownership, return
-types and exact `requires`/`ensures normal` clauses, with no body, `unsafe` or
-effects block. The contract-mode `wait_source_policy.qv` declares those
-expectations over derived declaration facts. Missing, duplicate, added or
-changed selected clauses refuse.
-It checks the named predicates against typed C paths and derives native
-obligations; these identifiers do not become arbitrary executable predicates
-in the G06 arithmetic interpreter. Contract acceptance alone emits no safety
-verdict. One complete identity-bearing observation and event-kernel replay are
-required for the separate bounded observed-composition artifact. Source:
-`crates/qcore-verification/src/monkey_wait_projection.rs`; bounds and remaining
-paths: [observed integration](reports/cycle18-observed-integration/README.md).
+`quirin-audit observed-wait` (`crates/qcore-verification/src/monkey_wait_projection.rs`) uses the structural contract parser to load the exact five declarations `_mk_event_loop_create`, `_mk_event_wait_2`, `_mk_event_wait_with_flags`, `_mk_event_loop_destroy`, and `cb_wait_2_timeout` from `monkey/wrapper_paths.qv` and `monkey/composition.qv`, validating their signatures, ownership/usage annotations, and `requires` / `ensures normal` clauses (with no body, `unsafe`, or `effects` block) against `wait_source_policy.qv`. Missing, duplicate, added, or altered clauses reject. These named predicates bind typed C paths to native event-kernel replay obligations rather than entering `G06`'s arithmetic evaluator, and contract acceptance alone publishes no safety verdict ([observed integration report](reports/cycle18-observed-integration/README.md)).
 
-### G06b. Typed executable policy predicates
+---
 
-`check_typed_contract_facts` extends G06 for an explicitly selected policy
-consumer. A fact is either an `i128` integer or UTF-8 text. Its primary grammar
-additionally admits double-quoted string literals. Literals decode the existing
-`source.string.v1` escapes before comparison. Text supports same-type `==` and
-`!=` only; text ordering, arithmetic and direct Boolean use reject, and there
-is no text/integer coercion. Boolean operators still evaluate both operands.
-The legacy numeric API and G06 grammar remain unchanged.
+<a id="g06b-typed-executable-policy-predicates"></a>
 
-The selected declaration must have the exact lexed header
-`extern fn NAME() -> unit contract`, ignoring comment trivia. Parameters,
-generics, effects, unsafe qualifiers, bodies and non-unit results reject.
-Only `requires` and `ensures normal` clauses are supported, with at least one
-postcondition. Duplicate facts, missing facts, unsupported syntax, type errors,
-false preconditions, false postconditions and overflow all reject.
+### G06b. Typed executable policy predicates (`i128` and UTF-8 text)
 
-The typed consumer bounds source text at 64 KiB, facts at 256, function/fact
-names at 256 bytes and text values at 4096 bytes. The predicate limits remain
-512 non-EOF tokens and depth 64. These are consumer limits, not new general
-language-conformance claims.
+`check_typed_contract_facts` extends `G06` for explicitly selected zero-parameter policy declarations of the exact lexed form `extern fn NAME() -> unit contract { ... };` (rejecting parameters, generics, `effects`, `unsafe`, bodies, and non-`unit` returns):
 
-`contract_fact_literal(source, function, fact) -> Result<ContractFact, String>`
-reads exactly one standalone `ensures normal FACT == LITERAL` clause from a
-strict policy declaration. It accepts text and signed integer literals and
-rejects missing, duplicate exact or conditional forms. Reading a literal does
-not establish any supplied fact or discharge the other clauses; callers still
-check the complete selected policy against independently derived facts.
+- **Two-sorted facts (`i128` | UTF-8 text):** Admits double-quoted string literals alongside `G06` expressions, decoding `source.string.v1` escapes (`\\`, `\"`, `\n`, `\t`, `\r`, `\0`, `\xHH`) prior to comparison. Text values support only same-type `==` and `!=` (no ordering, arithmetic, Boolean truthiness, or text/integer coercion), and Boolean connectives remain eager.
+- **Standalone literal extraction:** `contract_fact_literal(source, function, fact)` extracts a single `ensures normal FACT == LITERAL;` (text or signed integer) while still requiring callers to check the full policy against independently derived source/runtime facts (`monkey/wait_source_policy.qv`, `monkey/wait_identity_policy.qv`).
+- **Consumer bounds:** Source text ≤ **64 KiB**, facts ≤ **256**, function/fact identifiers ≤ **256 bytes**, decoded text values ≤ **4,096 bytes**, predicate ≤ **512 tokens** and **depth 64** ([report](reports/cycle18-contract-extraction/README.md)).
 
-The timed-wait consumers use `monkey/wait_source_policy.qv` for source and
-contract-shape acceptance and `monkey/wait_identity_policy.qv` for context,
-digest, bound and observed-profile relationships. Policy bytes are bound into
-the resulting context. Source extraction and runtime observations supply facts;
-the desired literals in a policy cannot manufacture the corresponding observed
-values. See [extraction and parity](reports/cycle18-contract-extraction/README.md).
+---
 
-## G07. Extended grammar and conformance
+<a id="g08-source-contract-service-configuration-v1"></a>
 
-`QCORE_DESIGN_GRAMMAR_r0_3.bnf` collects the nineteen BNF blocks from revision 0.2, adding the current optional module header. It preserves the intended full language vocabulary, including source constructs without driver lowering. Its lexical terminal placeholders are `IDENTIFIER-TOKEN`, `INTEGER-TOKEN`, `FLOAT-TOKEN`, `STRING-TOKEN` and `CHAR-TOKEN`.
+## G08. Source-contract service configuration (`v1` & `v2`) and audit composition
 
-That target grammar is neither a parser generator input already used by the compiler nor the grammar of every policy consumer. In particular, retained policy token expressions and resource predicate calls are defined at their consumer boundary above; their structural acceptance is not a new general-purpose contract proof rule. Future implementation work MUST keep the profile grammars, type rules, lowering coverage and negative tests synchronized instead of conflating the target with today's supported syntax.
+### Schema Version 1: Explicit Package and Policy Selection
 
-## G07.9. Immutable UTF-8 string views v1 (`source.string.v1`)
-
-The revision-0.3 [string-view amendment](design/STRING_SLICE_V1.md) requires an
-explicit, file-local `#import std.string;` for string capabilities. Card
-`STRING-SLICE` registers that module and implements this consumer grammar
-(diagnostics `Q068`–`Q073`, spec §L21), card `STRING-SLICE-IO` adds the two
-rendered-text statements marked below (`Q075`–`Q076`, the same pass's second
-band), and card `STRING-CONCAT` adds the composition, the `std.buffer` bridge
-and the embedded buffer statements (`Q077`–`Q079`, the third band):
-
-```ebnf
-module    = { import }, { error-decl | entry } ;
-import    = "import", ( "std.string" | "std.buffer" | "std.fmt"
-                      | "std.io" | "std.logger" ), ";" ;
-entry     = "fn", NAME, "(", ")", "->", "unit",
-            [ "effects", "{", EFFECT, { ",", EFFECT }, "}" ], "{", { stmt }, "}" ;
-stmt      = "let", NAME, [ ":", "string" ], "=", STRING-TOKEN, ";"
-          | "let", NAME, "=", [ "-" ], INTEGER, ";"
-          | "let", NAME, "=", "len", "(", NAME, ")", ";"
-          | "let", NAME, [ ":", "string" ], "=", NAME, "[", OPERAND, ":", OPERAND, "]", ";"
-          | "let", NAME, [ ":", "string" ], "=", "concat", "(", PIECE, { ",", PIECE }, ")", ";"
-                                                    (* STRING-CONCAT *)
-          | "let", NAME, [ ":", "string" ], "=", "borrow_utf8", "(", NAME, ")", ";"
-                                                    (* STRING-CONCAT *)
-          | "let", NAME, [ ":", "string" ], "=", "borrow_utf8",
-            "(", NAME, ",", OPERAND, ",", OPERAND, ")", ";"
-                                                    (* CT07-SLICE-PERMISSIONS *)
-          | BUFFER-STMT                             (* STRING-CONCAT *)
-          | "print", RENDERING, OPERAND, ";"
-          | "log", LEVEL, RENDERING, OPERAND, ";"
-          | "print", TEXT, ";"                      (* STRING-SLICE-IO *)
-          | "log", LEVEL, TEXT, ";"                 (* STRING-SLICE-IO *)
-          | "log_level", LEVEL, ";"
-          | "flush", ";"
-          | "return", ";" ;
-OPERAND   = [ "-" ], INTEGER | NAME ;
-TEXT      = STRING-TOKEN | NAME | NAME, "[", OPERAND, ":", OPERAND, "]" ;
-PIECE     = TEXT | RENDERING, "(", NAME, ")" ;
-EFFECT    = "io" | "alloc" | "mut" ;
-```
-
-`BUFFER-STMT` is `source.buffer.v1`'s own statement grammar (§G02k), **read by
-that route's own reader** (`source_std_buffer::buffer_statement`), so a byte
-write this route admits is byte for byte the statement that route would have
-produced and a shape one accepts and the other refuses is not expressible. A
-composed module is one that **acquires** a buffer: a module with no `bytes(N)`
-in its entry embeds no buffer statement at all, which is what keeps every
-program written before card `STRING-CONCAT` on the code path it was on.
-
-`STRING-TOKEN` is the existing lexer's retained string token; this grammar adds
-no token and **reserves no word**. `len`, `concat` and `borrow_utf8` are
-contextual — each is a clause word only where it is immediately followed by
-`(` — and `string` appears only in a type ascription. `dec` and `hex` need no
-rule, having been reserved words since `STD-MODULES`. A quoted token in
-*declaration metadata*, such as a `verify scope` entry's plugin version or
-profile, is not a statement and acquires no import requirement.
-
-**Composition (`concat`) is static.** Every `PIECE` is check-time-known, so the
-compiler computes the result's bytes and it becomes a new `static const` payload
-of the emitted program: no allocation, no run-time copy, no custody, and a
-length that is the sum of the pieces' lengths and is itself a check-time
-constant. A `RENDERING "(" NAME ")"` piece is the **text of a bound integer**,
-produced by the same rendering function `print dec NAME;` renders with, so the
-two spellings of a number cannot disagree. Two pieces are the minimum: a
-composition of one is that piece, and is refused.
-
-**The bridge (`borrow_utf8`) is checked twice.** Its UTF-8 validity is decided
-**statically**, out of the buffer's own write history — `source.buffer.v1`
-admits only constant bytes at constant indices — and the buffer may not be
-written or released inside the borrow's **window**, which runs from the borrow
-to the last statement that reads the view or anything derived from it. Both
-directions are refusals at check time; there is no run-time scan and no failure
-arm. A borrow contributes an ordinary `Read` to the cycle-3 ownership operation
-list, so borrowing a released buffer is that checker's own refusal rather than a
-rule this grammar adds.
-
-**A borrow lends a range** (card `CT07-SLICE-PERMISSIONS`). The three-argument
-form names the bytes `[LOW, HIGH)`, with both bounds resolved by the **same**
-operand rule a slice bound is and checked against the extent the acquisition
-declared (`0 <= low <= high <= extent`). The arity is **one or three and
-nothing between**: a range needs both of its ends, so a two-argument spelling
-has no reading and keeps refusing by shape. The one-argument form *is* the
-three-argument one at `[0, extent)` — not an abbreviation of it but the same
-rule at its degenerate bound, measured as an identical certificate and
-byte-identical emitted C. What the range changes is the window's **content**
-rather than its extent: a write is refused when its byte lies inside a live
-loan and **admitted when it lies outside every one of them**, so two disjoint
-permissions over one buffer are expressible and their disjointness is decided
-(`max low < min high`) rather than assumed. A release is still refused for any
-live loan however narrow, because it ends the storage all of them address, and
-the UTF-8 decision is made on the lent bytes — so a range whose end splits a
-code point is refused by that decision rather than by a new one. There is no
-**write** lend: the owner keeps the write authority over every byte it did not
-lend.
-
-A bound is a check-time constant, so `0 <= low <= high <= len(s)` and both UTF-8
-code-point boundaries are decided before emission and this profile has no
-run-time failure arm. That is as true of an inline `TEXT` slice as of a bound
-one: both are decided by one predicate, so a slice cannot be admitted at a
-rendering operand where the same slice written as a `let` would be refused.
-
-The two statement families above are separated by a **closed word set** and not
-by a lookahead: `RENDERING` is `dec` or `hex`, so a statement naming one renders
-a scalar and a statement naming neither renders text. A string therefore takes
-**no** selector — `dec` and `hex` are total functions from an `i32` to digits
-and a `string` is already the bytes — and a selector written in front of one
-refuses at `Q072`, where it refused before the composition existed. What reaches
-the stream is the view's exact UTF-8 payload, framed by the sink's own line
-discipline: no re-encoding, no escaping, no terminator, no newline beyond the
-one every line carries, and an embedded `0` written as the ordinary byte it is.
-
-Both pipe spellings are the same statements (§G02h): `s |> print;` is
-`print s;` and `s[0:4] |> log info;` is `log info s[0:4];`.
-
-**Route selection is unmoved by the text forms.** A *constructed* string at an
-operand — a quoted literal or an inline slice — selects this route; a bare `NAME`
-does not, so `print bogus;` in a `source.std-io.v1` module keeps that route's own
-refusal, and a bare name is admitted as text only inside a module already on
-this route.
-
-What remains outside every grammar in this document, each a named follow-on:
-**freezing** a `std.buffer` value into an owned string (the borrow landed; the
-freeze needs a custody component the view has nowhere to carry), transporting a
-string at an extern/native-library ABI, comparing or searching strings, a
-single-index access into a string, a composition with a piece the compiler
-cannot evaluate, and the separate mutable `{ptr, len, cap}` byte slice.
-
-## G07.10. A checked HTTP/1.1 message subset (`source.http.v1`)
-
-Card `HTTP-QUIRIN-V1` registers `std.http` and implements this consumer grammar
-(diagnostics `Q090`–`Q096`, spec §L21); card `HTTP-V1-COMPUTED-LENGTH` widens a
-component position to a value the entry **computes**, allocating no code and
-reserving no word. It is **an executed HTTP/1.1 subset with the boundary named**,
-never HTTP/1.1 conformance: what is outside it is listed at the end of this
-section and in `examples/http/README.md`.
-
-```ebnf
-module    = { import }, entry ;
-import    = "import", ( "std.http" | "std.socket" | "std.string"
-                      | "std.fmt" | "std.io" | "std.logger" ), ";" ;
-entry     = "fn", NAME, "(", ")", "->", "unit",
-            [ "effects", "{", EFFECT, { ",", EFFECT }, "}" ], "{", { stmt }, "}" ;
-stmt      = "let", NAME, "=", "request", STRING-TOKEN, STRING-TOKEN, STRING-TOKEN, ";"
-          | "let", NAME, "=", "response", STRING-TOKEN, INTEGER, STRING-TOKEN, ";"
-          | "header", NAME, STRING-TOKEN, VALUE, ";"
-          | "content", NAME, VALUE, ";"
-          | "let", NAME, "=", STRING-TOKEN, ";"        (* a bound string view *)
-          | "let", NAME, "=", "concat", "(", VALUE, { ",", VALUE }, ")", ";"
-          | "let", NAME, "=", "len", "(", NAME, ")", ";"
-          | "send", NAME, NAME, ";"                    (* a message or a view *)
-          | "recv", NAME, NAME, ";"                    (* verified against one *)
-          | SOCKET-STMT ;                              (* §G's socket surface *)
-VALUE     = STRING-TOKEN                               (* this module's syntax *)
-          | NAME                                       (* text this entry bound *)
-          | ( "dec" | "hex" ), "(", NAME, ")" ;        (* a bound integer's text *)
-EFFECT    = "io" | "alloc" | "mut" ;
-```
-
-`SOCKET-STMT` is `source.socket.v1`'s own statement grammar, **read by that
-route's own reader** (`source_socket::socket_statement`), so a transport
-statement this route admits is byte for byte the statement that route would have
-produced and a shape one accepts and the other refuses is not expressible.
-
-**Four reserved words** — `request`, `response`, `header`, `content` — each a
-clause word at a statement head or in a `let` initialiser and never a reference.
-`send`, `recv`, `let`, `close` and the standard-IO line words are reused rather
-than respelled. The census that chose them rejected `body` (8 occurrences in
-QCore *source* position, as a binding name in shipped fixtures), `message` and
-`payload`; RFC 9110 §6.4 renamed the body concept **content**, so the admitted
-word is also the specification's current one.
-
-**Every component is check-time-known** — a quoted token, or a value composed
-from check-time-known pieces — which is what makes a family of RFC 9112 facts
-decidable before emission and refused by name: the version is exactly `HTTP/1.1`
-(`Q091`), a method and a field name are `token`s and a target is origin-form
-(`Q091`, `Q092`), no component may carry a `CR` or an `LF` (`Q092`), a request
-carries exactly one `Host` field (`Q092`, RFC 9112 §3.2), and a declared
-`Content-Length` **equals the content's byte count** (`Q093`).
-
-**A computed component decides exactly the same facts** (card
-`HTTP-V1-COMPUTED-LENGTH`). A `VALUE` is resolved to bytes *before* any gate
-runs, so `Q092`'s `CR`/`LF` exclusion and `Q093`'s length equality are the
-unchanged functions above and never learn which spelling produced the bytes: a
-`concat` piece carrying a framing byte refuses at `Q092` exactly as a written one
-does, and a `dec(len(body))` that is not the content's byte count refuses at
-`Q093`. The composition is **static** — the compiler holds the bytes, so the
-result is a `static const` payload of the emitted program with no allocation, no
-run-time copy and a length that is itself a check-time constant (constraint
-15h) — and a composition of fewer than two pieces, or one above the 4096-byte
-payload bound, refuses at `Q090`. `concat` and `len` are `source.string.v1`'s
-**contextual** clause words read through that route's own predicates, `dec` and
-`hex` have been reserved since `STD-MODULES`, and `has_source_http` is unchanged,
-so this widening adds no reserved word and moves no route selection. The **field
-name** stays a written token (`HTTP-V1-COMPUTED-FIELD-NAME`).
-
-**The framing is constructed, not spelled.** No source program writes a CRLF:
-the compiler writes one after the start line, one after each field and one to end
-the head, and because no admitted component may carry one, every CRLF in an
-admitted head is one the compiler put there.
-
-**Import composition.** `std.http` grants the message vocabulary and nothing
-else: it opens no socket (a program that speaks HTTP names `std.socket` too),
-constructs no `string` — a quoted token at a method, target, field name, field
-value or content position is this module's own syntax and no value can name it,
-which is the case `STRING_SLICE_V1.md` §2 excludes — and writes no line. A
-`let NAME = STRING-TOKEN;` or `let NAME = concat(…);` binding **does** construct
-a string value a later statement names, and takes `std.string`'s own gate, as
-does `let NAME = len(NAME);`. A `dec(NAME)` written *at a component* is this
-module's syntax on the same terms as a quoted token there and takes neither that
-gate nor `std.fmt`'s — the answer `STRING-CONCAT` already gave for a `dec` piece
-inside a composition, inherited rather than decided again.
-
-`source.socket.v1` itself also gains a string payload here
-(`send NAME STRING-TOKEN;` and `recv NAME STRING-TOKEN;`, the socket card's
-follow-on `SOCKET-STRING-PAYLOAD`), gated by `std.string` for the same reason.
-
-What remains outside this grammar, each a named follow-on: a component whose
-bytes the compiler **cannot** evaluate (`STRING-SLICE-CONCAT-RUNTIME` — the point
-at which the `Content-Length` equality would stop being decidable), a computed
-**field name** (`HTTP-V1-COMPUTED-FIELD-NAME`), a slice of a bound view beside
-HTTP (`HTTP-V1-STRING-COMPOSE`), reading a message out of unknown input (`HTTP-V1-PARSE`), chunked transfer coding (`HTTP-V1-CHUNKED`), persistent
-connections and pipelining (`HTTP-V1-PERSISTENT`), `100 (Continue)`
-(`HTTP-V1-EXPECT-CONTINUE`), an external peer (`SOCKET-EXTERNAL-PEER`), TLS
-(`HTTP-V1-TLS`), a body that is a `std.buffer` extent
-(`HTTP-V1-BUFFER-CONTENT`), `obs-text` in a field value (`HTTP-V1-OBS-TEXT`), and
-a rendered text line inside this route (`HTTP-V1-TEXT-TRANSCRIPT`).
-
-## G07.11. A checked socket as a reactor-registered event source
-
-Card `SOCKET-EVENT-COMPOSE`. This is not a new route: it is `source.socket.v1`'s
-own grammar (§L21's `Q080`–`Q089` band) widened by the five statements of the
-reactor vocabulary, which are `source.event.v1`'s own words (§G02k) and **add no
-reserved word at all**.
-
-```ebnf
-socket-stmt    = (* every §G's socket statement, unchanged *)
-               | "event", "open", ";"
-               | "event", "close", ";"
-               | "watch", NAME, NAME, INTEREST, ";"
-               | "unwatch", NAME, ";"
-               | "dispatch", "ready", NAME, ";"
-               | "dispatch", "idle", ";" ;
-INTEREST       = "read" | "write" ;
-```
-
-Route selection: a module using **both** vocabularies is a `source.socket.v1`
-module; one using only the reactor's stays `source.event.v1`'s; one that also
-buffers, constructs a string or declares an HTTP message declines the composed
-guard and keeps the refusal it already had (`EVENT-BUFFER-PAYLOAD`,
-`HTTP-V1-EVENT-COMPOSE`). `wake` and `endpoints` are deliberately **not** in the
-grammar above: readiness here is induced by `connect`, `send` and `sendto`, and
-descriptors come from `tcp`, `udp` and `accept`, so neither statement has
-anything to do. A `write` interest is checked in full and makes the module
-emit no C, which is §G02k's own `accept_check_only` arm.
-
-The custody relation is a **loan**: `watch E S …;` is an
-`OwnershipOp::BorrowShared` of `S` to `E` running to the matching `unwatch E;`,
-so a close while registered and a `bind`/`listen`/`connect` on a watched socket
-are refused by the *unedited* ownership checker while a `send`, a `recv` and an
-`accept` are admitted. Spans are **lexical**, so registrations retire in the
-reverse of the order they are taken; a crossed pair is refused by name
-(`SOCKET-EVENT-CROSSED-SPANS`). A dispatch turn **drains nothing** — it observes
-level-triggered readiness, and the entry's own transport statements do the work.
-
-What remains outside this grammar, each a named follow-on: a source-level
-callback body (`EVENT-CALLBACK-BODY`), an executable write interest
-(`SOCKET-EVENT-WRITE-READY`), a turn over a two-member ready set
-(`OBS-REORDERING`), crossed registration spans
-(`SOCKET-EVENT-CROSSED-SPANS`), a registration on a socket of another program
-(`SOCKET-EXTERNAL-PEER`), and composition with `source.http.v1`
-(`HTTP-V1-EVENT-COMPOSE`).
-## G07.12. The checked bounded counted loop (`source.loop.v1`)
-
-Card `LOOP-V1` implements this consumer grammar (diagnostics `Q097`–`Q099`, spec
-§L21); card `LOOP-UNROLL-BUDGET` adds the `attr` production and the three-layer
-budget below, **allocating no code** — each of its refusals is a condition of
-`Q097` or `Q098`. It is a **control shape**, not a bundled module: it needs no
-`import`, exactly as `source.branch.v1`'s `if` does, and a route admits it the
-way a route admits `if`. **v1 admits it on `source.buffer.v1` only**; every
-other route keeps the refusal it already had (`LOOP-ROUTE-WIDENING`), and a
-clause list reaching one of those routes is refused at that route's own code.
-
-```ebnf
-stmt   = [ attr ], "for", NAME, "in", "0", "..", BOUND, "{", { stmt }, "}" ;
-attr   = "[|", "#", "unroll", ",", "where", "#", "bound", "<", INTEGER, "|]" ;
-BOUND  = INTEGER | NAME ;
-```
-
-* **`BOUND` is a check-time constant** the *lowering* can compute: an integer
-  literal, a name bound by a literal `let`, or a name bound by `extent(NAME)` —
-  and, since card `W48-QR-SCALAR-TYPES-R5`, a name bound by a conversion or a
-  value statement over such values, of any integer type of §G02t, the index
-  then taking the bound's type (§G02t, "Typed loops"). A bound read out of a
-  byte, a field or a copy is refused (`Q098`, `LOOP-BOUND-FROM-BYTE`), and so
-  is a `bool` bound, an `isize`/`usize` bound with no recorded target, a bound
-  of zero, a negative bound, a bound above 4096, and an entry whose unrolled
-  event total is above 8192.
-* **The bound is held to a three-layer budget** (card `LOOP-UNROLL-BUDGET`).
-  Layer one is the **absolute ceiling**, 4096, which no declaration may raise.
-  Layer two is the **default budget**, 256: a `for` with no `attr` may count at
-  most that many iterations, and one above it refuses at `Q098` with the clause
-  list that would license it **written into the message**. Layer three is the
-  `attr` itself — one statement-adjacent clause list licensing the single `for`
-  that follows it.
-
-  The declaration is **checked, never trusted**. The checker compares the
-  loop's own check-time bound against the condition and refuses a loop that
-  violates it, naming both numbers; `#bound < N` is strict, so `N` itself is not
-  licensed. A declared `N` that would license a bound above the ceiling refuses
-  **before** this loop's bound is looked at, which is what keeps the ceiling a
-  ceiling rather than a default with a longer spelling. Because `#bound < N`
-  licenses bounds up to `N - 1`, the largest condition the construct admits is
-  `#bound < 4097`, and that is the one that licenses a traversal of the largest
-  buffer `source.buffer.v1` admits. A condition **no** bound can satisfy —
-  `#bound < 1`, `#bound < 0` — refuses from the clause list alone, before any
-  loop is read, and names no bound.
-
-  The attribute raises the **per-loop bound and nothing else**: the entry's
-  unrolled-event budget of 8192 is untouched, so a nest of licensed loops is
-  still refused by what the checking route actually costs. A clause list outside
-  the form above, one before a statement that is not a `for`, a second one in a
-  row and a dangling one all refuse at `Q097`; an *unterminated* one is a `Q000`
-  parse failure. A clause list the reader could not read suppresses the budget
-  decision, so one mistake produces one refusal.
-
-  **The attribute erases.** It governs the checker's budget and appears nowhere
-  in the emitted C: an attributed and an unattributed program of the same
-  admitted bound emit byte-identical C, and the licence changes no published
-  value in the certificate either.
-* **The low end is the written-out `0`.** A range with another low end refuses
-  at `Q097` rather than being silently re-based (`LOOP-RANGE-LOW`).
-* **`NAME` is a scalar binding scoped to the body**, taking `0, 1, …, BOUND-1`
-  in order and read-only inside it. It is not visible after the loop, and
-  neither is any other name the body binds — the `IF-STATEMENT` rule for arm
-  bindings. A body binding that shadows one the entry already made refuses at
-  `Q097` rather than deciding which of two values survives the loop.
-* **The body's statements are the admitting route's own**, read by that route's
-  own reader, so a shape one admits and the other refuses is not expressible.
-  Nesting a `for` inside a `for` is admitted; `break`, `continue` and `return`
-  inside a body are refused by name at `Q097`.
-* **One iteration's net custody effect must be the identity** (`Q099`). A body
-  that acquires and releases is admitted; one that acquires without releasing,
-  or releases a resource it did not acquire, is refused.
-
-**Zero new tokens and one reserved word.** `..` is two existing `Dot` tokens read
-positionally; `for` is reserved (census-clean at zero occurrences outside `//`
-comments across all 418 `.qcore`/`.qc` files); `in` is a **contextual** clause
-word and deliberately **not** reserved, because the constraint-14 census found it
-as a reference inside the pinned contract corpus.
-
-**Checked by exact bounded unrolling, emitted as a real `for` loop.** The two
-halves are asymmetric on purpose: the checker needs each iteration's exact
-values because the certificate publishes them and the route's evidence is a byte
-comparison, while the emitted C needs to be the program a C reader would have
-written — and emitting the loop makes the native run a *check* of the unrolling
-rather than a restatement of it.
-
-## G07.13. The first source-level aggregate (`source.record.v1`)
-
-Card `AGGREGATES-V1` implements this consumer grammar. It **allocates no
-diagnostic code**: every refusal is a condition of the admitting route's
-existing `Q051`–`Q057` band (spec §L21), widened and stated there rather than
-taken silently, under the `Q-NAMESPACE-DECISION` ice box and on the
-`SOCKET-EVENT-COMPOSE` / `SOCKET-INET-ADDRESSES` precedent. It **reserves no
-word** either. Like `if` and `for` it is a language construct and not a bundled
-module: it needs no `import`. **v1 admits it on `source.buffer.v1` only**; every
-other route keeps the refusal it already had (`AGGREGATE-ROUTE-WIDENING`).
-
-```ebnf
-decl    = "type", NAME, "{", field, { ",", field }, [ "," ], "}" ;
-field   = NAME, ":", ( SCALAR | "bytes" | RECORD ) ; (* SCALAR: §G02t; RECORD: W48-QR-USABLE-RECORDS *)
-path    = ".", NAME, { ".", NAME } ;                (* W48-QR-USABLE-RECORDS *)
-stmt    = "let", NAME, "=", NAME, "{", assign, { ",", assign }, [ "," ], "}", ";"
-        | "let", NAME, "=", NAME, path, ";"
-        | NAME, path, "=", VALUE, ";" ;             (* the field write, W48-QR-USABLE-RECORDS *)
-assign  = NAME, ":", OPERAND ;
-OPERAND = [ "-" ], INTEGER | NAME                  (* `source.buffer.v1`'s own *)
-        | "true" | "false" ;                       (* at a `bool` field *)
-```
-
-* **The declaration head is the already-reserved `type`**, claimed at the one
-  shape a `{` after the name gives it; `type NAME = …;` is the alias it always
-  was. `resource type NAME {` is claimed by an earlier branch and never reaches
-  it. The constraint-14 census found **zero** bare `type NAME {` occurrences in
-  the tree and **rejected `record`** as a spelling: an archived probe fixture is
-  the single line `record R { }`, pinned to `Q000` by two archived reports.
-* **Card `W48-QR-SCALAR-TYPES-R3`: a scalar field is any §G02t type.** Its
-  value is a literal range-checked against the field's type (the minimum
-  included; `Q053`), `true`/`false` at a `bool` field, or a bound name of
-  **exactly** that type — no implicit conversion (`Q052`); a field read binds a
-  value of that type into the route's typed environment (§G02t), which every
-  position then checks. `isize`/`usize` fields need the recorded target
-  (`Q051`). An `i32` field reads its literal with the route's own `i32` reader,
-  so every record declared before the card checks and emits byte-identically.
-  Each member is emitted at its type's `<stdint.h>`/`<stdbool.h>`/`<stddef.h>`
-  spelling.
-* **Every scalar field is a plain value, and a record of scalars is therefore
-  a plain copyable value.** (Before card `W48-QR-SCALAR-TYPES-R3`, every such
-  field was an `i32`.)
-  It contributes no ownership operation, opens no obligation, derives no effect,
-  and is refused at every custody position by the admitting route's existing
-  "this is not a buffer" rule. An owned or view field is a new custody shape and
-  a separate card (`AGGREGATE-OWNED-FIELD`, `AGGREGATE-VIEW-FIELD`): the cycle-3
-  ownership IR addresses an owner by a plain **name** and has no notion of a
-  path, so `p.buf` is not something the checker can be asked about.
-* **Type formation decides distinctness.** A record declares 1 to 32 fields and
-  no two may share a name (`Q051`; the field bound is `Q053`). A repeated name is
-  refused rather than resolved, because which of two declarations a read answers
-  to would otherwise depend on the order a reader walks the list in.
-* **Construction is total**: every declared field is supplied exactly once, by
-  name, never by position. A missing, undeclared or repeated field refuses at
-  `Q051`. Totality is what makes a field read total on the declared names.
-* **A field value is the admitting route's own operand** — an integer literal or
-  a name that route bound to a check-time-constant integer — read by that route's
-  own reader, so a value one admits and the other refuses is not expressible. A
-  buffer at a field position is that route's existing `Q055`.
-* **A field read binds an ordinary scalar** of the admitting route, so rendering,
-  indexing and storing a field needs **no new operand form**. A record at a
-  position that takes an integer refuses at `Q052`, naming the field read that
-  would fix it.
-* **Card `W48-QR-USABLE-RECORDS`: writes, nesting, and calls.** A field whose
-  type is another record the module declares (either declaration order) holds
-  that record by value: a record of scalars is copied in, one that owns a
-  buffer anywhere below is moved in (the ownership IR's owner path, one level
-  before the card, is now a path of any depth, and the owned leaves are
-  released depth-first in declaration order). The declaration graph is
-  acyclic (a record that contains itself refuses, `Q051`), at most 8 deep and
-  256 leaves (`Q053`). Every field-path form takes a path (`o.inner.buf[0]`,
-  `drop o.inner.buf;`, `extent(o.inner.buf)`); a path through a field that is
-  not a record refuses (`Q052`). `RECORD.PATH = VALUE;` writes a scalar field
-  with a value of exactly its type (a literal range-checked, `Q053`; a name
-  of another type, `Q052`) and derives `mut`; at an owned field it is the
-  **refill**, moving a buffer into a hole only (over a live field, `Q054`). On
-  a record that owns, a read or write of a scalar field asks the IR that the
-  record is live, so after `drop f;` both are a use after drop (`Q054`). A
-  whole sub-record write and a whole read of a sub-record that owns refuse by
-  name (`Q051`). A record of scalars crosses `.qr` calls on
-  `source.scalar-calls.v1` (§G02s); this route stays entry-only.
-* **Card `W48-QR-TASK-RECORD-CAPTURES`: the scoped-task route.** A task module
-  declares records whose owned fields are `own<Buffer<T>>` — the task route's
-  own resource — and a record crosses a spawn and a `join` as its leaves
-  (§G02a, "Records across tasks"). `AGGREGATE-TASK-CAPTURE`'s by-name refusal is
-  lifted.
-* **Name resolution needed no new rule.** A field name sits before a `:` at a
-  construction and after a `.` at a read, and both positions were already drained
-  by `lexical_references`; the type name is an ordinary reference and resolves
-  because every declaration's name is a global. A construction of an undeclared
-  type therefore refuses at `Q013`.
-* **The `.` adjacency is pinned.** A field access is `Word Dot Word` and cannot
-  collapse into a float, because the lexer starts a `Float` only at a digit —
-  `127.0.0.1` is still `Float Dot Float`. A *numeric* field path (`p.1.2`) is one
-  float token after the `Dot` and refuses by name at `Q051`.
-* **Each declared type emits one C struct**, with one member per field in
-  declared order, and a construction emits one designated initializer naming
-  every field. Member and tag names are prefixed (`f_`, `qcore_record_`) so a
-  QCore name that is a C keyword still emits a compilable struct.
-
-## G08. Source-contract service configuration v1
-
-This JSON format configures the audit service; it adds no QCore source syntax.
-The base fields below are required; `frame_helpers` is optional on each binding.
-Unknown fields reject:
+This JSON schema (`crates/qcore-audit/src/source_contract.rs`) configures `quirin-audit`'s bounded Boolean-field source-contract service without adding `.qr` syntax (unknown JSON keys reject):
 
 ```json
 {
   "schema_version": 1,
   "packages": ["packages/example"],
   "bindings": [
-    {"library": "example", "provider": "example.boolean", "contract": "policy.qv"}
+    {
+      "library": "example",
+      "provider": "example.boolean",
+      "contract": "policy.qv",
+      "frame_helpers": [
+        {
+          "source": "reset.c",
+          "function": "reset_metadata",
+          "record": "widget",
+          "contract": "reset.qv"
+        }
+      ]
+    }
   ]
 }
 ```
 
-Relative package and policy paths resolve against the configuration directory.
-There must be 1–256 distinct nonempty package paths and 1–4096 bindings with
-unique nonempty library names and valid provider IDs. Configuration is bounded
-at 1 MiB, each UTF-8 policy at 8 MiB, and retained policy bytes together at
-32 MiB. Policy bytes are snapshotted once. Package identities, manifest target
-support and the existing Boolean-field checker capability must validate before
-dispatch. The sealed import supplies the model-library identity; configuration
-cannot manufacture it or expand import coverage. Missing bindings/packages,
-incompatible targets and rejected witnesses fail without provider fallback.
+- **Bounds and validation:** Configuration ≤ **1 MiB**; `1..=256` distinct package paths; `1..=4,096` bindings with unique library names and valid provider IDs; optional `frame_helpers` ≤ **256** per binding (unique C function names ≤ 128 ASCII bytes, contained relative `source` paths, exact single compile-db entry with strict preprocessing option preservation and ≤ 8 MiB per source / 32 MiB imported helper source); each UTF-8 `.qv` policy ≤ **8 MiB** and total snapshotted policies ≤ **32 MiB**.
+- **Trust boundary:** `SourceContractRegistry::load` validates package manifests, target compatibility, and Boolean-field capability before dispatch, and `verify` publishes a result only after trusted core witness replay succeeds over sealed Clang imports ([report](reports/w5-configured-source-contracts/README.md), [frame helpers](reports/w5-configured-frame-helpers/README.md)).
 
-`SourceContractPolicies::load` loads policies for direct comparison without
-requiring installed packages. `SourceContractRegistry::load` additionally verifies
-and registers explicit process packages. Its `verify` method accepts an opaque
-Clang-imported summary and returns a checked certificate plus contract evaluation
-only after existing trusted replay succeeds. Source: `crates/qcore-audit/src/source_contract.rs`.
-This implementation supports the existing bounded Boolean-field semantic profile;
-it is not a general contract solver. See the [execution record](reports/w5-configured-source-contracts/README.md).
+<a id="version-2-pinned-contract-bundle-selection"></a>
 
-A binding may additionally declare `"frame_helpers": [{"source": "reset.c",
-"function": "reset_metadata", "record": "widget", "contract": "reset.qv"}]`.
-Omission means no helper selection. At most 256 helpers are allowed per binding,
-with unique C function names; function/record identifiers are at most 128 ASCII
-bytes. Source paths must be contained relative paths within the selected library
-root. Policy paths resolve from the configuration directory and their snapshots
-share the existing 32 MiB aggregate policy budget.
+### Version 2: Pinned Contract Bundle Selection
 
-`import_configured_frame_helpers` requires exactly one selected compilation entry
-per source, canonical source containment, an absolute compilation directory, and
-strict preservation of supported preprocessing options. Unrepresented options
-reject. Source reads are bounded at 8 MiB each and retained imported helper source
-at 32 MiB per call; this is not a new bound on transient Clang preprocessing.
-`import_configured_frame_helpers_compatibility` explicitly preserves the existing
-pinned audit's historical option projection; there is no automatic fallback.
-`configured_frame_helper_policies` in the audit sidecar records snapshotted
-selection metadata, not proof that every configured helper was executed.
-
-### Version 2: pinned contract bundle selection
-
-Version 1 retains string policy paths. Version 2 accepts those paths and, for
-binding or frame-helper `contract`, this strict object:
+`"schema_version": 2` accepts either v1 string policy paths or a pinned bundle-asset selector object on any binding or `frame_helpers` `"contract"` field (`qcore_contract::bundle::ContractBundle::load`):
 
 ```json
 {
@@ -5580,110 +5011,48 @@ binding or frame-helper `contract`, this strict object:
 }
 ```
 
-`manifest` resolves relative to the configuration, while `path` is an exact key
-in the existing provider inventory format (`schema_version: 1`, `plugin_id`,
-`contracts` mapping paths to SHA-256). The consumer independently supplies the
-manifest hash and expected owner. Loading validates the inventory hash, owner,
-version, unique keys, exact recursive file set, and every file hash before
-exposing immutable UTF-8 policy snapshots. Asset keys must be forward-slash paths
-under `contracts/`, end in `.qv` or legacy `.qcore`, and contain no empty, dot, parent, backslash
-or colon component. Symlink manifests, asset directories/files and special files
-reject. Manifest parents are resolved as the explicitly selected location;
-protect that directory from concurrent mutation during loading.
+- **Total-or-reject bundle verification:** Validates the provider inventory (`schema_version: 1`, `plugin_id == owner`, `sha256` match, unique forward-slash keys under `contracts/` ending in `.qv` or `.qcore` with no `.`/`..`/backslash/colon segments, zero symlinks or special files, exact recursive directory tree match, and every per-file SHA-256).
+- **Limits:** Manifest ≤ **1 MiB**, `1..=4,096` files, ≤ **8,192** tree entries, ≤ **32** directory levels, ≤ **8 MiB** per non-empty UTF-8 file, and ≤ **32 MiB** per bundle (sharing the service's 32 MiB policy snapshot cap). Bundle loading establishes byte identity only—never predicate truth or implicit process registration.
 
-Limits: 1 MiB manifest, 1–4096 files, 8192 tree entries, 32 directory levels,
-8 MiB per nonempty UTF-8 file and 32 MiB per complete bundle. Selected policy
-copies also consume the service's existing 32 MiB aggregate snapshot budget.
-Unknown fields, versions, paths, mismatches and failures reject without fallback.
-Version 1 refuses bundle objects; unsupported service versions still reject.
+<a id="configured-c-audit-composition"></a>
 
-`qcore_contract::bundle::ContractBundle::load` needs no executable or process
-registry. A bundle identifies supplied policy bytes, not predicate truth,
-authorship, provider capability or source authority. Existing source import,
-policy-derived task identities and independent witness replay remain unchanged.
-`SourceContractRegistry` still requires its selected executable packages; bundle
-ownership does not implicitly select or register a process. The CMetrics source
-configuration is the pilot; existing compatibility adapters are retained.
+### Configured C Audit Composition
 
-## Configured C audit composition
+`qcore-audit` schema-1 audit configurations accept an optional `"source_contracts"` block containing `"configuration"`, `"source_rules"`, and `"libraries"` (`{"library", "source_root"}`), all required when the block is present (`crates/qcore-audit/README.md#configured-source-contract-processes`). It runs bounded Boolean source import and evidence-v2 replay alongside C resource auditing without promoting raw C resource verdicts.
 
-`qcore-audit` schema-1 configuration now accepts an optional `source_contracts`
-object with `configuration`, `source_rules` and explicit `libraries` entries
-(`library`, checkout-relative `source_root`). All are required within that object;
-unknown fields reject. The exact configuration and helper-resolution rules are
-in the [audit command documentation](../crates/qcore-audit/README.md#configured-source-contract-processes).
-This input selects existing bounded Boolean source import and evidence-v2 replay;
-it does not extend QCore source grammar or promote the C resource verdict.
+---
 
-## G09. Concurrent field-footprint questions
+<a id="g10-existing-c-generic-selections"></a>
 
-`source.bitfield-concurrency.v1` is a property-only checker. It requires
-`#import std.concurrency; concurrency checked;`, explicit-layout records, and
-one `unit` entry with effects `{spawn, join, mut}`. The entry declares one
-object with `let OBJECT = TYPE;`, then one task scope, then `return;`.
+## G10. Existing C: selection-invariant `_Generic` expressions
+
+### Consumer and Token-Level Lowering Rule
+
+In preprocessed C11 (`§6.5.1.1`) analyzed by the generic custody gateway, a `_Generic` selection inside a function body is admitted by **selection invariance** over the gateway's token stream:
 
 ```ebnf
-layout_field = NAME, ":", ("field", "<", OFFSET, ",", SIZE, ">"
-             | "bits", "<", UNIT, ",", BIT_OFFSET, ",", BIT_WIDTH,
-               ",", BYTE_OFFSET, ",", BYTE_SIZE, ">") ;
-```
-
-The scope contains at least two `let H = spawn S WORKER(write OBJECT.FIELD)?;`
-statements before any join, followed by one `let R = join move H?;` for each
-handle in spawn order. Each used worker has one `i32` parameter, effect `{mut}`,
-and exactly `write PARAM; return;`. Other declarations/statements refuse.
-`bits` and `field` are contextual, not newly reserved words.
-
-The checker derives layouts and field handles for `DisjointFootprintsV1`.
-Same-unit bit-fields refuse at `Q661` regardless of disjoint bit ranges. Layout
-truth remains a declared ABI premise. Admission establishes only pairwise
-field independence in a **successful spawn/join window**; it does not establish
-task failure recovery or lifetime safety. No C or reference execution is
-published. See [the bounded profile and controls](reports/ct10-source-layout/README.md).
-
-## G10. Existing C: generic selections
-
-The existing-C resource gateway reads preprocessed C. A C11 generic selection
-(§6.5.1.1) inside a function body is admitted by one route, *selection
-invariance*, over the gateway's token view (string and character literals are
-one token):
-
-```ebnf
-selection   = "_Generic", "(", control, ",", association, { ",", association }, ")" ;
-association = ( type_name | "default" ), ":", expression ;
-expression  = { "(" }, { pointer_cast }, core, { ")" } ;
+selection    = "_Generic", "(", control, ",", association, { ",", association }, ")" ;
+association  = ( type_name | "default" ), ":", expression ;
+expression   = { "(" }, { pointer_cast }, core, { ")" } ;
 pointer_cast = "(", IDENT, { IDENT }, "*", { "*" | qualifier }, ")" ;
-qualifier   = "const" | "volatile" | "restrict" | "__restrict" | "__restrict__" ;
-core        = IDENT, "(", arguments, ")" | IDENT | other_expression ;
+qualifier    = "const" | "volatile" | "restrict" | "__restrict" | "__restrict__" ;
+core         = IDENT, "(", arguments, ")" | IDENT | other_expression ;
 ```
 
-A selection is admitted only when every association's `expression` has the
-same `core` token for token after its enclosing parentheses and pointer casts
-are removed; at most one association is `default`. A cast is removed only
-when its operand is a whole parenthesised group, a direct call or a single
-name. If any cast was removed, `core` must be a direct call `IDENT ( … )`
-whose C declaration in the same unit returns an object pointer. An admitted
-selection is lowered to `core` (parenthesised unless it is a call or a
-name); its `control` is dropped, since C does not evaluate it. Selections
-nested in an association are lowered first. Every other selection is left as
-written and refuses where it did before, normally as a call to an
-uncontracted function `_Generic`.
+- **Invariance condition:** At most one association is `default`, and after stripping outer parentheses and outer object-pointer casts (permitted only around a parenthesized group, direct call, or single identifier—and if any cast is stripped, `core` `MUST` be a direct call `IDENT(...)` declared in the same TU as returning an object pointer), **every association `MUST` reduce to the exact same token sequence `core`**.
+- **Lowering:** Nested `_Generic` selections inside associations lower inner-first; the unevaluated `control` operand is dropped; and the entire `_Generic(...)` rewrites to `core` (parenthesized unless a call or identifier) across statements, initializers, conditions, returns, and call arguments (covering glibc 2.43's C23 `__glibc_const_generic` wrappers for `memchr`, `strchr`, `strstr`, `bsearch`, etc.). Non-invariant selections fall through to route `G`'s Clang-resolved `CG07` fallback (`11g`) or refuse as uncontracted `_Generic`.
 
-The admitted forms include glibc 2.43's C23 const-preserving macros
-(`__glibc_const_generic`: `memchr`, `strchr`, `strrchr`, `strpbrk`, `strstr`,
-`bsearch` and the wide-character searches), in any position: a statement, a
-declaration initializer, a condition, a return or a call argument. The
-lowered call then meets the ordinary classifier and its declared contract
-exactly as the same call spelled without a selection. The Clang-resolved route
-(reading the compiler's selected association) is not implemented.
-See [the card report](reports/w44-c11-generic-selection/README.md) and
-`QCore.GenericSelection`.
+**Implementation & Provenance:** `crates/qcore-c-gateway/`, `proof/QCore/GenericSelection.lean`; [report](reports/w44-c11-generic-selection/README.md) (complemented by `CG07`, gateway rule `11g`).
 
+---
 
-## G11. Existing C: indexed child/next lookup
+<a id="g11-existing-c-indexed-childnext-lookup"></a>
 
-The gateway's bounded read-only class matches this complete preprocessed body,
-with alpha-renamed function, formal, local and named record/alias names:
+## G11. Existing C: bounded read-only indexed `child`/`next` lookup
+
+### Matched C Function Shape
+
+The C gateway's read-only indexed-lookup summary class matches the following complete preprocessed function body (up to alpha-renaming of function, parameter, local, and struct/typedef identifiers):
 
 ```c
 static T *F(const T *P, U N) {
@@ -5695,66 +5064,37 @@ static T *F(const T *P, U N) {
 }
 ```
 
-`static` and the parent's leading `const` are optional. `T` is a complete,
-unique named nonunion `struct TAG` or its unique defining-struct alias; both
-members are unqualified single-level pointers to the same record. `U` resolves
-to an unsigned integer class; opaque, pointer, Boolean, enum, floating, volatile
-or atomic types refuse. Only zero and its parenthesized/void-pointer NULL forms
-are normalized. Added calls/writes, different guards/steps/returns, deeper
-pointers, qualified links and ambiguous/anonymous records refuse. Both original
-source-bound typed reads must be present under the retained Clang context.
-The original typed reads and alias/base/chain obligations remain intact. An
-inference-only name-only site with no resource/status or conflicting facts may
-be viewed as untracked at its source-bound read; only the cursor's checked
-non-NULL while-body point supplies its narrowing. Real tracked sites keep
-their original obligations, and a released peer prevents any borrowed view.
-The inferred result is Borrowed,parent0,nullable,const_dropped, validated by
-ordinary derived-result inference; it never becomes a fresh allocation.
+### Semantic Side Conditions and Caller Refinement Boundary
 
-Only an assigned direct `D = F(P, DECIMAL);` with decimal0–255 receives the
-private caller identity descriptor; this bound avoids target-width truncation
-for every admitted unsigned parameter. A literal has no redundant leading
-zero, suffix, cast or sign. Nested/whole-return calls and other indices retain
-the ordinary borrowed reading. Exact identity additionally needs must-held
-physical links and one settled contained child uniquely owned by a live parent.
-The caller actual and stored-link owners must resolve to the callee's complete
-canonical defining record tag. Same field spelling or site is insufficient;
-opaque caller type aliases withhold refinement. Link facts retain that tag,
-and a differently typed write invalidates overlapping owner facts.
-An absent link means Unknown; explicit NULL differs from absence. The source
-bridge currently proves exact stored-head and empty-head cases. General
-successor source closure, object-key lookup and Removed wrapper transport are
-not implemented by this class. See [gateway rule13a](agents/gateway.md#constraint-13a)
-and [the report](reports/detach-lookup-membership/README.md).
+- **Callee body constraints:** `static` and `const` on `P` are optional; `T` `MUST` resolve to a complete, unambiguous non-union `struct TAG` (or its unique defining typedef); both `child` and `next` `MUST` be unqualified `T *` members; `U` `MUST` be a plain unsigned integer type (not pointer, `bool`, enum, float, opaque, `volatile`, or `_Atomic`); only `0` and parenthesized/`(void *)0` `NULL` spellings normalize; any extra call, write, guard variation, or deeper indirection rejects.
+- **Inferred summary vs. caller identity refinement:** Validates as a nullable `Borrowed` (`parent0`, `const_dropped`) derived result—never a fresh allocation. Only a direct assignment `D = F(P, DECIMAL);` with a canonical decimal index **`0..=255`** (avoiding unsigned width truncation) receives private caller identity refinement, and only when the caller holds unique live parent custody, matching canonical `struct TAG` across callee/actual/link-owner, and source-derived must-held physical link facts (currently covering exact stored-head `0` and explicit empty-head `NULL` cases; general successor closure and `Removed` wrapper composition remain `Unknown`).
+
+**Implementation & Provenance:** `crates/qcore-c-gateway/`; gateway rule [13a](agents/gateway.md#constraint-13a), [report](reports/detach-lookup-membership/README.md).
+
+---
+
+<a id="g12-existing-c-checked-call-free-condition-composition"></a>
 
 ## G12. Existing C: checked call-free condition composition
 
-The resource gateway can retain its complete Boolean plan for a controlling
-expression made from existing call-free leaves, parentheses, `!`, `&&`,
-`||` and the ordinary `A ? B : C` conditional, with C's existing precedence
-and short-circuit placement. The plan is
-retained when an older admission already applies or when at least one node is
-an existing checked `IndirectScalarAccess`. This includes, for example:
+### Admitted Controlling-Expression Shape
 
-```c
-if ((p->fd != -1) && (p->map != NULL)) { /* existing supported statements */ }
-```
+In `if`, `while`, `do`, and `for` controlling expressions, the resource gateway retains its complete Boolean control-flow plan across parentheses, `!`, short-circuit `&&` and `||`, and ternary `A ? B : C` (with C precedence and short-circuit edge placement) whenever **every leaf already classifies completely** as a call-free check and at least one node is a checked `IndirectScalarAccess` (for example, `if ((cf->fd != -1) && (cf->map != NULL))`).
 
-Every leaf must already classify completely. Retention adds no leaf grammar,
-cast, qualifier, pointer value, scalar value or call-effect rule. The original
-read, alias/lifetime and per-hop obligations remain at their original positions;
-unresolved or released bases cannot be made safe by retaining the plan. A
-failed leaf refuses the complete plan and restores the classification probe.
-Descriptor and switch guards remain. The same existing graph assembly places
-admitted tests in `if`, `while`, `do` and `for` controls; it does not admit a new
-value-expression position or infer scalar outcomes.
+### Semantic Side Conditions
 
-This closes a composition gap for older checked field readers, including the
-Linux `(cf->fd != -1) && (cf->map != NULL)` residency predicate and a header
-helper's two-pointer NULL conjunction. It supplies no callback neutrality,
-ownership transfer or richer return transport. Existing source summaries still
-require their ordinary complete body derivation and caller checks. See
-[gateway rule5h](agents/gateway.md#constraint-5h),
-[the card report](reports/w48-bottom-up-batch4/README.md), and the bounded
-`QCore.CallFreeConditionReads` model. C extraction and Rust/model
-correspondence remain explicit review premises.
+- **Zero leaf widening:** Adds no new leaf syntax, cast, qualifier, pointer-value, scalar-value, or call-effect rule; every original per-hop non-null, liveness, and alias obligation remains enforced at its evaluation point, and any unclassifiable leaf rejects the entire Boolean plan and restores the original refusal probe.
+
+**Implementation & Provenance:** `crates/qcore-c-gateway/`, `proof/QCore/CallFreeConditionReads.lean`; gateway rule [5h](agents/gateway.md#constraint-5h), [report](reports/w48-bottom-up-batch4/README.md).
+
+---
+
+<a id="g07-extended-grammar-and-conformance"></a>
+
+## G07. Relation to the extended design grammar and conformance boundary
+
+[`QCORE_DESIGN_GRAMMAR_r0_3.bnf`](QCORE_DESIGN_GRAMMAR_r0_3.bnf) consolidates the nineteen target-language BNF blocks from revision 0.2 together with the optional `module` header (`IDENTIFIER-TOKEN`, `INTEGER-TOKEN`, `FLOAT-TOKEN`, `STRING-TOKEN`, `CHAR-TOKEN`). It serves solely as the **long-term surface-design reference**, not as a compiler parser-generator input or a statement of implemented lowering.
+
+In Quirin revision 0.3:
+1. **Consumer grammars are authoritative for current support:** Each `.qr` execution route (`Parts II–IV`), `.qv` contract/property loader (`Part V`), observation/configuration reader (`G06`, `G08`), and existing-C gateway subset (`G10`–`G12`) admits **only** the productions and side conditions documented in its own section above.
+2. **Structural acceptance ≠ semantic conformance:** Retained token spans in `G01` do not make arbitrary expressions executable or arbitrary postconditions proved; any construct outside the selected consumer's implemented grammar `MUST` fail closed (`Q***` compilation refusal or `Unknown` audit verdict).
