@@ -103,7 +103,8 @@ committed landing records.
    twelve-home route): 36 rows.
 
 Every custody move has one of the three (criterion 2); none is held. One
-NULL-property `Safe` is held for its published assumptions (below).
+NULL-property `Safe` was held for its published assumptions and is accepted
+by the user's decision of 2026-11-26 (below).
 
 ### Attribution summary
 
@@ -410,6 +411,15 @@ same. The direct use publishes it and the use through a summary does not,
 so this `Safe`'s assumption set is incomplete as published (hard invariant
 2). The cause is known; the evidence the verdict contract requires is not
 on the row. Follow-up P0-NULL-SUMMARY-DECLARED-ASSUMPTION.
+
+**Accepted (USER DECISION 2026-11-26, verbatim: "Accept it").** The row is
+accepted as `Safe` resting on the known `rd_kafka_topic_partition_list_new`
+non-null declaration (RK-TOPIC-PARTITION-LIST-CONSTRUCTORS, unvalidated:
+RK-TOPIC-PARTITION-CONSTRUCTORS-UNVALIDATED), while that assumption is still
+not published through the callee summary. It is no longer held for the
+Priority 0 reconciliation; P0-NULL-SUMMARY-DECLARED-ASSUMPTION stays open to
+publish the declaration on rows that rest on it through a summary. Custody
+figures are unaffected.
 
 No other new Safe is held: every custody `Safe` above has its cause and an
 empty diagnostic list, and the other three NULL `Safe` rows rest on the
