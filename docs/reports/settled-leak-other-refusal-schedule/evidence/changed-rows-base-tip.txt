@@ -1,0 +1,7 @@
+lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c ut_testSameSubscriptions Unsafe -> Unknown
+   - 22897 live obligation acquired at lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c:2967
+   - 22898 live obligation acquired at lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c:2967
+   - 22904 live obligation acquired at lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c:2967
+   - 22905 live obligation acquired at lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c:2967
+lib/librdkafka-2.15.0/src/snappy.c rd_kafka_snappy_java_uncompress Unsafe -> Unsafe
+   - 20474 live obligation acquired at lib/librdkafka-2.15.0/src/snappy.c:1705

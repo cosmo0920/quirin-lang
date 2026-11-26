@@ -1,0 +1,863 @@
+{
+ "by_kind": {
+  "hand-on+test": 22,
+  "test": 9
+ },
+ "functions": {
+  "rd_kafka_cgrp_calculate_subscribe_revoking_partitions": [
+   {
+    "acquisition_line": 23519,
+    "invocation": 18,
+    "kinds": [
+     "hand-on",
+     "test"
+    ],
+    "leaves": [
+     "UnknownAlias { variable: \"assigned\" }",
+     "UnknownAlias { variable: \"revoking\" }",
+     "UnknownAlias { variable: \"rktpar\" }",
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_topic_partition_list_add`\" }",
+     "Unsupported { description: \"indirect memory access is outside the resource projection\" }",
+     "Unsupported { description: \"unmodeled increment or decrement expression\" }"
+    ],
+    "line": 23536,
+    "marker_lines": [
+     23521,
+     23523,
+     23524,
+     23525,
+     23532
+    ],
+    "unresolved": true
+   },
+   {
+    "acquisition_line": 23519,
+    "invocation": 19,
+    "kinds": [
+     "hand-on",
+     "test"
+    ],
+    "leaves": [
+     "UnknownAlias { variable: \"assigned\" }",
+     "UnknownAlias { variable: \"revoking\" }",
+     "UnknownAlias { variable: \"rktpar\" }",
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_topic_partition_list_add`\" }",
+     "Unsupported { description: \"indirect memory access is outside the resource projection\" }",
+     "Unsupported { description: \"unmodeled increment or decrement expression\" }"
+    ],
+    "line": 23536,
+    "marker_lines": [
+     23521,
+     23523,
+     23524,
+     23525,
+     23532
+    ],
+    "unresolved": true
+   },
+   {
+    "acquisition_line": 23519,
+    "invocation": 20,
+    "kinds": [
+     "hand-on",
+     "test"
+    ],
+    "leaves": [
+     "UnknownAlias { variable: \"assigned\" }",
+     "UnknownAlias { variable: \"revoking\" }",
+     "UnknownAlias { variable: \"rktpar\" }",
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_topic_partition_list_add`\" }",
+     "Unsupported { description: \"indirect memory access is outside the resource projection\" }",
+     "Unsupported { description: \"unmodeled increment or decrement expression\" }"
+    ],
+    "line": 23536,
+    "marker_lines": [
+     23521,
+     23523,
+     23524,
+     23525,
+     23532
+    ],
+    "unresolved": true
+   }
+  ],
+  "rd_kafka_snappy_java_uncompress": [
+   {
+    "acquisition_line": 20500,
+    "invocation": 33,
+    "kinds": [
+     "test"
+    ],
+    "leaves": [
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_snappy_uncompress` in branch condition\" }",
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_snappy_uncompressed_length` in branch condition\" }"
+    ],
+    "line": 20470,
+    "marker_lines": [
+     20472,
+     20481
+    ],
+    "unresolved": true
+   },
+   {
+    "acquisition_line": 20500,
+    "invocation": 33,
+    "kinds": [
+     "test"
+    ],
+    "leaves": [
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_snappy_uncompress` in branch condition\" }",
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_snappy_uncompressed_length` in branch condition\" }"
+    ],
+    "line": 20474,
+    "marker_lines": [
+     20472,
+     20481
+    ],
+    "unresolved": true
+   },
+   {
+    "acquisition_line": 20500,
+    "invocation": 33,
+    "kinds": [
+     "test"
+    ],
+    "leaves": [
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_snappy_uncompress` in branch condition\" }",
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_snappy_uncompressed_length` in branch condition\" }"
+    ],
+    "line": 20498,
+    "marker_lines": [
+     20472,
+     20481
+    ],
+    "unresolved": true
+   },
+   {
+    "acquisition_line": 20500,
+    "invocation": 34,
+    "kinds": [
+     "test"
+    ],
+    "leaves": [
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_snappy_uncompress` in branch condition\" }",
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_snappy_uncompressed_length` in branch condition\" }"
+    ],
+    "line": 20470,
+    "marker_lines": [
+     20472,
+     20481
+    ],
+    "unresolved": true
+   },
+   {
+    "acquisition_line": 20500,
+    "invocation": 34,
+    "kinds": [
+     "test"
+    ],
+    "leaves": [
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_snappy_uncompress` in branch condition\" }",
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_snappy_uncompressed_length` in branch condition\" }"
+    ],
+    "line": 20474,
+    "marker_lines": [
+     20472,
+     20481
+    ],
+    "unresolved": true
+   },
+   {
+    "acquisition_line": 20500,
+    "invocation": 34,
+    "kinds": [
+     "test"
+    ],
+    "leaves": [
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_snappy_uncompress` in branch condition\" }",
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_snappy_uncompressed_length` in branch condition\" }"
+    ],
+    "line": 20498,
+    "marker_lines": [
+     20472,
+     20481
+    ],
+    "unresolved": true
+   },
+   {
+    "acquisition_line": 20500,
+    "invocation": 35,
+    "kinds": [
+     "test"
+    ],
+    "leaves": [
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_snappy_uncompress` in branch condition\" }",
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_snappy_uncompressed_length` in branch condition\" }"
+    ],
+    "line": 20470,
+    "marker_lines": [
+     20472,
+     20481
+    ],
+    "unresolved": true
+   },
+   {
+    "acquisition_line": 20500,
+    "invocation": 35,
+    "kinds": [
+     "test"
+    ],
+    "leaves": [
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_snappy_uncompress` in branch condition\" }",
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_snappy_uncompressed_length` in branch condition\" }"
+    ],
+    "line": 20474,
+    "marker_lines": [
+     20472,
+     20481
+    ],
+    "unresolved": true
+   },
+   {
+    "acquisition_line": 20500,
+    "invocation": 35,
+    "kinds": [
+     "test"
+    ],
+    "leaves": [
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_snappy_uncompress` in branch condition\" }",
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_snappy_uncompressed_length` in branch condition\" }"
+    ],
+    "line": 20498,
+    "marker_lines": [
+     20472,
+     20481
+    ],
+    "unresolved": true
+   },
+   {
+    "acquisition_line": 20500,
+    "invocation": 36,
+    "kinds": [
+     "hand-on",
+     "test"
+    ],
+    "leaves": [
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_snappy_uncompress` in branch condition\" }",
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_snappy_uncompressed_length` in branch condition\" }",
+     "Unsupported { description: \"possibly-null resource `outbuf` returned under a non-null result mode\" }"
+    ],
+    "line": 20470,
+    "marker_lines": [
+     20472,
+     20481,
+     20509
+    ],
+    "unresolved": true
+   },
+   {
+    "acquisition_line": 20500,
+    "invocation": 36,
+    "kinds": [
+     "hand-on",
+     "test"
+    ],
+    "leaves": [
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_snappy_uncompress` in branch condition\" }",
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_snappy_uncompressed_length` in branch condition\" }",
+     "Unsupported { description: \"possibly-null resource `outbuf` returned under a non-null result mode\" }"
+    ],
+    "line": 20474,
+    "marker_lines": [
+     20472,
+     20481,
+     20509
+    ],
+    "unresolved": true
+   },
+   {
+    "acquisition_line": 20500,
+    "invocation": 36,
+    "kinds": [
+     "hand-on",
+     "test"
+    ],
+    "leaves": [
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_snappy_uncompress` in branch condition\" }",
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_snappy_uncompressed_length` in branch condition\" }",
+     "Unsupported { description: \"possibly-null resource `outbuf` returned under a non-null result mode\" }"
+    ],
+    "line": 20498,
+    "marker_lines": [
+     20472,
+     20481,
+     20509
+    ],
+    "unresolved": true
+   }
+  ],
+  "ut_testSameSubscriptions": [
+   {
+    "acquisition_line": 22874,
+    "invocation": 21,
+    "kinds": [
+     "hand-on",
+     "test"
+    ],
+    "leaves": [
+     "Unsupported { description: \"braced initializer, expression, or declaration is not modeled\" }",
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_assignor_run`\" }",
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_metadata_new_topic_mock`\" }",
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_topic_partition_list_add`\" }",
+     "Unsupported { description: \"call to uncontracted function `ut_destroy_metadata`\" }",
+     "Unsupported { description: \"call to uncontracted function `verifyValidityAndBalance0` in branch condition\" }",
+     "Unsupported { description: \"indirect memory access is outside the resource projection\" }"
+    ],
+    "line": 22897,
+    "marker_lines": [
+     22880,
+     22882,
+     22885,
+     22889,
+     22890,
+     22892,
+     22895,
+     22898,
+     22899,
+     22900,
+     22902,
+     22905,
+     22907,
+     22908
+    ],
+    "unresolved": true
+   },
+   {
+    "acquisition_line": 22874,
+    "invocation": 21,
+    "kinds": [
+     "hand-on",
+     "test"
+    ],
+    "leaves": [
+     "Unsupported { description: \"braced initializer, expression, or declaration is not modeled\" }",
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_assignor_run`\" }",
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_metadata_new_topic_mock`\" }",
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_topic_partition_list_add`\" }",
+     "Unsupported { description: \"call to uncontracted function `ut_destroy_metadata`\" }",
+     "Unsupported { description: \"call to uncontracted function `verifyValidityAndBalance0` in branch condition\" }",
+     "Unsupported { description: \"indirect memory access is outside the resource projection\" }"
+    ],
+    "line": 22898,
+    "marker_lines": [
+     22880,
+     22882,
+     22885,
+     22889,
+     22890,
+     22892,
+     22895,
+     22898,
+     22899,
+     22900,
+     22902,
+     22905,
+     22907,
+     22908
+    ],
+    "unresolved": true
+   },
+   {
+    "acquisition_line": 22874,
+    "invocation": 21,
+    "kinds": [
+     "hand-on",
+     "test"
+    ],
+    "leaves": [
+     "Unsupported { description: \"braced initializer, expression, or declaration is not modeled\" }",
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_assignor_run`\" }",
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_metadata_new_topic_mock`\" }",
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_topic_partition_list_add`\" }",
+     "Unsupported { description: \"call to uncontracted function `ut_destroy_metadata`\" }",
+     "Unsupported { description: \"call to uncontracted function `verifyValidityAndBalance0` in branch condition\" }",
+     "Unsupported { description: \"indirect memory access is outside the resource projection\" }"
+    ],
+    "line": 22904,
+    "marker_lines": [
+     22880,
+     22882,
+     22885,
+     22889,
+     22890,
+     22892,
+     22895,
+     22898,
+     22899,
+     22900,
+     22902,
+     22905,
+     22907,
+     22908
+    ],
+    "unresolved": true
+   },
+   {
+    "acquisition_line": 22874,
+    "invocation": 21,
+    "kinds": [
+     "hand-on",
+     "test"
+    ],
+    "leaves": [
+     "Unsupported { description: \"braced initializer, expression, or declaration is not modeled\" }",
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_assignor_run`\" }",
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_metadata_new_topic_mock`\" }",
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_topic_partition_list_add`\" }",
+     "Unsupported { description: \"call to uncontracted function `ut_destroy_metadata`\" }",
+     "Unsupported { description: \"call to uncontracted function `verifyValidityAndBalance0` in branch condition\" }",
+     "Unsupported { description: \"indirect memory access is outside the resource projection\" }"
+    ],
+    "line": 22905,
+    "marker_lines": [
+     22880,
+     22882,
+     22885,
+     22889,
+     22890,
+     22892,
+     22895,
+     22898,
+     22899,
+     22900,
+     22902,
+     22905,
+     22907,
+     22908
+    ],
+    "unresolved": true
+   },
+   {
+    "acquisition_line": 22874,
+    "invocation": 22,
+    "kinds": [
+     "hand-on",
+     "test"
+    ],
+    "leaves": [
+     "Unsupported { description: \"braced initializer, expression, or declaration is not modeled\" }",
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_assignor_run`\" }",
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_metadata_new_topic_mock`\" }",
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_topic_partition_list_add`\" }",
+     "Unsupported { description: \"call to uncontracted function `ut_destroy_metadata`\" }",
+     "Unsupported { description: \"call to uncontracted function `verifyValidityAndBalance0` in branch condition\" }",
+     "Unsupported { description: \"indirect memory access is outside the resource projection\" }"
+    ],
+    "line": 22897,
+    "marker_lines": [
+     22880,
+     22882,
+     22885,
+     22889,
+     22890,
+     22892,
+     22895,
+     22898,
+     22899,
+     22900,
+     22902,
+     22905,
+     22907,
+     22908
+    ],
+    "unresolved": true
+   },
+   {
+    "acquisition_line": 22874,
+    "invocation": 22,
+    "kinds": [
+     "hand-on",
+     "test"
+    ],
+    "leaves": [
+     "Unsupported { description: \"braced initializer, expression, or declaration is not modeled\" }",
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_assignor_run`\" }",
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_metadata_new_topic_mock`\" }",
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_topic_partition_list_add`\" }",
+     "Unsupported { description: \"call to uncontracted function `ut_destroy_metadata`\" }",
+     "Unsupported { description: \"call to uncontracted function `verifyValidityAndBalance0` in branch condition\" }",
+     "Unsupported { description: \"indirect memory access is outside the resource projection\" }"
+    ],
+    "line": 22898,
+    "marker_lines": [
+     22880,
+     22882,
+     22885,
+     22889,
+     22890,
+     22892,
+     22895,
+     22898,
+     22899,
+     22900,
+     22902,
+     22905,
+     22907,
+     22908
+    ],
+    "unresolved": true
+   },
+   {
+    "acquisition_line": 22874,
+    "invocation": 22,
+    "kinds": [
+     "hand-on",
+     "test"
+    ],
+    "leaves": [
+     "Unsupported { description: \"braced initializer, expression, or declaration is not modeled\" }",
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_assignor_run`\" }",
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_metadata_new_topic_mock`\" }",
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_topic_partition_list_add`\" }",
+     "Unsupported { description: \"call to uncontracted function `ut_destroy_metadata`\" }",
+     "Unsupported { description: \"call to uncontracted function `verifyValidityAndBalance0` in branch condition\" }",
+     "Unsupported { description: \"indirect memory access is outside the resource projection\" }"
+    ],
+    "line": 22904,
+    "marker_lines": [
+     22880,
+     22882,
+     22885,
+     22889,
+     22890,
+     22892,
+     22895,
+     22898,
+     22899,
+     22900,
+     22902,
+     22905,
+     22907,
+     22908
+    ],
+    "unresolved": true
+   },
+   {
+    "acquisition_line": 22874,
+    "invocation": 22,
+    "kinds": [
+     "hand-on",
+     "test"
+    ],
+    "leaves": [
+     "Unsupported { description: \"braced initializer, expression, or declaration is not modeled\" }",
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_assignor_run`\" }",
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_metadata_new_topic_mock`\" }",
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_topic_partition_list_add`\" }",
+     "Unsupported { description: \"call to uncontracted function `ut_destroy_metadata`\" }",
+     "Unsupported { description: \"call to uncontracted function `verifyValidityAndBalance0` in branch condition\" }",
+     "Unsupported { description: \"indirect memory access is outside the resource projection\" }"
+    ],
+    "line": 22905,
+    "marker_lines": [
+     22880,
+     22882,
+     22885,
+     22889,
+     22890,
+     22892,
+     22895,
+     22898,
+     22899,
+     22900,
+     22902,
+     22905,
+     22907,
+     22908
+    ],
+    "unresolved": true
+   },
+   {
+    "acquisition_line": 22874,
+    "invocation": 23,
+    "kinds": [
+     "hand-on",
+     "test"
+    ],
+    "leaves": [
+     "Unsupported { description: \"braced initializer, expression, or declaration is not modeled\" }",
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_assignor_run`\" }",
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_metadata_new_topic_mock`\" }",
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_topic_partition_list_add`\" }",
+     "Unsupported { description: \"call to uncontracted function `ut_destroy_metadata`\" }",
+     "Unsupported { description: \"call to uncontracted function `verifyValidityAndBalance0` in branch condition\" }",
+     "Unsupported { description: \"indirect memory access is outside the resource projection\" }"
+    ],
+    "line": 22897,
+    "marker_lines": [
+     22880,
+     22882,
+     22885,
+     22889,
+     22890,
+     22892,
+     22895,
+     22898,
+     22899,
+     22900,
+     22902,
+     22905,
+     22907,
+     22908
+    ],
+    "unresolved": true
+   },
+   {
+    "acquisition_line": 22874,
+    "invocation": 23,
+    "kinds": [
+     "hand-on",
+     "test"
+    ],
+    "leaves": [
+     "Unsupported { description: \"braced initializer, expression, or declaration is not modeled\" }",
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_assignor_run`\" }",
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_metadata_new_topic_mock`\" }",
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_topic_partition_list_add`\" }",
+     "Unsupported { description: \"call to uncontracted function `ut_destroy_metadata`\" }",
+     "Unsupported { description: \"call to uncontracted function `verifyValidityAndBalance0` in branch condition\" }",
+     "Unsupported { description: \"indirect memory access is outside the resource projection\" }"
+    ],
+    "line": 22898,
+    "marker_lines": [
+     22880,
+     22882,
+     22885,
+     22889,
+     22890,
+     22892,
+     22895,
+     22898,
+     22899,
+     22900,
+     22902,
+     22905,
+     22907,
+     22908
+    ],
+    "unresolved": true
+   },
+   {
+    "acquisition_line": 22874,
+    "invocation": 23,
+    "kinds": [
+     "hand-on",
+     "test"
+    ],
+    "leaves": [
+     "Unsupported { description: \"braced initializer, expression, or declaration is not modeled\" }",
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_assignor_run`\" }",
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_metadata_new_topic_mock`\" }",
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_topic_partition_list_add`\" }",
+     "Unsupported { description: \"call to uncontracted function `ut_destroy_metadata`\" }",
+     "Unsupported { description: \"call to uncontracted function `verifyValidityAndBalance0` in branch condition\" }",
+     "Unsupported { description: \"indirect memory access is outside the resource projection\" }"
+    ],
+    "line": 22904,
+    "marker_lines": [
+     22880,
+     22882,
+     22885,
+     22889,
+     22890,
+     22892,
+     22895,
+     22898,
+     22899,
+     22900,
+     22902,
+     22905,
+     22907,
+     22908
+    ],
+    "unresolved": true
+   },
+   {
+    "acquisition_line": 22874,
+    "invocation": 23,
+    "kinds": [
+     "hand-on",
+     "test"
+    ],
+    "leaves": [
+     "Unsupported { description: \"braced initializer, expression, or declaration is not modeled\" }",
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_assignor_run`\" }",
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_metadata_new_topic_mock`\" }",
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_topic_partition_list_add`\" }",
+     "Unsupported { description: \"call to uncontracted function `ut_destroy_metadata`\" }",
+     "Unsupported { description: \"call to uncontracted function `verifyValidityAndBalance0` in branch condition\" }",
+     "Unsupported { description: \"indirect memory access is outside the resource projection\" }"
+    ],
+    "line": 22905,
+    "marker_lines": [
+     22880,
+     22882,
+     22885,
+     22889,
+     22890,
+     22892,
+     22895,
+     22898,
+     22899,
+     22900,
+     22902,
+     22905,
+     22907,
+     22908
+    ],
+    "unresolved": true
+   },
+   {
+    "acquisition_line": 22874,
+    "invocation": 24,
+    "kinds": [
+     "hand-on",
+     "test"
+    ],
+    "leaves": [
+     "Unsupported { description: \"braced initializer, expression, or declaration is not modeled\" }",
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_assignor_run`\" }",
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_metadata_new_topic_mock`\" }",
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_topic_partition_list_add`\" }",
+     "Unsupported { description: \"call to uncontracted function `ut_destroy_metadata`\" }",
+     "Unsupported { description: \"call to uncontracted function `verifyValidityAndBalance0` in branch condition\" }",
+     "Unsupported { description: \"indirect memory access is outside the resource projection\" }"
+    ],
+    "line": 22897,
+    "marker_lines": [
+     22880,
+     22882,
+     22885,
+     22889,
+     22890,
+     22892,
+     22895,
+     22898,
+     22899,
+     22900,
+     22902,
+     22905,
+     22907,
+     22908
+    ],
+    "unresolved": true
+   },
+   {
+    "acquisition_line": 22874,
+    "invocation": 24,
+    "kinds": [
+     "hand-on",
+     "test"
+    ],
+    "leaves": [
+     "Unsupported { description: \"braced initializer, expression, or declaration is not modeled\" }",
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_assignor_run`\" }",
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_metadata_new_topic_mock`\" }",
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_topic_partition_list_add`\" }",
+     "Unsupported { description: \"call to uncontracted function `ut_destroy_metadata`\" }",
+     "Unsupported { description: \"call to uncontracted function `verifyValidityAndBalance0` in branch condition\" }",
+     "Unsupported { description: \"indirect memory access is outside the resource projection\" }"
+    ],
+    "line": 22898,
+    "marker_lines": [
+     22880,
+     22882,
+     22885,
+     22889,
+     22890,
+     22892,
+     22895,
+     22898,
+     22899,
+     22900,
+     22902,
+     22905,
+     22907,
+     22908
+    ],
+    "unresolved": true
+   },
+   {
+    "acquisition_line": 22874,
+    "invocation": 24,
+    "kinds": [
+     "hand-on",
+     "test"
+    ],
+    "leaves": [
+     "Unsupported { description: \"braced initializer, expression, or declaration is not modeled\" }",
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_assignor_run`\" }",
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_metadata_new_topic_mock`\" }",
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_topic_partition_list_add`\" }",
+     "Unsupported { description: \"call to uncontracted function `ut_destroy_metadata`\" }",
+     "Unsupported { description: \"call to uncontracted function `verifyValidityAndBalance0` in branch condition\" }",
+     "Unsupported { description: \"indirect memory access is outside the resource projection\" }"
+    ],
+    "line": 22904,
+    "marker_lines": [
+     22880,
+     22882,
+     22885,
+     22889,
+     22890,
+     22892,
+     22895,
+     22898,
+     22899,
+     22900,
+     22902,
+     22905,
+     22907,
+     22908
+    ],
+    "unresolved": true
+   },
+   {
+    "acquisition_line": 22874,
+    "invocation": 24,
+    "kinds": [
+     "hand-on",
+     "test"
+    ],
+    "leaves": [
+     "Unsupported { description: \"braced initializer, expression, or declaration is not modeled\" }",
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_assignor_run`\" }",
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_metadata_new_topic_mock`\" }",
+     "Unsupported { description: \"call to uncontracted function `rd_kafka_topic_partition_list_add`\" }",
+     "Unsupported { description: \"call to uncontracted function `ut_destroy_metadata`\" }",
+     "Unsupported { description: \"call to uncontracted function `verifyValidityAndBalance0` in branch condition\" }",
+     "Unsupported { description: \"indirect memory access is outside the resource projection\" }"
+    ],
+    "line": 22905,
+    "marker_lines": [
+     22880,
+     22882,
+     22885,
+     22889,
+     22890,
+     22892,
+     22895,
+     22898,
+     22899,
+     22900,
+     22902,
+     22905,
+     22907,
+     22908
+    ],
+    "unresolved": true
+   }
+  ]
+ },
+ "lines": 31
+}
