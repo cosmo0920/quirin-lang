@@ -67,6 +67,7 @@ import QCore.CallbackReleasedEffectOrder
 import QCore.CallbackRequirementFold
 import QCore.CallbackSource
 import QCore.CallbackSuppliedNull
+import QCore.CallbackTableMemberPathStates
 import QCore.CallbackTaskHandoff
 import QCore.CalleeSummaryScope
 import QCore.CallerFrameHoldSwitch

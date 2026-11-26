@@ -1,0 +1,24 @@
+{
+  "schema": "quirin-amendments/2",
+  "card": "CALLBACK-TABLE-MEMBER-PATH-STATES",
+  "base": "43410b230",
+  "measured_tip": "e60f4522c",
+  "increment_paragraph": "**CALLBACK-TABLE-MEMBER-PATH-STATES (2026-11-25).** USER DECISION 2026-11-25 (\"lanich four of queued cards\", CALLBACK-TABLE-MEMBER-PATH the fourth). A table dispatch (resource_callback_table, rule 13v) dropped its candidates' member-path states: callback_operands collected them only for the synchronous and member forms while classified_in read such a candidate as its custody contract, so a table candidate's #released payload read as kept. The committed probe fixture showed it at base: a released payload then freed was Safe in the table form and Unsafe in the synchronous one, and a stale candidate was Safe. Fix: the CallbackClause::Table branch now extends member_paths with the same member_path_route::operands call, so the candidates are joined by rule 30's composition (disagreeing candidates refuse member-path-undecided; stale, unstated and double-release refusals stand). Rules 13v and 74p amended, C04.19.6 paragraph; Lean QCore.CallbackTableMemberPathStates (17 audited theorems: the_join_is_at_least_each_candidate, a_gone_table_leaves_exactly_once over any non-empty sequence of the candidates' readings in any order, a_stays_table_never_leaves, disagreeing_candidates_refuse, the_gone_reading_assumes_an_invocation naming the shared premise, vectors). Gateway fixture callback_table_member_path_states.rs (6 tests, 4 failing at base) pins both forms over the same bodies, controls (a candidate stating nothing keeps the payload) and the two shipped table clauses (cmt_mpack_unpack_map, ctr_mpack_unpack_map; neither provider states a member path). Opt-in current over Fluent Bit 046accf6 (base 43410b230 vs e60f4522c): 1187 Safe / 2 Pending / 3607 Unknown / 8 Unsafe on both sides, 0 status moves, 0 content changes, as predicted (the 42 rows naming the two table clauses unchanged). Registered MEMBER-PATH-INVOCATION-PREMISE. Pinned routes: none predicted; measure --declared is deferred to the integrator (no pinned inputs on this host).",
+  "status_edits": [],
+  "ledger": [
+    {
+      "id": "CALLBACK-TABLE-MEMBER-PATH-STATES",
+      "operation": "retire",
+      "why": "Discharged by CALLBACK-TABLE-MEMBER-PATH-STATES: the CallbackClause::Table branch of legacy_callback_route::callback_operands now composes the candidates' member-path states with the same member_path_route::operands call as the synchronous branch, joined over the candidates (disagreeing candidates refuse member-path-undecided). Rules 13v and 74p amended, C04.19.6; Lean QCore.CallbackTableMemberPathStates (the join is at least as strong as each candidate; gone leaves exactly once over any non-empty sequence of readings). Gateway fixture callback_table_member_path_states.rs: the probe (released payload then freed) is now Unsafe in the table form as in the synchronous one; controls and the two shipped table clauses unchanged; opt-in current 0 moves.",
+      "source": "docs/reports/callback-table-member-path-states/README.md"
+    },
+    {
+      "id": "MEMBER-PATH-INVOCATION-PREMISE",
+      "operation": "register",
+      "title": "A #released or #moved candidate state under no arm reads the invocation as run, at every invocation form",
+      "text": "Found by CALLBACK-TABLE-MEMBER-PATH-STATES. Rule 30 (C04.19.6's table, user decision 2026-10-15) composes a candidate's #released or #moved state under no arm as gone at a synchronous, member and (since this card) table invocation, while each clause says the callback is called zero or more times. If the callee calls no candidate, the linked object stays live while the caller reads it released: a leak is missed, and a later free of it reads as a double release. QCore.CallbackTableMemberPathStates.the_gone_reading_assumes_an_invocation names the premise (run [] false = 0); it is not proved. DISCHARGE: a stated, published premise per invoking declaration that a candidate runs (or a body check establishing it), or a user decision to refuse gone under no arm where the invocation may not run, with a census of the shipped member-path invocations. Size: small to medium.",
+      "source": "docs/reports/callback-table-member-path-states/README.md",
+      "recorded_by": "CALLBACK-TABLE-MEMBER-PATH-STATES"
+    }
+  ]
+}

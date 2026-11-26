@@ -8442,7 +8442,41 @@ an undeclared OpenSSL producer). `QCore.NullableReferenceDrop` (12 audited,
     called: premise `P-CG22-DEFINED-POINTER-VALUE`); anything else is an open
     set (`callback-undecided`, naming why). The candidates are then decided
     as rule 13u's. **Do not** close a table that is written, address-taken,
-    passed elsewhere, static or reached through a pointer.
+    passed elsewhere, static or reached through a pointer. **Amended by card
+    CALLBACK-TABLE-MEMBER-PATH-STATES** (rule 30 at a table dispatch;
+    contract specification C04.19.6): a candidate stating member-path states
+    reads as its custody contract here as at a synchronous invocation, and
+    its states are composed at the dispatch exactly as there
+    (`callback_operands`, the `CallbackClause::Table` branch: the same
+    `member_path_route::operands` at each parameter position, applied by
+    `member_path_route::apply` before the arms, after a release by rule
+    74p). Before this card the table branch collected no state, so a
+    candidate's `#released` payload read as kept: a later free of it was
+    certified `Safe` and a stale payload was not refused. Several entries
+    may run, in any order and any number of times; the synchronous join
+    over the candidates is sound for that (`QCore.CallbackTableMemberPathStates`):
+    `gone` only where every candidate's every reading takes the object once
+    and clears the member, so later entries find it cleared; `stays` only
+    where every reading keeps it; candidates that disagree refuse
+    `member-path-undecided`, and rule 30's stale, unstated and double-release
+    refusals stand. The `gone` reading with no arm reads the dispatch as
+    invoking a candidate, which C04.19.6 reads alike at every invocation
+    form (named, not proved, in `the_gone_reading_assumes_an_invocation`).
+    The shipped table clauses (`cmt_mpack_unpack_map`,
+    `ctr_mpack_unpack_map`) have no candidate stating a member path, and
+    their rows do not move. **Do not** drop a table candidate's stated
+    states or read one table entry's state alone. Pins:
+    `tests/callback_table_member_path_states.rs` (6 tests: the probe's double
+    release and the taken payload in both forms; agreeing and disagreeing
+    candidates; the stale and may-set refusals; candidates stating nothing
+    at the path; the shipped clauses). `QCore.CallbackTableMemberPathStates`
+    (`the_join_is_at_least_each_candidate`,
+    `a_gone_table_leaves_exactly_once`, `a_stays_table_never_leaves`,
+    `disagreeing_candidates_refuse`,
+    `the_gone_reading_assumes_an_invocation`,
+    `a_table_composition_after_a_release_is_the_c_order`,
+    `table_vectors_hold`);
+    [report](../reports/callback-table-member-path-states/README.md).
 
 <a id="constraint-13w"></a>
 
@@ -13768,8 +13802,10 @@ through `ampersand_runs`.
     release write a released object's field links or constructed state, or
     let a composition take a linked object that is not live, without
     adding the `callback-beside-release` refusal to every form this rule
-    reads. A table dispatch (rule 13v) composes no candidate state at all,
-    released object or not (follow-up CALLBACK-TABLE-MEMBER-PATH-STATES).
+    reads. A table dispatch (rule 13v) composes its candidates' states
+    since card CALLBACK-TABLE-MEMBER-PATH-STATES, through the same
+    `legacy_member_path_route::apply` after the release, so this rule's
+    argument covers it (`QCore.CallbackTableMemberPathStates.a_table_composition_after_a_release_is_the_c_order`).
     Premises stated, not proved: P-B08-SHALLOW. Pins:
     `tests/callback_member_released_effect_order.rs` (dropping the liveness
     read certifies the contained payload `Safe`: report §3).
