@@ -63,7 +63,7 @@ fn every_cx_term_is_used_typed_and_bound_to_lean() {
         .iter()
         .filter(|t| t.block == "CX")
         .collect::<Vec<_>>();
-    assert_eq!(cx.len(), 80);
+    assert_eq!(cx.len(), 90);
     let registered =
         |s: &str| s == "obj" || s == "integer" || RENDERED_VALUE_SORTS.iter().any(|(v, _)| *v == s);
     for t in &cx {

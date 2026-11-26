@@ -37,8 +37,8 @@
     {
       "function": "cb_queue_chunks",
       "module": "fluent_bit/storage_backlog.qv",
-      "contract_sha256": "595296735868b877d3f3abdb66541ff9244460d13e698061bddaf8efd7c436e2",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "b6647bbb8ea23e5a8a57edefc66cb05ec4120b60547a2cab41477e607e0757df",
+      "pinned_at": "2026-11-26T04:40:41Z",
       "identities": [
         {
           "reviewed_at": [
@@ -99,8 +99,8 @@
     {
       "function": "flb_config_set_program_name",
       "module": "fluent_bit/teardown_destroy.qv",
-      "contract_sha256": "c002910c8e0e6f505013c278317ca56616b826d7db0a98141189e01446b67a49",
-      "pinned_at": "2026-11-04T15:17:06Z",
+      "contract_sha256": "4f0e5ca430da4807a30755702fe0c231be64938c2f0376da94ffa2bd37863eab",
+      "pinned_at": "2026-11-26T04:40:55Z",
       "identities": [
         {
           "reviewed_at": [
@@ -2557,8 +2557,8 @@
     {
       "function": "sb_allocate_backlogs",
       "module": "fluent_bit/storage_backlog.qv",
-      "contract_sha256": "53161949fef18d454fab6cf5bbfd0d5e494181efa43d89d775a34a8ab33a61b8",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "6aeed91147d322bd4735c3b95fbf7321c43e8b3d09bc95faa105d40c4e17ea76",
+      "pinned_at": "2026-11-26T04:40:41Z",
       "identities": [
         {
           "reviewed_at": [
@@ -2623,8 +2623,8 @@
     {
       "function": "sb_append_chunk_to_segregated_backlog",
       "module": "fluent_bit/storage_backlog.qv",
-      "contract_sha256": "7dd643ba5a72bc63af85a12b8d6ee8e408ee171383677838c0a6f9e9b42e8838",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "ecec4aff03de01a6f248dbdcb0f5bd5a5e8cc471a501bc14819b58a4f160b0ed",
+      "pinned_at": "2026-11-26T04:40:41Z",
       "identities": [
         {
           "reviewed_at": [
@@ -2656,8 +2656,8 @@
     {
       "function": "sb_append_chunk_to_segregated_backlogs",
       "module": "fluent_bit/storage_backlog.qv",
-      "contract_sha256": "2d4aff08af834082498b4a3dab7d6dcbfa8d08e0f3491f3b3686d7669b5804b7",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "87427f8e83c4e6098c39a1f6a7f117f298ceca0e5f05a0a74e8e704146e78e57",
+      "pinned_at": "2026-11-26T04:40:41Z",
       "identities": [
         {
           "reviewed_at": [
@@ -2722,8 +2722,8 @@
     {
       "function": "sb_destroy_backlogs",
       "module": "fluent_bit/storage_backlog.qv",
-      "contract_sha256": "4f8f50dc435d32486fe308c4a0ab01f70a08e726e10b6d068b77fdfaa3c2eaf4",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "d10ebc781fe8b0d086a20426d9b770280c3cf045eedb13d346181c8e8f24a050",
+      "pinned_at": "2026-11-26T04:40:41Z",
       "identities": [
         {
           "reviewed_at": [
@@ -2788,8 +2788,8 @@
     {
       "function": "sb_release_output_queue_space",
       "module": "fluent_bit/storage_backlog.qv",
-      "contract_sha256": "53f4c9bb9d6040bcff9c34d3e3004f302e3752eb397f3241a43f9e2877340cdd",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "e0698d3b48914f37b76f5e1398a1ce924386108ba48d76390e64007290caa78b",
+      "pinned_at": "2026-11-26T04:40:41Z",
       "identities": [
         {
           "reviewed_at": [
@@ -2832,8 +2832,8 @@
     {
       "function": "sb_remove_chunk_from_segregated_backlog",
       "module": "fluent_bit/storage_backlog.qv",
-      "contract_sha256": "64eb3dfdd53ba4c2be3983e9585dfa3039ac0b16391eaf73c10bc277ec88282c",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "8e54c843737ef66d04c29222974c0d8e1bed0edf4f9e8dceb12d19d1044a347b",
+      "pinned_at": "2026-11-26T04:40:41Z",
       "identities": [
         {
           "reviewed_at": [
@@ -2898,8 +2898,8 @@
     {
       "function": "sb_segregate_chunks",
       "module": "fluent_bit/storage_backlog.qv",
-      "contract_sha256": "b2115acb6fde1c2d8edd0526e02eb92ecf4ddfc1f220b72c8a921b4ec57f622b",
-      "pinned_at": "2026-10-25T18:10:00Z",
+      "contract_sha256": "58a59bfce42c55aca4946850859afcc2a49fa3ef2d29af0255f394133d213e32",
+      "pinned_at": "2026-11-26T04:40:41Z",
       "identities": [
         {
           "reviewed_at": [

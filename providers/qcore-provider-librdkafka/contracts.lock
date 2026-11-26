@@ -1008,8 +1008,8 @@
     {
       "function": "rd_calloc",
       "module": "librdkafka/memory.qv",
-      "contract_sha256": "f1014d1a7ed37a21f74bfca15ea81fbaf7f54b678fbf668bf0efea17da327521",
-      "pinned_at": "2026-11-20T19:21:53Z",
+      "contract_sha256": "d33ffb53faeedb6a56a0ab7eccbbafa7962b4b824db03984975b16e61acafce3",
+      "pinned_at": "2026-11-26T04:40:58Z",
       "identities": [
         {
           "reviewed_at": [
@@ -7064,8 +7064,8 @@
     {
       "function": "rd_strdup",
       "module": "librdkafka/memory.qv",
-      "contract_sha256": "55a73fc329656fb37ddcb0f2d7b5d97e337e7b6bb239b6f8a1734d06194284de",
-      "pinned_at": "2026-11-20T19:21:53Z",
+      "contract_sha256": "7d2069b5cd99f3ec99c24fcba0fbc4a7fc260a2cbabf0dc6941033c90c4c0f4a",
+      "pinned_at": "2026-11-26T04:40:58Z",
       "identities": [
         {
           "reviewed_at": [

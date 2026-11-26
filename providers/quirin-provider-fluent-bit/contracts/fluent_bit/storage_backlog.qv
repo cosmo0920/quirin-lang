@@ -116,6 +116,8 @@ contract {
 extern fn sb_allocate_backlogs(context: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
+    requires linkage_contract_v1;
+    quant #link libevent::mk_list_add;
     requires resource_body_checked;
     ensures normal resource_borrowed(context);
     ensures normal resource_return_none();
@@ -125,6 +127,8 @@ contract {
 extern fn sb_destroy_backlogs(context: ptr<mut, u8>) -> unit
 contract {
     requires resource_contract_v1;
+    requires linkage_contract_v1;
+    quant #link libevent::mk_list_del;
     requires resource_body_checked;
     ensures normal resource_borrowed(context);
     ensures normal resource_return_none();
@@ -134,6 +138,8 @@ contract {
 extern fn sb_remove_chunk_from_segregated_backlog(target_chunk: ptr<mut, u8>, backlog: ptr<mut, u8>, destroy: i32) -> unit
 contract {
     requires resource_contract_v1;
+    requires linkage_contract_v1;
+    quant #link libevent::mk_list_del;
     requires resource_body_checked;
     ensures normal resource_borrowed(target_chunk);
     ensures normal resource_borrowed(backlog);
@@ -155,6 +161,8 @@ contract {
 extern fn sb_append_chunk_to_segregated_backlog(target_chunk: ptr<mut, u8>, stream: ptr<mut, u8>, target_chunk_size: usize, backlog: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
+    requires linkage_contract_v1;
+    quant #link libevent::mk_list_add;
     requires resource_body_checked;
     ensures normal resource_borrowed(target_chunk);
     ensures normal resource_borrowed(stream);
@@ -167,6 +175,8 @@ contract {
 extern fn sb_append_chunk_to_segregated_backlogs(target_chunk: ptr<mut, u8>, stream: ptr<mut, u8>, context: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
+    requires linkage_contract_v1;
+    quant #link libc::memset;
     requires resource_body_checked;
     ensures normal resource_borrowed(target_chunk);
     ensures normal resource_borrowed(stream);
@@ -178,6 +188,12 @@ contract {
 extern fn sb_segregate_chunks(config: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
+    requires linkage_contract_v1;
+    quant #link chunkio::cio_chunk_close;
+    quant #link chunkio::cio_chunk_down;
+    quant #link chunkio::cio_chunk_get_content_size;
+    quant #link chunkio::cio_chunk_is_up;
+    quant #link chunkio::cio_chunk_up_force;
     requires resource_body_checked;
     ensures normal resource_borrowed(config);
     ensures normal resource_return_none();
@@ -187,6 +203,8 @@ contract {
 extern fn sb_release_output_queue_space(output_plugin: ptr<mut, u8>, required_space: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
+    requires linkage_contract_v1;
+    quant #link chunkio::cio_chunk_close;
     requires resource_body_checked;
     ensures normal resource_borrowed(output_plugin);
     ensures normal resource_borrowed(required_space);
@@ -197,6 +215,12 @@ contract {
 extern fn cb_queue_chunks(in: ptr<mut, u8>, config: ptr<mut, u8>, data: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
+    requires linkage_contract_v1;
+    quant #link chunkio::cio_chunk_close;
+    quant #link chunkio::cio_chunk_down;
+    quant #link chunkio::cio_chunk_get_content_size;
+    quant #link chunkio::cio_chunk_is_up;
+    quant #link chunkio::cio_chunk_up_force;
     requires resource_body_checked;
     ensures normal resource_borrowed(in);
     ensures normal resource_borrowed(config);

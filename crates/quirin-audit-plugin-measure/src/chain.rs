@@ -78,7 +78,7 @@ use crate::util::{read_json, sha_file, write_json};
 use crate::{COMPARISON_SCHEMA, RUN_SCHEMA, declared, tool};
 
 /// The chained record's schema.
-pub const CHAIN_SCHEMA: &str = "quirin-measure-chain/1";
+pub const CHAIN_SCHEMA: &str = "quirin-measure-chain/2";
 
 /// The chained record's file name in the output directory.
 pub const CHAIN_FILE: &str = "chain.json";

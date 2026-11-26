@@ -840,6 +840,29 @@ impl ModuleOwners {
             .collect()
     }
 
+    /// Card CONNECT-ADOPT-DECLARED-DEPENDENCIES: every dependency the load
+    /// path's manifest records (links and inherit directives, each with its
+    /// recorded identity), by dependent crate (empty without a load path).
+    #[must_use]
+    pub fn manifest_dependencies(
+        &self,
+    ) -> BTreeMap<String, Vec<qcore_schemas::connect::DeclaredDependency>> {
+        self.load_path
+            .as_ref()
+            .map(|manifest| manifest.contract_dependencies.clone())
+            .unwrap_or_default()
+    }
+
+    /// Card CONNECT-ADOPT-DECLARED-DEPENDENCIES: namespace to load-path crate.
+    #[must_use]
+    pub fn namespace_owners(&self) -> BTreeMap<String, String> {
+        self.load_path
+            .iter()
+            .flat_map(|manifest| manifest.load_path.crates())
+            .map(|krate| (krate.namespace.clone(), krate.name.clone()))
+            .collect()
+    }
+
     /// The crate root of a load-path crate.
     fn crate_root(&self, name: &str) -> Option<PathBuf> {
         let root = self.load_path.as_ref()?.contract_roots.get(name)?;
@@ -1178,15 +1201,22 @@ pub fn apply_pins_probing(
     }
     // Card QUIRIN-AUDIT-CONNECT (C15.2): every declared contract dependency,
     // resolved after the pins and ranges so a withheld target holds its
-    // dependents.
-    if !contracts.contract_dependencies().is_empty() {
+    // dependents. Card CONNECT-ADOPT-DECLARED-DEPENDENCIES: the links the
+    // loader read and the dependencies the manifest records (inherit
+    // directives included, every one with its recorded identity).
+    let manifest_dependencies = owners.manifest_dependencies();
+    if !contracts.contract_dependencies().is_empty() || !manifest_dependencies.is_empty() {
         let owner = |module: &str| owners.lock_for(module).1;
         evaluation.contract_dependencies = crate::declared_dependencies::evaluate(
             contracts,
             &evaluation.modules,
             &evaluation.contract_sha256,
             &owner,
-            &owners.load_path_facts(),
+            &crate::declared_dependencies::Manifest {
+                crates: owners.load_path_facts(),
+                dependencies: manifest_dependencies,
+                namespaces: owners.namespace_owners(),
+            },
         )?;
     }
     Ok(evaluation)

@@ -2694,7 +2694,7 @@ pub const RENDERED_VALUE_SORTS: &[(&str, &str)] = &[
     ("cx_fn", "a declared function name"),
     (
         "cx_dep",
-        "a declared contract dependency (`requires resource_contract_dependency(...)`)",
+        "a declared contract dependency: a `linkage_contract_v1` link or a `contract inherit` directive, elaborated (contract spec C15.2)",
     ),
 ];
 
@@ -4224,13 +4224,13 @@ pub const RENDERED_TERMS: &[RenderedTerm] = &[
     RenderedTerm {
         name: "cx_digest_matches",
         sort: RenderedSort::Predicate(&["cx_dep"]),
-        meaning: "`#cx_digest_matches(#d)`: the target declaration's SHA-256 is `#d`'s (or `#d` states none)",
+        meaning: "`#cx_digest_matches(#d)`: the target declaration's SHA-256 is the one recorded for `#d` (an unrecorded digest matches nothing)",
         block: "CX",
     },
     RenderedTerm {
         name: "cx_declared_crate",
         sort: RenderedSort::Predicate(&["cx_dep"]),
-        meaning: "`#cx_declared_crate(#d)`: the target crate is a declared dependency of the dependent's crate (or the same crate)",
+        meaning: "`#cx_declared_crate(#d)`: the dependent's crate is on the load path, whose contract-level graph (not Cargo's) the target crate must be on (card CONNECT-ADOPT-DECLARED-DEPENDENCIES, D1 (a))",
         block: "CX",
     },
     RenderedTerm {
@@ -4285,6 +4285,66 @@ pub const RENDERED_TERMS: &[RenderedTerm] = &[
         name: "cx_human_resolvable",
         sort: RenderedSort::Predicate(&["cx_bundle", "cx_fn"]),
         meaning: "`#cx_human_resolvable(#b,#g)`: every cause of the hold is resolved by a person's review and re-pin",
+        block: "CX",
+    },
+    RenderedTerm {
+        name: "cx_reads",
+        sort: RenderedSort::Predicate(&["cx_bundle", "cx_fn", "cx_bundle", "cx_fn"]),
+        meaning: "`#cx_reads(#b,#g,#c,#h)`: a verdict that uses `#b`'s declaration of `#g` reads `#c`'s declaration of `#h` through it (an inherited clause, a body-checked specification's callee, a frame of `#h`'s calls)",
+        block: "CX",
+    },
+    RenderedTerm {
+        name: "cx_decides",
+        sort: RenderedSort::Predicate(&["cx_bundle", "cx_fn", "cx_bundle", "cx_fn"]),
+        meaning: "`#cx_decides(#b,#g,#c,#h)`: that reading can discharge a `Safe` obligation or validate an `Unsafe` violation (not only yield `Unknown` or `Pending`)",
+        block: "CX",
+    },
+    RenderedTerm {
+        name: "cx_relies",
+        sort: RenderedSort::Predicate(&["cx_bundle", "cx_fn", "cx_bundle", "cx_fn"]),
+        meaning: "`#cx_relies(#b,#g,#c,#h)`: `#b`'s `#g` relies on `#c`'s `#h`: a reading that can decide a verdict",
+        block: "CX",
+    },
+    RenderedTerm {
+        name: "cx_co_used",
+        sort: RenderedSort::Predicate(&["cx_bundle", "cx_fn", "cx_bundle", "cx_fn"]),
+        meaning: "`#cx_co_used(#b,#g,#c,#h)`: one function row's verdict uses both declarations",
+        block: "CX",
+    },
+    RenderedTerm {
+        name: "cx_link_required",
+        sort: RenderedSort::Predicate(&["cx_bundle", "cx_fn", "cx_bundle", "cx_fn"]),
+        meaning: "`#cx_link_required(#b,#g,#c,#h)`: the rule requires `#b`'s `#g` to link `#c`'s `#h`",
+        block: "CX",
+    },
+    RenderedTerm {
+        name: "cx_check_passes",
+        sort: RenderedSort::Predicate(&["cx_bundle"]),
+        meaning: "`#cx_check_passes(#b)`: the linkage check (`providers/contracts.py check`) passes for bundle `#b`",
+        block: "CX",
+    },
+    RenderedTerm {
+        name: "cx_links",
+        sort: RenderedSort::Predicate(&["cx_bundle", "cx_fn", "cx_bundle", "cx_fn"]),
+        meaning: "`#cx_links(#b,#g,#c,#h)`: `#b`'s declaration of `#g` states a `linkage_contract_v1` link to `#c`'s `#h`",
+        block: "CX",
+    },
+    RenderedTerm {
+        name: "cx_inherits",
+        sort: RenderedSort::Predicate(&["cx_bundle", "cx_fn", "cx_bundle", "cx_fn"]),
+        meaning: "`#cx_inherits(#b,#g,#c,#h)`: `#b`'s declaration of `#g` is `contract inherit` of `#c`'s `#h`, itself the link (D2)",
+        block: "CX",
+    },
+    RenderedTerm {
+        name: "cx_marked",
+        sort: RenderedSort::Predicate(&["cx_bundle", "cx_fn"]),
+        meaning: "`#cx_marked(#b,#g)`: `#b`'s declaration of `#g` states `requires linkage_contract_v1;`",
+        block: "CX",
+    },
+    RenderedTerm {
+        name: "cx_load_refused",
+        sort: RenderedSort::Predicate(&["cx_bundle", "cx_fn"]),
+        meaning: "`#cx_load_refused(#b,#g)`: the loader refuses the module of `#b`'s `#g` (total-or-reject)",
         block: "CX",
     },
 ];

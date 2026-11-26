@@ -138,11 +138,30 @@ impl Fixture {
                 .collect();
             let mut dependencies: Vec<&str> = krate.dependencies.to_vec();
             dependencies.sort_unstable();
-            records.push(json!({
+            let mut record = json!({
                 "name": krate.name, "namespace": namespace(krate.name), "version": "0.3.0",
                 "contracts": contracts, "dependencies": dependencies, "modules": modules,
                 "published": published, "resource_view": view,
-            }));
+            });
+            // Card CONNECT-ADOPT-DECLARED-DEPENDENCIES: a cross-crate inherit
+            // directive is a dependency the manifest records (unreviewed here).
+            let owner = |ns: &str| {
+                crates
+                    .iter()
+                    .find(|other| namespace(other.name) == ns)
+                    .map(|other| (other.name.to_owned(), "0.3.0".to_owned()))
+            };
+            let entries = qcore_contract::contract_dependency::unreviewed_manifest_entries(
+                krate.name,
+                &namespace(krate.name),
+                &krate.modules,
+                &owner,
+            )
+            .unwrap();
+            if !entries.is_empty() {
+                record["contract_dependencies"] = json!(entries);
+            }
+            records.push(record);
         }
         fs::create_dir_all(&providers).unwrap();
         fs::write(

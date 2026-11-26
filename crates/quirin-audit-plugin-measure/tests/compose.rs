@@ -157,7 +157,7 @@ fn bundles_agree_disagree_and_a_duplicate_libc_declaration_is_refused() {
     let path = load_path(&root, crates);
     let (completed, record) = run(&root, &["--load-path".into(), path.display().to_string()]);
     assert!(completed, "{record:#}");
-    assert_eq!(record["schema"], "quirin-contract-composition/1");
+    assert_eq!(record["schema"], "quirin-contract-composition/2");
     let shared = &record["declarations"]["shared_or_refused"];
     // Agreeing: one in force, the other kept as superseded (idempotent).
     assert_eq!(shared["f"]["standing"], "Safe");

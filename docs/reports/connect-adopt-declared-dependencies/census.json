@@ -1,0 +1,893 @@
+{
+  "schema": "connect-adopt-census/1",
+  "base": "1ecaf97e9",
+  "load_paths": [
+    "providers/contract-load-path.json",
+    "providers/user-crates-load-path.json"
+  ],
+  "edges": [
+    {
+      "kind": "inherit",
+      "dependent_crate": "quirin-provider-fluent-bit",
+      "dependent_module": "fluent_bit/resource_memory.qv",
+      "dependent": "flb_malloc",
+      "target_crate": "quirin-provider-libc",
+      "target": "libc::malloc",
+      "reading": "C15 inheritance: the child elaborates to the parent's clauses (contract_inclusion.rs), so every discharge through the child reads the parent clause",
+      "site": "contract inherit libc::malloc",
+      "target_identity": [
+        {
+          "mode": "flexible",
+          "module": "libc/memory.qv",
+          "contract_sha256": "1f50a774faa60a1c1900b1dd236613e164fa798279324ded86b885dac5e9c9f7"
+        }
+      ],
+      "target_version": "0.1.0",
+      "dependent_lock": [
+        {
+          "mode": "pinned",
+          "module": "fluent_bit/resource_memory.qv",
+          "contract_sha256": "d95ce00637913918a595a5be535abab01a7dbc620e8790beffd313437dde4eb9"
+        }
+      ],
+      "cargo_dependency_present": true,
+      "target_has_library_target": true,
+      "satisfiable_under_c15_2": true
+    },
+    {
+      "kind": "inherit",
+      "dependent_crate": "quirin-provider-fluent-bit",
+      "dependent_module": "fluent_bit/resource_memory.qv",
+      "dependent": "flb_calloc",
+      "target_crate": "quirin-provider-libc",
+      "target": "libc::calloc",
+      "reading": "C15 inheritance: the child elaborates to the parent's clauses (contract_inclusion.rs), so every discharge through the child reads the parent clause",
+      "site": "contract inherit libc::calloc",
+      "target_identity": [
+        {
+          "mode": "flexible",
+          "module": "libc/memory.qv",
+          "contract_sha256": "beb03c3611449ac83f20c1ebeffcdcc66adadc385fe9e8cb28b37f9ab2c95fa1"
+        }
+      ],
+      "target_version": "0.1.0",
+      "dependent_lock": [
+        {
+          "mode": "pinned",
+          "module": "fluent_bit/resource_memory.qv",
+          "contract_sha256": "b5598ca7af3b38fd15290890bbd5041e7f92b9f20f6e4b7cf1492633fb6f90ac"
+        }
+      ],
+      "cargo_dependency_present": true,
+      "target_has_library_target": true,
+      "satisfiable_under_c15_2": true
+    },
+    {
+      "kind": "inherit",
+      "dependent_crate": "quirin-provider-fluent-bit",
+      "dependent_module": "fluent_bit/resource_memory.qv",
+      "dependent": "flb_free",
+      "target_crate": "quirin-provider-libc",
+      "target": "libc::free",
+      "reading": "C15 inheritance: the child elaborates to the parent's clauses (contract_inclusion.rs), so every discharge through the child reads the parent clause",
+      "site": "contract inherit libc::free",
+      "target_identity": [
+        {
+          "mode": "flexible",
+          "module": "libc/memory.qv",
+          "contract_sha256": "a1a483555e1fb7422588aa089e3dbf91a873905cbd573f823957dee3d15b6a22"
+        }
+      ],
+      "target_version": "0.1.0",
+      "dependent_lock": [
+        {
+          "mode": "pinned",
+          "module": "fluent_bit/resource_memory.qv",
+          "contract_sha256": "ac614ad38ebf5f029c19d67e97fee05892cc13bd03c26f1f61f512aeffc74172"
+        }
+      ],
+      "cargo_dependency_present": true,
+      "target_has_library_target": true,
+      "satisfiable_under_c15_2": true
+    },
+    {
+      "kind": "inherit",
+      "dependent_crate": "quirin-provider-fluent-bit",
+      "dependent_module": "fluent_bit/resource_string.qv",
+      "dependent": "flb_strdup",
+      "target_crate": "quirin-provider-libc",
+      "target": "libc::strdup",
+      "reading": "C15 inheritance: the child elaborates to the parent's clauses (contract_inclusion.rs), so every discharge through the child reads the parent clause",
+      "site": "contract inherit libc::strdup",
+      "target_identity": [
+        {
+          "mode": "flexible",
+          "module": "libc/string.qv",
+          "contract_sha256": "df0d0b224585ec41cb414c157ec316421a917515100b2e6cc3a9e1da8f46b86b"
+        }
+      ],
+      "target_version": "0.1.0",
+      "dependent_lock": [
+        {
+          "mode": "pinned",
+          "module": "fluent_bit/resource_string.qv",
+          "contract_sha256": "172ff1988e8a5c65692080ef54f640da5c2bfdaf786039cf14e6faff7f448b4a"
+        }
+      ],
+      "cargo_dependency_present": true,
+      "target_has_library_target": true,
+      "satisfiable_under_c15_2": true
+    },
+    {
+      "kind": "inherit",
+      "dependent_crate": "quirin-provider-fluent-bit",
+      "dependent_module": "fluent_bit/resource_string.qv",
+      "dependent": "flb_strndup",
+      "target_crate": "quirin-provider-libc",
+      "target": "libc::strndup",
+      "reading": "C15 inheritance: the child elaborates to the parent's clauses (contract_inclusion.rs), so every discharge through the child reads the parent clause",
+      "site": "contract inherit libc::strndup",
+      "target_identity": [
+        {
+          "mode": "flexible",
+          "module": "libc/string.qv",
+          "contract_sha256": "16a4b6a8218a66a03b819a146adbe51c670d687a7e769201b4aa92b07c33ee46"
+        }
+      ],
+      "target_version": "0.1.0",
+      "dependent_lock": [
+        {
+          "mode": "pinned",
+          "module": "fluent_bit/resource_string.qv",
+          "contract_sha256": "32b13404eecd505b8a2530e1250ff81bc989c09bae244460b0744e48545e8a81"
+        }
+      ],
+      "cargo_dependency_present": true,
+      "target_has_library_target": true,
+      "satisfiable_under_c15_2": true
+    },
+    {
+      "kind": "inherit",
+      "dependent_crate": "qcore-provider-librdkafka",
+      "dependent_module": "librdkafka/memory.qv",
+      "dependent": "rd_malloc",
+      "target_crate": "quirin-provider-libc",
+      "target": "libc::malloc",
+      "reading": "C15 inheritance: the child elaborates to the parent's clauses (contract_inclusion.rs), so every discharge through the child reads the parent clause",
+      "site": "contract inherit libc::malloc",
+      "target_identity": [
+        {
+          "mode": "flexible",
+          "module": "libc/memory.qv",
+          "contract_sha256": "1f50a774faa60a1c1900b1dd236613e164fa798279324ded86b885dac5e9c9f7"
+        }
+      ],
+      "target_version": "0.1.0",
+      "dependent_lock": [
+        {
+          "mode": "pinned",
+          "module": "librdkafka/memory.qv",
+          "contract_sha256": "9771b5de2fc9b345449b5ee225694f3aadb0adacca02a6cbed08a4ac0644e30d"
+        }
+      ],
+      "cargo_dependency_present": true,
+      "target_has_library_target": true,
+      "satisfiable_under_c15_2": true
+    },
+    {
+      "kind": "inherit",
+      "dependent_crate": "qcore-provider-librdkafka",
+      "dependent_module": "librdkafka/memory.qv",
+      "dependent": "rd_strndup",
+      "target_crate": "quirin-provider-libc",
+      "target": "libc::strndup",
+      "reading": "C15 inheritance: the child elaborates to the parent's clauses (contract_inclusion.rs), so every discharge through the child reads the parent clause",
+      "site": "contract inherit libc::strndup",
+      "target_identity": [
+        {
+          "mode": "flexible",
+          "module": "libc/string.qv",
+          "contract_sha256": "16a4b6a8218a66a03b819a146adbe51c670d687a7e769201b4aa92b07c33ee46"
+        }
+      ],
+      "target_version": "0.1.0",
+      "dependent_lock": [
+        {
+          "mode": "pinned",
+          "module": "librdkafka/memory.qv",
+          "contract_sha256": "61900673fcd346ca034ae7269ad55a4b5c64a87326c1f2ba60094a8e8022d670"
+        }
+      ],
+      "cargo_dependency_present": true,
+      "target_has_library_target": true,
+      "satisfiable_under_c15_2": true
+    },
+    {
+      "kind": "inherit",
+      "dependent_crate": "qcore-provider-librdkafka",
+      "dependent_module": "librdkafka/memory.qv",
+      "dependent": "rd_free",
+      "target_crate": "quirin-provider-libc",
+      "target": "libc::free",
+      "reading": "C15 inheritance: the child elaborates to the parent's clauses (contract_inclusion.rs), so every discharge through the child reads the parent clause",
+      "site": "contract inherit libc::free",
+      "target_identity": [
+        {
+          "mode": "flexible",
+          "module": "libc/memory.qv",
+          "contract_sha256": "a1a483555e1fb7422588aa089e3dbf91a873905cbd573f823957dee3d15b6a22"
+        }
+      ],
+      "target_version": "0.1.0",
+      "dependent_lock": [
+        {
+          "mode": "pinned",
+          "module": "librdkafka/memory.qv",
+          "contract_sha256": "11dabb4546a4dd124048cbe5bba773f852adb9494b6ac1cb69517f49dc216fa1"
+        }
+      ],
+      "cargo_dependency_present": true,
+      "target_has_library_target": true,
+      "satisfiable_under_c15_2": true
+    },
+    {
+      "kind": "inherit",
+      "dependent_crate": "qcore-provider-libevent",
+      "dependent_module": "monkey/memory.qv",
+      "dependent": "mk_mem_alloc",
+      "target_crate": "quirin-provider-libc",
+      "target": "libc::malloc",
+      "reading": "C15 inheritance: the child elaborates to the parent's clauses (contract_inclusion.rs), so every discharge through the child reads the parent clause",
+      "site": "contract inherit libc::malloc",
+      "target_identity": [
+        {
+          "mode": "flexible",
+          "module": "libc/memory.qv",
+          "contract_sha256": "1f50a774faa60a1c1900b1dd236613e164fa798279324ded86b885dac5e9c9f7"
+        }
+      ],
+      "target_version": "0.1.0",
+      "dependent_lock": [
+        {
+          "mode": "pinned",
+          "module": "monkey/memory.qv",
+          "contract_sha256": "30b051b31acb3878b8134da69e16c51e24b4eee30e44654a1b28bbef026f6902"
+        }
+      ],
+      "cargo_dependency_present": true,
+      "target_has_library_target": true,
+      "satisfiable_under_c15_2": true
+    },
+    {
+      "kind": "inherit",
+      "dependent_crate": "qcore-provider-libevent",
+      "dependent_module": "monkey/memory.qv",
+      "dependent": "mk_mem_alloc_z",
+      "target_crate": "quirin-provider-libc",
+      "target": "libc::malloc",
+      "reading": "C15 inheritance: the child elaborates to the parent's clauses (contract_inclusion.rs), so every discharge through the child reads the parent clause",
+      "site": "contract inherit libc::malloc",
+      "target_identity": [
+        {
+          "mode": "flexible",
+          "module": "libc/memory.qv",
+          "contract_sha256": "1f50a774faa60a1c1900b1dd236613e164fa798279324ded86b885dac5e9c9f7"
+        }
+      ],
+      "target_version": "0.1.0",
+      "dependent_lock": [
+        {
+          "mode": "pinned",
+          "module": "monkey/memory.qv",
+          "contract_sha256": "8364d7deffc38b4c9777e9a827b5bb20e22ffde71d2948f4f33990df55062d15"
+        }
+      ],
+      "cargo_dependency_present": true,
+      "target_has_library_target": true,
+      "satisfiable_under_c15_2": true
+    },
+    {
+      "kind": "inherit",
+      "dependent_crate": "qcore-provider-libevent",
+      "dependent_module": "monkey/memory.qv",
+      "dependent": "mk_mem_free",
+      "target_crate": "quirin-provider-libc",
+      "target": "libc::free",
+      "reading": "C15 inheritance: the child elaborates to the parent's clauses (contract_inclusion.rs), so every discharge through the child reads the parent clause",
+      "site": "contract inherit libc::free",
+      "target_identity": [
+        {
+          "mode": "flexible",
+          "module": "libc/memory.qv",
+          "contract_sha256": "a1a483555e1fb7422588aa089e3dbf91a873905cbd573f823957dee3d15b6a22"
+        }
+      ],
+      "target_version": "0.1.0",
+      "dependent_lock": [
+        {
+          "mode": "pinned",
+          "module": "monkey/memory.qv",
+          "contract_sha256": "2774440c44b71b2b2c8ba5daa323d1d7efcb962cc64c74219354cc66a10b91bf"
+        }
+      ],
+      "cargo_dependency_present": true,
+      "target_has_library_target": true,
+      "satisfiable_under_c15_2": true
+    },
+    {
+      "kind": "body-checked-specification",
+      "dependent_crate": "qcore-provider-librdkafka",
+      "dependent_module": "librdkafka/memory.qv",
+      "dependent": "rd_calloc",
+      "target_crate": "quirin-provider-libc",
+      "target": "libc::calloc",
+      "reading": "rule 37 checked specification: resource_return_owned(nonnull) is established against the wrapper body, whose allocation is read through the libc declaration (owned nullable) before the asserted failure arm",
+      "site": "rd.h:139-143 calloc(num, sz)",
+      "target_identity": [
+        {
+          "mode": "flexible",
+          "module": "libc/memory.qv",
+          "contract_sha256": "beb03c3611449ac83f20c1ebeffcdcc66adadc385fe9e8cb28b37f9ab2c95fa1"
+        }
+      ],
+      "target_version": "0.1.0",
+      "dependent_lock": [
+        {
+          "mode": "pinned",
+          "module": "librdkafka/memory.qv",
+          "contract_sha256": "f1014d1a7ed37a21f74bfca15ea81fbaf7f54b678fbf668bf0efea17da327521"
+        }
+      ],
+      "cargo_dependency_present": true,
+      "target_has_library_target": true,
+      "satisfiable_under_c15_2": true
+    },
+    {
+      "kind": "body-checked-specification",
+      "dependent_crate": "qcore-provider-librdkafka",
+      "dependent_module": "librdkafka/memory.qv",
+      "dependent": "rd_strdup",
+      "target_crate": "quirin-provider-libc",
+      "target": "libc::strdup",
+      "reading": "rule 37 checked specification: resource_return_owned(nonnull) is established against the wrapper body, whose allocation is read through the libc declaration (owned nullable) before the asserted failure arm",
+      "site": "rd.h:161-169 strdup(s) (_strdup on Windows: undeclared, Unknown)",
+      "target_identity": [
+        {
+          "mode": "flexible",
+          "module": "libc/string.qv",
+          "contract_sha256": "df0d0b224585ec41cb414c157ec316421a917515100b2e6cc3a9e1da8f46b86b"
+        }
+      ],
+      "target_version": "0.1.0",
+      "dependent_lock": [
+        {
+          "mode": "pinned",
+          "module": "librdkafka/memory.qv",
+          "contract_sha256": "55a73fc329656fb37ddcb0f2d7b5d97e337e7b6bb239b6f8a1734d06194284de"
+        }
+      ],
+      "cargo_dependency_present": true,
+      "target_has_library_target": true,
+      "satisfiable_under_c15_2": true
+    },
+    {
+      "kind": "body-checked-specification",
+      "dependent_crate": "quirin-provider-fluent-bit",
+      "dependent_module": "fluent_bit/storage_backlog.qv",
+      "dependent": "sb_allocate_backlogs",
+      "target_crate": "qcore-provider-libevent",
+      "target": "libevent::mk_list_add",
+      "reading": "resource_body_checked: the specification is withdrawn unless the gateway body reading of plugins/in_storage_backlog/sb.c discharges it, and that reading applies the callee declaration at this call",
+      "site": "sb.c sb_allocate_backlogs calls mk_list_add",
+      "target_identity": [
+        {
+          "mode": "pinned",
+          "module": "monkey/intrusive_list.qv",
+          "contract_sha256": "748bf3d90bd350fe94aeb48d10bcd5efab02f4cbbec9c2093d113352288bf493"
+        }
+      ],
+      "target_version": "0.1.0",
+      "dependent_lock": [
+        {
+          "mode": "pinned",
+          "module": "fluent_bit/storage_backlog.qv",
+          "contract_sha256": "53161949fef18d454fab6cf5bbfd0d5e494181efa43d89d775a34a8ab33a61b8"
+        }
+      ],
+      "cargo_dependency_present": false,
+      "target_has_library_target": false,
+      "satisfiable_under_c15_2": false
+    },
+    {
+      "kind": "body-checked-specification",
+      "dependent_crate": "quirin-provider-fluent-bit",
+      "dependent_module": "fluent_bit/storage_backlog.qv",
+      "dependent": "sb_destroy_backlogs",
+      "target_crate": "qcore-provider-libevent",
+      "target": "libevent::mk_list_del",
+      "reading": "resource_body_checked: the specification is withdrawn unless the gateway body reading of plugins/in_storage_backlog/sb.c discharges it, and that reading applies the callee declaration at this call",
+      "site": "sb.c sb_destroy_backlogs calls mk_list_del",
+      "target_identity": [
+        {
+          "mode": "pinned",
+          "module": "monkey/intrusive_list.qv",
+          "contract_sha256": "507931da3352aced60a7f9f6956c920fbde74253949416a2eb473f52304c48a1"
+        }
+      ],
+      "target_version": "0.1.0",
+      "dependent_lock": [
+        {
+          "mode": "pinned",
+          "module": "fluent_bit/storage_backlog.qv",
+          "contract_sha256": "4f8f50dc435d32486fe308c4a0ab01f70a08e726e10b6d068b77fdfaa3c2eaf4"
+        }
+      ],
+      "cargo_dependency_present": false,
+      "target_has_library_target": false,
+      "satisfiable_under_c15_2": false
+    },
+    {
+      "kind": "body-checked-specification",
+      "dependent_crate": "quirin-provider-fluent-bit",
+      "dependent_module": "fluent_bit/storage_backlog.qv",
+      "dependent": "sb_remove_chunk_from_segregated_backlog",
+      "target_crate": "qcore-provider-libevent",
+      "target": "libevent::mk_list_del",
+      "reading": "resource_body_checked: the specification is withdrawn unless the gateway body reading of plugins/in_storage_backlog/sb.c discharges it, and that reading applies the callee declaration at this call",
+      "site": "sb.c sb_remove_chunk_from_segregated_backlog calls mk_list_del",
+      "target_identity": [
+        {
+          "mode": "pinned",
+          "module": "monkey/intrusive_list.qv",
+          "contract_sha256": "507931da3352aced60a7f9f6956c920fbde74253949416a2eb473f52304c48a1"
+        }
+      ],
+      "target_version": "0.1.0",
+      "dependent_lock": [
+        {
+          "mode": "pinned",
+          "module": "fluent_bit/storage_backlog.qv",
+          "contract_sha256": "64eb3dfdd53ba4c2be3983e9585dfa3039ac0b16391eaf73c10bc277ec88282c"
+        }
+      ],
+      "cargo_dependency_present": false,
+      "target_has_library_target": false,
+      "satisfiable_under_c15_2": false
+    },
+    {
+      "kind": "body-checked-specification",
+      "dependent_crate": "quirin-provider-fluent-bit",
+      "dependent_module": "fluent_bit/storage_backlog.qv",
+      "dependent": "sb_append_chunk_to_segregated_backlog",
+      "target_crate": "qcore-provider-libevent",
+      "target": "libevent::mk_list_add",
+      "reading": "resource_body_checked: the specification is withdrawn unless the gateway body reading of plugins/in_storage_backlog/sb.c discharges it, and that reading applies the callee declaration at this call",
+      "site": "sb.c sb_append_chunk_to_segregated_backlog calls mk_list_add",
+      "target_identity": [
+        {
+          "mode": "pinned",
+          "module": "monkey/intrusive_list.qv",
+          "contract_sha256": "748bf3d90bd350fe94aeb48d10bcd5efab02f4cbbec9c2093d113352288bf493"
+        }
+      ],
+      "target_version": "0.1.0",
+      "dependent_lock": [
+        {
+          "mode": "pinned",
+          "module": "fluent_bit/storage_backlog.qv",
+          "contract_sha256": "7dd643ba5a72bc63af85a12b8d6ee8e408ee171383677838c0a6f9e9b42e8838"
+        }
+      ],
+      "cargo_dependency_present": false,
+      "target_has_library_target": false,
+      "satisfiable_under_c15_2": false
+    },
+    {
+      "kind": "body-checked-specification",
+      "dependent_crate": "quirin-provider-fluent-bit",
+      "dependent_module": "fluent_bit/storage_backlog.qv",
+      "dependent": "sb_append_chunk_to_segregated_backlogs",
+      "target_crate": "quirin-provider-libc",
+      "target": "libc::memset",
+      "reading": "resource_body_checked: the specification is withdrawn unless the gateway body reading of plugins/in_storage_backlog/sb.c discharges it, and that reading applies the callee declaration at this call",
+      "site": "sb.c sb_append_chunk_to_segregated_backlogs calls memset",
+      "target_identity": [
+        {
+          "mode": "flexible",
+          "module": "libc/string.qv",
+          "contract_sha256": "05ca1acccd0a9a43f068f546434b67bf47c4e984a041fb900518835cb13e2233"
+        }
+      ],
+      "target_version": "0.1.0",
+      "dependent_lock": [
+        {
+          "mode": "pinned",
+          "module": "fluent_bit/storage_backlog.qv",
+          "contract_sha256": "2d4aff08af834082498b4a3dab7d6dcbfa8d08e0f3491f3b3686d7669b5804b7"
+        }
+      ],
+      "cargo_dependency_present": true,
+      "target_has_library_target": true,
+      "satisfiable_under_c15_2": true
+    },
+    {
+      "kind": "body-checked-specification",
+      "dependent_crate": "quirin-provider-fluent-bit",
+      "dependent_module": "fluent_bit/storage_backlog.qv",
+      "dependent": "sb_segregate_chunks",
+      "target_crate": "qcore-provider-chunkio",
+      "target": "chunkio::cio_chunk_close",
+      "reading": "resource_body_checked: the specification is withdrawn unless the gateway body reading of plugins/in_storage_backlog/sb.c discharges it, and that reading applies the callee declaration at this call",
+      "site": "sb.c sb_segregate_chunks calls cio_chunk_close",
+      "target_identity": [
+        {
+          "mode": "pinned",
+          "module": "chunkio/resource_open_close.qv",
+          "contract_sha256": "4e05d5ca414bbb75d3dbbec8d81e23e030162acd061112f1ed0587cab39b59d8"
+        }
+      ],
+      "target_version": "0.5.0",
+      "dependent_lock": [
+        {
+          "mode": "pinned",
+          "module": "fluent_bit/storage_backlog.qv",
+          "contract_sha256": "b2115acb6fde1c2d8edd0526e02eb92ecf4ddfc1f220b72c8a921b4ec57f622b"
+        }
+      ],
+      "cargo_dependency_present": false,
+      "target_has_library_target": false,
+      "satisfiable_under_c15_2": false
+    },
+    {
+      "kind": "body-checked-specification",
+      "dependent_crate": "quirin-provider-fluent-bit",
+      "dependent_module": "fluent_bit/storage_backlog.qv",
+      "dependent": "sb_segregate_chunks",
+      "target_crate": "qcore-provider-chunkio",
+      "target": "chunkio::cio_chunk_down",
+      "reading": "resource_body_checked: the specification is withdrawn unless the gateway body reading of plugins/in_storage_backlog/sb.c discharges it, and that reading applies the callee declaration at this call",
+      "site": "sb.c sb_segregate_chunks calls cio_chunk_down",
+      "target_identity": [
+        {
+          "mode": "pinned",
+          "module": "chunkio/chunk_residency.qv",
+          "contract_sha256": "38dac558f5ddc758de78aaef0761d2c1f0ac7bcde051ee011424adda641935f9"
+        }
+      ],
+      "target_version": "0.5.0",
+      "dependent_lock": [
+        {
+          "mode": "pinned",
+          "module": "fluent_bit/storage_backlog.qv",
+          "contract_sha256": "b2115acb6fde1c2d8edd0526e02eb92ecf4ddfc1f220b72c8a921b4ec57f622b"
+        }
+      ],
+      "cargo_dependency_present": false,
+      "target_has_library_target": false,
+      "satisfiable_under_c15_2": false
+    },
+    {
+      "kind": "body-checked-specification",
+      "dependent_crate": "quirin-provider-fluent-bit",
+      "dependent_module": "fluent_bit/storage_backlog.qv",
+      "dependent": "sb_segregate_chunks",
+      "target_crate": "qcore-provider-chunkio",
+      "target": "chunkio::cio_chunk_get_content_size",
+      "reading": "resource_body_checked: the specification is withdrawn unless the gateway body reading of plugins/in_storage_backlog/sb.c discharges it, and that reading applies the callee declaration at this call",
+      "site": "sb.c sb_segregate_chunks calls cio_chunk_get_content_size",
+      "target_identity": [
+        {
+          "mode": "pinned",
+          "module": "chunkio/chunk_sizes.qv",
+          "contract_sha256": "72654b936718cfdc4da1bf83f5b6ef0e9be6b25da1f6d4817baa27d5e8d350d9"
+        }
+      ],
+      "target_version": "0.5.0",
+      "dependent_lock": [
+        {
+          "mode": "pinned",
+          "module": "fluent_bit/storage_backlog.qv",
+          "contract_sha256": "b2115acb6fde1c2d8edd0526e02eb92ecf4ddfc1f220b72c8a921b4ec57f622b"
+        }
+      ],
+      "cargo_dependency_present": false,
+      "target_has_library_target": false,
+      "satisfiable_under_c15_2": false
+    },
+    {
+      "kind": "body-checked-specification",
+      "dependent_crate": "quirin-provider-fluent-bit",
+      "dependent_module": "fluent_bit/storage_backlog.qv",
+      "dependent": "sb_segregate_chunks",
+      "target_crate": "qcore-provider-chunkio",
+      "target": "chunkio::cio_chunk_is_up",
+      "reading": "resource_body_checked: the specification is withdrawn unless the gateway body reading of plugins/in_storage_backlog/sb.c discharges it, and that reading applies the callee declaration at this call",
+      "site": "sb.c sb_segregate_chunks calls cio_chunk_is_up",
+      "target_identity": [
+        {
+          "mode": "pinned",
+          "module": "chunkio/chunk_residency.qv",
+          "contract_sha256": "cb3491ca510c7fff7f42e40c911e9e93ad583d96d96427e3c704f430840432c6"
+        }
+      ],
+      "target_version": "0.5.0",
+      "dependent_lock": [
+        {
+          "mode": "pinned",
+          "module": "fluent_bit/storage_backlog.qv",
+          "contract_sha256": "b2115acb6fde1c2d8edd0526e02eb92ecf4ddfc1f220b72c8a921b4ec57f622b"
+        }
+      ],
+      "cargo_dependency_present": false,
+      "target_has_library_target": false,
+      "satisfiable_under_c15_2": false
+    },
+    {
+      "kind": "body-checked-specification",
+      "dependent_crate": "quirin-provider-fluent-bit",
+      "dependent_module": "fluent_bit/storage_backlog.qv",
+      "dependent": "sb_segregate_chunks",
+      "target_crate": "qcore-provider-chunkio",
+      "target": "chunkio::cio_chunk_up_force",
+      "reading": "resource_body_checked: the specification is withdrawn unless the gateway body reading of plugins/in_storage_backlog/sb.c discharges it, and that reading applies the callee declaration at this call",
+      "site": "sb.c sb_segregate_chunks calls cio_chunk_up_force",
+      "target_identity": [
+        {
+          "mode": "pinned",
+          "module": "chunkio/chunk_residency.qv",
+          "contract_sha256": "3d32f5993f3f654412f751c2ddaa8333a7a5ee74a49727537274866ac81240b8"
+        }
+      ],
+      "target_version": "0.5.0",
+      "dependent_lock": [
+        {
+          "mode": "pinned",
+          "module": "fluent_bit/storage_backlog.qv",
+          "contract_sha256": "b2115acb6fde1c2d8edd0526e02eb92ecf4ddfc1f220b72c8a921b4ec57f622b"
+        }
+      ],
+      "cargo_dependency_present": false,
+      "target_has_library_target": false,
+      "satisfiable_under_c15_2": false
+    },
+    {
+      "kind": "body-checked-specification",
+      "dependent_crate": "quirin-provider-fluent-bit",
+      "dependent_module": "fluent_bit/storage_backlog.qv",
+      "dependent": "sb_release_output_queue_space",
+      "target_crate": "qcore-provider-chunkio",
+      "target": "chunkio::cio_chunk_close",
+      "reading": "resource_body_checked: the specification is withdrawn unless the gateway body reading of plugins/in_storage_backlog/sb.c discharges it, and that reading applies the callee declaration at this call",
+      "site": "sb.c sb_release_output_queue_space calls cio_chunk_close",
+      "target_identity": [
+        {
+          "mode": "pinned",
+          "module": "chunkio/resource_open_close.qv",
+          "contract_sha256": "4e05d5ca414bbb75d3dbbec8d81e23e030162acd061112f1ed0587cab39b59d8"
+        }
+      ],
+      "target_version": "0.5.0",
+      "dependent_lock": [
+        {
+          "mode": "pinned",
+          "module": "fluent_bit/storage_backlog.qv",
+          "contract_sha256": "53f4c9bb9d6040bcff9c34d3e3004f302e3752eb397f3241a43f9e2877340cdd"
+        }
+      ],
+      "cargo_dependency_present": false,
+      "target_has_library_target": false,
+      "satisfiable_under_c15_2": false
+    },
+    {
+      "kind": "body-checked-specification",
+      "dependent_crate": "quirin-provider-fluent-bit",
+      "dependent_module": "fluent_bit/storage_backlog.qv",
+      "dependent": "cb_queue_chunks",
+      "target_crate": "qcore-provider-chunkio",
+      "target": "chunkio::cio_chunk_close",
+      "reading": "resource_body_checked: the specification is withdrawn unless the gateway body reading of plugins/in_storage_backlog/sb.c discharges it, and that reading applies the callee declaration at this call",
+      "site": "sb.c cb_queue_chunks calls cio_chunk_close",
+      "target_identity": [
+        {
+          "mode": "pinned",
+          "module": "chunkio/resource_open_close.qv",
+          "contract_sha256": "4e05d5ca414bbb75d3dbbec8d81e23e030162acd061112f1ed0587cab39b59d8"
+        }
+      ],
+      "target_version": "0.5.0",
+      "dependent_lock": [
+        {
+          "mode": "pinned",
+          "module": "fluent_bit/storage_backlog.qv",
+          "contract_sha256": "595296735868b877d3f3abdb66541ff9244460d13e698061bddaf8efd7c436e2"
+        }
+      ],
+      "cargo_dependency_present": false,
+      "target_has_library_target": false,
+      "satisfiable_under_c15_2": false
+    },
+    {
+      "kind": "body-checked-specification",
+      "dependent_crate": "quirin-provider-fluent-bit",
+      "dependent_module": "fluent_bit/storage_backlog.qv",
+      "dependent": "cb_queue_chunks",
+      "target_crate": "qcore-provider-chunkio",
+      "target": "chunkio::cio_chunk_down",
+      "reading": "resource_body_checked: the specification is withdrawn unless the gateway body reading of plugins/in_storage_backlog/sb.c discharges it, and that reading applies the callee declaration at this call",
+      "site": "sb.c cb_queue_chunks calls cio_chunk_down",
+      "target_identity": [
+        {
+          "mode": "pinned",
+          "module": "chunkio/chunk_residency.qv",
+          "contract_sha256": "38dac558f5ddc758de78aaef0761d2c1f0ac7bcde051ee011424adda641935f9"
+        }
+      ],
+      "target_version": "0.5.0",
+      "dependent_lock": [
+        {
+          "mode": "pinned",
+          "module": "fluent_bit/storage_backlog.qv",
+          "contract_sha256": "595296735868b877d3f3abdb66541ff9244460d13e698061bddaf8efd7c436e2"
+        }
+      ],
+      "cargo_dependency_present": false,
+      "target_has_library_target": false,
+      "satisfiable_under_c15_2": false
+    },
+    {
+      "kind": "body-checked-specification",
+      "dependent_crate": "quirin-provider-fluent-bit",
+      "dependent_module": "fluent_bit/storage_backlog.qv",
+      "dependent": "cb_queue_chunks",
+      "target_crate": "qcore-provider-chunkio",
+      "target": "chunkio::cio_chunk_get_content_size",
+      "reading": "resource_body_checked: the specification is withdrawn unless the gateway body reading of plugins/in_storage_backlog/sb.c discharges it, and that reading applies the callee declaration at this call",
+      "site": "sb.c cb_queue_chunks calls cio_chunk_get_content_size",
+      "target_identity": [
+        {
+          "mode": "pinned",
+          "module": "chunkio/chunk_sizes.qv",
+          "contract_sha256": "72654b936718cfdc4da1bf83f5b6ef0e9be6b25da1f6d4817baa27d5e8d350d9"
+        }
+      ],
+      "target_version": "0.5.0",
+      "dependent_lock": [
+        {
+          "mode": "pinned",
+          "module": "fluent_bit/storage_backlog.qv",
+          "contract_sha256": "595296735868b877d3f3abdb66541ff9244460d13e698061bddaf8efd7c436e2"
+        }
+      ],
+      "cargo_dependency_present": false,
+      "target_has_library_target": false,
+      "satisfiable_under_c15_2": false
+    },
+    {
+      "kind": "body-checked-specification",
+      "dependent_crate": "quirin-provider-fluent-bit",
+      "dependent_module": "fluent_bit/storage_backlog.qv",
+      "dependent": "cb_queue_chunks",
+      "target_crate": "qcore-provider-chunkio",
+      "target": "chunkio::cio_chunk_is_up",
+      "reading": "resource_body_checked: the specification is withdrawn unless the gateway body reading of plugins/in_storage_backlog/sb.c discharges it, and that reading applies the callee declaration at this call",
+      "site": "sb.c cb_queue_chunks calls cio_chunk_is_up",
+      "target_identity": [
+        {
+          "mode": "pinned",
+          "module": "chunkio/chunk_residency.qv",
+          "contract_sha256": "cb3491ca510c7fff7f42e40c911e9e93ad583d96d96427e3c704f430840432c6"
+        }
+      ],
+      "target_version": "0.5.0",
+      "dependent_lock": [
+        {
+          "mode": "pinned",
+          "module": "fluent_bit/storage_backlog.qv",
+          "contract_sha256": "595296735868b877d3f3abdb66541ff9244460d13e698061bddaf8efd7c436e2"
+        }
+      ],
+      "cargo_dependency_present": false,
+      "target_has_library_target": false,
+      "satisfiable_under_c15_2": false
+    },
+    {
+      "kind": "body-checked-specification",
+      "dependent_crate": "quirin-provider-fluent-bit",
+      "dependent_module": "fluent_bit/storage_backlog.qv",
+      "dependent": "cb_queue_chunks",
+      "target_crate": "qcore-provider-chunkio",
+      "target": "chunkio::cio_chunk_up_force",
+      "reading": "resource_body_checked: the specification is withdrawn unless the gateway body reading of plugins/in_storage_backlog/sb.c discharges it, and that reading applies the callee declaration at this call",
+      "site": "sb.c cb_queue_chunks calls cio_chunk_up_force",
+      "target_identity": [
+        {
+          "mode": "pinned",
+          "module": "chunkio/chunk_residency.qv",
+          "contract_sha256": "3d32f5993f3f654412f751c2ddaa8333a7a5ee74a49727537274866ac81240b8"
+        }
+      ],
+      "target_version": "0.5.0",
+      "dependent_lock": [
+        {
+          "mode": "pinned",
+          "module": "fluent_bit/storage_backlog.qv",
+          "contract_sha256": "595296735868b877d3f3abdb66541ff9244460d13e698061bddaf8efd7c436e2"
+        }
+      ],
+      "cargo_dependency_present": false,
+      "target_has_library_target": false,
+      "satisfiable_under_c15_2": false
+    },
+    {
+      "kind": "call-frame-of-another-crates-function",
+      "dependent_crate": "quirin-provider-fluent-bit",
+      "dependent_module": "fluent_bit/teardown_destroy.qv",
+      "dependent": "flb_config_set_program_name",
+      "target_crate": "qcore-provider-libevent",
+      "target": "libevent::mk_list_del",
+      "reading": "quant cell FN: TYPE |-> #untouched (G05 frame_clause) is applied by legacy_cell_frames at every call of FN; a Safe across that call rests on the frame and on FN's own declaration together",
+      "site": "quant cell mk_list_del: flb_input_instance |-> #untouched; quant cell mk_list_del: flb_output_instance |-> #untouched",
+      "target_identity": [
+        {
+          "mode": "pinned",
+          "module": "monkey/intrusive_list.qv",
+          "contract_sha256": "507931da3352aced60a7f9f6956c920fbde74253949416a2eb473f52304c48a1"
+        }
+      ],
+      "target_version": "0.1.0",
+      "dependent_lock": [
+        {
+          "mode": "pinned",
+          "module": "fluent_bit/teardown_destroy.qv",
+          "contract_sha256": "c002910c8e0e6f505013c278317ca56616b826d7db0a98141189e01446b67a49"
+        }
+      ],
+      "cargo_dependency_present": false,
+      "target_has_library_target": false,
+      "satisfiable_under_c15_2": false
+    }
+  ],
+  "counts": {
+    "edges": 30,
+    "dependent_declarations_to_repin": 22,
+    "per_crate_pair": [
+      {
+        "dependent_crate": "qcore-provider-libevent",
+        "target_crate": "quirin-provider-libc",
+        "edges": 3,
+        "declarations": 3
+      },
+      {
+        "dependent_crate": "qcore-provider-librdkafka",
+        "target_crate": "quirin-provider-libc",
+        "edges": 5,
+        "declarations": 5
+      },
+      {
+        "dependent_crate": "quirin-provider-fluent-bit",
+        "target_crate": "qcore-provider-chunkio",
+        "edges": 11,
+        "declarations": 3
+      },
+      {
+        "dependent_crate": "quirin-provider-fluent-bit",
+        "target_crate": "qcore-provider-libevent",
+        "edges": 5,
+        "declarations": 5
+      },
+      {
+        "dependent_crate": "quirin-provider-fluent-bit",
+        "target_crate": "quirin-provider-libc",
+        "edges": 6,
+        "declarations": 6
+      }
+    ],
+    "per_kind": {
+      "body-checked-specification": 18,
+      "call-frame-of-another-crates-function": 1,
+      "inherit": 11
+    },
+    "unsatisfiable_edges": 16,
+    "inherit_edges_blocked_by_qi002": 11
+  }
+}

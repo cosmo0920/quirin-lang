@@ -94,9 +94,13 @@ pub fn views(load_path: &std::path::Path, write: bool) -> Result<bool, String> {
 }
 
 /// Card QUIRIN-AUDIT-CONNECT: compare (and with `write`, set) every user
-/// crate record's `contract_dependencies` with the clauses its modules
-/// declare (`qcore_contract::contract_dependency::scan_module`). Returns
-/// whether every record was current.
+/// crate record's `contract_dependencies` with the links and cross-crate
+/// inherit directives its modules state
+/// (`qcore_contract::contract_dependency::scan_module`). Card
+/// CONNECT-ADOPT-DECLARED-DEPENDENCIES: each entry carries the identity a
+/// link never writes, the target crate's version (`since`) and the target
+/// declaration's lock digest (`sha256`), read from the load path this one
+/// extends or from this one. Returns whether every record was current.
 fn user_contract_dependencies(load_path: &std::path::Path, write: bool) -> Result<bool, String> {
     let text = fs::read_to_string(load_path)
         .map_err(|error| format!("{}: {error}", load_path.display()))?;
@@ -108,9 +112,43 @@ fn user_contract_dependencies(load_path: &std::path::Path, write: bool) -> Resul
         .parent()
         .unwrap_or_else(|| std::path::Path::new("."))
         .to_path_buf();
+    // Namespace to (crate, crate root, version), over this load path and the
+    // one it extends.
+    let mut owners: std::collections::BTreeMap<String, (String, std::path::PathBuf, String)> =
+        std::collections::BTreeMap::new();
+    let mut collect = |manifest: &Value, base: &std::path::Path| {
+        for record in manifest["crates"].as_array().into_iter().flatten() {
+            let contracts = base.join(record["contracts"].as_str().unwrap_or_default());
+            owners
+                .entry(record["namespace"].as_str().unwrap_or_default().to_owned())
+                .or_insert((
+                    record["name"].as_str().unwrap_or_default().to_owned(),
+                    contracts
+                        .parent()
+                        .map(std::path::Path::to_path_buf)
+                        .unwrap_or_default(),
+                    record["version"].as_str().unwrap_or_default().to_owned(),
+                ));
+        }
+    };
+    collect(&file, &base);
+    if let Some(extends) = file["extends"].as_str() {
+        let shipped_path = base.join(extends);
+        let shipped: Value = serde_json::from_str(
+            &fs::read_to_string(&shipped_path)
+                .map_err(|error| format!("{}: {error}", shipped_path.display()))?,
+        )
+        .map_err(|error| error.to_string())?;
+        let shipped_base = shipped_path
+            .parent()
+            .unwrap_or_else(|| std::path::Path::new("."))
+            .to_path_buf();
+        collect(&shipped, &shipped_base);
+    }
     let mut current = true;
     for record in file["crates"].as_array_mut().into_iter().flatten() {
         let name = record["name"].as_str().unwrap_or_default().to_owned();
+        let own_namespace = record["namespace"].as_str().unwrap_or_default().to_owned();
         let contracts = base.join(record["contracts"].as_str().unwrap_or_default());
         let mut scanned = Vec::new();
         for module in record["modules"].as_array().into_iter().flatten() {
@@ -121,10 +159,45 @@ fn user_contract_dependencies(load_path: &std::path::Path, write: bool) -> Resul
             for (function, written) in qcore_contract::contract_dependency::scan_module(&text)
                 .map_err(|error| format!("{name}:{module}: {error}"))?
             {
-                scanned.push(
-                    serde_json::to_value(written.of(&name, &function, module))
-                        .map_err(|error| error.to_string())?,
+                if written.target_namespace == own_namespace
+                    && written.form == qcore_schemas::connect::DependencyForm::Inherit
+                {
+                    continue;
+                }
+                let refuse = |message: String| {
+                    format!(
+                        "{name}:{module}: {}",
+                        qcore_contract::contract_dependency::refusal(
+                            qcore_contract::contract_dependency::LinkageCode::Ql007,
+                            message
+                        )
+                    )
+                };
+                let Some((target, root, version)) = owners.get(&written.target_namespace) else {
+                    return Err(refuse(format!(
+                        "`{}::{}`: no load-path crate derives the namespace",
+                        written.target_namespace, written.target_function
+                    )));
+                };
+                let mut dependency = written.of_target(&name, &function, module, target);
+                dependency.since = Some(
+                    qcore_schemas::library_version::LibraryVersion::parse(version)
+                        .map_err(|error| refuse(format!("{target}: {error}")))?,
                 );
+                // A link names a reviewed declaration (QL007 otherwise); an
+                // inherit directive whose parent no lock records carries its
+                // version alone and resolves `Pending` (an unrecorded digest
+                // matches nothing).
+                dependency.sha256 = lock_digest(root, &written.target_function);
+                if dependency.sha256.is_none()
+                    && written.form == qcore_schemas::connect::DependencyForm::Link
+                {
+                    return Err(refuse(format!(
+                        "`{}::{}`: {target}'s lock records no such declaration",
+                        written.target_namespace, written.target_function
+                    )));
+                }
+                scanned.push(serde_json::to_value(dependency).map_err(|error| error.to_string())?);
             }
         }
         let declared = record.get("contract_dependencies").cloned();
@@ -150,6 +223,17 @@ fn user_contract_dependencies(load_path: &std::path::Path, write: bool) -> Resul
         fs::write(load_path, bytes).map_err(|error| format!("{}: {error}", load_path.display()))?;
     }
     Ok(current)
+}
+
+/// The reviewed digest a crate's `contracts.lock` records for `function`.
+fn lock_digest(root: &std::path::Path, function: &str) -> Option<String> {
+    let lock: Value =
+        serde_json::from_str(&fs::read_to_string(root.join("contracts.lock")).ok()?).ok()?;
+    ["pinned", "flexible", "tip"]
+        .iter()
+        .flat_map(|kind| lock[*kind].as_array().into_iter().flatten())
+        .find(|entry| entry["function"] == function)
+        .and_then(|entry| entry["contract_sha256"].as_str().map(str::to_owned))
 }
 
 /// Entry point of `quirin-audit plugin`.

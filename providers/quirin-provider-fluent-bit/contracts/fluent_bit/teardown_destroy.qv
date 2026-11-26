@@ -495,6 +495,8 @@ contract {
 extern fn flb_config_set_program_name(config: ptr<mut, u8>, name: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
+    requires linkage_contract_v1;
+    quant #link libevent::mk_list_del;
     ensures normal resource_borrowed(config);
     ensures normal resource_borrowed(name);
     ensures normal resource_return_none();

@@ -3955,7 +3955,7 @@
       "sha256": "151e1f1ed18c2d0a25c9caacd6ae1e626f2bde79d7d8b0d0281d72186374a085"
     },
     "librdkafka/memory.qv": {
-      "clause_count": 74,
+      "clause_count": 78,
       "declaration_count": 13,
       "declarations": [
         {
@@ -3974,7 +3974,7 @@
           "resource_table": "functions"
         },
         {
-          "clauses": 6,
+          "clauses": 8,
           "name": "rd_calloc",
           "resource_mode": {
             "parameters": [
@@ -3990,7 +3990,7 @@
           "resource_table": "functions"
         },
         {
-          "clauses": 5,
+          "clauses": 7,
           "name": "rd_strdup",
           "resource_mode": {
             "parameters": [
@@ -4190,7 +4190,7 @@
           }
         ]
       },
-      "sha256": "eee05fae518e09aaf90d9e5ecd827c32d8bdb0e6fab15008d4ed2570bc33565b"
+      "sha256": "2f33c9108312a5614c60044b0dfd32d9e14e67ef827eb3443d494367e59b7da2"
     },
     "librdkafka/null_deref.qv": {
       "clause_count": 1380,
