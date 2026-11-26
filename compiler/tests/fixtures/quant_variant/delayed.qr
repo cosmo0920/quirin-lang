@@ -1,0 +1,33 @@
+// SPDX-License-Identifier: Apache-2.0
+module library;
+#import std.extern;
+
+quant variant TakeResult(p) {
+    Taken carries none;
+    Retained(code: i32) carries custody(p);
+}
+
+extern fn take(p: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_on_return(eq, 0, resource_consumed(p, nonnull));
+    ensures normal resource_on_return(ne, 0, resource_owned(p, nonnull));
+    ensures normal resource_return_none();
+    quant variant on_return(eq, 0) TakeResult::Taken;
+    quant variant on_return(ne, 0) TakeResult::Retained;
+};
+
+fn run(p: own<Buffer>, other: own<Buffer>) -> i32 {
+    let alias = p;
+    let receipt = take(p);
+    let packed = move receipt;
+    drop other;
+    return finish(alias, move packed);
+}
+
+fn finish(p: ptr<mut, u8>, result: quant variant TakeResult(p)) -> i32 {
+    match result {
+        TakeResult::Taken => { return 0; }
+        TakeResult::Retained { code: rc } => { drop p; return rc; }
+    }
+}

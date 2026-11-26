@@ -211,7 +211,7 @@ struct CrateRecord {
     /// Card OUTER-CONTRACT.
     #[serde(default)]
     outer_view: Option<Vec<String>>,
-    /// Card QUIRIN-AUDIT-CONNECT (C15.1): every declared contract dependency
+    /// Card QUIRIN-AUDIT-CONNECT (C15.2): every declared contract dependency
     /// of the crate's modules, in module then text order. Absent when none.
     #[serde(default)]
     contract_dependencies: Option<Vec<qcore_schemas::connect::DeclaredDependency>>,
@@ -240,7 +240,7 @@ pub struct LoadPathManifest {
     /// Card W45-USER-CONTRACT-PLUGINS: present exactly for a manifest that
     /// extends a shipped one.
     pub extension: Option<LoadPathExtension>,
-    /// Card QUIRIN-AUDIT-CONNECT (C15.1): crate name to the contract
+    /// Card QUIRIN-AUDIT-CONNECT (C15.2): crate name to the contract
     /// dependencies its modules declare, each checked against the module
     /// texts. A crate that declares none is absent.
     pub contract_dependencies: BTreeMap<String, Vec<qcore_schemas::connect::DeclaredDependency>>,
@@ -573,7 +573,7 @@ fn read_manifest(
             return Err(refuse(
                 &name,
                 "`contract_dependencies` differs from the dependencies its modules declare \
-                 (C15.1); regenerate the load-path manifest (`python3 providers/contracts.py \
+                 (C15.2); regenerate the load-path manifest (`python3 providers/contracts.py \
                  sync`, or `quirin-audit plugin views --write` for a user load path)"
                     .into(),
             ));
@@ -710,7 +710,7 @@ fn read_manifest(
     })
 }
 
-/// Card QUIRIN-AUDIT-CONNECT (C15.1): a load path whose declared contract
+/// Card QUIRIN-AUDIT-CONNECT (C15.2): a load path whose declared contract
 /// dependencies form a cycle is refused (`cx_cycle_holds`), naming every
 /// declaration on one.
 fn refuse_dependency_cycles(

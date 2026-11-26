@@ -60,6 +60,7 @@ pub enum DeclarationKind {
     VerifierScope,
     Dimension,
     Axis,
+    QuantVariant,
     TypeAlias,
     /// `type NAME { FIELD: TYPE, … }` — a source-level record type (card
     /// `AGGREGATES-V1`, `source.record.v1`).
@@ -147,6 +148,7 @@ pub enum SourceContractClauseKind {
     /// skips it exactly as it does a `quant` clause. Before this card the
     /// spelling was a parse error (`checks` is no exit selector).
     QuantCheck,
+    QuantVariantMap,
     /// Typed, explicitly parameterized first-order hypothesis; no truth admission.
     QuantProposition,
     /// Explicit entry prerequisite or exit assertion; never implicit evidence.
@@ -1054,6 +1056,8 @@ impl<'a> SourceParser<'a> {
             (DeclarationKind::VerifierScope, Some(start + 2))
         } else if self.word(start, "dimension") {
             (DeclarationKind::Dimension, Some(start + 1))
+        } else if self.words(start, &["quant", "variant"]) {
+            (DeclarationKind::QuantVariant, Some(start + 2))
         } else if self.words(start, &["quant", "axis"]) {
             (DeclarationKind::Axis, Some(start + 2))
         } else if self.words(start, &["resource", "type"]) {
@@ -1112,6 +1116,7 @@ impl<'a> SourceParser<'a> {
             DeclarationKind::ResourceType
             | DeclarationKind::ErrorType
             | DeclarationKind::Record
+            | DeclarationKind::QuantVariant
             | DeclarationKind::ImportedStruct
             | DeclarationKind::VerifierScope => {
                 let open = self.find_symbol(start, Symbol::LeftBrace)?;
@@ -1366,6 +1371,8 @@ impl<'a> SourceParser<'a> {
             }
             let (kind, expression_start) = if self.word(cursor, "requires") {
                 (SourceContractClauseKind::Requires, cursor + 1)
+            } else if self.words(cursor, &["quant", "variant", "on_return"]) {
+                (SourceContractClauseKind::QuantVariantMap, cursor + 2)
             } else if self.word(cursor, "quant") && self.word(cursor + 1, "condition") {
                 use qcore_schemas::quant_condition::Selector as C;
                 let (selector, next) = if self.word(cursor + 2, "entry") {
@@ -2002,7 +2009,7 @@ impl<'a> SourceParser<'a> {
             // Card `W48-QR-C-STRUCT-IMPORT`: likewise, the head was validated
             // by the branch that selected it and the body is
             // `crate::source_ffi`'s.
-            DeclarationKind::ImportedStruct => {}
+            DeclarationKind::ImportedStruct | DeclarationKind::QuantVariant => {}
         }
         Ok(())
     }
@@ -3429,10 +3436,15 @@ fn elaborate_block(
                 result_match::resolve_scrutinee(&syntax, &task_expressions, scopes, globals);
             let mut arms = Vec::new();
             for arm in &syntax.arms {
-                let arm_binding = arm.pattern.as_ref().map(|pattern| {
+                let binder = arm
+                    .pattern
+                    .as_ref()
+                    .map(|pattern| pattern.binding.value.as_str())
+                    .or_else(|| arm.variant_binding(context.program));
+                let arm_binding = binder.map(|name| {
                     let symbol = SymbolId(*next_symbol);
                     *next_symbol += 1;
-                    (pattern.binding.value.as_str(), false, symbol)
+                    (name, false, symbol)
                 });
                 let statements = elaborate_block(
                     &arm.body,

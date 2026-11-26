@@ -1176,7 +1176,7 @@ pub fn apply_pins_probing(
             databases,
         )?;
     }
-    // Card QUIRIN-AUDIT-CONNECT (C15.1): every declared contract dependency,
+    // Card QUIRIN-AUDIT-CONNECT (C15.2): every declared contract dependency,
     // resolved after the pins and ranges so a withheld target holds its
     // dependents.
     if !contracts.contract_dependencies().is_empty() {

@@ -256,7 +256,7 @@ def load_path_manifest(root=ROOT, metadata=None):
     return {"schema_version": 1, "crates": crates}
 
 
-# Card QUIRIN-AUDIT-CONNECT (contract spec C15.1): a declaration's declared
+# Card QUIRIN-AUDIT-CONNECT (contract spec C15.2): a declaration's declared
 # contract dependencies, `requires resource_contract_dependency("CRATE",
 # NS::NAME[, since "V"[, removed "W"]][, sha256 "HEX"]);`. This lexical
 # reading writes the load path's `contract_dependencies` entry; the Rust

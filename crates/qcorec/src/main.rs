@@ -29,7 +29,7 @@ use qcore_compiler::{
 use qcore_contract::contract_loader::{PublishedModuleRef, load_published_resource_contracts};
 use qcore_contract::load_path_manifest::{LoadPathManifest, load_contract_load_path_manifest};
 
-const USAGE: &str = "quirin 0.1.0 — the Quirin language driver\n\nUsage:\n  quirin check [--entry NAME] [--plugins CONFIG] [--native-library MANIFEST]... [--recorded-target FILE] FILE...\n  quirin check --contract-load-path MANIFEST FILE.qv\n  quirin emit [--entry NAME] [--plugins CONFIG] [--native-library MANIFEST]... [--recorded-target FILE] [-o FILE] FILE...\n  quirin qrlib generate --library NAME --version V --linkage static|dynamic --artifact REF [--header REF]\n      --contracts FILE.qv... --recorded-target FILE --unwinding abort --allocator-custody closed\n      --thread-posture single_caller [--os-build BUILD] [--runtime-dir DIR] -o OUT.qrlib\n  quirin qrlib check STORED.qrlib (the generate flags, without -o)\n  quirin build --recorded-target FILE --contracts FILE.qv... --native-library M.qrlib... [--entry NAME]\n      [--runtime-dir DIR] -o EXE FILE...\n  A .qrlib is generated from the artifact on every build; REF resolves against the manifest's\n  directory; check and build refuse a stored manifest the regenerated one differs from.\n  Source modes: module contract; | module library; | module executable;\n  Extensions: .qv contracts; .qr runtime/library; .qrlib native ABI manifests.\n  Legacy .qcore/.qcorelib inputs remain supported with outdated-name warnings.\n  Contract load-path check validates trusted resource-v1 assumptions and published\n  includes; it does not check C bodies or establish a safety verdict.\n  quirin plugins list [--config CONFIG]\n  quirin plugins profile [--config CONFIG]\n  quirin plugins inspect PLUGIN_ID [--config CONFIG]\n  quirin plugins verify PACKAGE_DIR\n  quirin plugins enable PACKAGE_DIR --config CONFIG\n  quirin plugins disable PLUGIN_ID --config CONFIG\n\n  verify/enable read the package without executing it: manifest syntax, path\n  containment, the declared executable digest, and every other declaration\n  against the template embedded in the executable's bytes. That is a snapshot\n  binding, not a signature or an immutable-execution guarantee.\n";
+const USAGE: &str = "quirin 0.1.0 — the Quirin language driver\n\nUsage:\n  quirin check [--contracts FILE.qv]... [--entry NAME] [--plugins CONFIG] [--native-library MANIFEST]... [--recorded-target FILE] FILE...\n  quirin check --contract-load-path MANIFEST FILE.qv\n  quirin emit [--contracts FILE.qv]... [--entry NAME] [--plugins CONFIG] [--native-library MANIFEST]... [--recorded-target FILE] [-o FILE] FILE...\n  quirin qrlib generate --library NAME --version V --linkage static|dynamic --artifact REF [--header REF]\n      --contracts FILE.qv... --recorded-target FILE --unwinding abort --allocator-custody closed\n      --thread-posture single_caller [--os-build BUILD] [--runtime-dir DIR] -o OUT.qrlib\n  quirin qrlib check STORED.qrlib (the generate flags, without -o)\n  quirin build --recorded-target FILE --contracts FILE.qv... --native-library M.qrlib... [--entry NAME]\n      [--runtime-dir DIR] -o EXE FILE...\n  A .qrlib is generated from the artifact on every build; REF resolves against the manifest's\n  directory; check and build refuse a stored manifest the regenerated one differs from.\n  Source modes: module contract; | module library; | module executable;\n  Extensions: .qv contracts; .qr runtime/library; .qrlib native ABI manifests.\n  Legacy .qcore/.qcorelib inputs remain supported with outdated-name warnings.\n  Contract load-path check validates trusted resource-v1 assumptions and published\n  includes; it does not check C bodies or establish a safety verdict.\n  quirin plugins list [--config CONFIG]\n  quirin plugins profile [--config CONFIG]\n  quirin plugins inspect PLUGIN_ID [--config CONFIG]\n  quirin plugins verify PACKAGE_DIR\n  quirin plugins enable PACKAGE_DIR --config CONFIG\n  quirin plugins disable PLUGIN_ID --config CONFIG\n\n  verify/enable read the package without executing it: manifest syntax, path\n  containment, the declared executable digest, and every other declaration\n  against the template embedded in the executable's bytes. That is a snapshot\n  binding, not a signature or an immutable-execution guarantee.\n";
 
 fn main() -> ExitCode {
     // Card RULE-SWITCH-ENTRY-POINTS: `quirin` records no gateway rule set.
@@ -75,12 +75,22 @@ fn run(arguments: Vec<String>) -> Result<(), String> {
     let mut plugins = None::<PathBuf>;
     let mut contract_load_path = None::<PathBuf>;
     let mut output = None::<PathBuf>;
+    let mut contract_paths = Vec::new();
     let mut manifests = Vec::<PathBuf>::new();
     let mut recorded_target = None::<PathBuf>;
     let mut inputs = Vec::new();
     let mut index = 1;
     while index < arguments.len() {
         match arguments[index].as_str() {
+            "--contracts" => {
+                index += 1;
+                contract_paths.push(
+                    arguments
+                        .get(index)
+                        .ok_or("--contracts requires a path")?
+                        .clone(),
+                );
+            }
             "--plugins" => {
                 index += 1;
                 if plugins.is_some() {
@@ -153,12 +163,13 @@ fn run(arguments: Vec<String>) -> Result<(), String> {
     if let Some(path) = contract_load_path {
         if inputs.len() != 1
             || entry.is_some()
+            || !contract_paths.is_empty()
             || plugins.is_some()
             || !manifests.is_empty()
             || recorded_target.is_some()
         {
             return Err(
-                "--contract-load-path requires exactly one contract input and cannot be combined with --entry, --plugins, --native-library or --recorded-target"
+                "--contract-load-path requires exactly one contract input and cannot be combined with --entry, --plugins, --native-library, --contracts or --recorded-target"
                     .into(),
             );
         }
@@ -253,7 +264,11 @@ fn run(arguments: Vec<String>) -> Result<(), String> {
     };
     let options = CompileOptions {
         entry,
-        extern_contracts: None,
+        extern_contracts: if contract_paths.is_empty() {
+            None
+        } else {
+            Some(qrlib::contracts(&contract_paths)?)
+        },
         native_libraries,
         native_library_headers,
     };
@@ -302,6 +317,9 @@ fn run(arguments: Vec<String>) -> Result<(), String> {
                         "; source.scalar-calls.v1: i32/unit calls; checked arithmetic; explicit std.io; closed entry observation"
                     }
                 },
+                qcore_compiler::SourceExecutionProfile::QuantVariantV1 => {
+                    "; source.quant-variant.v1"
+                }
                 qcore_compiler::SourceExecutionProfile::ResourceCallsV1 => {
                     "; source.resource-calls.v1: acyclic owned bytes moves and whole-buffer read/write loans"
                 }
@@ -368,7 +386,12 @@ fn run(arguments: Vec<String>) -> Result<(), String> {
                     module.checked.function_count()
                 );
             }
-            print_declared_assumptions(&module);
+        } else if module.execution_profile == qcore_compiler::SourceExecutionProfile::QuantVariantV1
+        {
+            println!(
+                "checked {} library function(s) under source.quant-variant.v1; C callers supply distinct live free-compatible owners",
+                module.checked.function_count()
+            );
         } else {
             println!(
                 "checked {:?} module: {} declaration(s), {} function body/bodies; no entry point",
@@ -377,6 +400,7 @@ fn run(arguments: Vec<String>) -> Result<(), String> {
                 module.checked.function_count()
             );
         }
+        print_declared_assumptions(&module);
     } else {
         let source = module.c_source.as_ref().ok_or(
             "library/contract mode supports checking declarations and bodies; standalone C emission requires an executable module"

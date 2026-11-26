@@ -798,7 +798,7 @@ pub struct ResourceContracts {
     /// serializes byte for byte as it did before the card.
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
     library_version: BTreeMap<String, crate::library_version::LibraryVersionBound>,
-    /// Card QUIRIN-AUDIT-CONNECT (contract spec C15.1): the declared
+    /// Card QUIRIN-AUDIT-CONNECT (contract spec C15.2): the declared
     /// cross-crate contract dependencies of every declaration that states one
     /// (`resource_contract_dependency`), keyed by function name, each with
     /// an empty dependent crate (the module's owner is known only on a load

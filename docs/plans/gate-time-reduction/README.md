@@ -1,192 +1,49 @@
-# Gate time reduction: requirements
+# Gate and measurement time reduction: requirements and status
 
-Status: requirements recorded 2026-11-05 by the integrator (record
-GATE-TIME-REQUIREMENTS); no card has started. User request (verbatim,
-2026-11-05): "We need to record the requirements of saving gating time tasks."
-The source was a migration plan the user brought from another session; this
-page keeps its requirements after checking each against `integrate/r3`
-(`96a3efd3b`), and corrects the claims the tree no longer supports (§4).
+> [!NOTE]
+> **Current status (9 of 13 requirements discharged; 4 open / partially open).** Originally recorded on 2026-11-05 (`GATE-TIME-REQUIREMENTS` against `96a3efd3b`) and extended with `R11`–`R13` on 2026-11-06/08. Current authoritative gate rules live in [`docs/agents/validation.md`](../../agents/validation.md). Open items remain tracked in `acceptance_matrix.json#named_followups`.
 
-Open work is tracked as the acceptance matrix's `named_followups`; each
-requirement below names the entry that tracks it.
+## 1. Execution status matrix (`R1`–`R13`)
 
-## 1. Measured cost (2026-11-05)
+| Req | Summary | Tracker ID(s) | Current standing |
+|---|---|---|---|
+| **R1** | Exact run-time reader & directory-walker attribution (`gate_scope_walkers.json` + `strace` census) | `GATE-SCOPE-RUNTIME-READS-HEURISTIC` | **Discharged** — [gate-scope-precise-selection](../../reports/gate-scope-precise-selection/README.md) |
+| **R2** | Test-only edits (`tests/*.rs` and `#[cfg(test)]` lib modules) stay scoped even in `FULL_CRATES` | `GATE-SCOPE-FULL-CRATES-TEST-ONLY`, `GATE-SCOPE-LIB-UNIT-TEST-MODULES` | **Discharged** — [precise selection](../../reports/gate-scope-precise-selection/README.md), [lib unit modules](../../reports/gate-scope-lib-unit-test-modules/README.md) |
+| **R3** | Derive aggregate contract counts from provider `contract-inventory.lock` files instead of global Rust literals | `CONTRACT-COUNT-PINS-OUTSIDE-LOCKS` | **Discharged** — [contract-count-pins-from-locks](../../reports/contract-count-pins-from-locks/README.md) |
+| **R4** | Move `qcore-c-gateway/tests/*.rs` cross-tree `include_str!` checks on `proof/` and `providers/` to a leaf test target | `GATEWAY-TESTS-CROSS-TREE-INCLUDES` | **Open** |
+| **R5** | Select heavy corpus route-parity and composition-mutation binaries only when their seam changes | `W44-TEST-CRITICAL-PATH-ROUTE-PARITY` | **Open** |
+| **R6** | Card-gate tolerance for card-added Lean audits (`QUIRIN_CARD_GATE_BASE`) + provider lock metadata check | `CARD-GATE-NEW-AUDIT-MATRIX-COUNT`, `GATE-SCOPE-PROVIDER-LOCK` | **Discharged** — [gate-scope-precise-selection](../../reports/gate-scope-precise-selection/README.md) |
+| **R7** | `quirin-audit measure` excludes slot-wait time from `--timeout-ms` analysis quota | `MEASURE-SLOT-WAIT-OUTSIDE-QUOTA` | **Discharged** — [measure-quota-and-incremental](../../reports/measure-quota-and-incremental/README.md) |
+| **R8** | Incremental declared measurement over changed TU/contract/`.qo` digests composed via `⊕` | `MEASURE-INCREMENTAL-BASELINE-COMPOSITION` | **Partially implemented / Open** — initial mechanism in [measure-quota-and-incremental](../../reports/measure-quota-and-incremental/README.md); full default replacement parity remains open |
+| **R9** | Historical red-commit scoper replay + completed scoped landing proof | `GATE-SCOPED-RUN-UNEXERCISED` | **Partially complete / Open** — red-commit replays archived in R1/R2 reports; tracker remains open in matrix |
+| **R10** | Extract corpus routes (`pinned_route.rs`, `current_route.rs`) into an out-of-process subcommand plugin | `CORPUS-ROUTES-OUT-OF-HOST` | **Open** (gated on `W45-SUBCOMMAND-CERTIFICATE-ROUTE` and `W45-SUBCOMMAND-HOST-REPORT-TRUST`) |
+| **R11** | Prevent single-audit starvation: 2 h I/O stall deadlines, bounded `rust-suite` drains, live `gate_slot.py status` | `GATE-SLOT-ADMISSION-STARVATION` | **Discharged** — [gate-slot-admission-starvation](../../reports/gate-slot-admission-starvation/README.md) |
+| **R12** | FIFO ticket-ordered slot admission and uncapped slot-wait exclusion under separate `--wall-limit-ms` | `GATE-SLOT-FIFO-ORDER`, `MEASURE-SLOT-WAIT-EXCLUSION-CAP` | **Discharged** — [gate-slot-fifo-order](../../reports/gate-slot-fifo-order/README.md) |
+| **R13** | Dedicated `short` fast lane (≤30–60 min, ≤1–2 GiB) and unslotted `build` class outside `EXCLUSIVE` | `GATE-SLOT-SHORT-BUILD-WAIT`, `GATE-SLOT-SHORT-JOB-LANE` | **Discharged** — [short-job lane](../../reports/gate-slot-short-job-lane/README.md), [builds unslotted](../../reports/gate-slot-builds-unslotted/README.md) |
 
-| What | Wall time | Source |
-|---|---:|---|
-| Full gate on `96a3efd3b` (landing) | 49 min: Rust suite 43 min 21 s (including the `rust-suite` slot wait), fmt 6 s, Clippy 53 s, probes 1 s, Lean 23 s, Python 67 s, providers 3 min 18 s | landing-r3 `private/gate-full-96a3efd3b/summary.txt` |
-| Declared measurement, CFL-MPACK r2 (3 profiles, tip side) | 3 h 58 min | `private/measure/cfl-mpack-r2-20261105T023115Z`, `run.wall_time_ms` 14,284,164 |
-| Declared measurement, LIBC-GAP (3 profiles, tip side) | 6 h 23 min | `private/measure/libc-gap-20261105T034105Z`, `run.wall_time_ms` 22,981,153 |
+---
 
-The two measurements ran concurrently with each other and with gates, so their
-wall times include slot waits; the `--timeout-ms 36000000` quota counts those
-waits too (R7).
+## 2. Invariants every gate/measurement optimization preserves
 
-Scoper probes (`python3 scripts/gate_scope.py --paths <p> --plan` at
-`96a3efd3b`):
+1. **Fail-closed & verdict contract** (`AGENTS.md` invariants 1 & 2): no gate or measurement shortcut may publish a verdict that a full run would not.
+2. **Replay before narrowing**: any narrower test selection must replay historical red-commit diffs and prove zero missed failing units before becoming the default.
+3. **Parity before deletion** (invariant 3): moving corpus routes out of the host (`R10`) requires archived byte-for-byte verdict parity.
+4. **Intentional pins** (invariant 5): per-file `contract-inventory.lock` pins and submodule commits remain enforced; `R3` moved only *how* aggregate counts are derived, not whether contract changes require reviewed lock updates.
+5. **Full landing arbiter**: the integrator's per-landing gate remains the full suite whenever analyzer, gateway, or contract semantics change.
 
-| Single changed path | Mode | Reason printed |
-|---|---|---|
-| `crates/qcore-c-gateway/tests/libc_gap_declarations.rs` (a new test file) | full | the diff reaches qcore-c-gateway |
-| `providers/quirin-provider-libc/contracts/libc/stdlib.qv` (one contract) | full | the diff reaches qcore-c-gateway, qcore-contract (string-literal readers of `providers/`) |
-| `proof/QCore/WrittenSetDerivation.lean` (one Lean module) | full | the diff reaches qcore-core |
-| `compiler/tests/contract_loader.rs` | scoped | qcore-compiler, qcorec |
+---
 
-So a contract-only card or a Lean-only card runs the same 22-package Rust
-suite as an analyzer change, and every landing waits hours for measurement.
+## 3. Detailed specification of remaining open requirements (`R4`, `R5`, `R8`–`R10`)
 
-## 2. Invariants every requirement keeps
+- **R4 (`GATEWAY-TESTS-CROSS-TREE-INCLUDES`)**: Relocate Lean-correspondence and provider-text `include_str!` tests out of `crates/qcore-c-gateway/tests/*.rs` into a leaf test package so editing a `proof/QCore/*.lean` or `providers/**/*.qv` file selects only Lean / provider checks + the leaf target rather than triggering full `qcore-c-gateway` test builds.
+- **R5 (`W44-TEST-CRITICAL-PATH-ROUTE-PARITY`)**: Gate the heavy route-parity binaries (`unsupported_close_route_parity`, `file_close_route_parity`, `filesystem_chunk_close_route_parity`) and `qcore-verification` composition-mutation binaries on changes to their route/composition seams rather than every edit in their crate.
+- **R8 (`MEASURE-INCREMENTAL-BASELINE-COMPOSITION`)**: Re-audit only translation units whose source, contract, or `.qo` input digests differ from the published baseline, composing unchanged baseline components via `⊕` (`qcore-schemas::composition`), and verify exact report equality against full runs across multiple landings before making incremental mode the default.
+- **R9 (`GATE-SCOPED-RUN-UNEXERCISED`)**: Complete end-to-end validation of scoped card runs alongside full historical red-commit replay coverage for `R4`/`R5`.
+- **R10 (`CORPUS-ROUTES-OUT-OF-HOST`, longer term)**: Move `pinned_route.rs`, `current_route.rs`, and corpus source-analysis adapters behind an out-of-process `quirin-audit` subcommand plugin once `W45-SUBCOMMAND-CERTIFICATE-ROUTE` (trusted-core witness/certificate replay for plugin claims) and `W45-SUBCOMMAND-HOST-REPORT-TRUST` (authenticated host report bindings) land with audited Lean parity.
 
-- Fail-closed and the verdict contract (AGENTS.md hard invariants 1 and 2):
-  no gate or measurement shortcut may publish a verdict a full run would not.
-- A narrowed selection must be shown to miss no failing test: replay historical
-  diffs and compare against the full selection before the narrowing is the
-  default.
-- Parity before deletion (invariant 3): a route moved out of the host keeps
-  its pinned verdicts, with the diff archived under `docs/reports/`.
-- Pinned expectations stay intentional (invariant 5): per-file
-  `contract-inventory.lock` pins and the libevent submodule pin are unchanged
-  in force; only where aggregate counts are read from changes.
-- The landing (integrator) gate stays the full arbiter on the merged commit
-  whenever analyzer, gateway or contract semantics change.
+---
 
-## 3. Requirements
+## 4. Historical baseline measurements (2026-11-05/08 incidents)
 
-**R1. Exact run-time readers.** The scoper attributes a run-time read to the
-files the reader actually reads, not to every file under a named directory.
-Directory walkers are declared, each with a test that the declaration matches
-what the binary walks. Tracked by GATE-SCOPE-RUNTIME-READS-HEURISTIC.
-Acceptance: the `.qv` probe in §1 no longer selects qcore-c-gateway or
-qcore-contract on a string literal; the replay of R9 shows no missed failure.
-
-**R2. Test-only edits stay scoped.** A diff confined to
-`crates/<crate>/tests/<binary>.rs` (and its fixtures) selects that crate's
-binary and its readers, not full mode, even for a crate in `FULL_CRATES`.
-Tracked by GATE-SCOPE-FULL-CRATES-TEST-ONLY. Acceptance: the first probe in §1
-is scoped.
-
-**R3. Aggregate contract counts read from the locks.** Global counts that
-every contract card edits (`compiler/tests/contract_loader.rs`:
-`(66, 577, 370)`, retaining 113, pending review 11, relational 10, corpus
-modules 147; `source_assumptions().len() == 66` in contract_loader.rs,
-provider_selection.rs, neighbours.rs and prod_contracts.rs) are derived from
-the providers' `contract-inventory.lock` files and the load-path manifest, so a
-contract card touches only its provider crate and lock. The per-file lock
-check in `qcore_contract_corpus.rs` stays. Tracked by
-CONTRACT-COUNT-PINS-OUTSIDE-LOCKS. Acceptance: a declaration added to one
-provider changes no file outside `providers/`; merging two contract cards no
-longer conflicts on these literals (37 commits touched contract_loader.rs
-since 2026-10-20).
-
-**R4. Cross-tree includes leave the gateway's tests.** Lean-correspondence
-and provider-text checks that `crates/qcore-c-gateway/tests/*.rs` read with
-`include_str!` from `proof/` and `providers/` move to a leaf test target, so a
-Lean or `.qv` edit does not select the gateway. Tracked by
-GATEWAY-TESTS-CROSS-TREE-INCLUDES. Acceptance: the Lean probe in §1 selects
-the Lean step and the leaf target, not full mode, unless a Rust reader of that
-module is found.
-
-**R5. Heavy corpus parity and mutation suites run only on their seam.** The
-route-parity binaries (`unsupported_close_route_parity`,
-`file_close_route_parity`, `filesystem_chunk_close_route_parity`) and the
-composition-mutation binaries in qcore-verification are selected when a route
-or composition seam changes, not for every change to their crate. Tracked by
-W44-TEST-CRITICAL-PATH-ROUTE-PARITY (amended).
-
-**R6. Card-gate stale records and provider lock.** A card adding a Lean audit
-can pass its own gate (CARD-GATE-NEW-AUDIT-MATRIX-COUNT); a root crate change
-that the provider workspace builds selects the provider lock check
-(GATE-SCOPE-PROVIDER-LOCK). Both already tracked.
-
-**R7. Measurement quota excludes slot waits.** `quirin-audit measure`'s
-wall-time quota counts analysis time, not time spent waiting for a gate slot,
-so a measurement queued behind a gate is not killed for waiting. Tracked by
-MEASURE-SLOT-WAIT-OUTSIDE-QUOTA.
-
-**R8. Incremental declared measurement.** A measurement re-audits only the
-translation units whose source, contract or `.qo` input digests changed
-against the published baseline, and joins the baseline's unchanged components
-(`⊕`), with a check that the composed report equals a full run on a sample of
-landings before it replaces the full run. Tracked by
-MEASURE-INCREMENTAL-BASELINE-COMPOSITION; related W45-CHECKPOINT-PINNED-REPLAY-ROUTE,
-W45-CHECKPOINT-GROUPS-IN-FLIGHT, CORPUS-DISPATCH-BY-SOURCE-SIZE.
-Acceptance: a contract-only card's measurement finishes in a fraction of the
-§1 times, with identical comparison output.
-
-**R9. Selection replay evidence.** Before any of R1-R5 becomes the default, the
-narrowed scoper is replayed over the diffs of recent landed cards (at least
-LIBC-GAP-DECLARATIONS, CELL-PROTOCOL-RELEASE-WINDOW-FRAMES,
-CFL-MPACK-EXTERNAL-DECLARATIONS, W45-AUDIT-SUBCOMMAND-PLUGINS) and the
-selected test units are compared with the full selection's failing set at each
-card's red commits. Discharges GATE-SCOPED-RUN-UNEXERCISED together with a
-completed scoped landing.
-
-**R10. Corpus routes behind the subcommand plugin boundary (longer term).**
-The corpus-specific routes (`pinned_route.rs`, `current_route.rs`) and
-source-analysis adapters move out of the `qcore-audit` host into an
-out-of-process `quirin-audit` subcommand plugin, so host and gateway changes
-stop rebuilding corpus code and corpus changes stop selecting the host.
-Prerequisites: a plugin `Safe`/`Unsafe` claim is admitted only through
-trusted-core certificate or witness replay (W45-SUBCOMMAND-CERTIFICATE-ROUTE),
-host verdicts are read only from a report bound to a verified audit identity
-(W45-SUBCOMMAND-HOST-REPORT-TRUST), with Lean parity for the admission rule;
-then parity before deletion. Tracked by CORPUS-ROUTES-OUT-OF-HOST.
-
-**R11. One audit cannot starve the host.** Added 2026-11-06 (user, verbatim,
-on the integrator's question whether to register the gap: "Register it
-(rec.)"). Observed on 2026-11-06: a `quirin-audit current` experiment
-(CURRENT-RUN-WORKER-SPIN) spun 10 h 18 min in `audit/3` with zero I/O; a
-card's `rust-suite` job had closed `audit/admission` to drain the audit slots
-and waited 10.1 h for that one slot, so every queued audit (a declared
-measurement, two checkpoint runs, a census probe) waited behind it. Holders
-were found only by matching `/tmp/quirin-gate/*` inodes against
-`/proc/locks`. Requirements: an audit slot job carries a stated wall-clock or
-progress deadline and is reported (never silently killed) when it stops
-making progress; a `rust-suite` drain has a bounded wait after which it
-reopens admission and reports the blocking holder; `gate_slot.py` can list
-live holders, waiters, their wait time and their CPU/I/O progress; peak RSS
-above the admission budget is reported while running, not only at exit.
-Tracked by GATE-SLOT-ADMISSION-STARVATION.
-
-**R12. Slots are served in arrival order; a queue does not kill a measurement.**
-Added 2026-11-08 (integrator's record of the 2026-11-07/08 incident). The audit
-slots were not first come, first served: a measurement's audit
-(SCALAR-STATEMENT-FORMS, `private/measure/scalar-forms-20261107T072754Z`)
-waited 7.5 h, then 15.5 h, while audits and `rust-suite` drains that asked
-hours later were admitted first; the measurement then died with
-`plugin-timeout: exceeded the wall-time quota of 36000000 ms (36000000 ms of
-declared slot waits excluded, limit 36000000 ms)`, because R7's exclusion was
-capped at the quota. Requirements: a waiter that arrived earlier is admitted
-before a later one of the same class, a `rust-suite` drain respecting the
-audits queued ahead of it, with crashed waiters, restarts and mixed memory
-budgets handled and no daemon; a measurement's slot wait is excluded from its
-analysis quota without being capped at it, under a separate stated overall wall
-bound with a much larger default and an override, both recorded; `status` shows
-each waiter's queue position. Tracked by GATE-SLOT-FIFO-ORDER and
-MEASURE-SLOT-WAIT-EXCLUSION-CAP (both discharged by card GATE-SLOT-FIFO-ORDER,
-[report](../../reports/gate-slot-fifo-order/README.md)).
-
-**R13. A short, memory-light job does not wait for audits.** Added 2026-11-08
-(user decision, "Yes, add a fast lane"; the incident: `prepare clang-build
---link`, 3 min 17 s and 832 MB, waited 5 h 8 min for an audit slot). A class of
-its own with a fixed small number of slots, admitted ahead of queued audits and
-not closed by a `rust-suite` drain; a declared wall bound that is enforced and
-a memory budget the job declares; a drain waits for lane jobs only as long as
-their wall bound; older clients stay safe. Tracked by GATE-SLOT-SHORT-BUILD-WAIT
-and GATE-SLOT-SHORT-JOB-LANE (both discharged by card GATE-SLOT-SHORT-JOB-LANE,
-[report](../../reports/gate-slot-short-job-lane/README.md)).
-
-Suggested order: R1, R2, R3 and R7 first (scoper and test changes, no
-semantics); R9 alongside; R4 and R5 next; R8 after them; R10 last.
-
-## 4. Corrections to the source plan
-
-- `--reader-granularity file` is already the default (`scripts/gate_scope.py`,
-  `default="file"`); the remaining defect is the string-literal attribution of
-  directories (R1).
-- The full gate measured 49 min at this landing, not 3-6 hours; the hours are
-  in declared measurement (§1), which is why R7 and R8 are requirements.
-- The aggregate pins are `(66, 577, 370)` and the other literals listed in R3,
-  not "69 modules".
-- Target wall times ("1-4 minutes", "5-15 minutes") are not requirements:
-  each card states its predicted saving and the integrator measures it.
+- **Baseline `96a3efd3b` (2026-11-05)**: Full landing gate 49 min (Rust suite 43 min 21 s including slot wait, providers 3 min 18 s, Python 67 s, Clippy 53 s, Lean 23 s, fmt 6 s, probes 1 s); concurrent 3-profile `quirin-audit measure` runs took 3 h 58 min (`CFL-MPACK r2`) and 6 h 23 min (`LIBC-GAP`) including slot waits.
+- **Starvation & ordering incidents (2026-11-06/08)**: A stalled `current` experiment spun 10.3 h without I/O (`R11`), non-FIFO `flock` wakeup delayed a queued measurement 23 h until the capped wait exclusion killed it (`R12`), and a 3 min `prepare clang-build --link` waited 5 h behind audits (`R13`)—all resolved by the `gate_slot.py` deadlines, FIFO ticket queue, `short` lane, and `build` class documented in [`docs/agents/validation.md#gate-slots`](../../agents/validation.md#gate-slots).

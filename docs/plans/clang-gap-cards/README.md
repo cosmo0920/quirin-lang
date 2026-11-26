@@ -1,887 +1,154 @@
-# Clang gap analysis: open card queue
+# Clang gap analysis: card queue and post-card residuals (`CG00`–`CG30`, `SUP01`–`SUP08`)
 
-Review date: 2026-09-29. Status: a candidate card queue, not dispatched work and
-not a coverage claim. Every card is registered in the acceptance matrix's
-`named_followups` as a candidate implementation card under its full ID
-(`CG00-CLANG-GAP-BASELINE` … `CG30-DIALECTS-FLAGS-TYPES`, recorded by
-`CLANG-GAP-CARD-QUEUE`); the IDs below are those IDs. Priority is relative within this queue. It does not
-override soundness repairs, G1/G4 ordering, the running `.qr` language cards or
-the integrator's wave selection.
+> [!NOTE]
+> **Current status (all 31 initial cards `CG00`–`CG30` plus `SUP03` and `SUP07` have landed bounded implementations; post-card residuals remain open).** Across wave 48 (rounds 1–21+ and subsequent `CG10`/`CG22`/`CG25` follow-ons), every card in Phases 0–4 shipped its bounded gateway/core/contract slice under `docs/reports/cg*/`. Remaining open work consists of the ~95 post-card `CG*` residual entries and open supplemental items (`SUP01`, `SUP02`, `SUP04`–`SUP06`, `MONKEY-DOCUMENTROOT-OVERWRITE-CANDIDATE`) registered in [`acceptance_matrix.json#named_followups`](../../reviews/r0_3/acceptance_matrix.json). See [`docs/STATUS.md`](../../STATUS.md) for current live-profile baselines.
 
 ## 1. Inputs and their standing
 
-The supplied inputs are archived byte-identically ([record](../../reviews/clang-gap-2026-09-29/README.md)) under
-[`reviews/clang-gap-2026-09-29/supplied/`](../../reviews/clang-gap-2026-09-29/supplied/):
+The supplied static gap-analysis inputs (2026-09-29) are archived byte-identically ([record](../../reviews/clang-gap-2026-09-29/README.md)) under [`reviews/clang-gap-2026-09-29/supplied/`](../../reviews/clang-gap-2026-09-29/supplied/):
 
 | File | SHA-256 |
 |---|---|
-| `Quirin_Clang_Gap_Analysis_EN.md` (the 112-entry inventory, §5; the implementation order, §7) | `92a1177d…a7e2e3` |
-| `Quirin_Clang_Response_EN.md` (conversational summary of the same analysis) | `1d22b316…e8710` |
+| `Quirin_Clang_Gap_Analysis_EN.md` (112-entry inventory §5; implementation order §7) | `92a1177d…a7e2e3` |
+| `Quirin_Clang_Response_EN.md` (conversational summary) | `1d22b316…e8710` |
 | `Quirin_Source_Evidence_EN.md` (excerpts Q01–Q47) | `80616b1b…a711a440` |
 
-`gap_inventory_EN.json`, `metadata.json`, `raw_boundary_mentions.json`, the
-probes and `translation_manifest.json` are named by the analysis but were not
-supplied.
+`gap_inventory_EN.json`, `metadata.json`, `raw_boundary_mentions.json`, the probes, and `translation_manifest.json` were named by the supplied text but not provided.
 
-**Declared input, not implementation authority.** The analysis is static: it
-ran no Rust test (its §0). Every card below therefore opens by reproducing the
-cited refusal as an executed BEFORE test. A claim that does not reproduce is a
-correction to the input, recorded in the card's report, not work to do.
+- **Declared input, not implementation authority**: Because the static review ran no Rust tests, every `CG` card opened by reproducing its cited refusal in an executed BEFORE test (`crates/qcore-c-gateway/tests/support/clang_gap.rs`, `clang_gap_phase1.rs`); claims that did not reproduce were recorded as input corrections in the card's report.
+- **Architectural direction**: Rather than inventing new contract semantics, Phases 1–4 generalized *where* existing contracts and core checkers apply across C's expression positions (`Phase 1`), typed places and stores (`Phase 2`), core footprint/extent/atomic checkers (`Phase 3`), and guarantee-gated numeric/callback/variadic/weak-memory extensions (`Phase 4`). Route `G` denotes the custody gateway and Route `T` denotes `typed_source.rs`.
 
-**Freshness, checked on base `535c327f`.** 44 of the 47 evidence excerpts are
-byte-identical to the current files, by the per-file SHA-256 the evidence
-records. The three that differ do not change a gap entry:
+---
 
-- Q31 `contract_loader.rs` gained lifecycle clauses (W47-FLB-LIB-LIFECYCLE,
-  W47-FLB-LIB-STRICT-PAIRING). The change is additive.
-- Q32 `scalar_calls.rs` gained the fixed-width table (W48-QR-SCALAR-TYPES). Its
-  header still says it has no wraparound or C undefined-behaviour
-  interpretation, so N04 stands for C.
-- Q41 `loop_owner_property_keys.rs` gained the service-key reading. It is still
-  a specialised `va_arg` shape, so K09 stands.
-
-**Direction.** This queue follows the analysis's §7 order. The central gap is
-applying and composing *existing* contracts across C's expression positions,
-places and control forms. Missing contract semantics are not the central gap.
-
-1. Common expression elaboration and one contract-application point.
-2. Common typed places and tracked stores.
-3. Connecting source facts to the existing core checkers (footprint, extent,
-   weak memory).
-4. Numeric, vocabulary and weak-memory extensions, chosen by the guarantee
-   actually wanted.
-
-Class codes (F/R/V/P/O) are the analysis's §4 codes. G is the custody gateway
-route and T is `typed_source.rs`. They accept different subsets, so a card
-names which route it changes.
-
-## 2. Priority queue
-
-"Absorbs" lists registered `named_followups` whose refusal the card is
-expected to lift or decide. The card closes or re-registers each one, with
-sizes re-measured. Effort follows the tiers in the
-[unsupported coverage queue](../unsupported-coverage/README.md#3-priority-queue):
-High for anything that could publish a wrong Safe, Medium for measurement.
+## 2. Phase tables and card records (`CG00`–`CG30`)
 
 ### Phase 0: baseline
 
-| Card | Entries | Effort | Prerequisite |
+| Card | Entries | Effort | Standing & report |
 |---|---|---|---|
-| CG00-CLANG-GAP-BASELINE | all 98 carded entries | Medium | none (landed, wave 48 round 1) |
+| `CG00-CLANG-GAP-BASELINE` | all 98 carded entries | Medium | **Landed** — [cg00-clang-gap-baseline](../../reports/cg00-clang-gap-baseline/README.md); residual `CG00-G-CORRECTION-RESIDUALS` |
 
-- **BEFORE tests.** Turn each cited refusal into an executed BEFORE test at
-  the gateway-helper level. The §8 axes (position, effect, evaluation order,
-  place, type, boundary, evidence, verdict) name the variants. Each test
-  records the entry ID.
-- **Attribution.** Attribute the corpus arbiter's Unknown functions to entry
-  IDs through their blocking diagnostic families, reusing the census routes
-  (`indirect-census`, W46-ACCESS-PATH-CENSUS). Rank the phase 1–2 cards by
-  functions freed, not leaves removed.
-- **Freeze.** Freeze a per-card PREDICTION.md.
-- **Records only.** The card changes no analyzer, and the corpus stays
-  byte-identical.
+- **CG00**: Converted all 98 carded entries into executed BEFORE tests across the §8 axes, attributed Unknown corpus functions to blocking diagnostic families, and froze `predictions/` rankings for Phases 1–3.
 
-### Phase 1: expression elaboration and contract application (F)
+---
 
-| Card | Entries | Route | Effort | Prerequisite |
+### Phase 1: expression elaboration and contract application (`F`)
+
+| Card | Entries | Route | Standing & primary report(s) | Open residuals in `named_followups` |
 |---|---|---|---|---|
-| CG01-T-OPERATOR-CLOSURE | E01 E02 E03(T) E14 | T | High | none |
-| CG02-ELABORATION-CORE | E03(values) E04 E05 E08 E12(order model) | G, T | High | CG00 |
-| CG03-CALL-SUMMARY-INSTANTIATION | K12 K03 | G, T | High | CG02 |
-| CG04-CONDITION-ACQUISITION | E09 E13 | G | High | CG02, CG03 (landed, wave 48 round 4) |
-| CG05-NESTED-CALL-EFFECTS | E10 E11 E12 | G | High | CG02, CG03 |
-| CG06-VALUE-CONNECTIVES-AND-CONDITIONAL | E06 E07 | G, T | High | CG02 |
-| CG07-GENERIC-AND-STATEMENT-EXPRESSIONS | E17 E19 | G, T | High | CG02 |
-| CG08-CASTS-AND-TYPE-QUERIES | E15 E16 N11 M18 N08(representation) | G, T | High | CG01 |
-| CG09-TYPED-SOURCE-CONTROL | C01 C02 C03 | T | High | CG01 |
+| `CG01-T-OPERATOR-CLOSURE` | E01 E02 E03(T) E14 | T | **Landed** — [cg01](../../reports/cg01-t-operator-closure/README.md) | `CG01-T-CONSUMER-ADMISSIONS` |
+| `CG02-ELABORATION-CORE` | E03(val) E04 E05 E08 E12(order) | G, T | **Landed (rule 10s)** — [cg02](../../reports/cg02-elaboration-core/README.md) | `CG02-COMMA-OPERAND-RESIDUALS`, `CG02-FOR-CLAUSE-SEQUENCES` |
+| `CG03-CALL-SUMMARY-INSTANTIATION` | K12 K03 | G, T | **Landed (rule 10u)** — [cg03](../../reports/cg03-call-summary-instantiation/README.md) | `CG03-RECURSIVE-COMPONENT-ADMISSIONS`, `CG03-RETURN-OPERAND-RESIDUALS`, `CG03-TYPED-SUBSTITUTION-RESIDUALS` |
+| `CG04-CONDITION-ACQUISITION` | E09 E13 | G | **Landed (rule 10x)** — [cg04](../../reports/cg04-condition-acquisition/README.md), [loop sites](../../reports/cg04-loop-site-generations/README.md) | `CG04-UNCONSULTED-CONDITION-LEAVES` |
+| `CG05-NESTED-CALL-EFFECTS` | E10 E11 E12 | G | **Landed (rules 10y, 11n)** — [cg05](../../reports/cg05-nested-call-effects/README.md), [footprints](../../reports/cg05-elaborator-call-footprints/README.md) | `CG05-UNCONTRACTED-INNER-CALLEES`, `CG05-CALL-ROOTED-PLACES`, `CG05-ELABORATOR-FOOTPRINTLESS-CALLS` |
+| `CG06-VALUE-CONNECTIVES-AND-CONDITIONAL` | E06 E07 | G, T | **Landed (rules 10z, 11m)** — [cg06](../../reports/cg06-value-connectives-and-conditional/README.md), [footprints](../../reports/cg06-connective-footprints/README.md) | `CG06-VALUE-CONNECTIVE-RESIDUALS` |
+| `CG07-GENERIC-AND-STATEMENT-EXPRESSIONS` | E17 E19 | G, T | **Landed (rule 11g)** — [cg07](../../reports/cg07-generic-and-statement-expressions/README.md) | `CG07-STATEMENT-EXPRESSION-POSITIONS`, `CG07-GENERIC-TOKEN-AST-MATCH` |
+| `CG08-CASTS-AND-TYPE-QUERIES` | E15 E16 N11 M18 N08(repr) | G, T | **Landed (rule 11b)** — [cg08](../../reports/cg08-casts-and-type-queries/README.md) | `CG08-CAST-AND-QUERY-RESIDUALS` |
+| `CG09-TYPED-SOURCE-CONTROL` | C01 C02 C03 | T | **Landed (rule 11l)** — [cg09](../../reports/cg09-typed-source-control/README.md) | `CG09-CONTROL-SHAPE-RESIDUALS` |
 
-- **CG01: T operator closure.**
-  - *Change.* Add binary `-` `<=` `>=` `^` `<<` `>>`, unary `+` `~`, the nine
-    compound assignments T lacks and float/char literals to
-    `Importer::expression` (Q11, Q12, Q16).
-  - *Consumers.* Every consumer must classify each new node as custody-neutral,
-    numerically evaluated or obligation-bearing. A new node no consumer
-    classifies stays refused.
-  - *Scope.* No numeric guarantee comes with it (N04–N06 are CG20).
-  - *Status (wave 48, round 1).* Landed: the importer reads the closure, and only
-    the Monkey wrapper projection admits it; the other consumers refuse by name
-    (`CG01-T-CONSUMER-ADMISSIONS`). [Report](../../reports/cg01-t-operator-closure/README.md).
-- **CG02: elaboration core.**
-  - *The layer.* `elaborate(expr, ctx)` yields a value or place, an evaluation
-    graph, effect and custody events, and obligations/assumptions (analysis §7).
-  - *Value forms.* Assignment as a value, pre/post `++`/`--` with the old and
-    new values kept apart, comma sequencing, and the compound-assignment
-    read-modify-write with a single left-hand evaluation.
-  - *Evaluation order.* Sequenced-before is explicit. An unspecified order is
-    never serialised left to right. The layer runs beside the shape routes,
-    and parity is required before any shape route retires (hard invariant 3).
-  - *Absorbs:* W43-RETURN-COMMA-MACRO.
-  - *Status (wave 48, round 2).* Landed on route G as a fallback in statements,
-    returns and call-free conditions (gateway rule 10s): 16 Unknown → Safe in the
-    corpus arbiter, no correction; route T names the value forms. Residuals
-    `CG02-COMMA-OPERAND-RESIDUALS` and `CG02-FOR-CLAUSE-SEQUENCES`.
-    [Report](../../reports/cg02-elaboration-core/README.md).
-- **CG03: call-summary instantiation.**
-  - *One application point.* A contract applies exactly once, where the
-    callee, types and actual identities are established. The same contract
-    then has the same acceptance range in statement, condition, nested,
-    field and profile consumers.
-  - *Substitution.* Formal substitution runs value → identity → formal, and
-    address-of-slot → Out destination, over CG10 places.
-  - *Total-or-reject.* Declared supported clauses keep total-or-reject.
-  - *Absorbs:* W46-ACCESS-PATH-PARITY (the plan-vocabulary part). The
-    W44-CALL-ARGUMENT-CUSTODY-POSITION refusals stay by design.
-  - *Status (wave 48, round 3).* Landed on route G (gateway rule 10u):
-    `Parser::instantiate_call` is the one application point (CG04 and CG05
-    call it), acceptance is by the value's use, and a scalar `return`
-    operand, effectful scalar actuals and a typed substitution are new
-    fallbacks. [Report](../../reports/cg03-call-summary-instantiation/README.md).
-- **CG04: condition acquisition.**
-  - *Example A* of the analysis: `if ((p = malloc(n)) != NULL) free(p);`.
-  - *Lowering.* Acquisition identity, binding, NULL/sentinel split,
-    success/failure states and merge are lowered together.
-  - *No hoisting.* The call is never hoisted (Q47 stays green as a regression).
-  - *Composition.* Nested connectives, type operators and increments inside
-    condition leaves compose through CG02.
-  - *Absorbs:* W44-CONDITION-CALL-ASSIGNMENT, -FREE-OPERAND, -TYPE-OPERATOR,
-    -REFUSED-SHAPES, W44-CONDITION-DISCARDED-DERIVED-RESULT,
-    W43-INDEX-TRAVERSAL-CONDITION-WRITE and CONDITION-DESUGAR-REFUSAL-ARMS-UNPINNED.
-  - *Status (wave 48, round 4).* Landed on route G (gateway rule 10x): the
-    NULL/sentinel split through `ResultUse::TestedSplit`, refused on any node
-    a CFG cycle may pass through (`CG04-LOOP-SITE-GENERATIONS`, a soundness
-    defect of the statement form, registered); type operators and increments
-    decided per leaf. +1 Unknown → Safe in the corpus arbiter, no correction.
-    [Report](../../reports/cg04-condition-acquisition/README.md).
-- **CG05: nested-call effects.**
-  - *Example B:* `sink(release_and_status(p))`. Inner non-identity effects
-    (Owned, Released, Consumed, Out) apply inside-out before the outer call.
-    Depth goes beyond one, and calls inside a larger argument
-    (`f(g(p) + 1)`) are in scope.
-  - *Sibling calls.* `sink2(f(p), g(q))` needs both orders checked, or
-    commutativity proved from contract footprints.
-  - *Absorbs:* NESTED-CALL-IN-ARGUMENT-POSITION, W44-PRINTF-NESTED-INNER-CALLEES,
-    W43-RETURN-COMPOUND-CALL and CJSON-DELETE-NESTED-DETACH.
-  - *Status (wave 48, round 4).* Landed on route G (gateway rule 10y): nested
-    calls applied inside-out through `instantiate_call` at any depth, data
-    actuals, and a footprint order check for unordered calls; +2 corpus Safe,
-    no correction. Residuals `CG05-UNCONTRACTED-INNER-CALLEES`,
-    `CG05-FOOTPRINT-ADDRESS-CONSERVATISM`, `CG05-CALL-ROOTED-PLACES` and
-    `CG05-ELABORATOR-CALL-FOOTPRINTS`.
-    [Report](../../reports/cg05-nested-call-effects/README.md).
-  - *Status (wave 48, round 8).* `CG05-ELABORATOR-CALL-FOOTPRINTS` landed
-    (gateway rule 11n): the elaborator's call events carry their contract
-    footprint and are applied through `instantiate_call`; +1 corpus Safe, no
-    correction. `CG05-FOOTPRINT-ADDRESS-CONSERVATISM` accepted as a measured
-    boundary (25 / 14), no premise. Both retired; residual
-    `CG05-ELABORATOR-FOOTPRINTLESS-CALLS`.
-    [Report](../../reports/cg05-elaborator-call-footprints/README.md).
-- **CG06: value-producing connectives and `?:`.**
-  - *Positions.* `&&`, `||` and `?:` in assignments, actuals, returns and
-    operands. The unevaluated side produces no effects.
-  - *Merges.* `?:` merges the selected branch's alias and custody state. The
-    GNU omitted middle operand is handled separately.
-  - *Absorbs:* RETURN-POSITION-CONDITIONAL, W43-RETURN-CONDITIONAL-OPERANDS,
-    and the `?:`-actual and pointer-`?:`-return rows of
-    W47-ACCESS-PATH-POSITION-RESIDUALS.
-  - *Status (wave 48, round 4).* Landed on route G (gateway rule 10z): branch
-    regions in the elaborator, and a refused statement, declaration or
-    `return` lowered by branching on each region's deciding operand, only
-    the evaluated arm on each edge; **+18** corpus Safe at its base, **+19**
-    on main `41719835` (with CG05), no correction.
-    Route T unchanged. Residuals by owner in
-    `CG06-VALUE-CONNECTIVE-RESIDUALS`.
-    [Report](../../reports/cg06-value-connectives-and-conditional/README.md).
-  - *Status (wave 48, round 8, the sibling-effect residual).* Gateway rule
-    11m composes a region beside call-bearing siblings with CG05's
-    footprints, one graph per arm: 987 of the 1,137 order refusals compose,
-    2 statements are lowered, the rest refuse on their own edges; no
-    function moves. `CG06-VALUE-CONNECTIVE-RESIDUALS` amended.
-    [Report](../../reports/cg06-connective-footprints/README.md).
-- **CG07: `_Generic` and statement expressions.**
-  - *`_Generic`.* Use Clang's selected `GenericSelectionExpr` association where
-    the associations differ, never evaluating the controlling or unselected
-    operands. G uses invariance today (Q21).
-  - *Statement expressions.* GNU statement expressions get their inner scope,
-    final value, internal calls and escape composed into the outer scope.
-  - *Status (wave 48, round 7).* Landed on route G (gateway rule 11g):
-    Clang's selected association after route 1 (no corpus selection needs
-    it: every one is glibc's invariant shape), and statement expressions
-    lowered from the stream when discarded, a whole initializer, assigned to
-    a named object or returned, under hygiene and escape premises: 1,414 of
-    them in the corpus (1,327 glibc `assert`), braced leaves on their lines
-    1,338 → 69, **0** corpus moves (their inner leaves remain, above all
-    `__assert_fail`, CG21's). Residuals `CG07-STATEMENT-EXPRESSION-POSITIONS`
-    and `CG07-GENERIC-TOKEN-AST-MATCH`.
-    [Report](../../reports/cg07-generic-and-statement-expressions/README.md).
-- **CG08: casts and type queries.**
-  - *Cast kinds.* Pointer↔integer, ToVoid, the ToBoolean kinds, integer↔FP and
-    FP-width, atomic and address-space conversions, each a *representation*
-    with an explicit loss/provenance flag. Numeric transfer is CG20.
-  - *sizeof and _Alignof.* Evaluated VLA operands are separated from
-    unevaluated ones. Clang-evaluated constants replace the neutrality marker
-    `1` wherever a value is consumed, and the marker is never reused in bounds
-    or branches (example D).
-  - *Absorbs:* W44-SIZEOF-OPERAND-RESIDUALS, W44-SIZEOF-CAST-SCALAR-QUERY,
-    SIZEOF-TYPE-FOLD-NO-LEAN, CAST-RETURN-UNCOMMITTED-OPERAND and
-    W45-CALLEE-CAST-LEXICAL-PREMISE.
-  - *Status (wave 48, round 5).* Landed on route G (gateway rule 11b) with
-    T's implicit enumerators (N11): **+16** corpus Safe, system +3, no
-    correction; a wrong Safe repaired (a pointer returned or stored as a
-    truth value escaped or bound it; no corpus instance). Residuals by owner
-    in `CG08-CAST-AND-QUERY-RESIDUALS`.
-    [Report](../../reports/cg08-casts-and-type-queries/README.md).
-- **CG09: typed-source control.**
-  - *Statements.* General `while`/`for`/`do`, `switch`/`case`/`default`, and
-    `goto`/labels/`break`/`continue` in T. Either lower through the
-    gateway's CFG or add T edges.
-  - *Lifetimes.* Local lifetime ends on every jump.
-  - *Precision.* G already has all of these (Q06, Q07). This is not a
-    precision card.
-  - *Status (wave 48, round 7).* Landed on route T with T edges (gateway
-    rule 11l). The acyclic forms are lowered into guarded paths and admitted
-    only by the Monkey wrapper projection. The other 19 import sites refuse
-    each by name (`CG01-T-CONSUMER-ADMISSIONS`). Every back-edge is refused
-    by name, since no invariant or summary exists (CG27). No function moves.
-    Residual: `CG09-CONTROL-SHAPE-RESIDUALS`.
-    [Report](../../reports/cg09-typed-source-control/README.md).
+- **CG01**: Added binary `-`, `<=`, `>=`, `^`, `<<`, `>>`, unary `+`, `~`, nine compound assignments, and float/char literals to `Importer::expression`; Monkey wrapper admits them while other `T` consumers refuse by name.
+- **CG02**: Added `elaborate(expr, ctx)` with explicit sequenced-before order, value assignments, pre/post `++`/`--`, comma sequencing, and single-LHS compound RMW on route G beside retained shape routes.
+- **CG03**: Unified contract instantiation at `Parser::instantiate_call` across statement, condition, return, and nested call positions.
+- **CG04**: Lowered condition acquisitions (`if ((p = malloc(n)) != NULL)`) via `ResultUse::TestedSplit` without hoisting, plus loop-site generation guards.
+- **CG05**: Applied inner non-identity call effects inside-out at arbitrary depth with footprint commutativity checks for unordered sibling calls.
+- **CG06**: Lowered value-producing `&&`, `||`, and `?:` through branch regions evaluating only the taken arm on each edge.
+- **CG07**: Connected Clang's selected `GenericSelectionExpr` association and lowered GNU statement expressions under hygiene/escape premises.
+- **CG08**: Modeled representation casts with provenance/loss flags, implicit `T` enumerators, and Clang-evaluated `sizeof`/`_Alignof` constants.
+- **CG09**: Added acyclic `T` control lowering into guarded paths with explicit back-edge refusals.
 
-### Phase 2: typed places and stores (F/R)
+---
 
-| Card | Entries | Route | Effort | Prerequisite |
+### Phase 2: typed places and stores (`F`/`R`)
+
+| Card | Entries | Route | Standing & primary report(s) | Open residuals in `named_followups` |
 |---|---|---|---|---|
-| CG10-COMMON-TYPED-PLACE | M01 I04 (K03 place side) | G | High | CG00 |
-| CG11-POINTER-VALUED-STORES | M02 M03 M04 | G | High | CG10; the owned-field Lean model; W45-SR5 findings closed |
-| CG12-VOID-VIEW-READBACK | M05 | G | High | CG11 |
-| CG13-UNION-AND-BITFIELD-PLACES | M06 M07 | G, T, core | High | CG10 |
-| CG14-AGGREGATE-VALUES-AND-INITIALIZERS | M08 M09 M10 M11 | G, T | High | CG10, CG11 (landed on G, wave 48 round 7) |
-| CG15-STORAGE-DURATION-AND-VOLATILE | M24 M23 | G, T | High | CG10 |
+| `CG10-COMMON-TYPED-PLACE` | M01 I04 K03(place) | G | **Bounded slices landed (rules 10t, 12i–12k, 14a–14d)** — [cg10](../../reports/cg10-common-typed-place/README.md), [sole blockers](../../reports/cg10-indirect-access-sole-blockers/README.md), [residuals r1–r4](../../reports/cg10-indirect-access-sole-residuals-r4/README.md), [member-store](../../reports/cg10-member-store-retained-by/README.md), [owned-out](../../reports/cg10-owned-out-parameter-member-slot/README.md) | `CG10-COMMON-TYPED-PLACE` (amended), `CG10-INDIRECT-ACCESS-SOLE-RESIDUALS`, `CG10-TYPED-PLACE-RESIDUALS`, `CG10-BOUND-ROOT-*`, `CG10-OWNED-OUT-*`, `CG10-R4-NEUTRAL-DECLARATIONS-UNVALIDATED`, `CG10-OOM-DECLARATIONS-UNVALIDATED` |
+| `CG11-POINTER-VALUED-STORES` | M02 M03 M04 | G | **Bounded slice landed (rule 10v)** — [cg11](../../reports/cg11-pointer-valued-stores/README.md) | `CG11-POINTER-VALUED-STORES` (amended), `CG11-UNRESOLVED-OWNER-POINTER-STORES`, `CG11-POINTER-STORE-SUMMARY-MODE`, `CG11-FUNCTION-POINTER-PARAMETER-CLOSURE`, `CG11-UNREAD-POINTER-PLACES` |
+| `CG12-VOID-VIEW-READBACK` | M05 | G | **Bounded slice landed (rule 11j)** — [cg12](../../reports/cg12-void-view-readback/README.md) | `CG12-VOID-VIEW-READBACK` (amended), `CG12-READBACK-NO-STORE-BASE`, `CG12-VIEW-RESIDUAL-FORMS` |
+| `CG13-UNION-AND-BITFIELD-PLACES` | M06 M07 | G, T, core | **Landed (rule 10w)** — [cg13](../../reports/cg13-union-and-bitfield-places/README.md) | `CG13-UNION-LEAVES-OTHER-CAUSES`, `CG13-UNION-PUNNING-FLOW-INSENSITIVE` |
+| `CG14-AGGREGATE-VALUES-AND-INITIALIZERS` | M08–M11 | G, T | **Bounded slice landed on G (rule 11f)** — [cg14](../../reports/cg14-aggregate-values-and-initializers/README.md) | `CG14-AGGREGATE-VALUES-AND-INITIALIZERS` (amended), `CG14-POINTER-BEARING-COPIES-AND-INITIAL-ALIASES`, `CG14-AGGREGATE-VALUE-POSITIONS`, `CG14-DECLARATION-FORMS` |
+| `CG15-STORAGE-DURATION-AND-VOLATILE` | M24 M23 | G, T | **Landed (rule 11h)** — [cg15](../../reports/cg15-storage-duration-and-volatile/README.md) | `CG15-STATIC-TABLE-RESIDUALS`, `CG15-STATIC-REGISTRY-CONTRACT` |
 
-- **CG10: common typed place.**
-  - *The place.* DeclID / FieldID / Index / offset / view, with AST-node and
-    SourceRange identity in place of unique-line token matching (I04). Mixed
-    `->`, `.`, `[]` and `*` paths get a *tracked* root, not only a
-    never-bound one.
-  - *Absorbs:* W46-ACCESS-PATH-TRACKED-MIXED-PLACES, W44-CHAIN-NESTED-AGGREGATE,
-    W43-INDIRECT-UNTYPED-SINGLE-ACCESS, REFUSED-HANDON-LINE-GRANULARITY and
-    W44-AGGREGATE-PREMISE3-MEMBER-NAME.
-  - *Status (wave 48, round 17, CG10-INDIRECT-ACCESS-SOLE-BLOCKERS).* The 513
-    functions the access refusal blocked alone, classified by the readers'
-    records: 321 hide an uncontracted callee behind the gate (P4). Rules 12i (a
-    refused `return`'s call read with W44) and 12j (`.`-only scalar places on
-    automatic record objects) free 41 corpus functions; 481 remain, ranked in
-    `CG10-INDIRECT-ACCESS-SOLE-RESIDUALS`
-    ([report](../../reports/cg10-indirect-access-sole-blockers/README.md)).
-  - *Status (wave 48, round 18, CG10-INDIRECT-ACCESS-SOLE-RESIDUALS).* Rule
-    12k names the uncontracted callee where it decides a gate refusal (no
-    status move; 2,962 leaves re-attributed); seven declared, pinned contracts
-    free 61 corpus functions; 205 functions remain blocked by the access
-    refusal alone, ranked in the amended entry
-    ([report](../../reports/cg10-indirect-access-sole-residuals/README.md)).
-  - *Status (wave 48, round 21, CG10-INDIRECT-ACCESS-SOLE-RESIDUALS round 2).*
-    Rules 14a (one `None`-result, all-`Borrowed` call inside a typed scalar
-    statement), 14b (an interior pointer of a never-bound root binds the
-    pointer read's alias), 14c (a scalar element address at an actual) and 14d
-    (an interior offset at an actual), with two body-validated neutral
-    declarations, free 24 corpus functions and 2 system rows; 201 functions
-    remain blocked by the access refusal alone, every class above 3 a design
-    refusal, a decision class or a contract question
-    ([report](../../reports/cg10-indirect-access-sole-residuals-r2/README.md)).
-- **CG11: pointer-valued stores.**
-  - *Scope.* This is the unsupported coverage queue's FIELD-CUSTODY (P5),
-    promoted from candidate. It covers `s->p = q`, `*slot = p` and
-    `slots[i] = p`, and stores through caller-owned objects, formals and
-    aliases. Nested fields, arrays, multilevel pointers and function pointers
-    are in scope.
-  - *Semantics.* Value store, alias addition and overwrite, the old
-    obligation, and escape are separate events.
-  - *Example C.* The Q36 fixture moves only through source store semantics,
-    not by a trusted contract on `set`.
-  - *Absorbs:* W43-INDIRECT-POINTER-VALUE-STORE, the seven W45-SUB-OBJECT-STORE-*
-    rows, W44-CALL-RESULT-INDIRECT-DESTINATION and W43-COLLECTION-NAME-STORE.
-  - *Status (wave 48, round 3).* Landed on route G as gateway rule 10v: a
-    pointer-typed store is read from the Clang AST and admitted only for a value
-    with no identity (null, string literal, function, a function-pointer name
-    bound to nothing, the destination's own object) into an untracked owner,
-    and the body publishes no summary. 5 Unknown → Safe in the corpus arbiter
-    and 1 in the system route, no correction. Example C stays Unknown: its
-    missing premise is an owner identity for `*s` that bounds `*q`'s lifetime,
-    or a derived Stored summary mode. The entry is amended, not retired.
-    Residuals: `CG11-UNRESOLVED-OWNER-POINTER-STORES`,
-    `CG11-POINTER-STORE-SUMMARY-MODE`, `CG11-FUNCTION-POINTER-PARAMETER-CLOSURE`
-    and `CG11-UNREAD-POINTER-PLACES`.
-    [Report](../../reports/cg11-pointer-valued-stores/README.md).
-- **CG12: typed readback from `void *` fields.**
-  - *Change.* A post-cast view and pointee type are connected to the stored
-    identity, by contract or derivation.
-  - *Absorbs:* W47-FIELDS-BY-MEMBER-VOID-ESCAPES.
-  - *Status (wave 48, round 7).* Landed on route G (gateway rule 11j) as two
-    rules: an object-pointer bit-cast view of a `void *` over an untracked
-    object, and the readback of a `void *` member of an admitted store base
-    as its linked identity (type punning refused). Corpus **+2** Safe on its
-    base and **+3** on main `e93dbe4e` (with CG14), system +2, no correction. Corrections to the input: CG00's M05 leaves are views of
-    untracked `void *`, not readbacks, and its control refuses at the store.
-    No corpus readback is bound to an identity, so the entry is amended, not
-    retired (`CG12-READBACK-NO-STORE-BASE`, `CG12-VIEW-RESIDUAL-FORMS`).
-    [Report](../../reports/cg12-void-view-readback/README.md).
-- **CG13: unions and bit-fields.**
-  - *Bit-fields* are an R card. Source fields map to `disjoint_footprint`
-    storage units, and accesses become read-modify-write events. Different
-    bit ranges are not automatically disjoint (example E).
-  - *Unions* need an overlapping-storage and effective-type view boundary
-    (V), or a contract boundary.
-  - *Absorbs:* W46-UNION-MEMBER-PATH, W44-CHAIN-INCOMPLETE-RECORD (the union
-    part) and W43-LIBC-GETPEERNAME-SOCKADDR-UNION.
-  - *Status (wave 48, round 3).* Landed on route G (rule 10w): union steps
-    by storage (punned pointer reads and pointer stores refused, a framed
-    store through a pointer-bearing union), bit-fields as C11 storage units
-    connected to `disjoint_footprint` for naming an unsequenced pair. Corpus
-    +6 Safe; `getpeername`'s transparent union reported and left to the
-    declared-ABI reader ([report](../../reports/cg13-union-and-bitfield-places/README.md)).
-- **CG14: aggregate values and initializers.**
-  - *Copies.* Whole-struct copies and assignments become field-wise alias and
-    custody transfer (the `h->value = h->value` fixture).
-  - *Initializers.* Designated and general initializers get implicit zero-fill
-    and initial aliases. Compound literals get identity and block/file
-    lifetime.
-  - *Strings and arrays.* String and array initializer extents feed CG16 only
-    when bounds are claimed.
-  - *Status (wave 48, round 7).* Landed on route G (gateway rule 11f):
-    custody-free record copies, identity-free braced initializers (a local
-    that can hold a pointer through rule 10v's flow guard), compound literals
-    as borrowed actuals only, string initializers with extents recorded and no
-    bound. **+8** corpus Safe (2 direct, 6 through derived summaries), system
-    and slice unmoved, no correction. Pointer-bearing copies, aggregate values
-    in actuals, returns and conditions, and several declaration forms remain
-    (`CG14-POINTER-BEARING-COPIES-AND-INITIAL-ALIASES`,
-    `CG14-AGGREGATE-VALUE-POSITIONS`, `CG14-DECLARATION-FORMS`); route T is
-    unchanged. [Report](../../reports/cg14-aggregate-values-and-initializers/README.md).
-- **CG15: storage duration and volatile.**
-  - *Storage.* Global, static and thread-local identity and lifetime; T
-    currently rejects them.
-  - *Volatile.* Volatile accesses become separate observable effects with a
-    count and an order, kept apart from custody.
-  - *Absorbs:* GATEWAY-VOLATILE-PREMISE and CT41-VOLATILE-COMPLEMENT-UNMEASURED.
-  - *Status (wave 48, round 7).* Landed on route G (gateway rule 11h): a
-    static-duration declaration is no event and its constant initializer
-    binds nothing, a static object's value and address carry no identity,
-    `volatile` objects carry no value fact and a custody decision on a
-    `volatile` read refuses, each `volatile` access a counted, C-ordered trace
-    event; T names its static refusal. Corpus **+7**, system +1, no
-    correction; two synthetic wrong Safes repaired (a static initializer
-    re-applied per call; a `volatile` pointer's binding). Both absorbed
-    entries closed; residuals `CG15-STATIC-TABLE-RESIDUALS` (52 leaves) and
-    `CG15-STATIC-REGISTRY-CONTRACT`.
-    [Report](../../reports/cg15-storage-duration-and-volatile/README.md).
+- **CG10**: Introduced AST-backed `DeclID`/`FieldID`/subscript/dereference places (`typed_place.rs`) over tracked roots, followed by sole-blocker rounds 1–4, retained-by member stores, owned-out member slots, bound untracked roots (`cg10-bound-untracked-roots`), embedded-list borrowed containers (`cg10-embedded-list-borrowed-container`), and reader-gap repairs (`cg10-reader-gaps`).
+- **CG11**: Admitted identity-free pointer stores into untracked owners (`rule 10v`); general tracked-owner pointer stores and `Stored` summary derivation remain open.
+- **CG12**: Admitted object-pointer bit-cast views over untracked `void *` and typed readback of linked `void *` store bases while refusing type punning.
+- **CG13**: Connected C11 bit-field storage units to `disjoint_footprint` and enforced union storage/punning boundaries.
+- **CG14**: Admitted custody-free struct copies, identity-free braced initializers, borrowed compound literals, and string-initializer extent recording on route G.
+- **CG15**: Modeled static-duration objects as identity-free and `volatile` accesses as ordered, value-erasing trace events refusing custody decisions.
 
-### Phase 3: connections to existing core checkers (R)
+---
 
-| Card | Entries | Effort | Prerequisite |
+### Phase 3: connections to existing core checkers (`R`)
+
+| Card | Entries | Standing & primary report(s) | Open residuals in `named_followups` |
 |---|---|---|---|
-| CG16-INDEX-AND-OFFSET-EXTENTS | M14 M15 M16 M17 | High | CG10; CG20 for ranges |
-| CG17-LAYOUT-DERIVED-EXTENTS | M12 M13 M19 E18 | High | CG08, CG10 |
-| CG18-FOOTPRINT-CONNECTION | M20 M21 M22 M26 W08 | High | CG10, CG13 |
-| CG19-ATOMIC-SOURCE-ROUTE | W01 W09 | High | CG10 |
+| `CG16-INDEX-AND-OFFSET-EXTENTS` | M14–M17 | **Bounded slice landed (rule 11s, `c.bounds.v1`)** — [cg16](../../reports/cg16-index-and-offset-extents/README.md), [transport](../../reports/cg16-bounds-transport-and-chunkio-neighbours/README.md), [design brief](cg16-reviewed-index-contracts.md) | `CG16-INDEX-AND-OFFSET-EXTENTS` (amended), `CG16-BOUNDS-CONTRACT-TRANSPORT`, `CG16-BOUNDS-POINTER-EXTENTS`, `CG16-BOUNDS-SYMBOLIC-RANGES`, `CG16-BOUNDS-UNSUPPORTED-FORMS` |
+| `CG17-LAYOUT-DERIVED-EXTENTS` | M12 M13 M19 E18 | **Landed (rule 11u)** — [cg17](../../reports/cg17-layout-derived-extents/README.md) | `CG17-FLEXIBLE-EXTENT-UNESTABLISHED`, `CG17-ALIGNMENT-UNDECIDED`, `CG17-CONTAINER-OF-LIST-LOOKUPS` |
+| `CG18-FOOTPRINT-CONNECTION` | M20–M22 M26 W08 | **Landed (rule 11k)** — [cg18](../../reports/cg18-footprint-connection/README.md) | `CG18-CROSS-OBJECT-PATH-PAIRS`, `CG18-FOOTPRINT-CONSUMERS` |
+| `CG19-ATOMIC-SOURCE-ROUTE` | W01 W09 | **Landed (rule 11i)** — [cg19](../../reports/cg19-atomic-source-route/README.md) | `CG19-ATOMIC-FORMAL-VALUE-STORE-OUT-PARAMETER`, `CG19-ENUMERATOR-ORDER-UNEVALUATED-IN-G-AND-T`, `CG19-PUBLICATION-ONE-FLAG-ONE-PAYLOAD` |
 
-- **CG16: index and offset extents.**
-  - *Detailed implementation brief (2026-10-01):*
-    [reviewed index and extent contracts](cg16-reviewed-index-contracts.md),
-    following [contract specification C09.1](../../QCORE_CONTRACT_SPEC_r0_3.md#c091-reviewed-index-and-extent-contracts-planned).
-    This expands the existing candidate; it is not implemented or dispatched.
-    CG16 owns the minimal single-base contract vocabulary and human-review
-    lifecycle; CG24 retains richer multi-base/derived/frame relations.
-    Source-established fixed extents need no user approval, and a user contract
-    cannot enlarge them. Review-held external facts are Pending only when no
-    other obstacle remains; every access and call precondition is still checked.
-    Custody and bounds are separately reported properties, joined only when
-    both are requested. `Idx<N>` is conceptual notation, not current syntax.
-  - *Bounds.* `0 <= i < count` against extent contracts. The intervals in
-    `indexed_collection.rs` track release obligations, not bounds (Q25).
-  - *Offsets.* Byte offset = element size × index.
-  - *Pointer comparisons.* Pointer difference and ordering get same-object
-    obligations. One-past formation is separated from dereference range.
-  - *Absorbs:* W43-INDEX-TRAVERSAL-STEP-COMPUTED,
-    W43-INDEX-TRAVERSAL-COMPUTED-POINTER-ACCESS and W46-ROUTING-QUERY-EXTENTS.
-  - *Status (wave 48, round 9).* A bounded sub-increment landed on route G
-    with the bounds consumer selected explicitly (gateway rule 11s): core
-    decisions with Lean `QCore.IndexExtent`, bounds contract v1 (G05b), the
-    source consumer, the audit selection `QCORE_BOUNDS_PROPERTY`. Custody
-    byte-identical on every route; corpus bounds 162 Safe / 0 Pending / 0
-    Unsafe / 4,759 Unknown, combined 111 Safe. The entry is amended, not
-    retired; the absorbed entries are amended with bounds-side sizes;
-    residuals `CG16-BOUNDS-CONTRACT-TRANSPORT`, `CG16-BOUNDS-POINTER-EXTENTS`,
-    `CG16-BOUNDS-UNSUPPORTED-FORMS`, `CG16-BOUNDS-SYMBOLIC-RANGES` (the last
-    reconciled with CG20). [Report](../../reports/cg16-index-and-offset-extents/README.md).
-- **CG17: layout-derived extents.**
-  - *Layout facts.* VLA bound evaluation and scope-exit lifetime, and
-    flexible-array remaining extent (allocation-size contract + `offsetof` +
-    element width).
-  - *Obligations.* Access alignment against derived addresses.
-  - *container_of.* `offsetof` values and `container_of` base/subobject
-    provenance.
-  - *Absorbs:* W45-FB-OR6-ELEMENT-IDENTITY.
-  - *Status (wave 48, round 10).* Landed (gateway rule 11u, `layout_extents.rs`):
-    an automatic VLA of scalar elements whose bound only reads and whose every
-    use is an element access or `sizeof` operand is no custody event (its
-    numeric obligations CG20's; an escaping address keeps the refusal);
-    flexible-array extents and alignment obligations are derived from Clang's
-    numbers (`layout_report`, property `layout.alignment.v1`, misaligned joins
-    to Unknown); `container_of` of an established `&x->m` is `x`. **No function
-    moved** on any route (corpus `3d53a5d0…` byte-identical); the corpus has
-    no VLA, 355 `container_of` shapes all list lookups (unestablished), 441
-    derived-address conversions (41 aligned, 400 undecided), 16 flexible
-    accesses (size not established). OR-6 amended; residuals
-    `CG17-FLEXIBLE-EXTENT-UNESTABLISHED`, `CG17-ALIGNMENT-UNDECIDED`,
-    `CG17-CONTAINER-OF-LIST-LOOKUPS`.
-    [Report](../../reports/cg17-layout-derived-extents/README.md).
-- **CG18: footprint connection.**
-  - *Liveness.* Subobject and view places connect to core generations without
-    weakening existing liveness checks.
-  - *Stated premises.* Cross-allocation disjointness needs an allocator model
-    or a stated assumption. Effective type and `restrict` are stated as
-    boundary premises.
-  - *Bytes.* memcpy/memmove/memset byte semantics apply only when byte-level
-    safety is claimed.
-  - *Locks.* Access footprints compose with mutex invariants beyond
-    `source.socket.v1`.
-  - *Absorbs:* W43-INDIRECT-BYTE-STORE-REPRESENTATION-PREMISE.
-  - *Status (wave 48, round 7).* Landed (gateway rule 11k): route G admits an
-    unsequenced pair of two members of one struct object when the core model
-    decides them disjoint from Clang's layout, and nothing across two objects;
-    the core gains stated cross-allocation disjointness
-    (`P-DISTINCT-ALLOCATIONS-DISJOINT`), views (`P-EFFECTIVE-TYPE`, punned
-    refused), byte transfers (`P-BYTE-REPRESENTATION`, overlapping `memcpy`
-    refused) and the mutex-invariant composition, reached from
-    `source.mutex.guard.v1`. No corpus, system or slice function moved (5
-    member pairs admitted in 2 corpus functions, leaves only). Residuals
-    `CG18-CROSS-OBJECT-PATH-PAIRS` and `CG18-FOOTPRINT-CONSUMERS`.
-    [Report](../../reports/cg18-footprint-connection/README.md).
-- **CG19: atomic source route.**
-  - *Change.* C `AtomicExpr`, atomic casts and `_Atomic` accesses route to the
-    core atomic model.
-  - *Publication.* Publication generalises to initialise → publish → observe →
-    use → reclaim, derived from source.
-  - *Absorbs:* CT41-ROUTE-HAS-NO-PRODUCTION-CALLER and
-    CT41-TYPED-SOURCE-QUALIFIER-ARM-STILL-UNDISCRIMINATING.
+- **CG16**: Implemented `QCore.IndexExtent`, `bounds_contract_v1` (`C09.1`, `G05b`), and `QCORE_BOUNDS_PROPERTY` (162 Safe / 4,759 Unknown bounds rows; combined custody+bounds 113 Safe at `SUP03`).
+- **CG17**: Modeled non-escaping scalar VLAs, Clang-derived flexible-array extents, `layout.alignment.v1` checks, and established `container_of(&x->m)` provenance.
+- **CG18**: Connected Clang struct member layouts to `disjoint_footprint` for unsequenced same-object member accesses and stated `P-DISTINCT-ALLOCATIONS-DISJOINT` / `P-EFFECTIVE-TYPE` / `P-BYTE-REPRESENTATION` premises.
+- **CG19**: Routed 51 `__c11_atomic_*` / `__atomic_*` / `__sync_*` builtins and `_Atomic` qualified loads/stores/RMWs (`atomic_source_route.rs`, `QCore.AtomicSourceRoute`) to the core atomic model and source publication route.
 
-### Phase 4: vocabulary, numeric and weak-memory extensions (V), by guarantee
+---
 
-Open a Phase 4 card only when its property is chosen as a published
-guarantee. For Fluent Bit, the analysis suggests size and bounds arithmetic,
-conditional ownership transfer and callback lifetimes first: CG20, CG23 and
-CG22.
+### Phase 4: vocabulary, numeric, and weak-memory extensions (`V`)
 
-| Card | Entries | Effort | Prerequisite |
+| Card | Entries | Standing & primary report(s) | Open residuals in `named_followups` |
 |---|---|---|---|
-| CG20-NUMERIC-DOMAIN | N01–N07, N08(transfer), C04, C05 | High | CG01, CG08 |
-| CG21-CALL-EXITS-AND-BOUNDARIES | C09–C13, E20, I06 | High | CG02 |
-| CG22-INDIRECT-CALLS-AND-CALLBACKS | K01 K02 | High | CG03 |
-| CG23-RELATIONAL-POSTCONDITIONS | K05 K11 | High | CG03 |
-| CG24-ALIAS-EXTENT-FRAME-VOCABULARY | K04 K06 | High | CG03, CG16 (landed, wave 48 round 11) |
-| CG25-RESOURCE-KINDS | K07 | High | none (landed, wave 48 round 10) |
-| CG26-VARIADICS | K08 K09 K10 | High | CG03 |
-| CG27-LOOPS-RECURSION-BUDGETS | C06 C07 C08 | High | CG09 |
-| CG28-WEAK-MEMORY-EVENTS | W02–W06 | High | CG19 |
-| CG29-EXECUTION-COVERAGE-AND-RECLAMATION | W07 W10 | High | CG28 (landed, wave 48 round 11) |
-| CG30-DIALECTS-FLAGS-TYPES | I01 I02 I03 I05 N12 N13 N14 | High | none (landed, wave 48 round 10; entry amended) |
+| `CG20-NUMERIC-DOMAIN` | N01–N08 C04 C05 | **Landed (rule 11q, C integer arithmetic property)** — [cg20](../../reports/cg20-numeric-domain/README.md) | `CG20-NUMERIC-CORPUS-CENSUS`, `CG20-RESULT-RANGE-TRANSFER-LEAN`, `CG20-SWITCH-AND-CORRELATION-PRECISION` |
+| `CG21-CALL-EXITS-AND-BOUNDARIES` | C09–C13 E20 I06 | **Landed (rule 11o, `resource_no_return()`)** — [cg21](../../reports/cg21-call-exits-and-boundaries/README.md) | `CG21-NORETURN-TYPED-ACTUAL-STATEMENTS`, `CG21-NORETURN-OPERAND-POSITIONS`, `CG21-CLEANUP-SCOPE-EXITS`, `CG21-OPAQUE-BOUNDARIES` |
+| `CG22-INDIRECT-CALLS-AND-CALLBACKS` | K01 K02 | **Landed (rules 11p, 13u–13z, `C04.19`)** — [cg22](../../reports/cg22-indirect-calls-and-callbacks/README.md), [registry](../../reports/cg22-callback-registry-contract/README.md), [candidates](../../reports/cg22-callback-candidate-contracts/README.md), [link premise](../../reports/cg22-callback-candidate-link-premise/README.md), [served queues](../../reports/cg22-op-callbacks-served-queues/README.md) | `CG22-OPEN-INDIRECT-CALLS`, `CG22-CALLBACK-REGISTRY-CONTRACT`, `CG22-CALLBACK-CANDIDATE-CONTRACTS`, `CG22-CALLBACK-OPEN-ACTUALS`, `CG22-COMPARATOR-CALLER-RESIDUALS`, `CG22-DESIGNATOR-ACTUAL-ELABORATION`, `CG22-INLINE-FNPTR-LOCAL-DECLARATION`, `CG22-MSGPACK-PACK-INVOCATIONS`, `CG22-REGISTRY-OUTSIDE-THE-FRAME` |
+| `CG23-RELATIONAL-POSTCONDITIONS` | K05 K11 | **Landed (rule 11r, `C04.13`)** — [cg23](../../reports/cg23-relational-postconditions/README.md) | `CG23-EXIT-SPECIFIC-BLOCKED-HELPERS`, `CG23-DISPOSITION-TEST-POSITIONS` |
+| `CG24-ALIAS-EXTENT-FRAME-VOCABULARY` | K04 K06 | **Landed (rule 11e, `C09.1`)** — [cg24](../../reports/cg24-alias-extent-frame-vocabulary/README.md) | `CG24-CALLBACK-SPANNING-RELATIONS`, `CG24-FRAME-AND-SLOT-PRECISION` |
+| `CG25-RESOURCE-KINDS` | K07 | **Landed (rule 11v)** — [cg25](../../reports/cg25-resource-kinds/README.md), [in-place regex](../../reports/cg25-in-place-regex/README.md), [thread-key](../../reports/cg25-thread-key-automatic-revisit/README.md), [void-cast](../../reports/cg25-void-cast-guard-escape/README.md) | `CG25-IN-PLACE-RESIDUAL-PAIRS`, `CG25-IN-PLACE-REGEX-REGERROR-FAILURE-EDGE`, `CG25-KINDED-WRAPPER-RESULTS`, `CG25-DLSYM-SYMBOL-LIFETIME`, `CG25-THREAD-KEY-SETTER-PLACE` |
+| `CG26-VARIADICS` | K08–K10 | **Landed (rules 11w, 12g)** — [cg26](../../reports/cg26-variadics/README.md), [tail actuals](../../reports/cg26-tail-residual-actuals/README.md) | `CG26-VA-PROTOCOL-PRECISION`, `CG26-POINTER-VA-ARG`, `CG26-TAIL-IDENTITY-CONDITIONALS`, `CG26-TAIL-UNMATCHED-STATEMENTS`, `CG26-ROUTE-T-VARIADICS` |
+| `CG27-LOOPS-RECURSION-BUDGETS` | C06–C08 | **Bounded slice landed (rule 11x)** — [cg27](../../reports/cg27-loops-recursion-budgets/README.md) | `CG27-LOOPS-RECURSION-BUDGETS` (amended), `CG27-LOOP-RECURSION-RESIDUALS` |
+| `CG28-WEAK-MEMORY-EVENTS` | W02–W06 | **Landed (rule 11t, `QCore.WeakMemory`)** — [cg28](../../reports/cg28-weak-memory-events/README.md) | `CG28-LEGACY-SYNC-BUILTINS`, `CG28-UNREAD-ATOMIC-OPERAND-SHAPES` |
+| `CG29-EXECUTION-COVERAGE-AND-RECLAMATION` | W07 W10 | **Landed (rule 11z)** — [cg29](../../reports/cg29-execution-coverage-and-reclamation/README.md) | `CG29-ARITHMETIC-RMW-VALUE-DOMAIN`, `CG29-SOURCE-FRAGMENT-EXTRACTION`, `CG29-RECLAMATION-SOURCE-ROUTE` |
+| `CG30-DIALECTS-FLAGS-TYPES` | I01–I03 I05 N12–N14 | **Bounded slice landed (rule 11y)** — [cg30](../../reports/cg30-dialects-flags-types/README.md), [type fixture](../../reports/cg30-type-identity-fixture/README.md) | `CG30-DIALECTS-FLAGS-TYPES` (amended) |
 
-- **CG20: numeric domain.**
-  - *Types.* Clang's canonical widths and signedness per target identity
-    (LP64/LLP64), with promotions and the usual conversions imported, not
-    re-derived.
-  - *Operations.* Sign/zero extension and truncation, and signed overflow
-    versus unsigned wrap.
-  - *Obligations.* `/` and `%` exception obligations, shift-count and
-    signedness obligations, and mixed-signedness comparisons.
-  - *Relation to the core.* The core fixed-width table from W48-QR-SCALAR-TYPES
-    is checked arithmetic, not C semantics. It is reused only through an
-    explicit C interpretation.
-  - *Precision.* Switch-value case pruning and branch correlation are
-    precision work.
-  - *Absorbs:* W45-FB-SCHED-RANDOM-RANGE.
-  - *Status (wave 48, round 9).* Landed (gateway rule 11q) as a new property
-    beside custody, *C integer arithmetic*: widths from the analysing Clang's
-    target macros (LP64 and LLP64 by test), Clang's recorded conversions, the
-    core table reached only through `c_numeric`, UB and unstated
-    implementation-defined cases as interval obligations, verdict `Safe` or
-    `Unknown`. The lexical ABI reader's LP64 premise for plain `long` is
-    removed (unreadable unless Clang's target is LP64); the cycle-18
-    evaluator reads C types (`CG01-CYCLE18-EVALUATOR-WIDTH` retired). C04 and
-    C05 not done (`CG20-SWITCH-AND-CORRELATION-PRECISION`);
-    W45-FB-SCHED-RANDOM-RANGE amended, not closed. Custody figures unchanged.
-    [Report](../../reports/cg20-numeric-domain/README.md).
-- **CG21: call exits and boundaries.**
-  - *Exits.* `noreturn` in every position, `setjmp`/`longjmp` non-local edges
-    with invalidation, and `cleanup` attributes on every scope exit.
-  - *Other control.* Computed goto target sets.
-  - *Boundaries.* asm, asm goto and SEH get explicit boundaries (clobbers,
-    memory effects, edges) or refusal. Builtin and extension AST kinds get a
-    common opaque boundary. An ordinary function contract is never
-    auto-applied to a non-call node.
-  - *Absorbs:* W43-LIBC-NORETURN.
-  - *Status (wave 48, round 9).* Landed on route G (gateway rule 11o): a
-    call statement ends its path only where its contract declares the new
-    `resource_no_return()` (a terminating exit; `abort`, `exit`,
-    `__assert_fail` in `quirin-provider-libc`) and its Clang declaration is
-    `noreturn`; non-local exits, returns-twice calls and extension nodes are
-    undeclarable and refused by name; assembly, SEH, `cleanup`, computed
-    `goto` and label addresses are named boundaries. Corpus 629 / 10 / 4,195
-    → **641 / 10 / 4,183** (12 Unknown → Safe), system and slice no move.
-    Residuals `CG21-UNDECLARED-NORETURN-CALLEES` (retired by
-    CONTRACT-NORETURN-AND-BORROWED-TAILS: `rd_kafka_crash` declared;
-    residual `CG21-NORETURN-TYPED-ACTUAL-STATEMENTS`),
-    `CG21-NORETURN-OPERAND-POSITIONS`, `CG21-CLEANUP-SCOPE-EXITS`,
-    `CG21-OPAQUE-BOUNDARIES`.
-    [Report](../../reports/cg21-call-exits-and-boundaries/README.md).
-- **CG22: indirect calls and callbacks.**
-  - *Callees.* Candidate callee sets with common signature and contract
-    resolution.
-  - *Callbacks.* Capture, escape, repeated invocation and teardown relations
-    for callbacks.
-  - *Absorbs:* LOADER-ABI-INLINE-FNPTR-DECLARATOR. The EXTERN-CALL-F
-    function-pointer part and the specialised W47-LOOP-OWNER-FIELD-KEYED-V-AND-F
-    are generalised here.
-  - *Status (wave 48, round 9).* Landed (gateway rule 11p): route G resolves a
-    call through a function pointer only to a candidate set the unit's Clang
-    AST closes (a designator, an address-never-taken local's definitions, a
-    `const` table) and rewrites it, before every hold, to the calls C may make
-    (a branch arm per candidate, so the flow joins them); every open set keeps
-    its refusal. The callback relation is decided in the core and the parity
-    census; no capture vocabulary exists. The inline `fnptr` parameter
-    declarator is read (LOADER-ABI-INLINE-FNPTR-DECLARATOR closed). No
-    corpus, system or slice site has a closed set, so the rewrite moves nothing; the declarator moves
-    corpus 645 / 10 / 4,179 → **647 / 10 / 4,177** on main `a6adb483` (the two
-    `rd_kafka_topic_partition_list_sort_by_*` wrappers), system and slice
-    byte-identical. Residuals
-    `CG22-OPEN-INDIRECT-CALLS`, `CG22-CALLBACK-REGISTRY-CONTRACT`,
-    `CG22-INLINE-FNPTR-LOCAL-DECLARATION`, `CG22-DESIGNATOR-ACTUAL-ELABORATION`.
-    [Report](../../reports/cg22-indirect-calls-and-callbacks/README.md).
-  - *Status (wave 48, round 21).* `CG22-CALLBACK-REGISTRY-CONTRACT` built the
-    callback vocabulary (gateway rules 13u–13z, contract spec C04.19):
-    synchronous invocation, table dispatch, registry, element custody and the
-    flag-conditioned self-release, decided fail-closed; no callback is read as
-    benign, so the two `rd_kafka_topic_partition_list_sort_by_*` wrappers this
-    card's declarator had made `Safe` are corrected to Unknown (their
-    comparators have no contract in force): corpus 881 / 9 / 3,944 →
-    **879 / 9 / 3,946** on its base, 905 / 9 / 3,920 → **903 / 9 / 3,922**
-    rebased onto `d03c59c73`. Residuals `CG22-REGISTRY-OUTSIDE-THE-FRAME`,
-    `CG22-CALLBACK-CANDIDATE-CONTRACTS`, `CG22-CALLBACK-OPEN-ACTUALS`,
-    `CG22-OP-CALLBACKS-AND-SERVED-QUEUES`, `CG22-MSGPACK-PACK-INVOCATIONS`.
-    [Report](../../reports/cg22-callback-registry-contract/README.md).
-- **CG23: relational postconditions.**
-  - *Change.* Return-code × multi-resource postconditions, and exit-specific
-    summary dispositions.
-  - *Existing rules.* Existing realloc and nullable rules stay.
-  - *Absorbs:* CONDITIONAL-RELEASE-BY-LITERAL, W45-FB-BACKLOG-MAP-ARMS,
-    W47-SUMMARY-ARGUMENT-CONDITIONAL-NULL,
-    W43-RESULT-ALIAS-CONDITIONAL-AND-RETAINED, W43-DESCRIPTOR-REFUSED-SHAPES
-    and CJSON-DELETE-SIBLING-CHAIN.
-  - *Status (wave 48, round 9).* Landed (gateway rule 11r, contract spec
-    §C04.13): return-code dispositions, instantiated by an `if` test of the
-    call's value (or of the value stored right before), untested calls
-    refused; exit-specific summaries for literal-returning `int` helpers; a
-    declaration its body contradicts withdrawn. Corpus, system and slice
-    byte-identical (no corpus declaration; the 105 candidate helpers are
-    Unknown themselves). Absorbed entries amended, none discharged; residuals
-    `CG23-EXIT-SPECIFIC-BLOCKED-HELPERS` and `CG23-DISPOSITION-TEST-POSITIONS`.
-    [Report](../../reports/cg23-relational-postconditions/README.md).
-- **CG24: alias, extent and frame vocabulary.**
-  - *Boundary with CG16.* The minimal reviewed single-base index/extent
-    vocabulary is specified in C09.1 and assigned to CG16; this card extends
-    those relations rather than making CG16 depend on its own successor.
-  - *Frame effects.* Read/write frame effects distinct from custody modes.
-    Borrowed is not purity.
-  - *Derived relations.* Multi-base, offset/length and callback-spanning
-    `Derived` relations.
-  - *Absorbs:* W46-SDS-CAT-SAFE-IN-PLACE-REALLOC and
-    W45-FB-BACKLOG-REFERENCE-VOCABULARY.
-  - *Status (wave 48, round 11).* Landed in CG16's bounds vocabulary (gateway
-    rule 11e, C09.1, G05b): closed frames (`bounds_frame_reads`/`writes`/`moves`
-    per pointer and slot parameter; a read keeps, a write withdraws the local
-    it receives, a move withdraws every declared fact), frame-tracked locals,
-    `bounds_return_derived` (offset/length, multi-base) with containment
-    checked against the base, and refutation by the body. Custody and bounds
-    byte-identical on corpus, system and slice (no bounds declaration is
-    selected on the audit routes). The sds slot is stated on the bounds side;
-    W46-SDS-CAT-SAFE-IN-PLACE-REALLOC and W45-FB-BACKLOG-REFERENCE-VOCABULARY
-    amended (custody halves open). Residuals `CG24-CALLBACK-SPANNING-RELATIONS`,
-    `CG24-FRAME-AND-SLOT-PRECISION`.
-    [Report](../../reports/cg24-alias-extent-frame-vocabulary/README.md).
-- **CG25: resource kinds.**
-  - *Change.* New kinds beyond Heap/Descriptor/Stream/Directory, each with a
-    sentinel and a release protocol. No unjustified equivalence to an
-    existing kind.
-  - *Absorbs:* W44-DLOPEN-DECLARATION-REMEASURE (library handle) and
-    W43-LIBC-IN-PLACE-LIFECYCLE.
-  - *Landed* ([report](../../reports/cg25-resource-kinds/README.md), rule
-    11v): `dynamic_library` and the in-place `regex` kind; residuals
-    `CG25-IN-PLACE-RESIDUAL-PAIRS`, `CG25-KINDED-WRAPPER-RESULTS`,
-    `CG25-DLSYM-SYMBOL-LIFETIME`.
-- **CG26: variadics.**
-  - *Custody.* General vararg custody and promotions.
-  - *va_list.* A `va_list` state machine
-    (`va_start`/`va_arg`/`va_copy`/`va_end`), or whole-helper contract
-    boundaries.
-  - *Format safety.* A separate checker, only if format safety is claimed.
-  - *Absorbs:* W44-VA-START-END-BUILTINS and W46-FCNTL-SETFD-ADDRESS-TAIL.
-  - *Status (wave 48, round 10).* Landed on route G (gateway rule 11w,
-    `va_list_protocol.rs`, `variadic_tail.rs`): a `va_list`'s C11 7.16
-    protocol is certified on every path from Clang's AST before
-    `va_start`/`va_end`/`va_copy` are custody-neutral and a scalar `va_arg` a
-    scalar write; a variadic definition's named parameters are read; a
-    refused tail call is re-read per position (T7 `&scalar` under any tail,
-    T8 a borrowed name only under the new `resource_variadic_borrowed_tail()`).
-    Corpus 629 / 10 / 4,195 → **631 / 10 / 4,193** (`rd_kafka_set_thread_name`,
-    `rd_kafka_open_cb_generic`), no correction; system and slice no status
-    move. K10 (format agreement) not claimed. Residuals
-    `CG26-VA-PROTOCOL-PRECISION`, `CG26-POINTER-VA-ARG`,
-    `CG26-BORROWED-TAIL-DECLARATIONS` (retired by
-    CONTRACT-NORETURN-AND-BORROWED-TAILS, residual
-    `CG26-TAIL-RESIDUAL-ACTUALS`, read by CG26-TAIL-RESIDUAL-ACTUALS (rule
-    12g, 40 → 15 tail leaves, no move) but for its casts, now
-    CAST-FORMALIZATION's; residuals `CG26-TAIL-IDENTITY-CONDITIONALS` and
-    `CG26-TAIL-UNMATCHED-STATEMENTS`), `CG26-ROUTE-T-VARIADICS`.
-    [Report](../../reports/cg26-variadics/README.md).
-- **CG27: loops, recursion and budgets.**
-  - *Invariants.* Loop-invariant contracts, widening and loop summaries.
-  - *Recursion.* Inductive summaries and ranking for general and multi-rank
-    recursion.
-  - *Budgets.* Budget exhaustion is reported as coverage. It is never Safe.
-  - *Absorbs:* W45-COUNTED-USERS-LOOPS, W43-COLLECTION-LOOP-SHAPES and
-    JOINED-PROVENANCE-CYCLE-SITES. It re-reads C03-NFR-REACH.
-  - *Status (wave 48, round 10).* Landed on route G (gateway rule 11x): the
-    counted-user pass summarizes a loop none of whose tokens performs a
-    counted-user operation (W45-COUNTED-USERS-LOOPS retired); a recursive
-    component no other route publishes may carry a signed threshold rank
-    (`n <= c` / `n > c`, actuals `n - k`, several ranks, mutual); every
-    budget's exhaustion is tested non-`Safe`. **0** corpus moves (byte
-    identical), as predicted: no corpus, system or slice function carries the
-    counted-user loop refusal, and the recursive components refuse at the
-    containment gate first. W43-COLLECTION-LOOP-SHAPES and
-    JOINED-PROVENANCE-CYCLE-SITES amended, unchanged. Residual:
-    `CG27-LOOP-RECURSION-RESIDUALS`.
-    [Report](../../reports/cg27-loops-recursion-budgets/README.md).
-- **CG28: weak-memory events.**
-  - *Events.* RMW, exchange and fetch_*; compare-exchange success and failure
-    (including weak spurious failure); thread and signal fences.
-  - *Release sequences.* Release sequences follow one named standard (C11,
-    C++20 or RC11), not a mix.
-  - *consume.* Decide: model dependencies, or keep consume explicitly out of
-    scope.
-  - *Lean.* Lean parity in the WeakMemory module.
-  - *Status (wave 48, round 9).* Landed (gateway rule 11t): RMW, compare-exchange
-    and fence events in `weak_memory` under C11 as published (N1570), release
-    sequences continued by RMWs, consume out of scope (refused, never acquire),
-    routed from source and lowered in route G to their custody effect. Corpus
-    +1 Unknown → Safe (`cmt_atomic_compare_exchange`); system and slice
-    unchanged. Lean `QCore.WeakMemory` (new). Residuals
-    `CG28-LEGACY-SYNC-BUILTINS` and `CG28-UNREAD-ATOMIC-OPERAND-SHAPES`; CG29 may
-    launch.
-- **CG29: execution coverage and reclamation (candidate).**
-  - *Execution coverage.* Candidate-execution generation or abstraction with
-    justified bounds. One accepted graph is not race freedom (Q34).
-  - *Reclamation.* Hazard-pointer and epoch reclamation protocols as
-    contracts plus a checker.
-  - *Status (wave 48, round 11).* Landed (gateway rule 11z), core consumers
-    plus the atomic-publication verdict.
-    - `qcore_core::execution_coverage` enumerates every candidate execution
-      of a bounded, loop-free fragment (literal value domains; bounds in the
-      evidence identity). Each candidate is checked by the unchanged
-      `check_c11_execution`, giving `RaceFree`, `Race` with a witness, or
-      `Unknown` named.
-    - The publication verdict's `Safe` now needs its shape race-free over
-      every execution and carries the all-executions assumption.
-    - `qcore_core::reclamation` checks hazard-pointer and epoch traces under
-      checked contracts, with `Declared` helpers and the handshake decided
-      by coverage.
-    - Corpus, system and slice: no move. There is no corpus consumer and no
-      reclamation protocol in the tree.
-    - Lean: `QCore.ExecutionCoverage` and `QCore.Reclamation` (new).
-    - Residuals: `CG29-ARITHMETIC-RMW-VALUE-DOMAIN`,
-      `CG29-SOURCE-FRAGMENT-EXTRACTION`, `CG29-RECLAMATION-SOURCE-ROUTE`.
-    - [Report](../../reports/cg29-execution-coverage-and-reclamation/README.md).
-- **CG30: dialects, flags and types.**
-  - *Dialects.* Explicit C17, C23 and C2y dialects (frontend identity and AST
-    differences together). Structured `--target`/`-mabi` flags join evidence
-    identity; unrestricted passthrough is not added.
-  - *Types.* Canonical type IDs across readers.
-  - *Extensions.* `_Complex`, vectors, `_BitInt` and fixed point, only for
-    extensions adopted.
-  - *Status (wave 48, round 10).* Landed as gateway rule 11y
-    ([report](../../reports/cg30-dialects-flags-types/README.md)): C17, C23
-    and C2y identities with registered AST differences in the evidence
-    identity (each refused by name; route G withdraws the definition before
-    any reader), structured `--target`/`-mabi` digested and admitted only
-    under the LP64 premise (`CTargetIdentity`, which CG20 keys widths on),
-    `CTypeId` shared by G, T and the ABI reader, and the four extension
-    families refused by name. Nothing adopted; the entry is amended with the
-    residual adoptions and their census sizes, not retired.
+---
 
-## 3. Entries that are not cards
+## 3. Entries that are intentionally non-cards (`14` of `112`)
 
-These are class O, or V/O without a chosen guarantee. They are neither
-defects nor TODOs. Each is reopened only by choosing its property as a
-published guarantee:
+Reopened only if explicitly selected as a new published guarantee:
+- **Out of scope**: `X01`–`X07` (LLVM backend/SSA/optimization/debug info, re-implementing Clang Sema, `"emit-llvm proves no UB"`, analyzing every external library body).
+- **Delegated or already checked**: `K13` (physical ABI lowering), `K14` (cross-TU summary rechecking), `I07` (per-build vs. all-configuration claim boundary).
+- **Guarantee-gated**: `N09`–`N10` (C IEEE/`fenv` guarantees), `M25` (uninitialized/padding byte reads), `W11` (eventual liveness/fairness).
 
-- **Out of scope** (LLVM backend, SSA, optimisation, debug output,
-  re-implementing Sema, "emit-llvm proves no UB", analysing every external
-  body): X01–X07.
-- **Delegated or already checked:** K13 (physical ABI lowering), K14
-  (cross-TU summary matching; existing rechecking is not a deficiency) and I07
-  (per-build guarantee versus all configurations).
-- **Guarantee-gated:** N09 and N10 (IEEE and fenv), M25 (uninitialized and
-  padding reads) and W11 (liveness and eventual observation).
+---
 
-Coverage: 98 carded entries + 14 non-card entries = 112. Every §5 row
-appears exactly once as a primary entry. E03, E12, N08 and K03 are split
-between two cards by aspect, as marked.
+## 4. Standing acceptance rules for residual cards
 
-## 4. Acceptance for every card
+Every follow-on residual card cut from this queue must provide:
+1. Frozen `PREDICTION.md` verified via `quirin-audit measure --declared`;
+2. Executed BEFORE/AFTER reproduction across the §8 axes with every moving row and correction attributed;
+3. Explicit route (`G`, `T`, or core consumer) and profile scope—never introducing evaluation orders C does not guarantee or auto-applying call contracts to non-call AST nodes;
+4. Fail-closed `Unknown` preservation, audited `QCore.*` Lean parity, and provisional-only reporting of `Unsafe` candidates.
 
-The unsupported coverage queue's §4 applies unchanged. That means a frozen
-PREDICTION.md, a BEFORE that reproduces the baseline, and an AFTER with every
-moving function attributed. It also means named corrections, fail-closed
-behaviour, Lean parity registered in an `Audit*.lean`, and no provisional
-Unsafe presented as an upstream defect. In addition:
+---
 
-- **Axes.** Test the analysis's §8 axes, not only accepted shapes. Each card's
-  report lists which axis values it covers and which stay refused.
-- **Route.** Name the route (G, T or core consumer) and source profile that a
-  result reaches. A core model's existence is not source reach.
-- **Evaluation order.** Never introduce an evaluation order C does not
-  guarantee and then claim a source-level result. If a card deliberately
-  audits one compiler's order instead, that is a separately stated scope.
-- **Contracts as boundaries.** A helper boundary contract is recorded as a
-  `Declared` assumption. Proving the helper's body is a separate obligation.
+## 5. Dispatch record summary
 
-## 5. Dispatch
+- **Pre-dispatch ranking (`CG00`, corpus `ae17152b`)**: Upper-bound Unknown functions freed alone (with / without alias leaves): `CG10` 491/293, `CG13` 55/48, `CG06` 40/39, `CG11` 37/34, `CG08` 34/22, `CG04` 31/25, `CG05` 23/19, `CG07` 18/15, `CG03` 17/13, `CG14` 17/11, `CG02` 12/10, `CG15` 7/7, `CG19` 2/2, `CG16` 2/1, `CG12` 1/1, `CG17` 0 (`CG10 + CG11` pair: 80).
+- **Executed wave-48 rounds**: All 31 base cards (`CG00`–`CG30`) landed across wave 48 rounds 1–11 (initial sweep reaching 647 Safe at `cf7cce20a`), followed by `CG10` sole-blocker/residual rounds 1–4, `CG22` callback registry & twelve-home comparator slices, `CG25` regex/thread-key/void-cast slices, and `AG1`–`AG3` (raising the corpus above 1,119 Safe; see [`docs/STATUS.md`](../../STATUS.md)).
 
-- **Measured ranking** (CG00-CLANG-GAP-BASELINE, corpus `ae17152b…`; Unknown
-  functions freed alone, alias leaves allowed / none, upper bounds;
-  [report](../../reports/cg00-clang-gap-baseline/README.md#33-ranking-phase-13-by-functions-freed),
-  function lists in its `predictions/`):
-  CG10 491/293, CG13 55/48, CG06 40/39, CG11 37/34, CG08 34/22, CG04 31/25,
-  CG05 23/19, CG07 18/15, CG03 17/13, CG14 17/11, CG02 12/10, CG15 7/7,
-  CG19 2/2, CG16 2/1, CG12 1/1, CG17 0; CG01 and CG09 (route T) and CG18 free
-  none in the corpus arbiter. The largest pair is CG10 + CG11 (80 functions).
-  2,765 Unknown functions stay blocked by uncontracted calls or other
-  unattributed leaves whatever phase 1–3 card lands.
-- **Landed:** every card, CG00–CG30 (wave 48, rounds 1–11, last landing main
-  `cf7cce20a`). The final-tree corpus is 647 / 10 / 4,177; see
-  [STATUS](../../STATUS.md) for the measured headline; each card's report owns its
-  figures. Open work is each card's registered residuals and §6.
-- **Critical path:** CG02 → CG03, then CG04, CG05 and CG06 in parallel, each
-  consuming CG00's function lists. CG10 can start now, in parallel with
-  phase 1, and has the largest measured yield.
-- **Delegated briefs.** A brief must carry the card's entries, the absorbed
-  follow-ups with their current sizes, and the evidence IDs.
+---
 
-## 6. Supplemental cards (2026-10-02)
+## 6. Supplemental cards (`SUP01`–`SUP08`, 2026-10-02)
 
-After the queue landed, the user decided (2026-10-02) that the four unmerged
-branches left from earlier waves are deleted and that the questions still open
-become supplemental cards. Each branch was tagged locally before deletion
-(`archive/<branch>`, not pushed), so its content stays recoverable:
+Four obsolete unmerged branches from earlier waves were archived under local `archive/*` tags on 2026-10-02, and the remaining open questions were registered as `SUP01`–`SUP08`:
 
-| Branch (archive tag) | Tip | What it held | Disposition |
-|---|---|---|---|
-| `card/c03-reach` (`archive/card-c03-reach`) | `326e634ef` | A competing C03-REACH unit 2: `QCore.NeutralFrameCensus`, 17 theorems proving the reach census inert and its labels a refinement of the gate | C03-REACH landed on main another way (`legacy_census.rs`) and judged Lean not applicable ([report §8](../../reports/remaining-c03-reach/README.md#8-lean)). The proof was never ported: **SUP01** |
-| `worktree-agent-a5b3a29c…` (`archive/worktree-agent-a5b3a29c1b3667c11`) | `30f0b1853` | WIP `gateway_reason_census.py` of the stalled C-GATEWAY-INDIRECT-CENSUS | Superseded: [C-GATEWAY-INDIRECT-CENSUS-2](../../reports/c-gateway-indirect-census-2/README.md) landed and fixed the macro-expansion misclassification (constraint 12a) the WIP stalled on. No open question |
-| `worktree-agent-a9c18eb0…` (`archive/worktree-agent-a9c18eb0765edfc46`) | `4a4df39cc` | A first CT41-MAP attempt (seven fixtures, its own stage-evidence file) | Superseded: CT41-MAP was [reduced onto the landed CT41 mapping](../../reports/ct41-map/README.md) and its residuals are registered (`CT41-*`). No open question |
-| `worktree-agent-ae1b55b7…` (`archive/worktree-agent-ae1b55b7a62492169`) | `3fbcfe2cd` | An abandoned HYGIENE-16 edit to `remaining-t00/coverage.json` that reverts later CT-CTWIN buckets | Obsolete: HYGIENE-16 landed in wave 16; the edit would regress the ledger. No open question |
-
-The supplemental cards also carry the questions the queue's last rounds left
-open. Each is registered in `named_followups` (recorded by
-`CLANG-GAP-SUPPLEMENTAL`); the queue's §4 acceptance applies to every one.
-
-| Card | Question | Effort | Prerequisite |
-|---|---|---|---|
-| SUP01-C03-CENSUS-INERTNESS-PROOF | Is the reach census provably inert now that verdict work relies on it? | High | none |
-| SUP02-MSVC-LLP64-WINDOWS-RUN | Do CG20's plain-`long` refusal and CG30's LLP64 refusal hold under a real MSVC-target Clang on Windows? | Medium (Windows host) | none |
-| SUP03-BOUNDS-TALLY-ON-INTEGRATED-MAIN | What is the bounds property's tally on the integrated main? | Medium | none; done (bounds unchanged, combined 111 → 113 Safe, [report](../../reports/sup03-bounds-tally/README.md)) |
-| SUP04-VARIADIC-UPSTREAM-CANDIDATES | Are CG26's two protocol violations real upstream defects? | Medium | none |
-| SUP05-PREDICTION-BEFORE-CODE | Can the order "prediction frozen before implementation" be checked, not asserted? | Medium | none |
-| SUP06-CONFIRMED-VERDICT-STATUS | A fifth verdict, `Confirmed`: fixed at the tip (release candidate) but not in master; Safe-equivalent yet handled on its own | High (verdict contract) | user decision on its semantics before dispatch |
-| SUP07-REFUSED-TEST-ACCUSATION | `mk_http_error_page` is a provisional `Unsafe` that its card's own reading calls false: a leak claim resting on a refused null test | High | none; done (rule 12e, [report](../../reports/sup07-refused-test-accusation/README.md)) |
-| SUP08-MONKEY-OVERWRITE-CANDIDATES | Are the `DocumentRoot` overwrite and `mk_config_listen_parse`'s `port = NULL` real Monkey leaks? | Medium (user validation) | none |
-
-- **SUP01: census inertness proof.** CG27 re-read C03-NFR-REACH with the census
-  (`crates/qcore-c-gateway/src/legacy_census.rs`, `compiler/examples/c03_reach_census.rs`), so a census edit that read its
-  own log could now move a recorded measurement unseen. Port the archived
-  `QCore.NeutralFrameCensus` (inertness: `the_log_does_not_influence_the_assignment`;
-  faithfulness under `Refines`) onto main's census, bound by shared vectors, or
-  record why C03-REACH's "not applicable" still holds. Size: 1 module, 17
-  theorems in the archive; 0 verdicts move by construction.
-- **SUP02: Windows MSVC run.** CG20's `c_numeric_abi_llp64` test runs a wrapper
-  Clang on Linux; CG30 refuses non-LP64 targets by flag. Run both controls and
-  the MSVC ABI reader fixtures on the Windows host against an
-  `x86_64-pc-windows-msvc` default target, record the revision and exits per
-  [platform evidence](../../development/platform-evidence.md), and correct the
-  reader's premise sentence if a control disagrees.
-- **SUP03: bounds tally on the integrated main.** CG16's final AFTER was lost
-  when the integrator removed its worktree mid-run; the published tally (162
-  Safe / 0 Pending / 0 Unsafe / 4,759 Unknown; combined 111 Safe) is from base
-  `b6a3dc42`. Re-measure with `QCORE_BOUNDS_PROPERTY` on the current main,
-  attribute any change (CG24's frames reach no function yet), and update the
-  STATUS bounds row.
-- **SUP04: variadic upstream candidates.** CG26 classified two refusals by
-  reading: `mk_vhost_set` returns without `va_end` on its `!value` path;
-  `rd_kafka_cgrp_rejoin` passes `ap` before `va_start`. Validate each against
-  the pinned sources (and a native trace where the path is reachable) before
-  any upstream report; until then they stay provisional and are never presented
-  as upstream defects.
-- **SUP05: prediction order.** Seven round-9/10 cards (CG21, CG23, CG25, CG26,
-  CG27, CG28, CG30) froze `PREDICTION.md` after drafting code (each disclosed it). Add a check that a card's prediction
-  commit precedes its first implementation commit (a records or validator
-  check, not a gate weakening), apply it to the wave-48 reports as a
-  measurement, and record the seven as disclosed deviations, not corrections.
-- **SUP06: a `Confirmed` verdict (user direction, 2026-10-02, for future
-  reference; not dispatched).** Raised while asking whether `mk_vhost_set` is
-  Safe at the tip of its fix. The user wants a status beside Safe / Pending /
-  Unsafe / Unknown, `Confirmed`, that callers may treat as Safe-equivalent but
-  that is published and handled as its own value. **Its meaning (user, same
-  day):** the function is *fixed at the tip* (the release candidate a tip-mode
-  contract tracks) *but not in master* (the released line, the audited
-  `HEAD`): the defect is real at the audited revision and its fix is confirmed
-  on the tip, as for `mk_vhost_set` (fix `21a2c190` on
-  `cosmo0920-missing-va_end-on-null`, not yet on Monkey `master`). This changes hard invariant 2
-  and language specification §L21.2 (`Safe < Pending < Unknown < Unsafe`), so
-  the card must settle, with the user, before any code:
-  - **What produces it.** Two facts together: the audited (master) body is not
-    Safe for a reason the tip's body no longer has, and the tip's body is
-    `Safe` (or the user's recorded confirmation of the fix stands for it),
-    resolved through a tip identity (C06.2) to a named commit; recorded in the verdict tuple's assumptions with who, what and
-    which revision; never produced by absence of evidence, never by a tool
-    refusal (fail-closed holds).
-  - **Where it sits.** Its place in the order and the join (`Safe ⊔ Confirmed`,
-    `Confirmed ⊔ Pending`), what "Safe-equivalent" means for a consumer that
-    requires `Safe`, and how a `Pending` (awaiting a human act) becomes
-    `Confirmed` (the act done) or stays apart from it.
-  - **How it is counted.** A separate column in every headline and report, never
-    folded silently into the Safe count; the denominator rule unchanged.
-  - **Where it reaches.** §L21.2, AGENTS.md invariant 2, the Lean verdict model
-    (`QCore.VerdictSemigroup`), every audit route, the sidecars, `compare`,
-    STATUS and the acceptance matrix; an earlier result never changes meaning.
-- **SUP07: an accusation resting on a refused test (user decision 2026-10-02:
-  MONKEY-VHOST-PROPERTY-CUSTODY landed as completed; this concern is handled
-  by a later card).** That card's `mk_string_dup` contract and rule 12d moved
-  `mk_http_error_page` (Monkey `mk_http.c`) Unknown → provisional `Unsafe`, a
-  leak at :399 of the copy made at :395. By the card's reading it is false:
-  the binding joins a refused `mk_ptr_to_buf` (:392) with the nullable copy,
-  the null test at :398 is refused, and rule 10b keeps the copy live on an exit
-  where it is NULL or was never made. Fix the general cause: a leak claim must
-  not rest on a decisive fact reachable only through a refused statement or
-  test (refuse, Unknown, named reason), as narrowly as the evidence allows,
-  without removing any established accusation; Lean parity; a control of the
-  :392/:395/:398/:399 shape; corpus back to 10 provisional `Unsafe` with every
-  other move read and named. Discharges `MONKEY-REFUSED-NULL-TEST-JOINED-LEAK`.
-- **SUP08: Monkey overwrite candidates (by reading, not validated).**
-  MONKEY-VHOST-PROPERTY-CUSTODY found two: `mk_vhost_set_property`'s
-  `DocumentRoot` branch overwrites `vh->documentroot.data` without releasing
-  the earlier copy (a second `DocumentRoot` set loses it; `mk_vhost_destroy`
-  releases only the last), and `mk_config_listen_parse` sets `port = NULL`
-  (`mk_config.c:222`), losing its copy. They keep `mk_vhost_set` non-Safe at
-  the tip. As with `mk_vhost_set`'s `va_end` fix (SUP04), the user validates
-  them in Monkey; a validated fix then gets a tip-mode contract (C06.2) and is
-  re-measured with the shared tip probe. Registered as
-  `MONKEY-DOCUMENTROOT-OVERWRITE-CANDIDATE`; nothing is reported upstream
-  without the user's decision.
+| Card | Question / Scope | Current standing |
+|---|---|---|
+| `SUP01-C03-CENSUS-INERTNESS-PROOF` | Prove `legacy_census.rs` reach-census inertness (`QCore.NeutralFrameCensus`) | **Open** |
+| `SUP02-MSVC-LLP64-WINDOWS-RUN` | Execute `CG20` plain-`long` and `CG30` LLP64 controls against native Windows `x86_64-pc-windows-msvc` Clang | **Open** (related LLP64 fixture portability landed in `windows-ci-llp64-fixtures-2`) |
+| `SUP03-BOUNDS-TALLY-ON-INTEGRATED-MAIN` | Re-measure `QCORE_BOUNDS_PROPERTY` on integrated `main` | **Completed** — [sup03-bounds-tally](../../reports/sup03-bounds-tally/README.md) (162 Safe / 4,759 Unknown; combined custody+bounds 111 → 113 Safe) |
+| `SUP04-VARIADIC-UPSTREAM-CANDIDATES` | Validate `CG26` `mk_vhost_set` (`!value` missing `va_end`) and `rd_kafka_cgrp_rejoin` (`ap` before `va_start`) candidates | **Open** (provisional only; never reported upstream without validation) |
+| `SUP05-PREDICTION-BEFORE-CODE` | Mechanically verify that a card's `PREDICTION.md` commit precedes its first implementation commit | **Open** |
+| `SUP06-CONFIRMED-VERDICT-STATUS` | Proposed fifth status `Confirmed` (fixed on upstream release-candidate tip, defective at audited `HEAD`) | **Open — gated on explicit user decision** (touches Hard Invariant 2 & `§L21.2`) |
+| `SUP07-REFUSED-TEST-ACCUSATION` | Prevent leak accusations resting on decisive facts hidden behind refused null tests (`mk_http_error_page`) | **Completed (rule 12e)** — [sup07-refused-test-accusation](../../reports/sup07-refused-test-accusation/README.md) |
+| `SUP08` (`MONKEY-DOCUMENTROOT-OVERWRITE-CANDIDATE`) | User validation of Monkey `DocumentRoot` and `mk_config_listen_parse` overwrite candidates | **Open** (awaits user validation; nothing reported upstream without user decision) |

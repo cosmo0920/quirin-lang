@@ -13,7 +13,7 @@
 // limitations under the License.
 
 //! Declared cross-crate contract dependencies at audit time (card
-//! **QUIRIN-AUDIT-CONNECT** Part C; contract spec C15.1).
+//! **QUIRIN-AUDIT-CONNECT** Part C; contract spec C15.2).
 //!
 //! A declaration may state which other crates' declarations its contract
 //! relies on (`requires resource_contract_dependency("CRATE", NS::NAME, ...)`,
@@ -210,7 +210,7 @@ pub fn evaluate(
 }
 
 /// What the record means, carried in it.
-pub const MEANING: &str = "declared contract dependencies (card QUIRIN-AUDIT-CONNECT, contract spec C15.1): a declaration's contract relies on the named crates' declarations with the stated identities (a version range over the crate's version, the target declaration's SHA-256); a dependency that does not resolve holds its declaration (dependency-changed: Pending, a review and re-pin resolve it; dependency-unresolved: Unknown), a held declaration holds every declaration that depends on it, and a cycle is held Unknown; nothing here makes a declaration Safe";
+pub const MEANING: &str = "declared contract dependencies (card QUIRIN-AUDIT-CONNECT, contract spec C15.2): a declaration's contract relies on the named crates' declarations with the stated identities (a version range over the crate's version, the target declaration's SHA-256); a dependency that does not resolve holds its declaration (dependency-changed: Pending, a review and re-pin resolve it; dependency-unresolved: Unknown), a held declaration holds every declaration that depends on it, and a cycle is held Unknown; nothing here makes a declaration Safe";
 
 #[cfg(test)]
 mod tests {

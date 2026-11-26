@@ -73,6 +73,7 @@ fn tracked_sources(root: &Path) -> Vec<PathBuf> {
 
 fn variant(checked: &CheckedSourceModule) -> &'static str {
     match checked {
+        CheckedSourceModule::QuantVariant(_) => "QuantVariant",
         CheckedSourceModule::ScalarCalls(_) => "ScalarCalls",
         CheckedSourceModule::Sequential(_) => "Sequential",
         CheckedSourceModule::ScopedTasks(_) => "ScopedTasks",

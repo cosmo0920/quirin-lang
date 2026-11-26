@@ -347,7 +347,7 @@ fn a_library_version_hold_keeps_its_reason_under_reduced_environments() {
     }
 }
 
-/// Card QUIRIN-AUDIT-CONNECT (contract spec C15.1): a call whose callee is
+/// Card QUIRIN-AUDIT-CONNECT (contract spec C15.2): a call whose callee is
 /// withheld because a contract dependency it declares does not resolve is
 /// `Unknown` with the dependency text (`missing-premise`); one withheld
 /// because the target's digest changed is `Pending` (`contract-pin-mismatch`).

@@ -406,6 +406,9 @@ fn contract_surface_is_pinned_as_structured_clauses() {
                     assert!(!clause.value.expression_source.is_empty());
                     all_expressions.push(clause.value.expression_source.clone());
                     match &clause.value.kind {
+                        SourceContractClauseKind::QuantVariantMap => {
+                            panic!("runtime adapter mappings belong to a source library")
+                        }
                         SourceContractClauseKind::Requires
                         | SourceContractClauseKind::QuantCheck
                         | SourceContractClauseKind::QuantNullDeref

@@ -132,7 +132,7 @@ requires resource_contract_dependency("quirin-provider-cfl", cfl::cfl_list_size,
     since "0.1.0", removed "0.2.0", sha256 "<64 hex>");
 ```
 
-Contract spec C15.1, grammar G05 `contract_dependency`. The clause names the
+Contract spec C15.2, grammar G05 `contract_dependency`. The clause names the
 crate (package name), the declaration (`NS::NAME`, the crate's derived
 namespace) and an identity: a version range over the crate's version and/or
 the SHA-256 of the target declaration's normalised text (the lock's

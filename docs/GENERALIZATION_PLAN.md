@@ -1,829 +1,160 @@
 # Checker generalization plan
 
-Date: 2026-09-06. Status: historical proposed execution plan. The current pinned
-Fluent Bit arbiter is `quirin-audit pinned`; its source adapters now live in
-`crates/quirin-source-analysis/`. See [architecture](development/architecture.md). Audience: implementation
-agents (Opus/Sonnet-class) and reviewers. This plan reviews the current checker
-architecture, names where it is over-fitted to the pinned source sets, sets a
-pluggable-system decomposition target for the monolithic crate, and orders the
-corrective workstreams. It does not weaken any Cycle 19/20 safety gate or the
-[reevaluation](REEVALUATION_SPEC.md) verdict contract.
+> [!NOTE]
+> **Architectural authority & historical status.** Originally authored on 2026-09-06 against the pre-split 23.8k-line monolithic `compiler/` crate. All foundational workstreams (`W0`–`W7`) have **executed** (decomposing the repository into the layered workspace below, establishing `.qv` contract bundles with lock files, standing up `quirin-audit`, and mapping **50/50** CT conformance cases), extended further by [`docs/plans/pluggable-cards/README.md`](plans/pluggable-cards/README.md). Sections **§2 (Invariants)** and **§3 (Layered Workspace Target)** remain active architectural constraints enforced by `compiler/tests/workspace_layering.rs` and [`docs/agents/operations.md`](agents/operations.md). For current architecture and measurements, see [`docs/development/architecture.md`](development/architecture.md) and [`docs/STATUS.md`](STATUS.md).
 
-## 1. Architecture review: what is generic, what is not
+## Current execution summary (`W0`–`W7`)
 
-Measured against the current tree (`compiler/src` = 23,804 lines):
-
-**Genuinely generic and load-bearing (~14,000 lines).** The Cycle 5–17
-semantic core (usage, ownership, quant indices, typed errors, error regions,
-whole-program, CFG, weak memory, concurrency, lowering) has zero third-party
-coupling. The unrestricted-C checker `compiler/src/legacy_c.rs` (2,726 lines)
-is also fully generic: tokenizer, structured-subset parser, CFG builder,
-may-alias resource abstract interpreter, Clang gateway, and independent
-certificate recheck, taking contracts through one clean interface,
-`ResourceContracts` (`legacy_c.rs:86-111`).
-
-**Generic substrate that exists but is not load-bearing.**
-
-- A real declarative contract language: the historical `contract/qcore/**.qcore` checkpoint (15 files,
-  689 lines) with `resource type`, `extern fn ... effects {...} contract
-  {...}`, and two working interpreters
-  (`compiler/src/contract_observation.rs`, `compiler/src/chunk_contract.rs`).
-  W1's first execution (2026-09-06) added a total-or-reject v1 loader,
-  `compiler/src/contract_loader.rs`, and the audit example now loads its
-  resource contracts through a manifest
-  ([parity record](reports/cycle19-contract-loader/README.md)), and the
-  leftover test/example literal sites now load `.qcore` fixtures through the
-  loader ([literal-site record](reports/w1-literal-sites/README.md)). Richer
-  observation/lifecycle predicates still use separate interpreters and no
-  loader feeds `LibrarySummaryProfile`.
-- A full Cycle 20 plugin protocol (`compiler/src/verifier_plugin.rs`, 1,567
-  lines): versioned manifests, capability matching, process isolation,
-  certificate firewall, composition. But `driver.rs:199-211` rejects every
-  resolved `verify scope` with `Q701` — obligation generation and dispatch are
-  unimplemented (finding VP05), and protocol v1 carries only Boolean
-  assertions, so the core rightly refuses all v1 `Safe` proposals.
-- A generic mechanism vocabulary `LibraryMechanismSummary`
-  (`external_integration.rs:467-514`: ReferenceCount, IntrusiveList,
-  TypedQueue, Arena, CascadingDestructor, AtomicPublication, ThreadHandoff,
-  Reclamation) and a generic custody algebra (`external_integration.rs:19-456`).
-- A generic conformance corpus CT01–CT50 (spec §55) with machine-readable
-  tracking (`docs/reevaluation/ct_manifest.json`) — currently **100% unmapped**.
-
-**Over-fitted (~5,300 lines of Cycle 18–20 integration).** Concrete hotspots,
-ranked:
-
-| Hotspot | Location | Nature |
+| Workstream | Target | Current standing |
 |---|---|---|
-| Literal source-fragment matcher | `compiler/src/external_source.rs` (whole file) | Pinned upstream paths with versions baked in (`:9-19`), closed `AuditedLibrary` dispatch (`:42-68`), "verification" is `contents.contains(fragment)` over exact upstream substrings (`:114-241`) |
-| Closed library enum + per-project arms | `compiler/src/external_integration.rs:458-912` | 3-variant `AuditedLibrary`, per-library `permits` arms (`:479-507`), hardcoded C function-name tables (`:653-679`), compile-time-constant Monkey callback audit results (`:722-764`, `:817-908`) |
-| Libevent tables | `compiler/src/verifier_plugins/libevent/event_driven.rs` | 48-entry API name table (`:108-157`), pinned commit + clean-tree + 12-file × ~40-needle substring audit (`:1482-1612`) |
-| Monkey trio | `verifier_plugins/libevent/monkey_{source,binding,observation}.rs` (2,080 lines) | Closed 3-callback list, hardcoded record names, callee allowlists, literal type-string tests, ghost-name synthesis table |
-| ChunkIO field importer | `verifier_plugins/chunkio/chunk_source.rs:119-124` | Exactly two struct/field pairs supported |
-| Audit orchestration as an example | `compiler/examples/cycle19_fluent_bit_libraries_audit.rs` (966 lines) | The only production contract table, compile-db ingest, per-library iteration, `include_str!`-bound contracts, hardcoded 12-path pin check. Pointing the checker at a new codebase today means writing a new ~900-line example, not supplying configuration |
-| First-party manifest literals | `compiler/src/verifier_plugin.rs:1436-1521` | Closed manifest/registration list |
+| **W0 — Workspace layering** | Extract `qcore-schemas` (L0) and `qcorec` CLI (L3); enforce downward-only dependencies | **Completed** (`workspace_layering.rs` enforces L0 → L1 → L2 → L3 + rule packages) |
+| **W1 — Contracts as data** | Total-or-reject contract loader (`qcore-contract`); eliminate Rust contract literals | **Completed** (`.qv` corpus across 11 locked provider crates + user plugin crates) |
+| **W2 — Profiles as data** | Versioned source-set profiles (`contract/profiles/`), CMake compile-db & preprocessor transport | **Completed for bounded profiles**; evaluation profiles managed via `contract/evaluations/` |
+| **W3 — Obligations & dispatch** | Core-derived obligations, `qcore-verifier-host`, evidence-v2 witness replay, permanent v1 `Safe` refusal | **Bounded implementation active**; general C lifecycle source derivation remains open |
+| **W4 — Custody summary inference** | SCC-ordered interprocedural summary inference & independent certificate rederivation (`qcore-c-gateway`) | **Implemented & extended** (`Out`, `Stored`, `Removed`, `Reallocated`, countdown/threshold recursion, `CG01`–`CG30` rules) |
+| **W5 — Configured audit & providers** | `qcore-audit` (`quirin-audit`), `quirin-source-analysis`, reproducible `providers/*` packages, rule crates | **Implemented**; legacy Cycle-19 routes remain retained until full G4 parity (`REEVALUATION_SPEC.md` §9) |
+| **W6 — Generic CT01–CT50 corpus** | Manifest-keyed source/C conformance harness (`docs/reevaluation/ct_manifest.json`) | **50/50 mapped** (48 distinct fixtures; 5 case-bound Lean proofs; 10 Linux/macOS sanitized-native rows; mapping ≠ full conformance) |
+| **W7 — Hygiene** | Lean 4.35 CI gate (`check_lean_audits.py`), diagnostic namespaces, routed `docs/agents/` & `docs/STATUS.md` | **Active continuous policy** (`512+` Lean audits; `Q7xx` / `QP***` / `QI***` / `QF***` namespaces) |
 
-**Structural finding: the system is one monolithic crate.** The workspace has
-a single member; `qcore-compiler` compiles the semantic kernel, the QCore
-front end, the C gateway, the plugin host, every first-party provider, the
-contract interpreters, the audit orchestration, and the CLI into one library
-and one binary. Consequences: providers are "plugins" in protocol only — they
-share the core's private types and compile into the trusted binary; the trust
-boundary Cycle 20 specifies (core firewall vs. untrusted provider) has no
-compilation-unit enforcement; any library-specific change rebuilds and
-re-risks the core; and third parties cannot ship a provider without forking
-the compiler. Generalization and de-monolithization are therefore the same
-project: the plan below treats **pluggability as a requirement of every
-workstream**, not a final refactor.
+---
 
-**Interpretation.** The project does not need a new architecture. Cycle 20
-already specifies the correct one (core owns obligations, identity, firewall,
-composition; plugins own library semantics), and the reevaluation spec already
-states the correct trust rule (*"The core MUST derive an obligation inventory
-from the normalized program. Plugins may propose witnesses, not the list of
-obligations whose absence would make their own proof succeed."*). What is
-missing is the connective tissue that makes the generic substrate load-bearing
-— a contract loader, data-driven source-set profiles, obligation
-generation/dispatch, interprocedural summary inference (LC01's remaining
-boundary), a generic acceptance corpus — **plus the physical decomposition
-that makes the plugin boundary real**. That is what this plan orders.
+## 1. Architecture review at the 2026-09-06 baseline
+
+*(Retained as historical context explaining why `W0`–`W7` were sequenced as below.)*
+
+At the 2026-09-06 baseline (`compiler/src` = 23,804 lines in a single monolithic crate):
+- **Generic kernel (~14,000 lines)**: Cycle 5–17 semantic passes (usage, ownership, quant indices, typed errors, error regions, CFG, weak memory, concurrency, lowering) and `legacy_c.rs` had zero third-party coupling.
+- **Under-connected substrate**: Declarative contracts, the Cycle-20 plugin protocol (`verifier_plugin.rs`), `LibraryMechanismSummary`, and `CT01`–`CT50` (then 0/50 mapped) existed without data-driven loaders or process boundaries.
+- **Over-fitted integration (~5,300 lines)**: Hardcoded `AuditedLibrary` enums, upstream substring matchers (`external_source.rs`), Libevent/Monkey/ChunkIO name tables, and a 966-line audit example compiled directly inside the trusted crate.
+
+---
 
 ## 2. Invariants that every workstream must preserve
 
-1. **Fail-closed everywhere.** Unknown, never optimistic fallback, for:
-   missing/unloadable contracts, unmatched profiles, unsupported constructs,
-   provider absence/failure/mismatch, and unproven call effects. No workstream
-   may convert an `Unknown` to `Safe` as a side effect of refactoring.
-2. **Reevaluation gate ordering** (`REEVALUATION_SPEC.md` §9): G1 certificate
-   containment before expanding provider coverage; Cycle 19's existing
-   analysis routes are removed only after G4 parity is recorded.
-3. **Parity before deletion** (Cycle 20C rule): each extraction must reproduce
-   the previous pinned verdicts, coverage tables, and diagnostics before the
-   hardcoded path is removed, with the comparison archived under
-   `docs/reports/`.
-4. **Verdict contract**: every result carries `(artifact, property, semantic
-   profile, scope, bounds, assumptions, evidence version)`; projection
-   percentage is never presented as safety percentage; unknowns stay in the
-   coverage denominator.
-5. **Standing per-change gate**: `cargo test --workspace`, `cargo fmt --check`,
-   Clippy `--all-targets -- -D warnings`, `lake build` (placeholder-free, no
-   project axioms in audits), and the existing probe examples
-   (`reevaluation_probe`, `reevaluation_followup`) keep passing.
-6. **Trusted input stays declared.** Contract/profile files are *trusted
-   assumptions*, and certificates must record which ones were assumed. Moving
-   a table from Rust into data does not make it verified; it makes it
-   declarable, diffable, and per-source-set.
-7. **Pluggability direction of dependencies.** New and moved code must respect
-   the target layering of §3: providers and profiles depend only on the
-   published schema surface, never on core internals; the core never depends
-   on any provider; the CLI and audit driver depend on the host, not on
-   individual providers. A workstream that would violate this must change the
-   schema surface (versioned) rather than reach across the boundary.
+1. **Fail-closed everywhere.** `Unknown`, never optimistic fallback, for missing/unloadable contracts, unmatched profiles, unsupported constructs, provider absence/failure/mismatch, and unproven call effects. No workstream may convert an `Unknown` to `Safe` as a side effect of refactoring.
+2. **Reevaluation gate ordering** ([`REEVALUATION_SPEC.md`](REEVALUATION_SPEC.md) §9): G1 certificate containment before expanding provider coverage; Cycle 19's existing analysis routes are removed only after G4 parity is recorded.
+3. **Parity before deletion** (Cycle 20C rule): each extraction must reproduce the previous pinned verdicts, coverage tables, and diagnostics before the hardcoded path is removed, with the comparison archived under `docs/reports/`.
+4. **Verdict contract**: every result carries `(artifact, property, semantic profile, scope, bounds, assumptions, evidence version)` over `Safe < Pending < Unknown < Unsafe`; projection percentage is never presented as safety percentage; unknowns and `Pending` stay in the coverage denominator.
+5. **Standing per-change gate**: workspace tests (`--no-fail-fast`), `cargo fmt --check`, Clippy `--all-targets -- -D warnings`, Lean audits (`check_lean_audits.py`, placeholder-free, no project axioms), Python tests, and the reevaluation probe examples (`reevaluation_probe`, `reevaluation_followup`) keep passing (see [`docs/agents/validation.md`](agents/validation.md)).
+6. **Trusted input stays declared.** Contract and profile files are *trusted assumptions*, and certificates must record which ones were assumed. Moving a table from Rust into `.qv` or JSON data makes it declarable, diffable, and per-source-set—never automatically proved.
+7. **Pluggability direction of dependencies.** New and moved code must respect the downward layering of §3: providers and subcommand plugins depend only on the published schema/plugin surface, never on core internals; the core never depends on any provider; the CLI and audit driver depend on hosts/registries, not on individual third-party provider internals.
 
-## 3. Pluggability target: from monolithic crate to layered workspace
+---
 
-### 3.1 Target crate layout
+## 3. Pluggability target: layered workspace architecture
 
-Decompose the workspace into layers with dependencies pointing strictly
-downward. Names are suggestions; the layering is the requirement.
+### 3.1 Target crate layout (live workspace)
 
-```
-crates/qcore-schemas          # L0: the published, versioned surface
-  verdict lattice, diagnostics model, obligation inventory,
-  evidence/witness schemas (v1 refusal + v2), plugin protocol frames,
-  manifest + profile formats, contract data model (ResourceFunctionContract),
-  source/build identity records.  serde types only, no analysis logic.
-crates/qcore-core             # L1: trusted semantic kernel
+Dependencies point strictly downward (`compiler/tests/workspace_layering.rs`):
+
+```text
+crates/qcore-schemas               # L0: published, versioned portable data surface
+  verdict lattice & composition (⊕), diagnostics & reason categories,
+  obligation inventory, evidence/witness schemas (v1 refusal + v2),
+  plugin protocol frames, profile/manifest formats, contract & supersession
+  data models, source/build/target identities. Serde types only; zero analysis logic.
+
+crates/qcore-core                  # L1: trusted semantic kernel
   usage, ownership, quant indices, typed errors, error regions, CFG,
-  weak memory, concurrency, custody algebra, library/container/reference-count custody
-  and pure model checkers.
-crates/qcore-frontend         # L1: front end, elaboration + whole-program checking
-  Uses the L0 typed formal-contract ASTs; schemas remain portable data with no
-  workspace dependencies. No analysis logic moves into the schema leaf.
-crates/qcore-contract         # L1: .qcore contract parsing, loader,
-  contract/observation interpreters (contract_observation, chunk_contract).
-crates/qcore-c-gateway        # L2: legacy_c, clang discovery, typed_c_ast,
-  interprocedural summary inference (W4), opaque typed Boolean-field source import,
-  generic typed path projection, call-result def/use and opaque typed-body comparison.
-crates/qcore-verifier-host    # L2: registry, discovery, process provider,
-  composition and certificate admission orchestration (W3).
-crates/qcore-verification     # Trusted adapter above L1 + C gateway + verifier host:
-  explicit-registry source driver, declared model/source-bundle gates, research aggregate,
-  obligation derivation, witness replay, scope dispatch, typed source-contract replay.
-  No provider dependency.
-  Keeps gateway/host/frontend/contract/schema integration out of the dependency-free kernel.
-crates/quirin-source-analysis # Source adapters above verification and the C gateway:
-  pinned ChunkIO and Libevent source analysis shared by compiler and audit;
-  no compiler, audit or provider implementation dependency.
-crates/qcore-audit            # L3: orchestration-as-configuration (W5):
-  compile-db ingest, pin verification, per-unit iteration, report emission,
-  sealed-import source-contract selection through explicit verified registries.
-crates/qcorec                 # L3: CLI binary.
-providers/qcore-provider-*    # out-of-tree layer: one crate per provider
-  (libevent+monkey, chunkio, cmetrics, ctraces, librdkafka), each buildable
-  as a standalone executable speaking the qcore-schemas protocol; in-process
-  adapter kept only during migration.
-contract/                     # data layer: .qcore contracts + profile
-  manifests, shipped with providers or user-supplied.
-proof/                        # unchanged location; theorem families referenced
-  by manifests via qcore-schemas identifiers.
+  weak memory, execution coverage, reclamation, concurrency, custody algebra,
+  event reactor, stdlib/buffer/string/socket/http/float models, pure checkers.
+
+crates/qcore-frontend              # L1: .qr / .qv front end, elaboration & whole-program driver
+  lexer, structural/formal clause parsers, runtime #import inspector,
+  closed index resolver, route elaborators.
+
+crates/qcore-contract              # L1: .qv contract loader, inclusion/inheritance,
+  hypothesis graphs, bounds/null/cell/callback loaders & observation interpreters.
+
+crates/qcore-gateway-rule-api      # L1.5: gateway rule position traits & envelopes
+  (depends only on qcore-schemas and qcore-contract; seam B of pluggable-cards).
+crates/gateway-rules/rule-*        # Pluggable C-gateway rule packages (depend on
+  qcore-gateway-rule-api and optional qcore-core; never on qcore-c-gateway).
+
+crates/qcore-c-gateway             # L2: existing-C analyzer, Clang discovery,
+  typed_c_ast, expression elaborator, typed places, W4 summary inference,
+  bounds/null/numeric/atomic/callback routes, rule-registry host.
+
+crates/qcore-verifier-host         # L2: provider registry, discovery, process isolation,
+  execution quotas, certificate firewall, and composition orchestration.
+
+crates/qcore-verification          # L2.5: trusted integration adapter above L1 + L2
+  explicit-registry source driver, obligation derivation, witness replay,
+  scope dispatch, typed source-contract replay (zero provider crate dependencies).
+
+crates/quirin-source-analysis      # Shared pinned ChunkIO & Libevent source adapters
+  above verification and C gateway (no compiler, audit, or provider dependency).
+
+crates/qcore-audit                 # L3: `quirin-audit` orchestration & routes
+  compile-db ingest, pin/lock verification, AUDIT-IR component execution,
+  pinned/current/configured routes, sidecar & component report emission,
+  subcommand plugin host (`crates/quirin-audit-plugin*`).
+
+crates/qcorec                      # L3: `quirin` CLI binary (`check`, `emit`, `build`, `plugins`).
+
+providers/*                        # Out-of-tree provider workspace (`providers/Cargo.toml`)
+  qcore-provider-{libevent,chunkio,cmetrics,ctraces,librdkafka} and
+  quirin-provider-{libc,fluent-bit,monkey,cjson,sqlite,shared,openssl,libcurl,plugin},
+  each owning `.qv` contracts + generated `contract-inventory.lock`.
+
+contract/                          # Evaluation profiles (`evaluations/`), contributions,
+  and source-set profiles (`profiles/`).
+proof/                             # Lean 4 (`v4.35.0`) models (`QCore/*.lean`) & audits (`Audit*.lean`).
 ```
-
-Rules:
-
-- **`qcore-schemas` is the only crate providers may depend on.** It is
-  semver-versioned independently; changing it is a compatibility event with
-  the same discipline as protocol v1 negotiation. Everything in it must be
-  serializable — if a type cannot cross a process boundary, it does not
-  belong there.
-- **The trust boundary is a process boundary, eventually.** During migration,
-  first-party providers may run in-process behind the same request/response
-  types, but they must lose access to core internals at the crate split — the
-  compiler enforces what code review currently has to.
-  *Decision (2026-09-06): providers remain compile-time crates speaking the
-  same schema types in-process; the out-of-process step is deferred, not
-  abandoned. Schema types stay process-portable so the deferral costs no
-  schema rework.*
-- **The schemas, core, frontend, contract and verifier-host libraries build
-  without provider executable crates or assets**. The C gateway also requires
-  the shared source-projection policy in `providers/quirin-provider-shared/contracts`.
-  The retained first-party integration adapters in `qcore-verification` and
-  `compiler` read canonical provider-owned contract assets at compile time;
-  their integration tests likewise require those data files. This deliberately
-  supersedes the full-workspace “zero providers present” layout requirement
-  following removal of duplicate contract snapshots. It adds no Rust dependency
-  on provider executable crates. The full first-party set remains separately
-  built and verified artifacts (Cycle 20D's packaging gate).
 
 ### 3.2 Migration strategy
 
-Big-bang decomposition of a 23.8k-line crate is high-risk and would freeze the
-other workstreams; a pure "refactor at the end" repeats the monolith. The plan
-uses a thin early split plus per-workstream placement:
+1. **Extract L0 (`qcore-schemas`) and L3 CLI (`qcorec`) first (`W0`)**, turning `qcore-compiler` into a shrinking compatibility facade.
+2. **Land every new capability directly in its target crate** (`W1` → `qcore-contract`, `W3` → `qcore-verifier-host`, `W4` → `qcore-c-gateway`, `W5` → `qcore-audit` / `quirin-source-analysis` / `providers/*`, gateway rules → `crates/gateway-rules/*`). Never add new logic to `qcore-compiler`.
+3. **Archive parity before route deletion** (Hard Invariant 3).
 
-1. **W0 (below) extracts only L0 + the CLI**: `qcore-schemas` and `qcorec`.
-   This is mostly type movement and re-exports; the existing `qcore-compiler`
-   crate temporarily becomes the L1/L2 grab-bag and re-exports schema types
-   for compatibility.
-2. Every subsequent workstream **lands new code in its target crate** and
-   moves the modules it touches (W1 → `qcore-contract`, W3 →
-   `qcore-verifier-host`, W4 → `qcore-c-gateway`, W5 → `providers/*` and
-   `qcore-audit`). No workstream adds code to the grab-bag.
-3. A closing consolidation step (W5, task 5) renames the emptied
-   `qcore-compiler` remainder into `qcore-core`/`qcore-frontend` and deletes
-   the compatibility re-exports.
+---
 
-This keeps each move reviewable, keeps `cargo test --workspace` green at every
-step, and means the crate graph converges on §3.1 as a by-product of the
-functional work rather than a separate risky project.
-
-## 4. Workstreams
-
-Ordered by leverage and dependency. W0 comes first and is short; W1–W3 are
-then independent of each other and can proceed in parallel; W4 depends on W1;
-W5 depends on W1–W3; W6/W7 are continuous.
+## 4. Workstreams (`W0`–`W7`)
 
 ### W0 — Workspace layering: extract the schema surface and the CLI
+- **Standing**: Executed ([W0 report](reports/w0-schema-crate/README.md)). Extracted `qcore-schemas` and `qcorec` and installed the downward-only workspace dependency guard (`workspace_layering.rs`).
 
-**Status.** Executed (2026-09-06): see the
-[W0 schema-crate record](reports/w0-schema-crate/README.md). All four tasks
-landed; the standing gate passed unchanged.
+### W1 — Contract loader: make `.qv` (formerly `.qcore`) the single source of contracts
+- **Standing**: Executed ([loader parity](reports/cycle19-contract-loader/README.md), [crate extraction](reports/w1-contract-crate/README.md), [literal migration](reports/w1-literal-sites/README.md), [clause vocabulary](reports/w1-clause-vocabulary/README.md)). Total-or-reject `resource_contract_v1` loading, `#include` / `contract inherit` (`C15`), per-provider `contract-inventory.lock` files, and `pinned_at` supersession (`C06.6`) live in `crates/qcore-contract`.
 
-**Goal.** Make the plugin boundary compiler-enforced from the start: a
-standalone `qcore-schemas` crate holding every type that crosses the
-core/provider or process boundary, and a `qcorec` binary crate that depends on
-the library rather than living inside it.
+### W2 — Source-set profiles and build transport as data
+- **Standing**: Executed for bounded profiles and CMake build transport ([profile manifests](reports/w2-profile-manifests/README.md), [provider discovery](reports/w2-provider-discovery/README.md), [source-profile boundary](reports/w2-source-profile-boundary/README.md), [preprocessor transport](reports/w2-preprocessor-transport/README.md), [Clang CMake build](reports/w2-clang-cmake-build/README.md), [Boolean-field profiles](reports/w2-boolean-field-profiles/README.md), [Monkey typed profile](reports/w2-monkey-typed-profile/README.md)). Configured audits preserve include classes, macro ordering, and persistent `quirin-audit prepare clang-build` provenance.
 
-**Tasks.**
-1. Create `crates/qcore-schemas` and move (with re-exports from
-   `qcore-compiler` for compatibility): the protocol v1 frame/manifest/
-   request/response types and capability/target declarations from
-   `verifier_plugin.rs`; the verdict and diagnostic model types; the
-   `ResourceFunctionContract`/`ResourceContracts` data model from
-   `legacy_c.rs:86-111` (types only — the analyzer stays); the
-   `LibraryMechanismSummary` vocabulary; source/build identity and pinned-
-   revision record types. Everything moved must be serde-serializable and
-   free of analysis logic.
-2. Move `src/main.rs` into `crates/qcorec`; the workspace gains three
-   members. No behavior change; CLI output byte-identical.
-3. Document the schema crate's compatibility policy in its README: semver,
-   what constitutes a breaking change, and the rule that providers depend on
-   this crate only.
-4. Add a CI/test guard that fails if `qcore-schemas` grows a dependency on
-   any other workspace crate (dependencies point downward only).
+### W3 — Core obligation generation and verify-scope dispatch
+- **Standing**: Bounded dispatch and v2 witness replay implemented ([evidence v2](reports/w3-evidence-v2/README.md), [verifier host](reports/w3-verifier-host/README.md), [source-field provider](reports/w3-source-field-provider/README.md)). Protocol v1 `Safe` proposals remain permanently refused; uncertified user/subcommand plugin claims yield `Pending` at best (`C11.1`–`C11.2`); general C lifecycle source derivation remains open.
 
-**Acceptance.** Workspace builds with three members; all tests, probes, and
-Clippy pass unchanged; `qcore-schemas` has no path dependencies on the rest of
-the workspace.
+### W4 — Interprocedural custody summary inference
+- **Standing**: Implemented and continuously extended in `crates/qcore-c-gateway/src/legacy_summary.rs` ([initial W4](reports/w4-custody-inference/README.md), [extensions](reports/w4-custody-extensions/README.md), [removed](reports/w4-removed-custody/README.md), [out forwarding](reports/w4-out-forwarding/README.md), [contextual recursion](reports/w4-contextual-recursion/README.md), [unsigned countdown](reports/w4-unsigned-countdown/README.md), [nullable removal](reports/w4-nullable-removal/README.md), [immutable out aliases](reports/w4-immutable-out-aliases/README.md), [gateway crate](reports/w4-gateway-crate/README.md)). Summaries validate via body re-analysis and independent certificate rederivation; declared contracts take precedence (`SummaryConflict` on disagreement).
 
-**Agent guidance.** Sonnet-class; mechanical but wide. Resist scope creep:
-W0 moves types, never logic. If a type turns out to entangle logic (e.g.
-methods doing analysis), split the type from its impl rather than moving the
-logic.
+### W5 — Provider extraction and orchestration-as-configuration
+- **Standing**: Configured `quirin-audit` orchestration, reproducible `providers/*` packages, CLI plugin verification, generic reactor/custody kernel split, and shared `quirin-source-analysis` are implemented ([configured audit](reports/w5-configured-audit/README.md), [provider packages](reports/w5-provider-packages/README.md), [CLI packages](reports/w5-cli-packages/README.md), [generic reactor](reports/w5-generic-reactor/README.md), [configured process audit](reports/w5-configured-process-audit/README.md), [driver consolidation](reports/w5-generic-driver-consolidation/README.md), [CMetrics provider](reports/w5-cmetrics-unit-provider/README.md)). Full provider semantic parity and legacy Cycle-19 route retirement remain gated on G4 parity.
 
-### W1 — Contract loader: make `.qcore` the single source of contracts
+### W6 — Generic acceptance corpus (`CT01`–`CT50`)
+- **Standing**: Harness stood up ([W6 harness](reports/w6-ct-harness/README.md)) and expanded across sequential, task, mutex, epoch, buffer, string, socket, cell, and C-twin lanes to **50/50 mapped cases** in `docs/reevaluation/ct_manifest.json` (48 distinct source fixtures, 5 case-bound Lean proofs, 10 gated Linux/macOS sanitized-native rows; see [`docs/STATUS.md`](STATUS.md)). Mapping tracks scenario coverage by stage and does not claim full language conformance.
 
-**Status.** Executed (2026-09-06). `compiler/src/contract_loader.rs`
-implements the total-or-reject v1 vocabulary and the Cycle 19 audit consumes
-a contract manifest — see the
-[contract-loader parity record](reports/cycle19-contract-loader/README.md).
-The relocation into `crates/qcore-contract` is executed (2026-09-06, with
-`crates/qcore-core` and `crates/qcore-frontend` extracted beneath it so the
-loader sits below the certificate recheck — see the
-[W1 relocation record](reports/w1-contract-crate/README.md); `chunk_contract`
-follows once the W5 task 3 chunk-summary schema split lands). The leftover
-literal sites are migrated (2026-09-06): tests and examples load `.qcore`
-fixture modules through the loader, and only the loader's own mapping tests
-still construct literals — see the
-[literal-site record](reports/w1-literal-sites/README.md). The richer clause
-vocabulary is closed (see the
-[clause-vocabulary record](reports/w1-clause-vocabulary/README.md)): the
-`requires resource_contract_v1` marker is pinned corpus-wide as the
-interpreter selector (19 declarations load, 141 are rejected rather than
-skipped), the clause-family → owner table is documented in the loader header
-and the corpus guide, and the C ABI scalar type table is complete. Unifying
-the resource loader with the observation/lifecycle interpreters is
-**W5-adjacent** — it depends on the W5 task 3 chunk-summary schema split —
-and non-null error sentinels need target-interface work in `qcore-schemas`
-plus the analyzer, not loader vocabulary.
+### W7 — Hygiene: names, diagnostics, Lean CI, and documentation routing
+- **Standing**: Implemented and maintained ([Lean CI](reports/w7-lean-ci/README.md), [generic Lean names](reports/w7-generic-lean-names/README.md), [diagnostic attribution](reports/w7-diagnostic-attribution/README.md), [documentation routing](reports/docs-structure-compression/README.md)). `Q700`–`Q703` belong to core `PluginVerification`; Libevent uses provider-local `qcore.libevent.L00`–`L12`; `AGENTS.md` routes to `docs/agents/` and `docs/STATUS.md`.
 
-**Goal.** One loader from canonical contract modules to the analyzer's
-`ResourceContracts`, eliminating every Rust-literal production contract table.
-
-**Why first.** It is the highest-leverage, lowest-risk step: the language, the
-parser (`frontend.rs` already elaborates contract clauses), and the consumer
-interface all exist; only the bridge is missing. Everything downstream (W2,
-W4, W5) wants contracts as data.
-
-**Tasks.**
-1. Add the loader in `crates/qcore-contract` (new home for
-   `contract_observation.rs` and `chunk_contract.rs` too): parse a
-   `module contract;` file via the existing front end and map each `extern fn`
-   declaration to a `ResourceFunctionContract` (parameter modes
-   Borrowed/Owned/Consumed/Released/Out/Stored/Removed × nullability, return
-   Owned/Reallocated, error sentinels). Define the mapping from
-   contract-clause vocabulary to `ResourceApiKind`/modes explicitly; any
-   clause the mapping cannot express → that function is rejected with a
-   diagnostic (fail-closed), not silently approximated.
-2. Migrate the production table in
-   `cycle19_fluent_bit_libraries_audit.rs:141-207` into
-   canonical `.qcore` files (e.g. `providers/quirin-provider-libc/contracts/libc/memory.qcore`,
-   `monkey/memory.qcore`, `librdkafka/memory.qcore`,
-   `fluent_bit/memory.qcore` extensions, `chunkio/chunk_open_close.qcore`),
-   and load them at runtime instead of `include_str!`/Rust literals.
-3. Update `compiler/tests/qcore_contract_corpus.rs` expected-count tables;
-   add loader unit tests: round-trip (loaded contract ≡ previous literal),
-   unsupported-clause rejection, missing-file behavior, duplicate-function
-   conflict behavior.
-4. Parity check: rerun the Cycle 19 audit example with loaded contracts and
-   diff verdict/coverage JSON against the current archived report
-   (`docs/reports/cycle19-resource-triage/`); archive the comparison.
-
-**Pluggability deliverable.** Contract files become a shippable unit: a
-provider or user can supply a directory of `.qcore` contracts without
-touching Rust. The loader consumes and produces only `qcore-schemas` types,
-so the same loader serves in-process use and future out-of-process providers.
-
-**Acceptance.** No production `ResourceContracts` literal remains outside
-tests; audit verdicts byte-identical (or every difference explained and
-recorded); corpus test still pins per-file clause counts.
-
-**Agent guidance.** Sonnet-class is sufficient; mechanical but detail-heavy.
-The one design decision needing care is the clause→mode mapping table — write
-it down in the module header and keep it total-or-reject.
-
-### W2 — Source-set profiles as data: replace closed enums and fragment tables
-
-[Public source-profile validation](reports/w2-source-profile-boundary/README.md)
-closes the direct-schema bypass of audited-file and witness validation. Manifest
-loading and generic source-summary derivation share the same structural rules;
-invalid direct inputs reject before granting mechanisms. Pinned outputs remain
-identical. This validates declared input structure, not the truth of an asserted
-library construct or provenance of a supplied checkout.
-
-**Goal.** A source-set *profile manifest* format so that adding a library
-means adding files, not editing Rust.
-
-**Tasks.**
-1. Define a versioned profile manifest (schema types in `qcore-schemas`;
-   files under `contract/profiles/<source-set>/profile.*`) carrying what is
-   today hardcoded: pinned revision(s), audited file paths, expected source
-   fragments/digests, permitted `LibraryMechanismSummary` set, function-name
-   → mechanism-summary table (the `required_chunk_summary` names,
-   `external_integration.rs:653-679`), API disposition tables (the 48-entry
-   Libevent profile, `event_driven.rs:108-157`), and required
-   evidence/observation kinds. Prefer **file digests over embedded source
-   substrings** for pin checks; keep substring needles only where a digest
-   cannot express "this specific construct is present", and record why.
-2. Replace `enum AuditedLibrary` and `external_source.rs`'s fragment tables
-   with profile loading. `derive_library_summary_profile` takes a manifest,
-   not a match arm. Unknown profile / failed pin → Unknown, as today.
-3. Replace the first-party manifest literals
-   (`verifier_plugin.rs:1436-1521`) with the same on-disk manifests routed
-   through the existing package-discovery path, keeping deterministic
-   registry ordering.
-4. Migrate the Fluent Bit / librdkafka / CFL / ChunkIO / Monkey / Libevent
-   data into profiles; parity-diff all pinned audit outputs before deleting
-   the Rust tables (invariant 3).
-
-**Pluggability deliverable.** A profile directory plus a contract directory is
-the complete definition of a source set. Profiles are distributable alongside
-provider packages and are validated by the host against `qcore-schemas`
-alone — a third party can define a new source set with zero forked code.
-
-**Acceptance.** `rg 'rd_kafka|cio_|flb_|mk_|evutil|cfl_'` in core crates
-matches only: (a) profile-loading code comments, (b) the bounded semantic
-models pending W5 extraction. Adding a hypothetical new library touches zero
-Rust files in the core.
-
-**Agent guidance.** Sonnet-class for the migration; have an Opus-class pass
-review the manifest schema before mass migration (it becomes a compatibility
-surface — version it from day one, like protocol v1).
-
-### W3 — Core obligation generation and verify-scope dispatch (closes VP05)
-
-**Goal.** `verify scope` declarations actually drive verification: the core
-derives an obligation inventory from the normalized program and dispatches
-requests; plugins propose witnesses against *core-chosen* obligations.
-
-**Tasks.**
-1. Define the obligation inventory in `qcore-schemas`: per capability
-   (resource contracts, chunk lifecycle, event traces, concurrency,
-   translation-unit projection), what obligations the core derives from a
-   normalized translation unit / typed program (e.g. per-function custody
-   discharge obligations, per-resource teardown obligations, per-callback
-   contract obligations). Follow the SV-LIB direction already recorded:
-   version the complete verification task, not just the response envelope.
-2. Specify evidence schema v2 (also in `qcore-schemas`):
-   capability-specific semantic witnesses the core can replay (not Boolean
-   assertions). Start with the two capabilities that already have core
-   checkers — chunk lifecycle (`chunk_lifecycle::check_chunk_program`) and
-   contract observations (`contract_observation`) — so v2 `Safe` promotion is
-   real from the first provider. Keep v1 refused, as today.
-3. Implement dispatch in the verifier host (new crate
-   `qcore-verifier-host`, absorbing `verifier_plugin.rs`'s registry/process/
-   composition halves; the firewall's per-capability checkers belong to the
-   trusted core side): resolved scope → obligations → registry requests →
-   firewall-checked responses → fail-closed aggregation into compile
-   diagnostics. Provider absence, timeout, or verdict `Unknown` on any
-   obligation keeps the scope unverified with today's diagnostics. Resolve
-   the `Q700/Q701` collision with spec §54's Libevent range while touching
-   this (see W7).
-4. Tests: nonempty obligations with unavailable/unknown/rejecting/conflicting
-   providers; a counting provider proving dispatch happens; a v2 witness
-   round-trip through the firewall; regression that v1 `Safe` is still
-   refused. Add one **out-of-process** conformance test: a trivial external
-   provider binary (test-only) that speaks v2 over stdio, proving the schema
-   crate suffices to implement a provider with no other workspace dependency.
-5. Lean: extend `QCore/VerifierPlugin.lean` from Boolean evidence to the v2
-   witness relation for the first capability, addressing FM01's narrowness in
-   that scope (the theorem should be about the checked relation, not a flag).
-
-**Pluggability deliverable.** The complete provider ABI —
-obligations + requests + witnesses + verdicts — lives in `qcore-schemas` and
-is exercised by an external binary in CI. From this point, "plugin" means a
-process, not a module.
-
-**Acceptance.** A source file with a `verify scope` over a supported
-capability gets a real, firewall-checked verdict; all VP01–VP08 probe
-expectations still pass; the reevaluation §6 evidence-contract sentence is
-implemented, not just quoted; the out-of-process conformance provider passes.
-
-**Agent guidance.** Opus-class. This is the trust-boundary workstream; the
-failure mode is designing evidence that restates the request (VP01/VP02's
-root cause). Every schema decision should be checked against: "could a
-malicious provider make the core's check vacuous?"
-
-### W4 — Interprocedural custody summary inference (LC01's open boundary)
-
-**Status.** Executed for parameter/return custody with validation (2026-09-06):
-see the [W4 custody-inference record](reports/w4-custody-inference/README.md).
-`crates/qcore-c-gateway/src/legacy_summary.rs` derives SCC-ordered summaries, validates each
-by re-running the intraprocedural analyzer against it, publishes them as
-`qcore-schemas` `ResourceSummaryRecord`s, and has the certificate recheck
-re-derive them independently. Declared contracts always win; a disagreement is
-a `SummaryConflict` diagnostic. The [2026-09-07 extension](reports/w4-custody-extensions/README.md)
-adds validated direct `Out` slots, `Stored` formals, `Reallocated` results and
-possibly-null owned returns. [Direct Removed wrappers](reports/w4-removed-custody/README.md)
-now validate contained entry and detached/live exits with matching Lean relations.
-[Direct Out forwarding](reports/w4-out-forwarding/README.md) now validates
-original slots and invalidates mutation/shadow/alias identity assumptions.
-[Immutable output aliases](reports/w4-immutable-out-aliases/README.md) now admit
-exact-type entry-prefix alias chains used only for Out calls/direct stores, while
-retaining independent original-slot validation and certificate rederivation.
-[Nullable removal](reports/w4-nullable-removal/README.md) now validates null
-and nonnull alternatives with exact owner/child preservation. Adjacent generic
-transfers reject ambiguous strong updates and terminal custody reuse; unresolved
-effects retain custody without fabricating proven leaks. Remaining: general
-removal/out-slot aliases, relational branch analysis, general recursive
-components and the Juliet stretch corpus.
-[Context-specific recursion](reports/w4-contextual-recursion/README.md) now
-validates exhaustive zero/nonzero integer controls using strictly lower-rank
-base summaries, including bounded mutual recursion. The [unsigned countdown
-extension](reports/w4-unsigned-countdown/README.md) adds exact `n - 1` calls
-with mutual strong induction over natural counter values, including unsigned
-width conversion. The zero body has no recursive assumptions; the nonzero body
-must validate the same complete custody contract. General arithmetic rankings,
-signed countdowns and general recursive fixed-point inference remain open. The [gateway relocation](reports/w4-gateway-crate/README.md)
-is executed (2026-09-07): `legacy_c`, `legacy_summary`, Clang discovery and
-typed-AST transport now live in `qcore-c-gateway`, with compiler compatibility
-reexports and pinned full-corpus parity.
-
-**Goal.** The generic capability whose absence forces per-library hand
-contracts: infer and validate parameter/return custody summaries for internal
-functions of a translation unit, so wrappers around contracted APIs are
-analyzed instead of Unknown.
-
-**Tasks.**
-1. In the C gateway (target crate `qcore-c-gateway`, absorbing `legacy_c.rs`,
-   `clang.rs`, `typed_c_ast.rs`), add a bottom-up (SCC-ordered) summary pass
-   over the already-built per-function CFGs: infer each internal function's
-   parameter modes and return ownership from its body given the contract
-   environment; validate the summary by re-running the intraprocedural
-   analyzer against it. Recursion: require a consistent fixed point or stay
-   Unknown.
-2. Apply inferred summaries at call sites with identity and footprint
-   transfer, mirroring what `whole_program.rs` already does for QCore source
-   (§22.3's summary shape is the target). Explicit `.qcore` contracts always
-   take precedence over inference; a conflict between the two is a
-   diagnostic, never a silent override (the LC01 lesson).
-3. Keep the certificate recheck honest: `check_legacy_safety_certificate`
-   must re-derive the same summaries independently.
-4. Tests, from the LC01 repair list: allocation wrapper (the LC01
-   counterexample must now be Unsafe-leak or Safe-with-discharge, never
-   false-Safe), caller-discard, caller-release, nested wrappers, parameter
-   consumption, recursion, out-parameters, realloc wrappers. Add the Juliet
-   temporal-safety held-out cases direction from the reevaluation literature
-   table as a stretch corpus.
-5. Measure on the pinned corpus: report movement in the 2 Safe / 98
-   provisional-Unsafe / 81 Unknown triage counts, per invariant 4 (report
-   deltas per verdict class; do not advertise a coverage percentage as
-   safety).
-
-**Pluggability deliverable.** Inferred summaries are expressed as
-`qcore-schemas` contract/summary records, so an inferred summary, a loaded
-`.qcore` contract, and a provider-proposed summary are the same data with
-different trust labels — providers can consume and refine gateway summaries
-through the ordinary schema surface.
-
-**Acceptance.** LC01's "remaining boundary" paragraph in
-`REEVALUATION_FOLLOWUP.md` can be updated to "implemented for parameter/return
-custody with validation"; no new false-Safe on the probe suite; triage deltas
-archived under `docs/reports/`.
-
-**Agent guidance.** Opus-class, highest reasoning effort of the plan. This is
-real static-analysis design (mode inference + fixed points + aliasing
-interaction with `MAX_ALIAS_TARGETS`). Insist on the "validated, not just
-inferred" discipline the follow-up demands.
-
-### W5 — Provider extraction and orchestration-as-configuration (Cycle 20C/20D)
-
-[CMetrics unit-result provider](reports/w5-cmetrics-unit-provider/README.md)
-adds a second real first-party semantic producer over the shared schemas-only
-statement engine. Explicit void-result imports use two Boolean prestates and
-unit contracts; actual `cmt_counter_allow_reset` source is checked through the
-configured driver. Its [canonical Clang CMake audit](reports/w2-clang-cmake-build/README.md) now
-consumes an unmodified compilation database and builds the native CMetrics
-static library in persistent isolated sources. GCC equivalence and complete
-counter safety remain open.
-The Rust schema API is 2.0.0; existing integer wire records and v2 behavior remain
-compatible. Broader per-provider semantics and default-corpus composition remain.
-
-[Generic driver and custody consolidation](reports/w5-generic-driver-consolidation/README.md)
-moves the remaining pure library-custody model into the kernel and explicit-registry
-source compilation, generic imports and research aggregation into verification.
-Default registry discovery and Monkey-specific composition remain compiler adapters.
-No dependency edge or semantic rule changes; seven production components and all
-four full-corpus outputs retain parity. Five tests exercise the provider-free
-entry points and a compatibility test pins type identity. Full provider semantic
-extraction and compatibility route deletion remain open.
-
-[Generic source consolidation](reports/w5-generic-source-consolidation/README.md)
-extracts typed path import/def-use into the C gateway and counter, field-release,
-list-unlink and cleanup-outcome checking into verification. Provider-free public
-integration tests and sealed-summary compile-fail tests run in the owning crates.
-Production bodies and full pinned outputs retain parity; compiler compatibility
-facades and specialized reference-body matching remain. This advances task5's
-consolidation without claiming task2's complete provider extraction.
-
-[Configured process auditing](reports/w5-configured-process-audit/README.md)
-now connects `quirin-audit CONFIG.json` to pinned helper/main-source import and
-explicit process dispatch, without an application-specific Rust adapter. The
-second-codebase command records two checked function contracts and two Unknown
-functions while its resource unit remains Unknown. Missing selections reject;
-failed/unadmitted providers remain Unknown without fallback. Library-required
-native evidence, broader lifecycle imports and full provider extraction remain open.
-
-[Configured frame helpers](reports/w5-configured-frame-helpers/README.md) remove
-the remaining helper-source/function/record/policy selection from the bounded
-Boolean process route. Generic imports protect the full declared modeled-field
-inventory and bind helpers to source/build/profile identities; a separate-TU
-second-codebase process test passes. Strict option preservation is the reusable
-default; the pinned adapter keeps its explicitly named historical projection.
-Actual recursive C layout equality remains an external premise. General
-lifecycle extraction and complete provider-owned source analysis remain open.
-
-[Configured source-contract dispatch](reports/w5-configured-source-contracts/README.md)
-now moves the bounded Boolean-field package/library/policy selection into L3
-`qcore-audit`, using verified registries and immutable policy snapshots. A second
-C codebase exercises the same service and schemas-only process. Full 185-unit
-source, diagnostic, contract and process-evidence artifacts reproduce the previous
-baseline byte-for-byte. This permits removal of the hardcoded selection and
-redundant pre-dispatch evaluation in this process route; trusted replay and the
-legacy direct comparison remain. It does not complete broader lifecycle import
-or specialized provider extraction.
-
-[Source-field provider integration](reports/w3-source-field-provider/README.md)
-now derives bounded tasks from opaque Clang imports and dispatches the real
-ChunkIO package for three production function contracts. This closes that
-source-effect exchange slice; general lifecycle effect import and provider-owned
-full source analysis remain open. The [statement execution increment](reports/w5-provider-statement-execution/README.md) moves finite-state path computation into the actual process, without sending expected paths. The selected audit mode has no provider fallback,
-and retains direct evaluation until broader composition parity is established.
-
-**Status (2026-09-07).** Configured audit orchestration is extracted with a
-second-codebase fixture and pinned parity. The sequential/concurrent kernel,
-chunk lifecycle and generic loop/ledger checks reside in core; whole-program
-checking resides in frontend. Declared chunk-path evaluation is in contract,
-with portable schema1.0.0 records and an opaque source-import boundary.
-Five standalone schema-only executables now reproduce the built-in v1 Unknown
-responses and reject malformed requests. ChunkIO 0.3.0 now computes bounded
-Boolean-field witnesses from typed statement inputs through v2; other v2
-capabilities remain Unknown without witnesses. Two clean builds reproduce executable/manifest/
-archive hashes. [Provider packaging evidence](reports/w5-provider-packages/README.md)
-and [kernel integration](reports/w5-resource-accounting/README.md) record scope.
-
-Task3's generic reactor lifecycle/descriptor model now lives in core with an
-explicit profile policy and compatible Libevent facade ([evidence](reports/w5-generic-reactor/README.md)).
-Task3's [callback records and declared-model exchange](reports/w5-reactor-callback-records/README.md)
-are implemented with a schemas-only process fixture; source binding and callback
-protocol witness admission remain open. Task2's specialized semantic extraction,
-registry-based Fluent Bit composition, task4 route deletion and remaining
-compiler consolidation remain open. [CLI package lifecycle](reports/w5-cli-packages/README.md)
-now supports explicit verification and pinned enable/disable selection. Existing
-in-process/source routes are retained until semantic parity meets these gates.
-
-**Goal.** Finish moving library semantics behind the plugin boundary — as
-separate crates and ultimately separate processes — and turn the 966-line
-audit example into a reusable, configured driver.
-
-**Tasks.**
-1. Promote the orchestration in `cycle19_fluent_bit_libraries_audit.rs`
-   (compile-db ingest, pin verification, per-unit iteration, verdict
-   tallying, JSON report emission) into `crates/qcore-audit`, driven by a W2
-   profile + W1 contracts; the example shrinks to argument parsing. A second,
-   different codebase then needs only a profile directory — recreate the
-   Cycle 17 CFL adjacent-checkout probe through this path as proof.
-2. Move each provider to its own crate under `providers/`
-   (`qcore-provider-libevent` including the Monkey trio,
-   `qcore-provider-chunkio`, then new `cmetrics`/`ctraces`/`librdkafka`
-   providers per the Cycle 20C order), each depending on `qcore-schemas`
-   only, each buildable as a standalone executable speaking W3's v2 protocol,
-   each with its own manifest, diagnostic namespace, tests, and parity
-   record. Where a provider currently needs a core type that isn't in the
-   schema crate, that is a schema-surface decision, not a license to link the
-   core.
-3. Split reactor-generic parts out before the move: the callback-summary
-   schema, generation-indexed lifecycle, and descriptor-custody models go to
-   `qcore-schemas`/`qcore-core`; only the Monkey/Libevent tables and
-   importers go to the provider crate.
-4. Only after each parity record: delete the corresponding hardcoded route
-   (`external_source.rs` arms, `AuditedLibrary`, first-party literals, the
-   in-process adapters).
-5. Consolidation: rename the emptied `qcore-compiler` remainder into
-   `qcore-core` + `qcore-frontend`, drop the W0 compatibility re-exports, and
-   verify the §3.1 dependency rules hold across the whole workspace
-   (including the W0 CI guard extended to every layer). Add the Cycle 20D
-   lifecycle tooling: `quirin plugins` package verification, enable/disable,
-   and reproducible first-party provider packages.
-
-**Pluggability deliverable.** This *is* the pluggability workstream's
-end-state: core builds and passes its tests with zero providers; the five
-first-party providers are separate artifacts; the Fluent Bit result is a
-composition of packages plus data, reproduced through the registry.
-
-**Acceptance.** Cycle 20's acceptance-gate list advances measurably: separate
-manifests/tests/namespaces for all five providers; the Fluent Bit composition
-profile reproduces Cycle 19's pinned verdicts through the registry; the
-monolithic routing is gone; the workspace matches §3.1.
-
-**Agent guidance.** Sonnet-class for extraction mechanics with the parity
-harness from task 1 built first; Opus-class review at each deletion step and
-at every schema-surface addition requested by a provider.
-
-[Typed body comparison](reports/w5-typed-body-boundary/README.md) now lives in
-the gateway. The public comparison accepts an arbitrary reference and makes no
-safety or revision claim. Reviewed-library witness construction remains sealed
-in the integration adapter, so extraction does not admit untrusted references
-as library evidence. Exact algorithm and full serialized audit parity are archived.
-Library reference selection and lifecycle semantics still require provider work.
-
-### W6 — Generic acceptance corpus: make CT01–CT50 the yardstick
-
-[Source task foundations](reports/w6-source-task-foundations/README.md) now
-retain structured spawn/join syntax and exact binder identities, and add a
-checked owned-resource reservation/completion/join ledger with Lean transfer
-proofs. [Native source tasks](reports/w6-native-source-tasks/README.md) now
-compose typed task/result IR and real Linux C11 create/join for scalar copies,
-with explicit checked failure paths. CT15 is newly mapped and CT19 upgraded
-to actual source. [Result recovery](reports/w6-task-recovery/README.md) adds
-explicit spawn/join handlers and CT13 sibling recovery with native storage
-checks. [Owned source tasks](reports/w6-owned-source-tasks/README.md) now add
-actual affine Buffer moves/results, checked worker custody effects and native
-creation rollback. CT01 maps the round trip; CT02/CT12 use real moved buffers.
-[Handler rethrow](reports/w6-handler-rethrow/README.md) now maps CT20 through
-actual source/native execution: second-create failure joins the earlier owned
-child, drops its result and raises the bound error. A declarative scenario runner
-checks success and both creation/allocation failures with negative join/drop controls.
-[Worker allocation](reports/w6-worker-allocation/README.md) adds checked fresh
-Buffer results and worker-local failure cleanup with scheduling-independent
-identities. CT16 now executes native worker errors and allocation failures; the
-earlier sequential implicit-cleanup control remains tested. Fourteen Lean model
-theorems and six fixed sanitizer runs accompany this increment.
-[Completed-child custody](reports/w6-completed-child-custody/README.md) maps CT14
-and upgrades CT37 to actual native worker completion before join, preserving its
-sequential payload control. [Reused-address conformance](reports/w6-reused-address/README.md)
-now maps CT50 with real unmap/remap at an identical address, distinct Buffer
-generations and stale-binding rejection. Coverage is 11/50 mapped, 39 unmapped. Loans, general usage/SSA rollback, owned
-graphs/errors, shared memory, mutexes, general control and other platforms remain open.
-
-**Goal.** Shift the test center of gravity from pinned-corpus regression to
-the spec's own generic conformance corpus, so "generic" is measured, not
-asserted.
-
-**Tasks.**
-1. Stand up a CT harness keyed to `docs/reevaluation/ct_manifest.json`:
-   each CT case gets QCore source (and, where the case concerns the C path, a
-   C twin), expected verdict/diagnostics, and per-stage status updates in the
-   manifest. Hand-constructed Rust events do not mark a case complete
-   (reevaluation §5.1 rule).
-2. Map cases opportunistically per workstream: W4 lands the
-   resource/custody CT rows; W3 lands the verdict/composition rows; the
-   concurrency rows follow the existing checkers. Track the mapped count in
-   the manifest — the number moving off "unmapped" is the plan's genericity
-   metric.
-3. Keep namespaces separate as specified: CT = language corpus; WM/VP/LC
-   probes = regression namespace; per-library cases = provider test suites.
-   After W5, per-library cases move out of the core's test tree into their
-   provider crates — the core test suite must not name any third-party
-   library.
-
-**Acceptance.** A recorded, increasing `mapping_status` count with per-stage
-evidence; no CT case marked complete without an executed source-level test;
-core test suite free of third-party identifiers post-W5.
-
-**Agent guidance.** Sonnet-class, batchable (cases are independent — this
-fans out well across parallel agents).
-
-### W7 — Hygiene: names, diagnostics, roadmap
-
-The [Lean CI gate](reports/w7-lean-ci/README.md) and
-[bounded generic model names](reports/w7-generic-lean-names/README.md) are
-implemented and locally validated (2026-09-07); hosted CI awaits a push.
-Historical model names remain compatibility aliases. Libevent diagnostic
-renumbering is already executed by W3. The [attribution repair](reports/w7-diagnostic-attribution/README.md)
-now enforces one local ASCII component after the exact selected plugin ID in
-both protocol response paths; it changes no manifest or wire shape.
-
-Small, continuous, do-with-adjacent-work:
-
-- Resolve the `Q700–Q712` collision: spec §54 names Libevent-specific
-  diagnostics in a numbered range that Cycle 20 reuses for `verify scope`
-  resolution. Assign plugin-namespaced diagnostics (the `QP***` space already
-  exists) for provider-specific conditions and reserve `Q7xx` once,
-  recording the decision in the spec changelog. Provider-owned diagnostic
-  namespaces become part of each provider's manifest (they already are in
-  Cycle 20's design) — the core allocates no numbers for library-specific
-  conditions.
-- Rename library-named wrappers around generic models where cheap:
-  `QCore.MonkeyEvent` (a generic descriptor-custody model), the
-  `busy_effect_preserves_chunkio_lock` theorem, `MonkeyComposition` (keep
-  aliases; Lean renames ripple into the audit files, so batch them). The
-  generic/renamed Lean modules pair with `qcore-core`; provider-specific
-  theorem families are referenced from provider manifests.
-- Keep `docs/ROADMAP_AFTER_CYCLE_9.md` current: it now records Cycles 19–20
-  and tracks this plan's W1–W7 execution; update its workstream table as
-  records land, keeping its "no cycle skipped without updating the dependency
-  order" rule.
-- CI: add the Lean job the reevaluation flagged (EV01) if still absent, and
-  the layering guard from W0 (no upward dependencies; `qcore-schemas`
-  dependency-free within the workspace).
-- Documentation split (done 2026-09-06; superseded in detail by the sync rule
-  in `AGENTS.md` since card DOCS-COMPACT, 2026-09-10): `AGENTS.md` is the
-  compressed agent briefing (status ledger, invariants, standing constraints,
-  per-change gate) and the source of truth for agents, imported by `CLAUDE.md`;
-  `README.md` is the human overview. `DEVELOPMENT.md` is now the compact table
-  of contents for focused guides and history under `docs/development/`.
-  A workstream that changes project status (verdict counts, gate closures,
-  crate layout) adds one paragraph, newest first, to the current record file
-  named by `docs/development/increments/README.md` and updates `AGENTS.md`'s
-  headline numbers in the same change. Update the history index when opening
-  a new wave file. `README.md` is refreshed by documentation maintenance
-  rather than per increment; archived reports keep their original wording.
+---
 
 ## 5. Sequencing summary
 
-For later production coverage beyond the initial library slices, use the
-[Fluent Bit system coverage card queue](plans/fluent-bit-system-coverage/README.md).
-It orders a pinned-source census before backlog custody/accounting, retry
-lifetime and engine progress work, with prerequisites and bounded acceptance
-criteria. It supplements this plan; CT mapping does not certify those systems.
-
-```
+```text
 W0 schema crate + CLI split
         │
-W1 contracts-as-data ──┬─▶ W4 custody inference ──┐
-W2 profiles-as-data  ──┤                          ├─▶ W5 provider crates/processes,
-W3 obligations+dispatch┘                          │     audit driver, consolidation
-W6 CT corpus (continuous, consumes W3/W4 output) ─┘
-W7 hygiene (continuous)
+W1 contracts-as-data (.qv + locks) ──┬─▶ W4 custody inference ──┐
+W2 profiles-as-data                ──┤                          ├─▶ W5 provider crates/processes,
+W3 obligations + v2 dispatch       ──┘                          │     quirin-audit, rule packages
+W6 CT01–CT50 corpus (50/50 mapped, stage-tracked) ──────────────┘
+W7 hygiene, Lean CI & doc compaction (continuous)
 ```
 
-Suggested review checkpoints: after W0 (schema-surface inventory — what got
-published is now a compatibility commitment); after W1 parity diff; after the
-W2 manifest schema (before mass migration); after the W3 evidence-schema v2
-design (before implementation); after the first W5 provider parity record;
-after W5 consolidation (workspace layering audit against §3.1).
+For post-`W0–W7` card isolation and C-gateway coverage queues, see the [planning index](plans/README.md).
 
-## 6. What this plan explicitly does not do
+## 6. Permanent non-goals of generalization
 
-- It does not promote any pinned translation unit toward `Safe`; verdict
-  movement comes only from W4's validated inference and is reported per
-  invariant 4.
-- It does not open the Cycle 19 fail-closed gates (per-path identity imports,
-  observation evidence) — those remain Cycle 19's own acceptance work.
-- It does not design a new plugin ABI; protocol v1 framing stays, evidence
-  moves to v2 within the existing negotiation, and the crate decomposition
-  packages the same protocol rather than replacing it.
-- It does not treat contract/profile data files as verified truth; they are
-  declared trusted assumptions carried into every certificate.
-- It does not attempt OS-level sandboxing of providers beyond the existing
-  process-group containment; memory/network isolation remains a recorded
-  open boundary from the follow-up repair, orthogonal to this decomposition.
-
-Ordered preprocessing transport (2026-09-07): W2's configured audit preserves
-regular/system/quote include classes and ordered macro definitions/undefinitions.
-A CLI regression reproduces the old adapter selecting a header that hid an
-unresolved call and returned Safe; the corrected import returns Unknown. Source
-parents now affect quoted includes only, and typed options bind source-task
-identity, including configured helpers. Empty arguments and command structure
-fail closed. All 816 workspace tests, 45 provider tests, 43 Python tests and
-20 Lean audits pass, together with the standing gates. All four 185-unit audit
-artifacts retain exact byte parity; the separate CMetrics audit changes only
-configuration/task/coverage identities. Eight new workspace tests cover the
-boundary. Evidence: `docs/reports/w2-preprocessor-transport/README.md`. The historical pinned
-Cycle19 option projection remains bounded; unsupported CMake flags, compiler
-equivalence, broader provider semantics and raw promotion remain open.
-
-Persistent Clang CMake audit (2026-09-07): W2's canonical CMetrics audit now
-consumes an unmodified CMake compile database, including warning/debug/PIC and
-assembler flags. The gateway transports four explicit flags through preprocessing,
-syntax and typed AST; they require a matching Clang C executable and explicit
-dialect. The original GCC command rejects rather than inheriting Clang defaults.
-An independent pinned source clone absorbs upstream configure-time writes, and
-its preparation step (since W44, `quirin-audit prepare clang-build`) persists the
-build, database and provenance.
-The native CMetrics static library builds in the normal and fresh output trees;
-both audits retain one checked function/six Unknown and a provisional Unsafe
-raw unit. All 819 workspace tests, 45 provider tests, 43 Python tests and 20 Lean
-audits pass, with all standing gates and exact four-artifact 185-unit parity.
-Evidence: `docs/reports/w2-clang-cmake-build/README.md`. General compiler,
-code-generation/stack equivalence, broader providers and raw promotion remain open.
+- Never promotes any pinned translation unit toward `Safe` by refactoring alone.
+- Never opens Cycle 19 fail-closed gates without per-path identity imports and required evidence.
+- Never treats `.qv` contract files or profile manifests as proved C bodies—they remain declared assumptions recorded on every dependent verdict.
+- Never claims OS-level memory/network sandboxing of external provider processes beyond enforced process-group and quota boundaries.

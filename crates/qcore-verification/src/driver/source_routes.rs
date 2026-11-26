@@ -118,6 +118,105 @@ pub(super) struct RouteInput<'a> {
 
 type Lowering = fn(&RouteInput<'_>) -> Result<CompiledModule, Vec<FileDiagnostic>>;
 
+fn compile_quant_variant(input: &RouteInput<'_>) -> Result<CompiledModule, Vec<FileDiagnostic>> {
+    use super::{
+        CheckedSourceModule, CheckedVariantModule, CustodyPayloadProfile, ExecutableResultType,
+        SourceExecutionProfile, SourceResultProfile, map_raw_diagnostic,
+    };
+    use qcore_contract::contract_loader;
+    use qcore_core::extern_call::ExternAssumption;
+
+    let first = input.parsed.declarations[0].span;
+    let diagnostic = |code, pass, span, message: String| {
+        vec![map_raw_diagnostic(code, pass, span, message, input.ranges)]
+    };
+    if input.mode != SourceModuleMode::Library {
+        return Err(diagnostic(
+            "Q020",
+            SemanticPass::OrdinaryTypes,
+            first,
+            "source.quant-variant.v1 exports typed library functions; declare module library;"
+                .into(),
+        ));
+    }
+    let program = qcore_frontend::quant_variant::check_tokens(input.parsed.lexical_tokens())
+        .map_err(|e| diagnostic("Q020", SemanticPass::OrdinaryTypes, e.span, e.message))?;
+    let load_error = |message| diagnostic("Q023", SemanticPass::ExternCall, first, message);
+    let sources = input.options.extern_contracts.as_ref().ok_or_else(|| {
+        load_error(
+            "quant variant adapters require an explicit return-code contract selection".into(),
+        )
+    })?;
+    let contracts = contract_loader::load_resource_contract_sources(sources).map_err(load_error)?;
+    contract_loader::check_source_assumptions(&contracts)
+        .map_err(|e| diagnostic("Q027", SemanticPass::ExternCall, first, e))?;
+    let signatures = contract_loader::declared_abi_signatures_of(&contracts).map_err(load_error)?;
+    let mut assumptions = Vec::new();
+    for adapter in program.adapters() {
+        let name = &adapter.name;
+        let span = input
+            .parsed
+            .declarations
+            .iter()
+            .find(|d| &d.value.name == name)
+            .map_or(first, |d| d.span);
+        let Some(selected) = contracts.relational_contract(name) else {
+            return Err(diagnostic(
+                "Q023",
+                SemanticPass::ExternCall,
+                span,
+                format!("no selected return-code contract for `{name}`"),
+            ));
+        };
+        let abi_matches = signatures.get(name).is_some_and(|abi| {
+            !abi.variadic_data_tail
+                && abi.result == "i32"
+                && matches!(abi.parameters.as_slice(), [ty] if
+                    qcore_frontend::source_extern::normalize_type(ty) == "ptr<mut,u8>")
+        });
+        if !abi_matches || !adapter.matches_selected_contract(selected) {
+            return Err(diagnostic(
+                "Q027",
+                SemanticPass::ExternCall,
+                span,
+                format!(
+                    "the ABI or mapped dispositions of `{name}` differ from the selected contract"
+                ),
+            ));
+        }
+        assumptions.push(ExternAssumption::DeclaredContract(name.clone()));
+    }
+    let scalar_results = program
+        .function_names()
+        .iter()
+        .cloned()
+        .map(|name| (name, ExecutableResultType::I32))
+        .collect();
+    let c_source = Some(program.emit_c().to_owned());
+    Ok(CompiledModule {
+        source_bundle: None,
+        extension_warnings: Vec::new(),
+        checked: CheckedSourceModule::QuantVariant(Box::new(CheckedVariantModule {
+            program,
+            assumptions,
+            selected_sources: contracts.source_assumptions().clone(),
+        })),
+        execution_profile: SourceExecutionProfile::QuantVariantV1,
+        declaration_count: input.typed.declarations.len(),
+        mode: input.mode,
+        result_profile: SourceResultProfile {
+            scalar_results,
+            owned_buffer_results: Default::default(),
+            custody_payloads: CustodyPayloadProfile::SealedVariant,
+        },
+        entry: None,
+        c_source,
+        source_map: Vec::new(),
+        reference_observation: None,
+        extern_observation: None,
+    })
+}
+
 /// One route of `compile_elaborated_source`.
 pub(super) struct SourceRoute {
     /// The route's name, as the contract guard's refusal states it.
@@ -232,7 +331,24 @@ fn functions(program: &SourceProgram) -> usize {
 /// route. The last entry, the sequential route, always selects. Each entry's
 /// comment says why it stands where it does; the order is the one the
 /// if-chain had, entry for entry.
-pub(super) static SOURCE_ROUTES: [SourceRoute; 22] = [
+pub(super) static SOURCE_ROUTES: [SourceRoute; 23] = [
+    SourceRoute {
+        name: "source.quant-variant.v1",
+        select: |parsed| {
+            Selection::of(parsed.declarations.iter().any(|d| {
+                d.value.kind == DeclarationKind::QuantVariant
+                    || d.value.function_contract.as_ref().is_some_and(|c| {
+                        c.clauses.iter().any(|cl| {
+                            cl.value.kind ==
+                    qcore_frontend::frontend::SourceContractClauseKind::QuantVariantMap
+                        })
+                    })
+            }))
+        },
+        lower: compile_quant_variant,
+        source_only: true,
+        closure: ClosureRule::Refuses(CLOSURE_ELSEWHERE),
+    },
     // Card `W48-QR-C-STRUCT-IMPORT`: `source.ffi.v1` is selected before every
     // other route, by `#import std.ffi.unsafe;` or a `struct!` declaration. A
     // file that imports C is unsafe as a whole (user decision 2), so it must
@@ -808,7 +924,8 @@ mod tests {
     /// name each arm's guard refusal states. Pinned here and in Lean
     /// (`QCore.RouteSelection.driverTable`); an entry added to the table must
     /// be added to both.
-    const ORDER: [(&str, bool); 22] = [
+    const ORDER: [(&str, bool); 23] = [
+        ("source.quant-variant.v1", true),
         ("source.ffi.v1", true),
         ("source.bitfield-concurrency.v1", true),
         ("source.epoch.tasks.v1", true),
@@ -865,15 +982,15 @@ mod tests {
             .map(|route| route.closure == ClosureRule::Hosts)
             .collect::<Vec<_>>();
         let expected = (0..SOURCE_ROUTES.len())
-            .map(|index| index == 5 || index == 6)
+            .map(|index| index == 6 || index == 7)
             .collect::<Vec<_>>();
         assert_eq!(hosts, expected);
         assert!(
-            SOURCE_ROUTES[7..]
+            SOURCE_ROUTES[8..]
                 .iter()
                 .all(|route| route.closure == ClosureRule::Refuses(CLOSURE_ELSEWHERE))
         );
-        assert_eq!(SOURCE_ROUTES[2].closure, SOURCE_ROUTES[3].closure);
+        assert_eq!(SOURCE_ROUTES[3].closure, SOURCE_ROUTES[4].closure);
     }
 
     /// The sequential route's selector holds for every module, so first match

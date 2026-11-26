@@ -113,7 +113,7 @@ fn recorded_target(path: &str) -> Result<RecordedTarget, String> {
 }
 
 /// The contract selection, keyed by the path as spelled.
-fn contracts(paths: &[String]) -> Result<BTreeMap<String, String>, String> {
+pub(super) fn contracts(paths: &[String]) -> Result<BTreeMap<String, String>, String> {
     let mut selected = BTreeMap::new();
     for path in paths {
         if selected

@@ -162,7 +162,7 @@ pub enum PinMismatchReason {
     /// Card OPENSSL-PROVIDER-PLUGIN: the audited build reports more than one
     /// version or header. Held as `Unknown`.
     LibraryVersionAmbiguous,
-    /// Card QUIRIN-AUDIT-CONNECT (contract spec C15.1): a declared contract
+    /// Card QUIRIN-AUDIT-CONNECT (contract spec C15.2): a declared contract
     /// dependency names a declaration whose digest is not the declared one,
     /// or one held for such a reason. Resolved by review and re-pin, so the
     /// hold is `Pending`.

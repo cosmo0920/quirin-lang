@@ -43,7 +43,7 @@ pub const USAGE: &str = "usage: quirin-audit plugin views --load-path USER.json 
 ///
 /// A load path that is not a user load path, or a probe failure.
 pub fn views(load_path: &std::path::Path, write: bool) -> Result<bool, String> {
-    // Card QUIRIN-AUDIT-CONNECT (C15.1): each user crate's declared contract
+    // Card QUIRIN-AUDIT-CONNECT (C15.2): each user crate's declared contract
     // dependencies, read from its module texts with the loader's own clause
     // reader, written before the strict read below (which refuses a stale
     // entry) when `--write` is given.

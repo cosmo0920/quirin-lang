@@ -684,7 +684,7 @@ class LoadPathManifest(unittest.TestCase):
 
 
 class ContractDependencies(unittest.TestCase):
-    """Card QUIRIN-AUDIT-CONNECT (contract spec C15.1): the load path's
+    """Card QUIRIN-AUDIT-CONNECT (contract spec C15.2): the load path's
     `contract_dependencies` entry, read lexically here and checked against
     the loader's own clause reader by `qcore_contract::load_path_manifest`."""
 

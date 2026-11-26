@@ -84,7 +84,7 @@ pub fn library_version_hold_description(callee: &str, reason: &str) -> String {
     )
 }
 
-/// Card QUIRIN-AUDIT-CONNECT (contract spec C15.1): the refusal a call site
+/// Card QUIRIN-AUDIT-CONNECT (contract spec C15.2): the refusal a call site
 /// carries when its callee's contract is withheld because a dependency it
 /// declares on another crate's contract does not resolve
 /// (`dependency-unresolved`). Like [`library_version_hold_description`] it

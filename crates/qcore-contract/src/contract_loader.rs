@@ -707,7 +707,7 @@ struct LoadedDeclaration {
     /// (`requires resource_library_version(...)`), at most one.
     library_version: Option<qcore_schemas::library_version::LibraryVersionBound>,
     /// Card QUIRIN-AUDIT-CONNECT: the declaration's declared contract
-    /// dependencies (`requires resource_contract_dependency(...)`, C15.1), in
+    /// dependencies (`requires resource_contract_dependency(...)`, C15.2), in
     /// clause order.
     contract_dependencies: Vec<crate::contract_dependency::WrittenDependency>,
     /// Card W48-QR-C-STRUCT-IMPORT: the declaration carries
@@ -2111,7 +2111,7 @@ fn load_function_in(
             }
             continue;
         }
-        // Card QUIRIN-AUDIT-CONNECT: a declared contract dependency (C15.1),
+        // Card QUIRIN-AUDIT-CONNECT: a declared contract dependency (C15.2),
         // a requirement that adds no obligation; one per target.
         if let Some(written) = crate::contract_dependency::contract_dependency_clause(
             requires,

@@ -536,7 +536,7 @@ const REASON_RULES: &[(&str, ReasonCategory)] = &[
         ReasonCategory::StaleEvidence,
     ),
     // ---- a declared contract dependency that does not resolve (card
-    // QUIRIN-AUDIT-CONNECT, contract spec C15.1): the contract relies on
+    // QUIRIN-AUDIT-CONNECT, contract spec C15.2): the contract relies on
     // another crate's declaration that is missing, unloaded, out of range,
     // named under the wrong crate, on a cycle or held `Unknown`, so a premise
     // the contract needs is unusable: `missing-premise`, never

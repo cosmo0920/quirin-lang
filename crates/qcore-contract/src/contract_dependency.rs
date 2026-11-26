@@ -13,7 +13,7 @@
 // limitations under the License.
 
 //! Declared cross-crate contract dependencies (card **QUIRIN-AUDIT-CONNECT**
-//! Part C; user decision of 2026-11-26; contract spec C15.1).
+//! Part C; user decision of 2026-11-26; contract spec C15.2).
 //!
 //! A resource-v1 declaration may state that its contract relies on another
 //! crate's declaration, with that declaration's identity:
@@ -54,7 +54,7 @@ fn malformed(expression: &str) -> String {
     format!(
         "malformed contract dependency `{expression}`: expected `{CONTRACT_DEPENDENCY_CLAUSE}(\"CRATE\", \
          NS::NAME[, since \"V\"[, removed \"W\"]][, sha256 \"HEX\"])` with at least one identity \
-         (contract spec C15.1)"
+         (contract spec C15.2)"
     )
 }
 

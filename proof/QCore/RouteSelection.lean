@@ -574,7 +574,8 @@ theorem choose_total_of_last {α : Type} (pre : List (Entry α)) (last : Entry �
 /-- `SOURCE_ROUTES`, row by row: (name, source-only, hosts closures). The
 same rows are pinned by `source_routes::tests`. -/
 def driverTable : List (String × Bool × Bool) :=
-  [("source.ffi.v1", true, false),
+  [("source.quant-variant.v1", true, false),
+   ("source.ffi.v1", true, false),
    ("source.bitfield-concurrency.v1", true, false),
    ("source.epoch.tasks.v1", true, false),
    ("source.epoch.bound.v1", true, false),
@@ -619,7 +620,7 @@ theorem mem_entriesFrom {α : Type} (sel : Nat → α → Bool) :
     · rcases mem_entriesFrom sel (i + 1) rest e h with ⟨row, hrow, h1, h2, h3⟩
       exact ⟨row, List.mem_cons_of_mem _ hrow, h1, h2, h3⟩
 
-theorem driver_table_length : driverTable.length = 22 := by decide
+theorem driver_table_length : driverTable.length = 23 := by decide
 
 /-- Every row but the sequential route's is source-only. -/
 theorem driver_table_reads_contracts_only_on_sequential :
@@ -657,9 +658,9 @@ theorem driver_closure_lowered_only_on_task_routes {α : Type} (sel : Nat → α
 
 /-! ### Vector: a module that dispatches and sockets -/
 
-/-- Its selectors: the socket-and-event composition (row 9), the event route
-(row 10) and the sequential route (row 21) hold. -/
-def dispatchAndSocket (i : Nat) (_ : Unit) : Bool := i == 9 || i == 10 || i == 21
+/-- Its selectors: the socket-and-event composition (row 10), the event route
+(row 11) and the sequential route (row 22) hold. -/
+def dispatchAndSocket (i : Nat) (_ : Unit) : Bool := i == 10 || i == 11 || i == 22
 
 /-- The table names the route that would lower it. -/
 theorem dispatch_and_socket_contract_names_socket :
@@ -667,10 +668,10 @@ theorem dispatch_and_socket_contract_names_socket :
       .guardRefused "source.socket.v1" := rfl
 
 /-- The base's restated list (`route_selection::source_only_route`): the
-driver's rows without the composition (row 9) and without the sequential
+driver's rows without the composition (row 10) and without the sequential
 route, so its first match for the same module was the event route. -/
 def restatedList : List (Entry Unit) :=
-  (driverEntries dispatchAndSocket).eraseIdx 9 |>.dropLast
+  (driverEntries dispatchAndSocket).eraseIdx 10 |>.dropLast
 
 theorem restated_list_named_event :
     (choose restatedList ()).map Entry.name = some "source.event.v1" := rfl

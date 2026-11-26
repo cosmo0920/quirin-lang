@@ -32,7 +32,7 @@
 //!   [`ReasonedVerdict`] with every reason kept
 //!   ([`ReasonedVerdict::fold`], the semigroup of `QCore.VerdictSemigroup`).
 //! * Part C, [`resolve`]: declared cross-crate contract dependencies
-//!   (`requires resource_contract_dependency(...)`, contract spec C15.1)
+//!   (`requires resource_contract_dependency(...)`, contract spec C15.2)
 //!   resolved against a loaded environment. An unsatisfied dependency (crate
 //!   missing, declaration unloaded, crate not a declared dependency, version
 //!   out of range, digest changed, a libc target named under another crate)
@@ -603,7 +603,7 @@ pub fn compose_function(
 
 /// One declared dependency of a declaration on another crate's declaration:
 /// `requires resource_contract_dependency("CRATE", NS::NAME[, since "V"]
-/// [, removed "W"][, sha256 "HEX"]);` (contract spec C15.1).
+/// [, removed "W"][, sha256 "HEX"]);` (contract spec C15.2).
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct DeclaredDependency {

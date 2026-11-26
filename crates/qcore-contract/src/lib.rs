@@ -48,7 +48,7 @@ pub mod descriptor_observation;
 mod extension_compatibility;
 pub mod extern_bridge;
 pub mod library_version;
-// Card QUIRIN-AUDIT-CONNECT: declared cross-crate contract dependencies (C15.1).
+// Card QUIRIN-AUDIT-CONNECT: declared cross-crate contract dependencies (C15.2).
 pub mod contract_dependency;
 pub mod list_finiteness;
 pub mod load_path_manifest;
