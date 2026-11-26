@@ -1,0 +1,19 @@
+{
+ "schema": "quirin-amendments/2",
+ "card": "CALL-WITH-DEREF-ACTUAL-READ-AS-DECLARATION",
+ "base": "110a69c8e",
+ "measured_tip": "ed73934d5",
+ "profiles": [],
+ "increment_paragraph": "**CALL-WITH-DEREF-ACTUAL-READ-AS-DECLARATION** (round 35, USER DECISION 2026-11-25 \"CALL-WITH-DEREF-ACTUAL-READ-AS-DECLARATION -> launch this\"; new gateway rule 89; Lean `QCore.CallNotDeclarator`; [report](../../reports/call-with-deref-actual/README.md)). The declaration-likeness test of `classify_simple_base` read a statement prefix `IDENT ( *` as the function-pointer declarator `T (*NAME)`, so the shadow guard refused `q_observe(*out);` and librdkafka's `rd_list_add(*toppars_add_list, ...)` as \"local declaration may shadow a formal resource identity\". That one disjunct is now dropped only when the statement's unique Clang node is a `CallExpr`; a `DeclStmt`, any other node or no unique node keeps it, the keyword, `IDENT IDENT` and `IDENT *` disjuncts are untouched, and no token guess is made. One hook in `legacy_classify.rs` (the third `is_identifier(first)` alternative of `let declaration_like`), the decision in `legacy_call_not_declarator.rs`. Pinned: `q_observe(*out);`, `cg_pair(*out, x);`, `if (x) q_observe(*out);` and the same call twice on two lines Unknown -> Safe (borrowing contracts only; `q_observe((*out));` was Safe at base); `**out`, `q_store(*list, ...)`, an uncontracted callee and two equal calls on one line keep their own refusals; `int (*out);`, `void (*out)(void);`, `T (*out)[4];`, `T (*out);` and a macro spelling a declarator stay refused. Opt-in `current` (046accf6, `--monkey-linked`, base and tip each from its own archive and binary): 1,198 Safe / 2 Pending / 3,596 Unknown / 8 Unsafe on both sides, no status move (predicted none); 12 rows lose all 21 shadow leaves at such calls, each replaced by the call's own reading (IND, an uncontracted callee, an unresolved identity, or nothing for `serialize_Metric`); add_remove_toppar stays Unknown on its registry holder, out-slot stores, `rd_list_remove`, its reference drop and two IND actuals. Pinned routes not run (no inputs on the host). Scoped gate (full): fmt, clippy, Lean (510 audits), Python (807) 0; Rust 10,132 passed, 1 failed, the base failure `workspace_layering::workspace_dependencies_point_strictly_downward` (qcore-c-gateway -> qcore-frontend, reproduced at 110a69c8e). This card discharges CALL-WITH-DEREF-ACTUAL-READ-AS-DECLARATION, registered only on the unlanded OUT-SLOT-CONDITIONAL-DELIVERY branch; the integrator retires it once that registration has landed.",
+ "status_edits": [],
+ "ledger": [
+  {
+   "id": "BASE-GATEWAY-FRONTEND-LAYERING",
+   "operation": "register",
+   "source": "docs/reports/call-with-deref-actual/README.md",
+   "recorded_by": "CALL-WITH-DEREF-ACTUAL-READ-AS-DECLARATION",
+   "title": "qcore-c-gateway's qcore-frontend dependency breaks workspace layering and the providers lock",
+   "text": "At main 110a69c8e (MEMBER-EFFECT-STORES body half) `crates/qcore-c-gateway/Cargo.toml` depends on `qcore-frontend`: `qcore-compiler` `workspace_layering::workspace_dependencies_point_strictly_downward` fails (\"crates/qcore-c-gateway must not depend on `qcore-frontend`\"), and `providers/Cargo.lock` lacks the edge, so `providers/package.py checkers` refuses its `--locked` build and an opt-in `current` run ends on QI014 unless the side tree's lock is refreshed. DISCHARGE: either allow the edge in the layering test with its reason or move the shared premise-formula code below the gateway, and commit the providers lock with the edge (provider gate); the gate's Rust suite and an unmodified opt-in run pass."
+  }
+ ]
+}

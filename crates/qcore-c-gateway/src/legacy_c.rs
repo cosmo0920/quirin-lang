@@ -222,6 +222,11 @@ mod typed_positions;
 #[path = "legacy_typed_declaration.rs"]
 mod typed_declaration_gate;
 
+// Card CALL-WITH-DEREF-ACTUAL-READ-AS-DECLARATION (rule 89): an `IDENT ( *`
+// statement prefix Clang reads as a call is not a declarator. One thin hook.
+#[path = "legacy_call_not_declarator.rs"]
+mod call_not_declarator;
+
 // Card W47-TYPED-ROOT-DECLARATION-READER (rule 10l): the typed positions'
 // never-bound, `may_bind` and declared-local premises, from the Clang AST
 // where the lexical declaration reader answers nothing. Hooks are thin.
