@@ -217,7 +217,8 @@ fn table(cb: &str) -> String {
 }
 
 /// Invokers that call on every path.
-const SYNC_EVERY: &str = "int c_op_call(struct op *rko, op_cb_t cb) { return cb(NULL, NULL, rko); }";
+const SYNC_EVERY: &str =
+    "int c_op_call(struct op *rko, op_cb_t cb) { return cb(NULL, NULL, rko); }";
 const MEMBER_EVERY: &str = "int c_op_invoke(struct op *rko) { int r; r = rko->op_cb(NULL, NULL, \
                             rko); return r; }";
 const TABLE_EVERY: &str = "int c_op_table(struct entry *table, struct op *rko) { \

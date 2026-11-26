@@ -268,7 +268,9 @@ fn collect<'v>(node: &'v Value, out: &mut Vec<&'v Value>) {
 
 const PENDING: usize = usize::MAX;
 
-enum Node<'a> {
+/// Card MEMBER-PATH-INVOCATION-PREMISE: shared with
+/// `member_path_invocation`'s must-call reading.
+pub(crate) enum Node<'a> {
     /// A full expression (or declaration), then `next`.
     Eval(&'a Value, usize),
     /// A condition: true, false.
@@ -280,8 +282,8 @@ enum Node<'a> {
 }
 
 #[derive(Default)]
-struct Graph<'a> {
-    nodes: Vec<Node<'a>>,
+pub(crate) struct Graph<'a> {
+    pub(crate) nodes: Vec<Node<'a>>,
     labels: BTreeMap<String, usize>,
     gotos: Vec<(usize, String)>,
     breaks: Vec<usize>,
@@ -471,7 +473,7 @@ impl<'a> Graph<'a> {
     }
 
     /// The function body's graph and its entry, or why it is not read.
-    fn of(body: &'a Value) -> Result<(Self, usize), String> {
+    pub(crate) fn of(body: &'a Value) -> Result<(Self, usize), String> {
         let mut graph = Self::default();
         let end = graph.push(Node::Return(None));
         let entry = graph.lower(body, end);

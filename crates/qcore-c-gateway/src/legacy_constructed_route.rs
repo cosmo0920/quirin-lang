@@ -78,6 +78,10 @@ pub struct MemberUse {
     /// `TAG.PATH`.
     pub key: String,
     pub actuals: Vec<CallbackActual>,
+    /// Card MEMBER-PATH-INVOCATION-PREMISE: the invocation's form, for the
+    /// invoking body's check that a candidate runs (`None`: never).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub form: Option<crate::member_path_invocation::Form>,
     /// The closure's refusal, kept when no path state decides.
     pub refusal: String,
     /// Card OP-CALLBACK-MEMBER-PATH-RELEASE (rule 30): every declaration in

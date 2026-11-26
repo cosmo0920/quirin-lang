@@ -78,6 +78,10 @@ pub struct MemberPathOperands {
     pub candidates: Vec<(String, Vec<MemberPathState>)>,
     /// Where the invocation is spelled, for refusals.
     pub member: String,
+    /// Card MEMBER-PATH-INVOCATION-PREMISE: the invocation, for the invoking
+    /// body's check that a candidate runs (`None`: never established).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub invocation: Option<crate::member_path_invocation::Site>,
 }
 
 /// The member-path readings of one decided invocation: one per parameter
@@ -89,6 +93,7 @@ pub(super) fn operands(
     actuals: &[CallbackActual],
     actual: &dyn Fn(usize) -> Option<Vec<String>>,
     member: &str,
+    form: Option<crate::member_path_invocation::Form>,
 ) -> Vec<MemberPathOperands> {
     let mut out = Vec::new();
     for (position, handed) in actuals.iter().enumerate() {
@@ -121,6 +126,14 @@ pub(super) fn operands(
             position,
             candidates: stated,
             member: member.to_owned(),
+            invocation: form
+                .clone()
+                .map(|form| crate::member_path_invocation::Site {
+                    form,
+                    arity: actuals.len(),
+                    position,
+                    handed: *index,
+                }),
         });
     }
     out
@@ -180,6 +193,9 @@ pub(super) fn apply(
     let Some(pointer) = state.pointers.get(name).cloned() else {
         return;
     };
+    // Card MEMBER-PATH-INVOCATION-PREMISE: decided once, where a state
+    // other than `#kept` is read.
+    let mut established = None;
     for site in &pointer.targets {
         let Some(fields) = state.field_links.get(site).cloned() else {
             continue;
@@ -202,9 +218,42 @@ pub(super) fn apply(
             let Some(join) = arm_join(state, name, &operands.object, arms, &field) else {
                 continue;
             };
-            let outcome = join_all(states.into_iter().map(|stated| compose(stated, join)))
+            let outcome = join_all(states.iter().map(|stated| compose(*stated, join)))
                 .unwrap_or(Outcome::Refused(Refusal::Unstated));
             let place = format!("{name}->{field}");
+            // Card MEMBER-PATH-INVOCATION-PREMISE: with no invocation
+            // established, each state reads `{V, #kept}`; a reading that
+            // decided only by the invocation having run refuses.
+            let established = *established.get_or_insert_with(|| {
+                crate::member_path_invocation::established(callee, operands.invocation.as_ref())
+            });
+            let unestablished = (!established)
+                .then(|| {
+                    join_all(states.iter().map(|stated| {
+                        compose(crate::member_path_invocation::unestablished(*stated), join)
+                    }))
+                    .unwrap_or(Outcome::Refused(Refusal::Unstated))
+                })
+                .filter(|weakened| *weakened != outcome && !matches!(outcome, Outcome::Refused(_)));
+            if unestablished.is_some() {
+                refuse(
+                    function,
+                    line,
+                    refusal(
+                        callee,
+                        &format!(
+                            "the callbacks from `{}` read `{place}` as taken only if one of them \
+                             runs, and the body of `{callee}` in this unit does not establish \
+                             that one runs on every path",
+                            operands.member
+                        ),
+                        crate::member_path_invocation::INVOCATION,
+                    ),
+                    state,
+                    diagnostics,
+                );
+                continue;
+            }
             let (reason, detail) = match outcome {
                 Outcome::Stays => continue,
                 Outcome::Gone => {

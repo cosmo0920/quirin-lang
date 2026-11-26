@@ -118,6 +118,10 @@ pub mod handoff_direct;
 /// Card OP-CALLBACK-MEMBER-PATH-RELEASE (rule 30): the body check of a
 /// declaration's member-path states.
 pub mod member_path_check;
+/// Card MEMBER-PATH-INVOCATION-PREMISE (rule 30 amended): a candidate's
+/// member-path state reads the invocation as run only where the invoking
+/// body establishes it.
+pub mod member_path_invocation;
 /// Card MEMBER-PATH-STATES-THROUGH-UNIT-HELPERS (rule 30, amended): the
 /// bounded path reading behind it, through the unit's static helpers.
 pub mod member_path_reading;

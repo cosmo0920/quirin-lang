@@ -291,6 +291,7 @@ import QCore.MemberFormalType
 import QCore.MemberHandoff
 import QCore.MemberNonCUnits
 import QCore.MemberPathDirectCall
+import QCore.MemberPathInvocationPremise
 import QCore.MemberPathRelease
 import QCore.MemberPathUnitHelpers
 import QCore.MemberPrepassRoutes

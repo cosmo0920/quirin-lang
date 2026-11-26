@@ -107,6 +107,15 @@ int c_cb_other(void *rk, void *rkq, struct op *rko);
 int c_cb_plain(void *rk, void *rkq, struct op *rko);
 ";
 
+/// Card MEMBER-PATH-INVOCATION-PREMISE: the invokers' bodies, each calling
+/// its candidate on every path, so their candidates' states read the
+/// invocation as run (rule 30 amended); `member_path_invocation_premise.rs`
+/// pins the bodies that may not call.
+const INVOKER_BODIES: &str = "\
+int c_op_table(struct entry *table, struct op *rko) { return table[0].handler(NULL, NULL, rko); }
+int c_op_call(struct op *rko, op_cb_t cb) { return cb(NULL, NULL, rko); }
+";
+
 fn environment() -> ResourceContracts {
     load_resource_contract_sources(&BTreeMap::from([
         (
@@ -157,7 +166,7 @@ fn summary_of(outcome: &UnrestrictedLegacyResult) -> Option<&LegacyProgramSummar
 
 /// The row of `f` in the unit `PRELUDE + source`.
 fn row(source: &str) -> Row {
-    let text = format!("{PRELUDE}\n{source}\n");
+    let text = format!("{PRELUDE}\n{INVOKER_BODIES}\n{source}\n");
     let outcome = analyze_unrestricted_c11(
         &C11TranslationUnit {
             source: &text,
