@@ -289,6 +289,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [confined-exit-precedence](confined-exit-precedence/README.md) | Confined process failure precedence |
 
+| [connect-adopt-declared-dependencies](connect-adopt-declared-dependencies/README.md) | CONNECT-ADOPT-DECLARED-DEPENDENCIES: every verdict reliance, declared |
+
 | [contract-adoption-not-in-force](contract-adoption-not-in-force/README.md) | CONTRACT-ADOPTION-NOT-IN-FORCE |
 
 | [contract-check-load-path](contract-check-load-path/README.md) | CONTRACT-CHECK-LOAD-PATH |

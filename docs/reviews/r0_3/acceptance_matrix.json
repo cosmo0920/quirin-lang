@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 10,
-  "named_followups": 1124
+  "named_followups": 1125
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -15133,13 +15133,6 @@
    "recorded_by": "K6-DIRECT-POSITION-ACCESS"
   },
   {
-   "id": "CONNECT-ADOPT-DECLARED-DEPENDENCIES",
-   "title": "No shipped contract states a declared contract dependency yet: onigmo's, librdkafka's and cmetrics' reliance on libc's and cfl's declarations stays implicit",
-   "why": "QUIRIN-AUDIT-CONNECT added `requires resource_contract_dependency(...)` (C15.2) but adopted it nowhere: one clause changes its declaration's normalised digest, so its lock entry stops covering it (contract-changed, Pending) until a person re-pins it. The scratch trial (docs/reports/quirin-audit-connect/scripts/adoption_trial.py, onig_new -> libc::malloc) shows what follows: the module diff, the load path's contract_dependencies entry, the lock entry 2e6db491... no longer covering the text, a Cargo dependency from quirin-provider-onigmo on quirin-provider-libc (cx_declared_crate) and providers/Cargo.lock, the user load path and the checker binding's module digest. DISCHARGE: per crate, state each dependency its contracts rely on (allocator, list and string contracts), regenerate the load paths, review and re-pin every changed declaration, and measure; a user decision on the scope (every reliance, or only ownership-transferring ones) first.",
-   "source": "docs/reports/quirin-audit-connect/README.md",
-   "recorded_by": "QUIRIN-AUDIT-CONNECT"
-  },
-  {
    "id": "CONNECT-SDK-LOAD-PATH-DEPENDENCIES",
    "title": "`quirin-plugin load-path` does not write a user crate's contract_dependencies; only `quirin-audit plugin views --write` does",
    "why": "QUIRIN-AUDIT-CONNECT: the core manifest reader refuses a user crate whose modules declare a contract dependency the load path does not record (QI014), so a user who regenerates the load path with the plugin SDK must run `quirin-audit plugin views --write` after it (as for the resource views). The SDK (providers/quirin-provider-plugin/src/load_path.rs) links no core crate and has no clause reader. DISCHARGE: either have the SDK emit the entry with a lexical reader the core reader cross-checks, or document the two-step workflow in the SDK README and its `check`.",
@@ -15243,6 +15236,20 @@
    "why": "Found by PRIORITY0-ATTRIBUTION: landing records measured at other bases and binaries never join (refused revision, analyzer, build commit), so a chain over the sides sees no move that cancels inside a step. Two did (mk_sched_threads_purge and mk_sched_threads_destroy_all: Unknown -> Safe in LIST-ENTRY-RELEASE-IDENTITY, back in RULE50-CONSUMER-COMPOSITION's landing); they were found by placing the 23 records with equal inputs on main's first-parent line and reading their side figures (docs/reports/priority0-remeasurement/scripts/landing_records.py). DISCHARGE: accept non-joining records with equal inputs as figure and row checkpoints inside a step, listing every row a checkpoint shows at a verdict the step's ends do not.",
    "source": "docs/reports/priority0-remeasurement/README.md",
    "recorded_by": "PRIORITY0-ATTRIBUTION"
+  },
+  {
+   "id": "CONNECT-LIBC-EFFECT-CLAIMS",
+   "title": "libevent states task and defer effects of libc callees outside quirin-provider-libc",
+   "why": "MEASURED by card CONNECT-ADOPT-DECLARED-DEPENDENCIES (base 1ecaf97e9): qcore-provider-libevent's monkey/callback_task_handoff.qv declares effect_send, effect_perror and effect_errno_location (callee == \"send\", \"perror\", \"__errno_location\"; task_spawn == 0; defer == 0), and monkey/timeout_teardown.qv records path_calls through send, __errno_location and perror. They name libc symbols and read no libc clause, so no link is required, but they are effect claims about libc functions held outside quirin-provider-libc (rule 10j owns libc declarations, not effect observations). DISCHARGE: decide whether task and defer effect claims about libc callees move into quirin-provider-libc (and are then linked), or are recorded as observations owned by the observing crate.",
+   "source": "docs/reports/connect-adopt-declared-dependencies/README.md",
+   "recorded_by": "CONNECT-ADOPT-DECLARED-DEPENDENCIES"
+  },
+  {
+   "id": "LINKAGE-PREMISES-BLOCK-RERENDER",
+   "title": "A `premises { ... };` block is admitted only where the consumers compare block-free tokens",
+   "why": "MEASURED by card CONNECT-ADOPT-DECLARED-DEPENDENCIES: the resource v1 loader, the [[local]] re-rendering (local_condition::without_local) and the inheritance shape check (contract_inclusion::canonical_shape) compare a declaration's tokens with the blocks' openers and `};` removed (contract_dependency::without_linkage_blocks), so a grouped declaration loads; the shipped links use the single-clause form. The bounds, outer and model vocabularies reject a link (no QuantLink reading), so they reject a premises block holding one; a premises block holding only their own clauses has not been exercised there. DISCHARGE: a fixture per vocabulary for a premises block of its own clauses, or a refusal by name.",
+   "source": "docs/reports/connect-adopt-declared-dependencies/README.md",
+   "recorded_by": "CONNECT-ADOPT-DECLARED-DEPENDENCIES"
   }
  ],
  "updated": "Completed plugin premise integration; exact hand-maintained union retains810followups, borrowed measured-source8419Rust/354Lean/freshcard133provider, exact source equivalence checked; authoritative root committed-matrix Python confirmation in integration receipt. CMetrics map/opts API model specifications added at the explicit user request. Eight declared-model API contracts remain outside interpreted views, with CMT-MAP-OPTS-CONTRACT-ADOPTION and CMT-LABELED-HASH-ZERO-STATIC-STORAGE Open. No trusted API coverage is claimed; the source gate is recorded by this card alongside its separate initializer native checkpoint. W48-CMT-TRACKED-INTERIOR-SELF-INIT implements rule 36b's checked initializer effect transport for an exact live owned root or embedded record, retaining actual self writes, invalidating aliased member facts and preserving resource obligations; nondefault custody frames refuse and no ordinary summary is exported. The canonical CFL intrusive_list.qv declares matching audit preconditions/effects; two CMetrics .qv modules add six map and two opts lifecycle models, including transitive ownership, partial failure, borrowed results and uncleared cleanup fields. All remain outside interpreted views; checked API adoption and labeled zero-hash storage accounting have named Open follow-ups. Fresh BASE/planner precedes prediction f18d96065 and implementation; the later contract amendment 08da23123 precedes .qv edits. Native corpus BASE/TIP Safe/Unknown/Pending/provisional-Unsafe: 1009 / 3816 / 0 / 9 to 1011 / 3814 / 0 / 9; full system/slice, 5781 NULL dictionaries and runtime projections are compared, 241 semantic leaves accounted, zero unexplained leaves and no prior Safe loss. Gate 8654 Rust / 370 Lean / 374 Python, provider 133 Rust / 25 Python and all five package verifies pass. The actual deep source reader uses 328 KiB below 1 MiB. Full getter closure remains Open; W48-CMT-SELF-INIT-DISJOINT-FRAMES tracks the next bounded frame extension, and W48-EXACT-RETURN-WITNESS-PRECISION is unchanged. Native evidence is isolated to measured e92d8aef35a8bd14550e90219d19a56eb3b196e7; later source gate 2d0d85299b830aa24d7f200d63a308653582363f validates the added declared API models separately; see docs/reports/w48-cmt-tracked-interior-self-init/README.md."
