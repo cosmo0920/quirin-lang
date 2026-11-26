@@ -969,6 +969,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [premise-symbolic-overlap-admission](premise-symbolic-overlap-admission/README.md) | PREMISE-SYMBOLIC-OVERLAP-ADMISSION |
 
+| [priority0-remeasurement](priority0-remeasurement/README.md) | PRIORITY0-ATTRIBUTION: the priority-0 remeasurement, row by row |
+
 | [process-fixtures-fs-write](process-fixtures-fs-write/README.md) | PROCESS-FIXTURES-FS-WRITE-OUTSIDE-HOST-CRATE: one out-of-process writer for every executable test fixture |
 
 | [proof-leg-batch](proof-leg-batch/README.md) | Two proof rows withdrawn by measurement: CT12 and CT14 are CT01's artifact (PROOF-LEG-BATCH) |
