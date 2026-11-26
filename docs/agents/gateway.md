@@ -14988,7 +14988,7 @@ it `Unknown`). No `Pending` reason is added or removed, and nothing becomes
 could leave a row with no non-`Safe` leaf, so rule 74c's held report keeps
 deciding it (in the gateway suite such marks come from a modelled effect,
 rule 43's `ElementsReleased` on an entry-custody site, and are never
-claimable). Pinned in `tests/settled_leak_mark_without_unknown.rs`: the held
+claimable). Pinned in `tests/settled_leak_other_refusal/mark_without_unknown.rs`: the held
 close on one arm in two schedules (both `Unsafe`, one leak, the hold kept),
 on both arms (both `Pending`, the hold's reason only), and the open arm past
 an unrelated held call (both `Unknown`, no leak, both holds kept).
