@@ -1,0 +1,16 @@
+{
+  "schema": "quirin-amendments/2",
+  "card": "MEMBER-PATH-INVOCATION-PREMISE",
+  "base": "98c51878f",
+  "measured_tip": "a8a93c0f0",
+  "increment_paragraph": "**MEMBER-PATH-INVOCATION-PREMISE (2026-11-26).** USER DECISION 2026-11-26 (\"launch the MEMBER-PATH-INVOCATION-PREMISE card\"). Rule 30 composed a candidate's #released or #moved member-path state under some or no arm as gone, reading the invocation as run although every clause calls its callback zero or more times; the committed probe showed invokers that may call no candidate (early return, a call under a condition, a zero-trip loop, ?:, &&, a goto past the call, a switch case without it, no body) read Safe at base in the synchronous, member and table forms. Fix: new module member_path_invocation.rs reads the invoking declaration's Clang body over rule 30's control-flow graph (a must-call data flow) and establishes the invocation only where every path to every normal exit makes an unconditional call of the formal, member or table entry handing the composed formal; otherwise each state V reads {V, #kept} and a reading decided only by the invocation refuses member-path-invocation-unestablished (unchanged under an arm releasing the path on every arm). Only refuses more. Census: the only shipped invocations reaching such a candidate are rd_kafka_op_destroy's and rd_kafka_poll_cb's rko_op_cb, both calling it only under a condition. Rules 30 and 13v amended, C04.19.6; Lean QCore.MemberPathInvocationPremise (15 audited theorems: an_unestablished_gone_leaves_exactly_once over every sequence including the empty one, the_weakening_only_refuses_more, must_sound, an_established_body_calls_on_every_exit, the_premise_is_discharged). Pins: member_path_invocation_premise.rs (4 tests, 3 failing at base); three older fixtures' invokers gain every-path bodies. Opt-in current over Fluent Bit 046accf6 (base 98c51878f vs a8a93c0f0): 1205 Safe / 2 Pending / 3589 Unknown / 8 Unsafe on both sides, 0 status moves, 0 content changes, as predicted. Pinned routes: none predicted; measure --declared is deferred to the integrator (no pinned inputs on this host).",
+  "status_edits": [],
+  "ledger": [
+    {
+      "id": "MEMBER-PATH-INVOCATION-PREMISE",
+      "operation": "retire",
+      "why": "Discharged by MEMBER-PATH-INVOCATION-PREMISE: a #released or #moved candidate state reads gone under some or no arm only where the invoking declaration's body, defined in the unit, calls the invoked formal, member or table entry on every path to every normal exit (member_path_invocation.rs, a must-call reading over rule 30's graph); otherwise each state reads {V, #kept} and the call refuses member-path-invocation-unestablished. Rules 30 and 13v amended, C04.19.6; Lean QCore.MemberPathInvocationPremise discharges the_gone_reading_assumes_an_invocation (the_premise_is_discharged). Census: rd_kafka_op_destroy and rd_kafka_poll_cb are the only shipped invocations reaching such a candidate, and neither body establishes it; opt-in current 0 moves.",
+      "source": "docs/reports/member-path-invocation-premise/README.md"
+    }
+  ]
+}
