@@ -7,7 +7,7 @@ LERI-HELD-FORMAL-LINK-OBLIGATION; user decision 2026-11-27). Base
 id. Lean `QCore.ScalarCallKillPolicy`. Commits: probe `c03e9b792`,
 [prediction](PREDICTION.md) `b3a45ca61`, semantic `b3e09974e` (first
 measured tip), probe `c1e6b1669`, prediction amendment `f823446b4`,
-semantic `b160cb304` (the measured tip).
+semantic `b160cb304` (the measured tip), fix `b0a2e4eeb` (section 5).
 
 ## Headline
 
@@ -206,7 +206,40 @@ for them.
 
 ## 5. Gate
 
-GATE_SECTION
+`python3 scripts/gate_scope.py --base fb4adb697 --out <worktree>/private/gate`
+through `private/toolchain/env.sh`. Mode full Rust suite (the diff reaches
+`qcore-c-gateway` whole), all Lean (`proof/QCore.lean` changed), no provider
+gate (`providers/` unchanged).
+
+**First run, on `b160cb304` (the measured tip): exit 1**, this card's.
+fmt, clippy, both probes, Lean (536 audits) and Python (814 tests) exit 0;
+the Rust suite exit 101: 725 units, 770 summaries, 10,394 passed, **4
+failed**, 24 ignored. The four failures
+(`libc_reading_site_evidence`: three tests; `reading_site_domain`: one)
+each refused `reading-site: artifact reference mismatch:
+crates/qcore-c-gateway/src/variadic_nested.rs`: those tests pin that
+file's bytes, and the semantic commit had made its T6 predicate
+`pub(crate)`. Fix `b0a2e4eeb`: `variadic_nested.rs` restored byte for byte,
+the predicate restated in `legacy_link_member.rs` over the crate's existing
+`LITERAL` and `PREDEFINED_IDENTIFIERS` constants (the same decision, so the
+measured verdicts stand; the fixtures and both failing binaries pass).
+Logs `private/gate-b160cb304/`.
+
+**Second run, on `b0a2e4eeb` (the card's code tip): exit 0**
+([gate.json](gate.json), logs `private/gate/`, Clang in
+[gate/clang-version.txt](gate/clang-version.txt)):
+
+| Step | Exit | Counts |
+|---|---|---|
+| submodules, fmt, clippy | 0 / 0 / 0 | |
+| Rust suite | 0 | 725 units, 770 summaries; 10,398 passed, 0 failed, 24 ignored |
+| both reevaluation probes | 0 / 0 | |
+| Lean (`check_lean_audits.py`) | 0 | 536 audits (this card adds `AuditScalarCallKillPolicy.lean`) |
+| Python suite | 0 | 814 tests |
+
+An earlier gate attempt on `b3e09974e` was stopped while queued, before its
+Rust suite started, because the tree changed under it
+(`private/gate-attempt1-aborted/`); it is not evidence.
 
 LLP64 fixture scan, as the brief spells it (`git diff --name-only
 fb4adb697...HEAD -- '*tests*' | python3 docs/reports/archive/language-and-tooling/windows-ci-llp64-fixtures-2/scripts/llp64_fixture_scan.py
@@ -214,7 +247,7 @@ fb4adb697...HEAD -- '*tests*' | python3 docs/reports/archive/language-and-toolin
 first attempt were pre-existing `unsigned long` parameters in files this
 card touched only by one constructor line (`contract_dependencies.rs`'s
 `malloc`, `tests/unit/legacy_c.rs`'s `q_realloc`); both are now spelled
-`__SIZE_TYPE__`. `python3 scripts/check_report_hygiene.py`: HYGIENE.
+`__SIZE_TYPE__`. `python3 scripts/check_report_hygiene.py`: exit 0.
 
 ## 6. Follow-ups
 
