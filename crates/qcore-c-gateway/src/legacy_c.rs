@@ -335,6 +335,12 @@ mod settled_leak_route;
 #[path = "legacy_joined_leak_witness.rs"]
 mod joined_leak_route;
 
+// Card SETTLED-LEAK-MARK-WITHOUT-UNKNOWN-LEAF (rule 84, amended): a leak whose
+// settled exit marks the identity beside no `Unknown` leaf. The hook below
+// naming the card is thin.
+#[path = "legacy_mark_without_unknown.rs"]
+mod mark_without_unknown_route;
+
 // Card NULLABLE-LAZY-CONSTRUCTOR-IN-LOOP (rule 74d): a resolved, possibly-null
 // resource returned under a non-null result mode is refused as that. The hook
 // below naming the card is thin.

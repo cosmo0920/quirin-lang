@@ -1,0 +1,25 @@
+{
+ "schema": "quirin-amendments/2",
+ "card": "SETTLED-LEAK-MARK-WITHOUT-UNKNOWN-LEAF",
+ "base": "07833c86a",
+ "measured_tip": "8e016d830",
+ "profiles": [],
+ "increment_paragraph": "**SETTLED-LEAK-MARK-WITHOUT-UNKNOWN-LEAF** (gateway rule 84 amended in place, with amendment lines in rules 74c and 6; `QCore.SettledLeakJoined` extended; [report](../../reports/settled-leak-mark-without-unknown-leaf/README.md)). A call held for a human act (rule 10i) refuses with a `Pending` reason and marks what it hands on; beside such holds and no `Unknown` leaf, rule 74c's held report still published a leak exactly when an iterate had claimed it (probe at `07833c86a`: a held `k_close(h, 0)` on one arm and an arm leaving `h` open was Unsafe with the open arm first and Unknown with the held arm first). `legacy_mark_without_unknown.rs` widens rule 84's side condition to an `Unknown` or `Pending` leaf (`blocking`): the marked identity is published on rule 84's witness and withdrawn otherwise; a withdrawal keeps the `Pending` leaf and its reason, so the row is at least Pending and rule 10i's standing analysis may raise it to Unknown; never Safe. A mark beside no blocking leaf stays with rule 74c (registered as SETTLED-LEAK-MARK-LEAFLESS). Suite census at base: 130 marked exit lines without an Unknown leaf (121 beside a Pending hold, 9 beside no leaf: rule 43's `ElementsReleased` on an exempt entry site), none held, none witnessed; the Fluent Bit census wrote no line. Pins: the one-arm shape Unsafe with one leak in both orders; the hold on both arms Pending; an open arm past an unrelated hold Unknown. Opt-in `current --monkey-linked` over Fluent Bit 046accf6, base `07833c86a` and tip `8e016d830` each on its own tree and binary: both 1,205/2/3,590/7, no row changed, as predicted. Pinned routes not runnable on the host; predicted no status moves.",
+ "status_edits": [],
+ "ledger": [
+  {
+   "id": "SETTLED-LEAK-MARK-WITHOUT-UNKNOWN-LEAF",
+   "operation": "retire",
+   "why": "DISCHARGE (SETTLED-LEAK-MARK-WITHOUT-UNKNOWN-LEAF, 2026-11-27): gateway rule 84's side condition is now an Unknown or Pending leaf, so a leak whose settled exit marks the identity beside a Pending hold is decided by rule 84's restricted replay and witness from settled states (published on a witness, withdrawn otherwise), whatever iterate claimed it (fixtures in both orders; QCore.SettledLeakJoined.publication_is_order_independent_beside_a_hold). A withdrawal keeps every hold's Pending leaf and reason, so the row is at least Pending and never Safe (a_pending_reason_is_preserved, a_decision_beside_a_blocking_leaf_is_never_safe). Measured: suite census 130 such marks at base (121 beside a hold, none held or witnessed); Fluent Bit opt-in census none; opt-in route 1,205/2/3,590/7 at base and tip, no row changed. The mark beside no blocking leaf is registered as SETTLED-LEAK-MARK-LEAFLESS.",
+   "source": "docs/reports/settled-leak-mark-without-unknown-leaf/README.md"
+  },
+  {
+   "id": "SETTLED-LEAK-MARK-LEAFLESS",
+   "operation": "register",
+   "title": "A leak marked at a settled exit in a function with no non-Safe leaf is still decided by schedule",
+   "text": "SETTLED-LEAK-MARK-WITHOUT-UNKNOWN-LEAF's rule 84 decides a marked report beside an Unknown or Pending leaf. Where the function has no non-Safe leaf at all, the mark comes from a modelled effect rather than a refusal (rule 43's ElementsReleased in cross_unit_elements_released: 9 suite census lines, all on an exempt entry-custody site and never claimable; none in the Fluent Bit opt-in census), and rule 74c's held report is still published exactly when an iterate claimed it. Deciding it needs a choice fail-closed does not settle: withdrawing an unwitnessed claim leaves the row Safe on a may-release effect, publishing accuses through that effect, and an Unknown leaf would invent a reason. Options: (a) a rule that a contract's may-release mark discharges the obligation; (b) an Unknown 'mark without refusal' reason for a live marked identity at a settled exit; (c) leave it until a claimable instance appears. DISCHARGE: choose one, census it, and keep rule 84's witness for refusal-free paths.",
+   "source": "docs/reports/settled-leak-mark-without-unknown-leaf/README.md",
+   "recorded_by": "SETTLED-LEAK-MARK-WITHOUT-UNKNOWN-LEAF"
+  }
+ ]
+}

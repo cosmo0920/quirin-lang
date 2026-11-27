@@ -221,3 +221,8 @@ fn a_refusal_on_every_path_is_withdrawn_in_both_schedules() {
         }
     }
 }
+
+// Card SETTLED-LEAK-MARK-WITHOUT-UNKNOWN-LEAF (rule 84 amended): a mark
+// beside a `Pending` hold with no `Unknown` leaf.
+#[path = "settled_leak_other_refusal/mark_without_unknown.rs"]
+mod mark_without_unknown;

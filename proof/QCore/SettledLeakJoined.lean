@@ -69,9 +69,21 @@ refused release of it) and whether the identity is live when the path ends.
   a refusal stays withdrawn in every order
   (`a_refused_only_leak_stays_withdrawn_any_kind`), and a decided report is
   never `Safe` (`a_decided_report_is_never_safe`). The order independence is
-  stated where rule 84 decides the report or the settled exit is unmarked; a
-  mark beside no `Unknown` leaf is outside it, and the Rust leaves that case
-  to rule 74c.
+  stated where rule 84 decides the report or the settled exit is unmarked.
+
+* **A mark beside a `Pending` hold** (card
+  SETTLED-LEAK-MARK-WITHOUT-UNKNOWN-LEAF, the last section). The side
+  condition is a blocking leaf, `Unknown` or `Pending` (`blocking`), so the
+  order independence covers a function whose only blocking leaves are holds
+  (`publication_is_order_independent_beside_a_hold`), where the old side
+  condition read the schedule (`the_pending_case_read_the_schedule`). The
+  settle step only appends, so every `Pending` reason is kept
+  (`a_pending_reason_is_preserved`) and the fold is never `Safe`
+  (`a_decision_beside_a_blocking_leaf_is_never_safe`); a withdrawal beside
+  holds only is exactly `Pending`
+  (`a_withdrawal_beside_holds_only_is_pending`). A mark beside no blocking
+  leaf is left to rule 74c's held report
+  (`a_mark_beside_no_blocking_leaf_is_left_to_rule_74c`).
 
 ## What this is not
 
@@ -417,5 +429,132 @@ theorem a_decided_report_is_never_safe (xs : List V) (published : Bool) :
     fold (xs ++ [.unknown] ++ (if published then [.provisionalUnsafe] else [])) ≠ .safe := by
   cases published <;> simp only [QCore.VerdictSemigroup.fold_append] <;>
     cases fold xs <;> decide
+
+/-! ## A mark beside a `Pending` hold (card SETTLED-LEAK-MARK-WITHOUT-UNKNOWN-LEAF)
+
+Rule 84 decided a marked report only beside an `Unknown` leaf. A call held
+for a human act refuses with a `Pending` reason and marks what it hands on,
+so in a function whose only blocking leaves are such holds the report was
+still decided by `held`, the schedule. The amended side condition is a
+blocking leaf: an `Unknown` or a `Pending` one. A withdrawal removes only the
+leak, so the hold's leaf and its reason stay, and the row is never `Safe`. A
+mark beside no blocking leaf is left to rule 74c: withdrawing there could
+leave no non-`Safe` leaf. -/
+
+/-- A leaf that keeps a withdrawal from reaching `Safe` (`blocking` in the
+Rust). -/
+def blocking (unknownLeaf pendingLeaf : Bool) : Bool := unknownLeaf || pendingLeaf
+
+/-- The decision with the widened side condition. -/
+def decisionAt (unknownLeaf pendingLeaf : Bool) (order : List KRun) : Bool :=
+  decision (blocking unknownLeaf pendingLeaf) order
+
+/-- **Order independence, the `Pending` case included.** Two schedules of the
+same runs decide the same whenever the function carries an `Unknown` or a
+`Pending` leaf, or the settled exit is unmarked. -/
+theorem publication_is_order_independent_beside_a_hold (unknownLeaf pendingLeaf : Bool)
+    (o₁ o₂ : List KRun) (perm : o₁.Perm o₂)
+    (scope : unknownLeaf = true ∨ pendingLeaf = true ∨ kMarked o₁ = false) :
+    decisionAt unknownLeaf pendingLeaf o₁ = decisionAt unknownLeaf pendingLeaf o₂ := by
+  unfold decisionAt
+  apply publication_is_order_independent _ _ _ perm
+  rcases scope with h | h | h
+  · left; simp [blocking, h]
+  · left; simp [blocking, h]
+  · right; exact h
+
+/-- A held call on one arm (a mark with a refusal), and the arm that avoids
+it. -/
+def heldArm : KRun := ⟨[⟨true, some .other⟩], true⟩
+
+/-- **The hazard, reproduced.** Beside a `Pending` leaf only, the old side
+condition left the report to the schedule: the avoiding arm first was
+published, the held arm first was not. -/
+theorem the_pending_case_read_the_schedule :
+    decision false [avoidingArm, heldArm] = true ∧
+      decision false [heldArm, avoidingArm] = false := by
+  decide
+
+/-- **The amended decision does not.** Beside a `Pending` leaf both orders
+publish the avoiding arm's leak. -/
+theorem both_orders_publish_beside_a_hold :
+    decisionAt false true [avoidingArm, heldArm] = true ∧
+      decisionAt false true [heldArm, avoidingArm] = true := by
+  decide
+
+/-- The hold on both arms: withdrawn in either order. -/
+theorem a_hold_on_both_arms_is_withdrawn :
+    decisionAt false true [heldArm, heldArm] = false := by
+  decide
+
+/-- A leak whose every live run passes a refusal (the hold included) stays
+withdrawn beside a `Pending` leaf, whatever the schedule. -/
+theorem a_refused_only_leak_stays_withdrawn_beside_a_hold (order : List KRun)
+    (premise : EveryRefusalMarks order)
+    (every : ∀ p ∈ order, p.live = true → ∃ s ∈ p.steps, s.refusal.isSome = true)
+    (marked : kMarked order = true) :
+    decisionAt false true order = false :=
+  a_refused_only_leak_stays_withdrawn_any_kind order premise every marked
+
+/-- Without a blocking leaf the decision is rule 74c's held report, as
+before: this card does not decide that case. -/
+theorem a_mark_beside_no_blocking_leaf_is_left_to_rule_74c (order : List KRun)
+    (marked : kMarked order = true) :
+    decisionAt false false order = held order := by
+  simp [decisionAt, decision, decides, blocking, marked]
+
+/-- A leaf of a function: its verdict and its reason. -/
+structure Leaf where
+  verdict : V
+  reason : String
+deriving DecidableEq, Repr
+
+/-- The settle step: the function's leaves are kept and the leak is appended
+when published. Nothing is removed. -/
+def settleLeaves (leaves : List Leaf) (published : Bool) : List Leaf :=
+  leaves ++ (if published then [⟨.provisionalUnsafe, "leak"⟩] else [])
+
+/-- **Every `Pending` reason is preserved**, whether the leak is published
+or withdrawn. -/
+theorem a_pending_reason_is_preserved (leaves : List Leaf) (published : Bool)
+    (l : Leaf) (member : l ∈ leaves) : l ∈ settleLeaves leaves published := by
+  unfold settleLeaves
+  exact List.mem_append_left _ member
+
+/-- **Never `Safe`.** Beside a blocking leaf, published or withdrawn, the
+function's fold is not `Safe`. -/
+theorem a_decision_beside_a_blocking_leaf_is_never_safe (leaves : List Leaf)
+    (published : Bool) (l : Leaf) (member : l ∈ leaves)
+    (isBlocking : l.verdict = .pending ∨ l.verdict = .unknown) :
+    fold ((settleLeaves leaves published).map (·.verdict)) ≠ .safe := by
+  apply QCore.VerdictSemigroup.a_non_safe_link_keeps_the_chain_non_safe
+    (x := l.verdict)
+  · exact List.mem_map.mpr ⟨l, a_pending_reason_is_preserved leaves published l member, rfl⟩
+  · rcases isBlocking with h | h <;> rw [h] <;> decide
+
+theorem fold_of_pendings (xs : List V) (ne : xs ≠ []) (h : ∀ x ∈ xs, x = .pending) :
+    fold xs = .pending := by
+  induction xs with
+  | nil => exact absurd rfl ne
+  | cons x xs ih =>
+    have hx := h x (List.mem_cons_self ..)
+    cases xs with
+    | nil => rw [hx]; rfl
+    | cons y ys =>
+      have rest := ih (List.cons_ne_nil _ _) (fun z hz => h z (List.mem_cons_of_mem _ hz))
+      show QCore.VerdictSemigroup.V.join x (fold (y :: ys)) = V.pending
+      rw [rest, hx]; rfl
+
+/-- A withdrawal beside holds only folds to exactly `Pending`: no reason is
+invented, and the row does not rise above the holds' own verdict. -/
+theorem a_withdrawal_beside_holds_only_is_pending (leaves : List Leaf)
+    (nonempty : leaves ≠ []) (holds : ∀ l ∈ leaves, l.verdict = .pending) :
+    fold ((settleLeaves leaves false).map (·.verdict)) = .pending := by
+  apply fold_of_pendings
+  · simpa [settleLeaves] using nonempty
+  · intro x hx
+    simp only [settleLeaves, Bool.false_eq_true, ite_false, List.append_nil, List.mem_map] at hx
+    obtain ⟨l, lm, rfl⟩ := hx
+    exact holds l lm
 
 end QCore.SettledLeakJoined

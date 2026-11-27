@@ -1,0 +1,26 @@
+{
+ "lines": 154,
+ "functions": {
+  "pending": 3,
+  "none": 1
+ },
+ "by_class_held_witnessed_claimable": {
+  "none/False/False/False": 9,
+  "pending/False/False/False": 9,
+  "pending/False/False/True": 128,
+  "pending/False/True/True": 4,
+  "pending/True/True/True": 4
+ },
+ "decided_differently_beside_pending": {
+  "w": [
+   [
+    [
+     0,
+     4
+    ],
+    "witnessed"
+   ]
+  ]
+ },
+ "held_beside_no_blocking_leaf": {}
+}
