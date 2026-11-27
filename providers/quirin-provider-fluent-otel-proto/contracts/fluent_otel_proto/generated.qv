@@ -1,0 +1,718 @@
+// SPDX-License-Identifier: Apache-2.0
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+module contract;
+
+// fluent-otel-proto generated functions — resource-projection vocabulary
+// version 1. Card OTEL-PROTO-PHASE-B1 (USER DECISIONS 2026-11-27, "New
+// provider crate", "Phase it, accept 7"). Written by
+// `scripts/generate.py`; never edit by hand.
+//
+// 78 TRUSTED ASSUMPTIONS, one per generated function an OpenTelemetry
+// consumer unit of Fluent Bit calls (52 `__init`, 9 `__get_packed_size`, 9 `__pack`, 4 `__unpack`, 4 `__free_unpacked`). The C bodies are not
+// analysed by this loader; each declaration is pinned (contract spec C06.2)
+// to its definition in `lib/fluent-otel-proto/proto_c/` and its prototype in
+// the generated header, so a regenerated file holds every declaration whose
+// site changed (`contract-pin-mismatch`, Unknown). The basis is the vendored
+// descriptors, which equal opentelemetry-proto v1.10.0
+// (`protocol-identity.json`, docs/reports/otel-proto-audit/README.md §3).
+//
+// ## The bodies, read before declaring (protoc-c 1.5.2; every one checked)
+//
+//     void   T__init (T *message)
+//     { static const T init_value = T__INIT; *message = init_value; }
+//     size_t T__get_packed_size (const T *message)
+//     { assert(...); return protobuf_c_message_get_packed_size ((const ProtobufCMessage*)(message)); }
+//     size_t T__pack (const T *message, uint8_t *out)
+//     { assert(...); return protobuf_c_message_pack ((const ProtobufCMessage*)message, out); }
+//     T *    T__unpack (ProtobufCAllocator *allocator, size_t len, const uint8_t *data)
+//     { return (T *) protobuf_c_message_unpack (&T__descriptor, allocator, len, data); }
+//     void   T__free_unpacked (T *message, ProtobufCAllocator *allocator)
+//     { if(!message) return; assert(...); protobuf_c_message_free_unpacked ((ProtobufCMessage*)message, allocator); }
+//
+// * `__init` copies a static initializer into memory the caller holds:
+//   `message` borrowed, no custody returned.
+// * `__get_packed_size` and `__pack` read the message (and `__pack` writes the
+//   caller's buffer): every parameter borrowed, no custody returned.
+// * `__unpack` returns a fresh message allocated through `allocator` (the
+//   system allocator when NULL), or NULL when the bytes do not decode or an
+//   allocation fails (`protobuf_c_message_unpack`, `protobuf-c.c:3028`): an
+//   owned, nullable result. protobuf-c.h:647-651: "calls to functions like
+//   protobuf_c_message_unpack() which return a ProtobufCMessage must be paired
+//   with a call to a free function".
+// * `__free_unpacked` returns at once on NULL and otherwise releases the
+//   message and everything it owns through the same allocator: a nullable
+//   release of `message`, the allocator borrowed.
+//
+// ## ABI (constraint 8)
+//
+// A pointer to const is `ptr<const, u8>`, any other pointer `ptr<mut, u8>`,
+// `size_t` `usize` (LP64), `void` `unit`.
+//
+// ## NOT CLAIMED
+//
+// * The protocol facts of an unpacked message (an absent sub-message is NULL,
+//   an element below the count is non-NULL, the selected oneof member is
+//   valid): they are the OTP premises of
+//   docs/reports/otel-proto-audit/formulas.json, which no verdict reads yet
+//   (OTEL-PROTO-NULL-CONDITIONAL-READING).
+// * That an `__unpack` result is released by the `__free_unpacked` of its own
+//   type, or that the allocator passed to both is the same: the custody model
+//   keys a release on the value, not on the message type.
+// * Anything about `message` being non-NULL where a function asserts it.
+
+// opentelemetry/proto/collector/logs/v1/logs_service.pb-c.h / opentelemetry/proto/collector/logs/v1/logs_service.pb-c.c
+extern fn opentelemetry__proto__collector__logs__v1__export_logs_service_request__free_unpacked(message: ptr<mut, u8>, allocator: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(message, nullable);
+    ensures normal resource_borrowed(allocator);
+    ensures normal resource_return_none();
+};
+
+// opentelemetry/proto/collector/logs/v1/logs_service.pb-c.h / opentelemetry/proto/collector/logs/v1/logs_service.pb-c.c
+extern fn opentelemetry__proto__collector__logs__v1__export_logs_service_request__get_packed_size(message: ptr<const, u8>) -> usize
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(message);
+    ensures normal resource_return_none();
+};
+
+// opentelemetry/proto/collector/logs/v1/logs_service.pb-c.h / opentelemetry/proto/collector/logs/v1/logs_service.pb-c.c
+extern fn opentelemetry__proto__collector__logs__v1__export_logs_service_request__init(message: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(message);
+    ensures normal resource_return_none();
+};
+
+// opentelemetry/proto/collector/logs/v1/logs_service.pb-c.h / opentelemetry/proto/collector/logs/v1/logs_service.pb-c.c
+extern fn opentelemetry__proto__collector__logs__v1__export_logs_service_request__pack(message: ptr<const, u8>, out: ptr<mut, u8>) -> usize
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(message);
+    ensures normal resource_borrowed(out);
+    ensures normal resource_return_none();
+};
+
+// opentelemetry/proto/collector/logs/v1/logs_service.pb-c.h / opentelemetry/proto/collector/logs/v1/logs_service.pb-c.c
+extern fn opentelemetry__proto__collector__logs__v1__export_logs_service_request__unpack(allocator: ptr<mut, u8>, len: usize, data: ptr<const, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(allocator);
+    ensures normal resource_borrowed(len);
+    ensures normal resource_borrowed(data);
+    ensures normal resource_return_owned(nullable);
+};
+
+// opentelemetry/proto/collector/logs/v1/logs_service.pb-c.h / opentelemetry/proto/collector/logs/v1/logs_service.pb-c.c
+extern fn opentelemetry__proto__collector__logs__v1__export_logs_service_response__get_packed_size(message: ptr<const, u8>) -> usize
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(message);
+    ensures normal resource_return_none();
+};
+
+// opentelemetry/proto/collector/logs/v1/logs_service.pb-c.h / opentelemetry/proto/collector/logs/v1/logs_service.pb-c.c
+extern fn opentelemetry__proto__collector__logs__v1__export_logs_service_response__init(message: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(message);
+    ensures normal resource_return_none();
+};
+
+// opentelemetry/proto/collector/logs/v1/logs_service.pb-c.h / opentelemetry/proto/collector/logs/v1/logs_service.pb-c.c
+extern fn opentelemetry__proto__collector__logs__v1__export_logs_service_response__pack(message: ptr<const, u8>, out: ptr<mut, u8>) -> usize
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(message);
+    ensures normal resource_borrowed(out);
+    ensures normal resource_return_none();
+};
+
+// opentelemetry/proto/collector/metrics/v1/metrics_service.pb-c.h / opentelemetry/proto/collector/metrics/v1/metrics_service.pb-c.c
+extern fn opentelemetry__proto__collector__metrics__v1__export_metrics_service_request__free_unpacked(message: ptr<mut, u8>, allocator: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(message, nullable);
+    ensures normal resource_borrowed(allocator);
+    ensures normal resource_return_none();
+};
+
+// opentelemetry/proto/collector/metrics/v1/metrics_service.pb-c.h / opentelemetry/proto/collector/metrics/v1/metrics_service.pb-c.c
+extern fn opentelemetry__proto__collector__metrics__v1__export_metrics_service_request__get_packed_size(message: ptr<const, u8>) -> usize
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(message);
+    ensures normal resource_return_none();
+};
+
+// opentelemetry/proto/collector/metrics/v1/metrics_service.pb-c.h / opentelemetry/proto/collector/metrics/v1/metrics_service.pb-c.c
+extern fn opentelemetry__proto__collector__metrics__v1__export_metrics_service_request__init(message: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(message);
+    ensures normal resource_return_none();
+};
+
+// opentelemetry/proto/collector/metrics/v1/metrics_service.pb-c.h / opentelemetry/proto/collector/metrics/v1/metrics_service.pb-c.c
+extern fn opentelemetry__proto__collector__metrics__v1__export_metrics_service_request__pack(message: ptr<const, u8>, out: ptr<mut, u8>) -> usize
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(message);
+    ensures normal resource_borrowed(out);
+    ensures normal resource_return_none();
+};
+
+// opentelemetry/proto/collector/metrics/v1/metrics_service.pb-c.h / opentelemetry/proto/collector/metrics/v1/metrics_service.pb-c.c
+extern fn opentelemetry__proto__collector__metrics__v1__export_metrics_service_request__unpack(allocator: ptr<mut, u8>, len: usize, data: ptr<const, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(allocator);
+    ensures normal resource_borrowed(len);
+    ensures normal resource_borrowed(data);
+    ensures normal resource_return_owned(nullable);
+};
+
+// opentelemetry/proto/collector/metrics/v1/metrics_service.pb-c.h / opentelemetry/proto/collector/metrics/v1/metrics_service.pb-c.c
+extern fn opentelemetry__proto__collector__metrics__v1__export_metrics_service_response__get_packed_size(message: ptr<const, u8>) -> usize
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(message);
+    ensures normal resource_return_none();
+};
+
+// opentelemetry/proto/collector/metrics/v1/metrics_service.pb-c.h / opentelemetry/proto/collector/metrics/v1/metrics_service.pb-c.c
+extern fn opentelemetry__proto__collector__metrics__v1__export_metrics_service_response__init(message: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(message);
+    ensures normal resource_return_none();
+};
+
+// opentelemetry/proto/collector/metrics/v1/metrics_service.pb-c.h / opentelemetry/proto/collector/metrics/v1/metrics_service.pb-c.c
+extern fn opentelemetry__proto__collector__metrics__v1__export_metrics_service_response__pack(message: ptr<const, u8>, out: ptr<mut, u8>) -> usize
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(message);
+    ensures normal resource_borrowed(out);
+    ensures normal resource_return_none();
+};
+
+// opentelemetry/proto/collector/profiles/v1development/profiles_service.pb-c.h / opentelemetry/proto/collector/profiles/v1development/profiles_service.pb-c.c
+extern fn opentelemetry__proto__collector__profiles__v1development__export_profiles_service_request__free_unpacked(message: ptr<mut, u8>, allocator: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(message, nullable);
+    ensures normal resource_borrowed(allocator);
+    ensures normal resource_return_none();
+};
+
+// opentelemetry/proto/collector/profiles/v1development/profiles_service.pb-c.h / opentelemetry/proto/collector/profiles/v1development/profiles_service.pb-c.c
+extern fn opentelemetry__proto__collector__profiles__v1development__export_profiles_service_request__get_packed_size(message: ptr<const, u8>) -> usize
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(message);
+    ensures normal resource_return_none();
+};
+
+// opentelemetry/proto/collector/profiles/v1development/profiles_service.pb-c.h / opentelemetry/proto/collector/profiles/v1development/profiles_service.pb-c.c
+extern fn opentelemetry__proto__collector__profiles__v1development__export_profiles_service_request__init(message: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(message);
+    ensures normal resource_return_none();
+};
+
+// opentelemetry/proto/collector/profiles/v1development/profiles_service.pb-c.h / opentelemetry/proto/collector/profiles/v1development/profiles_service.pb-c.c
+extern fn opentelemetry__proto__collector__profiles__v1development__export_profiles_service_request__pack(message: ptr<const, u8>, out: ptr<mut, u8>) -> usize
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(message);
+    ensures normal resource_borrowed(out);
+    ensures normal resource_return_none();
+};
+
+// opentelemetry/proto/collector/profiles/v1development/profiles_service.pb-c.h / opentelemetry/proto/collector/profiles/v1development/profiles_service.pb-c.c
+extern fn opentelemetry__proto__collector__profiles__v1development__export_profiles_service_request__unpack(allocator: ptr<mut, u8>, len: usize, data: ptr<const, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(allocator);
+    ensures normal resource_borrowed(len);
+    ensures normal resource_borrowed(data);
+    ensures normal resource_return_owned(nullable);
+};
+
+// opentelemetry/proto/collector/profiles/v1development/profiles_service.pb-c.h / opentelemetry/proto/collector/profiles/v1development/profiles_service.pb-c.c
+extern fn opentelemetry__proto__collector__profiles__v1development__export_profiles_service_response__get_packed_size(message: ptr<const, u8>) -> usize
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(message);
+    ensures normal resource_return_none();
+};
+
+// opentelemetry/proto/collector/profiles/v1development/profiles_service.pb-c.h / opentelemetry/proto/collector/profiles/v1development/profiles_service.pb-c.c
+extern fn opentelemetry__proto__collector__profiles__v1development__export_profiles_service_response__init(message: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(message);
+    ensures normal resource_return_none();
+};
+
+// opentelemetry/proto/collector/profiles/v1development/profiles_service.pb-c.h / opentelemetry/proto/collector/profiles/v1development/profiles_service.pb-c.c
+extern fn opentelemetry__proto__collector__profiles__v1development__export_profiles_service_response__pack(message: ptr<const, u8>, out: ptr<mut, u8>) -> usize
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(message);
+    ensures normal resource_borrowed(out);
+    ensures normal resource_return_none();
+};
+
+// opentelemetry/proto/collector/trace/v1/trace_service.pb-c.h / opentelemetry/proto/collector/trace/v1/trace_service.pb-c.c
+extern fn opentelemetry__proto__collector__trace__v1__export_trace_service_request__free_unpacked(message: ptr<mut, u8>, allocator: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(message, nullable);
+    ensures normal resource_borrowed(allocator);
+    ensures normal resource_return_none();
+};
+
+// opentelemetry/proto/collector/trace/v1/trace_service.pb-c.h / opentelemetry/proto/collector/trace/v1/trace_service.pb-c.c
+extern fn opentelemetry__proto__collector__trace__v1__export_trace_service_request__get_packed_size(message: ptr<const, u8>) -> usize
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(message);
+    ensures normal resource_return_none();
+};
+
+// opentelemetry/proto/collector/trace/v1/trace_service.pb-c.h / opentelemetry/proto/collector/trace/v1/trace_service.pb-c.c
+extern fn opentelemetry__proto__collector__trace__v1__export_trace_service_request__init(message: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(message);
+    ensures normal resource_return_none();
+};
+
+// opentelemetry/proto/collector/trace/v1/trace_service.pb-c.h / opentelemetry/proto/collector/trace/v1/trace_service.pb-c.c
+extern fn opentelemetry__proto__collector__trace__v1__export_trace_service_request__pack(message: ptr<const, u8>, out: ptr<mut, u8>) -> usize
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(message);
+    ensures normal resource_borrowed(out);
+    ensures normal resource_return_none();
+};
+
+// opentelemetry/proto/collector/trace/v1/trace_service.pb-c.h / opentelemetry/proto/collector/trace/v1/trace_service.pb-c.c
+extern fn opentelemetry__proto__collector__trace__v1__export_trace_service_request__unpack(allocator: ptr<mut, u8>, len: usize, data: ptr<const, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(allocator);
+    ensures normal resource_borrowed(len);
+    ensures normal resource_borrowed(data);
+    ensures normal resource_return_owned(nullable);
+};
+
+// opentelemetry/proto/collector/trace/v1/trace_service.pb-c.h / opentelemetry/proto/collector/trace/v1/trace_service.pb-c.c
+extern fn opentelemetry__proto__collector__trace__v1__export_trace_service_response__get_packed_size(message: ptr<const, u8>) -> usize
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(message);
+    ensures normal resource_return_none();
+};
+
+// opentelemetry/proto/collector/trace/v1/trace_service.pb-c.h / opentelemetry/proto/collector/trace/v1/trace_service.pb-c.c
+extern fn opentelemetry__proto__collector__trace__v1__export_trace_service_response__init(message: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(message);
+    ensures normal resource_return_none();
+};
+
+// opentelemetry/proto/collector/trace/v1/trace_service.pb-c.h / opentelemetry/proto/collector/trace/v1/trace_service.pb-c.c
+extern fn opentelemetry__proto__collector__trace__v1__export_trace_service_response__pack(message: ptr<const, u8>, out: ptr<mut, u8>) -> usize
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(message);
+    ensures normal resource_borrowed(out);
+    ensures normal resource_return_none();
+};
+
+// opentelemetry/proto/common/v1/common.pb-c.h / opentelemetry/proto/common/v1/common.pb-c.c
+extern fn opentelemetry__proto__common__v1__any_value__init(message: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(message);
+    ensures normal resource_return_none();
+};
+
+// opentelemetry/proto/common/v1/common.pb-c.h / opentelemetry/proto/common/v1/common.pb-c.c
+extern fn opentelemetry__proto__common__v1__array_value__init(message: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(message);
+    ensures normal resource_return_none();
+};
+
+// opentelemetry/proto/common/v1/common.pb-c.h / opentelemetry/proto/common/v1/common.pb-c.c
+extern fn opentelemetry__proto__common__v1__instrumentation_scope__init(message: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(message);
+    ensures normal resource_return_none();
+};
+
+// opentelemetry/proto/common/v1/common.pb-c.h / opentelemetry/proto/common/v1/common.pb-c.c
+extern fn opentelemetry__proto__common__v1__key_value__init(message: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(message);
+    ensures normal resource_return_none();
+};
+
+// opentelemetry/proto/common/v1/common.pb-c.h / opentelemetry/proto/common/v1/common.pb-c.c
+extern fn opentelemetry__proto__common__v1__key_value_list__init(message: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(message);
+    ensures normal resource_return_none();
+};
+
+// opentelemetry/proto/logs/v1/logs.pb-c.h / opentelemetry/proto/logs/v1/logs.pb-c.c
+extern fn opentelemetry__proto__logs__v1__log_record__init(message: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(message);
+    ensures normal resource_return_none();
+};
+
+// opentelemetry/proto/logs/v1/logs.pb-c.h / opentelemetry/proto/logs/v1/logs.pb-c.c
+extern fn opentelemetry__proto__logs__v1__resource_logs__init(message: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(message);
+    ensures normal resource_return_none();
+};
+
+// opentelemetry/proto/logs/v1/logs.pb-c.h / opentelemetry/proto/logs/v1/logs.pb-c.c
+extern fn opentelemetry__proto__logs__v1__scope_logs__init(message: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(message);
+    ensures normal resource_return_none();
+};
+
+// opentelemetry/proto/metrics/v1/metrics.pb-c.h / opentelemetry/proto/metrics/v1/metrics.pb-c.c
+extern fn opentelemetry__proto__metrics__v1__exemplar__init(message: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(message);
+    ensures normal resource_return_none();
+};
+
+// opentelemetry/proto/metrics/v1/metrics.pb-c.h / opentelemetry/proto/metrics/v1/metrics.pb-c.c
+extern fn opentelemetry__proto__metrics__v1__exponential_histogram__init(message: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(message);
+    ensures normal resource_return_none();
+};
+
+// opentelemetry/proto/metrics/v1/metrics.pb-c.h / opentelemetry/proto/metrics/v1/metrics.pb-c.c
+extern fn opentelemetry__proto__metrics__v1__exponential_histogram_data_point__buckets__init(message: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(message);
+    ensures normal resource_return_none();
+};
+
+// opentelemetry/proto/metrics/v1/metrics.pb-c.h / opentelemetry/proto/metrics/v1/metrics.pb-c.c
+extern fn opentelemetry__proto__metrics__v1__exponential_histogram_data_point__init(message: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(message);
+    ensures normal resource_return_none();
+};
+
+// opentelemetry/proto/metrics/v1/metrics.pb-c.h / opentelemetry/proto/metrics/v1/metrics.pb-c.c
+extern fn opentelemetry__proto__metrics__v1__gauge__init(message: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(message);
+    ensures normal resource_return_none();
+};
+
+// opentelemetry/proto/metrics/v1/metrics.pb-c.h / opentelemetry/proto/metrics/v1/metrics.pb-c.c
+extern fn opentelemetry__proto__metrics__v1__histogram__init(message: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(message);
+    ensures normal resource_return_none();
+};
+
+// opentelemetry/proto/metrics/v1/metrics.pb-c.h / opentelemetry/proto/metrics/v1/metrics.pb-c.c
+extern fn opentelemetry__proto__metrics__v1__histogram_data_point__init(message: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(message);
+    ensures normal resource_return_none();
+};
+
+// opentelemetry/proto/metrics/v1/metrics.pb-c.h / opentelemetry/proto/metrics/v1/metrics.pb-c.c
+extern fn opentelemetry__proto__metrics__v1__metric__init(message: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(message);
+    ensures normal resource_return_none();
+};
+
+// opentelemetry/proto/metrics/v1/metrics.pb-c.h / opentelemetry/proto/metrics/v1/metrics.pb-c.c
+extern fn opentelemetry__proto__metrics__v1__metrics_data__get_packed_size(message: ptr<const, u8>) -> usize
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(message);
+    ensures normal resource_return_none();
+};
+
+// opentelemetry/proto/metrics/v1/metrics.pb-c.h / opentelemetry/proto/metrics/v1/metrics.pb-c.c
+extern fn opentelemetry__proto__metrics__v1__metrics_data__init(message: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(message);
+    ensures normal resource_return_none();
+};
+
+// opentelemetry/proto/metrics/v1/metrics.pb-c.h / opentelemetry/proto/metrics/v1/metrics.pb-c.c
+extern fn opentelemetry__proto__metrics__v1__metrics_data__pack(message: ptr<const, u8>, out: ptr<mut, u8>) -> usize
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(message);
+    ensures normal resource_borrowed(out);
+    ensures normal resource_return_none();
+};
+
+// opentelemetry/proto/metrics/v1/metrics.pb-c.h / opentelemetry/proto/metrics/v1/metrics.pb-c.c
+extern fn opentelemetry__proto__metrics__v1__number_data_point__init(message: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(message);
+    ensures normal resource_return_none();
+};
+
+// opentelemetry/proto/metrics/v1/metrics.pb-c.h / opentelemetry/proto/metrics/v1/metrics.pb-c.c
+extern fn opentelemetry__proto__metrics__v1__resource_metrics__init(message: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(message);
+    ensures normal resource_return_none();
+};
+
+// opentelemetry/proto/metrics/v1/metrics.pb-c.h / opentelemetry/proto/metrics/v1/metrics.pb-c.c
+extern fn opentelemetry__proto__metrics__v1__scope_metrics__init(message: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(message);
+    ensures normal resource_return_none();
+};
+
+// opentelemetry/proto/metrics/v1/metrics.pb-c.h / opentelemetry/proto/metrics/v1/metrics.pb-c.c
+extern fn opentelemetry__proto__metrics__v1__sum__init(message: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(message);
+    ensures normal resource_return_none();
+};
+
+// opentelemetry/proto/metrics/v1/metrics.pb-c.h / opentelemetry/proto/metrics/v1/metrics.pb-c.c
+extern fn opentelemetry__proto__metrics__v1__summary__init(message: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(message);
+    ensures normal resource_return_none();
+};
+
+// opentelemetry/proto/metrics/v1/metrics.pb-c.h / opentelemetry/proto/metrics/v1/metrics.pb-c.c
+extern fn opentelemetry__proto__metrics__v1__summary_data_point__init(message: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(message);
+    ensures normal resource_return_none();
+};
+
+// opentelemetry/proto/metrics/v1/metrics.pb-c.h / opentelemetry/proto/metrics/v1/metrics.pb-c.c
+extern fn opentelemetry__proto__metrics__v1__summary_data_point__value_at_quantile__init(message: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(message);
+    ensures normal resource_return_none();
+};
+
+// opentelemetry/proto/profiles/v1development/profiles.pb-c.h / opentelemetry/proto/profiles/v1development/profiles.pb-c.c
+extern fn opentelemetry__proto__profiles__v1development__function__init(message: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(message);
+    ensures normal resource_return_none();
+};
+
+// opentelemetry/proto/profiles/v1development/profiles.pb-c.h / opentelemetry/proto/profiles/v1development/profiles.pb-c.c
+extern fn opentelemetry__proto__profiles__v1development__key_value_and_unit__init(message: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(message);
+    ensures normal resource_return_none();
+};
+
+// opentelemetry/proto/profiles/v1development/profiles.pb-c.h / opentelemetry/proto/profiles/v1development/profiles.pb-c.c
+extern fn opentelemetry__proto__profiles__v1development__line__init(message: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(message);
+    ensures normal resource_return_none();
+};
+
+// opentelemetry/proto/profiles/v1development/profiles.pb-c.h / opentelemetry/proto/profiles/v1development/profiles.pb-c.c
+extern fn opentelemetry__proto__profiles__v1development__link__init(message: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(message);
+    ensures normal resource_return_none();
+};
+
+// opentelemetry/proto/profiles/v1development/profiles.pb-c.h / opentelemetry/proto/profiles/v1development/profiles.pb-c.c
+extern fn opentelemetry__proto__profiles__v1development__location__init(message: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(message);
+    ensures normal resource_return_none();
+};
+
+// opentelemetry/proto/profiles/v1development/profiles.pb-c.h / opentelemetry/proto/profiles/v1development/profiles.pb-c.c
+extern fn opentelemetry__proto__profiles__v1development__mapping__init(message: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(message);
+    ensures normal resource_return_none();
+};
+
+// opentelemetry/proto/profiles/v1development/profiles.pb-c.h / opentelemetry/proto/profiles/v1development/profiles.pb-c.c
+extern fn opentelemetry__proto__profiles__v1development__profile__init(message: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(message);
+    ensures normal resource_return_none();
+};
+
+// opentelemetry/proto/profiles/v1development/profiles.pb-c.h / opentelemetry/proto/profiles/v1development/profiles.pb-c.c
+extern fn opentelemetry__proto__profiles__v1development__profiles_dictionary__init(message: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(message);
+    ensures normal resource_return_none();
+};
+
+// opentelemetry/proto/profiles/v1development/profiles.pb-c.h / opentelemetry/proto/profiles/v1development/profiles.pb-c.c
+extern fn opentelemetry__proto__profiles__v1development__resource_profiles__init(message: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(message);
+    ensures normal resource_return_none();
+};
+
+// opentelemetry/proto/profiles/v1development/profiles.pb-c.h / opentelemetry/proto/profiles/v1development/profiles.pb-c.c
+extern fn opentelemetry__proto__profiles__v1development__sample__init(message: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(message);
+    ensures normal resource_return_none();
+};
+
+// opentelemetry/proto/profiles/v1development/profiles.pb-c.h / opentelemetry/proto/profiles/v1development/profiles.pb-c.c
+extern fn opentelemetry__proto__profiles__v1development__scope_profiles__init(message: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(message);
+    ensures normal resource_return_none();
+};
+
+// opentelemetry/proto/profiles/v1development/profiles.pb-c.h / opentelemetry/proto/profiles/v1development/profiles.pb-c.c
+extern fn opentelemetry__proto__profiles__v1development__stack__init(message: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(message);
+    ensures normal resource_return_none();
+};
+
+// opentelemetry/proto/profiles/v1development/profiles.pb-c.h / opentelemetry/proto/profiles/v1development/profiles.pb-c.c
+extern fn opentelemetry__proto__profiles__v1development__value_type__init(message: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(message);
+    ensures normal resource_return_none();
+};
+
+// opentelemetry/proto/resource/v1/resource.pb-c.h / opentelemetry/proto/resource/v1/resource.pb-c.c
+extern fn opentelemetry__proto__resource__v1__resource__init(message: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(message);
+    ensures normal resource_return_none();
+};
+
+// opentelemetry/proto/trace/v1/trace.pb-c.h / opentelemetry/proto/trace/v1/trace.pb-c.c
+extern fn opentelemetry__proto__trace__v1__resource_spans__init(message: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(message);
+    ensures normal resource_return_none();
+};
+
+// opentelemetry/proto/trace/v1/trace.pb-c.h / opentelemetry/proto/trace/v1/trace.pb-c.c
+extern fn opentelemetry__proto__trace__v1__scope_spans__init(message: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(message);
+    ensures normal resource_return_none();
+};
+
+// opentelemetry/proto/trace/v1/trace.pb-c.h / opentelemetry/proto/trace/v1/trace.pb-c.c
+extern fn opentelemetry__proto__trace__v1__span__event__init(message: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(message);
+    ensures normal resource_return_none();
+};
+
+// opentelemetry/proto/trace/v1/trace.pb-c.h / opentelemetry/proto/trace/v1/trace.pb-c.c
+extern fn opentelemetry__proto__trace__v1__span__init(message: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(message);
+    ensures normal resource_return_none();
+};
+
+// opentelemetry/proto/trace/v1/trace.pb-c.h / opentelemetry/proto/trace/v1/trace.pb-c.c
+extern fn opentelemetry__proto__trace__v1__span__link__init(message: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(message);
+    ensures normal resource_return_none();
+};
+
+// opentelemetry/proto/trace/v1/trace.pb-c.h / opentelemetry/proto/trace/v1/trace.pb-c.c
+extern fn opentelemetry__proto__trace__v1__status__init(message: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(message);
+    ensures normal resource_return_none();
+};

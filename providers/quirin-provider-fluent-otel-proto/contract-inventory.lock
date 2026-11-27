@@ -1,0 +1,1004 @@
+{
+  "bounds_view": [],
+  "contracts": "quirin-provider-fluent-otel-proto/contracts",
+  "crate": "quirin-provider-fluent-otel-proto",
+  "files": {
+    "fluent_otel_proto/generated.qv": {
+      "clause_count": 255,
+      "declaration_count": 78,
+      "declarations": [
+        {
+          "clauses": 4,
+          "name": "opentelemetry__proto__collector__logs__v1__export_logs_service_request__free_unpacked",
+          "resource_mode": {
+            "parameters": [
+              {
+                "released": {
+                  "nullable": true
+                }
+              },
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 3,
+          "name": "opentelemetry__proto__collector__logs__v1__export_logs_service_request__get_packed_size",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 3,
+          "name": "opentelemetry__proto__collector__logs__v1__export_logs_service_request__init",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 4,
+          "name": "opentelemetry__proto__collector__logs__v1__export_logs_service_request__pack",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 5,
+          "name": "opentelemetry__proto__collector__logs__v1__export_logs_service_request__unpack",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": {
+              "owned": {
+                "nullable": true
+              }
+            }
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 3,
+          "name": "opentelemetry__proto__collector__logs__v1__export_logs_service_response__get_packed_size",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 3,
+          "name": "opentelemetry__proto__collector__logs__v1__export_logs_service_response__init",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 4,
+          "name": "opentelemetry__proto__collector__logs__v1__export_logs_service_response__pack",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 4,
+          "name": "opentelemetry__proto__collector__metrics__v1__export_metrics_service_request__free_unpacked",
+          "resource_mode": {
+            "parameters": [
+              {
+                "released": {
+                  "nullable": true
+                }
+              },
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 3,
+          "name": "opentelemetry__proto__collector__metrics__v1__export_metrics_service_request__get_packed_size",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 3,
+          "name": "opentelemetry__proto__collector__metrics__v1__export_metrics_service_request__init",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 4,
+          "name": "opentelemetry__proto__collector__metrics__v1__export_metrics_service_request__pack",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 5,
+          "name": "opentelemetry__proto__collector__metrics__v1__export_metrics_service_request__unpack",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": {
+              "owned": {
+                "nullable": true
+              }
+            }
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 3,
+          "name": "opentelemetry__proto__collector__metrics__v1__export_metrics_service_response__get_packed_size",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 3,
+          "name": "opentelemetry__proto__collector__metrics__v1__export_metrics_service_response__init",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 4,
+          "name": "opentelemetry__proto__collector__metrics__v1__export_metrics_service_response__pack",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 4,
+          "name": "opentelemetry__proto__collector__profiles__v1development__export_profiles_service_request__free_unpacked",
+          "resource_mode": {
+            "parameters": [
+              {
+                "released": {
+                  "nullable": true
+                }
+              },
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 3,
+          "name": "opentelemetry__proto__collector__profiles__v1development__export_profiles_service_request__get_packed_size",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 3,
+          "name": "opentelemetry__proto__collector__profiles__v1development__export_profiles_service_request__init",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 4,
+          "name": "opentelemetry__proto__collector__profiles__v1development__export_profiles_service_request__pack",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 5,
+          "name": "opentelemetry__proto__collector__profiles__v1development__export_profiles_service_request__unpack",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": {
+              "owned": {
+                "nullable": true
+              }
+            }
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 3,
+          "name": "opentelemetry__proto__collector__profiles__v1development__export_profiles_service_response__get_packed_size",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 3,
+          "name": "opentelemetry__proto__collector__profiles__v1development__export_profiles_service_response__init",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 4,
+          "name": "opentelemetry__proto__collector__profiles__v1development__export_profiles_service_response__pack",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 4,
+          "name": "opentelemetry__proto__collector__trace__v1__export_trace_service_request__free_unpacked",
+          "resource_mode": {
+            "parameters": [
+              {
+                "released": {
+                  "nullable": true
+                }
+              },
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 3,
+          "name": "opentelemetry__proto__collector__trace__v1__export_trace_service_request__get_packed_size",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 3,
+          "name": "opentelemetry__proto__collector__trace__v1__export_trace_service_request__init",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 4,
+          "name": "opentelemetry__proto__collector__trace__v1__export_trace_service_request__pack",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 5,
+          "name": "opentelemetry__proto__collector__trace__v1__export_trace_service_request__unpack",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": {
+              "owned": {
+                "nullable": true
+              }
+            }
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 3,
+          "name": "opentelemetry__proto__collector__trace__v1__export_trace_service_response__get_packed_size",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 3,
+          "name": "opentelemetry__proto__collector__trace__v1__export_trace_service_response__init",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 4,
+          "name": "opentelemetry__proto__collector__trace__v1__export_trace_service_response__pack",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 3,
+          "name": "opentelemetry__proto__common__v1__any_value__init",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 3,
+          "name": "opentelemetry__proto__common__v1__array_value__init",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 3,
+          "name": "opentelemetry__proto__common__v1__instrumentation_scope__init",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 3,
+          "name": "opentelemetry__proto__common__v1__key_value__init",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 3,
+          "name": "opentelemetry__proto__common__v1__key_value_list__init",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 3,
+          "name": "opentelemetry__proto__logs__v1__log_record__init",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 3,
+          "name": "opentelemetry__proto__logs__v1__resource_logs__init",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 3,
+          "name": "opentelemetry__proto__logs__v1__scope_logs__init",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 3,
+          "name": "opentelemetry__proto__metrics__v1__exemplar__init",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 3,
+          "name": "opentelemetry__proto__metrics__v1__exponential_histogram__init",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 3,
+          "name": "opentelemetry__proto__metrics__v1__exponential_histogram_data_point__buckets__init",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 3,
+          "name": "opentelemetry__proto__metrics__v1__exponential_histogram_data_point__init",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 3,
+          "name": "opentelemetry__proto__metrics__v1__gauge__init",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 3,
+          "name": "opentelemetry__proto__metrics__v1__histogram__init",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 3,
+          "name": "opentelemetry__proto__metrics__v1__histogram_data_point__init",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 3,
+          "name": "opentelemetry__proto__metrics__v1__metric__init",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 3,
+          "name": "opentelemetry__proto__metrics__v1__metrics_data__get_packed_size",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 3,
+          "name": "opentelemetry__proto__metrics__v1__metrics_data__init",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 4,
+          "name": "opentelemetry__proto__metrics__v1__metrics_data__pack",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 3,
+          "name": "opentelemetry__proto__metrics__v1__number_data_point__init",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 3,
+          "name": "opentelemetry__proto__metrics__v1__resource_metrics__init",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 3,
+          "name": "opentelemetry__proto__metrics__v1__scope_metrics__init",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 3,
+          "name": "opentelemetry__proto__metrics__v1__sum__init",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 3,
+          "name": "opentelemetry__proto__metrics__v1__summary__init",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 3,
+          "name": "opentelemetry__proto__metrics__v1__summary_data_point__init",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 3,
+          "name": "opentelemetry__proto__metrics__v1__summary_data_point__value_at_quantile__init",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 3,
+          "name": "opentelemetry__proto__profiles__v1development__function__init",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 3,
+          "name": "opentelemetry__proto__profiles__v1development__key_value_and_unit__init",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 3,
+          "name": "opentelemetry__proto__profiles__v1development__line__init",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 3,
+          "name": "opentelemetry__proto__profiles__v1development__link__init",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 3,
+          "name": "opentelemetry__proto__profiles__v1development__location__init",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 3,
+          "name": "opentelemetry__proto__profiles__v1development__mapping__init",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 3,
+          "name": "opentelemetry__proto__profiles__v1development__profile__init",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 3,
+          "name": "opentelemetry__proto__profiles__v1development__profiles_dictionary__init",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 3,
+          "name": "opentelemetry__proto__profiles__v1development__resource_profiles__init",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 3,
+          "name": "opentelemetry__proto__profiles__v1development__sample__init",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 3,
+          "name": "opentelemetry__proto__profiles__v1development__scope_profiles__init",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 3,
+          "name": "opentelemetry__proto__profiles__v1development__stack__init",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 3,
+          "name": "opentelemetry__proto__profiles__v1development__value_type__init",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 3,
+          "name": "opentelemetry__proto__resource__v1__resource__init",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 3,
+          "name": "opentelemetry__proto__trace__v1__resource_spans__init",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 3,
+          "name": "opentelemetry__proto__trace__v1__scope_spans__init",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 3,
+          "name": "opentelemetry__proto__trace__v1__span__event__init",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 3,
+          "name": "opentelemetry__proto__trace__v1__span__init",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 3,
+          "name": "opentelemetry__proto__trace__v1__span__link__init",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 3,
+          "name": "opentelemetry__proto__trace__v1__status__init",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        }
+      ],
+      "inherits": [],
+      "other_declarations": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "c61d6629e3cd74d1b020ce37fc4431b43bdaaad99c202ed8aceaa32d9a53c1b7"
+    },
+    "fluent_otel_proto/runtime.qv": {
+      "clause_count": 17,
+      "declaration_count": 4,
+      "declarations": [
+        {
+          "clauses": 4,
+          "name": "protobuf_c_message_free_unpacked",
+          "resource_mode": {
+            "parameters": [
+              {
+                "released": {
+                  "nullable": true
+                }
+              },
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 3,
+          "name": "protobuf_c_message_get_packed_size",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 4,
+          "name": "protobuf_c_message_pack",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 6,
+          "name": "protobuf_c_message_unpack",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": {
+              "owned": {
+                "nullable": true
+              }
+            }
+          },
+          "resource_table": "functions"
+        }
+      ],
+      "inherits": [],
+      "other_declarations": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "5b64a892ecc168aed43f354e61b2c24fc3311246ceabcde910022bce49bdb368"
+    }
+  },
+  "outer_view": [],
+  "regenerate": "python3 providers/contracts.py sync",
+  "resource_view": [
+    "fluent_otel_proto/generated.qv",
+    "fluent_otel_proto/runtime.qv"
+  ],
+  "schema_version": 2
+}
