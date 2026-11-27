@@ -1,0 +1,13 @@
+{
+  "note": "Landing integrate/r78 (base main 76c1f9cfc; USER DECISION 2026-11-27 \"land it as r78\"). Contents: SETTLED-LEAK-MARK-WITHOUT-UNKNOWN-LEAF d6685f2cc (rule 84 amended in place, rules 74c and 6 amendment lines; a leak marked beside a Pending hold is decided from settled states: published on rule 84's restricted-replay witness, else the Leak alone is withdrawn and the hold's Pending leaf and reason stay, never Safe; QCore.SettledLeakJoined new section). Merge clean; generated rule docs and Lean roots regenerated; third_party/libevent checked out. Amendments applied with --profiles-base origin/main; retires SETTLED-LEAK-MARK-WITHOUT-UNKNOWN-LEAF, registers SETTLED-LEAK-MARK-LEAFLESS. llp64_fixture_scan over the card's test changes: 0 counted. Full landing gate on 7de834458 (private/integrate-r78/gate, raw record beside this file as gate-scope.json) via scripts/gate_scope.py --base origin/main --full --landing through private/toolchain/env.sh: Rust 725 units / 770 summaries, 10368 passed, 0 failed, 24 ignored; fmt, Clippy and both reevaluation examples exit 0; Lean exit 0 on the gate-selected QCore.SettledLeakJoined audit; scripts/check_lean_audits.py over all modules exit 0, 531 audits (private/integrate-r78/lean-audits.log). The gate scope did not select the provider gate; provider_tests 182 (1 ignored) is carried from the integrate/r74 landing batch A gate. Python (807 tests) exit 0. Measurement is the card's own (opt-in current --monkey-linked over Fluent Bit 046accf6, base 07833c86a vs tip 8e016d830: 1205/2/3590/7 both, no row moved). Pinned-route parity (quirin-audit measure --declared) was not run: this host holds no build/cycle19 inputs or baselines. No profile baseline is changed and land.py publish is owed.",
+  "workspace_tests": 10368,
+  "provider_tests": 182,
+  "python_evidence_validator_tests": 807,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "full landing gate: every step exits 0; provider gate not selected (no providers/ change), provider count carried from the integrate/r74 landing batch A gate",
+  "lean_audits": 531,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
