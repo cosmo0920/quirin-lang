@@ -19,12 +19,11 @@
 //! call passing `FLB_TRUE`). The base verdict is in each comment.
 //! Conventions as in `clang_gap_phase1.rs`: `Safe` here is over the synthetic
 //! `q_*` fixture assumptions and promotes nothing; an `Unsafe` is a
-//! provisional verdict over the same fixtures.
+//! provisional verdict over the same fixtures. A module of
+//! `clang_gap_phase4.rs`, whose `clang_gap` support it uses, so the suite
+//! gains no test target.
 
-#[path = "support/clang_gap.rs"]
-mod clang_gap;
-
-use clang_gap::*;
+use super::clang_gap::*;
 
 /// The probed body: an owned object released only on the `destroy` arm.
 const BODY: &str = "static void subject(int destroy) \

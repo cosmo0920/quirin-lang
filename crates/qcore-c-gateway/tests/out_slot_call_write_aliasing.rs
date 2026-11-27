@@ -283,8 +283,18 @@ fn the_chunkio_file_content_copy_shape_refuses() {
          *out_buf = buf;\n *out_size = size;\n if (set_down) {\n x_down(ch);\n }\n return 0;\n } \
          int w(struct x_chunk *ch) {\n void *b;\n x_size_t n;\n \
          if (r(ch, &b, &n, 1) != 0) return -1;\n x_free(b);\n return 0;\n }",
-        &[("r", refused("out_buf")), ("w", caller_refused("b"))],
+        &[
+            ("r", fixed(refused("out_buf"))),
+            ("w", fixed(caller_refused("b"))),
+        ],
     );
+}
+
+/// Card FB-CHUNK-LIFECYCLE (rule 90): every call passes `set_down` as `1`,
+/// so the row also lists the premise; the refusals are unchanged.
+fn fixed(mut outcome: Outcome) -> Outcome {
+    outcome.2.push("90:static-call-sites-closed".to_owned());
+    outcome
 }
 
 #[test]
