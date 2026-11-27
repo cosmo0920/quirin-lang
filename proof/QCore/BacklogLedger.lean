@@ -31,7 +31,7 @@ module states:
 * the admission inequality of `flb_input_chunk_output_would_exceed_limit`
   (`src/flb_input_chunk.c:1176-1199`), the batch overshoot bound of
   `cb_queue_chunks` (`sb.c:602-720`) and the signed-delta magnitude of
-  `flb_input_chunk_update_output_instances` (`src/flb_input_chunk.c:3987-3992`).
+  `flb_input_chunk_update_output_instances` (`src/flb_input_chunk.c:3986-3991`).
 
 The Rust/model correspondence, exclusive access to the ledger and callees not
 writing it are premises (P-LEDGER-EXCLUSIVE, P-LEDGER-CALLEES).
