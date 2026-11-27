@@ -121,5 +121,16 @@ is left as written.
 
 ## Gate
 
-Recorded in [gate.json](gate.json) after the run; see the card reply for
-commands, exits and counts.
+`sh private/toolchain/env.sh python3 scripts/gate_scope.py --base
+76c1f9cfc --out <worktree>/private/gate`, run at `6e03aedb9` (the records
+commit; this edit and `gate.json` change no file the scope reads): exit 0,
+7 steps passed ([gate.json](gate.json)). Selection: no whole crate; 10
+test targets reached through `compiler/tests/w3_evidence_v2.rs`; Lean
+none; provider gate no. Submodules exit 0 (1); fmt exit 0; Clippy on
+`qcore-audit`, `qcore-compiler`, `quirin-audit-plugin-measure` targets exit
+0; Rust suite exit 0 (10 units, 51 passed, 0 failed); Python suite exit 0
+(807 tests). The reevaluation examples are not selected (no crate reached
+whole); they were run separately above, exit 0. LLP64 fixture scan over
+the diff's test paths: exit 0 (0 counted). `gen_rule_docs.py` and
+`gen_lean_roots.py` write nothing. `apply_amendments.py --check
+--profiles-base 76c1f9cfc`: exit 0. No base failure was seen.
