@@ -366,14 +366,20 @@ five packaged providers and speaks no plugin protocol. See
 
 For the real field-contract audit, select the checked-in configuration and durable
 verified package. On first setup, build that package set with
-`python3 -B providers/package.py build --output build/cycle19/provider-packages`:
+`python3 -B providers/package.py build --output build/cycle19/provider-packages`.
+Rebuild it whenever the packaging format or a provider changes: `verify` refuses
+a package whose executable lacks the embedded manifest template and contract
+envelopes, which is what a package built by an older `package.py` looks like.
+The builder refuses to overwrite an existing output directory, so move the stale
+one aside first. Set `FLUENT_BIT` to your Fluent Bit checkout; `../fluent-bit`
+holds only when it is a sibling of this repository:
 
 ```sh
 mkdir -p build/cycle19/reports
 python3 -B providers/package.py verify build/cycle19/provider-packages/qcore.chunkio
 QCORE_SOURCE_CONTRACTS="$PWD/contract/profiles/fluent-bit/source-contracts.json" \
   cargo run --quiet -p qcore-audit -- current \
-  --checkout ../fluent-bit --profile-directory contract/profiles/fluent-bit \
+  --checkout "$FLUENT_BIT" --profile-directory contract/profiles/fluent-bit \
   --monkey-database build/cycle19/monkey-build/compile_commands.json \
   --monkey-source-report build/cycle19/reports/source-effect-source.json \
   --report build/cycle19/reports/source-effect-diagnostics.json

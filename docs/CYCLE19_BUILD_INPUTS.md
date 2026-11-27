@@ -5,12 +5,14 @@ Copying only `compile_commands.json` out of `/tmp` is insufficient: its source
 files, working directories and generated include paths must also survive.
 
 From the QCore-C repository root, prepare the pinned source copy and configure
-its headers and commands in the ignored, persistent `build/cycle19` directory:
+its headers and commands in the ignored, persistent `build/cycle19` directory.
+Set `FLUENT_BIT` to your Fluent Bit checkout (`../fluent-bit` for a sibling
+checkout):
 
 ```sh
-cargo run -p qcore-audit -- prepare monkey --fluent-bit ../fluent-bit
+cargo run -p qcore-audit -- prepare monkey --fluent-bit "$FLUENT_BIT"
 cargo run --quiet -p qcore-audit -- current \
-  --checkout ../fluent-bit --profile-directory contract/profiles/fluent-bit \
+  --checkout "$FLUENT_BIT" --profile-directory contract/profiles/fluent-bit \
   --monkey-database build/cycle19/monkey-build/compile_commands.json
 ```
 
@@ -63,15 +65,18 @@ For process-backed Boolean-field contracts, retain the provider package alongsid
 the build inputs. On first setup, build it with
 `python3 -B providers/package.py build --output build/cycle19/provider-packages`.
 An existing package directory is reused after verification; the builder refuses
-to overwrite it. The checked-in configuration resolves relative paths from its
-own directory:
+to overwrite it. When `verify` refuses a package built by an older
+`package.py` (for example, an executable without the embedded manifest template
+envelope), move the stale directory aside and build again. The checked-in
+configuration resolves relative paths from its own directory. Set `FLUENT_BIT`
+to your Fluent Bit checkout; `../fluent-bit` holds only for a sibling checkout:
 
 ```sh
 mkdir -p build/cycle19/reports
 python3 -B providers/package.py verify build/cycle19/provider-packages/qcore.chunkio
 QCORE_SOURCE_CONTRACTS="$PWD/contract/profiles/fluent-bit/source-contracts.json" \
   cargo run --quiet -p qcore-audit -- current \
-  --checkout ../fluent-bit --profile-directory contract/profiles/fluent-bit \
+  --checkout "$FLUENT_BIT" --profile-directory contract/profiles/fluent-bit \
   --monkey-database build/cycle19/monkey-build/compile_commands.json \
   --monkey-source-report build/cycle19/reports/source-effect-source.json \
   --report build/cycle19/reports/source-effect-diagnostics.json
