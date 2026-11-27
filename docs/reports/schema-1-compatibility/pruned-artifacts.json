@@ -1,0 +1,88 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "schema-1-compatibility",
+ "total_pruned_files": 16,
+ "total_pruned_bytes": 661116,
+ "artifacts": [
+  {
+   "path": "audit.log.gz",
+   "bytes": 13852,
+   "sha256": "9bb67f7bd1ef53824a1aa556c0d92e579eb27595b0253507f8b8984f407f99d5"
+  },
+  {
+   "path": "chunk-contracts.json.gz",
+   "bytes": 268419,
+   "sha256": "d289a1b484dc4d887f2ddaecf93db87f69bdd5b2399ec4df9102c6a366c62438"
+  },
+  {
+   "path": "consumer-replay-current.log.gz",
+   "bytes": 400,
+   "sha256": "e31a345fba260445030b1c766ac96aea6600acbfb3de4313a9ac1093f4c555a0"
+  },
+  {
+   "path": "consumer-replay-obsolete.log.gz",
+   "bytes": 318,
+   "sha256": "2db18bba051766899646bafb2950037fee57a7495fe590d3f8214c5a09b6030c"
+  },
+  {
+   "path": "consumer-replay-package.log.gz",
+   "bytes": 322,
+   "sha256": "7c84a7091edc26cdaaa22f1eb95de6d4e91922d5f7f4ebb02f25f7055f863f60"
+  },
+  {
+   "path": "consumer-replay.log.gz",
+   "bytes": 131,
+   "sha256": "29aa42bab3283c4234d41a0bbc4c76b71e3b6f4c5807ff463b08c18d174c0134"
+  },
+  {
+   "path": "diagnostics.json.gz",
+   "bytes": 373382,
+   "sha256": "c3373912eaf0dac628a33cd6cbf1677865625fef0ad682af34e986ef14de0b66"
+  },
+  {
+   "path": "external-consumer.log.gz",
+   "bytes": 217,
+   "sha256": "2e973022b6297866118cfcd6c9bc30728e2aff183735a9e2e6e1483d3350c09b"
+  },
+  {
+   "path": "lock.log.gz",
+   "bytes": 143,
+   "sha256": "ad26796723c2beab03bcba2725f28da7503cc0a4bba04369ec51847e9237057d"
+  },
+  {
+   "path": "obsolete-consumer.log.gz",
+   "bytes": 320,
+   "sha256": "a6aadb168bf3096f062d1558f9465995aa0f951ea145cf09fc95eda8fb729d3e"
+  },
+  {
+   "path": "package.log.gz",
+   "bytes": 321,
+   "sha256": "3b974c09ed186d5e69a6771611699173fb8c373c610cae3e696172e9a5dfee8a"
+  },
+  {
+   "path": "packages-a.log.gz",
+   "bytes": 1311,
+   "sha256": "e1af62d6b790a6a127450b6694bab9c744038e8e3ecf428486d58bf6bb009335"
+  },
+  {
+   "path": "packages-b.log.gz",
+   "bytes": 1312,
+   "sha256": "03a7b1d7052f630ea28221753df59d6c84b8b49d5ea9614d20318f4174fc55ea"
+  },
+  {
+   "path": "provider-lock.log.gz",
+   "bytes": 143,
+   "sha256": "ad26796723c2beab03bcba2725f28da7503cc0a4bba04369ec51847e9237057d"
+  },
+  {
+   "path": "providers-check.log.gz",
+   "bytes": 288,
+   "sha256": "970fd06b63e4dbb6e5faf031883a526a5afeaf63ab24be97caec22c2d5bc9a70"
+  },
+  {
+   "path": "workspace-check.log.gz",
+   "bytes": 237,
+   "sha256": "6a738123991090aac028a3c1e622e4d901e0f04983f4e5cfd66dc918388be2fd"
+  }
+ ]
+}

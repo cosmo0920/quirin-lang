@@ -1,0 +1,68 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "w44-leak-pin-audit",
+ "total_pruned_files": 12,
+ "total_pruned_bytes": 4058795,
+ "artifacts": [
+  {
+   "path": "artifacts/chunk-contracts.json.gz",
+   "bytes": 281881,
+   "sha256": "f0568583a78a62741104d890e33c7dd84ccbb67d9a692f051aa21cc3b8e01703"
+  },
+  {
+   "path": "artifacts/contracts.json.gz",
+   "bytes": 67456,
+   "sha256": "17daf35bdfa4b3248e06c0b758f6e9987e399e7a3e552213bc20a608c7211f80"
+  },
+  {
+   "path": "artifacts/diagnostics.json.gz",
+   "bytes": 535326,
+   "sha256": "4907168e7c946806f5c1ac5e5bcbee774105326a12222bc98a36f183e39bbf2b"
+  },
+  {
+   "path": "attribution.json",
+   "bytes": 124123,
+   "sha256": "a822f2fd065d4cda3d99a35195659db5053e0cf600a4d75667efd546a72494f2"
+  },
+  {
+   "path": "classification.json",
+   "bytes": 1630634,
+   "sha256": "8a51dddddd9219b929c71f03f419fdc3c1914c4803dfcda57abd644344d0c9ba"
+  },
+  {
+   "path": "evidence/before-leak-witness.jsonl.gz",
+   "bytes": 72658,
+   "sha256": "9f5f15f1542a4b279f804261675ade847bd9b6e9b90b82464f58b7d4307cb294"
+  },
+  {
+   "path": "evidence/handoff-joined.json.gz",
+   "bytes": 74752,
+   "sha256": "484fad5d0d6ab46a6c2adc3651f8c4884bb0673dcadee5451cbb26e98e6f11dd"
+  },
+  {
+   "path": "evidence/handoff-leak-witness.jsonl.gz",
+   "bytes": 96571,
+   "sha256": "59b85f4f56ed68e593ac6bdc68eb6d2d507ed506b2981b0ae4af515ee4477317"
+  },
+  {
+   "path": "handoff-classification.json",
+   "bytes": 293457,
+   "sha256": "06231293afa584f5bf88e188b485c999abefd67e681accbce55aa221d00a514a"
+  },
+  {
+   "path": "integration/artifacts/chunk-contracts.json.gz",
+   "bytes": 281881,
+   "sha256": "f0568583a78a62741104d890e33c7dd84ccbb67d9a692f051aa21cc3b8e01703"
+  },
+  {
+   "path": "integration/artifacts/contracts.json.gz",
+   "bytes": 67456,
+   "sha256": "f7ff617ad6f17dda34b85900652c89056fbf5ea7e6779960b91e91c24c54bfba"
+  },
+  {
+   "path": "integration/artifacts/diagnostics.json.gz",
+   "bytes": 532600,
+   "sha256": "e6cfdbb6e698de7f687fdf2228d93090a880ae8ca3972d6ff5ee183dfa5e17c7"
+  }
+ ]
+}

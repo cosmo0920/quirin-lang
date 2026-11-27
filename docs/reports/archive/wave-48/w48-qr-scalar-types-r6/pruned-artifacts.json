@@ -1,0 +1,158 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "w48-qr-scalar-types-r6",
+ "total_pruned_files": 30,
+ "total_pruned_bytes": 637162,
+ "artifacts": [
+  {
+   "path": "artifacts/fixtures-after.json",
+   "bytes": 318539,
+   "sha256": "b876de4a3da8712e92718824051063f97fcf21cd3b36580b6f169cfb5d19b83d"
+  },
+  {
+   "path": "artifacts/fixtures-before.json",
+   "bytes": 318539,
+   "sha256": "0d88f51fac857222fded27b5891cb4b588aa688e4c75e4c59b126f46f6dbd0e3"
+  },
+  {
+   "path": "gate/01-submodule.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/02-fmt.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/03-tests.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/04-clippy.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/05-probe.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/06-followup.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/07-lean.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/08-provider-tests.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/09-provider-fmt.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/10-provider-clippy.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/11-arbiter.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/13-docs-index.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/14-python.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/15-clean.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "integration/exits/clean-dev.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "integration/exits/clippy.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "integration/exits/fmt.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "integration/exits/gateway-tests.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "integration/exits/lean.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "integration/exits/package-build.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "integration/exits/package-verify-qcore.chunkio.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "integration/exits/package-verify-qcore.cmetrics.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "integration/exits/package-verify-qcore.ctraces.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "integration/exits/package-verify-qcore.libevent.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "integration/exits/package-verify-qcore.librdkafka.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "integration/exits/provider-clippy.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "integration/exits/provider-tests.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "integration/exits/scalar-tests.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  }
+ ]
+}

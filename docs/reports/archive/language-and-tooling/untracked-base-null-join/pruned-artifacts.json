@@ -1,0 +1,13 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "untracked-base-null-join",
+ "total_pruned_files": 1,
+ "total_pruned_bytes": 357347,
+ "artifacts": [
+  {
+   "path": "evidence/census-base.jsonl",
+   "bytes": 357347,
+   "sha256": "371da457ec96428f6512fb2f4b87b6810f084fe94d433134ce86446d1a70f2c7"
+  }
+ ]
+}

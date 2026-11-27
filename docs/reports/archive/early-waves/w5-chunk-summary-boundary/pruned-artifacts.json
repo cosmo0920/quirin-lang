@@ -1,0 +1,43 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "w5-chunk-summary-boundary",
+ "total_pruned_files": 7,
+ "total_pruned_bytes": 37509,
+ "artifacts": [
+  {
+   "path": "audit.log.gz",
+   "bytes": 14338,
+   "sha256": "302835e04c459f1b66ede9d8fb0515a822ada66271e3a3e05895846565a5d57e"
+  },
+  {
+   "path": "clippy.log.gz",
+   "bytes": 226,
+   "sha256": "3ceb982abb48b4004e4b4e7fb448b93af8b9dff6b736f5fe966130974e5981e1"
+  },
+  {
+   "path": "followup.log.gz",
+   "bytes": 1744,
+   "sha256": "23da5650b8c10989911631f88f326537c9cbc01828fa26bc2af6ec1a3853f1a1"
+  },
+  {
+   "path": "lean-audits.log.gz",
+   "bytes": 6982,
+   "sha256": "6705a330a6580c5dd13bb9a63bfe18ef921cd79e4df2ede07a6d4a48341278dc"
+  },
+  {
+   "path": "lean.log.gz",
+   "bytes": 116,
+   "sha256": "03ecb88de2d2f53e92d5af5e252bc988e152a57332e5e5bb0df962412028a52e"
+  },
+  {
+   "path": "probe.log.gz",
+   "bytes": 659,
+   "sha256": "810d5bba6facd639dcbcbba6dd7200351fce9c9bd7b1d0869fc27533480331dd"
+  },
+  {
+   "path": "workspace.log.gz",
+   "bytes": 13444,
+   "sha256": "be3238a10dea0058b90b4741de976c24439d4c74d9a3303ef66e46695cebde7f"
+  }
+ ]
+}

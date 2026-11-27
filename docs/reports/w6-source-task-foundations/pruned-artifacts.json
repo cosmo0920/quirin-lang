@@ -1,0 +1,38 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "w6-source-task-foundations",
+ "total_pruned_files": 6,
+ "total_pruned_bytes": 139917,
+ "artifacts": [
+  {
+   "path": "checks.log",
+   "bytes": 13447,
+   "sha256": "25a66b17e8d5760ecc59f87fa5e8c2f1fedd1d8286523bd2b7b454d60463d98c"
+  },
+  {
+   "path": "driver.log",
+   "bytes": 439,
+   "sha256": "f8e5e7cd035d144c27f896a0792c1dd0daf7b95a7fd85fe7174742e9841b2333"
+  },
+  {
+   "path": "lean.log",
+   "bytes": 48683,
+   "sha256": "d0e78b060ee36a645d5b9a91a0c95b2927af16d8426f6b69a838944f797d9334"
+  },
+  {
+   "path": "providers.log",
+   "bytes": 6013,
+   "sha256": "1d37dbaa9b6d9f1516394dd080dd26be042f44072744f8ea18e3d7a24f00c9b5"
+  },
+  {
+   "path": "python.log",
+   "bytes": 4996,
+   "sha256": "c90d159818b53a0f53342abaf8d6031e061d4a15e0a4e97611a55fad579ba50b"
+  },
+  {
+   "path": "workspace.log",
+   "bytes": 66339,
+   "sha256": "221017cdc6eb6646de42e5d75250b2e3f51d17a5d9d3a26f44db808b0e110649"
+  }
+ ]
+}

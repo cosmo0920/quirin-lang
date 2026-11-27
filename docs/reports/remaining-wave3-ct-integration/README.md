@@ -4,10 +4,10 @@ Date: 2026-09-08. Base checkpoint: `8c62294` (the third delegated wave's tip,
 containing T04, T05, T06, T08, O03 and P08). Direct precedent:
 [T03-CT](../remaining-t03-ct-integration/README.md), whose harness discipline,
 `generator_status` handling and fail-closed probe method this card follows.
-Depends on [T05](../remaining-t05/README.md) and [T06](../remaining-t06/README.md)
-(the lowerings being mapped), [T08](../remaining-t08/README.md) (whose four CT
+Depends on [T05](../remaining-t05/README.md) and [T06](../archive/early-waves/remaining-t06/README.md)
+(the lowerings being mapped), [T08](../archive/early-waves/remaining-t08/README.md) (whose four CT
 cases stay unmapped on its own instruction), [T00](../remaining-t00/README.md)
-(the stage-derivation rule) and the [W6 CT harness](../w6-ct-harness/README.md).
+(the stage-derivation rule) and the [W6 CT harness](../archive/early-waves/w6-ct-harness/README.md).
 
 **Scope.** Harness, fixtures, manifest and one acceptance record. No language,
 checker, lowering or backend semantics changed; no diagnostic code was added,
@@ -405,7 +405,7 @@ because no Lean theorem is bound to any CT fixture.
 (card P02) is load-dependent because it installs `RLIMIT_NPROC = 1`, which
 counts every process of the real UID; under a full parallel workspace run it
 fails with `Broken pipe (os error 32)`. It passed on isolated re-run here. It is
-recorded in [`remaining-p03` §9.1](../remaining-p03/README.md) with the
+recorded in [`remaining-p03` §9.1](../archive/early-waves/remaining-p03/README.md) with the
 assertion deliberately not weakened, and nothing here touches it. This card
 modifies no file under `crates/`.
 

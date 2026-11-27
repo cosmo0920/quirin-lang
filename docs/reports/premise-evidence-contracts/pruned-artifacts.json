@@ -1,0 +1,248 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "premise-evidence-contracts",
+ "total_pruned_files": 48,
+ "total_pruned_bytes": 25519566,
+ "artifacts": [
+  {
+   "path": "measurement-invocations.json.gz",
+   "bytes": 187788,
+   "sha256": "9c230433b6f61b173d8ab62ec3c3b3b9d1c5d0520bd3447223fc62b11f772576"
+  },
+  {
+   "path": "measurements/corpus/base-environment.json.gz",
+   "bytes": 180061,
+   "sha256": "2f9304c5e9dcd6e859a92217dd7a8c8de586746bdc09766b4a1f1d37d4d3e122"
+  },
+  {
+   "path": "measurements/corpus/base/corpus-null.jsonl.gz",
+   "bytes": 1365858,
+   "sha256": "0b4e4fafbd9637a21ea1f520ec36b2d3c64d9d6d71225a072b831ac3a8ea2bb5"
+  },
+  {
+   "path": "measurements/corpus/base/invocation.json",
+   "bytes": 91413,
+   "sha256": "fe0d9cb740b61539881102081d0553507dc17828826d051bc546c14c30d77995"
+  },
+  {
+   "path": "measurements/corpus/base/resource-diagnostics.chunk-contracts.json.gz",
+   "bytes": 281881,
+   "sha256": "f0568583a78a62741104d890e33c7dd84ccbb67d9a692f051aa21cc3b8e01703"
+  },
+  {
+   "path": "measurements/corpus/base/resource-diagnostics.contracts.json.gz",
+   "bytes": 1875819,
+   "sha256": "34b005a527e1072a9df872cab5ba57838da7f4a4d02ee18664091b3bf563fa5e"
+  },
+  {
+   "path": "measurements/corpus/base/resource-diagnostics.json.gz",
+   "bytes": 1145985,
+   "sha256": "42c85126c3508195dfaef3dc9f735ab8f96cfef966f0eea926d107b325ba4b3a"
+  },
+  {
+   "path": "measurements/corpus/five-artifacts.json.gz",
+   "bytes": 5375913,
+   "sha256": "8313f4eb2e11381833d0c8748b6d2593eec37368dc77149b0013a2a77783d941"
+  },
+  {
+   "path": "measurements/corpus/full-closed-world-facts.json.gz",
+   "bytes": 102688,
+   "sha256": "a088f8ca0fc1ec6aa21f3cc0477033d44ca681c8999cbffac31041e95d6211fa"
+  },
+  {
+   "path": "measurements/corpus/impact.json.gz",
+   "bytes": 241874,
+   "sha256": "db5f3948e3b9e9f9208d9cc8a0787ba4bffcca6704e9ee2f2dc3ebc451925e64"
+  },
+  {
+   "path": "measurements/corpus/raw-differences.json.gz",
+   "bytes": 504082,
+   "sha256": "efadaa38a9593a578cd629aa4e3b644533da84d0488299f3838480b3ccfc9f38"
+  },
+  {
+   "path": "measurements/corpus/time-preprocess-stderr.log",
+   "bytes": 0,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+   "path": "measurements/corpus/tip-environment.json.gz",
+   "bytes": 180324,
+   "sha256": "e0f2db0c41555c51065d3a66dbf9dffd8ee009b556a40fa3c42b417b1a33a516"
+  },
+  {
+   "path": "measurements/corpus/tip/corpus-null.jsonl.gz",
+   "bytes": 1365781,
+   "sha256": "e6a23b8fe4d6b39b3b511dc1f16fe972f6479b41b3bd82593f64441dae00a379"
+  },
+  {
+   "path": "measurements/corpus/tip/invocation.json",
+   "bytes": 91402,
+   "sha256": "a46393c03c793e67ee1c9ce6f4424ea283b92e951bd3e8c7a9c4eeaa3696096b"
+  },
+  {
+   "path": "measurements/corpus/tip/resource-diagnostics.chunk-contracts.json.gz",
+   "bytes": 281881,
+   "sha256": "f0568583a78a62741104d890e33c7dd84ccbb67d9a692f051aa21cc3b8e01703"
+  },
+  {
+   "path": "measurements/corpus/tip/resource-diagnostics.contracts.json.gz",
+   "bytes": 1876744,
+   "sha256": "eda8c6b0999efb4b95b237f19413ce55d04ab2372e84b7c3e3f90078051e60ee"
+  },
+  {
+   "path": "measurements/corpus/tip/resource-diagnostics.json.gz",
+   "bytes": 1145789,
+   "sha256": "8ffc1b1a377a631bb2b92fb8ba1df2fef61da47537f33187bcd4f2f9a7454274"
+  },
+  {
+   "path": "measurements/slice/base-environment.json.gz",
+   "bytes": 179918,
+   "sha256": "46881598c669d80b8db7d33858c7138605b14be78355b2ee156bd44e3a1bc42b"
+  },
+  {
+   "path": "measurements/slice/base/invocation.json",
+   "bytes": 89691,
+   "sha256": "9eb000f0f39321fe6d3933f6c57a918ea76837765843ce2f41186e3052e05a1b"
+  },
+  {
+   "path": "measurements/slice/base/resource-diagnostics.chunk-contracts.json.gz",
+   "bytes": 260,
+   "sha256": "1811378fafdc3e57d9f3b3f603bccf68debf19ce12e89c0f504ba80e2e173cf4"
+  },
+  {
+   "path": "measurements/slice/base/resource-diagnostics.contracts.json.gz",
+   "bytes": 723759,
+   "sha256": "ce088d9f90293f1ce9486d7536e48cf6c2a15296d425ef2fcb9d9e01c5ae3d83"
+  },
+  {
+   "path": "measurements/slice/base/resource-diagnostics.json.gz",
+   "bytes": 151790,
+   "sha256": "00d61df913b8ed6f746f30df2fbaaba21b71acf671724c73e86c2d52660c4b91"
+  },
+  {
+   "path": "measurements/slice/base/slice-null.jsonl.gz",
+   "bytes": 96956,
+   "sha256": "a6e974ec455a2fe1be96b488e1cfe833cdf7d9ff473c8e8bce8e32e284dc3cb8"
+  },
+  {
+   "path": "measurements/slice/five-artifacts.json.gz",
+   "bytes": 1684848,
+   "sha256": "d3535064b939b55046db12d650503a1b6a7e87fa926ef66be9742a483d523eb4"
+  },
+  {
+   "path": "measurements/slice/raw-differences.json.gz",
+   "bytes": 368199,
+   "sha256": "bb60fe2c4f77ceaa9bade0ccc1ad756a42aeaffb1773ed27a781fd86b95bf6dd"
+  },
+  {
+   "path": "measurements/slice/time-preprocess-stderr.log",
+   "bytes": 0,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+   "path": "measurements/slice/tip-environment.json.gz",
+   "bytes": 180154,
+   "sha256": "648987a5191c49a0a12719b07f8c70f5a9da6a19df8c7d30cf5c73fd626fc618"
+  },
+  {
+   "path": "measurements/slice/tip/invocation.json",
+   "bytes": 89681,
+   "sha256": "9a3ef47eb6239a2c028ed2b29b34fb2b42d57ed6549a3e40bc729c99e8f14131"
+  },
+  {
+   "path": "measurements/slice/tip/resource-diagnostics.chunk-contracts.json.gz",
+   "bytes": 260,
+   "sha256": "1811378fafdc3e57d9f3b3f603bccf68debf19ce12e89c0f504ba80e2e173cf4"
+  },
+  {
+   "path": "measurements/slice/tip/resource-diagnostics.contracts.json.gz",
+   "bytes": 724684,
+   "sha256": "30efc2f0b4fcbf49be47d138b8bb1990a175930564bebc3c711efa8278c102f6"
+  },
+  {
+   "path": "measurements/slice/tip/resource-diagnostics.json.gz",
+   "bytes": 151788,
+   "sha256": "d586c8dbaacbfe879b307a870b88ed4770eb900ddda0252ac63fb7626ae15b38"
+  },
+  {
+   "path": "measurements/slice/tip/slice-null.jsonl.gz",
+   "bytes": 96944,
+   "sha256": "5810ac4f4a1104fd70fe0afaf22d80d4e47cc6e1de5cd9d6b30e73a41753c86a"
+  },
+  {
+   "path": "measurements/system/base-environment.json.gz",
+   "bytes": 180013,
+   "sha256": "514efd5864f7fa4d7de06447e422bc701c6ce4318cbe170ced04037aae3d3037"
+  },
+  {
+   "path": "measurements/system/base/invocation.json",
+   "bytes": 89780,
+   "sha256": "c5c47f944f3f33bb8ceb99b319c7e879b8c5abee02127f703a76125a8766eeb0"
+  },
+  {
+   "path": "measurements/system/base/resource-diagnostics.chunk-contracts.json.gz",
+   "bytes": 260,
+   "sha256": "21c47e400097333e880703ea1d1f27b3f23cd0544271c70c8c1b96c6216afe40"
+  },
+  {
+   "path": "measurements/system/base/resource-diagnostics.contracts.json.gz",
+   "bytes": 756915,
+   "sha256": "65c9537e30ce8195e018561b8d07199345c8e8df1da1574c4608da4fdcee5eac"
+  },
+  {
+   "path": "measurements/system/base/resource-diagnostics.json.gz",
+   "bytes": 148137,
+   "sha256": "5ff5386752917c2efef232948f3b166af10aef840c07df32c097a1f1edc2e7c7"
+  },
+  {
+   "path": "measurements/system/base/system-null.jsonl.gz",
+   "bytes": 104377,
+   "sha256": "e874d2ce2cd22440a7e4031c3ca4d6f97c598f9c84f564eae1a2f735b5a02c10"
+  },
+  {
+   "path": "measurements/system/five-artifacts.json.gz",
+   "bytes": 1746921,
+   "sha256": "0f00942c3a885996591f57f47295852b8b9fa2161487f7fe76dcf4480d4e9caa"
+  },
+  {
+   "path": "measurements/system/raw-differences.json.gz",
+   "bytes": 378444,
+   "sha256": "2522bc4b49b10b08cedccfe462048faa652d50ba0f34bc8030ac310898274f1b"
+  },
+  {
+   "path": "measurements/system/time-preprocess-stderr.log",
+   "bytes": 0,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+   "path": "measurements/system/tip-environment.json.gz",
+   "bytes": 180273,
+   "sha256": "0b783c7840341e765f7e49805915a9c6fcd436a602f72e12977787fbbae8ed9e"
+  },
+  {
+   "path": "measurements/system/tip/invocation.json",
+   "bytes": 89770,
+   "sha256": "239c3a0dfdbae02dce5d17d91e1a71b886b9323b6be67962b65a3e4613bd4ac1"
+  },
+  {
+   "path": "measurements/system/tip/resource-diagnostics.chunk-contracts.json.gz",
+   "bytes": 260,
+   "sha256": "21c47e400097333e880703ea1d1f27b3f23cd0544271c70c8c1b96c6216afe40"
+  },
+  {
+   "path": "measurements/system/tip/resource-diagnostics.contracts.json.gz",
+   "bytes": 757680,
+   "sha256": "b125048ed860cf7b372c9c2067010a180e3a66068cd62770a9f5c8c81030ddf0"
+  },
+  {
+   "path": "measurements/system/tip/resource-diagnostics.json.gz",
+   "bytes": 148142,
+   "sha256": "8c4f00e9fdf25ec22b989443e06ea35772ce58822a509d2bde3679b3c60e1e4a"
+  },
+  {
+   "path": "measurements/system/tip/system-null.jsonl.gz",
+   "bytes": 104379,
+   "sha256": "fb611541a430beea4f99e358093fbf0e2bf6de07b68efd8d67bfca5f2b89acba"
+  }
+ ]
+}

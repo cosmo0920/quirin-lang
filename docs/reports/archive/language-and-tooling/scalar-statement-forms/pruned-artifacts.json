@@ -1,0 +1,13 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "scalar-statement-forms",
+ "total_pruned_files": 1,
+ "total_pruned_bytes": 717140,
+ "artifacts": [
+  {
+   "path": "census.jsonl",
+   "bytes": 717140,
+   "sha256": "e8e40a83f786876e7fae0e030bb0312ccd75974edb61be2d10701418a8b56fee"
+  }
+ ]
+}

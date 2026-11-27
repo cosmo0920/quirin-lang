@@ -1,2 +1,0 @@
-subcommand `measure` (quirin-audit-measure@bcccc212ba199afd): failed (plugin-exit: the plugin ended with exit 1: 111 unattributed new Safe row(s) are flagged for review in /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a14d1f75495df89fd/private/chain-run-3/chain.json; none is accepted); 0 artifact(s), 0 claim(s); verdict Unknown
-report: /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a14d1f75495df89fd/private/chain-run-3/quirin-audit-measure.report.json

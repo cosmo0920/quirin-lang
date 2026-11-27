@@ -1,0 +1,43 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "development-docs-structure",
+ "total_pruned_files": 7,
+ "total_pruned_bytes": 143860,
+ "artifacts": [
+  {
+   "path": "logs/clippy.log.gz",
+   "bytes": 91,
+   "sha256": "0964c207edd2e43a938361c555e36eb95d4661319d16b5b9880c8e1b275b3750"
+  },
+  {
+   "path": "logs/fmt.log.gz",
+   "bytes": 20,
+   "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+  },
+  {
+   "path": "logs/followup.log.gz",
+   "bytes": 1897,
+   "sha256": "c8507c78f35ac31490ff78408ad56c45d586eccee169985bb0f845f30c08801d"
+  },
+  {
+   "path": "logs/lean.log.gz",
+   "bytes": 56574,
+   "sha256": "a3983c41849452889b7951a42c27297059b44ed688c3b7c6f5e32e73bf146d03"
+  },
+  {
+   "path": "logs/probe.log.gz",
+   "bytes": 659,
+   "sha256": "810d5bba6facd639dcbcbba6dd7200351fce9c9bd7b1d0869fc27533480331dd"
+  },
+  {
+   "path": "logs/python.log.gz",
+   "bytes": 805,
+   "sha256": "62bd13798fc50c4a2f80e9cf0719aa3ba28674ba34ac3ad804825e7edd671895"
+  },
+  {
+   "path": "logs/workspace.log.gz",
+   "bytes": 83814,
+   "sha256": "19a8b5a35dcf1bd306d00bb6448eef70589f74a00d5857d52892f8afd3ffcec9"
+  }
+ ]
+}

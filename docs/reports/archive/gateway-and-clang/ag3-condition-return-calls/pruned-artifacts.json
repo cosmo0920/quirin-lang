@@ -1,0 +1,13 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "ag3-condition-return-calls",
+ "total_pruned_files": 1,
+ "total_pruned_bytes": 90849,
+ "artifacts": [
+  {
+   "path": "census/ag3-sites.json.gz",
+   "bytes": 90849,
+   "sha256": "c0ddb4c2e32c162b86a5fb3bb660b441a0b9a2b7fdec4079748a62cbb6650991"
+  }
+ ]
+}

@@ -1,0 +1,78 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "cg05-nested-call-effects",
+ "total_pruned_files": 14,
+ "total_pruned_bytes": 358878,
+ "artifacts": [
+  {
+   "path": "artifacts/rederive-after.json",
+   "bytes": 178826,
+   "sha256": "e55a0f743950b0fb9fe2f535aa0fd162b07d46a318bc58139a9574b23c3fc9be"
+  },
+  {
+   "path": "artifacts/rederive-before.json",
+   "bytes": 180014,
+   "sha256": "8f04d0334c9aa6eeb5db1e4e8f58e9525577e5ade86c30e7bbd824d900913a5c"
+  },
+  {
+   "path": "gate/01-submodule.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/02-fmt.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/03-tests.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/05-clippy.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/06-probe.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/07-followup.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/08-lean.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/09-python.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/10-index.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/first-gate-03-tests.exit",
+   "bytes": 5,
+   "sha256": "bdc830287616dae1818ced3e7c186e1387155900ad30d5983ec02da1519c4a95"
+  },
+  {
+   "path": "gate/first-gate-03b-checkpoint-rerun.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/first-gate-03c-tests.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  }
+ ]
+}

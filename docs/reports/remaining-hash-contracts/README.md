@@ -1,7 +1,7 @@
 # HASH-CONTRACTS — declared contract text for the four `flb_hash_table_add` sites — 2026-09-09
 
 The named continuation of card **O04-B09B10**
-([`docs/reports/remaining-o04-b09b10/README.md`](../remaining-o04-b09b10/README.md)
+([`docs/reports/remaining-o04-b09b10/README.md`](../archive/early-waves/remaining-o04-b09b10/README.md)
 §1 rows 5-8 and §4), whose declaration of `flb_hash_table_add` carried the
 recorded boundary **`O04-B09B10-VALUE-DEPENDENT`**.
 
@@ -252,7 +252,7 @@ the card's whole diff. Both exit 0 with zero gateway failures. Transcripts:
 [`logs/corpus-after.log.gz`](logs/corpus-after.log.gz).
 
 **The BEFORE run against the archived wave-12 baseline**
-([`docs/reports/wave12-corpus/artifacts/`](../wave12-corpus/artifacts/)):
+([`docs/reports/wave12-corpus/artifacts/`](../archive/early-waves/wave12-corpus/artifacts/)):
 
 | Artifact | before vs archived |
 |---|---|

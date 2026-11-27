@@ -1,7 +1,7 @@
 # Wave-5 CT integration — CT28, CT31, CT32 and CT48 mapped with stage-derived evidence
 
 Date: 2026-09-08. Base checkpoint: `1fc273a` (the merged wave-5 tree).
-Source of the proposals: [card T03-F](../remaining-t03-f/README.md) §6, which
+Source of the proposals: [card T03-F](../archive/early-waves/remaining-t03-f/README.md) §6, which
 measured all four and deliberately left `docs/reevaluation/ct_manifest.json`
 untouched for the integrator.
 Precedents followed exactly: [the T03 CT integration](../remaining-t03-ct-integration/README.md)

@@ -1,0 +1,43 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "w44-libc-residuals",
+ "total_pruned_files": 7,
+ "total_pruned_bytes": 1830072,
+ "artifacts": [
+  {
+   "path": "artifacts/chunk-contracts.json.gz",
+   "bytes": 281881,
+   "sha256": "f0568583a78a62741104d890e33c7dd84ccbb67d9a692f051aa21cc3b8e01703"
+  },
+  {
+   "path": "artifacts/contracts.json.gz",
+   "bytes": 68507,
+   "sha256": "cfcbfe8faa257179aabb9b1230f04404efb67b3bc7165cefed9d61ecbc0cd883"
+  },
+  {
+   "path": "artifacts/diagnostics.json.gz",
+   "bytes": 525830,
+   "sha256": "8d419250c0ac0f2fe5020e6512929123ec32b4600f4cf1e60db1c381817b0fc6"
+  },
+  {
+   "path": "integration/artifacts/chunk-contracts.json.gz",
+   "bytes": 281881,
+   "sha256": "f0568583a78a62741104d890e33c7dd84ccbb67d9a692f051aa21cc3b8e01703"
+  },
+  {
+   "path": "integration/artifacts/contracts.json.gz",
+   "bytes": 68504,
+   "sha256": "030922e0166b76a25e4963b9bb07e7d508811fde8fb1c6a51dc4cd53ef6f3f79"
+  },
+  {
+   "path": "integration/artifacts/diagnostics.json.gz",
+   "bytes": 513718,
+   "sha256": "10a859f94c036db1c7fdfc0f9dc2f6f13beda815afa20c90173cf220b5565bbf"
+  },
+  {
+   "path": "measurement/residuals8-base.txt",
+   "bytes": 89751,
+   "sha256": "4544bf11fe23f2d2529b7d1121cff3470dd25ab135bcb6fa0866c02b7b1b32e0"
+  }
+ ]
+}

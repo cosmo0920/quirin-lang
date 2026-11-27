@@ -1,0 +1,43 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "w45-refuted-contract-withdrawal",
+ "total_pruned_files": 7,
+ "total_pruned_bytes": 334669,
+ "artifacts": [
+  {
+   "path": "artifacts/slice/after-046accf6.console.log",
+   "bytes": 11030,
+   "sha256": "41e71591df0a54141e195d13520acd864ce71a72544e950f0c1a359295f14360"
+  },
+  {
+   "path": "artifacts/slice/after-046accf6.contracts.json.gz",
+   "bytes": 92151,
+   "sha256": "ec86b2d873327196315ebbb75ed7f9e97dd839d6bc4b1270398b9214ba1536a1"
+  },
+  {
+   "path": "artifacts/slice/after-046accf6.json.gz",
+   "bytes": 109459,
+   "sha256": "db04484d3d7c58855a60bb50ff623aebebc0fcf9ef201fdfec22a0fe1fa66194"
+  },
+  {
+   "path": "artifacts/slice/before-046accf6.console.log",
+   "bytes": 10878,
+   "sha256": "f2c0d34fb25e63ecaa7b75b6f7d4c4f8ad309a7b85ad66e88531f8763e81037b"
+  },
+  {
+   "path": "artifacts/slice/before-046accf6.json.gz",
+   "bytes": 109687,
+   "sha256": "312f210f63bf618e832e2eb0183cfefeee4444de8cfcb24a9b7a7aa5d64a76b4"
+  },
+  {
+   "path": "artifacts/slice/checkpointed.stderr.log",
+   "bytes": 130,
+   "sha256": "7870e46b9b38ab320679897144a06e2c34a7f644d0f98d44f19dfe08e9498a7a"
+  },
+  {
+   "path": "integration/34-contracts-raw-diff.log",
+   "bytes": 1334,
+   "sha256": "0228259a21541d4038d096f26b275c185cab54277e93436773e3797ada742087"
+  }
+ ]
+}

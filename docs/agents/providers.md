@@ -305,7 +305,7 @@ corpus test recomputes each one from the tree. A contract change therefore
 carries its regenerated lock in the same commit, reviewed as a diff of data;
 never edit a lock by hand to make a test pass. It is not the
 `contracts.lock`/`bounds-contracts.lock`/`outer-contracts.lock` pin locks,
-which only `quirin-audit pin` writes. [Report](../reports/contract-locks/README.md).
+which only `quirin-audit pin` writes. [Report](../reports/archive/contracts-and-premises/contract-locks/README.md).
 
 Amended by card CONTRACT-SUPERSESSION (user decisions 9 and 9a, contract spec
 [C06.6](../QCORE_CONTRACT_SPEC_r0_3.md#c066-contract-supersession-across-bundles)):
@@ -320,7 +320,7 @@ lock set is the only one an audit reads; `providers/pin-lock-window.json`
 retains at most three sets (the live one and up to two archived under
 `providers/pin-lock-sets/<revision>/`), maintained only by `pin --window-*`:
 a re-base adds a set and retires the oldest, and a fourth is refused. Never
-edit a stamp, a tie or the window by hand. [Report](../reports/contract-supersession/README.md).
+edit a stamp, a tie or the window by hand. [Report](../reports/archive/contracts-and-premises/contract-supersession/README.md).
 
 Amended by card CONTRACT-COUNT-PINS-FROM-LOCKS (gate-time requirement R3): the
 inventory locks are schema 2. Each `extern fn` also records its
@@ -338,7 +338,7 @@ of these locks, read by one reader per language held to shared cases
 (`tests/support/contract_locks.rs`, `scripts/contract_corpus.py`
 `lock_totals`, `tests/support/contract_locks_cases.json`), never literals
 outside `providers/`: a contract card's count movement is its lock diff.
-[Report](../reports/contract-count-pins-from-locks/README.md).
+[Report](../reports/archive/contracts-and-premises/contract-count-pins-from-locks/README.md).
 
 <a id="constraint-19"></a>
 
@@ -401,7 +401,7 @@ install the exact texts under `includes/<crate>/<module>`;
 missing parent, an unused pin and an unpinned `includes/` tree. Card
 `CONTRACT-INHERIT-ADOPTION` builds the pins from the real crates' published
 sets (below); since `CONTRACT-INHERIT-QCORE-PROVIDER-NAMING`, `qcore.librdkafka`
-(2 pins) and `qcore.libevent` (1) include libc modules. [Report](../reports/contract-inherit/README.md).
+(2 pins) and `qcore.libevent` (1) include libc modules. [Report](../reports/archive/contracts-and-premises/contract-inherit/README.md).
 
 **Load path (CONTRACT-INHERIT-ADOPTION).** Each `quirin-provider-*` crate
 records `NAMESPACE` and `PUBLISHED` beside `CONTRACTS`; a contract-use edge is
@@ -413,7 +413,7 @@ pinning every published module's SHA-256, and computes an inventory's
 installs the pinned texts. After editing a published module (today
 `libc/memory.qcore` and `libc/string.qcore`) or a crate's constants, run
 `sync`: core consumers refuse a stale pin (`QI014`).
-[Report](../reports/contract-inherit-adoption/README.md).
+[Report](../reports/archive/contracts-and-premises/contract-inherit-adoption/README.md).
 
 **Executable crates (CONTRACT-INHERIT-QCORE-PROVIDER-NAMING, the user's option
 B).** The five `qcore-provider-*` crates are on the load path too: their
@@ -425,7 +425,7 @@ are real Cargo edges, pinned exactly in the conformance dependency test beside
 the data-crate edge. Their packages carry include pins, `package.py build`
 installs the parents and `verify` accepts them; the real-package mutation test
 refuses a changed and a missing included parent.
-[Report](../reports/contract-inherit-qcore-provider-naming/README.md).
+[Report](../reports/archive/contracts-and-premises/contract-inherit-qcore-provider-naming/README.md).
 
 **User contract crates (W45-USER-CONTRACT-PLUGINS).** A user's contract
 crate lives outside this repository on a user load path that `extends`
@@ -437,7 +437,7 @@ dependency pin admits it with the shared transport as its only first-party
 dependency. Its checker packages are built and verified by the SDK
 (`quirin-plugin package`/`verify`), not by `providers/package.py`, which still
 builds exactly the five first-party packages.
-[Report](../reports/w45-user-contract-plugins/README.md).
+[Report](../reports/archive/waves-40-47/w45-user-contract-plugins/README.md).
 **`package::build` holds no write descriptor on the executable (card
 `PLUGIN-PACKAGE-BUILD-WRITES-EXECUTABLE-IN-PROCESS`).** While the caller
 holds a write descriptor, any thread's fork copies it into a child that keeps
@@ -457,7 +457,7 @@ requirement is `tee` on `PATH`; it is documented on `build` and named in its
 `Err`. `providers/package.py` and `quirin-audit prepare`'s copy are tracked
 separately (`PROVIDER-PACKAGE-PY-WRITES-EXECUTABLE-IN-PROCESS`,
 `PREPARE-COPY-KEEPS-EXECUTABLE-MODE-IN-PROCESS`).
-[Report](../reports/plugin-package-build-write/README.md).
+[Report](../reports/archive/language-and-tooling/plugin-package-build-write/README.md).
 
 **Resource view (W44-PROVIDER-RESOURCE-VIEW).** Each load-path crate record
 also carries `resource_view`: the owned modules the resource-contract loader
@@ -472,7 +472,7 @@ accepted one or is missing. The Rust load-path reader refuses an unsorted view
 or one naming an unowned module (`QI014`). Packages are unchanged: the view
 lives only in the load path. The union of the resource views must equal
 `cycle19-resource-contracts.json`'s selected modules; current counts are in
-[STATUS](../STATUS.md). [Report](../reports/w44-provider-resource-view/README.md).
+[STATUS](../STATUS.md). [Report](../reports/archive/waves-40-47/w44-provider-resource-view/README.md).
 
 **Bounds view (CHUNKIO-META-LEN-BOUNDS-CONTRACTS, gateway rule
 [12r](gateway.md#constraint-12r)).** A bounds contract v1 module (C09.1) lives
@@ -487,14 +487,14 @@ with the resource locks by `pin --verify-contracts` (so by `contracts.py
 check`); a bounds declaration whose pin is not in force is held
 (`contract-pin-mismatch`). Packages carry the module through the unchanged
 inventory; no audit route reads contract modules from a package.
-[Report](../reports/chunkio-meta-len-bounds-contracts/README.md).
+[Report](../reports/archive/contracts-and-premises/chunkio-meta-len-bounds-contracts/README.md).
 Card CG16-BOUNDS-TRANSPORT-AND-CHUNKIO-NEIGHBOURS (gateway rules
 [14i](gateway.md#constraint-14i), [14j](gateway.md#constraint-14j)): `pin
 --bounds --track-tip REF` and `--untrack-tip` write tip entries in a bounds lock
 as in a resource lock; a bounds module never uses `#include` or `inherit` (the
 probe leaves one out of every view). `qcore-provider-chunkio`'s bounds view is
 `chunkio/file_st_bounds.qv` and `chunkio/meta_len_bounds.qv` (five pinned
-declarations). [Report](../reports/cg16-bounds-transport-and-chunkio-neighbours/README.md).
+declarations). [Report](../reports/archive/gateway-and-clang/cg16-bounds-transport-and-chunkio-neighbours/README.md).
 
 **Outer view (OUTER-CONTRACT, gateway rule [31](gateway.md#constraint-31)).**
 An outer contract v1 module (C04.20) lives in the provider crate that owns its
@@ -508,5 +508,5 @@ with the other locks by `pin --verify-contracts`; a loader whose pin is not in
 force covers nothing in the runtime projection and reaches every record.
 `quirin-provider-fluent-bit`'s outer view is `fluent_bit/outer.qv` (two pinned
 loaders), and `qcore-provider-librdkafka`'s is `librdkafka/outer.qv` (one pinned
-loader). [Reports](../reports/outer-contract/README.md) and
-[stage 2](../reports/rk-plugin-library-outer-envelope/README.md).
+loader). [Reports](../reports/archive/contracts-and-premises/outer-contract/README.md) and
+[stage 2](../reports/archive/language-and-tooling/rk-plugin-library-outer-envelope/README.md).

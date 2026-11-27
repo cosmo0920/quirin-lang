@@ -2,11 +2,11 @@
 
 Two programs: the checked bounded counted loop `for NAME in 0..BOUND { … }`,
 on `source.buffer.v1`, which is the route v1 admits it on. Card
-`LOOP-V1`; the evidence package is [`docs/reports/loop-v1/README.md`](../../docs/reports/loop-v1/README.md)
+`LOOP-V1`; the evidence package is [`docs/reports/archive/language-and-tooling/loop-v1/README.md`](../../docs/reports/archive/language-and-tooling/loop-v1/README.md)
 and the design note written before it is
 [`docs/design/SOURCE_LOOP_V1.md`](../../docs/design/SOURCE_LOOP_V1.md). The
 second program is card `LOOPS-ON-COMPOSED-ROUTES`' (wave 39), whose evidence
-package is [`docs/reports/loops-on-composed-routes/README.md`](../../docs/reports/loops-on-composed-routes/README.md):
+package is [`docs/reports/archive/language-and-tooling/loops-on-composed-routes/README.md`](../../docs/reports/archive/language-and-tooling/loops-on-composed-routes/README.md):
 a `for` beside a **write lend**, admitted with the loan's window computed over
 iterations. Its sanitized native run is `compiler/tests/loops_on_composed_routes.rs`'s.
 

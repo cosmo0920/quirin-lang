@@ -1,7 +1,7 @@
 # Quirin file-extension migration (`EXT-01`–`EXT-04`)
 
 > [!NOTE]
-> **Current status (completed active migration).** Compatibility readers (`EXT-01`, [report](../../reports/extension-compatibility/README.md)) and physical repository-wide renames (`EXT-02` and `EXT-03`, [combined report](../../reports/extension-physical-migration/README.md)) are **complete and merged**, followed by `#import` runtime resolution ([report](../../reports/runtime-source-imports/README.md)). Zero `EXT-*` items remain in `acceptance_matrix.json#named_followups`. Legacy `.qcore` and `.qcorelib` spellings remain accepted as compatibility aliases with stderr warnings; undated final removal of legacy reader support (`EXT-04`) awaits downstream readiness.
+> **Current status (completed active migration).** Compatibility readers (`EXT-01`, [report](../../reports/extension-compatibility/README.md)) and physical repository-wide renames (`EXT-02` and `EXT-03`, [combined report](../../reports/extension-physical-migration/README.md)) are **complete and merged**, followed by `#import` runtime resolution ([report](../../reports/archive/language-and-tooling/runtime-source-imports/README.md)). Zero `EXT-*` items remain in `acceptance_matrix.json#named_followups`. Legacy `.qcore` and `.qcorelib` spellings remain accepted as compatibility aliases with stderr warnings; undated final removal of legacy reader support (`EXT-04`) awaits downstream readiness.
 
 ## 1. Canonical suffix scheme (in force)
 

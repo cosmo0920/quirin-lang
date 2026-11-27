@@ -1,6 +1,6 @@
 # Audit checkpoints (`.qo`)
 
-[Development documentation](README.md) · [`quirin-audit` guide](../../crates/qcore-audit/README.md) · [Card report](../reports/w45-audit-checkpoints/README.md)
+[Development documentation](README.md) · [`quirin-audit` guide](../../crates/qcore-audit/README.md) · [Card report](../reports/archive/waves-40-47/w45-audit-checkpoints/README.md)
 
 With `--checkpoint-dir`, `quirin-audit current` seals **one complete `.qo` per
 source translation unit and compile configuration** as that unit finishes. Each
@@ -262,9 +262,9 @@ and standalone verification of each compile configuration.
 
 ## The pinned corpus route
 
-Card CORPUS-GROUP-CHECKPOINTS ([report](../reports/corpus-group-checkpoints/README.md));
+Card CORPUS-GROUP-CHECKPOINTS ([report](../reports/archive/language-and-tooling/corpus-group-checkpoints/README.md));
 schema 2, the lookup records and the restricted stage environment, card
-MEASURE-LOOKUP-RECORD-REUSE ([report](../reports/measure-lookup-record-reuse/README.md)).
+MEASURE-LOOKUP-RECORD-REUSE ([report](../reports/archive/language-and-tooling/measure-lookup-record-reuse/README.md)).
 `quirin-audit pinned --checkpoint-dir DIR [--resume] [--accept-base-analyzer
 BASE --repository DIR]` checkpoints the corpus arbiter. The normative Rust is
 `crates/qcore-audit/src/pinned_route/checkpoints.rs`; the Lean models are
@@ -351,7 +351,7 @@ changes no identity (the binary is the base one). `pinned --classify-only
 before anything runs: one `quirin-contract-only-classification/1` JSON line
 (exit 0) or the refusal (exit 1); `quirin-audit measure --reuse-contract-only`
 asks the base side's binary
-([MEASURE-CONTRACT-ONLY-SIDE-WIRING](../reports/measure-contract-only-side-wiring/README.md)).
+([MEASURE-CONTRACT-ONLY-SIDE-WIRING](../reports/archive/language-and-tooling/measure-contract-only-side-wiring/README.md)).
 
 Whole-run facts therefore invalidate every group of the stage that reads them
 and no other stage: a changed refutation table recomputes every group's

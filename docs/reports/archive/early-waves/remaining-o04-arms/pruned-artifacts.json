@@ -1,0 +1,28 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "remaining-o04-arms",
+ "total_pruned_files": 4,
+ "total_pruned_bytes": 848122,
+ "artifacts": [
+  {
+   "path": "artifacts/chunk-contracts.json.gz",
+   "bytes": 268593,
+   "sha256": "fb1e763def2c972520bbec23e3f8674a5408b76a672de052077d535abcf2c67e"
+  },
+  {
+   "path": "artifacts/diagnostics.json.gz",
+   "bytes": 367020,
+   "sha256": "b30177a5f92c91cd0f1ce6fff7ca9fc91d33e8e93be57e4960a4a340579f1b7d"
+  },
+  {
+   "path": "artifacts/diff-corpus-repin-to-after.json.gz",
+   "bytes": 114888,
+   "sha256": "ccb10a57cc4ee0611661d4bb7964817435897facbfa9147063c4bb447ba4e392"
+  },
+  {
+   "path": "artifacts/diff-corpus-repin-to-baseline.json.gz",
+   "bytes": 97621,
+   "sha256": "e6f53b7cb544bf34c890a5f97209a531287ca181bb00a6234bb8dc325760b4ba"
+  }
+ ]
+}

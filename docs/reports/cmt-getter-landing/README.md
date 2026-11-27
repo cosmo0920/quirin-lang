@@ -19,10 +19,10 @@ only custody/combined Unknown and Unsafe tallies by one in the static view
 and each existing scenario; its NULL tallies, contracts, loaders, selection
 and envelope coverage are unchanged.
 
-[Native receipt](../cmt-getter-ownership-closure/integration/native-receipt.json),
-[complete comparison](../cmt-getter-ownership-closure/integration/native-comparison.json.gz),
-[NULL attribution](../cmt-getter-ownership-closure/integration/null-attribution.json)
-and [outer attribution](../cmt-getter-ownership-closure/integration/outer-attribution.json)
+[Native receipt](../archive/contracts-and-premises/cmt-getter-ownership-closure/integration/native-receipt.json),
+[complete comparison](../archive/contracts-and-premises/cmt-getter-ownership-closure/integration/native-comparison.json.gz),
+[NULL attribution](../archive/contracts-and-premises/cmt-getter-ownership-closure/integration/null-attribution.json)
+and [outer attribution](../archive/contracts-and-premises/cmt-getter-ownership-closure/integration/outer-attribution.json)
 own this checkpoint. The receipt binds compressed complete raw report pairs,
 including components, contracts, source effects, NULL and outer documents.
 The historical card README's `native/receipt.json` link was absent from the
@@ -39,8 +39,8 @@ logs `private/codex-cmt-landing-20261027/host-full/`. Root Rust: 8,832 passed,
 554 tests, no skips. Both reevaluation probes, root fmt/Clippy and all five
 provider package builds/verifications exited 0. Provider Rust: 133 passed,
 0 failed, 1 ignored (43 summaries); provider fmt/Clippy also
-exited 0. [Gate](../cmt-getter-ownership-closure/integration/gate.json) and
-[exact commands, exits, counts and private log paths](../cmt-getter-ownership-closure/integration/gate-steps.json)
+exited 0. [Gate](../archive/contracts-and-premises/cmt-getter-ownership-closure/integration/gate.json) and
+[exact commands, exits, counts and private log paths](../archive/contracts-and-premises/cmt-getter-ownership-closure/integration/gate-steps.json)
 record the complete run. The Clang recording was captured in this worktree
 at the start of that gate. Records are committed before a fresh Python rerun
 and mandatory `python3 scripts/land.py publish`; that command remeasures the

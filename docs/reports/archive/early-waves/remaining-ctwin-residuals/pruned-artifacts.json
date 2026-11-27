@@ -1,0 +1,23 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "remaining-ctwin-residuals",
+ "total_pruned_files": 3,
+ "total_pruned_bytes": 682595,
+ "artifacts": [
+  {
+   "path": "artifacts/probe-indirect-presence-only/chunk-contracts.json.gz",
+   "bytes": 281879,
+   "sha256": "82a243238c20398e7d31f9c8825c753f776216b8297f6a67c47ca39b2cfff1e0"
+  },
+  {
+   "path": "artifacts/probe-indirect-presence-only/diagnostics.json.gz",
+   "bytes": 386572,
+   "sha256": "170f5868c6d0dc5f525bbb97050c9a7f494cbe828c3bc22158942083d0aa4420"
+  },
+  {
+   "path": "corpus-run.log.gz",
+   "bytes": 14144,
+   "sha256": "c4502e9166e7a75902fcde6d6105c0f20c73edbe345c9c1f61122d845f4db84d"
+  }
+ ]
+}

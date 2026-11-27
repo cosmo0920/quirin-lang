@@ -1,0 +1,13 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "b02-branch-condition",
+ "total_pruned_files": 1,
+ "total_pruned_bytes": 1499,
+ "artifacts": [
+  {
+   "path": "logs/mutations.log",
+   "bytes": 1499,
+   "sha256": "fab0fbba616cc47d80254e8260648ec99c5eee8759a5ca69f3ef9fdd57e9a91d"
+  }
+ ]
+}

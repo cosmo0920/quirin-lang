@@ -1,0 +1,28 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "w48-pointer-return-readonly",
+ "total_pruned_files": 4,
+ "total_pruned_bytes": 360495,
+ "artifacts": [
+  {
+   "path": "artifacts/after/family.json",
+   "bytes": 95515,
+   "sha256": "c07eb61b3cc7038e30ec8e46e59a2e0a3e27ac913823c434d729e33d1c247841"
+  },
+  {
+   "path": "artifacts/after/plan.json.gz",
+   "bytes": 93259,
+   "sha256": "3d191b022661e8775a6d85379a146ca1963c7f04fb5e36c223c8706f507db3ec"
+  },
+  {
+   "path": "artifacts/before/family.json",
+   "bytes": 78350,
+   "sha256": "e88ba47f787d7b59fbc8028daec6b688dcd4d347db2110a3aa17d0a13ef144dd"
+  },
+  {
+   "path": "artifacts/before/plan.json.gz",
+   "bytes": 93371,
+   "sha256": "6d4aedbf1939754ac57e9b688d8872d73907bbe5c74c75594533981fa2f8a6a6"
+  }
+ ]
+}

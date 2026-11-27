@@ -4,7 +4,7 @@ Gateway rules [32](../../agents/gateway.md#constraint-32) and
 [32a](../../agents/gateway.md#constraint-32a). On the user's decision of
 2026-10-22: a caller-facing contract with named premises, challenged for
 whether callers can be Safe outright. The card was halted on 2026-10-23
-([halt record](../w48-impl-round1-halt/README.md)) with one blocking review
+([halt record](../archive/wave-48/w48-impl-round1-halt/README.md)) with one blocking review
 item; this report closes the resumed card.
 
 ## Outcome

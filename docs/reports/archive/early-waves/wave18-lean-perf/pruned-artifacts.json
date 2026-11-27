@@ -1,0 +1,13 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "wave18-lean-perf",
+ "total_pruned_files": 1,
+ "total_pruned_bytes": 1812,
+ "artifacts": [
+  {
+   "path": "timings.log",
+   "bytes": 1812,
+   "sha256": "fd5114cfabbda8f6db262a85b8307f4a84a6f749ef7e37b9b7e877b6623ae567"
+  }
+ ]
+}

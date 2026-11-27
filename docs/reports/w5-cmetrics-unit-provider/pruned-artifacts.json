@@ -1,0 +1,88 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "w5-cmetrics-unit-provider",
+ "total_pruned_files": 16,
+ "total_pruned_bytes": 1161816,
+ "artifacts": [
+  {
+   "path": "audit.log.gz",
+   "bytes": 13850,
+   "sha256": "657670ab24760f930b8c273abe58256669ba038c505d8e2be56a4f94bd0e0acb"
+  },
+  {
+   "path": "checks.log.gz",
+   "bytes": 2281,
+   "sha256": "20cc5d1b9b9c1352259d9bb882e987cc40df532d5beaf0012bf29a1f7ae51a16"
+  },
+  {
+   "path": "chunk-contracts.json.gz",
+   "bytes": 268590,
+   "sha256": "1491151435de0baed8b2125d50b1ae86cb6cb3eb7c043d6984a702769387053f"
+  },
+  {
+   "path": "cmetrics-audit.log.gz",
+   "bytes": 333,
+   "sha256": "6934d46e187dec35a32f3fd88fbd7b6e2da2b9796973f4b500da99e6066d8a4f"
+  },
+  {
+   "path": "cmetrics-resource-only.log.gz",
+   "bytes": 297,
+   "sha256": "3e171a0a9c51997ade74136af6b7cd8e0dc65b61e6367f0d09f6d9a1b9378348"
+  },
+  {
+   "path": "diagnostics.json.gz",
+   "bytes": 372538,
+   "sha256": "0e229046194cf4359f3cf7d798952a5a967b19ee62712129a95908b4ba0e6dfa"
+  },
+  {
+   "path": "lean-audits.log.gz",
+   "bytes": 10122,
+   "sha256": "b610b5153228e9925ea137034f1131f860b9b0720bca6b11c0864c0421cf8acf"
+  },
+  {
+   "path": "lean-build.log.gz",
+   "bytes": 120,
+   "sha256": "46b491791a44af1ab98ffcdbcfd9c453e410bf26e7aae674f2112c879724146b"
+  },
+  {
+   "path": "packages-repro.log.gz",
+   "bytes": 1316,
+   "sha256": "9bfb0c39fb8d4221940fd6e95114adcd8cfe70a1cd67da9d04d626a11ff288e9"
+  },
+  {
+   "path": "packages-repro2.log.gz",
+   "bytes": 1318,
+   "sha256": "75e3ca5d1125173c4661b5e4580bf47ed900505adbafed6d9ad259e5add9e616"
+  },
+  {
+   "path": "packages.log.gz",
+   "bytes": 1212,
+   "sha256": "a3602dcd610c45250dbd4a0e979efce6c02e93f75985c181655bb9cc640b2d7a"
+  },
+  {
+   "path": "provider-checks.log.gz",
+   "bytes": 290,
+   "sha256": "58f252724d079fc64dde310b3266d8484fa434b4419b44b949842f00c101f9fe"
+  },
+  {
+   "path": "provider-tests.log.gz",
+   "bytes": 1655,
+   "sha256": "426164048eeca2c4825e2d25b56a4b9b11acd67f0750e66d75e9ac8f3867371a"
+  },
+  {
+   "path": "python.log.gz",
+   "bytes": 597,
+   "sha256": "41a7309cc74e5a2f56d2de587899e5b1b86135a0f80429a117fcb903aa8eb529"
+  },
+  {
+   "path": "qcore.cmetrics.tar.gz",
+   "bytes": 467856,
+   "sha256": "53797e8c2056c01d23e65465a503c3c1e90f3d0793e7fb2d9d74266032a6a92c"
+  },
+  {
+   "path": "workspace.log.gz",
+   "bytes": 19441,
+   "sha256": "79e37c1ea7b27f72599b198f1c40554724788686e6c2ca5725ebb1d3b9b8e3dc"
+  }
+ ]
+}

@@ -1,4 +1,0 @@
-$ /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a35090bafc9d378ff/target/debug/quirin-audit pin --verify-contracts --load-path providers/user-crates-load-path.json
-pin: quirin-provider-openssl: lock lists every declaration (0 pinned, 12 flexible)
-pin: lock-set window: 1 of 3 set(s), live set tied to 046accf6aded7906f66a1baf0202da349e521736
-exit 0

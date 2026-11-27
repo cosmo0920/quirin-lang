@@ -1,0 +1,28 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "corpus-group-checkpoints",
+ "total_pruned_files": 4,
+ "total_pruned_bytes": 4968,
+ "artifacts": [
+  {
+   "path": "evidence/interrupted/stderr.log",
+   "bytes": 2069,
+   "sha256": "e5d49dde18d5cb445640095e7867b47174a0f4fd5d4b8de8b456cbc56843fc6c"
+  },
+  {
+   "path": "evidence/plain/stderr.log",
+   "bytes": 237,
+   "sha256": "3f76da0841a6b25109336bfa974e676f2cf2ff0aa90ac5d715e639f295eebf41"
+  },
+  {
+   "path": "evidence/resumed/stderr.log",
+   "bytes": 1670,
+   "sha256": "b0a40e3350f2b40d2b4a17ffd2bb3c356ed138a98ba094e9373a56bbcc7a5d51"
+  },
+  {
+   "path": "evidence/reused/stderr.log",
+   "bytes": 992,
+   "sha256": "63e100e92c104b58066af66d6db297a1e1af1926cfd9f56fbf797d1d2b9213a8"
+  }
+ ]
+}

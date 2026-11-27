@@ -1,0 +1,13 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "current-context-new-triage",
+ "total_pruned_files": 1,
+ "total_pruned_bytes": 190968,
+ "artifacts": [
+  {
+   "path": "gate-d3.json",
+   "bytes": 190968,
+   "sha256": "c9fa613493786a88e83c40cd27cf9492a31b7a329449064996f7075e147ed8cf"
+  }
+ ]
+}

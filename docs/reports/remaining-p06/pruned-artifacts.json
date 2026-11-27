@@ -1,0 +1,13 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "remaining-p06",
+ "total_pruned_files": 1,
+ "total_pruned_bytes": 94530,
+ "artifacts": [
+  {
+   "path": "census.json",
+   "bytes": 94530,
+   "sha256": "544f115620f2f9c62b8776341cb698fc4b03090f6826629c8d53fc9b5250108b"
+  }
+ ]
+}

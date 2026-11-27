@@ -1,0 +1,28 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "w44-provider-resource-view",
+ "total_pruned_files": 4,
+ "total_pruned_bytes": 804,
+ "artifacts": [
+  {
+   "path": "identity/base-arbiter2.log",
+   "bytes": 144,
+   "sha256": "028607a0fe3071e0f4b1132394d5eda701ce71e2d7624ba350b61c90baf73fde"
+  },
+  {
+   "path": "identity/base1-refuses-new-load-path.log",
+   "bytes": 388,
+   "sha256": "4c5a0ab35d44f497057e5723cb44fc189d006000e6723875d006e6eb9b0f73fd"
+  },
+  {
+   "path": "identity/series1.log",
+   "bytes": 143,
+   "sha256": "7aefa93450008c0b09f22d1b4ca7f0cb589b70c80510bba7770bdbc87293a818"
+  },
+  {
+   "path": "identity/series2.log",
+   "bytes": 129,
+   "sha256": "7d8fbf4cca7b48bd620fc2101e6e75bf55c558843dd94f0355cca7c91487ecbd"
+  }
+ ]
+}

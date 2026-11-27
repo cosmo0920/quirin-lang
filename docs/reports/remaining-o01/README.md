@@ -152,7 +152,7 @@ reclaimed after the parent context was freed:
   library**, **0 by the harness**, **0 outstanding**.
 
 A suppressed close leaves the descriptor open *because the syscall never ran*.
-Per [O03](../remaining-o03/README.md) §3, that is the POSIX.1-2024 post-state,
+Per [O03](../archive/early-waves/remaining-o03/README.md) §3, that is the POSIX.1-2024 post-state,
 not the Linux one, and this card does not derive a
 `qcore_core::os_endpoint` post-state from it. The Rust test
 `a_suppressed_call_yields_no_operating_system_post_state` pins that the verdict

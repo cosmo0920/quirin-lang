@@ -1,0 +1,73 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "remaining-e01-f1",
+ "total_pruned_files": 13,
+ "total_pruned_bytes": 1700670,
+ "artifacts": [
+  {
+   "path": "artifacts/after/chunk-contracts.json.gz",
+   "bytes": 268593,
+   "sha256": "fb1e763def2c972520bbec23e3f8674a5408b76a672de052077d535abcf2c67e"
+  },
+  {
+   "path": "artifacts/after/diagnostics.json.gz",
+   "bytes": 387683,
+   "sha256": "519e157ceaee74128906e6450fc712396799b64bcd9685edb538f5b7a7f8b865"
+  },
+  {
+   "path": "artifacts/before/chunk-contracts.json.gz",
+   "bytes": 268593,
+   "sha256": "fb1e763def2c972520bbec23e3f8674a5408b76a672de052077d535abcf2c67e"
+  },
+  {
+   "path": "artifacts/before/diagnostics.json.gz",
+   "bytes": 367020,
+   "sha256": "b30177a5f92c91cd0f1ce6fff7ca9fc91d33e8e93be57e4960a4a340579f1b7d"
+  },
+  {
+   "path": "artifacts/diff-archived-to-before.json.gz",
+   "bytes": 97295,
+   "sha256": "fb8b9e814d9657788482d3e2928aa2696cfd0bcd8fdeca537412de32d26f0754"
+  },
+  {
+   "path": "logs/configured-chunkio-core-after.log",
+   "bytes": 8194,
+   "sha256": "ff69c436d216e6fb52c3a888a5c97f3d0d8f938949750ecb21578e2d97d895ce"
+  },
+  {
+   "path": "logs/configured-chunkio-core-before.log",
+   "bytes": 8194,
+   "sha256": "ff69c436d216e6fb52c3a888a5c97f3d0d8f938949750ecb21578e2d97d895ce"
+  },
+  {
+   "path": "logs/configured-cmetrics-after.log",
+   "bytes": 709,
+   "sha256": "7d0442d7bd3f7480147c445c159d8fdaac1d36fbd8fd0c01ae129828ed72320b"
+  },
+  {
+   "path": "logs/configured-cmetrics-before.log",
+   "bytes": 709,
+   "sha256": "7d0442d7bd3f7480147c445c159d8fdaac1d36fbd8fd0c01ae129828ed72320b"
+  },
+  {
+   "path": "logs/configured-libevent-core-after.log",
+   "bytes": 12384,
+   "sha256": "d93209714fde6e6ce65b3d77d1640a13e5da3e9b2fda14e23db58f7b842a5eab"
+  },
+  {
+   "path": "logs/configured-libevent-core-before.log",
+   "bytes": 12412,
+   "sha256": "bd6a79fc562fce0cb0139692f9636cb4dfeb98d52058ba43eb7a845656922343"
+  },
+  {
+   "path": "logs/corpus-after.log",
+   "bytes": 134432,
+   "sha256": "6ce222d2c783f0d83c063085383db1223395b38d9d5917f1b850af0a7e202322"
+  },
+  {
+   "path": "logs/corpus-before.log",
+   "bytes": 134452,
+   "sha256": "1d065f44237026d6b8c9f345df8fc2d5efff2acfb3e0988c6b1fd2f0d22c7926"
+  }
+ ]
+}

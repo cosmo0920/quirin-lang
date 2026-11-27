@@ -1,0 +1,13 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "sp2-symbolic-librdkafka-premises",
+ "total_pruned_files": 1,
+ "total_pruned_bytes": 956061,
+ "artifacts": [
+  {
+   "path": "gate/gate-1.json",
+   "bytes": 956061,
+   "sha256": "8df3f95304da8a57ad9541575518f712afbcec3724bd961d809f5481b0f91767"
+  }
+ ]
+}

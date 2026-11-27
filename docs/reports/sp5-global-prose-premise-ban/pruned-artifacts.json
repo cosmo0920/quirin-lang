@@ -1,0 +1,13 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "sp5-global-prose-premise-ban",
+ "total_pruned_files": 1,
+ "total_pruned_bytes": 470551,
+ "artifacts": [
+  {
+   "path": "gate/gate-1.json",
+   "bytes": 470551,
+   "sha256": "760e713bd21b9489148a8857c2c797a10d891b4998723ffeb4f8b88ba14212c1"
+  }
+ ]
+}

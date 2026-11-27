@@ -1,0 +1,23 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "cycle19-source-contracts",
+ "total_pruned_files": 3,
+ "total_pruned_bytes": 84585,
+ "artifacts": [
+  {
+   "path": "lean-audit.log",
+   "bytes": 3959,
+   "sha256": "73ed3172091a33316005284ef84a3a75ffd52ebd2e43e9c0fbe5e2567b77f126"
+  },
+  {
+   "path": "source-audit.log",
+   "bytes": 57449,
+   "sha256": "ed7520110d458a4af1c9c61287a1a3b4c081d7561b01055e746935285a717349"
+  },
+  {
+   "path": "tests.log",
+   "bytes": 23177,
+   "sha256": "1c4fed36a1a51d9a7cf0199acad247e7e2876dc683ea8ee1683ea0884a685e99"
+  }
+ ]
+}

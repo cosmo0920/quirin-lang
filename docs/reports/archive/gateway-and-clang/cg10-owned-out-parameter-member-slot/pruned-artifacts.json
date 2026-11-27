@@ -1,0 +1,18 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "cg10-owned-out-parameter-member-slot",
+ "total_pruned_files": 2,
+ "total_pruned_bytes": 1010461,
+ "artifacts": [
+  {
+   "path": "gate/gate-3.json",
+   "bytes": 504300,
+   "sha256": "7d8cedeea936f70088f4cf0f6c7f5172c7c5b4ed29398e6b5f9d9dda4ff179da"
+  },
+  {
+   "path": "integration/gate-scope.json",
+   "bytes": 506161,
+   "sha256": "c035683ba37d450d6cb48b4b623d7af18bc285a64f521aa6c3bf1c4eeea64599"
+  }
+ ]
+}

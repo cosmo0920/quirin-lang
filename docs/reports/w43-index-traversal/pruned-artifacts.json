@@ -1,0 +1,28 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "w43-index-traversal",
+ "total_pruned_files": 4,
+ "total_pruned_bytes": 1646938,
+ "artifacts": [
+  {
+   "path": "artifacts/chunk-contracts.json.gz",
+   "bytes": 281881,
+   "sha256": "f0568583a78a62741104d890e33c7dd84ccbb67d9a692f051aa21cc3b8e01703"
+  },
+  {
+   "path": "artifacts/diagnostics.json.gz",
+   "bytes": 541733,
+   "sha256": "9a6b02e7245dedc413ce3056b8adfb10d3dfce27b5cceb369ec75abc3770ef6b"
+  },
+  {
+   "path": "integration/artifacts/chunk-contracts.json.gz",
+   "bytes": 281881,
+   "sha256": "f0568583a78a62741104d890e33c7dd84ccbb67d9a692f051aa21cc3b8e01703"
+  },
+  {
+   "path": "integration/artifacts/diagnostics.json.gz",
+   "bytes": 541443,
+   "sha256": "da7f8573bf1f04625ed0a49e16594e111c1826c89a2faa7850da5d2f6972a1e9"
+  }
+ ]
+}

@@ -21,7 +21,7 @@ boundaries.
   One boundary recorded, not repaired: two distinct declared names that may
   alias are unrelated by the name-based projection, pinned so the field-read
   and no-field-read forms move together. Evidence:
-  `docs/reports/remaining-c02-p/README.md`.
+  `docs/reports/archive/early-waves/remaining-c02-p/README.md`.
 - Neutral-frame recursion (C03-NFR): a third W4 recursive route descends a
   two-point per-member lattice to the greatest post-fixed point with all ten
   V1-V10 validation obligations checked; the design's circular-effectful
@@ -33,7 +33,7 @@ boundaries.
   seven pins updated deliberately, each keeping its load-bearing negative
   half; the 185-unit audit re-measured byte-identical before/after at the pin.
   A pre-existing dead-uncontracted-call hazard is recorded, not repaired.
-  Evidence: `docs/reports/remaining-c03-nfr/README.md`.
+  Evidence: `docs/reports/archive/early-waves/remaining-c03-nfr/README.md`.
 - Composition completeness (E03-B): the published composite is now a real
   merge (premise union, coverage union, per-obligation bounds, tightest task
   envelope, provenance sets) on a composite-only field; a lone component
@@ -45,7 +45,7 @@ boundaries.
   `composed` under existing QP002. `Composition` grows 15 -> 31 audited
   theorems with two pre-repair theorems retired by name;
   `qcore-verifier-host` and `qcore-verification` move to 0.2.0. Residuals
-  recorded as E03-B-O. Evidence: `docs/reports/remaining-e03-b/README.md`.
+  recorded as E03-B-O. Evidence: `docs/reports/archive/early-waves/remaining-e03-b/README.md`.
 - Guard-profile completions (T03-F): `close g unchanged;` derives the checked
   NoWriteOccurred witness for a decidable read-only region, dropping the
   declared invariant premise there; guard-scoped facts land as
@@ -57,7 +57,7 @@ boundaries.
   event model gains the resource-destruction half: 19 new public theorems, no
   new axiom. Five new reserved words are recorded as a compatibility hazard
   and checked against every fixture. Evidence:
-  `docs/reports/remaining-t03-f/README.md`.
+  `docs/reports/archive/early-waves/remaining-t03-f/README.md`.
 - Manifest template binding (P01-F2): provider executables embed their
   manifest template; `verify`/`enable`, registry loads and the configured
   audit compare the installed manifest field-for-field against the template
@@ -68,7 +68,7 @@ boundaries.
   (all five shipped packages rebuilt and verified in the merged gate).
   28 audited Lean theorems (`QCore.PackageTemplateBinding`). Forged
   executables, TOCTOU and the unverified `from_package` loader stay open as
-  P01-F3. Evidence: `docs/reports/remaining-p01-f2/README.md`.
+  P01-F3. Evidence: `docs/reports/archive/early-waves/remaining-p01-f2/README.md`.
 - Bounded extern calls (`source.extern-call.v1`): a source function may call a
   declared extern function only behind `#import std.extern;`, with a trusted
   C04 contract selected through `CompileOptions::extern_contracts` (inline
@@ -87,7 +87,7 @@ boundaries.
   premise; the other call modes, sentinel adapters, extents, concurrent and
   error-region contexts stay named follow-ons (EXTERN-CALL-F). The design
   deviations, including the one new reserved word `succeeds`, are recorded.
-  Evidence: `docs/reports/extern-call-v1/README.md` and
+  Evidence: `docs/reports/archive/language-and-tooling/extern-call-v1/README.md` and
   `docs/design/EXTERN_CALL_SEMANTICS_V1.md`.
 - Wave-5 CT integration: CT28, CT31, CT32 and CT48 map with stage-derived
   evidence and exact ordered cascades re-measured on fixture bytes; CT

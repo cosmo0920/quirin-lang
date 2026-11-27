@@ -1,0 +1,33 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "premise-contracts-integration",
+ "total_pruned_files": 5,
+ "total_pruned_bytes": 306350,
+ "artifacts": [
+  {
+   "path": "initial-lean.log.gz",
+   "bytes": 425,
+   "sha256": "8596c7989cfd5ce718fc1935b01252916d8c5fbc032d543011a7edd00fe2d820"
+  },
+  {
+   "path": "initial-python.log.gz",
+   "bytes": 486,
+   "sha256": "a62bdc3b050daa0110aeba900ed6eae659a3465b25fa70f3cf61740522031288"
+  },
+  {
+   "path": "post-matrix-python.log.gz",
+   "bytes": 493,
+   "sha256": "e56f30fa2460b5878a4858d01b7effe89c9bdc8c5253a3d8396a6c8a0b545331"
+  },
+  {
+   "path": "repaired-lean.log.gz",
+   "bytes": 119252,
+   "sha256": "72b1c209d6516ae60884b8ae01cc1e5587adc803272f626f2c9633d7cf3cc020"
+  },
+  {
+   "path": "rust-summary.json.gz",
+   "bytes": 185694,
+   "sha256": "fbc8c66ae35f56f4153740d0f7eddba011272936bdb05e01c3af33f634c47da9"
+  }
+ ]
+}

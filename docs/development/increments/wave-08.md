@@ -19,7 +19,7 @@ card's record keeps its own boundaries.
   P09 report's own notes are corrected by measurement: C's real blocker is
   the Direct-mode no-selector default, and F is a test-rehoming refactor plus
   multi-path API break, not eleven pure re-exports. Evidence:
-  `docs/reports/remaining-p09-routes/README.md`.
+  `docs/reports/archive/early-waves/remaining-p09-routes/README.md`.
 - Epoch CT lane (T08-SRC-CT): the schema-2 harness gains the `epoch` route
   and the exhaustive `epoch_bound_figures` verdict mode (the whole published
   figure map is pinned, not a convenient subset); CT35, CT36, CT38 and CT39
@@ -45,7 +45,7 @@ card's record keeps its own boundaries.
   E01-F1's after-measurement after its before-run reproduced the prior
   baseline byte-identically. 38 audited Lean theorems
   (`QCore.SourceEnumeration`). Evidence:
-  `docs/reports/remaining-e01-f1/README.md`.
+  `docs/reports/archive/early-waves/remaining-e01-f1/README.md`.
 - ChunkIO teardown capabilities (P04-NEXT): of the thirteen remaining
   in-process capabilities, the list-unlink two-summary relation and the
   memory-backend nullable-field destructor move through the process boundary
@@ -60,7 +60,7 @@ card's record keeps its own boundaries.
   SourceMatch boundary (C), seven compositions. `qcore-schemas` is 7.0.0
   (source-incompatible additions with reasoning recorded; existing wire
   bytes pinned unchanged); ChunkIO package 0.6.0; all five packages rebuilt
-  and verified. Evidence: `docs/reports/remaining-p04-next/README.md`.
+  and verified. Evidence: `docs/reports/archive/early-waves/remaining-p04-next/README.md`.
 
 Nothing is promoted by this increment: raw Cycle 19 units stay 2 Safe /
 42 provisional Unsafe / 137 Unknown plus four data-only units — the baseline

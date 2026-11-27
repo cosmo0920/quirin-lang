@@ -1,0 +1,53 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "w5-generic-driver-consolidation",
+ "total_pruned_files": 9,
+ "total_pruned_bytes": 688531,
+ "artifacts": [
+  {
+   "path": "audit.log.gz",
+   "bytes": 13847,
+   "sha256": "5bc1bcc02bc8626ca2e6fc53a5b874a54f821c294c96a5b184cf5a06069e7f42"
+  },
+  {
+   "path": "checks.log.gz",
+   "bytes": 2283,
+   "sha256": "a1cb7d463cda0808dcfdf1e6e54f97fbab7ac5c34c9e137371870a682f007432"
+  },
+  {
+   "path": "chunk-contracts.json.gz",
+   "bytes": 268582,
+   "sha256": "7b52087dbbfc3c29df2a71f622db351ce43d21e100d12877680c8848d59f6b6d"
+  },
+  {
+   "path": "diagnostics.json.gz",
+   "bytes": 372538,
+   "sha256": "0e229046194cf4359f3cf7d798952a5a967b19ee62712129a95908b4ba0e6dfa"
+  },
+  {
+   "path": "lean-audits.log.gz",
+   "bytes": 9892,
+   "sha256": "752ee2705e60dd710c1fb43eddef80def16ebb76bcff8eb471d091359f039ab6"
+  },
+  {
+   "path": "lean-build.log.gz",
+   "bytes": 60,
+   "sha256": "fbd22e3f2b87931e031a0abfadfc4d36e21529a6a90766247fe7b08cca37b877"
+  },
+  {
+   "path": "providers.log.gz",
+   "bytes": 1520,
+   "sha256": "9c0758aa3ce3abb349bf172c8f399333cc38f0ded7bc260ec23e3860842257ec"
+  },
+  {
+   "path": "python.log.gz",
+   "bytes": 596,
+   "sha256": "98161931888efc1d54e5b1052b1af175bb89e8d96a8d4e8b84ca198c3f6af8c4"
+  },
+  {
+   "path": "workspace.log.gz",
+   "bytes": 19213,
+   "sha256": "e55347bf34faef14acb4be41ba696ebea6700a234b93865b75c24128f974e7b6"
+  }
+ ]
+}

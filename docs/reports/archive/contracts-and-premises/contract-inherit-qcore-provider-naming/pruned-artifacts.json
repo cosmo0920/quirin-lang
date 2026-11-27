@@ -1,0 +1,33 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "contract-inherit-qcore-provider-naming",
+ "total_pruned_files": 5,
+ "total_pruned_bytes": 15,
+ "artifacts": [
+  {
+   "path": "arbiter/after-vs-before.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "arbiter/after-vs-w43.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "arbiter/before-vs-w43.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "arbiter/contracts-after-vs-before.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "arbiter/source-effects-after-vs-before.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  }
+ ]
+}

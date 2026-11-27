@@ -1,0 +1,13 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "w45-memo-memory",
+ "total_pruned_files": 1,
+ "total_pruned_bytes": 1334,
+ "artifacts": [
+  {
+   "path": "integration/34-contracts-raw-diff.log",
+   "bytes": 1334,
+   "sha256": "0228259a21541d4038d096f26b275c185cab54277e93436773e3797ada742087"
+  }
+ ]
+}

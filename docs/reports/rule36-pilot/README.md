@@ -2,7 +2,7 @@
 
 Card RULE36-PILOT, the third pilot of GATEWAY-RULE-API-PILOT-MIGRATIONS (plan
 [pluggable-cards](../../plans/pluggable-cards/README.md) §3 B and §4;
-[GATEWAY-RULE-API](../gateway-rule-api/README.md) §7: rule 36 is the first
+[GATEWAY-RULE-API](../archive/language-and-tooling/gateway-rule-api/README.md) §7: rule 36 is the first
 `ReturnRoute` package). Base `80c8aea98`; halted on 2026-10-29 and merged
 onto main `62c8e461c` by the integrator, then finished in round 2 against that
 main (section 6). The rule is unchanged; its body moved and it gained a
@@ -262,7 +262,7 @@ The card was halted on the user's request on 2026-10-29 while its third
 measurement attempt waited for corpus slots. Its commits (prediction
 `215bb6b52`, code `375ec9326`, scripts, the uncommitted draft of this report as
 WIP `a89e765d9`) were merged onto main by the integrator
-([landing record](../pilots-r1-landing/integration/README.md), section
+([landing record](../archive/language-and-tooling/pilots-r1-landing/integration/README.md), section
 "Halted cards and tip validation"), unchanged except for the shared
 `gateway_rules.rs` hosted-package list, which now names every package; main's
 full gate at `442dfa6f0`/`dc5d07c95` passed with this code. RULE35-PILOT's

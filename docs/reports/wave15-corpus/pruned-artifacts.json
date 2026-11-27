@@ -1,0 +1,13 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "wave15-corpus",
+ "total_pruned_files": 1,
+ "total_pruned_bytes": 14642,
+ "artifacts": [
+  {
+   "path": "corpus-run.log.gz",
+   "bytes": 14642,
+   "sha256": "14f07d8a64d5524a4580974d4f5f0d1fdf828776ff68baf5b740bd4c82ca1d8c"
+  }
+ ]
+}

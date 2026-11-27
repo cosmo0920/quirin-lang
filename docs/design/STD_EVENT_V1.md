@@ -1,7 +1,7 @@
 # `std.event` v1 — a checked source surface over the existing reactor models
 
 Card `STD-EVENT` (wave 22). This document is the design record; the report of
-what actually landed is `docs/reports/wave22-std-event/README.md`.
+what actually landed is `docs/reports/archive/waves-20-39/wave22-std-event/README.md`.
 
 Written **before** the implementation, per the card brief, and left in place
 unedited except where the implementation measured something the design assumed.
@@ -307,7 +307,7 @@ as declined for v1 with the grounds in §1.
 ## 9. Amendment — the composed line and value vocabulary
 
 Card `COMPOSE-EVENT-LINES` (wave 23) refines this record in three places, and in
-no other. Evidence: `docs/reports/compose-event-lines/README.md`; spec §L21 row
+no other. Evidence: `docs/reports/archive/language-and-tooling/compose-event-lines/README.md`; spec §L21 row
 `Q074`; grammar §G02k.
 
 1. **§5's "no `let` and no scalar operand" is superseded by exactly one form.**

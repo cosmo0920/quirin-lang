@@ -1,0 +1,13 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "remaining-p04-compose",
+ "total_pruned_files": 1,
+ "total_pruned_bytes": 14025,
+ "artifacts": [
+  {
+   "path": "artifacts/corpus-run.log.gz",
+   "bytes": 14025,
+   "sha256": "473c64e9a5383123591a6a82cb2a5d20bbf2876948111f1a3b2ad6aa21fc2012"
+  }
+ ]
+}

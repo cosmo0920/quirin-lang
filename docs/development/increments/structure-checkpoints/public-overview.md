@@ -149,13 +149,13 @@ requires a C11 compiler. Native scoped task and checked mutex emission runs on
 Linux C11 threads, macOS pthreads, and Windows through an emitted
 winpthreads-derived compatibility subset. Emitted C is self-contained, so
 Windows builds need no pthread library — see the
-[Windows thread guide](../../../reports/windows-c11-threads/README.md). The full
+[Windows thread guide](../../../reports/archive/language-and-tooling/windows-c11-threads/README.md). The full
 test suite also exercises existing-C analysis, which needs Clang for
 preprocessing, syntax validation and its JSON AST
-([Windows Clang fixture validation](../../../reports/windows-clang-fixtures/README.md)).
+([Windows Clang fixture validation](../../../reports/archive/language-and-tooling/windows-clang-fixtures/README.md)).
 On macOS, the configured audit preserves Apple Clang architecture and
 undefined-prefix warning options across all three gateway phases
-([macOS Cycle19 compiler-option replay](../../../reports/macos-cycle19-compiler-options/README.md)).
+([macOS Cycle19 compiler-option replay](../../../reports/archive/language-and-tooling/macos-cycle19-compiler-options/README.md)).
 
 ```sh
 git submodule update --init --recursive

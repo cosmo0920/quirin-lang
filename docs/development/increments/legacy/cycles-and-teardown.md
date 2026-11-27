@@ -20,7 +20,7 @@ carried different wordings of the same increment, both are kept, because each
 carried facts the other did not. Nothing in this section is new: no count,
 verdict or boundary changed, and each paragraph keeps the checkpoint it was
 written at. The per-paragraph disposition ledger is
-`docs/reports/wave16-docs-compact/README.md`.
+`docs/reports/archive/early-waves/wave16-docs-compact/README.md`.
 
 #### Cycle status ledger as carried in AGENTS.md through wave 15
 
@@ -125,9 +125,9 @@ Cargo workspace declares **ten** members (those nine plus `compiler`), and
   Lifecycle source effect/ABI import stays incomplete, all unsupported and
   empty inventories stay `Unknown`, and first-party v1 providers remain
   unpromoted. Host registry/transport/firewall/composition relocation is executed
-  (`docs/reports/w3-verifier-host/README.md`); production profile/source import
+  (`docs/reports/archive/early-waves/w3-verifier-host/README.md`); production profile/source import
   and remaining trusted-kernel relocation stay open.
-  See `docs/reports/w3-evidence-v2/README.md`.
+  See `docs/reports/archive/early-waves/w3-evidence-v2/README.md`.
 - **Reevaluation (2026-09-05): 6 + 7 findings, all repaired**
   (`docs/REEVALUATION_SPEC.md`, `docs/REEVALUATION_FOLLOWUP.md`). Open
   boundaries that remain true statements: interprocedural parameter/return
@@ -148,19 +148,19 @@ Cargo workspace declares **ten** members (those nine plus `compiler`), and
 - **Active direction:** `docs/GENERALIZATION_PLAN.md` — generalize the
   checker away from pinned source sets and decompose the monolithic crate
   into a pluggable contract/verification system (workstreams W0–W7). W0 is
-  executed (2026-09-06, `docs/reports/w0-schema-crate/README.md`): the initial
+  executed (2026-09-06, `docs/reports/archive/language-and-tooling/w0-schema-crate/README.md`): the initial
   workspace had three members (`qcore-schemas` L0 surface, `qcore-compiler`
   grab-bag, `qcorec` CLI) with a layering-guard test; providers remain
   compile-time crates for now (decision recorded there — the plan's
   out-of-process step is deferred, not abandoned). W1's loader
   (total-or-reject v1) feeds the Cycle 19 audit from a contract manifest,
   and its relocation is executed (2026-09-06,
-  `docs/reports/w1-contract-crate/README.md`): `qcore-core`,
+  `docs/reports/archive/early-waves/w1-contract-crate/README.md`): `qcore-core`,
   `qcore-frontend`, and `qcore-contract` are extracted with a
   dependency-matrix guard test. The leftover literal contract sites are
   migrated to loader-fed `.qcore` fixtures (2026-09-06,
-  `docs/reports/w1-literal-sites/README.md`). **W1 is executed**
-  (2026-09-06, `docs/reports/w1-clause-vocabulary/README.md`): the
+  `docs/reports/archive/early-waves/w1-literal-sites/README.md`). **W1 is executed**
+  (2026-09-06, `docs/reports/archive/early-waves/w1-clause-vocabulary/README.md`): the
   `requires resource_contract_v1` marker is pinned corpus-wide as the
   interpreter selector — 19 declarations load and 142 are rejected, not
   skipped — the clause-family → owner table is documented in the loader
@@ -169,7 +169,7 @@ Cargo workspace declares **ten** members (those nine plus `compiler`), and
   byte-identical). Unifying the resource loader with the observation/
   lifecycle interpreters is W5-adjacent; non-null error sentinels need
   target-interface work, not loader vocabulary. W6's CT harness is stood up
-  (2026-09-06, `docs/reports/w6-ct-harness/README.md`):
+  (2026-09-06, `docs/reports/archive/early-waves/w6-ct-harness/README.md`):
   `compiler/tests/ct_corpus.rs` executes every case
   `docs/reevaluation/ct_manifest.json` marks mapped through the real source
   pipeline and fails closed on manifest/fixture disagreement. CT02/CT12 now
@@ -179,12 +179,12 @@ Cargo workspace declares **ten** members (those nine plus `compiler`), and
   Linux native join-failure and successful reclamation controls. CT13 checks
   explicit creation recovery and retained sibling storage. Shares and
   mutex source paths remain unexercised. Batch 2 (2026-09-06,
-  `docs/reports/w6-ct-batch-2/README.md`) adds CT19/CT37 and records the
+  `docs/reports/archive/early-waves/w6-ct-batch-2/README.md`) adds CT19/CT37 and records the
   full triage of all 47 then-unmapped cases (2 decidable-now, 8 blocked on
   W3/W4, 33 blocked on unimplemented syntax, 4 ambiguous); subsequent owned-task
   and reused-address mappings leave 39 cases unmapped, counted by a pinned test. W4 is executed for
   parameter/return custody with
-  validation (2026-09-06, `docs/reports/w4-custody-inference/README.md`):
+  validation (2026-09-06, `docs/reports/archive/early-waves/w4-custody-inference/README.md`):
   `crates/qcore-c-gateway/src/legacy_summary.rs` derives SCC-ordered custody summaries for
   internal C functions, publishes only summaries that a re-run of the
   intraprocedural analyzer validates, expresses them as `qcore-schemas`
@@ -194,8 +194,8 @@ Cargo workspace declares **ten** members (those nine plus `compiler`), and
   override. On the 156 pinned Fluent Bit units measurable in that run, one unit
   moved Unknown → Safe (`chunkio/cio_error.c`) and no unit entered the Unsafe
   class; the 29-unit Monkey/forced-Libevent leg was not re-measured. The bounded extension and remaining restrictions are recorded in
-  `docs/reports/w4-custody-extensions/README.md`. Gateway relocation is executed
-  (2026-09-07, `docs/reports/w4-gateway-crate/README.md`), with exact
+  `docs/reports/archive/early-waves/w4-custody-extensions/README.md`. Gateway relocation is executed
+  (2026-09-07, `docs/reports/archive/early-waves/w4-gateway-crate/README.md`), with exact
   185-unit verdict/projection/diagnostic parity. Execution
   is tracked in `docs/ROADMAP_AFTER_CYCLE_9.md`'s workstream table.
 

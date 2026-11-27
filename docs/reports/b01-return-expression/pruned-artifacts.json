@@ -1,0 +1,48 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "b01-return-expression",
+ "total_pruned_files": 8,
+ "total_pruned_bytes": 953053,
+ "artifacts": [
+  {
+   "path": "artifacts/chunk-contracts.json.gz",
+   "bytes": 294317,
+   "sha256": "429552f091cc171edcc973f8563539d5c38309e9613eee7d954c567e5dcc5d26"
+  },
+  {
+   "path": "artifacts/diagnostics.json.gz",
+   "bytes": 641255,
+   "sha256": "be26d99efd2ab093db69fc3215ed8b54d98b39d6a63d068d45c0ab6bae289244"
+  },
+  {
+   "path": "logs/mutation-collision-guard-disabled.log",
+   "bytes": 2285,
+   "sha256": "f09932cc8c15738a5b20af39cf2e2c707673b676b34cbd70e04801340dfc44ba"
+  },
+  {
+   "path": "logs/mutation-declared-only-disabled.log",
+   "bytes": 2892,
+   "sha256": "07c8a192f08d1e9c172e95b293f00325856412d80ec1c738aea6257f2e72557b"
+  },
+  {
+   "path": "logs/mutation-opaque-read-disabled.log",
+   "bytes": 3380,
+   "sha256": "f3a095b722520b0fc53d16a89506580cb61cb1877120baaeb2045b5492c54a42"
+  },
+  {
+   "path": "logs/mutation-opaque-result-escaped.log",
+   "bytes": 3374,
+   "sha256": "06b7cf369daef60f1e320117e0f7e8c8e3d555d45a456e27df21007db4471254"
+  },
+  {
+   "path": "logs/mutation-restored-green.log",
+   "bytes": 2828,
+   "sha256": "84c3423ebd9756fdde2f9400574eee27de909dabee9ba21ea8e7b8a75365b440"
+  },
+  {
+   "path": "logs/mutation-scalar-call-disabled.log",
+   "bytes": 2722,
+   "sha256": "176e917d089af97d9b9e664f8748427c12a0fa3bba8a5be00d7f96a88287e9c6"
+  }
+ ]
+}

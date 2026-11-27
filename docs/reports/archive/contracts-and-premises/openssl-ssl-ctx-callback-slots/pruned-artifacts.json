@@ -1,0 +1,58 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "openssl-ssl-ctx-callback-slots",
+ "total_pruned_files": 10,
+ "total_pruned_bytes": 434345,
+ "artifacts": [
+  {
+   "path": "evidence/run-1/1-check.log",
+   "bytes": 150,
+   "sha256": "45b9cb17195ab58429ed1c0beb864c8e476a90178f58f3ffc76fe3cdd5f8c334"
+  },
+  {
+   "path": "evidence/run-1/2-package.log",
+   "bytes": 332,
+   "sha256": "3ae139d503a7e092b4843e11419f46f7e0195e0b5460c4c3dc85dc5aea219ba2"
+  },
+  {
+   "path": "evidence/run-1/3-verify.log",
+   "bytes": 205,
+   "sha256": "20b8631c357f7246d8a7b7348d34122ba39046661008aae3c72bf854e18cc4cc"
+  },
+  {
+   "path": "evidence/run-1/4-load-path.log",
+   "bytes": 303,
+   "sha256": "042706c44e7c41c5a91fab9422a4b1a92b934c3e37ed4ed2d96517a0c0a6add3"
+  },
+  {
+   "path": "evidence/run-1/5-views.log",
+   "bytes": 511,
+   "sha256": "9f16b73827bd21054558e57a6243943463acb04390401f935fed7f70a1da04ec"
+  },
+  {
+   "path": "evidence/run-1/6-pin.log",
+   "bytes": 775,
+   "sha256": "8b58f8607206194b4fba3f3c651cecdeee9ebb74d0e1903dc80d78772855a89a"
+  },
+  {
+   "path": "evidence/run-1/7-contracts.log",
+   "bytes": 2872,
+   "sha256": "fa84159b6ef291ada1692f364a7c77848b1f4b7634b8bc180afa337e465efcea"
+  },
+  {
+   "path": "evidence/run-1/8-verify-contracts.log",
+   "bytes": 292,
+   "sha256": "2dd94425a5c561ac4f9208a37cf0361c1ea09f0475d4f3108b9ec8e411528b04"
+  },
+  {
+   "path": "gate/gate-1.json",
+   "bytes": 210607,
+   "sha256": "ef614cfebcd22576b67ffd9d38d915ff71861aa15e79e602d03920f5bc79fcb9"
+  },
+  {
+   "path": "integration/gate-scope.json",
+   "bytes": 218298,
+   "sha256": "2d3d5b468396bc1274e414c36aa1f4d3cc854954802c3eaa378e4174664a421a"
+  }
+ ]
+}

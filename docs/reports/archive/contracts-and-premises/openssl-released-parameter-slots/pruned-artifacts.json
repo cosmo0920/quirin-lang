@@ -1,0 +1,18 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "openssl-released-parameter-slots",
+ "total_pruned_files": 2,
+ "total_pruned_bytes": 335868,
+ "artifacts": [
+  {
+   "path": "gate/gate-3.json",
+   "bytes": 167883,
+   "sha256": "9e1c0828b52fd3f2ce3dfb4c16a1b28f35cd4aa5e917ac67243fe7a462d05485"
+  },
+  {
+   "path": "integration/gate-scope.json",
+   "bytes": 167985,
+   "sha256": "7acbb1864e5dba1a8fb94de0db8c54ef0981d493f48169a33d0538ebfdc483a8"
+  }
+ ]
+}

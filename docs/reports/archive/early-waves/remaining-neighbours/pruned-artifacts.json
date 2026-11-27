@@ -1,0 +1,53 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "remaining-neighbours",
+ "total_pruned_files": 9,
+ "total_pruned_bytes": 748873,
+ "artifacts": [
+  {
+   "path": "artifacts/chunk-contracts.json.gz",
+   "bytes": 281879,
+   "sha256": "82a243238c20398e7d31f9c8825c753f776216b8297f6a67c47ca39b2cfff1e0"
+  },
+  {
+   "path": "artifacts/diagnostics.json.gz",
+   "bytes": 386581,
+   "sha256": "bd92b702dd3cfa21136cfcb95615a3b61c8cf75b04c0c5894efeb491f60498c1"
+  },
+  {
+   "path": "logs/chunkio-after.log",
+   "bytes": 8009,
+   "sha256": "565d2884b6036a8bf3e1de55f6a83ec3fc32abe555376bd5b5b2d7c1340be045"
+  },
+  {
+   "path": "logs/chunkio-before.log",
+   "bytes": 8009,
+   "sha256": "239ae98bfa28f12935029c76b5671e2c1ec41815e15b207488710064ddf92241"
+  },
+  {
+   "path": "logs/cmetrics-after.log",
+   "bytes": 709,
+   "sha256": "18feee81dfd8a3106a9fd82a44d4b41fac4ac0d348907c38686b409cc0c2a01a"
+  },
+  {
+   "path": "logs/cmetrics-before.log",
+   "bytes": 709,
+   "sha256": "18feee81dfd8a3106a9fd82a44d4b41fac4ac0d348907c38686b409cc0c2a01a"
+  },
+  {
+   "path": "logs/corpus-after.log.gz",
+   "bytes": 14028,
+   "sha256": "c4badaf29c35ee8a73838f6bed0fc63d6b7f7ed3f1bf7060dbf5f92ff1aec423"
+  },
+  {
+   "path": "logs/corpus-before.log.gz",
+   "bytes": 14026,
+   "sha256": "734e8ccff7cc7c004e7a75d35e87040351bec5fddd771eb636941c86eef37957"
+  },
+  {
+   "path": "logs/lean-audits.log.gz",
+   "bytes": 34923,
+   "sha256": "55886f6d0295612d62eb27d707919ee1bfd6b090c5f42937b3bd920280574ab1"
+  }
+ ]
+}

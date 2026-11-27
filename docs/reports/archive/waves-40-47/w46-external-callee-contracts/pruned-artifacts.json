@@ -1,0 +1,58 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "w46-external-callee-contracts",
+ "total_pruned_files": 10,
+ "total_pruned_bytes": 1982086,
+ "artifacts": [
+  {
+   "path": "artifacts/arbiter/chunk-contracts.json.gz",
+   "bytes": 281881,
+   "sha256": "f0568583a78a62741104d890e33c7dd84ccbb67d9a692f051aa21cc3b8e01703"
+  },
+  {
+   "path": "artifacts/arbiter/contracts.json.gz",
+   "bytes": 98339,
+   "sha256": "146d16755e9a732abeaad817a69278d412beee8f3169281a3dd2a90754960854"
+  },
+  {
+   "path": "artifacts/arbiter/diagnostics.json.gz",
+   "bytes": 494669,
+   "sha256": "f18f36471792436058e042707aee5fcb26a02a6de6ef2cdf65f0e8bfbd1cc5dc"
+  },
+  {
+   "path": "artifacts/slice/after.console-tail.log",
+   "bytes": 746,
+   "sha256": "93256f4d6200f90ffa20abdbbaf7df93df244084e4918cea7a04722e821f5c11"
+  },
+  {
+   "path": "artifacts/slice/after.json.gz",
+   "bytes": 115434,
+   "sha256": "bf3c3b8593f13b00d1926bd77112dd1b71b33a1e48091c32ff8849ed9dc926a6"
+  },
+  {
+   "path": "artifacts/slice/before-85a35431.json.gz",
+   "bytes": 115386,
+   "sha256": "85d95c7963079d9ec2cfac25397d11f16b33517ebb6f9de357f87d6040e561c8"
+  },
+  {
+   "path": "artifacts/slice/before.console-tail.log",
+   "bytes": 746,
+   "sha256": "d0e5a70fb9893c736f5aeb5dfc5dbe1f8adf72a5a4fc8e6c55214361db197bb6"
+  },
+  {
+   "path": "integration/artifacts/chunk-contracts.json.gz",
+   "bytes": 281881,
+   "sha256": "f0568583a78a62741104d890e33c7dd84ccbb67d9a692f051aa21cc3b8e01703"
+  },
+  {
+   "path": "integration/artifacts/contracts.json.gz",
+   "bytes": 98335,
+   "sha256": "f0551bd7cffe908bcda1082642d6c69e98a75f38e10f3c062cf51cb308b1be0b"
+  },
+  {
+   "path": "integration/artifacts/diagnostics.json.gz",
+   "bytes": 494669,
+   "sha256": "f18f36471792436058e042707aee5fcb26a02a6de6ef2cdf65f0e8bfbd1cc5dc"
+  }
+ ]
+}

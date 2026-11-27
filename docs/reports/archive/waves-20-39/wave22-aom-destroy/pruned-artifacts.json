@@ -1,0 +1,43 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "wave22-aom-destroy",
+ "total_pruned_files": 7,
+ "total_pruned_bytes": 1248007,
+ "artifacts": [
+  {
+   "path": "artifacts/chunk-contracts.json.gz",
+   "bytes": 281879,
+   "sha256": "82a243238c20398e7d31f9c8825c753f776216b8297f6a67c47ca39b2cfff1e0"
+  },
+  {
+   "path": "artifacts/diagnostics.json.gz",
+   "bytes": 386072,
+   "sha256": "a399a657b158fc64e081d589348ad6b7b318a1f0cd79910209cb36dcf9789136"
+  },
+  {
+   "path": "artifacts/diff-wave20-to-after.json.gz",
+   "bytes": 111035,
+   "sha256": "7264b0b4ef81ad27f9f9fff048df774fc14a41adf77c48ad140e3e609943078c"
+  },
+  {
+   "path": "artifacts/diff-wave20-to-before.json.gz",
+   "bytes": 96739,
+   "sha256": "57dfcfde62dcb7aef27aead78adf2d770aef26fa66ecd05c4a47181dfe86fcb5"
+  },
+  {
+   "path": "logs/corpus-after.log.gz",
+   "bytes": 14670,
+   "sha256": "4a39840cf634480c7f9041bafdd9a402ab660736142acf52deeef9b860a82e7c"
+  },
+  {
+   "path": "logs/corpus-before.log.gz",
+   "bytes": 14671,
+   "sha256": "8f05c23c39299e6062393b8943a3a9a8ca8b8f935bfd3c3723b76cbb8e16fdbb"
+  },
+  {
+   "path": "logs/lean-audits.txt",
+   "bytes": 342941,
+   "sha256": "17465ef3ae7ad32f32d9345dfae5465f34b75299696ee6254dd62842faa81fec"
+  }
+ ]
+}

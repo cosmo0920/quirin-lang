@@ -3,7 +3,7 @@
 **Card:** `UNSAFE-LINKAGE` (wave 18). Design document, written before the
 implementation and revised against it; the deviations found by measurement are
 marked **[measured]** in place and reconciled in
-[`docs/reports/wave18-unsafe-linkage/README.md`](../reports/wave18-unsafe-linkage/README.md).
+[`docs/reports/archive/early-waves/wave18-unsafe-linkage/README.md`](../reports/archive/early-waves/wave18-unsafe-linkage/README.md).
 
 ## 0. The problem
 
@@ -288,7 +288,7 @@ withdrawing to it would reward a contradiction with a premise that says *less*
 about the artifact. The premise is a separate `ExternAssumption` variant rather
 than an optional field on this card's, so the paragraph below stays literally
 true. See
-[`docs/reports/wave19-unsafe-linkage-artifact/README.md`](../reports/wave19-unsafe-linkage-artifact/README.md).
+[`docs/reports/archive/early-waves/wave19-unsafe-linkage-artifact/README.md`](../reports/archive/early-waves/wave19-unsafe-linkage-artifact/README.md).
 
 **Why v1 stopped at L0 anyway.** The manifest did not exist yet — its format,
 loader, header reader, artifact verification and withdrawal semantics are stage
@@ -462,7 +462,7 @@ constrains it.
   binds to a library artifact identity in the manifest sense
   `NATIVE-LIBRARY-LINKAGE` §4.3 scopes, so the premise names *which build* was
   waived; see §4.2's landed note and
-  [that card's record](../reports/wave19-unsafe-linkage-artifact/README.md).
+  [that card's record](../reports/archive/early-waves/wave19-unsafe-linkage-artifact/README.md).
   Its own residuals — a contract slice, a real header reader, and a builder-side
   hash observation — are named there.
 * Variadics, function pointers, structs, floats and verifying the link step,

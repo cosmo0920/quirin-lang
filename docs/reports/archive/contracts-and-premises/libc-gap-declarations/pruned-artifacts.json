@@ -1,0 +1,18 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "libc-gap-declarations",
+ "total_pruned_files": 2,
+ "total_pruned_bytes": 87784,
+ "artifacts": [
+  {
+   "path": "gate/attempt-1-gate.json",
+   "bytes": 79947,
+   "sha256": "c01f6b295fcc1eaea719aa72e24ec84eb45cabeb0c77c054113714a504939472"
+  },
+  {
+   "path": "gate/selection.log",
+   "bytes": 7837,
+   "sha256": "3c202f789f643a3a0f65b755cc624bb621d025e5954930b6bb8e942775e59586"
+  }
+ ]
+}

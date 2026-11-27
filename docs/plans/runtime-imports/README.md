@@ -1,7 +1,7 @@
 # Runtime source imports (`#import`)
 
 > [!NOTE]
-> **Current status (completed).** Implemented after the `.qv`/`.qr`/`.qrlib` extension migration and validated under the full standing gate ([implementation and validation report](../../reports/runtime-source-imports/README.md)). Normative language rules live in [`docs/QCORE_SPEC_r0_3.md`](../../QCORE_SPEC_r0_3.md#runtime-source-imports) and [`docs/QCORE_MODULE_MODES.md`](../../QCORE_MODULE_MODES.md), and exact syntax lives in [`docs/QCORE_IMPLEMENTED_GRAMMARS_r0_3.md`](../../QCORE_IMPLEMENTED_GRAMMARS_r0_3.md#g01a-runtime-import-bundle).
+> **Current status (completed).** Implemented after the `.qv`/`.qr`/`.qrlib` extension migration and validated under the full standing gate ([implementation and validation report](../../reports/archive/language-and-tooling/runtime-source-imports/README.md)). Normative language rules live in [`docs/QCORE_SPEC_r0_3.md`](../../QCORE_SPEC_r0_3.md#runtime-source-imports) and [`docs/QCORE_MODULE_MODES.md`](../../QCORE_MODULE_MODES.md), and exact syntax lives in [`docs/QCORE_IMPLEMENTED_GRAMMARS_r0_3.md`](../../QCORE_IMPLEMENTED_GRAMMARS_r0_3.md#g01a-runtime-import-bundle).
 
 ## 1. Implemented syntax and module roles
 

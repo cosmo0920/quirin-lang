@@ -1,0 +1,148 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "w47-alias-residuals-census",
+ "total_pruned_files": 28,
+ "total_pruned_bytes": 2363817,
+ "artifacts": [
+  {
+   "path": "artifacts/baseline-identity/before-corpus-baseline-identity.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "artifacts/baseline/corpus/audit.log.gz",
+   "bytes": 15102,
+   "sha256": "eac5a993ae35c190abb5db192bfa69309c14dedbe78f55b93c92942a88d85bf6"
+  },
+  {
+   "path": "artifacts/baseline/corpus/parity.jsonl.contexts.jsonl.gz",
+   "bytes": 2423,
+   "sha256": "9c23ce2fce6a4eb8c8dc5758a9a6ccf02b00555ddc61195402ca95de283577be"
+  },
+  {
+   "path": "artifacts/baseline/corpus/parity.jsonl.gz",
+   "bytes": 855816,
+   "sha256": "224db00e469403592081dc0da21ca47f5f1bac8013a5d4f4ed6945bc91afecb5"
+  },
+  {
+   "path": "artifacts/baseline/corpus/resource-diagnostics.chunk-contracts.json.gz",
+   "bytes": 281923,
+   "sha256": "39b79d67c2cff49ddb7d72ee96e154dbc1cfa5de8f7ffb96b8a7674332314ee0"
+  },
+  {
+   "path": "artifacts/baseline/corpus/resource-diagnostics.contracts.json.gz",
+   "bytes": 107028,
+   "sha256": "e15264de3b737ce371ff0b24de100c09a27171faf7e2c3f342b78b25e657bbdc"
+  },
+  {
+   "path": "artifacts/baseline/corpus/resource-diagnostics.json.gz",
+   "bytes": 485694,
+   "sha256": "c14fee2dddec05659e50c4e0f847b988e467a2900df05e31e66166ce327a27ac"
+  },
+  {
+   "path": "artifacts/baseline/system/console.log.gz",
+   "bytes": 1590,
+   "sha256": "4715cab09e288d42a30349063092055ffc6adae354f1f1e8986de993d08500df"
+  },
+  {
+   "path": "artifacts/baseline/system/parity.jsonl.contexts.jsonl.gz",
+   "bytes": 3536,
+   "sha256": "bf21e997f74a6c8b017b29dcbfd88c415567802011840386655a3ca10047bcec"
+  },
+  {
+   "path": "artifacts/baseline/system/parity.jsonl.gz",
+   "bytes": 160284,
+   "sha256": "7a2e46fc6db3c1276839b2fdb99e4c9f5f244298a171f2acb82676a98eef13c4"
+  },
+  {
+   "path": "artifacts/baseline/system/resource-diagnostics.chunk-contracts.json.gz",
+   "bytes": 302,
+   "sha256": "739445165c18db6ccb55eab13ae62b38d71de122d5fc4b29b39af9708065db6d"
+  },
+  {
+   "path": "artifacts/baseline/system/resource-diagnostics.contracts.json.gz",
+   "bytes": 107775,
+   "sha256": "d41a08b8be57a6e7489631065af649e35d2df1e5401a929c5fb2ad25d505e5b4"
+  },
+  {
+   "path": "artifacts/baseline/system/resource-diagnostics.json.gz",
+   "bytes": 109263,
+   "sha256": "c890baa91766093f6d0eccd64c203d12f4745ecf85d1fd4fd56f175efe15b7d8"
+  },
+  {
+   "path": "artifacts/baseline/system/stderr.log.gz",
+   "bytes": 31,
+   "sha256": "b7368871ac9ce0ce08835c8c2fbf32d88bd56ee6bb93612434e3cc6bd4405e5e"
+  },
+  {
+   "path": "artifacts/census/corpus/leaves.jsonl.gz",
+   "bytes": 206439,
+   "sha256": "c82eb959226d5d81995609a0e8060818e8519c265f107a7d8afa53f686bb8057"
+  },
+  {
+   "path": "artifacts/census/system/leaves.jsonl.gz",
+   "bytes": 26572,
+   "sha256": "b62ecb3c368f99ff252920a8812e5e480fb644c464d4cac4a5d7946d2f0e0b77"
+  },
+  {
+   "path": "gate/01-submodule.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/02-tests.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/03-clean-dev.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/04-fmt.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/05-clippy.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/06-reevaluation-probe.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/07-reevaluation-followup.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/08-lean.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/09-clean-dev-2.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/10-clang-version.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/11-python.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/12-docs-index.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  }
+ ]
+}

@@ -1,0 +1,23 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "extension-physical-migration",
+ "total_pruned_files": 3,
+ "total_pruned_bytes": 361633,
+ "artifacts": [
+  {
+   "path": "runtime-abi-attribution.json",
+   "bytes": 168268,
+   "sha256": "e7ec10442990b65e09a65616ec41c77be05f664a2b59f2aadf92daec83fedf84"
+  },
+  {
+   "path": "runtime-abi-baseline.json",
+   "bytes": 114910,
+   "sha256": "228eb7b8873b5ca901e96536a59efa597feb62918dc6589d0b0b06214136b22d"
+  },
+  {
+   "path": "runtime-abi-reference-rewrites.json",
+   "bytes": 78455,
+   "sha256": "6283b9122f5f3c2827b48f6581d7c73831ade555be38357948fdb39a33c55d8e"
+  }
+ ]
+}

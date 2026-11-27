@@ -1,0 +1,113 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "w47-callee-closure-r2",
+ "total_pruned_files": 21,
+ "total_pruned_bytes": 7650081,
+ "artifacts": [
+  {
+   "path": "artifacts/after/corpus/audit.log.gz",
+   "bytes": 15105,
+   "sha256": "c4cc293fa9e5c03baf9b23c4e763e0b07eca9f2bb39e2fd7562e29f1209f843a"
+  },
+  {
+   "path": "artifacts/after/corpus/parity.jsonl.contexts.jsonl.gz",
+   "bytes": 2423,
+   "sha256": "9c23ce2fce6a4eb8c8dc5758a9a6ccf02b00555ddc61195402ca95de283577be"
+  },
+  {
+   "path": "artifacts/after/corpus/parity.jsonl.gz",
+   "bytes": 855992,
+   "sha256": "c41a70f3b6408965567ae37c8eeb9f2d2248a3cdc1740e1244d42978fe3b97b8"
+  },
+  {
+   "path": "artifacts/after/corpus/resource-diagnostics.chunk-contracts.json.gz",
+   "bytes": 281923,
+   "sha256": "39b79d67c2cff49ddb7d72ee96e154dbc1cfa5de8f7ffb96b8a7674332314ee0"
+  },
+  {
+   "path": "artifacts/after/corpus/resource-diagnostics.contracts.json.gz",
+   "bytes": 110365,
+   "sha256": "e4d0631d34a68ec3a9f388a3ce19c8a4599298d8dc4cc3364de38792e82b5ab5"
+  },
+  {
+   "path": "artifacts/after/corpus/resource-diagnostics.json.gz",
+   "bytes": 485618,
+   "sha256": "f74ff09367920c1c8d1017c86c9455e6c2bac21243e90830d4c23471a8507ac0"
+  },
+  {
+   "path": "artifacts/ranking/closure-after.json",
+   "bytes": 262678,
+   "sha256": "8d615b831938de3cb5f128778c1387263d39eff14ca2ff2fe4d780e23863fdc1"
+  },
+  {
+   "path": "artifacts/ranking/closure-before.json",
+   "bytes": 263022,
+   "sha256": "243beb67e2e6c6316a0c4f5912771d35ba17c43eac160ed7006e489a3978c7b6"
+  },
+  {
+   "path": "integration/artifacts/corpus/audit.log.gz",
+   "bytes": 15076,
+   "sha256": "de59712d0188b058c0b8aa0f330b99010b43f8a1021da271c4f6dc7cd9420c03"
+  },
+  {
+   "path": "integration/artifacts/corpus/parity.jsonl.contexts.jsonl.gz",
+   "bytes": 2486,
+   "sha256": "82661754d09fe200ed3c6f779e1f8c6a0c3065e55243ad1da1e1700acbc5ca1d"
+  },
+  {
+   "path": "integration/artifacts/corpus/parity.jsonl.gz",
+   "bytes": 3407050,
+   "sha256": "2401c266ea9386f87828f1d3c408134520e6eae973f888d3d29744aee7e62330"
+  },
+  {
+   "path": "integration/artifacts/corpus/resource-diagnostics.chunk-contracts.json.gz",
+   "bytes": 281881,
+   "sha256": "f0568583a78a62741104d890e33c7dd84ccbb67d9a692f051aa21cc3b8e01703"
+  },
+  {
+   "path": "integration/artifacts/corpus/resource-diagnostics.contracts.json.gz",
+   "bytes": 110211,
+   "sha256": "a9859aeae85b103d91787e11b369237233b7d49ef76e15086549c7c849d2561d"
+  },
+  {
+   "path": "integration/artifacts/corpus/resource-diagnostics.json.gz",
+   "bytes": 485364,
+   "sha256": "099db79fa7fdd97d186370e743f40e4a9445d09643977bd4e7e335be8c261ada"
+  },
+  {
+   "path": "integration/artifacts/system/console.log.gz",
+   "bytes": 1579,
+   "sha256": "fff3ce9db446b2352f4af9a1c859847728732adec3fbafb91734ec56e394e795"
+  },
+  {
+   "path": "integration/artifacts/system/parity.jsonl.contexts.jsonl.gz",
+   "bytes": 3499,
+   "sha256": "56ef39a8f2e9533b860e49d6384be3b724a16f6f51cf35120d3ace362c5f8f3a"
+  },
+  {
+   "path": "integration/artifacts/system/parity.jsonl.gz",
+   "bytes": 845293,
+   "sha256": "6bb6336c7717e5755de54a7fb1fe7ef68968aa72066ea3fc2cccb09d71b2f086"
+  },
+  {
+   "path": "integration/artifacts/system/resource-diagnostics.chunk-contracts.json.gz",
+   "bytes": 260,
+   "sha256": "21c47e400097333e880703ea1d1f27b3f23cd0544271c70c8c1b96c6216afe40"
+  },
+  {
+   "path": "integration/artifacts/system/resource-diagnostics.contracts.json.gz",
+   "bytes": 111001,
+   "sha256": "cb6ec62c39496127beb868b76f17a1842b0d040b5e1b2029c595240dc9390e3b"
+  },
+  {
+   "path": "integration/artifacts/system/resource-diagnostics.json.gz",
+   "bytes": 109235,
+   "sha256": "44a7b3622b6319ae14ad369cc120999fac6f9e5007a281e923ff179477ea11fe"
+  },
+  {
+   "path": "integration/artifacts/system/stderr.log.gz",
+   "bytes": 20,
+   "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+  }
+ ]
+}

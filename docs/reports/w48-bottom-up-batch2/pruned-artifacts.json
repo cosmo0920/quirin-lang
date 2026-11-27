@@ -1,0 +1,113 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "w48-bottom-up-batch2",
+ "total_pruned_files": 21,
+ "total_pruned_bytes": 3291017,
+ "artifacts": [
+  {
+   "path": "artifacts/after/contracts.json.gz",
+   "bytes": 276067,
+   "sha256": "36e354a1cfe2077ce59304fe14c94119220f6c57244a0217c0638a9c7d500663"
+  },
+  {
+   "path": "artifacts/after/family.json",
+   "bytes": 70863,
+   "sha256": "63dd078462dce2a9300c1b54d4a95f29a6d7098ca45278afc02bcf127b135e55"
+  },
+  {
+   "path": "artifacts/after/plan.json.gz",
+   "bytes": 88122,
+   "sha256": "12a8a82de03c48299c09386968911a03b92b2e391d39d0e4fa28a4c8edd17dd8"
+  },
+  {
+   "path": "artifacts/after/resource-diagnostics.json.gz",
+   "bytes": 763543,
+   "sha256": "a9922aab2f807a439ed073f19c3ba21fdddbc786bf6591e59f0ce1a6682dfb62"
+  },
+  {
+   "path": "artifacts/attempts/consumed-step-control-before.log.gz",
+   "bytes": 732,
+   "sha256": "cf36e514aadd1dcf13b0177688849860a6864e13dc60824fb9ae9e3191ca796e"
+  },
+  {
+   "path": "artifacts/attempts/initial-rust-summary.json.gz",
+   "bytes": 181099,
+   "sha256": "279e2ad511f4485b035765aaadc3e1a87afdbc92626ce4542a54387035d82e2b"
+  },
+  {
+   "path": "artifacts/before/contracts.json.gz",
+   "bytes": 276045,
+   "sha256": "550c89efb5eb85ab40ef2c17194d61d9194cb2ba379b90bce94caaea63e32791"
+  },
+  {
+   "path": "artifacts/before/family.json",
+   "bytes": 85308,
+   "sha256": "b66d4626369f7d654b1a8103146b3e7c470b49da60cd14b6d8f907dc0fd41dfa"
+  },
+  {
+   "path": "artifacts/before/plan.json.gz",
+   "bytes": 88233,
+   "sha256": "2f63ddd5d5118631d86fe6d9b65151bc98daa9d7617e70c9bbad151660863b29"
+  },
+  {
+   "path": "artifacts/before/resource-diagnostics.json.gz",
+   "bytes": 760644,
+   "sha256": "08ac1051990e5d7a2c5aa89c8608c6996eda6b03cc644f520cffd4221ba8923f"
+  },
+  {
+   "path": "artifacts/configured/after/slice-comparisons.exit",
+   "bytes": 42,
+   "sha256": "870102949a5529dfb543fae07599e4e19eb6f181f2765fe0ee8e821369ac9f0f"
+  },
+  {
+   "path": "artifacts/configured/after/slice-resource-diagnostics.json.gz",
+   "bytes": 129114,
+   "sha256": "9f54bd62df4608b4d4009cace824e91366f0d98ecabca074ab032404246d41df"
+  },
+  {
+   "path": "artifacts/configured/after/slice.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "artifacts/configured/after/system-comparisons.exit",
+   "bytes": 42,
+   "sha256": "870102949a5529dfb543fae07599e4e19eb6f181f2765fe0ee8e821369ac9f0f"
+  },
+  {
+   "path": "artifacts/configured/after/system-resource-diagnostics.json.gz",
+   "bytes": 130321,
+   "sha256": "51900a0b65e2d8ca872bc5baf1e834cb8f49dfb31bb962d68d1a9d317dec4ef7"
+  },
+  {
+   "path": "artifacts/configured/after/system.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "artifacts/configured/before/slice-resource-diagnostics.json.gz",
+   "bytes": 129036,
+   "sha256": "735cbba5e3e43c2c224caa6a547b5b69f8823a20b4f7f43d7abf078ac39c2b82"
+  },
+  {
+   "path": "artifacts/configured/before/system-resource-diagnostics.json.gz",
+   "bytes": 130236,
+   "sha256": "5c5d58a6b3cf8f03b6f4b8ca9515f36122bd3cb414ef7e7237af6806172294e6"
+  },
+  {
+   "path": "artifacts/final-gate/python-post-matrix-final.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "artifacts/final-gate/python-post-matrix-final.log.gz",
+   "bytes": 458,
+   "sha256": "7879e920bdd9eefcedd582f1b558bd2bfcbb91553cdc8a4c63d004b40149b699"
+  },
+  {
+   "path": "artifacts/final-gate/rust-summary.json.gz",
+   "bytes": 181103,
+   "sha256": "a196e0cd313742d9b7e8f92141d90dd24b4eb0d52a3814fb8a0626196e714d73"
+  }
+ ]
+}

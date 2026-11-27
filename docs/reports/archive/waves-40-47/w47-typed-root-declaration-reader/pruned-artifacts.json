@@ -1,0 +1,138 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "w47-typed-root-declaration-reader",
+ "total_pruned_files": 26,
+ "total_pruned_bytes": 3354328,
+ "artifacts": [
+  {
+   "path": "artifacts/after/corpus-comparison/changed-functions.jsonl.gz",
+   "bytes": 1810,
+   "sha256": "353abc3335f0b990a681c221f266fb4037690ad24c65817424f400b45edbda8c"
+  },
+  {
+   "path": "artifacts/after/corpus-comparison/changed-leaves.jsonl.gz",
+   "bytes": 2454,
+   "sha256": "fbc78c483f44101cd664852e20c26dd8a5091485b59b238584ed49ba61bcafe8"
+  },
+  {
+   "path": "artifacts/after/corpus/audit.log.gz",
+   "bytes": 15091,
+   "sha256": "d4edf4e381e8e92491ce5686859a458ac3c595170f45fe7b5782f616b9dd67d5"
+  },
+  {
+   "path": "artifacts/after/corpus/parity.jsonl.contexts.jsonl.gz",
+   "bytes": 2487,
+   "sha256": "554dddb2acf6d127da71c39f8fe2120215a4075ede54e54158679f0e3d7c0ccd"
+  },
+  {
+   "path": "artifacts/after/corpus/parity.jsonl.gz",
+   "bytes": 1461587,
+   "sha256": "1bb79681e991a5eeafb2748ae59f5d8d9a1b5a4ede168ae5cec302f2d68254d1"
+  },
+  {
+   "path": "artifacts/after/corpus/resource-diagnostics.chunk-contracts.json.gz",
+   "bytes": 281923,
+   "sha256": "39b79d67c2cff49ddb7d72ee96e154dbc1cfa5de8f7ffb96b8a7674332314ee0"
+  },
+  {
+   "path": "artifacts/after/corpus/resource-diagnostics.contracts.json.gz",
+   "bytes": 107032,
+   "sha256": "255ba6535deba54fbb7b2b4e89cdd3228db71f9cbcb9024cd9ed6adba94d3952"
+  },
+  {
+   "path": "artifacts/after/corpus/resource-diagnostics.json.gz",
+   "bytes": 485469,
+   "sha256": "ceea85eeeb628daa8675f2fef252721d30846a7d28e76bb285214ccb5cdaf228"
+  },
+  {
+   "path": "artifacts/after/root-declarations/corpus-exposure.json",
+   "bytes": 78924,
+   "sha256": "68e873af73672cc801183fa338510b4a18dca3a1a6fc9c1be8d99576500a4bc9"
+  },
+  {
+   "path": "artifacts/after/system-parity.jsonl.gz",
+   "bytes": 739097,
+   "sha256": "d9f0feaed8c99f68335e1255c77e4e7cbd7bed181a46c0a65548292666b7c503"
+  },
+  {
+   "path": "artifacts/cause/forecast.json",
+   "bytes": 104895,
+   "sha256": "e68dd0c43b3c44a6315525eacf9321466995c7aace989c2dec806d8d90e08eeb"
+  },
+  {
+   "path": "artifacts/cause/premise-census.json.gz",
+   "bytes": 73517,
+   "sha256": "256c9a90c2e3b66312bfc22287e54861f0e7c502a688f31ff2ec62bdbaab03d4"
+  },
+  {
+   "path": "gate/01-submodule.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/02-tests.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/03-clean.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/04-fmt.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/05-clippy.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/06-probe.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/07-followup.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/08-lean.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/09-python.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/10-docs-index.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/11-clang.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/12-census-clippy.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/13-census-lib.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/14-clean.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  }
+ ]
+}

@@ -194,7 +194,7 @@ read. Rule numbers and anchors are stable; backticked paths are repository-relat
     recursive and dynamic mutex shapes. The lift is not a mutual-exclusion,
     deadlock or liveness claim, and the per-unit resource route still refuses
     every declared condvar call. `QCore.CondvarJoin`;
-    [report](../reports/w47-condvar-join-publication/README.md).
+    [report](../reports/archive/waves-40-47/w47-condvar-join-publication/README.md).
 <!-- preserved:constraint-27:end -->
 
 <!-- generated:rules:end -->

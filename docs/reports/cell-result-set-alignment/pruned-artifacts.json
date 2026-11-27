@@ -1,0 +1,18 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "cell-result-set-alignment",
+ "total_pruned_files": 2,
+ "total_pruned_bytes": 625351,
+ "artifacts": [
+  {
+   "path": "census/inventory-patched.json",
+   "bytes": 166764,
+   "sha256": "3657902861a7441907f5b181daa7cb1b66850b27b4d6dca2e364a1e00d61ac5d"
+  },
+  {
+   "path": "census/inventory.json",
+   "bytes": 458587,
+   "sha256": "87248939e58976db94a15aac8e7b863a3adf5f87f87c421c6f5684aa764d2981"
+  }
+ ]
+}

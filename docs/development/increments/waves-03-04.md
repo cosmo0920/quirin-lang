@@ -23,12 +23,12 @@ implementation plus audited Lean modules; Python artifacts are supplementary.
   owned Buffer inside a declared error tag through completion and join;
   uniform rows, entry exclusion, one-shot `qcore_error_payload` take, 19 Lean
   theorems (`QCore.ErrorPayload`), six fixed sanitizer runs. Evidence:
-  `docs/reports/remaining-t06/README.md`.
+  `docs/reports/archive/early-waves/remaining-t06/README.md`.
 - Flat epoch accounting (T08): `FlatEpochBoundV1` checks a residency/work
   bound (shared union once, private peaks summed, declared overhead,
   completed-child results live until transfer; work never becomes wall-clock)
   with diagnostics `Q630`-`Q641` and 20 Lean theorems. Model-level only.
-  Evidence: `docs/reports/remaining-t08/README.md`.
+  Evidence: `docs/reports/archive/early-waves/remaining-t08/README.md`.
 - OS failure post-states (O03): the Linux `close(2)` failure post-state
   relation — five descriptor states over three separated identities, EBADF as
   refutation, POSIX-unpinned targets Indeterminate with no permitted retry —
@@ -37,26 +37,26 @@ implementation plus audited Lean modules; Python artifacts are supplementary.
   Python matrix/probes are supplementary. Two declared-model defects
   (`DescriptorCustody.lean` failed-close retention; the `evutil_closesocket`
   error clause) are recorded open as U4/U5, not repaired. Evidence:
-  `docs/reports/remaining-o03/README.md`.
+  `docs/reports/archive/early-waves/remaining-o03/README.md`.
 - Bounded composition audit (P08): the five-provider registry reproduces each
   implemented capability's single-provider outcome, with absence/mismatch/
   timeout/conflict rows per provider; only four capability routes exist and
   cross-route composition is measured unreachable (QP015), so the full
   five-provider gate is recorded open, not satisfied. Evidence:
-  `docs/reports/remaining-p08/README.md`.
+  `docs/reports/archive/early-waves/remaining-p08/README.md`.
 - Error-region task credit (T07): `CheckedRegionTaskCreditV1` composes the
   region credit discipline with the unedited task ledger — duties are derived
   from the ledger and never convert into credit; abandonment waits for joins,
   loan expiry and child endowments; rethrow carries remaining duties.
   Diagnostics relocated to `Q670`-`Q677` at integration; adapted to T05's
   counted-share API. 23 Lean theorems. Model-level; CT21-23 need a source
-  form. Evidence: `docs/reports/remaining-t07/README.md`.
+  form. Evidence: `docs/reports/archive/early-waves/remaining-t07/README.md`.
 - Disjoint footprints (T09): `DisjointFootprintsV1` decides byte-interval
   disjointness against one allocation generation with an 11-rule layout
   contract, bit-field storage units as single locations and protocol-cell
   descriptor identity; cross-allocation disjointness deliberately refuses.
   Diagnostics relocated to `Q650`-`Q667` at integration; 28 Lean theorems.
-  Evidence: `docs/reports/remaining-t09/README.md`.
+  Evidence: `docs/reports/archive/early-waves/remaining-t09/README.md`.
 - Source-to-native trace relation (F02): `qcore.task-trace-relation.v1`
   relates reference and native renderings of the pre-T06 owned round trip by
   admitted causal constraints (nine conjuncts, 20 violation classes); the
@@ -66,20 +66,20 @@ implementation plus audited Lean modules; Python artifacts are supplementary.
   pinned emission digests were deliberately re-pinned after the T05/T06/macOS
   emission changes, with the native relation re-verified. Which order the
   native execution actually took remains unestablished. Evidence:
-  `docs/reports/remaining-f02/README.md`.
+  `docs/reports/archive/early-waves/remaining-f02/README.md`.
 - Route removal (P09): the hardcoded per-plugin first-party selection route is
   deleted after byte-identical re-measured parity with W2 H6 package
   discovery; `qcore-compiler` is versioned 0.2.0. P04's counter route was
   deliberately not chosen (live production callers). Seven remaining legacy
   routes are named follow-ons P09-A..G. Evidence:
-  `docs/reports/remaining-p09/README.md`.
+  `docs/reports/archive/early-waves/remaining-p09/README.md`.
 - Aggregate composition (O05): a compositional teardown contract for one
   aggregate parent and one wrapper — distinct child identities across parent
   release, callback quiescence and joined tasks before teardown, durability
   separate, status facts refused as evidence — decides `Composed`/`Unknown`
   only; on the real Cycle 18/19 subject it yields `Unknown` with named
   per-member blockers. 39 Lean theorems. Evidence:
-  `docs/reports/remaining-o05/README.md`.
+  `docs/reports/archive/early-waves/remaining-o05/README.md`.
 - Wave-3 CT integration: CT03/CT04/CT05/CT17/CT18 are mapped with
   stage-derived evidence, moving CT coverage 15/50 to **20/50**; CT03/CT17
   are the second and third harness-gated sanitized-native cases. CT11 stays
@@ -149,7 +149,7 @@ boundaries.
   (`QCore.CapacityBoundary`); refusals carry module-local keys, no Q-code.
   `ENOSPC`/`EDQUOT` are classified from man-pages, not observed; metadata
   boundaries, the pinned-unit route and any production consumer remain open.
-  Evidence: `docs/reports/remaining-o02/README.md`.
+  Evidence: `docs/reports/archive/early-waves/remaining-o02/README.md`.
 
 With these two cards the 49-card execution plan of 2026-09-07 is fully
 dispositioned: every card is closed at its stated boundary or recorded as an
@@ -174,6 +174,6 @@ identity. The user's prepared audit at Fluent Bit `11651d47` now completes all
 134 Unknown / 4 data-only and zero gateway failures or option refusals.
 Historical evidence stays Unknown and this current-revision result neither
 replaces the pinned 185-unit ledger nor promotes a raw unit. Evidence:
-`docs/reports/macos-cycle19-compiler-options/README.md`.
+`docs/reports/archive/language-and-tooling/macos-cycle19-compiler-options/README.md`.
 
 <!-- migrated-section:end -->

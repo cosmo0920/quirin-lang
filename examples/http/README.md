@@ -8,8 +8,8 @@ whole transport is the embedded shim `crates/qcore-core/src/qcore_socket_compat.
 and the whole HTTP implementation is a byte sequence the compiler constructed.
 
 Cards `HTTP-QUIRIN-V1` and `HTTP-V1-COMPUTED-LENGTH`; the evidence packages are
-`docs/reports/http-quirin-v1/README.md` and
-`docs/reports/http-v1-computed-length/README.md`, the checked model is
+`docs/reports/archive/language-and-tooling/http-quirin-v1/README.md` and
+`docs/reports/archive/language-and-tooling/http-v1-computed-length/README.md`, the checked model is
 `crates/qcore-core/src/std_http.rs`, and the tests that hold these files to the
 `examples/threads` standard are in `compiler/tests/std_http.rs` and
 `compiler/tests/http_computed_length.rs`.

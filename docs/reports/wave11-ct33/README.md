@@ -1,6 +1,6 @@
 # Wave-11 CT lane — CT33 mapped from card CT33-RANKS's proposal
 
-> Runtime import maintenance: archived source inputs and runnable snippets now use `#import`; original results and hashes describe their recorded revision. See the [spelling attribution](../runtime-source-imports/spelling-attribution.json) for maintained source identities.
+> Runtime import maintenance: archived source inputs and runnable snippets now use `#import`; original results and hashes describe their recorded revision. See the [spelling attribution](../archive/language-and-tooling/runtime-source-imports/spelling-attribution.json) for maintained source identities.
 
 Wave 11. One case moves: **CT33** (lock-order cycle in optional rank mode)
 maps on the existing `mutex_guard` route. CT coverage moves **30/50 → 31/50

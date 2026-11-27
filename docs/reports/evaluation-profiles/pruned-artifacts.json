@@ -1,0 +1,33 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "evaluation-profiles",
+ "total_pruned_files": 5,
+ "total_pruned_bytes": 77655,
+ "artifacts": [
+  {
+   "path": "baseline/corpus.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "baseline/slice.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "baseline/system.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate-attempts/attempt-3-records-under-contract-profiles.gate.json",
+   "bytes": 76669,
+   "sha256": "9921f2cf2f01fe34af7e630f44ab6b9184f1916f19d37aecebf9c55702f96842"
+  },
+  {
+   "path": "gate-attempts/attempt-3-summary.json",
+   "bytes": 977,
+   "sha256": "0e9d6daa6155d0b746e9d8b0eb4b9eef3d84014a721924da7462f2b2560d65c3"
+  }
+ ]
+}

@@ -9,7 +9,7 @@ dependency-free L1 kernel and no analyzer, driver, contract or audit path calls
 the relation; consuming it is follow-on unit U3 (§12). No verdict, contract
 corpus count, CT mapping or raw Cycle 19 unit changes on its account. Card O03;
 evidence record
-[`docs/reports/remaining-o03/README.md`](../reports/remaining-o03/README.md).
+[`docs/reports/archive/early-waves/remaining-o03/README.md`](../reports/archive/early-waves/remaining-o03/README.md).
 
 This document specifies the failure post-state relation of **one** endpoint
 operation on **one** target:
@@ -339,7 +339,7 @@ them; establishing that link is the same class of work F01 did for
 `check_concurrent`.
 
 Recorded probe output:
-[`logs/relation_and_probe.json`](../reports/remaining-o03/logs/relation_and_probe.json).
+[`logs/relation_and_probe.json`](../reports/archive/early-waves/remaining-o03/logs/relation_and_probe.json).
 
 ### 9.1 Refusals
 

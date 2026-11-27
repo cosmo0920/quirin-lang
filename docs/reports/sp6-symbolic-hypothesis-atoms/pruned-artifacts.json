@@ -1,0 +1,13 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "sp6-symbolic-hypothesis-atoms",
+ "total_pruned_files": 1,
+ "total_pruned_bytes": 220178,
+ "artifacts": [
+  {
+   "path": "gate/gate-1.json",
+   "bytes": 220178,
+   "sha256": "f2c6a8b8af59613896415ac42c91f5af41a0bac04a86fbc76fffc1f68620ec94"
+  }
+ ]
+}

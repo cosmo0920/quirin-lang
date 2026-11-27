@@ -1,0 +1,88 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "fluent-bit-moving-revisions",
+ "total_pruned_files": 16,
+ "total_pruned_bytes": 321400,
+ "artifacts": [
+  {
+   "path": "baseline-audit.log.gz",
+   "bytes": 333,
+   "sha256": "6934d46e187dec35a32f3fd88fbd7b6e2da2b9796973f4b500da99e6066d8a4f"
+  },
+  {
+   "path": "chunkio-current.log.gz",
+   "bytes": 1097,
+   "sha256": "69dc4d00372ba862182939c11355439d0de733bfa6fe5ca24648ee5cb74a20ae"
+  },
+  {
+   "path": "clippy.log.gz",
+   "bytes": 164,
+   "sha256": "befea6262669b540b442e56079ce20844587235b42d82dd75ea2f5eefc8c54ec"
+  },
+  {
+   "path": "cmetrics-current.log.gz",
+   "bytes": 2227,
+   "sha256": "6b498aaa94ada8c8fbe39fd63dbc908aae8cd984a56ca5875750d5aa3861f26e"
+  },
+  {
+   "path": "ctraces-current.log.gz",
+   "bytes": 171,
+   "sha256": "618f6e66ac6d05741f595e83db2decbe09071b5f90757fd2fcd9e3b65f7424f1"
+  },
+  {
+   "path": "current-audit.log.gz",
+   "bytes": 297,
+   "sha256": "3e171a0a9c51997ade74136af6b7cd8e0dc65b61e6367f0d09f6d9a1b9378348"
+  },
+  {
+   "path": "fluent_bit-current.log.gz",
+   "bytes": 150,
+   "sha256": "e08460f1e003f8b6db7964202a7566acb65da65ed8aa4bbd5c62d93f29a9d82d"
+  },
+  {
+   "path": "followup.log.gz",
+   "bytes": 1744,
+   "sha256": "23da5650b8c10989911631f88f326537c9cbc01828fa26bc2af6ec1a3853f1a1"
+  },
+  {
+   "path": "full-audit.log.gz",
+   "bytes": 171,
+   "sha256": "618f6e66ac6d05741f595e83db2decbe09071b5f90757fd2fcd9e3b65f7424f1"
+  },
+  {
+   "path": "lean-audits.log.gz",
+   "bytes": 10264,
+   "sha256": "3ac576a0e6230bf5d1cffe3e7fc46a1af670ee5716a56cea804cab617ef96fd4"
+  },
+  {
+   "path": "lean.log.gz",
+   "bytes": 134,
+   "sha256": "ced0e339c9838af584ae4de7128c6c2a82da11a5801d4f5b72a2fdb25360e0f7"
+  },
+  {
+   "path": "librdkafka-current.json.gz",
+   "bytes": 277183,
+   "sha256": "373b0157e8295062731b50622645d97175d9eacd06722ae3ad3cf50c01a28c33"
+  },
+  {
+   "path": "librdkafka-current.log.gz",
+   "bytes": 6018,
+   "sha256": "a38fa47c55d9c28d7bfa3bf00d91ee6f2dfc9d6ece9a7708ee9b8e0e7c84103d"
+  },
+  {
+   "path": "prepare.log.gz",
+   "bytes": 171,
+   "sha256": "ccfdd084123e04606717ccc010d20731b7e3f376acffac9b1ce76b3e747bbf6d"
+  },
+  {
+   "path": "probe.log.gz",
+   "bytes": 659,
+   "sha256": "810d5bba6facd639dcbcbba6dd7200351fce9c9bd7b1d0869fc27533480331dd"
+  },
+  {
+   "path": "tests.log.gz",
+   "bytes": 20617,
+   "sha256": "7b99452b20ce605e189f01de40755121b0a0ac6ae5de07beadad9162d91a8456"
+  }
+ ]
+}

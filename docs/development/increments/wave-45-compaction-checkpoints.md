@@ -8,7 +8,7 @@
 > the compaction removed is lost. Each block names its revision and lines;
 > `git show <revision>:<file>` reproduces it byte for byte. Where a block and the current page disagree, **the current page wins**;
 > where a block states something the card measured to be false, the correction
-> is in [the card report](../../reports/docs-compact-9/README.md) and is
+> is in [the card report](../../reports/archive/language-and-tooling/docs-compact-9/README.md) and is
 > deliberately not applied here. Relative links inside a block keep their
 > original base, the page they were written in.
 

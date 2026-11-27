@@ -1,0 +1,23 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "remaining-g03",
+ "total_pruned_files": 3,
+ "total_pruned_bytes": 198341,
+ "artifacts": [
+  {
+   "path": "audit/stdout.log",
+   "bytes": 8185,
+   "sha256": "09a43ec163996757d93382be2239a8feb4eb303c4b9f2f5318157042e72de293"
+  },
+  {
+   "path": "failclosed.log",
+   "bytes": 789,
+   "sha256": "dcf89518cf64205e59a615ba9b3f3eede2afc8718857bed4d196dc0c6bbe18b1"
+  },
+  {
+   "path": "gate.log",
+   "bytes": 189367,
+   "sha256": "1dc22782adb47db804b00d82f230f37277e0fb933b89287208c3274bdd886539"
+  }
+ ]
+}

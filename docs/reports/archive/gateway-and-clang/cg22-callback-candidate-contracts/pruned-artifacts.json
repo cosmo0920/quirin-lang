@@ -1,0 +1,13 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "cg22-callback-candidate-contracts",
+ "total_pruned_files": 1,
+ "total_pruned_bytes": 38888,
+ "artifacts": [
+  {
+   "path": "integration/gate-scope.json",
+   "bytes": 38888,
+   "sha256": "33516e20937e0dce9d999d39968c05e76b7665dcf3f888bf639b48cdb35f2ce7"
+  }
+ ]
+}

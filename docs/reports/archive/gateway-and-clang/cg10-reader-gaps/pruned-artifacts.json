@@ -1,0 +1,23 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "cg10-reader-gaps",
+ "total_pruned_files": 3,
+ "total_pruned_bytes": 314031,
+ "artifacts": [
+  {
+   "path": "evidence/run-base.txt",
+   "bytes": 126932,
+   "sha256": "aa5368846c001e7bbf235b343caeba8d9c95afdab53745914afce7473ecef5a0"
+  },
+  {
+   "path": "evidence/run-tip.txt",
+   "bytes": 126932,
+   "sha256": "7ced7ddc6c7a605672424e68ebcd262dfa0f5825d5756468a82a20ae0bd5104c"
+  },
+  {
+   "path": "integration/gate-scope.json",
+   "bytes": 60167,
+   "sha256": "83ec30d0ffa81a67ae64562c95f65456c7ffdf8d1f5eb61c4ccfa59bdbc25010"
+  }
+ ]
+}

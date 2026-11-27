@@ -1,0 +1,43 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "gate-slot-builds-unslotted",
+ "total_pruned_files": 7,
+ "total_pruned_bytes": 12705,
+ "artifacts": [
+  {
+   "path": "gate-1-python.log",
+   "bytes": 5108,
+   "sha256": "7897e4af0b0d651ed05b5e4413f5d669f5e2d62664b0fe24701d06654722ee4e"
+  },
+  {
+   "path": "mutate_cpu_report.log",
+   "bytes": 1132,
+   "sha256": "9f411d0d0f096290a1e2da7ebcd385ad90e3c9a0c5bf38c33e3c57055c95aaf0"
+  },
+  {
+   "path": "starved-base.log",
+   "bytes": 3269,
+   "sha256": "d7c61dbd26e250afcd84f2d7dcc6383f8059abef58a1ac3d084a99965a4d9d26"
+  },
+  {
+   "path": "starved-card-2.log",
+   "bytes": 799,
+   "sha256": "305d64a6ae11ebb7126877f07e073648247ab0e7d2636e93125e2eda67080b98"
+  },
+  {
+   "path": "starved-card-3.log",
+   "bytes": 799,
+   "sha256": "6c82ca3393ba520ddf189e154e50ffce4bdbcc558493524a2b2f8728a7568909"
+  },
+  {
+   "path": "starved-card-4.log",
+   "bytes": 799,
+   "sha256": "1d58204959e1d5d9b3ed0b5481777780f2e1af24288c3211490d8399cb0a4216"
+  },
+  {
+   "path": "starved-card-5.log",
+   "bytes": 799,
+   "sha256": "f0bd532b5622e01ec9b96ef02910061b4d45e00b4e4901a04bd28ecf9038f1f0"
+  }
+ ]
+}

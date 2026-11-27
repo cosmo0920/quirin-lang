@@ -1,0 +1,43 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "joined-provenance-call-frames",
+ "total_pruned_files": 7,
+ "total_pruned_bytes": 1701890,
+ "artifacts": [
+  {
+   "path": "artifacts/chunk-contracts-before.json.gz",
+   "bytes": 281907,
+   "sha256": "d2a1d5c9f43135a5bd24998866093921607693e32a6b588cbb742431fde1d5ee"
+  },
+  {
+   "path": "artifacts/chunk-contracts.json.gz",
+   "bytes": 281900,
+   "sha256": "44fa0df45e13d8ed8d0209a728bc0bce969e1280fbad6f3ea6d86234e9094883"
+  },
+  {
+   "path": "artifacts/diagnostics-before.json.gz",
+   "bytes": 567606,
+   "sha256": "f4be084bfc012c3a79ed55f521043d3353c761934aa9cc309ea890eb14dc1a4e"
+  },
+  {
+   "path": "artifacts/diagnostics.json.gz",
+   "bytes": 567599,
+   "sha256": "28fab5938d8d037ebab961408b1fc8b7e859378e444213d1df96cfb87d6b3404"
+  },
+  {
+   "path": "logs/mutations.log",
+   "bytes": 1770,
+   "sha256": "2d8f1655b2e36ba8b6aee3b2f4688ba15da3f877fda762af53cdf8664d47ff40"
+  },
+  {
+   "path": "logs/rb-byte-before.log",
+   "bytes": 690,
+   "sha256": "4cd4f47aab5752234b743ee5ef9b9033874f92e28f9379f88e3fd8eec80c5bee"
+  },
+  {
+   "path": "logs/rb-leaves.log",
+   "bytes": 418,
+   "sha256": "7b771fcc9cb32b72406f5979a91c46b30981cbea2256d0f0c2742ef5a9493acc"
+  }
+ ]
+}

@@ -352,7 +352,7 @@ it. Recorded here so the two records read as one design rather than two:
   what landed, plus `^` reserved for bitwise xor. `BITWISE-OPERATORS` is the
   follow-on.
 
-Evidence: [`docs/reports/wave19-or-and-lowering/README.md`](../reports/wave19-or-and-lowering/README.md).
+Evidence: [`docs/reports/archive/early-waves/wave19-or-and-lowering/README.md`](../reports/archive/early-waves/wave19-or-and-lowering/README.md).
 
 ## Addendum, card `BITWISE-CONDITIONS`
 
@@ -386,7 +386,7 @@ anything in it. It unifies the three follow-ons that all lived in this tier —
 * **A `let` inside an arm is refused (`Q044`).** Widening §5's arm subset is
   card `IF-ARMS`' business, and the refusal names it.
 
-Evidence: [`docs/reports/wave20-bitwise-conditions/README.md`](../reports/wave20-bitwise-conditions/README.md).
+Evidence: [`docs/reports/archive/waves-20-39/wave20-bitwise-conditions/README.md`](../reports/archive/waves-20-39/wave20-bitwise-conditions/README.md).
 
 ## Addendum: what `IF-ARMS` did to this design (wave 20)
 
@@ -431,4 +431,4 @@ as one design.
   and wording moved. `IF-ARM-ACQUIRE` is still open, and it is what would let an
   early return stand *before* an acquisition.
 
-Evidence: [`docs/reports/wave20-if-arms/README.md`](../reports/wave20-if-arms/README.md).
+Evidence: [`docs/reports/archive/waves-20-39/wave20-if-arms/README.md`](../reports/archive/waves-20-39/wave20-if-arms/README.md).

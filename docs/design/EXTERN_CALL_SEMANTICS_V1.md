@@ -192,9 +192,9 @@ any mapping proposal is its own stage-derived record, not this card's).
 **Landed since (2026-09-09).** Two of the items above are no longer out of
 scope, at their own bounded records. `resource_out` and `resource_stored` are
 callable (card `EXTERN-F1`,
-[`docs/reports/extern-call-f1/README.md`](../reports/extern-call-f1/README.md)),
+[`docs/reports/archive/language-and-tooling/extern-call-f1/README.md`](../reports/archive/language-and-tooling/extern-call-f1/README.md)),
 and the error arm may release other live custody (card `EXTERN-ERR-REL`,
-[`docs/reports/remaining-extern-err-rel/README.md`](../reports/remaining-extern-err-rel/README.md)),
+[`docs/reports/archive/early-waves/remaining-extern-err-rel/README.md`](../reports/archive/early-waves/remaining-extern-err-rel/README.md)),
 which is what made the store reachable from a single source module. The arm's
 rule is the sequential cleanup edge of §3.3's acquisition, rendered as the
 declared consuming calls that edge would perform, and nothing wider: an
@@ -203,7 +203,7 @@ error exit (`qcore_core::cleanup_lowering`, `ExecutionOutcome::Error`) carries
 no payload and extern calls in error-region contexts remain out of scope.
 
 **Landed since (2026-09-10).** Two more, at card `EXTERN-MODES`
-([`docs/reports/remaining-extern-modes/README.md`](../reports/remaining-extern-modes/README.md)).
+([`docs/reports/archive/early-waves/remaining-extern-modes/README.md`](../reports/archive/early-waves/remaining-extern-modes/README.md)).
 `resource_released(p, nonnull)` is callable: it is the mode the error arm above
 was already describing, since contract spec §C04.2 separates *discharging* an
 obligation from *transferring* it and the arm previously had only transfer

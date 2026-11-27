@@ -1,0 +1,18 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "scheduler-destroy-member-states",
+ "total_pruned_files": 2,
+ "total_pruned_bytes": 215104,
+ "artifacts": [
+  {
+   "path": "artifacts/native-comparison-corpus.json",
+   "bytes": 67267,
+   "sha256": "f8350fe476c8c5de35a31b9b8482c1095bdfa48df1dfd9be37f0779ab98708a5"
+  },
+  {
+   "path": "integration/gate-scope.json",
+   "bytes": 147837,
+   "sha256": "32a6cd464595416ce24fdbdfcd2a8117c34a9d3cd7d5d2b1ab22573224cda2ed"
+  }
+ ]
+}

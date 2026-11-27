@@ -1,0 +1,43 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "w44-branch-condition-calls",
+ "total_pruned_files": 7,
+ "total_pruned_bytes": 1986221,
+ "artifacts": [
+  {
+   "path": "artifacts/chunk-contracts.json.gz",
+   "bytes": 281881,
+   "sha256": "f0568583a78a62741104d890e33c7dd84ccbb67d9a692f051aa21cc3b8e01703"
+  },
+  {
+   "path": "artifacts/contracts.json.gz",
+   "bytes": 67456,
+   "sha256": "56d254a6aff91842893e2e0d8c8e33349e0c7b7826edca8bf187b14b440eee8a"
+  },
+  {
+   "path": "artifacts/diagnostics.json.gz",
+   "bytes": 535949,
+   "sha256": "045a1da458a4b1be5db92f12f390088a2b31143677e828ed37790e8b9263fee3"
+  },
+  {
+   "path": "census/condition-call-census.final.jsonl.gz",
+   "bytes": 216348,
+   "sha256": "40d442b794411df82ceb8a6079ebd0ac2af947c9daf470de709c70170c1c355f"
+  },
+  {
+   "path": "integration/artifacts/chunk-contracts.json.gz",
+   "bytes": 281881,
+   "sha256": "f0568583a78a62741104d890e33c7dd84ccbb67d9a692f051aa21cc3b8e01703"
+  },
+  {
+   "path": "integration/artifacts/contracts.json.gz",
+   "bytes": 67456,
+   "sha256": "f7ff617ad6f17dda34b85900652c89056fbf5ea7e6779960b91e91c24c54bfba"
+  },
+  {
+   "path": "integration/artifacts/diagnostics.json.gz",
+   "bytes": 535250,
+   "sha256": "ed46fde2af9b619e3a1dbb5e433423ab2e0f516aa3d6503bbcd41e57e2a8ac28"
+  }
+ ]
+}

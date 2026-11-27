@@ -20,7 +20,7 @@
 **Decided: strategy (a), for the first wave.** `std.http` exists as a checked
 source surface in Quirin, lowered to self-contained C11 by the existing backend,
 linking no library and declaring no extern function. Evidence:
-`docs/reports/http-quirin-v1/README.md`; the published programs are under
+`docs/reports/archive/language-and-tooling/http-quirin-v1/README.md`; the published programs are under
 `examples/http/`, and both **run** sanitized with their output byte-compared
 against the compiler's own reference execution.
 

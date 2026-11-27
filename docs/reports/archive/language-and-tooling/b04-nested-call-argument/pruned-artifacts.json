@@ -1,0 +1,23 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "b04-nested-call-argument",
+ "total_pruned_files": 3,
+ "total_pruned_bytes": 4026,
+ "artifacts": [
+  {
+   "path": "logs/mutation-drop-nonfirst-instruction-child.log",
+   "bytes": 1027,
+   "sha256": "a0d639a5e08e6f667ee4e481ea9ccd71992a6e85eed3e1174804419d8ee3197a"
+  },
+  {
+   "path": "logs/mutation-drop-nonfirst-settled-borrow-check.log",
+   "bytes": 1027,
+   "sha256": "81496af6ebd8968279fb725827466c17a742ed7df11b14e57770893ddb75b895"
+  },
+  {
+   "path": "logs/mutation-green-control.log",
+   "bytes": 1972,
+   "sha256": "46b937649b228c2a2d740086d6317146427567ba79b644951480bac4e57e5ad6"
+  }
+ ]
+}

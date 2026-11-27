@@ -1,0 +1,223 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "tsan-failure-arms",
+ "total_pruned_files": 43,
+ "total_pruned_bytes": 18471,
+ "artifacts": [
+  {
+   "path": "artifacts/catch-rates.run.log",
+   "bytes": 412,
+   "sha256": "12e2a9fda4ac3ae7ada41663b8f9b89b7cce81e1f382a01015a436b5ba97b790"
+  },
+  {
+   "path": "artifacts/hook_visible_to_tsan.log",
+   "bytes": 998,
+   "sha256": "2543304b0d265cb30fe08ee432dad99224a5c208313e05e9ca01efdb95ac0edd"
+  },
+  {
+   "path": "artifacts/regen.log",
+   "bytes": 1502,
+   "sha256": "f8bce5a91c6353d4d47ee36ee57c5e85e5572aa87b7dedb6aae99af9cabe585c"
+  },
+  {
+   "path": "artifacts/register.log",
+   "bytes": 676,
+   "sha256": "00ba8fbd0d8d114963896f7f1525b0ecaed4081f40e62827bf411f17bf208b63"
+  },
+  {
+   "path": "artifacts/sweep.log",
+   "bytes": 760,
+   "sha256": "e19d4cfe47c3a388778e3673ec85aafb150521ef84000255b0e9e947c0ad8e3a"
+  },
+  {
+   "path": "artifacts/visible_mutation_without_the_lock.log",
+   "bytes": 6461,
+   "sha256": "6272ad7fe43bfe82fa21eefe7052943e3903ea8d097314d9ed79000fd4750fd3"
+  },
+  {
+   "path": "gate/cargo-test.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/check-residuals-at-base.log",
+   "bytes": 646,
+   "sha256": "40f4c06b42932034e5456a4e15201d606719032f3875a99a06b1205bae8cb38f"
+  },
+  {
+   "path": "gate/clippy.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/fmt.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/followup.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/integration-clang-version.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/lean.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/pre-rebase/cargo-test.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/pre-rebase/clippy-post.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/pre-rebase/clippy.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/pre-rebase/fmt-post.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/pre-rebase/fmt.exit",
+   "bytes": 3,
+   "sha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04"
+  },
+  {
+   "path": "gate/pre-rebase/followup.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/pre-rebase/lean.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/pre-rebase/probe.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/pre-rebase/python-post.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/pre-rebase/python.exit",
+   "bytes": 3,
+   "sha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04"
+  },
+  {
+   "path": "gate/pre-rebase/regen.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/probe.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/python-post.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/python-post.log",
+   "bytes": 2585,
+   "sha256": "d1b5173d48720a20bbe57ee1448e0968c43a0bc4374504a08c8b066c67901bc7"
+  },
+  {
+   "path": "gate/python.exit",
+   "bytes": 3,
+   "sha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04"
+  },
+  {
+   "path": "gate/rebase-1/cargo-test.exit",
+   "bytes": 5,
+   "sha256": "bdc830287616dae1818ced3e7c186e1387155900ad30d5983ec02da1519c4a95"
+  },
+  {
+   "path": "gate/rebase-1/clippy.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/rebase-1/fmt.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/rebase-1/followup.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/rebase-1/lean.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/rebase-1/probe.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/rebase-1/python-post.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/rebase-1/python.exit",
+   "bytes": 3,
+   "sha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04"
+  },
+  {
+   "path": "gate/rebase-1/regen.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/red-row.log",
+   "bytes": 1879,
+   "sha256": "ae27416d1d2aab09d147e44255a08dd54d3b20b7683171565be480b765bef4d6"
+  },
+  {
+   "path": "gate/regen.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/row-isolation-20-runs.log",
+   "bytes": 90,
+   "sha256": "0f7f3d6a9e1261341dd89c127816086b1e44d972890c2aa9a2d4f127f687abf0"
+  },
+  {
+   "path": "gate/row-isolation-file.log",
+   "bytes": 1713,
+   "sha256": "bc62c8bd4c188f82fe77d23a8c0a608774fd1054e091c6a8625e23aa2deff2e7"
+  },
+  {
+   "path": "gate/row-isolation.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/verify.log",
+   "bytes": 654,
+   "sha256": "6067c5caebfff616cd319bca1d3a5ce1ce5b1b4c027bb463e421633ddea235e8"
+  }
+ ]
+}

@@ -1,0 +1,18 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "selection-routes-split-caller-and-home",
+ "total_pruned_files": 2,
+ "total_pruned_bytes": 126519,
+ "artifacts": [
+  {
+   "path": "artifacts/native-comparison-map-linked.json",
+   "bytes": 78463,
+   "sha256": "e74926cd6e34172da697b9da85c1afc6295b37a8313f9bd62a1b6198d57fa96d"
+  },
+  {
+   "path": "integration/gate-scope.json",
+   "bytes": 48056,
+   "sha256": "743f80ec71ce839c8a7ae32c8563f2e5f381139e282117b84f8d017cb303465d"
+  }
+ ]
+}

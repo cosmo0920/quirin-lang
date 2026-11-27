@@ -114,18 +114,18 @@ audits (103 → 107: `AuditSocketEventCompose`, `AuditSourceLoop`,
 `AuditStringConcat`, `AuditRefusedWrites`), both probes exit 0, fmt and clippy
 clean; `qcore-schemas` stays 14.0.0, so constraint 18's rebuild-and-verify
 obligation is not engaged. The corpus baseline stays
-`docs/reports/wave23-c-operations/artifacts/` with the attributed AFTER runs
+`docs/reports/archive/waves-20-39/wave23-c-operations/artifacts/` with the attributed AFTER runs
 chained beneath it — `aom-destroy-siblings`, now `aom-binding-poison` — and no
 frozen archive is edited. Nothing is promoted: every raw Cycle 19 unit stays
 unpromoted, a provisional `Unsafe` is never an upstream defect claim, and full
 language conformance stays **false**. Evidence:
-`docs/reports/windows-native-sockets-harness/README.md`,
-`docs/reports/socket-v1-windows-run/README.md`,
-`docs/reports/socket-event-compose/README.md`, `docs/reports/loop-v1/README.md`,
-`docs/reports/string-concat/README.md`,
-`docs/reports/aom-binding-poison/README.md`,
-`docs/reports/wave25-close/gate.json`.
+`docs/reports/archive/language-and-tooling/windows-native-sockets-harness/README.md`,
+`docs/reports/archive/language-and-tooling/socket-v1-windows-run/README.md`,
+`docs/reports/archive/language-and-tooling/socket-event-compose/README.md`, `docs/reports/archive/language-and-tooling/loop-v1/README.md`,
+`docs/reports/archive/language-and-tooling/string-concat/README.md`,
+`docs/reports/archive/language-and-tooling/aom-binding-poison/README.md`,
+`docs/reports/archive/waves-20-39/wave25-close/gate.json`.
 
-SOCKET-V1-WINDOWS-RUN (2026-09-12): the two published `source.socket.v1` examples now compile and execute through the shared Visual Studio infrastructure on Windows, with a harness entry point that refuses unless the `cc` toolchain resolved Microsoft's actual `cl.exe` rather than an MSVC-like substitute. The TCP and UDP programs link Winsock solely through the emitted source's `#pragma comment(lib, "ws2_32.lib")`, run their real loopback implementations, keep stderr empty and reproduce the reference observation byte for byte; a repeated TCP run pins platform-independent determinism. Visual Studio 18 Community MSVC 19.51.36248 passes all three native rows and the complete 49-test `std_socket` target, and the MSVC-core CI lane now names that target explicitly while Clang is unavailable. The standing workspace gate also exposed and repaired one unrelated CRLF-only test-reader defect: `string_slice_io` now normalizes the included README before locating its LF-spelled transcript fence, without changing source or string semantics. This is native execution evidence, not a sanitizer claim; socket semantics, certificates, verdicts, providers, Lean and frozen corpus artifacts are unchanged. Evidence: `docs/reports/socket-v1-windows-run/README.md`.
+SOCKET-V1-WINDOWS-RUN (2026-09-12): the two published `source.socket.v1` examples now compile and execute through the shared Visual Studio infrastructure on Windows, with a harness entry point that refuses unless the `cc` toolchain resolved Microsoft's actual `cl.exe` rather than an MSVC-like substitute. The TCP and UDP programs link Winsock solely through the emitted source's `#pragma comment(lib, "ws2_32.lib")`, run their real loopback implementations, keep stderr empty and reproduce the reference observation byte for byte; a repeated TCP run pins platform-independent determinism. Visual Studio 18 Community MSVC 19.51.36248 passes all three native rows and the complete 49-test `std_socket` target, and the MSVC-core CI lane now names that target explicitly while Clang is unavailable. The standing workspace gate also exposed and repaired one unrelated CRLF-only test-reader defect: `string_slice_io` now normalizes the included README before locating its LF-spelled transcript fence, without changing source or string semantics. This is native execution evidence, not a sanitizer claim; socket semantics, certificates, verdicts, providers, Lean and frozen corpus artifacts are unchanged. Evidence: `docs/reports/archive/language-and-tooling/socket-v1-windows-run/README.md`.
 
 <!-- migrated-section:end -->

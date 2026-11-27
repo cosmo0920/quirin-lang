@@ -1,0 +1,13 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "gate-scope-lib-unit-test-modules",
+ "total_pruned_files": 1,
+ "total_pruned_bytes": 144099,
+ "artifacts": [
+  {
+   "path": "replay.json",
+   "bytes": 144099,
+   "sha256": "d2e9683b6c205ef58ae0a124b16f4495bde40a3f97f3c1e0f5ce8bcc55afccef"
+  }
+ ]
+}

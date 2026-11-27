@@ -1,0 +1,73 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "w2-profile-manifests",
+ "total_pruned_files": 13,
+ "total_pruned_bytes": 891976,
+ "artifacts": [
+  {
+   "path": "after-diagnostics.json.gz",
+   "bytes": 400563,
+   "sha256": "f337ea75eb6182f0fd041000eadad3ddfc7a8389249fe15f7348dfff6ed48a68"
+  },
+  {
+   "path": "after-full-audit.log.gz",
+   "bytes": 14526,
+   "sha256": "9673ddbda2d1ce07e1b143dc5a5826fdcddba094c6827f956d7381b2912f8f5a"
+  },
+  {
+   "path": "after-libevent.log",
+   "bytes": 1140,
+   "sha256": "9e3f367f6eea6f6edd6dd290ffb76e6ea104f76750053af3fd1dacc69c8cd41f"
+  },
+  {
+   "path": "baseline-diagnostics.json.gz",
+   "bytes": 400563,
+   "sha256": "f337ea75eb6182f0fd041000eadad3ddfc7a8389249fe15f7348dfff6ed48a68"
+  },
+  {
+   "path": "baseline-full-audit.log.gz",
+   "bytes": 14312,
+   "sha256": "c5428bd306fa1991de4f51e1e7400130fb7d91a6d8eb0617db0dfd53fc568ba7"
+  },
+  {
+   "path": "baseline-libevent.log",
+   "bytes": 652,
+   "sha256": "872dd87aff875eea547f8cd91e3e019afb8700cfac1247f0106b149dadc706c0"
+  },
+  {
+   "path": "clippy.log",
+   "bytes": 322,
+   "sha256": "653a58da61de79ad85c98e05c9d945e5c5235fc537234f15327415ddbb334714"
+  },
+  {
+   "path": "fmt.log",
+   "bytes": 0,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+   "path": "followup.log",
+   "bytes": 9181,
+   "sha256": "4a780912bc0d69b98ab2526c9d8a52eb8572a55b89e6ed1ec30cd08b075f68cd"
+  },
+  {
+   "path": "lean.log",
+   "bytes": 2351,
+   "sha256": "ed6080932e4cd5b840e26218565dcf3d89f1f0449a71f9bed7d6dbf78de68bdc"
+  },
+  {
+   "path": "probe.log",
+   "bytes": 2789,
+   "sha256": "64c7f72b4e2ed0c98a7fa056e64fcf1a8baca6397724f888a91c57ae6248212a"
+  },
+  {
+   "path": "submodule.log",
+   "bytes": 0,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+   "path": "workspace.log",
+   "bytes": 45577,
+   "sha256": "70b76073e5f47272cc3ea7a10a04aea11e45c1dd102b2a41aa403b069b0bc30f"
+  }
+ ]
+}

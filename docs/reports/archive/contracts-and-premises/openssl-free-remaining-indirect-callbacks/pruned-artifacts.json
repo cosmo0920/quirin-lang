@@ -1,0 +1,23 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "openssl-free-remaining-indirect-callbacks",
+ "total_pruned_files": 3,
+ "total_pruned_bytes": 1693396,
+ "artifacts": [
+  {
+   "path": "gate/gate-4.json",
+   "bytes": 564084,
+   "sha256": "2c63f4336b692217ebecd9cc7a60b87279f94d97bfbb09ab46e5ddb4e275c191"
+  },
+  {
+   "path": "gate/gate-5.json",
+   "bytes": 564353,
+   "sha256": "d9345084337ad7efed88a7f2b261a0d2ce8f4abe51ef0ffb3b72395d87524b82"
+  },
+  {
+   "path": "integration/gate-scope.json",
+   "bytes": 564959,
+   "sha256": "df41ff29cf56aa9bbd95db3ff637fc7724a7bae98dd41baf3aee1daa7a6396d2"
+  }
+ ]
+}

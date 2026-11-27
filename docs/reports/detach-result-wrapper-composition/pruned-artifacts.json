@@ -1,0 +1,23 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "detach-result-wrapper-composition",
+ "total_pruned_files": 3,
+ "total_pruned_bytes": 257026,
+ "artifacts": [
+  {
+   "path": "artifacts/base-plan.json.gz",
+   "bytes": 90863,
+   "sha256": "93bda0327c8e1f72647cb18e80fabb7108a23bc349ef5f9d28e4a7c167391d25"
+  },
+  {
+   "path": "artifacts/nine-body-review.json",
+   "bytes": 75338,
+   "sha256": "51d9c5691a65d59ecf51d0c57efbb8db71b4627a8634be16db568acf2a90ef31"
+  },
+  {
+   "path": "artifacts/tip-plan.json.gz",
+   "bytes": 90825,
+   "sha256": "9c1226c6a48ab90649bd456a8286f820960f3ca3127626af51fbc1c0ab712f8a"
+  }
+ ]
+}

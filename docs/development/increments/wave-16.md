@@ -29,7 +29,7 @@ only place per-increment history lives.
   in `CLAUDE.md`. The sweep is regex-driven plus a manual pass — thorough,
   not provably exhaustive — and the complete original text remains in git
   history and, for every unpreserved paragraph, verbatim here. Evidence:
-  `docs/reports/wave16-docs-compact/README.md`.
+  `docs/reports/archive/early-waves/wave16-docs-compact/README.md`.
 - Ledger and tooling hygiene (HYGIENE-16): three tally-neutral follow-ons
   close and none moves a number. `D02-BUCKETS-STALE` was measured **already
   repaired** — HYGIENE-14 made the counted set structural and CT-LABELS made
@@ -56,7 +56,7 @@ only place per-increment history lives.
   regenerating: `build_matrix.py`'s writer had never emitted the committed
   matrix's byte form, so every "adopt the regenerated matrix" commit
   re-serialised its output by hand; the writer now emits the committed form.
-  Evidence: `docs/reports/wave16-hygiene/README.md`.
+  Evidence: `docs/reports/archive/early-waves/wave16-hygiene/README.md`.
 - Chained tail actuals (NEIGHBOURS-CHAINED-TAIL): the one refusal wave 15
   isolated falls. A tail actual at a **declared**
   `resource_variadic_data_tail()` position that is exactly one admitted
@@ -75,7 +75,7 @@ only place per-increment history lives.
   removed, `flb_input_chunk_create` L19581, the line NEIGHBOURS predicted.
   28 audited theorems (`QCore.ChainedTailActual`); CHAINED-TAIL-NO-LIVENESS
   is recorded as inherited, not created. Evidence:
-  `docs/reports/remaining-neighbours-chained-tail/README.md`.
+  `docs/reports/archive/early-waves/remaining-neighbours-chained-tail/README.md`.
 - Opaque aggregate members (ALIAS-AGGREGATE): the twelve `unresolved
   resource identity` residuals NEIGHBOURS left on production
   `flb_input_chunk_create` are measured to have **no aliasing cause at all**
@@ -93,7 +93,7 @@ only place per-increment history lives.
   corpus reach is five statements in four units, with **all four added leaves
   refusals replacing refusals**. Fourteen new audited theorems across two
   existing namespaces, none retired. Evidence:
-  `docs/reports/remaining-alias-aggregate/README.md`.
+  `docs/reports/archive/early-waves/remaining-alias-aggregate/README.md`.
 - Declared/C ABI agreement (LOADER-ABI): a declared contract whose parameter
   or result ABI projections the analysed translation unit's own C declaration
   contradicts is now **withdrawn for that unit** — every call site refuses
@@ -119,7 +119,7 @@ only place per-increment history lives.
   the two namespaces, and the two probes composition made undiscriminating
   are retired **by name** rather than left to pass vacuously.
   `O04-TRACE-REACH` still stands: no production claim is restored. Evidence:
-  `docs/reports/remaining-loader-abi/README.md` (§10 for the reconciliation).
+  `docs/reports/archive/early-waves/remaining-loader-abi/README.md` (§10 for the reconciliation).
 - Publication custody (CTWIN-PUBLISH): the wave-9 `CT-CTWIN-PUBLISH` hazard
   is reproduced and closed — a store of an owned pointer into a file-scope
   object was `Safe` with no diagnostic, and so was publishing an
@@ -143,7 +143,7 @@ only place per-increment history lives.
   on the whole verdict in both directions. 30 audited theorems
   (`QCore.PublicationCustody`); CT40 candidate rows recorded without touching
   the manifest, with `_Atomic` measured *not* load-bearing. Evidence:
-  `docs/reports/remaining-ctwin-publish/README.md`.
+  `docs/reports/archive/early-waves/remaining-ctwin-publish/README.md`.
 - Filesystem-close composition (P04-COMPOSE-FS): the fourth composition
   module moves through the process boundary — the first with **two derived
   units in one question** and the first whose **every** prerequisite is
@@ -164,7 +164,7 @@ only place per-increment history lives.
   (`QCore.TwoDerivationAdmission`). `unsupported_close` is now composable-now
   and honestly sized out as `P04-COMPOSE-UNSUPPORTED` — a fifth proposal
   record carrying the symbolic other-backend class, not an extension of this
-  one. Evidence: `docs/reports/remaining-p04-compose-fs/README.md`.
+  one. Evidence: `docs/reports/archive/early-waves/remaining-p04-compose-fs/README.md`.
 - Corpus consolidation: one integrator measurement
   (`docs/reports/wave16-corpus/`) re-pins the baseline. The diagnostics diff
   is 4 added / 14 removed across four units and is **triangulated in both

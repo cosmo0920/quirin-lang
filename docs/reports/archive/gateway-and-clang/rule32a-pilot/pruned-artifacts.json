@@ -1,0 +1,23 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "rule32a-pilot",
+ "total_pruned_files": 3,
+ "total_pruned_bytes": 4389077,
+ "artifacts": [
+  {
+   "path": "identity/bytes-corpus.txt",
+   "bytes": 4389071,
+   "sha256": "393afd87c0d15e8c59996a32a49f66c9f5fd8eb77e9bd6970e1138090d527ef9"
+  },
+  {
+   "path": "identity/corpus-substitution.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "identity/substitution-ids.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  }
+ ]
+}

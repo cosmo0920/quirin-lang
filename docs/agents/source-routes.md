@@ -215,7 +215,7 @@ read. Rule numbers and anchors are stable; backticked paths are repository-relat
 ## Amendments after the 2026-09-19 migration checkpoint
 
 The blocks above are the migration's **preserved checkpoint text**, which
-`docs/reports/docs-structure-compression/verify.py` reconstructs byte for byte;
+`docs/reports/archive/language-and-tooling/docs-structure-compression/verify.py` reconstructs byte for byte;
 amendments therefore land here, beside the frozen text rather than inside it
 (standing constraint 21's own discipline). They are part of the rule.
 
@@ -255,7 +255,7 @@ entry's row is the scalar route's contextual spelling. The census is the one
 card 0 shipped (`docs/reports/w48-qr-scalar-types/census_spelling.py`): `as`
 before a scalar type name occurs in the tracked `.qr`/`.qv`/`.qrlib` files only
 in the three card examples, and the whole-tree fixture freeze
-(`docs/reports/w48-qr-scalar-types-r3/artifacts/fixtures-compare.txt`) is the
+(`docs/reports/archive/wave-48/w48-qr-scalar-types-r3/artifacts/fixtures-compare.txt`) is the
 census of the value-statement and typed-field shapes: no tracked file changes
 its reading, and the only admissions that move are `remaining-v04`'s P08 and
 P10, refused by the extern-declaration read — a declaration check, not a word.
@@ -271,7 +271,7 @@ a string literal inside a `struct!` or a `#c_ffi` signature (`c` stays an
 ordinary identifier everywhere else, and name resolution never walks declaration
 tokens); and `[| quant #c_ffi |]` before `extern fn` at declaration position,
 five tokens the lexer already produced. The census
-(`docs/reports/w48-qr-c-struct-import/census_ffi_spelling.py`, a token-level
+(`docs/reports/archive/wave-48/w48-qr-c-struct-import/census_ffi_spelling.py`, a token-level
 reading of all 632 tracked `.qr`/`.qv`/`.qrlib`/`.qcore`/`.qc` files) found
 **zero** `struct !`, `c"…"`, `[|`, `|]`, `c_ffi` and `std.ffi` before the card,
 and the whole-tree fixture freeze found every existing file byte-identical in
@@ -291,7 +291,7 @@ statement's references). A closure's header and body are its hidden worker's,
 so a window that contains a closure without lying inside it skips them
 (`SourceProgram::outside_closure_window`) — a sixth name-resolution
 exclusion, bounded by the closure's own extent. The census
-(`docs/reports/w48-qr-closures/census_closure_spelling.py`, all 697 tracked
+(`docs/reports/archive/wave-48/w48-qr-closures/census_closure_spelling.py`, all 697 tracked
 `.qr`/`.qv`/`.qrlib`/`.qcore`/`.qc` files) found **zero** `spawn NAME |`,
 `spawn NAME ||`, `spawn NAME [|`, `|` before a capture-mode word, `|`/`||`
 before `->` and `as NAME` in a spawn's capture list, and the whole-tree
@@ -311,7 +311,7 @@ route's own row reader, never by name resolution); and a float literal at an
 operand position. The lexer's existing `Float` token (`DIGITS . DIGITS`) gains
 an exponent written directly after the digits, `(e|E) [+|-] DIGITS`, taken
 only when a digit follows, so `1.5e` and `1e+` lex as before. The census
-(`docs/reports/w48-qr-floating-point/census_float_spelling.py`, all 701 tracked
+(`docs/reports/archive/wave-48/w48-qr-floating-point/census_float_spelling.py`, all 701 tracked
 `.qr`/`.qv`/`.qrlib`/`.qcore`/`.qc` files before the card) found **zero**
 exponent spellings, `f32`, `partial_eq`, `partial_ord`, `as f32`/`as f64` and
 either word in an effect row; `f64` only in `.qv` contract signatures and two
@@ -354,7 +354,7 @@ modes × two bases × seven declaration positions, each against a control named
 `flb_noop`) moved **321** selections on the base; after, **0** in the five
 name positions, and in the record-name and type positions exactly the base's
 105; the tracked route census (1,436 rows) is byte-identical
-([report](../reports/qr-lexical-selectors-declaration-names/README.md); Lean
+([report](../reports/archive/language-and-tooling/qr-lexical-selectors-declaration-names/README.md); Lean
 `QCore.RouteSelection`).
 
 Add `qr-lexical-selectors-declaration-names` to the rule's closing evidence list.
@@ -378,9 +378,9 @@ declaration name, an `extern fn print(…)`, a contract clause) selects nothing;
 a pair inside a body elsewhere, or a call beside a declaration named `print`,
 refuses at selection (`Q020`), never routed; and a `module contract;` module
 is never compiled on this route
-([QR-PRINT-ROUTE-MATCHES-DECLARATION](../reports/qr-print-route-matches-declaration/README.md)),
+([QR-PRINT-ROUTE-MATCHES-DECLARATION](../reports/archive/language-and-tooling/qr-print-route-matches-declaration/README.md)),
 nor, since
-[QR-LEXICAL-SELECTORS-DECLARATION-NAMES](../reports/qr-lexical-selectors-declaration-names/README.md),
+[QR-LEXICAL-SELECTORS-DECLARATION-NAMES](../reports/archive/language-and-tooling/qr-lexical-selectors-declaration-names/README.md),
 on any source-only route (constraint 14's amendment of that card).
 The selector must preserve sequential resource intrinsics, literal-only
 legacy programs and unsupported control-flow diagnostic pins. Read retained

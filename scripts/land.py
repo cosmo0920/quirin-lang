@@ -95,6 +95,7 @@ import unpublished_landings  # noqa: E402  (the unpublished-landings sentence)
 MATRIX = Path("docs/reviews/r0_3/acceptance_matrix.json")
 MATRIX_COMMAND = "python3 docs/reports/remaining-d02/build_matrix.py . --gate <gate.json>"
 INDEX_COMMAND = "python3 scripts/build_docs_index.py"
+HYGIENE_COMMAND = "python3 scripts/check_report_hygiene.py"
 CONTRIBUTIONS_COMMAND = "python3 scripts/contribution_ledgers.py render"
 UNPUBLISHED_COMMAND = unpublished_landings.WRITE_COMMAND
 STATUS = unpublished_landings.STATUS
@@ -297,11 +298,18 @@ def stale_records(root):
     except (OSError, ValueError, KeyError, TypeError) as error:
         stale.append((f"{MATRIX} cannot be read as the acceptance matrix ({error!r})",
                       MATRIX_COMMAND))
-    index = subprocess.run([sys.executable, str(root / "scripts/build_docs_index.py"), "--check"],
+    index = subprocess.run([sys.executable, str(root / "scripts/build_docs_index.py"), "--check",
+                            "--root", str(root)],
                            capture_output=True, text=True)
     if index.returncode != 0:
         stale.append(("docs/reports/INDEX.md: " + (index.stderr or index.stdout).strip(),
                       INDEX_COMMAND))
+    hygiene = root / "scripts/check_report_hygiene.py"
+    if hygiene.is_file():
+        report_hygiene = subprocess.run([sys.executable, str(hygiene), "--root", str(root)],
+                                        capture_output=True, text=True)
+        if report_hygiene.returncode != 0:
+            stale.append(((report_hygiene.stderr or report_hygiene.stdout).strip(), HYGIENE_COMMAND))
     ledgers = root / "scripts/contribution_ledgers.py"
     if ledgers.is_file():
         page = subprocess.run([sys.executable, str(ledgers), "--root", str(root), "render",

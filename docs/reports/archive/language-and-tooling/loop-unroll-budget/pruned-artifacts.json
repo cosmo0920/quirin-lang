@@ -1,0 +1,13 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "loop-unroll-budget",
+ "total_pruned_files": 1,
+ "total_pruned_bytes": 23188,
+ "artifacts": [
+  {
+   "path": "artifacts/workspace_tail.log",
+   "bytes": 23188,
+   "sha256": "9aef9fc0562bacbfbe8a6479e613d1c5079fe71b75ed3d342766be6b3fa4d606"
+  }
+ ]
+}

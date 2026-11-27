@@ -1,2 +1,0 @@
-write_text (base): 330736 of 506634 reads refused ('has no MemAvailable field')
-os.replace (fix): 0 of 440951 reads refused ('has no MemAvailable field')

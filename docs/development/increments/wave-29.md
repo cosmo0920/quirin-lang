@@ -34,12 +34,12 @@ two faithful size-query contracts (corpus 73 → **74**), BEFORE run
 byte-identical to the wave-27 baseline, AFTER run removing exactly thirteen
 `unsupported` uncontracted-call leaves (49,773 → **49,760**), leak **266
 unmoved** (no fifth move), zero status moves, nothing promoted; the corpus
-baseline moves to `docs/reports/w29-corpus-contracts/artifacts/`. Zero
+baseline moves to `docs/reports/archive/waves-20-39/w29-corpus-contracts/artifacts/`. Zero
 reserved words (`lend` contextual, censused +0) and zero new diagnostic codes
 across the wave. Lean audits 115 → **118**. Merged gate at the close tip:
 4,445 workspace tests (8 ignored, `--no-fail-fast`), 122 provider (carried),
 193 Python, both probes exit 0, fmt/clippy clean
-(`docs/reports/wave29-close/gate.json`); constraint-16 load rows that tripped
+(`docs/reports/archive/waves-20-39/wave29-close/gate.json`); constraint-16 load rows that tripped
 under concurrent suites were re-verified in isolation, both facts recorded
 each time. The acceptance matrix is regenerated through `build_matrix.py
 --gate` (hand-kept sections carried; the derived-fact tripwire and the CT
@@ -79,11 +79,11 @@ one discarded first AFTER attempt (exit 101, truncated output, no artifacts)
 is archived and recorded as environment-class, contributing to no verdict. No
 new diagnostic code, no keyword, no Lean module (no semantic surface moves —
 the AOM-DESTROY-SIBLINGS precedent). New baseline
-`docs/reports/w29-corpus-contracts/artifacts/`, chained on the frozen
+`docs/reports/archive/waves-20-39/w29-corpus-contracts/artifacts/`, chained on the frozen
 predecessors (constraint 21); named follow-ons `W29-CONTENT-SIZE-UNDECLARED`
 and `W29-SIZE-SIBLINGS-UNDECLARED`. Gate at the card tip: workspace tests,
 fmt/clippy, both probes, Lean audits and Python suite per the card report §6.
-Evidence: `docs/reports/w29-corpus-contracts/README.md`.
+Evidence: `docs/reports/archive/waves-20-39/w29-corpus-contracts/README.md`.
 
 Wave 29, card `SLICE-PERMISSIONS-WRITE-LEND` (2026-09-12): the write half of
 CT07 the read card named — `let NAME = lend(BUFFER, LOW, HIGH);` on
@@ -124,7 +124,7 @@ lends' rebased accesses cannot collide, a confined window preserves every
 unlent byte). Two fixture programs a CT lane can point at
 (`disjoint_write_halves.qcore`, `overlapping_lends.qcore`); the lane statement,
 the proposed 15h amendment and the boundaries are in
-`docs/reports/slice-permissions-write-lend/README.md`. Corpus-neutral by
+`docs/reports/archive/language-and-tooling/slice-permissions-write-lend/README.md`. Corpus-neutral by
 construction: no gateway, contract, audit or provider file in the diff, leak
 pin 266 untouched, nothing promoted.
 

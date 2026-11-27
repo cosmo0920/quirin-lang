@@ -1,0 +1,33 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "w45-user-contract-plugins",
+ "total_pruned_files": 5,
+ "total_pruned_bytes": 3844,
+ "artifacts": [
+  {
+   "path": "identity/baseline-identity-contracts.json.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "identity/baseline-identity-source-effects.json.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "identity/baseline-identity.json.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "integration/card-contracts-difference-stale.log",
+   "bytes": 446,
+   "sha256": "a750f07d589c19e597bca0d980d9d720c8d15e5c99fecab5688c787bf484b71f"
+  },
+  {
+   "path": "integration/contracts-raw-diff.log",
+   "bytes": 3389,
+   "sha256": "558613fda572d8eb0142a9325701a3ac45fc0372cafdc8e837319b22747959b6"
+  }
+ ]
+}

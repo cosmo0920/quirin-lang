@@ -1,0 +1,78 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "cycle19-current-command",
+ "total_pruned_files": 14,
+ "total_pruned_bytes": 104842,
+ "artifacts": [
+  {
+   "path": "clippy.log.gz",
+   "bytes": 146,
+   "sha256": "5a0429216de831f18de44b0a69b4cdf10d0180a56b8f9f0a67e6f20369bc9eb4"
+  },
+  {
+   "path": "command-test.log.gz",
+   "bytes": 312,
+   "sha256": "9c2ceb398a08d4fc51fc9c8010fb80d54372bca3e6c204cb0f74dfeed375a4bb"
+  },
+  {
+   "path": "current.log.gz",
+   "bytes": 1606,
+   "sha256": "b84a67d773a44d8b036687845ba6bd3acd931c42a0efe5983df500171fd86e75"
+  },
+  {
+   "path": "followup.log.gz",
+   "bytes": 1744,
+   "sha256": "23da5650b8c10989911631f88f326537c9cbc01828fa26bc2af6ec1a3853f1a1"
+  },
+  {
+   "path": "lean-audits.log.gz",
+   "bytes": 10264,
+   "sha256": "3ac576a0e6230bf5d1cffe3e7fc46a1af670ee5716a56cea804cab617ef96fd4"
+  },
+  {
+   "path": "lean.log.gz",
+   "bytes": 60,
+   "sha256": "b17aae97a7347ffca8031ca36026511a1cf8b909ca61599387b288d801f0a46c"
+  },
+  {
+   "path": "monkey-prepare.log.gz",
+   "bytes": 106,
+   "sha256": "2873ba736e30abb64e7f291ee8826ad929570d91b306fc3d62e071ef86461579"
+  },
+  {
+   "path": "pinned-rejection.log.gz",
+   "bytes": 152,
+   "sha256": "afbe62cbb87bac5d54640ecf63ce48e8f70e0551491e3136d24a7fe1845eaa53"
+  },
+  {
+   "path": "probe.log.gz",
+   "bytes": 659,
+   "sha256": "810d5bba6facd639dcbcbba6dd7200351fce9c9bd7b1d0869fc27533480331dd"
+  },
+  {
+   "path": "regression.log.gz",
+   "bytes": 676,
+   "sha256": "9b688d422e0678edee098e10d77844e30b00f8e4ed2c28944d2afe4790fb0043"
+  },
+  {
+   "path": "resource-diagnostics.chunk-contracts.json.gz",
+   "bytes": 259,
+   "sha256": "67492fde3a664fa6b313b4160c881bea6f5e1cd3438df25753bc739ce887bc5a"
+  },
+  {
+   "path": "resource-diagnostics.contracts.json.gz",
+   "bytes": 1276,
+   "sha256": "de935c7eb6dec2f7fd98b700b4b785b78381bf32306b7b36489aeaa4aa8f65c1"
+  },
+  {
+   "path": "resource-diagnostics.json.gz",
+   "bytes": 66940,
+   "sha256": "de3bd1699d0f36eec734d68937e6adf94c44d4c36fab9282457cd9dbd035cfaf"
+  },
+  {
+   "path": "tests.log.gz",
+   "bytes": 20642,
+   "sha256": "28e9ab3958c0acb2e5ef16f53c2329689790369aa3859c20c08a8246138d025f"
+  }
+ ]
+}

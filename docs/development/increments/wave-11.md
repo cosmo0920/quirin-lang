@@ -26,7 +26,7 @@ nothing above and each card's record keeps its own boundaries.
   refuted by measurement (this backend's Buffer has no extent); disposal is
   the one derived figure; guard/rank composition is refused deliberately
   with controls. 30 new audited theorems. Evidence:
-  `docs/reports/remaining-t08-compose/README.md`.
+  `docs/reports/archive/early-waves/remaining-t08-compose/README.md`.
 - Conditional-arm raw scan (E01-RAW-COND): the recovered wave-10 commit
   applied cleanly; a #if group's file-scope depth is the greatest depth its
   arms reach, so the scan can only hide, never invent, definitions —
@@ -34,7 +34,7 @@ nothing above and each card's record keeps its own boundaries.
   mechanism agreement rather than analysis coverage, and a latent
   phantom-definition hazard in the replaced rule is closed in passing.
   24 audited theorems. Evidence:
-  `docs/reports/remaining-e01-raw-cond/README.md`.
+  `docs/reports/archive/early-waves/remaining-e01-raw-cond/README.md`.
 - Recursion reach (C03-REACH): reach is still 0 — now known over the true
   population, 8x the recorded one (46 components / 96 members across 21
   units, 17 of them mutual), with the dominant indirect-access blocker
@@ -43,7 +43,7 @@ nothing above and each card's record keeps its own boundaries.
   recorded as `docs/design/W4_NEUTRAL_EXPRESSION_POSITIONS.md` with
   digits10 as the minimal validation case. The census is route-derived and
   the corpus byte-identical. Evidence:
-  `docs/reports/remaining-c03-reach/README.md`.
+  `docs/reports/archive/early-waves/remaining-c03-reach/README.md`.
 - May-alias refinement (C02-P-ALIAS): a modeled read is unresolved, never
   Safe, when another same-tag name was released on the reaching path and
   neither discharge (body-acquired provenance; pointer-inequality branch)
@@ -53,9 +53,9 @@ nothing above and each card's record keeps its own boundaries.
   byte-identical, the hazard recorded as C02-P-ALIAS-LEAK-ORDER rather than
   disturbed. One corpus obligation fires (rd_kafka_new); the C02-P agreement
   pin flips per its own design. 41 audited theorems. Evidence:
-  `docs/reports/remaining-c02-p-alias/README.md`.
+  `docs/reports/archive/early-waves/remaining-c02-p-alias/README.md`.
 - Corpus consolidation: one integrator measurement
-  (`docs/reports/wave11-corpus/`) re-pins the baseline — 2 Safe /
+  (`docs/reports/archive/early-waves/wave11-corpus/`) re-pins the baseline — 2 Safe /
   42 provisional Unsafe / 137 Unknown / 4 data-only unchanged, and the only
   changed unit is rdkafka.c, carrying both gateway cards' predicted effects
   at once; all other artifacts byte-identical with no residue class

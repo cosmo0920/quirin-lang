@@ -1,0 +1,78 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "scalar-route-exit-edge",
+ "total_pruned_files": 14,
+ "total_pruned_bytes": 1700991,
+ "artifacts": [
+  {
+   "path": "artifacts/chunk-contracts-before.json.gz",
+   "bytes": 281907,
+   "sha256": "d2a1d5c9f43135a5bd24998866093921607693e32a6b588cbb742431fde1d5ee"
+  },
+  {
+   "path": "artifacts/chunk-contracts.json.gz",
+   "bytes": 281900,
+   "sha256": "44fa0df45e13d8ed8d0209a728bc0bce969e1280fbad6f3ea6d86234e9094883"
+  },
+  {
+   "path": "artifacts/diagnostics-before.json.gz",
+   "bytes": 567606,
+   "sha256": "f4be084bfc012c3a79ed55f521043d3353c761934aa9cc309ea890eb14dc1a4e"
+  },
+  {
+   "path": "artifacts/diagnostics.json.gz",
+   "bytes": 567599,
+   "sha256": "28fab5938d8d037ebab961408b1fc8b7e859378e444213d1df96cfb87d6b3404"
+  },
+  {
+   "path": "gate/clippy.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/fmt.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/fmt.log",
+   "bytes": 0,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+   "path": "gate/followup.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/lean.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/probe.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/submodule.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/test-gateway-postfmt.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/test.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "mutations.log",
+   "bytes": 1955,
+   "sha256": "8ece2ca41d7d7ce9031a2b4880d9e713ff38af9f9198f1c267afa43016ff32a4"
+  }
+ ]
+}

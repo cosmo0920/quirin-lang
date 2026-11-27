@@ -13,7 +13,7 @@ card worktrees. The integration branch starts from `b3ec447b`, incorporates
 |---|---|---|
 | [CT24](../ct24-cleanup-task-composition/README.md) | Does cleanup release an owner while its child loan remains live? | The actual task ledger refuses; after-join and independent-owner controls admit. Success-arm credit evidence is conditional. |
 | [CT10](../ct10-source-layout/README.md) | Are simultaneous field writes independent under a declared layout? | Shared bit-field units refuse Q661. Property-only successful spawn/join window; no task-lifetime proof or C emission. |
-| [CT41](../ct41-sync-model/README.md) | Does a successful release/acquire observation order a payload write/read? | Dedicated bounded C API with declared invocation counts. The original CT41 case remains unmapped; plain and volatile both lack synchronization. |
+| [CT41](../archive/language-and-tooling/ct41-sync-model/README.md) | Does a successful release/acquire observation order a payload write/read? | Dedicated bounded C API with declared invocation counts. The original CT41 case remains unmapped; plain and volatile both lack synchronization. |
 
 Model proofs, case-bound proof stages and native observations remain distinct.
 These changes establish no Fluent Bit production verdict. The

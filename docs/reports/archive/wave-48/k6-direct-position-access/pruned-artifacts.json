@@ -1,0 +1,18 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "k6-direct-position-access",
+ "total_pruned_files": 2,
+ "total_pruned_bytes": 445561,
+ "artifacts": [
+  {
+   "path": "census/sites.jsonl.gz",
+   "bytes": 62872,
+   "sha256": "41cb640f52bba47b3eb6a9c3e64a5df4c36da762c1f62195bf1d976a182612ce"
+  },
+  {
+   "path": "integration/gate-scope.json",
+   "bytes": 382689,
+   "sha256": "8d66460dfc1bad0578a1d427d7a29ef963cfa9c42b6f7e08070b0f9d12f7a693"
+  }
+ ]
+}

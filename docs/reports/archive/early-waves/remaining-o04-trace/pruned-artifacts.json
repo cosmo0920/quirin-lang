@@ -1,0 +1,18 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "remaining-o04-trace",
+ "total_pruned_files": 2,
+ "total_pruned_bytes": 27943,
+ "artifacts": [
+  {
+   "path": "logs/corpus-after.log.gz",
+   "bytes": 13971,
+   "sha256": "082b7ee213084e71187538bfd4d8d9bbaa3012405f7efc2c3debf4742b0eda6d"
+  },
+  {
+   "path": "logs/corpus-before.log.gz",
+   "bytes": 13972,
+   "sha256": "e0048b596d068edf84f2ceb07447b8c2d730832d74926640951caf4ae34d6207"
+  }
+ ]
+}

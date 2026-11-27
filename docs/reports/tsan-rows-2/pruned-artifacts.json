@@ -1,0 +1,98 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "tsan-rows-2",
+ "total_pruned_files": 18,
+ "total_pruned_bytes": 9513,
+ "artifacts": [
+  {
+   "path": "artifacts/catch-point-reverse-mutex-edge.log",
+   "bytes": 4360,
+   "sha256": "15717d1f2a54549b8b61fbfa0e1f6a6c2d6ad5fa66c47d84443ea5b737acb603"
+  },
+  {
+   "path": "artifacts/catch-rates.run.log",
+   "bytes": 412,
+   "sha256": "611418cf4283de423908cbe8382f92196de132d33f256268ce0d59677c5bf462"
+  },
+  {
+   "path": "artifacts/hook_visible_to_tsan.log",
+   "bytes": 1099,
+   "sha256": "bb3fadb1642dea930af6f7d9610ae6177846ff185a8e1710f876b7ee7750da66"
+  },
+  {
+   "path": "artifacts/sweep.log",
+   "bytes": 3598,
+   "sha256": "8e44317ac22901c78dc7fe0855b108fdcef0deb351e774794d4dcd633a78d898"
+  },
+  {
+   "path": "gate/cargo-test.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/clippy-post.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/clippy.exit",
+   "bytes": 5,
+   "sha256": "bdc830287616dae1818ced3e7c186e1387155900ad30d5983ec02da1519c4a95"
+  },
+  {
+   "path": "gate/fmt-post.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/fmt.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/followup.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/lean.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/probe.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/python-final.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/python-post.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/python.exit",
+   "bytes": 3,
+   "sha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04"
+  },
+  {
+   "path": "gate/regen-final.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/regen.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/wlt-post.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  }
+ ]
+}

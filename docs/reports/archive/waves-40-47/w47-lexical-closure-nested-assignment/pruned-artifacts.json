@@ -1,0 +1,218 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "w47-lexical-closure-nested-assignment",
+ "total_pruned_files": 42,
+ "total_pruned_bytes": 9813317,
+ "artifacts": [
+  {
+   "path": "artifacts/after/corpus-comparison/changed-leaves.jsonl.gz",
+   "bytes": 8179,
+   "sha256": "5746464f711ce3636bb91a5311d12e7833fe4f37951f96e0bd81c293a4d5d37e"
+  },
+  {
+   "path": "artifacts/after/corpus/audit.log.gz",
+   "bytes": 15099,
+   "sha256": "d6f4cd79c7255ce883e877e980ecdc5a1998dcc2dabf49f5fea9bb82abe2ccef"
+  },
+  {
+   "path": "artifacts/after/corpus/parity.jsonl.contexts.jsonl.gz",
+   "bytes": 2487,
+   "sha256": "554dddb2acf6d127da71c39f8fe2120215a4075ede54e54158679f0e3d7c0ccd"
+  },
+  {
+   "path": "artifacts/after/corpus/parity.jsonl.gz",
+   "bytes": 1833044,
+   "sha256": "2f28882aad6131fa8420d36d2af0d2892809c1d205ec3c3d7715d4f6b36f04b5"
+  },
+  {
+   "path": "artifacts/after/corpus/resource-diagnostics.chunk-contracts.json.gz",
+   "bytes": 281923,
+   "sha256": "39b79d67c2cff49ddb7d72ee96e154dbc1cfa5de8f7ffb96b8a7674332314ee0"
+  },
+  {
+   "path": "artifacts/after/corpus/resource-diagnostics.contracts.json.gz",
+   "bytes": 110371,
+   "sha256": "ec6c0e183f74066e3b996ea0960b24f4306eb52c2357587c50d1863749272472"
+  },
+  {
+   "path": "artifacts/after/corpus/resource-diagnostics.json.gz",
+   "bytes": 487918,
+   "sha256": "261c3559f770d38f59fd1e4a961e53e7c52ce353be058e0fb1b828528fedb463"
+  },
+  {
+   "path": "artifacts/after/system-comparison/changed-leaves.jsonl.gz",
+   "bytes": 1145,
+   "sha256": "135e17bae4565dc31d0c293d160f4c88253dc100824d2f53f77b9a209c284c4a"
+  },
+  {
+   "path": "artifacts/after/system/console.log.gz",
+   "bytes": 1596,
+   "sha256": "4de3f60ab9b8875ca8a1a7510105ad55be59774bf1b8602647ef83f475714d60"
+  },
+  {
+   "path": "artifacts/after/system/parity.jsonl.contexts.jsonl.gz",
+   "bytes": 3536,
+   "sha256": "bf21e997f74a6c8b017b29dcbfd88c415567802011840386655a3ca10047bcec"
+  },
+  {
+   "path": "artifacts/after/system/parity.jsonl.gz",
+   "bytes": 301469,
+   "sha256": "35f1999a9a652a6db4c567497da3768914c650aa2bd4db2de15dc74307e8a369"
+  },
+  {
+   "path": "artifacts/after/system/resource-diagnostics.chunk-contracts.json.gz",
+   "bytes": 302,
+   "sha256": "739445165c18db6ccb55eab13ae62b38d71de122d5fc4b29b39af9708065db6d"
+  },
+  {
+   "path": "artifacts/after/system/resource-diagnostics.contracts.json.gz",
+   "bytes": 111132,
+   "sha256": "0f690742ebf517ffb79c218bb4f6c66b68cbb60d008163826a3164fcf0b34f4c"
+  },
+  {
+   "path": "artifacts/after/system/resource-diagnostics.json.gz",
+   "bytes": 109309,
+   "sha256": "b69b9e40c19e34b92164782665e617621a064f7ffa1a15953c508200b0c7871e"
+  },
+  {
+   "path": "artifacts/after/system/stderr.log.gz",
+   "bytes": 31,
+   "sha256": "b7368871ac9ce0ce08835c8c2fbf32d88bd56ee6bb93612434e3cc6bd4405e5e"
+  },
+  {
+   "path": "gate/census-clippy.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/census-lib-tests.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/clean-dev.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/clippy.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/docs-index.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/fmt.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/lean.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/python.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/reevaluation-followup.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/reevaluation-probe.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/submodule.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/tests.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "integration/artifacts/corpus/audit.log.gz",
+   "bytes": 15109,
+   "sha256": "12719dd0a682919e956dc428ddefec3c97aa9546b32997a695cdd17791ab8c45"
+  },
+  {
+   "path": "integration/artifacts/corpus/parity.jsonl.contexts.jsonl.gz",
+   "bytes": 2486,
+   "sha256": "82661754d09fe200ed3c6f779e1f8c6a0c3065e55243ad1da1e1700acbc5ca1d"
+  },
+  {
+   "path": "integration/artifacts/corpus/parity.jsonl.gz",
+   "bytes": 4341768,
+   "sha256": "6e2f15eafb0759922029285a5f126741c80c2047002a0010ad13f1b052895c04"
+  },
+  {
+   "path": "integration/artifacts/corpus/resource-diagnostics.chunk-contracts.json.gz",
+   "bytes": 281881,
+   "sha256": "f0568583a78a62741104d890e33c7dd84ccbb67d9a692f051aa21cc3b8e01703"
+  },
+  {
+   "path": "integration/artifacts/corpus/resource-diagnostics.contracts.json.gz",
+   "bytes": 110211,
+   "sha256": "a9859aeae85b103d91787e11b369237233b7d49ef76e15086549c7c849d2561d"
+  },
+  {
+   "path": "integration/artifacts/corpus/resource-diagnostics.json.gz",
+   "bytes": 488114,
+   "sha256": "b32ac49d316b9f2c7e5c2de8a08aafc3d6d750235306c131527595ba490a9a2a"
+  },
+  {
+   "path": "integration/artifacts/system/console.log.gz",
+   "bytes": 1586,
+   "sha256": "bce59656793af7187571a49ec5eb28681ca207b679385047684bf5db0f871bcf"
+  },
+  {
+   "path": "integration/artifacts/system/parity.jsonl.contexts.jsonl.gz",
+   "bytes": 3476,
+   "sha256": "934bdff85e00f1e3080148852eaf383c74d2129510a1a49bfc0afa25694c5dbc"
+  },
+  {
+   "path": "integration/artifacts/system/parity.jsonl.gz",
+   "bytes": 1079398,
+   "sha256": "76f12270a5718b7372b1aecc8449e70ce6ab3b9ead45a3422839b7f492dfa021"
+  },
+  {
+   "path": "integration/artifacts/system/resource-diagnostics.chunk-contracts.json.gz",
+   "bytes": 260,
+   "sha256": "21c47e400097333e880703ea1d1f27b3f23cd0544271c70c8c1b96c6216afe40"
+  },
+  {
+   "path": "integration/artifacts/system/resource-diagnostics.contracts.json.gz",
+   "bytes": 111001,
+   "sha256": "cb6ec62c39496127beb868b76f17a1842b0d040b5e1b2029c595240dc9390e3b"
+  },
+  {
+   "path": "integration/artifacts/system/resource-diagnostics.json.gz",
+   "bytes": 109306,
+   "sha256": "52ea87d56abf5814c05ff6a83b478576297e8808b643fc972781bed305ac85c9"
+  },
+  {
+   "path": "integration/artifacts/system/stderr.log.gz",
+   "bytes": 20,
+   "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+  },
+  {
+   "path": "integration/compose-corpus.log",
+   "bytes": 858,
+   "sha256": "079d30ba98238b323ba1b0fd8d99bb3b122ab207ac24fbf1880b2ef904e02e72"
+  },
+  {
+   "path": "integration/compose-system.log",
+   "bytes": 266,
+   "sha256": "009cd7c6fa523c6a882789700e15d13b88091a88cf15fa238aa45c280971b7fa"
+  }
+ ]
+}

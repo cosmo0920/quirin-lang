@@ -1,0 +1,43 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "callback-member-released-effect-order",
+ "total_pruned_files": 7,
+ "total_pruned_bytes": 37143,
+ "artifacts": [
+  {
+   "path": "evidence/base-fixture.log",
+   "bytes": 868,
+   "sha256": "cb11220ef1b3ebc2a34cf246ed7fcd3858280ddf920ef682936914ab0e9fd8ec"
+  },
+  {
+   "path": "evidence/mutation/baseline-1.log",
+   "bytes": 869,
+   "sha256": "1d2d5c90f0157c9453bda4bcab8a47b95c9cdd760a5cd7baa2eaf6149384b140"
+  },
+  {
+   "path": "evidence/mutation/baseline-1.log.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "evidence/mutation/mutant-1.log",
+   "bytes": 1848,
+   "sha256": "20e3a630bccf1a3fe0548b65a6ff90565c08d4b817e2a2584f27ff5092fae1e0"
+  },
+  {
+   "path": "evidence/mutation/mutant-1.log.exit",
+   "bytes": 5,
+   "sha256": "bdc830287616dae1818ced3e7c186e1387155900ad30d5983ec02da1519c4a95"
+  },
+  {
+   "path": "evidence/probe-table.log",
+   "bytes": 741,
+   "sha256": "904ea650282ffe3b241d49d4625039e12de220dc884c5c92baddd913c384dd26"
+  },
+  {
+   "path": "integration/gate-scope.json",
+   "bytes": 32809,
+   "sha256": "3dcdd80b910ff8661c7f95635cb0c859d4e3bde2ad78958a3d0635de9ca8ce9e"
+  }
+ ]
+}

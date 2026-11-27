@@ -1,3 +1,0 @@
-$ /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a35090bafc9d378ff/providers/target/debug/quirin-plugin check providers/quirin-provider-openssl
-quirin-provider-openssl: 7 module(s), 12 checker(s), 0 override(s)
-exit 0

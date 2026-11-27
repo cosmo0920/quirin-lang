@@ -1,0 +1,13 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "c-gateway-indirect-census-2",
+ "total_pruned_files": 1,
+ "total_pruned_bytes": 120413,
+ "artifacts": [
+  {
+   "path": "artifacts/census.json",
+   "bytes": 120413,
+   "sha256": "68b5d140b27b1d4117b673c5ec913bb4a94d30dd953a3a6470ed5b98815066d0"
+  }
+ ]
+}

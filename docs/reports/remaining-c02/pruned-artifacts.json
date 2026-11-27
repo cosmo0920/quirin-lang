@@ -1,0 +1,68 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "remaining-c02",
+ "total_pruned_files": 12,
+ "total_pruned_bytes": 191472,
+ "artifacts": [
+  {
+   "path": "logs/cmetrics_audit_after.log",
+   "bytes": 709,
+   "sha256": "7d0442d7bd3f7480147c445c159d8fdaac1d36fbd8fd0c01ae129828ed72320b"
+  },
+  {
+   "path": "logs/cycle19_pin_gate.log",
+   "bytes": 285,
+   "sha256": "06b2ab0a7bce1bac8bde11112635b3b964ee24e78c7e501e91de3c0c6c581956"
+  },
+  {
+   "path": "logs/gate_clippy.log",
+   "bytes": 73,
+   "sha256": "8c798c75014ca8e4571a98e4be7530a89ec2ce9032dc7862466150bbd077d744"
+  },
+  {
+   "path": "logs/gate_fmt.log",
+   "bytes": 0,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+   "path": "logs/gate_followup.log",
+   "bytes": 9896,
+   "sha256": "1697cfe49147c6c7298fb6b94b6818606d03e09786770100a823fa24acf123b3"
+  },
+  {
+   "path": "logs/gate_lean_audits.log",
+   "bytes": 72690,
+   "sha256": "b60eb80818c4a1812944accad943c3c46f54b2316f3baa2c8793d2fb26ffac5a"
+  },
+  {
+   "path": "logs/gate_lean_build.log",
+   "bytes": 41,
+   "sha256": "64cc9ac7dbf72c71eeb9b754263d468949fe2f44a6486fdca6d9cad4672da346"
+  },
+  {
+   "path": "logs/gate_probe.log",
+   "bytes": 2663,
+   "sha256": "2fd6c95e5456f189c621f5f77fd6c178c6e3b260aa3dfa372265778ebb11e6f3"
+  },
+  {
+   "path": "logs/gate_providers_clippy.log",
+   "bytes": 73,
+   "sha256": "171c0f65babfc4727788943326a107f6d466d1aef68eeba6f3f5d9dcd1e41304"
+  },
+  {
+   "path": "logs/gate_providers_test.log",
+   "bytes": 7778,
+   "sha256": "4b02367c087ad219f72488192206c4e4805e1d168a567bf91882cdda55f38979"
+  },
+  {
+   "path": "logs/gate_python.log",
+   "bytes": 147,
+   "sha256": "5a4372e9ae47d15d995aeabc755bdddca757e37ec8e28705368d783a90c0da98"
+  },
+  {
+   "path": "logs/gate_test.log",
+   "bytes": 97117,
+   "sha256": "b8ce06fa7e7e414e27baa9980aef81ec826684a63e3778b6e8a989f8ba19de5e"
+  }
+ ]
+}

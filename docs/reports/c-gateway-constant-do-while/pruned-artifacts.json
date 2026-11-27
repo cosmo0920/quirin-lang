@@ -1,0 +1,33 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "c-gateway-constant-do-while",
+ "total_pruned_files": 5,
+ "total_pruned_bytes": 1699702,
+ "artifacts": [
+  {
+   "path": "artifacts/chunk-contracts-before.json.gz",
+   "bytes": 281879,
+   "sha256": "82a243238c20398e7d31f9c8825c753f776216b8297f6a67c47ca39b2cfff1e0"
+  },
+  {
+   "path": "artifacts/chunk-contracts.json.gz",
+   "bytes": 281879,
+   "sha256": "82a243238c20398e7d31f9c8825c753f776216b8297f6a67c47ca39b2cfff1e0"
+  },
+  {
+   "path": "artifacts/diagnostics-before.json.gz",
+   "bytes": 567761,
+   "sha256": "1746e89bd6339bce9fb04f8b5379d8c809b98f3cef809d8b7c814d3fa075556c"
+  },
+  {
+   "path": "artifacts/diagnostics.json.gz",
+   "bytes": 567679,
+   "sha256": "4791cd3eaeb294837b57c60f57dd1c4134056d6c1bedc1b2d2acf59d04034bf1"
+  },
+  {
+   "path": "logs/acyclicity.log",
+   "bytes": 504,
+   "sha256": "7c6801b8550e1631377f685396b73b32dbaed24a3c049e8a12bd4f776ee017dd"
+  }
+ ]
+}

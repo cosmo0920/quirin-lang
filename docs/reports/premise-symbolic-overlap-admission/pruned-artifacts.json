@@ -1,0 +1,88 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "premise-symbolic-overlap-admission",
+ "total_pruned_files": 16,
+ "total_pruned_bytes": 3369,
+ "artifacts": [
+  {
+   "path": "validation/focused-1-contract-views.stderr.log.gz",
+   "bytes": 241,
+   "sha256": "165a2b8b25cd7214d85725755273cecbf40bd56cc18ab1145f2ba267b80b1481"
+  },
+  {
+   "path": "validation/focused-1-contract-views.stdout.log.gz",
+   "bytes": 923,
+   "sha256": "413eba143ba160b8428d212a52761143c894df6fc8d8a918aafed759266ca20c"
+  },
+  {
+   "path": "validation/focused-2-clippy.stderr.log.gz",
+   "bytes": 251,
+   "sha256": "0d749f9f0fdaa5a8b9be7903af4fcac4141f2ab9d3d1a042102d9460b93c6299"
+  },
+  {
+   "path": "validation/focused-2-clippy.stdout.log.gz",
+   "bytes": 20,
+   "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+  },
+  {
+   "path": "validation/focused-2-contract-view-census.stderr.log.gz",
+   "bytes": 290,
+   "sha256": "575a2107c789348fcc85a9fcf4be9dc83135fa40cfa41197153abd3ccae70a6d"
+  },
+  {
+   "path": "validation/focused-2-contract-view-census.stdout.log.gz",
+   "bytes": 176,
+   "sha256": "4b32ab2d686355f89becea234f16bee053173a169b4747e08b069f5669658de6"
+  },
+  {
+   "path": "validation/focused-2-contract-views.stderr.log.gz",
+   "bytes": 208,
+   "sha256": "d04dbc44efbcf05e44bdfce9c8ee46456ec5e07cf8b06eb52a9a0d0804c1047b"
+  },
+  {
+   "path": "validation/focused-2-contract-views.stdout.log.gz",
+   "bytes": 558,
+   "sha256": "6d1b08f0e5a94329b9d6c56ac32500000fba0ac87cfa21df3a144e04c58cc68f"
+  },
+  {
+   "path": "validation/focused-2-lean-model.stderr.log.gz",
+   "bytes": 20,
+   "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+  },
+  {
+   "path": "validation/focused-2-lean-model.stdout.log.gz",
+   "bytes": 191,
+   "sha256": "bf7636305d29ed4c88969a0c92f60859681c6dad1ddb230b6d260bfeac0c07b8"
+  },
+  {
+   "path": "validation/focused-3-lean-audit.stderr.log.gz",
+   "bytes": 20,
+   "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+  },
+  {
+   "path": "validation/focused-3-lean-audit.stdout.log.gz",
+   "bytes": 290,
+   "sha256": "60f98fda19d1718357228f609764aa937f149732858d7bb961b5e73d0e2ee89d"
+  },
+  {
+   "path": "validation/focused-3-lean-model.stderr.log.gz",
+   "bytes": 20,
+   "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+  },
+  {
+   "path": "validation/focused-3-lean-model.stdout.log.gz",
+   "bytes": 20,
+   "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+  },
+  {
+   "path": "validation/focused-3-lean-version.stderr.log.gz",
+   "bytes": 20,
+   "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+  },
+  {
+   "path": "validation/focused-3-lean-version.stdout.log.gz",
+   "bytes": 121,
+   "sha256": "1da76e5d6d6023db61f164bf06cdf87c21217a1ef6691cdda381db0d7597a99b"
+  }
+ ]
+}

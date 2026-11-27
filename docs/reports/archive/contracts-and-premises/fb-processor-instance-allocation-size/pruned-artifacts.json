@@ -1,0 +1,23 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "fb-processor-instance-allocation-size",
+ "total_pruned_files": 3,
+ "total_pruned_bytes": 332509,
+ "artifacts": [
+  {
+   "path": "artifacts/access-census-summary.json",
+   "bytes": 70624,
+   "sha256": "4b3fcbfb6f0fcbf8eb99da2bd43c1ddf6c266b01fb060fc449aa94588b5623da"
+  },
+  {
+   "path": "artifacts/properties.json",
+   "bytes": 110380,
+   "sha256": "b7d092488356c3877d766270efef13b9c2f1f96bc1622887a9011e5787962903"
+  },
+  {
+   "path": "artifacts/system-046accf6.census.json",
+   "bytes": 151505,
+   "sha256": "d8fb164dd5397a90fd589fbd2a28523ca91433619edaafb0c58e6b87975881e0"
+  }
+ ]
+}

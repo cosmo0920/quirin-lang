@@ -301,7 +301,7 @@ the repository root):
 }
 ```
 
-`python3 docs/reports/w44-quirin-audit-providers/scripts/manifest_to_providers.py
+`python3 docs/reports/archive/waves-40-47/w44-quirin-audit-providers/scripts/manifest_to_providers.py
 cycle19-resource-contracts.json` prints the 47 entries equal to the Cycle 19
 manifest. Its `--config OUT.json KEY=VALUE...` form writes them into such a
 configuration.
@@ -337,7 +337,7 @@ plain relative `.c` paths, distinct across the file, and every group's library
 must be declared by the profile. The invocation record (`selection`) and the
 `.contracts.json` sidecar (`unit_selection`) name the file by path, SHA-256
 and contents. `contract/profiles/fluent-bit/system-selection.json` is the
-Fluent Bit system slice ([W45-FB-SYSTEM-SELECTION](../../docs/reports/w45-fb-system-selection/README.md)).
+Fluent Bit system slice ([W45-FB-SYSTEM-SELECTION](../../docs/reports/archive/waves-40-47/w45-fb-system-selection/README.md)).
 
 ### Per-library contract scoping and slice execution
 
@@ -480,7 +480,7 @@ QCORE_CLANG=$(command -v clang) cargo run --release -p qcore-audit -- current \
 Preparation has two steps, each also a subcommand of its own. They run the
 same git, CMake and build commands, with the same arguments, as the retired
 Python preparation scripts, and write the same files
-([parity evidence](../../docs/reports/w44-quirin-audit-prepare/README.md)):
+([parity evidence](../../docs/reports/archive/waves-40-47/w44-quirin-audit-prepare/README.md)):
 
 - `prepare clang-build` clones the checkout (`git clone --no-hardlinks
   --no-checkout`, detached at the revision) into `fluent-bit-clang-source`,
@@ -531,7 +531,7 @@ run, not an input to any verdict, so it is not part of any identity comparison.
 The `libevent-core` inputs are prepared by the external subcommand
 `quirin-audit libevent prepare` (crate `quirin-audit-plugin-libevent`), from
 the pinned `third_party/libevent` submodule, byte for byte as the retired
-preparation script did ([parity](../../docs/reports/w45-audit-subcommand-plugins/README.md)):
+preparation script did ([parity](../../docs/reports/archive/waves-40-47/w45-audit-subcommand-plugins/README.md)):
 
 ```sh
 cargo build -p qcore-audit -p quirin-audit-plugin-libevent
@@ -670,7 +670,7 @@ outcome tallies, and every file with its settings and raw SHA-256.
 `<report>.invocation.json` records the jobs, the form that declared the
 dialect, and the load path and its source. On Fluent Bit, every unit that both
 this route and the build-configured run analyse gets the same verdict; the
-[measurement](../../docs/reports/w44-contracts-only-no-build/README.md)
+[measurement](../../docs/reports/archive/waves-40-47/w44-contracts-only-no-build/README.md)
 attributes every difference.
 
 ## Pinned and flexible contracts: `quirin-audit pin` and `compare`
@@ -706,7 +706,7 @@ quirin-audit compare --before A/resource-diagnostics.json --after B/resource-dia
 The change report keeps *violation detected* (a move to `Unsafe`) apart from
 *coverage lost* (a move from `Safe` to `Pending` or `Unknown`) and lists contracts in force,
 pin mismatches, assumptions, sources and per-function obligations
-([report](../../docs/reports/w45-contract-revision-mode/README.md)); since
+([report](../../docs/reports/archive/waves-40-47/w45-contract-revision-mode/README.md)); since
 W45-USER-CONTRACT-PLUGINS it also classes moves between `Unknown` and `Pending`
 and tallies each run's four verdicts.
 

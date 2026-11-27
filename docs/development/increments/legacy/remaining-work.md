@@ -75,7 +75,7 @@ each card's record keeps its own boundaries.
   component's assumptions. Fifteen audited Lean theorems in a new
   `Composition` namespace, no new axiom. Four completeness boundaries stay
   recorded open (E03-B in the acceptance matrix). Evidence:
-  `docs/reports/remaining-e03/README.md`.
+  `docs/reports/archive/early-waves/remaining-e03/README.md`.
 - Enforced confinement (P03): the verifier host gains a target-qualified
   `linux-confined-v1` profile composing P02's setrlimit plan with Landlock
   filesystem confinement and a `CLONE_NEWUSER|CLONE_NEWNET` network namespace
@@ -86,7 +86,7 @@ each card's record keeps its own boundaries.
   working admitted paths. This is confinement of two named resource classes,
   not an OS sandbox: no seccomp, no cgroup, no other namespace, and admitted
   paths stay fully reachable. The default remains `unenforced-legacy`.
-  Evidence: `docs/reports/remaining-p03/README.md`.
+  Evidence: `docs/reports/archive/early-waves/remaining-p03/README.md`.
 - ChunkIO counter through the process boundary (P04): the unsigned
   unit-counter contract now runs as package `qcore.chunkio` 0.5.0, computing
   its own typed path projection with no derived result in the request; the
@@ -96,7 +96,7 @@ each card's record keeps its own boundaries.
   missing-evidence, tampered and 25 mutation/refusal cases fail closed.
   `qcore-schemas` is 4.0.0 (three source-incompatible additions; existing wire
   bytes unchanged and pinned). Thirteen other in-process ChunkIO capabilities
-  keep named blockers. Evidence: `docs/reports/remaining-p04/README.md`.
+  keep named blockers. Evidence: `docs/reports/archive/early-waves/remaining-p04/README.md`.
 - Source mutex/guard lowering (T03): `source.mutex.guard.v1` lowers a lexical
   `with lock m as g` guard onto the unedited `CheckedMutexInvariantV1`
   checker, with C11 emission and independent reference execution compared
@@ -117,7 +117,7 @@ each card's record keeps its own boundaries.
   validation-by-reanalysis alone cannot refuse a circular effectful candidate,
   so any effectful route keeps a rank. Design only: no production file
   changed, and heap-link chain teardown is rejected with recorded ASan
-  hazards. Evidence: `docs/reports/remaining-c03/README.md` and
+  hazards. Evidence: `docs/reports/archive/early-waves/remaining-c03/README.md` and
   `docs/design/W4_RECURSIVE_SUMMARY_PROFILES.md`.
 
 Nothing is promoted by this increment: raw Cycle 19 units stay 2 Safe /
@@ -128,7 +128,7 @@ re-measured (CORPUS-REPIN remains open). Merged gate at this checkpoint:
 1080 workspace tests, 51 provider tests, 43 Python tests, 21 Lean audits,
 both reevaluation examples exit 0, fmt and clippy clean. A pre-existing P02
 `RLIMIT_NPROC` conformance test is load-flaky (it counts every process of the
-real UID); recorded in `docs/reports/remaining-p03/README.md` §9.1 with the
+real UID); recorded in `docs/reports/archive/early-waves/remaining-p03/README.md` §9.1 with the
 assertion deliberately not weakened.
 
 #### Second delegated increment (2026-09-08)
@@ -168,7 +168,7 @@ boundaries.
   additions; existing wire bytes pinned byte-identical). The moved capability
   has no production caller yet — it is exercised by the Cycle 18 unit tests,
   not the Cycle 19 audit — and the in-process route is retained (P09).
-  Evidence: `docs/reports/remaining-p05/README.md`.
+  Evidence: `docs/reports/archive/early-waves/remaining-p05/README.md`.
 - CTraces capability definition (P06): design only, by measurement — a census
   of all 273 function definitions in the 17 pinned CTraces units finds zero
   functions any implemented checker accepts, and the `ctraces` profile entry
@@ -191,7 +191,7 @@ boundaries.
   near miss sizing follow-on P07-U1.
   `qcore.librdkafka.queue_final_destroy.v1` is specified with two disjoint
   outcomes and seven premises; reclamation, callbacks and concurrency are
-  excluded, not assumed. Evidence: `docs/reports/remaining-p07/README.md`.
+  excluded, not assumed. Evidence: `docs/reports/archive/early-waves/remaining-p07/README.md`.
 - Constructor-to-caller custody (O04): on byte-verbatim Fluent Bit `90a0109`
   bodies, the three modeled failure arms of `flb_input_chunk_create` release
   the chunk produced at `cio_chunk_open` exactly once, all naming the same
@@ -203,7 +203,7 @@ boundaries.
   directions. The canonical CMetrics audit is byte-identical before and
   after; both functions stay Unknown, and one C03 pin was deliberately
   updated (its named blocker moved to the branch condition, recorded in the
-  test and report). Evidence: `docs/reports/remaining-o04/README.md`.
+  test and report). Evidence: `docs/reports/archive/early-waves/remaining-o04/README.md`.
 - Checker/model correspondence (F01): `check_concurrent` and
   `QCore.Concurrency.Lifetime.step`/`run` are tied by a seven-conjunct
   representation relation checked without instrumenting the checker, with
@@ -215,7 +215,7 @@ boundaries.
   is digest-checked, not mechanically extracted; data races, unauthorized
   access and permission overflow are outside every stated correspondence; the
   `CheckedMutexInvariantV1` pair remains open. Evidence:
-  `docs/reports/remaining-f01/README.md`.
+  `docs/reports/archive/early-waves/remaining-f01/README.md`.
 - T03 CT integration: CT26, CT27, CT29 and CT30 are mapped with stage-derived
   evidence and exact ordered diagnostic cascades; CT coverage moves from
   11/50 to 15/50 mapped. CT26 is the first harness-gated sanitized-native CT

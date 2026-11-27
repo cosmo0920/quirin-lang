@@ -1,0 +1,98 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "contract-count-pins-from-locks",
+ "total_pruned_files": 18,
+ "total_pruned_bytes": 68033,
+ "artifacts": [
+  {
+   "path": "hand-edited-locks/baseline-after/contracts-check.log",
+   "bytes": 9648,
+   "sha256": "cfc3987d7ca2a93e26318a7d5a95397533202f9cc64159ebc7b6912cef898392"
+  },
+  {
+   "path": "hand-edited-locks/baseline-after/python.log",
+   "bytes": 113,
+   "sha256": "539546f9faac6a040a08d7560f757fbf6bfe42a357b9743aa0d7f05151de9fb5"
+  },
+  {
+   "path": "hand-edited-locks/baseline-after/rust.log",
+   "bytes": 5490,
+   "sha256": "f6a0f73fe3d69225ec0d702aec28b2c3365c88a9dbdc9b43e700e2af233bfa41"
+  },
+  {
+   "path": "hand-edited-locks/baseline-before/contracts-check.log",
+   "bytes": 9648,
+   "sha256": "cfc3987d7ca2a93e26318a7d5a95397533202f9cc64159ebc7b6912cef898392"
+  },
+  {
+   "path": "hand-edited-locks/baseline-before/python.log",
+   "bytes": 113,
+   "sha256": "89c742a2b60067721242bf837f93bccf404c94d0cb593caf594b2e52a4caaad7"
+  },
+  {
+   "path": "hand-edited-locks/baseline-before/rust.log",
+   "bytes": 5738,
+   "sha256": "e045216021c830f40100dd0f0e076527df51800fa51421da4af880882b386a48"
+  },
+  {
+   "path": "hand-edited-locks/declaration-count-off-by-one/contracts-check.log",
+   "bytes": 300,
+   "sha256": "1f38d66d0f0352b4952d2942b6153d1ccb9ed9fac74df165dbda79ac9e4b11d9"
+  },
+  {
+   "path": "hand-edited-locks/declaration-count-off-by-one/python.log",
+   "bytes": 113,
+   "sha256": "a0d8151686c7a70c73660a73773200c08be296066aaf8cda79284a9e155f07c9"
+  },
+  {
+   "path": "hand-edited-locks/declaration-count-off-by-one/rust.log",
+   "bytes": 6188,
+   "sha256": "e68ac66755024a6384ebc82c52517931d2d515243657c1629f0b293efabfb77f"
+  },
+  {
+   "path": "hand-edited-locks/function-mode-parameter-dropped/contracts-check.log",
+   "bytes": 294,
+   "sha256": "f2a5cdfc5712a9da65fcf24008dad9a092f29423d9e5cd317ff418c901417cc8"
+  },
+  {
+   "path": "hand-edited-locks/function-mode-parameter-dropped/python.log",
+   "bytes": 113,
+   "sha256": "70722574123feb2109431625420306a578a9a45a96dba708142e5896381c7ca5"
+  },
+  {
+   "path": "hand-edited-locks/function-mode-parameter-dropped/rust.log",
+   "bytes": 6967,
+   "sha256": "33f78a48de1c982a656851ab096371e759ab977df214e44dfd57e3e4dedb3a2a"
+  },
+  {
+   "path": "hand-edited-locks/resource-view-count-off-by-one/contracts-check.log",
+   "bytes": 273,
+   "sha256": "c3f630566075c4fafee02255b61388f430dd8810e33431c00de0efa7c49aa7c8"
+  },
+  {
+   "path": "hand-edited-locks/resource-view-count-off-by-one/python.log",
+   "bytes": 1010,
+   "sha256": "46b332347a60fdbd8f9a2322fb3bd6d413bef5e7b8c47ef9b0af1a9ad973969c"
+  },
+  {
+   "path": "hand-edited-locks/resource-view-count-off-by-one/rust.log",
+   "bytes": 10200,
+   "sha256": "621c786a5e09a874cca9980d70f8b43696b40aeeda7bf6fbcb1fc16acd92a6c8"
+  },
+  {
+   "path": "hand-edited-locks/retaining-count-off-by-one/contracts-check.log",
+   "bytes": 295,
+   "sha256": "3697bf7106971ba0580ba5ede80c7ca30790fab334fde56a66137e9a41c2a7a6"
+  },
+  {
+   "path": "hand-edited-locks/retaining-count-off-by-one/python.log",
+   "bytes": 1085,
+   "sha256": "7dc9430ec8a026260b08b97bc7f563597c52a122c390dca84ac3f5de7b75a828"
+  },
+  {
+   "path": "hand-edited-locks/retaining-count-off-by-one/rust.log",
+   "bytes": 10445,
+   "sha256": "4a72e3e9333c3cc4be8a6c9b8bacacd7802ef7915ac39efa16f79be14000d353"
+  }
+ ]
+}

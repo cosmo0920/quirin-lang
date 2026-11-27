@@ -3,7 +3,7 @@
 P2 of the [unsupported-coverage plan](../../plans/unsupported-coverage/README.md),
 based on `207cebe4cdb745f6216ff2b511c4b7fd134581b9`. The prediction was
 frozen before implementation in [PREDICTION.md](PREDICTION.md). The earlier
-[P1 prediction](../w46-access-path-census/PREDICTION.md) is unchanged.
+[P1 prediction](../archive/waves-40-47/w46-access-path-census/PREDICTION.md) is unchanged.
 
 ## Implementation and boundary
 

@@ -1,0 +1,23 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "rk-topic-partition-list-constructors",
+ "total_pruned_files": 3,
+ "total_pruned_bytes": 1046354,
+ "artifacts": [
+  {
+   "path": "gate/gate-1.json",
+   "bytes": 358843,
+   "sha256": "a0468660cc6409a881e3da24f34f2c0862d7a3f0d0a962cf9f25d3b2afa174ce"
+  },
+  {
+   "path": "integration/gate-scope-attempt-1.json",
+   "bytes": 342331,
+   "sha256": "c5c8f2de62e64f51f49ed01cbe25db348acc5a325e31bea6684d59b6528c103a"
+  },
+  {
+   "path": "integration/gate-scope.json",
+   "bytes": 345180,
+   "sha256": "125f3530827371c88d9e7bf9f3cbd037d903f0cd3caf0d3ca2ca63366edf7fbc"
+  }
+ ]
+}

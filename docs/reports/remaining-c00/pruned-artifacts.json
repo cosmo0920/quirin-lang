@@ -1,0 +1,18 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "remaining-c00",
+ "total_pruned_files": 2,
+ "total_pruned_bytes": 2803,
+ "artifacts": [
+  {
+   "path": "logs/cmetrics_audit.log",
+   "bytes": 709,
+   "sha256": "2c6b0ec6c05468f21c94b51c002b02eb6cc37548b7bd7d01d31c35cb73599359"
+  },
+  {
+   "path": "logs/reproducer_probe.log",
+   "bytes": 2094,
+   "sha256": "172d29a6fd507c4fe7ce9a29e5878273e56aa346c79a9f4dc27017a921dd07e7"
+  }
+ ]
+}

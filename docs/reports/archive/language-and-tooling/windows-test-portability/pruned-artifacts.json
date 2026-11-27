@@ -1,0 +1,18 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "windows-test-portability",
+ "total_pruned_files": 2,
+ "total_pruned_bytes": 910,
+ "artifacts": [
+  {
+   "path": "f02-agreement.log",
+   "bytes": 485,
+   "sha256": "a614819b666ffec0180c16006cdfba5949c881a14522280a4f7cb26e6b39de10"
+  },
+  {
+   "path": "windows-f02.log",
+   "bytes": 425,
+   "sha256": "e37f688b10e47cedd84d520167f7308d3fa7f5e1db776fe8de1a07638b6c8fcb"
+  }
+ ]
+}

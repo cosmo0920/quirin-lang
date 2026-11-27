@@ -632,7 +632,7 @@ The forecast leaf still kept is the same one as on the base
 | 7 functions and 3 units Unknown → provisional Unsafe | **none**; `cio_memfs.c`, `cio_utils.c`, `rdkafka_telemetry_encode.c` stay Unknown |
 
 **Leak classification** (constraint 7, 19 → 20), by reading, in the leak
-audit's classes ([`../w44-leak-pin-audit/scripts/`](../w44-leak-pin-audit/scripts/)):
+audit's classes ([`../w44-leak-pin-audit/scripts/`](../archive/waves-40-47/w44-leak-pin-audit/scripts/)):
 the 19 baseline leaves are main's, classified by W44-LEAK-PIN-AUDIT and
 unchanged here. The one added leaf:
 

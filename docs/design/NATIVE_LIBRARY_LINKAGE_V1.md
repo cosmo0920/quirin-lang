@@ -30,10 +30,10 @@
 > | The header level | its own design note, [`NATIVE_LIBRARY_HEADER_V1.md`](NATIVE_LIBRARY_HEADER_V1.md), and its own report |
 >
 > Evidence:
-> [`docs/reports/wave19-unsafe-linkage-artifact/README.md`](../reports/wave19-unsafe-linkage-artifact/README.md),
-> [`docs/reports/wave20-native-library-contract-slice/README.md`](../reports/wave20-native-library-contract-slice/README.md),
-> [`docs/reports/wave22-native-library-header/README.md`](../reports/wave22-native-library-header/README.md),
-> [`docs/reports/native-library-source-binding/README.md`](../reports/native-library-source-binding/README.md).
+> [`docs/reports/archive/early-waves/wave19-unsafe-linkage-artifact/README.md`](../reports/archive/early-waves/wave19-unsafe-linkage-artifact/README.md),
+> [`docs/reports/archive/waves-20-39/wave20-native-library-contract-slice/README.md`](../reports/archive/waves-20-39/wave20-native-library-contract-slice/README.md),
+> [`docs/reports/archive/waves-20-39/wave22-native-library-header/README.md`](../reports/archive/waves-20-39/wave22-native-library-header/README.md),
+> [`docs/reports/archive/language-and-tooling/native-library-source-binding/README.md`](../reports/archive/language-and-tooling/native-library-source-binding/README.md).
 
 # Native-library linkage for bundled modules: `source.native-library.v1`
 
@@ -63,7 +63,7 @@ Nothing about the design's substance is changed.
 | A1 | §1, §11 | "the five-name … precedent" | **six** names | card `UNSAFE-LINKAGE` added `std.extern.unsafe` to the registry. |
 | A2 | §7 | "the first free band after `Q031`" | **`Q039` onward** | card `UNSAFE-LINKAGE` took `Q032`–`Q035` for its `UncheckedLinkage` pass, and card `PIPE-OPERATOR` then took `Q036`–`Q038` for its `Pipe` pass at wave-18 integration. Adjusted twice for the same reason; this is the only load-bearing collision between the two documents. |
 | A3 | §9 | "the 67-module corpus pin" | **69 modules** | card `CONSTRUCTOR-RESIDUALS` moved the pin 67 → 69 in wave 17. |
-| A4 | §2, §4.2, §4.3, §4.4 | "constraint 8 / 18 / 28" | kept, with referents named | the numbering is the authoring workflow's, not this repository's. The referents are: **8** = `LOADER-ABI`'s declared-ABI agreement with per-unit withdrawal (`docs/reports/remaining-loader-abi/README.md`); **18** = `P01-F2`'s embedded-manifest field-for-field package verification (`docs/reports/remaining-p01-f2/README.md`); **28** = the declared-assumption discipline of hard invariant 2. Left in place rather than rewritten so the adopted text stays comparable to its original. |
+| A4 | §2, §4.2, §4.3, §4.4 | "constraint 8 / 18 / 28" | kept, with referents named | the numbering is the authoring workflow's, not this repository's. The referents are: **8** = `LOADER-ABI`'s declared-ABI agreement with per-unit withdrawal (`docs/reports/archive/early-waves/remaining-loader-abi/README.md`); **18** = `P01-F2`'s embedded-manifest field-for-field package verification (`docs/reports/archive/early-waves/remaining-p01-f2/README.md`); **28** = the declared-assumption discipline of hard invariant 2. Left in place rather than rewritten so the adopted text stays comparable to its original. |
 
 One thing was checked and found **not** to need adjustment: §4.4's
 `single-threaded-caller` premise is still vacuous for exactly the reason it

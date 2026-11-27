@@ -1,0 +1,83 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "w45-fb-system-selection",
+ "total_pruned_files": 15,
+ "total_pruned_bytes": 742412,
+ "artifacts": [
+  {
+   "path": "artifacts/arbiter/baseline-identity-alias.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "artifacts/arbiter/baseline-identity-alias.log",
+   "bytes": 2065,
+   "sha256": "7ea19f6429dd481b73f7bae48e2ac960fce3d44f7f2f3e2d7aa9729f75fcb97e"
+  },
+  {
+   "path": "artifacts/arbiter/baseline-identity.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "artifacts/arbiter/baseline-identity.log",
+   "bytes": 1899,
+   "sha256": "bc47381b26baf7aa9bf71baa61aec41639a99393fb6845a7a9c8cb3afed7ee6e"
+  },
+  {
+   "path": "artifacts/main-profile/console.log",
+   "bytes": 128910,
+   "sha256": "bac10634f1f72c81fc558b5152821a6475fb3bde188bd22aca4c6757d003b503"
+  },
+  {
+   "path": "artifacts/main-profile/stderr.log",
+   "bytes": 0,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+   "path": "artifacts/prepare-attempt-1.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "artifacts/prepare-attempt-1.log",
+   "bytes": 371,
+   "sha256": "1969a21b16678e61b4329196ef4e49f05d84b42226f7e25e68cdfbf81a933b3c"
+  },
+  {
+   "path": "artifacts/system-slice/console.log",
+   "bytes": 10245,
+   "sha256": "4724f1ad310f9535fbf64eb4d7d0a0da2bf11b1fb38e3d3a7b698bc8da4d2f1a"
+  },
+  {
+   "path": "artifacts/system-slice/resource-diagnostics.contracts.json.gz",
+   "bytes": 68953,
+   "sha256": "d49a7adaaa988a3e1b8354ffbe38d7482900c9572a18a849cb6fe43964076f34"
+  },
+  {
+   "path": "artifacts/system-slice/resource-diagnostics.json.gz",
+   "bytes": 114963,
+   "sha256": "4d81837b82935a945d1647d51560237f47f72e7b7b1ddef108163f67e6dcd7ae"
+  },
+  {
+   "path": "artifacts/system-slice/stderr.log",
+   "bytes": 0,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+   "path": "binding.json",
+   "bytes": 154599,
+   "sha256": "340eabb1c974c86fa617e65467b041b3491743f8495e2f78ef3e538eed5340c7"
+  },
+  {
+   "path": "lifetime-inventory.json",
+   "bytes": 95123,
+   "sha256": "c6ad6dd8f78f05b86c62877f5497eff7f0536a71edc0622d19d5877c48f0ea90"
+  },
+  {
+   "path": "measurement/denominator.json",
+   "bytes": 165275,
+   "sha256": "5df859bcca30b832e99300016868bd2501792bc7f70712d770830f801e5a2ccb"
+  }
+ ]
+}

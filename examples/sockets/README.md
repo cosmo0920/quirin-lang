@@ -7,8 +7,8 @@ the embedded three-arm shim
 `crates/qcore-core/src/qcore_socket_compat.h`.
 
 Cards `QUIRIN-SOCKET-V1` and `SOCKET-INET-ADDRESSES`; the evidence packages are
-`docs/reports/quirin-socket-v1/README.md` and
-`docs/reports/socket-inet-addresses/README.md`, the checked model is
+`docs/reports/archive/language-and-tooling/quirin-socket-v1/README.md` and
+`docs/reports/archive/language-and-tooling/socket-inet-addresses/README.md`, the checked model is
 `crates/qcore-core/src/std_socket.rs`, and the tests that hold these files to
 the `examples/threads` standard are in `compiler/tests/std_socket.rs` and
 `compiler/tests/std_socket_inet.rs`.

@@ -12,17 +12,17 @@
 *Moved verbatim from `CLAUDE.md` lines 122-124 — W2 profile migration pointer.*
 
 - W2's bounded profile migration and full 185-TU parity are recorded in
-  `docs/reports/w2-profile-manifests/README.md`; remaining H4/H5/H6 and H7
+  `docs/reports/archive/early-waves/w2-profile-manifests/README.md`; remaining H4/H5/H6 and H7
   orchestration work is explicit there. Profile data remains declared trust.
 
 *Moved verbatim from `CLAUDE.md` lines 134-140 — W3 evidence-v2 / verifier-host pointer.*
 
 - W3 bounded evidence-v2 replay/dispatch is recorded in
-  `docs/reports/w3-evidence-v2/README.md`. Positive observation certificates
+  `docs/reports/archive/early-waves/w3-evidence-v2/README.md`. Positive observation certificates
   describe recorded runs under `observations_trusted`; lifecycle source
   derivation stays incomplete until real effect/ABI import exists. The generic
   host is extracted in `crates/qcore-verifier-host` (record:
-  `docs/reports/w3-verifier-host/README.md`); trusted derivation/replay/dispatch now reside
+  `docs/reports/archive/early-waves/w3-verifier-host/README.md`); trusted derivation/replay/dispatch now reside
   in `qcore-verification` above the dependency-free kernel. V1 Safe refusal is unchanged.
 
 *Moved verbatim from `CLAUDE.md` lines 142-144 — W2 H6 provider discovery pointer.*
@@ -36,13 +36,13 @@
 Lean CI hygiene is implemented (2026-09-07): the pinned proof build, all theorem
 audits and the complete QCore axiom closure are checked, with both reevaluation
 examples in Linux/Windows CI. Local gates pass; hosted CI awaits a push.
-See `docs/reports/w7-lean-ci/README.md`.
+See `docs/reports/archive/early-waves/w7-lean-ci/README.md`.
 
 *Moved verbatim from `CLAUDE.md` lines 151-153 — W7 generic Lean naming pointer.*
 
 W7 generic Lean naming is complete for the bounded targets: DescriptorCustody,
 EventComposition and busy_effect_preserves_lock, with historical aliases and
-unchanged models (`docs/reports/w7-generic-lean-names/README.md`).
+unchanged models (`docs/reports/archive/early-waves/w7-generic-lean-names/README.md`).
 
 *Moved verbatim from `CLAUDE.md` lines 163-165 — qcore-audit driver pointer.*
 
@@ -60,7 +60,7 @@ unchanged models (`docs/reports/w7-generic-lean-names/README.md`).
   exists.
 - W4 is executed for parameter/return custody with validation
   (`crates/qcore-c-gateway/src/legacy_summary.rs`,
-  `docs/reports/w4-custody-inference/README.md`). A call into an internal C
+  `docs/reports/archive/early-waves/w4-custody-inference/README.md`). A call into an internal C
   function is modeled only through a declared `.qcore` contract or a summary
   that `observations_match_contract` validated against a fresh analyzer run;
   everything else stays `Unknown`. When touching that pass, do not let a
@@ -69,10 +69,10 @@ unchanged models (`docs/reports/w7-generic-lean-names/README.md`).
   failure paths), and do not accept an assume-guarantee fixed point for a
   recursive component. The 2026-09-07 extension validates direct `Out` slots,
   `Stored` formals, `Reallocated` results and possibly-null owned returns
-  (`docs/reports/w4-custody-extensions/README.md`). Reassigned out pointers,
+  (`docs/reports/archive/early-waves/w4-custody-extensions/README.md`). Reassigned out pointers,
   Direct `Removed` wrappers are inferred and validated; general removal aliases and general recursive components remain unsupported; the
   `qcore-c-gateway` relocation is executed with compiler compatibility reexports
-  (`docs/reports/w4-gateway-crate/README.md`).
+  (`docs/reports/archive/early-waves/w4-gateway-crate/README.md`).
 - Never weaken a fail-closed gate, delete a pinned expectation, or downgrade
   a diagnostic to make a test pass. If a pinned table (contract corpus counts,
   submodule revision, archived report) conflicts with your change, the change

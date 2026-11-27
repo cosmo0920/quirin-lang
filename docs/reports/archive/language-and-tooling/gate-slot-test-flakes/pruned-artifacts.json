@@ -1,0 +1,28 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "gate-slot-test-flakes",
+ "total_pruned_files": 4,
+ "total_pruned_bytes": 29476,
+ "artifacts": [
+  {
+   "path": "integration/gate-scope.json",
+   "bytes": 23381,
+   "sha256": "47e1fb5669daed1b0abd007f2e29ef57d489dde2610588555cd1f20c5772cf6b"
+  },
+  {
+   "path": "meminfo-race.log",
+   "bytes": 156,
+   "sha256": "1141f6753fe1fdd36bf367be0aa82d8401efc9fb6a21fe451aee84489874ec91"
+  },
+  {
+   "path": "new-status-tests-at-base.log",
+   "bytes": 5655,
+   "sha256": "bbd9de38454873f9aca2a30d57c7af8df11ce66c5106fe5e8447424800dd832b"
+  },
+  {
+   "path": "teardown-race.log",
+   "bytes": 284,
+   "sha256": "91126a382ce052c8313a468ec935e0c917c8647ab9ae4c951407b294a153585f"
+  }
+ ]
+}

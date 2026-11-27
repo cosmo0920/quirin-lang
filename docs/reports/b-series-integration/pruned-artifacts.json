@@ -1,0 +1,18 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "b-series-integration",
+ "total_pruned_files": 2,
+ "total_pruned_bytes": 760816,
+ "artifacts": [
+  {
+   "path": "artifacts/diagnostics.json.gz",
+   "bytes": 566145,
+   "sha256": "cc9e5ebc2a330191d74965b64c5c9a4acb80407f4e1ec10ab333516871960949"
+  },
+  {
+   "path": "baseline-artifact-diff.json",
+   "bytes": 194671,
+   "sha256": "63df67d8f733247ca5ac74fc906b4e74526915b9067434aeb005b8d8dd4fd131"
+  }
+ ]
+}

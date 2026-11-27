@@ -1,2 +1,0 @@
-private/base-snapshot/scripts/tests: {'teardown_started': 3350706.959508836, 'alive_at_cleanup': ['waiter'], 'teardown_seconds': 20.0}; errors=0 failures=0
-scripts/tests: {'teardown_started': 3350727.505509422, 'alive_at_cleanup': [], 'teardown_seconds': 0.01}; errors=0 failures=0

@@ -1,0 +1,13 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "measure-contract-only-side-wiring",
+ "total_pruned_files": 1,
+ "total_pruned_bytes": 92437,
+ "artifacts": [
+  {
+   "path": "evidence/native-comparison-tip-a.json",
+   "bytes": 92437,
+   "sha256": "244e197e97a398710afd58528a28ed127d0fd93214a693030e8c05f9006a4908"
+  }
+ ]
+}

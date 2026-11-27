@@ -267,4 +267,4 @@ breach wave 33 registered. CT
 coverage unchanged at 45/50 mapped, sanitized-native 9 of 45, proof 3 of 45;
 corpus, contract and provider rows carried. Nothing is promoted; full language
 conformance stays **false**.
-[Report](../../reports/stability-reeval-1/README.md).
+[Report](../../reports/archive/language-and-tooling/stability-reeval-1/README.md).

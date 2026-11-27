@@ -1,0 +1,13 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "leri-cross-unit-elements-released",
+ "total_pruned_files": 1,
+ "total_pruned_bytes": 435823,
+ "artifacts": [
+  {
+   "path": "integration/gate-scope.json",
+   "bytes": 435823,
+   "sha256": "ab6d439d0a499737e5dd1e0112d77c880de9da412d314d5ab3993cf666aa57df"
+  }
+ ]
+}

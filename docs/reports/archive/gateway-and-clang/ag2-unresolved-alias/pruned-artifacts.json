@@ -1,0 +1,18 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "ag2-unresolved-alias",
+ "total_pruned_files": 2,
+ "total_pruned_bytes": 151446,
+ "artifacts": [
+  {
+   "path": "artifacts/census.json",
+   "bytes": 68261,
+   "sha256": "5a9a9973ad45c103af65726d67c0bc57a36c69b085df1209c8982fe75dd48033"
+  },
+  {
+   "path": "artifacts/repro-compare.json",
+   "bytes": 83185,
+   "sha256": "282c8e7966cb66b7ca2143605f496aa98da5fe1e99d77fece9b96539de64a80a"
+  }
+ ]
+}

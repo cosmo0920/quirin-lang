@@ -1,0 +1,28 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "remaining-c03",
+ "total_pruned_files": 4,
+ "total_pruned_bytes": 49619,
+ "artifacts": [
+  {
+   "path": "logs/c03-probe.log",
+   "bytes": 1084,
+   "sha256": "274286ded8ce88bcf8b24862f028e95d4673d45901f206a74e9b65a5c3aa9928"
+  },
+  {
+   "path": "logs/gate.log",
+   "bytes": 1912,
+   "sha256": "9c31817c2567486bbf11c5c382a7760c48ac30795aef99637efc058267360c79"
+  },
+  {
+   "path": "logs/hazard-cyclic.log",
+   "bytes": 42085,
+   "sha256": "02bfe01951dc98c1f9c3fda680b1f480585a5332f379280571c628a6804c9998"
+  },
+  {
+   "path": "logs/hazard-interior.log",
+   "bytes": 4538,
+   "sha256": "1eccf7eb37d5112c1f40e3b48cd25437baf7b07c2e424476a7cf3628e6501049"
+  }
+ ]
+}

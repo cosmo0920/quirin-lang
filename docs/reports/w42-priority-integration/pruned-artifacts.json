@@ -1,0 +1,13 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "w42-priority-integration",
+ "total_pruned_files": 1,
+ "total_pruned_bytes": 566402,
+ "artifacts": [
+  {
+   "path": "artifacts/diagnostics.json.gz",
+   "bytes": 566402,
+   "sha256": "7d7f43910845f3e31d770d729b7c8c963ca704e0852d3f1357428c61434c0ae8"
+  }
+ ]
+}

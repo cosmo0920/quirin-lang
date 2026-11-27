@@ -1,7 +1,7 @@
 # CG16-INDEX-AND-OFFSET-EXTENTS: reviewed index and extent contracts
 
 Status: **partly implemented** (wave 48 round 9; the
-[report](../../reports/cg16-index-and-offset-extents/README.md) lists what
+[report](../../reports/archive/gateway-and-clang/cg16-index-and-offset-extents/README.md) lists what
 landed and the registered residuals). Originally a candidate card, not
 dispatched.
 Expanded on 2026-10-01 from the user's decision to express existing-C access
@@ -29,7 +29,7 @@ submodules on a fresh checkout. Reproduce the existing controls in
 These are **custody limits**, not necessarily Unknown refusals. CG00's
 historical attribution/ranking is not a prediction of a new property's
 coverage. Read current STATUS and the latest integration artifacts before
-freezing `docs/reports/cg16-index-and-offset-extents/PREDICTION.md`.
+freezing `docs/reports/archive/gateway-and-clang/cg16-index-and-offset-extents/PREDICTION.md`.
 
 ## 2. Dependencies and ownership
 
@@ -139,7 +139,7 @@ each admitted expression position without changing C's evaluation order.
 Run the [full standing gate](../../agents/validation.md#standing-per-change-gate)
 and any conditional provider gate. Record commands, exits, counts, host/Clang
 identity, failed attempts and private logs. Archive a fresh BEFORE/AFTER corpus
-comparison under `docs/reports/cg16-index-and-offset-extents/`; preserve the
+comparison under `docs/reports/archive/gateway-and-clang/cg16-index-and-offset-extents/`; preserve the
 custody-only predecessor byte for byte unless a separately justified correction
 is measured. Measure bounds and combined-property coverage separately, with
 Unknown and Pending in each requested denominator. No promised Safe-count gain.

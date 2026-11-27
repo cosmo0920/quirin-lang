@@ -1,0 +1,13 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "status-compact-reconciliation-decision",
+ "total_pruned_files": 1,
+ "total_pruned_bytes": 16181,
+ "artifacts": [
+  {
+   "path": "integration/gate-scope.json",
+   "bytes": 16181,
+   "sha256": "41b837304f003bcb704575d4b441361d2d9883f5919234054fd9f82ed3e40f58"
+  }
+ ]
+}

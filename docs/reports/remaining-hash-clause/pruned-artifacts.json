@@ -1,0 +1,13 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "remaining-hash-clause",
+ "total_pruned_files": 1,
+ "total_pruned_bytes": 14035,
+ "artifacts": [
+  {
+   "path": "logs/corpus-run.log.gz",
+   "bytes": 14035,
+   "sha256": "4e27f6606ab71006a8f157f767533e77fcd920f0d03620266f7aa4af6fdfcb9e"
+  }
+ ]
+}

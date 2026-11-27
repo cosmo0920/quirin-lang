@@ -1,0 +1,78 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "w5-generic-source-consolidation",
+ "total_pruned_files": 14,
+ "total_pruned_bytes": 688889,
+ "artifacts": [
+  {
+   "path": "audit.log.gz",
+   "bytes": 13847,
+   "sha256": "d84c13b5500aa838aeb718145cad0a6fe72bb1e2c79d08ad3f9a228d4470cb6c"
+  },
+  {
+   "path": "checks.log.gz",
+   "bytes": 2242,
+   "sha256": "dc7e2d3fef0575bebd39b0664b1a731549fd903169d889424e52a6e2c7ddf8c7"
+  },
+  {
+   "path": "chunk-contracts.json.gz",
+   "bytes": 268582,
+   "sha256": "7b52087dbbfc3c29df2a71f622db351ce43d21e100d12877680c8848d59f6b6d"
+  },
+  {
+   "path": "diagnostics.json.gz",
+   "bytes": 372538,
+   "sha256": "0e229046194cf4359f3cf7d798952a5a967b19ee62712129a95908b4ba0e6dfa"
+  },
+  {
+   "path": "focused.log.gz",
+   "bytes": 445,
+   "sha256": "2de088fca6661b68e1f024b4d5e0ef0afa3f99623fb85d8e867b6e041f1078c5"
+  },
+  {
+   "path": "gateway-tree.log.gz",
+   "bytes": 335,
+   "sha256": "55d95089469b723c3aa908ac31c316e726d132d8a4353cbddd394d8fe6b1c567"
+  },
+  {
+   "path": "lean-audits.log.gz",
+   "bytes": 9597,
+   "sha256": "ba261a42b8fe9b7a34205634c7e0e77970518c2827db838cfd7a1f6258540403"
+  },
+  {
+   "path": "lean-build.log.gz",
+   "bytes": 60,
+   "sha256": "fbd22e3f2b87931e031a0abfadfc4d36e21529a6a90766247fe7b08cca37b877"
+  },
+  {
+   "path": "provider-checks.log.gz",
+   "bytes": 202,
+   "sha256": "c2c116a079aeb315597d8f6505185baa2c2d5de3117112028dd4ede7747d34d2"
+  },
+  {
+   "path": "provider-lock.log.gz",
+   "bytes": 71,
+   "sha256": "0b113b94739daa1de999ff915379a89948a393244fc864de0596992b2266276d"
+  },
+  {
+   "path": "providers.log.gz",
+   "bytes": 1419,
+   "sha256": "85e208cbffaf063cfbc8e6f48e57b5b013650232cc50481618b248966d1a95a6"
+  },
+  {
+   "path": "python.log.gz",
+   "bytes": 598,
+   "sha256": "460bd5a1bf0dfc71179c4262c332b9b2ab883e2d5113c07b9897485ebdcb9565"
+  },
+  {
+   "path": "verification-tree.log.gz",
+   "bytes": 414,
+   "sha256": "7bdd679dca79614d779e6462c0544986386c4dcac121a403baf14461a376106d"
+  },
+  {
+   "path": "workspace.log.gz",
+   "bytes": 18539,
+   "sha256": "af0b10ada1f04aa81b78555de259a28ecc42951427fa94168a7a878c15340eda"
+  }
+ ]
+}

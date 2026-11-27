@@ -1,0 +1,18 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "outer-contract-design",
+ "total_pruned_files": 2,
+ "total_pruned_bytes": 234732,
+ "artifacts": [
+  {
+   "path": "artifacts/outer-rows.json",
+   "bytes": 88707,
+   "sha256": "f8e40a448ea56e6b86a0d2a3fc8805c4a986ab2cb63a925f6d256b8f9945d81e"
+  },
+  {
+   "path": "artifacts/projection.json",
+   "bytes": 146025,
+   "sha256": "b3de923cbc359c7f394fbb7f93a2cb28626a20250fbd197f3764f0d19a7cf684"
+  }
+ ]
+}

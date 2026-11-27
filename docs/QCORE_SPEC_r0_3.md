@@ -2059,8 +2059,8 @@ Linux (C11 `<threads.h>`), macOS (emitted `pthread` adapter), and Windows
 Modules opting in with `#import std.extern;` (`Q022` when absent) execute flat
 sequential foreign calls through `source.extern-call.v1`
 ([grammar `G02d`](QCORE_IMPLEMENTED_GRAMMARS_r0_3.md#g02d-bounded-extern-calls),
-[v1 report](reports/extern-call-v1/README.md),
-[out/stored report](reports/extern-call-f1/README.md)):
+[v1 report](reports/archive/language-and-tooling/extern-call-v1/README.md),
+[out/stored report](reports/archive/language-and-tooling/extern-call-f1/README.md)):
 
 - **Explicit contract selection only:** every contracted callee `MUST` resolve in
   an explicit `CompileOptions` bundle loaded by `resource_contract_v1` (`Q023`
@@ -2534,7 +2534,7 @@ operations `MUST NOT` be implicitly available as un-imported built-ins.
 
 Revision 0.3 models `string` as an **immutable, non-owning UTF-8 byte view**
 with semantic representation `{ ptr, len }` (card `STRING-SLICE`, design
-[STRING_SLICE_V1](design/STRING_SLICE_V1.md), [report](reports/string-slice/README.md)):
+[STRING_SLICE_V1](design/STRING_SLICE_V1.md), [report](reports/archive/language-and-tooling/string-slice/README.md)):
 
 - **Zero custody, zero NUL-termination assumptions:** string literals denote
   `static const` UTF-8 bytes; `len(s)` returns byte length in `O(1)`; and a
@@ -2567,7 +2567,7 @@ with semantic representation `{ ptr, len }` (card `STRING-SLICE`, design
 ##### Stream Output Composition and NUL-Safe Emission (`STRING-SLICE-IO`)
 
 Modules importing `std.string` together with `std.io` and/or `std.logger`
-([report](reports/string-slice-io/README.md), diagnostics `Q075`–`Q076`) admit
+([report](reports/archive/language-and-tooling/string-slice-io/README.md), diagnostics `Q075`–`Q076`) admit
 raw UTF-8 text lines without importing `std.fmt`:
 
 ```qcore
@@ -2601,8 +2601,8 @@ fn main() -> i32 {
 
 ##### Static `concat` and Range-Wise `borrow_utf8` over `std.buffer`
 
-Cards `STRING-CONCAT` ([report](reports/string-concat/README.md)),
-`CT07-SLICE-PERMISSIONS` ([report](reports/ct07-slice-permissions/README.md)),
+Cards `STRING-CONCAT` ([report](reports/archive/language-and-tooling/string-concat/README.md)),
+`CT07-SLICE-PERMISSIONS` ([report](reports/archive/language-and-tooling/ct07-slice-permissions/README.md)),
 and `LOOPS-ON-COMPOSED-ROUTES` (`Q077`–`Q079`) add compile-time string
 composition and checked range borrows over owned `std.buffer` storage:
 
@@ -3331,7 +3331,7 @@ The `source.extern-call.v1` profile makes a **call to a declared extern function
   * Plain scalar literal bindings (`let NAME = LITERAL;`, card `EXTERN-SCALAR-LITERAL`) and single-operation checked scalar value statements (`W48-QR-SCALAR-TYPES-R3` / `W48-QR-FLOATING-POINT`) are likewise admitted in the value namespace; a literal binding calls nothing, derives no effect, and opens no custody obligation.
   * A bound scalar is admitted at a declared scalar parameter and nowhere else; a resource binding is refused at a scalar parameter (`Q024`); an unread scalar binding removes nothing from and adds nothing to the custody ledger (so it is never a leak); and an acquiring callee's result can never use the plain scalar-binding form (`Q025`).
 * **Extentless pointer premise, derived effects, and flat-entry scope.** Length and byte extent are **not** transported across §C04 pointers: every C04 pointer is an extentless `u8` projection, so no declaration on this path states how many bytes a callee reads or writes, and every certificate records that premise alongside each callee's declared contract and linkage premise. The derived effect row of an extern call is `{Io}`, plus `Alloc` iff the call establishes fresh custody through one of the acquisition sources, plus `Mut` iff at least one parameter is a `mut` pointer (and `partial_eq` / `partial_ord` / `throws<ArithmeticError>` where scalar float comparisons or runtime-faulting conversions appear); the caller's declared `effects { … }` row MUST admit every derived effect. Extern calls are admitted in a **flat sequential parameterless entry body only** (`Q026` in nested blocks, non-entry functions, parameterized entries, task workers, `with lock` bodies, or error regions; `source.exec12` retains its own non-source-callee refusal).
-* **Relative soundness.** Every verdict reached through `source.extern-call.v1` holds only *relative to* the selected declarations (`ContractTrust::Declared`); it is never a proof about the C library's body. See [implemented grammar G02d](QCORE_IMPLEMENTED_GRAMMARS_r0_3.md#g02d-bounded-extern-calls), the [extern-call v1 report](reports/extern-call-v1/README.md), and the [out/stored extension report](reports/extern-call-f1/README.md).
+* **Relative soundness.** Every verdict reached through `source.extern-call.v1` holds only *relative to* the selected declarations (`ContractTrust::Declared`); it is never a proof about the C library's body. See [implemented grammar G02d](QCORE_IMPLEMENTED_GRAMMARS_r0_3.md#g02d-bounded-extern-calls), the [extern-call v1 report](reports/archive/language-and-tooling/extern-call-v1/README.md), and the [out/stored extension report](reports/archive/language-and-tooling/extern-call-f1/README.md).
 
 ---
 
@@ -3347,7 +3347,7 @@ An external library that has **no contract at all** MAY be linked under an expli
 * **The contract is waived; the ABI is not (`Q033`).** Every parameter and result spelling MUST belong to the §C04.1 scalar ABI vocabulary (including `f32` and `f64` under `W48-QR-FLOATING-POINT`): scalars by value in, and a scalar or `unit` out. **Every pointer, in every spelling and every position, is refused (`Q033`)**, `ptr<const, u8>` deliberately included, as is any `unit` parameter or unknown type spelling. Handing a pointer to uncontracted code grants an unbounded capability—nothing bounds the extent read or written, `const` constrains only the C declaration rather than the implementation, nothing terminates the loan at return, and nothing prevents the callee from retaining or publishing the address—so no honest premise text could be stated for it. Restricting unchecked linkage to custody-free scalars ensures an uncontracted call cannot alter the caller's custody ledger regardless of what the callee executes.
 * **No coexistence with checkable contracts (`Q034`).** A waiver MUST NOT stand beside a checkable contract: both an inline `contract { … }` block on an `unsafe extern fn` declaration and a waived symbol name that the selected contract environment also declares are refused (`Q034`), regardless of whether their signatures agree.
 * **Unconditional full effect row.** Because nothing is modeled about an uncontracted callee's internal behavior, its derived effect row is unconditionally the **entire** modeled sequential row `{Io, Alloc, Mut}`. The caller's declared `effects { … }` row MUST admit all three effects, making the waiver visible in the entry function's signature as well as at the declaration.
-* **Mandatory certificate premise and publication tripwire (`Q035`).** Every certificate for a program declaring a called uncontracted symbol MUST carry that waiver—by symbol name and declared ABI signature—on the same declared-assumption channel as trusted contracts. The premise is derived directly from the program's callee inventory and checked again by independent certificate rederivation; any certificate missing a required waiver premise is refused at publication (`Q035`). A resulting verdict is `Safe` **only relative to that waiver** and MUST be rendered as such; it makes no claim about the C callee. See [implemented grammar G02d.1](QCORE_IMPLEMENTED_GRAMMARS_r0_3.md#g02d1-unchecked-linkage), `docs/design/UNSAFE_LINKAGE_V1.md`, and the [unchecked-linkage evidence](reports/wave18-unsafe-linkage/README.md).
+* **Mandatory certificate premise and publication tripwire (`Q035`).** Every certificate for a program declaring a called uncontracted symbol MUST carry that waiver—by symbol name and declared ABI signature—on the same declared-assumption channel as trusted contracts. The premise is derived directly from the program's callee inventory and checked again by independent certificate rederivation; any certificate missing a required waiver premise is refused at publication (`Q035`). A resulting verdict is `Safe` **only relative to that waiver** and MUST be rendered as such; it makes no claim about the C callee. See [implemented grammar G02d.1](QCORE_IMPLEMENTED_GRAMMARS_r0_3.md#g02d1-unchecked-linkage), `docs/design/UNSAFE_LINKAGE_V1.md`, and the [unchecked-linkage evidence](reports/archive/early-waves/wave18-unsafe-linkage/README.md).
 
 ---
 
@@ -3366,7 +3366,7 @@ A §L14.1 waiver MAY be made **resident in a native library manifest** (`.qrlib`
   * **Unchanged scalar-only surface:** The closed §L14.1 scalar table still decides admission first; naming an artifact states *which binary code* is linked, not what that code would do with a pointer capability.
   * **Sharpened premise and downgrade guard (`Q035`):** The certificate replaces the bare §L14.1 premise with the sharpened artifact-resident premise, and the independent publication recheck refuses any certificate that omits it or downgrades it back to a bare waiver.
   * **No contract/waiver collision (`Q042`):** A symbol declared `unchecked fn` in a selected manifest MUST NOT also be reached through a declared contract in the contract environment (`Q042`, the manifest-side mirror of `Q034`).
-* **Pin, not probe (at v1).** In `source.native-library.v1`, the artifact identity and `sha256` digest act as a **stated pin, not a check-time file probe**: the checker validates the manifest's syntax and consistency without reading or hashing the binary library on disk, and makes no claim about what the external linker ultimately consumed (contrast `.qrlib` v2 in §L14.8, which *does* read symbol tables and re-hash pinned files during `quirin build`). Recording the pin makes link-time build substitution an explicit violation of a named certificate assumption (§L20). See `docs/design/NATIVE_LIBRARY_LINKAGE_V1.md` and the [manifest evidence](reports/wave19-unsafe-linkage-artifact/README.md).
+* **Pin, not probe (at v1).** In `source.native-library.v1`, the artifact identity and `sha256` digest act as a **stated pin, not a check-time file probe**: the checker validates the manifest's syntax and consistency without reading or hashing the binary library on disk, and makes no claim about what the external linker ultimately consumed (contrast `.qrlib` v2 in §L14.8, which *does* read symbol tables and re-hash pinned files during `quirin build`). Recording the pin makes link-time build substitution an explicit violation of a named certificate assumption (§L20). See `docs/design/NATIVE_LIBRARY_LINKAGE_V1.md` and the [manifest evidence](reports/archive/early-waves/wave19-unsafe-linkage-artifact/README.md).
 
 ---
 
@@ -3385,7 +3385,7 @@ A `.qrlib` manifest entry MAY instead bind an exported symbol to a **declared re
   * **Stacked premises (`Q049`):** Every published certificate calling a manifest-bound contracted function MUST carry **both** premises: (1) the §L14.E.1 declared-contract premise (*what the code does*) and (2) the manifest residence premise naming the contract module, artifact pin, and four ABI premises (*which build supplies it*). Neither premise may replace the other, and a certificate missing either is refused (`Q049`).
   * **Unchanged §C04 surface and automatic waiver exclusion:** The §C04 bridging table alone governs what crosses the call boundary, and writing `unsafe extern fn` for a slice-bound symbol is automatically refused by `Q034` because `Q047` guarantees the symbol is present in the selected contract environment.
 
-See [implemented grammar G02d.2](QCORE_IMPLEMENTED_GRAMMARS_r0_3.md#g02d2-the-native-library-manifest) and the [contract slice evidence](reports/wave20-native-library-contract-slice/README.md).
+See [implemented grammar G02d.2](QCORE_IMPLEMENTED_GRAMMARS_r0_3.md#g02d2-the-native-library-manifest) and the [contract slice evidence](reports/archive/waves-20-39/wave20-native-library-contract-slice/README.md).
 
 ---
 
@@ -3395,7 +3395,7 @@ See [implemented grammar G02d.2](QCORE_IMPLEMENTED_GRAMMARS_r0_3.md#g02d2-the-na
 A `source.native-library.v1` manifest MAY bind the actual **exported C header** (`.h`) shipped by the library alongside its `sha256` content digest (card `NATIVE-LIBRARY-HEADER`; `docs/design/NATIVE_LIBRARY_HEADER_V1.md`).
 
 * **All-or-nothing field pair.** The header reference and header `sha256` digest are optional **as a pair**: a manifest specifies both or neither (`Q039` if only one is written). Naming neither leaves §L14.2 and §L14.3 completely unchanged.
-* **Token-stream header reader and bounded C subset (`Q063`).** When a header is bound, the declaration of **every** symbol the manifest binds (`unchecked fn` and `contract fn` alike) MUST be read directly from the supplied header's text and compared against the manifest entry's transcribed signature. To ensure that check-time derivation, manifest validation, and standalone certificate rechecking reproduce identical decisions without host-compiler drift (the reader discipline of `docs/reports/remaining-loader-abi/README.md`), the v1 header reader operates directly on the C token stream rather than invoking a full C AST frontend. It admits comments, backslash-newline splicing, a whole-file include guard, and depth-zero function declarations; **every shape outside that bounded subset refuses the manifest by name at `Q063`**, including:
+* **Token-stream header reader and bounded C subset (`Q063`).** When a header is bound, the declaration of **every** symbol the manifest binds (`unchecked fn` and `contract fn` alike) MUST be read directly from the supplied header's text and compared against the manifest entry's transcribed signature. To ensure that check-time derivation, manifest validation, and standalone certificate rechecking reproduce identical decisions without host-compiler drift (the reader discipline of `docs/reports/archive/early-waves/remaining-loader-abi/README.md`), the v1 header reader operates directly on the C token stream rather than invoking a full C AST frontend. It admits comments, backslash-newline splicing, a whole-file include guard, and depth-zero function declarations; **every shape outside that bounded subset refuses the manifest by name at `Q063`**, including:
   * an unsupplied header or a header whose measured `sha256` disagrees with the manifest's declared digest;
   * preprocessing directives outside `if`, `ifdef`, `ifndef`, `elif`, `else`, `endif`, `define`, `undef`, and `include`, or unbalanced conditional groups;
   * a bound symbol missing from the header, declared only inside a conditional region (no `#if` condition is evaluated), or defined as a preprocessor macro;
@@ -3580,9 +3580,9 @@ The baseline `model.concurrent14` checker analyzes explicit event traces using i
 
 ### L16.3. Guarded source mutex profile (`source.mutex.guard.v1`)
 
-The source compiler does not lower arbitrary concurrent syntax; for mutex synchronization it lowers the bounded `source.mutex.guard.v1` profile ([implemented grammar G02c](QCORE_IMPLEMENTED_GRAMMARS_r0_3.md#g02c-guarded-fixed-footprint-mutex)), translating lexical critical sections, ranked mutex declarations, and explicit `grow` statements into `CheckedMutexInvariantV1` events and independently re-deriving the resulting certificate before publication. Source-to-trace refinement, real C memory layout of declared intervals, truth of declared invariant predicates, deadlock freedom, runtime contention, and general native refinement remain outside the claim (fixed Windows native execution via the emitted C11 thread compatibility layer is documented in [the Windows thread report](reports/windows-c11-threads/README.md)).
+The source compiler does not lower arbitrary concurrent syntax; for mutex synchronization it lowers the bounded `source.mutex.guard.v1` profile ([implemented grammar G02c](QCORE_IMPLEMENTED_GRAMMARS_r0_3.md#g02c-guarded-fixed-footprint-mutex)), translating lexical critical sections, ranked mutex declarations, and explicit `grow` statements into `CheckedMutexInvariantV1` events and independently re-deriving the resulting certificate before publication. Source-to-trace refinement, real C memory layout of declared intervals, truth of declared invariant predicates, deadlock freedom, runtime contention, and general native refinement remain outside the claim (fixed Windows native execution via the emitted C11 thread compatibility layer is documented in [the Windows thread report](reports/archive/language-and-tooling/windows-c11-threads/README.md)).
 
-Within `source.mutex.guard.v1`, four decidable extensions govern invariant witnesses, facts, and child threads ([T03-F record](reports/remaining-t03-f/README.md); cards `MUTEX-SHARE-CROSS` and `MUTEX-SHARE-CROSS-EMISSION`):
+Within `source.mutex.guard.v1`, four decidable extensions govern invariant witnesses, facts, and child threads ([T03-F record](reports/archive/early-waves/remaining-t03-f/README.md); cards `MUTEX-SHARE-CROSS` and `MUTEX-SHARE-CROSS-EMISSION`):
 
 * **Checked `NoWriteOccurred` close witnesses:** A lexical `close` MAY request the checked no-write witness; lowering admits it **only** if no statement since the matching `open` can write or grow protection, and refuses otherwise (never silently downgrading to a declared predicate witness).
 * **Guard-scoped refinement facts:** Any asserted refinement fact mints a fresh `FactId` scoped strictly to the active guard instance; referencing it after that guard releases refuses as a stale fact (`Q616`).
@@ -3662,7 +3662,7 @@ The weak-memory kernel API (`check_c11_execution`) validates an **explicitly sup
 
 ### Bounded atomic-publication API (`check_atomic_publication`)
 
-Separately, `check_atomic_publication` checks one conditional C11 release/acquire publication idiom over a restricted, fully typed C translation unit ([CT41 synchronization model report](reports/ct41-sync-model/README.md)):
+Separately, `check_atomic_publication` checks one conditional C11 release/acquire publication idiom over a restricted, fully typed C translation unit ([CT41 synchronization model report](reports/archive/language-and-tooling/ct41-sync-model/README.md)):
 
 * **Conditional property:** A successful `memory_order_acquire` observation of a unique `memory_order_release` flag value happens-before—and therefore orders—one payload write before one payload read, verified via the C11 execution checker.
 * **Declared invocation bounds and non-claims:** Exactly **one** publisher invocation and **one** successful consumer observation are **declared analysis bounds**, not source-proved call counts. Plain non-atomic flags, `volatile` flags, and `memory_order_relaxed` operations supply zero synchronization proof and are refused. Each result binds both raw and preprocessed C source digests plus analysis configuration, publishes its exact `(profile, property, scope, bounds, assumptions)` tuple, proves neither termination nor general C safety, and does **not** promote legacy-C resource verdicts or CT41 whole-program coverage.
@@ -3685,11 +3685,11 @@ The unrestricted-C gateway (`c.resource`, `analyze_unrestricted_c11`) first runs
 
 Two token-derived rules admit unevaluated C type/size queries as custody-free scalar markers without treating them as numerical bounds:
 
-1. **Scalar type-name and scalar-variable queries ([wave23-c-operations report](reports/wave23-c-operations/README.md)):**
+1. **Scalar type-name and scalar-variable queries ([wave23-c-operations report](reports/archive/waves-20-39/wave23-c-operations/README.md)):**
    * Admits `sizeof(TYPE)` and `_Alignof(TYPE)` over a readable scalar type name, plus `sizeof` over a single declared scalar variable, as unevaluated scalar data in the generic gateway's six expression positions and in scalar assignments.
    * Modeling such a scalar assignment forgets the destination variable's previous scalar fact; expression-position side effects alongside a query, variable-length arrays (VLAs), opaque/incomplete types, and compound operands remain outside this rule.
    * The query's operand-class marker MUST NEVER be promoted into a numerical byte size, alignment value, or branch condition fact. Summary validation and standalone certificate rechecking reproduce the identical token-derived decision.
-2. **Unevaluated pointer-dereference `sizeof` in allocation/call statements ([w44-collection-allocation report](reports/w44-collection-allocation/README.md)):**
+2. **Unevaluated pointer-dereference `sizeof` in allocation/call statements ([w44-collection-allocation report](reports/archive/waves-40-47/w44-collection-allocation/README.md)):**
    * Under C11 6.5.3.4p2, `sizeof(*NAME)`, `sizeof(**NAME)`, or `sizeof(NAME[LITERAL])` is unevaluated when *every* declaration of `NAME` in the function is a pointer declarator carrying at least that many `*` indirections, no array dimension, and a type-specifier list resolving to a non-variably-modified type.
    * In a statement whose first call targets an ordinary callee, the lexical access gate treats such an operand as a scalar marker naming **no** resource passed to the callee; contract lookup and result custody for the statement proceed unchanged.
    * Variably modified or unresolved types, array declarators, and all other statement positions retain their existing refusals, and the marker never becomes a numerical extent.
@@ -3700,7 +3700,7 @@ Two token-derived rules admit unevaluated C type/size queries as custody-free sc
 
 Three fallback rules—consulted **only** on statements or conditions that the generic gateway would otherwise refuse—track pointer-base custody across indirect scalar reads/writes, pointer stepping, and multi-link struct chains:
 
-#### 1. Typed scalar accesses ([w43-indirect-access-general report](reports/w43-indirect-access-general/README.md))
+#### 1. Typed scalar accesses ([w43-indirect-access-general report](reports/archive/waves-40-47/w43-indirect-access-general/README.md))
 
 Consulted only when the generic gateway refused a statement for its memory access, destination, or increment, or flagged it as an unsanctioned `*p` store:
 * **Admitted shape:** Every memory access in the statement is `*p` or `p[i]` over a declared `SCALAR *p` or `SCALAR p[N]`, `p->f` over a declared record pointer and scalar member, or `s.f` over a declared record object; both destination and value are scalar; and the statement contains **no** call, unary `&`, comma operator, nested write, or pointer increment.
@@ -3718,7 +3718,7 @@ Extends typed scalar access to loops and conditions walking buffers or NUL-termi
   * Stepping **in place** (`p++`, `p += e`) the *sole* live binding holding an owned object's identity MUST refuse so custody of the base address is not lost.
 * **Finite fixed-point convergence and no-bounds scope:** Joining a declared scalar's branch fact with "no fact" yields "no fact", and copying or returning an unfacted scalar carries no custody. The worklist reaches a finite fixed point over loop headers (`Unknown` if unrepresentable). **No bounds claim is made**: offsets and indices are never evaluated beyond testing whether a step is a positive literal, and the published scope string states this explicitly.
 
-#### 3. Bounded 2–4 link struct member chains ([w44-indirect-chain-access report](reports/w44-indirect-chain-access/README.md))
+#### 3. Bounded 2–4 link struct member chains ([w44-indirect-chain-access report](reports/archive/waves-40-47/w44-indirect-chain-access/README.md))
 
 Both the typed scalar-access route and the index-traversal route additionally admit **2-to-4-selection member chains**—`r->l1->…->f`, `(*r).l1->…->f`, or `s.l1->…->f`—under strict structural and tracking constraints:
 * **Admitted chain types:** Every intermediate member selected and dereferenced MUST be declared `struct T *` over a complete, unambiguous, non-union C `struct`, and the final member `f` MUST be scalar. Pointer-valued final members, nested value-aggregate sub-objects, array subscripts inside the chain, and `void *` or non-struct pointer links are excluded.
@@ -3729,7 +3729,7 @@ Both the typed scalar-access route and the index-traversal route additionally ad
 
 ### L18.4. Indexed heap resource collections (`T **v` segment partitions)
 
-When the generic gateway refuses a statement or `if` condition operating on a body-acquired pointer array declared `T **v` whose elements own heap resources, the indexed-collection rule ([w43-indexed-resource-collections report](reports/w43-indexed-resource-collections/README.md)) partitions the non-negative index line into symbolic half-open segments `[lo, hi)`:
+When the generic gateway refuses a statement or `if` condition operating on a body-acquired pointer array declared `T **v` whose elements own heap resources, the indexed-collection rule ([w43-indexed-resource-collections report](reports/archive/waves-40-47/w43-indexed-resource-collections/README.md)) partitions the non-negative index line into symbolic half-open segments `[lo, hi)`:
 
 * **Symbolic bounds and segment states:** Segment endpoints are integer literals or `max(0, x + k)` for a declared integer variable `x` designated by no other lvalue; each segment is tracked as `unfilled`, `null`, `live`, or `released`.
 * **Admitted element operations (over index `I` = literal, declared integer, or `n++`):**
@@ -3766,7 +3766,7 @@ Two rules lower contracted calls appearing inside `return` expressions and branc
    * Models one **unconditional, externally declared contracted call** (having no local definition in the translation unit) inside an otherwise custody-neutral `return` or controlling expression, preserving its ordinary resource transfer and CFG successors.
    * The scalar-return call extension likewise requires an external callee with no local definition and zero custody return; direct opaque-member return reads establish no escaping resource identity.
    * Multiple one-level nested sibling calls are admitted **only** when every inner callee contract is resource-neutral and all argument, liveness, and alias obligations pass. Deeper nesting and short-circuit effectful calls not covered below remain `Unknown`.
-2. **Boolean-tree desugaring of call-bearing branch conditions ([w44-branch-condition-calls report](reports/w44-branch-condition-calls/README.md), [gateway constraint 5h](agents/gateway.md#constraint-5h)):**
+2. **Boolean-tree desugaring of call-bearing branch conditions ([w44-branch-condition-calls report](reports/archive/waves-40-47/w44-branch-condition-calls/README.md), [gateway constraint 5h](agents/gateway.md#constraint-5h)):**
    * Consulted only when a controlling expression containing calls was refused by every earlier rule, and admitted only when **every call in the expression is modeled**:
    * Reads the condition as a Boolean tree over `&&`, `||`, `!`, and top-level `?:` (treating `__builtin_expect(E, K)` with literal `K` as `E`).
    * Lowers each operand's call—in exact C evaluation order along CFG edges so short-circuited operands run **only** on paths where C evaluates them—to the ordinary statement classifier's contracted call requiring a **resource-free result** (`none` or `derived`), followed by the operand's branch decision (a neutral residual, or for call-free leaves an existing null, validity, distinctness, or typed-read test).

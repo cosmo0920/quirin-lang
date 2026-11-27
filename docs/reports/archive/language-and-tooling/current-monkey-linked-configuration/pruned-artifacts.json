@@ -1,0 +1,13 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "current-monkey-linked-configuration",
+ "total_pruned_files": 1,
+ "total_pruned_bytes": 210742,
+ "artifacts": [
+  {
+   "path": "census.json",
+   "bytes": 210742,
+   "sha256": "30cd5c7937c43e260fdde81f8c8ccf6d707fe0abb8e425f11f015fa1aa403c76"
+  }
+ ]
+}

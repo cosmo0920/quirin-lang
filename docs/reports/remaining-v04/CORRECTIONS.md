@@ -36,5 +36,5 @@ and `compiler/tests/logical_connectives.rs`) was corrected the same way: each
 still asserts the elaboration and now asserts that the one refusal is this
 `Q020`.
 
-Evidence: [card report](../w48-qr-scalar-types-r3/README.md), its
-[fixture comparison](../w48-qr-scalar-types-r3/artifacts/fixtures-compare.txt).
+Evidence: [card report](../archive/wave-48/w48-qr-scalar-types-r3/README.md), its
+[fixture comparison](../archive/wave-48/w48-qr-scalar-types-r3/artifacts/fixtures-compare.txt).

@@ -1,3 +1,0 @@
-$ private/tip-target/release/quirin-audit pin --load-path providers/user-crates-load-path.json --source-root docs/reports/openssl-provider-remaining-callees/evidence/fixture
-pin: quirin-provider-openssl: 0 pinned, 57 flexible; recorded at directory; wrote providers/quirin-provider-openssl/contracts.lock
-exit 0

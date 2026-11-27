@@ -374,13 +374,26 @@ def _section_items(card: str, heading: str, lines: list[str]) -> list[Item]:
     ]
 
 
+def find_card_report(root: pathlib.Path, card: str) -> pathlib.Path | None:
+    """Resolve `<card>` across `docs/reports/<card>` and `docs/reports/archive/*/<card>`."""
+    direct = root / "docs" / "reports" / card / "README.md"
+    if direct.is_file():
+        return direct
+    archive = root / "docs" / "reports" / "archive"
+    if archive.is_dir():
+        matches = sorted(archive.glob(f"*/{card}/README.md"))
+        if matches:
+            return matches[0]
+    return None
+
+
 def sweep(root: pathlib.Path, cards: list[str]) -> list[Item]:
     """Every integrator-addressed item across the named card reports."""
     found: list[Item] = []
     for card in cards:
-        report = root / "docs" / "reports" / card / "README.md"
-        if not report.is_file():
-            raise SystemExit(f"no such card report: {report}")
+        report = find_card_report(root, card)
+        if report is None:
+            raise SystemExit(f"no such card report: {root / 'docs' / 'reports' / card / 'README.md'}")
         found.extend(items_in_report(card, report.read_text(encoding="utf-8")))
     return found
 
@@ -481,10 +494,10 @@ def residual_sources(root: pathlib.Path, cards: list[str]) -> dict[str, str]:
     """
     sources: dict[str, str] = {}
     for card in cards:
-        report = root / "docs" / "reports" / card / "README.md"
-        if not report.is_file():
-            raise SystemExit(f"no such card report: {report}")
-        sources[f"docs/reports/{card}/README.md"] = report.read_text(encoding="utf-8")
+        report = find_card_report(root, card)
+        if report is None:
+            raise SystemExit(f"no such card report: {root / 'docs' / 'reports' / card / 'README.md'}")
+        sources[report.relative_to(root).as_posix()] = report.read_text(encoding="utf-8")
     increments = root / "docs" / "development" / "increments"
     if increments.is_dir():
         for record in sorted(increments.glob("*.md")):
@@ -546,16 +559,16 @@ def cards_changed_in_range(
     """
     start = f"{base}^" if include_base else base
     output = _git(root, "diff", "--name-only", start, head, "--", "docs/reports")
-    names = sorted(
-        {
-            line.split("/")[2]
-            for line in output.splitlines()
-            if line.startswith("docs/reports/") and len(line.split("/")) > 3
-        }
-    )
-    return [
-        name for name in names if (root / "docs" / "reports" / name / "README.md").is_file()
-    ]
+    candidates: set[str] = set()
+    for line in output.splitlines():
+        if not line.startswith("docs/reports/"):
+            continue
+        parts = line.split("/")
+        if len(parts) > 3 and parts[2] != "archive":
+            candidates.add(parts[2])
+        elif len(parts) > 5 and parts[2] == "archive":
+            candidates.add(parts[4])
+    return [name for name in sorted(candidates) if find_card_report(root, name) is not None]
 
 
 def cards_changed_since(root: pathlib.Path, ref: str) -> list[str]:
@@ -687,8 +700,14 @@ def outstanding_decisions(root: pathlib.Path, before_wave: int) -> dict[str, dic
     latest: dict[str, tuple[int, dict]] = {}
     if not reports.is_dir():
         return {}
-    for directory in sorted(reports.iterdir()):
-        match = CLOSE_DIR.match(directory.name) if directory.is_dir() else None
+    candidate_dirs = [d for d in sorted(reports.iterdir()) if d.is_dir() and d.name != "archive"]
+    archive = reports / "archive"
+    if archive.is_dir():
+        for bucket in sorted(archive.iterdir()):
+            if bucket.is_dir():
+                candidate_dirs.extend(d for d in sorted(bucket.iterdir()) if d.is_dir())
+    for directory in candidate_dirs:
+        match = CLOSE_DIR.match(directory.name)
         if not match:
             continue
         wave = int(match.group(1))

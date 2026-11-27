@@ -1,0 +1,13 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "member-path-invocation-premise",
+ "total_pruned_files": 1,
+ "total_pruned_bytes": 2006,
+ "artifacts": [
+  {
+   "path": "evidence/probe-base.log",
+   "bytes": 2006,
+   "sha256": "006b0ffe50eb835caafbaa77862e3b89919f733d9d567559ce4da8f1f2cfc1b8"
+  }
+ ]
+}

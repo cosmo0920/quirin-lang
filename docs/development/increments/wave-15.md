@@ -17,7 +17,7 @@ boundaries.
   t00-archive — via a forward-applied evidence-record field with five
   verbatim-cited migrations; the frozen archive's in-place mutation by an
   earlier lane is recorded as pending hygiene. Evidence:
-  `docs/reports/wave15-ct-labels/README.md`.
+  `docs/reports/archive/early-waves/wave15-ct-labels/README.md`.
 - Six callee contracts (NEIGHBOURS): the production blocker closes by
   declaration, not discharge — all six read against pinned bodies,
   flb_input_chunk_create moves 36 to 21 diagnostics with every
@@ -26,7 +26,7 @@ boundaries.
   faithfully (double), exposing that the loader never compares a fixture's
   declared ABI type against the C prelude; floats join the ABI table
   writable-only. Corpus 64 to 67. Evidence:
-  `docs/reports/remaining-neighbours/README.md`.
+  `docs/reports/archive/early-waves/remaining-neighbours/README.md`.
 - Enumeration leftovers (E01-TAIL): two live defects repaired — a #line
   directive in analysed source could move the audited scope in both
   directions (one fail-open), now attributed by include-depth flags no
@@ -34,7 +34,7 @@ boundaries.
   definitions, so Safe now requires full analysed coverage at the
   certificate gate. The cost residual measured at 53 ms and the cache
   declined, with the two genuinely larger redundancies named. 31 audited
-  theorems. Evidence: `docs/reports/remaining-e01-tail/README.md`.
+  theorems. Evidence: `docs/reports/archive/early-waves/remaining-e01-tail/README.md`.
 - Derived-text capability (MEMCLOSE): memory_close moves through the
   process boundary with the derived text never travelling — the core
   derives from its own recipe and compares field-for-field, with the
@@ -42,14 +42,14 @@ boundaries.
   directions; the extension is additive at the wire. filesystem_chunk_close
   becomes composable-now. `qcore-schemas` 12.0.0; ChunkIO 0.11.0;
   32 audited theorems. Evidence:
-  `docs/reports/remaining-memclose/README.md`.
+  `docs/reports/archive/early-waves/remaining-memclose/README.md`.
 - Literal-premise boundaries (HASH-REFINE): TYPE admitted on a closed C11
   argument (integer-constant 0 is the null pointer constant); LITERAL
   widened only structurally (matched parens, the 23-entry suffix table)
   with octal's refusal load-bearing on both sides and the declared space
   made canonical; zero corpus reach measured across all 50 sites. 28 new
   audited theorems. Evidence:
-  `docs/reports/remaining-hash-refine/README.md`.
+  `docs/reports/archive/early-waves/remaining-hash-refine/README.md`.
 - Liveness quartet (BORROW-RESIDUALS): PRESTATE lands (a call releasing and
   borrowing one settled identity in its own declared effects was
   Safe-with-no-diagnostics — refused, on the measured ground that no
@@ -57,7 +57,7 @@ boundaries.
   measurement; OUT and ASSUMPTION are reasoned refusals with every ground
   measured; corpus byte-identity proved by a toggled-rule control. 21 new
   audited theorems. Evidence:
-  `docs/reports/remaining-borrow-residuals/README.md`.
+  `docs/reports/archive/early-waves/remaining-borrow-residuals/README.md`.
 - Corpus consolidation: one integrator measurement
   (`docs/reports/wave15-corpus/`) re-pins the baseline — three diagnostics
   units, exactly NEIGHBOURS' attributed set, zero function status moves,

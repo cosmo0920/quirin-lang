@@ -143,7 +143,7 @@ engage.
 ## Amendments after the 2026-09-19 migration checkpoint
 
 The blocks still marked preserved above are the migration's reconstruction
-text. `docs/reports/docs-structure-compression/verify.py` checked them at that
+text. `docs/reports/archive/language-and-tooling/docs-structure-compression/verify.py` checked them at that
 card's own checkpoint; it no longer passes against the tree, failing at its first
 row (`AGENTS.md` → `docs/development/architecture.md`), so the markers pin
 nothing mechanically (`W45-DOCS-PRESERVATION-VERIFIER-DECAYED`). Edit such a

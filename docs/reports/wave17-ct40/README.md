@@ -21,7 +21,7 @@ therefore *structurally cannot* contribute to either.
 
 Card `CTWIN-PUBLISH` (wave 16) closed the gateway hazard that had kept CT40
 unmapped and recorded candidate schema-2 rows at
-[`docs/reports/remaining-ctwin-publish/artifacts/ct40-candidate-rows.json`](../remaining-ctwin-publish/artifacts/ct40-candidate-rows.json),
+[`docs/reports/remaining-ctwin-publish/artifacts/ct40-candidate-rows.json`](../archive/early-waves/remaining-ctwin-publish/artifacts/ct40-candidate-rows.json),
 explicitly for the next CT lane. Following the wave-8 precedent — parked rows
 are re-measured, never trusted — every value was measured again on **this
 tree's own fixture bytes** before the manifest was touched.

@@ -1,0 +1,98 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "w5-configured-frame-helpers",
+ "total_pruned_files": 18,
+ "total_pruned_bytes": 1347945,
+ "artifacts": [
+  {
+   "path": "audit.log.gz",
+   "bytes": 13851,
+   "sha256": "c8ddea2a06d262388841f03e011f4916fd27559768b4e80fa8f6d31edf564b30"
+  },
+  {
+   "path": "checks.log.gz",
+   "bytes": 2216,
+   "sha256": "61be4b130f66402161462c0a73a57f4f9304c46c2d3f3dd3e398b907b94b555e"
+  },
+  {
+   "path": "chunk-contracts.json.gz",
+   "bytes": 268582,
+   "sha256": "7b52087dbbfc3c29df2a71f622db351ce43d21e100d12877680c8848d59f6b6d"
+  },
+  {
+   "path": "compatibility-focused.log.gz",
+   "bytes": 1386,
+   "sha256": "87596b5ed231901cf75ffd183c2ceabbf09f4dbcd1b158545417958c8dfaa6e6"
+  },
+  {
+   "path": "diagnostics.json.gz",
+   "bytes": 372538,
+   "sha256": "0e229046194cf4359f3cf7d798952a5a967b19ee62712129a95908b4ba0e6dfa"
+  },
+  {
+   "path": "frame-policy-focused.log.gz",
+   "bytes": 406,
+   "sha256": "7518d9025da3a9814ed949f456e23a0f8409ab15825d231211e12c3fb3e385cc"
+  },
+  {
+   "path": "gateway-focused.log.gz",
+   "bytes": 3441,
+   "sha256": "7354781cfa94d4a0f99e70ab7b2ae5cf88e9289fbb71f06eb72d4d07d658f995"
+  },
+  {
+   "path": "layout-premise/caller.log",
+   "bytes": 828,
+   "sha256": "6ce2d9e402db5b1216e4b008fc9883a1e4839164a610d9a9b30d3f45793645dd"
+  },
+  {
+   "path": "layout-premise/helper.log",
+   "bytes": 884,
+   "sha256": "7e41c303209c3185ec6f40e9f3e1debd8842194d42c7b100c3405894cd0b4292"
+  },
+  {
+   "path": "lean-audits.log.gz",
+   "bytes": 8987,
+   "sha256": "65f7d153b6c09d662f0c9ad9630d8a33161710a322be3cd90590e9c844d15c30"
+  },
+  {
+   "path": "lean-build.log.gz",
+   "bytes": 90,
+   "sha256": "9dce10843bbe6ebe0c643b889b2262a78c4aaa77fda44ed0557f39bfb5c832ea"
+  },
+  {
+   "path": "pre-policy-metadata/audit.log.gz",
+   "bytes": 13847,
+   "sha256": "c991abdc7376653f45a505a9c93b4b021e69d9fd29f0507b0e2fc57b725f1206"
+  },
+  {
+   "path": "pre-policy-metadata/chunk-contracts.json.gz",
+   "bytes": 268419,
+   "sha256": "d289a1b484dc4d887f2ddaecf93db87f69bdd5b2399ec4df9102c6a366c62438"
+  },
+  {
+   "path": "pre-policy-metadata/diagnostics.json.gz",
+   "bytes": 372538,
+   "sha256": "0e229046194cf4359f3cf7d798952a5a967b19ee62712129a95908b4ba0e6dfa"
+  },
+  {
+   "path": "process-focused.log.gz",
+   "bytes": 436,
+   "sha256": "6b43982e9ea217632ad26d407c623b747f51879fb549b3555703cff0daf4a9a7"
+  },
+  {
+   "path": "providers.log.gz",
+   "bytes": 1144,
+   "sha256": "3a9020e5055b8ef5f25ffd426f63f6f9aef3f8c6098734d02600d74626bf7a31"
+  },
+  {
+   "path": "python.log.gz",
+   "bytes": 596,
+   "sha256": "a59be6b262031db14d57c767c61d42713968c1c6a83c12c776a547f2090f961b"
+  },
+  {
+   "path": "workspace.log.gz",
+   "bytes": 17756,
+   "sha256": "9ef694cf793de10ef8ba70d5b3e7d0b32b2747c142948a08e18a35ea0e2aa1e2"
+  }
+ ]
+}

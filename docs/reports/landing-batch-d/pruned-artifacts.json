@@ -1,0 +1,13 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "landing-batch-d",
+ "total_pruned_files": 1,
+ "total_pruned_bytes": 93069,
+ "artifacts": [
+  {
+   "path": "integration/gate-scope.json",
+   "bytes": 93069,
+   "sha256": "ac769beeb0946d124e58c9fcfd9b2393092bfafd0a0fd4c5af510245b9e97615"
+  }
+ ]
+}

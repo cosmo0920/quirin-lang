@@ -1,0 +1,18 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "sp4-symbolic-libevent-premises",
+ "total_pruned_files": 2,
+ "total_pruned_bytes": 310434,
+ "artifacts": [
+  {
+   "path": "gate/gate-1.json",
+   "bytes": 154220,
+   "sha256": "7a04a29978ba6360df53689d183f805b63b504e240abf047df45065809f4a268"
+  },
+  {
+   "path": "gate/gate-2.json",
+   "bytes": 156214,
+   "sha256": "2124f46c08f303eeb91d981e78dd1aa2a568e4c600482fe99b5946a9ce586cf4"
+  }
+ ]
+}

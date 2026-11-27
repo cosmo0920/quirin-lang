@@ -8,7 +8,7 @@
 > the subset census of §3 is measured by the shipped reader over the pinned
 > `third_party/libevent` headers and over the pinned Cycle 19 msgpack header,
 > and is reported in
-> [`docs/reports/wave22-native-library-header/README.md`](../reports/wave22-native-library-header/README.md).
+> [`docs/reports/archive/waves-20-39/wave22-native-library-header/README.md`](../reports/archive/waves-20-39/wave22-native-library-header/README.md).
 > The named refusals of §4 are the boundary; what they exclude is follow-on
 > work, listed in §9, not omission.
 

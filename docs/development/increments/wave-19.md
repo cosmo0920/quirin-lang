@@ -19,19 +19,19 @@ Contract corpus 70 modules. Nothing is promoted.
   non-acquiring call's custody-free scalar result and a scalar local
   passes as a `Data` actual, in a `ValueId` namespace beside `ResourceId`
   that nothing converts; the acquisition adapter stays the one spelling of
-  an acquisition. Evidence: `docs/reports/wave19-pipe-scalar-result/README.md`.
+  an acquisition. Evidence: `docs/reports/archive/early-waves/wave19-pipe-scalar-result/README.md`.
 - Branching (IF-STATEMENT): `source.branch.v1` — `if`/`else`, a decidable
   condition tier, custody-join agreement (band Q044–Q046, sequential route
   only, zero new reserved words). The census corrected wave 18's premise:
   five of six semantic models already branched; only the cleanup lowering
   lacked a branch constructor, so both arms flow through the unedited
-  checkers. Evidence: `docs/reports/wave19-if-statement/README.md`.
+  checkers. Evidence: `docs/reports/archive/early-waves/wave19-if-statement/README.md`.
 - Named waivers (UNSAFE-LINKAGE-ARTIFACT): level L1 of the linkage
   spectrum — a manifest-resident waiver publishes "unchecked X at ABI S
   from artifact Y@hash under stated ABI premises" over a total-or-reject
   manifest; the identity is a pin, not a probe; header disagreement
   refuses rather than withdraws (band Q039–Q042, no schemas bump).
-  Evidence: `docs/reports/wave19-unsafe-linkage-artifact/README.md`.
+  Evidence: `docs/reports/archive/early-waves/wave19-unsafe-linkage-artifact/README.md`.
 - Typedef reader (CONSTRUCTOR-RESIDUALS-ABI-TYPEDEF): the declared-ABI
   reader commits to function-pointer and aggregate-definition typedefs
   (`fnptr` normative in §C04.1, outside every custody admission), and the
@@ -40,20 +40,20 @@ Contract corpus 70 modules. Nothing is promoted.
   address-of-member refusal (residual `ABI-TYPEDEF-ADDRESS-OF-MEMBER`).
   BEFORE reproduced the wave-17 verdict artifact byte-identically; the
   msgpack contract measured zero payoff and is deliberately not landed.
-  Evidence: `docs/reports/wave19-abi-typedef/README.md`.
+  Evidence: `docs/reports/archive/early-waves/wave19-abi-typedef/README.md`.
 - Operators (OR-AND-LOWERING): the operator table is superseded by user
   direction — logical or is `||`, logical and `&&`, both short-circuit,
   lowered onto the branch construct with byte-identical C against
   hand-lowered branches; single `|`/`&`/`^` are reserved for bitwise with
   actionable refusals, resolving the open bitwise-OR-symbol note. No new
-  diagnostic code. Evidence: `docs/reports/wave19-or-and-lowering/README.md`.
+  diagnostic code. Evidence: `docs/reports/archive/early-waves/wave19-or-and-lowering/README.md`.
 - Route composition (STD-IO-COMPOSE): the extern and std-io routes compose
   as a checked model union selected after every concurrent route (Q043,
   `ComposedStdIo`); `EXTERN-SCALAR-LITERAL` lands, and a declared
   `succeeds INTEGER` outcome is verified by the emitted program rather
   than believed. The literal `value |> render |> log` chain compiles,
   emits its hand-written twin byte-identically and byte-compares per
-  stream sanitized. Evidence: `docs/reports/wave19-std-io-compose/README.md`.
+  stream sanitized. Evidence: `docs/reports/archive/early-waves/wave19-std-io-compose/README.md`.
 Merged gate at this checkpoint: 3,134 workspace tests (8 ignored),
 122 provider tests, 193 Python tests, 85 Lean audits, both reevaluation
 examples exit 0, fmt and clippy clean. Follow-on accounting lives in
@@ -79,7 +79,7 @@ Corpus-neutral by construction; the baseline stays
   `value |> render |> log` stays gated on two pre-existing measured
   boundaries recorded as PIPE-SCALAR-RESULT and STD-IO-COMPOSE.
   21 new audited theorems (`QCore.PipeDesugaring` 35 → 56). Evidence:
-  `docs/reports/wave19-pipe-chain/README.md`.
+  `docs/reports/archive/early-waves/wave19-pipe-chain/README.md`.
 - One printing route (TRACE-STDIO): all 46 compiler-synthesized print sites
   across the five C backends migrate onto the single
   `QCORE_IO_WRITE`/`QCORE_IO_FLUSH` route `std.io` lowers to, with no
@@ -92,7 +92,7 @@ Corpus-neutral by construction; the baseline stays
   reference execution, README transcript checked against a real run); a
   source-level `print` in a threaded module is measured impossible and
   pinned. Windows residuals recorded (TRACE-STDIO-WIN-DIGEST/-WIN-RUN).
-  Evidence: `docs/reports/wave19-trace-stdio/README.md`.
+  Evidence: `docs/reports/archive/early-waves/wave19-trace-stdio/README.md`.
 Merged gate at this checkpoint: 2,986 workspace tests (8 ignored),
 122 provider tests, 193 Python tests, 80 Lean audits, both reevaluation
 examples exit 0, fmt and clippy clean. The remaining wave-19 spine —

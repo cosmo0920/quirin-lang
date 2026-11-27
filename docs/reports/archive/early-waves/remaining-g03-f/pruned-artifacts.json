@@ -1,0 +1,18 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "remaining-g03-f",
+ "total_pruned_files": 2,
+ "total_pruned_bytes": 135973,
+ "artifacts": [
+  {
+   "path": "libevent-audit-stdout.log",
+   "bytes": 12412,
+   "sha256": "bd6a79fc562fce0cb0139692f9636cb4dfeb98d52058ba43eb7a845656922343"
+  },
+  {
+   "path": "libevent-core-audit.assumptions.json",
+   "bytes": 123561,
+   "sha256": "65cbbd37b2d0d1709d8db1ccc5fcd1dcf06d6ef6715f0c2af99cf902c5ffb576"
+  }
+ ]
+}

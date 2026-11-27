@@ -15,7 +15,7 @@ with the detach card must close compatibility before push.
 The task is the existing ledger entry `FB-EVENT-LOOP-CROSS-FUNCTION-LIFETIME`:
 implement the user's S3 declared lifetime protocols after the access/identity
 blockers. The historical census and decisions remain in
-[the design report](../fb-event-loop-cross-function-lifetime/README.md).
+[the design report](../archive/contracts-and-premises/fb-event-loop-cross-function-lifetime/README.md).
 D1/D5 selects S3; D3 restricts equalities to derivation from proven single
 stores and immutable flags; D6 orders the blockers first. Removal poisoning
 and loop destroy ending records already belong to the separate

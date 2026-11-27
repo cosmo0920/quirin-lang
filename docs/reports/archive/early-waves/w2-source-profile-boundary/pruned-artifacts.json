@@ -1,0 +1,63 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "w2-source-profile-boundary",
+ "total_pruned_files": 11,
+ "total_pruned_bytes": 690213,
+ "artifacts": [
+  {
+   "path": "audit.log.gz",
+   "bytes": 13843,
+   "sha256": "355379bf729ab9692b179eb88253a03078f4072c98b241884530a17254835860"
+  },
+  {
+   "path": "checks.log.gz",
+   "bytes": 2281,
+   "sha256": "0da1b54d96aacddebf12c5f4b992fed14e78d43238caac36b08bda7cb87b975a"
+  },
+  {
+   "path": "chunk-contracts.json.gz",
+   "bytes": 268582,
+   "sha256": "7b52087dbbfc3c29df2a71f622db351ce43d21e100d12877680c8848d59f6b6d"
+  },
+  {
+   "path": "diagnostics.json.gz",
+   "bytes": 372538,
+   "sha256": "0e229046194cf4359f3cf7d798952a5a967b19ee62712129a95908b4ba0e6dfa"
+  },
+  {
+   "path": "focused.log.gz",
+   "bytes": 499,
+   "sha256": "ff38379fe9129ca3495cc99b656e90326e5a95b913677140278d00e44cea9806"
+  },
+  {
+   "path": "lean-audits.log.gz",
+   "bytes": 10011,
+   "sha256": "90edc27b88d576bcdd8d0817b086da14dbe7e5a8b75056d8a85ff5239f5e35ae"
+  },
+  {
+   "path": "lean-build.log.gz",
+   "bytes": 124,
+   "sha256": "7a65b4fd58caa185990bcff627a397714d8113f7f7a6168a753ccde7545a1246"
+  },
+  {
+   "path": "providers.log.gz",
+   "bytes": 1482,
+   "sha256": "c4f5c5c0309911ddba1b27cb58bd07271f4f48a9f3ed5ebb78a40aa5c1bcdda1"
+  },
+  {
+   "path": "python.log.gz",
+   "bytes": 597,
+   "sha256": "bbf948fe446b9c06fd0090297a49b4d120083c2331feec0bda49055c9a35df20"
+  },
+  {
+   "path": "red.log.gz",
+   "bytes": 828,
+   "sha256": "362ef014ad4b53be054840a26010da98c400e1d74683bb981635cbd90e822189"
+  },
+  {
+   "path": "workspace.log.gz",
+   "bytes": 19428,
+   "sha256": "51ddc716dafda43e1d708284b9e334a9859a343224907e9ff49744bce3f07fb2"
+  }
+ ]
+}

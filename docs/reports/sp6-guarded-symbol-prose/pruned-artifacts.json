@@ -1,0 +1,13 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "sp6-guarded-symbol-prose",
+ "total_pruned_files": 1,
+ "total_pruned_bytes": 186168,
+ "artifacts": [
+  {
+   "path": "gate/gate-1.json",
+   "bytes": 186168,
+   "sha256": "e25577996f803e8d99bc2a38e22798e45e31c7a47b98babb38a013550d7f32e3"
+  }
+ ]
+}

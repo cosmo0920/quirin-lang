@@ -197,7 +197,7 @@ move.** Wave 35 measured two independent blockers at all 14 sites reaching
 **zero corpus movement was the expected outcome and is what happened**: 0 leaves
 added, 0 removed, 54,503 unmoved, 0 unit and 0 function status moves, with
 AFTER's verdict-bearing artifacts **byte-identical** to BEFORE's, and BEFORE
-reproducing `docs/reports/w36-corpus-contracts-3/artifacts/` byte for byte
+reproducing `docs/reports/archive/waves-20-39/w36-corpus-contracts-3/artifacts/` byte for byte
 (`diagnostics a7aa3b5f9ab193a0`, `chunk-contracts c4f438e4ed3dab3c`). Every
 count stands as the declarative arbiter left it — leak **272**, `unknown_alias`
 **4,308**, `unsupported` **49,922**, `summary_conflict` **1**, functions
@@ -288,7 +288,7 @@ in the isolated gate; that is constraint 16's signature and crate but **not** on
 of its six named rows, and the card files it as `LOAD-SENSITIVE-ROW-UNNAMED`
 rather than proposing a seventh, because one observation under a heavy
 self-inflicted load carries no measured load figure. Report:
-`docs/reports/c-gateway-indirect-census-2/README.md`.
+`docs/reports/archive/gateway-and-clang/c-gateway-indirect-census-2/README.md`.
 
 `STABILITY-REEVAL` #2 (2026-09-18), the cadence's **second firing**, audited
 waves 34–35 by `CLAUDE.md`'s four steps and closed with **31 registered
@@ -340,7 +340,7 @@ is driven by **no test**, counted by **no census**, and its decline returns the
 **same value** as "nothing to derive", so the rate is unmeasurable without a code
 change; `release_site` has **seven** refusal disjuncts and three are
 instrumented; and both wave-36 arbiters are chartered against numbers that exist
-only outside the tree. `docs/reports/stability-reeval-2/README.md`.
+only outside the tree. `docs/reports/archive/language-and-tooling/stability-reeval-2/README.md`.
 
 **`W36-CORPUS-CONTRACTS-3` (2026-09-18), wave 36's first arbiter by merge order (its brief said second; the order flipped when it finished first — integrator's settlement of `JOINED-PROVENANCE-CALL-FRAMES` §9.7) — six
 declarations chosen by function-cover yield, and the two places the method
@@ -424,7 +424,7 @@ in isolation at load 23.7–27.6. The card changes no crate source and
 as constraint 16's **sixth** load-sensitive member — or as evidence that
 `e3d3a2ce`'s repair is incomplete, the integrator's call
 (`STANDALONE-HOST-CLOSED-INPUT-LOAD`).
-`docs/reports/w36-corpus-contracts-3/README.md`.
+`docs/reports/archive/waves-20-39/w36-corpus-contracts-3/README.md`.
 
 **`CARD-SCOPE-GUARD` (2026-09-18)** answers `CARD-SCOPE-SELF-MERGE` with a
 mechanism rather than another instruction, and its interest is how much of the
@@ -462,5 +462,5 @@ and nothing more. `CLAUDE.md`'s worktree hygiene also gains the harness hazard
 that surfaced mid-card: an isolation worktree with an unchanged tree is removed
 even while its agent's background jobs run (`WORKTREE-AUTOREMOVAL-PRISTINE-TREE`).
 No crate source, no `proof/`, no pinned artifact: the workspace is byte-identical
-to `main`'s at `60958bf0`. `docs/reports/card-scope-guard/README.md`.
+to `main`'s at `60958bf0`. `docs/reports/archive/language-and-tooling/card-scope-guard/README.md`.
 

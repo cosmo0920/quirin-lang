@@ -461,7 +461,7 @@ eleven end-to-end tests assert on the leak and the exit rather than on the
 `double_releases()` proxy that let the finding survive a wave, and six mutations
 each turn a distinct set of them red. `CONSTANT-DO-WHILE-SCALAR-ROUTE-UNOWNED`
 is **retired**, its "more interesting outcome" clause being what happened: the
-two routes do disagree. `docs/reports/scalar-route-exit-edge/README.md`.
+two routes do disagree. `docs/reports/archive/language-and-tooling/scalar-route-exit-edge/README.md`.
 
 **`BASE-TYPE-READER-CENSUS` (2026-09-18).** Wave 37's first measurement card
 discharges `BASE-TYPE-READER-UNMEASURED`, the residual wave 36's indirect-access
@@ -498,7 +498,7 @@ decides zero). Six residuals are **registered** in `named_followups`
 (171 → 177), unlike wave 36's nine, and the family-size delta 18,555 → 18,549 is
 attributed exactly to wave 36's own first arbiter `W36-CORPUS-CONTRACTS-3`,
 confirming the registered residual `JPC-CENSUS-CONTRACT-SET-DEPENDENT` as
-measured rather than hypothetical. `docs/reports/base-type-reader-census/`.
+measured rather than hypothetical. `docs/reports/archive/language-and-tooling/base-type-reader-census/`.
 
 ## Checkpoints moved verbatim by `DOCS-COMPACT-7`
 
@@ -511,7 +511,7 @@ one of these blocks disagrees with those files, those files are right and this
 page records what was there before. Three of them carried a statement that was
 false when it was superseded — the chain length, CT46's stage rows and the
 follow-on count's own derivation — which is recorded in
-`docs/reports/docs-compact-7/README.md` §4 rather than repaired here.
+`docs/reports/archive/language-and-tooling/docs-compact-7/README.md` §4 rather than repaired here.
 
 ### 1. `AGENTS.md` headline paragraph — the arbiter chain, as it stood at `2caf7369`
 

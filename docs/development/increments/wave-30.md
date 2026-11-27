@@ -34,12 +34,12 @@ premises stated; BEFORE byte-identical to the wave-29 baseline, AFTER
 byte-identical to its own BEFORE (a determinism measurement), corpus rows
 confirmed unmoved (leak **266**, `unknown_alias` 4,344, `unsupported`
 49,760, nothing promoted), baseline moved to
-`docs/reports/w4-recursive-summaries/artifacts/`. `DOCS-COMPACT-4` honoured
+`docs/reports/archive/early-waves/w4-recursive-summaries/artifacts/`. `DOCS-COMPACT-4` honoured
 the cadence (44 constraints in/out, five drifts fixed; next pass ~wave 32).
 Zero reserved words, zero new codes. Lean audits 118 → **121**. Merged gate
 at the close tip: 4,466 workspace tests (8 ignored, `--no-fail-fast`), 122
 provider (carried), 193 Python, both probes exit 0, fmt/clippy clean
-(`docs/reports/wave30-close/gate.json`); the matrix regenerated through
+(`docs/reports/archive/waves-20-39/wave30-close/gate.json`); the matrix regenerated through
 `build_matrix.py --gate`, hand-kept sections carried, `T08-SRC-O`'s
 follow-up annotated with the loan discharge, every tripwire green at the
 close tip. Nothing is promoted; full language conformance stays **false**.
@@ -70,7 +70,7 @@ premises (no precondition, so no failure path can be deleted; negative
 prefix-closed facts, so soundness is a prefix induction rather than a rank),
 for the integrator to adopt (`W4-RECSUM-CONSTRAINT-4`). The arbiter runs, on a
 fresh Clang pin: BEFORE byte-identical to
-`docs/reports/w29-corpus-contracts/artifacts/` in `diagnostics.json` and
+`docs/reports/archive/waves-20-39/w29-corpus-contracts/artifacts/` in `diagnostics.json` and
 `chunk-contracts.json` (raw and canonical, SHA-256 `8662337d…` /
 `c4f438e4…`), AFTER byte-identical to BEFORE in **all five artifacts** — the
 card changes no analysis input, so the two counted runs are a run-to-run
@@ -86,7 +86,7 @@ environment mid-suite at 54 binaries, every completed binary green —
 discarded, recorded, not counted), fmt/clippy clean, both probes exit 0,
 **Passed 119 Lean audits**, Python 193 with the one disclosed derived-facts
 tripwire (`lean_audits: 118 != 119`, constraint 25's usual wave-close
-reconciliation). Evidence: `docs/reports/w4-recursive-summaries/README.md`.
+reconciliation). Evidence: `docs/reports/archive/early-waves/w4-recursive-summaries/README.md`.
 
 Wave 30, card `CT07-WRITE-REMAP` (2026-09-13): the CT lane wave 29's
 write-lend card named — CT07's evidence upgraded from the read-loan half to
@@ -159,7 +159,7 @@ frontend unit tests (24 total); Lean: `QCore.RegionJoinsLoan`, 16 audited
 theorems consuming `ReadLoan`/`EpochSourceLowering`/`RegionJoinsDuties`
 unedited, audits 118 → **119**. Constraint 15m amendment proposed in the card
 report §2 for the integrator. Evidence:
-`docs/reports/region-joins-loan/README.md`.
+`docs/reports/archive/language-and-tooling/region-joins-loan/README.md`.
 
 Wave 30, card `DOCS-COMPACT-4` (2026-09-13): the fourth recurring
 documentation compaction over `AGENTS.md`, `CLAUDE.md` and `README.md`, on the
@@ -200,7 +200,7 @@ Q-space note's per-wave runs merged, a duplicated baseline pointer removed).
 `EXAMPLES-STYLE-SLICE-FANOUT` remains an open user decision, flagged in
 `examples/README.md` and untouched. No crate source, no spec, no frozen
 archive, no manifest and no matrix file changed; corpus-neutral by
-construction. Evidence: `docs/reports/docs-compact-4/README.md`.
+construction. Evidence: `docs/reports/archive/language-and-tooling/docs-compact-4/README.md`.
 
 Wave 30, card `CT-PROOF-LEG-2` (2026-09-13): the **second proof-stage
 capability**, on the CT01 precedent — delivered without flipping the row: the
@@ -291,6 +291,6 @@ delivers the attribution, the readiness statement and the updated hand-kept
 `acceptance.json` reason, with the non-widening stated in §L21's `Q6xx` row.
 Zero reserved words, no gateway/contract/audit/provider file touched (corpus
 rows carried, leak pin 266 untouched by construction). Evidence:
-`docs/reports/ct24-cleanup-preempted/README.md`.
+`docs/reports/archive/language-and-tooling/ct24-cleanup-preempted/README.md`.
 
 <!-- migrated-section:end -->

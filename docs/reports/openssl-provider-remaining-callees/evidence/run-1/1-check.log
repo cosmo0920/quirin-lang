@@ -1,3 +1,0 @@
-$ providers/target/release/quirin-plugin check providers/quirin-provider-openssl
-quirin-provider-openssl: 15 module(s), 57 checker(s), 0 override(s)
-exit 0

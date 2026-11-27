@@ -48,7 +48,7 @@ source extraction and scalar erasure are premises, and automatic stack capacity
 is not proved. Six new public tests and a fixed six-allocation native sanitizer
 fixture pass. All 760 workspace tests and the standing gates pass; the 185-unit
 Cycle19 reports are byte-identical. General recursive inference, aliases and
-cost summaries remain open. Evidence: `docs/reports/w4-unsigned-countdown/README.md`.
+cost summaries remain open. Evidence: `docs/reports/archive/early-waves/w4-unsigned-countdown/README.md`.
 
 Generic source consolidation (2026-09-07): W5 moves typed C path import and
 call-result def/use into `qcore-c-gateway`; counter, nullable-field destructor,
@@ -62,7 +62,7 @@ parity after module-reference/import-order rewrites; default policy bytes and
 all four full Cycle19 artifacts are unchanged. The 767 workspace tests and
 standing gates pass. Specialized reference matching, provider extraction,
 registry composition and final compatibility removal remain open. Evidence:
-`docs/reports/w5-generic-source-consolidation/README.md`.
+`docs/reports/archive/early-waves/w5-generic-source-consolidation/README.md`.
 
 Handler rethrow conformance (2026-09-07): CT20 now executes an in-scope
 second-creation failure handler that joins its existing sibling, drops that
@@ -108,7 +108,7 @@ all 1,447 production comparison tokens match after documented API renames.
 All 784 workspace tests, standing gates, 31 provider tests, 43 Python tests and
 20 Lean audits pass; all four full Cycle19 artifacts are byte-identical. Provider
 semantic extraction, source-bound lifecycle composition and compatibility-route
-removal remain open. Evidence: `docs/reports/w5-typed-body-boundary/README.md`.
+removal remain open. Evidence: `docs/reports/archive/early-waves/w5-typed-body-boundary/README.md`.
 
 Completed-child custody conformance (2026-09-07): CT14 is newly mapped and CT37
 now executes real Linux worker allocation/completion/join. A shared native adapter
@@ -139,7 +139,7 @@ remains a premise. A native run executes the same C wrappers and releases all fo
 observed allocations under ASan/UBSan/LSan. All 791 workspace tests, standing gates,
 31 provider tests, 43 Python tests and 20 Lean audits pass. Broader alias analysis,
 relational branches, general recursion and cost summaries remain open. Evidence:
-`docs/reports/w4-immutable-out-aliases/README.md`.
+`docs/reports/archive/early-waves/w4-immutable-out-aliases/README.md`.
 
 Reused-address conformance (2026-09-07): CT50 now executes two owned Buffer
 lifetimes backed by real Linux mappings. The first is unmapped; the second uses
@@ -169,7 +169,7 @@ remain identical to the prior report; no verdict or CT mapping changes. Declared
 model profiles and synchronization evidence remain premises, not native proofs.
 Specialized provider semantics, broader lifecycle/source binding and compatibility
 route removal remain open. Evidence:
-`docs/reports/w5-generic-driver-consolidation/README.md`.
+`docs/reports/archive/early-waves/w5-generic-driver-consolidation/README.md`.
 
 Public source-profile validation (2026-09-07): W2's audited-file and construct
 witness rules now run at direct source-summary derivation as well as JSON load.
@@ -183,7 +183,7 @@ hash/predicate premises. All 803 workspace tests, standing gates, 31 provider
 tests, 43 Python tests and 20 Lean audits pass. The four full 185-TU audit
 artifacts retain exact parity; declared source constructs remain assumptions,
 with no raw verdict promotion or CT mapping change. Evidence:
-`docs/reports/w2-source-profile-boundary/README.md`.
+`docs/reports/archive/early-waves/w2-source-profile-boundary/README.md`.
 
 CMetrics unit-result provider (2026-09-07): W5 adds explicit void-result Boolean
 field import and process replay. `cmt_counter_allow_reset` now has a checked
@@ -244,7 +244,7 @@ commit. At `d1ab8abff`, separate CMetrics/librdkafka/ChunkIO scopes complete:
 138 units, 0 Safe / 28 provisional Unsafe / 107 Unknown / 3 data-only. Full
 current-corpus auditing still rejects unsupported CTraces options and conflicting
 wrapper commands; these are not revision-selection failures. No whole-unit
-promotion or semantic rule change is claimed. See `docs/reports/fluent-bit-moving-revisions/README.md` and
+promotion or semantic rule change is claimed. See `docs/reports/archive/language-and-tooling/fluent-bit-moving-revisions/README.md` and
 `crates/qcore-audit/README.md` for commands and validation.
 
 Cycle19 command correction checkpoint (2026-09-07): the existing example now
@@ -256,7 +256,7 @@ user command now completes at `d1ab8abff`, but all 186 configurations across
 185 source files remain Unknown before analysis because of compiler-command
 admission. This is an incomplete audit checkpoint, not a successful production
 verification: faithful dialect/driver/flag and filename-macro ingestion remains
-required. See `docs/reports/cycle19-current-command/README.md`.
+required. See `docs/reports/archive/cycles-18-19/cycle19-current-command/README.md`.
 
 Cycle19 explicit Clang audit (2026-09-07):
 `python3 -B scripts/prepare_cycle19_clang_audit.py --run` prepares Fluent Bit and
@@ -270,7 +270,7 @@ Clang rerun at `9f0fa573` analyzes all 186 configurations across 185 source file
 and zero compiler-command refusals. Historical source/native evidence remains
 unpromoted. All 857 workspace tests and standing gates pass. Full native Fluent
 Bit build, GCC equivalence and general filename/build semantics remain outside
-this result. Evidence: `docs/reports/cycle19-explicit-clang/README.md`.
+this result. Evidence: `docs/reports/archive/cycles-18-19/cycle19-explicit-clang/README.md`.
 
 Enforced process limits (2026-09-07): the verifier host gains a target-qualified
 `linux-rlimit-v1` execution profile that installs a package's declared limits

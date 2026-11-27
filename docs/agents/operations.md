@@ -59,6 +59,18 @@ investigating why it exists.
   fresh paths, including confirmation runs. A disk-exhausted run measures disk,
   not the program: retain the failed attempt, discard it as validation evidence,
   free only your own safe build output, and remeasure.
+- Keep `docs/reports/` compact and two-tiered: active or mechanically test/ledger-pinned
+  cards live at `docs/reports/<card>/`, and historical archived cards live under
+  `docs/reports/archive/<category>/<card>/` with unique card directory names across
+  both tiers (indexed together by `python3 scripts/build_docs_index.py`). Never
+  commit raw corpus dumps (`resource-diagnostics*`, `diagnostics.json*`, `parity.jsonl*`,
+  `corpus-null.jsonl*`, `gate-scope.json`, `/raw/before/`, `/raw/after/`, `.prepared.c.gz`),
+  failed/aborted attempts (`attempt-N/`, `*wrong-clang-attempt*`), or individual report
+  files over `512 KiB`; keep raw runs in `private/` and commit compact diffs/summaries
+  plus SHA-256 digests (`python3 scripts/check_report_hygiene.py`, wired into
+  `python3 scripts/land.py check`). Historical bulk dumps pruned under user decision
+  record their path, byte count, and SHA-256 in `<report-dir>/pruned-artifacts.json`
+  (`quirin-pruned-report-artifacts/1`).
 - Reclaim a delegated card's build directory only after its final report, not
   after an artifact appears. Ask its agent rather than inferring completion.
 - Restore mutation inputs by rewriting bytes and assert the round trip. Never
@@ -205,13 +217,13 @@ Read this section for documentation compaction, stability review and wave close.
   a stated measured boundary). Record postponement explicitly. Never relabel an
   observation as proof or infer stability from green tests.
 - Last firings and next due: the ninth compaction ran at the wave-45 close
-  (`DOCS-COMPACT-9`, [report](../reports/docs-compact-9/README.md)), postponed
+  (`DOCS-COMPACT-9`, [report](../reports/archive/language-and-tooling/docs-compact-9/README.md)), postponed
   from waves 42–43; the tenth is due around wave 47–48. `docs/STATUS.md` alone
   was compacted separately on 2026-11-21 (`STATUS-COMPACT`,
   [report](../reports/status-compact/README.md)); that is not the tenth
   compaction, which remains due for the other pages. Stability review firing
   five ran at the wave-45 close over `6dc484ad..8c1f15eb`
-  ([report](../reports/stability-reeval-5/README.md)); firing six is due after
+  ([report](../reports/archive/language-and-tooling/stability-reeval-5/README.md)); firing six is due after
   wave 47. A wave close records each firing or its postponement; neither is
   discharged silently.
 

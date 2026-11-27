@@ -276,8 +276,8 @@ and [implementation evidence](../../docs/reports/source-scalar-calls-v1/README.m
 the fixed-width types are [§G02t](../../docs/QCORE_IMPLEMENTED_GRAMMARS_r0_3.md#g02t-fixed-width-scalar-types)
 and [their evidence](../../docs/reports/w48-qr-scalar-types/README.md); the typed
 error is [its evidence](../../docs/reports/w48-qr-scalar-types-r2/README.md), and
-the typed record fields are [card R3's](../../docs/reports/w48-qr-scalar-types-r3/README.md), and the
-typed task values are [card R4's](../../docs/reports/w48-qr-scalar-types-r4/README.md), and the
-typed loops and buffer-route arithmetic are [card R5's](../../docs/reports/w48-qr-scalar-types-r5/README.md);
-floating point is [its evidence](../../docs/reports/w48-qr-floating-point/README.md),
-and floats on the buffer route and in payloads [card W48-QR-FLOAT-BUFFER-PAYLOADS's](../../docs/reports/w48-qr-float-buffer-payloads/README.md).
+the typed record fields are [card R3's](../../docs/reports/archive/wave-48/w48-qr-scalar-types-r3/README.md), and the
+typed task values are [card R4's](../../docs/reports/archive/wave-48/w48-qr-scalar-types-r4/README.md), and the
+typed loops and buffer-route arithmetic are [card R5's](../../docs/reports/archive/wave-48/w48-qr-scalar-types-r5/README.md);
+floating point is [its evidence](../../docs/reports/archive/wave-48/w48-qr-floating-point/README.md),
+and floats on the buffer route and in payloads [card W48-QR-FLOAT-BUFFER-PAYLOADS's](../../docs/reports/archive/wave-48/w48-qr-float-buffer-payloads/README.md).

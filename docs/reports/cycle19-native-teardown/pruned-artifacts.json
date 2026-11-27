@@ -1,0 +1,28 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "cycle19-native-teardown",
+ "total_pruned_files": 4,
+ "total_pruned_bytes": 130087,
+ "artifacts": [
+  {
+   "path": "audit.log.gz",
+   "bytes": 14082,
+   "sha256": "dc82a6901effc890e78a5b678511b75d6157347139814c06aa313fb6d40f5ab2"
+  },
+  {
+   "path": "lean.log.gz",
+   "bytes": 2920,
+   "sha256": "9d8670b7537347d57fb192abddf43e5d7bf611afbe8cf420c0cf740f58884d22"
+  },
+  {
+   "path": "metadata.json",
+   "bytes": 103591,
+   "sha256": "a536168ddb86c53fad64df19e344bf3dc4ec8f472c312648543ee57f162f2891"
+  },
+  {
+   "path": "workspace.log.gz",
+   "bytes": 9494,
+   "sha256": "cbb2bb89a31b13c7dafdb9b4e489532d1a992ce29d2a744bcd84d8ba3f9fe58c"
+  }
+ ]
+}

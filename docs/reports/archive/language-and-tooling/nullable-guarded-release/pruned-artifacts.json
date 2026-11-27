@@ -1,0 +1,13 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "nullable-guarded-release",
+ "total_pruned_files": 1,
+ "total_pruned_bytes": 63603,
+ "artifacts": [
+  {
+   "path": "integration/gate-scope.json",
+   "bytes": 63603,
+   "sha256": "661603ec210079ee4bae78355f2f3013b6554b021d620747bf41a98fdd6898fe"
+  }
+ ]
+}

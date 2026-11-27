@@ -24,7 +24,8 @@ Inputs, all read from the working tree, listed through git (`git ls-files
 --cached --others --exclude-standard`, so ignored content such as `private/`
 never counts, and a gate record written but not yet staged does):
 
-- Landing gate records: `docs/reports/<dir>/integration/gate.json` whose
+- Landing gate records: `docs/reports/<dir>/integration/gate.json` (or
+  archived `docs/reports/archive/<category>/<dir>/integration/gate.json`) whose
   `note` begins `Landing integrate/<label>`. The label is `rN` for the
   numbered landings and a branch word otherwise (`integrate/ag-gaps`).
   Records with an identical label and note are one landing (integrate/r8 left
@@ -100,7 +101,10 @@ class Git:
         result = self._run("ls-files", "--cached", *others, "-z", "--", pathspec)
         if result.returncode != 0:
             raise LandingError(f"git ls-files failed in {self.root}: {result.stderr.strip()}")
-        return sorted({path for path in result.stdout.split("\0") if path})
+        paths = {path for path in result.stdout.split("\0") if path}
+        if self.untracked:
+            paths = {path for path in paths if (self.root / path).is_file()}
+        return sorted(paths)
 
     def contains(self, revision, path):
         if self._run("cat-file", "-e", f"{revision}^{{commit}}").returncode != 0:
@@ -136,13 +140,37 @@ def cards_of(note):
     return CARD_RE.findall("".join(clause))
 
 
+def _card_dir_of_gate_record(path):
+    parts = Path(path).parts
+    if (len(parts) == 5 and parts[:2] == ("docs", "reports") and parts[2] != "archive"
+            and parts[3:] == ("integration", "gate.json")):
+        return parts[2]
+    if (len(parts) == 7 and parts[:3] == ("docs", "reports", "archive")
+            and parts[5:] == ("integration", "gate.json")):
+        return parts[4]
+    return None
+
+
+def _published_contains(git, revision, path):
+    if git.contains(revision, path):
+        return True
+    parts = Path(path).parts
+    if (len(parts) == 7 and parts[:3] == ("docs", "reports", "archive")
+            and parts[5:] == ("integration", "gate.json")):
+        return git.contains(revision, f"docs/reports/{parts[4]}/integration/gate.json")
+    return False
+
+
 def read_landings(root, git):
     """Every landing as a dict (label, number, cards, records, fallback), in
     landing order, and the problems found."""
     groups, problems = {}, []
-    for path in git.listed("docs/reports/*/integration/gate.json"):
-        parts = Path(path).parts
-        if len(parts) != 5:
+    candidates = sorted(
+        set(git.listed("docs/reports/*/integration/gate.json"))
+        | set(git.listed("docs/reports/archive/*/*/integration/gate.json"))
+    )
+    for path in candidates:
+        if _card_dir_of_gate_record(path) is None:
             continue
         try:
             record = json.loads((Path(root) / path).read_text(encoding="utf-8"))
@@ -165,7 +193,7 @@ def read_landings(root, git):
         if group["number"] is None:
             problems.append(f"{group['records'][0]}: integrate/{label} has no rN number")
         if not group["cards"]:
-            directory = Path(group["records"][0]).parts[2]
+            directory = _card_dir_of_gate_record(group["records"][0]) or Path(group["records"][0]).parts[2]
             group["cards"] = [directory.upper()]
             group["fallback"] = True
             problems.append(f"{group['records'][0]}: integrate/{label}'s note has no "
@@ -173,7 +201,7 @@ def read_landings(root, git):
                             f"{directory.upper()}")
         landings.append(group)
     landings.sort(key=lambda g: (g["number"] is None, g["number"] or 0, g["label"],
-                                 g["records"][0]))
+                                 _card_dir_of_gate_record(g["records"][0]) or g["records"][0]))
     return landings, problems
 
 
@@ -219,8 +247,9 @@ def read_publications(root):
             if not isinstance(revision, str) or not re.fullmatch(r"[0-9a-f]{40}", revision):
                 raise LandingError(f"{PUBLICATIONS}: an entry without a full revision")
             found.setdefault(revision, {"profiles": [], "sources": []})
-            if str(PUBLICATIONS) not in found[revision]["sources"]:
-                found[revision]["sources"].append(str(PUBLICATIONS))
+            pub_source = PUBLICATIONS.as_posix()
+            if pub_source not in found[revision]["sources"]:
+                found[revision]["sources"].append(pub_source)
     return found
 
 
@@ -249,7 +278,7 @@ def state(root, git=None):
         revision = max(publications, key=lambda rev: (git.time(rev), rev))
         newest = dict(publications[revision], revision=revision)
     unpublished = [landing for landing in landings
-                   if not any(git.contains(revision, path) for revision in publications
+                   if not any(_published_contains(git, revision, path) for revision in publications
                               for path in landing["records"])]
     return landings, unpublished, newest, problems
 

@@ -67,7 +67,7 @@ Rust custody example. Arbitrary user/package imports, implicit imports, combined
 task/mutex semantics and general native correctness remain outside this change.
 Validation: 1387 workspace tests passed, 1 ignored; all 32 Lean audits,
 formatting, Clippy, both reevaluation probes and four native examples pass.
-Evidence: `docs/reports/core-concurrency-prelude/README.md`.
+Evidence: `docs/reports/archive/language-and-tooling/core-concurrency-prelude/README.md`.
 
 Windows Clang fixture repair (2026-09-08): O04's reduced prelude uses
 Clang target integer types, and the generic consuming sink accepts object
@@ -83,7 +83,7 @@ Windows workspace gate records 1,316 passed, zero failed and one ignored,
 superseding the earlier fixture-failure limitation. Formatting, workspace
 Clippy, both reevaluation probes, the rebased Lean build and all 31 audits
 pass. Validation:
-`docs/reports/windows-clang-fixtures/README.md`.
+`docs/reports/archive/language-and-tooling/windows-clang-fixtures/README.md`.
 
 Windows second-source-set fixture (2026-09-08): compile databases now name the
 gateway-selected Clang and omit Unix-only build flags on Windows. All five
@@ -117,7 +117,7 @@ passes in 47.5 seconds locally; the next incremental build takes 0.13 seconds.
 `python3 scripts/check_lean_audits.py` now builds from the pinned proof directory,
 reports progress, enforces finite time limits and cleans up workers on timeout
 or cancellation. All 31 audits, eight runner tests and the standing gates pass.
-Evidence: `docs/reports/lean-build-performance/README.md`.
+Evidence: `docs/reports/archive/language-and-tooling/lean-build-performance/README.md`.
 
 Windows native concurrency (2026-09-08): the shared emitted C11 thread subset
 now includes a self-contained Windows implementation adapted from Monkey
@@ -131,7 +131,7 @@ retain their target scope; CT mappings and checker/Lean semantics are unchanged.
 This is the emitted subset, not full pthread/C11-threads conformance.
 The pinned Lean build and all 31 audits pass; the aggregate workspace gate
 retains ten failures in three untouched audit targets.
-See `docs/reports/windows-c11-threads/README.md` for provenance, build commands,
+See `docs/reports/archive/language-and-tooling/windows-c11-threads/README.md` for provenance, build commands,
 validation and platform limits.
 
 

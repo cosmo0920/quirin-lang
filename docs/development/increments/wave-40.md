@@ -18,7 +18,7 @@ files without counting mentions as tracking: the same 49 candidates survive,
 and two new Python controls cover the routing. Packet byte measurements are
 source-reading fixtures, not token billing or runtime telemetry. No language,
 corpus, contract, CT or proof claim moves; validation and the authority migration
-are recorded in [the restructuring report](../../reports/docs-structure-compression/README.md).
+are recorded in [the restructuring report](../../reports/archive/language-and-tooling/docs-structure-compression/README.md).
 The full gate passed: 4,727 Rust tests (0 failed, 10 ignored, 238 summaries),
 141 Lean audits, 305 Python tests, fmt/clippy and both probes exit 0; all named
 workspace host-sensitive rows were green, with no isolated retry. Provider
@@ -173,7 +173,7 @@ blocks, **47,344 bytes**, moved verbatim into
 [the wave-40 compaction checkpoints](wave-40-compaction-checkpoints.md) — a
 separate page rather than this one, because `DOCS-COMPACT-7`'s inline
 checkpoints took `wave-37.md` to 64,613 bytes and that card flagged the split as
-the close's to make. Report: `docs/reports/docs-compact-8/README.md`.
+the close's to make. Report: `docs/reports/archive/language-and-tooling/docs-compact-8/README.md`.
 
 **`STABILITY-REEVAL-4` (2026-09-19).** The cadence's fourth firing, over waves
 38 and 39, at base `6dc484ad`. An audit: no Rust, no Lean, no gate weakened, no

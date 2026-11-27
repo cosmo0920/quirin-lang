@@ -1,0 +1,18 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "cg10-indirect-access-sole-residuals-r3",
+ "total_pruned_files": 2,
+ "total_pruned_bytes": 900870,
+ "artifacts": [
+  {
+   "path": "census/premises.jsonl.gz",
+   "bytes": 838712,
+   "sha256": "5cafd52701125531d7c11a57a6ee20f7d4f4822babd3fa35f1af99599865e73e"
+  },
+  {
+   "path": "integration/gate-scope.json",
+   "bytes": 62158,
+   "sha256": "59873bfb13250d4d160d898fc6646d3681f7372a432d0125b3255f77bbb56a33"
+  }
+ ]
+}

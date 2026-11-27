@@ -15,7 +15,7 @@ They are not interchangeable.
 | Know what is supported/proved | [Status and provenance](STATUS.md) · [implemented grammars](QCORE_IMPLEMENTED_GRAMMARS_r0_3.md) |
 | Implement or review a change | [Agent startup](../AGENTS.md) · [numbered rule router](agents/README.md) |
 | Select future work | [Planning](#planning) · [planning index](plans/README.md) |
-| Find evidence for a past claim | [Reports index](reports/INDEX.md) · [wave index](development/increments/README.md) |
+| Find evidence for a past claim | [Reports hub](reports/README.md) · [alphabetical index](reports/INDEX.md) · [wave index](development/increments/README.md) |
 | Check a platform claim | [Platform evidence and limits](development/platform-evidence.md) |
 
 ## Specifications
@@ -44,7 +44,7 @@ active engineering queues from completed or halted migration plans.
 | Active C-gateway & coverage queues | [Clang gap queue (`CG00`–`CG30` residuals)](plans/clang-gap-cards/README.md) · [Typed access paths & callee closure](plans/unsupported-coverage/README.md) · [Fluent Bit system coverage](plans/fluent-bit-system-coverage/README.md) |
 | Active infrastructure & memory budgets | [Gate and measurement time reduction](plans/gate-time-reduction/README.md) · [AUDIT-IR 6–7 GB budget](development/audit-ir-card.md) |
 | Architecture, crate layering & cycle milestones | [Generalization plan (`W0`–`W7`)](GENERALIZATION_PLAN.md) · [Pluggable card seams (`A`–`G`)](plans/pluggable-cards/README.md) · [Post-Cycle-9 roadmap (`Cycles 10–20`)](ROADMAP_AFTER_CYCLE_9.md) |
-| Completed or halted plan archives | [Extension migration (`.qv`/`.qr`/`.qrlib` landed)](plans/quirin-extension-migration/README.md) · [Runtime `#import` (landed)](plans/runtime-imports/README.md) · [Hypothesis graphs (`v1`–`v4` landed; guarded adoption halted)](plans/contract-hypothesis-graph/README.md) · [Executed Fluent Bit investigations](reports/fb-system-audit-cards/README.md) |
+| Completed or halted plan archives | [Extension migration (`.qv`/`.qr`/`.qrlib` landed)](plans/quirin-extension-migration/README.md) · [Runtime `#import` (landed)](plans/runtime-imports/README.md) · [Hypothesis graphs (`v1`–`v4` landed; guarded adoption halted)](plans/contract-hypothesis-graph/README.md) · [Executed Fluent Bit investigations](reports/archive/contracts-and-premises/fb-system-audit-cards/README.md) |
 
 Search an exact card id before choosing work. A report's follow-on or a plan's
 row may have been discharged later; neither a historical title nor a rule
@@ -53,8 +53,10 @@ mention establishes current open status. Add matrix entries through
 
 ## Evidence and history
 
-- [Reports index](reports/INDEX.md): alphabetical lookup by card directory and
-  original report title; it assigns no completion or safety status.
+- [Reports hub](reports/README.md) and [alphabetical index](reports/INDEX.md):
+  lookup across active/pinned top-level cards (`docs/reports/<card>/`) and
+  categorized historical archives (`docs/reports/archive/<category>/<card>/`) by
+  card directory and original report title; it assigns no completion or safety status.
 - [Increment index](development/increments/README.md): one paragraph per
   increment, wave-by-wave; this names the current record file.
 - [Cycle requirements/evidence](development/cycle-status.md) and
@@ -73,7 +75,7 @@ Update the hub/router when adding a new authority. Preserve rule numbers and
 existing link targets; historical copies must say they are checkpoints.
 
 [DEVELOPMENT.md](../DEVELOPMENT.md) retains legacy heading links. The
-[restructuring report](reports/docs-structure-compression/README.md) records
+[restructuring report](reports/archive/language-and-tooling/docs-structure-compression/README.md) records
 the old-to-new map, exact preservation checks and size measurements.
 
 For a change-specific agent reading packet, see the [task reading protocol](agents/operations.md#task-reading-protocol) and [router](agents/README.md#generated-task-packet).

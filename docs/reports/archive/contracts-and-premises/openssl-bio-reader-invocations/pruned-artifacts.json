@@ -1,0 +1,18 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "openssl-bio-reader-invocations",
+ "total_pruned_files": 2,
+ "total_pruned_bytes": 489292,
+ "artifacts": [
+  {
+   "path": "gate/gate-1.json",
+   "bytes": 243505,
+   "sha256": "7e8f767672ee424e4cbf10ef51c1d1e54d051f8e1d49e5c1acf9debea84d545c"
+  },
+  {
+   "path": "integration/gate-scope.json",
+   "bytes": 245787,
+   "sha256": "3f443ac1effd05386bf05bf70cfa64098ed36c21e7c3b4dde0d5e343d0045395"
+  }
+ ]
+}

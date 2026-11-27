@@ -1,0 +1,93 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "corpus-repin",
+ "total_pruned_files": 17,
+ "total_pruned_bytes": 2284586,
+ "artifacts": [
+  {
+   "path": "artifacts/chunk-contracts.json.gz",
+   "bytes": 268593,
+   "sha256": "fb1e763def2c972520bbec23e3f8674a5408b76a672de052077d535abcf2c67e"
+  },
+  {
+   "path": "artifacts/current-route-diagnostics.json.gz",
+   "bytes": 758996,
+   "sha256": "6ad44d430ff379d71a6f898d43beeb977f2a39dd6cf0023b44602fdbc1d0c75b"
+  },
+  {
+   "path": "artifacts/diagnostics.json.gz",
+   "bytes": 367017,
+   "sha256": "bc208b0dea778335508cf7a19e5b2cf769215ae5bd2ef4f1e7bd1fa7390fe471"
+  },
+  {
+   "path": "diff.json.gz",
+   "bytes": 791072,
+   "sha256": "7272ebe3700425ef983a2f9bbe7c25d3016c44affc9e475e69c8eda88272bb15"
+  },
+  {
+   "path": "logs/audit-current-route.log.gz",
+   "bytes": 10997,
+   "sha256": "e07a23eb3687b57fb956be727a9b80c6b413fe167370264a33a6ba137ae5c32b"
+  },
+  {
+   "path": "logs/audit-pinned-route-submodule-refusal.log.gz",
+   "bytes": 11901,
+   "sha256": "fe3997fd7e2499f1bc9ae5f473e96cb75708dec163f4389c415a5de3e3649926"
+  },
+  {
+   "path": "logs/audit-pinned-route.log.gz",
+   "bytes": 13991,
+   "sha256": "ae0c4d4dd4f14ad846bcc0cc09ba6b75f59935cded5d68056ea7304fd75546b1"
+  },
+  {
+   "path": "logs/clippy.log.gz",
+   "bytes": 394,
+   "sha256": "b8b6d9f7571749efba8f90c1d092bd3d7612c32de0bf82e21532599074f16ec2"
+  },
+  {
+   "path": "logs/fmt.log.gz",
+   "bytes": 20,
+   "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+  },
+  {
+   "path": "logs/followup.log.gz",
+   "bytes": 1816,
+   "sha256": "17d3b34391301d8ba52ff6452122fbe43e2ada24274fef2ce78d8908ed91d691"
+  },
+  {
+   "path": "logs/lean-audits.log.gz",
+   "bytes": 20626,
+   "sha256": "504bd01a7cbb5c85fcdfd5a09c9840bf46a99abb3f90de31361893f882c714dd"
+  },
+  {
+   "path": "logs/prediction-comparison.log.gz",
+   "bytes": 345,
+   "sha256": "f34ba40c0698adda2f0e6cedfe81372ca5f485b17dfae72b6329220b28bd2843"
+  },
+  {
+   "path": "logs/prepare.log.gz",
+   "bytes": 330,
+   "sha256": "b27013859722ff5c84a614c482f5f99f0e5c47cde40fa265f89de80d44b28fe3"
+  },
+  {
+   "path": "logs/probe.log.gz",
+   "bytes": 659,
+   "sha256": "810d5bba6facd639dcbcbba6dd7200351fce9c9bd7b1d0869fc27533480331dd"
+  },
+  {
+   "path": "logs/provider-packages.log.gz",
+   "bytes": 1356,
+   "sha256": "13caa2630a049f67b5a9deb637fbfd582f5a4b9e69ec58dfaecdca1a507f65c4"
+  },
+  {
+   "path": "logs/python.log.gz",
+   "bytes": 152,
+   "sha256": "d27c744adcb88565734580e735fe0b452dde88a7362ba9a04824b99f2e63d3eb"
+  },
+  {
+   "path": "logs/tests.log.gz",
+   "bytes": 36321,
+   "sha256": "7c3b88967970577fd6b1858c612cc9ce8b28cbb80bb3243f51e7f3b4a29673b5"
+  }
+ ]
+}

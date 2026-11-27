@@ -42,7 +42,7 @@ The [combined revision integration](reports/r03-integration/README.md) records
 19 axiom audits passing, plus the unchanged 185-unit audit using persistent build
 inputs. This is bounded validation, not full language conformance.
 
-The later [W5 combined integration](reports/w5-resource-accounting/README.md)
+The later [W5 combined integration](reports/archive/early-waves/w5-resource-accounting/README.md)
 passes 565 Rust tests, 43 Python tests, the standing gate and 19 Lean audits.
 Separate provider-package tests and two reproducible builds against schemas
 0.2.0 are archived in [the package report](reports/w5-provider-packages/README.md).
@@ -53,22 +53,22 @@ passes 569 workspace tests, the standing gate and 19 Lean audits, including
 seven CLI process tests. Package snapshot verification does not establish
 source correctness or immunity to later package-file mutation.
 
-The [trusted verification adapter integration](reports/w5-verification-adapter/README.md)
+The [trusted verification adapter integration](reports/archive/early-waves/w5-verification-adapter/README.md)
 passes 571 workspace tests and the standing/Lean gates. All relocated
 derivation/replay/dispatch implementations retain byte parity.
 
-The [generalization checkpoint](reports/generalization-integration-20260907/README.md)
+The [generalization checkpoint](reports/archive/language-and-tooling/generalization-integration-20260907/README.md)
 passes579 workspace tests, the standing gate and19 Lean audits. Fresh full185
 audit output matches the merged W4 forwarding result exactly:3 Safe /94
 provisional Unsafe /84 Unknown /4 data-only. The report separately records an
 open synthetic indirect-access probe; broader conformance is not claimed.
 
-The [generic reactor integration](reports/w5-generic-reactor/README.md), including
+The [generic reactor integration](reports/archive/early-waves/w5-generic-reactor/README.md), including
 the merged indirect-access repair, passes 589 workspace tests, 43 Python tests,
 the standing gate and all 19 Lean audits. Unsupported reads now remain Unknown;
 typed access restoration and broader conformance remain open.
 
-[Declared callback record integration](reports/w5-reactor-callback-records/README.md)
+[Declared callback record integration](reports/archive/early-waves/w5-reactor-callback-records/README.md)
 passes 600 workspace tests, 43 Python tests, the standing gate and 19 Lean
 audits, plus three excluded provider conformance tests. Full 185-unit source
 and diagnostic output is byte-identical. Callback source derivation and
@@ -81,14 +81,14 @@ provides replayed evidence for three bounded function contracts; 93 selected
 functions remain Unknown. Full 185-unit source/diagnostic output and the prior
 contract sidecar remain byte-identical. General lifecycle import remains open.
 
-[Provider statement execution](reports/w5-provider-statement-execution/README.md)
+[Provider statement execution](reports/archive/early-waves/w5-provider-statement-execution/README.md)
 passes the same 611 workspace tests and standing gate, plus nine excluded
 provider workspace tests (four conformance and five executor tests). The process
 computes source paths from typed statements; source import and contract replay
 remain trusted. The program-input schema/profile are version 2 and ChunkIO is
 package 0.3.0; this is not full source-language or lifecycle conformance.
 
-[Context-specific custody recursion](reports/w4-contextual-recursion/README.md)
+[Context-specific custody recursion](reports/archive/early-waves/w4-contextual-recursion/README.md)
 passes 619 workspace tests, including eight new public-API tests with actual C
 imports and certificate rederivation, plus nine provider tests, 43 Python tests
 and all standing/Lean gates. Zero/nonzero integer contexts cover bounded
@@ -130,7 +130,7 @@ Three other reports remain byte-identical and no raw unit is promoted. CT
 coverage remains 7 mapped/43 unmapped; broader source and model correspondence
 remain open.
 
-[Configured source-contract dispatch](reports/w5-configured-source-contracts/README.md)
+[Configured source-contract dispatch](reports/archive/early-waves/w5-configured-source-contracts/README.md)
 passes 722 workspace tests, 17 separate provider tests, 43 Python tests, workspace
 and provider format/Clippy, both reevaluation probes, Lean build and 20 axiom
 audits. The second-codebase process tests exercise actual Clang imports and

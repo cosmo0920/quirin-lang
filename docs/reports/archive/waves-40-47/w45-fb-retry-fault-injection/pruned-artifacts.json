@@ -1,0 +1,93 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "w45-fb-retry-fault-injection",
+ "total_pruned_files": 17,
+ "total_pruned_bytes": 162906,
+ "artifacts": [
+  {
+   "path": "runs/c1-control.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "runs/c1-control.log",
+   "bytes": 16899,
+   "sha256": "1a1467b20d49224c892766ab740a48fe9c8ed1fa4cb167141f531f87b29b1deb"
+  },
+  {
+   "path": "runs/c1-fault.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "runs/c1-fault.log",
+   "bytes": 20498,
+   "sha256": "422f431085c47521be550da93ca90241f8f9611538fcc3f3a1d71227c45dc79f"
+  },
+  {
+   "path": "runs/c2-control-first.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "runs/c2-control-first.log",
+   "bytes": 15228,
+   "sha256": "85bd720f770b971ae9a4a1d403b1033a80cc4d845ccacb2bbba2ea5ef48b6b9c"
+  },
+  {
+   "path": "runs/c2-control-retry.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "runs/c2-control-retry.log",
+   "bytes": 18932,
+   "sha256": "7b1630697cf33fe28272cd5376fcabf795c27d36279396b333b023e7db8df2e2"
+  },
+  {
+   "path": "runs/c2-fault-first.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "runs/c2-fault-first.log",
+   "bytes": 16435,
+   "sha256": "0f6ffbebc2df309f199276fc844b87919cdc242717c4ae0b363dc0342fa0438c"
+  },
+  {
+   "path": "runs/c2-fault-retry.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "runs/c2-fault-retry.log",
+   "bytes": 19162,
+   "sha256": "da20259fbfc680bfba046feffc823e34e61d2bd79923f0f71f838aca1141245e"
+  },
+  {
+   "path": "runs/c3-control.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "runs/c3-control.log",
+   "bytes": 26554,
+   "sha256": "4080640d0ab166e43d70bab3f6b7e2c0cc62e6ef7103a957169044a005d74e8d"
+  },
+  {
+   "path": "runs/c3-fault-attempt1-discarded.log",
+   "bytes": 6337,
+   "sha256": "eab8ee89032692cf5b09acbe78d6e9f59547fe3dce2474c96cb5c49b6840cd43"
+  },
+  {
+   "path": "runs/c3-fault.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "runs/c3-fault.log",
+   "bytes": 22837,
+   "sha256": "51435648d7a1aec1aa744aea77da880963646012f83a0fc78dbe209daa375b2a"
+  }
+ ]
+}

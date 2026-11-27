@@ -1,0 +1,13 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "w43-monkey-callback-composition",
+ "total_pruned_files": 1,
+ "total_pruned_bytes": 70654,
+ "artifacts": [
+  {
+   "path": "obligation-report.json",
+   "bytes": 70654,
+   "sha256": "62e38dd073eaf6a18c69493ef446a8a938a25563fb92002e53a09437a6dc3837"
+  }
+ ]
+}

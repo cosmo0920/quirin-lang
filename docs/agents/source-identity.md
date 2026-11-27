@@ -86,7 +86,7 @@ read. Rule numbers and anchors are stable; backticked paths are repository-relat
     in-force tip entry is the named assumption `tip-tracked:FUNCTION` and its
     inventory status is `tip-in-force`, never `pinned-in-force`; a run with
     no tip entry is byte-identical to one before the card.
-    [Report](../reports/contract-pin-tip-mode/README.md).
+    [Report](../reports/archive/contracts-and-premises/contract-pin-tip-mode/README.md).
 
 <!-- generated:rules:end -->
 
@@ -99,7 +99,7 @@ it must never define the intended target set. Every selected target requires
 an analyzed Safe row, with matching canonical inventory and request/artifact
 identities. A duplicate, omitted, excluded or Unknown selected row cannot
 support a Safe certificate. This discharges `E01-TAIL-CERT-SCOPE` at the
-[certificate-scope card's boundary](../reports/review-certificate-scope/README.md).
+[certificate-scope card's boundary](../reports/archive/language-and-tooling/review-certificate-scope/README.md).
 
 Structural self-consistency is distinct from intended-target authentication.
 Consumers requiring the latter must compare with an independently held expected
@@ -122,7 +122,7 @@ contract claims against library bodies. Header effects are bound through the
 retained preprocessed content. Prepared audit paths use the exact retained raw,
 marked and plain preprocessing artifacts; they do not reprocess the input to
 manufacture certificate scope evidence. See the
-[context-binding card](../reports/certificate-context-binding/README.md) for
+[context-binding card](../reports/archive/language-and-tooling/certificate-context-binding/README.md) for
 the measured boundary and remaining assumptions.
 
 ## Assumed build settings are a scope, never an equivalence
@@ -151,4 +151,4 @@ generated. Headers are read as found on disk, tracked or not, and are bound
 only through the preprocessed text. A comparison with a configured run
 attributes each verdict difference to a preparation refusal or a text
 difference (`verdict_difference_needs_text_difference`). It must never pool
-the two runs' counts. [Report](../reports/w44-contracts-only-no-build/README.md).
+the two runs' counts. [Report](../reports/archive/waves-40-47/w44-contracts-only-no-build/README.md).
