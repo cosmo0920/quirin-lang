@@ -600,6 +600,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | Card directory | Original report title |
 |---|---|
 
+| [fb-backlog-accounting](fb-backlog-accounting/README.md) | FB-BACKLOG-ACCOUNTING: ledger census, checked saturating transitions (rule 92) |
+
 | [fb-chunk-lifecycle](fb-chunk-lifecycle/README.md) | FB-CHUNK-LIFECYCLE: a static function's constant-fixed formal, and the chunk-lifecycle census |
 
 | [fb-event-loop-cross-function-lifetime](archive/contracts-and-premises/fb-event-loop-cross-function-lifetime/README.md) | FB-EVENT-LOOP-CROSS-FUNCTION-LIFETIME: census and design (records-only landing) |
