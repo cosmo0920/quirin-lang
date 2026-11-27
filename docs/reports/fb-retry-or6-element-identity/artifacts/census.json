@@ -1,0 +1,121 @@
+[
+ {
+  "file": "plugins/in_tail/tail_file.c",
+  "function": "check_purge_deleted_file",
+  "line": 2504,
+  "destroyer": "flb_tail_file_remove",
+  "formal": "file"
+ },
+ {
+  "file": "plugins/in_tail/tail_file.c",
+  "function": "check_purge_deleted_file",
+  "line": 2504,
+  "destroyer": "flb_tail_file_remove",
+  "formal": "file"
+ },
+ {
+  "file": "plugins/in_tail/tail_file.c",
+  "function": "check_purge_deleted_file",
+  "line": 2504,
+  "destroyer": "flb_tail_file_remove",
+  "formal": "file"
+ },
+ {
+  "file": "plugins/in_tail/tail_fs_inotify.c",
+  "function": "reconcile_file_state",
+  "line": 171,
+  "destroyer": "flb_tail_file_remove",
+  "formal": "file"
+ },
+ {
+  "file": "plugins/in_tail/tail_fs_inotify.c",
+  "function": "reconcile_file_state",
+  "line": 171,
+  "destroyer": "flb_tail_file_remove",
+  "formal": "file"
+ },
+ {
+  "file": "src/flb_engine_dispatch.c",
+  "function": "flb_engine_dispatch_retry",
+  "line": 88,
+  "destroyer": "flb_task_retry_destroy",
+  "formal": "retry"
+ },
+ {
+  "file": "src/flb_engine_dispatch.c",
+  "function": "flb_engine_dispatch_retry",
+  "line": 88,
+  "destroyer": "flb_task_retry_destroy",
+  "formal": "retry"
+ },
+ {
+  "file": "src/flb_input.c",
+  "function": "flb_input_net_property_check",
+  "line": 1406,
+  "destroyer": "flb_input_instance_destroy",
+  "formal": "ins"
+ },
+ {
+  "file": "src/flb_input.c",
+  "function": "flb_input_net_property_check",
+  "line": 1406,
+  "destroyer": "flb_input_instance_destroy",
+  "formal": "ins"
+ },
+ {
+  "file": "src/flb_input.c",
+  "function": "flb_input_plugin_property_check",
+  "line": 1447,
+  "destroyer": "flb_input_instance_destroy",
+  "formal": "ins"
+ },
+ {
+  "file": "src/flb_input.c",
+  "function": "flb_input_oauth2_jwt_property_check",
+  "line": 1507,
+  "destroyer": "flb_input_instance_destroy",
+  "formal": "ins"
+ },
+ {
+  "file": "src/flb_input.c",
+  "function": "flb_input_http_server_property_check",
+  "line": 1539,
+  "destroyer": "flb_input_instance_destroy",
+  "formal": "ins"
+ },
+ {
+  "file": "src/flb_output.c",
+  "function": "flb_output_task_queue_enqueue",
+  "line": 288,
+  "destroyer": "flb_task_retry_destroy",
+  "formal": "retry"
+ },
+ {
+  "file": "src/flb_output.c",
+  "function": "flb_output_enable_multi_threading",
+  "line": 1307,
+  "destroyer": "flb_output_instance_destroy",
+  "formal": "ins"
+ },
+ {
+  "file": "src/flb_output.c",
+  "function": "flb_output_net_property_check",
+  "line": 1344,
+  "destroyer": "flb_output_instance_destroy",
+  "formal": "ins"
+ },
+ {
+  "file": "src/flb_scheduler.c",
+  "function": "flb_sched_timer_cb_destroy",
+  "line": 731,
+  "destroyer": "flb_sched_timer_destroy",
+  "formal": "timer"
+ },
+ {
+  "file": "src/flb_task.c",
+  "function": "flb_task_retry_reschedule",
+  "line": 292,
+  "destroyer": "flb_task_retry_destroy",
+  "formal": "retry"
+ }
+]
