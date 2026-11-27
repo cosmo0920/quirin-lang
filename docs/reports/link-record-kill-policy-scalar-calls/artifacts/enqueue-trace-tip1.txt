@@ -1,0 +1,16 @@
+QDBG L17792 pre={2: Ready("_head")} post-transfer={2: Ready("_head")} instr=NoOp
+QDBG   after-retain={2: Ready("_head")}
+QDBG L17793 pre={2: Ready("_head")} post-transfer={2: Ready("_head")} instr=ContractCall { function: "flb_malloc", destination: Some("queued_task"), arguments: [None],  }, produced_sites: [0], aggregate_reads: [], aggregate_consumed: [], aggregate_addresses: [], alias_reads: [], nested: [], containe
+QDBG   after-retain={}
+QDBG L17794 pre={} post-transfer={} instr=BranchOnNull { source: "queued_task", true_is_null: true }
+QDBG   after-retain={}
+QDBG L17795 pre={} post-transfer={} instr=ContractCall { function: "flb_errno_print", destination: None, arguments: [None, Some("__qcore_literal__"), None], , produced_sites: [], aggregate_reads: [], aggregate_consumed: [], aggregate_addresses: [], alias_reads: [], nested: [NestedContractCall { func
+QDBG   after-retain={}
+QDBG L17801 pre={} post-transfer={} instr=Alias { destination: "queued_task->retry", source: "retry" }
+QDBG   after-retain={}
+QDBG L17796 pre={} post-transfer={} instr=BranchOnNull { source: "retry", true_is_null: false }
+QDBG   after-retain={}
+QDBG L17802 pre={} post-transfer={} instr=AggregateStore { place: "queued_task->out_instance" }
+QDBG   after-retain={}
+QDBG L17797 pre={} post-transfer={} instr=ContractCall { function: "flb_task_retry_destroy", destination: None, arguments: [Some("retry")], ], result: None, container_effects: {0: Unpublished}, counted_users: CountedUserClauses { effects: {}, neutral: true, exits: [] }, link_members: {0: "_head"} },
+QDBG   after-retain={}
