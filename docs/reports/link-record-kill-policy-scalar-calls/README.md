@@ -40,7 +40,7 @@ Each actual of a contract call now has a kind (`Kind`,
 
 * **place**: the call may write what its root binding denotes (unchanged);
 * **scalar**: it denotes no object. A literal or predefined identifier
-  (premise T6, `variadic_nested::is_literal_or_predefined_actual`; the reader
+  (premise T6, restated in `legacy_link_member.rs` because `variadic_nested.rs` is a pinned reading-site artifact; the reader
   spells a string literal as one identifier-shaped token), an admitted
   dereference of a neutral nested call's scalar result (premises N4-D and
   N10: `(*__errno_location ())`), or exactly `sizeof ( … )` whose operand
@@ -77,8 +77,7 @@ separately; see section 6.
 `scalar_actuals` field, `#[serde(default, skip_serializing_if =
 "Vec::is_empty")]`), `legacy_transfer.rs` (the nested-call kill block
 replaced by one `before_nested` call; the `ContractCall` destructuring
-pattern names the field), `variadic_nested.rs` (`is_literal_or_predefined_actual`
-made `pub(crate)`), and one `scalar_actuals: Vec::new()` line in each
+pattern names the field), and one `scalar_actuals: Vec::new()` line in each
 constructor of `legacy_owned_out_member.rs`, `legacy_member_handoff.rs`,
 `legacy_joined_provenance.rs` (two, tests), `tests/contract_dependencies.rs`,
 `tests/unit/audit_ir_fragments.rs` and `tests/unit/legacy_c.rs`.

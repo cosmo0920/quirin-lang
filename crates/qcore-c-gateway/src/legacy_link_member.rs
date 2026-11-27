@@ -284,8 +284,7 @@ pub(crate) fn scalar_actuals(
         .enumerate()
         .filter(|(index, place)| {
             raw.and_then(|raw| raw.get(*index)).is_some_and(|actual| {
-                crate::variadic_nested::is_literal_or_predefined_actual(actual)
-                    || is_sizeof_actual(actual)
+                is_literal_or_predefined_actual(actual) || is_sizeof_actual(actual)
             }) || (place.is_none()
                 && nested
                     .iter()
@@ -293,6 +292,21 @@ pub(crate) fn scalar_actuals(
         })
         .map(|(index, _)| index)
         .collect()
+}
+
+/// Premise T6 (`variadic_nested`'s `is_literal_or_predefined_actual`,
+/// `QCore.LiteralTailActual`), restated here because that module's source is
+/// a pinned reading-site artifact: every token is a string or character
+/// literal (one identifier-shaped token), a numeric literal, or a C11
+/// 6.4.2.2 predefined identifier. Neither names a declaration or binding.
+fn is_literal_or_predefined_actual(actual: &[&str]) -> bool {
+    !actual.is_empty()
+        && actual.iter().all(|text| {
+            *text == crate::custody_free_copy::LITERAL
+                || crate::retained_by::PREDEFINED_IDENTIFIERS.contains(text)
+                || (text.as_bytes().first().is_some_and(u8::is_ascii_digit)
+                    && text.bytes().all(|byte| byte.is_ascii_alphanumeric()))
+        })
 }
 
 /// An actual that is exactly `sizeof ( … )`: the operator applies to the

@@ -465,7 +465,7 @@ const PREDEFINED_IDENTIFIERS: &[&str] = &["__func__", "__FUNCTION__", "__PRETTY_
 /// (`L"…"`: the prefix is a name here), an empty actual, and any statement
 /// carrying a nested call. In a readable function every actual T6 does not
 /// admit is decided by T1-T5 exactly as before.
-pub(crate) fn is_literal_or_predefined_actual(argument: &[&str]) -> bool {
+fn is_literal_or_predefined_actual(argument: &[&str]) -> bool {
     !argument.is_empty()
         && argument.iter().all(|text| {
             *text == LITERAL_TOKEN
