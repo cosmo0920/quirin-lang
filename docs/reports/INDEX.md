@@ -631,6 +631,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | Card directory | Original report title |
 |---|---|
 
+| [g1-closure-record](g1-closure-record/README.md) | P0-G1-CLOSURE-RECORD: gate G1 (certificate containment), evaluated |
+
 | [gapo-parity-decisions-nondeterministic](gapo-parity-decisions-nondeterministic/README.md) | GAPO-PARITY-DECISIONS-NONDETERMINISTIC: a consultation's parity decisions are its own |
 
 | [gapo-return-correctness](gapo-return-correctness/README.md) | GAPO-RETURN-CORRECTNESS |

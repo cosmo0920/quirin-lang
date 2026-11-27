@@ -2696,6 +2696,16 @@ pub const RENDERED_VALUE_SORTS: &[(&str, &str)] = &[
         "cx_dep",
         "a declared contract dependency: a `linkage_contract_v1` link or a `contract inherit` directive, elaborated (contract spec C15.2)",
     ),
+    // Card P0-G1-CLOSURE-RECORD (the G1 block): the sorts of the
+    // certificate-containment gate's criterion, prefixed `g1_`.
+    (
+        "g1_finding",
+        "a finding REEVALUATION_SPEC §9's gate G1 names (WM01, WM02, WM03, VP01, VP02)",
+    ),
+    (
+        "g1_case",
+        "an executed control case of the G1 closure record: a reevaluation probe entry or a named test",
+    ),
 ];
 
 /// The G01p sort of a rendered term: a value of a rendered value sort, a
@@ -4346,6 +4356,73 @@ pub const RENDERED_TERMS: &[RenderedTerm] = &[
         sort: RenderedSort::Predicate(&["cx_bundle", "cx_fn"]),
         meaning: "`#cx_load_refused(#b,#g)`: the loader refuses the module of `#b`'s `#g` (total-or-reject)",
         block: "CX",
+    },
+    // ---- Card P0-G1-CLOSURE-RECORD (REEVALUATION_SPEC §9, gate G1): the
+    // terms of the certificate-containment criterion, evaluated per finding
+    // over the executed control cases of
+    // `docs/reports/g1-closure-record/README.md`, each named by a formula of
+    // `crates/qcore-frontend/tests/g1_closure_formulas.rs`. Every name is
+    // prefixed `g1_`. A records vocabulary: no premise formula, contract or
+    // analyzer reads it. ----
+    RenderedTerm {
+        name: "g1_of",
+        sort: RenderedSort::Predicate(&["g1_case", "g1_finding"]),
+        meaning: "`#g1_of(#c,#f)`: case `#c` is a control of finding `#f`",
+        block: "G1",
+    },
+    RenderedTerm {
+        name: "g1_invalid",
+        sort: RenderedSort::Predicate(&["g1_case"]),
+        meaning: "`#g1_invalid(#c)`: `#c` submits an invalid candidate: a graph N1570 forbids (WM) or a proposal with no capability-specific semantic witness (VP)",
+        block: "G1",
+    },
+    RenderedTerm {
+        name: "g1_insufficient",
+        sort: RenderedSort::Predicate(&["g1_case"]),
+        meaning: "`#g1_insufficient(#c)`: `#c` submits insufficient evidence: empty facts, claims or coverage, an empty core inventory, no core checker, or a replay that discharges less than the core inventory",
+        block: "G1",
+    },
+    RenderedTerm {
+        name: "g1_positive",
+        sort: RenderedSort::Predicate(&["g1_case"]),
+        meaning: "`#g1_positive(#c)`: `#c` is a positive control: a valid candidate with complete evidence inside the finding's profile",
+        block: "G1",
+    },
+    RenderedTerm {
+        name: "g1_certified",
+        sort: RenderedSort::Predicate(&["g1_case"]),
+        meaning: "`#g1_certified(#c)`: the run of `#c` obtained the finding's certificate (`check_c11_execution` returned `Ok`, or the outcome carries a `CoreCertificate`)",
+        block: "G1",
+    },
+    RenderedTerm {
+        name: "g1_in_profile",
+        sort: RenderedSort::Predicate(&["g1_case"]),
+        meaning: "`#g1_in_profile(#c)`: `#c`'s input lies inside the explicit profile restriction of its finding's certificate",
+        block: "G1",
+    },
+    RenderedTerm {
+        name: "g1_unknown",
+        sort: RenderedSort::Predicate(&["g1_case"]),
+        meaning: "`#g1_unknown(#c)`: the run of `#c` is refused with a named reason (a `WeakMemoryError`, an atomic-route refusal or a QP reason code) and publishes no certificate",
+        block: "G1",
+    },
+    RenderedTerm {
+        name: "g1_executed",
+        sort: RenderedSort::Predicate(&["g1_case"]),
+        meaning: "`#g1_executed(#c)`: `#c` ran at the record's revision and met its stated expectation (probe `pass`, or the test passed)",
+        block: "G1",
+    },
+    RenderedTerm {
+        name: "g1_closed",
+        sort: RenderedSort::Predicate(&["g1_finding"]),
+        meaning: "`#g1_closed(#f)`: finding `#f`'s conjunct of the G1 criterion holds with evidence",
+        block: "G1",
+    },
+    RenderedTerm {
+        name: "g1_gate_met",
+        sort: NULLARY,
+        meaning: "`#g1_gate_met()`: gate G1 is met in the record's scope",
+        block: "G1",
     },
 ];
 
