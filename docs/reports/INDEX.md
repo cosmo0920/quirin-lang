@@ -951,6 +951,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | Card directory | Original report title |
 |---|---|
 
+| [p0-g1-closure-record](p0-g1-closure-record/README.md) | P0-G1-CLOSURE-RECORD: G1 (certificate containment) evaluated against §9 |
+
 | [package-bytes-depend-on-checkout](package-bytes-depend-on-checkout/README.md) | PACKAGE-BYTES-DEPEND-ON-CHECKOUT |
 
 | [pin-regenerate-stamp-monotonicity](pin-regenerate-stamp-monotonicity/README.md) | PIN-REGENERATE-STAMP-MONOTONICITY |
