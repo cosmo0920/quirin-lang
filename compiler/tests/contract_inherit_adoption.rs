@@ -76,7 +76,9 @@ fn the_real_load_path_reads_and_records_what_the_crates_declare() {
     let crates: Vec<_> = manifest.contract_roots.keys().cloned().collect();
     // Card CONTRACT-INHERIT-QCORE-PROVIDER-NAMING (deliberate update): the
     // five executable `qcore-provider-*` crates joined the load path; their
-    // records are pinned in `contract_inherit_qcore_provider.rs`.
+    // records are pinned in `contract_inherit_qcore_provider.rs`. Card
+    // OTEL-PROTO-PHASE-B1 (deliberate update) adds the data crate
+    // `quirin-provider-fluent-otel-proto`.
     assert_eq!(
         crates,
         [
@@ -87,6 +89,7 @@ fn the_real_load_path_reads_and_records_what_the_crates_declare() {
             "qcore-provider-librdkafka",
             "quirin-provider-cfl",
             "quirin-provider-fluent-bit",
+            "quirin-provider-fluent-otel-proto",
             "quirin-provider-libc",
             "quirin-provider-mpack",
             "quirin-provider-msgpack",

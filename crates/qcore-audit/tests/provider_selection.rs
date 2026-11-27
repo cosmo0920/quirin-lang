@@ -718,6 +718,8 @@ fn the_cycle19_provider_selection_is_the_cycle19_manifest_module_for_module() {
     );
     assert_eq!(from_selection.functions(), from_manifest.functions());
     // Its closure: the ten selected crates and the shared bundle.
+    // Card OTEL-PROTO-PHASE-B1 adds quirin-provider-fluent-otel-proto to the
+    // cmetrics, ctraces and fluent_bit providers (deliberate update).
     assert_eq!(
         resolved.closure_names().collect::<Vec<_>>(),
         [
@@ -728,6 +730,7 @@ fn the_cycle19_provider_selection_is_the_cycle19_manifest_module_for_module() {
             "qcore-provider-librdkafka",
             "quirin-provider-cfl",
             "quirin-provider-fluent-bit",
+            "quirin-provider-fluent-otel-proto",
             "quirin-provider-libc",
             "quirin-provider-mpack",
             "quirin-provider-msgpack",

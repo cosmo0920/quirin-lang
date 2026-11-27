@@ -85,7 +85,10 @@ pub fn check_identity(
             observed.0, pinned.0
         ));
     }
-    for (kind, p, o) in [("proto", pinned.1, observed.1), ("vendored", pinned.2, observed.2)] {
+    for (kind, p, o) in [
+        ("proto", pinned.1, observed.1),
+        ("vendored", pinned.2, observed.2),
+    ] {
         if p.is_empty() {
             problems.push(format!("no pinned {kind} digest"));
         }
@@ -114,18 +117,60 @@ mod tracked_files;
 #[cfg(test)]
 mod tests {
     use super::*;
-    use serde_json::Value;
 
-    fn identity() -> Value {
-        serde_json::from_str(IDENTITY).expect("protocol-identity.json parses")
+    // The crate is data only (no serde_json, conformance pin): the two JSON
+    // files are read by their fixed layout (`json.dumps(indent=1,
+    // sort_keys=True)`), member by member, total-or-panic.
+
+    /// The `"name": "value"` members of the object `"key": {` found after
+    /// `from` in `text`, in order.
+    fn object(text: &str, from: &str, key: &str) -> Vec<(String, String)> {
+        let at = text.find(from).expect(from);
+        let rest = &text[at..];
+        let open = rest.find(&format!("\"{key}\": {{")).expect(key);
+        let body = &rest[open..];
+        let close = body.find('}').expect("closing brace");
+        body[..close]
+            .lines()
+            .skip(1)
+            .filter(|line| !line.trim().is_empty())
+            .map(|line| {
+                let (name, value) = line.trim().trim_end_matches(',').split_once(": ").unwrap();
+                (
+                    name.trim_matches('"').to_owned(),
+                    value.trim_matches('"').to_owned(),
+                )
+            })
+            .collect()
     }
 
-    fn digests(v: &Value) -> Vec<(String, String)> {
-        v.as_object()
-            .unwrap()
-            .iter()
-            .map(|(k, d)| (k.clone(), d.as_str().unwrap().to_owned()))
+    /// The string items of the array `"key": [` found after `from`.
+    fn array(text: &str, from: &str, key: &str) -> Vec<String> {
+        let at = text.find(from).expect(from);
+        let rest = &text[at..];
+        let open = rest.find(&format!("\"{key}\": [")).expect(key);
+        let body = &rest[open..];
+        let close = body.find(']').expect("closing bracket");
+        body[..close]
+            .lines()
+            .skip(1)
+            .filter(|line| !line.trim().is_empty())
+            .map(|line| {
+                line.trim()
+                    .trim_end_matches(',')
+                    .trim_matches('"')
+                    .to_owned()
+            })
             .collect()
+    }
+
+    /// The string member `"key": "value"` found after `from`.
+    fn scalar(text: &str, from: &str, key: &str) -> String {
+        let at = text.find(from).expect(from);
+        let rest = &text[at..];
+        let open = rest.find(&format!("\"{key}\": \"")).expect(key) + key.len() + 5;
+        let close = rest[open..].find('"').unwrap();
+        rest[open..open + close].to_owned()
     }
 
     fn view(v: &[(String, String)]) -> Vec<(&str, &str)> {
@@ -169,28 +214,27 @@ mod tests {
     /// functions in module order.
     #[test]
     fn the_identity_pins_the_protocol_and_every_compiled_file() {
-        let id = identity();
-        assert_eq!(id["schema"], "quirin-protocol-identity/1");
-        assert!(id["basis"].as_str().unwrap().contains("v1.10.0"));
-        assert_eq!(
-            id["protocol"]["commit"],
-            "3a6e438003e673112efd4a00e9836c00672eae3c"
-        );
-        assert_eq!(id["protocol"]["files"].as_object().unwrap().len(), 11);
-        let vendored = id["vendored"].as_object().unwrap();
+        let id = IDENTITY;
+        assert!(id.contains("\"schema\": \"quirin-protocol-identity/1\""));
+        assert!(scalar(id, "{", "basis").contains("v1.10.0"));
+        let commit = scalar(id, "\"protocol\": {", "commit");
+        assert_eq!(commit, "3a6e438003e673112efd4a00e9836c00672eae3c");
+        let proto = object(id, "\"protocol\": {", "files");
+        assert_eq!(proto.len(), 11);
+        let vendored = object(id, "{", "vendored");
         assert_eq!(vendored.len(), 22);
-        assert!(vendored.contains_key("protobuf-c/protobuf-c.c"));
-        assert!(vendored.keys().all(|k| !k.contains("pprofextended")));
-        let census: Value = serde_json::from_str(
-            &std::fs::read_to_string(
-                std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-                    .join("../../docs/reports/otel-proto-audit/census.json"),
-            )
-            .unwrap(),
+        assert!(vendored.iter().any(|(k, _)| k == "protobuf-c/protobuf-c.c"));
+        assert!(vendored.iter().all(|(k, _)| !k.contains("pprofextended")));
+        let census = std::fs::read_to_string(
+            std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+                .join("../../docs/reports/otel-proto-audit/census.json"),
         )
         .unwrap();
-        assert_eq!(id["protocol"]["commit"], census["protocol_identity"]["commit"]);
-        assert_eq!(id["protocol"]["files"], census["protocol_identity"]["files"]);
+        assert_eq!(
+            scalar(&census, "\"protocol_identity\": {", "commit"),
+            commit
+        );
+        assert_eq!(object(&census, "\"protocol_identity\": {", "files"), proto);
         for (module, key) in [
             ("fluent_otel_proto/generated.qv", "generated"),
             ("fluent_otel_proto/runtime.qv", "runtime"),
@@ -201,13 +245,7 @@ mod tests {
                 .filter_map(|l| l.strip_prefix("extern fn "))
                 .map(|l| l.split('(').next().unwrap())
                 .collect();
-            let listed: Vec<&str> = id["declared"][key]
-                .as_array()
-                .unwrap()
-                .iter()
-                .map(|v| v.as_str().unwrap())
-                .collect();
-            assert_eq!(declared, listed, "{module}");
+            assert_eq!(declared, array(id, "\"declared\": {", key), "{module}");
         }
     }
 
@@ -215,22 +253,22 @@ mod tests {
     /// extra digest each yields a problem; the pinned identity yields none.
     #[test]
     fn a_stale_identity_is_refused() {
-        let id = identity();
-        let commit = id["protocol"]["commit"].as_str().unwrap();
-        let proto = digests(&id["protocol"]["files"]);
-        let vendored = digests(&id["vendored"]);
-        let pinned = (commit, &view(&proto)[..], &view(&vendored)[..]);
+        let commit = scalar(IDENTITY, "\"protocol\": {", "commit");
+        let proto = object(IDENTITY, "\"protocol\": {", "files");
+        let vendored = object(IDENTITY, "{", "vendored");
+        let pinned = (commit.as_str(), &view(&proto)[..], &view(&vendored)[..]);
         assert!(check_identity(pinned, pinned).is_empty());
-        assert!(!check_identity(pinned, ("0".repeat(40).as_str(), pinned.1, pinned.2)).is_empty());
+        let zero = "0".repeat(40);
+        assert!(!check_identity(pinned, (zero.as_str(), pinned.1, pinned.2)).is_empty());
         let mut changed = vendored.clone();
         changed[0].1 = "0".repeat(64);
-        assert!(!check_identity(pinned, (commit, pinned.1, &view(&changed)[..])).is_empty());
+        assert!(!check_identity(pinned, (pinned.0, pinned.1, &view(&changed)[..])).is_empty());
         let fewer = &view(&proto)[1..];
-        assert!(!check_identity(pinned, (commit, fewer, pinned.2)).is_empty());
+        assert!(!check_identity(pinned, (pinned.0, fewer, pinned.2)).is_empty());
         let mut more = view(&vendored);
         more.push(("opentelemetry/proto/x.pb-c.c", "00"));
-        assert!(!check_identity(pinned, (commit, pinned.1, &more[..])).is_empty());
-        assert!(!check_identity((commit, &[], &[]), pinned).is_empty());
+        assert!(!check_identity(pinned, (pinned.0, pinned.1, &more[..])).is_empty());
+        assert!(!check_identity((pinned.0, &[], &[]), pinned).is_empty());
     }
 
     /// libc stays in quirin-provider-libc: no declared name is a libc name.

@@ -46,6 +46,7 @@ CONSUMERS = [
     "lib/cmetrics/src/cmt_*opentelemetry*.c", "lib/ctraces/src/ctr_*opentelemetry.c",
     "src/opentelemetry/*.c", "plugins/in_opentelemetry/*.c", "plugins/out_opentelemetry/*.c",
     "plugins/processor_opentelemetry_envelope/*.c", "lib/cprofiles/cprof_*opentelemetry.c",
+    "lib/cprofiles/src/cprof_*opentelemetry.c",
 ]
 PBC = "lib/fluent-otel-proto/proto_c"
 STALE = "opentelemetry/proto/profiles/v1development/pprofextended.pb-c"

@@ -8,6 +8,3 @@ description = "Shared Quirin contract modules: the generated fluent-otel-proto f
 
 [lib]
 name = "quirin_provider_fluent_otel_proto"
-
-[dev-dependencies]
-serde_json.workspace = true

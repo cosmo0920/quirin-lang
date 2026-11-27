@@ -134,6 +134,8 @@ const CONVERSIONS: [(&str, &str, &str, &[Chain]); 2] = [
 fn the_executable_crates_are_on_the_load_path_with_derived_namespaces() {
     let manifest = real_load_path();
     let crates: Vec<_> = manifest.contract_roots.keys().cloned().collect();
+    // Card OTEL-PROTO-PHASE-B1 (deliberate update): the data crate
+    // `quirin-provider-fluent-otel-proto` joins the load path.
     assert_eq!(
         crates,
         [
@@ -144,6 +146,7 @@ fn the_executable_crates_are_on_the_load_path_with_derived_namespaces() {
             "qcore-provider-librdkafka",
             "quirin-provider-cfl",
             "quirin-provider-fluent-bit",
+            "quirin-provider-fluent-otel-proto",
             "quirin-provider-libc",
             "quirin-provider-mpack",
             "quirin-provider-msgpack",

@@ -603,8 +603,10 @@ class LoadPathManifest(unittest.TestCase):
         self.assertNotIn("qcore-provider-conformance", names)
         # Card W45-USER-CONTRACT-PLUGINS: the SDK is a workspace member that
         # owns no contracts, so it is not on the load path; 11 crates remain.
+        # Card OTEL-PROTO-PHASE-B1 adds quirin-provider-fluent-otel-proto: 12.
         self.assertNotIn("quirin-provider-plugin", names)
-        self.assertEqual(len(names), 11)
+        self.assertIn("quirin-provider-fluent-otel-proto", names)
+        self.assertEqual(len(names), 12)
         self.assertEqual(sum(name.startswith("qcore-provider-") for name in names), 5)
         edges = {c["name"]: c["dependencies"] for c in manifest["crates"]}
         self.assertEqual(edges["quirin-provider-fluent-bit"], ["quirin-provider-libc"])
