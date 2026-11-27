@@ -15212,6 +15212,6 @@ on every path in two schedules (both `Unknown`). Kept pins:
     `the_discharge_establishes_the_precondition`,
     `no_discharge_no_admission`, `vectors_hold`, …), bound to
     `ADMIT_VECTORS` and `OBSERVE_VECTORS` and
-    `crates/qcore-c-gateway/tests/held_formal_link_obligation.rs`.
+    `crates/qcore-c-gateway/tests/link_member_premises.rs (module `carried_link_obligation`)`.
 
 <!-- generated:rules:end -->

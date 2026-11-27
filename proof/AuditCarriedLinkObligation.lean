@@ -41,7 +41,7 @@ The candidates' reading off the destroyer calls, the kill policy's
 over-approximation of a statement's writes, every consumer's application or
 refusal of a container effect, P-CRR-LINKED and the Rust correspondence are
 trust boundary 28's, pinned by
-`crates/qcore-c-gateway/tests/held_formal_link_obligation.rs`. -/
+`crates/qcore-c-gateway/tests/link_member_premises.rs (module `carried_link_obligation`)`. -/
 
 -- The body's admission.
 #print axioms QCore.CarriedLinkObligation.the_seeded_record_holds

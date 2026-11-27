@@ -54,7 +54,7 @@ destroyer calls, that the Rust kill policy over-approximates a statement's
 writes, that every consumer of a summary with a container effect applies or
 refuses it, and the correspondence with the compiled Rust are review premises
 (trust boundary 28), pinned by
-`crates/qcore-c-gateway/tests/held_formal_link_obligation.rs`. P-CRR-LINKED
+`crates/qcore-c-gateway/tests/link_member_premises.rs (module `carried_link_obligation`)`. P-CRR-LINKED
 (an element of an iterated list is linked, so its links are valid) is rule
 10f's, still stated.
 -/
