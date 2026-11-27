@@ -272,7 +272,12 @@ declaration; `QL005` the retired written form `resource_contract_dependency`;
 an own declaration; `QL007` a link to a namespace no load-path crate derives
 or to a declaration its crate's lock does not record; `QL008` a libc/POSIX
 target under another crate; `QL009` a manifest entry without a valid recorded
-identity. A stale manifest entry and a dependency cycle stay `QI014`.
+identity. A stale manifest entry and a dependency cycle stay `QI014`. Card
+CONNECT-LIBC-EFFECT-CLAIMS adds `QL010` (`providers/contracts.py check`): a
+declared task/defer effect (`callee == "F"` beside `task_spawn`/`defer`) of a
+libc/POSIX callee outside `quirin-provider-libc`, or of a non-libc callee
+inside it (`cx_refuse_libc_effect_elsewhere`,
+`cx_refuse_foreign_effect_in_libc`), and a missing libc names list.
 
 <a id="premise-formula-namespace-qf"></a>
 

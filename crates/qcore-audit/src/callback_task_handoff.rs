@@ -25,9 +25,9 @@ use qcore_schemas::profile::ImportRole;
 use qcore_schemas::sha256_hex;
 use qcore_verification::callback_task_handoff::{
     CALLBACK_TASK_HANDOFF_EVIDENCE_VERSION, CALLBACK_TASK_HANDOFF_POLICY,
-    CallbackTaskObservationBundle, check_callback_task_observations,
-    check_taskful_callback_observations, project_callback_task_source,
-    project_taskful_callback_source, taskful_fixture_contract,
+    CallbackTaskObservationBundle, LIBC_CALLEE_EFFECTS_MODULE, check_callback_task_observations,
+    check_libc_callee_effects_identity, check_taskful_callback_observations,
+    project_callback_task_source, project_taskful_callback_source, taskful_fixture_contract,
 };
 use serde::{Deserialize, Serialize};
 
@@ -44,6 +44,10 @@ pub struct CallbackTaskHandoffConfig {
     pub monkey_inputs: PathBuf,
     pub source_compile_database: PathBuf,
     pub policy: PathBuf,
+    /// Card CONNECT-LIBC-EFFECT-CLAIMS (schema version 2): quirin-provider-libc's
+    /// `libc/callee_effects.qv` and that crate's `contract-inventory.lock`.
+    pub libc_callee_effects: PathBuf,
+    pub libc_inventory_lock: PathBuf,
     pub observations: PathBuf,
     pub report: PathBuf,
 }
@@ -100,6 +104,8 @@ struct CallbackTaskHandoffReport {
     source_revision: String,
     source_digest: String,
     policy_digest: String,
+    libc_effects_module: String,
+    libc_effects_digest: String,
     callbacks_observed: Vec<String>,
     observation_count: usize,
     result: String,
@@ -120,7 +126,7 @@ pub fn run_callback_task_handoff_config(path: &Path) -> Result<(), String> {
     let config_bytes = fs::read(&config_path).map_err(|error| error.to_string())?;
     let config: CallbackTaskHandoffConfig =
         serde_json::from_slice(&config_bytes).map_err(|error| error.to_string())?;
-    if config.schema_version != 1 || config.artifact.is_empty() {
+    if config.schema_version != 2 || config.artifact.is_empty() {
         return Err("unsupported callback-task-handoff configuration".into());
     }
     let profile = resolve(base, &config.monkey_profile);
@@ -128,12 +134,22 @@ pub fn run_callback_task_handoff_config(path: &Path) -> Result<(), String> {
     let monkey_inputs = resolve(base, &config.monkey_inputs);
     let compile_database = resolve(base, &config.source_compile_database);
     let policy = resolve(base, &config.policy);
+    let libc_effects = resolve(base, &config.libc_callee_effects);
+    let libc_lock = resolve(base, &config.libc_inventory_lock);
     let observations = resolve(base, &config.observations);
     let report = resolve(base, &config.report);
     let policy_bytes = fs::read(&policy).map_err(|error| error.to_string())?;
     if policy_bytes != CALLBACK_TASK_HANDOFF_POLICY.as_bytes() {
         return Err("configured callback task-handoff policy differs from the verifier".into());
     }
+    // Card CONNECT-LIBC-EFFECT-CLAIMS: the libc callees' effects are read from
+    // their owner; its module must be the verifier's copy and the one
+    // quirin-provider-libc's inventory lock records, or the audit refuses.
+    let libc_effects_bytes = fs::read(&libc_effects).map_err(|error| error.to_string())?;
+    let libc_lock_bytes = fs::read(&libc_lock).map_err(|error| error.to_string())?;
+    let libc_effects_digest =
+        check_libc_callee_effects_identity(&libc_effects_bytes, &libc_lock_bytes)
+            .map_err(|error| format!("libc callee-effect identity refused: {error:?}"))?;
     let observation_bytes = fs::read(&observations).map_err(|error| error.to_string())?;
     let observation_bundle: CallbackTaskObservationBundle =
         serde_json::from_slice(&observation_bytes).map_err(|error| error.to_string())?;
@@ -155,9 +171,14 @@ pub fn run_callback_task_handoff_config(path: &Path) -> Result<(), String> {
     let certificate = check_callback_task_observations(&projection, &observation_bundle)
         .map_err(|error| format!("observation check refused: {error:?}"))?;
 
+    if projection.libc_effects_digest() != libc_effects_digest {
+        return Err("libc callee-effect module differs from the projection's".into());
+    }
     let mut protected = vec![
         config_path.clone(),
         policy.clone(),
+        libc_effects.clone(),
+        libc_lock.clone(),
         observations.clone(),
         monkey_inputs.clone(),
         compile_database.clone(),
@@ -176,7 +197,7 @@ pub fn run_callback_task_handoff_config(path: &Path) -> Result<(), String> {
         ],
         assumptions: vec![
             "faithful typed C extraction".into(),
-            "declared callee effect contracts are trusted".into(),
+            "declared callee effect contracts are trusted (libevent's policy for its own and Monkey's callees; quirin-provider-libc's libc/callee_effects.qv for libc callees)".into(),
             "native observation producer and callback-window completeness are trusted".into(),
             "observer capability declaration completely records task and deferred lifecycle actions".into(),
             "Lean-model-to-Rust correspondence is maintained by review".into(),
@@ -185,6 +206,8 @@ pub fn run_callback_task_handoff_config(path: &Path) -> Result<(), String> {
         source_revision: projection.source_revision().into(),
         source_digest: projection.source_digest().into(),
         policy_digest: projection.policy_digest().into(),
+        libc_effects_module: LIBC_CALLEE_EFFECTS_MODULE.into(),
+        libc_effects_digest: projection.libc_effects_digest().into(),
         callbacks_observed: certificate.callbacks_observed,
         observation_count: certificate.observation_count,
         result: "bounded obligations checked; no aggregate Cycle 18 promotion".into(),
@@ -193,6 +216,8 @@ pub fn run_callback_task_handoff_config(path: &Path) -> Result<(), String> {
     // Re-read mutable configured inputs before publication.
     if fs::read(&config_path).map_err(|error| error.to_string())? != config_bytes
         || fs::read(&policy).map_err(|error| error.to_string())? != policy_bytes
+        || fs::read(&libc_effects).map_err(|error| error.to_string())? != libc_effects_bytes
+        || fs::read(&libc_lock).map_err(|error| error.to_string())? != libc_lock_bytes
         || fs::read(&observations).map_err(|error| error.to_string())? != observation_bytes
     {
         return Err("configured inputs changed during callback task-handoff audit".into());
@@ -491,4 +516,81 @@ pub fn run_taskful_fixture_config(path: &Path) -> Result<(), String> {
         &report_path,
         &serde_json::to_vec_pretty(&report).map_err(|error| error.to_string())?,
     )
+}
+
+#[cfg(test)]
+mod tests {
+    //! Card CONNECT-LIBC-EFFECT-CLAIMS: the configured audit binds
+    //! quirin-provider-libc's `libc/callee_effects.qv`; a changed module, or a
+    //! configuration that does not name it, refuses (Unknown) before any
+    //! source is read.
+
+    use super::*;
+    use qcore_verification::callback_task_handoff::LIBC_CALLEE_EFFECTS;
+
+    fn repository(path: &str) -> PathBuf {
+        Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("../..")
+            .join(path)
+    }
+
+    fn run(schema_version: u16, libc_module: &str) -> Result<(), String> {
+        let directory = std::env::temp_dir().join(format!(
+            "qcore-callback-task-handoff-libc-{}-{schema_version}-{}",
+            std::process::id(),
+            sha256_hex(libc_module.as_bytes())
+        ));
+        fs::create_dir_all(&directory).unwrap();
+        let module = directory.join("callee_effects.qv");
+        fs::write(&module, libc_module).unwrap();
+        let config = serde_json::json!({
+            "schema_version": schema_version,
+            "artifact": "fixture",
+            "monkey_profile": directory.join("absent-profile"),
+            "fluent_checkout": directory.join("absent-checkout"),
+            "monkey_inputs": directory.join("absent-inputs.json"),
+            "source_compile_database": directory.join("absent-compile-database.json"),
+            "policy": repository(
+                "providers/qcore-provider-libevent/contracts/monkey/callback_task_handoff.qv"
+            ),
+            "libc_callee_effects": module,
+            "libc_inventory_lock": repository(
+                "providers/quirin-provider-libc/contract-inventory.lock"
+            ),
+            "observations": directory.join("absent-observations.json"),
+            "report": directory.join("report.json"),
+        });
+        let config_path = directory.join("config.json");
+        fs::write(&config_path, serde_json::to_vec(&config).unwrap()).unwrap();
+        let result = run_callback_task_handoff_config(&config_path);
+        fs::remove_dir_all(&directory).unwrap();
+        result
+    }
+
+    #[test]
+    fn a_changed_libc_callee_effect_module_refuses_the_audit() {
+        let changed = LIBC_CALLEE_EFFECTS.replacen("defer == 0", "defer == 1", 1);
+        let error = run(2, &changed).unwrap_err();
+        assert!(
+            error.contains("libc callee-effect identity refused")
+                && error.contains("differs from the verifier"),
+            "{error}"
+        );
+    }
+
+    #[test]
+    fn the_reviewed_libc_module_passes_its_identity_check() {
+        // The identity check passes; the audit then refuses on the absent
+        // observations, never on the libc module.
+        let error = run(2, LIBC_CALLEE_EFFECTS).unwrap_err();
+        assert!(!error.contains("libc callee-effect"), "{error}");
+    }
+
+    #[test]
+    fn a_schema_1_configuration_without_the_libc_module_refuses() {
+        assert_eq!(
+            run(1, LIBC_CALLEE_EFFECTS).unwrap_err(),
+            "unsupported callback-task-handoff configuration"
+        );
+    }
 }

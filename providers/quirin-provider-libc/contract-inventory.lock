@@ -5,6 +5,35 @@
   "contracts": "quirin-provider-libc/contracts",
   "crate": "quirin-provider-libc",
   "files": {
+    "libc/callee_effects.qv": {
+      "clause_count": 9,
+      "declaration_count": 3,
+      "declarations": [
+        {
+          "clauses": 3,
+          "name": "effect_errno_location",
+          "resource_mode": null,
+          "resource_table": null
+        },
+        {
+          "clauses": 3,
+          "name": "effect_perror",
+          "resource_mode": null,
+          "resource_table": null
+        },
+        {
+          "clauses": 3,
+          "name": "effect_send",
+          "resource_mode": null,
+          "resource_table": null
+        }
+      ],
+      "inherits": [],
+      "other_declarations": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "dc9e1310bc228fc630a33e4241ba66e3fc30631bd957a3d30584bb4f20c252f1"
+    },
     "libc/dirent.qv": {
       "clause_count": 10,
       "declaration_count": 2,

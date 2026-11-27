@@ -808,6 +808,7 @@
       "contracts": "quirin-provider-libc/contracts",
       "dependencies": [],
       "modules": [
+        "libc/callee_effects.qv",
         "libc/dirent.qv",
         "libc/dlfcn.qv",
         "libc/errno.qv",

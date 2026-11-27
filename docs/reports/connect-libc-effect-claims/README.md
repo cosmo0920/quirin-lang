@@ -4,12 +4,17 @@ Card of round 41 (user decision of 2026-11-27), base `9903b027a`. It discharges
 the `named_followups` entry CONNECT-LIBC-EFFECT-CLAIMS, which
 CONNECT-ADOPT-DECLARED-DEPENDENCIES measured at `1ecaf97e9`.
 
-**State: census and classification done. Stopped before applying** under the
-brief's third stop condition: quirin-provider-libc has no vocabulary for
-task/defer effects, and the recommended resolution cannot be added as a small
-extension (see [Why the card stopped](#why-the-card-stopped)). No contract,
-lock, manifest, Rust, Python check or Lean file changed. The options are under
-[Options](#options).
+**State: applied (Option A).** The card first stopped before applying, under
+the brief's third stop condition (see [Why the card stopped](#why-the-card-stopped)),
+and handed back four [options](#options). USER DECISION (2026-11-27, verbatim):
+"Option A". What changed is under [Applied: Option A](#applied-option-a). The
+user accepted that two brief fixtures change with Option A: "linked and
+resolving" becomes "resolves from libc", and "stale link digest holds Pending"
+becomes "a changed libc module refuses the audit" (Unknown).
+
+The census and the classification below are the hand-back's, measured at the
+base. In the census, row numbers 1–5 still name the claims as they stood
+there.
 
 ## Census
 
@@ -92,9 +97,11 @@ are correctly placed under `cl_owner_observer`. Rows 6–15 are not effect claim
 (`!#names_libc_effect`). No claim is unclassified, so the first stop condition
 does not hold.
 
-The formulas are stated here and are not yet in the checked CX block (C04.18.9).
-Adding them, under the `cl_` prefix through `guarded_proposition`, belongs to
-applying the resolution.
+These `cl_` formulas are the hand-back's classification. They are not validator
+terms. The rule that is enforced is stated in the checked CX block (C04.18.9),
+which `guarded_proposition` validates (see
+[Applied: Option A](#applied-option-a)). It uses the `cx_` prefix because every
+id in that block must carry it (`every_formula_is_a_validated_typed_rendering`).
 
 ## Why the card stopped
 
@@ -215,12 +222,124 @@ hold, and only the third does.
   (decision of 2026-09-28) would turn the audit's positive certificate into
   `Pending`, which is a result move. This variant is not recommended.
 
+## Applied: Option A
+
+**Contracts.**
+
+- `effect_send`, `effect_perror` and `effect_errno_location` moved verbatim,
+  with no clause changed, to a new quirin-provider-libc module,
+  `providers/quirin-provider-libc/contracts/libc/callee_effects.qv`.
+  - It is a literal-fact module. The resource loader refuses it, so it is in no
+    view and has no `contracts.lock` entry.
+  - It is listed in the crate's `CONTRACTS` index and in its README.
+- libevent's `monkey/callback_task_handoff.qv` no longer states them. Its header
+  says where they went.
+- `monkey/timeout_teardown.qv` marks `path_call_sequences` and `path_calls` as
+  observations of `cb_timeout`, owned by libevent. Only comments were added
+  there; no clause changed.
+
+**Reader** (`qcore_verification::callback_task_handoff`).
+
+- `declared_callee_effect_in` reads each callee's effect from its owner:
+  - libevent's policy for `event_del`, `event_free`, `evutil_closesocket` and
+    `mk_mem_free`;
+  - `LIBC_CALLEE_EFFECTS` (the libc module) for `send`, `perror` and
+    `__errno_location`.
+- It fails closed:
+  - a declaration whose callee is a libc name (`libc-names.txt`), held outside
+    quirin-provider-libc, refuses (`cx_refuse_libc_effect_elsewhere`);
+  - a libc-held declaration of a non-libc callee refuses;
+  - a callee with zero declarations, or more than one across both owners,
+    refuses;
+  - a non-zero `task_spawn` or `defer` refuses.
+- The source projection carries `libc_effects_digest`.
+
+**Audit** (`quirin-audit callback-task-handoff`). The configuration schema is
+now 2, with two required fields, `libc_callee_effects` and
+`libc_inventory_lock`.
+
+- Before any source is read, `check_libc_callee_effects_identity` checks two
+  things, and either mismatch refuses (Unknown):
+  - the configured module's bytes equal the verifier's copy;
+  - that copy's SHA-256 is the one quirin-provider-libc's
+    `contract-inventory.lock` records for `libc/callee_effects.qv`.
+- The report gains `libc_effects_module` and `libc_effects_digest`.
+- Both new inputs are protected from report aliasing and reread before
+  publication.
+- A schema-1 configuration refuses.
+
+**Enforcement** (`providers/contracts.py check`, `QL010`).
+
+- `check_libc_effects` runs over the shipped and user load paths. It refuses a
+  declaration that states `task_spawn` or `defer` for a `callee == "F"` with F
+  a libc name outside quirin-provider-libc, and one in quirin-provider-libc
+  whose callee is not a libc name.
+- A missing names list refuses.
+- Observations (no `callee` key) are not this check's to refuse.
+- The shipped tree passes with 3 libc effect declarations, all in
+  quirin-provider-libc.
+
+The rule is stated as CX formulas in `qcore_schemas::connect::FORMULAS`. Each
+is validated by `guarded_proposition` and has a Lean theorem in
+`QCore.MeasureConnect`, audited in `AuditMeasureConnect.lean`.
+
+```
+cx_refuse_libc_effect_elsewhere:          forall (#b: cx_bundle) { forall (#g: cx_fn) { forall (#h: cx_fn) { (((#cx_declares(#b,#g) && #cx_effect_callee(#b,#g,#h)) && (#cx_libc_name(#h) && !#cx_libc_owner(#b))) => #cx_effect_refused(#b,#g)) } } }
+cx_refuse_foreign_effect_in_libc:         forall (#b: cx_bundle) { forall (#g: cx_fn) { forall (#h: cx_fn) { (((#cx_declares(#b,#g) && #cx_effect_callee(#b,#g,#h)) && (!#cx_libc_name(#h) && #cx_libc_owner(#b))) => #cx_effect_refused(#b,#g)) } } }
+cx_effect_refused_is_a_misplaced_effect:  forall (#b: cx_bundle) { forall (#g: cx_fn) { (#cx_effect_refused(#b,#g) => exists (#h: cx_fn) { ((#cx_declares(#b,#g) && #cx_effect_callee(#b,#g,#h)) && ((#cx_libc_name(#h) && !#cx_libc_owner(#b)) || (!#cx_libc_name(#h) && #cx_libc_owner(#b)))) }) } }
+cx_libc_owner_effect_accepted:            forall (#b: cx_bundle) { forall (#g: cx_fn) { ((#cx_libc_owner(#b) && forall (#h: cx_fn) { (#cx_effect_callee(#b,#g,#h) => #cx_libc_name(#h)) }) => !#cx_effect_refused(#b,#g)) } }
+cx_observation_accepted:                  forall (#b: cx_bundle) { forall (#g: cx_fn) { forall (#h: cx_fn) { ((#cx_observes_call(#b,#g,#h) && !exists (#k: cx_fn) { #cx_effect_callee(#b,#g,#k) }) => !#cx_effect_refused(#b,#g)) } } }
+cx_effect_refusal_fails_the_check:        forall (#b: cx_bundle) { forall (#g: cx_fn) { (#cx_effect_refused(#b,#g) => !#cx_effect_check_passes(#b)) } }
+cx_failed_effect_check_has_a_refusal:     forall (#b: cx_bundle) { (!#cx_effect_check_passes(#b) => exists (#g: cx_fn) { #cx_effect_refused(#b,#g) }) }
+```
+
+- The first two are the refusals and the third is their converse: a refusal
+  happens only for a misplaced effect.
+- `cx_libc_owner_effect_accepted` and `cx_observation_accepted` are the converse
+  refusals. The libc crate's effects of libc callees are accepted, and so is an
+  observation that states no effect.
+- The last two tie the refusals to the check's outcome.
+- Four new CX terms: `cx_effect_callee`, `cx_observes_call`,
+  `cx_effect_refused`, `cx_effect_check_passes`.
+- Counts: the CX block has 94 terms and the formula table 80 formulas.
+- Six of the Lean theorems use no axioms. `formula_cx_failed_effect_check_has_a_refusal`
+  uses only `Classical.choice`, `propext` and `Quot.sound`. There are no
+  project axioms or placeholders.
+
+**Fixtures.**
+
+| Fixture | Where |
+|---|---|
+| A libc effect declaration outside libc is refused | `providers/tests/test_contract_load_path.py` `CalleeEffectCheck.test_a_libc_effect_declaration_outside_libc_is_refused` (QL010); `qcore-verification` `a_libc_effect_declaration_outside_libc_is_refused` (reader) |
+| An observation in the observing crate is accepted | `CalleeEffectCheck.test_an_observation_in_the_observing_crate_is_accepted`; the shipped `timeout_teardown.qv` (`test_the_shipped_and_user_load_paths_pass`) |
+| Resolves from libc (replaces "linked and resolving") | `qcore-verification` `libc_callee_effects_resolve_from_libc`, `the_projection_binds_the_libc_module_digest`; `CalleeEffectCheck.test_the_moved_declaration_is_accepted_in_libc` |
+| A changed libc module refuses the audit (replaces "stale link digest holds Pending") | `qcore-verification` `a_changed_libc_module_refuses_the_audit` (changed bytes, a stale inventory digest, another crate's lock); `qcore-audit` `callback_task_handoff::tests::a_changed_libc_callee_effect_module_refuses_the_audit` (the configured audit returns its refusal, printed as `rejected (Unknown)`) |
+| Also covered | libc holds no other owner's effect (`libc_holds_no_effect_of_another_owners_callee`, both layers); a missing names list refuses; a schema-1 configuration refuses; the reviewed module passes its identity check |
+
+**Lock and manifest diff.** These were regenerated by `python3 providers/contracts.py sync`.
+
+- `providers/contract-load-path.json` lists `libc/callee_effects.qv` among
+  libc's modules (19). Its resource, bounds and outer views are unchanged.
+- `providers/quirin-provider-libc/contract-inventory.lock` adds that file and
+  its three declarations.
+- `providers/qcore-provider-libevent/contract-inventory.lock` drops the three
+  declarations and records the two changed module digests.
+- `providers/qcore-provider-libevent/contracts.json` records the new digests of
+  `callback_task_handoff.qv` and `timeout_teardown.qv`.
+- No `contracts.lock` changed, and no pin, `linkage-reliances.json` entry or
+  `contract_dependencies` entry changed.
+- The user load path's crates (libcurl, onigmo, openssl) are unchanged, and
+  `quirin-audit plugin views` reports them in step.
+
 ## Follow-ups
 
-- The integrator should return the chosen option to this card. Option A or D
-  is a resume on this branch. Option B or C is a new card.
-- Generalising `cl_owner_libc` to every owner is out of scope. That rule would
-  place a callee effect declaration in the callee's owner crate. libevent's
-  other four effect declarations (`event_del`, `event_free`,
-  `evutil_closesocket`, `mk_mem_free`) name libevent or Monkey functions, so
-  they already sit with their owner.
+- **CALLEE-EFFECT-RESOURCE-VOCABULARY** (option B, registered): the long-term
+  home for task/defer effects is a resource-v1 predicate on the libc
+  declarations themselves (`send`, `perror`, `__errno_location`). That would
+  let the effect carry a `contracts.lock` digest and be linked by a dependent.
+- **CALLEE-EFFECT-OWNER-GENERAL** (registered): `cx_refuse_libc_effect_elsewhere`
+  covers libc callees only. Placing every callee effect declaration in its
+  callee's owner crate would generalise it. libevent's other four effect
+  declarations (`event_del`, `event_free`, `evutil_closesocket`,
+  `mk_mem_free`) name libevent or Monkey functions, so they already sit with
+  their owner.

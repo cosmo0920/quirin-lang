@@ -1459,6 +1459,13 @@ decided with no identity refusal; every other unknown binding keeps it.
     (`W47-ARENA-INTERIOR-READING`). Rank on the post-access-path corpus before
     contracting: P3 exposed callees no earlier ranking saw
     ([report](../reports/w47-callee-closure-r2/README.md)).
+    CONNECT-LIBC-EFFECT-CLAIMS adds that a declared task/defer effect of a
+    libc callee is a libc declaration too: it lives only in
+    `quirin-provider-libc` (`libc/callee_effects.qv`), and `providers/contracts.py
+    check` refuses one elsewhere (`QL010`, `cx_refuse_libc_effect_elsewhere`); a
+    call-site observation that names libc functions as a body's calls
+    (`path_calls`) stays with the observing crate (`cx_observation_accepted`)
+    ([report](../reports/connect-libc-effect-claims/README.md)).
 
 <a id="constraint-10k"></a>
 

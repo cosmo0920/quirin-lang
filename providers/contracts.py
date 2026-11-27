@@ -469,6 +469,62 @@ def check_linkage(root, load_path):
                                  if d["form"] == "inherit")}
 
 
+# Card CONNECT-LIBC-EFFECT-CLAIMS (user decision of 2026-11-27, "Option A";
+# rule 10j). A declared task/defer effect of a callee is a fact about that
+# callee at every call site, so it belongs to the callee's owner: the effect of
+# a libc callee to quirin-provider-libc (`libc/callee_effects.qv`). A call-site
+# observation (`path_calls`, `path_call_sequences`: the calls of the observing
+# body) names a libc function only as one of that body's calls and stays with
+# the observing crate. Formulas of the CX block (qcore_schemas::connect::FORMULAS,
+# Lean QCore.MeasureConnect): `cx_refuse_libc_effect_elsewhere`,
+# `cx_refuse_foreign_effect_in_libc`, `cx_effect_refused_is_a_misplaced_effect`,
+# `cx_libc_owner_effect_accepted`, `cx_observation_accepted`,
+# `cx_effect_refusal_fails_the_check` and `cx_failed_effect_check_has_a_refusal`.
+_EFFECT_CALLEE = re.compile(r'\bcallee\s*==\s*"([A-Za-z_]\w*)"')
+_EFFECT_FACT = re.compile(r"\b(?:task_spawn|defer)\s*==")
+
+
+def check_libc_effects(root, crates):
+    """The callee-effect ownership check (QL010). `crates` are load-path
+    records (`name`, `contracts`) of the shipped and user load paths. A
+    declaration stating a `task_spawn` or `defer` fact for a `callee` that is a
+    libc/POSIX name (`quirin-provider-libc/libc-names.txt`) is refused in any
+    crate but quirin-provider-libc (`cx_refuse_libc_effect_elsewhere`); one in
+    quirin-provider-libc whose callee is no libc name is refused as well (it
+    belongs to that callee's owner). Anything else, observations included, is
+    not this check's (`cx_observation_accepted`). Fail-closed: a missing names
+    list refuses. Returns the counts."""
+    root = Path(root)
+    names_file = root / "quirin-provider-libc" / "libc-names.txt"
+    if not names_file.is_file():
+        raise ValueError(f"QL010: {names_file} is missing; the callee-effect check cannot run")
+    libc_names = {line.strip() for line in names_file.read_text().splitlines()
+                  if line.strip() and not line.lstrip().startswith("#")}
+    failures = []
+    owned = 0
+    for crate in crates:
+        for module, path in files(root / crate["contracts"]).items():
+            for function, block in declaration_blocks(Path(path).read_text()):
+                if not _EFFECT_FACT.search(block):
+                    continue
+                for callee in _EFFECT_CALLEE.findall(block):
+                    libc = callee in libc_names
+                    if libc and crate["name"] != "quirin-provider-libc":
+                        failures.append(
+                            f"QL010: {crate['name']}/{module}: `{function}` declares the task/defer "
+                            f"effect of libc callee `{callee}`, owned by quirin-provider-libc "
+                            "(cx_refuse_libc_effect_elsewhere)")
+                    elif not libc and crate["name"] == "quirin-provider-libc":
+                        failures.append(
+                            f"QL010: quirin-provider-libc/{module}: `{function}` declares the "
+                            f"task/defer effect of `{callee}`, which is no libc name")
+                    elif libc:
+                        owned += 1
+    if failures:
+        raise ValueError("callee-effect check: " + "; ".join(failures))
+    return {"libc_effect_declarations": owned}
+
+
 def declared_functions(text):
     """The `extern fn NAME` declarations of a module, comments removed (the
     lexical reading of `qcore_audit::user_plugins::declared_functions`)."""
@@ -985,6 +1041,9 @@ def main():
         locks = verify_locks(ROOT, ROOT / LOAD_PATH)
         user_crates = check_user_crates(ROOT)
         linkage = check_linkage(ROOT, load_path)
+        user_load_path = json.loads((ROOT / USER_LOAD_PATH).read_text())
+        linkage["callee_effects"] = check_libc_effects(
+            ROOT, load_path["crates"] + user_load_path["crates"])
         legacy_sources = {}
         for record in load_path["crates"]:
             directory = ROOT / record["contracts"]

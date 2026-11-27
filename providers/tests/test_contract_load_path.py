@@ -810,5 +810,64 @@ class LinkageCheck(unittest.TestCase):
             self.run_check(self.LINK, record)
 
 
+class CalleeEffectCheck(unittest.TestCase):
+    """Card CONNECT-LIBC-EFFECT-CLAIMS: a declared task/defer effect of a libc
+    callee is quirin-provider-libc's (`cx_refuse_libc_effect_elsewhere`); a
+    call-site observation stays with the observing crate
+    (`cx_observation_accepted`)."""
+
+    EFFECT = ('extern fn effect_send() -> unit\ncontract { ensures normal callee == "send"; '
+              "ensures normal task_spawn == 0; ensures normal defer == 0; };\n")
+    OWN_EFFECT = ('extern fn effect_acme_free() -> unit\ncontract { ensures normal callee == '
+                  '"acme_free"; ensures normal task_spawn == 0; ensures normal defer == 0; };\n')
+    OBSERVATION = ('extern fn acme_path() -> unit\ncontract { ensures normal path_calls == '
+                   '"send,__errno_location,perror"; };\n')
+
+    def run_check(self, acme, libc, names="# list\nsend\nperror\n__errno_location\n"):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            for crate, text in (("quirin-provider-acme", acme), ("quirin-provider-libc", libc)):
+                directory = root / crate / "contracts" / crate.rsplit("-", 1)[1]
+                directory.mkdir(parents=True)
+                (directory / "effects.qv").write_text("module contract;\n" + text)
+            if names is not None:
+                (root / "quirin-provider-libc" / "libc-names.txt").write_text(names)
+            crates = [{"name": crate, "contracts": f"{crate}/contracts"}
+                      for crate in ("quirin-provider-acme", "quirin-provider-libc")]
+            return contracts.check_libc_effects(root, crates)
+
+    def test_a_libc_effect_declaration_outside_libc_is_refused(self):
+        with self.assertRaises(ValueError) as caught:
+            self.run_check(self.EFFECT + self.OWN_EFFECT, "")
+        self.assertIn("QL010", str(caught.exception))
+        self.assertIn("cx_refuse_libc_effect_elsewhere", str(caught.exception))
+        self.assertIn("effect_send", str(caught.exception))
+
+    def test_the_moved_declaration_is_accepted_in_libc(self):
+        self.assertEqual(self.run_check(self.OWN_EFFECT, self.EFFECT),
+                         {"libc_effect_declarations": 1})
+
+    def test_an_observation_in_the_observing_crate_is_accepted(self):
+        self.assertEqual(self.run_check(self.OBSERVATION + self.OWN_EFFECT, self.EFFECT),
+                         {"libc_effect_declarations": 1})
+
+    def test_libc_holds_no_effect_of_another_owners_callee(self):
+        with self.assertRaises(ValueError) as caught:
+            self.run_check("", self.EFFECT + self.OWN_EFFECT)
+        self.assertIn("which is no libc name", str(caught.exception))
+
+    def test_a_missing_names_list_refuses(self):
+        with self.assertRaises(ValueError) as caught:
+            self.run_check(self.OWN_EFFECT, self.EFFECT, names=None)
+        self.assertIn("QL010", str(caught.exception))
+
+    def test_the_shipped_and_user_load_paths_pass(self):
+        root = Path(contracts.ROOT)
+        crates = (json.loads((root / contracts.LOAD_PATH).read_text())["crates"]
+                  + json.loads((root / contracts.USER_LOAD_PATH).read_text())["crates"])
+        self.assertEqual(contracts.check_libc_effects(root, crates),
+                         {"libc_effect_declarations": 3})
+
+
 if __name__ == "__main__":
     unittest.main()

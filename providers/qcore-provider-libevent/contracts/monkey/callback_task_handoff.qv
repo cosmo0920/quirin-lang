@@ -15,7 +15,17 @@
 module contract;
 
 // Executable policy for the complete selected Monkey callback inventory and
-// the declared task/defer effects of every opaque callee in its eight paths.
+// the declared task/defer effects of every opaque libevent or Monkey callee in
+// its eight paths.
+//
+// Card CONNECT-LIBC-EFFECT-CLAIMS (user decision of 2026-11-27, "Option A";
+// rule 10j): the effects of the libc callees (`send`, `perror`,
+// `__errno_location`) are libc declarations, owned by quirin-provider-libc in
+// `libc/callee_effects.qv`, and this module no longer states them.
+// `qcore_verification::callback_task_handoff` reads each callee's effect from
+// its owner. A task/defer declaration here whose callee is a libc name is
+// refused, both by that reader and by `providers/contracts.py check` (QL010,
+// `cx_refuse_libc_effect_elsewhere`).
 
 extern fn selected_callbacks() -> unit
 contract {
@@ -35,8 +45,6 @@ contract {
     ensures normal profile_digest != "";
 };
 
-extern fn effect_errno_location() -> unit
-contract { ensures normal callee == "__errno_location"; ensures normal task_spawn == 0; ensures normal defer == 0; };
 extern fn effect_event_del() -> unit
 contract { ensures normal callee == "event_del"; ensures normal task_spawn == 0; ensures normal defer == 0; };
 extern fn effect_event_free() -> unit
@@ -45,10 +53,6 @@ extern fn effect_evutil_closesocket() -> unit
 contract { ensures normal callee == "evutil_closesocket"; ensures normal task_spawn == 0; ensures normal defer == 0; };
 extern fn effect_mk_mem_free() -> unit
 contract { ensures normal callee == "mk_mem_free"; ensures normal task_spawn == 0; ensures normal defer == 0; };
-extern fn effect_perror() -> unit
-contract { ensures normal callee == "perror"; ensures normal task_spawn == 0; ensures normal defer == 0; };
-extern fn effect_send() -> unit
-contract { ensures normal callee == "send"; ensures normal task_spawn == 0; ensures normal defer == 0; };
 
 extern fn bounded_no_task_observation() -> unit
 contract {

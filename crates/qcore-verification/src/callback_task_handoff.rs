@@ -39,15 +39,30 @@ pub const CALLBACK_TASK_HANDOFF_POLICY: &str = include_str!(
 );
 pub const CALLBACK_TASK_HANDOFF_EVIDENCE_VERSION: &str = "qcore.cycle18.callback-task-handoff.v1";
 
-const EFFECT_DECLARATIONS: [&str; 7] = [
-    "effect_errno_location",
+/// Card CONNECT-LIBC-EFFECT-CLAIMS (user decision of 2026-11-27, "Option A";
+/// rule 10j): the declared task/defer effects of the libc callees, owned by
+/// quirin-provider-libc. The callback task-handoff audit binds this module's
+/// digest and checks it against that crate's `contract-inventory.lock`
+/// ([`check_libc_callee_effects_identity`]).
+pub const LIBC_CALLEE_EFFECTS: &str =
+    include_str!("../../../providers/quirin-provider-libc/contracts/libc/callee_effects.qv");
+/// The logical path of [`LIBC_CALLEE_EFFECTS`] in quirin-provider-libc.
+pub const LIBC_CALLEE_EFFECTS_MODULE: &str = "libc/callee_effects.qv";
+/// The crate that owns every libc/POSIX declaration (rule 10j).
+pub const LIBC_CRATE: &str = "quirin-provider-libc";
+/// The crate that owns the callback task-handoff policy.
+pub const POLICY_CRATE: &str = "qcore-provider-libevent";
+/// The libc/POSIX names rule 10j's placement test reads.
+const LIBC_NAMES: &str = include_str!("../../../providers/quirin-provider-libc/libc-names.txt");
+
+const POLICY_EFFECT_DECLARATIONS: &[&str] = &[
     "effect_event_del",
     "effect_event_free",
     "effect_evutil_closesocket",
     "effect_mk_mem_free",
-    "effect_perror",
-    "effect_send",
 ];
+const LIBC_EFFECT_DECLARATIONS: &[&str] =
+    &["effect_errno_location", "effect_perror", "effect_send"];
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum CallbackTaskHandoffError {
@@ -57,43 +72,158 @@ pub enum CallbackTaskHandoffError {
     Model(String),
 }
 
+/// One owner's declared callee effects: the owning crate, its module text and
+/// the declarations of it the reader consults.
+#[derive(Clone, Copy, Debug)]
+pub struct CalleeEffectSource<'a> {
+    pub owner_crate: &'a str,
+    pub text: &'a str,
+    pub declarations: &'a [&'a str],
+}
+
+/// The shipped owners: libevent's policy for libevent's and Monkey's own
+/// callees, quirin-provider-libc's module for the libc callees.
+pub fn callee_effect_sources() -> [CalleeEffectSource<'static>; 2] {
+    [
+        CalleeEffectSource {
+            owner_crate: POLICY_CRATE,
+            text: CALLBACK_TASK_HANDOFF_POLICY,
+            declarations: POLICY_EFFECT_DECLARATIONS,
+        },
+        CalleeEffectSource {
+            owner_crate: LIBC_CRATE,
+            text: LIBC_CALLEE_EFFECTS,
+            declarations: LIBC_EFFECT_DECLARATIONS,
+        },
+    ]
+}
+
+/// Whether `name` is a libc/POSIX function name (`libc-names.txt`).
+pub fn is_libc_name(name: &str) -> bool {
+    LIBC_NAMES
+        .lines()
+        .map(str::trim)
+        .any(|line| !line.is_empty() && !line.starts_with('#') && line == name)
+}
+
 fn literal(function: &str, fact: &str) -> Result<ContractFact, CallbackTaskHandoffError> {
     contract_fact_literal(CALLBACK_TASK_HANDOFF_POLICY, function, fact)
         .map_err(CallbackTaskHandoffError::Policy)
 }
 
+fn source_literal(
+    text: &str,
+    function: &str,
+    fact: &str,
+) -> Result<ContractFact, CallbackTaskHandoffError> {
+    contract_fact_literal(text, function, fact).map_err(CallbackTaskHandoffError::Policy)
+}
+
 fn declared_effect(callee: &str) -> Result<(), CallbackTaskHandoffError> {
+    declared_callee_effect_in(&callee_effect_sources(), callee).map(|_| ())
+}
+
+/// Read `callee`'s declared task/defer effect from its owner and return the
+/// owning crate. Fail-closed:
+///
+/// * a declaration whose callee is a libc name, held by any crate but
+///   quirin-provider-libc, refuses (`cx_refuse_libc_effect_elsewhere`), and so
+///   does a declaration held by quirin-provider-libc whose callee is not a
+///   libc name (it belongs to that callee's owner);
+/// * a callee with no declaration, or with several, refuses;
+/// * a declared task spawn or deferred registration refuses.
+pub fn declared_callee_effect_in<'a>(
+    sources: &[CalleeEffectSource<'a>],
+    callee: &str,
+) -> Result<&'a str, CallbackTaskHandoffError> {
     let mut matches = Vec::new();
-    for declaration in EFFECT_DECLARATIONS {
-        if literal(declaration, "callee")? == ContractFact::Text(callee.into()) {
-            matches.push(declaration);
+    for source in sources {
+        for declaration in source.declarations {
+            let ContractFact::Text(declared) = source_literal(source.text, declaration, "callee")?
+            else {
+                return Err(CallbackTaskHandoffError::Policy(format!(
+                    "`{declaration}` in {} states no textual callee",
+                    source.owner_crate
+                )));
+            };
+            let libc = is_libc_name(&declared);
+            if libc && source.owner_crate != LIBC_CRATE {
+                return Err(CallbackTaskHandoffError::Policy(format!(
+                    "`{declaration}` declares the task/defer effect of libc callee `{declared}` \
+                     in {}, outside {LIBC_CRATE} (cx_refuse_libc_effect_elsewhere)",
+                    source.owner_crate
+                )));
+            }
+            if !libc && source.owner_crate == LIBC_CRATE {
+                return Err(CallbackTaskHandoffError::Policy(format!(
+                    "`{declaration}` declares the task/defer effect of `{declared}`, which is no \
+                     libc name, in {LIBC_CRATE}"
+                )));
+            }
+            if declared == callee {
+                matches.push((source, *declaration));
+            }
         }
     }
-    let [declaration] = matches.as_slice() else {
+    let [(source, declaration)] = matches.as_slice() else {
         return Err(CallbackTaskHandoffError::Source(format!(
             "callee `{callee}` has no unique declared task/defer effect"
         )));
     };
-    let spawn = literal(declaration, "task_spawn")?;
-    let defer = literal(declaration, "defer")?;
+    let spawn = source_literal(source.text, declaration, "task_spawn")?;
+    let defer = source_literal(source.text, declaration, "defer")?;
     check_typed_contract_facts(
-        CALLBACK_TASK_HANDOFF_POLICY,
+        source.text,
         declaration,
         &[
             ("callee", ContractFact::Text(callee.into())),
-            ("task_spawn", spawn),
-            ("defer", defer),
+            ("task_spawn", spawn.clone()),
+            ("defer", defer.clone()),
         ],
     )
     .map_err(CallbackTaskHandoffError::Policy)?;
-    if literal(declaration, "task_spawn")? != ContractFact::Integer(0)
-        || literal(declaration, "defer")? != ContractFact::Integer(0)
-    {
+    if spawn != ContractFact::Integer(0) || defer != ContractFact::Integer(0) {
         return Err(CallbackTaskHandoffError::Source(format!(
             "callee `{callee}` can spawn tasks or defer work"
         )));
     }
-    Ok(())
+    Ok(source.owner_crate)
+}
+
+/// Bind the libc callee-effect module the audit was configured with to the
+/// verifier's copy and to quirin-provider-libc's reviewed inventory
+/// (`contract-inventory.lock`, `files["libc/callee_effects.qv"].sha256`).
+/// Any difference refuses (Unknown); the result is the bound digest.
+pub fn check_libc_callee_effects_identity(
+    configured_module: &[u8],
+    inventory_lock: &[u8],
+) -> Result<String, CallbackTaskHandoffError> {
+    if configured_module != LIBC_CALLEE_EFFECTS.as_bytes() {
+        return Err(CallbackTaskHandoffError::Policy(
+            "configured libc callee-effect module differs from the verifier".into(),
+        ));
+    }
+    let digest = sha256_hex(LIBC_CALLEE_EFFECTS.as_bytes());
+    let lock: serde_json::Value = serde_json::from_slice(inventory_lock).map_err(|error| {
+        CallbackTaskHandoffError::Policy(format!("libc contract inventory lock: {error}"))
+    })?;
+    if lock.get("crate").and_then(serde_json::Value::as_str) != Some(LIBC_CRATE) {
+        return Err(CallbackTaskHandoffError::Policy(format!(
+            "the configured contract inventory lock is not {LIBC_CRATE}'s"
+        )));
+    }
+    let recorded = lock
+        .get("files")
+        .and_then(|files| files.get(LIBC_CALLEE_EFFECTS_MODULE))
+        .and_then(|file| file.get("sha256"))
+        .and_then(serde_json::Value::as_str);
+    if recorded != Some(digest.as_str()) {
+        return Err(CallbackTaskHandoffError::Policy(format!(
+            "{LIBC_CRATE}'s contract inventory lock does not record the libc callee-effect \
+             module's digest {digest}"
+        )));
+    }
+    Ok(digest)
 }
 
 fn path_calls(operations: &[SourceOperation]) -> Result<Vec<String>, CallbackTaskHandoffError> {
@@ -131,9 +261,15 @@ pub struct CallbackTaskSourceProjection {
     source_revision: String,
     source_digest: String,
     policy_digest: String,
+    /// The digest of quirin-provider-libc's `libc/callee_effects.qv`, whose
+    /// declarations the projection read for the libc callees.
+    libc_effects_digest: String,
 }
 
 impl CallbackTaskSourceProjection {
+    pub fn libc_effects_digest(&self) -> &str {
+        &self.libc_effects_digest
+    }
     pub fn callbacks(&self) -> &[String] {
         &self.callbacks
     }
@@ -258,6 +394,7 @@ pub fn project_callback_task_source(
         source_revision,
         source_digest,
         policy_digest: sha256_hex(CALLBACK_TASK_HANDOFF_POLICY.as_bytes()),
+        libc_effects_digest: sha256_hex(LIBC_CALLEE_EFFECTS.as_bytes()),
     })
 }
 

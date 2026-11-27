@@ -107,8 +107,8 @@
       "sha256": "55587515743ddadde845440ebefd1b9555dd2cca65983386148365a6b14e8fc8"
     },
     "monkey/callback_task_handoff.qv": {
-      "clause_count": 66,
-      "declaration_count": 12,
+      "clause_count": 57,
+      "declaration_count": 9,
       "declarations": [
         {
           "clauses": 4,
@@ -119,12 +119,6 @@
         {
           "clauses": 6,
           "name": "selected_callback_identity",
-          "resource_mode": null,
-          "resource_table": null
-        },
-        {
-          "clauses": 3,
-          "name": "effect_errno_location",
           "resource_mode": null,
           "resource_table": null
         },
@@ -153,18 +147,6 @@
           "resource_table": null
         },
         {
-          "clauses": 3,
-          "name": "effect_perror",
-          "resource_mode": null,
-          "resource_table": null
-        },
-        {
-          "clauses": 3,
-          "name": "effect_send",
-          "resource_mode": null,
-          "resource_table": null
-        },
-        {
           "clauses": 7,
           "name": "bounded_no_task_observation",
           "resource_mode": null,
@@ -187,7 +169,7 @@
       "other_declarations": [],
       "premise_bindings": [],
       "premises": {},
-      "sha256": "f988c81e00471650a6b7c69c613be07f063a09d026287ff2dad6a3686e8e3311"
+      "sha256": "36aae2b9bfe7d180d64f5b85eaff7f9b82f0d76d6c3f137e71cff4c8c62e79be"
     },
     "monkey/composition.qv": {
       "clause_count": 35,
@@ -917,7 +899,7 @@
       "other_declarations": [],
       "premise_bindings": [],
       "premises": {},
-      "sha256": "64b92201adeb7e750a5f83c33642108550cb864caba3a9fab9fe33b9d32c55ca"
+      "sha256": "404892b072c89ca07ede6b607661bb61b12bb1e43928f20fca09fa2ebe17b7f9"
     },
     "monkey/vhost_set.qv": {
       "clause_count": 5,

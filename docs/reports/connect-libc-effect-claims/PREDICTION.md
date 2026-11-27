@@ -1,45 +1,36 @@
-# CONNECT-LIBC-EFFECT-CLAIMS: prediction
+# CONNECT-LIBC-EFFECT-CLAIMS: prediction (Option A)
 
-Base `9903b027a`. Written at the hand-back, before any option is applied. Every
-row is a prediction for the integrator to measure; none of it has been
-measured.
+Base `9903b027a`. USER DECISION (2026-11-27, verbatim): "Option A". These are
+predictions for the integrator to measure; none of them has been measured.
 
-## This commit (census and report only)
+| Route | Verdicts | Coverage | Reason |
+|---|---|---|---|
+| corpus | no move | no move | Neither changed libevent module (`monkey/callback_task_handoff.qv`, `monkey/timeout_teardown.qv`) is in libevent's resource, bounds or outer view, and the new `libc/callee_effects.qv` is in no view. No resource-v1 declaration, pin or link changed. |
+| twelve-home | no move | no move | same |
+| system | no move | no move | same. The pinned route reports each Monkey callback's Cycle 18 composition as `Unknown` with a reason, without running the callback task-handoff projection. |
+| slice | no move | no move | same |
 
-This commit adds only report files, so all four pinned routes (corpus,
-twelve-home, system, slice) are byte-identical in verdicts, coverage and
-contract identity.
+**Expected identity changes, none of them verdict moves.**
 
-## Per option, if applied
+- The load-path manifest (`providers/contract-load-path.json`) gains one libc
+  module.
+- Both crates' `contract-inventory.lock` files change, and libevent's
+  `contracts.json` records two new module digests.
+- A route whose input identity binds the whole manifest or those files records
+  a new input identity.
+- No `contracts.lock`, `linkage-reliances.json` or `contract_dependencies`
+  entry changed, so `measure chain`'s dependency graph is unchanged.
 
-| Route | A (move literal declarations to libc, owner read directly) | B (resource-v1 task/defer vocabulary) | C (A plus `linkage_contract_v2`) | D (keep in libevent, refusal with grandfathering) |
-|---|---|---|---|---|
-| corpus | no move | no move | no move | no move |
-| twelve-home | no move | no move | no move | no move |
-| system | no move | no move | no move | no move |
-| slice | no move | no move | no move | no move |
+**The `quirin-audit callback-task-handoff` audit**, which is not a pinned route:
 
-The reason is the same for every route: neither
-`monkey/callback_task_handoff.qv` nor `monkey/timeout_teardown.qv` is in
-libevent's resource view, and a new libc literal module would be in no view.
-The pinned route reports each Monkey callback's Cycle 18 composition as
-`Unknown` with a reason and does not run it, so no route's verdict reads these
-declarations.
-
-Identity changes that are not verdict moves:
-
-- **A and C.** The libc and libevent module digests change, along with their
-  `contract-inventory.lock` files, `contracts.json` and the module list in
-  `contract-load-path.json`.
-  - Any route whose identity binds the whole load-path manifest records a new
-    input identity.
-  - `quirin-audit callback-task-handoff` keeps its result ("bounded
-    obligations checked"). Its `policy_digest` changes because the libevent
-    policy text shrinks, and it gains the libc module's digest.
-- **B.** The resource-v1 declarations of `send`, `perror` and
-  `__errno_location` change, so their `contracts.lock` `contract_sha256`
-  values change (flexible pins; a review and re-pin are required).
-  - The custody effects are unchanged, so no gateway verdict moves.
-  - The Lean audit count grows by the new vocabulary's theorems.
-- **D.** No contract text changes. Only `providers/contracts.py check` gains a
-  refusal.
+- Its result is expected to be unchanged ("bounded obligations checked") for a
+  configuration that names the reviewed libc module and lock.
+- Its `policy_digest` changes because the libevent policy text changed.
+- The report gains `libc_effects_module` and `libc_effects_digest`.
+- A schema-1 configuration now refuses (Unknown) until it names the two new
+  inputs.
+- The taskful fixture audit (`callback-task-handoff-fixture`) reads the same
+  policy. Its frozen run manifest
+  (`docs/reports/cycle18-task-handoff/taskful-run-manifest.json`, policy
+  `be5964f3…`) already differed from the base's policy (`f988c81e…`), so
+  re-running it needs a fresh native run, as it did before this card.

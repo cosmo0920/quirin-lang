@@ -1,0 +1,46 @@
+// SPDX-License-Identifier: Apache-2.0
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+module contract;
+
+// Card CONNECT-LIBC-EFFECT-CLAIMS (user decision of 2026-11-27, "Option A";
+// rule 10j: libc declarations are owned by quirin-provider-libc only). The
+// declared task/defer effects of the libc callees the Cycle 18 callback
+// task-handoff audit meets. Each declaration states a fact about the libc
+// function itself, at every call site (`cx_refuse_libc_effect_elsewhere`): the
+// callee spawns no task and registers no deferred work.
+//
+// The three declarations were moved verbatim from qcore-provider-libevent's
+// `monkey/callback_task_handoff.qv`; no clause changed. That module keeps the
+// effects of libevent's and Monkey's own callees (`event_del`, `event_free`,
+// `evutil_closesocket`, `mk_mem_free`). `qcore_verification::callback_task_handoff`
+// reads each callee's effect from its owner, and `quirin-audit
+// callback-task-handoff` binds this module's digest, checking it against this
+// crate's `contract-inventory.lock` and refusing any mismatch (Unknown).
+//
+// This is a literal-fact module, not a resource declaration: the resource
+// loader refuses it, so it is in no view, and it is not pinned in
+// `contracts.lock`. `providers/contracts.py check` refuses a declaration of a
+// task/defer effect on a libc callee in any other crate (QL010).
+//
+// NOT CLAIMED: custody (the resource declarations of `send` in `socket.qv`,
+// `perror` in `stdio.qv` and `__errno_location` in `errno.qv` state it),
+// error behaviour, or anything about threads the C library starts internally.
+
+extern fn effect_errno_location() -> unit
+contract { ensures normal callee == "__errno_location"; ensures normal task_spawn == 0; ensures normal defer == 0; };
+extern fn effect_perror() -> unit
+contract { ensures normal callee == "perror"; ensures normal task_spawn == 0; ensures normal defer == 0; };
+extern fn effect_send() -> unit
+contract { ensures normal callee == "send"; ensures normal task_spawn == 0; ensures normal defer == 0; };

@@ -366,6 +366,35 @@ pub const FORMULAS: &[(&str, &str)] = &[
         "cx_dependency_is_a_link",
         "forall (#d: cx_dep) { (#cx_links(#cx_dependent_bundle(#d),#cx_dependent(#d),#cx_target_bundle(#d),#cx_target(#d)) || #cx_inherits(#cx_dependent_bundle(#d),#cx_dependent(#d),#cx_target_bundle(#d),#cx_target(#d))) }",
     ),
+    // ---- Callee-effect ownership (card CONNECT-LIBC-EFFECT-CLAIMS, QL010) ----
+    (
+        "cx_refuse_libc_effect_elsewhere",
+        "forall (#b: cx_bundle) { forall (#g: cx_fn) { forall (#h: cx_fn) { (((#cx_declares(#b,#g) && #cx_effect_callee(#b,#g,#h)) && (#cx_libc_name(#h) && !#cx_libc_owner(#b))) => #cx_effect_refused(#b,#g)) } } }",
+    ),
+    (
+        "cx_refuse_foreign_effect_in_libc",
+        "forall (#b: cx_bundle) { forall (#g: cx_fn) { forall (#h: cx_fn) { (((#cx_declares(#b,#g) && #cx_effect_callee(#b,#g,#h)) && (!#cx_libc_name(#h) && #cx_libc_owner(#b))) => #cx_effect_refused(#b,#g)) } } }",
+    ),
+    (
+        "cx_effect_refused_is_a_misplaced_effect",
+        "forall (#b: cx_bundle) { forall (#g: cx_fn) { (#cx_effect_refused(#b,#g) => exists (#h: cx_fn) { ((#cx_declares(#b,#g) && #cx_effect_callee(#b,#g,#h)) && ((#cx_libc_name(#h) && !#cx_libc_owner(#b)) || (!#cx_libc_name(#h) && #cx_libc_owner(#b)))) }) } }",
+    ),
+    (
+        "cx_libc_owner_effect_accepted",
+        "forall (#b: cx_bundle) { forall (#g: cx_fn) { ((#cx_libc_owner(#b) && forall (#h: cx_fn) { (#cx_effect_callee(#b,#g,#h) => #cx_libc_name(#h)) }) => !#cx_effect_refused(#b,#g)) } }",
+    ),
+    (
+        "cx_observation_accepted",
+        "forall (#b: cx_bundle) { forall (#g: cx_fn) { forall (#h: cx_fn) { ((#cx_observes_call(#b,#g,#h) && !exists (#k: cx_fn) { #cx_effect_callee(#b,#g,#k) }) => !#cx_effect_refused(#b,#g)) } } }",
+    ),
+    (
+        "cx_effect_refusal_fails_the_check",
+        "forall (#b: cx_bundle) { forall (#g: cx_fn) { (#cx_effect_refused(#b,#g) => !#cx_effect_check_passes(#b)) } }",
+    ),
+    (
+        "cx_failed_effect_check_has_a_refusal",
+        "forall (#b: cx_bundle) { (!#cx_effect_check_passes(#b) => exists (#g: cx_fn) { #cx_effect_refused(#b,#g) }) }",
+    ),
 ];
 
 /// The formula `(id, text)` of an id.
