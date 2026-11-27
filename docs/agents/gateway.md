@@ -15150,4 +15150,54 @@ on every path in two schedules (both `Unknown`). Kept pins:
     `no_ast_answer_keeps_the_old_test`, `a_keyword_declarator_stays`);
     [report](../reports/call-with-deref-actual/README.md).
 
+<a id="constraint-92"></a>
+
+92. **A ledger update is certified only as a guarded saturating
+    transition.** Card FB-BACKLOG-ACCOUNTING (`ledger_transition.rs`; one
+    `pub mod` line in the crate root, no hook in the custody route). The
+    custody gateway reads `L -= d` on an unsigned field as custody-neutral,
+    wrapping or not, so no custody verdict carries accounting. Rule 92 is a
+    separate reading over route T: the function is imported under
+    `LEDGER_ADMISSION` (`binary -`, `compound +=`, `compound -=` as
+    obligation-bearing, every other CG01 node refused by name) and each path
+    is read. A write to the named ledger field must be exactly one of: the
+    **discharge** `L = L - d` where the nearest guard reading `L` is
+    `d > L`, not taken; the **underflow clamp** `L = 0` where that guard was
+    taken; the **charge** `L = L + d` where the guard is `d > MAX - L`, not
+    taken, with `MAX` the caller-supplied maximum of the ledger type spelled
+    as Clang spells the literal; the **overflow clamp** `L = MAX` where it was
+    taken. For an update, the guard's `d` and the update's `d` must be equal
+    once reads are replaced by their places, and between the earliest read
+    either uses and the write there is no store, call or local store, so
+    the reads see one memory. With a pairing (Fluent Bit's backlog:
+    `mk_list_add`/`mk_list_del`) each path carries exactly as many charges
+    (with their clamps) as link calls and discharges (with their clamps) as
+    unlink calls; without one, a path changes the ledger at most once.
+    Everything else is refused, including `>=` (sound, but not admitted) and
+    any scan loop. A reading certifies arithmetic only: no transition wraps,
+    and each clamp arm is named. A clamp keeps the ledger in range but
+    makes it diverge from the sum it tracks: under the conservation
+    invariant (ledger = sum of linked charges) the underflow clamp is
+    unreachable, and the overflow clamp is unreachable under the physical
+    bound P-LEDGER-PHYSICAL; a doubled discharge can be hidden by the second
+    update's clamp, which is why it is refused statically. **Do not** treat a
+    reading as a custody fact, feed it to a custody verdict, read a clamp arm
+    as a defect, or admit the fs_chunks_size ledger's recomputed discharge
+    amounts as conserved (P-LEDGER-RECOMPUTED-CHARGE is not discharged).
+    Premises, stated and not proved: exclusive access to the ledger while the
+    function runs (P-LEDGER-EXCLUSIVE), callees do not write the ledger
+    (P-LEDGER-CALLEES), the supplied maximum is the ABI's (P-LEDGER-ABI), and
+    faithful Clang extraction (trust boundary 28). The pinned Fluent Bit
+    bodies themselves stay `Unknown` here: T refuses their `flb_warn`
+    argument list (an opaque `flb_output_name(...)` call beside unsequenced
+    reads) before rule 92 reads them, so the certified fixtures replace that
+    argument by a literal. `QCore.BacklogLedger` (`decide_vectors`,
+    `guarded_sub_does_not_wrap`, `guarded_add_does_not_wrap`,
+    `bare_sub_wraps`, `append_preserves`, `remove_preserves`,
+    `remove_underflow_clamp_unreachable`, `repeated_removal_is_a_no_op`,
+    `residency_preserves`, `partial_fanout_preserves`, `rollback_restores`,
+    `missing_discharge_breaks`, `doubled_discharge_breaks_or_clamps`,
+    `wouldExceed_iff`, `batch_overshoot_bound`, `negative_magnitude`);
+    [report](../reports/fb-backlog-accounting/README.md).
+
 <!-- generated:rules:end -->
