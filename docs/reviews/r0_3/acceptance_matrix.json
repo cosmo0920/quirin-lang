@@ -10264,8 +10264,8 @@
   {
    "id": "W45-FB-BACKLOG-PUBLICATION-BLOCKED",
    "title": "Backlog OB-1 (a wrapper is linked into exactly one queue): the link is now modeled (rule 10d), the leg fails on the byte counter's indirect access and no clause states 'exactly one queue'",
-   "why": "Before the merge of W45-FB-RETRY-LIFETIME, sb_append_chunk_to_segregated_backlog was provisional Unsafe on the unmodeled mk_list_add publication (MK-LIST-ADD-BORROWED-PUBLICATION). On the merged tree rule 10d models the link and withdraws that leak; the function's checked specification (all Borrowed) is still not established, on one indirect access: the saturation test reads backlog->ins->fs_backlog_chunks_size (OB-8, FB-BACKLOG-ACCOUNTING). OB-1's uniqueness half ('exactly one queue') is stated by no clause. DISCHARGE: the counter's read admitted (typed chain through a borrowed formal) and a membership-uniqueness clause, then the slice as arbiter for OB-1. AMENDED (FB-CHUNK-LIFECYCLE, gateway rule 90): with the destroy == 0 arm settled by the callers' constant, sb_remove_chunk_from_segregated_backlog's checked specification is withdrawn only by the same kind of leaf, an indirect access in its size-accounting block (sb.c:228-238, backlog->ins->fs_backlog_chunks_size and the flb_warn arguments), and through its uncontracted call so are sb_remove_chunk_from_segregated_backlogs, sb_destroy_backlog(s), sb_release_output_queue_space and cb_queue_chunks' removal calls (system slice at 3570e45f5). Those reads are the next leaves to discharge on that row; whether anything else stands behind them is not measured.",
-   "source": "docs/reports/archive/waves-40-47/w45-fb-backlog-custody/README.md, docs/reports/fb-chunk-lifecycle/README.md",
+   "why": "Before the merge of W45-FB-RETRY-LIFETIME, sb_append_chunk_to_segregated_backlog was provisional Unsafe on the unmodeled mk_list_add publication (MK-LIST-ADD-BORROWED-PUBLICATION). On the merged tree rule 10d models the link and withdraws that leak; the function's checked specification (all Borrowed) is still not established, on one indirect access: the saturation test reads backlog->ins->fs_backlog_chunks_size (OB-8, FB-BACKLOG-ACCOUNTING). OB-1's uniqueness half ('exactly one queue') is stated by no clause. DISCHARGE: the counter's read admitted (typed chain through a borrowed formal) and a membership-uniqueness clause, then the slice as arbiter for OB-1. AMENDED (FB-CHUNK-LIFECYCLE, gateway rule 90): with the destroy == 0 arm settled by the callers' constant, sb_remove_chunk_from_segregated_backlog's checked specification is withdrawn only by the same kind of leaf, an indirect access in its size-accounting block (sb.c:228-238, backlog->ins->fs_backlog_chunks_size and the flb_warn arguments), and through its uncontracted call so are sb_remove_chunk_from_segregated_backlogs, sb_destroy_backlog(s), sb_release_output_queue_space and cb_queue_chunks' removal calls (system slice at 3570e45f5). Those reads are the next leaves to discharge on that row; whether anything else stands behind them is not measured. Card FB-BACKLOG-ACCOUNTING reads OB-8's arithmetic separately: rule 92 certifies sb.c's charge and discharge statements as guarded saturating transitions paired with mk_list_add/mk_list_del (on reproductions, see FB-LEDGER-LOG-ARGUMENT-ORDER); it is not a custody fact, so this custody leg and its indirect-access refusal are unchanged.",
+   "source": "docs/reports/archive/waves-40-47/w45-fb-backlog-custody/README.md, docs/reports/fb-chunk-lifecycle/README.md, docs/reports/fb-backlog-accounting/README.md",
    "recorded_by": "W45-FB-BACKLOG-CUSTODY"
   },
   {
@@ -10658,8 +10658,8 @@
   {
    "id": "FB-PLAN-CARDS-UNTRACKED",
    "title": "Two Fluent Bit plan cards are tracked only in plan prose and report follow-ons",
-   "why": "MEASURED by card STABILITY-REEVAL-5 (wave-45 close, base 8c1f15eb): none of the six card ids in docs/plans/fluent-bit-system-coverage/README.md:60-65 is a named_followups id; FB-SYSTEM-EXTENSIONS appears only in the plan, FB-BACKLOG-ACCOUNTING only in reports' does_not_close lists; FB-BACKLOG-CUSTODY's status cell is empty although W45-FB-BACKLOG-CUSTODY merged at 2736f30c. A mention is not tracking (operations.md). DISCHARGE: the wave-close reconciliation updates the plan's status and registers the two cards, or records that report follow-ons are their tracker.",
-   "source": "docs/reports/archive/language-and-tooling/stability-reeval-5/README.md",
+   "why": "MEASURED by card STABILITY-REEVAL-5 (wave-45 close, base 8c1f15eb): none of the six card ids in docs/plans/fluent-bit-system-coverage/README.md:60-65 is a named_followups id; FB-SYSTEM-EXTENSIONS appears only in the plan, FB-BACKLOG-ACCOUNTING only in reports' does_not_close lists; FB-BACKLOG-CUSTODY's status cell is empty although W45-FB-BACKLOG-CUSTODY merged at 2736f30c. A mention is not tracking (operations.md). DISCHARGE: the wave-close reconciliation updates the plan's status and registers the two cards, or records that report follow-ons are their tracker. Card FB-BACKLOG-ACCOUNTING landed P1.2's first slice (ledger census, gateway rule 92, QCore.BacklogLedger); its remainder is tracked by FB-LEDGER-LOG-ARGUMENT-ORDER, FB-LEDGER-LOOP-SITES, FB-LEDGER-RECOMPUTED-CHARGE, FB-LEDGER-ROUTE-WIRING, FB-LEDGER-ADVISORY-LIMITS and FB-LEDGER-SIGNEDNESS-SITES; the plan's P1.2 row still reads open (prospective) and awaits the integrator's plan update.",
+   "source": "docs/reports/archive/language-and-tooling/stability-reeval-5/README.md, docs/reports/fb-backlog-accounting/README.md",
    "recorded_by": "STABILITY-REEVAL-5"
   },
   {
@@ -10763,8 +10763,8 @@
   {
    "id": "W46-FLUENT-ACCOUNTING-LOG-CALLBACK-EFFECT",
    "title": "Input-chunk output-size accounting wrappers reach configurable log callbacks",
-   "why": "flb_input_chunk_output_size_subtract and flb_input_chunk_update_output_instances conditionally log; the logging path can update counters and invoke a configured metrics log callback. Without a checked bound on its custody and counted-user effects, neither wrapper gets an unconditional neutral contract. Discharge by constraining the callback path or a guarded contract with audited semantics, then remeasure.",
-   "source": "docs/reports/archive/waves-40-47/w46-fluent-event-contract-gaps/README.md",
+   "why": "flb_input_chunk_output_size_subtract and flb_input_chunk_update_output_instances conditionally log; the logging path can update counters and invoke a configured metrics log callback. Without a checked bound on its custody and counted-user effects, neither wrapper gets an unconditional neutral contract. Discharge by constraining the callback path or a guarded contract with audited semantics, then remeasure. Card FB-BACKLOG-ACCOUNTING: in both helpers the log call lies only on the clamp arm; rule 92 refuses any call between a ledger guard and its update, so the log path cannot change a certified update's operand, but whether it writes the ledger itself stays premise P-LEDGER-CALLEES.",
+   "source": "docs/reports/archive/waves-40-47/w46-fluent-event-contract-gaps/README.md, docs/reports/fb-backlog-accounting/README.md",
    "recorded_by": "W46-CONTRACT-GAP-EXPANSION"
   },
   {
@@ -15290,6 +15290,55 @@
    "why": "SETTLED-LEAK-MARK-WITHOUT-UNKNOWN-LEAF's rule 84 decides a marked report beside an Unknown or Pending leaf. Where the function has no non-Safe leaf at all, the mark comes from a modelled effect rather than a refusal (rule 43's ElementsReleased in cross_unit_elements_released: 9 suite census lines, all on an exempt entry-custody site and never claimable; none in the Fluent Bit opt-in census), and rule 74c's held report is still published exactly when an iterate claimed it. Deciding it needs a choice fail-closed does not settle: withdrawing an unwitnessed claim leaves the row Safe on a may-release effect, publishing accuses through that effect, and an Unknown leaf would invent a reason. Options: (a) a rule that a contract's may-release mark discharges the obligation; (b) an Unknown 'mark without refusal' reason for a live marked identity at a settled exit; (c) leave it until a claimable instance appears. DISCHARGE: choose one, census it, and keep rule 84's witness for refusal-free paths.",
    "source": "docs/reports/settled-leak-mark-without-unknown-leaf/README.md",
    "recorded_by": "SETTLED-LEAK-MARK-WITHOUT-UNKNOWN-LEAF"
+  },
+  {
+   "id": "FB-LEDGER-LOG-ARGUMENT-ORDER",
+   "title": "Rule 92 certifies the Fluent Bit ledger statements only on reproductions: route T refuses the pinned flb_warn argument lists",
+   "why": "Card FB-BACKLOG-ACCOUNTING: flb_input_chunk.c:70-72 and sb.c:229-233, 278-282 pass flb_output_name(...) beside unsequenced field reads in flb_log_print's arguments; route T refuses an opaque call among unsequenced operands ('unsequenced call/read operands require an explicit ordering model') before rule 92 reads the body, so the certified fixtures replace that argument by a literal and the pinned bodies stay Unknown for the ledger property. DISCHARGE: T admits a call whose result feeds only a variadic logging call under a stated read-only premise for flb_output_name (or an ordering model), and rule 92 certifies the pinned bodies, with a test that pins them.",
+   "source": "docs/reports/fb-backlog-accounting/README.md",
+   "recorded_by": "FB-BACKLOG-ACCOUNTING"
+  },
+  {
+   "id": "FB-LEDGER-LOOP-SITES",
+   "title": "The backlog discharge sits inside mk_list_foreach_safe, which route T does not read",
+   "why": "Card FB-BACKLOG-ACCOUNTING: sb_remove_chunk_from_segregated_backlog's discharge (sb.c:226-238) is in a list iteration with break; route T reads only scan loops, so rule 92 refuses any loop and certifies the discharge only as the matching iteration cut to a loop-free function. DISCHARGE: rule 92 reads the iteration body (route T region import or the gateway's rule 5l list iteration) with pairing per iteration and the break's at-most-once, tested on the pinned function.",
+   "source": "docs/reports/fb-backlog-accounting/README.md",
+   "recorded_by": "FB-BACKLOG-ACCOUNTING"
+  },
+  {
+   "id": "FB-LEDGER-RECOMPUTED-CHARGE",
+   "title": "fs_chunks_size discharges recompute the chunk's real size instead of subtracting what was charged",
+   "why": "Card FB-BACKLOG-ACCOUNTING: flb_input_chunk.c's discharges (:620, :838, :2661, :2747) subtract flb_input_chunk_get_real_size at removal, while charges are the signed diffs passed to flb_input_chunk_update_output_instances (:1777, :3590, :3891); conservation (ledger = sum of routed chunks' charges) holds only if those diffs sum to the real size at removal (premise P-LEDGER-RECOMPUTED-CHARGE), and the saturating clamps absorb any drift. sb.c's backlog ledger stores the charged size and has no such gap. DISCHARGE: a checked proof that the diffs telescope to the real size, or a per-chunk charged amount, with a native control.",
+   "source": "docs/reports/fb-backlog-accounting/README.md",
+   "recorded_by": "FB-BACKLOG-ACCOUNTING"
+  },
+  {
+   "id": "FB-LEDGER-ROUTE-WIRING",
+   "title": "No audit route runs rule 92 or reports a ledger reading",
+   "why": "Card FB-BACKLOG-ACCOUNTING added the ledger checker as a library consumer exercised by tests only; quirin-audit current, the profile routes and the custody gateway do not call it, so no report carries ledger readings or refusals. DISCHARGE: a declared ledger list (field, type maximum, pairing) and a route that runs rule 92 over the declared sites and reports each reading beside, never inside, custody verdicts, with an identity run showing no custody row moves.",
+   "source": "docs/reports/fb-backlog-accounting/README.md",
+   "recorded_by": "FB-BACKLOG-ACCOUNTING"
+  },
+  {
+   "id": "FB-LEDGER-ADVISORY-LIMITS",
+   "title": "Fluent Bit's resident-byte and chunks-up limits are advisory or batch limits by design; which bound to certify is a human choice",
+   "why": "Card FB-BACKLOG-ACCOUNTING's census: mem_buf_limit pauses only after mem_chunks_size >= mem_buf_limit (flb_input_chunk.c:2961, after the write); max_chunks_up is strict in _cio_file_up(enforced) but cio_chunk_up_force skips it (used by sb.c:412, 633); storage.backlog.mem_limit is a batch test (sb.c:605, 611; overshoot < queues * largest chunk, QCore.BacklogLedger.batch_overshoot_bound). The card certifies no global resident-byte bound. DISCHARGE: the user chooses the inequality to certify (for example limit + one write, or limit + queues * largest chunk) and a card checks it against the pinned bodies.",
+   "source": "docs/reports/fb-backlog-accounting/README.md",
+   "recorded_by": "FB-BACKLOG-ACCOUNTING"
+  },
+  {
+   "id": "GATE-SCOPE-READ-CENSUS-FLOOR",
+   "title": "test_gate_scope_census fails once one more root test binary is added: the read census covers 703 of 781 units at r77",
+   "why": "Card FB-BACKLOG-ACCOUNTING's first scoped gate (base 76c1f9cfc) failed only test_the_census_covers_the_suite: adding one integration test binary made 703 observed units of 782, under the 0.9 floor (703.8); the base passes by 0.1 unit. The card moved its tests into the crate's unit tests instead. Every card that adds a root test binary will hit it. DISCHARGE: regenerate docs/reports/gate-scope-precise-selection/read-census.json (a new census run) or replace the fixed ratio with a check that names unobserved units, with the Python suite green.",
+   "source": "docs/reports/fb-backlog-accounting/README.md",
+   "recorded_by": "FB-BACKLOG-ACCOUNTING"
+  },
+  {
+   "id": "FB-LEDGER-SIGNEDNESS-SITES",
+   "title": "Two backlog signedness sites rest on premises: a dead size_t < 0 test and a size_t/ssize_t eviction requirement",
+   "why": "Card FB-BACKLOG-ACCOUNTING: sb.c:317-324 stores cio_chunk_get_real_size's ssize_t in a size_t, so its '< 0' test is always false and the -1 arm (unknown store type, cio_chunk.c:360) would charge SIZE_MAX (premise P-LEDGER-STORE-TYPE); sb_release_output_queue_space (sb.c:549-575) compares size_t released_space with ssize_t *required_space, correct only for a positive requirement, which its caller establishes (flb_input_chunk.c:1127). Recorded readings, not defect claims. DISCHARGE: checked readings of both conversions (store-type premise and caller precondition) against the pinned bodies.",
+   "source": "docs/reports/fb-backlog-accounting/README.md",
+   "recorded_by": "FB-BACKLOG-ACCOUNTING"
   }
  ],
  "updated": "Completed plugin premise integration; exact hand-maintained union retains810followups, borrowed measured-source8419Rust/354Lean/freshcard133provider, exact source equivalence checked; authoritative root committed-matrix Python confirmation in integration receipt. CMetrics map/opts API model specifications added at the explicit user request. Eight declared-model API contracts remain outside interpreted views, with CMT-MAP-OPTS-CONTRACT-ADOPTION and CMT-LABELED-HASH-ZERO-STATIC-STORAGE Open. No trusted API coverage is claimed; the source gate is recorded by this card alongside its separate initializer native checkpoint. W48-CMT-TRACKED-INTERIOR-SELF-INIT implements rule 36b's checked initializer effect transport for an exact live owned root or embedded record, retaining actual self writes, invalidating aliased member facts and preserving resource obligations; nondefault custody frames refuse and no ordinary summary is exported. The canonical CFL intrusive_list.qv declares matching audit preconditions/effects; two CMetrics .qv modules add six map and two opts lifecycle models, including transitive ownership, partial failure, borrowed results and uncleared cleanup fields. All remain outside interpreted views; checked API adoption and labeled zero-hash storage accounting have named Open follow-ups. Fresh BASE/planner precedes prediction f18d96065 and implementation; the later contract amendment 08da23123 precedes .qv edits. Native corpus BASE/TIP Safe/Unknown/Pending/provisional-Unsafe: 1009 / 3816 / 0 / 9 to 1011 / 3814 / 0 / 9; full system/slice, 5781 NULL dictionaries and runtime projections are compared, 241 semantic leaves accounted, zero unexplained leaves and no prior Safe loss. Gate 8654 Rust / 370 Lean / 374 Python, provider 133 Rust / 25 Python and all five package verifies pass. The actual deep source reader uses 328 KiB below 1 MiB. Full getter closure remains Open; W48-CMT-SELF-INIT-DISJOINT-FRAMES tracks the next bounded frame extension, and W48-EXACT-RETURN-WITNESS-PRECISION is unchanged. Native evidence is isolated to measured e92d8aef35a8bd14550e90219d19a56eb3b196e7; later source gate 2d0d85299b830aa24d7f200d63a308653582363f validates the added declared API models separately; see docs/reports/w48-cmt-tracked-interior-self-init/README.md."
