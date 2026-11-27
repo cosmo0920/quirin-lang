@@ -785,7 +785,8 @@ fn artifact_dependencies_are_only_schemas_and_serialization() {
         }
     }
     assert_eq!(artifacts, 5);
-    assert_eq!(shared, 6);
+    // Card OTEL-PROTO-PHASE-B1 adds quirin-provider-fluent-otel-proto.
+    assert_eq!(shared, 7);
     assert_eq!(sdk, 1);
     assert_eq!(user_crates, 3);
     // Card CONTRACT-INHERIT-ADOPTION: the one contract-use edge among the data

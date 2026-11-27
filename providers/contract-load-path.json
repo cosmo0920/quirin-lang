@@ -913,6 +913,7 @@
       "dependencies": [
         "quirin-provider-cfl",
         "quirin-provider-fluent-bit",
+        "quirin-provider-fluent-otel-proto",
         "quirin-provider-libc",
         "quirin-provider-mpack",
         "quirin-provider-msgpack"
