@@ -33,6 +33,15 @@ mod clang_gap;
 
 use clang_gap::*;
 
+/// Clang's spelling of `__SIZE_TYPE__` on the test's target (LLP64 on
+/// Windows), so the ledger type and the signature constraints read the same
+/// fixture on both; `18446744073709551615UL` has this type on both.
+const SIZE_T: &str = if cfg!(windows) {
+    "unsigned long long"
+} else {
+    "unsigned long"
+};
+
 const RECORDS: &str = "\
 struct out_ins { __SIZE_TYPE__ fs_backlog_chunks_size; };
 struct sb_q { struct out_ins *ins; };
@@ -99,7 +108,7 @@ fn typed_route_refuses_the_ledger_helpers_under_the_legacy_admission() {
     if !clang_available() {
         return;
     }
-    let types: &[&str] = &["struct flb_output_instance *", "unsigned long"];
+    let types: &[&str] = &["struct flb_output_instance *", SIZE_T];
     for (function, node) in [
         ("flb_input_chunk_output_size_subtract", "compound -="),
         ("input_chunk_output_size_add", "binary -"),
@@ -152,7 +161,7 @@ const SIZE_MAX: &str = "18446744073709551615";
 fn spec(field: &'static str, pairing: Option<LedgerPairing<'static>>) -> LedgerSpec<'static> {
     LedgerSpec {
         field,
-        ledger_type: "unsigned long",
+        ledger_type: SIZE_T,
         maximum: SIZE_MAX,
         pairing,
     }
@@ -233,7 +242,7 @@ fn helper(function: &str) -> SourceSummary {
         &logged(HELPERS),
         function,
         "void",
-        &["struct flb_output_instance *", "unsigned long"],
+        &["struct flb_output_instance *", SIZE_T],
         &["flb_output_instance"],
     )
     .unwrap_or_else(|reason| panic!("{function}: {reason}"))
@@ -296,7 +305,7 @@ const SB_RECORDS: &[&str] = &[
 const APPEND_TYPES: &[&str] = &[
     "struct cio_chunk *",
     "struct cio_stream *",
-    "unsigned long",
+    SIZE_T,
     "struct sb_out_queue *",
 ];
 const REMOVE_TYPES: &[&str] = &[
@@ -457,7 +466,7 @@ fn a_wrapping_update_refuses() {
         &bare,
         "flb_input_chunk_output_size_subtract",
         "void",
-        &["struct flb_output_instance *", "unsigned long"],
+        &["struct flb_output_instance *", SIZE_T],
         &["flb_output_instance"],
     );
     // A guard that does not read the ledger leaves the update unguarded.
@@ -554,7 +563,7 @@ fn the_pinned_log_argument_list_is_refused_before_the_ledger() {
             HELPERS,
             "flb_input_chunk_output_size_subtract",
             "void",
-            &["struct flb_output_instance *", "unsigned long"],
+            &["struct flb_output_instance *", SIZE_T],
             &["flb_output_instance"],
         ),
         Err(UNSEQUENCED.into())
@@ -638,7 +647,7 @@ fn a_missing_or_doubled_update_refuses() {
         &twice,
         "flb_input_chunk_output_size_subtract",
         "void",
-        &["struct flb_output_instance *", "unsigned long"],
+        &["struct flb_output_instance *", SIZE_T],
         &["flb_output_instance"],
     )
     .unwrap();
