@@ -28,6 +28,7 @@ import QCore.AssignmentDestinationSuffix
 import QCore.AtomicPublication
 import QCore.AtomicSourceRoute
 import QCore.AuditComposition
+import QCore.BacklogLedger
 import QCore.BitfieldSourceConcurrency
 import QCore.Bitwise
 import QCore.BodyClauseStanding
@@ -74,6 +75,7 @@ import QCore.CalleeSummaryScope
 import QCore.CallerFrameHoldSwitch
 import QCore.CandidateComposition
 import QCore.CapacityBoundary
+import QCore.CarriedLinkObligation
 import QCore.CarriedPublication
 import QCore.CastActualPlace
 import QCore.CastBeforeAmpersand
@@ -196,6 +198,7 @@ import QCore.ExactFormalReturn
 import QCore.ExactFormalReturnSwitch
 import QCore.ExecutableModel
 import QCore.ExecutionCoverage
+import QCore.ExitClassLinkPrecondition
 import QCore.ExitResiduals
 import QCore.ExternCall
 import QCore.ExternalIntegration
@@ -529,6 +532,7 @@ import QCore.SourceValidation
 import QCore.Sr5Soundness
 import QCore.StagedCheckpoints
 import QCore.StatementExpressions
+import QCore.StaticConstantFormal
 import QCore.StdBuffer
 import QCore.StdEvent
 import QCore.StdHttp

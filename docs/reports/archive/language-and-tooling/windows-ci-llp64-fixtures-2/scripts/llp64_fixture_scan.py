@@ -376,8 +376,28 @@ def contract_signatures(paths: list[str]) -> Signatures:
     return out
 
 
+def repository_root() -> str:
+    """The checkout holding this script, found by walking up to AGENTS.md.
+
+    A fixed number of parent hops broke when the report moved under
+    docs/reports/archive/ (REPORTS-ARCHIVE-AND-PRUNING), so the root is
+    located by its marker instead; no marker is a hard error, never an
+    empty contract set.
+    """
+    here = os.path.dirname(os.path.abspath(__file__))
+    while True:
+        if os.path.isfile(os.path.join(here, "AGENTS.md")) and os.path.isdir(
+            os.path.join(here, "providers")
+        ):
+            return here
+        parent = os.path.dirname(here)
+        if parent == here:
+            raise SystemExit("llp64_fixture_scan: no repository root (AGENTS.md) above " + __file__)
+        here = parent
+
+
 def repository_contracts() -> Signatures:
-    root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", ".."))
+    root = repository_root()
     return contract_signatures([os.path.join(root, "providers"),
                                 os.path.join(root, "crates", "qcore-c-gateway", "tests", "fixtures")])
 

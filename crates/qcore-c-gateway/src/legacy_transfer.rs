@@ -358,6 +358,13 @@ pub(super) struct AbstractState {
     /// Joined by intersection; empty in every function with no such
     /// initialisation, which keeps the join as it was.
     pub(super) link_ready: BTreeSet<(usize, String)>,
+    /// Card **FB-RETRY-OR6-ELEMENT-IDENTITY** (gateway rule 91): the link
+    /// records a formal's entry carries from its caller (its contract's
+    /// `resource_unpublished(p, MEMBER)`), `Ready` until a statement may
+    /// write the object, `Spent` once a destroyer took it on that record
+    /// ([`container_publication::carried_link`]). Joined by equality; empty
+    /// in every function whose contract carries none.
+    pub(super) carried_links: BTreeMap<usize, container_publication::carried_link::CarriedLink>,
     /// Card **MK-EVENT-DESCRIPTOR-QUANT** (rule 38): the descriptor cells of
     /// this path. Empty in every function that calls no declaration with a
     /// cell state, which keeps the join as it was.
@@ -532,6 +539,7 @@ impl AbstractState {
         self.unlinked.extend(incoming.unlinked.iter().copied());
         self.link_ready
             .retain(|fact| incoming.link_ready.contains(fact));
+        container_publication::carried_link::join(&mut self.carried_links, &incoming.carried_links);
         // Card MK-EVENT-CELL-CROSS-FUNCTION (rule 38c), read against each
         // side's own table before the tables join (rule 38), which card
         // CELL-PROTOCOL-PER-END-GUARDS (rule 38f) does in the same hook.
@@ -1054,6 +1062,12 @@ impl EntryCustody {
             }
             custody.parameter_sites[index] = Some(site);
         }
+        // Card FB-RETRY-OR6-ELEMENT-IDENTITY (gateway rule 91).
+        container_publication::carried_link::seed(
+            &mut custody.state,
+            &custody.parameter_sites,
+            contract,
+        );
         // A Removed formal is supplied inside its owner's aggregate, not in
         // direct custody. Bind every formal first so argument order cannot
         // change the owner identity. Unsupported owner shapes fail closed.
@@ -1400,7 +1414,17 @@ pub(super) fn observe_exit(
         parameters: entry
             .parameter_sites
             .iter()
-            .map(|site| site.map(|site| site_disposition(state, site)))
+            .map(|site| {
+                site.map(|site| {
+                    // Card FB-RETRY-OR6-ELEMENT-IDENTITY (gateway rule 91).
+                    container_publication::carried_link::observe(
+                        &entry.state,
+                        state,
+                        site,
+                        site_disposition(state, site),
+                    )
+                })
+            })
             .collect(),
         returned,
         out_slots: entry
@@ -2914,6 +2938,7 @@ pub(super) fn transfer(
         && !nested.is_empty()
     {
         state.link_ready.clear();
+        container_publication::carried_link::forget_ready(&mut state);
     }
     // UNTRACKED-BASE-NULL-JOIN-DISCHARGE hook (rule 83).
     let null_on_path = state.null_on_path.clone();
@@ -2928,6 +2953,7 @@ pub(super) fn transfer(
     );
     null_join_route::transfer(&node.instruction, &null_on_path, &mut output);
     container_publication::link_member::retain(&node.instruction, &mut output);
+    container_publication::carried_link::retain(&node.instruction, &mut output);
     slot_move_route::after(node, &mut output);
     // Card OUT-SLOT-CALL-WRITE-ALIASING (rule 11r(8)): a call that may write
     // caller memory leaves no bound out slot as it was, except the slots its
@@ -4649,6 +4675,17 @@ pub(super) fn transfer_base(
                 Some((before, after)) => (Some(before), Some(after)),
                 None => (None, None),
             };
+            // Card LERI-HELD-FORMAL-LINK-OBLIGATION (rule 91 (5)): the
+            // call's entry link preconditions, against the state before it.
+            container_publication::carried_link::check_preconditions(
+                function,
+                node.line,
+                called,
+                arguments,
+                contract,
+                &mut state,
+                diagnostics,
+            );
             if let Some(operands) = destroyers
                 .as_ref()
                 .filter(|operands| !operands.0.is_empty())

@@ -578,3 +578,58 @@ fn observation_replay_rejects_relabelled_scope_module_and_unchecked_bounds() {
         "scope/module/bounds substitutions accepted: {accepted:?}"
     );
 }
+
+// Card P0-G1-CLOSURE-RECORD: the evidence-v2 counterpart of VP02. A task
+// whose core inventory for the requested capability is empty reaches the
+// firewall with a well-bound `Safe` proposal whose empty coverage equals that
+// empty inventory; the core still refuses, because an empty inventory has no
+// independently checked no-obligations argument. The unmodified task is the
+// positive control.
+#[test]
+fn g1_empty_core_inventory_cannot_mint_a_v2_certificate() {
+    let derived = task();
+    let checker = ContractObservationReplay::new(derived.replay.observation.as_ref().unwrap());
+    let control =
+        registry(|_| {}).verify_v2(&request(&derived.task), &derived.task, Some(&checker));
+    assert_eq!(control.verdict, ProposedVerdict::Safe, "{control:?}");
+    assert!(control.certificate.is_some());
+
+    let mut empty = derived.task.clone();
+    empty.obligations.clear();
+    assert!(
+        empty.validate().is_ok(),
+        "the empty task must reach the firewall"
+    );
+    let empty_request = request(&empty);
+    assert!(empty_request.obligations.is_empty() && empty_request.facts.is_empty());
+    let outcome = registry(|_| {}).verify_v2(&empty_request, &empty, Some(&checker));
+    assert_eq!(outcome.verdict, ProposedVerdict::Unknown, "{outcome:?}");
+    assert!(outcome.certificate.is_none());
+    assert_eq!(outcome.diagnostics[0].code, "QP016", "{outcome:?}");
+    assert!(
+        outcome.diagnostics[0].message.contains("no-obligations"),
+        "{outcome:?}"
+    );
+}
+
+// Card P0-G1-CLOSURE-RECORD: an explicit profile restriction. The provider
+// declares only the `default` target profile; a task bound to any other
+// profile is refused before dispatch (QP005), although the provider would
+// return the replay-valid `Safe` proposal the positive control accepts.
+#[test]
+fn g1_undeclared_target_profile_cannot_dispatch_or_mint_a_certificate() {
+    let derived = task();
+    let checker = ContractObservationReplay::new(derived.replay.observation.as_ref().unwrap());
+    let mut other = derived.task.clone();
+    other.target.profile = "unaudited-profile".into();
+    let outcome = registry(|_| panic!("an undeclared profile must fail before provider dispatch"))
+        .verify_v2(&request(&other), &other, Some(&checker));
+    assert_eq!(outcome.verdict, ProposedVerdict::Unknown, "{outcome:?}");
+    assert!(outcome.certificate.is_none());
+    assert_eq!(outcome.diagnostics[0].code, "QP005", "{outcome:?}");
+
+    let control =
+        registry(|_| {}).verify_v2(&request(&derived.task), &derived.task, Some(&checker));
+    assert_eq!(control.verdict, ProposedVerdict::Safe, "{control:?}");
+    assert!(control.certificate.is_some());
+}

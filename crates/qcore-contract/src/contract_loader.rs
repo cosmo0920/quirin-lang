@@ -2269,6 +2269,22 @@ fn load_function_in(
                 });
                 continue;
             }
+            // Card LERI-HELD-FORMAL-LINK-OBLIGATION (§C04.8, gateway rule 91
+            // (5)): an entry link precondition, at most once per parameter;
+            // validated below with the container clauses.
+            if token_kinds(expression)?.first()
+                == Some(&TokenKind::Word(counted_users::LINKS_VALID.to_owned()))
+            {
+                let words = predicate_call(expression)?;
+                let words = words.iter().map(String::as_str).collect::<Vec<_>>();
+                counted_users::record_link_precondition(
+                    &mut collected,
+                    &words,
+                    expression,
+                    &index,
+                )?;
+                continue;
+            }
             // Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (§C04.19.2): the
             // discriminant of a type-switched release; validated below with
             // its arms.
@@ -2674,8 +2690,7 @@ fn load_function_in(
             || loop_owner.is_some()
             || thread_sync.is_some()
             || lifecycle.is_some()
-            || !collected.users.is_empty()
-            || !collected.container_effects.is_empty()
+            || !collected.is_empty()
         {
             return Err(
                 "a return-code disposition stands only beside plain parameter and result \
@@ -2844,8 +2859,7 @@ fn load_function_in(
             };
             if !kinds.parameter_kind(owner_parameter).is_heap()
                 || !kinds.parameter_kind(parameter).is_heap()
-                || !collected.container_effects.is_empty()
-                || !collected.users.is_empty()
+                || !collected.is_empty()
                 || input_nullable != nullable
                 || parameters[owner_parameter] != (ResourceParameterMode::Owned { nullable: false })
                 || parameter_types[parameter] != "ptr<mut, u8>"
@@ -2907,8 +2921,7 @@ fn load_function_in(
                 || parameters
                     .iter()
                     .any(|mode| *mode != ResourceParameterMode::Borrowed)
-                || !collected.container_effects.is_empty()
-                || !collected.users.is_empty()
+                || !collected.is_empty()
                 || loop_owner.is_some()
                 || thread_sync.is_some()
                 || lifecycle.is_some())
@@ -2927,6 +2940,7 @@ fn load_function_in(
         contract.container_effects = collected.container_effects.clone();
         contract.counted_users = collected.users.clone();
         contract.link_members = collected.link_members.clone();
+        contract.link_preconditions = collected.link_preconditions.clone();
         finished.push(qcore_schemas::relational_post::ExitClass { relation, contract });
     }
     let relational = if is_relational {
@@ -3004,6 +3018,7 @@ fn load_function_in(
             && cell_clauses.is_empty()
             && cell_releases.is_empty()
             && removal_guards.is_empty()
+            && collected.link_preconditions.is_empty()
             && collected.container_effects.iter().all(|(index, effect)| {
                 *effect == qcore_schemas::contract::ContainerEffect::Unpublished
                     && matches!(
@@ -3031,7 +3046,8 @@ fn load_function_in(
             && cell_clauses.is_empty()
             && cell_releases.is_empty()
             && removal_guards.is_empty()
-            && collected.container_effects.is_empty();
+            && collected.container_effects.is_empty()
+            && collected.link_preconditions.is_empty();
         if is_relational
             || !review.is_empty()
             || body_checked
@@ -3042,6 +3058,7 @@ fn load_function_in(
             || thread_sync.is_some()
             || lifecycle.is_some()
             || !collected.users.is_empty()
+            || !collected.link_preconditions.is_empty()
             || (!collected.container_effects.is_empty() && !member_path_destroyer)
         {
             return Err(
@@ -3194,6 +3211,7 @@ fn load_function_in(
                     || !removal_guards.is_empty()
                     || !literal_arguments.is_empty()
                     || !collected.container_effects.is_empty()
+                    || !collected.link_preconditions.is_empty()
                     || is_relational)
             {
                 return Err(

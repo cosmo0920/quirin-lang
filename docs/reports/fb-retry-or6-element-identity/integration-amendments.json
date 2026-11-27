@@ -1,0 +1,29 @@
+{
+ "schema": "quirin-amendments/2",
+ "card": "FB-RETRY-OR6-ELEMENT-IDENTITY",
+ "base": "76c1f9cfc",
+ "measured_tip": "e8016a423",
+ "profiles": [],
+ "increment_paragraph": "**FB-RETRY-OR6-ELEMENT-IDENTITY** (Fluent Bit priority 2, FB-RETRY-LIFETIME with CG17 on OR-6; gateway rule 91, rule 46 amended, contract specification §C04.8 amended, Lean `QCore.CarriedLinkObligation`; [report](../../reports/fb-retry-or6-element-identity/README.md)). A formal's link obligation is carried to its caller as the destroyer clause the caller already checks: a contract stating `resource_unpublished(p, MEMBER)` at a bound position gives its body `p`'s `MEMBER` links as an entry fact (`AbstractState::carried_links`, `Ready` until a statement may write the object under rule 46's kill policy or a self-initialisation, `Spent` once a destroyer of that member took it); rule 43's held arm, refused by rule 46 (3) for a formal, admits on it; a carried formal counts as released only through that destroyer; and W4 offers the clause at each bound formal handed directly to a member-naming destroyer and keeps it where the formal is released at every exit, so the derived summary is an element destroyer and rules 34, 43 and 46 check the obligation at every call (its own initialisation, its published object, an element bound through the member, or its own formal carried again; anything else refuses). Measured base `76c1f9cfc` against tip `e8016a423` on the fluent-bit-system route over this host's 046accf6 preparation: custody 114/0/329/5 → 116/0/327/5 (`flb_sched_timer_cb_destroy`, both configurations, Unknown → Safe, exactly the prediction; `flb_sched_event_handler` trades its uncontracted call for the caller-side refusal of its cast `timer`), null property unchanged; the opt-in current route (181 units, no Fluent Bit `src/` row but `flb_input_chunk.c`) unchanged. `flb_output_task_queue_enqueue` stays Unknown: `retry` is destroyed on one exit class and stored on the other, and no clause states the precondition without the unlink. OR-6 stays not stated: its pair is mutually recursive, and the blocker is the recursive component's summary, not the element identity or its member.",
+ "status_edits": [],
+ "ledger": [
+  {
+   "id": "LERI-HELD-FORMAL-LINK-OBLIGATION",
+   "operation": "amend",
+   "text": "DISCHARGED IN PART by FB-RETRY-OR6-ELEMENT-IDENTITY (gateway rule 91, Lean QCore.CarriedLinkObligation): a contract stating resource_unpublished(p, MEMBER) at a bound position gives its body p's MEMBER links as an entry fact (Ready until a statement may write the object, Spent once a destroyer of that member took it), rule 43's held arm admits on it, a carried formal counts as released only through that destroyer, and W4 publishes a body that hands its formal to a member-naming destroyer on every exit as an element destroyer of that formal, so rules 34, 43 and 46 check the obligation at every call. Measured at 76c1f9cfc on the fluent-bit-system route (this host's 046accf6 preparation): flb_sched_timer_cb_destroy, both configurations, Unknown -> Safe (114/0/329/5 -> 116/0/327/5), as predicted. REMAINING: flb_output_task_queue_enqueue (retry destroyed on the allocation failure, return -1, and stored on return 0) and the census's other ten functions that destroy a formal on a failure path only (four flb_input_*_property_check, flb_output_net_property_check, flb_output_enable_multi_threading, flb_task_retry_reschedule, flb_engine_dispatch_retry, in_tail check_purge_deleted_file and reconcile_file_state): no mode holds at every exit, and in the exit-specific route the other class keeps the destroyer path (diverged) while the formal is stored or kept, so stating the clause there would claim an unlink the body does not perform. DISCHARGE: a precondition-only clause (the formal's MEMBER links valid at the call, no unlink) that every consumer applies or refuses, stated per exit class, with Lean parity; it needs a contract schema field.",
+   "source": "docs/reports/fb-retry-or6-element-identity/README.md"
+  },
+  {
+   "id": "W45-FB-OR6-ELEMENT-IDENTITY",
+   "operation": "amend",
+   "text": "AMENDED by FB-RETRY-OR6-ELEMENT-IDENTITY (gateway rule 91, base 76c1f9cfc): re-read on the fluent-bit-system route at base and tip (this host's 046accf6 preparation), both rows unchanged: flb_output_task_queue_flush_one Unknown (counted-user operation on queued_task->task, flb_output_task_flush's refuted contract, unresolved queued_task, an indirect access, the uncontracted flush_next) and flb_output_task_singleplex_flush_next Unknown (the uncontracted flush_one). The element identity and its member are not what OR-6 lacks: queued_task is rule 10f's foreign element bound through _head (recorded and checked by rule 46 (2)), tracked after its unlink (W45-CONTAINER-ROOT-REACH). Rule 91 does not reach the pair (flush_one's destroyer actual is queued_task->retry, not a formal). The blocker remains the mutually recursive component's ElementsReleased summary. Size unchanged: 1 obligation, 2 functions.",
+   "source": "docs/reports/fb-retry-or6-element-identity/README.md"
+  },
+  {
+   "id": "CG17-CONTAINER-OF-LIST-LOOKUPS",
+   "operation": "amend",
+   "text": "AMENDED by FB-RETRY-OR6-ELEMENT-IDENTITY (base 76c1f9cfc): OR-6's slice needs no member provenance: flush_one's queued_task (mk_list_entry_first over (H)->next) is rule 10f's foreign element whose container_of member rule 46 already records and checks, and OR-6 is blocked by the recursive component's summary (W45-FB-OR6-ELEMENT-IDENTITY), not by this shape. No CG17 shape was discharged; the 355-shape boundary is unchanged.",
+   "source": "docs/reports/fb-retry-or6-element-identity/README.md"
+  }
+ ]
+}

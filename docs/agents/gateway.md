@@ -11952,6 +11952,10 @@ that only when every arriving edge has it.
     `a_mismatched_member_leaves_the_element_linked`, `vectors_hold`, …),
     bound to `FOREIGN_VECTORS`, `INIT_VECTORS` and `HELD_VECTORS` and
     `crates/qcore-c-gateway/tests/link_member_premises.rs`.
+    Amended by [rule 91](#constraint-91): a held object whose entry carries
+    its caller's link obligation (its contract's `resource_unpublished(p,
+    MEMBER)`) is admitted on that record; the obligation is checked at every
+    call of the summary rule 91 publishes.
 
 <a id="constraint-48"></a>
 
@@ -15202,5 +15206,204 @@ an unrelated held call (both `Unknown`, no leak, both holds kept).
     `a_declaration_keeps_the_refusal`, `a_non_call_keeps_the_old_test`,
     `no_ast_answer_keeps_the_old_test`, `a_keyword_declarator_stays`);
     [report](../reports/archive/language-and-tooling/call-with-deref-actual/README.md).
+
+<a id="constraint-90"></a>
+
+90. **A static function's formal that every call fixes is read at its
+    constant.** Card FB-CHUNK-LIFECYCLE (`legacy_static_constant_formal.rs`,
+    one hook in `build_function_cfg_with` in `legacy_c.rs`). Fluent Bit's
+    `sb_remove_chunk_from_segregated_backlog(target_chunk, backlog, destroy)`
+    (`plugins/in_storage_backlog/sb.c:214-246`) frees the wrapper it unlinks
+    only `if (destroy)`; over an unconstrained `destroy` the false arm leaked
+    it, a provisional `Unsafe` no invocation can reach (its one call passes
+    `FLB_TRUE`). A formal `NAME` at index `i` of a definition is **fixed** to
+    the truth `t` when (1) the definition has internal linkage (`static`, no
+    `extern`, rule 4a's reading), so by C11 6.2.2p3 no use outside the unit
+    denotes it; (2) every occurrence of the function's identifier in the
+    unit's token stream is its own declarator, a file-scope prototype ending
+    in `;`, or a direct call in a call position, so the calls are every
+    invocation (an address taken, a designator, a member or label of the
+    same spelling, a parenthesised name or a block-scope declaration
+    refuses); (3) there is a call, each call has the parameter count of
+    actuals, and each actual at `i` is a decimal constant of at most four
+    digits (matched enclosing parentheses only: no sign, suffix, octal, cast
+    or expression), all zero or all nonzero; (4) the formal is declared with
+    only `const`, `int`, `signed`, `unsigned` or `_Bool`, in which every such
+    constant keeps its truth (C11 6.3.1.2, 6.3.1.3p1); (5) every occurrence of
+    `NAME` in the body is exactly `if ( NAME )` or `if ( ! NAME )`, so it is
+    never written, address-taken or shadowed; and (6) the built CFG has
+    exactly that many two-way `BranchOnNull` nodes on `NAME`, none a loop
+    header or a cell-protocol test. Each such branch then becomes a `NoOp`
+    whose one successor is the arm `t` selects (rule 11x's `contextual_cfg`
+    selection); no node is removed, so a node left unreachable keeps its
+    instruction for the certificate firewall and reports nothing. The
+    selection runs over the stream the build was handed, so W4 derivation,
+    checked-specification settlement (rule 5l), the row's analysis and
+    certificate rederivation read the same graph, and the row, with every row
+    whose derivation reaches the function (rule ARM-OBLIGATIONS-UNIT-GRAIN),
+    lists the premise `static-call-sites-closed` among its assumptions: its
+    scope is the invocations the unit contains. **Do not** read the false arm
+    as discharged: under zero actuals it is the arm kept and its leak stands,
+    and with mixed or variable actuals nothing is selected. **Do not** extend
+    this to an external-linkage or address-taken function, a `while`/`for`/
+    `do` test (SCALAR-ROUTE-EXIT-EDGE's orphaned exit), a compound condition
+    or a computed actual without its own rule. Premise stated, not proved: the
+    token stream is the whole preprocessed unit (trust boundary 28).
+    `QCore.StaticConstantFormal` (`every_call_agrees`,
+    `selected_arm_is_taken_at_every_call`, `selection_is_cs_choice`,
+    `selection_only_removes_edges`, `an_escape_refuses`,
+    `a_block_scope_declaration_refuses`, `a_variable_actual_refuses`,
+    `mixed_truths_refuse`, `no_call_refuses`, `a_zero_actual_keeps_the_zero_arm`,
+    `a_read_constant_fits`); [report](../reports/fb-chunk-lifecycle/README.md).
+
+<a id="constraint-91"></a>
+
+91. **A formal's link obligation is carried to its caller, as the
+    destroyer clause the caller already checks.** Card
+    FB-RETRY-OR6-ELEMENT-IDENTITY (`legacy_carried_link.rs`; hooks in
+    `legacy_container_publication.rs` (rule 43's held arm),
+    `legacy_transfer.rs` (`AbstractState::carried_links`, the entry seed in
+    `EntryCustody::build`, the join, the nested-call and per-statement kill,
+    and `observe_exit`'s formal dispositions) and `legacy_summary.rs`
+    (`infer_cfg_summary`'s probe and candidate); rule 46's kill policy
+    factored into `link_member::reach`, unchanged; contract specification
+    §C04.8, amended). It amends rule 46 (3) for a formal and answers
+    LERI-HELD-FORMAL-LINK-OBLIGATION for the bodies it can state.
+    (1) **The entry fact.** A contract (declared or derived) stating
+    `resource_unpublished(p, MEMBER)` at a position the entry binds seeds
+    `p`'s site with `Ready(MEMBER)`: the clause is the caller's obligation
+    that `p`'s `MEMBER` links are valid at the call, and rules 34, 43 and 46
+    check it at every call. The record is forgotten at every statement rule
+    46 forgets a `link_ready` record at (`reach`), at a nested call, and at a
+    rule 36b self-initialisation of an object its base may denote (which
+    overwrites the caller's links); it joins by equality. (2) **The
+    admission.** Rule 43's held arm, refused by rule 46 (3) for want of the
+    body's own initialisation, admits an object whose record is
+    `Ready(MEMBER)` for the destroyer's declared `MEMBER` and makes it
+    `Spent(MEMBER)` (`admits`, `spend`); a `Spent` record survives every
+    statement. (3) **The exit.** A formal the entry carries reads `Released`
+    only when its record there is `Spent`; released any other way (a plain
+    free, a destroyer admitted on the body's own initialisation, a restored
+    publication) it reads `Mixed`, which no mode matches (`observe`), so a
+    declared destroyer whose body frees without the unlink no longer
+    validates. (4) **The summary.** `infer_cfg_summary` offers the clause in
+    its probe at each bound formal the body hands directly to an element
+    destroyer naming a member (one member per formal, `candidates`,
+    `offer`) and attaches it to the candidate only where that formal's
+    settled mode is `Released` (`attach`); the candidate is then checked
+    against a fresh run. The summary is an element destroyer's, so each
+    caller discharges it by its own initialisation (rule 46 (3)), its own
+    published object (rule 10d), an element bound through `MEMBER` (rule 46
+    (2)), or carries it again to its own formal (this rule); every other
+    actual refuses there, and a consumer that does not apply a container
+    effect refuses the call. (5) **The precondition without the unlink**
+    (card LERI-HELD-FORMAL-LINK-OBLIGATION; schema field
+    `ResourceFunctionContract::link_preconditions`, declared as `requires
+    resource_links_valid(p, MEMBER)` at an owned, consumed or released
+    pointer position with no container effect, rejected beside a §C04.13
+    disposition and every other clause a container clause is rejected
+    beside). The clause states the entry obligation of (1) and nothing about
+    the exit: the position's own mode is the exit effect. The entry seeds
+    `Owed(MEMBER)`, which (2) admits and spends and (1)'s policy forgets
+    exactly as `Ready`; at an exit, a formal it alone carries reads `Mixed`
+    when released through the carried destroyer (`Spent`), since the clause
+    states no unlink (`observed_for`), and as its disposition otherwise. W4
+    offers it, after (4)'s candidate failed its fresh run, at each candidate
+    formal the candidate binds but does not release (`attach_preconditions`),
+    and checks the widened candidate by a fresh run; a formal handed directly
+    to a position carrying the clause is a candidate as well. Rule 11r's
+    exit-specific route runs that inference per returned value, so a body
+    destroying its formal on one class and storing or keeping it on another
+    states an element destroy in the first and `resource_links_valid` beside
+    the store or keep in the second; the summary publishes only when every
+    class states the same entry obligations (`classes_agree`), since the
+    caller's state at the call is one state whichever class returns. Each
+    caller checks the clause in the transfer before the call's own reading
+    (`check_preconditions`; route G reads one class per edge, so the check
+    runs on every class): the actual is an object it published (rule 10d),
+    one it holds with its own `MEMBER` initialisation (rule 46 (3)), or its
+    own formal carried with `MEMBER` (`Ready` or `Owed`, not spent; the
+    check spends nothing); every other actual, a foreign element included,
+    refuses the call, and every consumer that does not check it refuses the
+    call too (`has_container_effect` counts it). **Do not** seed a record for
+    a position that states no member, admit on a `Spent` record or for
+    another member, keep a `Ready` or `Owed` record across a statement that
+    may write the object, read a carried formal as released without its
+    destroyer or a precondition-only formal as released through it, state
+    the destroyer clause where the formal is not released at every exit or
+    the precondition where it is released, publish classes that disagree on
+    an entry obligation, or admit a foreign element at a precondition alone.
+    Nothing here accuses. Not switchable: off would only refuse. Measured
+    (base `76c1f9cfc`, the opt-in current route): see the
+    [report](../reports/fb-retry-or6-element-identity/README.md); (5)
+    (base `0956f4d21`, the fluent-bit-system route): see the
+    [report](../reports/leri-held-exit-class-precondition/README.md).
+    `QCore.CarriedLinkObligation` (`the_seeded_record_holds`,
+    `retaining_keeps_every_ready_record`,
+    `the_carried_admission_is_sound`, `a_spent_record_admits_nothing`,
+    `a_carried_release_is_the_destroyers`,
+    `the_discharge_establishes_the_precondition`,
+    `no_discharge_no_admission`, `vectors_hold`, …), bound to
+    `ADMIT_VECTORS` and `OBSERVE_VECTORS` and
+    `crates/qcore-c-gateway/tests/link_member_premises.rs (module `carried_link_obligation`)`;
+    (5): `QCore.ExitClassLinkPrecondition`
+    (`a_precondition_release_is_not_the_destroyers`,
+    `one_discharge_seeds_every_class`,
+    `disagreeing_classes_publish_nothing`,
+    `the_precondition_discharge_establishes_it`,
+    `a_foreign_element_does_not_discharge_a_precondition`,
+    `checking_spends_nothing`, `vectors_hold`, …), bound to
+    `PRE_OBSERVE_VECTORS` and `PRE_DISCHARGE_VECTORS` and that module's
+    `exit_class_fixtures`.
+
+<a id="constraint-92"></a>
+
+92. **A ledger update is certified only as a guarded saturating
+    transition.** Card FB-BACKLOG-ACCOUNTING (`ledger_transition.rs`; one
+    `pub mod` line in the crate root, no hook in the custody route). The
+    custody gateway reads `L -= d` on an unsigned field as custody-neutral,
+    wrapping or not, so no custody verdict carries accounting. Rule 92 is a
+    separate reading over route T: the function is imported under
+    `LEDGER_ADMISSION` (`binary -`, `compound +=`, `compound -=` as
+    obligation-bearing, every other CG01 node refused by name) and each path
+    is read. A write to the named ledger field must be exactly one of: the
+    **discharge** `L = L - d` where the nearest guard reading `L` is
+    `d > L`, not taken; the **underflow clamp** `L = 0` where that guard was
+    taken; the **charge** `L = L + d` where the guard is `d > MAX - L`, not
+    taken, with `MAX` the caller-supplied maximum of the ledger type spelled
+    as Clang spells the literal; the **overflow clamp** `L = MAX` where it was
+    taken. For an update, the guard's `d` and the update's `d` must be equal
+    once reads are replaced by their places, and between the earliest read
+    either uses and the write there is no store, call or local store, so
+    the reads see one memory. With a pairing (Fluent Bit's backlog:
+    `mk_list_add`/`mk_list_del`) each path carries exactly as many charges
+    (with their clamps) as link calls and discharges (with their clamps) as
+    unlink calls; without one, a path changes the ledger at most once.
+    Everything else is refused, including `>=` (sound, but not admitted) and
+    any scan loop. A reading certifies arithmetic only: no transition wraps,
+    and each clamp arm is named. A clamp keeps the ledger in range but
+    makes it diverge from the sum it tracks: under the conservation
+    invariant (ledger = sum of linked charges) the underflow clamp is
+    unreachable, and the overflow clamp is unreachable under the physical
+    bound P-LEDGER-PHYSICAL; a doubled discharge can be hidden by the second
+    update's clamp, which is why it is refused statically. **Do not** treat a
+    reading as a custody fact, feed it to a custody verdict, read a clamp arm
+    as a defect, or admit the fs_chunks_size ledger's recomputed discharge
+    amounts as conserved (P-LEDGER-RECOMPUTED-CHARGE is not discharged).
+    Premises, stated and not proved: exclusive access to the ledger while the
+    function runs (P-LEDGER-EXCLUSIVE), callees do not write the ledger
+    (P-LEDGER-CALLEES), the supplied maximum is the ABI's (P-LEDGER-ABI), and
+    faithful Clang extraction (trust boundary 28). The pinned Fluent Bit
+    bodies themselves stay `Unknown` here: T refuses their `flb_warn`
+    argument list (an opaque `flb_output_name(...)` call beside unsequenced
+    reads) before rule 92 reads them, so the certified fixtures replace that
+    argument by a literal. `QCore.BacklogLedger` (`decide_vectors`,
+    `guarded_sub_does_not_wrap`, `guarded_add_does_not_wrap`,
+    `bare_sub_wraps`, `append_preserves`, `remove_preserves`,
+    `remove_underflow_clamp_unreachable`, `repeated_removal_is_a_no_op`,
+    `residency_preserves`, `partial_fanout_preserves`, `rollback_restores`,
+    `missing_discharge_breaks`, `doubled_discharge_breaks_or_clamps`,
+    `wouldExceed_iff`, `batch_overshoot_bound`, `negative_magnitude`);
+    [report](../reports/fb-backlog-accounting/README.md).
 
 <!-- generated:rules:end -->

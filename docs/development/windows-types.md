@@ -45,7 +45,7 @@ why, and so should a new one.
 
 ```sh
 git diff --name-only <base>...HEAD -- '*tests*' \
-  | python3 docs/reports/windows-ci-llp64-fixtures-2/scripts/llp64_fixture_scan.py --stdin
+  | python3 docs/reports/archive/language-and-tooling/windows-ci-llp64-fixtures-2/scripts/llp64_fixture_scan.py --stdin
 ```
 
 Exit 0 means nothing was counted. Exit 1 lists each hazard as

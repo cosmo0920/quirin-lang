@@ -370,6 +370,21 @@ existing analysis routes until G4 parity is recorded. Historical cycle records
 should retain their dates and add superseding evidence links, rather than have
 their old observations silently rewritten.
 
+**G1 closure (2026-11-27, card P0-G1-CLOSURE-RECORD, base `76c1f9cfc`).**
+G1 is met. The WM01–WM03 and VP01–VP02 fixes each have a negative control
+(the invalid candidate or insufficient evidence obtains no
+`C11ExecutionCertificate` or `CoreCertificate`) and a surviving positive
+control; the explicit profile restrictions in force (N1570 operation-order
+legality and represented event subset; no evidence-v1 `Safe`; no plugin
+`Unsafe` without a counterexample checker; evidence-v2 `Safe` only by a
+trusted-core witness replay over a non-empty core inventory; undeclared
+capability or target profile refused before dispatch) are enforced and
+tested. Capability-specific witnesses and core-derived inventories (G2),
+third-party `Unsafe` witness validation (no gate; it confers no
+certificate), source integration (G3) and implementation bridges (G5) stay
+open and outside G1. Evidence table, runs and exclusions:
+[closure record](reports/p0-g1-closure-record/README.md).
+
 ## 10. What ran in this audit
 
 | Command / check | Observed result |

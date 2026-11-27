@@ -89,6 +89,48 @@ pub(super) struct Collected {
     /// Card LERI-HELD-AND-LINK-MEMBER-PREMISES: the link member of each
     /// unlink that names one.
     pub link_members: BTreeMap<usize, String>,
+    /// Card LERI-HELD-FORMAL-LINK-OBLIGATION (gateway rule 91 (5)): each
+    /// `requires resource_links_valid(p, MEMBER)`, by position.
+    pub link_preconditions: BTreeMap<usize, String>,
+}
+
+impl Collected {
+    /// Whether the declaration states any clause of this family, a link
+    /// precondition included: every sibling restriction that rejects a
+    /// container clause rejects a link precondition too.
+    pub(super) fn is_empty(&self) -> bool {
+        self.container_effects.is_empty()
+            && self.users.is_empty()
+            && self.link_preconditions.is_empty()
+    }
+}
+
+/// Card LERI-HELD-FORMAL-LINK-OBLIGATION (gateway rule 91 (5), §C04.8): the
+/// requirement's name.
+pub(super) const LINKS_VALID: &str = "resource_links_valid";
+
+/// Record one `requires resource_links_valid(p, MEMBER)` (its words already
+/// read). A duplicate for one position rejects the module.
+pub(super) fn record_link_precondition(
+    collected: &mut Collected,
+    words: &[&str],
+    expression: &str,
+    index: &dyn Fn(&str) -> Result<usize, String>,
+) -> Result<(), String> {
+    let [LINKS_VALID, p, member] = words else {
+        return Err(format!(
+            "malformed link precondition `{expression}`: write `{LINKS_VALID}(PARAMETER, MEMBER)`"
+        ));
+    };
+    let position = index(p)?;
+    if collected
+        .link_preconditions
+        .insert(position, (*member).to_owned())
+        .is_some()
+    {
+        return Err(format!("duplicate link precondition for {p}"));
+    }
+    Ok(())
 }
 
 /// Read `expression` as a clause of this family. `Ok(None)` means it is not
@@ -340,6 +382,31 @@ pub(super) fn validate(
             {
                 return Err("a publication's container must be a distinct parameter with no container effect".into());
             }
+        }
+    }
+    // Card LERI-HELD-FORMAL-LINK-OBLIGATION (gateway rule 91 (5)): a link
+    // precondition names a pointer position the caller hands over live
+    // (owned, consumed or released), and never one that also states a
+    // container effect (an element destroyer's unlink already carries it).
+    for &position in collected.link_preconditions.keys() {
+        if !pointer(position)
+            || !matches!(
+                parameters[position],
+                ResourceParameterMode::Owned { .. }
+                    | ResourceParameterMode::Consumed { .. }
+                    | ResourceParameterMode::Released { .. }
+            )
+        {
+            return Err(
+                "a link precondition requires an owned, consumed or released pointer parameter"
+                    .into(),
+            );
+        }
+        if collected.container_effects.contains_key(&position) {
+            return Err(
+                "a link precondition never stands beside a container effect on the same parameter"
+                    .into(),
+            );
         }
     }
     for &position in collected.users.effects.keys() {

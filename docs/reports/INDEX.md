@@ -602,6 +602,10 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | Card directory | Original report title |
 |---|---|
 
+| [fb-backlog-accounting](fb-backlog-accounting/README.md) | FB-BACKLOG-ACCOUNTING: ledger census, checked saturating transitions (rule 92) |
+
+| [fb-chunk-lifecycle](fb-chunk-lifecycle/README.md) | FB-CHUNK-LIFECYCLE: a static function's constant-fixed formal, and the chunk-lifecycle census |
+
 | [fb-event-loop-cross-function-lifetime](archive/contracts-and-premises/fb-event-loop-cross-function-lifetime/README.md) | FB-EVENT-LOOP-CROSS-FUNCTION-LIFETIME: census and design (records-only landing) |
 
 | [fb-event-loop-lifetime-s3](fb-event-loop-lifetime-s3/README.md) | FB-EVENT-LOOP-CROSS-FUNCTION-LIFETIME: S3 |
@@ -615,6 +619,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [fb-processor-instance-allocation-size](archive/contracts-and-premises/fb-processor-instance-allocation-size/README.md) | FB-PROCESSOR-INSTANCE-ALLOCATION-SIZE: a processor instance allocated by the filter instance's size |
 
 | [fb-quant-contract-census](archive/contracts-and-premises/fb-quant-contract-census/README.md) | FB-QUANT-CONTRACT-CENSUS |
+
+| [fb-retry-or6-element-identity](fb-retry-or6-element-identity/README.md) | FB-RETRY-OR6-ELEMENT-IDENTITY: a formal's link obligation, carried to the caller |
 
 | [fb-system-audit-cards](archive/contracts-and-premises/fb-system-audit-cards/README.md) | Fluent Bit system audit investigation cards |
 
@@ -750,6 +756,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [leri-cross-unit-elements-released](archive/language-and-tooling/leri-cross-unit-elements-released/README.md) | LERI-CROSS-UNIT-ELEMENTS-RELEASED |
 
 | [leri-held-and-link-member-premises](archive/language-and-tooling/leri-held-and-link-member-premises/README.md) | LERI-HELD-AND-LINK-MEMBER-PREMISES: an element destroyer's link premises, checked |
+
+| [leri-held-exit-class-precondition](leri-held-exit-class-precondition/README.md) | LERI-HELD-FORMAL-LINK-OBLIGATION: the link precondition without the unlink, per exit class |
 
 | [lexical-routes-typed-fallbacks](lexical-routes-typed-fallbacks/README.md) | LEXICAL-ROUTES-PREEMPT-TYPED-FALLBACKS |
 
@@ -956,6 +964,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | Card directory | Original report title |
 |---|---|
+
+| [p0-g1-closure-record](p0-g1-closure-record/README.md) | P0-G1-CLOSURE-RECORD: G1 (certificate containment) evaluated against §9 |
 
 | [package-bytes-depend-on-checkout](archive/language-and-tooling/package-bytes-depend-on-checkout/README.md) | PACKAGE-BYTES-DEPEND-ON-CHECKOUT |
 

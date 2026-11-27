@@ -1192,6 +1192,11 @@ fn infer_cfg_summary(
     // failure paths a summary has to describe. A formal is bound only once the
     // analysis reports that the body already treats it as a resource it owns.
     let mut bound = vec![false; parameters.len()];
+    // Card FB-RETRY-OR6-ELEMENT-IDENTITY (gateway rule 91): the formals the
+    // body hands directly to an element destroyer, whose link obligation the
+    // summary may carry to its callers.
+    let carried =
+        crate::legacy_c::container_publication::carried_link::candidates(&cfg, parameters);
     // The binding set only grows and each retry binds at least one further
     // formal, so the loop settles after at most one round per formal. The
     // bound is written out rather than left implicit in the loop's shape.
@@ -1202,7 +1207,8 @@ fn infer_cfg_summary(
         if bound.iter().zip(&out).any(|(bound, out)| *bound && *out) {
             return None;
         }
-        let probe = probe_contract(parameters, &bound, &out);
+        let mut probe = probe_contract(parameters, &bound, &out);
+        crate::legacy_c::container_publication::carried_link::offer(&mut probe, &carried);
         let entry = EntryCustody::build(&cfg, parameters, &probe)?;
         let (summary, observations) = analyze_cfg_with_entry(cfg.clone(), &entry);
         if bind_unresolved_formals(&mut bound, parameters, &summary) {
@@ -1224,10 +1230,23 @@ fn infer_cfg_summary(
             &cfg,
             parameters,
         )?;
+        // Card FB-RETRY-OR6-ELEMENT-IDENTITY (gateway rule 91).
+        crate::legacy_c::container_publication::carried_link::attach(&mut candidate, &carried)?;
         let entry = EntryCustody::build(&cfg, parameters, &candidate)?;
+        let (summary, observations) = analyze_cfg_with_entry(cfg.clone(), &entry);
+        if observations_match_contract(&candidate, &entry, &summary, &observations) {
+            return Some(candidate);
+        }
+        // Card LERI-HELD-FORMAL-LINK-OBLIGATION (gateway rule 91 (5)): the
+        // link precondition, without the unlink, at each carried formal the
+        // candidate binds but does not release; checked by a fresh run.
+        let widened = crate::legacy_c::container_publication::carried_link::attach_preconditions(
+            &candidate, &carried,
+        )?;
+        let entry = EntryCustody::build(&cfg, parameters, &widened)?;
         let (summary, observations) = analyze_cfg_with_entry(cfg, &entry);
-        return observations_match_contract(&candidate, &entry, &summary, &observations)
-            .then_some(candidate);
+        return observations_match_contract(&widened, &entry, &summary, &observations)
+            .then_some(widened);
     }
     None
 }

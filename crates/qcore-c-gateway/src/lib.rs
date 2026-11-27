@@ -70,6 +70,8 @@ pub mod counter_source;
 #[cfg(feature = "indirect-census")]
 pub mod destination_suffix_census;
 pub mod ffi_layout;
+// Card FB-BACKLOG-ACCOUNTING (rule 92): checked saturating ledger transitions.
+pub mod ledger_transition;
 // Card W48-QRLIB-LINKAGE: the exported symbol table of a C-ABI artifact on
 // every platform, and the generated `.qrlib` manifest.
 pub mod linkage;

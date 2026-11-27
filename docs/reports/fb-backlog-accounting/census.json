@@ -1,0 +1,94 @@
+{
+  "schema": "fb-backlog-accounting-census/1",
+  "card": "FB-BACKLOG-ACCOUNTING",
+  "source": {
+    "fluent_bit": "046accf6aded7906f66a1baf0202da349e521736",
+    "tree": "private/fb-046accf6/fluent-bit-clang-source (read-only prepared input)",
+    "sha256": {
+      "plugins/in_storage_backlog/sb.c": "705012c176a27a34d0d101c40bc4b28eb7e5ef35595a40b20c2a3a2b8670cf04",
+      "src/flb_input_chunk.c": "0fdf7af3f6b976c7790fb6ded755e5f4cd20ea813cb7d868907a3c16eb10db8d",
+      "lib/chunkio/src/cio_file.c": "1c3eb285307108deb2b22c68cf282c0121619a35bbe36adc216f276d51925257",
+      "lib/chunkio/src/cio_chunk.c": "8f6064c742b3fcc53d75b66dbd07d5c7f03d2f245ec7716f8605a2c3a6efd6c8",
+      "lib/chunkio/src/cio_stream.c": "5226efb40578e3fc78de3c57cdb9e9e6adfa17b5d3aa2252c9545a7b777a2634"
+    }
+  },
+  "classes": {
+    "saturating_transition": "a ledger update whose arithmetic is guarded so it cannot wrap; the guard's other arm clamps the ledger (0 or SIZE_MAX) and logs, so the ledger then diverges from the sum it tracks",
+    "strict_bound": "the limit test is evaluated before the charge, in arithmetic that cannot wrap, and admission implies ledger + charge <= limit",
+    "batch_overshoot": "the limit test is evaluated once before a batch of charges; the batch can pass the limit by at most the batch's own size",
+    "advisory": "the limit is tested after the charge, or a caller can bypass it; nothing in the test bounds the overshoot",
+    "snapshot": "the value is recomputed from the physical set (not a running ledger), so it has no transition to check"
+  },
+  "ledgers": [
+    {
+      "ledger": "flb_output_instance.fs_backlog_chunks_size",
+      "kind": "per-output delivery charge (storage backlog queue)",
+      "type": "size_t",
+      "charge_identity": "exact: each wrapper stores the size it was charged with (sb_out_chunk.size) and removal subtracts that stored size",
+      "sites": [
+        {"file": "plugins/in_storage_backlog/sb.c", "lines": "277-287", "function": "sb_append_chunk_to_segregated_backlog", "operation": "charge after mk_list_add", "class": "saturating_transition", "c": "if (target_chunk_size > SIZE_MAX - L) L = SIZE_MAX; else L += target_chunk_size;", "stated_by_contract": false},
+        {"file": "plugins/in_storage_backlog/sb.c", "lines": "226-238", "function": "sb_remove_chunk_from_segregated_backlog", "operation": "discharge after mk_list_del of the matching wrapper; at most one per call (break)", "class": "saturating_transition", "c": "if (chunk->size > L) L = 0; else L -= chunk->size;", "stated_by_contract": false},
+        {"file": "plugins/in_storage_backlog/sb.c", "lines": "269-273", "function": "sb_append_chunk_to_segregated_backlog", "operation": "allocation failure returns -1 before mk_list_add and before the charge", "class": "saturating_transition", "c": "chunk == NULL -> return -1 (no link, no charge)", "stated_by_contract": false},
+        {"file": "plugins/in_storage_backlog/sb.c", "lines": "341-351", "function": "sb_append_chunk_to_segregated_backlogs", "operation": "fan-out: one charge per routed queue; a failing queue returns -3 leaving the earlier queues linked and charged (partial fan-out)", "class": "saturating_transition", "c": "result = sb_append_chunk_to_segregated_backlog(...); if (result) return -3;", "stated_by_contract": false, "note": "the ledgers stay equal to their linked wrappers; the caller sb_segregate_chunks then closes the chunk (sb.c:460-475) while the wrappers still refer to it, which is custody (OB-2, W45-FB-BACKLOG-FAULT-INJECTION A2), not accounting"},
+        {"file": "plugins/in_storage_backlog/sb.c", "lines": "317-324", "function": "sb_append_chunk_to_segregated_backlogs", "operation": "charge amount", "class": "saturating_transition", "c": "size_t chunk_size = cio_chunk_get_real_size(target_chunk); if (chunk_size < 0) ...", "stated_by_contract": false, "note": "cio_chunk_get_real_size returns ssize_t; the -1 arm (unknown store type, cio_chunk.c:360) converts to SIZE_MAX in the size_t local and the `< 0` test is always false, so that arm would charge SIZE_MAX and saturate. Reachable only for a store type outside {MEM, FS}; recorded as premise P-LEDGER-STORE-TYPE, not as a defect"}
+      ],
+      "readers": [
+        {"file": "src/flb_input_chunk.c", "lines": "1176-1199", "function": "flb_input_chunk_output_would_exceed_limit", "class": "strict_bound"},
+        {"file": "src/flb_engine.c", "lines": "258-265, 293-298", "function": "storage pressure (double arithmetic, reporting only)", "class": "advisory"}
+      ]
+    },
+    {
+      "ledger": "flb_output_instance.fs_chunks_size",
+      "kind": "per-output delivery charge (input chunks routed to the output)",
+      "type": "size_t",
+      "charge_identity": "recomputed: each discharge recomputes the chunk's current real size (flb_input_chunk_get_real_size) instead of the sum of its earlier charges; equality of the two is premise P-LEDGER-RECOMPUTED-CHARGE",
+      "sites": [
+        {"file": "src/flb_input_chunk.c", "lines": "66-78", "function": "flb_input_chunk_output_size_subtract", "class": "saturating_transition", "c": "if (bytes > L) { warn; L = 0; return; } L -= bytes;", "stated_by_contract": false},
+        {"file": "src/flb_input_chunk.c", "lines": "80-92", "function": "input_chunk_output_size_add", "class": "saturating_transition", "c": "if (bytes > SIZE_MAX - L) { warn; L = SIZE_MAX; return; } L += bytes;", "stated_by_contract": false},
+        {"file": "src/flb_input_chunk.c", "lines": "3979-4024", "function": "flb_input_chunk_update_output_instances", "operation": "signed delta to an unsigned magnitude: bytes = (size_t)(-(chunk_size + 1)) + 1 for chunk_size < 0, then subtract or add per routed output with total_limit_size != -1; fs_counted set on a positive add", "class": "saturating_transition", "stated_by_contract": false, "note": "the magnitude expression avoids negating SSIZE_MIN"},
+        {"file": "src/flb_input_chunk.c", "lines": "612-621", "function": "flb_input_chunk_release_space (local scope)", "operation": "route bit cleared, then subtract the recomputed real size", "class": "saturating_transition", "stated_by_contract": false},
+        {"file": "src/flb_input_chunk.c", "lines": "815-845", "function": "flb_input_chunk_release_route", "operation": "subtract only when fs_counted, then clear the route bit; the clear makes a repeated call return 0 at the get_bit test (no double discharge)", "class": "saturating_transition", "stated_by_contract": false},
+        {"file": "src/flb_input_chunk.c", "lines": "2635-2667, 2716-2752", "function": "flb_input_chunk_destroy_corrupted / flb_input_chunk_destroy", "operation": "subtract per routed output when fs_counted", "class": "saturating_transition", "stated_by_contract": false},
+        {"file": "src/flb_input_chunk.c", "lines": "1176-1199", "function": "flb_input_chunk_output_would_exceed_limit", "operation": "admission", "class": "strict_bound", "c": "exceeds = !(fs <= T && bl <= T - fs) || c > T - fs - bl", "inequality": "admit iff fs + bl + c <= T over the naturals (proved: QCore.BacklogLedger.wouldExceed_iff)", "stated_by_contract": false},
+        {"file": "src/flb_input_chunk.c", "lines": "1206-1255, 1261-1290", "function": "flb_input_chunk_find_space_new_data / flb_input_chunk_has_overlimit_routes", "operation": "per routed output with total_limit_size != -1 (SIZE_MAX sentinel)", "class": "strict_bound", "stated_by_contract": false},
+        {"file": "src/flb_input_chunk.c", "lines": "540-741", "function": "flb_input_chunk_release_space", "operation": "eviction until released_space >= *required_space (ssize_t compare)", "class": "batch_overshoot", "note": "credit side: eviction may release more than required, by less than the last chunk released", "stated_by_contract": false},
+        {"file": "src/flb_input_chunk.c", "lines": "1100-1170", "function": "flb_input_chunk_release_space_compound", "operation": "required_space_remainder (ssize_t) from size_t, clamped at 0 before the size_t store", "class": "batch_overshoot", "stated_by_contract": false}
+      ]
+    },
+    {
+      "ledger": "storage backlog queue memory (struct flb_sb.mem_limit vs flb_input_chunk_total_size)",
+      "kind": "budget credit (storage.backlog.mem_limit)",
+      "type": "size_t",
+      "sites": [
+        {"file": "plugins/in_storage_backlog/sb.c", "lines": "602-607", "function": "cb_queue_chunks", "operation": "total = resident up-bytes snapshot; return if total >= mem_limit", "class": "batch_overshoot", "stated_by_contract": false},
+        {"file": "plugins/in_storage_backlog/sb.c", "lines": "611-720", "function": "cb_queue_chunks", "operation": "while (total < mem_limit && ...) one chunk per non-empty queue per round, total += size after each", "class": "batch_overshoot", "inequality": "total_after < mem_limit + (number of queues) * (largest chunk content size) (proved: QCore.BacklogLedger.batch_overshoot_bound)", "stated_by_contract": false},
+        {"file": "plugins/in_storage_backlog/sb.c", "lines": "487-523, 525-578", "function": "sb_get_releasable_output_queue_space / sb_release_output_queue_space", "operation": "eviction sum over the queue; size_t released_space compared with ssize_t *required_space (converted to size_t), then *required_space -= released_space", "class": "batch_overshoot", "note": "correct only for *required_space > 0 at entry, which the caller (flb_input_chunk.c:1127) establishes; a negative entry would read as a huge unsigned requirement", "stated_by_contract": false}
+      ]
+    },
+    {
+      "ledger": "flb_input_instance.mem_chunks_size vs mem_buf_limit",
+      "kind": "physical resident bytes (snapshot)",
+      "type": "size_t",
+      "sites": [
+        {"file": "src/flb_input_chunk.c", "lines": "2987-2995, 3014-3017, 3148-3159", "function": "flb_input_chunk_total_size / set_limits / set_up_down", "operation": "mem_chunks_size = cio_stream_size_chunks_up(stream)", "class": "snapshot", "stated_by_contract": false},
+        {"file": "src/flb_input_chunk.c", "lines": "2955-2966", "function": "flb_input_chunk_is_mem_overlimit", "operation": "limit disabled when mem_buf_limit == 0 (size_t `<= 0`); overlimit iff mem_chunks_size >= mem_buf_limit, tested after the write", "class": "advisory", "stated_by_contract": false},
+        {"file": "lib/chunkio/src/cio_stream.c", "lines": "258-276", "function": "cio_stream_size_chunks_up", "operation": "total += bytes for bytes > 0 (ssize_t to size_t), unchecked sum", "class": "snapshot", "stated_by_contract": false}
+      ]
+    },
+    {
+      "ledger": "cio_ctx.total_chunks_up vs max_chunks_up, cio_ctx.total_chunks",
+      "kind": "physical mappings (chunks up) and descriptors",
+      "type": "size_t (counter), int (limit)",
+      "sites": [
+        {"file": "lib/chunkio/src/cio_chunk.c", "lines": "617-642", "function": "cio_chunk_counter_total_{add,sub,up_add,up_sub}", "class": "saturating_transition", "note": "unit counters with no guard; their non-wrap is the declared premise of providers/qcore-provider-chunkio/contracts/chunkio/counters.qv (counter_below_maximum / counter_positive), checked by qcore-verification's counter_contract against the body, not proved for the callers", "stated_by_contract": true},
+        {"file": "lib/chunkio/src/cio_file.c", "lines": "564-571, 837-842", "function": "open_and_up / _cio_file_up(enforced)", "operation": "refuse up iff total_chunks_up >= max_chunks_up (int converted to size_t; cio_set_max_chunks_up keeps n >= 1)", "class": "strict_bound", "stated_by_contract": false},
+        {"file": "lib/chunkio/src/cio_file.c", "lines": "901-904", "function": "cio_file_up_force", "operation": "skips the test; used by sb.c:412, 633 (backlog) so the backlog's ups are not bounded by max_chunks_up", "class": "advisory", "stated_by_contract": false},
+        {"file": "src/flb_input_chunk.c", "lines": "2968-2981", "function": "flb_input_chunk_is_storage_overlimit", "operation": "pause when total_chunks_up >= max_chunks_up (after the fact)", "class": "advisory", "stated_by_contract": false}
+      ]
+    }
+  ],
+  "contract_coverage": {
+    "stated": ["chunkio counters.qv (unit total/up counters, declared premises)"],
+    "not_stated": ["fs_backlog_chunks_size (storage_backlog.qv states custody only; OB-8)", "fs_chunks_size", "mem_limit batch", "mem_buf_limit", "max_chunks_up admission"]
+  }
+}
