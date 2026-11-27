@@ -195,7 +195,7 @@ reads no element. The reader is syntactic: it does not see a write through
 another alias of the message, a callee's side effect on a tested field, or a
 `goto` into a guarded block, and a guard it cannot recognise leaves a site
 unguarded. The fixture `scripts/tests/fixtures/otel_proto/otel_sites.c` pins
-both directions: its five unguarded wire sites are candidates and its guarded
+both directions: its four unguarded wire sites are candidates and its guarded
 ones are cited.
 
 **Sites** (guarded / candidate / not-determinable; protobuf-c runtime and
