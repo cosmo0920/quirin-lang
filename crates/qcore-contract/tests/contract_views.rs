@@ -96,9 +96,11 @@ fn every_registered_relation_holds_on_the_corpus() {
     // FB-PLUGIN-DESCRIPTOR-NONNULL-SCOPE +2 (`flb_input_new`'s stable
     // descriptor and `flb_input_thread_instance_exit`'s scope entry);
     // CELL-GUARD-RESULT-RANGE-CHECKED +2 (`open`'s C library result set and
-    // `mk_event_channel_create`'s derived range beside their resource views).
-    assert_eq!(report.census.len(), 25);
-    assert_eq!(report.relations.len(), 27);
+    // `mk_event_channel_create`'s derived range beside their resource views);
+    // FB-RETRY-LIFECYCLE-CONTRACTS +1 (`flb_output_name`'s resource-v1
+    // declaration beside its null-deref check).
+    assert_eq!(report.census.len(), 26);
+    assert_eq!(report.relations.len(), 28);
     let kinds: BTreeMap<&str, usize> =
         report
             .relations
@@ -111,7 +113,7 @@ fn every_registered_relation_holds_on_the_corpus() {
         kinds,
         BTreeMap::from([
             ("lifecycle_profiles", 2),
-            ("null_deref_beside", 14),
+            ("null_deref_beside", 15),
             ("projection", 5),
             ("renamed_equivalent", 1),
             ("source_shape", 5),

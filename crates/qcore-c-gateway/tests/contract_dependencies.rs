@@ -123,6 +123,7 @@ fn call(callee: &str) -> LegacyCfgNode {
             nested: Vec::new(),
             container: None,
             retention: None,
+            scalar_actuals: Vec::new(),
         },
         successors: Vec::new(),
         line: 1,
@@ -263,7 +264,7 @@ fn a_held_or_withdrawn_spelling_is_named_by_its_standing() {
 }
 
 const UNIT: &str = "\
-void *malloc(unsigned long n);\n\
+void *malloc(__SIZE_TYPE__ n);\n\
 void free(void *p);\n\
 static void drop(void *p) { free(p); }\n\
 void owner(void) { void *p = malloc(4); if (!p) return; drop(p); }\n\

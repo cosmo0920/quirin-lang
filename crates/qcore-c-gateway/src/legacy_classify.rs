@@ -1899,7 +1899,15 @@ impl Parser<'_> {
                         });
                     }
                 }
+                // Card LINK-RECORD-KILL-POLICY-SCALAR-CALLS (rule 46's kill
+                // policy): the actuals that denote no object.
+                let scalar_actuals = container_publication::link_member::scalar_actuals(
+                    raw_arguments.as_deref(),
+                    &arguments,
+                    &nested,
+                );
                 return LegacyInstruction::ContractCall {
+                    scalar_actuals,
                     container,
                     retention: None,
                     function: function.to_owned(),

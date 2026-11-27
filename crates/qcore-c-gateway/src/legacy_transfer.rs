@@ -2932,14 +2932,10 @@ pub(super) fn transfer(
     );
     // Card LERI-HELD-AND-LINK-MEMBER-PREMISES (gateway rule 46): a nested
     // call runs before the call it is nested in and may write any memory it
-    // is handed, so no link record survives into the call.
+    // is handed, so no link record of an object it may reach survives into
+    // the call (card LINK-RECORD-KILL-POLICY-SCALAR-CALLS: only those).
     let mut state = state;
-    if let LegacyInstruction::ContractCall { nested, .. } = &node.instruction
-        && !nested.is_empty()
-    {
-        state.link_ready.clear();
-        container_publication::carried_link::forget_ready(&mut state);
-    }
+    container_publication::link_member::before_nested(&node.instruction, &mut state);
     // UNTRACKED-BASE-NULL-JOIN-DISCHARGE hook (rule 83).
     let null_on_path = state.null_on_path.clone();
     let mut output = transfer_dispatch(
@@ -4648,6 +4644,7 @@ pub(super) fn transfer_base(
             // Ordered above, at the transfer position.
             container: _,
             retention,
+            scalar_actuals: _,
         } => {
             // Card O04-TRACE: the admitted nested call's declared effects, in
             // order, before the enclosing call's. It produces nothing, so its

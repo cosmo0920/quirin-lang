@@ -1,0 +1,114 @@
+// SPDX-License-Identifier: Apache-2.0
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+module contract;
+
+// Fluent Bit retry-lifecycle callees — resource-projection vocabulary
+// version 1 (card FB-RETRY-LIFECYCLE-CONTRACTS).
+//
+// The card's census (docs/reports/fb-retry-lifecycle-contracts/CENSUS.md)
+// lists every callee a row of the five lifecycle units (flb_task, flb_output,
+// flb_scheduler, flb_engine_dispatch, flb_engine) calls uncontracted, and
+// classifies each. These are the class (a) callees: each clause below is
+// read off the 046accf6 body cited beside it. Bound by function name and by
+// the declared signature; the revision binding is in the pin lock and the
+// card report, never here.
+//
+// Where the body is in an audited unit, the audit checks the declaration
+// against it there (custody duties, rule 13a for a borrowed result, rule
+// 30's member-path states) and withdraws it on disagreement; elsewhere it is
+// a declared assumption, as every cross-unit premise is. None of these
+// functions allocates, frees, stores or returns custody, and none writes a
+// task's `users`.
+//
+// NOT CLAIMED: anything about the values returned, the thread a function
+// runs on, or the event loop's own registrations (`flb_sched_timer_cb_disable`
+// removes the timer's event from the loop it is registered with, a loop the
+// timer reaches and no formal names; omitting that removal only keeps a
+// caller's reading conservative).
+
+// src/flb_scheduler.c:720-728. When `timer->timer_fd != -1`:
+// `mk_event_timeout_destroy(timer->sched->evl, &timer->event)` (declared in
+// monkey/event_loop.qv: borrows both, the event's `fd` stale) and
+// `timer->timer_fd = -1`; returns 0. The event's descriptor is staled on that
+// branch and kept on the other. A NULL timer faults on the first read.
+extern fn flb_sched_timer_cb_disable(timer: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(timer);
+    ensures normal resource_return_none();
+    quant live #timer: flb_sched_timer.event.fd |-> {#stale(descriptor), #kept};
+};
+
+// src/flb_task.c:75-78 (static inline). `config->task_map[id].task = NULL;`
+// clears a non-owning map slot.
+extern fn map_free_task_id(id: i32, config: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(id);
+    ensures normal resource_borrowed(config);
+    ensures normal resource_user_neutral();
+    ensures normal resource_return_none();
+};
+
+// src/flb_task.c:391-397. `ic = task->ic; return ic->fs_backlog;`
+extern fn flb_task_from_fs_storage(task: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(task);
+    ensures normal resource_user_neutral();
+    ensures normal resource_return_none();
+};
+
+// src/flb_scheduler.c:36-40. Two `FLB_TLS_INIT`: `do {} while (0)` with C11
+// thread-local storage, otherwise a `pthread_once` initialisation of a
+// static key. No parameter, no result.
+extern fn flb_sched_ctx_init() -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_return_none();
+};
+
+// src/flb_output_thread.c:38-44. `return FLB_TLS_GET(local_thread_instance);`
+// the calling output worker's own instance, which the worker owns. No
+// parameter; the result carries no custody of the caller (as `dlerror`'s
+// pointer result, libc/dlfcn.qv).
+extern fn flb_output_thread_instance_get() -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_return_none();
+};
+
+// src/flb_metrics.c:175-186. `m = flb_metrics_get_id(id, metrics)` (a list
+// lookup); -1 when absent; else `m->val += val; return 0;`.
+extern fn flb_metrics_sum(id: i32, val: usize, metrics: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(id);
+    ensures normal resource_borrowed(val);
+    ensures normal resource_borrowed(metrics);
+    ensures normal resource_return_none();
+};
+
+// src/flb_output.c:1321-1328. `if (ins->alias) return ins->alias; return
+// ins->name;` a pointer read from a member of `ins`, owned by it.
+extern fn flb_output_name(ins: ptr<mut, u8>) -> ptr<const, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(ins);
+    ensures normal resource_return_borrowed_from(ins, nullable);
+};
+
+// flb_input_name (src/flb_input.c:1143-1150) has the same shape over
+// `struct flb_input_instance`; it is declared once, in input_chunk_name.qv.

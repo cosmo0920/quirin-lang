@@ -1468,6 +1468,7 @@ fn only_a_released_position_of_a_contracted_call_records_a_release() {
             nested: Vec::new(),
             container: None,
             retention: None,
+            scalar_actuals: Vec::new(),
         };
         assert_eq!(
             released_names(&instruction) == vec!["a"],
@@ -2029,7 +2030,7 @@ fn conditional_provenance_excludes_shadowed_and_address_taken_names() {
 #[test]
 fn a_declined_return_call_probe_restores_the_site_counter() {
     let source = "void *q_alloc(void); void q_free(void *); \
-                  void *q_realloc(void *p, unsigned long size); \
+                  void *q_realloc(void *p, __SIZE_TYPE__ size); \
                   void *subject(void *p, int c) { \
                       if (c) { return q_realloc(p, 8); } \
                       void *a = q_alloc(); q_free(a); return q_alloc(); }";

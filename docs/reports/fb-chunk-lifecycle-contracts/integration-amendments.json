@@ -1,0 +1,48 @@
+{
+ "schema": "quirin-amendments/2",
+ "card": "FB-CHUNK-LIFECYCLE-CONTRACTS",
+ "base": "56584db0b",
+ "measured_tip": "b8470dedb",
+ "profiles": [],
+ "increment_paragraph": "**FB-CHUNK-LIFECYCLE-CONTRACTS** (round 39; Fluent Bit chunk lifecycle; no gateway rule, no Lean change; [report](../../reports/fb-chunk-lifecycle-contracts/README.md)). A reproducible census (`scripts/census.py` over the fluent-bit-system and opt-in `current --monkey-linked` reports, `CENSUS.md` + `census.json` with the SHA-256 of every input) writes down, for `plugins/in_storage_backlog/sb.c` and `src/flb_input_chunk.c` at 046accf6, every contract a row resolves (module, clauses, rows, the tests naming it), every non-Safe row's leaves at their original `file:line` grouped by cause, and a hand-written class for each of the 72 uncontracted callees: (a) statable now 1, (b) needs vocabulary or a rule 26, (c) blocked by its own body 13, (d) another module's 32. Most custody-neutral `flb_input_chunk.c` helpers stay undeclared because each reaches a log callback (`flb_warn`, `flb_routes_mask_get_bit`'s warning, `cmt_log_print`, ChunkIO's `cio_log`) and a borrowed-only declaration is applied as user-neutral outside its defining unit, which is the unconditional neutral contract W46-FLUENT-ACCOUNTING-LOG-CALLBACK-EFFECT refused; a checked specification would be withdrawn where their callers are. The one class (a) contract: `flb_input_name` (`src/flb_input.c:1143-1150`, both returns member reads of `ins`) as `resource_borrowed(ins)` + `resource_return_borrowed_from(ins, nullable)` in `fluent_bit/input_chunk_name.qv`, checked by rule 13a in its defining unit; fixture module `tests/slot_move_interior_borrow/chunk_lifecycle_contracts.rs` (no new target): the pinned body keeps it, a fresh-copy or releasing body is refused, the name is never releasable and ends with `ins`; inventory and pin locks regenerated in the same commit. Measured (base 56584db0b vs tip b8470dedb, each from its own archive and release binary): system 116 / 0 / 328 / 4 and current 1,205 / 2 / 3,590 / 7 on both sides, no status move (predicted none). All 8 uncontracted `flb_input_name` leaves (system; 3 on current) and 5 nested-call leaves clear; six rows gain 196 interior-borrow-ended refusals (rule 12y ending the parent borrow at later calls naming the instance), and `flb_storage_input_create` reaches `cio_stream_create`/`cio_stream_get`; every such row stays Unknown. Pinned routes not run (no inputs on the host). Scoped gate (private/gate, head b8470dedb): submodules, Clippy, probes 0; Rust 281 units 3,526 passed 0 failed; provider tests 182 passed 0 failed, package build/verify and Clippy 0; fmt, provider-fmt and Python (1 of 814: stale reports INDEX) failed on this card's own formatting and index and pass after the fixes; LLP64 scan 0. This card amends W46-FLUENT-ACCOUNTING-LOG-CALLBACK-EFFECT, W46-FLUENT-METADATA-CALLBACK-EFFECT, W47-LOOP-OWNER-UNDECLARABLE-OPERATIONS, W45-FB-BACKLOG-REACHABLE-RELEASE and W45-FB-SYSTEM-SLICE-RESIDUALS and registers FB-CHUNK-LIFECYCLE-OUT-OF-FILE-CALLEES.",
+ "status_edits": [],
+ "ledger": [
+  {
+   "id": "W46-FLUENT-ACCOUNTING-LOG-CALLBACK-EFFECT",
+   "operation": "amend",
+   "source": "docs/reports/fb-chunk-lifecycle-contracts/README.md",
+   "text": "AMENDED (FB-CHUNK-LIFECYCLE-CONTRACTS, census at 56584db0b over 046accf6): the same reach holds back five more custody-neutral flb_input_chunk.c helpers, each uncontracted in a lifecycle row: input_chunk_output_size_add (flb_warn on its clamp arm), flb_input_chunk_has_other_routes, flb_input_chunk_prefers_physical_delete and flb_input_chunk_has_overlimit_routes (flb_routes_mask_get_bit's out-of-range flb_warn, src/flb_routes_mask.c:165, and flb_trace), and update_logs_tag_records_untracked (cmt_counter_add's failure arm reaches cmt_log_print and cmt->log_cb). A borrowed-only declaration is applied as user-neutral in every unit that does not define the body (legacy_counted_users::call_effect, an empty counted-user clause set is Neutral), so it would be the refused unconditional neutral contract; and a checked specification would be withdrawn where their callers are, since each body's own row is not Safe. Discharge as stated: a constrained log-callback path, then remeasure."
+  },
+  {
+   "id": "W46-FLUENT-METADATA-CALLBACK-EFFECT",
+   "operation": "amend",
+   "source": "docs/reports/fb-chunk-lifecycle-contracts/README.md",
+   "text": "AMENDED (FB-CHUNK-LIFECYCLE-CONTRACTS, census at 56584db0b over 046accf6): besides flb_input_chunk_get_event_type, the same ChunkIO log-callback reach (cio_file_read_prepare/mmap_file, cio_file_up, cio_file_write, the content copy) holds back flb_input_chunk_get_projected_write_size (cio_meta_size), flb_input_chunk_set_up (cio_chunk_up), flb_input_chunk_write (cio_chunk_write) and get_input_chunk_record_count (cio_chunk_get_content); the interior-view half holds back flb_input_chunk_get_tag (a borrowed out slot would hide an overwritten tracked identity, and resource_out_derived(tag_buf, ic) is not checkable by rule 13a because the tag comes through input_chunk_metadata_view's out struct and ends with the ChunkIO chunk, not ic), input_chunk_metadata_view and flb_input_chunk_get_direct_routes. The ChunkIO entry points themselves (cio_meta_read/size/write, cio_chunk_get_content/write/write_at/up/tx_rollback) are qcore-provider-chunkio's to declare."
+  },
+  {
+   "id": "W47-LOOP-OWNER-UNDECLARABLE-OPERATIONS",
+   "operation": "amend",
+   "source": "docs/reports/fb-chunk-lifecycle-contracts/README.md",
+   "text": "AMENDED (FB-CHUNK-LIFECYCLE-CONTRACTS): flb_input_chunk_set_limits (flb_input_resume, flb_input_rate_gate_maybe_resume) and flb_input_chunk_protect (flb_input_pause, flb_input_rate_gate_protect) wrap the undeclarable pause/resume dispatch and stay undeclared with them; a wrapper declaration would hide the plugin callback. Both are uncontracted calls in input_chunk_append_raw at 046accf6."
+  },
+  {
+   "id": "W45-FB-BACKLOG-REACHABLE-RELEASE",
+   "operation": "amend",
+   "source": "docs/reports/fb-chunk-lifecycle-contracts/README.md",
+   "text": "AMENDED (FB-CHUNK-LIFECYCLE-CONTRACTS): the input-chunk side has the same shape and the same blocker: flb_input_chunk_find_space_new_data, flb_input_chunk_release_space(_compound) and memrb_input_chunk_release_space drop or destroy chunks reached through the instance and output they are handed, so no borrowed declaration is faithful (census at 56584db0b, class (b))."
+  },
+  {
+   "id": "W45-FB-SYSTEM-SLICE-RESIDUALS",
+   "operation": "amend",
+   "source": "docs/reports/fb-chunk-lifecycle-contracts/README.md",
+   "text": "AMENDED (FB-CHUNK-LIFECYCLE-CONTRACTS): five flb_input_chunk.c callees are blocked by their own bodies, not by vocabulary (census class (c) at 56584db0b): flb_input_chunk_create, input_chunk_get, input_chunk_append_raw, update_logs_tag_records_metrics and flb_input_chunk_destroy_corrupted; a declaration would replace a body whose own row does not discharge, so each waits on its row's leaves (docs/reports/fb-chunk-lifecycle-contracts/CENSUS.md section 2)."
+  },
+  {
+   "id": "FB-CHUNK-LIFECYCLE-OUT-OF-FILE-CALLEES",
+   "operation": "register",
+   "title": "Chunk-lifecycle rows call 32 callees whose contracts belong to modules outside the lifecycle contract files",
+   "source": "docs/reports/fb-chunk-lifecycle-contracts/README.md",
+   "text": "Census class (d) of FB-CHUNK-LIFECYCLE-CONTRACTS (base 56584db0b, Fluent Bit 046accf6; docs/reports/fb-chunk-lifecycle-contracts/CENSUS.md section 3): the sb.c and flb_input_chunk.c rows reach, uncontracted, eleven ChunkIO entry points (qcore-provider-chunkio; cio_chunk_get_real_size, cio_chunk_lock and cio_error_get are W45-FB-BACKLOG-CIO-RETURN-CODES', the rest also reach the cio_log callback), flb_time_get (fluent_bit/time.qv, FB-RETRY-LIFECYCLE-CONTRACTS' file), flb_hash_table_get/del_ptr (hash_table_publication.qv), flb_routes_mask_clear_bit (routes_mask.qv), and core subsystems with no contract module yet: flb_metrics_sum, flb_mp_count(_log_records), flb_mp_validate_{log,metric}_chunk, flb_chunk_trace_{destroy,do_input,pre_output}, flb_ring_buffer_{read,write,mark_flushed}, flb_filter_do, flb_input_log_append_processed, flb_input_rate_update, flb_input_set_context, flb_utils_size_to_bytes and flb_utils_bytes_to_human_readable_size. Each needs its own body reading in its own module (several log or dispatch callbacks, which W46/W47's refusals then govern). DISCHARGE: per callee, a contract in its owning module read from its body, or a recorded reason it cannot be stated; then rerun scripts/census.py."
+  }
+ ]
+}

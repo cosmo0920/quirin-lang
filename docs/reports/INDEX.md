@@ -606,6 +606,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [fb-chunk-lifecycle](fb-chunk-lifecycle/README.md) | FB-CHUNK-LIFECYCLE: a static function's constant-fixed formal, and the chunk-lifecycle census |
 
+| [fb-chunk-lifecycle-contracts](fb-chunk-lifecycle-contracts/README.md) | FB-CHUNK-LIFECYCLE-CONTRACTS: the chunk-lifecycle contract census, and the one contract it found statable |
+
 | [fb-event-loop-cross-function-lifetime](archive/contracts-and-premises/fb-event-loop-cross-function-lifetime/README.md) | FB-EVENT-LOOP-CROSS-FUNCTION-LIFETIME: census and design (records-only landing) |
 
 | [fb-event-loop-lifetime-s3](fb-event-loop-lifetime-s3/README.md) | FB-EVENT-LOOP-CROSS-FUNCTION-LIFETIME: S3 |
@@ -619,6 +621,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [fb-processor-instance-allocation-size](archive/contracts-and-premises/fb-processor-instance-allocation-size/README.md) | FB-PROCESSOR-INSTANCE-ALLOCATION-SIZE: a processor instance allocated by the filter instance's size |
 
 | [fb-quant-contract-census](archive/contracts-and-premises/fb-quant-contract-census/README.md) | FB-QUANT-CONTRACT-CENSUS |
+
+| [fb-retry-lifecycle-contracts](fb-retry-lifecycle-contracts/README.md) | FB-RETRY-LIFECYCLE-CONTRACTS: the retry-lifecycle contracts, written down |
 
 | [fb-retry-or6-element-identity](fb-retry-or6-element-identity/README.md) | FB-RETRY-OR6-ELEMENT-IDENTITY: a formal's link obligation, carried to the caller |
 
@@ -782,6 +786,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [librdkafka-plugin-premise-remainder](librdkafka-plugin-premise-remainder/README.md) | LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER: the plugin premise on member facts, the crash path and a model contract |
 
 | [licence-header-test-repair](archive/language-and-tooling/licence-header-test-repair/README.md) | LICENCE-HEADER-TEST-REPAIR |
+
+| [link-record-kill-policy-scalar-calls](link-record-kill-policy-scalar-calls/README.md) | LINK-RECORD-KILL-POLICY-SCALAR-CALLS: link records survive scalar-only calls |
 
 | [link-standing](archive/language-and-tooling/link-standing/README.md) | LINK-STANDING |
 

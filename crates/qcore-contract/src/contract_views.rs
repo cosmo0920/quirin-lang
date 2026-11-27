@@ -1467,6 +1467,17 @@ pub const REGISTERED_RELATIONS: &[RegisteredRelation] = &[
         assumed_premises: &[],
         finding: None,
     },
+    // Card FB-RETRY-LIFECYCLE-CONTRACTS: the output name accessor's
+    // resource-v1 declaration (a result borrowed from `ins`) beside its
+    // null-deref check.
+    RegisteredRelation {
+        function: "flb_output_name",
+        detailed: "fluent_bit/null_deref.qv",
+        view: "fluent_bit/retry_lifecycle.qv",
+        check: RelationCheck::NullDerefBeside,
+        assumed_premises: &[],
+        finding: None,
+    },
     // Card FB-PLUGIN-DESCRIPTOR-NONNULL-SCOPE (rule 14x): the input
     // constructor hosts the stable plugin descriptor beside its resource-v1
     // declaration.

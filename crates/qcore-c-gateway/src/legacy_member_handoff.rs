@@ -636,6 +636,7 @@ fn consumption(name: &str) -> LegacyInstruction {
         nested: Vec::new(),
         container: None,
         retention: None,
+        scalar_actuals: Vec::new(),
     }
 }
 
