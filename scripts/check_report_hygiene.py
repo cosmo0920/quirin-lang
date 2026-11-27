@@ -86,6 +86,11 @@ FROZEN_PINNED_ALLOWLIST = frozenset({
 })
 
 FROZEN_PINNED_DIR_PREFIXES = (
+    "docs/reports/archive/early-waves/remaining-e01-f1/artifacts/after/",
+    "docs/reports/archive/early-waves/wave9-corpus/",
+    "docs/reports/archive/early-waves/wave10-corpus/",
+    "docs/reports/archive/early-waves/wave11-corpus/",
+    "docs/reports/archive/early-waves/wave12-corpus/",
     "docs/reports/cycle19-file-constructor-failures/",
     "docs/reports/cycle19-file-descriptor-failures/",
     "docs/reports/cycle19-file-existing/",

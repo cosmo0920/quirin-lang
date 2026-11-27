@@ -141,7 +141,10 @@ class BackfilledContractSections(unittest.TestCase):
             if record is None:
                 continue
             finished = subprocess.run(
-                ["git", "-C", str(ROOT), "show", "%s:%s" % (record["original_commit"], relative)],
+                [
+                    "git", "-C", str(ROOT), "show",
+                    "%s:%s" % (record["original_commit"], backfill.original_path(relative)),
+                ],
                 capture_output=True,
             )
             if finished.returncode != 0:
