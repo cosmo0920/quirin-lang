@@ -310,10 +310,13 @@ fn every_g1_term_is_used_and_typed() {
         .filter(|(s, _)| s.starts_with("g1_"))
         .collect::<Vec<_>>();
     assert_eq!(sorts.len(), 2);
-    // The G1 block is the last block, contiguous, after the CX block.
+    // The G1 block is contiguous, after the CX block, followed only by the
+    // OTP block (card OTEL-PROTO-AUDIT).
     let blocks: Vec<_> = RENDERED_TERMS.iter().map(|t| t.block).collect();
     let first = blocks.iter().position(|b| *b == "G1").unwrap();
-    assert!(blocks[first..].iter().all(|b| *b == "G1"));
+    let count = blocks.iter().filter(|b| **b == "G1").count();
+    assert!(blocks[first..first + count].iter().all(|b| *b == "G1"));
+    assert!(blocks[first + count..].iter().all(|b| *b == "OTP"));
     assert_eq!(blocks[first - 1], "CX");
 }
 

@@ -331,8 +331,9 @@ fn the_sp9_block_is_new_prefixed_and_bound_to_lean() {
     // followed only by later blocks (card SP10-FORMAL-BINDING-DESCRIPTIONS
     // appends SP10 after it, card MEMBER-EFFECT-STORES its MES block and card
     // K2-NO-TYPED-ACCESS its K2 block and card K6-DIRECT-POSITION-ACCESS
-    // its K6 block after that, card QUIRIN-AUDIT-CONNECT its CX block, and
-    // card P0-G1-CLOSURE-RECORD its G1 block last).
+    // its K6 block after that, card QUIRIN-AUDIT-CONNECT its CX block, card
+    // P0-G1-CLOSURE-RECORD its G1 block and card OTEL-PROTO-AUDIT its OTP
+    // block last).
     let blocks: Vec<_> = RENDERED_TERMS.iter().map(|t| t.block).collect();
     let first = blocks.iter().position(|b| *b == "SP9").unwrap();
     assert!(blocks[first..first + sp9.len()].iter().all(|b| *b == "SP9"));
@@ -341,7 +342,8 @@ fn the_sp9_block_is_new_prefixed_and_bound_to_lean() {
         || *b == "K2"
         || *b == "K6"
         || *b == "CX"
-        || *b == "G1"));
+        || *b == "G1"
+        || *b == "OTP"));
     assert_eq!(blocks[first - 1], "SP7");
     for t in &sp9 {
         assert!(t.name.starts_with(PREFIX), "#{}", t.name);

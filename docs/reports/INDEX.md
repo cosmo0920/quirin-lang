@@ -934,6 +934,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [openssl-unstated-callback-slots](archive/contracts-and-premises/openssl-unstated-callback-slots/README.md) | OPENSSL-UNSTATED-CALLBACK-SLOTS: the slots the narrowed OpenSSL premise covered, stated |
 
+| [otel-proto-audit](otel-proto-audit/README.md) | OTEL-PROTO-AUDIT |
+
 | [out-parameter-body-summary](archive/language-and-tooling/out-parameter-body-summary/README.md) | OUT-PARAMETER-BODY-SUMMARY |
 
 | [out-parameter-scalar-frame-premise](archive/language-and-tooling/out-parameter-scalar-frame-premise/README.md) | OUT-PARAMETER-SCALAR-FRAME-PREMISE |

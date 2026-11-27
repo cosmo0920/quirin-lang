@@ -96,12 +96,17 @@ fn every_cx_term_is_used_typed_and_bound_to_lean() {
         .count();
     assert_eq!(sorts, 10);
     // The CX block is contiguous, followed only by the G1 block (card
-    // P0-G1-CLOSURE-RECORD), never reordered.
+    // P0-G1-CLOSURE-RECORD) and then the OTP block (card OTEL-PROTO-AUDIT),
+    // never reordered.
     let blocks: Vec<_> = RENDERED_TERMS.iter().map(|t| t.block).collect();
     let first = blocks.iter().position(|b| *b == "CX").unwrap();
     let count = blocks.iter().filter(|b| **b == "CX").count();
     assert!(blocks[first..first + count].iter().all(|b| *b == "CX"));
-    assert!(blocks[first + count..].iter().all(|b| *b == "G1"));
+    assert!(
+        blocks[first + count..]
+            .iter()
+            .all(|b| *b == "G1" || *b == "OTP")
+    );
     assert_eq!(blocks[first - 1], "K6");
     // Every formula has its Lean theorem, every term its Lean definition.
     let lean = std::fs::read_to_string(
