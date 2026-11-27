@@ -399,6 +399,7 @@ mod carried_link_obligation {
     struct holder { struct item *r; struct mk_list _head; };
     struct queue { struct mk_list items; struct mk_list rotated; struct mk_list pending; };
     int item_destroy(struct item *e);
+    int *q_errloc(void); int q_note(int e, const char *f, int l);
     void enq_decl(struct item *e, struct queue *q);
     int rel_decl(struct item *e);
     "#;
@@ -414,6 +415,10 @@ mod carried_link_obligation {
     contract { requires resource_contract_v1; ensures normal resource_return_owned(nullable); };
     extern fn item_destroy(e: ptr<mut, u8>) -> i32
     contract { requires resource_contract_v1; ensures normal resource_unpublished(e, _head); ensures normal resource_released(e, nonnull); ensures normal resource_return_none(); };
+    extern fn q_errloc() -> ptr<mut, u8>
+    contract { requires resource_contract_v1; ensures normal resource_return_none(); };
+    extern fn q_note(e: i32, f: ptr<const, u8>, l: i32) -> i32
+    contract { requires resource_contract_v1; ensures normal resource_borrowed(e); ensures normal resource_borrowed(f); ensures normal resource_borrowed(l); ensures normal resource_return_none(); };
     extern fn enq_decl(e: ptr<mut, u8>, q: ptr<mut, u8>) -> unit
     contract { requires resource_contract_v1; requires resource_links_valid(e, _head); ensures normal resource_consumed(e, nonnull); ensures normal resource_borrowed(q); ensures normal resource_return_none(); };
     extern fn rel_decl(e: ptr<mut, u8>) -> i32
@@ -723,6 +728,18 @@ mod carried_link_obligation {
                 None,
             ),
             // Bodies whose summary may not state the precondition.
+            // `flb_output_task_queue_enqueue`'s own failure path reports
+            // `flb_errno()` before the destroyer: a call with a nested call
+            // and a non-name actual (`*__errno_location()`), which rule 46's
+            // kill policy reads as reaching every object, so the carried
+            // record is gone at the destroyer (the measured row's leaf).
+            (
+                "errno-before-the-destroyer",
+                "static int enq(struct queue *q, struct item *r) { struct holder *h = q_try_alloc(); if (!h) { q_note(*q_errloc(), \"f.c\", 1); if (r) { item_destroy(r); } return -1; } h->r = r; mk_list_add(&h->_head, &q->pending); return 0; }".to_owned(),
+                "enq",
+                AnalysisStatus::Unknown,
+                Some(ENQ_HELD),
+            ),
             (
                 "frees-on-the-other-class",
                 "static int enq(struct queue *q, struct item *r) { struct holder *h = q_try_alloc(); if (!h) { item_destroy(r); return -1; } q_free(h); q_free(r); return 0; }".to_owned(),

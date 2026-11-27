@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "name": "leri-exit-class-census",
+  "description": "The census units the fluent-bit-system route does not read: flb_input.c (four *_property_check) and in_tail's tail_file.c and tail_fs_inotify.c.",
+  "groups": [
+    {
+      "library": "fluent_bit",
+      "label": "leri-exit-class-census",
+      "files": [
+        "src/flb_input.c",
+        "plugins/in_tail/tail_file.c",
+        "plugins/in_tail/tail_fs_inotify.c"
+      ]
+    }
+  ]
+}
