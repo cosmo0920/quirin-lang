@@ -191,8 +191,28 @@ removed.
 
 ## 5. Gate
 
-See [gate.json](gate.json) (scoped card gate, `--base 0956f4d21`, through
-`private/toolchain/env.sh`; logs `private/gate/`). LLP64 fixture scan over
+`python3 scripts/gate_scope.py --base 0956f4d21 --out <worktree>/private/gate`
+through `private/toolchain/env.sh`, on `77409a108`: [gate.json](gate.json),
+logs `private/gate/`, Clang in [gate/clang-version.txt](gate/clang-version.txt).
+Mode full; all Lean; no provider gate (`providers/` unchanged). **Exit 1**,
+one failure, this card's:
+
+| Step | Exit | Counts |
+|---|---|---|
+| submodules, fmt, clippy | 0 / 0 / 0 | |
+| Rust suite | 0 | 725 units, 770 summaries; 10,379 passed, 0 failed, 24 ignored |
+| both reevaluation probes | 0 / 0 | |
+| Lean (`check_lean_audits.py`) | 0 | 533 audits (this card adds `AuditExitClassLinkPrecondition.lean`) |
+| Python suite | **1** | 814 tests, 1 failure |
+
+The failure: `test_report_hygiene`'s stale `docs/reports/INDEX.md` (the new
+report was not indexed). Fix: `python3 scripts/build_docs_index.py`
+(`docs/reports/INDEX.md`, `docs/reports/README.md`). Re-run after it: the
+Python suite with `QUIRIN_CARD_GATE_BASE=0956f4d21`, exit 0, 814 tests
+(`private/post-python.log`); `check_report_hygiene.py` exit 0. The Rust suite
+and Lean were not re-run: the fix touches only generated report indexes.
+
+LLP64 fixture scan over
 the changed test files: exit 0 (0 counted, 0 found), run as the archived
 `docs/reports/archive/language-and-tooling/windows-ci-llp64-fixtures-2/scripts/llp64_fixture_scan.py
 --no-repository-contracts --contracts providers --contracts
