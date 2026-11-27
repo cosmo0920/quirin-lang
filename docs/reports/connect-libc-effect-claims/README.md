@@ -328,8 +328,38 @@ cx_failed_effect_check_has_a_refusal:     forall (#b: cx_bundle) { (!#cx_effect_
   `callback_task_handoff.qv` and `timeout_teardown.qv`.
 - No `contracts.lock` changed, and no pin, `linkage-reliances.json` entry or
   `contract_dependencies` entry changed.
-- The user load path's crates (libcurl, onigmo, openssl) are unchanged, and
-  `quirin-audit plugin views` reports them in step.
+- The user load path's crates (libcurl, onigmo, openssl) are unchanged.
+  `providers/contracts.py check` validates the user load path against
+  `quirin-audit plugin views` (`check_user_crates`) and passed, so no
+  `plugin views --write` was needed.
+
+## Checks (no card gate)
+
+Logs are under the worktree's `private/r41/`.
+
+| Check | Exit | Counts |
+|---|---|---|
+| `python3 providers/contracts.py sync` | 0 | libc 19 modules (resource view 17, bounds view 1) |
+| `python3 providers/contracts.py check` | 0 | linkage 15 recorded, 19 links, 11 inherit links; callee effects: 3 libc effect declarations; 95 contracts; user crates 3 |
+| `cargo test -p qcore-contract -p qcore-audit -p qcore-verification -p qcore-frontend -p qcore-schemas` (run 2) | 101 | 1832 passed, 1 failed, 4 ignored, 207 binaries. The failure is `the_libcurl_ranges_follow_the_audited_curlver_header`, the known libcurl `curlver.h` host failure. |
+| `cargo test -p qcore-compiler --test qcore_contract_corpus` (run 2) | 0 | 6 passed |
+| `cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline` | 0 | 182 passed, 1 ignored, 52 binaries |
+| `cargo clippy` (qcore-audit, -verification, -frontend, -schemas; providers: quirin-provider-libc, qcore-provider-libevent), `--all-targets -D warnings` | 0, 0 | |
+| `cargo fmt --check` (root, providers) | 0, 0 | |
+| `python3 scripts/gate_lean.py --module QCore.MeasureConnect --audit AuditMeasureConnect.lean` | 0 | 1 target built, 1 audit passed |
+| `python3 -m unittest discover -s providers/tests` | 0 | 38 tests |
+| `python3 -m unittest discover -s scripts/tests` | 0 | 807 tests |
+| `python3 scripts/build_docs_index.py --check`, `python3 scripts/gen_rule_docs.py --check` | 0, 0 | 289 rule files |
+| `python3 providers/package.py build` / `verify` (qcore.chunkio, .cmetrics, .ctraces, .libevent, .librdkafka) | 0 / 0 ×5 | |
+| `python3 scripts/apply_amendments.py integration-amendments.json --check` | 0 | 1 retired, 2 registered |
+
+Run 1 of the root tests failed in two places. `qcore_contract_corpus` had 3
+failures because the corpus reads tracked files only and the new module was not
+yet tracked. The new audit unit test raced on a shared temporary directory.
+Both were fixed and the tests re-run (run 2). Run 1 of
+`scripts/tests/test_contract_corpus.py` failed on the libc placement test,
+because the libc crate's declared names must be libc names. That test now
+checks an effect declaration by its callee, and it passes (9 tests).
 
 ## Follow-ups
 
