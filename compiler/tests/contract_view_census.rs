@@ -111,6 +111,12 @@ const EXPECTED_MULTI_MODULE: &[(&str, &[&str])] = &[
         "flb_malloc",
         &["fluent_bit/memory.qv", "fluent_bit/resource_memory.qv"],
     ),
+    // Card FB-RETRY-LIFECYCLE-CONTRACTS: the output name accessor's
+    // resource-v1 declaration beside its null-deref check.
+    (
+        "flb_output_name",
+        &["fluent_bit/null_deref.qv", "fluent_bit/retry_lifecycle.qv"],
+    ),
     // Card CELL-GUARD-RESULT-RANGE-CHECKED: the channel creator's derived
     // result range beside its resource-v1 declaration.
     (
@@ -215,10 +221,12 @@ fn every_multi_module_declaration_is_a_registered_checked_relation() {
     // and `flb_input_thread_instance_exit`'s scope entry: twenty-three
     // functions, twenty-five pairs; CELL-GUARD-RESULT-RANGE-CHECKED `open`'s
     // C library result set and `mk_event_channel_create`'s derived range:
-    // twenty-five functions, twenty-seven pairs).
-    assert_eq!(census_pairs(&report.census).len(), 27);
-    assert_eq!(REGISTERED_RELATIONS.len(), 27);
-    assert_eq!(report.relations.len(), 27);
+    // twenty-five functions, twenty-seven pairs; FB-RETRY-LIFECYCLE-CONTRACTS
+    // `flb_output_name`'s resource-v1 declaration: twenty-six functions,
+    // twenty-eight pairs).
+    assert_eq!(census_pairs(&report.census).len(), 28);
+    assert_eq!(REGISTERED_RELATIONS.len(), 28);
+    assert_eq!(report.relations.len(), 28);
 }
 
 /// The library's own corpus reader and this test's discovery agree module for
