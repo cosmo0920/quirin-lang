@@ -1,0 +1,68 @@
+src/flb_input_chunk.c flb_input_chunk_destroy Unknown -> Unknown
+   - 19769 call to uncontracted function `flb_input_chunk_output_size_subtract`
+src/flb_input_chunk.c flb_input_chunk_destroy_corrupted Unknown -> Unknown
+   - 19707 call to uncontracted function `flb_input_chunk_output_size_subtract`
+src/flb_input_chunk.c flb_input_chunk_map Unknown -> Unknown
+   - 18878 call to uncontracted function `flb_metrics_sum`
+   - 18879 call to uncontracted function `flb_metrics_sum`
+   + 18878 unresolved resource identity `ic`
+src/flb_input_chunk.c flb_input_chunk_output_size_subtract Unknown -> Safe
+   - 17720 indirect memory access is outside the resource projection
+   - 17721 unresolved resource identity `o_ins`
+src/flb_input_chunk.c flb_input_chunk_release_route Unknown -> Unknown
+   - 18266 indirect memory access is outside the resource projection
+   - 18267 call to uncontracted function `flb_input_chunk_output_size_subtract`
+src/flb_input_chunk.c flb_input_chunk_release_space Unknown -> Unknown
+   - 18122 call to uncontracted function `flb_input_chunk_output_size_subtract`
+   - 18167 call to uncontracted function `flb_metrics_sum`
+src/flb_input_chunk.c flb_input_chunk_update_output_instances Unknown -> Unknown
+   - 20593 call to uncontracted function `flb_input_chunk_output_size_subtract`
+   - 20596 call to uncontracted function `input_chunk_output_size_add`
+src/flb_input_chunk.c get_input_chunk_source_name Unknown -> Unknown
+   - 18054 call to uncontracted function `flb_input_name`
+   + 18054 unmodeled call, aggregate or indirect access in return expression
+src/flb_input_chunk.c input_chunk_append_raw Unknown -> Unknown
+   - 20124 call to uncontracted function `flb_input_name`
+   - 20138 nested call `flb_input_name` inside a modeled call is outside the resource projection
+   - 20199 call to uncontracted function `flb_metrics_sum`
+   - 20200 call to uncontracted function `flb_metrics_sum`
+   - 20232 nested call `flb_input_name` inside a modeled call is outside the resource projection
+   - 20289 nested call `flb_input_name` inside a modeled call is outside the resource projection
+   + 20127 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 20146 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 20155 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 20156 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 20159 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 20183 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 20188 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 20191 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 20194 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 20196 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 20198 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 20206 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 20216 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 20233 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 20244 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 20248 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 20255 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 20256 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 20269 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 20290 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 20293 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 20295 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+src/flb_input_chunk.c input_chunk_output_size_add Unknown -> Safe
+   - 17730 indirect memory access is outside the resource projection
+   - 17731 unresolved resource identity `o_ins`
+src/flb_input_chunk.c update_logs_tag_records_metrics Unknown -> Unknown
+   - 17786 call to uncontracted function `flb_input_name`
+   + 17790 use of `input_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 17795 use of `input_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 17805 use of `input_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 17810 use of `input_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 17811 use of `input_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 17813 use of `input_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 17823 use of `input_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 17826 use of `input_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 17833 use of `input_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 17845 use of `input_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 17848 use of `input_name` after its object moved or its parent changed (interior-borrow-ended)

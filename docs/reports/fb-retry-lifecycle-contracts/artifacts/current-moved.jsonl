@@ -1,0 +1,3 @@
+{"base_leaves": ["17720: indirect memory access is outside the resource projection", "17721: unresolved resource identity `o_ins`"], "file": "src/flb_input_chunk.c", "function": "flb_input_chunk_output_size_subtract", "move": "Unknown -> Safe", "occurrence": 1, "tip_declarations": ["flb_log_check", "flb_log_print", "flb_output_name"], "tip_summaries": []}
+{"base_leaves": ["17730: indirect memory access is outside the resource projection", "17731: unresolved resource identity `o_ins`"], "file": "src/flb_input_chunk.c", "function": "input_chunk_output_size_add", "move": "Unknown -> Safe", "occurrence": 1, "tip_declarations": ["flb_log_check", "flb_log_print", "flb_output_name"], "tip_summaries": []}
+{"moves": {"Unknown -> Safe": 2}}

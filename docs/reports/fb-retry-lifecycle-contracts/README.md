@@ -8,7 +8,9 @@ document. Commits: probe `827cac0ce` (the census at base),
 [prediction](PREDICTION.md) `3fcd222ed`, semantic `a84fa54c7` (the module,
 fixtures, synced inventory lock and pin), `45a17a70c` (the module selected in
 `cycle19-resource-contracts.json`; the measured tip), census re-run
-`24e49c1b6`.
+`24e49c1b6`, report `43071a9c8`, and `f9661e685` (the multi-module guard's
+registration of `flb_output_name` beside its null-deref check; it changes no
+analysis, so the measured tip stands).
 
 ## Headline
 
@@ -74,6 +76,11 @@ units whose own rows are Safe but publish no summary a caller reads
 (checked structurally by rule 13a in `flb_output.c`) and three bodies outside
 the selection (`flb_output_thread_instance_get`, `flb_metrics_sum`,
 `flb_input_name`), which stay declared assumptions at every call.
+`flb_output_name` is also declared in `fluent_bit/null_deref.qv` (a bounds
+view); the pair is registered as `null_deref_beside` in
+`qcore_contract::contract_views::REGISTERED_RELATIONS`, as
+`flb_input_chunk_get_name`'s is, so the multi-module guard checks the two
+agree on signature.
 
 The (b) and (c) owners, with lifecycle rows / leaves at the tip:
 W45-FB-BACKLOG-REACHABLE-RELEASE (5 callees: `flb_sched_request_invalidate`,
@@ -207,7 +214,20 @@ after a later call naming the instance (`metrics_append_input` 96,
 `flb_storage_input_create` now reaches three `cio_stream_*` calls a nested
 `flb_input_name` masked.
 
-**Opt-in current** — OPTIN_PLACEHOLDER
+**Opt-in current** ([artifacts/current-totals-base.json](artifacts/current-totals-base.json),
+[artifacts/current-totals-tip.json](artifacts/current-totals-tip.json),
+[artifacts/current-moved.jsonl](artifacts/current-moved.jsonl),
+[artifacts/current-changed.txt](artifacts/current-changed.txt); runs
+`private/m/run-{base,tip2}`, both exit 0, about 58 minutes each; reports
+`44da0b7b…`, `8d5b8e0d…`): 181 units, of the five lifecycle units none (its
+only Fluent Bit `src/` unit is `flb_input_chunk.c`). **1205 / 2 / 3590 / 7 →
+1209 / 2 / 3586 / 7**: the same two `flb_input_chunk.c` functions,
+`flb_input_chunk_output_size_subtract` and `input_chunk_output_size_add`,
+Unknown → Safe in both configurations, justified as on the system route;
+leaf trades in nine more `flb_input_chunk.c` functions, as on the system
+route. These two runs were not taken through `scripts/gate_slot.py` (an
+oversight); they ran beside the sibling card's slotted audits and this card's
+first gate attempt on a 32-CPU, 121 GiB host.
 
 ## 5. Prediction against measured
 
@@ -219,7 +239,9 @@ leaf; these three rows reached them through a nested call or a result
 identity instead. The predicted leaf clearances happened; the 299
 `interior-borrow-ended` leaves were not predicted (the prediction allowed
 for "a result pointer's identity, an access through it", not ended borrows).
-Every move is justified above.
+On the opt-in route the prediction said no status move; measured 4 (the
+two `flb_input_chunk.c` functions, both configurations), unpredicted for the
+same reason. Every move is justified above.
 
 ## 6. Gate
 
@@ -243,8 +265,14 @@ GATE_PLACEHOLDER
   `providers/quirin-provider-fluent-bit/contract-inventory.lock` and
   `contracts.lock` (regenerate with `providers/contracts.py sync` and re-pin
   on a conflict, never by hand), and the tail of
-  `crates/qcore-c-gateway/tests/retry_lifetime.rs` (a new module). No gateway
-  hook point is touched.
+  `crates/qcore-c-gateway/tests/retry_lifetime.rs` (a new module); one
+  `REGISTERED_RELATIONS` entry in `crates/qcore-contract/src/contract_views.rs`
+  (after `flb_input_chunk_get_name`'s) with the pinned relation counts in
+  `crates/qcore-contract/tests/contract_views.rs` and
+  `compiler/tests/contract_view_census.rs` (27 → 28; a sibling adding a
+  relation adds one more); `docs/reports/INDEX.md` and `README.md`
+  (regenerate with `scripts/build_docs_index.py`). No gateway hook point is
+  touched.
 * **Follow-ups** ([integration-amendments.json](integration-amendments.json)):
   registered FB-RETRY-LIFECYCLE-BODY-BLOCKERS, FB-RETURN-LINKED-ELEMENT and
   FB-RETRY-CONTRACT-FIXTURES;

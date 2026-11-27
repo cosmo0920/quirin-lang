@@ -618,6 +618,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [fb-quant-contract-census](archive/contracts-and-premises/fb-quant-contract-census/README.md) | FB-QUANT-CONTRACT-CENSUS |
 
+| [fb-retry-lifecycle-contracts](fb-retry-lifecycle-contracts/README.md) | FB-RETRY-LIFECYCLE-CONTRACTS: the retry-lifecycle contracts, written down |
+
 | [fb-retry-or6-element-identity](fb-retry-or6-element-identity/README.md) | FB-RETRY-OR6-ELEMENT-IDENTITY: a formal's link obligation, carried to the caller |
 
 | [fb-system-audit-cards](archive/contracts-and-premises/fb-system-audit-cards/README.md) | Fluent Bit system audit investigation cards |
