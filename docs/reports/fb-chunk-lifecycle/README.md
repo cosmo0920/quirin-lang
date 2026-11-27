@@ -126,6 +126,17 @@ Pinned routes (`quirin-audit measure --declared`) cannot run on this host:
 there are no `build/cycle19` inputs or baselines. That route was not run,
 and nothing about it is claimed here.
 
+## Gate
+
+`python3 scripts/gate_scope.py --base 76c1f9cfc --out private/gate` (full:
+the diff reaches `qcore-c-gateway`), second run at `4f1088a67`
+([gate.json](gate.json)): submodules, fmt, clippy and both reevaluation
+probes exit 0; Rust 725 units, 10,368 passed, 0 failed, 24 ignored; Lean
+532 audits, 0; Python 807 tests, 0. The first run (`private/gate-run1`) had
+four failures, all this card's own, and all fixed (see Probe and pins):
+three Rust pins and `test_gate_scope_census`. The LLP64 fixture scan exits
+0. The provider gate was not run, because `providers/` did not change.
+
 ## Chunk-lifecycle census (step 1)
 
 Script `scripts/lifecycle_census.py` over both system-slice reports
