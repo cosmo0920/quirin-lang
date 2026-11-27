@@ -9,8 +9,10 @@ document. Commits: probe `827cac0ce` (the census at base),
 fixtures, synced inventory lock and pin), `45a17a70c` (the module selected in
 `cycle19-resource-contracts.json`; the measured tip), census re-run
 `24e49c1b6`, report `43071a9c8`, and `f9661e685` (the multi-module guard's
-registration of `flb_output_name` beside its null-deref check; it changes no
-analysis, so the measured tip stands).
+registration of `flb_output_name` beside its null-deref check), `76ff1cb90`
+(opt-in artifacts, report index) and `f04e3e24f` (the provider crate's
+embedded index lists the module); none changes an analysis input, so the
+measured tip stands.
 
 ## Headline
 
@@ -225,8 +227,8 @@ only Fluent Bit `src/` unit is `flb_input_chunk.c`). **1205 / 2 / 3590 / 7 →
 `flb_input_chunk_output_size_subtract` and `input_chunk_output_size_add`,
 Unknown → Safe in both configurations, justified as on the system route;
 leaf trades in nine more `flb_input_chunk.c` functions, as on the system
-route. These two runs were not taken through `scripts/gate_slot.py` (an
-oversight); they ran beside the sibling card's slotted audits and this card's
+route. These runs, and the three system runs (one discarded), were not taken through
+`scripts/gate_slot.py` (an oversight); they ran beside the sibling card's slotted audits and this card's
 first gate attempt on a 32-CPU, 121 GiB host.
 
 ## 5. Prediction against measured
@@ -245,7 +247,37 @@ same reason. Every move is justified above.
 
 ## 6. Gate
 
-GATE_PLACEHOLDER
+`python3 scripts/gate_scope.py --base 56584db0b --out private/gate`
+(through `private/toolchain/env.sh`), on `76ff1cb90`; record
+[gate.json](gate.json), logs `private/gate/`. Lean: none selected.
+
+| Step | Exit and counts |
+|---|---|
+| submodules, fmt, clippy | 0, 0, 0 |
+| Rust suite (scoped) | 0: 725 units, 770 summaries; **10396 passed, 0 failed**, 24 ignored |
+| `reevaluation_probe`, `reevaluation_followup` | 0, 0 |
+| Python suite | 0: 814 tests |
+| provider package build, verify-all, verify | 0, 0, 0 |
+| provider `cargo test` | **101**: 57 passed, 1 failed, `quirin-provider-fluent-bit` `tests::index_is_exactly_the_contract_tree` (this card's: the crate embeds its contract tree by hand and the new module had no entry). Fixed in `f04e3e24f`; the crate's tests rerun: 0, 4 passed (`private/logs/provider-fb-test.log`); provider fmt and the crate's clippy rerun 0 |
+| provider fmt, clippy | 0, 0 |
+
+A first attempt on `24e49c1b6` (stopped after its Python step;
+`private/gate-attempt1/`) failed `contract_view_census` and `contract_views`
+(the multi-module guard; fixed in `f9661e685`) and the Python suite's report
+index check (fixed by `scripts/build_docs_index.py` in `76ff1cb90`); every
+other step it reached exited 0. Provider packages rebuilt and verified after
+`f04e3e24f` (`providers/package.py build` in a build slot, then `gate_scope.py --verify-packages`): 0, 0 (`private/logs/pkg-*.log`).
+
+Also run: `quirin-audit pin --check` for the crate at 046accf6, exit 1 at base
+and at the tip with the same three pre-existing not-in-force entries (83 → 91
+recorded); `pin --verify-contracts` 0 (`private/pin/`);
+`providers/contracts.py sync` 0 (`private/logs/sync1.log`); the LLP64 scan
+over `git diff --name-only 56584db0b...HEAD -- '*tests*'` 0 (1 file, 0 found);
+`scripts/check_report_hygiene.py` 0; `scripts/apply_amendments.py
+integration-amendments.json --check --profiles-base 56584db0b` 0;
+`gen_rule_docs.py` and `gen_lean_roots.py` wrote nothing. No base failure was
+seen. The opt-in current and system runs ran outside
+`gate_slot.py` (section 4).
 
 ## 7. Hand-offs, conflicts and follow-ups
 
