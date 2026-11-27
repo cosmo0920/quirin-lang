@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 10,
-  "named_followups": 1135
+  "named_followups": 1142
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -7469,7 +7469,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "full landing gate: every step exits 0 except the Python suite's stale-matrix check, cleared by regenerating the matrix from this record; provider gate not selected (no providers/ change), provider count carried from the integrate/r74 landing batch A gate",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/leri-held-exit-class-precondition/integration/gate.json)"
+  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
  },
  "named_followups": [
   {
@@ -15341,6 +15341,55 @@
    "why": "Card FB-BACKLOG-ACCOUNTING: sb.c:317-324 stores cio_chunk_get_real_size's ssize_t in a size_t, so its '< 0' test is always false and the -1 arm (unknown store type, cio_chunk.c:360) would charge SIZE_MAX (premise P-LEDGER-STORE-TYPE); sb_release_output_queue_space (sb.c:549-575) compares size_t released_space with ssize_t *required_space, correct only for a positive requirement, which its caller establishes (flb_input_chunk.c:1127). Recorded readings, not defect claims. DISCHARGE: checked readings of both conversions (store-type premise and caller precondition) against the pinned bodies.",
    "source": "docs/reports/fb-backlog-accounting/README.md",
    "recorded_by": "FB-BACKLOG-ACCOUNTING"
+  },
+  {
+   "id": "G1-CLOSURE-FORMULAS",
+   "title": "Queued card: G1 closure formulas supplementing P0-G1-CLOSURE-RECORD (16 checked formulas over the 27-row case table, two firewall controls)",
+   "why": "Queued card, in flight (recorded by the integrator 2026-11-27 so the queue is on main). Running in another session; it supplements P0-G1-CLOSURE-RECORD's G1 evaluation with 16 checked formulas over the 27-row case table and two firewall controls, and registers four follow-ups (G1-EXCLUDED-CAPABILITIES-WITHOUT-CHECKER, G1-EXCLUDED-EMPTY-SCOPE-ARGUMENT, G1-WM-CERTIFICATE-MODEL-IDENTITY, G1-WM-MIXED-SIZE-ROUTE-CONTROL), recorded here ahead of its landing. DISCHARGE: the card lands with its full landing gate; its amendments retire this entry and amend (not register) the four follow-ups.",
+   "source": "docs/reports/p0-g1-closure-record/README.md",
+   "recorded_by": "INTEGRATOR-QUEUE"
+  },
+  {
+   "id": "G1-EXCLUDED-CAPABILITIES-WITHOUT-CHECKER",
+   "title": "G1 exclusion: capabilities with no checker (from G1-CLOSURE-FORMULAS)",
+   "why": "Follow-up announced by queued card G1-CLOSURE-FORMULAS, recorded ahead of its landing. DISCHARGE: as stated in G1-CLOSURE-FORMULAS's report, which amends this entry when it lands.",
+   "source": "docs/reports/p0-g1-closure-record/README.md",
+   "recorded_by": "INTEGRATOR-QUEUE"
+  },
+  {
+   "id": "G1-EXCLUDED-EMPTY-SCOPE-ARGUMENT",
+   "title": "G1 exclusion: the empty-scope argument (from G1-CLOSURE-FORMULAS)",
+   "why": "Follow-up announced by queued card G1-CLOSURE-FORMULAS, recorded ahead of its landing. DISCHARGE: as stated in G1-CLOSURE-FORMULAS's report, which amends this entry when it lands.",
+   "source": "docs/reports/p0-g1-closure-record/README.md",
+   "recorded_by": "INTEGRATOR-QUEUE"
+  },
+  {
+   "id": "G1-WM-CERTIFICATE-MODEL-IDENTITY",
+   "title": "G1 weak memory: certificate model identity (from G1-CLOSURE-FORMULAS)",
+   "why": "Follow-up announced by queued card G1-CLOSURE-FORMULAS, recorded ahead of its landing. DISCHARGE: as stated in G1-CLOSURE-FORMULAS's report, which amends this entry when it lands.",
+   "source": "docs/reports/p0-g1-closure-record/README.md",
+   "recorded_by": "INTEGRATOR-QUEUE"
+  },
+  {
+   "id": "G1-WM-MIXED-SIZE-ROUTE-CONTROL",
+   "title": "G1 weak memory: mixed-size route control (from G1-CLOSURE-FORMULAS)",
+   "why": "Follow-up announced by queued card G1-CLOSURE-FORMULAS, recorded ahead of its landing. DISCHARGE: as stated in G1-CLOSURE-FORMULAS's report, which amends this entry when it lands.",
+   "source": "docs/reports/p0-g1-closure-record/README.md",
+   "recorded_by": "INTEGRATOR-QUEUE"
+  },
+  {
+   "id": "FB-RETRY-LIFECYCLE-CONTRACTS",
+   "title": "Queued card: census and contracts for the Fluent Bit retry lifecycle (task users, singleplex output, route queries, time, retry teardown)",
+   "why": "Queued card, in flight (recorded by the integrator 2026-11-27 so the queue is on main). Base 56584db0b. Writes down the tested and observed retry-lifecycle contracts as a census (CENSUS.md, census.json) and implements the statable ones in task_users.qv, output_singleplex.qv, task_route_queries.qv, time.qv and the retry entries of teardown_destroy.qv; gateway rule id 93 is reserved for it if needed. Sibling FB-CHUNK-LIFECYCLE-CONTRACTS is landing as r84. DISCHARGE: the card lands with its full landing gate and its amendments retire this entry.",
+   "source": "docs/plans/fluent-bit-system-coverage/README.md",
+   "recorded_by": "INTEGRATOR-QUEUE"
+  },
+  {
+   "id": "LINK-RECORD-KILL-POLICY-SCALAR-CALLS",
+   "title": "Queued card: refine rule 46's link-record kill policy for scalar calls (flb_errno() kills the record)",
+   "why": "Queued card, in flight (recorded by the integrator 2026-11-27 so the queue is on main). Base fb4adb697; follow-up of LERI-HELD-FORMAL-LINK-OBLIGATION (r83), where no Fluent Bit row moved because a scalar call such as flb_errno() kills the link record. Refines rule 46's kill policy in place (no new rule id), with Lean parity. DISCHARGE: the card lands with its full landing gate and its amendments retire this entry.",
+   "source": "docs/reports/leri-held-exit-class-precondition/README.md",
+   "recorded_by": "INTEGRATOR-QUEUE"
   }
  ],
  "updated": "Completed plugin premise integration; exact hand-maintained union retains810followups, borrowed measured-source8419Rust/354Lean/freshcard133provider, exact source equivalence checked; authoritative root committed-matrix Python confirmation in integration receipt. CMetrics map/opts API model specifications added at the explicit user request. Eight declared-model API contracts remain outside interpreted views, with CMT-MAP-OPTS-CONTRACT-ADOPTION and CMT-LABELED-HASH-ZERO-STATIC-STORAGE Open. No trusted API coverage is claimed; the source gate is recorded by this card alongside its separate initializer native checkpoint. W48-CMT-TRACKED-INTERIOR-SELF-INIT implements rule 36b's checked initializer effect transport for an exact live owned root or embedded record, retaining actual self writes, invalidating aliased member facts and preserving resource obligations; nondefault custody frames refuse and no ordinary summary is exported. The canonical CFL intrusive_list.qv declares matching audit preconditions/effects; two CMetrics .qv modules add six map and two opts lifecycle models, including transitive ownership, partial failure, borrowed results and uncleared cleanup fields. All remain outside interpreted views; checked API adoption and labeled zero-hash storage accounting have named Open follow-ups. Fresh BASE/planner precedes prediction f18d96065 and implementation; the later contract amendment 08da23123 precedes .qv edits. Native corpus BASE/TIP Safe/Unknown/Pending/provisional-Unsafe: 1009 / 3816 / 0 / 9 to 1011 / 3814 / 0 / 9; full system/slice, 5781 NULL dictionaries and runtime projections are compared, 241 semantic leaves accounted, zero unexplained leaves and no prior Safe loss. Gate 8654 Rust / 370 Lean / 374 Python, provider 133 Rust / 25 Python and all five package verifies pass. The actual deep source reader uses 328 KiB below 1 MiB. Full getter closure remains Open; W48-CMT-SELF-INIT-DISJOINT-FRAMES tracks the next bounded frame extension, and W48-EXACT-RETURN-WITNESS-PRECISION is unchanged. Native evidence is isolated to measured e92d8aef35a8bd14550e90219d19a56eb3b196e7; later source gate 2d0d85299b830aa24d7f200d63a308653582363f validates the added declared API models separately; see docs/reports/w48-cmt-tracked-interior-self-init/README.md."
