@@ -1,0 +1,90 @@
+{
+ "schema": "quirin-amendments/2",
+ "card": "FB-BACKLOG-ACCOUNTING",
+ "base": "76c1f9cfc",
+ "measured_tip": "8ab7477c3",
+ "increment_paragraph": "**FB-BACKLOG-ACCOUNTING (Fluent Bit P1.2, gateway rule 92).** A census (docs/reports/fb-backlog-accounting/census.json) classifies every backlog/input byte and count ledger site at Fluent Bit 046accf6 as saturating transition, strict bound, batch overshoot, advisory limit or snapshot, with the inequality read from the C: flb_input_chunk_output_would_exceed_limit admits iff fs + bl + c <= T, with every subtraction guarded; cb_queue_chunks overshoots storage.backlog.mem_limit by less than queues * largest chunk; mem_buf_limit and max_chunks_up (bypassed by cio_chunk_up_force) are advisory. Only ChunkIO's unit counters are stated by a contract. The probe pins that the custody gateway reads every ledger update, wrapping or not, as custody-neutral (Safe), so accounting cannot move a custody verdict. Rule 92 (ledger_transition.rs, one pub mod line in the crate root) is a typed-source consumer with its own node admission. It certifies each write to a named unsigned ledger as a guarded saturating subtraction or addition, or one of their two clamps, optionally paired one-to-one per path with mk_list_add/mk_list_del. It refuses a bare wrapping update, any other guard or clamp shape, a store or call between guard and update, a missing or doubled update and any scan loop. Fixtures reproduce flb_input_chunk.c:66-92 and sb.c:224-290 with the flb_warn name argument replaced by a literal, because route T refuses the pinned unsequenced argument lists, and with the removal loop cut to its matching iteration; the mutation controls refuse. Lean: QCore.BacklogLedger (33 audited theorems: no wrap; decision table; the ledger = linked-charges invariant across charge, discharge, repeated removal, residency, partial fan-out and rollback, with clamps unreachable under it; missing and doubled discharge break it or are hidden by the clamp; the admission inequality; the batch bound; the signed-delta magnitude). Opt-in current --monkey-linked, base 76c1f9cfc against tip 8ab7477c3: no moved row, 4,804 function rows and 181 unit statuses identical after blanking evidence_version, which carries the checkout HEAD. Scoped gate (full) on 46eb008dc: exit 0; Rust 10,373/0/24; 532 Lean audits; Python 807. An earlier attempt failed only test_gate_scope_census's 90% read-census floor on the card's new test binary, so the tests moved into the crate's unit tests (GATE-SCOPE-READ-CENSUS-FLOOR). No provider contract changed and the pinned routes cannot run on this host. Follow-ups: FB-LEDGER-LOG-ARGUMENT-ORDER, -LOOP-SITES, -RECOMPUTED-CHARGE, -ROUTE-WIRING, -ADVISORY-LIMITS, -SIGNEDNESS-SITES.",
+ "status_edits": [
+  {
+   "section": "## Coverage by area",
+   "old": "| Loop measures and list-length bounds | Facts beside custody, never verdicts: a checked counted-loop measure or a named refusal (rule 44); 17 of the system slice's 87 list-length loops carry a bound under a declared list-finiteness premise (rule 48) | [Gateway 44](agents/gateway.md#constraint-44), [48](agents/gateway.md#constraint-48) |",
+   "new": "| Loop measures, list-length bounds and ledger transitions | Facts beside custody, never verdicts: a checked counted-loop measure or a named refusal (rule 44); 17 of the system slice's 87 list-length loops carry a bound under a declared list-finiteness premise (rule 48); a byte-ledger write is certified only as a guarded saturating transition paired with its list operation, otherwise refused (rule 92), which no route reports yet and whose pinned Fluent Bit bodies route T still refuses | [Gateway 44](agents/gateway.md#constraint-44), [48](agents/gateway.md#constraint-48), [92](agents/gateway.md#constraint-92) |"
+  }
+ ],
+ "ledger": [
+  {
+   "id": "FB-PLAN-CARDS-UNTRACKED",
+   "operation": "amend",
+   "text": "Card FB-BACKLOG-ACCOUNTING landed P1.2's first slice (ledger census, gateway rule 92, QCore.BacklogLedger); its remainder is tracked by FB-LEDGER-LOG-ARGUMENT-ORDER, FB-LEDGER-LOOP-SITES, FB-LEDGER-RECOMPUTED-CHARGE, FB-LEDGER-ROUTE-WIRING, FB-LEDGER-ADVISORY-LIMITS and FB-LEDGER-SIGNEDNESS-SITES; the plan's P1.2 row still reads open (prospective) and awaits the integrator's plan update.",
+   "source": "docs/reports/fb-backlog-accounting/README.md"
+  },
+  {
+   "id": "W45-FB-BACKLOG-PUBLICATION-BLOCKED",
+   "operation": "amend",
+   "text": "Card FB-BACKLOG-ACCOUNTING reads OB-8's arithmetic separately: rule 92 certifies sb.c's charge and discharge statements as guarded saturating transitions paired with mk_list_add/mk_list_del (on reproductions, see FB-LEDGER-LOG-ARGUMENT-ORDER); it is not a custody fact, so this custody leg and its indirect-access refusal are unchanged.",
+   "source": "docs/reports/fb-backlog-accounting/README.md"
+  },
+  {
+   "id": "W46-FLUENT-ACCOUNTING-LOG-CALLBACK-EFFECT",
+   "operation": "append",
+   "text": "Card FB-BACKLOG-ACCOUNTING: in both helpers the log call lies only on the clamp arm; rule 92 refuses any call between a ledger guard and its update, so the log path cannot change a certified update's operand, but whether it writes the ledger itself stays premise P-LEDGER-CALLEES.",
+   "source": "docs/reports/fb-backlog-accounting/README.md"
+  },
+  {
+   "id": "FB-LEDGER-LOG-ARGUMENT-ORDER",
+   "operation": "register",
+   "title": "Rule 92 certifies the Fluent Bit ledger statements only on reproductions: route T refuses the pinned flb_warn argument lists",
+   "text": "Card FB-BACKLOG-ACCOUNTING: flb_input_chunk.c:70-72 and sb.c:229-233, 278-282 pass flb_output_name(...) beside unsequenced field reads in flb_log_print's arguments; route T refuses an opaque call among unsequenced operands ('unsequenced call/read operands require an explicit ordering model') before rule 92 reads the body, so the certified fixtures replace that argument by a literal and the pinned bodies stay Unknown for the ledger property. DISCHARGE: T admits a call whose result feeds only a variadic logging call under a stated read-only premise for flb_output_name (or an ordering model), and rule 92 certifies the pinned bodies, with a test that pins them.",
+   "source": "docs/reports/fb-backlog-accounting/README.md",
+   "recorded_by": "FB-BACKLOG-ACCOUNTING"
+  },
+  {
+   "id": "FB-LEDGER-LOOP-SITES",
+   "operation": "register",
+   "title": "The backlog discharge sits inside mk_list_foreach_safe, which route T does not read",
+   "text": "Card FB-BACKLOG-ACCOUNTING: sb_remove_chunk_from_segregated_backlog's discharge (sb.c:226-238) is in a list iteration with break; route T reads only scan loops, so rule 92 refuses any loop and certifies the discharge only as the matching iteration cut to a loop-free function. DISCHARGE: rule 92 reads the iteration body (route T region import or the gateway's rule 5l list iteration) with pairing per iteration and the break's at-most-once, tested on the pinned function.",
+   "source": "docs/reports/fb-backlog-accounting/README.md",
+   "recorded_by": "FB-BACKLOG-ACCOUNTING"
+  },
+  {
+   "id": "FB-LEDGER-RECOMPUTED-CHARGE",
+   "operation": "register",
+   "title": "fs_chunks_size discharges recompute the chunk's real size instead of subtracting what was charged",
+   "text": "Card FB-BACKLOG-ACCOUNTING: flb_input_chunk.c's discharges (:620, :838, :2661, :2747) subtract flb_input_chunk_get_real_size at removal, while charges are the signed diffs passed to flb_input_chunk_update_output_instances (:1777, :3590, :3891); conservation (ledger = sum of routed chunks' charges) holds only if those diffs sum to the real size at removal (premise P-LEDGER-RECOMPUTED-CHARGE), and the saturating clamps absorb any drift. sb.c's backlog ledger stores the charged size and has no such gap. DISCHARGE: a checked proof that the diffs telescope to the real size, or a per-chunk charged amount, with a native control.",
+   "source": "docs/reports/fb-backlog-accounting/README.md",
+   "recorded_by": "FB-BACKLOG-ACCOUNTING"
+  },
+  {
+   "id": "FB-LEDGER-ROUTE-WIRING",
+   "operation": "register",
+   "title": "No audit route runs rule 92 or reports a ledger reading",
+   "text": "Card FB-BACKLOG-ACCOUNTING added the ledger checker as a library consumer exercised by tests only; quirin-audit current, the profile routes and the custody gateway do not call it, so no report carries ledger readings or refusals. DISCHARGE: a declared ledger list (field, type maximum, pairing) and a route that runs rule 92 over the declared sites and reports each reading beside, never inside, custody verdicts, with an identity run showing no custody row moves.",
+   "source": "docs/reports/fb-backlog-accounting/README.md",
+   "recorded_by": "FB-BACKLOG-ACCOUNTING"
+  },
+  {
+   "id": "FB-LEDGER-ADVISORY-LIMITS",
+   "operation": "register",
+   "title": "Fluent Bit's resident-byte and chunks-up limits are advisory or batch limits by design; which bound to certify is a human choice",
+   "text": "Card FB-BACKLOG-ACCOUNTING's census: mem_buf_limit pauses only after mem_chunks_size >= mem_buf_limit (flb_input_chunk.c:2961, after the write); max_chunks_up is strict in _cio_file_up(enforced) but cio_chunk_up_force skips it (used by sb.c:412, 633); storage.backlog.mem_limit is a batch test (sb.c:605, 611; overshoot < queues * largest chunk, QCore.BacklogLedger.batch_overshoot_bound). The card certifies no global resident-byte bound. DISCHARGE: the user chooses the inequality to certify (for example limit + one write, or limit + queues * largest chunk) and a card checks it against the pinned bodies.",
+   "source": "docs/reports/fb-backlog-accounting/README.md",
+   "recorded_by": "FB-BACKLOG-ACCOUNTING"
+  },
+  {
+   "id": "GATE-SCOPE-READ-CENSUS-FLOOR",
+   "operation": "register",
+   "title": "test_gate_scope_census fails once one more root test binary is added: the read census covers 703 of 781 units at r77",
+   "text": "Card FB-BACKLOG-ACCOUNTING's first scoped gate (base 76c1f9cfc) failed only test_the_census_covers_the_suite: adding one integration test binary made 703 observed units of 782, under the 0.9 floor (703.8); the base passes by 0.1 unit. The card moved its tests into the crate's unit tests instead. Every card that adds a root test binary will hit it. DISCHARGE: regenerate docs/reports/gate-scope-precise-selection/read-census.json (a new census run) or replace the fixed ratio with a check that names unobserved units, with the Python suite green.",
+   "source": "docs/reports/fb-backlog-accounting/README.md",
+   "recorded_by": "FB-BACKLOG-ACCOUNTING"
+  },
+  {
+   "id": "FB-LEDGER-SIGNEDNESS-SITES",
+   "operation": "register",
+   "title": "Two backlog signedness sites rest on premises: a dead size_t < 0 test and a size_t/ssize_t eviction requirement",
+   "text": "Card FB-BACKLOG-ACCOUNTING: sb.c:317-324 stores cio_chunk_get_real_size's ssize_t in a size_t, so its '< 0' test is always false and the -1 arm (unknown store type, cio_chunk.c:360) would charge SIZE_MAX (premise P-LEDGER-STORE-TYPE); sb_release_output_queue_space (sb.c:549-575) compares size_t released_space with ssize_t *required_space, correct only for a positive requirement, which its caller establishes (flb_input_chunk.c:1127). Recorded readings, not defect claims. DISCHARGE: checked readings of both conversions (store-type premise and caller precondition) against the pinned bodies.",
+   "source": "docs/reports/fb-backlog-accounting/README.md",
+   "recorded_by": "FB-BACKLOG-ACCOUNTING"
+  }
+ ]
+}
