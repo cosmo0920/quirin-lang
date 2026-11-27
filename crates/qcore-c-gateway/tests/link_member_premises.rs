@@ -730,19 +730,21 @@ mod carried_link_obligation {
                 AnalysisStatus::Unknown,
                 None,
             ),
-            // Bodies whose summary may not state the precondition.
             // `flb_output_task_queue_enqueue`'s own failure path reports
-            // `flb_errno()` before the destroyer: a call with a nested call
-            // and a non-name actual (`*__errno_location()`), which rule 46's
-            // kill policy reads as reaching every object, so the carried
-            // record is gone at the destroyer (the measured row's leaf).
+            // `flb_errno()` before the destroyer. Card
+            // LINK-RECORD-KILL-POLICY-SCALAR-CALLS: every actual of that
+            // contracted call denotes no object (`*__errno_location()` is a
+            // scalar dereference of a neutral nested call, the others are
+            // literals), so the carried record survives it (Unknown at
+            // `fb4adb697`).
             (
                 "errno-before-the-destroyer",
                 "static int enq(struct queue *q, struct item *r) { struct holder *h = q_try_alloc(); if (!h) { q_note(*q_errloc(), \"f.c\", 1); if (r) { item_destroy(r); } return -1; } h->r = r; mk_list_add(&h->_head, &q->pending); return 0; }".to_owned(),
                 "enq",
-                AnalysisStatus::Unknown,
-                Some(ENQ_HELD),
+                AnalysisStatus::Safe,
+                None,
             ),
+            // Bodies whose summary may not state the precondition.
             (
                 "frees-on-the-other-class",
                 "static int enq(struct queue *q, struct item *r) { struct holder *h = q_try_alloc(); if (!h) { item_destroy(r); return -1; } q_free(h); q_free(r); return 0; }".to_owned(),
@@ -787,34 +789,34 @@ mod carried_link_obligation {
         vec![
             // Scalar-only calls: every actual a literal, a predefined
             // identifier or an admitted dereference of a neutral nested
-            // call's scalar result.
+            // call's scalar result. All four Unknown at `fb4adb697`.
             (
                 "carried-errno-glibc-spelling",
                 enq("q_note((*q_errloc()), \"f.c\", 1);"),
                 "enq",
-                AnalysisStatus::Unknown,
-                Some(ENQ_HELD),
+                AnalysisStatus::Safe,
+                None,
             ),
             (
                 "carried-literals-only",
                 enq("q_note(0, \"f.c\", 12);"),
                 "enq",
-                AnalysisStatus::Unknown,
-                Some(ENQ_HELD),
+                AnalysisStatus::Safe,
+                None,
             ),
             (
                 "carried-predefined-identifier",
                 enq("q_note(0, __func__, 12);"),
                 "enq",
-                AnalysisStatus::Unknown,
-                Some(ENQ_HELD),
+                AnalysisStatus::Safe,
+                None,
             ),
             (
                 "held-errno-report",
                 held("q_note(*q_errloc(), \"f.c\", 1);"),
                 "subject",
-                AnalysisStatus::Unknown,
-                Some(HELD_NOT_INITIALISED),
+                AnalysisStatus::Safe,
+                None,
             ),
             // Near misses: a pointer may reach the object, or the actual is
             // not decided scalar.

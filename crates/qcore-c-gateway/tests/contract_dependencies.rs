@@ -123,6 +123,7 @@ fn call(callee: &str) -> LegacyCfgNode {
             nested: Vec::new(),
             container: None,
             retention: None,
+            scalar_actuals: Vec::new(),
         },
         successors: Vec::new(),
         line: 1,

@@ -700,6 +700,14 @@ pub enum LegacyInstruction {
         /// its borrowed reading ([`retained_by_route`]). `None` for every
         /// other call.
         retention: Option<Box<retained_by_route::Operands>>,
+        /// Card **LINK-RECORD-KILL-POLICY-SCALAR-CALLS** (gateway rule 46's
+        /// kill policy): the positions whose actual denotes no object — a
+        /// literal or predefined identifier (premise T6), or an admitted
+        /// dereference of a neutral nested call's scalar result (premises
+        /// N4-D and N10). Read only by `link_member::reach`; empty for
+        /// every call that has none.
+        #[serde(default, skip_serializing_if = "Vec::is_empty")]
+        scalar_actuals: Vec<usize>,
     },
     BranchOnNull {
         source: String,

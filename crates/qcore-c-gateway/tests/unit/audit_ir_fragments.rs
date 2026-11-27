@@ -405,6 +405,7 @@ fn full_cfg_round_trip_retains_lifetime_and_refused_escape_metadata() {
         nested: vec![],
         container: None,
         retention: Some(Box::new(retention)),
+        scalar_actuals: vec![],
     };
     cfg.publications.line_reads.insert(
         7,
