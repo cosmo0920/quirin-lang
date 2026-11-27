@@ -371,19 +371,29 @@ Rebuild it whenever the packaging format or a provider changes: `verify` refuses
 a package whose executable lacks the embedded manifest template and contract
 envelopes, which is what a package built by an older `package.py` looks like.
 The builder refuses to overwrite an existing output directory, so move the stale
-one aside first. Set `FLUENT_BIT` to your Fluent Bit checkout; `../fluent-bit`
-holds only when it is a sibling of this repository:
+one aside first. Set `FLUENT_BIT` to your Fluent Bit checkout (`../fluent-bit`
+holds only when it is a sibling of this repository) and `CLANG`/`CLANGXX` to the
+Clang C and C++ compilers the audit is configured with:
 
 ```sh
-mkdir -p build/cycle19/reports
 python3 -B providers/package.py verify build/cycle19/provider-packages/qcore.chunkio
 QCORE_SOURCE_CONTRACTS="$PWD/contract/profiles/fluent-bit/source-contracts.json" \
-  cargo run --quiet -p qcore-audit -- current \
-  --checkout "$FLUENT_BIT" --profile-directory contract/profiles/fluent-bit \
-  --monkey-database build/cycle19/monkey-build/compile_commands.json \
-  --monkey-source-report build/cycle19/reports/source-effect-source.json \
-  --report build/cycle19/reports/source-effect-diagnostics.json
+  cargo run --release -p qcore-audit -- prepare --fluent-bit "$FLUENT_BIT" \
+  --clang "$CLANG" --clangxx "$CLANGXX" --jobs 8 --run
 ```
+
+`prepare --run` builds Fluent Bit and Monkey with the explicit Clang compilers
+into `build/cycle19/clang/<commit>/`, then runs `current` over them with both
+compile databases and `--monkey-linked`, so Monkey is analysed as Fluent Bit
+links it. `current` refuses a compile database whose compiler is not the
+configured Clang (GCC equivalence is unproven), so a database prepared with the
+system `cc` must be prepared again into a fresh output. All `prepare` flags go
+before `--`; arguments after `--` are forwarded to `current` and must not repeat
+the ones `prepare` already sets (`--checkout`, `--profile-directory`,
+`--compile-database`, `--monkey-database`, `--monkey-linked`,
+`--monkey-source-report`, `--report`, `--jobs`), which `current` refuses as given
+twice. The reports land in the output's `reports/` directory. To reuse an earlier
+preparation made with `--output DIR`, pass the same `--output DIR`.
 
 The configuration maps sealed model-library identities to provider IDs and policy
 paths. Relative paths resolve from its directory. `QCORE_CHUNKIO_PACKAGE` remains
