@@ -893,15 +893,15 @@ mod carried_link_obligation {
                 "carried-sizeof-allocation-then-errno",
                 "static int enq(struct queue *q, struct item *r) { struct holder *h = q_try_alloc_n(sizeof(struct holder)); if (!h) { q_note((*q_errloc()), \"f.c\", 1); if (r) { item_destroy(r); } return -1; } h->r = r; mk_list_add(&h->_head, &q->pending); return 0; }".to_owned(),
                 "enq",
-                AnalysisStatus::Unknown,
-                Some(ENQ_HELD),
+                AnalysisStatus::Safe,
+                None,
             ),
             (
                 "held-sizeof-allocation",
                 held("struct holder *g = q_try_alloc_n(sizeof(struct holder)); if (!g) { item_destroy(e); return; } q_free(g);"),
                 "subject",
-                AnalysisStatus::Unknown,
-                Some(HELD_NOT_INITIALISED),
+                AnalysisStatus::Safe,
+                None,
             ),
             // Near misses: the size is an expression over a name.
             (

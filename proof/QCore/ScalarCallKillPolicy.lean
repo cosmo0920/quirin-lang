@@ -33,9 +33,9 @@ was gone before it.
 
 An actual now has one of three kinds: a **place** (the call may write the
 objects its root binding denotes), a **scalar** (a literal, a predefined
-identifier, or an admitted dereference of a neutral nested call's scalar
-result: it denotes no object), or **undecided** (anything else, which may
-carry a pointer to any object). A call is decided when no actual is
+identifier, an admitted dereference of a neutral nested call's scalar
+result, or a whole call-free `sizeof ( … )`: it denotes no object), or
+**undecided** (anything else, which may carry a pointer to any object). A call is decided when no actual is
 undecided and every nested call's actuals are places (`decided`); it then
 writes only the objects its places, its nested calls' places and its
 written place may denote (`reached`). The nested calls run first, so before
@@ -58,8 +58,8 @@ the scalar-only condition holds (`a_kill_is_removed_only_for_scalar_calls`).
 ## What this is not
 
 A proof that the reader classifies actuals correctly. That a literal,
-a predefined identifier and an admitted N4-D/N10 dereference denote no
-object (premises T6, N10), that a place's root binding over-approximates
+a predefined identifier, an admitted N4-D/N10 dereference and a whole
+call-free `sizeof` denote no object (premises T6, N10, C11 6.5.3.4p2), that a place's root binding over-approximates
 what it denotes, and that a contracted callee writes nothing it is not
 handed (the frame premise the old policy's contract-call arm already
 relied on: it kept the records of objects no actual denotes) are review

@@ -272,8 +272,8 @@ pub(crate) fn decided(actuals: &[Kind], nested: &[&[Kind]]) -> bool {
 /// literal or predefined identifier (premise T6; the reader spells a string
 /// literal as one identifier-shaped token, so such a position may carry a
 /// place that names no binding), or, at a position with no place, an
-/// admitted nested call's dereferenced result. Every other position keeps
-/// its reading.
+/// admitted nested call's dereferenced result, or a whole parenthesised
+/// `sizeof` ([`is_sizeof_actual`]). Every other position keeps its reading.
 pub(crate) fn scalar_actuals(
     raw: Option<&[&[&str]]>,
     arguments: &[Option<String>],
@@ -285,6 +285,7 @@ pub(crate) fn scalar_actuals(
         .filter(|(index, place)| {
             raw.and_then(|raw| raw.get(*index)).is_some_and(|actual| {
                 crate::variadic_nested::is_literal_or_predefined_actual(actual)
+                    || is_sizeof_actual(actual)
             }) || (place.is_none()
                 && nested
                     .iter()
@@ -292,6 +293,47 @@ pub(crate) fn scalar_actuals(
         })
         .map(|(index, _)| index)
         .collect()
+}
+
+/// An actual that is exactly `sizeof ( … )`: the operator applies to the
+/// whole parenthesised operand, which closes the actual, and the operand
+/// carries no call, assignment, increment or decrement. Its value is a
+/// `size_t` that denotes no object. The operand is not evaluated unless its
+/// type is variably modified (C11 6.5.3.4p2), and evaluating an operand with
+/// no call, assignment, increment or decrement writes no memory, so the
+/// actual writes nothing either way. `sizeof (T) + p`, `sizeof x` and every
+/// other spelling stay undecided.
+pub(crate) fn is_sizeof_actual(actual: &[&str]) -> bool {
+    let [first, open, operand @ .., close] = actual else {
+        return false;
+    };
+    if *first != "sizeof" || *open != "(" || *close != ")" || operand.is_empty() {
+        return false;
+    }
+    // The opening parenthesis must close only at the end of the actual.
+    let mut depth = 1usize;
+    for token in operand {
+        match *token {
+            "(" => depth += 1,
+            ")" => {
+                depth -= 1;
+                if depth == 0 {
+                    return false;
+                }
+            }
+            _ => {}
+        }
+    }
+    depth == 1
+        && !operand.contains(&"=")
+        && !operand
+            .windows(2)
+            .any(|pair| matches!(pair, ["+", "+"] | ["-", "-"]))
+        && !operand.windows(2).any(|pair| {
+            pair[1] == "("
+                && crate::typed_field_access::is_name(pair[0])
+                && !crate::legacy_c::TYPE_OPERATORS.contains(&pair[0])
+        })
 }
 
 /// A nested call's actuals: a place, or anything else.
@@ -526,6 +568,34 @@ pub(crate) const KILL_VECTORS: &[KillVector] = {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn only_a_whole_call_free_sizeof_is_scalar() {
+        let admitted: &[&[&str]] = &[
+            &["sizeof", "(", "struct", "flb_task_enqueued", ")"],
+            &["sizeof", "(", "*", "v", ")"],
+            &["sizeof", "(", "int", ")"],
+            &["sizeof", "(", "(", "char", "*", ")", "p", ")"],
+        ];
+        for actual in admitted {
+            assert!(is_sizeof_actual(actual), "{actual:?}");
+        }
+        let refused: &[&[&str]] = &[
+            &["sizeof", "x"],
+            &["sizeof", "(", "T", ")", "+", "p"],
+            &["(", "sizeof", "(", "T", ")", ")"],
+            &["sizeof", "(", "T", ")", "*", "(", "n", ")"],
+            &["sizeof", "(", "f", "(", ")", ")"],
+            &["sizeof", "(", "x", "=", "y", ")"],
+            &["sizeof", "(", "x", "+", "+", ")"],
+            &["sizeof", "(", "-", "-", "x", ")"],
+            &["sizeof", "(", ")"],
+            &["n"],
+        ];
+        for actual in refused {
+            assert!(!is_sizeof_actual(actual), "{actual:?}");
+        }
+    }
 
     #[test]
     fn the_kill_vectors_hold() {

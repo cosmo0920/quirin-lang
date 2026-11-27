@@ -11924,9 +11924,10 @@ that only when every arriving edge has it.
     the call's own effect its nested calls drop the facts of objects their
     place actuals may denote, or every fact when one of their actuals is
     not a place (`before_nested`)). A **scalar** actual denotes no object:
-    a literal or predefined identifier (premise T6), or an admitted
+    a literal or predefined identifier (premise T6), an admitted
     dereference of a neutral nested call's scalar result (premises N4-D and
-    N10), recorded at classification (`LegacyInstruction::ContractCall`'s
+    N10), or a whole `sizeof ( … )` whose operand carries no call,
+    assignment, increment or decrement (C11 6.5.3.4p2), recorded at classification (`LegacyInstruction::ContractCall`'s
     `scalar_actuals`); anything else that is not a place (a cast, an
     address, an expression, a scalar-typed name with no pointer binding, an
     undereferenced nested result, a nested actual read as data) is
