@@ -1,0 +1,253 @@
+{
+ "schema": "fb-chunk-lifecycle-contracts-gate-summary/1",
+ "source": "private/gate/gate.json (python3 scripts/gate_scope.py --base 56584db0b --out private/gate)",
+ "gate_json_sha256": "901432fca6272025cbc497cd6ddb16cbe95d8270d8998ad33134766f6a670769",
+ "base": "56584db0b467355a13109e7c3923979a74423bb7",
+ "head": "b8470dedb8d9e2c0b9384106fc32d4afd6ee5b99",
+ "ok": false,
+ "started": "20261127T101857Z",
+ "finished": "20261127T131537Z",
+ "uncommitted": [
+  "docs/reports/fb-chunk-lifecycle-contracts/README.md",
+  "docs/reports/fb-chunk-lifecycle-contracts/integration-amendments.json"
+ ],
+ "steps": [
+  {
+   "name": "submodules",
+   "exit": 0,
+   "seconds": 0.0,
+   "counts": {
+    "submodules": 1,
+    "not_checked_out_or_moved": []
+   },
+   "log": "private/gate/submodules.log"
+  },
+  {
+   "name": "fmt",
+   "exit": 1,
+   "seconds": 25.8,
+   "counts": {},
+   "log": "private/gate/fmt.log"
+  },
+  {
+   "name": "clippy",
+   "exit": 0,
+   "seconds": 46.2,
+   "counts": {},
+   "log": "private/gate/clippy.log"
+  },
+  {
+   "name": "clippy-qcore-c-gateway",
+   "exit": 0,
+   "seconds": 30.6,
+   "counts": {},
+   "log": "private/gate/clippy-qcore-c-gateway.log"
+  },
+  {
+   "name": "clippy-qcore-contract",
+   "exit": 0,
+   "seconds": 12.8,
+   "counts": {},
+   "log": "private/gate/clippy-qcore-contract.log"
+  },
+  {
+   "name": "clippy-qcore-frontend",
+   "exit": 0,
+   "seconds": 0.2,
+   "counts": {},
+   "log": "private/gate/clippy-qcore-frontend.log"
+  },
+  {
+   "name": "clippy-qcore-verification",
+   "exit": 0,
+   "seconds": 4.5,
+   "counts": {},
+   "log": "private/gate/clippy-qcore-verification.log"
+  },
+  {
+   "name": "clippy-qcore-verification-lib",
+   "exit": 0,
+   "seconds": 3.7,
+   "counts": {},
+   "log": "private/gate/clippy-qcore-verification-lib.log"
+  },
+  {
+   "name": "rust-suite",
+   "exit": 0,
+   "seconds": 1154.9,
+   "counts": {
+    "units": 281,
+    "passed": 3526,
+    "failed": 0,
+    "ignored": 9,
+    "measured": 0,
+    "filtered": 10,
+    "summaries": 288,
+    "packages": [
+     "qcore-audit",
+     "qcore-compiler",
+     "qcorec",
+     "quirin-audit-plugin-libcurl",
+     "quirin-audit-plugin-measure",
+     "quirin-audit-plugin-openssl",
+     "quirin-source-analysis"
+    ],
+    "targets": [
+     "qcore-c-gateway::test::checked_allocator_constructors",
+     "qcore-c-gateway::test::constructor_residuals",
+     "qcore-c-gateway::test::neighbours",
+     "qcore-c-gateway::test::prod_contracts",
+     "qcore-c-gateway::test::rule37_switch",
+     "qcore-c-gateway::test::slot_move_interior_borrow",
+     "qcore-contract::test::bounds_contract",
+     "qcore-contract::test::contract_views",
+     "qcore-contract::test::descriptor_cells",
+     "qcore-contract::test::event_loop_clauses",
+     "qcore-contract::test::guarded_contract_adoption",
+     "qcore-contract::test::guarded_decomposition",
+     "qcore-contract::test::production_symbolic_adoption",
+     "qcore-frontend::test::premise_formula",
+     "qcore-verification::lib::qcore_verification",
+     "qcore-verification::test::call_use_dependents",
+     "qcore-verification::test::call_use_source",
+     "qcore-verification::test::callback_task_handoff",
+     "qcore-verification::test::cleanup_replay_mutations",
+     "qcore-verification::test::cleanup_replay_source",
+     "qcore-verification::test::composition_bounds",
+     "qcore-verification::test::composition_mutations",
+     "qcore-verification::test::composition_source",
+     "qcore-verification::test::counter_source",
+     "qcore-verification::test::emit_cleanup_replay_fixtures",
+     "qcore-verification::test::event_payload",
+     "qcore-verification::test::file_close_composition_mutations",
+     "qcore-verification::test::file_close_composition_source",
+     "qcore-verification::test::filesystem_chunk_close_composition_mutations",
+     "qcore-verification::test::filesystem_chunk_close_composition_source",
+     "qcore-verification::test::frame_source",
+     "qcore-verification::test::frame_source_mutations",
+     "qcore-verification::test::memory_close_composition_mutations",
+     "qcore-verification::test::memory_close_composition_source",
+     "qcore-verification::test::monkey_wait_projection",
+     "qcore-verification::test::observed_wait_composition",
+     "qcore-verification::test::source_effect",
+     "qcore-verification::test::source_effect_helper_target",
+     "qcore-verification::test::source_effect_mutations",
+     "qcore-verification::test::source_effect_obligations",
+     "qcore-verification::test::teardown_prerequisites",
+     "qcore-verification::test::teardown_source",
+     "qcore-verification::test::timeout_teardown",
+     "qcore-verification::test::unsupported_close_composition_mutations",
+     "qcore-verification::test::unsupported_close_composition_source",
+     "qcore-verification::test::wait_failure_paths"
+    ],
+    "summary": "/home/cosmo/Documents/GitHub/quirin-lang/.claude/worktrees/agent-a273dcc45e6a8fab7/private/gate/rust-suite/summary.json",
+    "ok": true
+   },
+   "log": "private/gate/rust-suite.log"
+  },
+  {
+   "name": "probe-reevaluation_probe",
+   "exit": 0,
+   "seconds": 0.2,
+   "counts": {},
+   "log": "private/gate/probe-reevaluation_probe.log"
+  },
+  {
+   "name": "probe-reevaluation_followup",
+   "exit": 0,
+   "seconds": 0.5,
+   "counts": {},
+   "log": "private/gate/probe-reevaluation_followup.log"
+  },
+  {
+   "name": "python",
+   "exit": 1,
+   "seconds": 134.2,
+   "counts": {
+    "tests": 814,
+    "skipped": 0,
+    "ok": false
+   },
+   "log": "private/gate/python.log"
+  },
+  {
+   "name": "provider-package-build",
+   "exit": 0,
+   "seconds": 356.1,
+   "counts": {},
+   "log": "private/gate/provider-package-build.log"
+  },
+  {
+   "name": "provider-package-verify-all",
+   "exit": 0,
+   "seconds": 0.9,
+   "counts": {},
+   "log": "private/gate/provider-package-verify-all.log"
+  },
+  {
+   "name": "provider-package-verify",
+   "exit": 0,
+   "seconds": 0.1,
+   "counts": {},
+   "log": "private/gate/provider-package-verify.log"
+  },
+  {
+   "name": "provider-test",
+   "exit": 0,
+   "seconds": 8790.0,
+   "counts": {
+    "summaries": 52,
+    "passed": 182,
+    "failed": 0,
+    "ignored": 1,
+    "measured": 0,
+    "filtered": 0
+   },
+   "log": "private/gate/provider-test.log"
+  },
+  {
+   "name": "provider-fmt",
+   "exit": 1,
+   "seconds": 5.3,
+   "counts": {},
+   "log": "private/gate/provider-fmt.log"
+  },
+  {
+   "name": "provider-clippy",
+   "exit": 0,
+   "seconds": 34.6,
+   "counts": {},
+   "log": "private/gate/provider-clippy.log"
+  }
+ ],
+ "reruns_after_fixes": [
+  {
+   "step": "fmt",
+   "command": "cargo fmt --all -- --check",
+   "exit": 0,
+   "log": "private/fclc/fmt-check.log",
+   "fix": "cargo fmt on tests/slot_move_interior_borrow/chunk_lifecycle_contracts.rs (one string constant's line break)"
+  },
+  {
+   "step": "provider-fmt",
+   "command": "cargo fmt --manifest-path providers/Cargo.toml --all -- --check",
+   "exit": 0,
+   "log": "private/fclc/pfmt-check.log"
+  },
+  {
+   "step": "python",
+   "command": "python3 -m unittest discover -s scripts/tests",
+   "exit": 0,
+   "tests": 814,
+   "log": "private/fclc/python2.log",
+   "fix": "python3 scripts/build_docs_index.py (docs/reports/INDEX.md, README.md)"
+  },
+  {
+   "step": "fixture target",
+   "command": "cargo test -p qcore-c-gateway --test slot_move_interior_borrow",
+   "exit": 0,
+   "passed": 16,
+   "log": "private/fclc/test4.log"
+  }
+ ]
+}

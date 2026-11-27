@@ -236,8 +236,8 @@
       "sha256": "0861e0b368a90fda230079d2206338ae44977404f9f9011bac1bd136fe09badd"
     },
     "fluent_bit/input_chunk_name.qv": {
-      "clause_count": 4,
-      "declaration_count": 1,
+      "clause_count": 7,
+      "declaration_count": 2,
       "declarations": [
         {
           "clauses": 4,
@@ -247,6 +247,24 @@
               "borrowed"
             ],
             "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 3,
+          "name": "flb_input_name",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": {
+              "derived": {
+                "const_dropped": false,
+                "extent": "borrowed",
+                "nullable": true,
+                "parameter": 0
+              }
+            }
           },
           "resource_table": "functions"
         }
@@ -262,7 +280,7 @@
           }
         ]
       },
-      "sha256": "d9d54bbd42f983280d746bd5307524d1e5368d084447cfdb48446fade4d4eb1b"
+      "sha256": "dfc191173b4fe25d89edea66463b1d2278879b8d7961dfabda7b91c285d624a7"
     },
     "fluent_bit/input_chunk_sizes.qv": {
       "clause_count": 6,

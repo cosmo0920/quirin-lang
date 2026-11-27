@@ -26,6 +26,11 @@ use qcore_c_gateway::legacy_c::{
 };
 use qcore_contract::contract_loader::load_resource_contract_sources;
 
+// Card FB-CHUNK-LIFECYCLE-CONTRACTS: the production `flb_input_name`
+// declaration, a parent-borrowed result this rule checks in its defining unit.
+#[path = "slot_move_interior_borrow/chunk_lifecycle_contracts.rs"]
+mod chunk_lifecycle_contracts;
+
 const PRELUDE: &str = "\
 typedef __SIZE_TYPE__ size_t;
 void *sm_alloc(size_t n); void sm_free(void *p); size_t sm_len(const char *s);

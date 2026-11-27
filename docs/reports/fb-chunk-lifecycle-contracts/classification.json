@@ -1,0 +1,354 @@
+{
+ "schema": "fb-chunk-lifecycle-classification/1",
+ "card": "FB-CHUNK-LIFECYCLE-CONTRACTS",
+ "meaning": "Hand-written, one entry per callee that a chunk-lifecycle row (sb.c, flb_input_chunk.c) reaches as `call to uncontracted function X` on either measured route at base 56584db0b. Bodies read at Fluent Bit 046accf6. census.py fails if a measured callee has no entry here.",
+ "callees": {
+  "flb_input_name": {
+   "class": "a",
+   "defined": "src/flb_input.c:1143",
+   "reason": "Both returns are member reads of `ins` (`ins->alias`, `ins->name`), the instance's own strings; the body calls, allocates, frees and stores nothing. `resource_borrowed(ins)` + `resource_return_borrowed_from(ins, nullable)` (contract spec C04.3.4), checked structurally by gateway rule 13a in its defining unit. Written in `fluent_bit/input_chunk_name.qv`.",
+   "owner": "this card"
+  },
+  "flb_input_chunk_output_size_subtract": {
+   "class": "b",
+   "defined": "src/flb_input_chunk.c:66",
+   "reason": "Custody-neutral body, but its clamp arm logs (`flb_warn` -> `flb_log_print`), whose path reaches a configurable log callback. A declaration without counted-user clauses is applied as neutral in every other unit (`legacy_counted_users::call_effect`), which is the unconditional neutral contract W46-FLUENT-ACCOUNTING-LOG-CALLBACK-EFFECT refused. Not re-admitted.",
+   "owner": "W46-FLUENT-ACCOUNTING-LOG-CALLBACK-EFFECT"
+  },
+  "input_chunk_output_size_add": {
+   "class": "b",
+   "defined": "src/flb_input_chunk.c:80",
+   "reason": "The saturating sibling of `flb_input_chunk_output_size_subtract`: the same `flb_warn` on its clamp arm, so the same refusal.",
+   "owner": "W46-FLUENT-ACCOUNTING-LOG-CALLBACK-EFFECT (amended to name it)"
+  },
+  "flb_input_chunk_update_output_instances": {
+   "class": "b",
+   "defined": "src/flb_input_chunk.c:3979",
+   "reason": "Calls both accounting helpers and `flb_trace`; named by W46-FLUENT-ACCOUNTING-LOG-CALLBACK-EFFECT.",
+   "owner": "W46-FLUENT-ACCOUNTING-LOG-CALLBACK-EFFECT"
+  },
+  "flb_input_chunk_has_other_routes": {
+   "class": "b",
+   "defined": "src/flb_input_chunk.c:941",
+   "reason": "A routing query, custody-neutral, but each iteration calls `flb_routes_mask_get_bit`, whose out-of-range arm logs (`flb_warn`, `src/flb_routes_mask.c:165`): the log-callback reach of W46-FLUENT-ACCOUNTING-LOG-CALLBACK-EFFECT.",
+   "owner": "W46-FLUENT-ACCOUNTING-LOG-CALLBACK-EFFECT (amended to name it)"
+  },
+  "flb_input_chunk_prefers_physical_delete": {
+   "class": "b",
+   "defined": "src/flb_input_chunk.c:964",
+   "reason": "Reaches `flb_input_chunk_has_other_routes` and so the same logging path.",
+   "owner": "W46-FLUENT-ACCOUNTING-LOG-CALLBACK-EFFECT (amended to name it)"
+  },
+  "flb_input_chunk_has_overlimit_routes": {
+   "class": "b",
+   "defined": "src/flb_input_chunk.c:1261",
+   "reason": "Calls `flb_routes_mask_get_bit` and `flb_trace` (compiled in: FLB_HAVE_TRACE), so the same logging path.",
+   "owner": "W46-FLUENT-ACCOUNTING-LOG-CALLBACK-EFFECT (amended to name it)"
+  },
+  "update_logs_tag_records_untracked": {
+   "class": "b",
+   "defined": "src/flb_input_chunk.c:103",
+   "reason": "`cmt_counter_add` copies its labels (`cmt_map.c` map_metric_create) but its failure arm calls `cmt_log_print`, which invokes `cmt->log_cb` (a declared callback member): the same unconstrained log-callback reach. Its own row also refuses the compound-literal label array.",
+   "owner": "W46-FLUENT-ACCOUNTING-LOG-CALLBACK-EFFECT (amended to name it)"
+  },
+  "flb_input_chunk_get_event_type": {
+   "class": "b",
+   "defined": "src/flb_input_chunk.c:3918",
+   "reason": "Calls `cio_meta_read`, whose file arm can enter `mmap_file` and its `cio_log` callback; named by W46-FLUENT-METADATA-CALLBACK-EFFECT.",
+   "owner": "W46-FLUENT-METADATA-CALLBACK-EFFECT"
+  },
+  "flb_input_chunk_get_projected_write_size": {
+   "class": "b",
+   "defined": "src/flb_input_chunk.c:988",
+   "reason": "Calls `cio_meta_size` (`cio_file_read_prepare` -> `mmap_file` -> `cio_log`): the metadata callback reach.",
+   "owner": "W46-FLUENT-METADATA-CALLBACK-EFFECT (amended to name it)"
+  },
+  "flb_input_chunk_set_up": {
+   "class": "b",
+   "defined": "src/flb_input_chunk.c:3182",
+   "reason": "Calls `cio_chunk_up` -> `cio_file_up`, which logs through `cio_log` on its failure arms; `fluent_bit/input_chunk_is_up.qv` already records set_up/down as undeclared.",
+   "owner": "W46-FLUENT-METADATA-CALLBACK-EFFECT (amended to name it)"
+  },
+  "flb_input_chunk_write": {
+   "class": "b",
+   "defined": "src/flb_input_chunk.c:792",
+   "reason": "Calls `cio_chunk_write` -> `cio_file_write`, which logs through `cio_log` (`cio_file.c:1016`).",
+   "owner": "W46-FLUENT-METADATA-CALLBACK-EFFECT (amended to name it)"
+  },
+  "get_input_chunk_record_count": {
+   "class": "b",
+   "defined": "src/flb_input_chunk.c:481",
+   "reason": "Calls `cio_chunk_get_content` (file arm: read prepare and content copy, both logging through `cio_log`) besides residency calls that restore the chunk's state.",
+   "owner": "W46-FLUENT-METADATA-CALLBACK-EFFECT (amended to name it)"
+  },
+  "flb_input_chunk_get_tag": {
+   "class": "b",
+   "defined": "src/flb_input_chunk.c:3956",
+   "reason": "Hands back `tag_buf`, an interior pointer into the ChunkIO chunk's metadata. `resource_borrowed` on an overwritten slot would hide an overwritten tracked identity; `resource_out_derived(tag_buf, ic, nonnull)` cannot be validated by rule 13a (the value comes through `input_chunk_metadata_view`'s out struct, not a member read of `ic`) and would end the borrow at `ic`, not at the chunk whose close ends it. Also reaches `cio_meta_read`.",
+   "owner": "W46-FLUENT-METADATA-CALLBACK-EFFECT"
+  },
+  "input_chunk_metadata_view": {
+   "class": "b",
+   "defined": "src/flb_input_chunk.c:308",
+   "reason": "Publishes borrowed interior pointers through an out struct (no v1 position for a struct of views) and reaches `cio_meta_read`.",
+   "owner": "W46-FLUENT-METADATA-CALLBACK-EFFECT"
+  },
+  "flb_input_chunk_get_direct_routes": {
+   "class": "b",
+   "defined": "src/flb_input_chunk.c:2188",
+   "reason": "Allocates the route array it returns through an out parameter after reading the metadata view; its own row stores through formals without an out-parameter contract.",
+   "owner": "W46-FLUENT-METADATA-CALLBACK-EFFECT"
+  },
+  "flb_input_chunk_set_limits": {
+   "class": "b",
+   "defined": "src/flb_input_chunk.c:3004",
+   "reason": "Calls `flb_input_resume` and `flb_input_rate_gate_maybe_resume`, which dispatch the plugin's resume callback; W47-LOOP-OWNER-UNDECLARABLE-OPERATIONS keeps pause/resume undeclared, so a wrapper declaration would hide the dispatch.",
+   "owner": "W47-LOOP-OWNER-UNDECLARABLE-OPERATIONS"
+  },
+  "flb_input_chunk_protect": {
+   "class": "b",
+   "defined": "src/flb_input_chunk.c:3081",
+   "reason": "Calls `flb_input_pause` and `flb_input_rate_gate_protect` (plugin pause callback dispatch).",
+   "owner": "W47-LOOP-OWNER-UNDECLARABLE-OPERATIONS"
+  },
+  "flb_input_pause": {
+   "class": "b",
+   "defined": "src/flb_input.c",
+   "reason": "Dispatches the plugin's pause callback; kept undeclared by W47-LOOP-OWNER-UNDECLARABLE-OPERATIONS (only its bounds clause is declared).",
+   "owner": "W47-LOOP-OWNER-UNDECLARABLE-OPERATIONS"
+  },
+  "flb_input_resume": {
+   "class": "b",
+   "defined": "src/flb_input.c",
+   "reason": "Dispatches the plugin's resume callback; as `flb_input_pause`.",
+   "owner": "W47-LOOP-OWNER-UNDECLARABLE-OPERATIONS"
+  },
+  "flb_input_rate_gate_protect": {
+   "class": "b",
+   "defined": "src/flb_input.c",
+   "reason": "Pauses the input through the plugin callback when the rate gate trips.",
+   "owner": "W47-LOOP-OWNER-UNDECLARABLE-OPERATIONS"
+  },
+  "flb_input_rate_gate_maybe_resume": {
+   "class": "b",
+   "defined": "src/flb_input.c",
+   "reason": "Resumes the input through the plugin callback.",
+   "owner": "W47-LOOP-OWNER-UNDECLARABLE-OPERATIONS"
+  },
+  "flb_input_chunk_find_space_new_data": {
+   "class": "b",
+   "defined": "src/flb_input_chunk.c:1206",
+   "reason": "Releases other chunks reached through `ic`'s instance (`flb_input_chunk_release_space_compound`); v1 states nothing about objects released through what an argument reaches.",
+   "owner": "W45-FB-BACKLOG-REACHABLE-RELEASE"
+  },
+  "flb_input_chunk_release_space": {
+   "class": "b",
+   "defined": "src/flb_input_chunk.c:540",
+   "reason": "Drops or destroys queued chunks reached through the instance and output.",
+   "owner": "W45-FB-BACKLOG-REACHABLE-RELEASE"
+  },
+  "flb_input_chunk_release_space_compound": {
+   "class": "b",
+   "defined": "src/flb_input_chunk.c:1100",
+   "reason": "Calls `flb_input_chunk_release_space` and `sb_release_output_queue_space`.",
+   "owner": "W45-FB-BACKLOG-REACHABLE-RELEASE"
+  },
+  "memrb_input_chunk_release_space": {
+   "class": "b",
+   "defined": "src/flb_input_chunk.c:3191",
+   "reason": "Destroys the oldest chunks of the instance's list to make room.",
+   "owner": "W45-FB-BACKLOG-REACHABLE-RELEASE"
+  },
+  "sb_release_output_queue_space": {
+   "class": "c",
+   "defined": "plugins/in_storage_backlog/sb.c",
+   "reason": "Already declared as a checked specification (`storage_backlog.qv`); withdrawn because its own body does not establish it (indirect access, unresolved `underlying_chunk`, the uncontracted removal cascade). Its releases of reachable wrappers are W45-FB-BACKLOG-REACHABLE-RELEASE.",
+   "owner": "W45-FB-BACKLOG-REACHABLE-RELEASE, FB-AUDIT-03-CROSS-OUTPUT-EVICTION"
+  },
+  "flb_input_chunk_map": {
+   "class": "b",
+   "defined": "src/flb_input_chunk.c:1455",
+   "reason": "Its `chunk` argument is stored on success, closed on one NULL arm and left open on the others; no v1 mode is faithful to all three.",
+   "owner": "W45-FB-BACKLOG-MAP-ARMS"
+  },
+  "flb_input_chunk_create": {
+   "class": "c",
+   "defined": "src/flb_input_chunk.c:2518",
+   "reason": "Its own row is Unknown (a nullable actual at a non-null contract, unresolved identities); a constructor declaration would replace a body that does not yet discharge.",
+   "owner": "the row's own leaves (census section 2)"
+  },
+  "input_chunk_get": {
+   "class": "c",
+   "defined": "src/flb_input_chunk.c:2823",
+   "reason": "Its own row has 27 leaves (hash-table lookups, unlinks it did not publish, unresolved identities); it creates, finds or destroys chunks by arm.",
+   "owner": "the row's own leaves (census section 2)"
+  },
+  "flb_input_chunk_destroy_corrupted": {
+   "class": "c",
+   "defined": "src/flb_input_chunk.c:2635",
+   "reason": "A destroyer whose own row releases members of its formal and unlinks what it did not publish; the same shape as `flb_input_chunk_destroy`, whose declaration stands as a premise.",
+   "owner": "FB-TEARDOWN-RELEASE-ACTUAL-IDENTITIES"
+  },
+  "input_chunk_append_raw": {
+   "class": "c",
+   "defined": "src/flb_input_chunk.c:3251",
+   "reason": "Its own row has 44 leaves across filtering, tracing, accounting and the ring buffer.",
+   "owner": "the row's own leaves (census section 2)"
+  },
+  "update_logs_tag_records_metrics": {
+   "class": "c",
+   "defined": "src/flb_input_chunk.c:117",
+   "reason": "Its own row refuses a braced initializer, formal-address actuals and a literal-argument premise, besides the callees above.",
+   "owner": "the row's own leaves (census section 2)"
+  },
+  "sb_remove_chunk_from_segregated_backlog": {
+   "class": "c",
+   "defined": "plugins/in_storage_backlog/sb.c:214",
+   "reason": "Checked specification withdrawn: its body's ledger update is an indirect access.",
+   "owner": "W45-FB-BACKLOG-PUBLICATION-BLOCKED"
+  },
+  "sb_remove_chunk_from_segregated_backlogs": {
+   "class": "c",
+   "defined": "plugins/in_storage_backlog/sb.c:248",
+   "reason": "Checked specification withdrawn: it calls the withdrawn single-queue removal.",
+   "owner": "W45-FB-BACKLOG-REACHABLE-RELEASE"
+  },
+  "sb_destroy_backlog": {
+   "class": "c",
+   "defined": "plugins/in_storage_backlog/sb.c:135",
+   "reason": "Checked specification withdrawn: it calls the withdrawn removal cascade.",
+   "owner": "W45-FB-BACKLOG-REACHABLE-RELEASE, W45-FB-BACKLOG-EXIT-WRAPPERS"
+  },
+  "sb_destroy_backlogs": {
+   "class": "c",
+   "defined": "plugins/in_storage_backlog/sb.c:179",
+   "reason": "Checked specification withdrawn: it calls the withdrawn `sb_destroy_backlog`.",
+   "owner": "W45-FB-BACKLOG-REACHABLE-RELEASE, W45-FB-BACKLOG-EXIT-WRAPPERS"
+  },
+  "sb_allocate_backlogs": {
+   "class": "c",
+   "defined": "plugins/in_storage_backlog/sb.c:148",
+   "reason": "Checked specification withdrawn: loop re-acquisition, unresolved identities and the withdrawn teardown.",
+   "owner": "W45-FB-BACKLOG-REACHABLE-RELEASE"
+  },
+  "sb_append_chunk_to_segregated_backlog": {
+   "class": "c",
+   "defined": "plugins/in_storage_backlog/sb.c:262",
+   "reason": "Checked specification withdrawn: its ledger charge is an indirect access.",
+   "owner": "W45-FB-BACKLOG-PUBLICATION-BLOCKED"
+  },
+  "sb_append_chunk_to_segregated_backlogs": {
+   "class": "c",
+   "defined": "plugins/in_storage_backlog/sb.c:292",
+   "reason": "Checked specification withdrawn: indirect accesses, ChunkIO calls and the -3 partial fan-out arm.",
+   "owner": "W45-FB-BACKLOG-CIO-RETURN-CODES, FB-AUDIT-03-PARTIAL-FANOUT"
+  },
+  "cio_chunk_get_real_size": {
+   "class": "d",
+   "defined": "lib/chunkio/src/cio_chunk.c:336",
+   "reason": "ChunkIO entry point; its contract belongs to qcore-provider-chunkio, not this card's files.",
+   "owner": "W45-FB-BACKLOG-CIO-RETURN-CODES (qcore-provider-chunkio)"
+  },
+  "cio_chunk_lock": {
+   "class": "d",
+   "defined": "lib/chunkio/src/cio_chunk.c:384",
+   "reason": "ChunkIO entry point (qcore-provider-chunkio).",
+   "owner": "W45-FB-BACKLOG-CIO-RETURN-CODES (qcore-provider-chunkio)"
+  },
+  "cio_error_get": {
+   "class": "d",
+   "defined": "lib/chunkio/src/cio_error.c:40",
+   "reason": "ChunkIO entry point (qcore-provider-chunkio).",
+   "owner": "W45-FB-BACKLOG-CIO-RETURN-CODES (qcore-provider-chunkio)"
+  },
+  "cio_chunk_get_content": {
+   "class": "d",
+   "defined": "lib/chunkio/src/cio_chunk.c:244",
+   "reason": "ChunkIO entry point (qcore-provider-chunkio); its file arm also reaches the `cio_log` callback.",
+   "owner": "qcore-provider-chunkio; W46-FLUENT-METADATA-CALLBACK-EFFECT"
+  },
+  "cio_chunk_write": {
+   "class": "d",
+   "defined": "lib/chunkio/src/cio_chunk.c:211",
+   "reason": "ChunkIO entry point (qcore-provider-chunkio); logs through `cio_log`.",
+   "owner": "qcore-provider-chunkio; W46-FLUENT-METADATA-CALLBACK-EFFECT"
+  },
+  "cio_chunk_write_at": {
+   "class": "d",
+   "defined": "lib/chunkio/src/cio_chunk.c",
+   "reason": "ChunkIO entry point (qcore-provider-chunkio); logs through `cio_log`.",
+   "owner": "qcore-provider-chunkio; W46-FLUENT-METADATA-CALLBACK-EFFECT"
+  },
+  "cio_chunk_up": {
+   "class": "d",
+   "defined": "lib/chunkio/src/cio_chunk.c:573",
+   "reason": "ChunkIO residency entry point (qcore-provider-chunkio `chunk_residency.qv` names it undeclared, NEIGHBOURS-UNDECLARED).",
+   "owner": "qcore-provider-chunkio"
+  },
+  "cio_chunk_tx_rollback": {
+   "class": "d",
+   "defined": "lib/chunkio/src/cio_chunk.c:476",
+   "reason": "ChunkIO entry point (qcore-provider-chunkio).",
+   "owner": "qcore-provider-chunkio"
+  },
+  "cio_meta_read": {
+   "class": "d",
+   "defined": "lib/chunkio/src/cio_meta.c:91",
+   "reason": "ChunkIO entry point (qcore-provider-chunkio); hands back an interior pointer through an out slot and reaches the `cio_log` callback.",
+   "owner": "qcore-provider-chunkio; W46-FLUENT-METADATA-CALLBACK-EFFECT"
+  },
+  "cio_meta_size": {
+   "class": "d",
+   "defined": "lib/chunkio/src/cio_meta.c:75",
+   "reason": "ChunkIO entry point (qcore-provider-chunkio); reaches the `cio_log` callback.",
+   "owner": "qcore-provider-chunkio; W46-FLUENT-METADATA-CALLBACK-EFFECT"
+  },
+  "cio_meta_write": {
+   "class": "d",
+   "defined": "lib/chunkio/src/cio_meta.c:46",
+   "reason": "ChunkIO entry point (qcore-provider-chunkio).",
+   "owner": "qcore-provider-chunkio"
+  },
+  "flb_hash_table_del_ptr": {
+   "class": "d",
+   "defined": "src/flb_hash_table.c",
+   "reason": "Hash-table removal; `fluent_bit/hash_table_publication.qv` is another module's subject.",
+   "owner": "hash_table_publication.qv's owner"
+  },
+  "flb_hash_table_get": {
+   "class": "d",
+   "defined": "src/flb_hash_table.c",
+   "reason": "Hash-table lookup with an out value; `hash_table_publication.qv` is another module's subject.",
+   "owner": "hash_table_publication.qv's owner"
+  },
+  "flb_routes_mask_clear_bit": {
+   "class": "d",
+   "defined": "src/flb_routes_mask.c",
+   "reason": "`fluent_bit/routes_mask.qv` is another module's subject (and the routes-mask setters log like `flb_routes_mask_get_bit`).",
+   "owner": "routes_mask.qv's owner"
+  },
+  "flb_time_get": {
+   "class": "d",
+   "defined": "src/flb_time.c",
+   "reason": "`fluent_bit/time.qv` belongs to the sibling card FB-RETRY-LIFECYCLE-CONTRACTS.",
+   "owner": "FB-RETRY-LIFECYCLE-CONTRACTS (hand-off)"
+  },
+  "flb_metrics_sum": {"class": "d", "defined": "src/flb_metrics.c", "reason": "Metrics subsystem, outside the lifecycle files.", "owner": "metrics contracts (none yet)"},
+  "flb_mp_count": {"class": "d", "defined": "src/flb_mp.c", "reason": "msgpack helpers, outside the lifecycle files.", "owner": "msgpack helper contracts (none yet)"},
+  "flb_mp_count_log_records": {"class": "d", "defined": "src/flb_mp.c", "reason": "msgpack helpers, outside the lifecycle files.", "owner": "msgpack helper contracts (none yet)"},
+  "flb_mp_validate_log_chunk": {"class": "d", "defined": "src/flb_mp.c", "reason": "msgpack helpers, outside the lifecycle files.", "owner": "msgpack helper contracts (none yet)"},
+  "flb_mp_validate_metric_chunk": {"class": "d", "defined": "src/flb_mp.c", "reason": "msgpack helpers, outside the lifecycle files.", "owner": "msgpack helper contracts (none yet)"},
+  "flb_chunk_trace_destroy": {"class": "d", "defined": "src/flb_chunk_trace.c", "reason": "Chunk tracing subsystem, outside the lifecycle files.", "owner": "chunk-trace contracts (none yet)"},
+  "flb_chunk_trace_do_input": {"class": "d", "defined": "src/flb_chunk_trace.c", "reason": "Chunk tracing subsystem.", "owner": "chunk-trace contracts (none yet)"},
+  "flb_chunk_trace_pre_output": {"class": "d", "defined": "src/flb_chunk_trace.c", "reason": "Chunk tracing subsystem.", "owner": "chunk-trace contracts (none yet)"},
+  "flb_ring_buffer_read": {"class": "d", "defined": "src/flb_ring_buffer.c", "reason": "Ring buffer subsystem.", "owner": "ring-buffer contracts (none yet)"},
+  "flb_ring_buffer_write": {"class": "d", "defined": "src/flb_ring_buffer.c", "reason": "Ring buffer subsystem.", "owner": "ring-buffer contracts (none yet)"},
+  "flb_ring_buffer_mark_flushed": {"class": "d", "defined": "src/flb_ring_buffer.c", "reason": "Ring buffer subsystem.", "owner": "ring-buffer contracts (none yet)"},
+  "flb_filter_do": {"class": "d", "defined": "src/flb_filter.c", "reason": "Runs the filter chain (plugin callbacks); outside the lifecycle files.", "owner": "filter contracts (none yet)"},
+  "flb_input_log_append_processed": {"class": "d", "defined": "src/flb_input_log.c", "reason": "Input log append path, outside the lifecycle files.", "owner": "input-log contracts (none yet)"},
+  "flb_input_rate_update": {"class": "d", "defined": "src/flb_input.c", "reason": "Input rate accounting, outside the lifecycle files.", "owner": "input_instance.qv's owner"},
+  "flb_input_set_context": {"class": "d", "defined": "src/flb_input.c", "reason": "Stores the plugin context into the instance (a transfer under an owner); outside the lifecycle files.", "owner": "input_instance.qv's owner"},
+  "flb_utils_size_to_bytes": {"class": "d", "defined": "src/flb_utils.c", "reason": "Utility parser, outside the lifecycle files.", "owner": "utility contracts (none yet)"},
+  "flb_utils_bytes_to_human_readable_size": {"class": "d", "defined": "src/flb_utils.c", "reason": "Utility formatter, outside the lifecycle files.", "owner": "utility contracts (none yet)"}
+ }
+}

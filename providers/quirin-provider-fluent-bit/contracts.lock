@@ -1094,6 +1094,35 @@
       ]
     },
     {
+      "function": "flb_input_name",
+      "module": "fluent_bit/input_chunk_name.qv",
+      "contract_sha256": "44271eadc06b08d4c8bc0f64247042d0257962f00cf34204e834ba8c70fdcfc1",
+      "pinned_at": "2026-11-27T09:14:39Z",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            }
+          ],
+          "sites": [
+            {
+              "path": "include/fluent-bit/flb_input.h",
+              "kind": "declaration",
+              "declaration_sha256": "c7bf957b6db0704c7f3aa361b0dbc2ace9fde70e2eabce0a4a5ca040fdd7e72d"
+            },
+            {
+              "path": "src/flb_input.c",
+              "kind": "definition",
+              "declaration_sha256": "c7bf957b6db0704c7f3aa361b0dbc2ace9fde70e2eabce0a4a5ca040fdd7e72d",
+              "body_sha256": "643f0f0e190b9b030fc33f4fa58afd94e8f1112f32173bbcff709f6022fe5fa4"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "function": "flb_input_new",
       "module": "fluent_bit/input_instance.qv",
       "contract_sha256": "a83b673aad72b7c83a855038111907b5aaceaa2a5955951f08b4fcbdcd341054",

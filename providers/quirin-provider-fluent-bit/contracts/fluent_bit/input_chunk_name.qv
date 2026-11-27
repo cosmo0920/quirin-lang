@@ -112,3 +112,43 @@ contract {
     ensures normal resource_borrowed(ic);
     ensures normal resource_return_none();
 };
+
+// FB-CHUNK-LIFECYCLE-CONTRACTS. The input-instance name accessor the chunk
+// lifecycle units call (`src/flb_input_chunk.c`, in logging arguments, the
+// untracked-records metric labels and `get_input_chunk_source_name`). Read at
+// Fluent Bit 046accf6aded7906f66a1baf0202da349e521736, `src/flb_input.c:1143-1150`;
+// C declaration `include/fluent-bit/flb_input.h`:
+//
+//     const char *flb_input_name(struct flb_input_instance *ins)
+//     {
+//         if (ins->alias) {
+//             return ins->alias;
+//         }
+//
+//         return ins->name;
+//     }
+//
+// Both returns are a member read of `ins`: the instance's own strings, which
+// `flb_input_instance_destroy` frees and which the caller must not. That is
+// contract spec C04.3.4's parent-borrowed result. The body calls nothing,
+// allocates nothing, frees nothing and stores nothing, so `ins` is borrowed.
+// `nullable`: the body does not establish that `ins->name` is non-NULL, so the
+// weaker statement is the faithful one.
+//
+// This is not a trusted premise in the defining unit: gateway rule 13a
+// withdraws a `resource_return_borrowed_from` declaration in a unit that
+// defines the body unless every `return` is NULL or a member read of the base
+// formal, which these two are. A body that returned anything else (a fresh
+// copy, another object) is refused there; the fixture
+// `crates/qcore-c-gateway/tests/slot_move_interior_borrow/chunk_lifecycle_contracts.rs`
+// pins both directions. Elsewhere it is a premise read from this body.
+//
+// NOT CLAIMED: that the result is non-NULL, how long the strings live beyond
+// `ins` (a borrow ends at `ins`'s release or at any call naming `ins`, rule
+// 12y), or anything about the instance's other members.
+extern fn flb_input_name(ins: ptr<mut, u8>) -> ptr<const, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(ins);
+    ensures normal resource_return_borrowed_from(ins, nullable);
+};
