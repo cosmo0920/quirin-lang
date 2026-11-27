@@ -400,6 +400,8 @@ mod carried_link_obligation {
     struct queue { struct mk_list items; struct mk_list rotated; struct mk_list pending; };
     int item_destroy(struct item *e);
     int *q_errloc(void); int q_note(int e, const char *f, int l);
+    int *q_field(struct item *p); void q_unknown(int k);
+    void *q_try_alloc_n(__SIZE_TYPE__ n);
     void enq_decl(struct item *e, struct queue *q);
     int rel_decl(struct item *e);
     "#;
@@ -419,6 +421,10 @@ mod carried_link_obligation {
     contract { requires resource_contract_v1; ensures normal resource_return_none(); };
     extern fn q_note(e: i32, f: ptr<const, u8>, l: i32) -> i32
     contract { requires resource_contract_v1; ensures normal resource_borrowed(e); ensures normal resource_borrowed(f); ensures normal resource_borrowed(l); ensures normal resource_return_none(); };
+    extern fn q_field(p: ptr<mut, u8>) -> ptr<mut, u8>
+    contract { requires resource_contract_v1; ensures normal resource_borrowed(p); ensures normal resource_return_none(); };
+    extern fn q_try_alloc_n(n: usize) -> ptr<mut, u8>
+    contract { requires resource_contract_v1; ensures normal resource_borrowed(n); ensures normal resource_return_owned(nullable); };
     extern fn enq_decl(e: ptr<mut, u8>, q: ptr<mut, u8>) -> unit
     contract { requires resource_contract_v1; requires resource_links_valid(e, _head); ensures normal resource_consumed(e, nonnull); ensures normal resource_borrowed(q); ensures normal resource_return_none(); };
     extern fn rel_decl(e: ptr<mut, u8>) -> i32
@@ -727,19 +733,21 @@ mod carried_link_obligation {
                 AnalysisStatus::Unknown,
                 None,
             ),
-            // Bodies whose summary may not state the precondition.
             // `flb_output_task_queue_enqueue`'s own failure path reports
-            // `flb_errno()` before the destroyer: a call with a nested call
-            // and a non-name actual (`*__errno_location()`), which rule 46's
-            // kill policy reads as reaching every object, so the carried
-            // record is gone at the destroyer (the measured row's leaf).
+            // `flb_errno()` before the destroyer. Card
+            // LINK-RECORD-KILL-POLICY-SCALAR-CALLS: every actual of that
+            // contracted call denotes no object (`*__errno_location()` is a
+            // scalar dereference of a neutral nested call, the others are
+            // literals), so the carried record survives it (Unknown at
+            // `fb4adb697`).
             (
                 "errno-before-the-destroyer",
                 "static int enq(struct queue *q, struct item *r) { struct holder *h = q_try_alloc(); if (!h) { q_note(*q_errloc(), \"f.c\", 1); if (r) { item_destroy(r); } return -1; } h->r = r; mk_list_add(&h->_head, &q->pending); return 0; }".to_owned(),
                 "enq",
-                AnalysisStatus::Unknown,
-                Some(ENQ_HELD),
+                AnalysisStatus::Safe,
+                None,
             ),
+            // Bodies whose summary may not state the precondition.
             (
                 "frees-on-the-other-class",
                 "static int enq(struct queue *q, struct item *r) { struct holder *h = q_try_alloc(); if (!h) { item_destroy(r); return -1; } q_free(h); q_free(r); return 0; }".to_owned(),
@@ -755,6 +763,177 @@ mod carried_link_obligation {
                 Some(ENQ_HELD),
             ),
         ]
+    }
+
+    /// Card **LINK-RECORD-KILL-POLICY-SCALAR-CALLS** (rule 46's kill
+    /// policy, shared by rule 91): a contracted call between the carried
+    /// record (or a held object's initialisation) and the destroyer. Each:
+    /// name, unit, entry, verdict, and a refusal it must carry (if any).
+    fn kill_policy_fixtures() -> Vec<(
+        &'static str,
+        String,
+        &'static str,
+        AnalysisStatus,
+        Option<&'static str>,
+    )> {
+        const ENQ_HELD: &str =
+            "unlink by `item_destroy` of `r`, which this function has not published";
+        const HELD_NOT_INITIALISED: &str = "unlink by `item_destroy` of `e`, which this function holds, but this function has not initialised its `_head` links";
+        let enq = |report: &str| {
+            format!(
+                "static int enq(struct queue *q, struct item *r, int k) {{ struct holder *h = q_try_alloc(); if (!h) {{ {report} if (r) {{ item_destroy(r); }} return -1; }} h->r = r; mk_list_add(&h->_head, &q->pending); return 0; }}"
+            )
+        };
+        let held = |report: &str| {
+            format!(
+                "void subject(int k) {{ struct item *e = q_alloc(); mk_list_init(&e->_head); {report} item_destroy(e); }}"
+            )
+        };
+        vec![
+            // Scalar-only calls: every actual a literal, a predefined
+            // identifier or an admitted dereference of a neutral nested
+            // call's scalar result. All four Unknown at `fb4adb697`.
+            (
+                "carried-errno-glibc-spelling",
+                enq("q_note((*q_errloc()), \"f.c\", 1);"),
+                "enq",
+                AnalysisStatus::Safe,
+                None,
+            ),
+            (
+                "carried-literals-only",
+                enq("q_note(0, \"f.c\", 12);"),
+                "enq",
+                AnalysisStatus::Safe,
+                None,
+            ),
+            (
+                "carried-predefined-identifier",
+                enq("q_note(0, __func__, 12);"),
+                "enq",
+                AnalysisStatus::Safe,
+                None,
+            ),
+            (
+                "held-errno-report",
+                held("q_note(*q_errloc(), \"f.c\", 1);"),
+                "subject",
+                AnalysisStatus::Safe,
+                None,
+            ),
+            // Near misses: a pointer may reach the object, or the actual is
+            // not decided scalar.
+            (
+                "carried-undereferenced-nested-pointer",
+                enq("q_use(q_errloc());"),
+                "enq",
+                AnalysisStatus::Unknown,
+                Some(ENQ_HELD),
+            ),
+            (
+                "carried-dereferenced-nested-reads-the-object",
+                enq("q_note(*q_field(r), \"f.c\", 1);"),
+                "enq",
+                AnalysisStatus::Unknown,
+                Some(ENQ_HELD),
+            ),
+            (
+                "held-dereferenced-nested-reads-the-object",
+                held("q_note(*q_field(e), \"f.c\", 1);"),
+                "subject",
+                AnalysisStatus::Unknown,
+                Some(HELD_NOT_INITIALISED),
+            ),
+            (
+                "carried-scalar-name",
+                enq("q_note(k, \"f.c\", 1);"),
+                "enq",
+                AnalysisStatus::Unknown,
+                Some(ENQ_HELD),
+            ),
+            (
+                "carried-arithmetic-actual",
+                enq("q_note(1 + 2, \"f.c\", 1);"),
+                "enq",
+                AnalysisStatus::Unknown,
+                Some(ENQ_HELD),
+            ),
+            (
+                "carried-negated-literal",
+                enq("q_note(-1, \"f.c\", 1);"),
+                "enq",
+                AnalysisStatus::Unknown,
+                Some(ENQ_HELD),
+            ),
+            (
+                "carried-cast-pointer",
+                enq("q_use((void *) r);"),
+                "enq",
+                AnalysisStatus::Unknown,
+                None,
+            ),
+            (
+                "carried-uncontracted-scalar-call",
+                enq("q_unknown(1);"),
+                "enq",
+                AnalysisStatus::Unknown,
+                None,
+            ),
+            (
+                "held-uncontracted-scalar-call",
+                held("q_unknown(1);"),
+                "subject",
+                AnalysisStatus::Unknown,
+                None,
+            ),
+            // `flb_output_task_queue_enqueue` as measured: the allocation
+            // takes `sizeof (struct flb_task_enqueued)` before the
+            // `flb_errno()` report (Unknown at `b3e09974e`).
+            (
+                "carried-sizeof-allocation-then-errno",
+                "static int enq(struct queue *q, struct item *r) { struct holder *h = q_try_alloc_n(sizeof(struct holder)); if (!h) { q_note((*q_errloc()), \"f.c\", 1); if (r) { item_destroy(r); } return -1; } h->r = r; mk_list_add(&h->_head, &q->pending); return 0; }".to_owned(),
+                "enq",
+                AnalysisStatus::Safe,
+                None,
+            ),
+            (
+                "held-sizeof-allocation",
+                held("struct holder *g = q_try_alloc_n(sizeof(struct holder)); if (!g) { item_destroy(e); return; } q_free(g);"),
+                "subject",
+                AnalysisStatus::Safe,
+                None,
+            ),
+            // Near misses: the size is an expression over a name.
+            (
+                "carried-sizeof-times-name",
+                enq("void *g = q_try_alloc_n(k * sizeof(struct holder)); if (g) { q_free(g); }"),
+                "enq",
+                AnalysisStatus::Unknown,
+                Some(ENQ_HELD),
+            ),
+            (
+                "carried-sizeof-plus-name",
+                enq("void *g = q_try_alloc_n(sizeof(struct holder) + k); if (g) { q_free(g); }"),
+                "enq",
+                AnalysisStatus::Unknown,
+                Some(ENQ_HELD),
+            ),
+        ]
+    }
+
+    #[test]
+    fn every_kill_policy_fixture_has_its_verdict_and_accuses_nothing() {
+        if qcore_c_gateway::clang_command().is_err() {
+            return;
+        }
+        for (name, body, entry, status, refusal) in kill_policy_fixtures() {
+            let (got, diagnostics) = analyze(&body, entry);
+            assert_eq!(got, status, "{name}\n{diagnostics:?}");
+            if let Some(refusal) = refusal {
+                assert!(has(&diagnostics, refusal), "{name}\n{diagnostics:?}");
+            }
+            assert_eq!(accusations(&diagnostics), 0, "{name}\n{diagnostics:?}");
+        }
     }
 
     #[test]

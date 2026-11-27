@@ -1,0 +1,23 @@
+{
+ "schema": "quirin-amendments/2",
+ "card": "LINK-RECORD-KILL-POLICY-SCALAR-CALLS",
+ "base": "fb4adb697",
+ "measured_tip": "b160cb304",
+ "profiles": [],
+ "increment_paragraph": "**LINK-RECORD-KILL-POLICY-SCALAR-CALLS** (the `flb_errno` follow-up of LERI-HELD-FORMAL-LINK-OBLIGATION; user decision 2026-11-27; gateway rule 46's kill policy amended in place, shared by rule 91; Lean `QCore.ScalarCallKillPolicy`; [report](../../reports/link-record-kill-policy-scalar-calls/README.md)). A contract call's actual is now a place, a scalar (a literal or predefined identifier, premise T6; an admitted dereference of a neutral nested call's scalar result, premises N4-D and N10; a whole `sizeof ( … )` whose operand carries no call, assignment, increment or decrement; recorded at classification as `ContractCall::scalar_actuals`) or undecided. A call with no undecided actual and only place actuals in its nested calls keeps the link records (rule 46's initialisation facts, rule 91's carried records) of every object its places, nested places and written place cannot denote; its nested calls, read before its own effect, forget only what their places may denote. Every other call forgets every record, as before, and the contract-call arm's existing frame premise (a contracted callee writes nothing it is not handed) is stated, not extended. Lean: soundness under the frame premise, every old reach kept, pointer-carrying calls keep their kill, a kill is removed only for scalar-only calls, `KILL_VECTORS`. Fixtures: seven scalar-only shapes Unknown → Safe, eleven near misses stay Unknown. Measured base `fb4adb697` against tip `b160cb304` (this host's 046accf6 preparation): fluent-bit-system 116/0/328/4 → 118/0/326/4, `flb_output_task_queue_enqueue` Unknown → Safe in both configurations as predicted (its carried `Ready(_head)` record now reaches `flb_task_retry_destroy` past `flb_malloc(sizeof …)` and `flb_errno()`), `flb_output_task_singleplex_enqueue` trades leaves and stays Unsafe on its own counted-user refutation; r83's census units unchanged (34/1/165/0). The first semantic commit (`b3e09974e`, without the `sizeof` arm) moved nothing: a debug trace showed the record forgotten at the allocation's `sizeof` actual, before `flb_errno()`, which r83 had read as the blocker.",
+ "status_edits": [],
+ "ledger": [
+  {
+   "id": "LERI-HELD-FORMAL-LINK-OBLIGATION",
+   "operation": "amend",
+   "text": "AMENDED by LINK-RECORD-KILL-POLICY-SCALAR-CALLS (rule 46's kill policy refined in place, shared by rule 91; Lean QCore.ScalarCallKillPolicy; base fb4adb697, measured tip b160cb304): a contracted call whose actuals are places or scalars (literals, predefined identifiers, an admitted N4-D/N10 dereference such as (*__errno_location ()), a whole call-free sizeof) and whose nested calls' actuals are places keeps the link records of every object it cannot reach. flb_output_task_queue_enqueue is discharged: Unknown -> Safe in both fluent-bit-system configurations (116/0/328/4 -> 118/0/326/4); its record had died at flb_malloc(sizeof (struct flb_task_enqueued)), before flb_errno(). REMAINING: every other census row keeps the blocker named above (the unmodelled store into ins in flb_output_net_property_check and three flb_input_*_property_check; uncontracted calls, indirect accesses and a member store in flb_input_plugin_property_check; flb_output_thread_pool_create in flb_output_enable_multi_threading's condition; uncontracted calls and refuted callees in flb_task_retry_reschedule and flb_engine_dispatch_retry; flb_tail_file_remove's contract-pin mismatch in in_tail); the census units measured unchanged (34/1/165/0). Still undecided by design: a scalar-typed name actual with no pointer binding and a size expression over names (deciding them needs the typed declaration facts and an integer-provenance premise); the global-write premise of a decided call is the contract-call arm's existing frame premise, not a schema fact.",
+   "source": "docs/reports/link-record-kill-policy-scalar-calls/README.md"
+  },
+  {
+   "id": "LINK-RECORD-KILL-POLICY-SCALAR-CALLS",
+   "operation": "retire",
+   "why": "DISCHARGED by the integrate/r86 landing of LINK-RECORD-KILL-POLICY-SCALAR-CALLS: the queued-card entry the integrator recorded on main (db5c82d3f) closes with rule 46's scalar-call kill policy, QCore.ScalarCallKillPolicy and its landing gate.",
+   "source": "docs/reports/link-record-kill-policy-scalar-calls/README.md"
+  }
+ ]
+}

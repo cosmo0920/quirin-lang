@@ -184,6 +184,7 @@ impl Parser<'_> {
                 nested,
                 container,
                 retention,
+                scalar_actuals,
             }) if function == minted
                 && contract == minted_contract
                 && produced_sites.is_empty()
@@ -203,6 +204,7 @@ impl Parser<'_> {
                     nested,
                     container,
                     retention,
+                    scalar_actuals,
                 }
             }
             _ => {

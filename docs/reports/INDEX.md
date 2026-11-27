@@ -783,6 +783,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [licence-header-test-repair](archive/language-and-tooling/licence-header-test-repair/README.md) | LICENCE-HEADER-TEST-REPAIR |
 
+| [link-record-kill-policy-scalar-calls](link-record-kill-policy-scalar-calls/README.md) | LINK-RECORD-KILL-POLICY-SCALAR-CALLS: link records survive scalar-only calls |
+
 | [link-standing](archive/language-and-tooling/link-standing/README.md) | LINK-STANDING |
 
 | [link-standing-import-limiters](archive/language-and-tooling/link-standing-import-limiters/README.md) | LINK-STANDING-IMPORT-LIMITERS |

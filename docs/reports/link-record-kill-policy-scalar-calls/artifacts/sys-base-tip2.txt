@@ -1,0 +1,19 @@
+unit 13 src/flb_output.c flb_output_task_queue_enqueue #1: Unknown -> Safe
+   - 17797: unlink by `flb_task_retry_destroy` of `retry`, which this function has not published
+   - 17797: unresolved resource identity `retry`
+   - 17801: unresolved resource identity `retry`
+unit 13 src/flb_output.c flb_output_task_singleplex_enqueue #1: Unsafe -> Unsafe
+   - 17843: call to uncontracted function `flb_output_task_queue_enqueue`
+   + 17843: call to `flb_output_task_queue_enqueue`, which requires `retry`'s `_head` links valid on entry, which this function does not show
+   + 17843: unlink by `flb_output_task_queue_enqueue` of `retry`, which this function has not published
+   + 17843: unresolved resource identity `retry`
+unit 14 src/flb_output.c flb_output_task_queue_enqueue #1: Unknown -> Safe
+   - 17797: unlink by `flb_task_retry_destroy` of `retry`, which this function has not published
+   - 17797: unresolved resource identity `retry`
+   - 17801: unresolved resource identity `retry`
+unit 14 src/flb_output.c flb_output_task_singleplex_enqueue #1: Unsafe -> Unsafe
+   - 17843: call to uncontracted function `flb_output_task_queue_enqueue`
+   + 17843: call to `flb_output_task_queue_enqueue`, which requires `retry`'s `_head` links valid on entry, which this function does not show
+   + 17843: unlink by `flb_output_task_queue_enqueue` of `retry`, which this function has not published
+   + 17843: unresolved resource identity `retry`
+{"base": {"Safe": 116, "Unknown": 328, "Unsafe": 4}, "moves": {"Unknown -> Safe": 2}, "tip": {"Safe": 118, "Unknown": 326, "Unsafe": 4}}

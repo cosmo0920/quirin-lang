@@ -489,6 +489,7 @@ import QCore.RouteSelection
 import QCore.RuntimeImports
 import QCore.ScalarAccessorCondition
 import QCore.ScalarBufferValues
+import QCore.ScalarCallKillPolicy
 import QCore.ScalarCalls
 import QCore.ScalarComposedString
 import QCore.ScalarEpochTasks
