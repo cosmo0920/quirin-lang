@@ -1,0 +1,430 @@
+src/flb_engine.c flb_engine_start Unknown -> Unknown
+   - 19800 call to uncontracted function `flb_sched_ctx_init`
+src/flb_engine.c handle_dlq_if_available Unknown -> Unknown
+   - 19328 call to uncontracted function `flb_input_name`
+   - 19330 call to uncontracted function `flb_output_name`
+   + 19332 use of `out` after its object moved or its parent changed (interior-borrow-ended)
+   + 19332 use of `tag` after its object moved or its parent changed (interior-borrow-ended)
+src/flb_engine.c handle_output_event Unknown -> Unknown
+   - 19384 call to uncontracted function `flb_input_name`
+   - 19385 call to uncontracted function `flb_output_name`
+   - 19418 call to uncontracted function `flb_metrics_sum`
+   - 19420 call to uncontracted function `flb_metrics_sum`
+   - 19429 call to uncontracted function `flb_task_from_fs_storage` in branch condition
+   - 19456 call to uncontracted function `flb_metrics_sum`
+   - 19480 call to uncontracted function `flb_metrics_sum`
+   - 19481 call to uncontracted function `flb_metrics_sum`
+   - 19509 call to uncontracted function `flb_metrics_sum`
+   - 19510 call to uncontracted function `flb_metrics_sum`
+   - 19530 call to uncontracted function `flb_metrics_sum`
+   - 19531 call to uncontracted function `flb_metrics_sum`
+   + 19396 use of `in_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19396 use of `out_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19400 use of `in_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19400 use of `out_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19402 use of `in_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19402 use of `out_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19405 use of `in_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19405 use of `out_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19408 use of `in_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19408 use of `out_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19413 use of `in_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19413 use of `out_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19414 use of `in_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19414 use of `out_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19418 unresolved resource identity `ins`
+   + 19420 unresolved resource identity `ins`
+   + 19423 use of `in_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19423 use of `out_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19426 use of `in_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19426 use of `out_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19430 use of `in_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19430 use of `out_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19433 use of `in_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19433 use of `out_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19436 use of `in_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19436 use of `out_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19437 use of `in_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19437 use of `out_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19441 use of `in_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19441 use of `out_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19442 use of `in_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19442 use of `out_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19446 use of `in_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19446 use of `out_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19449 use of `in_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19449 use of `out_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19453 use of `in_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19453 use of `out_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19456 unresolved resource identity `ins`
+   + 19457 use of `in_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19457 use of `out_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19458 use of `in_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19458 use of `out_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19459 use of `in_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19459 use of `out_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19462 use of `in_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19462 use of `out_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19464 use of `in_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19464 use of `out_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19465 use of `in_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19465 use of `out_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19466 use of `in_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19466 use of `out_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19470 use of `in_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19470 use of `out_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19473 use of `in_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19473 use of `out_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19477 use of `in_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19477 use of `out_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19480 unresolved resource identity `ins`
+   + 19481 unresolved resource identity `ins`
+   + 19482 use of `in_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19482 use of `out_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19483 use of `in_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19483 use of `out_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19484 use of `in_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19484 use of `out_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19488 use of `in_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19488 use of `out_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19491 use of `in_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19491 use of `out_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19492 use of `in_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19492 use of `out_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19494 use of `in_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19494 use of `out_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19497 use of `in_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19497 use of `out_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19498 use of `in_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19498 use of `out_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19499 use of `in_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19499 use of `out_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19502 use of `in_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19502 use of `out_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19506 use of `in_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19506 use of `out_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19509 unresolved resource identity `ins`
+   + 19510 unresolved resource identity `ins`
+   + 19514 use of `in_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19514 use of `out_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19515 use of `in_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19515 use of `out_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19516 use of `in_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19516 use of `out_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19520 use of `in_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19520 use of `out_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19523 use of `in_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19523 use of `out_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19527 use of `in_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19527 use of `out_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19530 unresolved resource identity `ins`
+   + 19531 unresolved resource identity `ins`
+   + 19532 use of `in_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19532 use of `out_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19533 use of `in_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 19533 use of `out_name` after its object moved or its parent changed (interior-borrow-ended)
+src/flb_engine_dispatch.c record_retry_failure_metrics Unknown -> Unknown
+   - 17435 call to uncontracted function `flb_input_name`
+   - 17436 call to uncontracted function `flb_output_name`
+   - 17459 call to uncontracted function `flb_metrics_sum`
+   - 17460 call to uncontracted function `flb_metrics_sum`
+   + 17446 use of `input_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 17446 use of `output_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 17448 use of `input_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 17448 use of `output_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 17452 use of `input_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 17452 use of `output_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 17455 use of `input_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 17455 use of `output_name` after its object moved or its parent changed (interior-borrow-ended)
+src/flb_input_chunk.c flb_input_chunk_destroy Unknown -> Unknown
+   - 19769 call to uncontracted function `flb_input_chunk_output_size_subtract`
+src/flb_input_chunk.c flb_input_chunk_destroy_corrupted Unknown -> Unknown
+   - 19707 call to uncontracted function `flb_input_chunk_output_size_subtract`
+src/flb_input_chunk.c flb_input_chunk_map Unknown -> Unknown
+   - 18878 call to uncontracted function `flb_metrics_sum`
+   - 18879 call to uncontracted function `flb_metrics_sum`
+   + 18878 unresolved resource identity `ic`
+src/flb_input_chunk.c flb_input_chunk_output_size_subtract Unknown -> Safe
+   - 17720 indirect memory access is outside the resource projection
+   - 17721 unresolved resource identity `o_ins`
+src/flb_input_chunk.c flb_input_chunk_release_route Unknown -> Unknown
+   - 18266 indirect memory access is outside the resource projection
+   - 18267 call to uncontracted function `flb_input_chunk_output_size_subtract`
+src/flb_input_chunk.c flb_input_chunk_release_space Unknown -> Unknown
+   - 18122 call to uncontracted function `flb_input_chunk_output_size_subtract`
+   - 18167 call to uncontracted function `flb_metrics_sum`
+src/flb_input_chunk.c flb_input_chunk_update_output_instances Unknown -> Unknown
+   - 20593 call to uncontracted function `flb_input_chunk_output_size_subtract`
+   - 20596 call to uncontracted function `input_chunk_output_size_add`
+src/flb_input_chunk.c get_input_chunk_source_name Unknown -> Unknown
+   - 18054 call to uncontracted function `flb_input_name`
+   + 18054 unmodeled call, aggregate or indirect access in return expression
+src/flb_input_chunk.c input_chunk_append_raw Unknown -> Unknown
+   - 20124 call to uncontracted function `flb_input_name`
+   - 20138 nested call `flb_input_name` inside a modeled call is outside the resource projection
+   - 20199 call to uncontracted function `flb_metrics_sum`
+   - 20200 call to uncontracted function `flb_metrics_sum`
+   - 20232 nested call `flb_input_name` inside a modeled call is outside the resource projection
+   - 20289 nested call `flb_input_name` inside a modeled call is outside the resource projection
+   + 20127 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 20146 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 20155 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 20156 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 20159 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 20183 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 20188 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 20191 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 20194 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 20196 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 20198 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 20206 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 20216 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 20233 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 20244 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 20248 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 20255 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 20256 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 20269 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 20290 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 20293 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 20295 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+src/flb_input_chunk.c input_chunk_output_size_add Unknown -> Safe
+   - 17730 indirect memory access is outside the resource projection
+   - 17731 unresolved resource identity `o_ins`
+src/flb_input_chunk.c update_logs_tag_records_metrics Unknown -> Unknown
+   - 17786 call to uncontracted function `flb_input_name`
+   + 17790 use of `input_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 17795 use of `input_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 17805 use of `input_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 17810 use of `input_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 17811 use of `input_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 17813 use of `input_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 17823 use of `input_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 17826 use of `input_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 17833 use of `input_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 17845 use of `input_name` after its object moved or its parent changed (interior-borrow-ended)
+   + 17848 use of `input_name` after its object moved or its parent changed (interior-borrow-ended)
+src/flb_output.c flb_output_flush_finished Unknown -> Unknown
+   - 18075 call to uncontracted function `flb_output_thread_instance_get`
+src/flb_output.c flb_output_flush_id_get Unknown -> Safe
+   - 17764 call to uncontracted function `flb_output_thread_instance_get`
+   - 17768 unresolved resource identity `th_ins`
+src/flb_output.c flb_output_flush_prepare_destroy Unknown -> Unknown
+   - 17747 call to uncontracted function `flb_output_thread_instance_get`
+src/flb_output.c flb_output_init_all Unknown -> Unknown
+   - 18719 nested call `flb_output_name` inside a modeled call is outside the resource projection
+   - 18725 call to uncontracted function `flb_output_name`
+   - 18938 nested call `flb_output_name` inside a modeled call is outside the resource projection
+   + 18714 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18723 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18732 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18736 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18737 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18741 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18742 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18746 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18747 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18751 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18752 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18758 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18759 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18763 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18764 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18768 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18769 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18775 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18779 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18785 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18789 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18795 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18799 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18802 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18805 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18812 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18815 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18819 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18826 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18828 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18830 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18832 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18834 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18836 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18838 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18840 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18844 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18854 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18859 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18861 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18866 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18868 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18874 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18876 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18882 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18884 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18890 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18894 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18899 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18904 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18906 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18909 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18911 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18912 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18916 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18917 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18922 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18924 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18929 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18936 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18942 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18943 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18947 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18949 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+src/flb_output.c flb_output_set_property Unknown -> Unknown
+   - 18324 unresolved resource identity `ins`
+   - 18332 unresolved resource identity `ins`
+   - 18339 unresolved resource identity `ins`
+   - 18343 unresolved resource identity `ins`
+   - 18351 unresolved resource identity `ins`
+   - 18356 unresolved resource identity `ins`
+   - 18359 unresolved resource identity `ins`
+   - 18362 unresolved resource identity `ins`
+   - 18365 unresolved resource identity `ins`
+   - 18371 unresolved resource identity `ins`
+   - 18426 indirect memory access is outside the resource projection
+   - 18441 unresolved resource identity `ins`
+   - 18492 indirect memory access is outside the resource projection
+   - 18508 unresolved resource identity `ins`
+   - 18512 unresolved resource identity `ins`
+src/flb_output.c flb_output_task_flush Unsafe -> Unsafe
+   - 17923 counted users undecided: `resource_user_exit(task, -1, restored)`: `flb_output_flush_create` calls `flb_output_flush_id_get`: the declaration of `flb_output_flush_id_get` does not hold against its body here (`resource_user_neutral()` undecided: `flb_output_flush_id_get` calls `flb_output_thread_instance_get`: call to `flb_output_thread_instance_get`, which has no contract in force and no body in this unit)
+   + 17923 counted users undecided: `resource_user_exit(task, -1, restored)`: `flb_output_flush_create` calls `flb_processor_is_active`: call to `flb_processor_is_active`, which has no contract in force and no body in this unit
+src/flb_output.c flb_output_task_flush_error Unknown -> Unknown
+   - 17884 unresolved resource identity `out_ins`
+src/flb_scheduler.c flb_sched_event_handler Unknown -> Unknown
+   - 18029 call to uncontracted function `flb_sched_timer_cb_disable`
+src/flb_scheduler.c flb_sched_timer_destroy Unknown -> Unknown
+   - 18234 call to uncontracted function `flb_sched_timer_cb_disable`
+src/flb_scheduler.c flb_sched_timer_invalidate Unknown -> Unknown
+   - 18227 call to uncontracted function `flb_sched_timer_cb_disable`
+src/flb_storage.c flb_storage_input_create Unknown -> Unknown
+   - 18735 indirect memory access is outside the resource projection
+   - 18736 unresolved resource identity `in`
+   - 18740 nested call `flb_input_name` inside a modeled call is outside the resource projection
+   - 18741 unresolved resource identity `in`
+   - 18747 unresolved resource identity `cio`
+   - 18748 nested call `flb_input_name` inside a modeled call is outside the resource projection
+   - 18755 indirect memory access is outside the resource projection
+   - 18757 indirect memory access is outside the resource projection
+   - 18759 indirect memory access is outside the resource projection
+   - 18766 indirect memory access is outside the resource projection
+   - 18769 indirect memory access is outside the resource projection
+   - 18771 indirect memory access is outside the resource projection
+   - 18784 unresolved resource identity `in`
+   - 18784 indirect memory access is outside the resource projection
+   + 18755 call to uncontracted function `cio_stream_get`
+   + 18757 call to uncontracted function `cio_stream_create`
+   + 18766 unresolved resource identity `cio`
+   + 18769 call to uncontracted function `cio_stream_create`
+src/flb_storage.c metrics_append_input Unknown -> Unknown
+   - 18476 call to uncontracted function `flb_input_name`
+   - 18478 call to uncontracted function `flb_input_name`
+   + 18477 use of `tmp` after its object moved or its parent changed (interior-borrow-ended)
+   + 18480 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18481 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18481 use of `tmp` after its object moved or its parent changed (interior-borrow-ended)
+   + 18482 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18482 use of `tmp` after its object moved or its parent changed (interior-borrow-ended)
+   + 18483 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18483 use of `tmp` after its object moved or its parent changed (interior-borrow-ended)
+   + 18484 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18484 use of `tmp` after its object moved or its parent changed (interior-borrow-ended)
+   + 18485 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18485 use of `tmp` after its object moved or its parent changed (interior-borrow-ended)
+   + 18486 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18486 use of `tmp` after its object moved or its parent changed (interior-borrow-ended)
+   + 18487 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18487 use of `tmp` after its object moved or its parent changed (interior-borrow-ended)
+   + 18495 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18495 use of `tmp` after its object moved or its parent changed (interior-borrow-ended)
+   + 18497 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18497 use of `tmp` after its object moved or its parent changed (interior-borrow-ended)
+   + 18500 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18500 use of `tmp` after its object moved or its parent changed (interior-borrow-ended)
+   + 18502 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18502 use of `tmp` after its object moved or its parent changed (interior-borrow-ended)
+   + 18504 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18504 use of `tmp` after its object moved or its parent changed (interior-borrow-ended)
+   + 18506 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18506 use of `tmp` after its object moved or its parent changed (interior-borrow-ended)
+   + 18507 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18507 use of `tmp` after its object moved or its parent changed (interior-borrow-ended)
+   + 18508 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18508 use of `tmp` after its object moved or its parent changed (interior-borrow-ended)
+   + 18511 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18511 use of `tmp` after its object moved or its parent changed (interior-borrow-ended)
+   + 18512 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18512 use of `tmp` after its object moved or its parent changed (interior-borrow-ended)
+   + 18513 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18513 use of `tmp` after its object moved or its parent changed (interior-borrow-ended)
+   + 18514 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18514 use of `tmp` after its object moved or its parent changed (interior-borrow-ended)
+   + 18515 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18515 use of `tmp` after its object moved or its parent changed (interior-borrow-ended)
+   + 18518 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18518 use of `tmp` after its object moved or its parent changed (interior-borrow-ended)
+   + 18519 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18519 use of `tmp` after its object moved or its parent changed (interior-borrow-ended)
+   + 18520 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18520 use of `tmp` after its object moved or its parent changed (interior-borrow-ended)
+   + 18522 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18522 use of `tmp` after its object moved or its parent changed (interior-borrow-ended)
+   + 18523 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18523 use of `tmp` after its object moved or its parent changed (interior-borrow-ended)
+   + 18524 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18524 use of `tmp` after its object moved or its parent changed (interior-borrow-ended)
+   + 18525 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18525 use of `tmp` after its object moved or its parent changed (interior-borrow-ended)
+   + 18526 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18526 use of `tmp` after its object moved or its parent changed (interior-borrow-ended)
+   + 18527 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18527 use of `tmp` after its object moved or its parent changed (interior-borrow-ended)
+   + 18548 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18548 use of `tmp` after its object moved or its parent changed (interior-borrow-ended)
+   + 18550 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18550 use of `tmp` after its object moved or its parent changed (interior-borrow-ended)
+   + 18551 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18551 use of `tmp` after its object moved or its parent changed (interior-borrow-ended)
+   + 18552 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18552 use of `tmp` after its object moved or its parent changed (interior-borrow-ended)
+   + 18553 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18553 use of `tmp` after its object moved or its parent changed (interior-borrow-ended)
+   + 18555 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18555 use of `tmp` after its object moved or its parent changed (interior-borrow-ended)
+   + 18556 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18556 use of `tmp` after its object moved or its parent changed (interior-borrow-ended)
+   + 18557 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18557 use of `tmp` after its object moved or its parent changed (interior-borrow-ended)
+   + 18558 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18558 use of `tmp` after its object moved or its parent changed (interior-borrow-ended)
+   + 18560 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18560 use of `tmp` after its object moved or its parent changed (interior-borrow-ended)
+   + 18561 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18561 use of `tmp` after its object moved or its parent changed (interior-borrow-ended)
+   + 18562 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18562 use of `tmp` after its object moved or its parent changed (interior-borrow-ended)
+   + 18563 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18563 use of `tmp` after its object moved or its parent changed (interior-borrow-ended)
+   + 18565 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18565 use of `tmp` after its object moved or its parent changed (interior-borrow-ended)
+   + 18566 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18566 use of `tmp` after its object moved or its parent changed (interior-borrow-ended)
+   + 18567 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18567 use of `tmp` after its object moved or its parent changed (interior-borrow-ended)
+   + 18569 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18569 use of `tmp` after its object moved or its parent changed (interior-borrow-ended)
+   + 18570 use of `name` after its object moved or its parent changed (interior-borrow-ended)
+   + 18570 use of `tmp` after its object moved or its parent changed (interior-borrow-ended)
+src/flb_task.c flb_task_destroy Unknown -> Unknown
+   - 17945 call to uncontracted function `map_free_task_id`
+src/flb_task.c flb_task_running_print Unknown -> Unknown
+   - 17632 indirect memory access is outside the resource projection
