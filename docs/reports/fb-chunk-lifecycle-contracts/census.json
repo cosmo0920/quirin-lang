@@ -748,6 +748,50 @@
    "clauses": [
     "requires resource_contract_v1;",
     "ensures normal resource_borrowed(ins);",
+    "ensures normal resource_return_borrowed_from(ins, nullable);"
+   ],
+   "function": "flb_input_name",
+   "modules": [
+    "quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_name.qv"
+   ],
+   "rows": [
+    "current:flb_input_chunk.c::append_to_ring_buffer",
+    "current:flb_input_chunk.c::flb_input_chunk_find_space_new_data",
+    "current:flb_input_chunk.c::flb_input_chunk_map",
+    "current:flb_input_chunk.c::flb_input_chunk_protect",
+    "current:flb_input_chunk.c::flb_input_chunk_release_space",
+    "current:flb_input_chunk.c::flb_input_chunk_set_limits",
+    "current:flb_input_chunk.c::get_input_chunk_source_name",
+    "current:flb_input_chunk.c::input_chunk_append_raw",
+    "current:flb_input_chunk.c::input_chunk_get",
+    "current:flb_input_chunk.c::update_logs_tag_records_metrics",
+    "current:flb_input_chunk.c::update_logs_tag_records_untracked",
+    "fluent-bit-system:flb_input_chunk.c::append_to_ring_buffer",
+    "fluent-bit-system:flb_input_chunk.c::flb_input_chunk_find_space_new_data",
+    "fluent-bit-system:flb_input_chunk.c::flb_input_chunk_map",
+    "fluent-bit-system:flb_input_chunk.c::flb_input_chunk_protect",
+    "fluent-bit-system:flb_input_chunk.c::flb_input_chunk_release_space",
+    "fluent-bit-system:flb_input_chunk.c::flb_input_chunk_set_limits",
+    "fluent-bit-system:flb_input_chunk.c::get_input_chunk_source_name",
+    "fluent-bit-system:flb_input_chunk.c::input_chunk_append_raw",
+    "fluent-bit-system:flb_input_chunk.c::input_chunk_get",
+    "fluent-bit-system:flb_input_chunk.c::update_logs_tag_records_metrics",
+    "fluent-bit-system:flb_input_chunk.c::update_logs_tag_records_untracked",
+    "fluent-bit-system:sb.c::cb_queue_chunks",
+    "fluent-bit-system:sb.c::cb_sb_init",
+    "fluent-bit-system:sb.c::sb_segregate_chunks"
+   ],
+   "tests": [
+    "crates/qcore-c-gateway/tests/slot_move_interior_borrow/chunk_lifecycle_contracts.rs::a_body_handing_back_anything_else_has_the_declaration_withdrawn",
+    "crates/qcore-c-gateway/tests/slot_move_interior_borrow/chunk_lifecycle_contracts.rs::the_declaration_is_a_borrowed_instance_and_a_parent_borrowed_result",
+    "crates/qcore-c-gateway/tests/slot_move_interior_borrow/chunk_lifecycle_contracts.rs::the_name_owns_nothing_and_ends_with_its_instance"
+   ],
+   "tests_count": 3
+  },
+  {
+   "clauses": [
+    "requires resource_contract_v1;",
+    "ensures normal resource_borrowed(ins);",
     "ensures normal resource_borrowed(cb_collect);",
     "ensures normal resource_borrowed(seconds);",
     "ensures normal resource_borrowed(nanoseconds);",
@@ -1617,7 +1661,7 @@
     "crates/qcore-c-gateway/tests/generic_selection.rs::a_call_argument_is_analysed_as_the_call",
     "crates/qcore-c-gateway/tests/generic_selection.rs::a_mutable_argument_selects_the_call_and_keeps_its_derivation"
    ],
-   "tests_count": 8
+   "tests_count": 9
   },
   {
    "clauses": [
@@ -1691,19 +1735,512 @@
  ],
  "fluent_bit_revision": "046accf6aded7906f66a1baf0202da349e521736",
  "inputs": {
+  "base-census": "b8b75f050b86a042489c79ceb298eaa3d9cc9d9c0f11ba3965d24c0f65c96de9",
   "classification.json": "862762c6c2729fd83a69567414081dba0473ca2a3824f75f2db2a90c585d2ea9",
-  "current:resource-diagnostics.contracts.json": "671ae250396a23c9a36945f976049569dcdb4e2a373e475224f350c362c21b6a",
-  "current:resource-diagnostics.json": "cd6d61b6cd91ff19c68bac152b578213f0637f93823f72f07c5947d9c8de68ec",
-  "fluent-bit-system:resource-diagnostics.contracts.json": "96ac179dd7f60f993cb4fd2eb8f6b2bd5f3747e5435715f644e3c21dab0d1d46",
-  "fluent-bit-system:resource-diagnostics.json": "6a74c2fcfdc3a3301802e03e089d17f117cc76e5df5259510d7c528f941f6b89",
+  "current:resource-diagnostics.contracts.json": "1b3014abfbf7bb96cf9c462d978bdebdeac31c603c21361b03618748cd79b067",
+  "current:resource-diagnostics.json": "ddb62e7742e848e79a055aa1c9aa0675b8ae3032e3f3a3f9771a6a29a07de0fe",
+  "fluent-bit-system:resource-diagnostics.contracts.json": "ca18a753baa97089aea9636f664de55cb14a7cfac8f034bd3b09ddb1cd4f925a",
+  "fluent-bit-system:resource-diagnostics.json": "7624b6269dd154a4b39bf03dc34faa995b148ea4608a3b1235e5393c200afc54",
   "fluent-bit:lib/chunkio/src/cio_chunk.c": "8f6064c742b3fcc53d75b66dbd07d5c7f03d2f245ec7716f8605a2c3a6efd6c8",
   "fluent-bit:lib/chunkio/src/cio_file.c": "1c3eb285307108deb2b22c68cf282c0121619a35bbe36adc216f276d51925257",
   "fluent-bit:plugins/in_storage_backlog/sb.c": "705012c176a27a34d0d101c40bc4b28eb7e5ef35595a40b20c2a3a2b8670cf04",
   "fluent-bit:src/flb_input.c": "92a0917b89dd61ff92d098dffcf56ddae1060d7588874a3fc0e8e27f45544122",
   "fluent-bit:src/flb_input_chunk.c": "0fdf7af3f6b976c7790fb6ded755e5f4cd20ea813cb7d868907a3c16eb10db8d"
  },
- "label": "base",
- "revision": "56584db0b467355a13109e7c3923979a74423bb7",
+ "label": "tip",
+ "moved": {
+  "current": [
+   {
+    "added": [
+     [
+      "unmodeled call, aggregate or indirect access in return expression",
+      "src/flb_input_chunk.c:537",
+      18054
+     ]
+    ],
+    "cleared": [
+     [
+      "call to uncontracted function `flb_input_name`",
+      "src/flb_input_chunk.c:537",
+      18054
+     ]
+    ],
+    "row": "flb_input_chunk.c::get_input_chunk_source_name",
+    "status": [
+     "Unknown",
+     "Unknown"
+    ]
+   },
+   {
+    "added": [
+     [
+      "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+      "src/flb_input_chunk.c:3302",
+      20127
+     ],
+     [
+      "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+      "src/flb_input_chunk.c:3335",
+      20146
+     ],
+     [
+      "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+      "src/flb_input_chunk.c:3349",
+      20155
+     ],
+     [
+      "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+      "src/flb_input_chunk.c:3350",
+      20156
+     ],
+     [
+      "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+      "src/flb_input_chunk.c:3358",
+      20159
+     ],
+     [
+      "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+      "src/flb_input_chunk.c:3400",
+      20183
+     ],
+     [
+      "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+      "src/flb_input_chunk.c:3409",
+      20188
+     ],
+     [
+      "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+      "src/flb_input_chunk.c:3419",
+      20191
+     ],
+     [
+      "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+      "src/flb_input_chunk.c:3423",
+      20194
+     ],
+     [
+      "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+      "src/flb_input_chunk.c:3427",
+      20196
+     ],
+     [
+      "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+      "src/flb_input_chunk.c:3429",
+      20198
+     ],
+     [
+      "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+      "src/flb_input_chunk.c:3432",
+      20199
+     ],
+     [
+      "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+      "src/flb_input_chunk.c:3433",
+      20200
+     ],
+     [
+      "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+      "src/flb_input_chunk.c:3443",
+      20206
+     ],
+     [
+      "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+      "src/flb_input_chunk.c:3455",
+      20216
+     ],
+     [
+      "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+      "src/flb_input_chunk.c:3482",
+      20233
+     ],
+     [
+      "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+      "src/flb_input_chunk.c:3506",
+      20244
+     ],
+     [
+      "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+      "src/flb_input_chunk.c:3512",
+      20248
+     ],
+     [
+      "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+      "src/flb_input_chunk.c:3522",
+      20255
+     ],
+     [
+      "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+      "src/flb_input_chunk.c:3525",
+      20256
+     ],
+     [
+      "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+      "src/flb_input_chunk.c:3547",
+      20269
+     ],
+     [
+      "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+      "src/flb_input_chunk.c:3590",
+      20290
+     ],
+     [
+      "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+      "src/flb_input_chunk.c:3595",
+      20293
+     ],
+     [
+      "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+      "src/flb_input_chunk.c:3599",
+      20295
+     ]
+    ],
+    "cleared": [
+     [
+      "call to uncontracted function `flb_input_name`",
+      "src/flb_input_chunk.c:3296",
+      20124
+     ],
+     [
+      "nested call `flb_input_name` inside a modeled call is outside the resource projection",
+      "src/flb_input_chunk.c:3317",
+      20138
+     ],
+     [
+      "nested call `flb_input_name` inside a modeled call is outside the resource projection",
+      "src/flb_input_chunk.c:3480",
+      20232
+     ],
+     [
+      "nested call `flb_input_name` inside a modeled call is outside the resource projection",
+      "src/flb_input_chunk.c:3588",
+      20289
+     ]
+    ],
+    "row": "flb_input_chunk.c::input_chunk_append_raw",
+    "status": [
+     "Unknown",
+     "Unknown"
+    ]
+   },
+   {
+    "added": [
+     [
+      "use of `input_name` after its object moved or its parent changed (interior-borrow-ended)",
+      "src/flb_input_chunk.c:167",
+      17790
+     ],
+     [
+      "use of `input_name` after its object moved or its parent changed (interior-borrow-ended)",
+      "src/flb_input_chunk.c:179",
+      17795
+     ],
+     [
+      "use of `input_name` after its object moved or its parent changed (interior-borrow-ended)",
+      "src/flb_input_chunk.c:190",
+      17805
+     ],
+     [
+      "use of `input_name` after its object moved or its parent changed (interior-borrow-ended)",
+      "src/flb_input_chunk.c:196",
+      17810
+     ],
+     [
+      "use of `input_name` after its object moved or its parent changed (interior-borrow-ended)",
+      "src/flb_input_chunk.c:197",
+      17811
+     ],
+     [
+      "use of `input_name` after its object moved or its parent changed (interior-borrow-ended)",
+      "src/flb_input_chunk.c:201",
+      17813
+     ],
+     [
+      "use of `input_name` after its object moved or its parent changed (interior-borrow-ended)",
+      "src/flb_input_chunk.c:211",
+      17823
+     ],
+     [
+      "use of `input_name` after its object moved or its parent changed (interior-borrow-ended)",
+      "src/flb_input_chunk.c:215",
+      17826
+     ],
+     [
+      "use of `input_name` after its object moved or its parent changed (interior-borrow-ended)",
+      "src/flb_input_chunk.c:222",
+      17833
+     ],
+     [
+      "use of `input_name` after its object moved or its parent changed (interior-borrow-ended)",
+      "src/flb_input_chunk.c:239",
+      17845
+     ],
+     [
+      "use of `input_name` after its object moved or its parent changed (interior-borrow-ended)",
+      "src/flb_input_chunk.c:243",
+      17848
+     ]
+    ],
+    "cleared": [
+     [
+      "call to uncontracted function `flb_input_name`",
+      "src/flb_input_chunk.c:154",
+      17786
+     ]
+    ],
+    "row": "flb_input_chunk.c::update_logs_tag_records_metrics",
+    "status": [
+     "Unknown",
+     "Unknown"
+    ]
+   }
+  ],
+  "fluent-bit-system": [
+   {
+    "added": [
+     [
+      "unmodeled call, aggregate or indirect access in return expression",
+      "src/flb_input_chunk.c:537",
+      18054
+     ]
+    ],
+    "cleared": [
+     [
+      "call to uncontracted function `flb_input_name`",
+      "src/flb_input_chunk.c:537",
+      18054
+     ]
+    ],
+    "row": "flb_input_chunk.c::get_input_chunk_source_name",
+    "status": [
+     "Unknown",
+     "Unknown"
+    ]
+   },
+   {
+    "added": [
+     [
+      "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+      "src/flb_input_chunk.c:3302",
+      20127
+     ],
+     [
+      "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+      "src/flb_input_chunk.c:3335",
+      20146
+     ],
+     [
+      "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+      "src/flb_input_chunk.c:3349",
+      20155
+     ],
+     [
+      "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+      "src/flb_input_chunk.c:3350",
+      20156
+     ],
+     [
+      "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+      "src/flb_input_chunk.c:3358",
+      20159
+     ],
+     [
+      "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+      "src/flb_input_chunk.c:3400",
+      20183
+     ],
+     [
+      "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+      "src/flb_input_chunk.c:3409",
+      20188
+     ],
+     [
+      "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+      "src/flb_input_chunk.c:3419",
+      20191
+     ],
+     [
+      "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+      "src/flb_input_chunk.c:3423",
+      20194
+     ],
+     [
+      "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+      "src/flb_input_chunk.c:3427",
+      20196
+     ],
+     [
+      "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+      "src/flb_input_chunk.c:3429",
+      20198
+     ],
+     [
+      "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+      "src/flb_input_chunk.c:3432",
+      20199
+     ],
+     [
+      "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+      "src/flb_input_chunk.c:3433",
+      20200
+     ],
+     [
+      "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+      "src/flb_input_chunk.c:3443",
+      20206
+     ],
+     [
+      "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+      "src/flb_input_chunk.c:3455",
+      20216
+     ],
+     [
+      "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+      "src/flb_input_chunk.c:3482",
+      20233
+     ],
+     [
+      "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+      "src/flb_input_chunk.c:3506",
+      20244
+     ],
+     [
+      "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+      "src/flb_input_chunk.c:3512",
+      20248
+     ],
+     [
+      "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+      "src/flb_input_chunk.c:3522",
+      20255
+     ],
+     [
+      "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+      "src/flb_input_chunk.c:3525",
+      20256
+     ],
+     [
+      "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+      "src/flb_input_chunk.c:3547",
+      20269
+     ],
+     [
+      "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+      "src/flb_input_chunk.c:3590",
+      20290
+     ],
+     [
+      "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+      "src/flb_input_chunk.c:3595",
+      20293
+     ],
+     [
+      "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+      "src/flb_input_chunk.c:3599",
+      20295
+     ]
+    ],
+    "cleared": [
+     [
+      "call to uncontracted function `flb_input_name`",
+      "src/flb_input_chunk.c:3296",
+      20124
+     ],
+     [
+      "nested call `flb_input_name` inside a modeled call is outside the resource projection",
+      "src/flb_input_chunk.c:3317",
+      20138
+     ],
+     [
+      "nested call `flb_input_name` inside a modeled call is outside the resource projection",
+      "src/flb_input_chunk.c:3480",
+      20232
+     ],
+     [
+      "nested call `flb_input_name` inside a modeled call is outside the resource projection",
+      "src/flb_input_chunk.c:3588",
+      20289
+     ]
+    ],
+    "row": "flb_input_chunk.c::input_chunk_append_raw",
+    "status": [
+     "Unknown",
+     "Unknown"
+    ]
+   },
+   {
+    "added": [
+     [
+      "use of `input_name` after its object moved or its parent changed (interior-borrow-ended)",
+      "src/flb_input_chunk.c:167",
+      17790
+     ],
+     [
+      "use of `input_name` after its object moved or its parent changed (interior-borrow-ended)",
+      "src/flb_input_chunk.c:179",
+      17795
+     ],
+     [
+      "use of `input_name` after its object moved or its parent changed (interior-borrow-ended)",
+      "src/flb_input_chunk.c:190",
+      17805
+     ],
+     [
+      "use of `input_name` after its object moved or its parent changed (interior-borrow-ended)",
+      "src/flb_input_chunk.c:196",
+      17810
+     ],
+     [
+      "use of `input_name` after its object moved or its parent changed (interior-borrow-ended)",
+      "src/flb_input_chunk.c:197",
+      17811
+     ],
+     [
+      "use of `input_name` after its object moved or its parent changed (interior-borrow-ended)",
+      "src/flb_input_chunk.c:201",
+      17813
+     ],
+     [
+      "use of `input_name` after its object moved or its parent changed (interior-borrow-ended)",
+      "src/flb_input_chunk.c:211",
+      17823
+     ],
+     [
+      "use of `input_name` after its object moved or its parent changed (interior-borrow-ended)",
+      "src/flb_input_chunk.c:215",
+      17826
+     ],
+     [
+      "use of `input_name` after its object moved or its parent changed (interior-borrow-ended)",
+      "src/flb_input_chunk.c:222",
+      17833
+     ],
+     [
+      "use of `input_name` after its object moved or its parent changed (interior-borrow-ended)",
+      "src/flb_input_chunk.c:239",
+      17845
+     ],
+     [
+      "use of `input_name` after its object moved or its parent changed (interior-borrow-ended)",
+      "src/flb_input_chunk.c:243",
+      17848
+     ]
+    ],
+    "cleared": [
+     [
+      "call to uncontracted function `flb_input_name`",
+      "src/flb_input_chunk.c:154",
+      17786
+     ]
+    ],
+    "row": "flb_input_chunk.c::update_logs_tag_records_metrics",
+    "status": [
+     "Unknown",
+     "Unknown"
+    ]
+   }
+  ]
+ },
+ "revision": "b8470dedb",
  "routes": {
   "current": {
    "all_rows": {
@@ -3486,14 +4023,14 @@
     "flb_input_chunk.c::get_input_chunk_source_name": {
      "leaves": [
       [
-       "call to uncontracted function `flb_input_name`",
-       "src/flb_input_chunk.c:537",
-       18054
-      ],
-      [
        "unmodeled call, aggregate or indirect access in return expression",
        "src/flb_input_chunk.c:533",
        18051
+      ],
+      [
+       "unmodeled call, aggregate or indirect access in return expression",
+       "src/flb_input_chunk.c:537",
+       18054
       ]
      ],
      "status": "Unknown"
@@ -3576,11 +4113,6 @@
        20216
       ],
       [
-       "call to uncontracted function `flb_input_name`",
-       "src/flb_input_chunk.c:3296",
-       20124
-      ],
-      [
        "call to uncontracted function `flb_input_rate_update`",
        "src/flb_input_chunk.c:3429",
        20198
@@ -3634,21 +4166,6 @@
        "indirect memory access is outside the resource projection",
        "src/flb_input_chunk.c:3525",
        20256
-      ],
-      [
-       "nested call `flb_input_name` inside a modeled call is outside the resource projection",
-       "src/flb_input_chunk.c:3317",
-       20138
-      ],
-      [
-       "nested call `flb_input_name` inside a modeled call is outside the resource projection",
-       "src/flb_input_chunk.c:3480",
-       20232
-      ],
-      [
-       "nested call `flb_input_name` inside a modeled call is outside the resource projection",
-       "src/flb_input_chunk.c:3588",
-       20289
       ],
       [
        "unlink by `flb_input_chunk_destroy` of `ic`, which this function has not published",
@@ -3719,6 +4236,126 @@
        "unresolved resource identity `in`",
        "src/flb_input_chunk.c:3558",
        20270
+      ],
+      [
+       "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+       "src/flb_input_chunk.c:3302",
+       20127
+      ],
+      [
+       "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+       "src/flb_input_chunk.c:3335",
+       20146
+      ],
+      [
+       "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+       "src/flb_input_chunk.c:3349",
+       20155
+      ],
+      [
+       "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+       "src/flb_input_chunk.c:3350",
+       20156
+      ],
+      [
+       "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+       "src/flb_input_chunk.c:3358",
+       20159
+      ],
+      [
+       "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+       "src/flb_input_chunk.c:3400",
+       20183
+      ],
+      [
+       "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+       "src/flb_input_chunk.c:3409",
+       20188
+      ],
+      [
+       "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+       "src/flb_input_chunk.c:3419",
+       20191
+      ],
+      [
+       "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+       "src/flb_input_chunk.c:3423",
+       20194
+      ],
+      [
+       "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+       "src/flb_input_chunk.c:3427",
+       20196
+      ],
+      [
+       "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+       "src/flb_input_chunk.c:3429",
+       20198
+      ],
+      [
+       "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+       "src/flb_input_chunk.c:3432",
+       20199
+      ],
+      [
+       "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+       "src/flb_input_chunk.c:3433",
+       20200
+      ],
+      [
+       "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+       "src/flb_input_chunk.c:3443",
+       20206
+      ],
+      [
+       "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+       "src/flb_input_chunk.c:3455",
+       20216
+      ],
+      [
+       "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+       "src/flb_input_chunk.c:3482",
+       20233
+      ],
+      [
+       "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+       "src/flb_input_chunk.c:3506",
+       20244
+      ],
+      [
+       "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+       "src/flb_input_chunk.c:3512",
+       20248
+      ],
+      [
+       "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+       "src/flb_input_chunk.c:3522",
+       20255
+      ],
+      [
+       "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+       "src/flb_input_chunk.c:3525",
+       20256
+      ],
+      [
+       "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+       "src/flb_input_chunk.c:3547",
+       20269
+      ],
+      [
+       "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+       "src/flb_input_chunk.c:3590",
+       20290
+      ],
+      [
+       "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+       "src/flb_input_chunk.c:3595",
+       20293
+      ],
+      [
+       "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+       "src/flb_input_chunk.c:3599",
+       20295
       ]
      ],
      "status": "Unknown"
@@ -4019,11 +4656,6 @@
        17813
       ],
       [
-       "call to uncontracted function `flb_input_name`",
-       "src/flb_input_chunk.c:154",
-       17786
-      ],
-      [
        "call to uncontracted function `update_logs_tag_records_untracked`",
        "src/flb_input_chunk.c:150",
        17783
@@ -4072,6 +4704,61 @@
        "unresolved resource identity `key`",
        "src/flb_input_chunk.c:232",
        17840
+      ],
+      [
+       "use of `input_name` after its object moved or its parent changed (interior-borrow-ended)",
+       "src/flb_input_chunk.c:167",
+       17790
+      ],
+      [
+       "use of `input_name` after its object moved or its parent changed (interior-borrow-ended)",
+       "src/flb_input_chunk.c:179",
+       17795
+      ],
+      [
+       "use of `input_name` after its object moved or its parent changed (interior-borrow-ended)",
+       "src/flb_input_chunk.c:190",
+       17805
+      ],
+      [
+       "use of `input_name` after its object moved or its parent changed (interior-borrow-ended)",
+       "src/flb_input_chunk.c:196",
+       17810
+      ],
+      [
+       "use of `input_name` after its object moved or its parent changed (interior-borrow-ended)",
+       "src/flb_input_chunk.c:197",
+       17811
+      ],
+      [
+       "use of `input_name` after its object moved or its parent changed (interior-borrow-ended)",
+       "src/flb_input_chunk.c:201",
+       17813
+      ],
+      [
+       "use of `input_name` after its object moved or its parent changed (interior-borrow-ended)",
+       "src/flb_input_chunk.c:211",
+       17823
+      ],
+      [
+       "use of `input_name` after its object moved or its parent changed (interior-borrow-ended)",
+       "src/flb_input_chunk.c:215",
+       17826
+      ],
+      [
+       "use of `input_name` after its object moved or its parent changed (interior-borrow-ended)",
+       "src/flb_input_chunk.c:222",
+       17833
+      ],
+      [
+       "use of `input_name` after its object moved or its parent changed (interior-borrow-ended)",
+       "src/flb_input_chunk.c:239",
+       17845
+      ],
+      [
+       "use of `input_name` after its object moved or its parent changed (interior-borrow-ended)",
+       "src/flb_input_chunk.c:243",
+       17848
       ]
      ],
      "status": "Unknown"
@@ -4097,6 +4784,11 @@
      "cause": "indirect memory access is outside the resource projection",
      "leaves": 91,
      "rows": 24
+    },
+    {
+     "cause": "use of `X` after its object moved or its parent changed (interior-borrow-ended)",
+     "leaves": 35,
+     "rows": 2
     },
     {
      "cause": "unmodeled call, aggregate or indirect access in branch condition",
@@ -4139,13 +4831,13 @@
      "rows": 3
     },
     {
-     "cause": "nested call `X` inside a modeled call is outside the resource projection",
+     "cause": "unmodeled increment or decrement expression",
      "leaves": 3,
      "rows": 1
     },
     {
-     "cause": "unmodeled increment or decrement expression",
-     "leaves": 3,
+     "cause": "unmodeled call, aggregate or indirect access in return expression",
+     "leaves": 2,
      "rows": 1
     },
     {
@@ -4160,11 +4852,6 @@
     },
     {
      "cause": "unmodeled call, aggregate or indirect access in loop condition",
-     "leaves": 1,
-     "rows": 1
-    },
-    {
-     "cause": "unmodeled call, aggregate or indirect access in return expression",
      "leaves": 1,
      "rows": 1
     }
@@ -4287,19 +4974,6 @@
       "flb_input_chunk.c::flb_input_chunk_flush",
       "flb_input_chunk.c::flb_input_chunk_map",
       "flb_input_chunk.c::input_chunk_append_raw"
-     ]
-    },
-    {
-     "callee": "flb_input_name",
-     "callee_body_status": [
-      "not on this route"
-     ],
-     "class": "a",
-     "leaves": 3,
-     "rows": [
-      "flb_input_chunk.c::get_input_chunk_source_name",
-      "flb_input_chunk.c::input_chunk_append_raw",
-      "flb_input_chunk.c::update_logs_tag_records_metrics"
      ]
     },
     {
@@ -6644,14 +7318,14 @@
     "flb_input_chunk.c::get_input_chunk_source_name": {
      "leaves": [
       [
-       "call to uncontracted function `flb_input_name`",
-       "src/flb_input_chunk.c:537",
-       18054
-      ],
-      [
        "unmodeled call, aggregate or indirect access in return expression",
        "src/flb_input_chunk.c:533",
        18051
+      ],
+      [
+       "unmodeled call, aggregate or indirect access in return expression",
+       "src/flb_input_chunk.c:537",
+       18054
       ]
      ],
      "status": "Unknown"
@@ -6734,11 +7408,6 @@
        20216
       ],
       [
-       "call to uncontracted function `flb_input_name`",
-       "src/flb_input_chunk.c:3296",
-       20124
-      ],
-      [
        "call to uncontracted function `flb_input_rate_update`",
        "src/flb_input_chunk.c:3429",
        20198
@@ -6792,21 +7461,6 @@
        "indirect memory access is outside the resource projection",
        "src/flb_input_chunk.c:3525",
        20256
-      ],
-      [
-       "nested call `flb_input_name` inside a modeled call is outside the resource projection",
-       "src/flb_input_chunk.c:3317",
-       20138
-      ],
-      [
-       "nested call `flb_input_name` inside a modeled call is outside the resource projection",
-       "src/flb_input_chunk.c:3480",
-       20232
-      ],
-      [
-       "nested call `flb_input_name` inside a modeled call is outside the resource projection",
-       "src/flb_input_chunk.c:3588",
-       20289
       ],
       [
        "unlink by `flb_input_chunk_destroy` of `ic`, which this function has not published",
@@ -6877,6 +7531,126 @@
        "unresolved resource identity `in`",
        "src/flb_input_chunk.c:3558",
        20270
+      ],
+      [
+       "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+       "src/flb_input_chunk.c:3302",
+       20127
+      ],
+      [
+       "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+       "src/flb_input_chunk.c:3335",
+       20146
+      ],
+      [
+       "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+       "src/flb_input_chunk.c:3349",
+       20155
+      ],
+      [
+       "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+       "src/flb_input_chunk.c:3350",
+       20156
+      ],
+      [
+       "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+       "src/flb_input_chunk.c:3358",
+       20159
+      ],
+      [
+       "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+       "src/flb_input_chunk.c:3400",
+       20183
+      ],
+      [
+       "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+       "src/flb_input_chunk.c:3409",
+       20188
+      ],
+      [
+       "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+       "src/flb_input_chunk.c:3419",
+       20191
+      ],
+      [
+       "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+       "src/flb_input_chunk.c:3423",
+       20194
+      ],
+      [
+       "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+       "src/flb_input_chunk.c:3427",
+       20196
+      ],
+      [
+       "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+       "src/flb_input_chunk.c:3429",
+       20198
+      ],
+      [
+       "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+       "src/flb_input_chunk.c:3432",
+       20199
+      ],
+      [
+       "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+       "src/flb_input_chunk.c:3433",
+       20200
+      ],
+      [
+       "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+       "src/flb_input_chunk.c:3443",
+       20206
+      ],
+      [
+       "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+       "src/flb_input_chunk.c:3455",
+       20216
+      ],
+      [
+       "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+       "src/flb_input_chunk.c:3482",
+       20233
+      ],
+      [
+       "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+       "src/flb_input_chunk.c:3506",
+       20244
+      ],
+      [
+       "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+       "src/flb_input_chunk.c:3512",
+       20248
+      ],
+      [
+       "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+       "src/flb_input_chunk.c:3522",
+       20255
+      ],
+      [
+       "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+       "src/flb_input_chunk.c:3525",
+       20256
+      ],
+      [
+       "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+       "src/flb_input_chunk.c:3547",
+       20269
+      ],
+      [
+       "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+       "src/flb_input_chunk.c:3590",
+       20290
+      ],
+      [
+       "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+       "src/flb_input_chunk.c:3595",
+       20293
+      ],
+      [
+       "use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+       "src/flb_input_chunk.c:3599",
+       20295
       ]
      ],
      "status": "Unknown"
@@ -7177,11 +7951,6 @@
        17813
       ],
       [
-       "call to uncontracted function `flb_input_name`",
-       "src/flb_input_chunk.c:154",
-       17786
-      ],
-      [
        "call to uncontracted function `update_logs_tag_records_untracked`",
        "src/flb_input_chunk.c:150",
        17783
@@ -7230,6 +7999,61 @@
        "unresolved resource identity `key`",
        "src/flb_input_chunk.c:232",
        17840
+      ],
+      [
+       "use of `input_name` after its object moved or its parent changed (interior-borrow-ended)",
+       "src/flb_input_chunk.c:167",
+       17790
+      ],
+      [
+       "use of `input_name` after its object moved or its parent changed (interior-borrow-ended)",
+       "src/flb_input_chunk.c:179",
+       17795
+      ],
+      [
+       "use of `input_name` after its object moved or its parent changed (interior-borrow-ended)",
+       "src/flb_input_chunk.c:190",
+       17805
+      ],
+      [
+       "use of `input_name` after its object moved or its parent changed (interior-borrow-ended)",
+       "src/flb_input_chunk.c:196",
+       17810
+      ],
+      [
+       "use of `input_name` after its object moved or its parent changed (interior-borrow-ended)",
+       "src/flb_input_chunk.c:197",
+       17811
+      ],
+      [
+       "use of `input_name` after its object moved or its parent changed (interior-borrow-ended)",
+       "src/flb_input_chunk.c:201",
+       17813
+      ],
+      [
+       "use of `input_name` after its object moved or its parent changed (interior-borrow-ended)",
+       "src/flb_input_chunk.c:211",
+       17823
+      ],
+      [
+       "use of `input_name` after its object moved or its parent changed (interior-borrow-ended)",
+       "src/flb_input_chunk.c:215",
+       17826
+      ],
+      [
+       "use of `input_name` after its object moved or its parent changed (interior-borrow-ended)",
+       "src/flb_input_chunk.c:222",
+       17833
+      ],
+      [
+       "use of `input_name` after its object moved or its parent changed (interior-borrow-ended)",
+       "src/flb_input_chunk.c:239",
+       17845
+      ],
+      [
+       "use of `input_name` after its object moved or its parent changed (interior-borrow-ended)",
+       "src/flb_input_chunk.c:243",
+       17848
       ]
      ],
      "status": "Unknown"
@@ -7851,6 +8675,11 @@
      "rows": 20
     },
     {
+     "cause": "use of `X` after its object moved or its parent changed (interior-borrow-ended)",
+     "leaves": 35,
+     "rows": 2
+    },
+    {
      "cause": "braced initializer, expression, or declaration is not modeled",
      "leaves": 14,
      "rows": 6
@@ -7896,11 +8725,6 @@
      "rows": 3
     },
     {
-     "cause": "nested call `X` inside a modeled call is outside the resource projection",
-     "leaves": 3,
-     "rows": 1
-    },
-    {
      "cause": "unmodeled increment or decrement expression",
      "leaves": 3,
      "rows": 1
@@ -7909,6 +8733,11 @@
      "cause": "unmodeled call, aggregate or indirect access in loop condition",
      "leaves": 2,
      "rows": 2
+    },
+    {
+     "cause": "unmodeled call, aggregate or indirect access in return expression",
+     "leaves": 2,
+     "rows": 1
     },
     {
      "cause": "unrecognized assignment destination",
@@ -7922,11 +8751,6 @@
     },
     {
      "cause": "loop re-acquisition: an earlier generation that may be live is still held",
-     "leaves": 1,
-     "rows": 1
-    },
-    {
-     "cause": "unmodeled call, aggregate or indirect access in return expression",
      "leaves": 1,
      "rows": 1
     }
@@ -8090,19 +8914,6 @@
       "flb_input_chunk.c::flb_input_chunk_flush",
       "flb_input_chunk.c::flb_input_chunk_map",
       "flb_input_chunk.c::input_chunk_append_raw"
-     ]
-    },
-    {
-     "callee": "flb_input_name",
-     "callee_body_status": [
-      "not on this route"
-     ],
-     "class": "a",
-     "leaves": 3,
-     "rows": [
-      "flb_input_chunk.c::get_input_chunk_source_name",
-      "flb_input_chunk.c::input_chunk_append_raw",
-      "flb_input_chunk.c::update_logs_tag_records_metrics"
      ]
     },
     {

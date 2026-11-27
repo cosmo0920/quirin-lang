@@ -604,6 +604,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [fb-chunk-lifecycle](fb-chunk-lifecycle/README.md) | FB-CHUNK-LIFECYCLE: a static function's constant-fixed formal, and the chunk-lifecycle census |
 
+| [fb-chunk-lifecycle-contracts](fb-chunk-lifecycle-contracts/README.md) | FB-CHUNK-LIFECYCLE-CONTRACTS: the chunk-lifecycle contract census, and the one contract it found statable |
+
 | [fb-event-loop-cross-function-lifetime](archive/contracts-and-premises/fb-event-loop-cross-function-lifetime/README.md) | FB-EVENT-LOOP-CROSS-FUNCTION-LIFETIME: census and design (records-only landing) |
 
 | [fb-event-loop-lifetime-s3](fb-event-loop-lifetime-s3/README.md) | FB-EVENT-LOOP-CROSS-FUNCTION-LIFETIME: S3 |
