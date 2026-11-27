@@ -202,10 +202,14 @@ const FIXTURES: &[(&str, &str, AnalysisStatus, Option<&str>)] = &[
             "unlink by `bare_destroy` of `e`, which this function holds, but the declaration names no link member",
         ),
     ),
+    // Card FB-RETRY-OR6-ELEMENT-IDENTITY (gateway rule 91): the formal's
+    // links are its caller's obligation, carried by the derived summary (an
+    // element destroyer of `e` through `_head`) and checked at every call;
+    // Unknown under rule 46 alone.
     (
         "formal-handed-to-destroyer",
         "void subject(struct item *e) { item_destroy(e); }",
-        AnalysisStatus::Unknown,
+        AnalysisStatus::Safe,
         None,
     ),
     // P-LERI-LINK-MEMBER.

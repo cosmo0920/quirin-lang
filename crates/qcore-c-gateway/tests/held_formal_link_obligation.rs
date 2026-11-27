@@ -12,10 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//! Card **FB-RETRY-OR6-ELEMENT-IDENTITY**: base census (`76c1f9cfc`), the
-//! verdicts before gateway rule 91. A formal handed to an element destroyer
-//! refuses under rule 46 (3), and every caller of the wrapper reads an
-//! uncontracted call.
+//! Card **FB-RETRY-OR6-ELEMENT-IDENTITY** (gateway rule 91): a formal handed
+//! to an element destroyer carries its link obligation to the caller.
 //!
 //! Rule 46 (3) decides P-LERI-HELD-LINKS only from the body's own
 //! initialisation, so a body handing its formal to a destroyer refuses
@@ -136,19 +134,27 @@ const ENQUEUE: &str = "static int enq(struct queue *q, struct item *r) {
     h->r = r; mk_list_add(&h->_head, &q->pending); return 0; }";
 
 const WRAPPER_HELD: &str = "unlink by `item_destroy` of `t`, which this function has not published";
+const CALLER_NOT_INITIALISED: &str = "unlink by `tdestroy` of `e`, which this function holds, but this function has not initialised its `_head` links";
+const CALLER_ROTATE: &str = "unlink by `tdestroy` of `e`, whose list links it through `_rotate`, while the declaration unlinks `_head`";
 const UNCONTRACTED_WRAPPER: &str = "call to uncontracted function `tdestroy`";
 
 /// Every fixture: name, unit, the function whose row is read, its verdict,
 /// and a refusal it must carry (if any).
-fn fixtures() -> Vec<(&'static str, String, &'static str, AnalysisStatus, Option<&'static str>)> {
+fn fixtures() -> Vec<(
+    &'static str,
+    String,
+    &'static str,
+    AnalysisStatus,
+    Option<&'static str>,
+)> {
     vec![
         // The wrapper's own row: its summary carries the obligation.
         (
             "wrapper",
             WRAPPER.to_owned(),
             "tdestroy",
-            AnalysisStatus::Unknown,
-            Some(WRAPPER_HELD),
+            AnalysisStatus::Safe,
+            None,
         ),
         // Callers discharging the carried obligation.
         (
@@ -157,7 +163,7 @@ fn fixtures() -> Vec<(&'static str, String, &'static str, AnalysisStatus, Option
                 "{WRAPPER}\nvoid subject(void) {{ struct item *e = q_alloc(); mk_list_init(&e->_head); tdestroy(e); }}"
             ),
             "subject",
-            AnalysisStatus::Unknown,
+            AnalysisStatus::Safe,
             None,
         ),
         (
@@ -166,14 +172,14 @@ fn fixtures() -> Vec<(&'static str, String, &'static str, AnalysisStatus, Option
                 "{WRAPPER}\nvoid subject(struct queue *q) {{ struct mk_list *c, *n; struct item *e; mk_list_foreach_safe(c, n, &q->items) {{ e = mk_list_entry(c, struct item, _head); tdestroy(e); }} }}"
             ),
             "subject",
-            AnalysisStatus::Unknown,
+            AnalysisStatus::Safe,
             None,
         ),
         (
             "caller-formal-carried-again",
             format!("{WRAPPER}\nvoid subject(struct item *e) {{ tdestroy(e); }}"),
             "subject",
-            AnalysisStatus::Unknown,
+            AnalysisStatus::Safe,
             None,
         ),
         // Callers that cannot discharge it refuse there.
@@ -182,7 +188,7 @@ fn fixtures() -> Vec<(&'static str, String, &'static str, AnalysisStatus, Option
             format!("{WRAPPER}\nvoid subject(void) {{ struct item *e = q_alloc(); tdestroy(e); }}"),
             "subject",
             AnalysisStatus::Unknown,
-            Some(UNCONTRACTED_WRAPPER),
+            Some(CALLER_NOT_INITIALISED),
         ),
         (
             "caller-element-through-rotate",
@@ -191,7 +197,7 @@ fn fixtures() -> Vec<(&'static str, String, &'static str, AnalysisStatus, Option
             ),
             "subject",
             AnalysisStatus::Unknown,
-            Some(UNCONTRACTED_WRAPPER),
+            Some(CALLER_ROTATE),
         ),
         (
             "caller-of-carrier-not-initialised",
@@ -228,12 +234,20 @@ fn fixtures() -> Vec<(&'static str, String, &'static str, AnalysisStatus, Option
         ),
         (
             "caller-of-withheld-wrapper",
-            format!(
-                "int tdestroy(struct item *t, int k) {{ if (k) {{ item_destroy(t); }} else {{ q_free(t); }} return 0; }}\nvoid subject(void) {{ struct item *e = q_alloc(); mk_list_init(&e->_head); tdestroy(e, 1); }}"
-            ),
+            "int tdestroy(struct item *t, int k) { if (k) { item_destroy(t); } else { q_free(t); } return 0; }\nvoid subject(void) { struct item *e = q_alloc(); mk_list_init(&e->_head); tdestroy(e, 1); }"
+                .to_owned(),
             "subject",
             AnalysisStatus::Unknown,
             Some(UNCONTRACTED_WRAPPER),
+        ),
+        // A declared destroyer's own body is checked against its clause:
+        // releasing the formal without the unlink no longer validates.
+        (
+            "declared-destroyer-frees-without-unlink",
+            "int item_destroy(struct item *e) { q_free(e); return 0; }".to_owned(),
+            "item_destroy",
+            AnalysisStatus::Unknown,
+            None,
         ),
         // The measured boundary: the obligation is needed on one exit class
         // only, and no summary states a precondition without the unlink.
