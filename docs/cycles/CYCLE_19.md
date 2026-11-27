@@ -374,7 +374,7 @@ All 300 workspace tests, formatting, Clippy, Lean build/dependency audit, native
 regression, and pinned source audit pass. Generic projection and safety counts
 are unchanged. Source/runtime payload and map binding, callback-contract
 checking under those bindings, and allocation/registration failure imports
-remain open, alongside 19B and 19C. See the [callback source report](../reports/cycle19-callback-source/README.md)
+remain open, alongside 19B and 19C. See the [callback source report](../reports/archive/cycles-18-19/cycle19-callback-source/README.md)
 for source paths, reproduction, evidence, and the precise remaining gates.
 
 ## Resource diagnostic inventory and importer recovery
@@ -400,7 +400,7 @@ proofs: most newly retained functions remain Unknown, and aggregate Unsafe
 verdicts still contain unresolved diagnostics. Monkey and the selected native
 chunk/callback contract coverage are unchanged. General 19B identity mapping,
 19C lifecycle/teardown imports, and 19D source/runtime/failure composition remain
-open. See [the triage report](../reports/cycle19-resource-triage/README.md) for
+open. See [the triage report](../reports/archive/cycles-18-19/cycle19-resource-triage/README.md) for
 the full before/after inventory, validation, and next implementation targets.
 
 ## Source/runtime callback binding and Lean verification
@@ -426,7 +426,7 @@ regression, and the pinned external audit pass. Generic projection and safety
 counts remain unchanged. Allocation/registration failure source imports,
 complete wrapper/map custody, and the full Cycle 18 event-program composition
 remain `Unknown`; no static event or plugin certificate is issued. 19B and 19C
-source custody/lifecycle work also remains open. See the [binding report](../reports/cycle19-callback-binding/README.md)
+source custody/lifecycle work also remains open. See the [binding report](../reports/archive/cycles-18-19/cycle19-callback-binding/README.md)
 for evidence, reproduction, assumptions, and the exact remaining gates.
 
 ## Native replay rules and expanded callback/failure paths
@@ -483,7 +483,7 @@ Exact source texts accompany the resource environment in safety certificates.
 Independent certificate replay reloads those texts and checks the resulting
 contract table; replacing a loaded mode without changing its recorded source
 invalidates the certificate. A resource-inventory sidecar records those same
-inputs for non-Safe units. See the [loader parity report](../reports/cycle19-contract-loader/README.md)
+inputs for non-Safe units. See the [loader parity report](../reports/archive/cycles-18-19/cycle19-contract-loader/README.md)
 for validation, signature differences, assumptions and reproduction.
 
 The remaining 19B source identity mapping, 19C lifecycle/teardown imports, 19D
@@ -493,7 +493,7 @@ not close them or bypass Cycle 20's semantic-witness firewall.
 
 ## Wrapper enum and stack-storage imports (2026-09-06)
 
-The [wrapper storage report](../reports/cycle19-wrapper-storage/README.md)
+The [wrapper storage report](../reports/archive/cycles-18-19/cycle19-wrapper-storage/README.md)
 records 41 symbolic paths from 10/15 wrappers, recovering socketpair forwarding
 and timed wait. Explicit Clang enum values and bounded stack arrays/records are
 retained with lexical identities; unsupported initialization and aggregate
@@ -503,7 +503,7 @@ identical. The other five wrappers and full 19B–19E composition remain open.
 
 ## Wrapper assertion and terminal-control imports (2026-09-06)
 
-The [wrapper control report](../reports/cycle19-wrapper-control/README.md)
+The [wrapper control report](../reports/archive/cycles-18-19/cycle19-wrapper-control/README.md)
 records 81 symbolic paths from 14/15 wrappers. Literal-zero macro bodies,
 nonreturning assertion exits, opaque direct calls and source-resolved array
 typedefs are retained. Inject's variable-bound loop remains Unknown. Four new
@@ -514,7 +514,7 @@ projections do not close the remaining custody or composition gates.
 
 ## Source-validated ChunkIO helper composition (2026-09-06)
 
-The [chunk helper report](../reports/cycle19-chunk-helper/README.md) records a
+The [chunk helper report](../reports/archive/cycles-18-19/cycle19-chunk-helper/README.md) records a
 checked `cio_chunk_unlock` contract composed with the actual `cio_error_reset`
 body. The helper's metadata write and exact source are retained, local helper
 shadowing and unsupported effects reject composition, and the contract checks
@@ -527,7 +527,7 @@ premises; full 19B–19E custody, lifecycle and event composition remain open.
 
 ## Structured injection scan import (2026-09-06)
 
-The [scan-loop report](../reports/cycle19-scan-loop/README.md) records source
+The [scan-loop report](../reports/archive/cycles-18-19/cycle19-scan-loop/README.md) records source
 projections for all 15 selected Monkey wrappers. The previous 81 flat paths
 remain; inject contributes two structured branches with explicit per-iteration
 reads, induction state and function-level early return. Loop safety, bounds and
@@ -722,7 +722,7 @@ constructor provenance, stream/context traversal or wider event composition.
 
 ## Source-bound teardown traversal (2026-09-06)
 
-The [traversal report](../reports/cycle19-teardown-traversal/README.md) checks the
+The [traversal report](../reports/archive/cycles-18-19/cycle19-teardown-traversal/README.md) checks the
 complete typed bodies of `cio_chunk_close_stream` and `cio_stream_destroy_all`
 against expanded references that input macros cannot rewrite. Saved-next order,
 sentinel exclusion, primary-link container recovery and exact child arguments
@@ -734,7 +734,7 @@ and identity/dependency composition remain open with the wider lifecycle/event g
 
 ## Stream and context parent release (2026-09-06)
 
-The [parent teardown report](../reports/cycle19-parent-teardown/README.md) checks
+The [parent teardown report](../reports/archive/cycles-18-19/cycle19-parent-teardown/README.md) checks
 complete `cio_stream_destroy` and `cio_destroy` bodies, retaining null guards,
 child-first traversal, stream unlinking and all optional context-field frees.
 Parent release never discharges a child's unresolved obligation. Four Lean
@@ -747,7 +747,7 @@ identity/dependency composition and the broader custody/event work remain open.
 
 ## Source-bound nested memory teardown (2026-09-06)
 
-The [nested memory report](../reports/cycle19-nested-memory/README.md) composes
+The [nested memory report](../reports/archive/cycles-18-19/cycle19-nested-memory/README.md) composes
 all six context/stream/chunk/backend stages with reset, unlink and counter
 dependencies. An ordered, complete ring binding instantiates concrete model
 identities and checks the resulting lifecycle prefix. Missing/duplicate/foreign

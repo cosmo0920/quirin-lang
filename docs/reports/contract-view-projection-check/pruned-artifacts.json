@@ -1,0 +1,18 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "contract-view-projection-check",
+ "total_pruned_files": 2,
+ "total_pruned_bytes": 263,
+ "artifacts": [
+  {
+   "path": "arbiter/after-vs-before.log",
+   "bytes": 255,
+   "sha256": "2ad11009bb955fcadc3db202441eb1a83cd8cc2779da7d26dc2120b93208b8d3"
+  },
+  {
+   "path": "census/base-census.exit",
+   "bytes": 8,
+   "sha256": "5dae72a737750057776cc6551d222d7a5b70e71940b313cd2fc9a1aca1f4a9f4"
+  }
+ ]
+}

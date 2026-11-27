@@ -1,0 +1,33 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "w48-openssl-contract-plugin",
+ "total_pruned_files": 5,
+ "total_pruned_bytes": 409600,
+ "artifacts": [
+  {
+   "path": "artifacts/check-report.json",
+   "bytes": 234902,
+   "sha256": "a0c7cfa86eeb54af373bc5a820f95ad589891d4791e6694829d222fe2318a26b"
+  },
+  {
+   "path": "artifacts/openssl-check.json",
+   "bytes": 101320,
+   "sha256": "93343965ed825da5471afc59a55f72c459e6d72813ed0964f23bb5207229c3e8"
+  },
+  {
+   "path": "artifacts/test-host-with-tarball.log",
+   "bytes": 866,
+   "sha256": "05d9e5afd30ef77c66ff65bd5ee23eb7dce8ecab0f008ec5fd24df4fa6b34cd2"
+  },
+  {
+   "path": "gate/python-rerun.log",
+   "bytes": 4215,
+   "sha256": "e6a908fe099b287131f06bd6a53b50975298a335be9f57366c85436b3a3f77de"
+  },
+  {
+   "path": "integration/gate-scope.json",
+   "bytes": 68297,
+   "sha256": "1409342acd3720515dcf68b81258cefbbdcce69597dbc22eb3fbfb8732be9118"
+  }
+ ]
+}

@@ -16,9 +16,9 @@ This document does three things, in the order the card requires:
    would require, and the follow-on implementation units (§4–§6).
 
 The measurements are reproduced by
-`docs/reports/remaining-p07/inventory.py`; its output is
-`docs/reports/remaining-p07/inventory.json`. The report at
-`docs/reports/remaining-p07/README.md` records the run and the gate.
+`docs/reports/archive/early-waves/remaining-p07/inventory.py`; its output is
+`docs/reports/archive/early-waves/remaining-p07/inventory.json`. The report at
+`docs/reports/archive/early-waves/remaining-p07/README.md` records the run and the gate.
 
 ---
 

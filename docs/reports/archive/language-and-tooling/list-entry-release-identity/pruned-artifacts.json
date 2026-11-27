@@ -1,0 +1,28 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "list-entry-release-identity",
+ "total_pruned_files": 4,
+ "total_pruned_bytes": 651386,
+ "artifacts": [
+  {
+   "path": "artifacts/census-slice-before.json",
+   "bytes": 120524,
+   "sha256": "15c5d37439ae6ecc223c42bf643e928618ff82f939feb424611d95461654f5e7"
+  },
+  {
+   "path": "artifacts/census-system-before.json",
+   "bytes": 156117,
+   "sha256": "22ba670eaf5980cf30d0551d054613622f08b8f5dcbb24575587e7e3178e3f31"
+  },
+  {
+   "path": "artifacts/native-comparison-system-slice.json",
+   "bytes": 113401,
+   "sha256": "a4e22c6ce9a413f8b90019b714c3616a87c95de328c6500647f83cc83f2eaa28"
+  },
+  {
+   "path": "integration/gate-scope.json",
+   "bytes": 261344,
+   "sha256": "f85b0cd1842187c8312ed04e3e7080d7a55c86752d43154281fed4540355e3a9"
+  }
+ ]
+}

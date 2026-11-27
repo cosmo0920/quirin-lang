@@ -20,44 +20,44 @@ nothing above and each card's record keeps its own boundaries.
   Safe with no diagnostic). 28 attributed function-level Unknown-to-Safe
   discharges; digits10 passes V1-V10 end-to-end and neutral-frame recursion
   reach moves 0 to 1 of 46. 30 audited theorems. Evidence:
-  `docs/reports/remaining-w4-expr-pos/README.md`.
+  `docs/reports/archive/early-waves/remaining-w4-expr-pos/README.md`.
 - Endpoint identities (O04-B09B10): member-address actuals (sub-object
   disjointness load-bearing) and custody-taking bound reads land; C6 narrows
   nine refusals to ONE — the flb_trace statement plus its proved shadow — and
   a third pre-existing false-Safe (nested-call custody silently dropped)
   is repaired and fires on the real corpus. 35+18 audited theorems.
-  Evidence: `docs/reports/remaining-o04-b09b10/README.md`.
+  Evidence: `docs/reports/archive/early-waves/remaining-o04-b09b10/README.md`.
 - Locals may-alias (ALIAS-LOCALS): v1's formal bound was measured
   launderable and a projection false-Safe (copy, release, probe) repaired;
   the definite-alias relation refines without widening, the verdict stays
   UnknownAlias on four recorded grounds, and the census closes the prior
   card's reach item. 51 audited theorems total. Evidence:
-  `docs/reports/remaining-alias-locals/README.md`.
+  `docs/reports/archive/early-waves/remaining-alias-locals/README.md`.
 - Fourth transport vocabulary (P04-B2): file_outcomes and file_delete move
   through the process boundary with the replay profile contract-derived,
   never wire-trusted, and the prerequisite mechanism gains its first
   production consumer. `qcore-schemas` 9.0.0; ChunkIO 0.8.0; 40 audited
-  theorems. Evidence: `docs/reports/remaining-p04-b2/README.md`.
+  theorems. Evidence: `docs/reports/archive/early-waves/remaining-p04-b2/README.md`.
 - Extern error-arm release (EXTERN-ERR-REL): the else arm renders the
   cleanup edge the core already computes (same identities, once, reverse
   order); STORE-REACH closes at four levels; "carried into the error path"
   is measured unimplementable on this route and recorded, and
   AdapterDepartingArgument is named. 19 new audited theorems. Evidence:
-  `docs/reports/remaining-extern-err-rel/README.md`.
+  `docs/reports/archive/early-waves/remaining-extern-err-rel/README.md`.
 - Protection growth (CT34-GROWTH): sound under five conditions — one
   narrower than proposed (creator-only, because DestroyMutex unparks to the
   creator); Q626/Q627 via the §L21 process (band Q610-Q627); the check-only
   backend behavior converted from omission to asserted decision; CT34's
   mapping proposed with a one-token control. 18 new audited theorems.
-  Evidence: `docs/reports/remaining-ct34-growth/README.md`.
+  Evidence: `docs/reports/archive/early-waves/remaining-ct34-growth/README.md`.
 - Transferability (CT46-SENDSYNC): a closed transferable(T) judgment decides
   both matrices whole, with the checked-redundant composition proven unable
   to diverge; CT46 stays honestly unmapped — the recorded blocker is retired
   and replaced by the measured CT46-MUTEX-CAPTURE (the accept half is
   unwritable). 27 audited theorems. Evidence:
-  `docs/reports/remaining-ct46-sendsync/README.md`.
+  `docs/reports/archive/early-waves/remaining-ct46-sendsync/README.md`.
 - Corpus consolidation: one integrator measurement
-  (`docs/reports/wave12-corpus/`) re-pins the baseline with the 59-unit diff
+  (`docs/reports/archive/early-waves/wave12-corpus/`) re-pins the baseline with the 59-unit diff
   TRIANGULATED exactly — the measured tree differs from each gateway card's
   archived AFTER in precisely the other card's units (55 + 9 − 5 shared),
   function moves measured directly at 28 Unknown-to-Safe equal to

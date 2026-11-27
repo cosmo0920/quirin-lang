@@ -1,0 +1,23 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "extension-compatibility",
+ "total_pruned_files": 3,
+ "total_pruned_bytes": 293722,
+ "artifacts": [
+  {
+   "path": "frozen-naming-status.json",
+   "bytes": 72722,
+   "sha256": "f9307825513a73a4c7a217644a4f7068982d158a51200b36bb9a40b93d2dddb8"
+  },
+  {
+   "path": "reference-paths.txt",
+   "bytes": 67551,
+   "sha256": "a0e0548450dda9ac4f09c37cf117ba8c07402a134db98bfee50d9f36261c2ae5"
+  },
+  {
+   "path": "source-parity.json",
+   "bytes": 153449,
+   "sha256": "109cc25b5e3f92ca5694bb60bf3f44c9b65e7cdd0863b74bcc8d61d4cdf2e758"
+  }
+ ]
+}

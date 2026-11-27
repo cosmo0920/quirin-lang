@@ -1,0 +1,18 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "measure-lookup-record-reuse",
+ "total_pruned_files": 2,
+ "total_pruned_bytes": 609364,
+ "artifacts": [
+  {
+   "path": "gate/base-attribution.log",
+   "bytes": 8158,
+   "sha256": "872c49aa2340f9f2ac8041e7bbd11bc3dbbf586d9bf9fdc124b95edae518fe96"
+  },
+  {
+   "path": "integration/gate-scope.json",
+   "bytes": 601206,
+   "sha256": "8a1f902e59d75835028e0e95a88183d2338920314f56bbd19ac528b30322cc61"
+  }
+ ]
+}

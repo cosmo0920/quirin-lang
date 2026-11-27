@@ -1,6 +1,6 @@
 # CT34-SANITIZED — emitting a protection growth, and what the native run is evidence of
 
-> Runtime import maintenance: archived source inputs and runnable snippets now use `#import`; original results and hashes describe their recorded revision. See the [spelling attribution](../runtime-source-imports/spelling-attribution.json) for maintained source identities.
+> Runtime import maintenance: archived source inputs and runnable snippets now use `#import`; original results and hashes describe their recorded revision. See the [spelling attribution](../archive/language-and-tooling/runtime-source-imports/spelling-attribution.json) for maintained source identities.
 
 Wave 14. Card CT34-SANITIZED (CT34-GROWTH-NATIVE): decide the emission semantics
 of `MutexInvariantEvent::GrowProtection`, implement it under exactly the

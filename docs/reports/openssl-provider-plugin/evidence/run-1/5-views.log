@@ -1,4 +1,0 @@
-$ /media/Data/GitHub/quirin-lang/.claude/worktrees/agent-a35090bafc9d378ff/target/debug/quirin-audit plugin views --load-path providers/user-crates-load-path.json --write
-quirin-provider-openssl: declared null probed ["openssl/bio.qv","openssl/engine.qv","openssl/err.qv","openssl/evp.qv","openssl/init.qv","openssl/ssl.qv","openssl/x509.qv"]
-plugin views: written to providers/user-crates-load-path.json
-exit 0

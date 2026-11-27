@@ -1,0 +1,33 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "w4-custody-extensions",
+ "total_pruned_files": 5,
+ "total_pruned_bytes": 1117164,
+ "artifacts": [
+  {
+   "path": "baseline-audit.log",
+   "bytes": 121326,
+   "sha256": "91125fe737c3146a15cb7d434fbafa1e148a0d6929a9721308fcfdb0a6c17042"
+  },
+  {
+   "path": "extension-audit.log",
+   "bytes": 121764,
+   "sha256": "16c3b5fdc772ca65211254e0bdd974e8c8a1b46d1af50f5c9eeb70b60f7c4b65"
+  },
+  {
+   "path": "function-diagnostic-changes.json",
+   "bytes": 350860,
+   "sha256": "2d09a058b9f541d2a5fd4c8a09d954c3da6712abac715b87d22ffbb068c5fd3f"
+  },
+  {
+   "path": "lean-axioms.log",
+   "bytes": 2983,
+   "sha256": "6789f2af44d296182bf1933e57bd103ccbfc81fb90c5f4697dbc977584378e24"
+  },
+  {
+   "path": "parity.json",
+   "bytes": 520231,
+   "sha256": "ec555bf52aa5d75429a5acc1566e7b7cc934af6cd43ff40389d12b021b985b43"
+  }
+ ]
+}

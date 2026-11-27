@@ -1,0 +1,83 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "w45-contract-revision-mode",
+ "total_pruned_files": 15,
+ "total_pruned_bytes": 46347,
+ "artifacts": [
+  {
+   "path": "locks/merged-add-046accf6.log",
+   "bytes": 2004,
+   "sha256": "b96e344a1cd81f966906fab1c2655a2dff4904f474445df0d3500c123725c302"
+  },
+  {
+   "path": "locks/merged-add-66910c10.log",
+   "bytes": 2682,
+   "sha256": "1d3be828e2da36d50a1016907854db2b59bee56725ba7ec63fe3bf259d336e48"
+  },
+  {
+   "path": "locks/merged-check-046accf6.log",
+   "bytes": 2997,
+   "sha256": "54533c0d1ecb0535e23306b318fe434c5c8856a4413a11e72910e8c56f0b1444"
+  },
+  {
+   "path": "locks/merged-check-66910c10.log",
+   "bytes": 3442,
+   "sha256": "8b0c4b34abae767e4c28d37a07e200051514020027be3e4112cbf79c9a4b9fb4"
+  },
+  {
+   "path": "locks/merged-check2-046accf6.log",
+   "bytes": 2028,
+   "sha256": "35871ced7954474f0f67fec17557396aefbb748c8090c601897bce68f9dfe233"
+  },
+  {
+   "path": "locks/merged-check2-66910c10.log",
+   "bytes": 2028,
+   "sha256": "e19833e065403c17794d882ddd5f2032fa608c8c7eeed16f3db90c525c7aef6a"
+  },
+  {
+   "path": "locks/pin-66910c10-final.log",
+   "bytes": 1560,
+   "sha256": "5ba70a818940c6b032640bb0652514678bf3ae73041d307a89d43befce9f1e95"
+  },
+  {
+   "path": "locks/v2-add-046accf6.log",
+   "bytes": 8732,
+   "sha256": "dc134119aeb7a2f405268c9c2d9c29f5caaa16bab842060b23d49e4c51b5a657"
+  },
+  {
+   "path": "locks/v2-check-046accf6.log",
+   "bytes": 2028,
+   "sha256": "a01d6a3d6da371f92186097d910014ff2a13ee3dccaebab3052ffb0234aa5392"
+  },
+  {
+   "path": "locks/v2-check-66910c10.log",
+   "bytes": 2028,
+   "sha256": "aef2070547f5d1fca48ac874326fe5c59cdef41782334207c8112cdf9da6420c"
+  },
+  {
+   "path": "locks/v2-check-864c3d97.log",
+   "bytes": 13829,
+   "sha256": "95023f8f653cd93efd0a372c1742d8347bcf8db03792a030248eb908fe07b3b8"
+  },
+  {
+   "path": "locks/v2-check-ctraces-270a842f9.log",
+   "bytes": 373,
+   "sha256": "01cada2e43f3e9c2b3ea45593b8657df432b9244fa36f8e59aa4397919bd3c8f"
+  },
+  {
+   "path": "locks/v2-check-ctraces-b3eec839c.log",
+   "bytes": 373,
+   "sha256": "9ff0ffc5b226069b367b27a387e1f8367719b4e79322a9fb9f9eef73b1e30022"
+  },
+  {
+   "path": "locks/v2-check-ctraces-before-270a842f9.log",
+   "bytes": 583,
+   "sha256": "3223904d7152ece26a5671a3bc5726bf381d168f2b9906ac9c845c0de42944cd"
+  },
+  {
+   "path": "locks/v2-migrate-66910c10.log",
+   "bytes": 1660,
+   "sha256": "377dabe009ad1b837644c9cdf426eccdde4429bcd4db4e78a7cbb6ebe4f05904"
+  }
+ ]
+}

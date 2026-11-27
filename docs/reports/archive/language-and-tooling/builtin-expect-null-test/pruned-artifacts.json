@@ -1,0 +1,13 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "builtin-expect-null-test",
+ "total_pruned_files": 1,
+ "total_pruned_bytes": 89196,
+ "artifacts": [
+  {
+   "path": "census.json.gz",
+   "bytes": 89196,
+   "sha256": "94ff4d7e43f21817e5c9b0d6a39859de13c8088fb0ad6076bb7ea75b71df6cc5"
+  }
+ ]
+}

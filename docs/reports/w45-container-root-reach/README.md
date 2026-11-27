@@ -39,7 +39,7 @@ any implementation. Gateway constraint 10f; contract specification unchanged
 
 | Measurement | Result |
 |---|---|
-| Arbiter BEFORE (`12553fb3`, `run_audit.py --jobs 8`) | Reproduces [w45-fb-backlog-custody/integration/artifacts](../w45-fb-backlog-custody/integration/artifacts/): `resource-diagnostics.json`, chunk contracts and Monkey source byte-identical; the contracts sidecar differs only in two `meaning` strings later cards reworded; `verdict_bearing_identical: true` ([before-identity.json](artifacts/arbiter/before-identity.json)) |
+| Arbiter BEFORE (`12553fb3`, `run_audit.py --jobs 8`) | Reproduces [w45-fb-backlog-custody/integration/artifacts](../archive/waves-40-47/w45-fb-backlog-custody/integration/artifacts/): `resource-diagnostics.json`, chunk contracts and Monkey source byte-identical; the contracts sidecar differs only in two `meaning` strings later cards reworded; `verdict_bearing_identical: true` ([before-identity.json](artifacts/arbiter/before-identity.json)) |
 | Slice BEFORE at `046accf6` (fresh private clone attempt-1, `scripts/prepare-attempt.sh`, exit 0) | units 0 / 2 / 13; functions 28 / 2 / 204 / 3; unsupported 3,338, unknown_alias 717, counted_user 4: the published figures ([before.json.gz](artifacts/slice/before.json.gz)) |
 | After merging `main` `675e7289` (W45-AUDIT-CHECKPOINTS) at `45bea57e` | the arbiter's five artifacts are byte-identical to this card's AFTER ([merged-identity.json](artifacts/arbiter/merged-identity.json)) and the slice report is byte-identical to its AFTER |
 
@@ -186,7 +186,7 @@ in [attribution/corpus.json](artifacts/attribution/corpus.json).
 
 `scripts/run-current.sh attempt-1 RUN BINARY --selection
 contract/profiles/fluent-bit/system-selection.json --jobs 8` (the command of
-[w45-fb-backlog-custody §4](../w45-fb-backlog-custody/README.md)); AFTER is
+[w45-fb-backlog-custody §4](../archive/waves-40-47/w45-fb-backlog-custody/README.md)); AFTER is
 [after.json.gz](artifacts/slice/after.json.gz), every leaf in
 [attribution/slice.json](artifacts/attribution/slice.json).
 

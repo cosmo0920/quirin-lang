@@ -1,0 +1,18 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "w43-indirect-access-general",
+ "total_pruned_files": 2,
+ "total_pruned_bytes": 836194,
+ "artifacts": [
+  {
+   "path": "artifacts/chunk-contracts.json.gz",
+   "bytes": 281881,
+   "sha256": "f0568583a78a62741104d890e33c7dd84ccbb67d9a692f051aa21cc3b8e01703"
+  },
+  {
+   "path": "artifacts/diagnostics.json.gz",
+   "bytes": 554313,
+   "sha256": "8b07c9184147c3c5d4e38c897484dcf1f4e0ab4013f931dfa3eed04a6f984e22"
+  }
+ ]
+}

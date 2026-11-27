@@ -1,0 +1,18 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "quant-contract-hypotheses",
+ "total_pruned_files": 2,
+ "total_pruned_bytes": 392586,
+ "artifacts": [
+  {
+   "path": "cmetrics/migration.json",
+   "bytes": 305394,
+   "sha256": "7f543f8b73b07baec437f0c8c27dfc7ed5bc09cf72a85f70ac2cd58e5d9f3063"
+  },
+  {
+   "path": "plugin/bindings/index.json",
+   "bytes": 87192,
+   "sha256": "068fa2a0cbdd830d8ffeb49433a4fb2689fd75da21595bafb333de96ada663ac"
+  }
+ ]
+}

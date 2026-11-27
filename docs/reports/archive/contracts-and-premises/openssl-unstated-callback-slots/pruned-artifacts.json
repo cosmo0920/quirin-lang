@@ -1,0 +1,38 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "openssl-unstated-callback-slots",
+ "total_pruned_files": 6,
+ "total_pruned_bytes": 461501,
+ "artifacts": [
+  {
+   "path": "evidence/run-1/1-check.log",
+   "bytes": 150,
+   "sha256": "d8ccbcec273d6b76dd09cfea1440ceebd6488eaabe79cd463c743d8995075b1c"
+  },
+  {
+   "path": "evidence/run-1/2-views.log",
+   "bytes": 161,
+   "sha256": "893d27b5062c3abd038ba04caf92275d916573e8e23f32c509c33ba5c6199250"
+  },
+  {
+   "path": "evidence/run-1/3-verify-contracts.log",
+   "bytes": 375,
+   "sha256": "b6eea20292021f14a71438d8a4550c05ddb8571b13c662423cc641d5f7c37f39"
+  },
+  {
+   "path": "evidence/run-1/4-contracts.log",
+   "bytes": 2634,
+   "sha256": "cebd6cb93cd95645b002e12cc942e4831f11a17710e7bbf7627ecdb4af6d3c02"
+  },
+  {
+   "path": "gate/gate-1.json",
+   "bytes": 226301,
+   "sha256": "61b3b9473ab2ef95b6a8d10ea92e0c7ae70b6c1a143aa5f293ab648171ceb13e"
+  },
+  {
+   "path": "integration/gate-scope.json",
+   "bytes": 231880,
+   "sha256": "8ebe429adee8a23bf60cb52fd61cdae361a777b01542fc15e13e673c152e762f"
+  }
+ ]
+}

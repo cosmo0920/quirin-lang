@@ -1,0 +1,33 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "remaining-constructor-residuals",
+ "total_pruned_files": 5,
+ "total_pruned_bytes": 956473,
+ "artifacts": [
+  {
+   "path": "artifacts/chunk-contracts.json.gz",
+   "bytes": 281879,
+   "sha256": "82a243238c20398e7d31f9c8825c753f776216b8297f6a67c47ca39b2cfff1e0"
+  },
+  {
+   "path": "artifacts/diagnostics.json.gz",
+   "bytes": 386145,
+   "sha256": "35d5c9592821b81119888c33c50f79929b3588603ab2ac367645eded8e7ddb71"
+  },
+  {
+   "path": "logs/corpus-after.log.gz",
+   "bytes": 14654,
+   "sha256": "8c5dcb75939be209ec51e1634da42996517bb4f7e51560306d7810f7b630fc68"
+  },
+  {
+   "path": "logs/corpus-before.log.gz",
+   "bytes": 14662,
+   "sha256": "12781c94bbd252fd10de7f8e254be8fb6f225af9b80d24ad437b28ff3951dcf1"
+  },
+  {
+   "path": "logs/workspace-tests.txt",
+   "bytes": 259133,
+   "sha256": "8aaddb9f382be93a6599531c0d0f61a7e155c681318a2a87de0cc1e83b1677ec"
+  }
+ ]
+}

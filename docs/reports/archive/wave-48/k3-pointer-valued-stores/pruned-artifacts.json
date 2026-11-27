@@ -1,0 +1,18 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "k3-pointer-valued-stores",
+ "total_pruned_files": 2,
+ "total_pruned_bytes": 1814384,
+ "artifacts": [
+  {
+   "path": "evidence/recensus-1124.json",
+   "bytes": 736293,
+   "sha256": "da522c529c09685b245ed8164e0ff69759011b35ede2bc5837bbf13a9e7ad9af"
+  },
+  {
+   "path": "evidence/shape-lex-1124.json",
+   "bytes": 1078091,
+   "sha256": "d15d584562b540e026c701090028f7b56d102a6a0a8d03c366b3f4a1298278d4"
+  }
+ ]
+}

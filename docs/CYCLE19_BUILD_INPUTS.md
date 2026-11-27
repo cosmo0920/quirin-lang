@@ -15,7 +15,7 @@ cargo run --quiet -p qcore-audit -- current \
 ```
 
 **The linked configuration** (card CURRENT-MONKEY-LINKED-CONFIGURATION,
-[report](reports/current-monkey-linked-configuration/README.md)):
+[report](reports/archive/language-and-tooling/current-monkey-linked-configuration/README.md)):
 `fluent-bit` links `lib/monkey` as the Fluent Bit build compiles it (epoll
 backend, OpenSSL TLS), not this forced-Libevent copy. `current
 --monkey-linked` analyses Monkey's units (`mk_core/` without `mk_core/deps/`,
@@ -27,7 +27,7 @@ unit under its `monkey-libevent` key. The setup's `prepare --run` passes
 both.
 
 `quirin-audit prepare monkey` (formerly a Python script; same commands and
-files, [parity evidence](reports/w44-quirin-audit-prepare/README.md)) checks
+files, [parity evidence](reports/archive/waves-40-47/w44-quirin-audit-prepare/README.md)) checks
 the checkout's `HEAD`, a clean Monkey source
 subtree, and retains a byte-identified copy. CMake explicitly selects Libevent
 and disables the other event loops. `qcore-monkey-inputs.json` records source

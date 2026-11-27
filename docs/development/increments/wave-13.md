@@ -28,7 +28,7 @@ keeps its own boundaries.
   fail-open. The declarations deliberately live as gateway fixtures, so the
   production corpus is untouched and nothing is promoted; production reach
   is measured zero (O04-TRACE-REACH). Evidence:
-  `docs/reports/remaining-o04-trace/README.md`.
+  `docs/reports/archive/early-waves/remaining-o04-trace/README.md`.
 - Recursion reach closed at the frontier (REACH-GATE): family F4 admits
   typed chains in expression positions under the refined proved sentence
   (binds, releases, escapes and addresses nothing the projection tracks),
@@ -36,7 +36,7 @@ keeps its own boundaries.
   11-component payoff is DISPROVED: every component at that threshold needs
   what fail-closed must refuse, named per component. Reach stays 1 of 46 by
   measurement; further reach requires new model capability. Evidence:
-  `docs/reports/remaining-reach-gate/README.md`.
+  `docs/reports/archive/early-waves/remaining-reach-gate/README.md`.
 - The plainest use-after-free refused (BORROW-LIVENESS): a single-name
   release-then-borrow — no aliasing involved — was measured Safe with no
   diagnostics at base; the liveness precondition now refuses it on settled
@@ -44,7 +44,7 @@ keeps its own boundaries.
   grounds and the must/may distinction proved both directions. LEAK-ORDER
   untouched by construction; corpus byte-identical with the census naming
   the binding conjunct. Evidence:
-  `docs/reports/remaining-borrow-liveness/README.md`.
+  `docs/reports/archive/early-waves/remaining-borrow-liveness/README.md`.
 - Hash-table contract (HASH-CONTRACTS): the upstream body read; the
   borrowed-mode contract lands with the size-0 boundary enforced by a
   machine-parsed total-or-reject premise directive in the contract's own
@@ -62,7 +62,7 @@ keeps its own boundaries.
   landed (P04-COMPOSE-A); the frame helper's lack of a verification task is
   the structural blocker (P04-COMPOSE-FRAME). `qcore-schemas` 10.0.0;
   host/verification 0.4.0; ChunkIO 0.9.0. Evidence:
-  `docs/reports/remaining-p04-compose/README.md`.
+  `docs/reports/archive/early-waves/remaining-p04-compose/README.md`.
 - Corpus consolidation: one integrator measurement
   (`docs/reports/wave13-corpus/`) re-pins the baseline — 4 changed units
   and 2 function discharges, exactly REACH-GATE's attributed set with

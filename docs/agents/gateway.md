@@ -76,7 +76,7 @@ which is not a second authority.
     also widens the declared-mode gate's reach (constraint 8): a reached
     `static` definition that contradicts a declaration now withdraws it in that
     unit, the refusing direction. `QCore.CalleeSummaryScope`;
-    [the card report](../reports/w44-corpus-callee-summaries/README.md).
+    [the card report](../reports/archive/waves-40-47/w44-corpus-callee-summaries/README.md).
     **Amended in place by card CG22-CALLBACK-CANDIDATE-CONTRACTS**: the
     reachability also follows the designators a scope member names beside a
     call to a declaration in force with a synchronous invocation or a table
@@ -98,7 +98,7 @@ which is not a second authority.
     eleven rows changing content only, no `Safe -> non-Safe`, no `Unsafe`
     added; `callback-uncontracted` 51 / 49 / 18 -> 50 / 48 / 17.
     `QCore.CallbackCandidateScope`;
-    [report](../reports/cg22-callback-candidate-contracts/README.md).
+    [report](../reports/archive/gateway-and-clang/cg22-callback-candidate-contracts/README.md).
 
 <a id="constraint-4b"></a>
 
@@ -144,7 +144,7 @@ which is not a second authority.
     not move. Premises stated, not proved: that the Rust construction reads
     the own contract nowhere else (trust boundary 28).
     `QCore.SummaryValidationPremises`;
-    [report](../reports/w47-summary-validation-protected-formals/README.md).
+    [report](../reports/archive/waves-40-47/w47-summary-validation-protected-formals/README.md).
 
     **Amendment (W48-BOTTOM-UP-BATCH2): a scalar-pointer formal's own slot
     may step only under a checked whole-body read frame.** After the old
@@ -193,13 +193,13 @@ which is not a second authority.
     incomplete census, failed replay or changed refutation table keeps the
     call uncontracted. Checkpoint composition and contracts-only routes
     refuse the opt-in mode. `QCore.CrossUnitSummary`;
-    [report](../reports/w44-cross-unit-summary/README.md).
+    [report](../reports/archive/waves-40-47/w44-cross-unit-summary/README.md).
     The bounded S3 extension retains outgoing lifetime effects separately from
     ordinary imports, compares them with the independently replayed Safe home
     and its W4 record, and preserves exact home/link identities at the caller.
     Unaware consumers still see no ordinary borrowed contract. Guarded mixtures,
     imported-home chains and missing effects remain refused; see
-    [ordered lifetime replay](../reports/event-ordered-lifetime/README.md).
+    [ordered lifetime replay](../reports/archive/language-and-tooling/event-ordered-lifetime/README.md).
     Card CURRENT-RUN-WORKER-SPIN (amended in place): a caller holds, and so
     replays at certificate issue and check, only the homes it may reach: no
     definition of the name in the caller, and the name used in the caller's
@@ -231,8 +231,8 @@ which is not a second authority.
     when the link map is selected. `QCore.CrossUnitReplayBudget`
     (`select_within_budget`, `select_sub_reachable`, `held_lookup_is_full`,
     `withheld_import_call_is_unknown`);
-    [report](../reports/current-run-worker-spin/README.md),
-    [subset](../reports/link-standing-import-limiters/README.md).
+    [report](../reports/archive/language-and-tooling/current-run-worker-spin/README.md),
+    [subset](../reports/archive/language-and-tooling/link-standing-import-limiters/README.md).
     Card LINK-STANDING: on the `current` route the resolution may instead be
     derived from a link-resolution artifact under rule 40's checked
     conditions; this rule's selection, scope, budget and replay are
@@ -255,7 +255,7 @@ which is not a second authority.
     summary is reachable on the system or tail-pause routes (condition 13 of
     rule 40 refuses every two-configuration core home, and `tail_file.c`'s
     census is incomplete). `QCore.CrossUnitElementRelease`;
-    [report](../reports/leri-cross-unit-elements-released/README.md).
+    [report](../reports/archive/language-and-tooling/leri-cross-unit-elements-released/README.md).
 
 <a id="constraint-5"></a>
 
@@ -459,7 +459,7 @@ reaches a bound or a branch.
     every inner identity transfer precedes the outer call. Identity transfers
     make C's unspecified sibling order unobservable in this resource model;
     they do not establish arbitrary runtime purity or whole-C correctness.
-    [B04 evidence](../reports/b04-nested-call-argument/README.md).
+    [B04 evidence](../reports/archive/language-and-tooling/b04-nested-call-argument/README.md).
 
 <a id="constraint-5g"></a>
 
@@ -478,7 +478,7 @@ reaches a bound or a branch.
     refusal still records `UnknownAlias` and keeps the function non-Safe.
     Pointer fields remain refused by this route; shapes outside this
     conjunction retain their prior handling, including the separate unbound
-    scalar-field no-op. See [the card report](../reports/w42-indirect-access/README.md).
+    scalar-field no-op. See [the card report](../reports/archive/waves-40-47/w42-indirect-access/README.md).
     **Amendment (card FB-LOOP-CHAIN-ACCESS-IDENTITY-BLOCKERS; ledger
     `RECORD-BODY-TOTAL-OR-REJECT`): the lexical declaration reader reads past
     function-pointer declarators, and this route keeps its domain.**
@@ -515,7 +515,7 @@ reaches a bound or a branch.
     `a_function_pointer_formal_is_opaque`,
     `an_unreadable_formal_refuses_the_function`, the vectors);
     `tests/function_pointer_declarators.rs` and the reader's unit tests;
-    [report](../reports/fb-loop-chain-blockers/README.md).
+    [report](../reports/archive/contracts-and-premises/fb-loop-chain-blockers/README.md).
 
 **Amendment (LEXICAL-ROUTES-PREEMPT-TYPED-FALLBACKS): a flow-refused scalar
 access may use an independently discharged Clang plan.** This narrowly amends
@@ -573,7 +573,7 @@ admission and scalar forgetting; [report](../reports/w48-bottom-up-batch5/README
     that exchange is expected. Rule 10x amends the first premise (a custody
     result split on its own failure value off every cycle) and replaces the
     whole-condition type-operator and increment refusals by its per-leaf
-    decision. [Report](../reports/w44-branch-condition-calls/README.md).
+    decision. [Report](../reports/archive/waves-40-47/w44-branch-condition-calls/README.md).
 
 
     **Amendment (W48-BOTTOM-UP-BATCH3): scalar accessor comparisons.** A
@@ -594,7 +594,7 @@ admission and scalar forgetting; [report](../reports/w48-bottom-up-batch5/README
     `QCore.ScalarAccessorCondition` proves observation coverage and preservation
     of the complete post-call state and diagnostics, with all32 admission
     vectors bound in Rust; extraction and correspondence remain premises28.
-    [Report](../reports/w48-bottom-up-batch3/README.md).
+    [Report](../reports/archive/wave-48/w48-bottom-up-batch3/README.md).
 
     **Amendment (W48-BOTTOM-UP-BATCH4): existing checked read leaves compose.**
     After every whole-condition route refuses a call-free controlling
@@ -611,7 +611,7 @@ admission and scalar forgetting; [report](../reports/w48-bottom-up-batch5/README
     Boolean-tree evaluation theorem for checked-read events, proving identical
     full checked state/error traces for an arbitrary read checker. Extraction
     and Rust correspondence remain premises 28.
-    [Report](../reports/w48-bottom-up-batch4/README.md).
+    [Report](../reports/archive/wave-48/w48-bottom-up-batch4/README.md).
 
     **Amendment (BUILTIN-EXPECT-NULL-TEST): the `__builtin_expect` wrapper.**
     `likely(e)`/`unlikely(e)` reach the analyser as whatever the unit's own
@@ -643,7 +643,7 @@ admission and scalar forgetting; [report](../reports/w48-bottom-up-batch5/README
     operand refuses, and that the admitted spellings are effect-free
     literals, with the admission vector bound through the reader in Rust; extraction and
     correspondence remain premises 28.
-    [Report](../reports/builtin-expect-null-test/README.md).
+    [Report](../reports/archive/language-and-tooling/builtin-expect-null-test/README.md).
 
 <a id="constraint-5i"></a>
 
@@ -659,7 +659,7 @@ admission and scalar forgetting; [report](../reports/w48-bottom-up-batch5/README
     over-approximates a refusing inventory (the protected-formal closure) may
     keep the suffix reader. A static-helper summary whose body validated only
     through a misnamed store is withdrawn with it (`mk_iov_init`).
-    [Report](../reports/w44-assignment-destination-suffix-place/README.md).
+    [Report](../reports/archive/waves-40-47/w44-assignment-destination-suffix-place/README.md).
 
     A refused sub-object store is re-admitted only as the sub-object it is
     (`LegacyInstruction::SubObjectStore`, W45-SUB-OBJECT-STORES): one member
@@ -676,7 +676,7 @@ admission and scalar forgetting; [report](../reports/w48-bottom-up-batch5/README
     `cio_file_open`); a formal's pointer is never a stored value (a derived
     summary would call it borrowed while the callee linked it into a record:
     `cfl_list_add`, `mk_list_init`); a statement reading a tracked descriptor
-    never reaches the rule. [Report](../reports/w45-sub-object-stores/README.md).
+    never reaches the rule. [Report](../reports/archive/waves-40-47/w45-sub-object-stores/README.md).
     Rule 10v (CG11) later reads two stores this rule refuses, on the typed
     statement route and under its own premises: a store of the destination's
     own object (`r->next = r`), whose body then publishes no summary, so the
@@ -724,7 +724,7 @@ admission and scalar forgetting; [report](../reports/w48-bottom-up-batch5/README
     that its route reads every place the statement writes.
     `QCore.ChainedAssignment` (`chain_eq_sequential`, `chainN_eq_sequential`,
     `both_names_hold_the_identity`, `the_guard_never_promotes`);
-    [report](../reports/chained-assignment-inner-destination/README.md).
+    [report](../reports/archive/language-and-tooling/chained-assignment-inner-destination/README.md).
 
 <a id="constraint-5j"></a>
 
@@ -744,7 +744,7 @@ admission and scalar forgetting; [report](../reports/w48-bottom-up-batch5/README
     `(*q)[0]`, `**q`, `(q->next)->len` and `*(q->f)` are second dereferences
     and keep the refusal, while a `*` applied to a cast group never counts for
     the type name inside it (W45-SR5-SOUNDNESS).
-    [Report](../reports/w45-return-expression-families/README.md).
+    [Report](../reports/archive/waves-40-47/w45-return-expression-families/README.md).
 
 <a id="constraint-5k"></a>
 
@@ -783,7 +783,7 @@ admission and scalar forgetting; [report](../reports/w48-bottom-up-batch5/README
     tracked identity into a member without recording either must refuse this
     read; a declaration's `Borrowed` covers what is reachable through the
     argument (P-B08-SHALLOW). `QCore.MemberRelease`;
-    [report](../reports/w45-callee-summary-cascade/README.md).
+    [report](../reports/archive/waves-40-47/w45-callee-summary-cascade/README.md).
     **A callee that releases the member again** (W45-SR5-SOUNDNESS): P1's
     `R(B)` was accepted on its contract's release mode alone, and
     `q_nullable_free(n->buf); node_destroy(n);` was `Safe` at function and
@@ -798,7 +798,7 @@ admission and scalar forgetting; [report](../reports/w48-bottom-up-batch5/README
     unknown, withholds the place. A callee with no body here is governed by
     its declaration: a declared release does not cascade to members
     (P-B08-SHALLOW, stated). `QCore.MemberReleaseCallee`;
-    [report](../reports/w45-sr5-soundness/README.md).
+    [report](../reports/archive/waves-40-47/w45-sr5-soundness/README.md).
     Amended by [rule 11c](#constraint-11c): the B08 join records a
     one-sided link as partial, never as a silent unresolved effect, and the
     escape cascade refuses a possibly-live child it does not carry on every
@@ -867,7 +867,7 @@ admission and scalar forgetting; [report](../reports/w48-bottom-up-batch5/README
     a leak. **Do not** widen it to every `UnknownAlias`: most report a read
     whose effect still applies. `QCore.ListIteration`,
     `QCore.CheckedSpecification`, `QCore.RefusedCallHandOn`;
-    [report](../reports/w45-fb-backlog-custody/README.md).
+    [report](../reports/archive/waves-40-47/w45-fb-backlog-custody/README.md).
     (6) The same holds for an O00 B08 field store `OWNER->F = V` refused
     **before its effect** because `OWNER` does not resolve to one live identity
     this body acquired (`resolved_aggregate_owner`; a borrowed or
@@ -883,7 +883,7 @@ admission and scalar forgetting; [report](../reports/w48-bottom-up-batch5/README
     `context_new` (the node linked into `thctx->contexts`, `thctx` from
     `pthread_getspecific`) was accused of two leaks.
     `QCore.RefusedStoreHandOn`;
-    [report](../reports/current-context-new-triage/README.md).
+    [report](../reports/archive/language-and-tooling/current-context-new-triage/README.md).
 
 <a id="constraint-6"></a>
 
@@ -982,7 +982,7 @@ rule 74c's.
    is not evidence: nothing is withdrawn on a body this unit does not define or
    W4 derives no summary for. The scalar projection assumes the LP64 model of
    the audited targets and the reader has no target (`LOADER-ABI-LP64`).
-   The [MSVC reader](../reports/msvc-abi-reader/README.md) also reads the closed
+   The [MSVC reader](../reports/archive/language-and-tooling/msvc-abi-reader/README.md) also reads the closed
    `__int64` / `signed __int64` / `unsigned __int64` family as the existing
    64-bit projections, with the same 64-bit-pointer premise for `isize` /
    `usize`; ordinary `long` is not reinterpreted as LLP64. A newly readable
@@ -1187,7 +1187,7 @@ decided with no identity refusal; every other unknown binding keeps it.
     Premises stated, not proved: the lexical reader tells a cast, a header, an
     argument list and a declarator from a callee (trust boundary 28), and the
     typedef reader over-approximates object uses. `QCore.ParenthesisedCallee`;
-    [report](../reports/w45-parenthesised-callee/README.md).
+    [report](../reports/archive/waves-40-47/w45-parenthesised-callee/README.md).
 
 <a id="constraint-10d"></a>
 
@@ -1214,7 +1214,7 @@ decided with no identity refusal; every other unknown binding keeps it.
     values) must refuse a container effect (`has_container_effect`). The
     lexical reader of entries, containers and rebinding is trust boundary 28.
     `QCore.ContainerPublication`;
-    [report](../reports/w45-fb-retry-lifetime/README.md). W45-SR5-SOUNDNESS
+    [report](../reports/archive/waves-40-47/w45-fb-retry-lifetime/README.md). W45-SR5-SOUNDNESS
     adds two refusals (`QCore.Sr5Soundness`). A publication into a container
     whose root the body also hands whole to a position its contract does not
     declare `Borrowed` (`q_free(q)`, a summary's `Released`) refuses: the
@@ -1251,7 +1251,7 @@ decided with no identity refusal; every other unknown binding keeps it.
     no counted-user clause and no body here changes no count — is stated, not
     proved. A derived custody summary is compared with a declaration's custody
     projection only. `QCore.CountedUsers`;
-    [report](../reports/w45-fb-retry-lifetime/README.md). Since
+    [report](../reports/archive/waves-40-47/w45-fb-retry-lifetime/README.md). Since
     W45-SR5-SOUNDNESS a call or counter write C may skip (behind `?:`, `&&` or
     `||`) and a call through a call's result (`f(a)(b)`, 10c's rule 2)
     undecide the counts instead of applying on every path, and a declared
@@ -1328,7 +1328,7 @@ decided with no identity refusal; every other unknown binding keeps it.
     proved: the second pass reads the table only by membership, and a held call
     can only make a refutation undecided, never create one.
     `QCore.RefutedContractWithdrawal`;
-    [report](../reports/w45-refuted-contract-withdrawal/README.md).
+    [report](../reports/archive/waves-40-47/w45-refuted-contract-withdrawal/README.md).
 
 <a id="constraint-10h"></a>
 
@@ -1361,7 +1361,7 @@ decided with no identity refusal; every other unknown binding keeps it.
     not proved: the host reads the plugin's answer only through
     `parse_response`, and a descendant that leaves the group is outside the
     kill. `QCore.SubcommandPlugins`;
-    [report](../reports/w45-audit-subcommand-plugins/README.md).
+    [report](../reports/archive/waves-40-47/w45-audit-subcommand-plugins/README.md).
 
 <a id="constraint-10i"></a>
 
@@ -1387,7 +1387,7 @@ decided with no identity refusal; every other unknown binding keeps it.
     is `Unknown`, its function rows keeping their own held reasons. Premise,
     stated: the lexer yields the identifiers the escape reads (trust boundary
     28). `QCore.ReservedSpelling`, `QCore.Sr5Soundness`;
-    [report](../reports/w45-sr5-soundness/README.md).
+    [report](../reports/archive/waves-40-47/w45-sr5-soundness/README.md).
     **Amendment (W45-REVIEW-HOLD-PREEMPTS-STATEMENT-REFUSAL): a held call
     never masks another reason.** A held call's refusal replaces its
     statement's other refusal (the classifier checks the hold first) and has
@@ -1413,7 +1413,7 @@ decided with no identity refusal; every other unknown binding keeps it.
     held one with the holds lifted; a declaration another unit's body would
     refute once accepted is not seen (`W45-REVIEW-HOLD-CROSS-UNIT-REFUTATION`).
     `QCore.ReviewHoldStanding`;
-    [report](../reports/w45-review-hold-preempts-statement-refusal/README.md).
+    [report](../reports/archive/waves-40-47/w45-review-hold-preempts-statement-refusal/README.md).
     **Amendment (W47-REVIEW-HOLD-CONCRETE-REASON; user decision 2026-09-29):
     a held row names the act it awaits.** Every published function row that
     records a review-held call carries `review_holds`: each held
@@ -1432,7 +1432,7 @@ decided with no identity refusal; every other unknown binding keeps it.
     byte-identical; the `.qo` schema is 4. Contract-pin-mismatch holds carry
     no marker and are not listed (`W47-PIN-MISMATCH-ROW-REASON`).
     `QCore.ReviewHoldStanding.ConcreteReason`;
-    [report](../reports/w47-review-hold-concrete-reason/README.md).
+    [report](../reports/archive/waves-40-47/w47-review-hold-concrete-reason/README.md).
 
 <a id="constraint-10j"></a>
 
@@ -1458,7 +1458,7 @@ decided with no identity refusal; every other unknown binding keeps it.
     a terminating exit is declared with `resource_no_return()`; a non-local
     exit stays undeclarable) or a handle kind stays undeclared with its reason, and a
     system library outside the audited source has no pinnable identity.
-    [Report](../reports/w46-external-callee-contracts/README.md).
+    [Report](../reports/archive/waves-40-47/w46-external-callee-contracts/README.md).
     W47-CALLEE-CLOSURE-R2 adds that a pointer result is declared with the mode
     that keeps what the body makes it depend on: an allocation inside storage
     a borrowed argument owns and releases (`cfl_arena_calloc`) is
@@ -1468,7 +1468,7 @@ decided with no identity refusal; every other unknown binding keeps it.
     then read as the storage the base owns, a stated premise
     (`W47-ARENA-INTERIOR-READING`). Rank on the post-access-path corpus before
     contracting: P3 exposed callees no earlier ranking saw
-    ([report](../reports/w47-callee-closure-r2/README.md)).
+    ([report](../reports/archive/waves-40-47/w47-callee-closure-r2/README.md)).
 
 <a id="constraint-10k"></a>
 
@@ -1514,7 +1514,7 @@ decided with no identity refusal; every other unknown binding keeps it.
     Premises stated, not proved: faithful Clang extraction and node matching
     (trust boundary 28), and that a never-bound root reaches no tracked
     place (P2's premise). `QCore.TypedAccessPathPositions`;
-    [report](../reports/w47-access-path-positions/README.md).
+    [report](../reports/archive/waves-40-47/w47-access-path-positions/README.md).
     **Amendment (W48-POINTER-RETURN-THROUGH-CALL-ACTUAL-ROOT):** the pointer
     return premise may omit one call-actual occurrence from `may_bind` only
     when the same unit contains the exact
@@ -1530,7 +1530,7 @@ decided with no identity refusal; every other unknown binding keeps it.
     own contract or validated summary remains an independent obligation.
     `QCore.ReadOnlyActualFrame` models the event exclusion and return
     decision; source extraction and Rust–Lean correspondence remain the
-    stated premises. [Report](../reports/w48-pointer-return-readonly/README.md).
+    stated premises. [Report](../reports/archive/wave-48/w48-pointer-return-readonly/README.md).
     Amended by [rule 11d](#constraint-11d): (3)'s pointer read on roots that
     are eligible chain roots is left to the flow, which reads each only as
     untracked (a tracked root refuses); an address actual and (2)'s return
@@ -1551,7 +1551,7 @@ decided with no identity refusal; every other unknown binding keeps it.
     caller's pointer object is a custody effect no `Borrowed` summary
     states. `QCore.OutParameterBodySummary`
     (`scalar_store_preserves_custody`, `released_base_refuses`);
-    [report](../reports/out-parameter-body-summary/README.md).
+    [report](../reports/archive/language-and-tooling/out-parameter-body-summary/README.md).
     Amended by [rule 75](#constraint-75) (K1-CALL-ACTUAL-ACCESS): a member
     address over a parenthesised root, `&(p)->f` (the `rd_kafka_*_lock`
     macros' spelling), meets (3)'s never-bound premise exactly as `&p->f`
@@ -1593,7 +1593,7 @@ decided with no identity refusal; every other unknown binding keeps it.
     per function (`position: "root-declarations"`). Premises stated, not
     proved: faithful Clang extraction (trust boundary 28), and that the Rust
     loop returns a seeded, settled set. `QCore.TypedRootDeclarations`;
-    [report](../reports/w47-typed-root-declaration-reader/README.md).
+    [report](../reports/archive/waves-40-47/w47-typed-root-declaration-reader/README.md).
     Rule 10k's checked read-only call actual is the sole narrower
     pointer-return answer: the ordinary `may_bind` answers remain unchanged
     for every other position and the AST closure is recomputed with only
@@ -1629,7 +1629,7 @@ decided with no identity refusal; every other unknown binding keeps it.
     declarations). Premises stated, not proved: faithful Clang extraction of
     the printed type and cast kinds (trust boundary 28).
     `QCore.TypedConstPointerValue`;
-    [report](../reports/w47-typed-const-pointer-value/README.md).
+    [report](../reports/archive/waves-40-47/w47-typed-const-pointer-value/README.md).
     Amended by rule 10o: where both readers answer, a spelling the AST closure
     binds is bound (the join only refuses more).
 
@@ -1675,7 +1675,7 @@ decided with no identity refusal; every other unknown binding keeps it.
     (`position: "residual-shape"`, its unread constructs and whether every
     root premise granted would admit it) and every connective return
     (`position: "return-connective"`). `QCore.TypedAccessPathPositionResiduals`;
-    [report](../reports/w47-access-path-position-residuals/README.md).
+    [report](../reports/archive/waves-40-47/w47-access-path-position-residuals/README.md).
     Amended by [rule 14c](#constraint-14c): (1)'s callee shape also admits a
     scalar element `&PATH[I]`; and by [rule 14d](#constraint-14d): an
     interior offset `P ± n` at an actual is read under (1)'s premise.
@@ -1722,7 +1722,7 @@ decided with no identity refusal; every other unknown binding keeps it.
     stated, not proved: the token reader's extraction of assignments and
     faithful Clang extraction (trust boundary 28), and that the Rust loops
     return seeded, settled sets. `QCore.LexicalClosureNestedAssignment`;
-    [report](../reports/w47-lexical-closure-nested-assignment/README.md).
+    [report](../reports/archive/waves-40-47/w47-lexical-closure-nested-assignment/README.md).
     Rule 10k's checked read-only actual is an explicit exception to the
     pointer-root `may_bind` over-approximation; the joined never-bound
     closure and every other lexical/AST binding remain required.
@@ -1779,7 +1779,7 @@ decided with no identity refusal; every other unknown binding keeps it.
     is the one whose mode the path fixed, `ctx->ins`); and that the threaded
     flag is immutable after init. `QCore.LoopOwner` derives, for this route,
     the single-dispatcher premise `QCore.EventDriven` takes as supplied;
-    [report](../reports/w47-loop-owner-contracts/README.md).
+    [report](../reports/archive/waves-40-47/w47-loop-owner-contracts/README.md).
     **Amendment (W47-LOOP-OWNER-COROUTINE-HOP): hop C and the configured
     reading.** A coroutine runs on the thread that resumes it. The census
     derives the input coroutine's resumers: `flb_input_coro_collect` names
@@ -1815,7 +1815,7 @@ decided with no identity refusal; every other unknown binding keeps it.
     common set. `QCore.LoopOwner` proves the hop (a coroutine resumed only on
     `owner L` runs on `owner L`; an undetermined resumer never discharges), the
     gating and the configured reading;
-    [report](../reports/w47-loop-owner-coroutine-hop/README.md).
+    [report](../reports/archive/waves-40-47/w47-loop-owner-coroutine-hop/README.md).
     **Amendment (W47-LOOP-OWNER-TYPED-DISPATCH): type-keyed V and a plugin
     copy's instance flag.** The census may read Clang's typed AST of each
     recorded compile command (`typed_dispatch_census.rs`): a field dispatch
@@ -1844,7 +1844,7 @@ decided with no identity refusal; every other unknown binding keeps it.
     whose `p` is that object). `QCore.LoopOwner` proves type-keyed dispatch a
     sub-relation of field-keyed dispatch that removes only cross-type edges or
     refuses, and the route dropped only when both flags derive none;
-    [report](../reports/w47-loop-owner-typed-dispatch/README.md).
+    [report](../reports/archive/waves-40-47/w47-loop-owner-typed-dispatch/README.md).
     **Amendment (W47-LOOP-OWNER-INSTANCE-FLOW): the instance a plugin copy
     is installed on.** Step B may tie an instance read as the head of a
     context's input list (`X = mk_list_entry(H, struct flb_input_instance,
@@ -1902,7 +1902,7 @@ decided with no identity refusal; every other unknown binding keeps it.
     one creation on every path, a second creation or an unmodelled mutation
     keeping the route, and an escape that writes neither the flag nor the
     instance keeping the derivation;
-    [report](../reports/w47-loop-owner-instance-flow/README.md).
+    [report](../reports/archive/waves-40-47/w47-loop-owner-instance-flow/README.md).
     **Amendment (W47-SERVICE-PROPERTY-KEYS): the keys a property setter
     carries.** In Step B's list-head region a call of a listed variadic
     setter (`flb_service_set`, `flb_input_set`, `flb_output_set`,
@@ -1949,7 +1949,7 @@ decided with no identity refusal; every other unknown binding keeps it.
     unmatched key keeping every branch, the reading covering every run of a
     prefix of the keys, a matched hazard staying read, case variants
     matching the same entries, and a read reach holding a hazard keeping the
-    route; [report](../reports/w47-service-property-keys/README.md).
+    route; [report](../reports/archive/waves-40-47/w47-service-property-keys/README.md).
     **Amendment (W47-LOOP-OWNER-PREDEFINED-MACRO-ARMS): reserved macros
     decided from the recorded compiler.** The configured reading may decide a
     macro reserved to the implementation (C11 7.1.3: `__X`, `_` and an
@@ -1995,7 +1995,7 @@ decided with no identity refusal; every other unknown binding keeps it.
     preprocessor, a comparison keeping its arm, an absent derivation keeping
     every arm, `-U` undefining, a file's directive winning and the old test's
     path refused whatever the arms;
-    [report](../reports/w47-loop-owner-predefined-macro-arms/README.md).
+    [report](../reports/archive/waves-40-47/w47-loop-owner-predefined-macro-arms/README.md).
     **Amendment (W47-PREMISES-CORO-PLUGIN): P-CORO-HANDLE, P-PLUGIN-DIR and
     the immutable threaded flag derived.** With a typed reading the census
     derives the three premises from the program (`loop_owner_coro_plugin.rs`,
@@ -2046,7 +2046,7 @@ decided with no identity refusal; every other unknown binding keeps it.
     resumer, a run-time flags write or a registration on another plugin's
     instance keeping the route, no write after start fixing the flag, and
     the old test's path refused whatever the premises;
-    [report](../reports/w47-premises-coro-plugin/README.md).
+    [report](../reports/archive/waves-40-47/w47-premises-coro-plugin/README.md).
     **Amendment (W47-PREMISES-INSTANCE): the list-head instance's premises
     derived.** The premised census (`--derive-premises`,
     `loop_owner_premises_instance.rs`, child of `thread_entry_census.rs`)
@@ -2104,7 +2104,7 @@ decided with no identity refusal; every other unknown binding keeps it.
     failed creation leaving the fresh list empty, a refuted P-INSTANCE never
     discharged with the premised verdict adding none, and a non-member write
     keeping the route;
-    [report](../reports/w47-premises-instance/README.md).
+    [report](../reports/archive/waves-40-47/w47-premises-instance/README.md).
     **Amendment (W47-PREMISES-HOLDER-REGION): the region's macro invocations
     and the holder's opacity derived.** (1) With region-macro facts
     (`region_macros`, `loop_owner_region_macros.rs`, child of
@@ -2174,7 +2174,7 @@ decided with no identity refusal; every other unknown binding keeps it.
     hazard only through a macro-made call refused, an opaque holder keeping
     the derivation, a writing carrier keeping the route and the holder's
     instance running its copy's callback;
-    [report](../reports/w47-premises-holder-region/README.md).
+    [report](../reports/archive/waves-40-47/w47-premises-holder-region/README.md).
 
 <a id="constraint-10q"></a>
 
@@ -2227,7 +2227,7 @@ decided with no identity refusal; every other unknown binding keeps it.
     test's code, derived from the loop-owner census's contexts; the engine
     context by every live thread); and acutest's per-test fork. A refusal is
     `Unknown`, never `Unsafe` or an upstream defect claim. `QCore.CondvarJoin`;
-    [report](../reports/w47-condvar-join-publication/README.md).
+    [report](../reports/archive/waves-40-47/w47-condvar-join-publication/README.md).
     **Amendment (W47-CONDVAR-JOIN-STOP-PATHS): stop paths, POSIX joins and
     descendants.** (1) The path reader drops the null arm of a field test
     (`!X->F`, `X->F == NULL`) only where the kernel's
@@ -2275,7 +2275,7 @@ decided with no identity refusal; every other unknown binding keeps it.
     descendant block; the observed engine-thread facts are recorded as
     Fluent Bit contracts awaiting review (`fluent_bit/lib_engine_thread.qv`,
     §C06.1: withheld, never `Safe`);
-    [report](../reports/w47-condvar-join-stop-paths/README.md).
+    [report](../reports/archive/waves-40-47/w47-condvar-join-stop-paths/README.md).
     **Amendment (W47-FLB-LIB-LIFECYCLE): a declared lifecycle is checked
     against its bodies, and only a precondition gates a release.**
     `requires resource_lifecycle(ctx, start|stop|destroy)` (contract
@@ -2308,7 +2308,7 @@ decided with no identity refusal; every other unknown binding keeps it.
     path joins `ctx->config->worker`), candidates only; the fixed test
     conforms, and its C5 stays not discharged by the body's repeated join.
     `QCore.CondvarJoin` (section `Lifecycle`);
-    [report](../reports/w47-flb-lib-lifecycle/README.md).
+    [report](../reports/archive/waves-40-47/w47-flb-lib-lifecycle/README.md).
     **Amendment (W47-FLB-LIB-STRICT-PAIRING): the lifecycle is a strict
     pair; the stop's "no effect" clauses become caller preconditions.** On the
     user's decision of 2026-09-29 (a double join hits memory issues, so
@@ -2341,7 +2341,7 @@ decided with no identity refusal; every other unknown binding keeps it.
     discharged (the status branch's unchecked first join and unresolved
     descendants); the old test stays not discharged. `QCore.CondvarJoin`
     (section `Lifecycle`, rewritten);
-    [report](../reports/w47-flb-lib-strict-pairing/README.md).
+    [report](../reports/archive/waves-40-47/w47-flb-lib-strict-pairing/README.md).
 
 <a id="constraint-10r"></a>
 
@@ -2379,7 +2379,7 @@ decided with no identity refusal; every other unknown binding keeps it.
     steps, event-payload identities). Do not call a fault-bearing or storing
     node custody-neutral, and do not evaluate one outside `checked_binary`.
     `QCore.TypedSourceOperators`, bound to the Rust tables by a shared-vector
-    test; [report](../reports/cg01-t-operator-closure/README.md).
+    test; [report](../reports/archive/gateway-and-clang/cg01-t-operator-closure/README.md).
 
 <a id="constraint-10s"></a>
 
@@ -2437,7 +2437,7 @@ decided with no identity refusal; every other unknown binding keeps it.
     `QCore.ElaborationCore` (`interleave_run`, `read_stable`,
     `commutes_sound`, `unsequenced_refusals`), bound to `FORM_TABLE`,
     `commutes` and ten C order vectors by a shared-vector test;
-    [report](../reports/cg02-elaboration-core/README.md).
+    [report](../reports/archive/gateway-and-clang/cg02-elaboration-core/README.md).
     Amended by [rule 11b](#constraint-11b): the cast and type-query rows
     are read by `CAST_TABLE` and `query_operand`, and a statement, `return`
     or condition holding a cast or a type query is consulted too.
@@ -2495,7 +2495,7 @@ decided with no identity refusal; every other unknown binding keeps it.
     and declaration ids and cast kinds, and that the gateway's tokens of a
     line are the analysed source's (trust boundary 28).
     `QCore.TypedPlace`, bound to the Rust decision table by a shared-vector
-    test; [report](../reports/cg10-common-typed-place/README.md).
+    test; [report](../reports/archive/gateway-and-clang/cg10-common-typed-place/README.md).
     Amended by [rule 11d](#constraint-11d): an eligible root with no tracked
     identity is read as untracked on a path where nothing bound it and
     nothing was refused before the access; the never-bound premise stays
@@ -2585,7 +2585,7 @@ decided with no identity refusal; every other unknown binding keeps it.
 
     `QCore.CallInstantiation`, bound to `ACCEPTANCE_VECTORS` and
     `SUBSTITUTION_VECTORS` by shared-vector tests;
-    [report](../reports/cg03-call-summary-instantiation/README.md).
+    [report](../reports/archive/gateway-and-clang/cg03-call-summary-instantiation/README.md).
     Amended by [rule 11b](#constraint-11b): the data reading takes
     `FloatingToBoolean` and the null test of a named pointer object.
 
@@ -2655,8 +2655,8 @@ decided with no identity refusal; every other unknown binding keeps it.
     extraction of types, cast kinds and declaration ids (trust boundary 28).
     `QCore.PointerStore`, bound to the Rust decision table by shared-vector
     tests, and `QCore.PointerStoreDerived` for the same-object reading;
-    [report](../reports/cg11-pointer-valued-stores/README.md),
-    [K3 report](../reports/k3-pointer-valued-stores/README.md).
+    [report](../reports/archive/gateway-and-clang/cg11-pointer-valued-stores/README.md),
+    [K3 report](../reports/archive/wave-48/k3-pointer-valued-stores/README.md).
 
 <a id="constraint-10w"></a>
 
@@ -2707,7 +2707,7 @@ decided with no identity refusal; every other unknown binding keeps it.
     another member is not visible, so a pointer so read is still only a
     target-free borrow. `QCore.UnionBitfieldPlace`, bound to the Rust
     decision table by a shared-vector test and reusing
-    `QCore.DisjointFootprint`; [report](../reports/cg13-union-and-bitfield-places/README.md).
+    `QCore.DisjointFootprint`; [report](../reports/archive/gateway-and-clang/cg13-union-and-bitfield-places/README.md).
 
 <a id="constraint-10x"></a>
 
@@ -2778,7 +2778,7 @@ decided with no identity refusal; every other unknown binding keeps it.
     pair's), and faithful Clang extraction (trust boundary 28).
     `QCore.ConditionAcquisition`, bound to `USE_VECTORS`, `CARRIER_VECTORS`,
     `PLACEMENT_VECTORS` and `LEAF_VECTORS` by shared-vector tests;
-    [report](../reports/cg04-condition-acquisition/README.md).
+    [report](../reports/archive/gateway-and-clang/cg04-condition-acquisition/README.md).
 
 <a id="constraint-10y"></a>
 
@@ -2838,7 +2838,7 @@ decided with no identity refusal; every other unknown binding keeps it.
     `every_interleaving_runs_alike`, `inner_effects_precede_the_outer_entry`,
     `a_non_commuting_pair_is_refused`), bound to `OVERLAP_VECTORS` and
     `ORDER_VECTORS` by shared-vector tests; `QCore.CallInstantiation`'s passed
-    row; [report](../reports/cg05-nested-call-effects/README.md).
+    row; [report](../reports/archive/gateway-and-clang/cg05-nested-call-effects/README.md).
 
 <a id="constraint-10z"></a>
 
@@ -2903,7 +2903,7 @@ decided with no identity refusal; every other unknown binding keeps it.
     `QCore.ValueConnectives` (short circuit, selection, single evaluation,
     the re-read, order, merge, forms and positions), bound to
     `ADMISSION_VECTORS`, `TRANSPARENT`, the elaborator and route G by
-    shared-vector tests; [report](../reports/cg06-value-connectives-and-conditional/README.md).
+    shared-vector tests; [report](../reports/archive/gateway-and-clang/cg06-value-connectives-and-conditional/README.md).
 
 <a id="constraint-11-series"></a>
 
@@ -2979,7 +2979,7 @@ own anchor here.
     `the_one_site_flow_hides_the_leak`), bound to `STEP_VECTORS`,
     `IDENTITY_VECTORS` and the gateway's verdicts on the pinned shapes
     (`SHAPE_VECTORS`) by shared-vector tests;
-    [report](../reports/cg04-loop-site-generations/README.md).
+    [report](../reports/archive/gateway-and-clang/cg04-loop-site-generations/README.md).
 
 <a id="constraint-11b"></a>
 
@@ -3059,7 +3059,7 @@ own anchor here.
     operand classes, single evaluation, consumed constants and the
     type-size fold), bound to `CAST_TABLE`, `query_operand`, Clang's
     constants and `fold_type_sizes` by shared-vector tests;
-    [report](../reports/cg08-casts-and-type-queries/README.md).
+    [report](../reports/archive/gateway-and-clang/cg08-casts-and-type-queries/README.md).
     Amended by [rule 12h](#constraint-12h): the kind table is refined by
     type classes into one conversion table every route-G position consults.
 
@@ -3129,7 +3129,7 @@ own anchor here.
     `the_model_is_sound`, `the_base_flow_hides_the_leak`), bound to
     `LINK_VECTORS`, `ESCAPE_VECTORS`, `EXIT_VECTORS` and the gateway's
     verdicts on the pinned shapes (`SHAPE_VECTORS`) by shared-vector tests;
-    [report](../reports/b08-field-link-join-silent-unresolved/README.md).
+    [report](../reports/archive/language-and-tooling/b08-field-link-join-silent-unresolved/README.md).
 
 <a id="constraint-11d"></a>
 
@@ -3195,7 +3195,7 @@ own anchor here.
     derived result satisfies it, the join keeps a refusal), bound to
     `DECISION_VECTORS` and `EVENT_VECTORS`, whose paths the gateway runs
     (`tests/bound_untracked_roots.rs`);
-    [report](../reports/cg10-bound-untracked-roots/README.md).
+    [report](../reports/archive/gateway-and-clang/cg10-bound-untracked-roots/README.md).
 
 <a id="constraint-11e"></a>
 
@@ -3260,7 +3260,7 @@ own anchor here.
     `derivedVectors` and `refuteVectors`
     (`crates/qcore-core/tests/index_extent_frames.rs`) and to route G by
     `tests/cg24_frames_and_relations.rs`;
-    [report](../reports/cg24-alias-extent-frame-vocabulary/README.md).
+    [report](../reports/archive/gateway-and-clang/cg24-alias-extent-frame-vocabulary/README.md).
 
 <a id="constraint-11f"></a>
 
@@ -3331,7 +3331,7 @@ own anchor here.
     `a_literal_borrow_ends_in_its_block`, `a_literal_never_escapes`,
     `an_unlisted_form_refuses`), bound to `COPY_VECTORS`, `LEAF_VECTORS` and
     `LITERAL_VECTORS` by a shared-vector test;
-    [report](../reports/cg14-aggregate-values-and-initializers/README.md).
+    [report](../reports/archive/gateway-and-clang/cg14-aggregate-values-and-initializers/README.md).
 
 <a id="constraint-11g"></a>
 
@@ -3410,7 +3410,7 @@ own anchor here.
     position table), bound to `ADMISSION_VECTORS`, `POSITIONS` and
     `commutes` by shared-vector tests and to route G by
     `tests/cg07_statement_expressions.rs`;
-    [report](../reports/cg07-generic-and-statement-expressions/README.md).
+    [report](../reports/archive/gateway-and-clang/cg07-generic-and-statement-expressions/README.md).
 
 <a id="constraint-11h"></a>
 
@@ -3502,7 +3502,7 @@ own anchor here.
     table and unlisted refusal), bound to `FORM_TABLE` and the gateway's
     verdicts on the pinned shapes (`SHAPE_VECTORS`) by shared-vector tests
     (`tests/storage_duration_volatile.rs`);
-    [report](../reports/cg15-storage-duration-and-volatile/README.md).
+    [report](../reports/archive/gateway-and-clang/cg15-storage-duration-and-volatile/README.md).
 
 <a id="constraint-11i"></a>
 
@@ -3578,7 +3578,7 @@ own anchor here.
     publication verdict's single-graph assumption and gate), bound to
     `ATOMIC_FORM_TABLE`, `decode_order`, `route_order` and
     `event_order_represented` by `tests/unit/atomic_source_route.rs`;
-    [report](../reports/cg19-atomic-source-route/README.md).
+    [report](../reports/archive/gateway-and-clang/cg19-atomic-source-route/README.md).
 
 <a id="constraint-11j"></a>
 
@@ -3657,7 +3657,7 @@ own anchor here.
     (read by Clang), `POSITION_VECTORS`, `DECISION_VECTORS` and
     `EVENT_VECTORS`, whose bodies the gateway runs
     (`tests/cg12_void_view_readback.rs`);
-    [report](../reports/cg12-void-view-readback/README.md).
+    [report](../reports/archive/gateway-and-clang/cg12-void-view-readback/README.md).
 
 <a id="constraint-11k"></a>
 
@@ -3755,7 +3755,7 @@ own anchor here.
     `the_summary_has_no_footprint`), bound to `PAIR_VECTORS`,
     `COPY_VECTORS` and the replay's generation vectors by shared-vector
     tests and to route G by `tests/footprint_connection.rs`;
-    [report](../reports/cg18-footprint-connection/README.md).
+    [report](../reports/archive/gateway-and-clang/cg18-footprint-connection/README.md).
 
 <a id="constraint-11l"></a>
 
@@ -3821,7 +3821,7 @@ own anchor here.
     `exhausted_never_safe`) is bound to `CONTROL_TABLE`, `LEGACY_STATEMENTS`,
     `CONTROL_STATEMENTS`, the four budgets and the importer's own `switch`
     lowering by a shared-vector test;
-    [report](../reports/cg09-typed-source-control/README.md).
+    [report](../reports/archive/gateway-and-clang/cg09-typed-source-control/README.md).
 
 <a id="constraint-11m"></a>
 
@@ -3893,7 +3893,7 @@ own anchor here.
     `footprint_commute_sound`), bound to `COMPOSED_VECTORS` and
     `FOOTPRINT_VECTORS` by shared-vector tests and to route G by
     `tests/cg06_connective_footprints.rs`;
-    [report](../reports/cg06-connective-footprints/README.md).
+    [report](../reports/archive/gateway-and-clang/cg06-connective-footprints/README.md).
 
 <a id="constraint-11n"></a>
 
@@ -3981,7 +3981,7 @@ own anchor here.
     with `aliased_den_meets_the_premises`), bound to
     `check_with_footprints` and `event_footprint` by `footprintVectors`;
     `QCore.NestedCallEffects.footprint_commute_sound` carries the pair to
-    the state; [report](../reports/cg05-elaborator-call-footprints/README.md).
+    the state; [report](../reports/archive/gateway-and-clang/cg05-elaborator-call-footprints/README.md).
 
 <a id="constraint-11o"></a>
 
@@ -4069,7 +4069,7 @@ own anchor here.
     `boundaries_refused`, `boundary_table_refused`), bound to
     `DECISION_VECTORS` and `BOUNDARIES` by shared-vector tests and to route G
     by `tests/cg21_call_exits.rs`;
-    [report](../reports/cg21-call-exits-and-boundaries/README.md).
+    [report](../reports/archive/gateway-and-clang/cg21-call-exits-and-boundaries/README.md).
 
 <a id="constraint-11p"></a>
 
@@ -4163,7 +4163,7 @@ own anchor here.
     theorems over `QCore.TypedefProjection`), bound to `JOIN_VECTORS` and
     `CALLBACK_VECTORS` by shared-vector tests and to route G by
     `tests/cg22_indirect_calls.rs`;
-    [report](../reports/cg22-indirect-calls-and-callbacks/README.md).
+    [report](../reports/archive/gateway-and-clang/cg22-indirect-calls-and-callbacks/README.md).
 
 <a id="constraint-11q"></a>
 
@@ -4235,7 +4235,7 @@ own anchor here.
     family, `portable_in_every_model`, …), bound to `c_numeric` by
     `promotionVectors`, `usualVectors`, `kernelVectors` and
     `conversionVectors` (and to Clang by `clang_records_the_lean_usual_conversions`);
-    [report](../reports/cg20-numeric-domain/README.md).
+    [report](../reports/archive/gateway-and-clang/cg20-numeric-domain/README.md).
 
 <a id="constraint-11r"></a>
 
@@ -4283,7 +4283,7 @@ own anchor here.
     parenthesis) takes `NAME`'s line and the parenthesis closing the moved
     call the call's own, so the stream's lines stay non-decreasing (card
     RELATIONAL-REWRITE-LINE-ORDER,
-    [report](../reports/relational-rewrite-line-order/README.md): before it the `if` kept its own line
+    [report](../reports/archive/language-and-tooling/relational-rewrite-line-order/README.md): before it the `if` kept its own line
     ahead of the moved call's, and `typed_place::occurrence` declined every
     statement of the unit). The stream the parser reads, after every
     rewrite, is guarded: one whose lines are not non-decreasing is a hard
@@ -4340,7 +4340,7 @@ own anchor here.
     non-literal return and a non-`int` result keep the refusal. **Do not**
     read a slot as unwritten from fewer than all of its class's exits, keep
     an unwritten class no other class writes, or validate it with the slot
-    unsanctioned. Measured: [report](../reports/out-parameter-body-summary/README.md);
+    unsanctioned. Measured: [report](../reports/archive/language-and-tooling/out-parameter-body-summary/README.md);
     `QCore.OutParameterBodySummary` (`class_mode_sound`,
     `summary_effect_equals_body_on_every_path`,
     `relation_requires_a_writer`).
@@ -4371,7 +4371,7 @@ own anchor here.
     a `-fno-strict-aliasing` unit keep the frame; every other refusal of (6)
     stands. **Do not** spare a slot for a character store, read the premise
     without listing it, or apply it in a unit built without the rule.
-    [Report](../reports/out-parameter-scalar-frame-premise/README.md);
+    [Report](../reports/archive/language-and-tooling/out-parameter-scalar-frame-premise/README.md);
     `QCore.OutParameterScalarFramePremise` (`wide_store_keeps_pointer_object`,
     `spares_sound`, `character_refuses`, `no_strict_aliasing_refuses`).
 
@@ -4407,7 +4407,7 @@ own anchor here.
     local all reach. A slot no store has bound is left unwritten: a
     `Borrowed` write passes no custody into it, and (2)'s consumer reads the
     caller's variable as untracked on that class. With no AST, or no AST call
-    on a call node's lines, every position but an `Out` one reaches. Census ([report](../reports/out-slot-call-write-aliasing/README.md)):
+    on a call node's lines, every position but an `Out` one reaches. Census ([report](../reports/archive/language-and-tooling/out-slot-call-write-aliasing/README.md)):
     of every `Safe` row of the corpus, system, slice and `current`
     populations (and the parent cards' predicted rows), five validate a
     pointer out slot and one passes it across such a call,
@@ -4517,7 +4517,7 @@ own anchor here.
     `resolveVectors` and `verdictVectors`
     (`crates/qcore-core/tests/index_extent.rs`) and to route G by
     `tests/cg16_index_extents.rs`;
-    [report](../reports/cg16-index-and-offset-extents/README.md).
+    [report](../reports/archive/gateway-and-clang/cg16-index-and-offset-extents/README.md).
 
 <a id="constraint-11t"></a>
 
@@ -4600,7 +4600,7 @@ own anchor here.
     litmus graphs from the Lean file) and `QCore.AtomicSourceRoute`
     (`read_modify_write_routed`, `fence_routed`, `consume_fence_is_acquire`,
     `consume_order_refused`, `routed_failure_admitted_by_model`,
-    `cas_vectors_hold`); [report](../reports/cg28-weak-memory-events/README.md).
+    `cas_vectors_hold`); [report](../reports/archive/gateway-and-clang/cg28-weak-memory-events/README.md).
 
 <a id="constraint-11u"></a>
 
@@ -4691,7 +4691,7 @@ own anchor here.
     bound to `FLEX_VECTORS`, `VLA_VECTORS`, `ALIGNMENT_VECTORS` and
     `container_vectors` by `tests/unit/layout_extents.rs` and to route G and
     the report by `tests/layout_extents.rs`;
-    [report](../reports/cg17-layout-derived-extents/README.md).
+    [report](../reports/archive/gateway-and-clang/cg17-layout-derived-extents/README.md).
 
 <a id="constraint-11v"></a>
 
@@ -4745,7 +4745,7 @@ own anchor here.
     `QCore.ResourceKinds` (28 theorems, `AuditResourceKinds.lean`; the kind
     table and the protocols bound to Rust and to the libc declarations by
     `kindVectors` and `protocolVectors`); `QCore.KindedCustody.Kind` gains the
-    two constructors; [report](../reports/cg25-resource-kinds/README.md).
+    two constructors; [report](../reports/archive/gateway-and-clang/cg25-resource-kinds/README.md).
     (5) **Thread keys** (card CURRENT-CONTEXT-NEW-TRIAGE, D3; user decision
     2026-11-16 "Queue both (Recommended)"; contract specification §C04.6.1;
     qcore-schemas 27.0.0 `ResourceKind::ThreadKey`,
@@ -4778,7 +4778,7 @@ own anchor here.
     (`AuditThreadKeyStatic.lean`), `QCore.KindedCustody.Kind.threadKey`,
     `kindVectors`/`protocolVectors` extended;
     `tests/thread_key_in_place.rs`;
-    [report](../reports/current-context-new-triage/README.md).
+    [report](../reports/archive/language-and-tooling/current-context-new-triage/README.md).
     (6) **Every mention, whatever the route** (card
     CG25-VOID-CAST-GUARD-ESCAPE, priority soundness; user decision
     2026-11-17 "Yes, launch it."). (4)'s guard reads only a statement's first
@@ -4815,7 +4815,7 @@ own anchor here.
     (`AuditInPlaceMentionGuard.lean`; every admitted lowering, from any
     route, passed the guard; `shapeAdmissions` bound to
     `tests/in_place_mention_guard.rs`);
-    [report](../reports/cg25-void-cast-guard-escape/README.md).
+    [report](../reports/archive/gateway-and-clang/cg25-void-cast-guard-escape/README.md).
     (7) **Automatic thread keys, used only when certified** (card
     CG25-THREAD-KEY-AUTOMATIC-REVISIT; user decision 2026-11-17
     "CG25-THREAD-KEY-AUTOMATIC-REVISIT -> Let's get started."). With (6) in
@@ -4862,7 +4862,7 @@ own anchor here.
     `a_safe_verdict_used_only_certified_keys`, the witness programs);
     `QCore.InPlaceMentionGuard.the_void_cast_getter_is_refused` restated for
     the kinded getter; `tests/thread_key_in_place.rs`;
-    [report](../reports/cg25-thread-key-automatic-revisit/README.md).
+    [report](../reports/archive/gateway-and-clang/cg25-thread-key-automatic-revisit/README.md).
 
 <a id="constraint-11w"></a>
 
@@ -4948,7 +4948,7 @@ own anchor here.
     `the_skipping_protocol_is_never_certified`,
     `borrowed_tail_is_the_identity`, `a_scalar_address_demands_nothing`),
     bound to `STEP_VECTORS` by a shared-vector test;
-    [report](../reports/cg26-variadics/README.md).
+    [report](../reports/archive/gateway-and-clang/cg26-variadics/README.md).
 
 <a id="constraint-11x"></a>
 
@@ -5020,7 +5020,7 @@ own anchor here.
     `an_unsigned_double_step_can_increase`; `Budget`:
     `an_exhausted_budget_is_never_safe`), bound to `sign_guard` and
     `step_actual` by `guardVectors` and `stepVectors`;
-    [report](../reports/cg27-loops-recursion-budgets/README.md).
+    [report](../reports/archive/gateway-and-clang/cg27-loops-recursion-budgets/README.md).
 
 <a id="constraint-11y"></a>
 
@@ -5106,7 +5106,7 @@ own anchor here.
     `refusal_keeps_unsafe`, `refusal_is_monotone`, `perm_same_typeId`,
     `bool_is_Bool`, `long_unsigned_int_vector`, `distinct_counts_distinct`),
     bound to the Rust tables by `tests/unit/c_frontend_identity.rs`;
-    [report](../reports/cg30-dialects-flags-types/README.md).
+    [report](../reports/archive/gateway-and-clang/cg30-dialects-flags-types/README.md).
 
 <a id="constraint-11z"></a>
 
@@ -5180,7 +5180,7 @@ own anchor here.
     vectors), `QCore.WeakMemory` (a spawn event, additive) and
     `QCore.AtomicSourceRoute` (`safe_publication_covers_every_execution`,
     `unknown_publication_carries_single_graph`);
-    [report](../reports/cg29-execution-coverage-and-reclamation/README.md).
+    [report](../reports/archive/gateway-and-clang/cg29-execution-coverage-and-reclamation/README.md).
 
 <a id="constraint-12c"></a>
 
@@ -5236,7 +5236,7 @@ own anchor here.
     `never_owned_changes_no_custody`, `never_owned_is_never_accused`,
     `a_null_test_refines_only_the_binding`), bound to `decide` and
     `derive_pointer` by unit tests;
-    [report](../reports/va-loop-and-pointer-arg/README.md).
+    [report](../reports/archive/language-and-tooling/va-loop-and-pointer-arg/README.md).
 
 <a id="constraint-12d"></a>
 
@@ -5276,7 +5276,7 @@ own anchor here.
     `the_name_branch_is_safe`, `the_withdrawal_refused_the_name_branch`,
     `releasing_the_owner_after_the_unlink_leaks_the_child`,
     `the_carry_only_replaces_a_refusal`, the shared `publishVectors` and
-    `unlinkVectors`); [report](../reports/monkey-vhost-property-custody/README.md).
+    `unlinkVectors`); [report](../reports/archive/contracts-and-premises/monkey-vhost-property-custody/README.md).
 
 <a id="constraint-12e"></a>
 
@@ -5322,7 +5322,7 @@ own anchor here.
     `settle_iff`, `the_rule_matches_the_executions`,
     `the_old_claim_was_false`, `an_established_claim_survives_the_join`,
     `a_marker_would_withdraw_it`, `a_refused_test_is_never_safe`, the shared
-    `edgeVectors`); [report](../reports/sup07-refused-test-accusation/README.md).
+    `edgeVectors`); [report](../reports/archive/language-and-tooling/sup07-refused-test-accusation/README.md).
 
 <a id="constraint-12f"></a>
 
@@ -5365,7 +5365,7 @@ own anchor here.
     `return_matches_statement`, `a_scalar_return_escapes_nothing`,
     `an_owned_object_stays_owed`, `decide_iff`, the shared
     `decisionVectors`, `a_declined_return_is_never_safe`);
-    [report](../reports/w48-bottom-up-callee-bodies/README.md).
+    [report](../reports/archive/wave-48/w48-bottom-up-callee-bodies/README.md).
 
 <a id="constraint-12g"></a>
 
@@ -5423,7 +5423,7 @@ own anchor here.
     `an_identity_arm_is_refused`, `an_identity_condition_is_refused`,
     `an_unanswered_root_is_refused`, `an_integer_identity_is_refused`,
     `the_reading_is_custody_neutral`, the shared `readVectors`);
-    [report](../reports/cg26-tail-residual-actuals/README.md).
+    [report](../reports/archive/gateway-and-clang/cg26-tail-residual-actuals/README.md).
     Amended by [rule 12h](#constraint-12h): the abstract expression is built
     through a cast the conversion table reads as its operand at a tail
     position (`cast_semantics::tail_transparent`); `a_cast_is_never_read`
@@ -5514,7 +5514,7 @@ own anchor here.
     `cast_keeps_events`, `discard_is_effect_only`, `star_through_cast_is_two`
     and nine more), bound to `CONVERSION_TABLE`, `classify` and rule 5j's
     reader by shared vectors;
-    [report](../reports/cast-formalization/README.md).
+    [report](../reports/archive/language-and-tooling/cast-formalization/README.md).
     **AMENDED (round 3 of CG10-INDIRECT-ACCESS-SOLE-RESIDUALS):** hook
     H-U also removes an identity-preserving view of a **member-chain place
     over a plain name** (`int n = f((const char *)a->name);`), at a **call
@@ -5530,7 +5530,7 @@ own anchor here.
     `QCore.CastActualPlace` (`place_view_vectors_hold`,
     `only_a_call_actual_is_uncast`, `a_qualified_view_is_kept`,
     `a_removed_view_is_the_place`), bound to `PLACE_VIEW_VECTORS`;
-    [report](../reports/cg10-indirect-access-sole-residuals-r3/README.md).
+    [report](../reports/archive/gateway-and-clang/cg10-indirect-access-sole-residuals-r3/README.md).
 
 <a id="constraint-12i"></a>
 
@@ -5580,7 +5580,7 @@ own anchor here.
     `the_exit_discharges_nothing_prior` and six more), composed from
     `QCore.CallArgumentAccess` and `QCore.ReturnCallCustody`, bound to the
     gateway by `tests/indirect_access_sole_blockers.rs`;
-    [report](../reports/cg10-indirect-access-sole-blockers/README.md).
+    [report](../reports/archive/gateway-and-clang/cg10-indirect-access-sole-blockers/README.md).
 
 <a id="constraint-12j"></a>
 
@@ -5618,7 +5618,7 @@ own anchor here.
     `the_never_bound_answer_is_unchanged`, `a_scalar_store_changes_no_binding`,
     `a_union_store_keeps_the_frame` and five more), bound to
     `DECISION_VECTORS` by a shared-vector test;
-    [report](../reports/cg10-indirect-access-sole-blockers/README.md).
+    [report](../reports/archive/gateway-and-clang/cg10-indirect-access-sole-blockers/README.md).
 
 <a id="constraint-12k"></a>
 
@@ -5671,7 +5671,7 @@ own anchor here.
     `a_held_callee_keeps_the_gate_refusal`,
     `an_unrecognised_actual_keeps_the_gate_refusal` and nine more), bound by
     `tests/indirect_access_sole_residuals.rs`;
-    [report](../reports/cg10-indirect-access-sole-residuals/README.md).
+    [report](../reports/archive/gateway-and-clang/cg10-indirect-access-sole-residuals/README.md).
 
 <a id="constraint-12l"></a>
 
@@ -5742,7 +5742,7 @@ own anchor here.
     `admittedVectors`, `decideVectors` and `shiftVectors`
     (`crates/qcore-core/tests/index_quant.rs`) and to route G by
     `tests/quant_index_checks.rs`;
-    [report](../reports/quant-index-checks/README.md).
+    [report](../reports/archive/contracts-and-premises/quant-index-checks/README.md).
 
 <a id="constraint-12m"></a>
 
@@ -5825,7 +5825,7 @@ own anchor here.
     `an_admitted_branch_never_converts_the_result`,
     `admission_composes_through_a_forwarder`, `owner_vectors_hold`,
     `branch_vectors_hold`); `tests/return_code_handoff.rs`;
-    [report](../reports/supplied-owned-return-code-handoff/README.md).
+    [report](../reports/archive/language-and-tooling/supplied-owned-return-code-handoff/README.md).
     **An exact copy of the member** (card HANDOFF-CANDIDATE-OWN-CALLBACKS,
     C04.19.5 amended): a call through a variable the body writes exactly
     once, `v = o->m` or `T v = o->m;` with no conversion but an lvalue read,
@@ -5882,7 +5882,7 @@ own anchor here.
     `a_decided_call_never_touches_a_taken_object`,
     `a_decided_split_is_the_guard_on_every_value`, `direct_vectors_hold`
     bound to `DIRECT_VECTORS`); `tests/handoff_direct_call.rs`;
-    [report](../reports/handoff-direct-call-reading/README.md).
+    [report](../reports/archive/language-and-tooling/handoff-direct-call-reading/README.md).
 
 <a id="constraint-12n"></a>
 
@@ -5968,7 +5968,7 @@ own anchor here.
     it, so a declared candidate frees no row by itself; measured, the 13
     `callback-uncontracted` leaves of `rd_kafka_op_destroy` in `rdkafka.c`
     and `rdkafka_offset.c` decide and no status moves.
-    [Report](../reports/op-callback-candidate-contracts/README.md).
+    [Report](../reports/archive/language-and-tooling/op-callback-candidate-contracts/README.md).
     **Application rk_conf callbacks** (card OP-APP-RK-CALLBACKS-VIA-POLL-CB,
     C04.19.3 and C04.19.4 amended; USER DECISIONS 2026-10-14, "Closed over
     FB's registrations" and "Build the agent's recommended set": D1, Q2, Q3,
@@ -6052,7 +6052,7 @@ own anchor here.
     an S3 lifetime token) and `src/simdutf/flb_simdutf_connector.cpp`
     (names `cmt`, `event`, `evl`): the rk_conf members, `consume_ctx` and
     `rko_serve` close, `cmt.log_cb` stays open on the connector.
-    [Report](../reports/callback-member-non-c-units/README.md).
+    [Report](../reports/archive/language-and-tooling/callback-member-non-c-units/README.md).
     Measured (corpus `66910c10` on main `b7facc899`): 936 / 9 / 3,889 → 936
     / 9 / 3,889, 97 Unknown rows trade leaves; the pre-pass reads 845 of
     1,444 units, none unread; the rk_conf members close (`dr_msg_cb`
@@ -6060,7 +6060,7 @@ own anchor here.
     `sasl.oauthbearer.token_refresh_cb` {Fluent Bit's and librdkafka's five},
     the other seven empty) and `rd_kafka_op_s.rko_op_cb` reads open (its
     union-keyed `rko_u` dependency).
-    [Report](../reports/op-app-rk-callbacks/README.md). **Do
+    [Report](../reports/archive/language-and-tooling/op-app-rk-callbacks/README.md). **Do
     not** decide a member over the unit's set alone where the run's facts
     are installed, exclude a unit whose evidence the run has not
     re-verified, compose a member-invoking run from checkpoints without the
@@ -6086,7 +6086,7 @@ own anchor here.
     `callback_member_closure`'s `CLOSURE_VECTORS`; `callback_member_fold`'s
     `RUN_VECTORS`; `tests/cg22_op_callbacks.rs`,
     `tests/callback_member_data_only.rs`;
-    [report](../reports/retained-release-formal/README.md).
+    [report](../reports/archive/language-and-tooling/retained-release-formal/README.md).
     `QCore.AppRkCallbacks`
     (`a_registration_closes_the_member_only_with_every_run_store`,
     `the_registered_set_is_exactly_the_read_and_registered_sets`,
@@ -6107,7 +6107,7 @@ own anchor here.
     `the_composed_decision_is_the_runs`,
     `a_run_decided_over_its_facts_composes`);
     `crates/qcore-audit/tests/member_prepass_routes.rs`;
-    [report](../reports/member-prepass-other-routes/README.md).
+    [report](../reports/archive/gateway-and-clang/member-prepass-other-routes/README.md).
     `QCore.MemberNonCUnits`
     (`an_undecided_unit_keeps_the_member_open`,
     `a_named_graph_token_keeps_the_member_open`,
@@ -6150,7 +6150,7 @@ own anchor here.
     `an_ungiven_range_aliases`, `a_disagreeing_union_aliases_everything`,
     `the_layout_takes_only_shared_stores`, `layout_vectors_hold`);
     `LAYOUT_VECTORS`; `tests/rko_union_layout.rs`;
-    [report](../reports/rko-op-cb-union-closure/README.md).
+    [report](../reports/archive/language-and-tooling/rko-op-cb-union-closure/README.md).
     **Opaque writes keyed by target** (card
     UNION-OPAQUE-RECORD-WRITES-BY-TYPE, C04.19.3 amended): every opaque
     write of a record (`MemberFacts::opened`) keeps its target expression
@@ -6188,7 +6188,7 @@ own anchor here.
     `a_non_overlapping_opaque_write_never_changes_the_read`,
     `an_unknown_range_opaque_write_aliases`, `opaque_vectors_hold`);
     `OPAQUE_VECTORS`; `tests/union_opaque_writes.rs`;
-    [report](../reports/union-opaque-record-writes/README.md).
+    [report](../reports/archive/language-and-tooling/union-opaque-record-writes/README.md).
     **A candidate's own member invocations** (card
     HANDOFF-CANDIDATE-OWN-CALLBACKS) are decided by this rule as in the
     candidate's own body, over the run's set only, when the candidate is
@@ -6226,7 +6226,7 @@ own anchor here.
     `an_unresolved_or_ambiguous_id_never_decides`,
     `two_records_never_validate`, `an_unlinked_record_never_validates`,
     `vectors_hold`); `VECTORS`; `tests/event_loop_retention.rs`;
-    [report](../reports/fb-event-loop-retention/README.md).
+    [report](../reports/archive/contracts-and-premises/fb-event-loop-retention/README.md).
 
     **A function pointer is a pointer to a function type** (card
     LOG-PRINT-BODY-CONTRACTS, a fail-closed repair).
@@ -6249,7 +6249,7 @@ own anchor here.
     `a_non_function_formal_store_never_decides`,
     `the_defect_would_close_the_member_empty`);
     `tests/log_print_member_contracts.rs`;
-    [report](../reports/log-print-body-contracts/README.md).
+    [report](../reports/archive/language-and-tooling/log-print-body-contracts/README.md).
 
     **A callback slot of an opaque record** (card
     OPENSSL-SSL-CTX-CALLBACK-SLOTS, amended in place; contract specification
@@ -6288,7 +6288,7 @@ own anchor here.
     `every_declared_writers_value_is_a_candidate`,
     `a_refused_slot_never_publishes_safe`);
     `tests/openssl_callback_slots.rs`;
-    [report](../reports/openssl-ssl-ctx-callback-slots/README.md).
+    [report](../reports/archive/contracts-and-premises/openssl-ssl-ctx-callback-slots/README.md).
 
     **The OpenSSL slots the narrowed premise covered** (card
     OPENSSL-UNSTATED-CALLBACK-SLOTS, amended in place; contract specification
@@ -6322,7 +6322,7 @@ own anchor here.
     `a_row_is_safe_only_if_every_invocation_decides`,
     `stating_an_invocation_never_improves_a_verdict`);
     `tests/openssl_unstated_callback_slots.rs`;
-    [report](../reports/openssl-unstated-callback-slots/README.md).
+    [report](../reports/archive/contracts-and-premises/openssl-unstated-callback-slots/README.md).
 
     **The OpenSSL handshake slots whose setters were undeclared** (card
     OPENSSL-UNDECLARED-HANDSHAKE-CALLBACKS, amended in place; contract
@@ -6355,7 +6355,7 @@ own anchor here.
     `an_unstated_slot_needs_the_premise`,
     `stating_more_invocations_never_improves_a_verdict`);
     `tests/openssl_undeclared_handshake_callbacks.rs`;
-    [report](../reports/openssl-undeclared-handshake-callbacks/README.md).
+    [report](../reports/archive/contracts-and-premises/openssl-undeclared-handshake-callbacks/README.md).
 
     **A BIO's method table and callback** (card
     OPENSSL-BIO-METHODS-AND-CALLBACKS, amended in place; contract
@@ -6392,7 +6392,7 @@ own anchor here.
     `an_admitted_drop_states_no_invocation` were retired by
     OPENSSL-FREE-SESSION-REMOVE-INVOCATION);
     `tests/openssl_undeclared_handshake_callbacks.rs`;
-    [report](../reports/openssl-bio-methods-and-callbacks/README.md).
+    [report](../reports/archive/contracts-and-premises/openssl-bio-methods-and-callbacks/README.md).
 
     **A slot invocation beside a reference drop** (card
     OPENSSL-FREE-SESSION-REMOVE-INVOCATION, amended in place; contract
@@ -6430,7 +6430,7 @@ own anchor here.
     `a_member_effect_beside_a_drop_refuses`,
     `applied_only_over_closed_identity_slots`);
     `tests/openssl_undeclared_handshake_callbacks.rs`;
-    [report](../reports/openssl-free-session-remove-invocation/README.md).
+    [report](../reports/archive/contracts-and-premises/openssl-free-session-remove-invocation/README.md).
 
     **The remaining handshake setters** (card
     OPENSSL-REMAINING-HANDSHAKE-SETTERS, amended in place; contract
@@ -6472,7 +6472,7 @@ own anchor here.
     `stating_slots_keeps_a_statement_honest`,
     `stating_the_remaining_slots_never_improves_a_verdict`);
     `tests/openssl_undeclared_handshake_callbacks.rs`;
-    [report](../reports/openssl-remaining-handshake-setters/README.md).
+    [report](../reports/archive/contracts-and-premises/openssl-remaining-handshake-setters/README.md).
     Card OPENSSL-FREE-INDIRECT-CALLBACKS: the nine `X509_LOOKUP_meth_set_*`
     setters register the lookup method table's slots
     (`x509_lookup_method_st.lookup_meth_*`, `x509_lookup_slots.qv`; the
@@ -6496,7 +6496,7 @@ own anchor here.
     `a_slot_the_call_does_not_run_needs_no_statement`,
     `stating_the_lookup_slots_never_improves`);
     `tests/openssl_undeclared_handshake_callbacks.rs`;
-    [report](../reports/openssl-free-indirect-callbacks/README.md).
+    [report](../reports/archive/contracts-and-premises/openssl-free-indirect-callbacks/README.md).
     Card OPENSSL-OBJECT-FREES-SILENT-METHOD-CALLBACKS: `X509_free`,
     `EVP_PKEY_free`, `PKCS12_free`, `ENGINE_free` and `EVP_MD_CTX_free`
     name `openssl_unstated_callback_slots` in the statement of a free
@@ -6513,7 +6513,7 @@ own anchor here.
     `a_running_free_names_the_statement`,
     `the_statement_is_named_only_where_audited`,
     `the_free_premise_moves_no_verdict`);
-    [report](../reports/openssl-object-frees-silent-method-callbacks/README.md).
+    [report](../reports/archive/contracts-and-premises/openssl-object-frees-silent-method-callbacks/README.md).
     Card OPENSSL-INNER-FREES-SILENT-METHOD-CALLBACKS: the calls that free a
     key, certificate or context inside without being frees name it too: the
     four `SSL_CTX_use_*` loaders, the two PEM readers, `d2i_PKCS12_bio` and
@@ -6528,7 +6528,7 @@ own anchor here.
     (`the_handshake_statement_entails_the_free_statement`,
     `a_run_names_exactly_one_statement`, `an_unlisted_keyed_entry_refuses`,
     `agrees_with_the_release_audit`);
-    [report](../reports/openssl-inner-frees-silent-method-callbacks/README.md).
+    [report](../reports/archive/contracts-and-premises/openssl-inner-frees-silent-method-callbacks/README.md).
     Card OPENSSL-FREE-REMAINING-INDIRECT-CALLBACKS (USER DECISIONS
     2026-11-21): the teardown slots' 13 setters are declared
     (`teardown_slots.qv`; three source-derived from the pinned 3.5.5
@@ -6554,7 +6554,7 @@ own anchor here.
     `released_statement_entails_free_statement`,
     `a_left_item_keeps_the_premise`, `nothing_left_drops_the_premise`,
     `the_stated_slots_are_the_audited`);
-    [report](../reports/openssl-free-remaining-indirect-callbacks/README.md).
+    [report](../reports/archive/contracts-and-premises/openssl-free-remaining-indirect-callbacks/README.md).
 
     **A slot invocation through a released parameter** (card
     OPENSSL-RELEASED-PARAMETER-SLOTS, amended in place; contract
@@ -6596,7 +6596,7 @@ own anchor here.
     `nothing_reads_the_object_after_the_release`,
     `the_premises_cover_exactly_what_remains`);
     `tests/openssl_undeclared_handshake_callbacks.rs`;
-    [report](../reports/openssl-released-parameter-slots/README.md).
+    [report](../reports/archive/contracts-and-premises/openssl-released-parameter-slots/README.md).
 
 <a id="constraint-12o"></a>
 
@@ -6685,7 +6685,7 @@ own anchor here.
     four forwarders hand a formal on (`SERVE-FORWARDED-CALLBACK-FORMALS`). The
     served-queue premise (C04.18) on `rd_kafka_q_wait_result` and
     `rd_kafka_q_purge0` is unchanged. Measured (corpus `66910c10` on main `579c2e6e2`, binary `21989e3e…`): **935 / 9 / 3,890 → 935 / 9 / 3,890** (`bdf5f1c8…` → `527a4cad…`), no status move, 102 Unknown rows trade leaves (`call to uncontracted function` 155 → `callback-member-open` 119, `callback-uncontracted` 16, `callback-withdrawn` 5 in `rdkafka_queue.c` by rule 13y, `callback-undecided` 1, access-gate refusals at member actuals 14); rule 12o validates `rd_kafka_op_destroy`'s arms in `rdkafka_op.c`; both op members close over the recorded units (27 and 4 candidates) and the fold reads them open for four data-only units (`CALLBACK-MEMBER-DATA-ONLY-UNITS`), demoting nothing; system 93 / 4 / 351 and slice 52 / 1 / 347 / 4 Pending, no row moves; the null property byte-identical on all three;
-    [report](../reports/cg22-op-callbacks-served-queues/README.md).
+    [report](../reports/archive/gateway-and-clang/cg22-op-callbacks-served-queues/README.md).
 
 <a id="constraint-12q"></a>
 
@@ -6721,7 +6721,7 @@ own anchor here.
     BEFORE binary wrote in two multisets, is one multiset over five AFTER
     runs; the 122 removed `typed-place` rows (43 kinds, 30 functions) were
     leftovers written by statement consultations whose own node did not
-    match; [report](../reports/gapo-parity-decisions-nondeterministic/README.md).
+    match; [report](../reports/archive/language-and-tooling/gapo-parity-decisions-nondeterministic/README.md).
 
 <a id="constraint-12r"></a>
 
@@ -6799,7 +6799,7 @@ own anchor here.
     end to end by `tests/bounds_pin_hold.rs` (unpinned, pinned, changed body,
     changed clause, missing entry) and
     `crates/qcore-c-gateway/tests/chunkio_meta_len_bounds.rs`;
-    [report](../reports/chunkio-meta-len-bounds-contracts/README.md).
+    [report](../reports/archive/contracts-and-premises/chunkio-meta-len-bounds-contracts/README.md).
 
 <a id="constraint-12s"></a>
 
@@ -6878,7 +6878,7 @@ own anchor here.
     `a_caller_edge_selects_the_exit_disposition`, `the_row_covers_every_path`,
     `a_conversion_can_move_a_value_between_classes` and three more), bound by
     the module's unit tests and `tests/callee_retention_class1.rs`;
-    [report](../reports/callee-retention-class1/README.md).
+    [report](../reports/archive/language-and-tooling/callee-retention-class1/README.md).
     Amended by [rule 11r](#constraint-11r)(6): (2)'s row analyses each class,
     and the whole literal-only body, under its analysis contract (a slot the
     class leaves unwritten is an `Out` slot there) and validates an unwritten
@@ -6952,7 +6952,7 @@ own anchor here.
     `an_unknown_holder_is_refused`, `decision_vectors_hold`,
     `trace_vectors_hold` and ten more), bound to `retained_by.rs` by the
     shared vectors and to route G by `tests/callee_retention_class1.rs`;
-    [report](../reports/callee-retention-class1/README.md).
+    [report](../reports/archive/language-and-tooling/callee-retention-class1/README.md).
     **Amendment (card FB-EVENT-LOOP-RETENTION-AND-REGISTRATION, contract
     specification C04.14.3; USER DECISIONS 2026-10-16, "Tracked holder path"
     and "R3: quant state"): holder paths and the removal of one
@@ -7030,8 +7030,8 @@ own anchor here.
     earlier `an_unmatched_removal_keeps_every_record` and
     `a_path_record_ends_only_by_its_own_removal` are corrected, not kept);
     `tests/event_loop_retention.rs`;
-    [report](../reports/fb-event-loop-retention/README.md),
-    [poisoning report](../reports/retention-unmatched-removal-poisons/README.md).
+    [report](../reports/archive/contracts-and-premises/fb-event-loop-retention/README.md),
+    [poisoning report](../reports/archive/language-and-tooling/retention-unmatched-removal-poisons/README.md).
     **S3 amendment (FB-EVENT-LOOP-CROSS-FUNCTION-LIFETIME, user direction
     2026-10-18; C04.21):** an unconditional declared record footprint may
     forward an exact caller-owned record at a typed interior/holder path.
@@ -7119,7 +7119,7 @@ own anchor here.
     declared event semantics, link resolution and Rust/Lean correspondence
     remain assumptions. This is no production collector-search, conditional
     host/loop, thread-join or backend-body proof. `QCore.HolderFrameIdentity`;
-    [report](../reports/event-holder-identity/README.md).
+    [report](../reports/archive/language-and-tooling/event-holder-identity/README.md).
 
     **Collector source-audit boundary (EVENT-COLLECTOR-SELECTION):** the
     separately replayed `collector_identity` imports read an exact internally
@@ -7137,7 +7137,7 @@ own anchor here.
     do not discharge list/key/record frames, thread teardown, descriptor custody
     or backend-body proof. Faithful extraction and Rust/Lean correspondence
     remain premises. `QCore.CollectorIdentity`;
-    [report](../reports/event-collector-selection/README.md).
+    [report](../reports/archive/language-and-tooling/event-collector-selection/README.md).
 
     **A null pointer constant retains nothing** (card
     RETENTION-NULL-CONSTANT-ACTUAL, carried by OPENSSL-UNSTATED-CALLBACK-SLOTS;
@@ -7160,7 +7160,7 @@ own anchor here.
     `a_null_retention_never_changes_a_replay`, `null_decision_vectors_hold`);
     `NULL_DECISION_VECTORS`, `NULL_SPELLING_VECTORS`;
     `tests/retention_null_constant.rs`;
-    [report](../reports/openssl-unstated-callback-slots/README.md).
+    [report](../reports/archive/contracts-and-premises/openssl-unstated-callback-slots/README.md).
 
 <a id="constraint-12u"></a>
 
@@ -7196,7 +7196,7 @@ own anchor here.
     non-Safe move, no leak or violation added), system and slice no row
     moves. `QCore.AbiEnumConstPointer`; tests
     `tests/abi_enum_const_pp.rs`, `tests/loader_abi.rs`;
-    [report](../reports/w43-abi-enum-and-const-pp/README.md).
+    [report](../reports/archive/waves-40-47/w43-abi-enum-and-const-pp/README.md).
 
 <a id="constraint-12v"></a>
 
@@ -7214,7 +7214,7 @@ own anchor here.
     and `const char **` never admit each other; `resource_out` still requires
     `ptr<mut, ptr<mut, u8>>`; derived results and retentions stay depth one.
     **Do not** drop a slot qualifier or fold the two spellings together.
-    `QCore.AbiEnumConstPointer`; [report](../reports/w43-abi-enum-and-const-pp/README.md).
+    `QCore.AbiEnumConstPointer`; [report](../reports/archive/waves-40-47/w43-abi-enum-and-const-pp/README.md).
 
 <a id="constraint-12w"></a>
 
@@ -7248,7 +7248,7 @@ own anchor here.
     `a_validated_body_keeps_nothing_when_the_guard_fails`,
     `an_admitted_guard_partitions_its_range`); tests
     `tests/retention_guard.rs`, `crates/qcore-contract/tests/retention_guard_clause.rs`;
-    [report](../reports/w43-abi-enum-and-const-pp/README.md).
+    [report](../reports/archive/waves-40-47/w43-abi-enum-and-const-pp/README.md).
 
 <a id="constraint-12x"></a>
 
@@ -7295,7 +7295,7 @@ own anchor here.
     `a_use_of_an_old_alias_is_refused`, `the_failure_arm_keeps_the_original`,
     `a_safe_path_never_uses_an_invalid_name`, `slot_vectors_hold`,
     `slot_trace_vectors_hold`); tests `tests/slot_move_interior_borrow.rs`,
-    `crates/qcore-contract/tests/slot_move_clause.rs`; [report](../reports/slot-move-and-interior-borrow/README.md).
+    `crates/qcore-contract/tests/slot_move_clause.rs`; [report](../reports/archive/language-and-tooling/slot-move-and-interior-borrow/README.md).
 
 <a id="constraint-12y"></a>
 
@@ -7332,7 +7332,7 @@ own anchor here.
     `a_write_through_a_borrow_keeps_it`, `a_write_through_a_borrow_ends_its_sibling`,
     `a_lazily_created_child_is_owned_by_the_parent`,
     `a_safe_path_never_uses_an_ended_borrow`, `borrow_trace_vectors_hold`);
-    [report](../reports/slot-move-and-interior-borrow/README.md).
+    [report](../reports/archive/language-and-tooling/slot-move-and-interior-borrow/README.md).
 
 <a id="constraint-12z"></a>
 
@@ -7352,7 +7352,7 @@ own anchor here.
     (`a_tracked_slot_is_never_overwritten`, `the_slot_value_is_never_released`,
     `the_base_release_ends_the_slot_value`,
     `a_safe_path_never_uses_a_value_its_base_outlived`, `out_vectors_hold`);
-    [report](../reports/slot-move-and-interior-borrow/README.md).
+    [report](../reports/archive/language-and-tooling/slot-move-and-interior-borrow/README.md).
 
 <a id="constraint-13a"></a>
 
@@ -7375,7 +7375,7 @@ own anchor here.
     governs. Structural: it establishes the provenance of what the body
     hands back or forwards, and the declaration stays a declared assumption
     in every other unit. Unit tests in `legacy_slot_move_borrow.rs`, the
-    withdrawal control in `tests/slot_move_interior_borrow.rs`; [report](../reports/slot-move-and-interior-borrow/README.md).
+    withdrawal control in `tests/slot_move_interior_borrow.rs`; [report](../reports/archive/language-and-tooling/slot-move-and-interior-borrow/README.md).
 
 **Amendment (CJSON-DETACH-SAME-ITEM, user decision 2026-10-18):** the bounded
 `resource_return_removed(item, n)` result returns the same checked-contained
@@ -7498,7 +7498,7 @@ safety claim and no validation of the detach representation premise.
     more); tests `tests/refcount_resource_kind.rs` (the brief's seven
     controls and the vectors bound to the Lean text),
     `crates/qcore-contract/tests/reference_clause.rs`;
-    [report](../reports/refcount-resource-kind/README.md).
+    [report](../reports/archive/contracts-and-premises/refcount-resource-kind/README.md).
 
 Amended by card REFERENCE-DROP-NULL-ACCEPTING (contract specification
 C04.17, grammar G05; follow-up registered by OPENSSL-PROVIDER-PLUGIN): a drop
@@ -7525,7 +7525,7 @@ OpenSSL callers' seven files no row moves either (all 59 drop diagnostics, in
 an undeclared OpenSSL producer). `QCore.NullableReferenceDrop` (12 audited,
 `nullable_drop_vectors_hold`); tests `tests/reference_drop_null_accepting.rs`,
 `crates/qcore-contract/tests/reference_clause.rs`;
-[report](../reports/reference-drop-null-accepting/README.md).
+[report](../reports/archive/language-and-tooling/reference-drop-null-accepting/README.md).
 
 <a id="constraint-13c"></a>
 
@@ -7548,7 +7548,7 @@ an undeclared OpenSSL producer). `QCore.NullableReferenceDrop` (12 audited,
     back exactly its argument and stores nothing of it; the count arithmetic
     stays a declared assumption pinned to the body. Unit tests in
     `legacy_reference_count.rs`, the withdrawal control in
-    `tests/refcount_resource_kind.rs`; [report](../reports/refcount-resource-kind/README.md).
+    `tests/refcount_resource_kind.rs`; [report](../reports/archive/contracts-and-premises/refcount-resource-kind/README.md).
 
 <a id="constraint-13d"></a>
 
@@ -7588,7 +7588,7 @@ an undeclared OpenSSL producer). `QCore.NullableReferenceDrop` (12 audited,
     `a_validated_body_returns_only_obtained_references`,
     `a_validated_non_null_body_never_returns_null`,
     `a_withdrawn_declaration_is_never_safe`, `body_vectors_hold`);
-    [report](../reports/refcount-reference-returning-declarations/README.md).
+    [report](../reports/archive/contracts-and-premises/refcount-reference-returning-declarations/README.md).
 
 <a id="constraint-13e"></a>
 
@@ -7639,7 +7639,7 @@ an undeclared OpenSSL producer). `QCore.NullableReferenceDrop` (12 audited,
     `a_predefined_identifier_outlives_every_holder`, and the transfer:
     `a_drop_after_a_transfer_is_an_over_drop`); controls in
     `tests/refcount_reference_returning.rs`;
-    [report](../reports/refcount-reference-returning-declarations/README.md).
+    [report](../reports/archive/contracts-and-premises/refcount-reference-returning-declarations/README.md).
 
 <a id="constraint-13f"></a>
 
@@ -7688,7 +7688,7 @@ an undeclared OpenSSL producer). `QCore.NullableReferenceDrop` (12 audited,
     `a_consulted_declaration_is_a_dependency`,
     `the_entry_contract_is_a_dependency`, `a_summary_dependency_propagates`,
     `closure_vectors_hold`);
-    [report](../reports/verdict-contract-dependencies/README.md).
+    [report](../reports/archive/language-and-tooling/verdict-contract-dependencies/README.md).
 
 <a id="constraint-13g"></a>
 
@@ -7777,7 +7777,7 @@ an undeclared OpenSSL producer). `QCore.NullableReferenceDrop` (12 audited,
     and Lean model. `QCore.PremiseFormula` (`check_denotes`, `wf_denotes`,
     `decision_vectors_agree`, `openssl_formulas_wf`,
     `unstated_entails_ex_data`, `ex_data_does_not_entail_unstated`, …);
-    [report](../reports/sp1-symbolic-openssl-premises/README.md).
+    [report](../reports/archive/contracts-and-premises/sp1-symbolic-openssl-premises/README.md).
     **Amended by card SP2-SYMBOLIC-LIBRDKAFKA-PREMISES** (C04.18.9's
     librdkafka block): `qcore-provider-librdkafka` states all 220 of its
     premises as formulas (12 names, 16 statements) over 75 appended terms,
@@ -7813,7 +7813,7 @@ an undeclared OpenSSL producer). `QCore.NullableReferenceDrop` (12 audited,
     leaves force. `QCore.PremiseFormula.FluentBit`
     (`fluent_bit_formulas_wf`, `untracked_admitted_faithful`,
     `ingestion_core_entails_premise`, `synchronous_output_not_in_tree`);
-    [report](../reports/sp3-symbolic-fluent-bit-libc-premises/README.md).
+    [report](../reports/archive/contracts-and-premises/sp3-symbolic-fluent-bit-libc-premises/README.md).
     **Amended by card SP4-SYMBOLIC-LIBEVENT-PREMISES** (C04.18.9, SP4
     block): `qcore-provider-libevent` states all 7 of its premises (the
     scheduler decomposition of `mk_http_thread_destroy`) as formulas over 39
@@ -7826,7 +7826,7 @@ an undeclared OpenSSL producer). `QCore.NullableReferenceDrop` (12 audited,
     (`libevent_formulas_wf`, the `eval_*` readings,
     `concurrent_runs_leave_the_callee`, `libevent_formulas_consistent`,
     `libevent_formulas_assume_something`);
-    [report](../reports/sp4-symbolic-libevent-premises/README.md).
+    [report](../reports/archive/contracts-and-premises/sp4-symbolic-libevent-premises/README.md).
     **Amended by card SP5-GLOBAL-PROSE-PREMISE-BAN** (contract
     specification C04.18; USER DECISION 2026-11-20): the string statement
     `resource_premise(NAME, "STATEMENT")` is retired. A statement that is or
@@ -8057,7 +8057,7 @@ an undeclared OpenSSL producer). `QCore.NullableReferenceDrop` (12 audited,
     29 / 0 / 2 / 14. `QCore.BodyClauseStanding`
     (`the_validated_only_rollup_is_a_subset`,
     `validated_implies_previously_validated`);
-    [report](../reports/verdict-body-standing-clause-scope/README.md).
+    [report](../reports/archive/language-and-tooling/verdict-body-standing-clause-scope/README.md).
 
 <a id="constraint-13l"></a>
 
@@ -8139,7 +8139,7 @@ an undeclared OpenSSL producer). `QCore.NullableReferenceDrop` (12 audited,
     `a_contradiction_still_fails`, `without_a_passing_check_nothing_changes`,
     `only_a_conflict_changes`, `the_new_evidence_covers_only_custody`,
     `recording_vectors_hold`); controls in `tests/declared_entry_check.rs`;
-    [report](../reports/declared-assumption-body-checks/README.md).
+    [report](../reports/archive/language-and-tooling/declared-assumption-body-checks/README.md).
 
 <a id="constraint-13n"></a>
 
@@ -8202,7 +8202,7 @@ an undeclared OpenSSL producer). `QCore.NullableReferenceDrop` (12 audited,
     (`an_index_read_before_is_read_after`, `the_index_is_the_document`,
     `only_the_deep_band_changes`, `depth_vectors_hold`, `band_edges`);
     controls in `tests/deep_unit_ast.rs`;
-    [report](../reports/rdhttp-header-summary-gap/README.md).
+    [report](../reports/archive/language-and-tooling/rdhttp-header-summary-gap/README.md).
 
 <a id="constraint-13p"></a>
 
@@ -8251,7 +8251,7 @@ an undeclared OpenSSL producer). `QCore.NullableReferenceDrop` (12 audited,
     `nothing_beyond_the_bound`, `a_stream_is_read_iff_every_value_is`,
     `fits_at_the_bound_fits_within_it`); controls in
     `deep_ast_transports::tests`;
-    [report](../reports/deep-ast-transports-and-wall-time/README.md).
+    [report](../reports/archive/language-and-tooling/deep-ast-transports-and-wall-time/README.md).
 
 <a id="constraint-13r"></a>
 
@@ -8405,7 +8405,7 @@ an undeclared OpenSSL producer). `QCore.NullableReferenceDrop` (12 audited,
     declarations listed each); `rd_kafka_consume_cb` composes;
     `rd_kafka_poll_cb` refuses at its own run-open `rko_u.offset_commit.cb`;
     system and slice byte-identical, null tallies identical;
-    [report](../reports/handoff-candidate-own-callbacks/README.md).
+    [report](../reports/archive/language-and-tooling/handoff-candidate-own-callbacks/README.md).
     `QCore.CallbackContracts`
     (`invocations_of_identities_are_identity`,
     `an_identity_decision_is_the_custody_reading`, `decide_refuses_*`,
@@ -8434,7 +8434,7 @@ an undeclared OpenSSL producer). `QCore.NullableReferenceDrop` (12 audited,
     `NULLABLE_CLASSIFY_VECTORS` and `NULLABLE_DECISION_VECTORS`);
     `tests/openssl_unstated_callback_slots.rs`
     (`a_candidate_requiring_a_live_object_where_the_library_may_pass_null_refuses`);
-    [report](../reports/callback-supplied-null-actual/README.md).
+    [report](../reports/archive/language-and-tooling/callback-supplied-null-actual/README.md).
 
 <a id="constraint-13v"></a>
 
@@ -8488,7 +8488,7 @@ an undeclared OpenSSL producer). `QCore.NullableReferenceDrop` (12 audited,
     `the_gone_reading_assumes_an_invocation`,
     `a_table_composition_after_a_release_is_the_c_order`,
     `table_vectors_hold`);
-    [report](../reports/callback-table-member-path-states/README.md).
+    [report](../reports/archive/language-and-tooling/callback-table-member-path-states/README.md).
 
 <a id="constraint-13w"></a>
 
@@ -8610,7 +8610,7 @@ an undeclared OpenSSL producer). `QCore.NullableReferenceDrop` (12 audited,
     `_by_topic_id`, whose comparators have no contract in force), no
     `Unknown → Safe`, no leak, violation or `Unsafe` added; system 89 / 4 /
     355 and slice 45 / 1 / 354 / 4 Pending unchanged in status;
-    [report](../reports/cg22-callback-registry-contract/README.md).
+    [report](../reports/archive/gateway-and-clang/cg22-callback-registry-contract/README.md).
 
 <a id="constraint-14a"></a>
 
@@ -8656,7 +8656,7 @@ an undeclared OpenSSL producer). `QCore.NullableReferenceDrop` (12 audited,
     `a_releasing_call_does_not_commute`, `an_admitted_call_takes_no_custody`
     (round 3 withdrew `two_calls_are_never_read` with the lifted limit),
     `scalar_call_vectors_hold`), bound to `SCALAR_CALL_VECTORS`;
-    [report](../reports/cg10-indirect-access-sole-residuals-r2/README.md).
+    [report](../reports/archive/gateway-and-clang/cg10-indirect-access-sole-residuals-r2/README.md).
 
 <a id="constraint-14b"></a>
 
@@ -8841,7 +8841,7 @@ an undeclared OpenSSL producer). `QCore.NullableReferenceDrop` (12 audited,
     (`crates/qcore-core/tests/bounds_body_standing.rs`); controls in
     `crates/qcore-c-gateway/tests/bounds_body_evidence.rs` and
     `crates/qcore-audit/tests/bounds_transport.rs`;
-    [report](../reports/cg16-bounds-transport-and-chunkio-neighbours/README.md).
+    [report](../reports/archive/gateway-and-clang/cg16-bounds-transport-and-chunkio-neighbours/README.md).
 
 <a id="constraint-14g"></a>
 
@@ -9564,7 +9564,7 @@ that only when every arriving edge has it.
     (`SERVE0-CALLBACK-HAND-ON-WITHDRAWN`). Rebased onto `89907068d`
     (OP-CALLBACK-CANDIDATE-CONTRACTS' candidates in force): corpus `0a38c3b3…`,
     system and slice byte-identical against main's own binary.
-    [report](../reports/serve-forwarded-callback-formals/README.md).
+    [report](../reports/archive/language-and-tooling/serve-forwarded-callback-formals/README.md).
 
 <a id="constraint-15x"></a>
 
@@ -9602,7 +9602,7 @@ that only when every arriving edge has it.
     `declined_restores_consultations`, `declined_keeps_facts`,
     `declined_without_new_facts_is_identity`, `declined_probe_moves_no_site`,
     `replacement_from_before_has_no_gap`, `replacement_after_first_gaps`);
-    [report](../reports/gapo-return-correctness/README.md).
+    [report](../reports/archive/language-and-tooling/gapo-return-correctness/README.md).
 
 <a id="constraint-15y"></a>
 
@@ -9768,7 +9768,7 @@ that only when every arriving edge has it.
     `a_call_runs_its_body`, `a_path_not_followed_never_validates`,
     `the_depth_bound_never_validates`, `an_exempt_exit_falsifies_its_guard`,
     `an_unnamed_return_is_never_exempt`, `an_eq_guard_is_never_exempt`);
-    [report](../reports/member-path-unit-helpers/README.md). Measured by
+    [report](../reports/archive/gateway-and-clang/member-path-unit-helpers/README.md). Measured by
     OP-CALLBACK-MEMBER-PATH-RELEASE on the corpus: the
     eight librdkafka candidates of shape (b) are declared
     (`OP-CALLBACK-CANDIDATE-CONTRACTS`); `rd_kafka_op_destroy`'s 131 leaves
@@ -9782,7 +9782,7 @@ that only when every arriving edge has it.
     `the_set_is_the_join_of_its_members`,
     `the_complement_partitions_the_results`, `compose_vectors_hold`);
     `tests/member_path_release.rs`;
-    [report](../reports/op-callback-member-path-release/README.md).
+    [report](../reports/archive/language-and-tooling/op-callback-member-path-release/README.md).
     **Amended by card FB-TEARDOWN-DESTROY-DECLARATIONS** (C04.19.6, on the
     user's decision of 2026-10-16, "Yes, allow it"): **a direct call of a
     member-path declaration with no hand-off reads its states once.**
@@ -9823,7 +9823,7 @@ that only when every arriving edge has it.
     `an_unknown_value_gives_the_join`, `an_unknown_value_never_releases`,
     `the_join_is_cautious`, `direct_vectors_hold`, `guard_vectors_hold`);
     `tests/member_path_direct_call.rs`;
-    [report](../reports/fb-teardown-destroy-declarations/README.md).
+    [report](../reports/archive/contracts-and-premises/fb-teardown-destroy-declarations/README.md).
     **Extended by rule 50** (card SCHEDULER-DESTROY-MEMBER-STATES): a
     store below the declaration's own unlink's link member inside a
     followed helper no longer ends the reading, and a member's value handed
@@ -9878,7 +9878,7 @@ that only when every arriving edge has it.
     `an_established_body_calls_on_every_exit`, `may_not_call_vectors_hold`,
     `each_shape_has_an_execution_with_no_call`,
     `the_premise_is_discharged`); `tests/member_path_invocation_premise.rs`;
-    [report](../reports/member-path-invocation-premise/README.md).
+    [report](../reports/archive/gateway-and-clang/member-path-invocation-premise/README.md).
 
 <a id="constraint-31"></a>
 
@@ -9948,7 +9948,7 @@ that only when every arriving edge has it.
     `crates/qcore-contract/tests/outer_contract.rs`,
     `crates/qcore-c-gateway/tests/outer_record_graph.rs`,
     `crates/qcore-audit/tests/outer_projection.rs`;
-    [report](../reports/outer-contract/README.md).
+    [report](../reports/archive/contracts-and-premises/outer-contract/README.md).
 
     Runtime list candidates (`RK-PLUGIN-INTERCEPTOR-CANDIDATES`, C04.20.1)
     are a separate versioned `outer-candidates.json` inventory, bound by
@@ -9964,7 +9964,7 @@ that only when every arriving edge has it.
     Unknown. No list is coerced to a function pointer and no union-arm
     closure is inferred. An in-force covered runtime fact remains Pending.
     `QCore.OuterListCandidates`; `outer_candidates`' Rust tests;
-    [report](../reports/rk-plugin-interceptor-candidates/README.md).
+    [report](../reports/archive/language-and-tooling/rk-plugin-interceptor-candidates/README.md).
 
     Card SP8-OUTER-CONTRACT-SYMBOLIC-STATEMENTS (USER DECISION 2026-11-20,
     conditions as symbols, not sentences; USER DECISIONS 2026-11-23, D1 A,
@@ -10086,7 +10086,7 @@ that only when every arriving edge has it.
     `crates/qcore-c-gateway/tests/caller_frame_hold.rs`,
     `crates/qcore-c-gateway/tests/rule32a_hold.rs`;
     [report](../reports/w48-rk-log-caller-frame/README.md),
-    [package](../reports/rule32a-pilot/README.md).
+    [package](../reports/archive/gateway-and-clang/rule32a-pilot/README.md).
 
 <a id="constraint-33"></a>
 
@@ -10173,7 +10173,7 @@ that only when every arriving edge has it.
     `crates/qcore-c-gateway/tests/detach_wrapper_composition.rs`,
     `crates/qcore-c-gateway/tests/rule33_switch.rs`;
     [report](../reports/detach-result-wrapper-composition/README.md),
-    [migration](../reports/rule33-pilot/README.md).
+    [migration](../reports/archive/gateway-and-clang/rule33-pilot/README.md).
 
 <a id="constraint-34"></a>
 
@@ -10234,7 +10234,7 @@ that only when every arriving edge has it.
     `crates/qcore-c-gateway/tests/element_destroyer.rs` (with its switched
     child), the package's `tests/unit/destroyer_order.rs`;
     [report](../reports/w48-sched-cleanup-production/README.md),
-    [migration](../reports/rule34-pilot/README.md).
+    [migration](../reports/archive/gateway-and-clang/rule34-pilot/README.md).
     Amended by [rule 43](#constraint-43): a destroyer also takes an object
     the path holds as one live, unpublished identity no path unlinked, and
     may sit beside member-path states.
@@ -10435,7 +10435,7 @@ that only when every arriving edge has it.
     Faithful extraction,
     parent embedding and Rust/model correspondence remain premise 28.
     [Design](../reports/w48-cmt-tracked-interior-self-init/DESIGN.md).
-    [Child-slot frame design](../reports/cmt-self-init-disjoint-frames/DESIGN.md).
+    [Child-slot frame design](../reports/archive/contracts-and-premises/cmt-self-init-disjoint-frames/DESIGN.md).
 
 <a id="constraint-36c"></a>
 
@@ -10529,7 +10529,7 @@ that only when every arriving edge has it.
     `AuditResultConstructors.lean`) and `QCore.ResultConstructorSwitch` (on is
     the rule, off is the old reading, off never widens;
     `AuditResultConstructorSwitch.lean`);
-    [report](../reports/w48-bu-rk-result-constructors/README.md),
+    [report](../reports/archive/wave-48/w48-bu-rk-result-constructors/README.md),
     [migration](../reports/rule37-pilot/README.md).
 
 <a id="constraint-38"></a>
@@ -10599,8 +10599,8 @@ that only when every arriving edge has it.
     (declared assumptions, pinned at both revisions), that two open
     descriptors never share a number, and `P-CELL-STATE-NOT-FORWARDED`. The
     Lean model is `QCore.DescriptorCells`
-    ([report](../reports/mk-event-descriptor-quant/README.md); the initial
-    member: [report](../reports/mk-event-first-member-cell/README.md)).
+    ([report](../reports/archive/language-and-tooling/mk-event-descriptor-quant/README.md); the initial
+    member: [report](../reports/archive/language-and-tooling/mk-event-first-member-cell/README.md)).
 
 <a id="constraint-38a"></a>
 
@@ -10673,7 +10673,7 @@ that only when every arriving edge has it.
     - the minted name stands for the same callee and positions.
 
     The Lean model is `QCore.CellArraySlots`
-    ([report](../reports/mk-event-cell-array-slots/README.md)).
+    ([report](../reports/archive/language-and-tooling/mk-event-cell-array-slots/README.md)).
 
 <a id="constraint-38b"></a>
 
@@ -10749,7 +10749,7 @@ that only when every arriving edge has it.
       positions.
 
     The Lean model is `QCore.RetainingCallMintedName`
-    ([report](../../reports/retaining-call-minted-name-actuals/README.md)).
+    ([report](../../reports/archive/language-and-tooling/retaining-call-minted-name-actuals/README.md)).
 
 <a id="constraint-38c"></a>
 
@@ -10819,7 +10819,7 @@ that only when every arriving edge has it.
     units, other threads, writes through other names or by uncontracted
     callees), and those of rule 38. The Lean model is
     `QCore.DescriptorCellProtocol`
-    ([report](../reports/mk-event-cell-cross-function/README.md)).
+    ([report](../reports/archive/language-and-tooling/mk-event-cell-cross-function/README.md)).
 
 <a id="constraint-38d"></a>
 
@@ -10878,7 +10878,7 @@ that only when every arriving edge has it.
     boundary 28): rule 38c's declared protocol (`P-CELL-PROTOCOL-DECLARED`)
     and the callee's declared release of a descriptor. The Lean model is
     `QCore.CellProtocolCloseActual`
-    ([report](../reports/cell-protocol-close-actual/README.md)).
+    ([report](../reports/archive/contracts-and-premises/cell-protocol-close-actual/README.md)).
 
 <a id="constraint-38e"></a>
 
@@ -10941,7 +10941,7 @@ that only when every arriving edge has it.
     (trust boundary 28): the C library's documented result sets
     (`libc-c-standard-abi`), Clang's AST of the configured unit, and the
     lexical site scanner's identity of the helpers. The Lean model is
-    `QCore.ResultSet` ([report](../reports/cell-guard-result-range-checked/README.md)).
+    `QCore.ResultSet` ([report](../reports/archive/contracts-and-premises/cell-guard-result-range-checked/README.md)).
 
     **Amended (card CELL-RESULT-SET-ALIGNMENT, USER DECISIONS 2026-11-04,
     Q1 (a) with its refinements; "Write [1, MAX]").** A C library declaration
@@ -10986,7 +10986,7 @@ that only when every arriving edge has it.
     (trust boundary 28): Clang's AST of each configuration, and the C library
     declarations' documented written sets: a call writes its out array and
     keeps no pointer to it. The Lean model is `QCore.WrittenSetDerivation`
-    ([report](../reports/cell-result-set-written-set-derivation/README.md)).
+    ([report](../reports/archive/contracts-and-premises/cell-result-set-written-set-derivation/README.md)).
 
 <a id="constraint-38f"></a>
 
@@ -11065,7 +11065,7 @@ that only when every arriving edge has it.
     stated, not proved (trust boundary 28): rule 38c's declared protocol
     (`P-CELL-PROTOCOL-DECLARED`) and rule 38's premise that a live descriptor
     is never `-1`. The Lean model is `QCore.CellProtocolPerEnd`
-    ([report](../reports/cell-protocol-per-end-guards/README.md)).
+    ([report](../reports/archive/contracts-and-premises/cell-protocol-per-end-guards/README.md)).
 
     (6) **Declared value sets** (card CELL-RESULT-SET-ALIGNMENT; USER
     DECISIONS 2026-11-04, verbatim: "Basically, Q1(a) and Q2(i) But we must
@@ -11170,7 +11170,7 @@ that only when every arriving edge has it.
     (pointer arithmetic stays inside the object it points into). A declared
     frame is a deferred-review contract, never a premise. The Lean model is
     `QCore.CellProtocolReleaseWindowFrames`
-    ([report](../reports/cell-protocol-release-window-frames/README.md)).
+    ([report](../reports/archive/contracts-and-premises/cell-protocol-release-window-frames/README.md)).
 
 <a id="constraint-38h"></a>
 
@@ -11212,7 +11212,7 @@ that only when every arriving edge has it.
     (`vectors_match`, `an_old_admission_stays`,
     `no_ast_answer_keeps_the_refusal`, `a_new_admission_needs_every_fact`, the
     four keeping theorems, the `NoOp` lowering);
-    [report](../reports/member-access-projection/README.md).
+    [report](../reports/archive/gateway-and-clang/member-access-projection/README.md).
 
 <a id="constraint-38i"></a>
 
@@ -11254,7 +11254,7 @@ that only when every arriving edge has it.
     `a_name_needs_every_premise`, `a_refusing_reading_keeps_a_call_shape_unnamed`,
     `a_store_needs_a_custody_value` and eleven more), bound by
     `tests/member_effect_summary.rs`;
-    [report](../reports/member-effect-summary/README.md). **Amended (card
+    [report](../reports/archive/gateway-and-clang/member-effect-summary/README.md). **Amended (card
     MEMBER-EFFECT-STORES):** where every condition formula of
     [rule 38k](#constraint-38k) holds, the store form is that rule's
     hand-off, admitted under the stated premise `mes_caller_slot`; this
@@ -11350,17 +11350,17 @@ that only when every arriving edge has it.
     `a_use_after_a_call_is_refused`,
     `a_callee_touching_a_released_place_is_refused` and seven more), bound by
     `tests/member_effect_summary.rs`;
-    [report](../reports/member-effect-summary/README.md).
+    [report](../reports/archive/gateway-and-clang/member-effect-summary/README.md).
     `QCore.MemberReleaseTypedMember` (`a_new_admission_is_an_untyped_member`,
     `an_admitted_actual_is_an_object_pointer`, `the_body_stays_sound`,
     `the_unit_plays_no_part` and eight more), bound by
     `tests/member_effect_component_scope.rs`;
-    [report](../reports/member-effect-component-scope/README.md).
+    [report](../reports/archive/gateway-and-clang/member-effect-component-scope/README.md).
     `QCore.MemberReleaseUntypedBase` (`a_new_admission_is_an_untyped_base`,
     `a_previous_admission_is_kept`,
     `an_admitted_actual_is_a_struct_pointer_member`, `the_body_stays_sound`
     and nine more), bound by `tests/member_release_untyped_base.rs`;
-    [report](../reports/member-release-untyped-base/README.md).
+    [report](../reports/archive/gateway-and-clang/member-release-untyped-base/README.md).
 
 <a id="constraint-38k"></a>
 
@@ -11447,7 +11447,7 @@ that only when every arriving edge has it.
     `a_callers_decision_is_unchanged`, `decision_vectors_hold` and eight
     more), bound by `tests/member_effect_stores.rs` and
     `tests/unit/member_handoff.rs`;
-    [report](../reports/member-effect-stores/README.md).
+    [report](../reports/archive/gateway-and-clang/member-effect-stores/README.md).
 
 <a id="constraint-39"></a>
 
@@ -11637,9 +11637,9 @@ that only when every arriving edge has it.
     `an_outside_second_configuration_admits_the_linked_home`,
     `outside_vectors_hold`); for the unprobed homes
     `QCore.CrossUnitReplayBudget` (`unprobed_is_never_held`,
-    `probing_shrinks_reachable`); [report](../reports/link-standing/README.md),
-    [two-configuration keys](../reports/link-standing-selection-two-configuration-keys/README.md),
-    [import limiters](../reports/link-standing-import-limiters/README.md).
+    `probing_shrinks_reachable`); [report](../reports/archive/language-and-tooling/link-standing/README.md),
+    [two-configuration keys](../reports/archive/language-and-tooling/link-standing-selection-two-configuration-keys/README.md),
+    [import limiters](../reports/archive/language-and-tooling/link-standing-import-limiters/README.md).
 
 <a id="constraint-41"></a>
 
@@ -11702,7 +11702,7 @@ that only when every arriving edge has it.
     `compound_is_assignment`, `named_store_refines_forget`,
     `declarators_are_sequential`, `runs_preserve_frame`,
     `a_released_base_has_no_write`), bound to `VECTORS` by a shared-vector
-    test; [report](../reports/scalar-statement-forms/README.md).
+    test; [report](../reports/archive/language-and-tooling/scalar-statement-forms/README.md).
 
 <a id="constraint-42"></a>
 
@@ -11749,7 +11749,7 @@ that only when every arriving edge has it.
     `more_reporters_never_withdraw`, `a_withdrawal_is_never_safe`,
     `the_rule_moves_no_verdict_to_safe`), bound to `WITHDRAW_VECTORS` and the
     fixtures' verdicts (`SHAPE_VECTORS`, `tests/loop_reacquisition_leak.rs`);
-    [report](../reports/loop-reacquisition-leak-accusation/README.md).
+    [report](../reports/archive/language-and-tooling/loop-reacquisition-leak-accusation/README.md).
 
 <a id="constraint-43"></a>
 
@@ -11814,7 +11814,7 @@ that only when every arriving edge has it.
     `the_borrowed_reading_would_trust_a_released_object`, `vectors_hold`, …),
     bound to `ELEMENT_RELEASE_VECTORS` and
     `crates/qcore-c-gateway/tests/element_release_summary.rs` (with its
-    switched child); [report](../reports/list-entry-release-identity/README.md).
+    switched child); [report](../reports/archive/language-and-tooling/list-entry-release-identity/README.md).
 
 <a id="constraint-44"></a>
 
@@ -11883,7 +11883,7 @@ that only when every arriving edge has it.
     `a_less_or_equal_test_never_exits`, `recording_a_fact_keeps_the_verdict`,
     `decide_vectors_hold`), bound to `DECIDE_VECTORS` and the fixtures
     (`tests/loop_measure.rs`, `qcore-audit/tests/loop_measure_selection.rs`);
-    [report](../reports/w45-fb-engine-progress-measure/README.md).
+    [report](../reports/archive/waves-40-47/w45-fb-engine-progress-measure/README.md).
 
 <a id="constraint-46"></a>
 
@@ -11934,7 +11934,7 @@ that only when every arriving edge has it.
     43 refused, and it accuses nothing: every change replaces an admission
     with a refusal. Not switchable (no registry entry): a switch would
     re-admit an unchecked premise. P-LERI-CALLER-PUBLISHED stays stated;
-    its load is measured in the [report](../reports/leri-held-and-link-member-premises/README.md).
+    its load is measured in the [report](../reports/archive/language-and-tooling/leri-held-and-link-member-premises/README.md).
     Ten Fluent Bit destroyers and `mk_http_thread_destroy` name `_head`.
     Measured (base `8fd7c8d0d`, the card's own preparations): see the
     report. `QCore.ElementLinkPremises`
@@ -12008,7 +12008,7 @@ that only when every arriving edge has it.
     `recording_a_fact_keeps_the_verdict`, `decide_vectors_hold`), bound to
     `LIST_DECIDE_VECTORS` and the fixtures (`tests/list_length_bound.rs`,
     `qcore-audit/tests/loop_measure_selection.rs`);
-    [report](../reports/w45-fb-list-finiteness-premise/README.md).
+    [report](../reports/archive/waves-40-47/w45-fb-list-finiteness-premise/README.md).
 
 <a id="constraint-49"></a>
 
@@ -12057,7 +12057,7 @@ that only when every arriving edge has it.
     `a_split_covers_every_value`, `a_merge_only_weakens`,
     `the_domain_checksum_is_pinned`, …), bound to
     `crates/qcore-c-gateway/tests/guard_correlated_census.rs`;
-    [report](../reports/tail-file-definition-census-incomplete/README.md).
+    [report](../reports/archive/language-and-tooling/tail-file-definition-census-incomplete/README.md).
 
 <a id="constraint-50"></a>
 
@@ -12120,7 +12120,7 @@ that only when every arriving edge has it.
     `distinct_identities_each_end_once`,
     `one_identity_refuses_the_second_end`); `member_path_check`'s unit tests,
     `tests/member_value_helper.rs`;
-    [report](../reports/scheduler-destroy-member-states/README.md).
+    [report](../reports/archive/language-and-tooling/scheduler-destroy-member-states/README.md).
 
 <a id="constraint-51"></a>
 
@@ -12197,7 +12197,7 @@ that only when every arriving edge has it.
     `the_schedulers_case_composes`). Tests:
     `tests/rule50_consumer_composition.rs` and
     `tests/member_value_helper.rs`. See the
-    [report](../reports/rule50-consumer-composition/README.md).
+    [report](../reports/archive/gateway-and-clang/rule50-consumer-composition/README.md).
 
 <a id="constraint-52"></a>
 
@@ -12234,7 +12234,7 @@ that only when every arriving edge has it.
     run `Unknown`. The binding verdicts are published in the plugin's own
     report (`openssl@<release>::<function>`); no analysis route reads them
     yet (`W48-OPENSSL-CALLER-COMPOSITION`). `QCore.OpensslContractPlugin`;
-    [report](../reports/w48-openssl-contract-plugin/README.md).
+    [report](../reports/archive/wave-48/w48-openssl-contract-plugin/README.md).
 
 <a id="constraint-53"></a>
 
@@ -12316,8 +12316,8 @@ that only when every arriving edge has it.
     library no include directory; a run's whole database is read, so a unit
     outside the audited selection can only add a configuration, never remove
     one). `QCore.LibraryVersionRange`;
-    [report](../reports/openssl-provider-plugin/README.md),
-    [route databases](../reports/library-version-probe-route-database/README.md).
+    [report](../reports/archive/contracts-and-premises/openssl-provider-plugin/README.md),
+    [route databases](../reports/archive/language-and-tooling/library-version-probe-route-database/README.md).
 
 <a id="constraint-54"></a>
 
@@ -12384,7 +12384,7 @@ that only when every arriving edge has it.
     `the_withheld_answer_is_unchanged` and four more), bound to
     `DECISION_VECTORS` by a shared-vector test
     (`tests/thread_local_custody_free_read.rs`);
-    [report](../reports/thread-local-custody-free-read/README.md).
+    [report](../reports/archive/language-and-tooling/thread-local-custody-free-read/README.md).
 
 <a id="constraint-57"></a>
 
@@ -12443,7 +12443,7 @@ that only when every arriving edge has it.
     `a_null_default_is_never_forwarded`, the `pem_*` vectors);
     `crates/qcore-contract/tests/callback_literal_premise.rs`,
     `crates/qcore-c-gateway/tests/callback_literal_premise.rs`.
-    [Report](../reports/openssl-pem-callback-arm/README.md).
+    [Report](../reports/archive/contracts-and-premises/openssl-pem-callback-arm/README.md).
     **Beside a slot invocation** (card OPENSSL-BIO-READER-INVOCATIONS, rule
     57 amended in place; contract specification C04.5 "Beside a slot
     invocation"): the loader also admits `resource_callback_slot_invoked(OBJ,
@@ -12468,7 +12468,7 @@ that only when every arriving edge has it.
     `a_plain_member_invocation_beside_a_premise_rejects`);
     `crates/qcore-contract/tests/callback_literal_premise.rs`,
     `crates/qcore-c-gateway/tests/openssl_undeclared_handshake_callbacks.rs`.
-    [Report](../reports/openssl-bio-reader-invocations/README.md).
+    [Report](../reports/archive/contracts-and-premises/openssl-bio-reader-invocations/README.md).
     **At a callback candidate** (card CALLBACK-CANDIDATE-LITERAL-PREMISE,
     rule 57 amended in place; contract specification C04.5 "At a callback
     candidate"): route G's rewrite bounds the *calls* of a premise-carrying
@@ -12505,7 +12505,7 @@ that only when every arriving edge has it.
     vectors); `crates/qcore-c-gateway/tests/callback_literal_premise.rs`
     and `legacy_literal_premise.rs`'s
     `a_premise_or_a_poisoned_set_withdraws_a_callback_candidate`.
-    [Report](../reports/callback-candidate-literal-premise/README.md).
+    [Report](../reports/archive/language-and-tooling/callback-candidate-literal-premise/README.md).
 
 <a id="constraint-61"></a>
 
@@ -12513,7 +12513,7 @@ that only when every arriving edge has it.
     aggregate store.** Card AG1-INDIRECT-MEMBER-ACCESS (round 33, the
     user's decision of 2026-11-18 to close the largest analyser gaps of the
     `current` run). The census of the access refusal on the user's 046accf6
-    `current` run ([report](../reports/ag1-indirect-member-access/README.md))
+    `current` run ([report](../reports/archive/gateway-and-clang/ag1-indirect-member-access/README.md))
     found the constructor shape `T *r = alloc(…); r->F = owned_call(…);
     return r;` refused at the member store wherever `T` is a typedef that
     *defines* its struct (`typedef struct TAG { … } T;`) or is declared twice
@@ -12579,7 +12579,7 @@ that only when every arriving edge has it.
     `legacy_transfer::transfer_base`, after rule 54's). It completes
     W43-INDEX-TRAVERSAL's copy exemption and rule 54 for the three sources
     the user's `current` run still reported as unresolved identities
-    ([report](../reports/ag2-unresolved-alias/README.md)). Read from Clang's
+    ([report](../reports/archive/gateway-and-clang/ag2-unresolved-alias/README.md)). Read from Clang's
     AST of the function, asked only where some alias copies a source the
     traversal names do not cover. (1) **Destinations.** Only an automatic
     local: exactly one declaration of the spelling in the function, a
@@ -12696,7 +12696,7 @@ that only when every arriving edge has it.
     answers (trust boundary 28), and that an identity call's effect on the
     abstract state is its contract's (constraint 4). Fixtures:
     `tests/condition_leaf_reads.rs`. `QCore.ConditionLeafReads`;
-    [report](../reports/ag3-condition-return-calls/README.md).
+    [report](../reports/archive/gateway-and-clang/ag3-condition-return-calls/README.md).
 
 <a id="constraint-66"></a>
 
@@ -12731,7 +12731,7 @@ that only when every arriving edge has it.
     `a_non_scalar_resolution_reads_nothing`, `a_non_member_is_never_read`,
     `decision_vectors_hold`, `the_decision_is_the_models`), bound to
     `DECISION_VECTORS`;
-    [report](../reports/cg10-indirect-access-sole-residuals-r4/README.md).
+    [report](../reports/archive/gateway-and-clang/cg10-indirect-access-sole-residuals-r4/README.md).
 
 <a id="constraint-67"></a>
 
@@ -12772,7 +12772,7 @@ that only when every arriving edge has it.
     `a_releasing_sibling_is_never_admitted`, `several_calls_are_read`,
     `no_call_is_never_read`), with `QCore.ResidualAccessReadings.scalarCallAdmitted`
     amended and bound to `SCALAR_CALL_VECTORS`;
-    [report](../reports/cg10-indirect-access-sole-residuals-r3/README.md).
+    [report](../reports/archive/gateway-and-clang/cg10-indirect-access-sole-residuals-r3/README.md).
 
 <a id="constraint-68"></a>
 
@@ -12809,7 +12809,7 @@ that only when every arriving edge has it.
     `a_pointer_to_the_alias_is_never_single`,
     `an_unresolved_pointee_is_never_single`, `decision_vectors_hold`,
     `the_decision_is_the_models`), bound to `DECISION_VECTORS`;
-    [report](../reports/cg10-indirect-access-sole-residuals-r3/README.md).
+    [report](../reports/archive/gateway-and-clang/cg10-indirect-access-sole-residuals-r3/README.md).
 
 <a id="constraint-69"></a>
 
@@ -12869,7 +12869,7 @@ that only when every arriving edge has it.
     `container_vectors_hold`, `the_rule_never_admits`,
     `the_status_of_a_function_is_unchanged`, …), bound to
     `CONTAINER_VECTORS`;
-    [report](../reports/cg10-embedded-list-borrowed-container/README.md).
+    [report](../reports/archive/gateway-and-clang/cg10-embedded-list-borrowed-container/README.md).
 
 <a id="constraint-70"></a>
 
@@ -12933,7 +12933,7 @@ that only when every arriving edge has it.
     boundary 28). `QCore.MemberStoreRetention` (decision vectors bound to
     `DECISION_VECTORS`; soundness over a concrete memory; caller discharge
     composes; the counterexample);
-    [report](../reports/cg10-member-store-retained-by/README.md).
+    [report](../reports/archive/gateway-and-clang/cg10-member-store-retained-by/README.md).
 
 <a id="constraint-71"></a>
 
@@ -12963,7 +12963,7 @@ that only when every arriving edge has it.
     `QCore.LogicalAndOperand` (`a_unary_address_is_read`,
     `a_logical_and_is_one`, `only_a_logical_and_is_dropped`,
     `decision_vectors_hold`), bound to `DECISION_VECTORS`;
-    [report](../reports/cg10-reader-gaps/README.md).
+    [report](../reports/archive/gateway-and-clang/cg10-reader-gaps/README.md).
 
 <a id="constraint-71a"></a>
 
@@ -13003,7 +13003,7 @@ that only when every arriving edge has it.
     `only_a_whole_call_is_read`, `a_kept_view_keeps_the_refusal`,
     `nothing_is_left_hidden`, `the_same_identities_are_handed`,
     `a_removed_view_is_its_place`), bound to `RETURN_VIEW_VECTORS`;
-    [report](../reports/cg10-reader-gaps/README.md).
+    [report](../reports/archive/gateway-and-clang/cg10-reader-gaps/README.md).
 
 <a id="constraint-71b"></a>
 
@@ -13043,7 +13043,7 @@ that only when every arriving edge has it.
     `a_pointer_typedef_is_not_a_function_typedef`,
     `an_alias_is_not_followed`, `read_only_for_a_function_typedef`,
     `a_function_pointer_adds_no_obligation`), bound to `DECISION_VECTORS`;
-    [report](../reports/cg10-reader-gaps/README.md).
+    [report](../reports/archive/gateway-and-clang/cg10-reader-gaps/README.md).
 
 <a id="constraint-72"></a>
 
@@ -13121,7 +13121,7 @@ that only when every arriving edge has it.
     `the_delivered_identity_is_held`, `a_tracked_owner_is_refused`,
     `a_delivery_withholds_the_summary` and six more), bound to
     `DECISION_VECTORS` and `ROOT_VECTORS`; `tests/owned_out_member_slot.rs`;
-    [report](../reports/cg10-owned-out-parameter-member-slot/README.md).
+    [report](../reports/archive/gateway-and-clang/cg10-owned-out-parameter-member-slot/README.md).
 
 <a id="constraint-74"></a>
 
@@ -13157,7 +13157,7 @@ that only when every arriving edge has it.
     `a_contracted_callee_keeps_the_gate_refusal`,
     `a_held_callee_keeps_the_gate_refusal`, `an_attributed_spelling_is_kept`,
     `the_uncast_call_hands_the_same_identities`);
-    [report](../reports/cg10-small-bundle/README.md).
+    [report](../reports/archive/gateway-and-clang/cg10-small-bundle/README.md).
 
 <a id="constraint-74a"></a>
 
@@ -13189,7 +13189,7 @@ that only when every arriving edge has it.
     `a_destructor_without_member_effect_does_not_fault`,
     `the_end_of_record_needs_a_destructor_premise`, over
     `QCore.MemberStoreRetention`'s concrete memory);
-    [report](../reports/cg10-small-bundle/README.md).
+    [report](../reports/archive/gateway-and-clang/cg10-small-bundle/README.md).
 
 <a id="constraint-74b"></a>
 
@@ -13234,7 +13234,7 @@ that only when every arriving edge has it.
     `a_called_formal_refuses`, `another_declarator_refuses`,
     `a_read_formal_is_never_called`, `a_plain_list_reads_as_before`,
     `a_function_pointer_adds_no_obligation`);
-    [report](../reports/cg10-small-bundle/README.md).
+    [report](../reports/archive/gateway-and-clang/cg10-small-bundle/README.md).
 
 <a id="constraint-74c"></a>
 
@@ -13296,7 +13296,7 @@ that only when every arriving edge has it.
     `a_withdrawal_is_never_below_unknown`, `a_spared_name_keeps_its_value`,
     `the_frame_only_widens`, `a_slot_address_still_poisons`,
     `the_non_null_edge_denotes_the_site`, `the_null_edge_owes_nothing`,
-    `a_reassignment_breaks_it`); [report](../reports/nullable-guarded-release/README.md).
+    `a_reassignment_breaks_it`); [report](../reports/archive/language-and-tooling/nullable-guarded-release/README.md).
 
 Rule 74c is amended by [rule 84](#constraint-84) (card
 SETTLED-LEAK-OTHER-REFUSAL-SCHEDULE): a held report whose settled exit marks
@@ -13375,7 +13375,7 @@ only a mark beside no blocking leaf is still decided here.
     `a_refused_return_claims_nothing`, `the_refusal_is_never_below_unknown`,
     `the_renaming_keeps_the_verdict`, `the_run_ends_in_an_address_iff_odd`,
     `a_logical_and_takes_no_address`, `the_frame_only_widens_again`);
-    [report](../reports/nullable-lazy-constructor-in-loop/README.md).
+    [report](../reports/archive/language-and-tooling/nullable-lazy-constructor-in-loop/README.md).
 
 Rule 74d (C) is extended by [rule 74e](#constraint-74e): every reader that
 decides address-taking from the unfused token stream reads the same parity
@@ -13429,7 +13429,7 @@ through `ampersand_runs`.
     `exactly_one_misses_an_odd_run`, `the_parity_keeps_every_single_address`,
     `the_parity_drops_only_even_runs`, `logical_and_is_the_even_complement`,
     `every_reader_reads_the_parity`, `decision_vectors_hold`);
-    [report](../reports/ampersand-run-parity/README.md).
+    [report](../reports/archive/language-and-tooling/ampersand-run-parity/README.md).
 
 <a id="constraint-74f"></a>
 
@@ -13469,7 +13469,7 @@ through `ampersand_runs`.
     `QCore.CastBeforeAmpersand` (`old_reading_misses_a_cast`,
     `the_fix_only_adds_addresses`, `an_undecided_group_is_a_cast`,
     `a_call_is_binary`, `the_address_hands_on_a_superset`,
-    `cast_vectors_hold`); [report](../reports/cast-before-ampersand/README.md).
+    `cast_vectors_hold`); [report](../reports/archive/language-and-tooling/cast-before-ampersand/README.md).
 
 <a id="constraint-74g"></a>
 
@@ -13513,7 +13513,7 @@ through `ampersand_runs`.
     (`old_reading_misses_the_slot`, `the_fix_only_adds_places`,
     `an_undecided_group_hands_on_both`, `a_call_is_binary`,
     `premise_four_only_refuses_more`, `star_vectors_hold`);
-    [report](../reports/cast-before-star/README.md).
+    [report](../reports/archive/language-and-tooling/cast-before-star/README.md).
 
 <a id="constraint-74h"></a>
 
@@ -13552,7 +13552,7 @@ through `ampersand_runs`.
     `member_admission_needs_every_reading`,
     `the_fix_only_refuses_more_starred`, `the_fix_only_refuses_more_member`,
     `the_cast_reading_alone_would_admit`, `family_vectors_hold`);
-    [report](../reports/return-family-star-cast/README.md).
+    [report](../reports/archive/gateway-and-clang/return-family-star-cast/README.md).
 
 <a id="constraint-74i"></a>
 
@@ -13610,7 +13610,7 @@ through `ampersand_runs`.
     `no_verdict_becomes_safe`, `a_safe_verdict_used_only_certified_objects`,
     `a_shadowed_name_is_refused`, and probes R2-R4 `Safe` under CG25's
     reading and refused under this one); `tests/in_place_regex_certified.rs`;
-    [report](../reports/cg25-in-place-regex/README.md).
+    [report](../reports/archive/gateway-and-clang/cg25-in-place-regex/README.md).
 
 <a id="constraint-74j"></a>
 
@@ -13655,7 +13655,7 @@ through `ampersand_runs`.
     `the_old_fold_differed_by_form`, `the_fold_agrees_with_the_slot_fold`,
     `the_fold_only_strengthens`, `a_non_null_position_is_a_fixed_point`,
     `out_and_removed_refuse`, `fold_vectors_hold`);
-    [report](../reports/callback-member-released-fold/README.md).
+    [report](../reports/archive/language-and-tooling/callback-member-released-fold/README.md).
 
 <a id="constraint-74k"></a>
 
@@ -13711,7 +13711,7 @@ through `ampersand_runs`.
     spelling is at the base; PASS-CORRELATED-LOOP-ALLOCATION). Premises stated, not proved: the token splitter, the Clang
     `DeclStmt` match (trust boundary 28), and that the statement lowering of a
     piece is the reading of that declaration alone. `QCore.LaterDeclarator`;
-    [report](../reports/later-declarator-initialiser/README.md).
+    [report](../reports/archive/language-and-tooling/later-declarator-initialiser/README.md).
 
 <a id="constraint-74l"></a>
 
@@ -13762,7 +13762,7 @@ through `ampersand_runs`.
     `the_renaming_keeps_every_leaf`, `only_the_unsanctioned_slot_changed`
     and seven more), bound to `OUT_MODE_VECTORS`;
     `tests/owned_out_formal_delivery.rs`;
-    [report](../reports/owned-constructor-out-delivery/README.md).
+    [report](../reports/archive/language-and-tooling/owned-constructor-out-delivery/README.md).
 
 <a id="constraint-74m"></a>
 
@@ -13803,7 +13803,7 @@ through `ampersand_runs`.
     `the_converted_value_keeps_its_refusal`,
     `a_cast_of_one_dereference_is_unchanged`, `deref_vectors_hold`,
     `old_vectors_hold`);
-    [report](../reports/return-family-deref-resolved-cast/README.md).
+    [report](../reports/archive/gateway-and-clang/return-family-deref-resolved-cast/README.md).
 
 <a id="constraint-74n"></a>
 
@@ -13858,7 +13858,7 @@ through `ampersand_runs`.
     `a_safe_verdict_used_only_admitted_objects`);
     `tests/in_place_regex_failure_use.rs`,
     `qcore-contract/tests/in_place_failure_use.rs`;
-    [report](../reports/regex-regerror-failure-edge/README.md).
+    [report](../reports/archive/language-and-tooling/regex-regerror-failure-edge/README.md).
 
 <a id="constraint-74o"></a>
 
@@ -13894,7 +13894,7 @@ through `ampersand_runs`.
     and probes F1, F3, F4 `Safe` under rule 12t's reading and refused under
     this one), extending `QCore.InPlaceCertifiedUse.oneDeclaration`;
     `tests/frame_holder_shadowed_name.rs`;
-    [report](../reports/frame-holder-shadowed-name/README.md).
+    [report](../reports/archive/language-and-tooling/frame-holder-shadowed-name/README.md).
 
 <a id="constraint-74p"></a>
 
@@ -13945,7 +13945,7 @@ through `ampersand_runs`.
     `the_late_order_never_admits_what_the_c_order_refuses`,
     `a_link_the_release_releases_refuses`, `a_kept_path_changes_nothing`,
     `the_late_order_is_stricter`, `order_vectors_hold`);
-    [report](../reports/callback-member-released-effect-order/README.md).
+    [report](../reports/archive/language-and-tooling/callback-member-released-effect-order/README.md).
 
 <a id="constraint-74r"></a>
 
@@ -13985,7 +13985,7 @@ through `ampersand_runs`.
     `a_multiplication_is_no_base`,
     `an_undecided_star_through_a_cast_is_a_base`, `untracked_vectors_hold`,
     `old_vectors_hold`);
-    [report](../reports/return-family-untracked-deref-cast/README.md).
+    [report](../reports/archive/gateway-and-clang/return-family-untracked-deref-cast/README.md).
 
 <a id="constraint-74s"></a>
 
@@ -14034,7 +14034,7 @@ through `ampersand_runs`.
     `admitted_is_one_dereference`, `old_admits_a_second_dereference`,
     `a_parenthesised_dereference_is_unchanged`, `outside_vectors_hold`,
     `old_vectors_hold`);
-    [report](../reports/return-family-star-outside-parentheses/README.md).
+    [report](../reports/archive/gateway-and-clang/return-family-star-outside-parentheses/README.md).
 
 <a id="constraint-74t"></a>
 
@@ -14090,7 +14090,7 @@ through `ampersand_runs`.
     `bases_kept`, `old_bases_kept`, `the_fix_only_refuses_more`,
     `old_misses_the_base`, `a_converted_operand_is_no_base`,
     `member_vectors_hold`, `old_vectors_hold`);
-    [report](../reports/return-family-untracked-member-cast/README.md).
+    [report](../reports/archive/gateway-and-clang/return-family-untracked-member-cast/README.md).
 
 <a id="constraint-74u"></a>
 
@@ -14137,7 +14137,7 @@ through `ampersand_runs`.
     `the_fix_only_refuses_more`, `qualified_only_refuses_more`,
     `old_misses_the_qualified_group`,
     `a_member_root_through_the_group_refuses`, `type_group_vectors_hold`);
-    [report](../reports/type-group-qualified-pointer/README.md).
+    [report](../reports/archive/gateway-and-clang/type-group-qualified-pointer/README.md).
 
 <a id="constraint-74v"></a>
 
@@ -14192,7 +14192,7 @@ through `ampersand_runs`.
     `the_root_is_the_dereferenced_name`,
     `a_value_read_dereferences_nothing`, `old_misses_the_base`,
     `read_vectors_hold`);
-    [report](../reports/return-strict-member-null/README.md).
+    [report](../reports/archive/gateway-and-clang/return-strict-member-null/README.md).
 
 <a id="constraint-74w"></a>
 
@@ -14248,7 +14248,7 @@ through `ampersand_runs`.
     `old_base_kept`, `old_arrow_kept`, `names_kept`,
     `the_fix_only_refuses_more`, `old_misses_the_base`,
     `another_pointer_refuses`, `arith_vectors_hold`);
-    [report](../reports/return-family-untracked-arith-access/README.md).
+    [report](../reports/archive/gateway-and-clang/return-family-untracked-arith-access/README.md).
 
 <a id="constraint-74x"></a>
 
@@ -14313,7 +14313,7 @@ through `ampersand_runs`.
     `old_base_kept`, `old_arrow_kept`, `names_kept`,
     `the_fix_only_refuses_more`, `old_misses_the_base`,
     `the_condition_is_no_base`, `cond_vectors_hold`);
-    [report](../reports/return-family-untracked-conditional-access/README.md).
+    [report](../reports/archive/gateway-and-clang/return-family-untracked-conditional-access/README.md).
 
 <a id="constraint-74y"></a>
 
@@ -14375,7 +14375,7 @@ through `ampersand_runs`.
     `old_base_kept`, `admitted_was_admitted`, `the_fix_only_refuses_more`,
     `old_misses_the_base`, `subscript_vectors_hold`,
     `may_bind_vectors_hold`);
-    [report](../reports/return-family-untracked-reversed-subscript/README.md).
+    [report](../reports/archive/gateway-and-clang/return-family-untracked-reversed-subscript/README.md).
 
 <a id="constraint-74z"></a>
 
@@ -14433,7 +14433,7 @@ through `ampersand_runs`.
     `undecided_keeps_74x_reading`, `pruning_keeps_every_refusal`,
     `only_dropped_bases_are_discharged`, `const_vectors_hold`,
     `prune_vectors_hold`);
-    [report](../reports/return-family-conditional-constant-pruning/README.md).
+    [report](../reports/archive/gateway-and-clang/return-family-conditional-constant-pruning/README.md).
 
 <a id="constraint-75"></a>
 
@@ -14474,7 +14474,7 @@ through `ampersand_runs`.
     `every_whole_address_is_seeded`, `only_a_member_operand_is_dropped`,
     `at_least_the_plain_reader`, `the_old_reading_is_kept_without_the_arm`,
     `the_closure_only_drops_seeds`, `decision_vectors_hold`), bound to
-    `DECISION_VECTORS`; [report](../reports/k1-call-actual-access/README.md).
+    `DECISION_VECTORS`; [report](../reports/archive/wave-48/k1-call-actual-access/README.md).
 
 <a id="constraint-77"></a>
 
@@ -14492,7 +14492,7 @@ through `ampersand_runs`.
     (`UnknownAlias L`, both edges unmodelled, so rule 11d then refused every
     later read), and `return L;` reported the unknown binding, although
     `return R->F;` is rule 10k (2)'s exit that escapes nothing
-    ([report](../reports/k5-local-origin-aliases/README.md)). Read from
+    ([report](../reports/archive/wave-48/k5-local-origin-aliases/README.md)). Read from
     Clang's AST of the function, asked only where a null test or a return
     names a local the declaration reader does not call a scalar. (1)
     **Roots.** A pointer formal, single-level, declared once and spelled by no
@@ -14584,7 +14584,7 @@ through `ampersand_runs`.
     claim a bound: as for every subscript, extents are outside the property.
     Premises stated, not proved: faithful Clang extraction of operand types,
     opcodes and cast kinds (trust boundary 28). Census and measurement:
-    [report](../reports/k7-residual-causes/README.md). `QCore.PointerOffsetPlace`
+    [report](../reports/archive/wave-48/k7-residual-causes/README.md). `QCore.PointerOffsetPlace`
     (`deref_offset_is_subscript`, `deref_difference_is_subscript`,
     `subscript_of_offset`, `offset_vectors_hold`,
     `a_deref_offset_reads_as_the_subscript`,
@@ -14655,7 +14655,7 @@ through `ampersand_runs`.
     `dropping_product_runs_loses_no_declaration`, `decision_vectors_hold`,
     `the_tables_are_counted`), bound to `DECISION_VECTORS`, the formula
     table and the K2 term list by shared-vector unit tests;
-    [report](../reports/k2-no-typed-access/README.md).
+    [report](../reports/archive/wave-48/k2-no-typed-access/README.md).
 
 <a id="constraint-81"></a>
 
@@ -14740,7 +14740,7 @@ through `ampersand_runs`.
     `an_outer_address_keeps_the_binding`, `lexical_vectors_hold`), bound to
     `LEXICAL_VECTORS`, `FORMULAS` (`formulaTable`) and the K6 block
     (`k6Terms`, `k6Sorts`) by unit tests;
-    [report](../reports/k6-direct-position-access/README.md).
+    [report](../reports/archive/wave-48/k6-direct-position-access/README.md).
 
 <a id="constraint-82"></a>
 
@@ -14798,7 +14798,7 @@ through `ampersand_runs`.
     `nothing_admits_more_than_both`, `a_relaxed_root_is_discharged`,
     `the_arm_is_read`, `the_condition_still_refuses`,
     `an_arm_74x_refuses_still_refuses`, `walk_vectors_hold`);
-    [report](../reports/return-family-arith-walk-conditional/README.md).
+    [report](../reports/archive/gateway-and-clang/return-family-arith-walk-conditional/README.md).
 
 <a id="constraint-83"></a>
 
@@ -14849,7 +14849,7 @@ through `ampersand_runs`.
     `no_null_keeps_the_verdict`, `a_guard_proved_non_null_is_discharged`,
     `an_overwritten_null_keeps_the_premise`, `an_unbound_base_discharges`,
     `old_premises_a_joined_null`, `join_vectors_hold`);
-    [report](../reports/untracked-base-null-join/README.md).
+    [report](../reports/archive/language-and-tooling/untracked-base-null-join/README.md).
 
 <a id="constraint-84"></a>
 
@@ -14920,7 +14920,7 @@ through `ampersand_runs`.
     `a_refused_only_leak_stays_withdrawn`, `publish_vectors_hold`,
     `an_unwithdrawn_report_is_untouched`, `a_publication_is_never_safe`,
     `the_pinned_instance`, `the_both_arms_control`);
-    [report](../reports/settled-leak-joined-genuine-withdrawn/README.md).
+    [report](../reports/archive/language-and-tooling/settled-leak-joined-genuine-withdrawn/README.md).
 
 Rule 84 is amended by card SETTLED-LEAK-OTHER-REFUSAL-SCHEDULE (same module;
 the hook after rule 42's settlement now computes rule 84's candidates first,
@@ -14962,7 +14962,7 @@ on every path in two schedules (both `Unknown`). Kept pins:
 `the_old_decision_read_the_schedule`, `both_orders_publish_the_avoiding_arm`,
 `a_refused_only_leak_stays_withdrawn_any_kind`,
 `every_kind_on_both_arms_is_withdrawn`, `a_decided_report_is_never_safe`);
-[report](../reports/settled-leak-other-refusal-schedule/README.md).
+[report](../reports/archive/language-and-tooling/settled-leak-other-refusal-schedule/README.md).
 
 Rule 84 is amended by card SETTLED-LEAK-MARK-WITHOUT-UNKNOWN-LEAF
 (`crates/qcore-c-gateway/src/legacy_mark_without_unknown.rs`, new: `blocking`,
@@ -15067,7 +15067,7 @@ an unrelated held call (both `Unknown`, no leak, both holds kept).
     `an_out_reading_mints_a_second_custody`,
     `a_borrowed_reading_hides_a_delivery` and six more), bound to
     `KEEP_OR_DELIVER_VECTORS`; `tests/out_slot_keep_or_deliver.rs`;
-    [report](../reports/out-slot-conditional-delivery/README.md).
+    [report](../reports/archive/language-and-tooling/out-slot-conditional-delivery/README.md).
 
 <a id="constraint-86"></a>
 
@@ -15111,7 +15111,7 @@ an unrelated held call (both `Unknown`, no leak, both holds kept).
     reading and refused under this one), extending
     `QCore.InPlaceCertifiedUse.oneDeclaration`;
     `tests/name_keyed_holder_shadowing.rs`;
-    [report](../reports/name-keyed-holder-shadowing/README.md).
+    [report](../reports/archive/language-and-tooling/name-keyed-holder-shadowing/README.md).
 
     **Every consumer, and the guard at the entry.** Card
     JUMPED-SHADOW-FORMAL-READINGS (USER DECISION 2026-11-25, "launch the
@@ -15158,7 +15158,7 @@ an unrelated held call (both `Unknown`, no leak, both holds kept).
     `no_verdict_becomes_safe`, `a_shadowed_formal_refuses_at_entry`,
     `a_keyed_event_needs_one_declaration`, and probes CJ1, CJ5 and WDJ1
     `Safe` before and refused now); `tests/jumped_shadow_formal_readings.rs`;
-    [report](../reports/jumped-shadow-formal-readings/README.md).
+    [report](../reports/archive/language-and-tooling/jumped-shadow-formal-readings/README.md).
 
 <a id="constraint-89"></a>
 
@@ -15194,6 +15194,6 @@ an unrelated held call (both `Unknown`, no leak, both holds kept).
     `an_admission_is_only_the_paren_star_disjunct`,
     `a_declaration_keeps_the_refusal`, `a_non_call_keeps_the_old_test`,
     `no_ast_answer_keeps_the_old_test`, `a_keyword_declarator_stays`);
-    [report](../reports/call-with-deref-actual/README.md).
+    [report](../reports/archive/language-and-tooling/call-with-deref-actual/README.md).
 
 <!-- generated:rules:end -->

@@ -1,0 +1,13 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "frame-holder-shadowed-name",
+ "total_pruned_files": 1,
+ "total_pruned_bytes": 32674,
+ "artifacts": [
+  {
+   "path": "integration/gate-scope.json",
+   "bytes": 32674,
+   "sha256": "44833f365b30b225ea02c8b5ce46ddd5fc83f4f0423173f9f89efbc71e99451e"
+  }
+ ]
+}

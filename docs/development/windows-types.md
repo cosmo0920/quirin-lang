@@ -19,8 +19,8 @@ Linux can therefore bind a contract position on Linux and be withdrawn on
 Windows. The withdrawal is fail-closed, so the test sees `Unknown` (with
 `abi-unreadable-declaration` or `abi-parameter-type-disagreement`) and fails
 only on Windows. Two rounds of Windows CI failures had exactly this cause:
-[round 1](../reports/windows-ci-plain-long-fixtures/README.md) (r42, 14 tests)
-and [round 2](../reports/windows-ci-llp64-fixtures-2/README.md) (r73, 8 tests).
+[round 1](../reports/archive/language-and-tooling/windows-ci-plain-long-fixtures/README.md) (r42, 14 tests)
+and [round 2](../reports/archive/language-and-tooling/windows-ci-llp64-fixtures-2/README.md) (r73, 8 tests).
 
 ## Spell these types this way
 

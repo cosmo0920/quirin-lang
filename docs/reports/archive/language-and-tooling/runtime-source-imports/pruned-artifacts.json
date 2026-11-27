@@ -1,0 +1,13 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "runtime-source-imports",
+ "total_pruned_files": 1,
+ "total_pruned_bytes": 100247,
+ "artifacts": [
+  {
+   "path": "spelling-attribution.json",
+   "bytes": 100247,
+   "sha256": "2f7c1de7fcc7d048205a1cc3a3e843bbbac5b0afbd65179d664e7e75f182fd8d"
+  }
+ ]
+}

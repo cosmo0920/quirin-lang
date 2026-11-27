@@ -1,0 +1,13 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "cg25-void-cast-guard-escape",
+ "total_pruned_files": 1,
+ "total_pruned_bytes": 171195,
+ "artifacts": [
+  {
+   "path": "integration/gate-scope.json",
+   "bytes": 171195,
+   "sha256": "bd1534aa3399041554ed335d1b1bfb3dc1e71c090e6f86b384c5c0b1fc841703"
+  }
+ ]
+}

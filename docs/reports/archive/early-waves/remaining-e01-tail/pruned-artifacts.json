@@ -1,0 +1,33 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "remaining-e01-tail",
+ "total_pruned_files": 5,
+ "total_pruned_bytes": 28338,
+ "artifacts": [
+  {
+   "path": "logs/chunkio-core-audit.log.gz",
+   "bytes": 1092,
+   "sha256": "f80abff02fb1bc91a76c08e5f51e5022c192442a837f212b62e459b010fdc358"
+  },
+  {
+   "path": "logs/cmetrics-counter-audit.log.gz",
+   "bytes": 348,
+   "sha256": "3ea94075c40ae2b44eaeabcbf345bdb1e24638387da89cd15f1430b8d89aa06a"
+  },
+  {
+   "path": "logs/corpus-current-route.log.gz",
+   "bytes": 11108,
+   "sha256": "27041c56cc5daa3dbccd70402a1ca03b01515c85819ccd8ecfd61f019a6e5837"
+  },
+  {
+   "path": "logs/corpus-pinned-route.log.gz",
+   "bytes": 14050,
+   "sha256": "c02191854bceea70e8f4a24d6134c25fec93d7fd8b68901609588c5e506c0bf7"
+  },
+  {
+   "path": "logs/libevent-core-audit.log.gz",
+   "bytes": 1740,
+   "sha256": "1b7e2566d7e81931782a453dcdb1e9981eac28c8e54418308872ad748da45fea"
+  }
+ ]
+}

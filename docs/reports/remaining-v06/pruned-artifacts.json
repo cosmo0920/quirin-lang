@@ -1,0 +1,38 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "remaining-v06",
+ "total_pruned_files": 6,
+ "total_pruned_bytes": 15255,
+ "artifacts": [
+  {
+   "path": "logs/adjacent-natural-literals.log",
+   "bytes": 725,
+   "sha256": "8c44674d580dacfd1ce7a2dc323744e7a4ae4b3c3d40e62bb5250eabf29a3db9"
+  },
+  {
+   "path": "logs/cited-tests.log",
+   "bytes": 1011,
+   "sha256": "2a62e9d3500b96ec5358e9387d9aedc46c2e0a709f17d7bdee61b7f1ac022089"
+  },
+  {
+   "path": "logs/i128-observation-literals.log",
+   "bytes": 5028,
+   "sha256": "16fa4983f767b174ba94ce5754adf421731b3deb70ac7978993d092aa76b8b45"
+  },
+  {
+   "path": "logs/i32-source-literals.log",
+   "bytes": 4584,
+   "sha256": "def098a98566d6f01a25d1423da6e6676b40b6bd4850749dfb2d4d49bfa4e66e"
+  },
+  {
+   "path": "logs/i32-task-operands.log",
+   "bytes": 3321,
+   "sha256": "defcc541d9720f2ecd6ea00f8cb893e9391d49e643ec48eabd310dc158d54ff8"
+  },
+  {
+   "path": "logs/i32-value-fidelity.log",
+   "bytes": 586,
+   "sha256": "a46bfb16f923c0ac8ac56d3c63ffad4aee1362f9d61101dc4f1eec9729c6d25a"
+  }
+ ]
+}

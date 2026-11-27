@@ -1,0 +1,13 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "later-declarator-initialiser",
+ "total_pruned_files": 1,
+ "total_pruned_bytes": 53058,
+ "artifacts": [
+  {
+   "path": "integration/gate-scope.json",
+   "bytes": 53058,
+   "sha256": "95151ed8811e19d07102587e3a089cfaafbc188e5d0fd6be07bab30d91689055"
+  }
+ ]
+}

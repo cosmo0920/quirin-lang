@@ -1,0 +1,13 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "windows-ci-plain-long-fixtures",
+ "total_pruned_files": 1,
+ "total_pruned_bytes": 33256,
+ "artifacts": [
+  {
+   "path": "integration/gate-scope.json",
+   "bytes": 33256,
+   "sha256": "7e3b97e6abff666c4fc6db5b9b77393e5a0bced9260eac282017d0e582bfd04a"
+  }
+ ]
+}

@@ -1,0 +1,113 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "aggregate-owned-field",
+ "total_pruned_files": 21,
+ "total_pruned_bytes": 880340,
+ "artifacts": [
+  {
+   "path": "gate/cargo-test.exit",
+   "bytes": 5,
+   "sha256": "bdc830287616dae1818ced3e7c186e1387155900ad30d5983ec02da1519c4a95"
+  },
+  {
+   "path": "gate/cargo-test.log",
+   "bytes": 413226,
+   "sha256": "049bba2424e29320d31e4020a31b0ca225796bfccbc67bf59e859cedd86127dc"
+  },
+  {
+   "path": "gate/clippy.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/fmt.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/fmt.log",
+   "bytes": 0,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+   "path": "gate/followup.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/isolated-std_socket_inet.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/isolated-std_socket_inet.log",
+   "bytes": 367,
+   "sha256": "59d0e9396648111351f5e0de51a41d3aceb2c00daa23fa4d5e00f1a232144b70"
+  },
+  {
+   "path": "gate/lean.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/lean.log",
+   "bytes": 449537,
+   "sha256": "f04de6b26fe45c38bde3b0b1630351661f84b8d4bbf00ed40f22c022b189032b"
+  },
+  {
+   "path": "gate/probe.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/python-post.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/python-post.log",
+   "bytes": 2583,
+   "sha256": "b04fe4b361d12fa4d2414263594f21f984ca81df4799a97608e9820ae58c2928"
+  },
+  {
+   "path": "gate/python.exit",
+   "bytes": 3,
+   "sha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04"
+  },
+  {
+   "path": "gate/python.log",
+   "bytes": 4973,
+   "sha256": "e9ac4a7ae01091d55a2c7be66416109e7477fb750092407dbc984e86ad4906c0"
+  },
+  {
+   "path": "gate/submodule.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/submodule.log",
+   "bytes": 0,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+   "path": "lean-audit.log",
+   "bytes": 2230,
+   "sha256": "1b25bda23532e576eddb5fc36c4c012cb466ba0740b54e27e43ae37a39afa38e"
+  },
+  {
+   "path": "mutations.log",
+   "bytes": 4685,
+   "sha256": "2bf26b949831fd0ddc6f83e97aa1b8e3afefe3cfa6fe3d95cae438f94f0911f6"
+  },
+  {
+   "path": "register-show.log",
+   "bytes": 2428,
+   "sha256": "5e3fe2885b92caf505116bced4864e580ab84127dae7bb9af09415ce7957bf71"
+  },
+  {
+   "path": "register.log",
+   "bytes": 279,
+   "sha256": "2d79eb1c1993fd7f8fd96117684b0c114deaa7548fcb35f6c62216ad256c31a5"
+  }
+ ]
+}

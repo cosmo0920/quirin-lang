@@ -4,7 +4,7 @@ Date: 2026-09-08. Base checkpoint: `9478b94` (the merged delegated increment).
 Depends on [T03](../remaining-t03/README.md) (the lowering being mapped),
 [T02](../remaining-t02/README.md) (the checker it lowers onto),
 [T00](../remaining-t00/README.md) (the stage-derivation rule this card obeys)
-and the [W6 CT harness](../w6-ct-harness/README.md).
+and the [W6 CT harness](../archive/early-waves/w6-ct-harness/README.md).
 
 **Scope.** Harness, fixtures, manifest and the two acceptance records. No
 language, checker, lowering or backend semantics changed; no diagnostic code was
@@ -332,7 +332,7 @@ A separate pre-existing flake stands: `qcore-verifier-host`'s
 load-dependent because it installs `RLIMIT_NPROC = 1`, which counts every
 process of the real UID. It failed once in the shared tree during this session
 and passed on re-run, and passed in the clean gate worktree. It is recorded in
-[`remaining-p03` §9.1](../remaining-p03/README.md) with the assertion
+[`remaining-p03` §9.1](../archive/early-waves/remaining-p03/README.md) with the assertion
 deliberately not weakened; nothing here touches it.
 
 ---

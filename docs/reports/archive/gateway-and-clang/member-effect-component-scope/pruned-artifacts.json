@@ -1,0 +1,13 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "member-effect-component-scope",
+ "total_pruned_files": 1,
+ "total_pruned_bytes": 66988,
+ "artifacts": [
+  {
+   "path": "census/corpus.json",
+   "bytes": 66988,
+   "sha256": "f970317f451c48d4512eb56a439b81879eac3bba83366d667acfae639407cad4"
+  }
+ ]
+}

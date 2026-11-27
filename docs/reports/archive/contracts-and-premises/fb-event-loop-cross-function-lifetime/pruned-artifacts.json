@@ -1,0 +1,23 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "fb-event-loop-cross-function-lifetime",
+ "total_pruned_files": 3,
+ "total_pruned_bytes": 728685,
+ "artifacts": [
+  {
+   "path": "artifacts/before-lifetime-rows-corpus.json",
+   "bytes": 79043,
+   "sha256": "6a72dc9c776c07905cb6bbffbf08e159ae9b0388a1dc772c2432273ebce00535"
+  },
+  {
+   "path": "artifacts/before-lifetime-rows-system.json",
+   "bytes": 75835,
+   "sha256": "a39673ebd14003fb19f0df9a4e3b14df765c9e8500754c498d394ca333834922"
+  },
+  {
+   "path": "artifacts/loop-member-census.json",
+   "bytes": 573807,
+   "sha256": "38e3ebabd1521fee948a103715393d28cdbe65987352cd59218e912891425b28"
+  }
+ ]
+}

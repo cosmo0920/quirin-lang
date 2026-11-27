@@ -1,0 +1,23 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "audit-canonical-paths",
+ "total_pruned_files": 3,
+ "total_pruned_bytes": 295509,
+ "artifacts": [
+  {
+   "path": "identity/corpus-base-mirror-vs-tip-original.json",
+   "bytes": 106511,
+   "sha256": "77a8d8120709c4329cb572a65fb18cb9a311a8dbda082fa12c344e40f7f9de97"
+  },
+  {
+   "path": "identity/slice-base-mirror-vs-tip-original.json",
+   "bytes": 91555,
+   "sha256": "3b45e4103ab6b416e86691a20de373c1d2d9dcdf1eb03df30459175436dfe008"
+  },
+  {
+   "path": "identity/system-base-mirror-vs-tip-original.json",
+   "bytes": 97443,
+   "sha256": "bded022d151d8e41000223cfd1eb0d87bbfabba490fadcc44e9db40a39f72ea4"
+  }
+ ]
+}

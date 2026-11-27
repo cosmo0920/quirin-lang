@@ -1,0 +1,13 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "owned-constructor-out-delivery",
+ "total_pruned_files": 1,
+ "total_pruned_bytes": 38586,
+ "artifacts": [
+  {
+   "path": "integration/gate-scope.json",
+   "bytes": 38586,
+   "sha256": "081f0645c5ee90c3b9bc154f4331edfd043a9edc7cee187c046948de59507c23"
+  }
+ ]
+}

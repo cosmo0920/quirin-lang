@@ -1,0 +1,38 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "w45-container-root-reach",
+ "total_pruned_files": 6,
+ "total_pruned_bytes": 1596803,
+ "artifacts": [
+  {
+   "path": "artifacts/arbiter/chunk-contracts.json.gz",
+   "bytes": 281881,
+   "sha256": "f0568583a78a62741104d890e33c7dd84ccbb67d9a692f051aa21cc3b8e01703"
+  },
+  {
+   "path": "artifacts/arbiter/contracts.json.gz",
+   "bytes": 92265,
+   "sha256": "cab6c5a4589c02310ef49023856d77f068925e848d86fd217eeb56b1457fa700"
+  },
+  {
+   "path": "artifacts/arbiter/diagnostics.json.gz",
+   "bytes": 496000,
+   "sha256": "874a16d14a53954babd595632bc5d07d191f602765cf9818eeea8d451e06eb2d"
+  },
+  {
+   "path": "artifacts/slice/after.json.gz",
+   "bytes": 115188,
+   "sha256": "77f81c8d98a62225489d7e9e614d908a321ac1b7337e953737a67a3574622196"
+  },
+  {
+   "path": "artifacts/slice/before.json.gz",
+   "bytes": 115469,
+   "sha256": "f2a00ef235ca28f9ffdbe453bd658ce0b74341f2fb5469fa39be49f16da56256"
+  },
+  {
+   "path": "integration/artifacts/diagnostics.json.gz",
+   "bytes": 496000,
+   "sha256": "874a16d14a53954babd595632bc5d07d191f602765cf9818eeea8d451e06eb2d"
+  }
+ ]
+}

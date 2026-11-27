@@ -1,0 +1,18 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "sp3-symbolic-fluent-bit-libc-premises",
+ "total_pruned_files": 2,
+ "total_pruned_bytes": 482867,
+ "artifacts": [
+  {
+   "path": "gate/gate-1.json",
+   "bytes": 240312,
+   "sha256": "cadffcc48dd5ed5eb10dca86b91d4269a7a83c8628de79ae3e115c02ad08816b"
+  },
+  {
+   "path": "gate/gate-2.json",
+   "bytes": 242555,
+   "sha256": "620d79bd956a57ad019e901ea969fb87e814081d74e2e6b0175344a395919a2d"
+  }
+ ]
+}

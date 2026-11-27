@@ -1,0 +1,83 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "ct07-two-thread-proof-leg",
+ "total_pruned_files": 15,
+ "total_pruned_bytes": 475286,
+ "artifacts": [
+  {
+   "path": "gate/cargo-test.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/clippy.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/fmt.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/fmt.log",
+   "bytes": 0,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+   "path": "gate/followup.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/followup.log",
+   "bytes": 11197,
+   "sha256": "20c7c350dbd15350191e8f7cf04e4d2b67d7e02ada31873eb5301f560c7b090d"
+  },
+  {
+   "path": "gate/lean.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/lean.log",
+   "bytes": 449174,
+   "sha256": "779fbaf2d39928386446292f9a75078345173836410c624ac9dead9cdd420ee7"
+  },
+  {
+   "path": "gate/probe.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/probe.log",
+   "bytes": 2663,
+   "sha256": "2fd6c95e5456f189c621f5f77fd6c178c6e3b260aa3dfa372265778ebb11e6f3"
+  },
+  {
+   "path": "gate/python-post.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/python-post.log",
+   "bytes": 2583,
+   "sha256": "0ecc082d47e3d3a9f2bcb17c56727d0c42c5a7fcef20d4dde0a8aca55a90cc5d"
+  },
+  {
+   "path": "gate/python.exit",
+   "bytes": 3,
+   "sha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04"
+  },
+  {
+   "path": "gate/python.log",
+   "bytes": 4973,
+   "sha256": "623a71914024bcffd6ec33879b1ae34484d189104cf9220c2fce1153bd504b77"
+  },
+  {
+   "path": "mutations.log",
+   "bytes": 4672,
+   "sha256": "167eb6a8aab4588fc8de4ffa4522ee8c5eb07c1ba0064bf2f705cd3b7224e817"
+  }
+ ]
+}

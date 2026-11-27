@@ -1,3 +1,0 @@
-$ private/bin-tip/quirin-audit plugin views --load-path providers/user-crates-load-path.json
-plugin views: every user crate's resource view is current
-exit 0

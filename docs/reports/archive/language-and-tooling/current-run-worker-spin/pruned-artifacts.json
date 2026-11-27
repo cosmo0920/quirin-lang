@@ -1,0 +1,13 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "current-run-worker-spin",
+ "total_pruned_files": 1,
+ "total_pruned_bytes": 292548,
+ "artifacts": [
+  {
+   "path": "acceptance-rows.json",
+   "bytes": 292548,
+   "sha256": "c5c04d863b01144b8e3621df8d38b8470c4e29df5e6e5689b481e8df474e1b62"
+  }
+ ]
+}

@@ -1,0 +1,23 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "remaining-ctwin-publish",
+ "total_pruned_files": 3,
+ "total_pruned_bytes": 42253,
+ "artifacts": [
+  {
+   "path": "artifacts/corpus-after.log.gz",
+   "bytes": 14070,
+   "sha256": "b70fd044bc43f3784f654f33a4f447f7ad5e54d41f435196a32db46bb64d8022"
+  },
+  {
+   "path": "artifacts/corpus-before.log.gz",
+   "bytes": 14073,
+   "sha256": "56899809fba7a0c2ef0001293fbce274d2ba71186982f33034364f8a557ac83a"
+  },
+  {
+   "path": "artifacts/corpus-toggled-rule-probe.log.gz",
+   "bytes": 14110,
+   "sha256": "da91eb2d3b4b88a359aff71260e35349252bdede8f741a868c6c7a58c0f0731d"
+  }
+ ]
+}

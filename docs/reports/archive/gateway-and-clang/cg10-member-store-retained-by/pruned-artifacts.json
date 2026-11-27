@@ -1,0 +1,13 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "cg10-member-store-retained-by",
+ "total_pruned_files": 1,
+ "total_pruned_bytes": 57567,
+ "artifacts": [
+  {
+   "path": "integration/gate-scope.json",
+   "bytes": 57567,
+   "sha256": "9f8125a279ee0b4bb787ccf64809345261ad2bc68b7424167f6296757386ec42"
+  }
+ ]
+}

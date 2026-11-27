@@ -1,0 +1,13 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "windows-clang-fixtures",
+ "total_pruned_files": 1,
+ "total_pruned_bytes": 20837,
+ "artifacts": [
+  {
+   "path": "validation.log",
+   "bytes": 20837,
+   "sha256": "1c5424146e05ccca257714a5bb87780a93c6e90e013c9c81f827dbec788eeb44"
+  }
+ ]
+}

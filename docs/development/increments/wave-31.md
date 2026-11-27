@@ -49,7 +49,7 @@ itself, and it is the occasioning case for the new **every-2-wave
 and an observation is not a proof.
 Merged gate at the close tip: 4,511 workspace tests (0 failed, 8 ignored,
 `--no-fail-fast`), 122 provider (carried), 200 Python, both probes exit 0,
-fmt/clippy clean (`docs/reports/wave31-close/gate.json`). Nothing is promoted;
+fmt/clippy clean (`docs/reports/archive/waves-20-39/wave31-close/gate.json`). Nothing is promoted;
 full language conformance stays **false**.
 
 The F02 alphabet grown by the Buffer write, and CT03's proof leg (2026-09-13):
@@ -120,7 +120,7 @@ scalar `usize` return) — and **upheld** for the remainder with readings and
 measurements (`W31-SIZE-SIBLINGS-REMAINDER`). The card was interrupted
 mid-run by a model usage limit and its **entire measurement was redone**
 after the user's own `C-GATEWAY-WAVE` moved the corpus baseline: the
-prediction was recomputed against `docs/reports/c-gateway-wave/artifacts/`
+prediction was recomputed against `docs/reports/archive/gateway-and-clang/c-gateway-wave/artifacts/`
 and committed before any AFTER run existed, and that recomputation is itself
 a finding — the gateway change moved the corpus totals substantially
 (leak 266 → 272, `unknown_alias` 4,344 → 4,208, `unsupported` 49,760 →
@@ -129,7 +129,7 @@ candidate neighbourhood, the four candidate leaves, all 127 leaf lines of
 their four carrying functions and all six sibling-callee leaves being
 byte-identical between the two baselines, so the two predictions agree. The
 arbiter runs, on a fresh Clang pin: BEFORE byte-identical to
-`docs/reports/c-gateway-wave/artifacts/` in `diagnostics.json` and
+`docs/reports/archive/gateway-and-clang/c-gateway-wave/artifacts/` in `diagnostics.json` and
 `chunk-contracts.json` (raw and canonical, SHA-256 `4fea48c6…` /
 `c4f438e4…`), which is what proves the AFTER delta isolates this card's own
 change; AFTER moves **five** `unsupported` leaves and nothing else — the four
@@ -160,7 +160,7 @@ fmt/clippy clean — the same figures `C-GATEWAY-WAVE` measured, reached under
 **disclosed** sibling-worktree load (up to five concurrent `cargo test` runs)
 with none of constraint 16's five load-sensitive rows tripped, so none was
 re-verified in isolation. Baseline proposed to move to
-`docs/reports/w31-corpus-contracts-2/artifacts/`, every predecessor frozen.
+`docs/reports/archive/waves-20-39/w31-corpus-contracts-2/artifacts/`, every predecessor frozen.
 
 Write lends crossing the spawn boundary (2026-09-13): `WRITE-LEND-TASKS` lands
 the task-crossing half the residual `SLICE-PERMISSIONS-WRITE-LEND` named —
@@ -218,13 +218,13 @@ both probes exit 0, fmt/clippy clean; measured while two other worktrees ran
 their own workspace suites, an earlier run under that load tripping
 constraint 16's `vp04_vp07_vp08_process_lifecycle_and_payload_budgets` row,
 which the recorded run passes. Evidence:
-`docs/reports/write-lend-tasks/README.md`.
+`docs/reports/archive/language-and-tooling/write-lend-tasks/README.md`.
 
 Wave 31, card `CT-WIRE-LANE-3` (2026-09-13): the CT lane taking the two
 decisions waves 29–30 made ready. **CT25 mapped, 42/50 → 43/50** — *"Cleanup
 destroys owner after joins and loan expiry"*, expected Accept, the
 `composed_epoch` route's second accepted case and its first **adopting** one,
-mapped exactly as `docs/reports/region-joins-loan/README.md` §7 prescribed:
+mapped exactly as `docs/reports/archive/language-and-tooling/region-joins-loan/README.md` §7 prescribed:
 the fixtures moved from `epoch_credit/CT25_LOAN/` into
 `compiler/tests/fixtures/ct/CT25/` with `region_joins_loan.rs` repointed (11
 tests green on the moved bytes), one new refusing control
@@ -313,7 +313,7 @@ worktree sweep retains all four secondary checkouts because each has unique
 unmerged work, and verifies the existing recovery hashes. Fresh BEFORE reproduces
 the wave-30 diagnostic and chunk-contract archives byte for byte; the five staged
 measurements, every changed leaf, provisional diagnostic boundaries and new
-baseline are owned by `docs/reports/c-gateway-wave/`. Final gate: **4,484** workspace
+baseline are owned by `docs/reports/archive/gateway-and-clang/c-gateway-wave/`. Final gate: **4,484** workspace
 tests (0 failed, 8 ignored, `--no-fail-fast`), **200** Python tests, **123** Lean
 audits, both probes exit 0, fmt/clippy clean; provider 122 carried unchanged.
 The sandbox failure, its green outside-sandbox repeat and the final source's

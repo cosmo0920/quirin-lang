@@ -1,0 +1,13 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "w7-lean-ci",
+ "total_pruned_files": 1,
+ "total_pruned_bytes": 39894,
+ "artifacts": [
+  {
+   "path": "audits.log",
+   "bytes": 39894,
+   "sha256": "b50214cf83abb7de5f08f8e1aebf7a311e68815c0d45861e62c5c9f2358dc0e1"
+  }
+ ]
+}

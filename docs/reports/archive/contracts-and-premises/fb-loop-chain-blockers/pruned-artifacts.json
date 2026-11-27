@@ -1,0 +1,173 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "fb-loop-chain-blockers",
+ "total_pruned_files": 33,
+ "total_pruned_bytes": 1372893,
+ "artifacts": [
+  {
+   "path": "artifacts/after-chain-slice.json",
+   "bytes": 194080,
+   "sha256": "010a81e9d203278e208cc257d04b1fda22cdf2a1ebd6dd9f3dc85b20ba6fa32b"
+  },
+  {
+   "path": "artifacts/after-chain-system.json",
+   "bytes": 109816,
+   "sha256": "8a44d53cc417622be982b2d09fe2baeac1702cc9388fa82c70008809531e55bd"
+  },
+  {
+   "path": "artifacts/after-classes-slice.json",
+   "bytes": 141028,
+   "sha256": "ac53f3748b0eebacde2a2b8f94202beede89651e362376852f0784c822e78e5f"
+  },
+  {
+   "path": "artifacts/after-classes-system.json",
+   "bytes": 98607,
+   "sha256": "36d3ec6e636825c61b0f5d91f44c1b513ff24c8fe1d6c0f23eada868793bbfe6"
+  },
+  {
+   "path": "artifacts/before-chain-slice.json",
+   "bytes": 215176,
+   "sha256": "5e17d6bae1b31fc5519124e676fb150ec67e97ac5936a2c88a7d1cbe7a9830d9"
+  },
+  {
+   "path": "artifacts/before-chain-system.json",
+   "bytes": 134015,
+   "sha256": "6d2c77d259e77c878d2fa60900979f70e5a106b459597be59cbd1162cd9e126d"
+  },
+  {
+   "path": "artifacts/before-classes-slice.json",
+   "bytes": 158196,
+   "sha256": "6ae708ef614e9747298e4a2b3a7f62296b8e59d6e99e5a08c3722033af98bd0e"
+  },
+  {
+   "path": "artifacts/before-classes-system.json",
+   "bytes": 128874,
+   "sha256": "e97e1bedd1f7a41dc504063ac174cafb28a117762ca03ad0a52054f62ec4db13"
+  },
+  {
+   "path": "artifacts/movement-corpus-first-run.json",
+   "bytes": 96026,
+   "sha256": "f40946363bef03e1050df4d1ec3bb140373e0cd7b415088b00ecc9733dba4b85"
+  },
+  {
+   "path": "artifacts/movement-corpus.json",
+   "bytes": 97006,
+   "sha256": "ea40ba88b755855f11d06def939370c8b1b8c34d646a5fb050d07319959237bd"
+  },
+  {
+   "path": "gate/00-check.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/01-submodule.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/02-fmt.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/03-clippy.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/04-tests.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/05-probe.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/06-followup.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/07-lean.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/08-python.exit",
+   "bytes": 3,
+   "sha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04"
+  },
+  {
+   "path": "gate/09-index.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/09a-matrix.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/09b-python.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/10-packages-build.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/10b-index.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/10c-index-check.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/11-packages-verify.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/11a-packages-verify-librdkafka.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/11b-provider-check.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/11c-contracts-check.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/12-provider-tests.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/13-provider-python.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/14-provider-fmt.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/15-provider-clippy.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  }
+ ]
+}

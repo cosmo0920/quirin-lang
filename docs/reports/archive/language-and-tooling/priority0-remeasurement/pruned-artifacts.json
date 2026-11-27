@@ -1,0 +1,18 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "priority0-remeasurement",
+ "total_pruned_files": 2,
+ "total_pruned_bytes": 271901,
+ "artifacts": [
+  {
+   "path": "chain/chain.json.gz",
+   "bytes": 271426,
+   "sha256": "4d15b7a00fd624940ee7e1950caaa3600b48eb1a38421521ee3f507bb050cc1e"
+  },
+  {
+   "path": "chain/stdout.log",
+   "bytes": 475,
+   "sha256": "796171fe7eca33923c9881e2592a1206a763f9852576e7d66a249da6182c0521"
+  }
+ ]
+}

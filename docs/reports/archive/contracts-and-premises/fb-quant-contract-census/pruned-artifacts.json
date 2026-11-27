@@ -1,0 +1,13 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "fb-quant-contract-census",
+ "total_pruned_files": 1,
+ "total_pruned_bytes": 104590,
+ "artifacts": [
+  {
+   "path": "artifacts/patterns.json",
+   "bytes": 104590,
+   "sha256": "5523367f6bc1500d512f76ef0b98c22a803ab716d8f26c5b0c8135ae38b80182"
+  }
+ ]
+}

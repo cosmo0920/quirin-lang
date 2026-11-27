@@ -1,0 +1,13 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "contract-locks",
+ "total_pruned_files": 1,
+ "total_pruned_bytes": 3242,
+ "artifacts": [
+  {
+   "path": "python-final.log",
+   "bytes": 3242,
+   "sha256": "8b756be25b354df8fc6e6ab2bf80f911754e75be465bf7c02d5fed576ba66a3c"
+  }
+ ]
+}

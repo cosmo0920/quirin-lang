@@ -1,0 +1,13 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "nullable-lazy-constructor-in-loop",
+ "total_pruned_files": 1,
+ "total_pruned_bytes": 37191,
+ "artifacts": [
+  {
+   "path": "integration/gate-scope.json",
+   "bytes": 37191,
+   "sha256": "a848d32df0514db60c2f746852ea29d9af9b8e4456aed18bab44cbc018e3ff6a"
+  }
+ ]
+}

@@ -44,7 +44,7 @@ change. The order was:
 
 The prediction file states this chronology itself. It has never been edited.
 The human halt of 2026-10-23
-([record](../w48-impl-round1-halt/README.md)) stopped the card before any
+([record](../archive/wave-48/w48-impl-round1-halt/README.md)) stopped the card before any
 measurement. The resumed card then made these commits:
 
 - `0a9c4c3c6`: merged main `8991b7b58`.

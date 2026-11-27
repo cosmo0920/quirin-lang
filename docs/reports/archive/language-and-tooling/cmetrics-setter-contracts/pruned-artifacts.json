@@ -1,0 +1,18 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "cmetrics-setter-contracts",
+ "total_pruned_files": 2,
+ "total_pruned_bytes": 898,
+ "artifacts": [
+  {
+   "path": "failed-gate/cmetrics-setter-models.stderr.log",
+   "bytes": 0,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+   "path": "failed-gate/cmetrics-setter-models.stdout.log",
+   "bytes": 898,
+   "sha256": "0cf88824337fbd676d4a74fa5f7e5502f8f2d1a85094f45565562a2f37ff1c8d"
+  }
+ ]
+}

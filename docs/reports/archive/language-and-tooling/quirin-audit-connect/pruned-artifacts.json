@@ -1,0 +1,23 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "quirin-audit-connect",
+ "total_pruned_files": 3,
+ "total_pruned_bytes": 335306,
+ "artifacts": [
+  {
+   "path": "demonstration/landing-556460e31-then-landing-777fba16e/chain.json.gz",
+   "bytes": 121718,
+   "sha256": "bc9c958a8a3853a78c49de36424c8f0b1630c67311128729a37ac7b1707467ff"
+  },
+  {
+   "path": "demonstration/summary.json",
+   "bytes": 106703,
+   "sha256": "9d8f2d83cbeddd02538fce2d2ebc6f1b37a62674a037babd80e9348ff1a05f3d"
+  },
+  {
+   "path": "integration/gate-scope.json",
+   "bytes": 106885,
+   "sha256": "a7857dd3efecafabfc962d7399057df1a0dc3ece3130381ee6b907ff255c5514"
+  }
+ ]
+}

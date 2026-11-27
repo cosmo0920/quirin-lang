@@ -111,15 +111,15 @@ contract, audit or provider file appears in any of the five diffs, so the leak
 pin stays **266**, the contract corpus stays 73 modules, unit verdicts stay 2
 `Safe` / 42 provisional `Unsafe` / 137 `Unknown` / 4 data-only, the function
 histogram stays 150 / 84 / 4,600, and the baseline
-`docs/reports/wave23-c-operations/artifacts/` is neither re-measured nor
+`docs/reports/archive/waves-20-39/wave23-c-operations/artifacts/` is neither re-measured nor
 re-pinned. Nothing is promoted: no raw Cycle 19 unit is promoted, no function
 moved status in either direction, every provisional `Unsafe` stays a
 provisional claim and never an upstream defect claim, and full language
-conformance stays false. Evidence: `docs/reports/docs-compact-2/README.md`,
-`docs/reports/quirin-socket-v1/README.md`,
-`docs/reports/string-slice-io/README.md`,
-`docs/reports/c-emit-main-unify/README.md`,
-`docs/reports/http-quirin-v1/README.md`.
+conformance stays false. Evidence: `docs/reports/archive/language-and-tooling/docs-compact-2/README.md`,
+`docs/reports/archive/language-and-tooling/quirin-socket-v1/README.md`,
+`docs/reports/archive/language-and-tooling/string-slice-io/README.md`,
+`docs/reports/archive/language-and-tooling/c-emit-main-unify/README.md`,
+`docs/reports/archive/language-and-tooling/http-quirin-v1/README.md`.
 
 Native-library decoration Windows fixture repair (2026-09-12): the manifest and visibility-header mutation helpers now normalize checkout line endings before applying LF-spelled edits, so the four negative rows exercise their intended malformed include and non-derivable decoration cases under CRLF rather than either failing at the test guard or silently compiling the unedited manifest. The header-removal row also asserts that both binding statements were actually removed. The focused `native_library_header_decoration` suite passes all 22 tests; the full workspace test gate, formatting, Clippy, both reevaluation probes and all 99 Lean audits pass. Production reader semantics, verdicts, provider packages and frozen corpus artifacts are unchanged.
 

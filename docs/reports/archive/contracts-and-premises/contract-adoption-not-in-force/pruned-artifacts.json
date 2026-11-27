@@ -1,0 +1,13 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "contract-adoption-not-in-force",
+ "total_pruned_files": 1,
+ "total_pruned_bytes": 141709,
+ "artifacts": [
+  {
+   "path": "census/census.json",
+   "bytes": 141709,
+   "sha256": "5b7d89e28d3d961af7ee0a49db5cee487e11cf77a8a42ef804fe28dbf1d895cf"
+  }
+ ]
+}

@@ -1,0 +1,23 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "callback-member-released-fold",
+ "total_pruned_files": 3,
+ "total_pruned_bytes": 38049,
+ "artifacts": [
+  {
+   "path": "evidence/base-fixture-2.log",
+   "bytes": 2419,
+   "sha256": "35f92acf27ce05e11c4b4d52a9a353fcc2ad1b54dadde9c63ff1170b29174c0f"
+  },
+  {
+   "path": "evidence/base-fixture.log",
+   "bytes": 4504,
+   "sha256": "35c4da719fcf5f8be47ef2b718114648fcbfc72a1d2ed958f01813727219ec76"
+  },
+  {
+   "path": "integration/gate-scope.json",
+   "bytes": 31126,
+   "sha256": "a8e0f85acf86cbb9bf06d76618aea0e788c49f1358079663fbd146c10c5684e7"
+  }
+ ]
+}

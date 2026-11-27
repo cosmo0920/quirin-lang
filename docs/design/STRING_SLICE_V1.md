@@ -7,7 +7,7 @@
 > lexed and decoded to a well-formed UTF-8 payload, the `{ptr, len}` view is
 > modelled and reference-executed, `len(s)` and `s[low:high]` are checked and
 > lowered to §6's C11 aggregate, and the §8 evidence list is met at
-> `docs/reports/string-slice/README.md`. The implementation decides every §2
+> `docs/reports/archive/language-and-tooling/string-slice/README.md`. The implementation decides every §2
 > admission condition **statically** — the first of the two arms §2 permits —
 > because every bound in v1 is a check-time constant; it therefore introduces no
 > run-time failure arm, and a bound it cannot decide is refused by name.
@@ -21,7 +21,7 @@
 > **no** rendering selector, and one written in front of a string still refuses
 > at `Q072`. Neither output module accepts text on its own: what changed is that
 > a file naming **both** can render it, which is what §7 asked for. Evidence:
-> `docs/reports/string-slice-io/README.md`.
+> `docs/reports/archive/language-and-tooling/string-slice-io/README.md`.
 >
 > §5's **buffer borrow is implemented** by card `STRING-CONCAT`
 > (`Q077`–`Q079`, the same pass's third band), together with §9's
@@ -36,7 +36,7 @@
 > nothing and copies nothing at run time; its length is the sum of its pieces'
 > lengths and is a check-time constant, which is what makes a **computed
 > `Content-Length`** decidable. Evidence:
-> `docs/reports/string-concat/README.md`.
+> `docs/reports/archive/language-and-tooling/string-concat/README.md`.
 >
 > Still **proposed and unimplemented**: §5's **freeze** (`STRING-SLICE-FREEZE`),
 > §6's extern/native-library **crossing**, which stays refused
@@ -243,7 +243,7 @@ authority genuinely transferred through the ownership IR's range-carrying
 borrow node); on *this* composed route a lend still refuses by name until the
 cross-model overlap rule with these read loans exists
 (`SLICE-PERMISSIONS-COMPOSED-LEND`,
-`docs/reports/slice-permissions-write-lend/README.md`), so every sentence above
+`docs/reports/archive/language-and-tooling/slice-permissions-write-lend/README.md`), so every sentence above
 stands here unchanged.
 
 ## 6. C11 lowering and ABI boundary

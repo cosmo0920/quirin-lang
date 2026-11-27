@@ -1,0 +1,13 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "plugin-premise-integration",
+ "total_pruned_files": 1,
+ "total_pruned_bytes": 482,
+ "artifacts": [
+  {
+   "path": "post-matrix-python.log.gz",
+   "bytes": 482,
+   "sha256": "65abd632b51cc9052064114b8d112bbfe27fce0339a915d28c3095733f62cdc9"
+  }
+ ]
+}

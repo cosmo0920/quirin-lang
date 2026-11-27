@@ -220,7 +220,7 @@ environment failure is never readable as a statement about the analysed source
 serializes byte-identically to 5.0.0 — `"derivation_incomplete":[]` does not
 mention the element shape — so its `task_digest` is unchanged. This was
 measured, not assumed; the measurement and the exact digests that do move are
-recorded in `docs/reports/remaining-reason-codes/README.md`. Nothing else in
+recorded in `docs/reports/archive/early-waves/remaining-reason-codes/README.md`. Nothing else in
 the crate changed: protocol v1, evidence versions 1 and 2, every data-profile
 version, and every other record's bytes are untouched.
 

@@ -1,0 +1,18 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "rk-plugin-interceptor-candidates",
+ "total_pruned_files": 2,
+ "total_pruned_bytes": 307702,
+ "artifacts": [
+  {
+   "path": "artifact-diff.json.gz",
+   "bytes": 229575,
+   "sha256": "299f93175a8740d76d7f4ac54e2ca1eb81f6994a809ee05449c6edbd7905bedb"
+  },
+  {
+   "path": "artifact-summary.json",
+   "bytes": 78127,
+   "sha256": "5c11b441a72023cc755cfa9bb286d7d9baa4712f9d9cbb0d81c7fbf6c9384d26"
+  }
+ ]
+}

@@ -1,0 +1,23 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "provider-py-dual-stem-fixture",
+ "total_pruned_files": 3,
+ "total_pruned_bytes": 1898,
+ "artifacts": [
+  {
+   "path": "mutation-logs/M1-dual-stem-refusal-disabled.log",
+   "bytes": 895,
+   "sha256": "145aa5166d8b319ff84ff387e6b6bd3f4e189b8593718a0eb1703b419884ae44"
+  },
+  {
+   "path": "mutation-logs/M2-legacy-selector-admission-removed.log",
+   "bytes": 898,
+   "sha256": "dc12a18904fc301eaa05d825f003a41b351c494275c62a2e1164828be1e97be0"
+  },
+  {
+   "path": "mutation-logs/baseline.log",
+   "bytes": 105,
+   "sha256": "354c3d828acda6a2a7353175af6f47b9a6ade35a84756ca5433e46f76b8d8b55"
+  }
+ ]
+}

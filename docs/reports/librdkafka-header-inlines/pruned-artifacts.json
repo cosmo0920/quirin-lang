@@ -1,0 +1,18 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "librdkafka-header-inlines",
+ "total_pruned_files": 2,
+ "total_pruned_bytes": 2056301,
+ "artifacts": [
+  {
+   "path": "census/premise-reach.json",
+   "bytes": 86926,
+   "sha256": "14626ec43f30235d7c82e083d182fe8a17cb653301257ef2cc78bde6e05e9578"
+  },
+  {
+   "path": "integrate-r4-native-comparison.json",
+   "bytes": 1969375,
+   "sha256": "9db1b0162ca9a15c90108fe05b54b8eea8fceb74e0941549574acd5482d83ff7"
+  }
+ ]
+}

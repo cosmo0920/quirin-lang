@@ -95,7 +95,7 @@ checkouts, so no cross-checkout executable/archive byte identity is claimed.
 The delegated same-checkout repeated-build comparison remains its narrower
 measurement.
 
-The provider lane's [report](../provider-contract-bundle/README.md) preserves
+The provider lane's [report](../archive/language-and-tooling/provider-contract-bundle/README.md) preserves
 the initial Python member-order assertion failure and the sandbox confinement
 failure (121 passed/1 failed, exit 101). The corrected Python tests and complete
 native-host suite passed. No assertion or confinement rule was weakened.

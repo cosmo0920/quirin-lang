@@ -2,14 +2,14 @@
 
 Card RULE37-PILOT, the second pilot of `GATEWAY-RULE-API-PILOT-MIGRATIONS`
 ([plan](../../plans/pluggable-cards/README.md) §3 B and §4;
-[interface report](../gateway-rule-api/README.md) §7). Base `80c8aea98`.
+[interface report](../archive/language-and-tooling/gateway-rule-api/README.md) §7). Base `80c8aea98`.
 Implementation `6b6a3a438`; [prediction](PREDICTION.md) committed before it
 (`1ac59451c`).
 
 ## 1. What moved
 
 Rule 37 ([rule](../../agents/rules/37.md),
-[card](../w48-bu-rk-result-constructors/README.md)) has three parts in the
+[card](../archive/wave-48/w48-bu-rk-result-constructors/README.md)) has three parts in the
 gateway. Two are admissions and moved; one is a guard and stays.
 
 | Part | Before | After |
@@ -149,7 +149,7 @@ last, `rd_strdup` with `asserted_allocation`): `rdkafka_admin.c`
 memory access is outside the resource projection` (the `sizeof(*e)` mention)
 or with a call to the uncontracted constructor below them. No row moves toward
 `Safe` with the rule off. Rule 37's own card recorded a forecast, not measured
-rows ([prediction](../w48-bu-rk-result-constructors/PREDICTION.md): five
+rows ([prediction](../archive/wave-48/w48-bu-rk-result-constructors/PREDICTION.md): five
 primary rows); three of its five forecast rows are measured here
 (`ConsumerGroupListing_new`, `_copy`, `_copy_opaque`), `topic_partition_new`
 and `topic_partition_new_with_id_and_name` are not among the moved rows, and

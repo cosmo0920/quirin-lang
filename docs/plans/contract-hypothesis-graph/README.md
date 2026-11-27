@@ -10,7 +10,7 @@
 
 | Stage | Spec & Grammar | Standing and evidence |
 |---|---|---|
-| **Graph v1** (`CONTRACT-HYPOTHESIS-GRAPH-V1`) | `C04.18.1` | **Completed** ([report](../../reports/contract-hypothesis-graph-v1/README.md)): acyclic content-addressed premise/hypothesis DAG, dispositions vs. warrants (`derived`, `observed`, `declared`, `human-reviewed`, `provider-proposed`), context-key equality before conjunction, per-row consultation closure. |
+| **Graph v1** (`CONTRACT-HYPOTHESIS-GRAPH-V1`) | `C04.18.1` | **Completed** ([report](../../reports/archive/contracts-and-premises/contract-hypothesis-graph-v1/README.md)): acyclic content-addressed premise/hypothesis DAG, dispositions vs. warrants (`derived`, `observed`, `declared`, `human-reviewed`, `provider-proposed`), context-key equality before conjunction, per-row consultation closure. |
 | **Graph v2** (Neutral decomposition & binding refs) | `C04.18.2` | **Completed**: explicit formal binding references and neutral premise decomposition. |
 | **Graph v3 & v4** (`quant proposition` & `quant condition`) | `C04.18.7`–`18.8`, `G01p`, `G01c` | **Completed**: first-order mathematical formulas over unbounded `integer` and domain sorts, explicit `requirements` retention, and `entry`/`normal`/`error(E)`/`any` conditions. |
 | **Formula v1 & Prose Ban (`SP1`–`SP10`)** | `C04.18.9`, `G05-formula` | **Completed**: all provider premises migrated to symbolic formula v1; prose string premises (`QF001`) and string hypothesis atoms `resource_hypothesis` (`QF002`) are globally refused on every route. |

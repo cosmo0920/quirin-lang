@@ -1,0 +1,23 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "remaining-borrow-residuals",
+ "total_pruned_files": 3,
+ "total_pruned_bytes": 42108,
+ "artifacts": [
+  {
+   "path": "logs/corpus-after.log.gz",
+   "bytes": 14039,
+   "sha256": "10b6f65221064ecbb55c9a144a71695fad8f32f7424983c3ac317407d6ab16df"
+  },
+  {
+   "path": "logs/corpus-before.log.gz",
+   "bytes": 14031,
+   "sha256": "a39b9a1a46660ea3fb9d8ca2d6474ef9594e65726e1c3f4b1b26b25a7a9bdbf2"
+  },
+  {
+   "path": "logs/corpus-census.log.gz",
+   "bytes": 14038,
+   "sha256": "166be97f0332bf3ebba05ffabd7e4e227fb7d9d80b36a80534c4cfd949aa328d"
+  }
+ ]
+}

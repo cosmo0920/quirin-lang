@@ -1,0 +1,43 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "w7-diagnostic-attribution",
+ "total_pruned_files": 7,
+ "total_pruned_bytes": 2227,
+ "artifacts": [
+  {
+   "path": "clippy.log.gz",
+   "bytes": 155,
+   "sha256": "413abf29fef93ca0c50f6e1c2133c22c39e32e1f5b902c5e29ab3ada84d9dc45"
+  },
+  {
+   "path": "fixed-probe.log.gz",
+   "bytes": 131,
+   "sha256": "4375cb5bc00e315d65f6986ca18830c081c7f63741b7e05e03413a8c91661e50"
+  },
+  {
+   "path": "format.log.gz",
+   "bytes": 20,
+   "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+  },
+  {
+   "path": "host-tests.log.gz",
+   "bytes": 674,
+   "sha256": "627e9610a6f77aaa8822ff3ff5294830335bf008b6492cce33fe21739fd069f8"
+  },
+  {
+   "path": "original-probe.log.gz",
+   "bytes": 141,
+   "sha256": "c0ae3a82e967cb42361f2731b5b369065f94a7776a37130486ddb32463d58eb5"
+  },
+  {
+   "path": "process-conformance.log.gz",
+   "bytes": 430,
+   "sha256": "aed27a1599b880156d28d4baa2111d160688458f62c7a75ed464baa61b5611e8"
+  },
+  {
+   "path": "regression-before.log.gz",
+   "bytes": 676,
+   "sha256": "a9ab2aed5dc5d84b6c38061606b2df0e57979e4f3f6520dcbea7586e38778dc4"
+  }
+ ]
+}

@@ -6,7 +6,7 @@
 Date: 2026-09-08. Base checkpoint: `a4492da` (the remaining-work wave tip).
 Depends on [T02](../remaining-t02/README.md) (the model checker being lowered
 onto), [T01](../remaining-t01/README.md) (the profile design, §4.3), and the
-[W6 frontend gates](../w6-frontend-gates/README.md) (body-local guard binders).
+[W6 frontend gates](../archive/early-waves/w6-frontend-gates/README.md) (body-local guard binders).
 
 **Scope.** One bounded source surface, one Linux backend. This card adds a
 source route; it does not implement general source concurrency, does not retire

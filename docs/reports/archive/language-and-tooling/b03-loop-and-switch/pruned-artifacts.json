@@ -1,0 +1,28 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "b03-loop-and-switch",
+ "total_pruned_files": 4,
+ "total_pruned_bytes": 1993,
+ "artifacts": [
+  {
+   "path": "mutations-restored.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "mutations-restored.log",
+   "bytes": 857,
+   "sha256": "8414db6dddef4aa620197df8b9f368b2273df151416192359b67ea3750ad5e31"
+  },
+  {
+   "path": "mutations.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "mutations.log",
+   "bytes": 1130,
+   "sha256": "1c592949a91922c29cb410cc59dc75687108e3ffe2e384fbab0ebff9a454caf2"
+  }
+ ]
+}

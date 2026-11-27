@@ -1,0 +1,13 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "refused-store-of-call-result-escape",
+ "total_pruned_files": 1,
+ "total_pruned_bytes": 1333,
+ "artifacts": [
+  {
+   "path": "evidence/route-census/leak-witness.jsonl.gz",
+   "bytes": 1333,
+   "sha256": "b5be66558b85781ca3f8e8017e71b62c08777d6f0766305c519d44f2d99166d1"
+  }
+ ]
+}

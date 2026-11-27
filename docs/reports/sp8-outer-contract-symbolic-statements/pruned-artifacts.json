@@ -1,0 +1,13 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "sp8-outer-contract-symbolic-statements",
+ "total_pruned_files": 1,
+ "total_pruned_bytes": 218237,
+ "artifacts": [
+  {
+   "path": "gate/gate-1.json",
+   "bytes": 218237,
+   "sha256": "7f097f448f353e71c251292886d275854fa6598af2cfb5f89f3f4723dbcf60a2"
+  }
+ ]
+}

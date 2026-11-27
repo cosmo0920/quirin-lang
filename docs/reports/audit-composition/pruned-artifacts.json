@@ -1,0 +1,13 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "audit-composition",
+ "total_pruned_files": 1,
+ "total_pruned_bytes": 107317,
+ "artifacts": [
+  {
+   "path": "identity.json",
+   "bytes": 107317,
+   "sha256": "9e8646301c5e5d4188694c9a0ecd140a641ab7c414546809c2aa550f6d029a61"
+  }
+ ]
+}

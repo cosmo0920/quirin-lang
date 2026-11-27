@@ -1,0 +1,13 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "remaining-reason-codes",
+ "total_pruned_files": 1,
+ "total_pruned_bytes": 200378,
+ "artifacts": [
+  {
+   "path": "audit/chunkio-core-audit.assumptions.json",
+   "bytes": 200378,
+   "sha256": "51f9f0017948c5f65bba744a0d34ffd29126e02dbb2a03cc8e4788f5bca538f7"
+  }
+ ]
+}

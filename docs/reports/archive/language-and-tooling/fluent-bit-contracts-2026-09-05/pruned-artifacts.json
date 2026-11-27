@@ -1,0 +1,18 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "fluent-bit-contracts-2026-09-05",
+ "total_pruned_files": 2,
+ "total_pruned_bytes": 43892,
+ "artifacts": [
+  {
+   "path": "contract-tests.log",
+   "bytes": 429,
+   "sha256": "11402e8b1db92aee2dc7c7d2eccf245c277747686ecb2ec79ad0c8cea422136e"
+  },
+  {
+   "path": "source-audit.log",
+   "bytes": 43463,
+   "sha256": "6608f47b57fb8f9a71c9519181158b15b419d70094cd73931bee1eb36a5e5223"
+  }
+ ]
+}

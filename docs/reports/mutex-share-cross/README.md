@@ -1,6 +1,6 @@
 # MUTEX-SHARE-CROSS — a payload crosses because a verified mutex protects it (wave 32)
 
-> Runtime import maintenance: archived source inputs and runnable snippets now use `#import`; original results and hashes describe their recorded revision. See the [spelling attribution](../runtime-source-imports/spelling-attribution.json) for maintained source identities.
+> Runtime import maintenance: archived source inputs and runnable snippets now use `#import`; original results and hashes describe their recorded revision. See the [spelling attribution](../archive/language-and-tooling/runtime-source-imports/spelling-attribution.json) for maintained source identities.
 
 Card brief: wave 32's language head — the composition CT46 needs, where a value
 that is **Send but not Sync** crosses a task boundary **only** through a

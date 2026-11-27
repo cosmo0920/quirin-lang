@@ -1,0 +1,83 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "composed-window-reach",
+ "total_pruned_files": 15,
+ "total_pruned_bytes": 143755,
+ "artifacts": [
+  {
+   "path": "emission-census.json",
+   "bytes": 131326,
+   "sha256": "86b73410b30b24c8e035a5d01b5756c2fc87bf97d5ddac9be458c4b281eacfe1"
+  },
+  {
+   "path": "gate/cargo-test.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/clippy.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/fmt.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/followup.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/lean.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/preservation-verify.log",
+   "bytes": 654,
+   "sha256": "3c1d7392d9b69bc7ffed07573a0a14a0fa465d11673245b1a1360b2a8c28e224"
+  },
+  {
+   "path": "gate/probe.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/python-final.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/python.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/submodule.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "mutations.log",
+   "bytes": 2940,
+   "sha256": "9699ddca658c4005cbcc935667323c34e5c3d6b4f6cfa176ebe4541668b3a252"
+  },
+  {
+   "path": "probes/verdicts.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "probes/verdicts.log",
+   "bytes": 6546,
+   "sha256": "bec0d05498c515038e3c3f8c81ece2d939a4acd483aa590df2113cfbfc856541"
+  },
+  {
+   "path": "wave39-anchoring.log",
+   "bytes": 2259,
+   "sha256": "27e4a55bfbc1e89205b504e56785da4000b59d542d5df7bbbb383790f0d18eeb"
+  }
+ ]
+}

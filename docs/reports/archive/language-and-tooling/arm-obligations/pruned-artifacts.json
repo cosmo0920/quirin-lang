@@ -1,0 +1,28 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "arm-obligations",
+ "total_pruned_files": 4,
+ "total_pruned_bytes": 7938079,
+ "artifacts": [
+  {
+   "path": "identity/bytes-corpus.txt",
+   "bytes": 7938070,
+   "sha256": "acb7e76b05adfad1dad5f357d79e0b7a713485d16bacba17862df407b732fd4a"
+  },
+  {
+   "path": "identity/corpus-substitution.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "identity/strip.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "identity/substitution-ids.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  }
+ ]
+}

@@ -1,0 +1,18 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "w45-fb-engine-progress",
+ "total_pruned_files": 2,
+ "total_pruned_bytes": 162660,
+ "artifacts": [
+  {
+   "path": "census/loop-inventory.json",
+   "bytes": 161326,
+   "sha256": "12d6a6049acd66907e189435a0e775a40700d09eda6931dd299b086a8757102f"
+  },
+  {
+   "path": "integration/34-contracts-raw-diff.log",
+   "bytes": 1334,
+   "sha256": "0228259a21541d4038d096f26b275c185cab54277e93436773e3797ada742087"
+  }
+ ]
+}

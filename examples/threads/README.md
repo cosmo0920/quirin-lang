@@ -193,7 +193,7 @@ fatal in the emitted runtime, preserving storage that a worker might still use.
 
 These examples use the implemented scoped-task grammar and the `Buffer`
 intrinsics (one `i32` payload per buffer). They are not a general thread-pool or
-parallel-array API. See the [Windows thread implementation report](../../docs/reports/windows-c11-threads/README.md)
+parallel-array API. See the [Windows thread implementation report](../../docs/reports/archive/language-and-tooling/windows-c11-threads/README.md)
 for the supported adapter subset and validation bounds.
 
 ## Records across tasks

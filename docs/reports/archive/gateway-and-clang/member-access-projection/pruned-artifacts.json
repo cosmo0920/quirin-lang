@@ -1,0 +1,13 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "member-access-projection",
+ "total_pruned_files": 1,
+ "total_pruned_bytes": 885262,
+ "artifacts": [
+  {
+   "path": "census/premises.jsonl.gz",
+   "bytes": 885262,
+   "sha256": "e60ba2f4782f0a9f0d1f6fd1354129690f848151316c887a5c59cc86578e3f99"
+  }
+ ]
+}

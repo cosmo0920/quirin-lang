@@ -109,10 +109,10 @@ rows tripped during two cards' runs (the confined-fixture write test and the
 `RLIMIT_NPROC` row) and were verified in isolation exactly as that constraint
 prescribes, with no assertion weakened. Evidence:
 `docs/reports/ct-wire-lane/README.md`,
-`docs/reports/loop-unroll-budget/README.md`,
-`docs/reports/http-v1-computed-length/README.md`,
-`docs/reports/examples-suite-wire/README.md`,
-`docs/reports/socket-inet-addresses/README.md`,
-`docs/reports/wave26-close/gate.json`.
+`docs/reports/archive/language-and-tooling/loop-unroll-budget/README.md`,
+`docs/reports/archive/language-and-tooling/http-v1-computed-length/README.md`,
+`docs/reports/archive/language-and-tooling/examples-suite-wire/README.md`,
+`docs/reports/archive/language-and-tooling/socket-inet-addresses/README.md`,
+`docs/reports/archive/waves-20-39/wave26-close/gate.json`.
 
 <!-- migrated-section:end -->

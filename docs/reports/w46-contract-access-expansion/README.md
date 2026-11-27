@@ -30,8 +30,8 @@ particular baseline does not name them in diagnostics.
 
 | Card | New declarations | Branch tip | Main merge |
 |---|---:|---|---|
-| [Metric aggregate getters](../w46-metric-aggregate-contracts/README.md) | 6 | `4767d3b1` | `4d73ef16` |
-| [Fluent routing queries](../w46-fluent-routing-query-contracts/README.md) | 5 | `65d717b4` | `bfa510b7` |
+| [Metric aggregate getters](../archive/waves-40-47/w46-metric-aggregate-contracts/README.md) | 6 | `4767d3b1` | `4d73ef16` |
+| [Fluent routing queries](../archive/waves-40-47/w46-fluent-routing-query-contracts/README.md) | 5 | `65d717b4` | `bfa510b7` |
 
 The [tracked declaration diff](census/added-contracts.json) records all eleven
 names. Merge conflicts in the two corpus test files were resolved by taking

@@ -1,0 +1,18 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "remaining-loader-abi-modes",
+ "total_pruned_files": 2,
+ "total_pruned_bytes": 28040,
+ "artifacts": [
+  {
+   "path": "artifacts/corpus-after-run.log.gz",
+   "bytes": 14020,
+   "sha256": "8151a25d0ae5ee1e1e84ff9af6953c09e4608afded0ea53328bf087c142d4dac"
+  },
+  {
+   "path": "artifacts/corpus-before-run.log.gz",
+   "bytes": 14020,
+   "sha256": "d007dd418723440b309900835eb234d5b8391d5261f0814d5cf809584f30cbeb"
+  }
+ ]
+}

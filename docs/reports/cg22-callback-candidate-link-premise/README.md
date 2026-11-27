@@ -1,7 +1,7 @@
 # CG22-CALLBACK-CANDIDATE-LINK-PREMISE: the twelve-home link premise
 
 Card CG22-CALLBACK-CANDIDATE-LINK-PREMISE (launched by the user 2026-11-18),
-follow-up of [CG22-CALLBACK-CANDIDATE-CONTRACTS](../cg22-callback-candidate-contracts/README.md).
+follow-up of [CG22-CALLBACK-CANDIDATE-CONTRACTS](../archive/gateway-and-clang/cg22-callback-candidate-contracts/README.md).
 Base `974434463` (main). The integrator chose the discharge: extend the stated
 link premise as a **new evaluation profile**, `twelve-home`, without touching
 `eight-home` or any other pinned profile. The card is **data only**: no

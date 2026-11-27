@@ -1,0 +1,103 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "w2-preprocessor-transport",
+ "total_pruned_files": 19,
+ "total_pruned_bytes": 691765,
+ "artifacts": [
+  {
+   "path": "audit.log.gz",
+   "bytes": 13849,
+   "sha256": "253f569960d1cc6efef802ae0771bffffd995096ceacb3405ddc94e5f5d4a154"
+  },
+  {
+   "path": "chunk-contracts.json.gz",
+   "bytes": 268590,
+   "sha256": "1491151435de0baed8b2125d50b1ae86cb6cb3eb7c043d6984a702769387053f"
+  },
+  {
+   "path": "cli.log.gz",
+   "bytes": 304,
+   "sha256": "be65f5e245fb1a882403662dffdd6b3d1ec3cbbb023193012dc5a41b478e0b18"
+  },
+  {
+   "path": "clippy.log.gz",
+   "bytes": 164,
+   "sha256": "fab98bb410ee1d9659448622139218c0a600e175ea039b0ce512fe72efa6a864"
+  },
+  {
+   "path": "cmetrics.log.gz",
+   "bytes": 333,
+   "sha256": "6934d46e187dec35a32f3fd88fbd7b6e2da2b9796973f4b500da99e6066d8a4f"
+  },
+  {
+   "path": "diagnostics.json.gz",
+   "bytes": 372538,
+   "sha256": "0e229046194cf4359f3cf7d798952a5a967b19ee62712129a95908b4ba0e6dfa"
+  },
+  {
+   "path": "fmt.log.gz",
+   "bytes": 20,
+   "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+  },
+  {
+   "path": "focused.log.gz",
+   "bytes": 464,
+   "sha256": "090abc61e3a9e915d0ab19433586aa65bcd520460a0c8998c8e64b1ffd80a4cf"
+  },
+  {
+   "path": "followup.log.gz",
+   "bytes": 1745,
+   "sha256": "ca86e224565e6a1570bbd7bba29a4499aee9d929a2173bb8aa5121656e9bc175"
+  },
+  {
+   "path": "identity.log.gz",
+   "bytes": 320,
+   "sha256": "30c862704a85ab823bfb88b8e48cf43354781ac8a01bfb334693b2d8215f9b6a"
+  },
+  {
+   "path": "lean-audits.log.gz",
+   "bytes": 10122,
+   "sha256": "b610b5153228e9925ea137034f1131f860b9b0720bca6b11c0864c0421cf8acf"
+  },
+  {
+   "path": "lean.log.gz",
+   "bytes": 60,
+   "sha256": "b17aae97a7347ffca8031ca36026511a1cf8b909ca61599387b288d801f0a46c"
+  },
+  {
+   "path": "probe.log.gz",
+   "bytes": 659,
+   "sha256": "ba1b892a7a38f851dea5791ecb8b032e2bc1c96ae9aeb559530aa62355726717"
+  },
+  {
+   "path": "provider-clippy.log.gz",
+   "bytes": 174,
+   "sha256": "9cb167bb61ac40c5e8e7ea46d117b88dcc8f14d75dcccaf749ca69200a6ad641"
+  },
+  {
+   "path": "provider-fmt.log.gz",
+   "bytes": 20,
+   "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+  },
+  {
+   "path": "providers.log.gz",
+   "bytes": 1536,
+   "sha256": "349c8b137d0fd7041dc9551d27cc42dc0a33c4a3ee3ecabb03582f152a737b5e"
+  },
+  {
+   "path": "python.log.gz",
+   "bytes": 597,
+   "sha256": "3b9e899afb9fcb47917e164849a5e7051ca28ba483ea650e1de792f4c89e0795"
+  },
+  {
+   "path": "red.log.gz",
+   "bytes": 536,
+   "sha256": "24afe3c2c10140538a451983b3a391b1d16dff389747ea39d7a261c70b7ac8d9"
+  },
+  {
+   "path": "workspace.log.gz",
+   "bytes": 19734,
+   "sha256": "c99f944da60bae8cfe60693ce3c0974e611064f46cbfb067a6bdf61d6e920bf2"
+  }
+ ]
+}

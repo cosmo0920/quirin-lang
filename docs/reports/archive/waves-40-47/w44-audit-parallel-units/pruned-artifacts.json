@@ -1,0 +1,18 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "w44-audit-parallel-units",
+ "total_pruned_files": 2,
+ "total_pruned_bytes": 2851,
+ "artifacts": [
+  {
+   "path": "identity/identity-all.log",
+   "bytes": 2009,
+   "sha256": "00a10bf304365322374c954afb899d7c9f34276b8fbfd9ae1b4c3bf3622919e9"
+  },
+  {
+   "path": "identity/identity-final.log",
+   "bytes": 842,
+   "sha256": "f72d1eb68783916737e7f7bf74c5756c63b7da5a5f307420a5cdf90e64fdf87e"
+  }
+ ]
+}

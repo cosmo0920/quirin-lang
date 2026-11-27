@@ -1,7 +1,7 @@
 # Documentation restructuring checkpoints
 
 Preserved text from the restructuring base, not current authority. Each file is
-below 32 KiB. The [migration report](../../../reports/docs-structure-compression/README.md)
+below 32 KiB. The [migration report](../../../reports/archive/language-and-tooling/docs-structure-compression/README.md)
 explains exact reconstruction; current rules start at [AGENTS.md](../../../../AGENTS.md).
 
 - [Agent introduction](agent-introduction.md)

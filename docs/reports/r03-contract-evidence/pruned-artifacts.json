@@ -1,0 +1,58 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "r03-contract-evidence",
+ "total_pruned_files": 10,
+ "total_pruned_bytes": 112992,
+ "artifacts": [
+  {
+   "path": "clippy.log",
+   "bytes": 814,
+   "sha256": "a59af000e3d82ee9a3ef344d384ea71d2139080066a3ab3e42b3555b961e8997"
+  },
+  {
+   "path": "consumer.log",
+   "bytes": 453,
+   "sha256": "214c0d832592fc0db432c390e0c450fcdc9f9232e7a556859bb9a65d32af9c8e"
+  },
+  {
+   "path": "fmt.log",
+   "bytes": 0,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+   "path": "followup.log",
+   "bytes": 9896,
+   "sha256": "1697cfe49147c6c7298fb6b94b6818606d03e09786770100a823fa24acf123b3"
+  },
+  {
+   "path": "lean-audits.log",
+   "bytes": 42022,
+   "sha256": "077b636d3b09b663a4b16bce47364a7e6dcd90acfefb25c57bedbc535b755ac7"
+  },
+  {
+   "path": "lean.log",
+   "bytes": 126,
+   "sha256": "d37d8404bce4cb463317a8b986a08513d6f9bfab460374e8b8174af93f425171"
+  },
+  {
+   "path": "observation-baseline.log",
+   "bytes": 1213,
+   "sha256": "21fb036f3bab8ff5b682e771dbcf93a60f69a80a8094ac478e503a2c41194261"
+  },
+  {
+   "path": "observation-fixed.log",
+   "bytes": 976,
+   "sha256": "195e232916ee26cd7161e6e390e6e6b7460c71e78bbd11903c7b3dfe7c78b75b"
+  },
+  {
+   "path": "probe.log",
+   "bytes": 2663,
+   "sha256": "1df32cc1f4e314b1f2cbf9d17e31550922fd0927acb3972f4573c5488a5bfa68"
+  },
+  {
+   "path": "workspace.log",
+   "bytes": 54829,
+   "sha256": "415ae600349225996b8d7e134409428bcf83aa9296587853b307225685c6e27b"
+  }
+ ]
+}

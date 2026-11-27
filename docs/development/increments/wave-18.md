@@ -31,7 +31,7 @@ modules, CT 33/50, `qcore-schemas` 14.0.0. Nothing is promoted.
   to state their premise; the manifest-resident artifact-identity entry is
   staged as UNSAFE-LINKAGE-ARTIFACT. 33 audited theorems, a fixed sanitizer
   run linking real uncontracted C. Evidence:
-  `docs/reports/wave18-unsafe-linkage/README.md`.
+  `docs/reports/archive/early-waves/wave18-unsafe-linkage/README.md`.
 - Proof-phase shortening (LEAN-PERF): the audit gate drops cold 121.4 s to
   61.0 s and incremental 36.5 s to 4.2 s with nothing proved changed — no
   theorem statement, domain, digest or pinned number moved, `native_decide`
@@ -42,7 +42,7 @@ modules, CT 33/50, `qcore-schemas` 14.0.0. Nothing is promoted.
   reverted where it regressed. The audit phase parallelises behind a
   still-serialised build; there is deliberately no cross-worktree cache and
   CI stays cold, which is the recorded trust argument. Evidence:
-  `docs/reports/wave18-lean-perf/README.md`.
+  `docs/reports/archive/early-waves/wave18-lean-perf/README.md`.
 - Pipe and the operator table (PIPE-OPERATOR): `|>` lands as a pure
   token-stream desugaring (first-argument insertion, left-associative) with
   byte-identical emitted C against the hand-written twin and linearity
@@ -59,7 +59,7 @@ modules, CT 33/50, `qcore-schemas` 14.0.0. Nothing is promoted.
   native-library design note moves its reservation to Q039+, closing a latent
   third collision. Multi-stage chains (PIPE-CHAIN) and the or/and lowerings
   wait on a source branching construct — the named wave-19 prerequisite.
-  35 audited theorems. Evidence: `docs/reports/wave18-pipe-operator/README.md`.
+  35 audited theorems. Evidence: `docs/reports/archive/early-waves/wave18-pipe-operator/README.md`.
 Merged gate at this checkpoint: 2,959 workspace tests (8 ignored),
 122 provider tests, 193 Python tests, 79 Lean audits, both reevaluation
 examples exit 0, fmt and clippy clean. Follow-on accounting lives in

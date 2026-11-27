@@ -1,6 +1,6 @@
 # CT42-CELL-ROUTE (wave 39) — route the socket protocol cell from source, and map CT42
 
-> Runtime import maintenance: archived source inputs and runnable snippets now use `#import`; original results and hashes describe their recorded revision. See the [spelling attribution](../runtime-source-imports/spelling-attribution.json) for maintained source identities.
+> Runtime import maintenance: archived source inputs and runnable snippets now use `#import`; original results and hashes describe their recorded revision. See the [spelling attribution](../archive/language-and-tooling/runtime-source-imports/spelling-attribution.json) for maintained source identities.
 
 Base `e878b362` (= `origin/main` at branch time). Report directory:
 `docs/reports/ct42-cell-route/`. Everything numbered below was measured on

@@ -1,0 +1,13 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "cell-guard-result-range",
+ "total_pruned_files": 1,
+ "total_pruned_bytes": 160672,
+ "artifacts": [
+  {
+   "path": "census/census.json",
+   "bytes": 160672,
+   "sha256": "846bf9e3cf4861710625562e1389a4f39039e9c5a66f5b4ad40c690c39dccdd8"
+  }
+ ]
+}

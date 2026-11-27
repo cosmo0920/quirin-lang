@@ -1,0 +1,23 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "stability-reeval-5",
+ "total_pruned_files": 3,
+ "total_pruned_bytes": 4687,
+ "artifacts": [
+  {
+   "path": "integration/34-contracts-raw-diff.log",
+   "bytes": 1334,
+   "sha256": "0228259a21541d4038d096f26b275c185cab54277e93436773e3797ada742087"
+  },
+  {
+   "path": "probes/probe.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "probes/probe.log",
+   "bytes": 3350,
+   "sha256": "12aec01f54647c8888c360ebfe0b6a6f68ddd8dad720d3ec9606c8f6e25e2015"
+  }
+ ]
+}

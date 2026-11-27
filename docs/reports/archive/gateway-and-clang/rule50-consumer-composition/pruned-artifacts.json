@@ -1,0 +1,23 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "rule50-consumer-composition",
+ "total_pruned_files": 3,
+ "total_pruned_bytes": 318176,
+ "artifacts": [
+  {
+   "path": "artifacts/native-comparison-corpus-attempt1.json",
+   "bytes": 72535,
+   "sha256": "c6fc08c60a146522f28309bbfac5a2494507abeb5669e95560c9f068a8c1e688"
+  },
+  {
+   "path": "artifacts/native-comparison-corpus.json",
+   "bytes": 73089,
+   "sha256": "2c538f0beed51c0fdae108b5216d70e8b50339e061e5f3f7027ebd484df21654"
+  },
+  {
+   "path": "integration/gate-scope.json",
+   "bytes": 172552,
+   "sha256": "28356ff3568e4f16c2373d1c6f1e958b5fa0c6b3705154da4e10cb9246c949b2"
+  }
+ ]
+}

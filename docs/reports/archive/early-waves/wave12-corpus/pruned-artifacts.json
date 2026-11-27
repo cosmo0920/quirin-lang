@@ -1,0 +1,38 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "wave12-corpus",
+ "total_pruned_files": 6,
+ "total_pruned_bytes": 1753813,
+ "artifacts": [
+  {
+   "path": "artifacts/chunk-contracts.json.gz",
+   "bytes": 281900,
+   "sha256": "44fa0df45e13d8ed8d0209a728bc0bce969e1280fbad6f3ea6d86234e9094883"
+  },
+  {
+   "path": "artifacts/diagnostics.json.gz",
+   "bytes": 386918,
+   "sha256": "954df67d33116fb815725fb86c1a7b583c583207f325afabf305a44a0eb9718a"
+  },
+  {
+   "path": "corpus-run.log.gz",
+   "bytes": 14634,
+   "sha256": "b39f4d5c74ed98932ba5c36a15c3b2b0c5220ee31154ebd9866ec2a9c6a74445"
+  },
+  {
+   "path": "diff-wave11-to-wave12.json.gz",
+   "bytes": 433243,
+   "sha256": "3276c0898da74558463b6fefb741925ac9660b125213c46e1ccabd01edf02c57"
+  },
+  {
+   "path": "triangulation-vs-b09b10.json.gz",
+   "bytes": 535499,
+   "sha256": "aae8e7e00b347c9a5eaf77e256bfbba2bd4d4fab9948d266bcf7ae8fbe632b64"
+  },
+  {
+   "path": "triangulation-vs-expr-pos.json.gz",
+   "bytes": 101619,
+   "sha256": "cf9a33a1cf2a2ae103e0fc376e2da4af203f08b404c0bcc5b1a2d5772381a982"
+  }
+ ]
+}

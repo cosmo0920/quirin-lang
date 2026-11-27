@@ -58,7 +58,7 @@ runs carries the test-build configuration (`--link`, `--batch-size`:
 [Test build storage](#test-build-storage)). The provider workspace is
 not covered — its conformance binaries launch process providers throughout —
 and keeps plain `cargo test`; the runner refuses any workspace but the root.
-[Report](../reports/w44-test-suite-wall-time/README.md).
+[Report](../reports/archive/waves-40-47/w44-test-suite-wall-time/README.md).
 
 A delegated card's worktree is a fresh checkout, so the submodule step is due
 every time; a missing `third_party/libevent` surfaces late and reads like a
@@ -109,18 +109,18 @@ binders and type of every `optDeclSig` signature (`def`, `abbrev`, `example`,
 `inductive`/`structure` headers, constructors, structure fields: the def
 contract clauses), and `recall` and `monotonicity_by` are keywords everywhere;
 use none of the five as a name anywhere
-(`docs/reports/lean-4-35-toolchain/`).
+(`docs/reports/archive/language-and-tooling/lean-4-35-toolchain/`).
 The same audit rejects self-equality and exact assumed conclusions in public,
 non-internal theorem statements. This narrow check is not a semantic
 non-vacuity proof; do not weaken its generated-name boundary or substitute it
-for statement review (`docs/reports/lean-proof-integrity/`).
+for statement review (`docs/reports/archive/language-and-tooling/lean-proof-integrity/`).
 Both reevaluation examples run in Linux and Clang-enabled
 Windows CI. Generic Lean names keep historical aliases
 (`QCore.DescriptorCustody`, `EventComposition` / `checkEventComposition`,
 `busy_effect_preserves_lock`), so the old Monkey module, composition accessors
-and ChunkIO lock theorem remain usable. `docs/reports/w7-lean-ci/README.md`,
-`docs/reports/w7-generic-lean-names/README.md`,
-`docs/reports/lean-build-performance/README.md`.
+and ChunkIO lock theorem remain usable. `docs/reports/archive/early-waves/w7-lean-ci/README.md`,
+`docs/reports/archive/early-waves/w7-generic-lean-names/README.md`,
+`docs/reports/archive/language-and-tooling/lean-build-performance/README.md`.
 
 <!-- preserved:validation:end -->
 
@@ -219,7 +219,7 @@ which, as in the full gate, get the provider gate only when `providers/`
 changes. A narrowing is accepted only with a replay showing that no unit that
 failed at a recorded red commit is dropped
 ([evidence](../reports/gate-scope-precise-selection/README.md),
-[library units](../reports/gate-scope-lib-unit-test-modules/README.md)).
+[library units](../reports/archive/language-and-tooling/gate-scope-lib-unit-test-modules/README.md)).
 
 ## Gate slots
 
@@ -519,8 +519,8 @@ configured one rebuild each other, while a plain command with
 `CARGO_INCREMENTAL=0` reuses configured units, dynamically linked ones
 included, and a configured build then reuses a library a plain build left
 without its `.so` and, by the wrapper's fallback, links it statically.
-[Report](../reports/test-storage-budget/README.md),
-[whole-job measurement](../reports/ci-rust-job-peak/README.md).
+[Report](../reports/archive/language-and-tooling/test-storage-budget/README.md),
+[whole-job measurement](../reports/archive/language-and-tooling/ci-rust-job-peak/README.md).
 
 <!-- generated:rules:start — edit docs/agents/rules/<id>.md, then run python3 scripts/gen_rule_docs.py -->
 
@@ -577,7 +577,7 @@ artifact and `audit.log` are byte-identical at every job count, and
 reported (`W44-AUDIT-PARALLEL-UNITS`). The configured routes
 `quirin-audit current` and `quirin-audit CONFIG.json` take the same flag:
 `--jobs`, then a configuration `jobs`, then the
-variable ([W44-QUIRIN-AUDIT-PROVIDERS](../reports/w44-quirin-audit-providers/README.md)). Two limits:
+variable ([W44-QUIRIN-AUDIT-PROVIDERS](../reports/archive/waves-40-47/w44-quirin-audit-providers/README.md)). Two limits:
 
 - A census run always analyses one unit at a time, whatever `N` says: any
   census variable set in a census-feature build forces it, because census
@@ -588,4 +588,4 @@ variable ([W44-QUIRIN-AUDIT-PROVIDERS](../reports/w44-quirin-audit-providers/REA
 
 The configured route's `preparation:` line sums per-unit wall-clock time; it
 is a measurement, differs between any two runs, and at `N > 1` exceeds the
-process's own wall time. [Evidence](../reports/w44-audit-parallel-units/README.md).
+process's own wall time. [Evidence](../reports/archive/waves-40-47/w44-audit-parallel-units/README.md).

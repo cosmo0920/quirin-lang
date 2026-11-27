@@ -41,7 +41,7 @@ boundaries.
   `C02-P-ALIAS-LEAK-ORDER` is undisturbed by construction. 29 audited theorems
   (`QCore.DereferencedResult`); contract corpus **67 → 69** by two deliberate
   additions. Evidence:
-  `docs/reports/remaining-constructor-residuals/README.md`.
+  `docs/reports/archive/early-waves/remaining-constructor-residuals/README.md`.
 - Declared/derived custody-mode agreement (LOADER-ABI-MODES): a declared
   contract whose custody **duty** the validated W4 summary of the callee's own
   body in the analysed unit *contradicts* is now withdrawn for that unit —
@@ -68,7 +68,7 @@ boundaries.
   was measured in **both** directions and all five artifacts are byte-identical
   between them. 36 audited theorems (`QCore.DeclaredModeAgreement`); contract
   spec §C04.1 gains the mode-agreement requirement. Evidence:
-  `docs/reports/remaining-loader-abi-modes/README.md`.
+  `docs/reports/archive/early-waves/remaining-loader-abi-modes/README.md`.
 - Publication residuals (CTWIN-RESIDUALS): the four shapes card CTWIN-PUBLISH
   left open are measured and closed, and the brief's soundness ordering is
   **refuted by measurement** — INDIRECT, named the likeliest launder, is the
@@ -94,7 +94,7 @@ boundaries.
   are retired by name and one C03 pin moved earlier, each keeping its
   load-bearing half. `QCore.PublicationCustody` grows 30 → **50** audited
   theorems. Corpus reach is **zero**, measured twice. Evidence:
-  `docs/reports/remaining-ctwin-residuals/README.md`.
+  `docs/reports/archive/early-waves/remaining-ctwin-residuals/README.md`.
 - Extern released and reallocated modes (EXTERN-MODES): two of the five open
   `source.extern-call.v1` call modes become callable, each at a measured
   boundary. `resource_released(p, nonnull)` is the mode the error arm was
@@ -117,7 +117,7 @@ boundaries.
   name with their load-bearing halves kept; three new fixed ASan/UBSan/LSan
   fixtures link a real C `free` and a real `realloc`, including the preserving
   arm where a double free would be reported. Evidence:
-  `docs/reports/remaining-extern-modes/README.md`.
+  `docs/reports/archive/early-waves/remaining-extern-modes/README.md`.
 - ChunkIO symbolic other-backend classification (P04-COMPOSE-UNSUPPORTED): the
   fifth and **last reachable** composition module moves through the process
   boundary, closing the ladder. It is the first family that imports **no body
@@ -142,7 +142,7 @@ boundaries.
   (`P04-COMPOSE-UNSUPPORTED-REACHABILITY`): the route establishes what happens
   *if* a chunk's stream carries a discriminant outside both constants, and
   **nothing** about whether any caller can produce one. Evidence:
-  `docs/reports/remaining-p04-compose-unsupported/README.md`.
+  `docs/reports/archive/early-waves/remaining-p04-compose-unsupported/README.md`.
 - Standard output modules (STD-MODULES): the census contradicts the card's
   premise and is the result — QCore source has **no** printing, logging,
   formatting or IO construct and never had one (21 statement kinds, none
@@ -170,7 +170,7 @@ boundaries.
   collide with the reserved error-type keyword, so the severity is spelled
   `fatal` (the `work` → `effort` precedent). 45 audited theorems
   (`QCore.StdIo`), no new axiom. Evidence:
-  `docs/reports/wave17-std-modules/README.md`.
+  `docs/reports/archive/early-waves/wave17-std-modules/README.md`.
 - Wave-17 CT lane (CT40-LANE): **CT40 maps on the `legacy_c` route, moving CT
   coverage 32/50 → 33/50**, after card CTWIN-PUBLISH closed the gateway hazard
   that had left it unmapped. Every parked candidate row was re-measured on the

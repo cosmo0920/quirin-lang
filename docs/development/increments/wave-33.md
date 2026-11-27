@@ -41,8 +41,8 @@ output; injected bad statements and a deprecated-lemma build fail as intended.
 The workspace gate required execution outside the sandbox for LeakSanitizer.
 No Rust implementation, model operation, corpus pin or conformance count changed;
 old reports remain frozen. Evidence and proof-API removals are in
-[the proof-integrity report](../../reports/lean-proof-integrity/README.md) and its
-[validation record](../../reports/lean-proof-integrity/validation.json).
+[the proof-integrity report](../../reports/archive/language-and-tooling/lean-proof-integrity/README.md) and its
+[validation record](../../reports/archive/language-and-tooling/lean-proof-integrity/validation.json).
 
 Wave 33 close (2026-09-15): **two cards merged and one abandoned**, and the
 abandoned one is recorded rather than omitted. **One arbiter ran.**
@@ -127,7 +127,7 @@ off only when no pipe makes byte progress, retaining deadline checks, bounded
 reads, incomplete-request rejection and process-group cleanup. Original
 assertions and deadlines remain; an added control must receive the exact same
 response after transmitting the complete request. Evidence and gate results:
-[repair report](../../reports/verifier-host-closed-input-deadline/README.md).
+[repair report](../../reports/archive/language-and-tooling/verifier-host-closed-input-deadline/README.md).
 No language-semantic or Lean definition changes; native timing is observation,
 not a scheduling theorem, and no macOS run is claimed.
 

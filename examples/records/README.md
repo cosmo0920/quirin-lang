@@ -4,7 +4,7 @@ The first source-level aggregate type: a named record with a fixed list of
 distinctly named fields, a construction, and a field read, admitted on
 `source.buffer.v1` — the only route v1 admits it on. Card `AGGREGATES-V1`
 landed the construct with `i32` fields only; the evidence package is
-[`docs/reports/aggregates-v1/README.md`](../../docs/reports/aggregates-v1/README.md),
+[`docs/reports/archive/language-and-tooling/aggregates-v1/README.md`](../../docs/reports/archive/language-and-tooling/aggregates-v1/README.md),
 and this family is its named follow-on `EXAMPLES-AGGREGATES`. Card
 `AGGREGATE-OWNED-FIELD` (wave 39) added the field that **owns** a buffer —
 [`docs/reports/aggregate-owned-field/README.md`](../../docs/reports/aggregate-owned-field/README.md)

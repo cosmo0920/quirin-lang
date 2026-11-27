@@ -5,8 +5,8 @@ integrate branch with one full landing gate:
 
 | Card | Report | Rule |
 |---|---|---|
-| SETTLED-LEAK-OTHER-REFUSAL-SCHEDULE | [report](../settled-leak-other-refusal-schedule/README.md) | 84 amended (74c, 6 point to it) |
-| MEMBER-PATH-INVOCATION-PREMISE | [report](../member-path-invocation-premise/README.md) | 30 amended (13v points to it) |
+| SETTLED-LEAK-OTHER-REFUSAL-SCHEDULE | [report](../archive/language-and-tooling/settled-leak-other-refusal-schedule/README.md) | 84 amended (74c, 6 point to it) |
+| MEMBER-PATH-INVOCATION-PREMISE | [report](../archive/gateway-and-clang/member-path-invocation-premise/README.md) | 30 amended (13v points to it) |
 
 Each card's own report holds its evidence; this page records the integration.
 The landing gate record is [integration/gate.json](integration/gate.json).

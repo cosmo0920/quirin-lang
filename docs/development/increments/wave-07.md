@@ -22,7 +22,7 @@ card's record keeps its own boundaries.
   change). The evutil_closesocket clause is corrected against the pinned
   source with a deliberate 4-to-8 clause-count pin update. 16 new audited
   theorems; the reactor's missing target/errno vocabulary is recorded as
-  O03-U4-REACTOR-TARGET. Evidence: `docs/reports/remaining-o03-u4u5/README.md`.
+  O03-U4-REACTOR-TARGET. Evidence: `docs/reports/archive/early-waves/remaining-o03-u4u5/README.md`.
 - Source roots and CMake flags (G03-F): profile-manifest version 2 admits
   exactly "." as a source root (v1 spellings mean the same thing under both
   versions; traversal spellings keep their refusals at both), and the
@@ -34,7 +34,7 @@ card's record keeps its own boundaries.
   zero option refusals, all reason codes classifying. Two-command ambiguity is
   narrowed by compile_target.object_prefix, never merged. 18 audited Lean
   theorems (`QCore.SourceRootAdmission`); CMetrics/chunkio-core artifacts
-  byte-identical. Evidence: `docs/reports/remaining-g03-f/README.md`.
+  byte-identical. Evidence: `docs/reports/archive/early-waves/remaining-g03-f/README.md`.
 - Per-arm constructor discharge (O04-ARMS): the borrowed-actual admission
   widens to bounded typed access chains (every link declared exactly
   `struct P *`, re-entered in the declaration model per link, depth capped at
@@ -46,9 +46,9 @@ card's record keeps its own boundaries.
   185-unit corpus was re-measured twice through the pinned route: headline
   counts and every unit verdict unchanged, diagnostics move in 4 units in the
   fail-closed direction, and the current baseline is deliberately re-pinned to
-  `docs/reports/remaining-o04-arms/artifacts/` with the wave-6 record kept
+  `docs/reports/archive/early-waves/remaining-o04-arms/artifacts/` with the wave-6 record kept
   intact. 23 audited Lean theorems (`QCore.ChainedAccess`). Evidence:
-  `docs/reports/remaining-o04-arms/README.md`.
+  `docs/reports/archive/early-waves/remaining-o04-arms/README.md`.
 - Epoch source syntax (T08-EPOCH-SRC): `source.epoch.bound.v1` lowers a
   lexical `thread scope NAME epoch { ... }` declaration onto the unedited
   FlatEpochBoundV1 checker with independent recheck; the route is check-only
@@ -60,7 +60,7 @@ card's record keeps its own boundaries.
   three named harness prerequisites; CT stays 24/50. 37 audited Lean theorems
   (`QCore.EpochSourceLowering`); spec §L21's Q6xx row now enumerates the four
   concurrency sub-bands, closing the wave-3 follow-up edit. Evidence:
-  `docs/reports/remaining-t08-epoch-src/README.md`.
+  `docs/reports/archive/early-waves/remaining-t08-epoch-src/README.md`.
 - Confinement bounds (P03-F): the confined profile gains an enforced per-tree
   child quota — cgroup v2 pids controller under a delegated subtree, joined in
   the first pre_exec closure, with the new `max_execution_processes` declared
@@ -73,7 +73,7 @@ card's record keeps its own boundaries.
   P09-lock. P02-FLAKE's assertion is byte-for-byte unchanged with a
   deterministic companion. 29 audited Lean theorems
   (`QCore.ProcessQuotaPlan`); qcore-schemas stays 6.0.0. Evidence:
-  `docs/reports/remaining-p03-f/README.md`.
+  `docs/reports/archive/early-waves/remaining-p03-f/README.md`.
 
 Nothing is promoted by this increment: raw Cycle 19 units stay 2 Safe /
 42 provisional Unsafe / 137 Unknown plus four data-only units — the baseline

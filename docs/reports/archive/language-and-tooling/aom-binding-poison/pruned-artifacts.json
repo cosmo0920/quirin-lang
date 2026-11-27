@@ -1,0 +1,33 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "aom-binding-poison",
+ "total_pruned_files": 5,
+ "total_pruned_bytes": 1021707,
+ "artifacts": [
+  {
+   "path": "artifacts/chunk-contracts.json.gz",
+   "bytes": 281968,
+   "sha256": "c7810de9c40d2cf4b14059c13493983f052b9b4de1fc2c9846169b25c443e2b5"
+  },
+  {
+   "path": "artifacts/diagnostics.json.gz",
+   "bytes": 386740,
+   "sha256": "c8c79de439c1dd775b07c27388edba4416b15a382eeba1761d8816b9309c31a8"
+  },
+  {
+   "path": "artifacts/diff-baseline-to-after.json.gz",
+   "bytes": 181174,
+   "sha256": "ab9bad49985814577753a6329e25ddb164668800a9117ca0c274f8106156cec9"
+  },
+  {
+   "path": "artifacts/diff-baseline-to-before.json.gz",
+   "bytes": 97003,
+   "sha256": "b91c524ca2960d5fbe8843cc9f3d2933a007bb1ee06d411c2b5bca8e9c609ca9"
+  },
+  {
+   "path": "logs/workspace-tests.txt.gz",
+   "bytes": 74822,
+   "sha256": "63c129ddc3cf5a1f96baafbb6d0033c24ec32d3893a40cc60c0d31d8c46189f1"
+  }
+ ]
+}

@@ -184,6 +184,21 @@ class Generation(unittest.TestCase):
         self.assertIn("integrate/r7 (WINDOWS-CI-FIX)", sentence)
         self.assertIn("named by its directory WINDOWS-CI-FIX", problems[0])
 
+    def test_archived_landing_gate_records_preserve_publication_and_directory_fallback(self):
+        first = self.repo.landing("r1", "CARD-ONE")
+        self.repo.publication(first)
+        self.repo.commit("publish r1 before archiving")
+        archived = self.root / "docs/reports/archive/wave-48/card-one"
+        archived.parent.mkdir(parents=True, exist_ok=True)
+        git(self.root, "mv", "docs/reports/card-one", "docs/reports/archive/wave-48/card-one")
+        self.repo.gate("archive/wave-48/legacy-fix",
+                       "Landing integrate/r2 (merges fix/legacy 8231af235).")
+        self.repo.commit("archive card-one and add archived r2")
+        sentence, problems = self.sentence()
+        self.assertIn("1 landing completed steps 1–7", sentence)
+        self.assertIn("integrate/r2 (LEGACY-FIX)", sentence)
+        self.assertIn("named by its directory LEGACY-FIX", problems[0])
+
     def test_untracked_records_count_only_in_production_mode(self):
         self.repo.gate("card-new", "Landing integrate/r9 (merges CARD-NEW 1234567).")
         self.assertIn("none", self.sentence()[0])

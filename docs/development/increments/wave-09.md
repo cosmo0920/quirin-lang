@@ -20,7 +20,7 @@ keeps its own boundaries.
   second, distinct cause — conditional-arm brace imbalance — named
   E01-F1-RAW-COND and pinned, not repaired. 31 audited Lean theorems
   (`QCore.RawDirectiveLexing`) with an exhaustive two-sided lexing checksum
-  tie. Evidence: `docs/reports/remaining-e01-f1-raw/README.md`.
+  tie. Evidence: `docs/reports/archive/early-waves/remaining-e01-f1-raw/README.md`.
 - Aggregate stores (O04-B08): a conjunctive typed admission for storing a
   tracked resource into a field of a live, body-acquired aggregate
   (`ic->chunk = chunk`) as a field-link custody edge — deliberately shallow
@@ -32,7 +32,7 @@ keeps its own boundaries.
   than being weakened. Corpus diagnostics move fail-closed in 38 units with
   zero verdict movement and leak unchanged at 271. 42 audited Lean theorems
   (`QCore.AggregateStore`). Evidence:
-  `docs/reports/remaining-o04-b08/README.md`.
+  `docs/reports/archive/early-waves/remaining-o04-b08/README.md`.
 - Guard-local join (T03-GUARD-JOIN): the soundness argument closes only for a
   rule narrower than proposed — the joined subtree must name no mutex at all,
   making deadlock structurally impossible rather than analyzed — landed as
@@ -40,7 +40,7 @@ keeps its own boundaries.
   with zero deleted checker lines, no diagnostic change, and 24 new Lean
   theorems. The T03-F asymmetry (a child ending its parent's borrow) is
   refused by G7. CT28/CT32 cascades verified unchanged. Evidence:
-  `docs/reports/remaining-t03-guard-join/README.md`.
+  `docs/reports/archive/early-waves/remaining-t03-guard-join/README.md`.
 - C-twin CT lane (CT-CTWIN): the reserved `legacy_c` route becomes real — the
   C twin runs through the actual gateway with the whole verdict pinned
   (unit result, verbatim reason, complete function map, ordered diagnostic
@@ -60,7 +60,7 @@ keeps its own boundaries.
   PrerequisiteIdentity/revalidate_prerequisite land with no production
   consumer yet. `qcore-schemas` is 8.0.0; ChunkIO package 0.7.0; 28 audited
   Lean theorems (`QCore.CallUseAdmission`). Evidence:
-  `docs/reports/remaining-p04-next-ab/README.md`.
+  `docs/reports/archive/early-waves/remaining-p04-next-ab/README.md`.
 - Generator and reason residuals (GEN-REASON): the acceptance-matrix
   generator's every section is now derived, integrator-supplied (via
   `--gate`, else labelled carried) or carried verbatim from the committed
@@ -71,10 +71,10 @@ keeps its own boundaries.
   with the three reachable conversions named, and B3's sidecar reason_code
   lands with the pinned bytes deliberately left for the re-pin. 15 audited
   Lean theorems (`QCore.ReasonCarrier`). Evidence:
-  `docs/reports/wave9-gen-reason/README.md`.
+  `docs/reports/archive/early-waves/wave9-gen-reason/README.md`.
 - Corpus consolidation: one integrator measurement on the fully merged tree
   through the canonical pinned route re-pins the 185-unit baseline
-  (`docs/reports/wave9-corpus/`): 2 Safe / 42 provisional Unsafe /
+  (`docs/reports/archive/early-waves/wave9-corpus/`): 2 Safe / 42 provisional Unsafe /
   137 Unknown / 4 data-only, zero verdict movement, and every changed leaf
   attributed to the union of the three archived per-card diffs plus the two
   known residue classes (path-literal provenance, package identity). The

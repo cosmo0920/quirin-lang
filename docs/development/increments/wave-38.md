@@ -127,5 +127,5 @@ two of its three target names reach no tracker. Gate detached at `6368cc7b`:
 run on this card's own unrepaired test** then 0 after a one-line repair, both
 probes 0, **137** Lean, **295** Python before and after the regeneration with
 `--gate docs/reports/wave37-close/gate.json`, Clang 21.1.8 recorded. Nothing
-promoted. `docs/reports/stability-reeval-3/README.md`.
+promoted. `docs/reports/archive/language-and-tooling/stability-reeval-3/README.md`.
 

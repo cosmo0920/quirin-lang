@@ -1,0 +1,18 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "cell-protocol-fb-declarations",
+ "total_pruned_files": 2,
+ "total_pruned_bytes": 206073,
+ "artifacts": [
+  {
+   "path": "census/census.json",
+   "bytes": 129599,
+   "sha256": "1a09570c1e639bf8574b38fef9bc9387976cdf90815144b4e7040d9b64426fe9"
+  },
+  {
+   "path": "native-comparison-merged.json",
+   "bytes": 76474,
+   "sha256": "a4290ebf01c1a92d0163bff4380f652cda988b1d73379ef8a9f603da6ae3bef0"
+  }
+ ]
+}

@@ -1,0 +1,18 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "reference-drop-null-accepting",
+ "total_pruned_files": 2,
+ "total_pruned_bytes": 630631,
+ "artifacts": [
+  {
+   "path": "gate/gate-1.json",
+   "bytes": 311968,
+   "sha256": "1302afaaa3e763c3dcc270b3e3df80e6f273b2a1012830e3b378d2fd19110096"
+  },
+  {
+   "path": "integration/gate-scope.json",
+   "bytes": 318663,
+   "sha256": "6d254b3e161d30ba5d1c22dd5017f1f0415778e5084da71c6c99577c2faaa433"
+  }
+ ]
+}

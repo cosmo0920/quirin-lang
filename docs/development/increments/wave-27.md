@@ -73,7 +73,7 @@ disagreeing flagless marker **withdraws** the coordinate rather than relabelling
 it, and constraint 12's scope rule is untouched. The BEFORE run reproduces the
 preceding baseline's `diagnostics.json` and `chunk-contracts.json` byte for byte
 and the AFTER run differs in attribution presentation alone: the corpus baseline
-moves to `docs/reports/gateway-c-location/artifacts/` with **185 units 2 Safe /
+moves to `docs/reports/archive/language-and-tooling/gateway-c-location/artifacts/` with **185 units 2 Safe /
 42 provisional Unsafe / 137 Unknown / 4 data-only**, 4,834 projected functions
 150/84/4,600, leak **266**, `unknown_alias` **4,344**, `unsupported` **49,773**
 and all 54,383 diagnostic rows keeping their `(function, preprocessed line,
@@ -102,10 +102,10 @@ theorems inside an existing audit, which is why five cards produced four files);
 193 Python tests OK after the matrix regeneration. Provider 122 is **carried** —
 no provider source, manifest template or `qcore-schemas` version changed and
 `qcore-schemas` stays 14.0.0, so constraint 18's rebuild-and-verify obligation is
-not engaged. Evidence: `docs/reports/ct23-credit-error-path/README.md`,
-`docs/reports/docs-compact-3/README.md`, `docs/reports/aggregates-v1/README.md`,
-`docs/reports/quant-region-source/README.md`,
-`docs/reports/ct07-slice-permissions/README.md`,
-`docs/reports/gateway-c-location/README.md`, `docs/reports/wave27-close/gate.json`.
+not engaged. Evidence: `docs/reports/archive/language-and-tooling/ct23-credit-error-path/README.md`,
+`docs/reports/archive/language-and-tooling/docs-compact-3/README.md`, `docs/reports/archive/language-and-tooling/aggregates-v1/README.md`,
+`docs/reports/archive/contracts-and-premises/quant-region-source/README.md`,
+`docs/reports/archive/language-and-tooling/ct07-slice-permissions/README.md`,
+`docs/reports/archive/language-and-tooling/gateway-c-location/README.md`, `docs/reports/archive/waves-20-39/wave27-close/gate.json`.
 
 <!-- migrated-section:end -->

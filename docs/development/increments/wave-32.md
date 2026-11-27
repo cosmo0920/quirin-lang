@@ -165,7 +165,7 @@ touches none of it (CT44 is not in card T00's newly-decidable list); the matrix
 is therefore regenerated through its standing generator with the **committed
 gate file passed by its relative spelling**, so
 `validation.measurement_provenance` cannot be downgraded from
-`integrator_supplied (docs/reports/wave31-close/gate.json)` to the
+`integrator_supplied (docs/reports/archive/waves-20-39/wave31-close/gate.json)` to the
 carried-and-unmeasured warning — measured outcome: `validation` **byte-identical**
 and every hand-maintained section unchanged except `named_followups`, to which
 this lane **appends** its two residuals through that section's own documented
@@ -307,7 +307,7 @@ lease (`WRITE-LEND-TASKS-EXERCISE`), with the operative consequence recorded as
 a measured boundary rather than a defect: write-lend programs sit outside F02
 relational comparison by construction, their native evidence being sanitizer
 and allocation-count. Evidence:
-`docs/reports/trace-alphabet-lease-boundary/README.md`.
+`docs/reports/archive/language-and-tooling/trace-alphabet-lease-boundary/README.md`.
 
 `PROOF-LEG-BATCH` (2026-09-13, wave 32) set out to grow the proof axis
 **3 of 43 → 5 of 43** by binding CT01's already-proved procedure
@@ -357,7 +357,7 @@ the card tip: 224 suite summaries, **4,512 passed / 1 failed / 8 ignored**, the
 one failure constraint 16's `RLIMIT_NPROC` row under five concurrent worktree
 gates (load to 65) and **re-verified green in isolation**, same binary, nothing
 edited; fmt, clippy and both probes clean; `Passed 125 Lean audits`; `scripts/tests`
-fully green at 200. Report: `docs/reports/proof-leg-batch/README.md`.
+fully green at 200. Report: `docs/reports/archive/language-and-tooling/proof-leg-batch/README.md`.
 
 `DOCS-COMPACT-5` — fifth recurring compaction of `AGENTS.md`, `CLAUDE.md` and
 `README.md` (2026-09-13, after wave 31; **no arbiter run, no corpus row
@@ -407,7 +407,7 @@ the card tip: **4,511 workspace tests (0 failed, 8 ignored, 223 binaries,
 `--no-fail-fast`), no constraint-16 row tripped**, fmt/clippy clean, both probes
 exit 0, `Passed 125 Lean audits`, 200 Python tests OK. Nothing is promoted, no
 count moved, and full language conformance stays **false**.
-`docs/reports/docs-compact-5/README.md`.
+`docs/reports/archive/language-and-tooling/docs-compact-5/README.md`.
 
 `CT-COMPOSED-NATIVE` (2026-09-13) supplies the runner that CT22's and CT25's
 own `unassessed` rows had been naming since wave 29: `run_composed_native`

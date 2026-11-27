@@ -1,0 +1,23 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "w44-quirin-audit-providers",
+ "total_pruned_files": 3,
+ "total_pruned_bytes": 9471,
+ "artifacts": [
+  {
+   "path": "identity/each-module.log",
+   "bytes": 6937,
+   "sha256": "0a485778a6a96925cabb7152f8b3b2faa10e842f2326e34de423f3f0bcfc171d"
+  },
+  {
+   "path": "identity/whole-crate-each.log",
+   "bytes": 2272,
+   "sha256": "3ee49c4be9c8ced45a5114180873c8f649b810af7331c9a1060135ad6a6a1a25"
+  },
+  {
+   "path": "identity/whole-crates.log",
+   "bytes": 262,
+   "sha256": "8884ad3a104e2f5c234f1acd126c6523cf572dc9fd21e0ac40f2e25f43bfbf6e"
+  }
+ ]
+}

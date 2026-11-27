@@ -27,7 +27,7 @@ card's record keeps its own boundaries.
   only package_digest moving; 20 audited Lean theorems
   (`QCore.ReasonCategory`). Opaque tool text, the untyped ChunkSourceResult
   reason and the adapter-assembled sidecar vocabularies remain open
-  (REASON-CODES-B). Evidence: `docs/reports/remaining-reason-codes/README.md`.
+  (REASON-CODES-B). Evidence: `docs/reports/archive/early-waves/remaining-reason-codes/README.md`.
 - Stage-derived CT schema (T00-CT-SCHEMA): the CT manifest is schema 2 —
   every stage status is an object carrying its executor, artifact,
   observation count and host gate; the conflated cfg/type_checker split into
@@ -42,7 +42,7 @@ card's record keeps its own boundaries.
   the hand-kept ones. Lean judged not applicable with reasoning recorded.
   The generator's non-CT sections remain a stale hand-coded snapshot, adopted
   surgically and recorded open as D02-GEN-REST. Evidence:
-  `docs/reports/remaining-t00-ct-schema/README.md`.
+  `docs/reports/archive/early-waves/remaining-t00-ct-schema/README.md`.
 - Corpus re-pin (CORPUS-REPIN): the four archived 185-unit artifacts are
   re-measured through the canonical pinned route on freshly prepared pinned
   clones (Fluent Bit 66910c10, explicit Clang) and deliberately re-pinned,

@@ -1,0 +1,13 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "connect-adopt-declared-dependencies",
+ "total_pruned_files": 1,
+ "total_pruned_bytes": 436823,
+ "artifacts": [
+  {
+   "path": "integration/gate-scope.json",
+   "bytes": 436823,
+   "sha256": "131ee4598659773492747471ed111f6fd31c09415ee634972c8b44c608c17cd6"
+  }
+ ]
+}

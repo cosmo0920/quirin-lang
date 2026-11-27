@@ -1,0 +1,13 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "rule-switch-entry-points",
+ "total_pruned_files": 1,
+ "total_pruned_bytes": 4172,
+ "artifacts": [
+  {
+   "path": "gate.log",
+   "bytes": 4172,
+   "sha256": "6c49e14dba227f9e4ceb53283bd53ba424fe86beeb28f9200cbf3e28df500d68"
+  }
+ ]
+}

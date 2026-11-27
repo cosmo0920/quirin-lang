@@ -1,0 +1,88 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "ct-proof-leg-3",
+ "total_pruned_files": 16,
+ "total_pruned_bytes": 39017,
+ "artifacts": [
+  {
+   "path": "gate/clippy.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/fmt.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/followup.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/iso-confined.log",
+   "bytes": 378,
+   "sha256": "ef4c109c24b7cd1ae8debd52a207ebd4c0f2d77b759b2ff90842186534d9169f"
+  },
+  {
+   "path": "gate/iso-memgrowth.log",
+   "bytes": 364,
+   "sha256": "d336ad8276dc4c9aef48ca96c9bfc57ed713557cd995f805bbb313c74bd2c714"
+  },
+  {
+   "path": "gate/lean-audits-tail.log",
+   "bytes": 3034,
+   "sha256": "5af4536d34b234fab98c5c0755ad895dc5938fd7b3a7a8407ea22170354ec6eb"
+  },
+  {
+   "path": "gate/lean-audits.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/probe.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/python-post.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/python-post.log",
+   "bytes": 2585,
+   "sha256": "ea52a2eaf98e5173122985d32eaf56d59e41cd747c94e9c1203f663b9660433c"
+  },
+  {
+   "path": "gate/python.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "gate/python.log",
+   "bytes": 897,
+   "sha256": "76de9812f648b6366f2bd9db04712058e90b85ae29e4d193b604f5185ec43a76"
+  },
+  {
+   "path": "gate/workspace-summaries.log",
+   "bytes": 22945,
+   "sha256": "fdb7e676bcaf9ec63d6aa1ea00684f7abb90975f228519a8670e7db4d4173f58"
+  },
+  {
+   "path": "gate/workspace-tests.exit",
+   "bytes": 5,
+   "sha256": "bdc830287616dae1818ced3e7c186e1387155900ad30d5983ec02da1519c4a95"
+  },
+  {
+   "path": "l3-lean-full.log",
+   "bytes": 2831,
+   "sha256": "49c0151192274e8c2d7ecbf0abe4296a601396ff576547aa052f6fa5e1b33de7"
+  },
+  {
+   "path": "mutations.log",
+   "bytes": 5957,
+   "sha256": "dd67f8d5c6b79adc7d0de77c75ae00994434874baf36c12ec8956a80bdfcb17f"
+  }
+ ]
+}

@@ -1,0 +1,18 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "cg22-callback-candidate-link-premise",
+ "total_pruned_files": 2,
+ "total_pruned_bytes": 49249,
+ "artifacts": [
+  {
+   "path": "gate/python.log",
+   "bytes": 5910,
+   "sha256": "7865d421fda5272584c73efa8d30e33a1ab38961e862dedea63afc122a302743"
+  },
+  {
+   "path": "integration/gate-scope.json",
+   "bytes": 43339,
+   "sha256": "9d12f217bbc1fd349b33285a29db0faa453dc851e235788158bbbd9906148c0c"
+  }
+ ]
+}

@@ -96,9 +96,9 @@ flexible libc declarations; rejected legacy-policy declarations remain 216.
 
 | Implementation card | Additions | Final branch tip | Main merge |
 |---|---:|---|---|
-| [libc / Monkey / Libevent](../w46-libc-event-contract-gaps/README.md) | 4 / 4 / 3 | `f61882a0` | `eb913c38` |
-| [CMetrics / CTraces](../w46-metric-trace-contract-gaps/README.md) | 13 / 6 | `0c3b627e` | `542f7d6d` |
-| [Fluent Bit event helpers](../w46-fluent-event-contract-gaps/README.md) | 6 | `d461a488` | `ec8fded0` |
+| [libc / Monkey / Libevent](../archive/waves-40-47/w46-libc-event-contract-gaps/README.md) | 4 / 4 / 3 | `f61882a0` | `eb913c38` |
+| [CMetrics / CTraces](../archive/waves-40-47/w46-metric-trace-contract-gaps/README.md) | 13 / 6 | `0c3b627e` | `542f7d6d` |
+| [Fluent Bit event helpers](../archive/waves-40-47/w46-fluent-event-contract-gaps/README.md) | 6 | `d461a488` | `ec8fded0` |
 
 The four libc declarations (`memcmp`, `strncmp`, `strnlen`, `strcasecmp`) also
 have existing builtin handling for some expression routes. They provide reusable

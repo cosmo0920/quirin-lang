@@ -8,7 +8,7 @@ first plugin is [`quirin-audit-plugin-libevent`](../../crates/quirin-audit-plugi
 (`quirin-audit libevent prepare`). The normative text is contract
 specification [C11.2](../QCORE_CONTRACT_SPEC_r0_3.md#c112-audit-subcommand-plugins);
 the host is `crates/qcore-audit/src/subcommand_plugins.rs`; the evidence is
-[W45-AUDIT-SUBCOMMAND-PLUGINS](../reports/w45-audit-subcommand-plugins/README.md).
+[W45-AUDIT-SUBCOMMAND-PLUGINS](../reports/archive/waves-40-47/w45-audit-subcommand-plugins/README.md).
 
 ## Running one
 
@@ -214,7 +214,7 @@ target/debug/quirin-audit --plugin-path target/debug --output ../out/openssl \
   openssl check --clang clang [--binding NAME]...
 ```
 
-Card [W48-OPENSSL-CONTRACT-PLUGIN](../reports/w48-openssl-contract-plugin/README.md),
+Card [W48-OPENSSL-CONTRACT-PLUGIN](../reports/archive/wave-48/w48-openssl-contract-plugin/README.md),
 rule 52. OpenSSL's contracts are checked by this plugin, not by a provider
 crate: it carries them (`crates/quirin-audit-plugin-openssl/contracts/openssl-3.5.5.json`,
 one binding per OpenSSL function the Fluent Bit routes call uncontracted:
@@ -247,7 +247,7 @@ an analysis route yet.
 
 `quirin-audit libcurl` (crate
 [`quirin-audit-plugin-libcurl`](../../crates/quirin-audit-plugin-libcurl/src/lib.rs),
-card [W48-LIBCURL-CONTRACT-PLUGIN](../reports/w48-libcurl-contract-plugin/README.md))
+card [W48-LIBCURL-CONTRACT-PLUGIN](../reports/archive/wave-48/w48-libcurl-contract-plugin/README.md))
 carries libcurl's contracts and checks them with its own checker against a
 pinned release: libcurl 8.18.0, the upstream tarball by SHA-256, and every
 file the checker reads by its own digest. Its answers reach the audit only
@@ -323,7 +323,7 @@ target/release/quirin-audit --plugin-path target/release --output ../measure/car
 | `--inputs FILE`, `--routes R,...` | The explicit inputs (`quirin-measure-inputs/1`): per route a compile database (or the pinned corpus inputs root) and a unit list; [`inputs/live.json`](../../crates/quirin-audit-plugin-measure/inputs/live.json) holds the live routes |
 | `--profile NAME` | A live evaluation profile, `contract/evaluations/<NAME>/evaluation.json` (`eight-home`, `twelve-home`, `fluent-bit-system`, `fluent-bit-tail-pause`; schema in `scripts/evaluation_profiles.py`), repeatable. Every untracked input digest it records is verified and every prepared directory must exist before anything runs; a frozen profile is refused. The record then carries each side's figures as `evaluation_profiles.py summarize` computes them and its `compare` verdict against the profile's baseline |
 | `--declared FILE` | Check the measured moves of the first comparison against the file's `measure-prediction` block (below) |
-| `--rules-off IDS` | Also measure the first comparison's after side `<tip>` with `QCORE_GATEWAY_RULES_OFF=IDS` as side `<tip>-off` and compare it with `<tip>` (the per-rule contribution, below). Ids are distinct. Refused, "not yet supported", unless the binary advertises the switch (every `quirin-audit` built since card GATEWAY-RULE-API does); after the run every switched side's components must record exactly its off-list. The ids are those of `crates/gateway-rules/registry.toml`; the analyzer refuses to run under an unknown id, a hold or a malformed list. Set by hand, the variable is honoured only where it is recorded (`current` and `contracts` with a report, `pinned` with its diagnostic report, a configuration run, `prepare --run`); every other `quirin-audit` command line, `quirin-dump-checkpoint`, `quirin` and every example linking the gateway refuses a non-empty list, and so does the host before any subcommand plugin, whose environment it clears ([RULE-SWITCH-ENTRY-POINTS](../reports/rule-switch-entry-points/README.md)) |
+| `--rules-off IDS` | Also measure the first comparison's after side `<tip>` with `QCORE_GATEWAY_RULES_OFF=IDS` as side `<tip>-off` and compare it with `<tip>` (the per-rule contribution, below). Ids are distinct. Refused, "not yet supported", unless the binary advertises the switch (every `quirin-audit` built since card GATEWAY-RULE-API does); after the run every switched side's components must record exactly its off-list. The ids are those of `crates/gateway-rules/registry.toml`; the analyzer refuses to run under an unknown id, a hold or a malformed list. Set by hand, the variable is honoured only where it is recorded (`current` and `contracts` with a report, `pinned` with its diagnostic report, a configuration run, `prepare --run`); every other `quirin-audit` command line, `quirin-dump-checkpoint`, `quirin` and every example linking the gateway refuses a non-empty list, and so does the host before any subcommand plugin, whose environment it clears ([RULE-SWITCH-ENTRY-POINTS](../reports/archive/language-and-tooling/rule-switch-entry-points/README.md)) |
 | `--per-rule` | With two or more `--rules-off` ids: also measure one side `<tip>-off-<id>` per id with only that rule off, so each rule's rows are separated from the rows the rules move together (named interactions) |
 | `--repository DIR`, `--inputs-base DIR` | The repository (revisions, link map, `scripts/gate_slot.py`) and the root of the untracked prepared inputs (default: the repository) |
 | `--mirror auto\|always\|never` | Re-spell the compile databases into a digest-manifested mirror when they spell a non-canonical path (default `auto`); needed for analyzers built before AUDIT-CANONICAL-PATHS |
@@ -358,7 +358,7 @@ checkpoint identity (`PINNED-ROWS-BIND-WORKING-DIRECTORY`); `invocation.json`
 records both spellings (`working_directory`, `working_directory_as_run`).
 
 **Link-resolution sides** (card
-[SELECTION-ROUTES-SPLIT-CALLER-AND-HOME](../reports/selection-routes-split-caller-and-home/README.md),
+[SELECTION-ROUTES-SPLIT-CALLER-AND-HOME](../reports/archive/language-and-tooling/selection-routes-split-caller-and-home/README.md),
 `--link-resolution NAME`, [`link.rs`](../../crates/quirin-audit-plugin-measure/src/link.rs)).
 A configured route of the inputs manifest may name its rule 40 artifact,
 `"link_resolution": {"path": ..., "sha256": ...}` (relative to the inputs base,
@@ -381,7 +381,7 @@ derived (`link_resolution_run`), and `measure publish` refuses such a side: a
 profile's baseline is its route under the stated map.
 
 **Contract-only reuse** (card
-[MEASURE-CONTRACT-ONLY-SIDE-WIRING](../reports/measure-contract-only-side-wiring/README.md),
+[MEASURE-CONTRACT-ONLY-SIDE-WIRING](../reports/archive/language-and-tooling/measure-contract-only-side-wiring/README.md),
 `--reuse-contract-only`). When the first comparison is two `rev:` sides, a
 pinned corpus route is measured, and neither `--rules-off` nor
 `--build-commit` is given, the base side is built first; the tip is then

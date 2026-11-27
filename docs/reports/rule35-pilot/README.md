@@ -5,7 +5,7 @@ The first pilot of `GATEWAY-RULE-API-PILOT-MIGRATIONS` (pluggable-cards
 `80c8aea98`; measured tip `555bd17db` (the code; later commits change tests,
 records and this report only). Rule 35 (`docs/agents/rules/35.md`) moves out of
 `qcore-c-gateway` into `crates/gateway-rules/rule-35-literal-decay` behind the
-[GATEWAY-RULE-API](../gateway-rule-api/README.md) interface. No verdict, leaf
+[GATEWAY-RULE-API](../archive/language-and-tooling/gateway-rule-api/README.md) interface. No verdict, leaf
 or diagnostic changes with every rule on (section 3); rule 35's contribution is
 now a switch-measured ledger (section 4).
 

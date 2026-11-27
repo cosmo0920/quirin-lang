@@ -1,0 +1,93 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "w6-native-source-tasks",
+ "total_pruned_files": 17,
+ "total_pruned_bytes": 694464,
+ "artifacts": [
+  {
+   "path": "audit.log.gz",
+   "bytes": 13854,
+   "sha256": "6d2c70f8813f25b7f05493f0296ee8b1aaa0fc08bcd93942b43043e1b5e0a9ee"
+  },
+  {
+   "path": "checks.log.gz",
+   "bytes": 2306,
+   "sha256": "69d9404a04a516c787e814b54e4aa8c5207f54b8070411ca5c39c7c2ac3779b6"
+  },
+  {
+   "path": "chunk-contracts.json.gz",
+   "bytes": 268419,
+   "sha256": "d289a1b484dc4d887f2ddaecf93db87f69bdd5b2399ec4df9102c6a366c62438"
+  },
+  {
+   "path": "cli-tests.log",
+   "bytes": 665,
+   "sha256": "99848c13090e131f29ad7e3e28fcf1fa75cbb85b7ef26a35274ae465e3a5942f"
+  },
+  {
+   "path": "core-private-wrapper.log",
+   "bytes": 605,
+   "sha256": "4c135b7b211750f328ad6c3687250e85ecbe4377044adf0a5a2687bec3ce0cf7"
+  },
+  {
+   "path": "core-tests.log",
+   "bytes": 1120,
+   "sha256": "1a6f3efb02a079db7e83edd3b71b0e7150e8ae201ab382a6ec8d915c75e32539"
+  },
+  {
+   "path": "ct-tests.log",
+   "bytes": 483,
+   "sha256": "464f7f67713f061aa8c7746966656d4c6d66cf75c4168b7d2f6e367e7e416510"
+  },
+  {
+   "path": "diagnostics.json.gz",
+   "bytes": 373382,
+   "sha256": "c3373912eaf0dac628a33cd6cbf1677865625fef0ad682af34e986ef14de0b66"
+  },
+  {
+   "path": "frontend-tests.log",
+   "bytes": 5284,
+   "sha256": "246ecb1796ec176dc13209f854853d0966347bae08c1919e2f204c6cb93cc27a"
+  },
+  {
+   "path": "lean.log.gz",
+   "bytes": 7855,
+   "sha256": "154549ff358f5d842177d390373c7b936803af4c34bf933ddbc7aab27702a6a0"
+  },
+  {
+   "path": "native-tests.log",
+   "bytes": 1505,
+   "sha256": "fe09c4795d31afeec95fbe780f38751655ee90e010072b5c56b90781186b9260"
+  },
+  {
+   "path": "providers.log.gz",
+   "bytes": 1015,
+   "sha256": "11ab7db4438a24969c80e52b49a844d2e4d582c74364bee78f5dc9f0ee2d764a"
+  },
+  {
+   "path": "python.log.gz",
+   "bytes": 597,
+   "sha256": "0d7225d2f737ec8c0a96d561153501dac42f7a71e2955cd24d260ed4b32eabda"
+  },
+  {
+   "path": "sanitizers-traced.log",
+   "bytes": 222,
+   "sha256": "1288864b484f382c161b9e395dffacb8eb6a11546499473aba6f5b1ac82fe3dc"
+  },
+  {
+   "path": "sanitizers-untraced.log",
+   "bytes": 97,
+   "sha256": "c89ba8c3505394064d1b0f92e0f3fbcf4dcc2cf87b94bbcb158741b2662f6588"
+  },
+  {
+   "path": "scope-import-before.log",
+   "bytes": 1013,
+   "sha256": "a345e9c3996a8aa4fd91ae73fec330f8deba342169933e85f500f4c6fe968de8"
+  },
+  {
+   "path": "workspace.log.gz",
+   "bytes": 16042,
+   "sha256": "d3727e0d2c02cab417298e4d31b8c1151afa256d99560654d63f9facc3303e01"
+  }
+ ]
+}

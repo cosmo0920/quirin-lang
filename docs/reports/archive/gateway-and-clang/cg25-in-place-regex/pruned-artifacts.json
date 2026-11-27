@@ -1,0 +1,13 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "cg25-in-place-regex",
+ "total_pruned_files": 1,
+ "total_pruned_bytes": 27151,
+ "artifacts": [
+  {
+   "path": "integration/gate-scope.json",
+   "bytes": 27151,
+   "sha256": "90c399b265f21b438015f3a35e8566260efef7312d1a541a7e76daca5daf869a"
+  }
+ ]
+}

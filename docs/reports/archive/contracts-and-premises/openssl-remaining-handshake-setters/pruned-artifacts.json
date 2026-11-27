@@ -1,0 +1,28 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "openssl-remaining-handshake-setters",
+ "total_pruned_files": 4,
+ "total_pruned_bytes": 1412298,
+ "artifacts": [
+  {
+   "path": "evidence/opt-in/comparison-base-tip1.json",
+   "bytes": 100614,
+   "sha256": "603d6ec958475bdc84ed2b66d2ba8efe5ecfa3775dfef051e783f686bfde8c56"
+  },
+  {
+   "path": "gate/gate-1.json",
+   "bytes": 441813,
+   "sha256": "3c9b1cdbe17c1ebd336bba562fdb2c68af739fb6b0662d5c494625d1a472a9ce"
+  },
+  {
+   "path": "gate/gate-2.json",
+   "bytes": 442338,
+   "sha256": "77216d00f17a0b03da5a528ad40de3b177c3c55c82c07687ee6f59f1820b4e9c"
+  },
+  {
+   "path": "integration/gate-scope.json",
+   "bytes": 427533,
+   "sha256": "aae067498dee20df55da48509708ed70663f30cc900b6ac466608170d1e98b2b"
+  }
+ ]
+}

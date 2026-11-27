@@ -1,0 +1,73 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "w44-collection-allocation",
+ "total_pruned_files": 13,
+ "total_pruned_bytes": 2989624,
+ "artifacts": [
+  {
+   "path": "after-diff.json",
+   "bytes": 83244,
+   "sha256": "f31fd97bf97b70363af84cd71968510eadb2046e6ac601be3b051e67103dec5a"
+  },
+  {
+   "path": "artifacts/chunk-contracts.json.gz",
+   "bytes": 281881,
+   "sha256": "f0568583a78a62741104d890e33c7dd84ccbb67d9a692f051aa21cc3b8e01703"
+  },
+  {
+   "path": "artifacts/contracts.json.gz",
+   "bytes": 68506,
+   "sha256": "b7b433bf56c5cb157806f685748de3977b79307e0c2d836851a301a35a41d5ab"
+  },
+  {
+   "path": "artifacts/diagnostics.json.gz",
+   "bytes": 515346,
+   "sha256": "fcffa998df06d113fe086cffad86fc3ffe8cae6d3180659485013ae18d855314"
+  },
+  {
+   "path": "census/sizeof-census.json.gz",
+   "bytes": 100866,
+   "sha256": "8d2bcb481e232d0b57f2317145bb8a8e355e577064b9ac63b75ab973600d911c"
+  },
+  {
+   "path": "integration/artifacts/chunk-contracts.json.gz",
+   "bytes": 281881,
+   "sha256": "f0568583a78a62741104d890e33c7dd84ccbb67d9a692f051aa21cc3b8e01703"
+  },
+  {
+   "path": "integration/artifacts/contracts.json.gz",
+   "bytes": 68504,
+   "sha256": "030922e0166b76a25e4963b9bb07e7d508811fde8fb1c6a51dc4cd53ef6f3f79"
+  },
+  {
+   "path": "integration/artifacts/diagnostics.json.gz",
+   "bytes": 514439,
+   "sha256": "f0703d5e38200ace878f9cda81d12fd471c90d01e64b5405b19c7f66584dbf77"
+  },
+  {
+   "path": "premerge/after-diff.json",
+   "bytes": 111913,
+   "sha256": "c5ea465dbc29ff98dcecf31f56952d88fab22622295e7cd34bd2f4e8799a14f5"
+  },
+  {
+   "path": "premerge/artifacts/chunk-contracts.json.gz",
+   "bytes": 281881,
+   "sha256": "f0568583a78a62741104d890e33c7dd84ccbb67d9a692f051aa21cc3b8e01703"
+  },
+  {
+   "path": "premerge/artifacts/contracts.json.gz",
+   "bytes": 67458,
+   "sha256": "0affbf2feba8fee9c69a8bbd0e5f6160ae9ac62d0e9bd864dcab3c8f66e008dc"
+  },
+  {
+   "path": "premerge/artifacts/diagnostics.json.gz",
+   "bytes": 540806,
+   "sha256": "c73691f8620ad6f1f20545ef6b344d42168623e7f3cb5514e256d76b78719470"
+  },
+  {
+   "path": "premerge/census/leak-attribution.json",
+   "bytes": 72899,
+   "sha256": "4bb21ae4f806826340d3075187f78531e5b1b2a5ddc171e21aea2906bb104ce6"
+  }
+ ]
+}

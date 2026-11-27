@@ -1,6 +1,6 @@
 # `CT-LANE-5` — wave 37's CT mapping lane
 
-> Runtime import maintenance: archived source inputs and runnable snippets now use `#import`; original results and hashes describe their recorded revision. See the [spelling attribution](../runtime-source-imports/spelling-attribution.json) for maintained source identities.
+> Runtime import maintenance: archived source inputs and runnable snippets now use `#import`; original results and hashes describe their recorded revision. See the [spelling attribution](../archive/language-and-tooling/runtime-source-imports/spelling-attribution.json) for maintained source identities.
 
 **Wave 37. Base `0f6eb0a6`. One case re-mapped, three re-measured and left
 unmapped, one not attempted. No count moves.**

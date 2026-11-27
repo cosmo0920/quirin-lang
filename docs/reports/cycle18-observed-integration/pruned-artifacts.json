@@ -1,0 +1,43 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "cycle18-observed-integration",
+ "total_pruned_files": 7,
+ "total_pruned_bytes": 272811,
+ "artifacts": [
+  {
+   "path": "negative-controls/artifact-substitution.log",
+   "bytes": 100,
+   "sha256": "38259cf0d0a2ed8321e8b57793f9abb8e28fb2cdcbbd8ae7624166925671388f"
+  },
+  {
+   "path": "negative-controls/callback-generation.log",
+   "bytes": 99,
+   "sha256": "4d4aad0c37406df453c5fa29742085cca9c7542a95f40c387a6cedda1cd0d2a0"
+  },
+  {
+   "path": "negative-controls/invented-synchronization.log",
+   "bytes": 211,
+   "sha256": "447903985546e01a64d205fbb884b8928932a41a7633af2047477385666d3ebc"
+  },
+  {
+   "path": "negative-controls/missing-record.log",
+   "bytes": 75,
+   "sha256": "166a787e373cd558f4647b87bc8b6032d146402980ab1666924e77d7c6117f65"
+  },
+  {
+   "path": "negative-controls/owned-callback-contract.log",
+   "bytes": 111,
+   "sha256": "8064ea15aa9d9746ae36801b438413132213adb08b97e5eecc6ae0bdc718d64b"
+  },
+  {
+   "path": "negative-controls/unsupported-backend.log",
+   "bytes": 105,
+   "sha256": "178775ab634dd920fcd6ae3af00010ea1e9ccf0969bab7763b87edd89741f7a3"
+  },
+  {
+   "path": "worktree-sweep.json",
+   "bytes": 272110,
+   "sha256": "36a2c6a20b16ca0499d205db0a7987ee2f89941cdb2e81526f7cea69d3e47b7e"
+  }
+ ]
+}

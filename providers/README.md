@@ -27,7 +27,7 @@ receiver recomputes the same reading from its own import and evaluates the
 pinned counter contract itself, so an agreeing proposal discharges nothing on
 its own. Caller storage, exclusive access, the entry range and the unsigned
 C/`usize` ABI binding remain the contract's declared premises. See the
-[capability transport evidence](../docs/reports/remaining-p04/README.md).
+[capability transport evidence](../docs/reports/archive/early-waves/remaining-p04/README.md).
 
 Libevent, CTraces and librdkafka remain Unknown-only. Clang import and helper
 validation stay in the trusted gateway. The CMetrics configured audit checks
@@ -203,7 +203,7 @@ No provider binary is checked into the source tree.
 
 The bytes do not depend on where the checkout, `CARGO_HOME`, the target
 directory or the toolchain lie (card
-[PACKAGE-BYTES-DEPEND-ON-CHECKOUT](../docs/reports/package-bytes-depend-on-checkout/README.md)).
+[PACKAGE-BYTES-DEPEND-ON-CHECKOUT](../docs/reports/archive/language-and-tooling/package-bytes-depend-on-checkout/README.md)).
 Cargo hashes a path package by its path relative to the workspace root, or by
 its absolute path when it lies outside, and `qcore-schemas` lies outside
 `providers/`. So the build compiles a staged copy under the target directory,
@@ -351,7 +351,7 @@ only the package root and the paths an explicit `ConfinementPolicy` names, and
 default policy — a caller that supplies none is refused before spawning — and a
 policy handed to a non-confining profile is refused in the other direction. All
 five shipped packages answer identically under it; see
-[filesystem and network confinement](../docs/reports/remaining-p03/README.md)
+[filesystem and network confinement](../docs/reports/archive/early-waves/remaining-p03/README.md)
 for the mechanisms, the measured fixtures and the exact trust boundary. This is
 confinement of two named resource classes, not a general OS sandbox: no seccomp
 filter and no cgroup is installed, and every non-completed provider outcome
@@ -362,7 +362,7 @@ The conformance workspace also contains `callback_proposal_writer`, a schema-onl
 record-exchange fixture. Its paired test uses the trusted declared-reactor
 consumer and rejects authority/identity/coverage mutations. It is not one of the
 five packaged providers and speaks no plugin protocol. See
-[callback record evidence](../docs/reports/w5-reactor-callback-records/README.md).
+[callback record evidence](../docs/reports/archive/early-waves/w5-reactor-callback-records/README.md).
 
 For the real field-contract audit, select the checked-in configuration and durable
 verified package. On first setup, build that package set with
@@ -395,7 +395,7 @@ schemas-only process and trusted replay. Its declared profile maps one Boolean
 field onto an existing logical axis; it does not establish arbitrary record or
 lifecycle semantics. Process tests are Unix-bound. See the
 [configuration format](../docs/QCORE_IMPLEMENTED_GRAMMARS_r0_3.md#g08-source-contract-service-configuration-v1)
-and [parity evidence](../docs/reports/w5-configured-source-contracts/README.md).
+and [parity evidence](../docs/reports/archive/early-waves/w5-configured-source-contracts/README.md).
 
 Bindings may now select separate-TU constant metadata helpers with `frame_helpers`.
 The generic loader checks exact compile-entry selection, supported options,

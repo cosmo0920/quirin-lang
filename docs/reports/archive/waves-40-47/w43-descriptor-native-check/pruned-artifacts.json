@@ -1,0 +1,23 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "w43-descriptor-native-check",
+ "total_pruned_files": 3,
+ "total_pruned_bytes": 589305,
+ "artifacts": [
+  {
+   "path": "aggregate.json",
+   "bytes": 131202,
+   "sha256": "b5fadff6d6f2e8f0b26362c3f5fe7a1981dcac215ac1afa2c4d64f357f896a33"
+  },
+  {
+   "path": "build.json",
+   "bytes": 211733,
+   "sha256": "2989f10c7d4aff2457dc01786ad036a6c4963ff9295ab3e9b6e919677704933d"
+  },
+  {
+   "path": "records/observations.tar.gz",
+   "bytes": 246370,
+   "sha256": "d83d1377d6143581df70e072e98ec35791f62e88b10124ac8f14b06c7c3db93f"
+  }
+ ]
+}

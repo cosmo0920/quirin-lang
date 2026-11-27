@@ -1,0 +1,13 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "r03-integration",
+ "total_pruned_files": 1,
+ "total_pruned_bytes": 406876,
+ "artifacts": [
+  {
+   "path": "resource-diagnostics.gz",
+   "bytes": 406876,
+   "sha256": "b5136db0602ad10d9eccd842672e9aa7eb0c858cc8ff7fa7cfba416a9e261877"
+  }
+ ]
+}

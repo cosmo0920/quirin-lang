@@ -1,0 +1,13 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "library-version-hold-current-route-pending",
+ "total_pruned_files": 1,
+ "total_pruned_bytes": 32258,
+ "artifacts": [
+  {
+   "path": "integration/gate-scope.json",
+   "bytes": 32258,
+   "sha256": "593eeed1cb912882607325c63d50cb0efac36dffd1df8cfd62b07b61fedfade4"
+  }
+ ]
+}

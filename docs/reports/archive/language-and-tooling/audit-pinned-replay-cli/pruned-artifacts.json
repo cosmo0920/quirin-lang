@@ -1,0 +1,13 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "audit-pinned-replay-cli",
+ "total_pruned_files": 1,
+ "total_pruned_bytes": 195597,
+ "artifacts": [
+  {
+   "path": "diff.json",
+   "bytes": 195597,
+   "sha256": "a2f9c160f5e4dba5af9664295312a01afc7220a855d50403b4ba8e3024b70565"
+  }
+ ]
+}

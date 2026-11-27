@@ -5,7 +5,7 @@
 
 Every paragraph of the base guidance that card W44-AGENT-GUIDANCE-OPUS55 removed
 or reworded, verbatim, at base `94502987472c25567d87fc873615ea5de1667603`. Each block names its source file and
-base line range. The card's [report](../../../reports/w44-agent-guidance-opus55/README.md)
+base line range. The card's [report](../../../reports/archive/waves-40-47/w44-agent-guidance-opus55/README.md)
 maps each block to its current location; `checkpoint.py --check` there verifies
 the blocks against the base byte for byte. Relative links are as in the source
 file and may not resolve from here.

@@ -122,7 +122,7 @@ the landed `non_atomic_completion_has_no_payload_path` is a theorem about CT41's
 own case class, so the gap is no longer a missing theorem but the artifact
 binding, and a CT41 proof leg is now a realistic next card. Follow-ups
 **262 → 269**; coverage, proof and sanitized-native counts all **unmoved**.
-[Evidence](../../reports/ct41-map/README.md).
+[Evidence](../../reports/archive/language-and-tooling/ct41-map/README.md).
 
 **`CT41-PUBLICATION-MAPPING` (2026-09-19).** CT41's original volatile
 completion case now executes through the bounded C publication route: volatile
@@ -166,7 +166,7 @@ and an inline-slice render inside a composed `for` body, a nested body, a plain
 and an owned-field record beside a lend and inside a body, a scalar rebound
 from a byte at a lend bound — and each refuses at the code and by the mechanism
 constraint 15h names, or is admitted where the constraint says it should be
-(`docs/reports/composed-window-reach/probes/verdicts.log`, shipped with the
+(`docs/reports/archive/language-and-tooling/composed-window-reach/probes/verdicts.log`, shipped with the
 harness). What is true is narrower. `COMPOSED-VIEW-WINDOW-INERT`'s *title* is
 wrong and its content is right: `std_string::view_uses_at_any_depth` does not
 return the empty vector for every input — it names a view at every reading
@@ -229,12 +229,12 @@ restructure and its ledger edits re-routed: the follow-up figure to
 `docs/STATUS.md`, constraint 15h's amendment to `docs/agents/buffers-records.md`
 and the `Q051` widening plus the namespace tally to `docs/agents/diagnostics.md`
 — in every case **outside** the `<!-- preserved:… -->` markers, because
-`docs/reports/docs-structure-compression/verify.py` pins each preserved span's
+`docs/reports/archive/language-and-tooling/docs-structure-compression/verify.py` pins each preserved span's
 `sha256` as a byte-exact reconstruction of the pre-restructure guides. The first
 draft was written inside those markers, the verifier caught it, and **the pin
 was not edited** (constraint 21); `scripts/build_docs_index.py --check` caught a
 stale report index in the same pass and was regenerated. Evidence:
-`docs/reports/composed-window-reach/`.
+`docs/reports/archive/language-and-tooling/composed-window-reach/`.
 
 > instructions describe their recorded dates. Current agent rules are routed by
 > [AGENTS.md](../../../AGENTS.md) to the [rule reference](../../agents/README.md)
@@ -244,7 +244,7 @@ stale report index in the same pass and was regenerated. Evidence:
 **`OWNED-FIELD-ROUTE-REACH` (2026-09-19).** Wave 39's five owned-field rules
 were measured for **reach** before anything was changed, by a shipped script
 that writes 29 whole `.qcore` programs and hands each to the built `quirin
-check` (`docs/reports/owned-field-route-reach/scripts/reach.py`, paired against
+check` (`docs/reports/archive/language-and-tooling/owned-field-route-reach/scripts/reach.py`, paired against
 the same script run on a `git archive` of the card's base `463fa6e8` by
 `reach_delta.py`). Four rules — construction moves in, the partial move's hole,
 the declaration-order drop-through, the leak naming a path — were already
@@ -397,6 +397,6 @@ already carries for wave 39, extended by the cohort trigger and the failure arms
 — is written **outside** every `<!-- preserved:… -->` block, in a new
 "Amendments after the 2026-09-19 migration checkpoint" section of
 `docs/agents/buffers-records.md`, with
-`docs/reports/docs-structure-compression/verify.py` exiting **0** and the page at
+`docs/reports/archive/language-and-tooling/docs-structure-compression/verify.py` exiting **0** and the page at
 24,721 bytes, under the 32 KiB cap.
-Evidence: `docs/reports/tsan-failure-arms/README.md`.
+Evidence: `docs/reports/archive/language-and-tooling/tsan-failure-arms/README.md`.

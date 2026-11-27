@@ -1,0 +1,13 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "w45-fb-engine-progress-measure",
+ "total_pruned_files": 1,
+ "total_pruned_bytes": 601206,
+ "artifacts": [
+  {
+   "path": "integration/gate-scope.json",
+   "bytes": 601206,
+   "sha256": "8a1f902e59d75835028e0e95a88183d2338920314f56bbd19ac528b30322cc61"
+  }
+ ]
+}

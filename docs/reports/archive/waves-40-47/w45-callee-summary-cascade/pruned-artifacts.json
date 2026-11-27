@@ -1,0 +1,53 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "w45-callee-summary-cascade",
+ "total_pruned_files": 9,
+ "total_pruned_bytes": 1991599,
+ "artifacts": [
+  {
+   "path": "artifacts/chunk-contracts.json.gz",
+   "bytes": 281881,
+   "sha256": "f0568583a78a62741104d890e33c7dd84ccbb67d9a692f051aa21cc3b8e01703"
+  },
+  {
+   "path": "artifacts/contracts.json.gz",
+   "bytes": 68508,
+   "sha256": "800dfd991662750f8de5c23cb12c5bb2a293b6f3e739bb49dc9d94d484301282"
+  },
+  {
+   "path": "artifacts/diagnostics.json.gz",
+   "bytes": 512242,
+   "sha256": "7d066c9bd9175da3a9f6a6e8865e0be4a116adae758b57714a3eff07f435c68b"
+  },
+  {
+   "path": "census/cascade-after.json.gz",
+   "bytes": 78245,
+   "sha256": "5d61f6d0ecc5f6ea4960aa23857a82a507ad94dc17c73962a15c31e591146f60"
+  },
+  {
+   "path": "census/cascade-base.json.gz",
+   "bytes": 78478,
+   "sha256": "adfb6432cae8ff16438a9d872109383ccb52a2429a27dcfb667df07719339c72"
+  },
+  {
+   "path": "census/root-cost.json.gz",
+   "bytes": 112799,
+   "sha256": "553429c72097fa206de45872b97b82f9e958e01e1c74bd8996147765ff39f881"
+  },
+  {
+   "path": "integration/artifacts/chunk-contracts.json.gz",
+   "bytes": 281881,
+   "sha256": "f0568583a78a62741104d890e33c7dd84ccbb67d9a692f051aa21cc3b8e01703"
+  },
+  {
+   "path": "integration/artifacts/contracts.json.gz",
+   "bytes": 68504,
+   "sha256": "030922e0166b76a25e4963b9bb07e7d508811fde8fb1c6a51dc4cd53ef6f3f79"
+  },
+  {
+   "path": "integration/artifacts/diagnostics.json.gz",
+   "bytes": 509061,
+   "sha256": "71503c5813dd5b089c8985e49aeb144bd88b2814f68d80e37d0e01870466795d"
+  }
+ ]
+}

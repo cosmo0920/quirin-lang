@@ -1,0 +1,13 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "lean-build-performance",
+ "total_pruned_files": 1,
+ "total_pruned_bytes": 107936,
+ "artifacts": [
+  {
+   "path": "lean-validation.log",
+   "bytes": 107936,
+   "sha256": "9dc9c4e0a88d8beb8c36f92787fb0e85cf0d8e159f03a702983c8ae46d718ea6"
+  }
+ ]
+}

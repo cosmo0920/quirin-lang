@@ -1,0 +1,98 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "w46-access-path-statements",
+ "total_pruned_files": 18,
+ "total_pruned_bytes": 2435627,
+ "artifacts": [
+  {
+   "path": "artifacts/after/changed-functions.jsonl.gz",
+   "bytes": 47149,
+   "sha256": "d34730b5f54e9b0647bb8b81d4c49199c8ec8ae1d9312e16dc91ffae87b99a49"
+  },
+  {
+   "path": "artifacts/after/changed-leaf-attribution.jsonl.gz",
+   "bytes": 76040,
+   "sha256": "3352dadafcfb5cc5dc8dcc2f309f118f6d502c1228311eed413e3e10bc22069a"
+  },
+  {
+   "path": "artifacts/after/chunk-contracts.json.gz",
+   "bytes": 281902,
+   "sha256": "62cdfe0316e6571b10c60058470541835cd2c4ebfa0bdd0ba2665e4d89cd6b0c"
+  },
+  {
+   "path": "artifacts/after/console.log.gz",
+   "bytes": 14993,
+   "sha256": "1582d0f5af38ffc67eadca74c538245492a72e5d17b8a7b96f21f02cb6c6e537"
+  },
+  {
+   "path": "artifacts/after/contracts.json.gz",
+   "bytes": 104733,
+   "sha256": "5c896bf3fcce26730a4397aa98033c0589ad530d89c641e522182402b11ae5b0"
+  },
+  {
+   "path": "artifacts/after/diagnostics.json.gz",
+   "bytes": 490922,
+   "sha256": "d060006810edd506f1c2e583275dd75d7023ffd8e3c72949e5215157152e2023"
+  },
+  {
+   "path": "artifacts/after/frontend-contexts.jsonl.gz",
+   "bytes": 2421,
+   "sha256": "a6df8f2264e5a5786d7d151d3902f3f79caf8eef5d9177c407e83e8bb176e6b7"
+  },
+  {
+   "path": "artifacts/after/parity-disagreements.jsonl.gz",
+   "bytes": 350070,
+   "sha256": "2b532d6a6cd76419483c0f02efb9e846d67f1255dab03011a23b1b87ad9a2f10"
+  },
+  {
+   "path": "artifacts/after/parity.jsonl.gz",
+   "bytes": 353234,
+   "sha256": "79549cf7514935d3f6a1152e03458736f3d8e01c41d200e3b5ce6b5809c162c2"
+  },
+  {
+   "path": "artifacts/system-after/changed-functions.jsonl.gz",
+   "bytes": 3028,
+   "sha256": "bb9df34d4edfdcad058b0399f471fc4d6e7f148f64d9f6dcda6ee678cb383575"
+  },
+  {
+   "path": "artifacts/system-after/changed-leaf-attribution.jsonl.gz",
+   "bytes": 4670,
+   "sha256": "7b6652f0402c79e0a199b26ed6ccec2d1c6b8a6740bae8682158ad79419bcba5"
+  },
+  {
+   "path": "artifacts/system-after/console.log.gz",
+   "bytes": 1577,
+   "sha256": "d31abce5a1b624959d45fe15e3148cc0e37bcc508c99dbba20e3ed18335068aa"
+  },
+  {
+   "path": "artifacts/system-after/contracts.json.gz",
+   "bytes": 105476,
+   "sha256": "aa214c38d603963a82050d4ff7c9cb61ae0316467756a16d83ec5ef5a2f62ba7"
+  },
+  {
+   "path": "artifacts/system-after/diagnostics.json.gz",
+   "bytes": 109593,
+   "sha256": "54aa1f85e15477b863e4e244a613b0ca8865104fdbd93cb13ac6be9fa36de4bd"
+  },
+  {
+   "path": "artifacts/system-after/frontend-contexts.jsonl.gz",
+   "bytes": 3530,
+   "sha256": "0ba18504a87cfca382470ac9c828a1d99945956fbd7a9988d683815fb8f253c7"
+  },
+  {
+   "path": "artifacts/system-after/parity-disagreements.jsonl.gz",
+   "bytes": 61259,
+   "sha256": "cad386a409fe6d1194be843d6fea9664727e513a07992d5605264e381311a650"
+  },
+  {
+   "path": "artifacts/system-after/parity.jsonl.gz",
+   "bytes": 63631,
+   "sha256": "9a702f9e5ff1bdea27024e154b07ba9a5a3666346c4da4ccf0924fe8fd6627a6"
+  },
+  {
+   "path": "integration/final-mechanism-review.json",
+   "bytes": 361399,
+   "sha256": "a1dc4287baa4225f6c739731e86145f5d2e72306292c99a2348ea9452230790a"
+  }
+ ]
+}

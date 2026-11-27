@@ -1,0 +1,78 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "fb-system-audit-cards",
+ "total_pruned_files": 14,
+ "total_pruned_bytes": 270213,
+ "artifacts": [
+  {
+   "path": "accounting/source-pin.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "accounting/source-pin.log",
+   "bytes": 952,
+   "sha256": "0a98839b85ec99d6b3172c3a6afc7408187a103306c0396dbe8aad02ad7ad5db"
+  },
+  {
+   "path": "census/evidence.json",
+   "bytes": 264677,
+   "sha256": "eb270f88d9c6f562b863eda862d72a9dedf03c7c1c0a961510b429e1ba08257a"
+  },
+  {
+   "path": "retry/artifacts/c1-build.log",
+   "bytes": 132,
+   "sha256": "efd0820503cadf9aa1d3b6b3950e1061db2bc920417df08804d464b07b668eb9"
+  },
+  {
+   "path": "retry/artifacts/c1-compile.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "retry/artifacts/c1-compile.stderr.log",
+   "bytes": 0,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+   "path": "retry/artifacts/c1-compile.stdout.log",
+   "bytes": 0,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+   "path": "retry/artifacts/c1-run.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "retry/artifacts/c1-run.stderr.log",
+   "bytes": 0,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+   "path": "retry/artifacts/c1-run.stdout.log",
+   "bytes": 110,
+   "sha256": "30892e4b8c07496205cdbcd8f6c02bbd973946ff765edd2d9fac5ce53cd091ab"
+  },
+  {
+   "path": "retry/artifacts/source-hashes.log",
+   "bytes": 694,
+   "sha256": "0558bf4d9c399f4dd9cb7ddcf6d301980c28c72a5a4648aa2033e89f1f709392"
+  },
+  {
+   "path": "retry/artifacts/source-revision.log",
+   "bytes": 42,
+   "sha256": "1fda1b112bc977a4259fec723f00fe70793dcd00b26308edcda6692455100034"
+  },
+  {
+   "path": "retry/artifacts/source-status.log",
+   "bytes": 0,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+   "path": "retry/artifacts/verification.log",
+   "bytes": 3597,
+   "sha256": "8aae6e57c7729ac4eae389f8b709fb604f7517ca4bfd6869f9cdad1d0bb19aff"
+  }
+ ]
+}

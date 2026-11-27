@@ -1,0 +1,113 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "w6-owned-source-tasks",
+ "total_pruned_files": 21,
+ "total_pruned_bytes": 689285,
+ "artifacts": [
+  {
+   "path": "audit.log.gz",
+   "bytes": 13841,
+   "sha256": "d37e0bb71303d7b3bde4e37e4388ddb1583def13b0e9c221bec7b69d9c2199eb"
+  },
+  {
+   "path": "checks.log.gz",
+   "bytes": 2211,
+   "sha256": "0d8f2683fc23f1ede950894a8cd65b80d8c43b844e4e729a349094ed6c7b495f"
+  },
+  {
+   "path": "chunk-contracts.json.gz",
+   "bytes": 268582,
+   "sha256": "7b52087dbbfc3c29df2a71f622db351ce43d21e100d12877680c8848d59f6b6d"
+  },
+  {
+   "path": "diagnostics.json.gz",
+   "bytes": 372538,
+   "sha256": "0e229046194cf4359f3cf7d798952a5a967b19ee62712129a95908b4ba0e6dfa"
+  },
+  {
+   "path": "lean-audits.log.gz",
+   "bytes": 9467,
+   "sha256": "d99eadd2a457dee351f39b005a054f7f811c30c565a5d7294dccc0445a831452"
+  },
+  {
+   "path": "lean-build.log.gz",
+   "bytes": 90,
+   "sha256": "8b954d97e1bbb3ac19967311f756e683ec568b7b9af76996f76b5d607592495b"
+  },
+  {
+   "path": "providers.log.gz",
+   "bytes": 1248,
+   "sha256": "9ce5f146ef58e546ae8022d3f35dfef0f9bb4e39e4dbf40f4cf32cd86d948937"
+  },
+  {
+   "path": "python.log.gz",
+   "bytes": 597,
+   "sha256": "c9ff4c1d5ae397f8f9644dda1f0ef0e6144b16452655674489f4e5f5396cc156"
+  },
+  {
+   "path": "sanitizer-allocation-failure-traced.log",
+   "bytes": 225,
+   "sha256": "fa3144627e20d244c724c44fded186496462a6f2f670d64defd337a562398747"
+  },
+  {
+   "path": "sanitizer-allocation-failure-untraced.log",
+   "bytes": 67,
+   "sha256": "f1e6297122d4f9021805c6512935870caa81b268f8a248bcf0b2d8df7d0e8a4f"
+  },
+  {
+   "path": "sanitizer-child-drop-traced.log",
+   "bytes": 225,
+   "sha256": "81339cb2357740ceb96b7c3c4bd6cdb5b20587b0a9a55abb4d168b971b3357bf"
+  },
+  {
+   "path": "sanitizer-child-drop-untraced.log",
+   "bytes": 173,
+   "sha256": "277ba4f95fc0c6c0ec8571d6bce0aff38b34b6b31cef04065452b0b2b8c663aa"
+  },
+  {
+   "path": "sanitizer-child-error-traced.log",
+   "bytes": 225,
+   "sha256": "f3b4c94955441b5fb0075533ba03d1c673d2cfac912ae321037608cf3663c74a"
+  },
+  {
+   "path": "sanitizer-child-error-untraced.log",
+   "bytes": 197,
+   "sha256": "50361159481681de8fa0725c499026e3533f83a0134d618bb8505aee70ebb01d"
+  },
+  {
+   "path": "sanitizer-create-failure-traced.log",
+   "bytes": 277,
+   "sha256": "a9688092a7c7bf0ebb9a016dcfb9fd00a0d4a5e944199e7b00a6f8ce0b144748"
+  },
+  {
+   "path": "sanitizer-create-failure-untraced.log",
+   "bytes": 184,
+   "sha256": "ef6c62fecd4f9fdff1384ded4438ae2346d0dbae79aaac7aaae5c098aebf934d"
+  },
+  {
+   "path": "sanitizer-environment-failure-traced.log",
+   "bytes": 252,
+   "sha256": "3b86c48a015d326738a825d63421a8248bc3794be3f394a38cbece01bbf6aa41"
+  },
+  {
+   "path": "sanitizer-environment-failure-untraced.log",
+   "bytes": 159,
+   "sha256": "4b0be781d95cc6369ff2b408c2310dc6c87f12e33d292c2d258f1b431acb9e3a"
+  },
+  {
+   "path": "sanitizer-round-trip-traced.log",
+   "bytes": 282,
+   "sha256": "a8de8363bf01c5e12afcdaf0fd454fd2eb6eb71f77835ae4d689560b26ea1bf5"
+  },
+  {
+   "path": "sanitizer-round-trip-untraced.log",
+   "bytes": 232,
+   "sha256": "6950beae31ad45732d49ed7a7cdd95c2ba84acc24e5bbccd62211784b15e553b"
+  },
+  {
+   "path": "workspace.log.gz",
+   "bytes": 18213,
+   "sha256": "aaeeef0977655b787ac30b9dc00084e202bb1f93a1e9badd1a98045890f70539"
+  }
+ ]
+}

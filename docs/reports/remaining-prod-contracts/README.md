@@ -1,7 +1,7 @@
 # PROD-CONTRACTS — production declared contract text for the logging family, the name accessor and the routes-mask helpers — 2026-09-09
 
 The named continuation of cards **O04-TRACE**
-([`docs/reports/remaining-o04-trace/README.md`](../remaining-o04-trace/README.md)
+([`docs/reports/remaining-o04-trace/README.md`](../archive/early-waves/remaining-o04-trace/README.md)
 §2.4 and `O04-TRACE-REACH`) and **HASH-CONTRACTS**
 ([`docs/reports/remaining-hash-contracts/README.md`](../remaining-hash-contracts/README.md)
 §5.3 and §10). O04-TRACE built the variadic-data-tail vocabulary and the

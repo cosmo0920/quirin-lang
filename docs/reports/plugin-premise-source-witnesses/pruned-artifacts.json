@@ -1,0 +1,148 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "plugin-premise-source-witnesses",
+ "total_pruned_files": 28,
+ "total_pruned_bytes": 649970,
+ "artifacts": [
+  {
+   "path": "actual-observation.json.gz",
+   "bytes": 213799,
+   "sha256": "6e40fc386dc1c059ece133cffc2d133f810d1426a6ceaafb87734debda5d33fd"
+  },
+  {
+   "path": "focused/check-1.log",
+   "bytes": 1130,
+   "sha256": "3651e0dbae2edf0a73c5247152eb970131a57f162e38be5ebf2f1f5f5944ef39"
+  },
+  {
+   "path": "focused/check-2.log",
+   "bytes": 195,
+   "sha256": "9783c17e220341a245d7b1ff92b54329a6a6847555fd4971f8956449c0db154c"
+  },
+  {
+   "path": "focused/check-3.log",
+   "bytes": 195,
+   "sha256": "ce91203c1b2b0e478aceb50482d3fa882919e536bb3a9d249b1b0624ebeafa32"
+  },
+  {
+   "path": "focused/clippy-1.log",
+   "bytes": 1742,
+   "sha256": "cbc2c5f267fe7b68a84b4eca729b8456eb4f9d21e9bda8f1722e3b9ca1e38aad"
+  },
+  {
+   "path": "focused/clippy-2.log",
+   "bytes": 195,
+   "sha256": "c265096d8009db6f434c845acb1ae34bb7ee4c40c67e4a033f56158add61f0e9"
+  },
+  {
+   "path": "focused/clippy-3.log",
+   "bytes": 195,
+   "sha256": "03ff89200e39c40dfcee4d1e7d68b3f99e632254d53d8644970386ac11b550c5"
+  },
+  {
+   "path": "focused/focused-test-1.log",
+   "bytes": 1431,
+   "sha256": "d250d1a3e971c804631825585e93f9de6382da26c13797a7c5433609fc726e66"
+  },
+  {
+   "path": "focused/focused-test-2.log",
+   "bytes": 1348,
+   "sha256": "50930c8b9e4b0ec2afc7ec4cbe6392df361c33585ff8704fdf42bf1f3e6175de"
+  },
+  {
+   "path": "focused/focused-test-3.log",
+   "bytes": 593,
+   "sha256": "1d63334420b0e3d5d65576a81708e1b45dea779921f9d643147ad3f7d1db31d1"
+  },
+  {
+   "path": "focused/focused-test-4.log",
+   "bytes": 694,
+   "sha256": "eb470605a4c54ca2fa5e19b6d556ed8a718ef3abbf5adf67b787b3309696c11f"
+  },
+  {
+   "path": "focused/focused-test-5.log",
+   "bytes": 694,
+   "sha256": "38cc862f016e56c53b4551c45121c714de431fefbe0b9a6d7d9b44a5eb23158c"
+  },
+  {
+   "path": "focused/lean-audit-2.log",
+   "bytes": 1252,
+   "sha256": "e829bf46190e7961448b521c037413612e7f716017b983610d066eb72b79dde9"
+  },
+  {
+   "path": "focused/lean-audit-3.log",
+   "bytes": 1520,
+   "sha256": "ade3cf217da3b9e83c0a04f713daef5a3ca1859ae9bde9c99663006ebcf0c22a"
+  },
+  {
+   "path": "focused/lean-model-1.log",
+   "bytes": 587,
+   "sha256": "527346d33698f5a46e622cb20e893ecd118c2db114b38e7677c76e258585c07f"
+  },
+  {
+   "path": "focused/lean-model-2.log",
+   "bytes": 0,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+   "path": "focused/lean-model-3.log",
+   "bytes": 0,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+   "path": "focused/replay-3.log",
+   "bytes": 430,
+   "sha256": "88d979e1291c93406676c509f73a1144b016021607a7ef06725523301d502500"
+  },
+  {
+   "path": "focused/replay-4.log",
+   "bytes": 430,
+   "sha256": "60f0c5aacd055df415553f2d6bc0f8aab6431f44f868c19d1082c37b232c009e"
+  },
+  {
+   "path": "focused/replay-5.log",
+   "bytes": 430,
+   "sha256": "3183dee266fa74e264ab272e1619975bb4644ae5ddf11f45f64d323bdf2b3622"
+  },
+  {
+   "path": "frozen-source-equality.json",
+   "bytes": 137897,
+   "sha256": "6c4bd34baff2d3dd4c2224033b4cefc49154b9d7dcb67c689607d08caea0cd17"
+  },
+  {
+   "path": "post-guard/actual-observation.json.gz",
+   "bytes": 213749,
+   "sha256": "f39a3a73661613bf1a141a86e2515bdcc126d536a3280407311425dbbd23cbc1"
+  },
+  {
+   "path": "post-guard/clippy-4.log",
+   "bytes": 195,
+   "sha256": "03ff89200e39c40dfcee4d1e7d68b3f99e632254d53d8644970386ac11b550c5"
+  },
+  {
+   "path": "post-guard/focused-test-6.log",
+   "bytes": 788,
+   "sha256": "df11391e6ace0f05f0eb164307d054d7b09192b430428c38c3582404c3b53d10"
+  },
+  {
+   "path": "post-guard/lean-audit-4.log",
+   "bytes": 1609,
+   "sha256": "33392e6d966389f82ceb86568d2bd6efc93778f22a255902a8c79d9ff17b88eb"
+  },
+  {
+   "path": "post-guard/lean-model-4.log",
+   "bytes": 0,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+   "path": "post-guard/replay-6.log",
+   "bytes": 430,
+   "sha256": "88f4b84c5b94a82e70a7cfdadc659225aae9df2bb2707fe5646171c53a955ec5"
+  },
+  {
+   "path": "source-model-map-v2.json",
+   "bytes": 68442,
+   "sha256": "dea656e0774a75817bf9a9f9c5ee29625d1366c46e808f55cc10db35497536d5"
+  }
+ ]
+}

@@ -90,7 +90,7 @@ The Windows tests use the discovered executable in compile databases, preserve
 CRLF mutation checks, and run POSIX LP64 cleanup fixtures in isolated child
 tests through that Clang with an explicit Linux target. Native Windows analysis
 retains its native target; no checker rule or production cleanup ABI is widened.
-See `docs/reports/windows-vs2026/README.md` for local validation and limits.
+See `docs/reports/archive/language-and-tooling/windows-vs2026/README.md` for local validation and limits.
 Windows validation: 828 tests, formatting, Clippy and both reevaluation probes
 pass. The Lean gate was not run because `lake` is not installed on this host.
 

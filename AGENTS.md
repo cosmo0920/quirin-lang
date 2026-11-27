@@ -120,4 +120,4 @@ See [namespace policy](docs/agents/diagnostics.md#diagnostics-namespaces).
 ## Where to read more
 
 [Documentation hub](docs/README.md) · [Rule router](docs/agents/README.md) ·
-[Preservation evidence](docs/reports/docs-structure-compression/README.md).
+[Preservation evidence](docs/reports/archive/language-and-tooling/docs-structure-compression/README.md).

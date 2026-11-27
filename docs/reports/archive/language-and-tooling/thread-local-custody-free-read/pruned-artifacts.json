@@ -1,0 +1,18 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "thread-local-custody-free-read",
+ "total_pruned_files": 2,
+ "total_pruned_bytes": 273323,
+ "artifacts": [
+  {
+   "path": "census/tls_census.json",
+   "bytes": 70427,
+   "sha256": "a88996d2e6f0a6c1c49fe0c42bc8c198a1de56df2a7d4ac3c59becf31f6b213a"
+  },
+  {
+   "path": "integration/gate-scope.json",
+   "bytes": 202896,
+   "sha256": "309b1f1183cb3dfed97852e56f4055c67385ad2791a2f1268158857b6a9df173"
+  }
+ ]
+}

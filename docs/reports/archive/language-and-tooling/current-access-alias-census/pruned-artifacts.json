@@ -1,0 +1,23 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "current-access-alias-census",
+ "total_pruned_files": 3,
+ "total_pruned_bytes": 546065,
+ "artifacts": [
+  {
+   "path": "artifacts/alias-leaves.jsonl.gz",
+   "bytes": 288608,
+   "sha256": "28ff5d8ab241db798321d50a367bc6435527227e6cd0cd9fd668accf9250c16b"
+  },
+  {
+   "path": "artifacts/shape-functions.jsonl.gz",
+   "bytes": 138151,
+   "sha256": "3640d30801030e2c64c835d3fd0cb68392803f9a880c86d10170f7c68c711bcb"
+  },
+  {
+   "path": "artifacts/shape-leaves.jsonl.gz",
+   "bytes": 119306,
+   "sha256": "06594fb5bc4216d43a48fdbb21f09b3c2903f488a1bcb2e433ad322c7ed123c3"
+  }
+ ]
+}

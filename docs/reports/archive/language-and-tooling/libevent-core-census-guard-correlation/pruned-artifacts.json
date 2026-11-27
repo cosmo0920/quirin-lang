@@ -1,0 +1,23 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "libevent-core-census-guard-correlation",
+ "total_pruned_files": 3,
+ "total_pruned_bytes": 444140,
+ "artifacts": [
+  {
+   "path": "artifacts/base-base.json",
+   "bytes": 151962,
+   "sha256": "84507d73d7c16032f5f8abb6806946a698cf7c535b032fd36c9cf5730ad3b724"
+  },
+  {
+   "path": "artifacts/base-tip.json",
+   "bytes": 154401,
+   "sha256": "d591338c5587ac53019d553aa53255ed48605790cad65f544634ec9ce6fa6896"
+  },
+  {
+   "path": "artifacts/sidecars-base-tip.txt",
+   "bytes": 137777,
+   "sha256": "0fc08d6b5a63799e616f8fe588f436c7bea134132e64712570699a233a00ecd2"
+  }
+ ]
+}

@@ -122,12 +122,12 @@ process providers, and a certificate firewall. Protocol v1 carries only
 Boolean assertions, so the core currently refuses all v1 `Safe` proposals
 and treats unchecked `Unsafe` proposals as `Unknown`; source-level
 `verify scope` declarations now derive obligations and dispatch providers.
-The [bounded evidence-v2 increment](../reports/w3-evidence-v2/README.md)
+The [bounded evidence-v2 increment](../reports/archive/early-waves/w3-evidence-v2/README.md)
 replays observation predicates against pinned contracts and records agreement
 for supplied runs under an explicit observation-trust assumption. A standalone
 provider builds against `qcore-schemas` alone. Source lifecycle effects remain
 unimported, empty inventories remain unverified, and first-party providers
-remain unpromoted. The [generic verifier host](../reports/w3-verifier-host/README.md)
+remain unpromoted. The [generic verifier host](../reports/archive/early-waves/w3-verifier-host/README.md)
 is extracted into `qcore-verifier-host`, buildable without provider crates;
 production profile import and remaining kernel consolidation are still open.
 
@@ -145,27 +145,27 @@ over source sets — contracts and profiles as data, core-derived obligations,
 interprocedural summary inference — and (b) decompose the monolithic crate
 into a pluggable contract/verification system with a versioned schema
 surface and out-of-process providers. W0 is executed
-([record](../reports/w0-schema-crate/README.md)): the schema surface and
+([record](../reports/archive/language-and-tooling/w0-schema-crate/README.md)): the schema surface and
 the CLI are standalone crates, with a test guarding the downward-only
 dependency rule; providers stay compile-time crates for now (decision
 recorded in the W0 report). The W1 relocation is executed
-([record](../reports/w1-contract-crate/README.md)): the contract loader
+([record](../reports/archive/early-waves/w1-contract-crate/README.md)): the contract loader
 and observation interpreter live in `crates/qcore-contract`, above the new
 `qcore-core` kernel seed and `qcore-frontend` front-end crates. The W1
 literal-site migration is executed
-([record](../reports/w1-literal-sites/README.md)): the remaining Rust
+([record](../reports/archive/early-waves/w1-literal-sites/README.md)): the remaining Rust
 contract-table literals in tests and examples now load `.qcore` fixture
 modules through the loader. W1 is executed
-([record](../reports/w1-clause-vocabulary/README.md)): the clause-family
+([record](../reports/archive/early-waves/w1-clause-vocabulary/README.md)): the clause-family
 boundary between the loader and the observation/lifecycle interpreters is
 documented and pinned corpus-wide, and the C ABI scalar table is complete;
 unifying the interpreters is a W5-adjacent item and error sentinels need
 target-interface work. The
 W6 CT conformance harness is stood up
-([record](../reports/w6-ct-harness/README.md)): `compiler/tests/ct_corpus.rs`
+([record](../reports/archive/early-waves/w6-ct-harness/README.md)): `compiler/tests/ct_corpus.rs`
 executes the manifest-mapped spec §55 cases through the real source pipeline;
 CT02/CT12/CT16 initially mapped sequential-core fixtures. Batch 2
-([record](../reports/w6-ct-batch-2/README.md)) adds CT19 and CT37 and
+([record](../reports/archive/early-waves/w6-ct-batch-2/README.md)) adds CT19 and CT37 and
 records the full triage of all 47 then-unmapped cases. The later
 [native task increment](../reports/w6-native-source-tasks/README.md) maps CT15
 and upgrades CT19 to actual task source; [explicit recovery](../reports/w6-task-recovery/README.md)
@@ -175,17 +175,17 @@ and [handler rethrow](../reports/w6-handler-rethrow/README.md) now leave
 upgrades CT16 to real child allocation/error cleanup and retains its sequential
 implicit-cleanup control. W4 is
 executed for parameter/return custody with validation
-([record](../reports/w4-custody-inference/README.md)): the C gateway now
+([record](../reports/archive/early-waves/w4-custody-inference/README.md)): the C gateway now
 infers each internal function's parameter and return custody summary bottom-up
 over the call graph and publishes it only after re-running the intraprocedural
 analyzer against it, so a wrapper around a contracted API is analyzed instead
 of being `Unknown`. Declared contracts always take precedence, a disagreement
 is reported rather than resolved silently, and the safety certificate's recheck
-re-derives every summary independently. The [bounded W4 extension](../reports/w4-custody-extensions/README.md)
+re-derives every summary independently. The [bounded W4 extension](../reports/archive/early-waves/w4-custody-extensions/README.md)
 adds direct out-parameters, stores of formal resources into formal owners,
 reallocation wrappers and possibly-null owned returns. Recursive functions,
 aggregate removal and unsupported out-slot aliases keep their callers `Unknown`.
-The [gateway relocation](../reports/w4-gateway-crate/README.md) extracts this
+The [gateway relocation](../reports/archive/early-waves/w4-gateway-crate/README.md) extracts this
 analysis, Clang discovery and typed-AST transport into `qcore-c-gateway`, retaining
 the compiler API and exact 185-unit diagnostic/verdict/projection parity.
 

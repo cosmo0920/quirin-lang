@@ -1,0 +1,113 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "rk-outer-loader-scope",
+ "total_pruned_files": 21,
+ "total_pruned_bytes": 74836,
+ "artifacts": [
+  {
+   "path": "artifacts/closeout/docs-index.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "artifacts/closeout/docs-index.log.gz",
+   "bytes": 60,
+   "sha256": "a472694d6aa5e62f0bee929e0b6035ee27b9497ce75453263e90fa08c230e500"
+  },
+  {
+   "path": "artifacts/closeout/python-postmatrix.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "artifacts/closeout/python-postmatrix.log.gz",
+   "bytes": 459,
+   "sha256": "44990ce828b37728eeb10b0c7aa3cb430a073f96fe168396ae3df0024dadf0a3"
+  },
+  {
+   "path": "artifacts/closeout/reconciliation.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "artifacts/closeout/reconciliation.log.gz",
+   "bytes": 280,
+   "sha256": "35758235d494ea8d88edc1a5056ec32ab760b6ae2401a3b9574490a3632fc4d8"
+  },
+  {
+   "path": "artifacts/closeout/residuals.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "artifacts/closeout/residuals.log.gz",
+   "bytes": 3861,
+   "sha256": "b1dd611e991d9cb5dfabf3b9e575db63229feffbfc462a1d18adb86d58b3b12a"
+  },
+  {
+   "path": "artifacts/closeout/whitespace.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "artifacts/closeout/whitespace.log.gz",
+   "bytes": 20,
+   "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+  },
+  {
+   "path": "artifacts/composed-runtime-receipt.json",
+   "bytes": 66881,
+   "sha256": "c03b2534a188a46160ce08ad795fe0636423d70ff1b8551e7ecc63a958a167d8"
+  },
+  {
+   "path": "pins/corpus-check.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "pins/corpus-check.log",
+   "bytes": 258,
+   "sha256": "12b1a7d6d56b0100802e9b7744e399863fe129ade32e4ba2faf735828beb3fbd"
+  },
+  {
+   "path": "pins/corpus-pin.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "pins/corpus-pin.log",
+   "bytes": 387,
+   "sha256": "0f14c1628ac396e4686c406054ec09d41656ff7a8c002d39a454a4a12afc1821"
+  },
+  {
+   "path": "pins/system-check.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "pins/system-check.log",
+   "bytes": 258,
+   "sha256": "0ef0a79d2503a902cbae4cee5a1c0c28829f94bd8d9e4d4579f4d4ec0324417f"
+  },
+  {
+   "path": "pins/system-pin.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "pins/system-pin.log",
+   "bytes": 353,
+   "sha256": "d488b1a9ace182ade0bdddddf1c519271a7fa006ffa697fbe0024a9f70bccbd7"
+  },
+  {
+   "path": "pins/verify.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "pins/verify.log",
+   "bytes": 1989,
+   "sha256": "6fc7e0dc91326a53f9c6590a72fef05d003118f2bc94103bad6a070d373f1e5c"
+  }
+ ]
+}

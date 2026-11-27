@@ -1,0 +1,73 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "cycle19-file-os",
+ "total_pruned_files": 13,
+ "total_pruned_bytes": 699717,
+ "artifacts": [
+  {
+   "path": "audit.log.gz",
+   "bytes": 14182,
+   "sha256": "eb8c1eb51e794c6bb8d5554309c1848cca37b3a9a888d5d6a412c6f25420173d"
+  },
+  {
+   "path": "clippy.log.gz",
+   "bytes": 146,
+   "sha256": "5b76b638bfa04363980def14a25fdee034e1710fbc1553b9e201cf9853e420b2"
+  },
+  {
+   "path": "diagnostics.chunk-contracts.json.gz",
+   "bytes": 268098,
+   "sha256": "0b71125cf850dc14c9492dbed3f8d63e915004ac851ef2ded105a3d43a2820e1"
+  },
+  {
+   "path": "diagnostics.contracts.json.gz",
+   "bytes": 880,
+   "sha256": "9105cafac331475e3f05db866638d060662ee52acfa7c17a5e22ad7bbf62a832"
+  },
+  {
+   "path": "diagnostics.json.gz",
+   "bytes": 400396,
+   "sha256": "e2578636f5f810e697435701ce5389436a75eda6a803394b9e6ce8aef31a8d1e"
+  },
+  {
+   "path": "fmt.log.gz",
+   "bytes": 20,
+   "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+  },
+  {
+   "path": "followup.log.gz",
+   "bytes": 1690,
+   "sha256": "864806d1687f976a4772bc95c3b69d27eea2d77750d285d9414e3c5cbad43b93"
+  },
+  {
+   "path": "lean-audit.log.gz",
+   "bytes": 3117,
+   "sha256": "073ef2a26f048e27ae5eb360128dddc9a33ec09874542e73295a6d4c755108cc"
+  },
+  {
+   "path": "lean-build.log.gz",
+   "bytes": 122,
+   "sha256": "48fb703c1e218ee57319fbffafe5e44be7c1f64716881fd7fecc9c895d12e5e8"
+  },
+  {
+   "path": "probe.log.gz",
+   "bytes": 659,
+   "sha256": "810d5bba6facd639dcbcbba6dd7200351fce9c9bd7b1d0869fc27533480331dd"
+  },
+  {
+   "path": "python-tests.log.gz",
+   "bytes": 329,
+   "sha256": "e34aad648e8b41a081ee98d9f331fcb002811178226ac9bc5189aa573c87205d"
+  },
+  {
+   "path": "report-tests.log.gz",
+   "bytes": 381,
+   "sha256": "8d0f4a8d32cc9dc93f42384753250dfc03348790c60907e4047b5ba5674319be"
+  },
+  {
+   "path": "workspace-tests.log.gz",
+   "bytes": 9697,
+   "sha256": "787e2af5c81e49d3de6f936d517b6aea674ed5107a23e5c8d57b19fa489fb47b"
+  }
+ ]
+}

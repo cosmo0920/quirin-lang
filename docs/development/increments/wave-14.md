@@ -41,7 +41,7 @@ boundaries.
   T00's archive; the mixed-join liveness condition is exactly {RELEASED} and
   {RELEASED, ESCAPED} over the modelled bits, enumerated and decided, three
   theorems retired by name, LEAK-ORDER untouched. Evidence:
-  `docs/reports/remaining-hygiene-14/README.md`.
+  `docs/reports/archive/early-waves/remaining-hygiene-14/README.md`.
 - Frame verification task (P04-FRAME): the frame helper — and by census
   correction the list-unlink and field-destructor checks too — gain
   first-class verification tasks wrapping unedited evaluators in full
@@ -49,7 +49,7 @@ boundaries.
   the identity triple (P04-FRAME-OBLIGATION-ID); memory_close's move is
   honestly sized out as P04-COMPOSE-MEMCLOSE. 27 audited theorems;
   `qcore-schemas` to 11.0.0. Evidence:
-  `docs/reports/remaining-p04-frame/README.md`.
+  `docs/reports/archive/early-waves/remaining-p04-frame/README.md`.
 - file_close compositions (P04-COMPOSE-A): both entry points travel with
   structural recursion (a boxed nested family input; measured depth 2
   compositions / 4 task levels; 171 mutation rows including the forged
@@ -57,7 +57,7 @@ boundaries.
   v2 with both directions refused; a fail-closed gate its own change nearly
   weakened was repaired at the original site, and a missing pin its module
   doc claimed was written rather than the claim lowered. 15 new audited
-  theorems. Evidence: `docs/reports/remaining-p04-compose-a/README.md`.
+  theorems. Evidence: `docs/reports/archive/early-waves/remaining-p04-compose-a/README.md`.
 - Corpus consolidation: one integrator measurement
   (`docs/reports/wave14-corpus/`) re-pins the baseline — one attributed
   diagnostics unit (PROD-CONTRACTS' −58/+17 leaves), the schemas-11.0.0

@@ -21,14 +21,14 @@ keeps its own boundaries.
   releasing Linux classes retire the number, everything unpinned stays
   Poisoned. The two-sided digest grows to 2016 rows with Rust and Lean
   agreeing independently. Nine audited theorems. `qcore-compiler` 0.4.0.
-  Evidence: `docs/reports/remaining-o03-reactor/README.md`.
+  Evidence: `docs/reports/archive/early-waves/remaining-o03-reactor/README.md`.
 - Cleanup-outcome vocabulary (P04-B1): both cleanup-outcome contracts declare
   the referents their profile binds under `cleanup_vocabulary_v1`, bound
   structurally against pinned source (13 source-binding, 17 profile and 20
   grammar refusals; clause counts 16/16/12 → 26/29/25, corpus stays 60
   modules). 37 audited Lean theorems (`QCore.CleanupVocabulary`). The only
   corpus movement of the wave: 18 contract_source leaves. Evidence:
-  `docs/reports/remaining-p04-b1/README.md`.
+  `docs/reports/archive/early-waves/remaining-p04-b1/README.md`.
 - Loader and TOCTOU (P01-F3): no unverified provider path remains reachable
   from production (two real holes closed: discover_packages registered a
   package with no executable at all, and the compiler's first-party registry
@@ -38,7 +38,7 @@ keeps its own boundaries.
   PROVED open in Lean rather than claimed closed, and a self-caught deadline
   regression repaired. 24 audited theorems (`QCore.PackageIdentity`);
   `qcore-verifier-host` 0.3.0. Evidence:
-  `docs/reports/remaining-p01-f3/README.md`.
+  `docs/reports/archive/early-waves/remaining-p01-f3/README.md`.
 - Lock ranks (CT33-RANKS): the recorded CT33 blocker was measured incomplete
   — nested `with lock` was itself refused — so both moved together: `mutex
   rank N` declarations, an opt-in strict-order discipline (new Q624/Q625
@@ -46,14 +46,14 @@ keeps its own boundaries.
   nesting, with unranked modules byte-identical. A rank is a declared
   position, not an assumption. 12 audited theorems; CT33's mapping is
   proposed with the measured [Q624,Q612] cascade for the next CT lane.
-  Evidence: `docs/reports/remaining-ct33-ranks/README.md`.
+  Evidence: `docs/reports/archive/early-waves/remaining-ct33-ranks/README.md`.
 - Composition residuals (E03-B-O): an absent provider's obligations now
   derive and refuse on absence (ObservationHooks withholds its vacuous
   inventory — E03-B-O1-HOOKS); composition is grouping-invariant on the
   whole outcome; BoundedPaths composes through the real firewall with a
   census tripwire for the still-unemitted count kinds. `Composition` grows
   to 61 audited theorems; `qcore-verification` 0.3.0. Evidence:
-  `docs/reports/remaining-e03-b-o/README.md`.
+  `docs/reports/archive/early-waves/remaining-e03-b-o/README.md`.
 - Extern out/stored modes (EXTERN-F1): `resource_out(nullable)` acquires on
   the success arm only (an unwritten slot is observed as failure and
   refuted, not believed); `resource_stored` consumes permanently under the
@@ -62,7 +62,7 @@ keeps its own boundaries.
   source module — the abandonment gate refuses a second live acquisition and
   was deliberately not weakened (EXTERN-F1-STORE-REACH). `QCore.ExternCall`
   grows to 48 audited theorems; two new sanitized native fixtures. Evidence:
-  `docs/reports/extern-call-f1/README.md`.
+  `docs/reports/archive/language-and-tooling/extern-call-f1/README.md`.
 - Bound-base reads (O04-READ-BOUND): a member read through a base bound by an
   admitted aggregate store is admitted as a whole Borrowed actual with the
   linked children's liveness required (the released-child admission and a
@@ -70,9 +70,9 @@ keeps its own boundaries.
   the READ-BOUND-BASE blocker falls and C6's residual narrows ten to nine
   refusals — C6 itself stays Unknown. All five corpus artifacts
   byte-identical. 44 audited theorems (`QCore.BoundFieldRead`). Evidence:
-  `docs/reports/remaining-o04-read-bound/README.md`.
+  `docs/reports/archive/early-waves/remaining-o04-read-bound/README.md`.
 - Corpus consolidation: one integrator measurement on the merged tree
-  (`docs/reports/wave10-corpus/`) re-pins the baseline — 2 Safe /
+  (`docs/reports/archive/early-waves/wave10-corpus/`) re-pins the baseline — 2 Safe /
   42 provisional Unsafe / 137 Unknown / 4 data-only unchanged, and the only
   movement against wave 9 is P04-B1's 18 contract_source leaves, attributed
   pair by pair. The acceptance matrix regenerates whole-file at the merged

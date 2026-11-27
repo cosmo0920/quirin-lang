@@ -36,7 +36,7 @@ position in the ordered expectation table; the entry was placed in its required
 lexical position and the full gate rerun.
 
 Reproduce from the repository root using the standing commands in
-[the traversal report](../cycle19-teardown-traversal/README.md), with
+[the traversal report](../archive/cycles-18-19/cycle19-teardown-traversal/README.md), with
 `RUST_TEST_THREADS=1 cargo test --workspace` and these audit output arguments:
 
 ```sh

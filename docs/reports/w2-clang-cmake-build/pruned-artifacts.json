@@ -1,0 +1,153 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "w2-clang-cmake-build",
+ "total_pruned_files": 29,
+ "total_pruned_bytes": 916054,
+ "artifacts": [
+  {
+   "path": "audit.log.gz",
+   "bytes": 13851,
+   "sha256": "e6b84e8848ce4e93708d227a39d9aad776ea652ed321946279ef43b06b14e6f6"
+  },
+  {
+   "path": "canonical-audit.log.gz",
+   "bytes": 333,
+   "sha256": "6934d46e187dec35a32f3fd88fbd7b6e2da2b9796973f4b500da99e6066d8a4f"
+  },
+  {
+   "path": "chunk-contracts.json.gz",
+   "bytes": 268590,
+   "sha256": "1491151435de0baed8b2125d50b1ae86cb6cb3eb7c043d6984a702769387053f"
+  },
+  {
+   "path": "cli.log.gz",
+   "bytes": 308,
+   "sha256": "c611d3c44273fff4a5330d6d27e99aff7127b53944825d0592cbb1b036f9f10f"
+  },
+  {
+   "path": "clippy.log.gz",
+   "bytes": 197,
+   "sha256": "bacf5c4584a1e66e0c9ba2c6361776409078e97cf0b355fdac69d83739b35c35"
+  },
+  {
+   "path": "cmake-production.log.gz",
+   "bytes": 6773,
+   "sha256": "f715a93e73e1267c89820695d9ae84edd20d2d89fd2c65d3a8b86c81dd4ae2bd"
+  },
+  {
+   "path": "compile_commands.json.gz",
+   "bytes": 94477,
+   "sha256": "122bf806d1e3172403ca6adb9ec027358ac00410b2424db5636ce2b0d1a38340"
+  },
+  {
+   "path": "configure.log.gz",
+   "bytes": 3201,
+   "sha256": "c149a68dfd247050788017a979bd01faf1ff01695dbd443d7ed4a131c2a9ca89"
+  },
+  {
+   "path": "diagnostics.json.gz",
+   "bytes": 372538,
+   "sha256": "0e229046194cf4359f3cf7d798952a5a967b19ee62712129a95908b4ba0e6dfa"
+  },
+  {
+   "path": "fmt.log.gz",
+   "bytes": 20,
+   "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+  },
+  {
+   "path": "focused.log.gz",
+   "bytes": 533,
+   "sha256": "ad3b242a4d46a3d9de9dc90afe650c4e86ce58a0a177050e5992049b04b36b2a"
+  },
+  {
+   "path": "followup.log.gz",
+   "bytes": 1790,
+   "sha256": "10c100d35d4064543e90f67572bcc4a9609d53985838d91482da2ca5c7829e58"
+  },
+  {
+   "path": "fresh-audit.log.gz",
+   "bytes": 333,
+   "sha256": "6934d46e187dec35a32f3fd88fbd7b6e2da2b9796973f4b500da99e6066d8a4f"
+  },
+  {
+   "path": "fresh-compile_commands.json.gz",
+   "bytes": 109762,
+   "sha256": "e588f11eae8e7dd22bb984ce54706c5062a1fb0ac0d942328e9baacc31610526"
+  },
+  {
+   "path": "fresh-configure.log.gz",
+   "bytes": 6803,
+   "sha256": "345a2e27488cf92a0bfd23cd1670210d705ac5f290436bc5537877c639316236"
+  },
+  {
+   "path": "fresh-native-build.log.gz",
+   "bytes": 1430,
+   "sha256": "278a895b423a46f580e129d5e024e5045e5c6324407477bef704b289e4f7af22"
+  },
+  {
+   "path": "fresh.log.gz",
+   "bytes": 119,
+   "sha256": "c229ec654321463eb49508388ffd30347f9abacde3369a03cf9aa35f44f8264f"
+  },
+  {
+   "path": "gcc-rejection.log.gz",
+   "bytes": 92,
+   "sha256": "a8de99bb744e50dd0016f0fd53fdb13d90df7ebcb889287866b93564ee6eeb06"
+  },
+  {
+   "path": "identity.log.gz",
+   "bytes": 320,
+   "sha256": "47df43db92822a905af06d3a5311e40c02842e3ca52de7e76171ddca72bb2bfa"
+  },
+  {
+   "path": "lean-audits.log.gz",
+   "bytes": 10122,
+   "sha256": "b610b5153228e9925ea137034f1131f860b9b0720bca6b11c0864c0421cf8acf"
+  },
+  {
+   "path": "lean.log.gz",
+   "bytes": 60,
+   "sha256": "b17aae97a7347ffca8031ca36026511a1cf8b909ca61599387b288d801f0a46c"
+  },
+  {
+   "path": "native-build.log.gz",
+   "bytes": 1416,
+   "sha256": "034b79d23266e8b66cacd8077e028a9753aac93e01f36c67133c252203920da7"
+  },
+  {
+   "path": "prepare.log.gz",
+   "bytes": 110,
+   "sha256": "8c27e8d7d4e751403342aec0bc44e15ef6ece227217aae33847385ae56b9090d"
+  },
+  {
+   "path": "probe.log.gz",
+   "bytes": 724,
+   "sha256": "ef1c4f6c8ef80e8901a08d4cd375e0e413af061e27abb7ca2f741f6e7db5c226"
+  },
+  {
+   "path": "provider-clippy.log.gz",
+   "bytes": 201,
+   "sha256": "e4b8defab5767080689c8491e6900eb29d681962f6f5fe6c81a5d61a94452756"
+  },
+  {
+   "path": "provider-fmt.log.gz",
+   "bytes": 20,
+   "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+  },
+  {
+   "path": "providers.log.gz",
+   "bytes": 1533,
+   "sha256": "a738e4c1143183840efd28e31a9830aeb22ff55063a7527740091a65d453ea31"
+  },
+  {
+   "path": "python.log.gz",
+   "bytes": 598,
+   "sha256": "9e9dc3562cb2a3ea4aaef304dc499bf9069839727f770f2346d0053f51bff740"
+  },
+  {
+   "path": "workspace.log.gz",
+   "bytes": 19800,
+   "sha256": "165914e4ca422971c2e7715c6eae317a7a7fae088688255fbf26e8cce18eb264"
+  }
+ ]
+}

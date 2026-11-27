@@ -12,7 +12,7 @@ the failure-gated chain, which caught one composition seam (the example
 suite's rename-proof driver constant failed to compile once only `quirin`
 existed — `env!` resolves in the arm a match never takes). Wave 21 is
 corpus-neutral by construction; the baseline stays
-`docs/reports/wave20-corpus/`.
+`docs/reports/archive/waves-20-39/wave20-corpus/`.
 - Source logging in the thread examples (COMPOSE-CONCURRENCY): the new
   route `source.std-io-tasks.v1` composes the checked task route with
   `std.io`/`std.logger` — the task half is the unedited task lowering and
@@ -27,7 +27,7 @@ corpus-neutral by construction; the baseline stays
   (`value |> log info dec` over `qcore_buffer_read`). All four
   `examples/threads` programs gain source logging, sanitized and
   per-stream byte-compared; no synthesized trace byte moved. Evidence:
-  `docs/reports/wave21-compose-concurrency/README.md`.
+  `docs/reports/archive/waves-20-39/wave21-compose-concurrency/README.md`.
 - The example suite (EXAMPLES-SUITE): five families under `examples/` —
   stdio (both renderings, all three severities with the `fatal` collision
   asserted, `flush`'s no-durability boundary, the composed
@@ -35,7 +35,7 @@ corpus-neutral by construction; the baseline stays
   unsafe-linkage — 14 programs, 32 tests, with refused programs and
   quoted diagnostics extracted from the READMEs and compiled, so no
   documented refusal can drift. Evidence:
-  `docs/reports/wave21-examples-suite/README.md`.
+  `docs/reports/archive/waves-20-39/wave21-examples-suite/README.md`.
 Merged gate at this checkpoint: 3,343 workspace tests (8 ignored),
 122 provider tests, 193 Python tests, 90 Lean audits, both reevaluation
 examples exit 0, fmt and clippy clean. Follow-on accounting lives in
@@ -55,7 +55,7 @@ occurrences named a binary; no CI edit was needed (every automated
 invocation selects the package, not the binary); no transitional alias,
 because a second `[[bin]]` would make `cargo run -p qcorec --` ambiguous.
 Behaviour neutrality byte-pinned. Evidence:
-`docs/reports/wave21-quirin-rename/README.md`.
+`docs/reports/archive/waves-20-39/wave21-quirin-rename/README.md`.
 
 
 <!-- migrated-section:end -->

@@ -22,9 +22,9 @@ These hold for every figure on this page.
   only, rule 31), is never Safe, always stays in the denominator, its held
   reason is only ever tool-minted, and a Pending unit is subject to every Safe
   scope gate (gateway 10i). A row is Pending only if its function carries no
-  other reason ([held-call standing](reports/w45-review-hold-preempts-statement-refusal/README.md));
+  other reason ([held-call standing](reports/archive/waves-40-47/w45-review-hold-preempts-statement-refusal/README.md));
   every row holding a review-held call names the held declaration's markers
-  ([concrete reason](reports/w47-review-hold-concrete-reason/README.md)).
+  ([concrete reason](reports/archive/waves-40-47/w47-review-hold-concrete-reason/README.md)).
 - **Unsafe is provisional.** Every Unsafe count below is provisional Unsafe: a
   candidate, never a validated upstream defect claim.
 - **Unknowns stay in the denominator.** Projection coverage is not safety
@@ -106,7 +106,7 @@ Unpublished landings (user decision 2026-11-16): the newest committed landing ba
 ### Measured since the baselines
 
 **Newest integrator measurement of the live routes:** the SP1 landing's
-[`quirin-audit measure --declared`](reports/sp1-symbolic-openssl-premises/integration/native-comparison.json.gz)
+[`quirin-audit measure --declared`](reports/archive/contracts-and-premises/sp1-symbolic-openssl-premises/integration/native-comparison.json.gz)
 of `2c07390b6` (main r39 plus SP1) against `b7f86a0de`, every route complete,
 0 moves. Function rows, Safe / Pending / Unknown / provisional Unsafe; a
 landing-gate count, not a published baseline:
@@ -173,28 +173,28 @@ and the reports.
 
 | Area | Current state and boundary | Source |
 |---|---|---|
-| Runtime projection of outer contracts (rule 31, C04.20) | A separate runtime scope beside unchanged static verdicts. At stage 2 all three loaders were in force; runtime all-loaded custody **909 / 32 / 3,884 / 9**, the exact 32 baseline Unknown rows Pending until human review of both loaded plugin classes (measured at stage 2, before the published baseline) | [Stage 1](reports/outer-contract/README.md), [stage 2](reports/rk-plugin-library-outer-envelope/README.md) |
-| Bounds (separate from custody) | **162 Safe / 0 Pending / 0 Unsafe / 4,759 Unknown** over 4,921 definitions; combined custody + bounds 113 / 4,799 / 9 at SUP03-BOUNDS-TALLY-ON-INTEGRATED-MAIN (main `e0b92ece6`). User-authored external premises require review; every covered use is checked | [CG16](reports/cg16-index-and-offset-extents/README.md), [SUP03](reports/sup03-bounds-tally/README.md) |
-| Null dereference (separate; rules 14k–14z, 15q–15u, C09.3) | The live baselines above (corpus null 2,549 / 2,355 / 17 provisional Unsafe). Findings are exact paths validated from entry under a named condition, never upstream defects | [Null triage](reports/null-triage-unresolved-paths/README.md) |
-| Contract dependencies per verdict (rules 13f–13k) | Every row lists the declarations and premises it rests on; the dependency field changes no verdict | [Report](reports/verdict-contract-dependencies/README.md) |
-| Callback contracts (rules 13u–13z, C04.19) | A callback-taking callee is decided only through its callbacks' own contracts, never as benign; registries only under a registration in force in the calling body | [Report](reports/cg22-callback-registry-contract/README.md) |
-| Leak classification | Of W44-LEAK-PIN-AUDIT's 271 leaves: 139 validated, 31 projection artifacts, 101 premise or approximation gaps; provisional candidates, never upstream defect claims (classifies that card's leaves, not today's) | [Classification](reports/w44-leak-pin-audit/classification.md) |
-| Refusal censuses (measurement, no verdict) | Uncontracted calls, branch conditions, indirect access, return expressions and unknown aliases are each censused by the card that last moved them; the indirect-access sole-blocker population is ranked by CG10-INDIRECT-ACCESS-SOLE-RESIDUALS (round 4: 222 Unknown functions blocked by it alone on the opt-in route) | [Round 4](reports/cg10-indirect-access-sole-residuals-r4/README.md), [W47 blockers](reports/w47-access-path-positions/artifacts/after/blockers.json), [alias census](reports/w47-alias-residuals-census/README.md) |
+| Runtime projection of outer contracts (rule 31, C04.20) | A separate runtime scope beside unchanged static verdicts. At stage 2 all three loaders were in force; runtime all-loaded custody **909 / 32 / 3,884 / 9**, the exact 32 baseline Unknown rows Pending until human review of both loaded plugin classes (measured at stage 2, before the published baseline) | [Stage 1](reports/archive/contracts-and-premises/outer-contract/README.md), [stage 2](reports/archive/language-and-tooling/rk-plugin-library-outer-envelope/README.md) |
+| Bounds (separate from custody) | **162 Safe / 0 Pending / 0 Unsafe / 4,759 Unknown** over 4,921 definitions; combined custody + bounds 113 / 4,799 / 9 at SUP03-BOUNDS-TALLY-ON-INTEGRATED-MAIN (main `e0b92ece6`). User-authored external premises require review; every covered use is checked | [CG16](reports/archive/gateway-and-clang/cg16-index-and-offset-extents/README.md), [SUP03](reports/archive/language-and-tooling/sup03-bounds-tally/README.md) |
+| Null dereference (separate; rules 14k–14z, 15q–15u, C09.3) | The live baselines above (corpus null 2,549 / 2,355 / 17 provisional Unsafe). Findings are exact paths validated from entry under a named condition, never upstream defects | [Null triage](reports/archive/contracts-and-premises/null-triage-unresolved-paths/README.md) |
+| Contract dependencies per verdict (rules 13f–13k) | Every row lists the declarations and premises it rests on; the dependency field changes no verdict | [Report](reports/archive/language-and-tooling/verdict-contract-dependencies/README.md) |
+| Callback contracts (rules 13u–13z, C04.19) | A callback-taking callee is decided only through its callbacks' own contracts, never as benign; registries only under a registration in force in the calling body | [Report](reports/archive/gateway-and-clang/cg22-callback-registry-contract/README.md) |
+| Leak classification | Of W44-LEAK-PIN-AUDIT's 271 leaves: 139 validated, 31 projection artifacts, 101 premise or approximation gaps; provisional candidates, never upstream defect claims (classifies that card's leaves, not today's) | [Classification](reports/archive/waves-40-47/w44-leak-pin-audit/classification.md) |
+| Refusal censuses (measurement, no verdict) | Uncontracted calls, branch conditions, indirect access, return expressions and unknown aliases are each censused by the card that last moved them; the indirect-access sole-blocker population is ranked by CG10-INDIRECT-ACCESS-SOLE-RESIDUALS (round 4: 222 Unknown functions blocked by it alone on the opt-in route) | [Round 4](reports/archive/gateway-and-clang/cg10-indirect-access-sole-residuals-r4/README.md), [W47 blockers](reports/archive/waves-40-47/w47-access-path-positions/artifacts/after/blockers.json), [alias census](reports/archive/waves-40-47/w47-alias-residuals-census/README.md) |
 | Raw source coverage | **4,921 definitions / 4,834 projected / 87 pinned-build exclusions**, 24 full-path units | [Census](reports/w42-unprojected-definitions/README.md) |
-| Contract plugins | `quirin-audit openssl`, `quirin-audit libcurl` and the OpenSSL and libcurl user crates publish Pending at best, never Safe. The pinned corpus route refuses a manifest whose load path carries checker bindings (`checker-bindings-not-run`) | [OpenSSL](reports/w48-openssl-contract-plugin/README.md), [libcurl](reports/w48-libcurl-contract-plugin/README.md), [bindings](reports/configured-route-plugin-bindings/README.md) |
+| Contract plugins | `quirin-audit openssl`, `quirin-audit libcurl` and the OpenSSL and libcurl user crates publish Pending at best, never Safe. The pinned corpus route refuses a manifest whose load path carries checker bindings (`checker-bindings-not-run`) | [OpenSSL](reports/archive/wave-48/w48-openssl-contract-plugin/README.md), [libcurl](reports/archive/wave-48/w48-libcurl-contract-plugin/README.md), [bindings](reports/archive/language-and-tooling/configured-route-plugin-bindings/README.md) |
 
 **Fluent Bit, Monkey and Cycle 18 evidence**
 
 | Area | Current state and boundary | Source |
 |---|---|---|
-| Loop-owner obligation (rule 10p, C04.9) | 4 declared collector operations, **refused on every per-unit route** (verdicts unchanged); discharge is measured only by the in_tail thread-entry census | [W47-LOOP-OWNER-INSTANCE-FLOW](reports/w47-loop-owner-instance-flow/README.md) |
-| Condvar publication and join (rule 10q, C04.10) | 6 declared libc callees, **refused on every per-unit route** (verdicts unchanged); discharge is measured only by the condvar/join census | [W47-CONDVAR-JOIN-PUBLICATION](reports/w47-condvar-join-publication/README.md) |
-| Engine loop census (measurement, no verdict) | 121 loops at `046accf6`: 115 bounded / 2 decreasing / 1 yielding / 3 unresolved under named premises; no progress verdict (Quirin proves resource safety, not progress) | [W45-FB-ENGINE-PROGRESS](reports/w45-fb-engine-progress/README.md) |
+| Loop-owner obligation (rule 10p, C04.9) | 4 declared collector operations, **refused on every per-unit route** (verdicts unchanged); discharge is measured only by the in_tail thread-entry census | [W47-LOOP-OWNER-INSTANCE-FLOW](reports/archive/waves-40-47/w47-loop-owner-instance-flow/README.md) |
+| Condvar publication and join (rule 10q, C04.10) | 6 declared libc callees, **refused on every per-unit route** (verdicts unchanged); discharge is measured only by the condvar/join census | [W47-CONDVAR-JOIN-PUBLICATION](reports/archive/waves-40-47/w47-condvar-join-publication/README.md) |
+| Engine loop census (measurement, no verdict) | 121 loops at `046accf6`: 115 bounded / 2 decreasing / 1 yielding / 3 unresolved under named premises; no progress verdict (Quirin proves resource safety, not progress) | [W45-FB-ENGINE-PROGRESS](reports/archive/waves-40-47/w45-fb-engine-progress/README.md) |
 | Loop measures and list-length bounds | Facts beside custody, never verdicts: a checked counted-loop measure or a named refusal (rule 44); 17 of the system slice's 87 list-length loops carry a bound under a declared list-finiteness premise (rule 48) | [Gateway 44](agents/gateway.md#constraint-44), [48](agents/gateway.md#constraint-48) |
-| Engine-thread joins (native observation, no verdict) | 240 runs: a second `flb_stop`, and a stop after an engine start failure, join the engine thread twice; under the strict pair these reproduce caller-contract violations, not library defects. **Native observation at the pinned builds under the stated inducers, not a proof, no Quirin verdict moves, not an upstream defect claim** | [W47-FB-DOUBLE-STOP-OBSERVATION](reports/w47-fb-double-stop-observation/README.md) |
-| Native descriptor observation | **81 pinned Linux runs** (80 accepted, 36 with injected failures); release-at-most-once fails in 13 runs (two double closes read against the Fluent Bit source: local observations, provisional candidates, not upstream defect claims) and operand validity in 37 (`close(-1)`); the landed libc descriptor, stream and directory contracts bound to **3,149** executions of 18 declared callees with **0 contradictions** | [W43 descriptor native check](reports/w43-descriptor-native-check/README.md) |
+| Engine-thread joins (native observation, no verdict) | 240 runs: a second `flb_stop`, and a stop after an engine start failure, join the engine thread twice; under the strict pair these reproduce caller-contract violations, not library defects. **Native observation at the pinned builds under the stated inducers, not a proof, no Quirin verdict moves, not an upstream defect claim** | [W47-FB-DOUBLE-STOP-OBSERVATION](reports/archive/waves-40-47/w47-fb-double-stop-observation/README.md) |
+| Native descriptor observation | **81 pinned Linux runs** (80 accepted, 36 with injected failures); release-at-most-once fails in 13 runs (two double closes read against the Fluent Bit source: local observations, provisional candidates, not upstream defect claims) and operand validity in 37 (`close(-1)`); the landed libc descriptor, stream and directory contracts bound to **3,149** executions of 18 declared callees with **0 contradictions** | [W43 descriptor native check](reports/archive/waves-40-47/w43-descriptor-native-check/README.md) |
 | Chunk lifecycle results | **0 Safe / 96 Unknown** over 96 selected `flb_input_chunk.c` and `cio_chunk.c` functions; nine outstanding composition legs each | [Chunk source profile](reports/w43-chunk-source-profile/README.md) |
-| Monkey callback accounting | **3/3 accounted, 0/3 Cycle 18 composed, 3 explicit Unknown**; 8 source paths; 51 relevant obligation cells, 17 discharged / 34 open | [Callback report](reports/w42-monkey-callback-coverage/README.md), [composition](reports/w43-monkey-callback-composition/README.md) |
+| Monkey callback accounting | **3/3 accounted, 0/3 Cycle 18 composed, 3 explicit Unknown**; 8 source paths; 51 relevant obligation cells, 17 discharged / 34 open | [Callback report](reports/w42-monkey-callback-coverage/README.md), [composition](reports/archive/waves-40-47/w43-monkey-callback-composition/README.md) |
 | Observed Monkey timed wait | 1 instrumented Linux epoll success run; conditional replay, no coverage promotion | [Observed integration](reports/cycle18-observed-integration/README.md) |
 | Cycle 18 | Priority-one: 8 failure cases (3 fault-model Unsafe / 5 Unknown), 4/4 payload paths under explicit authority, 15-operation timeout teardown. Bounded aggregate: 3 joined families / 8 source paths / 7 unresolved obligations, **aggregate Unknown**. Callback task handoff: 12 source-derived operations, production acceptance pending. Native platform matrix: **4 Linux Observed / 3 foreign-host Unknown** | [Priority one](reports/cycle18-priority1-integration/README.md), [broader integration](reports/cycle18-broader-integration/README.md) |
 
@@ -224,13 +224,13 @@ Unsafe proposals downgrade to Unknown (`QP010`).
   EVENT-HOLDER-IDENTITY, EVENT-COLLECTOR-SELECTION) are independently replayed
   imports; membership/instance invariance, persistent frames and caller
   lifetime composition remain open, and no Safe route consumes them
-  ([collector selection](reports/event-collector-selection/README.md)).
+  ([collector selection](reports/archive/language-and-tooling/event-collector-selection/README.md)).
 - Guarded contract adoption is **halted at the user's request**
   ([supplemental card](reports/guarded-contract-adoption/SUPPLEMENTAL_CARD.md)).
 - Memory: the bounded audit working set's one observed default current run
   peaked at 6,985,576,448 bytes; the 6 GB target, CI margin and repeats remain
   open, and the prior four-job 7 GB OOM remains a failed result
-  ([working set](reports/audit-ir-working-set/README.md)).
+  ([working set](reports/archive/language-and-tooling/audit-ir-working-set/README.md)).
 - Resource custody is kind-indexed: a release discharges only an obligation
   of its own kind, and a file descriptor is tracked as an `int` with sentinel
   validity ([W43-DESCRIPTOR-RESOURCE-TRACKING](reports/w43-descriptor-resource-tracking/README.md)).
@@ -253,7 +253,7 @@ Root Rust: **10,370 passed / 0 failed / 24 ignored**, 725 units / 770 summaries;
 Python: **807 tests**, which exited 1 on `test_build_matrix_sections`'
 stale-matrix check only, and were rerun after the matrix was regenerated from
 the record. No provider path changed; the provider figure, **182 passed / 1 ignored**, is carried from the
-integrate/r74 [landing gate](reports/landing-batch-a/integration/gate.json), which ran it.
+integrate/r74 [landing gate](reports/archive/wave-48/landing-batch-a/integration/gate.json), which ran it.
 Clang: Ubuntu clang 21.1.8. Pinned-route parity was not run (no `build/cycle19`
 inputs on the host), and no profile baseline changed.
 

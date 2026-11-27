@@ -139,8 +139,8 @@ Clang present; the pre-rebase gate measured 4,662 / 0 / 9 and 138, and a
 first run at `ac2a6b84` exited 101 against stale artifacts the first
 mutation harness left (restore by `mv` without a `touch`; three rows of the
 card's own file) plus one load-red constraint-16 row, both recorded and the
-harness corrected (`docs/reports/loops-on-composed-routes/gate.json`, §10).
-Evidence: `docs/reports/loops-on-composed-routes/README.md`.
+harness corrected (`docs/reports/archive/language-and-tooling/loops-on-composed-routes/gate.json`, §10).
+Evidence: `docs/reports/archive/language-and-tooling/loops-on-composed-routes/README.md`.
 
 **`CT42-CELL-ROUTE` (2026-09-18).** The socket protocol cell is routed from
 source and CT42 is mapped — **46/50 → 47/50**, a grown denominator, which is

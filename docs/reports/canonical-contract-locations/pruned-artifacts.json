@@ -1,0 +1,13 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "canonical-contract-locations",
+ "total_pruned_files": 1,
+ "total_pruned_bytes": 371069,
+ "artifacts": [
+  {
+   "path": "corpus-diff.json",
+   "bytes": 371069,
+   "sha256": "84d9a0104f6aa734c1f2a51190c001981bc31215a88949810061ce516501d201"
+  }
+ ]
+}

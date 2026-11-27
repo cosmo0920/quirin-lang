@@ -6,7 +6,7 @@ rule. It is the disposition of card **C03-REACH** step (3): the measured
 identification of what the next W4 admission must cover, and why the obvious
 smaller options do not.
 
-Measurement of record: [`docs/reports/remaining-c03-reach/README.md`](../reports/remaining-c03-reach/README.md),
+Measurement of record: [`docs/reports/archive/early-waves/remaining-c03-reach/README.md`](../reports/archive/early-waves/remaining-c03-reach/README.md),
 whose census artifact carries every number quoted below.
 
 ## 1. The problem this note is scoped by

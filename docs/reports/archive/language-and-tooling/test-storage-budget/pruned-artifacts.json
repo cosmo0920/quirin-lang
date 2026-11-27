@@ -1,0 +1,13 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "test-storage-budget",
+ "total_pruned_files": 1,
+ "total_pruned_bytes": 1460,
+ "artifacts": [
+  {
+   "path": "evidence/timing.log",
+   "bytes": 1460,
+   "sha256": "d590a994023bc85120a869268770003b58df23a5303ad8fdc95dad872a24d4e3"
+  }
+ ]
+}

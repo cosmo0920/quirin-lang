@@ -1,0 +1,33 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "callback-supplied-null-actual",
+ "total_pruned_files": 5,
+ "total_pruned_bytes": 1589150,
+ "artifacts": [
+  {
+   "path": "gate/gate-1.json",
+   "bytes": 297241,
+   "sha256": "e47958e907bb270a4443011365f717d6135cf653e5efb0ccf0ff3d9c1f059d00"
+  },
+  {
+   "path": "gate/gate-2.json",
+   "bytes": 301658,
+   "sha256": "2b14c0b8d46237b3bacb625115633660dadfa2fbbb57f4c7de26287019c7f036"
+  },
+  {
+   "path": "gate/gate-3.json",
+   "bytes": 301887,
+   "sha256": "afa4e0a4c4af818a961fdca9115fde74904e490c536850f0675c0b9daad2eb95"
+  },
+  {
+   "path": "gate/gate-4.json",
+   "bytes": 344134,
+   "sha256": "bcb10afcc2e0e6cf2dd6a80fbfabec5844a78dbe6490b00193e0a79eed3c6d69"
+  },
+  {
+   "path": "integration/gate-scope.json",
+   "bytes": 344230,
+   "sha256": "9b0e381a8e3e31c7995adc186032875e50e57465973b2bc0398ca6923e98a96e"
+  }
+ ]
+}

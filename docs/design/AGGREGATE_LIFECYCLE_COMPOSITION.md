@@ -427,7 +427,7 @@ Recorded open, not repaired:
 * **O05-O2 — no OS endpoint post-state relation on this branch.** The card's
   brief named O03's target-qualified `close(2)` post-state relation as a
   dependency; it is **absent from this branch** (no `crates/qcore-core/src/os_endpoint.rs`,
-  no `proof/QCore/OsEndpointPostState.lean`, no `docs/reports/remaining-o03/`).
+  no `proof/QCore/OsEndpointPostState.lean`, no `docs/reports/archive/early-waves/remaining-o03/`).
   `CustodyEvidence::ObservedEndpointPostState` and the premise
   `EndpointPostStateSupplied` are the seam it plugs into; until it lands, an
   endpoint whose post-state nobody decides is `UnsupportedClass::OsCustody`.
@@ -476,4 +476,4 @@ Recorded open, not repaired:
 | `crates/qcore-core/tests/unit/aggregate_composition.rs` | the reference program and the 52-row counterexample suite |
 | `proof/QCore/AggregateComposition.lean` | the model of the decisions, 39 audited theorems |
 | `proof/AuditO05.lean` | the axiom surface |
-| `docs/reports/remaining-o05/README.md` | the evidence record, gate results and integrator notes |
+| `docs/reports/archive/early-waves/remaining-o05/README.md` | the evidence record, gate results and integrator notes |

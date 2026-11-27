@@ -1,0 +1,28 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "ag1-indirect-member-access",
+ "total_pruned_files": 4,
+ "total_pruned_bytes": 1167027,
+ "artifacts": [
+  {
+   "path": "census/premises.jsonl.gz",
+   "bytes": 853711,
+   "sha256": "3570cb5a8910b720fa6898c456d0d6b25ef431f8904b893a72b89036584c2cc5"
+  },
+  {
+   "path": "census/sole-sites.txt",
+   "bytes": 85502,
+   "sha256": "4ffc8829583818d3a24671a2024aba170f696ddbf3995cc5dd811f9327e4e629"
+  },
+  {
+   "path": "integration/combined-native-comparison.json.gz",
+   "bytes": 109262,
+   "sha256": "d7ebf034f8bb75c32e61fc63c782bbdb325d6a56174e26676739cd0ebece6874"
+  },
+  {
+   "path": "integration/gate-scope.json",
+   "bytes": 118552,
+   "sha256": "2c0c46e1be7183937a7a264b3f167cf1312f2192f01c43a98f0ad8d17bc2f3fe"
+  }
+ ]
+}

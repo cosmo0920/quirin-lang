@@ -1,6 +1,6 @@
 # CT shared fixture disclosure
 
-> Canonical import maintenance: seven reviewed fixture-group digests changed when all their members adopted `#import`. Group membership and relations are unchanged; [exact attribution](../runtime-source-imports/integration-corrections.json) preserves old/new hashes. Original measurements below remain tied to their original revision.
+> Canonical import maintenance: seven reviewed fixture-group digests changed when all their members adopted `#import`. Group membership and relations are unchanged; [exact attribution](../archive/language-and-tooling/runtime-source-imports/integration-corrections.json) preserves old/new hashes. Original measurements below remain tied to their original revision.
 
 Date: 2026-09-23. Card: `CT-SHARED-FIXTURE-DISCLOSURE`. Base `ffdddbbb`.
 

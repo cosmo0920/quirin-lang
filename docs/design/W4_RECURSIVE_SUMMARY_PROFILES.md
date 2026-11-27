@@ -10,7 +10,7 @@ mapped. Everything it claims about current behaviour is measured by
 `crates/qcore-c-gateway/tests/c03_neutral_frame_recursion_probe.rs`, a
 design probe over the **unchanged** gateway; everything it claims about the
 proposed route is a specification with an acceptance obligation attached, not a
-result. The archived record is `docs/reports/remaining-c03/README.md`.
+result. The archived record is `docs/reports/archive/early-waves/remaining-c03/README.md`.
 
 ## 1. Where this sits
 
@@ -21,8 +21,8 @@ Two recursive routes exist on top of that discipline:
 
 | Route | Restricts | Admits | Justification |
 |---|---|---|---|
-| Contextual recursion (`docs/reports/w4-contextual-recursion/README.md`) | one immutable explicit **integer** control, partitioned Zero/NonZero | arbitrary custody effects | ranks 0 and 1; a NonZero context may only call an already-validated literal-zero context |
-| Unsigned countdown (`docs/reports/w4-unsigned-countdown/README.md`) | one immutable explicit **unsigned** control, actual exactly `0` or `control - 1` | arbitrary custody effects | strong induction over concrete natural counter values |
+| Contextual recursion (`docs/reports/archive/early-waves/w4-contextual-recursion/README.md`) | one immutable explicit **integer** control, partitioned Zero/NonZero | arbitrary custody effects | ranks 0 and 1; a NonZero context may only call an already-validated literal-zero context |
+| Unsigned countdown (`docs/reports/archive/early-waves/w4-unsigned-countdown/README.md`) | one immutable explicit **unsigned** control, actual exactly `0` or `control - 1` | arbitrary custody effects | strong induction over concrete natural counter values |
 
 Both constrain the **control shape** and leave the **effect content** free,
 paying for that freedom with a well-founded rank. The obvious next increments

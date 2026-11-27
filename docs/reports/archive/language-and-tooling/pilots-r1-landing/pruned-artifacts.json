@@ -1,0 +1,13 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "pilots-r1-landing",
+ "total_pruned_files": 1,
+ "total_pruned_bytes": 213879,
+ "artifacts": [
+  {
+   "path": "integration/tip-gate-steps.json",
+   "bytes": 213879,
+   "sha256": "8d7d4f50292a44998fb87159ed701036dab2bf323b376dc2aa25de76ab24bd47"
+  }
+ ]
+}

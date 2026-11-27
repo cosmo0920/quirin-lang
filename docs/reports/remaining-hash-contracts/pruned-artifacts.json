@@ -1,0 +1,28 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "remaining-hash-contracts",
+ "total_pruned_files": 4,
+ "total_pruned_bytes": 696916,
+ "artifacts": [
+  {
+   "path": "artifacts/chunk-contracts.json.gz",
+   "bytes": 281900,
+   "sha256": "44fa0df45e13d8ed8d0209a728bc0bce969e1280fbad6f3ea6d86234e9094883"
+  },
+  {
+   "path": "artifacts/diagnostics.json.gz",
+   "bytes": 386960,
+   "sha256": "1599c98b7fe439fdef39097ae3a4a527f4067ec26780b2bd9fab90bf9965124b"
+  },
+  {
+   "path": "logs/corpus-after.log.gz",
+   "bytes": 14026,
+   "sha256": "0680b3e29f56a0fe03e9fcd6dbb9b3e8623b15fc7125780cf5c1433693ececf9"
+  },
+  {
+   "path": "logs/corpus-before.log.gz",
+   "bytes": 14030,
+   "sha256": "1bf8dcf5085ca8ea91aa1a59c7b141b0fe0a11d7fa1ace754a7bc320e36e0634"
+  }
+ ]
+}

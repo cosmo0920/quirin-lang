@@ -1091,7 +1091,7 @@ fn main() -> unit effects { io, alloc, mut } {
 
 - **Cards:** `STD-BUFFER`, `SLICE-PERMISSIONS-WRITE-LEND`, `LOOPS-ON-COMPOSED-ROUTES`, `OWNED-FIELD-ROUTE-REACH`, `COMPOSED-WINDOW-REACH`, `W48-QR-SCALAR-TYPES-R3`, `R5`, `W48-QR-FLOAT-BUFFER-PAYLOADS`.
 - **Implementation:** `crates/qcore-frontend/src/source_std_buffer.rs`, `crates/qcore-core/src/std_buffer.rs`.
-- **Design & reports:** [`design/STD_BUFFER_V1.md`](design/STD_BUFFER_V1.md), [Wave 22 std.buffer report](reports/wave22-std-buffer/README.md).
+- **Design & reports:** [`design/STD_BUFFER_V1.md`](design/STD_BUFFER_V1.md), [Wave 22 std.buffer report](reports/archive/waves-20-39/wave22-std-buffer/README.md).
 - **Lean models:** `QCore.WriteLend`, `QCore.LoopWindows`, `QCore.ScalarLoopBounds`.
 
 ---
@@ -1292,7 +1292,7 @@ fn main() -> unit effects { io, alloc, mut } {
 
 - **Cards:** `STRING-SLICE`, `STRING-SLICE-IO`, `STRING-CONCAT`, `CT07-SLICE-PERMISSIONS`, `LOOPS-ON-COMPOSED-ROUTES`, `W48-QR-SCALAR-TYPES-R6`, `W48-QR-FLOAT-BUFFER-PAYLOADS`.
 - **Implementation:** `crates/qcore-frontend/src/source_std_string.rs`, `crates/qcore-core/src/std_string.rs`.
-- **Design & reports:** [`design/STRING_SLICE_V1.md`](design/STRING_SLICE_V1.md), `docs/reports/string-slice/README.md`, `docs/reports/string-slice-io/README.md`, `docs/reports/string-concat/README.md`, `docs/reports/ct07-slice-permissions/README.md`.
+- **Design & reports:** [`design/STRING_SLICE_V1.md`](design/STRING_SLICE_V1.md), `docs/reports/archive/language-and-tooling/string-slice/README.md`, `docs/reports/archive/language-and-tooling/string-slice-io/README.md`, `docs/reports/archive/language-and-tooling/string-concat/README.md`, `docs/reports/archive/language-and-tooling/ct07-slice-permissions/README.md`.
 - **Lean models:** `QCore.StringSliceIo`, `QCore.StringConcat`, `QCore.LoopWindows`, `QCore.ScalarComposedString`.
 
 ---
@@ -1374,7 +1374,7 @@ LEVEL       = "trace" | "debug" | "info" | "warn" | "error" | "fatal" ;
 
 - **Cards:** `PIPE-OPERATOR`, `PIPE-CHAIN`, `PIPE-SCALAR-RESULT`, `PIPE-INTRINSIC-STAGE`, `PIPE-DROP-STAGE`, `OR-AND-LOWERING`, `BITWISE-CONDITIONS`, `STRING-SLICE-IO`, `W48-QR-CLOSURES`.
 - **Implementation:** `crates/qcore-frontend/src/pipe.rs`, `crates/qcore-frontend/src/lexer.rs`.
-- **Reports:** `docs/reports/wave19-or-and-lowering/README.md`, `docs/reports/wave20-bitwise-conditions/README.md`.
+- **Reports:** `docs/reports/archive/early-waves/wave19-or-and-lowering/README.md`, `docs/reports/archive/waves-20-39/wave20-bitwise-conditions/README.md`.
 
 ---
 
@@ -1461,7 +1461,7 @@ fn main() -> i32 {
 
 - **Cards:** `IF-STATEMENT`, `OR-AND-LOWERING`, `BITWISE-CONDITIONS`, `IF-ARMS`.
 - **Implementation:** `crates/qcore-frontend/src/source_branch.rs`, `crates/qcore-core/src/ownership.rs`, `crates/qcore-core/src/cleanup_lowering.rs`.
-- **Design & reports:** [`design/SOURCE_BRANCH_V1.md`](design/SOURCE_BRANCH_V1.md), `docs/reports/wave19-if-statement/README.md`, `docs/reports/wave20-bitwise-conditions/README.md`, `docs/reports/wave20-if-arms/README.md`.
+- **Design & reports:** [`design/SOURCE_BRANCH_V1.md`](design/SOURCE_BRANCH_V1.md), `docs/reports/archive/early-waves/wave19-if-statement/README.md`, `docs/reports/archive/waves-20-39/wave20-bitwise-conditions/README.md`, `docs/reports/archive/waves-20-39/wave20-if-arms/README.md`.
 
 ---
 
@@ -1532,7 +1532,7 @@ fn main() -> unit effects { io, alloc, mut } {
 
 - **Cards:** `LOOP-V1`, `LOOP-UNROLL-BUDGET`, `LOOPS-ON-COMPOSED-ROUTES`, `W48-QR-SCALAR-TYPES-R5`.
 - **Implementation:** `crates/qcore-frontend/src/source_loop.rs`, `crates/qcore-frontend/src/source_std_buffer.rs`, `crates/qcore-frontend/src/source_std_string.rs`.
-- **Reports & Lean:** `docs/reports/loop-v1/README.md`, `docs/reports/loop-unroll-budget/README.md`, `QCore.LoopWindows`.
+- **Reports & Lean:** `docs/reports/archive/language-and-tooling/loop-v1/README.md`, `docs/reports/archive/language-and-tooling/loop-unroll-budget/README.md`, `QCore.LoopWindows`.
 
 ---
 
@@ -1603,7 +1603,7 @@ fn main() -> unit effects { io } {
 
 - **Cards:** `STD-MODULES`, `STD-FMT-BORROW`, `W48-QR-SCALAR-TYPES`.
 - **Implementation:** `crates/qcore-frontend/src/source_std_io.rs`, `crates/qcore-core/src/std_io.rs`.
-- **Reports:** `docs/reports/wave17-std-modules/README.md`, `docs/reports/wave18-std-fmt-borrow/README.md`.
+- **Reports:** `docs/reports/archive/early-waves/wave17-std-modules/README.md`, `docs/reports/wave18-std-fmt-borrow/README.md`.
 
 ---
 
@@ -1807,7 +1807,7 @@ fn main() -> unit effects { io } {
 
 - **Cards:** `QUIRIN-SOCKET-V1`, `SOCKET-INET-ADDRESSES`, `SOCKET-EVENT-COMPOSE`, `HTTP-QUIRIN-V1` (`SOCKET-STRING-PAYLOAD`), `CT42-CELL-ROUTE`.
 - **Implementation:** `crates/qcore-frontend/src/source_socket.rs`, `crates/qcore-core/src/std_socket.rs`, `crates/qcore-core/src/socket_address.rs`, `crates/qcore-core/src/socket_footprint.rs`.
-- **Reports:** `docs/reports/quirin-socket-v1/README.md`, `docs/reports/socket-inet-addresses/README.md`, `docs/reports/socket-event-compose/README.md`, `docs/reports/ct42-cell-route/README.md`.
+- **Reports:** `docs/reports/archive/language-and-tooling/quirin-socket-v1/README.md`, `docs/reports/archive/language-and-tooling/socket-inet-addresses/README.md`, `docs/reports/archive/language-and-tooling/socket-event-compose/README.md`, `docs/reports/ct42-cell-route/README.md`.
 
 ---
 
@@ -1906,7 +1906,7 @@ fn main() -> unit effects { io } {
 
 - **Cards:** `HTTP-QUIRIN-V1`, `HTTP-V1-COMPUTED-LENGTH`.
 - **Implementation:** `crates/qcore-frontend/src/source_http.rs`, `crates/qcore-core/src/std_http.rs`.
-- **Reports:** `docs/reports/http-quirin-v1/README.md`, `docs/reports/http-v1-computed-length/README.md`, [`../examples/http/README.md`](../examples/http/README.md).
+- **Reports:** `docs/reports/archive/language-and-tooling/http-quirin-v1/README.md`, `docs/reports/archive/language-and-tooling/http-v1-computed-length/README.md`, [`../examples/http/README.md`](../examples/http/README.md).
 
 ---
 
@@ -2117,7 +2117,7 @@ fn main() -> i32 effects { throws<SpawnError>, spawn, join, may_block } {
 
 - **Cards:** `W6-TASK-RECOVERY`, `CT47-COPY-CAPTURE`, `W48-QR-SCALAR-TYPES-R4`, `W48-QR-TASK-RECORD-CAPTURES`.
 - **Implementation:** `crates/qcore-frontend/src/frontend_tasks.rs`, `crates/qcore-core/src/scoped_tasks.rs`, `crates/qcore-core/src/transfer.rs`.
-- **Reports:** `docs/reports/w6-task-recovery/README.md`, `docs/reports/w48-qr-task-record-captures/README.md`.
+- **Reports:** `docs/reports/w6-task-recovery/README.md`, `docs/reports/archive/wave-48/w48-qr-task-record-captures/README.md`.
 
 ---
 
@@ -2181,7 +2181,7 @@ fn main() -> i32 effects { throws<SpawnError>, spawn, join, may_block } {
 
 - **Cards:** `W48-QR-CLOSURES`.
 - **Implementation:** `crates/qcore-frontend/src/closures.rs`, `crates/qcore-frontend/src/frontend_tasks.rs`.
-- **Reports & Lean:** `docs/reports/w48-qr-closures/README.md`, `QCore.Closures`.
+- **Reports & Lean:** `docs/reports/archive/wave-48/w48-qr-closures/README.md`, `QCore.Closures`.
 
 ---
 
@@ -2376,7 +2376,7 @@ fn main() -> i32 effects { alloc, throws<AllocError>, throws<SpawnError>, spawn,
 
 - **Cards:** `T05` (`REMAINING-T05`), `WRITE-LEND-TASKS`, `WRITE-LEND-TASKS-EXERCISE`, `TASK-ROUTE-TSAN`, `TSAN-ROWS-2`, `W48-QR-SCALAR-TYPES-R6`.
 - **Implementation:** `crates/qcore-frontend/src/frontend_tasks.rs`, `crates/qcore-core/src/scoped_tasks.rs`.
-- **Reports & Lean:** `docs/reports/remaining-t05/README.md`, `docs/reports/write-lend-tasks/README.md`, `docs/reports/write-lend-tasks-exercise/README.md`, `QCore.WriteLendTasks`, `QCore.WriteLendTasksExercise`.
+- **Reports & Lean:** `docs/reports/remaining-t05/README.md`, `docs/reports/archive/language-and-tooling/write-lend-tasks/README.md`, `docs/reports/write-lend-tasks-exercise/README.md`, `QCore.WriteLendTasks`, `QCore.WriteLendTasksExercise`.
 
 ---
 
@@ -2456,7 +2456,7 @@ fn main() -> i32 effects { alloc, throws<AllocError>, spawn, join, may_block } {
 
 - **Cards:** `T06` (`REMAINING-T06`).
 - **Implementation:** `crates/qcore-frontend/src/frontend_tasks.rs`, `crates/qcore-core/src/scoped_tasks.rs`.
-- **Reports:** `docs/reports/remaining-t06/README.md`.
+- **Reports:** `docs/reports/archive/early-waves/remaining-t06/README.md`.
 
 ---
 
@@ -2560,7 +2560,7 @@ fn main() -> unit {
 
 - **Cards:** `T03`, `T03-F`, `T03-GUARD-JOIN`, `CT33-RANKS`, `CT34-GROWTH`, `MUTEX-SHARE-CROSS`, `MUTEX-SHARE-CROSS-EMISSION`, `MUTEX-SHARE-CROSS-ARMS`, `W48-QR-SCALAR-TYPES-R6`.
 - **Implementation:** `crates/qcore-frontend/src/source_mutex.rs`, `crates/qcore-core/src/mutex_invariant.rs`, `crates/qcore-backend-c/src/mutex_c_emit.rs`, `crates/qcore-frontend/tests/source_mutex.rs`.
-- **Reports & Lean:** `docs/reports/remaining-t03/README.md`, `docs/reports/remaining-ct33-ranks/README.md`, `docs/reports/remaining-ct34-growth/README.md`, `docs/reports/mutex-share-cross/README.md`, `docs/reports/mutex-share-cross-emission/README.md`, `QCore.MutexShareCrossEmission`, `QCore.MutexShareCrossArms`.
+- **Reports & Lean:** `docs/reports/remaining-t03/README.md`, `docs/reports/archive/early-waves/remaining-ct33-ranks/README.md`, `docs/reports/archive/early-waves/remaining-ct34-growth/README.md`, `docs/reports/mutex-share-cross/README.md`, `docs/reports/mutex-share-cross-emission/README.md`, `QCore.MutexShareCrossEmission`, `QCore.MutexShareCrossArms`.
 
 ---
 
@@ -2636,7 +2636,7 @@ fn main() -> unit {
 
 - **Cards:** `T08-EPOCH-SRC` (`REMAINING-T08-EPOCH-SRC`), `CT23-CREDIT-ERROR-PATH`.
 - **Implementation:** `crates/qcore-frontend/src/source_epoch.rs`, `crates/qcore-core/src/epoch_accounting.rs`.
-- **Reports:** `docs/reports/remaining-t08-epoch-src/README.md`.
+- **Reports:** `docs/reports/archive/early-waves/remaining-t08-epoch-src/README.md`.
 
 ---
 
@@ -2732,7 +2732,7 @@ fn main() -> i32 effects { alloc, throws<AllocError>, throws<SpawnError>, spawn,
 
 - **Cards:** `T08-COMPOSE`, `CT23-CREDIT-ERROR-PATH`, `REGION-CREDIT-JOINS`, `REGION-JOINS-DUTIES`, `REGION-JOINS-LOAN`, `CT24-CLEANUP-TASK-COMPOSITION`, `W48-QR-SCALAR-TYPES-R6`.
 - **Implementation:** `crates/qcore-frontend/src/source_epoch_tasks.rs`, `crates/qcore-core/src/epoch_credit_recovery.rs`, `crates/qcore-core/src/error_region.rs`.
-- **Reports:** `docs/reports/remaining-t08-compose/README.md`, `docs/reports/ct23-credit-error-path/README.md`, `docs/reports/region-credit-joins/README.md`, `docs/reports/region-joins-duties/README.md`, `docs/reports/region-joins-loan/README.md`.
+- **Reports:** `docs/reports/archive/early-waves/remaining-t08-compose/README.md`, `docs/reports/archive/language-and-tooling/ct23-credit-error-path/README.md`, `docs/reports/archive/language-and-tooling/region-credit-joins/README.md`, `docs/reports/region-joins-duties/README.md`, `docs/reports/archive/language-and-tooling/region-joins-loan/README.md`.
 
 ---
 
@@ -3046,7 +3046,7 @@ fn main() -> unit effects { io, alloc, mut } {
 }
 ```
 
-**Implementation & Provenance:** `crates/qcore-frontend/src/source_extern.rs`, `crates/qcore-core/src/extern_call.rs`, `crates/qcore-contract/src/extern_bridge.rs`; language spec [§L14](QCORE_SPEC_r0_3.md) & contract spec [§C04.1–C04.3](QCORE_CONTRACT_SPEC_r0_3.md#c041-abi-projection); cards `EXTERN-CALL-V1`, `EXTERN-F1`, `EXTERN-ERR-REL`, `EXTERN-MODES`, `PIPE-SCALAR-RESULT`, `EXTERN-SCALAR-LITERAL`, `EXTERN-SCALAR-OUTCOME`, `W48-QR-SCALAR-TYPES-R3`, `W48-QR-FLOATING-POINT`; reports [extern-call-v1](reports/extern-call-v1/README.md), [extern-call-f1](reports/extern-call-f1/README.md), [remaining-extern-err-rel](reports/remaining-extern-err-rel/README.md), [remaining-extern-modes](reports/remaining-extern-modes/README.md).
+**Implementation & Provenance:** `crates/qcore-frontend/src/source_extern.rs`, `crates/qcore-core/src/extern_call.rs`, `crates/qcore-contract/src/extern_bridge.rs`; language spec [§L14](QCORE_SPEC_r0_3.md) & contract spec [§C04.1–C04.3](QCORE_CONTRACT_SPEC_r0_3.md#c041-abi-projection); cards `EXTERN-CALL-V1`, `EXTERN-F1`, `EXTERN-ERR-REL`, `EXTERN-MODES`, `PIPE-SCALAR-RESULT`, `EXTERN-SCALAR-LITERAL`, `EXTERN-SCALAR-OUTCOME`, `W48-QR-SCALAR-TYPES-R3`, `W48-QR-FLOATING-POINT`; reports [extern-call-v1](reports/archive/language-and-tooling/extern-call-v1/README.md), [extern-call-f1](reports/archive/language-and-tooling/extern-call-f1/README.md), [remaining-extern-err-rel](reports/archive/early-waves/remaining-extern-err-rel/README.md), [remaining-extern-modes](reports/archive/early-waves/remaining-extern-modes/README.md).
 
 ---
 
@@ -3195,7 +3195,7 @@ fn main() -> unit effects { io, alloc, mut } {
 }
 ```
 
-**Implementation & Provenance:** `crates/qcore-frontend/src/source_extern.rs`, `crates/qcore-core/src/extern_call.rs`; design [`docs/design/UNSAFE_LINKAGE_V1.md`](design/UNSAFE_LINKAGE_V1.md); card `UNSAFE-LINKAGE`, `W48-QR-FLOATING-POINT`; report [wave18-unsafe-linkage](reports/wave18-unsafe-linkage/README.md).
+**Implementation & Provenance:** `crates/qcore-frontend/src/source_extern.rs`, `crates/qcore-core/src/extern_call.rs`; design [`docs/design/UNSAFE_LINKAGE_V1.md`](design/UNSAFE_LINKAGE_V1.md); card `UNSAFE-LINKAGE`, `W48-QR-FLOATING-POINT`; report [wave18-unsafe-linkage](reports/archive/early-waves/wave18-unsafe-linkage/README.md).
 
 ---
 
@@ -3299,7 +3299,7 @@ contract fn demo_buf_new(uintptr_t) -> uint8_t * from contracts/demo_codec.qv;
 contract fn demo_buf_free(uint8_t *) -> void from contracts/demo_codec.qv;
 ```
 
-**Implementation & Provenance:** `crates/qcore-core/src/native_library.rs`, `crates/qcore-core/src/native_library_header.rs`; design [`docs/design/NATIVE_LIBRARY_LINKAGE_V1.md`](design/NATIVE_LIBRARY_LINKAGE_V1.md), [`docs/design/NATIVE_LIBRARY_HEADER_V1.md`](design/NATIVE_LIBRARY_HEADER_V1.md), spec [§L14.4](QCORE_SPEC_r0_3.md); cards `UNSAFE-LINKAGE-ARTIFACT`, `NATIVE-LIBRARY-CONTRACT-SLICE`, `NATIVE-LIBRARY-HEADER`, `NATIVE-LIBRARY-HEADER-DECORATION`, `W48-QR-FLOAT-QRLIB-SPELLING`; reports [wave19](reports/wave19-unsafe-linkage-artifact/README.md), [wave20](reports/wave20-native-library-contract-slice/README.md), [wave22](reports/wave22-native-library-header/README.md), [decoration](reports/native-library-header-decoration/README.md).
+**Implementation & Provenance:** `crates/qcore-core/src/native_library.rs`, `crates/qcore-core/src/native_library_header.rs`; design [`docs/design/NATIVE_LIBRARY_LINKAGE_V1.md`](design/NATIVE_LIBRARY_LINKAGE_V1.md), [`docs/design/NATIVE_LIBRARY_HEADER_V1.md`](design/NATIVE_LIBRARY_HEADER_V1.md), spec [§L14.4](QCORE_SPEC_r0_3.md); cards `UNSAFE-LINKAGE-ARTIFACT`, `NATIVE-LIBRARY-CONTRACT-SLICE`, `NATIVE-LIBRARY-HEADER`, `NATIVE-LIBRARY-HEADER-DECORATION`, `W48-QR-FLOAT-QRLIB-SPELLING`; reports [wave19](reports/archive/early-waves/wave19-unsafe-linkage-artifact/README.md), [wave20](reports/archive/waves-20-39/wave20-native-library-contract-slice/README.md), [wave22](reports/archive/waves-20-39/wave22-native-library-header/README.md), [decoration](reports/archive/language-and-tooling/native-library-header-decoration/README.md).
 
 ---
 
@@ -3388,7 +3388,7 @@ header_hash sha256:d4735e3a265e16eee03f59718b9b5d03019c07d8b6c51f90da3a666eec13a
 contract fn qr_pkt_checksum(const struct qr_pkt *) -> uint32_t from contracts/qr_pkt.qv export qr_pkt_checksum global in libqr_pkt.a(qr_pkt.o);
 ```
 
-**Implementation & Provenance:** `crates/qcore-core/src/native_library.rs`, `crates/qcore-c-gateway/src/linkage.rs`; spec [§L14.8](QCORE_SPEC_r0_3.md); cards `W48-QRLIB-LINKAGE`, `W48-QR-FLOAT-QRLIB-SPELLING`; report [w48-qrlib-linkage](reports/w48-qrlib-linkage/README.md).
+**Implementation & Provenance:** `crates/qcore-core/src/native_library.rs`, `crates/qcore-c-gateway/src/linkage.rs`; spec [§L14.8](QCORE_SPEC_r0_3.md); cards `W48-QRLIB-LINKAGE`, `W48-QR-FLOAT-QRLIB-SPELLING`; report [w48-qrlib-linkage](reports/archive/wave-48/w48-qrlib-linkage/README.md).
 
 ---
 
@@ -3436,7 +3436,7 @@ fn main() -> unit effects { io, alloc, mut } {
 }
 ```
 
-**Implementation & Provenance:** `crates/qcore-core/src/native_library.rs` (`SourceLibraryBinding`), `crates/qcore-frontend/src/frontend.rs`; cards `NATIVE-LIBRARY-SOURCE-BINDING`, `W48-QRLIB-LINKAGE`; report [native-library-source-binding](reports/native-library-source-binding/README.md).
+**Implementation & Provenance:** `crates/qcore-core/src/native_library.rs` (`SourceLibraryBinding`), `crates/qcore-frontend/src/frontend.rs`; cards `NATIVE-LIBRARY-SOURCE-BINDING`, `W48-QRLIB-LINKAGE`; report [native-library-source-binding](reports/archive/language-and-tooling/native-library-source-binding/README.md).
 
 ---
 
@@ -3666,7 +3666,7 @@ fn main() -> unit effects { io, mut } {
 }
 ```
 
-**Implementation & Provenance:** `crates/qcore-frontend/src/source_ffi.rs`, `crates/qcore-core/src/ffi.rs`, `crates/qcore-c-gateway/src/ffi_layout.rs`, `crates/qcore-contract/src/contract_loader.rs` (`ffi_declarations`); language spec [§L14.6, §L14.8, §L20](QCORE_SPEC_r0_3.md), contract spec [§C04.12](QCORE_CONTRACT_SPEC_r0_3.md#c0412-ffi-function-definitions--quant-c_ffi-); cards `W48-QR-C-STRUCT-IMPORT`, `W48-QR-USABLE-RECORDS`, `W48-QR-FLOATING-POINT`, `W48-QRLIB-LINKAGE`; reports [w48-qr-c-struct-import](reports/w48-qr-c-struct-import/README.md), [w48-qrlib-linkage](reports/w48-qrlib-linkage/README.md).
+**Implementation & Provenance:** `crates/qcore-frontend/src/source_ffi.rs`, `crates/qcore-core/src/ffi.rs`, `crates/qcore-c-gateway/src/ffi_layout.rs`, `crates/qcore-contract/src/contract_loader.rs` (`ffi_declarations`); language spec [§L14.6, §L14.8, §L20](QCORE_SPEC_r0_3.md), contract spec [§C04.12](QCORE_CONTRACT_SPEC_r0_3.md#c0412-ffi-function-definitions--quant-c_ffi-); cards `W48-QR-C-STRUCT-IMPORT`, `W48-QR-USABLE-RECORDS`, `W48-QR-FLOATING-POINT`, `W48-QRLIB-LINKAGE`; reports [w48-qr-c-struct-import](reports/archive/wave-48/w48-qr-c-struct-import/README.md), [w48-qrlib-linkage](reports/archive/wave-48/w48-qrlib-linkage/README.md).
 
 ---
 
@@ -5078,7 +5078,7 @@ This JSON schema (`crates/qcore-audit/src/source_contract.rs`) configures `quiri
 ```
 
 - **Bounds and validation:** Configuration ≤ **1 MiB**; `1..=256` distinct package paths; `1..=4,096` bindings with unique library names and valid provider IDs; optional `frame_helpers` ≤ **256** per binding (unique C function names ≤ 128 ASCII bytes, contained relative `source` paths, exact single compile-db entry with strict preprocessing option preservation and ≤ 8 MiB per source / 32 MiB imported helper source); each UTF-8 `.qv` policy ≤ **8 MiB** and total snapshotted policies ≤ **32 MiB**.
-- **Trust boundary:** `SourceContractRegistry::load` validates package manifests, target compatibility, and Boolean-field capability before dispatch, and `verify` publishes a result only after trusted core witness replay succeeds over sealed Clang imports ([report](reports/w5-configured-source-contracts/README.md), [frame helpers](reports/w5-configured-frame-helpers/README.md)).
+- **Trust boundary:** `SourceContractRegistry::load` validates package manifests, target compatibility, and Boolean-field capability before dispatch, and `verify` publishes a result only after trusted core witness replay succeeds over sealed Clang imports ([report](reports/archive/early-waves/w5-configured-source-contracts/README.md), [frame helpers](reports/w5-configured-frame-helpers/README.md)).
 
 <a id="version-2-pinned-contract-bundle-selection"></a>
 
@@ -5126,7 +5126,7 @@ core         = IDENT, "(", arguments, ")" | IDENT | other_expression ;
 - **Invariance condition:** At most one association is `default`, and after stripping outer parentheses and outer object-pointer casts (permitted only around a parenthesized group, direct call, or single identifier—and if any cast is stripped, `core` `MUST` be a direct call `IDENT(...)` declared in the same TU as returning an object pointer), **every association `MUST` reduce to the exact same token sequence `core`**.
 - **Lowering:** Nested `_Generic` selections inside associations lower inner-first; the unevaluated `control` operand is dropped; and the entire `_Generic(...)` rewrites to `core` (parenthesized unless a call or identifier) across statements, initializers, conditions, returns, and call arguments (covering glibc 2.43's C23 `__glibc_const_generic` wrappers for `memchr`, `strchr`, `strstr`, `bsearch`, etc.). Non-invariant selections fall through to route `G`'s Clang-resolved `CG07` fallback (`11g`) or refuse as uncontracted `_Generic`.
 
-**Implementation & Provenance:** `crates/qcore-c-gateway/`, `proof/QCore/GenericSelection.lean`; [report](reports/w44-c11-generic-selection/README.md) (complemented by `CG07`, gateway rule `11g`).
+**Implementation & Provenance:** `crates/qcore-c-gateway/`, `proof/QCore/GenericSelection.lean`; [report](reports/archive/waves-40-47/w44-c11-generic-selection/README.md) (complemented by `CG07`, gateway rule `11g`).
 
 ---
 
@@ -5169,7 +5169,7 @@ In `if`, `while`, `do`, and `for` controlling expressions, the resource gateway 
 
 - **Zero leaf widening:** Adds no new leaf syntax, cast, qualifier, pointer-value, scalar-value, or call-effect rule; every original per-hop non-null, liveness, and alias obligation remains enforced at its evaluation point, and any unclassifiable leaf rejects the entire Boolean plan and restores the original refusal probe.
 
-**Implementation & Provenance:** `crates/qcore-c-gateway/`, `proof/QCore/CallFreeConditionReads.lean`; gateway rule [5h](agents/gateway.md#constraint-5h), [report](reports/w48-bottom-up-batch4/README.md).
+**Implementation & Provenance:** `crates/qcore-c-gateway/`, `proof/QCore/CallFreeConditionReads.lean`; gateway rule [5h](agents/gateway.md#constraint-5h), [report](reports/archive/wave-48/w48-bottom-up-batch4/README.md).
 
 ---
 

@@ -1,0 +1,13 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "busy-state-fluent-bit-provider",
+ "total_pruned_files": 1,
+ "total_pruned_bytes": 414033,
+ "artifacts": [
+  {
+   "path": "integration/gate-scope.json",
+   "bytes": 414033,
+   "sha256": "df70f4f9b4bffc5af97b89ecfa46d9b9acd4ff5009d4d0ad4de22516219e5c9c"
+  }
+ ]
+}

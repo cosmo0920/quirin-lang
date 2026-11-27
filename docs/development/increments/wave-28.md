@@ -27,7 +27,7 @@ carried from the wave-27 `gateway-c-location` baseline, every figure unchanged
 (leak 266). Lean audits 114 → **115** (`+AuditRegionCreditJoins`). Merged gate
 at the close tip: 4,392 workspace tests (8 ignored, `--no-fail-fast`), 122
 provider (carried), 193 Python, both probes exit 0, fmt/clippy clean
-(`docs/reports/wave28-close/gate.json`); two constraint-16 load rows tripped
+(`docs/reports/archive/waves-20-39/wave28-close/gate.json`); two constraint-16 load rows tripped
 under concurrent suites during integration and were re-verified green in
 isolation, both facts recorded. The acceptance matrix's derived rows are
 regenerated through `build_matrix.py --gate` (hand-kept sections carried, the
@@ -84,7 +84,7 @@ load, is a recorded constraint-16 row verified passing in isolation), 193
 Python, **114 Lean audits** (unchanged — the lane adds no Lean), both
 reevaluation examples exit 0, fmt/clippy clean, provider 122 carried (no
 provider file touched). Nothing is promoted: the corpus baseline
-stays `docs/reports/gateway-c-location/artifacts/` with leak **266**, the
+stays `docs/reports/archive/language-and-tooling/gateway-c-location/artifacts/` with leak **266**, the
 contract corpus 73 modules, full language conformance **false**. Evidence:
 `docs/reports/ct-wire-lane-2/README.md` and its `ct_stage_evidence.json`.
 
@@ -120,7 +120,7 @@ audited Lean theorems in the new `QCore.RegionCreditJoins`
 (`AuditRegionCreditJoins.lean`, audits 114 → **115**, no project axiom). CT
 manifest untouched — CT22 mapping is the wire lane's; CT25 stays inexpressible
 with its gap narrowed to `REGION-JOINS-DUTIES`. Checkpoint and boundaries:
-`docs/reports/region-credit-joins/README.md`.
+`docs/reports/archive/language-and-tooling/region-credit-joins/README.md`.
 
 The published records family (EXAMPLES-AGGREGATES, wave 28): the follow-on
 card `AGGREGATES-V1` named is discharged — `examples/records/` publishes the
@@ -154,7 +154,7 @@ every published type and field name and the page says so. The family README
 publishes no `quirin` command line, deliberately: `examples_cli.rs` pins the
 published check/emit command-line counts at 6/6, and the loops precedent is
 `cargo test` lines only. Evidence:
-`docs/reports/examples-aggregates/README.md`.
+`docs/reports/archive/language-and-tooling/examples-aggregates/README.md`.
 
 Worktree submodule diagnostic (2026-09-12, post-wave-27 close, `1e1916b4`
 merged at `e552e59c`): the two checkout-reading `profile_loader` tests
@@ -172,7 +172,7 @@ message; initialised checkout → all 18 tests pass), the pin assertion itself i
 unedited, and `f7_and_f8_pin_failures_reject_the_checkout` keeps the
 `SourceRevisionMismatch` arm exactly as it was. **DECIDES — discharges**
 residual `DOCS-COMPACT-3-WORKTREE-SUBMODULE`
-(`docs/reports/docs-compact-3/README.md` §11.1, recorded there frozen; the
+(`docs/reports/archive/language-and-tooling/docs-compact-3/README.md` §11.1, recorded there frozen; the
 discharge is recorded here per constraint 21). The same change also corrects
 the two stale `CLAUDE.md` attributions of constraint 4's assume-guarantee rule
 in `docs/design/W4_RECURSIVE_SUMMARY_PROFILES.md` to `AGENTS.md` (residual

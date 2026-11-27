@@ -1,0 +1,12 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "total_pruned_files": 1,
+ "total_pruned_bytes": 386513,
+ "artifacts": [
+  {
+   "path": "artifacts/diagnostics.json.gz",
+   "bytes": 386513,
+   "sha256": "270ce876560786db7a73f6cfe7680e3757b42d3ef5532bb6cfc8cd10554b34ab"
+  }
+ ]
+}

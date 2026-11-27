@@ -1,0 +1,13 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "landing-777fba16e",
+ "total_pruned_files": 1,
+ "total_pruned_bytes": 86487,
+ "artifacts": [
+  {
+   "path": "native-comparison.json.gz",
+   "bytes": 86487,
+   "sha256": "b586a52858b1a5202312077890ea39f49cb50d526bb13c01e695dbc7d55c8827"
+  }
+ ]
+}

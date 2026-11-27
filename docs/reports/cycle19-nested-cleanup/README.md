@@ -45,7 +45,7 @@ is identical; one new nested-cleanup entry records the chain and 43 scenarios.
 Aggregate results remain two Safe, 98 provisional Unsafe, 81 Unknown, four
 data-only units and zero gateway failures across 185 units.
 
-Reproduce with the [traversal commands](../cycle19-teardown-traversal/README.md)
+Reproduce with the [traversal commands](../archive/cycles-18-19/cycle19-teardown-traversal/README.md)
 using `/tmp/cycle19-nested-cleanup` as prefix and the serialized workspace-test
 command above. Logs, compressed source evidence, parity and SHA-256 hashes are
 archived here. Cycle 19 remains in progress: native constructor/caller/ring

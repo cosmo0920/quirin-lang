@@ -1,0 +1,88 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "remaining-b01",
+ "total_pruned_files": 16,
+ "total_pruned_bytes": 48681,
+ "artifacts": [
+  {
+   "path": "logs/cargo_clippy.log",
+   "bytes": 1834,
+   "sha256": "212ff8e867316d5aaccf2756bf45231056daa8429adeb0bd624920e5ff1c56ac"
+  },
+  {
+   "path": "logs/cargo_fmt.log",
+   "bytes": 0,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+   "path": "logs/cargo_test_workspace.log",
+   "bytes": 4282,
+   "sha256": "7afac027ced2ce664e2c2ac1ccf8c45435f0aaacff1fd817ecb2f3f9f8e11ae8"
+  },
+  {
+   "path": "logs/cmetrics_audit.log",
+   "bytes": 709,
+   "sha256": "2c6b0ec6c05468f21c94b51c002b02eb6cc37548b7bd7d01d31c35cb73599359"
+  },
+  {
+   "path": "logs/cmetrics_prepare.log",
+   "bytes": 218,
+   "sha256": "a39f2e10edb760454497bae9d95081ac3c42c420bef7cfdd16bc7b5c27b07d05"
+  },
+  {
+   "path": "logs/cycle19_185.log",
+   "bytes": 179,
+   "sha256": "94312a81a2461ef94885de58dd977a8806a884b856a04320cf0fe2109d8e90b5"
+  },
+  {
+   "path": "logs/followup.log",
+   "bytes": 9896,
+   "sha256": "942570345bd19fddcd308dc3f7c369f624ff6a3b418d6d634f1abaf2026dc4a7"
+  },
+  {
+   "path": "logs/lake_build.log",
+   "bytes": 2837,
+   "sha256": "cd816298588d7250a830e802f274b4687f48304528c2e9d6be488b9b05665134"
+  },
+  {
+   "path": "logs/lean_audits.log",
+   "bytes": 9612,
+   "sha256": "885fbeeb4a60658173ee85a5ea9ba047f264f77330a0675b295dad8f7ef5be7e"
+  },
+  {
+   "path": "logs/probe.log",
+   "bytes": 2663,
+   "sha256": "53f255db9467bf9e8574344cd02c04323e7c852b103140ae0eed35133c7a923c"
+  },
+  {
+   "path": "logs/provider_package_build.log",
+   "bytes": 3561,
+   "sha256": "9c0e30bbe2b87ef6fc77cf24ee1316f221e9e8f0c858cd573e7c5f2bd6c06f92"
+  },
+  {
+   "path": "logs/providers_clippy.log",
+   "bytes": 2487,
+   "sha256": "79d2dba49d969899b627b3dc330a10cfc12e46b59519e765c5b2e87ef511650a"
+  },
+  {
+   "path": "logs/providers_fmt.log",
+   "bytes": 0,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+   "path": "logs/providers_test.log",
+   "bytes": 5176,
+   "sha256": "06a08b5f41ba61bd13f26a1ef0e41d9dbb7c16ca787d675628a325a93bc93a49"
+  },
+  {
+   "path": "logs/python_unittest.log",
+   "bytes": 4996,
+   "sha256": "c40f11535e35117eb0b1f6b9e101e7786fd68e2a50ac16c6a3b7a8677b796f00"
+  },
+  {
+   "path": "logs/submodule_update.log",
+   "bytes": 231,
+   "sha256": "e72aeec7034ba4610b2cfb0fb2f73f30c61bbcf404db87103e7b84dbf5aed0af"
+  }
+ ]
+}

@@ -1,0 +1,288 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "contract-lifecycle-symbols",
+ "total_pruned_files": 56,
+ "total_pruned_bytes": 391864,
+ "artifacts": [
+  {
+   "path": "validation/focused-1.log.gz",
+   "bytes": 446,
+   "sha256": "a1fb8c9d3e005239940af8a2deedaf0f1393da3f148f77810aee0165ccda46c0"
+  },
+  {
+   "path": "validation/focused-2.log.gz",
+   "bytes": 643,
+   "sha256": "5e8a2a27f3efe1d2b6dda50cb00359075f9846991142689c79f23ee5106b1255"
+  },
+  {
+   "path": "validation/focused-3.log.gz",
+   "bytes": 1067,
+   "sha256": "2a0c3cf8927cb70f1ade9e2480238ecc514d9a816d6221481fc30c5520a4b243"
+  },
+  {
+   "path": "validation/focused-4.log.gz",
+   "bytes": 437,
+   "sha256": "b367951651a2ead898c3d4f23139f4cf270df8707657ab2815bdc3569bb6323f"
+  },
+  {
+   "path": "validation/focused-5.log.gz",
+   "bytes": 479,
+   "sha256": "180556504e13b751d685ee39b637d3d49dce8a212d44583e3b897c562c865510"
+  },
+  {
+   "path": "validation/gate-1/clang.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "validation/gate-1/clang.log.gz",
+   "bytes": 130,
+   "sha256": "406ea76b3153710fad352ac5a2cb02d02426f1c96f2a1234f1bffe3fe91a7d50"
+  },
+  {
+   "path": "validation/gate-1/clippy.exit",
+   "bytes": 5,
+   "sha256": "bdc830287616dae1818ced3e7c186e1387155900ad30d5983ec02da1519c4a95"
+  },
+  {
+   "path": "validation/gate-1/clippy.log.gz",
+   "bytes": 565,
+   "sha256": "3f379439d7a716bd104c3fc3ccd9e72e7a06bb66a57b7b52e55153c398a25ce3"
+  },
+  {
+   "path": "validation/gate-1/fmt.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "validation/gate-1/fmt.log.gz",
+   "bytes": 20,
+   "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+  },
+  {
+   "path": "validation/gate-1/followup.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "validation/gate-1/followup.log.gz",
+   "bytes": 2164,
+   "sha256": "7124902447ccf3c1cded1c93726e64d5f2c09f8dd02d628268327f8d0f8a8d89"
+  },
+  {
+   "path": "validation/gate-1/lean.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "validation/gate-1/lean.log.gz",
+   "bytes": 120612,
+   "sha256": "7842a17d864aa2577b4dbba064678252745dcc684894979c8067944c3f7a2c8d"
+  },
+  {
+   "path": "validation/gate-1/probe.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "validation/gate-1/probe.log.gz",
+   "bytes": 804,
+   "sha256": "a2cf1868fbf36167d28eb7286194adf3272b7daf79e7311ec1909a2f94fc0d03"
+  },
+  {
+   "path": "validation/gate-1/rust.exit",
+   "bytes": 5,
+   "sha256": "bdc830287616dae1818ced3e7c186e1387155900ad30d5983ec02da1519c4a95"
+  },
+  {
+   "path": "validation/gate-1/rust.log.gz",
+   "bytes": 629,
+   "sha256": "b28b9fcd9f8b2c731a7be291445af27e67145eb6e078714946968bfdb08ff759"
+  },
+  {
+   "path": "validation/gate-1/submodules.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "validation/gate-1/submodules.log.gz",
+   "bytes": 20,
+   "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+  },
+  {
+   "path": "validation/gate-3/clang.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "validation/gate-3/clang.log.gz",
+   "bytes": 130,
+   "sha256": "406ea76b3153710fad352ac5a2cb02d02426f1c96f2a1234f1bffe3fe91a7d50"
+  },
+  {
+   "path": "validation/gate-3/clippy.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "validation/gate-3/clippy.log.gz",
+   "bytes": 256,
+   "sha256": "86d4fa12f06976f4023efa3fd5c852588ee25a93df0944f7bda065fcb2312a04"
+  },
+  {
+   "path": "validation/gate-3/fmt.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "validation/gate-3/fmt.log.gz",
+   "bytes": 20,
+   "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+  },
+  {
+   "path": "validation/gate-3/followup.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "validation/gate-3/followup.log.gz",
+   "bytes": 2117,
+   "sha256": "1c59b1d242a6957d517273670b525e6d8b79acf73d8835559d2c371fab728bdf"
+  },
+  {
+   "path": "validation/gate-3/lean.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "validation/gate-3/lean.log.gz",
+   "bytes": 120582,
+   "sha256": "0f5e4e0837eda2bf229381c620c185cb251628cbc5f5e4d59074b3a2a10b18b8"
+  },
+  {
+   "path": "validation/gate-3/probe.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "validation/gate-3/probe.log.gz",
+   "bytes": 652,
+   "sha256": "20cd31d6b7edc6e54590518032646807fba55117d95e9c7de836041cd055311c"
+  },
+  {
+   "path": "validation/gate-3/rust.exit",
+   "bytes": 5,
+   "sha256": "bdc830287616dae1818ced3e7c186e1387155900ad30d5983ec02da1519c4a95"
+  },
+  {
+   "path": "validation/gate-3/rust.log.gz",
+   "bytes": 8173,
+   "sha256": "c4ccb633122db4f22b071f458c9465b1786e122772c839debd23438cd70088d1"
+  },
+  {
+   "path": "validation/gate-3/submodules.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "validation/gate-3/submodules.log.gz",
+   "bytes": 20,
+   "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+  },
+  {
+   "path": "validation/gate-4/clang.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "validation/gate-4/clang.log.gz",
+   "bytes": 130,
+   "sha256": "406ea76b3153710fad352ac5a2cb02d02426f1c96f2a1234f1bffe3fe91a7d50"
+  },
+  {
+   "path": "validation/gate-4/clippy.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "validation/gate-4/clippy.log.gz",
+   "bytes": 256,
+   "sha256": "804543f641bdf136e7da27c4049e5b5b9f8eda94fc8b821bb8c81fb8779cb8d8"
+  },
+  {
+   "path": "validation/gate-4/fmt.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "validation/gate-4/fmt.log.gz",
+   "bytes": 20,
+   "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+  },
+  {
+   "path": "validation/gate-4/followup.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "validation/gate-4/followup.log.gz",
+   "bytes": 2117,
+   "sha256": "1c59b1d242a6957d517273670b525e6d8b79acf73d8835559d2c371fab728bdf"
+  },
+  {
+   "path": "validation/gate-4/lean.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "validation/gate-4/lean.log.gz",
+   "bytes": 120576,
+   "sha256": "fe9a2bcde4e63db8729c21eb5dd779841869001dc3f0c7a7ed3fa31558dddd5a"
+  },
+  {
+   "path": "validation/gate-4/probe.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "validation/gate-4/probe.log.gz",
+   "bytes": 652,
+   "sha256": "20cd31d6b7edc6e54590518032646807fba55117d95e9c7de836041cd055311c"
+  },
+  {
+   "path": "validation/gate-4/rust.exit",
+   "bytes": 5,
+   "sha256": "bdc830287616dae1818ced3e7c186e1387155900ad30d5983ec02da1519c4a95"
+  },
+  {
+   "path": "validation/gate-4/rust.log.gz",
+   "bytes": 7860,
+   "sha256": "546facaa62d7a1ac382fe4d33d247cfc889610cf0124f2220428c84d62e3ae24"
+  },
+  {
+   "path": "validation/gate-4/submodules.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "validation/gate-4/submodules.log.gz",
+   "bytes": 20,
+   "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+  },
+  {
+   "path": "validation/lean-focused-1.log.gz",
+   "bytes": 20,
+   "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+  },
+  {
+   "path": "validation/tsan-isolation-1/stderr.log.gz",
+   "bytes": 20,
+   "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+  },
+  {
+   "path": "validation/tsan-isolation-1/stdout.log.gz",
+   "bytes": 147,
+   "sha256": "8498208b725ca5c2d40d08bb020c34aa3f999f119204ebe93b8591fad8391ed3"
+  }
+ ]
+}

@@ -1,0 +1,13 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "w4-gateway-crate",
+ "total_pruned_files": 1,
+ "total_pruned_bytes": 122725,
+ "artifacts": [
+  {
+   "path": "audit.log",
+   "bytes": 122725,
+   "sha256": "6b0cb5a70e4b4a2a51095f78e9e005b11abbbad3203b4515f61b16d98e643c90"
+  }
+ ]
+}

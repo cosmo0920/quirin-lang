@@ -1,0 +1,58 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "w5-concurrent-kernel",
+ "total_pruned_files": 10,
+ "total_pruned_bytes": 126413,
+ "artifacts": [
+  {
+   "path": "clippy.log",
+   "bytes": 767,
+   "sha256": "6b32b13bdec6a118f84d15149ccb0a37f6959a728693600b7d20a88953641e69"
+  },
+  {
+   "path": "core-runtime-dependencies.log",
+   "bytes": 71,
+   "sha256": "be25cced02194d394945c87c93a910eb0815dd055e18114ed7709475b5251cce"
+  },
+  {
+   "path": "core-test-dependencies.log",
+   "bytes": 179,
+   "sha256": "80381159c297b8edb66ae43f590c8bd7704d2b75f5ee0744772714dcdbd63e0c"
+  },
+  {
+   "path": "core-tests.log",
+   "bytes": 10824,
+   "sha256": "11f35a781b66d3ceb79b7570c77ac52e52ee671cce241a8420c12c45a85ef6a3"
+  },
+  {
+   "path": "format.log",
+   "bytes": 0,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+   "path": "lean-all-audits.log",
+   "bytes": 44770,
+   "sha256": "5131b29f220b3697dbe8af424bd68956a9341e2f04ec270092aea627df06a8af"
+  },
+  {
+   "path": "lean-build.log",
+   "bytes": 41,
+   "sha256": "9e395a9b593c15f57d70590608db835311332ead6b09f9cbd5d37843297746d4"
+  },
+  {
+   "path": "reevaluation-followup.log",
+   "bytes": 9884,
+   "sha256": "ef444f4f006e3ba9f285dc8d544ce1a7175cf76bc58665ca991a8220a25e8b10"
+  },
+  {
+   "path": "reevaluation-probe.log",
+   "bytes": 2651,
+   "sha256": "4cea3a9fb26acf9b4ad31b3413148b484c4a2a21680c38e7764b6d4961c1d757"
+  },
+  {
+   "path": "workspace-tests.log",
+   "bytes": 57226,
+   "sha256": "1a118ec88d8b1c3679fd964b46b6016833ac5b3b3d815f1f8d81d2a995e4d57e"
+  }
+ ]
+}

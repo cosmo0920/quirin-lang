@@ -1,0 +1,43 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "w48-bu-external-callee-contracts",
+ "total_pruned_files": 7,
+ "total_pruned_bytes": 261622,
+ "artifacts": [
+  {
+   "path": "corpus-reading-attribution.json",
+   "bytes": 67212,
+   "sha256": "1124761d67139861a61248483cd7a024f22af4d936eaab98c09fb53f7cdb8646"
+  },
+  {
+   "path": "evidence-catalog.json",
+   "bytes": 71462,
+   "sha256": "65d857992b2cd07bfb1d11f7fe2bd1e2d525e9ebb3b88c382419db8458f0e0f9"
+  },
+  {
+   "path": "integration/current-main/attempt-1/clang-version.exit",
+   "bytes": 3,
+   "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+   "path": "integration/current-main/attempt-1/clang-version.txt",
+   "bytes": 126,
+   "sha256": "ddea17f1273cf52729ca27d3cc1386d076dd825044d9d56a2e9709153d7747f5"
+  },
+  {
+   "path": "integration/current-main/attempt-1/receipt.json",
+   "bytes": 20731,
+   "sha256": "77b2b97e9fd9a612e9e0d5b153d3fe74c13e5fb6e5e244c02554f102114fd65f"
+  },
+  {
+   "path": "integration/current-main/attempt-2/receipt.json",
+   "bytes": 2752,
+   "sha256": "ad9fe3347df078a88b9068148958e2a57e2892fd635fb59aedf0a612f4c44b17"
+  },
+  {
+   "path": "prepared-resolution.json",
+   "bytes": 99336,
+   "sha256": "71cd849ab77fa54d68d4f7f5f159ddc0ffa0679b7781cd58220299561b7c9584"
+  }
+ ]
+}

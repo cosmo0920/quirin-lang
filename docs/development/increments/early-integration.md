@@ -19,7 +19,7 @@ observations, not general OS failure or durability guarantees. Evidence:
 `docs/reports/cycle19-reopen-failures/README.md`. Raw units remain unpromoted.
 
 W2 bounded profile migration landed (2026-09-07;
-`docs/reports/w2-profile-manifests/README.md`): schema v1 and total-or-reject
+`docs/reports/archive/early-waves/w2-profile-manifests/README.md`): schema v1 and total-or-reject
 loading replace the library enum, source inventories, mechanism/operation
 summary tables and Libevent API/build/source tables with declared profile data.
 Full 185-TU diagnostic/source parity is byte-identical to baseline `43040e7`
@@ -30,7 +30,7 @@ in subsequent bounded increments below; configured orchestration remains W2/W5
 work. This does not complete W2.
 
 Frontend gates repaired (2026-09-07,
-`docs/reports/w6-frontend-gates/README.md`): nonempty source function contracts
+`docs/reports/archive/early-waves/w6-frontend-gates/README.md`): nonempty source function contracts
 reject centrally with Q021 until enforced. Guard/thread-scope header names bind
 only inside their bodies; at that checkpoint nested concurrency lowering rejected with Q500.
 This closes the two W6 batch-2 frontend defects without claiming contract or
@@ -44,17 +44,17 @@ from profile packages with stable plugin-id ordering and no compiled fallback.
 All shipped providers remain v1 built-ins returning Unknown; process extraction
 is still W5 work. Full 185-TU diagnostic/source parity is unchanged.
 
-The [Lean CI hygiene](../../reports/w7-lean-ci/README.md) adds the pinned Lean
+The [Lean CI hygiene](../../reports/archive/early-waves/w7-lean-ci/README.md) adds the pinned Lean
 build and every theorem audit to CI, including a compiled QCore axiom check.
 Both reevaluation probes also run in Linux and Clang-enabled Windows CI.
 Local checks passed; the hosted workflow has not yet run.
 
-[Generic Lean naming](../../reports/w7-generic-lean-names/README.md) makes the
+[Generic Lean naming](../../reports/archive/early-waves/w7-generic-lean-names/README.md) makes the
 descriptor-custody model, event composition and busy/lock preservation theorem
 available under library-independent names while keeping historical aliases.
 
 Boolean field profile routing landed (2026-09-07,
-`docs/reports/w2-boolean-field-profiles/README.md`): typed C record/field and
+`docs/reports/archive/early-waves/w2-boolean-field-profiles/README.md`): typed C record/field and
 Boolean operation routes come from loaded profile data, with exact declared
 assumptions on summaries. An unrelated record fixture exercises both supported
 models. Full 185-TU resource diagnostics and source projections are unchanged;
@@ -72,7 +72,7 @@ and source evidence remains in `compiler/examples/support/cycle19_compatibility.
 until provider extraction/parity replaces it. This is not full W5 completion.
 
 Monkey typed import profiles landed (2026-09-07,
-`docs/reports/w2-monkey-typed-profile/README.md`): function roles, records,
+`docs/reports/archive/early-waves/w2-monkey-typed-profile/README.md`): function roles, records,
 sizeof bounds, exact callback signatures, callee bounds and callback effects
 load from profile data. Malformed or unavailable declarations reject; wrappers
 retain their existing opaque-call grammar. Full 185-TU diagnostics are unchanged;
@@ -98,12 +98,12 @@ also moved unchanged. Portable, untrusted chunk-path records live in schemas
 0.2.0; `qcore-contract` evaluates declared paths, while only the opaque typed
 source importer can issue source-checked compatibility certificates. No plugin
 wire version or admission rule changed. See
-`docs/reports/w5-sequential-kernel/README.md`,
-`docs/reports/w5-concurrent-kernel/README.md`, and
-`docs/reports/w5-chunk-summary-boundary/README.md`.
+`docs/reports/archive/early-waves/w5-sequential-kernel/README.md`,
+`docs/reports/archive/early-waves/w5-concurrent-kernel/README.md`, and
+`docs/reports/archive/early-waves/w5-chunk-summary-boundary/README.md`.
 W4 now validates direct non-null `Removed` wrappers from contained entry to
 live detached exit, with independent certificate rederivation and matching
-Lean relations (`docs/reports/w4-removed-custody/README.md`). All 185 pinned
+Lean relations (`docs/reports/archive/early-waves/w4-removed-custody/README.md`). All 185 pinned
 resource/source results remain unchanged; recursion, general removal aliases,
 provider model extraction and broader source/CT coverage remain open.
 
@@ -116,8 +116,8 @@ provider models and registry-based Fluent Bit composition remain open.
 Whole-program checking now lives in frontend; generic loop/ledger checking
 lives in core, with preserved compiler APIs and exact implementation/test body
 parity. Evidence: `docs/reports/w5-provider-packages/README.md`,
-`docs/reports/w5-whole-program-frontend/README.md`, and
-`docs/reports/w5-resource-accounting/README.md`.
+`docs/reports/archive/early-waves/w5-whole-program-frontend/README.md`, and
+`docs/reports/archive/early-waves/w5-resource-accounting/README.md`.
 
 CLI package lifecycle (2026-09-07, `docs/reports/w5-cli-packages/README.md`):
 `qcorec plugins verify PACKAGE`, `enable PACKAGE --config FILE`, and
@@ -132,12 +132,12 @@ and scope dispatch now live in `crates/qcore-verification`, with byte-identical
 implementations/tests and compiler reexports. It depends on core, frontend,
 contract, schemas and host; providers cannot link it. Lifecycle source effects
 remain incomplete and cannot promote a result. Evidence:
-`docs/reports/w5-verification-adapter/README.md`.
+`docs/reports/archive/early-waves/w5-verification-adapter/README.md`.
 
 W4 output forwarding and identity invalidation (2026-09-07): direct output
 pointer forwarding now validates original sanctioned slots on every exit.
 Formal shadowing, pointer mutation and direct alias chains cannot reuse stale
-resource identity. Evidence: `docs/reports/w4-out-forwarding/README.md`.
+resource identity. Evidence: `docs/reports/archive/early-waves/w4-out-forwarding/README.md`.
 That increment measured 3 Safe / 94 provisional Unsafe / 84 Unknown /
 4 data-only, with no promotions. The subsequent indirect-access repair
 (`docs/reports/w4-indirect-access/README.md`) rejects unmodeled dereference,
@@ -151,7 +151,7 @@ The generic reactor lifecycle and descriptor model now resides in
 `crates/qcore-core/src/event_reactor.rs`, parameterized by an explicit accepted
 profile list. The Libevent adapter retains build matching and pinned source
 checks, and preserves concrete enum imports through a lossless facade.
-Evidence: `docs/reports/w5-generic-reactor/README.md`. Callback source binding/protocol admission, specialized provider extraction
+Evidence: `docs/reports/archive/early-waves/w5-generic-reactor/README.md`. Callback source binding/protocol admission, specialized provider extraction
 and registry-based corpus composition remain open.
 
 Generic callback records (2026-09-07): `qcore-schemas::reactor` and
@@ -160,7 +160,7 @@ exchange against the complete assignment inventory. A schemas-only process
 fixture exercises matching and adversarial proposals. This adds no protocol
 witness admission or source-derived authority; Monkey effect records retain
 their separate interpretation. Evidence:
-`docs/reports/w5-reactor-callback-records/README.md`. Source binding,
+`docs/reports/archive/early-waves/w5-reactor-callback-records/README.md`. Source binding,
 specialized provider extraction and registry composition remain open.
 
 Source-derived field-contract provider path (2026-09-07): the typed Boolean
@@ -181,7 +181,7 @@ Boolean-field paths from a version-2 typed statement program. Requests no longer
 carry expected paths. The receiver retains opaque source identity, compares
 complete proposed paths and evaluates the pinned contract. Parser/evaluator
 semantics retain parity; source import and helper ABI checks stay trusted.
-Evidence: `docs/reports/w5-provider-statement-execution/README.md`. Full lifecycle
+Evidence: `docs/reports/archive/early-waves/w5-provider-statement-execution/README.md`. Full lifecycle
 import, other specialized provider analysis and registry composition remain open.
 
 Contextual recursion (2026-09-07): W4 now infers validated custody for one
@@ -191,7 +191,7 @@ zero contexts via exact zero literals. Both contracts must agree, and the
 combined CFG is revalidated and independently rederived by certificate checking.
 Release, owned-return and bounded mutual-recursion source cases pass; mutations,
 nondecreasing calls, zero cycles and broader controls remain outside this route.
-Evidence: `docs/reports/w4-contextual-recursion/README.md`. General recursive
+Evidence: `docs/reports/archive/early-waves/w4-contextual-recursion/README.md`. General recursive
 fixed points, broader arithmetic rankings, aliases and cost summaries remain open;
 the unsigned countdown extension below covers exact `n - 1` calls.
 
@@ -255,7 +255,7 @@ chunk-contract and source-effect reports are byte-identical; 22 units have
 diagnostic changes. No raw unit is promoted.
 
 Configured source-contract dispatch is implemented (2026-09-07;
-`docs/reports/w5-configured-source-contracts/README.md`). The L3 audit service
+`docs/reports/archive/early-waves/w5-configured-source-contracts/README.md`). The L3 audit service
 loads explicit package/library/policy bindings, snapshots policy bytes and
 selects providers from sealed Clang import identities. `QCORE_SOURCE_CONTRACTS`
 selects the configuration; `QCORE_CHUNKIO_PACKAGE` remains a compatible package

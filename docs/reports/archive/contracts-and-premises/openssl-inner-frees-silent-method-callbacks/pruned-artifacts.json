@@ -1,0 +1,18 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "openssl-inner-frees-silent-method-callbacks",
+ "total_pruned_files": 2,
+ "total_pruned_bytes": 976287,
+ "artifacts": [
+  {
+   "path": "gate/gate-1.json",
+   "bytes": 497898,
+   "sha256": "ce885e6bfc88a3433912cc718a12b6f3f5b55a8347468ce01bc60d2d3c9062b7"
+  },
+  {
+   "path": "integration/gate-scope.json",
+   "bytes": 478389,
+   "sha256": "f2ce75f0c750f3fd594170ab0225301793db97539e1e747571d21d23a70477a0"
+  }
+ ]
+}

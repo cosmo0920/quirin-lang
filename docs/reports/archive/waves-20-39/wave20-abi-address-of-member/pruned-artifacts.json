@@ -1,0 +1,33 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "wave20-abi-address-of-member",
+ "total_pruned_files": 5,
+ "total_pruned_bytes": 310550,
+ "artifacts": [
+  {
+   "path": "artifacts/diff-wave17-to-after.json.gz",
+   "bytes": 114030,
+   "sha256": "fab015b4c5b73e0a6e7a4d1c4489e498ac2ed331883010a98deaeac1095675a1"
+  },
+  {
+   "path": "artifacts/diff-wave17-to-before.json.gz",
+   "bytes": 101431,
+   "sha256": "d54190ab5c11c4c41e9963d411bc24db5f3d4001decb68ebe04c4d2950bd1695"
+  },
+  {
+   "path": "logs/candidates.txt",
+   "bytes": 67012,
+   "sha256": "fb0f81102a83696e2e95b3e9528e38fddd82c7ee48001c520fd7f71ad8d81278"
+  },
+  {
+   "path": "logs/corpus-after.log.gz",
+   "bytes": 14036,
+   "sha256": "740e81521d2405b5ed8b170343d9787d9899afe3190927e67f4c91a8c24c2d99"
+  },
+  {
+   "path": "logs/corpus-before.log.gz",
+   "bytes": 14041,
+   "sha256": "eb9f03021cbe19e75118022d639cdbde6ac756c3107635e0c6f734da0d163849"
+  }
+ ]
+}

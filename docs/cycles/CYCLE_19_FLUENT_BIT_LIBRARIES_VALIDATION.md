@@ -143,7 +143,7 @@ Fluent Bit.
 ## Local result before resource-importer triage
 
 This table is the baseline retained through the callback-source increment.
-The [resource-importer triage rerun](../reports/cycle19-resource-triage/README.md)
+The [resource-importer triage rerun](../reports/archive/cycles-18-19/cycle19-resource-triage/README.md)
 now projects 4,688/4,775 functions, with two Safe, 98 provisional Unsafe,
 81 Unknown, four data-only units, and zero gateway failures. The same source
 and build boundary applies; the increased projection count is not proved
@@ -346,12 +346,12 @@ for each imported callback. The native observation regression still checks the
 48-record descriptor trace and 145 allocator executions, but it does not yet
 bind the new symbolic payload/map/fired-slot accesses to those observations.
 The table's generic projection and Safe/Unsafe/Unknown counts are unchanged.
-See [the callback source report](../reports/cycle19-callback-source/README.md).
+See [the callback source report](../reports/archive/cycles-18-19/cycle19-callback-source/README.md).
 
 
 ## 19D callback binding follow-up (2026-09-06)
 
-The [callback binding report](../reports/cycle19-callback-binding/README.md)
+The [callback binding report](../reports/archive/cycles-18-19/cycle19-callback-binding/README.md)
 records one checked native execution for each of the three Monkey callbacks,
 six checked native QCore postconditions, and 20 audited Lean binding theorems.
 It joins freshly imported source paths to registration arguments, memory

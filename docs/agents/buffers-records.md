@@ -309,7 +309,7 @@ read. Rule numbers and anchors are stable; backticked paths are repository-relat
 ## Amendments after the 2026-09-19 migration checkpoint
 
 The blocks still marked preserved above are the migration's reconstruction
-text. `docs/reports/docs-structure-compression/verify.py` checked them at that
+text. `docs/reports/archive/language-and-tooling/docs-structure-compression/verify.py` checked them at that
 card's own checkpoint; it no longer passes against the tree, failing at its first
 row (`AGENTS.md` → `docs/development/architecture.md`), so the markers pin
 nothing mechanically (`W45-DOCS-PRESERVATION-VERIFIER-DECAYED`). Edit such a
@@ -510,7 +510,7 @@ alone — a **finite** binding, and that is its boundary
 
 Nothing this card lands is reachable from source: a 535-program census admits
 146 on both sides, byte-identical, with **0** verdicts moved either way.
-Evidence: `docs/reports/composed-window-reach/README.md`.
+Evidence: `docs/reports/archive/language-and-tooling/composed-window-reach/README.md`.
 
 ### Constraint 15h — the task-route ThreadSanitizer citation (card `TSAN-FAILURE-ARMS`, wave 41)
 
@@ -545,4 +545,4 @@ evidence about the schedules realised and never a proof of race freedom
 a measured boundary). Every row is still a pthread-bound Linux build
 (`TASK-ROUTE-TSAN-PTHREAD-BINDING`), and **no Windows or Apple run is claimed**
 (`TASK-ROUTE-TSAN-WINDOWS-APPLE-RUN`, `WRITE-LEND-EXERCISE-WINDOWS-RUN`).
-Evidence: `docs/reports/tsan-failure-arms/README.md`.
+Evidence: `docs/reports/archive/language-and-tooling/tsan-failure-arms/README.md`.

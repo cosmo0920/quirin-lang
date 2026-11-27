@@ -1,0 +1,18 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "loop-reacquisition-leak-accusation",
+ "total_pruned_files": 2,
+ "total_pruned_bytes": 17761,
+ "artifacts": [
+  {
+   "path": "evidence/after/leak-witness.jsonl.gz",
+   "bytes": 6732,
+   "sha256": "f271ad0bdceeb12edcf68b447cbec83c51a8dc5b3bf17be2713b5bb9185ac168"
+  },
+  {
+   "path": "evidence/before/leak-witness.jsonl.gz",
+   "bytes": 11029,
+   "sha256": "73886d130d41ef5d682dfece2f2e6d14ba354ec39561dc6646e6bffb01c82647"
+  }
+ ]
+}

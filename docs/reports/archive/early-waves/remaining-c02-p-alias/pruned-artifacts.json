@@ -1,0 +1,43 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "remaining-c02-p-alias",
+ "total_pruned_files": 7,
+ "total_pruned_bytes": 738429,
+ "artifacts": [
+  {
+   "path": "artifacts/chunk-contracts.json.gz",
+   "bytes": 281879,
+   "sha256": "82a243238c20398e7d31f9c8825c753f776216b8297f6a67c47ca39b2cfff1e0"
+  },
+  {
+   "path": "artifacts/diagnostics.json.gz",
+   "bytes": 386677,
+   "sha256": "43a9bcf599616f1a0f2e3e832d7d533b4c0930fbeaf15aa4b7b0bd4d1a959e48"
+  },
+  {
+   "path": "logs/corpus-after.log.gz",
+   "bytes": 13973,
+   "sha256": "2a7d44d9a63314744e56a4ae9ecd51f525a650ebf15f996954b204ddc3870a5a"
+  },
+  {
+   "path": "logs/corpus-before.log.gz",
+   "bytes": 13976,
+   "sha256": "988c17cd54f747fbb58ab5d7da9195094ed681578f6ffa600ffc98f8a9c9965c"
+  },
+  {
+   "path": "logs/corpus-bisect1.log.gz",
+   "bytes": 13976,
+   "sha256": "48f43e5a6ba1b46dd1f52f66f0e7823d798b09e5aa40a82df819c9b2b7f71cef"
+  },
+  {
+   "path": "logs/corpus-bisect2.log.gz",
+   "bytes": 13976,
+   "sha256": "f0680c02f3a3f088df57cd2f973e5274a9284a30a90db7c54005d932f5166862"
+  },
+  {
+   "path": "logs/corpus-first-after.log.gz",
+   "bytes": 13972,
+   "sha256": "53665a3d7c6806d0fd86d7759fd16510b5ae3e3728977a520ce803a99d29c35d"
+  }
+ ]
+}

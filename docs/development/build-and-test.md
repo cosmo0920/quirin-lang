@@ -83,7 +83,7 @@ harness uses MSVC's `/experimental:c11atomics` for its synchronization observers
 the emitted task runtime itself does not require that switch. The supported
 surface is joinable creation/join, equality/yield and plain non-recursive
 mutexes, not the full C11 header. See
-[the Windows thread report](../reports/windows-c11-threads/README.md).
+[the Windows thread report](../reports/archive/language-and-tooling/windows-c11-threads/README.md).
 
 For existing-C analysis and the full test suite, also install Visual
 Studio's optional **C++ Clang tools for Windows** or a standalone LLVM
@@ -110,7 +110,7 @@ These exercise the existing POSIX models, not native Windows cleanup behavior;
 ordinary Windows analysis keeps its native target.
 Local VS 2026 validation passed 828 tests, formatting, Clippy and both
 reevaluation probes; Lean was unavailable. See the
-[Windows validation report](../reports/windows-vs2026/README.md).
+[Windows validation report](../reports/archive/language-and-tooling/windows-vs2026/README.md).
 
 An explicit path works without changing PATH, including paths with spaces:
 

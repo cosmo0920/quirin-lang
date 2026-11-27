@@ -180,6 +180,33 @@ class ExtractionTests(unittest.TestCase):
             with self.assertRaises(SystemExit):
                 sweep_module.sweep(pathlib.Path(scratch), ["no-such-card"])
 
+    def test_archived_reports_and_closes_resolve_identically_to_top_level(self):
+        with tempfile.TemporaryDirectory(prefix="qcore-sweep-") as scratch:
+            root = pathlib.Path(scratch)
+            archived = root / "docs" / "reports" / "archive" / "waves-20-39" / "old-card"
+            archived.mkdir(parents=True, exist_ok=True)
+            (archived / "README.md").write_text(NUMBERED_REPORT, encoding="utf-8")
+            old_close = root / "docs" / "reports" / "archive" / "waves-20-39" / "wave33-close"
+            old_close.mkdir(parents=True, exist_ok=True)
+            (old_close / "reconciliation.json").write_text(
+                json.dumps(
+                    {
+                        "wave": 33,
+                        "cards": ["old-card"],
+                        "verdicts": {},
+                        "deferred_decisions": {
+                            "items": [
+                                {"name": "ARCHIVED-DEFERRAL", "verdict": "deferred", "ground": "g"}
+                            ]
+                        },
+                    }
+                ),
+                encoding="utf-8",
+            )
+            items = sweep_module.sweep(root, ["old-card"])
+            self.assertEqual(len(items), 3)
+            self.assertIn("ARCHIVED-DEFERRAL", sweep_module.outstanding_decisions(root, 40))
+
 
 class CheckTests(unittest.TestCase):
     def _tree(self, scratch, verdicts, cards=("a-card",)):

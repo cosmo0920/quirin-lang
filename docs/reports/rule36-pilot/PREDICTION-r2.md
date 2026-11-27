@@ -8,7 +8,7 @@ TIP `rev:62c8e461c` (the three moves, the registry rows and their Lean switch
 modules; `git diff 0d15e7b19 62c8e461c -- crates proof compiler contract`).
 
 The block below merges the three cards' `measure-prediction` blocks
-([33](../rule33-pilot/PREDICTION.md), [34](../rule34-pilot/PREDICTION.md),
+([33](../archive/gateway-and-clang/rule33-pilot/PREDICTION.md), [34](../archive/gateway-and-clang/rule34-pilot/PREDICTION.md),
 [36](PREDICTION.md)), each committed before its card's code: every one
 declares an identity, so the merge is an identity. BASE -> TIP moves no row
 on any of the three live routes; reports are byte-identical up to the checked

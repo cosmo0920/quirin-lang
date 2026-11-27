@@ -1,0 +1,13 @@
+{
+ "schema": "quirin-pruned-report-artifacts/1",
+ "card": "extension-contract-physical",
+ "total_pruned_files": 1,
+ "total_pruned_bytes": 317527,
+ "artifacts": [
+  {
+   "path": "baseline.json",
+   "bytes": 317527,
+   "sha256": "f854f11acc824b3ccd831625dade48ef920ff7a739a39a573336f4062eee9c94"
+  }
+ ]
+}
