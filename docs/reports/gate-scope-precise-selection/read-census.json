@@ -1815,6 +1815,202 @@
 "read": [],
 "seconds": 1.3
 },
+"qcore-audit::test::linkage_shipped_resolution": {
+"dirs": [
+"providers/qcore-provider-chunkio/contracts",
+"providers/qcore-provider-chunkio/contracts/chunkio",
+"providers/qcore-provider-cmetrics/contracts",
+"providers/qcore-provider-cmetrics/contracts/cmetrics",
+"providers/qcore-provider-ctraces/contracts",
+"providers/qcore-provider-ctraces/contracts/ctraces",
+"providers/qcore-provider-libevent/contracts",
+"providers/qcore-provider-libevent/contracts/monkey",
+"providers/qcore-provider-librdkafka/contracts",
+"providers/qcore-provider-librdkafka/contracts/librdkafka",
+"providers/quirin-provider-cfl/contracts",
+"providers/quirin-provider-cfl/contracts/cfl",
+"providers/quirin-provider-fluent-bit/contracts",
+"providers/quirin-provider-fluent-bit/contracts/fluent_bit",
+"providers/quirin-provider-fluent-otel-proto/contracts",
+"providers/quirin-provider-fluent-otel-proto/contracts/fluent_otel_proto",
+"providers/quirin-provider-libc/contracts",
+"providers/quirin-provider-libc/contracts/libc",
+"providers/quirin-provider-mpack/contracts",
+"providers/quirin-provider-mpack/contracts/mpack",
+"providers/quirin-provider-msgpack/contracts",
+"providers/quirin-provider-msgpack/contracts/msgpack",
+"providers/quirin-provider-shared/contracts",
+"providers/quirin-provider-shared/contracts/language",
+"providers/quirin-provider-shared/contracts/library"
+],
+"exit": 0,
+"ls_files": [],
+"missing_count": 79,
+"ok": true,
+"probed_count": 12,
+"read": [
+"cycle19-resource-contracts.json",
+"providers/contract-load-path.json",
+"providers/qcore-provider-chunkio/contracts/chunkio/chunk_destructor.qv",
+"providers/qcore-provider-chunkio/contracts/chunkio/chunk_residency.qv",
+"providers/qcore-provider-chunkio/contracts/chunkio/chunk_sizes.qv",
+"providers/qcore-provider-chunkio/contracts/chunkio/constructor_failure_observation.qv",
+"providers/qcore-provider-chunkio/contracts/chunkio/context_destructor.qv",
+"providers/qcore-provider-chunkio/contracts/chunkio/counters.qv",
+"providers/qcore-provider-chunkio/contracts/chunkio/error_frame.qv",
+"providers/qcore-provider-chunkio/contracts/chunkio/error_state.qv",
+"providers/qcore-provider-chunkio/contracts/chunkio/file_close.qv",
+"providers/qcore-provider-chunkio/contracts/chunkio/file_close_delete.qv",
+"providers/qcore-provider-chunkio/contracts/chunkio/file_st_bounds.qv",
+"providers/qcore-provider-chunkio/contracts/chunkio/filesystem_attempts.qv",
+"providers/qcore-provider-chunkio/contracts/chunkio/filesystem_chunk_close.qv",
+"providers/qcore-provider-chunkio/contracts/chunkio/filesystem_constructor_failure_observation.qv",
+"providers/qcore-provider-chunkio/contracts/chunkio/filesystem_delete.qv",
+"providers/qcore-provider-chunkio/contracts/chunkio/filesystem_delete_attempt.qv",
+"providers/qcore-provider-chunkio/contracts/chunkio/filesystem_delete_observation.qv",
+"providers/qcore-provider-chunkio/contracts/chunkio/filesystem_descriptor_failure_observation.qv",
+"providers/qcore-provider-chunkio/contracts/chunkio/filesystem_existing_observation.qv",
+"providers/qcore-provider-chunkio/contracts/chunkio/filesystem_integrity_observation.qv",
+"providers/qcore-provider-chunkio/contracts/chunkio/filesystem_observation.qv",
+"providers/qcore-provider-chunkio/contracts/chunkio/filesystem_os_constructor_observation.qv",
+"providers/qcore-provider-chunkio/contracts/chunkio/filesystem_os_observation.qv",
+"providers/qcore-provider-chunkio/contracts/chunkio/filesystem_outcomes.qv",
+"providers/qcore-provider-chunkio/contracts/chunkio/filesystem_reopen_failure_observation.qv",
+"providers/qcore-provider-chunkio/contracts/chunkio/filesystem_sync_failure_observation.qv",
+"providers/qcore-provider-chunkio/contracts/chunkio/filesystem_teardown_observation.qv",
+"providers/qcore-provider-chunkio/contracts/chunkio/filesystem_transition_observation.qv",
+"providers/qcore-provider-chunkio/contracts/chunkio/filesystem_unmap_failure_observation.qv",
+"providers/qcore-provider-chunkio/contracts/chunkio/import_composition.qv",
+"providers/qcore-provider-chunkio/contracts/chunkio/list_unlink.qv",
+"providers/qcore-provider-chunkio/contracts/chunkio/lock_state.qv",
+"providers/qcore-provider-chunkio/contracts/chunkio/logging.qv",
+"providers/qcore-provider-chunkio/contracts/chunkio/memory_backend.qv",
+"providers/qcore-provider-chunkio/contracts/chunkio/memory_close.qv",
+"providers/qcore-provider-chunkio/contracts/chunkio/meta_len_bounds.qv",
+"providers/qcore-provider-chunkio/contracts/chunkio/nested_cleanup.qv",
+"providers/qcore-provider-chunkio/contracts/chunkio/nested_memory_teardown.qv",
+"providers/qcore-provider-chunkio/contracts/chunkio/parent_teardown.qv",
+"providers/qcore-provider-chunkio/contracts/chunkio/resource_open_close.qv",
+"providers/qcore-provider-chunkio/contracts/chunkio/stream_destructor.qv",
+"providers/qcore-provider-chunkio/contracts/chunkio/teardown_observation.qv",
+"providers/qcore-provider-chunkio/contracts/chunkio/teardown_traversal.qv",
+"providers/qcore-provider-chunkio/contracts/chunkio/unmap_wrapper.qv",
+"providers/qcore-provider-chunkio/contracts/chunkio/unsupported_close.qv",
+"providers/qcore-provider-chunkio/contracts/chunkio/unsupported_constructor_observation.qv",
+"providers/qcore-provider-cmetrics/contracts/cmetrics/context_lifetime.qv",
+"providers/qcore-provider-cmetrics/contracts/cmetrics/counter_reset.qv",
+"providers/qcore-provider-cmetrics/contracts/cmetrics/logging.qv",
+"providers/qcore-provider-cmetrics/contracts/cmetrics/map_lifetime.qv",
+"providers/qcore-provider-cmetrics/contracts/cmetrics/metric_setters.qv",
+"providers/qcore-provider-cmetrics/contracts/cmetrics/metric_values.qv",
+"providers/qcore-provider-cmetrics/contracts/cmetrics/mpack_string_out.qv",
+"providers/qcore-provider-cmetrics/contracts/cmetrics/mpack_utils.qv",
+"providers/qcore-provider-cmetrics/contracts/cmetrics/null_deref.qv",
+"providers/qcore-provider-cmetrics/contracts/cmetrics/opts_lifetime.qv",
+"providers/qcore-provider-cmetrics/contracts/cmetrics/typed_setters.qv",
+"providers/qcore-provider-ctraces/contracts/ctraces/context_lifetime.qv",
+"providers/qcore-provider-ctraces/contracts/ctraces/mpack_string_out.qv",
+"providers/qcore-provider-libevent/contracts/monkey/callback_binding.qv",
+"providers/qcore-provider-libevent/contracts/monkey/callback_task_handoff.qv",
+"providers/qcore-provider-libevent/contracts/monkey/composition.qv",
+"providers/qcore-provider-libevent/contracts/monkey/cycle18_composition.qv",
+"providers/qcore-provider-libevent/contracts/monkey/descriptor_observation.qv",
+"providers/qcore-provider-libevent/contracts/monkey/event_loop.qv",
+"providers/qcore-provider-libevent/contracts/monkey/event_payload.qv",
+"providers/qcore-provider-libevent/contracts/monkey/intrusive_list.qv",
+"providers/qcore-provider-libevent/contracts/monkey/logging.qv",
+"providers/qcore-provider-libevent/contracts/monkey/memory.qv",
+"providers/qcore-provider-libevent/contracts/monkey/native_platform_matrix.qv",
+"providers/qcore-provider-libevent/contracts/monkey/result_range.qv",
+"providers/qcore-provider-libevent/contracts/monkey/scalar_observation.qv",
+"providers/qcore-provider-libevent/contracts/monkey/string.qv",
+"providers/qcore-provider-libevent/contracts/monkey/timeout_teardown.qv",
+"providers/qcore-provider-libevent/contracts/monkey/vhost_set.qv",
+"providers/qcore-provider-libevent/contracts/monkey/wait_failure_policy.qv",
+"providers/qcore-provider-libevent/contracts/monkey/wait_identity_policy.qv",
+"providers/qcore-provider-libevent/contracts/monkey/wait_source_policy.qv",
+"providers/qcore-provider-libevent/contracts/monkey/wrapper_paths.qv",
+"providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv",
+"providers/qcore-provider-librdkafka/contracts/librdkafka/client.qv",
+"providers/qcore-provider-librdkafka/contracts/librdkafka/compress_out.qv",
+"providers/qcore-provider-librdkafka/contracts/librdkafka/header_inlines.qv",
+"providers/qcore-provider-librdkafka/contracts/librdkafka/kafka_mem.qv",
+"providers/qcore-provider-librdkafka/contracts/librdkafka/log_caller_frame.qv",
+"providers/qcore-provider-librdkafka/contracts/librdkafka/logging.qv",
+"providers/qcore-provider-librdkafka/contracts/librdkafka/lz4_stream.qv",
+"providers/qcore-provider-librdkafka/contracts/librdkafka/memory.qv",
+"providers/qcore-provider-librdkafka/contracts/librdkafka/null_deref.qv",
+"providers/qcore-provider-librdkafka/contracts/librdkafka/outer.qv",
+"providers/qcore-provider-librdkafka/contracts/librdkafka/queue_destructor.qv",
+"providers/qcore-provider-librdkafka/contracts/librdkafka/refcount.qv",
+"providers/qcore-provider-librdkafka/contracts/librdkafka/topic_partition.qv",
+"providers/qcore-provider-librdkafka/contracts/librdkafka/topic_partition_constructors.qv",
+"providers/qcore-provider-librdkafka/contracts/librdkafka/typed_queue.qv",
+"providers/quirin-provider-cfl/contracts/cfl/arena_lifetime.qv",
+"providers/quirin-provider-cfl/contracts/cfl/atomic.qv",
+"providers/quirin-provider-cfl/contracts/cfl/hash_state.qv",
+"providers/quirin-provider-cfl/contracts/cfl/intrusive_list.qv",
+"providers/quirin-provider-cfl/contracts/cfl/null_deref.qv",
+"providers/quirin-provider-cfl/contracts/cfl/sds_lifetime.qv",
+"providers/quirin-provider-cfl/contracts/cfl/time.qv",
+"providers/quirin-provider-fluent-bit/contracts/fluent_bit/busy_state.qv",
+"providers/quirin-provider-fluent-bit/contracts/fluent_bit/hash_table_publication.qv",
+"providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy.qv",
+"providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy_direct_routes.qv",
+"providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_helpers.qv",
+"providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_is_up.qv",
+"providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_name.qv",
+"providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_sizes.qv",
+"providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_total_size.qv",
+"providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_collector_registration.qv",
+"providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_instance.qv",
+"providers/quirin-provider-fluent-bit/contracts/fluent_bit/lib_engine_thread.qv",
+"providers/quirin-provider-fluent-bit/contracts/fluent_bit/logging.qv",
+"providers/quirin-provider-fluent-bit/contracts/fluent_bit/loop_owner.qv",
+"providers/quirin-provider-fluent-bit/contracts/fluent_bit/memory.qv",
+"providers/quirin-provider-fluent-bit/contracts/fluent_bit/null_deref.qv",
+"providers/quirin-provider-fluent-bit/contracts/fluent_bit/outer.qv",
+"providers/quirin-provider-fluent-bit/contracts/fluent_bit/output_flush_id.qv",
+"providers/quirin-provider-fluent-bit/contracts/fluent_bit/output_singleplex.qv",
+"providers/quirin-provider-fluent-bit/contracts/fluent_bit/resource_memory.qv",
+"providers/quirin-provider-fluent-bit/contracts/fluent_bit/resource_string.qv",
+"providers/quirin-provider-fluent-bit/contracts/fluent_bit/result_range.qv",
+"providers/quirin-provider-fluent-bit/contracts/fluent_bit/routes_mask.qv",
+"providers/quirin-provider-fluent-bit/contracts/fluent_bit/storage_backlog.qv",
+"providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_route_queries.qv",
+"providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv",
+"providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv",
+"providers/quirin-provider-fluent-bit/contracts/fluent_bit/time.qv",
+"providers/quirin-provider-fluent-otel-proto/contracts/fluent_otel_proto/generated.qv",
+"providers/quirin-provider-fluent-otel-proto/contracts/fluent_otel_proto/runtime.qv",
+"providers/quirin-provider-libc/contracts/libc/callee_effects.qv",
+"providers/quirin-provider-libc/contracts/libc/dirent.qv",
+"providers/quirin-provider-libc/contracts/libc/dlfcn.qv",
+"providers/quirin-provider-libc/contracts/libc/errno.qv",
+"providers/quirin-provider-libc/contracts/libc/math.qv",
+"providers/quirin-provider-libc/contracts/libc/memory.qv",
+"providers/quirin-provider-libc/contracts/libc/process.qv",
+"providers/quirin-provider-libc/contracts/libc/pthread_mutex.qv",
+"providers/quirin-provider-libc/contracts/libc/pthread_sync.qv",
+"providers/quirin-provider-libc/contracts/libc/regex.qv",
+"providers/quirin-provider-libc/contracts/libc/result_sets.qv",
+"providers/quirin-provider-libc/contracts/libc/socket.qv",
+"providers/quirin-provider-libc/contracts/libc/stdio.qv",
+"providers/quirin-provider-libc/contracts/libc/stdlib.qv",
+"providers/quirin-provider-libc/contracts/libc/string.qv",
+"providers/quirin-provider-libc/contracts/libc/sys_stat.qv",
+"providers/quirin-provider-libc/contracts/libc/threads.qv",
+"providers/quirin-provider-libc/contracts/libc/time.qv",
+"providers/quirin-provider-libc/contracts/libc/unistd.qv",
+"providers/quirin-provider-mpack/contracts/mpack/writer.qv",
+"providers/quirin-provider-msgpack/contracts/msgpack/packer.qv",
+"providers/quirin-provider-shared/contracts/language/quantified_indices.qv",
+"providers/quirin-provider-shared/contracts/library/custody_evidence.qv",
+"providers/quirin-provider-shared/contracts/library/descriptor_native_observation.qv",
+"providers/quirin-provider-shared/contracts/library/source_projection.qv"
+],
+"seconds": 21.2
+},
 "qcore-audit::test::loop_measure_selection": {
 "dirs": [],
 "exit": 0,
@@ -3113,6 +3309,16 @@
 "read": [],
 "seconds": 0.5
 },
+"qcore-c-gateway::test::call_with_deref_actual": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 2,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 9.2
+},
 "qcore-c-gateway::test::callback_candidate_scope": {
 "dirs": [],
 "exit": 0,
@@ -3162,6 +3368,16 @@
 "probed_count": 1,
 "read": [],
 "seconds": 1.7
+},
+"qcore-c-gateway::test::callback_table_member_path_states": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 2,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 8.9
 },
 "qcore-c-gateway::test::callee_retention_class1": {
 "dirs": [],
@@ -4377,6 +4593,16 @@
 "read": [],
 "seconds": 0.0
 },
+"qcore-c-gateway::test::fluent_otel_proto_contracts": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 2,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 1.2
+},
 "qcore-c-gateway::test::footprint_connection": {
 "dirs": [],
 "exit": 0,
@@ -4507,6 +4733,16 @@
 "read": [],
 "seconds": 0.7
 },
+"qcore-c-gateway::test::in_place_regex_failure_use": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 2,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 2.3
+},
 "qcore-c-gateway::test::index_traversal": {
 "dirs": [],
 "exit": 0,
@@ -4596,6 +4832,16 @@
 "probed_count": 1,
 "read": [],
 "seconds": 0.4
+},
+"qcore-c-gateway::test::jumped_shadow_formal_readings": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 2,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 8.1
 },
 "qcore-c-gateway::test::k1_call_actual_access": {
 "dirs": [],
@@ -4925,6 +5171,16 @@
 "read": [],
 "seconds": 0.6
 },
+"qcore-c-gateway::test::member_path_invocation_premise": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 2,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 10.6
+},
 "qcore-c-gateway::test::member_path_release": {
 "dirs": [],
 "exit": 0,
@@ -4994,6 +5250,16 @@
 "probed_count": 1,
 "read": [],
 "seconds": 0.2
+},
+"qcore-c-gateway::test::name_keyed_holder_shadowing": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 2,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 9.9
 },
 "qcore-c-gateway::test::neighbours": {
 "dirs": [
@@ -5462,6 +5728,16 @@
 "probed_count": 1,
 "read": [],
 "seconds": 0.5
+},
+"qcore-c-gateway::test::out_slot_keep_or_deliver": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 2,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 4.9
 },
 "qcore-c-gateway::test::outer_record_graph": {
 "dirs": [],
@@ -5999,6 +6275,36 @@
 "read": [],
 "seconds": 1.6
 },
+"qcore-c-gateway::test::return_family_type_group": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 2,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 3.3
+},
+"qcore-c-gateway::test::return_family_untracked_arith_access": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 2,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 9.5
+},
+"qcore-c-gateway::test::return_family_untracked_conditional_access": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 2,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 8.1
+},
 "qcore-c-gateway::test::return_family_untracked_deref_cast": {
 "dirs": [],
 "exit": 0,
@@ -6008,6 +6314,26 @@
 "probed_count": 1,
 "read": [],
 "seconds": 2.2
+},
+"qcore-c-gateway::test::return_family_untracked_member_cast": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 2,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 10.4
+},
+"qcore-c-gateway::test::return_family_untracked_reversed_subscript": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 2,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 6.6
 },
 "qcore-c-gateway::test::return_position_modeled_call": {
 "dirs": [],
@@ -6038,6 +6364,16 @@
 "probed_count": 1,
 "read": [],
 "seconds": 0.5
+},
+"qcore-c-gateway::test::return_strict_member_null": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 2,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 8.0
 },
 "qcore-c-gateway::test::review_hold_standing": {
 "dirs": [],
@@ -6366,6 +6702,26 @@
 "read": [],
 "seconds": 0.2
 },
+"qcore-c-gateway::test::settled_leak_joined": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 2,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 3.9
+},
+"qcore-c-gateway::test::settled_leak_other_refusal": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 2,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 4.2
+},
 "qcore-c-gateway::test::sizeof_operand": {
 "dirs": [],
 "exit": 0,
@@ -6525,6 +6881,16 @@
 "probed_count": 1,
 "read": [],
 "seconds": 0.2
+},
+"qcore-c-gateway::test::untracked_base_null_join": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 2,
+"ok": true,
+"probed_count": 1,
+"read": [],
+"seconds": 5.9
 },
 "qcore-c-gateway::test::va_loop_pointer_arg": {
 "dirs": [],
@@ -12338,6 +12704,30 @@
 ],
 "seconds": 0.2
 },
+"qcore-compiler::test::quant_variant": {
+"dirs": [
+"contract/profiles"
+],
+"exit": 0,
+"ls_files": [],
+"missing_count": 45,
+"ok": true,
+"probed_count": 3,
+"read": [
+"contract/profiles/chunkio-core/profile.json",
+"contract/profiles/cmetrics-counter/profile.json",
+"contract/profiles/cycle18-task-handoff/profile.json",
+"contract/profiles/fluent-bit/profile.json",
+"contract/profiles/fluent-bit/providers/qcore.chunkio.json",
+"contract/profiles/fluent-bit/providers/qcore.cmetrics.json",
+"contract/profiles/fluent-bit/providers/qcore.ctraces.json",
+"contract/profiles/fluent-bit/providers/qcore.librdkafka.json",
+"contract/profiles/libevent-core/profile.json",
+"contract/profiles/libevent/profile.json",
+"contract/profiles/libevent/providers/qcore.libevent.json"
+],
+"seconds": 0.8
+},
 "qcore-compiler::test::reactor_route_parity": {
 "dirs": [],
 "exit": 0,
@@ -15617,6 +16007,16 @@
 "read": [],
 "seconds": 0.4
 },
+"qcore-contract::test::in_place_failure_use": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 0,
+"ok": true,
+"probed_count": 0,
+"read": [],
+"seconds": 0.2
+},
 "qcore-contract::test::libc_reading_hypotheses": {
 "dirs": [],
 "exit": 0,
@@ -16489,6 +16889,28 @@
 "read": [],
 "seconds": 0.0
 },
+"qcore-frontend::test::g1_closure_formulas": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 0,
+"ok": true,
+"probed_count": 0,
+"read": [
+"docs/reports/g1-closure-record/README.md"
+],
+"seconds": 0.1
+},
+"qcore-frontend::test::linkage_syntax": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 0,
+"ok": true,
+"probed_count": 0,
+"read": [],
+"seconds": 0.2
+},
 "qcore-frontend::test::module_imports": {
 "dirs": [],
 "exit": 0,
@@ -16518,6 +16940,18 @@
 "probed_count": 0,
 "read": [],
 "seconds": 0.0
+},
+"qcore-frontend::test::otel_proto_formulas": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 0,
+"ok": true,
+"probed_count": 0,
+"read": [
+"proof/QCore/OtelProtoObligations.lean"
+],
+"seconds": 0.1
 },
 "qcore-frontend::test::owned_tasks": {
 "dirs": [],
@@ -16668,6 +17102,16 @@
 "probed_count": 0,
 "read": [],
 "seconds": 0.0
+},
+"qcore-frontend::test::token_span_lookup": {
+"dirs": [],
+"exit": 0,
+"ls_files": [],
+"missing_count": 0,
+"ok": true,
+"probed_count": 0,
+"read": [],
+"seconds": 0.2
 },
 "qcore-frontend::test::transferability": {
 "dirs": [],
