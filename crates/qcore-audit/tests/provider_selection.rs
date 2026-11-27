@@ -718,6 +718,8 @@ fn the_cycle19_provider_selection_is_the_cycle19_manifest_module_for_module() {
     );
     assert_eq!(from_selection.functions(), from_manifest.functions());
     // Its closure: the ten selected crates and the shared bundle.
+    // Card OTEL-PROTO-PHASE-B1 adds quirin-provider-fluent-otel-proto to the
+    // cmetrics, ctraces and fluent_bit providers (deliberate update).
     assert_eq!(
         resolved.closure_names().collect::<Vec<_>>(),
         [
@@ -728,6 +730,7 @@ fn the_cycle19_provider_selection_is_the_cycle19_manifest_module_for_module() {
             "qcore-provider-librdkafka",
             "quirin-provider-cfl",
             "quirin-provider-fluent-bit",
+            "quirin-provider-fluent-otel-proto",
             "quirin-provider-libc",
             "quirin-provider-mpack",
             "quirin-provider-msgpack",
@@ -755,7 +758,8 @@ fn repository() -> PathBuf {
     PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../..")
 }
 
-/// The eleven crates on the repository's load path, in load-path order.
+/// The twelve crates on the repository's load path, in load-path order (card
+/// OTEL-PROTO-PHASE-B1 adds quirin-provider-fluent-otel-proto).
 fn real_crates(repository: &Path) -> Vec<String> {
     let load_path: Value = serde_json::from_slice(
         &fs::read(repository.join("providers/contract-load-path.json")).unwrap(),
@@ -774,7 +778,7 @@ fn every_real_crate_selected_whole_is_its_loader_view() {
     let repository = repository();
     let load_path = repository.join("providers/contract-load-path.json");
     let crates = real_crates(&repository);
-    assert_eq!(crates.len(), 11);
+    assert_eq!(crates.len(), 12);
     // The declared views are the loader's own.
     let probe = probe_resource_views(&load_path).unwrap();
     let declared: Value = serde_json::from_slice(&fs::read(&load_path).unwrap()).unwrap();

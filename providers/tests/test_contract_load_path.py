@@ -603,8 +603,10 @@ class LoadPathManifest(unittest.TestCase):
         self.assertNotIn("qcore-provider-conformance", names)
         # Card W45-USER-CONTRACT-PLUGINS: the SDK is a workspace member that
         # owns no contracts, so it is not on the load path; 11 crates remain.
+        # Card OTEL-PROTO-PHASE-B1 adds quirin-provider-fluent-otel-proto: 12.
         self.assertNotIn("quirin-provider-plugin", names)
-        self.assertEqual(len(names), 11)
+        self.assertIn("quirin-provider-fluent-otel-proto", names)
+        self.assertEqual(len(names), 12)
         self.assertEqual(sum(name.startswith("qcore-provider-") for name in names), 5)
         edges = {c["name"]: c["dependencies"] for c in manifest["crates"]}
         self.assertEqual(edges["quirin-provider-fluent-bit"], ["quirin-provider-libc"])
@@ -867,6 +869,54 @@ class CalleeEffectCheck(unittest.TestCase):
                   + json.loads((root / contracts.USER_LOAD_PATH).read_text())["crates"])
         self.assertEqual(contracts.check_libc_effects(root, crates),
                          {"libc_effect_declarations": 3})
+
+
+class FluentOtelProtoLinkage(unittest.TestCase):
+    """Card OTEL-PROTO-PHASE-B1: a cmetrics declaration whose body-checked
+    reading rests on the shipped quirin-provider-fluent-otel-proto declaration
+    of a generated `__free_unpacked` must link it; the real generated module
+    is the target, and an unlinked reliance fails the check."""
+
+    TARGET = "opentelemetry__proto__collector__metrics__v1__export_metrics_service_request__free_unpacked"
+    WRAPPER = ("module contract;\n"
+               "extern fn cmt_request_free(p: ptr<mut, u8>) -> unit\ncontract {\n"
+               "    requires resource_contract_v1;\n{links}    requires resource_body_checked;\n"
+               "    ensures normal resource_released(p, nullable);\n"
+               "    ensures normal resource_return_none();\n};\n")
+    RECORD = [{"crate": "qcore-provider-cmetrics", "function": "cmt_request_free",
+               "kind": "body-checked-specification",
+               "targets": ["fluent_otel_proto::" + TARGET],
+               "reading": "body calls the generated __free_unpacked"}]
+
+    def run_check(self, linked):
+        crate = HERE / "quirin-provider-fluent-otel-proto" / "contracts" / "fluent_otel_proto"
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            cmetrics = root / "qcore-provider-cmetrics" / "contracts" / "cmetrics"
+            cmetrics.mkdir(parents=True)
+            links = (f"    requires linkage_contract_v1;\n    quant #link fluent_otel_proto::{self.TARGET};\n"
+                     if linked else "")
+            (cmetrics / "free.qv").write_text(self.WRAPPER.replace("{links}", links))
+            otel = root / "quirin-provider-fluent-otel-proto" / "contracts" / "fluent_otel_proto"
+            otel.mkdir(parents=True)
+            (otel / "generated.qv").write_text((crate / "generated.qv").read_text())
+            (root / contracts.LINKAGE_RELIANCES).write_text(json.dumps(
+                {"schema": "quirin-linkage-reliances/1", "declarations": self.RECORD}))
+            stated = [{"dependent": "cmt_request_free", "form": "link",
+                       "target_namespace": "fluent_otel_proto", "target_function": self.TARGET}]
+            load_path = {"crates": [
+                {"name": "qcore-provider-cmetrics", "namespace": "cmetrics",
+                 "contracts": "qcore-provider-cmetrics/contracts",
+                 **({"contract_dependencies": stated} if linked else {})},
+                {"name": "quirin-provider-fluent-otel-proto", "namespace": "fluent_otel_proto",
+                 "contracts": "quirin-provider-fluent-otel-proto/contracts"}]}
+            return contracts.check_linkage(root, load_path)
+
+    def test_a_reliance_on_a_generated_release_must_be_linked(self):
+        self.assertEqual(self.run_check(True)["links"], 1)
+        with self.assertRaises(ValueError) as caught:
+            self.run_check(False)
+        self.assertIn("cx_reliance_is_linked", str(caught.exception))
 
 
 if __name__ == "__main__":

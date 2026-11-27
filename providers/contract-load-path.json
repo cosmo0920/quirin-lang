@@ -802,6 +802,24 @@
       ]
     },
     {
+      "name": "quirin-provider-fluent-otel-proto",
+      "namespace": "fluent_otel_proto",
+      "version": "0.1.0",
+      "contracts": "quirin-provider-fluent-otel-proto/contracts",
+      "dependencies": [],
+      "modules": [
+        "fluent_otel_proto/generated.qv",
+        "fluent_otel_proto/runtime.qv"
+      ],
+      "published": {},
+      "resource_view": [
+        "fluent_otel_proto/generated.qv",
+        "fluent_otel_proto/runtime.qv"
+      ],
+      "bounds_view": [],
+      "outer_view": []
+    },
+    {
       "name": "quirin-provider-libc",
       "namespace": "libc",
       "version": "0.1.0",
@@ -896,6 +914,7 @@
       "dependencies": [
         "quirin-provider-cfl",
         "quirin-provider-fluent-bit",
+        "quirin-provider-fluent-otel-proto",
         "quirin-provider-libc",
         "quirin-provider-mpack",
         "quirin-provider-msgpack"

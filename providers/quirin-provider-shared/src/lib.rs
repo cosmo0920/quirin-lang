@@ -22,7 +22,7 @@
 //! binary that does not call it.
 //!
 //! The crate owns the provider-owner-less policies under `contracts/`
-//! (`language/`, `library/`) and re-exports the five per-library contract
+//! (`language/`, `library/`) and re-exports the six per-library contract
 //! crates, so a consumer can take the whole shared set from one crate through
 //! [`CONTRACT_SETS`] and [`shared_contracts`]. Every contract crate is data only:
 //! nothing here loads, selects or installs a module implicitly.
@@ -38,6 +38,7 @@ pub mod teardown_effect;
 
 pub use quirin_provider_cfl as cfl;
 pub use quirin_provider_fluent_bit as fluent_bit;
+pub use quirin_provider_fluent_otel_proto as fluent_otel_proto;
 pub use quirin_provider_libc as libc;
 pub use quirin_provider_mpack as mpack;
 pub use quirin_provider_msgpack as msgpack;
@@ -76,11 +77,12 @@ pub const CONTRACTS: &[(&str, &str)] = &[
 ];
 
 /// The complete shared contract set: this crate's own modules followed by the
-/// five per-library crates' modules.
+/// six per-library crates' modules.
 pub const CONTRACT_SETS: &[&[(&str, &str)]] = &[
     CONTRACTS,
     cfl::CONTRACTS,
     fluent_bit::CONTRACTS,
+    fluent_otel_proto::CONTRACTS,
     libc::CONTRACTS,
     mpack::CONTRACTS,
     msgpack::CONTRACTS,
@@ -196,7 +198,7 @@ mod tests {
             &'static [&'static str],
             &'static [(&'static str, &'static str)],
         );
-        let linked: [Linked; 6] = [
+        let linked: [Linked; 7] = [
             (
                 "quirin-provider-cfl",
                 cfl::NAMESPACE,
@@ -208,6 +210,12 @@ mod tests {
                 fluent_bit::NAMESPACE,
                 fluent_bit::PUBLISHED,
                 fluent_bit::CONTRACTS,
+            ),
+            (
+                "quirin-provider-fluent-otel-proto",
+                fluent_otel_proto::NAMESPACE,
+                fluent_otel_proto::PUBLISHED,
+                fluent_otel_proto::CONTRACTS,
             ),
             (
                 "quirin-provider-libc",
@@ -266,6 +274,7 @@ mod tests {
             (CONTRACTS, &["language/", "library/"][..]),
             (cfl::CONTRACTS, &["cfl/"][..]),
             (fluent_bit::CONTRACTS, &["fluent_bit/"][..]),
+            (fluent_otel_proto::CONTRACTS, &["fluent_otel_proto/"][..]),
             (libc::CONTRACTS, &["libc/"][..]),
             (mpack::CONTRACTS, &["mpack/"][..]),
             (msgpack::CONTRACTS, &["msgpack/"][..]),

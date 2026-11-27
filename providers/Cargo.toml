@@ -1,5 +1,5 @@
 [workspace]
-members = ["quirin-provider-libc", "quirin-provider-cfl", "quirin-provider-mpack", "quirin-provider-msgpack", "quirin-provider-fluent-bit", "quirin-provider-shared", "quirin-provider-plugin", "quirin-provider-openssl", "quirin-provider-libcurl", "quirin-provider-onigmo", "qcore-provider-libevent", "qcore-provider-chunkio", "qcore-provider-cmetrics", "qcore-provider-ctraces", "qcore-provider-librdkafka", "conformance"]
+members = ["quirin-provider-libc", "quirin-provider-cfl", "quirin-provider-mpack", "quirin-provider-msgpack", "quirin-provider-fluent-bit", "quirin-provider-shared", "quirin-provider-plugin", "quirin-provider-openssl", "quirin-provider-libcurl", "quirin-provider-onigmo", "quirin-provider-fluent-otel-proto", "qcore-provider-libevent", "qcore-provider-chunkio", "qcore-provider-cmetrics", "qcore-provider-ctraces", "qcore-provider-librdkafka", "conformance"]
 resolver = "2"
 
 [workspace.dependencies]
@@ -12,6 +12,7 @@ quirin-provider-cfl = { path = "quirin-provider-cfl" }
 quirin-provider-mpack = { path = "quirin-provider-mpack" }
 quirin-provider-msgpack = { path = "quirin-provider-msgpack" }
 quirin-provider-fluent-bit = { path = "quirin-provider-fluent-bit" }
+quirin-provider-fluent-otel-proto = { path = "quirin-provider-fluent-otel-proto" }
 
 # Card TEST-STORAGE-BUDGET: line tables only, as the root workspace's dev
 # profile (card W44-TEST-SUITE-WALL-TIME), so panics and backtraces keep

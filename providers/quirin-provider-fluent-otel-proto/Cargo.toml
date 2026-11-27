@@ -1,0 +1,10 @@
+[package]
+name = "quirin-provider-fluent-otel-proto"
+version = "0.1.0"
+edition = "2024"
+license = "MIT OR Apache-2.0"
+publish = false
+description = "Shared Quirin contract modules: the generated fluent-otel-proto functions and the protobuf-c runtime entry points they reach (card OTEL-PROTO-PHASE-B1)"
+
+[lib]
+name = "quirin_provider_fluent_otel_proto"

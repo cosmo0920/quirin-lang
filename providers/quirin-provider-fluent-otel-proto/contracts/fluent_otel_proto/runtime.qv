@@ -1,0 +1,69 @@
+// SPDX-License-Identifier: Apache-2.0
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+module contract;
+
+// protobuf-c runtime entry points — resource-projection vocabulary version 1.
+// Card OTEL-PROTO-PHASE-B1. Written by `scripts/generate.py`; never edit by
+// hand.
+//
+// FOUR TRUSTED ASSUMPTIONS: the runtime functions the generated wrappers of
+// `generated.qv` reach, read from the vendored protobuf-c 1.5.0
+// (`lib/fluent-otel-proto/proto_c/protobuf-c/protobuf-c.c`, prototypes in
+// `protobuf-c.h`). The runtime unit is on no measured route; these are
+// declared so the wrappers' callees are contracted wherever a route reads them.
+//
+// * `protobuf_c_message_unpack` (:3028): a message allocated through
+//   `allocator`, or NULL on a decode or allocation failure (every failure
+//   path frees what it allocated and returns NULL): owned, nullable.
+// * `protobuf_c_message_free_unpacked` (:3324): `if (message == NULL) return;`
+//   then frees the message and its members: a nullable release.
+// * `protobuf_c_message_pack` (:1472), `protobuf_c_message_get_packed_size`:
+//   read the message (and write the caller's buffer): borrowed.
+//
+// No libc name is declared here: allocation goes through the allocator, and
+// libc's own declarations stay in quirin-provider-libc.
+
+extern fn protobuf_c_message_free_unpacked(message: ptr<mut, u8>, allocator: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(message, nullable);
+    ensures normal resource_borrowed(allocator);
+    ensures normal resource_return_none();
+};
+
+extern fn protobuf_c_message_get_packed_size(message: ptr<const, u8>) -> usize
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(message);
+    ensures normal resource_return_none();
+};
+
+extern fn protobuf_c_message_pack(message: ptr<const, u8>, out: ptr<mut, u8>) -> usize
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(message);
+    ensures normal resource_borrowed(out);
+    ensures normal resource_return_none();
+};
+
+extern fn protobuf_c_message_unpack(descriptor: ptr<const, u8>, allocator: ptr<mut, u8>, len: usize, data: ptr<const, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(descriptor);
+    ensures normal resource_borrowed(allocator);
+    ensures normal resource_borrowed(len);
+    ensures normal resource_borrowed(data);
+    ensures normal resource_return_owned(nullable);
+};
