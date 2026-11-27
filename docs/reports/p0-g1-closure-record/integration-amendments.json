@@ -1,0 +1,17 @@
+{
+ "schema": "quirin-amendments/2",
+ "card": "P0-G1-CLOSURE-RECORD",
+ "base": "76c1f9cfc",
+ "measured_tip": "f5127016c",
+ "profiles": [],
+ "increment_paragraph": "**P0-G1-CLOSURE-RECORD** (named follow-up of PRIORITY0-ATTRIBUTION; [report](../../reports/p0-g1-closure-record/README.md)). G1 (REEVALUATION_SPEC §9, certificate containment) is evaluated against its deliverable and criterion and recorded met, with a dated closure note in §9. For each of WM01-WM03 and VP01-VP02 the report names the fix (3827db1c0, hardened by 895689b91; now `qcore-core` weak_memory.rs and `qcore-verifier-host` `check_evidence`), the negative control (the invalid candidate or insufficient evidence obtains no `C11ExecutionCertificate` or `CoreCertificate`) and the surviving positive control; evidence v1 has none by design, and the surviving positive path is evidence v2's core witness replay. Runs at base through env.sh: reevaluation_probe exit 0 (8/8, failed_expectations 0), reevaluation_followup exit 0 (11/11), weak_memory::tests 12/12, cycle20_verifier_plugins 20/20, w3_evidence_v2 8/8, plugin_firewall 6/6. The explicit profile restrictions in force are listed with their enforcement and tests: N1570 operation-order legality and the represented event subset (no consume, no mixed-size), one supplied candidate, no evidence-v1 `Safe`, no plugin `Unsafe` without a counterexample checker (QP010), evidence-v2 `Safe` only by a trusted-core replay discharging a non-empty core inventory, undeclared capability or target profile refused before dispatch (QP005). Two refusal arms no test reached get test-only controls in compiler/tests/w3_evidence_v2.rs (10/10 at the tip): an empty core inventory (QP016, VP02's v2 counterpart) and an undeclared target profile (QP005), each with its positive control. Excluded from G1 by the spec's text: capability-specific witnesses and core-derived inventories (G2), third-party `Unsafe` witness validation (no gate; it confers no certificate; W45-PLUGIN-COUNTEREXAMPLE-CHECKER), source integration (G3), implementation bridges (G5). No analyzer, contract, rule or Lean change; no corpus figure can move, so nothing was measured.",
+ "status_edits": [],
+ "ledger": [
+  {
+   "id": "P0-G1-CLOSURE-RECORD",
+   "operation": "retire",
+   "why": "DISCHARGED by P0-G1-CLOSURE-RECORD (base 76c1f9cfc): docs/reports/p0-g1-closure-record/README.md evaluates REEVALUATION_SPEC §9's G1 deliverable and criterion and records G1 met, with a dated closure note in §9 as the one authority. Each of WM01-WM03 and VP01-VP02 has its fix (3827db1c0, 895689b91), a negative control and a surviving positive control, run at base (reevaluation_probe exit 0, 8/8; reevaluation_followup exit 0, 11/11; weak_memory::tests 12/12; cycle20_verifier_plugins 20/20; w3_evidence_v2 8/8, 10/10 at the tip; plugin_firewall 6/6). The explicit profile restrictions in force are listed with enforcement and tests; two untested refusal arms (v2 empty core inventory QP016, undeclared target profile QP005) gained test-only controls. Open items excluded with their cited gate: capability-specific witnesses and core-derived inventories (G2), third-party Unsafe witness validation (no gate, no certificate conferred; W45-PLUGIN-COUNTEREXAMPLE-CHECKER), source integration (G3), implementation bridges (G5).",
+   "source": "docs/reports/p0-g1-closure-record/README.md"
+  }
+ ]
+}
