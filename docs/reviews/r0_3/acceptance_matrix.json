@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 10,
-  "named_followups": 1129
+  "named_followups": 1128
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6921,11 +6921,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Landing integrate/r80 (base main 327978070; USER DECISION 2026-11-27 \"land FB-RETRY-OR6 as r80 after r79 lands\" and \"land r80 when the gate passes\"). Contents: FB-RETRY-OR6-ELEMENT-IDENTITY 21cc8bccc (gateway rule 91 new, not switchable: a contract's resource_unpublished(p, MEMBER) at a bound position gives the body p's MEMBER links as an entry fact the caller owes; rule 43's held arm admits p on it at a destroyer of the same member; W4 offers the clause only where the formal is released on every exit, so rules 34, 43 and 46 check the obligation at each call; rule 46 amended in place (kill policy factored into link_member::reach, no behaviour change); contract spec §C04.8 amended; QCore.CarriedLinkObligation new; the link_member_premises fixture formal-handed-to-destroyer moves Unknown to Safe, attributed). Merge clean; generated rule docs and Lean roots regenerated; third_party/libevent checked out. Amendments applied with --profiles-base origin/main; amends LERI-HELD-FORMAL-LINK-OBLIGATION, W45-FB-OR6-ELEMENT-IDENTITY and CG17-CONTAINER-OF-LIST-LOOKUPS, registers nothing. llp64_fixture_scan over the card's test changes: 0 counted. Full landing gate on 4754435a4 (raw record private/integrate-r80/gate/gate.json, kept out of the tree by the report-hygiene rule) via scripts/gate_scope.py --base origin/main --full --landing through private/toolchain/env.sh: Rust 725 units / 770 summaries, 10374 passed, 0 failed, 24 ignored; fmt, Clippy and both reevaluation examples exit 0; scripts/check_lean_audits.py over all modules exit 0, 532 audits (private/integrate-r80/lean.log). The gate scope did not select the provider gate; provider_tests 182 (1 ignored) is carried from the integrate/r74 landing batch A gate. Python (814 tests) exit 1 only on two stale generated records (the matrix Lean-audit count 531 against 532 from the new QCore.CarriedLinkObligation audit, and docs/reports/INDEX.md without the new report), cleared by regenerating from this record; the rerun after the records commit exits 0. Measurement is the card's own (fluent-bit-system route over Fluent Bit 046accf6, base 76c1f9cfc vs tip e8016a423: custody 114/0/329/5 to 116/0/327/5, flb_sched_timer_cb_destroy Unknown to Safe in both configurations, justified because the obligation rule 46 refused is now carried in its summary and checked at each call; opt-in current --monkey-linked 1205/2/3590/7 both, no row moved). Pinned-route parity (quirin-audit measure --declared) was not run: this host holds no build/cycle19 inputs or baselines. No profile baseline is changed and land.py publish is owed.",
-  "workspace_tests": 10374,
+  "note": "Landing integrate/r81 (base main 0956f4d21; USER DECISION 2026-11-27 \"land FB-CHUNK-LIFECYCLE as r81 after r80 lands\"). Contents: FB-CHUNK-LIFECYCLE 49ea93d55 (gateway rule 90 new: an integer formal of a static function whose every unit occurrence is its declarator, a file-scope prototype or a direct call, every call passing a decimal constant of one truth, read only as if (NAME) / if (!NAME) with exactly that many two-way branches, has each such branch taken as the arm C takes, every reaching row listing premise static-call-sites-closed; legacy_static_constant_formal.rs with a hook in legacy_c.rs build_function_cfg_with; QCore.StaticConstantFormal new; three existing pins re-pinned with their original intent kept (a variable actual) plus a constant-actual control; no contract change). Merge regenerated the generated rule docs and Lean roots beside rule 91; third_party/libevent checked out. Amendments applied with --profiles-base origin/main; retires P0-SB-REMOVE-CHUNK-DESTROY-FLAG, amends W45-FB-BACKLOG-PUBLICATION-BLOCKED. llp64_fixture_scan over the card's test changes: 1 counted, clang_gap_phase4.rs:161 `#include <setjmp.h>` (host-include), a fixture line unchanged since 51252d80b (2026-09-29) that the scan reaches only because the card edits the same file; no hit in the card's own lines. Full landing gate on 2e7eef1ea (raw record private/integrate-r81/gate/gate.json, kept out of the tree by the report-hygiene rule) via scripts/gate_scope.py --base origin/main --full --landing through private/toolchain/env.sh: Rust 725 units / 770 summaries, 10379 passed, 0 failed, 24 ignored; fmt, Clippy and both reevaluation examples exit 0; scripts/check_lean_audits.py over all modules exit 0, 533 audits (private/integrate-r81/lean.log). The gate scope did not select the provider gate; provider_tests 182 (1 ignored) is carried from the integrate/r74 landing batch A gate. Python (814 tests) exit 1 only on three stale generated records (the matrix Lean-audit count 532 against 533 from the new QCore.StaticConstantFormal audit, dimensions.named_followups 1129 against 1128 from the retired follow-up, and docs/reports/INDEX.md without the new report), cleared by regenerating from this record; the rerun after the records commit exits 0. Measurement is the card's own (over Fluent Bit 046accf6, base 76c1f9cfc vs tip 3570e45f5: system slice 114/0/329/5 to 114/0/330/4, sb_remove_chunk_from_segregated_backlog and unit sb.c provisional Unsafe to Unknown, no Unknown to Safe move; opt-in current --monkey-linked 1205/2/3590/7 both, no row moved, 497 rows newly list the premise, 12 of them already Safe). The card's four measurement runs were started directly rather than through scripts/gate_slot.py, as its report records. Pinned-route parity (quirin-audit measure --declared) was not run: this host holds no build/cycle19 inputs or baselines. No profile baseline is changed and land.py publish is owed.",
+  "workspace_tests": 10379,
   "provider_tests": 182,
   "python_evidence_validator_tests": 814,
-  "lean_audits": 532,
+  "lean_audits": 533,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
    "AuditAddressArrowPlace.lean",
@@ -7397,6 +7397,7 @@
    "AuditSr5Soundness.lean",
    "AuditStagedCheckpoints.lean",
    "AuditStatementExpressions.lean",
+   "AuditStaticConstantFormal.lean",
    "AuditStdBuffer.lean",
    "AuditStdEvent.lean",
    "AuditStdHttp.lean",
@@ -7466,7 +7467,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "full landing gate: every step exits 0 except the Python suite's stale-matrix check, cleared by regenerating the matrix from this record; provider gate not selected (no providers/ change), provider count carried from the integrate/r74 landing batch A gate",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/fb-retry-or6-element-identity/integration/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/fb-chunk-lifecycle/integration/gate.json)"
  },
  "named_followups": [
   {
