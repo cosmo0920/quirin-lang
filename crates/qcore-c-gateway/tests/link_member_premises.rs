@@ -401,6 +401,7 @@ mod carried_link_obligation {
     int item_destroy(struct item *e);
     int *q_errloc(void); int q_note(int e, const char *f, int l);
     int *q_field(struct item *p); void q_unknown(int k);
+    void *q_try_alloc_n(__SIZE_TYPE__ n);
     void enq_decl(struct item *e, struct queue *q);
     int rel_decl(struct item *e);
     "#;
@@ -422,6 +423,8 @@ mod carried_link_obligation {
     contract { requires resource_contract_v1; ensures normal resource_borrowed(e); ensures normal resource_borrowed(f); ensures normal resource_borrowed(l); ensures normal resource_return_none(); };
     extern fn q_field(p: ptr<mut, u8>) -> ptr<mut, u8>
     contract { requires resource_contract_v1; ensures normal resource_borrowed(p); ensures normal resource_return_none(); };
+    extern fn q_try_alloc_n(n: usize) -> ptr<mut, u8>
+    contract { requires resource_contract_v1; ensures normal resource_borrowed(n); ensures normal resource_return_owned(nullable); };
     extern fn enq_decl(e: ptr<mut, u8>, q: ptr<mut, u8>) -> unit
     contract { requires resource_contract_v1; requires resource_links_valid(e, _head); ensures normal resource_consumed(e, nonnull); ensures normal resource_borrowed(q); ensures normal resource_return_none(); };
     extern fn rel_decl(e: ptr<mut, u8>) -> i32
@@ -882,6 +885,38 @@ mod carried_link_obligation {
                 "subject",
                 AnalysisStatus::Unknown,
                 None,
+            ),
+            // `flb_output_task_queue_enqueue` as measured: the allocation
+            // takes `sizeof (struct flb_task_enqueued)` before the
+            // `flb_errno()` report (Unknown at `b3e09974e`).
+            (
+                "carried-sizeof-allocation-then-errno",
+                "static int enq(struct queue *q, struct item *r) { struct holder *h = q_try_alloc_n(sizeof(struct holder)); if (!h) { q_note((*q_errloc()), \"f.c\", 1); if (r) { item_destroy(r); } return -1; } h->r = r; mk_list_add(&h->_head, &q->pending); return 0; }".to_owned(),
+                "enq",
+                AnalysisStatus::Unknown,
+                Some(ENQ_HELD),
+            ),
+            (
+                "held-sizeof-allocation",
+                held("struct holder *g = q_try_alloc_n(sizeof(struct holder)); if (!g) { item_destroy(e); return; } q_free(g);"),
+                "subject",
+                AnalysisStatus::Unknown,
+                Some(HELD_NOT_INITIALISED),
+            ),
+            // Near misses: the size is an expression over a name.
+            (
+                "carried-sizeof-times-name",
+                enq("void *g = q_try_alloc_n(k * sizeof(struct holder)); if (g) { q_free(g); }"),
+                "enq",
+                AnalysisStatus::Unknown,
+                Some(ENQ_HELD),
+            ),
+            (
+                "carried-sizeof-plus-name",
+                enq("void *g = q_try_alloc_n(sizeof(struct holder) + k); if (g) { q_free(g); }"),
+                "enq",
+                AnalysisStatus::Unknown,
+                Some(ENQ_HELD),
             ),
         ]
     }
