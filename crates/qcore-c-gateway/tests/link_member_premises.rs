@@ -259,6 +259,29 @@ fn every_fixture_has_its_verdict_and_refusal() {
     }
 }
 
+/// Card LERI-HELD-FORMAL-LINK-OBLIGATION (gateway rule 91 (5)): the declared
+/// link precondition, `requires resource_links_valid(p, MEMBER)`, and where it
+/// may stand.
+#[test]
+fn the_loader_reads_the_link_precondition() {
+    let load = |clauses: &str| {
+        load_resource_contract_sources(
+            &[(
+                "d.qcore".to_owned(),
+                format!(
+                    "module contract;\nextern fn d(e: ptr<mut, u8>, q: ptr<mut, u8>) -> i32\ncontract {{ requires resource_contract_v1; {clauses} }};\n"
+                ),
+            )]
+            .into_iter()
+            .collect(),
+        )
+    };
+    let consumed = load(
+        "requires resource_links_valid(e, _head); ensures normal resource_consumed(e, nonnull); ensures normal resource_borrowed(q); ensures normal resource_return_none();",
+    );
+    assert!(consumed.is_err(), "base: no such requirement");
+}
+
 #[test]
 fn the_loader_reads_the_link_member_of_a_destroyer_only() {
     let load = |clauses: &str| {
@@ -547,14 +570,107 @@ mod carried_link_obligation {
                 AnalysisStatus::Unknown,
                 None,
             ),
-            // The measured boundary: the obligation is needed on one exit class
-            // only, and no summary states a precondition without the unlink.
+        ]
+    }
+
+    /// Card **LERI-HELD-FORMAL-LINK-OBLIGATION** (gateway rule 91 (5)): a
+    /// formal destroyed on one exit class only. The enqueue shape, its
+    /// callers, and the bodies whose summary may not state the precondition.
+    /// Each: name, unit, the function whose row is read, its verdict, and a
+    /// refusal it must carry (if any).
+    fn exit_class_fixtures() -> Vec<(
+        &'static str,
+        String,
+        &'static str,
+        AnalysisStatus,
+        Option<&'static str>,
+    )> {
+        const ENQ_HELD: &str =
+            "unlink by `item_destroy` of `r`, which this function has not published";
+        const ENQ_UNCONTRACTED: &str = "call to uncontracted function `enq` in branch condition";
+        vec![
+            // The enqueue shape: destroyed on `return -1`, stored on `return 0`.
+            ("enqueue", ENQUEUE.to_owned(), "enq", AnalysisStatus::Unknown, Some(ENQ_HELD)),
+            // Kept (not stored) on `return 0`.
             (
-                "enqueue",
-                ENQUEUE.to_owned(),
+                "enqueue-keeps",
+                "static int enq(struct queue *q, struct item *r) { struct holder *h = q_try_alloc(); if (!h) { if (r) { item_destroy(r); } return -1; } q_free(h); return 0; }".to_owned(),
                 "enq",
                 AnalysisStatus::Unknown,
-                None,
+                Some(ENQ_HELD),
+            ),
+            // The destroy path never returns: the ordinary route.
+            (
+                "noreturn-destroy",
+                "void keep(struct queue *q, struct item *r) { struct holder *h = q_try_alloc(); if (!h) { item_destroy(r); for (;;); } h->r = r; mk_list_add(&h->_head, &q->pending); }".to_owned(),
+                "keep",
+                AnalysisStatus::Unknown,
+                Some(ENQ_HELD),
+            ),
+            // Callers, each testing the returned value.
+            (
+                "caller-initialised",
+                format!("{ENQUEUE}\nvoid subject(struct queue *q) {{ struct item *e = q_alloc(); mk_list_init(&e->_head); if (enq(q, e) != 0) {{ return; }} }}"),
+                "subject",
+                AnalysisStatus::Unknown,
+                Some(ENQ_UNCONTRACTED),
+            ),
+            (
+                "caller-formal-carried-again",
+                format!("{ENQUEUE}\nint subject(struct queue *q, struct item *e) {{ if (enq(q, e) != 0) {{ return -1; }} return 0; }}"),
+                "subject",
+                AnalysisStatus::Unknown,
+                Some(ENQ_UNCONTRACTED),
+            ),
+            (
+                "caller-not-initialised",
+                format!("{ENQUEUE}\nvoid subject(struct queue *q) {{ struct item *e = q_alloc(); if (enq(q, e) != 0) {{ return; }} }}"),
+                "subject",
+                AnalysisStatus::Unknown,
+                Some(ENQ_UNCONTRACTED),
+            ),
+            (
+                "caller-initialises-another-member",
+                format!("{ENQUEUE}\nvoid subject(struct queue *q) {{ struct item *e = q_alloc(); mk_list_init(&e->_rotate); if (enq(q, e) != 0) {{ return; }} }}"),
+                "subject",
+                AnalysisStatus::Unknown,
+                Some(ENQ_UNCONTRACTED),
+            ),
+            (
+                "caller-foreign-element",
+                format!("{ENQUEUE}\nvoid subject(struct queue *q) {{ struct mk_list *c, *n; struct item *e; mk_list_foreach_safe(c, n, &q->items) {{ e = mk_list_entry(c, struct item, _head); if (enq(q, e) != 0) {{ return; }} }} }}"),
+                "subject",
+                AnalysisStatus::Unknown,
+                Some(ENQ_UNCONTRACTED),
+            ),
+            (
+                "caller-published",
+                format!("{ENQUEUE}\nvoid subject(struct queue *q) {{ struct item *e = q_alloc(); mk_list_add(&e->_head, &q->items); if (enq(q, e) != 0) {{ return; }} }}"),
+                "subject",
+                AnalysisStatus::Unknown,
+                Some(ENQ_UNCONTRACTED),
+            ),
+            (
+                "caller-untested",
+                format!("{ENQUEUE}\nvoid subject(struct queue *q) {{ struct item *e = q_alloc(); mk_list_init(&e->_head); enq(q, e); }}"),
+                "subject",
+                AnalysisStatus::Unknown,
+                Some("call to uncontracted function `enq`"),
+            ),
+            // Bodies whose summary may not state the precondition.
+            (
+                "frees-on-the-other-class",
+                "static int enq(struct queue *q, struct item *r) { struct holder *h = q_try_alloc(); if (!h) { item_destroy(r); return -1; } q_free(h); q_free(r); return 0; }".to_owned(),
+                "enq",
+                AnalysisStatus::Unknown,
+                Some(ENQ_HELD),
+            ),
+            (
+                "writes-before",
+                "static int enq(struct queue *q, struct item *r) { struct holder *h; q_use(r); h = q_try_alloc(); if (!h) { item_destroy(r); return -1; } h->r = r; mk_list_add(&h->_head, &q->pending); return 0; }".to_owned(),
+                "enq",
+                AnalysisStatus::Unknown,
+                Some(ENQ_HELD),
             ),
         ]
     }
@@ -565,6 +681,21 @@ mod carried_link_obligation {
             return;
         }
         for (name, body, entry, status, refusal) in fixtures() {
+            let (got, diagnostics) = analyze(&body, entry);
+            assert_eq!(got, status, "{name}\n{diagnostics:?}");
+            if let Some(refusal) = refusal {
+                assert!(has(&diagnostics, refusal), "{name}\n{diagnostics:?}");
+            }
+            assert_eq!(accusations(&diagnostics), 0, "{name}\n{diagnostics:?}");
+        }
+    }
+
+    #[test]
+    fn every_exit_class_fixture_has_its_verdict_and_accuses_nothing() {
+        if qcore_c_gateway::clang_command().is_err() {
+            return;
+        }
+        for (name, body, entry, status, refusal) in exit_class_fixtures() {
             let (got, diagnostics) = analyze(&body, entry);
             assert_eq!(got, status, "{name}\n{diagnostics:?}");
             if let Some(refusal) = refusal {
