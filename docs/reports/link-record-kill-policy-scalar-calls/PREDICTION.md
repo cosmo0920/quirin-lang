@@ -52,3 +52,24 @@ none
 
 **Pinned routes** (`quirin-audit measure --declared`) need inputs this host
 does not have; the card records the refusal.
+
+## Amendment after the first tip measurement (frozen before the second)
+
+The first measured tip, `b3e09974e`, moved **no row** on the system route
+or the census units (the prediction above was wrong for it). A debug
+trace of the enqueue (a private copy of that tip with prints) shows the
+carried `Ready(_head)` record is forgotten one statement earlier than r83
+read: at `queued_task = flb_malloc(sizeof (struct flb_task_enqueued))`,
+whose actual is a `sizeof` and so undecided; `flb_errno_print` itself is
+decided at that tip (`scalar_actuals` `[0, 1, 2]`, one nested call with no
+actual). The second semantic commit adds one scalar shape: an actual that
+is exactly `sizeof ( … )`, the operand carrying no call, assignment,
+increment or decrement (probe `c1e6b1669` pins the shape Unknown).
+
+Second tip, predicted: the block above unchanged (system:
+`flb_output_task_queue_enqueue` Unknown -> Safe in both configurations,
+Safe +2, Unknown -2, the singleplex caller's leaf trade); census units
+none. Because `sizeof` actuals are common in allocations, rows elsewhere
+on these routes whose only blocker was a record forgotten at such an
+allocation may also move; none was identified at base, and any that does
+is reported as unpredicted with its justification.
