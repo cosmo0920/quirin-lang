@@ -363,8 +363,6 @@ does not replace review of what the theorems actually state.
 | G5: proof and platform closure | Implementation bridges, Lean CI, native platform/sanitizer/hook records | All claims have matching proofs or explicitly bounded evidence; open platform gates stay open |
 | G6: reevaluation publication | Raw results, scripts, held-out cases and revised claim inventory | Independent reproduction; no known false safety in claimed scope; unresolved cases visible |
 
-G1 is met within the certificates and profiles its [closure record](reports/g1-closure-record/README.md) scopes (2026-11-27, `9903b027a`), which lists the open items it excludes.
-
 Implement G1 before expanding provider coverage. Do not remove Cycle 19's
 existing analysis routes until G4 parity is recorded. Historical cycle records
 should retain their dates and add superseding evidence links, rather than have
@@ -383,7 +381,10 @@ tested. Capability-specific witnesses and core-derived inventories (G2),
 third-party `Unsafe` witness validation (no gate; it confers no
 certificate), source integration (G3) and implementation bridges (G5) stay
 open and outside G1. Evidence table, runs and exclusions:
-[closure record](reports/p0-g1-closure-record/README.md).
+[closure record](reports/p0-g1-closure-record/README.md). The criterion is also stated as checked
+formulas over a 27-row case table, with the excluded items registered:
+[G1 closure formulas](reports/g1-closure-record/README.md) (card
+G1-CLOSURE-FORMULAS, supplementary; this note stays the authority).
 
 ## 10. What ran in this audit
 

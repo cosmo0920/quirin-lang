@@ -15,7 +15,9 @@ the pinned Fluent Bit tree `build/cycle19/c-gateway-wave-pin/fluent-bit-clang-so
 (HEAD `66910c10a4d7eafa810b84229cf2dcf7b0f26f97`, compile database sha256
 `5e6868d9…f7e78`); the last landing measurement
 `private/measure/r40-landing/sides/tip/` (quirin-audit built from `c0cb77da3`).
-Everything below is in [census.json](census.json) (schema `otel-proto-audit/1`),
+Everything below is in [census.json](census.json) (schema `otel-proto-audit/1`;
+its per-function and per-site rows are in the gzipped
+[census-rows.json.gz](census-rows.json.gz), which `load_census` merges back),
 produced by [scripts/otel_proto_audit.py](../../../scripts/otel_proto_audit.py)
 and [scripts/otel_proto_sites.py](../../../scripts/otel_proto_sites.py)
 (§8 has the commands). The formulas are in [formulas.json](formulas.json).

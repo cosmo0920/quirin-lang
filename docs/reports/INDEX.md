@@ -639,7 +639,7 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | Card directory | Original report title |
 |---|---|
 
-| [g1-closure-record](g1-closure-record/README.md) | P0-G1-CLOSURE-RECORD: gate G1 (certificate containment), evaluated |
+| [g1-closure-record](g1-closure-record/README.md) | G1-CLOSURE-FORMULAS: gate G1 (certificate containment) as checked formulas |
 
 | [gapo-parity-decisions-nondeterministic](archive/language-and-tooling/gapo-parity-decisions-nondeterministic/README.md) | GAPO-PARITY-DECISIONS-NONDETERMINISTIC: a consultation's parity decisions are its own |
 

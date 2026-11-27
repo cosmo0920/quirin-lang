@@ -37,6 +37,7 @@ files use (``map<>``, ``group``, ``extend``, proto2) is refused, never skipped.
 from __future__ import annotations
 
 import argparse
+import gzip
 import hashlib
 import json
 import re
@@ -912,6 +913,41 @@ def phase_b_effect(functions: list[dict]) -> dict:
     return out
 
 
+# The per-function and per-site rows are bulk; the committed report keeps them
+# gzipped beside the compact summary (report-artifact ceiling, check_report_hygiene).
+ROW_KEYS = ("functions", "sites")
+
+
+def rows_path(summary: Path) -> Path:
+    """The gzipped rows file that accompanies a summary `census.json`."""
+    return summary.with_name(summary.stem + "-rows.json.gz")
+
+
+def split_rows(report: dict) -> tuple[dict, dict]:
+    """The report without its bulk rows, and the rows."""
+    return ({k: v for k, v in report.items() if k not in ROW_KEYS},
+            {k: report[k] for k in ROW_KEYS if k in report})
+
+
+def write_census(report: dict, summary: Path) -> None:
+    """Write the compact summary and its gzipped rows, byte-stable (gzip mtime 0)."""
+    head, rows = split_rows(report)
+    summary.write_text(json.dumps(head, indent=1, sort_keys=True) + "\n")
+    data = (json.dumps(rows, indent=1, sort_keys=True) + "\n").encode()
+    rows_path(summary).write_bytes(gzip.compress(data, mtime=0))
+
+
+def load_census(summary: Path) -> dict:
+    """The full report: the summary merged with its rows, when they exist."""
+    report = json.loads(summary.read_text())
+    if any(k in report for k in ROW_KEYS):
+        raise Refused(f"{summary}: rows belong in {rows_path(summary).name}")
+    rows = rows_path(summary)
+    if rows.exists():
+        report.update(json.loads(gzip.decompress(rows.read_bytes())))
+    return report
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -975,9 +1011,13 @@ def main(argv: list[str] | None = None) -> int:
                 "describe": subprocess.run(["git", "-C", str(args.proto_root), "describe", "--tags"],
                                            check=True, capture_output=True, text=True).stdout.strip(),
             }
-            emit(build_report(args.measure_tip, json.loads(args.sites.read_text()),
-                              json.loads(args.conformance.read_text()), identity(args.proto_root),
-                              args.tree_root, inputs))
+            report = build_report(args.measure_tip, json.loads(args.sites.read_text()),
+                                  json.loads(args.conformance.read_text()), identity(args.proto_root),
+                                  args.tree_root, inputs)
+            if args.output:
+                write_census(report, args.output)
+            else:
+                emit(report)
     except Refused as error:
         print(f"refused: {error}", file=sys.stderr)
         return 1

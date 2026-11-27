@@ -299,7 +299,7 @@ class ProtocolShape(unittest.TestCase):
 class CommittedCensus(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.census = json.loads((REPORT / "census.json").read_text())
+        cls.census = audit.load_census(REPORT / "census.json")
         rows = json.loads((REPORT / "formulas.json").read_text())["formulas"]
         cls.formulas = {i for i, _ in rows}
 
@@ -320,6 +320,12 @@ class CommittedCensus(unittest.TestCase):
             covered = sum(1 for r in m["routes"].values() if r["rows"])
             if m["unmeasured"] == m["functions"]:
                 self.assertEqual(covered, 0)
+
+    def test_the_committed_summary_carries_no_bulk_rows(self):
+        summary = json.loads((REPORT / "census.json").read_text())
+        self.assertEqual([k for k in audit.ROW_KEYS if k in summary], [])
+        self.assertTrue(audit.rows_path(REPORT / "census.json").exists())
+        self.assertTrue(self.census["functions"] and self.census["sites"])
 
     def test_identity_is_pinned(self):
         ident = self.census["protocol_identity"]

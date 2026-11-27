@@ -332,7 +332,7 @@ fn the_sp9_block_is_new_prefixed_and_bound_to_lean() {
     // appends SP10 after it, card MEMBER-EFFECT-STORES its MES block and card
     // K2-NO-TYPED-ACCESS its K2 block and card K6-DIRECT-POSITION-ACCESS
     // its K6 block after that, card QUIRIN-AUDIT-CONNECT its CX block, card
-    // P0-G1-CLOSURE-RECORD its G1 block and card OTEL-PROTO-AUDIT its OTP
+    // G1-CLOSURE-FORMULAS its G1 block and card OTEL-PROTO-AUDIT its OTP
     // block last).
     let blocks: Vec<_> = RENDERED_TERMS.iter().map(|t| t.block).collect();
     let first = blocks.iter().position(|b| *b == "SP9").unwrap();

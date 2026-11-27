@@ -120,7 +120,7 @@ fn every_otp_term_is_used_typed_and_bound_to_lean() {
         .count();
     assert_eq!(sorts, 5);
     // The OTP block is the last block, contiguous, after the G1 block (card
-    // P0-G1-CLOSURE-RECORD), which follows the CX block.
+    // G1-CLOSURE-FORMULAS), which follows the CX block.
     let blocks: Vec<_> = RENDERED_TERMS.iter().map(|t| t.block).collect();
     let first = blocks.iter().position(|b| *b == "OTP").unwrap();
     assert!(blocks[first..].iter().all(|b| *b == "OTP"));

@@ -2696,7 +2696,7 @@ pub const RENDERED_VALUE_SORTS: &[(&str, &str)] = &[
         "cx_dep",
         "a declared contract dependency: a `linkage_contract_v1` link or a `contract inherit` directive, elaborated (contract spec C15.2)",
     ),
-    // Card P0-G1-CLOSURE-RECORD (the G1 block): the sorts of the
+    // Card G1-CLOSURE-FORMULAS (the G1 block): the sorts of the
     // certificate-containment gate's criterion, prefixed `g1_`.
     (
         "g1_finding",
@@ -4404,7 +4404,7 @@ pub const RENDERED_TERMS: &[RenderedTerm] = &[
         meaning: "`#cx_effect_check_passes(#b)`: the callee-effect check passes for bundle `#b`",
         block: "CX",
     },
-    // ---- Card P0-G1-CLOSURE-RECORD (REEVALUATION_SPEC §9, gate G1): the
+    // ---- Card G1-CLOSURE-FORMULAS (REEVALUATION_SPEC §9, gate G1): the
     // terms of the certificate-containment criterion, evaluated per finding
     // over the executed control cases of
     // `docs/reports/g1-closure-record/README.md`, each named by a formula of

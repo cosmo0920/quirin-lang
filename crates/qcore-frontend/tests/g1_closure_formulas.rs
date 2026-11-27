@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//! Card **P0-G1-CLOSURE-RECORD**: REEVALUATION_SPEC §9's gate G1 criterion
+//! Card **G1-CLOSURE-FORMULAS**: REEVALUATION_SPEC §9's gate G1 criterion
 //! ("invalid candidates and insufficient evidence cannot obtain the affected
 //! certificates; positive controls survive", with the deliverable's explicit
 //! profile restrictions) as formulas of the C04.18.9 typed rendering over the

@@ -1,13 +1,18 @@
-# P0-G1-CLOSURE-RECORD: gate G1 (certificate containment), evaluated
+# G1-CLOSURE-FORMULAS: gate G1 (certificate containment) as checked formulas
 
-Card P0-G1-CLOSURE-RECORD (round 41; USER DECISION 2026-11-27: "the G1
+Card G1-CLOSURE-FORMULAS (round 41; USER DECISION 2026-11-27: "the G1
 closure record and CONNECT-LIBC-EFFECT-CLAIMS are still open. We need to
-launch this card"). It discharges the follow-up P0-G1-CLOSURE-RECORD,
-which PRIORITY0-ATTRIBUTION registered in
+launch this card"). It was briefed as P0-G1-CLOSURE-RECORD, the follow-up
+PRIORITY0-ATTRIBUTION registered in
 [the priority-0 remeasurement](../priority0-remeasurement/README.md#g1-certificate-containment).
-Base `9903b027a`. No analyzer, contract or gateway semantic change. The
-card adds two firewall control tests, the `G1` records vocabulary and its
-validator-checked formulas.
+The other lane discharged that follow-up first (r79,
+[G1 closure record](../p0-g1-closure-record/README.md)), and its dated note
+in `docs/REEVALUATION_SPEC.md` §9 is the authority for G1. This record
+supplements it (user decision 2026-11-27, "Supplement"): it states the same
+criterion as validator-checked formulas over the `G1` records vocabulary,
+decides them over an executed case table, adds two firewall control tests,
+and registers the excluded items as follow-ups. Base `9903b027a`. No
+analyzer, contract or gateway semantic change.
 
 ## Verdict
 

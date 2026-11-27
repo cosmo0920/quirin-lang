@@ -480,7 +480,7 @@ fn the_classification_never_disagrees_with_the_registry_on_safe() {
     }
 }
 
-/// Card P0-G1-CLOSURE-RECORD (`docs/reports/g1-closure-record/README.md`,
+/// Card G1-CLOSURE-FORMULAS (`docs/reports/g1-closure-record/README.md`,
 /// case `g1_case_vp02_v2_empty_inventory`): the evidence-v2 counterpart of
 /// REEVALUATION_SPEC finding VP02. A provider answers `Safe` for a task whose
 /// core inventory holds no obligation of the requested capability, with
@@ -536,7 +536,7 @@ fn g1_vp02_empty_core_inventory_cannot_obtain_a_v2_certificate() {
     );
 }
 
-/// Card P0-G1-CLOSURE-RECORD (case `g1_case_vp_v2_unmatched_target`): a task
+/// Card G1-CLOSURE-FORMULAS (case `g1_case_vp_v2_unmatched_target`): a task
 /// whose target profile, library, dialect or backend the manifest does not
 /// declare, or whose capability it does not declare, is refused at QP005
 /// before the provider is consulted, though the provider would answer with a

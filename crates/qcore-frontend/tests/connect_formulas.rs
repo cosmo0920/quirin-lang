@@ -96,7 +96,7 @@ fn every_cx_term_is_used_typed_and_bound_to_lean() {
         .count();
     assert_eq!(sorts, 10);
     // The CX block is contiguous, followed only by the G1 block (card
-    // P0-G1-CLOSURE-RECORD) and then the OTP block (card OTEL-PROTO-AUDIT),
+    // G1-CLOSURE-FORMULAS) and then the OTP block (card OTEL-PROTO-AUDIT),
     // never reordered.
     let blocks: Vec<_> = RENDERED_TERMS.iter().map(|t| t.block).collect();
     let first = blocks.iter().position(|b| *b == "CX").unwrap();
