@@ -316,7 +316,8 @@
    "class": "a",
    "clause": "resource_borrowed(ins); resource_return_borrowed_from(ins, nullable)",
    "reason": "`src/flb_input.c:1143-1150`: the same shape as `flb_output_name` over `struct flb_input_instance`. Body outside the system selection: a declared assumption",
-   "owner": "-"
+   "owner": "fluent_bit/retry_lifecycle.qv",
+   "written": true
   },
   "flb_input_pause_all": {
    "class": "d",
@@ -382,7 +383,8 @@
    "class": "a",
    "clause": "resource_borrowed(id); resource_borrowed(val); resource_borrowed(metrics); resource_return_none()",
    "reason": "`src/flb_metrics.c:175-186`: `m = flb_metrics_get_id(id, metrics)` (a list lookup), `-1` when absent, else `m->val += val; return 0`. An integer add into a metric the list owns; no custody moves. Body outside the system selection: a declared assumption",
-   "owner": "-"
+   "owner": "fluent_bit/retry_lifecycle.qv",
+   "written": true
   },
   "flb_net_ctx_init": {
    "class": "d",
@@ -478,7 +480,8 @@
    "class": "a",
    "clause": "resource_borrowed(ins); resource_return_borrowed_from(ins, nullable)",
    "reason": "`src/flb_output.c:1321-1328`: returns `ins->alias` when set, else `ins->name`: a pointer read from a member of `ins`, owned by it. Rule 13a validates the clause structurally in `flb_output.c` (every return is a member read of the base); its row there is Unknown only for the return-expression access, which the declaration does not rest on",
-   "owner": "-"
+   "owner": "fluent_bit/retry_lifecycle.qv",
+   "written": true
   },
   "flb_output_net_property_check": {
    "class": "c",
@@ -529,7 +532,8 @@
    "class": "a",
    "clause": "resource_return_none()",
    "reason": "`src/flb_output_thread.c:38-44`: `return FLB_TLS_GET(local_thread_instance);` (a thread-local pointer the output thread owns). No parameter; the result is no fresh, detached or derived custody of the caller (as `dlerror`'s pointer result in libc/dlfcn.qv). Body outside the system selection: a declared assumption at every call",
-   "owner": "-"
+   "owner": "fluent_bit/retry_lifecycle.qv",
+   "written": true
   },
   "flb_output_thread_pool_create": {
    "class": "d",
@@ -605,7 +609,8 @@
    "class": "a",
    "clause": "resource_return_none()",
    "reason": "`src/flb_scheduler.c:36-40`: two `FLB_TLS_INIT` (with C11 TLS `do {} while (0)`; otherwise a `pthread_once` key initialisation of a static key). No parameter, no allocation the caller owns, no result. Its own row is Safe",
-   "owner": "-"
+   "owner": "fluent_bit/retry_lifecycle.qv",
+   "written": true
   },
   "flb_sched_ctx_set": {
    "class": "c",
@@ -646,7 +651,8 @@
    "class": "a",
    "clause": "resource_borrowed(timer); resource_return_none(); quant live #timer: flb_sched_timer.event.fd |-> {#stale(descriptor), #kept}",
    "reason": "`src/flb_scheduler.c:720-728`: when `timer->timer_fd != -1` it calls `mk_event_timeout_destroy(timer->sched->evl, &timer->event)` (declared: borrows both, the event's `fd` stale) and stores -1 in `timer->timer_fd`; returns 0. Nothing is allocated, freed, stored or returned; the event's descriptor is staled on one branch and kept on the other. Its own row is Safe in this unit, so the declaration is checked against a body that validates; no W4 summary reaches the callers today",
-   "owner": "-"
+   "owner": "fluent_bit/retry_lifecycle.qv",
+   "written": true
   },
   "flb_sched_timer_cleanup": {
    "class": "c",
@@ -747,7 +753,8 @@
    "class": "a",
    "clause": "resource_borrowed(task); resource_user_neutral(); resource_return_none()",
    "reason": "`src/flb_task.c:391-397`: `ic = task->ic; return ic->fs_backlog;` two member reads and an integer result; no custody, no `users` write. Its own row is Safe in this unit (its caller is `handle_output_event`, in `flb_engine.c`)",
-   "owner": "-"
+   "owner": "fluent_bit/retry_lifecycle.qv",
+   "written": true
   },
   "flb_task_map_get_task_id": {
    "class": "c",
@@ -913,7 +920,8 @@
    "class": "a",
    "clause": "resource_borrowed(id); resource_borrowed(config); resource_user_neutral(); resource_return_none()",
    "reason": "`src/flb_task.c:75-78` (static inline): `config->task_map[id].task = NULL;`. Clears a non-owning map slot; allocates, frees and transfers nothing, writes no `users`. Its own row is Safe, so the declaration is checked against a validating body",
-   "owner": "-"
+   "owner": "fluent_bit/retry_lifecycle.qv",
+   "written": true
   },
   "map_get_task_id": {
    "class": "c",

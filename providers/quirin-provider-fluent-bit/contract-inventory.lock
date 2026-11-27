@@ -1024,6 +1024,119 @@
       "premises": {},
       "sha256": "bd2d69eeb72afe274c3ca3fb09080c0bc7e91f51c99eb00e710fe4ac3fc2182f"
     },
+    "fluent_bit/retry_lifecycle.qv": {
+      "clause_count": 28,
+      "declaration_count": 8,
+      "declarations": [
+        {
+          "clauses": 4,
+          "name": "flb_sched_timer_cb_disable",
+          "resource_mode": null,
+          "resource_table": "retaining"
+        },
+        {
+          "clauses": 5,
+          "name": "map_free_task_id",
+          "resource_mode": {
+            "counted_users": {
+              "neutral": true
+            },
+            "parameters": [
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 4,
+          "name": "flb_task_from_fs_storage",
+          "resource_mode": {
+            "counted_users": {
+              "neutral": true
+            },
+            "parameters": [
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 2,
+          "name": "flb_sched_ctx_init",
+          "resource_mode": {
+            "parameters": [],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 2,
+          "name": "flb_output_thread_instance_get",
+          "resource_mode": {
+            "parameters": [],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 5,
+          "name": "flb_metrics_sum",
+          "resource_mode": {
+            "parameters": [
+              "borrowed",
+              "borrowed",
+              "borrowed"
+            ],
+            "result": "none"
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 3,
+          "name": "flb_output_name",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": {
+              "derived": {
+                "const_dropped": false,
+                "extent": "borrowed",
+                "nullable": true,
+                "parameter": 0
+              }
+            }
+          },
+          "resource_table": "functions"
+        },
+        {
+          "clauses": 3,
+          "name": "flb_input_name",
+          "resource_mode": {
+            "parameters": [
+              "borrowed"
+            ],
+            "result": {
+              "derived": {
+                "const_dropped": false,
+                "extent": "borrowed",
+                "nullable": true,
+                "parameter": 0
+              }
+            }
+          },
+          "resource_table": "functions"
+        }
+      ],
+      "inherits": [],
+      "other_declarations": [],
+      "premise_bindings": [],
+      "premises": {},
+      "sha256": "b8053f8dd7b688b23dfd003b7869eaaf5e9345acba6753aa03e0efa83addda10"
+    },
     "fluent_bit/routes_mask.qv": {
       "clause_count": 18,
       "declaration_count": 4,
@@ -1602,6 +1715,7 @@
     "fluent_bit/output_singleplex.qv",
     "fluent_bit/resource_memory.qv",
     "fluent_bit/resource_string.qv",
+    "fluent_bit/retry_lifecycle.qv",
     "fluent_bit/routes_mask.qv",
     "fluent_bit/storage_backlog.qv",
     "fluent_bit/task_route_queries.qv",

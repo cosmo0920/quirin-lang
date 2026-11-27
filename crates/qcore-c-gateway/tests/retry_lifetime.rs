@@ -957,3 +957,348 @@ fn a_status_contract_with_the_wrong_c_declaration_is_withdrawn() {
         kinds(bad)
     );
 }
+
+// ---- FB-RETRY-LIFECYCLE-CONTRACTS: the production retry-lifecycle module ----
+//
+// `providers/quirin-provider-fluent-bit/contracts/fluent_bit/retry_lifecycle.qv`
+// declares the census's class (a) callees
+// (`docs/reports/fb-retry-lifecycle-contracts/CENSUS.md`). Each fixture below
+// reproduces one callee's 046accf6 shape, checks the production declaration
+// against it, shows a caller resolving the call, and substitutes a body that
+// violates the clause, which must not be accepted. `Safe` here is `Safe` for
+// the synthetic shape under the declarations, never a statement about Fluent
+// Bit.
+mod retry_lifecycle_contracts {
+    use super::*;
+
+    const MODULE: &str = include_str!(
+        "../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/retry_lifecycle.qv"
+    );
+
+    /// The production declarations these shapes call, restated from
+    /// `monkey/event_loop.qv`, `libc/threads.qv` and `fluent_bit/resource_memory.qv`.
+    const CALLEES: &str = r#"module contract;
+
+extern fn mk_event_timeout_destroy(loop: ptr<mut, u8>, data: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(loop);
+    ensures normal resource_borrowed(data);
+    quant live #loop: #holds(data) |-> #absent;
+    quant live #data: mk_event.fd |-> #stale(descriptor);
+    ensures normal resource_return_none();
+};
+
+extern fn flb_free(ptr: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(ptr, nullable);
+    ensures normal resource_return_none();
+};
+
+extern fn pthread_getspecific(key: u32) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    ensures normal resource_borrowed(key);
+    ensures normal resource_kind(key, thread_key);
+    ensures normal resource_return_none();
+};
+
+extern fn flb_malloc(size: usize) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(size);
+    ensures normal resource_return_owned(nullable);
+};
+"#;
+
+    const SHAPES: &str = concat!(
+        host_abi::size_t_declaration!(),
+        r#"
+struct mk_event { int fd; int type; };
+struct flb_sched { void *evl; };
+struct flb_sched_timer { struct mk_event event; int timer_fd; struct flb_sched *sched; };
+struct flb_task_map { void *task; };
+struct flb_config { struct flb_task_map *task_map; };
+struct flb_input_chunk { int fs_backlog; };
+struct flb_task { int users; struct flb_input_chunk *ic; };
+struct flb_metric { int id; size_t val; };
+struct flb_metrics { struct flb_metric *first; };
+struct flb_output_instance { char *alias; char *name; };
+struct flb_input_instance { char *alias; char *name; };
+int mk_event_timeout_destroy(void *loop, void *data);
+void flb_free(void *ptr);
+void *flb_malloc(size_t size);
+const char *flb_input_name(struct flb_input_instance *ins);
+typedef unsigned int pthread_key_t;
+void *pthread_getspecific(pthread_key_t key);
+"#
+    );
+
+    fn contracts() -> ResourceContracts {
+        load_resource_contract_sources(&BTreeMap::from([
+            ("retry_lifecycle.qv".to_owned(), MODULE.to_owned()),
+            ("callees.qv".to_owned(), CALLEES.to_owned()),
+        ]))
+        .expect("the production module and its callees load")
+    }
+
+    fn analyse(body: &str, entry: &str) -> LegacyProgramSummary {
+        analyze_legacy_c_translation_unit(&format!("{SHAPES}\n{body}"), entry, &contracts())
+            .expect("the shape analyses")
+    }
+
+    fn uncontracted(summary: &LegacyFunctionSummary) -> Vec<String> {
+        kinds(summary)
+            .into_iter()
+            .filter(|kind| kind.contains("uncontracted") || kind.contains("withdrawn"))
+            .collect()
+    }
+
+    // src/flb_scheduler.c:720-728 and the call in flb_sched_timer_destroy:907.
+    const TIMER_DISABLE: &str = r#"
+int flb_sched_timer_cb_disable(struct flb_sched_timer *timer)
+{
+    if (timer->timer_fd != -1) {
+        mk_event_timeout_destroy(timer->sched->evl, &timer->event);
+        timer->timer_fd = -1;
+    }
+    return 0;
+}
+"#;
+
+    #[test]
+    fn the_timer_disable_declaration_holds_on_its_shape_and_its_caller_resolves() {
+        let summary = analyse(
+            &format!(
+                "{TIMER_DISABLE}\nint disable_caller(struct flb_sched_timer *timer)\n{{\n    \
+                 flb_sched_timer_cb_disable(timer);\n    return 0;\n}}\n"
+            ),
+            "disable_caller",
+        );
+        let body = function(&summary, "flb_sched_timer_cb_disable");
+        assert_eq!(body.status, AnalysisStatus::Safe, "{:?}", kinds(body));
+        assert!(body.diagnostics.is_empty(), "{:?}", kinds(body));
+        let caller = function(&summary, "disable_caller");
+        assert_eq!(caller.status, AnalysisStatus::Safe, "{:?}", kinds(caller));
+    }
+
+    #[test]
+    fn a_timer_disable_body_that_frees_its_timer_is_refused() {
+        let summary = analyse(
+            "int flb_sched_timer_cb_disable(struct flb_sched_timer *timer)\n{\n    \
+             flb_free(timer);\n    return 0;\n}\n",
+            "flb_sched_timer_cb_disable",
+        );
+        let body = function(&summary, "flb_sched_timer_cb_disable");
+        assert_ne!(body.status, AnalysisStatus::Safe, "{:?}", kinds(body));
+    }
+
+    // src/flb_task.c:75-78, :391-397 and src/flb_output.c:1321-1328, called
+    // as flb_task_destroy:909 and handle_output_event:623/687 call them.
+    const TASK_HELPERS: &str = r#"
+static inline void map_free_task_id(int id, struct flb_config *config)
+{
+    config->task_map[id].task = 0;
+}
+int flb_task_from_fs_storage(struct flb_task *task)
+{
+    struct flb_input_chunk *ic;
+    ic = (struct flb_input_chunk *) task->ic;
+    return ic->fs_backlog;
+}
+const char *flb_output_name(struct flb_output_instance *ins)
+{
+    if (ins->alias) {
+        return ins->alias;
+    }
+    return ins->name;
+}
+void helper_caller(struct flb_config *config, struct flb_task *task,
+                   struct flb_output_instance *o)
+{
+    const char *name;
+    map_free_task_id(3, config);
+    if (flb_task_from_fs_storage(task) == 1) {
+        name = flb_output_name(o);
+    }
+}
+"#;
+
+    #[test]
+    fn the_task_helpers_and_the_name_accessor_hold_and_their_caller_resolves() {
+        let summary = analyse(TASK_HELPERS, "helper_caller");
+        for name in ["map_free_task_id", "flb_task_from_fs_storage"] {
+            let body = function(&summary, name);
+            assert_eq!(
+                body.status,
+                AnalysisStatus::Safe,
+                "{name}: {:?}",
+                kinds(body)
+            );
+            assert!(body.diagnostics.is_empty(), "{name}: {:?}", kinds(body));
+        }
+        // Rule 13a keeps the borrowed result (every return is a member read
+        // of `ins`); the W4 summary cannot state a derived result, so the
+        // defining row records exactly that disagreement and nothing else.
+        let accessor = function(&summary, "flb_output_name");
+        assert_eq!(accessor.status, AnalysisStatus::Unknown);
+        assert!(
+            kinds(accessor).len() == 1 && kinds(accessor)[0].starts_with("SummaryConflict"),
+            "{:?}",
+            kinds(accessor)
+        );
+        let caller = function(&summary, "helper_caller");
+        assert_eq!(caller.status, AnalysisStatus::Safe, "{:?}", kinds(caller));
+    }
+
+    #[test]
+    fn task_helpers_that_release_what_their_formals_reach_are_refused() {
+        let summary = analyse(
+            r#"
+static inline void map_free_task_id(int id, struct flb_config *config)
+{
+    flb_free(config->task_map);
+}
+int flb_task_from_fs_storage(struct flb_task *task)
+{
+    flb_free(task->ic);
+    return 0;
+}
+"#,
+            "flb_task_from_fs_storage",
+        );
+        for name in ["map_free_task_id", "flb_task_from_fs_storage"] {
+            let body = function(&summary, name);
+            assert_ne!(
+                body.status,
+                AnalysisStatus::Safe,
+                "{name}: {:?}",
+                kinds(body)
+            );
+        }
+    }
+
+    #[test]
+    fn a_name_accessor_returning_a_fresh_allocation_is_not_read_as_borrowed() {
+        let summary = analyse(
+            r#"
+const char *flb_output_name(struct flb_output_instance *ins)
+{
+    return flb_malloc(4);
+}
+void name_caller(struct flb_output_instance *o)
+{
+    const char *name;
+    name = flb_output_name(o);
+}
+"#,
+            "name_caller",
+        );
+        let caller = function(&summary, "name_caller");
+        assert_ne!(caller.status, AnalysisStatus::Safe, "{:?}", kinds(caller));
+    }
+
+    // src/flb_output_thread.c:38-44 (`FLB_TLS_GET` without C11 TLS is
+    // `pthread_getspecific`), src/flb_metrics.c:175-186 (the lookup reduced to its first
+    // element), src/flb_scheduler.c:36-40 (`FLB_TLS_INIT` with C11 TLS) and
+    // a cross-unit call of flb_input_name (src/flb_input.c:1143-1150).
+    const OUTSIDE: &str = r#"
+struct flb_out_thread_instance { int flush_id; };
+static pthread_key_t local_thread_instance;
+struct flb_out_thread_instance *flb_output_thread_instance_get()
+{
+    struct flb_out_thread_instance *th_ins;
+    th_ins = pthread_getspecific(local_thread_instance);
+    return th_ins;
+}
+int flb_metrics_sum(int id, size_t val, struct flb_metrics *metrics)
+{
+    struct flb_metric *m;
+    m = metrics->first;
+    if (!m) {
+        return -1;
+    }
+    m->val += val;
+    return 0;
+}
+void flb_sched_ctx_init()
+{
+}
+void outside_caller(struct flb_metrics *metrics, struct flb_input_instance *in)
+{
+    struct flb_out_thread_instance *th;
+    const char *name;
+    flb_sched_ctx_init();
+    th = flb_output_thread_instance_get();
+    flb_metrics_sum(1, 2, metrics);
+    name = flb_input_name(in);
+}
+"#;
+
+    #[test]
+    fn the_outside_bodies_hold_on_their_shapes_and_their_caller_resolves() {
+        let summary = analyse(OUTSIDE, "outside_caller");
+        for name in [
+            "flb_output_thread_instance_get",
+            "flb_metrics_sum",
+            "flb_sched_ctx_init",
+        ] {
+            let body = function(&summary, name);
+            assert_eq!(
+                body.status,
+                AnalysisStatus::Safe,
+                "{name}: {:?}",
+                kinds(body)
+            );
+            assert!(body.diagnostics.is_empty(), "{name}: {:?}", kinds(body));
+        }
+        let caller = function(&summary, "outside_caller");
+        assert_eq!(caller.status, AnalysisStatus::Safe, "{:?}", kinds(caller));
+    }
+
+    #[test]
+    fn outside_bodies_that_violate_their_clauses_are_refused() {
+        let summary = analyse(
+            r#"
+void flb_sched_ctx_init()
+{
+    flb_malloc(8);
+}
+void *flb_output_thread_instance_get()
+{
+    return flb_malloc(8);
+}
+int flb_metrics_sum(int id, size_t val, struct flb_metrics *metrics)
+{
+    flb_free(metrics);
+    return 0;
+}
+void violating_caller(struct flb_metrics *metrics)
+{
+    void *th;
+    th = flb_output_thread_instance_get();
+    flb_metrics_sum(1, 2, metrics);
+}
+"#,
+            "violating_caller",
+        );
+        for name in [
+            "flb_sched_ctx_init",
+            "flb_output_thread_instance_get",
+            "flb_metrics_sum",
+            "violating_caller",
+        ] {
+            let body = function(&summary, name);
+            assert_ne!(
+                body.status,
+                AnalysisStatus::Safe,
+                "{name}: {:?}",
+                kinds(body)
+            );
+        }
+        let caller = function(&summary, "violating_caller");
+        assert_eq!(uncontracted(caller).len(), 2, "{:?}", kinds(caller));
+    }
+}
