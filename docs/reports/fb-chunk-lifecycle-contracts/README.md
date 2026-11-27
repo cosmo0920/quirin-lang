@@ -136,7 +136,8 @@ FB-BACKLOG-ACCOUNTING's. The only change is the archived path of
 `opt_in_providers.py`. The first base current attempt
 (`private/fclc/run-base-current-attempt1`) exited 1 on the old path
 ("a contract load path is given but no provider is selected") and is
-discarded. Logs are under this worktree's `private/fclc/`.
+discarded. Logs are under this worktree's `private/fclc/`. Later commits change only records and the fixture module's whitespace
+(`cargo fmt`), so `b8470dedb` is the measured code.
 
 | Route | Base | Tip | Status moves |
 |---|---|---|---|
@@ -209,7 +210,40 @@ gives each callee's class and owner. In summary:
 
 ## Gate
 
-GATE_PLACEHOLDER
+`python3 scripts/gate_scope.py --base 56584db0b --out private/gate` ran
+through `private/toolchain/env.sh` (Clang 21.1.8, Lean 4.35) on head
+`b8470dedb` with the records uncommitted. It was a scoped run: 46 Rust test
+targets in 7 packages, no Lean module, the provider gate, and Python.
+[gate.json](gate.json) is the compact record, with the SHA-256 of the full
+`private/gate/gate.json`.
+
+* Submodules 0; Clippy 0 for all six steps; both reevaluation probes 0.
+* Rust suite exit 0: 281 units, **3,526 passed, 0 failed**, 9 ignored.
+* Provider package build and verify 0; provider `cargo test` exit 0, **182
+  passed, 0 failed**, 1 ignored (8,790 s, almost all of it waiting for the
+  rust-suite slot); provider Clippy 0.
+* **Three steps exited 1, all caused by this card, all fixed:**
+  * `fmt` and `provider-fmt`: one line break in a string constant of the new
+    fixture module. After `cargo fmt`, both `--check` runs exit 0.
+  * `python`: 814 tests, 1 failure,
+    `test_report_hygiene...test_real_repository_passes_hygiene_and_index_checks`
+    (stale `docs/reports/INDEX.md`). After `scripts/build_docs_index.py`, the
+    suite exits 0 with 814 tests (`private/fclc/python2.log`).
+  * The fixture target was re-run after the formatting fix: 16 passed.
+
+The full scoped gate was not re-run after these fixes. The fixes change
+whitespace in one test file and two generated indexes; the rerun steps above
+are their checks. No test failed at the base that is not this card's.
+
+Also run: the LLP64 fixture scan over the card's test files
+(`git diff --name-only 56584db0b...HEAD -- '*tests*' | ...llp64_fixture_scan.py --stdin`,
+0 counted, exit 0); `scripts/check_report_hygiene.py` passed;
+`scripts/apply_amendments.py ... --check --profiles-base 56584db0b` exits 0;
+`scripts/gen_rule_docs.py` and `scripts/gen_lean_roots.py` change nothing (no
+rule or Lean module was added). The fixture module was first placed in
+`clang_gap_phase4.rs`. That file already has a counted LLP64 hazard at base
+(`#include <setjmp.h>`, line 165), so touching it would have made the card's
+scan fail. The module moved to `slot_move_interior_borrow.rs`, which is clean.
 
 ## Hook points and files likely to conflict
 

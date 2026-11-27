@@ -145,8 +145,7 @@ fn row(source: &str, name: &str, with_card: bool) -> Row {
 }
 
 /// A caller that reads the name and owns nothing else.
-const READ: &str =
-    "size_t caller(struct flb_input_instance *ins) { const char *n = flb_input_name(ins); \
+const READ: &str = "size_t caller(struct flb_input_instance *ins) { const char *n = flb_input_name(ins); \
      return n ? strlen(n) : 0; }";
 
 const UNCONTRACTED: &str = "call to uncontracted function `flb_input_name`";
